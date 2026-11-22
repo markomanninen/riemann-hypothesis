@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OoConvOf
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OoConvOf
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 noncomputable section
 

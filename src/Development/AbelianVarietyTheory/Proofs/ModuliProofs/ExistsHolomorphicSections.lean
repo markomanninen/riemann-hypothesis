@@ -1,13 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsOpenPartialHomeomorphAnalytic
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.Imports
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsOpenPartialHomeomorphAnalytic
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.Imports
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -21,38 +25,10 @@ theorem analyticAt_eval₂Hom {E R J : Type*} [NormedAddCommGroup E] [NormedSpac
     AnalyticAt ℂ (fun z => MvPolynomial.eval₂Hom (φ z) (u z) q) w := by
   induction q using MvPolynomial.induction_on with
   | C a => simpa only [MvPolynomial.eval₂Hom_C] using hφ a
-  | add P Q hP hQ => simp only [map_add]; exact hP.add hQ
+  | add P Q hP hQ => simp only [map_add (f := _)]; exact hP.add hQ
   | mul_X P i hP =>
     simp only [map_mul, MvPolynomial.eval₂Hom_X']
     exact hP.mul (hu i)
-
-theorem hasDerivAt_eval₂Hom_line {R J : Type*} [CommRing R] [Fintype J]
-    (φ : R →+* ℂ) (q : MvPolynomial J R) (y v : J → ℂ) :
-    HasDerivAt (fun t : ℂ => MvPolynomial.eval₂Hom φ (y + t • v) q)
-      (∑ i, MvPolynomial.eval₂Hom φ y (MvPolynomial.pderiv i q) * v i) 0 := by
-  classical
-  induction q using MvPolynomial.induction_on with
-  | C a => simpa using hasDerivAt_const (0 : ℂ) (φ a)
-  | add P Q hP hQ =>
-    simp only [map_add, add_mul, Finset.sum_add_distrib]
-    exact hP.add hQ
-  | mul_X P i hP =>
-    have hX : HasDerivAt (fun t : ℂ => y i + t * v i) (v i) 0 := by
-      simpa using ((hasDerivAt_id (0 : ℂ)).mul_const (v i)).const_add (y i)
-    have h := hP.mul hX
-    simp only [map_mul, MvPolynomial.eval₂Hom_X', Pi.add_apply, Pi.smul_apply, smul_eq_mul]
-    refine HasDerivAt.congr_deriv h ?_
-    have h1 : ∀ j, MvPolynomial.eval₂Hom φ y (MvPolynomial.pderiv j (P * MvPolynomial.X i)) * v j =
-        MvPolynomial.eval₂Hom φ y (MvPolynomial.pderiv j P) * v j * y i +
-        if i = j then MvPolynomial.eval₂Hom φ y P * v j else 0 := by
-      intro j
-      rw [MvPolynomial.pderiv_mul, MvPolynomial.pderiv_X]
-      by_cases hij : i = j
-      · subst hij; simp; ring
-      · simp [hij, Pi.single_eq_of_ne hij]; ring
-    simp only [h1, Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, if_true,
-      ← Finset.sum_mul]
-    simp
 
 theorem exists_local_inverse {E S J σ : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     [FiniteDimensional ℂ E] [CommRing S] [Fintype J] [Fintype σ] [DecidableEq σ]

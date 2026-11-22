@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitMkOfFormallyUnramified
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.TwistingSheafOneChartEqPreimageStandardChart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitMkOfFormallyUnramified
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.TwistingSheafOneChartEqPreimageStandardChart
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -77,7 +81,7 @@ theorem IsFreeGen.formMapSq (σ : k →+* k') (ρ : A →+* B) (h : ρ.comp α =
     obtain ⟨a, rfl⟩ := hx
     simp
   | zero => simp
-  | add x y _ _ hx hy => rw [TensorProduct.tmul_add, map_add, map_add, hx, hy]
+  | add x y _ _ hx hy => rw [TensorProduct.tmul_add, map_add (f := _), map_add (f := _), hx, hy]
   | smul a x _ hx =>
     rw [TensorProduct.tmul_smul, ← algebraMap_smul B, map_smul, hx, map_smul, algebraMap_smul]
 

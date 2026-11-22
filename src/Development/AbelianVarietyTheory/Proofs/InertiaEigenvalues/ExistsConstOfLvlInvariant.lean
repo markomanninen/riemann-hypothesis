@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBin
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvdSubOfDvdSubX
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBin
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvdSubOfDvdSubX
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,8 +91,10 @@ theorem sum_pow_int {l : ℕ} (hl : l.Prime) (k : ℕ) {R : Type} [CommRing R] {
   have h := aeval_eq_zero_of_complex hN hζ ht
     (∑ a ∈ (Finset.range (l ^ (k + 1))).filter (fun a => ¬ l ∣ a), (Polynomial.X ^ j) ^ a
       - (c : Polynomial ℤ)) (by
-      simp only [map_sub, map_sum, map_pow, Polynomial.aeval_X, map_intCast, hc, sub_self])
-  simp only [map_sub, map_sum, map_pow, Polynomial.aeval_X, map_intCast, sub_eq_zero] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sub, map_sum, map_pow, Polynomial.aeval_X, map_intCast, hc, sub_self])
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, map_pow, Polynomial.aeval_X, map_intCast, sub_eq_zero] at h
   refine ⟨c, ?_⟩
   rw [← h]
   exact Finset.sum_congr rfl fun a _ => by rw [← pow_mul, ← pow_mul, mul_comm]
@@ -101,7 +107,7 @@ theorem sum_aeval_const {l : ℕ} (hl : l.Prime) (k : ℕ) {O R : Type} [CommRin
   | add r s hr hs =>
     obtain ⟨c, hc⟩ := hr
     obtain ⟨d, hd⟩ := hs
-    exact ⟨c + d, by simp only [map_add, Finset.sum_add_distrib, hc, hd]⟩
+    exact ⟨c + d, by simp only [map_add (f := _), Finset.sum_add_distrib, hc, hd]⟩
   | monomial j x =>
     obtain ⟨c, hc⟩ := sum_pow_int hl k ht j
     refine ⟨x * c, ?_⟩
@@ -112,15 +118,16 @@ def lvlPoly (l : ℕ) (O : Type) [CommRing O] (k : ℕ) : Polynomial O :=
 
 theorem coe_lvlPoly (l : ℕ) (O : Type) [CommRing O] (k : ℕ) :
     ((lvlPoly l O k : Polynomial O) : O⟦X⟧) = lvl l O k := by
-  have := map_sum (Polynomial.coeToPowerSeries.ringHom (R := O))
-    (fun i => ((1 + Polynomial.X : Polynomial O) ^ l ^ k) ^ i) (Finset.range l)
-  simp only [map_pow, map_add, map_one, Polynomial.coeToPowerSeries.ringHom_apply,
-    Polynomial.coe_X] at this
-  exact this
+  unfold lvlPoly GlobalTheory.CycFr.lvl
+  change Polynomial.coeToPowerSeries.ringHom _ = _
+  rw [map_sum]
+  simp only [map_pow, map_add (f := _), map_one, Polynomial.coeToPowerSeries.ringHom_apply,
+    Polynomial.coe_X]
 
 theorem algHom_lvl (l : ℕ) {O R : Type} [CommRing O] [CommRing R] [Algebra O R] (k : ℕ)
     (f : O⟦X⟧ →ₐ[O] R) : f (lvl l O k) = ∑ i ∈ Finset.range l, (f (1 + X) ^ l ^ k) ^ i := by
-  simp only [lvl, map_sum, map_pow]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [GlobalTheory.CycFr.lvl, map_sum, map_pow]
 
 theorem lvlPoly_monic {l : ℕ} (hl : l.Prime) (O : Type) [CommRing O] [Nontrivial O] (k : ℕ) :
     (lvlPoly l O k).Monic := by
@@ -133,7 +140,8 @@ theorem lvlPoly_monic {l : ℕ} (hl : l.Prime) (O : Type) [CommRing O] [Nontrivi
 
 theorem lvlPoly_map (l : ℕ) {O F : Type} [CommRing O] [CommRing F] (j : O →+* F) (k : ℕ) :
     (lvlPoly l O k).map j = lvlPoly l F k := by
-  simp [lvlPoly, Polynomial.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [lvlPoly, Polynomial.map_sum]
 
 theorem lvlPoly_of_char {l : ℕ} [Fact l.Prime] {F : Type} [CommRing F] [IsDomain F]
     (h : (l : F) = 0) (k : ℕ) : lvlPoly l F k = Polynomial.X ^ (l ^ k * (l - 1)) := by
@@ -161,7 +169,7 @@ theorem lvlPoly_distinguished {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [
   rw [lvlPoly_of_char h0] at h1
   have h2 := hm.natDegree_map (IsLocalRing.residue O)
   rw [h1, Polynomial.natDegree_X_pow] at h2
-  have h3 := congrArg (fun p => Polynomial.coeff p n) h1
+  have h3 := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p n) h1
   rw [← h2] at hn
   simp only [Polynomial.coeff_map, Polynomial.coeff_X_pow, hn.ne, if_false] at h3
   exact (IsLocalRing.residue_eq_zero_iff _).1 h3
@@ -199,7 +207,7 @@ theorem exists_const_of_lvl_invariant {l : ℕ} [Fact l.Prime] {O : Type} [CommR
       exact this
     have e2 := (hz _).2 (hb a ha')
     rw [hbr] at e2
-    simp only [map_sub, map_add, map_mul, e1, (hz _).2 dvd_rfl, zero_mul, add_zero,
+    simp only [map_sub, map_add (f := _), map_mul, e1, (hz _).2 dvd_rfl, zero_mul, add_zero,
       sub_eq_zero] at e2
     rw [← e2, GlobalTheory.NB.LT.algHom_coe, act_nat_X, ← Polynomial.aeval_algHom_apply,
       Polynomial.aeval_comp]

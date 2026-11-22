@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.MeanSquareBounds.PrimeSetTwoBounds
-import Development.AutomorphicArithmetic.MeanSquareBounds.meanSqK
-import Development.AutomorphicArithmetic.MeanSquareBounds.BadShare
-import Development.AutomorphicArithmetic.MeanSquareBounds.BoxOfS
-import Development.AutomorphicArithmetic.MeanSquareBounds.TwistPrim
-import Development.AutomorphicArithmetic.MeanSquareBounds.IndUnique
-import Development.AutomorphicArithmetic.MeanSquareBounds.CountBad
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.MSqCount
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTFinal
-import Formalism.LandauZeroFreeBounds.SiegelWalfiszAPOfSiegelLower
+module
+
+public import Development.AutomorphicArithmetic.MeanSquareBounds.PrimeSetTwoBounds
+public import Development.AutomorphicArithmetic.MeanSquareBounds.meanSqK
+public import Development.AutomorphicArithmetic.MeanSquareBounds.BadShare
+public import Development.AutomorphicArithmetic.MeanSquareBounds.BoxOfS
+public import Development.AutomorphicArithmetic.MeanSquareBounds.TwistPrim
+public import Development.AutomorphicArithmetic.MeanSquareBounds.IndUnique
+public import Development.AutomorphicArithmetic.MeanSquareBounds.CountBad
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.MSqCount
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTFinal
+public import Formalism.LandauZeroFreeBounds.SiegelWalfiszAPOfSiegelLower
+
+@[expose] public section
 
 open Finset Formalism.HermitianLattices.ZeroFreeRegionGL2 Formalism.HermitianLattices.Ext.LogarithmicIntegralBounds
 

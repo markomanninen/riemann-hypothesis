@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.PoitouTate.General
-import GroundTheory.ProfiniteCohomology.PoitouTate.Primary
-import GroundTheory.ProfiniteCohomology.PoitouTate.BrauerInvZOfIsSepClosureCohomologyULiftIntAddEqu
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseDefs
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.Dimension
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteCompact
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.PoitouTate.General
+public import GroundTheory.ProfiniteCohomology.PoitouTate.Primary
+public import GroundTheory.ProfiniteCohomology.PoitouTate.BrauerInvZOfIsSepClosureCohomologyULiftIntAddEqu
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseDefs
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.Dimension
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteCompact
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -12,8 +17,6 @@ noncomputable section
 namespace GroundTheory.ProfCoh
 
 open IsDedekindDomain NumberField CategoryTheory MonoidalCategory GroundTheory.Global
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 attribute [local instance 2000] Rep.hV2
 
@@ -72,6 +75,8 @@ theorem zmodToQZ_compactCohomologyResMap_of_localInv [Fintype ι] {q n : ℕ}
 
 end Natural
 
+local notation "ℚ̄" => AlgebraicClosure ℚ
+
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
   (ιs : ∀ v : S, ℚ̄ →ₐ[K.1] AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1))
 
@@ -80,16 +85,16 @@ section Facts
 variable {n : ℕ} [NeZero n] (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((n : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
   (hK : Odd n ∨ IsTotallyComplex K.1)
 
-include hS hK in
 
+include hS hK in
 theorem subsingleton_cohomology_gs_of_nsmul (M : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S))
     [IsDiscreteRep M] (hM : ∀ m : M, n • m = 0) {r : ℕ} (hr : 3 ≤ r) :
     Subsingleton (cohomology M r) :=
   subsingleton_cohomology_of_cdp_le_two (NeZero.ne n)
     (fun _ hℓ hℓn => cdp_galUnramifiedOutside_le_two_of_dvd K S (NeZero.ne n) hS hK hℓ hℓn) M hM hr
 
-include hS hK in
 
+include hS hK in
 theorem finite_cohomology_gs_of_nsmul [Finite S]
     (M : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S)) [IsDiscreteRep M] [Finite M]
     (hM : ∀ m : M, n • m = 0) (r : ℕ) : Finite (cohomology M r) := by
@@ -99,31 +104,38 @@ theorem finite_cohomology_gs_of_nsmul [Finite S]
   · have := subsingleton_cohomology_gs_of_nsmul S hS hK M hM (show 3 ≤ r by omega)
     exact Finite.of_subsingleton
 
-include hS hK in
 
+include hS hK in
 theorem finite_compactCohomologyRes_gs_of_nsmul [Finite S]
     (M : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S)) [IsDiscreteRep M] [Finite M]
     (hM : ∀ m : M, n • m = 0) (r : ℕ) : Finite (compactCohomologyRes (gsFinFamily S ιs) M r) := by
   have := finite_cohomology_gs_of_nsmul S hS hK M hM r
   exact finite_compactCohomologyRes_gs_of_finite K S ιs M r
 
-include hS in
 
+include hS in
 theorem nonempty_addEquiv_gsRoots_of_mem : Nonempty (gsRoots S n ≃+ ZMod n) := by
+  have hroots : Nat.card (rootsOfUnity n (maxUnramifiedOutside K.1 ℚ̄ S)) = n := by
+    obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot ℚ̄ n
+    have hmem : ζ ∈ maxUnramifiedOutside K.1 ℚ̄ S :=
+      mem_maxUnramifiedOutside_of_pow_eq_one S (NeZero.ne n) (fun v hv h => hv (hS v h)) hζ.pow_eq_one
+    have hζ' : IsPrimitiveRoot (⟨ζ, hmem⟩ : maxUnramifiedOutside K.1 ℚ̄ S) n :=
+      IsPrimitiveRoot.of_map_of_injective (f := (maxUnramifiedOutside K.1 ℚ̄ S).val) hζ
+        Subtype.val_injective
+    exact hζ'.card_rootsOfUnity
   have hcard : Nat.card (rootsOfUnity n (maxUnramifiedOutside K.1 ℚ̄ S)) = Nat.card (Multiplicative (ZMod n)) := by
-    rw [card_rootsOfUnity_maxUnramifiedOutside K S n (NeZero.ne n) (fun v hv h => hv (hS v h)),
-      Nat.card_eq_fintype_card, Fintype.card_multiplicative, ZMod.card]
+    rw [hroots, Nat.card_eq_fintype_card, Fintype.card_multiplicative, ZMod.card]
   exact ⟨MulEquiv.toAdditive (mulEquivOfCyclicCardEq hcard)⟩
 
-include hS hK in
 
+include hS hK in
 theorem subsingleton_cohomology_three_gsRoots : Subsingleton (cohomology (gsRoots S n) 3) :=
   subsingleton_cohomology_gs_of_nsmul S hS hK _ (nsmul_gsRoots S n) le_rfl
 
 variable [Fintype S]
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem zmodToQZ_gsCompactInv_localToCompact (h3 : Subsingleton (cohomology (gsRoots S n) 3))
     (ξ : ∀ v : S, cohomology (Rep.res (gsFinFamily S ιs v).toMonoidHom (gsRoots S n)) 2) :
     zmodToQZ n (gsCompactInv S ιs n hK h3
@@ -188,8 +200,8 @@ section Hypotheses
 variable {N : ℕ} (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((N : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
   (hK : Odd N ∨ IsTotallyComplex K.1)
 
-include hS in
 
+include hS in
 theorem mem_of_natCast_dvd_mem {d : ℕ} (hd : d ∣ N) (v : HeightOneSpectrum (𝓞 K.1))
     (hv : ((d : ℕ) : 𝓞 K.1) ∈ v.asIdeal) : v ∈ S := by
   obtain ⟨c, rfl⟩ := hd
@@ -197,8 +209,8 @@ theorem mem_of_natCast_dvd_mem {d : ℕ} (hd : d ∣ N) (v : HeightOneSpectrum (
   rw [Nat.cast_mul]
   exact v.asIdeal.mul_mem_right _ hv
 
-include hK in
 
+include hK in
 theorem odd_or_isTotallyComplex_of_dvd {d : ℕ} (hd : d ∣ N) : Odd d ∨ IsTotallyComplex K.1 :=
   hK.imp (fun ho => ho.of_dvd_nat hd) id
 
@@ -211,25 +223,27 @@ theorem gsPoitouTateDualityHypotheses
           (subsingleton_cohomology_three_gsRoots S (mem_of_natCast_dvd_mem S hS (Nat.ordProj_dvd N p))
             (odd_or_isTotallyComplex_of_dvd hK (Nat.ordProj_dvd N p)))) U₀) :
     PoitouTateDualityHypotheses (gsFinFamily S ιs) (gsRoots S N)
-      (gsCompactInv S ιs N hK (subsingleton_cohomology_three_gsRoots S hS hK)) (gsLocalInvRootsQZ S ιs N) where
-  nonempty_addEquiv := nonempty_addEquiv_gsRoots_of_mem S hS
-  bijective_compactDualityMap M _ _ hM _ _ h :=
-    bijective_compactDualityMap_of_primePow (gsFinFamily S ιs) (gsRoots S N) _
-      (fun p => gsRoots S (p ^ N.factorization p))
-      (fun p => gsCompactInv S ιs (p ^ N.factorization p) (odd_or_isTotallyComplex_of_dvd hK (Nat.ordProj_dvd N p))
-        (subsingleton_cohomology_three_gsRoots S (mem_of_natCast_dvd_mem S hS (Nat.ordProj_dvd N p))
-          (odd_or_isTotallyComplex_of_dvd hK (Nat.ordProj_dvd N p))))
-      (fun p => gsRootsIncl S (Nat.ordProj_dvd N p)) (nonempty_addEquiv_gsRoots_of_mem S hS)
-      (fun p _ => nonempty_addEquiv_gsRoots_of_mem S (mem_of_natCast_dvd_mem S hS (Nat.ordProj_dvd N p)))
-      (fun _ _ => gsRootsIncl_injective S _)
-      (fun _ _ z => zmodToQZ_gsCompactInv_gsRootsIncl S ιs _ hK _ _ _ z)
-      (fun p hp M _ _ hMp _ _ h => (H p hp).choose_spec.bijective_compactDualityMap M hMp h) M hM h
-  finite_cohomology M _ _ hM r := finite_cohomology_gs_of_nsmul S hS hK M hM r
-  finite_compactCohomology M _ _ hM r := finite_compactCohomologyRes_gs_of_nsmul S ιs hS hK M hM r
-  subsingleton_three M _ _ hM := subsingleton_cohomology_gs_of_nsmul S hS hK M hM le_rfl
-  localToCompact_two := zmodToQZ_gsCompactInv_localToCompact S ιs hK _
-  surjective_localPairing M _ _ hM v :=
-    (bijective_gsLocalPairing S ιs N (nonempty_addEquiv_gsRoots_of_mem S hS) M hM v (show 0 + 2 = 2 from rfl)).2
+      (gsCompactInv S ιs N hK (subsingleton_cohomology_three_gsRoots S hS hK)) (gsLocalInvRootsQZ S ιs N) := by
+  exact {
+    nonempty_addEquiv := nonempty_addEquiv_gsRoots_of_mem S hS
+    bijective_compactDualityMap M _ _ hM _ _ h :=
+      bijective_compactDualityMap_of_primePow (gsFinFamily S ιs) (gsRoots S N) _
+        (fun p => gsRoots S (p ^ N.factorization p))
+        (fun p => gsCompactInv S ιs (p ^ N.factorization p) (odd_or_isTotallyComplex_of_dvd hK (Nat.ordProj_dvd N p))
+          (subsingleton_cohomology_three_gsRoots S (mem_of_natCast_dvd_mem S hS (Nat.ordProj_dvd N p))
+            (odd_or_isTotallyComplex_of_dvd hK (Nat.ordProj_dvd N p))))
+        (fun p => gsRootsIncl S (Nat.ordProj_dvd N p)) (nonempty_addEquiv_gsRoots_of_mem S hS)
+        (fun p _ => nonempty_addEquiv_gsRoots_of_mem S (mem_of_natCast_dvd_mem S hS (Nat.ordProj_dvd N p)))
+        (fun _ _ => gsRootsIncl_injective S _)
+        (fun _ _ z => zmodToQZ_gsCompactInv_gsRootsIncl S ιs _ hK _ _ _ z)
+        (fun p hp M _ _ hMp _ _ h => (H p hp).choose_spec.bijective_compactDualityMap M hMp h) M hM h
+    finite_cohomology M _ _ hM r := finite_cohomology_gs_of_nsmul S hS hK M hM r
+    finite_compactCohomology M _ _ hM r := finite_compactCohomologyRes_gs_of_nsmul S ιs hS hK M hM r
+    subsingleton_three M _ _ hM := subsingleton_cohomology_gs_of_nsmul S hS hK M hM le_rfl
+    localToCompact_two := zmodToQZ_gsCompactInv_localToCompact S ιs hK _
+    surjective_localPairing M _ _ hM v :=
+      (bijective_gsLocalPairing S ιs N (nonempty_addEquiv_gsRoots_of_mem S hS) M hM v (show 0 + 2 = 2 from rfl)).2
+  }
 
 end Hypotheses
 

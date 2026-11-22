@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.AestronglyMeasurableQuotMeasureIffLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.AestronglyMeasurableQuotMeasureIffLift
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.AutomorphicL2Unitary
 
@@ -12,6 +16,10 @@ theorem integrable_conj_mul_translate_path {G : Type} [Group G] [TopologicalSpac
     (_hcont : Continuous f') (H : L2 Γ μ) (t : ℝ) :
     Integrable (Function.uncurry fun (s : ℝ) (q : GlobalTheory.AutomorphicL2Unitary.Quot Γ) => starRingEnd ℂ (H q) * f' (sec Γ q * c s))
       ((volume.restrict (Set.uIoc 0 t)).prod (quotMeasure Γ μ)) := by
+  haveI : SigmaFinite μ := inferInstance
+  haveI : SigmaFinite (quotMeasure Γ μ) :=
+    SigmaFinite.of_map _ (measurePreserving_sec (Γ := Γ) (μ := μ)).measurable.aemeasurable
+      (by rw [measurePreserving_sec.map_eq]; infer_instance)
   haveI : IsFiniteMeasure (volume.restrict (Set.uIoc (0 : ℝ) t)) :=
     ⟨by rw [Measure.restrict_apply_univ, Set.uIoc]; exact measure_Ioc_lt_top⟩
   have hm : Measurable (Function.uncurry fun (s : ℝ) (q : GlobalTheory.AutomorphicL2Unitary.Quot Γ) => rmul Γ (c s) q) :=

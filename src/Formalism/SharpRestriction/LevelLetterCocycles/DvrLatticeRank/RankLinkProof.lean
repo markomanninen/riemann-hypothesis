@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.SecondRankCount
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GeneratorBoundOfHypotheses
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.SecondRankCount
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GeneratorBoundOfHypotheses
+
+@[expose] public section
 
 noncomputable section
 

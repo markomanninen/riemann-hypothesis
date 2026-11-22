@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacExGoodOfN
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.UnitaryIsometries
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GNonneg
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacExGoodOfN
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.UnitaryIsometries
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GNonneg
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,7 @@ theorem exists_Q {r k : ℕ} (ε : Fin (2 * r + k + 1) → Bool)
   refine ⟨Matrix.of fun i j => Formalism.QuantumDeterminants.GBasic.Pk k r (σ.symm i) j, ?_⟩
   rw [← Formalism.QuantumDeterminants.GBasic.PJP k r]
   ext a b
-  rw [mul_apply, mul_apply]
+  rw [Matrix.mul_apply, Matrix.mul_apply]
   simp only [Formalism.REAL.Jm, mul_diagonal, conjTranspose_apply, of_apply]
   refine (Fintype.sum_equiv σ _ _ (fun m => ?_)).symm
   simp only [Equiv.symm_apply_apply, hσ m]
@@ -101,7 +105,7 @@ theorem Hpk_es (a b : Fin r) :
 theorem Hpk_mulVec_es (v : Fin (2 * r + k + 1) → ℂ) (a : Fin r) :
     (Formalism.QuantumDeterminants.Hpk k r *ᵥ v) (Formalism.QuantumDeterminants.esI k r a) = v (Formalism.QuantumDeterminants.eI k r a) := by
   have ha := a.isLt
-  rw [Formalism.QuantumDeterminants.gn_Hpk_mulVec, dif_pos (Or.inr (by simp only [Formalism.QuantumDeterminants.esI]; omega))]
+  rw [Formalism.QuantumDeterminants.gn_Hpk_mulVec, dite_eq_left (Or.inr (by simp only [Formalism.QuantumDeterminants.esI]; omega))]
   congr 1
   apply Fin.ext
   simp only [Formalism.QuantumDeterminants.esI, Formalism.QuantumDeterminants.eI]
@@ -110,7 +114,7 @@ theorem Hpk_mulVec_es (v : Fin (2 * r + k + 1) → ℂ) (a : Fin r) :
 theorem Hpk_mulVec_e (v : Fin (2 * r + k + 1) → ℂ) (a : Fin r) :
     (Formalism.QuantumDeterminants.Hpk k r *ᵥ v) (Formalism.QuantumDeterminants.eI k r a) = v (Formalism.QuantumDeterminants.esI k r a) := by
   have ha := a.isLt
-  rw [Formalism.QuantumDeterminants.gn_Hpk_mulVec, dif_pos (Or.inl (by simp only [Formalism.QuantumDeterminants.eI]; omega))]
+  rw [Formalism.QuantumDeterminants.gn_Hpk_mulVec, dite_eq_left (Or.inl (by simp only [Formalism.QuantumDeterminants.eI]; omega))]
   congr 1
 
 end Hpk

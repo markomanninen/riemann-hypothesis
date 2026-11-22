@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AmpleLineBundles.SpanLeOfMem
+module
+
+public import Development.WeilBound.CoreStatements.AmpleLineBundles.SpanLeOfMem
+
+@[expose] public section
 
 open GroundTheory.Heights₂.Heights NumberField TensorProduct ComplexAt GlobalTheory.CompanionTheory.Ar Matrix
 open scoped BigOperators ComplexOrder
@@ -22,7 +26,7 @@ theorem coord_tail_zero (σ : K →+* ℂ) (r : ℕ) (x : Fibre σ (Fin r → �
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul z f => simp [standardCoord, tailIncl]
-  | add a b ha hb => simp only [map_add, PiLp.add_apply] at ha hb ⊢; rw [ha, hb, add_zero]
+  | add a b ha hb => simp only [map_add (f := _), PiLp.add_apply] at ha hb ⊢; rw [ha, hb, add_zero]
 
 omit [NumberField K] in
 theorem coord_tail_succ (σ : K →+* ℂ) (r : ℕ) (x : Fibre σ (Fin r → 𝓞 K)) (j : Fin r) :
@@ -31,7 +35,7 @@ theorem coord_tail_succ (σ : K →+* ℂ) (r : ℕ) (x : Fibre σ (Fin r → �
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul z f => simp [standardCoord, tailIncl]
-  | add a b ha hb => simp only [map_add, PiLp.add_apply] at ha hb ⊢; rw [ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), PiLp.add_apply] at ha hb ⊢; rw [ha, hb]
 
 omit [NumberField K] in
 theorem coord_head (σ : K →+* ℂ) (r : ℕ) (x : Fibre σ (Fin (r + 1) → 𝓞 K)) :
@@ -40,7 +44,7 @@ theorem coord_head (σ : K →+* ℂ) (r : ℕ) (x : Fibre σ (Fin (r + 1) → �
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul z f => simp [standardCoord, integersCoord]
-  | add a b ha hb => simp only [map_add] at ha hb ⊢; rw [ha, hb]; rfl
+  | add a b ha hb => simp only [map_add (f := _)] at ha hb ⊢; rw [ha, hb]; rfl
 
 theorem coord_zero_of_orth (σ : K →+* ℂ) (r : ℕ) (v : Fibre σ (Fin (r + 1) → 𝓞 K))
     (hv : ∀ w : Fibre σ (Fin r → 𝓞 K), ((HermitianMetric.standard K (Fin (r + 1))).form σ).inner
@@ -196,7 +200,8 @@ theorem std_deg (r : ℕ) : (∀ F, (HermitianBundle.standard K r).degree F ≤ 
       have h3 := (stdExt K r).degree_submodule_le F
       linarith
     · rw [HermitianBundle.degree_top_eq_arithDegree, (stdExt K r).arithDegree_eq_add,
-        ← HermitianBundle.degree_top_eq_arithDegree, ih.2, HermitianBundle.arithDegree_integers, add_zero]
+        ← HermitianBundle.degree_top_eq_arithDegree, ih.2,
+        HermitianBundle.arithDegree_integers, add_zero]
 
 theorem standard_hermitian_bundle_semistable : ∀ (K : Type) [Field K] [NumberField K] (r : ℕ), (HermitianBundle.standard K r).slopeMax ≤ 0 ∧ (HermitianBundle.standard K r).normDegree ⊤ = 0 := by
   intro K _ _ r

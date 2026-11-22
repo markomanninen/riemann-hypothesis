@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.VtUniq
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.VtUniq
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,7 +86,11 @@ theorem cubical_law_left (a : O) (x x' y : T ⟶ A) :
     val₂ (w a) z J (x * x') y * cubV c z J (x ≫ o.act a) (x' ≫ o.act a) y =
       val₂ (w a) z J x y * val₂ (w a) z J x' y * cubV c z J x x' (y ≫ o.act (star a)) := by
   have := fun a => o.hom a
-  have C : IsCub (cubV c z J) := isCub_cubV c hJ
+  have face (x y : T ⟶ A) : cubV c z J 1 x y = 1 := by
+    have e := val_corr hJ (c.face 0) (lift x y).left
+    rw [val_one] at e
+    refine (Eq.trans ?_ (val_cub c (lift x y) hJ (pzero A _) (x2 A 0) (x2 A 1)).symm).trans e
+    congr 1 <;> simp [x2, pzero, Hom.one_def]
   have key := ratio_pow hp L.isLB (fun U _ h => (prod_sum₂ (K := (K ⊕ K)) (K' := thK.{0}) (U := U) _ (prod_sum₂ (K := K) (K' := K) (U := U) _ (hW a (powPr A (0 : Fin 3)) (powPr A (2 : Fin 3)) U h) (hW a (powPr A (1 : Fin 3)) (powPr A (2 : Fin 3)) U h)) (prod_cubφ (powPr A (0 : Fin 3)) (powPr A (1 : Fin 3)) ((powPr A (2 : Fin 3)) ≫ o.act (star a)) h)).trans (Eq.trans (by
       simp only [MonObj.mul_comp]
       apply Additive.ofMul.injective
@@ -91,14 +99,18 @@ theorem cubical_law_left (a : O) (x x' y : T ⟶ A) :
     (mulGen_isGen _ _ _ _ _ _ _ (pullGen_isGen _ _ _ _ (hw a) (lift ((powPr A (0 : Fin 3)) * (powPr A (1 : Fin 3))) (powPr A (2 : Fin 3))).left) (cubG_isGen c ((powPr A (0 : Fin 3)) ≫ o.act a) ((powPr A (1 : Fin 3)) ≫ o.act a) (powPr A (2 : Fin 3))))
     (mulGen_isGen _ _ _ _ _ _ _ (mulGen_isGen _ _ _ _ _ _ _ (pullGen_isGen _ _ _ _ (hw a) (lift (powPr A (0 : Fin 3)) (powPr A (2 : Fin 3))).left) (pullGen_isGen _ _ _ _ (hw a) (lift (powPr A (1 : Fin 3)) (powPr A (2 : Fin 3))).left)) (cubG_isGen c (powPr A (0 : Fin 3)) (powPr A (1 : Fin 3)) ((powPr A (2 : Fin 3)) ≫ o.act (star a)))) x x' y hJ
   simp only [val_mul hJ, val_ros _ _ hJ, val_cubG c _ hJ, MonObj.comp_mul, ← Category.assoc, tup_0, tup_1, tup_2,
-    MonObj.one_comp, _root_.mul_one, h1, C.face] at key
+    MonObj.one_comp, _root_.mul_one, h1, face] at key
   exact key
 
 theorem cubical_law_right (a : O) (x x' y : T ⟶ A) :
     val₂ (w a) z J x (x' * y) * cubV c z J (x ≫ o.act a) x' y =
       val₂ (w a) z J x x' * val₂ (w a) z J x y * cubV c z J x (x' ≫ o.act (star a)) (y ≫ o.act (star a)) := by
   have := fun a => o.hom a
-  have C : IsCub (cubV c z J) := isCub_cubV c hJ
+  have face (x y : T ⟶ A) : cubV c z J 1 x y = 1 := by
+    have e := val_corr hJ (c.face 0) (lift x y).left
+    rw [val_one] at e
+    refine (Eq.trans ?_ (val_cub c (lift x y) hJ (pzero A _) (x2 A 0) (x2 A 1)).symm).trans e
+    congr 1 <;> simp [x2, pzero, Hom.one_def]
   have key := ratio_pow hp L.isLB (fun U _ h => (prod_sum₂ (K := (K ⊕ K)) (K' := thK.{0}) (U := U) _ (prod_sum₂ (K := K) (K' := K) (U := U) _ (hW a (powPr A (0 : Fin 3)) (powPr A (1 : Fin 3)) U h) (hW a (powPr A (0 : Fin 3)) (powPr A (2 : Fin 3)) U h)) (prod_cubφ (powPr A (0 : Fin 3)) ((powPr A (1 : Fin 3)) ≫ o.act (star a)) ((powPr A (2 : Fin 3)) ≫ o.act (star a)) h)).trans (Eq.trans (by
       simp only [MonObj.mul_comp, _root_.mul_assoc]
       apply Additive.ofMul.injective
@@ -107,13 +119,17 @@ theorem cubical_law_right (a : O) (x x' y : T ⟶ A) :
     (mulGen_isGen _ _ _ _ _ _ _ (pullGen_isGen _ _ _ _ (hw a) (lift (powPr A (0 : Fin 3)) ((powPr A (1 : Fin 3)) * (powPr A (2 : Fin 3)))).left) (cubG_isGen c ((powPr A (0 : Fin 3)) ≫ o.act a) (powPr A (1 : Fin 3)) (powPr A (2 : Fin 3))))
     (mulGen_isGen _ _ _ _ _ _ _ (mulGen_isGen _ _ _ _ _ _ _ (pullGen_isGen _ _ _ _ (hw a) (lift (powPr A (0 : Fin 3)) (powPr A (1 : Fin 3))).left) (pullGen_isGen _ _ _ _ (hw a) (lift (powPr A (0 : Fin 3)) (powPr A (2 : Fin 3))).left)) (cubG_isGen c (powPr A (0 : Fin 3)) ((powPr A (1 : Fin 3)) ≫ o.act (star a)) ((powPr A (2 : Fin 3)) ≫ o.act (star a)))) x x' y hJ
   simp only [val_mul hJ, val_ros _ _ hJ, val_cubG c _ hJ, MonObj.comp_mul, ← Category.assoc, tup_0, tup_1, tup_2,
-    MonObj.one_comp, _root_.mul_one, h1, C.face] at key
+    MonObj.one_comp, _root_.mul_one, h1, face] at key
   exact key
 
 theorem adv_mul (a b : O) (x x' y : T ⟶ A) :
     val₂ (w (a * b)) z J x y = val₂ (w a) z J (x ≫ o.act b) y * val₂ (w b) z J x (y ≫ o.act (star a)) := by
   have := fun a => o.hom a
-  have C : IsCub (cubV c z J) := isCub_cubV c hJ
+  have face (x y : T ⟶ A) : cubV c z J 1 x y = 1 := by
+    have e := val_corr hJ (c.face 0) (lift x y).left
+    rw [val_one] at e
+    refine (Eq.trans ?_ (val_cub c (lift x y) hJ (pzero A _) (x2 A 0) (x2 A 1)).symm).trans e
+    congr 1 <;> simp [x2, pzero, Hom.one_def]
   have key := ratio_pow hp L.isLB (fun U _ h => (prod_sum₂ (K := K) (K' := K) (U := U) _ (hW a ((powPr A (0 : Fin 3)) ≫ o.act b) (powPr A (2 : Fin 3)) U h) (hW b (powPr A (0 : Fin 3)) ((powPr A (2 : Fin 3)) ≫ o.act (star a)) U h)).trans (Eq.trans (by
       simp only [star_mul, mul_comm (star b), mul_comm a b, o.mul, Category.assoc]
       apply Additive.ofMul.injective
@@ -122,14 +138,18 @@ theorem adv_mul (a b : O) (x x' y : T ⟶ A) :
     (pullGen_isGen _ _ _ _ (hw (a * b)) (lift (powPr A (0 : Fin 3)) (powPr A (2 : Fin 3))).left)
     (mulGen_isGen _ _ _ _ _ _ _ (pullGen_isGen _ _ _ _ (hw a) (lift ((powPr A (0 : Fin 3)) ≫ o.act b) (powPr A (2 : Fin 3))).left) (pullGen_isGen _ _ _ _ (hw b) (lift (powPr A (0 : Fin 3)) ((powPr A (2 : Fin 3)) ≫ o.act (star a))).left)) x x' y hJ
   simp only [val_mul hJ, val_ros _ _ hJ, val_cubG c _ hJ, MonObj.comp_mul, ← Category.assoc, tup_0, tup_1, tup_2,
-    MonObj.one_comp, _root_.mul_one, h1, C.face] at key
+    MonObj.one_comp, _root_.mul_one, h1, face] at key
   exact key
 
 theorem adv_add (a b : O) (x x' y : T ⟶ A) :
     val₂ (w (a + b)) z J x y * cubV c z J (x ≫ o.act a) (x ≫ o.act b) y =
       val₂ (w a) z J x y * val₂ (w b) z J x y * cubV c z J x (y ≫ o.act (star a)) (y ≫ o.act (star b)) := by
   have := fun a => o.hom a
-  have C : IsCub (cubV c z J) := isCub_cubV c hJ
+  have face (x y : T ⟶ A) : cubV c z J 1 x y = 1 := by
+    have e := val_corr hJ (c.face 0) (lift x y).left
+    rw [val_one] at e
+    refine (Eq.trans ?_ (val_cub c (lift x y) hJ (pzero A _) (x2 A 0) (x2 A 1)).symm).trans e
+    congr 1 <;> simp [x2, pzero, Hom.one_def]
   have key := ratio_pow hp L.isLB (fun U _ h => (prod_sum₂ (K := (K ⊕ K)) (K' := thK.{0}) (U := U) _ (prod_sum₂ (K := K) (K' := K) (U := U) _ (hW a (powPr A (0 : Fin 3)) (powPr A (2 : Fin 3)) U h) (hW b (powPr A (0 : Fin 3)) (powPr A (2 : Fin 3)) U h)) (prod_cubφ (powPr A (0 : Fin 3)) ((powPr A (2 : Fin 3)) ≫ o.act (star a)) ((powPr A (2 : Fin 3)) ≫ o.act (star b)) h)).trans (Eq.trans (by
       simp only [star_add, o.add, MonObj.comp_mul, _root_.mul_assoc]
       apply Additive.ofMul.injective
@@ -138,13 +158,17 @@ theorem adv_add (a b : O) (x x' y : T ⟶ A) :
     (mulGen_isGen _ _ _ _ _ _ _ (pullGen_isGen _ _ _ _ (hw (a + b)) (lift (powPr A (0 : Fin 3)) (powPr A (2 : Fin 3))).left) (cubG_isGen c ((powPr A (0 : Fin 3)) ≫ o.act a) ((powPr A (0 : Fin 3)) ≫ o.act b) (powPr A (2 : Fin 3))))
     (mulGen_isGen _ _ _ _ _ _ _ (mulGen_isGen _ _ _ _ _ _ _ (pullGen_isGen _ _ _ _ (hw a) (lift (powPr A (0 : Fin 3)) (powPr A (2 : Fin 3))).left) (pullGen_isGen _ _ _ _ (hw b) (lift (powPr A (0 : Fin 3)) (powPr A (2 : Fin 3))).left)) (cubG_isGen c (powPr A (0 : Fin 3)) ((powPr A (2 : Fin 3)) ≫ o.act (star a)) ((powPr A (2 : Fin 3)) ≫ o.act (star b)))) x x' y hJ
   simp only [val_mul hJ, val_ros _ _ hJ, val_cubG c _ hJ, MonObj.comp_mul, ← Category.assoc, tup_0, tup_1, tup_2,
-    MonObj.one_comp, _root_.mul_one, h1, C.face] at key
+    MonObj.one_comp, _root_.mul_one, h1, face] at key
   exact key
 
 theorem adv_sy (a : O) (x x' y : T ⟶ A) :
     val₂ (w a) z J x y * val₂ (w (star a)) z J y x * val₂ (w 1) z J x y = val₂ (w 1) z J x y := by
   have := fun a => o.hom a
-  have C : IsCub (cubV c z J) := isCub_cubV c hJ
+  have face (x y : T ⟶ A) : cubV c z J 1 x y = 1 := by
+    have e := val_corr hJ (c.face 0) (lift x y).left
+    rw [val_one] at e
+    refine (Eq.trans ?_ (val_cub c (lift x y) hJ (pzero A _) (x2 A 0) (x2 A 1)).symm).trans e
+    congr 1 <;> simp [x2, pzero, Hom.one_def]
   have key := ratio_pow hp L.isLB (fun U _ h => (hW 1 (powPr A (0 : Fin 3)) (powPr A (2 : Fin 3)) U h).trans (Eq.trans (by
       simp only [star_star, mul_comm (powPr A (2 : Fin 3)), mul_comm ((powPr A (2 : Fin 3)) ≫ o.act (star a))]
       apply Additive.ofMul.injective
@@ -153,7 +177,7 @@ theorem adv_sy (a : O) (x x' y : T ⟶ A) :
     (mulGen_isGen _ _ _ _ _ _ _ (mulGen_isGen _ _ _ _ _ _ _ (pullGen_isGen _ _ _ _ (hw a) (lift (powPr A (0 : Fin 3)) (powPr A (2 : Fin 3))).left) (pullGen_isGen _ _ _ _ (hw (star a)) (lift (powPr A (2 : Fin 3)) (powPr A (0 : Fin 3))).left)) (pullGen_isGen _ _ _ _ (hw 1) (lift (powPr A (0 : Fin 3)) (powPr A (2 : Fin 3))).left))
     (pullGen_isGen _ _ _ _ (hw 1) (lift (powPr A (0 : Fin 3)) (powPr A (2 : Fin 3))).left) x x' y hJ
   simp only [val_mul hJ, val_ros _ _ hJ, val_cubG c _ hJ, MonObj.comp_mul, ← Category.assoc, tup_0, tup_1, tup_2,
-    MonObj.one_comp, _root_.mul_one, h1, C.face] at key
+    MonObj.one_comp, _root_.mul_one, h1, face] at key
   exact key
 
 theorem adv_one (x y : T ⟶ A) : val₂ (w 1) z J x y = 1 := by

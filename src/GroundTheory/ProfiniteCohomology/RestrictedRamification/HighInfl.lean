@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.InflationRestriction
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
-import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality.Naturality
-import GroundTheory.ProfiniteCohomology.CupProducts
-import GroundTheory.ProfiniteCohomology.CupProducts.Projection
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.InflationRestriction
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
+public import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality.Naturality
+public import GroundTheory.ProfiniteCohomology.CupProducts
+public import GroundTheory.ProfiniteCohomology.CupProducts.Projection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -57,8 +62,8 @@ end Groups
 
 variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] in
 theorem range_repHom_le_comap {A B : Rep.{u} k G} (f : A ⟶ B) (g : G) :
     LinearMap.range f.hom.toLinearMap ≤ (LinearMap.range f.hom.toLinearMap).comap (B.ρ g) := by
   rintro _ ⟨a, rfl⟩
@@ -167,19 +172,19 @@ instance isDiscreteRep_coindInvQuotShortComplex_X₂ : IsDiscreteRep (coindInvQu
 instance isDiscreteRep_coindInvQuotShortComplex_X₃ : IsDiscreteRep (coindInvQuotShortComplex A N).X₃ :=
   isDiscreteRep_quotient _ _ _
 
-omit [CompactSpace G] in
 
-theorem coindInvQuotShortComplex_shortExact : (coindInvQuotShortComplex A N).ShortExact where
-  exact := by
-    rw [← ShortComplex.exact_map_iff_of_faithful _ (forget₂ (Rep.{u} k (G ⧸ N)) (ModuleCat.{u} k)),
+omit [CompactSpace G] in
+theorem coindInvQuotShortComplex_shortExact : (coindInvQuotShortComplex A N).ShortExact := by
+  apply ShortComplex.ShortExact.mk'
+  · rw [← ShortComplex.exact_map_iff_of_faithful _ (forget₂ (Rep.{u} k (G ⧸ N)) (ModuleCat.{u} k)),
       ShortComplex.moduleCat_exact_iff]
     intro y hy
     change Submodule.Quotient.mk (p := LinearMap.range (coindInvariants A N).f.hom.toLinearMap) y = 0 at hy
     obtain ⟨x, hx⟩ := (Submodule.Quotient.mk_eq_zero _).1 hy
     exact ⟨x, hx⟩
-  mono_f := (Rep.mono_iff_injective _).2 fun x y h =>
-    Subtype.ext (coindEmbedding_injective A (congrArg Subtype.val h))
-  epi_g := (Rep.epi_iff_surjective _).2 (Submodule.mkQ_surjective _)
+  · exact (Rep.mono_iff_injective _).2 fun x y h =>
+      Subtype.ext (coindEmbedding_injective A (congrArg Subtype.val h))
+  · exact (Rep.epi_iff_surjective _).2 (Submodule.mkQ_surjective _)
 
 noncomputable def coindInvQuotToInvariants :
     (coindInvQuotShortComplex A N).X₃ ⟶ (coindInvariants A N).X₃ :=
@@ -189,10 +194,10 @@ noncomputable def coindInvQuotToInvariants :
         exact congrArg (fun φ => φ.hom x) (coindInvariants A N).zero), fun g =>
     Submodule.linearMap_qext _ (LinearMap.ext fun x => Rep.hom_comm_apply (coindInvariants A N).g g x)⟩
 
-omit [CompactSpace G] in
 
+omit [CompactSpace G] in
 theorem coindInvQuotToInvariants_injective : Function.Injective (coindInvQuotToInvariants A N).hom := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro q hq
   obtain ⟨x, rfl⟩ := Submodule.mkQ_surjective _ q
   have hx : (coindShortComplex A).g.hom x.1 = 0 := congrArg Subtype.val hq
@@ -245,8 +250,8 @@ theorem cohomologyInfl_δ_coindInvQuot (i j : ℕ) (hij : i + 1 = j)
   exact (cohomologyMapAlong_cohomologyMap (QuotientGroup.mk' N) (continuous_quotientGroup_mk' N)
     (coindInvQuotToInvariants A N) (Rep.ofHom ((coindCokernel A).ρ.quotientToInvariants_lift N)) x).symm
 
-omit [CompactSpace G] in
 
+omit [CompactSpace G] in
 theorem isIsoModCoprime_cohomologyInfl_one (ℓ : ℕ)
     (h1 : ∀ y : cohomology (Rep.res N.subtype A) 1, ∃ m : ℕ, m.Coprime ℓ ∧ m • y = 0) :
     IsIsoModCoprime ℓ (cohomologyInfl A N 1).hom.toAddMonoidHom := by

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MaxWeightGL1EqOne
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MaxWeightGL1EqOne
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
+
+@[expose] public section
+
 open ReciprocityTheory.DiscreteGroups.LocalClassField Matrix GlobalTheory.LKLoc
 
 namespace GlobalTheory.LKLoc

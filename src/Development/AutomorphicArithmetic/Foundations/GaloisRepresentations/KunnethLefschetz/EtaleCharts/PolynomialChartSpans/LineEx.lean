@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.BlowOfBl
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.BlowOfBl
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 

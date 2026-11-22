@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.RestrProdSt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.PosNear
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.RestrProdSt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.PosNear
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,20 +100,21 @@ theorem repr_change {F E : Type} [Field F] [Field E] [Algebra F E] {d d' : ℕ}
       ∑ k, (Algebra.TensorProduct.basis R b).repr y k * algebraMap F R (b'.repr (b k) k') := by
   have hE : ∀ e : E, b'.repr e k' = ∑ k, b.repr e k * b'.repr (b k) k' := fun e => by
     conv_lhs => rw [← b.sum_repr e]
-    simp only [map_sum, map_smul, Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.smul_apply,
-      smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Finset.sum_apply', Finsupp.smul_apply, smul_eq_mul]
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul r e =>
-    rw [Algebra.TensorProduct.basis_repr_tmul, Finsupp.smul_apply, Finsupp.mapRange_apply, hE,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Algebra.TensorProduct.basis_repr_tmul, Finsupp.smul_apply, Finsupp.mapRange_apply, hE,
       map_sum, smul_eq_mul, Finset.mul_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [Algebra.TensorProduct.basis_repr_tmul, Finsupp.smul_apply, Finsupp.mapRange_apply,
       smul_eq_mul, map_mul, mul_assoc]
   | add x y hx hy =>
-    rw [map_add, Finsupp.add_apply, hx, hy, ← Finset.sum_add_distrib]
+    rw [map_add (f := _), Finsupp.add_apply, hx, hy, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [map_add, Finsupp.add_apply, add_mul]
+    rw [map_add (f := _), Finsupp.add_apply, add_mul]
 
 theorem latCofin_holds : LatCofin := by
   intro F E _ _ _ _ a M d d' b b'

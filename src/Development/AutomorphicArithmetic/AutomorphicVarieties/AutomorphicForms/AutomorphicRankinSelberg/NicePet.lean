@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.StripInt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.StripInt
+
+@[expose] public section
 
 open Filter Asymptotics CongruenceSubgroup Matrix.SpecialLinearGroup
 open UpperHalfPlane hiding I

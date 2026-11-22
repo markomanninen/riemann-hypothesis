@@ -1,11 +1,15 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.SmulMemSpan
 
 theorem exists_smul_mem {K V : Type} [Field K] [NumberField K] [AddCommGroup V] [Module K V]
     [Module (NumberField.RingOfIntegers K) V]
     [IsScalarTower (NumberField.RingOfIntegers K) K V]
-    (L : Submodule (NumberField.RingOfIntegers K) V) (hL : Submodule.IsLattice K L) (x : V) :
+    (L : Submodule (NumberField.RingOfIntegers K) V) (hL : Submodule.IsFullLattice K L) (x : V) :
     ∃ (r : NumberField.RingOfIntegers K), r ≠ (0 : NumberField.RingOfIntegers K) ∧ r • x ∈ L := by
   have hx : x ∈ Submodule.span K (L : Set V) := by rw [hL.span_eq_top]; trivial
   induction hx using Submodule.span_induction with

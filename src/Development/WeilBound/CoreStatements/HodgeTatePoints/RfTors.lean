@@ -1,5 +1,10 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.LiftComul
-import Development.WeilBound.CoreStatements.HodgeTatePoints.RfHopf
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.LiftComul
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.RfHopf
+
+@[expose] public section
+
 open ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Up GlobalTheory.CompanionTheory.Ar.GR
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi

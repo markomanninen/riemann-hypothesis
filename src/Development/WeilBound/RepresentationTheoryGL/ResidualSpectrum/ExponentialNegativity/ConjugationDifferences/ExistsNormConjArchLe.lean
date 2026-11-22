@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsNormRconvLeSiegel
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsNormRconvLeSiegel
+
+@[expose] public section
 
 open Set Filter Topology
 open NumberField IsDedekindDomain

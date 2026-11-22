@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddSSn
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddSSn
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField
 open scoped ComplexConjugate Matrix

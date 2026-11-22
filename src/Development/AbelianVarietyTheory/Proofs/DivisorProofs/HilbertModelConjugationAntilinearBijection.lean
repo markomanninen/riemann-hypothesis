@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsContinuousRepresentativeSobolevBoundStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ComplexConjugationMapsMultiplicitySpace
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsAntilinear
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsContinuousRepresentativeSobolevBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ComplexConjugationMapsMultiplicitySpace
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsAntilinear
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.L2.Pj Formalism.IndefR.FWT Formalism.IndefR GlobalTheory.HolDict
 open scoped TensorProduct InnerProductSpace ContDiff
@@ -21,7 +25,7 @@ theorem nonempty_antilinear {H H' Y : Type} [AddCommGroup H] [Module ℂ H] [Add
   choose y hy using hy
   exact ⟨{ toFun := y
            invFun := x
-           map_add' := fun a b => hinj (funext fun g => by rw [ha, hy, hy, hy, ha', map_add])
+           map_add' := fun a b => hinj (funext fun g => by rw [ha, hy, hy, hy, ha', map_add (f := _)])
            map_smul' := fun z a => hinj (funext fun g => by rw [hs, hy, hy, hs', map_mul])
            left_inv := fun a => hinj' (funext fun g => by rw [hx, hy, Complex.conj_conj])
            right_inv := fun a => hinj (funext fun g => by rw [hy, hx, Complex.conj_conj]) }⟩

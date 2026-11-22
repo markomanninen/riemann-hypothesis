@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FiniteOfFiniteQuotMapOfIsPrecomplete
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNoetherianRingAdicCompletionOfNoetherian
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FiniteOfFiniteQuotMapOfIsPrecomplete
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNoetherianRingAdicCompletionOfNoetherian
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -31,7 +35,7 @@ noncomputable def toCompletion (hpm : (p : C) ∈ maximalIdeal C) :
 
 theorem algebraMap_injective [IsNoetherianRing C] :
     Function.Injective (algebraMap C (AdicCompletion (maximalIdeal C) C)) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   have hmem : x ∈ ⨅ n : ℕ, maximalIdeal C ^ n := by
     rw [Submodule.mem_iInf]
@@ -78,8 +82,8 @@ theorem finite_quot_span [IsNoetherianRing C] [Finite (ResidueField C)] (hp0 : (
 
 end GlobalTheory.CompletionEmbed
 
-open IsLocalRing GlobalTheory.CompletionEmbed in
 
+open IsLocalRing GlobalTheory.CompletionEmbed in
 theorem GlobalTheory.CompletionEmbed.exists_finite_padicInt_domain :
     ∀ (p : ℕ) [Fact p.Prime] (C : Type) [CommRing C] [IsDomain C] [IsLocalRing C]
       [IsNoetherianRing C], Finite (ResidueField C) → (p : C) ≠ 0 → (p : C) ∈ maximalIdeal C →
@@ -118,7 +122,7 @@ theorem GlobalTheory.CompletionEmbed.exists_finite_padicInt_domain :
     (Ideal.Quotient.mk Q).comp (algebraMap C A), ?_⟩
   · exact Module.Finite.of_surjective (Ideal.Quotient.mkₐ ℤ_[p] Q).toLinearMap
       (Ideal.Quotient.mkₐ_surjective ℤ_[p] Q)
-  · rw [injective_iff_map_eq_zero]
+  · set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     have hbot : Q.comap (algebraMap C A) = ⊥ := by
       by_contra hb

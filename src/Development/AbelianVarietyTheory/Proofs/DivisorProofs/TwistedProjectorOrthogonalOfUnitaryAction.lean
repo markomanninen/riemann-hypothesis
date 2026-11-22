@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.GramCEqTranspose
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.GramCEqTranspose
+
+@[expose] public section
+
 open NumberField
 
 open scoped ComplexConjugate InnerProductSpace
@@ -35,7 +40,8 @@ theorem twistedProjector_orthogonal_of_unitary : ∀ {LL Ks : Type} [Field LL] [
     rw [← hu g u (A.ρ g⁻¹ v), h1]
   have sa : ∀ u v, ⟪A.j σ (A.eOp eC u), A.j σ v⟫_ℂ = ⟪A.j σ u, A.j σ (A.eOp eC v)⟫_ℂ := by
     intro u v
-    simp only [Formalism.IndefR.Arith.FormsL.eOp_apply, map_sum, map_smulₛₗ, sum_inner, inner_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Formalism.IndefR.Arith.FormsL.eOp_apply, map_sum, map_smulₛₗ, sum_inner, inner_sum,
       inner_smul_left, inner_smul_right]
     conv_rhs => rw [← Equiv.sum_comp (Equiv.inv G0)]
     refine Finset.sum_congr rfl fun g _ => ?_
@@ -47,7 +53,7 @@ theorem twistedProjector_orthogonal_of_unitary : ∀ {LL Ks : Type} [Field LL] [
   have horth : ⟪A.j σ (A.eOp eC x), A.j σ (y - A.eOp eC y)⟫_ℂ = 0 := by
     have hy : A.eOp eC (A.eOp eC y) = A.eOp eC y := LinearMap.congr_fun hid y
     rw [sa, map_sub, hy, sub_self, map_zero, inner_zero_right]
-  rw [map_add]
+  rw [map_add (f := _)]
   have h := norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero _ _ horth
   simpa only [sq] using h
 

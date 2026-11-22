@@ -1,5 +1,9 @@
-import Development.DiscreteGroups.GlobalIrreducibility.LConvBigD
-import GroundTheory.AutomorphicForms.SmoothRepSchur
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvBigD
+public import GroundTheory.AutomorphicForms.SmoothRepSchur
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem eq_zero_of_forall [ρ.IsIrreducible] (l : Module.Dual ℂ V) {v₀ : V} 
   by_contra hb0
   let S : Submodule ℂ V :=
     { carrier := {x | ∀ g, l (ρ g x) = 0}
-      add_mem' := fun {x y} hx hy g => by rw [map_add, map_add, hx g, hy g, add_zero]
+      add_mem' := fun {x y} hx hy g => by rw [map_add (f := _), map_add (f := _), hx g, hy g, add_zero]
       zero_mem' := fun g => by rw [map_zero, map_zero]
       smul_mem' := fun c x hx g => by rw [map_smul, map_smul, hx g, smul_zero] }
   have hS : ∀ h, ∀ ⦃x⦄, x ∈ S → ρ h x ∈ S := fun h x hx g => by
@@ -53,7 +57,7 @@ theorem bigCell : BigCell := by
   let Y : Submodule ℂ (π₁.V × π₂.V) :=
     { carrier := {x | ∀ g, l₁ (π₁.ρ g x.1) = l₂ (π₂.ρ g x.2)}
       add_mem' := fun {x y} hx hy g => by
-        rw [Prod.fst_add, Prod.snd_add, map_add, map_add, map_add, map_add, hx g, hy g]
+        rw [Prod.fst_add, Prod.snd_add, map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hx g, hy g]
       zero_mem' := fun g => by simp
       smul_mem' := fun c x hx g => by
         rw [Prod.smul_fst, Prod.smul_snd, map_smul, map_smul, map_smul, map_smul, hx g] }

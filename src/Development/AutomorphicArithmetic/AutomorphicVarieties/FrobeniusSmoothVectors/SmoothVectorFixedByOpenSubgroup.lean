@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StrSMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Imports
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StrSMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Imports
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -51,7 +55,7 @@ theorem UpperTheory.smooth_vector_fixed_by_open_subgroup :
     linear_combination e
   refine ⟨x', ?_, hcoc', hc', fun v => ⟨y v - X, hloc' v⟩, ?_⟩
   · rw [hform]
-    exact IsLocallyConstant.comp₂ hlc (hlc.comp_continuous (continuous_mul_right F.c))
+    exact IsLocallyConstant.comp₂ hlc (hlc.comp_continuous (continuous_mul_const F.c))
       (fun a b => (a + b - x F.c) / 2)
   · by_contra hall
     push_neg at hall

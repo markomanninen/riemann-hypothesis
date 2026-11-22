@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedIdeal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSpan
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.DerHom
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedIdeal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSpan
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.DerHom
+
+@[expose] public section
 
 open IsLocalRing Polynomial UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -82,7 +86,7 @@ private theorem redDim_der {O : Type} [CommRing O] [IsLocalRing O] {R : Type} [C
   have h2 : y * z = (y - algebraMap O R a) * (z - algebraMap O R b) + a • z + b • y
       - algebraMap O R (a * b) := by
     simp only [Algebra.smul_def, map_mul]; ring
-  rw [h2, map_sub, map_add, map_add, h1, hD _ (hON _), map_smul, map_smul, hres y a ha, hres z b hb]
+  rw [h2, map_sub, map_add (f := _), map_add (f := _), h1, hD _ (hON _), map_smul, map_smul, hres y a ha, hres z b hb]
   simp only [Algebra.smul_def, Algebra.algebraMap_self, RingHom.id_apply]; ring
 
 theorem UpperTheory.V.Ws.redDim :

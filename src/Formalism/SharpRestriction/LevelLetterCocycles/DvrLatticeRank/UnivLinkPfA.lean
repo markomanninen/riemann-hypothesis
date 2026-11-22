@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.SecondPropositionFree
-import Formalism.SharpRestriction.LevelLetterCocycles.MapCompZero
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.SecondPropositionFree
+public import Formalism.SharpRestriction.LevelLetterCocycles.MapCompZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -164,7 +168,8 @@ theorem univLinkPf_basis [StrongRankCondition O] (Pt : ZMod n → LL → (K →�
     rw [show (Submodule.Quotient.mk (∑ i, b.repr (Submodule.Quotient.mk x) i • xb i) :
         IIrest W T Pt π' Eπ h' c S) =
         Submodule.mkQ _ (∑ i, b.repr (Submodule.Quotient.mk x) i • xb i) from rfl]
-    simp only [map_sum, map_smul, Submodule.mkQ_apply, hxb]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Submodule.mkQ_apply, hxb]
     exact (b.sum_repr _).symm
   rw [Submodule.Quotient.eq] at h
   simpa using h
@@ -195,7 +200,8 @@ theorem univLinkPf_transport {Pt : ZMod n → LL → (K →ₐ[Qp] LL) → Prop}
       Submodule.Quotient.mk (Y - ∑ j, Yj j - ∑ i, o i • Yb i) := by
     rw [show (Submodule.Quotient.mk (Y - ∑ j, Yj j - ∑ i, o i • Yb i) : QLamP W T π' Eπ h' M c) =
       Submodule.mkQ _ (Y - ∑ j, Yj j - ∑ i, o i • Yb i) from rfl]
-    simp only [map_sub, map_sum, map_smul, Submodule.mkQ_apply, hX, hXj, hXb]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_smul, Submodule.mkQ_apply, hX, hXj, hXb]
   have hmem := h3 ((X - ∑ j, Xj j - ∑ i, o i • Xb i : ↥(LamLA W T π' Eπ h' c ⊤)) : LA W T π' c)
     (X - ∑ j, Xj j - ∑ i, o i • Xb i).2
     ((Y - ∑ j, Yj j - ∑ i, o i • Yb i : ↥(LamPS W T Eπ h' c)) : W.DD T)

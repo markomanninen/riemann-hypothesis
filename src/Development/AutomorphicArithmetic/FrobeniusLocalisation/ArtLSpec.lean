@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+module
+
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+
+@[expose] public section
 
 open UpperTheory.HF
 
@@ -54,7 +58,7 @@ theorem UpperTheory.HF.artL_spec :
   have hex := exists_unit hN hl
   have hart : H.artL l = H.art hex.choose := by
     unfold UpperTheory.HF.Formalism.HC.HostRaw.artL
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
   obtain ⟨hc1, hc2⟩ := hex.choose_spec
   have part2 : ∀ u : (ZMod H.condN)ˣ, (u : ZMod H.condN).val ≡ l [MOD ordCompl[l] H.condN] →
       (u : ZMod H.condN).val ≡ 1 [MOD ordProj[l] H.condN] → H.art u = H.artL l := by

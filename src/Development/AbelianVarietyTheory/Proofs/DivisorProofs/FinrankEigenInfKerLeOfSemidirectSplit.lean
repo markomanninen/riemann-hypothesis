@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankCharacterEigenspaceInfKerLeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankCharacterEigenspaceInfKerLeStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.ArithmeticCylinders GlobalTheory.BadCount Module
 
 noncomputable section
@@ -29,7 +34,7 @@ theorem commute_single {π : Γ →* G} {ι : G →* Γ} (h : IsSplit π ι) (x 
     show _ * _ = _ * _
     simp [MonoidAlgebra.of_apply, MonoidAlgebra.single_mul_single, h.2 m r hr]
   · intro x y hx hy
-    rw [map_add]
+    rw [map_add (f := _)]
     exact hx.add_left hy
   · intro a x hx
     rw [map_smul]
@@ -45,7 +50,7 @@ theorem asAlgebraHom_map {V : Type} [AddCommGroup V] [Module ℂ V] (ι : G →*
   · intro m
     simp [MonoidAlgebra.of_apply, Representation.asAlgebraHom_single]
   · intro x y hx hy
-    rw [map_add, map_add, map_add, hx, hy]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
   · intro a x hx
     rw [map_smul, map_smul, map_smul, hx]
 
@@ -59,7 +64,7 @@ theorem coeff_map_mul_eR {π : Γ →* G} {ι : G →* Γ} (h : IsSplit π ι) (
     (MonoidAlgebra.mapDomainAlgHom ℂ ℂ ι x * eR π).coeff γ =
       x.coeff (π γ) * (Nat.card π.ker : ℂ)⁻¹ := by
   unfold eR
-  rw [Finset.mul_sum, MonoidAlgebra.coeff_sum, Finsupp.finset_sum_apply]
+  rw [Finset.mul_sum, MonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply]
   simp_rw [MonoidAlgebra.mul_single_apply]
   let r0 : π.ker := ⟨(ι (π γ))⁻¹ * γ, inv_mul_mem_ker h γ⟩
   have key : ∀ r : π.ker, (MonoidAlgebra.mapDomainAlgHom ℂ ℂ ι x).coeff (γ * (r : Γ)⁻¹) =
@@ -70,7 +75,7 @@ theorem coeff_map_mul_eR {π : Γ →* G} {ι : G →* Γ} (h : IsSplit π ι) (
     · have : γ * (r : Γ)⁻¹ = ι (π γ) := by
         subst hr
         simp [r0]
-      rw [this, Finsupp.mapDomain_apply (isSplit_injective h)]
+      rw [this, Finsupp.mapDomain_apply_of_injective (isSplit_injective h)]
     · apply Finsupp.mapDomain_notin_range
       rintro ⟨g, hg⟩
       apply hr
@@ -116,7 +121,8 @@ theorem lvlIdem_comap [Fintype G] {π : Γ →* G} {ι : G →* Γ} (h : IsSplit
     Formalism.L2.DIV.lvlIdem (P.comap π) lamb =
       MonoidAlgebra.mapDomainAlgHom ℂ ℂ ι (Formalism.L2.DIV.lvlIdem P lam) * eR π := by
   have hcard := card_comap h P
-  simp only [Formalism.L2.DIV.lvlIdem, eR, map_sum, MonoidAlgebra.mapDomainAlgHom_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.L2.DIV.lvlIdem, eR, map_sum, MonoidAlgebra.mapDomainAlgHom_apply,
     MonoidAlgebra.mapDomain_single, Finset.sum_mul_sum, MonoidAlgebra.single_mul_single]
   rw [← Fintype.sum_prod_type' (f := fun (i : P) (j : π.ker) =>
     MonoidAlgebra.single (ι (i : G) * (j : Γ))
@@ -134,8 +140,8 @@ theorem lvlIdem_comap [Fintype G] {π : Γ →* G} {ι : G →* Γ} (h : IsSplit
 
 end GlobalTheory.BadCount.Lift
 
-open scoped Classical in
 
+open scoped Classical in
 theorem GlobalTheory.BadCount.finrank_eig_inf_ker_le_of_isSplit : ∀ (G Γ V : Type) [Group G] [Fintype G] [Group Γ] [Fintype Γ] [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V] (π : Γ →* G) (ι : G →* Γ), IsSplit π ι → ∀ (ρ : Representation ℂ Γ V) (P : Subgroup G) (lam : P →* ℂˣ) (lamb : P.comap π →* ℂˣ), (∀ γ : P.comap π, lamb γ = lam ⟨π γ, γ.2⟩) → ∀ (H : Fin 2 → Subgroup G) (n : Fin 2 → ℕ) (e : MonoidAlgebra ℂ G) (b : Fin 2 → MonoidAlgebra ℂ G) (s : Fin 2 → ℝ) (c : ℝ), (∀ k, EmbReg ρ ((H k).comap π) (n k)) → (∀ k, (n k : ℝ) * Nat.card ((H k).comap π) ≤ c * Nat.card (P.comap π) * finrank ℂ (eig ρ (P.comap π) lamb)) → (∀ k, b k * b k = b k) → (∀ k a, b k * a = a * b k) → 1 - e = b 0 + b 1 - b 0 * b 1 → (∀ k g, (b k * Formalism.L2.DIV.lvlIdem P lam).coeff g ≠ 0 → g ∈ H k) → (∀ k, (b k * Formalism.L2.DIV.lvlIdem P lam).coeff 1 = (s k : ℂ) / (Nat.card P : ℂ)) → (finrank ℂ (eig ρ (P.comap π) lamb ⊓ LinearMap.ker (Representation.asAlgebraHom (ρ.comp ι : Representation ℂ G V) e) : Submodule ℂ V) : ℝ) ≤ c * (s 0 + s 1) * finrank ℂ (eig ρ (P.comap π) lamb) := by
   intro G Γ V _ _ _ _ _ _ _ π ι h ρ P lam lamb hl H n e b s c hEmb hcard hidem hcent hsum hsupp hcoeff
   let ιA := MonoidAlgebra.mapDomainAlgHom ℂ ℂ ι
@@ -161,7 +167,7 @@ theorem GlobalTheory.BadCount.finrank_eig_inf_ker_le_of_isSplit : ∀ (G Γ V : 
       · unfold GlobalTheory.BadCount.Lift.eR
         refine Commute.sum_right _ _ _ (fun r _ => ?_)
         exact GlobalTheory.BadCount.Lift.commute_single h _ r r.2 _)
-    (by rw [← map_one ιA, ← map_sub, hsum, map_sub, map_add, map_mul])
+    (by rw [← map_one ιA, ← map_sub, hsum, map_sub, map_add (f := _), map_mul])
     (fun k γ hne => by
       rw [hco] at hne
       show π γ ∈ H k

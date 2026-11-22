@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsAdicColimitOfFactor
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsAdicColimitOfFactor
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
 open GlobalTheory.AdicColimit
 
 namespace GlobalTheory
 
-open CategoryTheory CategoryTheory.Limits AlgebraicGeometry in
 
+open CategoryTheory CategoryTheory.Limits AlgebraicGeometry in
 theorem _root_.GlobalTheory.isAdicComplete_of_pow_le_of_pow_le (A : Type) [CommRing A] (J J' : Ideal A) (k l : ℕ)
     (h1 : J ^ k ≤ J') (h2 : J' ^ l ≤ J) (h : IsAdicComplete J A) : IsAdicComplete J' A := by
   have hk : J ^ (k + 1) ≤ J' := le_trans (Ideal.pow_le_pow_right (Nat.le_succ k)) h1

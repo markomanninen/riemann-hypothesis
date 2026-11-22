@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinearIndependentKaehlerDOfAlgebraicIndependentStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinearIndependentKaehlerDOfAlgebraicIndependentStatement
+
+@[expose] public section
 
 namespace GlobalTheory.BertiniC
 
-open KaehlerDifferential in
 
+open KaehlerDifferential in
 theorem false_of_dependent_derivatives {k A κ : Type} [Field k] [CharZero k] [CommRing A] [Algebra k A]
     [Field κ] [Algebra k κ] [Algebra A κ] [IsScalarTower k A κ] [Algebra.EssFiniteType k κ]
     (n : ℕ) (δ : Fin n → Derivation k A A) (ω : Fin n → KaehlerDifferential k A)
@@ -22,14 +26,16 @@ theorem false_of_dependent_derivatives {k A κ : Type} [Field k] [CharZero k] [C
   set m : Fin n → KaehlerDifferential k κ := fun l => KaehlerDifferential.map k k A κ (ω l) with hm
   have hdψ : ∀ a : A, D k κ (algebraMap A κ a) = ∑ l, algebraMap A κ (δ l a) • m l := by
     intro a
-    rw [← KaehlerDifferential.map_D k k A κ, hω a, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← KaehlerDifferential.map_D k k A κ, hω a, map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [LinearMap.map_smul, algebraMap_smul]
   have e1 : ∀ i ∈ J, ∑ p, algebraMap A κ (f p) • D k κ (t (i, p)) =
       - ∑ p, t (i, p) • D k κ (algebraMap A κ (f p)) := by
     intro i hi
     have h := congrArg (D k κ) (r1 i hi)
-    rw [map_sum, map_zero] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h
     simp only [Derivation.leibniz, Finset.sum_add_distrib] at h
     rw [eq_neg_iff_add_eq_zero, add_comm]
     exact h
@@ -58,8 +64,8 @@ variable {k A : Type} [Field k] [CommRing A] [Algebra k A] {n : ℕ}
 
 abbrev Var (M : ℕ) (ι : Type) := (Fin M × ι) ⊕ (Fin M ⊕ Unit)
 
-open MvPolynomial in
 
+open MvPolynomial in
 noncomputable def relIdeal : Ideal (MvPolynomial (Var M ι) A) :=
   Ideal.span {x | (∃ i ∈ J, x = ∑ p, X (Sum.inl (i, p)) * C (f p)) ∨
     (∃ l, x = ∑ i ∈ J, X (Sum.inr (Sum.inl i)) * ∑ p, X (Sum.inl (i, p)) * C (δ l (f p))) ∨
@@ -67,8 +73,8 @@ noncomputable def relIdeal : Ideal (MvPolynomial (Var M ι) A) :=
 
 end Construction
 
-open MvPolynomial in
 
+open MvPolynomial in
 theorem no_dependence_of_general : ∀ (k A : Type) [Field k] [CharZero k] [CommRing A] [Algebra k A] [Algebra.FiniteType k A] (n : ℕ) (δ : Fin n → Derivation k A A) (ω : Fin n → KaehlerDifferential k A), (∀ a : A, KaehlerDifferential.D k A a = ∑ l, δ l a • ω l) → ∀ {ι : Type} [Fintype ι] (f : ι → A) (M : ℕ) (J : Finset (Fin M)) (i₀ : Fin M) (p₀ : ι), i₀ ∈ J → ∃ Q : MvPolynomial (Fin M × ι) k, Q ≠ 0 ∧ ∀ u : Fin M × ι → k, MvPolynomial.eval u Q ≠ 0 → ∀ (K : Type) [Field K] [Algebra k K] (φ : A →ₐ[k] K) (c : Fin M → K), φ (f p₀) ≠ 0 → c i₀ = 1 → (∀ i ∈ J, φ (∑ p, u (i, p) • f p) = 0) → ¬ ∀ l, ∑ i ∈ J, c i * φ (δ l (∑ p, u (i, p) • f p)) = 0 := by
   intro k A _ _ _ _ _ n δ ω hω ι _ f M J i₀ p₀ hi₀
   classical
@@ -128,10 +134,12 @@ theorem no_dependence_of_general : ∀ (k A : Type) [Field k] [CharZero k] [Comm
     apply false_of_dependent_derivatives n δ ω hω f M J i₀ p₀ hi₀ _ ht (fun i => π (X (Sum.inr (Sum.inl i))))
     · intro i hi
       have := hπI _ (g1mem i hi)
-      simpa only [map_sum, map_mul, hπC] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa only [map_sum, map_mul, hπC] using this
     · intro l
       have := hπI _ (g2mem l)
-      simpa only [map_sum, map_mul, hπC] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa only [map_sum, map_mul, hπC] using this
     · have h3 : π (X (Sum.inr (Sum.inl i₀)) - 1) = 0 := hπI _ g3mem
       rw [RingHom.map_sub, RingHom.map_one] at h3
       exact h3
@@ -150,9 +158,11 @@ theorem no_dependence_of_general : ∀ (k A : Type) [Field k] [CharZero k] [Comm
     rw [hIdef, relIdeal, Ideal.span_le]
     rintro x (⟨i, hi, rfl⟩ | ⟨l, rfl⟩ | rfl | rfl) <;> simp only [SetLike.mem_coe, RingHom.mem_ker]
     · have := hrel i hi
-      simpa [e, map_sum, Algebra.smul_def] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [e, map_sum, Algebra.smul_def] using this
     · have := hδ l
-      simpa [e, map_sum, Algebra.smul_def] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [e, map_sum, Algebra.smul_def] using this
     · simp [e, hc]
     · simp [e, inv_mul_cancel₀ hφ]
   let e' : T →+* K := Ideal.Quotient.lift I e (fun a ha => hI ha)

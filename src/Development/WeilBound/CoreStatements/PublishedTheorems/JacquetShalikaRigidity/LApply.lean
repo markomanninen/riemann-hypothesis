@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem ky_of : W0 → KY := by
         refine ⟨fun t g => ?_, fun h => ?_⟩
         · show x (GlobalTheory.UnitaryBC.splitCentre E k t * g) + x' (GlobalTheory.UnitaryBC.splitCentre E k t * g) = x g + x' g
           rw [hx1, hx1']
-        · rw [map_add, hx2, hx2', add_zero]
+        · rw [map_add (f := _), hx2, hx2', add_zero]
       zero_mem' := ⟨fun t g => rfl, fun h => map_zero _⟩
       smul_mem' := by
         rintro c x ⟨hx1, hx2⟩

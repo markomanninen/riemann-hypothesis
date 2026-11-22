@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CardNonempty
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CardNonempty
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry KaehlerDifferential MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.AbCoh
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -66,8 +71,8 @@ theorem δ_pair (z : CC F 1) (g : C0 F) (hg : e1 F z = d0 F g) {i j : κ} (h : i
   have mi : mn (ne ({i} : Finset κ) (Finset.singleton_nonempty _)) = i := Finset.min'_singleton i
   have mj : mn (ne ({j} : Finset κ) (Finset.singleton_nonempty _)) = j := Finset.min'_singleton j
   have mij : mn (ne ({i, j} : Finset κ) (Finset.insert_nonempty _ _)) = i := min'_pair h
-  rw [orderedCechToCatCochainsOne_apply_valueAtSubset, amitsur_d0_apply, dif_neg (by rw [mi, mij]; exact lt_irrefl i)] at h1
-  rw [orderedCechToCatCochainsOne_apply_valueAtSubset, amitsur_d0_apply, dif_pos (by rw [mj, mij]; exact h)] at h2
+  rw [orderedCechToCatCochainsOne_apply_valueAtSubset, amitsur_d0_apply, dite_eq_right (by rw [mi, mij]; exact lt_irrefl i)] at h1
+  rw [orderedCechToCatCochainsOne_apply_valueAtSubset, amitsur_d0_apply, dite_eq_left (by rw [mj, mij]; exact h)] at h2
   have key := mp_transport1 F z
     (s := ⟨{mn (ne {i, j} (Finset.insert_nonempty _ _)), mn (ne {j} (Finset.singleton_nonempty _))},
       Finset.card_pair (by rw [mj, mij]; exact h.ne)⟩) (s' := ⟨{i, j}, hs⟩)

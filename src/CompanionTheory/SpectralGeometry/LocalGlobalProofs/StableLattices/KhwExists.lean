@@ -1,9 +1,13 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import CompanionTheory.HarishChandraModules.NonemptyRepresentations.TypeExists
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DiagonalTransferAction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingConstruction
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import CompanionTheory.HarishChandraModules.NonemptyRepresentations.TypeExists
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DiagonalTransferAction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingConstruction
+
+@[expose] public section
 
 open scoped InnerProductSpace
 

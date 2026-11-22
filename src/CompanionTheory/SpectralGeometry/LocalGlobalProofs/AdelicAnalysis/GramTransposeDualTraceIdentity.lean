@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SumRhoEqTrace
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SumRhoEqTrace
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,8 @@ theorem DM_mulVec_emb {F : Type} [Field F] [NumberField F] {ι : Type} [Fintype 
   obtain ⟨i, w⟩ := p
   simp only [mulVec, dotProduct, DM, emb, Fintype.sum_prod_type, blockDiagonal_apply]
   rw [Finset.sum_comm]
-  simp [map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_mul]
 
 theorem gM_transpose_mulVec {F : Type} [Field F] [NumberField F] {ι : Type} [Fintype ι]
     [DecidableEq ι] [DecidableEq (InfinitePlace F)] (ρ : InfinitePlace F → (F →+* ℝ))

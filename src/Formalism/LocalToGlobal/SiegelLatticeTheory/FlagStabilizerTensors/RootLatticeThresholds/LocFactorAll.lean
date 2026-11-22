@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocalL2AllOfDictionary
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.EquivPf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocalL2AllOfDictionary
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.EquivPf
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ namespace Formalism.L2.SG.Pf.LocF
 
 open Formalism.MainNotions.S Formalism.L2.SG.Pf.Choice Formalism.L2.SG.Pf.WuDec Formalism.QuantumDeterminants Matrix
 
-variable [Fact Formalism.L2.SG.SplitPrimeNormLemmas.CoefWeightedLoc] in
 
+variable [Fact Formalism.L2.SG.SplitPrimeNormLemmas.CoefWeightedLoc] in
 theorem locFactor_all (hD : SDictAll) {D : D7} {X : HidaSetting D} {θ : ℝ} (hG : Formalism.L2.SG.ConcreteSettingExists.GapHyp D)
     (C : Choice X θ) : LocFactor C :=
   locFactor_of local_continuity_all Formalism.L2.SG.Pf.EquivPf.local_equivalence_all local_reproduction_all (local_l2_all_of_dictionary hD) hG C
@@ -72,8 +76,8 @@ theorem local_dictionary_all : SDictAll := by
     simp only [← Matrix.mul_assoc]
     rw [Matrix.mul_assoc (C.Qi τ * uMat h) (C.Q τ) (C.Qi τ), h2, Matrix.mul_one]
 
-variable [Fact Formalism.L2.SG.SplitPrimeNormLemmas.CoefWeightedLoc] in
 
+variable [Fact Formalism.L2.SG.SplitPrimeNormLemmas.CoefWeightedLoc] in
 theorem locFactor_holds {D : D7} {X : HidaSetting D} {θ : ℝ} (hG : Formalism.L2.SG.ConcreteSettingExists.GapHyp D)
     (C : Choice X θ) : LocFactor C :=
   locFactor_all local_dictionary_all hG C

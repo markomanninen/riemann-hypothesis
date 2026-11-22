@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DifferentiableAtOrbit
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LieAlgebraOfLinearGroupClosedStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SmoothVectorsInvariantSubspaceStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionOfSmoothVectorStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionAdditiveStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionConjugationStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DifferentiableAtOrbit
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LieAlgebraOfLinearGroupClosedStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SmoothVectorsInvariantSubspaceStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionOfSmoothVectorStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionAdditiveStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionConjugationStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,7 +87,8 @@ theorem sumSquares_comm {n : ℕ} {G : Set (Matrix (Fin n) (Fin n) ℂ)} {H : Ty
   have hdelta : ∀ l m, ∑ i, O l i * O m i = (1 : Matrix (Fin d) (Fin d) ℝ) l m := fun l m => by
     rw [← hOO]
     simp [Matrix.mul_apply]
-  rw [map_sum, Finset.sum_congr rfl fun i _ => step i, Finset.sum_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_congr rfl fun i _ => step i, Finset.sum_comm]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [Finset.sum_comm]
   simp_rw [← Finset.sum_smul, hdelta, Matrix.one_apply]

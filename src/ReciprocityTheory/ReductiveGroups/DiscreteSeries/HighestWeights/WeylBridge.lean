@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.ExplicitFormulaCounts.WeylForK
-import Formalism.SharpRestriction.CuspSpanNormBounds.LocalBesselAndTopKernel
+module
+
+public import Formalism.PeriodIntegrals.ExplicitFormulaCounts.WeylForK
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalBesselAndTopKernel
+
+@[expose] public section
 
 noncomputable section
 

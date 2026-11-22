@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PowMulMemAdd
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JointCondIffRhoOfGoodPoint
-import ReciprocityTheory.GaloisValuations.GlobalB
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormAlgebraMapPadicIntLeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PowMulMemAdd
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JointCondIffRhoOfGoodPoint
+public import ReciprocityTheory.GaloisValuations.GlobalB
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormAlgebraMapPadicIntLeOne
+
+@[expose] public section
 
 noncomputable section
 

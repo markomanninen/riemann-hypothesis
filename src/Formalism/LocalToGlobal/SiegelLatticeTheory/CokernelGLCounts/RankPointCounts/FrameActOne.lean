@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MemOfBcPMem
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DensFrame
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocFacts
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MemOfBcPMem
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DensFrame
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,8 +29,8 @@ theorem sgnP_mem (p : PlF D) (b : Fin (D.R.rS + 1)) : TermLoc.sgnP D p b ∈ (D.
   simp only [Polynomial.eval₂_sub, Polynomial.eval₂_pow, Polynomial.eval₂_X, Polynomial.eval₂_one]
   rw [pow_two, TermLoc.localSign_sq, sub_self]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem btAdm : BtAdm Zd u u' F0 what₂ := by
   intro hC γ Z F'₂ φ φ' Λ₂ hs
   obtain ⟨_, _, ⟨hlat, hloc⟩, _⟩ := hs
@@ -99,7 +103,8 @@ theorem btAdm : BtAdm Zd u u' F0 what₂ := by
   have h3 : baseChange₂ D p ((((gS D : ℕ) : D.host.E))⁻¹ • x) ∈ lattice₂ D Zd.M p Λ₂ := by
     rw [Formalism.L2.SG.Pf.LocalDenominators.baseChange_smul₂]; exact h2
   haveI := p.isPrime
-  have h4 := (Formalism.L2.SG.Pf.LocalDenominators.baseChangeAt_mem_localLattice_iff Zd p hlat _).1 h3
+  letI := hlat
+  have h4 := (Formalism.L2.SG.Pf.LocalDenominators.baseChangeAt_mem_localLattice_iff Zd p (Λ := Λ₂) (by infer_instance) _).1 h3
   obtain ⟨t, ht, htx⟩ := (Formalism.HermitianLattices.Ext.L3.LocalSpans.mem_locF p.asIdeal Λ₂ _).1 h4
   refine ⟨algebraMap (𝓞 D.host.F) (𝓞 D.host.E) t, fun h => ht (by rw [← hPp]; exact h), ?_⟩
   have e : algebraMap (𝓞 D.host.F) (𝓞 D.host.E) t • x =
@@ -108,6 +113,7 @@ theorem btAdm : BtAdm Zd u u' F0 what₂ := by
     congr 1
     push_cast
     field_simp
+  change algebraMap (𝓞 D.host.F) (𝓞 D.host.E) t • x ∈ Ideal.span {((gS D : ℕ) : 𝓞 D.host.E)} • Λ₂
   rw [e]
   exact Submodule.smul_mem_smul (Ideal.mem_span_singleton_self _) htx
 

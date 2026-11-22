@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
-import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardBaseFlagComplementIntegralLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DefiniteLatticeDiscriminantModuleCardDetSq
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanInfEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardBaseFlagComplementIntegralLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DefiniteLatticeDiscriminantModuleCardDetSq
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanInfEq
+
+@[expose] public section
 
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
@@ -127,10 +131,12 @@ theorem isCompl_perp (h : V →ₗ⋆[K] V →ₗ[K] K) (ha : ∀ x, h x x = 0 �
     have hx' : ∀ i, h (b i : V) x = 0 := fun i => congrFun (LinearMap.mem_ker.1 hx) i
     have e : p = ∑ i, b.repr ⟨p, hp⟩ i • (b i : V) := by
       have := congrArg A.subtype (b.sum_repr ⟨p, hp⟩)
-      rw [map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at this
       exact this.symm
     rw [e]
-    simp [map_sum, hx']
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, hx']
   have h1 := f.finrank_range_add_finrank_ker
   have h2 : finrank K (LinearMap.range f) ≤ finrank K A := by
     have := (LinearMap.range f).finrank_le
@@ -142,18 +148,12 @@ theorem isCompl_perp (h : V →ₗ⋆[K] V →ₗ[K] K) (ha : ∀ x, h x x = 0 �
   refine ⟨hd, codisjoint_iff.2 (Submodule.eq_top_of_finrank_eq (by omega))⟩
 
 omit [StarRing K] [FiniteDimensional K V] in
-theorem span_inf (L : Submodule (𝓞 K) V) (hL : Submodule.IsLattice K L) (T : Submodule K V) :
+theorem span_inf (L : Submodule (𝓞 K) V) (hL : Submodule.IsFullLattice K L) (T : Submodule K V) :
     Submodule.span K ((L ⊓ T.restrictScalars (𝓞 K) : Submodule (𝓞 K) V) : Set V) = T := by
-  first
-  | exact @_root_.GlobalTheory.SpanInfEq.main
-  | exact _root_.GlobalTheory.SpanInfEq.main
-  | (apply _root_.GlobalTheory.SpanInfEq.main <;> assumption)
-  | (intros; apply _root_.GlobalTheory.SpanInfEq.main <;> assumption)
-  | (intros; apply @_root_.GlobalTheory.SpanInfEq.main <;> first | assumption | infer_instance)
-  | (intros; exact _root_.GlobalTheory.SpanInfEq.main ..)
+  exact _root_.GlobalTheory.SpanInfEq.main L hL T
 
 theorem key (h : V →ₗ⋆[K] V →ₗ[K] K) (hs : h.IsSymm) (hn : h.Nondegenerate) (ha : ∀ x, h x x = 0 → x = 0)
-    (L P : Submodule (𝓞 K) V) (hL : Submodule.IsLattice K L) (hi : Formalism.HermitianLatticesTheory.IsIntegralLat h L)
+    (L P : Submodule (𝓞 K) V) (hL : Submodule.IsFullLattice K L) (hi : Formalism.HermitianLatticesTheory.IsIntegralLat h L)
     (hP : P ≤ L) (I₁ I₂ : Ideal (𝓞 K)) (h1 : I₁ • dualInH h L ≤ L)
     (h2 : I₂ • dualInH h (L ⊓ (Submodule.span K (P : Set V)).restrictScalars (𝓞 K)) ≤
       L ⊓ (Submodule.span K (P : Set V)).restrictScalars (𝓞 K)) :
@@ -189,16 +189,18 @@ theorem key (h : V →ₗ⋆[K] V →ₗ[K] K) (hs : h.IsSymm) (hn : h.Nondegene
         have := L.sub_mem (L.smul_mem b hz) hbm.1
         rw [smul_add, add_sub_cancel_left] at this
         exact this
-      rw [smul_add, map_add, LinearMap.add_apply, (hT x).1 hxT _ hbm.2, zero_add]
+      rw [smul_add, map_add (f := _), LinearMap.add_apply, (hT x).1 hxT _ hbm.2, zero_add]
       exact (mem_dual h _ x).1 hx1 _ hbt
     · intro a b ha hb
-      rw [map_add, LinearMap.add_apply]
+      rw [map_add (f := _), LinearMap.add_apply]
       exact Submodule.add_mem _ ha hb
   obtain ⟨a, haI, rfl⟩ := (Ideal.mem_map_of_equiv _ r).1 hr
   change _ ∈ L
   rw [← hdd, mem_dual]
   intro y hy
-  have hy' : y ∈ dualInH h L := ⟨hy, by change y ∈ Submodule.span K _; rw [hL.span_eq_top]; trivial⟩
+  have hspan : Submodule.span K (L : Set V) = ⊤ := by
+    simpa using span_inf L hL (⊤ : Submodule K V)
+  have hy' : y ∈ dualInH h L := ⟨hy, by change y ∈ Submodule.span K _; rw [hspan]; trivial⟩
   have hay : a • y ∈ I₂ • L := by
     have := Submodule.smul_mem_smul haI hy'
     rw [Submodule.mul_smul] at this
@@ -212,9 +214,60 @@ end General
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
+set_option maxHeartbeats 4000000 in
+theorem base_full (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ : LatV D)
+    (hStand : Stand D u u') (hB : IsBase D u F0) (hR : IsRowLat D F0 Λ) :
+    Submodule.IsFullLattice D.host.E (L0X D Λ (lf D F0)) := by
+  obtain ⟨he, hz⟩ := hB
+  obtain ⟨_, ⟨hL, hU, hlift, hconv⟩, _⟩ := hR
+  have hS' := hStand
+  have hT : Tu D u ≠ 0 := hS'.2.1.ne_zero
+  have hT0 : ((Tu D u : ℕ) : D.host.E) ≠ 0 := by exact_mod_cast hT
+  have hWH := Formalism.MainNotions.WHyp_Wsp D u hT (lf D F0) he hz
+  have hm : 0 < D.R.m := lt_of_lt_of_le (by norm_num) D.R.two_le_m
+  have hiso := D.sp.iXY_isom 0 hm
+  have hinj : Function.Injective (D.sp.iXY 0) := by
+    rw [← LinearMap.ker_eq_bot, eq_bot_iff]
+    intro x hx
+    refine (Submodule.mem_bot _).2 ((D.sp.X 0).nondeg.2 x (fun y => ?_))
+    rw [← hiso y x, LinearMap.mem_ker.1 hx, map_zero]
+  have hXX : ∀ x ∈ F0.X, ∀ y ∈ F0.X, (hS D).hT x y = 0 := fun x hx y hy =>
+    Formalism.MainNotions.hT_swap_zero ((Formalism.MainNotions.mem_orth_iff _ _).1 (Formalism.MainNotions.X_le_orth_Xplus F0 hx) y (Submodule.mem_sup_left hy))
+  have hXz : ∀ x ∈ F0.X, (hS D).hT x F0.z = 0 := Formalism.MainNotions.hT_zero_of_mem_X F0 F0.z_orth
+  have hWo : ∀ w, ∀ x ∈ F0.Xplus, (hS D).hT x (D.sp.iXY 0 w) = 0 := fun w =>
+    (Formalism.MainNotions.mem_orth_iff _ _).1 (hWH.1.le (Submodule.mem_sup_left ⟨w, rfl⟩))
+  have hXW : ∀ x ∈ F0.X, ∀ w, (hS D).hT x (D.sp.iXY 0 w) = 0 := fun x hx w => hWo w x (Submodule.mem_sup_left hx)
+  have hzW : ∀ w, (hS D).hT F0.z (D.sp.iXY 0 w) = 0 := fun w =>
+    hWo w _ (Submodule.mem_sup_right (Submodule.mem_span_singleton_self _))
+  have hdec : ∀ v, (∀ x ∈ F0.X, (hS D).hT x v = 0) → (hS D).hT F0.z v = 0 →
+      ∃ w, ∃ x ∈ F0.X, v = D.sp.iXY 0 w + x := by
+    intro v h1 h2
+    have : v ∈ orth (hS D) F0.Xplus := (Formalism.MainNotions.mem_orth_iff _ _).2
+      (Formalism.MainNotions.hT_zero_of_mem_Xplus F0 (fun a => h1 _ (Submodule.subset_span ⟨a, rfl⟩)) h2)
+    obtain ⟨_, ⟨w, rfl⟩, x, hx, e⟩ := Submodule.mem_sup.1 (hWH.1.ge this)
+    exact ⟨w, x, hx, e.symm⟩
+  have hsub : ∀ v, (∀ x ∈ F0.X, (hS D).hT x v = 0) → (v ∈ Lsub Λ (lf D F0) ↔ ∃ x ∈ F0.X, v + x ∈ Λ) := by
+    intro v hv
+    constructor
+    · rintro ⟨h1, -⟩
+      obtain ⟨l, hl, x, hx, rfl⟩ := Submodule.mem_sup.1 h1
+      exact ⟨-x, F0.X.neg_mem hx, by simpa using hl.1⟩
+    · rintro ⟨x, hx, h1⟩
+      refine ⟨Submodule.mem_sup.2 ⟨v + x, ⟨h1, (Formalism.MainNotions.mem_orth_iff _ _).2 fun y hy => ?_⟩, -x, F0.X.neg_mem hx,
+        by abel⟩, (Formalism.MainNotions.mem_orth_iff _ _).2 hv⟩
+      rw [map_add (f := _), hv y hy, hXX y hy x hx, add_zero]
+  obtain ⟨a1, a2, a3⟩ := GlobalTheory.LoopC.Base.perp_lattice (hS D).hT (hS D).herm (hS D).nondeg hL hU (D.sp.X 0).hT (D.sp.X 0).herm
+    (D.sp.X 0).nondeg (D.sp.iXY 0) hiso F0.X F0.z (Tu D u) hT hXX hXz hXW hzW F0.z_norm hlift.1 hdec
+    (fun c x hx h => hconv.2 c ((hsub _ fun y hy => by simp [hXz y hy]).2 ⟨x, hx, h⟩))
+    (L0X D Λ (lf D F0)) (fun w => by
+      rw [← hsub _ fun x hx => hXW x hx w]
+      exact ⟨fun h => h.1, fun h => ⟨h, hzW w⟩⟩)
+  exact a1
+
 theorem main : ∀ (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ : LatV D), Stand D u u' → IsBase D u F0 → IsRowLat D F0 Λ → ∀ (P : LatW D) (s : ℕ) (Q : ℝ), s ≤ D.R.k → SubOK D (L0X D Λ (lf D F0)) P s Q → rkW D (perpW D (L0X D Λ (lf D F0)) P) = s ∧ ∃ I : Ideal (𝓞 D.host.E), I ≠ ⊥ ∧ (Ideal.absNorm I : ℝ) ≤ Q ^ 2 * NT D u ^ 2 ∧ I • dualInH (D.sp.X 0).hT (perpW D (L0X D Λ (lf D F0)) P) ≤ perpW D (L0X D Λ (lf D F0)) P := by
   intro D u u' F0 Λ hS hB hR P s Q hs hP
   obtain ⟨-, -, hpd, hL, hi, hdet, -⟩ := GlobalTheory.T.standardBaseFlag_complement_integralLattice D u u' F0 Λ hS hB hR
+  have hLfull := base_full D u u' F0 Λ hS hB hR
   generalize L0X D Λ (lf D F0) = L at *
   obtain ⟨hPL, hrk, -, -, hQ⟩ := hP
   have ha : ∀ x, (D.sp.X 0).hT x x = 0 → x = 0 := by
@@ -230,7 +283,7 @@ theorem main : ∀ (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ : LatV D),
   · have h1 := Submodule.finrank_add_eq_of_isCompl (isCompl_perp (D.sp.X 0).hT ha P)
     unfold rkW at hrk ⊢
     unfold perpW
-    rw [span_inf L hL]
+    rw [span_inf L hLfull]
     unfold perpE
     omega
   · obtain ⟨a1, a2, -⟩ := GlobalTheory.LoopC.DetCard.main D L hL.fg hpd hi
@@ -239,10 +292,10 @@ theorem main : ∀ (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ : LatV D),
     obtain ⟨b1, b2, b3⟩ := GlobalTheory.LoopC.DetCard.main D (sat D L P) hMfg hpd hMi
     obtain ⟨c1, c2⟩ := b3 P (fun x hx => ⟨hPL hx, Submodule.subset_span hx⟩) (by
       unfold rkW sat
-      rw [span_inf L hL])
+      rw [span_inf L hLfull])
     obtain ⟨I₁, p1, p2, p3⟩ := exists_ideal_smul_le _ _ a1
     obtain ⟨I₂, q1, q2, q3⟩ := exists_ideal_smul_le _ _ b1
-    refine ⟨_, ?_, ?_, key (D.sp.X 0).hT (D.sp.X 0).herm (D.sp.X 0).nondeg ha L P hL hi hPL I₁ I₂ p3 q3⟩
+    refine ⟨_, ?_, ?_, key (D.sp.X 0).hT (D.sp.X 0).herm (D.sp.X 0).nondeg ha L P hLfull hi hPL I₁ I₂ p3 q3⟩
     · intro h0
       have := congrArg Ideal.absNorm h0
       rw [absNorm_map_equiv, Ideal.absNorm_bot, Ideal.absNorm_eq_zero_iff] at this

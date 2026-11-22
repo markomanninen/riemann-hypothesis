@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.FstHomCompSqzOfLeibniz
-import ReciprocityTheory.DualLattices.EvCotStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.FstHomCompSqzOfLeibniz
+public import ReciprocityTheory.DualLattices.EvCotStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,16 +37,6 @@ omit [CommRing O] [AddCommGroup M] [Module O M] in
 lemma ext {x y : SqExt O M} (h1 : x.fst = y.fst) (h2 : x.snd = y.snd) : x = y :=
   Prod.ext h1 h2
 
-omit [CommRing O] [AddCommGroup M] [Module O M] in
-@[simp] lemma fst_mk (a : O) (m : M) : (mk a m).fst = a := rfl
-omit [CommRing O] [AddCommGroup M] [Module O M] in
-@[simp] lemma snd_mk (a : O) (m : M) : (mk a m).snd = m := rfl
-@[simp] lemma fst_add (x y : SqExt O M) : (x + y).fst = x.fst + y.fst := rfl
-@[simp] lemma snd_add (x y : SqExt O M) : (x + y).snd = x.snd + y.snd := rfl
-@[simp] lemma fst_zero : (0 : SqExt O M).fst = 0 := rfl
-@[simp] lemma snd_zero : (0 : SqExt O M).snd = 0 := rfl
-@[simp] lemma fst_one : (1 : SqExt O M).fst = 1 := rfl
-@[simp] lemma snd_one : (1 : SqExt O M).snd = 0 := rfl
 @[simp] lemma fst_mul (x y : SqExt O M) : (x * y).fst = x.fst * y.fst := rfl
 @[simp] lemma snd_mul (x y : SqExt O M) : (x * y).snd = x.fst • y.snd + y.fst • x.snd := rfl
 
@@ -70,7 +64,8 @@ instance [IsLocalRing O] : IsLocalRing (SqExt O M) := by
   haveI : Nontrivial (SqExt O M) := (fstHom (O := O) (M := M)).domain_nontrivial
   refine IsLocalRing.of_isUnit_or_isUnit_of_isUnit_add ?_
   intro a b h
-  rw [isUnit_iff, fst_add] at h
+  rw [isUnit_iff] at h
+  change IsUnit (a.fst + b.fst) at h
   rw [isUnit_iff, isUnit_iff]
   exact IsLocalRing.isUnit_or_isUnit_of_isUnit_add h
 
@@ -150,14 +145,15 @@ def sqMap (u : M →ₗ[(O : Type)] M') : LHom (sqAlg O M) (sqAlg O M') :=
   sqLift (sqProj O M) (u.toAddMonoidHom.comp SqExt.sndHom)
     (fun f f' => by
       refine (congrArg u (SqExt.snd_mul (O := (O : Type)) (M := M) f f')).trans ?_
-      rw [map_add, map_smul, map_smul]; rfl)
+      rw [map_add (f := _), map_smul, map_smul]; rfl)
     (fun _ => map_zero u)
 
 lemma map_sqMap_tg (B : BX R₀) {ι : Type} [Fintype ι] (w : ι → B.gg) (m : ι → M)
     (u : M →ₗ[(O : Type)] M') :
     B.map (sqMap u) (B.tg (sqProj O M) (sqProj_sqZero O M) (∑ k, w k ⊗ₜ[R₀] sqKer (m k))) =
       B.tg (sqProj O M') (sqProj_sqZero O M') (∑ k, w k ⊗ₜ[R₀] sqKer (u (m k))) := by
-  rw [← B.tg_nat (sqProj O M) (sqProj O M') (sqProj_sqZero O M) (sqProj_sqZero O M') (sqMap u)
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← B.tg_nat (sqProj O M) (sqProj O M') (sqProj_sqZero O M) (sqProj_sqZero O M') (sqMap u)
     (fun _ h => h), map_sum]
   rfl
 
@@ -200,14 +196,16 @@ lemma sum_lieBasis (l : Fin g → O) :
   have h : l = ∑ k, l k • (Pi.single k 1 : Fin g → O) := by
     ext j; simp [Finset.sum_apply, Pi.single_apply]
   conv_rhs => rw [h]
-  rw [← Submodule.mkQ_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Submodule.mkQ_apply, map_sum]
   rfl
 
 lemma lie_ext {u u' : LieDualModP p O g →ₗ[O] M}
     (h : ∀ k, u (lieBasis O p g k) = u' (lieBasis O p g k)) : u = u' := by
   refine LinearMap.ext fun x => ?_
   obtain ⟨l, rfl⟩ := Submodule.Quotient.mk_surjective _ x
-  rw [← sum_lieBasis, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← sum_lieBasis, map_sum, map_sum]
   simp only [map_smul, h]
 
 end Lie
@@ -230,7 +228,9 @@ lemma snd_smul (φ : LHom A (sqAlg O M)) (h1 : φ.comp sO = sqIncl O M) (o : (O 
   have h : φ.1 (sO.1 o) = SqExt.mk (M := M) o 0 := congrArg (fun ψ => ψ.1 o) h1
   rw [map_mul, h]
   refine (SqExt.snd_mul (O := (O : Type)) (M := M) _ _).trans ?_
-  simp
+  change o • (φ.1 f : SqExt (O : Type) M).snd +
+    (φ.1 f : SqExt (O : Type) M).fst • (0 : M) = _
+  rw [smul_zero, add_zero]
 
 lemma snd_leibniz (φ : LHom A (sqAlg O M)) (h2 : (sqProj O M).comp φ = ε) (f f' : (A : Type)) :
     SqExt.snd (O := (O : Type)) (M := M) (φ.1 (f * f')) =
@@ -279,12 +279,16 @@ lemma tg_act {E : Type} [CommRing E] (Ac : OAct B O p E) (a : E) (gb : Module.Ba
   have hx' : x = ∑ k, (⟨B.tg (sqProj O M) (sqProj_sqZero O M) (gb k ⊗ₜ[R₀] sqKer (m k)),
       tg_torP B p _ _ _ _ (hk k)⟩ : torP B p (sqAlg O M)) := by
     refine Subtype.ext ?_
-    rw [hx, AddSubmonoidClass.coe_finset_sum, tgPt, map_sum]
-  rw [hx', map_sum, AddSubmonoidClass.coe_finset_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx, AddSubmonoidClass.coe_finsetSum, tgPt, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hx', map_sum, AddSubmonoidClass.coe_finsetSum]
   simp only [Ac.act_tg a (sqIncl O M) (sqProj O M) (sqProj_sqZero O M) _ _ (hk _)]
-  rw [← map_sum, tgPt]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, tgPt]
   congr 1
-  simp only [map_sum, TensorProduct.tmul_sum, ← smul_sqKer, ← TensorProduct.smul_tmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, TensorProduct.tmul_sum, ← smul_sqKer, ← TensorProduct.smul_tmul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [← TensorProduct.sum_tmul, gb.sum_repr]
@@ -390,7 +394,8 @@ theorem universal_derivation :
     have hρ : (D.H.ρL a)ᵀ *ᵥ l = ∑ k, l k • D.H.ρL a k := by
       ext j
       simp [Matrix.mulVec, dotProduct, Finset.sum_apply, mul_comm]
-    rw [hρ, ← Submodule.mkQ_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hρ, ← Submodule.mkQ_apply, map_sum]
     rfl
 
 end GlobalTheory.CotUniv

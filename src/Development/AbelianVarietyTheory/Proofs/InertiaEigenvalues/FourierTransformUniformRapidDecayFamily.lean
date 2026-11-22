@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOfMemSmoothSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOfMemSmoothSpan
+
+@[expose] public section
+
 open NumberField Matrix MeasureTheory GlobalTheory.CuspRep GlobalTheory.CuspRep.CuspidalL2GL GlobalTheory.ThetaPoisson GroundTheory.Global GroundTheory.Global.IdeleGroup
 open scoped ComplexConjugate nonZeroDivisors ContDiff
 
@@ -10,7 +15,7 @@ open scoped FourierTransform
 
 namespace GlobalTheory.FourierDecay
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ}
 
 def pairL (u : Fin n → Cinf E) : (Fin n → Cinf E) →L[ℝ] ℝ :=
   LinearMap.toContinuousLinearMap
@@ -77,8 +82,8 @@ theorem infFourier_fderiv {f : (Fin n → Cinf E) → ℂ} (hf : ContDiff ℝ �
     (2 * π * I * (pairL u v : ℂ)) * ∫ x, f x * (𝐞 (-pairL u x) : ℂ) ∂infMeasure E n
   linear_combination key - e
 
-open Classical in
 
+open Classical in
 def dirv (k : Fin n × InfinitePlace E × Bool) : Fin n → Cinf E :=
   Pi.single k.1 (Pi.single k.2.1 (if k.2.2 then I else 1))
 
@@ -122,9 +127,9 @@ theorem norm_le_sum_pairL (u : Fin n → Cinf E) : ‖u‖ ≤ ∑ k, |pairL u (
 
 end GlobalTheory.FourierDecay
 
-open GlobalTheory.FourierDecay in
 
-theorem GlobalTheory.fourier_decay_family : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) (ι : Type)
+open GlobalTheory.FourierDecay in
+theorem GlobalTheory.fourier_decay_family : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) (ι : Type)
     (w : ι → ℝ) (𝒞 : Set (ι → (Fin n → Cinf E) → ℂ)),
     (∀ f ∈ 𝒞, (∀ i, ContDiff ℝ ∞ (f i) ∧ HasCompactSupport (f i)) ∧ ∃ C : ℝ, ∀ i, ∫ y, ‖f i y‖ ∂(infMeasure E n) ≤ C * w i) →
     (∀ f ∈ 𝒞, ∀ v : Fin n → Cinf E, (fun i y => fderiv ℝ (f i) y v) ∈ 𝒞) →

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped InnerProductSpace BigOperators
@@ -46,7 +50,7 @@ theorem prod_one_sub_bounded_below :
     have hp : 0 ≤ ∏ v ∈ S.filter (· ∈ F), (1 - s v) :=
       Finset.prod_nonneg fun v _ => (hfac v).le
     have hq : ∏ v ∈ F \ S.filter (· ∈ F), (1 - s v) ≤ 1 :=
-      Finset.prod_le_one (fun v _ => (hfac v).le) (fun v _ => hle1 v)
+      Finset.prod_le_one₀ (fun v _ => (hfac v).le) (fun v _ => hle1 v)
     exact mul_le_of_le_one_left hp hq
   have hB : Real.exp (-(2 * ∑' v, s v)) ≤ ∏ v ∈ S.filter (· ∉ F), (1 - s v) := by
     have hsum : ∑ v ∈ S.filter (· ∉ F), s v ≤ ∑' v, s v :=
@@ -58,7 +62,7 @@ theorem prod_one_sub_bounded_below :
           linarith
       _ = ∏ v ∈ S.filter (· ∉ F), Real.exp (-(2 * s v)) := Real.exp_sum _ _
       _ ≤ ∏ v ∈ S.filter (· ∉ F), (1 - s v) :=
-          Finset.prod_le_prod (fun v _ => (Real.exp_pos _).le)
+          Finset.prod_le_prod₀ (fun v _ => (Real.exp_pos _).le)
             (fun v hv => exp_neg_two_mul_le_one_sub (h0 v)
               (hout v (Finset.mem_filter.mp hv).2))
   rw [hsplit]

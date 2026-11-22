@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdNB
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdNB
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,8 +53,39 @@ theorem stepB (X : Submodule E S.V) (hXiso : ∀ x ∈ X, ∀ y ∈ X, S.hT x y 
   have hδ'Λ : ∀ m : M₂, (m : S.V) + δ' m ∈ Λ := fun m => by
     rw [hδ'app, ← add_sub_assoc]
     exact Λ.sub_mem (hδΛ m) (int_smul_mem (sd_int hSD₂ m.2.1 hyΛ) hδzΛ)
+  have hden : ∀ u : S.V, ∃ d : 𝓞 E, d ≠ 0 ∧ d • u ∈ Λ₂ := by
+    intro u
+    obtain ⟨s, hs⟩ := hΛ₂.fg
+    obtain ⟨d, hd⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors (𝓞 E)) s (fun x => S.hT x u)
+    let P : Submodule (𝓞 E) S.V := {
+      carrier := {x | IsIntegral ℤ ((d : 𝓞 E) • S.hT x u)}
+      zero_mem' := by simpa using (isIntegral_zero : IsIntegral ℤ (0 : E))
+      add_mem' := by
+        intro x y hx hy
+        simpa [map_add, LinearMap.add_apply, smul_add] using hx.add hy
+      smul_mem' := by
+        intro a x hx
+        change IsIntegral ℤ ((d : 𝓞 E) • S.hT x u) at hx
+        change IsIntegral ℤ ((d : 𝓞 E) • S.hT (a • x) u)
+        rw [oSmul S a x, hT_smulL S, oSmulW, smul_eq_mul]
+        have ha : IsIntegral ℤ (star (a : E)) := isInt_star a.2
+        convert ha.mul hx using 1 <;> rw [oSmulW, smul_eq_mul] <;> ring }
+    have hsP : (s : Set S.V) ⊆ P := by
+      intro x hx
+      obtain ⟨b, hb⟩ := hd x hx
+      change IsIntegral ℤ ((d : 𝓞 E) • S.hT x u)
+      rw [← hb]
+      exact b.2
+    have hdu : (d : 𝓞 E) • u ∈ Λ₂ := by
+      apply (hSD₂ _).2
+      intro x hx
+      have hxP : x ∈ P := (hs ▸ Submodule.span_le.mpr hsP) hx
+      change IsIntegral ℤ ((d : 𝓞 E) • S.hT x u) at hxP
+      rw [oSmul S, map_smul]
+      simpa only [oSmulW] using hxP
+    exact ⟨d, nonZeroDivisors.ne_zero d.2, hdu⟩
   have hfull : ∀ u ∈ orth S X, ∃ d : 𝓞 E, d ≠ 0 ∧ d • u ∈ M₂ := fun u hu => by
-    obtain ⟨d, hd, hdu⟩ := PI.UnitaryGroupMassFormula.BetaLUniq.exists_smul_mem S Λ₂ hΛ₂ u
+    obtain ⟨d, hd, hdu⟩ := hden u
     exact ⟨d, hd, hdu, by show d • u ∈ orth S X; rw [oSmul]; exact (orth S X).smul_mem _ hu⟩
   obtain ⟨A, hA⟩ := ext_lat S (W := S.V) (orth S X) M₂ (fun x hx => hx.2) hfull δ'
   have hscale : ∀ u : orth S X, ∃ d : 𝓞 E, d ≠ 0 ∧ ∃ hm : ((d : E) • (u : S.V)) ∈ M₂,
@@ -86,7 +121,7 @@ theorem stepW (X : Submodule E S.V) (hXiso : ∀ x ∈ X, ∀ y ∈ X, S.hT x y 
     exact (Submodule.mem_bot E).2 (Subtype.ext h1)
   have hiso : ∀ u v : orth S X, S.hT (f u) (f v) = S.hT u v := fun u v => by
     show S.hT ((u : S.V) + A u) ((v : S.V) + A v) = S.hT u v
-    rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, orth_X' S u.2 (hA v), orth_X S v.2 (hA u),
+    rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, orth_X' S u.2 (hA v), orth_X S v.2 (hA u),
       hXiso _ (hA u) _ (hA v)]
     ring
   obtain ⟨g, hg, hgf⟩ := witt_extension_theorem E S.V S.hT (fun x y => by rw [hsw S x y])

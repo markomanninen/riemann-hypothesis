@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NOfibCut
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RealFramesCharacters
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.HermitianZZEqNeg
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RealHermitianForms
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.HermitianSumFrames
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NOfibCut
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RealFramesCharacters
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.HermitianZZEqNeg
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RealHermitianForms
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.HermitianSumFrames
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,8 +42,13 @@ theorem hJ_span_ef (v : InfinitePlace X.B.I.F) (α β : Fin D.R.rS → D.host.E)
     hJ (X.B.I.ε v) (rv X.B.I v (X.crd (∑ c, α c • X.eX c + ∑ c, β c • X.fY c))) w = 0 := by
   rw [Formalism.L2.SG.NormCut.crd_add', Formalism.L2.SG.NormCut.crd_sum', Formalism.L2.SG.NormCut.crd_sum']
   simp only [Formalism.L2.SG.NormCut.crd_smul']
-  rw [← Formalism.L2.SG.Pf.Vanish2.rvHom_apply, map_add, Formalism.L2.SG.Pf.Vanish2.rvHom_apply,
-    Formalism.L2.SG.Pf.Vanish2.rvHom_apply, Formalism.L2.SG.RealObj.RealFramesCharacters.rv_sum, Formalism.L2.SG.RealObj.RealFramesCharacters.rv_sum,
+  have rv_add (a b : Fin X.B.I.n → X.B.I.E) : rv X.B.I v (a + b) = rv X.B.I v a + rv X.B.I v b := by
+    unfold rv
+    rw [← Matrix.mulVec_add]
+    congr 1
+    ext i
+    simp
+  rw [rv_add, Formalism.L2.SG.RealObj.RealFramesCharacters.rv_sum, Formalism.L2.SG.RealObj.RealFramesCharacters.rv_sum,
     Formalism.L2.SG.RealObj.InfCut.ProductExactness.hJ_add_l, Formalism.L2.SG.RealObj.HermitianSumRootCoordinateFrames.hJ_sum_left,
     Formalism.L2.SG.RealObj.HermitianSumRootCoordinateFrames.hJ_sum_left]
   simp only [he, hf, mul_zero, Finset.sum_const_zero, add_zero]
@@ -80,8 +89,13 @@ theorem dictionary_place_holds : DictPlace := by
     have hy : n.symm (X.fY b) = xq X n b + (∑ c, (VS D).hT (X.fY c) (n.symm (X.fY b)) • X.eX c +
         ∑ c, (VS D).hT (X.eX c) (n.symm (X.fY b)) • X.fY c) := by
       simp only [xq, pW]; abel
-    rw [hy, Formalism.L2.SG.NormCut.crd_add', ← Formalism.L2.SG.Pf.Vanish2.rvHom_apply, map_add,
-      Formalism.L2.SG.Pf.Vanish2.rvHom_apply, Formalism.L2.SG.Pf.Vanish2.rvHom_apply, Formalism.L2.SG.RealObj.InfCut.ProductExactness.hJ_add_l,
+    have rv_add (a b : Fin X.B.I.n → X.B.I.E) : rv X.B.I v (a + b) = rv X.B.I v a + rv X.B.I v b := by
+      unfold rv
+      rw [← Matrix.mulVec_add]
+      congr 1
+      ext i
+      simp
+    rw [hy, Formalism.L2.SG.NormCut.crd_add', rv_add, Formalism.L2.SG.RealObj.InfCut.ProductExactness.hJ_add_l,
       hJ_span_ef X v _ _ w he hf, add_zero]
   funext p
   rcases p with ((p | b) | (p | a))

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GlobSpecOfExists
-import Formalism.GradedWeylDivisibility.FinalD
-import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PosOkId
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GenMDetNeZeroOfNontrivial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GlobSpecOfExists
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PosOkId
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GenMDetNeZeroOfNontrivial
+
+@[expose] public section
 
 open MvPolynomial NumberField IsDedekindDomain Formalism.GradedWeylDivisibility Formalism.MainNotions.G Formalism.L2.Col Formalism.HermitianLatticesTheory Formalism.BasicNotions Formalism.L2.DIV GlobalTheory.GO GlobalTheory.ValCmp
 
@@ -155,7 +159,7 @@ theorem exists_cofRel_dualWeyl : ∀ (R : Type) [CommRing R] [IsDomain R] (m : �
     obtain ⟨g₂, h₂, e₂⟩ := hy
     refine ⟨g₁ + g₂, add_mem h₁ h₂, ?_⟩
     unfold CofRel at e₁ e₂ ⊢
-    rw [mul_add, e₁, e₂, map_add]
+    rw [mul_add, e₁, e₂, map_add (f := _)]
   | smul a x _ hx =>
     obtain ⟨g, h, e⟩ := hx
     refine ⟨a • g, Submodule.smul_mem _ a h, ?_⟩

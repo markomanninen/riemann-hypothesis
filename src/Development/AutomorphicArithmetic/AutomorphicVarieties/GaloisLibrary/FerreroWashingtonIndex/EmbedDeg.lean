@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.CycRepApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.EmbCyc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.KwHom
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.CycRepApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.EmbCyc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.KwHom
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.V.Kum UpperTheory.V.Stick UpperTheory.V.FW
 open scoped nonZeroDivisors
@@ -26,7 +30,7 @@ theorem UpperTheory.V.FW.embed :
     · exact h
   have hlc : (l + 1).Coprime l := by
     simp
-  refine ⟨f₀ * (l + 1), f₀ * (l + 1) * l ^ e, Nat.Coprime.mul hf₀c hlc, ?_, ?_⟩
+  refine ⟨f₀ * (l + 1), f₀ * (l + 1) * l ^ e, Nat.Coprime.mul_left hf₀c hlc, ?_, ?_⟩
   · have : 1 < l + 1 := by have := hp.one_lt; omega
     calc 1 < l + 1 := this
       _ ≤ f₀ * (l + 1) := Nat.le_mul_of_pos_left _ hf₀pos
@@ -61,7 +65,7 @@ theorem UpperTheory.V.FW.embed :
     exact h2
   have htow := Module.finrank_mul_finrank ℚ K' L
   have htot : M.totient ≤ f₀ * (l + 1) * l ^ e * l ^ n₀ * (l ^ n).totient := by
-    have hco : (f₀ * (l + 1)).Coprime (l ^ m) := (Nat.Coprime.mul hf₀c hlc).pow_right m
+    have hco : (f₀ * (l + 1)).Coprime (l ^ m) := (Nat.Coprime.mul_left hf₀c hlc).pow_right m
     rw [hM, Nat.totient_mul hco]
     calc (f₀ * (l + 1)).totient * (l ^ m).totient ≤ f₀ * (l + 1) * (l ^ m).totient :=
           Nat.mul_le_mul_right _ (Nat.totient_le _)

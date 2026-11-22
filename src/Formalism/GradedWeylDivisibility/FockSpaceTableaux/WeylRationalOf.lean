@@ -1,6 +1,10 @@
-import Formalism.GradedWeylDivisibility.StatementB
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.StatementB
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -15,7 +19,7 @@ private theorem rowGen_map_intCast {r n : ℕ} (a b : Fin r) (f : MvPolynomial (
   next c =>
     simp [rowGen]
   next p q hp hq =>
-    rw [_root_.map_add, _root_.map_add, _root_.map_add, hp, hq, Polynomial.map_add]
+    rw [_root_.map_add (f := _), _root_.map_add (f := _), _root_.map_add (f := _), hp, hq, Polynomial.map_add (f := _)]
   next p v hp =>
     rw [_root_.map_mul, map_X, _root_.map_mul, _root_.map_mul, Polynomial.map_mul, hp]
     congr 1
@@ -66,7 +70,7 @@ theorem lclosedeq_weyl_denom {r n : ℕ} (hn : n ≤ r) (ν : Fin n → ℕ)
     obtain ⟨d, hd, v, hv, hv'⟩ := hy
     refine ⟨c * d, mul_ne_zero hc hd, d • u + c • v,
       Submodule.add_mem _ (Submodule.smul_mem _ _ hu) (Submodule.smul_mem _ _ hv), ?_⟩
-    rw [_root_.map_add, MvPolynomial.smul_eq_C_mul u d, MvPolynomial.smul_eq_C_mul v c,
+    rw [_root_.map_add (f := _), MvPolynomial.smul_eq_C_mul u d, MvPolynomial.smul_eq_C_mul v c,
       _root_.map_mul, _root_.map_mul, map_C, map_C, hu', hv']
     simp only [MvPolynomial.smul_eq_C_mul, eq_intCast, Int.cast_mul, MvPolynomial.C_mul]
     ring
@@ -87,7 +91,7 @@ private theorem colAddGen_map_intCast {r n : ℕ} (l j : Fin n) (f : MvPolynomia
   next c =>
     simp [colAddGen]
   next p q hp hq =>
-    rw [_root_.map_add, _root_.map_add, _root_.map_add, hp, hq, _root_.map_add]
+    rw [_root_.map_add (f := _), _root_.map_add (f := _), _root_.map_add (f := _), hp, hq, _root_.map_add (f := _)]
   next p v hp =>
     rw [_root_.map_mul, map_X, _root_.map_mul, _root_.map_mul, _root_.map_mul, hp]
     congr 1

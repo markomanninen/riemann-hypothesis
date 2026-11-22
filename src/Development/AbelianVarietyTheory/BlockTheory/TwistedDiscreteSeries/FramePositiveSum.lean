@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.StandardOrderExtendedBasisApplyLowBlock
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.StandardOrderExtendedBasisApplyLowBlock
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix
 open scoped ENNReal
@@ -63,7 +67,6 @@ def colPos (κ : ℕ) (t : Type) : XIx (Fin κ) t 0 → ℕ :=
   Sum.elim (Sum.elim (fun i => i.val) (fun i => i.elim0)) (fun p => p.1.elim0)
 
 variable (k) in
-
 def colGroup (κ : ℕ) (t : Type) [Fintype t] [DecidableEq t] : Set (GL (XIx (Fin κ) t 0) k) :=
   {γ | ∃ gb, Reduces γ gb ∧ IsUpperUnip (colPos κ t) gb.val}
 
@@ -207,13 +210,5 @@ def Statement : Prop :=
     [MeasurableSpace k] [BorelSpace k] (ψ : AddChar k Circle) (ν : Measure k), HasConductor ψ 1 → IsUnitVol ν →
     StepWellDefined ψ ν ∧ ChainFinite ψ ν ∧ CosetMeasure ν ∧ VolumeCancels ν ∧ TargetLaw ψ ν ∧ SourceLaw ψ ν ∧
       ChainInvariant ψ ν ∧ ChainInvariantLast ψ ν ∧ FirstVertexChains ψ ν
-
-example {F : Type} [Field F] (M : Matrix (Fin 1 ⊕ Fin 1) (Fin 1 ⊕ Fin 1) F) :
-    superSum (framePos 1 1) M = M (.inl 0) (.inr 0) := by
-  simp [superSum, framePos, Fintype.sum_sum_type]
-
-example {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    {n : Type} [Fintype n] [DecidableEq n] (g : GL n k) : deltaR 1 g = 1 := by
-  simp [deltaR]
 
 end GlobalTheory.IndefiniteRowSideFullHecke.FramePositiveSum

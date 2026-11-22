@@ -1,30 +1,35 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.StrictTransform
-import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupChart
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupChartComputations
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupSmoothness
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.CoordinateDivisorBlowup
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.CoordinateBlowupChart
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.StrictTransformChart
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.StrictTransformSubscheme
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.StrictNormalCrossingsBlowup
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateDivisorSmoothness
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.BlowupDerivativeIdealBound
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.ControlledTransformLogDerivativesInCharts
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdeal
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheaf
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.LogDerivativeIdeal
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.LogDerivativeIdealSheaf
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheafSmoothPullback
-import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.StrictTransform
+public import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupChart
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupChartComputations
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupSmoothness
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.CoordinateDivisorBlowup
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.CoordinateBlowupChart
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.StrictTransformChart
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.StrictTransformSubscheme
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.StrictNormalCrossingsBlowup
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateDivisorSmoothness
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.BlowupDerivativeIdealBound
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.ControlledTransformLogDerivativesInCharts
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdeal
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheaf
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.LogDerivativeIdeal
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.LogDerivativeIdealSheaf
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheafSmoothPullback
+public import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace
@@ -62,7 +67,7 @@ theorem exists_affineOpen_derivIdealSheafIterate_le_biSup_logDerivIdealSheafIter
     (hL : ∀ l ≤ m,
       Blowup.exceptionalIdeal π Z ^ (m - l) * L l = (derivIdealSheafIterate k p l A).comap π)
     (n : ℕ) (hn : n ≤ m) (x₁ : ↥X₁) (hx₁ : π.base x₁ ∈ Z.support) :
-    haveI : AlgebraicGeometry.Smooth (π ≫ p) := smooth_comp_of_isBlowupAlongIdealSheaf hsnc hπ
+    letI : AlgebraicGeometry.Smooth (π ≫ p) := smooth_comp_of_isBlowupAlongIdealSheaf hsnc hπ
     ∃ V : X₁.affineOpens, x₁ ∈ V.1 ∧
       (derivIdealSheafIterate k (π ≫ p) n (L 0)).ideal V ≤
         (⨆ l, ⨆ _ : l ≤ n,
@@ -182,8 +187,8 @@ theorem exists_affineOpen_derivIdealSheafIterate_le_biSup_logDerivIdealSheafIter
       rw [B.chart.ideal_eq_span_coord hBaff _ {s} (B.restrictIdeal_exceptionalIdeal Z hs hZU')]
       simp
     have hL' : ∀ i ≤ m,
-        Ideal.span {EtaleCoordinates.coord k (ULift.{u, 0} (Fin mm)) Γ(X₁, B.domain)
-            (⟨s⟩ : ULift.{u, 0} (Fin mm)) ^ (m - i)} * (L i).ideal ⟨B.domain, hBaff⟩ =
+        Ideal.span {(EtaleCoordinates.coord k (ULift.{u, 0} (Fin mm)) Γ(X₁, B.domain)
+            (⟨s⟩ : ULift.{u, 0} (Fin mm))) ^ (m - i)} * (L i).ideal ⟨B.domain, hBaff⟩ =
           Ideal.map φ (derivIdealIterate k i (A.ideal ⟨U', hU'aff⟩)) := by
       intro i hi
       have hmul : (Blowup.exceptionalIdeal π Z ^ (m - i) * L i).ideal ⟨B.domain, hBaff⟩ =
@@ -197,8 +202,8 @@ theorem exists_affineOpen_derivIdealSheafIterate_le_biSup_logDerivIdealSheafIter
       rfl
     have key : derivIdealIterate k n ((L 0).ideal ⟨B.domain, hBaff⟩) ≤
         ⨆ i, ⨆ _ : i ≤ n, logDerivIdealIterate k
-          (Ideal.span {EtaleCoordinates.coord k (ULift.{u, 0} (Fin mm)) Γ(X₁, B.domain)
-            (⟨t⟩ : ULift.{u, 0} (Fin mm))}) (n - i) ((L i).ideal ⟨B.domain, hBaff⟩) :=
+          (Ideal.span {(EtaleCoordinates.coord k (ULift.{u, 0} (Fin mm)) Γ(X₁, B.domain)
+            (⟨t⟩ : ULift.{u, 0} (Fin mm)))}) (n - i) ((L i).ideal ⟨B.domain, hBaff⟩) :=
       EtaleCoordinates.derivIdealIterate_le_iSup_logDerivIdealIterate_controlledTransform
         k (ULift.{u, 0} (Fin mm)) Γ(X, U') Γ(X₁, B.domain) φ T ⟨s⟩ ⟨t⟩
         hsT hin hsc hout hnzd hhT hhs (A.ideal ⟨U', hU'aff⟩)
@@ -228,7 +233,7 @@ theorem derivIdealSheafIterate_le_biSup_logDerivIdealSheafIterate_strictTransfor
     (hL : ∀ l ≤ m,
       Blowup.exceptionalIdeal π Z ^ (m - l) * L l = (derivIdealSheafIterate k p l A).comap π)
     (n : ℕ) (hn : n ≤ m) :
-    haveI : AlgebraicGeometry.Smooth (π ≫ p) := smooth_comp_of_isBlowupAlongIdealSheaf hsnc hπ
+    letI : AlgebraicGeometry.Smooth (π ≫ p) := smooth_comp_of_isBlowupAlongIdealSheaf hsnc hπ
     derivIdealSheafIterate k (π ≫ p) n (L 0) ≤
       ⨆ l, ⨆ _ : l ≤ n,
         logDerivIdealSheafIterate k (π ≫ p) (Blowup.strictTransform π Z H) (n - l) (L l) := by

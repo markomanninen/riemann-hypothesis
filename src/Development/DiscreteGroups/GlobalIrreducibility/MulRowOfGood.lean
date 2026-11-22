@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.GlobalIrreducibility.ColUSingleOfGe
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.ColUSingleOfGe
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,14 +30,14 @@ def Good (j : ℕ) (x : Matrix (Fin n) (Fin n) k) : Prop :=
 
 theorem mul_col_of_good {j : ℕ} {Y : Matrix (Fin n) (Fin n) k} (hY : Good j Y) (M : Matrix (Fin n) (Fin n) k)
     {i l : Fin n} (hl : j + 1 ≤ l.val) : (M * Y) i l = M i l := by
-  rw [mul_apply, Finset.sum_eq_single l]
+  rw [Matrix.mul_apply, Finset.sum_eq_single l]
   · rw [hY l l (Or.inr hl), one_apply_eq, mul_one]
   · intro b _ hb; rw [hY b l (Or.inr hl), one_apply_ne hb, mul_zero]
   · simp
 
 theorem mul_row_of_good {j : ℕ} {X : Matrix (Fin n) (Fin n) k} (hX : Good j X) (M : Matrix (Fin n) (Fin n) k)
     {i l : Fin n} (hi : j ≤ i.val) : (X * M) i l = M i l := by
-  rw [mul_apply, Finset.sum_eq_single i]
+  rw [Matrix.mul_apply, Finset.sum_eq_single i]
   · rw [hX i i (Or.inl hi), one_apply_eq, one_mul]
   · intro b _ hb; rw [hX i b (Or.inl hi), one_apply_ne (Ne.symm hb), zero_mul]
   · simp
@@ -53,14 +57,14 @@ theorem good_conj {j : ℕ} (x : GL (Fin n) k) (hx : Good j (x : Matrix (Fin n) 
     intro i l hl
     have hGY : ∀ a, (G * Y) a l = Y a l := by
       intro a
-      rw [mul_apply, ← one_mul Y, mul_apply, one_mul]
+      rw [Matrix.mul_apply, ← one_mul Y, Matrix.mul_apply, one_mul]
       refine Finset.sum_congr rfl fun b _ => ?_
       by_cases hb : b.val < j + 1
       · exact congrArg (· * Y b l) (hg a b (Or.inr hb))
       · have h1 : Y b l = 0 := by
           rw [hy b l (Or.inl (by omega)), one_apply_ne]; intro h; rw [h] at hb; omega
         rw [h1, mul_zero, mul_zero]
-    rw [Matrix.mul_assoc, mul_apply, ← hXY, mul_apply]
+    rw [Matrix.mul_assoc, Matrix.mul_apply, ← hXY, Matrix.mul_apply]
     exact Finset.sum_congr rfl fun a _ => by rw [hGY]
 
   have hB : ∀ i l : Fin n, j ≤ i.val → j + 1 ≤ l.val → (X * G * Y) i l = G i l := by

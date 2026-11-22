@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpresDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgTwist
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpresDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgTwist
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -71,7 +75,7 @@ private theorem tau_B (τ : S.R →ₐ[O] S.R)
       · rw [hm, e]; simp
       · exact h2 v i g
     | algebraMap r => exact τ.commutes r
-    | add a b _ _ ha hb => rw [map_add, ha, hb]
+    | add a b _ _ ha hb => rw [map_add (f := _), ha, hb]
     | mul a b _ _ ha hb => rw [map_mul, ha, hb]
   have hloc : (maximalIdeal S.R).map τ ≤ maximalIdeal S.R := by
     rw [Ideal.map_le_iff_le_comap]
@@ -106,7 +110,7 @@ private theorem ex_tauA : ∃ τ : S.A →ₐ[O] S.A,
       · rw [h1']
         exact mul_mem (pow_mem (neg_mem (one_mem _)) _) (S.r_mem g i j)
     | algebraMap r => rw [τ.commutes r]; exact S.A.algebraMap_mem r
-    | add a b _ _ ha hb => rw [map_add]; exact add_mem ha hb
+    | add a b _ _ ha hb => rw [map_add (f := τ)]; exact add_mem ha hb
     | mul a b _ _ ha hb => rw [map_mul]; exact mul_mem ha hb
   let τA : S.A →ₐ[O] S.A := (τ.comp S.A.val).codRestrict S.A fun a => hA a a.2
   have e1 : ∀ g i j, τA (S.u.r g i j) = sg S.A (pw i j) * S.u.r g i j := fun g i j =>
@@ -131,14 +135,14 @@ private theorem ex_tauA : ∃ τ : S.A →ₐ[O] S.A,
     have := map_sg (τA : S.A →+* S.A) (pw i j)
     rw [RingHom.coe_coe] at this
     rw [this, sg_sq, one_mul]
-  · rw [map_add, map_add, qa, qb]
+  · rw [map_add (f := _), map_add (f := _), qa, qb]
   · rw [map_mul, map_mul, qa, qb]
   · rw [e1, pw, ← neg_one_zpow_sg]
     rcases Int.even_or_odd (w 3 i - w 3 j) with h | h
     · rw [h.neg_one_zpow]; simp
     · exact sub_mem (Ideal.mul_mem_left _ _ (Ideal.subset_span ⟨g, i, j, h, rfl⟩))
         (Ideal.subset_span ⟨g, i, j, h, rfl⟩)
-  · rw [map_add, add_sub_add_comm]; exact add_mem qa qb
+  · rw [map_add (f := _), add_sub_add_comm]; exact add_mem qa qb
   · have : τA (a * b) - a * b = (τA a - a) * τA b + a * (τA b - b) := by rw [map_mul]; ring
     rw [this]
     exact add_mem (Ideal.mul_mem_right _ _ qa) (Ideal.mul_mem_left _ _ qb)

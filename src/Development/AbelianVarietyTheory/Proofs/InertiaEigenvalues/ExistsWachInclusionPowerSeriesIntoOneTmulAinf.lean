@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EmbWInjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedIntegersTensorEqLetterwiseProductAinf
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltWittEqZeroOfPrimeMulEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EmbWInjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedIntegersTensorEqLetterwiseProductAinf
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltWittEqZeroOfPrimeMulEqZero
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct GlobalTheory.HWL GlobalTheory.Prism GlobalTheory.PrismS
 open scoped Formalism.Per
@@ -47,12 +51,12 @@ theorem exists_factor {W : Type} [CommRing W] (r : O →ₗ[Z] Z) (hr : r 1 = 1)
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul o b => rw [hj, Algebra.TensorProduct.tmul_mul_tmul, one_mul, hp, hp, mul_smul_comm]
-    | add y z hy hz => rw [mul_add, map_add, map_add, hy, hz, mul_add]
+    | add y z hy hz => rw [mul_add, map_add (f := _), map_add (f := _), hy, hz, mul_add]
   have hinj : Function.Injective j := fun a b h => by
     rw [← hp1 a, ← hp1 b, ← hj, ← hj, h]
   have hpoly : ∀ q : Polynomial W, f (q : PowerSeries W) ∈ j.range := fun q => by
     induction q using Polynomial.induction_on' with
-    | add q q' h h' => rw [Polynomial.coe_add, map_add]; exact add_mem h h'
+    | add q q' h h' => rw [Polynomial.coe_add, map_add (f := _)]; exact add_mem h h'
     | monomial n w =>
       rw [← Polynomial.C_mul_X_pow_eq_monomial, Polynomial.coe_mul, Polynomial.coe_pow, Polynomial.coe_C,
         Polynomial.coe_X, map_mul, map_pow]
@@ -68,9 +72,9 @@ theorem exists_factor {W : Type} [CommRing W] (r : O →ₗ[Z] Z) (hr : r 1 = 1)
     obtain ⟨a, ha⟩ := hpoly (PowerSeries.trunc m x)
     have e : f x = j a + j (π ^ m) * f x' := by
       conv_lhs => rw [hx']
-      rw [map_add, map_mul, map_pow, hX, ha, map_pow, hj]
+      rw [map_add (f := _), map_mul, map_pow, hX, ha, map_pow, hj]
     refine ⟨j (p (f x')) - f x', ?_⟩
-    rw [e, map_add, hpm, hj a, hp1, map_add, map_mul, ← hj a, ← hj π, map_pow]
+    rw [e, map_add (f := _), hpm, hj a, hp1, map_add (f := _), map_mul, ← hj a, ← hj π, map_pow]
     ring
   refine ⟨fun a b h => hinj h, ?_⟩
   let e : A ≃+* j.range := RingEquiv.ofBijective j.rangeRestrict
@@ -91,12 +95,14 @@ theorem exists_sum {W C : Type} [CommRing W] [CommRing C] (F : W →+* O ⊗[Z] 
   choose a a1 a2 using hz
   choose b b1 b2 using hu
   refine ⟨∑ i, a i * b i, ?_, ?_⟩
-  · rw [map_sum, tmul_sum]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    rw [map_mul, a1, b1, Algebra.TensorProduct.tmul_mul_tmul, one_mul]
-  · rw [map_sum, map_sum]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    rw [map_mul, map_mul, a2, b2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum, tmul_sum]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [map_mul, a1, b1, Algebra.TensorProduct.tmul_mul_tmul, one_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum, map_sum]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [map_mul, map_mul, a2, b2]
 
 end General
 

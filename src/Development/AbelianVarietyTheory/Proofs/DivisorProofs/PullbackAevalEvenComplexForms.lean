@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.BsLApply
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BsLApply
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MvPolynomial MeasureTheory Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.L2DbarEstimates (V)
@@ -13,7 +18,7 @@ theorem GlobalTheory.FlagCell2.pull_aeval_even : ∀ (n n' : ℕ) (L : V n →L[
     simp only [MvPolynomial.aeval_C]
     rw [Subalgebra.coe_algebraMap, Subalgebra.coe_algebraMap, AlgHom.commutes]
   | add p q hp hq =>
-    rw [map_add, map_add, Subalgebra.coe_add, Subalgebra.coe_add, map_add, hp, hq]
+    rw [map_add (f := _), map_add (f := _), Subalgebra.coe_add, Subalgebra.coe_add, map_add (f := _), hp, hq]
   | mul_X p i hp =>
     rw [map_mul, map_mul, MvPolynomial.aeval_X, MvPolynomial.aeval_X, Subalgebra.coe_mul,
       Subalgebra.coe_mul, map_mul, hp, h i]

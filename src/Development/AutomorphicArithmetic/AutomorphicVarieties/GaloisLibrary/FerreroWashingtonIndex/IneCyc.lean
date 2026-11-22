@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.CycRepApply
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.CycRepApply
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.V.Kum UpperTheory.V.Stick UpperTheory.V.FW
 open scoped nonZeroDivisors
@@ -60,5 +64,5 @@ theorem UpperTheory.V.FW.ineCyc :
     obtain rfl : m = l ^ n := hm
     exact iC_ine F Ω l A hA g hg n _ (by rw [← map_pow, hy, map_one])
   | algebraMap r => rw [← IsScalarTower.algebraMap_apply]; exact g.commutes r
-  | add a b _ _ ha hb => rw [map_add, map_add, ha, hb]
+  | add a b _ _ ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
   | mul a b _ _ ha hb => rw [map_mul, map_mul, ha, hb]

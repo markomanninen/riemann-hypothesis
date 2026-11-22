@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWeakTopologyWittTiltTensor
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZlTowerGen
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoordsOneTmulSmul
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TeichmullerRootPowIdealsTendstoZeroWeakTopStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWeakTopologyWittTiltTensor
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZlTowerGen
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoordsOneTmulSmul
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TeichmullerRootPowIdealsTendstoZeroWeakTopStatement
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc TensorProduct GlobalTheory.NL Formalism.MainNotions.DeltaInvariantLattices GlobalTheory.WeakClosed
 open scoped Topology PowerSeries.WithPiTopology
 set_option synthInstance.maxHeartbeats 400000
@@ -24,7 +29,8 @@ theorem inclR_pow_mul_smul_eq_sum {l : ℕ} [Fact l.Prime] {LL : FinExt l} {M : 
     conv_lhs => rw [← (TensorProduct.equivFinsuppOfBasisLeft bO).symm_apply_apply z]
     rw [TensorProduct.equivFinsuppOfBasisLeft_symm_apply, Finsupp.sum_fintype _ _ (by simp)]
   conv_lhs => rw [hz]
-  rw [Finset.mul_sum, map_sum, Finset.sum_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.mul_sum, map_sum, Finset.sum_smul]
   refine Finset.sum_congr rfl fun α _ => ?_
   rw [Algebra.TensorProduct.tmul_pow, Algebra.TensorProduct.tmul_mul_tmul, one_pow, one_mul, ← mul_smul,
     Algebra.TensorProduct.tmul_mul_tmul, one_mul, mul_one]
@@ -36,7 +42,8 @@ theorem coords_sum_one_tmul_smul {R O W T ι κ : Type} [CommRing R] [CommRing O
     (i : ι) :
     GlobalTheory.WeakTop.coords W O b (∑ α, ((1 : O) ⊗ₜ[R] w α) • Y α) i =
       ∑ α, w α * GlobalTheory.WeakTop.coords W O b (Y α) i := by
-  rw [map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_apply]
   exact Finset.sum_congr rfl fun α _ => GlobalTheory.WeakTop.coords_one_tmul_smul b _ _ i
 
 theorem exists_pow_wittCoords_inclR_smul_mem_nhds {l : ℕ} [Fact l.Prime] {P : LocPrime l} (AI : LocAinf l P) (s : ℕ)
@@ -56,7 +63,7 @@ theorem exists_pow_wittCoords_inclR_smul_mem_nhds {l : ℕ} [Fact l.Prime] {P : 
   let F : (Fin m → WCb l) → (Fin d → WCb l) := fun w i =>
     ∑ α, w α * GlobalTheory.WeakTop.coords (WCb l) ↥(OL LL) b (Y α) i
   have hF : Continuous F := continuous_pi fun i =>
-    continuous_finset_sum _ fun α _ => (continuous_apply α).mul continuous_const
+    continuous_finsetSum _ fun α _ => (continuous_apply α).mul continuous_const
   have hF0 : F 0 = 0 := by funext i; simp [F]
   have hFV : F ⁻¹' V ∈ 𝓝 (0 : Fin m → WCb l) := hF.tendsto 0 (hF0 ▸ hV)
   rw [nhds_pi] at hFV

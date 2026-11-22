@@ -1,24 +1,29 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.HtdOf
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EvBasicNEvalSubCoeffMem
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ChartFirstOrderMemSpan
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.NsmulFAddSqZeroEq
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CoeffDvdOfAevalAddSqZero
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.PSerFrobOfInvariance
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CoeffDecomp
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ChartPSmulLiftEqBt
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FAddNsmulFEqEvalPolyFrob
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.LocalFactorModPNilOver
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EvBtOfTangentOfSeries
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.HtDualExists
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EvImgIsLatSubring
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ValNatCastSmul
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.PairingNsmulRight
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IsLocalRingTensorProductOfFiniteOfPoints
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EvHopfOfTensorLocal
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.PointsEqTangent
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.UniversalDerivation
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EvCotOfUnivDer
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.HtdOf
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EvBasicNEvalSubCoeffMem
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ChartFirstOrderMemSpan
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.NsmulFAddSqZeroEq
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CoeffDvdOfAevalAddSqZero
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.PSerFrobOfInvariance
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CoeffDecomp
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ChartPSmulLiftEqBt
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FAddNsmulFEqEvalPolyFrob
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.LocalFactorModPNilOver
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EvBtOfTangentOfSeries
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.HtDualExists
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EvImgIsLatSubring
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ValNatCastSmul
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.PairingNsmulRight
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IsLocalRingTensorProductOfFiniteOfPoints
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EvHopfOfTensorLocal
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.PointsEqTangent
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.UniversalDerivation
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EvCotOfUnivDer
+
+@[expose] public section
+
 open TensorProduct IsLocalRing Matrix ReciprocityTheory.PGsh ReciprocityTheory.PGsh.Up ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Be2
 
 noncomputable section
@@ -45,7 +50,8 @@ theorem evLat (D : Dat p g B Tw Dt Oe σ cp) : EvLatStatement D :=
   GlobalTheory.evImg_isLat_subring D
 
 theorem evHopf (D : Dat p g B Tw Dt Oe σ cp) : EvHopfStatement D :=
-  GlobalTheory.EvHopf.evHopf_of_tensorLocal GlobalTheory.isLocalRing_tensorProduct_of_finite_of_points D
+  _root_.GlobalTheory.EvHopf.evHopf_of_tensorLocal
+    GlobalTheory.isLocalRing_tensorProduct_of_finite_of_points D
 
 theorem evAct (D : Dat p g B Tw Dt Oe σ cp) : EvActStatement D :=
   GlobalTheory.EvAct.evImg_act_stable D

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HESmulRight
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsGeneratorCmDifferentIdealScaled
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaLatticeImageRationalHomLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HESmulRight
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsGeneratorCmDifferentIdealScaled
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaLatticeImageRationalHomLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,7 +97,7 @@ theorem pt_sub (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) {N N' : ℕ} (z 
 theorem pt_add (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) {N N' : ℕ} (z w : Matrix (Fin N') (Fin N) D.host.E) :
     pt D (tor0 D cc δ) δ z + pt D (tor0 D cc δ) δ w = pt D (tor0 D cc δ) δ (z + w) := by
   funext τ i j
-  simp only [Pi.add_apply, pt_apply, Matrix.add_apply, map_add, mul_add]
+  simp only [Pi.add_apply, pt_apply, Matrix.add_apply, map_add (f := _), mul_add]
 
 def ptH (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (N : ℕ) {N' : ℕ} (t₀ : D.host.E) (b : Fin N' → D.host.E) :
     (Fin N → 𝓞 D.host.E) →+ VC D N N' :=
@@ -110,7 +114,7 @@ def phiH (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) {N' : ℕ} (t₀ : D.h
   AddMonoidHom.mk' (fun s => (∑ τ, ∑ i, embT D τ (s : D.host.E) *
       (δ * embT D τ (t₀ * x i) * (starRingEnd ℂ) (δ * embT D τ (t₀ * b i)))) / (area (tor0 D cc δ).abelian₂ : ℂ))
     fun s s' => by
-      simp only [RingOfIntegers.coe_eq_algebraMap, map_add, add_mul, Finset.sum_add_distrib, add_div]
+      simp only [RingOfIntegers.coe_eq_algebraMap, map_add (f := _), add_mul, Finset.sum_add_distrib, add_div]
 
 theorem Hf_ptH (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (N : ℕ) {N' : ℕ} (t₀ : D.host.E)
     (b x : Fin N' → D.host.E) (c c' : Fin N → 𝓞 D.host.E) :
@@ -119,7 +123,8 @@ theorem Hf_ptH (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (N : ℕ) {N' : 
   have h1 : ∀ s : 𝓞 D.host.E, algebraMap (𝓞 D.host.E) D.host.E (sgO D s) =
       D.host.conj (algebraMap (𝓞 D.host.E) D.host.E s) := fun s => rfl
   rw [phiH, AddMonoidHom.mk'_apply]
-  simp only [Hf, ptH_apply, pt_apply, mat, Algebra.smul_def,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Hf, ptH_apply, pt_apply, mat, Algebra.smul_def,
     RingOfIntegers.coe_eq_algebraMap, map_sum, map_mul, h1, embT_conj, Finset.sum_mul]
   congr 1
   refine Finset.sum_congr rfl fun τ _ => Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun k _ => ?_
@@ -173,7 +178,8 @@ theorem triDat_of_tri : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ), cc
         ptH D cc δ N t₀ y a := by
     intro y a
     simp only [AddMonoidHom.comp_apply, AddMonoidHom.single_apply]
-    rw [← map_sum, Finset.univ_sum_single]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, Finset.univ_sum_single]
   have hin : ∀ (L : Lat D N') (y : Fin N' → D.host.E), y ∈ L → ∀ a : Fin N → 𝓞 D.host.E,
       ptH D cc δ N t₀ y a ∈ La D (tor0 D cc δ) (stdL D N) L := fun L y hy a =>
     (ptH_mem hδ L t₀ y a).2 fun j => smul_mem_IL (Submodule.smul_mem _ _ ht₀) hy

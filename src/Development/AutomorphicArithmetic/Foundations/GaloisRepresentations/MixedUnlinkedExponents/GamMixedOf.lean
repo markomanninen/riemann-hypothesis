@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.MixedUnlinkedExponents.ValsExtOf
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BijectiveOfSplit
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.WeakStable
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.MixedUnlinkedExponents.ValsExtOf
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BijectiveOfSplit
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.WeakStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,11 +25,11 @@ def NmEq : Prop :=
 def ChsTr : Prop :=
   ∀ (k k' : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     [Field k'] [ValuativeRel k'] [TopologicalSpace k'] [IsNonarchimedeanLocalField k'] (i : k ≃+* k') (hi' : Continuous i.symm)
-    (s : Multiset (IrrGL k)),
+    (s : Multiset (IrrGL (k := k))),
     chs (s.map (GlobalTheory.SuppIne.trGL i hi')) = (chs s).map fun ξ => ξ.comp (Units.map (i.symm : k' →* k))
 
 def SplitSupp : Prop :=
-  ∀ (K L : Type) [Field K] [NumberField K] [IsTotallyComplex K] [Field L] [NumberField L] [IsTotallyComplex L] [Algebra K L]
+  ∀ (K L : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] [Algebra K L]
     [IsGalois K L], (Module.finrank K L).Prime → ∀ n : ℕ, 1 ≤ n → ∀ (π : CuspSub K n) (P : CuspSub L n),
     WeakBC (CG.mk π).HasSat (CG.mk P).HasSat →
     ∀ (v : HeightOneSpectrum (𝓞 K)) (w : PlacesOver L v), (¬ ∀ u : PlacesOver L v, u = w) →
@@ -35,22 +39,17 @@ def SplitSupp : Prop :=
         ∀ s s', SuppAt π v s → SuppAt P w.1 s' → s' = s.map (GlobalTheory.SuppIne.trGL i hi')
 
 def RkSupp : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (π : CuspSub K 1) (ψ : HChar K), CG.mk π = CG.ofChar ψ →
+  ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (π : CuspSub K 1) (ψ : HChar K), CG.mk π = CG.ofChar ψ →
     ∀ v s, SuppAt π v s → chs s = {ψ.loc v}
 
 def RkLift : Prop :=
-  ∀ (K L : Type) [Field K] [NumberField K] [IsTotallyComplex K] [Field L] [NumberField L] [IsTotallyComplex L] [Algebra K L]
+  ∀ (K L : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] [Algebra K L]
     (ψ : HChar K) (ψ' : HChar L), WeakBC (CG.ofChar ψ).HasSat (CG.ofChar ψ').HasSat →
     ∀ (v : HeightOneSpectrum (𝓞 K)) (w : PlacesOver L v), ψ'.loc w.1 = (ψ.loc v).comp (nm w)
 
 def UpThru : Prop :=
   ∀ (K L : Type) [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L] (v : HeightOneSpectrum (𝓞 K)) (w : PlacesOver L v)
-    (s : Multiset (IrrGL (v.adicCompletion K))), (up w s).filter (Thru w) = up w s
-
-def Spread : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (n : ℕ), 1 ≤ n → ∀ (π : CuspSub K n) v s, SuppAt π v s →
-    GlobalTheory.RoadU.Unlinked s → ∀ ξ ∈ chs s, ∀ ξ' ∈ chs s,
-      ‖((ξ (unif (v.adicCompletion K)) : ℂˣ) : ℂ)‖ < (Ideal.absNorm v.asIdeal : ℝ) * ‖((ξ' (unif (v.adicCompletion K)) : ℂˣ) : ℂ)‖
+    (s : Multiset (IrrGL (k := v.adicCompletion K))), (up w s).filter (Thru w) = up w s
 
 def SplitSuppOf : Prop := NmEq → SuppFacts → UpperTheory.ConvolutionTheory.Sph.WeakStable → UpperTheory.ConvolutionTheory.T.SplitStrong → SplitSupp
 def RkLiftOf : Prop := NormLoc → RkLift

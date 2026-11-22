@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAddCharArchimedeanExpRealLinear
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MixedSpaceVecPairAsAdeles
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IteratedLineDerivMemWeylAlg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAddCharArchimedeanExpRealLinear
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MixedSpaceVecPairAsAdeles
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IteratedLineDerivMemWeylAlg
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta
 open IsDedekindDomain NumberField MeasureTheory
@@ -17,4 +21,4 @@ theorem _root_.GlobalTheory.T.standardAddChar_archimedean_exp_realLinear : ∀ (
         Complex.exp (2 * Real.pi * Complex.I * β a)) ∧
       ∀ a, β a = -(∑ ρ, θ ρ (((InfiniteAdeleRing.ringEquiv_mixedSpace D.host.F).symm a) ⊗ₜ[D.host.F]
         (1 : D.host.E))).re := by
-  first | exact @GlobalTheory.StdCharLin.stdChar_mixed_linear | exact GlobalTheory.StdCharLin.stdChar_mixed_linear | (intros; apply GlobalTheory.StdCharLin.stdChar_mixed_linear <;> assumption)
+  exact @GlobalTheory.StdCharLin.stdChar_mixed_linear

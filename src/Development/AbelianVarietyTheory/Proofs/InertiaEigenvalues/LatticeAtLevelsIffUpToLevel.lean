@@ -1,16 +1,20 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.GradedSeries
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfSumSmul
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanIsLinesOfGraded
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffEqOfApply
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AntitoneFiltrationExistsAdaptedLinearIndepSet
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamComponentWachLetterBasisFiltration
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachWeierstrassTestAndDensity
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLevelExpansionAtRootOfUnity
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ISupIndepDdRE
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEqOfExhaustive
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyClosedOfDictClosed
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.GradedSeries
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfSumSmul
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanIsLinesOfGraded
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffEqOfApply
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AntitoneFiltrationExistsAdaptedLinearIndepSet
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamComponentWachLetterBasisFiltration
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachWeierstrassTestAndDensity
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLevelExpansionAtRootOfUnity
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ISupIndepDdRE
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEqOfExhaustive
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyClosedOfDictClosed
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,8 +121,8 @@ theorem single_mem_shiftSer {F : Submodule L M} (k : ℤ) {d : M} (hd : d ∈ F)
   · subst h; simpa using hd
   · simp [Pi.single_eq_of_ne h]
 
-open GlobalTheory.SenLines.Coords in
 
+open GlobalTheory.SenLines.Coords in
 theorem spanIsLines_of_graded_onto {N : Type} (E : N → ℤ → M) {r : ℕ} (u : Fin r → ℤ) (d : Fin r → M)
     (hd : LinearIndependent L d) (A : ℤ → Submodule L M)
     (hA : ∀ a, A a = Submodule.span L (d '' {k | a ≤ u k})) (h1 : ∀ x k, E x k ∈ A (-k))
@@ -192,9 +196,8 @@ theorem spanIsLines_of_graded_onto {N : Type} (E : N → ℤ → M) {r : ℕ} (u
     simp only [he, serAct_lines]
     rw [← lines_sum, ← hf]
     congr 1
-    funext k
-    simp only [Matrix.mulVec, dotProduct, Mx, Matrix.of_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
-    exact Finset.sum_congr rfl fun s _ => by ring
+    ext k
+    simp [Matrix.mulVec, dotProduct, Mx, smul_eq_mul, mul_comm]
 
 theorem serSpan_eq_graded (A : ℤ → Submodule L M) (hA : Antitone A) (hfd : FiniteDimensional L ↥(⨆ a, A a))
     (hsep : ∀ x, (∀ a, x ∈ A a) → x = 0) (S : Set (ℤ → M)) (h1 : ∀ y ∈ S, ∀ k, y k ∈ A (-k))
@@ -306,11 +309,14 @@ theorem isLaurent_twist (c : L) (g : M →ₗ[L] M') {u : ℤ → M} (hu : IsLau
 
 theorem twist_serMul {c : L} (hc : c ≠ 0) (g : M →ₗ[L] M') (f : L⟦X⟧) {u : ℤ → M} (hu : IsLaurent u) :
     twist c g (serMul f u) = serMul (rescale c f) (twist c g u) := by
-  have := congrArg Laur.co (Laur.tw_smul hc g f (Laur.mk u hu : Laur L M))
-  rw [Laur.co_smul] at this
-  refine Eq.trans (funext fun k => ?_) this
-  rw [Laur.co_tw, Laur.co_smul]
-  rfl
+  funext k
+  have h := congrFun (congrArg Laur.co (Laur.tw_smul hc g f (Laur.mk u hu : Laur L M))) k
+  have hm : Laur.co (Laur.mk u hu : Laur L M) = u := by
+    rfl
+  have ht : Laur.co (Laur.tw c g (Laur.mk u hu : Laur L M)) = twist c g u := by
+    funext j
+    rw [Laur.co_tw, hm, twist_apply]
+  simpa [Laur.co_smul, Laur.co_tw, twist_apply, hm, ht] using h
 
 theorem map_serSpan {c : L} (hc : c ≠ 0) (g : M →ₗ[L] M') (S : Set (ℤ → M)) (hS : ∀ y ∈ S, IsLaurent y) :
     (serSpan L S).map (twist c g) = serSpan L (twist c g '' S) := by
@@ -461,7 +467,7 @@ theorem approx [IsDomain O] [IsFractionRing O LL]
     have hb : algebraMap O LL b ≠ 0 := IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors b.2
     refine ⟨algebraMap O (LetA O n) o • x + algebraMap O (LetA O n) o' • x', (algebraMap O LL b)⁻¹,
       inv_ne_zero hb, fun j hj => ?_⟩
-    rw [map_add, hO, hO, Pi.add_apply, Pi.add_apply, Pi.smul_apply, Pi.smul_apply, ho, ho', ← h j hj, ← h' j hj,
+    rw [map_add (f := _), hO, hO, Pi.add_apply, Pi.add_apply, Pi.smul_apply, Pi.smul_apply, ho, ho', ← h j hj, ← h' j hj,
       mul_smul, mul_smul, ← smul_add, inv_smul_smul₀ hb]
   | smul e y _ hy =>
     obtain ⟨x, c, hc, h⟩ := hy
@@ -573,8 +579,8 @@ theorem low_guard_iff [CharZero LL] : (∃ j : ℕ, j < W.s ∧ IsPrimitiveRoot 
     obtain ⟨j', hj', hζ⟩ := key _ ((hX ⟨j, hj⟩).1 h0)
     exact ⟨j', by omega, hζ⟩
 
-omit i ζ in
 
+omit i ζ in
 theorem coeffForm_iff_spans [CharZero LL] (hT : IsCrys PD T.ρ) (Pt : ZMod n → LL → (K →ₐ[Qp] LL) → Prop)
     (hPt : ∀ i ζ τ, Pt i ζ τ → (SpanAt W T i ζ τ ↔ CoeffAt W T i ζ τ)) :
     p4 W Pt T ↔ ∀ i ζ, (∀ j : ℕ, j < W.s → IsPrimitiveRoot ζ (PD.p ^ j) →
@@ -657,7 +663,7 @@ theorem crisLev_step [CharZero LL] (hT : IsCrys PD T.ρ) (hζ : ∃ j : ℕ, IsP
         have e : W.Q ^ (m + m') • (y + z) = ((W.Q ^ m' • (⟨_, hm⟩ : ↥(W.N T)) + W.Q ^ m • ⟨_, hm'⟩ : ↥(W.N T)) : W.DD T) := by
           simp only [Submodule.coe_add, Submodule.coe_smul, smul_smul, ← pow_add, smul_add, add_comm m' m]
         refine ⟨m + m', e ▸ Subtype.property _, ?_⟩
-        rw [show (⟨W.Q ^ (m + m') • (y + z), _⟩ : ↥(W.N T)) = _ from Subtype.ext e, map_add, levB_smul, levB_smul]
+        rw [show (⟨W.Q ^ (m + m') • (y + z), _⟩ : ↥(W.N T)) = _ from Subtype.ext e, map_add (f := _), levB_smul, levB_smul]
         exact add_mem ((serSpan_closed h).2 _) ((serSpan_closed h').2 _)
       | smul a y _ hy =>
         obtain ⟨m, hm, h⟩ := hy
@@ -745,8 +751,8 @@ theorem pt_iff (τ : ↥K.1 →ₐ[ℚ_[l]] ↥LL.1) :
   rintro rfl x y hxy
   exact congrArg τs (Subtype.ext hxy.symm)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem mid_iff (ht : LocTied l P AI) (hT : IsCrys (P.PD K) T.ρ) (τ : ↥K.1 →ₐ[ℚ_[l]] ↥LL.1)
     (hpt : GlobalTheory.NL.Pt H h i ζ τ) : SpanAt (H.W K s LL h) T i ζ τ ↔ CoeffAt (H.W K s LL h) T i ζ τ := by
   have hl : l.Prime := Fact.out
@@ -767,8 +773,8 @@ def UpToLevel : Prop :=
       Nlev (H.W K s LL h) T i ζ = shiftSer 0 (toDR (PD := P.PD K) T (Dlet (H.W K s LL h) T i))) ∧
     (∀ τ : ↥(Ks K s) →ₐ[ℚ_[l]] ↥LL.1, H.IsPt h i ζ τ → SpanAt (H.W K s LL h) T i ζ (resEmb h τ))
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem upToLevel_iff (ht : LocTied l P AI) (hT : IsCrys (P.PD K) T.ρ) :
     p4 (H.W K s LL h) (GlobalTheory.NL.Pt H h) T ↔ UpToLevel H h T := by
   haveI : CharZero ↥LL.1 := algebraRat.charZero _
@@ -779,8 +785,8 @@ theorem upToLevel_iff (ht : LocTied l P AI) (hT : IsCrys (P.PD K) T.ρ) :
   obtain ⟨τs, h1, rfl⟩ := (pt_iff H h i ζ _).1 hτ
   exact g τs h1
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem latticeAtLevels_iff_upToLevel {F : LocFon l P AI H} (C : LocCmpT l P AI H F) :
     LatticeAtLevels l P AI H F C ↔ ∀ (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL)
       (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)), IsCrys (P.PD K) T.ρ → UpToLevel H h T := by

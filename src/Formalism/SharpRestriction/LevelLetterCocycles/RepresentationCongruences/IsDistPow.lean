@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsPhiBridge
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.SaturationFractionModule
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsPhiBridge
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.SaturationFractionModule
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem ArcLengthThreeDescent.cancel {ϖ : O} (hϖ : Irreducible ϖ) {G : O⟦X�
     rw [Ideal.mem_span_pair] at h ⊢
     obtain ⟨A, B, hAB⟩ := h
     have h1 := congrArg (PowerSeries.map (IsLocalRing.residue O)) hAB
-    simp only [map_add, map_mul, map_pow, PowerSeries.map_C, hres, map_zero,
+    simp only [map_add (f := _), map_mul, map_pow, PowerSeries.map_C, hres, map_zero,
       zero_pow (by omega : m + 1 ≠ 0), mul_zero, zero_mul, zero_add] at h1
     have hB : B.map (IsLocalRing.residue O) = 0 := (mul_eq_zero.1 h1).resolve_right hG
     have hcoef : ∀ k, ∃ b : O, PowerSeries.coeff k B = ϖ * b := by
@@ -154,7 +158,7 @@ theorem ArcLengthThreeDescent.Kc_le (l b₁ y η : ℕ) [hl : Fact l.Prime] (hy 
     have h4 : 2 * a ≤ a * l := by nlinarith
     omega
   have hv : padicValNat l (a.choose (y - 1)) ≤ Nat.log l a := by
-    rw [← Nat.factorization_def _ hl.out]
+    rw [Nat.padicValNat_def, ← Nat.factorization_def _ hl.out]
     exact Nat.factorization_choose_le_log
   have hlog1 : (Nat.log l a : ℝ) ≤ Real.logb l a := by
     have h1 : ((l ^ Nat.log l a : ℕ) : ℝ) ≤ (a : ℝ) := by

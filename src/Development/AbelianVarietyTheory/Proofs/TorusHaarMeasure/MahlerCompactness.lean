@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajorantNormalForms
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianLatticeMaps
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IntegralBasisReduction
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajorantNormalForms
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianLatticeMaps
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IntegralBasisReduction
+
+@[expose] public section
 
 namespace GlobalTheory.FlagMahler
 
@@ -137,7 +141,8 @@ theorem _root_.GlobalTheory.FlagMahler.comb_bound (y : X.Ψ → Matrix (Fin r) (
       ∑ i, ‖(q i : ℂ)‖ * (1 + _root_.ReciprocityTheory.ChartRestriction.G.FD.QuadraticLatticeForms.Qy X y (f i) / X.c τ) := by
   have he : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb τ.1 (∑ i, q i • f i) = ∑ i, (q i : ℂ) • _root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb τ.1 (f i) := by
     ext a
-    simp [_root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb, Finset.sum_apply, map_sum, Rat.smul_def]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [_root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb, Finset.sum_apply, map_sum, Rat.smul_def]
   rw [he, Matrix.mulVec_sum]
   simp only [Matrix.mulVec_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
   refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => ?_)
@@ -204,20 +209,6 @@ theorem det_ne_of_gram {τ : E →+* ℂ} {Y : Matrix (Fin r) (Fin r) ℂ} {p0 :
   have h3 : star (v b) = 0 := (mul_eq_zero.mp h2).resolve_left hs
   simpa using h3
 
-theorem Kset_sub (R : ℝ) : Kset X R ⊆ X.dom := by
-  intro w hw τ
-  have hg := (hw τ).1
-  refine ⟨det_ne_of_gram X hg, fun i => ?_⟩
-  have e : dmin X.Gm w τ i = ((psgn X.p0 i : ℝ) : ℂ) := by
-    unfold dmin lminor
-    rw [hg, submatrix_diagonal _ _ (Fin.castLE_injective _), det_diagonal]
-    simp only [psgn, Complex.ofReal_prod, Fin.val_castLE]
-    exact Fin.prod_univ_eq_prod_range (fun a => ((sgn X.p0 a : ℝ) : ℂ)) i
-  rw [e, Complex.ofReal_re]
-  have hne : psgn X.p0 i ≠ 0 :=
-    Finset.prod_ne_zero_iff.mpr fun a _ => by unfold sgn; split_ifs <;> norm_num
-  exact mul_self_pos.mpr hne
-
 end
 
 theorem norm_herm_le {y : X.Ψ → Matrix (Fin r) (Fin r) ℂ} (hy : IntegralBasisReduction.IsNormal X y) {C : ℝ}
@@ -239,11 +230,11 @@ theorem norm_herm_le {y : X.Ψ → Matrix (Fin r) (Fin r) ℂ} (hy : IntegralBas
         nlinarith [mul_nonneg hc.le (sq_nonneg (u - w))]
     _ = _ := by simp
 
+
 open NumberField Module in
 open Matrix in
 open scoped ComplexConjugate in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r) in
-
 theorem _root_.GlobalTheory.FlagMahler.Qy_smul_le (y : X.Ψ → Matrix (Fin r) (Fin r) ℂ) (α : E) (v : Fin r → E) :
     _root_.ReciprocityTheory.ChartRestriction.G.FD.QuadraticLatticeForms.Qy X y (α • v) ≤ (∑ σ : X.Ψ, ‖σ.1 α‖ ^ 2) * _root_.ReciprocityTheory.ChartRestriction.G.FD.QuadraticLatticeForms.Qy X y v := by
   unfold _root_.ReciprocityTheory.ChartRestriction.G.FD.QuadraticLatticeForms.Qy
@@ -502,11 +493,11 @@ private theorem norm_entry_le_of_gram_eq_diagonal_sgn (τ : X.Ψ) (W : Matrix (F
   refine (norm_sum_le _ _).trans (le_of_eq (Finset.sum_congr rfl fun k _ => ?_))
   rw [norm_mul, transpose_apply, conjTranspose_apply, norm_star]
 
+
 open NumberField Module in
 open Matrix in
 open scoped ComplexConjugate in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r) in
-
 theorem _root_.GlobalTheory.FlagMahler.mahler_compactness : _root_.ReciprocityTheory.ChartRestriction.G.FD.MahlerCompactnessCriterion (E := E) := by
   classical
   unfold _root_.ReciprocityTheory.ChartRestriction.G.FD.MahlerCompactnessCriterion

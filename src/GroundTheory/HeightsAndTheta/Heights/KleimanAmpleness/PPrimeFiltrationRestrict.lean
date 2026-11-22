@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPrimeFiltrationPoint
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPrimeFiltrationPoint
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -22,8 +27,8 @@ abbrev reducedPt : Fin (N + 1) → K' := fun i => ψ (ratio hj i)
 def RegularAt (a : Ω) : Prop :=
   ∃ b c : chartRing S x (singleChart hj), ψ c ≠ 0 ∧ a * (c : Ω) = b
 
+open scoped Classical in
 open Classical in
-
 def residueAt (a : Ω) : K' :=
   if h : RegularAt hj ψ a then ψ h.choose / ψ h.choose_spec.choose else 0
 
@@ -39,7 +44,7 @@ theorem residue_wellDefined {a : Ω} {b c b0 c0 : chartRing S x (singleChart hj)
 theorem residueAt_eq {a : Ω} {b c : chartRing S x (singleChart hj)} (hc : ψ c ≠ 0)
     (h : a * (c : Ω) = b) : residueAt hj ψ a = ψ b / ψ c := by
   have hr : RegularAt hj ψ a := ⟨b, c, hc, h⟩
-  rw [residueAt, dif_pos hr]
+  rw [residueAt, dite_eq_left hr]
   exact residue_wellDefined hj ψ hc h hr.choose_spec.choose_spec.1 hr.choose_spec.choose_spec.2
 
 theorem residueAt_of_mem (a : chartRing S x (singleChart hj)) : residueAt hj ψ (a : Ω) = ψ a := by
@@ -64,7 +69,7 @@ theorem RegularAt.add {a a' : Ω} (h : RegularAt hj ψ a) (h' : RegularAt hj ψ 
     simp only [Subalgebra.coe_mul, Subalgebra.coe_add, ← hbc, ← hbc']
     ring
   refine ⟨⟨_, _, hcc, he⟩, ?_⟩
-  rw [residueAt_eq hj ψ hcc he, residueAt_eq hj ψ hc hbc, residueAt_eq hj ψ hc' hbc', map_add,
+  rw [residueAt_eq hj ψ hcc he, residueAt_eq hj ψ hc hbc, residueAt_eq hj ψ hc' hbc', map_add (f := _),
     map_mul, map_mul, map_mul, div_add_div _ _ hc hc']
   ring
 
@@ -102,7 +107,6 @@ theorem ratio_self : ψ (ratio (S := S) hj j) = 1 := by
 variable (hxy : ∀ i, ψ (ratio hj i) ≠ 0 → x i ≠ 0)
 
 include hxy in
-
 theorem regularAt_chart (K : Chart (reducedPt hj ψ)) {f s : Poly S N} {e : ℕ} (hs : s ∈ monos K.1)
     (hf : f.IsHomogeneous e) (hse : s.IsHomogeneous e) :
     RegularAt hj ψ (aeval x f / aeval x s) ∧
@@ -160,7 +164,7 @@ theorem exists_generator_at {Q0 Q1 : Submodule (chartRing S x (singleChart hj)) 
       obtain ⟨c, hc⟩ := Submodule.mem_one.mp hmn
       exact ⟨c, hc, H m hm n hn c hc⟩
     · rintro a b ⟨c, hc, hc0⟩ ⟨d, hd, hd0⟩
-      exact ⟨c + d, by rw [Subalgebra.coe_add, hc, hd], by rw [map_add, hc0, hd0, add_zero]⟩
+      exact ⟨c + d, by rw [Subalgebra.coe_add, hc, hd], by rw [map_add (f := _), hc0, hd0, add_zero]⟩
   have : c = 1 := Subtype.ext hc
   rw [this, map_one] at hψc
   exact one_ne_zero hψc

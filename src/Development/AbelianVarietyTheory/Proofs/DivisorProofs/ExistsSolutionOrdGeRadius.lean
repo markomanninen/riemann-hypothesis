@@ -1,7 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuationTheory
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.WtSubOneLe
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatFrame
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.TypicalCurveStructureConstants
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.RootStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.FactorialWeightedSumBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.OmBStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.WtSubOneLe
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatFrame
+
+@[expose] public section
 
 open MvPowerSeries ReciprocityTheory.PGsh ReciprocityTheory.ChartRestriction.G.Sh GlobalTheory.FGDepth
 
@@ -66,7 +73,7 @@ theorem agree_mul {D : ℕ} {g g' h h' : MvPowerSeries (Fin M) C} (hg0 : constan
   rw [Finset.HasAntidiagonal.mem_antidiagonal] at hβγ
   dsimp only
   have hdeg : Finsupp.degree β + Finsupp.degree γ = Finsupp.degree α := by
-    rw [← hβγ, map_add]
+    rw [← hβγ, map_add (f := _)]
   by_cases hβ : β = 0
   · subst hβ
     simp only [MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hg0, hg0', zero_mul]
@@ -239,7 +246,7 @@ theorem coeff_Phi {p : ℕ} {c : Fin d → ℕ → Fin d → C} (hc0 : ∀ a, c 
   have h0 : ∑ a, c a 0 b * coeff α (t a ^ (p ^ 0)) = coeff α (t b) := by
     simp only [hc0, pow_zero, pow_one, Pi.single_apply, ite_mul, one_mul, zero_mul,
       Finset.sum_ite_eq, Finset.mem_univ, if_true]
-  simp only [Phi, map_add, map_sub, hl, Finset.sum_range_succ', h0]
+  simp only [Phi, map_add (f := _), map_sub, hl, Finset.sum_range_succ', h0]
   ring
 
 def iterT (p : ℕ) (c : Fin d → ℕ → Fin d → C) (z : Fin d → MvPowerSeries (Fin M) C) :
@@ -331,7 +338,7 @@ theorem lgSum_limT (b : Fin d) : lgSum p c (limT p c z) b = z b := by
   have h2 : coeff α (Phi p c z (iterT p c z (Finsupp.degree α + 1)) b) =
       coeff α (iterT p c z (Finsupp.degree α + 1) b) :=
     (agree_iterT hp hc0 hz (Finsupp.degree α + 1) b α (Nat.lt_succ_self _)).symm
-  simp only [Phi, map_add, map_sub] at h2
+  simp only [Phi, map_add (f := _), map_sub] at h2
   rw [h1]
   linear_combination -h2
 

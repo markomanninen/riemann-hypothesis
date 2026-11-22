@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SymbolCongr
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SymbolCongr
+
+@[expose] public section
 
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible GlobalTheory.InducedPBW
 
@@ -95,7 +99,7 @@ theorem comm_mem (h : SymbolCongr act) (Y : Mat p q) (v : V) (a : List (PIx p q)
       List.length_map, ug_comm, map_pLin, pLin_unitP] at h1 h2 ⊢
     rw [← kOnS_X] at h1
     rw [show b.length + 1 + a.length = b.length + (a.length + 1) by omega] at h2
-    rw [kOnS_mul, mul_commutator_mul_expand, mul_leibniz_comm, map_add, map_add, map_add]
+    rw [kOnS_mul, mul_commutator_mul_expand, mul_leibniz_comm, map_add (f := _), map_add (f := _), map_add (f := _)]
     have hs := Submodule.add_mem _ h1 h2
     convert hs using 1
     abel
@@ -158,7 +162,8 @@ theorem monomial_mem (h : SymbolCongr act) {Y : Mat p q} (hY : IsKC Y) (v : V)
       cls act (act Y v) (symU p q (MvPolynomial.monomial α 1)) -
       cls act v (ugι p q Y * symU p q (MvPolynomial.monomial α 1)) ∈
         indFlt act (Finsupp.toMultiset α).toList.length := by
-  rw [mul_symU_monomial_eq_avg_perm, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [mul_symU_monomial_eq_avg_perm, map_smul, map_sum]
   apply sub_inv_factorial_smul_sum_mem
   intro σ
   have hσ := list_mem act h hY v (List.ofFn fun i => (Finsupp.toMultiset α).toList.get (σ i))
@@ -175,7 +180,8 @@ theorem homog_mem (h : SymbolCongr act) {Y : Mat p q} (hY : IsKC Y) (v : V) (k :
       (cls act v ∘ₗ symU p q ∘ₗ kOnS Y + cls act (act Y v) ∘ₗ symU p q -
         cls act v ∘ₗ LinearMap.mulLeft ℂ (ugι p q Y) ∘ₗ symU p q) Q := fun Q => by
     simp
-  rw [hlin, MvPolynomial.as_sum P, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hlin, MvPolynomial.as_sum P, map_sum]
   refine Submodule.sum_mem _ fun d hd => ?_
   rw [show MvPolynomial.monomial d (P.coeff d) = P.coeff d • MvPolynomial.monomial d 1 by
     rw [MvPolynomial.smul_monomial, smul_eq_mul, mul_one], map_smul]
@@ -192,8 +198,8 @@ end GlobalTheory.InducedPBW.Equivariant
 
 namespace GlobalTheory.InducedPBW
 
-open Equivariant in
 
+open Equivariant in
 theorem symmetrisation_equivariant : ∀ (p q : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V] (act : Mat p q →ₗ[ℂ] Module.End ℂ V), SymbolCongr act → ∀ (k : ℕ) (Y : Mat p q), IsKC Y → ∀ z ∈ symTens p q V k, (indRel act).mkQ (LinearMap.rTensor V (symU p q) (LinearMap.rTensor V (kOnS Y) z + LinearMap.lTensor _ (act Y) z)) - (indRel act).mkQ (LinearMap.rTensor V (LinearMap.mulLeft ℂ (ugι p q Y)) (LinearMap.rTensor V (symU p q) z)) ∈ indFlt act k := by
   intro p q V _ _ act h k Y hY z hz
   unfold symTens at hz
@@ -202,13 +208,13 @@ theorem symmetrisation_equivariant : ∀ (p q : ℕ) (V : Type) [AddCommGroup V]
   induction w using TensorProduct.induction_on with
   | zero => simp
   | tmul P v =>
-    simp only [LinearMap.rTensor_tmul, LinearMap.lTensor_tmul, Submodule.coe_subtype, map_add,
+    simp only [LinearMap.rTensor_tmul, LinearMap.lTensor_tmul, Submodule.coe_subtype, map_add (f := _),
       LinearMap.mulLeft_apply, ← cls_apply]
     exact homog_mem act h hY v k P ((MvPolynomial.mem_homogeneousSubmodule k _).mp P.2)
   | add x y hx hy =>
     have hs := Submodule.add_mem _ hx hy
     convert hs using 1
-    simp only [map_add]
+    simp only [map_add (f := _)]
     abel
 
 end GlobalTheory.InducedPBW

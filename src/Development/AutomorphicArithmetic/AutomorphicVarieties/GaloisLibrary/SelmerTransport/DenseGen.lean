@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
+
+@[expose] public section
 
 open ReciprocityTheory.Gal UpperTheory.V.Base
 
@@ -111,7 +115,8 @@ private theorem solveGen (l : ℕ) [Fact l.Prime] (R N : Type) [CommRing R] [Add
       ∑ t ∈ Finset.range (l ^ (max A k - k)), σ (γ ^ (t * l ^ k)) (a (l ^ k) - a 0) := by
     rw [← L2 _ hk, hK1, mul_comm (l ^ k)]
   have hfixQ : σ (γ ^ (l ^ (max A k))) (a (l ^ (max A k)) - a 0) = a (l ^ (max A k)) - a 0 := by
-    rw [hdQ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hdQ, map_sum]
     refine Finset.sum_congr rfl (fun t _ => ?_)
     rw [← Module.End.mul_apply, ← map_mul, mul_comm (γ ^ (l ^ (max A k))), map_mul,
       Module.End.mul_apply, hA (max A k) (le_max_left A k)]
@@ -157,7 +162,7 @@ private theorem solveGen (l : ℕ) [Fact l.Prime] (R N : Type) [CommRing R] [Add
   · intro x
     refine (denseGen l).induction_on
       (p := fun x => C (Multiplicative.ofAdd 1 * x) = σ (Multiplicative.ofAdd 1) (C x) - φ x) x ?_ ?_
-    · exact (clopenEq (hCc.comp (continuous_mul_left _))
+    · exact (clopenEq (hCc.comp (continuous_const_mul _))
         ((continuous_of_discreteTopology
           (f := fun pr : N × N => σ (Multiplicative.ofAdd 1) pr.1 - pr.2)).comp
           (hCc.prodMk hφ))).isClosed
@@ -194,7 +199,7 @@ theorem UpperTheory.V.Base.h2Zl :
   refine (denseGen l).induction_on (p := fun g => σ g (C h) - C (g * h) + C g = f.1 (g, h)) g ?_ ?_
   · exact (clopenEq
       (((hσ'.comp (continuous_id.prodMk continuous_const)).sub
-        (hC.comp (continuous_mul_right h))).add hC)
+        (hC.comp (continuous_mul_const h))).add hC)
       (hf.comp (continuous_id.prodMk continuous_const))).isClosed
   · intro n
     induction n with
@@ -204,7 +209,7 @@ theorem UpperTheory.V.Base.h2Zl :
     | succ n ih =>
       rw [pow_succ', mul_assoc, hCeq, hCeq, map_mul, Module.End.mul_apply]
       have hc := hcoc (Multiplicative.ofAdd 1) (Multiplicative.ofAdd 1 ^ n) h
-      rw [← ih, map_add, map_sub] at hc
+      rw [← ih, map_add (f := _), map_sub] at hc
       rw [← sub_eq_zero]
       convert hc using 1
       abel

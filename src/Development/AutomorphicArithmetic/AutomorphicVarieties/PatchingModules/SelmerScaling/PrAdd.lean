@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+
+@[expose] public section
+
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
 theorem UpperTheory.V.Pa.prAdd :
@@ -35,12 +40,12 @@ theorem UpperTheory.V.Pa.prAdd :
     have : b = c := S.U.inj (e.symm.trans e')
     rw [this]; exact hc
   refine ⟨h1, h2, fun a a' => key _ _ _ ?_, fun b a => key _ _ _ ?_, fun a a' => ?_, hi, ?_⟩
-  · rw [map_add, Submodule.coe_add]
+  · rw [map_add (f := _), Submodule.coe_add]
     linear_combination - h1 a - h1 a'
   · rw [map_mul, Submodule.coe_smul, Algebra.smul_def, Algebra.smul_def, ← mul_add, h1]
   · obtain ⟨c, -, e⟩ := S.U.mul_mem _ (S.pr1 a).2 _ (S.pr1 a').2
     have := key (a * a') (S.pr0 a * S.pr0 a' + c) (S.pr0 a • S.pr1 a' + S.pr0 a' • S.pr1 a) (by
-      rw [map_add, map_mul, Submodule.coe_add, Submodule.coe_smul, Submodule.coe_smul, Algebra.smul_def,
+      rw [map_add (f := _), map_mul, Submodule.coe_add, Submodule.coe_smul, Submodule.coe_smul, Algebra.smul_def,
         Algebra.smul_def, ← e]
       have e1 := h1 a
       have e2 := h1 a'
@@ -49,4 +54,4 @@ theorem UpperTheory.V.Pa.prAdd :
     rw [this.1, add_sub_cancel_left]
     exact Ideal.subset_span ⟨_, (S.pr1 a).2, _, (S.pr1 a').2, e⟩
   · refine sup_le (sup_le ?_ (Ideal.pow_le_self two_ne_zero)) hi
-    exact ((IsLocalRing.local_hom_TFAE (algebraMap S.OO S.Bh)).out 0 2).1 (IsCO.isLocalHom (O := S.OO) (R := S.Bh))
+    exact ((IsLocalRing.local_hom_tfae (algebraMap S.OO S.Bh)).out 1 3).1 (IsCO.isLocalHom (O := S.OO) (R := S.Bh))

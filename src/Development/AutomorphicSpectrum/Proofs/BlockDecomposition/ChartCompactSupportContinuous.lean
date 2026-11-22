@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FreeCell
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.UnitsOpenEmbeddingLocalTensor
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FreeCell
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.UnitsOpenEmbeddingLocalTensor
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,14 +97,14 @@ theorem continuous_hR [IsTopologicalRing (R ⊗[F] E)] (hsig : Continuous (sigR 
     {m : ℕ} (J : Matrix (Fin m) (Fin m) E) {u v : A → Fin m → R ⊗[F] E} (hu : Continuous u) (hv : Continuous v) :
     Continuous fun p => hR R σ J (u p) (v p) := by
   unfold hR hform
-  refine continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => ?_
+  refine continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => ?_
   exact ((hsig.comp ((continuous_apply i).comp hu)).mul continuous_const).mul ((continuous_apply j).comp hv)
 
 theorem continuousOn_hR [IsTopologicalRing (R ⊗[F] E)] (hsig : Continuous (sigR R σ)) {A : Type}
     [TopologicalSpace A] {m : ℕ} (J : Matrix (Fin m) (Fin m) E) {S : Set A} {u v : A → Fin m → R ⊗[F] E}
     (hu : ContinuousOn u S) (hv : ContinuousOn v S) : ContinuousOn (fun p => hR R σ J (u p) (v p)) S := by
   unfold hR hform
-  refine continuousOn_finset_sum _ fun i _ => continuousOn_finset_sum _ fun j _ => ?_
+  refine continuousOn_finsetSum _ fun i _ => continuousOn_finsetSum _ fun j _ => ?_
   exact ((hsig.comp_continuousOn ((continuous_apply i).comp_continuousOn hu)).mul continuousOn_const).mul
     ((continuous_apply j).comp_continuousOn hv)
 

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -29,11 +33,11 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.IwahoriBlocks.indSeed 
   have Fin' : ∀ g (hg : D g) v, F v g = y (hg.choose, 1) v := by
     intro g hg v
     show (if hg : D g then y (hg.choose, 1) else 0) v = _
-    rw [dif_pos hg]
+    rw [dite_eq_left hg]
   have Fout : ∀ g, ¬ D g → ∀ v, F v g = 0 := by
     intro g hg v
     show (if hg : D g then y (hg.choose, 1) else 0) v = _
-    rw [dif_neg hg]
+    rw [dite_eq_right hg]
     rfl
   refine ⟨U, F, ?_, ?_⟩
   · intro h hh

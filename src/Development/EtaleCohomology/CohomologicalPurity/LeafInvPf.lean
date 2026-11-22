@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafHensCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafHensCut
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,9 @@ theorem inv_surj (I : Ideal A) (x : A) (hx : Ideal.Quotient.mk I x = 1) (s : Loc
 theorem inv_univ (I : Ideal A) (i : A) (hi : i ∈ I) : Univ (algebraMap A (Localization.Away (1 + i))) I := by
   intro B _ J hJ ψ hψ
   have hu : IsUnit (ψ (1 + i)) := by
-    have hj : ψ i ∈ Ideal.jacobson ⊥ := hJ.jac (hψ hi)
+    have hj : ψ i ∈ Ideal.jacobson ⊥ := by
+      rw [Ideal.jacobson_bot]
+      exact hJ.jac (hψ hi)
     have := (Ideal.mem_jacobson_bot.1 hj) 1
     rw [mul_one, add_comm] at this
     rwa [map_add, map_one]
@@ -45,7 +51,7 @@ theorem inv_univ (I : Ideal A) (i : A) (hi : i ∈ I) : Univ (algebraMap A (Loca
 theorem LeafInv_of : LeafInv := by
   intro A _ I i hi
   have hx : Ideal.Quotient.mk I (1 + i) = 1 := by
-    rw [map_add, map_one, Ideal.Quotient.eq_zero_iff_mem.2 hi, add_zero]
+    rw [map_add (f := _), map_one, Ideal.Quotient.eq_zero_iff_mem.2 hi, add_zero]
   refine ⟨Localization.Away (1 + i), inferInstance, algebraMap A (Localization.Away (1 + i)),
     ⟨?_, inv_retr I _ hx, inv_surj I _ hx, inv_univ I i hi⟩, IsLocalization.Away.algebraMap_isUnit (1 + i)⟩
   rw [RingHom.etale_algebraMap]

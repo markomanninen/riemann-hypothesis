@@ -1,12 +1,18 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.HopBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CommPrj
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.PolyMem
-import GroundTheory.AutomorphicForms.Satake
-import GroundTheory.AutomorphicForms.MacdonaldWhittakerHecke
-import GroundTheory.GlobalFields.LocalFieldAtPlace
-import GroundTheory.GlobalFields.KummerTheory.LocalIndexAtPlace
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.HopBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CommPrj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.PolyMem
+public import GroundTheory.AutomorphicForms.Satake
+public import GroundTheory.AutomorphicForms.SphericalIntegral
+public import GroundTheory.AutomorphicForms.MacdonaldHecke
+public import GroundTheory.AutomorphicForms.MacdonaldWhittakerHecke
+public import GroundTheory.GlobalFields.LocalFieldAtPlace
+public import GroundTheory.GlobalFields.KummerTheory.LocalIndexAtPlace
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -197,7 +203,7 @@ end Loc2
 
 section Glob
 
-variable {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (w : Pl K)
+variable {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (w : Pl K)
 
 private def rr : Representation ℂ (GL (Fin n) (w.adicCompletion K)) (LL μ) where
   toFun g := (rhoL μ w g : LL μ →ₗ[ℂ] LL μ)
@@ -251,7 +257,7 @@ end Glob
 
 section Main
 
-variable {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (w : Pl K)
+variable {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (w : Pl K)
   [MeasurableSpace (GL (Fin n) (w.adicCompletion K))] [BorelSpace (GL (Fin n) (w.adicCompletion K))]
   (m : Measure (GL (Fin n) (w.adicCompletion K))) [m.IsHaarMeasure]
 
@@ -310,7 +316,7 @@ private theorem core (hm : m.real (integralGL (w.adicCompletion K) n : Set (GL (
     simp [atPl, hev.const]
   | add p q hp hq =>
     intro v
-    rw [map_add, add_smul, Submodule.coe_add, hp, hq]
+    rw [map_add (f := _), add_smul, Submodule.coe_add, hp, hq]
     simp [atPl]
   | mul_X p i ih =>
     intro v

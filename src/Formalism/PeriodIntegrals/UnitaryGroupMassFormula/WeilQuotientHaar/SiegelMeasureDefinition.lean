@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeilQuotientHaar.HaarMeasureUniqueness
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeilQuotientHaar.HaarMeasureUniqueness
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,7 +79,7 @@ lemma map_inv_eq_self (K : Set G) (hc : IsClosed K) (hK : IsGrp K) (μ : Measure
     rw [e, Measure.map_id]
   have hμc : μ = (c * c) • μ := by
     have h2 := hinv2
-    rw [hceq, Measure.map_smul, hceq, smul_smul] at h2
+    rw [hceq, Measure.map_smul c hmeas.aemeasurable, hceq, smul_smul] at h2
     exact h2.symm
   haveI := hsf
   obtain ⟨A, hA0, hAt⟩ := exists_pos_fin μ hne
@@ -268,9 +272,7 @@ theorem siegel_measure_definition : SMeas := by
       have e : μN.map (fun n => k⁻¹ * n⁻¹ * k) =
           (μN.map (fun x => x⁻¹)).map (fun x => k⁻¹ * x * k⁻¹⁻¹) := by
         rw [Measure.map_map hcj measurable_inv]
-        congr 1
-        funext x
-        simp
+        simp only [Function.comp_def, inv_inv]
       show μN.map (fun n => k⁻¹ * n⁻¹ * k) = μN
       rw [e, hIN, hconj _ (hH.2.2 k hk)]
     rw [hM]

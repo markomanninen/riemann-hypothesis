@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.CAFInvol
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.CAFInvol
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -39,7 +43,7 @@ theorem exists_levi_k : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
   have hu : IsUnit (JR (F := F) (AF F) JT).det := by
     have := ((Ne.isUnit hT.2).map (inclR (F := F) (AF F)))
     rwa [RingHom.map_det] at this
-  have ha : cAF σ (e + cAF σ e) = e + cAF σ e := by rw [RingHom.map_add, hcc, add_comm]
+  have ha : cAF σ (e + cAF σ e) = e + cAF σ e := by rw [RingHom.map_add (f := _), hcc, add_comm]
   obtain ⟨H, H', g1, g2, g3, g4, g5, ⟨M, hM, g6⟩, g7⟩ := levi_alg (cAF σ) hcc r hr _ hJ hu _ ha t.1 (t⁻¹).1
     t.mul_inv t.inv_mul (by ext i j; exact ht i j)
   have eJ : JR (F := F) (AF F) (GlobalTheory.WeilSchrodinger.DblTargetF.dblG JT) =

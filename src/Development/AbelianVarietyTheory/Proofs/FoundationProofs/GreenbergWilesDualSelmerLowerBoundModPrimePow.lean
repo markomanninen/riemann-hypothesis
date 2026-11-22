@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContinuousMatQApply
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SelNZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnramifiedH1CardInvariants
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedDualEvalBidualApply
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OrdinarySelmerModPrimePowInjectsResidualSelmerStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DualSelmerClassesGiveNoncohomologousCochainsStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardOrdinaryLocalConditionModPrimePowLeConstMulStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardGaloisInvariantsOrdinaryRankTwoModPowBoundedStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ArchimedeanInvariantsCardStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContinuousMatQApply
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SelNZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnramifiedH1CardInvariants
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedDualEvalBidualApply
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OrdinarySelmerModPrimePowInjectsResidualSelmerStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DualSelmerClassesGiveNoncohomologousCochainsStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardOrdinaryLocalConditionModPrimePowLeConstMulStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardGaloisInvariantsOrdinaryRankTwoModPowBoundedStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ArchimedeanInvariantsCardStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.Ord2.GwIneq
 open scoped Matrix
 
@@ -23,7 +28,11 @@ theorem exists_cc (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] 
       haveI : Algebra.IsAlgebraic ℚ Ω := IsAlgClosure.isAlgebraic
       haveI : IsGalois ℚ Ω := {}
       letI : Algebra ℚ ℂ := w.embedding.toAlgebra
-      let j : Ω →ₐ[ℚ] ℂ := IsAlgClosed.lift
+      let j : Ω →ₐ[ℚ] ℂ := (by
+        refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+        solve_by_elim* (maxDepth := 2) only [*,
+          @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+          @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
       have hr : ComplexEmbedding.IsReal w.embedding := InfinitePlace.isReal_iff.1 hw
       let cj : ℂ →ₐ[ℚ] ℂ := { starRingEnd ℂ with commutes' := fun x => RingHom.congr_fun hr x }
       letI : Algebra Ω ℂ := j.toRingHom.toAlgebra

@@ -1,11 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineSCShortExact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernPartOverProperClosedEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArithVarComplexPointsCompactStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchIntegrableRegularVariety
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineSCShortExact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernPartOverProperClosedEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArithVarComplexPointsCompact
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsFlagBundleRankOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsFlagModelHermSum
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OfSwap2
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RestrictChernPart
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GenericPointAsIdeal
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AnalyticOnNhdFinChartIff
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NefFibOfIsNef
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchIntegrableRegularVariety
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MvPolynomial MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
-open GlobalTheory GlobalTheory.ArInt GlobalTheory.CxForm GlobalTheory.CxPts GlobalTheory.VB GlobalTheory.Cartier GlobalTheory.CovTest GlobalTheory.CovTest.SwapLine GlobalTheory.LineForm
+open GlobalTheory GlobalTheory.ArInt GlobalTheory.CxForm GlobalTheory.CxPts GlobalTheory.VB GlobalTheory.Cartier GlobalTheory.CovTest GlobalTheory.LineForm
 open scoped Classical
 
 set_option autoImplicit false
@@ -16,7 +31,7 @@ namespace GlobalTheory.LogNormIntGen
 
 theorem archIntegrable : ∀ {k : Type} [CommRing k] {X : Scheme.{0}} [IsIntegral X] {p : X ⟶ Sp k}
     {D : ℕ}, IsArithVar p D → GenSmooth p D → ∀ (M N : HermLB p) {r : N.B.ι → X.functionFieldˣ}
-      (hr : IsRatSec N.B r), M.ArchIntegrable N D hr := by
+      (hr : GlobalTheory.Cartier.IsRatSec N.B r), M.ArchIntegrable N D hr := by
   intro k _ X _ p D hX hs M N r hr σ
   have := hX.compactSpace σ
   have := CxPts.secondCountableTopology_of_isProjOver σ hX.isProjOver

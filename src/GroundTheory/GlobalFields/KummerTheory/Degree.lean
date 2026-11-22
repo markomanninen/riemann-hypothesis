@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.KummerBasic
-import GroundTheory.ProfiniteCohomology.KummerFinite
-import GroundTheory.ProfiniteCohomology.KummerCorrespondence
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.KummerBasic
+public import GroundTheory.ProfiniteCohomology.KummerFinite
+public import GroundTheory.ProfiniteCohomology.KummerCorrespondence
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -37,11 +41,6 @@ noncomputable def radicalQuotientEquiv (Δ : Subgroup Kˣ) :
     (Δ ⧸ (unitsPow K n).subgroupOf Δ) ≃* radicalClasses K n Δ :=
   (QuotientGroup.quotientMulEquivOfEq (ker_toRadicalClasses K n Δ).symm).trans
     (QuotientGroup.quotientKerEquivOfSurjective _ (toRadicalClasses_surjective K n Δ))
-
-@[simp] lemma radicalQuotientEquiv_mk (Δ : Subgroup Kˣ) (a : Δ) :
-    (radicalQuotientEquiv K n Δ (a : Δ ⧸ (unitsPow K n).subgroupOf Δ) : UnitsModPow K n) =
-      ((a : Kˣ) : UnitsModPow K n) :=
-  rfl
 
 def kummerExtension (Ω : Type*) [Field Ω] [Algebra K Ω] (Δ : Subgroup Kˣ) :
     IntermediateField K Ω :=

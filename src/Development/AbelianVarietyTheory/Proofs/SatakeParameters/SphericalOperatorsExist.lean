@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.HasLevel
-import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.ClosedAtLConclusionOfMem
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIntPolyEsymmEqPowerSumMultiset
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.OpOfAevalExists
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EsymmInvMulProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.HasLevel
+public import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.ClosedAtLConclusionOfMem
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIntPolyEsymmEqPowerSumMultiset
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.OpOfAevalExists
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EsymmInvMulProd
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -55,7 +60,7 @@ theorem single_mem {G : Type} (S : Subring ℂ) (x : G) {c : ℂ} (hc : c ∈ S)
 theorem conv_mem {G : Type} [Group G] (S : Subring ℂ) (F f : G →₀ ℂ) (hF : ∀ g, F g ∈ S) (hf : ∀ g, f g ∈ S) (x : G) :
     OpPoly.conv F f x ∈ S := by
   classical
-  simp only [OpPoly.conv, Finsupp.sum, Finsupp.finset_sum_apply]
+  simp only [OpPoly.conv, Finsupp.sum, Finsupp.finsetSum_apply]
   refine Subring.sum_mem _ fun g _ => Subring.sum_mem _ fun h _ => ?_
   exact single_mem S _ (S.mul_mem (hF g) (hf h)) x
 
@@ -78,7 +83,7 @@ theorem exists_poly_op (S : Subring ℂ) {G I : Type} [Group G] (f : I → G →
     refine ⟨F₁ + F₂, fun g => ?_, fun V _ _ ρ z v hz => ?_⟩
     · rw [Finsupp.add_apply]
       exact S.add_mem (h₁ g) (h₂ g)
-    · rw [opOf_add, e₁ V ρ z v hz, e₂ V ρ z v hz, map_add, add_smul]
+    · rw [opOf_add, e₁ V ρ z v hz, e₂ V ρ z v hz, map_add (f := _), add_smul]
   | mul_X p i hp =>
     obtain ⟨F, hF, e⟩ := hp
     refine ⟨OpPoly.conv F (f i), conv_mem S F (f i) hF (hf i), fun V _ _ ρ z v hz => ?_⟩
@@ -91,14 +96,15 @@ theorem exists_finsupp_heckeVec (S : Subring ℂ) {G : Type} [Group G] {K : Subg
   classical
   let s := (Formalism.UG.P.finite_support_cosets hK hh.2).toFinset
   refine ⟨∑ c ∈ s, Finsupp.single c.out (h c.out), fun g => ?_, fun V _ _ ρ x => ?_⟩
-  · rw [Finsupp.finset_sum_apply]
+  · rw [Finsupp.finsetSum_apply]
     exact Subring.sum_mem _ fun c _ => single_mem S _ (hS _) g
-  · rw [← opHom_apply ρ x, map_sum, heckeVec, finsum_eq_sum_of_support_subset (s := s)]
-    · refine Finset.sum_congr rfl fun c _ => ?_
-      rw [opHom_apply, opOf_single]
-    · intro c hc
-      simp only [s, Set.Finite.coe_toFinset, Set.mem_setOf_eq]
-      exact fun h0 => hc (by simp [h0])
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [← opHom_apply ρ x, map_sum, heckeVec, finsum_eq_sum_of_support_subset (s := s)]
+      · refine Finset.sum_congr rfl fun c _ => ?_
+        rw [opHom_apply, opOf_single]
+      · intro c hc
+        simp only [s, Set.Finite.coe_toFinset, Set.mem_setOf_eq]
+        exact fun h0 => hc (by simp [h0])
 
 end GlobalTheory.Cong.SphOpsProof
 
@@ -155,7 +161,7 @@ theorem sphOps : SphOps := by
     OpPoly.conv (Finsupp.single 1 ((qV E w : ℂ) ^ j.choose 2)) (T j)
   have hfP : ∀ j g, fP j g ∈ S := fun j => conv_mem S _ _ (single_mem S 1 (natPow_mem_zq hq _)) (hT j)
   have actP : ∀ (σ : SmIrr (GL (Fin a) (w.adicCompletion E))) (B : Multiset ℂˣ), HasSatGL w σ.ρ B →
-      ∀ v ∈ fixed σ.ρ (KGL w a), ∀ j ≤ a, opOf σ.ρ (fP j) v = (UpperTheory.V.Af.algSat a (qV E w) B).esymm j • v := by
+      ∀ v ∈ fixed σ.ρ (KGL w (n := a)), ∀ j ≤ a, opOf σ.ρ (fP j) v = (UpperTheory.V.Af.algSat a (qV E w) B).esymm j • v := by
     intro σ B hB v hv j hj
     by_cases h0 : v = 0
     · subst h0; rw [opOf_zero_vec, smul_zero]
@@ -166,7 +172,7 @@ theorem sphOps : SphOps := by
     OpPoly.conv (Finsupp.single (ConjPlace.dGL a ϖ a)⁻¹ ((qV E w : ℂ) ^ a.choose 2)⁻¹) (fP (a - j))
   have hfN : ∀ j g, fN j g ∈ S := fun j => conv_mem S _ _ (single_mem S _ (inv_natPow_mem_zq hq _)) (hfP _)
   have actN : ∀ (σ : SmIrr (GL (Fin a) (w.adicCompletion E))) (B : Multiset ℂˣ), HasSatGL w σ.ρ B →
-      ∀ v ∈ fixed σ.ρ (KGL w a), ∀ j : Fin (a + 1),
+      ∀ v ∈ fixed σ.ρ (KGL w (n := a)), ∀ j : Fin (a + 1),
         opOf σ.ρ (fN j) v = ((UpperTheory.V.Af.algSat a (qV E w) B).map (·⁻¹)).esymm j • v := by
     intro σ B hB v hv j
     by_cases h0 : v = 0

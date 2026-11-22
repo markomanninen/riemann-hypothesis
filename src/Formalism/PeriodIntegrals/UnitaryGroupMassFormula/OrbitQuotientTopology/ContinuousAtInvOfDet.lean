@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitQuotientTopology.MeasurableStabActOne
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitQuotientTopology.MeasurableStabActOne
+
+@[expose] public section
 
 open Matrix MeasureTheory Measure Topology Set
 open scoped ENNReal
@@ -58,7 +62,7 @@ theorem measurable_Eset [SFinite μR] (hK : ∀ m, IsClosed (K m)) (m : ℕ) : M
   exact h1.inter h2
 
 theorem measurable_theta [SFinite μR] (hK : ∀ m, IsClosed (K m)) : Measurable (theta g μR K) := by
-  refine Measurable.ennreal_tsum (fun m => ?_)
+  refine Measurable.tsum (fun m => ?_)
   refine Measurable.indicator ?_ (measurable_Eset g μR K hK m)
   refine Measurable.mul ?_ (by first | exact (measurable_Phi g μR K hK m).inv | exact measurable_inv.comp (measurable_Phi g μR K hK m))
   exact (measurable_one.indicator (hK m).measurableSet).comp measurable_fst.snd

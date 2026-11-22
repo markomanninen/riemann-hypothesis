@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TopPlaceLogTheta
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ColInst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TopPlaceLogTheta
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ColInst
+
+@[expose] public section
 
 namespace GlobalTheory.ColNorms
 

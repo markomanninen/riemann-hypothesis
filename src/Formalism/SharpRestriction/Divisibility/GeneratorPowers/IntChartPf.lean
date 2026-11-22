@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.IntChartSt
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.IntChartCut
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermCut
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.GlobFnsDvrPf
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.IntChartSt
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.IntChartCut
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermCut
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.GlobFnsDvrPf
+
+@[expose] public section
 
 set_option autoImplicit false
 

@@ -1,5 +1,9 @@
-import Formalism.UnipotentAdelicQuotients.EllRegStep
-import Formalism.UnipotentAdelicQuotients.EllipticRegularity.KernDecay
+module
+
+public import Formalism.UnipotentAdelicQuotients.EllRegStep
+public import Formalism.UnipotentAdelicQuotients.EllipticRegularity.KernDecay
+
+@[expose] public section
 
 namespace ZetaZeros.D.EllReg
 
@@ -10,7 +14,7 @@ noncomputable section
 
 variable {d : ℕ}
 
-private def wn (s M ε : ℝ) (F : E d → ℂ) : ℝ≥0∞ := eLpNorm (fun ξ => om s M ε ξ * ‖F ξ‖) 2 volume
+private def wn (s M ε : ℝ) (F : E d → ℂ) : ℝ≥0∞ := eLpNorm' (fun ξ => om s M ε ξ * ‖F ξ‖) 2 volume
 
 private lemma jb_pos (ξ : E d) : 0 < 1 + ‖ξ‖ ^ 2 := by positivity
 
@@ -58,23 +62,23 @@ private lemma norm_mono_le {n : ℕ} (w : Fin n → Fin d) (ξ : E d) :
     nlinarith
   calc ∏ l, ‖(2 * Real.pi * Complex.I * ((ξ (w l) : ℝ) : ℂ))‖
       ≤ ∏ _l : Fin n, 2 * Real.pi * (1 + ‖ξ‖ ^ 2) ^ ((1 : ℝ) / 2) :=
-        Finset.prod_le_prod (fun _ _ => norm_nonneg _) (fun l _ => hj (w l))
+        Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) (fun l _ => hj (w l))
     _ = (2 * Real.pi) ^ n * (1 + ‖ξ‖ ^ 2) ^ ((n : ℝ) / 2) := by
         rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin, mul_pow, ← Real.rpow_mul_natCast (jb_pos ξ).le]
         congr 2; ring
 
 private lemma nrm_eq_wn (s M ε : ℝ) (F : E d → ℂ) : nrm s M ε F = wn s M ε F ^ 2 := by
-  have h := eLpNorm_nnreal_pow_eq_lintegral (μ := (volume : Measure (E d)))
-    (f := fun ξ => om s M ε ξ * ‖F ξ‖) (p := 2) (by norm_num)
+  have h := lintegral_rpow_eNorm_eq_rpow_eLpNorm' (μ := (volume : Measure (E d)))
+    (f := fun ξ => om s M ε ξ * ‖F ξ‖) (q := 2) (by norm_num)
   unfold wn
-  have e2 : ((2 : NNReal) : ℝ≥0∞) = 2 := rfl
-  rw [e2] at h
-  rw [← ENNReal.rpow_natCast, show ((2 : ℕ) : ℝ) = ((2 : NNReal) : ℝ) by norm_num, h]
+  rw [← ENNReal.rpow_natCast, show ((2 : ℕ) : ℝ) = 2 by norm_num, ← h]
   unfold nrm
   congr 1; ext ξ
   rw [Real.enorm_eq_ofReal (mul_nonneg (om_nonneg' _ _ _ _) (norm_nonneg _)),
-    ENNReal.ofReal_mul (om_nonneg' _ _ _ _), ofReal_norm, show ((2 : NNReal) : ℝ) = ((2 : ℕ) : ℝ) by norm_num,
-    ENNReal.rpow_natCast, mul_pow]
+    ENNReal.ofReal_mul (om_nonneg' _ _ _ _), ofReal_norm]
+  have hp (x : ℝ≥0∞) : x ^ (2 : ℝ) = x ^ (2 : ℕ) := by
+    simpa using (ENNReal.rpow_natCast x 2)
+  simp only [hp, mul_pow]
 
 private lemma wn_eq_nrm (s M ε : ℝ) (F : E d → ℂ) : wn s M ε F = nrm s M ε F ^ (1 / 2 : ℝ) := by
   rw [nrm_eq_wn, ← ENNReal.rpow_natCast, ← ENNReal.rpow_mul]; norm_num
@@ -92,15 +96,15 @@ private lemma wn_le_of (s s' M M' ε ε' : ℝ) (F G : E d → ℂ) (c : ℝ) (h
     (h : ∀ ξ, om s M ε ξ * ‖F ξ‖ ≤ c * (om s' M' ε' ξ * ‖G ξ‖)) :
     wn s M ε F ≤ ENNReal.ofReal c * wn s' M' ε' G := by
   unfold wn
-  have : eLpNorm (fun ξ => om s M ε ξ * ‖F ξ‖) 2 volume ≤
-      eLpNorm (c • fun ξ => om s' M' ε' ξ * ‖G ξ‖) 2 volume := by
-    apply eLpNorm_mono
-    intro ξ
+  have : eLpNorm' (fun ξ => om s M ε ξ * ‖F ξ‖) 2 volume ≤
+      eLpNorm' (c • fun ξ => om s' M' ε' ξ * ‖G ξ‖) 2 volume := by
+    apply eLpNorm'_mono_ae (by norm_num)
+    filter_upwards with ξ
     simp only [Pi.smul_apply, smul_eq_mul, Real.norm_eq_abs]
     rw [abs_of_nonneg (mul_nonneg (om_nonneg' _ _ _ _) (norm_nonneg _)),
       abs_of_nonneg (mul_nonneg hc (mul_nonneg (om_nonneg' _ _ _ _) (norm_nonneg _)))]
     exact h ξ
-  rw [eLpNorm_const_smul] at this
+  rw [eLpNorm'_const_smul c (by norm_num)] at this
   simpa [Real.enorm_eq_ofReal hc] using this
 
 private lemma wn_mono_alt (s s' M ε : ℝ) (hs : s ≤ s') (F : E d → ℂ) : wn s M ε F ≤ wn s' M ε F := by
@@ -308,13 +312,22 @@ private lemma level_i (hCB : ConvBound) (hWD : WeightDiff) (M : ℝ) (hM : 0 ≤
   let To : (Fin m → Fin d) → E d → ℝ := fun w ξ => om a M ε ξ * ‖conv (Kt w) (fun η => mono w η * V η) ξ‖
   let Lo : (n : ℕ) → (Fin n → Fin d) → E d → ℝ := fun n w ξ =>
     om a M ε ξ * ‖conv (𝓕 (lo n w)) (fun η => mono w η * V η) ξ‖
-  have mRo : ∀ n w, AEStronglyMeasurable (Ro n w) volume := fun n w =>
-    wt_aesm a M ε ((((continuous_const.mul (mono_cont w)).measurable).mul
-      (conv_meas (fourier_cont_of (hc n w).1.continuous (hc n w).2) hW)))
-  have mTo : ∀ w, AEStronglyMeasurable (To w) volume := fun w =>
-    wt_aesm a M ε (conv_meas (hKt w) ((mono_cont w).mul hV))
-  have mLo : ∀ n w, AEStronglyMeasurable (Lo n w) volume := fun n w =>
-    wt_aesm a M ε (conv_meas (fourier_cont_of (hlo n w).1.continuous (hlo n w).2) ((mono_cont w).mul hV))
+  have hprod : (fun ξ => A ξ * V ξ) = fun ξ =>
+      (∑ n ∈ Finset.range m, ∑ w : Fin n → Fin d, (-1 : ℂ) ^ n * mono w ξ * conv (𝓕 (c n w)) W ξ)
+        - (∑ w : Fin m → Fin d, conv (Kt w) (fun η => mono w η * V η) ξ)
+        - (∑ n ∈ Finset.range m, ∑ w : Fin n → Fin d, conv (𝓕 (lo n w)) (fun η => mono w η * V η) ξ) := by
+    funext ξ
+    rw [← hid ξ]
+    ring
+  have mprod : Measurable (fun ξ => A ξ * V ξ) := by
+    rw [hprod]
+    refine Measurable.sub (Measurable.sub ?_ ?_) ?_
+    · refine Finset.measurable_fun_sum _ fun n _ => Finset.measurable_fun_sum _ fun w _ => ?_
+      exact (continuous_const.mul (mono_cont w)).measurable.mul
+        (conv_meas (fourier_cont_of (hc n w).1.continuous (hc n w).2) hW)
+    · exact Finset.measurable_fun_sum _ fun w _ => conv_meas (hKt w) ((mono_cont w).mul hV)
+    · refine Finset.measurable_fun_sum _ fun n _ => Finset.measurable_fun_sum _ fun w _ => ?_
+      exact conv_meas (fourier_cont_of (hlo n w).1.continuous (hlo n w).2) ((mono_cont w).mul hV)
   have hpt : ∀ ξ, om a M ε ξ * ‖A ξ * V ξ‖ ≤
       ((∑ n ∈ Finset.range m, ∑ w : Fin n → Fin d, Ro n w) + (∑ w : Fin m → Fin d, To w) +
         (∑ n ∈ Finset.range m, ∑ w : Fin n → Fin d, Lo n w)) ξ := by
@@ -327,49 +340,45 @@ private lemma level_i (hCB : ConvBound) (hWD : WeightDiff) (M : ℝ) (hM : 0 ≤
       simp only [Pi.add_apply, Finset.sum_apply, Ro, To, Lo, mul_add, Finset.mul_sum]
     rw [hR]
     refine mul_le_mul_of_nonneg_left ?_ (om_nonneg' a M ε ξ)
-    have h := hid ξ
-    have e : A ξ * V ξ = (∑ n ∈ Finset.range m, ∑ w : Fin n → Fin d, (-1 : ℂ) ^ n * mono w ξ * conv (𝓕 (c n w)) W ξ)
-        - (∑ w : Fin m → Fin d, conv (Kt w) (fun η => mono w η * V η) ξ)
-        - (∑ n ∈ Finset.range m, ∑ w : Fin n → Fin d, conv (𝓕 (lo n w)) (fun η => mono w η * V η) ξ) := by
-      rw [← h]; ring
+    have e := congrFun hprod ξ
     rw [e]
     refine (norm_sub_le _ _).trans (add_le_add ((norm_sub_le _ _).trans (add_le_add ?_ ?_)) ?_)
     · exact (norm_sum_le _ _).trans (Finset.sum_le_sum fun n _ => norm_sum_le _ _)
     · exact norm_sum_le _ _
     · exact (norm_sum_le _ _).trans (Finset.sum_le_sum fun n _ => norm_sum_le _ _)
+  have hb {f : E d → ℝ} (hf : AEStronglyMeasurable f volume) :
+      eLpNorm f 2 volume = eLpNorm' f 2 volume := by
+    simpa using (eLpNorm_eq_eLpNorm' (p := 2) (by norm_num) (by norm_num) hf)
   have hmono : wn a M ε (fun ξ => A ξ * V ξ) ≤ eLpNorm ((∑ n ∈ Finset.range m, ∑ w : Fin n → Fin d, Ro n w) +
       (∑ w : Fin m → Fin d, To w) + (∑ n ∈ Finset.range m, ∑ w : Fin n → Fin d, Lo n w)) 2 volume := by
     unfold wn
-    apply eLpNorm_mono
+    rw [← hb (wt_aesm a M ε mprod)]
+    apply eLpNorm_mono_real (wt_aesm a M ε mprod)
     intro ξ
     have h0 : 0 ≤ om a M ε ξ * ‖A ξ * V ξ‖ := mul_nonneg (om_nonneg' _ _ _ _) (norm_nonneg _)
-    rw [Real.norm_of_nonneg h0]
-    exact (hpt ξ).trans (le_abs_self _)
-  have sRo : ∀ n, AEStronglyMeasurable (∑ w : Fin n → Fin d, Ro n w) volume := fun n =>
-    Finset.aestronglyMeasurable_sum _ fun w _ => mRo n w
-  have sLo : ∀ n, AEStronglyMeasurable (∑ w : Fin n → Fin d, Lo n w) volume := fun n =>
-    Finset.aestronglyMeasurable_sum _ fun w _ => mLo n w
-  have s1 : AEStronglyMeasurable (∑ n ∈ Finset.range m, ∑ w : Fin n → Fin d, Ro n w) volume :=
-    Finset.aestronglyMeasurable_sum _ fun n _ => sRo n
-  have s2 : AEStronglyMeasurable (∑ w : Fin m → Fin d, To w) volume :=
-    Finset.aestronglyMeasurable_sum _ fun w _ => mTo w
-  have s3 : AEStronglyMeasurable (∑ n ∈ Finset.range m, ∑ w : Fin n → Fin d, Lo n w) volume :=
-    Finset.aestronglyMeasurable_sum _ fun n _ => sLo n
-  refine hmono.trans ((eLpNorm_add_le (p := 2) (s1.add s2) s3 (by norm_num)).trans ?_)
-  refine (add_le_add (eLpNorm_add_le (p := 2) s1 s2 (by norm_num)) le_rfl).trans ?_
+    simpa only [Real.norm_of_nonneg h0] using hpt ξ
+  refine hmono.trans ((eLpNorm_add_le (p := 2) (by norm_num)).trans ?_)
+  refine (add_le_add (eLpNorm_add_le (p := 2) (by norm_num)) le_rfl).trans ?_
   have k1 : eLpNorm (∑ n ∈ Finset.range m, ∑ w : Fin n → Fin d, Ro n w) 2 volume ≤
       ∑ n ∈ Finset.range m, ∑ w : Fin n → Fin d, Bo n w := by
-    refine (eLpNorm_sum_le (p := 2) (fun n _ => sRo n) (by norm_num)).trans (Finset.sum_le_sum fun n hn => ?_)
-    refine (eLpNorm_sum_le (p := 2) (fun w _ => mRo n w) (by norm_num)).trans (Finset.sum_le_sum fun w _ => ?_)
+    refine (eLpNorm_sum_le (p := 2) (by norm_num)).trans (Finset.sum_le_sum fun n hn => ?_)
+    refine (eLpNorm_sum_le (p := 2) (by norm_num)).trans (Finset.sum_le_sum fun w _ => ?_)
+    rw [hb (show AEStronglyMeasurable (Ro n w) volume from
+      wt_aesm a M ε ((continuous_const.mul (mono_cont w)).measurable.mul
+        (conv_meas (fourier_cont_of (hc n w).1.continuous (hc n w).2) hW)))]
     exact hBo n w (Finset.mem_range.1 hn) ε hε0 hε1
   have k2 : eLpNorm (∑ w : Fin m → Fin d, To w) 2 volume ≤
       ∑ w : Fin m → Fin d, (Bt w + ENNReal.ofReal ((2 * Real.pi) ^ m) * (∫⁻ ζ, ‖Kt w ζ‖ₑ) * wn (s + 1) M ε V) := by
-    refine (eLpNorm_sum_le (p := 2) (fun w _ => mTo w) (by norm_num)).trans (Finset.sum_le_sum fun w _ => ?_)
+    refine (eLpNorm_sum_le (p := 2) (by norm_num)).trans (Finset.sum_le_sum fun w _ => ?_)
+    rw [hb (show AEStronglyMeasurable (To w) volume from
+      wt_aesm a M ε (conv_meas (hKt w) ((mono_cont w).mul hV)))]
     exact hBt w ε hε0 hε1
   have k3 : eLpNorm (∑ n ∈ Finset.range m, ∑ w : Fin n → Fin d, Lo n w) 2 volume ≤
       ∑ n ∈ Finset.range m, ∑ w : Fin n → Fin d, Bl n w := by
-    refine (eLpNorm_sum_le (p := 2) (fun n _ => sLo n) (by norm_num)).trans (Finset.sum_le_sum fun n hn => ?_)
-    refine (eLpNorm_sum_le (p := 2) (fun w _ => mLo n w) (by norm_num)).trans (Finset.sum_le_sum fun w _ => ?_)
+    refine (eLpNorm_sum_le (p := 2) (by norm_num)).trans (Finset.sum_le_sum fun n hn => ?_)
+    refine (eLpNorm_sum_le (p := 2) (by norm_num)).trans (Finset.sum_le_sum fun w _ => ?_)
+    rw [hb (show AEStronglyMeasurable (Lo n w) volume from
+      wt_aesm a M ε (conv_meas (fourier_cont_of (hlo n w).1.continuous (hlo n w).2) ((mono_cont w).mul hV)))]
     exact hBl n w (Finset.mem_range.1 hn) ε hε0 hε1
   refine (add_le_add (add_le_add k1 k2) k3).trans (le_of_eq ?_)
   rw [Finset.sum_add_distrib, Finset.sum_mul]
@@ -483,23 +492,29 @@ private lemma ell_wn {ι : Type} [Fintype ι] (m : ι → ℕ) (k : ℕ) (c : �
       ENNReal.ofReal (Real.sqrt (2 ^ k / c)) * ∑ i, wn (s + 1 - m i) M ε (fun ξ => A i ξ * V ξ) := by
   set f0 : E d → ℝ := fun ξ => om s M ε ξ * ‖V ξ‖
   set f : ι → E d → ℝ := fun i ξ => om (s + 1 - m i) M ε ξ * ‖A i ξ * V ξ‖
-  have m0 : AEStronglyMeasurable f0 volume := wt_aesm s M ε hV.measurable
-  have mf : ∀ i, AEStronglyMeasurable (f i) volume := fun i => wt_aesm _ M ε ((hA i).mul hV).measurable
-  have msum : AEStronglyMeasurable (∑ i, f i) volume := Finset.aestronglyMeasurable_sum _ fun i _ => mf i
+  have hb {f : E d → ℝ} (hf : AEStronglyMeasurable f volume) :
+      eLpNorm f 2 volume = eLpNorm' f 2 volume := by
+    simpa using (eLpNorm_eq_eLpNorm' (p := 2) (by norm_num) (by norm_num) hf)
   have h1 : wn (s + 1) M ε V ≤ eLpNorm (Real.sqrt 2 • f0 + Real.sqrt (2 ^ k / c) • ∑ i, f i) 2 volume := by
     unfold wn
-    apply eLpNorm_mono
+    rw [← hb (wt_aesm (s + 1) M ε hV.measurable)]
+    apply eLpNorm_mono_real (wt_aesm (s + 1) M ε hV.measurable)
     intro ξ
     have h0 : 0 ≤ om (s + 1) M ε ξ * ‖V ξ‖ := mul_nonneg (om_nonneg' _ _ _ _) (norm_nonneg _)
     rw [Real.norm_of_nonneg h0]
-    refine (ell_pt m k c hc σ A hσA hS s M ε V ξ).trans (le_trans (le_of_eq ?_) (le_abs_self _))
-    simp [f0, f, Finset.sum_apply]
-  refine h1.trans ((eLpNorm_add_le (p := 2) (m0.const_smul _) (msum.const_smul _) (by norm_num)).trans ?_)
+    simpa [f0, f, Finset.sum_apply] using ell_pt m k c hc σ A hσA hS s M ε V ξ
+  refine h1.trans ((eLpNorm_add_le (p := 2) (by norm_num)).trans ?_)
   rw [eLpNorm_const_smul, eLpNorm_const_smul]
   refine add_le_add ?_ ?_
-  · rw [Real.enorm_eq_ofReal (Real.sqrt_nonneg _)]; rfl
+  · rw [Real.enorm_eq_ofReal (Real.sqrt_nonneg _), hb (wt_aesm s M ε hV.measurable)]; rfl
   · rw [Real.enorm_eq_ofReal (Real.sqrt_nonneg _)]
-    exact mul_le_mul' le_rfl (eLpNorm_sum_le (p := 2) (fun i _ => mf i) (by norm_num))
+    apply mul_le_mul' le_rfl
+    refine (eLpNorm_sum_le (p := 2) (by norm_num)).trans ?_
+    apply Finset.sum_le_sum
+    intro i _
+    rw [hb (show AEStronglyMeasurable (f i) volume from
+      wt_aesm _ _ _ ((hA i).mul hV).measurable)]
+    rfl
 
 private lemma absorb {X B : ℝ≥0∞} (hX : X < ⊤) (h : X ≤ B + ENNReal.ofReal (1 / 2) * X) : X ≤ 2 * B := by
   have hh : ENNReal.ofReal (1 / 2) * X + ENNReal.ofReal (1 / 2) * X = X := by

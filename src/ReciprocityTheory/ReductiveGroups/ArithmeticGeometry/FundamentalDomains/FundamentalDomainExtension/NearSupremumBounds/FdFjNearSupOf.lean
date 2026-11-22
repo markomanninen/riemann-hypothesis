@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicCoefficientSplitting
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicCoefficientSplitting
+
+@[expose] public section
 
 namespace PI.FdFjNearSup.W
 
@@ -24,7 +28,8 @@ theorem isIsoV_embV {r : ℕ} (X : Data E r) {ξ : Fin r → E} (h : X.IsIso ξ)
   intro τ
   obtain ⟨-, hh, hne⟩ := h
   have key : hermC τ.1 X.Gm (X.embV ξ τ) (X.embV ξ τ) = τ.1 (herm X.Gm ξ ξ) := by
-    simp only [hermC, herm, Data.embV, Data.emb, map_sum, map_mul, cc,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hermC, herm, Data.embV, Data.emb, map_sum, map_mul, cc,
       IsCMField.complexEmbedding_complexConj]
   refine ⟨by rw [key, hh, map_zero], fun h0 => hne ?_⟩
   funext a
@@ -250,7 +255,7 @@ theorem fd_fj_near_sup_of (h1 : FlowDomainCriterion (E := E)) (h2 : FjHolo (E :=
     refine hhi.trans ?_
     have h3ρ : 0 ≤ 1 + 3 * d6rh c1 w := by linarith
     calc _ ≤ ∏ τ : X.Ψ, (1 + 3 * d6rh c1 w) ^ (X.spread la τ / 2) := by
-          refine Finset.prod_le_prod (fun τ _ => ?_) (fun τ _ => ?_)
+          refine Finset.prod_le_prod₀ (fun τ _ => ?_) (fun τ _ => ?_)
           · dsimp only
             rw [hq τ, inv_inv]
             exact Real.rpow_nonneg (le_max_of_le_right (ttpos τ).le) _

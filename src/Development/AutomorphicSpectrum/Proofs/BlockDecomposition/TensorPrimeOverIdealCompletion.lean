@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open TensorProduct
 
 namespace GlobalTheory.CompanionTheory.KrullBaseChange
@@ -67,7 +72,7 @@ theorem krull_after_base_change {B R C M : Type} [CommRing B] [CommRing R] [Comm
     | tmul z c =>
       simpa [hφ] using hmem (n + 1) z z.2 c
     | add a b ha hb =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact Submodule.add_mem _ ha hb
   have hone : φ (y ⊗ₜ[B] (1 : C)) = (1 : R ⊗[B] C) ⊗ₜ[R] y := rfl
   have hinf : ((1 : R ⊗[B] C) ⊗ₜ[R] y) ∈

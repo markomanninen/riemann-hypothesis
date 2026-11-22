@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsStabForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsStabForm
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level
@@ -65,9 +70,13 @@ theorem herm_nat_right (c : ℕ) (x y : Fin n → E) : herm 1 x ((c : E) • y) 
 omit [IsCMField E] in
 theorem int_of_coprime {a b : ℕ} (h : a.Coprime b) {x : E} (h1 : IsIntegral ℤ ((a : E) * x))
     (h2 : IsIntegral ℤ ((b : E) * x)) : IsIntegral ℤ x := by
-  have := mem_of_coprime (stdL E 1) h (v := fun _ => x) ((mem_stdL _).2 fun _ => h1)
-    ((mem_stdL _).2 fun _ => h2)
-  exact (mem_stdL _).1 this 0
+  obtain ⟨u, v, huv⟩ : IsCoprime (a : ℤ) (b : ℤ) := Nat.isCoprime_iff_coprime.2 h
+  have hbezout : (u : E) * a + (v : E) * b = 1 := by
+    exact_mod_cast congrArg (Int.cast : ℤ → E) huv
+  have hx : (u : E) * ((a : E) * x) + (v : E) * ((b : E) * x) = x := by
+    rw [← _root_.mul_assoc, ← _root_.mul_assoc, ← add_mul, hbezout, _root_.one_mul]
+  rw [← hx]
+  exact ((isIntegral_intCast u).mul h1).add ((isIntegral_intCast v).mul h2)
 
 theorem patch {M t : ℕ} (ht : 0 < t) (htM : t.Coprime M) (J J' : Ideal (𝓞 E)) (hJ : (M : 𝓞 E) ∈ J)
     (hJ' : (M : 𝓞 E) ∈ J') (A : Lt E n) (hA : A.FG) (hsd : ∀ x, x ∈ A ↔ ∀ y ∈ A, IsIntegral ℤ (herm 1 x y))

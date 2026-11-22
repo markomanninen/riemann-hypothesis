@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerInfMemLocSpan
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
-import GroundTheory.AutomorphicForms.MultiplicityOne.Injective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfMemCell
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactOpenSubgroupSubsetNhdsOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerInfMemLocSpan
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import GroundTheory.AutomorphicForms.MultiplicityOne.Injective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfMemCell
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactOpenSubgroupSubsetNhdsOne
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CuspRep Formalism.UG GlobalTheory.LFun Matrix MeasureTheory
 
 noncomputable section
@@ -60,16 +65,16 @@ theorem IsUT.inv {g : GL (Fin a) R} (hg : IsUT (g : Matrix (Fin a) (Fin a) R)) :
 
 end UT
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
-theorem mem_NA_iff_isUT (u : GA E a) : u ∈ NA E a ↔ IsUT (u : Matrix (Fin a) (Fin a) (Ad E)) := Iff.rfl
+theorem mem_NA_iff_isUT (u : GA E a) : u ∈ NA (E := E) (a := a) ↔ IsUT (u : Matrix (Fin a) (Fin a) (Ad E)) := Iff.rfl
 
-theorem NA_mul {u v : GA E a} (hu : u ∈ NA E a) (hv : v ∈ NA E a) : u * v ∈ NA E a := by
+theorem NA_mul {u v : GA E a} (hu : u ∈ NA (E := E) (a := a)) (hv : v ∈ NA (E := E) (a := a)) : u * v ∈ NA (E := E) (a := a) := by
   rw [mem_NA_iff_isUT, Units.val_mul]; exact IsUT.mul hu hv
 
-theorem NA_inv {u : GA E a} (hu : u ∈ NA E a) : u⁻¹ ∈ NA E a := IsUT.inv hu
+theorem NA_inv {u : GA E a} (hu : u ∈ NA (E := E) (a := a)) : u⁻¹ ∈ NA (E := E) (a := a) := IsUT.inv hu
 
-theorem last_row_mul {m : ℕ} {u : GA E (m + 1)} (hu : u ∈ NA E (m + 1)) (c : GA E (m + 1)) (j : Fin (m + 1)) :
+theorem last_row_mul {m : ℕ} {u : GA E (m + 1)} (hu : u ∈ NA (E := E) (a := (m + 1))) (c : GA E (m + 1)) (j : Fin (m + 1)) :
     ((u * c : GA E (m + 1)) : Matrix (Fin (m + 1)) (Fin (m + 1)) (Ad E)) (Fin.last m) j =
       (c : Matrix (Fin (m + 1)) (Fin (m + 1)) (Ad E)) (Fin.last m) j := by
   rw [Units.val_mul, Matrix.mul_apply, Finset.sum_eq_single (Fin.last m), hu.2, one_mul]
@@ -78,7 +83,7 @@ theorem last_row_mul {m : ℕ} {u : GA E (m + 1)} (hu : u ∈ NA E (m + 1)) (c :
   · simp
 
 theorem mem_cell_iff (K : Subgroup (GL (Fin a) (Af E))) (q p : GA E a) :
-    p ∈ cell K q ↔ ∃ u ∈ NA E a, GeneralLinearGroup.map (pFin E) (q⁻¹ * u⁻¹ * p) ∈ K := by
+    p ∈ cell K q ↔ ∃ u ∈ NA (E := E) (a := a), GeneralLinearGroup.map (pFin E) (q⁻¹ * u⁻¹ * p) ∈ K := by
   constructor
   · rintro ⟨u, hu, k, hk, y, rfl⟩
     refine ⟨u, hu, ?_⟩
@@ -91,7 +96,7 @@ theorem mem_cell_iff (K : Subgroup (GL (Fin a) (Af E))) (q p : GA E a) :
 
 theorem isOpen_cell {K : Subgroup (GL (Fin a) (Af E))} (hK : IsOpen (K : Set (GL (Fin a) (Af E)))) (q : GA E a) :
     IsOpen (cell K q) := by
-  have e : cell K q = ⋃ u ∈ NA E a, (fun p => GeneralLinearGroup.map (pFin E) (q⁻¹ * u⁻¹ * p)) ⁻¹' (K : Set _) := by
+  have e : cell K q = ⋃ u ∈ NA (E := E) (a := a), (fun p => GeneralLinearGroup.map (pFin E) (q⁻¹ * u⁻¹ * p)) ⁻¹' (K : Set _) := by
     ext p; rw [mem_cell_iff]; simp
   rw [e]
   refine isOpen_biUnion fun u _ => hK.preimage ?_
@@ -127,7 +132,7 @@ theorem cell_eq_of_mem {K : Subgroup (GL (Fin a) (Af E))} {x x' p : GA E a} (h :
   le_antisymm ((cell_subset_of_mem (mem_cell_symm h)).trans (cell_subset_of_mem h'))
     ((cell_subset_of_mem (mem_cell_symm h')).trans (cell_subset_of_mem h))
 
-theorem NA_mul_mem_cell {K : Subgroup (GL (Fin a) (Af E))} {q c u : GA E a} (hu : u ∈ NA E a) (hc : c ∈ cell K q) :
+theorem NA_mul_mem_cell {K : Subgroup (GL (Fin a) (Af E))} {q c u : GA E a} (hu : u ∈ NA (E := E) (a := a)) (hc : c ∈ cell K q) :
     u * c ∈ cell K q := by
   obtain ⟨v, hv, k, hk, y, rfl⟩ := hc
   exact ⟨u * v, NA_mul hu hv, k, hk, y, by group⟩
@@ -138,10 +143,10 @@ namespace GlobalTheory.JSW.MirPatch.Cover
 
 open GlobalTheory.JSW GlobalTheory.JSW.MirPatch Topology
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
+
 
 variable (E) in
-
 def Zset (S : Finset (HeightOneSpectrum (𝓞 E))) (m : ℕ) : Set (GA E (m + 1)) :=
   {c | (∀ j, (c : Matrix (Fin (m + 1)) (Fin (m + 1)) (Ad E)) (Fin.last m) j = if j = Fin.last m then 1 else 0) ∧
     ∀ w ∉ S, IsUT ((GeneralLinearGroup.map ((pLoc E w).comp (pFin E)) c : GL (Fin (m + 1)) (w.adicCompletion E)) :
@@ -167,8 +172,8 @@ theorem isClosed_Zset (S : Finset (HeightOneSpectrum (𝓞 E))) (m : ℕ) : IsCl
       isClosed_iInter fun _ => isClosed_eq (hloc w i j) continuous_const).inter
         (isClosed_iInter fun i => isClosed_eq (hloc w i i) continuous_const))
 
-theorem mem_Zset_of {S : Finset (HeightOneSpectrum (𝓞 E))} {m : ℕ} {c u : GA E (m + 1)} (hu : u ∈ NA E (m + 1))
-    (h : u * c ∈ mirS E S m) : c ∈ Zset E S m := by
+theorem mem_Zset_of {S : Finset (HeightOneSpectrum (𝓞 E))} {m : ℕ} {c u : GA E (m + 1)} (hu : u ∈ NA (E := E) (a := (m + 1)))
+    (h : u * c ∈ (GlobalTheory.JSW.supS (E := E) (a := m + 1) S ∩ GlobalTheory.JSW.mirSet (GlobalTheory.CuspRep.Ad E) m)) : c ∈ Zset E S m := by
   refine ⟨fun j => by rw [← last_row_mul hu c j]; exact h.2 j, fun w hw => ?_⟩
   have h1 := h.1 w hw
   rw [map_mul] at h1
@@ -176,7 +181,7 @@ theorem mem_Zset_of {S : Finset (HeightOneSpectrum (𝓞 E))} {m : ℕ} {c u : G
   exact IsUT.inv (g := GeneralLinearGroup.map ((pLoc E w).comp (pFin E)) u) (IsUT.map hu _)
 
 theorem exists_NA_of_mem_Zset {S : Finset (HeightOneSpectrum (𝓞 E))} {m : ℕ} {c : GA E (m + 1)}
-    (hc : c ∈ Zset E S m) : ∃ u ∈ NA E (m + 1), u * c ∈ mirS E S m := by
+    (hc : c ∈ Zset E S m) : ∃ u ∈ NA (E := E) (a := (m + 1)), u * c ∈ (GlobalTheory.JSW.supS (E := E) (a := m + 1) S ∩ GlobalTheory.JSW.mirSet (GlobalTheory.CuspRep.Ad E) m) := by
   classical
   set cf := GeneralLinearGroup.map (pFin E) c
   set L : GL (Fin (m + 1)) (Af E) :=
@@ -206,7 +211,7 @@ theorem exists_NA_of_mem_Zset {S : Finset (HeightOneSpectrum (𝓞 E))} {m : ℕ
     intro w; rw [hk]; split_ifs with hw
     · exact isUT_one
     · exact IsUT.inv (hc.2 w hw)
-  have huNA : finGL E (m + 1) k ∈ NA E (m + 1) := by
+  have huNA : finGL E (m + 1) k ∈ NA (E := E) (a := (m + 1)) := by
     refine ⟨fun i j hij => ad_ext ?_ ?_, fun i => ad_ext ?_ ?_⟩
     · show (GeneralLinearGroup.map (pInf E) (finGL E (m + 1) k) : Matrix _ _ _) i j = pInf E 0
       rw [pInf_finGL, map_zero]; exact Matrix.one_apply_ne (ne_of_gt hij)
@@ -225,7 +230,7 @@ theorem exists_NA_of_mem_Zset {S : Finset (HeightOneSpectrum (𝓞 E))} {m : ℕ
 
 theorem exists_base {S : Finset (HeightOneSpectrum (𝓞 E))} {m : ℕ} {d : GA E (m + 1)} (hd : d ∈ Zset E S m)
     (V : GA E (m + 1) → Subgroup (GL (Fin (m + 1)) (Af E))) :
-    ∃ q, q ∈ mirS E S m ∧ GeneralLinearGroup.map (pInf E) q = 1 ∧ d ∈ cell (V q) q := by
+    ∃ q, q ∈ (GlobalTheory.JSW.supS (E := E) (a := m + 1) S ∩ GlobalTheory.JSW.mirSet (GlobalTheory.CuspRep.Ad E) m) ∧ GeneralLinearGroup.map (pInf E) q = 1 ∧ d ∈ cell (V q) q := by
   obtain ⟨u, hu, hm⟩ := exists_NA_of_mem_Zset hd
   set p := u * d with hp
   refine ⟨finGL E (m + 1) (GeneralLinearGroup.map (pFin E) p), ⟨fun w hw => ?_, fun j => ?_⟩, pInf_finGL _, ?_⟩
@@ -252,12 +257,12 @@ namespace GlobalTheory.JSW.MirPatch.Cover
 
 open GlobalTheory.JSW GlobalTheory.JSW.MirPatch Topology
 
-theorem exists_cover : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (m : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E))) (C : Set (GA E (m + 1))), IsCompact C → ∀ V : GA E (m + 1) → Subgroup (GL (Fin (m + 1)) (Af E)), (∀ q, IsOpen (V q : Set (GL (Fin (m + 1)) (Af E)))) → ∃ (K : Subgroup (GL (Fin (m + 1)) (Af E))) (R : Finset (GA E (m + 1))) (j : GA E (m + 1) → GA E (m + 1)), IsOpen (K : Set (GL (Fin (m + 1)) (Af E))) ∧ IsCompact (K : Set (GL (Fin (m + 1)) (Af E))) ∧ (∀ x ∈ R, j x ∈ GlobalTheory.JSW.mirS E S m ∧ GeneralLinearGroup.map (pInf E) (j x) = 1 ∧ K ≤ V (j x) ∧ GlobalTheory.JSW.MirPatch.cell K x ⊆ GlobalTheory.JSW.MirPatch.cell (V (j x)) (j x)) ∧ (∀ p ∈ GlobalTheory.JSW.mirS E S m, (∃ u ∈ GlobalTheory.JSW.NA E (m + 1), u⁻¹ * p ∈ C) → ∃ x ∈ R, p ∈ GlobalTheory.JSW.MirPatch.cell K x) ∧ (∀ x ∈ R, ∀ x' ∈ R, ∀ p ∈ GlobalTheory.JSW.mirS E S m, p ∈ GlobalTheory.JSW.MirPatch.cell K x → p ∈ GlobalTheory.JSW.MirPatch.cell K x' → x = x') := by
+theorem exists_cover : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (m : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E))) (C : Set (GA E (m + 1))), IsCompact C → ∀ V : GA E (m + 1) → Subgroup (GL (Fin (m + 1)) (Af E)), (∀ q, IsOpen (V q : Set (GL (Fin (m + 1)) (Af E)))) → ∃ (K : Subgroup (GL (Fin (m + 1)) (Af E))) (R : Finset (GA E (m + 1))) (j : GA E (m + 1) → GA E (m + 1)), IsOpen (K : Set (GL (Fin (m + 1)) (Af E))) ∧ IsCompact (K : Set (GL (Fin (m + 1)) (Af E))) ∧ (∀ x ∈ R, j x ∈ (GlobalTheory.JSW.supS (E := E) (a := m + 1) S ∩ GlobalTheory.JSW.mirSet (GlobalTheory.CuspRep.Ad E) m) ∧ GeneralLinearGroup.map (pInf E) (j x) = 1 ∧ K ≤ V (j x) ∧ GlobalTheory.JSW.MirPatch.cell K x ⊆ GlobalTheory.JSW.MirPatch.cell (V (j x)) (j x)) ∧ (∀ p ∈ (GlobalTheory.JSW.supS (E := E) (a := m + 1) S ∩ GlobalTheory.JSW.mirSet (GlobalTheory.CuspRep.Ad E) m), (∃ u ∈ GlobalTheory.JSW.NA (E := E) (a := (m + 1)), u⁻¹ * p ∈ C) → ∃ x ∈ R, p ∈ GlobalTheory.JSW.MirPatch.cell K x) ∧ (∀ x ∈ R, ∀ x' ∈ R, ∀ p ∈ (GlobalTheory.JSW.supS (E := E) (a := m + 1) S ∩ GlobalTheory.JSW.mirSet (GlobalTheory.CuspRep.Ad E) m), p ∈ GlobalTheory.JSW.MirPatch.cell K x → p ∈ GlobalTheory.JSW.MirPatch.cell K x' → x = x') := by
   intro E _ _ _ m S C hC V hV
   classical
   set D := C ∩ Zset E S m
   have hD : IsCompact D := hC.inter_right (isClosed_Zset S m)
-  have hq : ∀ d ∈ D, ∃ q, q ∈ mirS E S m ∧ GeneralLinearGroup.map (pInf E) q = 1 ∧ d ∈ cell (V q) q :=
+  have hq : ∀ d ∈ D, ∃ q, q ∈ (GlobalTheory.JSW.supS (E := E) (a := m + 1) S ∩ GlobalTheory.JSW.mirSet (GlobalTheory.CuspRep.Ad E) m) ∧ GeneralLinearGroup.map (pInf E) q = 1 ∧ d ∈ cell (V q) q :=
     fun d hd => exists_base hd.2 V
   choose! q hq using hq
   obtain ⟨t, htD, hcov⟩ := hD.elim_nhds_subcover (fun d => cell (V (q d)) (q d))

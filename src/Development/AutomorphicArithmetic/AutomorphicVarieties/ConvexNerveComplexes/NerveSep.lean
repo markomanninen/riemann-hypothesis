@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.NerveFaceClosed
-import Mathlib.Analysis.LocallyConvex.Separation
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.NerveFaceClosed
+public import Mathlib.Analysis.LocallyConvex.Separation
+
+@[expose] public section
 
 open Set UpperTheory.V.ConeExtensionAcyclic
 

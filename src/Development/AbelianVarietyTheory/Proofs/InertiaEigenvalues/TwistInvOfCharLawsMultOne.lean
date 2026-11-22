@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.InjPrimeTo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.InjPrimeTo
+
+@[expose] public section
 
 open GlobalTheory.TypeLeaf Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.MainNotions.ArithmeticCylinders Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial NumberField IsDedekindDomain
 
 namespace GlobalTheory.TypeLeaf
 
-open Polynomial NumberField IsDedekindDomain in
 
+open Polynomial NumberField IsDedekindDomain in
 theorem _root_.GlobalTheory.TypeLeaf.lpChar_eq_triv_of_mul_eq_one (D : _root_.Formalism.BasicNotions.D7) (w : _root_.Formalism.BasicNotions.PlE D.host)
     (χ χ' : D.naut.LP w) (c c' : ℂ)
     (hu : D.naut.unr χ) (hu' : D.naut.unr χ') (hd' : D.naut.lpDim χ' = 1)
@@ -29,8 +33,8 @@ private lemma exists_frobEig_etaT_inv_etaTinv (D : _root_.Formalism.BasicNotions
   rw [(D.naut.etaTinv_def w).2, hc]
   simp
 
-open Polynomial NumberField IsDedekindDomain in
 
+open Polynomial NumberField IsDedekindDomain in
 theorem _root_.GlobalTheory.TypeLeaf.twistInv_of_charLaws_multOne :
     ∀ D : _root_.Formalism.BasicNotions.D7, _root_.GlobalTheory.TypeLeaf.CharLaws D → _root_.GlobalTheory.TypeLeaf.MultOne D →
       _root_.GlobalTheory.TypeLeaf.TwistInv D := by

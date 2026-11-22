@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitCenterChart
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitChartMax
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCenterMemIff
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCenterDivSuppLemmas
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitCenterChart
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitChartMax
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCenterMemIff
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCenterDivSuppLemmas
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -22,7 +27,7 @@ theorem OrbitCenterChart.proof : OrbitCenterChart.Statement := by
     have hJ : NumbersDVR.IsMultiHomogIdeal (ι := blockIdx n) (orbitIdeal x ⊔ Ideal.span {s}) := by
       intro f hf b
       obtain ⟨p, hp, t, ht, rfl⟩ := Submodule.mem_sup.mp hf
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem_sup (OrbitCurve.weightedHomogeneousComponent_mem_orbitIdeal x hp b)
         (NumbersDVR.isMultiHomogIdeal_span_singleton (e := a) hsa' t ht b)
     exact NumbersDVR.MinimalPrimeMultiHomog.proof ℤ ι (blockIdx n) _ V hJ hVmin
@@ -36,7 +41,8 @@ theorem OrbitCenterChart.proof : OrbitCenterChart.Statement := by
 
   have hVzero : ∀ f ∈ V, aeval (dehomCoords (genPt V) c) f = 0 := by
     intro f hf
-    rw [← sum_weightedHomogeneousComponent (w := coordDeg n) f,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← sum_weightedHomogeneousComponent (w := coordDeg n) f,
       finsum_eq_sum _ (weightedHomogeneousComponent_finsupp f), map_sum]
     refine Finset.sum_eq_zero fun b _ ↦ ?_
     exact (aeval_dehomCoords_of_homog (genPt V) c

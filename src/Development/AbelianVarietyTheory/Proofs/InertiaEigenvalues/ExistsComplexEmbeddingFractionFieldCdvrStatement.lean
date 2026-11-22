@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsComplexEmbeddingFractionFieldCdvr
-import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsComplexEmbeddingFractionFieldCdvr
+public import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2.Pj
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.exists_complex_embedding_fractionField_cdvr : ∀ (K : Type) [Field K] [NumberField K] (σ : K →+* ℂ) (T : CDVR), T.FinRes → ∀ io : K →+* T.Fr, ∃ ι : T.Fr →+* ℂ, ι.comp io = σ := by

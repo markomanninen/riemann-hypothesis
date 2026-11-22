@@ -1,13 +1,12 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.LeafChartRing
-import Development.AutomorphicArithmetic.CommutativeAlgebra.CechNerveRepresentableDisjoint
-import Development.AutomorphicArithmetic.CommutativeAlgebra.CechNerveRestrictOpen
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.LeafChartRing
+
+@[expose] public section
+
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.E.t_E6Cut
-
-private theorem conn_mono {R : Type} [CommRing R] {F : Shv R} {c c' : ℤ} (h : c' ≤ c) {E E' : Spc} {f : E ⟶ E'}
-    (hf : Conn R F c f) : Conn R F c' f :=
-  fun n => ⟨fun hn => (hf n).1 (by omega), fun hn => (hf n).2 (by omega)⟩
 
 private theorem conn_square {R : Type} [CommRing R] {F : Shv R} {c : ℤ} {E₁ E₂ E₃ E₄ : Spc} {u : E₁ ⟶ E₂}
     {v : E₃ ⟶ E₄} {a : E₁ ⟶ E₃} {b : E₂ ⟶ E₄} (w : u ≫ b = a ≫ v) (ha : Eqv R a F) (hb : Eqv R b F)
@@ -73,27 +72,5 @@ private theorem smooth_of_cover {V Y : Scheme.{0}} (f : V ⟶ Y)
   have := hf a
   change Smooth (j a ≫ f)
   infer_instance
-
-theorem UpperTheory.connectivity_of_cech_disjoint_cover :
-    LeafLevel → A1 → A2 → ∀ (R : Type) [CommRing R] (F : Shv R) (c : ℤ) {V Y : Scheme.{0}} (f : V ⟶ Y) [Surjective f], (∃ (ι : Type) (O : ι → Scheme.{0}) (j : ∀ a, O a ⟶ V), (∀ a, IsOpenImmersion (j a)) ∧ (∀ a b, a ≠ b → Disjoint (Set.range (j a)) (Set.range (j b))) ∧ (∀ y : V, ∃ a, y ∈ Set.range (j a)) ∧ ∀ a, IsOpenImmersion (j a ≫ f)) → ∀ W : Y.Opens,
-      Conn R F c (sch.map (f ⁻¹ᵁ W).ι) → (∀ (Z : Scheme.{0}) (g : Z ⟶ Y), (∃ (ι : Type) (O : ι → Scheme.{0}) (j : ∀ a, O a ⟶ Z), (∀ a, IsOpenImmersion (j a)) ∧ (∀ a b, a ≠ b → Disjoint (Set.range (j a)) (Set.range (j b))) ∧ (∀ y : Z, ∃ a, y ∈ Set.range (j a)) ∧ ∀ a, IsOpenImmersion (j a ≫ g)) → Conn R F (c - 1) (sch.map (g ⁻¹ᵁ W).ι)) → Conn R F c (sch.map W.ι) := by
-  intro hL a1 a2 R _ F c V Y f _ hcov W h0 hp
-  obtain ⟨ψ, hψ, hlev⟩ := UpperTheory.cech_nerve_restrict_open f W
-  have hsm : Smooth f := smooth_of_cover f hcov
-  have hsmW : Smooth (f ∣_ W) := MorphismProperty.of_isPullback (P := @Smooth) (isPullback_morphismRestrict f W).flip hsm
-  have hsuW : Surjective (f ∣_ W) := MorphismProperty.of_isPullback (P := @Surjective) (isPullback_morphismRestrict f W).flip inferInstance
-  have eV := a2 R f F
-  have eW := a2 R (f ∣_ W) F
-  have hψc : Conn R F c ψ := by
-    refine hL a1 R F c ψ fun p => ?_
-    rcases p with _ | p
-    · obtain ⟨e, he⟩ := cech_zero f
-      obtain ⟨e', he'⟩ := hlev 0 V f e he
-      have h0' : Conn R F (c - ((0 : ℕ) : ℤ)) (sch.map (f ⁻¹ᵁ W).ι) := by simpa using h0
-      exact conn_level _ _ e e' he' h0'
-    · obtain ⟨Z, g, e, hg, hc⟩ := UpperTheory.cech_nerve_representable_disjoint f hcov (p + 1)
-      obtain ⟨e', he'⟩ := hlev (p + 1) Z g e hg
-      exact conn_level _ _ e e' he' (conn_mono (by push_cast; omega) (hp Z g hc))
-  exact conn_square hψ eW eV hψc
 
 end

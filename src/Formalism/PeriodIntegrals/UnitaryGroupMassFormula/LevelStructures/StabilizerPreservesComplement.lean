@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.LeviInt
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.LeviInt
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,8 @@ variable {F E : Type} [Field F] [Field E] [Algebra F E] {R : Type} [CommRing R] 
 theorem hermForm_base_conj_symm (hσ : ∀ x, σ (σ x) = x) (hJ : ∀ i j, σ (J j i) = J i j) (x y : Fin n → E) :
     σ (hE σ J x y) = hE σ J y x := by
   unfold hE Formalism.UG.hform
-  simp only [map_sum, map_mul, AlgHom.coe_toRingHom, hσ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, AlgHom.coe_toRingHom, hσ]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rw [hJ a b]
@@ -78,7 +83,7 @@ theorem stabilizer_fixes_span {r : ℕ} (P : Frame E n r) {h : HA R σ J} (hh : 
     obtain ⟨a, _, rfl⟩ := hu
     exact hY a
   | zero => exact map_zero _
-  | add u w _ _ hu hw => rw [map_add, hu, hw]
+  | add u w _ _ hu hw => rw [map_add (f := _), hu, hw]
   | smul c u _ hu => rw [map_smul, hu]
 
 theorem stabilizer_preserves_complement {r : ℕ} (P : Frame E n r) {h : HA R σ J} (hh : h ∈ Hsub R σ J P) {w : Fin n → R ⊗[F] E}
@@ -142,7 +147,7 @@ theorem lin_mem_localLattice (g : HA (Fv F v) σ J) (A : Set (Fin n → E))
     obtain ⟨y, hy, rfl⟩ := hu
     exact hg y hy
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add u w _ _ hu hw => rw [map_add]; exact Submodule.add_mem _ hu hw
+  | add u w _ _ hu hw => rw [map_add (f := _)]; exact Submodule.add_mem _ hu hw
   | smul c u _ hu =>
     rw [LinearMap.map_smul_of_tower]
     exact Submodule.smul_mem _ _ hu
@@ -215,7 +220,7 @@ theorem leviIntH : LeviIntH := by
       have := (hKi' _).1 (hWgen y hy)
       rw [mul_inv_rev, lin_mul] at this
       have e : lin _ X.B.I.cm.sig X.B.I.J n⁻¹ y' = y' + x' := by simp [x']
-      rw [e, map_add, hfix, add_comm] at this
+      rw [e, map_add (f := _), hfix, add_comm] at this
       exact this
     exact hLWM _ (hdec hm hx' (stabilizer_preserves_complement (frameOf X w) hh' hy') rfl)
   have hall : ∀ g ∈ Hsub (Fv X.B.I.F p.1) X.B.I.cm.sig X.B.I.J (frameOf X w),

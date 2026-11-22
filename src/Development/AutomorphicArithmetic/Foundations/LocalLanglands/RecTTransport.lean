@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CuspLaws
+module
+
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CuspLaws
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ section Rep
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-def DZ (y : IrrGL k) : Prop := GlobalTheory.PRep.fixed y.rep (GlobalTheory.SplitWeil.KOne k (Fin y.1)) ≠ ⊥
+def DZ (y : IrrGL (k := k)) : Prop := GlobalTheory.PRep.fixed y.rep (GlobalTheory.SplitWeil.KOne k (Fin y.1)) ≠ ⊥
 
 def TameChar (χ : kˣ →* ℂˣ) : Prop := ∀ u : kˣ, valuation k ((u : k) - 1) < 1 → χ u = 1
 
@@ -56,8 +60,8 @@ def Ext.Res {g n : ℕ} [Fact g.Prime] (D : Ext h g n) (R : Ine (F := E) A →* 
     Valued.v ((D.a' (ineIncl D.h' t') : D.w'.adicCompletion D.E') - algebraMap D.E' (D.w'.adicCompletion D.E') (x : D.E')) < 1 →
     R t = z
 
-variable (h) in
 
+variable (h) in
 structure TameSys (g : ℕ) [Fact g.Prime] (n : ℕ) {K : Type} [Field K] [Algebra (ZMod g) K] (R : Ine (F := E) A →* Kˣ) : Prop where
   pos : 0 < n
   normV_eq : normV w = g
@@ -70,27 +74,27 @@ structure TameSys (g : ℕ) [Fact g.Prime] (n : ℕ) {K : Type} [Field K] [Algeb
 def InFor (g n : ℕ) {K : Type} [Field K] (R : Ine (F := E) A →* Kˣ) (θ : Kˣ →* ℂˣ) (V : WD h) : Prop :=
   ∀ t : Ine (F := E) A, V.inePol (t : G E Ω) = ∏ j ∈ Finset.range n, (X - C ((θ (R t ^ g ^ j) : ℂˣ) : ℂ))
 
-def TypeAt (x : IrrGL (w.adicCompletion E)) (V : WD h) : Prop :=
+def TypeAt (x : IrrGL (k := w.adicCompletion E)) (V : WD h) : Prop :=
   ∀ (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i → ∀ n : ℕ, 0 < n →
     ∀ (D : Ext h g n) (R : Ine (F := E) A →* D.Kˣ), D.Res R → ∀ θ : D.Kˣ →* ℂˣ, GlobalTheory.Published.IsRegularChar g n θ →
     ∀ τ : FDRep ℂ (Gn g n), IsCusp τ.character → Names g n θ τ → ∀ σ : IrrRep (GL (Fin n) (w.adicCompletion E)), cls σ = x →
       GlobalTheory.SerSys.TameGen.Inflates (σ.ρ.comp (GeneralLinearGroup.map i.toRingHom)) τ → V.mono0 ∧ InFor g n R θ V
 
-structure Par (a : Weil h →* (w.adicCompletion E)ˣ) (y : IrrGL (w.adicCompletion E)) (V : WD h) : Prop where
+structure Par (a : Weil h →* (w.adicCompletion E)ˣ) (y : IrrGL (k := w.adicCompletion E)) (V : WD h) : Prop where
   irr : IsIrrWD V
   dim : V.lpDim = y.1
   tame : IsTameWD V
   central : ∀ ω, HasCentralChar y.rep ω → ∀ σ, (V.eig σ).prod = (ω (a σ) : ℂ)
   type : TypeAt y V
 
-structure CuspT (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (r : IrrGL (w.adicCompletion E) → WD h) : Prop where
+structure CuspT (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (r : IrrGL (k := w.adicCompletion E) → WD h) : Prop where
   irr : ∀ x, x.IsCusp → IsIrrWD (r x)
   dim : ∀ x, x.IsCusp → (r x).lpDim = x.1
   one : ∀ χ hχ, r (.ofChar χ hχ) = WD.lpOfChar h (χ.comp a) (ha.smooth hχ)
   nu : ∀ x, x.IsCusp → ∀ s : ℝ, r (x.nu s) = (r x).lpTw s
-  absCentral : ∀ x : IrrGL (w.adicCompletion E), x.IsCusp → ∀ ω, HasCentralChar x.rep ω → ∀ σ, ‖((r x).eig σ).prod‖ = ‖(ω (a σ) : ℂ)‖
+  absCentral : ∀ x : IrrGL (k := w.adicCompletion E), x.IsCusp → ∀ ω, HasCentralChar x.rep ω → ∀ σ, ‖((r x).eig σ).prod‖ = ‖(ω (a σ) : ℂ)‖
   twist : ∀ x, x.IsCusp → GoodCusp x → ∀ χ hχ, r (x.tw χ hχ) = (r x).lpTwist (χ.comp a) (ha.smooth hχ)
-  central : ∀ x : IrrGL (w.adicCompletion E), x.IsCusp → GoodCusp x → ∀ ω, HasCentralChar x.rep ω → ∀ σ, ((r x).eig σ).prod = (ω (a σ) : ℂ)
+  central : ∀ x : IrrGL (k := w.adicCompletion E), x.IsCusp → GoodCusp x → ∀ ω, HasCentralChar x.rep ω → ∀ σ, ((r x).eig σ).prod = (ω (a σ) : ℂ)
   dual : ∀ x y, x.IsCusp → y.IsCusp → GoodCusp x → DualCl x y → r y = (r x).lpDual
   inj : ∀ x y, x.IsCusp → y.IsCusp → GoodCusp y → r x = r y → x = y
   depth : ∀ x, x.IsCusp → GoodCusp x → DZ x → IsTameWD (r x)
@@ -146,11 +150,11 @@ def DetByType : Prop :=
       HasCentralChar σ.ρ ω → HasCentralChar σ'.ρ ω → cls σ' = cls σ
 
 def TwTame : Prop :=
-  ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k] (y : IrrGL k) (χ : kˣ →* ℂˣ) (hχ : IsSmoothChar χ),
+  ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k] (y : IrrGL (k := k)) (χ : kˣ →* ℂˣ) (hχ : IsSmoothChar χ),
     0 < y.1 → DZ y → (DZ (y.tw χ hχ) ↔ TameChar χ)
 
 def ClBasic : Prop :=
-  ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k] (y : IrrGL k),
+  ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k] (y : IrrGL (k := k)),
     (∃ ω, IsSmoothChar ω ∧ HasCentralChar y.rep ω ∧ ∀ ω', HasCentralChar y.rep ω' → ω' = ω) ∧
     (∀ χ hχ, (y.tw χ hχ).1 = y.1 ∧ ((y.tw χ hχ).IsCusp ↔ y.IsCusp) ∧ (GoodCusp (y.tw χ hχ) ↔ GoodCusp y) ∧
       (∀ χ' hχ' h'', (y.tw χ hχ).tw χ' hχ' = y.tw (χ * χ') h'') ∧
@@ -163,15 +167,15 @@ def ClBasic : Prop :=
 
 def Expo : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a), ∃ e : IrrGL (w.adicCompletion E) → ℝ, ∀ x : IrrGL (w.adicCompletion E), 0 < x.1 →
+    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a), ∃ e : IrrGL (k := w.adicCompletion E) → ℝ, ∀ x : IrrGL (k := w.adicCompletion E), 0 < x.1 →
     (∀ s : ℝ, e (x.nu s) = e x + s) ∧ ∀ ω, HasCentralChar x.rep ω → ∀ (J : WD h), J.lpDim = x.1 → (∀ σ, ‖(J.eig σ).prod‖ = 1) →
       ∀ σ, ‖((J.lpTw (e x)).eig σ).prod‖ = ‖(ω (a σ) : ℂ)‖
 
 def GoodSeg : Prop :=
   ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k],
-    (∀ (l : List (Segment k)) (x : IrrGL k), IsL (l : Multiset (Segment k)) x.rep → (Good x ↔ ∀ Δ ∈ l, GoodCusp Δ.first)) ∧
-    (∀ x : IrrGL k, x.IsCusp → (Good x ↔ GoodCusp x)) ∧
-    ∀ (x : IrrGL k) (s s' : Multiset (IrrGL k)), HasSupport x.rep s → HasSupport x.rep s' → s = s'
+    (∀ (l : List (Segment k)) (x : IrrGL (k := k)), IsL (l : Multiset (Segment k)) x.rep → (Good x ↔ ∀ Δ ∈ l, GoodCusp Δ.first)) ∧
+    (∀ x : IrrGL (k := k), x.IsCusp → (Good x ↔ GoodCusp x)) ∧
+    ∀ (x : IrrGL (k := k)) (s s' : Multiset (IrrGL (k := k))), HasSupport x.rep s → HasSupport x.rep s' → s = s'
 
 def ArtEx : Prop := ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
     (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w), ∃! a : Weil h →* (w.adicCompletion E)ˣ, IsLocalArtin h a
@@ -198,7 +202,7 @@ def ResIndep : Prop :=
       ∃ e : D.K ≃+* D'.K, ∀ t, ((R' t : D'.Kˣ) : D'.K) = e (R t : D.Kˣ)
 
 def TypeIff : Prop := ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (rc : IrrGL (w.adicCompletion E) → WD h), TypeLaw h rc ↔ ∀ x, TypeAt x (rc x)
+    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (rc : IrrGL (k := w.adicCompletion E) → WD h), TypeLaw (h := h) rc ↔ ∀ x, TypeAt x (rc x)
 
 def IndEx : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
@@ -248,24 +252,24 @@ def JunkEx : Prop :=
       ∀ (V : WD h) ξ hξ, IsTameWD V → J ≠ V.lpTwist ξ hξ)
 
 def ParEx : Prop := ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i → ∀ y : IrrGL (w.adicCompletion E), y.IsCusp → DZ y → ∃ V : WD h, Par a y V
+    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i → ∀ y : IrrGL (k := w.adicCompletion E), y.IsCusp → DZ y → ∃ V : WD h, Par a y V
 
 def ParUniq : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
     (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i →
-    ∀ y : IrrGL (w.adicCompletion E), y.IsCusp → DZ y → ∀ V : WD h, Par a y V →
-      (∀ V', Par a y V' → V' = V) ∧ ∀ y' : IrrGL (w.adicCompletion E), y'.IsCusp → DZ y' → Par a y' V → y' = y
+    ∀ y : IrrGL (k := w.adicCompletion E), y.IsCusp → DZ y → ∀ V : WD h, Par a y V →
+      (∀ V', Par a y V' → V' = V) ∧ ∀ y' : IrrGL (k := w.adicCompletion E), y'.IsCusp → DZ y' → Par a y' V → y' = y
 
 def ParTw : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
     (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i →
-    ∀ y : IrrGL (w.adicCompletion E), y.IsCusp → DZ y → ∀ V : WD h, Par a y V → ∀ χ hχ, TameChar χ →
+    ∀ y : IrrGL (k := w.adicCompletion E), y.IsCusp → DZ y → ∀ V : WD h, Par a y V → ∀ χ hχ, TameChar χ →
       Par a (y.tw χ hχ) (V.lpTwist (χ.comp a) (ha.smooth hχ))
 
 def ParDual : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
     (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i →
-    ∀ y y' : IrrGL (w.adicCompletion E), y.IsCusp → DZ y → DualCl y y' → ∀ V : WD h, Par a y V → Par a y' V.lpDual
+    ∀ y y' : IrrGL (k := w.adicCompletion E), y.IsCusp → DZ y → DualCl y y' → ∀ V : WD h, Par a y V → Par a y' V.lpDual
 
 def ParOne : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
@@ -281,47 +285,38 @@ def ParOne : Prop :=
 
 def GoodMap : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a), ∃ r : IrrGL (w.adicCompletion E) → WD h,
+    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a), ∃ r : IrrGL (k := w.adicCompletion E) → WD h,
     (∀ χ hχ, r (.ofChar χ hχ) = WD.lpOfChar h (χ.comp a) (ha.smooth hχ)) ∧
     (∀ x, x.IsCusp → GoodCusp x → ∀ χ hχ, r (x.tw χ hχ) = (r x).lpTwist (χ.comp a) (ha.smooth hχ)) ∧
     ((∃ (g : ℕ) (_ : Fact g.Prime) (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i) → ∀ y, y.IsCusp → DZ y → Par a y (r y))
 
 def CuspEx : Prop := ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a), ∃ r : IrrGL (w.adicCompletion E) → WD h, CuspT a ha r
+    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a), ∃ r : IrrGL (k := w.adicCompletion E) → WD h, CuspT a ha r
 
 def ExtDim : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (r rc : IrrGL (w.adicCompletion E) → WD h), CuspT a ha r → IsLExt r rc →
-    ∀ x : IrrGL (w.adicCompletion E), ((rc x).lpDim = x.1 ∧ ∃ s, HasSupport x.rep s ∧ (∀ y ∈ s, y.IsCusp) ∧
+    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (r rc : IrrGL (k := w.adicCompletion E) → WD h), CuspT a ha r → IsLExt r rc →
+    ∀ x : IrrGL (k := w.adicCompletion E), ((rc x).lpDim = x.1 ∧ ∃ s, HasSupport x.rep s ∧ (∀ y ∈ s, y.IsCusp) ∧
       ∀ σ, (rc x).charPol σ = (s.map fun y => (r y).charPol σ).prod) ∧
       ∀ ω, HasCentralChar x.rep ω → ∀ σ, ‖((rc x).eig σ).prod‖ = ‖(ω (a σ) : ℂ)‖ ∧ (Good x → ((rc x).eig σ).prod = (ω (a σ) : ℂ))
 
 def ExtTw : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (r rc : IrrGL (w.adicCompletion E) → WD h), CuspT a ha r → IsLExt r rc →
+    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (r rc : IrrGL (k := w.adicCompletion E) → WD h), CuspT a ha r → IsLExt r rc →
     (∀ x (s : ℝ), rc (x.nu s) = (rc x).lpTw s) ∧
       ∀ x χ hχ, Good x → rc (x.tw χ hχ) = (rc x).lpChar (WD.lpOfChar h (χ.comp a) (ha.smooth hχ))
 
 def ExtDual : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (r rc : IrrGL (w.adicCompletion E) → WD h), CuspT a ha r → IsLExt r rc →
+    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (r rc : IrrGL (k := w.adicCompletion E) → WD h), CuspT a ha r → IsLExt r rc →
     ∀ (n : ℕ) (π π' : IrrRep (GL (Fin n) (w.adicCompletion E))), Good (cls π) → Nonempty (π'.ρ.Equiv (contra π.ρ)) →
       rc (cls π') = (rc (cls π)).lpDual
 
 def ExtInj : Prop := ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (r rc : IrrGL (w.adicCompletion E) → WD h), CuspT a ha r → IsLExt r rc → ∀ x y, Good y → rc x = rc y → x = y
+    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (r rc : IrrGL (k := w.adicCompletion E) → WD h), CuspT a ha r → IsLExt r rc → ∀ x y, Good y → rc x = rc y → x = y
 
 def ExtDepth : Prop := ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (r rc : IrrGL (w.adicCompletion E) → WD h), CuspT a ha r → IsLExt r rc → ∀ x, Good x → DZ x → IsTameWD (rc x)
-
-def RecTTransport : Prop :=
-  ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w)
-    (E' Ω' : Type) [Field E'] [NumberField E'] [Field Ω'] [Algebra E' Ω'] [IsAlgClosure E' Ω'] (A' : ValuationSubring Ω')
-    (w' : HeightOneSpectrum (𝓞 E')) (h' : IsPlaceOver A' w') (φ : Ω ≃+* Ω') (j : E →+* E')
-    (i : w.adicCompletion E ≃+* w'.adicCompletion E'), PlaceIso A w A' w' φ j i →
-    ∀ (rc : IrrGL (w.adicCompletion E) → WD h) (rc' : IrrGL (w'.adicCompletion E') → WD h'), IsRecT h rc → IsRecT h' rc' →
-      ∀ x x', RepRel i x x' → Good x → WDRel φ (rc x) (rc' x')
+    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a) (r rc : IrrGL (k := w.adicCompletion E) → WD h), CuspT a ha r → IsLExt r rc → ∀ x, Good x → DZ x → IsTameWD (rc x)
 
 end UpperTheory.Zero.LLC
 

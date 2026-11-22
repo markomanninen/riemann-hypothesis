@@ -1,17 +1,21 @@
-import Mathlib
-import Formalism.TameInertiaTowers.StatementGroup
+module
+
+public import Mathlib
+public import Formalism.TameInertiaTowers.StatementGroup
+
+@[expose] public section
 
 namespace Formalism.TwoAdicCyclotomicDecomposition.TwoAdicValuation
 
 lemma vEq (z : ℤ) (hz : z ≠ 0) : (padicValInt 2 z : ℕ∞) = emultiplicity (2 : ℤ) z := by
   haveI : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
-  rw [show padicValInt 2 z = padicValNat 2 z.natAbs from rfl,
-    padicValNat_eq_emultiplicity (Int.natAbs_ne_zero.mpr hz), Int.emultiplicity_natAbs]
+  rw [padicValInt, multiplicity_eq_emultiplicity (Int.natAbs_ne_zero.mpr hz),
+    Int.emultiplicity_natAbs]
   rfl
 
 lemma vNat (e : ℕ) (he : e ≠ 0) : (padicValNat 2 e : ℕ∞) = emultiplicity (2 : ℤ) (e : ℤ) := by
   haveI : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
-  rw [padicValNat_eq_emultiplicity he, ← Int.natCast_emultiplicity]
+  rw [Nat.padicValNat_def, multiplicity_eq_emultiplicity he, ← Int.natCast_emultiplicity]
   rfl
 
 lemma pow_sub_one_ne (a : ℤ) (ha2 : a ^ 2 ≠ 1) (e : ℕ) (he : 0 < e) : a ^ e - 1 ≠ 0 := by
@@ -88,7 +92,7 @@ theorem twoAdicVal : TwoAdicVal := by
   intro a ha ha2 e he
   by_cases hev : Even e
   · have h := val_even a ha ha2 e he hev
-    have hl : padicValNat 2 e ≤ Nat.log 2 e := padicValNat_le_nat_log e
+    have hl : padicValNat 2 e ≤ Nat.log 2 e := by simpa only [Nat.padicValNat_def] using (multiplicity_le_nat_log (p := 2) e)
     rw [if_pos hev]
     constructor <;> omega
   · have hod : Odd e := Nat.not_even_iff_odd.mp hev
@@ -107,7 +111,7 @@ theorem twoAdicOrder : TwoAdicOrder := by
         padicValInt 2 (a ^ 2 ^ j - 1) + 1 = padicValInt 2 (a ^ 2 - 1) + j := by
       intro j hj
       have := val_even a ha ha2 (2 ^ j) (by positivity) (Nat.even_pow.mpr ⟨even_two, by omega⟩)
-      rwa [padicValNat.prime_pow] at this
+      rwa [Nat.padicValNat_def, Nat.multiplicity_prime_pow] at this
     have hpow : ∀ j : ℕ,
         ((a : ZMod (2 ^ N)) ^ 2 ^ j = 1 ↔ N ≤ padicValInt 2 (a ^ 2 ^ j - 1)) := fun j =>
       powEq N (2 ^ j) a (pow_sub_one_ne a ha2 _ (by positivity))

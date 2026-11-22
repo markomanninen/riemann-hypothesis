@@ -1,7 +1,11 @@
-import Formalism.HarderNarasimhan.DegSupermodZ
-import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.MuChar
+module
+
+public import Formalism.HarderNarasimhan.DegSupermodZ
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.MuChar
+
+@[expose] public section
 
 open Module Submodule
 
@@ -49,7 +53,8 @@ private lemma norm_sum_smul_map_le_mul_of_bounded {A : Submodule ℤ E} {B : Sub
     simp [Submodule.coe_sum, Int.cast_smul_eq_zsmul]
   have heF : ((e (∑ i, round ((n : ℝ) * c i) • b i) : B) : F) =
       ∑ i, ((round ((n : ℝ) * c i) : ℤ) : ℝ) • ((e (b i) : B) : F) := by
-    simp [map_sum, map_zsmul, Submodule.coe_sum, Int.cast_smul_eq_zsmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_zsmul, Submodule.coe_sum, Int.cast_smul_eq_zsmul]
   have dF : (n : ℝ) • ∑ i, c i • ((e (b i) : B) : F) =
       ((e (∑ i, round ((n : ℝ) * c i) • b i) : B) : F) +
         ∑ i, ((n : ℝ) * c i - (round ((n : ℝ) * c i) : ℝ)) • ((e (b i) : B) : F) := by
@@ -179,13 +184,15 @@ theorem norm_starProjection_le {G : Type*} [AddCommGroup G] (α : G →+ E) (β 
     starProjection_orthogonal_apply_eq_zero (hS _ (hsS i))
   have hβ : U'ᗮ.starProjection (β (k • g - ∑ i, round ((k : ℝ) * c i) • s i)) =
       (k : ℝ) • U'ᗮ.starProjection (β g) := by
-    simp [map_sub, map_sum, map_zsmul, map_nsmul, h0, Nat.cast_smul_eq_nsmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sub, map_sum, map_zsmul, map_nsmul, h0, Nat.cast_smul_eq_nsmul]
   have hα : α (k • g - ∑ i, round ((k : ℝ) * c i) • s i) =
       (k : ℝ) • (span ℝ (α '' S))ᗮ.starProjection (α g) +
         ∑ i, ((k : ℝ) * c i - (round ((k : ℝ) * c i) : ℝ)) • α (s i) := by
     have hx : α g = (span ℝ (α '' S))ᗮ.starProjection (α g) + ∑ i, c i • α (s i) := by
       rw [hrep]; abel
-    rw [map_sub, map_nsmul, map_sum, ← Nat.cast_smul_eq_nsmul ℝ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_nsmul, map_sum, ← Nat.cast_smul_eq_nsmul ℝ]
     conv_lhs => rw [hx]
     simp only [map_zsmul, smul_add, Finset.smul_sum, sub_smul, Finset.sum_sub_distrib, smul_smul,
       Int.cast_smul_eq_zsmul]

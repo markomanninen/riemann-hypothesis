@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.IsUnitOfValEqZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtDefs
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.IsUnitOfValEqZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtDefs
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -11,7 +15,7 @@ theorem ratio_eq {Ω V : Type*} [Field Ω] [AddCommGroup V] [Module Ω V] {f g :
     (hg : g ≠ 0) (hf : f = a • g) : ratio f g = a := by
   unfold ratio
   have h : ∃ a : Ω, f = a • g := ⟨a, hf⟩
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact smul_left_injective Ω hg (h.choose_spec.symm.trans hf)
 
 theorem wt_cancel {a b c : WithTop ℤ} (hb : b ≠ ⊤) (h : a + b = c + b) : a = c := by
@@ -33,8 +37,8 @@ namespace Data
 
 variable (d : Data K ι Ω WT A)
 
-open ValuationResidueLemmas in
 
+open ValuationResidueLemmas in
 theorem admissible_over_prime (hd : d.AxH 𝒜) (h : d.S1) (la : IsDedekindDomain.HeightOneSpectrum (𝓞 K)) (c : ι)
     (w : AddValuation (OmS (Ω c) d.D d.N) (WithTop ℤ)) (hw : w ∈ d.PlOver la c) :
     d.admitted c (d.Wres c w) ∧ IsOver (K := K) (d.Wres c w) la ∧
@@ -53,9 +57,9 @@ theorem admissible_over_prime (hd : d.AxH 𝒜) (h : d.S1) (la : IsDedekindDomai
   let a : Fin (d.N + 1) → Ω c := fun j => ratio (Ω := Ω c) (d.w j c) (d.w (d.jc c) c)
   have ha : ∀ j, d.w j c = a j • d.w (d.jc c) c := fun j => by
     obtain ⟨b, hb⟩ := hex j
-    rw [show a j = b from ratio_eq (hd.w_base c) hb]
+    rw [show a j = b from ValuationResidueLemmas.ratio_eq (hd.w_base c) hb]
     exact hb
-  have ha_jc : a (d.jc c) = 1 := ratio_eq (hd.w_base c) (one_smul _ _).symm
+  have ha_jc : a (d.jc c) = 1 := ValuationResidueLemmas.ratio_eq (hd.w_base c) (one_smul _ _).symm
   let f := algebraMap (Ω c) (OmS (Ω c) d.D d.N)
   obtain ⟨j0, -, hj0⟩ := Finset.univ.exists_min_image (fun j => w (f (a j))) Finset.univ_nonempty
   have hj0' : ∀ j, w (f (a j0)) ≤ w (f (a j)) := fun j => hj0 j (Finset.mem_univ _)
@@ -69,13 +73,13 @@ theorem admissible_over_prime (hd : d.AxH 𝒜) (h : d.S1) (la : IsDedekindDomai
   let r : Fin (d.N + 1) → Ω c := fun j => ratio (Ω := Ω c) (d.w j c) (d.w j0 c)
   have hr : ∀ j, r j * a j0 = a j := fun j => by
     have : r j = a j / a j0 :=
-      ratio_eq hw0 (by rw [ha j, ha j0, smul_smul, div_mul_cancel₀ _ ha0])
+      ValuationResidueLemmas.ratio_eq hw0 (by rw [ha j, ha j0, smul_smul, div_mul_cancel₀ _ ha0])
     rw [this, div_mul_cancel₀ _ ha0]
-  have hr0 : r j0 = 1 := ratio_eq hw0 (one_smul _ _).symm
+  have hr0 : r j0 = 1 := ValuationResidueLemmas.ratio_eq hw0 (one_smul _ _).symm
   have hrint : ∀ j, 0 ≤ w (f (r j)) := fun j => by
     have e : w (f (r j)) + w (f (a j0)) = w (f (a j)) := by
       rw [← AddValuation.map_mul, ← map_mul, hr]
-    exact wt_nonneg_of_add (hNZ.1 _ hf0) e (hj0' j)
+    exact ValuationResidueLemmas.wt_nonneg_of_add (hNZ.1 _ hf0) e (hj0' j)
 
   let s : TVar d.D d.N → OmS (Ω c) d.D d.N := sImg (D := d.D) (d.jc c) (d.x c)
   have hOT : ∀ p, d.OTtoS c (MvPolynomial.X p) = s p := by
@@ -87,7 +91,8 @@ theorem admissible_over_prime (hd : d.AxH 𝒜) (h : d.S1) (la : IsDedekindDomai
   have hrel : ∀ i : Fin (d.D + 1), i ≠ 0 → ∑ j, s (i, j) * f (a j) = 0 := by
     intro i hi
     rw [Fin.sum_univ_succAbove _ (d.jc c)]
-    simp only [s, sImg, Fin.succAbove_cases_eq_insertNth, Fin.insertNth_apply_same,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [s, sImg, Fin.succAbove_cases_eq_insertNth, Fin.insertNth_apply_same,
       Fin.insertNth_apply_succAbove, hi, ↓reduceIte, ha_jc, map_one, mul_one, map_neg, map_sum,
       map_mul, hC]
     rw [neg_add_eq_zero]
@@ -128,6 +133,10 @@ theorem admissible_over_prime (hd : d.AxH 𝒜) (h : d.S1) (la : IsDedekindDomai
 
   letI _iW := ReciprocityTheory.MultiplicativeHeights.residueAlgebra (vRing w) f
   letI _io := ReciprocityTheory.MultiplicativeHeights.residueAlgebra ((vRing w).comap f) (algebraMap K (Ω c))
+  letI : Algebra (ResidueField (((vRing w).comap f).comap (algebraMap K (Ω c))))
+      (ResidueField (vRing w)) :=
+    ((algebraMap _ (ResidueField (vRing w))).comp
+      (algebraMap _ (ResidueField ((vRing w).comap f)))).toAlgebra
   let k₁ : IntermediateField (ResidueField (((vRing w).comap f).comap (algebraMap K (Ω c))))
       (ResidueField ((vRing w).comap f)) :=
     IntermediateField.adjoin _ {z | ∃ j, ∃ h : r j ∈ (vRing w).comap f,
@@ -160,7 +169,7 @@ theorem admissible_over_prime (hd : d.AxH 𝒜) (h : d.S1) (la : IsDedekindDomai
     obtain ⟨Q, ⟨Z, hZ⟩, rfl⟩ := hP
     have e : (⟨_, hα⟩ : (vRing w).comap f) = Q.coeff α := Subtype.ext (MvPolynomial.coeff_map _ _ _)
     rw [e]
-    have := congrArg (MvPolynomial.coeff α) hZ
+    have := congrArg (AddMonoidAlgebra.coeff · α) hZ
     simp only [MvPolynomial.coeff_map] at this
     rw [← this]
     exact (Z.coeff α).2
@@ -191,7 +200,70 @@ theorem admissible_over_prime (hd : d.AxH 𝒜) (h : d.S1) (la : IsDedekindDomai
     intro x
     have := (hpl (MvPolynomial.C x)).1
     rwa [hOT', MvPolynomial.eval₂_C] at this
-  have hind_u := indep_u (Ω := Ω c) w la u h0 h1
+  have hind_u : AlgebraicIndependent
+      (ResidueField (((vRing w).comap f).comap (algebraMap K (Ω c))))
+      (fun j => residue (vRing w) (u j)) := by
+    classical
+    letI _iW := ReciprocityTheory.MultiplicativeHeights.residueAlgebra (vRing w) f
+    letI _io := ReciprocityTheory.MultiplicativeHeights.residueAlgebra ((vRing w).comap f)
+      (algebraMap K (Ω c))
+    letI : Algebra (ResidueField (((vRing w).comap f).comap (algebraMap K (Ω c))))
+        (ResidueField (vRing w)) :=
+      ((algebraMap _ (ResidueField (vRing w))).comp
+        (algebraMap _ (ResidueField ((vRing w).comap f)))).toAlgebra
+    let ν : AddValuation K (WithTop ℤ) := (w.comap f).comap (algebraMap K (Ω c))
+    have hpos : ∀ x : 𝓞 K, 0 < ν (algebraMap (𝓞 K) K x) ↔ x ∈ la.asIdeal := by
+      intro x
+      have hx := h0 (MvPolynomial.C x)
+      simp only [MvPolynomial.eval₂_C] at hx
+      refine hx.trans ?_
+      constructor
+      · intro hx; simpa using hx 0
+      · intro hx α; rw [MvPolynomial.coeff_C]; split_ifs <;> simp [hx]
+    have h1' : ∀ x : 𝓞 K, algebraMap (𝓞 K) K x ∈ vRing ν := h1
+    have h1o : ∀ x : 𝓞 K,
+        algebraMap (𝓞 K) K x ∈ ((vRing w).comap f).comap (algebraMap K (Ω c)) := h1
+    have hsurj : Function.Surjective
+        ((residue (((vRing w).comap f).comap (algebraMap K (Ω c)))).comp
+          ((algebraMap (𝓞 K) K).codRestrict _ h1o)) :=
+      ValuationResidueLemmas.surj_res ν la h1' hpos
+    rw [algebraicIndependent_iff]
+    intro P hP
+    by_contra hne
+    obtain ⟨P', rfl⟩ := MvPolynomial.map_surjective _ hsurj P
+    have hα : ∃ α, P'.coeff α ∉ la.asIdeal := by
+      by_contra hall
+      push Not at hall
+      apply hne
+      ext α
+      rw [MvPolynomial.coeff_map, RingHom.comp_apply]
+      change residue _ _ = 0
+      rw [residue_eq_zero_iff]
+      exact (ValuationResidueLemmas.mem_max_iff ν _).mpr ((hpos _).mpr (hall α))
+    obtain ⟨α, hα⟩ := hα
+    have hw0 : ¬ 0 < w (MvPolynomial.eval₂
+        ((algebraMap (Ω c) (OmS (Ω c) d.D d.N)).comp
+          ((algebraMap K (Ω c)).comp (algebraMap (𝓞 K) K)))
+        (fun j => (u j : OmS (Ω c) d.D d.N)) P') := by
+      rw [h0]
+      intro h
+      exact hα (h α)
+    let ψ : 𝓞 K →+* vRing w :=
+      ((algebraMap (Ω c) (OmS (Ω c) d.D d.N)).comp
+        ((algebraMap K (Ω c)).comp (algebraMap (𝓞 K) K))).codRestrict (vRing w) h1
+    let y : vRing w := MvPolynomial.eval₂ ψ u P'
+    have hy : (y : OmS (Ω c) d.D d.N) = MvPolynomial.eval₂
+        ((algebraMap (Ω c) (OmS (Ω c) d.D d.N)).comp
+          ((algebraMap K (Ω c)).comp (algebraMap (𝓞 K) K)))
+        (fun j => (u j : OmS (Ω c) d.D d.N)) P' :=
+      MvPolynomial.eval₂_comp_left (vRing w).subtype ψ u P'
+    have hres : residue (vRing w) y = 0 := by
+      have e := MvPolynomial.eval₂_comp_left (residue (vRing w)) ψ u P'
+      rw [MvPolynomial.aeval_def, MvPolynomial.eval₂_map] at hP
+      refine e.trans (Eq.trans ?_ hP)
+      congr 1
+    rw [residue_eq_zero_iff, ValuationResidueLemmas.mem_max_iff, hy] at hres
+    exact hw0 hres
   have hcard : Fintype.card (TVar d.D d.N) = Fintype.card (SVar d.D d.N) + d.D := by
     simp [Fintype.card_sum, Fintype.card_prod]; ring
   have RT := ReciprocityTheory.MultiplicativeHeights.Closed.residueTrdeg K (Ω c) (OmS (Ω c) d.D d.N) d.D (hd.trdeg c)
@@ -231,8 +303,10 @@ theorem admissible_over_prime (hd : d.AxH 𝒜) (h : d.S1) (la : IsDedekindDomai
       intro R hR h0'
       apply hR; apply hinj
       rw [← hψ, h0', map_zero, map_zero]
-    obtain ⟨c1, -, e1⟩ := exists_val_coeff w t ht hG _ (hne P hP0)
-    obtain ⟨c2, hc2, e2⟩ := exists_val_coeff w t ht hG _ (hne Q hQ0)
+    obtain ⟨c1, -, e1⟩ := _root_.ReciprocityTheory.ChartRestriction.G.T0.ValuationResidueLemmas.exists_val_coeff
+      w t ht hG _ (hne P hP0)
+    obtain ⟨c2, hc2, e2⟩ := _root_.ReciprocityTheory.ChartRestriction.G.T0.ValuationResidueLemmas.exists_val_coeff
+      w t ht hG _ (hne Q hQ0)
     rw [hψ] at e1 e2
     refine ⟨c1 / c2, ?_⟩
     have hQU : algebraMap (MvPolynomial (SVar d.D d.N) (Ω c)) (OmS (Ω c) d.D d.N) Q ≠ 0 :=
@@ -244,7 +318,8 @@ theorem admissible_over_prime (hd : d.AxH 𝒜) (h : d.S1) (la : IsDedekindDomai
       rw [← AddValuation.map_mul, ← map_mul, div_mul_cancel₀ _ hc2]
     rw [hπ', e1, e2] at k1
     show w (f (c1 / c2)) = 1
-    exact wt_cancel (hNZ.1 _ ((map_ne_zero f).mpr hc2)) (k2.trans k1.symm)
+    exact ValuationResidueLemmas.wt_cancel
+      (hNZ.1 _ ((map_ne_zero f).mpr hc2)) (k2.trans k1.symm)
   have hOver : IsOver (K := K) (d.Wres c w) la := by
     intro x
     have := hpl (MvPolynomial.C x)
@@ -257,13 +332,15 @@ theorem admissible_over_prime (hd : d.AxH 𝒜) (h : d.S1) (la : IsDedekindDomai
   have hsH : ∀ q, d.sH c (MvPolynomial.X q) = s q := fun q => by simp [Data.sH, sHom, s]
   have hsum : (∑ j, d.sH c (MvPolynomial.X (0, j)) * f (r j)) =
       MvPolynomial.aeval t (∑ j, p (0, j) * MvPolynomial.C (r j)) := by
-    simp only [map_sum, map_mul, hpu, MvPolynomial.aeval_C, hsH]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, hpu, MvPolynomial.aeval_C, hsH]
     rfl
   show w (∑ j, d.sH c (MvPolynomial.X (0, j)) * f (r j)) = 0
   rw [hsum]
   have hL : (∑ j, p (0, j) * MvPolynomial.C (r j)) ∈ R3 :=
     R3.sum_mem fun j _ => R3.mul_mem (hpR3 _) (hR3C _)
-  refine val_eval_eq_zero w t ht hG _ (fun β => hcoefW _ hL β) (Finsupp.single (Sum.inl ()) 1) ?_
+  refine _root_.ReciprocityTheory.ChartRestriction.G.T0.ValuationResidueLemmas.val_eval_eq_zero
+    w t ht hG _ (fun β => hcoefW _ hL β) (Finsupp.single (Sum.inl ()) 1) ?_
   rw [MvPolynomial.coeff_sum, Fin.sum_univ_succAbove _ j0]
   simp only [hpj0, hpk, ↓reduceIte, hr0, map_one, mul_one]
   rw [MvPolynomial.coeff_X', if_pos rfl, Finset.sum_eq_zero, add_zero]

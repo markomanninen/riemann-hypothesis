@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentIdealSmulMemSpanRational
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentIdealSmulMemSpanRational
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory

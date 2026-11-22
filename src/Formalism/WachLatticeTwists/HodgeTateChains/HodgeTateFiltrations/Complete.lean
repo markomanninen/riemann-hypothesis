@@ -1,4 +1,8 @@
-import Formalism.WachLatticeTwists.HodgeTateChains.Statement
+module
+
+public import Formalism.WachLatticeTwists.HodgeTateChains.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,7 @@ theorem onePlus : StatOnePlus := by
       induction n with
       | zero => simp [f, ha0]
       | succ n ih =>
-        rw [hfs, map_add, smul_add, has, map_smul, smul_smul, ← pow_succ', smul_neg]
+        rw [hfs, map_add (f := _), smul_add, has, map_smul, smul_smul, ← pow_succ', smul_neg]
         have : f n + ϖ ^ n • a n + (ϖ • E (f n) + ϖ ^ (n + 1) • E (a n))
             = (f n + ϖ • E (f n)) + ϖ ^ n • a n + ϖ ^ (n + 1) • E (a n) := by abel
         rw [this, ih]; abel
@@ -87,7 +91,7 @@ theorem third_estimate_of_first_two (h1 : StatOnePlus) : PerturbationOperatorInt
       = g (x + ϖ • S (B (g x))) - (x + ϖ • S (B (g x))) := by
     intro x
     have h := hgS (B (g x))
-    rw [map_add, map_smul, mul_comm z ϖ, mul_smul, ← h, smul_sub]; abel
+    rw [map_add (f := _), map_smul, mul_comm z ϖ, mul_smul, ← h, smul_sub]; abel
   have hinj : ∀ x, g x = x → x = 0 := fun x hx => hz x (by rw [← hSg, hx, sub_self, map_zero])
   refine ⟨?_, ?_, ?_⟩
   · intro x hx

@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ConjStableShaFam
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ConjStableShaFam
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base
 
 theorem UpperTheory.V.Base.places :
     ∀ (k Ω : Type) [Field k] [NumberField k] [Field Ω] [Algebra k Ω] [IsAlgClosure k Ω] (l : ℕ) [Fact l.Prime] (A : ValuationSubring Ω),
       (A ≠ ⊤ → ∃ v : HeightOneSpectrum (𝓞 k), IsPlaceOver A v) ∧ (A = ⊤ → Ine (F := k) A = ⊥ ∧ ¬ A.valuation (l : Ω) < 1) ∧
-      (∀ v : HeightOneSpectrum (𝓞 k), IsPlaceOver A v → (A.valuation (l : Ω) < 1 ↔ v ∈ Above k l)) ∧
+      (∀ v : HeightOneSpectrum (𝓞 k), IsPlaceOver A v → (A.valuation (l : Ω) < 1 ↔ v ∈ Above (F := k) l)) ∧
       (¬ A.valuation (l : Ω) < 1 → Ine (F := k) A ≤ (cycZ k Ω l).ker) := by
   intro k Ω _ _ _ _ _ l _ A
   have hint : ∀ z : Ω, IsIntegral ℤ z → A.valuation z ≤ 1 := by
@@ -34,7 +38,7 @@ theorem UpperTheory.V.Base.places :
       { carrier := {x | A.valuation (algebraMap k Ω (x : k)) < 1}
         add_mem' := by
           intro a b ha hb
-          simp only [Set.mem_setOf_eq, map_add] at *
+          simp only [Set.mem_setOf_eq, map_add (f := _)] at *
           exact lt_of_le_of_lt (A.valuation.map_add _ _) (max_lt ha hb)
         zero_mem' := by simp
         smul_mem' := by

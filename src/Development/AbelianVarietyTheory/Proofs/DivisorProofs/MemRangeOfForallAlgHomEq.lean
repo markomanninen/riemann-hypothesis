@@ -1,10 +1,15 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
 
-open Polynomial in
 
+open Polynomial in
 theorem mem_range_of_forall_algHom_eq :
     ∀ (F K₀ : Type) [Field F] [CharZero F] [Field K₀] [Algebra F K₀], Algebra.IsAlgebraic F K₀ →
       ∀ t : K₀, (∀ (Ω : Type) [Field Ω] [Algebra F Ω] (φ₁ φ₂ : K₀ →ₐ[F] Ω), φ₁ t = φ₂ t) →

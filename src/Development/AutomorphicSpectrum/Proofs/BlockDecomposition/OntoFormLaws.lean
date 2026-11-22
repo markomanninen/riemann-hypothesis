@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormLaws
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormLaws
+
+@[expose] public section
+
 open CrystallineSemistableComparison.Onto
 
 set_option autoImplicit false
@@ -11,7 +16,7 @@ namespace GlobalTheory.CompanionTheory.OntoForms
 open exteriorPower
 
 theorem mem_of_span {R M X ι : Type*} [CommRing R] [AddCommGroup M] [Module R M] [AddCommGroup X]
-    [Module R X] [DecidableEq ι] (m : MultilinearMap R (fun _ : ι => M) X) (P : Submodule R X)
+    [Module R X] [DecidableEq ι] (m : (ι → M) →ₘₗ[R] X) (P : Submodule R X)
     (S : ι → Set M) (U : Finset ι) (hS : ∀ i ∈ U, Submodule.span R (S i) = ⊤)
     (h : ∀ v, (∀ j, v j ∈ S j) → m v ∈ P) :
     ∀ v, (∀ j, j ∉ U → v j ∈ S j) → m v ∈ P := by
@@ -32,7 +37,7 @@ theorem mem_of_span {R M X ι : Type*} [CommRing R] [AddCommGroup M] [Module R M
     simpa using h3
 
 theorem sub_mem_of_congr {R M X ι : Type*} [CommRing R] [AddCommGroup M] [Module R M]
-    [AddCommGroup X] [Module R X] [DecidableEq ι] (m : MultilinearMap R (fun _ : ι => M) X)
+    [AddCommGroup X] [Module R X] [DecidableEq ι] (m : (ι → M) →ₘₗ[R] X)
     (P : Submodule R X) (L : Submodule R M) (hP : ∀ v k, v k ∈ L → m v ∈ P) (U : Finset ι) :
     ∀ u u', (∀ k, k ∉ U → u k = u' k) → (∀ k, u k - u' k ∈ L) → m u - m u' ∈ P := by
   induction U using Finset.induction_on with
@@ -118,7 +123,7 @@ theorem eq_zero_of_map {A B M N Q : Type*} [CommRing A] [CommRing B] [Algebra A 
         change p (ιMulti A a fun k => s (Function.update v i (x + y) k)) =
           p (ιMulti A a fun k => s (Function.update v i x k)) +
           p (ιMulti A a fun k => s (Function.update v i y k))
-        rw [hcomp, hcomp, hcomp, ← map_add, ← AlternatingMap.map_update_add]
+        rw [hcomp, hcomp, hcomp, ← map_add (f := _), ← AlternatingMap.map_update_add]
         refine cong _ _ fun k => ?_
         by_cases hki : k = i
         · subst hki; simp [hs']
@@ -207,8 +212,8 @@ variable {K A : Type} [CommRing K] [CommRing A] [Algebra K A] {a : ℕ}
 theorem smul_form (c g₀ : A) (g : Fin a → A) : c • form K g₀ g = form K (c * g₀) g := by
   simp [form, mul_smul]
 
-variable (K A a) in
 
+variable (K A a) in
 theorem span_forms : Submodule.span K {ω : Om K A a | ∃ g₀ g, ω = form K g₀ g} = ⊤ := by
   classical
   set S := Submodule.span K {ω : Om K A a | ∃ g₀ g, ω = form K g₀ g} with hS
@@ -344,7 +349,7 @@ theorem formLaws : FormLaws := by
         unfold form
         rw [(ιMulti B a (M := Ω[B⁄K])).map_coord_zero k (by simp [hk']), smul_zero]
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+    | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
     | smul c x _ hx => rw [h3, hx, smul_zero]
 
 end GlobalTheory.CompanionTheory.OntoForms

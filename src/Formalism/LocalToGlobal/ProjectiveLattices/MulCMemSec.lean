@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.PetersonNormSubspace
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.PetersonNormSubspace
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,6 +34,7 @@ def CuspMul : Prop :=
   ∀ (a a' : (E →+* ℂ) × ℕ → ℕ) (n n' : ℕ) (f g : Rul Xo c), Dom a n → Dom a' n' → f ∈ cusp Xo c U a n →
     g ∈ cusp Xo c U a' n' → mulC Xo c f g ∈ cusp Xo c U (a + a') (n + n')
 
+set_option maxSynthPendingDepth 1 in
 def CuspFD : Prop :=
   ∀ (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ), Dom a n → FiniteDimensional c.F (cusp Xo c U a n)
 

@@ -1,17 +1,21 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry CrystallineSemistableComparison CrystallineSemistableComparison.R
 
 namespace GlobalTheory.CompanionTheory.PdTF
 
-theorem natCast_mul_cancel {S : Type} [CommRing S] (hS : TF S) {n : ℕ} (hn : n ≠ 0) {a b : S}
+theorem natCast_mul_cancel {S : Type} [CommRing S] (hS : TF (S := S)) {n : ℕ} (hn : n ≠ 0) {a b : S}
     (e : (n : S) * a = (n : S) * b) : a = b := by
   have h0 : (n : S) * (a - b) = 0 := by rw [mul_sub, e, sub_self]
   have := (mem_nonZeroDivisors_iff.mp (hS n hn)).1 _ h0
   exact sub_eq_zero.mp this
 
-theorem exists_dividedPowers {S : Type} [CommRing S] (hS : TF S) (I : Ideal S) (hI : PdI I) :
+theorem exists_dividedPowers {S : Type} [CommRing S] (hS : TF (S := S)) (I : Ideal S) (hI : PdI I) :
     ∃ δ : DividedPowers I, IsPd (RingHom.id S) I δ := by
   classical
   have ex : ∀ (k : ℕ) (x : S), ∃ y : S,

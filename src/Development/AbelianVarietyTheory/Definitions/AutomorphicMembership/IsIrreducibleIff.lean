@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.Imports
-import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.Imports
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,9 +35,9 @@ theorem isIrreducible_iff {V : Type} [AddCommGroup V] [Module ℂ V] (ρ : Repre
 
 variable [TopologicalSpace G]
 
-variable (G) in
 
-structure SmIrr where
+variable (G) in
+structure SmIrr (G : Type) [Group G] [TopologicalSpace G] where
 
   V : Type
   [acg : AddCommGroup V]
@@ -45,25 +49,25 @@ structure SmIrr where
 
 attribute [instance] SmIrr.acg SmIrr.mod
 
-variable (G) in
 
+variable (G) in
 instance SmIrr.setoid : Setoid (SmIrr G) where
   r σ σ' := Nonempty (σ.ρ.Equiv σ'.ρ)
   iseqv := ⟨fun σ => ⟨.refl σ.ρ⟩, fun ⟨e⟩ => ⟨e.symm⟩, fun ⟨e⟩ ⟨e'⟩ => ⟨e.trans e'⟩⟩
 
-variable (G) in
-
-def Irr : Type 1 := Quotient (SmIrr.setoid G)
 
 variable (G) in
+def Irr (G : Type) [Group G] [TopologicalSpace G] : Type 1 := Quotient (@SmIrr.setoid G _ _)
 
+
+variable (G) in
 def SmIrr.triv : SmIrr G where
   V := ℂ
   ρ := Representation.trivial ℂ G ℂ
   smooth v := by simp
   irred := (isIrreducible_iff _).2 ⟨inferInstance, fun W _ => eq_bot_or_eq_top W⟩
 
-instance : Inhabited (Irr G) := ⟨Quotient.mk _ (SmIrr.triv G)⟩
+instance : Inhabited (Irr G) := ⟨Quotient.mk (@SmIrr.setoid G _ _) (SmIrr.triv G)⟩
 
 variable [IsTopologicalGroup G]
 
@@ -81,22 +85,13 @@ def SmIrr.twist (σ : SmIrr G) (χ : G →* ℂˣ) (hχ : IsOpen {g | χ g = 1})
     exact (W.smul_mem_iff (Units.ne_zero (χ g))).1 (hW g v hv)
 
 def Irr.twist (σ : Irr G) (χ : G →* ℂˣ) (hχ : IsOpen {g | χ g = 1}) : Irr G :=
-  Quotient.map (sa := SmIrr.setoid G) (sb := SmIrr.setoid G) (fun σ : SmIrr G => σ.twist χ hχ) (fun σ σ' ⟨e⟩ => ⟨.mk e.toLinearEquiv fun g => by
+  Quotient.map (sa := @SmIrr.setoid G _ _) (sb := @SmIrr.setoid G _ _) (fun σ : SmIrr G => σ.twist χ hχ) (fun σ σ' ⟨e⟩ => ⟨.mk e.toLinearEquiv fun g => by
     ext v
     change e (((χ g : ℂˣ) : ℂ) • σ.ρ g v) = ((χ g : ℂˣ) : ℂ) • σ'.ρ g (e v)
     rw [map_smul]
     exact congrArg _ (LinearMap.congr_fun (e.isIntertwining' g) v)⟩) σ
 
-def Irr.ofChar (χ : G →* ℂˣ) (hχ : IsOpen {g | χ g = 1}) : Irr G := Quotient.mk _ ((SmIrr.triv G).twist χ hχ)
-
-theorem Irr.ofChar_inj {χ χ' : G →* ℂˣ} {hχ : IsOpen {g | χ g = 1}} {hχ' : IsOpen {g | χ' g = 1}}
-    (h : Irr.ofChar χ hχ = Irr.ofChar χ' hχ') : χ = χ' := by
-  obtain ⟨e⟩ : Nonempty ((twRep (Representation.trivial ℂ G ℂ) χ).Equiv (twRep (Representation.trivial ℂ G ℂ) χ')) :=
-    Quotient.exact h
-  ext g
-  have h1 : e (((χ g : ℂˣ) : ℂ) • (1 : ℂ)) = ((χ' g : ℂˣ) : ℂ) • e (1 : ℂ) :=
-    LinearMap.congr_fun (e.isIntertwining' g) (1 : ℂ)
-  rw [map_smul] at h1
-  exact smul_left_injective ℂ ((map_ne_zero_iff e e.injective).2 (one_ne_zero (α := ℂ))) h1
+def Irr.ofChar (χ : G →* ℂˣ) (hχ : IsOpen {g | χ g = 1}) : Irr G :=
+  Quotient.mk (@SmIrr.setoid G _ _) ((SmIrr.triv G).twist χ hχ)
 
 end GlobalTheory.CuspRep

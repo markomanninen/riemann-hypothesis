@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.LatticeClassesOfLiftTransitivity
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.LatticeClassesOfLiftTransitivity
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem embedding_add_smul_z_mem_perp (w : (D.sp.X 0).V) (c : D.host.E) : D.sp.i
   have h1 : (VS D).hT x (D.sp.iXY 0 w) = 0 :=
     Formalism.MainNotions.hT_swap_zero ((Formalism.MainNotions.mem_orth_iff _ _).1 (isotropic_le_orth_range D u F0 he hx) _ ⟨w, rfl⟩)
   have h2 : (VS D).hT x F0.z = 0 := Formalism.MainNotions.hT_zero_of_mem_X F0 F0.z_orth x hx
-  rw [map_add, map_smul, h1, h2, smul_zero, add_zero]
+  rw [map_add (f := _), map_smul, h1, h2, smul_zero, add_zero]
 
 def quotientClass (w : (D.sp.X 0).V) (c : D.host.E) : WbQ D F0 :=
   Submodule.Quotient.mk ⟨D.sp.iXY 0 w + c • F0.z, embedding_add_smul_z_mem_perp D u F0 he w c⟩
@@ -67,7 +71,7 @@ theorem quotientClass_injective_left {w w' : (D.sp.X 0).V} {c c' : D.host.E} (h 
   have h0 : (VS D).hT F0.z (D.sp.iXY 0 w + c • F0.z - (D.sp.iXY 0 w' + c' • F0.z)) = 0 :=
     Formalism.MainNotions.hT_swap_zero (Formalism.MainNotions.hT_zero_of_mem_X F0 F0.z_orth _ h')
   have hc : c = c' := by
-    simp only [map_sub, map_add, map_smul, hzW, F0.z_norm, smul_eq_mul, zero_add] at h0
+    simp only [map_sub, map_add (f := _), map_smul, hzW, F0.z_norm, smul_eq_mul, zero_add] at h0
     have : (c - c') * ((Tu D u : ℕ) : D.host.E) = 0 := by linear_combination -h0
     rcases mul_eq_zero.1 this with h1 | h1
     · exact sub_eq_zero.1 h1
@@ -95,7 +99,7 @@ theorem actsAsExtendByOne_of_induced (σ : (VS D).V ≃ₗ[D.host.E] (VS D).V) (
   rw [hφ _ (flag_stabilizer_mem_perp D u F0 σ hσ _ (embedding_add_smul_z_mem_perp D u F0 he w c)), Submodule.Quotient.eq]
   change σ (D.sp.iXY 0 w + c • F0.z) - (D.sp.iXY 0 (γ w) + c • F0.z) ∈ F0.X
   have e : σ (D.sp.iXY 0 w + c • F0.z) - (D.sp.iXY 0 (γ w) + c • F0.z) = σ (D.sp.iXY 0 w) - D.sp.iXY 0 (γ w) := by
-    rw [map_add, map_smul, hσ.2.2]
+    rw [map_add (f := _), map_smul, hσ.2.2]
     abel
   rw [e]
   exact hind w
@@ -119,7 +123,7 @@ theorem gmap_latticeWithZ_of_induced (σ : (VS D).V ≃ₗ[D.host.E] (VS D).V) (
       exact hσ.2.2.symm
     have e3 : σ.symm (D.sp.iXY 0 w + c • F0.z) - (D.sp.iXY 0 (γ.symm w) + c • F0.z) =
         -(σ.symm (σ (D.sp.iXY 0 (γ.symm w)) - D.sp.iXY 0 w)) := by
-      rw [map_add, map_smul, hzs, map_sub, LinearEquiv.symm_apply_apply]
+      rw [map_add (f := _), map_smul, hzs, map_sub, LinearEquiv.symm_apply_apply]
       abel
     rw [e3]
     exact F0.X.neg_mem h2

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.DigitPartMonomial
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.ProjKeepsLetter
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.AddMemSupportOfMemSupportCoefOut
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.DigitPartMonomial
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.ProjKeepsLetter
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.AddMemSupportOfMemSupportCoefOut
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,10 +13,6 @@ open MvPolynomial Finset
 namespace Formalism.MainNotions.PlaneGram
 
 variable {K : Type} [Field K]
-
-theorem vala_iff_Aset' {L : Type} [DecidableEq L] {r : ℕ} (sg : L → Bool) (S : Finset L) (θ : ℝ)
-    (F : MvPolynomial (L × Fin r) K) : vala sg S θ F ↔ F ∈ Aset sg S ⌈θ⌉ := by
-  exact vala_iff_Aset sg S θ F
 
 theorem lg_mono' {p : ℕ} (hp : 2 ≤ p) {r : ℕ} (hr : 1 ≤ r) {a b : ℕ} (hab : a ≤ b) :
     lg p r a ≤ lg p r b := by
@@ -223,14 +223,16 @@ theorem stepP_of [CharZero K] (v : AddValuation K (WithTop ℚ)) (p : ℕ) (C0 :
       Pj Z = ∑ ζ ∈ Z.support, Z.coeff ζ • Pr (fun i => ldeg ζ i) (monomial ζ 1) := by
     intro Z
     conv_lhs => rw [Z.as_sum]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl (fun ζ _ => ?_)
     rw [hmono, map_smul, hPj]
   have hhom : ∀ (d : D.ML → ℕ), ∀ F ∈ PolK K D.r d, Pj F = Pr d F := by
     intro d F hF
     rw [hlin]
     conv_rhs => rw [F.as_sum]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl (fun ζ hζ => ?_)
     have hd : (fun i => ldeg ζ i) = d := funext ((mem_PolK_iff d F).1 hF ζ hζ)
     rw [hd, hmono ζ (F.coeff ζ), map_smul]
@@ -280,7 +282,8 @@ theorem stepP_of [CharZero K] (v : AddValuation K (WithTop ℚ)) (p : ℕ) (C0 :
   · intro j m θ Z hZ
     have hsplit : Pj Z = ∑ d ∈ Z.support.image (fun α i => ldeg α i), Pr d (hcomp d Z) := by
       conv_lhs => rw [sum_hcomp Z]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl (fun d _ => hhom d _ (hcomp_mem_PolK d Z))
     rw [vala_iff_Aset, hsplit]
     apply Aset_sum

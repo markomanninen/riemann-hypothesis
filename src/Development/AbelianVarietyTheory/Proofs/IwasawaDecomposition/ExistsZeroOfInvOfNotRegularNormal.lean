@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingKrullDimIntegers
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MemRangeOfForallHeightEqOneOfIsReflexive
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BijectiveAlgebraMapIntegralClosureOfBirational
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingKrullDimIntegers
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MemRangeOfForallHeightEqOneOfIsReflexive
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BijectiveAlgebraMapIntegralClosureOfBirational
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.Cartier GlobalTheory.CxPts GlobalTheory.ProjVar GlobalTheory.TrueGeo Formalism.BasicNotions
 
@@ -55,41 +59,5 @@ theorem mem_range_iff {R B K : Type} [CommRing R] [CommRing B] [Field K] [Algebr
     rw [map_mul, ← IsScalarTower.algebraMap_apply, ← e, IsScalarTower.algebraMap_apply R B K s]
     have hu' : algebraMap R B s = u := hu.symm
     rw [hu', ← _root_.mul_assoc, ← map_mul, Units.inv_mul, map_one, _root_.one_mul]
-
-theorem exists_zeroAt_inv : ∀ (X : Scheme.{0}) [IsIntegral X] [IsLocallyNoetherian X], ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsNormalScheme X → ∀ (x : X) (f : X.functionField), ¬ RegAt x f → ∃ z : X, z ⤳ x ∧ ZeroAt z f⁻¹ := by
-  intro X _ _ hN x f hf
-  obtain ⟨U, hU, hx, -⟩ := exists_isAffineOpen_mem_and_subset (x := x) (U := ⊤) trivial
-  haveI : Nonempty U := ⟨⟨x, hx⟩⟩
-  haveI := isIntegrallyClosed_sections_of_stalks (fun y => (hN y).2) hU
-  haveI : IsNoetherianRing Γ(X, U) := IsLocallyNoetherian.component_noetherian ⟨U, hU⟩
-  haveI := functionField_isFractionRing_of_isAffineOpen X U hU
-  have key : ∀ y : U, RegAt (y : X) f ↔ ∃ s c : Γ(X, U), algebraMap _ X.functionField s * f =
-      algebraMap _ X.functionField c ∧ s ∉ (hU.primeIdealOf y).asIdeal := fun y =>
-    haveI := hU.isLocalization_stalk y
-    mem_range_iff (B := X.presheaf.stalk (y : X)) (hU.primeIdealOf y).asIdeal f
-  obtain ⟨p, hp, hpQ, h1, hpf⟩ := exists_height_one f (hU.primeIdealOf ⟨x, hx⟩).asIdeal
-    fun s c e => by_contra fun hs => hf ((key ⟨x, hx⟩).2 ⟨s, c, e, hs⟩)
-  let P : PrimeSpectrum Γ(X, U) := ⟨p, hp⟩
-  have hz : hU.fromSpec P ∈ U := by
-    have : hU.fromSpec P ∈ Set.range hU.fromSpec := ⟨P, rfl⟩
-    rwa [hU.range_fromSpec] at this
-  let z : U := ⟨hU.fromSpec P, hz⟩
-  have hP : hU.primeIdealOf z = P :=
-    hU.fromSpec.isOpenEmbedding.injective (hU.fromSpec_primeIdealOf z)
-  have hzx : (z : X) ⤳ x := by
-    have h := ((PrimeSpectrum.le_iff_specializes P (hU.primeIdealOf ⟨x, hx⟩)).mp hpQ).map
-      hU.fromSpec.continuous
-    rwa [hU.fromSpec_primeIdealOf ⟨x, hx⟩] at h
-  have hfz : ¬ RegAt (z : X) f := fun h => by
-    obtain ⟨s, c, e, hs⟩ := (key z).1 h
-    rw [hP] at hs
-    exact hs (hpf s c e)
-  clear_value z
-  haveI := hU.isLocalization_stalk z
-  haveI : IsDiscreteValuationRing (X.presheaf.stalk (z : X)) :=
-    isDiscreteValuationRing_of_height_eq_one (hU.primeIdealOf z).asIdeal (by rw [hP]; exact h1) _
-  refine ⟨z, hzx, zeroAt_iff.2 ⟨?_, fun h => hfz ?_⟩⟩
-  · exact (ValuationRing.isInteger_or_isInteger (X.presheaf.stalk (z : X)) f).resolve_left hfz
-  · simpa using h.inv.regAt
 
 end GlobalTheory.NormalPole

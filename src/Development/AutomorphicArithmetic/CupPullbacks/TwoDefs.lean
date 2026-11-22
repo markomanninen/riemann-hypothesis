@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
+module
+
+public import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC UpperTheory.Pbf
 
 noncomputable section
@@ -34,8 +39,6 @@ theorem TU.hom_subsingleton {N : ℕ} {A : Type} [CommRing A] (v w : TU N A) : S
   have := h2 1 h1
   rw [mul_one] at this
   exact sub_eq_zero.1 this
-
-instance {N : ℕ} {A : Type} [CommRing A] (v w : TU N A) : Subsingleton (v ⟶ w) := TU.hom_subsingleton v w
 
 def TU.map (N : ℕ) {A B : Type} [CommRing A] [CommRing B] (f : A →+* B) : TU N A ⥤ TU N B where
   obj v := (Um.map N f).obj v

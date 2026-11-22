@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+module
+
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+
+@[expose] public section
 
 open Matrix Complex Unitary
 open scoped ComplexOrder

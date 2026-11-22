@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DiscreteSpectrumResidualClassification
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationUnitaryStandardCharacter
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BernsteinUnitaryProductIrreducible
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.AdelicIntertwinerEqScalar
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationUnitaryStandardCharacterStatement
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DiscreteSpectrumResidualClassification
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationUnitaryStandardCharacter
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BernsteinUnitaryProductIrreducible
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.AdelicIntertwinerEqScalar
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationUnitaryStandardCharacterStatement
+
+@[expose] public section
 
 section
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -38,7 +42,8 @@ theorem metaplectic_splittings_differ_by_character : _root_.GlobalTheory.FunPr.T
     swap
     · exact ⟨1, fun h => absurd h hg⟩
     have hgi := at_inv hg
-    obtain ⟨z, hz⟩ := _root_.GlobalTheory.T.adelic_intertwiner_eq_scalar hP F κ ψ hψ (om g * ω₀ g⁻¹)
+    have hscalar : ∃ z : ℂ, ∀ φ ∈ schA F κ, (om g * ω₀ g⁻¹) φ = z • φ :=
+      _root_.GlobalTheory.T.adelic_intertwiner_eq_scalar hP F κ ψ hψ (om g * ω₀ g⁻¹)
       (fun φ hφ => hom.pres g _ ((hω _ hgi).1 φ hφ))
       (fun w φ hφ => by
         have e1 : schr ψ w φ = d.rho ψ (d.e.symm w) φ := by simp [Darboux.rho]
@@ -47,6 +52,7 @@ theorem metaplectic_splittings_differ_by_character : _root_.GlobalTheory.FunPr.T
         simp [Darboux.rho])
       (fun μ hμ φ hφ => by
         rw [Module.End.mul_apply, hom.unit μ hμ g _ ((hω _ hgi).1 φ hφ), (hω _ hgi).2.2 μ hμ φ hφ])
+    obtain ⟨z, hz⟩ := hscalar
     refine ⟨z, fun _ φ hφ => ?_⟩
     have := hz (ω₀ g φ) ((hω g hg).1 φ hφ)
     rwa [Module.End.mul_apply, ← Module.End.mul_apply (ω₀ g⁻¹), ← map_mul, inv_mul_cancel, map_one,

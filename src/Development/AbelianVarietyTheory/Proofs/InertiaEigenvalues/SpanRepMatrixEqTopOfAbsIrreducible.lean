@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ResidualConstruction
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanRingCornerIdealModuleIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ResidualConstruction
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanRingCornerIdealModuleIff
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N GlobalTheory.IndefiniteRowSideFullHecke.CongruenceModuleMatrices GlobalTheory.SpanRing
 
 namespace GlobalTheory.BurnsideField
@@ -34,7 +39,7 @@ theorem span_range_eq_top_of_isAlgClosed {G K V : Type} [Group G] [Field K] [IsA
   obtain ⟨r, rfl⟩ := hsurj f
   induction r using MonoidAlgebra.induction_linear with
   | zero => simp
-  | add x y hx hy => rw [map_add]; exact Submodule.add_mem _ (hx trivial) (hy trivial)
+  | add x y hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ (hx trivial) (hy trivial)
   | single g c =>
     rw [Representation.asAlgebraHom_single]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨g, rfl⟩)
@@ -83,7 +88,8 @@ theorem span_eq_top_of_span_map {Γ k K : Type} [Field k] [Field K] [Algebra k K
   have hF : ∀ X : Matrix (Fin r) (Fin r) k, F (X.map (algebraMap k K)) = algebraMap k K (f X) := by
     intro X
     conv_rhs => rw [Matrix.matrix_eq_sum_single X]
-    simp only [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum]
     change ∑ i, ∑ j, algebraMap k K (X i j) * algebraMap k K (f (Matrix.single i j 1)) = _
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     have : Matrix.single i j (X i j) = X i j • Matrix.single i j (1 : k) := by

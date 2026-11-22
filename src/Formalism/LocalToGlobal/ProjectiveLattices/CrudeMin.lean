@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.RowDeg
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.RowDeg
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -79,7 +83,7 @@ theorem crPderiv_supported {R : Type} [CommRing R] {s : Set (Letter T r n)} (i :
     rw [Derivation.map_algebraMap]
     exact zero_mem _
   | add x y _ _ hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hx hy
   | mul x y hx' hy' hx hy =>
     rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
@@ -97,7 +101,7 @@ private theorem crPderiv_zero_lemma {R : Type} [CommRing R] {s : Set (Letter T r
     rintro rfl
     exact hi hj
   | algebraMap c => exact Derivation.map_algebraMap _ _
-  | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
   | mul x y _ _ hx hy => rw [Derivation.leibniz, hx, hy, smul_zero, smul_zero, add_zero]
 
 theorem crP_mem_harmK (k : Type) [Field k] (β : (Σ σ : T, Fin (r σ)) → Fin n) (a : T → ℕ → ℕ) (cc : T → T)
@@ -367,7 +371,7 @@ theorem crDl_inj (β : (Σ σ : T, Fin (r σ)) → Fin n) : Function.Injective (
 
 theorem crDiagExp_apply (β : (Σ σ : T, Fin (r σ)) → Fin n) (a : T → ℕ → ℕ) (ℓ : Letter T r n) :
     diagExp r n β a ℓ = ∑ p, if crDl β p = ℓ then a p.1 p.2 else 0 := by
-  simp only [diagExp, Finsupp.finset_sum_apply, Finsupp.single_apply]
+  simp only [diagExp, Finsupp.finsetSum_apply, Finsupp.single_apply]
   rfl
 
 theorem crDiagExp_dl (β : (Σ σ : T, Fin (r σ)) → Fin n) (a : T → ℕ → ℕ) (p : Σ σ : T, Fin (r σ)) :
@@ -408,17 +412,18 @@ theorem crRho_monomial (R : Type) [CommRing R] (β : (Σ σ : T, Fin (r σ)) →
 
 theorem crRho_coeff (R : Type) [CommRing R] (β : (Σ σ : T, Fin (r σ)) → Fin n)
     (p : MvPolynomial (Letter T r n) R) (m : Letter T r n →₀ ℕ)
-    (hm : ∀ ℓ ∈ m.support, ℓ.2.2 = β ⟨ℓ.1, ℓ.2.1⟩) : coeff m (crRho R β p) = coeff m p := by
+    (hm : ∀ ℓ ∈ m.support, ℓ.2.2 = β ⟨ℓ.1, ℓ.2.1⟩) : AddMonoidAlgebra.coeff (crRho R β p) m = AddMonoidAlgebra.coeff p m := by
   refine MvPolynomial.induction_on' p ?_ ?_
   · intro u c
     rw [crRho_monomial]
     split_ifs with h
     · rfl
-    · rw [coeff_zero, coeff_monomial, if_neg]
-      rintro rfl
-      exact h hm
+    · have hne : u ≠ m := by
+        rintro rfl
+        exact h hm
+      rw [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, coeff_monomial, ite_eq_right hne]
   · intro p q hp hq
-    rw [map_add, coeff_add, coeff_add, hp, hq]
+    rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq]
 
 theorem crRho_supported (R : Type) [CommRing R] (β : (Σ σ : T, Fin (r σ)) → Fin n)
     (p : MvPolynomial (Letter T r n) R) : crRho R β p ∈ supported R (crDiag β) := by
@@ -431,7 +436,7 @@ theorem crRho_supported (R : Type) [CommRing R] (β : (Σ σ : T, Fin (r σ)) �
         (Subalgebra.prod_mem _ fun ℓ hℓ => Subalgebra.pow_mem _ (crX_mem (h ℓ hℓ)) _)
     · exact Subalgebra.zero_mem _
   · intro p q hp hq
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Subalgebra.add_mem _ hp hq
 
 theorem crRho_minor (R : Type) [CommRing R] (β : (Σ σ : T, Fin (r σ)) → Fin n)
@@ -550,7 +555,7 @@ theorem Pmin_good (m : Letter T r n →₀ ℕ) (hm : m ∈ (MvPolynomial.map (I
   rw [crP_map] at hm
   have h1 := crP_mem_supported k β a
   rw [mem_supported] at h1
-  exact h1 ((mem_vars ℓ).mpr ⟨m, hm, Finsupp.mem_support_iff.mpr hℓ⟩)
+  exact h1 ((MvPolynomial.mem_vars_iff_mem_support ℓ).mpr ⟨m, hm, Finsupp.mem_support_iff.mpr hℓ⟩)
 
 theorem Pmin_degree (ha : Dom r a) (m : Letter T r n →₀ ℕ)
     (hm : m ∈ (MvPolynomial.map (Int.castRingHom k) (Pmin r n β a)).support) :

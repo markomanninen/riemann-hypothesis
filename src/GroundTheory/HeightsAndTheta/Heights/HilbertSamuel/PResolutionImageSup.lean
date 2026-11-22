@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionImageSup
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartSup
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PResolutionSupBound
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionImageSup
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartSup
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PResolutionSupBound
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -132,7 +137,7 @@ theorem local_bound (hC : ChartSupBound.Statement) (d : HSMDatum D Ω κ) (x₀ 
   obtain ⟨C₀, hC₀⟩ := hC D (e.target ∩ e.symm ⁻¹' d.R.U x₀) (Metric.closedBall (e x₀) (δ / 2)) _ ν hVo
     (isCompact_closedBall _ _) hKV hψ (hνs.continuousOn.mono inter_subset_left) fun z hz => hνpos z hz.1
   refine ⟨e.source ∩ e ⁻¹' Metric.ball (e x₀) (δ / 2), e.isOpen_inter_preimage Metric.isOpen_ball,
-    ⟨hj, Metric.mem_ball_self (half_pos hδ)⟩, max C₀ 0, le_max_right _ _, fun n hn f hf y hy => ?_⟩
+    ⟨hj, Set.mem_preimage.mpr (Metric.mem_ball_self (half_pos hδ))⟩, max C₀ 0, le_max_right _ _, fun n hn f hf y hy => ?_⟩
   have hgc := (continuous_ptNorm_resPt d hf).pow 2
   have hgm : Measurable fun y => ENNReal.ofReal (ptNorm d.m (RingHom.id ℂ) n f (resPt d y) ^ 2) :=
     ENNReal.measurable_ofReal.comp hgc.measurable
@@ -176,8 +181,8 @@ theorem local_bound (hC : ChartSupBound.Statement) (d : HSMDatum D Ω κ) (x₀ 
 
 end ResolutionImageSup
 
-open ResolutionImageSup in
 
+open ResolutionImageSup in
 theorem ResolutionImageSup.proof (hC : ChartSupBound.Statement) : ResolutionImageSup.Statement := by
   intro D Ω _ _ κ _ d
   choose N hNo hxN C hC0 hCb using fun x => local_bound hC d x

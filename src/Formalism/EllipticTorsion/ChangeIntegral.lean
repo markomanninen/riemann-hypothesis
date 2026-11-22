@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.EllipticTorsion.Statement
+module
+
+public import Mathlib
+public import Formalism.EllipticTorsion.Statement
+
+@[expose] public section
 
 universe u
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.HostCls
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsPrimeOfDifferentLe
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.HostCls
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsPrimeOfDifferentLe
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Finset
 
@@ -14,7 +18,8 @@ theorem sum_padicValNat_log_le {n : ℕ} (hn : n ≠ 0) (S : Finset ℕ) (hS : �
   rw [Real.log_nat_eq_sum_factorization, Finsupp.sum]
   calc ∑ l ∈ S, (padicValNat l n : ℝ) * Real.log l
       = ∑ l ∈ S, (n.factorization l : ℝ) * Real.log l :=
-        Finset.sum_congr rfl fun l hl => by rw [Nat.factorization_def n (hS l hl)]
+        Finset.sum_congr rfl fun l hl => by
+          rw [Nat.padicValNat_def, Nat.factorization_def n (hS l hl)]
     _ ≤ ∑ l ∈ S ∪ n.factorization.support, (n.factorization l : ℝ) * Real.log l :=
         Finset.sum_le_sum_of_subset_of_nonneg Finset.subset_union_left fun l _ _ =>
           mul_nonneg (by positivity) (Real.log_natCast_nonneg l)
@@ -26,7 +31,7 @@ theorem sum_log_le_of_dvd {n : ℕ} (hn : n ≠ 0) (S : Finset ℕ) (hS : ∀ l 
     ∑ l ∈ S, Real.log l ≤ Real.log n := by
   refine le_trans (Finset.sum_le_sum fun l hl => ?_) (sum_padicValNat_log_le hn S fun l hl => (hS l hl).1)
   haveI := Fact.mk (hS l hl).1
-  have h1 : (1 : ℝ) ≤ padicValNat l n := by exact_mod_cast one_le_padicValNat_of_dvd hn (hS l hl).2
+  have h1 : (1 : ℝ) ≤ padicValNat l n := by exact_mod_cast (by simpa only [Nat.padicValNat_def] using one_le_padicValNat_of_dvd hn (hS l hl).2)
   have := Real.log_natCast_nonneg l
   nlinarith
 
@@ -44,7 +49,8 @@ theorem sum_delta_log_le (E : Type) [Field E] [NumberField E] (S : Finset ℕ) (
       = (∑ l ∈ S, (padicValNat l (discr E).natAbs : ℝ) * Real.log l) / (Module.finrank ℚ E : ℝ) := by
         rw [Finset.sum_div]
         exact Finset.sum_congr rfl fun l _ => by
-          rw [show padicValInt l (discr E) = padicValNat l (discr E).natAbs from rfl]; ring
+          rw [padicValInt, Nat.padicValNat_def]
+          ring
     _ ≤ Real.log |(discr E : ℝ)| / (Module.finrank ℚ E : ℝ) := div_le_div_of_nonneg_right h hn.le
     _ = _ := by ring
 

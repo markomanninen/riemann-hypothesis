@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,7 +102,7 @@ theorem rrPar_sh (l : ℕ) (H₁ H₂ : ZMod n → ℕ) (cuts : Finset (ZMod n))
   rw [Finset.sup_image]
   congr 1
   funext c
-  simp only [Function.comp_apply, rF_sh, add_sub_cancel_right]
+  simp [rF_sh]
 
 theorem arc_parameters_shift_invariant (l j g h : ℕ) (H₁ H₂ : ZMod n → ℕ) (cuts : Finset (ZMod n)) (arcLen : ZMod n → ℕ) :
     initialExponentBound l n j g h (sh a H₁) (sh a H₂) (shC a cuts) (sh a arcLen) =

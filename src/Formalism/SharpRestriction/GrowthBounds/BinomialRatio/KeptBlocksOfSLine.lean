@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.KeptBlocksOfUSLines
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.KeptBlocksOfUSLines
+
+@[expose] public section
 
 noncomputable section
 

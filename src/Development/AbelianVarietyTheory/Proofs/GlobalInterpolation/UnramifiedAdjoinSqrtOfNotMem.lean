@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.UnitaryBC Polynomial
 
@@ -37,7 +41,7 @@ theorem GlobalTheory.unramified_adjoin_sqrt_of_not_mem : ∀ (L : Type) [Field L
       rw [map_sub, aeval_X_pow, aeval_C, hsq, sub_self]
     refine (eq_of_monic_of_dvd_of_natDegree_le (minpoly.monic hdA) hm
       (minpoly.isIntegrallyClosed_dvd hdA hroot) ?_).symm
-    rw [hdeg, natDegree_X_pow_sub_C]
+    rw [hdeg, natDegree_X_pow_sub_C _]
 
   have hadj : Algebra.adjoin (maximalRealSubfield L) {algebraMap (𝓞 L) L d} = ⊤ := by
     have htop : IntermediateField.adjoin (maximalRealSubfield L) {δ} = ⊤ :=

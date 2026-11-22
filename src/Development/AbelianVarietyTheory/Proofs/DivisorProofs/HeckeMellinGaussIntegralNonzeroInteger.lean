@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CompletedLStripBounds
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormWt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousTerm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralHeckeMellinGaussIntegrandEqProdGammaStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmTypeProdNormSqEqAbsNormSpanStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CompletedLStripBounds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormWt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousTerm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralHeckeMellinGaussIntegrandEqProdGammaStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmTypeProdNormSqEqAbsNormSpanStatement
+
+@[expose] public section
 
 noncomputable section
 

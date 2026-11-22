@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PolarizedLinkage.ExtraV
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.UnitaryGaloisFamilies.GdLaws
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupercuspidalSupportCharacters
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MongeAmpereChartDensityIntegral
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MonodromyVanishesWeilTwistIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSphericalOfHasSatGL
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEmbeddingProdIrrSupport
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PolarizedLinkage.ExtraV
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.UnitaryGaloisFamilies.GdLaws
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupercuspidalSupportCharacters
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MongeAmpereChartDensityIntegral
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MonodromyVanishesWeilTwistIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSphericalOfHasSatGL
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEmbeddingProdIrrSupport
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,46 +49,29 @@ section Loc
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-private theorem good_chars {n : ℕ} {x : IrrGL k} (ξ : Fin n → kˣ →* ℂˣ) (hξ : ∀ j, IsSmoothChar (ξ j))
+private theorem good_chars {n : ℕ} {x : IrrGL (k := k)} (ξ : Fin n → kˣ →* ℂˣ) (hξ : ∀ j, IsSmoothChar (ξ j))
     (hs : HasSupport x.rep (GlobalTheory.RoadU.chars ξ hξ)) : Good x := by
   refine ⟨_, hs, fun y hy => Or.inl ?_⟩
   obtain ⟨j, -, rfl⟩ := Multiset.mem_map.1 hy
   simp [IrrGL.ofChar]
 
 private theorem good_zero (τ : SmIrr (GL (Fin 0) k)) : Good (IrrGL.of τ.ρ τ.smooth τ.irred) := by
-  obtain ⟨t, x, hx, -, hc, -, hs⟩ := GlobalTheory.BCen.SuppEmbed.exists_embedding_prodIrr_support k 0 _ τ.ρ τ.smooth τ.irred
-  refine ⟨_, ((hs _).2 rfl).of_equiv (IrrGL.equivOf τ.ρ τ.smooth τ.irred), fun y hy => ?_⟩
+  have hex : ∃ (t : ℕ) (x : Fin t → IrrGL (k := k)) (hx : ∑ a, (x a).1 = 0)
+      (φ : τ.ρ.IntertwiningMap (GlobalTheory.LocGL.prodIrr x hx)),
+      (∀ a, (x a).IsCusp) ∧ Function.Injective φ ∧
+        HasSupport τ.ρ (Finset.univ.val.map x) := by
+    obtain ⟨t, x, hx, hc, φ, hφ⟩ :=
+      GlobalTheory.CompanionTheory.SubEmb.subEmbedding_of_stage GlobalTheory.CompanionTheory.ProdStage.prod₂_prodIrr_append k 0 _ τ.ρ τ.smooth τ.irred
+    have hsupp : HasSupport τ.ρ (Finset.univ.val.map x) :=
+      GlobalTheory.LocGL.hasSupport_of_isSubquotient τ.irred hc (.of_injective φ hφ)
+    exact ⟨t, x, hx, φ, hc, hφ, hsupp⟩
+  obtain ⟨t, x, hx, -, hc, -, hs⟩ := hex
+  refine ⟨_, hs.of_equiv (IrrGL.equivOf τ.ρ τ.smooth τ.irred), fun y hy => ?_⟩
   obtain ⟨a, -, rfl⟩ := Multiset.mem_map.1 hy
   have h0 := (Finset.sum_eq_zero_iff.1 hx) a (Finset.mem_univ a)
   have h1 := (hc a).1
   omega
 
 end Loc
-
-theorem sphUntw : SphUntw := by
-  intro _ K Ω _ _ _ _ _ n κ w τ τ' B hB ⟨e⟩
-  have hχ : IsSmoothChar (κ.loc w) := GlobalTheory.HeckeComp.smooth_loc κ w
-  have ex : (IrrGL.of τ.ρ τ.smooth τ.irred).tw (κ.loc w) hχ = IrrGL.of τ'.ρ τ'.smooth τ'.irred := by
-    rw [IrrGL.tw_of]
-    exact IrrGL.of_eq_of.2 ⟨e.symm⟩
-  have ex' : IrrGL.of τ.ρ τ.smooth τ.irred = (IrrGL.of τ'.ρ τ'.smooth τ'.irred).tw (κ.loc w)⁻¹ hχ.inv := by
-    rw [← ex, IrrGL.tw_tw]
-    simp only [mul_inv_cancel, IrrGL.tw_one]
-  have hGG : Good (IrrGL.of τ'.ρ τ'.smooth τ'.irred) ∧ Good (IrrGL.of τ.ρ τ.smooth τ.irred) := by
-    rcases Nat.eq_zero_or_pos n with rfl | hn
-    · exact ⟨good_zero τ', good_zero τ⟩
-    · obtain ⟨ξ, hξ, -, hs, -⟩ := GlobalTheory.T.supercuspidal_support_characters K n hn w τ' B hB
-      have h1 := GlobalTheory.RoadU.CharTwist.hasSupport_rep_tw hs _ hχ.inv
-      rw [GlobalTheory.RoadU.CharTwist.chars_tw, ← ex'] at h1
-      exact ⟨good_chars ξ hξ hs, good_chars _ _ h1⟩
-  obtain ⟨hG', hG⟩ := hGG
-  refine ⟨hG, fun A h rc hrc => ?_⟩
-  obtain ⟨b, hb, ε, L⟩ := toV' hrc
-  have hsph := GlobalTheory.TempSatUnr.isSpherical_of_hasSatGL hB
-  have hu : (rc (IrrGL.of τ'.ρ τ'.smooth τ'.irred)).unr :=
-    (L.sph _).1 (fixed_ne_bot_of_equiv (IrrGL.equivOf τ'.ρ τ'.smooth τ'.irred) hsph)
-  have hg := (UpperTheory.V.Z.Win.Gu.gdLaws K Ω A w h).2.2.2 _ hu
-  rw [algNorm, L.nu_eq, (UpperTheory.V.Z.Win.Gu.gdLaws K Ω A w h).2.1, ex', L.twist _ _ _ hG', L.one, lpChar_lpOfChar]
-  exact gd_lpTwist hg _ _
 
 end UpperTheory.V.Z.Desc.W

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafTwPairHtpyPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafTwPairHtpyPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC MonoidalCategory
@@ -30,10 +34,6 @@ instance (A : Shv R) : ((tF R).obj A).PreservesZeroMorphisms where
   map_zero B C := by
     change A.obj ◁ (sheafToPresheaf _ _).map (0 : B ⟶ C) = 0
     rw [Functor.map_zero]; exact MonoidalPreadditive.whiskerLeft_zero
-
-example (I J : Cx R) : HomologicalComplex.HasMapBifunctor I J (tF R) (ComplexShape.up ℤ) := inferInstance
-example (P : PSh1 R) : Presheaf.IsLocallySurjective Scheme.etaleTopology (toSheafify Scheme.etaleTopology P) := inferInstance
-example (P : PSh1 R) : Presheaf.IsLocallyInjective Scheme.etaleTopology (toSheafify Scheme.etaleTopology P) := inferInstance
 
 abbrev P (I J : Cx R) : CochainComplex (PSh1 R) ℤ := HomologicalComplex.mapBifunctor I J (tF R) (ComplexShape.up ℤ)
 
@@ -91,8 +91,8 @@ theorem lift_eq (I J : Cx R) (U : Scheme.{0}) (w : ℤ) (x : Tens I J U w) :
     unfold Pair.lift
     erw [DirectSum.toModule_lof]
     induction t using TensorProduct.induction_on with
-    | zero => erw [map_zero, map_zero, map_zero]; rfl
-    | add x y hx hy => erw [map_add, map_add, map_add, hx, hy]; rfl
+    | zero => erw [map_zero, map_zero, map_zero]
+    | add x y hx hy => erw [map_add, map_add, map_add, hx, hy]
     | tmul a b => rw [TensorProduct.lift.tmul]; rfl
 
 theorem Phi_nat (I J : Cx R) {V U : Scheme.{0}} (g : V ⟶ U) (w : ℤ) (x : Tens I J U w) :

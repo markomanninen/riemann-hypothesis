@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.SpectrumLimits
-import Mathlib.RingTheory.PiTensorProduct
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SpectrumLimits
+public import Mathlib.RingTheory.PiTensorProduct
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -35,7 +39,7 @@ theorem tensCop : TensCop := by
       change g i (φ r) = c r
       rw [← RingHom.comp_apply, hg i]
     let ga : Fin (n + 1) → (A' →ₐ[A] R) := fun i => AlgHom.mk (g i) (hc i)
-    let F : MultilinearMap A (fun _ : Fin (n + 1) => A') R :=
+    let F : (Π _ : Fin (n + 1), A') →ₘₗ[A] R :=
       (MultilinearMap.mkPiAlgebra A (Fin (n + 1)) R).compLinearMap (fun i => (ga i).toLinearMap)
     let H := liftAlgHom F (by simp [F]) (by intro x y; simp [F, Finset.prod_mul_distrib])
     have hH : ∀ i a, H (singleAlgHom (A := fun _ => A') i a) = g i a := by

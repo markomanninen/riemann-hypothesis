@@ -1,28 +1,33 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemBand
-import GroundTheory.AutomorphicForms.ReductionSiegel
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsNormRconvLeSiegel
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfIsOpenStab
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsConjFiniteUnipotentMemOpenSubgroupStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspidalNormLeOfAlternatingSumScaledUnipFDStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReproducingIdentityExtendsHarishChandraSpanStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitOneAddOfSqStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormToLMapPInfLeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeightLeOfIsCompactStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemBand
+public import GroundTheory.AutomorphicForms.ReductionSiegel
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsNormRconvLeSiegel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfIsOpenStab
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsConjFiniteUnipotentMemOpenSubgroupStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspidalNormLeOfAlternatingSumScaledUnipFDStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReproducingIdentityExtendsHarishChandraSpanStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitOneAddOfSqStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormToLMapPInfLeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeightLeOfIsCompactStatement
+
+@[expose] public section
+
 open NumberField MeasureTheory GlobalTheory.CuspRep GlobalTheory.HCF Topology GroundTheory.Automorphic.Reduction
 open scoped ContDiff
 
 noncomputable section
 namespace GlobalTheory.HCF.Decay
 
-theorem meanIter : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a r : ℕ), 0 < r → r < a →
+theorem meanIter : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a r : ℕ), 0 < r → r < a →
     ∀ φ : GA E a → ℂ, (∀ γ g, φ (ratGL E a γ * g) = φ g) → IsCuspidal φ → Continuous φ →
     ∀ M : ℕ, 0 < M → ∀ (x : GA E a) (m : ℕ) (B : ℝ),
       (∀ y : Fin m → BlockIx a r → Ad E, (∀ i, y i ∈ GroundTheory.Automorphic.scaledUnipFD E a r M) →
         ‖∑ ε : Fin m → Bool, (GroundTheory.Automorphic.altSign ε : ℂ) * φ (unip (GroundTheory.Automorphic.altPoint y ε) * x)‖ ≤ B) →
       ‖φ x‖ ≤ B := GlobalTheory.T.cuspidal_norm_le_of_alternatingSum_scaledUnipFD
 
-theorem reproSpan : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (L : Subgroup (GL (Fin a) (Af E)))
+theorem reproSpan : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (L : Subgroup (GL (Fin a) (Af E)))
     (W : Submodule ℂ (Kinf E a → ℂ)) (X : Set (Module.End ℂ (Sm E a) → ℂ)) (N : ℕ) (β : Lie E a → ℂ),
     ContDiff ℝ ∞ β → HasCompactSupport β → tsupport β ⊆ invSet E a →
     (∀ φ ∈ formsGL E a L W X N, ∀ g : GA E a, ∫ x, chart φ.1 g x * β x = φ.1 g) →
@@ -36,16 +41,16 @@ theorem diffInt : ∀ (E : Type) [Field E] [NumberField E] (a : ℕ) (β : Lie E
     ‖∑ ε : Fin m → Bool, (GroundTheory.Automorphic.altSign ε : ℂ) *
         ∫ w, f (toL ((1 + GroundTheory.Automorphic.altPoint Y ε) * Matrix.of w)) * β w‖ ≤ c * F * ∏ i, ‖toL (Y i)‖ := GlobalTheory.T.norm_signed_sum_integral_le
 
-theorem normTransfer : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), ∃ c : ℝ, 0 ≤ c ∧
+theorem normTransfer : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), ∃ c : ℝ, 0 ≤ c ∧
     ∀ M : Matrix (Fin a) (Fin a) (Ad E),
       ‖toL (M.map (pInf E))‖ ≤ c * ‖GroundTheory.Automorphic.CuspidalSpectrum.archMat E a M‖ := GlobalTheory.T.norm_toL_map_pInf_le'
 
-theorem heightBound : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (Q : Set (Lie E a)),
+theorem heightBound : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (Q : Set (Lie E a)),
     IsCompact Q → Q ⊆ invSet E a →
     ∃ H : ℝ, ∀ y : GL (Fin a) (Cinf E), toL y.val ∈ Q → GlobalTheory.CuspRep.height y ≤ H := GlobalTheory.T.height_bounded_of_toL_mem_isCompact
 
 section Span
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ} {L : Subgroup (GL (Fin a) (Af E))}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ} {L : Subgroup (GL (Fin a) (Af E))}
   {W : Submodule ℂ (Kinf E a → ℂ)} {X : Set (Module.End ℂ (Sm E a) → ℂ)} {N : ℕ}
 
 theorem span_left {φ : Sm E a} (hφ : φ ∈ Submodule.span ℂ (formsGL E a L W X N)) :
@@ -61,7 +66,7 @@ theorem span_fin {φ : Sm E a} (hφ : φ ∈ Submodule.span ℂ (formsGL E a L W
   induction hφ using Submodule.span_induction with
   | mem x hx => exact hx.2.1
   | zero => intro l _; exact map_zero _
-  | add x y _ _ hx hy => intro l hl; rw [map_add, hx l hl, hy l hl]
+  | add x y _ _ hx hy => intro l hl; rw [map_add (f := _), hx l hl, hy l hl]
   | smul c x _ hx => intro l hl; rw [map_smul, hx l hl]
 
 theorem span_right {φ : Sm E a} (hφ : φ ∈ Submodule.span ℂ (formsGL E a L W X N)) {l : GL (Fin a) (Af E)} (hl : l ∈ L)
@@ -81,7 +86,7 @@ theorem span_cont (hL : IsOpen (L : Set (GL (Fin a) (Af E)))) {φ : Sm E a}
 end Span
 
 section Conj
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem nilM_add' {R : Type} [CommRing R] {r : ℕ} (x y : BlockIx a r → R) : nilM (x + y) = nilM x + nilM y := by
   ext i j; simp only [nilM, Matrix.of_apply, Matrix.add_apply]; split_ifs <;> simp
@@ -93,11 +98,11 @@ theorem map_unip' {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) {r : �
     Matrix.GeneralLinearGroup.map f (unip P) = unip (fun p => f (P p)) := by
   ext i j
   change f ((1 + nilM P : Matrix (Fin a) (Fin a) R) i j) = (1 + nilM (fun p => f (P p)) : Matrix (Fin a) (Fin a) S) i j
-  simp only [nilM, Matrix.add_apply, Matrix.of_apply, Matrix.one_apply, map_add]
+  simp only [nilM, Matrix.add_apply, Matrix.of_apply, Matrix.one_apply, map_add (f := _)]
   split_ifs <;> simp
 
-variable (E) in
 
+variable (E) in
 def conjY {r : ℕ} (x : GA E a) : (BlockIx a r → Ad E) →+ Matrix (Fin a) (Fin a) (Cinf E) where
   toFun P := (((x⁻¹ : GA E a) : Matrix (Fin a) (Fin a) (Ad E)) * nilM P * (x : Matrix (Fin a) (Fin a) (Ad E))).map (pInf E)
   map_zero' := by simp [nilM_zero']
@@ -147,7 +152,7 @@ theorem val_map_conj_unip {r : ℕ} (x : GA E a) (P : BlockIx a r → Ad E) :
 
 end Conj
 
-theorem oneRoot (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (L : Subgroup (GL (Fin a) (Af E)))
+theorem oneRoot (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (L : Subgroup (GL (Fin a) (Af E)))
     (hL : IsOpen (L : Set (GL (Fin a) (Af E)))) (W : Submodule ℂ (Kinf E a → ℂ)) (X : Set (Module.End ℂ (Sm E a) → ℂ))
     (N : ℕ) (β : Lie E a → ℂ) (hβ : ContDiff ℝ ∞ β) (hβc : HasCompactSupport β) (hβu : tsupport β ⊆ invSet E a)
     (hrep : ∀ φ ∈ formsGL E a L W X N, ∀ g : GA E a, ∫ x, chart φ.1 g x * β x = φ.1 g)
@@ -253,11 +258,11 @@ theorem oneRoot (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : �
   refine (hdiff f hfc F hF0 hfQ Yv hYY hYR).trans ?_
   have hprod : ∏ i, ‖toL (Yv i)‖ ≤ (K₁ * gain) ^ m := by
     rw [← Fin.prod_const]
-    exact Finset.prod_le_prod (fun i _ => norm_nonneg _) fun i _ => hYn i
+    exact Finset.prod_le_prod₀ (fun i _ => norm_nonneg _) fun i _ => hYn i
   calc c * F * ∏ i, ‖toL (Yv i)‖ ≤ c * F * (K₁ * gain) ^ m := mul_le_mul_of_nonneg_left hprod (by positivity)
     _ = c * C₀' * H' ^ N₀ * K₁ ^ m * gain ^ m * Sr ^ N₀ := by rw [hF]; ring
 
-theorem decay : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (L : Subgroup (GL (Fin a) (Af E))), IsOpen (L : Set (GL (Fin a) (Af E))) → ∀ (W : Submodule ℂ (Kinf E a → ℂ)) (X : Set (Module.End ℂ (Sm E a) → ℂ)) (N : ℕ) (β : Lie E a → ℂ), ContDiff ℝ ∞ β → HasCompactSupport β → tsupport β ⊆ invSet E a → (∀ φ ∈ formsGL E a L W X N, ∀ g : GA E a, ∫ x, chart φ.1 g x * β x = φ.1 g) → ∀ φ ∈ Submodule.span ℂ (formsGL E a L W X N), IsCuspidal φ.1 → ∀ Ω : Set (GA E a), IsCompact Ω → Ω ⊆ ((adelicBorel : Subgroup (GA E a)) : Set (GA E a)) → ∀ (t C₀ : ℝ) (N₀ : ℕ), 0 < t → (∀ b ∈ Ω, ∀ (r : Fin a → ℝ) (hr : ∀ i, 0 < r i), ∀ k ∈ (maxCompact : Subgroup (GA E a)), ∀ y : GL (Fin a) (Cinf E), ‖φ.1 (b * diagUnits a (fun i => posIdele (K := E) (r i) (hr i)) * k * infGL E a y)‖ ≤ C₀ * (∑ i, (r i + (r i)⁻¹)) ^ N₀ * height y ^ N₀) → ∀ m : ℕ, ∃ C : ℝ, 0 ≤ C ∧ ∀ b ∈ Ω, ∀ (r : Fin a → ℝ) (hr : ∀ i, 0 < r i), (∀ i j : Fin a, (j : ℕ) = i + 1 → t * r j ≤ r i) → ∀ k ∈ (maxCompact : Subgroup (GA E a)), ∀ i j : Fin a, (j : ℕ) = i + 1 → ‖φ.1 (b * diagUnits a (fun i => posIdele (K := E) (r i) (hr i)) * k)‖ ≤ C * (r j / r i) ^ m * (∑ i, (r i + (r i)⁻¹)) ^ N₀ := by
+theorem decay : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (L : Subgroup (GL (Fin a) (Af E))), IsOpen (L : Set (GL (Fin a) (Af E))) → ∀ (W : Submodule ℂ (Kinf E a → ℂ)) (X : Set (Module.End ℂ (Sm E a) → ℂ)) (N : ℕ) (β : Lie E a → ℂ), ContDiff ℝ ∞ β → HasCompactSupport β → tsupport β ⊆ invSet E a → (∀ φ ∈ formsGL E a L W X N, ∀ g : GA E a, ∫ x, chart φ.1 g x * β x = φ.1 g) → ∀ φ ∈ Submodule.span ℂ (formsGL E a L W X N), IsCuspidal φ.1 → ∀ Ω : Set (GA E a), IsCompact Ω → Ω ⊆ ((adelicBorel : Subgroup (GA E a)) : Set (GA E a)) → ∀ (t C₀ : ℝ) (N₀ : ℕ), 0 < t → (∀ b ∈ Ω, ∀ (r : Fin a → ℝ) (hr : ∀ i, 0 < r i), ∀ k ∈ (maxCompact : Subgroup (GA E a)), ∀ y : GL (Fin a) (Cinf E), ‖φ.1 (b * diagUnits a (fun i => posIdele (K := E) (r i) (hr i)) * k * infGL E a y)‖ ≤ C₀ * (∑ i, (r i + (r i)⁻¹)) ^ N₀ * height y ^ N₀) → ∀ m : ℕ, ∃ C : ℝ, 0 ≤ C ∧ ∀ b ∈ Ω, ∀ (r : Fin a → ℝ) (hr : ∀ i, 0 < r i), (∀ i j : Fin a, (j : ℕ) = i + 1 → t * r j ≤ r i) → ∀ k ∈ (maxCompact : Subgroup (GA E a)), ∀ i j : Fin a, (j : ℕ) = i + 1 → ‖φ.1 (b * diagUnits a (fun i => posIdele (K := E) (r i) (hr i)) * k)‖ ≤ C * (r j / r i) ^ m * (∑ i, (r i + (r i)⁻¹)) ^ N₀ := by
   intro E _ _ _ a L hL W X N β hβ hβc hβu hrep φ hφ hcusp Ω hΩ hΩB t C₀ N₀ ht hgrow m
   have hex : ∀ (s : ℕ) (hs : 0 < s) (hsa : s < a), ∃ C : ℝ, 0 ≤ C ∧ ∀ b ∈ Ω, ∀ (r : Fin a → ℝ) (hr : ∀ i, 0 < r i),
       (∀ i j : Fin a, (j : ℕ) = i + 1 → t * r j ≤ r i) → ∀ k ∈ (maxCompact : Subgroup (GA E a)),

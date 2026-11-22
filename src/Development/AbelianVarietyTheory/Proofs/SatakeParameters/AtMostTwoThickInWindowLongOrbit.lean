@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Alternates
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.FrobeniusOrbits.HostCorollaries
-import Development.AutomorphicArithmetic.CyclotomicBounds.PlaceOfLetterInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Alternates
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.FrobeniusOrbits.HostCorollaries
+public import Development.AutomorphicArithmetic.CyclotomicBounds.PlaceOfLetterInjective
+
+@[expose] public section
+
 open GlobalTheory.HTW Formalism.BasicNotions Formalism.FrobeniusOrbits
 
 namespace GlobalTheory.HTW.LongWindow

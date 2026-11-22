@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemBand
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsNormRconvLeSiegel
-import GroundTheory.AutomorphicForms.ReductionSiegel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemBand
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsNormRconvLeSiegel
+public import GroundTheory.AutomorphicForms.ReductionSiegel
+
+@[expose] public section
+
 open NumberField MeasureTheory GlobalTheory.CuspRep GlobalTheory.HCF Topology
 open scoped ContDiff
 
@@ -102,9 +107,10 @@ theorem altPoint_sq {m : ℕ} {Y : Fin m → Mat E a} (hY : ∀ i j, Y i * Y j =
 theorem toL_altPoint {m : ℕ} (Y : Fin m → Mat E a) (ε : Fin m → Bool) :
     toL (altPoint Y ε) = altPoint (fun i => toL (Y i)) ε := by
   unfold altPoint
-  rw [← toLA_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← toLA_apply, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
-  split_ifs <;> simp [toLA_apply]
+  split_ifs <;> simp [← toLA_apply]
 
 theorem norm_toL_altPoint_le {m : ℕ} {Y : Fin m → Mat E a} {R : ℝ} (hR : ∀ i, ‖toL (Y i)‖ ≤ R)
     (ε : Fin m → Bool) : ‖toL (altPoint Y ε)‖ ≤ m * R := by
@@ -243,7 +249,7 @@ theorem norm_sum_altSign_integral_le : ∀ (E : Type) [Field E] [NumberField E] 
       have hv' : ‖v‖ ≤ Rq' := (hRq v hv).trans (le_max_left _ _)
       have hprod : ∏ i, ‖toL (-(Y i * Matrix.of v))‖ ≤ ((a : ℝ) * Rq') ^ m * ∏ i, ‖toL (Y i)‖ := by
         rw [← Fin.prod_const, ← Finset.prod_mul_distrib]
-        refine Finset.prod_le_prod (fun i _ => norm_nonneg _) fun i _ => ?_
+        refine Finset.prod_le_prod₀ (fun i _ => norm_nonneg _) fun i _ => ?_
         have hn : ‖toL (-(Y i * Matrix.of v))‖ = ‖toL (Y i * Matrix.of v)‖ := by
           show ‖-(toL (Y i * Matrix.of v))‖ = _
           exact norm_neg _

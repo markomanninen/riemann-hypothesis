@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SymmetricPowerSymbols.WkTopEq
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.LUnH
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SymmetricPowerSymbols.WkTopEq
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.LUnH
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,8 +43,8 @@ def Cnd (l N : ℕ) (g : SL(2, ℤ)) {M : ℕ} (m : Matrix (Fin 2) (Fin 2) (ZMod
   ((m 1 0).val : ZMod N) = 0 ∧ ((m 0 0).val : ZMod N) = (en g 0 0 : ZMod N) ∧
     (en g 1 0 : ZMod l) * ((m 0 0).val : ZMod l) = (en g 0 0 : ZMod l) * ((m 1 0).val : ZMod l)
 
-open Classical in
 
+open Classical in
 def Xi (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n N M₀ M w : ℕ) [NeZero M] (g : SL(2, ℤ)) (x y : Row M₀)
     (P : (ZMod M)ˣ → Prop) (a : Fam X M₀) : X.Fn l := fun u =>
   ∑ m ∈ Finset.univ.filter (fun m : GL (Fin 2) (ZMod M) =>
@@ -96,8 +100,8 @@ def rdT (l n r N p : ℕ) (y : (ZMod (lvT l n r N p))ˣ) : (ZMod p)ˣ × (ZMod (
    Units.map (ZMod.castHom ((Dvd.dvd.mul_right (pow_dvd_pow l (Nat.le_add_right r n)) (N * N)).mul_right p)
      (ZMod (l ^ r))).toMonoidHom y)
 
-open Classical in
 
+open Classical in
 def inv1 (m a : ℕ) : (ZMod m)ˣ := if h : IsUnit (a : ZMod m) then h.unit⁻¹ else 1
 
 def YT (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n r N p : ℕ) [NeZero N] [NeZero p] (x : ZMod N) (c d w : ℕ) (g : SL(2, ℤ))

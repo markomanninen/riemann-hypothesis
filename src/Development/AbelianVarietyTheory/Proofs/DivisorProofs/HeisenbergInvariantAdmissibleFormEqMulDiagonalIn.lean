@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IncMDblR
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransportF
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaDiagInt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubledDarbouxCoordsCompat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicStoneVonNeumannLagrangianUniquenessStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransportF
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDblCoordDblD
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaDiagInt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubledDarbouxCoordsCompat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicStoneVonNeumannLagrangianUniquenessStatement
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -45,8 +50,8 @@ theorem continuous_shiftOf : Continuous (shiftOf : (κ → AF F) → Vi F κ × 
     continuous_toMixed.comp (continuous_fst.comp (continuous_apply i)))).prodMk
     (continuous_pi fun i => continuous_snd.comp (continuous_apply i))
 
-variable (F κ) in
 
+variable (F κ) in
 def glueE : (Vi F κ × Vf F κ) ≃ₜ+ (κ → AF F) where
   toFun := glue
   invFun := shiftOf
@@ -72,8 +77,8 @@ theorem lDiag_eq (μ : @Measure (κ → AF F) (borel _)) (hμ : @Measure.IsAddHa
   rw [integral_smul_nnreal_measure]
   rfl
 
-variable (F κ) in
 
+variable (F κ) in
 def diagL : ((κ → F) × (κ → F)) →ₗ[F] ((κ ⊕ κ → F) × (κ ⊕ κ → F)) where
   toFun p := (Sum.elim p.1 p.1, Sum.elim p.2 (-p.2))
   map_add' p q := by

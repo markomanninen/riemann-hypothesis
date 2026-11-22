@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,31 +29,5 @@ def simT (c : A →ₐ[k] A) : Subgroup Aˣ where
         = ((x⁻¹ : Aˣ) : A) * c ((x⁻¹ : Aˣ) : A) * (algebraMap k A s * algebraMap k A ((s⁻¹ : kˣ) : k)) := by
           rw [← map_mul, Units.mul_inv, map_one, mul_one]
       _ = algebraMap k A ((s⁻¹ : kˣ) : k) := by rw [← mul_assoc, h1, one_mul]
-
-def fixU (c : A →ₐ[k] A) : Subgroup Aˣ where
-  carrier := {a | c a = a}
-  one_mem' := by simp
-  mul_mem' := by
-    intro a b ha hb
-    simp only [Set.mem_setOf_eq, Units.val_mul, map_mul] at *
-    rw [ha, hb]
-  inv_mem' := by
-    intro a ha
-    simp only [Set.mem_setOf_eq] at *
-    have h : c ((a⁻¹ : Aˣ) : A) * a = 1 := by
-      conv_lhs => rw [← ha]
-      rw [← map_mul]
-      simp
-    calc c ((a⁻¹ : Aˣ) : A) = c ((a⁻¹ : Aˣ) : A) * a * ((a⁻¹ : Aˣ) : A) := by simp
-      _ = ((a⁻¹ : Aˣ) : A) := by rw [h, one_mul]
-
-def normSub (c : A →ₐ[k] A) : Subgroup (fixU k c) :=
-  Subgroup.closure {a : fixU k c | ∃ (t : kˣ) (x : Aˣ), ((a : Aˣ) : A) = algebraMap k A t * (x * c x)}
-
-def H1 (c : A →ₐ[k] A) : Type := fixU k c ⧸ normSub k c
-
-instance (c : A →ₐ[k] A) : CommGroup (H1 k c) := by
-  unfold H1
-  infer_instance
 
 end GlobalTheory.LKTorus

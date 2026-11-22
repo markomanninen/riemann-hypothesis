@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.GL3MeanSquares.PrimeCountAsymptoticInProgressions
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
-import Formalism.CyclotomicNorms.StatementI
-import Development.AbelianVarietyTheory.Definitions.Foundations.RayPrimes
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRatAddMulOfMemAdjoin
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.PrimeCountAsymptoticInProgressions
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Formalism.CyclotomicNorms.StatementI
+public import Development.AbelianVarietyTheory.Definitions.Foundations.RayPrimes
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRatAddMulOfMemAdjoin
+
+@[expose] public section
+
 open Finset ArithmeticFunction NumberField IsDedekindDomain Filter Topology GlobalTheory.Mem.An Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab
 open scoped nonZeroDivisors
 
@@ -21,7 +26,7 @@ theorem half_int_coords {E : Type} [Field E] [NumberField E] (d : ℕ) (hd : d.P
     have h1 : IsIntegral ℤ q := by
       have : (q : E) = algebraMap ℚ E q := by simp
       rw [this] at hq
-      exact (isIntegral_algebraMap_iff (algebraMap ℚ E).injective).1 hq
+      exact (isIntegral_algebraMap_iff ).1 hq
     obtain ⟨n, hn⟩ := IsIntegrallyClosed.isIntegral_iff.1 h1
     exact ⟨n, by simpa using hn.symm⟩
   obtain ⟨t, ht⟩ := key (2 * a) (by
@@ -87,14 +92,14 @@ theorem normOne_iff_of_sqrt {E : Type} [Field E] [NumberField E] (d : ℕ) (hd :
     have hπ : ((1 + (M : 𝓞 E) * ((v : 𝓞 E) + (u : 𝓞 E) * ω) : 𝓞 E) : E) = ((A : E) + B * s) / 2 := by
       have h0 : algebraMap (𝓞 E) E ω = (1 + s) / 2 := rfl
       change algebraMap (𝓞 E) E _ = _
-      simp only [map_add, map_mul, map_one, map_natCast, map_intCast]
+      simp only [map_add (f := _), map_mul, map_one, map_natCast, map_intCast]
       rw [h0, hA, hB]; ring
     refine ⟨1 + (M : 𝓞 E) * ((v : 𝓞 E) + (u : 𝓞 E) * ω), ?_, ?_, ?_⟩
     · rw [hπ]
       exact div_mem (add_mem (intCast_mem _ _) (mul_mem (intCast_mem _ _) hsK)) (ofNat_mem _ 2)
     · rw [hπ]
       have hNE : (A : E) ^ 2 + d * B ^ 2 = 4 * p := by exact_mod_cast congrArg (Int.cast : ℤ → E) hN
-      rw [map_div₀, map_add, map_mul, map_intCast, map_intCast, hc, map_ofNat]
+      rw [map_div₀, map_add (f := _), map_mul, map_intCast, map_intCast, hc, map_ofNat]
       linear_combination (1 / 4 : E) * hNE - (B : E) ^ 2 / 4 * hs
     · rw [add_sub_cancel_left]
       exact Ideal.mul_mem_right _ _ (Ideal.mem_span_singleton_self _)
@@ -119,7 +124,7 @@ theorem normOne_iff_of_sqrt {E : Type} [Field E] [NumberField E] (d : ℕ) (hd :
       have huE : 2 * (b : E) = u := by exact_mod_cast congrArg (Rat.cast : ℚ → E) hu
       refine ⟨2 + M * t, M * u, ?_, dvd_mul_right _ _, ⟨w, by linear_combination (M : ℤ) * hw⟩⟩
       rw [hyE, hab] at hN
-      simp only [map_add, map_mul, map_one, map_natCast, map_ratCast, hc] at hN
+      simp only [map_add (f := _), map_mul, map_one, map_natCast, map_ratCast, hc] at hN
       have : (2 + M * t : E) ^ 2 + d * (M * u) ^ 2 = 4 * p := by
         rw [← htE, ← huE]
         linear_combination 4 * hN + 4 * (M : E) ^ 2 * (b : E) ^ 2 * hs

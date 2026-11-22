@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataCD
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.PerpendicularEmbedding
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ContinuousMatrixEntryAbsSum
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataCD
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.PerpendicularEmbedding
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ContinuousMatrixEntryAbsSum
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Topology Formalism.BasicNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.IndefiniteRowSideFullHecke.PerpendicularEmbedding GlobalTheory.CompactDualQuot
 open scoped ENNReal NNReal
@@ -34,10 +38,10 @@ private lemma sum_norm_sum_mul_matrix_le_mul_sum_norm_of_norm_le {α : Type*} [F
         rw [Finset.sum_comm, Finset.mul_sum]
         simp_rw [Finset.mul_sum]
 
+
 open MeasureTheory Matrix Filter Topology in
 open scoped ENNReal NNReal in
 variable {P Q P' Q' : ℕ} in
-
 theorem _root_.GlobalTheory.SectionGaugeCompare.gauge_section_mul_block : ∀ (P Q P' Q' : ℕ)
     (e : Option (Fin P' ⊕ Fin Q') ≃ (Fin P ⊕ Fin Q)) (j : _root_.Formalism.BasicNotions.UpqT P' Q' → _root_.Formalism.BasicNotions.UpqT P Q),
     _root_.GlobalTheory.CompactDualQuot.IsBlockEmb e j → ∀ t : ℝ, 1 < t → ∃ δ : ℝ, 0 < δ ∧

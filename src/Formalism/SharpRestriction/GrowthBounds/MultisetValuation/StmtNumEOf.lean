@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NcSummableMin
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NcSummableMin
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,8 @@ def nc_zc (X : Formalism.MainNotions.G.Inst D L) (Y : Formalism.MainNotions.G.La
     (s : Fin ((D.gat u w hg).P.n' (Y.vOf u w hg t0))) : ℝ :=
   Formalism.MainNotions.G.fillG X (Formalism.MainNotions.G.bL L) j (false, t0 + s.val • Formalism.MainNotions.G.hP D (D.what₂.places.resChar w)) + Formalism.MainNotions.G.cG L
 
-open Classical in
 
+open Classical in
 def nc_Loc (D : Formalism.BasicNotions.D7) (L : SizeData₂ D) (X : Formalism.MainNotions.G.Inst D L) (Y : Formalism.MainNotions.G.LatInst D) (K : Formalism.MainNotions.G.Consts)
     (_hT : GatTies D) (u : D.what₂.Word) (w : D.what₂.places.Pl)
     (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) (t0 : Formalism.MainNotions.G.HH D) (j : ℕ) : Prop :=
@@ -235,10 +239,5 @@ theorem stmtNumE_of (C₀ : ℝ) (h : nc_Need C₀) : Formalism.MainNotions.Form
     · intro s hs e he
       exact hEx s hs e he
     · exact hDe
-
-theorem stmtNum_of (C₀ : ℝ) (h : nc_Need C₀) (D : Formalism.BasicNotions.D7) (L : SizeData₂ D) (X : Formalism.MainNotions.G.Inst D L)
-    (Y : Formalism.MainNotions.G.LatInst D) : Formalism.MainNotions.FormalGroupSystem.NumericalComparison D L X Y := by
-  obtain ⟨C, hC⟩ := stmtNumE_of C₀ h
-  exact ⟨C, hC D L X Y⟩
 
 end Formalism.MainNotions.FormalGroupSystem.Pf

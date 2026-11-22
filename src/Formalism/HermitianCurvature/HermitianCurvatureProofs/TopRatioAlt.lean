@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OneAddPowLeExp
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LenEqLenI
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OneAddPowLeExp
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LenEqLenI
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBL
 
@@ -111,7 +115,7 @@ theorem topRatio : TopRatio := by
   have hF0 : 0 < ∏ j, rf j := Finset.prod_pos fun j _ => (hrf j).1
   have hF1 : ∏ j, rf j ≤ Real.exp ((S.Ntop : ℝ) / ((S.Ntop : ℝ) ^ 2 - 1)) := by
     calc ∏ j, rf j ≤ ∏ _j : Fin w.length, (1 + 1 / ((S.Ntop : ℝ) ^ 2 - 1)) :=
-          Finset.prod_le_prod (fun j _ => (hrf j).1.le) fun j _ => (hrf j).2
+          Finset.prod_le_prod₀ (fun j _ => (hrf j).1.le) fun j _ => (hrf j).2
       _ = (1 + 1 / ((S.Ntop : ℝ) ^ 2 - 1)) ^ w.length := by simp
       _ ≤ Real.exp (w.length * (1 / ((S.Ntop : ℝ) ^ 2 - 1))) := one_add_pow_le_exp _ (by positivity) _
       _ ≤ Real.exp ((S.Ntop : ℝ) / ((S.Ntop : ℝ) ^ 2 - 1)) := by

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TraitOrdOfTraitOrdPt
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsProperOfSubsingleton
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSabDescentOfFieldExtension
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CoefficientFieldIntegersDedekindFractionField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.BlowPolSt
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsProperOfSubsingleton
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSabDescentOfFieldExtension
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CoefficientFieldIntegersDedekindFractionField
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits NumberField IsLocalRing TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R Formalism.L2.Pj
@@ -30,7 +34,7 @@ theorem isOpen_connectedComponent_of_noetherian {X : Type} [TopologicalSpace X] 
       mem_irreducibleComponent, fun h k => by
       obtain ⟨Z, ⟨a, b⟩, c⟩ := Set.mem_iUnion₂.1 h
       exact b ((a.1.isConnected.isPreconnected.subset_connectedComponent c).trans (connectedComponent_eq k).ge)⟩]
-  exact (NoetherianSpace.finite_irreducibleComponents.subset fun _ h => h.1).isClosed_biUnion fun Z h =>
+  exact (NoetherianSpace.finite_irreducibleComponents.subset (by exact fun _ h => h.1)).isClosed_biUnion fun Z h =>
     isClosed_of_mem_irreducibleComponents Z h.1
 
 theorem exists_connected_open {S : Scheme.{0}} [IsLocallyNoetherian S] (N : S.Opens) (s : S) (hs : s ∈ N) :
@@ -73,8 +77,3 @@ theorem isOpen_abLocus_of_locallyNoetherian {S : Scheme.{0}} [IsLocallyNoetheria
   exact (key y).2 hy
 
 end GlobalTheory.AbLocusOpenGlobal
-
-theorem GlobalTheory.AbLocusOpenGlobal.isOpen_abLocus_gmod : ∀ {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {D : Datum H} {l : Level H} {Xo : Moduli D l} {c : Coeff l} (Z : GMod Xo c), IsOpen (abLocus Z.t.G) := by
-  intro E _ _ _ H D l Xo c Z
-  have : IsLocallyNoetherian Z.X := (GlobalTheory.ModelRelCompare.densePart Z (GlobalTheory.CoeffRings.coeff_isDedFrac E H l c).1).1
-  exact GlobalTheory.AbLocusOpenGlobal.isOpen_abLocus_of_locallyNoetherian Z.t.G Z.t.semi

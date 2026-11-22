@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.WhittakerVanishingImpliesZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EventuallyMemFixed
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.WhittakerVanishingImpliesZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EventuallyMemFixed
+
+@[expose] public section
 
 noncomputable section
 

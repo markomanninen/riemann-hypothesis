@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.AlgResPropsPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.AlgResPropsPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits Polynomial
@@ -79,7 +83,7 @@ lemma gen {A B C D : CommRingCat.{0}} (f : A ⟶ B) (g : A ⟶ C) (u : B ⟶ D) 
       rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
     rw [hbc, map_mul, h1, h2]
     exact T.mul_mem (hu b) (hv c)
-  | add x y hx hy => rw [map_add]; exact T.add_mem hx hy
+  | add x y hx hy => rw [map_add (f := _)]; exact T.add_mem hx hy
 
 theorem Push_of : LateralTheory.E.AlgResPropsPf.Push := by
   intro A B C D f g u v h hf Q hQ d
@@ -93,7 +97,7 @@ theorem Push_of : LateralTheory.E.AlgResPropsPf.Push := by
         simp only [Set.mem_ofPred_eq, map_mul] at *; exact ha.mul hb
       one_mem' := by simp only [Set.mem_ofPred_eq, map_one]; exact isAlgebraic_one
       add_mem' := fun {a b} ha hb => by
-        simp only [Set.mem_ofPred_eq, map_add] at *; exact ha.add hb
+        simp only [Set.mem_ofPred_eq, map_add (f := _)] at *; exact ha.add hb
       zero_mem' := by simp only [Set.mem_ofPred_eq, map_zero]; exact isAlgebraic_zero
       neg_mem' := fun {a} ha => by
         simp only [Set.mem_ofPred_eq, map_neg] at *

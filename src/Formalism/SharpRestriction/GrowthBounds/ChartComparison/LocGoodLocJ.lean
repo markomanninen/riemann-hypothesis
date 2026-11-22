@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.StepIn
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.LevelsOfChChartsCover
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.FiniteClassSetOfFiniteIndex
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TiePtOneRec
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TiePsi
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.StepIn
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.LevelsOfChChartsCover
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.FiniteClassSetOfFiniteIndex
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TiePtOneRec
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TiePsi
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,8 +31,8 @@ variable {D : D7} {X : Formalism.L2.Herm.Herm0 D} {u : D.what₂.Word} {w : D.wh
   (t : GChartTie (X.g u w hg) Lv i em (D.sp.X (i + 1)).gram Lb Uloc ψ eps)
   (B : GL (Fin (D.sp.X (i + 1)).rank) D.host.E)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 def locJ : LocAt D.host.F D.host.E (D.R.N (i + 1)) (gatCh (gatJ Lv (i + 1)) em) where
   rk := t.rk.trans (rankN D (i + 1) hi)
   pl := (X.g u w hg).pl
@@ -49,8 +53,8 @@ theorem locJ_UJ (c : cmp) (γ : ((gatCh (gatJ Lv (i + 1)) em).lev c).Γ) :
     (locJ hi t B).gamI c γ ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D (i + 1) hi) :=
   reGL_mem_UJ (rankN D (i + 1) hi) _ (D.sp.X (i + 1)).gram _ (gramN_apply D (i + 1) hi) _ (t.gamI c γ).2
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem locJ_actB (hB : FrRatJ t B) : (locJ hi t B).ActB := by
   refine LocAt.actB_of (locJ hi t B) (rankN D (i + 1) hi) B (fun c γ => (t.gamI c γ).1) rfl (fun _ _ => rfl) ?_
   intro c v γ a b a' b' ha hb
@@ -58,18 +62,20 @@ theorem locJ_actB (hB : FrRatJ t B) : (locJ hi t B).ActB := by
   rw [hB _ ((X.g u w hg).pl v).2, bc_comp] at h1
   exact h1
 
-set_option maxHeartbeats 4000000 in
 
-theorem locGood_locJ : LocGood (sigD D) (gramN D (i + 1) hi) (locJ hi t B) where
-  herm := isHerm_re (rankN D (i + 1) hi) _ (D.sp.X (i + 1)).gram _ (gramN_apply D (i + 1) hi) (gram_herm D.sp.cm (D.sp.X (i + 1)))
-  det := det_re (rankN D (i + 1) hi) (D.sp.X (i + 1)).gram _ (gramN_apply D (i + 1) hi) (gram_det_unit D.sp.cm (D.sp.X (i + 1)))
-  sig := fun v x => (X.g u w hg).spl_sig _ ((X.g u w hg).pl v).2 x
-  yG_mem := fun c => reGL_mem_UPts (rankN D (i + 1) hi) D.sp.cm.sig (D.sp.X (i + 1)).gram _ (gramN_apply D (i + 1) hi) _ _ (t.yG c).2
-  yG_p := fun c v => by
-    have h1 := t.yG_p c _ ((X.g u w hg).pl v).2
-    have h2 := bc_reGL (rankN D (i + 1) hi) (prV (E := D.host.E) ((X.g u w hg).pl v).1) (t.yG c).1
-    rw [h1, map_one] at h2
-    exact h2
+set_option maxHeartbeats 4000000 in
+theorem locGood_locJ : LocGood (sigD D) (gramN D (i + 1) hi) (locJ hi t B) := by
+  refine {
+    herm := isHerm_re (rankN D (i + 1) hi) _ (D.sp.X (i + 1)).gram _ (gramN_apply D (i + 1) hi) (gram_herm D.sp.cm (D.sp.X (i + 1)))
+    det := det_re (rankN D (i + 1) hi) (D.sp.X (i + 1)).gram _ (gramN_apply D (i + 1) hi) (gram_det_unit D.sp.cm (D.sp.X (i + 1)))
+    sig := fun v x => (X.g u w hg).spl_sig _ ((X.g u w hg).pl v).2 x
+    yG_mem := fun c => reGL_mem_UPts (rankN D (i + 1) hi) D.sp.cm.sig (D.sp.X (i + 1)).gram _ (gramN_apply D (i + 1) hi) _ _ (t.yG c).2
+    yG_p := ?_ }
+  intro c v
+  have h1 := t.yG_p c _ ((X.g u w hg).pl v).2
+  have h2 := bc_reGL (rankN D (i + 1) hi) (prV (E := D.host.E) ((X.g u w hg).pl v).1) (t.yG c).1
+  rw [h1, map_one] at h2
+  exact h2
 
 theorem locInt_locJ : LocInt (locJ hi t B) :=
   fun v x => (X.g u w hg).completion_integers_iff v _ rfl x

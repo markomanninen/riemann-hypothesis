@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.GalLaws
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecCrit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecFun
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.DenseCc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ThBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BfFun
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.TypeFin
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.TwistUnitary
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.IsHilbertSchmidtOfAeEqDual
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.GalLaws
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecCrit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecFun
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.DenseCc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ThBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BfFun
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.TypeFin
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.TwistUnitary
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.IsHilbertSchmidtOfAeEqDual
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -40,7 +44,7 @@ private theorem nu_pres {K : Type} [Field K] [NumberField K] {n : ℕ} (D : Type
   have := D.prob
   have hm : Measurable e := e.continuous.measurable
   have hemb : MeasurableEmbedding e := e.toHomeomorph.measurableEmbedding
-  have : IsProbabilityMeasure (D.ν.map e) := Measure.isProbabilityMeasure_map hm.aemeasurable
+  have : IsProbabilityMeasure (D.ν.map e) := inferInstance
   have hp : MeasurePreserving e D.ν (D.ν.map e) := ⟨hm, rfl⟩
   have hs : ∀ᵐ k ∂(D.ν.map e), k ∈ D.U := by
     rw [hemb.ae_map_iff]
@@ -80,7 +84,7 @@ private theorem reps_tw {K : Type} [Field K] [NumberField K] {n : ℕ} {μ : Mea
     (θ : Twist μ) {v : L2 μ} {φ : G1 K n → ℂ} (hv : Reps μ v φ) : Reps μ (θ.U v) fun x => φ (θ.e.symm x) := by
   have hp : MeasurePreserving θ.e.symm μ μ := θ.pres.symm θ.e.toHomeomorph.toMeasurableEquiv
   have h1 := hp.quasiMeasurePreserving.ae hv
-  have h2 := (quasiMeasurePreserving_mk (Gam K n) μ).ae (θ.U_spec v)
+  have h2 := QuasiMeasurePreserving.ae (quasiMeasurePreserving_mk (Gam K n) μ) (θ.U_spec v)
   filter_upwards [h1, h2] with y a b
   rw [b, ← a]
   congr 1
@@ -116,7 +120,7 @@ private theorem th_tw {K : Type} [Field K] [NumberField K] (e : G1 K (2 + 2) ≃
   congr 1
   simp [hε, mul_assoc]
 
-private theorem sec_tw {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] {μ : Measure (G1 K (2 + 2))} [μ.IsHaarMeasure]
+private theorem sec_tw {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] {μ : Measure (G1 K (2 + 2))} [μ.IsHaarMeasure]
     {μ₂ : Measure (G1 K 2)} [μ₂.IsHaarMeasure] {τ₁ τ₂ : Submodule ℂ (L2 μ₂)} (i₁ : CuspIrr μ₂ τ₁) (i₂ : CuspIrr μ₂ τ₂)
     {D : TypeDat K (2 + 2)} {σ : K ≃+* K} {θ : Twist μ} {θ₂ : Twist μ₂} (h : UpperTheory.ConvolutionTheory.K.IsGal σ θ)
     (h₂ : UpperTheory.ConvolutionTheory.K.IsGal σ θ₂) (hs : Stable D θ) (m₁ : τ₁.map (θ₂.U : L2 μ₂ →ₗ[ℂ] L2 μ₂) = τ₂)

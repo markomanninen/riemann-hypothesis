@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InvSubOneMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InvSubOneMem
+
+@[expose] public section
+
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
 
 namespace GlobalTheory.GaugeSubHaar
@@ -85,9 +90,9 @@ private theorem comap_subtype_val_haar_properties {n : ℕ} {ε : Fin n → Bool
     apply hB0
     rw [← hνB, h0, Measure.coe_zero, Pi.zero_apply]
 
+
 open MeasureTheory NumberField Matrix Finset in
 open Topology in
-
 theorem _root_.GlobalTheory.GaugeSubHaar.isGaugeSub_haar : ∀ (n : ℕ) (ε : Fin n → Bool) (S : Subgroup (_root_.Formalism.REAL.UJ ε)), IsClosed (S : Set (_root_.Formalism.REAL.UJ ε)) → ∀ (d : ℕ) (μ : Measure (_root_.Formalism.REAL.UJ ε)), _root_.GlobalTheory.FlagMeas.IsGaugeSub (S : Set (_root_.Formalism.REAL.UJ ε)) d μ → SigmaFinite μ ∧ IsFiniteMeasureOnCompacts μ ∧ ∀ μ', _root_.GlobalTheory.FlagMeas.IsGaugeSub (S : Set (_root_.Formalism.REAL.UJ ε)) d μ' → μ' = μ := by
   intro n ε S hS d μ hμ
   have hme : MeasurableEmbedding (Subtype.val : S → _root_.Formalism.REAL.UJ ε) :=
@@ -116,7 +121,7 @@ theorem _root_.GlobalTheory.GaugeSubHaar.isGaugeSub_haar : ∀ (n : ℕ) (ε : F
   have hsmul := Measure.isMulLeftInvariant_eq_smul ν' ν
   set c := ν'.haarScalarFactor ν with hc
   have hμc : μ' = c • μ := by
-    rw [← hmap', hsmul, Measure.map_smul, hmap]
+    rw [← hmap', hsmul, Measure.map_smul c hme.measurable.aemeasurable, hmap]
   obtain ⟨-, -, h3⟩ := hμ
   obtain ⟨-, -, h3'⟩ := hμ'
   rw [hμc] at h3'

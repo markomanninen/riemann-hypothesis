@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.StatementF
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvMemDoubleCosetAndComm
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.StatementF
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvMemDoubleCosetAndComm
+
+@[expose] public section
 
 open Formalism.UG Matrix GlobalTheory.UnitarySwap
 
@@ -28,7 +32,7 @@ theorem exists_param (hσ : ∀ x, σ (σ x) = x) {τ : L} (hτ : τ ∈ intL L)
   refine ⟨π⁻¹ * (δ + π * (τ * A)), mul_ne_zero (inv_ne_zero hπ0) h0, ?_, (δ + π * (τ * A))⁻¹, ?_, ?_,
     inv_mul_cancel₀ h0⟩
   · have : σ τ = 1 - τ := by rw [← hτ1]; ring
-    simp only [map_mul, map_add, map_inv₀, hσπ, hδ', hA', this]
+    simp only [map_mul, map_add (f := _), map_inv₀, hσπ, hδ', hA', this]
     field_simp
     ring
   · rw [mem_int, map_inv₀, h1, inv_one]
@@ -168,7 +172,7 @@ theorem exists_move [FiniteDimensional L V] (hσσ : ∀ x, σ (σ x) = x) (hσ 
     have : (refl B f μ' * refl B e μ * s₀ : Module.End L V) (c • (π • e) + d • f + v₀) =
         (c * (π * (1 - π * p * B e e)) + d * (-p)) • e +
           (c * (-((1 - π * p * B e e) * p')) + d * (z - p' * B f f)) • (π • f) + s₀ v₀ := by
-      simp only [Module.End.mul_apply, map_add, map_smul, s₀e, s₀f, f₁ _ h4.2.1 h4.2.2, se, sf, key]
+      simp only [Module.End.mul_apply, map_add (f := _), map_smul, s₀e, s₀f, f₁ _ h4.2.1 h4.2.2, se, sf, key]
       module
     rw [this]
     refine hΛ'.add (hΛ'.add (hΛ'.smul hσO ?_ he) (hΛ'.smul hσO ?_ hπf)) h3.1

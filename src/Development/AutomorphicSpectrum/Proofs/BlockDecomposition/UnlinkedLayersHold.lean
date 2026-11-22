@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.GenericUnlinkedGL.UnlinkedRealize
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.GenericUnlinkedGL.UnlinkedRealize
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,10 +24,10 @@ theorem ncard_carrier (Δ : Segment k) : Δ.carrier.ncard = Δ.len := by
   rw [Segment.carrier, ← Set.image_univ, Set.ncard_image_of_injective _ (term_injective Δ)]
   simp
 
-theorem ms_le {Δ : Segment k} {s : Multiset (IrrGL k)} (h : ∀ x ∈ Δ.carrier, x ∈ s) : Δ.ms ≤ s :=
+theorem ms_le {Δ : Segment k} {s : Multiset (IrrGL (k := k))} (h : ∀ x ∈ Δ.carrier, x ∈ s) : Δ.ms ≤ s :=
   (Multiset.le_iff_subset (ms_nodup Δ)).2 fun _ hx => h _ (Segment.mem_ms.1 hx)
 
-theorem exists_longest {s : Multiset (IrrGL k)} {y : IrrGL k} (hy : y ∈ s) (hc : y.IsCusp) :
+theorem exists_longest {s : Multiset (IrrGL (k := k))} {y : IrrGL (k := k)} (hy : y ∈ s) (hc : y.IsCusp) :
     ∃ Γ : Segment k, (∀ x ∈ Γ.carrier, x ∈ s) ∧
       ∀ D : Segment k, (∀ x ∈ D.carrier, x ∈ s) → D.len ≤ Γ.len := by
   classical
@@ -40,7 +44,7 @@ theorem exists_longest {s : Multiset (IrrGL k)} {y : IrrGL k} (hy : y ∈ s) (hc
   obtain ⟨Γ, hΓ, e⟩ := Nat.findGreatest_spec h1' h1
   exact ⟨Γ, hΓ, fun D hD => e ▸ Nat.le_findGreatest (hb D hD) ⟨D, hD, rfl⟩⟩
 
-theorem not_linked_of_longest {s : Multiset (IrrGL k)} {Γ D : Segment k} (hΓ : ∀ x ∈ Γ.carrier, x ∈ s)
+theorem not_linked_of_longest {s : Multiset (IrrGL (k := k))} {Γ D : Segment k} (hΓ : ∀ x ∈ Γ.carrier, x ∈ s)
     (hm : ∀ D : Segment k, (∀ x ∈ D.carrier, x ∈ s) → D.len ≤ Γ.len) (hD : ∀ x ∈ D.carrier, x ∈ s) :
     ¬ Γ.Linked D := by
   rintro ⟨⟨U, hU⟩, -, h2⟩
@@ -54,7 +58,7 @@ theorem not_linked_of_longest {s : Multiset (IrrGL k)} {Γ D : Segment k} (hΓ :
   rw [ncard_carrier, ncard_carrier] at h5
   omega
 
-theorem exists_unlinked (n : ℕ) : ∀ s : Multiset (IrrGL k), Multiset.card s = n → (∀ y ∈ s, y.IsCusp) →
+theorem exists_unlinked (n : ℕ) : ∀ s : Multiset (IrrGL (k := k)), Multiset.card s = n → (∀ y ∈ s, y.IsCusp) →
     ∃ m : Multiset (Segment k), (∀ D ∈ m, ∀ D' ∈ m, ¬ D.Linked D') ∧ m.bind Segment.ms = s := by
   classical
   induction n using Nat.strong_induction_on with

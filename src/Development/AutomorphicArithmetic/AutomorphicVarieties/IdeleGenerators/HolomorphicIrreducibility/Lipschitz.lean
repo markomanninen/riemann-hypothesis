@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
+
+@[expose] public section
 
 open Polynomial Filter Topology
 
@@ -13,7 +17,7 @@ private lemma lk_hasDerivAt (m : ℕ) (x : ℂ) (hx : x ≠ 1) :
   refine ⟨_, h, ?_⟩
   have e2 : numL (m + 2) = X * (derivative (numL (m + 1)) * (1 - X) + C ((m : ℤ) + 1) * numL (m + 1)) := by
     rw [numL.eq_3]
-  simp only [Lk, e2, map_mul, map_add, map_sub, map_one, Polynomial.aeval_X, Polynomial.aeval_C,
+  simp only [Lk, e2, map_mul, map_add (f := _), map_sub, map_one, Polynomial.aeval_X, Polynomial.aeval_C,
     id, Nat.add_sub_cancel, Pi.pow_apply]
   field_simp
   push_cast

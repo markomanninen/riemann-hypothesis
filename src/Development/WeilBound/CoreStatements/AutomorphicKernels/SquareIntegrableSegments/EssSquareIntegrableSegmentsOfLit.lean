@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SquareIntegrableSegments.Development
-import Development.WeilBound.CoreStatements.PublishedTheorems.LanglandsClassification.Bridge
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.BernsteinZelevinskyGL.TopAdm
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SquareIntegrableSegments.Development
+public import Development.WeilBound.CoreStatements.PublishedTheorems.LanglandsClassification.Bridge
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.BernsteinZelevinskyGL.TopAdm
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.WittLtA
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.WittLtA
+
+@[expose] public section
 
 open Matrix NumberField GlobalTheory.Inertia
 open scoped ComplexConjugate
@@ -16,7 +20,8 @@ abbrev hf {n : Type} [Fintype n] (G : Matrix n n E) (x y : n → E) : E := x ⬝
 theorem cc_mulVec {n m : Type} [Fintype n] [Fintype m] (P : Matrix n m E) (y : m → E) :
     FD.cc ∘ (P *ᵥ y) = P.map FD.cc *ᵥ (FD.cc ∘ y) := by
   funext i
-  simp [mulVec, dotProduct, FD.cc, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [mulVec, dotProduct, FD.cc, map_sum, map_mul]
 
 theorem hf_congr {n m : Type} [Fintype n] [Fintype m] (G : Matrix n n E) (P : Matrix n m E) (x y : m → E) :
     hf (Pᵀ * G * P.map FD.cc) x y = hf G (P *ᵥ x) (P *ᵥ y) := by

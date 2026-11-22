@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.SiegelWeilUnitaryConvergent
-import Formalism.SharpRestriction.GlobalSchurBounds.LocalCountingBounds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.SiegelWeilNarrowOfWide
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.SiegelWeilUnitaryConvergent
+public import Formalism.SharpRestriction.GlobalSchurBounds.LocalCountingBounds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.SiegelWeilNarrowOfWide
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open scoped TensorProduct ENNReal

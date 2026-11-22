@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.NumberField
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IwahoriTypeSupport.TorusScalar
-import Development.WeilBound.RepresentationTheoryGL.GaloisPermutationReps.SubquotientEquivalence.IsTypeMap
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.NumberField
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IwahoriTypeSupport.TorusScalar
+public import Development.WeilBound.RepresentationTheoryGL.GaloisPermutationReps.SubquotientEquivalence.IsTypeMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ def resT {F : Type} [Field F] (a b : ℕ) {n : ℕ} (T : GL (Fin n) F → ℂ) (
   ∑ᶠ p : GL (Fin n) F, if InPar a p ∧ tlG a p = x ∧ brG a b p = y then T p else 0
 
 def SuppAny : Prop :=
-  ∀ (E Ω : Type) [Field E] [NumberField E] [IsTotallyComplex E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (n : ℕ), 0 < n →
+  ∀ (E Ω : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (n : ℕ), 0 < n →
     ∀ (π : CuspSub E n) (Y : Pt E Ω n), Lifts (Pt.base Ω π) Y →
     ∀ (A : ValuationSubring Ω) (v : HeightOneSpectrum (𝓞 E)) (w : HeightOneSpectrum (𝓞 Y.K)) (h : IsPlaceOver A v)
       (h' : IsPlaceOver A w) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* v.adicCompletion E), Continuous i →
@@ -36,7 +40,7 @@ def SuppAny : Prop :=
       ∃ ξ hξ, ToralOver h h' (IrrGL.of τ.ρ τ.smooth τ.irred) τ' ξ hξ
 
 def UnlinkedBC : Prop :=
-  ∀ (E Ω : Type) [Field E] [NumberField E] [IsTotallyComplex E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (n : ℕ), 0 < n →
+  ∀ (E Ω : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (n : ℕ), 0 < n →
     ∀ (π : CuspSub E n) (Y : Pt E Ω n), Lifts (Pt.base Ω π) Y →
     ∀ (A : ValuationSubring Ω) (v : HeightOneSpectrum (𝓞 E)) (w : HeightOneSpectrum (𝓞 Y.K)) (h : IsPlaceOver A v)
       (h' : IsPlaceOver A w) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* v.adicCompletion E), Continuous i →
@@ -152,7 +156,7 @@ def KillsOn (P : Lbl → Prop) : Prop :=
       (JD θ (a.lift (Module.finrank F F')).D (a.lift (Module.finrank F F')).L a.rk)
 
 def CuspIrr : Prop :=
-  ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k] (y : IrrGL k), y.IsCusp → UpperTheory.Zero.LLC.DZ y →
+  ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k] (y : IrrGL (k := k)), y.IsCusp → UpperTheory.Zero.LLC.DZ y →
     FiniteDimensional ℂ (fixed y.rep (KOne k (Fin y.1))) ∧ (levelZero y.rep).IsIrreducible ∧
       PositivityTheory.Rg.DzCount.FinCusp (levelZero y.rep)
 
@@ -178,13 +182,13 @@ def SubqMap : Prop :=
 
 def SuppStd : Prop :=
   ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k] (N : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V)
-    (S : Multiset (IrrGL k)), HasSupport π S → ∃ (s : ℕ) (x : Fin s → IrrGL k) (hd : ∑ a, (x a).1 = N),
+    (S : Multiset (IrrGL (k := k))), HasSupport π S → ∃ (s : ℕ) (x : Fin s → IrrGL (k := k)) (hd : ∑ a, (x a).1 = N),
       Finset.univ.val.map x = S ∧ IsSubquotient π (prodIrr x hd)
 
 def LblOf : Prop :=
   ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k] (θ : AlgebraicClosure 𝓀[k] →* ℂ), Inj θ → ∀ (N : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V]
-    (π : Representation ℂ (GL (Fin N) k) V) (S : Multiset (IrrGL k)), HasSupport π S → fixed π (KOne k (Fin N)) ≠ ⊥ →
-    ∃ (s : ℕ) (x : Fin s → IrrGL k) (c : Fin s → ℕ), Finset.univ.val.map x = S ∧
+    (π : Representation ℂ (GL (Fin N) k) V) (S : Multiset (IrrGL (k := k))), HasSupport π S → fixed π (KOne k (Fin N)) ≠ ⊥ →
+    ∃ (s : ℕ) (x : Fin s → IrrGL (k := k)) (c : Fin s → ℕ), Finset.univ.val.map x = S ∧
       (∀ a, (x a).IsCusp ∧ UpperTheory.Zero.LLC.DZ (x a) ∧ Reg (Nat.card 𝓀[k]) (x a).1 (c a) ∧
         ∀ γ, LinearMap.trace ℂ _ (levelZero (x a).rep γ) = cusp θ (x a).1 (c a) γ) ∧
       HasLbl θ π ⟨Nat.card 𝓀[k], [], List.ofFn fun a => ((x a).1, c a)⟩
@@ -246,14 +250,14 @@ def ResDeg : Prop :=
         ∀ z, s z = z ^ Nat.card 𝓀[v.adicCompletion K]
 
 def StableOf : Prop :=
-  ∀ (K M : Type) [Field K] [NumberField K] [Field M] [NumberField M] [Algebra K M] [IsGalois K M] [IsTotallyComplex K]
-    [IsTotallyComplex M], (Module.finrank K M).Prime → ∀ n : ℕ, 0 < n → ∀ (π : CuspSub K n) (P : CuspSub M n),
+  ∀ (K M : Type) [Field K] [NumberField K] [Field M] [NumberField M] [Algebra K M] [IsGalois K M] [_root_.NumberField.IsTotallyComplex K]
+    [_root_.NumberField.IsTotallyComplex M], (Module.finrank K M).Prime → ∀ n : ℕ, 0 < n → ∀ (π : CuspSub K n) (P : CuspSub M n),
     WeakBC (Cusp.cx π).sat (Cusp.cx P).sat →
     (∀ g : M ≃ₐ[K] M, (Cusp.cx P).ConjIso g.toRingEquiv) ∧ SplitLift (Cusp.cx π) (Cusp.cx P)
 
 def StepAt (P₀ : Lbl → Prop) (split : Prop → Prop) : Prop :=
   ∀ (K M Ω : Type) [Field K] [NumberField K] [Field M] [NumberField M] [Field Ω] [Algebra K M] [Algebra K Ω] [Algebra M Ω]
-    [IsScalarTower K M Ω] [IsGalois K M] [IsTotallyComplex K] [IsTotallyComplex M], (Module.finrank K M).Prime →
+    [IsScalarTower K M Ω] [IsGalois K M] [_root_.NumberField.IsTotallyComplex K] [_root_.NumberField.IsTotallyComplex M], (Module.finrank K M).Prime →
     ∀ n : ℕ, 0 < n → ∀ (π : CuspSub K n) (P : CuspSub M n), WeakBC (Cusp.cx π).sat (Cusp.cx P).sat →
     ∀ (A : ValuationSubring Ω) (Θ : IsLocalRing.ResidueField A →* ℂ), Inj Θ →
     ∀ (v : HeightOneSpectrum (𝓞 K)) (w : PlacesOver M v), split (UpperTheory.ConvolutionTheory.GM.Split M v) → UpperTheory.ConvolutionTheory.GM.Unr M v →
@@ -273,7 +277,7 @@ def LiftsFix : Prop :=
     ∀ x : X.K, ∃ y : Y.K, algebraMap Y.K Ω y = algebraMap X.K Ω x
 
 def PlaceEx : Prop :=
-  ∀ (K M Ω : Type) [Field K] [NumberField K] [Field M] [NumberField M] [IsTotallyComplex M] [Field Ω] [Algebra K Ω] [Algebra M Ω]
+  ∀ (K M Ω : Type) [Field K] [NumberField K] [Field M] [NumberField M] [_root_.NumberField.IsTotallyComplex M] [Field Ω] [Algebra K Ω] [Algebra M Ω]
     (A : ValuationSubring Ω) (v : HeightOneSpectrum (𝓞 K)), IsPlaceOver A v → ∀ (n : ℕ) (P : CuspSub M n),
     ∃ w : HeightOneSpectrum (𝓞 M), IsPlaceOver A w ∧ ∃ τ, P.IsLocComp w τ
 
@@ -307,7 +311,7 @@ def ArtRead : Prop :=
 
 def TypeChar : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] (v : HeightOneSpectrum (𝓞 E)) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* v.adicCompletion E),
-    Continuous i → ∀ (r : 𝓀[v.adicCompletion E] ≃+* ZMod g) (y : IrrGL (v.adicCompletion E)) (τ : FDRep ℂ (GlobalTheory.GLq.Gn g y.1)),
+    Continuous i → ∀ (r : 𝓀[v.adicCompletion E] ≃+* ZMod g) (y : IrrGL (k := v.adicCompletion E)) (τ : FDRep ℂ (GlobalTheory.GLq.Gn g y.1)),
     GlobalTheory.GLq.IsCusp τ.character → GlobalTheory.SerSys.TameGen.Inflates (y.rep.comp (Matrix.GeneralLinearGroup.map i.toRingHom)) τ →
     ∀ γ, τ.character (Matrix.GeneralLinearGroup.map r.toRingHom γ) = LinearMap.trace ℂ _ (levelZero y.rep γ)
 
@@ -323,7 +327,7 @@ def CuspIne : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
     (v : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A v) (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* v.adicCompletion E), Continuous i →
     ∀ (Θ : IsLocalRing.ResidueField A →* ℂ), Inj Θ → ∀ (e : AlgebraicClosure 𝓀[v.adicCompletion E] →+* IsLocalRing.ResidueField A)
-      (y : IrrGL (v.adicCompletion E)) (c : ℕ), y.IsCusp → UpperTheory.Zero.LLC.DZ y → Reg g y.1 c →
+      (y : IrrGL (k := v.adicCompletion E)) (c : ℕ), y.IsCusp → UpperTheory.Zero.LLC.DZ y → Reg g y.1 c →
       (∀ γ, LinearMap.trace ℂ _ (levelZero y.rep γ) = cusp (Θ.comp e.toMonoidHom) y.1 c γ) →
     ∀ rc, UpperTheory.Zero.LLC.IsRecT h rc → ∀ f : ℕ, 0 < f → y.1 ∣ f → ∀ (t : Ine (F := E) A) (ϖ : Ω), ϖ ^ (g ^ f - 1) = (g : Ω) →
       ∀ z : A, (z : Ω) = (t : G E Ω) ϖ / ϖ → (rc y).inePol (t : G E Ω) =
@@ -331,8 +335,8 @@ def CuspIne : Prop :=
 
 def SuppIne : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (v : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A v) (rc : IrrGL (v.adicCompletion E) → WD h), UpperTheory.Zero.LLC.IsRecT h rc →
-    ∀ (x : IrrGL (v.adicCompletion E)) (S : Multiset (IrrGL (v.adicCompletion E))), HasSupport x.rep S →
+    (v : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A v) (rc : IrrGL (k := v.adicCompletion E) → WD h), UpperTheory.Zero.LLC.IsRecT h rc →
+    ∀ (x : IrrGL (k := v.adicCompletion E)) (S : Multiset (IrrGL (k := v.adicCompletion E))), HasSupport x.rep S →
     ∀ t : Ine (F := E) A, (rc x).inePol (t : G E Ω) = (S.map fun y => (rc y).inePol (t : G E Ω)).prod
 
 def TameChars : Prop :=

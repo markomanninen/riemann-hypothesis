@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.TCells
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FPiece
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSubquotientCompMulSingle
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SocleOfMultiplicityOne
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.TCells
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FPiece
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSubquotientCompMulSingle
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SocleOfMultiplicityOne
+
+@[expose] public section
 
 open Filter Topology GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult UpperTheory.Lit.Cas UpperTheory.Lit.Red
 
@@ -46,7 +50,7 @@ private theorem parInd_single {W : Type} [AddCommGroup W] [Module ℂ W] {r : �
   have h' : F.1.1 1 = G.1.1 1 := h
   rw [law F, law G, h']
 
-private theorem eq_of_jm {r : ℕ} (q : Fin r → IrrGL k) (a : Fin r) (ha : ∀ j, j ≠ a → (q j).1 = 0) (x : IrrGL k)
+private theorem eq_of_jm {r : ℕ} (q : Fin r → IrrGL (k := k)) (a : Fin r) (ha : ∀ j, j ≠ a → (q j).1 = 0) (x : IrrGL (k := k))
     (hq : ∑ j, (q j).1 = x.1) (h : jm q hq x.rep ≠ 0) : q a = x := by
   obtain ⟨d, y⟩ := x
   obtain rfl : (q a).1 = d := by
@@ -57,7 +61,7 @@ private theorem eq_of_jm {r : ℕ} (q : Fin r → IrrGL k) (a : Fin r) (ha : ∀
       ((isSubquotient_comp h1 _).trans (isSubquotient_jac_single (b := fun j => (q j).1) a ha _ _)))
   exact (IrrGL.of_rep (q a)).symm.trans ((IrrGL.of_eq_of.2 ⟨ψ.symm⟩).trans (IrrGL.of_rep ⟨_, y⟩))
 
-private theorem eq_of_jh {r : ℕ} (q : Fin r → IrrGL k) (a : Fin r) (ha : ∀ j, j ≠ a → (q j).1 = 0) (x : IrrGL k)
+private theorem eq_of_jh {r : ℕ} (q : Fin r → IrrGL (k := k)) (a : Fin r) (ha : ∀ j, j ≠ a → (q j).1 = 0) (x : IrrGL (k := k))
     (hq : ∑ j, (q j).1 = x.1) (h : jhMult x.rep (prodIrr q hq) ≠ 0) : q a = x := by
   obtain ⟨d, y⟩ := x
   obtain rfl : (q a).1 = d := by
@@ -69,9 +73,9 @@ private theorem eq_of_jh {r : ℕ} (q : Fin r → IrrGL k) (a : Fin r) (ha : ∀
   exact (IrrGL.of_rep (q a)).symm.trans ((IrrGL.of_eq_of.2 ⟨ψ⟩).trans (IrrGL.of_rep ⟨_, y⟩))
 
 private theorem cell (hG : GlobalTheory.Published.GeometricLemma) (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness)
-    {P : Set (IrrGL k)} {x y z y' z' : IrrGL k} (h : Emb x y z) (h' : Emb x y' z') (hy' : SuppIn y' P)
+    {P : Set (IrrGL (k := k))} {x y z y' z' : IrrGL (k := k)} (h : Emb x y z) (h' : Emb x y' z') (hy' : SuppIn y' P)
     (hz : FirstIn z Pᶜ) :
-    ∃ (s : Fin 2 → Fin 2 → IrrGL k) (hr : ∀ i, ∑ j, (s i j).1 = (![y, z] i).1)
+    ∃ (s : Fin 2 → Fin 2 → IrrGL (k := k)) (hr : ∀ i, ∑ j, (s i j).1 = (![y, z] i).1)
       (hc : ∀ j, ∑ i, (s i j).1 = (![y', z'] j).1), (∀ i, jm (s i) (hr i) (![y, z] i).rep ≠ 0) ∧
         (∀ j, jhMult (![y', z'] j).rep (prodIrr (fun i => s i j) (hc j)) ≠ 0) ∧ (s 1 0).1 = 0 := by
   obtain ⟨hd, f, hf⟩ := h
@@ -103,7 +107,7 @@ private theorem cell (hG : GlobalTheory.Published.GeometricLemma) (hBZ : GlobalT
 end
 
 theorem UpperTheory.Lit.Full.data :
-    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (P : Set (IrrGL k)) (x y z y' z' : IrrGL k), Emb x y z → Emb x y' z' → SuppIn y P → SuppIn y' P → FirstIn z Pᶜ → FirstIn z' Pᶜ → y = y' ∧ z = z' := by
+    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (P : Set (IrrGL (k := k))) (x y z y' z' : IrrGL (k := k)), Emb x y z → Emb x y' z' → SuppIn y P → SuppIn y' P → FirstIn z Pᶜ → FirstIn z' Pᶜ → y = y' ∧ z = z' := by
   intro hG hBZ k _ _ _ _ P x y z y' z' h h' hy hy' hz hz'
   obtain ⟨s, hr, hc, hrow, hcol, h10⟩ := cell hG hBZ h h' hy' hz
   obtain ⟨t, hr', hc', -, -, h10'⟩ := cell hG hBZ h' h hy hz'

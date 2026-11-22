@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.SliceSeminorm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStdCharNegOneOfStandardTraceAdelicAddChar
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.ExistsEqAdelicCharMul
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaSumStarAndSchAStar
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.SliceSeminorm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStdCharNegOneOfStandardTraceAdelicAddChar
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.ExistsEqAdelicCharMul
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaSumStarAndSchAStar
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +24,8 @@ variable {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ] {ψ : Add
 theorem sl_int (h : Φ ∈ schA F (κ ⊕ κ)) (a) : Integrable (sl a Φ) (adeleMeasurePi F) :=
   integrable_of_mem_schwartzBruhatPi ((sl_mem h).1 a)
 
-variable (F κ) in
 
+variable (F κ) in
 def lD : ((κ ⊕ κ → AF F) → ℂ) →ₗ[ℂ] ℂ := (LinearMap.exists_extend
   ({ toFun Φ := adelicFourierPi F (sl 0 Φ.1) 0
      map_add' Φ Ψ := congrFun (adelicFourierPi_add (sl_int Φ.2 0) (sl_int Ψ.2 0)) 0
@@ -140,7 +144,7 @@ theorem lD_unit {G : Type} [Group G] {om : G →* Module.End ℂ ((κ → AF F) 
     rw [lD_sq h, lD_sq (hp g φ h), hu _ inferInstance g φ h]
   have k1 := k _ (add_mem h h')
   have k2 := k _ (add_mem h (Submodule.smul_mem _ Complex.I h'))
-  simp only [map_add, map_smul, star_add, star_smul, GlobalTheory.SchwartzBox.boxFun_add_left, GlobalTheory.SchwartzBox.boxFun_add_right,
+  simp only [map_add (f := _), map_smul, star_add, star_smul, GlobalTheory.SchwartzBox.boxFun_add_left, GlobalTheory.SchwartzBox.boxFun_add_right,
     GlobalTheory.SchwartzBox.boxFun_smul_left, GlobalTheory.SchwartzBox.boxFun_smul_right, k φ h, k φ' h', smul_eq_mul,
     Complex.star_def, Complex.conj_I] at k1 k2
   linear_combination (1 / 2) * k1 + (Complex.I / 2) * k2 + (1 / 2 * (lD F κ (boxFun (om g φ) (star (om g φ'))) -

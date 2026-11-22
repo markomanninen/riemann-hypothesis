@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.PolarU

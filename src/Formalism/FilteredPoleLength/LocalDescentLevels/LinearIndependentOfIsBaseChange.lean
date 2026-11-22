@@ -1,4 +1,8 @@
-import Formalism.FilteredPoleLength.ReducedBasisBounds.BetaSesquilinearity
+module
+
+public import Formalism.FilteredPoleLength.ReducedBasisBounds.BetaSesquilinearity
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +76,7 @@ theorem isLattice_span_image_alt : IsLatticeSpanImage := by
     { carrier := {x | j x ∈ P}
       add_mem' := fun {a b} ha hb => by
         show j (a + b) ∈ P
-        rw [map_add]
+        rw [map_add (f := _)]
         exact P.add_mem ha hb
       zero_mem' := by
         show j 0 ∈ P
@@ -96,12 +100,11 @@ theorem isLattice_span_image_alt : IsLatticeSpanImage := by
   refine ⟨⟨S.image j, ?_⟩, ?_⟩
   · rw [Finset.coe_image, hNP]
   · rw [Submodule.span_span_of_tower, ← span_image_span_alt (K' := K') j (M : Set V), hM2]
-    rw [eq_top_iff, ← (hj.basis (Module.finBasis K V)).span_eq, Submodule.span_le]
+    change Submodule.span K' (j '' Set.univ) = ⊤
+    rw [Set.image_univ]
+    apply top_unique
+    rw [← (hj.basis (Module.finBasis K V)).span_eq]
+    apply Submodule.span_mono
     rintro _ ⟨i, rfl⟩
-    apply Submodule.subset_span
-    refine ⟨Module.finBasis K V i, Submodule.mem_top, ?_⟩
-    first
-    | simp [IsBaseChange.basis_apply]
-    | simp
-
+    exact ⟨_, (IsBaseChange.basis_apply _ _ _).symm⟩
 end Formalism.LatticeBaseChangeAlt

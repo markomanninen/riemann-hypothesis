@@ -1,6 +1,10 @@
-import Formalism.GradedWeylDivisibility.FinalD
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LRowdivLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LRowdivLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -41,9 +45,9 @@ theorem sw_deriv (a b : Fin r) (f : MvPolynomial (Fin r × Fin n) R) :
   | C c =>
     rw [sw_rowGen_C, Polynomial.derivative_C, mul_zero, MvPolynomial.derivation_C, map_zero]
   | add p q hp hq =>
-    rw [map_add, map_add, map_add, map_add, mul_add, hp, hq]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), mul_add, hp, hq]
   | mul_X p v hp =>
-    rw [map_mul, Polynomial.derivative_mul, Derivation.leibniz, smul_eq_mul, smul_eq_mul, map_add,
+    rw [map_mul, Polynomial.derivative_mul, Derivation.leibniz, smul_eq_mul, smul_eq_mul, map_add (f := _),
       map_mul, map_mul, ← hp, Dop_X, sw_rowGen_X]
     by_cases h1 : v.1 = b <;> by_cases h2 : a = b <;>
       simp only [h1, h2, if_true, if_false, sw_rowGen_X, map_zero, mul_zero, zero_mul, add_zero,
@@ -54,7 +58,7 @@ theorem sw_rowDiv_zero (a b : Fin r) (g : MvPolynomial (Fin r × Fin n) R) : row
   unfold rowDiv
   induction g using MvPolynomial.induction_on with
   | C c => rw [sw_rowGen_C, Polynomial.coeff_C_zero]
-  | add p q hp hq => rw [map_add, Polynomial.coeff_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), Polynomial.coeff_add, hp, hq]
   | mul_X p v hp =>
     rw [map_mul, Polynomial.mul_coeff_zero, hp, sw_rowGen_X]
     split_ifs <;> simp
@@ -83,7 +87,7 @@ theorem sw_step_eq (a : Fin r) (k : ℕ) (f : MvPolynomial (Fin r × Fin n) R) :
     rw [Polynomial.coeff_X_mul, Polynomial.coeff_derivative, Polynomial.coeff_derivative]
     simp only [MvPolynomial.smul_eq_C_mul]
     push_cast
-    simp only [map_add, map_natCast, map_one]
+    simp only [map_add (f := _), map_natCast, map_one]
     ring
 
 theorem sw_pow_ne (a b : Fin r) (hab : a ≠ b) (k : ℕ) (f : MvPolynomial (Fin r × Fin n) R) :

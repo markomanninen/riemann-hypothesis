@@ -1,10 +1,15 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ADensStBA
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartEnergyIntegrable
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsHermFormCompare
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartHessCompare
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PChartDensityIntegrable
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ADensStBA
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartEnergyIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsHermFormCompare
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartHessCompare
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PChartDensityIntegrable
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -101,8 +106,8 @@ theorem abs_maDensity_mix_le {e : ℕ} {M N : Matrix (Fin (e + 1)) (Fin (e + 1))
 
 end ChartEnergyIntegrableAlt
 
-open ChartEnergyIntegrableAlt in
 
+open ChartEnergyIntegrableAlt in
 theorem ChartEnergyIntegrable.proof (hCmp : HermFormCompare.Statement) (hHess : ChartHessCompare.Statement) :
     ChartEnergyIntegrable.Statement := by
   intro e M N hM hN k

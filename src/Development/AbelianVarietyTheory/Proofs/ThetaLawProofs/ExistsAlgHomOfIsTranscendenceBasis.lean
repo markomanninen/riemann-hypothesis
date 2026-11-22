@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,7 +25,11 @@ theorem exists_algHom_of_isTranscendenceBasis {E Ω ι : Type} [Field E] [Algebr
   haveI : IsScalarTower K A Ω := IsScalarTower.of_algebraMap_eq fun a => (g.commutes a).symm
   haveI : FaithfulSMul A Ω := (faithfulSMul_iff_algebraMap_injective A Ω).2 hg
   haveI := hv.isAlgebraic
-  let j : E →ₐ[A] Ω := IsAlgClosed.lift
+  let j : E →ₐ[A] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨j.restrictScalars K, fun i => ?_⟩
   have h := j.commutes (hv.1.aevalEquiv (X i))
   have e : algebraMap A E (hv.1.aevalEquiv (X i)) = v i := by
@@ -36,10 +44,10 @@ theorem algebraicIndependent_add_one {E ι : Type} [CommRing E] [Algebra K E] {v
   have h₁ : AlgebraicIndependent K fun i : ι => (X i + 1 : MvPolynomial ι K) := by
     refine AlgebraicIndependent.of_comp (aeval fun i : ι => (X i - 1 : MvPolynomial ι K)) ?_
     convert algebraicIndependent_X ι K using 1
-    funext i
+    ext i
     simp
   convert h₁.map' (algebraicIndependent_iff_injective_aeval.1 hv) using 1
-  funext i
+  ext i
   simp
 
 theorem mem_range_of_fixed [IsAlgClosed K] {Ω : Type} [Field Ω] [IsAlgClosed Ω] [Algebra K Ω] (a : Ω)

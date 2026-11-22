@@ -1,5 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AlgebraMapGFEqGval
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CoordinatesFlagVector
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GqPtOfNeZeroIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsColReduced
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalGroupInFamilyNontrivial
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,9 +18,6 @@ namespace GlobalTheory.RelFlag
 section Space
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E} {r : ℕ} {T T' : E}
-
-def endMat (S : HSpace E) (Y : S.V →ₗ[E] S.V) : Matrix (Fin S.rank) (Fin S.rank) E :=
-  LinearMap.toMatrix S.frame S.frame Y
 
 theorem hT_eq_form (x y : S.V) : S.hT y x = form (starRingEnd E) S.gram (co S x) (co S y) := by
   rw [hT_eq_sum, form, Matrix.dotProduct_mulVec]; rfl

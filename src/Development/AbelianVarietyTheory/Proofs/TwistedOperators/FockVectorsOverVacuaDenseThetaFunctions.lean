@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsVacFOfIsVacVec
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.LowVanishFockOfLowVanish
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralEqOfNorms
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FderivCompress
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeisenbergSmoothVectorDerivativeCalculus
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfPderivStable
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormCreationAnnihilationWordLeNumberOperatorPowStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeylNumberOperatorCommutationStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PowSubCreationVacuumFockBoundStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqZeroAtOneOfIteratedDerivsVanishOfGrowthStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VacuumProjectorRangeAnnihilatedStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEuclideanCoordsHermitianCartanInvolutionStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockCreationPreservesFockVectorsTwoFramesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsVacFOfIsVacVec
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.LowVanishFockOfLowVanish
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralEqOfNorms
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FderivCompress
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeisenbergSmoothVectorDerivativeCalculus
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfPderivStable
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormCreationAnnihilationWordLeNumberOperatorPowStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeylNumberOperatorCommutationStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PowSubCreationVacuumFockBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqZeroAtOneOfIteratedDerivsVanishOfGrowthStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VacuumProjectorRangeAnnihilatedStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEuclideanCoordsHermitianCartanInvolutionStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockCreationPreservesFockVectorsTwoFramesStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,12 +60,12 @@ def dE (hS : ∀ f ∈ S, Sm ρ f) (hD : ∀ v, ∀ f ∈ S, dH ρ v f ∈ S) (v
 variable (hJ : ∀ x, J (J x) = -x) (h : IsHeis (omJ J) ρ) (hΦ : ∀ v f, ‖Φ (ρ v f)‖ = ‖Φ f‖)
   (hS : ∀ f ∈ S, Sm ρ f) (hD : ∀ v, ∀ f ∈ S, dH ρ v f ∈ S)
 
-variable (J) in
 
+variable (J) in
 def cE (z : V) : Module.End ℂ S := dE hS hD z - I • dE hS hD (J z)
 
-variable (J) in
 
+variable (J) in
 def aE (z : V) : Module.End ℂ S := -(dE hS hD z + I • dE hS hD (J z))
 
 theorem coe_cE (z : V) (x : S) : (cE J hS hD z x : B) = dH ρ z x - I • dH ρ (J z) x := rfl
@@ -94,12 +98,12 @@ include h hΦ in
 theorem adjoint (z : V) (x y : S) :
     inner ℂ (Φ (cE J hS hD z x)) (Φ y) = inner ℂ (Φ x) (Φ (aE J hS hD z y)) := by
   change inner ℂ (Φ (dH ρ z x - I • dH ρ (J z) x)) _ = inner ℂ _ (Φ (-(dH ρ z y + I • dH ρ (J z) y)))
-  simp only [map_sub, map_neg, map_add, map_smul, inner_sub_left, inner_neg_right, inner_add_right, inner_smul_left,
+  simp only [map_sub, map_neg, map_add (f := _), map_smul, inner_sub_left, inner_neg_right, inner_add_right, inner_smul_left,
     inner_smul_right, inner_dH hΦ h (hS _ x.2) (hS _ y.2), conj_I]
   ring
 
-include hJ h hΦ in
 
+include hJ h hΦ in
 theorem inner_translate (K : Submodule ℂ S) (hK : ∀ z, ∀ x ∈ K, cE J hS hD z x ∈ K) {v : S} (hv : v ∈ K)
     (ha : ∀ z, aE J hS hD z v = 0) {y : H} (hy : ∀ x ∈ K, inner ℂ y (Φ x) = 0) (w : V) :
     inner ℂ y (Φ (ρ w v)) = 0 := by
@@ -138,8 +142,8 @@ theorem inner_translate (K : Submodule ℂ S) (hK : ∀ z, ∀ x ∈ K, cE J hS 
           rw [mul_pow, mul_assoc, mul_assoc, ← mul_assoc (‖Φ v‖ ^ 2)]
           exact mul_le_mul_of_nonneg_left (h2 k) (by positivity)
 
-include hJ hΦ in
 
+include hJ hΦ in
 theorem dense_zero (hρ : ∀ w, ∀ f ∈ S, ρ w f ∈ S) (hP : ∀ f ∈ S, proj h f ∈ S) (K : Submodule ℂ S)
     (hK : ∀ z, ∀ x ∈ K, cE J hS hD z x ∈ K) (hK0 : ∀ v, (∀ z, aE J hS hD z v = 0) → v ∈ K) (f : S) {δ : ℝ}
     (hδ : 0 < δ) : ∃ g ∈ K, ‖Φ (f - g)‖ < δ := by
@@ -197,8 +201,8 @@ theorem wordSum_le {X Y ι : Type} [Fintype ι] (A : ι → X → X) (p : X → 
   simp only [wordSum, Finset.sum_mul]
   exact Finset.sum_le_sum fun k hk => Finset.sum_le_sum fun a _ => hC' _ (e k hk a) y
 
-include hJ h hΦ in
 
+include hJ h hΦ in
 theorem exists_number {ι : Type} [Fintype ι] (u : ι → V) (d : ℕ) : ∃ M : Module.End ℂ S,
     (∀ v, (∀ z, aE J hS hD z v = 0) → M v = ((8 * π : ℝ) : ℂ) • v) ∧
     (∀ z, M * cE J hS hD z = cE J hS hD z * (M + ((8 * π : ℝ) : ℂ) • 1)) ∧
@@ -226,8 +230,8 @@ theorem exists_number {ι : Type} [Fintype ι] (u : ι → V) (d : ℕ) : ∃ M 
   rw [← hw, ← ofReal_norm_eq_enorm, ← ofReal_norm_eq_enorm, ← ENNReal.ofReal_mul (le_max_right _ _)]
   exact ENNReal.ofReal_le_ofReal ((hC x).trans (mul_le_mul_of_nonneg_right (le_max_left _ _) (norm_nonneg _)))
 
-include hJ hΦ hS hD in
 
+include hJ hΦ hS hD in
 theorem dense_words (hρ : ∀ w, ∀ f ∈ S, ρ w f ∈ S) (hP : ∀ f ∈ S, proj h f ∈ S) (F : Submodule ℂ B)
     (hF0 : ∀ f ∈ S, (∀ z, dH ρ z f + I • dH ρ (J z) f = 0) → f ∈ F)
     (hF : ∀ z, ∀ f ∈ S, f ∈ F → dH ρ z f - I • dH ρ (J z) f ∈ F) {ι : Type} [Fintype ι] (u : ι → V) (d : ℕ)
@@ -260,8 +264,8 @@ theorem dense_words (hρ : ∀ w, ∀ f ∈ S, ρ w f ∈ S) (hP : ∀ f ∈ S, 
   rw [← ofReal_norm_eq_enorm, ← ENNReal.ofReal_coe_nnreal]
   exact ENNReal.ofReal_le_ofReal hd.le
 
-include hJ in
 
+include hJ in
 theorem dense_transport {V' : Type} [NormedAddCommGroup V'] [NormedSpace ℝ V'] (E : V ≃L[ℝ] V') {J' : V' → V'}
     (hE : ∀ x, E (J x) = J' (E x)) {ρ : V' → B →L[ℂ] B} (hρ : IsHeis (omJ J) fun v => ρ (E v))
     (hΦ : ∀ v f, ‖Φ (ρ v f)‖ = ‖Φ f‖) {Y : Type} (T : Y → B →L[ℂ] B) (hT : ∀ y v f, T y (ρ v f) = ρ v (T y f))
@@ -332,7 +336,8 @@ def atPl (τ : D.what₂.Tau) (y : Matrix (Fin W.rank) (Fin V.rank) ℂ) : Ix V 
 
 theorem sum_atPl (x : Ix V W → ℂ) : x = ∑ τ, atPl τ (cpt x τ) := by
   unfold atPl
-  rw [← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum]
   exact (congrArg vecL (Finset.univ_sum_single (unvecL x))).symm
 
 theorem cpt_cplx (sS : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ)
@@ -373,7 +378,8 @@ theorem coe_dH {G : BB ψ V W} (hG : GlobalTheory.RealWeil.Sm (rhoV hψ σ V W) 
     coeL ψ V W (dH (rhoV hψ σ V W) x G) = ∑ τ, Formalism.IndefR.Datum.dRho (heisO ψ V W) θ τ (cpt x τ) (coeL ψ V W G) := by
   have e : dH (rhoV hψ σ V W) x G = ∑ τ, dH (rhoV hψ σ V W) (atPl τ (cpt x τ)) G :=
     (congrArg (fderiv ℝ (fun u => rhoV hψ σ V W u G) 0) (sum_atPl x)).trans (map_sum _ _ _)
-  simp only [e, map_sum, coe_dH_atPl h hψ hG]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [e, map_sum, coe_dH_atPl h hψ hG]
 
 theorem mem_level {U : AddSubgroup (WO V W)} (hU : IsOpen (U : Set (WO V W))) (G : BB ψ V W) :
     G ∈ (thetaLevel ψ V W U).comap (coeL ψ V W) ↔ GlobalTheory.RealWeil.Sm (rhoV hψ σ V W) G ∧
@@ -385,8 +391,8 @@ theorem mem_level {U : AddSubgroup (WO V W)} (hU : IsOpen (U : Set (WO V W))) (G
       rw [← coe_rhoB hψ, hG.2 u hu h0]
     exact ⟨theta_of_sm h hψ G hG.1 ⟨U, hU, e⟩, e⟩
 
-include hψ in
 
+include hψ in
 theorem crea_mem (A : Fr V) (B : Fr W) (U : AddSubgroup (WO V W)) (τ : D.what₂.Tau)
     (z : Matrix (Fin W.rank) (Fin V.rank) ℂ) {g : WO V W → ℂ} (hg : g ∈ fockSpan ψ θ A B U) :
     crea (heisO ψ V W) θ τ (cplxO (A.cart τ) (B.cart τ)) z g ∈ fockSpan ψ θ A B U := by

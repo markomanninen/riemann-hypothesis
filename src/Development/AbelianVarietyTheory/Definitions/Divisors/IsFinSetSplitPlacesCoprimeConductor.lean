@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EntireEqOfHalfPlane
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EntireEqOfHalfPlane
+
+@[expose] public section
 
 noncomputable section
 

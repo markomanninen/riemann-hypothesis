@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSplitAtOfIsSplitPl
-import CompanionTheory.EightfoldTheory.ZeroLevelTheory.LocalLanglands.Imports
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSplitAtOfIsSplitPl
+public import CompanionTheory.EightfoldTheory.ZeroLevelTheory.LocalLanglands.Imports
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,22 +1,27 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartFH
-import ReciprocityTheory.DualLattices.TowerZeroSurjective
-import ReciprocityTheory.DualLattices.LinPairStatement
-import ReciprocityTheory.DualLattices.LengthDegreeAbelianVariety
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
-import ReciprocityTheory.DualLattices.SubMemOfCompat
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.Biextensions.GenericFiberCubeInclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSeparatedOfIsQProjOver
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.IsEigBasisIff
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EigenspaceDimAddSplitExactTransposeStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EmbeddingsLiftIntegersIdempotentsConjugationStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EigenbasisRestrictionSurjectiveEquivariantStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.TateModuleEigenspaceDimEqLieAlgebraSumStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.PadicPlaceBasisOfIdempotentStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsFreeGeneratorsStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.PadicIntAlgebraOfIsAdicCompleteMatrixUniqueStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartFH
+public import ReciprocityTheory.DualLattices.TowerZeroSurjective
+public import ReciprocityTheory.DualLattices.LinPairStatement
+public import ReciprocityTheory.DualLattices.LengthDegreeAbelianVariety
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
+public import ReciprocityTheory.DualLattices.SubMemOfCompat
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.Biextensions.GenericFiberCubeInclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSeparatedOfIsQProjOver
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.IsEigBasisIff
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EigenspaceDimAddSplitExactTransposeStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EmbeddingsLiftIntegersIdempotentsConjugationStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EigenbasisRestrictionSurjectiveEquivariantStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.TateModuleEigenspaceDimEqLieAlgebraSumStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.PadicPlaceBasisOfIdempotentStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsFreeGeneratorsStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.PadicIntAlgebraOfIsAdicCompleteMatrixUniqueStatement
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry TensorProduct Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.Pdiv.ChartF ReciprocityTheory.ChartRestriction.G.Pdiv.AvDefs
 open ReciprocityTheory.PGsh ReciprocityTheory.PGsh.Up ReciprocityTheory.PGsh.Be2 GlobalTheory.ChF
@@ -121,7 +126,8 @@ private theorem wfd (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C
 private theorem mulVec_comb {O I J K : Type} [CommRing O] [Fintype I] [Fintype J] (M : Matrix K J O)
     (c : I → O) (u : I → J → O) : M *ᵥ (∑ i, c i • u i) = ∑ i, c i • (M *ᵥ u i) := by
   show Matrix.mulVecLin M _ = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun i _ => map_smul _ _ _
 
 private theorem sum_single' {O I : Type} [CommRing O] [Fintype I] [DecidableEq I] (c : I → O) :
@@ -219,7 +225,7 @@ theorem exists_generators : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [I
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul c a => rw [extM_tmul, hLt, Matrix.mul_smul, Matrix.smul_mul, hL.eqB]
-    | add x x' h h' => rw [map_add, map_add, Matrix.mul_add, Matrix.add_mul, h, h']
+    | add x x' h h' => rw [map_add (f := _), map_add (f := _), Matrix.mul_add, Matrix.add_mul, h, h']
   have hA : ∀ x, Aᵀ * (extM p ρG x)ᵀ = (extM p (trR NZ) x).map (algebraMap ℤ_[p] O) * Aᵀ := by
     intro x
     induction x using TensorProduct.induction_on with
@@ -232,7 +238,7 @@ theorem exists_generators : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [I
         ← Matrix.transpose_mul, ← Matrix.transpose_mul, hL.eqA]
       rfl
     | add x x' h h' =>
-      rw [map_add, map_add, Matrix.transpose_add, Matrix.mul_add, h, h', Matrix.map_add _ (map_add _),
+      rw [map_add (f := _), map_add (f := _), Matrix.transpose_add, Matrix.mul_add, h, h', Matrix.map_add _ (map_add _),
         Matrix.add_mul]
   let ρ' : (ℤ_[p] ⊗[ℤ] OE) →ₐ[ℤ_[p]] Matrix (Ix g) (Ix g) ℤ_[p] := H.ρ.comp (sigE p OE).toAlgHom
   have hρ' : ∀ x, ρ' x = H.ρ (sigE p OE x) := fun x => rfl
@@ -247,7 +253,7 @@ theorem exists_generators : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [I
     | tmul c a =>
       rw [extM_tmul, Matrix.transpose_smul, Matrix.smul_mulVec, map_smul, res_eig _ _ _ (hW j), smul_smul]
       congr 1
-    | add x x' h h' => rw [map_add, map_add, Matrix.transpose_add, Matrix.add_mulVec, map_add, h, h', add_smul]
+    | add x x' h h' => rw [map_add (f := _), map_add (f := _), Matrix.transpose_add, Matrix.add_mulVec, map_add (f := _), h, h', add_smul]
   obtain ⟨h₁, y, hy, hyd⟩ := wfd p C v O hv OE w b (Ix g) ρ'
   obtain ⟨h₂, z, hz, hzd⟩ := wfd p C v O hv OE w b (Fin r) (extM p (trR NZ))
   choose kB hkB using hL.fromB
@@ -306,12 +312,14 @@ theorem exists_generators : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [I
     omega
   · intro l j
     refine Fin.addCases (fun l => ?_) (fun l => ?_) l
-    · rw [Fin.append_left, hχ, map_sum]
-      exact Submodule.sum_mem _ fun i _ => by
-        rw [map_smul]; exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, rfl⟩)
-    · rw [Fin.append_right, map_sum]
-      exact Submodule.sum_mem _ fun i _ => by
-        rw [map_smul]; exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, rfl⟩)
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [Fin.append_left, hχ, map_sum]
+        exact Submodule.sum_mem _ fun i _ => by
+          rw [map_smul]; exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, rfl⟩)
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [Fin.append_right, map_sum]
+        exact Submodule.sum_mem _ fun i _ => by
+          rw [map_smul]; exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, rfl⟩)
   · have hTb : ∀ j k, tauExt ((t j : Emb (O := O) w.e) : OE →+* O) (b k : ℤ_[p] ⊗[ℤ] OE) =
         tauExt ((t j : Emb (O := O) w.e) : OE →+* O) α ^ (k : ℕ) := by
       intro j k

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicOutsideLine
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.RealEmbeddingCharacters
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicOutsideLine
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.RealEmbeddingCharacters
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.FourierCoefficientMatrices
 
@@ -55,14 +59,6 @@ lemma th_zero : th (0 : ι → Fin 2 → Fin 2 → ℝ) = 0 := by
   funext τ i k
   simp [th]
 
-def hermSub : Submodule ℝ (ι → Fin 2 → Fin 2 → ℂ) where
-  carrier := {b | IsHermFam b}
-  add_mem' {a b} ha hb τ i k := by
-    simp only [Pi.add_apply, map_add]; rw [ha τ i k, hb τ i k]
-  zero_mem' τ i k := by simp
-  smul_mem' s b hb τ i k := by
-    simp only [Pi.smul_apply, Complex.real_smul, map_mul, Complex.conj_ofReal]; rw [hb τ i k]
-
 lemma conj_herm {χ : ι → Fin 2 → Fin 2 → ℂ} (h : IsHermFam χ) :
     IsHermFam (fun τ i k => conj (χ τ i k)) := by
   intro τ i k
@@ -96,7 +92,8 @@ def prR (b : ι → Fin 2 → Fin 2 → ℂ) : (ι → Fin 2 → Fin 2 → ℂ) 
 lemma pr_sum {N : ℕ} (χ : ι → Fin 2 → Fin 2 → ℂ) (c : Fin N → ℝ) (ω : Fin N → ι → Fin 2 → Fin 2 → ℂ) :
     pr χ (∑ j, (c j : ℂ) • ω j) = ∑ j, c j * pr χ (ω j) := by
   show prL χ (∑ j, (c j : ℂ) • ω j) = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun j _ => pr_smul_right χ (ω j) (c j)
 
 lemma eq_zero_of_pr_conj {χ : ι → Fin 2 → Fin 2 → ℂ}
@@ -129,7 +126,8 @@ lemma kap_li (hω : ∀ j, IsHermFam (ω j)) (hli : LinearIndependent ℝ ω) :
   intro s g hg i hi
   refine hli s g ?_ i hi
   have h := congrArg thL hg
-  rw [map_sum, map_zero] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero] at h
   rw [← h]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_smul]
@@ -150,7 +148,8 @@ lemma herm_eq_sum (hω : ∀ j, IsHermFam (ω j)) (hli : LinearIndependent ℝ �
   calc b = thL (kap b) := (th_kap hb).symm
     _ = thL (∑ j, B.repr (kap b) j • kap (ω j)) := by rw [hsum]
     _ = ∑ j, (B.repr (kap b) j : ℂ) • ω j := by
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         refine Finset.sum_congr rfl fun j _ => ?_
         rw [map_smul, Complex.coe_smul]
         exact congrArg _ (th_kap (hω j))
@@ -227,15 +226,6 @@ lemma Zb_zero (x : Frame X.Ψ r) : X.Zb u 0 x = x := by
   show X.zmat u 0 τ * mat x τ = x τ
   rw [zmat_zero, one_mul]
   rfl
-
-lemma gram_unitary {n : X.Ψ → Matrix (Fin r) (Fin r) ℂ} (hn : X.IsUnitaryC n) (τ : X.Ψ)
-    (A : Matrix (Fin r) (Fin r) ℂ) : gram τ.1 X.Gm (n τ * A) = gram τ.1 X.Gm A := by
-  have hcol : ∀ a, col (n τ * A) a = (n τ).mulVec (col A a) := by
-    intro a
-    funext k
-    simp [col, Matrix.mul_apply, Matrix.mulVec, dotProduct]
-  ext a c'
-  simp only [gram, Matrix.of_apply, hcol, hn τ]
 
 def fac (la : Wt X.Ψ r) (x : Frame X.Ψ r) : ℝ :=
   ∏ τ, ∏ i : Fin r, ‖dmin X.Gm x τ i.succ / dmin X.Gm x τ i.castSucc‖ ^ (-(la τ i : ℝ) / 2)

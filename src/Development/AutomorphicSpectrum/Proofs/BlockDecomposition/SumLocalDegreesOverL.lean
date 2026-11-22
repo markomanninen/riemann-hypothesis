@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.PairSums.SumPair
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalDegreeSum
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.PairSums.SumPair
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalDegreeSum
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Representation Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.Published GlobalTheory.Published.PoitouTate PositivityTheory.S2pt
 
 namespace GlobalTheory.CompanionTheory.GreenbergWiles

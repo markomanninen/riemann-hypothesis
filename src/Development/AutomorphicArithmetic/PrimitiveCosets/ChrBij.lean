@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.PrimitiveCosets.CoreAtH
-import Development.AutomorphicArithmetic.PrimitiveCosets.ToEBij
+module
+
+public import Development.AutomorphicArithmetic.PrimitiveCosets.CoreAtH
+public import Development.AutomorphicArithmetic.PrimitiveCosets.ToEBij
+
+@[expose] public section
 
 open UpperTheory.Comparison₂ Deduction.CH Formalism Formalism.HC Formalism.D5 Formalism.RankGapBounds.WeightedMeanData Formalism.LFunctionChainParameters.WeightedSlopeBounds Formalism.LFunctionChainParameters.characterSumData Formalism.LFunctionChainParameters.ThickSetMeanBounds Formalism.LFunctionChainParameters.LErr
   Formalism.LFunctionChainParameters.LChain Formalism.LFunctionChainParameters.LHost

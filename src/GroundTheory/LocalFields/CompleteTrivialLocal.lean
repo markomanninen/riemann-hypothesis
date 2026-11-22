@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.LocalFields.CompleteTrivial
-import GroundTheory.LocalFields.NormalLattice
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.CompleteTrivial
+public import GroundTheory.LocalFields.NormalLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,7 +86,13 @@ abbrev lat (s : ℕ) : Submodule 𝒪[K] L := normalLattice D.π D.θ s
 abbrev k : ℕ := D.r + 1
 
 omit [FiniteDimensional K L] in
-theorem lat_antitone {s t : ℕ} (h : s ≤ t) : D.lat t ≤ D.lat s := normalLattice_antitone _ _ h
+theorem lat_antitone {s t : ℕ} (h : s ≤ t) : D.lat t ≤ D.lat s := by
+  have hlat : Antitone D.lat := by
+    refine antitone_nat_of_succ_le fun j => Submodule.span_le.mpr ?_
+    rintro _ ⟨σ, rfl⟩
+    simp only [SetLike.mem_coe, pow_succ', mul_smul]
+    exact Submodule.smul_mem _ D.π (Submodule.subset_span ⟨σ, rfl⟩)
+  exact hlat h
 
 theorem mul_mem_lat {s t : ℕ} (hs : D.k ≤ s) {x y : L} (hx : x ∈ D.lat s) (hy : y ∈ D.lat t) :
     x * y ∈ D.lat (t + 1) :=
@@ -298,9 +308,9 @@ theorem val_coe_smul_F {j : ℕ} (σ : Gal(L/K)) (y : D.filt.F j) :
     D.val ((σ • y : D.filt.F j) : D.units 0) = σ (D.val y) := by
   rw [StableFiltration.coe_smul_F, val_smul]
 
+
 omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] [ValuativeExtension K L]
   [FiniteDimensional K L] in
-
 theorem smul_theta_mem (j : ℕ) (c : 𝒪[K]) : c • D.π ^ (D.k + j) • D.θ ∈ D.lat (D.k + j) := by
   have : D.π ^ (D.k + j) • (1 : Gal(L/K)) D.θ ∈ D.lat (D.k + j) := Submodule.subset_span ⟨1, rfl⟩
   simpa using Submodule.smul_mem _ c this
@@ -350,7 +360,7 @@ theorem subsingleton_tateZero_gr (j : ℕ) : Subsingleton (TateZero Gal(L/K) (D.
       D.π ^ (D.k + j) • ∑ σ, (c σ - c 1) • σ D.θ := by
     show D.val x - 1 - ∑ σ : Gal(L/K), (σ (D.val y) - 1) = _
     rw [← hc, hyv]
-    simp only [Algebra.smul_def, map_add, map_one, map_mul, map_pow, map_sub,
+    simp only [Algebra.smul_def, map_add (f := _), map_one, map_mul, map_pow, map_sub,
       algEquiv_algebraMap_integer, add_sub_cancel_left, Finset.mul_sum, ← sum_sub_distrib]
     refine sum_congr rfl fun σ _ => ?_
     ring
@@ -402,8 +412,9 @@ theorem subsingleton_tateNegOne_gr (j : ℕ) : Subsingleton (TateNegOne Gal(L/K)
     rw [← hc]
     simp_rw [hmv]
     have he0' : ∑ τ, algebraMap 𝒪[K] L (c τ) = algebraMap 𝒪[K] L D.π * algebraMap 𝒪[K] L e0 := by
-      rw [← map_sum, he0, map_mul]
-    simp only [Algebra.smul_def, map_add, map_one, map_mul, map_pow,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, he0, map_mul]
+    simp only [Algebra.smul_def, map_add (f := _), map_one, map_mul, map_pow,
       algEquiv_algebraMap_integer, add_sub_cancel_left, Finset.mul_sum, sum_sub_distrib]
     have h3 : ∑ τ : Gal(L/K), algebraMap 𝒪[K] L (c τ) * (algebraMap 𝒪[K] L D.π ^ (D.k + j) * D.θ) =
         (∑ τ, algebraMap 𝒪[K] L (c τ)) * (algebraMap 𝒪[K] L D.π ^ (D.k + j) * D.θ) := by
@@ -421,21 +432,23 @@ end Graded
 
 section Main
 
+open scoped Pointwise
+
 variable {K L : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
   [Field L] [ValuativeRel L] [TopologicalSpace L] [IsNonarchimedeanLocalField L]
   [Algebra K L] [ValuativeExtension K L] [FiniteDimensional K L] [IsGalois K L]
 
+
 omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] [ValuativeRel L] [TopologicalSpace L]
   [IsNonarchimedeanLocalField L] [ValuativeExtension K L] [FiniteDimensional K L] [IsGalois K L] in
 open scoped Pointwise in
-
 theorem normalLattice_eq_smul_span (π : 𝒪[K]) (θ : L) (s : ℕ) :
     normalLattice π θ s = π ^ s • Submodule.span 𝒪[K] (Set.range fun σ : Gal(L/K) => σ θ) := by
   rw [normalLattice, ← Set.smul_set_range, Submodule.span_smul]
 
+
 omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] [ValuativeRel L]
   [TopologicalSpace L] [IsNonarchimedeanLocalField L] [ValuativeExtension K L] in
-
 theorem span_conjugates_eq_top {θ : L} (hθ : LinearIndependent K fun σ : Gal(L/K) => σ θ) :
     Submodule.span K (Set.range fun σ : Gal(L/K) => σ θ) = ⊤ := by
   have := (basisOfLinearIndependentOfCardEqFinrank hθ
@@ -455,8 +468,8 @@ theorem isOpen_units (j : ℕ) : IsOpen (D.units j : Set 𝒪[L]ˣ) := by
 
 attribute [local instance] action
 
-omit [TopologicalSpace L] [IsNonarchimedeanLocalField L] [IsGalois K L] in
 
+omit [TopologicalSpace L] [IsNonarchimedeanLocalField L] [IsGalois K L] in
 theorem subsingleton_tate :
     Subsingleton (TateZero Gal(L/K) (D.units 0)) ∧ Subsingleton (TateNegOne Gal(L/K) (D.units 0)) :=
   subsingleton_tate_of_complete D.filt D.filt_zero D.filt_complete D.filt_separated
@@ -464,8 +477,8 @@ theorem subsingleton_tate :
 
 end NormalLatticeData
 
-open scoped Pointwise in
 
+open scoped Pointwise in
 theorem exists_openSubgroup_units_tateTrivial :
     ∃ (π : 𝒪[K]) (θ : L) (k : ℕ), Irreducible π ∧ (LinearIndependent K fun σ : Gal(L/K) => σ θ) ∧
       Submodule.span K (Set.range fun σ : Gal(L/K) => σ θ) = ⊤ ∧

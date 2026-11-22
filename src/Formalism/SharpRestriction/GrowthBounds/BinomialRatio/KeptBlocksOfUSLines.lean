@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreeRatioConsecutive
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.PairFacts
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreeRatioConsecutive
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.PairFacts
+
+@[expose] public section
 
 noncomputable section
 

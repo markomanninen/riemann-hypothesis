@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OneSubMemIdS
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OneSubMemIdS
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.L2.Col GlobalTheory.InertNbr
 open Formalism.L2.DIV (Pl kP St resS oToS idS cmpS)
 open scoped TensorProduct

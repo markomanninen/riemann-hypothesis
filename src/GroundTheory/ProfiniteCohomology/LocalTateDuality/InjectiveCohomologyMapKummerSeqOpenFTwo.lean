@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalClassFormationAlt
-import GroundTheory.ProfiniteCohomology.ClassFormations.Corestriction
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
-import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality.QuotientToInvariantsFunctorPreservesZeroMorphism
-import GroundTheory.ProfiniteCohomology.PoincareDuality.Torsion
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalClassFormationAlt
+public import GroundTheory.ProfiniteCohomology.ClassFormations.Corestriction
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
+public import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality.QuotientToInvariantsFunctorPreservesZeroMorphism
+public import GroundTheory.ProfiniteCohomology.PoincareDuality.Torsion
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -27,7 +32,8 @@ theorem coindMap_res_comp_coindTrace (U : OpenSubgroup G) {A B : Rep.{u} k G} (�
   change (coindTrace (U : Subgroup G) B).hom
       ((Rep.coindMap (U : Subgroup G).subtype ((Rep.resFunctor (U : Subgroup G).subtype).map φ)).hom f) =
     φ.hom ((coindTrace (U : Subgroup G) A).hom f)
-  rw [coindTrace_hom_apply, coindTrace_hom_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coindTrace_hom_apply, coindTrace_hom_apply, map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   induction c using QuotientGroup.induction_on with
   | H x =>
@@ -112,8 +118,8 @@ theorem kummerSeqOpen_shortExact {n : ℕ} (hn : (n : K) ≠ 0) (W : Subgroup Ga
     (kummerSeqOpen (K := K) (Ksep := Ksep) n W).ShortExact :=
   shortExact_map_res W (kummerSequence_shortExact n hn)
 
-omit [IsSepClosure K Ksep] in
 
+omit [IsSepClosure K Ksep] in
 theorem kummerSeqOpen_g_hom_apply (n : ℕ) (W : Subgroup Gal(Ksep/K))
     (x : Rep.res W.subtype (galUnits.{0} K Ksep)) :
     (kummerSeqOpen (K := K) (Ksep := Ksep) n W).g.hom x = n • x :=

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CubeTotalComplexAcyclicOfSlicesInductionOnCard
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsLocalizedModuleResBasicOpenOfQcqs
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CechHOneVanishesOnOpenOfIsAffineOpen
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.BijOnKerAndExactOfQuasiIsoBaseChange
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsMatricesOfProjectiveComplex
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExactCechOneOfH1Zero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CubeTotalComplexAcyclicOfSlicesInductionOnCard
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsLocalizedModuleResBasicOpenOfQcqs
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CechHOneVanishesOnOpenOfIsAffineOpen
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.BijOnKerAndExactOfQuasiIsoBaseChange
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsMatricesOfProjectiveComplex
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExactCechOneOfH1Zero
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory AlgebraicGeometry DirectSum TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
@@ -88,7 +92,8 @@ theorem coord_termMap_sum (w : π ≫ f = f' ≫ Spec.map (CommRingCat.ofHom (al
     AddMonoidHom.mk' (fun y => rs Y' h (SecOnR.coord (f := f') (y s) fun _ => j))
       fun y z => map_add (rs Y' h) _ _
   change F (termMap M D w 0 _) = _
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   change rs Y' h (SecOnR.coord (f := f') (v k • SecOnR.pull M w _ _ (preimage_biInf D π s.1).ge (x k s)) fun _ => j) = _
   refine (congrArg (rs Y' h) (SecOnR.coord_base_smul _ _ _)).trans
@@ -137,7 +142,8 @@ theorem perf_of_projective_model :
         termMap M D H.w 0 (∑ k, v.1 k ⊗ₜ[R] (φ.f 0).hom (u k)) := by
       rw [S.apply_symm_apply]
       change termMap M D H.w 0 ((φ.f 0).hom.baseChange R' (∑ k, v.1 k ⊗ₜ[R] u k)) = _
-      rw [map_sum ((φ.f 0).hom.baseChange R')]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum ((φ.f 0).hom.baseChange R')]
       rfl
     have hle : π ⁻¹ᵁ ((⨅ i ∈ ({p.1} : Finset κ), D i) ⊓ M.U p.2) ≤
         (⨅ i ∈ ({p.1} : Finset κ), π ⁻¹ᵁ D i) ⊓ (M.pull π).U fun _ => p.2 :=

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia
 
@@ -97,7 +101,7 @@ private theorem dgl_sgn {g : GL (Fin 3) R} (hg : Up g) (s : ℤˣ) :
     · rw [Matrix.diagonal_apply_ne _ hab,
         Matrix.diagonal_apply_ne _ (fun h => hab (Fin.rev_injective h).symm)]
 
-private def Bor (R : Type) [CommRing R] : Subgroup (GG 3 R) where
+private def Bor (R : Type) [CommRing R] : Subgroup (GG (m := 3) (R := R)) where
   carrier := {x | Up x.left}
   mul_mem' := fun {x y} hx hy => by
     change Up (x * y).left
@@ -109,7 +113,7 @@ private def Bor (R : Type) [CommRing R] : Subgroup (GG 3 R) where
     rw [SemidirectProduct.inv_left]
     exact Up.sgn (Up.inv hx) _
 
-private def dgHom (R : Type) [CommRing R] : Bor R →* GG 3 R :=
+private def dgHom (R : Type) [CommRing R] : Bor R →* GG (m := 3) (R := R) :=
   MonoidHom.mk' (fun x => ⟨dgl x.1.left x.2, x.1.right⟩) (fun x y => by
     ext1
     · rw [SemidirectProduct.mul_left]
@@ -124,9 +128,11 @@ end SlopeTestRemainingChoices
 end UpperTheory.V.UnitaryThreeInertia
 
 theorem UpperTheory.V.UnitaryThreeInertia.lt_diag :
-    ∀ {R : Type} [CommRing R] [Finite R], ∃ (B : Subgroup (GG 3 R)) (dg : B →* GG 3 R),
-      (∀ x : GG 3 R, x ∈ B ↔ ∀ a b, wt a b < 0 → x.mat a b = 0) ∧
-      ∀ x : B, (dg x).right = (x : GG 3 R).right ∧ (dg x).mat = Matrix.diagonal fun a => (x : GG 3 R).mat a a := by
+    ∀ {R : Type} [CommRing R] [Finite R],
+      ∃ (B : Subgroup (GG (m := 3) (R := R))) (dg : B →* GG (m := 3) (R := R)),
+        (∀ x : GG (m := 3) (R := R), x ∈ B ↔ ∀ a b, wt a b < 0 → x.mat a b = 0) ∧
+        ∀ x : B, (dg x).right = (x : GG (m := 3) (R := R)).right ∧
+          (dg x).mat = Matrix.diagonal fun a => (x : GG (m := 3) (R := R)).mat a a := by
   intro R _ _
   refine ⟨Bor R, dgHom R, fun x => ?_, fun x => ⟨rfl, rfl⟩⟩
   exact ⟨fun h a b hab => h ((ltd_wt_neg_iff a b).1 hab), fun h a b hab => h a b ((ltd_wt_neg_iff a b).2 hab)⟩

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.GradedWeylDivisibility.StatementA
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.DualWeylNonDom
+module
+
+public import Mathlib
+public import Formalism.GradedWeylDivisibility.StatementA
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.DualWeylNonDom
+
+@[expose] public section
 
 namespace GlobalTheory.NonDomZero
 

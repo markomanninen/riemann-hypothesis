@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Multiset
 
@@ -10,7 +14,7 @@ theorem exists_antitone_listing {α : Type*} (m : Multiset α) (f : α → ℝ) 
   obtain ⟨l, rfl⟩ := Quot.exists_rep m
   let r : α → α → Prop := fun a b => f b ≤ f a
   haveI : DecidableRel r := fun _ _ => Classical.dec _
-  haveI : IsTotal α r := ⟨fun a b => le_total (f b) (f a)⟩
+  haveI : Std.Total r := ⟨fun a b => le_total (f b) (f a)⟩
   haveI : IsTrans α r := ⟨fun a b c h1 h2 => le_trans h2 h1⟩
   let l' := l.insertionSort r
   have hperm : l'.Perm l := List.perm_insertionSort r l

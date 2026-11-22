@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.Brauer
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeMackey
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.SumInvariants
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.RealPlaces
-import GroundTheory.ProfiniteCohomology.CompactSupportCohomology
-import GroundTheory.ProfiniteCohomology.PoincareDuality.Torsion
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.Brauer
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeMackey
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.SumInvariants
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.RealPlaces
+public import GroundTheory.ProfiniteCohomology.CompactSupportCohomology
+public import GroundTheory.ProfiniteCohomology.PoincareDuality.Torsion
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -13,8 +18,6 @@ namespace GroundTheory.ProfCoh
 open IsDedekindDomain NumberField CategoryTheory GroundTheory.Global
 
 open scoped DirectSum
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 noncomputable section
 
@@ -68,6 +71,8 @@ theorem descendAlong_apply (f : G →ₗ[R] Q) (hf : Function.Surjective f) (φ 
   rfl
 
 end Descend
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
 
@@ -163,8 +168,8 @@ theorem gsLocalInvRootsQZ_eq (v : S) :
           (cohomologyULiftIntAddEquiv _ 2).toAddMonoidHom) :=
   rfl
 
-omit [Fintype S] in
 
+omit [Fintype S] in
 theorem gsLocalInvRootsQZ_cohomologyMapAlong (v : S) (x : cohomology (gsRoots S n) 2) :
     gsLocalInvRootsQZ S ιs n v ((cohomologyMapAlong (gsFinFamily S ιs v).toMonoidHom
         (continuous_toMonoidHom _) (𝟙 _) 2).hom x) =
@@ -181,8 +186,8 @@ theorem gsLocalInvRootsQZ_cohomologyMapAlong (v : S) (x : cohomology (gsRoots S 
     (rootsOfUnityToSUnits S (maxUnramifiedOutside K.1 ℚ̄ S) n) (sUnitsToUnits S (maxUnramifiedOutside K.1 ℚ̄ S))
     (rootsLocalMorZ S ιs n v) (embUnitsMorZ S (ιs v)) (fun _ => rfl) 2 x
 
-omit [Fintype S] [NeZero n] in
 
+omit [Fintype S] [NeZero n] in
 theorem placeInv_inl_eq_zero (hn : Odd n ∨ IsTotallyComplex K.1) (v : InfinitePlace K.1)
     (y : localGaloisCohomology K 2 (.inl v)) (hy : n • y = 0) : placeInv (.inl v) y = 0 := by
   rcases hn with ⟨m, rfl⟩ | hc
@@ -201,13 +206,14 @@ theorem placeInv_inl_eq_zero (hn : Odd n ∨ IsTotallyComplex K.1) (v : Infinite
     rw [show y = 0 from Subsingleton.elim (α := cohomology (galUnitsZ v.Completion
       (AlgebraicClosure v.Completion)) 2) y 0, map_zero]
 
-omit [Fintype S] in
 
+omit [Fintype S] in
 theorem sumPlaceInv_eq_sum_of_placeInv (T : Finset (Place K.1)) (y : ⨁ w : Place K.1, localGaloisCohomology K 2 w)
     (hT : ∀ w ∉ T, placeInv w (y w) = 0) : sumPlaceInv K y = ∑ w ∈ T, placeInv w (y w) := by
   classical
   conv_lhs => rw [← DirectSum.sum_support_of y]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp_rw [sumPlaceInv_of]
   calc ∑ w ∈ DFinsupp.support y, placeInv w (y w)
       = ∑ w ∈ DFinsupp.support y ∪ T, placeInv w (y w) :=
@@ -216,14 +222,14 @@ theorem sumPlaceInv_eq_sum_of_placeInv (T : Finset (Place K.1)) (y : ⨁ w : Pla
     _ = ∑ w ∈ T, placeInv w (y w) :=
         (Finset.sum_subset Finset.subset_union_right fun w _ hw => hT w hw).symm
 
-omit [Fintype S] [NeZero n] in
 
+omit [Fintype S] [NeZero n] in
 theorem placeInv_inr_apply (v : HeightOneSpectrum (𝓞 K.1)) (y : localGaloisCohomology K 2 (.inr v)) :
     placeInv (.inr v) y = brauerInvZOfIsSepClosure (v.adicCompletion K.1) (AlgebraicClosure (v.adicCompletion K.1)) y :=
   rfl
 
-open Classical in
 
+open Classical in
 def gsLocalEmbeddings : LocalEmbeddings K where
   fin v := if h : v ∈ S then ιs ⟨v, h⟩ else (nonempty_localEmbeddings K).some.fin v
   inf v := (nonempty_localEmbeddings K).some.inf v
@@ -232,14 +238,14 @@ omit [Fintype S] [NeZero n] in
 theorem gsLocalEmbeddings_fin (v : S) : (gsLocalEmbeddings S ιs).fin v = ιs v :=
   dif_pos v.2
 
-omit [Fintype S] in
 
+omit [Fintype S] in
 theorem sum_eq_zero_of_zmodToQZ {ι : Type*} [Fintype ι] (F : ι → ZMod n) (G : ι → QZ)
     (hFG : ∀ v, zmodToQZ n (F v) = G v) (h : ∑ v, G v = 0) : ∑ v, F v = 0 :=
   zmodToQZ_injective (by rw [map_sum, map_zero, ← h]; exact Finset.sum_congr rfl fun v _ => hFG v)
 
-omit [NeZero n] in
 
+omit [NeZero n] in
 theorem brauerSumInv_eq_sum_of (ι : LocalEmbeddings K) (z : cohomology (unitsLimitRep K) 2)
     (hz : ∀ w : Place K.1, (∀ v : S, w ≠ .inr (v : HeightOneSpectrum (𝓞 K.1))) →
       placeInv w (brauerLocal ι z w) = 0) :
@@ -251,8 +257,8 @@ theorem brauerSumInv_eq_sum_of (ι : LocalEmbeddings K) (z : cohomology (unitsLi
       _ fun w hw => hz w fun v hv => hw (Finset.mem_image.2 ⟨v, Finset.mem_univ _, hv.symm⟩),
     Finset.sum_image (fun v _ w _ h => Subtype.ext (Sum.inr_injective h))]
 
-omit [NeZero n] in
 
+omit [NeZero n] in
 theorem sum_brauerInvZ_gsLocalRes_sUnits (hn : Odd n ∨ IsTotallyComplex K.1)
     (y : cohomology (galSUnitsMax K.1 ℚ̄ S) 2) (hy : n • y = 0) :
     ∑ v : S, brauerInvZOfIsSepClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)
@@ -288,8 +294,8 @@ theorem gsSumInvRoots_globalToLocal (hn : Odd n ∨ IsTotallyComplex K.1) (x : c
     (sum_brauerInvZ_gsLocalRes_sUnits S ιs n hn _ ?_))
   rw [← map_nsmul, nsmul_cohomology_eq_zero _ (fun ζ => nsmul_gsRoots S n ζ) 2 x, map_zero]
 
-omit [Fintype S] [NeZero n] in
 
+omit [Fintype S] [NeZero n] in
 theorem localToCompact_two_surjective (h3 : Subsingleton (cohomology (gsRoots S n) 3)) :
     Function.Surjective (localToCompact (gsFinFamily S ιs) (gsRoots S n) _ (fun _ => 𝟙 _) 2).hom := fun _ =>
   (ShortComplex.moduleCat_exact_iff_ker_sub_range _).1
@@ -309,8 +315,8 @@ noncomputable def gsCompactInv (hn : Odd n ∨ IsTotallyComplex K.1) (h3 : Subsi
   descendAlong (localToCompact (gsFinFamily S ιs) (gsRoots S n) _ (fun _ => 𝟙 _) 2).hom
     (localToCompact_two_surjective S ιs n h3) (gsSumInvRoots S ιs n) (ker_localToCompact_le S ιs n hn)
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem gsCompactInv_localToCompact (hn : Odd n ∨ IsTotallyComplex K.1)
     (h3 : Subsingleton (cohomology (gsRoots S n) 3))
     (ξ : ∀ v : S, cohomology (Rep.res (gsFinFamily S ιs v).toMonoidHom (gsRoots S n)) 2) :

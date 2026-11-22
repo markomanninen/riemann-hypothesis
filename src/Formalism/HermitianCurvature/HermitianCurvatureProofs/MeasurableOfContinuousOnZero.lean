@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.CompositeFormulaOfDensities
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormDiagonalEntryDilationGeneratorLeOne
+module
+
+public import Formalism.HermitianCurvature.CompositeFormulaOfDensities
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormDiagonalEntryDilationGeneratorLeOne
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 
@@ -20,8 +24,6 @@ theorem measurable_of_continuousOn_zero {X : Type*} [TopologicalSpace X] [Measur
     by_cases hx : x ∈ s <;> simp [Set.piecewise, hx, h0]
   rw [e]
   exact hf.measurable_piecewise continuousOn_const hs
-
-example (k r : ℕ) : OpensMeasurableSpace (Cf r 0 × Mt k r) := inferInstance
 
 section Meas
 

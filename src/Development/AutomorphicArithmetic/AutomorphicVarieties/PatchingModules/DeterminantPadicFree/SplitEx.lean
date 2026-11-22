@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDvrIc
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDvrIc
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NormLinks
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NilradicalLatticeZMemSpan
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NormLinks
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NilradicalLatticeZMemSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,10 +83,6 @@ theorem level_subgroup_norm_congruence {x : X.B.I.Gf} (hk : x ∈ X.K2) : x ∈ 
 end Formalism.L2.SG.Pf.ChiNHomPf
 
 namespace Formalism.L2.SG.Pf
-
-def ChiNHom : Prop :=
-  ∀ (D : D7) (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (x y : X.B.I.Gf), x ∈ X.B.I.Kset →
-    Formalism.L2.SG.NormCut.NCong X x → Formalism.L2.SG.NormCut.NCong X y → chiN X (x * y) = chiN X x * chiN X y
 
 end Formalism.L2.SG.Pf
 
@@ -169,8 +169,8 @@ theorem adm_norm_of_carrier (hTF : FrameTie X u u' F0 F0') (hM : Formalism.L2.SG
       simp only [hY', Matrix.mulVec_mulVec, hκ', ← fmat_mul]
       congr 2
       group
-    rw [e] at h1
-    exact h1
+    -- Transport membership directly since `rw` cannot unfold the flag index at its default transparency.
+    exact (congrArg (InAt X.B.I X.B.g X.B.g) e).mp h1
 
   have fixE : ∀ (w : D.what₂.Word) (h : Formalism.L2.SG.PoincareInHH.PoincareSetting.Hfin X w) (a : Fin D.R.rS),
       X.B.I.fmat ((h : X.B.I.Gf) * X.xu w)⁻¹ *ᵥ incl X.B.I (X.crd (X.eX a)) = incl X.B.I (X.crd (X.eX a)) :=
@@ -264,8 +264,8 @@ section ChiTriv
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-open Formalism.L2.SG.TermOp.Vanish in
 
+open Formalism.L2.SG.TermOp.Vanish in
 theorem chiTrivialC_of_nilradicalConjLevel (hK : NilradicalConjLevel) : ChiTrivialC := by
   intro D X Y u u' Λ Λ' hΛ hΛ' p s hs
   obtain ⟨x, m, hx, hxs, hm, hm'⟩ := hs

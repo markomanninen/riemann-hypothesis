@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,12 +11,6 @@ open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.
 open scoped Matrix
 
 namespace GlobalTheory.Ord2.VanishKato
-
-theorem tw_tw {Γ k : Type} [Group Γ] [Field k] {n : ℕ} (r : Γ →* GL (Fin n) k) (a b : Γ →* kˣ) :
-    tw (tw r a) b = tw r (b * a) := by
-  ext1 s
-  apply Units.ext
-  simp only [tw_val, smul_smul, MonoidHom.mul_apply, Units.val_mul]
 
 theorem cont_of_ker {Γ H : Type} [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [Group H]
     [TopologicalSpace H] [IsTopologicalGroup H] (f : Γ →* H) (U : Set Γ) (hU : IsOpen U) (h1 : 1 ∈ U)

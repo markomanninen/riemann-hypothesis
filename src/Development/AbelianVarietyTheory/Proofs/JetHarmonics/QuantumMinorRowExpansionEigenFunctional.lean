@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Formalism.RealPlaceAnalysis.StatementE
-import Formalism.RealPlaceAnalysis.StatementKT
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmRowExp
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QuantumMinorEqUnitSmulOfRangeEqStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Formalism.RealPlaceAnalysis.StatementE
+public import Formalism.RealPlaceAnalysis.StatementKT
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmRowExp
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QuantumMinorEqUnitSmulOfRangeEqStatement
+
+@[expose] public section
+
 open BranchingSupport Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
 
@@ -34,7 +39,8 @@ theorem qminor_row_step_under_functional : ∀ (M Wp : Type) [AddCommGroup M] [M
     unfold Formalism.REAL.Tm
     rw [if_neg hne, zero_add, ← hk, hl k x]
     simp only [hiff]
-  rw [hq u, quantum_minor_row_expansion.1 (Module.End ℂ M) n t E hE, LinearMap.smul_apply, map_smul, LinearMap.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hq u, quantum_minor_row_expansion.1 (Module.End ℂ M) n t E hE, LinearMap.smul_apply, map_smul, LinearMap.sum_apply,
     map_sum, Fin.sum_univ_succ, Finset.sum_eq_zero, add_zero, mul_smul]
   · congr 1
     have h0 := key 0

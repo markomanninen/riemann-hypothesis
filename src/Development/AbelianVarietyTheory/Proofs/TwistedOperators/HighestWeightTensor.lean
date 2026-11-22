@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+
+@[expose] public section
 
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible
 
@@ -54,7 +58,8 @@ lemma isKC_comm {Y Z : Mat p q} (hY : IsKC Y) (hZ : IsKC Z) : IsKC (Y * Z - Z * 
 lemma kc_ind (act : Mat p q →ₗ[ℂ] Module.End ℂ V) (N : Submodule ℂ V) (y : V)
     (h : ∀ a b, sameBlock a b → act (Eab a b) y ∈ N) {Z : Mat p q} (hZ : IsKC Z) : act Z y ∈ N := by
   rw [Matrix.matrix_eq_sum_single Z]
-  simp only [map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply]
   refine N.sum_mem fun a _ => N.sum_mem fun b _ => ?_
   by_cases hab : sameBlock a b
   · have : (Matrix.single a b (Z a b) : Mat p q) = Z a b • Eab a b := by
@@ -158,7 +163,8 @@ lemma exists_dual {act : Mat p q →ₗ[ℂ] Module.End ℂ V} (hL : IsKLieAct a
       · intro b _ hb; simp [hb]
       · simp
     rw [hh, this, hm]
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hv.1, Finset.sum_smul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hv.1, Finset.sum_smul,
       mul_smul]
   set Q : Submodule ℂ V := ⨆ (t : ℂ) (_ : t.re < m.re), h.eigenspace t with hQ
   have hvQ : v ∉ Q := by
@@ -203,7 +209,7 @@ lemma exists_dual {act : Mat p q →ₗ[ℂ] Module.End ℂ V} (hL : IsKLieAct a
   obtain ⟨s, rfl⟩ := Submodule.mem_span_singleton.1 hx
   have h1 : φ z = 0 := hφQ hz
   have h2 : φ (act (Eab a a) z) = 0 := hφQ (hQst a a (same_refl a) le_rfl z hz)
-  simp only [map_add, map_smul, hv.1, h1, h2, smul_eq_mul]
+  simp only [map_add (f := _), map_smul, hv.1, h1, h2, smul_eq_mul]
   ring
 
 lemma ker_bot {act : Mat p q →ₗ[ℂ] Module.End ℂ V} (hL : IsKLieAct act) {μ : Ix p q → ℚ}
@@ -297,7 +303,7 @@ lemma ctrR_act (a₁ : Mat p q →ₗ[ℂ] Module.End ℂ V₁) (a₂ : Mat p q 
   induction u using TensorProduct.induction_on with
   | zero => simp
   | tmul x y => simp [tens_tmul]
-  | add x y hx hy => simp only [map_add, hx, hy]; abel
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]; abel
 
 lemma ctrL_act (a₁ : Mat p q →ₗ[ℂ] Module.End ℂ V₁) (a₂ : Mat p q →ₗ[ℂ] Module.End ℂ V₂)
     (Z : Mat p q) (φ : V₁ →ₗ[ℂ] ℂ) (s : ℂ) (hφ : ∀ y, φ (a₁ Z y) = s * φ y)
@@ -306,7 +312,7 @@ lemma ctrL_act (a₁ : Mat p q →ₗ[ℂ] Module.End ℂ V₁) (a₂ : Mat p q 
   induction u using TensorProduct.induction_on with
   | zero => simp
   | tmul x y => simp [tens_tmul, hφ, mul_smul]
-  | add x y hx hy => simp only [map_add, hx, hy, smul_add]; abel
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, smul_add]; abel
 
 noncomputable def ctrMap (u : TensorProduct ℂ V₁ V₂) : (V₂ →ₗ[ℂ] ℂ) →ₗ[ℂ] V₁ where
   toFun ψ := ctrR ψ u

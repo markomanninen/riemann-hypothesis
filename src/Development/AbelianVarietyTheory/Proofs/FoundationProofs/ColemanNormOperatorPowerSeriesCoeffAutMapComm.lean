@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CyclotomicDvdExpandOfCoprime
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CyclotomicDvdExpandOfCoprime
+
+@[expose] public section
+
 open GlobalTheory.Col PowerSeries
 
 noncomputable section

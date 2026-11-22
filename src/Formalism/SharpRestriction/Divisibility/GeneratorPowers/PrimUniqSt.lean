@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+
+@[expose] public section
 
 set_option autoImplicit false
 

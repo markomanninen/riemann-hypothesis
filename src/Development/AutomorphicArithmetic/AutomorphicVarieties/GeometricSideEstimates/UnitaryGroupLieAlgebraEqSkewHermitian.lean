@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.ThStmt
-import GroundTheory.GlobalFields.Adele.Topology
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.ThStmt
+public import GroundTheory.GlobalFields.Adele.Topology
+
+@[expose] public section
+
 open UpperTheory.V.Lit.Geo NumberField Matrix GlobalTheory.CuspRep Topology Filter
 
 theorem UpperTheory.unitaryGroup_lieAlgebra_eq_skewHermitian :

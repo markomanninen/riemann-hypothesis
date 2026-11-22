@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.BiextensionRelation
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.HomotheticLatticeIntegralS2
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.BiextensionRelation
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.HomotheticLatticeIntegralS2
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -19,7 +23,7 @@ theorem NRCM_of (hS : SqrtKur) (hD : DenseOK) (h2 : HomotheticLatticeIntegralS2)
   have hw := (hS dK hsq hd4 l hl5 hinert ι).1
   have hmem : ∀ m n : ℤ, ι ((m : ℂ) + (n : ℂ) * omegaK dK) ∈ MaximalUnramifiedExtension l := by
     intro m n
-    rw [map_add, map_mul, map_intCast, map_intCast]
+    rw [map_add (f := _), map_mul, map_intCast, map_intCast]
     exact add_mem (intCast_mem _ m) (mul_mem (intCast_mem _ n) hw)
   let S : Set (MaximalUnramifiedExtension l) := {a | ∃ m n : ℤ, ¬ (l : ℤ) ∣ normInt dK m n ∧
     (a : ℂ_[l]) = ι ((m : ℂ) + (n : ℂ) * omegaK dK)}

@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IncludeLInjective
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IncludeLInjective
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX GlobalTheory.HeightCounting GlobalTheory.HeightCounting.FormsStep NumberField IsDedekindDomain Polynomial
 open scoped TensorProduct
 
@@ -82,7 +87,7 @@ theorem specAt_mem (lam : ι → DomWeight n) (τ₀ : ι) (y : ι × Fin n × F
     rw [this, ← MvPolynomial.smul_eq_C_mul]
     exact Submodule.smul_mem _ _ (hF τ₀)
   | zero => simp
-  | add x z _ _ hx hz => rw [map_add]; exact Submodule.add_mem _ hx hz
+  | add x z _ _ hx hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hz
   | smul a x _ hx => rw [map_smul]; exact Submodule.smul_mem _ _ hx
 
 theorem specAt_blockAct (τ₀ : ι) (y : ι × Fin n × Fin n → K) (M : Matrix (Fin n) (Fin n) K)
@@ -96,7 +101,8 @@ theorem specAt_blockAct (τ₀ : ι) (y : ι × Fin n × Fin n → K) (M : Matri
     by_cases hτ : τ = τ₀
     · subst hτ
       simp [specAt, Formalism.GradedWeylDivisibility.blockAct, Formalism.GradedWeylDivisibility.rowAct]
-    · simp only [AlgHom.comp_apply, Formalism.GradedWeylDivisibility.blockAct, specAt, MvPolynomial.aeval_X, hτ, if_false, map_sum, map_mul,
+    · set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.comp_apply, Formalism.GradedWeylDivisibility.blockAct, specAt, MvPolynomial.aeval_X, hτ, if_false, map_sum, map_mul,
         MvPolynomial.aeval_C, Matrix.one_apply]
       rw [Finset.sum_eq_single a]
       · simp [hτ]

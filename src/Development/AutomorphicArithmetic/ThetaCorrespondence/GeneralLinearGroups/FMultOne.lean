@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.MCellone
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FPiece
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HasSupportOfIsSubquotientProdIrr
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.MCellone
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FPiece
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HasSupportOfIsSubquotientProdIrr
+
+@[expose] public section
 
 open Filter Topology GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult UpperTheory.Lit.Cas UpperTheory.Lit.Red
 
 theorem UpperTheory.Lit.Full.multOne :
-    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (P : Set (IrrGL k)) (y z : IrrGL k) (N : ℕ) (hd : ∑ a, (![y, z] a).1 = N), SuppIn y P → FirstIn z Pᶜ → jm ![y, z] hd (prodIrr ![y, z] hd) ≤ 1 := by
+    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (P : Set (IrrGL (k := k))) (y z : IrrGL (k := k)) (N : ℕ) (hd : ∑ a, (![y, z] a).1 = N), SuppIn y P → FirstIn z Pᶜ → jm ![y, z] hd (prodIrr ![y, z] hd) ≤ 1 := by
   intro hG hBZ k _ _ _ _ P y z N hd hy hz
   refine UpperTheory.Lit.Mix.cellone hG hBZ k y z N hd fun q hq hpos hjm p hc => ?_
   by_contra hne

@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
+
+@[expose] public section
+
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
 private theorem chi_rep {n : ℕ} {A G : Type} [CommRing A] [Group G] (ρ : G →* Matrix (Fin n) (Fin n) A) (g : G) :
@@ -39,21 +44,21 @@ theorem UpperTheory.V.Pa.vrRel :
   · rw [← hk (S.G.frame.oEl v (S.u.ψ v) g) (Or.inl (Or.inl ⟨v, g, Or.inl rfl⟩)), GFrame.oEl, map_list_prod,
       List.map_ofFn]
     congr 2
-    funext k
-    simp only [Function.comp_apply]
+    funext i
+    dsimp only [Function.comp_apply]
     rw [map_sub, h1, h2]
   · have := hk _ (Or.inl (Or.inr ⟨w, g, (S.P.Ip w).symm ▸ hg, Or.inl rfl⟩))
     rwa [map_sub, h1, map_one, sub_eq_zero] at this
   · rw [← hk _ (Or.inr (Or.inl ⟨j, Or.inl rfl⟩)), q1El, map_list_prod, List.map_ofFn]
     congr 2
-    funext k
-    simp only [Function.comp_apply]
+    funext i
+    dsimp only [Function.comp_apply]
     rw [map_sub, h1, h2]
   · rw [← hk _ (Or.inr (Or.inr ⟨j, i, Or.inl rfl⟩)), q2El, map_mul, map_list_prod, List.map_ofFn, map_sub, map_sub,
       h1, h2, map_one]
     congr 3
     funext k
-    simp only [Function.comp_apply]
+    dsimp only [Function.comp_apply]
     split_ifs
     · rw [map_one]
     · rw [map_sub, h1, h2]

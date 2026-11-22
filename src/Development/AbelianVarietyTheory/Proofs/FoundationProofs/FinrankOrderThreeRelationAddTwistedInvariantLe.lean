@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemTwInv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemTwInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,11 +35,11 @@ theorem finrank_relThree_add_finrank_twInv_le :
         obtain ⟨Φ, hΓ, hΦ⟩ := Φ
         refine ⟨fun γ hγ x => ?_, fun x => ?_⟩
         · simp only [mul_assoc, hΓ γ hγ]
-        · simp only [e2, e3, hΦ, h2, h3, map_add]
+        · simp only [e2, e3, hΦ, h2, h3, map_add (f := _)]
           abel⟩
       map_add' := fun Φ Ψ => by
         ext x
-        simp only [Submodule.coe_add, Pi.add_apply, map_add]
+        simp only [Submodule.coe_add, Pi.add_apply, map_add (f := _)]
         abel
       map_smul' := fun c Φ => by
         ext x

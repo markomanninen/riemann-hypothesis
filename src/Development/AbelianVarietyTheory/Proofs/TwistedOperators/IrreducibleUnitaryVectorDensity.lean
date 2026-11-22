@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped InnerProductSpace
 
 namespace GlobalTheory
@@ -38,21 +43,22 @@ lemma comm_diag (P : PiLp 2 (fun _ : Fin n => H) →L[ℂ] PiLp 2 (fun _ : Fin n
     (c : Fin n → Fin n → ℂ) (hc : ∀ i j x, P (incl j x) i = c i j • x) (T : H →L[ℂ] H)
     (x : PiLp 2 (fun _ : Fin n => H)) : P (diag n T x) = diag n T (P x) := by
   rw [← sum_incl x]
-  simp only [map_sum, diag_incl]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, diag_incl]
   refine Finset.sum_congr rfl fun j _ => ?_
   ext i
   simp [hc]
 
 end IrreducibleUnitaryDensity
 
-open IrreducibleUnitaryDensity in
 
+open IrreducibleUnitaryDensity in
 theorem irreducibleUnitary_density (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     [CompleteSpace H] (G : Type) [Group G] (π : G →* (H →L[ℂ] H)) (hu : ∀ g x, ‖π g x‖ = ‖x‖)
     (hs : ∀ B : H →L[ℂ] H, (∀ g, B.comp (π g) = (π g).comp B) →
       ∃ c : ℂ, B = c • ContinuousLinearMap.id ℂ H)
     (n : ℕ) (a : Fin n → H) (Λ : Fin n → (H →L[ℂ] ℂ)) (h : ∀ g, ∑ j, Λ j (π g (a j)) = 0)
-    (φ u : H) : ∑ j, ⟪φ, a j⟫_ℂ * Λ j u = 0 := by
+    (φ u : H) : ∑ j, ⟪φ, a j⟫_ℂ * Λ j u = 0 := open IrreducibleUnitaryDensity in by
   let a' : PiLp 2 (fun _ : Fin n => H) := WithLp.toLp 2 a
   let S : Submodule ℂ (PiLp 2 (fun _ : Fin n => H)) :=
     Submodule.span ℂ (Set.range fun g => diag n (π g) a')

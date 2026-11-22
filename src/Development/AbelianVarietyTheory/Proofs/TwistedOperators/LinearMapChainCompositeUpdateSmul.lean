@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.InvVolConjLevelOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.InvVolConjLevelOne
+
+@[expose] public section
+
 open GlobalTheory.FunObj
 
 namespace GlobalTheory.ChainSmul

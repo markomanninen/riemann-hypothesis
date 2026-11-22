@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.ProjectiveLineFlags.PsPair
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.ProjectiveLineFlags.PsPair
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws GlobalTheory.GalOfCusp
 
@@ -62,7 +66,7 @@ theorem UpperTheory.V.Ws.P1.towerGal :
     have hcard : Nat.card (T.K ≃ₐ[ℚ] T.K) = 2 := by
       rw [IsGalois.card_aut_eq_finrank, T.degK]
     have hker := @IntermediateField.restrictNormalHom_ker ℚ Ω _ _ _ T.K
-      (by convert hN; exact Subsingleton.elim _ _)
+      (by convert hN)
     intro a b ha hb
     rw [Subgroup.mem_comap, ← hker, MonoidHom.mem_ker] at ha hb ⊢
     rw [map_mul, map_mul]

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SncBoundaryCoordinateChartStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.DenseCoordinateTorusStatement
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SncBoundaryCoordinateChartStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.DenseCoordinateTorusStatement
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+
+@[expose] public section
+
 open ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P Filter Topology
 open scoped ContDiff
 

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatCoreA
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatCoreA
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,8 @@ theorem piTensor_twist (ρ : ∀ a, Representation ℂ (Γ a) (X a)) (χ : ∀ a
     congr 1
     simp only [twist_apply]
     rw [MultilinearMap.map_smul_univ, Units.coe_prod]
-  | add y₁ y₂ h₁ h₂ => rw [map_add, map_add, h₁, h₂, smul_add]
+    simp only [RingHom.id_apply]
+  | add y₁ y₂ h₁ h₂ => rw [map_add (f := _), map_add (f := _), h₁, h₂, smul_add]
 
 end Tensor
 
@@ -40,8 +45,8 @@ variable {E : Type} [Field E] [NumberField E] {w : HeightOneSpectrum (𝓞 E)} {
   {X : Fin c → Type} [∀ a, AddCommGroup (X a)] [∀ a, Module ℂ (X a)]
   {π : ∀ a, Representation ℂ (GL (Fin (N a)) (w.adicCompletion E)) (X a)}
 
-omit h in
 
+omit h in
 theorem evT_idem (hs : ∀ a, IsSmooth (π a))
     (hC : IsCompact (Subgroup.pi Set.univ (fun a => KO (w.adicCompletion E) (Fin (N a))) :
       Set (∀ a, GL (Fin (N a)) (w.adicCompletion E))))
@@ -52,7 +57,7 @@ theorem evT_idem (hs : ∀ a, IsSmooth (π a))
     evT ev (piTensor π μ (idem (isSmooth_piTensor hs) hC v)) = evT ev (piTensor π μ v) := by
   let Φ : (⨂[ℂ] a, X a) →ₗ[ℂ] ((∀ a, GL (Fin (N a)) (w.adicCompletion E)) → ℂ) :=
     { toFun := fun y ν => evT ev (piTensor π ν y)
-      map_add' := fun y y' => funext fun ν => by simp [map_add]
+      map_add' := fun y y' => funext fun ν => by simp [map_add (f := _)]
       map_smul' := fun r y => funext fun ν => by simp [map_smul] }
   have hΦs : ∀ y, Φ y ∈ smoothPart (rightReg ℂ (∀ a, GL (Fin (N a)) (w.adicCompletion E)) ℂ) := fun y =>
     mem_smoothPart_of_nhds (Filter.mem_of_superset ((isSmooth_piTensor hs y).mem_nhds (by simp)) fun g hg =>
@@ -76,10 +81,10 @@ theorem evT_idem (hs : ∀ a, IsSmooth (π a))
   exact congrFun (congrArg Subtype.val key) μ
 
 theorem isSatVecGL_of_levi (hs : ∀ a, IsSmooth (π a)) (S : Fin c → Multiset ℂˣ)
-    (hS : ∀ a, ∀ x ∈ fixed (π a) (KGL w (N a)), x ≠ 0 → IsSatVecGL w (π a) x (S a))
+    (hS : ∀ a, ∀ x ∈ fixed (π a) (KGL w (n := (N a))), x ≠ 0 → IsSatVecGL w (π a) x (S a))
     (z : Fin c → ℂˣ) (hz : ∀ a, (z a : ℂ) = (qV E w : ℂ) ^ ((modExp (fun a => Fin (N a)) a : ℂ) / 2))
     (ev : ∀ a, X a →ₗ[ℂ] ℂ) (G : GL (Fin n) (w.adicCompletion E) → ℂ)
-    (hGK : ∀ g, ∀ k ∈ KGL w n, G (g * k) = G g)
+    (hGK : ∀ g, ∀ k ∈ KGL w (n := n), G (g * k) = G g)
     (hGN : ∀ u ∈ unipRad (w.adicCompletion E) (stdBlocks N h), ∀ g, G (u * g) = G g)
     (v : ⨂[ℂ] a, X a)
     (hGv : ∀ μ : ∀ a, GL (Fin (N a)) (w.adicCompletion E),
@@ -87,7 +92,7 @@ theorem isSatVecGL_of_levi (hs : ∀ a, IsSmooth (π a)) (S : Fin c → Multiset
     (hG0 : G ≠ 0) :
     IsSatVecGL w (rightReg ℂ _ ℂ) G (∑ a, (S a).map (· * z a)) := by
   classical
-  have hKO : ∀ m, KGL w m = KO (w.adicCompletion E) (Fin m) := fun m => (SphCompletion.KO_completion w m).symm
+  have hKO : ∀ m, KGL w (n := m) = KO (w.adicCompletion E) (Fin m) := fun m => (SphCompletion.KO_completion w m).symm
   let χ : ∀ a, GL (Fin (N a)) (w.adicCompletion E) →* ℂˣ := fun a =>
     detChar (Fin (N a)) (absPow (w.adicCompletion E) (-((modExp (fun a => Fin (N a)) a : ℂ) / 2)))
   let π' : ∀ a, Representation ℂ (GL (Fin (N a)) (w.adicCompletion E)) (X a) := fun a => twist (π a) (χ a)
@@ -105,8 +110,8 @@ theorem isSatVecGL_of_levi (hs : ∀ a, IsSmooth (π a)) (S : Fin c → Multiset
     exact GlobalTheory.LGrp.mem_fixed.1 (idem_mem hsT hC y) g fun a _ => hg a
   set Bt := ∑ a, (S a).map (· * z a) with hBt
   have hQ : ∀ y, ∀ f : IndSp (stdBlocks N h) (piTensor π'),
-      f ∈ fixed (multiProd (stdBlocks N h) π') (KGL w n) → f.1.1 1 = P y →
-      (∀ ϖ, IsUnifV E w ϖ → ∀ j ≤ n, heckeVec (multiProd (stdBlocks N h) π') (KGL w n) (Tj ℂ n (Ov E w) ϖ j) f =
+      f ∈ fixed (multiProd (stdBlocks N h) π') (KGL w (n := n)) → f.1.1 1 = P y →
+      (∀ ϖ, IsUnifV E w ϖ → ∀ j ≤ n, heckeVec (multiProd (stdBlocks N h) π') (KGL w (n := n)) (Tj ℂ n (Ov E w) ϖ j) f =
         satEig (qV E w) n Bt j • f) ∧ (f ≠ 0 → Bt.card = n) := by
     intro y
     induction y using PiTensorProduct.induction_on with
@@ -132,13 +137,13 @@ theorem isSatVecGL_of_levi (hs : ∀ a, IsSmooth (π a)) (S : Fin c → Multiset
       intro f hf hf1
       obtain ⟨f₁, hf₁, e₁⟩ := exists_fixed_apply_one (stdBlocks N h) (ρ := piTensor π') (x := P y₁) (hPfix y₁)
       obtain ⟨f₂, hf₂, e₂⟩ := exists_fixed_apply_one (stdBlocks N h) (ρ := piTensor π') (x := P y₂) (hPfix y₂)
-      have hf₁' : f₁ ∈ fixed (multiProd (stdBlocks N h) π') (KGL w n) := by rw [hKO]; exact hf₁
-      have hf₂' : f₂ ∈ fixed (multiProd (stdBlocks N h) π') (KGL w n) := by rw [hKO]; exact hf₂
+      have hf₁' : f₁ ∈ fixed (multiProd (stdBlocks N h) π') (KGL w (n := n)) := by rw [hKO]; exact hf₁
+      have hf₂' : f₂ ∈ fixed (multiProd (stdBlocks N h) π') (KGL w (n := n)) := by rw [hKO]; exact hf₂
       have hsum : f = f₁ + f₂ := by
         rw [← sub_eq_zero]
         refine eq_zero_of_apply_one (stdBlocks N h) (sub_mem (by rw [← hKO]; exact hf) (add_mem hf₁ hf₂)) ?_
         show f.1.1 1 - (f₁.1.1 1 + f₂.1.1 1) = 0
-        rw [hf1, e₁, e₂, map_add, sub_self]
+        rw [hf1, e₁, e₂, map_add (f := _), sub_self]
       obtain ⟨H₁, C₁⟩ := ih₁ f₁ hf₁' e₁
       obtain ⟨H₂, C₂⟩ := ih₂ f₂ hf₂' e₂
       refine ⟨fun ϖ hϖ j hj => ?_, fun h0 => ?_⟩
@@ -151,7 +156,7 @@ theorem isSatVecGL_of_levi (hs : ∀ a, IsSmooth (π a)) (S : Fin c → Multiset
           rw [hsum, h1, h2, add_zero]
         · exact C₁ h1
   obtain ⟨f, hf, hf1⟩ := exists_fixed_apply_one (stdBlocks N h) (ρ := piTensor π') (x := P v) (hPfix v)
-  have hfK : f ∈ fixed (multiProd (stdBlocks N h) π') (KGL w n) := by rw [hKO]; exact hf
+  have hfK : f ∈ fixed (multiProd (stdBlocks N h) π') (KGL w (n := n)) := by rw [hKO]; exact hf
   let Y : IndSp (stdBlocks N h) (piTensor π') →ₗ[ℂ] (GL (Fin n) (w.adicCompletion E) → ℂ) :=
     (evT ev).compLeft _ ∘ₗ Submodule.subtype _ ∘ₗ Submodule.subtype _
   have hYe : ∀ g F, Y (multiProd (stdBlocks N h) π' g F) = rightReg ℂ _ ℂ g (Y F) := fun _ _ => rfl
@@ -172,12 +177,40 @@ theorem isSatVecGL_of_levi (hs : ∀ a, IsSmooth (π a)) (S : Fin c → Multiset
     rw [hGK _ _ (by rw [hKO]; exact hx)]
     show evT ev (f.1.1 (p * x)) = _
     rw [apply_mul_of_fixed _ hf p hx]
-    obtain ⟨u, hu, hpu⟩ := exists_levi_mul_unip _ (stdBlocks N h) ⟨p, hp⟩
+    have hEmb (g : ∀ a, GL (Fin (N a)) (w.adicCompletion E)) :
+        leviEmb (w.adicCompletion E) (stdBlocks N h) g ∈ parab (w.adicCompletion E) (stdBlocks N h) :=
+      mem_parab_iff.2 fun _ _ i j hab => by
+        letI : DecidableEq (Fin c) := Classical.typeDecidableEq _
+        simpa [leviEmb, Matrix.reindex_apply] using
+          (Matrix.blockDiagonal'_apply_ne
+            (fun a => (g a : Matrix (Fin (N a)) (Fin (N a)) (w.adicCompletion E))) i j hab.ne')
+    have hdecomp (q : parab (w.adicCompletion E) (stdBlocks N h)) :
+        ∃ u ∈ unipRad (w.adicCompletion E) (stdBlocks N h),
+          (q : GL (Fin n) (w.adicCompletion E)) =
+            leviEmb (w.adicCompletion E) (stdBlocks N h)
+              (leviProj (w.adicCompletion E) (stdBlocks N h) q) * u := by
+      let L : parab (w.adicCompletion E) (stdBlocks N h) :=
+        ⟨leviEmb _ _ (leviProj _ _ q), hEmb _⟩
+      refine ⟨((L⁻¹ * q : parab (w.adicCompletion E) (stdBlocks N h)) : GL (Fin n) (w.adicCompletion E)),
+        (coe_mem_unipRad _ _).2 ?_, ?_⟩
+      · have hL : leviProj (w.adicCompletion E) (stdBlocks N h) L = leviProj (w.adicCompletion E) (stdBlocks N h) q := by
+          funext a
+          ext i j
+          simp [L, leviEmb, Matrix.blockDiagonal'_apply_eq]
+        rw [map_mul, map_inv, hL, inv_mul_cancel]
+      · rw [Subgroup.coe_mul, Subgroup.coe_inv]
+        exact (mul_inv_cancel_left _ _).symm
+    obtain ⟨u, hu, hpu⟩ := hdecomp ⟨p, hp⟩
     have hlaw := parInd_law (stdBlocks N h) (piTensor π') f ⟨p, hp⟩ 1
     rw [mul_one] at hlaw
     generalize leviProj (w.adicCompletion E) (stdBlocks N h) ⟨p, hp⟩ = μ at hpu hlaw
-    have hN := leviEmb_mem_normalizer (w.adicCompletion E) (stdBlocks N h) μ
-    have hu' := (Subgroup.mem_normalizer_iff.1 hN u).1 hu
+    have hu' : leviEmb (w.adicCompletion E) (stdBlocks N h) μ * u *
+        (leviEmb (w.adicCompletion E) (stdBlocks N h) μ)⁻¹ ∈ unipRad (w.adicCompletion E) (stdBlocks N h) := by
+      let P : parab (w.adicCompletion E) (stdBlocks N h) := ⟨_, hEmb μ⟩
+      let U : parab (w.adicCompletion E) (stdBlocks N h) := ⟨u, unipRad_le_parab _ _ hu⟩
+      have hU : leviProj (w.adicCompletion E) (stdBlocks N h) U = 1 := (coe_mem_unipRad _ U).1 hu
+      show ((P * U * P⁻¹ : parab (w.adicCompletion E) (stdBlocks N h)) : GL (Fin n) (w.adicCompletion E)) ∈ _
+      rw [coe_mem_unipRad, map_mul, map_mul, map_inv, hU, mul_one, mul_inv_cancel]
     have hG1 : G p = G (leviEmb (w.adicCompletion E) (stdBlocks N h) μ) := by
       have e : p = (leviEmb (w.adicCompletion E) (stdBlocks N h) μ * u *
           (leviEmb (w.adicCompletion E) (stdBlocks N h) μ)⁻¹) * leviEmb (w.adicCompletion E) (stdBlocks N h) μ := by

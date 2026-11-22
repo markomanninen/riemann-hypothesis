@@ -1,10 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.SpecializationMapCompUniversalSection
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.SecondSelmerSpanBoundAtAllLevels
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DOfRep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.RrGen
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.OoMaps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.SpRoots
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.SpecializationMapCompUniversalSection
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.SecondSelmerSpanBoundAtAllLevels
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DOfRep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.RrGen
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.OoMaps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.SpRoots
+
+@[expose] public section
+
 open IsLocalRing Matrix Filter UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa UpperTheory.V.Pa.Core
 open scoped TensorProduct
 
@@ -35,7 +40,7 @@ private theorem lam_lift {n : ℕ} {R S H G : Type} [CommRing R] [CommRing S] [G
   rw [← ((UpperTheory.V.CA.d_gmap E).2.2.1 f y).2 i, ← h]
   unfold GDet.lam
   generalize MonoidAlgebra.mapRingHom H f y = z
-  congr 2
+  apply congrArg (fun p : Polynomial S => (-1) ^ i * p.coeff (n - i))
   change D.D (Polynomial S) _ = D.D (Polynomial S) (MonoidAlgebra.mapDomainRingHom (Polynomial S) φ _)
   congr 1
   rw [map_sub]
@@ -43,7 +48,7 @@ private theorem lam_lift {n : ℕ} {R S H G : Type} [CommRing R] [CommRing S] [G
   · simp
   · induction z using MonoidAlgebra.induction_linear with
     | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | single g r => simp
 
 private theorem rep_comap {n : ℕ} {A G H : Type} [CommRing A] [Group G] [Group H]
@@ -53,7 +58,7 @@ private theorem rep_comap {n : ℕ} {A G H : Type} [CommRing A] [Group G] [Group
   congr 1
   induction z using MonoidAlgebra.induction_linear with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | single g r => simp [GDet.repAlg]
 
 private theorem genBy_img {O R S : Type} [CommRing O] [CommRing R] [Algebra O R] [IsLocalRing R] [CommRing S]
@@ -133,7 +138,7 @@ theorem UpperTheory.V.Pa.Core.ooPt :
     refine Eq.trans ?_ this
     rw [q1El]
     congr 4
-    funext i
+    funext k
     simp only [Function.comp_apply, map_sub, hp, map_one, hph]
   · obtain ⟨g, rfl⟩ := hsj g
     obtain ⟨ph, hph⟩ := hsj (Λ.ph j)

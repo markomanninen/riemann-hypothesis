@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeHomSectionsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeEtaleSheafSectionLocallyFiniteCombinationStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRulesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BigEtaleModuleSheafMonoEpiIffSectionsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeHomSectionsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeEtaleSheafSectionLocallyFiniteCombinationStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRulesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BigEtaleModuleSheafMonoEpiIffSectionsStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
 noncomputable section
@@ -86,7 +91,8 @@ theorem free_map_epi (R : Type) [CommRing R] {P Q : PSh} (f : P ⟶ Q)
   refine ⟨∑ i : c.support, c i.1 • freeGen R P W (x i), ?_⟩
   have e1 : Sec.map ((free R).map f) (∑ i : c.support, c i.1 • freeGen R P W (x i)) =
       ∑ i : c.support, c i.1 • freeGen R Q W (Q.map k.op i.1) := by
-    simp only [Sec.map, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Sec.map, map_sum, map_smul]
     refine Finset.sum_congr rfl fun i _ => ?_
     congr 1
     rw [← hx i]; exact (GlobalTheory.T.free_sections_ext_res_map R P ((free R).obj P)).2.2.2 Q f W (x i)
@@ -135,7 +141,7 @@ theorem free_map_mono_of_loc (R : Type) [CommRing R] {P Q : PSh} (f : P ⟶ Q)
   have hd : Finsupp.mapDomain (f.app (op W)) (Finsupp.mapDomain (P.map k.op) c) = 0 := by
     rw [← Finsupp.mapDomain_comp]
     rw [show (f.app (op W) ∘ P.map k.op) = (Q.map k.op ∘ f.app (op V)) from
-      funext fun x => FunctorToTypes.naturality f k.op x]
+      funext fun x => NatTrans.naturality_apply f k.op x]
     rw [Finsupp.mapDomain_comp]; exact hk
   refine loc_mono (loc_kill f hi _ hd) ?_
   intro W' k' hk'
@@ -146,8 +152,8 @@ end GlobalTheory.EtC.FreeMonoEpi
 
 namespace GlobalTheory.EtC
 
-open GlobalTheory.EtC.FreeMonoEpi in
 
+open GlobalTheory.EtC.FreeMonoEpi in
 theorem free_map_mono_epi_iso : ∀ (R : Type) [CommRing R] {P Q : PSh} (f : P ⟶ Q), (Mono f → Mono ((free R).map f)) ∧ ((∀ U (y : Q.obj (op U)), Loc U fun V g => ∃ x, f.app (op V) x = Q.map g.op y) → Epi ((free R).map f)) ∧ ((∀ U (y : Q.obj (op U)), Loc U fun V g => ∃ x, f.app (op V) x = Q.map g.op y) → (∀ U (x x' : P.obj (op U)), f.app (op U) x = f.app (op U) x' → Loc U fun _ g => P.map g.op x = P.map g.op x') → IsIso ((free R).map f)) := by
   intro R _ P Q f
   refine ⟨fun _ => free_map_mono R f, free_map_epi R f, fun hs hi => ?_⟩

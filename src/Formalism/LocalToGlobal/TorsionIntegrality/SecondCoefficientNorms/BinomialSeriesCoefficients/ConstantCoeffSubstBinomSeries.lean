@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.CoeffPowEqZeroOfCc
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.DegreeLeOfMemAntidiagonal
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.CoeffPowEqZeroOfCc
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.DegreeLeOfMemAntidiagonal
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -41,9 +45,9 @@ theorem binom_zero_succ (k : ℕ) : binom (0 : K) (k + 1) = 0 := by
 def binomSeries (z : K) : PowerSeries K := PowerSeries.mk (binom z)
 
 theorem binomSeries_ode (z : K) :
-    (1 + PowerSeries.X) * PowerSeries.derivative K (binomSeries z) = z • binomSeries z := by
+    (1 + PowerSeries.X) * PowerSeries.derivative (R := K) (binomSeries z) = z • binomSeries z := by
   ext n
-  rw [add_mul, one_mul, map_add, PowerSeries.coeff_derivative, PowerSeries.coeff_smul]
+  rw [add_mul, one_mul, map_add (f := _), PowerSeries.coeff_derivative, PowerSeries.coeff_smul]
   cases n with
   | zero =>
     have h := binom_succ z 0
@@ -79,7 +83,7 @@ theorem subst_binomSeries_eq_mvExp (z : K) {f : MvPowerSeries σ K}
     rw [MvPowerSeries.smul_eq_C_mul, map_mul, hf, mul_zero]
   have hnzf : MvPowerSeries.constantCoeff (-(z • f)) = 0 := by rw [map_neg, hzf, neg_zero]
   set B := PowerSeries.subst (mvExp f - 1) (binomSeries z) with hB
-  have hode : mvExp f * PowerSeries.subst (mvExp f - 1) (PowerSeries.derivative K (binomSeries z))
+  have hode : mvExp f * PowerSeries.subst (mvExp f - 1) (PowerSeries.derivative (R := K) (binomSeries z))
       = z • B := by
     have h := congrArg (PowerSeries.subst (mvExp f - 1)) (binomSeries_ode z)
     rw [PowerSeries.subst_mul hs, PowerSeries.subst_add hs, PowerSeries.subst_X hs,
@@ -87,8 +91,8 @@ theorem subst_binomSeries_eq_mvExp (z : K) {f : MvPowerSeries σ K}
       PowerSeries.coe_substAlgHom hs] at h
     rw [hB, ← h]
     ring
-  have hd : ∀ i, MvPowerSeries.pderiv K i B =
-      MvPowerSeries.C z * MvPowerSeries.pderiv K i f * B := by
+  have hd : ∀ i, MvPowerSeries.pderiv (R := K) i B =
+      MvPowerSeries.C z * MvPowerSeries.pderiv (R := K) i f * B := by
     intro i
     apply (isUnit_mvExp hf).mul_left_cancel
     rw [hB, IntegralMvPolynomialLemmas.pderiv_subst _ hg, ← mul_assoc, hode, map_sub, MvPowerSeries.pderiv_one, sub_zero,

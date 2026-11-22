@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.IsCondAt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.IsCondAt
+
+@[expose] public section
 
 noncomputable section
 

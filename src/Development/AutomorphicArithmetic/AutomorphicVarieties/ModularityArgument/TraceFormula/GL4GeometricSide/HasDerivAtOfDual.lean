@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4GeometricSide.InnerEq
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.UnitaryCurves.StarMulOfPlaces
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4GeometricSide.InnerEq
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.UnitaryCurves.StarMulOfPlaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -241,7 +245,7 @@ private theorem i_K (a b : Fin n) (u : D.U) :
   apply Subtype.ext
   show (D.i (D.E1 w a b u + D.E2 w a b u)).1 = (cx w.embedding (lieOp π) a b (D.i u)).1 -
     (cx (barE E w.embedding) (lieOp π) b a (D.i u)).1
-  rw [map_add, Submodule.coe_add, D.hE1, D.hE2, key, key, sub_eq_add_neg]
+  rw [map_add (f := _), Submodule.coe_add, D.hE1, D.hE2, key, key, sub_eq_add_neg]
   simp [eopW]
 
 private theorem K_mem (v : D.U) (a b : Fin n) (u : D.U) (hu : u ∈ (orb D v).comap D.i) :
@@ -282,7 +286,8 @@ private theorem deriv_σ (v : D.U) (X : Matrix (Fin n) (Fin n) ℂ) (γ : ℝ �
   set d : D.U := ∑ a, ∑ b, X a b • kF (D.E1 w) (D.E2 w) a b u with hd'
   have hdi : D.i d = lieOp π Z (D.i u) := by
     rw [hZd, lieOp_skew π _ X hX, hd']
-    simp only [map_sum, map_smul, i_K, LinearMap.sum_apply, LinearMap.smul_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, i_K, LinearMap.sum_apply, LinearMap.smul_apply]
   have hdS : d ∈ (orb D v).comap D.i := by
     show D.i d ∈ orb D v
     rw [hdi]

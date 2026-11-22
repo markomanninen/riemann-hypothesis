@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.TwistingSheaf
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjTwistLeray
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.TwistingSheaf
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjTwistLeray
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -34,7 +39,7 @@ theorem isBasisOn_upow {u : A} (hu : u ∈ 𝒜 1) (k : ℤ) :
       r • resM ((preMod (Proj 𝒜)).obj (twistingSheaf 𝒜 k)) h (upow 𝒜 hu k) =
         twistMap hu k (W := V) hW r := by
     intro r
-    apply ProjTwist.ext (k := k) (U := V)
+    apply Subtype.ext
     funext x
     change (r.1 x).val * val (k := k) (U := Proj.basicOpen 𝒜 u) (upow 𝒜 hu k) ⟨x.1, h x.2⟩ =
       twistFrac u k x.1 (hW x) * (r.1 x).val
@@ -122,7 +127,7 @@ theorem upow_res {u v : A} (hu : u ∈ 𝒜 1) (hv : v ∈ 𝒜 1) (m : ℕ) :
         resM ((preMod (Proj 𝒜)).obj (twistingSheaf 𝒜 m))
           (inf_le_left : Proj.basicOpen 𝒜 u ⊓ Proj.basicOpen 𝒜 v ≤ Proj.basicOpen 𝒜 u)
           (upow 𝒜 hu m) := by
-  apply ProjTwist.ext (k := m) (U := Proj.basicOpen 𝒜 u ⊓ Proj.basicOpen 𝒜 v)
+  apply Subtype.ext
   funext x
   change val (k := m) (U := Proj.basicOpen 𝒜 v) (upow 𝒜 hv m) ⟨x.1, x.2.2⟩ =
     (((ratio 𝒜 hu hv).1 ⟨x.1, x.2.1⟩) ^ m).val *
@@ -157,41 +162,36 @@ def mulSec {a b : ℤ} {U : (Proj 𝒜).Opens} (s : Γ(twistingSheaf 𝒜 a, U))
     (t : Γ(twistingSheaf 𝒜 b, U)) (x : U) : val (mulSec s t) x = val s x * val t x := rfl
 
 def mulLin (a b : ℤ) (U : (Proj 𝒜).Opens) :
-    ((preMod (Proj 𝒜)).obj (twistingSheaf 𝒜 a)).obj (op U) →ₗ[ringOn (Proj 𝒜) U]
-      ((preMod (Proj 𝒜)).obj (twistingSheaf 𝒜 b)).obj (op U) →ₗ[ringOn (Proj 𝒜) U]
+    ((preMod (Proj 𝒜)).obj (twistingSheaf 𝒜 a)).obj (op U) →ₗ[Γ(Proj 𝒜, U)]
+      ((preMod (Proj 𝒜)).obj (twistingSheaf 𝒜 b)).obj (op U) →ₗ[Γ(Proj 𝒜, U)]
         ((preMod (Proj 𝒜)).obj (twistingSheaf 𝒜 (a + b))).obj (op U) :=
-  LinearMap.mk₂ _ (fun s t => mulSec s t)
-    (fun s s' t => ProjTwist.ext (funext fun x => by
+  LinearMap.mk₂ Γ(Proj 𝒜, U) (fun s t => mulSec s t)
+    (fun s s' t => Subtype.ext (funext fun x => by
       change (val s x + val s' x) * val t x = val s x * val t x + val s' x * val t x
       ring))
-    (fun r s t => ProjTwist.ext (funext fun x => by
+    (fun r s t => Subtype.ext (funext fun x => by
       change ((r.1 x).val * val s x) * val t x = (r.1 x).val * (val s x * val t x)
       ring))
-    (fun s t t' => ProjTwist.ext (funext fun x => by
+    (fun s t t' => Subtype.ext (funext fun x => by
       change val s x * (val t x + val t' x) = val s x * val t x + val s x * val t' x
       ring))
-    (fun r s t => ProjTwist.ext (funext fun x => by
+    (fun r s t => Subtype.ext (funext fun x => by
       change val s x * ((r.1 x).val * val t x) = (r.1 x).val * (val s x * val t x)
       ring))
 
-variable (𝒜) in
 
+variable (𝒜) in
 def mulPre (a b : ℤ) :
     (preMod (Proj 𝒜)).obj (twistingSheaf 𝒜 a) ⊗ (preMod (Proj 𝒜)).obj (twistingSheaf 𝒜 b) ⟶
-      (preMod (Proj 𝒜)).obj (twistingSheaf 𝒜 (a + b)) where
-  app U := ModuleCat.ofHom
-    (X := ((preMod (Proj 𝒜)).obj (twistingSheaf 𝒜 a) ⊗
-      (preMod (Proj 𝒜)).obj (twistingSheaf 𝒜 b)).obj U)
-    (Y := ((preMod (Proj 𝒜)).obj (twistingSheaf 𝒜 (a + b))).obj U)
-    (by exact TensorProduct.lift (mulLin a b U.unop))
-  naturality {U V} f := by
-    apply ModuleCat.hom_ext
-    apply TensorProduct.ext'
-    intro s t
-    exact ProjTwist.ext (funext fun x => rfl)
+      (preMod (Proj 𝒜)).obj (twistingSheaf 𝒜 (a + b)) :=
+  PresheafOfModulesOfCommRing.homMk
+    (R := (Proj 𝒜).sheaf.obj)
+    (fun U => ModuleCat.ofHom (TensorProduct.lift (mulLin a b U.unop)))
+    (fun {_ _} _ => ModuleCat.MonoidalCategory.tensor_ext fun _ _ =>
+      Subtype.ext (funext fun _ => rfl))
+
 
 variable (𝒜) in
-
 def twistMul (a b : ℤ) : twistingSheaf 𝒜 a ⊗ twistingSheaf 𝒜 b ⟶ twistingSheaf 𝒜 (a + b) :=
   tensorLift (mulPre 𝒜 a b)
 
@@ -208,24 +208,25 @@ lemma twistMul_app (a b : ℤ) (U : (Proj 𝒜).Opens)
 
 lemma mulSec_upow {u : A} (hu : u ∈ 𝒜 1) (a b : ℤ) :
     mulSec (upow 𝒜 hu a) (upow 𝒜 hu b) = upow 𝒜 hu (a + b) :=
-  ProjTwist.ext (funext fun x => by
+  Subtype.ext (funext fun (x : Proj.basicOpen 𝒜 u) => by
+    change val (mulSec (upow 𝒜 hu a) (upow 𝒜 hu b)) x = val (upow 𝒜 hu (a + b)) x
     erw [val_mulSec, val_upow, val_upow, val_upow, twistFrac_mul])
 
-variable (𝒜) in
 
+variable (𝒜) in
 def oneSections : (twistingSheaf 𝒜 0).sections :=
   ⟨fun U => mkSection (U := U.unop)
       (fun x => ((1 : (ProjectiveSpectrum.Proj.structureSheaf 𝒜).obj.obj U).1 x).val)
       (isLocallyFraction_val_section (𝒜 := 𝒜) _),
-    fun _ => ProjTwist.ext (funext fun _ => rfl)⟩
+    fun _ => Subtype.ext (funext fun _ => rfl)⟩
 
 lemma val_oneSections (U : (Proj 𝒜).Opens) (x : U) :
     val (k := 0) (U := U) ((oneSections 𝒜).val (op U)) x = 1 := by
   change ((1 : (ProjectiveSpectrum.Proj.structureSheaf 𝒜).obj.obj (op U)).1 x).val = 1
   erw [Proj.one_apply, HomogeneousLocalization.val_one]
 
-variable (𝒜) in
 
+variable (𝒜) in
 def unitToTwistZero : 𝟙_ (Proj 𝒜).Modules ⟶ twistingSheaf 𝒜 0 :=
   (SheafOfModules.unitHomEquiv _).symm (oneSections 𝒜)
 
@@ -237,8 +238,7 @@ lemma unitToTwistZero_one (U : (Proj 𝒜).Opens) {u : A} (hu : u ∈ 𝒜 1)
       (1 : ringOn (Proj 𝒜) U) • (show ((preMod (Proj 𝒜)).obj (twistingSheaf 𝒜 0)).obj (op U) from
         (oneSections 𝒜).val (op U)) := rfl
   rw [e, one_smul]
-  apply ProjTwist.ext (k := 0) (U := U)
-  funext x
+  refine Subtype.ext (funext fun (x : U) => ?_)
   change val (k := 0) (U := U) ((oneSections 𝒜).val (op U)) x =
     val (k := 0) (U := Proj.basicOpen 𝒜 u) (upow 𝒜 hu 0) ⟨x.1, h x.2⟩
   rw [val_oneSections]
@@ -302,7 +302,7 @@ instance isIso_unitToTwistZero : IsIso (unitToTwistZero (grading A n)) := by
 instance isNoetherianRing_gradeZero [IsNoetherianRing A] : IsNoetherianRing (grading A n 0) := by
   refine isNoetherianRing_of_surjective A _ (algebraMap A (grading A n 0)) ?_
   rintro ⟨p, hp⟩
-  refine ⟨coeff 0 p, Subtype.ext ?_⟩
+  refine ⟨AddMonoidAlgebra.coeff p 0, Subtype.ext ?_⟩
   rw [SetLike.GradeZero.coe_algebraMap, MvPolynomial.algebraMap_eq]
   by_cases h0 : p = 0
   · subst h0

@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.SpecializationMapCompUniversalSection
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.SecondSelmerSpanBoundAtAllLevels
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.UnivDetMf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.UniversalDeformationRingLocalCharacters
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.CoCoprod
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.SubgroupQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.FiniteHomOfTopFG
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.SpecializationMapCompUniversalSection
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.SecondSelmerSpanBoundAtAllLevels
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.UnivDetMf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.UniversalDeformationRingLocalCharacters
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.CoCoprod
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.SubgroupQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.FiniteHomOfTopFG
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+
+@[expose] public section
 
 open IsLocalRing Matrix Filter UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa UpperTheory.V.Pa.Core
 open scoped TensorProduct
@@ -297,7 +301,7 @@ theorem UpperTheory.V.Pa.Core.rrEx :
       rw [hFX]
       rfl
     · show F (algebraMap O (MvPowerSeries σ R₁) (A.ut j i) + MvPowerSeries.X (Sum.inr (Sum.inl (j, i)))) = t'.U j i
-      rw [map_add, AlgHom.commutes, hFX]
+      rw [map_add (f := _), AlgHom.commutes, hFX]
       show algebraMap O R' (A.ut j i) + (t'.U j i - algebraMap O R' (A.ut j i)) = t'.U j i
       ring
     · show F (MvPowerSeries.X (Sum.inr (Sum.inr (j, i)))) = t'.y j i
@@ -323,6 +327,6 @@ theorem UpperTheory.V.Pa.Core.rrEx :
       · have h4 : G (algebraMap O (MvPowerSeries σ R₁) (A.ut j i) +
             MvPowerSeries.X (Sum.inr (Sum.inl (j, i)))) = t'.U j i := g4 j i
         show G (MvPowerSeries.X (Sum.inr (Sum.inl (j, i)))) = t'.U j i - algebraMap O R' (A.ut j i)
-        rw [← h4, map_add, AlgHom.commutes]
+        rw [← h4, map_add (f := _), AlgHom.commutes]
         ring
       · exact g5 j i

@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.ExistsInertiaCharpolyFactorOfTameType
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExistsInertiaCharpolyFactorOfTameType
+
+@[expose] public section
+
 open Formalism.MainNotions Formalism.MainNotions.N
 
 namespace GlobalTheory.SplitField
@@ -46,7 +51,8 @@ theorem mem_span_of_map_mem_span {L E ι : Type} [Field L] [Field E] [Fintype ι
   let Λ : (ι → E) →ₗ[E] E := ∑ i, f (c i) • LinearMap.proj i
   have hΛ : ∀ v, Λ (f ∘ v) = f (l v) := by
     intro v
-    simp [Λ, hlc, map_sum, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Λ, hlc, map_sum, mul_comm]
   have hker : Submodule.span E ((fun v => f ∘ v) '' S) ≤ LinearMap.ker Λ := by
     rw [Submodule.span_le]
     rintro _ ⟨s, hs, rfl⟩
@@ -184,7 +190,7 @@ theorem endSpanned_of_isoSub {Γ L : Type} [Group Γ] [Field L] {a : ℕ} (τ : 
       refine ⟨by simp, ?_⟩
       simp only [Matrix.zero_mulVec]
       have : (⟨0, W.zero_mem⟩ : W) = 0 := rfl
-      rw [this, map_zero]; rfl
+      rw [this, e.map_zero]; rfl
     | add x y hx' hy' hx hy =>
       intro v
       obtain ⟨h1, e1⟩ := hx v
@@ -192,7 +198,7 @@ theorem endSpanned_of_isoSub {Γ L : Type} [Group Γ] [Field L] {a : ℕ} (τ : 
       refine ⟨by rw [Matrix.add_mulVec]; exact W.add_mem h1 h2, ?_⟩
       have : (⟨(x + y).mulVec v, by rw [Matrix.add_mulVec]; exact W.add_mem h1 h2⟩ : W) = ⟨_, h1⟩ + ⟨_, h2⟩ := by
         ext1; simp [Matrix.add_mulVec]
-      rw [this, map_add, Submodule.coe_add, e1, e2, Matrix.add_mulVec]
+      rw [this, map_add (f := _), Submodule.coe_add, e1, e2, Matrix.add_mulVec]
     | smul c x hx' hx =>
       intro v
       obtain ⟨h1, e1⟩ := hx v

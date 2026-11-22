@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.PadMHerm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.MatDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.PadMHerm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.MatDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,14 +51,14 @@ def PBlk : Prop :=
   ∀ (L : Type) [Field L] [NumberField L] (d n q : ℕ) (ω : Form (HS L (d * n)) q),
     (∀ g, FInv ω g) → ∀ g, FInv (pullF ω (blkL d n) 0) g
 
-open Classical in
 
+open Classical in
 def fT {L : Type} [Field L] [NumberField L] {N q : ℕ}
     (T : Matrix (Fin q → Ix (InfinitePlace L) N) (Fin q → Ix (InfinitePlace L) N) ℂ) (Y : Fin q → HS L N) : ℂ :=
   ∑ I, ∑ J, T I J * ∏ i, blk (fun w => mat (Y i) w) (I i) (J i)
 
-open Classical in
 
+open Classical in
 def Cplx : Prop :=
   ∀ (L : Type) [Field L] [NumberField L] (N q : ℕ) (f : ContinuousMultilinearMap ℝ (fun _ : Fin q => HS L N) ℝ),
     (∀ u : Gp L N, actL u (one L N).1 = (one L N).1 → ∀ Y, f (fun i => actL u (Y i)) = f Y) →

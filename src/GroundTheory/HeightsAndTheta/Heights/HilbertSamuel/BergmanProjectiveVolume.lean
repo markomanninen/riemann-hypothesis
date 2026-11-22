@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.BergmanProjective
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.BergmanProjective
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -69,7 +74,7 @@ theorem setLIntegral_fsMeasure_chartDomain (j : Fin (N + 1)) (g : CP N → ℝ�
       transition 0 j '' {z : Fin N → ℂ | chartVec 0 z j ≠ 0} := by
     rw [image_transition]
     filter_upwards [ae_chartVec_ne j] with y hy
-    exact propext ⟨fun _ => hy, fun _ => trivial⟩
+    exact ⟨fun _ => hy, fun _ => trivial⟩
   conv_rhs => rw [← setLIntegral_univ]
   rw [setLIntegral_congr hae,
     lintegral_image_eq_lintegral_normSq_det_mul (transition 0 j) _ (isOpen_chartVec_ne 0 j)

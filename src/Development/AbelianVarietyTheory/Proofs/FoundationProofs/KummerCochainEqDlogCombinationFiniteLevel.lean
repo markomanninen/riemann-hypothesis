@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerTowerQqPowLevelEqQ
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIntPrimeDivRootOfUnitySubOnePowStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsAlmostGaloisCoordinatesStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TraceTowerAlmostDualBasesAdjoinKummerRootStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDerivationModIntegralExtensionPCubeStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DerivationModIntegralAlmostDualPSqIsIntStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TowerLevelEmbeddingInjectiveRangeAdjoinRootsStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TowerGaloisFixedEqDivLevelElementsStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TowerLevelAdjoinRootsIntegrallyClosedQuotientStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDlogDerivationsTowerLevelModIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDlogDerivationsGluedTowerLevelsStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KaehlerRelationDerivationModIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TowerGnExponentsKummerCochainsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerTowerQqPowLevelEqQ
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIntPrimeDivRootOfUnitySubOnePowStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsAlmostGaloisCoordinatesStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TraceTowerAlmostDualBasesAdjoinKummerRootStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDerivationModIntegralExtensionPCubeStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DerivationModIntegralAlmostDualPSqIsIntStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TowerLevelEmbeddingInjectiveRangeAdjoinRootsStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TowerGaloisFixedEqDivLevelElementsStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TowerLevelAdjoinRootsIntegrallyClosedQuotientStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDlogDerivationsTowerLevelModIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDlogDerivationsGluedTowerLevelsStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KaehlerRelationDerivationModIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TowerGnExponentsKummerCochainsStatement
+
+@[expose] public section
 
 open GlobalTheory.K5
 
@@ -67,9 +71,9 @@ theorem fix_mem_Lev (hΩ : IsClo p Ω) (T : Tower p Ω) :
     (Lev_mono T (by omega) hb) hb0 hx.1⟩
 
 theorem der_zeta_pow {T : Tower p Ω} {C : Subalgebra (O0 p) Ω} {D : Ω → Ω} (hD : IsDer C D)
-    (hC : ∀ x ∈ C, IsInt p x) {m : ℕ} (hm : T.ζ m ∈ C) {e : Ω}
-    (he : IsInt p (D (T.ζ m) - e * T.ζ m)) (i : ℕ) :
-    IsInt p (D (T.ζ m ^ i) - i * e * T.ζ m ^ i) := by
+    (hC : ∀ x ∈ C, IsInt (p := p) x) {m : ℕ} (hm : T.ζ m ∈ C) {e : Ω}
+    (he : IsInt (p := p) (D (T.ζ m) - e * T.ζ m)) (i : ℕ) :
+    IsInt (p := p) (D (T.ζ m ^ i) - i * e * T.ζ m ^ i) := by
   have h1 := int_mul (int_zeta_inv T m) (int_add (hD.pow' hC hm i)
     (int_mul (int_mul (int_nat i) (int_pow (int_zeta T m) i)) he))
   refine int_congr h1 ?_
@@ -78,12 +82,12 @@ theorem der_zeta_pow {T : Tower p Ω} {C : Subalgebra (O0 p) Ω} {D : Ω → Ω}
   ring
 
 theorem exists_ders (hp2 : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (n : ℕ) (hn : 1 ≤ n) {r : Ω}
-    (hr : IsInt p r) {a lz lq : Gal p Ω → ZMod (p ^ n)} (ha : IsKum T n (Gn T n) r a)
+    (hr : IsInt (p := p) r) {a lz lq : Gal p Ω → ZMod (p ^ n)} (ha : IsKum T n (Gn T n) r a)
     (hz : IsKum T n (Gn T n) (T.ζ (2 * n)) lz) (hq : IsKum T n (Gn T n) (T.qq (2 * n)) lq) :
     ∃ Dz Dq : Ω → Ω, IsDer (FixI (Hfix T r)) Dz ∧ IsDer (FixI (Hfix T r)) Dq ∧
-      IsInt p (Dz (T.ζ n) - (p : Ω) ^ 4 / p ^ n * T.ζ n) ∧ IsInt p (Dz (T.qq n)) ∧
-      IsInt p (Dq (T.ζ n)) ∧ IsInt p (Dq (T.qq n) - (p : Ω) ^ 4 / p ^ n * T.qq n) ∧
-      ∀ g ∈ Gn T n, ∃ s t : ℤ, IsInt p ((p : Ω) ^ 2 * (Dz (g r) -
+      IsInt (p := p) (Dz (T.ζ n) - (p : Ω) ^ 4 / p ^ n * T.ζ n) ∧ IsInt (p := p) (Dz (T.qq n)) ∧
+      IsInt (p := p) (Dq (T.ζ n)) ∧ IsInt (p := p) (Dq (T.qq n) - (p : Ω) ^ 4 / p ^ n * T.qq n) ∧
+      ∀ g ∈ Gn T n, ∃ s t : ℤ, IsInt (p := p) ((p : Ω) ^ 2 * (Dz (g r) -
         (1 + p ^ n * ((lz g).val : Ω) + p ^ (2 * n) * s) * g (Dz r) -
         (p ^ n * ((lq g).val : Ω) + p ^ (2 * n) * t) * g (Dq r))) := by
   have hH : ∀ h ∈ Hinf T, ∃ i : ℕ, h r = T.ζ n ^ i * r := fun h hh => ⟨_, ha h (Hinf_le T n hh)⟩
@@ -95,9 +99,9 @@ theorem exists_ders (hp2 : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (n : ℕ
   obtain ⟨Dq, hDq, eq⟩ := GlobalTheory.T.exists_derivationModIntegral_extension_p_cube p Ω _ _ ι u v tr hd dq hdq
   have hC := hd.2.1
   have hLB : ∀ m, Lev T m ≤ FixI (Hinf T) := fun m => Lev_le_FixI T m (Hinf_le T m)
-  have p3 : IsInt p ((p : Ω) ^ 3) := int_pow (int_nat p) 3
-  have V : ∀ m, 1 ≤ m → IsInt p (Dz (T.ζ m) - (p : Ω) ^ 4 / p ^ m * T.ζ m) ∧ IsInt p (Dz (T.qq m)) ∧
-      IsInt p (Dq (T.ζ m)) ∧ IsInt p (Dq (T.qq m) - (p : Ω) ^ 4 / p ^ m * T.qq m) := by
+  have p3 : IsInt (p := p) ((p : Ω) ^ 3) := int_pow (int_nat p) 3
+  have V : ∀ m, 1 ≤ m → IsInt (p := p) (Dz (T.ζ m) - (p : Ω) ^ 4 / p ^ m * T.ζ m) ∧ IsInt (p := p) (Dz (T.qq m)) ∧
+      IsInt (p := p) (Dq (T.ζ m)) ∧ IsInt (p := p) (Dq (T.qq m) - (p : Ω) ^ 4 / p ^ m * T.qq m) := by
     intro m hm
     obtain ⟨v1, v2, v3, v4⟩ := hval m hm
     have z := hLB m (zeta_mem_Lev T m)
@@ -130,7 +134,7 @@ theorem exists_ders (hp2 : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (n : ℕ
       ring
     · have a1 := int_add (int_add (hDz.2.1 _ (pow_mem zC j) _ qC)
         (int_mul (int_pow (int_zeta T m) j) y2)) (int_mul (int_qq T m) (der_zeta_pow hDz hC zC y1 j))
-      have a2 : IsInt p (Dz (g (T.qq m)) - j * ((p : Ω) ^ 4 / p ^ m) * g (T.qq m)) := by
+      have a2 : IsInt (p := p) (Dz (g (T.qq m)) - j * ((p : Ω) ^ 4 / p ^ m) * g (T.qq m)) := by
         rw [e2]; exact int_congr a1 (by ring)
       have a3 := int_gal g.symm a2
       refine int_congr (int_sub (int_sub a3 (int_mul (int_nat i) y2)) (int_mul (int_nat j) y4)) ?_
@@ -161,10 +165,10 @@ theorem core (hp2 : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (n : ℕ) (hn :
     Cob1 n (Gn T n) (fun g => (p : Ω) ^ 6 *
       (ι u * ((a g).val : Ω) - ι A * ((lq g).val : Ω) - ι B * ((lz g).val : Ω))) := by
   have hL := emb_mem_Lev hΩ hn hι
-  have hI : ∀ x, IsInt p (ι x) := fun x => Lev_int T n _ (hL x)
-  have hrI : IsInt p r := int_of_pow (ppow_pos n) (hr ▸ hI u)
+  have hI : ∀ x, IsInt (p := p) (ι x) := fun x => Lev_int T n _ (hL x)
+  have hrI : IsInt (p := p) r := int_of_pow (ppow_pos n) (hr ▸ hI u)
   obtain ⟨Dz, Dq, hDz, hDq, w1, w2, w3, w4, hE⟩ := exists_ders hp2 hΩ T n hn hrI ha hz hq
-  have hC : ∀ x ∈ FixI (Hfix T r), IsInt p x := fun x hx => hx.1
+  have hC : ∀ x ∈ FixI (Hfix T r), IsInt (p := p) x := fun x hx => hx.1
   have hLC : Lev T n ≤ FixI (Hfix T r) := Lev_le_FixI T n (le_trans inf_le_left (Hinf_le T n))
   have hrC : r ∈ FixI (Hfix T r) := ⟨hrI, fun h hh => hh.2⟩
   have kz := GlobalTheory.T.kaehler_relation_derivationModIntegral p Ω n ι _ hC (fun x => hLC (hL x)) Dz hDz _ _ _ _ _ _ hrel
@@ -179,17 +183,17 @@ theorem core (hp2 : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (n : ℕ) (hn :
   have pz := hDz.pow hC hrC N
   have pq := hDq.pow hC hrC N
   rw [hN', ← hN, hr] at pz pq
-  have Ez : IsInt p ((p : Ω) ^ n * (r ^ N * Dz r) - ι B * (p ^ 4 / p ^ n)) := by
+  have Ez : IsInt (p := p) ((p : Ω) ^ n * (r ^ N * Dz r) - ι B * (p ^ 4 / p ^ n)) := by
     refine int_congr (int_sub (int_mul inv (int_add (int_add kz
       (int_mul (int_mul (int_zeta T n) (hI A)) w2)) (int_mul (int_mul (int_qq T n) (hI B)) w1))) pz) ?_
     field_simp
     ring
-  have Eq : IsInt p ((p : Ω) ^ n * (r ^ N * Dq r) - ι A * (p ^ 4 / p ^ n)) := by
+  have Eq : IsInt (p := p) ((p : Ω) ^ n * (r ^ N * Dq r) - ι A * (p ^ 4 / p ^ n)) := by
     refine int_congr (int_sub (int_mul inv (int_add (int_add kq
       (int_mul (int_mul (int_zeta T n) (hI A)) w4)) (int_mul (int_mul (int_qq T n) (hI B)) w3))) pq) ?_
     field_simp
     ring
-  have p2 : IsInt p ((p : Ω) ^ 2) := int_pow (int_nat p) 2
+  have p2 : IsInt (p := p) ((p : Ω) ^ 2) := int_pow (int_nat p) 2
   refine ⟨_, int_mul p2 Ez, fun g hg => ?_⟩
   obtain ⟨s, t, hst⟩ := hE g hg
   have hfix : ∀ x, g (ι x) = ι x := fun x => (Lev_le_FixI T n le_rfl (hL x)).2 g hg
@@ -200,8 +204,8 @@ theorem core (hp2 : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (n : ℕ) (hn :
   have b2 := int_mul (int_pow (int_gal g hrI) N) (int_sub hst (int_mul p2 b1))
   have gz := int_gal g Ez
   have gq := int_gal g Eq
-  have pn : IsInt p ((p : Ω) ^ n) := int_pow (int_nat p) n
-  have p6 : IsInt p ((p : Ω) ^ 6) := int_pow (int_nat p) 6
+  have pn : IsInt (p := p) ((p : Ω) ^ n) := int_pow (int_nat p) n
+  have p6 : IsInt (p := p) ((p : Ω) ^ 6) := int_pow (int_nat p) 6
   refine ⟨_, int_add (int_add (int_add (int_add b2
     (int_mul (int_mul (int_add (int_nat (lz g).val) (int_mul pn (int_int s))) p2) gz))
     (int_mul (int_mul (int_add (int_nat (lq g).val) (int_mul pn (int_int t))) p2) gq))
@@ -248,7 +252,7 @@ theorem kummer_eq_dlog : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∃ c : ℕ, 
   intro Ω _ _ hΩ T n hn ι hι k w α β hd r hr a lz lq ha hz hq
   haveI := hΩ.clo
   have hL := emb_mem_Lev hΩ hn hι
-  have hI : ∀ x, IsInt p (ι x) := fun x => Lev_int T n _ (hL x)
+  have hI : ∀ x, IsInt (p := p) (ι x) := fun x => Lev_int T n _ (hL x)
   have hfix : ∀ g ∈ Gn T n, ∀ x, g (ι x) = ι x := fun g hg x =>
     (Lev_le_FixI T n le_rfl (hL x)).2 g hg
   have hπ : T.ζ n - 1 ≠ 0 := sub_ne_zero.2 ((T.prim n).ne_one
@@ -274,7 +278,7 @@ theorem kummer_eq_dlog : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∃ c : ℕ, 
     rw [hd, mul_left_comm, mul_left_comm (yn p n), mul_assoc, mul_assoc]) hr' ha' hz hq
   obtain ⟨x2, i2, e2⟩ := core hp2 hΩ T n hn ι hι (xn p n - 1) 0 (xn p n) (by
     simp [mul_comm]) hs' hb hz hq
-  have hpπ : IsInt p ((p : Ω) / (T.ζ n - 1)) := by
+  have hpπ : IsInt (p := p) ((p : Ω) / (T.ζ n - 1)) := by
     simpa using GlobalTheory.T.isInt_prime_div_rootOfUnity_sub_one_pow p Ω T n 1 hn (Nat.totient_pos.2 (ppow_pos n))
   have j1 := int_mul (int_nat (Ω := Ω) (p := p) p) (hI (↑w⁻¹ : On p n))
   have j2 := int_mul (int_int (Ω := Ω) (p := p) k) hpπ
@@ -296,7 +300,7 @@ theorem kummer_eq_dlog : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∃ c : ℕ, 
     simpa only [Int.cast_sub, Int.cast_mul, Int.cast_natCast, Nat.cast_pow, Int.cast_pow] using this
   refine ⟨_, int_add (int_add (int_mul j1 l1) (int_mul j2 l2))
     (int_mul (int_pow (int_nat p) 7) (int_int t)), ?_⟩
-  simp only [map_add, map_sub, map_mul, map_div₀, map_natCast, map_intCast, map_one, map_zero,
+  simp only [map_add (f := _), map_sub, map_mul, map_div₀, map_natCast, map_intCast, map_one, map_zero,
     hfix g hg, hι.1, (mem_Gn.1 hg).1] at f1 f2 ⊢
   have hinv : (T.ζ n - 1) * (T.ζ n - 1)⁻¹ = 1 := mul_inv_cancel₀ hπ
   simp only [div_eq_mul_inv]

@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
-import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Wlocal
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LGradedLemmas
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LEhwLemmas
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+public import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Wlocal
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LGradedLemmas
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LEhwLemmas
+
+@[expose] public section
 
 open MvPolynomial
 

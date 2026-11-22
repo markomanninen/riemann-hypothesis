@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.GWickA
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.GWickA
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,8 @@ variable {m n : ℕ}
 
 theorem gramX_apply (ε : Fin m → Bool) (x : Fin m → Fin n → ℂ) (i j : Fin n) :
     gramX ε x i j = ∑ a, sgn ε a * star (x a i) * x a j := by
-  simp only [gramX, Qp, Qb, map_sub, map_sum, map_mul, evX, eval_X, if_true, Bool.false_eq_true, if_false]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [gramX, Qp, Qb, map_sub, map_sum, map_mul, evX, eval_X, if_true, Bool.false_eq_true, if_false]
   rw [Finset.sum_filter, Finset.sum_filter, ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun a _ => ?_
   cases h : ε a <;> simp [sgn, h]
@@ -58,7 +63,7 @@ theorem exp_phiP (ε : Fin m → Bool) (c t : ℝ) (b : Matrix (Fin n) (Fin n) �
       rw [mul_comm, Complex.mul_conj, Complex.normSq_eq_norm_sq]
     rw [Complex.star_def, hz]; push_cast; ring
   have h2 : (b * gramX ε x).trace = ∑ a, ∑ k, ∑ j, sgn ε a * b j k * star (x a k) * x a j := by
-    simp only [trace, diag, mul_apply, gramX_apply, Finset.mul_sum]
+    simp only [trace, diag, Matrix.mul_apply, gramX_apply, Finset.mul_sum]
     conv_lhs => arg 2; ext j; rw [Finset.sum_comm]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun a _ => ?_

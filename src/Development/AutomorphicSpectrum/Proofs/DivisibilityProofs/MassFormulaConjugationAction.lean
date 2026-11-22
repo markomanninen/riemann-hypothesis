@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CardCount
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CardCount
+
+@[expose] public section
 
 open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top GroundTheory.Heights₂.Heights.ModelLeaves
 open ReciprocityTheory.ChartRestriction.G.Geo (HermLine IsSmoothHerm IsArithVar IsHorizontal mcPts mCoordIdeal IsIntersectionFamily IsIntersectionSystem IntersectionSystem ptsIntegral geoNum charOf recR arInt ChartBundle chartRing)
@@ -65,7 +69,7 @@ theorem arNum_rename' {σ' : Type} (e : σ' → σ) (H : MvPolynomial σ' ℝ) :
     rw [MvPolynomial.rename_monomial, arNum_monomial', arNum_monomial',
       show Finsupp.toMultiset (Finsupp.mapDomain e μ) = (Finsupp.toMultiset μ).map e from
         (Finsupp.toMultiset_map _ _).symm, Multiset.map_map]
-  | add p q hp hq => rw [map_add, arNum_add', arNum_add', hp, hq]
+  | add p q hp hq => rw [map_add (f := _), arNum_add', arNum_add', hp, hq]
 
 end Lin
 

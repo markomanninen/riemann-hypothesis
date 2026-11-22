@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsMemWpNormSubLtOne
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ClosedBallValuationSubringToSubring
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsMemWpNormSubLtOne
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ClosedBallValuationSubringToSubring
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.MemLoc.FrobLaws
@@ -35,7 +39,7 @@ theorem endo_root {k : Type} [CommRing k] [IsDomain k] (p : ℕ) [hp : Fact p.Pr
     simp [this]
   haveI : Finite F := hfin
   letI : Field F := (Finite.isField_of_domain F).toField
-  haveI : CharP F p := CharP.subring k p F
+  haveI : CharP F p := F.subtype.charP F.subtype_injective p
   letI : Algebra (ZMod p) F := ZMod.algebra F p
   let ψ : F →+* F := (φ.comp F.subtype).codRestrict F fun y => by
     rw [hF]
@@ -109,7 +113,8 @@ theorem res_inj {a b : OO l} {m : ℕ} (hm : 0 < m) (hlm : ¬ l ∣ m) (ha : a ^
   rw [ha, hb, sub_self] at h1
   have h2 := (mul_eq_zero.1 h1).resolve_right (sub_ne_zero.2 hne)
   have h3 := congrArg res h2
-  simp only [map_sum, map_mul, map_pow, map_zero, ← h] at h3
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_pow, map_zero, ← h] at h3
   rw [geom_sum₂_self] at h3
   rcases mul_eq_zero.1 h3 with h4 | h4
   · exact hlm ((CharP.cast_eq_zero_iff (kk l) l m).1 h4)
@@ -179,7 +184,7 @@ theorem exists_level {x : Om l} (hx : x ∈ MaximalUnramifiedExtension l) :
     exact ⟨1, one_pos, hl.out.not_dvd_one, fun h h' _ => by rw [h.commutes, h'.commutes]⟩
   | add a b _ _ ha hb =>
     obtain ⟨m, hm, hlm, H⟩ := key ha hb
-    exact ⟨m, hm, hlm, fun h h' H' => by rw [map_add, map_add, (H h h' H').1, (H h h' H').2]⟩
+    exact ⟨m, hm, hlm, fun h h' H' => by rw [map_add (f := _), map_add (f := _), (H h h' H').1, (H h h' H').2]⟩
   | inv a _ ha =>
     obtain ⟨m, hm, hlm, H⟩ := ha
     exact ⟨m, hm, hlm, fun h h' H' => by rw [map_inv₀, map_inv₀, H h h' H']⟩

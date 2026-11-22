@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.IsFieldIntersection
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ProjLineRankTwoPushforwardHypotheses
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlock
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChangeOfModel
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.IsFieldIntersection
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ProjLineRankTwoPushforwardHypotheses
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlock
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChangeOfModel
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -46,9 +51,6 @@ def AddBlockIsometric.Statement : Prop :=
 namespace PowerBlockProjectiveLine
 
 open ProjLine
-
-def fsOldPull : HermLine (addIdx (GlobalTheory (Fin 2)) 2) :=
-  GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Inter.pullHerm (isBlockMap_oldV (ι := GlobalTheory (Fin 2)) 2) fsLine1
 
 end PowerBlockProjectiveLine
 

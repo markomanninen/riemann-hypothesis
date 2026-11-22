@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.IsUnitCoeffZero
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ConstantCoeffAddFirstSecond
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndFrFix
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.IsUnitCoeffZero
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ConstantCoeffAddFirstSecond
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndFrFix
+
+@[expose] public section
 
 set_option autoImplicit false
 

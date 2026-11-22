@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
-import GroundTheory.ProfiniteCohomology.PoincareDuality.NsmulEqZeroOfNonemptyAddEquiv
-import GroundTheory.ProfiniteCohomology.PoincareDuality.DeltaPairing
-import GroundTheory.ProfiniteCohomology.CyclicCupBrauer
-import GroundTheory.ProfiniteCohomology.PoincareDuality.Torsion
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
+public import GroundTheory.ProfiniteCohomology.PoincareDuality.NsmulEqZeroOfNonemptyAddEquiv
+public import GroundTheory.ProfiniteCohomology.PoincareDuality.DeltaPairing
+public import GroundTheory.ProfiniteCohomology.CyclicCupBrauer
+public import GroundTheory.ProfiniteCohomology.PoincareDuality.Torsion
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -20,8 +25,8 @@ section Criteria
 
 variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] in
 theorem inhomogeneousCochains_d_one_apply_vec (A : Rep.{u} k G) (w : (Fin 1 → G) → A) (g h : G) :
     (inhomogeneousCochains.d A 1).hom w ![g, h] = A.ρ g (w ![h]) - w ![g * h] + w ![g] := by
   refine (inhomogeneousCochains_d_one_apply A _ ![g, h]).trans ?_
@@ -162,11 +167,11 @@ abbrev bockSeq : ShortComplex (Rep.{0} (ULift.{0} ℤ) G) where
       zero_mul]
     rfl
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] in
 
-theorem bockSeq_shortExact (hn : n ≠ 0) : (bockSeq G n).ShortExact where
-  exact := by
-    refine shortComplex_exact_of_forall_exists _ fun x hx => ?_
+omit [TopologicalSpace G] [IsTopologicalGroup G] in
+theorem bockSeq_shortExact (hn : n ≠ 0) : (bockSeq G n).ShortExact := by
+  refine ShortComplex.ShortExact.mk' ?_ ?_ ?_
+  · refine shortComplex_exact_of_forall_exists _ fun x hx => ?_
     obtain ⟨m⟩ := x
     have h0 : ((m : ℤ) : ZMod n) = 0 := by
       have := congrArg ULift.down ((zmodReduction_hom_apply G n m).symm.trans hx)
@@ -178,8 +183,7 @@ theorem bockSeq_shortExact (hn : n ≠ 0) : (bockSeq G n).ShortExact where
     apply ULift.ext
     change n • c = m
     rw [hc, nsmul_eq_mul]
-  mono_f := by
-    refine (Rep.mono_iff_injective _).2 fun x y hxy => ?_
+  · refine (Rep.mono_iff_injective _).2 fun x y hxy => ?_
     obtain ⟨a⟩ := x
     obtain ⟨b⟩ := y
     change (n • 𝟙 (intRepTriv G)).hom (ULift.up a) = (n • 𝟙 (intRepTriv G)).hom (ULift.up b) at hxy
@@ -187,8 +191,7 @@ theorem bockSeq_shortExact (hn : n ≠ 0) : (bockSeq G n).ShortExact where
     have h : n • a = n • b := congrArg ULift.down hxy
     rw [nsmul_eq_mul, nsmul_eq_mul] at h
     exact congrArg ULift.up (mul_left_cancel₀ (by exact_mod_cast hn) h)
-  epi_g := by
-    have : NeZero n := ⟨hn⟩
+  · have : NeZero n := ⟨hn⟩
     refine (Rep.epi_iff_surjective _).2 fun y => ?_
     obtain ⟨z⟩ := y
     refine ⟨(ULift.up (z.val : ℤ) : intRepTriv G), ?_⟩
@@ -240,8 +243,8 @@ theorem natCast_mul_bockInt [NeZero n] (χ : G → ZMod n)
   push_cast at e'
   linarith
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] in
 theorem charCocycle_eq_bockInt [NeZero n] (χ : G → ZMod n) (ψ : Additive G →+ AddCircle (1 : ℚ))
     (hψ : ∀ g : G, ψ (Additive.ofMul g) = QZ.toAddCircle (zmodToQZ n (χ g))) (g h : G) :
     charCocycle ψ (g, h) = bockInt χ g h := by

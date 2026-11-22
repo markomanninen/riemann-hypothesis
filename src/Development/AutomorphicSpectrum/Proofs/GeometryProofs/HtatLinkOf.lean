@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PowValIntCast
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatLat
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatPol
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatLev
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatReg
-import Development.WeilBound.CoreStatements.HodgeTatePoints.Hcptgen
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateNormComparison
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
-import Development.WeilBound.CoreStatements.HodgeTatePoints.TwhopfSec
-import Development.WeilBound.CoreStatements.HodgeTatePoints.BtLink
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PowValIntCast
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatLat
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatPol
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatLev
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatReg
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.Hcptgen
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateNormComparison
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.TwhopfSec
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.BtLink
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ theorem htat_link_of (h758 : type_of% @GlobalTheory.T.HTChartExists_holds) (h576
       ∀ κ : chartRing o (mseg y) s.1, PointHT → IsCp p (κ : Ω) → Dc.HasTestPoints κ := by
     intro s
     obtain ⟨_, _, _, x, hx, hr⟩ := hch s.1 s.2
-    obtain ⟨Dc, h1, h2, h3, h4, h5, h6⟩ := exists_chart Twhopf.sec_inj Twexists.exists_torsion' h758 h576 D 𝔐.t 𝔐.ξ 𝔐.tie.gen 𝔐.all 𝔐.M 𝔐.ρ 𝔐.act
+    obtain ⟨Dc, h1, h2, h3, h4, h5, h6⟩ := GlobalTheory.CompanionTheory.HtLink.exists_chart Twhopf.sec_inj Twexists.exists_torsion' h758 h576 D 𝔐.t 𝔐.ξ 𝔐.tie.gen 𝔐.all 𝔐.M 𝔐.ρ 𝔐.act
       p (𝔐.R p) hev hprop (𝔐.tors p hpS) hrk u hu π e hπ he hsurj hker halt hadj hes hei (chartRing o (mseg y) s.1) x hx
       (fun q hq => chart_le_regAt 𝔐 p o ho s.1 q ((hr q).1 hq).1 ((hr q).1 hq).2)
     exact ⟨Dc, h1, h2, fun w => (h3 w).trans ⟨fun h q a b => h q ((hr q).2 ⟨a, b⟩),

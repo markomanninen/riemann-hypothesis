@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.StrongApproxN
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.LatStab
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.LocDensVolS
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.StrongApproxN
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.LatStab
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.LocDensVolS
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,8 @@ theorem pv_mulVec (v : HeightOneSpectrum (𝓞 F)) (m : Matrix (Fin n) (Fin n) (
     (x : Fin n → Af F ⊗[F] E) :
     pv v (m *ᵥ x) = (m.map (tensMap (E := E) (evalV F v))) *ᵥ pv v x := by
   funext i
-  simp [pv, Matrix.mulVec, dotProduct, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [pv, Matrix.mulVec, dotProduct, map_sum]
 
 open Classical in
 theorem singleV_smul (v : HeightOneSpectrum (𝓞 F)) (c : F) (y : Fv F v) :
@@ -56,7 +61,7 @@ theorem tens_lift_self (v : HeightOneSpectrum (𝓞 F)) (z : Fv F v ⊗[F] E) :
     show (evalV F v (singleV F v a)) ⊗ₜ[F] e = a ⊗ₜ e
     show (singleV F v a v) ⊗ₜ[F] e = a ⊗ₜ e
     rw [PI.VolStabSW.VolAAW.singleV_self]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem tens_lift_ne {v w : HeightOneSpectrum (𝓞 F)} (h : w ≠ v) (z : Fv F v ⊗[F] E) :
     tensMap (E := E) (evalV F w) (LinearMap.rTensor E (sV v) z) = 0 := by
@@ -67,7 +72,7 @@ theorem tens_lift_ne {v w : HeightOneSpectrum (𝓞 F)} (h : w ≠ v) (z : Fv F 
     show (evalV F w (singleV F v a)) ⊗ₜ[F] e = 0
     show (singleV F v a w) ⊗ₜ[F] e = 0
     rw [PI.VolStabSW.VolAAW.singleV_ne _ _ h, TensorProduct.zero_tmul]
-  | add x y hx hy => rw [map_add, map_add, hx, hy, add_zero]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, add_zero]
 
 theorem pv_liftV_self (v : HeightOneSpectrum (𝓞 F)) (y : Fin n → Fv F v ⊗[F] E) : pv v (liftV v y) = y := by
   funext i

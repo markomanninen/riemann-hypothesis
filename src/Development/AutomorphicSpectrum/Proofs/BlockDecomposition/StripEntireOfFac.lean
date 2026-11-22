@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.StripEntire
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DifferentiableAffLine
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChamberPairThreeFour
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.StripEntire
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DifferentiableAffLine
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChamberPairThreeFour
+
+@[expose] public section
 
 noncomputable section
 

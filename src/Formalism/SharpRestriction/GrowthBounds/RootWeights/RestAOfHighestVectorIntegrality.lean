@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.ExistsScalarMultipleMemDelta
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightEntriesBetweenExtremeHighest
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.ExistsScalarMultipleMemDelta
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightEntriesBetweenExtremeHighest
+
+@[expose] public section
 
 noncomputable section
 

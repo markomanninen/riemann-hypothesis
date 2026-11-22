@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DiscreteSpectrumResidualClassification
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.NarrowSwap
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DiscreteSpectrumResidualClassification
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.NarrowSwap
+
+@[expose] public section
 
 section
 noncomputable section

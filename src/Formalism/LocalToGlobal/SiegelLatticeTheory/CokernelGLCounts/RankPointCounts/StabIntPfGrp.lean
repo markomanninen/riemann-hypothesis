@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.PairVal
-import Lemmata.GeneralBFactRightBisAlt.Imports
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.PairVal
+public import Lemmata.GeneralBFactRightBisAlt.Imports
+
+@[expose] public section
 
 noncomputable section
 

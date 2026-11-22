@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.TateTwists.EtaleSemilinearCohomologyOperationImageSpecOfHyp
-import Development.EtaleCohomology.TateTwists.EtaleCohomologyEvaluationConnectingHom
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleSemilinearCohomologyOperationImageSpecOfHyp
+public import Development.EtaleCohomology.TateTwists.EtaleCohomologyEvaluationConnectingHom
+
+@[expose] public section
 
 theorem LateralTheory.Fix.EtaleCochainSemilinearMapCompCompatible.intersectionNumber_baseChange : LateralTheory.EtaleFoundations.EtaleCochainSemilinearMapCompCompatible :=
   LateralTheory.EtaleFoundations.etale_cohomology_operation_comp_of_image_spec

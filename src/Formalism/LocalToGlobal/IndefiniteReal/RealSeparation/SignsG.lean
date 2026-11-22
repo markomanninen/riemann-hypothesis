@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
-import Formalism.LocalToGlobal.HeckeThetaElements.IsHeckeElt
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+public import Formalism.LocalToGlobal.HeckeThetaElements.IsHeckeElt
+
+@[expose] public section
 
 noncomputable section
 

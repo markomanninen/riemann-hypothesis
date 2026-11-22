@@ -1,15 +1,19 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHB2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointCornerScaledSingleComm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceContOn
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.KloostermanDensityOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.EmbeddedGroupMeasurePreserving
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGLet
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHLNf
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SlicesFiniteRegularityBuilt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UwClosedSubgroup
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftFubiniNormalizedTower
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelsOfBuiltSetting
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHB2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointCornerScaledSingleComm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceContOn
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KloostermanDensityOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.EmbeddedGroupMeasurePreserving
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGLet
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHLNf
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SlicesFiniteRegularityBuilt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UwClosedSubgroup
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftFubiniNormalizedTower
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelsOfBuiltSetting
+
+@[expose] public section
 
 open Matrix
 open scoped ContDiff ComplexConjugate
@@ -42,7 +46,7 @@ theorem cd_lowW_entry {p : ℕ} (σ : Equiv.Perm (Fin p)) (a b : Fin p) :
   simp only [Matrix.add_apply, Matrix.of_apply]
   refine contDiff_const.add ?_
   split_ifs
-  · exact contDiff_apply ℝ ℂ _
+  · exact contDiff_apply ℝ (fun _ => ℂ) _
   · exact contDiff_const
 
 theorem cd_zxH_entry (h : C.LPt) (j : ℕ) (hs : D.ptSize h = j) (a b : Fin j) :
@@ -217,8 +221,8 @@ theorem leading_block_of_base_point {k r j : ℕ} (hj : j + 1 ≤ r) (Z : Matrix
   have key : ∀ q : Fin (2 * (j + 1 + (r - (j + 1))) + k + 1), q.val = 2 * (j + (r - j)) + k - a.val →
       q = U.eB k (j + 1) (r - (j + 1)) (Sum.inr ⟨j - a.val, by omega⟩) := by
     intro q hq; ext; rw [Ux3.block_index_last_val]; simp only [Fin.val_mk]; omega
-  rw [key (Fin.cast _ _) (by simp), LeftFubiniLemmas.embedding_map_apply_last_block, dif_pos (by simp only [Fin.val_cast]; omega), zfull_apply,
-    dif_pos (by simp only [Fin.val_rev, Fin.val_cast, Fin.val_mk]; omega)]
+  rw [key (Fin.cast _ _) (by simp), LeftFubiniLemmas.embedding_map_apply_last_block, dite_eq_left (by simp only [Fin.val_cast]; omega), zfull_apply,
+    dite_eq_left (by simp only [Fin.val_rev, Fin.val_cast, Fin.val_mk]; omega)]
   congr 1 <;> ext <;> simp only [Fin.val_rev, Fin.val_cast, Fin.val_mk] <;> omega
 
 end head

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.ExtFree
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.ExtFree
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 
@@ -25,7 +29,7 @@ private theorem hom_uniq {l : ℕ} [Fact l.Prime] {R : Type} [CommRing R] (f f' 
   rw [PadicInt.maximalIdeal_eq_span_p, Ideal.mem_span_singleton'] at hx
   obtain ⟨y, hy⟩ := hx
   have hx' : x = (PadicInt.zmodRepr x : ℤ_[l]) + y * l := by rw [hy]; ring
-  rw [hx', map_add, map_add, map_mul, map_mul, map_natCast, map_natCast, map_natCast, map_natCast, h]
+  rw [hx', map_add (f := _), map_add (f := _), map_mul, map_mul, map_natCast, map_natCast, map_natCast, map_natCast, h]
   simp
 
 private theorem localization_quotient_separated_dvd {A K L : Type} [CommRing A] [Field K] [Algebra A K] [IsFractionRing A K] [Field L] (g : A →+* L)
@@ -70,13 +74,15 @@ theorem UpperTheory.V.Pa.Det.coefficientExtension_preserves_conditions_and_det :
       have lhs : ∀ (e : x.A) (M : Matrix (Fin n) (Fin n) x.A) a c,
           p i (j e * ∑ k, j (M a k) * Z k c) = e * ∑ k, M a k * p i (Z k c) := by
         intro e M a c
-        rw [Finset.mul_sum, map_sum, Finset.mul_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [Finset.mul_sum, map_sum, Finset.mul_sum]
         refine Finset.sum_congr rfl fun k _ => ?_
         rw [← mul_assoc, ← map_mul, hlin, mul_assoc]
       have rhs : ∀ (M : Matrix (Fin n) (Fin n) x.A) a c,
           p i (∑ k, Z a k * j (M k c)) = ∑ k, p i (Z a k) * M k c := by
         intro M a c
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         refine Finset.sum_congr rfl fun k _ => ?_
         rw [mul_comm, hlin, mul_comm]
       ext a c

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.EvenVal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.EvenVal
+
+@[expose] public section
 
 noncomputable section
 
@@ -110,10 +114,6 @@ def HsLaw : Prop :=
 def HsNE : Prop :=
   ∀ (O K : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Field K] [Algebra O K] (Δ τ : K), IsLoc O Δ →
     τ ^ 2 - 4 ≠ 0 → ∀ t : Kˣ, t ∈ NE τ ↔ hs (τ ^ 2 - 4) (t : K) = 1
-
-def EtaEx : Prop :=
-  ∀ (O K : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Field K] [Algebra O K] (Δ : K), IsLoc O Δ →
-    ∃ η : Kˣ →* ℂˣ, Unr O η ∧ ∀ x, (η x : ℂ) = hs Δ (x : K)
 
 def SplitJ : Prop :=
   ∀ (O K : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Field K] [Algebra O K] (Δ : K), IsLoc O Δ →

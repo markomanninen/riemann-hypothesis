@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalTateDuality.KummerCup
-import GroundTheory.ProfiniteCohomology.LocalTateDuality.NormCharacters
-import GroundTheory.LocalFields.SeparableClosure
-import GroundTheory.LocalFields.IntermediateField
-import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeAndRangePowLe
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalTateDuality.KummerCup
+public import GroundTheory.ProfiniteCohomology.LocalTateDuality.NormCharacters
+public import GroundTheory.LocalFields.SeparableClosure
+public import GroundTheory.LocalFields.IntermediateField
+public import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeAndRangePowLe
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -28,8 +33,8 @@ theorem unitsInvariantOpen_mul (W : Subgroup Gal(Ksep/K)) (a b : (fixedField W)�
       Additive.ofMul (Units.map (algebraMap (fixedField W) Ksep : fixedField W →* Ksep) b)
   rw [map_mul, ofMul_mul]
 
-omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] [IsSepClosure K Ksep] in
 
+omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] [IsSepClosure K Ksep] in
 theorem natCast_fixedField_ne_zero (hn : (n : K) ≠ 0) (W : Subgroup Gal(Ksep/K)) :
     (n : fixedField W) ≠ 0 := by
   rw [← map_natCast (algebraMap K (fixedField W))]
@@ -54,7 +59,7 @@ theorem finite_cohomology_one_res_galRootsOfUnity (hn : (n : K) ≠ 0) (U : Open
         rw [pow_zero, zero_smul] at h
         rw [h, map_zero, map_zero, ofAdd_zero]
       map_mul' := fun a b => by
-        rw [unitsInvariantOpen_mul, map_add, map_add, ofAdd_add] }
+        rw [unitsInvariantOpen_mul, map_add (f := _), map_add (f := _), ofAdd_add] }
   have hle : (powMonoidHom n : (fixedField (U : Subgroup Gal(Ksep/K)))ˣ →* _).range ≤ κ.ker := by
     rintro _ ⟨b, rfl⟩
     rw [MonoidHom.mem_ker]
@@ -86,12 +91,12 @@ theorem eq_zero_of_forall_cupPairing_zmodMul_eq_zero_left (hn : (n : K) ≠ 0)
     exact (isOpen_discrete _).preimage ((openChar n U z).continuous_toFun.comp continuous_ofMul)
   have hcomm : ∀ σ τ : Gal(Ksep/fixedField (U : Subgroup Gal(Ksep/K))),
       σ * τ * σ⁻¹ * τ⁻¹ ∈ charKer (charAdd (openChar n U z)) := fun σ τ => by
-    rw [mem_charKer, ofMul_mul, ofMul_mul, ofMul_mul, ofMul_inv, ofMul_inv, map_add, map_add, map_add,
+    rw [mem_charKer, ofMul_mul, ofMul_mul, ofMul_mul, ofMul_inv, ofMul_inv, map_add (f := _), map_add (f := _), map_add (f := _),
       map_neg, map_neg]
     abel
   have htop := eq_top_of_forall_exists_norm _ hopen hcomm hnorm
   rw [cohomologyπ_one_eq_zero_iff_of_trivial _ (fun _ _ => rfl)]
-  exact fun g => ULift.ext _ _ (zmodCocycleHom_eq_zero_of_charKer_eq_top hn U z htop g)
+  exact fun g => ULift.ext (zmodCocycleHom_eq_zero_of_charKer_eq_top hn U z htop g)
 
 theorem eq_zero_of_forall_cupPairing_zmodMul_eq_zero_right (hn : (n : K) ≠ 0)
     (U : OpenSubgroup Gal(Ksep/K))

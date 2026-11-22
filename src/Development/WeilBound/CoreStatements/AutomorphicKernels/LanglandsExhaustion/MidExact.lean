@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.MidDefs
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIrreducibleSubquotientTwoBlockConstituents
-import BuildAid.D4
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.MidDefs
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIrreducibleSubquotientTwoBlockConstituents
+public import Lean.LibrarySuggestions.Basic
+public import Lean.Elab.Command
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,8 +60,8 @@ end IndExact
 variable {nA nB m m' N : ℕ} {VA VB V₁ V₂ V₃ : Type} [AddCommGroup VA] [Module ℂ VA] [AddCommGroup VB] [Module ℂ VB]
   [AddCommGroup V₁] [Module ℂ V₁] [AddCommGroup V₂] [Module ℂ V₂] [AddCommGroup V₃] [Module ℂ V₃]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem tripleProductMap_injective (h2 : m + nB = m') (h1 : nA + m' = N) (PA : Representation ℂ (GL (Fin nA) k) VA)
     (PB : Representation ℂ (GL (Fin nB) k) VB) {τ₁ : Representation ℂ (GL (Fin m) k) V₁}
     {τ₂ : Representation ℂ (GL (Fin m) k) V₂} {τ₃ : Representation ℂ (GL (Fin m) k) V₃}

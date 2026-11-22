@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.InvTransposeGLInvTransposeGL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralNonnegNormaliserEq
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.InvTransposeGLInvTransposeGL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralNonnegNormaliserEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem exists_small_cover [SecondCountableTopology G] (H : Subgroup G) [Discret
       ∀ i, ∀ a ∈ u i, ∀ b ∈ u i, a * b⁻¹ ∈ H → a = b := by
   obtain ⟨W, hWo, hW1, hW⟩ := exists_open_small H
   let s : G → Set G := fun g => (fun x => x * g⁻¹) ⁻¹' W
-  have hso : ∀ g, IsOpen (s g) := fun g => hWo.preimage (continuous_mul_right _)
+  have hso : ∀ g, IsOpen (s g) := fun g => hWo.preimage (continuous_mul_const _)
   obtain ⟨T, hTc, hT⟩ := TopologicalSpace.isOpen_iUnion_countable s hso
   have hcov : ∀ g, ∃ t ∈ T, g ∈ s t := by
     intro g
@@ -63,7 +67,7 @@ theorem exists_strict_domain [SecondCountableTopology G] [MeasurableSpace G] [Bo
       ext x; simp [A]
     rw [this]
     exact MeasurableSet.iUnion fun h =>
-      ((huo i).preimage (continuous_mul_left _)).measurableSet
+      ((huo i).preimage (continuous_const_mul _)).measurableSet
   let D : Set G := ⋃ i, (u i ∩ ⋂ j : Fin i, (A j)ᶜ)
   have hD : MeasurableSet D := MeasurableSet.iUnion fun i =>
     (huo i).measurableSet.inter (MeasurableSet.iInter fun j => (hAm j).compl)
@@ -244,7 +248,7 @@ theorem quotIntegral_unfold (hle : Γ₀ ≤ Γ) (hFd : IsFundamentalDomain Γ F
   rw [key]
   refine integral_congr_ae ?_
   have hmq : Measurable fun x => ∑' q : Γ ⧸ Γ₀.subgroupOf Γ, ‖F (((q.out : Γ) : G)⁻¹ * x)‖ₑ :=
-    Measurable.ennreal_tsum fun q => (hF.comp (measurable_const_mul _)).enorm
+    Measurable.tsum fun q => (hF.comp (measurable_const_mul _)).enorm
   filter_upwards [ae_lt_top hmq hint] with x hx
   refine tsum_complex_eq hle hD F hFH x ?_
   have h2 : ∑' γ : Γ, ‖D.indicator F ((γ : G) * x)‖ₑ ≠ ∞ := by

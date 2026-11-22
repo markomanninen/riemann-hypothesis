@@ -1,12 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.LinAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.FirstOrderLiftConstantPart
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.Claim2
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.DualEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.TpDual
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.ExistsSemilinearFunctionalNonzero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.LiftsSub
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.AlSel
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.LinAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.FirstOrderLiftConstantPart
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.Claim2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.DualEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.TpDual
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.ExistsSemilinearFunctionalNonzero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.LiftsSub
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.AlSel
+
+@[expose] public section
+
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
 theorem UpperTheory.V.Pa.pres :
@@ -50,8 +55,7 @@ theorem UpperTheory.V.Pa.pres :
     show Lifts S.h S.k _
     convert hL using 1
     funext j
-    simp only [Finset.sum_apply, Pi.smul_apply, Submodule.coe_sum, Submodule.coe_smul]
-    exact hlin _ _ _
+    simpa using hlin (Fin (S.k.g + 1)) c (fun i => (z i j : S.Bh →+ S.F))
   have hB : ∀ (e : ℕ) (α : Fin e → S.Tp), LinearIndependent S.F α →
       (∀ i j, Pi.single j (α i) ∈ U) → e + S.k.g * S.k.g ≤ D0 := by
     intro e α hα hs
@@ -94,9 +98,11 @@ theorem UpperTheory.V.Pa.pres :
       have ha := congrFun hr a
       simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply] at ha ⊢
       have hm : (∑ q, s q * cO q a) ∈ maximalIdeal S.OO := by
-        rw [← residue_eq_zero_iff, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← residue_eq_zero_iff, map_sum]
         simpa [map_mul] using ha
-      rw [← hker, RingHom.mem_ker, map_sum] at hm
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hker, RingHom.mem_ker, map_sum] at hm
       simpa [map_mul, hcO] using hm
     show residue S.OO (s p) = 0
     rw [residue_eq_zero_iff, ← hker, RingHom.mem_ker]
@@ -122,7 +128,8 @@ theorem UpperTheory.V.Pa.pres :
         intro k
         rw [hmulT α hα _ _ (hXm k), ← hXv k ⟨α, hα⟩, ← ho k]
         rfl
-      simp only [map_sub, map_sum, e2, e1, sub_self]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sub, map_sum, e2, e1, sub_self]
     rw [← sub_add_cancel b (∑ k, algebraMap S.OO S.Bh (o k) * Xb k)]
     refine Ideal.add_mem _ (Ideal.mem_sup_right hb'J) (Ideal.mem_sup_left ?_)
     exact Ideal.sum_mem _ fun k _ => Ideal.mul_mem_left _ _ (Ideal.subset_span ⟨k, rfl⟩)
@@ -138,10 +145,12 @@ theorem UpperTheory.V.Pa.pres :
       intro j
       have hj := hαdef j (∑ a, algebraMap S.OO S.Bh (cO (i, j) a) * Xb a)
       rw [hrF _ (hb j), zero_mul, sub_zero] at hj
-      rw [← hj, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hj, map_sum]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [hmulT _ (α j).2 _ _ (hXm a), hXv a (α j), ← hcO (i, j) a]
       rfl
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [e3]
     exact hrelα

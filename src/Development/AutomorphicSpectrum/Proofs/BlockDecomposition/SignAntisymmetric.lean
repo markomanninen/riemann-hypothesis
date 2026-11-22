@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PairStructureOnLine
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PairStructureOnLine
+
+@[expose] public section
 
 noncomputable section
 
@@ -124,11 +128,6 @@ theorem sg_val (B : Finset (Fin n × Fin n)) (hB : ∀ p ∈ B, p.1 < p.2) {a b 
   · exact key a b h
   · rw [sg_anti B b a]
     rcases key b a h with h' | h' <;> simp [h']
-
-theorem cyc (f : Fin n → Fin n → Fin n → ℝ) : ∑ a, ∑ b, ∑ c, f b c a = ∑ a, ∑ b, ∑ c, f a b c := by
-  rw [sum_comm]
-  refine sum_congr rfl fun b _ => ?_
-  rw [sum_comm]
 
 end GlobalTheory.CompanionTheory.RealMult.Short
 

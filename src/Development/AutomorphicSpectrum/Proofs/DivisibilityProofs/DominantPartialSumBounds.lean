@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
-import Development.WeilBound.CoreStatements.FlagImmersions.PartialSumOrderedBounds
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
+public import Development.WeilBound.CoreStatements.FlagImmersions.PartialSumOrderedBounds
+
+@[expose] public section
 
 open MvPolynomial Filter Topology GlobalTheory.CompanionTheory.Ar.Top
 

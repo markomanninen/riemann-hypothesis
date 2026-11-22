@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseChangeLevelFamilyIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralTwistedConjInvariant
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralProductGroup
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThLInvolutive
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseChangeLevelFamilyIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralTwistedConjInvariant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralProductGroup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThLInvolutive
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem twOrb_prod' (θ : G →* G) (θ' : G' →* G') (K : Subgroup G) (K' : Su
     GlobalTheory.BCT.OrbProd.twCent_prod θ θ' δ δ', ← finsum_prod_mul',
     ← finsum_comp_equiv (Equiv.ofBijective _ (GlobalTheory.BCT.OrbProd.dcPair_bij (twCent θ δ) K (twCent θ' δ') K'))]
   refine finsum_congr fun z => ?_
-  obtain ⟨t, k, ht, hk, hq⟩ := DoubleCoset.mk_out_eq_mul ((twCent θ δ).prod (twCent θ' δ')) (K.prod K')
+  obtain ⟨t, ht, k, hk, hq⟩ := DoubleCoset.mk_out_eq_mul ((twCent θ δ).prod (twCent θ' δ')) (K.prod K')
     (Quotient.out z.1, Quotient.out z.2)
   rw [Subgroup.mem_prod] at ht hk
   have hdc : GlobalTheory.BCT.OrbProd.dcPair (twCent θ δ) K (twCent θ' δ') K' z =
@@ -71,13 +75,11 @@ section Cl
 
 variable {G G' : Type} [Group G] [Group G']
 
-theorem twRel_equiv (θ : G →* G) : Equivalence (fun x y : G => ∃ g, y = g⁻¹ * x * θ g) where
-  refl x := ⟨1, by simp⟩
-  symm := by
-    rintro x y ⟨g, rfl⟩
+theorem twRel_equiv (θ : G →* G) : Equivalence (fun x y : G => ∃ g, y = g⁻¹ * x * θ g) := by
+  refine ⟨fun x => ⟨1, by simp⟩, ?_, ?_⟩
+  · rintro x y ⟨g, rfl⟩
     exact ⟨g⁻¹, by simp [mul_assoc]⟩
-  trans := by
-    rintro x y z ⟨g, rfl⟩ ⟨g', rfl⟩
+  · rintro x y z ⟨g, rfl⟩ ⟨g', rfl⟩
     exact ⟨g * g', by simp [mul_assoc]⟩
 
 def mkC (θ : G →* G) (x : G) : TwCl θ := Quot.mk _ x
@@ -127,19 +129,19 @@ theorem charpoly_conj {R m : Type} [CommRing R] [Fintype m] [DecidableEq m] (g X
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
 theorem rStab_index_ne_zero {n : ℕ} {w : Pl E} {K' : Subgroup (GLw n w)} {φ : GLw n w → ℂ}
-    (hK : IsLevel (thL n w) (GlobalTheory.LFun.KGL w n) K') (hφ : IsHecke K' φ) (δ x : GLw n w) :
-    (rStab fun k : GlobalTheory.LFun.KGL w n => φ ((x * k)⁻¹ * δ * thL n w (x * k))).index ≠ 0 := by
+    (hK : IsLevel (thL n w) (GlobalTheory.LFun.KGL w (n := n)) K') (hφ : IsHecke K' φ) (δ x : GLw n w) :
+    (rStab fun k : GlobalTheory.LFun.KGL w (n := n) => φ ((x * k)⁻¹ * δ * thL n w (x * k))).index ≠ 0 := by
   obtain ⟨hKo, -, hKθ⟩ := hK
   obtain ⟨-, hinv⟩ := hφ
-  have hcpt : CompactSpace (GlobalTheory.LFun.KGL w n) :=
+  have hcpt : CompactSpace (GlobalTheory.LFun.KGL w (n := n)) :=
     isCompact_iff_compactSpace.mp (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w n).2
-  have hopen : IsOpen ((K'.subgroupOf (GlobalTheory.LFun.KGL w n) : Subgroup (GlobalTheory.LFun.KGL w n)) :
-      Set (GlobalTheory.LFun.KGL w n)) := Subgroup.subgroupOf_isOpen (GlobalTheory.LFun.KGL w n) K' hKo
-  have hfin : Finite (GlobalTheory.LFun.KGL w n ⧸ K'.subgroupOf (GlobalTheory.LFun.KGL w n)) :=
+  have hopen : IsOpen ((K'.subgroupOf (GlobalTheory.LFun.KGL w (n := n)) : Subgroup (GlobalTheory.LFun.KGL w (n := n))) :
+      Set (GlobalTheory.LFun.KGL w (n := n))) := Subgroup.subgroupOf_isOpen (GlobalTheory.LFun.KGL w (n := n)) K' hKo
+  have hfin : Finite (GlobalTheory.LFun.KGL w (n := n) ⧸ K'.subgroupOf (GlobalTheory.LFun.KGL w (n := n))) :=
     Subgroup.quotient_finite_of_isOpen _ hopen
-  have hH : (K'.subgroupOf (GlobalTheory.LFun.KGL w n)).index ≠ 0 := Subgroup.index_ne_zero_of_finite
-  have hle : K'.subgroupOf (GlobalTheory.LFun.KGL w n) ≤
-      rStab fun k : GlobalTheory.LFun.KGL w n => φ ((x * k)⁻¹ * δ * thL n w (x * k)) := by
+  have hH : (K'.subgroupOf (GlobalTheory.LFun.KGL w (n := n))).index ≠ 0 := Subgroup.index_ne_zero_of_finite
+  have hle : K'.subgroupOf (GlobalTheory.LFun.KGL w (n := n)) ≤
+      rStab fun k : GlobalTheory.LFun.KGL w (n := n) => φ ((x * k)⁻¹ * δ * thL n w (x * k)) := by
     intro k hk
     rw [Subgroup.mem_subgroupOf] at hk
     rw [GlobalTheory.TwOrbConj.mem_rStab]
@@ -174,16 +176,16 @@ theorem nrmL_charpoly_twConj (n : ℕ) (w : Pl E) (g y : GLw n w) :
     exact charpoly_conj g _
 
 private theorem charpoly_nrmL_rep_eq_and_twOrb_rep_eq {n : ℕ} {w : Pl E} {K' : Subgroup (GLw n w)} {φ : GLw n w → ℂ}
-    (hK : IsLevel (thL n w) (GlobalTheory.LFun.KGL w n) K') (hφ : IsHecke K' φ) (x : GLw n w) :
+    (hK : IsLevel (thL n w) (GlobalTheory.LFun.KGL w (n := n)) K') (hφ : IsHecke K' φ) (x : GLw n w) :
     (nrmL n w (mkC (thL n w) x).rep).val.charpoly = (nrmL n w x).val.charpoly ∧
-      twOrb (thL n w) (GlobalTheory.LFun.KGL w n) (mkC (thL n w) x).rep φ =
-        twOrb (thL n w) (GlobalTheory.LFun.KGL w n) x φ := by
+      twOrb (thL n w) (GlobalTheory.LFun.KGL w (n := n)) (mkC (thL n w) x).rep φ =
+        twOrb (thL n w) (GlobalTheory.LFun.KGL w (n := n)) x φ := by
   obtain ⟨g, hg⟩ := rel_of_mkC_eq (thL n w) (mkC_rep (thL n w) (mkC (thL n w) x))
   constructor
   · have h := nrmL_charpoly_twConj n w g (mkC (thL n w) x).rep
     rw [← hg] at h
     exact h.symm
-  · have h := GlobalTheory.TwOrbConj.twOrb_twConj (GLw n w) (thL n w) (GlobalTheory.LFun.KGL w n) (mkC (thL n w) x).rep g φ
+  · have h := GlobalTheory.TwOrbConj.twOrb_twConj (GLw n w) (thL n w) (GlobalTheory.LFun.KGL w (n := n)) (mkC (thL n w) x).rep g φ
       (fun y => rStab_index_ne_zero hK hφ _ y)
     rw [← hg] at h
     exact h.symm
@@ -191,7 +193,7 @@ private theorem charpoly_nrmL_rep_eq_and_twOrb_rep_eq {n : ℕ} {w : Pl E} {K' :
 theorem stTw2_tens : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (a b : ℕ) (w : Pl E)
     (Q₁ Q₂ : (w.adicCompletion E)[X])
     (K₁ : Subgroup (GLw a w)) (K₂ : Subgroup (GLw b w)) (φ₁ : GLw a w → ℂ) (φ₂ : GLw b w → ℂ),
-    IsLevel (thL a w) (GlobalTheory.LFun.KGL w a) K₁ → IsLevel (thL b w) (GlobalTheory.LFun.KGL w b) K₂ → IsHecke K₁ φ₁ →
+    IsLevel (thL a w) (GlobalTheory.LFun.KGL w (n := a)) K₁ → IsLevel (thL b w) (GlobalTheory.LFun.KGL w (n := b)) K₂ → IsHecke K₁ φ₁ →
     IsHecke K₂ φ₂ → stTw2 a b w Q₁ Q₂ (tens φ₁ φ₂) = stTw a w Q₁ φ₁ * stTw b w Q₂ φ₂ := by
   intro E _ _ _ a b w Q₁ Q₂ K₁ K₂ φ₁ φ₂ h₁ h₂ h₃ h₄
   unfold stTw2 stTw tens clSum
@@ -200,9 +202,9 @@ theorem stTw2_tens : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (a b
   have hcl : clPair (thL a w) (thL b w) c = (mkC (thL a w) c.rep.1, mkC (thL b w) c.rep.2) := rfl
   obtain ⟨hc₁, ho₁⟩ := charpoly_nrmL_rep_eq_and_twOrb_rep_eq h₁ h₃ c.rep.1
   obtain ⟨hc₂, ho₂⟩ := charpoly_nrmL_rep_eq_and_twOrb_rep_eq h₂ h₄ c.rep.2
-  have ho : twOrb ((thL a w).prodMap (thL b w)) ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) c.rep
+  have ho : twOrb ((thL a w).prodMap (thL b w)) ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) c.rep
       (fun y => φ₁ y.1 * φ₂ y.2) =
-      twOrb (thL a w) (GlobalTheory.LFun.KGL w a) c.rep.1 φ₁ * twOrb (thL b w) (GlobalTheory.LFun.KGL w b) c.rep.2 φ₂ :=
+      twOrb (thL a w) (GlobalTheory.LFun.KGL w (n := a)) c.rep.1 φ₁ * twOrb (thL b w) (GlobalTheory.LFun.KGL w (n := b)) c.rep.2 φ₂ :=
     twOrb_prod' (thL a w) (thL b w) _ _ c.rep.1 c.rep.2 φ₁ φ₂ (fun x => rStab_index_ne_zero h₁ h₃ _ x)
       (fun x => rStab_index_ne_zero h₂ h₄ _ x)
   rw [Equiv.ofBijective_apply, hcl]

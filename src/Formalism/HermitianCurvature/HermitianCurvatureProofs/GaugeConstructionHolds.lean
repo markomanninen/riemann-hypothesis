@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreDone
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRRotK
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreDone
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRRotK
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.Gauge.GC
 

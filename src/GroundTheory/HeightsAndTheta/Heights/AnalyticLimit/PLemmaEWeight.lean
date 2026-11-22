@@ -1,12 +1,17 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshRegMax
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PChartLeviThGe
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLemmaEWeight
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PLemmaETailLog
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PKaehlerBound
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PLogNormHolo
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.EnergyStep
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshRegMax
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PChartLeviThGe
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLemmaEWeight
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PLemmaETailLog
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PKaehlerBound
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PLogNormHolo
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.EnergyStep
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit
@@ -132,8 +137,8 @@ theorem eventually_le_rSec {A : FinHolAtlas D X} {L : LocPot X} {s : X → X →
 def eWeightPair (L : LocPot X) (s : X → X → ℂ) (c₀ l : ℝ) (z : X) : Fin 2 → ℝ :=
   ![-(c₀ * rSec L s z), -l]
 
-open Classical in
 
+open Classical in
 def eWeight (L : LocPot X) (s : X → X → ℂ) (c₀ l : ℝ) (z : X) : ℝ :=
   if z ∈ secOpen s then regMax 1 (eWeightPair L s c₀ l z) - 1 else -l - 1
 

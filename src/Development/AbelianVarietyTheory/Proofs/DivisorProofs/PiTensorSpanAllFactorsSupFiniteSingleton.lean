@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ActAtApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ActAtApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,6 @@ theorem tensAll_sup_le {T : Type} [Fintype T] [DecidableEq T] {V : T → Type} [
   · subst hs
     refine Submodule.mem_sup_left (Submodule.subset_span ⟨u, hu, ?_⟩)
     congr 1
-    funext w
     simp
   · obtain ⟨w, hw⟩ : ∃ w, w ∉ s := by
       by_contra h

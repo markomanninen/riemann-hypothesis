@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.OrbJetBase
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitPowerSeriesCoefficients.ExpSum
+module
+
+public import Formalism.PeriodIntegrals.OrbJetBase
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitPowerSeriesCoefficients.ExpSum
+
+@[expose] public section
 
 noncomputable section
 

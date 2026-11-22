@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StepPtRepPfA
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StepPtRepPfA
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,10 +90,6 @@ private lemma hJ_smul_right_gauge_lattice_shifts (c : ℂ) (x y : Fin n → ℂ)
 
 theorem frame_dual_z_pairing_one : hJ ε F.zd F.z = 1 := by
   rw [zd, hJ_smul_left_eq_star_mul, F.star_cz, F.zz]
-  field_simp [F.T_ne]
-
-theorem z_zd : hJ ε F.z F.zd = 1 := by
-  rw [zd, hJ_smul_right_gauge_lattice_shifts, F.zz]
   field_simp [F.T_ne]
 
 theorem zd_zd : hJ ε F.zd F.zd = -(F.T : ℂ)⁻¹ := by
@@ -393,13 +393,13 @@ theorem solveHerm (Z Q : Matrix (Fin (m + 1)) (Fin (m + 1)) ℂ) (hZ : IsUnit Z.
 
 theorem dl_top {r : ℕ} (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) : Dl Z (r + 1) = Z.det := by
   unfold Dl
-  rw [dif_pos le_rfl]
+  rw [dite_eq_left le_rfl]
   congr 1
 
 theorem dl_r {r : ℕ} (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) :
     Dl Z r = adjugate Z (Fin.last r) (Fin.last r) := by
   unfold Dl
-  rw [dif_pos (Nat.le_succ r), Matrix.adjugate_fin_succ_eq_det_submatrix, Fin.succAbove_last]
+  rw [dite_eq_left (Nat.le_succ r), Matrix.adjugate_fin_succ_eq_det_submatrix, Fin.succAbove_last]
   have h1 : (Fin.castLE (Nat.le_succ r) : Fin r → Fin (r + 1)) = Fin.castSucc := by
     funext i
     exact Fin.ext rfl

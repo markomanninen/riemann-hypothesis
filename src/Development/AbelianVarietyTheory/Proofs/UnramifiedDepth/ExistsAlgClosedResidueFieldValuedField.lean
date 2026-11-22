@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.Interface
-import Formalism.LocalToGlobal.CharacterGerms.HostTraceIdentity
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CubWeilOfInjective
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.Interface
+public import Formalism.LocalToGlobal.CharacterGerms.HostTraceIdentity
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CubWeilOfInjective
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ (PS ev pt addOf)
@@ -47,16 +52,8 @@ theorem mm_isMaximal : (mm V).IsMaximal := by
     rw [← hyx]
     exact J.mul_mem_left y hxJ
 
-theorem integers : (AddValuation.toValuation V.v).Integers V.RR where
-  hom_inj := Subtype.val_injective
-  map_le_one := fun r => by
-    show 0 ≤ V.v (r : C)
-    exact nonneg V r
-  exists_of_le_one := fun {r} h => by
-    have h' : 0 ≤ V.v r := h
-    refine ⟨⟨r, ?_⟩, rfl⟩
-    show ((0 : ℝ) : WithTop ℝ) ≤ V.v r
-    simpa using h'
+theorem integers : (AddValuation.toValuation V.v).Integers V.RR :=
+  Valuation.integer.integers (AddValuation.toValuation V.v)
 
 theorem isAlgClosed_of_surjective [IsAlgClosed C] {Ω : Type} [Field Ω] (ρ : V.RR →+* Ω)
     (hρ : Function.Surjective ρ) : IsAlgClosed Ω := by

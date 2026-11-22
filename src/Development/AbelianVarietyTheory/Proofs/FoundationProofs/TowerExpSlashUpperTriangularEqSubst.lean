@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsRootOfIsAlgClosed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsRootOfIsAlgClosed
+
+@[expose] public section
 
 namespace GlobalTheory.CyclotomicQExpansion
 open GlobalTheory.KZ
@@ -22,7 +26,7 @@ theorem exp_sl_upper (Ω : Type) [Field Ω] [Algebra ℚ Ω] (ε : Ω →+* ℂ)
     rw [this]; exact div_pos hdet (by positivity)
   ext s
   unfold sub scale
-  rw [dif_pos hpos]
+  rw [dite_eq_left hpos]
   set e := (OrderIso.mulLeft₀ (ent g 0 0 / ent g 1 1) hpos).toOrderEmbedding with he
   have hs : s = e (s * ent g 1 1 / ent g 0 0) := by
     simp only [he, RelIso.coe_toRelEmbedding, OrderIso.coe_toOrderEmbedding, OrderIso.mulLeft₀_apply]

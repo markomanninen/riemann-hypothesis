@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
-import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.CenteredPerpendicularSets
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointLatticeIntersectionSelfDualProperties
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrthogonalCanonicalFiltrationStepsAutPoint
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InvLeSizeQAboveOrthogonalSaturatedStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ComplexSpanAtRealPlaceAutPointLatticePropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SubquotientCoveringRadiusRealPlacesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
+public import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.CenteredPerpendicularSets
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointLatticeIntersectionSelfDualProperties
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrthogonalCanonicalFiltrationStepsAutPoint
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InvLeSizeQAboveOrthogonalSaturatedStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ComplexSpanAtRealPlaceAutPointLatticePropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SubquotientCoveringRadiusRealPlacesStatement
+
+@[expose] public section
 
 open GlobalTheory.Count GlobalTheory.IndefiniteRowSideFullHecke.CenteredPerpendicularSets Formalism.MainNotions.S Formalism.HN Formalism.REAL Matrix NumberField Finset
 
@@ -18,36 +22,39 @@ section Form
 
 variable {K : Type} [Field K] [StarRing K] {n : ℕ}
 
-local notation "h" => Formalism.UG.hform (starRingEnd K)
-
 theorem hform_eq (J : Matrix (Fin n) (Fin n) K) (x y : Fin n → K) :
-    h J x y = star x ⬝ᵥ J *ᵥ y := by
+    Formalism.UG.hform (starRingEnd K) J x y = star x ⬝ᵥ J *ᵥ y := by
   simp [Formalism.UG.hform, dotProduct, mulVec, Finset.mul_sum, mul_assoc, starRingEnd_apply]
 
 def adj (J M : Matrix (Fin n) (Fin n) K) : Matrix (Fin n) (Fin n) K := J⁻¹ * Mᴴ * J
 
 theorem adj_left {J : Matrix (Fin n) (Fin n) K} (hd : J.det ≠ 0) (M : Matrix (Fin n) (Fin n) K)
-    (u v : Fin n → K) : h J (M *ᵥ u) v = h J u (adj J M *ᵥ v) := by
+    (u v : Fin n → K) :
+    Formalism.UG.hform (starRingEnd K) J (M *ᵥ u) v =
+      Formalism.UG.hform (starRingEnd K) J u (adj J M *ᵥ v) := by
   rw [hform_eq, hform_eq, adj, mulVec_mulVec, ← Matrix.mul_assoc, ← Matrix.mul_assoc,
     Matrix.mul_nonsing_inv _ (Ne.isUnit hd), Matrix.one_mul, star_mulVec, ← mulVec_mulVec,
     dotProduct_mulVec (star u) Mᴴ]
 
 theorem adj_right {J : Matrix (Fin n) (Fin n) K} (hJ : Formalism.UG.IsHerm (starRingEnd K) J)
     (hd : J.det ≠ 0) (M : Matrix (Fin n) (Fin n) K)
-    (u v : Fin n → K) : h J (adj J M *ᵥ u) v = h J u (M *ᵥ v) := by
+    (u v : Fin n → K) :
+    Formalism.UG.hform (starRingEnd K) J (adj J M *ᵥ u) v =
+      Formalism.UG.hform (starRingEnd K) J u (M *ᵥ v) := by
   rw [PerpStep.hform_swap hJ, ← adj_left hd, ← PerpStep.hform_swap hJ]
 
 theorem mem_of_perp_perp {J : Matrix (Fin n) (Fin n) K} (hJ : Formalism.UG.IsHerm (starRingEnd K) J)
     (hd : J.det ≠ 0) (W : Submodule K (Fin n → K)) (y : Fin n → K)
-    (hy : ∀ p ∈ perpSet (starRingEnd K) J W, h J p y = 0) : y ∈ W := by
+    (hy : ∀ p ∈ perpSet (starRingEnd K) J W, Formalism.UG.hform (starRingEnd K) J p y = 0) : y ∈ W := by
   by_contra hn
   obtain ⟨f, hf, hW⟩ := W.exists_dual_map_eq_bot_of_notMem hn inferInstance
   set c : Fin n → K := fun j => f (Pi.single j 1) with hc
-  have key : ∀ z, h J (star (c ᵥ* J⁻¹)) z = f z := by
+  have key : ∀ z, Formalism.UG.hform (starRingEnd K) J (star (c ᵥ* J⁻¹)) z = f z := by
     intro z
     rw [hform_eq, star_star, dotProduct_mulVec, vecMul_vecMul,
       Matrix.nonsing_inv_mul _ (Ne.isUnit hd), vecMul_one]
-    conv_rhs => rw [← Finset.univ_sum_single z, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← Finset.univ_sum_single z, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     have : (Pi.single j (z j) : Fin n → K) = z j • (Pi.single j 1 : Fin n → K) := by
       rw [← Pi.single_smul, smul_eq_mul, mul_one]
@@ -61,7 +68,8 @@ theorem mem_of_perp_perp {J : Matrix (Fin n) (Fin n) K} (hJ : Formalism.UG.IsHer
   rw [PerpStep.hform_swap hJ, key, h0, star_zero]
 
 theorem eq_zero_of_perp {J : Matrix (Fin n) (Fin n) K} (hJ : Formalism.UG.IsHerm (starRingEnd K) J)
-    (hd : J.det ≠ 0) (y : Fin n → K) (hy : ∀ p, h J p y = 0) : y = 0 :=
+    (hd : J.det ≠ 0) (y : Fin n → K)
+    (hy : ∀ p, Formalism.UG.hform (starRingEnd K) J p y = 0) : y = 0 :=
   (Submodule.mem_bot K).1 (mem_of_perp_perp hJ hd ⊥ y fun p _ => hy p)
 
 theorem adj_of_skew {J Z : Matrix (Fin n) (Fin n) K} (hJ : Formalism.UG.IsHerm (starRingEnd K) J)
@@ -120,9 +128,6 @@ end Form
 section Norm
 
 variable {n : ℕ}
-
-theorem hs_nonneg' (a : Matrix (Fin n) (Fin n) ℂ) : 0 ≤ hs a := by
-  unfold hs; positivity
 
 theorem hs_sub_le (a b : Matrix (Fin n) (Fin n) ℂ) : hs (a - b) ≤ 2 * hs a + 2 * hs b := by
   unfold hs

@@ -1,24 +1,24 @@
-import ReciprocityTheory.SemistableReduction.FinrankRestrictTotalDegree
-import ReciprocityTheory.SemistableReduction.RankEqualityHolds
-import ReciprocityTheory.SemistableReduction.CauchyInequalityOnTorus
-import ReciprocityTheory.SemistableReduction.GenericImageFinite
-import ReciprocityTheory.SemistableReduction.IntegralClosureRankAndResidueTrdegLe
-import ReciprocityTheory.SemistableReduction.GaussExtensionAndResidueTrdegEq
-import Mathlib
-import ReciprocityTheory.SemistableReduction.DetSubtypeCompAssociatedProd
-import ReciprocityTheory.SemistableReduction.NormValuationEqFactorization
+module
+
+public import ReciprocityTheory.SemistableReduction.FinrankRestrictTotalDegree
+public import Mathlib
+public import ReciprocityTheory.SemistableReduction.ComapInclusionIsLocalHom
+public import ReciprocityTheory.SemistableReduction.CauchyInequalityOnTorus
+public import ReciprocityTheory.SemistableReduction.GenericImageFinite
+public import ReciprocityTheory.SemistableReduction.IntegralClosureRankAndResidueTrdegLe
+public import ReciprocityTheory.SemistableReduction.GaussExtensionAndResidueTrdegEq
+public import ReciprocityTheory.SemistableReduction.DetSubtypeCompAssociatedProd
+public import ReciprocityTheory.SemistableReduction.NormValuationEqFactorization
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights.Closed
 
 open ReciprocityTheory.MultiplicativeHeights
 
-theorem rank : RankStatement := rank_equality_holds
-
 theorem fieldOfS : FieldOfSStatement := genericImageFinite
 
 theorem dedekindRank : DedekindRankStatement := integralClosureRank_and_residueTrdegLe.1
-
-theorem tr : TRStatement := residueTrdegLe
 
 theorem residueTrdeg : ResidueTrdegStatement := residueTrdeg_holds residueTrdegLe
 

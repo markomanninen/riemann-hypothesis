@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,10 +43,10 @@ theorem norm_factorial_inv_le (p : ℕ) [hp : Fact p.Prime] (h : ‖(p : C)‖ =
     hp.out.ne_one
   have hval : padicValNat p n.factorial = v := by
     have hm0 : m ≠ 0 := by rintro rfl; exact hm (dvd_zero _)
-    rw [hv, padicValNat.mul (pow_ne_zero _ hp.out.ne_zero) hm0, padicValNat.prime_pow,
-      padicValNat.eq_zero_of_not_dvd hm, add_zero]
+    rw [Nat.padicValNat_def, hv, Nat.multiplicity_mul (pow_ne_zero _ hp.out.ne_zero) hm0,
+      Nat.multiplicity_prime_pow, multiplicity_eq_zero_of_not_dvd hm, add_zero]
   have hle : (p - 1) * v ≤ n := by
-    rw [← hval, sub_one_mul_padicValNat_factorial]
+    rw [← hval, Nat.padicValNat_def, hp.out.sub_one_mul_multiplicity_factorial]
     exact Nat.sub_le _ _
   have hle' : ((p : ℝ) - 1) * v ≤ n := by
     have : (((p - 1) * v : ℕ) : ℝ) ≤ n := by exact_mod_cast hle

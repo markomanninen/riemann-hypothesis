@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.ChainLawPhiPf
-import Formalism.LocalToGlobal.Columns.ChainTopLawB
+module
+
+public import Formalism.LocalToGlobal.Columns.ChainLawPhiPf
+public import Formalism.LocalToGlobal.Columns.ChainTopLawB
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -14,7 +18,7 @@ variable {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K] {P : Heig
 theorem clPfUV_one {k : Type} [CommRing k] (χ : kˣ →* Kˣ) : clPfUV χ (1 : k) = 1 := by
   classical
   unfold clPfUV
-  rw [dif_pos isUnit_one]
+  rw [dite_eq_left isUnit_one]
   have : (isUnit_one : IsUnit (1 : k)).unit = 1 := Units.ext rfl
   rw [this, map_one, Units.val_one]
 
@@ -33,7 +37,7 @@ private theorem clPfRed_one_eq_ite {k₀ n c : ℕ} (hk : k₀ ≤ n) {p p' : �
   have hf := fIdx_lt' (k₀ := k₀) (c := c) hk hp
   simp only [LinearEquiv.coe_toLinearMap, LinearEquiv.coe_one, id]
   unfold Loc.atN Loc.eN
-  rw [dif_pos hf]
+  rw [dite_eq_left hf]
   by_cases h : p = p'
   · subst h
     simp [redP_one]

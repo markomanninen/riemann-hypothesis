@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
+
+@[expose] public section
 
 open Matrix Formalism.IndefR.Datum
 open scoped ComplexOrder MatrixOrder

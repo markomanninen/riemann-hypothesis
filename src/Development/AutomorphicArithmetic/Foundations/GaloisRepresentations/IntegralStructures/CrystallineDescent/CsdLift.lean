@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.CrystallineDescent.PatchOneAlt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CsdScopeOfLift
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PolarizedPairBaseChangePolarizedSameWeight
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.CrystallineDescent.PatchOneAlt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CsdScopeOfLift
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PolarizedPairBaseChangePolarizedSameWeight
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -13,9 +18,11 @@ open UpperTheory.Gal.Int.Core
 theorem UpperTheory.Gal.Int.Core.csdLift_holds :
     CsdLift := by
   intro hJ hG E M _ _ _ _ _ _ _ l a ha π P hL hS
+  obtain ⟨hreg, hpol, -⟩ := hS
+  have hreg' : (CG.mk P).IsRegAlg := (CG.isRegAlg_iff _).2 fun τ => by
+    rw [hL.inf τ]
+    exact (CG.isRegAlg_iff _).1 hreg (τ.comp (algebraMap E M))
   have hF := GlobalTheory.automorphicFormsFiniteGL
-  obtain ⟨⟨χ', hreg', -⟩, -⟩ := GlobalTheory.LiftPolar.main hF hJ hG E M l a ha π _ P hL hS
-  obtain ⟨-, hpol, -⟩ := hS
   refine ⟨hreg', ⟨fun v => by rw [locInf_pow, quadChar_locInf], ?_⟩, trivial⟩
   rw [GlobalTheory.CsdLift.compNorm_quadChar_pow]
   refine UpperTheory.polOfSat_of_thetaSat UpperTheory.theta_satake_parameters_inverse hJ hG M a ha P 1 ?_

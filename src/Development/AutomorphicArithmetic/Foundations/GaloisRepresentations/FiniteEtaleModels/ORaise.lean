@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.TExt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHarrisTaylorModuliObjectPullback
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenModelEqGenericFibre
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.TExt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHarrisTaylorModuliObjectPullback
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenModelEqGenericFibre
+
+@[expose] public section
 
 set_option autoImplicit false
 

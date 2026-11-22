@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VarietyStalkRegularDim
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsPresents
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsFiniteSubsetNonzeroLocus
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenericResidueLinearIndependence
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.InterNumEqSumLengthMulInterNumRed
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GoodStalks
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VarietyStalkRegularDim
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsPresents
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsFiniteSubsetNonzeroLocus
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenericResidueLinearIndependence
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.InterNumEqSumLengthMulInterNumRed
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GoodStalks
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
-open GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts GlobalTheory.Published.ArDegreeModel GlobalTheory.QCoh
+open GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts GlobalTheory.QCoh
 open IsLocalRing
 open GlobalTheory.CompanionTheory.KoszulCount
 set_option maxHeartbeats 1000000 in

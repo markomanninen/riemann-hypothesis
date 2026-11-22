@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBergman
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartCover
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.UnifBergmanLocal
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBergman
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartCover
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.UnifBergmanLocal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

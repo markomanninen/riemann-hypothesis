@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NodeFunctionLeviDecompositionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStable
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NodeFunctionLeviDecompositionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStable
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix MeasureTheory Filter Topology
 open GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.DiscSpec GlobalTheory.CompanionTheory.CTFin PositivityTheory.Rg.Rs PositivityTheory.Rg.Rs.InducedTensorMap
 open PositivityTheory.Rg.BcB.E PositivityTheory.Rg.BcB.SpectralAccumulation GlobalTheory.CompanionTheory.LimV
@@ -8,10 +13,10 @@ open scoped ContDiff
 
 namespace GlobalTheory.CompanionTheory.LimV.NodeFlat
 
-theorem flatFn_nodeFn : ∀ {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {r s : ℕ} (e₁ : GA E r → ℂ) (e₂ : GA E s → ℂ), FlatFn e₁ → FlatFn e₂ → FlatFn (nodeFn e₁ e₂) := by
+theorem flatFn_nodeFn : ∀ {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {r s : ℕ} (e₁ : GA E r → ℂ) (e₂ : GA E s → ℂ), FlatFn e₁ → FlatFn e₂ → FlatFn (nodeFn e₁ e₂) := by
   intro E _ _ _ r s e₁ e₂ h₁ h₂
   have ap : ∀ (u : BlockIx (r + s) r → Ad E) (m : GA E r × GA E s) (k : Kinf E (r + s))
-      (c : GL (Fin (r + s)) (Af E)), c ∈ KO E (r + s) →
+      (c : GL (Fin (r + s)) (Af E)), c ∈ GlobalTheory.CompanionTheory.LimV.KO E (r + s) →
       nodeFn e₁ e₂ (unip u * lev (Ad E) r s m * cf (r + s) k c) = e₁ m.1 * e₂ m.2 :=
     fun u m k c hc => GlobalTheory.T.node_function_levi_decomposition e₁ e₂ h₁ h₂ u m k c hc
   have hleft : ∀ (v : BlockIx (r + s) r → Ad E) (x : GA E (r + s)),
@@ -19,12 +24,12 @@ theorem flatFn_nodeFn : ∀ {E : Type} [Field E] [NumberField E] [IsTotallyCompl
     intro v x
     obtain ⟨u, m, k, c, hc, rfl⟩ := exists_iw x
     rw [← mul_assoc, ← mul_assoc, ← PositivityTheory.Rg.Rs.InducedTensorMap.D.unip_add', ap _ _ _ _ hc, ap _ _ _ _ hc]
-  have hright : ∀ (x : GA E (r + s)) (k' : Kinf E (r + s)), ∀ c' ∈ KO E (r + s),
+  have hright : ∀ (x : GA E (r + s)) (k' : Kinf E (r + s)), ∀ c' ∈ GlobalTheory.CompanionTheory.LimV.KO E (r + s),
       nodeFn e₁ e₂ (x * cf (r + s) k' c') = nodeFn e₁ e₂ x := by
     intro x k' c' hc'
     obtain ⟨u, m, k, c, hc, rfl⟩ := exists_iw x
     rw [mul_assoc _ (cf (r + s) k c), PositivityTheory.Rg.Rs.InducedTensorMap.cf_mul,
-      ap _ _ _ _ ((KO E (r + s)).mul_mem hc hc'), ap _ _ _ _ hc]
+      ap _ _ _ _ ((GlobalTheory.CompanionTheory.LimV.KO E (r + s)).mul_mem hc hc'), ap _ _ _ _ hc]
   have key : ∀ m : GA E r × GA E s,
       ContDiffAt ℝ ∞ (chart (nodeFn e₁ e₂) (lev (Ad E) r s m)) (oneL E (r + s)) := by
     intro m
@@ -43,7 +48,7 @@ theorem flatFn_nodeFn : ∀ {E : Type} [Field E] [NumberField E] [IsTotallyCompl
       rfl
     conv_lhs => rw [hyw, chart_val]
     obtain ⟨v, hv⟩ := lev_mul_infGL m (u y) (b₁ y) (b₂ y) (κ y)
-    rw [hv, ap _ _ _ _ ((KO E (r + s)).one_mem)]
+    rw [hv, ap _ _ _ _ ((GlobalTheory.CompanionTheory.LimV.KO E (r + s)).one_mem)]
   refine ⟨fun x => ?_, hright, ?_⟩
   · obtain ⟨u, m, k, c, hc, rfl⟩ := exists_iw x
     rw [ap _ _ _ _ hc]

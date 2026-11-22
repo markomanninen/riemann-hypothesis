@@ -1,5 +1,10 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.GlobSerreSt
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.Coords
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.GlobSerreSt
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.Coords
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 noncomputable section
@@ -69,14 +74,14 @@ theorem ev_str {W : X.Opens} (T : Thick (LL q)) (h : InU W T) (a : O) :
   (evalAt_base q (Ideal.Quotient.mk ⊥) (show PtOver X q (Ideal.Quotient.mk (⊥ : Ideal O)) (T.B ⧸ T.J) from T.y).1.1 (pt T)
     (show PtOver X q (Ideal.Quotient.mk (⊥ : Ideal O)) (T.B ⧸ T.J) from T.y).2 h a).trans (T.w a)
 
-open Classical in
 
+open Classical in
 def lft (W : X.Opens) (T : Thick (LL q)) (f : Γ(X, W)) : T.B :=
   if h : InU W T then Function.surjInv Ideal.Quotient.mk_surjective (ev T h f) else 0
 
 theorem lft_spec {W : X.Opens} (T : Thick (LL q)) (h : InU W T) (f : Γ(X, W)) :
     Ideal.Quotient.mk T.J (lft W T f) = ev T h f := by
-  rw [lft, dif_pos h]
+  rw [lft, dite_eq_left h]
   exact Function.surjInv_eq _ _
 
 def IsLift (W : X.Opens) {d : ℕ} (t : Fin d → Γ(X, W)) (u : Fin d → ∀ T : Thick (LL q), T.B) : Prop :=

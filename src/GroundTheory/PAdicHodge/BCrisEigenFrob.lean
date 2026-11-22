@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.PAdicHodge.BCrisEigenWitt
-import GroundTheory.PAdicHodge.LocalBridge
-import GroundTheory.PAdicHodge.UnramifiedACris
-import GroundTheory.PAdicHodge.UnramifiedClosure
-import GroundTheory.LocalFields.WeilGroupDefs
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.BCrisEigenWitt
+public import GroundTheory.PAdicHodge.LocalBridge
+public import GroundTheory.PAdicHodge.UnramifiedACris
+public import GroundTheory.PAdicHodge.UnramifiedClosure
+public import GroundTheory.LocalFields.WeilGroupDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

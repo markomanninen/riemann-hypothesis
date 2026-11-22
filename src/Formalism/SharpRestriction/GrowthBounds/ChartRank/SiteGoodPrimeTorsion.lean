@@ -1,15 +1,19 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypVinRec
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypInvLe
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypForms
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypEvChain
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypLat
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypChi
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.IntWOfPow
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypFin
-import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ValIntN
-import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.TiedCls
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocTiesOf
-import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypVinRec
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypInvLe
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypForms
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypEvChain
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypLat
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypChi
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.IntWOfPow
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypFin
+public import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ValIntN
+public import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ClsChartedLabAt
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocTiesOf
+public import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,8 +33,8 @@ section Step
 variable {j : ℕ} (hj : j + 1 ≤ D.R.m) {C : ColumnChain D.R D.what₂.Tau (D.hcW u)} {A : ColumnsAtT D.R C} {P : PeriodMap D.R C}
   {M : MemberForms D.what₂.LL D.what₂.embLL D.what₂.places D.what₂.Tau (D.hcW u) C A P}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 structure StepTies (Fo : FormsIn M (j + 1) hj) (Lc : LocIn X0 u w h Lv j Fo.Ch) (Gt : GatTies D) (c : LatCmp D) : Prop where
 
   frRat : ∀ β, FrRatJ (Lc.t β) Lc.B
@@ -63,39 +67,72 @@ theorem StepTies.chi (S : StepTies hj Fo Lc Gt c) (β : Fo.Ch) (κ : (Fo.K β).l
     ∃ r ∈ intW D.what₂.places w, r⁻¹ ∈ intW D.what₂.places w ∧ D.what₂.embLL r = ((Fo.K β).lev.chi κ : ℂ) :=
   chiUnit_of hj (Fo.K β).lev (S.sameU β) (c.embW u w h) (S.psi β) S.bad_p (fun x => c.embW_int u w h x) κ
 
+
 set_option maxHeartbeats 4000000 in
+theorem StepTies.ties (S : StepTies hj Fo Lc Gt c) (β : Fo.Ch) : LocTiesR hj Fo Lc (c.embW u w h) β :=
+  { frRat := S.frRat β
+    sameU := S.sameU β
+    hypT := S.hypT β
+    bad_p := S.bad_p
+    std := S.std
+    psi := S.psi β
+    chiRat := fun κ => let ⟨r, _, _, hr⟩ := S.chi β κ; ⟨r, hr⟩
+    chRat := S.chRat β }
 
-theorem StepTies.ties (S : StepTies hj Fo Lc Gt c) (β : Fo.Ch) : LocTiesR hj Fo Lc (c.embW u w h) β where
-  frRat := S.frRat β
-  sameU := S.sameU β
-  hypT := S.hypT β
-  bad_p := S.bad_p
-  std := S.std
-  psi := S.psi β
-  chiRat := fun κ => let ⟨r, _, _, hr⟩ := S.chi β κ; ⟨r, hr⟩
-  chRat := S.chRat β
-
-theorem StepTies.lat (S : StepTies hj Fo Lc Gt c) (β : Fo.Ch) : LatTies hj w Fo β (Lc.Lb β) where
-  siteGood_prime_torsion := S.siteGood_prime_torsion
-  Lb_eq := S.Lb_eq β
-  lat := fun cl => isLattice_chart (Fo.K β) cl
-  chi := S.chi β
+theorem StepTies.lat (S : StepTies hj Fo Lc Gt c) (β : Fo.Ch) : LatTies hj w Fo β (Lc.Lb β) :=
+  { siteGood_prime_torsion := S.siteGood_prime_torsion
+    Lb_eq := S.Lb_eq β
+    lat := fun cl => isLattice_chart (Fo.K β) cl
+    chi := S.chi β }
 
 theorem StepTies.core (S : StepTies hj Fo Lc Gt c) (K : CmpTied D X0 T Gt c) (ht : Fl.t = D.R.t) (hF : FillTie Gt u w h Fl) (β : Fo.Ch) :
     (stepInOf hj Fo Lc (Gt.gat_pos u w h)).Core (c.embW u w h) β :=
   core_of_R hj K ht hF (S.ties β)
 
 theorem StepTies.valIntN (S : StepTies hj Fo Lc Gt c) (K : CmpTied D X0 T Gt c) (ht : Fl.t = D.R.t) (hF : FillTie Gt u w h Fl) :
-    (stepInOf hj Fo Lc (Gt.gat_pos u w h)).ValIntN (c.embW u w h) w :=
-  valIntN_rec hj (c.embW u w h) (fun β => locTies_of hj K ht hF (S.ties β)) Formalism.L2.G.RelativeIndexFlags.blockRationality_holds
+    (stepInOf hj Fo Lc (Gt.gat_pos u w h)).ValIntN (c.embW u w h) w := by
+  have ties (β : Fo.Ch) : LocTies hj Fo Lc (Gt.gat_pos u w h) (c.embW u w h) β :=
+    { frRat := S.frRat β
+      sameU := S.sameU β
+      hypT := S.hypT β
+      bad_p := S.bad_p
+      std := S.std
+      pos_emb := fun v s x => locJ_pos_emb hj (Lc.t β) Lc.B K v s x
+      wt := StepIn.wt_of (M := M) Gt w h Lv ht hF j hj (stepInOf hj Fo Lc (Gt.gat_pos u w h)) rfl β
+      psi := S.psi β
+      chiRat := (S.ties β).chiRat
+      chRat := S.chRat β }
+  exact valIntN_rec hj (c.embW u w h) ties Formalism.L2.G.RelativeIndexFlags.blockRationality_holds
     ((D.gat u w h).P.setting (plc Gt u w h)).frac_O (fun x => c.embW_int u w h x) S.lat
 
 theorem StepTies.twUnit (S : StepTies hj Fo Lc Gt c) (K : CmpTied D X0 T Gt c) (ht : Fl.t = D.R.t) (hF : FillTie Gt u w h Fl) (β : Fo.Ch) :
-    (stepInOf hj Fo Lc (Gt.gat_pos u w h)).TwUnit w β :=
-  twUnit_of (stepInOf hj Fo Lc (Gt.gat_pos u w h)) (c.embW u w h) w β (S.core K ht hF β) (fun x => c.embW_int u w h x) (latIn_of hj (S.ties β).frRat (S.lat β))
+    (stepInOf hj Fo Lc (Gt.gat_pos u w h)).TwUnit w β := by
+  have lat : LatIn (stepInOf hj Fo Lc (Gt.gat_pos u w h)) w β :=
+    { prime := h.1
+      resChar := rfl
+      siteGood_prime_torsion := S.siteGood_prime_torsion
+      alg := fun v a => (X0.g u w h).spl_alg _ ((X0.g u w h).pl v).2 a
+      base := fun v t =>
+        Formalism.L2.G.RelativeIndexFlags.frlat_re (rankN D (j + 1) hj) ((X0.g u w h).pl v).1
+          ((X0.g u w h).spl _ ((X0.g u w h).pl v).2) (Lc.Lb β) Lc.B
+          ((Lc.t β).fr _ ((X0.g u w h).pl v).2) (S.frRat β _ _) ((Lc.t β).fr_lat _ ((X0.g u w h).pl v).2)
+          (Fo.K β).lev.Lb (S.Lb_eq β) t
+      lat := (S.lat β).lat
+      chi := S.chi β }
+  exact twUnit_of (stepInOf hj Fo Lc (Gt.gat_pos u w h)) (c.embW u w h) w β (S.core K ht hF β)
+    (fun x => c.embW_int u w h x) lat
 
-theorem StepTies.chX (S : StepTies hj Fo Lc Gt c) : ChX (stepInOf hj Fo Lc (Gt.gat_pos u w h)) :=
-  chX_stepInOf hj Fo Lc (Gt.gat_pos u w h) (fun β => (S.ties β).sameU) (fun β => (S.ties β).frRat) S.hypC
+theorem StepTies.chX (S : StepTies hj Fo Lc Gt c) : ChX (stepInOf hj Fo Lc (Gt.gat_pos u w h)) := by
+  have charts : ChX (stepInOf hj Fo Lc (Gt.gat_pos u w h)) := by
+    refine { hypC := ?_, inj := ?_, onto := ?_, cinj := ?_ }
+    all_goals
+      intro β
+      let : Fintype (Lc.cmpt β) := Lc.fin β
+    · exact locHypC_locJ hj (Lc.t β) Lc.B (Fo.K β).lev (S.sameU β) (S.frRat β) (S.hypC β)
+    · exact fun a => gamI_inj_locJ hj (Lc.t β) Lc.B a
+    · exact fun a => gamOnto_locJ hj (Lc.t β) Lc.B (Fo.K β).lev (S.sameU β) a
+    · exact compInj_locJ hj (Lc.t β) Lc.B (Fo.K β).lev (S.sameU β)
+  exact charts
 
 end Step
 
@@ -153,46 +190,27 @@ structure HypTies (Z : AtIn X0 Tw u μ w h Lv) (Gt : GatTies D) (c : LatCmp D) :
   fill : FillTie Gt u w h Fl
   step : ∀ j hj, StepTies hj (Z.Fo j hj) (Z.Lc j hj) Gt c
 
-theorem HypTies.toI {Z : AtIn X0 Tw u μ w h Lv} (A : HypTies Z Gt c) : HypTiesI X0 (Z.I Gt) Gt c where
-  fl_t := A.fl_t
-  fill := A.fill
-  step := fun j hj => ⟨Z.Fo j hj, Z.Lc j hj, rfl, A.step j hj⟩
+theorem HypTies.toI {Z : AtIn X0 Tw u μ w h Lv} (A : HypTies Z Gt c) : HypTiesI X0 (Z.I Gt) Gt c :=
+  { fl_t := A.fl_t
+    fill := A.fill
+    step := fun j hj => ⟨Z.Fo j hj, Z.Lc j hj, rfl, A.step j hj⟩ }
 
 theorem HypTies.hyp {Z : AtIn X0 Tw u μ w h Lv} (A : HypTies Z Gt c) (K : CmpTied D X0 T Gt c) : CmpJHyp c (Z.I Gt) := A.toI.hyp K
 
-theorem HypTies.atHyp {Z : AtIn X0 Tw u μ w h Lv} (A : HypTies Z Gt c) (K : CmpTied D X0 T Gt c) : AtHyp Z Gt c where
-  fl_t := A.fl_t
-  fill := A.fill
-  ties := fun j hj => (A.step j hj).ties
-  hypC := fun j hj => (A.step j hj).hypC
-  ok := fun j hj => (A.step j hj).ok
-  twUnit := fun j hj => (A.step j hj).twUnit K A.fl_t A.fill
-  valIntN := fun j hj => (A.step j hj).valIntN K A.fl_t A.fill
-  fin := A.toI.fin K
-  card := (A.hyp K).card
+theorem HypTies.atHyp {Z : AtIn X0 Tw u μ w h Lv} (A : HypTies Z Gt c) (K : CmpTied D X0 T Gt c) : AtHyp Z Gt c :=
+  { fl_t := A.fl_t
+    fill := A.fill
+    ties := fun j hj => (A.step j hj).ties
+    hypC := fun j hj => (A.step j hj).hypC
+    ok := fun j hj => (A.step j hj).ok
+    twUnit := fun j hj => (A.step j hj).twUnit K A.fl_t A.fill
+    valIntN := fun j hj => (A.step j hj).valIntN K A.fl_t A.fill
+    fin := A.toI.fin K
+    card := (A.hyp K).card }
 
 section Fam
 
 variable {L : SizeData₂ D} {hT : GatTies D} {Gi : G.Inst D L} {Gl : G.LatInst D} {Kc : G.Consts} {Dx : DivX D} {cX : ExtraC}
-
-structure FamTies (E : Extra D L hT Gi Gl Kc Dx cX) (X0 : Formalism.L2.Herm.Herm0 D)
-    (Lv : ∀ (_ : D.what₂.Tup) u (w : D.what₂.places.Pl) (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)), Levels (Gl.Fl u w hg))
-    (I : ∀ (μ : D.what₂.Tup), DV.Used D μ → ∀ u (w : D.what₂.places.Pl) (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)),
-      D.what₂.places.resChar w ∉ Dx.Qp μ → CmpJIn E.tw u μ w hg (Lv μ u w hg)) : Prop where
-  fill : ∀ u w hg, FillTie hT u w hg (Gl.Fl u w hg)
-  step : ∀ μ hU u w hg hq j hj, ∃ (Fo : FormsIn ((I μ hU u w hg hq).at' j hj).M (j + 1) hj) (Lc : LocIn X0 u w hg (Lv μ u w hg) j Fo.Ch),
-    ((I μ hU u w hg hq).at' j hj).st = stepInOf hj Fo Lc (hT.gat_pos u w hg) ∧ StepTies hj Fo Lc hT E.cmp
-
-theorem FamTies.H {E : Extra D L hT Gi Gl Kc Dx cX} {X0 : Formalism.L2.Herm.Herm0 D} {Lv} {I} (A : FamTies E X0 Lv I)
-    (K : CmpTied D X0 T hT E.cmp) : ∀ μ hU u w hg hq, CmpJHyp E.cmp (I μ hU u w hg hq) := fun μ hU u w hg hq =>
-  haveI : Fact (D.what₂.places.resChar w).Prime := ⟨D.what₂.places.resChar_prime w⟩
-  HypTiesI.hyp (X0 := X0) ⟨(E.ker u w hg).fl_t, A.fill u w hg, A.step μ hU u w hg hq⟩ K
-
-theorem FamTies.chX {E : Extra D L hT Gi Gl Kc Dx cX} {X0 : Formalism.L2.Herm.Herm0 D} {Lv} {I} (A : FamTies E X0 Lv I) :
-    ∀ μ hU u w hg hq j hj, ChX ((I μ hU u w hg hq).at' j hj).st := fun μ hU u w hg hq j hj => by
-  obtain ⟨Fo, Lc, e, S⟩ := A.step μ hU u w hg hq j hj
-  rw [e]
-  exact S.chX
 
 end Fam
 

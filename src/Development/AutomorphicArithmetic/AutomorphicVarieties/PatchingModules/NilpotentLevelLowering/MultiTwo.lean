@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.ActUVariableEqPow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.MultiPhi
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.MultiPsi
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkDualEx
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.ActUVariableEqPow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.MultiPhi
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.MultiPsi
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkDualEx
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.N ValuativeRel IsLocalRing
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil
@@ -37,14 +41,14 @@ private theorem comm_emb (H : HkHyp O Nq act e W) {j j' : Fin q} (h : j ≠ j') 
     Commute (e j) (act (emb O R j' x)) := by
   induction x using MvPolynomial.induction_on with
   | C r => rw [emb_C, AlgHom.commutes]; exact (Algebra.commutes _ _).symm
-  | add p p' hp hp' => rw [map_add, map_add]; exact hp.add_right hp'
+  | add p p' hp hp' => rw [map_add (f := _), map_add (f := _)]; exact hp.add_right hp'
   | mul_X p i hp => rw [map_mul, map_mul, emb_X]; exact hp.mul_right (H.eX j j' i h)
 
 private theorem mem_emb (H : HkHyp O Nq act e W) {j j' : Fin q} (h : j ≠ j') (x : MvPolynomial (Fin n) O) :
     ∀ v ∈ W j, act (emb O R j' x) v ∈ W j := by
   induction x using MvPolynomial.induction_on with
   | C r => intro v hv; rw [emb_C, AlgHom.commutes]; exact (W j).smul_mem _ hv
-  | add p p' hp hp' => intro v hv; rw [map_add, map_add]; exact (W j).add_mem (hp v hv) (hp' v hv)
+  | add p p' hp hp' => intro v hv; rw [map_add (f := _), map_add (f := _)]; exact (W j).add_mem (hp v hv) (hp' v hv)
   | mul_X p i hp => intro v hv; rw [map_mul, map_mul, emb_X]; exact hp _ (H.WX j j' i h v hv)
 
 private theorem comm_list (H : HkHyp O Nq act e W) {j : Fin q} {l : List (Fin q)} (h : j ∉ l)
@@ -158,7 +162,8 @@ private theorem esymm_root {O R B : Type} [CommRing O] [CommRing R] [Algebra O R
       MvPolynomial.rename (fun i => (j, i)) (MvPolynomial.map (β.comp (algebraMap O R)) p) := by
     intro p
     simp [emb, MvPolynomial.map_rename, MvPolynomial.map_map]
-  rw [hE, MvPolynomial.map_esymm, MvPolynomial.esymm, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hE, MvPolynomial.map_esymm, MvPolynomial.esymm, map_sum, map_sum]
   simp only [map_prod, MvPolynomial.rename_X]
   have hroot := MSplitAlg.prod_root P n j
   have hc' : ((Finset.univ.val.map (MSplitAlg.root P n j)).map fun t => Polynomial.X - Polynomial.C t).prod.coeff (n - k)
@@ -196,7 +201,7 @@ theorem UpperTheory.V.Pa.Lev.multiTwo :
     rw [htr, ← this, ← htr, hembZ, hsym j k hk]
   let ψ : V →+ MSplitAlg P n ⊗[B] M := AddMonoidHom.mk' (fun v => ∑ i : Fin q → ι,
       mkq (MvPolynomial.map β (∏ j, emb O R j (a (i j)))) ⊗ₜ[B] tr (act (∏ j, emb O R j (c (i j))) v))
-    (by intro v w; simp [map_add, TensorProduct.tmul_add, Finset.sum_add_distrib])
+    (by intro v w; simp [map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib])
   have hψv : ∀ v, ψ v = ∑ i : Fin q → ι,
       mkq (MvPolynomial.map β (∏ j, emb O R j (a (i j)))) ⊗ₜ[B] tr (act (∏ j, emb O R j (c (i j))) v) := fun v => rfl
   have hψ := multiPsi O R B M V q n β P act tr ι a c hd hmon hdeg htrS htrE ψ hψv
@@ -205,7 +210,8 @@ theorem UpperTheory.V.Pa.Lev.multiTwo :
     rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one]
   have hφψ : ∀ v, φ (ψ v) = act f v := by
     intro v
-    rw [hψv, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hψv, map_sum]
     have hterm : ∀ i : Fin q → ι, φ (mkq (MvPolynomial.map β (∏ j, emb O R j (a (i j)))) ⊗ₜ[B]
         tr (act (∏ j, emb O R j (c (i j))) v)) =
         (act (∏ j, emb O R j (a (i j))) * (List.ofFn e).prod * act (∏ j, emb O R j (c (i j)))) v := by
@@ -223,8 +229,8 @@ theorem UpperTheory.V.Pa.Lev.multiTwo :
     rw [map_mul, Module.End.mul_apply, k2, k1, mul_smul]
   have hTadd : ∀ x y, T x → T y → T (x + y) := by
     rintro x y ⟨b1, h1, k1⟩ ⟨b2, h2, k2⟩
-    refine ⟨b1 + b2, by rw [map_add, map_add, map_add, h1, h2], fun m => ?_⟩
-    rw [map_add, LinearMap.add_apply, k2, k1, ← map_add, add_smul]
+    refine ⟨b1 + b2, by rw [map_add (f := _), map_add (f := _), map_add (f := _), h1, h2], fun m => ?_⟩
+    rw [map_add (f := _), LinearMap.add_apply, k2, k1, ← map_add (f := _), add_smul]
   have hTC : ∀ (j : Fin q) (r : O), T (emb O R j (MvPolynomial.C r)) := by
     intro j r
     refine ⟨β (algebraMap O R r), ?_, fun m => ?_⟩
@@ -246,7 +252,7 @@ theorem UpperTheory.V.Pa.Lev.multiTwo :
       rw [this]
       exact hTC j r
     | add p p' hp hp' =>
-      rw [map_add, Subalgebra.coe_add, map_add]
+      rw [map_add (f := _), Subalgebra.coe_add, map_add (f := _)]
       exact hTadd _ _ hp hp'
     | mul_X p i hp =>
       rw [map_mul, Subalgebra.coe_mul, map_mul]
@@ -272,7 +278,8 @@ theorem UpperTheory.V.Pa.Lev.multiTwo :
     rw [← hpu]
     apply Finset.prod_congr rfl
     intro j _
-    rw [← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum]
     congr 1
     conv_rhs => rw [← (hkDualExp O n ι a c hd (Hk.NN n (Nq j : O))).1]
     refine Finset.sum_congr rfl fun k _ => ?_
@@ -291,14 +298,15 @@ theorem UpperTheory.V.Pa.Lev.multiTwo :
       exact tr_list H (List.nodup_finRange q) (fun j => c (i j)) hvW
     choose bb hbb1 hbb2 using hb
     rw [hψv]
-    simp only [hbb2, ← TensorProduct.smul_tmul, Algebra.smul_def, hbb1, ← map_mul, ← TensorProduct.sum_tmul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hbb2, ← TensorProduct.smul_tmul, Algebra.smul_def, hbb1, ← map_mul, ← TensorProduct.sum_tmul,
       ← map_sum]
     rw [hpoly, e1]
   refine ⟨φ, ψ, hφ2, hψ, hφψ, ?_⟩
   intro z
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, smul_add]
   | tmul s m =>
     obtain ⟨p, rfl⟩ : ∃ p, mkq p = s := Ideal.Quotient.mk_surjective s
     induction p using MvPolynomial.induction_on' generalizing m with
@@ -311,4 +319,4 @@ theorem UpperTheory.V.Pa.Lev.multiTwo :
           MvPolynomial.C_mul_monomial, mul_one]
       rw [hs, hφ2, hφ1, hψ, hψinc, smul_smul, smul_smul, mul_comm]
     | add p1 p2 h1 h2 =>
-      rw [map_add, TensorProduct.add_tmul, map_add, map_add, h1, h2, smul_add]
+      rw [map_add (f := _), TensorProduct.add_tmul, map_add (f := _), map_add (f := _), h1, h2, smul_add]

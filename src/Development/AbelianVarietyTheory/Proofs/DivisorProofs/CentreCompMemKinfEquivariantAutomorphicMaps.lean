@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfMemSpanK
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemZalgCommuteCompactRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfMemSpanK
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemZalgCommuteCompactRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,10 +12,10 @@ open NumberField GlobalTheory.CuspRep GlobalTheory.CuspQuot GlobalTheory.AutGrow
 
 namespace GlobalTheory.AutGrowth
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
+
 
 variable (E a) in
-
 def leftInv : Submodule ℂ (Sm E a) where
   carrier := {ψ | ∀ γ g, ψ.1 (ratGL E a γ * g) = ψ.1 g}
   zero_mem' _ _ := rfl
@@ -28,12 +32,12 @@ theorem lie_mem_leftInv (X : Lie E a) {ψ : Sm E a} (h : ψ ∈ leftInv E a) : l
     · rfl
   simp only [lie_apply, lieD, e]
 
-variable (E a) in
 
+variable (E a) in
 def fixL (L : Subgroup (GL (Fin a) (Af E))) : Submodule ℂ (Sm E a) where
   carrier := {ψ | ∀ k ∈ L, finRep E a k ψ = ψ}
   zero_mem' k _ := map_zero _
-  add_mem' {ψ ψ'} h h' k hk := by rw [map_add, h k hk, h' k hk]
+  add_mem' {ψ ψ'} h h' k hk := by rw [map_add (f := _), h k hk, h' k hk]
   smul_mem' c ψ h k hk := by rw [map_smul, h k hk]
 
 theorem lie_mem_fixL (L : Subgroup (GL (Fin a) (Af E))) (X : Lie E a) {ψ : Sm E a} (h : ψ ∈ fixL E a L) :
@@ -45,7 +49,7 @@ theorem lie_mem_fixL (L : Subgroup (GL (Fin a) (Af E))) (X : Lie E a) {ψ : Sm E
   rw [← e]
   exact congrArg (lie E a X) (h k hk)
 
-theorem comp_mem_maps : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ)
+theorem comp_mem_maps : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ)
     (L : Subgroup (GL (Fin a) (Af E))) (W : Submodule ℂ (Sm E a)) (hW : ∀ k, ∀ w ∈ W, cptRep E a k w ∈ W)
     (T : W →ₗ[ℂ] Sm E a), T ∈ maps L W hW → ∀ z ∈ Zalg E a, z ∘ₗ T ∈ maps L W hW := by
   intro E _ _ _ a L W hW T hT z hz

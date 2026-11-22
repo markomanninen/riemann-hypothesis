@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.BetaAtSymm
-import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsIsoPairOfEq
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllSixAbelianSchemeLawsHold
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.BetaAtSymm
+public import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsIsoPairOfEq
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllSixAbelianSchemeLawsHold
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits NumberField IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -15,8 +19,8 @@ noncomputable section
 
 namespace GlobalTheory.SameCoord
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem psiCoord_of_isPullDeg_id {R : Type} [CommRing R] [IsDomain R] [IsLocalRing R] {D D' : DegPre R}
     (hD : IsPullDeg (RingHom.id R) D D') (x : D'.X) (r : R) (hr : PsiCoord D (hD.xe x) r) :
     ∃ u : Rˣ, PsiCoord D' x (u * r) := by
@@ -76,8 +80,8 @@ theorem psiCoord_of_isPullDeg_id {R : Type} [CommRing R] [IsDomain R] [IsLocalRi
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_move (hU : UnifBaseChangeSt) (h5 : Laws5) {R : Type} [CommRing R] [IsDomain R] {I : Ideal R}
     (hR : AdmBase R I) {t t' : SAB H (Sp R)} (m : SABMap t' t (𝟙 _)) (P : PELUnif I t) :
     ∃ (P' : PELUnif I t') (hD : IsPullDeg (RingHom.id R) P.D.toPre P'.D.toPre),
@@ -158,7 +162,7 @@ theorem exists_equiv_psiCoord : ∀ (E : Type) [Field E] [NumberField E] [IsCMFi
   have hR : AdmBase R (maximalIdeal R) := ⟨hN, inferInstance, hC, hA⟩
   obtain ⟨-, -, -, h4, h5, h6⟩ := GlobalTheory.allSixLaws
   obtain ⟨P, hD₁, xl₁⟩ := exists_move h4.unifBaseChange h5 hR m U
-  obtain ⟨wL, -, g₀, -, m₀, -, -⟩ := exists_iso_pair_of_eq (U'.bundle.trans P.bundle.symm)
+  obtain ⟨wL, g₀, m₀⟩ := exists_iso_of_eq (U'.bundle.trans P.bundle.symm)
   obtain ⟨hD₂, -, holin⟩ := h6.unifUniq R _ hR P.D U'.D P.A U'.A t'.G t'.semi P.U U'.U wL g₀ m₀
   obtain ⟨xl₂, -⟩ := holin (𝓞 E) P.oD U'.oD P.oA U'.oA t'.act.toRingAct P.lin U'.lin
   let e₁ : P.D.toPre.X ≃ₗ[𝓞 E] U.D.toPre.X := { hD₁.xe with map_smul' := xl₁ }

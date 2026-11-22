@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TwOrbMEqTwOrbUOfNormal
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnrExtC
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TwOrbMEqTwOrbUOfNormal
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnrExtC
+
+@[expose] public section
 
 noncomputable section
 

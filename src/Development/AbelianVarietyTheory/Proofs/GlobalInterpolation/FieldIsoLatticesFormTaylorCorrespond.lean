@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TranslateMomentsAll
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SpanImageLeOf
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaLatticeImageRationalHomLattice
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.ZeroDimA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.Taylor
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TranslateMomentsAll
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SpanImageLeOf
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaLatticeImageRationalHomLattice
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.ZeroDimA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.Taylor
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.MainNotions Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker Formalism.L2.Th1.H GlobalTheory.IndefiniteRowSideFullHecke.JetSumTable GlobalTheory.MomT
 open GlobalTheory.IdealTransport GlobalTheory.ThetaLatImage
@@ -109,6 +113,42 @@ theorem mem_La (hs : s.Ok) (N : Submodule (𝓞 X.E) (Sp X.E a)) (N' : Submodule
 
 theorem sd_lat (hs : s.Ok) {n : ℕ} (N : Submodule (𝓞 X.E) (Sp X.E n)) (hN : IsSdLat N) : StandardLatticesGL3.SD D (s.lat N) := by
   obtain ⟨hl, hu⟩ := hN
+  have hspan : Submodule.span X.E (N : Set (Sp X.E n)) = ⊤ := by
+    apply Submodule.dualAnnihilator_eq_bot_iff.mp
+    apply le_antisymm ?_ bot_le
+    intro f hf
+    let v : Sp X.E n := fun i => star (f (Pi.single i 1))
+    have hpair : hStd X.E n v = f := by
+      apply (Pi.basisFun X.E (Fin n)).ext
+      intro i
+      rw [Pi.basisFun_apply, hStd_apply, Finset.sum_eq_single i]
+      · simp [v]
+      · intro j _ hj
+        simp [hj]
+      · simp
+    have hline (r : X.E) : r • v ∈ N := by
+      rw [← show dual (hStd X.E n) N = N from hu, dualBasic_mem_dual]
+      intro y hy
+      have hy0 : hStd X.E n v y = 0 := by
+        rw [hpair]
+        exact (Submodule.mem_dualAnnihilator f).mp hf y (Submodule.subset_span hy)
+      have hz : hStd X.E n y v = 0 := by
+        simpa [hy0] using ((hStd_isSymm (E := X.E) (n := n)).eq v y).symm
+      simp [hz]
+    have hv : v = 0 := by
+      funext i
+      change v i = 0
+      by_contra hi
+      let coord := (LinearMap.proj i : Sp X.E n →ₗ[X.E] X.E).restrictScalars (𝓞 X.E)
+      have htop : N.map coord = ⊤ := by
+        rw [eq_top_iff]
+        intro x _
+        exact ⟨(x / v i) • v, hline _, div_mul_cancel₀ _ hi⟩
+      have : Module.Finite (𝓞 X.E) X.E := Module.finite_def.mpr (htop ▸ hl.fg.map coord)
+      exact RingOfIntegers.not_isField X.E
+        (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 X.E) X.E) (Field.toIsField X.E))
+    rw [Submodule.mem_bot]
+    simpa [hv] using hpair.symm
   let f : Sp X.E n ≃+ (Fin n → D.host.E) := AddEquiv.piCongrRight fun _ : Fin n => s.iE.toAddEquiv
   rw [GlobalTheory.InertSign.sd_iff]
   refine ⟨?_, ?_, ?_⟩
@@ -120,7 +160,7 @@ theorem sd_lat (hs : s.Ok) {n : ℕ} (N : Submodule (𝓞 X.E) (Sp X.E n)) (hN :
     intro v _
     have h1 := span_image_span s.iE f (fun r m => funext fun i => map_mul s.iE r (m i)) (N : Set (Sp X.E n))
     have h2 : v ∈ Submodule.span D.host.E (f '' (N : Set (Sp X.E n))) := by
-      rw [← h1, hl.span_eq_top]
+      rw [← h1, hspan]
       exact Submodule.subset_span ⟨f.symm v, trivial, by simp⟩
     exact Submodule.span_mono (fun w hw => Submodule.subset_span hw) h2
   · have key : ∀ x y : Sp X.E n, GlobalTheory.InertSign.IntE D (GlobalTheory.InertSign.hE D (fun i => s.iE (y i)) (fun i => s.iE (x i))) ↔
@@ -128,7 +168,8 @@ theorem sd_lat (hs : s.Ok) {n : ℕ} (N : Submodule (𝓞 X.E) (Sp X.E n)) (hN :
       intro x y
       have e : GlobalTheory.InertSign.hE D (fun i => s.iE (y i)) (fun i => s.iE (x i)) = s.iE (hStd X.E n x y) := by
         change _ = s.iE (∑ i, star (x i) * y i)
-        simp only [GlobalTheory.InertSign.hE, map_sum, map_mul, hs.2, mul_comm]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [GlobalTheory.InertSign.hE, map_sum, map_mul, hs.2, mul_comm]
       rw [e, ← s.iE.symm_apply_apply (hStd X.E n x y), ← mem_one_iff, s.iE.symm_apply_apply, Submodule.mem_one]
       rfl
     intro y

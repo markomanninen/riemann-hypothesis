@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.CharPerm
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.CharPerm
+
+@[expose] public section
 
 open Polynomial Matrix
 
@@ -21,6 +25,7 @@ private theorem exists_subring_hom_algebraicClosure_of_injective (B K k : Type) 
       intro b hb
       rw [Ideal.mem_comap, Ideal.mem_bot, ← (algebraMap B C).map_zero] at hb
       rw [hinj hb, RingHom.mem_ker, φ.map_zero])
+  rw [Ideal.under_def] at hQc
   haveI := hQ
   haveI hQ' : (Q.comap (algebraMap B C)).IsPrime := by
     rw [hQc]
@@ -51,7 +56,11 @@ private theorem exists_subring_hom_algebraicClosure_of_injective (B K k : Type) 
   haveI : Module.IsTorsionFree R M := Module.isTorsionFree_iff_algebraMap_injective.2 hRM
   haveI hI : Algebra.IsIntegral R S := Algebra.IsIntegral.quotient
   haveI : Algebra.IsAlgebraic R S := hI.isAlgebraic
-  let L : S →ₐ[R] M := IsAlgClosed.lift
+  let L : S →ₐ[R] M := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨C.toSubring, L.toRingHom.comp (Ideal.Quotient.mk Q), fun b => (algebraMap B C b).2, ?_, ?_⟩
   · intro b
     show L (Ideal.Quotient.mk Q (algebraMap B C b)) = _

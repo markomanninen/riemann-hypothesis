@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.GramInvOHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.SigRAlgebraMap
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.NormLeOfNear
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.OBas1OfUnitV
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.MemUnifOIff
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.GramInvOHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.SigRAlgebraMap
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.NormLeOfNear
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.OBas1OfUnitV
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.MemUnifOIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -113,7 +117,7 @@ theorem fix_sc (hcm : IsCMExt F E σ) (s : Fv F v ⊗[F] E) (hs : sigR (Fv F v) 
     | zero => exact ⟨0, by simp [sc]⟩
     | tmul a e =>
       have hfix : σ (e + σ e) = e + σ e := by
-        rw [map_add, PI.OmLocU.Orb.sigma_invol σ hcm, add_comm]
+        rw [map_add (f := _), PI.OmLocU.Orb.sigma_invol σ hcm, add_comm]
       obtain ⟨c, hc⟩ := gr_fix_range σ hcm hfix
       refine ⟨c • a, ?_⟩
       have hs1 : sigR (Fv F v) σ (a ⊗ₜ[F] e) = a ⊗ₜ[F] σ e := by
@@ -125,7 +129,7 @@ theorem fix_sc (hcm : IsCMExt F E σ) (s : Fv F v ⊗[F] E) (hs : sigR (Fv F v) 
       obtain ⟨rx, hx⟩ := hx
       obtain ⟨ry, hy⟩ := hy
       refine ⟨rx + ry, ?_⟩
-      rw [map_add, show x + y + (sigR (Fv F v) σ x + sigR (Fv F v) σ y) =
+      rw [map_add (f := _), show x + y + (sigR (Fv F v) σ x + sigR (Fv F v) σ y) =
         (x + sigR (Fv F v) σ x) + (y + sigR (Fv F v) σ y) by abel, hx, hy]
       simp [sc, TensorProduct.add_tmul]
   obtain ⟨r, hr⟩ := key s
@@ -207,7 +211,7 @@ theorem normOne_of (hRes : PI.OmLocU.Red.ResAlg σ J ψ v) : PI.OmLocU.Orb.NormO
   set θs := sigR (Fv F v) σ θ with hθs
   have hθs0 : θs ∈ OEv (E := E) v := PI.OmLocU.UnN.sigR_mem σ v hθ0
   have hθinv : sigR (Fv F v) σ θs = θ := PI.OmLocU.Orb.sigR_invol (v := v) σ hcm θ
-  obtain ⟨t, ht, hT⟩ := fix_int_sc σ v hcm (oEv_add v hθ0 hθs0) (by rw [map_add, hθinv, add_comm])
+  obtain ⟨t, ht, hT⟩ := fix_int_sc σ v hcm (oEv_add v hθ0 hθs0) (by rw [map_add (f := _), hθinv, add_comm])
   obtain ⟨m, hm, hM⟩ := fix_int_sc σ v hcm (oEv_mul v hθ0 hθs0) (by rw [map_mul, hθinv, mul_comm])
   obtain ⟨ε, hε, hU⟩ := fix_int_sc σ v hcm hu0 hus
   have hus' : sigR (Fv F v) σ u' = u' := by
@@ -261,7 +265,7 @@ theorem normOne_of (hRes : PI.OmLocU.Red.ResAlg σ J ψ v) : PI.OmLocU.Orb.NormO
   obtain ⟨xO, hxO⟩ : ∃ xO : v.adicCompletionIntegers F, (xO : Fv F v) = x0 := ⟨⟨x0, hx0⟩, rfl⟩
   obtain ⟨yO, hyO⟩ : ∃ yO : v.adicCompletionIntegers F, (yO : Fv F v) = y0 := ⟨⟨y0, hy0⟩, rfl⟩
   have hres : redR v (xO ^ 2 + tO * xO * yO + mO * yO ^ 2 - eO) = 0 := by
-    rw [map_sub, map_add, map_add, map_mul, map_mul, map_mul, map_pow, map_pow]
+    rw [map_sub, map_add (f := _), map_add (f := _), map_mul, map_mul, map_mul, map_pow, map_pow]
     have ex : redR v xO = xb := by
       show red v (xO : Fv F v) = xb
       rw [hxO]
@@ -285,14 +289,14 @@ theorem normOne_of (hRes : PI.OmLocU.Red.ResAlg σ J ψ v) : PI.OmLocU.Orb.NormO
   have hyi : y ∈ v.adicCompletionIntegers F := Valued.toNormedField.norm_le_one_iff.1 hy
   refine ⟨sc (E := E) v x + sc (E := E) v y * θ, oEv_add v (sc_mem v hxi) (oEv_mul v (sc_mem v hyi) hθ0), ?_⟩
   have hl : sigR (Fv F v) σ (sc (E := E) v x + sc (E := E) v y * θ) = sc (E := E) v x + sc (E := E) v y * θs := by
-    rw [map_add, map_mul, sigR_sc', sigR_sc']
+    rw [map_add (f := _), map_mul, sigR_sc', sigR_sc']
   rw [hl]
   have e1 : (sc (E := E) v x + sc (E := E) v y * θs) * (sc (E := E) v x + sc (E := E) v y * θ) =
       sc (E := E) v x * sc (E := E) v x + sc (E := E) v x * sc (E := E) v y * (θ + θs) +
         sc (E := E) v y * sc (E := E) v y * (θ * θs) := by ring
   have e2 : sc (E := E) v x * sc (E := E) v x + sc (E := E) v x * sc (E := E) v y * sc (E := E) v t +
       sc (E := E) v y * sc (E := E) v y * sc (E := E) v m = sc (E := E) v (x ^ 2 + t * x * y + m * y ^ 2) := by
-    simp only [sc_eq, map_add, map_mul, map_pow]
+    simp only [sc_eq, map_add (f := _), map_mul, map_pow]
     ring
   rw [e1, hT, hM, e2, hq, ← hU', mul_comm]
   exact huu'

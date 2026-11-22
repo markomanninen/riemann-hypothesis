@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.NMeasInv
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureInverseContraction.AmatInvMul
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.NMeasInv
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureInverseContraction.AmatInvMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,8 +92,8 @@ theorem tri_f {z : Fin n → ℂ} {g g' : Matrix (Fin n) (Fin n) ℂ} (hg : Form
       _ = hJ ε (e b) (f c) := by rw [hJ_conj ε (f c) ((g' - 1) *ᵥ e b), h3, star_zero, add_zero]
   rw [key, sub_self]
 
-omit hG in
 
+omit hG in
 def Sb (ε : Fin n → Bool) (e f : Fin r → Fin n → ℂ) (g : Matrix (Fin n) (Fin n) ℂ) (y : Fin n → ℂ)
     (i : Fin n) : ℝ :=
   ∑ b, ((∑ c, ‖hJ ε (f c) y * hJ ε (f b) ((g - 1) *ᵥ e c)‖ +

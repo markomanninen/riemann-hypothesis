@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceIffAdditiveMapsExist
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceIffAdditiveMapsExist
+
+@[expose] public section
 
 open Filter Topology
 
@@ -124,7 +128,7 @@ theorem mem_range_wToC_of_pow_congr : ∀ (p : ℕ) [Fact p.Prime] (n : ℕ) (W 
       have e : φ x - Formalism.L2.G.Pend.wToC p (wτ + (p : Formalism.L2.G.Pend.WW p) * w₁) =
           (φ x ^ ((p ^ n) ^ k) - τ) + (p : ℂ_[p]) * (φ (-c) - Formalism.L2.G.Pend.wToC p w₁) := by
         conv_lhs => rw [hx]
-        rw [map_add, map_add, map_mul, map_mul, map_pow, map_natCast, map_natCast, hwτ]
+        rw [map_add (f := _), map_add (f := _), map_mul, map_mul, map_pow, map_natCast, map_natCast, hwτ]
         ring
       rw [e]
       refine Formalism.L2.G.Pend.nadd p ((hτ k)) ?_

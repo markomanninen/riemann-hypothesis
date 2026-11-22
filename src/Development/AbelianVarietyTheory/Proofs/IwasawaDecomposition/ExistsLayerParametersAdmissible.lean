@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RationalRootsDef
-import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemSpanOfSemilinear
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SizesEqCount
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ResCharConj
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TupTiedOfMuIs
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNsmulMemOfSpan
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PosIffSideMemMax
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FourMulRootLt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RationalRootsDef
+public import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemSpanOfSemilinear
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SizesEqCount
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ResCharConj
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TupTiedOfMuIs
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNsmulMemOfSpan
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PosIffSideMemMax
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FourMulRootLt
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.L2.Host GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Top NumberField IsDedekindDomain
 

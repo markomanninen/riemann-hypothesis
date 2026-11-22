@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.VeryAmpleSecsSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.VeryAmpleSecsSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -101,8 +106,8 @@ theorem exists_pow_mul_mem_pow {A : Subalgebra k Ω} {L : Submodule A Ω} {r : �
 
 end VeryAmpleSecs
 
-open VeryAmpleSecs in
 
+open VeryAmpleSecs in
 theorem VeryAmpleSecs.proof : VeryAmpleSecs.Statement.{u, w} := by
   intro k _ Ω _ _ N x Nb r h hv n
   ext s

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FieldValuesMemFixedField
-import Formalism.LocalToGlobal.Columns.PathCountSymmetricHolds
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAlgebraicRootsCoeffFieldContainsTwistValueStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowsLiftsHeckeOperatorsCommuteStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCoefficientFieldContainsHeckeEigenvaluesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FieldValuesMemFixedField
+public import Formalism.LocalToGlobal.Columns.PathCountSymmetricHolds
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAlgebraicRootsCoeffFieldContainsTwistValueStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowsLiftsHeckeOperatorsCommuteStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCoefficientFieldContainsHeckeEigenvaluesStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,8 +51,8 @@ theorem large_coefficientField_contains_twist_values : Top.EvLg fun _ B f T => �
   have key : ∀ τ : TupU I U, ∃ a : I.ι, I.tup a = τ.1 := fun τ => ⟨_, tup_ixOf I τ⟩
 
   have hH3 : ColHyp3 B.wts I.Ch I.sel (InfinitePlace.mk B.embLL) (tuOf I U) Xg ∅ := by
-    refine ⟨⟨isConjAt_embLL B, hirr, fun τ => Formalism.L2.Col.heckeOperators_commute _ _, fun τ => ?_,
-      fun j τ => Formalism.L2.Col.heckeOperators_commute _ _, fun j τ => ?_⟩, fun τ => ?_, fun τ => ?_, fun j τ => ?_, fun j τ => ?_⟩
+    refine ⟨⟨isConjAt_embLL B, hirr, fun τ => Formalism.L2.Col.heckeComm_of_paths _ _ Formalism.L2.Col.pathCount_symmetric_holds, fun τ => ?_,
+      fun j τ => Formalism.L2.Col.heckeComm_of_paths _ _ Formalism.L2.Col.pathCount_symmetric_holds, fun j τ => ?_⟩, fun τ => ?_, fun τ => ?_, fun j τ => ?_, fun j τ => ?_⟩
     · obtain ⟨a, ha⟩ := key τ
       rw [← ha]
       exact fun i => (hFI a).1 (Sum.inl i)

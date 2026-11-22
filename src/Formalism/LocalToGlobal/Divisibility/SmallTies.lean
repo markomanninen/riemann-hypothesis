@@ -1,9 +1,79 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.LinkDef
-import Formalism.LocalToGlobal.Divisibility.ConstantGeTwentyEight
-import Formalism.LocalToGlobal.Divisibility.TiedLemmas
-import Formalism.LocalToGlobal.GlobalTheory.FamRowsP
-import Formalism.LocalRingCardinality.DataParams₂
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.LinkDef
+public import Formalism.LocalToGlobal.Divisibility.ConstantGeTwentyEight
+public import Formalism.LocalToGlobal.Divisibility.TiedLemmas
+public import Formalism.LocalToGlobal.GlobalTheory.FamCol
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefSide
+public import Formalism.LocalToGlobal.Divisibility.LiftLat
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefUse
+public import Formalism.LocalToGlobal.Divisibility.LiftLatLemmas
+public import Formalism.QuotientMetricDivisors.FinalW
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DualPl
+public import Formalism.SharpRestriction.GlobalSchurBounds.QuadraticLogDerivCongr
+public import Formalism.LocalRingCardinality.Lemmas
+public import Formalism.SizeWindowBrackets.Chain2aCoreNoAnalytic
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.PChain
+public import Formalism.SizeWindowBrackets.ClaimGaFree
+public import Formalism.SizeWindowBrackets.QuotientSlopeBoundsWith
+public import Formalism.SizeWindowBrackets.FrameTraceRatioFinEquiv
+public import Formalism.SizeWindowBrackets.SlopesHypothesisFinitePlaces
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.WeightedSlopeExcessDecomposition
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.LevelOfCongruence
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.JointDModelAppliesUnitLattice
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.ExistsNsmulMem
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.GaloisMapComplexConjugation
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.AdmissibleSchurLemma
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.OneLeThresholdMulPowers
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.StronglyIrreducible
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SlopeIneqMean
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HtGram
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.PolygonSlopeSum
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SizeMu
+public import Formalism.LocalToGlobal.GlobalTheory.IsResidueClassZero
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.SecondPropositionEveryLocalisation
+public import Formalism.LocalToGlobal.Divisibility.NumbersLemmas
+public import Formalism.LocalRingCardinality.MinkMEqMinkowskiNumber
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.Minkowski
+public import Development.AutomorphicArithmetic.ConductorsKronecker.Imports
+public import Development.AutomorphicArithmetic.PrimitiveCosets.RecH
+public import Development.AutomorphicArithmetic.PrimitiveCosets.ToEBij
+public import Development.AutomorphicArithmetic.ConductorsKronecker.InertiaD
+public import Development.AutomorphicArithmetic.ConductorsKronecker.IsInertIff
+public import Development.AutomorphicArithmetic.OrbitLabellings.EvenAddOrderOfHPOfPowLe
+public import Formalism.LocalToGlobal.GlobalTheory.HLatOpsP
+public import Formalism.SizeWindowBrackets.ErrorFormsWeakWindowsFalse
+public import Formalism.LogVandermondeBounds.LogRatioUpperBound
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.SubThreeMulLogTwoLe
+public import Formalism.LogVandermondeBounds.HookGammaAmgmMultinomialBounds
+public import Formalism.SizeWindowBrackets.SlopesFromSizeAndCount
+public import Formalism.LandauZeroFreeBounds.SiegelWalfiszAP
+public import Formalism.ZeroFreeRegion.Statement
+public import Formalism.LandauZeroFreeBounds.LogDerivRegionChiOf
+public import Formalism.LandauZeroFreeBounds.SiegelWalfiszAPOfSiegelLower
+public import Formalism.SizeWindowBrackets.SBrDiv
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.Rerealize
+public import Formalism.SizeWindowBrackets.TraceSquareAndDiagBounds
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.TraceConjTransposeMulSelf
+public import Formalism.SizeWindowBrackets.GaloisToProductIsIso
+public import Formalism.SizeWindowBrackets.GrowthBoundGivesRiemannHypothesis
+public import Formalism.SizeWindowBrackets.SecondKindBucket
+public import Formalism.SizeWindowBrackets.SlopeExcessBoundExponentZero
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.LipschitzWeightAndMinimum
+public import Formalism.SizeWindowBrackets.RealSlopeBoundsSplit
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
+public import Mathlib.Data.Fintype.BigOperators
+public import Formalism.RankGapBounds.RankGapProofs.WeightedMeanData
+public import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.ZetaNegReal
+public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.DzDifferentiableOn
+public import Formalism.LocalRingCardinality.DataParams₂
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 
@@ -32,9 +102,6 @@ variable {D : D7} {Bs : DefBase D.what₂.LL} {Df0 Df1 : DefSide Bs} {Dc : DefCo
 
 def FTie (L : SizeData₂ D) (N : IndefNum Bs) (eJ : Bs.J ≃ Fin D.R.m) : Prop :=
   ∀ y j, N.F0 y j = L.F ((eJ j).1 + 1) (D.plEq.symm y)
-
-theorem fTie_num_iff (L : SizeData₂ D) (Z : IndefScale Bs) (C CH : ℝ) (eJ : Bs.J ≃ Fin D.R.m) :
-    FTie L (Z.num C CH) eJ ↔ ∀ y j, Z.F0 y j = L.F ((eJ j).1 + 1) (D.plEq.symm y) := Iff.rfl
 
 theorem sum_lifts_eJ (eJ : Bs.J ≃ Fin D.R.m) (f : ℕ → ℝ) :
     ∑ j ∈ SizeData₂.lifts D, f j = ∑ j : Bs.J, f ((eJ j).1 + 1) := by
@@ -78,29 +145,10 @@ theorem two_sumTw_eq_Fo (L : SizeData₂ D) (S0 : IndefSide Df0 N) (hU : S0.toIn
     ring
   rw [h1, h3, h2, Finset.mul_sum]
 
-theorem two_FoOf_eq_Fo (L : SizeData₂ D) (P : IndefCore Df0 Df1 Dc Sp N) (eJ : Bs.J ≃ Fin D.R.m) (hF : FTie L N eJ) :
-    2 * FoOf P = L.Fo := by
-  unfold FoOf
-  exact two_sumTw_eq_Fo L P.base P.extra.untw eJ hF
-
 theorem two_FoOfR_eq_Fo (L : SizeData₂ D) (P : IndefCoreR Df0 Df1 Dc Sp N) (eJ : Bs.J ≃ Fin D.R.m) (hF : FTie L N eJ) :
     2 * FoOfR P = L.Fo := by
   unfold FoOfR
   exact two_sumTw_eq_Fo L P.base P.extra.untw eJ hF
-
-theorem foTie_pkg {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {m : ℕ} (L : SizeData₂ D) (A : FamIn D.what₂.LL G Pl0 T m)
-    (P0 : Subgroup G) (ψ0 : P0 →* D.what₂.LLˣ) (P1 : Subgroup G) (ψ1 : P1 →* D.what₂.LLˣ)
-    (Dc : ∀ Zs : DefSub A.fam.amb, DefCols (A.side P1 ψ1 Zs)) (Sp : ∀ Zs : DefSub A.fam.amb, SPer (Dc Zs))
-    (Zsc : DefSub A.fam.amb → IndefScale A.fam.base) (Cp CHp : ℝ)
-    (Pk : IndefPkg A.fam.amb (faceOf A P0 ψ0 P1 ψ1 Dc Sp Zsc) Cp CHp) (eJ : A.fam.base.J ≃ Fin D.R.m)
-    (hF : FTie L ((Zsc Pk.Zs).num Cp CHp) eJ) : 2 * FoOf Pk.core = L.Fo := two_FoOf_eq_Fo L Pk.core eJ hF
-
-theorem foTie_pkgR {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {m : ℕ} (L : SizeData₂ D) (A : FamIn D.what₂.LL G Pl0 T m)
-    (P0 : Subgroup G) (ψ0 : P0 →* D.what₂.LLˣ) (P1 : Subgroup G) (ψ1 : P1 →* D.what₂.LLˣ)
-    (Dc : ∀ Zs : DefSub A.fam.amb, DefCols (A.side P1 ψ1 Zs)) (Sp : ∀ Zs : DefSub A.fam.amb, SPer (Dc Zs))
-    (Zsc : DefSub A.fam.amb → IndefScale A.fam.base) (cf : ConvFace A.fam.base) (Cp CHp : ℝ)
-    (Pk : IndefPkgR A.fam.amb (faceOf A P0 ψ0 P1 ψ1 Dc Sp Zsc) cf Cp CHp) (eJ : A.fam.base.J ≃ Fin D.R.m)
-    (hF : FTie L ((Zsc Pk.Zs).num Cp CHp) eJ) : 2 * FoOfR Pk.core = L.Fo := two_FoOfR_eq_Fo L Pk.core eJ hF
 
 end Fo
 
@@ -108,28 +156,11 @@ section Sg
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K] {I : Type}
 
-theorem sg_fin_sgD (C : Formalism.L2.Col.ColObj K I) (u : I) :
-    (Function.support (shiftZ (Formalism.L2.GlobalTheoryTheory.FamRows.sgD C u))).Finite := Formalism.L2.GlobalTheoryTheory.FamRows.flD_support_finite C u
-
 end Sg
 
 section Mu1
 
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {m : ℕ}
-
-theorem package_column_tuple_eq (A : FamIn D.what₂.LL G Pl0 T m)
-    (P0 : Subgroup G) (ψ0 : P0 →* D.what₂.LLˣ) (P1 : Subgroup G) (ψ1 : P1 →* D.what₂.LLˣ)
-    (Dc : ∀ Zs : DefSub A.fam.amb, DefCols (A.side P1 ψ1 Zs)) (Sp : ∀ Zs : DefSub A.fam.amb, SPer (Dc Zs))
-    (Zsc : DefSub A.fam.amb → IndefScale A.fam.base) (Cp CHp : ℝ)
-    (Pk : IndefPkg A.fam.amb (faceOf A P0 ψ0 P1 ψ1 Dc Sp Zsc) Cp CHp) :
-    Pk.core.cols.toIndefData.μ = Pk.core.base.toIndefData.μ := column_tuple_of_level_link Pk.core.extra.level
-
-theorem package_column_tuple_eq_of_conventions (A : FamIn D.what₂.LL G Pl0 T m)
-    (P0 : Subgroup G) (ψ0 : P0 →* D.what₂.LLˣ) (P1 : Subgroup G) (ψ1 : P1 →* D.what₂.LLˣ)
-    (Dc : ∀ Zs : DefSub A.fam.amb, DefCols (A.side P1 ψ1 Zs)) (Sp : ∀ Zs : DefSub A.fam.amb, SPer (Dc Zs))
-    (Zsc : DefSub A.fam.amb → IndefScale A.fam.base) (cf : ConvFace A.fam.base) (Cp CHp : ℝ)
-    (Pk : IndefPkgR A.fam.amb (faceOf A P0 ψ0 P1 ψ1 Dc Sp Zsc) cf Cp CHp) :
-    Pk.core.cols.toIndefData.μ = Pk.core.base.toIndefData.μ := column_tuple_of_level_link Pk.core.extra.level
 
 end Mu1
 

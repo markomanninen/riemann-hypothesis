@@ -1,6 +1,10 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.LConvSepI
-import Development.DiscreteGroups.GlobalIrreducibility.LConvSepM
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvSepI
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvSepM
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem form_eq_zero_of_self {M : Type} [AddCommGroup M] [Module ℂ M] {B : M �
   have e1 : B (x + ((-(t : ℂ)) * B z x) • z) (x + ((-(t : ℂ)) * B z x) • z) =
       B x x + (-(t : ℂ)) * B z x * (starRingEnd ℂ) (B z x) +
         (starRingEnd ℂ) (-(t : ℂ) * B z x) * B z x := by
-    simp only [map_add, LinearMap.add_apply, map_smulₛₗ, map_smul, LinearMap.smul_apply, smul_eq_mul,
+    simp only [map_add (f := _), LinearMap.add_apply, map_smulₛₗ, map_smul, LinearMap.smul_apply, smul_eq_mul,
       RingHom.id_apply, hz, hxz]
     ring
   have e2 : (B (x + ((-(t : ℂ)) * B z x) • z) (x + ((-(t : ℂ)) * B z x) • z)).re =

@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfAsm
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfLocC
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfHH
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfMat
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfAlpha
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfAsm
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfLocC
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfHH
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfMat
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfAlpha
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,9 +50,9 @@ def FramepfBack {T : LocLat G Qp LL O} (Bs : FramepfBas W T) (π' : LetA O n) (c
       ∀ y ∈ LamPS W T Eπ h' c,
         framepf_Ψα Bs π' c hπ0 hΔπ hR2 γ0 hu H (Φ y) - lam • y ∈ JP W T π' Eπ h' M c
 
+
 include Ct in
 set_option maxHeartbeats 1000000 in
-
 theorem framepf_data [IsDomain O] (hι : Function.Injective (algebraMap O LL)) (hT : IsCrys PD T.ρ)
     (hs : W.s = 1) (Pt : ZMod n → LL → (K →ₐ[Qp] LL) → Prop) (c : ZMod n)
     (hprim : ∀ τ ζ, Pt c ζ τ → IsPrimitiveRoot ζ PD.p) (h4 : Formalism.MainNotions.DeltaInvariantLattices.p4 W Pt T)

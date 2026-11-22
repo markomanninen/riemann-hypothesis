@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CTUnitsLeft
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonsplitCentraliserNormElement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DetGramRatOneNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsConjSelfReciprocalOfDvdEllipticPolynomial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CTUnitsLeft
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonsplitCentraliserNormElement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DetGramRatOneNeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsConjSelfReciprocalOfDvdEllipticPolynomial
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.UnitaryClasses
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -40,7 +45,7 @@ theorem exists_common {ι A : Type} [Finite ι] [CommRing A] {R : ι → Type} [
 theorem aeval_intertwine {K : Type} [Field K] {n : ℕ} (B C H : Matrix (Fin n) (Fin n) K) (h : B * H = H * C)
     (p : K[X]) : aeval B p * H = H * aeval C p := by
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, map_add, add_mul, mul_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), add_mul, mul_add, hp, hq]
   | monomial d a =>
     have hpow : B ^ d * H = H * C ^ d := by
       induction d with
@@ -109,8 +114,8 @@ theorem eval₂_root_map : eval₂ ((AdjoinRoot.of (Q.1.map (algebraMap E K))).c
   have h := AdjoinRoot.eval₂_root (Q.1.map (algebraMap E K))
   rwa [eval₂_map] at h
 
-omit hj1 in
 
+omit hj1 in
 def psiB : Fld Q →+* AdjoinRoot (Q.1.map (algebraMap E K)) :=
   AdjoinRoot.lift ((AdjoinRoot.of (Q.1.map (algebraMap E K))).comp (algebraMap E K))
     (AdjoinRoot.root (Q.1.map (algebraMap E K))) (eval₂_root_map Q)
@@ -148,7 +153,7 @@ theorem psi_inclBase (y : k ⊗[maximalRealSubfield E] E) :
     psi j Q hj1 (inclBase Q k y) = AdjoinRoot.of _ (j.symm y) := by
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul a e =>
     have h0 : inclBase Q k (a ⊗ₜ e) = a ⊗ₜ[maximalRealSubfield E] algebraMap E (Fld Q) e := by
       simp [inclBase]
@@ -174,8 +179,8 @@ theorem dvd_of_phi_eq_zero {g : K[X]} (h : phi j Q g = 0) : Q.1.map (algebraMap 
   rw [h, map_zero] at this
   exact AdjoinRoot.mk_eq_zero.1 this.symm
 
-omit hj1 in
 
+omit hj1 in
 theorem involBase_phi (cK : K →+* K)
     (hj2 : ∀ x, j (cK x) = Algebra.TensorProduct.map (AlgHom.id (maximalRealSubfield E) k)
       ((IsCMField.complexConj E : E ≃ₐ[maximalRealSubfield E] E) : E →ₐ[maximalRealSubfield E] E) (j x))
@@ -191,7 +196,7 @@ theorem involBase_phi (cK : K →+* K)
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul a e => simp [inclBase, involBase, invol_algebraMap]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have e1 : ib.comp ι = ι.comp cK := RingHom.ext fun y => hιc y
   have e2 : ib ((1 : k) ⊗ₜ alpha Q) = (1 : k) ⊗ₜ (alpha Q)⁻¹ := by
     change (1 : k) ⊗ₜ invol Q (alpha Q) = _
@@ -305,7 +310,7 @@ theorem assembly (j : K ≃+* k ⊗[maximalRealSubfield E] E) (hj1 : ∀ e : E, 
   set R : K[X] := a.map (algebraMap E K) with hRdef
   have hBA : aeval A R * A = 1 := by
     have := congrArg (fun p : E[X] => aeval A (p.map (algebraMap E K))) hab
-    simp only [Polynomial.map_add, Polynomial.map_mul, map_add, map_mul, hCH, Polynomial.map_X, aeval_X,
+    simp only [Polynomial.map_add (f := _), Polynomial.map_mul, map_add (f := _), map_mul, hCH, Polynomial.map_X, aeval_X,
       Polynomial.map_one, map_one, mul_zero, add_zero, zero_mul] at this
     exact this
   have hAB : A * aeval A R = 1 := by
@@ -315,7 +320,7 @@ theorem assembly (j : K ≃+* k ⊗[maximalRealSubfield E] E) (hj1 : ∀ e : E, 
     rw [hRdef, phi_map j (Qs Q) hj1]
     congr 1
     have := congrArg (AdjoinRoot.mk (Qs Q).1) hab
-    rw [map_add, map_mul, map_mul, map_one, AdjoinRoot.mk_X, AdjoinRoot.mk_eq_zero.2 (hQsP Q), mul_zero, add_zero] at this
+    rw [map_add (f := _), map_mul, map_mul, map_one, AdjoinRoot.mk_X, AdjoinRoot.mk_eq_zero.2 (hQsP Q), mul_zero, add_zero] at this
     exact eq_inv_of_mul_eq_one_left this
   set H' : Matrix (Fin n) (Fin n) K := H₀.map (algebraMap E K) with hH'
   have hcTmap : (cT (IsCMField.complexConj E).toRingEquiv.toRingHom γ₀.val).map (algebraMap E K) = cT cK A := by
@@ -344,82 +349,6 @@ theorem assembly (j : K ≃+* k ⊗[maximalRealSubfield E] E) (hj1 : ∀ e : E, 
     exact final_calc A H' cK f m R _ hint hkey
 
 section Concrete
-
-theorem unique_over (w : Pl E) (hw : ¬ IsSplitAt w) {v : HeightOneSpectrum (𝓞 (maximalRealSubfield E))}
-    (hv : w.under (𝓞 (maximalRealSubfield E)) = v) (u : Pl E) (hu : u.under (𝓞 (maximalRealSubfield E)) = v) : u = w := by
-  by_contra h
-  exact hw ⟨u, h, hu.trans hv.symm⟩
-
-theorem toCompl_bijective (w : Pl E) (hw : ¬ IsSplitAt w) (v : HeightOneSpectrum (𝓞 (maximalRealSubfield E)))
-    (hv : w.under (𝓞 (maximalRealSubfield E)) = v) : Function.Bijective (GlobalTheory.LFun.toCompl hv) := by
-  refine ⟨(injective_iff_map_eq_zero _).2 fun y hy => ?_, GlobalTheory.LFun.InertChart.toCompl_surjective hv⟩
-  have h1 := GlobalTheory.AutFunCompare.map_tensNU_self _ _ (GlobalTheory.AdelicU.singleFin_mul v)
-    (GlobalTheory.AdelicU.evalV_singleFin_self v) y
-  have h2 : GlobalTheory.LFun.finAdEquiv (maximalRealSubfield E) E
-      (GlobalTheory.IndefiniteRowSideFullHecke.AdelicUnitaryGroups.tensNU _ (GlobalTheory.AdelicU.singleFin_mul v) y) = 0 :=
-    FiniteAdeleRing.ext _ fun u => by
-      by_cases e : u.under (𝓞 (maximalRealSubfield E)) = v
-      · rw [GlobalTheory.LFun.finAdEquiv_apply e, h1]
-        obtain rfl := unique_over w hw hv u e
-        exact hy
-      · rw [GlobalTheory.LFun.finAdEquiv_apply rfl, GlobalTheory.AutFunCompare.map_tensNU_zero _ _ _
-          (GlobalTheory.AdelicU.evalV_singleFin_ne e), map_zero]
-        rfl
-  rw [← h1, (map_eq_zero_iff _ (GlobalTheory.LFun.finAdEquiv (maximalRealSubfield E) E).injective).1 h2, map_zero]
-
-def locJ (_hU : Unr E) (w : Pl E) (hw : ¬ IsSplitAt w) (v : HeightOneSpectrum (𝓞 (maximalRealSubfield E)))
-    (hv : w.under (𝓞 (maximalRealSubfield E)) = v) :
-    w.adicCompletion E ≃+* v.adicCompletion (maximalRealSubfield E) ⊗[maximalRealSubfield E] E :=
-  (RingEquiv.ofBijective (GlobalTheory.LFun.toCompl hv) (toCompl_bijective w hw v hv)).symm
-
-theorem toCompl_locJ (hU : Unr E) (w : Pl E) (hw : ¬ IsSplitAt w)
-    (v : HeightOneSpectrum (𝓞 (maximalRealSubfield E))) (hv : w.under (𝓞 (maximalRealSubfield E)) = v)
-    (x : w.adicCompletion E) : GlobalTheory.LFun.toCompl hv (locJ hU w hw v hv x) = x :=
-  (RingEquiv.ofBijective (GlobalTheory.LFun.toCompl hv) (toCompl_bijective w hw v hv)).apply_symm_apply x
-
-theorem locJ_toCompl (hU : Unr E) (w : Pl E) (hw : ¬ IsSplitAt w)
-    (v : HeightOneSpectrum (𝓞 (maximalRealSubfield E))) (hv : w.under (𝓞 (maximalRealSubfield E)) = v)
-    (y : v.adicCompletion (maximalRealSubfield E) ⊗[maximalRealSubfield E] E) :
-    locJ hU w hw v hv (GlobalTheory.LFun.toCompl hv y) = y :=
-  (RingEquiv.ofBijective (GlobalTheory.LFun.toCompl hv) (toCompl_bijective w hw v hv)).symm_apply_apply y
-
-theorem locJ_algebraMap (hU : Unr E) (w : Pl E) (hw : ¬ IsSplitAt w)
-    (v : HeightOneSpectrum (𝓞 (maximalRealSubfield E))) (hv : w.under (𝓞 (maximalRealSubfield E)) = v) (e : E) :
-    locJ hU w hw v hv (algebraMap E _ e) = (1 : v.adicCompletion (maximalRealSubfield E)) ⊗ₜ e := by
-  have h := GlobalTheory.LFun.toCompl_tmul hv 1 e
-  rw [map_one, one_mul] at h
-  rw [← h, locJ_toCompl]
-
-theorem locJ_cj (hU : Unr E) (w : Pl E) (hw : ¬ IsSplitAt w)
-    (v : HeightOneSpectrum (𝓞 (maximalRealSubfield E))) (hv : w.under (𝓞 (maximalRealSubfield E)) = v)
-    (x : w.adicCompletion E) :
-    locJ hU w hw v hv (cj w x) = Algebra.TensorProduct.map
-      (AlgHom.id (maximalRealSubfield E) (v.adicCompletion (maximalRealSubfield E)))
-      ((IsCMField.complexConj E : E ≃ₐ[maximalRealSubfield E] E) : E →ₐ[maximalRealSubfield E] E)
-      (locJ hU w hw v hv x) := by
-  have hmain := GlobalTheory.ConjAtPlace.main E hU w
-  have hσ := (hmain.2.2.2.1 hw).1
-  have hF : ∀ a, cj w (GlobalTheory.LFun.complMap hv a) = GlobalTheory.LFun.complMap hv a := by
-    have := (HeightOneSpectrum.denseRange_algebraMap (maximalRealSubfield E) v).equalizer
-      (hmain.1.comp (GlobalTheory.LFun.InertChart.continuous_complMap hv)) (GlobalTheory.LFun.InertChart.continuous_complMap hv)
-      (funext fun x => by
-        simp only [Function.comp_apply, GlobalTheory.LFun.complMap_algebraMap, hσ]
-        exact congrArg _ ((IsCMField.complexConj E).commutes x))
-    exact fun a => congrFun this a
-  have hcomp : ∀ y, cj w (GlobalTheory.LFun.toCompl hv y) = GlobalTheory.LFun.toCompl hv
-      (Algebra.TensorProduct.map (AlgHom.id (maximalRealSubfield E) (v.adicCompletion (maximalRealSubfield E)))
-        ((IsCMField.complexConj E : E ≃ₐ[maximalRealSubfield E] E) : E →ₐ[maximalRealSubfield E] E) y) := by
-    intro y
-    induction y using TensorProduct.induction_on with
-    | zero => simp
-    | tmul a x => simp [GlobalTheory.LFun.toCompl_tmul, hF, hσ]
-    | add a b ha hb => simp only [map_add, ha, hb]
-  conv_lhs => rw [← toCompl_locJ hU w hw v hv x, hcomp, locJ_toCompl]
-
-def locPhi (hU : Unr E) (w : Pl E) (hw : ¬ IsSplitAt w) (v : HeightOneSpectrum (𝓞 (maximalRealSubfield E)))
-    (hv : w.under (𝓞 (maximalRealSubfield E)) = v) {r : ℕ} (Q : SelfRecip E r) :
-    (w.adicCompletion E)[X] →+* v.adicCompletion (maximalRealSubfield E) ⊗[maximalRealSubfield E] Fld Q :=
-  phi (locJ hU w hw v hv) Q
 
 end Concrete
 

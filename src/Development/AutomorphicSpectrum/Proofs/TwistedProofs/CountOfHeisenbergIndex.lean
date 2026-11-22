@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasLenOfLatLen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasLenOfLatLen
+
+@[expose] public section
+
 open GlobalTheory.InertZeta Formalism.UG Matrix
 
 noncomputable section
@@ -67,7 +72,8 @@ theorem exists_int_lift (hH : Heis) (hU : IsUnramInv ϖ σ q) (ρ : Fin N → L)
     rw [hU.2.1]
     exact hx
   have hσs : σ (-∑ j, ρ j * σ (ρ j.rev)) = -∑ j, ρ j * σ (ρ j.rev) := by
-    rw [map_neg, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_neg, map_sum]
     congr 1
     simp only [map_mul, hσσ]
     exact Fintype.sum_equiv Fin.revPerm _ _ (fun j => by simp only [Fin.revPerm_apply, Fin.rev_rev]; ring)
@@ -213,7 +219,7 @@ theorem count (hH : Heis) (hL : LatIndex) (hT : TraceIndex) : Count := by
       refine ⟨by simpa using hzcorner, ?_⟩
       have h1 := (mem_traceZero.mp (Quotient.out t : traceZero σ (ϖ ^ f)).2).2
       have h2 := (mem_traceZero.mp (Quotient.out t' : traceZero σ (ϖ ^ f)).2).2
-      simp only [AddSubgroup.coe_add, AddSubgroup.coe_neg, map_add, map_neg]
+      simp only [AddSubgroup.coe_add, AddSubgroup.coe_neg, map_add (f := _), map_neg]
       linear_combination -h1 + h2)
     rw [htt]
   have hsurjG : Function.Surjective G := by

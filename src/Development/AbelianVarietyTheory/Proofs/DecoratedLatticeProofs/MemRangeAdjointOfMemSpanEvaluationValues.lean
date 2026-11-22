@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped ComplexConjugate InnerProductSpace
 
@@ -51,7 +55,8 @@ theorem value_of_adjoint_of_mem_span : ∀ (X W C : Type) [AddCommGroup W] [Modu
     refine ⟨fun j => ip y (b j) • w, fun j _ => K.smul_mem _ hw, ?_⟩
     rw [hΦ]
     conv_rhs => rw [hexp y]
-    rw [map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply]
     refine Finset.sum_congr rfl (fun j _ => ?_)
     simp only [map_smul, LinearMap.smul_apply]
   obtain ⟨u, hu, hFu⟩ := hspan hF
@@ -98,7 +103,8 @@ theorem value_of_adjoint_of_mem_span : ∀ (X W C : Type) [AddCommGroup W] [Modu
     Finset.sum_congr rfl (fun j _ => by rw [hu_eq j])
   rw [hsum]
   conv_rhs => rw [hexp x]
-  rw [map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, LinearMap.sum_apply]
   refine Finset.sum_congr rfl (fun j _ => ?_)
   simp only [map_smul, LinearMap.smul_apply]
   rw [hsym x (b j)]

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsHorizontalSpanTwo
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImageVarIdBotTwo
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiProjPrimeImageZ
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsHorizontalSpanTwo
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImageVarIdBotTwo
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiProjPrimeImageZ
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

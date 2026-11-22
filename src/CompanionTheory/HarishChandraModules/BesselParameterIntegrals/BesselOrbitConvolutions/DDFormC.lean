@@ -1,5 +1,9 @@
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.BesselOrbitConvolutions.AtFormAdmOneOfSteps
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.L2NormScaling
+module
+
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.BesselOrbitConvolutions.AtFormAdmOneOfSteps
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.L2NormScaling
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped InnerProductSpace ENNReal ComplexConjugate

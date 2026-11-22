@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.AlgebraicTheory.StatementNorm
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.AlgebraicTheory.StatementNorm
+
+@[expose] public section
 
 namespace GlobalTheory
 

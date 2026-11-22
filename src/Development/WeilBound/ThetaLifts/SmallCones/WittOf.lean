@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
-import Development.WeilBound.ThetaLifts.SmallCones.MatCancel
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.IsFrPlane
-import Development.WeilBound.ThetaLifts.CartanFactorisation.Unimod
-import Development.WeilBound.ThetaLifts.TowerModels.PlaneReal
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
+public import Development.WeilBound.ThetaLifts.SmallCones.MatCancel
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.IsFrPlane
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.Unimod
+public import Development.WeilBound.ThetaLifts.TowerModels.PlaneReal
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,8 @@ theorem witt_of : Witt := by
   refine ⟨fun h0 x hx => ?_, fun n₁ H h1 h2 => ?_⟩
   · obtain ⟨w⟩ : Nonempty (InfinitePlace F) := inferInstance
     have e := congrArg (B.emb w).1 hx
-    simp only [form, dotProduct, Matrix.mulVec, map_sum, map_mul, hB.cm.2.2.2, map_zero] at e
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [form, dotProduct, Matrix.mulVec, map_sum, map_mul, hB.cm.2.2.2, map_zero] at e
     have := aniso (hX.sig w) h0 (x := fun i => (B.emb w).1 (x i)) e
     exact funext fun i => (B.emb w).1.injective ((congrFun this i).trans (map_zero _).symm)
   · obtain ⟨c, hc, hσ⟩ := PositivityTheory.ThKF.exists_scale hB.cm (-1)

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralOfTwistConjugatePlace
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralProperties
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralOfTwistConjugatePlace
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralProperties
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,8 +30,8 @@ theorem cover_quot {G : Type} [Group G] (H K : Subgroup G) (A F : Set G) (hF : F
   rintro q ⟨k, hk, hq⟩
   obtain ⟨h, hh, f, hf, k', hk', e⟩ := hA _ hq
   refine ⟨f, hf, ?_⟩
-  rw [← DoubleCoset.out_eq' H K q]
-  refine (DoubleCoset.eq H K _ _).2 ⟨h, hh, k' * k⁻¹, mul_mem hk' (inv_mem hk), ?_⟩
+  rw [← DoubleCoset.out_eq' (H := H) (K := K) q]
+  refine (@DoubleCoset.eq _ _ H K _ _).2 ⟨h, hh, k' * k⁻¹, mul_mem hk' (inv_mem hk), ?_⟩
   rw [← mul_assoc, ← e, mul_inv_cancel_right]
 
 theorem cover_gam {G : Type} [Group G] [TopologicalSpace G] (θ : G →* G) (K Γ : Subgroup G) (δ : G)
@@ -52,7 +56,7 @@ theorem cover_gam {G : Type} [Group G] [TopologicalSpace G] (θ : G →* G) (K �
     exact Set.finite_range _
   refine ⟨⋃ f ∈ F, (fun p : G × G => p.1 * p.2 * f) '' (Rr ×ˢ P f),
     hF.biUnion fun f _ => (hRr.prod (hP f)).image _, fun t ht f hf => ?_⟩
-  obtain ⟨h, c, hh, hc, e⟩ := DoubleCoset.mk_out_eq_mul (Γ.subgroupOf T) (Tc.subgroupOf T) (⟨t, ht⟩ : T)
+  obtain ⟨h, hh, c, hc, e⟩ := DoubleCoset.mk_out_eq_mul (Γ.subgroupOf T) (Tc.subgroupOf T) (⟨t, ht⟩ : T)
   set r : T := Quotient.out (DoubleCoset.mk (Γ.subgroupOf T) (Tc.subgroupOf T) (⟨t, ht⟩ : T)) with hr
   have hhΓ : (h : G) ∈ Γ := Subgroup.mem_subgroupOf.1 hh
   have hcT : (c : G) ∈ Tc := Subgroup.mem_subgroupOf.1 hc
@@ -75,7 +79,7 @@ theorem cover_of_fin {H : Type} [Group H] [TopologicalSpace H] [IsTopologicalGro
   refine ⟨⋃ q ∈ {q : DoubleCoset.Quotient (twCent θ d : Set H) (K : Set H) | ∃ k ∈ K,
       (Quotient.out q * k)⁻¹ * d * θ (Quotient.out q * k) ∈ C}, (fun k => Quotient.out q * k) '' (K : Set H),
     hf.isCompact_biUnion fun q _ => hK.image (continuous_const.mul continuous_id), fun z hz => ?_⟩
-  obtain ⟨h, k, hh, hk, e⟩ := DoubleCoset.mk_out_eq_mul (twCent θ d) K z
+  obtain ⟨h, hh, k, hk, e⟩ := DoubleCoset.mk_out_eq_mul (twCent θ d) K z
   have hh' : h * d = d * θ h := hh
   have ez : Quotient.out (DoubleCoset.mk (twCent θ d) K z) * k⁻¹ = h * z := by rw [e, mul_inv_cancel_right]
   refine ⟨h⁻¹, inv_mem hh, ?_⟩

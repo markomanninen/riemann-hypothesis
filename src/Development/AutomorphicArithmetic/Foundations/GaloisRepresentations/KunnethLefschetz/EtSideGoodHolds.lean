@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.CoreHolds
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.CoreHolds
+
+@[expose] public section
 
 namespace UpperTheory.Gal.KunnethLefschetz.Top
 open CrystallineSemistableComparison

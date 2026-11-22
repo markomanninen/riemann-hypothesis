@@ -1,34 +1,38 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ConjEMemHostFIff
-import Formalism.LocalRingCardinality.Params
-import Formalism.LocalRingCardinality.DataHost
-import Formalism.LocalRingCardinality.DataSpaces
-import Formalism.SharpRestriction.CuspSpanNormBounds.BlockEnds
-import Formalism.FrobeniusOrbits.Statement
-import Formalism.SharpRestriction.CuspSpanNormBounds.Point
-import Formalism.HermitianLattices.StatementLat
-import Formalism.HarderNarasimhan.Statement
-import Formalism.FrobeniusOrbits.HostThickExists
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ZsmulGeneratorEqZeroOfProjection
-import Formalism.WeaklyAdmissibleFiltrations.Statement
-import Formalism.LocalRingCardinality.DataRows
-import Formalism.SatakeDualWeyl.Statement
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Formalism.HarderNarasimhan.StatementPl
-import Formalism.HermitianLattices.StatementMass
-import Formalism.LocalRingCardinality.DataArith
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Formalism.LatticeSlopes.Statement
-import Formalism.FockGram.StatementHerm
-import Formalism.ThetaLiftIndependence.Statement
-import Formalism.SharpRestriction.CuspSpanNormBounds.DataS
-import Formalism.LocalRingCardinality.DataKernels
-import Formalism.HermitianLattices.StatementMaj
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarCohPfD
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.EmbeddingIntegerAlgebraMap
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocModel
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalDiscriminantIsUnit
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ConjEMemHostFIff
+public import Formalism.LocalRingCardinality.Params
+public import Formalism.LocalRingCardinality.DataHost
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BlockEnds
+public import Formalism.FrobeniusOrbits.Statement
+public import Formalism.SharpRestriction.CuspSpanNormBounds.Point
+public import Formalism.HermitianLattices.StatementLat
+public import Formalism.HarderNarasimhan.Statement
+public import Formalism.FrobeniusOrbits.HostThickExists
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ZsmulGeneratorEqZeroOfProjection
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+public import Formalism.LocalRingCardinality.DataRows
+public import Formalism.SatakeDualWeyl.Statement
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Formalism.HarderNarasimhan.StatementPl
+public import Formalism.HermitianLattices.StatementMass
+public import Formalism.LocalRingCardinality.DataArith
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Formalism.LatticeSlopes.Statement
+public import Formalism.FockGram.StatementHerm
+public import Formalism.ThetaLiftIndependence.Statement
+public import Formalism.SharpRestriction.CuspSpanNormBounds.DataS
+public import Formalism.LocalRingCardinality.DataKernels
+public import Formalism.HermitianLattices.StatementMaj
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarCohPfD
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.EmbeddingIntegerAlgebraMap
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocModel
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalDiscriminantIsUnit
+
+@[expose] public section
 
 private lemma den_coprime_of_mul_eq {K V : Type*} [Field K] [NumberField K] [AddCommGroup V] [Module K V]
     [Module (NumberField.RingOfIntegers K) V] [IsScalarTower (NumberField.RingOfIntegers K) K V]
@@ -71,7 +75,7 @@ private lemma den_coprime_of_mul_eq {K V : Type*} [Field K] [NumberField K] [Add
 theorem UpperTheory.Reformulated.B.ExistsBaseFieldIntegerDenominator.exists_den :
     ∀ {D : Formalism.BasicNotions.D7}
     {Λ : Submodule (NumberField.RingOfIntegers D.host.E) (Formalism.MainNotions.S.VS D).V},
-    Submodule.IsLattice D.host.E Λ →
+    Submodule.IsFullLattice D.host.E Λ →
       ∀ (x : (Formalism.MainNotions.S.VS D).V),
         ∃ (d : NumberField.RingOfIntegers ↥D.host.F),
           d ≠ (0 : NumberField.RingOfIntegers ↥D.host.F) ∧

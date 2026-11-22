@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.GramMatrices.StatementsGramAtPosDef
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.EventuallyInFrameDomain
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.GramMatrices.StatementsGramAtPosDef
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.EventuallyInFrameDomain
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -34,7 +39,7 @@ theorem GramAtPosDef.proof (D : ComponentData II Ψ K ι Ω E) : GramAtPosDef.St
     exact valAt_eq hzP (HermMetricEq.isValueAt_iff.2 ((hS p q).isValueAt hzP))
   have hgram : gramAt (D.h τ) bfr z =
       (HermMetricEq.valM D.y S z)ᴴ * (D.h τ).gram hex.choose z * HermMetricEq.valM D.y S z := by
-    rw [gramAt, dif_pos hex, dif_pos hS', hvals]
+    rw [gramAt, dite_eq_left hex, dite_eq_left hS', hvals]
   choose U hU hUe using fun q =>
     hbAt.2 _ ((HermMetricEq.isFrameAt_of_isFrameOver ((D.h τ).isFrame hex.choose) hzP hd).1 q)
   have hSU : S * Matrix.of (fun p q => U q p) = 1 := by

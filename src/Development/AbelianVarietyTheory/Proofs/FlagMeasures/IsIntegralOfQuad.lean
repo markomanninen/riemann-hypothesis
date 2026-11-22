@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GFrames
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GFrames
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL NumberField IsDedekindDomain
 open scoped Pointwise ENNReal Classical
 
@@ -101,7 +106,7 @@ theorem exists_trace_norm (A : Places F E sig) (x : E) :
         induction hz using Submodule.span_induction with
         | mem z hz => obtain ⟨y, rfl⟩ := hz; rw [(A.loc p).cj_ιE, h1]
         | zero => simp
-        | add a b _ _ ha hb => rw [map_add, ha, hb]
+        | add a b _ _ ha hb => rw [map_add (f := _), ha, hb]
         | smul c a _ ha => rw [map_smul, ha]
       have h3 : Function.Surjective (Algebra.linearMap (A.loc p).Fp (A.loc p).Ep) := by
         intro z
@@ -109,7 +114,7 @@ theorem exists_trace_norm (A : Places F E sig) (x : E) :
       have h4 := LinearMap.finrank_le_finrank_of_surjective h3
       rw [(A.loc p).rank, Module.finrank_self] at h4
       omega
-  obtain ⟨t, ht⟩ := hfix (x + sig x) (by rw [map_add, hss, add_comm])
+  obtain ⟨t, ht⟩ := hfix (x + sig x) (by rw [map_add (f := _), hss, add_comm])
   obtain ⟨n, hn⟩ := hfix (x * sig x) (by rw [map_mul, hss, mul_comm])
   exact ⟨t, n, ht, hn⟩
 
@@ -130,7 +135,7 @@ theorem mem_O_iff (A : Places F E sig) (p : HeightOneSpectrum (𝓞 F)) (x : E) 
   haveI := nontrivial_Ep (A.loc p)
   have ht' : algebraMap _ (A.loc p).Ep ((A.loc p).ιF t)
       = (A.loc p).ιE x + (A.L p).cj ((A.loc p).ιE x) := by
-    rw [← (A.loc p).compat, ht, map_add, A.L_cj, (A.loc p).cj_ιE]
+    rw [← (A.loc p).compat, ht, map_add (f := _), A.L_cj, (A.loc p).cj_ιE]
   have hn' : algebraMap _ (A.loc p).Ep ((A.loc p).ιF n)
       = (A.loc p).ιE x * (A.L p).cj ((A.loc p).ιE x) := by
     rw [← (A.loc p).compat, hn, map_mul, A.L_cj, (A.loc p).cj_ιE]

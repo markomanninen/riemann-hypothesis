@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.IntegralSquareRoots.FinrankRow
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.IntegralSquareRoots.FinrankRow
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.BasicNotions Classical Matrix

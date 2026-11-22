@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumBCut
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocModel
-import Formalism.SharpRestriction.CuspSpanNormBounds.LocalOrbitGerms
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumBCut
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocModel
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalOrbitGerms
+
+@[expose] public section
 
 noncomputable section
 

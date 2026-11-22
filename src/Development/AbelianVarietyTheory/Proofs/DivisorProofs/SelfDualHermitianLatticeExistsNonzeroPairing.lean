@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.AdelicU
@@ -10,7 +15,8 @@ theorem sesquilinearFormOfGram_eq_conj_swap : ∀ (F E : Type) [Field F] [Number
     (∀ e, σ (σ e) = e) → ∀ (n : ℕ) (J : Matrix (Fin n) (Fin n) E) (x w : Fin n → E),
     (∀ i j, σ (J j i) = J i j) → form σ J x w = σ (form σ J w x) := by
   intro F E _ _ _ _ _ σ hσ n J x w hJ
-  simp only [form, dotProduct, Matrix.mulVec, map_sum, map_mul, hσ, hJ, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [form, dotProduct, Matrix.mulVec, map_sum, map_mul, hσ, hJ, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring
@@ -21,7 +27,7 @@ theorem not_fg_top_ringOfIntegers (E : Type) [Field E] [NumberField E] :
   haveI : Module.Finite (𝓞 E) E := ⟨h⟩
   haveI : Module.Finite ℤ E := Module.Finite.trans (𝓞 E) E
   have hi : IsIntegral ℤ (algebraMap ℚ E (2⁻¹ : ℚ)) := Algebra.IsIntegral.isIntegral _
-  rw [isIntegral_algebraMap_iff (algebraMap ℚ E).injective] at hi
+  rw [isIntegral_algebraMap_iff ] at hi
   obtain ⟨y, hy⟩ := IsIntegrallyClosed.isIntegral_iff.mp hi
   have h2 : ((2 * y : ℤ) : ℚ) = 1 := by
     push_cast

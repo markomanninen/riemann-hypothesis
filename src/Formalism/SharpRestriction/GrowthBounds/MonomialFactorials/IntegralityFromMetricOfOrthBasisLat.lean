@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ClosedOfOrthogonalBasis
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.CommCondition
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ClosedOfOrthogonalBasis
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.CommCondition
+
+@[expose] public section
 
 noncomputable section
 

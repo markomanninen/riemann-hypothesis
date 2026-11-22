@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TopLeWchartNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ToStkAInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TopLeWchartNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ToStkAInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,6 +23,20 @@ theorem exists_ratio_valR {A : Type} [CommRing A] [IsLocalRing A] {X : Scheme.{0
   obtain ⟨a, ha⟩ := TorusCoord.exists_ratio hL (fun _ _ _ => rfl) t ht t' ht'
   refine ⟨a, fun z J hJ => ha _ _ z J hJ, fun j hj => ?_⟩
   obtain ⟨J, hJ⟩ := TorusCoord.exists_good' hL (cpt A)
+  have toStkA_valR {B : Type} [CommRing B] {Y : Scheme.{0}} (x : Sp B ⟶ Y)
+      (U : Y.Opens) (z : Sp B) (ht : ⊤ ≤ x ⁻¹ᵁ U) (b : Γ(Y, U)ˣ) :
+      toStkA z (valR x U b.val) = (gm x z U b).val := by
+    have hz : x z ∈ U := ht (show z ∈ (⊤ : (Sp B).Opens) from trivial)
+    have e1 : ∀ c, (Scheme.ΓSpecIso (CommRingCat.of B)).inv.hom
+        ((Scheme.ΓSpecIso (CommRingCat.of B)).hom.hom c) = c :=
+      fun c => congrArg (fun f => CommRingCat.Hom.hom f c)
+        (Iso.hom_inv_id (Scheme.ΓSpecIso (CommRingCat.of B)))
+    rw [valR, dite_eq_left ht, gm, dite_eq_left hz]
+    show ((Sp B).presheaf.germ ⊤ z trivial).hom ((Scheme.ΓSpecIso (CommRingCat.of B)).inv.hom
+        ((Scheme.ΓSpecIso (CommRingCat.of B)).hom.hom ((x.appLE U ⊤ ht).hom b.val))) =
+      ((Sp B).presheaf.germ (x ⁻¹ᵁ U) z hz).hom ((x.app U).hom b.val)
+    rw [e1]
+    exact TopCat.Presheaf.germ_res_apply (Sp B).presheaf (homOfLE ht) z trivial ((x.app U).hom b.val)
   apply toStkA_injective
   have hm : (𝟙 (Sp A) : Sp A ⟶ Sp A) (cpt A) ∈ LB.wchart L φ j := hj (x := cpt A) trivial
   rw [map_mul, toStkA_valR _ ⊤ _ le_rfl, toStkA_valR _ (LB.wchart L φ j) _ hj (t.s j),

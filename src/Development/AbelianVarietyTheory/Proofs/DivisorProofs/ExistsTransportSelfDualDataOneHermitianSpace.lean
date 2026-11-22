@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FirstIndexEqOfUnfolded
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSelfDualTr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CovolumeEqOfRealUnitaryConj
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LandherrStOfHasseNormSt
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasseNormTheoremQuadraticExtension
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FirstIndexEqOfUnfolded
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSelfDualTr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CovolumeEqOfRealUnitaryConj
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LandherrStOfHasseNormSt
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasseNormTheoremQuadraticExtension
+
+@[expose] public section
 
 noncomputable section
 
@@ -258,8 +262,8 @@ theorem isUStab_iff (γ : GL (Fin r) E) :
     refine forall_congr' fun x => ?_
     rw [conj_mulVec, mem_latMap, mem_latMap]
 
-include hP in
 
+include hP in
 theorem exists_isom (hΨ : X.Ψ = Y.Ψ) : ∃ u : (E →+* ℂ) → Matrix (Fin r) (Fin r) ℂ,
     (∀ τ ∈ X.Ψ, gram τ Y.Gm (u τ) = X.Gm.map τ) ∧
     ∀ γ : GL (Fin r) E, ∀ τ ∈ X.Ψ, u τ * (P⁻¹ * γ * P).1.map τ = γ.1.map τ * u τ := by
@@ -444,8 +448,8 @@ end Move
 
 end GlobalTheory.EqCovol.Transport
 
-open GlobalTheory.EqCovol.Transport in
 
+open GlobalTheory.EqCovol.Transport in
 theorem GlobalTheory.EqCovol.exists_transport : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (l : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H) (r : ℕ) (Y Y' : ReciprocityTheory.ChartRestriction.G.FD.Data E r), (∀ τ : E →+* ℂ, τ ∈ Y.Ψ ↔ τ (H.rt : E) = H.rt0) → Y'.Ψ = Y.Ψ → Y'.p0 = Y.p0 → 1 ≤ Y.p0 → Y.p0 < r → GlobalTheory.EqCovol.IsLevGrp l Y' → GlobalTheory.EqCovol.IsSelfDualTr Y → GlobalTheory.EqCovol.IsSelfDualTr Y' → ∃ Y'' : ReciprocityTheory.ChartRestriction.G.FD.Data E r, Y''.Ψ = Y.Ψ ∧ Y''.Gm = Y.Gm ∧ Y''.ξ0 = Y.ξ0 ∧ Y''.p0 = Y.p0 ∧ GlobalTheory.EqCovol.IsLevGrp l Y'' ∧ GlobalTheory.EqCovol.IsSelfDualTr Y'' ∧ GlobalTheory.TrueCx.covol Y'' = GlobalTheory.TrueCx.covol Y' := by
   intro E _ _ _ H l r Y Y' _ hΨ hp _ _ hl hY hY'
   obtain ⟨P, hP⟩ := exists_similitude H Y' Y hΨ hp hY' hY

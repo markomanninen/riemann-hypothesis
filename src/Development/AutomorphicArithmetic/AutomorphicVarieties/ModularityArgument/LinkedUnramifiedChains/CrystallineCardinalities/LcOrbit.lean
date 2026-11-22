@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnitStep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.DualZ
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnitStep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.DualZ
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr UpperTheory.V.Z.J Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V
 
@@ -64,14 +68,14 @@ private theorem cardInv {n : ℕ} {D M : Type} [Group D] [AddCommGroup M] [Modul
       invFun := fun f => ⟨f.1.toZModLinearMap n, by
         refine (Representation.mem_invariants _ _).mpr ?_
         intro g
-        apply TDual.ext
+        apply LinearMap.ext
         intro m
         have h1 := f.2 g (σ g⁻¹ m)
         have hinv : σ g (σ g⁻¹ m) = m := by
           rw [← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply]
         rw [hinv] at h1
         exact h1.symm⟩
-      left_inv := fun φ => Subtype.ext (TDual.ext fun m => rfl)
+      left_inv := fun φ => Subtype.ext (LinearMap.ext fun m => rfl)
       right_inv := fun f => Subtype.ext (AddMonoidHom.ext fun m => rfl) }
 
 private theorem lc_orbit {D M : Type} [Group D] [TopologicalSpace D] [IsTopologicalGroup D] [AddCommGroup M]

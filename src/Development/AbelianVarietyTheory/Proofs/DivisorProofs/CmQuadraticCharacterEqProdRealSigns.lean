@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Formalism.LocalToGlobal.IndefiniteReal.DatumF
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemNormGroupIffEverywhereNorm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumF
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemNormGroupIffEverywhereNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,8 +64,10 @@ theorem ringEquivReal_neg {σ : E →ₐ[F] E} (hcm : IsCMExt F E σ) {w : Infin
   have hc : ((e (algebraMap F w.Completion δ) : ℝ) : ℂ) = z * z := by
     rw [InfinitePlace.Completion.ringEquivRealOfIsReal_apply,
       InfinitePlace.Completion.extensionEmbeddingOfIsReal_apply]
-    have h5 : InfinitePlace.Completion.extensionEmbedding w (algebraMap F w.Completion δ) = w.embedding δ :=
-      InfinitePlace.Completion.extensionEmbedding_coe w ((WithAbs.equiv w.1).symm δ)
+    have h5 : InfinitePlace.Completion.extensionEmbedding w (algebraMap F w.Completion δ) = w.embedding δ := by
+      rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+        Algebra.algebraMap_self_apply, InfinitePlace.Completion.extensionEmbedding_coe]
+      rfl
     rw [h5, ← τ.2, RingHom.comp_apply, ← h1, map_mul]
   have hr := congrArg Complex.re hc
   simp only [Complex.ofReal_re, Complex.mul_re, hre, zero_mul, zero_sub] at hr

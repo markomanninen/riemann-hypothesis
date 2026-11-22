@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpFibreDegree
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpFibreDegree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -83,8 +88,8 @@ def BlowUpFibreSemilocal.Statement : Prop :=
           ∀ 𝔫 : {𝔫 : Ideal B // 𝔫.IsMaximal},
             (haveI := 𝔫.2.isPrime
              Module.length (Localization.AtPrime 𝔫.1)
-               (Localization.AtPrime 𝔫.1 ⧸ Ideal.span {algebraMap B (Localization.AtPrime 𝔫.1)
-                 (algebraMap (homLocRing P W) B ⟨_, hz⟩)})) =
+               (Localization.AtPrime 𝔫.1 ⧸ Ideal.span {(algebraMap B (Localization.AtPrime 𝔫.1)
+                 (algebraMap (homLocRing P W) B ⟨_, hz⟩))})) =
               ((divCycle (blowUpOf P u) (liftForm x) (e 𝔫).1).toNat : ℕ∞) ∧
             𝔫.1.inertiaDeg (homLocRing P W) = specialRelDeg (e 𝔫).1
 

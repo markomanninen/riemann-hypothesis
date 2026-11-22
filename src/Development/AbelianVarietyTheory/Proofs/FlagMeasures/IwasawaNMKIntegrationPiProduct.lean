@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LintegralFintypeProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LintegralFintypeProd
+
+@[expose] public section
 
 open MeasureTheory
 

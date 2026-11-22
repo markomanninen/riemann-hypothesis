@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.L2DbarEstimates.Imports
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSignHolds
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ImportsAlt
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.L2ExtensionLogCanonical
-import Development.AbelianVarietyTheory.Definitions.Divisors.EtaleEmpty
+module
+
+public import Mathlib
+public import ReciprocityTheory.L2DbarEstimates.Imports
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSignHolds
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ImportsAlt
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.L2ExtensionLogCanonical
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EtaleEmpty
+
+@[expose] public section
+
 open MeasureTheory Filter Topology Metric ReciprocityTheory.L2DbarEstimates ReciprocityTheory.L2DbarEstimates.Y GlobalTheory.OTY GlobalTheory.Published.L2Extension
 open scoped ENNReal ContDiff
 
@@ -36,7 +41,7 @@ theorem nz_dense_of_ne_zero_on_components : ∀ (n : ℕ) (Y : Type) [Topologica
     obtain ⟨r, hr, hball⟩ := Metric.isOpen_iff.mp e.open_target (e y) hyv
     set W : Set Y := e.source ∩ e ⁻¹' ball (e y) r
     have hWo : IsOpen W := e.isOpen_inter_preimage isOpen_ball
-    have hyW : y ∈ W := ⟨A.mem_pick y, mem_ball_self hr⟩
+    have hyW : y ∈ W := ⟨A.mem_pick y, by exact Set.mem_preimage.mpr (mem_ball_self hr)⟩
     obtain ⟨x, hxW, hxZ⟩ := (mem_closure_iff.mp hy) W hWo hyW
     set F : V n → ℂ := τ i ∘ e.symm
     have hF : DifferentiableOn ℂ F (ball (e y) r) := by

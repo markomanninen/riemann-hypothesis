@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Complex Matrix Filter Topology
 open scoped BigOperators Real

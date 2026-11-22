@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.ModDepthGE
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsEquivalenceFiniteEtaleBaseChangeResidueField
+module
+
+public import Mathlib
+public import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.ModDepthGE
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsEquivalenceFiniteEtaleBaseChangeResidueField
+
+@[expose] public section
 
 set_option autoImplicit false
 

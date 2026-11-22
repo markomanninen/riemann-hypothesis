@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.SemilocalAlgebras.Galois
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FixedUnitsFinitelyManyNorms
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.SemilocalAlgebras.Galois
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FixedUnitsFinitelyManyNorms
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,9 @@ theorem exists_rat_approx (L : Type) [Field L] [NumberField L] (c : L →ₐ[ℚ
   let Y : (Module.Free.ChooseBasisIndex ℤ (𝓞 L) → K) → A := fun t => ∑ i, t i • bA i
   let F : K × (Module.Free.ChooseBasisIndex ℤ (𝓞 L) → K) → A :=
     fun p => ((1 : K) ⊗ₜ[ℚ] a⁻¹) * (algebraMap K A p.1 * (Y p.2 * mc (Y p.2))) - 1
-  have hY : Continuous Y := continuous_finset_sum _ (fun i _ => (continuous_apply i).smul continuous_const)
+  have hY : Continuous Y := by
+    dsimp [Y]
+    fun_prop
   have hmc : Continuous mc := IsModuleTopology.continuous_of_linearMap mc
   have hal : Continuous (algebraMap K A) := IsModuleTopology.continuous_of_linearMap (Algebra.linearMap K A)
   have hF : Continuous F :=
@@ -112,7 +118,7 @@ theorem valuation_eq_one_of_coord (L : Type) [Field L] [NumberField L] (v : Heig
     (w : HeightOneSpectrum (𝓞 L)) [w.asIdeal.LiesOver v.asIdeal] (ε : L)
     (hε : ∀ j, v.valuation ℚ ((integralBasis L).repr (ε - 1) j) < 1) : w.valuation L ε = 1 := by
   classical
-  have he : v.asIdeal.ramificationIdx' w.asIdeal ≠ 0 := by
+  have he : w.asIdeal.ramificationIdx ℤ ≠ 0 := by
     intro he
     obtain ⟨m, hm, hm0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot v.ne_bot
     have h1 : w.valuation L (algebraMap (𝓞 L) L (algebraMap ℤ (𝓞 L) m)) < 1 := by

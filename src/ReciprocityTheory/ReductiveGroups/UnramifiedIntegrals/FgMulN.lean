@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgBasic
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,12 +83,12 @@ theorem mulN_integral {lam : PowerSeries K} {Φ : MvPowerSeries (Fin 2) K} (h : 
       unfold atX atY
       first
       | rw [MvPowerSeries.subst_add ha]
-      | rw [← MvPowerSeries.coe_substAlgHom ha, map_add, MvPowerSeries.coe_substAlgHom]
+      | rw [← MvPowerSeries.coe_substAlgHom ha, map_add (f := _), MvPowerSeries.coe_substAlgHom]
       rw [powerSeries_subst_subst_of_constantCoeff_zero lam (MvPowerSeries.constantCoeff_X 0) ha,
         powerSeries_subst_subst_of_constantCoeff_zero lam (MvPowerSeries.constantCoeff_X 1) ha,
         MvPowerSeries.subst_X ha, MvPowerSeries.subst_X ha]
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]
-      rw [hlog, hXs, Nat.cast_succ, map_add, map_one]
+      rw [hlog, hXs, Nat.cast_succ, map_add (f := _), map_one]
       ring
 
 end ReciprocityTheory.ChartRestriction.L1

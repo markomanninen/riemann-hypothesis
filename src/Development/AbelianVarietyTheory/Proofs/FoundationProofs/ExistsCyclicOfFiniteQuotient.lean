@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsMulCommutativeCentRealUJ
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsNormEqFixedUnitHenselian
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsNormEqXModMonicOfAdicCompleteInvolution
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsMulCommutativeCentRealUJ
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsNormEqFixedUnitHenselian
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsNormEqXModMonicOfAdicCompleteInvolution
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+
+@[expose] public section
 
 open Set Filter Matrix Polynomial GlobalTheory.AdelicU NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.ClassParam (krylov exists_cyclic krylov_map)
@@ -35,7 +39,8 @@ theorem exists_aeval_of_cyclic {M N : Matrix (Fin r) (Fin r) O} {v : Fin r → O
     have : krylov M v *ᵥ c = N *ᵥ v := by rw [mulVec_mulVec, mul_nonsing_inv _ hv, one_mulVec]
     rw [← this]
     ext i
-    simp [p, krylov, map_sum, aeval_monomial, Matrix.sum_mulVec, Algebra.algebraMap_eq_smul_one,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [p, krylov, map_sum, aeval_monomial, Matrix.sum_mulVec, Algebra.algebraMap_eq_smul_one,
       Matrix.smul_mulVec, Matrix.mulVec.eq_def (Matrix.of _), dotProduct, mul_comm]
   have hc : Commute (aeval M p) M := by
     have := congrArg (aeval M) (mul_comm p X)
@@ -143,9 +148,9 @@ section Points
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin n) (Fin n) E}
 
+
 variable (E) in
 omit [NumberField E] in
-
 def intLocMap (v : HeightOneSpectrum (𝓞 F)) : v.adicCompletionIntegers F →+* intLoc F E v :=
   ((Algebra.TensorProduct.includeLeftRingHom (R := F) (B := E)).comp (v.adicCompletionIntegers F).subtype).codRestrict _
     fun a => tmul_mem_intLoc a.2 1
@@ -188,7 +193,7 @@ theorem eventually_exists_map_eq (p : E[X]) : ∀ᶠ v : HeightOneSpectrum (𝓞
   · exact ⟨0, by rw [notMem_support_iff.1 hi, map_zero, map_zero]⟩
 
 theorem eventually_conj_of_charpoly_eq (h : IsCMExt F E σ) (hJ : IsHermND σ J) (L : Submodule (𝓞 E) (Fin n → E))
-    [Submodule.IsLattice E L] {P : E[X]} (hP : P.Separable) :
+    [Submodule.IsFullLattice E L] {P : E[X]} (hP : P.Separable) :
     ∀ᶠ v in cofinite, ∀ g ∈ stabLoc σ J L v, ∀ g' ∈ stabLoc σ J L v,
       (matHom _ σ J g).1.charpoly = P.map (inclR (Fv F v)) → (matHom _ σ J g').1.charpoly = P.map (inclR (Fv F v)) →
       ∃ k ∈ stabLoc σ J L v, k⁻¹ * g * k = g' := by
@@ -232,9 +237,8 @@ theorem eventually_conj_of_charpoly_eq (h : IsCMExt F E σ) (hJ : IsHermND σ J)
       rw [map_one]; rfl
     · change sigR _ σ (sigR _ σ y.1) = y.1
       induction y.1 with
-      | zero => simp
       | tmul a b => simp [sigR, hσ]
-      | add a b ha hb => rw [map_add, map_add, ha, hb]
+      | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
     · change (inclR (Fv F v) (ω : E) - inclR (Fv F v) (σ ω)) * inclR (Fv F v) (2 * ω : E)⁻¹ = 1
       rw [← map_sub, ← map_mul, hω, sub_neg_eq_add, ← two_mul,
         mul_inv_cancel₀ (mul_ne_zero two_ne_zero (RingOfIntegers.coe_ne_zero_iff.2 hω0)), map_one]
@@ -243,7 +247,7 @@ theorem eventually_conj_of_charpoly_eq (h : IsCMExt F E σ) (hJ : IsHermND σ J)
     · change O.subtype J'.det * inclR (Fv F v) J.det⁻¹ = 1
       rw [RingHom.map_det, show O.subtype.mapMatrix J' = (inclR (Fv F v)).mapMatrix J from rfl, ← RingHom.map_det,
         ← map_mul, mul_inv_cancel₀ hJ.2, map_one]
-    · rw [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_mul, ← derivative_map, c1, ha, hb, derivative_map,
+    · rw [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_mul, ← derivative_map, c1, ha, hb, derivative_map,
         ← Polynomial.map_mul, ← Polynomial.map_mul, ← Polynomial.map_add, hab, Polynomial.map_one, Polynomial.map_one]
   let k : GLoc σ J v := ⟨Formalism.UG.bc O.subtype u, (hU u.1 J').symm.trans (congrArg (·.map O.subtype) hu)⟩
   refine ⟨k, mem_stabLoc_stdLattice_iff.2 ⟨fun i j => (u.1 i j).2, fun i j => (u⁻¹.1 i j).2⟩, ?_⟩
@@ -254,7 +258,7 @@ theorem eventually_conj_of_charpoly_eq (h : IsCMExt F E σ) (hJ : IsHermND σ J)
   exact this
 
 theorem eventually_conj_mem_stabLoc (h : IsCMExt F E σ) (hJ : IsHermND σ J) (L : Submodule (𝓞 E) (Fin n → E))
-    [Submodule.IsLattice E L] {γ : GRat σ J} (hγ : IsRegSS γ.1.1) :
+    [Submodule.IsFullLattice E L] {γ : GRat σ J} (hγ : IsRegSS γ.1.1) :
     ∀ᶠ v in cofinite, {x | x⁻¹ * proj σ J v (ratEmb σ J γ) * x ∈ stabLoc σ J L v} =
       (cent (proj σ J v (ratEmb σ J γ)) : Set (GLoc σ J v)) * (stabLoc σ J L v : Set (GLoc σ J v)) := by
   filter_upwards [eventually_conj_of_charpoly_eq h hJ L hγ, eventually_proj_mem_stabLoc σ J L (ratEmb σ J γ)]
@@ -273,16 +277,21 @@ theorem eventually_conj_mem_stabLoc (h : IsCMExt F E σ) (hJ : IsHermND σ J) (L
     rw [this, ← mem_cent.1 ht, inv_mul_cancel_left]
     exact mul_mem (mul_mem (inv_mem hk) hg) hk
 
-theorem eventually_forall_proj_mem (L : Submodule (𝓞 E) (Fin n → E)) [Submodule.IsLattice E L] {K : Set (GAd σ J)}
+theorem eventually_forall_proj_mem (L : Submodule (𝓞 E) (Fin n → E)) [Submodule.IsFullLattice E L] {K : Set (GAd σ J)}
     (hK : IsCompact K) : ∀ᶠ v in cofinite, ∀ x ∈ K, proj σ J v x ∈ stabLoc σ J L v := by
-  refine hK.induction_on (p := fun K => ∀ᶠ v in cofinite, ∀ x ∈ K, proj σ J v x ∈ stabLoc σ J L v) (by simp)
-    (fun _ _ hs ht => ht.mono fun v hv x hx => hv x (hs hx))
-    (fun _ _ hs ht => (hs.and ht).mono fun v hv x hx => hx.elim (hv.1 x) (hv.2 x)) fun x _ => ?_
-  refine ⟨_, mem_nhdsWithin_of_mem_nhds (((restrGroup_GAd σ J L).isOpen_level.preimage
-    (continuous_const_mul x⁻¹)).mem_nhds (by simp)), (eventually_proj_mem_stabLoc σ J L x).mono fun v hv y hy => ?_⟩
-  simpa using mul_mem hv (hy v)
+  apply hK.induction_on (p := fun K => ∀ᶠ v in cofinite, ∀ x ∈ K, proj σ J v x ∈ stabLoc σ J L v)
+  · simp
+  · intro s t hs ht
+    exact ht.mono fun v hv x hx => hv x (hs hx)
+  · intro s t hs ht
+    exact (hs.and ht).mono fun v hv x hx => hx.elim (hv.1 x) (hv.2 x)
+  · intro x hx
+    refine ⟨_, mem_nhdsWithin_of_mem_nhds (((restrGroup_GAd σ J L).isOpen_level.preimage
+      (continuous_const_mul x⁻¹)).mem_nhds (by simp)), ?_⟩
+    exact (eventually_proj_mem_stabLoc σ J L x).mono fun v hv y hy => by
+      simpa using mul_mem hv (hy v)
 
-theorem isProperOrbit_GAd_of_local (L : Submodule (𝓞 E) (Fin n → E)) [Submodule.IsLattice E L] {γ : GAd σ J}
+theorem isProperOrbit_GAd_of_local (L : Submodule (𝓞 E) (Fin n → E)) [Submodule.IsFullLattice E L] {γ : GAd σ J}
     (hK : ∀ᶠ v in cofinite, {x | x⁻¹ * proj σ J v γ * x ∈ stabLoc σ J L v} =
       (cent (proj σ J v γ) : Set (GLoc σ J v)) * (stabLoc σ J L v : Set (GLoc σ J v)))
     (ha : ∀ w, IsProperOrbit (cent (projArch σ J w γ)) (projArch σ J w γ))
@@ -291,7 +300,29 @@ theorem isProperOrbit_GAd_of_local (L : Submodule (𝓞 E) (Fin n → E)) [Submo
   obtain ⟨S, hS⟩ := GlobalTheory.RestrMeas.exists_finset_of_eventually (hK.and (eventually_forall_proj_mem L hc))
   choose A hA hA' using fun w => ha w _ (hc.image (continuous_projArch σ J w))
   choose B hB hB' using fun v => hf v _ (hc.image (continuous_proj σ J v))
-  refine ⟨_, (isRestrGroup_GAd σ J L).isCompact_cyl S A B hA fun v _ => hB v, fun x hx => ?_⟩
+  have hcyl : IsCompact {g : GAd σ J | (∀ w, projArch σ J w g ∈ A w) ∧
+      (∀ v ∈ S, proj σ J v g ∈ B v) ∧ ∀ v ∉ S, proj σ J v g ∈ stabLoc σ J L v} := by
+    have hc := ((((isCompact_univ_pi hA).image (continuous_embArchPi σ J)).image (continuous_ofInf σ J)).mul
+      ((isCompact_univ_pi fun v : S => hB v).image (continuous_embAt σ J S))).mul (isCompact_levelOff σ J L S)
+    convert hc using 1
+    ext g
+    constructor
+    · rintro ⟨h1, h2, h3⟩
+      obtain ⟨e1, e2, e3⟩ := comp_glue (fun w => projArch σ J w g) (projAt σ J S g)
+      refine ⟨_, ⟨_, ⟨_, ⟨fun w => projArch σ J w g, fun w _ => h1 w, rfl⟩, rfl⟩, _,
+        ⟨projAt σ J S g, fun v _ => h2 v v.2, rfl⟩, rfl⟩, _⁻¹ * g,
+        mem_levelOff.2 ⟨mem_finPts_iff_forall.2 fun w => ?_, fun v hv => ?_, fun v hv => ?_⟩, mul_inv_cancel_left _ _⟩
+      · rw [map_mul, map_inv, e1, inv_mul_cancel]
+      · rw [map_mul, map_inv, e2 ⟨v, hv⟩, projAt_apply, inv_mul_cancel]
+      · rw [map_mul, map_inv, e3 v hv, inv_one, one_mul]; exact h3 v hv
+    · rintro ⟨_, ⟨_, ⟨_, ⟨a, ha, rfl⟩, rfl⟩, _, ⟨b, hb, rfl⟩, rfl⟩, k, hk, rfl⟩
+      obtain ⟨e1, e2, e3⟩ := comp_glue a b
+      obtain ⟨k1, k2, k3⟩ := mem_levelOff.1 hk
+      refine ⟨fun w => ?_, fun v hv => ?_, fun v hv => ?_⟩
+      · rw [map_mul, e1, mem_finPts_iff_forall.1 k1, mul_one]; exact ha w trivial
+      · rw [map_mul, e2 ⟨v, hv⟩, k2 v hv, mul_one]; exact hb ⟨v, hv⟩ trivial
+      · rw [map_mul, e3 v hv, one_mul]; exact k3 v hv
+  refine ⟨_, hcyl, fun x hx => ?_⟩
   choose a ha1 ha2 using fun w => hA' w (projArch σ J w x) ⟨_, hx, by simp⟩
   have : ∀ v, ∃ t ∈ cent (proj σ J v γ), (v ∈ S → t * proj σ J v x ∈ B v) ∧
       (v ∉ S → t * proj σ J v x ∈ stabLoc σ J L v) := fun v => by
@@ -301,9 +332,10 @@ theorem isProperOrbit_GAd_of_local (L : Submodule (𝓞 E) (Fin n → E)) [Submo
     · obtain ⟨t, h1, k, hk, e⟩ := (Set.ext_iff.1 (hS v hv).1 (proj σ J v x)).1 (by simpa using (hS v hv).2 _ hx)
       exact ⟨t⁻¹, inv_mem h1, fun h => absurd h hv, fun _ => by rw [← e, inv_mul_cancel_left]; exact hk⟩
   choose b hb1 hb2 hb3 using this
-  obtain ⟨t, h1, h2⟩ := (restrGroup_GAd σ J L).exists_eq a b (by
+  have hb : ∀ᶠ v in cofinite, b v ∈ stabLoc σ J L v := by
     filter_upwards [S.eventually_cofinite_notMem, eventually_proj_mem_stabLoc σ J L x] with v hv hxv
-    exact (Subgroup.mul_mem_cancel_right _ hxv).1 (hb3 v hv))
+    exact (Subgroup.mul_mem_cancel_right _ hxv).1 (hb3 v hv)
+  obtain ⟨t, h1, h2⟩ := (restrGroup_GAd σ J L).exists_eq a b hb
   refine ⟨t, mem_cent.2 (GAd_ext σ J (fun w => ?_) fun v => ?_), fun w => ?_, fun v hv => ?_, fun v hv => ?_⟩
   · simpa only [map_mul, h1] using mem_cent.1 (ha1 w)
   · simpa only [map_mul, h2] using mem_cent.1 (hb1 v)
@@ -311,14 +343,14 @@ theorem isProperOrbit_GAd_of_local (L : Submodule (𝓞 E) (Fin n → E)) [Submo
   · simpa only [map_mul, h2] using hb2 v hv
   · simpa only [map_mul, h2] using hb3 v hv
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem isRegSS_proj_ratEmb {γ : GRat σ J} (hγ : IsRegSS γ.1.1) (v : HeightOneSpectrum (𝓞 F)) :
     IsRegSS (matHom _ σ J (proj σ J v (ratEmb σ J γ))).1 := by
   rw [proj_ratEmb]; exact hγ.map (inclR _)
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem isRegSS_projArch_ratEmb {γ : GRat σ J} (hγ : IsRegSS γ.1.1) (w : InfinitePlace F) :
     IsRegSS (matHom _ σ J (projArch σ J w (ratEmb σ J γ))).1 := by
   rw [projArch_ratEmb]; exact hγ.map (inclR _)
@@ -331,7 +363,7 @@ theorem isProperOrbit_ratEmb (h : IsCMExt F E σ) (hJ : IsHermND σ J) {γ : GRa
     fun v => isProperOrbit_GLoc h hJ (isRegSS_proj_ratEmb hγ v)
 
 theorem regular_semisimple_adelic (h : IsCMExt F E σ) (hJ : IsHermND σ J) (L : Submodule (𝓞 E) (Fin n → E))
-    [Submodule.IsLattice E L] (γ : GRat σ J) (hγ : IsRegSS γ.1.1) :
+    [Submodule.IsFullLattice E L] (γ : GRat σ J) (hγ : IsRegSS γ.1.1) :
     (∀ᶠ v in cofinite, {x | x⁻¹ * proj σ J v (ratEmb σ J γ) * x ∈ stabLoc σ J L v} =
       (cent (proj σ J v (ratEmb σ J γ)) : Set (GLoc σ J v)) * (stabLoc σ J L v : Set (GLoc σ J v))) ∧
     IsProperOrbit (cent (ratEmb σ J γ)) (ratEmb σ J γ) :=

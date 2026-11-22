@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsExamples
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDivPushForward
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPFContractedDim
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PRelevantPrimeDimGe
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsExamples
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDivPushForward
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPFContractedDim
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PRelevantPrimeDimGe
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -31,11 +36,6 @@ def DivPushForwardLocal.Statement : Prop :=
         relDeg j P' * divCycle (contractPrime j P') a W
 
 section Example
-
-abbrev LineRing : Type :=
-  MRing (fun k => addBlock (ProjIdx 1) 0 ((Function.Embedding.some : Unit ↪ Option Unit) k)) ℚ
-
-abbrev linePointIdeal : Ideal LineRing := Ideal.span {X ⟨(), (0 : Fin 2)⟩}
 
 end Example
 

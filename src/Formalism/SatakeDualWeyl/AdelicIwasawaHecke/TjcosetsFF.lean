@@ -1,4 +1,8 @@
-import Formalism.SatakeDualWeyl.StatementE
+module
+
+public import Formalism.SatakeDualWeyl.StatementE
+
+@[expose] public section
 
 noncomputable section
 
@@ -226,7 +230,7 @@ def tjcosets_equiv (n j : ℕ) :
       have := congrArg (tjcosets_pr n j) h
       simpa [tjcosets_pr_ext] using this)), fun i a ha => by
       simp only [Function.comp_apply, tjcosets_ext, LinearMap.coe_mk, AddHom.coe_mk]
-      rw [dif_neg (by omega)]⟩
+      rw [dite_eq_right (by omega)]⟩
   left_inv w := by
     apply Subtype.ext
     funext i

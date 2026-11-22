@@ -1,3 +1,7 @@
-import Mathlib
-import GroundTheory.GlobalFields.LocalAtPlace
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousSingleV
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.LocalAtPlace
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousSingleV
+
+@[expose] public section

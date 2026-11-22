@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FixedFrameProperty
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormBasics
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FixedFrameProperty
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormBasics
+
+@[expose] public section
 
 open Matrix Formalism.FourierDecayAlt Formalism.QuantumDeterminants
 open scoped ComplexConjugate

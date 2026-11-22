@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GaloisFromTraceFormula.DescWeakOfRunTh
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.SatakeTwists.SatakeTwistHolds
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PStringStepB
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GaloisFromTraceFormula.DescWeakOfRunTh
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.SatakeTwists.SatakeTwistHolds
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PStringStepB
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter Topology
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.LFun
@@ -59,7 +63,7 @@ theorem UpperTheory.V.Z.Tf.GaloisFromTraceFormula.cuspCaseJ :
   choose π p₁ p₂ p₃ using fun k => hM E N h1 bad hb K W (φ k) (m k) (B k) (h k).1 (h k).2.1
   choose π₀ z q₁ q₂ q₃ q₄ q₅ q₆ using fun k => hN E N h1 bad K W hK (π k) (φ k) (m k) (p₁ k) (h k).1.ne (h k).1.ty (p₂ k)
   have hz : Tendsto z atTop (𝓝 z₀) := by
-    refine ((tendsto_finset_sum _ fun t _ => sum_to (hm t)).div_const c).congr fun k => ?_
+    refine ((tendsto_finsetSum _ fun t _ => sum_to (hm t)).div_const c).congr fun k => ?_
     rw [q₅ k, mul_div_cancel_left₀ _ hc0]
   have hs : ∀ k, ∀ w ∉ bad, (CG.mk (π₀ k)).HasSat w ((B k w).map (· * (Model.absC E (-z k)).val w)) := fun k w hw => by
     have := PositivityTheory.RgJS.satake_twist_holds E _ _ _ w _ (absC_unrAt (-z k) w) (p₃ k w hw)

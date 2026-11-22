@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.MemL2OfBoundedContinuousInvariant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MemL2OfBoundedContinuousInvariant
+
+@[expose] public section
 
 open MeasureTheory Set GlobalTheory.AutomorphicL2Unitary
 open scoped ENNReal Pointwise
@@ -93,7 +97,7 @@ theorem measurePreserving_conj (hc : Cocompact Γ N) (μ : Measure N) [μ.IsHaar
   have h := isFundamentalDomain_stdDom (Γ.subgroupOf N) μ
   have he := Measure.isMulLeftInvariant_eq_smul (μ.map e) μ
   have h' : IsFundamentalDomain (Γ.subgroupOf N) (e ⁻¹' stdDom (Γ.subgroupOf N)) μ :=
-    h.preimage_of_equiv ⟨hm, he ▸ Measure.smul_absolutelyContinuous⟩
+    h.preimage_of_equiv ⟨hm.aemeasurable, he ▸ Measure.smul_absolutelyContinuous⟩
       (e := fun δ => ⟨e.symm δ, mul_mem (mul_mem (inv_mem hγ) δ.2) hγ⟩)
       ⟨fun a b hab => Subtype.ext (e.symm.injective (congrArg Subtype.val hab)),
         fun δ => ⟨⟨e δ, mul_mem (mul_mem hγ δ.2) (inv_mem hγ)⟩, Subtype.ext (e.symm_apply_apply _)⟩⟩

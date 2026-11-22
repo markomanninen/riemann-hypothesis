@@ -1,5 +1,11 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.WeilJacquetShalikaLaw
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.lift_levelP_alt₂
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.WeilJacquetShalikaLaw
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +34,7 @@ theorem local_unramified_of : JacquetShalikaLocal.L7 → JacquetShalikaLocal.lif
       rw [← hΛ' 0 hφ, map_zero]
     rw [h0, h0, zero_mul]
   let v : GL (Fin a) (w.adicCompletion E) → ℂ := fun x => Wh ψ φ (h * fl a w x)
-  have hfix : ∀ k ∈ KGL w a, Rt E a (fl a w k) φ = φ := fun k hk => GlobalTheory.LGrp.mem_fixed.1 hsat.2.1 k hk
+  have hfix : ∀ k ∈ KGL w (n := a), Rt E a (fl a w k) φ = φ := fun k hk => GlobalTheory.LGrp.mem_fixed.1 hsat.2.1 k hk
   have hv : v ∈ WeilJacquetShalikaLaw.WS (WeilJacquetShalikaLaw.psiW ψ w) a := by
     intro n hn x
     change Wh ψ φ (h * fl a w (n * x)) = _ * Wh ψ φ (h * fl a w x)
@@ -62,7 +68,7 @@ theorem local_unramified_of : JacquetShalikaLocal.L7 → JacquetShalikaLocal.lif
       have e1 := (LinearMap.proj (R := ℂ) (φ := fun _ : GL (Fin a) (w.adicCompletion E) => ℂ) x).toAddMonoidHom.map_finsum hfin
       have e2 := (Λ : XB E a →L[ℂ] ℂ).toLinearMap.toAddMonoidHom.map_finsum hfin2
       have e3 := hsat.2.2.2 ϖ hϖ j hj
-      have key : ∀ c : GL (Fin a) (w.adicCompletion E) ⧸ KGL w a,
+      have key : ∀ c : GL (Fin a) (w.adicCompletion E) ⧸ KGL w (n := a),
           (Tj ℂ a (Ov E w) ϖ j c.out • GlobalTheory.PRep.rightReg ℂ (GL (Fin a) (w.adicCompletion E)) ℂ c.out v) x =
             Λ (Tj ℂ a (Ov E w) ϖ j c.out • repW a w c.out φ) := by
         intro c
@@ -71,8 +77,8 @@ theorem local_unramified_of : JacquetShalikaLocal.L7 → JacquetShalikaLocal.lif
         rw [hrt, smul_eq_mul]
         change _ * Wh ψ φ (h * fl a w (x * c.out)) = _
         rw [map_mul, mul_assoc]
-      have LHS : heckeVec (GlobalTheory.PRep.rightReg ℂ (GL (Fin a) (w.adicCompletion E)) ℂ) (KGL w a)
-          (Tj ℂ a (Ov E w) ϖ j) v x = Λ (heckeVec (repW a w) (KGL w a) (Tj ℂ a (Ov E w) ϖ j) φ) := by
+      have LHS : heckeVec (GlobalTheory.PRep.rightReg ℂ (GL (Fin a) (w.adicCompletion E)) ℂ) (KGL w (n := a))
+          (Tj ℂ a (Ov E w) ϖ j) v x = Λ (heckeVec (repW a w) (KGL w (n := a)) (Tj ℂ a (Ov E w) ϖ j) φ) := by
         rw [heckeVec, heckeVec]
         exact e1.trans ((finsum_congr key).trans e2.symm)
       refine LHS.trans ?_

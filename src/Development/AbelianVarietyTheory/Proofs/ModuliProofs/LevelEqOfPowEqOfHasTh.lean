@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsThetaPtOverOfSubsingleton
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsThetaPtOverMove
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaCosetNonvanishingOfHasTh
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsThetaPtOverOfSubsingleton
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsThetaPtOverMove
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaCosetNonvanishingOfHasTh
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -31,7 +35,7 @@ theorem biadd_eq_zero {M U : Type} [AddCommGroup M] [AddCommGroup U] {n r : ℕ}
       have a₁ := hr t a
       have a₂ := hr a t
       have a₃ := hr a (n • a)
-      simp only [map_add, map_nsmul, AddMonoidHom.add_apply, AddMonoidHom.nsmul_apply, hc t ht, pow_succ] at a₁ a₂ a₃ ⊢
+      simp only [map_add (f := _), map_nsmul, AddMonoidHom.add_apply, AddMonoidHom.nsmul_apply, hc t ht, pow_succ] at a₁ a₂ a₃ ⊢
       linear_combination (norm := module) a₁ + a₂ + a₃
     have h₀ : ∀ z, n ^ r • B z z = 0 := fun z => (h₁ z).trans ((h₁ 0).symm.trans (by simp))
     have h₂ := h₀ (x + y)
@@ -39,7 +43,7 @@ theorem biadd_eq_zero {M U : Type} [AddCommGroup M] [AddCommGroup U] {n r : ℕ}
     have h₄ := h₀ y
     have h₅ := hr x y
     obtain ⟨l, rfl⟩ := hn
-    simp only [map_add, AddMonoidHom.add_apply, hB y x, pow_succ] at h₂ h₅
+    simp only [map_add (f := _), AddMonoidHom.add_apply, hB y x, pow_succ] at h₂ h₅
     linear_combination (norm := module) h₅ - l • (h₂ - h₃ - h₄)
 
 theorem div_prod_pow_eq_one {H I : Type} [CommGroup H] [Fintype I] {k : ℕ} {y z : I → H} (hk : ∀ i, y i ^ k = z i ^ k)
@@ -86,8 +90,8 @@ theorem eq_of_pairing_const {H U I : Type} [CommGroup H] [CommGroup U] [Fintype 
   rw [skew, h]
   exact inv_one
 
-open Out ThetaCoord CommPairing VVRank in
 
+open Out ThetaCoord CommPairing VVRank in
 theorem exists_twist (hG : GlobalFnsSt) {S : Scheme.{0}} (P : PolAV S) {T : Over S} {k : ℕ} (hk : Odd k) {I : Type}
     {x a : I → (T ⟶ P.A)} (ha : ∀ i, a i ^ k = 1) {c : I → Γ(T.left, ⊤)ˣ}
     (hc : ∀ i, WeilIs P.A P.L ((k : ℤ) ^ 2) (x i) (a i) (c i)) {v v' : I → Γ(T.left, ⊤)}
@@ -156,8 +160,8 @@ theorem linComb_val {S : Scheme.{0}} {A T : Over S} [GrpObj A] [IsCommMonObj A] 
   rw [Out.linComb, List.prod_ofFn]
   exact Finset.prod_congr rfl fun i _ => by rw [← zpow_natCast, ZMod.val_intCast, ← zpow_eq_zpow_emod' _ (h i)]
 
-open Out in
 
+open Out in
 theorem eq_of_isThetaPt (hLaw : Laws) {g n j : ℕ} (hn : Odd n) (hj : 2 ≤ j) {K : Type} [Field K] [IsAlgClosed K]
     (P : PolAV (Sp K)) {y z : Fin (2 * g) → (baseOver (Sp K) ⟶ P.A)} (hy : ∀ i, y i ^ (n ^ j) ^ 2 = 1)
     (hz : ∀ i, z i ^ (n ^ j) ^ 2 = 1) (hk : ∀ i, y i ^ n ^ j = z i ^ n ^ j)
@@ -248,8 +252,8 @@ end GlobalTheory.LevelSquare
 
 namespace GlobalTheory
 
-open LevelSquare ThetaPtMove in
 
+open LevelSquare ThetaPtMove in
 theorem level_eq_of_pow_eq_of_hasTh : Out.Laws → Out.Laws2 → ∀ (g n j : ℕ) (J : Type), n.Prime → Odd n → 2 ≤ j → ∀ (o : Type) [CommRing o] (b : TBase o ((n ^ j) ^ 2)) (K : Type) [Field K] [IsAlgClosed K] (s : Sp K ⟶ Sp o) (t t' : TObj g ((n ^ j) ^ 2) J b s) (φ : t'.A.left ⟶ t.A.left) (v : Ix g ((n ^ j) ^ 2) → K), IsGrpPullback t'.A t.A (𝟙 _) φ → LBIso t'.L (t.L.pull φ) → (∀ i, (t'.pt i ^ n ^ j).left ≫ φ = (t.pt i ^ n ^ j).left) → t.HasTh (𝟙 _) v → t'.HasTh (𝟙 _) v → ∀ i, (t'.pt i).left ≫ φ = (t.pt i).left := by
   intro hLaw hLaw₂ g n j J hp hn hj o _ b K _ _ s t t' φ v hφ hw hk H H'
   have hc := GlobalTheory.coset_of_hasTh hLaw hLaw₂ o g (n ^ j) J b _ s t n K (𝟙 _) v ⊥ hp.two_le (dvd_pow_self n (by omega)) H

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.PadicGeMulNat
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.PadicGeMulNat
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,7 +95,7 @@ theorem choose_shift_binomial_expansion (P rho M e : ℕ) :
     rw [one_pow, mul_one, C_eq_natCast, add_sub_cancel_right]
     ring
   have hc := congrArg (fun q : ℤ[X] => q.coeff M) hpoly
-  simp only [coeff_one_add_X_pow, finset_sum_coeff, coeff_C_mul] at hc
+  simp only [coeff_one_add_X_pow, finsetSum_coeff, coeff_C_mul] at hc
   rw [hc]
   calc ∑ l ∈ range (e + 1), ((e.choose l : ℕ) : ℤ) * ((1 + X : ℤ[X]) ^ rho * ((1 + X) ^ P - 1) ^ l).coeff M
       = ∑ l ∈ range (e + 1), binomialExpansionCoeff P rho M l * ((e.choose l : ℕ) : ℤ) :=

@@ -1,8 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.IntegralJetsPairing
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
-import Formalism.LocalToGlobal.ProjectiveLattices.HalfOneAddSqrtNegIsIntegral
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ProjectiveOfFg
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataKerI
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+public import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
+public import Formalism.LocalToGlobal.ProjectiveLattices.HalfOneAddSqrtNegIsIntegral
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ProjectiveOfFg
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -39,7 +45,8 @@ theorem exists_triv (hur : Algebra.Unramified (𝓞 (maximalRealSubfield E)) (�
     have e2 : ∑ j, (x j : E) * IsCMField.complexConj E (y j : E) =
         ((∑ j, x j * IsCMField.ringOfIntegersComplexConj E (y j) : 𝓞 E) : E) := by
       change _ = algebraMap (𝓞 E) E _
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_mul, ← IsCMField.coe_ringOfIntegersComplexConj]
     rw [e1, e2, Nat.cast_one, one_mul]

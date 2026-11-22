@@ -1,8 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DatumEquiv
-import Development.AbelianVarietyTheory.Definitions.Divisors.VdmSplit
+module
 
-section
-open GlobalTheory.PsCo.PcEG
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TCoefMInMMul
+public import Formalism.RealPlaceAnalysis.Complexify
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.IsPhysSet
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,7 +98,9 @@ def AP (ε : Fin n → Bool) : Matrix (Mode ε) (Mode ε) (Poly n) :=
 end OmegaDeterminant
 
 open OmegaDeterminant in
-theorem modeMatrixDet_eq_adjointDet : OmDet := by
+theorem modeMatrixDet_eq_adjointDet :
+    ∀ (n : ℕ) (ε : Fin n → Bool), ∃ Q : Poly n, ∀ k ∈ Formalism.REAL.Kset ε,
+      ev k Q * ev k (OmP ε).det = physDet ε k := by
   intro n ε
   refine ⟨(AP ε).det, fun k hk => ?_⟩
   let e : Mode ε ≃ {x : Fin n × Fin n // IsPhys ε x} :=
@@ -113,5 +117,3 @@ theorem modeMatrixDet_eq_adjointDet : OmDet := by
   rfl
 
 end GlobalTheory.PsCo.PcEF
-
-end

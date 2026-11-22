@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedSmooth
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
-import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.IsotypicSignedParameters
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsBlockOrd
-import Formalism.LocalToGlobal.LatticeGeometry.CmTypeMeetsConjugatePair
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryExistsWithPrescribedParts
-import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.OrthonormalBaseFrameNeg
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedSmooth
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
+public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.IsotypicSignedParameters
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsBlockOrd
+public import Formalism.LocalToGlobal.LatticeGeometry.CmTypeMeetsConjugatePair
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryExistsWithPrescribedParts
+public import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.OrthonormalBaseFrameNeg
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,10 +44,6 @@ theorem tauE_cm (σ : D.host.E →+* ℂ) :
     exact exists_congr fun ρ => eq_comm
   rw [hc, key, key]
   exact Formalism.L2.Geo.mem_Psi_iff_mul_cc_notMem g
-
-theorem infMat_eq (V : HSp D) (θ : Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ) (h : GA D V) :
-    letI := D.host.cmStar
-    infMat D.sp.cm.sig V.gram θ h = Formalism.L2.Pj.archM V θ h := rfl
 
 theorem archM_mul (V : HSp D) (θ : Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ) (a b : GA D V) :
     Formalism.L2.Pj.archM V θ (a * b) = Formalism.L2.Pj.archM V θ a * Formalism.L2.Pj.archM V θ b := by

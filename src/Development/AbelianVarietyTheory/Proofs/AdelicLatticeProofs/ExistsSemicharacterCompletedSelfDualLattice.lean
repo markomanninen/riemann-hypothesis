@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsIsArchimedeanAdeleChartOfRealChart
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIntegerMapEqHalfOneAddSqrt
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDualStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HomSymplecticHalfFormAlgebraicLawsContinuousStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsIsArchimedeanAdeleChartOfRealChart
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIntegerMapEqHalfOneAddSqrt
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDualStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HomSymplecticHalfFormAlgebraicLawsContinuousStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open scoped TensorProduct ContDiff ComplexOrder
@@ -38,7 +42,7 @@ theorem exists_abstract {G R : Type} [AddCommGroup G] [AddCommGroup R] (ψ : Add
       rw [sub_sub_sub_cancel_left] at h1
       exact sub_eq_zero.1 (hKL _ (L.sub_mem h.choose_spec.1 hl') h1)
     show dite _ _ _ = _
-    rw [dif_pos h, e]
+    rw [dite_eq_left h, e]
   have gen : ∀ u ∈ L, (∀ l ∈ L, ψ (B l u) * ψ (B (p (l + u)) (l + u)) = ψ (B (p l) l)) →
       ∀ x, ψ (B x u) * χ (x + u) = χ x := fun u hu H x => by
     by_cases h : ∃ l ∈ L, K (x - l)
@@ -102,7 +106,7 @@ theorem latO_inf (S T : HSp D) (LS : Set (Fin S.rank → D.host.E)) (LT : Set (F
     have h1 : infPart D (x i j) = 0 := congrFun (congrFun hx i) j
     have h2 : infPart D (y i j) = 0 := congrFun (congrFun hy i) j
     show infPart D (x i j + y i j) = 0
-    rw [RingHom.map_add, h1, h2, add_zero]
+    rw [RingHom.map_add (f := _), h1, h2, add_zero]
   | neg x _ hx =>
     funext i j
     have h1 : infPart D (x i j) = 0 := congrFun (congrFun hx i) j
@@ -174,7 +178,7 @@ theorem exists_semichar : ∀ (D : D7) (S T : HSp D) (ΛS : Submodule (𝓞 D.ho
     (fun x => by
       funext i j
       show incA D (b : D.host.E) * x i j + incA D (star (b : D.host.E)) * x i j = x i j
-      rw [← add_mul, ← RingHom.map_add, hb, RingHom.map_one, one_mul])
+      rw [← add_mul, ← RingHom.map_add (f := _), hb, RingHom.map_one, one_mul])
     (f7 _) (latO_mul_int S T _ _ _ b)
   exact ⟨χ, c1, c2, c3, c4, c5, fun e he u hu hh => c6 u hu (f8 e _ u he.2.1 hh)⟩
 

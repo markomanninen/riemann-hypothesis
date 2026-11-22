@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.AbelianHodgeDeRham.Bridge
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.AbelianHodgeDeRham.Bridge
+
+@[expose] public section
 
 set_option autoImplicit false
 

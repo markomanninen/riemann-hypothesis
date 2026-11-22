@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NilpotentOfNotIsUnit
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffZeroEqZeroIff
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NilpotentOfNotIsUnit
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffZeroEqZeroIff
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct GlobalTheory.HWL GlobalTheory.Decompl
 
@@ -25,7 +29,7 @@ private theorem crd_mul_lemma_2 (i : I) (c : W) (y : O ⊗[Z] W) :
   | tmul o v =>
     rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, crd_tmul_lemma, crd_tmul_lemma]
     exact (mul_smul_comm _ _ _).symm
-  | add y z hy hz => rw [mul_add, map_add, map_add, hy, hz, mul_add]
+  | add y z hy hz => rw [mul_add, map_add (f := _), map_add (f := _), hy, hz, mul_add]
 
 private theorem sum_basis_tmul_crd_eq (y : O ⊗[Z] W) : ∑ i, b i ⊗ₜ[Z] crd b i y = y := by
   induction y using TensorProduct.induction_on with
@@ -34,11 +38,12 @@ private theorem sum_basis_tmul_crd_eq (y : O ⊗[Z] W) : ∑ i, b i ⊗ₜ[Z] cr
     simp_rw [crd_tmul_lemma, Module.Basis.coord_apply, ← TensorProduct.smul_tmul,
       ← TensorProduct.sum_tmul, Module.Basis.sum_repr]
   | add y z hy hz =>
-    simp_rw [map_add, TensorProduct.tmul_add, Finset.sum_add_distrib, hy, hz]
+    simp_rw [map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib, hy, hz]
 
 private theorem crd_sum_lemma_4 (j : I) (v : I → W) : crd b j (∑ i, b i ⊗ₜ[Z] v i) = v j := by
   classical
-  simp [map_sum, crd_tmul_lemma, Module.Basis.coord_apply, Finsupp.single_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, crd_tmul_lemma, Module.Basis.coord_apply, Finsupp.single_apply]
 
 theorem mem_pow_iff (w : W) (n : ℕ) (x : O ⊗[Z] W) :
     x ∈ Ideal.span {((1 : O) ⊗ₜ[Z] w) ^ n} ↔ ∀ i, crd b i x ∈ Ideal.span {w ^ n} := by
@@ -55,8 +60,8 @@ theorem mem_pow_iff (w : W) (n : ℕ) (x : O ⊗[Z] W) :
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [hc i, Algebra.TensorProduct.tmul_mul_tmul, one_mul]
 
-include b in
 
+include b in
 theorem complete_tensor (w : W) [h : IsAdicComplete (Ideal.span {w}) W] :
     IsAdicComplete (Ideal.span {(1 : O) ⊗ₜ[Z] w}) (O ⊗[Z] W) := by
   have key : ∀ (n : ℕ) (x : O ⊗[Z] W),
@@ -133,7 +138,7 @@ private theorem crd_tensorProduct_map_eq {Z O I W W' : Type} [CommRing Z] [CommR
   | zero => simp
   | tmul o v =>
     rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, crd_tmul_lemma, crd_tmul_lemma, map_smul]
-  | add y z hy hz => rw [map_add, map_add, hy, hz, map_add, map_add]
+  | add y z hy hz => rw [map_add (f := _), map_add (f := _), hy, hz, map_add (f := _), map_add (f := _)]
 
 private theorem tensor_eq_of_crd_eq {Z O I W : Type} [CommRing Z] [CommRing O] [Algebra Z O]
     [Fintype I] (b : Module.Basis I Z O) [CommRing W] [Algebra Z W] {y y' : O ⊗[Z] W}

@@ -1,4 +1,8 @@
-import Formalism.FormalDegreeBessel.StatementWR
+module
+
+public import Formalism.FormalDegreeBessel.StatementWR
+
+@[expose] public section
 
 open scoped ContDiff Topology
 open Filter
@@ -124,29 +128,6 @@ theorem wirtBar_fun (l : Fin m) (g : (Fin m → ℂ) → E) :
   funext y
   exact wirtBar_eq l g y
 
-theorem Wc_hol (k l : Fin m) (c : ℂ) (T : (Fin m → ℂ) →L[ℝ] ℂ) (hT : ∀ v, T v = c * v k) :
-    Wc (Pi.single l 1) (Pi.single l Complex.I) (-Complex.I) T = (if l = k then c else 0) ∧
-      Wc (Pi.single l 1) (Pi.single l Complex.I) Complex.I T = 0 := by
-  refine ⟨?_, ?_⟩ <;> rw [Wc_apply, hT, hT] <;> by_cases hl : l = k
-  · simp only [hl, Pi.single_eq_same, if_true, smul_eq_mul]
-    linear_combination (-c / 2) * Complex.I_sq
-  · simp [hl, Pi.single_eq_of_ne (Ne.symm hl)]
-  · simp only [hl, Pi.single_eq_same, smul_eq_mul]
-    linear_combination (c / 2) * Complex.I_sq
-  · simp [Pi.single_eq_of_ne (Ne.symm hl)]
-
-theorem Wc_anti (k l : Fin m) (c : ℂ) (T : (Fin m → ℂ) →L[ℝ] ℂ) (hT : ∀ v, T v = c * star (v k)) :
-    Wc (Pi.single l 1) (Pi.single l Complex.I) (-Complex.I) T = 0 ∧
-      Wc (Pi.single l 1) (Pi.single l Complex.I) Complex.I T = (if l = k then c else 0) := by
-  refine ⟨?_, ?_⟩ <;> rw [Wc_apply, hT, hT] <;> by_cases hl : l = k
-  · simp only [hl, Pi.single_eq_same, smul_eq_mul, star_one, Complex.star_def, Complex.conj_I]
-    linear_combination (c / 2) * Complex.I_sq
-  · simp [Pi.single_eq_of_ne (Ne.symm hl)]
-  · simp only [hl, Pi.single_eq_same, if_true, smul_eq_mul, star_one, Complex.star_def,
-      Complex.conj_I]
-    linear_combination (-c / 2) * Complex.I_sq
-  · simp [hl, Pi.single_eq_of_ne (Ne.symm hl)]
-
 def coef (k : Fin m) : Fin 6 → (Fin m → ℂ) → ℂ
   | 0 => fun y => y k
   | 1 => fun y => y k
@@ -239,33 +220,36 @@ theorem wirtBar_coef {k : Fin m} {x : Fin m → ℂ} (hx : x ∈ OmX m) (l : Fin
 theorem contDiffAt_star_apply (k : Fin m) (x : Fin m → ℂ) :
     ContDiffAt ℝ ∞ (fun y : Fin m → ℂ => star (y k)) x := by
   rw [star_fun_eq]
-  exact ((Complex.conjCLE : ℂ →L[ℝ] ℂ).contDiff.comp (contDiff_apply ℝ ℂ k)).contDiffAt
+  exact ((Complex.conjCLE : ℂ →L[ℝ] ℂ).contDiff.comp (contDiff_apply ℝ (fun _ => ℂ) k)).contDiffAt
 
 theorem coef_contDiffAt {k : Fin m} {x : Fin m → ℂ} (hx : x ∈ OmX m) (j : Fin 6) :
     ContDiffAt ℝ ∞ (coef k j) x := by
   have hxk : x k ≠ 0 := hx k
   match j with
-  | 0 => exact (contDiff_apply ℝ ℂ k).contDiffAt
-  | 1 => exact (contDiff_apply ℝ ℂ k).contDiffAt
-  | 2 => exact (contDiffAt_inv ℝ hxk).comp x (contDiff_apply ℝ ℂ k).contDiffAt
+  | 0 => exact (contDiff_apply ℝ (fun _ => ℂ) k).contDiffAt
+  | 1 => exact (contDiff_apply ℝ (fun _ => ℂ) k).contDiffAt
+  | 2 => exact (contDiffAt_inv ℝ hxk).comp x (contDiff_apply ℝ (fun _ => ℂ) k).contDiffAt
   | 3 => exact contDiffAt_star_apply k x
   | 4 => exact contDiffAt_star_apply k x
   | 5 => exact (contDiffAt_inv ℝ (star_ne_zero.mpr hxk)).comp x (contDiffAt_star_apply k x)
 
 theorem opL_ev (k : Fin m) (j : Fin 6) (g : (Fin m → ℂ) → E) {x : Fin m → ℂ} (hx : x ∈ OmX m) :
     opL k j g =ᶠ[𝓝 x] fun y => coef k j y • Dop k j g y := by
+  classical
   have hev : ∀ᶠ y in 𝓝 x, y ∈ OmX m := (isOpen_omX m).mem_nhds hx
   match j with
   | 0 =>
     filter_upwards [hev] with y hy
     show pOp k g y = y k • wirt k g y
-    simp [pOp, hy]
+    change (if y ∈ OmX m then y k • wirt k g y else 0) = _
+    rw [if_pos hy]
   | 1 => exact Filter.Eventually.of_forall fun y => rfl
   | 2 => exact Filter.Eventually.of_forall fun y => rfl
   | 3 =>
     filter_upwards [hev] with y hy
     show pbOp k g y = star (y k) • wirtBar k g y
-    simp [pbOp, hy]
+    change (if y ∈ OmX m then star (y k) • wirtBar k g y else 0) = _
+    rw [if_pos hy]
   | 4 => exact Filter.Eventually.of_forall fun y => rfl
   | 5 => exact Filter.Eventually.of_forall fun y => rfl
 
@@ -275,11 +259,12 @@ theorem opL_on (k : Fin m) (j : Fin 6) (g : (Fin m → ℂ) → E) {x : Fin m �
 
 theorem opL_off (k : Fin m) (j : Fin 6) (g : (Fin m → ℂ) → E) {x : Fin m → ℂ} (hx : x ∉ OmX m)
     (h0 : g x = 0) : opL k j g x = 0 := by
+  classical
   match j with
-  | 0 => show pOp k g x = 0; simp [pOp, hx]
+  | 0 => show pOp k g x = 0; change (if x ∈ OmX m then x k • wirt k g x else 0) = 0; rw [if_neg hx]
   | 1 => show x k • g x = 0; rw [h0, smul_zero]
   | 2 => show (x k)⁻¹ • g x = 0; rw [h0, smul_zero]
-  | 3 => show pbOp k g x = 0; simp [pbOp, hx]
+  | 3 => show pbOp k g x = 0; change (if x ∈ OmX m then star (x k) • wirtBar k g x else 0) = 0; rw [if_neg hx]
   | 4 => show star (x k) • g x = 0; rw [h0, smul_zero]
   | 5 => show (star (x k))⁻¹ • g x = 0; rw [h0, smul_zero]
 
@@ -298,10 +283,6 @@ theorem reg_Dop {g : (Fin m → ℂ) → E} (hg : Reg g) (k : Fin m) (j : Fin 6)
     exact contDiffAt_Wc (hg x hx) _ _ _
   | 4 => exact hg x hx
   | 5 => exact hg x hx
-
-theorem reg_opL {g : (Fin m → ℂ) → E} (hg : Reg g) (k : Fin m) (j : Fin 6) : Reg (opL k j g) := by
-  intro x hx
-  exact ((coef_contDiffAt hx j).smul (reg_Dop hg k j x hx)).congr_of_eventuallyEq (opL_ev k j g hx)
 
 def dco (l : Fin m) (i : Fin 6) (k : Fin m) (j : Fin 6) (x : Fin m → ℂ) : ℂ :=
   match i with
@@ -421,6 +402,7 @@ theorem commuting_functional_holds : CommFun := by
       opL_off k j _ hx (opL_off l i f hx (hf.2 x hx))]
 
 theorem weyl_functional_holds : WeylFun := by
+  classical
   intro m E _ _ l f hf
   have hr := reg_of_mem hf
   have h0 : ∀ x, x ∉ OmX m → f x = 0 := hf.2
@@ -449,7 +431,11 @@ theorem weyl_functional_holds : WeylFun := by
       change x l • (wirt l (coef l 1) x • f x + x l • wirt l f x) = x l • pOp l f x + x l • f x
       simp only [pOp, hx, if_true, hw, one_smul]
       rw [smul_add, add_comm]
-    · simp only [Pi.add_apply, pOp, cOp, hx, if_false, h0 x hx, smul_zero, add_zero]
+    · change opL l 0 (opL l 1 f) x = (opL l 1 (opL l 0 f) + opL l 1 f) x
+      rw [opL_off l 0 (opL l 1 f) hx (opL_off l 1 f hx (h0 x hx)),
+        Pi.add_apply, opL_off l 1 (opL l 0 f) hx (opL_off l 0 f hx (h0 x hx)),
+        opL_off l 1 f hx (h0 x hx)]
+      simp
   · funext x
     simp only [cbOp, cbiOp, smul_smul]
     by_cases h : x l = 0
@@ -474,6 +460,10 @@ theorem weyl_functional_holds : WeylFun := by
         star (x l) • pbOp l f x + star (x l) • f x
       simp only [pbOp, hx, if_true, hw, one_smul]
       rw [smul_add, add_comm]
-    · simp only [Pi.add_apply, pbOp, cbOp, hx, if_false, h0 x hx, smul_zero, add_zero]
+    · change opL l 3 (opL l 4 f) x = (opL l 4 (opL l 3 f) + opL l 4 f) x
+      rw [opL_off l 3 (opL l 4 f) hx (opL_off l 4 f hx (h0 x hx)),
+        Pi.add_apply, opL_off l 4 (opL l 3 f) hx (opL_off l 3 f hx (h0 x hx)),
+        opL_off l 4 f hx (h0 x hx)]
+      simp
 
 end Formalism.QuantumDeterminants

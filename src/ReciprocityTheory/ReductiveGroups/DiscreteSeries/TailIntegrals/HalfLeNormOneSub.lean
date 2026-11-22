@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.IntegrableUnitIndicator
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.IntegrableUnitIndicator
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ lemma volume_Bset_ne_zero {p q : ι} (hpq : p ≠ q) {k : ℕ} (hk : Fintype.car
     volume (Bset q) ≠ 0 := by
   have hc : Continuous (tW q) := by
     unfold tW
-    refine Continuous.sqrt (continuous_finset_sum _ fun i _ => ?_)
+    refine Continuous.sqrt (continuous_finsetSum _ fun i _ => ?_)
     by_cases hi : i = q
     · simp only [hi, ↓reduceIte]; exact continuous_const
     · simp only [hi, ↓reduceIte]; exact Complex.continuous_normSq.comp (continuous_apply i)

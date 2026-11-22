@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierBesselBasePointIsUnfoldingBasePointSpec
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FourierZeroHolds
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SiegelParabolicUnnMatrixBlockUpperTriangular
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasChr
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FourierBesselBasePointIsUnfoldingBasePointSpec
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FourierZeroHolds
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SiegelParabolicUnnMatrixBlockUpperTriangular
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasChr
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem repr_map' {F E R R' ι : Type} [Field F] [Field E] [Algebra F E] [CommRi
       φ ((Algebra.TensorProduct.basis R b).repr z k) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
   | tmul a e => simp [Algebra.TensorProduct.basis_repr_tmul]
 
 theorem ae_ext (z z' : AE D) (hi : ∀ w, compInf D.host.F D.host.E w z = compInf D.host.F D.host.E w z')
@@ -133,8 +137,8 @@ theorem stab_of_int (v : Pl D) (k : GLoc D.sp.cm.sig (Jst D n) v)
   rw [← e]
   exact hint _ hM' _ hz
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem nb_mem_KAt {nb : hermA D n → G D n} (hnb : IsNMap nb) {v : Pl D} {y : hermA D n} (hy : IntAt v y) :
     nb y ∈ KAt D n v := by
   obtain ⟨hi, ho, hint⟩ := hy

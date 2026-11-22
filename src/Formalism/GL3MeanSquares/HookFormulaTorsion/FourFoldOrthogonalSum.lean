@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GL3MeanSquares.InvariantSeriesBidegreeOneOne
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.InvariantSeriesBidegreeOneOne
+
+@[expose] public section
 
 namespace Formalism.HermitianLattices.IntegralLatticeDensity
 

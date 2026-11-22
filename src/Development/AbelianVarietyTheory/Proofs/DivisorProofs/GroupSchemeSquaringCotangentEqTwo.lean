@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatPath
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GroupSchemeUnitStalkDataGermStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatPath
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GroupSchemeUnitStalkDataGermStatement
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -51,7 +55,7 @@ theorem sqr_sub_two_mem : ∀ (S : Scheme.{0}) (G : Over S) [GrpObj G], QuasiSep
   letI := c.algebra
   let h : Γ(G.left, W₁ ⊓ G.hom ⁻¹ᵁ U) := (sqr G).appLE U₀ _ kS g - (resG G.left kW g + resG G.left kW g)
   have hz : AugCot.d (c.aug he) h = 0 := (c.augCotEquiv he).injective (by
-    rw [c.augCotEquiv_d he, map_zero, map_sub, map_add, key, sub_self])
+    rw [c.augCotEquiv_d he, map_zero, map_sub, map_add (f := _), key, sub_self])
   rw [AugCot.d_eq_zero_iff] at hz
   let gW := G.left.presheaf.germ (W₁ ⊓ G.hom ⁻¹ᵁ U) (unitSec G s) hxW
   have g1 : gW ((sqr G).appLE U₀ _ kS g) = m (G.left.presheaf.germ U₀ (unitSec G s) hU₀ g) :=
@@ -60,7 +64,7 @@ theorem sqr_sub_two_mem : ∀ (S : Scheme.{0}) (G : Over S) [GrpObj G], QuasiSep
     TopCat.Presheaf.germ_res_apply _ _ _ _ _
   have gh : gW h = m (G.left.presheaf.germ U₀ (unitSec G s) hU₀ g) -
       2 * G.left.presheaf.germ U₀ (unitSec G s) hU₀ g := by
-    simp only [h, map_sub, map_add, g1, g2, two_mul]
+    simp only [h, map_sub, map_add (f := _), g1, g2, two_mul]
   have hf0 : ε (G.left.presheaf.germ U₀ (unitSec G s) hU₀ g) = 0 := hf
   have hker : ∀ x, c.aug he x = 0 → ε (gW x) = 0 := by
     intro x hx
@@ -81,7 +85,7 @@ theorem sqr_sub_two_mem : ∀ (S : Scheme.{0}) (G : Over S) [GrpObj G], QuasiSep
     have e2 : S.presheaf.germ U s hsU (c.aug he h) = ε (gW h) := (hε _ hxW U hsU c.le h).symm
     rw [e1, e2, hεh, map_zero]
   rw [← gh, show gW h = gW (h - algebraMap Γ(S, U) Γ(G.left, W₁ ⊓ G.hom ⁻¹ᵁ U) (c.aug he h)) +
-      gW (algebraMap Γ(S, U) Γ(G.left, W₁ ⊓ G.hom ⁻¹ᵁ U) (c.aug he h)) by rw [← map_add, sub_add_cancel],
+      gW (algebraMap Γ(S, U) Γ(G.left, W₁ ⊓ G.hom ⁻¹ᵁ U) (c.aug he h)) by rw [← map_add (f := _), sub_add_cancel],
     halg, add_zero]
   exact hmap _ hz
 end GlobalTheory.Nef

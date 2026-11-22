@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix
 
@@ -15,7 +19,7 @@ theorem fin_iic_telescope : ∀ (N : ℕ) (M : Type) [AddCommGroup M] (f : Fin N
       ext k
       simp only [Finset.mem_Iic, Finset.mem_singleton, Fin.le_iff_val_le_val, Fin.ext_iff]
       omega
-    rw [hset, Finset.sum_singleton, dif_pos rfl, neg_neg]
+    rw [hset, Finset.sum_singleton, dite_eq_left rfl, neg_neg]
   | succ n ih =>
     have hn' : n < N := by omega
     have hset : Finset.Iic (⟨n + 1, hn⟩ : Fin N) = insert ⟨n + 1, hn⟩ (Finset.Iic ⟨n, hn'⟩) := by
@@ -26,7 +30,7 @@ theorem fin_iic_telescope : ∀ (N : ℕ) (M : Type) [AddCommGroup M] (f : Fin N
       simp only [Finset.mem_Iic, Fin.le_iff_val_le_val, not_le]
       omega
     have hs := (neg_eq_iff_eq_neg.mpr (ih hn')).symm
-    rw [hset, Finset.sum_insert hnot, dif_neg (by simp), hs]
+    rw [hset, Finset.sum_insert hnot, dite_eq_right (by simp), hs]
     have e : ∀ p, f ⟨(⟨n + 1, hn⟩ : Fin N).val - 1, p⟩ = f ⟨n, hn'⟩ :=
       fun p => congrArg f (Fin.ext (by simp))
     rw [e]

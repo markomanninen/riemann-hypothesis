@@ -1,4 +1,8 @@
-import Formalism.EllipticTorsion.WChordSeries
+module
+
+public import Formalism.EllipticTorsion.WChordSeries
+
+@[expose] public section
 
 open PowerSeries
 
@@ -156,15 +160,15 @@ theorem Formalism.ELL.wChordSubst_of (hU : Formalism.ELL.WSubstUnique.{u}) : For
     rw [hwF, map_zero, div_zero, eq_comm, div_eq_zero_iff] at hx hy
     have hx' := hx.resolve_right (by simp [iw0, iw1, idA])
     have hy' := hy.resolve_right (by simp [iw0, iw1, idA])
-    simp only [← map_mul, ← map_sub, ← map_add, ← map_pow, ← map_neg] at hx' hy'
+    simp only [← map_mul, ← map_sub, ← map_add (f := _), ← map_pow, ← map_neg] at hx' hy'
     rw [map_eq_zero_iff _ injA] at hx' hy'
     have hxB := congrArg φ hx'
     have hyB := congrArg φ hy'
-    simp only [map_mul, map_sub, map_add, map_pow, map_neg, map_zero, AlgHom.commutes,
+    simp only [map_mul, map_sub, map_add (f := _), map_pow, map_neg, map_zero, AlgHom.commutes,
       φX0, φX1, φw0, φw1] at hxB hyB
     have hxF := congrArg (algebraMap (MvPowerSeries σ K) (FractionRing (MvPowerSeries σ K))) hxB
     have hyF := congrArg (algebraMap (MvPowerSeries σ K) (FractionRing (MvPowerSeries σ K))) hyB
-    simp only [map_mul, map_sub, map_add, map_pow, map_neg, map_zero] at hxF hyF
+    simp only [map_mul, map_sub, map_add (f := _), map_pow, map_neg, map_zero] at hxF hyF
     rw [hr, map_zero, div_zero, div_zero]
     constructor
     · rw [hxF, zero_div]
@@ -172,15 +176,15 @@ theorem Formalism.ELL.wChordSubst_of (hU : Formalism.ELL.WSubstUnique.{u}) : For
   · have iwF := (map_ne_zero_iff _ injA).2 hwF
     rw [div_eq_div_iff iwF (by simp [iw0, iw1, idA])] at hx
     rw [div_eq_div_iff iwF (by simp [iw0, iw1, idA]), neg_one_mul] at hy
-    simp only [← map_mul, ← map_sub, ← map_add, ← map_pow, ← map_neg] at hx hy
+    simp only [← map_mul, ← map_sub, ← map_add (f := _), ← map_pow, ← map_neg] at hx hy
     rw [injA.eq_iff] at hx hy
     have hxB := congrArg φ hx
     have hyB := congrArg φ hy
-    simp only [map_mul, map_sub, map_add, map_pow, map_neg, AlgHom.commutes,
+    simp only [map_mul, map_sub, map_add (f := _), map_pow, map_neg, AlgHom.commutes,
       φX0, φX1, φw0, φw1, φwF] at hxB hyB
     have hxF := congrArg (algebraMap (MvPowerSeries σ K) (FractionRing (MvPowerSeries σ K))) hxB
     have hyF := congrArg (algebraMap (MvPowerSeries σ K) (FractionRing (MvPowerSeries σ K))) hyB
-    simp only [map_mul, map_sub, map_add, map_pow, map_neg] at hxF hyF
+    simp only [map_mul, map_sub, map_add (f := _), map_pow, map_neg] at hxF hyF
 
     have jwr : algebraMap (MvPowerSeries σ K) (FractionRing (MvPowerSeries σ K)) (w.subst (φ F₂)) ≠ 0 := by
       intro h0

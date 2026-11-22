@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiagMod
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiagMod
+
+@[expose] public section
+
 open scoped MatrixGroups TensorProduct
 open Matrix GlobalTheory.KZ GlobalTheory.KZ.ES
 
@@ -24,7 +29,7 @@ def core (F : Type) [Field F] [Algebra F L] (W₁ W₂ : ValuationSubring L) : S
     rw [map_mul]; exact ⟨mul_mem (ha σ).1 (hb σ).1, mul_mem (ha σ).2 (hb σ).2⟩
   one_mem' σ := by rw [map_one]; exact ⟨one_mem _, one_mem _⟩
   add_mem' ha hb σ := by
-    rw [map_add]; exact ⟨add_mem (ha σ).1 (hb σ).1, add_mem (ha σ).2 (hb σ).2⟩
+    rw [map_add (f := _)]; exact ⟨add_mem (ha σ).1 (hb σ).1, add_mem (ha σ).2 (hb σ).2⟩
   zero_mem' σ := by rw [map_zero]; exact ⟨zero_mem _, zero_mem _⟩
   neg_mem' ha σ := by rw [map_neg]; exact ⟨neg_mem (ha σ).1, neg_mem (ha σ).2⟩
 
@@ -227,10 +232,12 @@ private lemma mem_of_mem_of_inv_core_mem [FiniteDimensional F L] (W₁ W₂ U U'
   have hsS : s ∈ _root_.GlobalTheory.ValConj.core F W₁ W₂ := by
     intro σ
     have hσs : σ s = ∑ j ∈ Finset.range k, algebraMap F L (a j) * σ x ^ j / σ x ^ k := by
-      simp [hs, map_sum, map_div₀, map_mul, map_pow, AlgEquiv.commutes]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [hs, map_sum, map_div₀, map_mul, map_pow, AlgEquiv.commutes]
     have hσrel : ∑ j ∈ Finset.range (n + 1), algebraMap F L (a j) * σ x ^ j = 0 := by
       have := congrArg σ hrel
-      simpa [map_sum, map_mul, map_pow, AlgEquiv.commutes] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum, map_mul, map_pow, AlgEquiv.commutes] using this
     have hσx : σ x ≠ 0 := by simpa using hx0
     rw [hσs]
     exact ⟨sum_lower_div_pow_mem_of_normalized_relation W₁ n k _ (σ x) hσx hk (fun j => hUW₁ _ (ha j)) (by simp [hak]) hσrel,
@@ -243,13 +250,13 @@ private lemma mem_of_mem_of_inv_core_mem [FiniteDimensional F L] (W₁ W₂ U U'
     rw [← U.valuation_le_one_iff, map_inv₀, h1, inv_one]
   exact (valuation_lt_one_iff_inv_not_mem' U' s hs0).1 h2 (hcen s hsS hs0 hsU)
 
+
 open scoped MatrixGroups TensorProduct in
 open Matrix in
 open Finset in
 open scoped Pointwise in
 variable {F L : Type} [Field F] [Field L] [Algebra F L] in
 open scoped Pointwise in
-
 theorem _root_.GlobalTheory.KZ.ES.exists_conj_of_same_trace : ∀ (F L : Type) [Field F] [Field L]
     [Algebra F L] [FiniteDimensional F L] [IsGalois F L] (W₁ W₂ : ValuationSubring L),
     (∀ a : F, algebraMap F L a ∈ W₁ ↔ algebraMap F L a ∈ W₂) →

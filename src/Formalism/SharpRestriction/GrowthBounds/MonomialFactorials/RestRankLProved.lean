@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestPlusOf
-import Formalism.PolynomialDimension.MultinomialDepth.PartnerM
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestPlusOf
+public import Formalism.PolynomialDimension.MultinomialDepth.PartnerM
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,8 +38,8 @@ section Level
 
 variable (p : ℕ) [Fact p.Prime] {N r : ℕ} [NeZero r] (G : Formalism.GM.M.BlockData N)
 
-open Classical in
 
+open Classical in
 def xiMons (n : ℕ) : Finset (Formalism.GM.M.BVar N r G.T.t →₀ ℕ) :=
   (CountingStatementReduction.Ev r n).image (fun e => ∑ c : Fin r, Finsupp.single (Formalism.GM.M.xiVar N r G.T.t c) (e c))
 
@@ -66,7 +70,7 @@ theorem xi_mem_span (n : ℕ) (g : MvPolynomial (Formalism.GM.M.BVar N r G.T.t) 
   refine Submodule.sum_mem _ fun m hm => ?_
   have hm' := hs hm
   obtain ⟨hsupp, hsum⟩ := hm'
-  have hmono : monomial m (coeff m g) = coeff m g • monomial m (1 : ℚ_[p]) := by
+  have hmono : monomial m (AddMonoidAlgebra.coeff g m) = AddMonoidAlgebra.coeff g m • monomial m (1 : ℚ_[p]) := by
     rw [smul_monomial, smul_eq_mul, mul_one]
   rw [hmono]
   refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨m, ?_, rfl⟩)

@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsHostFrame
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompIne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompCond
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompOrd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.PartOrd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.DecFrob
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.DvrFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsHostFrame
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompIne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompCond
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompOrd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.PartOrd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.DecFrob
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.DvrFacts
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia
 
@@ -152,7 +156,7 @@ private theorem res_ne {l : ℕ} [hl : Fact l.Prime] (c : Coef l) {N : ℕ} [NeZ
     rw [← pow_hom, th0, pow_orderOf_eq_one]; ext; simp
   have e1 : ((th0 l ψ).toUnitHom u ^ 4) ^ l ^ s = 1 := by
     ext1
-    refine eq_one_of_congr ((UpperTheory.V.Base.dvrFacts l c.O).2.2.2.2.2.2.2.2 _ hth) ?_ ?_
+    refine eq_one_of_congr (n := orderOf (lPrime l ψ)) ((UpperTheory.V.Base.dvrFacts l c.O).2.2.2.2.2.2.2.2 _ hth) ?_ ?_
     · rw [← Units.val_pow_eq_pow_val, ← pow_mul, ← pow_mul, mul_comm _ (orderOf _), mul_comm 4, mul_assoc, pow_mul, en, one_pow,
         Units.val_one]
     · rw [pow_right_comm, ← pow_hom, ← e0, pow_hom, pow_right_comm, Units.val_pow_eq_pow_val, Units.val_pow_eq_pow_val,
@@ -206,7 +210,7 @@ theorem UpperTheory.V.UnitaryThreeInertia.exists_sigma :
   intro Ω _ _ _ l hl c N _ e ψ o H S A F hF v hv
   obtain ⟨p, hp, hp2, hpT, hpl, hpv⟩ : ∃ p : ℕ, p.Prime ∧ p ≠ 2 ∧ p ∈ UpperTheory.V.HV.Tb l ψ ∧ (p = l ∨ (p ≠ l ∧ p ≡ 1 [MOD l])) ∧
       ((p : ℕ) : NumberField.RingOfIntegers ℚ) ∈ v.1.asIdeal := by
-    rcases hv with rfl | hv
+    rcases Set.mem_insert_iff.mp hv with rfl | hv
     · exact ⟨l, hl.out, H.l_odd, Finset.mem_insert_self _ _, Or.inl rfl, hF.vl⟩
     · obtain ⟨p, hp, hpv⟩ := (hF.Sb v).1 hv
       have hp' := hp

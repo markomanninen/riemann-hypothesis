@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopMulDescendedSubmoduleOfUnitCocycleEqTop
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopMulDescendedSubmoduleOfUnitCocycleEqTop
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+
+@[expose] public section
+
 open TensorProduct GlobalTheory.EtC
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.top_mul_descendedSubmoduleOfUnitCocycle_eq_top : ∀ (A B : Type) [CommRing A] [CommRing B] [Algebra A B] [Module.Flat A B] (u : (B ⊗[A] B)ˣ), UCoc A B u → (⊤ : Submodule A B) * descMod A B u = ⊤ := by

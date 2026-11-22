@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.IsTheta
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsNondegenerateRightInvariantFormOfCompactQu
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.UnitaryAdelicGroupTopology
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsCompactFundamentalSetUnitary
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsEquivariantProjectionsOfSumIrreducible
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MemISupAutomorphicRepsOfInvariantForm
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.IsTheta
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsNondegenerateRightInvariantFormOfCompactQu
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.UnitaryAdelicGroupTopology
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsCompactFundamentalSetUnitary
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsEquivariantProjectionsOfSumIrreducible
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MemISupAutomorphicRepsOfInvariantForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,8 @@ open NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.UnitaryBC
 
 namespace UpperTheory.V.Z.J.D.Dc
 
-open GlobalTheory.DefU in
 
+open GlobalTheory.DefU in
 theorem autProj (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (M : Submodule ℂ (autU E n))
     (hM : FiniteDimensional ℂ M) :
     ∃ (κ : Type) (_ : Fintype κ) (σ : κ → Submodule ℂ (UA E n → ℂ)) (P : κ → autU E n →ₗ[ℂ] autU E n),
@@ -117,23 +121,27 @@ theorem coreP {κ : Type} [Fintype κ] (A : Submodule ℂ Y) (tf : Y →ₗ[ℂ]
   refine ⟨G, hGA, fun t i ℓ => hG t i ℓ ▸ hP t _, funext fun i => ?_, fun T k a hTA hT hF t i => ?_⟩
   · rw [Finset.sum_apply]
     refine sub_eq_zero.1 (hinj _ (sub_mem (Submodule.sum_mem _ fun t _ => hGA t i) (hFA i)) fun ℓ => ?_)
-    simp only [map_sub, map_sum, LinearMap.sub_apply, LinearMap.sum_apply, hG]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, LinearMap.sub_apply, LinearMap.sum_apply, hG]
     exact sub_eq_zero.2 (hPs i ℓ)
   · refine sub_eq_zero.1 (hinj _ (sub_mem (Submodule.sum_mem _ fun j _ => A.smul_mem _ (hTA _ (hGA t j))) (hGA t i))
       fun ℓ => ?_)
     have e : ∑ j, a i j • (⟨RU E n k (Φ j ℓ), hW k _ (Φ j ℓ).2⟩ : W) = Φ i ℓ := by
       apply Subtype.ext
       have := congrArg (fun y => tf y ℓ) (hF i)
-      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hT] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hT] at this
       rw [Submodule.coe_sum]
       exact this
     have e2 := congrArg (P t) e
-    simp only [map_sum, map_smul, hPe] at e2
-    simp only [map_sub, map_sum, map_smul, LinearMap.sub_apply, LinearMap.sum_apply, LinearMap.smul_apply, hT, hG]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, hPe] at e2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_smul, LinearMap.sub_apply, LinearMap.sum_apply, LinearMap.smul_apply, hT, hG]
     exact sub_eq_zero.2 e2
 
-open GlobalTheory.DefU in
 
+open GlobalTheory.DefU in
 theorem absMain {I J : Type} [Fintype J] [FiniteDimensional ℂ D] (A : Submodule ℂ Y) (tf : Y →ₗ[ℂ] D →ₗ[ℂ] (UA E n → ℂ))
     (r : UA E n → D → D) (hinj : ∀ F ∈ A, (∀ ℓ, tf F ℓ = 0) → F = 0)
     (hsur : ∀ Φ : D →ₗ[ℂ] (UA E n → ℂ), (∀ ℓ, IsAutFormU (Φ ℓ)) → (∀ ℓ, ∀ x ∈ infU E n, RU E n x (Φ ℓ) = Φ (r x ℓ)) →
@@ -173,7 +181,8 @@ theorem absMain {I J : Type} [Fintype J] [FiniteDimensional ℂ D] (A : Submodul
   have hFW : ∀ i ℓ, tf (F i) ℓ ∈ ⨆ j, σ j := fun i ℓ => by
     have e : F i = ∑ t, G' t i := by
       rw [← hsum', Finset.sum_apply]
-    rw [e, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum, LinearMap.sum_apply]
     exact Submodule.sum_mem _ fun t _ => hmem t i ℓ
   obtain ⟨Q, hQ, hQs, hQu⟩ := indepProj σ hind
   have hst : ∀ x, ∀ φ ∈ ⨆ j, σ j, RU E n x φ ∈ ⨆ j, σ j := fun x φ hφ => by
@@ -183,7 +192,8 @@ theorem absMain {I J : Type} [Fintype J] [FiniteDimensional ℂ D] (A : Submodul
   obtain ⟨G, hGA, hG, hsum, hinv⟩ := coreP A tf r hinj hsur (⨆ j, σ j) hst σ Q (fun t φ hφ => (hσ t).aut φ hφ) hQ
     (fun t x φ => hQu (fun j => RU E n x (Q j φ)) (fun j => (hσ j).stable x _ (hQ j φ)) _ (by
       change RU E n x (φ : UA E n → ℂ) = _
-      rw [← map_sum, hQs]) t) F hFA hFW (fun i ℓ => hQs _) (fun i ℓ x hx => heq _ (hFA i) ℓ x hx)
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, hQs]) t) F hFA hFW (fun i ℓ => hQs _) (fun i ℓ x hx => heq _ (hFA i) ℓ x hx)
   exact ⟨G, hGA, fun j u i => hinv (T u) (k u) (a u) (hTA u) (hT u) (hF u) j i, hG, hsum⟩
 
 theorem indepOf {M N J K : Type} [AddCommGroup M] [Module ℂ M] [AddCommGroup N] [Module ℂ N] (σ : J → Submodule ℂ N)

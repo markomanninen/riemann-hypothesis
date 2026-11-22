@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoDuality
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoDuality
+
+@[expose] public section
 
 noncomputable section
 

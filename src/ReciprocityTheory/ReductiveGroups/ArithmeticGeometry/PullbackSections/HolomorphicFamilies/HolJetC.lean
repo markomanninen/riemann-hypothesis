@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.HolJetB
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.HolJetB
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,11 +20,11 @@ theorem valAt'_comp (x : Sp ℂ ⟶ Y) (φ : Y ⟶ Y') (U : Y'.Opens) (f : Γ(Y'
   unfold valAt'
   have e : x ⁻¹ᵁ φ ⁻¹ᵁ U = (x ≫ φ) ⁻¹ᵁ U := rfl
   by_cases h : ⊤ ≤ (x ≫ φ) ⁻¹ᵁ U
-  · rw [dif_pos (e ▸ h), dif_pos h]
+  · rw [dite_eq_left (e ▸ h), dite_eq_left h]
     unfold valAt
     rw [Scheme.Hom.comp_appLE]
     rfl
-  · rw [dif_neg (e ▸ h), dif_neg h]
+  · rw [dite_eq_right (e ▸ h), dite_eq_right h]
 
 theorem isHolFam_comp (e : (Fin g → ℂ) → (Sp ℂ ⟶ Y)) (hol : IsHolFam e) (φ : Y ⟶ Y') :
     IsHolFam (fun z => e z ≫ φ) := by
@@ -29,8 +33,8 @@ theorem isHolFam_comp (e : (Fin g → ℂ) → (Sp ℂ ⟶ Y)) (hol : IsHolFam e
   simp only [valAt'_comp] at this
   exact this
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem jetPt_comp (e : (Fin g → ℂ) → (Sp ℂ ⟶ Y)) (hol : IsHolFam e) (φ : Y ⟶ Y')
     (e' : (Fin g → ℂ) → (Sp ℂ ⟶ Y')) (hol' : IsHolFam e') (he : ∀ z, e z ≫ φ = e' z) (m : ℕ) :
     jetPt e hol m ≫ φ = jetPt e' hol' m := by
@@ -53,8 +57,8 @@ theorem jetPt_comp (e : (Fin g → ℂ) → (Sp ℂ ⟶ Y)) (hol : IsHolFam e) (
   funext z
   rw [valAt'_comp, he z]
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem jetPt_aug (e : (Fin g → ℂ) → (Sp ℂ ⟶ Y)) (hol : IsHolFam e) (m : ℕ) :
     spMap ((jetAug : Jet ℂ (Fin 1 × Fin g) m →ₐ[ℂ] ℂ) : Jet ℂ (Fin 1 × Fin g) m →+* ℂ) ≫ jetPt e hol m = e 0 := by
   unfold jetPt

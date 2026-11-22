@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LiftSemiTmul
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LiftSemiTmul
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,7 +20,7 @@ theorem form_mem_of_mem_smul_top {A N : Type} [CommRing A] [AddCommGroup N] [Mod
     rw [map_smul, smul_eq_mul]
     exact J.mul_mem_right _ hr
   · intro x y hx hy
-    rw [map_add]
+    rw [map_add (f := _)]
     exact J.add_mem hx hy
 
 theorem exists_step_of_sup_span {A : Type} [CommRing A] (K I : Ideal A) (S : Finset A)
@@ -53,7 +57,7 @@ theorem eq_zero_of_lift_of_mem_maximalIdeal_smul (A Q N : Type) [CommRing A] [Is
     | zero => intro i; simp
     | add x y _ _ hx hy =>
       intro i
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact I.add_mem (hx i) (hy i)
     | smul r x _ hx =>
       intro i
@@ -105,7 +109,7 @@ theorem eq_zero_of_lift_of_mem_maximalIdeal_smul (A Q N : Type) [CommRing A] [Is
           exact Submodule.smul_mono_left hKJ
         exact h2 h1
       · intro x y hx hy
-        rw [map_add]
+        rw [map_add (f := _)]
         exact Submodule.add_mem _ hx hy
     have hzJ : ∀ z, b z ∈ J • (⊤ : Submodule A N) := by
       intro z

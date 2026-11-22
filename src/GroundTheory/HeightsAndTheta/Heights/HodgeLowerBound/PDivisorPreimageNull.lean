@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsDivisorPreimageNull
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsParamImageNull
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.GlueCharts
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsDivisorPreimageNull
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsParamImageNull
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.GlueCharts
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

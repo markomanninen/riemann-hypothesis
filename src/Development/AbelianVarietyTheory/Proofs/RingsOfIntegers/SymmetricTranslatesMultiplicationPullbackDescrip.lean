@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsUniqueSymmetricTranslateOddLevel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsUniqueSymmetricTranslateOddLevel
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,8 +23,8 @@ namespace GlobalTheory.PlaceInt.TwoLifts
 section General
 variable {X : Scheme.{0}} (A : Over X) [GrpObj A] [IsCommMonObj A] (L : RigLB A)
 
-omit [IsCommMonObj A] in
 
+omit [IsCommMonObj A] in
 theorem normEnd_iff (N : ℕ)
     (α₀ : LB.Gen (LB.LinComb L.L (K := Fin 2) ![𝟙 A.left, (mulA A N).left] ![(N : ℤ) ^ 2, -1])) :
     IsNormEnd A L (mulA A N) ((N : ℤ) ^ 2) 1 α₀ ↔ IsNormMul A L.L L.rig N α₀ := by

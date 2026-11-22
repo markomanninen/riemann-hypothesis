@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.UnramifiedCocycleIsCoboundaryOfBernoulliUnit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.Counts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GeneratorCountTuples.LemmaK
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ExistsPrimitiveRootPow
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.ExistsAb
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.DvrIntClosure
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.UnramifiedCocycleIsCoboundaryOfBernoulliUnit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.Counts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GeneratorCountTuples.LemmaK
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ExistsPrimitiveRootPow
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.ExistsAb
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.DvrIntClosure
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.V.Odd UpperTheory.V.ML UpperTheory.V.X
 open TensorProduct nonZeroDivisors
@@ -90,7 +94,7 @@ private theorem core {G O K W : Type} [Group G] [TopologicalSpace G] [CommRing O
     let z : Z1U ρ ⊤ := ⟨fun u => π ((q ^ (n + N))⁻¹ * c u.1),
       hc.comp (continuous_const.mul (hcc.comp continuous_subtype_val)), fun g h => by
         show π (_ * c (g.1 * h.1)) = π _ + ρ g.1 (π _)
-        rw [hco, hρ, mul_add, map_add, mul_smul_comm, map_smul]⟩
+        rw [hco, hρ, mul_add, map_add (f := _), mul_smul_comm, map_smul]⟩
     have hz : Submodule.Quotient.mk z ∈ LocSel ρ ⊤ 𝒟 := by
       rw [mk_mem_locSel]
       intro D hD

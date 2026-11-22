@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
-import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.KaSmallNonpos
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
+public import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.KaSmallNonpos
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ def supIn : Submodule (𝓞 K) R := (latOf C Vs hV).map (C.subtype.restrictScala
 
 theorem supIn_full_iff :
     ((supIn C Vs hV).FG ∧ Submodule.span K (supIn C Vs hV : Set R) = C) ↔
-      Submodule.IsLattice K (latOf C Vs hV) := by
+      Submodule.IsFullLattice K (latOf C Vs hV) := by
   have h1 : (supIn C Vs hV).FG ↔ (latOf C Vs hV).FG :=
     ⟨Submodule.fg_of_fg_map_injective (C.subtype.restrictScalars (𝓞 K)) C.injective_subtype, fun h => h.map _⟩
   have h2 : Submodule.span K (supIn C Vs hV : Set R) =
@@ -27,31 +31,14 @@ theorem supIn_full_iff :
   rw [h1, h2]
   constructor
   · rintro ⟨a, b⟩
-    refine ⟨a, Submodule.map_injective_of_injective C.injective_subtype ?_⟩
-    rw [b, Submodule.map_subtype_top]
+    exact { toIsLattice := Submodule.IsLattice.of_fg K a
+            span_eq_top := Submodule.map_injective_of_injective C.injective_subtype (by
+              rw [b, Submodule.map_subtype_top]) }
   · intro h
-    exact ⟨h.fg, by rw [h.span_eq_top, Submodule.map_subtype_top]⟩
+    exact ⟨h.fg, by rw [Submodule.IsFullLattice.span_eq_top (self := h), Submodule.map_subtype_top]⟩
 
 end Ambient
 
 variable {D : D7}
-
-def supLattice (T : Core D) (j : ℕ) (a : (D.host.E →+* ℂ) × ℕ → ℕ) (n : ℕ) : Submodule (𝓞 T.Q.c.F) (T.R j) :=
-  supIn (T.cuspA j a n) (valSet (T.Q.Xo j) T.Q.c (algCls (T.Q.Xo j) T.Q.c)) fun la => isVal_valSet la
-
-def SupLatticeFullAt (T : Core D) (j : ℕ) (a : (D.host.E →+* ℂ) × ℕ → ℕ) (n : ℕ) : Prop :=
-  (supLattice T j a n).FG ∧ Submodule.span T.Q.c.F (supLattice T j a n : Set (T.R j)) = T.cuspA j a n
-
-def kappaExp (D : D7) (hK : DV.KapDef D) (hn : Even D.R.nV) (j : ℕ) : (D.host.E →+* ℂ) × ℕ → ℕ :=
-  wtA (DIV.Cons.kaWt D hK hn j)
-
-def IntegralCuspFormsFullLattice : Prop :=
-  ∀ (D : D7) (hK : DV.KapDef D) (hn : Even D.R.nV) (T : Core D), LawsM T → ∀ j, InR D j →
-    SupLatticeFullAt T j (kappaExp D hK hn j) D.R.nV
-
-example (T : Core D) (h : LawsM T) (j : ℕ) (hj : InR D j) (la : HeightOneSpectrum (𝓞 T.Q.c.F)) :
-    Nonempty (T.PtM j la) := by
-  obtain ⟨V, io, e, ho, y, hy⟩ := h.ptNe j hj la
-  exact ⟨⟨_, PtV.mk la ho y hy () trivial, rfl⟩⟩
 
 end GlobalTheory.IndefiniteRowSideFullHecke.SupremumLattice

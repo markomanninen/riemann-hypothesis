@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ToUnitsCompToCircle
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LevelLiftIsLiftPrincipalLevelDatumRealisation
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjugateThetaSeriesFlatDatumRootOfUnityStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChangeOfSplittingPair
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjugateThetaLiftsIsConjugateCuspExpansion
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaOneMapBaseTupleOfCharacterisationExtremalStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PureTensorLIntertwine
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PureTensorOTransSumLin
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FlatVecExistsUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ToUnitsCompToCircle
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LevelLiftIsLiftPrincipalLevelDatumRealisation
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjugateThetaSeriesFlatDatumRootOfUnityStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChangeOfSplittingPair
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjugateThetaLiftsIsConjugateCuspExpansion
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaOneMapBaseTupleOfCharacterisationExtremalStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PureTensorLIntertwine
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PureTensorOTransSumLin
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FlatVecExistsUnique
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -74,11 +78,6 @@ theorem cf_sum {ζ : ℂ} (hζ : ζ ≠ 0) {Ψ Ψ' : X → ℂ} (h0 : CF φ τ �
     rw [mul_left_comm, ← mul_assoc ζ, mul_inv_cancel₀ hζ, one_mul]
   rw [e1, e2] at hc
   exact hc
-
-theorem cf_smul {ζ : ℂ} (hζ : ζ ≠ 0) {Φ Φ' : X → ℂ} (h : CF φ τ ζ Φ Φ') (d : ℂ) :
-    CF φ τ ζ (fun g => d * Φ g) (fun g => τ d * Φ' g) := by
-  have := cf_sum hζ h (β := fun _ : Unit => d) (fun _ => Φ) (fun _ => Φ') (fun _ => h)
-  simpa using this
 
 end CFAux
 
@@ -184,15 +183,16 @@ theorem series_vecFlat_eq_sum {F : Face D A} (hC : GlobalTheory.Hk3.Core R F) {B
   change (R.ωP i t) (h, g) (B.F.fock (∑ p, (((B.G.P.chi p)⁻¹ : ℂˣ) : ℂ) • (R.ωP i t) (1, k p) f) P) 0 = _
   rw [show B.F.fock (∑ p, (((B.G.P.chi p)⁻¹ : ℂˣ) : ℂ) • (R.ωP i t) (1, k p) f) P =
       ∑ p, (((B.G.P.chi p)⁻¹ : ℂˣ) : ℂ) • B.F.fock ((R.ωP i t) (1, k p) f) P from hsum]
-  simp only [map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
   refine Finset.sum_congr rfl fun p _ => ?_
   rw [← hmove p, ← hBo.series_eq_ser t f u (h) w, GlobalTheory.ExportSeries.series_apply, ← Module.End.mul_apply, ← map_mul,
     Prod.mk_mul_mk, mul_one]
 
 end Sum
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem conj_gen : Formalism.MainNotions.ModuliIntegralCharts.H1.ChartIndepSt2 → ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T0 : Type)
     (A : FamIn D.what₂.LL G Pl0 T0 D.R.m) (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (R : RealDat D A T.Q.c.F) (F : Face D A)
     (κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1)) (v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec)

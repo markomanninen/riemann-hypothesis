@@ -1,6 +1,10 @@
-import Formalism.SatakeDualWeyl.DefsCS
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AdelstabL
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Bridge
+module
+
+public import Formalism.SatakeDualWeyl.DefsCS
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AdelstabL
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Bridge
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ variable {A : Type} [CommRing A] {n : Type} [Fintype n]
 
 theorem csScale_hform_add_left (σ : A →+* A) (J : Matrix n n A) (x x' y : n → A) :
     hform σ J (x + x') y = hform σ J x y + hform σ J x' y := by
-  simp only [hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem csScale_hform_add_right (σ : A →+* A) (J : Matrix n n A) (x y y' : n → A) :
     hform σ J x (y + y') = hform σ J x y + hform σ J x y' := by
@@ -84,7 +88,8 @@ theorem csScale_sigR_mem (σ : E →ₐ[F] E) {s : 𝒜} (hs : s ∈ 𝒮) :
 theorem csScale_hform_incl (σ : E →ₐ[F] E) (J : Matrix n n E) (x y : n → E) :
     hform (sigR σ (FiniteAdeleRing (𝓞 F) F)) (J.map ιA) (fun i => ιA (x i)) (fun i => ιA (y i)) =
       ιA (hform (σ : E →+* E) J x y) := by
-  simp only [hform, map_sum, map_mul, Matrix.map_apply, csScale_sigR_incl]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hform, map_sum, map_mul, Matrix.map_apply, csScale_sigR_incl]
 
 theorem csScale_den (σ : E →ₐ[F] E) (J : Matrix n n E) (Λ : Submodule (𝓞 E) (n → E))
     (hfin : Module.Finite (𝓞 E) Λ) :

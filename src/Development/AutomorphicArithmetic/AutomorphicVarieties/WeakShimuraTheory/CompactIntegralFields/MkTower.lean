@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.FerreroWashington
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.FerreroWashington
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 open scoped Pointwise
@@ -47,7 +51,7 @@ private theorem mt_conj {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ �
   · rintro ⟨a, ha, rfl⟩
     simpa [MulSemiringAction.toRingHom_apply, AlgEquiv.smul_def] using ha
 
-private theorem mt_not_both (L : Type) [Field L] [NumberField L] [IsTotallyReal L] [IsTotallyComplex L] : False := by
+private theorem mt_not_both (L : Type) [Field L] [NumberField L] [IsTotallyReal L] [_root_.NumberField.IsTotallyComplex L] : False := by
   obtain w : NumberField.InfinitePlace L := Classical.choice inferInstance
   exact (NumberField.InfinitePlace.not_isReal_iff_isComplex.mpr (IsTotallyComplex.isComplex w)) (IsTotallyReal.isReal w)
 
@@ -113,8 +117,6 @@ private theorem mem_or_mul_mem_fixing_of_quadratic {Ω : Type} [Field Ω] [CharZ
       rw [IsGalois.card_aut_eq_finrank ℚ K, hK]
     have hc : Nat.card (@AlgEquiv ℚ K K _ _ _ K.algebra' K.algebra') = 2 := by
       rw [← hc0]
-      congr 1
-      all_goals exact Subsingleton.elim _ _
     obtain ⟨y, hy, hu⟩ := (Nat.card_eq_two_iff' (1 : @AlgEquiv ℚ K K _ _ _ K.algebra' K.algebra')).mp hc
     by_contra hm
     have e1 := hu _ hh

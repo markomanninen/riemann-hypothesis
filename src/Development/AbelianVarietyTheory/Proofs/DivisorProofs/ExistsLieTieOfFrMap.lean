@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsLatBasisHtLatIffSpanEq
-import Development.AbelianVarietyTheory.Counterexamples.AbelianLawCounterexamples.HomExtendsOverDVRHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsLatBasisHtLatIffSpanEq
+public import Development.AbelianVarietyTheory.Counterexamples.AbelianLawCounterexamples.HomExtendsOverDVRHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -87,7 +91,38 @@ theorem exists_lieTie_of_frMap : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
     unfold IsTan
     rw [Over.comp_left, ← Category.assoc, ht τ j, ← Over.comp_left, MonObj.one_comp]
   obtain ⟨xG, hx⟩ := exists_pull hπ ht'
-  obtain ⟨x, hc, -⟩ := existsUnique_left (P := P) hp (isAdicComplete_dualNumber p) xG.1
+  have mem_pow {R : Type} [CommRing R] (a : R) (n : ℕ) (x : R) :
+      x ∈ (Ideal.span {a} ^ n • ⊤ : Submodule R R) ↔ a ^ n ∣ x := by
+    rw [Ideal.span_singleton_pow, smul_eq_mul, Ideal.mul_top, Ideal.mem_span_singleton]
+  have dual_dvd (n : ℕ) (x : DualNumber O) :
+      (p : DualNumber O) ^ n ∣ x ↔ (p : O) ^ n ∣ x.fst ∧ (p : O) ^ n ∣ x.snd := by
+    have e : (p : DualNumber O) ^ n = TrivSqZeroExt.inl ((p : O) ^ n) := by
+      rw [← TrivSqZeroExt.inl_pow, TrivSqZeroExt.inl_natCast]
+    rw [e]
+    constructor
+    · rintro ⟨y, rfl⟩
+      exact ⟨⟨y.fst, by simp⟩, ⟨y.snd, by simp⟩⟩
+    · rintro ⟨⟨a, ha⟩, b, hb⟩
+      exact ⟨TrivSqZeroExt.inl a + TrivSqZeroExt.inr b, by ext <;> simp [ha, hb]⟩
+  have hadic : IsAdicComplete (Ideal.span {(p : DualNumber O)}) (DualNumber O) := by
+    have h : IsAdicComplete (Ideal.span {(p : O)}) O := inferInstance
+    refine { haus' := ?_, toIsPrecomplete := ?_ }
+    · intro x hx
+      simp only [SModEq.zero, mem_pow, dual_dvd] at hx
+      refine TrivSqZeroExt.ext (h.toIsHausdorff.haus' x.fst fun n => ?_)
+        (h.toIsHausdorff.haus' x.snd fun n => ?_)
+      · rw [SModEq.zero, mem_pow]; exact (hx n).1
+      · rw [SModEq.zero, mem_pow]; exact (hx n).2
+    · constructor
+      intro f hf
+      simp only [SModEq.sub_mem, mem_pow, dual_dvd] at hf ⊢
+      obtain ⟨a, ha⟩ := h.toIsPrecomplete.prec' (fun n => (f n).fst) fun {m n} hmn => by
+        rw [SModEq.sub_mem, mem_pow]; exact (hf hmn).1
+      obtain ⟨b, hb⟩ := h.toIsPrecomplete.prec' (fun n => (f n).snd) fun {m n} hmn => by
+        rw [SModEq.sub_mem, mem_pow]; exact (hf hmn).2
+      simp only [SModEq.sub_mem, mem_pow] at ha hb
+      exact ⟨TrivSqZeroExt.inl a + TrivSqZeroExt.inr b, fun n => ⟨by simpa using ha n, by simpa using hb n⟩⟩
+  obtain ⟨x, hc, -⟩ := existsUnique_left (P := P) hp hadic xG.1
   have h7 := hc.comp (TrivSqZeroExt.fstHom O O O)
   rw [xG.2] at h7
   have hu : (u' ≫ e.hom.left) ≫ t'.G.hom = spMap (algebraMap T.Fr (DualNumber T.Fr)) := by

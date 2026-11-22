@@ -1,10 +1,14 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GenericSectionOfAxioms
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HFour
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.IntNsg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HPlaces
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscB
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GenericSectionOfAxioms
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HFour
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.IntNsg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HPlaces
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscB
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 

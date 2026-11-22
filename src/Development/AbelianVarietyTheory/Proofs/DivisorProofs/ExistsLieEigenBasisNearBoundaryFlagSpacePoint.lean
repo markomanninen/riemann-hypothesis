@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBaseFrame
-import Development.AbelianVarietyTheory.Definitions.Divisors.P22
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSpreadGenericEigenFrameAffineOpen
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAffineStableLieEigenspaceFrame
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAffineEigenframeNearImage
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBaseFrame
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSpreadGenericEigenFrameAffineOpen
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAffineStableLieEigenspaceFrame
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAffineEigenframeNearImage
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open GlobalTheory GlobalTheory.CechPic GlobalTheory.Vanishing GlobalTheory.CompHS
@@ -26,9 +31,9 @@ namespace GlobalTheory.LogPole.EigNear
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H}
   {l : Level H} {Xo : Moduli Dw l} {c : Coeff l}
 
+
 set_option maxHeartbeats 1000000 in
 open GlobalTheory.LogKSDiv.Spread GlobalTheory.ShFam.EigSpread GlobalTheory.ShFam.EigLoc GlobalTheory.LieLocBasis in
-
 theorem exists_eigBasis_at (TF : TorFlag Xo c) (p : TF.Y.X) :
     ∃ (U : TF.Y.X.affineOpens) (n : ℕ) (e : (Σ τ : E →+* ℂ, Fin (Dw.mult τ)) ≃ Fin n)
       (v : Fin n → (Sp (DualNumber Γ(TF.Y.X, U.1)) ⟶ TF.Y.t.G.left)), p ∈ U.1 ∧ IsEigBasis TF U e v := by
@@ -59,8 +64,85 @@ theorem exists_eigBasis_at (TF : TorFlag Xo c) (p : TF.Y.X) :
   have hφ₁ : spMap φ₁ = hU₁.fromSpec ≫ TF.Y.s := spMap_cst _ hU₁
   have hρφ : ρ₁.comp φ₁ = φ₀ := spMap_inj (by
     rw [ReciprocityTheory.ChartRestriction.G.PullbackSections.spMap_comp, hφ₁, ← Category.assoc, hK, hφ₀])
+  have vec_bc_of_chart {S : Type} [CommRing S] {x : Sp S ⟶ TF.Y.X} {n : ℕ}
+      {xc : ∀ m : ℕ, ReciprocityTheory.ChartRestriction.G.Chart.sp (R₀ := S) (ReciprocityTheory.ChartRestriction.G.Chart.JetR S (Fin n) m) ⟶ (Over.pullback x).obj TF.Y.t.G}
+      (C : ReciprocityTheory.ChartRestriction.G.Chart.Chart ((Over.pullback x).obj TF.Y.t.G))
+      (hx : ReciprocityTheory.ChartRestriction.G.Chart.IsUnivChart _ n xc)
+      {S' : Type} [CommRing S'] (ψ : S →+* S') {x' : Sp S' ⟶ TF.Y.X} (h : x' = spMap ψ ≫ x) :
+      ∃ (xc' : ∀ m : ℕ, ReciprocityTheory.ChartRestriction.G.Chart.sp (R₀ := S') (ReciprocityTheory.ChartRestriction.G.Chart.JetR S' (Fin n) m) ⟶ (Over.pullback x').obj TF.Y.t.G),
+        ReciprocityTheory.ChartRestriction.G.Chart.IsUnivChart _ n xc' ∧
+        ∀ cc : Fin n → S, vec TF.Y.t x' xc' (ψ ∘ cc) = spMap (dualMap ψ) ≫ vec TF.Y.t x xc cc := by
+    subst h
+    letI : Algebra S S' := ψ.toAlgebra
+    obtain ⟨x₁, hx₁, hcomp⟩ := LieChart.univChart_baseChange_of_chart (R := S) (R' := S') _ C n xc hx
+    have h₁ := IsGrpPullback.comp
+      (isGrpPullback_pullback ((Over.pullback x).obj TF.Y.t.G) (ReciprocityTheory.ChartRestriction.G.Chart.fB S S'))
+      (isGrpPullback_pullback TF.Y.t.G x)
+    obtain ⟨e, he, hφ⟩ := grpPullback_iso h₁
+      (isGrpPullback_pullback TF.Y.t.G (ReciprocityTheory.ChartRestriction.G.Chart.fB S S' ≫ x))
+    refine ⟨fun m => x₁ m ≫ e.hom, gfp_chart_iso e hx₁, fun cc => ?_⟩
+    have key : (ReciprocityTheory.ChartRestriction.G.Chart.tvec (x := fun m => x₁ m ≫ e.hom) (algebraMap S S' ∘ cc)).left =
+        (ReciprocityTheory.ChartRestriction.G.Chart.tvec (x := x₁) (algebraMap S S' ∘ cc)).left ≫ e.hom.left := by
+      show (_ ≫ x₁ 1 ≫ e.hom).left = (_ ≫ x₁ 1).left ≫ e.hom.left
+      rw [Over.comp_left, Over.comp_left, Over.comp_left, Category.assoc]
+    show (ReciprocityTheory.ChartRestriction.G.Chart.tvec (x := fun m => x₁ m ≫ e.hom) (algebraMap S S' ∘ cc)).left ≫ pullback.fst _ _ = _
+    rw [key, Category.assoc, hφ, ← Category.assoc, hcomp cc, Category.assoc]
+    rfl
   obtain ⟨xcK, hxK, hcK⟩ := vec_bc_of_chart C hx ρ₁ (x' := TF.Y.X.fromSpecStalk p)
     (by rw [hx₁, Category.comp_id, hK])
+  have exists_projectors (c : Coeff l) {L : Type} [CommRing L] (φ : c.F →+* L) {x : Sp L ⟶ TF.Y.X} {n : ℕ}
+      {xc : ∀ m : ℕ, ReciprocityTheory.ChartRestriction.G.Chart.sp (R₀ := L) (ReciprocityTheory.ChartRestriction.G.Chart.JetR L (Fin n) m) ⟶ (Over.pullback x).obj TF.Y.t.G}
+      (hx : ReciprocityTheory.ChartRestriction.G.Chart.IsUnivChart _ n xc) :
+      ∃ P : (E →+* ℂ) → Matrix (Fin n) (Fin n) L, ∀ {k : Type} [CommRing k] (ψ : L →+* k) {x' : Sp k ⟶ TF.Y.X}
+        {xc' : ∀ m : ℕ, ReciprocityTheory.ChartRestriction.G.Chart.sp (R₀ := k) (ReciprocityTheory.ChartRestriction.G.Chart.JetR k (Fin n) m) ⟶ (Over.pullback x').obj TF.Y.t.G}
+        (hx' : ReciprocityTheory.ChartRestriction.G.Chart.IsUnivChart _ n xc'), (∀ cc : Fin n → L, vec TF.Y.t x' xc' (ψ ∘ cc) = spMap (dualMap ψ) ≫ vec TF.Y.t x xc cc) → ∀ τ v, (P τ).map ψ *ᵥ v ∈ eig c (ψ.comp φ) hx' τ ∧
+          (v ∈ eig c (ψ.comp φ) hx' τ → (P τ).map ψ *ᵥ v = v) := by
+    classical
+    have : CharZero c.F := RingHom.charZero c.F.val.toRingHom
+    obtain ⟨α, hinj, ⟨f, hf, hfs⟩, hN⟩ :=
+      ReciprocityTheory.ChartRestriction.G.PullbackSections.exists_sepElt (E := E) (F := c.F) c.F.val.toRingHom (embK c) (fun τ a => embK_coe c τ a)
+    letI : Algebra c.F L := φ.toAlgebra
+    refine ⟨fun τ => LinearMap.toMatrix' (ReciprocityTheory.ChartRestriction.G.PullbackSections.proj (rho hx) (embK c) α τ), fun {k} _ ψ {x' xc'} hx' hv τ => ?_⟩
+    letI : Algebra c.F k := (ψ.comp φ).toAlgebra
+    have e₁ : ∀ m, ReciprocityTheory.ChartRestriction.G.PullbackSections.IsEigV (rho hx') (embK c τ) (ReciprocityTheory.ChartRestriction.G.PullbackSections.proj (rho hx') (embK c) α τ m) := fun m =>
+      ReciprocityTheory.ChartRestriction.G.PullbackSections.eig_of_alpha _ _ α hN τ (ReciprocityTheory.ChartRestriction.G.PullbackSections.proj_eig_alpha _ _ α hinj f hf hfs τ m)
+    have e₂ : ∀ m, ReciprocityTheory.ChartRestriction.G.PullbackSections.IsEigV (rho hx') (embK c τ) m → ReciprocityTheory.ChartRestriction.G.PullbackSections.proj (rho hx') (embK c) α τ m = m := fun m hm => by
+      have := ReciprocityTheory.ChartRestriction.G.PullbackSections.proj_sum_eig (rho hx') (embK c) α hinj (Pi.single τ m) (fun τ' => by
+        by_cases h : τ' = τ
+        · subst h; rwa [Pi.single_eq_same]
+        · rw [Pi.single_eq_of_ne h]; intro a; simp) τ
+      rwa [Finset.sum_pi_single', if_pos (Finset.mem_univ _), Pi.single_eq_same] at this
+    have htm : ∀ (a : 𝓞 E) (cc : Fin n → L), rho hx' a (ψ ∘ cc) = ψ ∘ rho hx a cc :=
+      fun a cc => vec_inj hx' (by
+        show vec TF.Y.t _ xc' (ReciprocityTheory.ChartRestriction.G.Chart.tmap hx' _ _) = vec TF.Y.t _ xc' (_ ∘ ReciprocityTheory.ChartRestriction.G.Chart.tmap hx _ _)
+        rw [vec_tmap hx', hv, hv, vec_tmap hx, Category.assoc])
+    have pw : ∀ (j : ℕ) cc, (rho hx' α ^ j) (ψ ∘ cc) = ψ ∘ (rho hx α ^ j) cc := fun j => by
+      induction j with
+      | zero => exact fun _ => rfl
+      | succ j ih => intro cc; rw [pow_succ', pow_succ', Module.End.mul_apply, Module.End.mul_apply, ih]; exact htm α _
+    have pr : ∀ (Q : Polynomial c.F) cc, Polynomial.aeval (rho hx' α) (Q.map (algebraMap c.F k)) (ψ ∘ cc) =
+        ψ ∘ Polynomial.aeval (rho hx α) (Q.map (algebraMap c.F L)) cc := fun Q cc => by
+      induction Q using Polynomial.induction_on' with
+      | add p q hp hq =>
+        rw [Polynomial.map_add (f := _), Polynomial.map_add (f := _), map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, hp, hq]
+        funext j; simp
+      | monomial j a =>
+        rw [Polynomial.map_monomial, Polynomial.map_monomial, Polynomial.aeval_monomial, Polynomial.aeval_monomial,
+          Module.End.mul_apply, Module.End.mul_apply, pw, Module.algebraMap_end_apply, Module.algebraMap_end_apply]
+        funext i
+        exact (map_mul ψ _ _).symm
+    have hP : (LinearMap.toMatrix' (ReciprocityTheory.ChartRestriction.G.PullbackSections.proj (rho hx) (embK c) α τ)).map ψ =
+        LinearMap.toMatrix' (ReciprocityTheory.ChartRestriction.G.PullbackSections.proj (rho hx') (embK c) α τ) := by
+      ext i j
+      have s : (Pi.single j 1 : Fin n → k) = ψ ∘ Pi.single j 1 := funext fun r => by
+        by_cases hj : r = j <;> simp [hj, Pi.single_apply]
+      rw [Matrix.map_apply, LinearMap.toMatrix'_apply, LinearMap.toMatrix'_apply, s]
+      exact (congrFun (pr _ _) i).symm
+    intro v
+    rw [hP, ← Matrix.toLin'_apply, Matrix.toLin'_toMatrix', ReciprocityTheory.ChartRestriction.G.Chart.mem_eigLat_iff,
+      ReciprocityTheory.ChartRestriction.G.Chart.mem_eigLat_iff]
+    exact ⟨e₁ v, e₂ v⟩
+
   obtain ⟨Pr, hPr⟩ := exists_projectors c φ₁ hx
   choose Bv hBv using fun τ i => vec_exists hxK _ (f₀.tan τ i)
   have hBe : ∀ τ i, Bv τ i ∈ eig c φ₀ hxK τ := fun τ i => (vec_eig_iff hxK _ _).1 (by rw [← hBv]; exact f₀.eig τ i)
@@ -137,6 +219,6 @@ theorem exists_eigBasis_at (TF : TorFlag Xo c) (p : TF.Y.X) :
 
 end GlobalTheory.LogPole.EigNear
 
-theorem GlobalTheory.LogPole.exists_eigBasis_near : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (TF : TorFlag Xo c) (Z : Comp Xo c), FnAlgClosed Xo c → ∀ y : Y₀ TF.X Z, ∃ (U : TF.Y.X.affineOpens) (n : ℕ) (e : (Σ τ : E →+* ℂ, Fin (Dw.mult τ)) ≃ Fin n) (v : Fin n → (Sp (DualNumber Γ(TF.Y.X, U.1)) ⟶ TF.Y.t.G.left)), toBase TF Z y ∈ U.1 ∧ IsEigBasis TF U e v := by
+theorem GlobalTheory.LogPole.exists_eigBasis_near : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (TF : TorFlag Xo c) (Z : Comp Xo c), FnAlgClosed (Xo := Xo) (c := c) → ∀ y : Y₀ TF.X Z, ∃ (U : TF.Y.X.affineOpens) (n : ℕ) (e : (Σ τ : E →+* ℂ, Fin (Dw.mult τ)) ≃ Fin n) (v : Fin n → (Sp (DualNumber Γ(TF.Y.X, U.1)) ⟶ TF.Y.t.G.left)), toBase TF Z y ∈ U.1 ∧ IsEigBasis TF U e v := by
   intro E _ _ _ H Dw l Xo c TF Z _ y
   exact GlobalTheory.LogPole.EigNear.exists_eigBasis_at TF (toBase TF Z y)

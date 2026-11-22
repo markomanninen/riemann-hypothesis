@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnifAlong
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KeyDatumFibreOfComposableBaseChangeStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.MemNonzeroLocusOfUnit
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasisBaseChange
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsMetricConjugateFramedPoint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnifAlong
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KeyDatumFibreOfComposableBaseChangeStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.MemNonzeroLocusOfUnit
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasisBaseChange
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsMetricConjugateFramedPoint
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.KeyCl GlobalTheory.Ex GlobalTheory.KeyEven
@@ -48,9 +53,6 @@ theorem main : ∀ (K : Type) [Field K] (G : Over (Sp K)) [GrpObj G] [IsCommMonO
   have hF := dual_eq_id F hF₁ hF₂
   have hF' := dual_eq_id F' hF₁' hF₂'
   subst hF hF'
-  have eD : spMap (Formalism.L2.Pj.dualMap (RingHom.id K)) = 𝟙 (Sp (DualNumber K)) := by
-    refine Eq.trans (congrArg spMap (RingHom.ext fun z => ?_)) e'
-    ext <;> simp [Formalism.L2.Pj.dualMap]
   have eR : spMap (Chart.dualMapR (RingHom.id K)) = 𝟙 (Sp (DualNumber K)) := by
     refine Eq.trans (congrArg spMap (RingHom.ext fun z => ?_)) e'
     ext <;> simp [Chart.dualMapR]
@@ -79,10 +81,10 @@ theorem main : ∀ (K : Type) [Field K] (G : Over (Sp K)) [GrpObj G] [IsCommMonO
   have hv : IsLieBasis v := Chart.isLieBasis_baseChange (RingHom.id K) hC
     (isLieBasis_cast hg'.symm x'.basis) hvχ
   refine ⟨v, hv, fun i => ?_, φ, he, ψ, RingHom.id _, hφ, hψ, hmaps, hsec, hF₁, hF₂, fun i => ?_⟩
-  · have h' : IsGrpPullback x.P.A G (spMap (RingHom.id K) ≫ 𝟙 (Sp K)) φ := by rw [Category.comp_id]; exact hφ
-    exact GlobalTheory.LamT.isLieComb_of_two_pullbacks (RingHom.id K) rfl (grpPullback_self G) h' rfl (hM i)
-      (fun j => by rw [hxv, eD, e', Category.comp_id]; rfl)
-      (by rw [hvφ, eD, Category.comp_id, Category.id_comp])
+  · apply Chart.comb_baseChange (RingHom.id K) hφ (hM i)
+    · intro j
+      rw [hxv, e', Category.id_comp, eR, Category.id_comp]
+    · rw [hvφ, eR, Category.id_comp]
   · rw [hvφ, e', Category.id_comp]
 
 end GlobalTheory.LieLift

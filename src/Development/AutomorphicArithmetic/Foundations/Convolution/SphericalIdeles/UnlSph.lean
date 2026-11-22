@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.WeakStable
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SphericalEmbeddings.NoLinkRev
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SphericalEmbeddings.IsSmoothCharUnr
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ResidueCardEqAbsNorm
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.WeakStable
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SphericalEmbeddings.NoLinkRev
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SphericalEmbeddings.IsSmoothCharUnr
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ResidueCardEqAbsNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 
 private theorem prin_irr {n : ℕ} (χ : Fin n → kˣ →* ℂˣ) (hχ : ∀ i, IsSmoothChar (χ i))
     (h : ∀ i j, χ j ≠ χ i * absPow k 1) : (prinSeries χ).IsIrreducible := by
-  let x : Fin n → IrrGL k := fun i => IrrGL.ofChar (χ i) (hχ i)
+  let x : Fin n → IrrGL (k := k) := fun i => IrrGL.ofChar (χ i) (hχ i)
   have hx : ∀ i, (x i).IsCusp := fun i => IrrGL.isCusp_ofChar _ _
   have hd : ∑ i, (x i).1 = n := by simp [x, IrrGL.ofChar]
   have hnu : ∀ i j, x j ≠ (x i).nu 1 := fun i j e => by
@@ -32,10 +36,36 @@ private theorem prin_irr {n : ℕ} (χ : Fin n → kˣ →* ℂˣ) (hχ : ∀ i,
   let q := multiProdEquiv (stdBlocks (fun i => (x i).1) hd) fun i => equivRep (IrrRep.det (Fin 1) (χ i) (hχ i))
   have hM : (multiProd (Equiv.sigmaUnique (Fin n) fun _ => Fin 1) fun i => detRep (Fin 1) (χ i)).IsIrreducible :=
     GlobalTheory.Parabolic.isIrreducible_of_equiv (p.trans q).symm hP
-  haveI := nontrivial_of_irreducible hM
-  haveI := nontrivial_of_isSubquotient
-    (GlobalTheory.PermPrin.isSubquotient_multiProd_prinSeries (Equiv.sigmaUnique (Fin n) fun _ => Fin 1) χ)
-  obtain ⟨e⟩ := equiv_of_isSubquotient (GlobalTheory.PrinProd.isSubquotient_prinSeries_multiProd k n χ) hM
+  have hMnt : Nontrivial (IndSp (Equiv.sigmaUnique (Fin n) fun _ => Fin 1)
+      (piTensor fun i => detRep (Fin 1) (χ i))) := nontrivial_of_irreducible hM
+  have hnt {G V W : Type} [Group G] [AddCommGroup V] [Module ℂ V] [AddCommGroup W]
+      [Module ℂ W] {σ : Representation ℂ G W} {ρ : Representation ℂ G V}
+      (h : IsSubquotient σ ρ) (hW : Nontrivial W) : Nontrivial V := by
+    letI := hW
+    obtain ⟨S, f, hf⟩ := h
+    have := hf.nontrivial
+    exact Subtype.val_injective.nontrivial (α := S.toSubmodule)
+  letI := hnt (GlobalTheory.PermPrin.isSubquotient_multiProd_prinSeries
+    (Equiv.sigmaUnique (Fin n) fun _ => Fin 1) χ) hMnt
+  have heq {G V W : Type} [Group G] [AddCommGroup V] [Module ℂ V] [AddCommGroup W]
+      [Module ℂ W] {σ : Representation ℂ G W} {ρ : Representation ℂ G V}
+      (h : IsSubquotient σ ρ) [Nontrivial W] (hρ : ρ.IsIrreducible) : Nonempty (ρ.Equiv σ) := by
+    obtain ⟨S, f, hf⟩ := h
+    obtain ⟨y, hy⟩ := exists_ne (0 : W)
+    obtain ⟨v, rfl⟩ := hf y
+    haveI : IsSimpleOrder (Subrepresentation ρ) := hρ
+    rcases eq_bot_or_eq_top S with rfl | rfl
+    · exact absurd (by rw [show v = 0 from Subtype.ext v.2, map_zero]) hy
+    let F : ρ.IntertwiningMap σ := f.comp (topEquiv ρ).symm.toIntertwiningMap
+    have hs : Function.Surjective F := hf.comp (topEquiv ρ).symm.toLinearEquiv.surjective
+    refine ⟨equivOfBijective F ⟨(injective_iff_map_eq_zero _).2 fun x hx => ?_, hs⟩⟩
+    rcases eq_bot_or_eq_top F.ker with h | h
+    · have : x ∈ F.ker := hx
+      rw [h] at this
+      exact this
+    · have : v.1 ∈ F.ker := by rw [h]; trivial
+      exact absurd this hy
+  obtain ⟨e⟩ := heq (GlobalTheory.PrinProd.isSubquotient_prinSeries_multiProd k n χ) hM
   exact GlobalTheory.Parabolic.isIrreducible_of_equiv e hM
 
 private theorem unr_ne {a b : ℂˣ} (h : (a : ℂ) ≠ (resCard k : ℂ) * b) : unrChar k b ≠ unrChar k a * absPow k 1 := by

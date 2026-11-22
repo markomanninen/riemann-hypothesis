@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N
 
 namespace GlobalTheory

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MonodromyZeroOfWeilDeligneRepClassIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPowEqPowOfWeilDegreeEqSmoothStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeilGroupIsSemisimpleOfSemisimpleFrobStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MonodromyZeroOfWeilDeligneRepClassIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPowEqPowOfWeilDegreeEqSmoothStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeilGroupIsSemisimpleOfSemisimpleFrobStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial Module GlobalTheory.WeilDeligne
 
@@ -41,7 +45,7 @@ theorem semisimplePart_mul_eq {f s N : End ℂ V} {c : ℂ} (hc : Commute f s) (
       hs.isFinitelySemisimple hn
     simp [h1, h3, smul_smul]
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, map_add, hx, hy]
+  | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 end Lin
 
@@ -105,13 +109,13 @@ theorem commute_of_commute_pow {R : Type*} [Ring R] [Algebra ℂ R] {u : Rˣ} {T
 
 theorem exists_frobenius_semisimplification : ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω) (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (V : Type) [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V] (ρ : Representation ℂ (Weil h) V) (N : End ℂ V), IsSmooth ρ → IsNilpotent N → (∀ σ, ρ σ * N = ((normV w : ℕ) : ℂ) ^ deg σ • (N * ρ σ)) → ∃ (a : WDRep h V) (u : (End ℂ V)ˣ), a.N = N ∧ IsNilpotent ((u : End ℂ V) - 1) ∧ Commute (u : End ℂ V) N ∧ (∀ σ, Commute (u : End ℂ V) (ρ σ)) ∧ ∀ σ, ρ σ = a.ρ σ * ((u ^ deg σ : (End ℂ V)ˣ) : End ℂ V) := by
   intro E Ω _ _ _ _ _ A w h V _ _ _ ρ N hρ hN hc
-  obtain ⟨n, hn, s, hs, hnil, hss, hf⟩ := End.exists_isNilpotent_isSemisimple (f := ρ (frob h))
-  set f := ρ (frob h) with hfdef
+  obtain ⟨n, hn, s, hs, hnil, hss, hf⟩ := End.exists_isNilpotent_isSemisimple (f := ρ (frob (h := h)))
+  set f := ρ (frob (h := h)) with hfdef
   have hfn : Commute f n := Algebra.commute_of_mem_adjoin_self hn
   have hfs : Commute f s := Algebra.commute_of_mem_adjoin_self hs
   have hsub : f - s = n := by rw [hf]; simp
   have hns : Commute n s := by rw [← hsub]; exact hfs.sub_left (Commute.refl s)
-  have hfu : IsUnit f := (Group.isUnit (frob h)).map ρ
+  have hfu : IsUnit f := (Group.isUnit (frob (h := h))).map ρ
   have hsu : IsUnit s := by
     have : s = f + -n := by rw [← hsub]; simp
     rw [this]
@@ -131,16 +135,16 @@ theorem exists_frobenius_semisimplification : ∀ (E Ω : Type) [Field E] [Numbe
     rw [this]
     exact hns.units_inv_right.isNilpotent_mul_right hnil
   have huN : Commute (u : End ℂ V) N := by
-    have h1 := hc (frob h)
+    have h1 := hc (frob (h := h))
     have h2 := semisimplePart_mul_eq hfs hss (hsub ▸ hnil) h1
-    have hq : ((normV w : ℕ) : ℂ) ^ deg (frob h) ≠ 0 :=
+    have hq : ((normV w : ℕ) : ℂ) ^ deg (frob (h := h)) ≠ 0 :=
       zpow_ne_zero _ (Nat.cast_ne_zero.mpr (one_lt_normV w).ne_bot)
     have h3 : (S : End ℂ V) * ((u : End ℂ V) * N) = S * (N * u) := by
       rw [← mul_assoc, hSu', h1, ← mul_assoc, h2, smul_mul_assoc, mul_assoc, hSu']
     exact (Units.mul_right_inj S).mp h3
   have huρ : ∀ τ, Commute (u : End ℂ V) (ρ τ) := by
     intro τ
-    obtain ⟨m, hm, e⟩ := GlobalTheory.T.exists_pow_eq_pow_of_weilDegree_eq_smooth E Ω A w h V ρ hρ (frob h) (τ * frob h * τ⁻¹) (by simp)
+    obtain ⟨m, hm, e⟩ := GlobalTheory.T.exists_pow_eq_pow_of_weilDegree_eq_smooth E Ω A w h V ρ hρ (frob (h := h)) (τ * frob (h := h) * τ⁻¹) (by simp)
     have c1 : f ^ m * ρ τ = (1 : ℂ) • (ρ τ * f ^ m) := by
       rw [one_smul]
       conv_lhs => rw [hfdef, e]
@@ -172,9 +176,9 @@ theorem exists_frobenius_semisimplification : ∀ (E Ω : Type) [Field E] [Numbe
   have hsm : IsSmooth ρ' := .of_open hρ (by simp) fun σ hσ => by
     have : ρ (ineIncl h σ) = 1 := hσ
     rw [hρ', this]; simp
-  have hfr : ρ' (frob h) = S := by
+  have hfr : ρ' (frob (h := h)) = S := by
     rw [hρ', deg_frob, ← hfdef, ← hSu', mul_assoc, ← Units.val_mul]; simp
-  refine ⟨⟨ρ', N, hsm, GlobalTheory.T.weilGroup_isSemisimple_of_semisimple_frob E Ω A w h V ρ' hsm (frob h) deg_frob (hfr ▸ hss), hN,
+  refine ⟨⟨ρ', N, hsm, GlobalTheory.T.weilGroup_isSemisimple_of_semisimple_frob E Ω A w h V ρ' hsm (frob (h := h)) deg_frob (hfr ▸ hss), hN,
     fun σ => ?_⟩, u, rfl, hunil, huN, huρ, fun σ => ?_⟩
   · rw [hρ', mul_assoc, (huN.units_zpow_left (-deg σ)).eq, ← mul_assoc, hc, smul_mul_assoc,
       mul_assoc]

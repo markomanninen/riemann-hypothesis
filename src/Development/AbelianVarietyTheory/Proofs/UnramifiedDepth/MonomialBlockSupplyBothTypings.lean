@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.ContentLargeFromSupplies
-import Formalism.LocalToGlobal.CharacterGerms.ContentZeroAt
-import Formalism.LocalToGlobal.CharacterGerms.LatticeInclusionFormsInjective
-import Formalism.LocalToGlobal.CharacterGerms.CoeffIterateZero
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ProdFactorialDiag
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CharacterBlocksAttainBound
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.ContentLargeFromSupplies
+public import Formalism.LocalToGlobal.CharacterGerms.ContentZeroAt
+public import Formalism.LocalToGlobal.CharacterGerms.LatticeInclusionFormsInjective
+public import Formalism.LocalToGlobal.CharacterGerms.CoeffIterateZero
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ProdFactorialDiag
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CharacterBlocksAttainBound
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -101,7 +105,8 @@ end
 
 theorem degree_dg {σ : Type} {N N' : ℕ} (j : Fin N × Fin N' → σ) (e : ℕ → ℕ) :
     (dg j (monAl N N' e)).degree = monDeg N N' e := by
-  rw [← sum_monAl, Fin.sum_univ_eq_sum_range (fun ρ => monAl N N' e ρ) N, dg, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← sum_monAl, Fin.sum_univ_eq_sum_range (fun ρ => monAl N N' e ρ) N, dg, map_sum]
   refine Finset.sum_congr rfl fun ρ hρ => ?_
   unfold dgOne
   split_ifs with h
@@ -173,15 +178,16 @@ theorem core (X : RowData C V d I J) (g : Fin 2) (r : ZMod d → ℕ) (en : ∀ 
       val_nat V.v V.l_prime V.v_l (Finset.prod_ne_zero_iff.2 fun _ _ => Nat.factorial_ne_zero _),
       WithTop.coe_le_coe, GlobalTheory.LegendreBounds.padicValNat_prod_factorial V.l V.l_prime]
     have hd : ∑ a, monDeg N (r a) (e a) = ∑ x, (∑ a, dg (j a) (monAl N (r a) (e a))) x := by
-      rw [← Finsupp.degree_eq_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← Finsupp.degree_eq_sum, map_sum]
       exact Finset.sum_congr rfl fun a _ => (degree_dg _ _).symm
     rw [hd, Nat.cast_sum, Finset.sum_div]
     exact Finset.sum_le_sum fun ρ _ => GlobalTheory.LegendreBounds.upper V.l V.l_prime _
   · rw [hval, GlobalTheory.LegendreFacts.mfact_eq_prod]
     refine le_of_eq (val_coprime V.v V.l_prime V.v_l fun hd => ?_)
-    obtain ⟨x, -, hx⟩ := (Prime.dvd_finset_prod_iff V.l_prime.prime _).1 hd
+    obtain ⟨x, -, hx⟩ := (Prime.dvd_finsetProd_iff V.l_prime.prime _).1 hd
     refine absurd ((V.l_prime.dvd_factorial).1 hx) (not_le.2 ?_)
-    rw [Finsupp.finset_sum_apply]
+    rw [Finsupp.finsetSum_apply]
     by_cases hx' : ∃ a y, x = j a y
     · obtain ⟨a, y, rfl⟩ := hx'
       rw [Finset.sum_eq_single a, dg_apply (j a) (hj' a) _ y.1 y.2]

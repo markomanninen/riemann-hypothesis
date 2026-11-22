@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.OrbitPlaces
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.OrbitPlaces
+
+@[expose] public section
 
 open scoped BigOperators
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Classical

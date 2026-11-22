@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.Uniformised
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.Uniformised
+
+@[expose] public section
 
 open NumberField Polynomial
 open scoped Matrix
@@ -16,7 +20,7 @@ theorem aeval_mul_of_mul_eq {g : ℕ} {T P : Matrix (Fin g) (Fin g) ℂ} {r : �
     | zero => simp
     | succ k ih => rw [pow_succ', mul_assoc, ih, mul_smul_comm, h, smul_smul, pow_succ, mul_comm (r ^ k)]
   induction q using Polynomial.induction_on' with
-  | add p q hp' hq' => rw [map_add, add_mul, hp', hq', eval_add, add_smul]
+  | add p q hp' hq' => rw [map_add (f := _), add_mul, hp', hq', eval_add, add_smul]
   | monomial k a =>
     rw [aeval_monomial, eval_monomial, Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul, smul_mul_assoc, hp,
       smul_smul]
@@ -88,7 +92,8 @@ theorem spectral (K : Type) [Field K] [NumberField K] (g : ℕ) (Φ : K →+* Ma
   · have hne : S.Nonempty := ⟨_, hmemS (IsAlgClosed.lift (R := ℚ) (M := ℂ) (S := K)).toRingHom⟩
     rw [← Finset.sum_image (f := P) (fun τ _ τ' _ h => hinjθ τ τ' h), himage]
     show ∑ r ∈ S, aeval T (Lagrange.basis S id r) = 1
-    rw [← map_sum, Lagrange.sum_basis hinjS hne, map_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, Lagrange.sum_basis hinjS hne, map_one]
   · obtain ⟨q, hq, hτq⟩ := hpoly x
     rw [hq, aeval_mul_of_mul_eq (heig _ (hmemS τ)), hτq]
   · obtain ⟨q, hq, hτq⟩ := hpoly x
@@ -110,7 +115,10 @@ theorem extend {K : Type} [Field K] [NumberField K] {g : ℕ} (ψ : 𝓞 K →+*
   have hcomm : ∀ a ∈ Set.range ψ, ∀ b ∈ Set.range ψ, a * b = b * a := by
     rintro _ ⟨a, rfl⟩ _ ⟨b, rfl⟩
     rw [← map_mul, mul_comm, map_mul]
-  letI : CommRing (Algebra.adjoin ℚ (Set.range ψ)) := Algebra.adjoinCommRingOfComm ℚ hcomm
+  letI : IsMulCommutative (Algebra.adjoin ℚ (Set.range ψ)) :=
+    Algebra.isMulCommutative_adjoin ℚ (fun a ha b hb _ => hcomm a ha b hb)
+  letI : CommRing (Algebra.adjoin ℚ (Set.range ψ)) := by
+    open scoped IsMulCommutative in infer_instance
   let ψ' : 𝓞 K →+* Algebra.adjoin ℚ (Set.range ψ) :=
     ψ.codRestrict (Algebra.adjoin ℚ (Set.range ψ)) fun x => Algebra.subset_adjoin ⟨x, rfl⟩
   have hu : ∀ y : nonZeroDivisors (𝓞 K), IsUnit (ψ' y) := by
@@ -120,8 +128,8 @@ theorem extend {K : Type} [Field K] [NumberField K] {g : ℕ} (ψ : 𝓞 K →+*
     rw [← mul_assoc, ← map_mul, hy, map_natCast, ← map_natCast (algebraMap ℚ (Algebra.adjoin ℚ (Set.range ψ))),
       ← map_mul, mul_inv_cancel₀ (by exact_mod_cast hN), map_one]
   refine ⟨(Algebra.adjoin ℚ (Set.range ψ)).val.toRingHom.comp
-    (IsLocalization.lift (M := nonZeroDivisors (𝓞 K)) (S := K) hu), fun c => ?_⟩
-  have := IsLocalization.lift_eq (M := nonZeroDivisors (𝓞 K)) (S := K) hu c
+    (IsLocalization.lift (M := nonZeroDivisors (𝓞 K)) (S := K) (g := ψ') hu), fun c => ?_⟩
+  have := IsLocalization.lift_eq (M := nonZeroDivisors (𝓞 K)) (S := K) (g := ψ') hu c
   simp only [RingHom.comp_apply]
   erw [this]
   rfl
@@ -187,7 +195,7 @@ theorem lie_projectors : ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (R : Type) [
     have h0 : D.ω ^ 2 - (D.tr : 𝓞 D.F) * D.ω + (D.nm : 𝓞 D.F) = 0 := by
       rw [← D.tr_eq, ← D.nm_eq]; ring
     have := congrArg (τ'.comp (algebraMap (𝓞 D.F) D.F)) h0
-    simp only [map_sub, map_add, map_mul, map_pow, map_intCast, map_zero] at this
+    simp only [map_sub, map_add (f := _), map_mul, map_pow, map_intCast, map_zero] at this
     exact this
   have hτω : ∀ i, τ i (D.ω : D.F) = lam := fun i => by rw [hτ, b.t_ω]
   have hexp : ∀ x : D.F, Φ x = ∑ τ', τ' x • E τ' := by

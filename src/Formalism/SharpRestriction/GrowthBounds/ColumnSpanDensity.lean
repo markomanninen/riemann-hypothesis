@@ -1,2 +1,5 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.TheoremIOfLatticeFunctorComparison
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.TheoremIFamilyOfClosedForm
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.TheoremIOfLatticeFunctorComparison
+
+@[expose] public section

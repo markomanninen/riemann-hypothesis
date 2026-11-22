@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedVectorEqOfStandardData
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsTwIffCanonEq
-import Formalism.LocalToGlobal.KernelLattices.TopPin
-import Formalism.LocalToGlobal.KernelLattices.InterlaceAll
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HermitianChartComplexRationalIntegralFormsStatement
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.DiagramFitsSourceRank
-import Formalism.UnipotentAdelicQuotients.WeylLatDual
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PolFunApply
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EvalTwSubK
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.TiedRec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedVectorEqOfStandardData
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsTwIffCanonEq
+public import Formalism.LocalToGlobal.KernelLattices.TopPin
+public import Formalism.LocalToGlobal.KernelLattices.InterlaceAll
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HermitianChartComplexRationalIntegralFormsStatement
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.DiagramFitsSourceRank
+public import Formalism.UnipotentAdelicQuotients.WeylLatDual
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PolFunApply
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EvalTwSubK
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.TiedRec
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.IntegralityCompare
@@ -62,7 +67,7 @@ theorem smul_map_mem {K : Type} [CommRing K] (O : AddSubgroup K) (G : Set (MvPol
   induction hg using Submodule.span_induction with
   | mem x hx => exact AddSubgroup.subset_closure ⟨r, hr, x, hx, rfl⟩
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, smul_add]; exact add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _), smul_add]; exact add_mem hx hy
   | smul z x _ hx =>
     rw [map_zsmul, smul_comm]
     exact zsmul_mem hx z
@@ -76,7 +81,7 @@ theorem map_mem {L K : Type} [CommRing L] [CommRing K] (φ : L →+* K) {O : Set
     rw [map_smul_map]
     exact AddSubgroup.subset_closure ⟨φ r, h r hr, g, hg, rfl⟩
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact add_mem hx hy
   | neg x _ hx => rw [map_neg]; exact neg_mem hx
 
 theorem of_map_mem {L K : Type} [CommRing L] [CommRing K] (φ : L →+* K) (hφ : Function.Injective φ)
@@ -87,7 +92,8 @@ theorem of_map_mem {L K : Type} [CommRing L] [CommRing K] (φ : L →+* K) (hφ 
   choose r' hr' e using fun i => (h i).1
   have : R = ∑ i, r' i • map (Int.castRingHom L) (g i) := by
     apply map_injective φ hφ
-    rw [hR', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hR', map_sum]
     simp only [map_smul_map, e]
   rw [this]
   exact sum_mem fun i _ => AddSubgroup.subset_closure ⟨r' i, hr' i, g i, (h i).2, rfl⟩
@@ -140,7 +146,8 @@ theorem keyCoord {L K : Type} [Field L] [Field K] [Module.Flat ℤ K] (ψ : L �
       map (Int.castRingHom K') g = ∑ k, (crd g k : K') • map (Int.castRingHom K') (e k) := by
     intro K' _ g hg
     conv_lhs => rw [hexp g hg]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_zsmul, Int.cast_smul_eq_zsmul]
   have hg1 : ∀ i, g1 i ∈ N := fun i => Submodule.subset_span (by simp [hT])
@@ -161,7 +168,8 @@ theorem keyCoord {L K : Type} [Field L] [Field K] [Module.Flat ℤ K] (ψ : L �
     rw [Finset.sum_comm]
     simp [c, Finset.sum_smul]
   have hψ : map ψ R = ∑ k, ψ (c k) • map (Int.castRingHom K) (e k) := by
-    rw [hRc, map_sum]; simp only [map_smul_map]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hRc, map_sum]; simp only [map_smul_map]
   have hd : map ψ R = ∑ k, d k • map (Int.castRingHom K) (e k) := by
     rw [hR2]
     simp_rw [mapExp K _ (hg2 _), Finset.smul_sum, smul_smul]

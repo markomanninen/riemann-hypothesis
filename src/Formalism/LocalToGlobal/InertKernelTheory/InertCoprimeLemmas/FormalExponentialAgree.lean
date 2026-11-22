@@ -1,14 +1,18 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementW
-import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.Statement
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.CyclicPowerClassOfExpEquiv
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FlowTwoTorsionWp
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.TwoTorsionU
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.ConstantCoeffSeriesAtVariable
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PowerSeriesNormUnits.NormUnitsSubstitution
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupCommon.ExpLog
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.OneAddMulDerivLogSubst
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalC
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementW
+public import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.Statement
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.CyclicPowerClassOfExpEquiv
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FlowTwoTorsionWp
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.TwoTorsionU
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.ConstantCoeffSeriesAtVariable
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PowerSeriesNormUnits.NormUnitsSubstitution
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupCommon.ExpLog
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.OneAddMulDerivLogSubst
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalC
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,7 @@ theorem formal_equivalence_agree : SimeqAgree := by
     rw [← expMv_eq_mvExp h0] at h1
     exact h1
 
-theorem dX_eq (f : PowerSeries ℂ_[p]) : dX f = derivative ℂ_[p] f := by
+theorem dX_eq (f : PowerSeries ℂ_[p]) : dX f = PowerSeries.derivative f := by
   ext n
   simp [dX, PowerSeries.coeff_derivative, mul_comm]
 
@@ -96,7 +100,8 @@ theorem omegaW_eq {W : WeierstrassCurve ℂ_[p]} {wq : PowerSeries ℂ_[p]} (h :
   have key : Formalism.L2.Th1.A.fw W * (-(2 : PowerSeries ℂ_[p]) * wq - X * dX wq) =
       wq * (C W.a₁ * X + C W.a₃ * X ^ 3 * wq - 2) := by
     apply mul_left_cancel₀ (pow_ne_zero 3 (X_ne_zero (R := ℂ_[p])))
-    have hder : derivative ℂ_[p] (X ^ 3 * wq) = 3 * X ^ 2 * wq + X ^ 3 * derivative ℂ_[p] wq := by
+    have hder : PowerSeries.derivative (X ^ 3 * wq) =
+        3 * X ^ 2 * wq + X ^ 3 * PowerSeries.derivative wq := by
       rw [Derivation.leibniz, Derivation.leibniz_pow, derivative_X]
       simp only [smul_eq_mul, nsmul_eq_mul]
       push_cast

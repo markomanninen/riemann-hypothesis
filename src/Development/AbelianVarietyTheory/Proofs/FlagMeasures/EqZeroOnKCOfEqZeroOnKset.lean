@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+
+@[expose] public section
 
 open Matrix Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Dec
 open scoped InnerProductSpace
 
 namespace GlobalTheory.Dec.KCIdent
 
-open scoped MatrixOrder Matrix.Norms.L2Operator ComplexOrder in
 
+open scoped MatrixOrder Matrix.Norms.L2Operator ComplexOrder in
 theorem exists_herm_log {n : ℕ} (y J : Matrix (Fin n) (Fin n) ℂ) (hy : IsUnit y)
     (hJ : Commute (yᴴ * y) J) :
     ∃ L : Matrix (Fin n) (Fin n) ℂ, Lᴴ = L ∧ Commute L J ∧ NormedSpace.exp L = yᴴ * y := by

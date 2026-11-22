@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.LawWLevi
-import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.LevScalar2
-import Development.WeilBound.ThetaLifts.CTKernel
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.LawWLevi
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.LevScalar2
+public import Development.WeilBound.ThetaLifts.CTKernel
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem lawW_unip (hA : PositivityTheory.Mix.AdelSt) (hP : IsPair B M χX χW om
         ext i k
         have := congrFun (ha (Pi.single k 1)) i
         rw [mulVec_mulVec] at this
-        simpa [mat, mul_comm, mul_apply (M := replicateCol _ _)] using this) (by
+        simpa [mat, mul_comm, Matrix.mul_apply] using this) (by
         ext i k
         exact (congrFun hu.1 i).trans (by simp))
     intro Φ hΦ

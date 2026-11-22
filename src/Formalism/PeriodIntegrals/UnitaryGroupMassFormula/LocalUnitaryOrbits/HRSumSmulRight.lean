@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.CrossMSmulRight
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.CrossMSmulRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -129,7 +133,8 @@ theorem hensOnto_of (a : ℕ) (Y : TupV (E := E) v n a) (hGI : GramInvO σ J v �
     have e2 : ∑ k, sigR (Fv F v) σ (C k i) * hR (Fv F v) σ J (y k) (y j) = sigR (Fv F v) σ (A j i) := by
       have : (gramR (Fv F v) σ J y * C) j i = A j i := by
         rw [hCdef, ← Matrix.mul_assoc, hGG, Matrix.one_mul]
-      rw [← this, Matrix.mul_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← this, Matrix.mul_apply, map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_mul, mul_comm]
       congr 1

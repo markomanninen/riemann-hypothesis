@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MembershipCriteria.GoodChar
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.RationalFiniteIdeleFactorization
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.Irreducible
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ExistsStdStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MembershipCriteria.GoodChar
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.RationalFiniteIdeleFactorization
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.Irreducible
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ExistsStdStatement
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory
@@ -85,7 +90,7 @@ theorem closure_adjoin_unitBall_coeff_bound : ∀ (l : ℕ) [Fact l.Prime] (F : 
   obtain ⟨v, hv⟩ := hcl hx
   obtain ⟨k, hk, w, hw, hkw⟩ := Submodule.mem_sup.1 (hW.sup_eq_top ▸ Submodule.mem_top (x := v))
   have hφw : φ w = x := by
-    rw [← hv, ← hkw, map_add, LinearMap.mem_ker.1 hk, zero_add]
+    rw [← hv, ← hkw, map_add (f := _), LinearMap.mem_ker.1 hk, zero_add]
   have hwn : ‖w‖ ≤ C0 := by
     have h := hC0.le_mul_dist ⟨w, hw⟩ 0
     rw [map_zero, dist_zero_right, dist_zero_right] at h

@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.StatementTL
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DiagonalTransferAction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameCompletion
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Sq2UnitOfEqOneOfSq2EqDiv
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HomogeneityNaturalDegree
+module
+
+public import Formalism.HermitianCurvature.StatementTL
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DiagonalTransferAction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameCompletion
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Sq2UnitOfEqOneOfSq2EqDiv
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HomogeneityNaturalDegree
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ComplexConjugate ContDiff
@@ -99,7 +103,8 @@ variable {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [Norm
 theorem xf_capV_sum (π' : Mx k r → (Wq →L[ℂ] Wq)) (B0 : Fin k → Fin (2 * r + k + 1) → ℂ) (w : ℂ) (ν : Fin k → ℂ) :
     capV π' B0 w ν = ∑ i : Fin k, ∑ j : Fin k, ((-1 : ℂ) ^ ((i : ℕ) + (j : ℕ)) * star (ν i) * ν j) •
       LinearMap.toContinuousLinearMap (qminor (EB π' B0) (skip1 i) (skip1 j) w : Module.End ℂ Wq) := by
-  simp only [capV, Q.chatA, map_sum, map_smul, Pi.star_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [capV, Q.chatA, map_sum, map_smul, Pi.star_apply]
 
 theorem xf_capV_cd (π' : Mx k r → (Wq →L[ℂ] Wq)) (B0 : Fin k → Fin (2 * r + k + 1) → ℂ) (w : ℂ) :
     ContDiff ℝ ∞ (fun ν : Fin k → ℂ => capV π' B0 w ν) := by
@@ -109,8 +114,8 @@ theorem xf_capV_cd (π' : Mx k r → (Wq →L[ℂ] Wq)) (B0 : Fin k → Fin (2 *
     funext (xf_capV_sum π' B0 w)]
   refine ContDiff.sum fun i _ => ContDiff.sum fun j _ => ?_
   have hs : ContDiff ℝ ∞ (fun ν : Fin k → ℂ => star (ν i)) :=
-    Complex.conjCLE.contDiff.comp (contDiff_apply ℝ ℂ i)
-  exact ((contDiff_const.mul hs).mul (contDiff_apply ℝ ℂ j)).smul contDiff_const
+    Complex.conjCLE.contDiff.comp (contDiff_apply ℝ (fun _ => ℂ) i)
+  exact ((contDiff_const.mul hs).mul (contDiff_apply ℝ (fun _ => ℂ) j)).smul contDiff_const
 
 def xfPi (π' : Mx k r → (Wq →L[ℂ] Wq)) (B0 : Fin k → Fin (2 * r + k + 1) → ℂ) (w : ℂ) (ν : Fin k → ℂ) :
     C6.EndH Wp Wq :=
@@ -130,7 +135,7 @@ private theorem contDiff_of_isPolyDeg' {k r κ : ℕ} {P : B.Mat k r → ℂ} (h
     simp only [MvPolynomial.eval_C]
     exact contDiff_const
   next p q hp hq =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact hp.add hq
   next p i hp =>
     simp only [map_mul, MvPolynomial.eval_X]

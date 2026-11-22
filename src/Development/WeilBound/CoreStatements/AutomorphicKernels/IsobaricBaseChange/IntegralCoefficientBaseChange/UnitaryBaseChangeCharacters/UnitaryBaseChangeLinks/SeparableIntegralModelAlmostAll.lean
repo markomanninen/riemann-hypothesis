@@ -1,8 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
-import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.LocalTwistContinuousInvolutionIntegralProperties
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteTwistedClassesCharpoly
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AevalRootEqZeroIff
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.LocalTwistContinuousInvolutionIntegralProperties
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteTwistedClassesCharpoly
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AevalRootEqZeroIff
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
@@ -64,7 +68,7 @@ theorem goodPlaces (E : Type) [Field E] [NumberField E] (P : E[X]) (hP : P.Separ
   refine ⟨Q, ⟨A, B, ?_⟩, hQ⟩
   apply Polynomial.map_injective (intL (w.adicCompletion E)).subtype Subtype.val_injective
   have h2 := congrArg (Polynomial.map (algebraMap E (w.adicCompletion E))) hab
-  simp only [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_one] at h2 ⊢
+  simp only [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_one] at h2 ⊢
   rw [← Polynomial.derivative_map] at h2 ⊢
   rw [hQ, hA, hB]
   exact h2

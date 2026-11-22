@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.DerivExistsAllPosStatement
-import Formalism.RealPlaceAnalysis.QuotientSettingHolds
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.DerivExistsAllPosStatement
+public import Formalism.RealPlaceAnalysis.QuotientSettingHolds
+
+@[expose] public section
 
 noncomputable section
 

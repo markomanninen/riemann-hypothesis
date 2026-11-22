@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FockPairingHighestWeight
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FockPairingHighestWeight
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -35,7 +39,7 @@ lemma fockR_add_left (f f' g : MvPolynomial σ R) :
     fockR_eq_sum f' g (f.support ∪ f'.support) Finset.subset_union_right,
     ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun m _ => ?_
-  simp only [coeff_add]; ring
+  simp only [MvPolynomial.coeff_add]; ring
 
 lemma fockR_smul_left (c : R) (f g : MvPolynomial σ R) :
     fockR (c • f) g = c * fockR f g := by
@@ -79,7 +83,8 @@ lemma fockR_monomial [DecidableEq (σ →₀ ℕ)] (m m' : σ →₀ ℕ) (a b :
 
 lemma fockR_map {S : Type*} [CommRing S] (φ : R →+* S) (f g : MvPolynomial σ R) :
     fockR (map φ f) (map φ g) = φ (fockR f g) := by
-  rw [fockR_eq_sum _ _ f.support (support_map_subset φ f), fockR, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [fockR_eq_sum _ _ f.support (support_map_subset φ f), fockR, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   simp only [coeff_map, map_mul, map_natCast]
 
@@ -105,7 +110,7 @@ lemma glue_apply (p : S → (Fin k × Fin n →₀ ℕ)) (s : S) (v : Fin k × F
   classical
   unfold glue
   rw [Finsupp.finsetSum_apply, Finset.sum_eq_single s]
-  · exact Finsupp.mapDomain_apply (Prod.mk_right_injective s) _ _
+  · exact Finsupp.mapDomain_apply_of_injective (Prod.mk_right_injective s) _ _
   · intro t _ hts
     apply Finsupp.mapDomain_of_notMem_range
     rintro ⟨w, hw⟩
@@ -135,19 +140,20 @@ lemma prod_blockEmb_monomial (p : S → (Fin k × Fin n →₀ ℕ)) (a : S → 
 
 lemma prod_blockEmb_expand [DecidableEq S] (F : S → MvPolynomial (Fin k × Fin n) K) :
     ∏ s, blockEmb K s (F s) = ∑ p ∈ Fintype.piFinset (fun s => (F s).support),
-      monomial (glue p) (∏ s, coeff (p s) (F s)) := by
+      monomial (glue p) (∏ s, AddMonoidAlgebra.coeff (F s) (p s)) := by
   calc ∏ s, blockEmb K s (F s)
-      = ∏ s, ∑ m ∈ (F s).support, blockEmb K s (monomial m (coeff m (F s))) := by
+      = ∏ s, ∑ m ∈ (F s).support, blockEmb K s (monomial m (AddMonoidAlgebra.coeff (F s) m)) := by
         refine Finset.prod_congr rfl fun s _ => ?_
         conv_lhs => rw [(F s).as_sum]
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
     _ = ∑ p ∈ Fintype.piFinset (fun s => (F s).support),
-          ∏ s, blockEmb K s (monomial (p s) (coeff (p s) (F s))) := Finset.prod_univ_sum _ _
+          ∏ s, blockEmb K s (monomial (p s) (AddMonoidAlgebra.coeff (F s) (p s))) := Finset.prod_univ_sum _ _
     _ = _ := Finset.sum_congr rfl fun p _ => prod_blockEmb_monomial _ _
 
 lemma fockR_expand {τ : Type*} (f g : MvPolynomial τ K) :
     fockR f g = ∑ m ∈ f.support, ∑ m' ∈ g.support,
-      fockR (monomial m (coeff m f)) (monomial m' (coeff m' g)) := by
+      fockR (monomial m (AddMonoidAlgebra.coeff f m)) (monomial m' (AddMonoidAlgebra.coeff g m')) := by
   conv_lhs => rw [f.as_sum, g.as_sum]
   rw [fockR_sum_left]
   exact Finset.sum_congr rfl fun m _ => fockR_sum_right _ _ _
@@ -198,14 +204,6 @@ theorem fock_pairing_bilinear : FockRBilin := fun _ _ _ f f' g a =>
   ⟨fockR_add_left f f' g, fockR_smul_left a f g, fockR_symm f g⟩
 
 theorem fock_pairing_map : FockRMap := fun _ _ _ _ _ φ f g => fockR_map φ f g
-
-theorem fock_pairing_monomial : FockRMonomial := by
-  unfold FockRMonomial
-  intros
-  classical
-  split_ifs with h
-  · rw [fockR_monomial, if_pos h]
-  · rw [fockR_monomial, if_neg h]
 
 theorem fock_pairing_block : FockRBlock := fun _ _ _ _ _ _ F G => fockR_block F G
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.GaussS
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.GaussS
+
+@[expose] public section
 
 noncomputable section
 
@@ -114,7 +118,7 @@ theorem integP : IntegP := by
     refine Finset.prod_congr rfl fun a _ => ?_
     rw [← Finset.prod_mul_distrib]
   have hP : (fun x => evX P x * gs c x) =
-      fun x => ∑ d ∈ P.support, coeff d P * (evX (monomial d 1) x * gs c x) := by
+      fun x => ∑ d ∈ P.support, AddMonoidAlgebra.coeff P d * (evX (monomial d 1) x * gs c x) := by
     funext x
     simp only [evX]
     rw [MvPolynomial.eval_eq, Finset.sum_mul]

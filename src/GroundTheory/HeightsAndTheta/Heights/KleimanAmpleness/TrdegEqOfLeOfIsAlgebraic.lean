@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsFieldSubalgebraSelf
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsFieldSubalgebraSelf
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -169,14 +174,14 @@ theorem trdeg_quotient_mIdealOver [Fintype K] (y : (Σ k, ι k) → Ω) (c : ∀
       exact isAlgebraic_algebraMap (⟨_, AlgHom.mem_range_self _ _⟩ : R)
     | algebraMap r =>
       exact isAlgebraic_algebraMap (⟨algebraMap F _ r, R.algebraMap_mem r⟩ : R)
-    | add x y _ _ hx hy => rw [map_add]; exact hx.add hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact hx.add hy
     | mul x y _ _ hx hy => rw [map_mul]; exact hx.mul hy
   have halg : ∀ t ∈ (chartConeMap (F := F) y c).range, IsAlgebraic R t := by
     rintro _ ⟨q, rfl⟩
     change IsAlgebraic R (chartConeMap (F := F) y c q)
     induction q using MvPolynomial.induction_on with
     | C a => rw [chartConeMap_C]; exact halgC a a.2
-    | add p q hp hq => rw [map_add]; exact hp.add hq
+    | add p q hp hq => rw [map_add (f := _)]; exact hp.add hq
     | mul_X p k hp =>
       rw [map_mul, chartConeMap_X]
       exact hp.mul (isAlgebraic_algebraMap (⟨_, hUR k⟩ : R))

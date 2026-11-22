@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.PieceGood
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.PieceGood
+
+@[expose] public section
 
 namespace PositivityTheory.RgUd.TP.Desc.Asm
 

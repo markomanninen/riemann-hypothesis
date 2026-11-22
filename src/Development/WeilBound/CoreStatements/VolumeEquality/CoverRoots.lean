@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.RootBranches
-import Development.WeilBound.CoreStatements.VolumeEquality.CoverRootsAlg
-import Development.WeilBound.CoreStatements.VolumeEquality.CoverRootsSch
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.RootBranches
+public import Development.WeilBound.CoreStatements.VolumeEquality.CoverRootsAlg
+public import Development.WeilBound.CoreStatements.VolumeEquality.CoverRootsSch
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+
+@[expose] public section
 
 noncomputable section
 

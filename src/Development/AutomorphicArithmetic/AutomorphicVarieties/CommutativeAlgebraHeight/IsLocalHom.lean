@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
-import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.IsSaturatedChain
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+public import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.IsSaturatedChain
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,9 +36,6 @@ variable {C : Type} [CommRing C] (x : Ideal C) [x.IsPrime]
 
 abbrev Cpl : Type := AdicCompletion (maximalIdeal (Localization.AtPrime x)) (Localization.AtPrime x)
 
-def toCpl : C →+* Cpl x :=
-  (algebraMap (Localization.AtPrime x) (Cpl x)).comp (algebraMap C (Localization.AtPrime x))
-
 def dimAt (I : Ideal C) : WithBot ℕ∞ :=
   ringKrullDim (Localization.AtPrime x ⧸ I.map (algebraMap C (Localization.AtPrime x)))
 
@@ -46,12 +47,5 @@ structure IsCplAt {C : Type} [CommRing C] (x : Ideal C) (R : Type) [CommRing R] 
   complete : IsAdicComplete (maximalIdeal R) R
   comap_pow : ∀ n : ℕ, (maximalIdeal R ^ n).comap (algebraMap C R) = x ^ n
   dense : ∀ (n : ℕ) (r : R), ∃ c : C, r - algebraMap C R c ∈ maximalIdeal R ^ n
-
-theorem IsCplAt.self (R : Type) [CommRing R] [IsLocalRing R] [IsNoetherianRing R]
-    [IsAdicComplete (maximalIdeal R) R] : IsCplAt (maximalIdeal R) R where
-  noeth := inferInstance
-  complete := inferInstance
-  comap_pow n := Ideal.comap_id _
-  dense n r := ⟨r, by simp⟩
 
 end UpperTheory.V.CA

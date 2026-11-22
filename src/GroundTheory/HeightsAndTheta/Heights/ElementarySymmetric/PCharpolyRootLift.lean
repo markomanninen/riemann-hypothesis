@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsCharpolyRootLift
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsRingHomExtendOfIsIntegral
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsCharpolyRootLift
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsRingHomExtendOfIsIntegral
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -91,9 +96,11 @@ theorem exists_homogenization {ι : Type*} (a : ι) (G : MvPolynomial ι ℚ) :
     have hG : aeval (fun k => y k / y a) G = ∑ i ∈ Finset.range (G.totalDegree + 1),
         aeval (fun k => y k / y a) (homogeneousComponent i G) := by
       conv_lhs => rw [← sum_homogeneousComponent G]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
     rw [hG]
-    simp only [map_sum, map_mul, map_pow, aeval_X, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_pow, aeval_X, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i hi => ?_
     have hi' : i ≤ G.totalDegree := by simp at hi; omega
     have hyy : (fun k => y k / y a) = fun k => (y a)⁻¹ * y k := by
@@ -197,8 +204,8 @@ theorem exists_ringHom_extend_of_isIntegral {R S K : Type*} [CommRing R] [CommRi
 
 end CharpolyRootLift
 
-open IntermediateField.algebraAdjoinAdjoin in
 
+open IntermediateField.algebraAdjoinAdjoin in
 theorem CharpolyRootLift.proof : CharpolyRootLift.Statement := by
   intro Ω _ _ D l P _ hP hgen j m u c hlj hc0 hhom hchar a hu ζ hζa w hw
   have hl := CharpolyRootLift.ne_zero_of_generic hgen
@@ -251,7 +258,8 @@ theorem CharpolyRootLift.proof : CharpolyRootLift.Statement := by
         rw [(minpoly.monic (IsIntegral.of_finite P x)).leadingCoeff, map_one]; exact one_ne_zero),
       ← Polynomial.pow_scaleRoots_of_isReduced, ← Polynomial.map_pow, ← hcp, hchar,
       CharpolyRootLift.scaleRoots_sum_C_mul_X_pow_sub _ _ (by rw [hc0, map_one])]
-    simp only [QA, Polynomial.map_sum, Polynomial.map_mul, Polynomial.map_C, Polynomial.map_pow,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [QA, Polynomial.map_sum, Polynomial.map_mul, Polynomial.map_C, Polynomial.map_pow,
       Polynomial.map_X]
     refine Finset.sum_congr rfl fun i hi => ?_
     have hi' : i ≤ n := by simp only [Finset.mem_range] at hi; omega

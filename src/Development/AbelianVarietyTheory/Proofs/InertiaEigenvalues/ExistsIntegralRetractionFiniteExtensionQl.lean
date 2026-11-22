@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InclIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvrComplete
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InclIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvrComplete
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
@@ -72,7 +76,8 @@ theorem exists_retraction (A K L : Type) [CommRing A] [IsDomain A] [IsPrincipalI
       smul_eq_mul]
     rw [h1]
     simp only [hrepr]
-    rw [← map_one (algebraMap A K), ← ha, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_one (algebraMap A K), ← ha, map_sum]
     simp only [map_mul]
   · intro x hx
     set z : integralClosure A L := ⟨x, show x ∈ integralClosure A L from hx⟩ with hz
@@ -82,7 +87,8 @@ theorem exists_retraction (A K L : Type) [CommRing A] [IsDomain A] [IsPrincipalI
       smul_eq_mul]
     rw [hx']
     simp only [hrepr]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_mul]
 
 theorem exists_retraction_closure (R F K L : Type) [CommRing R] [IsDomain R] [Field F] [Algebra R F]

@@ -1,28 +1,33 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.CartierDivisorComponents
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.NoetherianBlowup
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceRelations
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
-import Development.ResolutionOfSingularities.Foundations.Schemes.SchemeMorphismProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.KrullDimClosedSubset
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.FiniteKrullDim
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.DivisorReductionSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.AmbientBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.LowerBoundaryData
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.FunctorialPrincipalization
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.AmbientEmbedding
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.BlowupSequenceData
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IrreducibleComponentsAlongSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.ControlledTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.SupportsAlongSequence
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.CartierDivisorComponents
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.NoetherianBlowup
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceRelations
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
+public import Development.ResolutionOfSingularities.Foundations.Schemes.SchemeMorphismProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.KrullDimClosedSubset
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.FiniteKrullDim
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.DivisorReductionSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.AmbientBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.DivisorReduction.LowerBoundaryData
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.FunctorialPrincipalization
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.AmbientEmbedding
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.BlowupSequenceData
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IrreducibleComponentsAlongSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.ControlledTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.SupportsAlongSequence
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry TopologicalSpace
@@ -295,30 +300,31 @@ structure DivisorReductionStepProperties (hres : FunctorialResolution.Blowup.Str
 
 theorem DivisorReductionStepProperties.toDivisorReductionTerminationProperties {hres : FunctorialResolution.Blowup.StrictTransformIsBlowupOfClosedSubscheme.{u}}
     {hno : BlowupPreservesNoetherian.{u}} (h : DivisorReductionStepProperties hres hno) :
-    DivisorReductionTerminationProperties hres hno where
-  exists_ideal_mul_preIdeal_pow := h.exists_ideal_mul_preIdeal_pow
-  isMarked_pushedTop := h.isMarked_pushedTop
-  isMarked_pushedPre := h.isMarked_pushedPre
-  isBlowup_id_preIdeal := h.isBlowup_id_preIdeal
-  lowerTriple_dim_lt := fun T hV hne j hj I₀ E₀ => dim_restrictToBoundaryDivisor_lt T hV hne j hj I₀ E₀
-  valid_lowerTop := h.valid_lowerTop
-  valid_lowerPre := h.valid_lowerPre
-  orderAt_ctrlIdeal_le_top := h.orderAt_ctrlIdeal_le_top
-  orderAt_ctrlIdeal_le_pre := h.orderAt_ctrlIdeal_le_pre
-  coSupport_inter_ker_eq_empty_top := h.coSupport_inter_ker_eq_empty_top
-  coSupport_inter_ker_eq_empty_pre := h.coSupport_inter_ker_eq_empty_pre
-  properCenters := fun T hV hm s => centersContainNoComponent_of_isAdmissible T hV hm s
-  isPullbackSeq_ambientTower := h.isPullbackSeq_ambientTower
-  isStrictPullbackSeq_ambientTower := h.isStrictPullbackSeq_ambientTower
-  comap_ctrlIdeal_top := h.comap_ctrlIdeal_top
-  comap_ctrlIdeal_pre := h.comap_ctrlIdeal_pre
-  preIdeal_baseChange := h.preIdeal_baseChange
-  preIdeal_pullbackAlong := h.preIdeal_pullbackAlong
-  preIdeal_eq_top_of_imageIdeal := h.preIdeal_eq_top_of_imageIdeal
-  isOpen_preLocus := fun T hV j hj => isOpen_setOf_connectedComponent_subset_orderAtLeastLocus T hV j hj
-  smooth_preIdeal := h.smooth_preIdeal
-  hasSNCWith_preIdeal := h.hasSNCWith_preIdeal
-  support_preIdeal_subset := h.support_preIdeal_subset
+    DivisorReductionTerminationProperties hres hno := by
+  exact
+    { exists_ideal_mul_preIdeal_pow := h.exists_ideal_mul_preIdeal_pow
+      isMarked_pushedTop := h.isMarked_pushedTop
+      isMarked_pushedPre := h.isMarked_pushedPre
+      isBlowup_id_preIdeal := h.isBlowup_id_preIdeal
+      lowerTriple_dim_lt := dim_restrictToBoundaryDivisor_lt
+      valid_lowerTop := h.valid_lowerTop
+      valid_lowerPre := h.valid_lowerPre
+      orderAt_ctrlIdeal_le_top := h.orderAt_ctrlIdeal_le_top
+      orderAt_ctrlIdeal_le_pre := h.orderAt_ctrlIdeal_le_pre
+      coSupport_inter_ker_eq_empty_top := h.coSupport_inter_ker_eq_empty_top
+      coSupport_inter_ker_eq_empty_pre := h.coSupport_inter_ker_eq_empty_pre
+      properCenters := centersContainNoComponent_of_isAdmissible
+      isPullbackSeq_ambientTower := h.isPullbackSeq_ambientTower
+      isStrictPullbackSeq_ambientTower := h.isStrictPullbackSeq_ambientTower
+      comap_ctrlIdeal_top := h.comap_ctrlIdeal_top
+      comap_ctrlIdeal_pre := h.comap_ctrlIdeal_pre
+      preIdeal_baseChange := h.preIdeal_baseChange
+      preIdeal_pullbackAlong := h.preIdeal_pullbackAlong
+      preIdeal_eq_top_of_imageIdeal := h.preIdeal_eq_top_of_imageIdeal
+      isOpen_preLocus := isOpen_setOf_connectedComponent_subset_orderAtLeastLocus
+      smooth_preIdeal := h.smooth_preIdeal
+      hasSNCWith_preIdeal := h.hasSNCWith_preIdeal
+      support_preIdeal_subset := h.support_preIdeal_subset }
 
 end FunctorialResolution.EmbeddedResolution
 

@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SymbolCongr
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DegreeSingleAdd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ProdXEqMonomial
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UgMemSpanListProd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ProdPLinIsHomogeneous
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SymmetrisationEquivariant
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SymbolCongr
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DegreeSingleAdd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ProdXEqMonomial
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UgMemSpanListProd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ProdPLinIsHomogeneous
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SymmetrisationEquivariant
+
+@[expose] public section
 
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible MvPolynomial TensorProduct
 
@@ -223,12 +227,13 @@ theorem symmetrisation_injective (act : Mat p q →ₗ[ℂ] Module.End ℂ V) (h
       φ ∘ₗ (indRel act).mkQ ∘ₗ (TensorProduct.mk ℂ (Ug p q) V).flip v ∘ₗ symU p q -
         (TensorProduct.mk ℂ (MvPolynomial (PIx p q) ℂ) V).flip v
     have hM : ∀ Q, M Q = φ ((indRel act).mkQ (symU p q Q ⊗ₜ[ℂ] v)) - Q ⊗ₜ[ℂ] v := fun Q => rfl
-    rw [← hM, P.as_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hM, P.as_sum, map_sum]
     refine Submodule.sum_mem _ fun α hα => ?_
     have hdeg : α.degree = k := by
       rw [Finsupp.degree_eq_weight_one]
       exact hP (mem_support_iff.mp hα)
-    have hmon : monomial α (coeff α P) = coeff α P • monomial α (1 : ℂ) := by
+    have hmon : monomial α (AddMonoidAlgebra.coeff P α) = AddMonoidAlgebra.coeff P α • monomial α (1 : ℂ) := by
       rw [smul_monomial, smul_eq_mul, mul_one]
     rw [hmon, map_smul]
     refine Submodule.smul_mem _ _ ?_
@@ -253,7 +258,7 @@ theorem symmetrisation_injective (act : Mat p q →ₗ[ℂ] Module.End ℂ V) (h
       exact hsym P.1 P.2 v
     | add w w' hw hw' =>
       have h5 := Submodule.add_mem _ hw hw'
-      simp only [map_add]
+      simp only [map_add (f := _)]
       rw [add_sub_add_comm]
       exact h5
   have hz0 : z ∈ degLt ℂ (PIx p q) V k := by

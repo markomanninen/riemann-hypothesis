@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceAdeleRing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAdelicCharacterTrivialOfLocal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceAdeleRing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAdelicCharacterTrivialOfLocal
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,15 +23,6 @@ theorem IsKFinite.mul {Φ Ψ : G → ℂ} (h : IsKFinite K Φ) (h' : IsKFinite K
   obtain ⟨W', hf', hW'⟩ := isKFinite_iff.1 h'
   exact isKFinite_iff.2 ⟨W * W', Module.Finite.iff_fg.2 ((Module.Finite.iff_fg.1 hf).mul (Module.Finite.iff_fg.1 hf')),
     fun k hk => Submodule.mul_mem_mul (hW k hk) (hW' k hk)⟩
-
-theorem IsKFinite.prod {ι : Type} (S : Finset ι) {Φ : ι → G → ℂ} (h : ∀ i ∈ S, IsKFinite K (Φ i)) :
-    IsKFinite K fun g => ∏ i ∈ S, Φ i g := by
-  classical
-  induction S using Finset.induction_on with
-  | empty => exact .of_invariant fun _ _ _ => rfl
-  | insert i S hi ih =>
-    simp only [Finset.prod_insert hi]
-    exact (h i (Finset.mem_insert_self i S)).mul (ih fun j hj => h j (Finset.mem_insert_of_mem hj))
 
 end KFinite
 
@@ -68,11 +63,11 @@ theorem val_cutIdele (S : Finset (HeightOneSpectrum (𝓞 F))) (x : (AF F ⊗[F]
     (cutIdele S x).1 = algebraMap (AF F) (AF F ⊗[F] E) (eps S) * (x.1 - 1) + 1 := by
   refine adele_ext (fun w => ?_) fun v => ?_
   · have h : compInf F E w (algebraMap (AF F) (AF F ⊗[F] E) (eps S)) = 1 := rfl
-    rw [map_add, map_mul, map_sub, h, map_one, one_mul, sub_add_cancel]
+    rw [map_add (f := _), map_mul, map_sub, h, map_one, one_mul, sub_add_cancel]
     exact congrArg Units.val (unitInf_cutIdele S x w)
   · have h : compFin F E v (algebraMap (AF F) (AF F ⊗[F] E) (eps S)) =
         Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F v (GlobalTheory.LocalGlobalChar.ind S) ⊗ₜ[F] (1 : E) := rfl
-    rw [map_add, map_mul, map_sub, h, map_one, ev_ind]
+    rw [map_add (f := _), map_mul, map_sub, h, map_one, ev_ind]
     split_ifs with hv
     · rw [← Algebra.TensorProduct.one_def, one_mul, sub_add_cancel]
       exact congrArg Units.val (unitFin_cutIdele_of_mem x hv)

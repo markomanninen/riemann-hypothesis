@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.Lemma5aAt
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.Lemma5aAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -146,7 +150,7 @@ theorem rat_padicGe_cast {p : ℕ} (hp : p.Prime) (S : UniformizedDVR p O) [Char
   · subst hx; exact ⟨0, by simp⟩
   have hv : (c : ℤ) ≤ padicValRat p x := by exact_mod_cast h
   have hnum : x.num ≠ 0 := Rat.num_ne_zero.2 hx
-  have hdef : padicValRat p x = padicValInt p x.num - padicValNat p x.den := rfl
+  have hdef := padicValRat_def p x
   have hden : ¬ p ∣ x.den := by
     intro hd
     have hn : ¬ (p : ℤ) ∣ x.num := by
@@ -156,10 +160,10 @@ theorem rat_padicGe_cast {p : ℕ} (hp : p.Prime) (S : UniformizedDVR p O) [Char
       rw [x.reduced] at this
       exact hp.one_lt.ne' (Nat.dvd_one.1 this)
     have h0 : padicValInt p x.num = 0 := padicValInt.eq_zero_of_not_dvd hn
-    have h1 : 1 ≤ padicValNat p x.den := one_le_padicValNat_of_dvd x.den_nz hd
+    have h1 := one_le_multiplicity_of_dvd x.den_nz hd
     rw [hdef, h0] at hv
     omega
-  have hd0 : padicValNat p x.den = 0 := padicValNat.eq_zero_of_not_dvd hden
+  have hd0 := multiplicity_eq_zero_of_not_dvd hden
   have hc : c ≤ padicValInt p x.num := by
     rw [hdef, hd0] at hv
     simpa using hv
@@ -413,7 +417,8 @@ theorem derivation_valuation_at_prime (D : Formalism.BasicNotions.D7) (h : Forma
               (derTriple (p ^ g) M rho l).2.1 a))) =
         C (∑ l ∈ T, algebraMap O (KK O) ((γ l : ℤ) : O) * ∏ a, (((be a).choose (l a) : ℕ) : KK O)) *
           monoL fun a => rho a + p ^ g * be a - M a := by
-      rw [map_sum, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_mul]
       exact Finset.sum_congr rfl fun l hl => der_term (p ^ g) M rho l be (hT2 l hl) _
     rw [e2, divDer_monoL, ← sub_mul, ← map_sub]
     obtain ⟨z, hz⟩ := hT3 be
@@ -647,7 +652,7 @@ theorem Kcol_succ (R : Type*) [CommRing R] {N n : ℕ} (mu : Fin (N + 1) → Fin
     Kcol R mu c (j + 1) =
       colStep c (colH (mu (⟨j, h⟩ : Fin N).castSucc) c) (colH (mu (⟨j, h⟩ : Fin N).succ) c) (letVec R ⟨j, h⟩)
         (Kcol R mu c j) := by
-  rw [Kcol, dif_pos h]
+  rw [Kcol, dite_eq_left h]
   rfl
 
 theorem Kcol_hom (R : Type*) [CommRing R] {N n : ℕ} (mu : Fin (N + 1) → Fin n → ℤ) (c : ℤ) :
@@ -1066,7 +1071,8 @@ theorem hom_scale_sum {R B σ : Type*} [CommRing R] [CommRing B] (φ ψ : MvPoly
     (hD : ∀ m ∈ F.support, ∑ v ∈ m.support, e v * m v = D) : φ F = u ^ D * ψ F := by
   conv_lhs => rw [F.as_sum]
   conv_rhs => rw [F.as_sum]
-  rw [map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.mul_sum]
   exact Finset.sum_congr rfl fun m hm => by rw [hom_scale φ ψ u e hC hX, hD m hm]
 
 theorem deg_sum {ι : Type*} [Fintype ι] {n : ℕ} (V : Finset ι) (m : ι × Fin n →₀ ℕ) :
@@ -1122,7 +1128,8 @@ theorem valS_le_diff {R : Type*} [CommRing R] {ι : Type*} [Fintype ι] {n : ℕ
               ∑ c, C (LaurentPolynomial.T 1 * twistMat R n (lastIdx n) (-1) c b) * X (v.1, c)
             = ∑ c, C (LaurentPolynomial.T 1) *
                 C (∑ b, twistMat R n (lastIdx n) (-1) c b * twistMat R n (lastIdx n) 1 b v.2) * X (v.1, c) := by
-              simp only [Finset.mul_sum, map_sum, Finset.sum_mul, map_mul]
+              set_option synthInstance.maxHeartbeats 100000 in
+                simp only [Finset.mul_sum, map_sum, Finset.sum_mul, map_mul]
               rw [Finset.sum_comm]
               exact Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun b _ => by ring
           _ = C (LaurentPolynomial.T 1) ^ (if v.1 ∈ V then 1 else 0) * X v := by
@@ -1190,7 +1197,8 @@ theorem DecSys.e_e_ne (h : DecSys W e) {mu nu : I} (hne : nu ≠ mu) (x : V) : e
 theorem DecSys.zero_of_not_mem (h : DecSys W e) {x : V} {T : Finset I} (hT : x = ∑ mu ∈ T, e mu x) {mu : I}
     (hmu : mu ∉ T) : e mu x = 0 := by
   have h1 := congrArg (e mu) hT
-  rw [map_sum] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum] at h1
   rw [h1]
   refine Finset.sum_eq_zero fun nu hnu => h.e_e_ne (fun hh : nu = mu => hmu (hh ▸ hnu)) x
 
@@ -1227,10 +1235,10 @@ def DecSys.projQ (h : DecSys W e) (Q : I → Prop) : Module.End K V where
   map_add' x y := by
     obtain ⟨T, h1, h2⟩ := h.cover2 x y
     have h3 : x + y = ∑ mu ∈ T, e mu (x + y) := by
-      simp only [map_add, Finset.sum_add_distrib]
+      simp only [map_add (f := _), Finset.sum_add_distrib]
       rw [← h1, ← h2]
     rw [h.projFun_eq Q h1, h.projFun_eq Q h2, h.projFun_eq Q h3]
-    simp only [map_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), Finset.sum_add_distrib]
   map_smul' c x := by
     obtain ⟨T, h1⟩ := h.cover x
     have h3 : c • x = ∑ mu ∈ T, e mu (c • x) := by
@@ -1249,9 +1257,11 @@ theorem DecSys.comm_projQ (h : DecSys W e) (Q : I → Prop) (A : Module.End K V)
     (hA : ∀ mu x, A (e mu x) = e mu (A x)) (x : V) : A (h.projQ Q x) = h.projQ Q (A x) := by
   obtain ⟨T, h1⟩ := h.cover x
   have h3 : A x = ∑ mu ∈ T, e mu (A x) := by
-    simp only [← hA, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← hA, ← map_sum]
     rw [← h1]
-  rw [h.projQ_eq Q h1, h.projQ_eq Q h3, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h.projQ_eq Q h1, h.projQ_eq Q h3, map_sum]
   exact Finset.sum_congr rfl fun mu _ => hA mu x
 
 theorem DecSys.comm_of_preserve (h : DecSys W e) (A : Module.End K V) (hA : ∀ mu, ∀ x ∈ W mu, A x ∈ W mu)
@@ -1259,7 +1269,8 @@ theorem DecSys.comm_of_preserve (h : DecSys W e) (A : Module.End K V) (hA : ∀ 
   obtain ⟨T, h1⟩ := h.cover x
   have h2 : e mu (A x) = ∑ nu ∈ T, e mu (A (e nu x)) := by
     conv_lhs => rw [h1]
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
   rw [h2]
   by_cases hmu : mu ∈ T
   · rw [Finset.sum_eq_single_of_mem mu hmu fun nu _ hne => h.zero_on mu nu hne _ (hA nu _ (h.mem nu x))]
@@ -1309,7 +1320,7 @@ theorem isoSub_map_of_comm (E : GLOps n K V) (A : Module.End K V) (hA : ∀ a b 
         rw [h2, this, map_zero]
       · rw [← hA, hv.2.2 a b hab, map_zero]
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+  | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
   | smul c y _ hy => rw [map_smul]; exact Submodule.smul_mem _ _ hy
 
 end Iso
@@ -1379,7 +1390,7 @@ theorem polProj_mem (d : ι → ℕ) (F : MvPolynomial (ι × Fin r) K) : polPro
     split_ifs with h
     · exact monomial_mem_Pol d m c h
     · exact Submodule.zero_mem _
-  | add p q hp hq => rw [map_add]; exact Submodule.add_mem _ hp hq
+  | add p q hp hq => rw [map_add (f := _)]; exact Submodule.add_mem _ hp hq
 
 theorem polProj_of_mem (d : ι → ℕ) (F : MvPolynomial (ι × Fin r) K) (hF : F ∈ Pol K r d) : polProj K d F = F := by
   unfold Pol at hF
@@ -1387,7 +1398,8 @@ theorem polProj_of_mem (d : ι → ℕ) (F : MvPolynomial (ι × Fin r) K) (hF :
   calc polProj K d F = polProj K d (∑ m ∈ F.support, monomial m (F.coeff m)) := by
         rw [support_sum_monomial_coeff]
     _ = ∑ m ∈ F.support, monomial m (F.coeff m) := by
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         refine Finset.sum_congr rfl fun m hm => ?_
         rw [polProj_monomial, if_pos (show ∀ i, multideg m i = d i from hF hm)]
     _ = F := support_sum_monomial_coeff F
@@ -1424,7 +1436,8 @@ theorem polProj_glAct [Fintype ι] (d : ι → ℕ) (LL : Letters ι) (S : Set �
       rw [LinearMap.sum_apply]
       refine Finset.sum_congr rfl fun l _ => ?_
       split_ifs <;> simp
-    rw [hg, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hg, map_sum]
     by_cases h : ∀ i, multideg m i = d i
     · rw [if_pos h, hg]
       refine Finset.sum_congr rfl fun l _ => ?_
@@ -1438,7 +1451,7 @@ theorem polProj_glAct [Fintype ι] (d : ι → ℕ) (LL : Letters ι) (S : Set �
       · rw [polProj_step, if_neg h]
       · rw [map_neg, polProj_step, if_neg h, neg_zero]
       · rw [map_zero]
-  | add p q hp hq => rw [map_add, map_add, map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
 
 theorem glAct_mem_Pol [Fintype ι] (d : ι → ℕ) (LL : Letters ι) (S : Set ι) (a b : Fin r)
     (F : MvPolynomial (ι × Fin r) K) (hF : F ∈ Pol K r d) : glAct K LL S a b F ∈ Pol K r d := by
@@ -1466,7 +1479,7 @@ theorem fock_add_left (F F' G : MvPolynomial σ K) : fock (F + F') G = fock F G 
     fock_eq_sum F' G (F.support ∪ F'.support ∪ (F + F').support)
       (Finset.subset_union_right.trans Finset.subset_union_left), ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun m _ => ?_
-  rw [coeff_add]; ring
+  rw [MvPolynomial.coeff_add]; ring
 
 theorem fock_zero_left (G : MvPolynomial σ K) : fock (0 : MvPolynomial σ K) G = 0 := by
   simp [fock]
@@ -1475,7 +1488,7 @@ theorem fock_add_right (F G G' : MvPolynomial σ K) : fock F (G + G') = fock F G
   unfold fock
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun m _ => ?_
-  rw [coeff_add]; ring
+  rw [MvPolynomial.coeff_add]; ring
 
 theorem fock_zero_right (F : MvPolynomial σ K) : fock F (0 : MvPolynomial σ K) = 0 := by
   simp [fock]
@@ -1560,11 +1573,14 @@ variable {e : (Fin r → ℤ) → Module.End K (MvPolynomial (ι × Fin r) K)}
 theorem decSys_of (he : ∀ mu, IsIsoProj (glOps K r LL S) mu (e mu))
     (hs : ∀ G : MvPolynomial (ι × Fin r) K, ∃ T : Finset (Fin r → ℤ),
       G = ∑ mu ∈ T, e mu G ∧ ∀ mu, e mu G ∈ isoSub (glOps K r LL S) mu) :
-    DecSys (fun mu => isoSub (glOps K r LL S) mu) e where
-  id_on mu x hx := (he mu).1 x hx
-  zero_on mu nu hne x hx := (he mu).2 nu hne x hx
-  cover x := by obtain ⟨T, h, _⟩ := hs x; exact ⟨T, h⟩
-  mem mu x := by obtain ⟨_, _, h⟩ := hs x; exact h mu
+    DecSys (fun mu => isoSub (glOps K r LL S) mu) e := by
+  refine ⟨fun mu => (he mu).1, fun mu => (he mu).2, ?_, ?_⟩
+  · intro x
+    obtain ⟨T, h, _⟩ := hs x
+    exact ⟨T, h⟩
+  · intro mu x
+    obtain ⟨_, _, h⟩ := hs x
+    exact h mu
 
 theorem e_mem_Pol (sys : DecSys (fun mu => isoSub (glOps K r LL S) mu) e) (d : ι → ℕ) (mu : Fin r → ℤ)
     (F : MvPolynomial (ι × Fin r) K) (hF : F ∈ Pol K r d) : e mu F ∈ Pol K r d := by
@@ -1591,7 +1607,8 @@ theorem isFockProj_projQ (sys : DecSys (fun mu => isoSub (glOps K r LL S) mu) e)
     intro mu hne
     by_contra hQ
     apply hne
-    rw [sys.projQ_eq _ hT, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [sys.projQ_eq _ hT, map_sum]
     exact Finset.sum_eq_zero fun nu hnu =>
       sys.e_e_ne (fun hh : nu = mu => hQ (hh ▸ (Finset.mem_filter.1 hnu).2)) F
   · obtain ⟨T, hT⟩ := sys.cover F
@@ -1810,7 +1827,8 @@ theorem wt_comp_mem (E : GLOps n K V) [CharZero K] (W : Submodule K V) (hW : ∀
         have h1 : E a a (∑ k ∈ T, f k) - (nu a : K) • ∑ k ∈ T, f k ∈ W :=
           W.sub_mem (hW a _ hs) (W.smul_mem _ hs)
         have h2 : E a a (∑ k ∈ T, f k) - (nu a : K) • ∑ k ∈ T, f k = ∑ k ∈ T, ((k a : K) - (nu a : K)) • f k := by
-          rw [map_sum, Finset.smul_sum, ← Finset.sum_sub_distrib]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum, Finset.smul_sum, ← Finset.sum_sub_distrib]
           refine Finset.sum_congr rfl fun k hk => ?_
           rw [(isoW_mem_weightSp E k (f k)).1 (hf k hk) a, sub_smul]
         rw [h2, ← Finset.add_sum_erase T _ hnu, sub_self, zero_smul, zero_add] at h1
@@ -1915,7 +1933,7 @@ theorem genSub_stab (E : GLOps n K V) (v : V) : Stab E (genSub E v) := by
     obtain ⟨u, hu, rfl⟩ := hy
     exact Submodule.subset_span ⟨E a b * u, (Umon E).mul_mem (isoH_E_mem_Umon E a b) hu, rfl⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+  | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
   | smul c y _ hy => rw [map_smul]; exact Submodule.smul_mem _ _ hy
 
 theorem mem_genSub_self (E : GLOps n K V) (v : V) : v ∈ genSub E v :=
@@ -1945,7 +1963,7 @@ theorem isoSub_stab (E : GLOps n K V) (mu : Fin n → ℤ) : Stab E (isoSub E mu
     obtain ⟨u, hu, v, hv, rfl⟩ := hy
     exact Submodule.subset_span ⟨E a b * u, (Umon E).mul_mem (isoH_E_mem_Umon E a b) hu, v, hv, rfl⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+  | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
   | smul c y _ hy => rw [map_smul]; exact Submodule.smul_mem _ _ hy
 
 theorem genSub_le_isoSub (E : GLOps n K V) (mu : Fin n → ℤ) (v : V) (hv : IsHWV E mu v) :
@@ -1971,7 +1989,7 @@ theorem isoH_Z_low (E : GLOps n K V) (v : V) (c d : Fin n) (hcd : d ≤ c) :
     exact Submodule.subset_span
       ⟨E c d * u, (isoH_lowMon E).mul_mem (Submonoid.subset_closure ⟨c, d, hcd, rfl⟩) hu, rfl⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+  | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
   | smul k y _ hy => rw [map_smul]; exact Submodule.smul_mem _ _ hy
 
 theorem isoH_comm (E : GLOps n K V) (h : GLRel E) (a b c d : Fin n) (x : V) :
@@ -2016,7 +2034,7 @@ theorem isoH_Z_stab (E : GLOps n K V) (h : GLRel E) (lam : Fin n → ℤ) (v : V
     exact isoH_Z_word E h lam v hv u hu a b
   | zero => rw [map_zero]; exact Submodule.zero_mem _
   | add y z hy' hz' hy hz =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ (hy hy') (hz hz')
   | smul k y hy' hy =>
     rw [map_smul]
@@ -2053,7 +2071,7 @@ theorem isoH_Y_low (E : GLOps n K V) (h : GLRel E) (lam : Fin n → ℤ) (v : V)
   intro y hy
   unfold isoH_Y at hy ⊢
   obtain ⟨y1, hy1, y2, hy2, rfl⟩ := Submodule.mem_sup.1 hy
-  rw [map_add]
+  rw [map_add (f := _)]
   refine Submodule.add_mem _ ?_ ?_
   · obtain ⟨k, rfl⟩ := Submodule.mem_span_singleton.1 hy1
     rw [map_smul]
@@ -2143,10 +2161,10 @@ theorem crRes_isGLRep (E : GLOps n K V) (h : GLRel E) (P : Submodule K V) [Finit
       apply Subtype.ext
       rw [Submodule.coe_sum, hx]
       refine Finset.sum_congr rfl fun mu hmu => ?_
-      rw [dif_pos hmu]
+      rw [dite_eq_left hmu]
     rw [hx']
     refine Submodule.sum_mem _ fun mu hmu => ?_
-    rw [dif_pos hmu]
+    rw [dite_eq_left hmu]
     exact Submodule.mem_iSup_of_mem mu (crRes_weight E P hP mu _ (hf mu hmu).1)
 
 theorem cr_in (D : Formalism.BasicNotions.D7) (h2 : Formalism.MainNotions.CovariantDegrees.adm2 D) {n : ℕ} {K V : Type} [Field K] [CharZero K]
@@ -2412,7 +2430,7 @@ theorem Stab_inf (A B : Submodule K V) (hA : Stab E A) (hB : Stab E B) : Stab E 
 theorem Stab_sup (A B : Submodule K V) (hA : Stab E A) (hB : Stab E B) : Stab E (A ⊔ B) := by
   intro a b x hx
   obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hx
-  rw [map_add]
+  rw [map_add (f := _)]
   exact Submodule.add_mem _ (Submodule.mem_sup_left (hA a b y hy)) (Submodule.mem_sup_right (hB a b z hz))
 
 def isoSet (Om : Set (Fin n → ℤ)) (P : Submodule K V) : Set V :=
@@ -2433,7 +2451,7 @@ theorem split_hwv (A C : Submodule K V) (hA : Stab E A) (hC : Stab E C) (hAC : A
     a ∈ weightSp E nu ∧ ∀ i j, i < j → E i j a = 0 := by
   have key : ∀ T : Module.End K V, (∀ x ∈ A, T x ∈ A) → (∀ x ∈ C, T x ∈ C) → T (a + c) = 0 → T a = 0 := by
     intro T hTA hTC h0
-    rw [map_add] at h0
+    rw [map_add (f := _)] at h0
     have h1 : T a = -T c := eq_neg_of_add_eq_zero_left h0
     have h2 : T a ∈ A ⊓ C := ⟨hTA a ha, by rw [h1]; exact C.neg_mem (hTC c hc)⟩
     rw [hAC] at h2

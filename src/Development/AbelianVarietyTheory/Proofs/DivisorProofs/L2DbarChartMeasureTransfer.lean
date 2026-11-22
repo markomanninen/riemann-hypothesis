@@ -1,6 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemTChartSource
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartDensityChangeFormula
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ReferenceMetricMulDualEqOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsFlagFrame
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RingKrullDimLeOfIsAlgebraic
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.JGenSpecializes
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InducedMetricPullback
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValAtAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartDensityChangeFormula
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -9,7 +18,7 @@ noncomputable section
 open CategoryTheory AlgebraicGeometry Limits NumberField IsDedekindDomain TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.TrueGeo GlobalTheory.CxPts GlobalTheory.ShFam GlobalTheory.Mean4 GlobalTheory.Mean4O
-open MeasureTheory GlobalTheory.ChartGlue GlobalTheory.Mean4O.CoverInt
+open MeasureTheory GlobalTheory.ChartGlue
 
 namespace GlobalTheory.GlueCoverNull
 

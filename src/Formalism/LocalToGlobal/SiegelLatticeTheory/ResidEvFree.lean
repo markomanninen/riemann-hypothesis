@@ -1,8 +1,13 @@
-import Formalism.SharpRestriction.SmoothDesignExistence.ClosedLinkSOfClosedPeriodAndFiltration
-import Formalism.SharpRestriction.CuspSpanNormBounds.StandingHypothesesHoldFamily
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.CMFieldLemmas
-import Formalism.SharpRestriction.AdmissibleParameterJoins.SfromGLu
-import Formalism.LocalToGlobal.GlobalTheory.GL2.ModEqOfNormOneMod
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.StandingHypothesesHoldFamily
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PlaceDegreeData
+public import Formalism.SharpRestriction.SmoothDesignExistence.DGamSmooth
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.CMFieldLemmas
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.SfromGLu
+public import Formalism.LocalToGlobal.GlobalTheory.GL2.ModEqOfNormOneMod
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Pk
 
@@ -46,7 +51,6 @@ theorem cycSplit (N p : ℕ) (K : Type) [Field K] [NumberField K] [Algebra K (Cy
     have : NeZero ((N : ℕ) : ℚ) := ⟨by exact_mod_cast hN.ne'⟩
     convert CyclotomicField.isCyclotomicExtension N ℚ
     · rfl
-    · exact Subsingleton.elim _ _
   have hL : ∀ (Q : Ideal (𝓞 (CyclotomicField N ℚ))) [Q.IsPrime] [Q.LiesOver (span {(p : ℤ)})],
       Q.ramificationIdx ℤ = 1 ∧ Q.inertiaDeg ℤ = 1 := by
     intro Q _ _
@@ -77,8 +81,8 @@ end Cyc
 
 end
 
-open Ideal NumberField IsDedekindDomain in
 
+open Ideal NumberField IsDedekindDomain in
 theorem splitsE_g (D : D7) (i : Fin 2) : S.SplitsCompl D.host.E (D.host.g i) := by
   have hp := D.host.g_prime i
   refine S.splitsCompl_of_ncard _ _ hp ?_

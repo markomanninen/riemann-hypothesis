@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.CartanFactorisation.PolCount
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLFock
+module
+
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.PolCount
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLFock
+
+@[expose] public section
 
 namespace PositivityTheory.ThKF
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
+
+@[expose] public section
 
 noncomputable section
 
@@ -139,8 +143,8 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable (D : D7)
 
-def PD (Λ : Submodule (𝓞 D.host.E) (hS D).V) {T : D.host.E} (F : LFlag (hS D) D.R.rS T) (u' : D.what₂.Word)
-    (F' : LFlag (hS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) : Prop :=
+def PD (Λ : Submodule (𝓞 D.host.E) (hS D).V) {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (u' : D.what₂.Word)
+    (F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)) : Prop :=
   IsLift Λ F' ∧ IsAdmissible Λ (gS D) F F' ∧ FrameOK D Λ F'
 
 abbrev TermsOf (u' : D.what₂.Word) {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T)
@@ -197,19 +201,6 @@ def TermsAtFinite (u u' : D.what₂.Word) : Prop :=
 
 variable {D}
 
-def Term.toSig {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)}
-    {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)} (t : Term D u u' F0 what₂) :
-    Σ Λ : {Λ // Λ ∈ what₂}, TermsOf D u' F0 Λ.1 := ⟨⟨t.lam, t.mem⟩, t.cls⟩
-
-theorem Term.toSig_injective {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)}
-    {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)} :
-    Function.Injective (Term.toSig (u' := u') (F0 := F0) (what₂ := what₂)) := by
-  intro t1 t2 h
-  cases t1
-  cases t2
-  cases h
-  rfl
-
 theorem term_atPt_finite {u u' : D.what₂.Word} (hfin : TermsAtFinite D u u') (hsig : (VS D).SigOK)
     (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)) (what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V))
     (hrows : IsRowReps D F0 what₂) (w : Point D.host.E (D.R.rS + 1)) :
@@ -240,47 +231,14 @@ theorem pd_self {u : D.what₂.Word} (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) :
         simp [Matrix.one_apply_ne hab]
       · intro h
         exact absurd (Finset.mem_univ b) h
-    rw [h0, sub_self]
+    rw [h0]
+    change ModG (hS D) Λ (gS D) (frame (lf D F0) b - frame (lf D F0) b)
+    rw [sub_self]
     unfold ModG
     intro P _
     exact zero_mem _
   · unfold FrameOK
     exact ⟨hconv, hX⟩
-
-def idTerm {u : D.what₂.Word} (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E))
-    (what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)) (hrows : IsRowReps D F0 what₂)
-    (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hΛ : Λ ∈ what₂) : Term D u u F0 what₂ :=
-  ⟨Λ, hΛ, mk _ _ _ ⟨lf D F0, pd_self F0 Λ (hrows.1 Λ hΛ)⟩⟩
-
-def TermFeqFIff (D : D7) (u : D.what₂.Word) : Prop :=
-  ∀ (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)) (Λ : Submodule (𝓞 D.host.E) (VS D).V)
-    (hΛ : IsRowLat D F0 Λ) (t : TermsOf D u F0 Λ),
-      IsFeqF Λ (lf D F0) (PD D Λ (lf D F0) u) t ↔ t = mk _ _ _ ⟨lf D F0, pd_self F0 Λ hΛ⟩
-
-theorem idTerm_FeqF {u : D.what₂.Word} (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E))
-    (what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)) (hrows : IsRowReps D F0 what₂)
-    (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hΛ : Λ ∈ what₂) : (idTerm F0 what₂ hrows Λ hΛ).FeqF := by
-  unfold Term.FeqF IsFeqF
-  exact ⟨lf D F0, rep_mk _, 1, one_mem_NLam _ _, fun _ => rfl⟩
-
-theorem termFeqFIff_holds (D : D7) (u : D.what₂.Word) : TermFeqFIff D u := by
-  intro F0 Λ hΛ t
-  unfold IsFeqF
-  constructor
-  · rintro ⟨F', ⟨h, rfl⟩, n, hn, hfr⟩
-    symm
-    apply Quot.sound
-    unfold Rel DCRel
-    have hz : F'.zt = F'.fl.z := by
-      obtain ⟨⟨_, hz⟩, _⟩ := h
-      exact hz
-    have hlast := hfr (Fin.last _)
-    simp only [frame, FlagG.fvec, Fin.snoc_last] at hlast
-    refine ⟨n, hn, 1, one_mem_NLam _ _, fun a => (hfr a).symm, ?_⟩
-    rw [hz]
-    exact hlast.symm
-  · rintro rfl
-    exact ⟨lf D F0, rep_mk _, 1, one_mem_NLam _ _, fun _ => rfl⟩
 
 end D7
 

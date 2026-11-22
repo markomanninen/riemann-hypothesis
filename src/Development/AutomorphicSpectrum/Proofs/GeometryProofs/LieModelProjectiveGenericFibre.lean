@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsSubFibreSubFib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsSubFibreSubFib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,8 +39,9 @@ def resMap (j : V →ₗ[A] T) (W : Submodule K T) : (W.restrictScalars A).comap
 
 theorem isLocalized_resMap [Module.IsTorsionFree A V] (j : V →ₗ[A] T)
     [IsLocalizedModule (nonZeroDivisors A) j] (W : Submodule K T) :
-    IsLocalizedModule (nonZeroDivisors A) (resMap j W) where
-  map_units a := by
+    IsLocalizedModule (nonZeroDivisors A) (resMap j W) := by
+  constructor
+  · intro a
     have hk : algebraMap A K a ≠ 0 := IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors a.2
     have key : ∀ w : W, algebraMap A (Module.End A W) a w = algebraMap A K a • w := fun w => by
       rw [Module.algebraMap_end_apply, algebraMap_smul]
@@ -44,14 +49,14 @@ theorem isLocalized_resMap [Module.IsTorsionFree A V] (j : V →ₗ[A] T)
     · rw [key, key] at h
       exact smul_right_injective W hk h
     · rw [key, smul_smul, mul_inv_cancel₀ hk, one_smul]
-  surj w := by
+  · intro w
     obtain ⟨⟨y, a⟩, h⟩ := IsLocalizedModule.surj (nonZeroDivisors A) j (w : T)
     have h' : (a : A) • (w : T) = j y := h
     have hy : j y ∈ W := by
       rw [← h', ← algebraMap_smul K (a : A) (w : T)]
       exact W.smul_mem _ w.2
     exact ⟨(⟨y, hy⟩, a), Subtype.ext h⟩
-  exists_of_eq {x y} h := by
+  · intro x y h
     refine ⟨1, ?_⟩
     rw [one_smul, one_smul]
     exact Subtype.ext (injective_of_isLocalized j (congrArg Subtype.val h))
@@ -72,7 +77,7 @@ theorem exists_smul_mem (j : V →ₗ[A] T) (S : Submodule A V) (B : Set T)
     obtain ⟨a, ha, y, hy, e⟩ := hu
     obtain ⟨b, hb, y', hy', e'⟩ := hv
     refine ⟨a * b, mul_ne_zero ha hb, b • y + a • y', S.add_mem (S.smul_mem _ hy) (S.smul_mem _ hy'), ?_⟩
-    rw [map_add, map_smul, map_smul, ← e, ← e', smul_add, smul_smul, smul_smul, mul_comm a b, mul_comm b a,
+    rw [map_add (f := _), map_smul, map_smul, ← e, ← e', smul_add, smul_smul, smul_smul, mul_comm a b, mul_comm b a,
       mul_comm a b]
   | smul c u _ hu =>
     obtain ⟨a, ha, y, hy, e⟩ := hu
@@ -112,8 +117,8 @@ variable {X : Scheme.{0}} {G : Over X} [GrpObj G] {Ω : Type} [Field Ω] {ξ : S
   [Module (𝓞 L) V] {T : Type} [AddCommGroup T] [Module L T] [Module (𝓞 L) T] [IsScalarTower (𝓞 L) L T]
 
 theorem eq_pt_of_lifts {MB : LieModel G z V} {TL : LieModel G (spMap (algebraMap (𝓞 L) L) ≫ z) T}
-    {j : V →ₗ[𝓞 L] T} (hl : ∀ x, MB.Lifts (algebraMap (𝓞 L) L) (𝟙 G.left) x (TL.pt (j x))) {x : V}
-    {v : epsAt (spMap (algebraMap (𝓞 L) L) ≫ z) ⟶ G} (h : MB.Lifts (algebraMap (𝓞 L) L) (𝟙 G.left) x v) :
+    {j : V →ₗ[𝓞 L] T} (hl : ∀ x, ((TL.pt (j x)).left ≫ (𝟙 G.left) = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap (𝓞 L) L)) ≫ (MB.pt x).left)) {x : V}
+    {v : epsAt (spMap (algebraMap (𝓞 L) L) ≫ z) ⟶ G} (h : (v.left ≫ (𝟙 G.left) = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap (𝓞 L) L)) ≫ (MB.pt x).left)) :
     v = TL.pt (j x) := by
   have e : v.left ≫ 𝟙 G.left = (TL.pt (j x)).left ≫ 𝟙 G.left := h.trans (hl x).symm
   rw [Category.comp_id, Category.comp_id] at e
@@ -121,7 +126,7 @@ theorem eq_pt_of_lifts {MB : LieModel G z V} {TL : LieModel G (spMap (algebraMap
 
 theorem mem_subGens_of_nat {M : LieModel G ξ Li} {U : Submodule Ω Li} {MB : LieModel G z V}
     {TL : LieModel G (spMap (algebraMap (𝓞 L) L) ≫ z) T} {j : V →ₗ[𝓞 L] T}
-    (hl : ∀ x, MB.Lifts (algebraMap (𝓞 L) L) (𝟙 G.left) x (TL.pt (j x))) {e : Li} (he : e ∈ U) {w : T}
+    (hl : ∀ x, ((TL.pt (j x)).left ≫ (𝟙 G.left) = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap (𝓞 L) L)) ≫ (MB.pt x).left)) {e : Li} (he : e ∈ U) {w : T}
     (hv : M.ValAt (spMap (algebraMap (𝓞 L) L) ≫ z) e (TL.pt w)) (n : ℕ) {y : V} (hy : (n : 𝓞 L) • w = j y) :
     y ∈ subGens M U z MB := by
   obtain ⟨h1, -⟩ := id hv
@@ -136,7 +141,7 @@ theorem mem_subGens_of_nat {M : LieModel G ξ Li} {U : Submodule Ω Li} {MB : Li
 
 end Geo
 
-theorem finrank_subFib : ∀ (X : Scheme.{0}) (G : Over X) [GrpObj G] (Ω : Type) [Field Ω] (ξ : Sp Ω ⟶ X) (Li : Type) [AddCommGroup Li] [Module Ω Li] (M : LieModel G ξ Li) (L : Type) [Field L] [NumberField L] (z : Sp (𝓞 L) ⟶ X) (V : Type) [AddCommGroup V] [Module (𝓞 L) V] [Module.Finite (𝓞 L) V] [Module.Projective (𝓞 L) V] (MB : LieModel G z V) (T : Type) [AddCommGroup T] [Module L T] [Module (𝓞 L) T] [IsScalarTower (𝓞 L) L T] (TL : LieModel G (spMap (algebraMap (𝓞 L) L) ≫ z) T) (j : V →ₗ[𝓞 L] T) (U : Submodule Ω Li), IsCptGen ξ → (∀ x, MB.Lifts (algebraMap (𝓞 L) L) (𝟙 G.left) x (TL.pt (j x))) → IsBaseChange L j → Module.finrank (𝓞 L) V = Module.finrank L T ∧ Module.finrank (𝓞 L) (FlagFib.subFib M U z MB) = Module.finrank L (Submodule.span L {w | ∃ e ∈ U, M.ValAt (spMap (algebraMap (𝓞 L) L) ≫ z) e (TL.pt w)}) := by
+theorem finrank_subFib : ∀ (X : Scheme.{0}) (G : Over X) [GrpObj G] (Ω : Type) [Field Ω] (ξ : Sp Ω ⟶ X) (Li : Type) [AddCommGroup Li] [Module Ω Li] (M : LieModel G ξ Li) (L : Type) [Field L] [NumberField L] (z : Sp (𝓞 L) ⟶ X) (V : Type) [AddCommGroup V] [Module (𝓞 L) V] [Module.Finite (𝓞 L) V] [Module.Projective (𝓞 L) V] (MB : LieModel G z V) (T : Type) [AddCommGroup T] [Module L T] [Module (𝓞 L) T] [IsScalarTower (𝓞 L) L T] (TL : LieModel G (spMap (algebraMap (𝓞 L) L) ≫ z) T) (j : V →ₗ[𝓞 L] T) (U : Submodule Ω Li), IsCptGen ξ → (∀ x, ((TL.pt (j x)).left ≫ (𝟙 G.left) = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap (𝓞 L) L)) ≫ (MB.pt x).left)) → IsBaseChange L j → Module.finrank (𝓞 L) V = Module.finrank L T ∧ Module.finrank (𝓞 L) (FlagFib.subFib M U z MB) = Module.finrank L (Submodule.span L {w | ∃ e ∈ U, M.ValAt (spMap (algebraMap (𝓞 L) L) ≫ z) e (TL.pt w)}) := by
   intro X G _ Ω _ ξ Li _ _ M L _ _ z V _ _ _ _ MB T _ _ _ _ TL j U _ hl hj
   haveI : IsLocalizedModule (nonZeroDivisors (𝓞 L)) j :=
     (isLocalizedModule_iff_isBaseChange (nonZeroDivisors (𝓞 L)) L j).2 hj
@@ -151,7 +156,9 @@ theorem finrank_subFib : ∀ (X : Scheme.{0}) (G : Over X) [GrpObj G] (Ω : Type
       have hv' := eq_pt_of_lifts hl hlift
       exact Submodule.subset_span ⟨e, he, hv' ▸ hv⟩
     | zero => simp
-    | add a b _ _ ha hb => rw [map_add]; exact add_mem ha hb
+    | add a b _ _ ha hb =>
+      rw [map_add]
+      exact add_mem ha hb
     | smul c a _ ha =>
       rw [map_smul, ← algebraMap_smul L c (j a)]
       exact Submodule.smul_mem _ _ ha

@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutDef
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaTildeHeckeCharSplitMulSignOfNormFormula
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmQuadraticCharacterEqProdRealSigns
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRealSpanEqConjFixedPrimeMulRelNorm
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutDef
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaTildeHeckeCharSplitMulSignOfNormFormula
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmQuadraticCharacterEqProdRealSigns
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRealSpanEqConjFixedPrimeMulRelNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem hom_fix (Fx : HeightOneSpectrum (𝓞 E) → Prop) {G : Type} [CommGroup
       exact k.ne_zero (by simpa using hk)
     rw [hi, hk, GlobalTheory.EtaProduct.val_int Q hu]
   have gone : Gen ⊤ 1 := fun Q _ => by
-    rw [map_one, ← Ideal.one_eq_top, multiplicity_eq_zero.2 Q.prime.not_dvd_one]
+    rw [map_one, ← Ideal.one_eq_top, multiplicity_eq_zero_of_not_dvd Q.prime.not_dvd_one]
     simp
   have gmov : ∀ P : HeightOneSpectrum (𝓞 E), ¬ Fx P → Gen P.asIdeal 1 := fun P hP Q hQ => by
     rw [map_one, GlobalTheory.EtaProduct.mult_ne (P := P) (Q := Q) (fun h => hP (h ▸ hQ))]
@@ -53,7 +57,7 @@ theorem hom_fix (Fx : HeightOneSpectrum (𝓞 E) → Prop) {G : Type} [CommGroup
       Gen P.asIdeal z := by
     intro P z a1 a3 Q _
     by_cases hQ : Q = P
-    · rw [hQ, a1, multiplicity_self]; simp
+    · rw [hQ, a1, multiplicity_self (FiniteMultiplicity.of_prime_left P.prime P.ne_bot)]; simp
     · rw [a3 Q hQ, GlobalTheory.EtaProduct.mult_ne hQ]; simp
   have gprime : ∀ P : HeightOneSpectrum (𝓞 E), ∃ z, Gen P.asIdeal z := by
     intro P
@@ -176,7 +180,7 @@ theorem exists_half_abstract' {F T T' : Type} [Field F] [NumberField F] [CommRin
   rintro e ⟨he1, he2, v, η, ⟨α, rfl, hα1, hα0⟩, he3⟩
   obtain ⟨a, b, hab⟩ := hdec e
   have hce : c e = j a - j b * δ := by
-    rw [hab, map_add, map_mul, hcj, hcj, hcδ]; ring
+    rw [hab, map_add (f := _), map_mul, hcj, hcj, hcδ]; ring
   have he4 : c e * c e = c e := by rw [← map_mul, he1]
   obtain ⟨B, hB⟩ : ∃ B : AF F, B = 2 * algebraMap F (AF F) (d : F) * b := ⟨_, rfl⟩
   have hjB : j B = δ * (e - c e) := by

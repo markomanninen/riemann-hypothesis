@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.BoxCancel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryDoubledBlockDiagOneStatement
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.BoxCancel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryDoubledBlockDiagOneStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -205,7 +209,7 @@ theorem TA' [TopologicalSpace R] [TopologicalSpace E] [IsModuleTopology R E] [Mo
       have e2 := congrFun ((hrel _ z).2 ⟨a, rfl⟩).1 k.1
       rw [Function.extend_apply' _ _ _ k.2] at e2
       simp only [LinearEquiv.apply_symm_apply, Subtype.val_injective.extend_apply] at e1
-      rw [map_add, map_add, Prod.fst_add, Pi.add_apply] at e1
+      rw [map_add (f := _), map_add (f := _), Prod.fst_add, Pi.add_apply] at e1
       exact (e1.trans ((congrArg (· + _) e2).trans (zero_add _))).symm
   exact TA h hI hS hj he hcard hrel Subtype.val_injective (fun k => ⟨fun ⟨a, ha⟩ => ha ▸ a.2, fun hk => ⟨⟨k, hk⟩, rfl⟩⟩)
     (LinearEquiv.ofBijective θ₀ hb) hθ hW hW₁ hch g

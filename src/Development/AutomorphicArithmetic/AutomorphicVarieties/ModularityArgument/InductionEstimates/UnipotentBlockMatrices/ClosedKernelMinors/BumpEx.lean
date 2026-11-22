@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import GroundTheory.AutomorphicForms.L2LocalComponents.ArchBump
-import GroundTheory.AutomorphicForms.GKModules.KernelCalculus
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SmoothingFinite
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import GroundTheory.AutomorphicForms.L2LocalComponents.ArchBump
+public import GroundTheory.AutomorphicForms.GKModules.KernelCalculus
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SmoothingFinite
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -93,6 +97,12 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.bumpEx :
     ∀ {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (G1 K n)) [μ.IsHaarMeasure] (O : Set (G1 K n)), O ∈ 𝓝 (1 : G1 K n) →
       ∃ a : CC K n, tsupport a ⊆ O ∧ (∀ g, 0 ≤ (a g).re ∧ (a g).im = 0) ∧ ∫ g, a g ∂μ = 1 ∧ CuspidalProjection.ccStar a = a ∧ UpperTheory.ConvolutionTheory.C.IsLeftSmooth a := by
   intro K _ _ n μ _ O hO
+  letI : FirstCountableTopology (G1 K n) := by
+    set_option synthInstance.maxHeartbeats 200000 in exact inferInstance
+  letI : RegularSpace (G1 K n) := by
+    set_option synthInstance.maxHeartbeats 200000 in exact inferInstance
+  letI : R1Space (G1 K n) := by
+    set_option synthInstance.maxHeartbeats 200000 in exact inferInstance
   obtain ⟨O', hO', hO'O, hO'c⟩ := local_compact_nhds hO
   obtain ⟨V₂, hV₂, e₂⟩ := bump_split hO'
   obtain ⟨V₁, hV₁, e₁⟩ := bump_split hV₂
@@ -112,7 +122,8 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.bumpEx :
   have hU : IsOpen (U : Set (AdelicGLn.integralFiniteGL K n)) := N.toOpenSubgroup.isOpen
   have hUV : ∀ u : U, finOne K n u ∈ V₁ := fun u => interior_subset (hN u.2)
   have := compactSpace_of_isOpen U hU
-  obtain ⟨F₁, h, -, hF₁, -, hc, h0, h1, hs, hV⟩ := bump_step (haarProb U) ((finOne K n).comp U.subtype)
+  set_option synthInstance.maxHeartbeats 200000 in
+   obtain ⟨F₁, h, -, hF₁, -, hc, h0, h1, hs, hV⟩ := bump_step (haarProb U) ((finOne K n).comp U.subtype)
     (continuous_finOne.comp continuous_subtype_val) (ρ := fun _ => 1) continuous_const
     (HasCompactSupport.of_compactSpace _) (fun _ => zero_le_one) (p₀ := 1) one_ne_zero (h := fun x => f x * f x⁻¹)
     (f.continuous.mul (f.continuous.comp continuous_inv)) (fun x => mul_nonneg (hf _).1 (hf _).1)

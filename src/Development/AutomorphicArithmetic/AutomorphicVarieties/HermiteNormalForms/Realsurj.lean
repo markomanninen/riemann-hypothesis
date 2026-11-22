@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+
+@[expose] public section
 
 open NumberField Matrix UpperTheory.V UpperTheory.V.KT
 open scoped ComplexOrder
 
 open NumberField.InfinitePlace in
-private theorem one_coord (L : Type) [Field L] [NumberField L] [IsTotallyComplex L]
+private theorem one_coord (L : Type) [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L]
     (z : InfinitePlace L → ℂ) :
     ∃ x : BI L → ℝ, ∀ w, ∑ i, (x i : ℂ) * embO w (RingOfIntegers.basis L i) = z w := by
   classical
@@ -21,7 +25,7 @@ private theorem one_coord (L : Type) [Field L] [NumberField L] [IsTotallyComplex
   rfl
 
 theorem UpperTheory.V.KT.realsurj :
-    ∀ (L : Type) [Field L] [NumberField L] [IsTotallyComplex L] (N : ℕ),
+    ∀ (L : Type) [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (N : ℕ),
     Function.Surjective (realVec : (Fin N × BI L → ℝ) → VR L N) := by
   intro L _ _ _ N z
   choose x hx using fun a : Fin N => one_coord L (fun w => z w a)

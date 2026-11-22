@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,8 @@ theorem conjDeriv : ∀ (U : Type) [NormedAddCommGroup U] [InnerProductSpace ℂ
     intro t
     have h1 : ∀ j, ⟪E j, x t (A (y t (E j)))⟫_ℂ = ∑ k, ⟪x t (b k), E j⟫_ℂ * ⟪E j, x t (E k)⟫_ℂ := by
       intro j
-      rw [hexp (y t (E j)), map_sum, inner_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hexp (y t (E j)), map_sum, inner_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_smul, inner_smul_right, ← ContinuousLinearMap.adjoint_inner_left, hy]
     simp_rw [h1]

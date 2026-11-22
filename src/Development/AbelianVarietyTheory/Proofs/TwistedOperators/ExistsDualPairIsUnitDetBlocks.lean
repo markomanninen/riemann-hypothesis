@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped Matrix
 
 namespace GlobalTheory
@@ -41,7 +46,7 @@ theorem exists_det_add_mul_ne_zero_of_ker_inf {k : Type} [Field k] {n : ℕ}
     intro v hv
     have hvmem : v ∈ LinearMap.ker c ⊔ L' := by rw [hL'.sup_eq_top]; exact Submodule.mem_top
     obtain ⟨x, hx, y, hy, rfl⟩ := Submodule.mem_sup.mp hvmem
-    rw [map_add, hgL x hx, hgL' y hy] at hv
+    rw [map_add (f := _), hgL x hx, hgL' y hy] at hv
     have hax : a x ∈ (LinearMap.ker c).map a ⊓ U := by
       refine ⟨Submodule.mem_map_of_mem hx, ?_⟩
       rw [eq_neg_of_add_eq_zero_left hv]
@@ -108,7 +113,8 @@ theorem exists_isUnit_det_toBlocks_add_mul {R : Type} [CommRing R] [IsLocalRing 
   have hm : (IsLocalRing.residue R).mapMatrix (H.toBlocks₁₁ + Matrix.of X * H.toBlocks₂₁) =
       Hb.toBlocks₁₁ + Xb * Hb.toBlocks₂₁ := by
     ext i j
-    simp [RingHom.mapMatrix_apply, Matrix.mul_apply, map_sum, hX, hHb_def, Matrix.toBlocks₁₁,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [RingHom.mapMatrix_apply, Matrix.mul_apply, map_sum, hX, hHb_def, Matrix.toBlocks₁₁,
       Matrix.toBlocks₂₁]
   rw [hm]
   exact hXb

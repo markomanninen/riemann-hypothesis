@@ -1,4 +1,8 @@
-import Formalism.MahlerMeasure.CsSaturated
+module
+
+public import Formalism.MahlerMeasure.CsSaturated
+
+@[expose] public section
 
 namespace Formalism.GM.M
 

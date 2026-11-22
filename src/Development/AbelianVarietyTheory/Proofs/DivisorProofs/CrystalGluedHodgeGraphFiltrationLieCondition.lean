@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrysActApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsArtinianRingTsze
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GroupObjectLiftDividedPowers
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystalGluedHodgeGraphFiltrationOrderStable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorLieConditionModHodgeFiltrationStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrysActApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsArtinianRingTsze
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GroupObjectLiftDividedPowers
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystalGluedHodgeGraphFiltrationOrderStable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorLieConditionModHodgeFiltrationStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.UPel.Sm GlobalTheory.Cris GlobalTheory.DeRham
@@ -99,7 +104,7 @@ theorem crdL_smul (π : TrivSqZeroExt k (Fin d → k) →ₗ[k] k) (u : CrysC k 
 
 theorem crdL_add (π : TrivSqZeroExt k (Fin d → k) →ₗ[k] k) (u : CrysC k d A₀) (q q' : primDR A₀) :
     π (u ((GlobalTheory.FODef.constMorV k (Fin d → k) A₀).pull (q + q'))) = π (u ((GlobalTheory.FODef.constMorV k (Fin d → k) A₀).pull q)) + π (u ((GlobalTheory.FODef.constMorV k (Fin d → k) A₀).pull q')) := by
-  simp only [map_add]
+  simp only [map_add (f := _)]
 
 def crdL (π : TrivSqZeroExt k (Fin d → k) →ₗ[k] k) (u : CrysC k d A₀) : primDR A₀ →ₗ[k] k where
   toFun q := π (u ((GlobalTheory.FODef.constMorV k (Fin d → k) A₀).pull q))
@@ -111,7 +116,7 @@ theorem crdL_apply (π : TrivSqZeroExt k (Fin d → k) →ₗ[k] k) (u : CrysC k
 
 theorem crdL_add_u (π : TrivSqZeroExt k (Fin d → k) →ₗ[k] k) (u v : CrysC k d A₀) (q : primDR A₀) :
     crdL A₀ π (u + v) q = crdL A₀ π u q + crdL A₀ π v q := by
-  simp only [crdL_apply, LinearMap.add_apply, map_add]
+  simp only [crdL_apply, LinearMap.add_apply, map_add (f := _)]
 
 theorem crdL_zero_u (π : TrivSqZeroExt k (Fin d → k) →ₗ[k] k) (q : primDR A₀) :
     crdL A₀ π 0 q = 0 := by
@@ -136,7 +141,34 @@ theorem primPull_const_pull (g : A₀ ⟶ A₀) [IsMonHom g] (q : primDR A₀) :
     primPull (divided₂ (GlobalTheory.FODef.sqZero k (Fin d → k))) (spMap (TrivSqZeroExt.fstHom k k (Fin d → k)).toRingHom) g
         ((GlobalTheory.FODef.constMorV k (Fin d → k) A₀).pull q) =
       (GlobalTheory.FODef.constMorV k (Fin d → k) A₀).pull (primPull (dp0 k) (𝟙 _) g q) := by
-  have K := (homMor (dp0 k) (𝟙 _) g).comp (GlobalTheory.FODef.constMorV k (Fin d → k) A₀)
+  have compMor {R R' R'' : Type} [CommRing R] [CommRing R'] [CommRing R'']
+      {I : Ideal R} {I' : Ideal R'} {I'' : Ideal R''} {S S' S'' : Scheme.{0}}
+      {κ : DividedPowers I} {κ' : DividedPowers I'} {κ'' : DividedPowers I''}
+      {t : S ⟶ Sp R} {t' : S' ⟶ Sp R'} {t'' : S'' ⟶ Sp R''}
+      {A : Over S} {A' : Over S'} {A'' : Over S''} [GrpObj A] [GrpObj A'] [GrpObj A'']
+      {σ : R →+* R'} {τ : R' →+* R''} {b : S' ⟶ S} {b' : S'' ⟶ S'}
+      {φ : A'.left ⟶ A.left} {ψ : A''.left ⟶ A'.left}
+      (m : GrpMor κ t A κ' t' A' σ b φ) (m' : GrpMor κ' t' A' κ'' t'' A'' τ b' ψ) :
+      GrpMor κ t A κ'' t'' A'' (τ.comp σ) (b' ≫ b) (ψ ≫ φ) := by
+    refine { dp := DividedPowers.IsDPMorphism.comp _ m'.dp m.dp, base := ?_, w := ?_, mul := ?_ }
+    · rw [Category.assoc, m.base, ← Category.assoc, m'.base, Category.assoc, Cris.spMap_comp]
+    · rw [Category.assoc, m.w, ← Category.assoc, m'.w, Category.assoc]
+    · intro T x y x₀ y₀ hx hy
+      let x₁ : Over.mk (T.hom ≫ b') ⟶ A' := Over.homMk (x.left ≫ ψ) (by
+        simp only [Over.mk_hom, Category.assoc]; rw [m'.w, reassoc_of% (Over.w x)])
+      let y₁ : Over.mk (T.hom ≫ b') ⟶ A' := Over.homMk (y.left ≫ ψ) (by
+        simp only [Over.mk_hom, Category.assoc]; rw [m'.w, reassoc_of% (Over.w y)])
+      let x₂ : Over.mk ((Over.mk (T.hom ≫ b')).hom ≫ b) ⟶ A := Over.homMk x₀.left (by
+        simpa using Over.w x₀)
+      let y₂ : Over.mk ((Over.mk (T.hom ≫ b')).hom ≫ b) ⟶ A := Over.homMk y₀.left (by
+        simpa using Over.w y₀)
+      have h₁ := m'.mul T x y x₁ y₁ rfl rfl
+      have h₂ := m.mul _ x₁ y₁ x₂ y₂ (by simp [x₂, x₁, hx]) (by simp [y₂, y₁, hy])
+      have h₃ : (x₀ * y₀).left = (x₂ * y₂).left := by
+        simp only [Hom.mul_def, Over.comp_left, Over.lift_left]
+        rfl
+      rw [h₃, h₂, h₁, Category.assoc]
+  have K := compMor (homMor (dp0 k) (𝟙 _) g) (GlobalTheory.FODef.constMorV k (Fin d → k) A₀)
   have e1 := GrpMor.pull_pull (GlobalTheory.FODef.constMorV k (Fin d → k) A₀)
     (homMor (divided₂ (GlobalTheory.FODef.sqZero k (Fin d → k))) (spMap (TrivSqZeroExt.fstHom k k (Fin d → k)).toRingHom) g) K
     (fun _ ↦ rfl) (by simp) q
@@ -208,7 +240,8 @@ theorem mul_sub_mem_lieZ {r : ℕ} (lam : Fin r → k) (c : Fin r → 𝓞 D.F) 
       · ring)
   convert H using 1
   rw [Fintype.sum_sum_type]
-  simp only [Sum.elim_inl, Sum.elim_inr, map_sum, map_smul, map_mul, Module.End.mul_apply, Finset.smul_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Sum.elim_inl, Sum.elim_inr, map_sum, map_smul, map_mul, Module.End.mul_apply, Finset.smul_sum,
     smul_smul, sub_eq_add_neg, neg_mul, neg_smul, Finset.sum_neg_distrib]
 
 theorem one_sub_mem_lieZ {r : Fin D.a → ℕ} (lam : ∀ i, Fin (r i) → k) (c : ∀ i, Fin (r i) → 𝓞 D.F)
@@ -243,12 +276,12 @@ theorem lieZ_le_fil (hs : t = spMap β) : lieZ o₀ β ≤ Fil o₀.A := by
   have hq0 : D.ω * D.ω - (D.tr : 𝓞 D.F) * D.ω + (D.nm : 𝓞 D.F) = 0 := by
     rw [← D.tr_eq, ← D.nm_eq]; ring
   have hq := congrArg (fun x => crysAct o₀ (algebraMap (𝓞 D.F) D.O x) h) hq0
-  simp only [map_add, map_sub, map_mul, map_intCast, map_zero, LinearMap.add_apply, LinearMap.sub_apply,
+  simp only [map_add (f := _), map_sub, map_mul, map_intCast, map_zero, LinearMap.add_apply, LinearMap.sub_apply,
     Module.End.mul_apply, Module.End.intCast_apply, LinearMap.zero_apply] at hq
   rw [← Int.cast_smul_eq_zsmul k, ← Int.cast_smul_eq_zsmul k] at hq
   have hroot : β b.ρ * ((D.tr : k) - β b.ρ) = (D.nm : k) := by
     have := congrArg β b.ρ_root
-    simp only [map_add, map_sub, map_mul, map_pow, map_intCast, map_zero] at this
+    simp only [map_add (f := _), map_sub, map_mul, map_pow, map_intCast, map_zero] at this
     linear_combination -this
   have hy0 : crysAct o₀ (algebraMap (𝓞 D.F) D.O D.ω) ((A - ((D.tr : k) - β b.ρ) • 1) h) -
       β b.ρ • ((A - ((D.tr : k) - β b.ρ) • 1) h) ∈ Fil o₀.A := by
@@ -264,7 +297,8 @@ theorem lieZ_le_fil (hs : t = spMap β) : lieZ o₀ β ≤ Fil o₀.A := by
         ∑ i, ∑ l, lam l • (crysAct o₀ (algebraMap (𝓞 D.F) D.O (c l)) (w i) - β (b.t i (c l)) • w i) := by
     have h3 : ∀ i, ∑ l, lam l • β (b.t i (c l)) • w i = 0 := fun i => by
       simp only [smul_smul, ← Finset.sum_smul, hsum i, zero_smul]
-    simp only [map_sub, map_sum, smul_sub, Finset.smul_sum, Finset.sum_sub_distrib, h3, sub_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, smul_sub, Finset.smul_sum, Finset.sum_sub_distrib, h3, sub_zero]
     rw [Finset.sum_comm (f := fun i l => lam l • crysAct o₀ (algebraMap (𝓞 D.F) D.O (c l)) (w i))]
     abel
   rw [e]
@@ -294,8 +328,8 @@ end GlobalTheory.HTGlueLie
 
 namespace GlobalTheory.HTGlueLie
 
-open GlobalTheory.HTCount in
 
+open GlobalTheory.HTCount in
 theorem glueFil_lie : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel.HT.Datum p) (R : Type) [CommRing R] (b : GlobalTheory.UPel.HT.Base D R) (N : ℕ), 3 ≤ N → N.Coprime p → ∀ (k : Type) [Field k] [IsAlgClosed k] (t : Sp k ⟶ Sp R) (o₀ : GlobalTheory.UPel.HT.Obj b N t) (β : R →+* k), t = spMap β → ∀ φ : LinearMap.BilinForm k (HdR o₀.A), GlobalTheory.AbDual.IsCorrForm (dp0 k) (𝟙 _) o₀.A o₀.A o₀.P φ → ∀ (d : ℕ) (f : Fin d → (HdR o₀.A →ₗ[k] HdR o₀.A)), (∀ j, IsKS (GlobalTheory.HTCount.crysAct o₀) φ (Fil o₀.A) (GlobalTheory.HTCount.lieZ o₀ β) (f j)) → (∀ e : Crys (divided₂ (GlobalTheory.FODef.sqZero k (Fin d → k))) (spMap (TrivSqZeroExt.fstHom k k (Fin d → k)).toRingHom) o₀.A, (haveI := o₀.act.hom (algebraMap (𝓞 D.F) D.O D.ω); push (divided₂ (GlobalTheory.FODef.sqZero k (Fin d → k))) (spMap (TrivSqZeroExt.fstHom k k (Fin d → k)).toRingHom) (o₀.act.act (algebraMap (𝓞 D.F) D.O D.ω)) (e)) - algebraMap k (TrivSqZeroExt k (Fin d → k)) (β b.ρ) • e ∈ (GlobalTheory.HTGlue.glueFil o₀.A f) → ∃ w : Fin D.a → Crys (divided₂ (GlobalTheory.FODef.sqZero k (Fin d → k))) (spMap (TrivSqZeroExt.fstHom k k (Fin d → k)).toRingHom) o₀.A, (∀ i (c : 𝓞 D.F), (haveI := o₀.act.hom (algebraMap (𝓞 D.F) D.O c); push (divided₂ (GlobalTheory.FODef.sqZero k (Fin d → k))) (spMap (TrivSqZeroExt.fstHom k k (Fin d → k)).toRingHom) (o₀.act.act (algebraMap (𝓞 D.F) D.O c)) (w i)) - algebraMap k (TrivSqZeroExt k (Fin d → k)) (β (b.t i c)) • w i ∈ (GlobalTheory.HTGlue.glueFil o₀.A f)) ∧ e - ∑ i, w i ∈ (GlobalTheory.HTGlue.glueFil o₀.A f)) := by
   intro p _ D R _ b N _ _ k _ _ t o₀ β hs φ _ d f hf e he
   have hT : ∀ (x : D.O) (π : TrivSqZeroExt k (Fin d → k) →ₗ[k] k) (u : CrysC k d o₀.A),
@@ -326,7 +360,8 @@ theorem glueFil_lie : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel.HT.Dat
   · refine mem_glueFil_of_crd_mem o₀.A f _ hZ hfZ _ fun π => ?_
     have H := mul_sub_mem_lieZ o₀ β (lam i) (c i) i (hc' i) (hrho π) c₀
     convert H using 1
-    simp only [map_sub, map_sum, hT, crd_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, hT, crd_smul]
   · have hk : algebraMap k (TrivSqZeroExt k (Fin d → k)) (β b.ρ - ((D.tr : k) - β b.ρ))⁻¹ *
         (algebraMap k (TrivSqZeroExt k (Fin d → k)) (β b.ρ) -
           algebraMap k (TrivSqZeroExt k (Fin d → k)) ((D.tr : k) - β b.ρ)) = 1 := by
@@ -335,6 +370,7 @@ theorem glueFil_lie : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel.HT.Dat
     refine mem_glueFil_of_crd_mem o₀.A f _ hZ hfZ _ fun π => ?_
     have H := one_sub_mem_lieZ o₀ β lam c hc' (hrho π)
     convert H using 1
-    simp only [map_sub, map_sum, hT, crd_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, hT, crd_smul]
 
 end GlobalTheory.HTGlueLie

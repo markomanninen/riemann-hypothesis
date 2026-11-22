@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsFlagGrassSteps
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsAntisym
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsFlagGrassSteps
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsAntisym
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -14,7 +19,7 @@ namespace FsInvPow
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
 theorem fsHerm_h_eq (a : K → ℤ) (z : (Σ k, ι k) → ℂ) :
-    (fsHerm ι a).h z = (HermLine.ofMetrics (fun k => fsMetric (ι k)) a).h z := by
+    (fsHerm ι a).h z = (HermLine.ofMetrics (fun k => fsMetric (ι := ι k)) a).h z := by
   rw [fsHerm_h, Inter.ofMetrics_fs_h]
   unfold refNorm
   refine Finset.prod_congr rfl fun k _ => ?_
@@ -22,7 +27,8 @@ theorem fsHerm_h_eq (a : K → ℤ) (z : (Σ k, ι k) → ℂ) :
     Real.sq_sqrt (Finset.sum_nonneg fun _ _ => sq_nonneg _)]
 
 theorem isSmoothHerm_fsHerm (a : K → ℤ) : IsSmoothHerm (fsHerm ι a) := by
-  have h : (fsHerm ι a).h = (HermLine.ofMetrics (fun k => fsMetric (ι k)) a).h := funext (fsHerm_h_eq a)
+  have h : (fsHerm ι a).h = (HermLine.ofMetrics (fun k => fsMetric (ι := ι k)) a).h :=
+    funext (fsHerm_h_eq a)
   unfold IsSmoothHerm
   rw [h]
   exact Inter.isSmoothHerm_ofMetrics_fs a
@@ -56,8 +62,8 @@ theorem invTensor_h {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k, i⟩ 
   rw [zpow_neg_one, zpow_one]
   exact inv_mul_cancel₀ hS
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem ptsIntegral_eq_zero {e : ℕ} (P : Ideal (MRing ι)) (φ : Fin e → ((Σ k, ι k) → ℂ) → ℝ)
     (g : ((Σ k, ι k) → ℂ) → ℝ) (hg : ∀ z ∈ mcPts P, g z = 0) : ptsIntegral P φ g = 0 := by
   unfold ptsIntegral

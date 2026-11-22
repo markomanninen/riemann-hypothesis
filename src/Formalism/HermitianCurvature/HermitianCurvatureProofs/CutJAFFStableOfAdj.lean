@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableGerm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableLoc
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableEquivOps
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableGerm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableLoc
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableEquivOps
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA.FFS
 

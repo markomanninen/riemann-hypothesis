@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.HdimEqZeroOfSubsingleton
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.HdimEqZeroOfSubsingleton
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -44,15 +48,15 @@ abbrev Hs (n : ℕ) : Type :=
 
 def d2 : C2 F →ₗ[R] C3 F := LinearMap.fst R _ _ ∘ₗ dTot2 F ∘ₗ LinearMap.inl R _ _
 
-variable {F} in
 
+variable {F} in
 def pulln {F' : C' ⥤ CommAlgCat.{0} R} (m : CoefMap (RingHom.id R) F F') (n : ℕ) : Cn F n →ₗ[R] Cn F' n where
   toFun f c := m.α (c.obj (Fin.last n)) (f (c ⋙ m.G))
   map_add' _ _ := funext fun _ ↦ map_add _ _ _
   map_smul' _ _ := funext fun _ ↦ m.smul _ _ _
 
-variable {F} in
 
+variable {F} in
 def AllQIso {F' : C' ⥤ CommAlgCat.{0} R} (m : CoefMap (RingHom.id R) F F') : Prop :=
   QIsoAt (0 : R →ₗ[R] Cn F 0) (dn F 0) (0 : R →ₗ[R] Cn F' 0) (dn F' 0) (pulln m 0) ∧
     ∀ n, QIsoAt (dn F n) (dn F (n + 1)) (dn F' n) (dn F' (n + 1)) (pulln m (n + 1))
@@ -96,8 +100,8 @@ structure BC [Algebra R R'] (F' : C ⥤ CommAlgCat.{0} R') where
   smul : ∀ (T : C) (r : R) (b : F.obj T), α T (r • b) = algebraMap R R' r • α T b
   bij : ∀ T : C, ∃ e : R' ⊗[R] F.obj T ≃ₗ[R'] F'.obj T, ∀ b, e (1 ⊗ₜ b) = α T b
 
-variable {F} in
 
+variable {F} in
 def BC.coef [Algebra R R'] {F' : C ⥤ CommAlgCat.{0} R'} (m : BC F F') : CoefMap (algebraMap R R') F F' where
   G := 𝟭 C
   α := m.α

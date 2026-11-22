@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.DiagramChase
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.DiagramChase
+
+@[expose] public section
 
 namespace LateralTheory.E.StepSPf
 

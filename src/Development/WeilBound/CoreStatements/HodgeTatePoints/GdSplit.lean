@@ -1,4 +1,8 @@
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LeadMinor
+module
+
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LeadMinor
+
+@[expose] public section
 
 open Module NumberField GlobalTheory.CompanionTheory.Ar.HT TensorProduct
 
@@ -78,10 +82,10 @@ theorem split_exact : ∀ (A : Type) [CommRing A] [IsDomain A] (P₁ P₂ : Type
     obtain ⟨y'', hy''⟩ := hqi (w - r x₀)
     refine ⟨x₀ + i (w - r x₀), (-w', y₀ - y''), Prod.ext ?_ ?_⟩
     · show w = r (x₀ + i (w - r x₀)) + a • -w'
-      rw [map_add, hw', smul_neg]
+      rw [map_add (f := _), hw', smul_neg]
       abel
     · show q x₀ + a • y₀ = q (x₀ + i (w - r x₀)) + a • (y₀ - y'')
-      rw [map_add, hy'', smul_sub]
+      rw [map_add (f := _), hy'', smul_sub]
       abel
   obtain ⟨w', hw'⟩ := hri (r x)
   obtain ⟨y'', hy''⟩ := hqi (r x)

@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.CechPic GlobalTheory.AbDual GlobalTheory.DualCon
 open scoped CategoryTheory.Obj
@@ -16,7 +21,7 @@ def addCls (A : Over S) [GrpObj A] (T : Over S) : AddSubgroup (Pic (A ⊗ T).lef
   carrier := {c | ∀ (Y : Over S) (a a' : Y ⟶ A) (t : Y ⟶ T),
     CechPic.pull (lift (a * a') t).left c = CechPic.pull (lift a t).left c + CechPic.pull (lift a' t).left c}
   add_mem' {c d} hc hd Y a a' t := by
-    simp only [map_add]
+    simp only [map_add (f := _)]
     rw [hc Y a a' t, hd Y a a' t]
     abel
   zero_mem' Y a a' t := by simp only [map_zero, add_zero]
@@ -37,8 +42,8 @@ def resCls {T' T : Over S} (u : T' ⟶ T) : addCls A T →+ addCls A T' :=
         ← Over.comp_left, comp_lift, lift_fst, lift_snd_assoc]
       exact c.2 Y a a' (t ≫ u)
 
-variable (A) in
 
+variable (A) in
 def famFunctor : (Over S)ᵒᵖ ⥤ CommGrpCat.{1} where
   obj T := CommGrpCat.of (Multiplicative (addCls A T.unop))
   map g := CommGrpCat.ofHom (AddMonoidHom.toMultiplicative (resCls (A := A) g.unop))
@@ -120,7 +125,7 @@ theorem rep_isDual : ∀ (S : Scheme.{0}) (A B : Over S) [GrpObj A] (P : LB (A �
     have hμ : ptCls h (B ⊗ B) μ[B] = ptCls h _ (fst B B) + ptCls h _ (snd B B) :=
       Equiv.ofBijective_apply_symm_apply (ptCls h (B ⊗ B)) (ptCls_bij h _) _
     intro Y x y
-    rw [Hom.mul_def, ptCls_comp, hμ, map_add, ← ptCls_comp, ← ptCls_comp, lift_fst, lift_snd]
+    rw [Hom.mul_def, ptCls_comp, hμ, map_add (f := _), ← ptCls_comp, ← ptCls_comp, lift_fst, lift_snd]
   have hone : ∀ (Y : Over S), ptCls h Y (1 : Y ⟶ B) = 0 := by
     have hη : ptCls h (𝟙_ (Over S)) η[B] = 0 :=
       Equiv.ofBijective_apply_symm_apply (ptCls h _) (ptCls_bij h _) 0

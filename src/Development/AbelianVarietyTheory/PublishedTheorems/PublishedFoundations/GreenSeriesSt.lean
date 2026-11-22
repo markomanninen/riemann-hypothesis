@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.StandardFiveNontrivial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.StandardFiveNontrivial
+
+@[expose] public section
 
 open Polynomial
 namespace GlobalTheory.Published

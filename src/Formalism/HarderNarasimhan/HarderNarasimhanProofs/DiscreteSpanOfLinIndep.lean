@@ -1,7 +1,11 @@
-import Formalism.HarderNarasimhan.StatementPl
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
-import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
-import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
+module
+
+public import Formalism.HarderNarasimhan.StatementPl
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
+
+@[expose] public section
 
 open Module NumberField
 
@@ -26,7 +30,7 @@ theorem realize_apply1 (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι 
 
 theorem realize_injective (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
     (hX : ∀ v, IsUnit (X v).det) : Function.Injective (Formalism.HermitianLatticesTheory.realize b X) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   have hf : ∀ v i, Formalism.HermitianLatticesTheory.fcoord b X v x i = 0 := by
     intro v i
@@ -55,7 +59,8 @@ theorem sum_embedding_eq_zero {t : Free.ChooseBasisIndex ℤ (𝓞 K) → ℝ}
     rcases InfinitePlace.embedding_mk_eq φ with hφ | hφ
     · simpa [hφ] using h (InfinitePlace.mk φ)
     · have h2 := congrArg (starRingEnd ℂ) (h (InfinitePlace.mk φ))
-      simpa [hφ, map_sum, map_mul, Complex.conj_ofReal] using h2
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [hφ, map_sum, map_mul, Complex.conj_ofReal] using h2
   have hli := (canonicalEmbedding.latticeBasis K).linearIndependent
   rw [Fintype.linearIndependent_iff] at hli
   have hz := hli (fun k => (t k : ℂ)) (by

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.SHenCut
+module
+
+public import Development.EtaleCohomology.KummerTheory.SHenCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits GlobalTheory.EtC Polynomial

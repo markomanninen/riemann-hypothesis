@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -32,7 +36,7 @@ def powModP (p : ℕ) (hp : p.Prime) (B : Type) [CommRing B] :
   map_zero' := by simp [zero_pow hp.ne_zero]
   map_add' x y := by
     obtain ⟨r, hr⟩ := exists_add_pow_prime_eq hp x y
-    rw [hr, map_add, map_add]
+    rw [hr, map_add (f := _), map_add (f := _)]
     have : Ideal.Quotient.mk (Ideal.span {(p : B)}) ((p : B) * x * y * r) = 0 := by
       rw [Ideal.Quotient.eq_zero_iff_mem, mul_assoc, mul_assoc]
       exact Ideal.mul_mem_right _ _ (Ideal.mem_span_singleton_self _)

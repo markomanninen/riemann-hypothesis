@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.WeilJacquetShalikaLaw
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.WeilJacquetShalikaLaw
+
+@[expose] public section
 
 noncomputable section
 
@@ -121,7 +125,7 @@ theorem step_loc (i : ℕ) (s : ℝ)
     obtain ⟨yb, hyb, hvb⟩ := hb
     refine ⟨ya + yb, ?_, VGe_add hva hvb⟩
     show M.emb (i + 1) (ya + yb) = C.Klin i (M.emb i (a + b))
-    rw [map_add, map_add, map_add, hya, hyb]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), hya, hyb]
     rfl
   | smul r a _ ha =>
     obtain ⟨ya, hya, hva⟩ := ha
@@ -185,7 +189,7 @@ theorem base_map_mem_local_lattice {D : D7} (T : TwForms D) (u : D.what₂.Word)
   induction hx using Submodule.span_induction with
   | mem x hx => exact Submodule.subset_span ((T.twist_preserves_base_lattice u μ x).1 hx)
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
   | smul r a _ ha =>
     rw [Subring.smul_def, map_smul, ← Subring.smul_def]
     exact Submodule.smul_mem _ r ha

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.nakayama
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.nakayama
+
+@[expose] public section
 
 open Matrix Filter NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 
@@ -44,7 +48,7 @@ private theorem sc_count (S T B : Submodule A C) [Finite (B.map T.mkQ)] (F : Fin
     obtain ⟨f, hf, b, hb, hT⟩ := h x hx
     refine ⟨(⟨T.mkQ b, Submodule.mem_map_of_mem hb⟩, ⟨f, hf⟩), ?_⟩
     show T.mkQ b + T.mkQ f = T.mkQ x
-    rw [← map_add, Submodule.mkQ_apply, Submodule.mkQ_apply, Submodule.Quotient.eq]
+    rw [← map_add (f := _), Submodule.mkQ_apply, Submodule.mkQ_apply, Submodule.Quotient.eq]
     convert T.neg_mem hT using 1
     abel
   have hfin : (Set.range φ).Finite := Set.finite_range φ
@@ -237,7 +241,7 @@ private theorem scS_lim {t : A} (Φ : C →ₗ[A] C') [IsPrecomplete (Ideal.span
   have hx' : x = rem n + t ^ j • Q n := by rw [← (hrem n).2]; abel
   refine ⟨b + t ^ j • Φ a, ?_⟩
   rw [smul_add, hb, smul_comm (t ^ n) (t ^ j), ← map_smul Φ (t ^ n) a, ha, hx']
-  simp only [map_add, map_sub, map_smul, smul_sub]
+  simp only [map_add (f := _), map_sub, map_smul, smul_sub]
   abel
 
 private theorem sc_kerdiv {t : A} (Φ : C →ₗ[A] C') (h : ∀ y : C', t • y = 0 → y = 0) {j : ℕ}

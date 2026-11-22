@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.LocalLevelOutsideSigma
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.FinFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.LocalLevelOutsideSigma
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.FinFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,14 +44,14 @@ private theorem map_inj {k k' : Type} [Field k] [Field k'] {n : ℕ} (i : k ≃+
   have := congrArg (fun x : GL (Fin n) k' => (x : Matrix (Fin n) (Fin n) k') a b) h
   simpa using this
 
-private theorem levCore (hF : Fit T S VL A) {n : ℕ} (x : UA L n) (hx : x ∈ finU L n)
+private theorem levCore (hF : Fit T S VL A) {n : ℕ} (x : UA L n) (hx : x ∈ finU (E := L) (n := n))
     (P : Pl (Lp L) → Prop) (E : ∀ v, v ∈ A.Sg → GL (Fin n) (Kv v))
-    (hK : ∀ v, P v ↔ ∀ w, un w = v → cLoc w x ∈ GlobalTheory.LFun.KGL w n)
+    (hK : ∀ v, P v ↔ ∀ w, un w = v → cLoc w x ∈ GlobalTheory.LFun.KGL w (n := n))
     (hE : ∀ w (_ : w ∈ S) (h : IsSplitAt w) (hv : un w ∈ A.Sg),
       cLoc w x = Matrix.GeneralLinearGroup.map ((T w h).i : Kv (un w) →+* Kw w) (E (un w) hv)) :
-    ((∀ v (h : v ∈ A.Sg), E v h ∈ (A.V v).J n) ∧ ∀ v ∉ A.Sg, P v) ↔ x ∈ lev (Kall L n) S VL := by
-  have memL : x ∈ lev (Kall L n) S VL ↔
-      (x ∈ finU L n ∧ ∀ w, cLoc w x ∈ GlobalTheory.LFun.KGL w n) ∧ ∀ w ∈ S, cLoc w x ∈ (VL w).J n := by
+    ((∀ v (h : v ∈ A.Sg), E v h ∈ (A.V v).J n) ∧ ∀ v ∉ A.Sg, P v) ↔ x ∈ lev (Kall (L := L) n) S VL := by
+  have memL : x ∈ lev (Kall (L := L) n) S VL ↔
+      (x ∈ finU (E := L) (n := n) ∧ ∀ w, cLoc w x ∈ GlobalTheory.LFun.KGL w (n := n)) ∧ ∀ w ∈ S, cLoc w x ∈ (VL w).J n := by
     simp [lev, Kall, Subgroup.mem_inf, Subgroup.mem_iInf]
   rw [memL]
   have loc : ∀ w (hw : w ∈ S) (h : IsSplitAt w) (hv : un w ∈ A.Sg),
@@ -62,7 +66,7 @@ private theorem levCore (hF : Fit T S VL A) {n : ℕ} (x : UA L n) (hx : x ∈ f
       · obtain ⟨w0, hw0, e⟩ := (hF.sg _).1 hv
         have sp := hF.pl.split w0 hw0
         have hv0 : un w0 ∈ A.Sg := e ▸ hv
-        have hk : cLoc w0 x ∈ GlobalTheory.LFun.KGL w0 n := by
+        have hk : cLoc w0 x ∈ GlobalTheory.LFun.KGL w0 (n := n) := by
           rw [hE w0 hw0 sp hv0]
           exact ((T w0 sp).K n _).2 (((Sig.finFacts _ (A.V (un w0))).2.2.2.2.2 n).2.2.2 (h1 _ hv0))
         exact (Br.uaFacts L n).2.2.2.2.2.2.2 w0 sp x hk w e.symm
@@ -73,7 +77,7 @@ private theorem levCore (hF : Fit T S VL A) {n : ℕ} (x : UA L n) (hx : x ∈ f
     obtain ⟨w0, hw0, rfl⟩ := (hF.sg _).1 hv
     exact (loc w0 hw0 (hF.pl.split w0 hw0) hv).1 (h2 w0 hw0)
 
-private theorem elCore (hF : Fit T S VL A) {n : ℕ} (x : UA L n) (hx : x ∈ finU L n)
+private theorem elCore (hF : Fit T S VL A) {n : ℕ} (x : UA L n) (hx : x ∈ finU (E := L) (n := n))
     (O : Pl (Lp L) → Prop) (E : ∀ v, v ∈ A.Sg → GL (Fin n) (Kv v)) (d : ParN (Lp L) n)
     (hO : ∀ v, O v ↔ ∀ w, un w = v → cLoc w x = 1)
     (hE : ∀ w (_ : w ∈ S) (h : IsSplitAt w) (hv : un w ∈ A.Sg),
@@ -142,16 +146,16 @@ private theorem hsS (w : Plc L) (hw : w ∈ S) (h : IsSplitAt w) (hv : un w ∈ 
       Matrix.GeneralLinearGroup.map ((T w h).i : Kv (un w) →+* Kw w) (eD (A.hs _ hv) ((g : DA B.Δ).1 (un w))) := by
   rw [hB.splS w (T w h) g, eD_congr (hF.s w hw h) (A.hs _ hv) (T w h).hs]
 
-private theorem hfS (g : SA B.Δ) : (B.bS g : UA L 2) ∈ finU L 2 := (B.bS g).2.1
+private theorem hfS (g : SA B.Δ) : (B.bS g : UA L 2) ∈ finU (E := L) (n := 2) := (B.bS g).2.1
 
 include hB hF in
-private theorem cl1 (hA : A.Ok) (g : GA B.Δ) : g ∈ A.dat.UG ↔ (B.bG g : UA L 3) ∈ lev (Kall L 3) S VL :=
+private theorem cl1 (hA : A.Ok) (g : GA B.Δ) : g ∈ A.dat.UG ↔ (B.bG g : UA L 3) ∈ lev (Kall (L := L) 3) S VL :=
   ((datOk _ _ A hA).2.2.2.1 g).trans (levCore T hF _ (B.bG g).2 (fun v => g.1 v ∈ KU (Ov v) _)
     (fun v h => eU (A.hs v h) (g.1 v)) (fun v => hB.KG g v) (fun w hw h hv => hsG hB T hF w hw h hv g))
 
 include hB hF in
 private theorem cl2 (hA : A.Ok) (g : SA B.Δ) :
-    (g : DA B.Δ) ∈ A.dat.U2 ↔ (B.bS g : UA L 2) ∈ lev (Kall L 2) S VL :=
+    (g : DA B.Δ) ∈ A.dat.U2 ↔ (B.bS g : UA L 2) ∈ lev (Kall (L := L) 2) S VL :=
   ((datOk _ _ A hA).2.2.2.2 (g : DA B.Δ)).trans (levCore T hF _ (hfS g) (fun v => (g : DA B.Δ).1 v ∈ KD _ (Ov v))
     (fun v h => eD (A.hs v h) ((g : DA B.Δ).1 v)) (fun v => hB.KS g v) (fun w hw h hv => hsS hB T hF w hw h hv g))
 

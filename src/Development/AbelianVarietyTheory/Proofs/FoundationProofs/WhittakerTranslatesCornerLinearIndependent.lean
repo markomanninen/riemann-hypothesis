@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.StandardFiveNontrivial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.StandardFiveNontrivial
+
+@[expose] public section
 
 noncomputable section
 open Polynomial Classical GlobalTheory.BadShare
@@ -243,7 +247,8 @@ lemma step {M : Type} [AddCommGroup M] [Module ℂ M] (ρ : Representation ℂ (
   have h3 : ∑ v : Fin N → ZMod g,
       L.ψ (-((L.co m : ZMod g) * v m)) • ρ (colElt n (tr v) (htr v n le_rfl)) (∑ h, φ h • ρ h x) = 0 := by
     simp [hs]
-  simp only [map_sum, Finset.smul_sum] at h3
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.smul_sum] at h3
   rw [Finset.sum_comm, Finset.sum_congr rfl fun h _ => ((Finset.sum_congr rfl fun v _ => h1 v h).trans (Finset.sum_smul.symm.trans (h2 h))), ← Finset.smul_sum] at h3
   exact (smul_eq_zero.1 h3).resolve_left (Nat.cast_ne_zero.2 Fintype.card_ne_zero)
 
@@ -280,7 +285,8 @@ theorem translates_independent : ∀ (g : ℕ) [Fact g.Prime] (N : ℕ), ∀ (M 
     have hs' : ∑ p, φ (h₀ * p) • ρ p x = 0 := by
       have e := Equiv.sum_comp (Equiv.mulLeft h₀) (fun h => φ h • ρ h x)
       have e2 := congrArg (ρ h₀⁻¹) (e.trans hs)
-      rw [map_sum, map_zero] at e2
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero] at e2
       rw [← e2]
       refine Finset.sum_congr rfl fun p _ => ?_
       simp only [Equiv.coe_mulLeft, map_smul]

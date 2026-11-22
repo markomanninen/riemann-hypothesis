@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.TracePow
-import GroundTheory.AutomorphicForms.GeometricLemmaFiltration
-import GroundTheory.AutomorphicForms.WhittakerCells
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.TracePow
+public import GroundTheory.AutomorphicForms.GeometricLemmaFiltration
+public import GroundTheory.AutomorphicForms.WhittakerCells
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,10 +44,11 @@ private theorem doubleCoset_eq_cell (w : Equiv.Perm (Fin n)) :
         (GroundTheory.Automorphic.Iwasawa.blockUpper E n (Fin.val : Fin n → ℕ)) =
       cell (GlobalTheory.SmGL.borel E (Fin n)) (GlobalTheory.SmGL.unipB E (Fin n)) (permGL E w) := by
   have hset : ((GroundTheory.Automorphic.Iwasawa.blockUpper E n (Fin.val : Fin n → ℕ)) : Set (GL (Fin n) E)) =
-      ((GroundTheory.Automorphic.borel n E) : Set (GL (Fin n) E)) := by
+      ((GroundTheory.Automorphic.Iwasawa.borel E n) : Set (GL (Fin n) E)) := by
     ext g
     simp only [SetLike.mem_coe]
-    rw [mem_blockUpper_iff, mem_autBorel_iff]
+    rw [mem_blockUpper_iff, ← mem_autBorel_iff]
+    rfl
   ext g
   constructor
   · intro hg

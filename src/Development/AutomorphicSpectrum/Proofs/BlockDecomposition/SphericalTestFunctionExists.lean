@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.IsEpCont
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SiegelConj
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.IsEpCont
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SiegelConj
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 set_option synthInstance.maxSize 1000
@@ -28,14 +32,14 @@ theorem contDiff_normAtPlace_sq (w : InfinitePlace k) :
       rw [normAtPlace_apply_of_isReal hw]
     rw [h]
     exact (contDiff_norm_sq ℝ).comp
-      ((contDiff_apply ℝ ℝ (⟨w, hw⟩ : {w : InfinitePlace k // w.IsReal})).comp contDiff_fst)
+      ((contDiff_apply ℝ (fun _ => ℝ) (⟨w, hw⟩ : {w : InfinitePlace k // w.IsReal})).comp contDiff_fst)
   · have hc : w.IsComplex := InfinitePlace.not_isReal_iff_isComplex.mp hw
     have h : (fun u : mixedSpace k => normAtPlace w u ^ 2) = fun u => ‖u.2 ⟨w, hc⟩‖ ^ 2 := by
       funext u
       rw [normAtPlace_apply_of_isComplex hc]
     rw [h]
     exact (contDiff_norm_sq ℝ).comp
-      ((contDiff_apply ℝ ℂ (⟨w, hc⟩ : {w : InfinitePlace k // w.IsComplex})).comp contDiff_snd)
+      ((contDiff_apply ℝ (fun _ => ℂ) (⟨w, hc⟩ : {w : InfinitePlace k // w.IsComplex})).comp contDiff_snd)
 
 theorem contDiff_q₀ : ContDiff ℝ (∞) (q₀ (k := k)) := by
   unfold q₀
@@ -46,7 +50,8 @@ theorem contDiff_qI {ι : Type} [Fintype ι] : ContDiff ℝ (∞) (qI (k := k) (
   unfold qI
   apply ContDiff.sum
   intro i _
-  have hi : ContDiff ℝ (∞) fun u : ι → mixedSpace k => u i := contDiff_apply ℝ (mixedSpace k) i
+  have hi : ContDiff ℝ (∞) fun u : ι → mixedSpace k => u i :=
+    contDiff_apply ℝ (fun _ => mixedSpace k) i
   exact (contDiff_q₀ (k := k)).comp hi
 
 theorem q₀_nonneg (u : mixedSpace k) : 0 ≤ q₀ u := by

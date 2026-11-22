@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TwistBaseCoefficientRingResidueFieldFinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TwistBaseCoefficientRingResidueFieldFinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem exists_basis_coord_lattice {O V : Type} [CommRing O] [IsDomain O] [IsPri
     | zero => intro s; exact ⟨0, by simp⟩
     | add x y _ _ hx hy =>
       intro s
-      rw [map_add, Finsupp.add_apply]
+      rw [map_add (f := _), Finsupp.add_apply]
       exact add_mem (hx s) (hy s)
     | smul a x _ hx =>
       intro s
@@ -104,10 +108,12 @@ theorem sideEv_end (b : Bool) (T : Module.End K (V b)) (f : V b) (y : Σ b', Fin
   classical
   have h0 : T f = ∑ t, (e b).repr f t • T (e b t) := by
     conv_lhs => rw [← (e b).sum_repr f]
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
   have h1 : sideEv iC e b (T f) y =
       ∑ t, iC ((e b).repr f t) * sideEv iC e b (T (e b t)) y := by
-    rw [h0, map_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h0, map_sum, Finset.sum_apply]
     exact Finset.sum_congr rfl fun t _ => sideEv_smul iC e b _ _ y
   rw [h1, Fintype.sum_sigma, Finset.sum_eq_single b]
   · refine Finset.sum_congr rfl fun t _ => ?_

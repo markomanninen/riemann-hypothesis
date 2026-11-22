@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CircleHomEqZpow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CircleHomEqZpow
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory.UnitaryChar

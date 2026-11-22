@@ -1,5 +1,9 @@
-import Formalism.LocalRingCardinality.DataDIV
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+module
+
+public import Formalism.LocalRingCardinality.DataDIV
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+
+@[expose] public section
 
 noncomputable section
 

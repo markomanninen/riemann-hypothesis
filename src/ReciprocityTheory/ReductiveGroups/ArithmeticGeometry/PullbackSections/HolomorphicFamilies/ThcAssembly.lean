@@ -1,5 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.ShortPlace
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.WeightAssemblyClause
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.FullExists
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.WeightAssemblyClause
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 

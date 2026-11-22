@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CubeTotalComplexAcyclicOfSlicesInductionOnCard
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.TwistedSectionsLocaliseToChartsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CubeTotalComplexAcyclicOfSlicesInductionOnCard
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.TwistedSectionsLocaliseToChartsStatement
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory AlgebraicGeometry DirectSum TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
@@ -38,8 +42,8 @@ theorem secUnit_compat (σ : LB.Sec H) (k l : H.ι) {O : Y.Opens} (hH : O ≤ H.
       res hH (H.g k l) * secUnit σ l (hH.trans inf_le_right) h :=
   Units.ext (GlobalTheory.LB.sec_rel σ k l _ (hH.trans inf_le_right) hH)
 
-variable (M) in
 
+variable (M) in
 def divPow (σ : LB.Sec H) (h : V ≤ nonzeroLocus σ) (t : ℤ) :
     SecOn (tw M H t) V →ₗ[Γ(Y, V)] SecOn (tw M H 0) V where
   toFun x := twMk 0
@@ -93,7 +97,7 @@ def dehom : GrSum hx →ₛₗ[MvPolynomial.eval₂Hom (cst f V) r] SecOnR f (tw
         r j • GrSum.desc hx (fun t => SecOnR.lin f (divPow M (s i) h t)) m := by
       induction m using DirectSum.Decomposition.inductionOn (GrSum.grading hx) with
       | zero => simp
-      | add a b ha hb => rw [smul_add, map_add, map_add, smul_add, ha, hb]
+      | add a b ha hb => rw [smul_add, map_add (f := _), map_add (f := _), smul_add, ha, hb]
       | @homogeneous n a =>
         obtain ⟨_, a, rfl⟩ := a
         rw [GrSum.X_smul_of, GrSum.desc_of, GrSum.desc_of]
@@ -105,15 +109,15 @@ def dehom : GrSum hx →ₛₗ[MvPolynomial.eval₂Hom (cst f V) r] SecOnR f (tw
     | C a =>
       rw [MvPolynomial.eval₂Hom_C, ← MvPolynomial.algebraMap_eq, algebraMap_smul, map_smul]
       rfl
-    | add p q hp hq => rw [add_smul, map_add, map_add, add_smul, hp, hq]
+    | add p q hp hq => rw [add_smul, map_add (f := _), map_add (f := _), add_smul, hp, hq]
     | mul_X p j hp => rw [mul_smul, hp, hX, map_mul, MvPolynomial.eval₂Hom_X', mul_smul]
 
 theorem dehom_of (t : ℤ) (a : SecOnR f (tw M H t) V) :
     dehom f s hx i h r hr (GrSum.of hx t a) = SecOnR.lin f (divPow M (s i) h t) a :=
   GrSum.desc_of hx _ t a
 
-include h hr in
 
+include h hr in
 theorem ratio_self : r i = 1 := by
   refine Y.sheaf.eq_of_locally_eq' (fun k : H.ι => V ⊓ H.U k) V
     (fun k => homOfLE inf_le_left) (fun x hx => ?_) _ _ fun k => ?_

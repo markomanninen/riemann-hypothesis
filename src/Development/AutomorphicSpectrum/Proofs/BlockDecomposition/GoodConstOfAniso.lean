@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableIffMemL2
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableIffMemL2
+
+@[expose] public section
 
 noncomputable section
 

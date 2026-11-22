@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.QuotientMetricDivisors.StatementE
+module
+
+public import Mathlib
+public import Formalism.QuotientMetricDivisors.StatementE
+
+@[expose] public section
 
 open Finset
 
@@ -21,8 +25,8 @@ lemma absE_dsum_le {J Pl : Type} [Fintype J] [Fintype Pl] (g : J → Pl → ℝ)
     _ = (Fintype.card Pl : ℝ) * c := by rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
     _ ≤ f * c := mul_le_mul_of_nonneg_right hP hc
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem error_absorption : AbsorbE := by
   intro J Pl _ _ TT _ x eps L b a rd La B0 Nc xe m f k N S t η w'' b' dC lam0 C0 Lpass Eb e6 eP
     logOm kk eK pq w eE δ hx heps hL hb ha hrd hrdL hxL hLa hB0 hNc hxe hJ hPl hm hf hk hN hS ht

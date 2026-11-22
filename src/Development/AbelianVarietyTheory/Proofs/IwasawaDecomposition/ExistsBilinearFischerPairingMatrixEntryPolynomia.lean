@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColLieApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColLieApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,6 @@ def wt (α : σ →₀ ℕ) : ℂ := ∏ v, ((α v).factorial : ℂ)
 
 theorem wt_ne_zero (α : σ →₀ ℕ) : wt α ≠ 0 :=
   Finset.prod_ne_zero_iff.2 fun v _ => Nat.cast_ne_zero.2 (Nat.factorial_ne_zero _)
-
-theorem wt_zero : wt (0 : σ →₀ ℕ) = 1 := by simp [wt]
 
 theorem wt_add_single (α : σ →₀ ℕ) (v : σ) : wt (α + Finsupp.single v 1) = wt α * ((α v : ℂ) + 1) := by
   classical
@@ -36,7 +38,7 @@ def pair : MvPolynomial σ ℂ →ₗ[ℂ] MvPolynomial σ ℂ →ₗ[ℂ] ℂ :
   (basisMonomials σ ℂ).constr ℂ fun α => wt α • lcoeff ℂ α
 
 theorem pair_monomial_one (α : σ →₀ ℕ) (Q : MvPolynomial σ ℂ) :
-    pair (monomial α 1) Q = wt α * coeff α Q := by
+    pair (monomial α 1) Q = wt α * AddMonoidAlgebra.coeff Q α := by
   have := (basisMonomials σ ℂ).constr_basis ℂ (fun α => wt α • lcoeff ℂ α) α
   rw [coe_basisMonomials] at this
   unfold pair
@@ -44,7 +46,7 @@ theorem pair_monomial_one (α : σ →₀ ℕ) (Q : MvPolynomial σ ℂ) :
   simp
 
 theorem pair_monomial (α : σ →₀ ℕ) (c : ℂ) (Q : MvPolynomial σ ℂ) :
-    pair (monomial α c) Q = c * (wt α * coeff α Q) := by
+    pair (monomial α c) Q = c * (wt α * AddMonoidAlgebra.coeff Q α) := by
   have : (monomial α c : MvPolynomial σ ℂ) = c • monomial α 1 := by
     rw [smul_monomial, smul_eq_mul, mul_one]
   rw [this, map_smul, LinearMap.smul_apply, pair_monomial_one, smul_eq_mul]
@@ -54,7 +56,7 @@ theorem pair_mul_X (P Q : MvPolynomial σ ℂ) (v : σ) : pair (P * X v) Q = pai
   | monomial α c =>
     rw [X, monomial_mul, mul_one, pair_monomial, pair_monomial, coeff_pderiv, wt_add_single]
     ring
-  | add P P' h h' => simp only [add_mul, map_add, LinearMap.add_apply, h, h']
+  | add P P' h h' => simp only [add_mul, map_add (f := _), LinearMap.add_apply, h, h']
 
 def lin (A : σ → σ → ℂ) : MvPolynomial σ ℂ →ₐ[ℂ] MvPolynomial σ ℂ :=
   aeval fun v => ∑ w, A v w • X w
@@ -64,7 +66,8 @@ theorem lin_X (A : σ → σ → ℂ) (v : σ) : lin A (X v) = ∑ w, A v w • 
 
 theorem pderiv_lin_X (A : σ → σ → ℂ) (v u : σ) : pderiv v (lin A (X u)) = C (A u v) := by
   classical
-  rw [lin_X, map_sum, Finset.sum_eq_single v]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [lin_X, map_sum, Finset.sum_eq_single v]
   · simp [smul_eq_C_mul]
   · intro w _ hw
     simp [pderiv_X, Pi.single_apply, hw]
@@ -75,10 +78,10 @@ theorem pderiv_lin (A : σ → σ → ℂ) (v : σ) (Q : MvPolynomial σ ℂ) :
   classical
   induction Q using MvPolynomial.induction_on with
   | C c => simp [lin]
-  | add P P' h h' => simp only [map_add, h, h', smul_add, Finset.sum_add_distrib]
+  | add P P' h h' => simp only [map_add (f := _), h, h', smul_add, Finset.sum_add_distrib]
   | mul_X P u h =>
     rw [map_mul, Derivation.leibniz, h, pderiv_lin_X]
-    simp only [Derivation.leibniz, smul_eq_mul, map_add, map_mul, smul_add, Finset.sum_add_distrib,
+    simp only [Derivation.leibniz, smul_eq_mul, map_add (f := _), map_mul, smul_add, Finset.sum_add_distrib,
       Finset.mul_sum, mul_smul_comm]
     congr 1
     rw [Finset.sum_eq_single u]
@@ -87,11 +90,11 @@ theorem pderiv_lin (A : σ → σ → ℂ) (v : σ) (Q : MvPolynomial σ ℂ) :
       simp [pderiv_X, Pi.single_apply, hw, Ne.symm hw]
     · simp
 
-theorem coeff_zero_lin (A : σ → σ → ℂ) (Q : MvPolynomial σ ℂ) : coeff 0 (lin A Q) = coeff 0 Q := by
+theorem coeff_zero_lin (A : σ → σ → ℂ) (Q : MvPolynomial σ ℂ) : AddMonoidAlgebra.coeff (lin A Q) 0 = AddMonoidAlgebra.coeff Q 0 := by
   change constantCoeff (lin A Q) = constantCoeff Q
   induction Q using MvPolynomial.induction_on with
   | C c => simp [lin]
-  | add P P' h h' => simp only [map_add, h, h']
+  | add P P' h h' => simp only [map_add (f := _), h, h']
   | mul_X P u h => simp [lin_X, map_sum, smul_eq_C_mul]
 
 theorem pair_lin (A : σ → σ → ℂ) (P Q : MvPolynomial σ ℂ) :
@@ -100,9 +103,10 @@ theorem pair_lin (A : σ → σ → ℂ) (P Q : MvPolynomial σ ℂ) :
   | C c =>
     have : lin A (C c) = C c := by simp [lin]
     rw [this, C_apply, pair_monomial, pair_monomial, coeff_zero_lin]
-  | add P P' h h' => simp only [map_add, LinearMap.add_apply, h, h']
+  | add P P' h h' => simp only [map_add (f := _), LinearMap.add_apply, h, h']
   | mul_X P u h =>
-    rw [pair_mul_X, pderiv_lin, map_mul, lin_X, Finset.mul_sum, map_sum, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [pair_mul_X, pderiv_lin, map_mul, lin_X, Finset.mul_sum, map_sum, map_sum, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun w _ => ?_
     rw [mul_smul_comm, map_smul, map_smul, LinearMap.smul_apply, pair_mul_X, h]
 
@@ -127,7 +131,7 @@ theorem pair_rep (ℓ : MvPolynomial σ ℂ →ₗ[ℂ] ℂ) (d : ℕ)
     split_ifs with hd
     · exact mul_div_cancel₀ _ (wt_ne_zero α)
     · rw [h α (not_le.1 hd), mul_zero]
-  | add P P' h h' => simp only [map_add, LinearMap.add_apply, h, h']
+  | add P P' h h' => simp only [map_add (f := _), LinearMap.add_apply, h, h']
 
 open Classical in
 theorem subst_eq_lin {ι : Type} [Fintype ι] {m n : ℕ} (a : ι → Matrix (Fin n) (Fin n) ℂ)

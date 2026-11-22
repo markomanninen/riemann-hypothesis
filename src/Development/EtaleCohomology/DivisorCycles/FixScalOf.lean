@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.DivisorCycles.CycleCountPf
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AevalEig
+module
+
+public import Development.EtaleCohomology.DivisorCycles.CycleCountPf
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AevalEig
+
+@[expose] public section
 
 open Matrix PositivityTheory.AutomorphicGaloisHodgeTate.Div Polynomial
 namespace LateralTheory.DivDb.ScalarFixedPointsUnderAeval

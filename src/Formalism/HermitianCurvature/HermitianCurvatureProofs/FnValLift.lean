@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ArelStar
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameTransport
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ArelStar
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameTransport
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ContDiff
@@ -21,7 +25,7 @@ theorem ιLev_apply_lev (g : Matrix (Fin (2 * r' + k + 1)) (Fin (2 * r' + k + 1)
   have hp := p.isLt
   have hq := q.isLt
   simp only [ιLev]
-  rw [dif_pos ⟨by omega, by omega⟩, dif_pos ⟨by omega, by omega⟩]
+  rw [dite_eq_left ⟨by omega, by omega⟩, dite_eq_left ⟨by omega, by omega⟩]
   congr 1 <;> ext <;> simp
 
 theorem ιLev_inj' {g g' : Matrix (Fin (2 * r' + k + 1)) (Fin (2 * r' + k + 1)) ℂ}
@@ -34,7 +38,7 @@ theorem contDiff_ιLev' : ContDiff ℝ ∞ (ιLev k i r') := by
   refine contDiff_pi.2 fun p => contDiff_pi.2 fun q => ?_
   unfold ιLev
   split_ifs
-  · exact (contDiff_apply ℝ ℂ _).comp (contDiff_apply ℝ (Fin (2 * r' + k + 1) → ℂ) _)
+  · exact (contDiff_apply ℝ (fun _ => ℂ) _).comp (contDiff_apply ℝ (fun _ => (Fin (2 * r' + k + 1) → ℂ)) _)
   all_goals exact contDiff_const
 
 theorem zeta_lift (z z' : Fin (2 * r' + k + 1) → ℂ) (g : Mx k r') :

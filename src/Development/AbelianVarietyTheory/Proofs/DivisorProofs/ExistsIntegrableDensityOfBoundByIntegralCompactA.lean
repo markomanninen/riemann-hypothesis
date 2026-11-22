@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 
 namespace GlobalTheory
@@ -39,7 +44,7 @@ theorem exists_integrable_density_of_bound_by_integral_compact : ∀ (X : Type) 
     rw [hexp] at h12
     have hint : ∫ x in K, ‖(f : X → ℂ) x‖ ∂μ = (eLpNorm (f : X → ℂ) 1 ν).toReal := by
       rw [integral_norm_eq_lintegral_enorm (hS f f.2).aestronglyMeasurable,
-        eLpNorm_one_eq_lintegral_enorm]
+        eLpNorm_one_eq_lintegral_eNorm (hS f f.2).aestronglyMeasurable]
     have hfin : eLpNorm (f : X → ℂ) 2 ν * ν Set.univ ^ (1 / 2 : ℝ) ≠ ⊤ :=
       ENNReal.mul_ne_top (hmem f).eLpNorm_ne_top
         (ENNReal.rpow_ne_top_of_nonneg (by norm_num) (measure_ne_top _ _))

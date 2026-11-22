@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.NumberFieldFamilies.NPartCNdTie
+module
+
+public import Formalism.LocalToGlobal.NumberFieldFamilies.NPartCNdTie
+
+@[expose] public section
 
 noncomputable section
 

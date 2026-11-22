@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.SliceBound
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.SliceUmg
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.SliceBound
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.SliceUmg
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction UpperTheory.V.C
 
 namespace UpperTheory.ConvolutionTheory.BW
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {S : Set (Pl E)} {n r s : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {S : Set (Pl E)} {n r s : ℕ}
 
 private theorem bnd : ∀ {n : ℕ} (d : Dat S n) (N : ℕ), ∃ C R : ℝ, ∀ (φ : Sm E n) (B : ℝ), Umg φ →
     (∀ g, ‖φ.1 g‖ ≤ B * AutomorphicForm.height g ^ N) → ∀ t, ‖d.comp φ.1 t‖ ≤ C * B * Real.exp (R * ‖t‖) := by
@@ -54,5 +58,5 @@ private theorem lin : ∀ {n : ℕ} (d : Dat S n) (φ ψ : Sm E n) (c : ℂ), Um
 end UpperTheory.ConvolutionTheory.BW
 
 theorem UpperTheory.ConvolutionTheory.BW.compBound :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.CompBound E :=
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.CompBound E :=
   fun _ _ _ _ _ _ d => ⟨UpperTheory.ConvolutionTheory.BW.bnd d, UpperTheory.ConvolutionTheory.BW.lin d⟩

@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
-import ReciprocityTheory.ThetaQuasiPeriods.Transl
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocal
+module
+
+public import Mathlib
+public import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
+public import ReciprocityTheory.ThetaQuasiPeriods.Transl
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocal
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,8 +83,8 @@ theorem gm_mul_comp {X X' Y Z : Scheme.{0}} (r : Z ⟶ Y) (q : Y ⟶ X) (q' : Y 
     gm (r ≫ q) z U a = gm (r ≫ q') z W b * gm (r ≫ q) z V d := by
   rw [gm_comp r q z U hU, gm_comp r q z V hV, gm_comp r q' z W hW, h, map_mul]
 
-include hc in
 
+include hc in
 theorem exists_section [∀ i, QuasiSeparatedSpace (D.obj i)] {i : I} (U : (D.obj i).Opens)
     (hU : IsCompact (U : Set (D.obj i))) (s : Γ(c.pt, c.π.app i ⁻¹ᵁ U)) :
     ∃ (j : I) (f : j ⟶ i) (t : Γ(D.obj j, D.map f ⁻¹ᵁ U))
@@ -99,8 +103,8 @@ theorem exists_section [∀ i, QuasiSeparatedSpace (D.obj i)] {i : I} (U : (D.ob
     (show c.π.app i ⁻¹ᵁ U ≤ c.π.app j.left ⁻¹ᵁ (D.map j.hom ⁻¹ᵁ U) by
       rw [← Scheme.Hom.comp_preimage, c.w]))).symm
 
-include hc in
 
+include hc in
 theorem exists_unit [∀ i, QuasiSeparatedSpace (D.obj i)] {i : I} (U : (D.obj i).Opens)
     (hU : IsCompact (U : Set (D.obj i))) (s : Γ(c.pt, c.π.app i ⁻¹ᵁ U)ˣ) :
     ∃ (j : I) (f : j ⟶ i) (t : Γ(D.obj j, D.map f ⁻¹ᵁ U)ˣ),
@@ -134,8 +138,8 @@ theorem exists_unit [∀ i, QuasiSeparatedSpace (D.obj i)] {i : I} (U : (D.obj i
   congr 2
   simp only [w]
 
-include hc in
 
+include hc in
 theorem exists_unit_eq {i : I} (U : (D.obj i).Opens)
     (hU : IsCompact (U : Set (D.obj i))) (s t : Γ(D.obj i, U)ˣ)
     (h : ∀ z, c.π.app i z ∈ U → gm (c.π.app i) z _ s = gm (c.π.app i) z _ t) :
@@ -254,8 +258,8 @@ theorem exists_generator_stage_of_unit_descent [∀ i, CompactSpace (D.obj i)] [
   refine Eq.trans ?_ (gm_pull_g M _ (𝟙 _) y _ _ (hle' _ k hk) (hle' _ l hl)).symm
   rw [Category.id_comp, D.map_comp]
 
-include hc in
 
+include hc in
 theorem exists_gen_stage [∀ i, CompactSpace (D.obj i)] [∀ i, QuasiSeparatedSpace (D.obj i)] {i : I}
     {M : LB (D.obj i)} (hM : M.IsLB) (h : ∃ t : LB.Gen (M.pull (c.π.app i)), t.IsGen) :
     ∃ (j : I) (f : j ⟶ i) (t : LB.Gen (M.pull (D.map f))), t.IsGen :=

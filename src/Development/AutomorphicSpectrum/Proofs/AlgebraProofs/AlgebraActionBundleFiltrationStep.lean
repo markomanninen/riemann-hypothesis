@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TwistApply
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SubAndQuotientBundles
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ShortExactFirstTermBundle
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TwistApply
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SubAndQuotientBundles
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ShortExactFirstTermBundle
+
+@[expose] public section
 
 noncomputable section
 
@@ -130,7 +134,8 @@ theorem exists_local (τ : A →+* Module.End K V) {r : ℕ} (χ : A →ₐ[k] k
       P y = ∑ s, d s • x s := fun d y hy => by
     have h1 : ∀ s, Θ s y = d s := fun s => by
       have h2 := hW1 s _ hy
-      rw [map_sub, map_sum, sub_eq_zero] at h2
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum, sub_eq_zero] at h2
       rw [h2]
       simp [hΘT]
     rw [hPa]
@@ -140,7 +145,8 @@ theorem exists_local (τ : A →+* Module.End K V) {r : ℕ} (χ : A →ₐ[k] k
     obtain ⟨d, hd⟩ := exists_coords τ x χ hc hspan z
     refine ⟨d, hd, ?_⟩
     have := apply_mem_of_mul_mem τ hmt hd
-    simpa [map_sub, map_sum] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sub, map_sum] using this
   have hPT : ∀ z, P (τ t z) - z ∈ idealV τ (RingHom.ker χ) := fun z => by
     obtain ⟨d, h1, h2⟩ := hT z
     rw [hPc d _ h2, ← neg_sub]
@@ -152,7 +158,8 @@ theorem exists_local (τ : A →+* Module.End K V) {r : ℕ} (χ : A →ₐ[k] k
       have := add_mem hz h2
       simpa using this
     rw [hPc d _ h3]
-    simpa [map_sum] using h3
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum] using h3
   · rw [hPa]
     exact sum_mem fun s _ => smul_mem_of_isBun C hL i (hint l s y hy) (hx s)
 

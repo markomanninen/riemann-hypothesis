@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PointHeight
-import Development.AbelianVarietyTheory.Definitions.Divisors.BlockSphereMeanLinForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointHeight
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BlockSphereMeanLinForm
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -11,10 +15,6 @@ open MvPolynomial NumberField
 namespace GlobalTheory.ChowHt
 
 attribute [local instance] MvPolynomial.gradedAlgebra
-
-def lineVanishingIdeal {k : Type} [Field k] {N : ℕ} (y : Fin N → k) : Ideal (MvPolynomial (Fin N) k) :=
-  (Ideal.homogeneousCore (homogeneousSubmodule (Fin N) k)
-    (vanishingIdeal k (Submodule.span k {y} : Set (Fin N → k)))).toIdeal
 
 theorem aeval_smul_of_isHomogeneous {k K : Type} [Field k] [Field K] [Algebra k K] {N d : ℕ}
     {g : MvPolynomial (Fin N) k} (hg : g.IsHomogeneous d) (t : K) (z : Fin N → K) :
@@ -30,31 +30,6 @@ theorem aeval_smul_of_isHomogeneous {k K : Type} [Field k] [Field K] [Algebra k 
     Finset.prod_pow_eq_pow_sum, hd]
   ring
 
-set_option autoImplicit false in
-open MvPolynomial NumberField in
-attribute [local instance] MvPolynomial.gradedAlgebra in
-private lemma linForm_isHomogeneous_one' {K : Type} [Field K] {N : ℕ} (c : Fin N → K) :
-    (_root_.GlobalTheory.ChowHt.Model.linForm c).IsHomogeneous 1 := by
-  unfold _root_.GlobalTheory.ChowHt.Model.linForm
-  refine IsHomogeneous.sum _ _ _ fun j _ => ?_
-  simpa using (isHomogeneous_C (Fin 1 × Fin N) (c j)).mul (isHomogeneous_X K ((0 : Fin 1), j))
 
-set_option autoImplicit false in
-open MvPolynomial NumberField in
-attribute [local instance] MvPolynomial.gradedAlgebra in
-theorem _root_.GlobalTheory.ChowHt.irreducible_linForm {K : Type} [Field K] {N : ℕ} {c : Fin N → K}
-    (hc : c ≠ 0) :
-    Irreducible (_root_.GlobalTheory.ChowHt.Model.linForm c) := by
-  obtain ⟨k, hk⟩ := Function.ne_iff.mp hc
-  have hk' : (_root_.GlobalTheory.ChowHt.Model.linForm c).coeff (Finsupp.single (0, k) 1) ≠ 0 := by
-    rw [_root_.GlobalTheory.ChowHt.Model.coeff_linForm]; exact hk
-  have hne : _root_.GlobalTheory.ChowHt.Model.linForm c ≠ 0 := by
-    intro h; rw [h, coeff_zero] at hk'; exact hk' rfl
-  refine irreducible_of_totalDegree_eq_one
-    ((linForm_isHomogeneous_one' c).totalDegree hne) fun x hx => ?_
-  refine isUnit_iff_ne_zero.mpr fun hx0 => hk' ?_
-  have := hx (Finsupp.single (0, k) 1)
-  rw [hx0] at this
-  exact zero_dvd_iff.mp this
 
 end GlobalTheory.ChowHt

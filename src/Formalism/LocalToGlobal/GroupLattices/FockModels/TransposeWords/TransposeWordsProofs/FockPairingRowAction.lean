@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FockPairingHighestWeight
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FockPairingHighestWeight
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -120,11 +124,11 @@ lemma tsact_rowAct_X (G : Matrix (Fin r) (Fin r) R) (v : Fin r × Fin n) :
   simp [rowAct]
 
 lemma tsact_coeff_zero (G : Matrix (Fin r) (Fin r) R) (h : MvPolynomial (Fin r × Fin n) R) :
-    coeff 0 (rowAct R G h) = coeff 0 h := by
+    AddMonoidAlgebra.coeff (rowAct R G h) 0 = AddMonoidAlgebra.coeff h 0 := by
   show MvPolynomial.constantCoeff (rowAct R G h) = MvPolynomial.constantCoeff h
   induction h using MvPolynomial.induction_on
   next a => simp [rowAct]
-  next p q hp hq => simp only [map_add, hp, hq]
+  next p q hp hq => simp only [map_add (f := _), hp, hq]
   next p v hp => simp [hp, rowAct]
 
 lemma tsact_chain (G : Matrix (Fin r) (Fin r) R) (b : Fin r) (s : Fin n) (h : MvPolynomial (Fin r × Fin n) R) :
@@ -132,12 +136,13 @@ lemma tsact_chain (G : Matrix (Fin r) (Fin r) R) (b : Fin r) (s : Fin n) (h : Mv
   classical
   induction h using MvPolynomial.induction_on with
   | C a => simp [rowAct]
-  | add p q hp hq => simp only [map_add, hp, hq, smul_add, Finset.sum_add_distrib]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq, smul_add, Finset.sum_add_distrib]
   | mul_X p v hp =>
     obtain ⟨c, t⟩ := v
     have hL : pderiv (b, s) (∑ d : Fin r, C (G c d) * X (d, t) : MvPolynomial (Fin r × Fin n) R)
         = if t = s then C (G c b) else 0 := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [pderiv_C_mul, pderiv_X, Pi.single_apply, Prod.mk.injEq]
       by_cases hts : t = s
       · subst hts
@@ -150,7 +155,7 @@ lemma tsact_chain (G : Matrix (Fin r) (Fin r) R) (b : Fin r) (s : Fin n) (h : Mv
       · subst hts
         simp [apply_ite, Finset.sum_ite_eq, smul_eq_C_mul, mul_comm]
       · simp [hts]
-    simp only [map_mul, Derivation.leibniz, smul_eq_mul, map_add, tsact_rowAct_X, hL, hp]
+    simp only [map_mul, Derivation.leibniz, smul_eq_mul, map_add (f := _), tsact_rowAct_X, hL, hp]
     simp only [smul_add, Finset.sum_add_distrib]
     rw [hR]
     simp only [Finset.mul_sum, Finset.sum_mul, mul_smul_comm]
@@ -166,7 +171,7 @@ theorem fock_pairing_row_action : FockRRowAct := by
     rw [h1, C_apply, tsact_monomial_left, tsact_monomial_left, tsact_coeff_zero]
   | add p q hp hq =>
     intro Q
-    rw [map_add, tsact_add_left, tsact_add_left, hp, hq]
+    rw [map_add (f := _), tsact_add_left, tsact_add_left, hp, hq]
   | mul_X p v hp =>
     intro Q
     rw [map_mul, tsact_rowAct_X, Finset.mul_sum, tsact_sum_left, tsact_X_mul, tsact_chain, tsact_sum_right]

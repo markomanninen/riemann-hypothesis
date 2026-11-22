@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.BasicLiftAll
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyContinuousOn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.BasicLiftAll
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyContinuousOn
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.R Formalism.FourierDecayAlt.Wd Formalism.FourierDecayAlt.Fr Formalism.REAL Formalism.QuantumDeterminants MeasureTheory GlobalTheory.HatNF Filter Topology
 
@@ -20,7 +24,7 @@ private lemma norm_opApply_le_of_polynomial_coeffs_lemma {k r : ℕ} {Wp Wq : Ty
       ∀ g ∈ _root_.Formalism.FourierDecayAlt.B.GV k r, ‖_root_.Formalism.FourierDecayAlt.B.opApply Θ G g‖ ≤ C * B * _root_.Formalism.FourierDecayAlt.B.gN g ^ ((κ : ℝ) - A) := by
   induction Θ with
   | nil => exact ⟨0, le_rfl, fun G B hG g _ => by
-      simp [_root_.Formalism.FourierDecayAlt.B.opApply, _root_.Formalism.FourierDecayAlt.P.B4.gN_rpow_nonneg, mul_nonneg (mul_nonneg le_rfl (_root_.Formalism.FourierDecayAlt.P.B4.cc_nonneg hG))]⟩
+      simp [_root_.Formalism.FourierDecayAlt.B.opApply]⟩
   | cons T Θ ih =>
     obtain ⟨C₁, hC₁0, hC₁⟩ := ih (fun S hS => hΘ S (List.mem_cons_of_mem _ hS))
     obtain ⟨hlen, Q, hQ, hcoef⟩ := hΘ T List.mem_cons_self
@@ -45,7 +49,7 @@ private lemma norm_opApply_le_of_polynomial_coeffs_lemma {k r : ℕ} {Wp Wq : Ty
       have := hCQ [] (by simp) (by simp) g hg
       simpa [_root_.Formalism.FourierDecayAlt.P.BetaSesquilinearity.Dw] using this
     have hterm : ‖(T.coef g) (_root_.Formalism.FourierDecayAlt.B.Rw T.word G g)‖ ≤ CQ * ν * B * _root_.Formalism.FourierDecayAlt.B.gN g ^ ((κ : ℝ) - A) := by
-      rw [hcoef, ContinuousLinearMap.smul_apply, ContinuousLinearMap.id_apply, norm_smul,
+      rw [hcoef, smul_apply, ContinuousLinearMap.id_apply, norm_smul,
         congrFun (_root_.Formalism.FourierDecayAlt.P.BetaSesquilinearity.Rw_scale T.word G) g, norm_smul, ← hν, sub_eq_add_neg,
         Real.rpow_add hgpos]
       calc ‖Q g‖ * (ν * ‖_root_.Formalism.FourierDecayAlt.B.Rw (List.map _root_.Formalism.FourierDecayAlt.P.BetaSesquilinearity.nrm T.word) G g‖)
@@ -86,9 +90,9 @@ private lemma continuousOn_opApply_of_polynomial_coeffs_lemma_2 {k r : ℕ} {Wp 
   rw [hfun]
   exact hQc.continuousOn.smul hRw
 
+
 open MeasureTheory Filter Topology in
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
-
 theorem _root_.GlobalTheory.HatNF.vecV_cut_polyOp : ∃ c₃ : ℝ, ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (P : _root_.Formalism.FourierDecayAlt.M.Par) (p : _root_.Formalism.FourierDecayAlt.KB.Pl P Wp Wq) (o κ : ℕ) (Θ : _root_.Formalism.FourierDecayAlt.B.DiffOp P.k P.r Wp Wq) (F : _root_.Formalism.FourierDecayAlt.B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (A : ℝ), _root_.Formalism.FourierDecayAlt.P.CutMP.PolyOp o κ Θ → _root_.Formalism.FourierDecayAlt.B.CkOn ⊤ (_root_.Formalism.FourierDecayAlt.B.GV P.k P.r) F → _root_.Formalism.FourierDecayAlt.B.InCC A o F → c₃ * ((P.r : ℝ) + 1) ^ 2 * ((P.r : ℝ) * ((2 * P.r + P.k + 1 : ℕ) : ℝ) + 1) ≤ A - 1 - κ → ∀ cut : ℕ → _root_.Formalism.FourierDecayAlt.B.Mat P.k P.r → ℂ, (∀ n g, cut n g = ((Real.smoothTransition ((4 - ∑ i, ∑ j, Complex.normSq ((((n : ℝ) + 1)⁻¹ • g) i j)) / 3) : ℝ) : ℂ)) → ∀ γ : _root_.Formalism.FourierDecayAlt.C.LPt, Filter.Tendsto (fun n => p.V (_root_.Formalism.FourierDecayAlt.B.opApply Θ (fun g => cut n g • F g)) γ) Filter.atTop (nhds (p.V (_root_.Formalism.FourierDecayAlt.B.opApply Θ F) γ)) := by
   obtain ⟨c₃, hc₃⟩ := _root_.Formalism.FourierDecayAlt.P.PBE.vecV_tendsto
   refine ⟨c₃, ?_⟩
@@ -147,7 +151,7 @@ theorem _root_.GlobalTheory.HatNF.vecV_cut_polyOp : ∃ c₃ : ℝ, ∀ (Wp Wq :
   intro g _
   set S : _root_.Formalism.FourierDecayAlt.B.Mat P.k P.r → ℝ := fun h => ∑ i, ∑ j, Complex.normSq (h i j) with hS
   have hScont : Continuous S :=
-    continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+    continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       Complex.continuous_normSq.comp ((continuous_apply j).comp (continuous_apply i))
   have hO : IsOpen {h | S h < S g + 1} := isOpen_lt hScont continuous_const
   obtain ⟨N, hN⟩ := exists_nat_ge (S g + 1)

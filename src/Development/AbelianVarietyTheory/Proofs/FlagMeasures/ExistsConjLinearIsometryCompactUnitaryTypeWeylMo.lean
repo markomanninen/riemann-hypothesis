@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormalizedFockFormPureTensorProperties
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIntertwinerOfSameHarishChandraParamUnitaryStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHarishChandraTypeDualWeylModuleFockNormStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ConjCoefficientsWeylModuleRowActNormFockStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InvariantPosDefFormEqSmulInnerOfIrreducibleStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DelSqIrreducibleUnitaryStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormalizedFockFormPureTensorProperties
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIntertwinerOfSameHarishChandraParamUnitaryStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHarishChandraTypeDualWeylModuleFockNormStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ConjCoefficientsWeylModuleRowActNormFockStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InvariantPosDefFormEqSmulInnerOfIrreducibleStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DelSqIrreducibleUnitaryStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.Forms Formalism.UG Matrix NumberField IsDedekindDomain
 open scoped InnerProductSpace TensorProduct
@@ -136,7 +140,8 @@ private theorem rowAct_rowAct' {r n : ℕ} (A B : Matrix (Fin r) (Fin r) ℂ)
       Formalism.GradedWeylDivisibility.rowAct ℂ (n := n) (B * A) := by
     apply MvPolynomial.algHom_ext
     intro v
-    simp only [AlgHom.comp_apply, Formalism.GradedWeylDivisibility.rowAct, MvPolynomial.aeval_X, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.comp_apply, Formalism.GradedWeylDivisibility.rowAct, MvPolynomial.aeval_X, map_sum, map_mul,
       MvPolynomial.aeval_C, MvPolynomial.algebraMap_eq, Matrix.mul_apply,
       Finset.mul_sum, Finset.sum_mul]
     rw [Finset.sum_comm]
@@ -267,9 +272,9 @@ theorem exists_conj_weyl : ∀ (k n : ℕ) (h : k = n) (lam : DomWeight n) (u : 
 
   obtain ⟨B, hB⟩ : ∃ B : W →ₗ⋆[ℂ] W →ₗ[ℂ] ℂ, ∀ x y, B x y = normFock lam (j0 y) (j0 x) :=
     ⟨LinearMap.mk₂'ₛₗ (starRingEnd ℂ) (RingHom.id ℂ) (fun x y => normFock lam (j0 y) (j0 x))
-      (fun x x' y => by simp only [map_add, normFock_add_right])
+      (fun x x' y => by simp only [map_add (f := _), normFock_add_right])
       (fun c x y => by simp only [map_smul, normFock_smul_right, starRingEnd_apply, smul_eq_mul])
-      (fun x y y' => by simp only [map_add, normFock_add_left'])
+      (fun x y y' => by simp only [map_add (f := _), normFock_add_left'])
       (fun c x y => by simp only [map_smul, normFock_smul_left', RingHom.id_apply, smul_eq_mul]),
       fun _ _ => rfl⟩
   haveI : FiniteDimensional ℂ W := hfd

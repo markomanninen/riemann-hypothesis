@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Ylb7.main :
     ∀ {G : Type} [inst : Group G] [inst_1 : TopologicalSpace G] {C : Set G},

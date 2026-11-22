@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.PowerSeriesAdicEval
 
@@ -38,7 +42,7 @@ theorem algHom_ext_of_isHausdorff {R A : Type*} [CommRing R] [CommRing A] [Algeb
   set G : PowerSeries R := PowerSeries.mk fun i => PowerSeries.coeff (i + n) F
   have : f F - f' F = f PowerSeries.X ^ n * (f G - f' G) := by
     conv_lhs => rw [e]
-    rw [map_add, map_add, map_mul, map_mul, map_pow, map_pow, algHom_coe, algHom_coe, ← hX]
+    rw [map_add (f := _), map_add (f := _), map_mul, map_mul, map_pow, map_pow, algHom_coe, algHom_coe, ← hX]
     ring
   rw [this]
   exact Ideal.mul_mem_right _ _ (Ideal.pow_mem_pow hy n)

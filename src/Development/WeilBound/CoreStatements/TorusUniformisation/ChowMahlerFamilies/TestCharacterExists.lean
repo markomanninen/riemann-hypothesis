@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FromNAdd
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.PolarisedFlagStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FromNAdd
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.PolarisedFlagStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointIdeal segreVec IsFlagFrame IsFlagPair SameGenericFibre IsModelOver divCycle)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg fnField)
@@ -37,7 +42,8 @@ theorem eq_of_root {R : Type} [CommRing R] [IsDomain R] [IsLocalRing R] (q : ℕ
   have h2 : (∑ i ∈ Finset.range q, x ^ i * y ^ (q - 1 - i)) = 1 :=
     mul_right_cancel₀ (sub_ne_zero.2 hne) (by rw [h1, _root_.one_mul])
   have h3 := congrArg (IsLocalRing.residue R) h2
-  rw [map_sum, map_one] at h3
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_one] at h3
   simp only [map_mul, map_pow, h] at h3
   rw [geom_sum₂_self] at h3
   have h4 : ((q : ℕ) : IsLocalRing.ResidueField R) = 0 := by
@@ -94,7 +100,7 @@ theorem core (p : ℕ) [Fact p.Prime] {R : Type} [CommRing R] [IsDomain R] [IsLo
   refine ⟨σ', ee, fun a b => ?_, key, fun τ => ?_⟩
   · rw [hσ, hσ, hσ]
     refine fund hpp n.ne_zero (hn ▸ hroot _ _) (hn ▸ hroot _ _) (hn ▸ hroot _ _) ?_
-    rw [← IsLocalRing.residue_eq_zero_iff, map_sub, map_sub, hχ, hχ, hχ, map_add]
+    rw [← IsLocalRing.residue_eq_zero_iff, map_sub, map_sub, hχ, hχ, hχ, map_add (f := _)]
     ring
   · ext a
     rw [← key, pow_succ, pow_mul, MulChar.pow_apply' _ hpp.ne_zero, ← key, ← map_pow]
@@ -157,7 +163,7 @@ theorem overC (p : ℕ) [Fact p.Prime] {O : Type} [CommRing O] [IsLocalRing O] {
 theorem inj_loc {A Ω O : Type} [CommRing A] [Field Ω] [Algebra A Ω] [IsIntegralClosure A ℤ Ω] (m : Ideal A) [m.IsPrime]
     [CommRing O] [Algebra A O] [IsLocalization.AtPrime O m] [Algebra O Ω] [IsScalarTower A O Ω] :
     Function.Injective (algebraMap O Ω) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro o ho
   obtain ⟨⟨a, s⟩, h⟩ := IsLocalization.surj m.primeCompl o
   have h1 := congrArg (algebraMap O Ω) h

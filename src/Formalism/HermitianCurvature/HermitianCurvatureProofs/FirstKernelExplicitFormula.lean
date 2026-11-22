@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.BlockKernelPropertiesOfSteps
-import Formalism.DoubleCosetMeasures.LatticeCoset
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CharacterOrthogonalityDual
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelQuotientFinite
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstKernelPropertiesOfHypotheses
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AddedBlockKernelSupport
+module
+
+public import Formalism.HermitianCurvature.BlockKernelPropertiesOfSteps
+public import Formalism.DoubleCosetMeasures.LatticeCoset
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CharacterOrthogonalityDual
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelQuotientFinite
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstKernelPropertiesOfHypotheses
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AddedBlockKernelSupport
+
+@[expose] public section
 
 open Matrix Formalism.DoubleCosetMeasures Formalism.FourierDecayAlt.A5
 open scoped ComplexConjugate
@@ -199,7 +203,6 @@ def toCos {w : Point K} (p : lowW K w.1 w.2 × upUniG K w.1.sum) : Cos R w :=
   (Quotient.mk _ p.1, QuotientGroup.mk p.2)
 
 open Classical in
-
 def Gterm (ψ : AddChar K ℂ) (w w' : Point K) (p : lowW K w.1 w.2 × upUniG K w.1.sum)
     (p' : lowW K w'.1 w'.2 × upUniG K w'.1.sum) : ℂ :=
   (if IsInt R (orbZ w p) ∧ IsInt R (orbZ w' p') then
@@ -221,10 +224,22 @@ theorem sec_pt (h : Point K) (c : Kˣ) :
   rcases x with x | x <;> rcases y with y | y
   · rw [blkM_ll]
     simp only [pt, eN_inl]
+    have hblk : ∀ (l : List ℕ) (j : ℕ), j < l.sum → blk l j < l.length := by
+      intro l
+      induction l with
+      | nil => simp
+      | cons a l ih =>
+        intro j hj
+        simp only [List.sum_cons] at hj
+        simp only [blk, List.length_cons]
+        split_ifs with h
+        · omega
+        · have htail := ih (j - a) (by omega)
+          omega
     change (if (y : ℕ) = revIn (h.1 ++ [1]) x then
       ((Function.update h.2 h.1.length c (blk (h.1 ++ [1]) x) : Kˣ) : K) else 0) = _
     rw [A5x7.revIn_app_lt 1 _ _ x.2, A5x7.blk_app_lt 1 _ _ x.2,
-      Function.update_of_ne (ne_of_lt (A5x7.blk_lt_length _ _ x.2))]
+      Function.update_of_ne (ne_of_lt (hblk _ _ x.2))]
   · rw [blkM_lr]
     simp only [pt, eN_inl, eN_inr]
     change (if h.1.sum = revIn (h.1 ++ [1]) x then
@@ -251,24 +266,24 @@ theorem sec_sLow (hN : N = m + 1) (A : Matrix (Fin m) (Fin m) K) (b a : Fin m �
     rw [eN_inr]
     omega
   simp only [Fintype.univ_unit, Finset.sum_singleton]
-  rw [dif_neg hinr, add_zero, ← Finset.sum_add_distrib]
+  rw [dite_eq_right hinr, add_zero, ← Finset.sum_add_distrib]
   apply Finset.sum_congr rfl
   intro i _
   have hi := i.isLt
   have hlt : ((eN hN (Sum.inl i) : Fin N) : ℕ) + 1 < N := by
     rw [eN_inl]
     omega
-  rw [dif_pos hlt]
+  rw [dite_eq_left hlt]
   by_cases h : i.val + 1 < m
   · have e : (⟨((eN hN (Sum.inl i) : Fin N) : ℕ) + 1, hlt⟩ : Fin N) = eN hN (Sum.inl ⟨i.val + 1, h⟩) := by
       ext
       simp [eN_inl]
-    rw [e, blkM_ll, dif_pos h, if_neg (by omega), add_zero]
+    rw [e, blkM_ll, dite_eq_left h, if_neg (by omega), add_zero]
   · have e : (⟨((eN hN (Sum.inl i) : Fin N) : ℕ) + 1, hlt⟩ : Fin N) = eN hN (Sum.inr ()) := by
       ext
       simp only [eN_inl, eN_inr]
       omega
-    rw [e, blkM_rl, dif_neg h, if_pos (by omega), zero_add]
+    rw [e, blkM_rl, dite_eq_right h, if_pos (by omega), zero_add]
 
 theorem sec_sUp (hN : N = m + 1) (A : Matrix (Fin m) (Fin m) K) (b a : Fin m → K) (d : K) :
     sUp (blkM hN A b a d) = sUp A + lastE b := by
@@ -278,24 +293,24 @@ theorem sec_sUp (hN : N = m + 1) (A : Matrix (Fin m) (Fin m) K) (b a : Fin m →
     rw [eN_inr]
     omega
   simp only [Fintype.univ_unit, Finset.sum_singleton]
-  rw [dif_neg hinr, add_zero, ← Finset.sum_add_distrib]
+  rw [dite_eq_right hinr, add_zero, ← Finset.sum_add_distrib]
   apply Finset.sum_congr rfl
   intro i _
   have hi := i.isLt
   have hlt : ((eN hN (Sum.inl i) : Fin N) : ℕ) + 1 < N := by
     rw [eN_inl]
     omega
-  rw [dif_pos hlt]
+  rw [dite_eq_left hlt]
   by_cases h : i.val + 1 < m
   · have e : (⟨((eN hN (Sum.inl i) : Fin N) : ℕ) + 1, hlt⟩ : Fin N) = eN hN (Sum.inl ⟨i.val + 1, h⟩) := by
       ext
       simp [eN_inl]
-    rw [e, blkM_ll, dif_pos h, if_neg (by omega), add_zero]
+    rw [e, blkM_ll, dite_eq_left h, if_neg (by omega), add_zero]
   · have e : (⟨((eN hN (Sum.inl i) : Fin N) : ℕ) + 1, hlt⟩ : Fin N) = eN hN (Sum.inr ()) := by
       ext
       simp only [eN_inl, eN_inr]
       omega
-    rw [e, blkM_lr, dif_neg h, if_pos (by omega), zero_add]
+    rw [e, blkM_lr, dite_eq_right h, if_pos (by omega), zero_add]
 
 theorem sec_lastE_vecMul {v : Matrix (Fin m) (Fin m) K} (hv : IsLowUni v) (ξ : Fin m → K) :
     lastE (ξ ᵥ* v) = lastE ξ := by
@@ -941,8 +956,8 @@ theorem iso_ex (D : iso_Dat R M₂ C₂ γ Φ₂ π₂ g₂ lam₂) (y : C₂) (
   rw [hx0, h, Submodule.Quotient.eq, LinearMap.mem_range] at h1
   obtain ⟨s, hs⟩ := h1
   have hs' : (s : K) = ((γ⁻¹ : Kˣ) : K) * k - ((γ⁻¹ : Kˣ) : K) * Φ₂ x0 := hs
-  refine ⟨x0 + s • g₂, by rw [map_add, map_smul, D.pg, smul_zero, add_zero, hx0], ?_⟩
-  rw [map_add, map_smul, D.Pg]
+  refine ⟨x0 + s • g₂, by rw [map_add (f := _), map_smul, D.pg, smul_zero, add_zero, hx0], ?_⟩
+  rw [map_add (f := _), map_smul, D.Pg]
   show Φ₂ x0 + (s : K) * (γ : K) = k
   rw [hs']
   have hγ : ((γ⁻¹ : Kˣ) : K) * (γ : K) = 1 := by simp
@@ -964,9 +979,9 @@ def iso_lift (D₂ : iso_Dat R M₂ C₂ γ Φ₂ π₂ g₂ lam₂) (D₁ : iso
   toFun := iso_liftFun D₂ D₁ φ hφ
   map_add' x y := by
     apply iso_uniq D₂
-    · rw [map_add, (iso_liftFun_spec D₂ D₁ φ hφ _).1, (iso_liftFun_spec D₂ D₁ φ hφ _).1,
+    · rw [map_add (f := _), (iso_liftFun_spec D₂ D₁ φ hφ _).1, (iso_liftFun_spec D₂ D₁ φ hφ _).1,
         (iso_liftFun_spec D₂ D₁ φ hφ _).1, map_add, map_add]
-    · rw [map_add, (iso_liftFun_spec D₂ D₁ φ hφ _).2, (iso_liftFun_spec D₂ D₁ φ hφ _).2,
+    · rw [map_add (f := _), (iso_liftFun_spec D₂ D₁ φ hφ _).2, (iso_liftFun_spec D₂ D₁ φ hφ _).2,
         (iso_liftFun_spec D₂ D₁ φ hφ _).2, map_add]
   map_smul' r x := by
     apply iso_uniq D₂
@@ -1211,7 +1226,7 @@ theorem iso_bot_vec (a : Fin m → R) (r : R) : iso_bot R hN (iso_vec hN a r) = 
 
 def iso_dot (ξ : Fin m → K) : (Fin m → R) →ₗ[R] K where
   toFun v := ξ ⬝ᵥ coeLin R v
-  map_add' v w := by rw [map_add, dotProduct_add]
+  map_add' v w := by rw [map_add (f := _), dotProduct_add]
   map_smul' r v := by
     rw [map_smul, RingHom.id_apply]
     have : r • coeLin R v = (r : K) • coeLin R v := rfl
@@ -1315,11 +1330,12 @@ theorem iso_datB (b : Fin m → R) (hb : coeLin R b = Z *ᵥ η) (s : R)
     (hs : (s : K) = ξ ⬝ᵥ (Z *ᵥ η) + (c : K)) :
     iso_Dat R (iso_M R hN Z ξ) (coker R (bigZ hN Z ξ η (c : K))) c (iso_Phi R hN Z ξ)
       (iso_piB R hN Z ξ η (c : K)) (Submodule.Quotient.mk (iso_vec hN b s))
-      (A5x6.muZ R (bigZ hN Z ξ η (c : K)) (iso_bigZ_det hN Z hZ ξ η c)) where
-  surj y := by
+      (A5x6.muZ R (bigZ hN Z ξ η (c : K)) (iso_bigZ_det hN Z hZ ξ η c)) := by
+  refine { surj := ?_, ker := ?_, pg := ?_, Pg := ?_, lam_pi := ?_ }
+  · intro y
     obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ y
     exact ⟨Submodule.Quotient.mk x, rfl⟩
-  ker x hx := by
+  · intro x hx
     obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ x
     rw [iso_piB_mk, Submodule.Quotient.mk_eq_zero, Formalism.DoubleCosetMeasures.P.mem_latZ] at hx
     obtain ⟨y, hy⟩ := hx
@@ -1347,25 +1363,24 @@ theorem iso_datB (b : Fin m → R) (hb : coeLin R b = Z *ᵥ η) (s : R)
     rw [← h2]
     simp only [smul_eq_mul, Subring.coe_mul, hs]
     ring
-  pg := by
-    rw [iso_piB_mk, Submodule.Quotient.mk_eq_zero, Formalism.DoubleCosetMeasures.P.mem_latZ]
+  · rw [iso_piB_mk, Submodule.Quotient.mk_eq_zero, Formalism.DoubleCosetMeasures.P.mem_latZ]
     refine ⟨iso_vec hN 0 1, ?_⟩
     rw [iso_coeLin_vec, iso_coeLin_vec, bigZ, iso_blkM_mulVec, hb, hs]
     simp
-  Pg := by
-    rw [iso_Phi_mk, affine_form_on_vector, hs, hb]; ring
-  lam_pi x := by
+  · rw [iso_Phi_mk, affine_form_on_vector, hs, hb]; ring
+  · intro x
     obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ x
     rw [iso_piB_mk, A5x6.muZ_mk, iso_lamLin_big R hN Z hZ, iso_Phi_mk]
 
 theorem iso_datS (hξ : ∀ j, (ξ ᵥ* Z) j ∈ R) (α : coker R Z →ₗ[R] KR R)
     (hα : ∀ v, α (Submodule.Quotient.mk v) = Submodule.Quotient.mk (ξ ⬝ᵥ coeLin R v)) :
     iso_Dat R (iso_M R hN Z ξ) (coker R Z) 1 (iso_Phi R hN Z ξ)
-      (iso_piS R hN Z ξ) (Submodule.Quotient.mk (iso_vec hN 0 1)) (-α) where
-  surj y := by
+      (iso_piS R hN Z ξ) (Submodule.Quotient.mk (iso_vec hN 0 1)) (-α) := by
+  refine { surj := ?_, ker := ?_, pg := ?_, Pg := ?_, lam_pi := ?_ }
+  · intro y
     obtain ⟨a, rfl⟩ := Submodule.Quotient.mk_surjective _ y
     exact ⟨Submodule.Quotient.mk (iso_vec hN a 0), by rw [iso_piS_mk, iso_top_vec]⟩
-  ker x hx := by
+  · intro x hx
     obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ x
     rw [iso_piS_mk, Submodule.Quotient.mk_eq_zero] at hx
     obtain ⟨a, ha⟩ := (Formalism.DoubleCosetMeasures.P.mem_latZ R Z _).1 hx
@@ -1380,11 +1395,9 @@ theorem iso_datS (hξ : ∀ j, (ξ ᵥ* Z) j ∈ R) (α : coker R Z →ₗ[R] KR
     refine ⟨by rw [h3]; exact hx, ?_⟩
     rw [affine_form_apply, h3, map_sub, map_smul, iso_bot_vec, ← ha, Matrix.dotProduct_mulVec]
     simp
-  pg := by
-    rw [iso_piS_mk, iso_top_vec]; rfl
-  Pg := by
-    rw [iso_Phi_mk, affine_form_on_vector]; simp
-  lam_pi x := by
+  · rw [iso_piS_mk, iso_top_vec]; rfl
+  · rw [iso_Phi_mk, affine_form_on_vector]; simp
+  · intro x
     obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ x
     rw [iso_piS_mk, LinearMap.neg_apply, hα, iso_Phi_mk, affine_form_apply, ← Submodule.Quotient.mk_neg,
       Submodule.Quotient.eq]
@@ -1505,7 +1518,7 @@ theorem iC_spec (Z : Matrix (Fin m) (Fin m) K) (hZ : IsInt R Z) (hd : IsUnit Z.d
   have h3 : Z *ᵥ coeLin R r = coeLin R (P.liftR R Z hZ *ᵥ r) := by
     rw [P.coeLin_mulVec, P.liftR_map]
   refine ⟨Quotient.out β + P.liftR R Z hZ *ᵥ r, ?_, ?_⟩
-  · rw [map_add, h2, h3]
+  · rw [map_add (f := _), h2, h3]
   · rw [Submodule.Quotient.mk_add]
     have h4 : (Submodule.Quotient.mk (P.liftR R Z hZ *ᵥ r) : coker R Z) = 0 := by
       rw [Submodule.Quotient.mk_eq_zero, P.mem_latZ]
@@ -1680,7 +1693,6 @@ theorem finsum_of_inj {X S : Type} (ι : S → X) (hι : Function.Injective ι) 
 variable {K : Type} [CommRing K]
 
 open Classical in
-
 def tTerm (R : Subring K) (ψ : AddChar K ℂ) {m m' N N' : ℕ} (hN : N = m + 1) (hN' : N' = m' + 1)
     (Z₁ : Matrix (Fin m) (Fin m) K) (Z₂ : Matrix (Fin m') (Fin m') K) (c : K)
     (y : ((Fin m → KR R) × (Fin m → KR R)) × ((Fin m' → KR R) × (Fin m' → KR R))) : ℂ :=

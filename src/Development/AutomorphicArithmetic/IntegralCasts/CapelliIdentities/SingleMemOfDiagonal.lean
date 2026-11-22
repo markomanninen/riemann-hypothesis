@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.SingleMemOfDiagonal.single_mem_of_diag :
     ∀ {κ : Type} [inst : Field κ] {m : ℕ} (d : Fin m → κ),

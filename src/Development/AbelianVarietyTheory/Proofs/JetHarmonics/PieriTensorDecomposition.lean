@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NumericalFamilyShapeGapsStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DiscreteSeriesUnitarySmoothBasicStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SmoothMapsClosureStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DiscreteSeriesParameterUnique
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.TensorDecompositionParameters
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsFRepDualStandardUnitaryRepStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsFRepExteriorPowerStandardRepStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NumericalFamilyShapeGapsStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DiscreteSeriesUnitarySmoothBasicStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SmoothMapsClosureStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DiscreteSeriesParameterUnique
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.TensorDecompositionParameters
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsFRepDualStandardUnitaryRepStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsFRepExteriorPowerStandardRepStatement
+
+@[expose] public section
 
 open BranchingSupport Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
@@ -81,29 +85,35 @@ private theorem raw_scale {ρ : Mx k r → Matrix ι ι ℂ} {R : Rep k r} {RI :
     (a : κ → ℂ) (ha : ∀ I, a I ≠ 0)
     (h1 : ∀ I c, SmMap (RI I) R (fun v => a I • io I c v))
     (h2 : ∀ I c, SmMap R (RI I) (fun v => (a I)⁻¹ • pr I c v)) :
-    TensRaw ρ R RI (fun I c v => a I • io I c v) (fun I c v => (a I)⁻¹ • pr I c v) where
-  io_sm := h1
-  pr_sm := h2
-  io_eq := fun I g hg y hy => by
+    TensRaw ρ R RI (fun I c v => a I • io I c v) (fun I c v => (a I)⁻¹ • pr I c v) := by
+  refine
+    { io_sm := h1
+      pr_sm := h2
+      io_eq := ?_
+      pr_eq := ?_
+      sum_io_pr := ?_
+      pr_io := ?_
+      pr_io_ne := ?_ }
+  · intro I g hg y hy
     funext c
     have := congrFun (h.io_eq I g hg y hy) c
     simp only [act] at this ⊢
     rw [this, Finset.smul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, smul_comm]
-  pr_eq := fun I g hg x hx => by
+  · intro I g hg x hx
     rw [← Finset.smul_sum, ← Finset.smul_sum, map_smul, h.pr_eq I g hg x hx]
-  sum_io_pr := fun x hx c => by
+  · intro x hx c
     rw [← h.sum_io_pr x hx c]
     refine Finset.sum_congr rfl fun I _ => ?_
     have hm : ∑ d, pr I d (x d) ∈ (RI I).smSub :=
       Submodule.sum_mem _ fun d _ => (h.pr_sm I d).mem _ (hx d)
     rw [← Finset.smul_sum, (h.io_sm I c).smul _ _ hm, smul_smul, mul_inv_cancel₀ (ha I), one_smul]
-  pr_io := fun I y hy => by
+  · intro I y hy
     conv_rhs => rw [← h.pr_io I y hy]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [(h.pr_sm I c).smul _ _ ((h.io_sm I c).mem _ hy), smul_smul, inv_mul_cancel₀ (ha I), one_smul]
-  pr_io_ne := fun I J hIJ y hy => by
+  · intro I J hIJ y hy
     have : ∀ c, (a I)⁻¹ • pr I c (a J • io J c y) = ((a I)⁻¹ * a J) • pr I c (io J c y) := fun c => by
       rw [(h.pr_sm I c).smul _ _ ((h.io_sm J c).mem _ hy), smul_smul]
     simp only [this]
@@ -227,7 +237,7 @@ theorem sub_single_inj {n : ℕ} (mu : Fin n → ℝ) :
   intro s t hst
   by_contra hne
   have h := congrFun hst s
-  simp [Pi.single_apply, hne] at h
+  simp [hne] at h
 
 theorem tens_exists : Hyps → ∀ (k r : ℕ) (lam : Fin (2 * r + k + 1) → ℝ) (u : ℕ → ℝ) (b bv ga h : ℝ) (q0 : ℕ) (R : (Fin (2 * r + k + 1) → ℤ) → Rep k r), Num k r lam u b bv ga h q0 → IsFam lam q0 R → ∀ ν, (∀ l, n1 ν + l ≤ q0 → ∃ io pr ep, TensH (cmp l) (cmp l (Formalism.QuantumDeterminants.Hpk k r)) (R ν) (fun I : Sub (2 * r + k + 1) l => R (ν + eZ I.1)) io pr ep) ∧ (n1 ν + 1 ≤ q0 → ∃ io pr ep, TensH dualM (Formalism.QuantumDeterminants.Hpk k r) (R ν) (fun s => R (ν - Pi.single s 1)) io pr ep) := by
   intro hH k r lam u b bv ga h q0 R hN hF ν

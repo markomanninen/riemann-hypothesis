@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.CovolumeCount
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsLattice
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.CovolumeCount
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsLattice
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

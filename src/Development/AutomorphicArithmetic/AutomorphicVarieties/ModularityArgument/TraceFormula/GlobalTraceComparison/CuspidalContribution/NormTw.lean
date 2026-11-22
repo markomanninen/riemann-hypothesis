@@ -1,14 +1,18 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.CuspidalContribution.LevShrink
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.CuspSupportOf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LieCentralElementTraceStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TraceOperatorEigenvalueSumStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CentralEigenExponentialStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AuxiliaryCuspLemmaStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LimitTwistBound
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FlatAbsoluteCharacter
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PExpTwA
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PStringStepB
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.LogAbsEqLogIdeleNorm
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.CuspidalContribution.LevShrink
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.CuspSupportOf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LieCentralElementTraceStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TraceOperatorEigenvalueSumStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CentralEigenExponentialStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AuxiliaryCuspLemmaStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LimitTwistBound
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FlatAbsoluteCharacter
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PExpTwA
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PStringStepB
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.LogAbsEqLogIdeleNorm
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Filter Topology
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.LFun UpperTheory.V.Z.Tf.GlobalTraceComparison UpperTheory.V.Z.Tf.GlobalTraceComparison.Cusp
@@ -26,8 +30,7 @@ private theorem log_norm_coord (t : (Af E)ˣ) (w : HeightOneSpectrum (𝓞 E)) :
     Real.log ‖(t : Af E) w‖ = -((GlobalTheory.Idele.ord_vw t w : ℝ) * Real.log (Ideal.absNorm w.asIdeal : ℕ)) := by
   have hq : ((Ideal.absNorm w.asIdeal : ℕ) : ℝ) ≠ 0 := by
     simpa [Ideal.absNorm_eq_zero_iff] using w.ne_bot
-  have e : ∀ (n : ℤ) (h : WithZero.exp n ≠ 0), Multiplicative.toAdd (WithZero.unzero h) = n := fun _ _ => rfl
-  rw [FinitePlace.norm_def, GlobalTheory.Idele.valued_idele, WithZeroMulInt.toNNReal_neg_apply _ WithZero.exp_ne_zero, e]
+  rw [FinitePlace.norm_def, GlobalTheory.Idele.valued_idele, WithZeroMulInt.toNNReal_neg_apply _ WithZero.exp_ne_zero, WithZero.log_exp]
   simp [Real.log_zpow]
 
 private theorem logFin_eq (t : (Af E)ˣ) : logFin E t = -∑ᶠ w, Real.log ‖(t : Af E) w‖ := by

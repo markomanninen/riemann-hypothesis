@@ -1,16 +1,20 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.FlagBasis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.EigLatBasis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.Biextensions.CubicalExtendsSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RankPf
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.IsLocallyConstantRankAtStalkEigenSub
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.NilpotentCoordinates
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.FlagBasis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.EigLatBasis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.Biextensions.CubicalExtendsSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RankPf
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.IsLocallyConstantRankAtStalkEigenSub
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.NilpotentCoordinates
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj
@@ -111,7 +115,7 @@ theorem finrank_eq_of_eigen (H : Host E) {k : Type} [Field k] [IsAlgClosed k] [C
     conv_lhs => arg 2; rw [← this]
     rw [← Finset.sum_add_distrib, ← hc]
     exact (Finset.sum_congr rfl fun φ _ => h2 φ).trans (by simp)
-  rw [← Module.finrank_mul_finrank ℚ (maximalRealSubfield E) E,
+  rw [← (letI : Module.Free (maximalRealSubfield E) E := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank ℚ (maximalRealSubfield E) E),
     Algebra.IsQuadraticExtension.finrank_eq_two (maximalRealSubfield E) E] at h3 ⊢
   rw [Nat.mul_div_cancel _ two_pos]
   linarith
@@ -136,7 +140,8 @@ theorem dim_geometric_fibre (o : Obj D l b s) {k : Type} [Field k] [IsAlgClosed 
     have := CharP.charP_to_charZero k
     exact Nat.cast_injective e⟩
   obtain ⟨hdet, -⟩ := o.geom k x β hβ
-  have := (IsSemiAbelian.pullback x o.t.G o.t.semi).comm
+  have := o.t.semi.comm
+  have : IsCommMonObj ((Over.pullback x).obj o.t.G) := inferInstance
   obtain ⟨z, hz⟩ := exists_isUnivChart ((Over.pullback x).obj o.t.G) d hd
   let act := OAct.pullback x o.t.G o.t.act
   have := act.hom
@@ -168,7 +173,9 @@ theorem smoothOfRelativeDimension (o : Obj D l b s) :
   have hp := (isGrpPullback_pullback o.t.G x).1
   obtain ⟨y', hy', -⟩ := Scheme.exists_preimage_of_isPullback hp y (default : PrimeSpectrum k)
     (Scheme.fromSpecResidueField_apply _ _).symm
-  have := (IsSemiAbelian.pullback x o.t.G o.t.semi).smooth
+  have : Smooth ((Over.pullback x).obj o.t.G).hom := by
+    change Smooth (pullback.snd o.t.G.hom x)
+    infer_instance
   have : ConnectedSpace ((Over.pullback x).obj o.t.G).left :=
     GeometricallyConnected.geometrically_connectedSpace (f := o.t.G.hom) x _ _ hp
   obtain ⟨d, hd'⟩ := exists_dim_of_preconnected ((Over.pullback x).obj o.t.G).hom y'

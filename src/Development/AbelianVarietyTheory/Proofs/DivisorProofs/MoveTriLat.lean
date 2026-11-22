@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.UnitCharTriangle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.UnitCharTriangle
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,12 +40,6 @@ def moveTri (Y : Tri T A A' WW) (ΛA : Submodule (𝓞 D.host.E) (Fin A.rank →
 variable (Y : Tri T A A' WW) (ΛA : Submodule (𝓞 D.host.E) (Fin A.rank → D.host.E))
   (ΛA' : Submodule (𝓞 D.host.E) (Fin A'.rank → D.host.E)) (ΛW : Submodule (𝓞 D.host.E) (Fin WW.rank → D.host.E))
   (g : GA D A) (g' : GA D A') (h : GA D WW) (t₀ : T) (r r' : T → ℂ)
-
-theorem moveTri_lat : (moveTri Y ΛA ΛA' ΛW g g' h t₀ r r').rA.Λ = ΛA ∧ (moveTri Y ΛA ΛA' ΛW g g' h t₀ r r').rA'.Λ = ΛA' ∧
-    (moveTri Y ΛA ΛA' ΛW g g' h t₀ r r').rW.Λ = ΛW := ⟨rfl, rfl, rfl⟩
-
-example : (moveTri Y ΛA ΛA' ΛW 1 1 1 t₀ (fun _ => 1) (fun _ => 1)).f = fun t => Y.ω t (1, 1) (Y.f t) := by
-  funext t; simp [moveTri]
 
 end GlobalTheory.BotMove
 

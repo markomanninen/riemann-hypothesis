@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.IncomingBounds.IncomingBound
-import Formalism.IncomingBounds.FlowDegreeBounds.LemmaFd
-import Development.AutomorphicArithmetic.OrbitLabellings.ExistsMaxFlowAttainedAndIsOptDual
+module
+
+public import Mathlib
+public import Formalism.IncomingBounds.IncomingBound
+public import Formalism.IncomingBounds.FlowDegreeBounds.LemmaFd
+public import Development.AutomorphicArithmetic.OrbitLabellings.ExistsMaxFlowAttainedAndIsOptDual
+
+@[expose] public section
 
 open scoped BigOperators
 open Formalism.IncomingBounds

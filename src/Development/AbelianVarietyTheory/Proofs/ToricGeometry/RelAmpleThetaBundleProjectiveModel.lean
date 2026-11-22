@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
-import ReciprocityTheory.ThetaQuasiPeriods.Transl
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SurjectiveOfComplexPointsLiftOfUniversallyClosed
+module
+
+public import Mathlib
+public import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
+public import ReciprocityTheory.ThetaQuasiPeriods.Transl
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SurjectiveOfComplexPointsLiftOfUniversallyClosed
+
+@[expose] public section
 
 noncomputable section
 
@@ -193,7 +197,7 @@ theorem relAmple_of_values
     rw [MvPolynomial.eval₂Hom_map_hom, ← hc, MvPolynomial.eval₂Hom_rename]
     refine Eq.trans ?_ (MvPolynomial.map_eval₂Hom _ (r (e i)) (ψ.appLE _ _ (loc (e i)).le).hom F).symm
     congr 2
-    funext c
+    funext j
     simp
 
 theorem two_mul_dot_int {g : ℕ} {a : Fin g → ℝ} (ha : ∀ i, a i = 0 ∨ a i = 1 / 2) (n : Fin g → ℤ) :

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.TlNonempty
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.TensZeroRight
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.TlNonempty
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.TensZeroRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,7 @@ theorem levelAtPrime_character_mul {L₁ N₁ : ℕ} (hp : 0 < p) (hV : Fr.Valid
   | monomial a k =>
     rw [PsiP_monomial, monomial_mul, T5.monomialSubstitution_monomial, plMon_psiExpP_add p hk hp hV hr hJ hnL, monomial_mul, mul_one,
       one_mul]
-  | add F G hF hG => rw [map_add, add_mul, T5.monomialSubstitution_add, hF, hG, mul_add]
+  | add F G hF hG => rw [map_add (f := _), add_mul, T5.monomialSubstitution_add, hF, hG, mul_add]
 
 end LevP
 

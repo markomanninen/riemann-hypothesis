@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JBConjTranspose
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommutingHermitianSimultaneousDiag
+module
 
-open Matrix Finset GlobalTheory.OpTrace GlobalTheory.AutomorphicL2Unitary GlobalTheory.LinRed GlobalTheory.CompanionTheory.GLK
-open PositivityTheory.RgBcC PositivityTheory.RgBcC.Real PositivityTheory.RgBcC.RealD
-open PositivityTheory.RgTw (Mat G th IsThetaOp)
-open scoped InnerProductSpace ComplexConjugate
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MapMemKfin
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommutingHermitianSimultaneousDiag
+
+@[expose] public section
+
+open Matrix
+open GlobalTheory.CompanionTheory.GLK (expG)
+open PositivityTheory.RgBcC.Real (uG)
+open PositivityTheory.RgTw (Mat G)
 
 namespace GlobalTheory.CompanionTheory.UnitaryExp
 
@@ -118,7 +122,8 @@ theorem exists_skew_exp_eq (n : ℕ) (k : Matrix.unitaryGroup (Fin n) ℂ) :
     rw [e2] at e
     have e3 : ((expG (V * Matrix.diagonal w * Vᴴ) 1 : G n) : Mat n) =
         NormedSpace.exp (V * Matrix.diagonal w * Vᴴ) := by
-      simp
+      delta expG
+      simp only [IsUnit.unit_spec, Complex.ofReal_one, one_smul]
     rw [e3]
     exact hk.trans e.symm
 

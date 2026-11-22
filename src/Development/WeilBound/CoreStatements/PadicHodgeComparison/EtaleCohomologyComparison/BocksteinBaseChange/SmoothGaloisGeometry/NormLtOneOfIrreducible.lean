@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HarishChandraFormulaStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HarishChandraFormulaStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -113,6 +117,6 @@ theorem OK_dvr : IsDiscreteValuationRing (OK l K) := by
   have hnf : ¬ IsField (OK l K) := fun hf => by
     rw [IsLocalRing.isField_iff_maximalIdeal_eq.mp hf, Ideal.mem_bot] at hlm
     exact (Fact.out : l.Prime).ne_zero (Nat.cast_injective (R := OK l K) (by simpa using hlm))
-  exact ((IsDiscreteValuationRing.TFAE _ hnf).out 0 2).mpr hded
+  exact ((IsDiscreteValuationRing.TFAE _ hnf).out 1 3).mpr hded
 
 end CrystallineSemistableComparison

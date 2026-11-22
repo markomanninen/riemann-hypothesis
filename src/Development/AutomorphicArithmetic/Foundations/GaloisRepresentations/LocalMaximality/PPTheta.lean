@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.PWdUni
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.PWdUni
+
+@[expose] public section
+
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
 private lemma pk_mem {d : ℕ} {I : Finset (Fin (d + 1))} (h : I.Nonempty) : pk I ∈ I := by
   unfold pk
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact Finset.min'_mem _ _
 
 private lemma lat_mem (hA : LatA) {F : Type} [Field F] [Algebra ℂ F] {d : ℕ} (x : Fin (d + 1) → Fˣ)
@@ -74,7 +79,8 @@ theorem UpperTheory.Gal.productCup_of_system.pTheta_of :
     change ∑ i ∈ t, GlobalTheory.cubeSign t i • b (t.erase i) = 0
     have h1 : ∑ i ∈ t, GlobalTheory.cubeSign t i • β (t.erase i) = 0 := h0
     have h2 := congrArg (TensorProduct.mk ℂ F (DR ℂ K) 1) h1
-    rw [map_sum, map_zero] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h2
     rw [← h2]
     exact Finset.sum_congr rfl fun i _ => by simp only [hbdef, Units.smul_def, map_zsmul, TensorProduct.mk_apply]
   have hb2 : ∀ J, J.card ≠ p + 1 → b J = 0 := fun J hJ => hb0 J fun h => hJ h.2
@@ -82,7 +88,7 @@ theorem UpperTheory.Gal.productCup_of_system.pTheta_of :
       detC (sysP K x a).rowMu (uni I L) = 0 := by
     intro I L h
     unfold detC
-    rw [dif_neg (by rw [hcard]; exact h)]
+    rw [dite_eq_right (by rw [hcard]; exact h)]
   have hθe : ∀ L : Finset (Mi d), detC (sysP K x a).rowMu (uni ∅ L) = 0 :=
     (hTh d _ _ (sysP K x a)).2.1
   have hval : ∀ (I J : Finset (Fin (d + 1))) (L : Finset (Mi d)),

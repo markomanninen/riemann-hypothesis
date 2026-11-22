@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TprodMemTensSpan
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorPlaceActionInjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MinFirst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TprodMemTensSpan
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorPlaceActionInjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MinFirst
+
+@[expose] public section
+
 open scoped TensorProduct
 
 noncomputable section
@@ -14,12 +19,80 @@ theorem atPl_eq_zero_of_common {ι : Type} [Fintype ι] [DecidableEq ι] {V : Ty
     (w : ι) (F : Set (Module.End ℂ V)) (g : Module.End ℂ V) (hg : ∀ v, (∀ L ∈ F, L v = 0) → g v = 0)
     (T : ⨂[ℂ] _ : ι, V) (hT : ∀ L ∈ F, GlobalTheory.RealLift.atPl (V := fun _ : ι => V) w L T = 0) :
     GlobalTheory.RealLift.atPl (V := fun _ : ι => V) w g T = 0 := by
+  let hd : DecidableEq ι := inferInstance
+  let contrML (w₀ : ι) (μ : ι → Module.Dual ℂ V) : MultilinearMap (RingHom.id ℂ) (fun _ : ι => V) V := {
+    toFun x := (∏ i ∈ Finset.univ.erase w₀, μ i (x i)) • x w₀
+    map_update_add' := by
+      intro inst x i a b
+      obtain rfl : inst = hd := Subsingleton.elim _ _
+      by_cases h : i = w₀
+      · subst h
+        have e : ∀ c, ∏ k ∈ Finset.univ.erase i, μ k (Function.update x i c k) =
+            ∏ k ∈ Finset.univ.erase i, μ k (x k) := fun c =>
+          Finset.prod_congr rfl fun k hk => by rw [Function.update_of_ne (Finset.ne_of_mem_erase hk)]
+        simp only [e, Function.update_self, smul_add]
+      · have hi : i ∈ Finset.univ.erase w₀ := Finset.mem_erase.2 ⟨h, Finset.mem_univ _⟩
+        have e : ∀ c, ∏ k ∈ Finset.univ.erase w₀, μ k (Function.update x i c k) =
+            μ i c * ∏ k ∈ (Finset.univ.erase w₀).erase i, μ k (x k) := fun c => by
+          rw [← Finset.mul_prod_erase _ _ hi, Function.update_self]
+          congr 1
+          exact Finset.prod_congr rfl fun k hk => by rw [Function.update_of_ne (Finset.ne_of_mem_erase hk)]
+        simp only [e, Function.update_of_ne (Ne.symm h), map_add (f := _), add_mul, add_smul]
+    map_update_smul' := by
+      intro inst x i c a
+      obtain rfl : inst = hd := Subsingleton.elim _ _
+      by_cases h : i = w₀
+      · subst h
+        have e : ∀ c, ∏ k ∈ Finset.univ.erase i, μ k (Function.update x i c k) =
+            ∏ k ∈ Finset.univ.erase i, μ k (x k) := fun c =>
+          Finset.prod_congr rfl fun k hk => by rw [Function.update_of_ne (Finset.ne_of_mem_erase hk)]
+        simp only [e, Function.update_self, RingHom.id_apply, smul_comm c]
+      · have hi : i ∈ Finset.univ.erase w₀ := Finset.mem_erase.2 ⟨h, Finset.mem_univ _⟩
+        have e : ∀ c, ∏ k ∈ Finset.univ.erase w₀, μ k (Function.update x i c k) =
+            μ i c * ∏ k ∈ (Finset.univ.erase w₀).erase i, μ k (x k) := fun c => by
+          rw [← Finset.mul_prod_erase _ _ hi, Function.update_self]
+          congr 1
+          exact Finset.prod_congr rfl fun k hk => by rw [Function.update_of_ne (Finset.ne_of_mem_erase hk)]
+        simp only [e, Function.update_of_ne (Ne.symm h), map_smul, smul_eq_mul, mul_assoc, smul_smul, RingHom.id_apply]
+
+  }
+  let contr (w₀ : ι) (μ : ι → Module.Dual ℂ V) : (⨂[ℂ] _ : ι, V) →ₗ[ℂ] V :=
+    PiTensorProduct.lift (contrML w₀ μ)
+
+  have contr_tprod (w₀ : ι) (μ : ι → Module.Dual ℂ V) (x : ι → V) :
+      contr w₀ μ (PiTensorProduct.tprod ℂ x) = (∏ i ∈ Finset.univ.erase w₀, μ i (x i)) • x w₀ := by
+    change PiTensorProduct.lift (contrML w₀ μ) (PiTensorProduct.tprod ℂ x) = _
+    rw [PiTensorProduct.lift.tprod]; rfl
+
+  have dual_contr (w₀ : ι) (μ : ι → Module.Dual ℂ V) (ν : Module.Dual ℂ V) (T : ⨂[ℂ] _ : ι, V) :
+      ν (contr w₀ μ T) =
+        PiTensorProduct.dualDistrib (PiTensorProduct.tprod ℂ (Function.update μ w₀ ν)) T := by
+    induction T using PiTensorProduct.induction_on with
+    | smul_tprod r x =>
+      rw [map_smul, map_smul, map_smul, contr_tprod, PiTensorProduct.dualDistrib_apply, map_smul,
+        ← Finset.mul_prod_erase _ _ (Finset.mem_univ w₀), Function.update_self, smul_eq_mul, smul_eq_mul, smul_eq_mul]
+      congr 1
+      rw [mul_comm]
+      congr 1
+      exact Finset.prod_congr rfl fun k hk => by rw [Function.update_of_ne (Finset.ne_of_mem_erase hk)]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, map_add (f := _)]
+
+  have contr_atPl (w₀ : ι) (μ : ι → Module.Dual ℂ V) (L : Module.End ℂ V) (T : ⨂[ℂ] _ : ι, V) :
+      contr w₀ μ (GlobalTheory.RealLift.atPl (V := fun _ : ι => V) w₀ L T) = L (contr w₀ μ T) := by
+    induction T using PiTensorProduct.induction_on with
+    | smul_tprod r x =>
+      rw [map_smul, map_smul, map_smul, GlobalTheory.RealLift.atPl, PiTensorProduct.map_tprod, contr_tprod, contr_tprod,
+        map_smul, Function.update_self, L.map_smul]
+      congr 2
+      exact Finset.prod_congr rfl fun k hk => by
+        simp [Function.update_of_ne (Finset.ne_of_mem_erase hk)]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   apply GlobalTheory.PiTensorCommute.eq_zero_of_forall_dualDistrib
   intro f
-  have hv : g (GlobalTheory.FactorKernel.contr w f T) = 0 := hg _ fun L hL => by
-    rw [← GlobalTheory.FactorKernel.contr_atPl, hT L hL, map_zero]
-  have h := GlobalTheory.FactorKernel.dual_contr w f (f w) (GlobalTheory.RealLift.atPl (V := fun _ : ι => V) w g T)
-  rw [GlobalTheory.FactorKernel.contr_atPl, hv, map_zero, Function.update_eq_self] at h
+  have hv : g (contr w f T) = 0 := hg _ fun L hL => by
+    rw [← contr_atPl, hT L hL, map_zero]
+  have h := dual_contr w f (f w) (GlobalTheory.RealLift.atPl (V := fun _ : ι => V) w g T)
+  rw [contr_atPl, hv, map_zero, Function.update_eq_self] at h
   exact h.symm
 
 theorem atPl_sub_smul_one {ι : Type} [Fintype ι] [DecidableEq ι] {V : Type} [AddCommGroup V] [Module ℂ V]
@@ -68,7 +141,7 @@ theorem exists_proj_of_graded {σ : Type} (K : Submodule ℂ (MvPolynomial σ �
           hq0 f' (max (max f.totalDegree f'.totalDegree) (f + f').totalDegree + 1) (by omega),
           hq0 (f + f') (max (max f.totalDegree f'.totalDegree) (f + f').totalDegree + 1) (by omega),
           ← Finset.sum_add_distrib]
-        simp only [map_add]
+        simp only [map_add (f := _)]
       map_smul' := fun c f => by
         simp only [RingHom.id_apply]
         rw [hq0 f (max f.totalDegree (c • f).totalDegree + 1) (by omega),
@@ -88,7 +161,7 @@ theorem exists_proj_of_graded {σ : Type} (K : Submodule ℂ (MvPolynomial σ �
     simpa [q] using this
   · intro f
     show (∑ i ∈ Finset.range (f.totalDegree + 1), q i f).totalDegree ≤ f.totalDegree
-    refine (totalDegree_finset_sum _ _).trans (Finset.sup_le fun i hi => ?_)
+    refine (totalDegree_finsetSum _ _).trans (Finset.sup_le fun i hi => ?_)
     have hi' : i ≤ f.totalDegree := by simp at hi; omega
     have hh : (q i f).IsHomogeneous i := (g i (homogeneousComponent i f)).2.2
     by_cases h0 : q i f = 0
@@ -100,7 +173,8 @@ theorem homogeneousComponent_fockAct1 {P Q R S : ℕ} (X : Mat P Q) (hX : IsKC X
   classical
   have hh : ∀ i, fockAct1 P Q R S X (homogeneousComponent i f) ∈ homogeneousSubmodule (Ix P Q × Ix R S) ℂ i :=
     fun i => GlobalTheory.FockAlg.MinFirst.kStable_homog i X hX _ (homogeneousComponent_isHomogeneous i f)
-  conv_lhs => rw [← sum_homogeneousComponent f, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← sum_homogeneousComponent f, map_sum, map_sum]
   simp_rw [homogeneousComponent_of_mem (hh _)]
   rw [Finset.sum_ite_eq]
   split_ifs with h

@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TBNFinal
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.LevelThreeSeparatesTangents
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.MemAnalyticAtZeroOfEventuallyDifferentiableAt
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.PredMulSumPadicValNatFactorialAddCardLe
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TBNFinal
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.LevelThreeSeparatesTangents
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.MemAnalyticAtZeroOfEventuallyDifferentiableAt
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.PredMulSumPadicValNatFactorialAddCardLe
+
+@[expose] public section
 
 open Complex ReciprocityTheory.ChartRestriction.G.I2 Filter Topology
 
@@ -158,8 +162,9 @@ theorem exists_sec_ne_zero {Y : GT ι} {θ : EuclideanSpace ℂ ι → ℂ} (hθ
   rw [add_neg_cancel, twistedLaw_zero_iff] at h
   exact ⟨_, h, by simp [ha', hb']⟩
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 noncomputable def jets (Y : GT ι) (k : ℕ) : Submodule ℂ (MvPowerSeries ι ℂ) where
   carrier := {x | ∃ F ∈ (powTorus Y k).Sec k,
     taylorDir (fun i => EuclideanSpace.single i (1 : ℂ)) F = x}
@@ -239,7 +244,8 @@ theorem jets_three {Y : GT ι} {θ : EuclideanSpace ℂ ι → ℂ} (hθ : θ �
       have h3 := hφ (Submodule.mem_sup_left (S := jets Y 3) ⟨_, h, rfl⟩)
       rw [LinearMap.mem_ker, hform, constantCoeff_taylorDir] at h3
       simp only [coeff_single_taylorDir _ (analyticAt_of_differentiable h.1 0)] at h3
-      rw [hc, map_sum, ← h3]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hc, map_sum, ← h3]
       simp only [map_smul, smul_eq_mul, zero_add, zero_sub]
       congr 1
       · ring
@@ -272,8 +278,9 @@ end ThetaJet
 
 open ThetaJet
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 theorem exists_section_jet_ne_zero {ι : Type} [Fintype ι] (Y : GT ι) (θ : EuclideanSpace ℂ ι → ℂ) (hθ : θ ∈ Y.Sec 1) (h0 : θ ≠ 0)
     (D q : ℕ) (hq : 3 * D + 2 ≤ q) (P : MvPolynomial ι ℂ) (hP : P ≠ 0) (hD : P.totalDegree ≤ D) :
     ∃ F : EuclideanSpace ℂ ι → ℂ, Differentiable ℂ F ∧

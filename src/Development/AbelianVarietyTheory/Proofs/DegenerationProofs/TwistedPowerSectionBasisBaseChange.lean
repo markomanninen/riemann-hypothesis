@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HasWtZero
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsExtensionPullOver
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.SectionScalarValuation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HasWtZero
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsExtensionPullOver
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.SectionScalarValuation
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -39,18 +43,21 @@ theorem basis_map_of_basis {φ : R →+* R'} (f : M →ₛₗ[φ] M') {I J : Typ
     simp only [Finset.sum_smul, mul_smul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [← Finset.smul_sum, hu i, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.smul_sum, hu i, map_sum]
     simp only [map_smulₛₗ, ← hu i]
   have fb : ∀ c : J → R', ∑ j, c j • f (b j) = ∑ i, (∑ j, c j * φ (w j i)) • f (β i) := fun c => by
     simp only [Finset.sum_smul, mul_smul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun j _ => ?_
-    rw [← Finset.smul_sum, hw j, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.smul_sum, hw j, map_sum]
     simp only [map_smulₛₗ, ← hw j]
   have back : ∀ (a : I → R') i', ∑ j, (∑ i, a i * φ (u i j)) * φ (w j i') = a i' := fun a i' => by
     simp only [Finset.sum_mul, _root_.mul_assoc, ← map_mul]
     rw [Finset.sum_comm]
-    simp only [← Finset.mul_sum, ← map_sum, huw]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← Finset.mul_sum, ← map_sum, huw]
     simp [apply_ite φ]
   obtain ⟨c, hc, hcu⟩ := hf s
   refine ⟨_, hc.trans (fb c), fun a ha => funext fun i => ?_⟩
@@ -110,7 +117,8 @@ theorem basis_of_isPullback {R R' : Type} [CommRing R] [CommRing R'] (φ : R →
       rw [← this]
       exact (Iso.inv_hom_id_apply (Scheme.ΓSpecIso (CommRingCat.of R')) (a i)).symm
   have Fs : ∀ a : Fin m → R', F (∑ i, a i • b' i) = ∑ i, a i • pullOver L ε H.w hψ (b i) := fun a => by
-    simp only [map_sum, map_smulₛₗ, Fb, RingHom.id_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smulₛₗ, Fb, RingHom.id_apply]
   obtain ⟨a, ha, hu⟩ := hb' (G s)
   refine ⟨a, ?_, fun a' ha' => hu a' ?_⟩
   · show s = _

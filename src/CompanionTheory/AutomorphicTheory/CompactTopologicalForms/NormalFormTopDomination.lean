@@ -1,5 +1,9 @@
-import CompanionTheory.AutomorphicTheory.CompactTopologicalForms.FinalC
-import CompanionTheory.AutomorphicTheory.JacobiDiagonalBounds.NormalFormHatCompact
+module
+
+public import CompanionTheory.AutomorphicTheory.CompactTopologicalForms.FinalC
+public import CompanionTheory.AutomorphicTheory.JacobiDiagonalBounds.NormalFormHatCompact
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP.CompactFormNormalFormDomination
 
@@ -9,8 +13,8 @@ noncomputable section
 
 theorem normal_form_top_domination : NFTopDomAll := nfTopDomAll_of_tieC NormalFormRelations.normal_form_hat_compact
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 theorem thmBpAt_top (Cb C₃ CΛ C₀ : ℝ) (hC₃ : 0 ≤ C₃) (hCΛ : 0 ≤ CΛ) (hC₀ : 1 / 2 ≤ C₀) :
     ∃ C₄ c₃ Cc Cc' Cc'' : ℝ, ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
       [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (P : M.Par) (p : KB.Pl P Wp Wq)
@@ -45,8 +49,8 @@ open scoped ENNReal
 
 noncomputable section
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 theorem thmBpAt_eqR_top (Cb C₃ CΛ C₀ : ℝ) (hC₃ : 0 ≤ C₃) (hCΛ : 0 ≤ CΛ) (hC₀ : 1 / 2 ≤ C₀) :
     ∃ C₄ c₃ Cc Cc' Cc'' : ℝ, ∀ (P : M.Par) (Wp Wq : Type)
       [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [FiniteDimensional ℂ Wp]

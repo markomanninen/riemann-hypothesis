@@ -1,5 +1,10 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.PositiveMajorantGaussian
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.PositiveMajorantGaussian
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix
 open scoped ENNReal NNReal
 set_option maxHeartbeats 1000000 in

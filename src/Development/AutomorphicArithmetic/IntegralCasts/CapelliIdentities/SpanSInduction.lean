@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Qe24.spanS.{u_1, u_2} :
     {K : Type u_1} →

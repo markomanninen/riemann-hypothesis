@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdmittedEqDiagonalLagrangianThetaIntegral
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdmittedEqDiagonalLagrangianThetaIntegral
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -90,10 +94,12 @@ theorem exists_admissible_eq_lagrangian_integral : ∀ (F E : Type) [Field F] [N
     intro f
     rw [Seminorm.finset_sup_apply, Seminorm.finset_sup_apply]
     congr 2
+    funext i
+    simp [schwartzSeminormFamily, SchwartzMap.seminorm_apply]
   refine ⟨SchwartzMap.mkCLMtoNormedSpace (σ := RingHom.id ℂ) (fun f => L ⟨pureA F f g, hmem f⟩)
     (fun f f' => ?_) (fun a f => ?_) ⟨Finset.Iic (k, 0), c * ν.real 𝓕, mul_nonneg hc measureReal_nonneg, fun f => ?_⟩,
     fun f => ?_⟩
-  · rw [← map_add]
+  · rw [← map_add (f := _)]
     congr 1
     exact Subtype.ext (funext fun x => by simp [pureA, add_mul])
   · rw [RingHom.id_apply, ← map_smul]

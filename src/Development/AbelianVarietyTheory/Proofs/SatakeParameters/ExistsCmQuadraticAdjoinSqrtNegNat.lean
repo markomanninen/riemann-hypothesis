@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.Imports
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AlgebraMapMemMaximalRealSubfieldIff
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsSqrtTotallyNegative
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.Imports
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AlgebraMapMemMaximalRealSubfieldIff
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsSqrtTotallyNegative
+
+@[expose] public section
+
 open NumberField
 
 open scoped IntermediateField
@@ -18,7 +23,7 @@ theorem finrank_adjoin_sq {E Ω : Type} [Field E] [Field Ω] [Algebra E Ω] (c :
   rw [IntermediateField.adjoin.finrank hi]
   have h1 : (minpoly E t).natDegree ≤ 2 := by
     have := Polynomial.natDegree_le_of_dvd (minpoly.dvd E t h0) hm.ne_zero
-    rwa [Polynomial.natDegree_X_pow_sub_C] at this
+    rwa [Polynomial.natDegree_X_pow_sub_C _] at this
   have h2 : 2 ≤ (minpoly E t).natDegree := (minpoly.two_le_natDegree_iff hi).2 (by simpa using hn)
   omega
 

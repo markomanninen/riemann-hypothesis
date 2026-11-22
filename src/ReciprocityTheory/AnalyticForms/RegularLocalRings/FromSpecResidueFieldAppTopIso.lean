@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -14,12 +18,11 @@ def constSec (U : S.Opens) : ℂ →+* Γ(S, U) :=
 def constRes (x : S) : ℂ →+* S.residueField x :=
   (S.evaluation ⊤ x trivial).hom.comp (constSec s ⊤)
 
-def CPt (S : Scheme.{0}) : Type := {x : S // IsClosed ({x} : Set S)}
 
 open Classical in
-
-def valHom (x : S) : S.residueField x → ℂ :=
-  if h : ∃ φ : S.residueField x →+* ℂ, φ.comp (constRes s x) = RingHom.id ℂ then h.choose else fun _ => 0
+def valHom (x : S) : S.residueField x → ℂ := by
+  classical
+  exact if h : ∃ φ : S.residueField x →+* ℂ, φ.comp (constRes s x) = RingHom.id ℂ then h.choose else fun _ => 0
 
 def val {U : S.Opens} (f : Γ(S, U)) (x : S) (hx : x ∈ U) : ℂ :=
   valHom s x (S.evaluation U x hx f)
@@ -69,7 +72,7 @@ theorem valHom_eq [LocallyOfFiniteType s] (x : S) (hx : IsClosed ({x} : Set S)) 
   have hex : ∃ φ : S.residueField x →+* ℂ, φ.comp (constRes s x) = RingHom.id ℂ :=
     ⟨_, valHom_spec s x hx⟩
   unfold valHom
-  rw [dif_pos hex, valHom_unique s x hx _ hex.choose_spec]
+  rw [dite_eq_left hex, valHom_unique s x hx _ hex.choose_spec]
 
 theorem evaluation_res {U V : S.Opens} (h : V ≤ U) (f : Γ(S, U)) (x : S) (hx : x ∈ V) :
     S.evaluation V x hx (S.presheaf.map (homOfLE h).op f) = S.evaluation U x (h hx) f := by
@@ -109,13 +112,6 @@ theorem residueFieldMap_constRes {T : Scheme.{0}} (t : T ⟶ Spec (CommRingCat.o
   rw [Scheme.evaluation_naturality g x (V := ⊤) trivial, ← hg, Scheme.Hom.comp_appTop,
     Category.assoc]
   rfl
-
-theorem existsUnique_valHom [LocallyOfFiniteType s] (x : S) (hx : IsClosed ({x} : Set S)) :
-    (∃! φ : S.residueField x →+* ℂ, φ.comp (constRes s x) = RingHom.id ℂ) ∧
-      Function.Bijective (valHom s x) := by
-  refine ⟨⟨_, valHom_spec s x hx, fun ψ hψ => valHom_unique s x hx ψ hψ⟩, ?_⟩
-  rw [valHom_eq s x hx]
-  exact (residueFieldIsoBase s x hx).commRingCatIsoToRingEquiv.bijective
 
 theorem val_ringHom [LocallyOfFiniteType s] (U : S.Opens) (x : S) (hx : x ∈ U)
     (hc : IsClosed ({x} : Set S)) :

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StLocB
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationDetEqOne
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StLocB
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationDetEqOne
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.Spherical UpperTheory.Gal.Gen GLnLocal
 
@@ -11,12 +15,12 @@ theorem UpperTheory.Gal.Gen.gammaEig_pf :
     fun g k hk => zonalSpherical_mul_right z g hk
   have hpos : (0 : ℝ) < μ.real ↑(integralGL F n) :=
     HeckeAlgebra.measureReal_compactOpen_pos μ (isCompact_integralGL F n) (isOpen_integralGL F n)
-  have hne : ((μ.real ↑(integralGL F n) : ℝ) : ℂ) ≠ 0 := by
-    exact_mod_cast hpos.ne'
+  have hne : (μ.real ↑(integralGL F n) : ℂ) ≠ 0 :=
+    Complex.ofReal_ne_zero.2 hpos.ne'
   have hmin : ∀ r, minusculeHecke μ r ∈ eigenSubalgebra μ z (zonalSpherical μ z) hf := by
     intro r y
     rw [integral_minusculeHecke_mul hf y r, sum_zonalSpherical_gMat z r y]
-    field_simp
+    simp only [← mul_assoc, mul_inv_cancel₀ hne, one_mul]
   have htop : eigenSubalgebra μ z (zonalSpherical μ z) hf = ⊤ :=
     eigenSubalgebra_eq_top z hf (fun r _ => hmin r)
       (GlobalTheory.HenQ.ShellOp.central_mem_of_top z hf (hmin n))

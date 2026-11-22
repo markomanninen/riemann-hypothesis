@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementA
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementB
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.OneAddMulDerivLogSubst
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementA
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementB
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.OneAddMulDerivLogSubst
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ theorem fLog_mul {ι : Type} {g h : MvPowerSeries ι K} (hg : MvPowerSeries.cons
   have hg0 := Formalism.L2.Th1.B.constantCoeff_fLog hg
   have hh0 := Formalism.L2.Th1.B.constantCoeff_fLog hh
   have hs : MvPowerSeries.constantCoeff (Formalism.L2.Th1.B.fLog g + Formalism.L2.Th1.B.fLog h) = 0 := by
-    rw [map_add, hg0, hh0, add_zero]
+    rw [map_add (f := _), hg0, hh0, add_zero]
   calc Formalism.L2.Th1.B.fLog (g * h) = Formalism.L2.Th1.B.fLog (Formalism.L2.Th1.B.fExp (Formalism.L2.Th1.B.fLog g) * Formalism.L2.Th1.B.fExp (Formalism.L2.Th1.B.fLog h)) := by
         rw [Formalism.L2.Th1.B.fExp_fLog hg, Formalism.L2.Th1.B.fExp_fLog hh]
     _ = Formalism.L2.Th1.B.fLog (Formalism.L2.Th1.B.fExp (Formalism.L2.Th1.B.fLog g + Formalism.L2.Th1.B.fLog h)) := by rw [Formalism.L2.Th1.B.fExp_add hg0 hh0]
@@ -84,7 +88,7 @@ theorem inVar_add_inVar_ne_zero {l : PowerSeries K} (hl1 : PowerSeries.coeff 1 l
     at1 (0 : Fin 2) l + at1 1 l ≠ 0 := by
   intro h
   have h2 := congrArg (fun φ => MvPowerSeries.coeff (Finsupp.single (0 : Fin 2) 1) φ) h
-  simp only [Formalism.InvariantFactorPaths.G7.at1, map_add, map_zero, PowerSeries.coeff_subst_single] at h2
+  simp only [Formalism.InvariantFactorPaths.G7.at1, map_add (f := _), map_zero, PowerSeries.coeff_subst_single] at h2
   simp [hl1] at h2
 
 theorem inVar_sub_inVar_ne_zero {l : PowerSeries K} (hl1 : PowerSeries.coeff 1 l = 1) :
@@ -418,7 +422,7 @@ theorem DiffPh_of (hS : Sigma1Sq) (hL : SimeqLog) : DiffPh := by
   have hE1 : MvPowerSeries.constantCoeff (ep + PowerSeries.C (c0 - e1) * PowerSeries.X ^ 2) = 1 := hE1'
   have hEI : Formalism.DworkPowerSeriesWeights.Integral (ep + PowerSeries.C (c0 - e1) * PowerSeries.X ^ 2 : PowerSeries K) := by
     intro n
-    rw [map_add, PowerSeries.C_apply, PowerSeries.X_apply, MvPowerSeries.coeff_C_mul,
+    rw [map_add (f := _), PowerSeries.C_apply, PowerSeries.X_apply, MvPowerSeries.coeff_C_mul,
       MvPowerSeries.coeff_X_pow]
     refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hCC.1 n) ?_)
     split_ifs

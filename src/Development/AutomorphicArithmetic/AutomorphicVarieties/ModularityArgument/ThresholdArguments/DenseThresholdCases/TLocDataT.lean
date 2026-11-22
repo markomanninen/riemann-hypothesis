@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PolarizedLinkage.LocDataT
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LocDataT
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.PaLevel
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PolarizedLinkage.LocDataT
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LocDataT
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.PaLevel
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -13,8 +17,6 @@ open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands Glo
 open UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Hi UpperTheory.V.AlgebraTools UpperTheory.V.Pa UpperTheory.V.Pa.Lev UpperTheory.Zero.LLC
 open GlobalTheory.PRep
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-open private rel_of_chars chi_unit from Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.LLocData
-open private charpoly_smul_prod absPow_neg_nat from Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.NuChar
 namespace UpperTheory.V.Z.Win.LocalCharacterData
 section Loc
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {n : ℕ}
@@ -39,7 +41,12 @@ private theorem psi_val (ψ : Fin n → kˣ →* ℂˣ) (χ : (Fin n → kˣ) �
     rw [modExp_fin _ (fun _ => by simp)]
     push_cast
     ring
-  have h4 := absPow_neg_nat k (i : ℕ) x
+  have h4 : (absPow k (-((i : ℕ) : ℂ)) x : ℂ) = (resCard k : ℂ) ^ (((i : ℕ) : ℤ) * ord k x) := by
+    rw [val_absPow, GlobalTheory.LGrp.nabs_eq_zpow, Complex.cpow_neg, Complex.cpow_natCast]
+    push_cast
+    rw [← zpow_natCast, ← zpow_mul, ← zpow_neg]
+    congr 1
+    ring
   rw [← h1, hχ]
   simp only [MonoidHom.mul_apply, MonoidHom.comp_apply, Units.val_mul]
   erw [h2]
@@ -91,13 +98,13 @@ open Polynomial
 variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
   {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} {h : IsPlaceOver A w}
   {a : Weil h →* (w.adicCompletion E)ˣ} {ha : IsLocalArtin h a} {ε : EpsFamily A}
-  {rc : IrrGL (w.adicCompletion E) → WD h} {n : ℕ}
+  {rc : IrrGL (k := w.adicCompletion E) → WD h} {n : ℕ}
 private theorem support_chars (σ : SmIrr (GL (Fin n) (w.adicCompletion E))) (ψ : Fin n → (w.adicCompletion E)ˣ →* ℂˣ)
     (hψ : ∀ i, IsSmoothChar (ψ i)) (hs : IsSubquotient σ.ρ (prinSeries ψ)) :
     HasSupport (IrrGL.of σ.ρ σ.smooth σ.irred).rep (GlobalTheory.RoadU.chars ψ hψ) :=
   (hasSupport_of_isCuspSupport (GlobalTheory.TameIwahori.isCuspSupport_of_prinSeries (k := w.adicCompletion E)
     ⟨σ.V, σ.ρ, σ.smooth, σ.irred⟩ hψ hs)).of_equiv (IrrGL.equivOf σ.ρ σ.smooth σ.irred)
-private theorem jqRecV (L : LawsV a ha ε rc) (σ : SmIrr (GL (Fin n) (w.adicCompletion E)))
+private theorem jqRecV (L : _root_.UpperTheory.V.Z.Win.LawsV a ha ε rc) (σ : SmIrr (GL (Fin n) (w.adicCompletion E)))
     (ψ : Fin n → (w.adicCompletion E)ˣ →* ℂˣ) (hψ : ∀ i, IsSmoothChar (ψ i)) (hs : IsSubquotient σ.ρ (prinSeries ψ))
     (g : Weil h) :
     (rc (IrrGL.of σ.ρ σ.smooth σ.irred)).charPol g = ∏ i, (X - C ((ψ i (a g) : ℂˣ) : ℂ)) := by
@@ -106,7 +113,7 @@ private theorem jqRecV (L : LawsV a ha ε rc) (σ : SmIrr (GL (Fin n) (w.adicCom
   simp only [Function.comp_apply]
   rw [L.one, WD.lpOfChar, WD.charPol_mk, WDRep.ofChars_ρ, charpoly_diagEnd]
   simp
-private theorem nuCharV (L : LawsV a ha ε rc) (σ : SmIrr (GL (Fin n) (w.adicCompletion E)))
+private theorem nuCharV (L : _root_.UpperTheory.V.Z.Win.LawsV a ha ε rc) (σ : SmIrr (GL (Fin n) (w.adicCompletion E)))
     (ψ : Fin n → (w.adicCompletion E)ˣ →* ℂˣ) (χ : (Fin n → (w.adicCompletion E)ˣ) →* ℂˣ) (hψ : ∀ i, IsSmoothChar (ψ i))
     (hχ : torusChar ψ = χ * ((deltaHalf (w.adicCompletion E) fun _ : Fin n => Unit).comp
       (leviTorus (w.adicCompletion E) (Fin n)).toMonoidHom))
@@ -118,8 +125,34 @@ private theorem nuCharV (L : LawsV a ha ε rc) (σ : SmIrr (GL (Fin n) (w.adicCo
   generalize rc (IrrGL.of σ.ρ σ.smooth σ.irred) = x at H ⊢
   obtain ⟨m, b, rfl⟩ := x.exists_rep
   rw [WD.charPol_mk] at H
-  rw [WD.lpTw_mk, WD.charPol_mk, WDRep.tw_ρ, ← GlobalTheory.SatChar.absPow_art ha ((1 - (n : ℝ)) / 2) g,
-    charpoly_smul_prod _ _ (Units.ne_zero _) _ H]
+  rw [WD.lpTw_mk, WD.charPol_mk, WDRep.tw_ρ, ← GlobalTheory.SatChar.absPow_art ha ((1 - (n : ℝ)) / 2) g]
+  let u := (absPow (w.adicCompletion E) (((1 - (n : ℝ)) / 2 : ℝ) : ℂ) (a g) : ℂ)
+  have hu : u ≠ 0 := Units.ne_zero _
+  have hsmul : (u • b.ρ g).charpoly = ∏ i, (X - C ((ψ i (a g) : ℂˣ) * u)) := by
+    let B := Pi.basisFun ℂ (Fin m)
+    let M := LinearMap.toMatrix B B (b.ρ g)
+    have hM : M.charpoly = ∏ i, (X - C ((ψ i (a g) : ℂˣ) : ℂ)) :=
+      (LinearMap.charpoly_toMatrix _ B).trans H
+    have hcard : Fintype.card (Fin m) = Fintype.card (Fin n) := by
+      rw [← Matrix.charpoly_natDegree_eq_dim M, hM, natDegree_finsetProd_X_sub_C_eq_card, Finset.card_univ]
+    rw [← LinearMap.charpoly_toMatrix _ B, map_smul]
+    change (u • M).charpoly = _
+    refine Polynomial.funext fun z => ?_
+    have heval := congrArg (eval (z / u)) hM
+    rw [Matrix.eval_charpoly, eval_prod] at heval
+    have hscale : Matrix.scalar (Fin m) z - u • M = u • (Matrix.scalar (Fin m) (z / u) - M) := by
+      ext j j'
+      by_cases hj : j = j'
+      · subst hj
+        simp
+        field_simp
+      · simp [Matrix.diagonal_apply_ne _ hj]
+    rw [Matrix.eval_charpoly, hscale, Matrix.det_smul, heval, eval_prod, hcard,
+      ← Finset.card_univ, ← Finset.prod_const, ← Finset.prod_mul_distrib]
+    refine Finset.prod_congr rfl fun i _ => ?_
+    simp
+    field_simp
+  rw [hsmul]
   refine Finset.prod_congr rfl fun i _ => ?_
   congr 2
   have e1 : ((n : ℂ) - 1) / 2 + (((1 - (n : ℝ)) / 2 : ℝ) : ℂ) = 0 := by
@@ -202,15 +235,70 @@ theorem UpperTheory.V.Z.Win.locDataT_alt :
       have e2 : a g ∈ unitsC _ C := Subgroup.map_mono (Subgroup.comap_mono hC) (hk g g.2 hgk)
       change (resCard (w.adicCompletion E) : ℂ) ^ (((i : ℕ) : ℤ) * ord (w.adicCompletion E) (a g)) *
         (χ (Pi.mulSingle i (a g)) : ℂ) = 1
-      rw [e, chi_unit ψ χ hψχ i _ e (hψC i _ e2)]
-      simp
+      have hunit := psi_val ψ χ hψχ (a g) i
+      rw [hψC i _ e2, val_absPow, GlobalTheory.LGrp.nabs_eq_zpow, e] at hunit
+      simpa [e] using hunit.symm
     have hRg : R g = 1 := by
       have e : r g = 1 := hw2 g hgk (((hw1 g).trans (hν g)).trans (by
         change ∏ i, (Polynomial.X - Polynomial.C (c i g)) = _
         simp [hcg]))
       change Matrix.GeneralLinearGroup.map ι.toRingHom (r g) = 1
       rw [e, map_one]
-    exact rel_of_chars hq2 R c hR ⟨fr, h1⟩ ⟨τ, h2⟩ hRg hcg hg i
+    let f : Weil hB := ⟨fr, h1⟩
+    let t : Weil hB := ⟨τ, h2⟩
+    let q := resCard (w.adicCompletion E)
+    have hinv (j : Fin n) (s : Weil hB) : c j s⁻¹ * c j s = 1 := by
+      rw [← map_mul, inv_mul_cancel, map_one]
+    have hne (j : Fin n) (s : Weil hB) : c j s ≠ 0 := fun h0 => by
+      simpa [h0] using hinv j s
+    have hconj : R f⁻¹ * R t * (R f⁻¹)⁻¹ = R t ^ q := by
+      change R ((t ^ q)⁻¹ * (f⁻¹ * t * f)) = 1 at hRg
+      rw [map_mul, map_inv, inv_mul_eq_one] at hRg
+      rw [← map_pow, hRg]
+      simp
+    have hc (j : Fin n) : c j (t ^ (q - 1)) = 1 := by
+      have hconjc : c j (f⁻¹ * t * f) = c j t := by
+        rw [map_mul, map_mul, mul_right_comm, hinv, one_mul]
+      have hpow : c j (t ^ q) = c j t := by
+        have e : c j ((t ^ q)⁻¹ * (f⁻¹ * t * f)) = 1 := hcg j
+        rw [map_mul, hconjc, ← hinv j (t ^ q)] at e
+        exact (mul_left_cancel₀ (hne _ _) e).symm
+      have hstep : t ^ q = t ^ (q - 1) * t := by
+        rw [← pow_succ, Nat.sub_add_cancel (show 1 ≤ q from le_trans (by decide) hq2)]
+      rw [hstep, map_mul] at hpow
+      exact mul_right_cancel₀ (hne j t) (hpow.trans (one_mul _).symm)
+    have hnil : IsNilpotent (((R t ^ (q - 1) : GL (Fin n) ℂ) : Matrix (Fin n) (Fin n) ℂ) - 1) := by
+      refine ⟨n, ?_⟩
+      have e := Matrix.aeval_self_charpoly (R (t ^ (q - 1)) : Matrix (Fin n) (Fin n) ℂ)
+      rw [hR] at e
+      simpa [hc] using e
+    have hsep (j j' : Fin n) : c j f⁻¹ ≠ (q : ℂ) * c j' f⁻¹ := fun e => by
+      have e' : c j' f = (q : ℂ) * c j f := by
+        linear_combination (c j' f * c j f) * e - c j' f * hinv j f + q * c j f * hinv j' f
+      by_cases hj : j' = j
+      · subst hj
+        have eq : (1 : ℂ) = q := mul_right_cancel₀ (hne j' f) ((one_mul _).trans e')
+        have : 1 = q := by exact_mod_cast eq
+        exact (Nat.ne_of_lt hq2) this
+      · exact (hg j' j hj).2 e'
+    have hcomm := (tamePair ℂ n q (R f⁻¹) (R t) (fun j => c j f⁻¹) hq2 hconj (hR _) hsep hnil).2
+    have hcomm' : R f * R t = R t * R f := by
+      rw [map_inv] at hcomm
+      exact (Commute.inv_left_iff.1 hcomm : Commute (R f) (R t))
+    refine pairRel ℂ n (R f) (R t) (fun j => c j f) (fun j => c j t) (fun j j' e => ?_) ?_
+      (hR f) (fun b => ?_) i
+    · by_contra hj
+      exact (hg j j' hj).1 e
+    · rw [← Units.val_mul, hcomm', Units.val_mul]
+    · rw [← Units.val_pow_eq_pow_val, ← Units.val_mul, ← map_pow, ← map_mul]
+      have hroots : (R (f ^ b * t) : Matrix (Fin n) (Fin n) ℂ).charpoly.roots =
+          Finset.univ.val.map (fun j => c j (f ^ b * t)) := by
+        rw [hR, Finset.prod_eq_multiset_prod, ← Polynomial.roots_multiset_prod_X_sub_C
+          (Finset.univ.val.map (fun j => c j (f ^ b * t))), Multiset.map_map]
+        rfl
+      rw [Matrix.trace_eq_sum_roots_charpoly, hroots]
+      change (∑ j, c j (f ^ b * t)) = _
+      simp
   exact ⟨fun hc => (core (hc.elim hsph hgen)).1, fun hg => (core (hgen hg)).2 hg⟩
 end
 end

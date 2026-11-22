@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.HilbertRowConditions.RowPin
-import Formalism.LocalToGlobal.KernelLattices.InterlaceAll
-import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
-import Formalism.SharpRestriction.GlobalSchurBounds.FiniteModelOfAdmissibleTransports
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NfAllSmulReB
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ExistsOnOfPosDef
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.HilbertRowConditions.RowPin
+public import Formalism.LocalToGlobal.KernelLattices.InterlaceAll
+public import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
+public import Formalism.SharpRestriction.GlobalSchurBounds.FiniteModelOfAdmissibleTransports
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NfAllSmulReB
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ExistsOnOfPosDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem ptCo_mem_intSpan : ∀ (D : D7) (u : D.what₂.Word) (Ch : ℕ → Type)
   induction hy using Submodule.span_induction with
   | mem y hy => exact ptCo_one D u Ch chOf Tf B hB w y hy c
   | zero => rw [map_zero, map_zero, Pi.zero_apply]; exact zero_mem _
-  | add y z _ _ hy hz => rw [map_add, map_add, Pi.add_apply]; exact add_mem hy hz
+  | add y z _ _ hy hz => rw [map_add (f := _), map_add (f := _), Pi.add_apply]; exact add_mem hy hz
   | smul r y _ hy =>
     have e : r • y = (r : D.what₂.LL) • y := rfl
     rw [e, LinearMap.map_smulₛₗ, map_smul, Pi.smul_apply]

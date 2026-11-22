@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.LinearCoeffSubstChainRule
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.LinearCoeffSubstChainRule
+
+@[expose] public section
 
 noncomputable section
 
@@ -134,7 +138,7 @@ theorem endoLog_holds {C : Type} [Field C] [CharZero C] {V : VF C} {O : Type} [C
   have hlin : ∀ m, φ m = ∑ j, VP.lin1 (φ m) j • (MvPowerSeries.X j : MvPowerSeries (Fin dd) C) := by
     intro m
     refine VP.lin_of_add (φ m) (cφ m) ?_
-    rw [hsub _ (fun k => by rw [map_add, VP.cc_X, VP.cc_X, add_zero]) m, hsub _ (fun _ => VP.cc_X _) m,
+    rw [hsub _ (fun k => by rw [map_add (f := _), VP.cc_X, VP.cc_X, add_zero]) m, hsub _ (fun _ => VP.cc_X _) m,
       hsub _ (fun _ => VP.cc_X _) m]
     exact VP.PhiAt_add Y hε hadd (fun _ => VP.cc_X _) (fun _ => VP.cc_X _) m
   have hP := VP.cc_mapAt hε (VP.cc_exAt Y ha)
@@ -148,12 +152,5 @@ theorem endoLog_holds {C : Type} [Field C] [CharZero C] {V : VF C} {O : Type} [C
   rw [VP.subst_smul ha, VP.subst_X ha]
   show VP.lin1 (VP.PhiAt Y ε MvPowerSeries.X m) j • a j = _
   rw [VP.linear_coeff_formal_law_at_X Y hε]
-
-theorem valuation_eq_pair_of_projections' {C : Type} [Field C] [CharZero C] {V : VF C} {O : Type} [CommRing O] [StarRing O] {dd : ℕ} {d : ℕ}
-    [NeZero d] {Orb : Type} [Fintype Orb] {I : Orb → Fin 2 → Type} [∀ o g, Fintype (I o g)]
-    (Y : FBChart C V O dd) (p : ∀ o, PairData Y d (I o)) (H : ∀ o, (Y.raw (p o)).Hyps V)
-    (Ls : LetSys C dd) (n : ℕ) (hK : KillSt Y p) (hP : ∀ o, ProjSt Y (p o))
-    (hT : ∀ o, RawChart.TCoordSt (H o).cartH) : ValEqPSt Y p H Ls n :=
-  valuation_eq_pair_of_projections Y p H Ls n (endoLog_holds Y) hK hP hT
 
 end Formalism.L2.FormalSeriesBounds

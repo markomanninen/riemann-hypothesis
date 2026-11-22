@@ -1,7 +1,11 @@
-import Development.EtaleCohomology.EtaleSheaves.QuotientFieldNonconstantLift
-import Development.EtaleCohomology.EtaleSheaves.LeafDescendVCut
-import Development.EtaleCohomology.EtaleSheaves.CurveKrullDimTopology
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.DimSplitPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.QuotientFieldNonconstantLift
+public import Development.EtaleCohomology.EtaleSheaves.LeafDescendVCut
+public import Development.EtaleCohomology.EtaleSheaves.CurveKrullDimTopology
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.DimSplitPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry LateralTheory.E.E4 Set Topology TopologicalSpace

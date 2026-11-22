@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,8 +91,8 @@ end GlobalTheory.Desc.Sat
 
 namespace GlobalTheory.Desc
 
-open Sat in
 
+open Sat in
 theorem Emb.fst_mem_U_iff : ∀ (σ : Setup) (E : Emb σ), σ.Common → ∀ (x : Sp σ.R) (w : ↥(Limits.pullback E.p (spMap (σ.ρ x)))), (Limits.pullback.fst E.p (spMap (σ.ρ x)) w ∈ E.U ↔ ∃ y : (σ.C x).G.left, E.emb x y = Limits.pullback.fst E.p (spMap (σ.ρ x)) w ∧ (σ.C x).G.hom y = Limits.pullback.snd E.p (spMap (σ.ρ x)) w) := by
   intro σ E hC x w
   constructor

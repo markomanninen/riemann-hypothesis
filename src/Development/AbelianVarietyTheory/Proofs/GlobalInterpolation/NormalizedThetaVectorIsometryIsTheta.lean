@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.LateralTheory
-import Formalism.LocalToGlobal.KernelLattices.DeterminantCokernelCount.CokernelIndexFactors.StatementB
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
-import Formalism.LocalToGlobal.GlobalTheory.GL3.LinkThetaStatementFamily
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PStdOK
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.RCauchy
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+public import Formalism.LocalToGlobal.KernelLattices.DeterminantCokernelCount.CokernelIndexFactors.StatementB
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.LinkThetaStatementFamily
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PStdOK
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.RCauchy
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Classical Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker
 
@@ -41,7 +45,7 @@ theorem isTheta_eNat_comp : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ)
         (B.eNat χ N N' L L' (e.symm (z + x)) *
           Complex.exp (-(Real.pi : ℂ) * JMB.hf S.Hm z x - (Real.pi : ℂ) / 2 * JMB.hf S.Hm x x)) =
       B.eNat χ N N' L L' (e.symm z)
-    rw [← key, hph, ← hal, h1, h2, map_add]
+    rw [← key, hph, ← hal, h1, h2, map_add (f := _)]
     unfold U
     ring_nf
 

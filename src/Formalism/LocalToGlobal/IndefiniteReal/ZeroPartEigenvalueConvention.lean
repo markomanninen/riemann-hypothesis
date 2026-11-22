@@ -1,9 +1,13 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LinksLemmas
-import Formalism.LocalToGlobal.IndefiniteReal.LinksW
-import Formalism.LocalToGlobal.IndefiniteReal.WeilFull
-import Formalism.LocalToGlobal.IndefiniteReal.PrimitiveStatementsWithPassage
-import Formalism.LocalToGlobal.IndefiniteReal.HeckeIndexRange
-import Formalism.LocalToGlobal.Columns.HeckeInertComm
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksLemmas
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksW
+public import Formalism.LocalToGlobal.IndefiniteReal.WeilFull
+public import Formalism.LocalToGlobal.IndefiniteReal.PrimitiveStatementsWithPassage
+public import Formalism.LocalToGlobal.IndefiniteReal.HeckeIndexRange
+public import Formalism.LocalToGlobal.Columns.HeckeInertComm
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,9 +27,9 @@ open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism
 
 variable (D) {G : Type} [Group G] [Fintype G] {Pl0 I0 T : Type} (A3 : FamIn3 D.what₂.LL G Pl0 I0 (List ℕ) T D.R.m)
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure Face3 where
 
   P0 : Subgroup G
@@ -67,25 +71,25 @@ def eV (Zs : DefSub A3.fam3.amb3) (t : T) : (Fin ((F.fc Zs).Df1.nV t) → D.what
 
 end Face3
 
-variable {D} in
 
+variable {D} in
 def labIn (n : ℕ) (s : List ℕ) : List ℤ :=
   s.map (fun a => (a : ℤ)) ++ List.replicate (n - 2 * s.length) 0 ++ (s.reverse.map fun a => -(a : ℤ))
 
-variable {D} in
 
+variable {D} in
 def IsLabElt (V : HSp D) (P : Pl D.host.E) (d : List ℤ) (x : Bridge.Gf V) : Prop :=
   ∃ (e f : AE D) (ϖ : 𝓞 D.host.E) (α : GA D V), IsPrimeIdem P e f ∧ ϖ ∈ P.asIdeal ∧ ϖ ∉ P.asIdeal ^ 2 ∧ α ∈ GfC V ∧
     (x : GL _ _) = finHom V α ∧ SuppF V f α ∧ DivAt V e (ϖ : D.host.E) d α
 
-variable {D} in
 
+variable {D} in
 def IsLocElt (V : HSp D) (P : Pl D.host.E) (x : Bridge.Gf V) : Prop :=
   ∃ (e f : AE D) (g : GA D V), IsPrimeIdem P e f ∧ g ∈ GfC V ∧ (x : GL _ _) = finHom V g ∧ SuppF V f g
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure RealDat3 (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] extends RealDat D A3.A Ks where
 
   plI : I0 → Pl D.host.E

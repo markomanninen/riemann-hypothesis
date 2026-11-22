@@ -1,10 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsLineStabHaar
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsSemidirectHaar
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsUnitsInvHaar
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsTorusEmbedding
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsLineEigenvalue
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsTorusModulus
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsLineStabHaar
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsSemidirectHaar
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsUnitsInvHaar
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsTorusEmbedding
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsLineEigenvalue
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsTorusModulus
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -14,19 +18,19 @@ open scoped ENNReal NNReal
 noncomputable section
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 def LineStabHaar.invUnits (b : InfinitePlace E → ℂ) : InfinitePlace E → ℂˣ :=
   fun w => if hb : b w = 0 then 1 else (Units.mk0 (b w) hb)⁻¹
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem LineStabHaar.invUnits_of_ne {b : InfinitePlace E → ℂ} (hb : ∀ w, b w ≠ 0) :
     invUnits b = fun w => (Units.mk0 (b w) (hb w))⁻¹ := by
   funext w
   simp [invUnits, hb w]
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem LineStabHaar.measurable_invUnits : Measurable (invUnits (E := E)) := by
   have h0 : Measurable fun z : ℂ => if hz : z = 0 then (1 : ℂˣ) else (Units.mk0 z hz)⁻¹ := by
     refine measurable_iff_comap_le.2 ?_
@@ -38,25 +42,25 @@ theorem LineStabHaar.measurable_invUnits : Measurable (invUnits (E := E)) := by
       by_cases hz : z = 0 <;> simp [hz]
     rw [e]
     exact (Measurable.ite (measurableSet_singleton 0) measurable_const measurable_inv).comap_le
-  exact measurable_pi_lambda _ fun w => h0.comp (measurable_pi_apply w)
+  exact Measurable.of_eval fun w => h0.comp (measurable_pi_apply w)
 
-omit [NumberField F] [NumberField E] [IsTotallyReal F] [IsTotallyComplex E] [DecidableEq ι] in
 
+omit [NumberField F] [NumberField E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] [DecidableEq ι] in
 theorem LineStabHaar.two_le_finrank {h : HermitianForm F E W} (v : Basis ι E W) {x₀ w₀ : W}
     (hx₀ : x₀ ≠ 0) (hp : IsHyperbolicPair h x₀ w₀) : 2 ≤ finrank E W := by
   have : Module.Finite E W := Module.Finite.of_basis v
   have hli : LinearIndependent E ![x₀, w₀] := by
     refine LinearIndependent.pair_iff.2 fun s t hst => ?_
     have e := congrArg (h.toSesq x₀) hst
-    rw [map_add, map_smul, map_smul, hp.1, hp.2.2, map_zero, smul_zero, zero_add, smul_eq_mul,
+    rw [map_add (f := _), map_smul, map_smul, hp.1, hp.2.2, map_zero, smul_zero, zero_add, smul_eq_mul,
       mul_one] at e
     subst e
     rw [zero_smul, add_zero, smul_eq_zero] at hst
     exact ⟨hst.resolve_right hx₀, rfl⟩
   simpa using hli.fintype_card_le_finrank
 
-omit [NumberField F] [IsTotallyReal F] [IsTotallyComplex E] in
 
+omit [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem LineStabHaar.proof (h : HermitianForm F E W) (v : Basis ι E W)
     (h1 : WittPartner.Statement h) (h2 : VecAtNeZero.Statement v)
     (h3 : TorusEmbedding.Statement h v) (h4 : LineEigenvalue.Statement h v)

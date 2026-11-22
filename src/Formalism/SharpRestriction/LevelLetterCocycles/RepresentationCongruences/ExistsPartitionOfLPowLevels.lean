@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.UniversalGeneralOfRestriction
-import Formalism.SharpRestriction.LevelLetterCocycles.PsCoprimeOf
-import Formalism.SharpRestriction.LevelLetterCocycles.SaturationUnramifiedOfRingCondition
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.UniversalGeneralOfRestriction
+public import Formalism.SharpRestriction.LevelLetterCocycles.PsCoprimeOf
+public import Formalism.SharpRestriction.LevelLetterCocycles.SaturationUnramifiedOfRingCondition
+
+@[expose] public section
 
 noncomputable section
 

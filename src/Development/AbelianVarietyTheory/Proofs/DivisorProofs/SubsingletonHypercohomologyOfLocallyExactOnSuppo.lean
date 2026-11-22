@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSuppSub
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSheafShortComplexExactIffLocallyStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HypercohomologyPullbackPushforwardFunctorial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCochainEvEqOfNatural
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCochainEvalOnSimplexBasicPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRules
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSuppSub
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSheafShortComplexExactIffLocallyStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HypercohomologyPullbackPushforwardFunctorial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCochainEvEqOfNatural
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCochainEvalOnSimplexBasicPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRules
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -38,8 +42,8 @@ theorem delta_comp_ofHom {K I J : Cx R} {n : ℤ} (a : Cochain K I n) (f : I ⟶
 
 end GlobalTheory.EtC.SuppAcyc
 
-open GlobalTheory.EtC.SuppAcyc in
 
+open GlobalTheory.EtC.SuppAcyc in
 theorem GlobalTheory.EtC.subsingleton_of_locExact_supp : ∀ (R : Type) [CommRing R] (E : Spc) (C : Cx R) [C.IsKInjective], (∀ (U : Scheme.{0}), Nonempty (Sx E 0 U) → ∀ (n : ℤ) (b : Sec (C.X n) U), Sec.map (C.d n (n + 1)) b = 0 → Loc U fun V g => ∃ a : Sec (C.X (n - 1)) V, Sec.map (C.d (n - 1) n) a = Sec.res g b) → ∀ n, Subsingleton (CohomologyClass ((chains R).obj E) C n) := by
   intro R _ E C _ hC n
   let Z : Scheme.{0} → Prop := fun U => Nonempty (Sx E 0 U)
@@ -75,10 +79,58 @@ theorem GlobalTheory.EtC.subsingleton_of_locExact_supp : ∀ (R : Type) [CommRin
   have hnull : Nonempty (Homotopy ι 0) := IsKInjective.nonempty_homotopy_zero ι hD
   have hpush : cpush ((chains R).obj E) ι n = cpush _ (0 : D ⟶ C) n :=
     ((GlobalTheory.EtC.ZcFun.main R).2.2.2.2 ι 0 hnull ((chains R).obj E) n).2
-  obtain ⟨-, hnat, hdet, -, -⟩ := GlobalTheory.T.etaleCochainEvalOnSimplex_basic_properties R (E := E) (I := C) (n := n)
-  obtain ⟨-, -, -, -, hpost⟩ := GlobalTheory.T.etaleCochainEvalOnSimplex_basic_properties R (E := E) (I := D) (n := n)
-  obtain ⟨haddD1, -, hdetD, -, hpost1⟩ := GlobalTheory.T.etaleCochainEvalOnSimplex_basic_properties R (E := E) (I := D) (n := n + 1)
-  obtain ⟨haddC1, -, -, -, -⟩ := GlobalTheory.T.etaleCochainEvalOnSimplex_basic_properties R (E := E) (I := C) (n := n + 1)
+  have hbasic :
+      ∀ {I : Cx R} {n : ℤ},
+      (∀ (α β : Cochain ((chains R).obj E) I n) p s h U x,
+        ev (α + β) p s h U x = ev α p s h U x + ev β p s h U x ∧
+        ev (α - β) p s h U x = ev α p s h U x - ev β p s h U x ∧
+        ev (0 : Cochain ((chains R).obj E) I n) p s h U x = 0 ∧
+        ∀ c : ℤ, ev (c • α) p s h U x = c • ev α p s h U x) ∧
+      (∀ (α : Cochain ((chains R).obj E) I n) p s h (V U : Scheme.{0}) (g : V ⟶ U) (x : Sx E p U),
+        Sec.res g (ev α p s h U x) = ev α p s h V (x.res g)) ∧
+      (∀ α β : Cochain ((chains R).obj E) I n,
+        (∀ p s h U x, ev α p s h U x = ev β p s h U x) → α = β) ∧
+      (∀ {E' : Spc} (f : E' ⟶ E) (α : Cochain ((chains R).obj E) I n) p s h U (x : Sx E' p U),
+        ev ((Cochain.ofHom ((chains R).map f)).comp α (zero_add n)) p s h U x = ev α p s h U (x.map f)) ∧
+      ∀ {J : Cx R} (m : I ⟶ J) (α : Cochain ((chains R).obj E) I n) p s h U x,
+        ev (α.comp (Cochain.ofHom m) (add_zero n)) p s h U x = Sec.map (m.f s) (ev α p s h U x) := by
+    intro I n
+    have ev_eq {F : Spc} {J : Cx R} (α : Cochain ((chains R).obj F) J n)
+        (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx F p U) :
+        ev α p s h U x = Sec.map ((chainsXIso R F p).inv ≫ α.v _ _ h) (freeGen R _ U x) := rfl
+    refine ⟨?_, ?_, ?_, ?_, ?_⟩
+    · intro α β p s h U x
+      have hadd (a b : Cochain ((chains R).obj E) I n) :
+          ev (a + b) p s h U x = ev a p s h U x + ev b p s h U x := by
+        simp [ev, Cochain.add_v]
+      let eval : Cochain ((chains R).obj E) I n →+ Sec (I.X s) U :=
+        AddMonoidHom.mk' (fun a => ev a p s h U x) hadd
+      exact ⟨hadd α β, map_sub eval α β, map_zero eval, fun c => map_zsmul eval c α⟩
+    · intro α p s h V U g x
+      rw [ev_eq, CupSpec.map_res, CupSpec.freeGen_res]
+      rfl
+    · intro α β H
+      ext p s hs : 1
+      by_cases hp : p ≤ 0
+      · obtain ⟨k, rfl⟩ : ∃ k : ℕ, p = -(k : ℤ) := ⟨(-p).toNat, by omega⟩
+        rw [← cancel_epi (chainsXIso R E k).inv]
+        exact CupSpec.free_ext _ _ (fun U x => H k s hs U x)
+      · exact (CupSpec.isZero_chains E p (by omega)).eq_of_src _ _
+    · intro E' f α p s h U x
+      rw [ev_eq, ev_eq, Cochain.zero_cochain_comp_v, Cochain.ofHom_v,
+        ← Category.assoc, CupSpec.chains_map, Category.assoc]
+      change Sec.map ((chainsXIso R E p).inv ≫ α.v _ _ h)
+        (Sec.map ((free R).map _) (freeGen R _ U x)) = _
+      rw [CupSpec.freeGen_map]
+      rfl
+    · intro J m α p s h U x
+      rw [ev_eq, ev_eq, Cochain.comp_zero_cochain_v, Cochain.ofHom_v,
+        ← Category.assoc]
+      rfl
+  obtain ⟨-, hnat, hdet, -, -⟩ := hbasic (I := C) (n := n)
+  obtain ⟨-, -, -, -, hpost⟩ := hbasic (I := D) (n := n)
+  obtain ⟨haddD1, -, hdetD, -, hpost1⟩ := hbasic (I := D) (n := n + 1)
+  obtain ⟨haddC1, -, -, -, -⟩ := hbasic (I := C) (n := n + 1)
   have hzero : ∀ c : CohomologyClass ((chains R).obj E) C n, c = 0 := by
     intro c
     obtain ⟨α, rfl⟩ := c.mk_surjective
@@ -93,7 +145,26 @@ theorem GlobalTheory.EtC.subsingleton_of_locExact_supp : ∀ (R : Type) [CommRin
       intro p s h V U g x
       apply hinj s V
       rw [← SuppSub.res_map, hvspec, hvspec, (hnat α.1 p s h V U g x)]
-    obtain ⟨α', hα'⟩ := GlobalTheory.EtC.exists_cochain_ev_eq_of_natural R v hvnat
+    have hex : ∃ α : Cochain ((chains R).obj E) D n, ∀ p s h U x, ev α p s h U x = v p s h U x := by
+      have components : ∀ (i j : ℤ) (hij : i + n = j), ∃ φ : ((chains R).obj E).X i ⟶ D.X j,
+          ∀ (p : ℕ) (hp : i = -(p : ℤ)) U x,
+            Sec.map ((chainsXIso R E p).inv ≫ eqToHom (congrArg ((chains R).obj E).X hp.symm) ≫ φ)
+              (freeGen R _ U x) = v p j (hp ▸ hij) U x := by
+        intro i j hij
+        by_cases hi : i ≤ 0
+        · obtain ⟨k, rfl⟩ : ∃ k : ℕ, i = -(k : ℤ) := ⟨(-i).toNat, by omega⟩
+          obtain ⟨φ, hφ⟩ := CupSpec.free_exists (R := R) _ _ (v k j hij) (hvnat k j hij)
+          refine ⟨(chainsXIso R E k).hom ≫ φ, fun p hp U x => ?_⟩
+          obtain rfl : k = p := by omega
+          rw [eqToHom_refl, Category.id_comp, Iso.inv_hom_id_assoc]
+          exact hφ U x
+        · exact ⟨0, fun p hp => by omega⟩
+      choose φ hφ using components
+      refine ⟨Cochain.mk φ, fun p s h U x => ?_⟩
+      have hEval := hφ _ _ h p rfl U x
+      rw [eqToHom_refl, Category.id_comp] at hEval
+      exact hEval
+    obtain ⟨α', hα'⟩ := hex
     have hcomp : α'.comp (Cochain.ofHom ι) (add_zero n) = α.1 := by
       apply hdet
       intro p s h U x

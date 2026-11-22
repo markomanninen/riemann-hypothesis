@@ -1,4 +1,8 @@
-import CompanionTheory.AutomorphicTheory.ZuckermanCommutation.ZuckermanFunctors.IsSimpleFam
+module
+
+public import CompanionTheory.AutomorphicTheory.ZuckermanCommutation.ZuckermanFunctors.IsSimpleFam
+
+@[expose] public section
 
 open Matrix Finset
 open scoped Kronecker
@@ -40,7 +44,8 @@ theorem mAct_one {ι : Type} [Fintype ι] [DecidableEq ι] {V : Type} [AddCommGr
 theorem hom_cas (hL : HomLie) {X Y : Obj k r} {f : M X →ₗ[ℂ] M Y} (hX : X.1.OK) (hY : Y.1.OK) (hf : IsHom X Y f)
     (x : M X) : f (cas X x) = cas Y (f x) := by
   have h : ∀ Z x, f (L X Z x) = L Y Z (f x) := fun Z x => LinearMap.congr_fun (hL k r X Y f hX hY hf Z) x
-  simp only [cas, LinearMap.sum_apply, Module.End.mul_apply, map_sum, h]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [cas, LinearMap.sum_apply, Module.End.mul_apply, map_sum, h]
 
 def cM (n : ℕ) : Matrix Unit (Fin n × Fin n) ℂ := fun _ p => if p.1 = p.2 then 1 else 0
 
@@ -152,7 +157,7 @@ theorem multOne_of (hC : HomCat) (hM : MatHom) (hT : TensHom) (hL : HomLie) (hS 
   have a1 := LinearMap.congr_fun hl v
   have a2 := LinearMap.congr_fun hl' v
   simp only [LinearMap.comp_apply, LinearMap.smul_apply, LinearMap.id_apply] at a1 a2
-  rw [e, map_add, map_smul, map_smul, a1, a2, smul_smul, smul_smul, ← add_smul, h0, zero_smul]
+  rw [e, map_add (f := _), map_smul, map_smul, a1, a2, smul_smul, smul_smul, ← add_smul, h0, zero_smul]
 
 end CompanionTheory.Zuck
 

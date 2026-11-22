@@ -1,4 +1,8 @@
-import Formalism.FilteredPoleLength.ReducedBasisBounds.ParameterInequalities
+module
+
+public import Formalism.FilteredPoleLength.ReducedBasisBounds.ParameterInequalities
+
+@[expose] public section
 
 noncomputable section
 

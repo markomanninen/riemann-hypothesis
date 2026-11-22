@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.NormalizedValuationMul
-import Formalism.LocalToGlobal.ProjectiveLattices.SecPtOrd
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.NormalizedValuationMul
+public import Formalism.LocalToGlobal.ProjectiveLattices.SecPtOrd
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ theorem loc_charZero (h : IsUnif (OsK Xr la G.w) (unifO Xr la G.N)) (ζ : PtsG G
   have hO : CharZero (Op Xr la G.N) :=
     (RingHom.charZero_iff (IsFractionRing.injective (Op Xr la G.N) (Kp Xr la G.N))).2 hK
   refine charZero_of_injective_algebraMap (R := Op Xr la G.N) ?_
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   by_contra ha0
   obtain ⟨n, u, rfl⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible ha0 h.irreducible
@@ -119,10 +123,5 @@ theorem fromW_of {ζ : PtsG G la} [IsDVRAt ζ] {y : E.Pt' la}
            loc := hloc
            unr := hunr
            evW := hevW }⟩
-
-theorem secPtSt_of
-    (hR : ∀ ζ : PtsG G la, ∃ y : E.Pt' la, Nonempty (FromW ζ y)) :
-    SecPtSt G la :=
-  fun ζ => (hR ζ).imp fun _ ⟨f⟩ => ⟨f.toSecPt⟩
 
 end Formalism.L2.Pj

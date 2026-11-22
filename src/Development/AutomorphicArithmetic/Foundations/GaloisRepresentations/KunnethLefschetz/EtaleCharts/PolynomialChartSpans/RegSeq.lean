@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PBData
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PBData
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,8 +12,8 @@ namespace UpperTheory.Gal.KunnethLefschetz.G
 private lemma mem_span_X_of_sum_eq_zero {A : Type} [CommRing A] {d : ℕ} (p : Fin d → MvPolynomial (Fin d) A)
     (h : ∑ m, MvPolynomial.X m * p m = 0) (l : Fin d) :
     p l ∈ Ideal.span (Set.range fun m : Fin d => (MvPolynomial.X m : MvPolynomial (Fin d) A)) := by
-  have h0 : MvPolynomial.coeff 0 (p l) = 0 := by
-    have h1 := congrArg (MvPolynomial.coeff (Finsupp.single l 1)) h
+  have h0 : AddMonoidAlgebra.coeff (p l) 0 = 0 := by
+    have h1 := congrArg (AddMonoidAlgebra.coeff · (Finsupp.single l 1)) h
     rw [MvPolynomial.coeff_sum, MvPolynomial.coeff_zero, Finset.sum_eq_single l] at h1
     · simpa [MvPolynomial.coeff_X_mul'] using h1
     · intro m _ hm

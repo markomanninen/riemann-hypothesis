@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.AltCMul
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.AltCMul
+
+@[expose] public section
 
 noncomputable section
 

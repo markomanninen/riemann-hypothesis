@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -150,7 +154,7 @@ theorem weakApprox (T : Finset (HeightOneSpectrum (𝓞 L)))
     · have hsplit : algebraMap L (w.adicCompletion L) (a0 + (N : L) * (s : L)) - x w =
           (algebraMap L (w.adicCompletion L) a0 - x w) +
             algebraMap L (w.adicCompletion L) ((N : L) * (s : L)) := by
-        rw [map_add]; ring
+        rw [map_add (f := _)]; ring
       rw [hsplit]
       refine Valuation.map_add_lt _ (hclose w hw) ?_
       rw [val_alg, Valuation.map_mul]
@@ -161,7 +165,7 @@ theorem weakApprox (T : Finset (HeightOneSpectrum (𝓞 L)))
     · have h1 : |σ a0| ≤ B := hB ⟨σ, rfl⟩
       have hN1 : (1 : ℝ) ≤ N := Nat.one_le_cast.mpr hN
       have hs0 : (0 : ℝ) ≤ s := Nat.cast_nonneg s
-      rw [map_add, map_mul, map_natCast, map_natCast]
+      rw [map_add (f := _), map_mul, map_natCast, map_natCast]
       nlinarith [neg_abs_le (σ a0), mul_nonneg (sub_nonneg.mpr hN1) hs0]
   by_cases h0 : a0 + (N : L) * (t : L) = 0
   · have ht1 : B < ((t + 1 : ℕ) : ℝ) := by push_cast; linarith

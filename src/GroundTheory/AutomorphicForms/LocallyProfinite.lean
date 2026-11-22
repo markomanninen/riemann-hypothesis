@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,20 +61,12 @@ theorem hasBasis_nhds_one_compactOpenSubgroup :
   ⟨fun _ => ⟨fun hU => exists_openSubgroup_isCompact_subset hU,
     fun ⟨K, _, hKU⟩ => mem_of_superset K.mem_nhds_one hKU⟩⟩
 
-theorem hasBasis_nhds_compactOpenSubgroup (g : G) :
-    (𝓝 g).HasBasis (fun K : OpenSubgroup G => IsCompact (K : Set G))
-      (fun K => g • (K : Set G)) := by
-  rw [← map_mul_left_nhds_one g]
-  convert (hasBasis_nhds_one_compactOpenSubgroup (G := G)).map (g * ·) using 2 with K
-  ext x
-  simp only [Set.mem_smul_set, smul_eq_mul, Set.mem_image]
-
 theorem exists_compactOpenSubgroup : ∃ K : OpenSubgroup G, IsCompact (K : Set G) := by
   obtain ⟨K, hK, -⟩ := exists_openSubgroup_isCompact_subset (univ_mem : univ ∈ 𝓝 (1 : G))
   exact ⟨K, hK⟩
 
-omit [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] in
 
+omit [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] in
 theorem isCompact_inf_left {K L : OpenSubgroup G} (hK : IsCompact (K : Set G)) :
     IsCompact ((K ⊓ L : OpenSubgroup G) : Set G) := by
   rw [OpenSubgroup.coe_inf]

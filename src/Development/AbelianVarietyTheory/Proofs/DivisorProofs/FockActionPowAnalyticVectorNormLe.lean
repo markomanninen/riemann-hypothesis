@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockNormBoundsMulXPderivStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockNormBoundsMulXPderivStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible GlobalTheory.FockAlg MvPolynomial
 
 noncomputable section
@@ -11,7 +16,7 @@ theorem totalDegree_pderiv_le_self {σ : Type} (i : σ) (Q : MvPolynomial σ ℂ
     (pderiv i Q).totalDegree ≤ Q.totalDegree := by
   classical
   refine Finset.sup_le fun m hm => ?_
-  have hc : coeff (m + Finsupp.single i 1) Q ≠ 0 := by
+  have hc : AddMonoidAlgebra.coeff Q (m + Finsupp.single i 1) ≠ 0 := by
     rw [mem_support_iff, coeff_pderiv] at hm
     intro h
     rw [h, zero_mul] at hm
@@ -87,7 +92,7 @@ theorem omE_bound (h : IsFockIP ι) (l l' : Ln p q r s) (d : ℕ) (P : Pol p q r
   split_ifs
   · rw [LinearMap.add_apply, LinearMap.smul_apply, Module.End.one_apply]
     refine ⟨(totalDegree_add _ _).trans (max_le h1 ((totalDegree_smul_le _ _).trans (by omega))), ?_⟩
-    rw [map_add, map_smul]
+    rw [map_add (f := _), map_smul]
     refine (norm_add_le _ _).trans ?_
     rw [norm_smul]
     have : ‖(1 / 2 : ℂ)‖ = 1 / 2 := by simp
@@ -107,9 +112,11 @@ theorem omAct_bound (h : IsFockIP ι) (Y : Matrix (Ln p q r s) (Ln p q r s) ℂ)
   · refine (totalDegree_finsetSum _ _).trans (Finset.sup_le fun l _ => ?_)
     refine (totalDegree_finsetSum _ _).trans (Finset.sup_le fun l' _ => ?_)
     exact (totalDegree_smul_le _ _).trans (omE_bound h l l' d P hP).1
-  · rw [map_sum, Finset.sum_mul]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_mul]
     refine norm_sum_le_of_le _ fun l _ => ?_
-    rw [map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_mul]
     refine norm_sum_le_of_le _ fun l' _ => ?_
     rw [map_smul, norm_smul]
     exact mul_le_mul_of_nonneg_left (omE_bound h l l' d P hP).2 (norm_nonneg _)

@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRingHomRhoK
+module
+
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRingHomRhoK
+
+@[expose] public section
+
 open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formalism.MainNotions.TaylorLogMetric GlobalTheory.KerStd GlobalTheory.KerStd.HypCoord Classical
 open Formalism.L2.Th1.CM (MaximalUnramifiedExtension)
 open Formalism.L2.Th1.D (F1 F2 OwOK TrDual phFF)
@@ -40,7 +45,8 @@ theorem sigma_sq_term (D : D7) (p : ℕ) [Fact p.Prime] (σ : MaximalUnramifiedE
 theorem sigma_sq_sum_shift (D : D7) (p : ℕ) [Fact p.Prime] (σ : MaximalUnramifiedExtension p →+* MaximalUnramifiedExtension p)
     (F : ZMod (nP D p) → MaximalUnramifiedExtension p) (hF : ∀ t, σ (σ (F t)) = F (t + 2)) :
     σ (σ (∑ t, F t)) = ∑ t, F t := by
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   simp_rw [hF]
   exact Fintype.sum_equiv (Equiv.addRight 2) _ _ (fun _ => rfl)
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.GaugeEx
 open scoped TensorProduct NNReal ENNReal
@@ -27,17 +31,17 @@ theorem finprod_eq {ι : Type} (r : ι → ℝ≥0) (hr : (Function.mulSupport r
     NNReal.toRealHom.toMonoidHom.map_finprod hr
   rw [h1, ← tprod_eq_finprod (L := SummationFilter.unconditional ι) h0, ← Finset.tprod_subtype' S (fun v => (r v : ℝ))]
   exact (Multipliable.tprod_mul_tprod_compl (f := fun v => (r v : ℝ)) (s := (S : Set ι))
-    (multipliable_of_finite_mulSupport (finite_mulSupport_sub r hr _))
-    (multipliable_of_finite_mulSupport (finite_mulSupport_sub r hr _))).symm
+    (multipliable_of_hasFiniteMulSupport (finite_mulSupport_sub r hr _))
+    (multipliable_of_hasFiniteMulSupport (finite_mulSupport_sub r hr _))).symm
 
 theorem tprod_scale {ι : Type} (f : ι → ℝ) (r : ι → ℝ≥0) (hf : Summable fun v => |f v - 1|)
     (hr : (Function.mulSupport r).Finite) (S : Finset ι) :
     ∏' v : {v // v ∉ S}, ((r v.1 : ℝ) * f v.1) =
       (∏' v : {v // v ∉ S}, (r v.1 : ℝ)) * ∏' v : {v // v ∉ S}, f v.1 := by
   refine Multipliable.tprod_mul
-    (multipliable_of_finite_mulSupport (finite_mulSupport_sub r hr _)) ?_
+    (multipliable_of_hasFiniteMulSupport (finite_mulSupport_sub r hr _)) ?_
   have h := multipliable_one_add_of_summable (f := fun v : {v // v ∉ S} => f v.1 - 1)
-    (hf.subtype {v | v ∉ S})
+    (hf.subtype (fun v => v ∉ S))
   simpa using h
 
 theorem finprod_ennreal {ι : Type} (r : ι → ℝ≥0) (hr : (Function.mulSupport r).Finite)

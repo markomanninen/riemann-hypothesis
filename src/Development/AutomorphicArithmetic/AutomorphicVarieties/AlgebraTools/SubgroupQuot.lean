@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ProfDefs
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ProfDefs
+
+@[expose] public section
 
 open Filter UpperTheory.V.AlgebraTools
 open scoped TensorProduct
@@ -16,7 +20,7 @@ theorem UpperTheory.V.AlgebraTools.TopFG.subgroup_quot :
     haveI : H.FiniteIndex := Subgroup.finiteIndex_of_finite_quotient
     set D := Subgroup.closure s with hD
     haveI : Finite s := hs
-    haveI : Group.FG D := Group.closure_finite_fg s
+    haveI : Group.FG D := inferInstance
     haveI : (H.subgroupOf D).FiniteIndex := inferInstance
     have hfg : Group.FG (H.subgroupOf D) := inferInstance
     obtain ⟨t, ht, htf⟩ := Group.fg_iff.mp hfg

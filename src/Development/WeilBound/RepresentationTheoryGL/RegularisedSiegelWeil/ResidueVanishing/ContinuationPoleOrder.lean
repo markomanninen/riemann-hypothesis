@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ResidueVanishing.Leaves
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ResidueVanishing.Leaves
+
+@[expose] public section
 
 noncomputable section
 

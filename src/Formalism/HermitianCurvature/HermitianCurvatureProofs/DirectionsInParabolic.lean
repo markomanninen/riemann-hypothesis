@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementU
+module
+
+public import Formalism.HermitianCurvature.StatementU
+
+@[expose] public section
 
 open Matrix Formalism.FourierDecayAlt Formalism.FourierDecayAlt.U Formalism.QuantumDeterminants
 open scoped ComplexConjugate

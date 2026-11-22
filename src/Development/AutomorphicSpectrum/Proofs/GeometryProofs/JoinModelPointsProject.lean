@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsArithVarOfBlockAlgebraic
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ValuationCoordsComplexPoint
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsValuationSubringExtension
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullFormsGeneric
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsArithVarOfBlockAlgebraic
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ValuationCoordsComplexPoint
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsValuationSubringExtension
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullFormsGeneric
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,9 +45,9 @@ theorem IsVal.unique (hw : w ∈ ptsOver L (mCoordIdeal y)) {a : Ω} {v v' : L}
       have := homog_neg (homog_mul hg' hh)
       rwa [add_comm d' d] at this)
   have h0 := aeval_eq_zero_of hw hF (by
-    simp only [map_add, map_neg, map_mul, hy, hy']
+    simp only [map_add (f := _), map_neg, map_mul, hy, hy']
     ring)
-  simp only [map_add, map_neg, map_mul, hv, hv'] at h0
+  simp only [map_add (f := _), map_neg, map_mul, hv, hv'] at h0
   have : (v - v') * (aeval w h * aeval w h') = 0 := by linear_combination h0
   rcases mul_eq_zero.mp this with h | h
   · exact sub_eq_zero.mp h
@@ -58,8 +62,8 @@ theorem IsVal.add {a b : Ω} {v u : L} (h1 : IsVal y w a v) (h2 : IsVal y w b u)
   · have := homog_mul hg' hh
     rwa [add_comm d' d] at this
   · rw [map_mul]; exact mul_ne_zero hn hn'
-  · simp only [map_add, map_mul, hy, hy']; ring
-  · simp only [map_add, map_mul, hv, hv']; ring
+  · simp only [map_add (f := _), map_mul, hy, hy']; ring
+  · simp only [map_add (f := _), map_mul, hv, hv']; ring
 
 theorem IsVal.mul {a b : Ω} {v u : L} (h1 : IsVal y w a v) (h2 : IsVal y w b u) :
     IsVal y w (a * b) (v * u) := by
@@ -82,8 +86,8 @@ theorem isVal_one : IsVal y w 1 1 :=
 theorem isVal_zero : IsVal y w 0 0 :=
   ⟨0, 0, 1, homog_zero 0, homog_one, by simp, by simp, by simp⟩
 
-variable (y w) in
 
+variable (y w) in
 def locRing : Subring Ω where
   carrier := {a | ∃ v, IsVal y w a v}
   mul_mem' := fun ⟨_, hv⟩ ⟨_, hu⟩ => ⟨_, hv.mul hu⟩
@@ -278,7 +282,7 @@ theorem isMultiHomog_rename_inl {g : MRing ι} {d : K → ℕ} (hg : IsMultiHomo
   cases k with
   | inl k =>
     have h1 : ∀ i : joinIdx ι ι' (Sum.inl k), Finsupp.mapDomain (joinInl ι ι') m₀ ⟨Sum.inl k, i⟩ = m₀ ⟨k, i⟩ :=
-      fun i => Finsupp.mapDomain_apply joinInl_injective m₀ ⟨k, i⟩
+      fun i => Finsupp.mapDomain_apply_of_injective joinInl_injective m₀ ⟨k, i⟩
     simp only [h1]
     exact hg m₀ hm₀ k
   | inr k =>

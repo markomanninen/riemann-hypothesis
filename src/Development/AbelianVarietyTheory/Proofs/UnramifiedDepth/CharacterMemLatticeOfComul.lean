@@ -1,11 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartFH
-import ReciprocityTheory.DualLattices.TowerZeroSurjective
-import ReciprocityTheory.DualLattices.LinPairStatement
-import ReciprocityTheory.DualLattices.LengthDegreeAbelianVariety
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.IsEigBasisIff
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartFH
+public import ReciprocityTheory.DualLattices.TowerZeroSurjective
+public import ReciprocityTheory.DualLattices.LinPairStatement
+public import ReciprocityTheory.DualLattices.LengthDegreeAbelianVariety
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.IsEigBasisIff
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry TensorProduct Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.Pdiv.ChartF ReciprocityTheory.ChartRestriction.G.Pdiv.AvDefs
 open ReciprocityTheory.PGsh ReciprocityTheory.PGsh.Up ReciprocityTheory.PGsh.Be2 GlobalTheory.ChF
@@ -18,8 +23,8 @@ private def latConv {C N : Type} [Field C] [Add N] (φ ψ : (N → C) →ₗ[C] 
     (N → C) →ₗ[C] C where
   toFun f := φ (fun x => ψ (fun y => f (x + y)))
   map_add' f g := by
-    rw [← map_add]; congr 1; funext x
-    rw [Pi.add_apply, ← map_add]; rfl
+    rw [← map_add (f := _)]; congr 1; funext x
+    rw [Pi.add_apply, ← map_add (f := _)]; rfl
   map_smul' c f := by
     rw [RingHom.id_apply, ← map_smul]; congr 1; funext x
     rw [Pi.smul_apply, ← map_smul]; rfl
@@ -44,7 +49,7 @@ private theorem lat_bound {C V : Type} [Field C] [AddCommGroup V] [Module C V]
     obtain ⟨M, hM⟩ := hx
     obtain ⟨M', hM'⟩ := hy
     refine ⟨max M M', fun φ hφ => ?_⟩
-    rw [map_add]
+    rw [map_add (f := _)]
     exact (v.map_add _ _).trans (max_le_max (hM φ hφ) (hM' φ hφ))
   | smul c x _ hx =>
     obtain ⟨M, hM⟩ := hx
@@ -93,7 +98,7 @@ private theorem lat_dual {C : Type} [Field C] (v : Valuation C NNReal) {O : Type
       rw [← hb, Module.Basis.coord_apply, Module.Basis.repr_self, Finsupp.single_apply]
       split_ifs <;> simp
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact v.map_add_le hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact v.map_add_le hx hy
     | smul c x _ hx =>
       rw [← algebraMap_smul C c x, map_smul, smul_eq_mul, map_mul]
       exact mul_le_one' (hv.map_le_one c) hx

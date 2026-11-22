@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLocalComponentUnitaryMatrix
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryHeckeCharacterValues
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetVecEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMaximalAboveOfDvdNormHost
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLocalComponentUnitaryMatrix
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryHeckeCharacterValues
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetVecEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMaximalAboveOfDvdNormHost
+
+@[expose] public section
+
 open scoped Pointwise
 open Formalism.BasicNotions Formalism.IndefR.Links IsDedekindDomain NumberField
 open Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3
@@ -115,7 +120,7 @@ theorem glue_one (D : D7) (e : AE D) : glue D e 1 = 1 := by
 
 theorem sgA_glue (D : D7) {e : AE D} (hs : sgA D e = e) (a : D.host.E) :
     sgA D (glue D e a) = glue D e (D.host.conj a) := by
-  unfold glue; rw [map_add, map_mul, map_sub, map_one, hs, PtsMem.sgA_inc]
+  unfold glue; rw [map_add (f := _), map_mul, map_sub, map_one, hs, PtsMem.sgA_inc]
 
 def glueU (D : D7) {e : AE D} (he : e * e = e) (a : D.host.E) (ha : a ≠ 0) : (AE D)ˣ :=
   ⟨glue D e a, glue D e a⁻¹, by rw [glue_mul D he, mul_inv_cancel₀ ha, glue_one],
@@ -273,7 +278,7 @@ theorem exists_skew_scalar (D : D7) (𝔪 : Ideal (𝓞 D.host.E)) (h0 : 𝔪 �
         simp only [hι, map_mul, map_natCast, Formalism.L2.Pj.algebraMap_conj_smul, conj_conj] at this
         rw [hb']; exact this
       have hcop : IsCoprime ((b * n0 : ℕ) : ℤ) ((M ^ (N' + 1) : ℕ) : ℤ) :=
-        Nat.isCoprime_iff_coprime.2 (Nat.Coprime.pow_right _ (Nat.Coprime.mul hb hn0M))
+        Nat.isCoprime_iff_coprime.2 (Nat.Coprime.pow_right _ (Nat.Coprime.mul_left hb hn0M))
       obtain ⟨u', v', huv⟩ := hcop
       have huv' := congrArg (Int.cast : ℤ → D.host.E) huv
       push_cast at huv'
@@ -287,7 +292,7 @@ theorem exists_skew_scalar (D : D7) (𝔪 : Ideal (𝓞 D.host.E)) (h0 : 𝔪 �
         rw [hr2]
         linear_combination (u' * D.host.conj (ι c)) * hr' - (u' * b * t) * hE -
           (v' * t * ι b0 * M) * hM' + (t * ι b0) * huv'
-      simp only [map_add, map_mul, map_intCast, map_natCast, Formalism.L2.Pj.algebraMap_conj_smul]
+      simp only [map_add (f := _), map_mul, map_intCast, map_natCast, Formalism.L2.Pj.algebraMap_conj_smul]
       exact fin
 
 end GlobalTheory.SkewCentral

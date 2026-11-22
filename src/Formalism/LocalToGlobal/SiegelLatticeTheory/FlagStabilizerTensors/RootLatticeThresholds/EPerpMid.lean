@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarPinCellS
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BridgeNC
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BridgeRel
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocJEq
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuBesselLoc
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RealHermitianForms
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarPinCellS
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BridgeNC
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BridgeRel
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocJEq
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuBesselLoc
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RealHermitianForms
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,16 +41,16 @@ theorem e_perp_mid (hT : TrHyp F Qm Qim c) (a : Fin r) (j : Fin (2 * r + k + 1))
     (hj2 : j.val ≤ r + k) : hJ ε (F.e a) (Qm *ᵥ Formalism.QuantumDeterminants.bvec j) = 0 := by
   have he : F.e a = (c a)⁻¹ • (Qm *ᵥ Formalism.QuantumDeterminants.bvec (Formalism.QuantumDeterminants.eI k r a)) := by
     rw [hT.he, smul_smul, inv_mul_cancel₀ (c_ne hT a), one_smul]
-  rw [he, PtRepPf.hJ_smul_left, ← herm_Q hT, Formalism.L2.SG.Pf.CarrierBase.herm_bvec]
-  have h0 : (Formalism.QuantumDeterminants.Hpk k r *ᵥ Formalism.QuantumDeterminants.bvec j) (Formalism.QuantumDeterminants.eI k r a) = 0 := by
-    simp only [Formalism.QuantumDeterminants.bvec, Matrix.mulVec_single_one, Matrix.col_apply]
+  have h0 : Formalism.QuantumDeterminants.Hpk k r (Formalism.QuantumDeterminants.eI k r a) j = 0 := by
+    have ha := a.isLt
+    have hsum : a.val + j.val ≠ 2 * r + k := by omega
     unfold Formalism.QuantumDeterminants.Hpk
-    have ha := a.2
-    have hv : (Formalism.QuantumDeterminants.eI k r a).val = a.val := rfl
-    rw [if_neg (fun h => by have h' := h.2; rw [hv] at h'; omega),
-      if_neg (fun h => by have h' := h.1; omega),
-      if_neg (fun h => by have h' := h.1; rw [hv] at h'; omega)]
-  rw [h0, mul_zero]
+    simp only [Formalism.QuantumDeterminants.eI, hsum, not_lt.mpr hj1, not_le.mpr ha,
+      and_false, false_and, if_false]
+  rw [he, PtRepPf.hJ_smul_left, ← herm_Q hT]
+  simp only [Formalism.QuantumDeterminants.herm, Formalism.QuantumDeterminants.bvec,
+    ← Pi.single_star, star_one, single_dotProduct, Matrix.mulVec_single_one,
+    Matrix.col_apply, h0, mul_zero]
 
 theorem fwd_N (hT : TrHyp F Qm Qim c) {g : Matrix (Fin n) (Fin n) ℂ} {z : Fin n → ℂ}
     (hgU : gᴴ * Formalism.REAL.Jm ε * g = Formalism.REAL.Jm ε) (hg : InN ε F.e z g) :

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.CycSecP
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.CycSecP
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ def Ann (hL : LocData ε c t p q e sL ρ) (L : C(KR n, ℂ) →L[ℂ] ℂ) : Sub
   add_mem' := by
     intro R R' hR hR' y
     have : secK hL (R + R') y = secK hL R y + secK hL R' y := by ext k; simp
-    rw [this, map_add, hR y, hR' y, add_zero]
+    rw [this, map_add (f := _), hR y, hR' y, add_zero]
   zero_mem' := by
     intro y
     have : secK hL 0 y = 0 := by ext k; simp
@@ -75,7 +79,7 @@ theorem t_ne (hL : LocData ε c t p q e sL ρ) : t ≠ 0 := by
 def lin (Φ : Fin n → Fin n → PX m n) (H : Matrix (Fin n) (Fin n) ℂ) : PX m n := ∑ i, ∑ j, C (H i j) * Φ j i
 
 theorem lin_add (Φ : Fin n → Fin n → PX m n) (H H' : Matrix (Fin n) (Fin n) ℂ) : lin Φ (H + H') = lin Φ H + lin Φ H' := by
-  simp only [lin, Matrix.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [lin, Matrix.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem lin_sub (Φ : Fin n → Fin n → PX m n) (H H' : Matrix (Fin n) (Fin n) ℂ) : lin Φ (H - H') = lin Φ H - lin Φ H' := by
   simp only [lin, Matrix.sub_apply, map_sub, sub_mul, Finset.sum_sub_distrib]

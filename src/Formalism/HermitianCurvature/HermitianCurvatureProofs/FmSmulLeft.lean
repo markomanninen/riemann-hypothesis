@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementTB
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementTB
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.GermFibreKernels
 
@@ -30,13 +34,9 @@ theorem herm (x y : α) : conj (P.K y x) = P.K x y := by
   have := congrFun (congrFun h ⟨x, hx⟩) ⟨y, hy⟩
   simpa [Matrix.conjTranspose_apply, Matrix.of_apply] using this
 
-theorem fm_inner_add (x : α) (g₁ g₂ : α →₀ ℂ) :
-    ((g₁ + g₂).sum fun y b => P.K x y * b) = (g₁.sum fun y b => P.K x y * b) + g₂.sum fun y b => P.K x y * b :=
-  Finsupp.sum_add_index' (fun _ => by simp) (fun _ _ _ => by ring)
-
 theorem fm_add_left (f₁ f₂ g : α →₀ ℂ) : P.fm (f₁ + f₂) g = P.fm f₁ g + P.fm f₂ g := by
   unfold fm
-  exact Finsupp.sum_add_index' (fun _ => by simp) (fun _ _ _ => by simp [map_add]; ring)
+  exact Finsupp.sum_add_index' (fun _ => by simp) (fun _ _ _ => by simp [map_add (f := _)]; ring)
 
 theorem fm_smul_left (f g : α →₀ ℂ) (r : ℂ) : P.fm (r • f) g = conj r * P.fm f g := by
   unfold fm
@@ -46,7 +46,8 @@ theorem fm_smul_left (f g : α →₀ ℂ) (r : ℂ) : P.fm (r • f) g = conj r
 
 theorem fm_conj (f g : α →₀ ℂ) : conj (P.fm g f) = P.fm f g := by
   unfold fm
-  simp only [Finsupp.sum, map_sum, map_mul, Complex.conj_conj, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finsupp.sum, map_sum, map_mul, Complex.conj_conj, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun y _ => Finset.sum_congr rfl fun x _ => ?_
   rw [P.herm y x]; ring

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGlobalIffEtaProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGlobalIffEtaProd
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 open scoped TensorProduct
 
@@ -61,7 +66,7 @@ theorem eq_or_eq_conjugate (hd : Module.finrank K L = 2) (σ : L →+* L) (hσ :
     rw [LinearIndependent.pair_iff]
     intro a b hab
     have h2 := congrArg σ hab
-    simp only [Algebra.smul_def, map_add, map_mul, hK, hσt, map_one, map_zero, mul_one] at h2 hab
+    simp only [Algebra.smul_def, map_add (f := _), map_mul, hK, hσt, map_one, map_zero, mul_one] at h2 hab
     have hb2 : (2 : L) * (algebraMap K L b * t) = 0 := by linear_combination hab - h2
     have hb : b = 0 := by simpa [ht0] using hb2
     subst hb
@@ -78,7 +83,7 @@ theorem eq_or_eq_conjugate (hd : Module.finrank K L = 2) (σ : L →+* L) (hσ :
   have hb : b = 0 := by
     have h2 : σ (t * t) = t * t := by rw [map_mul, hσt, neg_mul_neg]
     rw [hab] at h2
-    simp only [map_add, map_mul, hK, hσt] at h2
+    simp only [map_add (f := _), map_mul, hK, hσt] at h2
     have hb2 : (2 : L) * (algebraMap K L b * t) = 0 := by linear_combination -h2
     simpa [ht0] using hb2
   subst hb
@@ -90,13 +95,13 @@ theorem eq_or_eq_conjugate (hd : Module.finrank K L = 2) (σ : L →+* L) (hσ :
     have hφt : φ t = ε t := sub_eq_zero.1 h1
     refine RingHom.ext fun x => ?_
     obtain ⟨a', b', rfl⟩ := hdec x
-    simp only [map_add, map_mul, hφK, hφt]
+    simp only [map_add (f := _), map_mul, hφK, hφt]
   · right
     have hφt : φ t = -ε t := eq_neg_of_add_eq_zero_left h1
     refine RingHom.ext fun x => ?_
     obtain ⟨a', b', rfl⟩ := hdec x
     rw [ComplexEmbedding.conjugate_coe_eq, ← hc]
-    simp only [map_add, map_mul, hφK, hφt, hK, hσt, map_neg]
+    simp only [map_add (f := _), map_mul, hφK, hφt, hK, hσt, map_neg]
 
 end GlobalTheory.QuadSigns
 

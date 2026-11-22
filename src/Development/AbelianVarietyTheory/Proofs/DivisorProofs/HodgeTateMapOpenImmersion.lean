@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PtMapDualBCLeft
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FormallyUnramifiedOfTangentMapInjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MonoFinitePartPullbackStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinitePartPowEqOneLocalStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PtMapDualBCLeft
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FormallyUnramifiedOfTangentMapInjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MonoFinitePartPullbackStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinitePartPowEqOneLocalStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 

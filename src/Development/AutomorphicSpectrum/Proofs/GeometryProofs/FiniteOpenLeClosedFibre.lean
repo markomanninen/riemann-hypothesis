@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.HodgeTatePoints.ValAtRestrict
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.ValAtRestrict
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
 
 namespace GlobalTheory.CompanionTheory.Ar.BT

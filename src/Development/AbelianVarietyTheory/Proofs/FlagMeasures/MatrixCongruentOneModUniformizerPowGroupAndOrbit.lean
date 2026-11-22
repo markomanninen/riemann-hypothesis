@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermLat
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsEqZpowMulUnit
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CongruentOneMatricesTransitiveNearHermitianStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermLat
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsEqZpowMulUnit
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CongruentOneMatricesTransitiveNearHermitianStatement
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical
@@ -78,10 +82,6 @@ theorem cT_cT (L : LocE F E) {m : ℕ} (A : Matrix (Fin m) (Fin m) E) : cT L (cT
   ext a b
   simp [cT, L.cj_cj]
 
-theorem cT_one (L : LocE F E) {m : ℕ} : cT L (1 : Matrix (Fin m) (Fin m) E) = 1 := by
-  ext a b
-  simp [cT, Matrix.one_apply, eq_comm]
-
 theorem mem_hermLat (L : LocE F E) {m : ℕ} {X : Matrix (Fin m) (Fin m) E} :
     X ∈ hermLat L m ↔ IsHerm L X ∧ IsIntM L X := by
   refine ⟨fun h => ?_, fun h => AddSubgroup.subset_closure h⟩
@@ -126,7 +126,7 @@ theorem norm_one_add (L : LocE F E) (ϖ : 𝒪[F]) (hϖ : Irreducible ϖ) {y : E
   rw [IsUnit.unit_spec]
   have e : ((1 + ϖ * (t + ϖ * n) : 𝒪[F]) : F) = 1 + (ϖ : F) * ((t : F) + (ϖ : F) * (n : F)) := rfl
   rw [e]
-  simp only [map_add, map_mul, map_one, AlgEquiv.commutes]
+  simp only [map_add (f := _), map_mul, map_one, AlgEquiv.commutes]
   rw [← ht, ← hn]
   ring
 
@@ -172,7 +172,7 @@ theorem congK_basic (L : LocE F E) (ϖ : 𝒪[F]) (hϖ : Irreducible ϖ) {m i : 
   let A' : Matrix (Fin m) (Fin m) L.O := 1 + p • C'
   have hAA : A = L.O.subtype.mapMatrix A' := by
     rw [hAC]
-    simp only [A', map_add, map_one]
+    simp only [A', map_add (f := _), map_one]
     congr 1
     ext a b
     simp [C', p, pow_succ]
@@ -236,7 +236,7 @@ theorem horb_isCO (L : LocE F E) (ϖ : 𝒪[F]) (hϖ : Irreducible ϖ) {m i : �
   have hpu : ∀ n : ℕ, IsUnit (algebraMap F E ((ϖ : F) ^ n)) := fun n =>
     (IsUnit.mk0 _ (pow_ne_zero n hϖ0)).map _
   let A : AddSubgroup (Matrix (Fin m) (Fin m) E) :=
-    (hermLat L m).map (DistribMulAction.toAddMonoidHom _ (algebraMap F E ((ϖ : F) ^ j)))
+    (hermLat L m).map (DistribSMul.toAddMonoidHom _ (algebraMap F E ((ϖ : F) ^ j)))
   have hA : ∀ X, X ∈ A ↔ ∃ D, (IsHerm L D ∧ IsIntM L D) ∧ algebraMap F E ((ϖ : F) ^ j) • D = X := by
     intro X
     simp only [A, AddSubgroup.mem_map, mem_hermLat]

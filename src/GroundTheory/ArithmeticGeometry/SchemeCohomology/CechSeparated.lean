@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechLeray
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.AffineVanishing
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechLeray
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.AffineVanishing
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -31,7 +36,8 @@ lemma cechAcyclic_of_transport (φ : Opens Y → Opens X) (hφ : Monotone φ)
   have hE'0 : ∀ n, E' n 0 = 0 := fun n => funext fun i => by
     simp only [E', Pi.zero_apply, map_zero]
   have hEd : ∀ n σ, E (n + 1) (d P' U n σ) = d P (φ ∘ U) n (E n σ) := fun n σ => funext fun i => by
-    simp only [E, d_apply, map_sum, map_zsmul, he, res_res]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [E, d_apply, map_sum, map_zsmul, he, res_res]
   intro n σ hσ
   have hσ' : d P' U (n + 1) (E' (n + 1) σ) = 0 := by
     rw [← hE'E (n + 2) (d P' U (n + 1) _), hEd, hEE', hσ, hE'0]
@@ -67,15 +73,17 @@ lemma inter_basicOpen {V : X.Opens} {κ : Type u} (h : κ → Γ(X, V)) :
     rfl
 
 lemma isCoverSystem_isBasicCover :
-    IsCoverSystem (X := X.toTopCat) IsAffineOpen (fun {κ} V U => IsBasicCover (κ := κ) V U) where
-  iSup_eq V κ U hU := hU.2.choose_spec.2
-  inter_mem V κ U hU n i := by
+    IsCoverSystem (X := X.toTopCat) IsAffineOpen (fun {κ} V U => IsBasicCover (κ := κ) V U) := by
+  constructor
+  · intro V κ U hU
+    exact hU.2.choose_spec.2
+  · intro V κ U hU n i
     obtain ⟨hV, h, hUh, -⟩ := hU
     have : U = fun a => X.basicOpen (h a) := funext hUh
     subst this
     rw [inter_basicOpen h i]
     exact hV.basicOpen _
-  exists_refinement V hV O hO := by
+  · intro V hV O hO
     choose f hfO hxf using fun x : V => hV.exists_basicOpen_le (V := O x) ⟨x.1, hO x⟩ x.2
     obtain ⟨fs, hfs⟩ := hV.isCompact.elim_finite_subcover
       (fun x : V => (X.basicOpen (f x) : Set X)) (fun x => (X.basicOpen (f x)).isOpen)
@@ -130,7 +138,8 @@ theorem cechAcyclic_of_isBasicCover (F : X.Modules) [F.IsQuasicoherent] {V : X.O
   let e : tildeAb M ≅ modulesAb F' :=
     (SheafOfModules.toSheaf _).mapIso (@asIso _ _ _ _ F'.fromTildeΓ hiso)
   have hF' : CechAcyclic (modulesAb F').obj U' :=
-    CechAcyclic.of_retract U' e.inv.hom e.hom.hom (congrArg (fun f => f.hom) e.inv_hom_id) hM
+    CechAcyclic.of_retract U' e.inv.hom e.hom.hom
+      (congrArg (fun f => f.hom) e.inv_hom_id) hM
   have key := cechAcyclic_of_transport (P := (modulesAb F).obj) (P' := (modulesAb F').obj)
     (fun W => hV.fromSpec ''ᵁ W) (fun _ _ hle => hV.fromSpec.image_mono hle)
     (fun W => AddEquiv.refl _) (fun _ _ => rfl) U' (fun i => image_inter hV.fromSpec U' i) hF'

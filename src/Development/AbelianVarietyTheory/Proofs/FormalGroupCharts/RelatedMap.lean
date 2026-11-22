@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.TwoChartSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.TwoChartSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -166,11 +170,11 @@ theorem core (hN : NabTransSt) {O : Type} [CommRing O] [StarRing O] {B B' : FB k
   · have g := gp_addOf _ B'.G.const _ _ (hp (n := 3) 0) (hp 1)
     have := r.ph1
     rw [E g (hp 2), E (hp 0) (hp 2), E (hp 1) (hp 2), ← gt_expS_add _ _ (Z (hp 0) (hp 2)) (Z (hp 1) (hp 2))] at this
-    exact solve_exp (by rw [map_add, Z (hp 0) (hp 2), Z (hp 1) (hp 2), add_zero]) (Z g (hp 2)) this
+    exact solve_exp (by rw [map_add (f := _), Z (hp 0) (hp 2), Z (hp 1) (hp 2), add_zero]) (Z g (hp 2)) this
   · have g := gp_addOf _ B'.G.const _ _ (hp (n := 3) 1) (hp 2)
     have := r.ph2
     rw [E (hp 0) g, E (hp 0) (hp 1), E (hp 0) (hp 2), ← gt_expS_add _ _ (Z (hp 0) (hp 1)) (Z (hp 0) (hp 2))] at this
-    exact solve_exp (by rw [map_add, Z (hp 0) (hp 1), Z (hp 0) (hp 2), add_zero]) (Z (hp 0) g) this
+    exact solve_exp (by rw [map_add (f := _), Z (hp 0) (hp 1), Z (hp 0) (hp 2), add_zero]) (Z (hp 0) g) this
   · have := r.sy
     rw [E (hp 1) (hp 0)] at this
     exact solve_exp (Z (hp 1) (hp 0)) hl this

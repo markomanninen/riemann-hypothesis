@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SetupEig
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexNeZeroOfIsOpen
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedTraceIndicatorLevelLocalUnitary
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SetupEig
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexNeZeroOfIsOpen
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedTraceIndicatorLevelLocalUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -309,7 +313,7 @@ theorem locOp_mapsTo (σ : SmIrr (UL n w)) {K' : Subgroup (UL n w)} (ho : IsOpen
 theorem locOp_val (σ : SmIrr (UL n w)) {K' : Subgroup (UL n w)} (ho : IsOpen (K' : Set (UL n w))) {f : UL n w → ℂ}
     (hf : IsHecke K' f) (v : fixed σ.ρ K') : (locOp σ K' f v).1 = levOp σ.ρ (KL n w) K' f LinearMap.id v.1 := by
   unfold PositivityTheory.Rg.BcB.F.Eig.locOp
-  rw [dif_pos (GlobalTheory.CompanionTheory.LocHecke.locOp_mapsTo σ ho hf)]
+  rw [dite_eq_left (GlobalTheory.CompanionTheory.LocHecke.locOp_mapsTo σ ho hf)]
   rfl
 
 end Unitary

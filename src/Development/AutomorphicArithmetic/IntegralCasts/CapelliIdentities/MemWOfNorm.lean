@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.Qi32.kb :
     (p : ℕ) → [Fact (Nat.Prime p)] → Type :=

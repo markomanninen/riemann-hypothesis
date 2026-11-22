@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.JacquetSubsetSums.JacquetSubsetSum
+module
+
+public import Mathlib
+public import Formalism.JacquetSubsetSums.JacquetSubsetSum
+
+@[expose] public section
 
 open Finset Matrix
 
@@ -9,7 +13,7 @@ open Finset Matrix in
 private theorem isUnit_add_mul_of_mem_maximalIdeal {O : Type*} [CommRing O] [IsLocalRing O] {ϖ : O}
     (hϖ : ϖ ∈ IsLocalRing.maximalIdeal O) {u : O} (hu : IsUnit u) (c : O) :
     IsUnit (u + ϖ * c) := by
-  rw [← IsLocalRing.residue_ne_zero_iff_isUnit, map_add,
+  rw [← IsLocalRing.residue_ne_zero_iff_isUnit, map_add (f := _),
     (IsLocalRing.residue_eq_zero_iff _).mpr (Ideal.mul_mem_right c _ hϖ), add_zero,
     IsLocalRing.residue_ne_zero_iff_isUnit]
   exact hu
@@ -22,7 +26,7 @@ private theorem isUnit_diag_dvd_lower_mul {O : Type*} [CommRing O] [IsLocalRing 
     (∀ i, IsUnit ((A * B) i i)) ∧ ∀ i j, j < i → ϖ ∣ (A * B) i j := by
   constructor
   · intro i
-    rw [mul_apply, ← Finset.add_sum_erase _ _ (Finset.mem_univ i)]
+    rw [Matrix.mul_apply, ← Finset.add_sum_erase _ _ (Finset.mem_univ i)]
     have hs : ϖ ∣ ∑ l ∈ univ.erase i, A i l * B l i := by
       refine Finset.dvd_sum fun l hl => ?_
       rcases lt_or_gt_of_ne (Finset.ne_of_mem_erase hl) with h | h
@@ -32,7 +36,7 @@ private theorem isUnit_diag_dvd_lower_mul {O : Type*} [CommRing O] [IsLocalRing 
     rw [hc]
     exact isUnit_add_mul_of_mem_maximalIdeal hϖ ((hA i).mul (hB i)) c
   · intro i j hij
-    rw [mul_apply]
+    rw [Matrix.mul_apply]
     refine Finset.dvd_sum fun l _ => ?_
     rcases lt_or_ge l i with h | h
     · exact Dvd.dvd.mul_right (hA' i l h) _
@@ -95,8 +99,8 @@ private theorem sum_filter_lt_sum_of_strictAnti {r : ℕ} {a : Fin r → ℕ} (h
   rw [sdiff_inter_self_right] at e2
   omega
 
-open Finset Matrix in
 
+open Finset Matrix in
 theorem _root_.GlobalTheory.IwahoriNewtonTest.intersectionNumber_baseChange : _root_.Formalism.PacketSums.IwahoriNewton := by
   unfold _root_.Formalism.PacketSums.IwahoriNewton
   intro O _ _ ϖ hϖ r a ha i₁ i₂ h1 h2 h1' h2' k hk
@@ -136,16 +140,5 @@ theorem _root_.GlobalTheory.IwahoriNewtonTest.intersectionNumber_baseChange : _r
     (isUnit_add_mul_of_mem_maximalIdeal hϖ (hunit T) c)).unit, ?_⟩
   simp only [IsUnit.unit_spec]
   ring
-
-theorem premises_model :
-    (2 : ℤ_[2]) ∈ IsLocalRing.maximalIdeal ℤ_[2] ∧ (2 : ℤ_[2]) ≠ 0 ∧
-    StrictAnti (![1, 0] : Fin 2 → ℕ) ∧
-    (∀ i, IsUnit ((!![1, 1; 2, 1] : Matrix (Fin 2) (Fin 2) ℤ_[2]) i i)) ∧
-    (∀ i j, j < i → (2 : ℤ_[2]) ∣ (!![1, 1; 2, 1] : Matrix (Fin 2) (Fin 2) ℤ_[2]) i j) := by
-  refine ⟨?_, two_ne_zero, by decide, ?_, ?_⟩
-  · rw [PadicInt.maximalIdeal_eq_span_p]
-    exact Ideal.mem_span_singleton_self _
-  · intro i; fin_cases i <;> simp
-  · intro i j h; fin_cases i <;> fin_cases j <;> simp_all
 
 end GlobalTheory.IwahoriNewtonTest

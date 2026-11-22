@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedSmooth
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
-import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.IsotypicSignedParameters
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsBlockOrd
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedSmooth
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
+public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.IsotypicSignedParameters
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsBlockOrd
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.RealPar Matrix MeasureTheory
 open scoped TensorProduct
 
@@ -136,7 +141,7 @@ theorem kstable_lie : ∀ (p q n : ℕ) (e : Ix p q ≃ Fin n) (ε : Fin n → B
       exact hu
     intro Z hZ w hw
     obtain ⟨X, Y, hX, hXK, hY, hYK, rfl⟩ := exists_decomp hZ
-    rw [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply]
+    rw [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply]
     exact W.add_mem (key X hX hXK w hw) (W.smul_mem _ (key Y hY hYK w hw))
 
 end GlobalTheory.RealPar.KStabLie

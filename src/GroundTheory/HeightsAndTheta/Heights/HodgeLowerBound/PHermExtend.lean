@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsHermExtend
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsHermExtend
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -8,6 +13,7 @@ noncomputable section
 namespace GroundTheory.Heights₂.Heights.LowerBoundFree
 
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo Filter Topology
+open scoped ContDiff
 
 namespace HermExtend
 
@@ -25,8 +31,8 @@ def secAt (z₀ : (Σ k, ι k) → ℂ) (Q : (Σ k, ι k × ι k) → ℂ) : (Σ
 def coefAt (z₀ w : (Σ k, ι k) → ℂ) (k : K) : ℂ :=
   (∑ j, starRingEnd ℂ (w ⟨k, j⟩) * z₀ ⟨k, j⟩) * ((blkSq w k : ℝ) : ℂ)⁻¹
 
-variable (ι) in
 
+variable (ι) in
 def blocksNe : Set ((Σ k, ι k) → ℂ) :=
   {z | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0}
 
@@ -93,8 +99,6 @@ theorem eq_smul_of_proj_eq {z w : (Σ k, ι k) → ℂ} (hz : z ∈ blocksNe ι)
   have e : z = torusSmul (coefAt z w) w := by rw [← secAt_proj, h, secAt_proj_self hz]
   exact ⟨coefAt z w, coef_ne_zero (e ▸ hz), e⟩
 
-local notation "𝕟" => ((⊤ : ℕ∞) : WithTop ℕ∞)
-
 theorem isOpen_blocksNe : IsOpen (blocksNe ι) := by
   have : blocksNe ι = ⋂ k, ⋃ i, {z : (Σ k, ι k) → ℂ | z ⟨k, i⟩ ≠ 0} := by
     ext z; simp [blocksNe]
@@ -102,27 +106,27 @@ theorem isOpen_blocksNe : IsOpen (blocksNe ι) := by
   exact isOpen_iInter_of_finite fun k => isOpen_iUnion fun i =>
     isOpen_ne_fun (continuous_apply _) continuous_const
 
-theorem contDiff_blkSq (k : K) : ContDiff ℝ 𝕟 (fun z : (Σ k, ι k) → ℂ => blkSq z k) := by
+theorem contDiff_blkSq (k : K) : ContDiff ℝ ∞ (fun z : (Σ k, ι k) → ℂ => blkSq z k) := by
   unfold blkSq
-  exact ContDiff.sum fun i _ => (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ ℂ (⟨k, i⟩ : Σ k, ι k))
+  exact ContDiff.sum fun i _ => (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ (fun _ => ℂ) (⟨k, i⟩ : Σ k, ι k))
 
-theorem contDiffOn_proj : ContDiffOn ℝ 𝕟 (proj (ι := ι)) (blocksNe ι) := by
+theorem contDiffOn_proj : ContDiffOn ℝ ∞ (proj (ι := ι)) (blocksNe ι) := by
   refine contDiffOn_pi.2 fun q => ?_
   unfold proj
-  have hc : ContDiff ℝ 𝕟 (fun z : (Σ k, ι k) → ℂ => starRingEnd ℂ (z ⟨q.1, q.2.2⟩)) := by
-    have := Complex.conjCLE.contDiff.comp (contDiff_apply ℝ ℂ (⟨q.1, q.2.2⟩ : Σ k, ι k)) (n := 𝕟)
+  have hc : ContDiff ℝ ∞ (fun z : (Σ k, ι k) → ℂ => starRingEnd ℂ (z ⟨q.1, q.2.2⟩)) := by
+    have := Complex.conjCLE.contDiff.comp (contDiff_apply ℝ (fun _ => ℂ) (⟨q.1, q.2.2⟩ : Σ k, ι k)) (n := ∞)
     simpa [Function.comp_def, Complex.conjCLE_apply] using this
-  refine ((contDiff_apply ℝ ℂ (⟨q.1, q.2.1⟩ : Σ k, ι k)).mul hc).contDiffOn.mul ?_
+  refine ((contDiff_apply ℝ (fun _ => ℂ) (⟨q.1, q.2.1⟩ : Σ k, ι k)).mul hc).contDiffOn.mul ?_
   refine ContDiffOn.inv ?_ fun z hz => ?_
   · exact (Complex.ofRealCLM.contDiff.comp (contDiff_blkSq q.1)).contDiffOn
   · exact_mod_cast (blkSq_pos hz q.1).ne'
 
-theorem contDiff_secAt (z₀ : (Σ k, ι k) → ℂ) : ContDiff ℝ 𝕟 (secAt (ι := ι) z₀) := by
+theorem contDiff_secAt (z₀ : (Σ k, ι k) → ℂ) : ContDiff ℝ ∞ (secAt (ι := ι) z₀) := by
   refine contDiff_pi.2 fun p => ?_
   unfold secAt
-  exact ContDiff.sum fun j _ => (contDiff_apply ℝ ℂ _).mul contDiff_const
+  exact ContDiff.sum fun j _ => (contDiff_apply ℝ (fun _ => ℂ) _).mul contDiff_const
 
-theorem contDiffOn_refNorm (a : K → ℤ) : ContDiffOn ℝ 𝕟 (refNorm (ι := ι) a) (blocksNe ι) := by
+theorem contDiffOn_refNorm (a : K → ℤ) : ContDiffOn ℝ ∞ (refNorm (ι := ι) a) (blocksNe ι) := by
   unfold refNorm
   refine contDiffOn_prod fun k _ => ?_
   exact ContDiffOn.rpow_const_of_ne (contDiff_blkSq k).contDiffOn fun z hz => (blkSq_pos hz k).ne'
@@ -194,8 +198,8 @@ theorem logRatio_smul
   rw [hF z hz c hc, refNorm_smul, mul_div_mul_left _ _
     (Finset.prod_ne_zero_iff.2 fun k _ => zpow_ne_zero _ (norm_ne_zero_iff.2 (hc k)))]
 
-open Classical in
 
+open Classical in
 def descend (P : Ideal (MRing ι)) (a : K → ℤ) (F : ((Σ k, ι k) → ℂ) → ℝ) (Q : (Σ k, ι k × ι k) → ℂ) : ℝ :=
   if h : ∃ z ∈ mcPts P, proj z = Q then logRatio a F h.choose else 0
 
@@ -203,7 +207,7 @@ theorem descend_proj
     (hF : ∀ z ∈ mcPts P, ∀ c : K → ℂ, (∀ k, c k ≠ 0) → F (torusSmul c z) = (∏ k, ‖c k‖ ^ a k) * F z)
     {w : (Σ k, ι k) → ℂ} (hw : w ∈ mcPts P) : descend P a F (proj w) = logRatio a F w := by
   have h : ∃ z ∈ mcPts P, proj z = proj w := ⟨w, hw, rfl⟩
-  rw [descend, dif_pos h]
+  rw [descend, dite_eq_left h]
   obtain ⟨hz, hzw⟩ := h.choose_spec
   obtain ⟨c, hc, e⟩ := eq_smul_of_proj_eq hw.1 hzw
   calc logRatio a F h.choose = logRatio a F (torusSmul c h.choose) := (logRatio_smul hF hz hc).symm
@@ -212,7 +216,7 @@ theorem descend_proj
 theorem local_ext (hP : IsMultiHomogIdeal P) (hpos : ∀ z ∈ mcPts P, 0 < F z)
     (hF : ∀ z ∈ mcPts P, ∀ c : K → ℂ, (∀ k, c k ≠ 0) → F (torusSmul c z) = (∏ k, ‖c k‖ ^ a k) * F z)
     (hS : SmoothAlong (mcPts P) F) {z₀ : (Σ k, ι k) → ℂ} (hz₀ : z₀ ∈ mcPts P) :
-    ∃ W ∈ 𝓝 (proj z₀), ∃ g : ((Σ k, ι k × ι k) → ℂ) → ℝ, ContDiffOn ℝ 𝕟 g W ∧
+    ∃ W ∈ 𝓝 (proj z₀), ∃ g : ((Σ k, ι k × ι k) → ℂ) → ℝ, ContDiffOn ℝ ∞ g W ∧
       ∀ Q ∈ W ∩ proj '' mcPts P, g Q = descend P a F Q := by
   obtain ⟨U, hU, G, hG, hGF⟩ := hS z₀ hz₀
   let O := (interior U ∩ G ⁻¹' Set.Ioi 0) ∩ blocksNe ι
@@ -228,9 +232,9 @@ theorem local_ext (hP : IsMultiHomogIdeal P) (hpos : ∀ z ∈ mcPts P, 0 < F z)
   · refine (contDiff_secAt z₀).continuous.continuousAt.preimage_mem_nhds ?_
     rw [secAt_proj_self hz₀.1]
     exact hOopen.mem_nhds hz₀O
-  · have h1 : ContDiffOn ℝ 𝕟 (fun Q => G (secAt z₀ Q)) (secAt z₀ ⁻¹' O) :=
+  · have h1 : ContDiffOn ℝ ∞ (fun Q => G (secAt z₀ Q)) (secAt z₀ ⁻¹' O) :=
       (hG.mono interior_subset).comp (contDiff_secAt z₀).contDiffOn fun Q hQ => hQ.1.1
-    have h2 : ContDiffOn ℝ 𝕟 (fun Q => refNorm a (secAt z₀ Q)) (secAt z₀ ⁻¹' O) :=
+    have h2 : ContDiffOn ℝ ∞ (fun Q => refNorm a (secAt z₀ Q)) (secAt z₀ ⁻¹' O) :=
       (contDiffOn_refNorm a).comp (contDiff_secAt z₀).contDiffOn fun Q hQ => hQ.2
     refine (h1.div h2 fun Q hQ => (refNorm_pos a hQ.2).ne').log fun Q hQ => ?_
     exact (div_pos hQ.1.2 (refNorm_pos a hQ.2)).ne'
@@ -245,12 +249,12 @@ theorem local_ext (hP : IsMultiHomogIdeal P) (hpos : ∀ z ∈ mcPts P, 0 < F z)
     rw [e, ← hGF _ ⟨hU', hmem⟩]
     exact logRatio_smul hF hw hc
 
-open scoped Manifold in
 
+open scoped Manifold in
 theorem exists_smooth_descend (hP : IsMultiHomogIdeal P) (hpos : ∀ z ∈ mcPts P, 0 < F z)
     (hF : ∀ z ∈ mcPts P, ∀ c : K → ℂ, (∀ k, c k ≠ 0) → F (torusSmul c z) = (∏ k, ‖c k‖ ^ a k) * F z)
     (hS : SmoothAlong (mcPts P) F) :
-    ∃ g : ((Σ k, ι k × ι k) → ℂ) → ℝ, ContDiff ℝ 𝕟 g ∧ ∀ z ∈ mcPts P, g (proj z) = logRatio a F z := by
+    ∃ g : ((Σ k, ι k × ι k) → ℂ) → ℝ, ContDiff ℝ ∞ g ∧ ∀ z ∈ mcPts P, g (proj z) = logRatio a F z := by
   classical
   let C := proj '' mcPts P
   let t : ((Σ k, ι k × ι k) → ℂ) → Set ℝ := fun Q => if Q ∈ C then {descend P a F Q} else Set.univ
@@ -259,7 +263,7 @@ theorem exists_smooth_descend (hP : IsMultiHomogIdeal P) (hpos : ∀ z ∈ mcPts
     · simp only [t, if_pos h]; exact convex_singleton _
     · simp only [t, if_neg h]; exact convex_univ
   have Hloc : ∀ Q, ∃ U ∈ 𝓝 Q, ∃ g : ((Σ k, ι k × ι k) → ℂ) → ℝ,
-      ContMDiffOn 𝓘(ℝ, (Σ k, ι k × ι k) → ℂ) 𝓘(ℝ, ℝ) 𝕟 g U ∧ ∀ y ∈ U, g y ∈ t y := by
+      ContMDiffOn 𝓘(ℝ, (Σ k, ι k × ι k) → ℂ) 𝓘(ℝ, ℝ) ∞ g U ∧ ∀ y ∈ U, g y ∈ t y := by
     intro Q
     by_cases hQ : Q ∈ C
     · obtain ⟨z₀, hz₀, rfl⟩ := hQ

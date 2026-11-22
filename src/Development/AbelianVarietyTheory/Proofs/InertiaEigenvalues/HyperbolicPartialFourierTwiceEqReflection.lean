@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WHyp
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WHyp
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 noncomputable section

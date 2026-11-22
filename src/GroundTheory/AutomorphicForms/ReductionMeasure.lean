@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.ReductionMahler
-import GroundTheory.GlobalFields.TateThesis.AdeleMeasurable
-import GroundTheory.GlobalFields.TateThesis.AdeleMeasure
-import GroundTheory.GlobalFields.TateThesis.IdeleMeasure
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.ReductionMahler
+public import GroundTheory.GlobalFields.TateThesis.AdeleMeasurable
+public import GroundTheory.GlobalFields.TateThesis.AdeleMeasure
+public import GroundTheory.GlobalFields.TateThesis.IdeleMeasure
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter Set MeasureTheory TopologicalSpace
 open scoped NumberField.AdeleRing RestrictedProduct ENNReal
@@ -83,12 +87,6 @@ def infFinEquiv {n : ℕ} : AdelicGLn.AdelicGL K n ≃ₜ*
         ((AdelicGLn.infiniteEquiv K n).continuous.comp continuous_fst).prodMk continuous_snd
       continuous_invFun :=
         ((AdelicGLn.infiniteEquiv K n).symm.continuous.comp continuous_fst).prodMk continuous_snd }
-
-theorem infFinEquiv_apply_fst {n : ℕ} (g : AdelicGLn.AdelicGL K n) (w : InfinitePlace K) :
-    (infFinEquiv g).1 w = infAt w g := rfl
-
-theorem infFinEquiv_apply_snd {n : ℕ} (g : AdelicGLn.AdelicGL K n) :
-    (infFinEquiv g).2 = (AdelicGLn.prodEquiv K n g).2 := rfl
 
 theorem measure_lt_top_of_forall_mem {n : ℕ} (μ : Measure (AdelicGLn.AdelicGL K n))
     [μ.IsHaarMeasure] {E : Set (AdelicGLn.AdelicGL K n)}

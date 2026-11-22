@@ -1,6 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MonoPullbackMapOfFlat
-import Mathlib
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MonoPullbackMapOfFlat
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry
 

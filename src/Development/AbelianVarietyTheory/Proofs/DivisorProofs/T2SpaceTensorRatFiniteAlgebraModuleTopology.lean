@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsCyclotomicExtensionQI
-import GroundTheory.GlobalFields.LocalAtPlace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsCyclotomicExtensionQI
+public import GroundTheory.GlobalFields.LocalAtPlace
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,7 +88,7 @@ def tensorInt (O : Subring R) : Subring (R ⊗[ℚ] F) where
     · exact O.zero_mem
   add_mem' := by
     intro x y hx hy i j
-    simp only [Set.mem_setOf_eq, map_add, Matrix.add_apply]
+    simp only [Set.mem_setOf_eq, map_add (f := _), Matrix.add_apply]
     exact add_mem (hx i j) (hy i j)
   zero_mem' := by intro i j; simp
   neg_mem' := by
@@ -111,7 +115,7 @@ def tensorIntAlg (A : Type) [Ring A] [Algebra ℚ A] [Module.Finite ℚ A] (O : 
     · exact O.zero_mem
   add_mem' := by
     intro x y hx hy i j
-    simp only [Set.mem_setOf_eq, map_add, Matrix.add_apply]
+    simp only [Set.mem_setOf_eq, map_add (f := _), Matrix.add_apply]
     exact add_mem (hx i j) (hy i j)
   zero_mem' := by intro i j; simp
   neg_mem' := by
@@ -180,8 +184,6 @@ section Entries
 
 variable {S : Type} [CommRing S] {n : ℕ}
 
-def EntriesIn (n : ℕ) (P : Subring S) : Set (Matrix (Fin n) (Fin n) S) := {M | ∀ i j, M i j ∈ P}
-
 end Entries
 
 variable {p : ℕ} [Fact p.Prime]
@@ -214,14 +216,14 @@ theorem level_exists : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p), Nonempty G.
   have hσ : Continuous (fun y : AfP p ⊗[ℚ] G.C ↦ (starT G.star (AfP p) y).unop) := by
     let σl : (AfP p ⊗[ℚ] G.C) →ₗ[AfP p] (AfP p ⊗[ℚ] G.C) :=
       { toFun := fun y ↦ (starT G.star (AfP p) y).unop
-        map_add' := fun x y ↦ by simp only [map_add, MulOpposite.unop_add]
+        map_add' := fun x y ↦ by simp only [map_add (f := _), MulOpposite.unop_add]
         map_smul' := by
           intro r x
           induction x using TensorProduct.induction_on with
           | zero => simp
           | tmul a y =>
             simp only [TensorProduct.smul_tmul', smul_eq_mul, starT_tmul, RingHom.id_apply]
-          | add x y hx hy => simp only [smul_add, map_add, MulOpposite.unop_add, hx, hy, RingHom.id_apply] }
+          | add x y hx hy => simp only [smul_add, map_add (f := _), MulOpposite.unop_add, hx, hy, RingHom.id_apply] }
     exact IsModuleTopology.continuous_of_linearMap σl
   have hj : Continuous (algebraMap (AfP p) (AfP p ⊗[ℚ] G.C)) :=
     IsModuleTopology.continuous_of_linearMap (Algebra.linearMap (AfP p) (AfP p ⊗[ℚ] G.C))

@@ -1,6 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMidJacAt
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantModulus
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToGAdMat
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsGenericIffIsGenericFor
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantModulus
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,10 +67,5 @@ theorem isAdmissible_parInd (e : (Σ a, m a) ≃ n) (ρ : Representation ℂ (Le
 end GlobalTheory.SmGL.ParIndAdm
 
 namespace GlobalTheory.ThK.MidJac
-
-theorem isAdmissible_detInd : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    (x x' : ℕ) (α β : kˣ →* ℂˣ), GlobalTheory.PRep.IsAdmissible (GlobalTheory.ThK.MidJac.detInd x x' α β) := by
-  intro k _ _ _ _ x x' α β
-  exact GlobalTheory.SmGL.ParIndAdm.isAdmissible_parInd _ _
 
 end GlobalTheory.ThK.MidJac

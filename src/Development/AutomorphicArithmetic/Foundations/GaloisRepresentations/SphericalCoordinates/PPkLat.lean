@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PFrameEx
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormLeOneOfIsIntegral
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PFrameEx
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormLeOneOfIsIntegral
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
 open GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKGeo Polynomial
@@ -147,8 +152,8 @@ private theorem core (hPL : PLatOf) {D : Datum p} (T T' : VQ D →+ Loc G)
     { carrier := {x | IntL (mv P (T x)) ∧ IntL (mv Q (T' x))}
       add_mem' := fun {a b} ha hb => by
         refine ⟨?_, ?_⟩
-        · rw [map_add, mv_add]; exact intL_add ha.1 hb.1
-        · rw [map_add, mv_add]; exact intL_add ha.2 hb.2
+        · rw [map_add (f := _), mv_add]; exact intL_add ha.1 hb.1
+        · rw [map_add (f := _), mv_add]; exact intL_add ha.2 hb.2
       zero_mem' := by
         refine ⟨?_, ?_⟩
         · rw [map_zero, mv_zero]; exact intL_zero

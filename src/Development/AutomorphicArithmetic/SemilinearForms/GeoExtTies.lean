@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEquivLift
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ReadingEqZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EquivAllEnl
-import Development.AutomorphicArithmetic.UnitTensorPairings.GeometricActionOverCoefficientExtension
-import Development.AutomorphicArithmetic.UnitTensorPairings.ThetaLiftDataOverCoefficientExtension
-import Development.AutomorphicArithmetic.UnitTensorPairings.CuspSectionsOverCoefficientExtension
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEquivLift
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ReadingEqZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EquivAllEnl
+public import Development.AutomorphicArithmetic.UnitTensorPairings.GeometricActionOverCoefficientExtension
+public import Development.AutomorphicArithmetic.UnitTensorPairings.ThetaLiftDataOverCoefficientExtension
+public import Development.AutomorphicArithmetic.UnitTensorPairings.CuspSectionsOverCoefficientExtension
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,8 +39,8 @@ theorem center_map {G G' : Type} [Group G] [Group G'] (φ : G ≃* G') {z : G} (
   obtain ⟨g, rfl⟩ := φ.surjective g
   rw [← map_mul, ← map_mul, hz g]
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem oneMapOf_two (hR : PreChar R') (hchi : R'.grp_chiW) (hT : TieIn T' R' κ' v₀')
     (O' : OMDat T'.toCore R' i' Unit (fun _ => A'.μ0)) (hF : O'.c'.F = D'.what₂.embLL.toRatAlgHom.fieldRange)
     (hP' : O'.Pins (κ' i') (v₀' i' (sg0 D' A')) (iotaW T' i') (T'.x₀ ((i' : ℕ) + 1) O'.s0))
@@ -75,8 +79,8 @@ theorem preChar_of {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 I0 T0 : Type}
   ⟨hch.base.lev, hch.base.grp.red_R, hch.base.grp.red_L, hch.base.grp.record, hch.base.fam, hch.base.models,
     RealDat.chain_of_weak hch.base.chain hEx, RealDat.thP_of_weak hch.base.thP hEx⟩
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem cpt : ∀ {B B' : Base} {f : Fr B.toPre} {f' : Fr B'.toPre} {T : TwDat B} {T' : TwDat B'} (w : ColW B f T) (w' : ColW B' f' T')
     (Z : w.Lt) (Z' : w'.Lt) (hX : B.fields.Ok) (hX' : B'.fields.Ok) (Wt : Set B.places.Pl) (Wt' : Set B'.places.Pl)
     (z : Dat (w.st Z) w.I hX T Wt), Enl0 B B' → HEq w'.px w.px →

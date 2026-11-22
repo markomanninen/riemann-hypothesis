@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementQ
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MinorSmoothness.ExpSecondHermitianMemLevel
+module
+
+public import Formalism.HermitianCurvature.StatementQ
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MinorSmoothness.ExpSecondHermitianMemLevel
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped ContDiff
@@ -15,7 +19,7 @@ attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 variable {k r : ℕ} {i : Fin (r + 1)} {D : Set (Mx k r)}
 
 lemma entry_cd (a b : Fin (2 * r + k + 1)) : ContDiff ℝ ∞ (fun g : Mx k r => g a b) := by
-  exact (contDiff_apply ℝ ℂ b).comp (contDiff_apply ℝ (Fin (2 * r + k + 1) → ℂ) a)
+  exact (contDiff_apply ℝ (fun _ => ℂ) b).comp (contDiff_apply ℝ (fun _ => (Fin (2 * r + k + 1) → ℂ)) a)
 
 lemma inv_glev {g : Mx k r} (hg : g ∈ Glev k r i) : g⁻¹ = Hpk k r * gᴴ * Hpk k r := by
   simp only [Glev, UH, Set.mem_setOf_eq] at hg
@@ -75,7 +79,8 @@ lemma chatL_local (hD : IsOpen D) (u : ℂ) (a β : Mx k r → Fin (mdim k r i) 
 lemma chatL_clm (hD : IsOpen D) (u : ℂ) (a β : Mx k r → Fin (mdim k r i) → ℂ)
     (L : E →L[ℂ] E') (f : Mx k r → E) (hf : SmoothLev k r i D f) (g : Mx k r) (hg : g ∈ Glev k r i ∩ D) :
     chatL (EH k r) (posL k r i) u a β (fun y => L (f y)) g = L (chatL (EH k r) (posL k r i) u a β f g) := by
-  simp only [chatL, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [chatL, map_sum, map_smul]
   refine Finset.sum_congr rfl fun i0 _ => Finset.sum_congr rfl fun j0 _ => ?_
   congr 1
   exact qminor_clm hD _ _ u L f hf g hg
@@ -115,7 +120,8 @@ lemma second_capelli_minor_continuousLinear (hD : IsOpen D) (u : ℂ) (a a' β �
     (L : E →L[ℂ] E') (f : Mx k r → E) (hf : SmoothLev k r i D f) (g : Mx k r) (hg : g ∈ Glev k r i ∩ D) :
     chat2L (EH k r) (posL k r i) u a a' β β' (fun y => L (f y)) g =
       L (chat2L (EH k r) (posL k r i) u a a' β β' f g) := by
-  simp only [chat2L, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [chat2L, map_sum]
   refine Finset.sum_congr rfl fun i0 _ => Finset.sum_congr rfl fun i1 _ =>
     Finset.sum_congr rfl fun j0 _ => Finset.sum_congr rfl fun j1 _ => ?_
   split_ifs
@@ -210,8 +216,5 @@ theorem qnTPres_of (hT : TInvariant) : TPreservesFF := by
       rw [hLx]
       exact hW x hx h hh h' hh'
     rw [← e, tl_local hD z z' Y p q _ _ hloc g hg, tl_clm hD z z' Y p q L J hs g hg, hLx]
-
-theorem qnTPres_of' (hT : TInvariant) (_ : EabPres) : TPreservesFF := by
-  exact qnTPres_of hT
 
 end Formalism.FourierDecayAlt.Q.TPresMain

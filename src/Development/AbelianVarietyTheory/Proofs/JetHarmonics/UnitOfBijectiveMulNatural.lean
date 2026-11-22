@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.ThmASt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsSplitTorusPointsMulEquiv
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.AlWellDefSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.NonzeroLocus
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsSplitTorusPointsMulEquiv
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
@@ -79,10 +84,5 @@ theorem unitOf_ptMap {R' : Type} [CommRing R'] [Algebra O R'] (φ : R →ₐ[O] 
     (Scheme.ΓSpecIso_naturality (CommRingCat.ofHom φ.toRingHom))
 
 end GmPoints
-
-theorem unitOf_bijective_mul_natural :
-    ∀ (O : Type) [CommRing O], (∀ (R : Type) [CommRing R] [Algebra O R], Function.Bijective (unitOf : (specO O R ⟶ Gm (Spec (CommRingCat.of O))) → Rˣ) ∧ ∀ w w' : specO O R ⟶ Gm (Spec (CommRingCat.of O)), unitOf (w * w') = unitOf w * unitOf w') ∧ ∀ (R R' : Type) [CommRing R] [Algebra O R] [CommRing R'] [Algebra O R'] (φ : R →ₐ[O] R') (w : specO O R ⟶ Gm (Spec (CommRingCat.of O))), (unitOf (ptMap φ ≫ w) : R') = φ (unitOf w : R) :=
-  fun _ _ => ⟨fun _ _ _ => ⟨GmPoints.unitOf_bijective, GmPoints.unitOf_mul⟩,
-    fun _ _ _ _ _ _ φ w => GmPoints.unitOf_ptMap φ w⟩
 
 end GlobalTheory

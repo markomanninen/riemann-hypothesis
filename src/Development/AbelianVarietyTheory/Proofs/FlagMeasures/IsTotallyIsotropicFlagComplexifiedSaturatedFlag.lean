@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsIsSatFlagOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsIsSatFlagOne
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
 
@@ -27,7 +31,8 @@ private theorem finrank_span_map_ringHom_eq_finrank {K : Type*} [Field K] {n : �
       have hφ : (fun l => φ (u l)) = ∑ k, φ (b.repr ⟨u, hu⟩ k) • fun l => φ ((b k : Fin n → K) l) := by
         conv_lhs => rw [hu']
         ext l
-        simp [Finset.sum_apply, map_sum, map_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp [Finset.sum_apply, map_sum, map_mul]
       rw [hφ]
       exact Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
     calc Module.finrank ℂ (Submodule.span ℂ ((fun y : Fin n → K => fun l => φ (y l)) '' (V : Set (Fin n → K))))
@@ -141,7 +146,8 @@ theorem isIsoFlag_flagAt_of_isSatFlag :
     have h' := congrArg (I.φ v) h
     rw [map_zero] at h'
     rw [← h']
-    simp [Formalism.UG.hform, dotProduct, Matrix.mulVec, map_sum, map_mul, hstar, Finset.mul_sum, mul_assoc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Formalism.UG.hform, dotProduct, Matrix.mulVec, map_sum, map_mul, hstar, Finset.mul_sum, mul_assoc]
   refine ⟨?_, ?_, ?_, ?_⟩
   · show Submodule.span ℂ _ = ⊥
     rw [Submodule.span_eq_bot]

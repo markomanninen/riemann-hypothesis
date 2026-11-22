@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubini
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubini
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem finPres : FinPres := by
     | succ j ih =>
       have hcomp : ((θ ^ (j + 1) : Monoid.End G) : G → G) = (θ ^ j : Monoid.End G) ∘ θ := by
         rw [pow_succ]; rfl
-      rw [hcomp, ← Measure.map_map (hpow j).measurable hθ.measurable, hc, Measure.map_smul, ih,
+      rw [hcomp, ← Measure.map_map (hpow j).measurable hθ.measurable, hc, Measure.map_smul c (hpow j).aemeasurable, ih,
         smul_smul, pow_succ']
   have hfin : c ^ (m + 1) • μ = μ := by
     rw [← hj, hθl]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -136,50 +140,7 @@ def RegAf (G : HTGroup p) (g : G.GAf) : Prop :=
     Commute a ((ubcMap (AfP.eval w) g).1.1 : w.1.adicCompletion ℚ ⊗[ℚ] G.C) →
     Commute b ((ubcMap (AfP.eval w) g).1.1 : w.1.adicCompletion ℚ ⊗[ℚ] G.C) → Commute a b
 
-def CxCount : Prop :=
-  ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p), IsSimple G → ∀ v : InfinitePlace G.F, sigPosH (G.gram_herm v) = 1 →
-    ∀ (wt : Polynomial G.F → ℂ) (L : G.Level) (f : G.GAf → ℂ), IsTest (MonoidHom.id _) L.K.toSubgroup L.K.toSubgroup f →
-    (∀ g, f g ≠ 0 → RegAf G g) →
-    ∀ (K' : Subgroup (Gr G 1)) (f' : Gr G 1 → ℂ), IsTest (sigG G 1) (KHT p G.m G.n 1 G.Fw) K' f' →
-      cxTotal G v wt L.K.toSubgroup f K' f' = fullSum G wt L.K.toSubgroup f 1 K' f'
-
 def Form.one (G : HTGroup p) : Form G := ⟨1, sh_one_eq G, ⟨1, 1, by simp [Triv, inC]⟩, ⟨1, by simp [Triv, inC]⟩⟩
-
-theorem triv_norm (G : HTGroup p) (R : Type) [CommRing R] [Algebra ℚ R] (y : G.Cˣ) :
-    Triv G R (y * sh G y) (Units.map (inC G R).toMonoidHom y⁻¹) 1 := by
-  have e1 : (starT G.star R (inC G R ((y⁻¹ : G.Cˣ) : G.C))).unop = inC G R (sh G ((y⁻¹ : G.Cˣ) : G.C)) :=
-    starT_tmul G.star R 1 _
-  have e : sh G y * sh G ((y⁻¹ : G.Cˣ) : G.C) = 1 := by
-    simp only [sh]
-    rw [← MulOpposite.unop_mul, ← map_mul, Units.inv_mul, map_one, MulOpposite.unop_one]
-  show inC G R ((y⁻¹ : G.Cˣ) : G.C) * inC G R (y * sh G y) * (starT G.star R (inC G R ((y⁻¹ : G.Cˣ) : G.C))).unop = _
-  rw [e1, ← map_mul, ← map_mul, ← mul_assoc, Units.inv_mul, one_mul, e, map_one, Units.val_one, map_one]
-
-def Form.norm (G : HTGroup p) (y : G.Cˣ) : Form G where
-  β := ⟨y * sh G y, sh G ((y⁻¹ : G.Cˣ) : G.C) * (y⁻¹ : G.Cˣ), by
-      have e : sh G y * sh G ((y⁻¹ : G.Cˣ) : G.C) = 1 := by
-        simp only [sh]
-        rw [← MulOpposite.unop_mul, ← map_mul, Units.inv_mul, map_one, MulOpposite.unop_one]
-      rw [mul_assoc, ← mul_assoc (sh G y), e, one_mul, Units.mul_inv], by
-      have e : sh G ((y⁻¹ : G.Cˣ) : G.C) * sh G y = 1 := by
-        simp only [sh]
-        rw [← MulOpposite.unop_mul, ← map_mul, Units.mul_inv, map_one, MulOpposite.unop_one]
-      rw [mul_assoc, ← mul_assoc ((y⁻¹ : G.Cˣ) : G.C), Units.inv_mul, one_mul, e]⟩
-  sym := by
-    show sh G (y * sh G y) = y * sh G y
-    simp only [sh, map_mul, MulOpposite.unop_mul, G.star_star]
-  trivAf := ⟨_, 1, triv_norm G _ y⟩
-  trivR := ⟨_, triv_norm G _ y⟩
-
-def Form.ofPair {G : HTGroup p} (P : Pair G) : Form G := ⟨P.β, P.sym, P.trivAf, P.trivR⟩
-
-theorem herm_one (G : HTGroup p) (v : InfinitePlace G.F) : herm G v 1 = G.gram v := by
-  simp [herm]
-
-theorem nonempty_posV_of_mark {G : HTGroup p} (P : Pair G) (μ : ℂ) (h : P.Mark μ) :
-    ∃ v, sigPosH (G.gram_herm v) = 1 ∧ Nonempty (PosV G v P.β) := by
-  obtain ⟨v, hv, x, -, hx⟩ := h
-  exact ⟨v, hv, ⟨⟨x, hx⟩⟩⟩
 
 theorem fixL_one (G : HTGroup p) (v : InfinitePlace G.F) (β : G.Cˣ) (z : Fin G.n → ℂ) : FixL G v β 1 z :=
   ⟨1, by simp [toV]⟩
@@ -194,18 +155,7 @@ def Stab.one (G : HTGroup p) (v : InfinitePlace G.F) (β : G.Cˣ) (x : (AfP p �
     Stab G v β x t hx Kf K' a :=
   ⟨1, by simpa using Kf.one_mem, by simpa using K'.one_mem, fixL_one G v β _⟩
 
-open GlobalTheory.LKTrip.Example GlobalTheory.LKMid.Example in
 
-theorem points_nonempty_unitaryRankOne : ∃ v, sigPosH ((ex 1 one_ne_zero).gram_herm v) = 1 ∧
-    ∀ x t hx Kf K', Nonempty (Pts (ex 1 one_ne_zero) v exPair.β x t hx Kf K') := by
-  obtain ⟨μ, hμ⟩ := exPair_mark
-  obtain ⟨v, hv, ⟨z⟩⟩ := nonempty_posV_of_mark _ μ hμ
-  exact ⟨v, hv, fun x t hx Kf K' => ⟨Quot.mk _ (1, z)⟩⟩
-
-open GlobalTheory.LKTrip.Example GlobalTheory.LKMid.Example in
-
-example : ((exPair.γ, exPair.c) : _ × ℚˣ) ∈ grp (ex 1 one_ne_zero) exPair.β :=
-  ⟨exPair.sim, by show (0:ℚ) < 5; norm_num⟩
 
 theorem finitePlacesAway_nonempty (p : ℕ) [Fact p.Prime] : Nonempty (AwayP p) := by
   obtain ⟨q, hq, hqp⟩ := Nat.exists_infinite_primes (p+1)
@@ -218,20 +168,6 @@ theorem finitePlacesAway_nonempty (p : ℕ) [Fact p.Prime] : Nonempty (AwayP p) 
   have := Nat.le_of_dvd (Fact.out : p.Prime).pos h2
   omega
 
-theorem regAf_of_comm (G : HTGroup p) (hc : ∀ a b : G.C, a * b = b * a) (g : G.GAf) : RegAf G g := by
-  obtain ⟨w⟩ := finitePlacesAway_nonempty p
-  have key : ∀ a b : w.1.adicCompletion ℚ ⊗[ℚ] G.C, a * b = b * a := by
-    intro a b
-    induction a using TensorProduct.induction_on with
-    | zero => simp
-    | add x y hx hy => rw [add_mul, mul_add, hx, hy]
-    | tmul r x =>
-      induction b using TensorProduct.induction_on with
-      | zero => simp
-      | add x y hx hy => rw [add_mul, mul_add, hx, hy]
-      | tmul s y => simp [Algebra.TensorProduct.tmul_mul_tmul, mul_comm r s, hc x y]
-  exact ⟨w, fun a b _ _ => key a b⟩
-
 theorem sigG_one (G : HTGroup p) (g : Gr G 1) : sigG G 1 g = g := by
   refine Prod.ext ?_ (funext fun i => ?_)
   · show GlobalTheory.LKLoc.sig p (Q0 p) 1 1 g.1 = g.1
@@ -240,30 +176,5 @@ theorem sigG_one (G : HTGroup p) (g : Gr G 1) : sigG G 1 g = g := by
   · show sigRes p (G.Fw i) G.n 1 (g.2 i) = g.2 i
     rw [sigRes_degree_one]; rfl
 
-open GlobalTheory.LKTrip.Example GlobalTheory.LKMid.Example in
-
-theorem hyps_ex : IsSimple (ex 1 one_ne_zero) ∧ (∃ v, sigPosH ((ex 1 one_ne_zero).gram_herm v) = 1) ∧
-    ∃ (L : (ex 1 one_ne_zero).Level) (f : (ex 1 one_ne_zero).GAf → ℂ) (K' : Subgroup (Gr (ex 1 one_ne_zero) 1))
-      (f' : Gr (ex 1 one_ne_zero) 1 → ℂ), f 1 = 1 ∧ f' 1 = 1 ∧
-      IsTest (MonoidHom.id _) L.K.toSubgroup L.K.toSubgroup f ∧ (∀ g, f g ≠ 0 → RegAf (ex 1 one_ne_zero) g) ∧
-      IsTest (sigG (ex 1 one_ne_zero) 1) (KHT 5 (ex 1 one_ne_zero).m (ex 1 one_ne_zero).n 1 (ex 1 one_ne_zero).Fw) K' f' := by
-  obtain ⟨μ, v, hv, -⟩ := exPair_mark
-  obtain ⟨L⟩ := GlobalTheory.LKTrip.LevelExists.level_exists 5 (ex 1 one_ne_zero)
-  refine ⟨isSimple_unitaryRankOne, ⟨v, hv⟩, L, _, _, _, ?_, ?_, isTest_indicator _ _ (by simp), fun g _ => regAf_of_comm _ ?_ g,
-    isTest_indicator _ _ ?_⟩
-  · exact Set.indicator_of_mem (Subgroup.one_mem _) _
-  · exact Set.indicator_of_mem (Subgroup.one_mem _) _
-  · intro a b
-    have key : ∀ a b : Matrix (Fin 1) (Fin 1) QI, a * b = b * a := by
-      intro a b; ext i j; fin_cases i; fin_cases j; simp [Matrix.mul_apply, mul_comm]
-    exact key a b
-  · rintro _ ⟨k, hk, rfl⟩
-    rw [sigG_one]; exact hk
-
-example (G : HTGroup p) (v wt Kf K' f') :
-    cxTotal G v wt Kf (fun _ => 0) K' f' = fullSum G wt Kf (fun _ => 0) 1 K' f' := by
-  simp [cxTotal, cxSum, cxSumAt, fullSum, Pair.term, Pair.termAt, pointSum]
-
-example (G : HTGroup p) : ((Form.one G).β : G.C) = 1 := rfl
 
 end GlobalTheory.LKCx

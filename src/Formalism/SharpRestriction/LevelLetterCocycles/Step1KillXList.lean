@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.InvariantLetterPolynomialDerivation
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.InvariantLetterPolynomialDerivation
+
+@[expose] public section
 
 noncomputable section
 

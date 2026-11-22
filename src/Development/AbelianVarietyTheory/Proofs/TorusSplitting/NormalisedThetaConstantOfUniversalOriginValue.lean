@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TorusSections.ExistsSecTie
-import Development.AbelianVarietyTheory.Definitions.TorusSections.IsTorusOf
-import Formalism.LocalToGlobal.ProjectiveLattices.DataAtPointN3
-import Formalism.LocalToGlobal.ProjectiveLattices.LiesOverBaseChange
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ETPoint
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsIsUUOver
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TorusSections.ExistsSecTie
+public import Development.AbelianVarietyTheory.Definitions.TorusSections.IsTorusOf
+public import Formalism.LocalToGlobal.ProjectiveLattices.DataAtPointN3
+public import Formalism.LocalToGlobal.ProjectiveLattices.LiesOverBaseChange
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ETPoint
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsIsUUOver
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,7 +33,7 @@ theorem map_gm {X Y Z : Scheme.{0}} (r : Z ⟶ Y) (g : Y ⟶ X) (z : Z) (U : X.O
       (congrArg (r.stalkMap z).hom (gs_unit g (r z) U h a))))
     rw [← gs_pull r g z U h, gs_stalkMap r z _ h, gs_pull (𝟙 Y) g (r z) U h, Category.id_comp]
   · have h' : (r ≫ g) z ∉ U := h
-    rw [gm, dif_neg h', gm, dif_neg h]
+    rw [gm, dite_eq_right h', gm, dite_eq_right h]
     exact (map_one _).symm
 
 section General

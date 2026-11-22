@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ToroidalCompactificationData
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LeadingMinorSignsOverBoundedFlagDomain
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ToroidalCompactificationData
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LeadingMinorSignsOverBoundedFlagDomain
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField Matrix
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formalism.L2.Pj GlobalTheory GlobalTheory.CxPts GlobalTheory.Toroidal GlobalTheory.LieMet GlobalTheory.ShFam
 open Formalism.DegreeFormula Formalism.MJ GlobalTheory.HodgeDomain GlobalTheory.TrueCx
@@ -86,7 +91,7 @@ theorem differentiable_frameAt [Fintype Tau] (τ : X.Ψ) (a b : Fin r) :
     rcases (idx hj) c with c' | c' <;> rcases (idx hj) b with b' | b' <;>
       simp only [fromBlocks_apply₁₁, fromBlocks_apply₁₂, fromBlocks_apply₂₁, fromBlocks_apply₂₂, unflat, of_apply] <;>
       first | exact differentiable_const _ | exact differentiable_apply _
-  simp only [mat_frameAt, mul_apply]
+  simp only [mat_frameAt, Matrix.mul_apply]
   exact Differentiable.fun_sum (u := Finset.univ) (A := fun c (v : Tau × Fin j × Fin (r - j) → ℂ) =>
     mat (x0F X) τ a c * ((reindex (idx hj) (idx hj)).symm (fromBlocks 1 (unflat v (κ.symm τ)) 0 1)) c b)
     fun c _ => (hM c).const_mul _
@@ -96,21 +101,5 @@ end GlobalTheory.ShFam.SecFrame
 namespace GlobalTheory.ShFam
 
 open ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up
-
-theorem exists_holo_frame : ∀ (D : D7) (A : Amb D) (N j : ℕ) (S : Sig A N j) (κ : Lv A) (s : FinalTheorems S κ) (L : CmList A) (k : s.Comp), ∃ f : Pt D.what₂.Tau j (N - j) → (s.fd k).dom, (∀ z ∈ DomI D.what₂.Tau j (N - j), s.zOf L k (f z) = z ∧ ∀ τ, coW (s.fd k) s.j_le (f z).1 τ = 1 ∧ coOm (s.fd k) s.j_le (f z).1 τ = 1) ∧ ∀ τ a b, DifferentiableOn ℂ (fun v => ReciprocityTheory.ChartRestriction.G.FD.mat (f (unflat v)).1 τ a b) (DomFlat D.what₂.Tau j (N - j)) := by
-  intro D A N j S κ s L k
-  classical
-  let F : Pt D.what₂.Tau j (N - j) → (s.fd k).dom := fun z =>
-    if hz : z ∈ DomI D.what₂.Tau j (N - j) then
-      ⟨SecFrame.frameAt (s.fd k) s.j_le (s.lab L k) z, SecFrame.frameAt_mem _ _ _ (s.p0_eq k) hz⟩
-    else ⟨x0F _, IW.orth_mem_dom _ _ (isOrth_x0F _)⟩
-  have hF : ∀ z ∈ DomI D.what₂.Tau j (N - j), (F z).1 = SecFrame.frameAt (s.fd k) s.j_le (s.lab L k) z :=
-    fun z hz => by simp only [F, dif_pos hz]
-  refine ⟨F, fun z hz => ⟨?_, fun τ => ?_⟩, fun τ a b => ?_⟩
-  · show domPt (s.fd k) s.j_le (s.lab L k) (F z).1 = z
-    rw [hF z hz]; exact SecFrame.domPt_frameAt _ _ _ z
-  · rw [hF z hz]; exact SecFrame.co_frameAt _ _ _ z τ
-  · refine (SecFrame.differentiable_frameAt (s.fd k) s.j_le (s.lab L k) τ a b).differentiableOn.congr fun v hv => ?_
-    exact congrArg (fun x => ReciprocityTheory.ChartRestriction.G.FD.mat x τ a b) (hF _ hv)
 
 end GlobalTheory.ShFam

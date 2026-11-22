@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsOneComb
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsDoubleDescentRanksOneThreeFive
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsDoubleStep
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsHeisenbergCombinationSplitPlaceDatumStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExchangeToPositionOneUniformInLevelStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LocalZetaIntegralOpenSubgroup
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LocalSchrodingerModelUniqTransportExistsStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsClosedEmbeddingAffPtUncurry
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FirstVertexParahoricLevelChainTwist
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsOneComb
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsDoubleDescentRanksOneThreeFive
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsDoubleStep
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsHeisenbergCombinationSplitPlaceDatumStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExchangeToPositionOneUniformInLevelStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LocalZetaIntegralOpenSubgroup
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LocalSchrodingerModelUniqTransportExistsStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsClosedEmbeddingAffPtUncurry
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FirstVertexParahoricLevelChainTwist
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+
+@[expose] public section
 
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
@@ -106,7 +110,7 @@ theorem idem_orth {k' : Type} [Field k'] [ValuativeRel k'] [TopologicalSpace k']
   have he' : cA D q'.e * cA D q'.e = cA D q'.e := by rw [← map_mul, he]
   have h1 : q'.e + cA D q'.e ∈ GlobalTheory.FinPl.idAt D (· = q'.v) :=
     ((GlobalTheory.T.placeIdempotent_acts_on_supportedAndOff D q'.v ε' hε').1 _).2 (by rw [← hs']; linear_combination he + he' + 2 * hec)
-  rw [map_add, cA_cA, add_comm, hs]
+  rw [map_add (f := _), cA_cA, add_comm, hs]
   refine (GlobalTheory.T.placeIdempotent_acts_on_supportedAndOff D q.v ε hε).2 _ ⟨h1.1, ?_⟩
   have h2 := h1.2
   simp only [SetLike.mem_coe, Submodule.mem_iInf] at h2 ⊢
@@ -155,8 +159,8 @@ open GlobalTheory.IndefiniteRowSideFullHecke.FramePositiveSum (IsCO)
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k]
 variable {n n' : Type} [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] {c : ℕ}
 
-omit [MeasurableSpace k] [BorelSpace k] in
 
+omit [MeasurableSpace k] [BorelSpace k] in
 theorem exists_open_fix {Y : Type} [Fintype Y] [DecidableEq Y] (L : Level (GL Y k)) (hL : IsOpen (L.J : Set (GL Y k))) (α : GL Y k) :
     ∃ U : Subgroup (GL Y k), IsOpen (U : Set (GL Y k)) ∧ ∀ (A : Type) [AddCommGroup A] [Module ℂ A] (σ : Representation ℂ (GL Y k) A),
       IsSmoothRep σ → ∀ v : A, (∀ j : L.J, σ (j : GL Y k) v = (L.lam j : ℂ) • v) → ∀ u ∈ U, σ u (σ α v) = σ α v := by
@@ -186,8 +190,8 @@ theorem exists_isOneComb {ψ : AddChar k Circle} (hψ : HasConductor ψ 1) {ν :
     Finsupp.sum_mapDomain_index (by simp) (fun _ _ _ => add_mul _ _ _)]
   simp only [map_mul, Module.End.mul_apply]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] in
 theorem exists_covers {ι V : Type} [Zero V] {p : ℕ} {J : Subgroup (GL (n ⊕ Fin c) k)} (s : Finset ι)
     (f : ι → GL (n ⊕ Fin c) k → V) (hf : ∀ i, ∃ T, Covers p J T (f i)) (t₀ : GL (n ⊕ Fin c) k) :
     ∃ T, t₀ ∈ T ∧ ∀ i ∈ s, Covers p J T (f i) := by
@@ -218,15 +222,15 @@ theorem exists_covers_flat {ψ : AddChar k Circle} (hψ : HasConductor ψ 1) (ν
   convert hT using 2 with h
   rw [GlobalTheory.StepData.flat, ← GlobalTheory.SplitWeil.om_mul, one_mul, mul_one]
 
-omit [BorelSpace k] in
 
+omit [BorelSpace k] in
 theorem xi_mem_SB (ψ : AddChar k Circle) (ν : Measure k) (μ : kˣ →* ℂˣ) (Φ : SB (Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k))
     (J : Subgroup (GL (n ⊕ Fin c) k)) (b : GL (n ⊕ Fin c) k) (h' : GL (n' ⊕ Fin (c + 1)) k) (h : GL (n ⊕ Fin c) k) :
     GlobalTheory.StepData.xi ψ ν μ Φ.1 J b h' h ∈ SB (Matrix n n' k) :=
   (SB _).smul_mem _ (GlobalTheory.RootEx.opE_mem_SB 1 ψ ν (GlobalTheory.SplitWeil.om_mem_SB μ h' h Φ.2))
 
-omit [MeasurableSpace k] [BorelSpace k] in
 
+omit [MeasurableSpace k] [BorelSpace k] in
 theorem exists_isCombAt {D : D7} {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1)) (p : Place D k) {S T : HSp D}
     (FS : GlobalTheory.LocMod.Frame k S.rank n') (FT : GlobalTheory.LocMod.Frame k T.rank n) {Ξ : Matrix n n' k → ℂ} (hΞ : Ξ ∈ SB (Matrix n n' k)) :
     ∃ d, p.IsCombAt ψ FS FT d Ξ := by
@@ -236,20 +240,13 @@ theorem exists_isCombAt {D : D7} {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdCh
   rw [show Φ = ⟨Ξ, hΞ⟩ from Subtype.ext h, show Φ₀ = O from Subtype.ext (h₀.trans hO.symm)]
   exact h2 Tm hT
 
-omit [MeasurableSpace k] [BorelSpace k] in
-
-theorem prX_Cgrp_KO : prX (Cgrp (KO k (n ⊕ Fin c)) 1) = KO k n := by
-  ext g
-  simp only [mem_prX, mem_Cgrp, inv_one, one_mul, mul_one]
-  exact ⟨fun ⟨_, hu, h⟩ => GlobalTheory.TwistVertex.mem_KO_of_mul_embX hu h.2, fun h => ⟨1, one_mem _, by
-    rw [one_mul]; exact ⟨Subgroup.mem_sup_left ⟨g, rfl⟩, GlobalTheory.TwistVertex.embX_mem_KO h⟩⟩⟩
 
 end Local
 
 variable {D : D7} {ψ : AddChar (AF D.host.F) ℂ} {σ : ℕ}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_qstep (hψ : IsStdChar D ψ (-1)) (S : Dbl2 ψ σ) {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] (ν : Measure k) (hν : IsUnitVol ν)
     (q : GlobalTheory.FinPl.SplitPt D k) (ψk : AddChar k Circle) (hk : (ofSplit q).IsChar ψ ψk) (hc : HasConductor ψk 1)
@@ -283,91 +280,7 @@ theorem exists_qstep (hψ : IsStdChar D ψ (-1)) (S : Dbl2 ψ σ) {k : Type} [Fi
   exact ⟨gl₀, gl₁, gl₂, l₀, l₁, l₂, D₁, D₂, dat₁, dat₂, A₁, A₂, cov₁ () (Finset.mem_univ _), cov₂, d₁, d₂, ent₁, ent₂, e₀, e₂,
     one₀, one₂, m₁, m₂, a₁, a₂, b₁, b₂, g₁, g₂, _, rfl⟩
 
-def IsSpherical {S : Dbl2 ψ σ} (Q : QStep S) : Prop :=
-  IsOne Q.Φ₁ ∧ IsOne Q.Φ₂ ∧ Q.L₁ = Model.sph _ _ ∧ Q.L₂ = Model.sph _ _ ∧ Q.α = 1 ∧ Q.A₁ = {1} ∧ Q.A₂ = {1} ∧ Q.L₀ = Model.sph _ _
 
-set_option maxHeartbeats 1000000 in
-
-theorem exists_spherical_at (hψ : IsStdChar D ψ (-1)) (S : Dbl2 ψ σ) {k : Type} [Field k] [ValuativeRel k]
-    [TopologicalSpace k] [IsNonarchimedeanLocalField k] (q : GlobalTheory.FinPl.SplitPt D k) {ψk : AddChar k Circle}
-    (hk : (ofSplit q).IsChar ψ ψk) (hc : HasConductor ψk 1) {μ₁ μ₂ : kˣ →* ℂˣ} (c₁ : (ofSplit q).IsComp S.χ₁⁻¹ μ₁)
-    (c₂ : (ofSplit q).IsComp S.χ₂⁻¹ μ₂) (u₁ : IsUnram μ₁) (u₂ : IsUnram μ₂) : ∃ Q : QStep S, Q.q.v = q.v ∧ IsSpherical Q := by
-  borelize k
-  obtain ⟨ν, hν⟩ := GlobalTheory.SplitWeil.exists_isUnitVol (k := k)
-  haveI := hν.1
-  obtain ⟨F, -⟩ := DblInhab.exists_dbl D k (ofSplit q) σ S.B S.J S.B' _ _ _ (Frame.ofGL 1) (Frame.ofGL 1) (Frame.ofGL 1) 1 one_ne_zero
-  obtain ⟨gl₀, l₀⟩ := Model.exists_gl q _ F.G₀
-  obtain ⟨gl₁, l₁⟩ := Model.exists_gl q _ F.G₁
-  obtain ⟨gl₂, l₂⟩ := Model.exists_gl q _ F.G₂
-  obtain ⟨Φ₁, h₁, -⟩ := PinModel.exists_isOne (k := k) (Y := Fin S.J.W₀.rank ⊕ Fin (2 * σ + 1 + 1))
-    (Y' := Fin S.B.A.rank ⊕ Fin (2 * σ + 1 + 1 + 1))
-  obtain ⟨Φ₂, h₂, -⟩ := PinModel.exists_isOne (k := k) (Y := Fin S.B'.A.rank ⊕ Fin (2 * σ + 1))
-    (Y' := Fin S.J.W₀.rank ⊕ Fin (2 * σ + 1 + 1))
-  have e₁ : Φ₁.1 = Model.ind k _ _ := h₁
-  have e₂ : Φ₂.1 = Model.ind k _ _ := h₂
-  obtain ⟨m₁, a₁, b₁⟩ := Model.exists_haar ν (Fin S.J.W₀.rank)
-  obtain ⟨m₂, a₂, b₂⟩ := Model.exists_haar ν (Fin S.B'.A.rank)
-  obtain ⟨x₀, one₀⟩ := exists_isOneComb (P := σ + 1 + 1) hc hν (by omega) (by omega)
-    (Model.sph k (Fin S.B.A.rank ⊕ Fin (2 * σ + 1 + 1 + 1))) Model.isCO_sph.1 1
-  choose x₂ one₂ using fun β => exists_isOneComb (P := σ + 1) hc hν (by omega) (by omega)
-    (Model.sph k (Fin S.B'.A.rank ⊕ Fin (2 * σ + 1))) Model.isCO_sph.1 β
-  exact ⟨{ k := k, ν := ν, unitVol := hν, q := q, ψk := ψk, char := hk, cond := hc, c := 2 * σ, F := F
-           n₀ := Fin S.B.A.rank, n₁ := Fin S.J.W₀.rank, n₂ := Fin S.B'.A.rank
-           gl₀ := gl₀, gl₁ := gl₁, gl₂ := gl₂, loc₀ := l₀, loc₁ := l₁, loc₂ := l₂, μ₁ := μ₁, μ₂ := μ₂, comp₁ := c₁, comp₂ := c₂
-           open₁ := Model.isOpen_ker u₁, open₂ := Model.isOpen_ker u₂, L₀ := Model.sph k _, L₁ := Model.sph k _
-           L₂ := Model.sph k _, co₁ := Model.isCO_sph, co₂ := Model.isCO_sph
-           le₁ := le_rfl, le₂ := le_rfl, Φ₁ := Φ₁, Φ₂ := Φ₂
-           ty₁ := e₁ ▸ Model.hasTypes_ind u₁, ty₂ := e₂ ▸ Model.hasTypes_ind u₂
-           D₁ := Finsupp.single 0 1, D₂ := Finsupp.single 0 1
-           dat₁ := e₁ ▸ PinModel.isCombAt_one _ ψ _ _, dat₂ := e₂ ▸ PinModel.isCombAt_one _ ψ _ _
-           α := 1, A₁ := {1}, A₂ := {1}
-           cov₁ := e₁ ▸ Model.covers_ind hc hν μ₁
-           cov₂ := fun γ hγ => by rw [Finset.mem_singleton.1 hγ, e₂]; exact Model.covers_ind hc hν μ₂
-           d₁ := fun _ => Finsupp.single 0 1, d₂ := fun _ _ => Finsupp.single 0 1
-           ent₁ := fun γ => by
-             rw [Finset.mem_singleton.1 γ.2, e₁]
-             exact (congrArg _ (Model.xi_ind (c := 2 * σ + 1) hc hν μ₁)).mpr (PinModel.isCombAt_one _ ψ F.F₀ F.F₁)
-           ent₂ := fun γ β => by
-             rw [Finset.mem_singleton.1 γ.2, Finset.mem_singleton.1 β.2, e₂]
-             exact (congrArg _ (Model.xi_ind (c := 2 * σ) hc hν μ₂)).mpr (PinModel.isCombAt_one _ ψ F.F₁ F.F₂)
-           e₀ := x₀, e₂ := fun β => x₂ β.1, one₀ := one₀, one₂ := fun β => one₂ β.1
-           m₁ := m₁, m₂ := m₂, haar₁ := a₁, haar₂ := a₂, vol₁ := b₁, vol₂ := b₂ }, rfl, h₁, h₂, rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
-
-theorem infinite_spherical (hψ : IsStdChar D ψ (-1)) (S : Dbl2 ψ σ) : {v | ∃ Q : QStep S, Q.q.v = v ∧ IsSpherical Q}.Infinite := by
-  have hev := (GlobalTheory.T.standard_character_conductor_almost_all D ψ hψ).and ((GlobalTheory.FinPl.AeUnit.eventually_incA_mul_mem_intAt D D.host.xi0).and
-    ((GlobalTheory.FinPl.AeUnit.eventually_incA_mul_mem_intAt D D.host.xi0⁻¹).and
-      ((DblInhab.eventually_isUnram D S.χ₁⁻¹ S.weila.hecS.1.inv).and (DblInhab.eventually_isUnram D S.χ₂⁻¹ S.weilb.hecS.1.inv))))
-  refine Filter.frequently_cofinite_iff_infinite.1
-    (((Filter.frequently_cofinite_iff_infinite.2 (GlobalTheory.T.infinitely_many_split_places D)).and_eventually hev).mono ?_)
-  rintro v ⟨⟨e, ε, he, hε, hs⟩, a1, a2, a3, a4, a5⟩
-  obtain ⟨q, -, hq⟩ := GlobalTheory.FinPl.SplitPoint.exists_splitPt D v e ε he hε hs
-  obtain ⟨⟨ψk, hk⟩, -, -, -, hc⟩ := GlobalTheory.LocChar.weil_char_split D _ (ofSplit q) ψ hψ
-  obtain ⟨μ₁, c₁⟩ := hc S.χ₁⁻¹
-  obtain ⟨μ₂, c₂⟩ := hc S.χ₂⁻¹
-  rw [← hq]
-  exact exists_spherical_at hψ S q hk
-    (DblInhab.hasConductor q (by rw [hq]; exact a1) (by rw [hq]; exact a2) (by rw [hq]; exact a3) hk)
-    c₁ c₂ (a4 _ q hq _ c₁) (a5 _ q hq _ c₂)
-
-theorem IsSpherical.xi_eq {S : Dbl2 ψ σ} {Q : QStep S} (h : IsSpherical Q) (γ : Q.A₁) (β : Q.A₂) :
-    GlobalTheory.StepData.xi Q.ψk Q.ν Q.μ₁ Q.Φ₁.1 Q.L₁.J 1 Q.α γ.1 = Model.ind Q.k _ _ ∧
-      GlobalTheory.StepData.xi Q.ψk Q.ν Q.μ₂ Q.Φ₂.1 Q.L₂.J 1 γ.1 β.1 = Model.ind Q.k _ _ := by
-  obtain ⟨h₁, h₂, l₁, l₂, a, a₁, a₂, -⟩ := h
-  have g : γ.1 = 1 := Finset.mem_singleton.1 (a₁ ▸ γ.2)
-  have b : β.1 = 1 := Finset.mem_singleton.1 (a₂ ▸ β.2)
-  rw [g, b, a, l₁, l₂, show Q.Φ₁.1 = Model.ind Q.k _ _ from h₁, show Q.Φ₂.1 = Model.ind Q.k _ _ from h₂]
-  exact ⟨Model.xi_ind Q.cond Q.unitVol _, Model.xi_ind Q.cond Q.unitVol _⟩
-
-theorem IsSpherical.constants {S : Dbl2 ψ σ} {Q : QStep S} (h : IsSpherical Q) :
-    Q.volJ = 1 ∧ (∀ γ, Q.w₁ γ = 1) ∧ ∀ β, Q.w₂ β = 1 := by
-  obtain ⟨-, -, l₁, l₂, -, a₁, a₂, -⟩ := h
-  refine ⟨by simp [QStep.volJ, l₁, l₂, Model.sph], fun γ => ?_, fun β => ?_⟩
-  · rw [QStep.w₁, show γ.1 = 1 from Finset.mem_singleton.1 (a₁ ▸ γ.2), l₁, Model.sph, prX_Cgrp_KO, Q.vol₁]
-    simp
-  · rw [QStep.w₂, show β.1 = 1 from Finset.mem_singleton.1 (a₂ ▸ β.2), l₂, Model.sph, prX_Cgrp_KO, Q.vol₂]
-    simp
 
 end GlobalTheory.QPl.Inhab
 end

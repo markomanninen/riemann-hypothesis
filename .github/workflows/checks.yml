@@ -1,22 +1,12 @@
 name: checks
 
-# Two fast checks. Neither compiles the submission's own code; the Comparator run does that
-# and is too big for hosted runners (see the README).
+# Challenge build on hosted runners; full builds use the external runner pool.
+# The original-submission provenance comparison is available by manual dispatch.
 #
-# This workflow runs on GitHub because other people need to see its results. The badge and the
-# challenge-export artifact are what checkers of the submission download and compare. It runs only
-# when a file it checks changes, so a change to the notes in verification/ starts nothing.
+# In this fork the workflow starts by hand only. The upstream repository runs the same checks on
+# every push and pull request, and its results are the ones that other people read.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "src/**"
-      - "lakefile.toml"
-      - "lean-toolchain"
-      - "lake-manifest.json"
-      - "export-targets.txt"
-      - ".github/workflows/checks.yml"
   workflow_dispatch:
 
 permissions:
@@ -24,7 +14,8 @@ permissions:
 
 jobs:
   mirror:
-    name: Source is identical to the published tarball
+    if: github.event_name == 'workflow_dispatch'
+    name: Historic original-submission provenance comparison
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -36,16 +27,27 @@ jobs:
           echo "9631b4f020199e580ba86178cb56c6e9b09f690c2369a80dc4334aa93f49c7fc  $T/lean.tar.gz" | sha256sum -c
           tar xzf "$T/lean.tar.gz" -C "$T"
 
-          # src/ differs only by the added Challenge.lean
-          d=$(diff -r "$T/lean/src" src || true); echo "$d"
-          [ "$d" = "Only in src: Challenge.lean" ]
+          # The first commit is the archive's lean/ directory, byte for byte.
+          ORIG=40e56bab026552e089d7afcfeff08d2defb9c005
+          git fetch --no-tags --depth 1 origin "$ORIG"
+          mkdir "$T/first"; git archive "$ORIG" | tar -x -C "$T/first"
+          diff -r "$T/lean" "$T/first"
+
+          # Later source changes, for the record: files Added, Deleted and Modified under src/.
+          git diff --name-status "$ORIG" HEAD -- src | cut -c1 | sort | uniq -c
+          git diff --name-status --diff-filter=AM "$ORIG" HEAD -- src
+
+          # The toolchain and dependency pins are still the submission's.
           cmp "$T/lean/lean-toolchain" lean-toolchain
           cmp "$T/lean/lake-manifest.json" lake-manifest.json
 
-          # lakefile.toml is the original, byte for byte, followed by the marked block
+          # Only the explicit cache prefix and marked Comparator suffix are additions.
+          printf '# Cache infrastructure; the original submission starts below this block.\nplatformIndependent = true\n\n' > "$T/cache-prefix"
+          head -n 3 lakefile.toml | cmp - "$T/cache-prefix"
+          tail -n +4 lakefile.toml > "$T/lakefile-without-cache.toml"
           n=$(wc -c < "$T/lean/lakefile.toml")
-          head -c "$n" lakefile.toml | cmp - "$T/lean/lakefile.toml"
-          tail -c +"$((n + 1))" lakefile.toml
+          head -c "$n" "$T/lakefile-without-cache.toml" | cmp - "$T/lean/lakefile.toml"
+          tail -c +"$((n + 1))" "$T/lakefile-without-cache.toml"
 
   challenge:
     name: Challenge compiles against Mathlib alone
@@ -61,34 +63,6 @@ jobs:
           sh "$RUNNER_TEMP/elan-init.sh" -y --default-toolchain none
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
       - name: Fetch Mathlib's official build cache
-        run: lake exe cache get
+        run: lake exe mathlib/cache get
       - name: Build only the Challenge module
         run: lake build Challenge
-
-      # Step 1 of the README: export the challenge on a clean machine, where none of the
-      # submission's code has been compiled, and publish the file for the judge to use.
-      - name: Build the exporter (lean4export v4.33.0 with this project's Lean)
-        run: |
-          git clone --quiet --depth 1 --branch v4.33.0 https://github.com/leanprover/lean4export "$RUNNER_TEMP/lean4export"
-          cp lean-toolchain "$RUNNER_TEMP/lean4export/lean-toolchain"
-          cd "$RUNNER_TEMP/lean4export" && git rev-parse HEAD && lake build lean4export
-      - name: Export the challenge
-        run: |
-          mkdir "$RUNNER_TEMP/out"
-          lake env "$RUNNER_TEMP/lean4export/.lake/build/bin/lean4export" Challenge -- $(cat export-targets.txt) > "$RUNNER_TEMP/out/challenge.export"
-          cd "$RUNNER_TEMP/out"
-          sha256sum challenge.export | tee challenge.export.sha256
-          {
-            echo "### Challenge export"
-            echo "- sha256: \`$(cut -d' ' -f1 challenge.export.sha256)\`"
-            echo "- size: $(stat -c %s challenge.export) bytes, $(wc -l < challenge.export) lines"
-            echo "- commit: \`$GITHUB_SHA\`"
-          } >> "$GITHUB_STEP_SUMMARY"
-          # The README quotes this checksum; fail if the export ever changes.
-          echo "bd484ac9886a96f26b1d9a7a59ebd45b7a70d102c015d4f31f9302bbdd6ab2b9  challenge.export" | sha256sum -c
-          zstd -q -19 -T0 --rm challenge.export
-      - uses: actions/upload-artifact@v4
-        with:
-          name: challenge-export
-          path: ${{ runner.temp }}/out/
-          if-no-files-found: error

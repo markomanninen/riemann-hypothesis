@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.LocalEmbeddings.FinMatchDefs
-import Development.AutomorphicArithmetic.DivisorFrames.UnitCharIdempotentSumEqProdUnitInd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatSelfDualOfUnimod
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.LocalEmbeddings.FinMatchDefs
+public import Development.AutomorphicArithmetic.DivisorFrames.UnitCharIdempotentSumEqProdUnitInd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatSelfDualOfUnimod
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum GlobalTheory.IndefiniteRowSideFullHecke.MatchingAdjoints GlobalTheory.Grid GlobalTheory.ChainFr GlobalTheory.SquareComm GlobalTheory.FinMatch
@@ -14,7 +18,8 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.Local
 private theorem cpt_sum {D : D7} {e : AE D} {S : Finset (HeightOneSpectrum (𝓞 D.host.E))} (he : IsIdemSum e S)
     {w : HeightOneSpectrum (𝓞 D.host.E)} (hw : w ∈ S) : GlobalTheory.StdFrames.cpt (D := D) w (toEAf D e) = 1 := by
   obtain ⟨⟨es, h, rfl⟩, -⟩ := he
-  rw [map_sum (toEAf D), map_sum (GlobalTheory.StdFrames.cpt (D := D) w),
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum (toEAf D), map_sum (GlobalTheory.StdFrames.cpt (D := D) w),
     Finset.sum_eq_single_of_mem w hw fun Q hQ hne => (GlobalTheory.StdFrames.cpt_of_isIdemAt (h Q hQ)).2 w hne.symm]
   exact (GlobalTheory.StdFrames.cpt_of_isIdemAt (h w hw)).1
 

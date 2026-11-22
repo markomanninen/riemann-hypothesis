@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
 
 open Finset
 
@@ -94,8 +98,8 @@ theorem pair_lt (t : Fin n → Fin n → ℝ) (ht : ∀ a b, t b a = - t a b) (h
     linarith
   linarith
 
-open Classical in
 
+open Classical in
 def ind {ε : Fin n → Bool} (A : Finset (NC ε)) (a b : Fin n) : ℝ :=
   if ∃ h : ε a = true ∧ ε b = false, (⟨(a, b), h⟩ : NC ε) ∈ A then 1 else 0
 

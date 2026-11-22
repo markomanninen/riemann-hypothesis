@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NmPinvOfPlace
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EaGeCOfNorm
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NmPinvOfPlace
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EaGeCOfNorm
+
+@[expose] public section
 
 noncomputable section
 

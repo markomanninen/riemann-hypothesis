@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.ExampleSatisfiesConditionsAtFive
-import Formalism.LocalRingCardinality.DataParams
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.ExampleSatisfiesConditionsAtFive
+public import Formalism.LocalRingCardinality.DataParams
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Polynomial
 
@@ -13,23 +17,6 @@ open Formalism.BasicNotions Formalism.L2.Indef Formalism.L2.Indef.Tree
 section LocalGroups
 
 variable (r : ℕ) (k : Type) [Field k]
-
-def mirabolic : Subgroup (GL (Fin r) k) where
-  carrier := {h | ∀ i : Fin r, i.val + 1 = r → ∀ j, (h : Matrix (Fin r) (Fin r) k) i j = if i = j then 1 else 0}
-  one_mem' := by
-    intro i _ j
-    simp [Matrix.one_apply]
-  mul_mem' := by
-    intro a b ha hb i hi j
-    simp [Matrix.mul_apply, ha i hi, hb i hi]
-  inv_mem' := by
-    intro a ha i hi j
-    have h : ((a : Matrix (Fin r) (Fin r) k) * ((a⁻¹ : GL (Fin r) k) : Matrix (Fin r) (Fin r) k)) i j =
-        (1 : Matrix (Fin r) (Fin r) k) i j := by
-      rw [← Units.val_mul, mul_inv_cancel, Units.val_one]
-    rw [Matrix.mul_apply, Matrix.one_apply] at h
-    rw [← h]
-    simp [ha i hi]
 
 theorem diag_mul_of_upper {r : ℕ} {k : Type} [Field k] (A B : Matrix (Fin r) (Fin r) k)
     (hA : A.BlockTriangular id) (hB : B.BlockTriangular id) (i : Fin r) : (A * B) i i = A i i * B i i := by
@@ -62,18 +49,11 @@ variable {r k}
 def superDiag (u : Matrix (Fin r) (Fin r) k) : k :=
   ∑ i : Fin r, ∑ j : Fin r, if j.val = i.val + 1 then u i j else 0
 
-example (a : k) : superDiag !![1, a; 0, 1] = a := by
-  simp [superDiag, Fin.sum_univ_two]
-
 end LocalGroups
 
 section Idem
 
 variable {K : Type} [Field K] {G : Type} [Group G]
-
-def IsIrrCharacter (τ : G → K) : Prop :=
-  ∃ (n : ℕ) (ρ : Representation (AlgebraicClosure K) G (Fin n → AlgebraicClosure K)),
-    ρ.IsIrreducible ∧ ∀ a, LinearMap.trace _ _ (ρ a) = algebraMap K (AlgebraicClosure K) (τ a)
 
 def centralIdem [Finite G] (τ : G → K) : MonoidAlgebra K G :=
   haveI := Fintype.ofFinite G
@@ -84,10 +64,6 @@ def twistInv (χ : G →* Kˣ) : MonoidAlgebra K G →ₐ[K] MonoidAlgebra K G :
     { toFun := fun a => MonoidAlgebra.single a (((χ a)⁻¹ : Kˣ) : K)
       map_one' := by simp [MonoidAlgebra.one_def]
       map_mul' := fun a b => by simp [MonoidAlgebra.single_mul_single, mul_comm] }
-
-example (χ : G →* Kˣ) (a : G) :
-    twistInv χ (MonoidAlgebra.single a 1) = MonoidAlgebra.single a (((χ a)⁻¹ : Kˣ) : K) := by
-  simp [twistInv]
 
 end Idem
 
@@ -142,8 +118,8 @@ variable {p} {K : Type} [Field K]
 def torVal {d : ℕ} (θ : Tor p d →* Kˣ) : Fbar p → K :=
   Function.extend (fun u : Tor p d => ((u : (Fbar p)ˣ) : Fbar p)) (fun u => ((θ u : Kˣ) : K)) 0
 
-open Classical in
 
+open Classical in
 def cuspChar {ι : Type} [Fintype ι] [DecidableEq ι] (θ : Tor p (Fintype.card ι) →* Kˣ) (h : Matrix ι ι (ZMod p)) : K :=
   if ∃ (φ : (ZMod p)[X]) (n : ℕ), Irreducible φ ∧ h.charpoly = φ ^ n then
     (-1) ^ (Fintype.card ι - 1) * ∑ z ∈ (h.charpoly.aroots (Fbar p)).toFinset, torVal θ z *
@@ -163,8 +139,8 @@ theorem cycLen_pos {r : ℕ} (b : Fin r → Fin r) (c : Cyc b) : 0 < cycLen b c 
 theorem cycLen_dvd {r : ℕ} (b : Fin r → Fin r) (c : Cyc b) : cycLen b c ∣ r.factorial :=
   Nat.dvd_factorial (cycLen_pos b c) (by simpa using Fintype.card_subtype_le (fun i : Fin r => b i = c.1))
 
-variable (p K) in
 
+variable (p K) in
 abbrev SSParam (r : ℕ) : Type := Σ b : Fin r → Fin r, ∀ c : Cyc b, (Tor p (cycLen b c) →* Kˣ)
 
 instance finiteTor {r : ℕ} (b : Fin r → Fin r) (c : Cyc b) : Finite (Tor p (cycLen b c)) := by
@@ -185,8 +161,8 @@ def cycChar (s : SSParam p K r) (c : Cyc s.1) : Tor p r.factorial →* Kˣ :=
 def rootChar (s : SSParam p K r) (x : Σ c : Cyc s.1, Fin (cycLen s.1 c)) : Tor p r.factorial →* Kˣ :=
   cycChar s x.1 ^ (p ^ x.2.val)
 
-open Classical in
 
+open Classical in
 def typeChar (s : SSParam p K r) (x : GL (Fin r) (ZMod p)) : K :=
   haveI := Fintype.ofFinite (GL (Fin r) (ZMod p))
   ((Nat.card {y : GL (Fin r) (ZMod p) // (y : Matrix (Fin r) (Fin r) (ZMod p)).BlockTriangular s.1} : ℕ) : K)⁻¹ *
@@ -244,15 +220,7 @@ abbrev LevelGroup : Type := ∀ v : Sq H, GL (Fin R.r) (ZMod (H.g v.1))
 
 def levelU : Subgroup (LevelGroup H) := Subgroup.pi Set.univ fun v => unitri R.r (ZMod (H.g v.1))
 
-def levelP : Subgroup (LevelGroup H) := Subgroup.pi Set.univ fun v => mirabolic R.r (ZMod (H.g v.1))
-
-def levelUP : Subgroup (levelP H) := (levelU H).subgroupOf (levelP H)
-
-def delq : ℕ := (levelUP H).index
-
 variable {H} {K : Type} [Field K]
-
-def IsGenericFamily {A : Type} [CommMonoid A] (ψ : ∀ v : Sq H, AddChar (ZMod (H.g v.1)) A) : Prop := ∀ v, ψ v ≠ 1
 
 def psiU {A : Type} [CommMonoid A] (ψ : ∀ v : Sq H, AddChar (ZMod (H.g v.1)) A) (u : LevelGroup H) : A :=
   haveI := Fintype.ofFinite (Sq H)
@@ -287,9 +255,6 @@ def goodIdem (om : ∀ i : Fin 2, (ZMod (H.g i))ˣ →* Kˣ) : MonoidAlgebra K (
 def goodIdemTw (om : ∀ i : Fin 2, (ZMod (H.g i))ˣ →* Kˣ) (j : Fin R.m) : MonoidAlgebra K (LevelGroup H) :=
   twistInv (chiDet om j) (goodIdem om)
 
-variable (H K) in
-
-def HasLevelRoots : Prop := ∃ ζ : K, IsPrimitiveRoot ζ (Nat.card (LevelGroup H))
 
 end Level
 
@@ -297,89 +262,6 @@ section Ties
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K] {Bs : DefBase K} {Df : DefSide Bs} {S : IndefData Df} {c : OnConst}
 
-def TieGroup {R : Ranks} {H : Host R} (ψ : ∀ v : Sq H, AddChar (ZMod (H.g v.1)) (𝓞 K)) (O : OnObj S (levelP H) c) : Prop :=
-  O.U = levelUP H ∧ ∀ u : levelP H, u ∈ levelUP H → O.ψ u = psiU ψ (u : LevelGroup H)
-
-def TieAction {R : Ranks} {H : Host R} (om : ∀ i : Fin 2, (ZMod (H.g i))ˣ →* Kˣ) (jx : Bs.J ≃ Fin R.m)
-    (O : OnObj S (levelP H) c) (ρ₀ : ∀ j, Representation K (LevelGroup H) (Fin (O.nZ j) → K)) : Prop :=
-  ∀ j, O.ρ j = (ρ₀ j).comp (levelP H).subtype ∧
-    O.e j = (ρ₀ j).asAlgebraHom (goodIdemTw om (jx j)) ∧
-    O.V₀ j = LinearMap.range ((ρ₀ j).asAlgebraHom (goodIdemTw om (jx j)))
-
-def TieNumbers {D : D7} (L : SizeData₂ D) {P : Type} [Group P] [Finite P] (O : OnObj S P c) : Prop :=
-  O.g1 = D.host.g 0 ∧ O.g2 = D.host.g 1 ∧ O.f = (D.R.f : ℝ) ∧ O.k = (D.R.k : ℝ) ∧ O.m = (D.R.m : ℝ) ∧
-    O.rr = (D.R.r : ℝ) ∧ O.x = L.sc.x ∧ O.eps = L.sc.eps
-
-def LevelTie {D : D7} (L : SizeData₂ D) (ψ : ∀ v : Sq D.host, AddChar (ZMod (D.host.g v.1)) (𝓞 K))
-    (om : ∀ i : Fin 2, (ZMod (D.host.g i))ˣ →* Kˣ) (jx : Bs.J ≃ Fin D.R.m)
-    (O : OnObj S (levelP D.host) c) (ρ₀ : ∀ j, Representation K (LevelGroup D.host) (Fin (O.nZ j) → K)) : Prop :=
-  HasLevelRoots D.host K ∧ IsGenericFamily ψ ∧ IsGeneratorFamily om ∧
-    TieGroup ψ O ∧ TieAction om jx O ρ₀ ∧ TieNumbers L O
-
 end Ties
-
-def ClaimPlaces : Prop :=
-  ∀ (D : D7) (L : SizeData₂ D) (_ : ParameterChoice' D L),
-    Function.Injective (fun v : Sq D.host => v.2.1) ∧
-    Set.range (fun v : Sq D.host => v.2.1) =
-      {v : HeightOneSpectrum (𝓞 D.host.F) | ((D.host.g 0 * D.host.g 1 : ℕ) : 𝓞 D.host.F) ∈ v.asIdeal} ∧
-    (∀ i, Nat.card (PlOver D.host i) = D.R.f) ∧ Nat.card (Sq D.host) = 2 * D.R.f ∧
-    ∀ v : Sq D.host, Nat.card (𝓞 D.host.F ⧸ v.2.1.asIdeal) = D.host.g v.1
-
-def ClaimCharacter : Prop :=
-  ∀ (R : Ranks) (H : Host R) (A : Type) [CommMonoid A] (ψ : ∀ v : Sq H, AddChar (ZMod (H.g v.1)) A),
-    levelU H ≤ levelP H ∧ psiU ψ 1 = 1 ∧
-    (∀ u ∈ levelU H, ∀ u' ∈ levelU H, psiU ψ (u * u') = psiU ψ u * psiU ψ u') ∧
-    ∀ u ∈ levelU H, psiU ψ u ^ (H.g 0 * H.g 1) = 1
-
-def ClaimLocalOrders : Prop :=
-  ∀ (r : ℕ) (k : Type) [Field k] [Finite k], 1 ≤ r →
-    Nat.card (unitri r k) = Nat.card k ^ (r * (r - 1) / 2) ∧
-    Nat.card (mirabolic r k) = Nat.card k ^ (r * (r - 1) / 2) * ∏ i ∈ Finset.Ico 1 r, (Nat.card k ^ i - 1) ∧
-    ((unitri r k).subgroupOf (mirabolic r k)).index = ∏ i ∈ Finset.Ico 1 r, (Nat.card k ^ i - 1)
-
-def ClaimIndex : Prop :=
-  ∀ (R : Ranks) (H : Host R),
-    haveI := Fintype.ofFinite (Sq H)
-    delq H = ∏ v : Sq H, ∏ i ∈ Finset.Ico 1 R.r, (H.g v.1 ^ i - 1)
-
-def ClaimPageBound : Prop :=
-  ∀ (D : D7) (L : SizeData₂ D) (_ : ParameterChoice' D L),
-    (1 : ℝ) / 2 ≤ 1 - 1 / (4 * ((D.R.f : ℝ) * D.R.k) ^ 3) ∧
-    1 - 1 / (4 * ((D.R.f : ℝ) * D.R.k) ^ 3) ≤ (delq D.host : ℝ) / (Nat.card (levelU D.host) : ℝ) ∧
-    (delq D.host : ℝ) / (Nat.card (levelU D.host) : ℝ) ≤ 1
-
-def ClaimUnipValuation : Prop :=
-  ∀ (D : D7) (L : SizeData₂ D) (_ : ParameterChoice' D L) (l : ℕ), l.Prime →
-    padicValNat l (Nat.card (levelU D.host)) =
-      if l = D.host.g 0 ∨ l = D.host.g 1 then D.R.f * (D.R.r * (D.R.r - 1) / 2) else 0
-
-def ClaimRegularType : Prop :=
-  ∀ (p : ℕ) [Fact p.Prime] (K : Type) [Field K] [CharZero K] (r : ℕ) (s : SSParam p K r), IsRegularParam s →
-    IsIrrCharacter (typeChar s) ∧
-    ∀ s' : SSParam p K r, IsRegularParam s' →
-      (typeChar s = typeChar s' ↔ Set.range (rootChar s) = Set.range (rootChar s'))
-
-def ClaimIdempotent : Prop :=
-  ∀ (R : Ranks) (H : Host R) (K : Type) [Field K] [NumberField K] (om : ∀ i : Fin 2, (ZMod (H.g i))ˣ →* Kˣ),
-    HasLevelRoots H K → IsGeneratorFamily om →
-    (∀ τ ∈ goodTypes om, IsIrrCharacter τ) ∧
-    IsIdempotentElem (goodIdem om) ∧ goodIdem om ∈ Subalgebra.center K (MonoidAlgebra K (LevelGroup H)) ∧
-    (∀ a, IsIntegral ℤ ((Nat.card (LevelGroup H) : K) * (goodIdem om).coeff a)) ∧
-    (∀ a, (goodIdem om).coeff a ∈ Subfield.closure {y : K | ∃ i j x, y = ((chiTame om i j x : Kˣ) : K)}) ∧
-    ∀ j, IsIdempotentElem (goodIdemTw om j) ∧
-      goodIdemTw om j ∈ Subalgebra.center K (MonoidAlgebra K (LevelGroup H)) ∧
-      goodIdemTw om j =
-        ∑ τ ∈ (goodTypes_finite om).toFinset, centralIdem (fun a => τ a * ((chiDet om j a : Kˣ) : K))
-
-def ClaimLeaves : Prop :=
-  ∀ (D : D7) (L : SizeData₂ D) (_ : ParameterChoice' D L) (K : Type) [Field K] [NumberField K] [StarRing K]
-    (Bs : DefBase K) (Df : DefSide Bs) (S : IndefData Df) (c : OnConst)
-    (ψ : ∀ v : Sq D.host, AddChar (ZMod (D.host.g v.1)) (𝓞 K)) (om : ∀ i : Fin 2, (ZMod (D.host.g i))ˣ →* Kˣ)
-    (jx : Bs.J ≃ Fin D.R.m) (O : OnObj S (levelP D.host) c)
-    (ρ₀ : ∀ j, Representation K (LevelGroup D.host) (Fin (O.nZ j) → K)),
-    LevelTie L ψ om jx O ρ₀ →
-      LeafMackey O ∧ LeafIndexU O ∧ LeafUnip O ∧ LeafProj O ∧
-      ∀ j (h : levelP D.host), O.e j ∘ₗ O.ρ j h = O.ρ j h ∘ₗ O.e j
 
 end GlobalTheory.IndefiniteRowSideFullHecke.LevelCuspCharacters

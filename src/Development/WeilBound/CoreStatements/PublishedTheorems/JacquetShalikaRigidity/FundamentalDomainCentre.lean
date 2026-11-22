@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsFiniteMeasureQuotMeasure
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsFiniteMeasureQuotMeasure
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,12 +21,12 @@ namespace FundamentalDomainCentre
 
 set_option synthInstance.maxHeartbeats 400000
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {k : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {k : ℕ}
 
-abbrev fdL (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (k : ℕ) : Set (GA E k) :=
+abbrev fdL (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (k : ℕ) : Set (GA E k) :=
   GlobalTheory.AutomorphicL2Unitary.stdDom (latticeGL E k)
 
-abbrev rhoZ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (k : ℕ) : Measure (GA E k) :=
+abbrev rhoZ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (k : ℕ) : Measure (GA E k) :=
   Measure.sum fun n : ℤ => Measure.dirac (splitCentre E k 1 ^ (-n))
 
 instance rhoZ_sFinite : SFinite (rhoZ E k) := by
@@ -164,10 +168,10 @@ theorem fundamental_domain_of : Q1 → D0 → N3 → W0 := by
   have hβ₁ : Measurable ((FundamentalDomainCentre.fdL E k).indicator (1 : GA E k → ℝ≥0∞)) := by
     first | exact measurable_one.indicator hF | exact measurable_const.indicator hF
   refine ⟨⟨fun g => ∑' n : ℤ, (FundamentalDomainCentre.fdL E k).indicator (1 : GA E k → ℝ≥0∞) (splitCentre E k 1 ^ n * g),
-    Measurable.ennreal_tsum fun n => hβ₁.comp (measurable_const_mul _), fun g => ?_⟩, fun β hβ => ?_⟩
+    Measurable.tsum fun n => hβ₁.comp (measurable_const_mul _), fun g => ?_⟩, fun β hβ => ?_⟩
   · have hm : Measurable fun h : GA E k =>
         ∑' n : ℤ, (FundamentalDomainCentre.fdL E k).indicator (1 : GA E k → ℝ≥0∞) (splitCentre E k 1 ^ n * (h * g)) :=
-      Measurable.ennreal_tsum fun n => hβ₁.comp ((measurable_const_mul _).comp (measurable_mul_const g))
+      Measurable.tsum fun n => hβ₁.comp ((measurable_const_mul _).comp (measurable_mul_const g))
     refine (hlint _ hm).trans ?_
     refine Eq.trans ?_ (FundamentalDomainCentre.fundamental_domain_tsum hD hk g)
     rw [ENNReal.tsum_prod']

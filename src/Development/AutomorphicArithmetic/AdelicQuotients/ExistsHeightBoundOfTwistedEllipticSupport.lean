@@ -1,5 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
+
+@[expose] public section
+
 open MeasureTheory NumberField IsDedekindDomain Polynomial
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace GroundTheory.Global GroundTheory.Global.SemiLocal
 open GroundTheory.Global.AdeleBaseChange
@@ -29,7 +34,7 @@ theorem UpperTheory.exists_height_bound_of_twistedElliptic_support :
   obtain ⟨C, c, hC⟩ := h2 F E σ hσ n hn
   have hcs : HasCompactSupport (f : G1 E n → ℂ) := f.hasCompactSupport
   obtain ⟨M, hM⟩ := GroundTheory.Automorphic.CuspidalSpectrum.exists_height_le_of_isCompact
-    (hcs.isCompact.image (continuous_subtype_val (p := fun g => g ∈ normOneGL E n)))
+    (hcs.isCompact.image (continuous_subtype_val (p := fun g => g ∈ normOneGL (K := E) (n := n))))
   let f' : PositivityTheory.Rg.Tf.Core.CC E n :=
     { toFun := fun g => ((‖f g‖ : ℝ) : ℂ)
       continuous_toFun := Complex.continuous_ofReal.comp (map_continuous f).norm

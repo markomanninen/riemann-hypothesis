@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FormOffSpecializationRing
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RootOriginGenericFrameBound
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FormOffSpecializationRing
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RootOriginGenericFrameBound
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 open Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Rec
@@ -18,7 +23,7 @@ theorem aeval_ratio (y : (Σ k, ι k) → Ω) (cc : ∀ k, ι k) (f : MRing ι) 
       MvPolynomial.eval (fun k => (y ⟨k, cc k⟩)⁻¹) (mConeMap y f) := by
   induction f using MvPolynomial.induction_on with
   | C a => simp [mConeMap]
-  | add f g hf hg => simp only [map_add, hf, hg]
+  | add f g hf hg => simp only [map_add (f := _), hf, hg]
   | mul_X f i hf =>
     simp only [map_mul, hf]
     simp [mConeMap, div_eq_mul_inv]
@@ -49,12 +54,12 @@ theorem point [CharZero Ω] (y : (Σ k, ι k) → Ω) (hb : Birational y) (hy : 
   have h1 : ∀ f : MRing ι, ((MvPolynomial.aeval ρA f : A) : Ω) = MvPolynomial.aeval ρ f := fun f => by
     induction f using MvPolynomial.induction_on with
     | C a => simp
-    | add f g hf hg => simp only [map_add, Subring.coe_add, hf, hg]
+    | add f g hf hg => simp only [map_add (f := _), Subring.coe_add, hf, hg]
     | mul_X f i hf => simp only [map_mul, Subring.coe_mul, hf, MvPolynomial.aeval_X]; rfl
   have h2 : ∀ f : MRing ι, MvPolynomial.aeval z f = ev (MvPolynomial.aeval ρA f) := fun f => by
     induction f using MvPolynomial.induction_on with
     | C a => simp
-    | add f g hf hg => simp only [map_add, hf, hg]
+    | add f g hf hg => simp only [map_add (f := _), hf, hg]
     | mul_X f i hf => simp only [map_mul, hf, MvPolynomial.aeval_X]; rfl
   have hz : z ∈ Small.ptsOver 𝕜 (mCoordIdeal y) := by
     refine ⟨fun k => ⟨cc k, ?_⟩, fun f hf => ?_⟩
@@ -183,7 +188,7 @@ theorem ext (T : CDVR) (hT : T.FinRes) (ι : T.Fr →+* PadicAlgCl p) (N : ℝ) 
       map_one' := hinj (by rw [hf, map_one, map_one])
       map_mul' := fun a b => hinj (by rw [hf, map_mul, map_mul, hf, hf])
       map_zero' := hinj (by rw [hf, map_zero, map_zero])
-      map_add' := fun a b => hinj (by rw [hf, map_add, map_add, hf, hf]) }
+      map_add' := fun a b => hinj (by rw [hf, map_add (f := _), map_add (f := _), hf, hf]) }
   have hiT : ∀ x, j (iT x) = ι x := hf
   set m : ℤ := vV T₀.V ((p : ℕ) : T₀.Fr) with hm
   have hrel : ∀ x, x ≠ 0 → (vV T₀.V (iT x) : ℝ) / m = (vV T.V x : ℝ) / N := fun x hx => by

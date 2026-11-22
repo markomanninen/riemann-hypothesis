@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.CartanFactorisation.EqOfInner
+module
+
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.EqOfInner
+
+@[expose] public section
 
 noncomputable section
 

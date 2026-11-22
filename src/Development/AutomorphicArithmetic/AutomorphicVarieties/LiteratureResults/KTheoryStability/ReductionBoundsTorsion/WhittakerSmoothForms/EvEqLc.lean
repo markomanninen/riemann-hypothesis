@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.ActLPos
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.ActLPos
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,8 @@ theorem lc_dC {G : Type} [Group G] {k : ℕ} (b : (Fin (k + 1) → G) → ℝ)
   congr 1
   rw [Finsupp.linearCombination_single, one_smul]
   unfold bd
-  rw [Finsupp.linearCombination_single, one_smul, map_add, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finsupp.linearCombination_single, one_smul, map_add (f := _), map_sum]
   simp only [map_smul, map_zsmul, Finsupp.linearCombination_single, one_smul, smul_eq_mul, zsmul_eq_mul,
     Int.cast_pow, Int.cast_neg, Int.cast_one]
   unfold dC

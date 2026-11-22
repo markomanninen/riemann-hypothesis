@@ -1,11 +1,16 @@
-import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.HasLevel
-import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.ClosedAtLConclusionOfMem
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIntPolyEsymmEqPowerSumMultisetStatement
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ElementarySymmetricInverse
+module
+
+public import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.HasLevel
+public import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.ClosedAtLConclusionOfMem
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIntPolyEsymmEqPowerSumMultisetStatement
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ElementarySymmetricInverse
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -40,7 +45,7 @@ private def cv (A B : G →₀ ℂ) : G →₀ ℂ :=
 private theorem cv_mem (R : Subring ℂ) {A B : G →₀ ℂ} (hA : ∀ g, A g ∈ R) (hB : ∀ g, B g ∈ R) (x : G) :
     cv A B x ∈ R := by
   classical
-  simp only [cv, Finsupp.sum, Finsupp.finset_sum_apply]
+  simp only [cv, Finsupp.sum, Finsupp.finsetSum_apply]
   refine R.sum_mem fun g _ => R.sum_mem fun h _ => ?_
   rw [Finsupp.single_apply]
   split_ifs
@@ -53,7 +58,7 @@ private theorem opOf_eq (ρ : Representation ℂ G V) (f : G →₀ ℂ) (v : V)
 
 private theorem opOf_add (ρ : Representation ℂ G V) (A B : G →₀ ℂ) (v : V) :
     opOf ρ (A + B) v = opOf ρ A v + opOf ρ B v := by
-  simp only [opOf_eq, map_add]
+  simp only [opOf_eq, map_add (f := _)]
 
 private theorem opOf_smul (ρ : Representation ℂ G V) (c : ℂ) (A : G →₀ ℂ) (v : V) :
     opOf ρ (c • A) v = c • opOf ρ A v := by
@@ -74,8 +79,10 @@ private theorem opOf_zero (ρ : Representation ℂ G V) (A : G →₀ ℂ) : opO
 private theorem opOf_cv (ρ : Representation ℂ G V) (A B : G →₀ ℂ) (v : V) :
     opOf ρ (cv A B) v = opOf ρ A (opOf ρ B v) := by
   rw [opOf_eq, cv]
-  simp only [Finsupp.sum, map_sum, Finsupp.linearCombination_single]
-  simp only [opOf, Finsupp.sum, map_sum, Finset.smul_sum, map_smul, map_mul, Module.End.mul_apply, mul_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finsupp.sum, map_sum, Finsupp.linearCombination_single]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [opOf, Finsupp.sum, map_sum, Finset.smul_sum, map_smul, map_mul, Module.End.mul_apply, mul_smul]
 
 private theorem poly_op (R : Subring ℂ) {I : Type} (f : I → G →₀ ℂ) (hf : ∀ i g, f i g ∈ R) (P : MvPolynomial I ℤ) :
     ∃ F : G →₀ ℂ, (∀ g, F g ∈ R) ∧ ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ G V) (v : V)
@@ -94,7 +101,7 @@ private theorem poly_op (R : Subring ℂ) {I : Type} (f : I → G →₀ ℂ) (h
     obtain ⟨F₁, a₁, b₁⟩ := hp
     obtain ⟨F₂, a₂, b₂⟩ := hr
     refine ⟨F₁ + F₂, fun g => R.add_mem (a₁ g) (a₂ g), fun V _ _ ρ v z h => ?_⟩
-    rw [opOf_add, b₁ V ρ v z h, b₂ V ρ v z h, map_add, add_smul]
+    rw [opOf_add, b₁ V ρ v z h, b₂ V ρ v z h, map_add (f := _), add_smul]
   | mul_X p i hp =>
     obtain ⟨F, a, b⟩ := hp
     refine ⟨cv F (f i), cv_mem R a (hf i), fun V _ _ ρ v z h => ?_⟩
@@ -156,7 +163,7 @@ private theorem normV_eq : normV w = Formalism.UG.qV E w := by
 private theorem exists_Tj_op (R : Subring ℂ) {ϖ : w.adicCompletion E} (hϖ : Formalism.UG.IsUnifV E w ϖ) (j : ℕ) :
     ∃ f : GL (Fin a) (w.adicCompletion E) →₀ ℂ, (∀ g, f g ∈ R) ∧
       ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GL (Fin a) (w.adicCompletion E)) V) (x : V),
-        opOf ρ f x = GlobalTheory.LFun.heckeVec ρ (GlobalTheory.LFun.KGL w a) (Formalism.UG.Tj ℂ a (Formalism.UG.Ov E w) ϖ j) x := by
+        opOf ρ f x = GlobalTheory.LFun.heckeVec ρ (GlobalTheory.LFun.KGL w (n := a)) (Formalism.UG.Tj ℂ a (Formalism.UG.Ov E w) ϖ j) x := by
   classical
   have hm := GlobalTheory.LFun.Tj_mem_hecke (n := a) hϖ j
   have hfin := Formalism.UG.P.finite_support_cosets (Formalism.UG.Final.GLintComm E w a) hm.2
@@ -167,24 +174,25 @@ private theorem exists_Tj_op (R : Subring ℂ) {ϖ : w.adicCompletion E} (hϖ : 
     · exact R.zero_mem
   refine ⟨∑ c ∈ hfin.toFinset, Finsupp.single c.out (Formalism.UG.Tj ℂ a (Formalism.UG.Ov E w) ϖ j c.out), fun g => ?_,
     fun V _ _ ρ x => ?_⟩
-  · rw [Finsupp.finset_sum_apply]
+  · rw [Finsupp.finsetSum_apply]
     refine R.sum_mem fun c _ => ?_
     rw [Finsupp.single_apply]
     split_ifs
     · exact hR _
     · exact R.zero_mem
-  · rw [opOf_eq, map_sum, GlobalTheory.LFun.heckeVec, finsum_eq_sum_of_support_subset (s := hfin.toFinset)]
-    · simp only [Finsupp.linearCombination_single]
-    · intro c hc
-      simp only [Function.mem_support] at hc
-      simp only [Set.Finite.coe_toFinset, Set.mem_setOf_eq]
-      exact fun h0 => hc (by simp [h0])
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [opOf_eq, map_sum, GlobalTheory.LFun.heckeVec, finsum_eq_sum_of_support_subset (s := hfin.toFinset)]
+      · simp only [Finsupp.linearCombination_single]
+      · intro c hc
+        simp only [Function.mem_support] at hc
+        simp only [Set.Finite.coe_toFinset, Set.mem_setOf_eq]
+        exact fun h0 => hc (by simp [h0])
 
 private theorem heckeVec_Ta {ϖ : w.adicCompletion E} {c : GL (Fin a) (w.adicCompletion E)}
     (hc : (c : Matrix (Fin a) (Fin a) (w.adicCompletion E)) = ϖ • 1)
     {V : Type} [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GL (Fin a) (w.adicCompletion E)) V) {x : V}
-    (hx : x ∈ GlobalTheory.PRep.fixed ρ (GlobalTheory.LFun.KGL w a)) :
-    GlobalTheory.LFun.heckeVec ρ (GlobalTheory.LFun.KGL w a) (Formalism.UG.Tj ℂ a (Formalism.UG.Ov E w) ϖ a) x = ρ c x := by
+    (hx : x ∈ GlobalTheory.PRep.fixed ρ (GlobalTheory.LFun.KGL w (n := a))) :
+    GlobalTheory.LFun.heckeVec ρ (GlobalTheory.LFun.KGL w (n := a)) (Formalism.UG.Tj ℂ a (Formalism.UG.Ov E w) ϖ a) x = ρ c x := by
   classical
   have hD : Formalism.UG.diagJ a ϖ a = (c : Matrix (Fin a) (Fin a) (w.adicCompletion E)) := by
     rw [hc]
@@ -197,7 +205,7 @@ private theorem heckeVec_Ta {ϖ : w.adicCompletion E} {c : GL (Fin a) (w.adicCom
       (∃ x ∈ Formalism.UG.GLint (Fin a) (Formalism.UG.Ov E w), ∃ y ∈ Formalism.UG.GLint (Fin a) (Formalism.UG.Ov E w),
         (g : Matrix (Fin a) (Fin a) (w.adicCompletion E)) =
           (x : Matrix (Fin a) (Fin a) (w.adicCompletion E)) * Formalism.UG.diagJ a ϖ a *
-            (y : Matrix (Fin a) (Fin a) (w.adicCompletion E))) ↔ c⁻¹ * g ∈ GlobalTheory.LFun.KGL w a := by
+            (y : Matrix (Fin a) (Fin a) (w.adicCompletion E))) ↔ c⁻¹ * g ∈ GlobalTheory.LFun.KGL w (n := a) := by
     intro g
     constructor
     · rintro ⟨x, hx', y, hy, e⟩
@@ -205,27 +213,27 @@ private theorem heckeVec_Ta {ϖ : w.adicCompletion E} {c : GL (Fin a) (w.adicCom
         rw [Units.val_mul, Units.val_mul, e, hD, hc]
         simp [Matrix.smul_mul, Matrix.mul_smul])
       rw [hg, inv_mul_cancel_left]
-      exact (GlobalTheory.LFun.KGL w a).mul_mem hx' hy
+      exact (GlobalTheory.LFun.KGL w (n := a)).mul_mem hx' hy
     · intro hk
       obtain ⟨k, rfl⟩ : ∃ k, g = c * k := ⟨c⁻¹ * g, by group⟩
       rw [inv_mul_cancel_left] at hk
       refine ⟨k, hk, 1, one_mem _, ?_⟩
       rw [Units.val_mul, hD, hc]
       simp [Matrix.smul_mul, Matrix.mul_smul]
-  have key : ∀ g, Formalism.UG.Tj ℂ a (Formalism.UG.Ov E w) ϖ a g = if c⁻¹ * g ∈ GlobalTheory.LFun.KGL w a then 1 else 0 := by
+  have key : ∀ g, Formalism.UG.Tj ℂ a (Formalism.UG.Ov E w) ϖ a g = if c⁻¹ * g ∈ GlobalTheory.LFun.KGL w (n := a) then 1 else 0 := by
     intro g
     simp only [Formalism.UG.Tj, Set.indicator_apply, Set.mem_setOf_eq, hiff g]
-    by_cases h : c⁻¹ * g ∈ GlobalTheory.LFun.KGL w a
+    by_cases h : c⁻¹ * g ∈ GlobalTheory.LFun.KGL w (n := a)
     · simp [h]
     · simp [h]
-  rw [GlobalTheory.LFun.heckeVec, finsum_eq_single _ (c : GL (Fin a) (w.adicCompletion E) ⧸ GlobalTheory.LFun.KGL w a)]
-  · have hk : c⁻¹ * (c : GL (Fin a) (w.adicCompletion E) ⧸ GlobalTheory.LFun.KGL w a).out ∈ GlobalTheory.LFun.KGL w a :=
+  rw [GlobalTheory.LFun.heckeVec, finsum_eq_single _ (c : GL (Fin a) (w.adicCompletion E) ⧸ GlobalTheory.LFun.KGL w (n := a))]
+  · have hk : c⁻¹ * (c : GL (Fin a) (w.adicCompletion E) ⧸ GlobalTheory.LFun.KGL w (n := a)).out ∈ GlobalTheory.LFun.KGL w (n := a) :=
       QuotientGroup.eq.1 (QuotientGroup.out_eq' _).symm
     rw [key, if_pos hk, one_smul]
-    have e : (c : GL (Fin a) (w.adicCompletion E) ⧸ GlobalTheory.LFun.KGL w a).out =
-        c * (c⁻¹ * (c : GL (Fin a) (w.adicCompletion E) ⧸ GlobalTheory.LFun.KGL w a).out) := by group
-    calc ρ (c : GL (Fin a) (w.adicCompletion E) ⧸ GlobalTheory.LFun.KGL w a).out x
-        = ρ (c * (c⁻¹ * (c : GL (Fin a) (w.adicCompletion E) ⧸ GlobalTheory.LFun.KGL w a).out)) x := by rw [← e]
+    have e : (c : GL (Fin a) (w.adicCompletion E) ⧸ GlobalTheory.LFun.KGL w (n := a)).out =
+        c * (c⁻¹ * (c : GL (Fin a) (w.adicCompletion E) ⧸ GlobalTheory.LFun.KGL w (n := a)).out) := by group
+    calc ρ (c : GL (Fin a) (w.adicCompletion E) ⧸ GlobalTheory.LFun.KGL w (n := a)).out x
+        = ρ (c * (c⁻¹ * (c : GL (Fin a) (w.adicCompletion E) ⧸ GlobalTheory.LFun.KGL w (n := a)).out)) x := by rw [← e]
       _ = ρ c x := by rw [map_mul, Module.End.mul_apply, GlobalTheory.LGrp.mem_fixed.1 hx _ hk]
   · intro C hC
     rw [key, if_neg, zero_smul]
@@ -260,7 +268,7 @@ private theorem sat_ops (R : Subring ℂ) :
     ∃ (u : Fin (a + 1) → GL (Fin a) (w.adicCompletion E) →₀ ℂ) (c : GL (Fin a) (w.adicCompletion E)),
       (∀ j g, u j g ∈ R) ∧
       ∀ (σ : SmIrr (GL (Fin a) (w.adicCompletion E))) (B : Multiset ℂˣ), GlobalTheory.LFun.HasSatGL w σ.ρ B →
-        ∀ v ∈ GlobalTheory.PRep.fixed σ.ρ (GlobalTheory.LFun.KGL w a),
+        ∀ v ∈ GlobalTheory.PRep.fixed σ.ρ (GlobalTheory.LFun.KGL w (n := a)),
           (∀ j : Fin (a + 1), opOf σ.ρ (u j) v = (UpperTheory.V.Af.algSat a (normV w) B).esymm j • v) ∧
           σ.ρ c v = ((((normV w : ℕ) : ℂ) ^ a.choose 2)⁻¹ * (UpperTheory.V.Af.algSat a (normV w) B).esymm a) • v := by
   obtain ⟨ϖ, hϖ⟩ := GlobalTheory.LFun.exists_isUnifV w
@@ -278,7 +286,7 @@ private theorem sat_ops (R : Subring ℂ) :
   refine ⟨fun j => (((normV w : ℕ) : ℂ) ^ ((j : ℕ).choose 2)) • f j, c, fun j g => ?_, fun σ B hB v hv => ?_⟩
   · rw [Finsupp.smul_apply, smul_eq_mul]
     exact R.mul_mem (R.pow_mem (natCast_mem R _) _) (hfR j g)
-  have key : ∀ j ≤ a, GlobalTheory.LFun.heckeVec σ.ρ (GlobalTheory.LFun.KGL w a) (Formalism.UG.Tj ℂ a (Formalism.UG.Ov E w) ϖ j) v =
+  have key : ∀ j ≤ a, GlobalTheory.LFun.heckeVec σ.ρ (GlobalTheory.LFun.KGL w (n := a)) (Formalism.UG.Tj ℂ a (Formalism.UG.Ov E w) ϖ j) v =
       GlobalTheory.LFun.satEig (normV w) a B j • v := by
     intro j hj
     by_cases hv0 : v = 0

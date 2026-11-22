@@ -1,11 +1,15 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCompactSupportDcos
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermLocallyConstant
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbsHalfBlockDetIntegralGLInvariant
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockLevelsEqIntegralGLOfUnramified
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BorelApproximation
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ZeroContDiffOnSupported
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCompactSupportDcos
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermLocallyConstant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbsHalfBlockDetIntegralGLInvariant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockLevelsEqIntegralGLOfUnramified
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BorelApproximation
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ZeroContDiffOnSupported
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,14 +71,14 @@ section Levels
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
-theorem isOpen_KGL (w : Pl E) (a : ℕ) : IsOpen (GlobalTheory.LFun.KGL w a : Set (GLw a w)) := by
+theorem isOpen_KGL (w : Pl E) (a : ℕ) : IsOpen (GlobalTheory.LFun.KGL w (n := a) : Set (GLw a w)) := by
   rw [GlobalTheory.CompanionTheory.IwLevels.KGL_eq_KO]
   exact GlobalTheory.SplitFlip.isOpen_KO
 
-theorem isCompact_KGL (w : Pl E) (a : ℕ) : IsCompact (GlobalTheory.LFun.KGL w a : Set (GLw a w)) :=
+theorem isCompact_KGL (w : Pl E) (a : ℕ) : IsCompact (GlobalTheory.LFun.KGL w (n := a) : Set (GLw a w)) :=
   GlobalTheory.CompanionTheory.IwLevels.isCompact_KGL w a
 
-theorem thL_KGL (a : ℕ) (w : Pl E) (k : GLw a w) (hk : k ∈ GlobalTheory.LFun.KGL w a) : thL a w k ∈ GlobalTheory.LFun.KGL w a := by
+theorem thL_KGL (a : ℕ) (w : Pl E) (k : GLw a w) (hk : k ∈ GlobalTheory.LFun.KGL w (n := a)) : thL a w k ∈ GlobalTheory.LFun.KGL w (n := a) := by
   unfold thL
   split_ifs
   · exact hk
@@ -86,14 +90,14 @@ theorem thL_iw (a : ℕ) (w : Pl E) (k : GLw a w) (hk : k ∈ iwGL a w) : thL a 
   · exact hk
   · exact GlobalTheory.CompanionTheory.IwFacts.thetaGL_mem_iwGL w a hk
 
-theorem lev_K (a : ℕ) (w : Pl E) : IsLevel (thL a w) (GlobalTheory.LFun.KGL w a) (GlobalTheory.LFun.KGL w a) :=
+theorem lev_K (a : ℕ) (w : Pl E) : IsLevel (thL a w) (GlobalTheory.LFun.KGL w (n := a)) (GlobalTheory.LFun.KGL w (n := a)) :=
   ⟨isOpen_KGL w a, le_rfl, thL_KGL a w⟩
 
-theorem lev_iw (a : ℕ) (w : Pl E) : IsLevel (thL a w) (GlobalTheory.LFun.KGL w a) (iwGL a w) :=
+theorem lev_iw (a : ℕ) (w : Pl E) : IsLevel (thL a w) (GlobalTheory.LFun.KGL w (n := a)) (iwGL a w) :=
   ⟨GlobalTheory.SmGL.IwahoriOnto.isOpen_iwahori _ _, GlobalTheory.CompanionTheory.IwLevels.iwGL_le_KGL w a, thL_iw a w⟩
 
 theorem prod_open_le {a b : ℕ} {w : Pl E} {K₁ : Subgroup (GLw a w)} {K₂ : Subgroup (GLw b w)}
-    (h₁ : IsLevel (thL a w) (GlobalTheory.LFun.KGL w a) K₁) (h₂ : IsLevel (thL b w) (GlobalTheory.LFun.KGL w b) K₂) :
+    (h₁ : IsLevel (thL a w) (GlobalTheory.LFun.KGL w (n := a)) K₁) (h₂ : IsLevel (thL b w) (GlobalTheory.LFun.KGL w (n := b)) K₂) :
     IsOpen ((K₁.prod K₂ : Subgroup (GLw a w × GLw b w)) : Set (GLw a w × GLw b w)) ∧ K₁.prod K₂ ≤ K2 a b w :=
   ⟨by rw [Subgroup.coe_prod]; exact h₁.1.prod h₂.1, Subgroup.prod_mono h₁.2.1 h₂.2.1⟩
 
@@ -104,8 +108,8 @@ theorem idempotent_maximal_pair_indicator (a b : ℕ) (w : Pl E) :
   rfl
 
 abbrev IsLv {a b : ℕ} {w : Pl E} (L : Subgroup (GLw a w × GLw b w)) : Prop :=
-  ∃ K₁ : Subgroup (GLw a w), ∃ K₂ : Subgroup (GLw b w), IsLevel (thL a w) (GlobalTheory.LFun.KGL w a) K₁ ∧
-    IsLevel (thL b w) (GlobalTheory.LFun.KGL w b) K₂ ∧ L = K₁.prod K₂
+  ∃ K₁ : Subgroup (GLw a w), ∃ K₂ : Subgroup (GLw b w), IsLevel (thL a w) (GlobalTheory.LFun.KGL w (n := a)) K₁ ∧
+    IsLevel (thL b w) (GlobalTheory.LFun.KGL w (n := b)) K₂ ∧ L = K₁.prod K₂
 
 theorem idem_of_lv (h1 : IdemAlg) {a b : ℕ} {w : Pl E} {L : Subgroup (GLw a w × GLw b w)} (he : IsLv L) :
     IsHecke L (idem L) := by
@@ -119,8 +123,8 @@ theorem isTestFunction_of (h1 : IdemAlg) {a b : ℕ} (φ : ∀ w : Pl E, GLw a w
     (hout : ∀ w ∉ Q, φ w = idem (K2 a b w)) : IsTestP φ := by
   choose L hL hH using hloc
   choose K₁ K₂ h₁ h₂ he using hL
-  let K₁' : ∀ w : Pl E, Subgroup (GLw a w) := fun w => if w ∈ Q then K₁ w else GlobalTheory.LFun.KGL w a
-  let K₂' : ∀ w : Pl E, Subgroup (GLw b w) := fun w => if w ∈ Q then K₂ w else GlobalTheory.LFun.KGL w b
+  let K₁' : ∀ w : Pl E, Subgroup (GLw a w) := fun w => if w ∈ Q then K₁ w else GlobalTheory.LFun.KGL w (n := a)
+  let K₂' : ∀ w : Pl E, Subgroup (GLw b w) := fun w => if w ∈ Q then K₂ w else GlobalTheory.LFun.KGL w (n := b)
   have hcof : ∀ p : Pl E → Prop, (∀ w ∉ Q, p w) → ∀ᶠ w in Filter.cofinite, p w := fun p hp =>
     Filter.eventually_cofinite.2 (Q.finite_toSet.subset fun w hw => Classical.by_contradiction fun h => hw (hp w h))
   unfold IsTestP GlobalTheory.BCT.IsLevelFam GlobalTheory.BCT.IsTest
@@ -185,7 +189,7 @@ theorem unifV {w : Pl E} (x : w.adicCompletion E) (h : ordL x = 1) : IsUnifV E w
 
 theorem mu_det {w : Pl E} (μ : (w.adicCompletion E)ˣ →* ℂˣ)
     (hμ : ∀ u : (w.adicCompletion E)ˣ, ordL (u : w.adicCompletion E) = 0 → μ u = 1) {m : ℕ} (k : GLw m w)
-    (hk : k ∈ GlobalTheory.LFun.KGL w m) : μ (GeneralLinearGroup.det k) = 1 :=
+    (hk : k ∈ GlobalTheory.LFun.KGL w (n := m)) : μ (GeneralLinearGroup.det k) = 1 :=
   hμ _ (ordL_of_v_one _ (GlobalTheory.BCT.AbsHalfInv.v_det_KGL hk))
 
 theorem mu_left {a b : ℕ} {w : Pl E} (μ : (w.adicCompletion E)ˣ →* ℂˣ) (k m : GLw a w × GLw b w) :
@@ -207,7 +211,7 @@ theorem mu_right {a b : ℕ} {w : Pl E} (μ : (w.adicCompletion E)ˣ →* ℂˣ)
   ac_rfl
 
 theorem dgM_KGL {a b m : ℕ} (hh : a + b = m) (w : Pl E) (k : GLw a w × GLw b w) (hk : k ∈ K2 a b w) :
-    GlobalTheory.BCT.CtLevel.dgM hh w k ∈ GlobalTheory.LFun.KGL w m := by
+    GlobalTheory.BCT.CtLevel.dgM hh w k ∈ GlobalTheory.LFun.KGL w (n := m) := by
   obtain ⟨h1, h2⟩ := Subgroup.mem_prod.1 hk
   obtain ⟨e1, f1⟩ := GlobalTheory.AdelicU.mem_GLint_iff.1 h1
   obtain ⟨e2, f2⟩ := GlobalTheory.AdelicU.mem_GLint_iff.1 h2
@@ -217,8 +221,8 @@ theorem dgM_KGL {a b m : ℕ} (hh : a + b = m) (w : Pl E) (k : GLw a w × GLw b 
     exact GlobalTheory.BCT.CtLevel.blockDiagonalMatrixOfAddEq_entries_mem_subring _ hh _ _ f1 f2 i j
 
 theorem maximal_pair_mem_levi {a b m : ℕ} (hh : a + b = m) (w : Pl E) (k : GLw a w × GLw b w) (hk : k ∈ K2 a b w) :
-    k ∈ leviOf hh w (GlobalTheory.LFun.KGL w m) := by
-  show blk hh w k 0 ∈ GlobalTheory.LFun.KGL w m
+    k ∈ leviOf hh w (GlobalTheory.LFun.KGL w (n := m)) := by
+  show blk hh w k 0 ∈ GlobalTheory.LFun.KGL w (n := m)
   rw [GlobalTheory.CompanionTheory.GL3BlockMatrixLocal.blk_zero_eq]
   exact dgM_KGL hh w k hk
 
@@ -346,11 +350,11 @@ theorem hc_H (h2 : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], LocOp
     funext y
     have hy : y ∈ UL n w := by unfold UL; rw [if_pos hs]; exact Subgroup.mem_top y
     simp only [F, toSub, dif_pos hy]
-  have hHk : IsHk (GlobalTheory.LFun.KGL w n) F := by
+  have hHk : IsHk (GlobalTheory.LFun.KGL w (n := n)) F := by
     rw [hF]
     exact ⟨isOpen_KGL w n, isCompact_KGL w n, hcs_of_fin (isCompact_KGL w n) hT.2,
       fun k₁ hk₁ k₂ hk₂ g => hT.1 ⟨k₁, hk₁⟩ ⟨k₂, hk₂⟩ g⟩
-  obtain ⟨c1, c2, -, -⟩ := h2 E n a (n - a) (Nat.add_sub_of_le ha) w (GlobalTheory.LFun.KGL w n) (isOpen_KGL w n) le_rfl
+  obtain ⟨c1, c2, -, -⟩ := h2 E n a (n - a) (Nat.add_sub_of_le ha) w (GlobalTheory.LFun.KGL w (n := n)) (isOpen_KGL w n) le_rfl
     (fun k hk k' hk' => mul_mem (mul_mem hk hk') (inv_mem hk)) {1} (by simp)
     (fun k hk => ⟨1, ⟨Finset.mem_singleton_self 1, by simpa using hk⟩, fun z hz => Finset.mem_singleton.1 hz.1⟩)
   obtain ⟨-, hcs, hbi⟩ := c1 F hHk 1 (Finset.mem_singleton_self 1) 1 (Finset.mem_singleton_self 1)

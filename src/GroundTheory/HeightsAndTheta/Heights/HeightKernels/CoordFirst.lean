@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KernelsMatrix
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KernelsMatrix
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -53,11 +58,5 @@ theorem sq_coord_le {ι : Type*} [Fintype ι] [DecidableEq ι] (Y : Matrix ι ι
   rwa [div_le_iff₀ hpos, mul_comm] at h2
 
 end KCoord
-
-theorem FirstCoordinateBound.intersectionNumber_baseChange : FirstCoordinateBound.Statement := by
-  intro g _ Y hY v
-  have h := KCoord.sq_coord_le Y hY 0 v
-  rw [div_le_iff₀ hY.inv.diag_pos, mul_comm]
-  exact h
 
 end GroundTheory.Heights₂.Heights

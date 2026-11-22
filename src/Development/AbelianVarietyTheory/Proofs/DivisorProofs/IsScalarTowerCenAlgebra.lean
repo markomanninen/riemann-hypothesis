@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentreCompat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CenMapTmulEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentreCompat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CenMapTmulEq
+
+@[expose] public section
 
 noncomputable section
 open scoped TensorProduct

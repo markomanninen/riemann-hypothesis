@@ -1,15 +1,15 @@
-import Mathlib
-import Formalism.DistinguishedUnitIdeals.StatementE
+module
+
+public import Mathlib
+public import Formalism.DistinguishedUnitIdeals.StatementE
+
+@[expose] public section
 
 noncomputable section
 
 namespace Formalism.ExponentWindows.E
 
 open PowerSeries
-
-local macro "modx" : tactic =>
-  `(tactic| ((try simp only [smul_sub, smul_add, smul_neg, smul_smul, mul_comm, mul_left_comm,
-    mul_assoc]) <;> abel))
 
 namespace IdempotentNormalFormsRhoFacts
 
@@ -78,7 +78,7 @@ theorem phiIt_add (i : ZMod n) (k : ℕ) (u v : V) :
     L.phiIt i k (u + v) = L.phiIt i k u + L.phiIt i k v := by
   induction k with
   | zero => rfl
-  | succ k ih => simp only [phiIt_succ_lemma, ih, map_add]
+  | succ k ih => simp only [phiIt_succ_lemma, ih, map_add (f := _)]
 
 theorem phiIt_sub (i : ZMod n) (k : ℕ) (u v : V) :
     L.phiIt i k (u - v) = L.phiIt i k u - L.phiIt i k v := by
@@ -122,12 +122,6 @@ theorem phiIt_mem_pull {i : ZMod n} (k : ℕ) {v : V} (hv : v ∈ L.N i) :
     L.phiIt i k v ∈ L.pull i k :=
   Submodule.subset_span (Set.mem_image_of_mem (L.phiIt i k) hv)
 
-theorem phiIt_sm {i : ZMod n} (k : ℕ) {a : PowerSeries O} {v : V} (hv : v ∈ sm a (L.N i)) :
-    L.phiIt i k v ∈ sm ((⇑B.φ)^[k] a) (L.pull i k) := by
-  obtain ⟨u, hu, rfl⟩ := mem_sm.1 hv
-  rw [phiIt_smul]
-  exact smul_mem_sm _ (phiIt_mem_pull L k hu)
-
 theorem γ_N (h1 : ∀ i, ∀ v ∈ L.N i, L.γ i v - v ∈ sm X (L.N i)) {i : ZMod n} {v : V}
     (hv : v ∈ L.N i) : L.γ i v ∈ L.N i := by
   have h := (L.N i).add_mem (sm_le X (L.N i) (h1 i v hv)) hv
@@ -139,7 +133,7 @@ theorem γ_pull (h1 : ∀ i, ∀ v ∈ L.N i, L.γ i v - v ∈ sm X (L.N i)) {i 
     { carrier := {x | L.γ (i + (k : ZMod n)) x ∈ L.pull i k}
       add_mem' := fun {x y} hx hy => by
         show L.γ (i + (k : ZMod n)) (x + y) ∈ L.pull i k
-        rw [map_add]
+        rw [map_add (f := _)]
         exact add_mem hx hy
       zero_mem' := by
         show L.γ (i + (k : ZMod n)) 0 ∈ L.pull i k
@@ -221,7 +215,8 @@ theorem isTr_sub {c : ZMod n} {j M g sig : ℕ} {z₁ z₂ τ₁ τ₂ : V}
         = B.lc ^ K₂ • (L.γ c v₁ - v₁ - B.lc ^ K₁ • z₁)
           - B.lc ^ K₁ • (L.γ c v₂ - v₂ - B.lc ^ K₂ • z₂) := by
       rw [map_sub, γ_lc, γ_lc, pow_add]
-      modx
+      simp only [smul_sub, smul_add, smul_smul, mul_comm, mul_left_comm, mul_assoc]
+      <;> abel
     rw [e]
     exact Submodule.sub_mem _ (Submodule.smul_mem _ _ hg₁) (Submodule.smul_mem _ _ hg₂)
   · have e : B.lc ^ (K₁ + K₂) • (τ₁ - τ₂)
@@ -229,7 +224,8 @@ theorem isTr_sub {c : ZMod n} {j M g sig : ℕ} {z₁ z₂ τ₁ τ₂ : V}
         = B.lc ^ K₂ • (B.lc ^ K₁ • τ₁ - B.lc ^ sig • L.phiIt c j v₁)
           - B.lc ^ K₁ • (B.lc ^ K₂ • τ₂ - B.lc ^ sig • L.phiIt c j v₂) := by
       rw [phiIt_sub, phiIt_lc, phiIt_lc, pow_add]
-      modx
+      simp only [smul_sub, smul_add, smul_smul, mul_comm, mul_left_comm, mul_assoc]
+      <;> abel
     rw [e]
     exact Submodule.sub_mem _ (Submodule.smul_mem _ _ ht₁) (Submodule.smul_mem _ _ ht₂)
 
@@ -240,13 +236,15 @@ theorem isTr_C {c : ZMod n} {j M g sig : ℕ} {z τ : V} (m : O)
   · have e : (L.γ c (C m • v) - C m • v) - B.lc ^ K • (C m • z) =
         C m • ((L.γ c v - v) - B.lc ^ K • z) := by
       rw [γ_C]
-      modx
+      simp only [smul_sub, smul_add, smul_smul, mul_comm, mul_left_comm, mul_assoc]
+      <;> abel
     rw [e]
     exact Submodule.smul_mem _ _ hz
   · have e : B.lc ^ K • (C m • τ) - B.lc ^ sig • L.phiIt c j (C m • v) =
         C m • (B.lc ^ K • τ - B.lc ^ sig • L.phiIt c j v) := by
       rw [phiIt_C]
-      modx
+      simp only [smul_sub, smul_add, smul_smul, mul_comm, mul_left_comm, mul_assoc]
+      <;> abel
     rw [e]
     exact Submodule.smul_mem _ _ hf
 
@@ -272,7 +270,8 @@ theorem isTr_zero {c : ZMod n} {j M g sig : ℕ} {τ : V}
       B.lc ^ K' • (B.lc ^ K • τ - B.lc ^ sig • L.phiIt c j v) +
         B.lc ^ sig • (B.lc ^ K' • L.phiIt c j v) := by
     rw [pow_add]
-    modx
+    simp only [smul_sub, smul_add, smul_smul, mul_comm, mul_left_comm, mul_assoc]
+      <;> abel
   rw [e]
   exact add_mem (Submodule.smul_mem _ _ hf) (Submodule.smul_mem _ _ h1)
 
@@ -289,7 +288,8 @@ theorem γR_mem {c : ZMod n} {j M g sig : ℕ} {w τ : V} (hB : B.Good j M g)
       (B.lc ^ sig • L.phiIt c j w - τ) =
       B.lc ^ sig • L.phiIt c j (L.γ c w - w) - (L.γ (c + (j : ZMod n)) τ - τ) := by
     simp only [map_sub, γ_lc, γ_phiIt, phiIt_sub]
-    modx
+    simp only [smul_sub, smul_add, smul_smul, mul_comm, mul_left_comm, mul_assoc]
+      <;> abel
   rw [e1]
   have hP : B.lc ^ sig • L.phiIt c j (L.γ c w - w) - (L.γ (c + (j : ZMod n)) τ - τ) ∈
       L.pull c j :=
@@ -306,7 +306,8 @@ theorem γR_mem {c : ZMod n} {j M g sig : ℕ} {w τ : V} (hB : B.Good j M g)
         (L.γ (c + (j : ZMod n)) (B.lc ^ K • τ - B.lc ^ sig • L.phiIt c j v) -
           (B.lc ^ K • τ - B.lc ^ sig • L.phiIt c j v)) := by
     simp only [phiIt_sub, phiIt_lc, map_sub, γ_lc, γ_phiIt]
-    modx
+    simp only [smul_sub, smul_add, smul_smul, mul_comm, mul_left_comm, mul_assoc]
+      <;> abel
   rw [e2]
   exact sub_mem (neg_mem (Submodule.smul_mem _ _ hZ)) (sub_mem hA hf)
 
@@ -426,7 +427,8 @@ theorem rho_map_linear : RhoLin := by
   have e0 : L.γ c (w' - C m • w) - (w' - C m • w) -
       ((L.γ c w' - w') - C m • (L.γ c w - w)) = 0 := by
     simp only [map_sub, γ_C]
-    modx
+    simp only [smul_sub, smul_add, smul_smul, mul_comm, mul_left_comm, mul_assoc]
+      <;> abel
   rw [e0] at hT
   have hmem := isTr_zero hB.2.2 (h6 c hc) (h7 c hc) hT
   have hR : (B.lc ^ sig • L.phiIt c j w' - τ') - C m • (B.lc ^ sig • L.phiIt c j w - τ) ∈
@@ -434,7 +436,8 @@ theorem rho_map_linear : RhoLin := by
     have e : (B.lc ^ sig • L.phiIt c j w' - τ') - C m • (B.lc ^ sig • L.phiIt c j w - τ) =
         B.lc ^ sig • L.phiIt c j (w' - C m • w) - (τ' - C m • τ) := by
       simp only [phiIt_sub, phiIt_C]
-      modx
+      simp only [smul_sub, smul_add, smul_smul, mul_comm, mul_left_comm, mul_assoc]
+      <;> abel
     rw [e]
     exact h4 c hc hmem
   apply cobound_of_small hB.1 h1 h2 h3
@@ -454,49 +457,6 @@ theorem rho_map_linear : RhoLin := by
     exact sub_mem (hz' i) (Submodule.smul_mem _ _ (hz i))
 
 namespace IdempotentNormalFormsRhoFacts
-
-theorem rho_add {O : Type} [CommRing O] {B : Base O} {n : ℕ} {Cu : Cuts n} {j M g sig : ℕ}
-    {V : Type} [AddCommGroup V] [Module (PowerSeries O) V] {L : Lat B n V}
-    (hB : B.Good j M g) (hL : L.Good Cu j M g sig) {c : ZMod n} (hc : c ∈ Cu.cuts)
-    {w₁ w₂ w₃ : V} {y₁ z₁ y₂ z₂ y₃ z₃ : ZMod n → V} (hr₁ : L.IsRho c j M g sig w₁ y₁ z₁)
-    (hr₂ : L.IsRho c j M g sig w₂ y₂ z₂) (hr₃ : L.IsRho c j M g sig w₃ y₃ z₃)
-    (hu : w₃ - w₁ - w₂ ∈ sm X (L.N c)) : L.IsCobound (y₃ - y₁ - y₂) (z₃ - z₁ - z₂) := by
-  obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩ := hL
-  obtain ⟨τ₁, hτ₁, hy₁, hc₁, hz₁⟩ := hr₁
-  obtain ⟨τ₂, hτ₂, hy₂, hc₂, hz₂⟩ := hr₂
-  obtain ⟨τ₃, hτ₃, hy₃, hc₃, hz₃⟩ := hr₃
-  have hT := isTr_sub (isTr_self j M g sig hu) (isTr_sub (isTr_sub hτ₃ hτ₁) hτ₂)
-  have e0 : L.γ c (w₃ - w₁ - w₂) - (w₃ - w₁ - w₂) -
-      ((L.γ c w₃ - w₃) - (L.γ c w₁ - w₁) - (L.γ c w₂ - w₂)) = 0 := by
-    simp only [map_sub]
-    abel
-  rw [e0] at hT
-  have hmem := isTr_zero hB.2.2 (h6 c hc) (h7 c hc) hT
-  have hR : (B.lc ^ sig • L.phiIt c j w₃ - τ₃) - (B.lc ^ sig • L.phiIt c j w₁ - τ₁) -
-      (B.lc ^ sig • L.phiIt c j w₂ - τ₂) ∈ sm (X ^ M) (L.N (c + (j : ZMod n))) := by
-    have e : (B.lc ^ sig • L.phiIt c j w₃ - τ₃) - (B.lc ^ sig • L.phiIt c j w₁ - τ₁) -
-        (B.lc ^ sig • L.phiIt c j w₂ - τ₂) =
-        B.lc ^ sig • L.phiIt c j (w₃ - w₁ - w₂) - (τ₃ - τ₁ - τ₂) := by
-      simp only [phiIt_sub]
-      modx
-    rw [e]
-    exact h4 c hc hmem
-  apply cobound_of_small hB.1 h1 h2 h3
-  · have a₁ : L.dγ y₁ = L.dφ z₁ := hc₁
-    have a₂ : L.dγ y₂ = L.dφ z₂ := hc₂
-    have a₃ : L.dγ y₃ = L.dφ z₃ := hc₃
-    show L.dγ (y₃ - y₁ - y₂) = L.dφ (z₃ - z₁ - z₂)
-    rw [dγ_sub, dγ_sub, dφ_sub, dφ_sub, a₁, a₂, a₃]
-  · intro i
-    rw [hy₁, hy₂, hy₃]
-    by_cases hi : i = c + (j : ZMod n)
-    · subst hi
-      simp only [Pi.sub_apply, Pi.single_eq_same]
-      exact hR
-    · simp only [Pi.sub_apply, Pi.single_eq_of_ne hi, sub_zero]
-      exact zero_mem _
-  · intro i
-    exact sub_mem (sub_mem (hz₃ i) (hz₁ i)) (hz₂ i)
 
 end IdempotentNormalFormsRhoFacts
 

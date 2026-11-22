@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.ChernClassEvaluation
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ChernClassEvaluation
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -59,7 +63,7 @@ lemma etale_kummer_chern_cochain_coboundary_triangle_eq_zero_of_qth_roots (q : �
   have e3' : ev α (1 + 1) 0 (by omega) V y = kumT q V v + kumT q V w - kumT q V (v * w) := e3
   have hn : (3 : ℤ).negOnePow = -1 := by rw [Int.negOnePow_odd]; decide
   rw [e3', e0, e1, e2, hn]
-  simp only [Sec.map, map_add, map_sub]
+  simp only [Sec.map, map_add (f := _), map_sub]
   simp
   abel
 

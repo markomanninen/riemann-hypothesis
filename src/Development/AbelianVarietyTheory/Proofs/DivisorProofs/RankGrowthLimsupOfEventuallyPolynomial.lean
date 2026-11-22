@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsAlgebraicIndependentGenericPoint
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ProjPointIdealMemProjComponentsOfIsProjPureDim
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFormDegreeLeHilbertDegreeEvalNeZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LeadingCoeffNonnegOfEventuallyEvalNat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsAlgebraicIndependentGenericPoint
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ProjPointIdealMemProjComponentsOfIsProjPureDim
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFormDegreeLeHilbertDegreeEvalNeZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LeadingCoeffNonnegOfEventuallyEvalNat
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -34,16 +38,16 @@ private lemma tendsto_eval_div_pow_atTop_coeff_of_degree_le (Q : Polynomial ℝ)
   rcases hQ.lt_or_eq with hlt | heq
   · have hc : Q.coeff D = 0 := Polynomial.coeff_eq_zero_of_degree_lt hlt
     rw [hc]
-    simpa using Polynomial.div_tendsto_zero_of_degree_lt Q (Polynomial.X ^ D) (by rw [hX]; exact hlt)
+    simpa using Polynomial.div_tendsto_atTop_zero_of_degree_lt (P := Q) (Q := Polynomial.X ^ D) (by rw [hX]; exact hlt)
   · have hc : Q.leadingCoeff = Q.coeff D := by
       rw [Polynomial.leadingCoeff, Polynomial.natDegree_eq_of_degree_eq_some heq]
-    have := Polynomial.div_tendsto_leadingCoeff_div_of_degree_eq Q (Polynomial.X ^ D) (by rw [hX, heq])
+    have := Polynomial.div_tendsto_atTop_leadingCoeff_div_of_degree_eq (P := Q) (Q := Polynomial.X ^ D) (by rw [hX, heq])
     simpa [hc] using this
+
 
 set_option autoImplicit false in
 open Filter Topology in
 open scoped ENNReal in
-
 theorem _root_.GlobalTheory.CompHt.growth_of_eventually_eq_eval :
     ∀ (D a : ℕ) (h : ℕ → ℕ) (H : Polynomial ℚ), 1 ≤ a → (∀ᶠ n : ℕ in atTop, (h n : ℚ) = H.eval (n : ℚ)) →
       (H.degree ≤ D → ∀ δ : ℕ, (δ : ℚ) = (D.factorial : ℚ) * H.coeff D →
@@ -101,7 +105,7 @@ theorem _root_.GlobalTheory.CompHt.growth_of_eventually_eq_eval :
       by_contra hneg
       push_neg at hneg
       have hpos : 0 < Q.degree := lt_of_le_of_lt (by exact_mod_cast Nat.zero_le D) hQdeg'
-      have hbot := (Polynomial.tendsto_atBot_of_leadingCoeff_nonpos Q hpos hneg).comp hakR
+      have hbot := (Polynomial.tendsto_atBot_of_leadingCoeff_nonpos hpos hneg).comp hakR
       have hneg' := hbot.eventually (eventually_lt_atBot (0 : ℝ))
       obtain ⟨k, hk1, hk2⟩ := (hneg'.and hval).exists
       simp only [Function.comp_apply] at hk1
@@ -110,7 +114,7 @@ theorem _root_.GlobalTheory.CompHt.growth_of_eventually_eq_eval :
     have hT : Tendsto g atTop atTop := by
       refine Tendsto.congr' (EventuallyEq.symm hg_eq) ?_
       refine Tendsto.const_mul_atTop (by positivity) ?_
-      refine (Polynomial.div_tendsto_atTop_of_degree_gt Q (Polynomial.X ^ D) (by rw [hX]; exact hQdeg')
+      refine (Polynomial.div_tendsto_atTop_of_degree_gt (P := Q) (Q := Polynomial.X ^ D) (by rw [hX]; exact hQdeg')
         (by simp) ?_).comp hakR |>.congr fun k => by simp
       simpa using hlc.le
     rw [hlim]

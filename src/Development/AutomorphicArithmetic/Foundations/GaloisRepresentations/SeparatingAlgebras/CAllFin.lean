@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.LocRho
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.BlockBoundTheorem
-import Development.AbelianVarietyTheory.Definitions.Divisors.WtSizeOver
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.LocRho
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.BlockBoundTheorem
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WtSizeOver
+
+@[expose] public section
 
 noncomputable section
 
@@ -128,7 +132,7 @@ theorem kappa (E : Type) [Field E] [NumberField E] [IsCMField E] (l : ℕ) [Fact
 
 def IntL {E : Type} [Field E] [NumberField E] [IsCMField E] {a l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ)
     (lam : (E →+* ℂ) → DomWeight a) (f : UA E a →₀ ℂ) : Prop :=
-  ∀ g ∈ f.support, g ∈ finU E a ∧ ∃ d : ℕ, DenomLe l d g ∧ ‖ι.symm (f g)‖ ≤ ((l : ℝ)⁻¹) ^ (a * d *
+  ∀ g ∈ f.support, g ∈ finU (E := E) (n := a) ∧ ∃ d : ℕ, DenomLe l d g ∧ ‖ι.symm (f g)‖ ≤ ((l : ℝ)⁻¹) ^ (a * d *
     ∑ᶠ (u : HeightOneSpectrum (𝓞 E)) (_ : ((l : ℕ) : 𝓞 E) ∈ u.asIdeal ∧ cLoc u g ≠ 1), wtSizeOver ι lam u)
 
 section Size
@@ -180,7 +184,7 @@ theorem sum_le_loc {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (W : Wt E a)
 end Size
 
 theorem cAll_fin' {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} {c : UA E n}
-    (hc : c ∈ finU E n) : cAll c = 1 := by
+    (hc : c ∈ finU (E := E) (n := n)) : cAll c = 1 := by
   funext v
   have : cInf c = 1 := hc
   simp [cAll, cEmb, this]
@@ -209,7 +213,7 @@ theorem frame (hD : DenomBdd) (hR : RhoBound) (hL : LatFacts) (hE : LevelEx) {E 
       · have h1 : κ c τ = 1 := hκ1 c τ (by simpa using hτ)
         rw [h1, inv_one, Units.val_one, Matrix.one_apply]
         split_ifs <;> simp) x hx
-  have hval : ∀ f : algForms W, ∀ γ ∈ ratU E a, ∀ s x, x ∈ infU E a → ∀ c : finU E a,
+  have hval : ∀ f : algForms W, ∀ γ ∈ ratU E a, ∀ s x, x ∈ infU E a → ∀ c : finU (E := E) (n := a),
       (∀ v g, f.1 v (g * (c : UA E a)) = f.1 v g) → ∀ v,
       f.1 (ρ (M (γ * s * x * c)) v) (γ * s * x * c) = f.1 (ρ (M s) (ρ (κ (c : UA E a)) v)) s := by
     intro f γ hγ s x hx c hf v
@@ -231,8 +235,8 @@ theorem frame (hD : DenomBdd) (hR : RhoBound) (hL : LatFacts) (hE : LevelEx) {E 
   · intro f
     obtain ⟨C, hC, hfC⟩ := hE E a W f
     obtain ⟨d, hd⟩ := hD E l hlp a C hC.compact
-    let C₃ : Subgroup (finU E a) := C.subgroupOf (finU E a)
-    have hC₃o : IsOpen (C₃ : Set (finU E a)) := by
+    let C₃ : Subgroup (finU (E := E) (n := a)) := C.subgroupOf (finU (E := E) (n := a))
+    have hC₃o : IsOpen (C₃ : Set (finU (E := E) (n := a))) := by
       obtain ⟨N, hNo, hN1, hNC⟩ := hC.isOpen
       refine Subgroup.isOpen_of_mem_nhds _ (g := 1)
         (Filter.mem_of_superset ((hNo.preimage continuous_subtype_val).mem_nhds hN1) ?_)
@@ -267,10 +271,11 @@ theorem frame (hD : DenomBdd) (hR : RhoBound) (hL : LatFacts) (hE : LevelEx) {E 
     have hR0 : 0 ≤ R := (norm_nonneg _).trans (hF g i)
     have e : opOf (RU E a) (t j) (F (b g i)) g = ∑ h ∈ (t j).support, t j h * F (b g i) (g * h) := by
       simp only [opOf, Finsupp.sum, Finset.sum_apply, Pi.smul_apply, RU_apply, smul_eq_mul]
-    rw [e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum]
     refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hR0 fun h hh => ?_
     have hinv : ((l : ℝ)⁻¹) ≤ 1 := inv_le_one_of_one_le₀ hl1
-    obtain ⟨hfin, d, hd, hn⟩ : h ∈ finU E a ∧ ∃ d : ℕ, DenomLe l d h ∧ ‖ι.symm (t j h)‖ ≤
+    obtain ⟨hfin, d, hd, hn⟩ : h ∈ finU (E := E) (n := a) ∧ ∃ d : ℕ, DenomLe l d h ∧ ‖ι.symm (t j h)‖ ≤
         ((l : ℝ)⁻¹) ^ (a * d * ∑ v ∈ Finset.univ.filter (fun v => cLoc (u v) h ≠ 1), 2 * sz (W v)) := by
       rcases ht j with ht | ht
       · obtain ⟨hfin, d, hd, hn⟩ := ht h hh
@@ -286,8 +291,8 @@ theorem frame (hD : DenomBdd) (hR : RhoBound) (hL : LatFacts) (hE : LevelEx) {E 
     have hx : CoefLe ι 1 ((t j h • y : W.Sp) : Formalism.L2.DIV.Pol ℂ (InfinitePlace E) a) := by
       intro q
       have hq := hyc q
-      have e1 : MvPolynomial.coeff q ((t j h • y : W.Sp) : Formalism.L2.DIV.Pol ℂ (InfinitePlace E) a) =
-          t j h * MvPolynomial.coeff q (y : Formalism.L2.DIV.Pol ℂ (InfinitePlace E) a) := by
+      have e1 : AddMonoidAlgebra.coeff ((t j h • y : W.Sp) : Formalism.L2.DIV.Pol ℂ (InfinitePlace E) a) q =
+          t j h * AddMonoidAlgebra.coeff (y : Formalism.L2.DIV.Pol ℂ (InfinitePlace E) a) q := by
         simp [MvPolynomial.coeff_smul]
       rw [e1, map_mul, norm_mul]
       have hlpos : (0 : ℝ) < (l : ℝ) := by linarith

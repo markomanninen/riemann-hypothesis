@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StAreaMultiplicity
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StAreaMultiplicity
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -45,8 +50,7 @@ theorem lintegral_abs_det_eq_lintegral_encard {E : Type*} [NormedAddCommGroup E]
         (aemeasurable_fderivWithin μ hA hf')
     refine (hA.inter (hdm (measurableSet_singleton 0).compl)).nullMeasurableSet.congr ?_
     filter_upwards [(ae_restrict_iff' hA).1 hfd] with x hx
-    change (x ∈ A ∩ d ⁻¹' {0}ᶜ) = (x ∈ B)
-    rw [eq_iff_iff]
+    change (x ∈ A ∩ d ⁻¹' {0}ᶜ) ↔ (x ∈ B)
     by_cases hxA : x ∈ A
     · simp [B, hxA, hx hxA]
     · simp [B, hxA]

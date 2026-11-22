@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 namespace GlobalTheory.UnitWitt
@@ -16,7 +21,7 @@ theorem conjTranspose_vecMulVec_self (w : Fin r → E) : (vecMulVec w (star w))�
 theorem vecMulVec_self_mul (w : Fin r → E) :
     vecMulVec w (star w) * vecMulVec w (star w) = (star w ⬝ᵥ w) • vecMulVec w (star w) := by
   ext i j
-  simp only [mul_apply, vecMulVec_apply, Matrix.smul_apply, smul_eq_mul, dotProduct, Pi.star_apply, Finset.sum_mul,
+  simp only [Matrix.mul_apply, vecMulVec_apply, Matrix.smul_apply, smul_eq_mul, dotProduct, Pi.star_apply, Finset.sum_mul,
     Finset.mul_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   ring

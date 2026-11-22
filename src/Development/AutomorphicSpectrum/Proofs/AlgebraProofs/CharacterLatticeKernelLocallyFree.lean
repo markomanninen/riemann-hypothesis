@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocFreeMapMkQIff
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LatticeGoodBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocallyFreeSummandCriterionStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SumMemLoc
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.Imports
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocFreeMapMkQIff
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LatticeGoodBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocallyFreeSummandCriterionStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SumMemLoc
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.Imports
+
+@[expose] public section
 
 noncomputable section
 

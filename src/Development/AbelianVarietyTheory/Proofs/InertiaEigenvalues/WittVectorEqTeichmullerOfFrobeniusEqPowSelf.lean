@@ -1,21 +1,25 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped NNReal
 
 namespace GlobalTheory
 
-open WittVector in
 
+open WittVector in
 theorem wittVector_iterate_frobenius_of_eq_pow {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O]
-    (y : WittVector l O) (h : frobenius y = y ^ l) (k : ℕ) :
+    (y : WittVector l O) (h : (WittVector.frobenius (p := l) (R := O)) y = y ^ l) (k : ℕ) :
     (WittVector.frobenius (p := l) (R := O))^[k] y = y ^ l ^ k := by
   induction k with
   | zero => simp
   | succ k ih =>
     rw [Function.iterate_succ_apply', ih, map_pow, h, ← pow_mul, pow_succ', mul_comm]
 
-open WittVector in
 
+open WittVector in
 theorem wittVector_coeff_iterate_frobenius {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O]
     [CharP O l] (y : WittVector l O) (k n : ℕ) :
     ((WittVector.frobenius (p := l) (R := O))^[k] y).coeff n = y.coeff n ^ l ^ k := by
@@ -24,8 +28,8 @@ theorem wittVector_coeff_iterate_frobenius {l : ℕ} [Fact l.Prime] {O : Type} [
   | succ k ih =>
     rw [Function.iterate_succ_apply', WittVector.coeff_frobenius_charP, ih, ← pow_mul, ← pow_succ]
 
-open WittVector in
 
+open WittVector in
 theorem wittVector_eq_teichmuller_of_frobenius_eq_pow :
     ∀ (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [CharP O l] [PerfectRing O l]
       (y : WittVector l O), WittVector.frobenius y = y ^ l →

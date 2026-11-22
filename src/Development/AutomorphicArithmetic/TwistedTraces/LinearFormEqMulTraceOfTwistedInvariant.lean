@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped BigOperators
 
 theorem UpperTheory.linearForm_eq_mul_trace_of_twisted_invariant :
@@ -74,7 +79,7 @@ theorem UpperTheory.linearForm_eq_mul_trace_of_twisted_invariant :
       rw [h1]
       exact rank1 η u
     | add s t hs ht =>
-      rw [map_add, map_add, add_mul, map_add, mul_add, hs, ht]
+      rw [map_add (f := _), map_add (f := _), add_mul, map_add (f := _), mul_add, hs, ht]
   intro b
   have hκ := all E
   rw [hE, mul_one] at hκ

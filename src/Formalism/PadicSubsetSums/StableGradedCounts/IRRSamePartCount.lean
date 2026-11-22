@@ -1,4 +1,8 @@
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRPrimeToPartEqIff
+module
+
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRPrimeToPartEqIff
+
+@[expose] public section
 
 open Finset
 
@@ -14,7 +18,7 @@ theorem lpow_order_iff {G : Type*} [Monoid G] {l n : ℕ} (hl : l.Prime) (hn : n
       rw [← hk']
       exact Nat.gcd_dvd_right _ _
     haveI := Fact.mk hl
-    have hkv : k ≤ padicValNat l n := (padicValNat_dvd_iff_le hn).1 hkn
+    have hkv : k ≤ padicValNat l n := ((by simpa only [_root_.Nat.padicValNat_def] using @_root_.multiplicity_dvd_iff_le : ∀ {p : _root_.Nat} [hp : _root_.Fact (_root_.Nat.Prime p)] {a n : _root_.Nat} (ha : a ≠ 0), p ^ n ∣ a ↔ n ≤ _root_.padicValNat p a) hn).1 hkn
     obtain ⟨c, hc⟩ := pow_dvd_pow l hkv
     rw [hc, pow_mul, ← hk', hg, one_pow]
   · intro h

@@ -1,7 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ScalesBy
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAHEqOfMemRatPts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeviDecompositionWittFrameStabilizerStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ScalesBy
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAHEqOfMemRatPts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeviDecompositionWittFrameStabilizerStatement
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCompactLevelHeightScalesIsotropicFrame
+
+@[expose] public section
+
 open scoped TensorProduct NNReal ENNReal Matrix
 open NumberField MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet GlobalTheory.ResLine GlobalTheory.ResidueEisenstein
 open GlobalTheory.Doubling (absE)
@@ -10,9 +16,8 @@ namespace GlobalTheory.ResidueEisenstein
 
 theorem slab_subset : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (n : ℕ) (J : Matrix (Fin n) (Fin n) E) (r : ℕ) (X Y : Matrix (Fin n) (Fin (r + 1)) E) (L : Submodule (𝓞 E) (Fin n → E)) (a : GL (Fin n) (AF F ⊗[F] E)) (h : GAd σ J → ℝ), DataJ σ J X Y L a h → ∀ b, IsFlowJ σ J X Y b → ∃ C : Set (GAd σ J), IsCompact C ∧ ∀ g, Real.exp (-1) ≤ h g → h g ≤ 1 → ∃ u ∈ unipRad σ J X, ∃ m ∈ GlobalTheory.StdPar.leviOne σ J X Y {Fin.last r}, ∃ y ∈ C, g = u * m * y := by
   intro F E _ _ _ _ _ σ n J r X Y L a h D b hb
-  have hK : IsCompact (levelAll σ J L a : Set (GAd σ J)) := by
-    haveI := D.lat
-    exact GlobalTheory.Doubling.isCompact_levelAll D.cm J L a
+  have hK : IsCompact (levelAll σ J L a : Set (GAd σ J)) :=
+    (HtCont.isCompact_isHt_scales F E σ n J r X Y L a h D).1
   refine ⟨(fun q : ℝ × GAd σ J => b q.1 * q.2) '' (Set.Icc (-1 : ℝ) 0 ×ˢ (levelAll σ J L a : Set (GAd σ J))), ?_, ?_⟩
   · exact (isCompact_Icc.prod hK).image ((hb.cont.comp continuous_fst).mul continuous_snd)
   · intro g h1 h2

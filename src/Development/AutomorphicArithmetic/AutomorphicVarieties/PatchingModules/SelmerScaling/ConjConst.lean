@@ -1,13 +1,18 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.TestEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.TrConst
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.ClosureIdeal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.TestVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.PrVr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.PrAdd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.OddDiag
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.HomBasic
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EigEx
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.TestEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.TrConst
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.ClosureIdeal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.TestVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.PrVr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.PrAdd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.OddDiag
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.HomBasic
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EigEx
+
+@[expose] public section
+
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
 private theorem tri_prod {R : Type} [CommRing R] {n : ℕ} (L : List (Matrix (Fin n) (Fin n) R))
@@ -205,16 +210,16 @@ private theorem conj_const {l : ℕ} [Fact l.Prime] (S : Ctx l) (R : Type) [Comm
       rw [map_list_prod, map_zero, List.map_ofFn] at h1
       rw [← h1]
       congr 2
-      funext i
-      simp only [Function.comp_apply, RingHom.comp_apply, map_sub, hφ1, hφ2, AlgHom.toRingHom_eq_coe,
-        RingHom.coe_coe, AlgHom.commutes]
-      rw [hφ3, Matrix.map_mul, Matrix.map_mul, Ctx.ρ, hp]
+      funext k
+      simp only [Function.comp_apply, RingHom.comp_apply, map_sub, hφ1, hφ2]
+      change _ = φ1 _ - φ1 _
+      rw [φ1.commutes, hφ3, Matrix.map_mul, Matrix.map_mul, Ctx.ρ, hp]
   · refine key _ _ ((hU j i).1 ?_)
     have h1 := congrArg φ (r3 j)
     rw [map_list_prod, map_zero, List.map_ofFn] at h1
     rw [← h1]
     congr 2
-    funext i
+    funext k
     simp only [Function.comp_apply, map_sub, hφ1, hφ2]
   · refine key _ 0 (((hU j i).2 _ ?_).trans (map_zero _).symm)
     have h1 := congrArg φ (r4 j i)

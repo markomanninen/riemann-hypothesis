@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GlobSet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GlobSet
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc GlobalTheory.Unfold GlobalTheory.LocOver GlobalTheory.GenMass
 open scoped Classical
@@ -27,7 +31,8 @@ theorem satur_of_gram_det_unit : ∀ {F : Type} [Field F] [ValuativeRel F] [Topo
     have hsum : H.h (∑ i, c i • m i) (m a) = (Matrix.mulVec (H.gram m) c) a := by
       let φ : V →+ E := AddMonoidHom.mk' (fun x => H.h x (m a)) (fun x x' => H.h_add_left x x' (m a))
       have hφ : H.h (∑ i, c i • m i) (m a) = φ (∑ i, c i • m i) := rfl
-      rw [hφ, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hφ, map_sum]
       simp only [Matrix.mulVec, dotProduct, HermSp.gram, Matrix.of_apply]
       refine Finset.sum_congr rfl fun i _ => ?_
       show H.h (c i • m i) (m a) = _

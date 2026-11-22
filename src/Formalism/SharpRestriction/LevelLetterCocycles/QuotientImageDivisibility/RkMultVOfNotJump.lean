@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.WeaklyAdmissibleFiltrations.Statement
-import Formalism.WeaklyAdmissibleFiltrations.CrystallineStableLifts.Window
+module
+
+public import Mathlib
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+public import Formalism.WeaklyAdmissibleFiltrations.CocyclesFunctorial
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem rk_filV_succ (a : ℤ) : FilV PD (LL := LL) (V := V) (a + 1) ≤ FilV PD
   | zero => simp
   | tmul v b => exact ⟨v ⊗ₜ ⟨b.1, PD.Fil_anti a b.2⟩, by simp [AlgebraTensorModule.map_tmul]⟩
   | add y z hy hz =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ hy hz
 
 theorem rk_filV_anti : Antitone (fun a : ℤ => FilV PD (LL := LL) (V := V) a) := by
@@ -81,7 +85,7 @@ theorem rk_filV_sep (x : V ⊗[Qp] BdR) (hx : ∀ a, x ∈ FilV PD (LL := LL) (V
       simp only [AlgebraTensorModule.map_tmul, LinearMap.id_apply, Submodule.subtype_apply, he]
       exact Submodule.smul_of_tower_mem _ _ w.2
     | add y z hy hz =>
-      simp only [map_add, Finsupp.add_apply]
+      simp only [map_add (f := _), Finsupp.add_apply]
       exact Submodule.add_mem _ hy hz
   have h0 : e x = 0 := by
     ext i
@@ -137,7 +141,7 @@ theorem rk_multV_of_not_jump (τ : K →ₐ[Qp] LL) (a : ℤ) (h : ¬ IsJumpV PD
 theorem rk_sum_multV (τ : K →ₐ[Qp] LL) (m k : ℤ) (hmk : m ≤ k) :
     ∑ a ∈ Finset.Ico m k, multV PD ρ τ a =
       (finrank LL ↥(FildR PD ρ τ m) : ℤ) - finrank LL ↥(FildR PD ρ τ k) := by
-  induction k, hmk using Int.le_induction with
+  induction k, hmk using Int.leInduction with
   | base => simp
   | succ n hn ih =>
     have hI : Finset.Ico m (n + 1) = insert n (Finset.Ico m n) := by

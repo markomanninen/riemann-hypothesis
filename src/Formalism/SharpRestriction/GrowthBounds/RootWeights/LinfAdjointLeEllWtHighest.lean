@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.LoweringSpanHighestComponentIntegral
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.InvariantDenominatorLinftyBound
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.LoweringSpanHighestComponentIntegral
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.InvariantDenominatorLinftyBound
+
+@[expose] public section
 
 noncomputable section
 

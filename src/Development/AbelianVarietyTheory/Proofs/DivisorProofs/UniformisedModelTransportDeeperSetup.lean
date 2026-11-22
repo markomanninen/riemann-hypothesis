@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyUWit
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.ImmersedBy
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LabRange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCommonBaseChangePolarizedAbelianSchemeOfGe
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsSpecializesIsLocalization
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompleteDvrValuesUnitary
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisedModelBaseChangeCompleteDvrExtension
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyUWit
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.ImmersedBy
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LabRange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCommonBaseChangePolarizedAbelianSchemeOfGe
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsSpecializesIsLocalization
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompleteDvrValuesUnitary
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisedModelBaseChangeCompleteDvrExtension
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open GlobalTheory.Toroidal GlobalTheory.Models GlobalTheory.LN GlobalTheory.ShFam GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZH GlobalTheory.Poinc
@@ -22,8 +27,8 @@ theorem spMap_comp₂ {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (f :
     spMap (g.comp f) = spMap g ≫ spMap f := by
   rw [← Spec.map_comp]; rfl
 
-open GlobalTheory.Poinc.Extend in
 
+open GlobalTheory.Poinc.Extend in
 theorem extend {O Ω Γ : Type} [CommRing O] [IsDomain O] [IsNoetherianRing O] [IsIntegrallyClosed O] [Field Ω] [Algebra O Ω]
     [IsFractionRing O Ω] {S₁ S₂ T₁ T₂ U K : Scheme.{0}} [U.IsSeparated] {A₁ : Over S₁} {A₂ : Over S₂} {G₁ : Over T₁}
     {G₂ : Over T₂} [GrpObj G₁] [GrpObj G₂] (ab₁ : IsAbelianScheme G₁) (ab₂ : IsAbelianScheme G₂) {σ₁ : T₁ ⟶ S₁}
@@ -39,6 +44,21 @@ theorem extend {O Ω Γ : Type} [CommRing O] [IsDomain O] [IsNoetherianRing O] [
     ∃ e₂ : A.left ⟶ G₂.left, IsGrpPullback A G₂ (v ≫ k₂) e₂ ∧ e₁ ≫ β₁ = e₂ ≫ β₂ ∧
       ∀ x, ∃ w : K ⟶ A.left, w ≫ A.hom = 𝟙 _ ∧ w ≫ e₁ ≫ α₁ = (v ≫ k₁ ≫ σ₁) ≫ t₁ x ∧
         w ≫ e₂ ≫ α₂ = (v ≫ k₂ ≫ σ₂) ≫ t₂ x := by
+  have ab_pull {S S' : Scheme.{0}} {f : S' ⟶ S} {G : Over S} {G' : Over S'}
+      {φ : G'.left ⟶ G.left} [GrpObj G] [GrpObj G'] (hG : IsAbelianScheme G)
+      (h : IsGrpPullback G' G f φ) : IsAbelianScheme G' := by
+    have := hG.comm
+    have hc : IsCommMonObj G' := open scoped CategoryTheory.MonObj in by
+      rw [isCommMonObj_iff_isMulCommutative]
+      intro T
+      letI : Group (T ⟶ G') := CategoryTheory.Hom.group
+      letI : CommGroup (Over.mk (T.hom ≫ f) ⟶ G) := CategoryTheory.Hom.commGroup
+      refine ⟨⟨fun x y => Over.OverMorphism.ext (h.1.hom_ext ?_ (by rw [Over.w, Over.w]))⟩⟩
+      rw [← h.2 T x y (pushPt h.1.w x) (pushPt h.1.w y) rfl rfl,
+        ← h.2 T y x (pushPt h.1.w y) (pushPt h.1.w x) rfl rfl, _root_.mul_comm]
+    exact ⟨hc, MorphismProperty.of_isPullback (P := @Smooth) h.1 hG.smooth,
+      MorphismProperty.of_isPullback (P := @IsProper) h.1 hG.proper,
+      MorphismProperty.of_isPullback (P := @GeometricallyConnected) h.1 hG.geomConnected⟩
   obtain ⟨Q₁, _, b₁, g₁⟩ : ∃ (Q : Over (Sp O)) (_ : GrpObj Q) (b : Q.left ⟶ G₁.left), IsGrpPullback Q G₁ k₁ b :=
     ⟨_, _, _, isGrpPullback_pullback G₁ k₁⟩
   obtain ⟨Q₂, _, b₂, g₂⟩ : ∃ (Q : Over (Sp O)) (_ : GrpObj Q) (b : Q.left ⟶ G₂.left), IsGrpPullback Q G₂ k₂ b :=
@@ -49,8 +69,8 @@ theorem extend {O Ω Γ : Type} [CommRing O] [IsDomain O] [IsNoetherianRing O] [
   have hn : ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsNormalScheme (Sp O) := GlobalTheory.Published.SemiAbelianHomExtension.isNormalScheme_spec O
   have hj : IsGenericPointHom (spMap (algebraMap O Ω)) := IsGenericPointHom.fractionField O Ω
   obtain ⟨_, _⟩ := hj.quasiCompact_and_dominant
-  have s₁ := isSemiAbelian_of_isAbelianScheme Q₁ (PolPull.isAbelianScheme_of_isGrpPullback ab₁ g₁)
-  have s₂ := isSemiAbelian_of_isAbelianScheme Q₂ (PolPull.isAbelianScheme_of_isGrpPullback ab₂ g₂)
+  have s₁ := isSemiAbelian_of_isAbelianScheme Q₁ (ab_pull ab₁ g₁)
+  have s₂ := isSemiAbelian_of_isAbelianScheme Q₂ (ab_pull ab₂ g₂)
   have := s₁.smooth
   have := s₂.smooth
   have := s₁.separated
@@ -141,11 +161,26 @@ theorem isSeparated_univ {E : Type} [Field E] [NumberField E] [IsCMField E] {H :
 
 end GlobalTheory.UPoinc.Transport
 
-open GlobalTheory.UPoinc.Transport in
 
+open GlobalTheory.UPoinc.Transport in
 theorem GlobalTheory.UPoinc.uTest_transport : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Geo.Tor.Level H) (Xo : Moduli Dw l) (cf : Coeff l) (C : UCompact Xo cf) (X₁ : USetup C) (D : UDeep X₁) (p : ℕ) [Fact p.Prime] (z₁ : X₁.M.Z) (ct : UCTrait X₁ p z₁) (y : Sp (OO p) ⟶ D.X.M.Z) (h : y ≫ D.q = ct.y) (c₀ : X₁.Ω₁) (hc : c₀ ≠ 0) (R' : Subalgebra X₁.o₁ X₁.Ω₁) (fg : R'.FG) (frac : ∀ x : X₁.Ω₁, ∃ a ∈ R', ∃ b ∈ R', x = a / b) (hth : ∀ x, c₀ * X₁.S.th x ∈ R') (hev : ∀ x k, c₀ * X₁.S.ev x k ∈ R') (ρ' : (X₁.S.rechart c₀ hc R' fg frac hth hev).Real) (u' : Sp (ratHull R') ⟶ Xo.XF cf), USame X₁.ρ ρ' (fun x => x) (RingHom.id _) → ρ'.i₀ = X₁.ρ.i₀ → spMap (ratHull R').val.toRingHom ≫ u' = X₁.uΩ → R' ≤ X₁.M.O ((gPt p ≫ ct.y) (closedPoint (PadicAlgCl p))) → ∀ (G : Over (Sp (ratHull R'))) (_ : GrpObj G) (α : G.left ⟶ ρ'.P.A.left) (β : G.left ⟶ Xo.univ.t.G.left), IsGrpPullback G ρ'.P.A (spMap (toRat R')) α → IsGrpPullback G Xo.univ.t.G (u' ≫ pullback.fst _ _) β → LBIso (ρ'.P.L.pull α) (Xo.univ.t.PP.L.pull β) → ∀ (y₀ : R' →+* PadicAlgCl p), (∀ a : R', y₀ a = X₁.M.val (gPt p ≫ ct.y) a) → ∀ (u : ρ'.UTest p y₀) (c₂ : D.X.Ω₁) (hc₂ : c₂ ≠ 0) (R₂ : Subalgebra D.X.o₁ D.X.Ω₁) (fg₂ : R₂.FG) (frac₂ : ∀ x : D.X.Ω₁, ∃ a ∈ R₂, ∃ b ∈ R₂, x = a / b) (hth₂ : ∀ x, c₂ * D.X.S.th x ∈ R₂) (hev₂ : ∀ x k, c₂ * D.X.S.ev x k ∈ R₂) (ρ₂ : (D.X.S.rechart c₂ hc₂ R₂ fg₂ frac₂ hth₂ hev₂).Real) (u₂' : Sp (ratHull R₂) ⟶ Xo.XF cf), USame D.X.ρ ρ₂ (fun x => x) (RingHom.id _) → ρ₂.i₀ = D.X.ρ.i₀ → spMap (ratHull R₂).val.toRingHom ≫ u₂' = D.X.uΩ → R₂ ≤ D.X.M.O ((gPt p ≫ y) (closedPoint (PadicAlgCl p))) → ∀ (G₂ : Over (Sp (ratHull R₂))) (_ : GrpObj G₂) (α₂ : G₂.left ⟶ ρ₂.P.A.left) (β₂ : G₂.left ⟶ Xo.univ.t.G.left), IsGrpPullback G₂ ρ₂.P.A (spMap (toRat R₂)) α₂ → IsGrpPullback G₂ Xo.univ.t.G (u₂' ≫ pullback.fst _ _) β₂ → LBIso (ρ₂.P.L.pull α₂) (Xo.univ.t.PP.L.pull β₂) → ∀ (y₂ : R₂ →+* PadicAlgCl p), (∀ a : R₂, y₂ a = D.X.M.val (gPt p ≫ y) a) → (∀ a : D.X.o₁, ‖y₂ (algebraMap D.X.o₁ R₂ a)‖ ≤ 1) → (∃ (P₀ : Over (Sp D.X.Ω₁)) (_ : GrpObj P₀) (a : P₀.left ⟶ G.left) (a₂ : P₀.left ⟶ G₂.left), IsGrpPullback P₀ G (spMap ((algebraMap X₁.Ω₁ D.X.Ω₁).comp (ratHull R').val.toRingHom)) a ∧ IsGrpPullback P₀ G₂ (spMap (ratHull R₂).val.toRingHom) a₂ ∧ a ≫ β = a₂ ≫ β₂ ∧ ∀ x, ∃ w : Sp D.X.Ω₁ ⟶ P₀.left, w ≫ a ≫ α = spMap ((algebraMap X₁.Ω₁ D.X.Ω₁).comp R'.val.toRingHom) ≫ (ρ'.pt x).left ∧ w ≫ a₂ ≫ α₂ = spMap R₂.val.toRingHom ≫ (ρ₂.pt (D.lab x)).left) → ∃ (u₂ : ρ₂.UTest p y₂) (e : u₂.D.toPre.X ≃+ u.D.toPre.X) (T : (TFK (R := u₂.V) (PadicAlgCl p) ⟶ u₂.A.A) ≃ (TFK (R := u.V) (PadicAlgCl p) ⟶ u.A.A)), (∀ χ r, u.PsiNorm (e χ) r → u₂.PsiNorm χ r) ∧ (∀ x₂ a, x₂.left ≫ u₂.φ = spMap y₂ ≫ (ρ₂.pt (D.lab a)).left ↔ (T x₂).left ≫ u.φ = spMap y₀ ≫ (ρ'.pt a).left) ∧ (∀ x₂ (w₂ : Sp (PadicAlgCl p) ⟶ G₂.left), w₂ ≫ α₂ = x₂.left ≫ u₂.φ → ∃ w : Sp (PadicAlgCl p) ⟶ G.left, w ≫ α = (T x₂).left ≫ u.φ ∧ w ≫ β = w₂ ≫ β₂) ∧ (∀ (m : ℕ) (pk₂ : QkPt u₂.D.toPre (PadicAlgCl p) m) x₂, 1 ≤ m → QkToAkU u₂.U.toUnifPre (PadicAlgCl p) m pk₂ x₂ → ∃ pk : QkPt u.D.toPre (PadicAlgCl p) m, pk.y = e pk₂.y ∧ QkToAkU u.U.toUnifPre (PadicAlgCl p) m pk (T x₂)) ∧ (∀ (m : ℕ) (pk : QkPt u.D.toPre (PadicAlgCl p) m) x, 1 ≤ m → QkToAkU u.U.toUnifPre (PadicAlgCl p) m pk x → ∃ pk₂ : QkPt u₂.D.toPre (PadicAlgCl p) m, e pk₂.y = pk.y ∧ QkToAkU u₂.U.toUnifPre (PadicAlgCl p) m pk₂ (T.symm x)) := by
   intro E _ _ _ H Dw l Xo cf C X₁ D p _ z₁ ct y h c₀ hc R' fg frac hth hev ρ' u' _ _ _ hR' G _ α β hα hβ hL y₀ hy₀ u
     c₂ hc₂ R₂ fg₂ frac₂ hth₂ hev₂ ρ₂ u₂' _ _ _ hR₂ G₂ _ α₂ β₂ hα₂ hβ₂ hL₂ y₂ hy₂ _ ⟨P₀, _, a, a₂, ha, ha₂, hab, hpt⟩
+  have ab_pull {S S' : Scheme.{0}} {f : S' ⟶ S} {G : Over S} {G' : Over S'}
+      {φ : G'.left ⟶ G.left} [GrpObj G] [GrpObj G'] (hG : IsAbelianScheme G)
+      (h : IsGrpPullback G' G f φ) : IsAbelianScheme G' := by
+    have := hG.comm
+    have hc : IsCommMonObj G' := open scoped CategoryTheory.MonObj in by
+      rw [isCommMonObj_iff_isMulCommutative]
+      intro T
+      letI : Group (T ⟶ G') := CategoryTheory.Hom.group
+      letI : CommGroup (Over.mk (T.hom ≫ f) ⟶ G) := CategoryTheory.Hom.commGroup
+      refine ⟨⟨fun x y => Over.OverMorphism.ext (h.1.hom_ext ?_ (by rw [Over.w, Over.w]))⟩⟩
+      rw [← h.2 T x y (pushPt h.1.w x) (pushPt h.1.w y) rfl rfl,
+        ← h.2 T y x (pushPt h.1.w y) (pushPt h.1.w x) rfl rfl, _root_.mul_comm]
+    exact ⟨hc, MorphismProperty.of_isPullback (P := @Smooth) h.1 hG.smooth,
+      MorphismProperty.of_isPullback (P := @IsProper) h.1 hG.proper,
+      MorphismProperty.of_isPullback (P := @GeometricallyConnected) h.1 hG.geomConnected⟩
   obtain ⟨V₂, _, _, _, _, hV₂c, hV₂n, σ, hσ, hval⟩ :=
     GlobalTheory.UPoinc.exists_complete_dvr_values_unitary E H Dw l Xo cf C X₁ D p z₁ ct y h u.V u.complete u.norm_le
   obtain ⟨u₁, τ, e, T, hτ, hpsi, hT, hfw, hbw⟩ :=
@@ -207,8 +242,8 @@ theorem GlobalTheory.UPoinc.uTest_transport : ∀ (E : Type) [Field E] [NumberFi
   have sv₂ : spMap v ≫ spMap k₂ ≫ spMap (toRat R₂) = spMap (v.comp g₂) := by rw [sk₂, ← spMap_comp₂]
   obtain ⟨e₁, he₁, ee₁⟩ := GlobalTheory.Poinc.Extend.exists_factor (j := spMap v ≫ spMap k₁) hα
     (u₁.cart.congr (by rw [Category.assoc, sv₁]) rfl)
-  obtain ⟨e₂, he₂, hee, hw⟩ := extend (Γ := X₁.S.Gam) (PolPull.isAbelianScheme_of_isGrpPullback ρ'.P.isAb hα)
-    (PolPull.isAbelianScheme_of_isGrpPullback ρ₂.P.isAb hα₂) hα.1 hα₂.1 (spMap k₁) (spMap k₂) β β₂
+  obtain ⟨e₂, he₂, hee, hw⟩ := extend (Γ := X₁.S.Gam) (ab_pull ρ'.P.isAb hα)
+    (ab_pull ρ₂.P.isAb hα₂) hα.1 hα₂.1 (spMap k₁) (spMap k₂) β β₂
     (fun x => (ρ'.pt x).left) (fun x => (ρ₂.pt (D.lab x)).left) (fun x => Over.w (ρ'.pt x))
     (fun x => Over.w (ρ₂.pt (D.lab x))) (ha.congr (by rw [ek₁, spMap_comp₂]) rfl)
     (ha₂.congr (by rw [ek₂, spMap_comp₂]) rfl) hab (by rw [sg₁, sg₂]; exact hpt) (spMap v) he₁

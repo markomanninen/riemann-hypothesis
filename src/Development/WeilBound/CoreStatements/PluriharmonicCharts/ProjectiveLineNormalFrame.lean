@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.InFlagDomainOne
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.TripleDeriv
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.InFlagDomainOne
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.TripleDeriv
+
+@[expose] public section
+
 open Matrix GlobalTheory.CompanionTheory.Ar.PB
 open scoped ComplexOrder
 
@@ -10,7 +15,7 @@ theorem holo_part {E M : Type*} [AddCommGroup E] [Module ℂ E] [AddCommGroup M]
     (H : E →ₗ[ℝ] M) : ∃ L : E →ₗ[ℂ] M, ∀ v, L v = (1 / 2 : ℂ) • (H v - Complex.I • H (Complex.I • v)) := by
   refine ⟨⟨⟨fun v => (1 / 2 : ℂ) • (H v - Complex.I • H (Complex.I • v)), ?_⟩, ?_⟩, fun v => rfl⟩
   · intro v w
-    simp only [smul_add, map_add]
+    simp only [smul_add, map_add (f := _)]
     module
   · intro c v
     have e1 : c • v = c.re • v + c.im • (Complex.I • v) := by
@@ -20,7 +25,7 @@ theorem holo_part {E M : Type*} [AddCommGroup E] [Module ℂ E] [AddCommGroup M]
       congr 1
       apply Complex.ext <;> simp
     simp only [RingHom.id_apply]
-    rw [e2, e1, map_add, map_sub, H.map_smul, H.map_smul, H.map_smul, H.map_smul]
+    rw [e2, e1, map_add (f := _), map_sub, H.map_smul, H.map_smul, H.map_smul, H.map_smul]
     generalize H v = A
     generalize H (Complex.I • v) = B
     simp only [← Complex.coe_smul]
@@ -61,7 +66,7 @@ theorem PositivityTheory.Xgp.projective_line_normal_frame : ∀ (d : ℕ) (G : (
     exact h1.unique h2
   let H : (Fin d → ℂ) →ₗ[ℝ] Matrix (Fin 2) (Fin 2) ℂ :=
     { toFun := fun v => g0ᴴ * Dm v * g0
-      map_add' := fun v w => by rw [map_add, Matrix.mul_add, Matrix.add_mul]
+      map_add' := fun v w => by rw [map_add (f := _), Matrix.mul_add, Matrix.add_mul]
       map_smul' := fun c v => by rw [map_smul, Matrix.mul_smul, Matrix.smul_mul]; rfl }
   have hH : ∀ v, (H v)ᴴ = H v := by
     intro v
@@ -75,7 +80,7 @@ theorem PositivityTheory.Xgp.projective_line_normal_frame : ∀ (d : ℕ) (G : (
     module
   let Λ : Fin 2 → Fin 2 → (Fin d → ℂ) →L[ℂ] ℂ := fun p q => LinearMap.toContinuousLinearMap
     { toFun := fun v => (g0 * L v) p q
-      map_add' := fun v w => by rw [map_add, Matrix.mul_add]; rfl
+      map_add' := fun v w => by rw [map_add (f := _), Matrix.mul_add]; rfl
       map_smul' := fun c v => by rw [map_smul, Matrix.mul_smul]; rfl }
   refine ⟨fun y => g0 - g0 * L (y - y₀), fun p q => ?_, by simpa using hg0u, by simpa using hg0, fun p q => ?_⟩
   · show Differentiable ℂ fun y => g0 p q - Λ p q (y - y₀)

@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.SphSplitOf
-import Development.WeilBound.ThetaLifts.SphericalLattices.BelowIffRows
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KCoinvOfNarrow
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.BernsteinNarrowness.BernsteinClosure.RamifiedMultiplicityOne
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.SphSplitOf
+public import Development.WeilBound.ThetaLifts.SphericalLattices.BelowIffRows
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KCoinvOfNarrow
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.BernsteinNarrowness.BernsteinClosure.RamifiedMultiplicityOne
+
+@[expose] public section
 
 noncomputable section
 

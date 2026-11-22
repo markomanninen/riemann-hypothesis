@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.EigBoxE
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.EigBoxE
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ private theorem iSup_pres {T : Module.End A M} {P : ℕ → Module.End A M} {S :
     exact hS _ hy
   · simp
   · intro y z hy hz
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact Submodule.add_mem _ hy hz
 
 end Gen
@@ -49,8 +53,8 @@ section Fr
 
 variable {Γ Ga Gp : Type} [Group Γ] [Group Ga] [Group Gp] (X : Frame Γ Ga Gp) {A : Type} [CommRing A] {m : ℕ}
 
-variable (A m) in
 
+variable (A m) in
 private abbrev R (g : Ga) : Module.End A (X.Fn A m) := rtr A (Ga × Gp) (Fin m → A) (g, 1)
 
 private theorem comm_rp (g : Ga) (p : Gp) : Commute (R X A m g) (X.rp A m p) := by
@@ -166,7 +170,7 @@ private theorem tr_MK {g : H.Ga} (hg : Norm H g) (a : H.Op → c.O) (K : H.Lev) 
       rw [map_smul]
       exact Submodule.smul_mem_smul hr (tr_Ord H θ hg K hy)
     · intro y z hy hz
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ hy hz
   refine iSup_pres (fun n => ?_) hle h2'
   refine Commute.pow_right ?_ n
@@ -226,7 +230,8 @@ theorem UpperTheory.V.Z.Desc.V0.eEx :
   have hcomm : ∀ i f, E (H.op A i f) = H.op A i (E f) := by
     intro i f
     show opE ρ a (H.op A i f) = H.op A i (opE ρ a f)
-    rw [opE_eq, opE_eq, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [opE_eq, opE_eq, map_sum]
     refine Finset.sum_congr rfl fun g hg => ?_
     rw [map_zsmul]
     congr 1

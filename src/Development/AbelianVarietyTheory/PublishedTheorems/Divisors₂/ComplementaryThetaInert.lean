@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ def ComplementaryThetaInert : Prop :=
       ResEtaPow (Units.map (algebraMap F (AF F)).toMonoidHom).range χW' (a + a') →
       IsHecke F E χV → IsHecke F E χV' → IsHecke F E χW → IsHecke F E χW' →
       M.IsWeil ψ χV χW om → M'.IsWeil ψ χV' χW' om' →
-    ∀ v : Pl F, IsField (Fv F v ⊗[F] E) →
+    ∀ v : Pl (F := F), IsField (Fv F v ⊗[F] E) →
       (∃ Cy : Matrix (Fin (a + a')) (Fin n) (Fv F v ⊗[F] E),
         IsLagr (Algebra.TensorProduct.map (AlgHom.id (Fv F v) (Fv F v)) σ) (JR (Fv F v) W.J) Cy) →
       (∃ P : Matrix (Fin a) (Fin a' ⊕ (Fin r ⊕ Fin r)) (Fv F v ⊗[F] E),

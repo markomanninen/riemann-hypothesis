@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PoleLengthBound.PiBallFromAlt
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.BallQuotLen
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PoleLengthBound.PiBallFromAlt
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.BallQuotLen
+
+@[expose] public section
 
 noncomputable section
 

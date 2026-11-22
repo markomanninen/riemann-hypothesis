@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StDefinite
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.FinOfPI
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HilbertSchurOfAdjointClosed
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StDefinite
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.FinOfPI
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HilbertSchurOfAdjointClosed
+
+@[expose] public section
 
 open CompanionTheory.D.gk.admitted (stdPoly)
 open GlobalTheory.AutomorphicL2Unitary
@@ -40,7 +44,7 @@ theorem bicommutant_restriction_prime :
         simp only [ContinuousLinearMap.mul_apply, a1, a2]
       simpa only [e] using hgen (p g * g') (π k h)
     | zero => simp
-    | add u w _ _ hu hw => simpa only [map_add] using W₀.add_mem hu hw
+    | add u w _ _ hu hw => simpa only [map_add (f := _)] using W₀.add_mem hu hw
     | smul c u _ hu => simpa only [map_smul] using W₀.smul_mem c hu
   have hker : W₀.topologicalClosure ≤ LinearMap.ker (x : H →ₗ[ℂ] H) := by
     refine Submodule.topologicalClosure_minimal _ ?_ (ContinuousLinearMap.isClosed_ker x)

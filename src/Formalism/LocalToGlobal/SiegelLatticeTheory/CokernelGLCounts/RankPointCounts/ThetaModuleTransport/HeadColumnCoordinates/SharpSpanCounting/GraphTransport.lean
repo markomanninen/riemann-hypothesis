@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.MemPerpSpanIff
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.MemPerpSpanIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -115,7 +119,7 @@ theorem h_omP (f f' : Fin (r + 1) → V) (u : V) :
     H.h u (omP H f f') = ∑ b, M.L.cj ((H.Zhat f f')⁻¹ b (Fin.last r)) * H.h u (f' b) := by
   have hD : H.Dl f f' (r + 1) = (H.Zhat f f').det := by
     unfold HermSp.Dl
-    rw [dif_pos le_rfl]
+    rw [dite_eq_left le_rfl]
     simp [Fin.castLE_refl]
   unfold omP HermSp.om'
   rw [h_smul_right, h_sum_right, Finset.mul_sum]

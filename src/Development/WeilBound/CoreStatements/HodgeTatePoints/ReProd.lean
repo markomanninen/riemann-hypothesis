@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.ReBase
-import ReciprocityTheory.DualLattices.CharTableIsUnit
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.ReBase
+public import ReciprocityTheory.DualLattices.CharTableIsUnit
+
+@[expose] public section
 
 noncomputable section
 
@@ -149,7 +153,7 @@ theorem tn_char {N : Type} [AddCommGroup N] [Fintype N] [DecidableEq N]
       tn (AA.carrier.map (LinearMap.funLeft R C fun y : N₁ => e (y, 0)))
         (AA.carrier.map (LinearMap.funLeft R C fun y : N₂ => e (0, y))) := by
   have hadd : ∀ z : N₁ × N₂, e (z.1, 0) + e (0, z.2) = e z := fun z => by
-    rw [← map_add]; simp
+    rw [← map_add (f := _)]; simp
   have hs₂ : ∀ g ∈ AA.carrier, (fun x => g (e (0, (e.symm x).2))) ∈ AA.carrier := by
     intro g hg
     have := (stabadd C R N N AA AA (AddMonoidHom.id N)

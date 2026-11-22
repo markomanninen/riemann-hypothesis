@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConstMemBddAut
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitIdempotentPrimeProjectionCorrespondence
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConstMemBddAut
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitIdempotentPrimeProjectionCorrespondence
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum GlobalTheory.LFun GlobalTheory.AdelicU GlobalTheory.PRep GlobalTheory.FinZeta GlobalTheory.AdelicScalar GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues GlobalTheory.LiftRows
@@ -29,18 +33,18 @@ theorem compFin_tensAt_ne {u v : HeightOneSpectrum (𝓞 D.host.F)} (h : u ≠ v
         evFin D.host.F u (pairA D.host.F 0 (singleFin v a)) ⊗ₜ[D.host.F] x :=
       Algebra.TensorProduct.map_tmul ..
     rw [h1, h0, TensorProduct.zero_tmul]
-  | add y z hy hz => simp only [map_add, hy, hz, add_zero]
+  | add y z hy hz => simp only [map_add (f := _), hy, hz, add_zero]
+
 
 set_option maxHeartbeats 1000000 in
 open Classical in
-
 theorem compFin_add_cA_eq_one : ∀ {D : D7} (Z : Finset (Pl D.host.E)) (e : AE D), IsIdemSum e Z → ∀ PP ∈ Z,
-    compFin D.host.F D.host.E (PP.under (𝓞 D.host.F)) (e + cA D e) = 1 := by
+    compFin D.host.F D.host.E ((_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP)) (e + cA D e) = 1 := by
   intro D Z e he PP hPP
   classical
   obtain ⟨⟨es, hes, rfl⟩, hcc⟩ := he
   obtain ⟨v0, τ0, -, hPP0⟩ := GlobalTheory.SplitIdemDict.exists_emb (hes PP hPP)
-  have hu : PP.under (𝓞 D.host.F) = v0 := by rw [hPP0]; exact splitPrime_under τ0
+  have hu : (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP) = v0 := by rw [hPP0]; exact splitPrime_under τ0
   rw [hu]
   have key : ∀ Q ∈ Z, compFin D.host.F D.host.E v0 (es Q) =
       (if Q = PP then splitIdem (isCMExt_host D) τ0 else 0) +
@@ -63,13 +67,14 @@ theorem compFin_add_cA_eq_one : ∀ {D : D7} (Z : Finset (Pl D.host.E)) (e : AE 
       exact compFin_tensAt_ne (Ne.symm hv) _
   have hsum : compFin D.host.F D.host.E v0 (∑ Q ∈ Z, es Q) = splitIdem (isCMExt_host D) τ0 +
       (if splitPrime (τ0.comp D.sp.cm.sig) ∈ Z then 1 - splitIdem (isCMExt_host D) τ0 else 0) := by
-    rw [map_sum, Finset.sum_congr rfl key]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_congr rfl key]
     simp only [Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq, if_pos hPP]
   have hc : compFin D.host.F D.host.E v0 (cA D (∑ Q ∈ Z, es Q)) =
       sigR _ D.sp.cm.sig (compFin D.host.F D.host.E v0 (∑ Q ∈ Z, es Q)) :=
     (GlobalTheory.SplitIdemDict.compFin_cA _).symm
   have h1 : ∀ a : Fv D.host.F v0 ⊗[D.host.F] D.host.E, a + (1 - a) = 1 := fun a => by abel
-  rw [map_add, hc, hsum]
+  rw [map_add (f := _), hc, hsum]
   by_cases hP' : splitPrime (τ0.comp D.sp.cm.sig) ∈ Z
   · exfalso
     have hz := congrArg (compFin D.host.F D.host.E v0) hcc

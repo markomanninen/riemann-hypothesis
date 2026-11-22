@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsOrthFull
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsOrthFull
+
+@[expose] public section
 
 open GroundTheory.Heights₂.Heights NumberField TensorProduct ComplexAt GlobalTheory.CompanionTheory.Ar Matrix
 open scoped BigOperators ComplexOrder

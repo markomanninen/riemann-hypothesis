@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.SheafHOver
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechSeparated
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.SheafHOver
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechSeparated
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -62,17 +67,8 @@ instance isDenseSubsite_overEquivalence_inverse :
       ((Opens.grothendieckTopology X.toTopCat).over U) :=
   U.instIsDenseSubsiteSubtypeMemOverGrothendieckTopologyOverInverseOverEquivalence
 
-lemma overEquivalence_inverse_left (W : U.toScheme.Opens) :
-    (U.overEquivalence.inverse.obj W).left = U.ι ''ᵁ W := by
-  ext x
-  constructor
-  · rintro ⟨y, hy, rfl⟩
-    exact ⟨y, hy, rfl⟩
-  · rintro ⟨y, hy, rfl⟩
-    exact ⟨y, hy, rfl⟩
 
 set_option maxHeartbeats 4000000 in
-
 def restrictAbIso (F : X.Modules) :
     (sheafCongrAb ((Opens.grothendieckTopology X.toTopCat).over U)
       (Opens.grothendieckTopology U.toScheme.toTopCat) U.overEquivalence).functor.obj

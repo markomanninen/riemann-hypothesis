@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.HgtExA
-import Development.WeilBound.ThetaLifts.LatticeBasics.CompactBound
-import Development.WeilBound.ThetaLifts.LatticeBasics.ContinuousFlat
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HgtExA
+public import Development.WeilBound.ThetaLifts.LatticeBasics.CompactBound
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ContinuousFlat
+
+@[expose] public section
 
 noncomputable section
 

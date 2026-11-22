@@ -1,5 +1,9 @@
-import CompanionTheory.AutomorphicTheory.ZuckermanCommutation.ZuckermanFunctors.MultOne
-import CompanionTheory.AutomorphicTheory.SchurLimitBounds.SchurOrthogonality.SchurH
+module
+
+public import CompanionTheory.AutomorphicTheory.ZuckermanCommutation.ZuckermanFunctors.MultOne
+public import CompanionTheory.AutomorphicTheory.SchurLimitBounds.SchurOrthogonality.SchurH
+
+@[expose] public section
 
 open Matrix Finset
 open scoped Kronecker
@@ -231,14 +235,17 @@ theorem decV (S : Steps) (Lb : Lib t) (hk : 1 ≤ k) (b : Bool) {μ : Fin (2 * r
     intro f g hf hg'
     obtain ⟨α, β, hab, h0⟩ := m1 _ _ ((he f).1 hf) ((he g).1 hg')
     refine ⟨α, β, hab, e.map_eq_zero_iff.1 ?_⟩
-    rw [map_add, map_smul, map_smul, h0]
+    rw [map_add (f := _), map_smul, map_smul, h0]
 
 theorem decW (S : Steps) (Lb : Lib t) (hk : 1 ≤ k) : ∀ (l : ℕ) {μ : Fin (2 * r + k + 1) → ℝ} {U : URep k r} {h : ℝ},
     U.R.IsDS ε μ → GapAtLeast ε μ h → t _ ε + (((2 * r + k + 1) ^ 2 + 2 : ℕ) : ℝ) + 1 + l < h →
     (∀ a c, a < c → (l : ℝ) + 1 ≤ μ a - μ c) →
     ∀ T : Sub (2 * r + k + 1) l → URep k r, (∀ I, (T I).R.IsDS ε (addSet μ I.1)) →
-    ∃ io pr, IsDec (N := M) IsHom (wedge k r l, U) (fun I => one (T I)) io pr
-  | 0, μ, U, h, hU, hg, ht, _, T, hT => by
+    ∃ io pr, IsDec (N := M) IsHom (wedge k r l, U) (fun I => one (T I)) io pr := by
+  intro l
+  induction l with
+  | zero =>
+    intro μ U h hU hg ht _ T hT
     have C := S.homCat k r
     have h1 : (1 : ℝ) ≤ (((2 * r + k + 1) ^ 2 + 2 : ℕ) : ℝ) := by exact_mod_cast (by omega)
     have hI : ∀ I : Sub (2 * r + k + 1) 0, I = ⟨∅, rfl⟩ := fun I => Subtype.ext (Finset.card_eq_zero.1 I.2)
@@ -255,7 +262,8 @@ theorem decW (S : Steps) (Lb : Lib t) (hk : 1 ≤ k) : ∀ (l : ℕ) {μ : Fin (
       simp [mAct_apply]
     · have e : addSet μ I.1 = μ := by rw [hI I]; funext a; simp [addSet]
       simpa only [e] using hT I
-  | m + 1, μ, U, h, hU, hg, ht, hD, T, hT => by
+  | succ m ih =>
+    intro μ U h hU hg ht hD T hT
     classical
     have C := S.homCat k r
     have h1 : (1 : ℝ) ≤ (((2 * r + k + 1) ^ 2 + 2 : ℕ) : ℝ) := by exact_mod_cast (by omega)
@@ -263,8 +271,12 @@ theorem decW (S : Steps) (Lb : Lib t) (hk : 1 ≤ k) : ∀ (l : ℕ) {μ : Fin (
     rw [Nat.cast_succ m] at ht hD
     let P := {ν : Fin (2 * r + k + 1) → ℝ // IsHCParam ν ∧ GapAtLeast ε ν (h - ((m + 1 : ℕ) : ℝ))}
     have hex : ∀ ν : P, ∃ V : URep k r, V.R.IsDS ε ν.1 := fun ν => by
-      obtain ⟨R', hR'⟩ := Lb.exist k r ε μ ν.1 U.R _ hU ν.2.1 ν.2.2 (by push_cast; linarith)
-      exact ⟨mkU R' hR', hR'⟩
+      have ht' : t _ ε < h - ((m + 1 : ℕ) : ℝ) := by
+        push_cast
+        linarith
+      have hRep : ∃ R' : Rep k r, R'.IsDS ε ν.1 :=
+        Lb.exist k r ε μ ν.1 U.R (h - ((m + 1 : ℕ) : ℝ)) hU ν.2.1 ν.2.2 ht'
+      exact hRep.elim fun R' hR' => ⟨mkU R' hR', hR'⟩
     choose V hV using hex
     have nr : ∀ {ν : Fin (2 * r + k + 1) → ℝ}, (∀ a, ∃ x : ℕ, x ≤ m + 1 ∧ ν a = μ a + x) →
         IsHCParam ν ∧ GapAtLeast ε ν (h - ((m + 1 : ℕ) : ℝ)) := fun hx =>
@@ -284,32 +296,48 @@ theorem decW (S : Steps) (Lb : Lib t) (hk : 1 ≤ k) : ∀ (l : ℕ) {μ : Fin (
           add_le_add (ind_le p.1 a) (by split_ifs <;> simp), by simp [addSet, Pi.single_apply, add_assoc]⟩⟩
     let e : Sub (2 * r + k + 1) (m + 1) → P := fun I => ⟨addSet μ I.1, nr fun a => ⟨_, ind_le I a, by simp [addSet]⟩⟩
     have cs := fun ν : P => (S.casDS S.infChar k r ε _ (V ν) hk (hV ν) (triv k r)).2
-    obtain ⟨hd1, hd2⟩ := S.decTens k r (wedge k r m) (vr k r false) U (S.okWedge k r m) (S.okVr k r false)
-    obtain ⟨io₁, pr₁, D₁, e₁⟩ := hd1 _ _ (fun J => V (pJ J)) (fun p => V (par p)) (fun J => (casG (pJ J).1 : ℂ))
-      (decW S Lb hk m hU hg (by linarith) (fun a c hac => by linarith [hD a c hac]) _ fun J => hV (pJ J))
-      (fun J => decV S Lb hk false (hV (pJ J)) (near hU.1 hg hD m (by linarith) (hJ J)).2.1 (by linarith) _
-        fun s => hV (par (J, s)))
-      fun J => cs (pJ J)
-    obtain ⟨io₂, pr₂, D₂, e₂⟩ := hd2 _ _ (fun s => V (ps s)) (fun p => V (par p)) (fun s => (casG (ps s).1 : ℂ))
-      (decV S Lb hk false hU hg (by linarith) _ fun s => hV (ps s))
-      (fun s => decW S Lb hk m (hV (ps s)) (gap_shift hg false s) (by linarith)
-        (fun a c hac => by
+    have hDecTens := S.decTens
+    unfold DecTens at hDecTens
+    have hTensor := hDecTens k r (wedge k r m) (vr k r false) U (S.okWedge k r m) (S.okVr k r false)
+    rcases hTensor with ⟨hd1, hd2⟩
+    let X : Obj k r := ((wedge k r m).tens (vr k r false), U)
+    have hLeft : ∃ io pr, IsDec (N := M) IsHom X (fun p => one (V (par p))) io pr ∧
+        ∀ p, cas1 (wedge k r m) (vr k r false) U ∘ₗ io p = (casG (pJ p.1).1 : ℂ) • io p := by
+      refine hd1 (Sub (2 * r + k + 1) m) (Fin (2 * r + k + 1))
+        (fun J => V (pJ J)) (fun p => V (par p)) (fun J => (casG (pJ J).1 : ℂ)) ?_ ?_ (fun J => cs (pJ J))
+      · exact ih (μ := μ) (U := U) (h := h) hU hg (by linarith)
+          (fun a c hac => by linarith [hD a c hac]) _ (fun J => hV (pJ J))
+      · intro J
+        have hGap := (near hU.1 hg hD m (by linarith) (hJ J)).2.1
+        exact decV S Lb hk false (μ := (pJ J).1) (U := V (pJ J)) (h := h - m)
+          (hV (pJ J)) hGap (by linarith) _ (fun s => hV (par (J, s)))
+    obtain ⟨io₁, pr₁, D₁, e₁⟩ := hLeft
+    have hRight : ∃ io pr, IsDec (N := M) IsHom X (fun p => one (V (par p))) io pr ∧
+        ∀ p, cas2 (wedge k r m) (vr k r false) U ∘ₗ io p = (casG (ps p.2).1 : ℂ) • io p := by
+      refine hd2 (Sub (2 * r + k + 1) m) (Fin (2 * r + k + 1))
+        (fun s => V (ps s)) (fun p => V (par p)) (fun s => (casG (ps s).1 : ℂ)) ?_ ?_ (fun s => cs (ps s))
+      · exact decV S Lb hk false (μ := μ) (U := U) (h := h) hU hg (by linarith) _ (fun s => hV (ps s))
+      · intro s
+        refine ih (μ := (ps s).1) (U := V (ps s)) (h := h - 1)
+          (hV (ps s)) (gap_shift hg false s) (by linarith) ?_ _ ?_
+        · intro a c hac
           have := (near hU.1 hg hD 1 (by push_cast; linarith) (hs s)).2.2 a c hac
           push_cast at this
           show _ ≤ shift false μ s a - shift false μ s c
-          linarith) _
-        fun J => by
+          linarith
+        · intro J
           have e' : addSet (ps s).1 J.1 = (par (J, s)).1 := by
             funext a; simp [ps, par, addSet, shift]; ring
-          rw [e']; exact hV (par (J, s)))
-      fun s => cs (ps s)
+          rw [e']
+          exact hV (par (J, s))
+    obtain ⟨io₂, pr₂, D₂, e₂⟩ := hRight
     obtain ⟨hint, hjj⟩ := S.wedgeInt (2 * r + k + 1) m
     have hm1 : ((m : ℂ) + 1) ≠ 0 := by exact_mod_cast Nat.succ_ne_zero m
     obtain ⟨c1, c2⟩ := S.count (2 * r + k + 1) m μ fun a c hac => by linarith [hD a c hac]
     have okX := S.okTens k r _ _ (S.okWedge k r m) (S.okVr k r false)
     refine dec_iso C (S.decOfTrace _ _ _ C P (fun ν => one (V ν))
       (S.schur S.infChar k r ε P (fun ν => ν.1) V Subtype.val_injective hV) _ par
-      ((wedge k r m).tens (vr k r false), U) (wedge k r (m + 1), U) io₁ io₂ pr₁ pr₂ D₁ D₂
+      X (wedge k r (m + 1), U) io₁ io₂ pr₁ pr₂ D₁ D₂
       (cas _) (cas1 _ _ U) (cas2 _ _ U) _ _ (fun ν => (casG ν.1 : ℂ)) (2 - (casG μ : ℂ)) (2 * ((m : ℂ) + 1)) e₁ e₂
       (fun ν i hi => LinearMap.ext fun x => ?_)
       (mAct (jW _ m)) (mAct (((m : ℂ) + 1)⁻¹ • (jW _ m)ᵀ))

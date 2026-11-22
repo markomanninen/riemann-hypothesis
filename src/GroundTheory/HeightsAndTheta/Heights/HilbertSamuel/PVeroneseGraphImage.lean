@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsVeroneseGraph
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSecondVeronese
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsVeroneseGraph
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSecondVeronese
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

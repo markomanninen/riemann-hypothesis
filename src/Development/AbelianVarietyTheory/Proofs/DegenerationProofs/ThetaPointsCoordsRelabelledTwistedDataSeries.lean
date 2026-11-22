@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.WithISelf
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsCoordPtFibre
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HomTransport
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsThetaPtDown
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.HasThetaConstantsIffOfThetaLevelPullback
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionMapsCompatibleInLevelStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.WithISelf
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsCoordPtFibre
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HomTransport
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsThetaPtDown
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.HasThetaConstantsIffOfThetaLevelPullback
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionMapsCompatibleInLevelStatement
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 private theorem UpperTheory.pow_preserves_submodule {A M : Type} [CommRing A] [AddCommGroup M] [Module A M]
     (U : Submodule A M) (T : Module.End A M) (hT : ∀ f ∈ U, T f ∈ U) (n : ℕ) :
@@ -108,7 +112,7 @@ theorem UpperTheory.exists_ordinaryProjector_of_eventually_periodic :
     refine ⟨max J1 J2, fun j hj => ?_⟩
     have hs := (V k).add_mem (h1 j (le_trans (le_max_left _ _) hj))
       (h2 j (le_trans (le_max_right _ _) hj))
-    rw [map_add]
+    rw [map_add (f := _)]
     convert hs using 1
     abel
   have hPsmul : ∀ (c : A) f x, P f x → P (c • f) (c • x) := by

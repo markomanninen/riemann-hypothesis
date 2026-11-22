@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RevPosRevPos
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MapAFrPMulFrPinv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RevPosRevPos
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MapAFrPMulFrPinv
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.L2.Pj
 open MeasureTheory IsDedekindDomain NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Ker GlobalTheory.AdSpan
@@ -21,7 +26,8 @@ theorem gram_reS_eq : (reS S b).gram = (frP S b)ᴴ * S.gram * frP S b := by
     (Module.Basis.sum_toMatrix_smul_self S.frame b k).symm
   show S.hT (b i) (b j) = ∑ k, (∑ l, star (frP S b l i) * S.gram l k) * frP S b k j
   rw [hb i, hb j]
-  simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
     HSpace.gram, Finset.sum_mul, Finset.mul_sum, RingHom.id_apply, starRingEnd_apply]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
   ring
@@ -80,8 +86,8 @@ theorem map_latO (LT : Set (Fin T.rank → D.host.E)) (P : HeightOneSpectrum (�
 
 end GlobalTheory.AdSpan.ReVec.Lat
 
-open GlobalTheory.AdSpan.ReVec.Lat in
 
+open GlobalTheory.AdSpan.ReVec.Lat in
 theorem GlobalTheory.AdSpan.ReVec.latO_reW_iff : ∀ (D : D7) (S T : HSp D) (b : Module.Basis (Fin S.rank) D.host.E S.V)
     (LT : Set (Fin T.rank → D.host.E)) (u : WO (reS S b) T),
     u ∈ latO (reS S b) T (L0c D (reS S b)) LT (fun _ => True) ↔

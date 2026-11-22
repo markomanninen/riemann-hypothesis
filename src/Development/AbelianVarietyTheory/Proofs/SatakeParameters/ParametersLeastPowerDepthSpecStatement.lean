@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LeastPowerDepthSpec
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Alternates
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.FrobeniusOrbits.HostCorollaries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LeastPowerDepthSpec
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Alternates
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.FrobeniusOrbits.HostCorollaries
+
+@[expose] public section
+
 open GlobalTheory.HTW Formalism.BasicNotions Formalism.FrobeniusOrbits
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.leastPowerDepth_spec : ∀ {D : D7} (L : SizeData₂ D) (_ : ParameterChoice' D L) (l : ℕ), 11 ≤ l → LevelStarExponents.lA L ≤ ((l : ℝ) - 1) ^ depth L l ∧ 2 * depth L l + 2 ≤ D.host.Lw ∧ ((l : ℝ) < LevelStarExponents.lA L → 2 ≤ depth L l) := by

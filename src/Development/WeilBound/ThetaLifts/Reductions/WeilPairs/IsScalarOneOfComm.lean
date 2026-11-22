@@ -1,16 +1,20 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutTrace
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutReal
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutEta
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutProd
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutGen
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutSubst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaDistributionInvariantRationalTarget
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAdelicPointEqRealMulFiniteBothOrdersStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaFunctionHeisenbergInvariantStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianFormRealCoordinateMatrixHermitianDetNeZStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealCoordinateActionUnitaryPreservesHermitianForStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRealChartAdeleTensorAdmissibleCMBaseStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardTraceAddCharIsStandardCharOfAdmissibleCMStatement
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutTrace
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutReal
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutEta
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutProd
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutGen
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutSubst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaDistributionInvariantRationalTarget
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAdelicPointEqRealMulFiniteBothOrdersStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaFunctionHeisenbergInvariantStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianFormRealCoordinateMatrixHermitianDetNeZStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealCoordinateActionUnitaryPreservesHermitianForStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRealChartAdeleTensorAdmissibleCMBaseStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardTraceAddCharIsStandardCharOfAdmissibleCMStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,8 +34,8 @@ variable {σ : E →ₐ[F] E} {B : Base F E} {nS nT : ℕ} {JS : Matrix (Fin nS)
 
 variable {η : (AEF F E)ˣ →* Circle} {ε : AEF F E} {of oi : GAF σ JS × GAF σ JT →* Module.End ℂ (WOF F E nS nT → ℂ)}
 
-variable (σ JS JT) in
 
+variable (σ JS JT) in
 def substF (p : GAF σ JS × GAF σ JT) : Module.End ℂ (WOF F E nS nT → ℂ) :=
   LinearMap.funLeft ℂ ℂ (actOF σ JS JT p.1⁻¹ p.2⁻¹)
 
@@ -49,8 +53,8 @@ theorem substF_one (f : WOF F E nS nT → ℂ) : substF σ JS JT 1 f = f := by
   show f (actOF σ JS JT 1⁻¹ 1⁻¹ x) = f x
   rw [inv_one, inv_one, GlobalTheory.FinLatF.actOF_one]
 
-variable (ξ₀ B of oi) in
 
+variable (ξ₀ B of oi) in
 def IsScalarF (p : GAF σ JS × GAF σ JT) (c : ℂ) : Prop :=
   ∀ f, IsThetaFunOF σ JS JT ξ₀ B.ψ f → of p (oi p f) = c • substF σ JS JT p f
 
@@ -129,7 +133,7 @@ theorem eta_cut (hB : B.IsGood σ) (h2 : ResEtaF η 1) (hε : IsHalfF σ ε) (u 
     rw [Units.val_mul, cutRat_val, cutRat_val, cutRat_val]
     linear_combination (-(incAF F E u - 1) ^ 2) * hε.orth)
   have e2 := GlobalTheory.SplitDetCharF.char_norm hB.cm h2 (cutRat _ h3 u) (cutRat ε hε.idem (Units.map (σ : E →* E) u)) (by
-    rw [cutRat_val, cutRat_val, map_add, map_sub, map_mul, map_one,
+    rw [cutRat_val, cutRat_val, map_add (f := _), map_sub, map_mul, map_one,
       GlobalTheory.HeisLineF.cAF_cAF σ (GlobalTheory.SplitDetCharF.sig_invol hB.cm), cAF_incAF']
     rfl)
   rw [e1, map_mul, mul_assoc, e2, mul_one]
@@ -251,8 +255,8 @@ theorem scalar_const (C : Ctx σ B JS JT ξ₀ θ ι) (hG : GoodLat Λ) (hR : Ra
   exact GlobalTheory.RatAut.final_algebra p₁ p₂ p₃ p₄ hn hc0 hδ0 (Circle.coe_ne_zero _) h1 h2 h3 h4 g2
     (phase_rat C P.res P.half hΔ hd hN' d1 d2 (zF_rat C P.half.idem ha hb hΔ))
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem isScalar_one_of_comm (C : Ctx σ B JS JT ξ₀ θ ι) (hG : GoodLat Λ) (hR : RatSD σ JS JT ξ₀ Λ)
     (hO : IsLatRepF σ JS JT ξ₀ B.ψ hc Λ w lam Om) (P : Parts C hc lam Om η ε of oi) (hs : CartF σ JS JT ξ₀ B θ s)
     {g : GAF σ JS} {h : GAF σ JT} (hg : g ∈ GQF σ JS) (hh : h ∈ GQF σ JT)

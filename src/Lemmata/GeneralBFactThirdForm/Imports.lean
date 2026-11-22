@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Bl.general_b_fact_third_form
 
@@ -7,7 +11,7 @@ theorem goal1 :
   [inst_4 : Module.{0, 0} E V] [FiniteDimensional.{0, 0} E V]
   [inst_6 : Module.{0, 0} (NumberField.RingOfIntegers.{0} E) V]
   [inst_7 : IsScalarTower.{0, 0, 0} (NumberField.RingOfIntegers.{0} E) E V]
-  (Λ : Submodule.{0, 0} (NumberField.RingOfIntegers.{0} E) V) [hΛ : Submodule.IsLattice.{0, 0, 0} E Λ] (v : V),
+  (Λ : Submodule.{0, 0} (NumberField.RingOfIntegers.{0} E) V) [hΛ : Submodule.IsFullLattice.{0, 0, 0} E Λ] (v : V),
   Exists.{1} fun (s : NumberField.RingOfIntegers.{0} E) ↦
     And (Ne.{1} s 0) (Membership.mem.{0, 0} Λ (HSMul.hSMul.{0, 0, 0} s v)) := by
   intro E V _ _ _ _ _ _ _ _ Λ hΛ v

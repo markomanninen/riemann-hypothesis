@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
-import Formalism.LocalToGlobal.UnitaryNorms.UnrAe
+module
+
+public import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+public import Formalism.LocalToGlobal.UnitaryNorms.UnrAe
+
+@[expose] public section
 
 noncomputable section
 
@@ -189,24 +193,12 @@ section UnitsTriv
 
 variable {L : Type} [Field L] [NumberField L]
 
-def compAt (w : HeightOneSpectrum (𝓞 L)) : Ideles L →* (w.adicCompletion L)ˣ :=
-  Units.map { toFun := fun a => a.2 w, map_one' := rfl, map_mul' := fun _ _ => rfl }
-
-variable (L) in
-
-def UnitsTrivP : Prop :=
-  ∀ (χ : Ideles L →* ℂˣ), Continuous χ → ∀ (T : Set (HeightOneSpectrum (𝓞 L))), T.Finite →
-    (∀ v ∉ T, ∀ x : (v.adicCompletion L)ˣ, IsUnitAt v x → χ (localIdele L v x) = 1) →
-    ∀ u : Ideles L, (u : AdeleRing (𝓞 L) L).1 = 1 → (∀ v, IsUnitAt v (compAt v u)) → (∀ v ∈ T, compAt v u = 1) → χ u = 1
 
 end UnitsTriv
 
 section UnitsTrivPf
 
 variable {L : Type} [Field L] [NumberField L]
-
-def infU : Ideles L →* (InfiniteAdeleRing L)ˣ :=
-  Units.map { toFun := fun a => a.1, map_one' := rfl, map_mul' := fun _ _ => rfl }
 
 end UnitsTrivPf
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.RayPrincipalIdeals
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.NonemptyAlgHomOfIsRayOfDvd
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemRayPrincipalIdealsInfOfUnitsPmOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RayClassNumberBounds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.RayPrincipalIdeals
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.NonemptyAlgHomOfIsRayOfDvd
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.FiniteDimensionalOfSz
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RayClassNumberBounds
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -173,10 +177,10 @@ private theorem exists_rayPair_inf_of_rayPair (hu : ∀ u : (𝓞 K)ˣ, u = 1 �
     rw [mul_assoc, mul_comm (Ideal.span {δ}), ← mul_assoc, e₁, Ideal.span_singleton_mul_span_singleton,
       Ideal.span_singleton_mul_span_singleton, hmul]
 
+
 set_option autoImplicit false in
 open NumberField IsDedekindDomain in
 variable {K : Type} [Field K] [NumberField K] in
-
 theorem _root_.GlobalTheory.RayCompositum.fieldRange_sup_eq_top : ∀ {K H H₁ H₂ : Type} [Field K] [NumberField K] [Field H] [NumberField H]
     [Algebra K H] [IsAbelianGalois K H] [Field H₁] [NumberField H₁] [Algebra K H₁] [IsAbelianGalois K H₁]
     [Field H₂] [NumberField H₂] [Algebra K H₂] [IsAbelianGalois K H₂], (∀ u : (𝓞 K)ˣ, u = 1 ∨ u = -1) →

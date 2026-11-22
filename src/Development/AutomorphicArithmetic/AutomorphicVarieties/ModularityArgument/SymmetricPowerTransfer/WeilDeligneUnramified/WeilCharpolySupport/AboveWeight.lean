@@ -1,14 +1,18 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeilDeligneUnramified.UnitaryTwoForm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeilDeligneUnramified.WeilCharpolySupport.AboveW
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.WeightKernels.TwistRatios.WtOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.UnramifiedTwists.EqOneOfUnr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteAdeleEmbeddingExtension
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.ExistsRec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.SatLoc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.LocCompC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.BuildingComponentUniqueness
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.NewformTwistNorms.PowEqOneOfKills
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceUnitaryLocalPointsEquivGL
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeilDeligneUnramified.UnitaryTwoForm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeilDeligneUnramified.WeilCharpolySupport.AboveW
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.WeightKernels.TwistRatios.WtOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.UnramifiedTwists.EqOneOfUnr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteAdeleEmbeddingExtension
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.ExistsRec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.SatLoc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.LocCompC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.BuildingComponentUniqueness
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.NewformTwistNorms.PowEqOneOfKills
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceUnitaryLocalPointsEquivGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,7 +98,7 @@ private theorem pot_of_above {L Ω : Type} [Field L] [NumberField L] [Field Ω] 
   intro A hA
   have hAl : A.valuation (l : Ω) < 1 := by
     have h1 := (hA ((l : ℕ) : 𝓞 L)).2 hw
-    simpa using h1
+    simpa only [map_natCast] using h1
   obtain ⟨b, k, κ, hk, hflag, hκ⟩ := H A hAl
   refine ⟨κ, hflag, fun i j c hc h => ?_⟩
   obtain ⟨s, hs, hinf⟩ := cyc_inf_over L Ω l A hAl
@@ -111,7 +115,7 @@ private theorem pot_of_above {L Ω : Type} [Field L] [NumberField L] [Field Ω] 
 
 private theorem unr_of_comp {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ} {w : Plc L}
     {σ : Submodule ℂ (UA L n → ℂ)} {τ : SmIrr (GL (Fin n) (Kw w))} (hs : IsSplitAt w) (hτ : Comp σ w τ)
-    (hf : Af.HasFixed τ.ρ (GlobalTheory.LFun.KGL w n)) : IsUnramU σ w := by
+    (hf : Af.HasFixed τ.ρ (GlobalTheory.LFun.KGL w (n := n))) : IsUnramU σ w := by
   obtain ⟨e, he⟩ := GlobalTheory.locU_equiv_GL L n w hs
   obtain ⟨hi, f, f0, fm, fe⟩ := hτ
   obtain ⟨z, hz, hfix⟩ := hf
@@ -142,7 +146,7 @@ theorem UpperTheory.V.Z.Sym.W.adjoint_lift_transfer_to_unitary_group_two : Upper
     · rw [map_pow, compNorm_quadChar, one_pow]
       exact (GlobalTheory.ContraPair.dualIsConjBy_one π).2 hd
   obtain ⟨HT, hwt, hLG⟩ := P.compat L Ω l ι 2 one_le_two r π hc hreg hpol hatt
-  have hg : ∀ (w : Plc L) (A : ValuationSubring Ω) (hA : IsPlaceOver A w) (rc : IrrGL (w.adicCompletion L) → WD hA), UpperTheory.Zero.LLC.IsRecT hA rc →
+  have hg : ∀ (w : Plc L) (A : ValuationSubring Ω) (hA : IsPlaceOver A w) (rc : IrrGL (k := w.adicCompletion L) → WD hA), UpperTheory.Zero.LLC.IsRecT hA rc →
       ∀ τ, π.IsLocComp w τ → GlobalTheory.RoadU.PlainTor (IrrGL.of τ.ρ τ.smooth τ.irred) ∧ UpperTheory.GalStar.Tor (rc (algNorm τ)) ∧ (rc (algNorm τ)).mono0 :=
     fun w A hA rc hrc τ hτ => guard_of P.plain hreg hatt hr.wit (by
       by_cases e : ((l : ℕ) : 𝓞 L) ∈ w.asIdeal
@@ -158,7 +162,7 @@ theorem UpperTheory.V.Z.Sym.W.adjoint_lift_transfer_to_unitary_group_two : Upper
       rw [GlobalTheory.EvExtend.mem_placeOf]
       simpa using GlobalTheory.EvExtend.norm_natCast_lt_one (l := l)
     obtain ⟨A, hA⟩ : ∃ A : ValuationSubring Ω, IsPlaceOver A (GlobalTheory.EvExtend.placeOf φ) := exists_isPlaceOver Ω _
-    have hAl : A.valuation (l : Ω) < 1 := by simpa using (hA _).2 hw
+    have hAl : A.valuation (l : Ω) < 1 := by simpa only [map_natCast] using (hA _).2 hw
     obtain ⟨τ, hτ⟩ := hex (GlobalTheory.EvExtend.placeOf φ)
     obtain ⟨-, b, hb⟩ := UpperTheory.V.Z.Sym.W.aboveW PA L Ω l ι hl r hc m hr.gap _ hw HT ((hLG _ _ hτ).2 (hpt _ _ hτ)) A hA
       (hr.above A hAl) τ (hLG _ _ hτ).1 (hpt _ _ hτ)
@@ -201,12 +205,12 @@ theorem UpperTheory.V.Z.Sym.W.adjoint_lift_transfer_to_unitary_group_two : Upper
       rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
       exact_mod_cast hM
     exact (Ideal.finite_factors h0).subset fun v hv => Ideal.dvd_span_singleton.mpr hv
-  have hfix : ∀ w : Plc L, (M : 𝓞 L) ∉ w.asIdeal → ∀ τ, π.IsLocComp w τ → Af.HasFixed τ.ρ (GlobalTheory.LFun.KGL w 2) := fun w hw τ hτ => by
+  have hfix : ∀ w : Plc L, (M : 𝓞 L) ∉ w.asIdeal → ∀ τ, π.IsLocComp w τ → Af.HasFixed τ.ρ (GlobalTheory.LFun.KGL w (n := 2)) := fun w hw τ hτ => by
     obtain ⟨A, hA⟩ : ∃ A : ValuationSubring Ω, IsPlaceOver A w := exists_isPlaceOver Ω w
     obtain ⟨rc, hrc⟩ := exRec' PA.litN hA
     have hl' := mt (hlm w) hw
     have hq := hg w A hA rc hrc τ hτ
-    exact UpperTheory.V.Z.Desc.W.sphT PA.litN L Ω l ι 2 r hc w hl' A hA (hr.unr A fun h => hw ((hA _).1 (by simpa using h))) rc hrc τ hq.1
+    exact UpperTheory.V.Z.Desc.W.sphT PA.litN L Ω l ι 2 r hc w hl' A hA (hr.unr A fun h => hw ((hA _).1 (by simpa only [map_natCast] using h))) rc hrc τ hq.1
       ((((hLG w τ hτ).1 A hA rc hrc).1 hl').isWDOf hq.2)
   obtain ⟨σ, hσ, hunr, hsat⟩ := P.desc L hU.unr l Fact.out _ hfin (fun w hw => hU.split w ((hk M w).2 hw))
     (fun w hw => (hk M w).1 (hlm w hw)) 2 le_rfl (by norm_num) π hreg hrw hd

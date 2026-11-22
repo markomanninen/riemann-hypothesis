@@ -1,11 +1,15 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormUniq
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeLiftRatioMemIdeal
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsConeLift
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PderivComp1PtZeroEqZero
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormUniq
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeLiftRatioMemIdeal
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsConeLift
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PderivComp1PtZeroEqZero
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -242,7 +246,7 @@ theorem mk3 {B : Type} [CommRing B] (J : Ideal B) (x y z : B) (e : B ⧸ J)
 
 theorem mk2 {B : Type} [CommRing B] (J : Ideal B) (x y g : B) (e : B ⧸ J) (hg : Ideal.Quotient.mk J g = -e)
     (h : -e + Ideal.Quotient.mk J x * Ideal.Quotient.mk J y = 0) : Ideal.Quotient.mk J (g + x * y) = 0 := by
-  rw [map_add, map_mul, hg, h]
+  rw [map_add (f := _), map_mul, hg, h]
 
 theorem tau_alg {A : Type} [CommRing A] {a bi b e ei : A} (h1 : a * e = b) (h2 : b * bi = 1) (h3 : e * ei = 1) :
     a * bi * e = 1 ∧ -ei + a * bi = 0 := by
@@ -279,7 +283,7 @@ theorem main : CrystallineSemistableComparison.Onto.FirstChernCoboundary := by
   have hβ : ∀ α : ι, CH.d ((inU q (U α)).ι ⋙ G q 1) 1 ((resU (G q 1) (jU q U α)).pullC 1 bb + dA α) =
         (CH.Mor.restrict (G q 1) (inU q (U α)).ι).pullC 2 r := by
     intro α
-    rw [map_add, CH.Mor.d_pullC, hbb, map_sub, dW, sub_add_cancel]
+    rw [map_add (f := _), CH.Mor.d_pullC, hbb, map_sub, dW, sub_add_cancel]
     rfl
   refine ⟨-1, fun α => (resU (G q 1) (jU q U α)).pullC 1 bb + dA α, hβ, ?_⟩
   intro α α' V h h' k k' u hu
@@ -295,11 +299,11 @@ theorem main : CrystallineSemistableComparison.Onto.FirstChernCoboundary := by
   let d₂ : CH.Cn ((inU q V).ι ⋙ G q 1) 1 := dl (a1 (inU q V).ι) (a2 (inU q V).ι) (fun φ => W₂ φ) hW₂
   have e₁ : (resU (G q 1) k).pullC 1 ((resU (G q 1) (jU q U α)).pullC 1 bb + dA α) =
       (resU (G q 1) (le_trans k (jU q U α))).pullC 1 bb + d₁ := by
-    rw [map_add, hdA]
+    rw [map_add (f := _), hdA]
     rfl
   have e₂ : (resU (G q 1) k').pullC 1 ((resU (G q 1) (jU q U α')).pullC 1 bb + dA α') =
       (resU (G q 1) (le_trans k (jU q U α))).pullC 1 bb + d₂ := by
-    rw [map_add, hdA]
+    rw [map_add (f := _), hdA]
     rfl
   have hz : CH.d ((inU q V).ι ⋙ G q 1) 1 ((resU (G q 1) k).pullC 1 ((resU (G q 1) (jU q U α)).pullC 1 bb + dA α) -
       (resU (G q 1) k').pullC 1 ((resU (G q 1) (jU q U α')).pullC 1 bb + dA α')) = 0 := by

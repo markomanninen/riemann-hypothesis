@@ -1,20 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemBand
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsNormRconvLeSiegel
-import GroundTheory.AutomorphicForms.ReductionSiegel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemBand
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsNormRconvLeSiegel
+public import GroundTheory.AutomorphicForms.ReductionSiegel
+
+@[expose] public section
+
 open NumberField MeasureTheory GlobalTheory.CuspRep GlobalTheory.HCF Topology
 open scoped ContDiff
 
 namespace GlobalTheory.HeightBound
 
-theorem height_le_of_isCompact : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (Q : Set (Lie E a)),
+theorem height_le_of_isCompact : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (Q : Set (Lie E a)),
     IsCompact Q → Q ⊆ invSet E a →
     ∃ H : ℝ, ∀ y : GL (Fin a) (Cinf E), toL y.val ∈ Q → GlobalTheory.CuspRep.height y ≤ H := by
   intro E _ _ _ a Q hQ hsub
   let f : Lie E a → Lie E a := fun w => toL ((Matrix.of w)⁻¹)
   have hdetc : Continuous (fun x : Lie E a => (Matrix.of x).det) := by
     simp only [Matrix.det_apply', Matrix.of_apply]
-    refine continuous_finset_sum _ fun σ _ => continuous_const.mul (continuous_finset_prod _ fun i _ => ?_)
+    refine continuous_finsetSum _ fun σ _ => continuous_const.mul (continuous_finsetProd _ fun i _ => ?_)
     exact (continuous_apply i).comp (continuous_apply (σ i))
   have hadj : Continuous (fun x : Lie E a => (Matrix.of x).adjugate) :=
     Continuous.matrix_adjugate (continuous_id : Continuous fun x : Lie E a => x)

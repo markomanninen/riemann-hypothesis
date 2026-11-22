@@ -1,11 +1,41 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PeriodSingle
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MovedReadingSameMapsBaseReadingAgrees
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ColsStdOfBWit
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LevelTrueOfWitness
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemCutQGrp
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevelReadingRationalAtTwistExtendsIntegralUnitarStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TwistedTupleReadingLevelCharacterStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PeriodSingle
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MovedReadingSameMapsBaseReadingAgrees
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsStdFr
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PinColL
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.FrameTopAlt
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.XiEqXiOffMul
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HzUnit
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CosInj
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.UnitRatio
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChartZero
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TailRd
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.Placed
+public import Formalism.LocalToGlobal.IndefiniteReal.RealRec
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ThetaChr
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ColumnCompatibleSelection
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.STiesR
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SameDegreeZeroFormsSelf
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DivisionPairOfAdelicFormsFaceColumnsData
+public import Formalism.LocalToGlobal.CarriedPlMap
+public import Formalism.LocalToGlobal.SelSide
+public import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.TwistedCharacterValue
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TwArgs
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DivRows3GIff
+public import Formalism.LocalToGlobal.Divisibility.ColPins
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.CountsIrreducibilityConstants
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.BrgStdR
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsScaleWithBoundedGamma
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TwistedArgsColumnHeq
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LevTruePackOfPart
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CornerCoordinateAutomatic
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemCutQGrp
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevelReadingRationalAtTwistExtendsIntegralUnitarStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TwistedTupleReadingLevelCharacterStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,8 +116,8 @@ theorem under_inj {B : Base} {X : PreX B.toPre} (I : TC B X) (hOk : I.Ok) (a : I
   · exact absurd (h ▸ Finset.mem_union_right _ (GlobalTheory.Mem.Col2.ChEx.q_sub_SQ I a P'.2))
       ((GlobalTheory.Mem.LevTwist.levOk_twists B X I hOk).1.split P.1 (Finset.mem_union_right _ (GlobalTheory.Mem.Col2.ChEx.q_sub_SQ I a P.2)))
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem mem_levS_of_reads {B : Base} {X : PreX B.toPre} (I : TC B X) (hOk : I.Ok) (hPins : TC.Pins B X) (l : I.Laws)
     (Z : TC.Later B (I.cols l)) (a : I.ι) {bad : Set (HeightOneSpectrum (𝓞 (I.rec7 l Z).host.F))}
     (S : StepLevel (I.rec7 l Z).host.F (I.rec7 l Z).host.E (sigD (I.rec7 l Z)) (gramP (I.rec7 l Z)) 1 (I.rec7 l Z).R.f bad)
@@ -135,8 +165,8 @@ section Args
 
 open GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Tr
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem lev_twArgs {K : Ctx} {B : GlobalTheory.Mem.Base} {f : Fr B.toPre} {T : TwDat B} {w : ColW B f T} {Z : w.Lt} {Wt : Set B.places.Pl}
     {L : SizeData₂ (w.st Z).toD7} {hT : GatTies (w.st Z).toD7} {Gi : Formalism.MainNotions.G.Inst (w.st Z).toD7 L} {Gl : Formalism.MainNotions.G.LatInst (w.st Z).toD7}
     {Kc : Formalism.MainNotions.G.Consts} {Yd : DivX (w.st Z).toD7} {cX : ExtraC} {ex : Extra (w.st Z).toD7 L hT Gi Gl Kc Yd cX}
@@ -162,54 +192,14 @@ theorem lev_twArgs {K : Ctx} {B : GlobalTheory.Mem.Base} {f : Fr B.toPre} {T : T
       have := hg PP.1 PP.2 h'
       rw [e PP.1 PP.2 h'] at this
       exact this
-  kexactB key g
+  run_tac Lean.Elab.Tactic.withMainContext do
+    let e ← Lean.Elab.Term.elabTerm (← `($(Lean.mkIdent `key) $(Lean.mkIdent `g))) none
+    (← Lean.Elab.Tactic.getMainGoal).assign e
+    Lean.Elab.Tactic.replaceMainGoal []
 
 end Args
 
-set_option maxHeartbeats 2000000 in
 
-theorem data_of_bWit {hL : GlobalTheory.Published.LocalLanglandsGL} {p : Bl.Prm hL} {K : Ctx} (q : Bl.WPt p.s K) {c : ℝ}
-    (b : Bundle (q.w.D q.Z) q.O c) (hw : Bl.BWit q b) :
-    (pk (packB b)).βX = 1 ∧ (∀ t, (pk (packB b)).Q t = q.w.I.Q ((packB b).P.I.tup t)) ∧
-      ∀ g, g ∈ (lvP (packB b)).H ↔ ∀ PP (h : PP ∈ (q.B.primes q.w.px).vGs) (h' : PP ∈ (pk (packB b)).Pg),
-        g ⟨PP, h'⟩ ∈ (GlobalTheory.Mem.Col2.TC.Ps q.w.I ⟨PP, h⟩).H := by
-  have hu := GlobalTheory.MiS.Check.used_all (packB b)
-  obtain ⟨x, a, ax, y, -, -, -, -, -, -, -, -, -⟩ := hw
-  have hx : a.x = x := eq_of_heq ax
-  subst hx
-  obtain ⟨-, -, hl, -⟩ := GlobalTheory.Mem.R3.twArgs_lev K q.B q.f q.T q.w q.Z _ _ _ _ _ _ _ _ q.O.ex q.x.what₂ a
-  have key : ∀ k : Bl.RPk b.R b.S, k = Bl.rpkX y.y → (∀ t, Formalism.IndefR.RecTie.Used0 (q.w.D q.Z) (k.P.I.tup t)) →
-      (letI := k.B.alg
-      k.B.Q.Rl.toRealDat.βX = 1 ∧ (∀ t, k.B.Q.Rl.toRealDat.Q t = q.w.I.Q (k.P.I.tup t)) ∧
-      ∀ g, g ∈ (k.B.Q.Rl.toRealDat.levR k.B.Q.F.lv2 true).H ↔
-        ∀ PP (h : PP ∈ (q.B.primes q.w.px).vGs) (h' : PP ∈ k.B.Q.Rl.toRealDat.Pg),
-        g ⟨PP, h'⟩ ∈ (GlobalTheory.Mem.Col2.TC.Ps q.w.I ⟨PP, h⟩).H) := by
-    intro k hk
-    subst hk
-    intro hu
-    letI := a.x.grp
-    letI := a.x.fin
-    letI := a.x.alg
-    refine ⟨a.x.pins.keep.beta.2, fun t => ?_, fun g => ?_⟩
-    · have h1 := eq_of_heq (hl _ (hu t)).1
-      exact (congrArg a.x.R.Q (a.x.Y.tupT_tup t)).symm.trans h1
-    · exact (lev_twArgs a g)
-  exact key (Bl.rpkB b) y.eq hu
-
-set_option maxHeartbeats 2000000 in
-
-theorem levS_iff_cls : ∀ {hL : GlobalTheory.Published.LocalLanglandsGL} {p : Bl.Prm hL} {K : Ctx} (q : Bl.WPt p.s K) {c : ℝ} (b : Bundle (q.w.D q.Z) q.O c), Bl.BWit q b → ∀ (u : (q.w.D q.Z).what₂.Word) (t : (packB b).P.T) (h : (packB b).P.I.tup t ≠ (q.w.D q.Z).what₂.mu0) (g : GA (q.w.D q.Z) (q.w.D q.Z).sp.X'), g ∈ (levS _ (pk (packB b)).βX (datXP (pk (packB b)) (lvP (packB b)) t)) ↔ ∃ κ : ((packB b).R.T.tw.pt.cls u ((packB b).P.I.tup t) h).lev.U, GlobalTheory.Core.Rk.Top.HasMat g κ.1 := by
-  intro hL p K q c b hw u t h g
-  obtain ⟨hOk, ⟨hPins⟩, -, -, l0, tw, he, ht, -, -, s⟩ := GlobalTheory.Fam.colsStd_of_bWit q b hw
-  obtain ⟨hβ, hQ, hH⟩ := data_of_bWit q b hw
-  have hPg : (pk (packB b)).Pg = (q.B.primes q.w.px).vGs := Finset.ext (GlobalTheory.Fam.BundleLev.levTrue_packB q b hw).2.1
-  have key : ∀ (Tw : TwForms (q.w.D q.Z)) (t' : Formalism.L2.Forms.SymmetricTwistedColumnsAtPrimes (packB b).R.T.n.tp (packB b).R.T.cols Tw),
-      Tw = GlobalTheory.Mem.Col2.TC.tw q.w.I q.w.l l0 q.Z → HEq t' tw →
-      (g ∈ (levS _ (pk (packB b)).βX (datXP (pk (packB b)) (lvP (packB b)) t)) ↔
-        ∃ κ : (t'.pt.cls u ((packB b).P.I.tup t) h).lev.U, GlobalTheory.Core.Rk.Top.HasMat g κ.1) := by
-    rintro _ t' rfl rfl
-    exact mem_levS_of_reads q.w.I hOk hPins q.w.l q.Z _ _ (s.what₂ u _ h) _ hβ _ _ hPg (hQ t) _ hH _ _ _ g
-  exact key _ _ he ht
 
 end GlobalTheory.TopVal.TwSet
 

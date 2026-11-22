@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.KerIsTerm
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LevelChainSharpColumnValuationOfPointKernelLiftL
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemClosureIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.KerIsTerm
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LevelChainSharpColumnValuationOfPointKernelLiftL
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemClosureIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,8 @@ theorem jj_iK (w : D.what₂.places.Pl) (v : B.ch.A.vT) (x : B.E) :
   unfold jj
   split_ifs <;> simp [starRingEnd_apply]
 
-variable (M) in
 
+variable (M) in
 def co : M.Val →ₗ[ℂ] Pol ℂ D.what₂.Tau (D.R.N i) :=
   polOf (Gr B.emb D.what₂.embLL (D.R.N i)) (shiftOf (B.lam i)) (fr0 B.emb D.what₂.embLL (D.R.N i)) ∘ₗ M.Val.subtype
 
@@ -86,8 +90,8 @@ theorem co_range : LinearMap.range (co M) = Formalism.MainNotions.product_first_
       exact Submodule.mem_map_of_mem hP
     exact ⟨⟨_, h⟩, co_of_eq rfl⟩
 
-variable (M) in
 
+variable (M) in
 def wl (w : D.what₂.places.Pl) (L : Submodule (𝓞 B.E) (Fin (D.R.N i) → B.E)) : AddSubgroup M.Val where
   carrier := {y | ∃ F ∈ B.valAt w i L, y.1 = B.ev i F}
   zero_mem' := ⟨0, Submodule.zero_mem _, (map_zero (evV B.emb 1 (B.lam i) D.what₂.embLL)).symm⟩
@@ -179,7 +183,7 @@ theorem frame_iff (v : B.ch.A.vT) (s : Set (Fin (D.R.N i) → (M.Lc v).K)) (L : 
     rw [e, hs, h, e2]
 
 theorem gm_basis (hS : B.Sees) {w : D.what₂.places.Pl} (hw : OverT B.ch w) {L : Submodule (𝓞 B.E) (Fin (D.R.N i) → B.E)}
-    (hL : Submodule.IsLattice B.E L) (v : B.ch.A.vT) {g : GL (Fin (D.R.N i)) B.E} (hg : IsBasisAt (B.pr v).1 L g) :
+    (hL : Submodule.IsFullLattice B.E L) (v : B.ch.A.vT) {g : GL (Fin (D.R.N i)) B.E} (hg : IsBasisAt (B.pr v).1 L g) :
     IsBasisAt (D.plEq w) (dualFr (tauLat B.emb (B.ch.fm.tauOf w v) (if B.Z.seenP w then L else dual (hStd B.E _) L)))
       (gm R w v (Matrix.GeneralLinearGroup.map (R.iK v).toRingHom g)) := by
   have h := fun x => (D.val_nonneg_iff w _).symm.trans (hS w hw (B.pr v) x)
@@ -189,12 +193,12 @@ theorem gm_basis (hS : B.Sees) {w : D.what₂.places.Pl} (hw : OverT B.ch w) {L 
   · exact basis_conj B.emb _ _ _ h hL hg
 
 theorem valB_iff (hS : B.Sees) {w : D.what₂.places.Pl} (hw : OverT B.ch w) (V : Finset B.ch.A.vT) (p : M.Pt)
-    {L : Submodule (𝓞 B.E) (Fin (D.R.N i) → B.E)} (hL : Submodule.IsLattice B.E L)
+    {L : Submodule (𝓞 B.E) (Fin (D.R.N i) → B.E)} (hL : Submodule.IsFullLattice B.E L)
     (hs : ∀ v x, (fun a => R.iK v (x a)) ∈ (open Classical in
       if B.ch.fm.seenP w = true ∧ v ∉ V then ((p.2 v).1.L : Set _) else (p.2 v).ker) ↔ x ∈ localization₂ (B.pr v).1.asIdeal L)
     (y : M.Val) :
     y ∈ (coord R hS).valB w V p ↔ y ∈ wl M w (if B.Z.seenP w then L else dual (hStd B.E _) L) := by
-  have hL' : Submodule.IsLattice B.E (if B.Z.seenP w then L else dual (hStd B.E _) L) := by
+  have hL' : Submodule.IsFullLattice B.E (if B.Z.seenP w then L else dual (hStd B.E _) L) := by
     split_ifs
     · exact hL
     · exact dual_lattice hL
@@ -233,25 +237,26 @@ theorem ker_iff (b) (d : (B.I.S i).D b) (v : B.ch.A.vT) (x : Fin (D.R.N i) → B
   have := R.pt_f b d v x
   exact ⟨fun h => this.symm.trans h, fun h => this.trans h⟩
 
-theorem valIs (hS : B.Sees) : R.ValIs (coord R hS) where
-  dual w hw b d y := by
+theorem valIs (hS : B.Sees) : R.ValIs (coord R hS) := by
+  refine { dual := ?_, ker := ?_ }
+  · intro w hw b d y
     have hd := (B.hJ.tied i).ok b d
     obtain ⟨a, ha⟩ := exists_sepElt sp.nonconj
     by_cases hs : B.Z.seenP w = true
-    · have := valB_iff R hS hw ∅ (R.pt b d) hd.Lsh_lattice (fun v x => by
+    · have := valB_iff R hS hw ∅ (R.pt b d) hd.Lsh_full_lattice (fun v x => by
         rw [if_pos ⟨hs, Finset.notMem_empty v⟩, hd.locP_Lsh ha (B.pr v)]
         exact R.pt_L b d v x) y
       rw [if_pos hs] at this
       rw [(B.hJ.tied i).Lsh_eq]
       exact this
-    · have := valB_iff R hS hw ∅ (R.pt b d) hd.L_lattice (fun v x => by
+    · have := valB_iff R hS hw ∅ (R.pt b d) hd.L_full_lattice (fun v x => by
         rw [if_neg fun h => hs h.1]
         exact ker_iff R b d v x) y
       rw [if_neg hs] at this
       rw [(B.hJ.tied i).Lsh_eq]
       exact this
-  ker w hw hs b d y := by
-    have := valB_iff R hS hw Finset.univ (R.pt b d) ((B.hJ.tied i).ok b d).L_lattice (fun v x => by
+  · intro w hw hs b d y
+    have := valB_iff R hS hw Finset.univ (R.pt b d) ((B.hJ.tied i).ok b d).L_full_lattice (fun v x => by
       rw [if_neg fun h => h.2 (Finset.mem_univ v)]
       exact ker_iff R b d v x) y
     rw [if_pos hs] at this
@@ -262,7 +267,12 @@ theorem valB_single (hS : B.Sees) {w : D.what₂.places.Pl} (hw : OverT B.ch w) 
     y ∈ (coord R hS).valB w {v} (R.pt b d) ↔ y ∈ wl M w ((B.J.A i).ker b d (B.pr v)) := by
   have hd := (B.hJ.tied i).ok b d
   obtain ⟨a, ha⟩ := exists_sepElt sp.nonconj
-  have := valB_iff R hS hw {v} (R.pt b d) (hd.LshKer_lattice ha (B.pr v)) (fun v' x => by
+  have hLshKer : Submodule.IsFullLattice B.E (((B.J.A i).deco b d).LshKer (B.pr v)) := by
+    let := hd.L_full_lattice
+    let := hd.LshKer_lattice ha (B.pr v)
+    exact Submodule.IsFullLattice.of_le B.E fun x hx =>
+      (hd.mem_LshKer ha (B.pr v) x).2 ⟨hd.L_le_Lsh hx, ((hd.mem_L x).1 hx).2 (B.pr v)⟩
+  have := valB_iff R hS hw {v} (R.pt b d) hLshKer (fun v' x => by
     by_cases h : v' = v
     · subst h
       rw [if_neg fun h => h.2 (Finset.mem_singleton_self _), hd.locP_LshKer_self ha, localization_kerAt_eq hd]
@@ -391,8 +401,9 @@ theorem gm_unit (w : D.what₂.places.Pl) {γ : GL (Fin (D.R.N i)) B.E} (hγ : �
     rw [h2]
     rfl
 
-theorem coord_ok (hS : B.Sees) : (coord R hS).Ok where
-  act_co w _ g := by
+theorem coord_ok (hS : B.Sees) : (coord R hS).Ok := by
+  refine { act_co := ?_, S_on := ?_, B_on := ?_, off_act := ?_, S_off := ?_ }
+  · intro w _ g
     obtain ⟨γ, ζ, hγ, hl, ha⟩ := R.rat g
     obtain ⟨k, hk, h⟩ := (isOfFinOrder_iff_pow_eq_one).1 ((CommGroup.mem_torsion _).1 ζ.2)
     refine ⟨((ζ.1 : (D.what₂.LL)ˣ) : D.what₂.LL), k, hk, by rw [← Units.val_pow_eq_pow_val, h, Units.val_one], fun y => ?_⟩
@@ -405,18 +416,19 @@ theorem coord_ok (hS : B.Sees) : (coord R hS).Ok where
     rw [h2, h3, mov_eq]
     simp only [hl, gm_unit R w hγ]
     rfl
-  S_on w hw φ hφ :=
-    (forms_iff w (fun c => (B.I.S i).Lsh c.1 ((B.I.S i).rep c)) φ hφ).trans
+  · intro w hw φ hφ
+    exact (forms_iff w (fun c => (B.I.S i).Lsh c.1 ((B.I.S i).rep c)) φ hφ).trans
       (valIn_iff R w _ _ (fun c y => (valIs R hS).dual w hw c.1 _ y) φ)
-  B_on w hw hs v φ hφ :=
-    (forms_iff w (fun c => (B.J.A i).ker c.1 ((B.I.S i).rep c) (B.pr v)) φ hφ).trans
+  · intro w hw hs v φ hφ
+    exact (forms_iff w (fun c => (B.J.A i).ker c.1 ((B.I.S i).rep c) (B.pr v)) φ hφ).trans
       (valIn_iff R w _ _ (fun c y => valB_single R hS hw hs v c.1 _ y) φ)
-  off_act w _ g p y := ⟨fun h => by
+  · intro w _ g p y
+    refine ⟨?_, woff_act R w g p y⟩
+    intro h
     have := woff_act R w g⁻¹ (g • p) _ h
-    rwa [inv_smul_smul, ← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply] at this,
-    woff_act R w g p y⟩
-  S_off w hw φ hφ :=
-    (forms_iff w (fun c => (B.I.S i).Lsh c.1 ((B.I.S i).rep c)) φ hφ).trans
+    rwa [inv_smul_smul, ← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply] at this
+  · intro w hw φ hφ
+    exact (forms_iff w (fun c => (B.I.S i).Lsh c.1 ((B.I.S i).rep c)) φ hφ).trans
       (valIn_iff R w _ (fun p => (woff R w p.1 : Set M.Val)) (fun c y => woff_pt R hw c.1 _ y) φ)
 
 theorem exists_coord : ∀ (D : D7) (u : D.what₂.Word) (B : Built.Dat D u) (i : ℕ) (sp : Split (B.J.A i) B.J.T) (M : PtModel B.ch i) (R : B.Real i sp M), i ≤ D.R.m → B.Sees → ∃ Co : M.Coord, Co.Ok ∧ R.ValIs Co :=

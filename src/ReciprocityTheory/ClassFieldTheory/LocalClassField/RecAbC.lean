@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPairDefs
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPair
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecCyclic
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecFunct
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.GabLim
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.NormOpen
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPairDefs
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPair
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecCyclic
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecFunct
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.GabLim
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.NormOpen
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -30,7 +34,7 @@ theorem exists_normUnits (hL : FiniteDimensional ℚ_[p] L) (h : K ≤ L) :
   refine ⟨MonoidHom.mk' ν fun a b => ?_, hν⟩
   apply Additive.ofMul.injective
   apply ofK_injective (p := p) (K := K)
-  rw [hν, ofMul_mul, ofMul_mul, map_add, map_add, map_add, hν, hν]
+  rw [hν, ofMul_mul, ofMul_mul, map_add (f := _), map_add (f := _), map_add (f := _), hν, hν]
 
 theorem mem_normGrp_iff_exists (a : Kˣ) :
     a ∈ normGrp p K L ↔ ∃ b : Lˣ, ofK p K (Additive.ofMul a) = normHom p K L (ofK p L (Additive.ofMul b)) := by

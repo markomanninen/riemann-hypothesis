@@ -1,5 +1,9 @@
-import Formalism.PieriBlockIdeals.StatementLR
-import Formalism.PieriBlockIdeals.PieriColumnMinors.DividedPowerZeroZeroVector
+module
+
+public import Formalism.PieriBlockIdeals.StatementLR
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.DividedPowerZeroZeroVector
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -34,7 +38,7 @@ theorem real_nondegenerate : RealNondeg := by
 theorem idx_surj (p q : ℕ) : Function.Surjective (idx p q) := finSumFinEquiv.surjective
 
 theorem coeff_der_diag {r n : ℕ} (a : Fin r) (f : MvPolynomial (Fin r × Fin n) ℚ) (m : Fin r × Fin n →₀ ℕ) :
-    coeff m (der r n a a f) = ((Finsupp.weight (rowW r n) m a : ℕ) : ℚ) * coeff m f := by
+    AddMonoidAlgebra.coeff (der r n a a f) m = ((Finsupp.weight (rowW r n) m a : ℕ) : ℚ) * AddMonoidAlgebra.coeff f m := by
   rw [← rowDiv_one, lgraded_coeff_euler, lgraded_weight_rowW]
 
 theorem der_diag_iff {r n : ℕ} (f : MvPolynomial (Fin r × Fin n) ℚ) (μ : Fin r → ℕ) :
@@ -43,12 +47,12 @@ theorem der_diag_iff {r n : ℕ} (f : MvPolynomial (Fin r × Fin n) ℚ) (μ : F
   · intro h a
     ext m
     rw [coeff_der_diag, coeff_smul, smul_eq_mul]
-    by_cases hm : coeff m f = 0
+    by_cases hm : AddMonoidAlgebra.coeff f m = 0
     · rw [hm, mul_zero, mul_zero]
     · rw [h hm]
   · intro h m hm
     funext a
-    have h1 := congrArg (coeff m) (h a)
+    have h1 := congrArg (AddMonoidAlgebra.coeff · m) (h a)
     rw [coeff_der_diag, coeff_smul, smul_eq_mul] at h1
     exact_mod_cast mul_right_cancel₀ hm h1
 

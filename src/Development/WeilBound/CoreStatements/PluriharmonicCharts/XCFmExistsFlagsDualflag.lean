@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.GenUIsGenFam
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StalkSpecializesBijective
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.GenUIsGenFam
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StalkSpecializesBijective
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory NumberField Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -190,7 +194,8 @@ private theorem dual_lemma_4 {Ω V : Type} [Field Ω] [AddCommGroup V] [Module �
   rw [← h1]
   show (∑ d, P d a • bO d) (∑ c, Pᵀ⁻¹ c b • v c) = _
   rw [LinearMap.sum_apply]
-  simp only [LinearMap.smul_apply, map_sum, map_smul, hv, smul_eq_mul, mul_ite, mul_one, mul_zero,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.smul_apply, map_sum, map_smul, hv, smul_eq_mul, mul_ite, mul_one, mul_zero,
     Finset.sum_ite_eq, Finset.mem_univ, if_true, Matrix.transpose_apply]
   exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
 
@@ -211,7 +216,8 @@ theorem PositivityTheory.Xgp.t_c_fm_exists_flags_dualflag : ∀ (E : Type) [Fiel
       apply Subtype.ext
       simpa [Submodule.coe_sum] using hg
     have h2 := congrArg (bO a) h0
-    simpa [map_sum, hv] using h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, hv] using h2
   intro p _
   have hp : ∀ q' : Cpt ξ', genPt 𝔐.ξ ⤳ pr q'.1 := fun q' => by
     have h1 := q'.2.map pr.continuous

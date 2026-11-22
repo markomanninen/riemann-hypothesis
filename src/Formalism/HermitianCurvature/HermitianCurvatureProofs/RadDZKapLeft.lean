@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadDZCompLeft
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCRadSpSmooth
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGenTransferFn
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadDZCompLeft
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCRadSpSmooth
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGenTransferFn
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasNormGroups
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BijectiveOfIntertwining
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasNormGroups
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BijectiveOfIntertwining
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ValuativeRel Matrix Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocDict
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -66,7 +71,7 @@ theorem eq_zero_of_evalAt_shift (k : ℕ) (x : V ⊗[ℂ] (Fin (k + 1) → ℂ))
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul v t => simp [evalAt_tmul]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   rw [key, LinearEquiv.map_eq_zero_iff] at hx
   rw [hx, map_zero]
 
@@ -223,8 +228,8 @@ section Sp
 variable {V V' : Type} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]
   [AddCommGroup V'] [Module ℂ V'] [FiniteDimensional ℂ V']
 
-variable (h) in
 
+variable (h) in
 def lastEig (k : ℕ) (σ : Weil h) : ℂ := (WDRep.spEig w (k + 1) ⟨k, by omega⟩ : ℂ) ^ deg σ
 
 theorem sp_ρ_apply (n : ℕ) (σ : Weil h) (y : Fin n → ℂ) (i : Fin n) :
@@ -290,7 +295,7 @@ theorem eq_of_hasCopy (a : WDRep h V) (ha : a.ρ.IsIrreducible) (a' : WDRep h V'
     | tmul v y =>
       rw [WDRep.tensor_ρ, TensorProduct.map_tmul, evalAt_tmul, evalAt_tmul, sp_ρ_apply, map_smul, smul_smul]
       rfl
-    | add x y hx hy => simp only [map_add, smul_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), smul_add, hx, hy]
   let G : V →ₗ[ℂ] V' := evalAt (⟨m, by omega⟩ : Fin (m + 1)) ∘ₗ f
   have hG : ∀ σ v, G (a.ρ σ v) = a'.ρ σ (G v) := by
     intro σ v
@@ -358,7 +363,7 @@ theorem exists_mem_of_sumList {α : Type} (F : α → WD h) (l : List α)
   induction l with
   | nil =>
     exfalso
-    change HasCopyW ρ k c (WD.lpZero h) at H
+    change HasCopyW ρ k c (WD.lpZero (h := h)) at H
     rw [WD.lpZero, hasCopyW_mk] at H
     exact not_hasCopy_zero H
   | cons p l ih =>

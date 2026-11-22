@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SimultaneousEigenvectors.SimEig
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SimultaneousEigenvectors.SimEig
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ private theorem coordB_natural {β : Type} [DecidableEq β] (b : Module.Basis β
   induction u using TensorProduct.induction_on with
   | zero => simp
   | tmul x y => simp [TensorProduct.equivFinsuppOfBasisRight_apply_tmul_apply]
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
 
 private theorem leftB {ι : Type} (A : ι → Module.End ℂ V) (l : ι → ℂ) {u : V ⊗[ℂ] W} (hu : u ≠ 0)
     (h : ∀ i, TensorProduct.map (A i) (1 : Module.End ℂ W) u = l i • u) :

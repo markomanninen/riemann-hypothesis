@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.ValAtSpecMap
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.ValAtSpecMap
+
+@[expose] public section
+
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.BT
 
 noncomputable section
@@ -20,7 +25,7 @@ theorem exists_der_gen {R RC C N L U : Type} [CommRing R] [IsDomain R] [CommRing
   letI : Algebra R RC := σ.toAlgebra
   let k₀ : L →ₗ[R] ReciprocityTheory.PGsh.Up.LieDualModP p RC g :=
     { toFun := fun w => Submodule.Quotient.mk (io (j w))
-      map_add' := fun a b => by rw [map_add, map_add, Submodule.Quotient.mk_add]
+      map_add' := fun a b => by rw [map_add (f := _), map_add (f := _), Submodule.Quotient.mk_add]
       map_smul' := fun r a => by
         rw [map_smul, io.map_smulₛₗ, Submodule.Quotient.mk_smul]
         exact algebraMap_smul RC r _ }
@@ -37,7 +42,7 @@ theorem exists_der_gen {R RC C N L U : Type} [CommRing R] [IsDomain R] [CommRing
       (LinearEquiv.symm_apply_eq _).2 rfl
     simp only [d₀, LinearMap.comp_apply, LinearEquiv.coe_coe, this, Submodule.liftQ_apply]
   obtain ⟨Dv, hD1, hD2⟩ := exists_der_ext h1 h2 φ hφ hA (d₀ ∘ₗ cotMap A)
-    (fun a b => by simp only [LinearMap.comp_apply, cotMap_mul, map_add, map_smul]) M hM
+    (fun a b => by simp only [LinearMap.comp_apply, cotMap_mul, map_add (f := _), map_smul]) M hM
   refine ⟨Dv, hD1, fun a f w hf hw => ?_⟩
   rw [hD2 a f hf, LinearMap.comp_apply, hw, hd₀]
   rfl

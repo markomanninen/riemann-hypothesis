@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.MainCoind
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.PowDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.MainCoind
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.PowDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -11,8 +16,8 @@ universe u w
 
 variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] {R : Type w} [CommMonoid R]
 
-omit [CommMonoid R] in
 
+omit [CommMonoid R] in
 theorem apply_subrepresentation_congr (χ : (A : Rep.{u} k G) → [IsDiscreteRep A] → R)
     {A : Rep.{u} k G} [IsDiscreteRep A] {W W' : Submodule k A} (h : W = W')
     (hW : ∀ g, W ≤ W.comap (A.ρ g)) (hW' : ∀ g, W' ≤ W'.comap (A.ρ g)) :
@@ -33,7 +38,8 @@ theorem rangeStep (hχ : IsMultiplicativeOn P χ) (hPdvd : ∀ m n, m ∣ n → 
         χ (Rep.subrepresentation A _ (map_le_comap T hT D hD)) := by
   have hdvd : Nat.card D ∣ Nat.card A :=
     AddSubgroup.card_addSubgroup_dvd_card D.toAddSubgroup
-  exact hχ.shortExact (rangeStepComplex_shortExact T hT D hD) (hPdvd _ _ hdvd hA)
+  exact hχ.shortExact (S := rangeStepComplex T hT D hD)
+    (rangeStepComplex_shortExact T hT D hD) (hPdvd _ _ hdvd hA)
 
 variable [IsTopologicalGroup G] [CompactSpace G]
 

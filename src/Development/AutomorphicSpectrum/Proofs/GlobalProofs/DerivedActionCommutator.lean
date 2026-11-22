@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LieAlgebraOfLinearGroupClosedStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LieAlgebraOfLinearGroupClosedStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ theorem hasDerivAt_curve (z : Fin n → Fin n → ℂ) (X : Matrix (Fin n) (Fin 
 
 def one : Fin n → Fin n → ℂ := Matrix.of.symm (1 : Matrix (Fin n) (Fin n) ℂ)
 
-theorem of_one : Matrix.of (one (n := n)) = 1 := by simp [one]
+theorem of_one : Matrix.of (one (n := n)) = 1 := by exact Matrix.of.apply_symm_apply _
 
 section Smooth
 
@@ -65,8 +69,8 @@ theorem hasDerivAt_along (hG : IsLinRed G) (hF : ContDiff ℝ ∞ F)
   have h := hd.comp_hasDerivAt (0 : ℝ) (hasDerivAt_curve z X)
   refine h.congr_of_eventuallyEq (Filter.Eventually.of_forall fun t => ?_)
   have hm : Matrix.of z * NormedSpace.exp (t • X) ∈ G := hG.mul_mem _ hz _ (hX t)
-  have := hFv (Matrix.of.symm (Matrix.of z * NormedSpace.exp (t • X))) (by simpa using hm)
-  simpa using this
+  have := hFv (Matrix.of.symm (Matrix.of z * NormedSpace.exp (t • X))) (by simpa only [Matrix.of.apply_symm_apply] using hm)
+  simpa only [Matrix.of.apply_symm_apply, Function.comp_def] using this
 
 theorem hasDerivAt_exp_along (hG : IsLinRed G) (hF : ContDiff ℝ ∞ F)
     (hFv : ∀ z, Matrix.of z ∈ G → π (Matrix.of z) v = F z) {X : Matrix (Fin n) (Fin n) ℂ}
@@ -110,8 +114,8 @@ theorem dRep_dRep (hG : IsLinRed G) (hrep : Formalism.QuantumDeterminants.IsCRep
   have h' : HasDerivAt (fun t : ℝ => π (NormedSpace.exp (t • X)) (dRep π Y v)) _ 0 :=
     h.congr_of_eventuallyEq (Filter.Eventually.of_forall fun t => by
       have := rep_dRep hG hrep hF hFv hY (z := Matrix.of.symm (NormedSpace.exp (t • X)))
-        (by simpa using hX t)
-      simpa [of_one, Function.comp_def] using this)
+        (by simpa only [Matrix.of.apply_symm_apply] using hX t)
+      simpa only [Matrix.of.apply_symm_apply, of_one, one_mul, Function.comp_def] using this)
   refine h'.deriv.trans ?_
   simp [add_comm]
 
@@ -130,8 +134,9 @@ theorem dRep_bracket {G : Set (Matrix (Fin n) (Fin n) ℂ)} {π : Matrix (Fin n)
   rw [dRep_dRep hG hrep hF hFv hX hY, dRep_dRep hG hrep hF hFv hY hX, dRep_eq hG hF hFv hZ,
     hsymm.eq (rightMul X one) (rightMul Y one), add_sub_add_left_eq_sub, ← map_sub]
   congr 1
+  simp only [rightMul_apply, Matrix.of.apply_symm_apply, of_one, one_mul]
   ext a b
-  simp [rightMul_apply, one, Matrix.sub_apply]
+  rfl
 
 theorem smooth_bracket : ∀ {n : ℕ} {G : Set (Matrix (Fin n) (Fin n) ℂ)} {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] {π : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)} (hG : IsLinRed G) (hrep : Formalism.QuantumDeterminants.IsCRepOn G π) {v : H} (hv : IsSmoothVec G π v) {X Y : Matrix (Fin n) (Fin n) ℂ} (hX : X ∈ HCSS.lieOf G) (hY : Y ∈ HCSS.lieOf G), dRep π (X * Y - Y * X) v = dRep π X (dRep π Y v) - dRep π Y (dRep π X v) :=
   fun hG hrep _ hv _ _ hX hY => dRep_bracket hG hrep hv hX hY

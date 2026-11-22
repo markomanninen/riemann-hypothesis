@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RelOfTorsion
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderValueEval
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderEmbeddingOpenCoverStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SemiabelianAdicTorsionOneStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueTangentDualNumber
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RelOfTorsion
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderValueEval
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderEmbeddingOpenCoverStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SemiabelianAdicTorsionOneStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueTangentDualNumber
+
+@[expose] public section
 
 noncomputable section
 
@@ -488,8 +492,53 @@ theorem der_main : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClose
   haveI : Finite (LevGrp La p n) := finite_levGrp' (Fact.out) n
   haveI : Module.Projective O L := (GlobalTheory.T.lie_model_finite_base_change S G O y L M).2.1
   obtain ⟨U, H, hfin, -⟩ := GlobalTheory.T.semiabelian_adic_torsion_one p C v O hv hp hO S G hG y La X
-  obtain ⟨j, hj, -⟩ := GlobalTheory.T.existsUnique_btOrder_embedding O _ (X.Γ n)
-  haveI := (GlobalTheory.T.btOrder_embedding_open_cover O _ (X.Γ n) (U n) (hfin n) j hj).1
+  have hex : ∃ j : (X.Γ n).G.left ⟶ Spec (CommRingCat.of ((X.Γ n).btOrder ⊤)),
+      (X.Γ n).IsEmb ((X.Γ n).btOrder ⊤) j := by
+    let Γ := X.Γ n
+    let A := Γ.btOrder ⊤
+    have htop (t : LevGrp La p n) (h : ⊤ ≤ (Γ.pt t).left ⁻¹ᵁ ⊤) (s : Γ(Γ.G.left, ⊤)) :
+        valAt (Γ.pt t).left ⊤ h s = PositivityTheory.HtPt.Mh.val (Γ.pt t).left s := by
+      simp only [valAt, PositivityTheory.HtPt.Mh.val, Scheme.Hom.appTop, Scheme.Hom.app_eq_appLE]
+      rfl
+    have hsec (a : A) : ∃ s : Γ(Γ.G.left, ⊤), ∀ t,
+        PositivityTheory.HtPt.Mh.val (Γ.pt t).left s = algebraMap O (FractionRing O) (a.1 t) := by
+      have ha := (PositivityTheory.HtPt.Twhopf.mem_order O _ Γ ⊤ a.1).1 a.2
+      obtain ⟨s, hs⟩ := (PositivityTheory.HtPt.Twhopf.reg_iff O _ Γ ⊤ _).1 (ha 1)
+      refine ⟨s, fun t => (htop t le_top s).symm.trans ?_⟩
+      simpa only [_root_.one_mul] using hs t le_top
+    have hsec_ext {s s' : Γ(Γ.G.left, ⊤)}
+        (h : ∀ t, PositivityTheory.HtPt.Mh.val (Γ.pt t).left s = PositivityTheory.HtPt.Mh.val (Γ.pt t).left s') : s = s' := by
+      rw [← sub_eq_zero]
+      refine GlobalTheory.T.section_eq_zero_of_values O _ Γ ⊤ _ fun t ht => ?_
+      rw [htop, map_sub, h, sub_self]
+    have hhom_ext {B : Type} [CommRing B] {j j' : Γ.G.left ⟶ Spec (CommRingCat.of B)}
+        (h : ∀ t, (Γ.pt t).left ≫ j = (Γ.pt t).left ≫ j') : j = j' :=
+      PositivityTheory.HtPt.Mh.pb_ext fun a => hsec_ext fun t => by
+        rw [PositivityTheory.HtPt.Mh.val_pb_comp, h, ← PositivityTheory.HtPt.Mh.val_pb_comp]
+    choose s hs using hsec
+    let φ : A →+* Γ(Γ.G.left, ⊤) :=
+      { toFun := s
+        map_one' := hsec_ext fun t => by rw [hs, map_one]; simp
+        map_mul' := fun a b => hsec_ext fun t => by rw [hs, map_mul, hs, hs]; simp
+        map_zero' := hsec_ext fun t => by rw [hs, map_zero]; simp
+        map_add' := fun a b => hsec_ext fun t => by rw [hs, map_add (f := _), hs, hs]; simp }
+    obtain ⟨j, hj⟩ := PositivityTheory.HtPt.Mh.exists_pb φ
+    have hpt : ∀ t, (Γ.pt t).left ≫ j = Spec.map (CommRingCat.ofHom
+        ((algebraMap O (FractionRing O)).comp
+          ((Pi.evalRingHom (fun _ : LevGrp La p n => O) t).comp A.val.toRingHom))) := by
+      intro t
+      apply PositivityTheory.HtPt.Mh.comp_eq_spec
+      intro a
+      rw [hj]
+      exact hs a t
+    refine ⟨j, ⟨?_, hpt⟩⟩
+    apply hhom_ext
+    intro t
+    rw [← Category.assoc, hpt, PositivityTheory.HtPt.Mh.spec_comp, Over.w (Γ.pt t)]
+    show _ = Spec.map (CommRingCat.ofHom (algebraMap O (FractionRing O)))
+    congr 2
+  obtain ⟨j, hj⟩ := hex
+  haveI := (GlobalTheory.CompanionTheory.Ar.BT.EmbSub.openImmersion_translatesCover O _ (X.Γ n) (U n) (hfin n) j hj).1
   exact der_all (X.Γ n) (X.tors n) M hj (U n) (hfin n).one
 
 end GlobalTheory.CompanionTheory.Ar.HT.TwDer

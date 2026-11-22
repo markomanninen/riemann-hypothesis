@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.MetricsProjectionFormulaNef
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiProjPrimeImageZ
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ProjDeg
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ProjContract
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PFnDegRelDeg
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.GeoNum
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ExistsUnique
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PContractRelDimLe
-import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.FieldNumbersProjectionFormulaDegree
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.MetricsProjectionFormulaNef
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiProjPrimeImageZ
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ProjDeg
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ProjContract
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PFnDegRelDeg
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.GeoNum
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ExistsUnique
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PContractRelDimLe
+public import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.FieldNumbersProjectionFormulaDegree
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,16 +52,16 @@ theorem geoNum_one_linear {K : Type} [Fintype K] {ι : K → Type} [∀ k, Finty
       split_ifs
       · exact Int.natCast_nonneg _
       · exact le_rfl
-    · rw [geoNum, dif_pos h]
+    · rw [geoNum, dite_eq_left h]
       rfl
   · refine ⟨0, fun _ => le_rfl, fun a => ?_⟩
-    rw [geoNum, dif_neg h]
+    rw [geoNum, dite_eq_right h]
     simp
 
 end SlopeTestRemainingChoices
 
-open ReciprocityTheory.ChartRestriction.G.AI.I1 GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.Inter.PointVertical in
 
+open ReciprocityTheory.ChartRestriction.G.AI.I1 GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.Inter.PointVertical in
 theorem nefAt_pull {K K' : Type} [Fintype K] [Fintype K'] {ι : K → Type} {ι' : K' → Type} [∀ k, Fintype (ι k)]
     [∀ k, Fintype (ι' k)] {κ : K → K'} {v : (Σ k, ι k) → Σ k, ι' k} (hv : IsBlockMap κ v) {P : Ideal (MRing ι)}
     {P' : Ideal (MRing ι')} (hP : P ≤ imageZ v P') {p : ℕ} (hp : p.Prime) {a : K → ℤ} (h : PB.NefAt P p a) :

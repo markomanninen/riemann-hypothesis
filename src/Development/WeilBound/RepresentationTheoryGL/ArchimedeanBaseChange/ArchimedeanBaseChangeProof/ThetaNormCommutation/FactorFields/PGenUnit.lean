@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.FactorFields.TensorCompl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralTwistedConjInvariant
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.FactorFields.TensorCompl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralTwistedConjInvariant
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,8 +70,8 @@ theorem PositivityTheory.Rg.BcB.G3.genUnit_pf : PositivityTheory.Rg.BcB.G3.GenUn
       GlobalTheory.TwOrbConj.map_conj_self K (K.one_mem), (Subgroup.relIndex_eq_one).2 hcpt]
     simp
   rw [GlobalTheory.TwOrbConj.twOrb_eq, finsum_eq_single _ (DoubleCoset.mk (twCent θ z) K 1)]
-  · obtain ⟨t, ht, k, hk, he⟩ := (DoubleCoset.eq _ _ _ _).1
-      (DoubleCoset.out_eq' (twCent θ z) K (DoubleCoset.mk (twCent θ z) K 1)).symm
+  · obtain ⟨t, ht, k, hk, he⟩ := (@DoubleCoset.eq _ _ _ _ _ _).1
+      (DoubleCoset.out_eq' (DoubleCoset.mk (twCent θ z) K 1)).symm
     rw [he, GlobalTheory.TwOrbConj.summand_rep θ K z _ 1 ht hk, hval]
   · intro q hq
     rw [PositivityTheory.Rg.BcB.G3.GenUnitP.summand_eq θ K hKθ z]
@@ -76,7 +80,7 @@ theorem PositivityTheory.Rg.BcB.G3.genUnit_pf : PositivityTheory.Rg.BcB.G3.GenUn
       apply hq
       obtain ⟨t, ht, k, hk, he⟩ := huniq _ hm
       symm
-      conv_rhs => rw [← DoubleCoset.out_eq' (twCent θ z) K q]
+      conv_rhs => rw [← DoubleCoset.out_eq' q]
       rw [DoubleCoset.eq]
       exact ⟨t, ht, k, hk, by rw [he]; group⟩
     · rfl

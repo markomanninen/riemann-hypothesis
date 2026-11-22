@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafBdCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafBdCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -11,7 +15,7 @@ theorem mono_freeP (R : Type) [CommRing R] {P Q : PSh} (g : P ⟶ Q) [Mono g] : 
     have hg : Function.Injective (g.app U) := (mono_iff_injective _).1 inferInstance
     rw [ModuleCat.mono_iff_injective]
     dsimp [freeP]
-    exact Finsupp.mapDomain_injective (fun a b h => ULift.ext _ _ (hg (congrArg ULift.down h)))
+    exact Finsupp.mapDomain_injective (fun a b h => ULift.ext (hg (congrArg ULift.down h)))
   exact NatTrans.mono_of_mono_app _
 
 theorem mono_free (R : Type) [CommRing R] {P Q : PSh} (g : P ⟶ Q) [Mono g] : Mono ((free R).map g) := by

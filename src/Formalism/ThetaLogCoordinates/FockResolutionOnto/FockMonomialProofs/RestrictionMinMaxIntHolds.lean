@@ -1,6 +1,10 @@
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementC
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.ResInto
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.MulEarlyLettersHolds
+module
+
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementC
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.ResInto
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.MulEarlyLettersHolds
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.L4
 
@@ -99,15 +103,15 @@ theorem eproj_comm (LL : Letters N) (j : ℕ) (ρ : Fin r) (w1 w2 : Fin r → �
   have e2 : LogBallEstimates (Q (HeightBoundSetup F)) = Q (HeightBoundSetup F) := eproj_fix LL j ρ w2 LogBallEstimates ⟨i2, r2, k2⟩ _ hQH
   have e3 : LogBallEstimates (Q (F - HeightBoundSetup F)) = 0 := (Submodule.mem_inf.mp hQK).1
   have hsplit : Q F = Q (HeightBoundSetup F) + Q (F - HeightBoundSetup F) := by
-    rw [← map_add]; simp
-  rw [hsplit, map_add, e2, e3, add_zero]
+    rw [← map_add (f := _)]; simp
+  rw [hsplit, map_add (f := _), e2, e3, add_zero]
 
 private theorem coeff_filt_lemma {σ R : Type*} [CommSemiring R] [DecidableEq σ] (P : (σ →₀ ℕ) → Prop)
     (dec : ∀ m, Decidable (P m)) (x : MvPolynomial σ R) (n : σ →₀ ℕ) :
-    coeff n (∑ m ∈ x.support, @ite _ (P m) (dec m) (monomial m (coeff m x)) 0) =
-      @ite _ (P n) (dec n) (coeff n x) 0 := by
+    AddMonoidAlgebra.coeff (∑ m ∈ x.support, @ite _ (P m) (dec m) (monomial m (AddMonoidAlgebra.coeff x m)) 0) n =
+      @ite _ (P n) (dec n) (AddMonoidAlgebra.coeff x n) 0 := by
   rw [MvPolynomial.coeff_sum]
-  simp only [apply_ite (coeff n), MvPolynomial.coeff_monomial, MvPolynomial.coeff_zero]
+  simp only [apply_ite (AddMonoidAlgebra.coeff · n), MvPolynomial.coeff_monomial, MvPolynomial.coeff_zero]
   by_cases hn : n ∈ x.support
   · rw [Finset.sum_eq_single n]
     · simp
@@ -115,7 +119,7 @@ private theorem coeff_filt_lemma {σ R : Type*} [CommSemiring R] [DecidableEq σ
       simp [hb]
     · intro h
       exact absurd hn h
-  · have h0 : coeff n x = 0 := by simpa using hn
+  · have h0 : AddMonoidAlgebra.coeff x n = 0 := by simpa using hn
     rw [h0, ite_self]
     apply Finset.sum_eq_zero
     intro b hb
@@ -139,7 +143,8 @@ private theorem glAct_slice_lemma_2 (LL : Letters N) (j : ℕ) (ρ c d : Fin r) 
     have h2 : (i', b) ≠ (i, ρ) := fun h => hb (Prod.mk.inj h).2
     simpa [Finsupp.single_apply, h1, h2] using hn
   rw [MvPolynomial.mem_restrictSupport_iff] at hy
-  rw [← MvPolynomial.support_sum_monomial_coeff y, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPolynomial.support_sum_monomial_coeff y, map_sum]
   refine Submodule.sum_mem _ fun n hn => ?_
   have hnQ : n (i, ρ) ∈ Q := hy (Finset.mem_coe.mpr hn)
   simp only [glAct, LinearMap.sum_apply]
@@ -168,7 +173,7 @@ private theorem resL_glAct_lemma_3 (LL : Letters N) (j : ℕ) (ρ c d : Fin r) (
     (e : ℕ) (x : MvPolynomial (Fin N × Fin r) ℚ_[p]) :
     resL p (i, ρ) e (glAct p LL j c d x) = glAct p LL j c d (resL p (i, ρ) e x) := by
   have hres : ∀ (y : MvPolynomial (Fin N × Fin r) ℚ_[p]) (n : Fin N × Fin r →₀ ℕ),
-      coeff n (resL p (i, ρ) e y) = if n (i, ρ) = e then coeff n y else 0 := by
+      AddMonoidAlgebra.coeff (resL p (i, ρ) e y) n = if n (i, ρ) = e then AddMonoidAlgebra.coeff y n else 0 := by
     intro y n
     simp only [resL, LinearMap.coe_mk, AddHom.coe_mk]
     unfold initPart
@@ -213,7 +218,7 @@ private theorem resL_glAct_lemma_3 (LL : Letters N) (j : ℕ) (ρ c d : Fin r) (
     · rfl
   have hsplit : x = resL p (i, ρ) e x + (x - resL p (i, ρ) e x) := by abel
   conv_lhs => rw [hsplit]
-  rw [map_add, map_add, hid _ (glAct_slice_lemma_2 LL j ρ c d hc hd i _ _ hmem),
+  rw [map_add (f := _), map_add (f := _), hid _ (glAct_slice_lemma_2 LL j ρ c d hc hd i _ _ hmem),
     hzero _ (glAct_slice_lemma_2 LL j ρ c d hc hd i _ _ hrest), add_zero]
 
 theorem eproj_res (LL : Letters N) (j : ℕ) (ρ : Fin r) (w : Fin r → ℤ)
@@ -262,7 +267,8 @@ private theorem glAct_md_lemma_5 (LL : Letters N) (j : ℕ) (c d : Fin r) (B : P
       unfold MultiDeg
       simp only [hsum]
   rw [MvPolynomial.mem_restrictSupport_iff] at hy
-  rw [← MvPolynomial.support_sum_monomial_coeff y, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPolynomial.support_sum_monomial_coeff y, map_sum]
   refine Submodule.sum_mem _ fun n hn => ?_
   have hnB : (MultiDeg LL n ↔ B) := hy (Finset.mem_coe.mpr hn)
   simp only [glAct, LinearMap.sum_apply]
@@ -280,7 +286,7 @@ theorem eproj_pol (LL : Letters N) (j : ℕ) (ρ : Fin r) (w : Fin r → ℤ)
   classical
   intro F hFP hFW
   let Pm : MvPolynomial (Fin N × Fin r) ℚ_[p] →ₗ[ℚ_[p]] MvPolynomial (Fin N × Fin r) ℚ_[p] :=
-    { toFun := fun x => ∑ m ∈ x.support, if MultiDeg LL m then monomial m (coeff m x) else 0
+    { toFun := fun x => ∑ m ∈ x.support, if MultiDeg LL m then monomial m (AddMonoidAlgebra.coeff x m) else 0
       map_add' := fun x y => by
         ext n
         beta_reduce
@@ -293,7 +299,7 @@ theorem eproj_pol (LL : Letters N) (j : ℕ) (ρ : Fin r) (w : Fin r → ℤ)
         rw [MvPolynomial.coeff_smul, coeff_filt_lemma (fun m => MultiDeg LL m) _,
           coeff_filt_lemma (fun m => MultiDeg LL m) _]
         split_ifs <;> simp }
-  have hπ : ∀ y n, coeff n (Pm y) = if MultiDeg LL n then coeff n y else 0 :=
+  have hπ : ∀ y n, AddMonoidAlgebra.coeff (Pm y) n = if MultiDeg LL n then AddMonoidAlgebra.coeff y n else 0 :=
     fun y n => coeff_filt_lemma (fun m => MultiDeg LL m) _ y n
   have hsupp : ∀ (S : Set (Fin N × Fin r →₀ ℕ)) (y : MvPolynomial (Fin N × Fin r) ℚ_[p]),
       y ∈ MvPolynomial.restrictSupport ℚ_[p] S → Pm y ∈ MvPolynomial.restrictSupport ℚ_[p] S := by
@@ -346,7 +352,7 @@ theorem eproj_pol (LL : Letters N) (j : ℕ) (ρ : Fin r) (w : Fin r → ℤ)
     intro c _ d _ x
     have hsplit : x = Pm x + (x - Pm x) := by abel
     conv_lhs => rw [hsplit]
-    rw [map_add, map_add, hid _ (glAct_md_lemma_5 LL j c d True _ (hmemT x)),
+    rw [map_add (f := _), map_add (f := _), hid _ (glAct_md_lemma_5 LL j c d True _ (hmemT x)),
       hzero _ (glAct_md_lemma_5 LL j c d False _ (hrest x)), add_zero]
   have key := eproj_comm LL j ρ w w PE PE hPE hPE Pm hQ (fun x hx => hsupp _ x hx) F hFW
   have hF : Pm F = F := hid F (by
@@ -452,7 +458,7 @@ theorem wtComp_int (LL : Letters N) (j : ℕ) (w : Fin r → ℤ) :
   unfold wtComp compP
   refine Submodule.sum_mem _ fun m _ => ?_
   split_ifs
-  · exact ⟨monomial m (coeff m y), by simp [MvPolynomial.coeff_map]⟩
+  · exact ⟨monomial m (AddMonoidAlgebra.coeff y m), by simp [MvPolynomial.coeff_map]⟩
   · exact Submodule.zero_mem _
 
 theorem wtComp_keep_supp (LL : Letters N) (j : ℕ) (w : Fin r → ℤ) (Q : Set (Fin N × Fin r →₀ ℕ)) :
@@ -540,21 +546,5 @@ theorem restriction_min_max_holds : ResMM := by
     obtain ⟨hhY, hhH⟩ := Submodule.mem_inf.mp hh1
     exact Submodule.mem_inf.mpr ⟨Submodule.mem_inf.mpr ⟨restriction_into_holds p K r LL J M ρ e1 hr hρ hv hHP h hhY,
       res_hw LL (K + 1) ρ w (Fin.last K) 0 h hhH⟩, resL_keep_supp (Fin.last K, ρ) 0 _ h hhW⟩
-
-theorem restriction_min_max_int_holds : ResMMZ := by
-  intro p _ K r _ LL q J M ρ w e1 hr hρ hv hHP hHE hSat x hx hxI
-  obtain ⟨hx1, hxW⟩ := Submodule.mem_inf.mp hx
-  obtain ⟨hxX, hxH⟩ := Submodule.mem_inf.mp hx1
-  obtain ⟨h0, hh0, hh0I, hres⟩ := hSat x hxX hxI
-  obtain ⟨PE, hPE, -, hInt⟩ := hypE_eproj LL ρ e1 hHE (K + 1) le_rfl w
-  have hY := wtComp_Y LL J M w h0 hh0
-  have hW := wtComp_mem (p := p) LL (K + 1) w h0
-  refine ⟨((p : ℚ_[p]) ^ e1) • PE (wtComp p LL (K + 1) w h0), Submodule.mem_inf.mpr
-    ⟨Submodule.smul_mem (MMw p LL J M ρ w) _ (eproj_Y LL J M ρ w e1 hHP PE hPE _ hY hW),
-      hInt _ (Submodule.mem_inf.mpr ⟨(Submodule.mem_inf.mp hY).1, wtComp_int LL (K + 1) w h0 hh0I⟩) hW⟩, ?_⟩
-  change resL p (Fin.last K, ρ) 0 (((p : ℚ_[p]) ^ e1) • PE (wtComp p LL (K + 1) w h0)) = _
-  change resL p (Fin.last K, ρ) 0 h0 = x at hres
-  rw [map_smul, ← eproj_res LL (K + 1) ρ w PE hPE (Fin.last K) 0 _ hW, wtComp_res, hres,
-    wtComp_fix LL (K + 1) w x hxW, eproj_fix LL (K + 1) ρ w PE hPE x (Submodule.mem_inf.mpr ⟨hxH, hxW⟩)]
 
 end Formalism.InvariantFactorPaths.L4

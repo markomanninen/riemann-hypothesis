@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LevelMatchIff
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FrLink
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LinkUnique
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ColumnWittFrameBasisBlockGram
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DualLatticeLocalCharacterization
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitaryDatumLevelPrimeSplitDegreeGramFacts
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MiddleLatticeSelfDualAnisotropicPairingStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TransportedColumnLatticeHasLevelAndDualGeneratorStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicColumnLatticeEqSpanPartTransportedFrameStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LevelMatchIff
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FrLink
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LinkUnique
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ColumnWittFrameBasisBlockGram
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DualLatticeLocalCharacterization
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitaryDatumLevelPrimeSplitDegreeGramFacts
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MiddleLatticeSelfDualAnisotropicPairingStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TransportedColumnLatticeHasLevelAndDualGeneratorStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicColumnLatticeEqSpanPartTransportedFrameStatement
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.ColDict GlobalTheory.St GlobalTheory.St.G
 open scoped TensorProduct InnerProductSpace
@@ -77,7 +81,8 @@ theorem mem_span_q (hw : WittX X u wt) (y : (VS D).V) (he : ∀ a, (VS D).hT (X.
       X.crd (∑ k, f k) = ∑ k, X.crd (f k) := by
     intro f
     funext i
-    simp only [HidaSetting.crd, crdOf, map_sum, Finsupp.coe_finsetSum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [HidaSetting.crd, crdOf, map_sum, Finsupp.coe_finsetSum, Finset.sum_apply]
   have crd_inj : ∀ v w : (VS D).V, X.crd v = X.crd w → v = w := by
     intro v w h
     apply X.bas.repr.injective
@@ -111,20 +116,23 @@ theorem mem_span_q (hw : WittX X u wt) (y : (VS D).V) (he : ∀ a, (VS D).hT (X.
     intro b
     have h0 := he b
     rw [hy'] at h0
-    simp [map_sum, Fintype.sum_sum_type, famQ, hqe, X.ee, X.ef, (X.zu_orth u b).1] at h0
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, Fintype.sum_sum_type, famQ, hqe, X.ee, X.ef, (X.zu_orth u b).1] at h0
     simpa using h0
   have hE : ∀ b, X.ιE (t (Sum.inr (Sum.inl b))) = 0 := by
     intro b
     have h0 := hf b
     rw [hy'] at h0
-    simp [map_sum, Fintype.sum_sum_type, famQ, hqf, X.ff, hT_fe, (X.zu_orth u b).2] at h0
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, Fintype.sum_sum_type, famQ, hqf, X.ff, hT_fe, (X.zu_orth u b).2] at h0
     simpa using h0
   have hZ : ∀ x : Unit, X.ιE (t (Sum.inr (Sum.inr (Sum.inr x)))) = 0 := by
     intro x
     cases x
     have h0 := hz
     rw [hy'] at h0
-    simp [map_sum, Fintype.sum_sum_type, famQ, hqz, hT_ze, hT_zf, hT_zz_ne X u] at h0
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, Fintype.sum_sum_type, famQ, hqz, hT_ze, hT_zf, hT_zz_ne X u] at h0
     simpa using h0
   refine ⟨fun j => X.ιE (t (Sum.inl j)), ?_⟩
   conv_lhs => rw [hy']
@@ -185,7 +193,7 @@ def ic (v : (VS D).V) : VA X.B.I := incl X.B.I (X.crd v)
 
 theorem ic_add (v w : (VS D).V) : ic X (v + w) = ic X v + ic X w := by
   funext i
-  simp only [ic, incl, Pi.add_apply, HidaSetting.crd, crdOf, map_add, Finsupp.coe_add]
+  simp only [ic, incl, Pi.add_apply, HidaSetting.crd, crdOf, map_add (f := _), Finsupp.coe_add]
 
 theorem ic_smul (a : D.host.E) (v : (VS D).V) :
     ic X (a • v) = Formalism.UG.inclE (F := X.B.I.F) (Af X.B.I.F) (X.ιE.symm a) • ic X v := by
@@ -314,8 +322,8 @@ end GlobalTheory.St.G.Stabk
 
 namespace GlobalTheory.St.G
 
-open GlobalTheory.St.G.Stabk in
 
+open GlobalTheory.St.G.Stabk in
 theorem stabK_iff : ∀ (D : D7) (X : HidaSetting D) (u : D.what₂.Word) (wt : (VS D).V ≃ₗ[D.host.E] (VS D).V) (ιA : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F ≃+* D.host.E ⊗[D.host.F] Ad D.host.F), WittX X u wt → IsAdeleIso X ιA → ∀ (h : Hfin X u) (y : Formalism.UG.UPts (Formalism.L2.Forms.sigD D) (Formalism.L2.Forms.gramN D 0 (Nat.zero_le _)) (Ad D.host.F)), RepF X wt ιA (h : X.B.I.Gf) y → ((h : X.B.I.Gf) ∈ X.B.I.Kset ↔ ((∀ x, x ∈ hat D.host.F (Mq wt) ↔ y.1.1 *ᵥ x ∈ hat D.host.F (Mq wt)) ∧ ∀ x, (∀ z ∈ hat D.host.F (Mq wt), hR (Formalism.L2.Forms.sigD D) (Formalism.L2.Forms.gramN D 0 (Nat.zero_le _)) (Ad D.host.F) z x ∈ OAd D.host.F D.host.E) → (y.1.1 - 1) *ᵥ x ∈ hat D.host.F (Mq wt))) := by
   intro D X u wt ιA hw hι h y hr
   obtain ⟨hTL, x₀, hx₀, h1, d, hd, hdx, hdual⟩ := GlobalTheory.T.transported_column_lattice_has_level_and_dual_generator D X u wt hw

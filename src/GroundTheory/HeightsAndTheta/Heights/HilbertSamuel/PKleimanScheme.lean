@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKleimanScheme
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsAmpleOfGenTwist
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ImportsLast
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ImportsSide
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ImportsExtra
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKleimanScheme
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsAmpleOfGenTwist
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ImportsLast
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ImportsSide
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ImportsExtra
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

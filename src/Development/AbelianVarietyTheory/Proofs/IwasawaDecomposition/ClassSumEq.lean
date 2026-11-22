@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CenUsedOfCenReal
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SettingsFormsExistList
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.OmPinsTr
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SideTw
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleTwistOfTwistingCharacter
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.KeepSideBMtVPlaces
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SideBTies
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.YsOfFi
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CenUsedOfCenReal
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SettingsFormsExistList
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.OmPinsTr
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SideTw
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleTwistOfTwistingCharacter
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.KeepSideBMtVPlaces
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SideBTies
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.YsOfFi
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,21 +52,21 @@ theorem frGood {F : Frame S T} (h : F.Good) : (frT b F).Good :=
   ⟨(by with_unfolding_all exact (h.rank_le :)), (by with_unfolding_all exact (h.onbS :)), (by with_unfolding_all exact (h.cartT :)), (by with_unfolding_all exact (h.onbT :)), (by with_unfolding_all exact (h.sdS :)), (by with_unfolding_all exact (h.sdT :)), (by with_unfolding_all exact (h.frS :)), (by with_unfolding_all exact (h.frT :)),
     ⟨(by with_unfolding_all exact (h.vac.1 :)), by rewrite [vacuum_eq a b, thetaFun_eq a b]; exact (by with_unfolding_all exact (h.vac.2 :))⟩⟩
 
-theorem baGood {X : ExportSeries.Base S T} (h : X.Good) : (baT b X).Good where
-  even := (by with_unfolding_all exact (h.even :))
-  odd := (by with_unfolding_all exact (h.odd :))
-  frame := frGood b h.frame
-  de := twGood b h.de
-  places := (by with_unfolding_all exact ((placesOK b h.places) :))
-  wt := ⟨(by with_unfolding_all exact (h.wt.le :)), (by with_unfolding_all exact (h.wt.lam_eq :))⟩
-  sig := (by with_unfolding_all exact (h.sig :))
-  sigOK := (by with_unfolding_all exact (h.sigOK :))
-  eta := (by with_unfolding_all exact (h.eta :))
-  hecke := (by with_unfolding_all exact (h.hecke :))
-  real := (by with_unfolding_all exact (h.real :))
-  unram := (by with_unfolding_all exact (h.unram :))
-  tame := (by with_unfolding_all exact (h.tame :))
-  inf := (by with_unfolding_all exact (h.inf :))
+theorem baGood {X : ExportSeries.Base S T} (h : X.Good) : (baT b X).Good :=
+  { even := (by with_unfolding_all exact (h.even :))
+    odd := (by with_unfolding_all exact (h.odd :))
+    frame := frGood b h.frame
+    de := twGood b h.de
+    places := (by with_unfolding_all exact ((placesOK b h.places) :))
+    wt := ⟨(by with_unfolding_all exact (h.wt.le :)), (by with_unfolding_all exact (h.wt.lam_eq :))⟩
+    sig := (by with_unfolding_all exact (h.sig :))
+    sigOK := (by with_unfolding_all exact (h.sigOK :))
+    eta := (by with_unfolding_all exact (h.eta :))
+    hecke := (by with_unfolding_all exact (h.hecke :))
+    real := (by with_unfolding_all exact (h.real :))
+    unram := (by with_unfolding_all exact (h.unram :))
+    tame := (by with_unfolding_all exact (h.tame :))
+    inf := (by with_unfolding_all exact (h.inf :)) }
 
 theorem baWeil {X : ExportSeries.Base S T} {ν ω} (h : X.IsWeil ν ω) : (baT b X).IsWeil ((ν)) ((ω)) :=
   (by with_unfolding_all exact ((weilDatum_imp b _ _ _ _ _ _ h) :))
@@ -129,8 +133,6 @@ variable {B : GlobalTheory.Mem.Base} {C : Cols B} {W : RowsRest B C}
 
 def Oth.L (o : Oth W) : Late B C := ⟨W, o.V, o.S, o.N, o.G⟩
 
-def Oth.of (a : Late B C) : Oth a.W := ⟨a.V, a.S, a.N, a.G⟩
-
 variable {o : Oth W} (o' : Oth W) {N : NData o.L.D.R o.L.D.host o.L.D.what₂} {X : NTw o.L.D.R o.L.D.host o.L.D.what₂ o.L.D.LL0 N}
 
 def seT (ρ : Setup X) : @Setup o'.L.D ((N)) ((X)) :=
@@ -141,23 +143,23 @@ def seT (ρ : Setup X) : @Setup o'.L.D ((N)) ((X)) :=
 
 variable {ρ : Setup X}
 
-theorem seGood (h : ρ.Good) : (seT o' ρ).Good where
-  rc := (by with_unfolding_all exact ((rcGood o'.L h.rc) :))
-  ch := fun i => (by with_unfolding_all exact ((choiceT o'.L (h.ch ((by with_unfolding_all exact (i :))))) :))
-  bad_ne := (by with_unfolding_all exact (h.bad_ne :))
-  goodSetup_bad_mem_badPlaces := (by with_unfolding_all exact (h.goodSetup_bad_mem_badPlaces :))
-  goodSetup_badPlaces_conj := (by with_unfolding_all exact (h.goodSetup_badPlaces_conj :))
-  goodSetup_placesOverTwo_subset := (by with_unfolding_all exact (h.goodSetup_placesOverTwo_subset :))
-  goodSetup_count_eq_zero_off_badPlaces := (by with_unfolding_all exact (h.goodSetup_count_eq_zero_off_badPlaces :))
-  e_LL0 := (by with_unfolding_all exact (h.e_LL0 :))
-  ek_e := (by with_unfolding_all exact (h.ek_e :))
-  base := fun i j b => (by with_unfolding_all exact ((baGood o'.L (h.base ((by with_unfolding_all exact (i :))) ((by with_unfolding_all exact (j :))) b)) :))
-  latS := (by with_unfolding_all exact (h.latS :))
-  latT := (by with_unfolding_all exact (h.latT :))
-  Pg := (by with_unfolding_all exact (h.Pg :))
-  delta := fun i j b => (by with_unfolding_all exact ((congrArg (twT o'.L) (h.delta ((by with_unfolding_all exact (i :))) ((by with_unfolding_all exact (j :))) b)) :))
-  weil := fun i j b t ht => (by with_unfolding_all exact ((baWeil o'.L (h.weil ((by with_unfolding_all exact (i :))) ((by with_unfolding_all exact (j :))) b (twT o.L t) (twGood o.L ht))) :))
-  classes := fun i j b t ht ha => (by with_unfolding_all exact ((classSys o'.L (h.classes ((by with_unfolding_all exact (i :))) ((by with_unfolding_all exact (j :))) b (twT o.L t) (twGood o.L ht) ((by with_unfolding_all exact ((baAdm o.L ha) :))))) :))
+theorem seGood (h : ρ.Good) : (seT o' ρ).Good :=
+  { rc := (by with_unfolding_all exact ((rcGood o'.L h.rc) :))
+    ch := fun i => (by with_unfolding_all exact ((choiceT o'.L (h.ch ((by with_unfolding_all exact (i :))))) :))
+    bad_ne := (by with_unfolding_all exact (h.bad_ne :))
+    goodSetup_bad_mem_badPlaces := (by with_unfolding_all exact (h.goodSetup_bad_mem_badPlaces :))
+    goodSetup_badPlaces_conj := (by with_unfolding_all exact (h.goodSetup_badPlaces_conj :))
+    goodSetup_placesOverTwo_subset := (by with_unfolding_all exact (h.goodSetup_placesOverTwo_subset :))
+    goodSetup_count_eq_zero_off_badPlaces := (by with_unfolding_all exact (h.goodSetup_count_eq_zero_off_badPlaces :))
+    e_LL0 := (by with_unfolding_all exact (h.e_LL0 :))
+    ek_e := (by with_unfolding_all exact (h.ek_e :))
+    base := fun i j b => (by with_unfolding_all exact ((baGood o'.L (h.base ((by with_unfolding_all exact (i :))) ((by with_unfolding_all exact (j :))) b)) :))
+    latS := (by with_unfolding_all exact (h.latS :))
+    latT := (by with_unfolding_all exact (h.latT :))
+    Pg := (by with_unfolding_all exact (h.Pg :))
+    delta := fun i j b => (by with_unfolding_all exact ((congrArg (twT o'.L) (h.delta ((by with_unfolding_all exact (i :))) ((by with_unfolding_all exact (j :))) b)) :))
+    weil := fun i j b t ht => (by with_unfolding_all exact ((baWeil o'.L (h.weil ((by with_unfolding_all exact (i :))) ((by with_unfolding_all exact (j :))) b (twT o.L t) (twGood o.L ht))) :))
+    classes := fun i j b t ht ha => (by with_unfolding_all exact ((classSys o'.L (h.classes ((by with_unfolding_all exact (i :))) ((by with_unfolding_all exact (j :))) b (twT o.L t) (twGood o.L ht) ((by with_unfolding_all exact ((baAdm o.L ha) :))))) :)) }
 
 variable (ρ) (i : X.Tw) (j : Fin o.L.D.R.m) (b : Bool)
 

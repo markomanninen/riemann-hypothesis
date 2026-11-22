@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleExact
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlagUnipotentAnisotropicProjectionEqOne
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlagUnipotentBesselCharacterLaws
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatMapsSatisfyFlatLawsFinitePlacesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleExact
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlagUnipotentAnisotropicProjectionEqOne
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlagUnipotentBesselCharacterLaws
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatMapsSatisfyFlatLawsFinitePlacesStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.MixModel MeasureTheory Matrix
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -36,7 +40,7 @@ theorem wittCoreEmbedding_preserves_supportedUnitarySubgroup {S S₀ : HSp D} {�
     (hh : h ∈ grpAt S₀ P) : d.emb0 h ∈ grpAt S P := by
   rw [grpAt, mem_congGrp_iff] at hh ⊢
   have key : (mt S (d.emb0 h)).map (Ideal.Quotient.mk (idAt D P)) =
-      (d.jX ⬝ d.pX + d.j0 ⬝ d.p0 + d.jY ⬝ d.pY).map (Ideal.Quotient.mk (idAt D P)) := by
+      (d.jX * d.pX + d.j0 * d.p0 + d.jY * d.pY).map (Ideal.Quotient.mk (idAt D P)) := by
     have hadd : ∀ A B : Matrix (Fin S.rank) (Fin S.rank) (AE D), (A + B).map (Ideal.Quotient.mk (idAt D P)) =
         A.map (Ideal.Quotient.mk (idAt D P)) + B.map (Ideal.Quotient.mk (idAt D P)) :=
       fun A B => Matrix.map_add _ (Ideal.Quotient.mk (idAt D P)).map_add A B
@@ -80,7 +84,7 @@ theorem om_eq_zero_iff {S T : HSp D} (om : Om S T) (g : GA D S × GA D T) (F : W
 theorem orth_comp_mem {S₀ A L : HSp D} (o : OrthDec S₀ A L) (P : Pl D → Prop) {h : GA D A}
     (hh : o.emb (h, 1) ∈ grpAt S₀ P) : h ∈ grpAt A P := by
   rw [grpAt, mem_congGrp_iff] at hh ⊢
-  have e : mt A h = o.pA ⬝ mt S₀ (o.emb (h, 1)) ⬝ o.jA := by
+  have e : mt A h = o.pA * mt S₀ (o.emb (h, 1)) * o.jA := by
     rw [o.pA_emb, Matrix.mul_assoc, o.pA_jA, Matrix.mul_one]
   rw [e, Matrix.map_mul, Matrix.map_mul, hh, Matrix.mul_one, ← Matrix.map_mul, o.pA_jA]
   exact Matrix.map_one _ (Ideal.Quotient.mk (idAt D P)).map_zero (Ideal.Quotient.mk (idAt D P)).map_one

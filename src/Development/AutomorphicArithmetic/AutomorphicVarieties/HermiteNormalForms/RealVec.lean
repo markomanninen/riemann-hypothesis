@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+
+@[expose] public section
 
 open NumberField Matrix UpperTheory.V UpperTheory.V.KT
 open scoped ComplexOrder
@@ -48,7 +52,8 @@ theorem UpperTheory.V.KT.gramq :
       _ = _ := Finset.sum_comm
   · intro c
     funext w a
-    simp [realVec, toR, intVec, map_sum, zsmul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [realVec, toR, intVec, map_sum, zsmul_eq_mul]
   · let E : (Fin N × BI L → ℤ) ≃ Lat L N :=
       (Equiv.curry _ _ _).trans
         (Equiv.piCongrRight fun _ => (RingOfIntegers.basis L).equivFun.symm.toEquiv)

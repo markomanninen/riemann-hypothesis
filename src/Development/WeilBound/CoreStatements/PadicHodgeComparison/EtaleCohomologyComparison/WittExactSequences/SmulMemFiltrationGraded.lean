@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.ObFacts
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.ObFacts
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -64,8 +68,8 @@ theorem gr_add (h : RGr l) (A : PAlg l) (n r : ℕ) (z z' : (FilF l n r).obj A) 
   obtain ⟨x, hx, e⟩ := gr_spec h A (fv z) (fv_mem z)
   obtain ⟨x', hx', e'⟩ := gr_spec h A (fv z') (fv_mem z')
   have hs : fv (z + z') - A.toAcr n (x + x') * A.dxi n r =
-      (fv z - A.toAcr n x * A.dxi n r) + (fv z' - A.toAcr n x' * A.dxi n r) := by rw [fv_add, map_add]; ring
-  rw [gr_eq h A _ _ (x + x') (by rw [hs]; exact add_mem hx hx'), e, e', map_add, map_add]
+      (fv z - A.toAcr n x * A.dxi n r) + (fv z' - A.toAcr n x' * A.dxi n r) := by rw [fv_add, map_add (f := _)]; ring
+  rw [gr_eq h A _ _ (x + x') (by rw [hs]; exact add_mem hx hx'), e, e', map_add (f := _), map_add (f := _)]
 
 def grF (h : RGr l) (A : PAlg l) (n r : ℕ) : (FilF l n r).obj A →+ (UnF l n).obj A where
   toFun z := gr h A n r (fv z) (fv_mem z)

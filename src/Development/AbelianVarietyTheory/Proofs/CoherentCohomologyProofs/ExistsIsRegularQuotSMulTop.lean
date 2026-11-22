@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 universe u_1 u_2
 
@@ -48,18 +52,24 @@ theorem exists_isRegular_quotSMulTop {R : Type u_1} [CommRing R] [IsNoetherianRi
   have hltQ : 𝔪 • (⊤ : Submodule R (QuotSMulTop y M)) < ⊤ :=
     maximalIdeal_smul_top_lt_top (QuotSMulTop y M)
 
-  have hM := (ModuleCat.exists_isRegular_tfae 𝔪 xs.length (ModuleCat.of R M) hltM).out 3 1
+  have hM := (ModuleCat.exists_isRegular_tfae 𝔪 xs.length (ModuleCat.of R M) hltM).out 4 1
   have hExtM := hM.mp ⟨xs, rfl, hmem, hxs⟩
 
   have hS := IsSMulRegular.smulShortComplex_shortExact (M := ModuleCat.of R M) hreg
+  have supp𝔪 : Module.support R (Shrink.{u_2} (R ⧸ 𝔪)) =
+      PrimeSpectrum.zeroLocus 𝔪 := by
+    rw [(Shrink.linearEquiv R _).support_eq, Module.support_eq_zeroLocus,
+      Ideal.annihilator_quotient]
   have hExtQ : ∀ i < n, Subsingleton (Abelian.Ext
       (ModuleCat.of R (Shrink.{u_2} (R ⧸ 𝔪))) (ModuleCat.of R (QuotSMulTop y M)) i) := by
     intro i hi
     have hE := Abelian.Ext.covariant_sequence_exact₃'
       (ModuleCat.of R (Shrink.{u_2} (R ⧸ 𝔪))) hS i (i + 1) rfl
     rw [ShortComplex.ab_exact_iff_function_exact] at hE
-    have h0 := hExtM i (by omega)
-    have h1 := hExtM (i + 1) (by omega)
+    have h0 := hExtM (ModuleCat.of R (Shrink.{u_2} (R ⧸ 𝔪))) inferInstance inferInstance
+      (by rw [supp𝔪]) i (by omega)
+    have h1 := hExtM (ModuleCat.of R (Shrink.{u_2} (R ⧸ 𝔪))) inferInstance inferInstance
+      (by rw [supp𝔪]) (i + 1) (by omega)
     have key : ∀ x : Abelian.Ext (ModuleCat.of R (Shrink.{u_2} (R ⧸ 𝔪)))
         (ModuleCat.of R (QuotSMulTop y M)) i, x = 0 := by
       intro x
@@ -69,7 +79,7 @@ theorem exists_isRegular_quotSMulTop {R : Type u_1} [CommRing R] [IsNoetherianRi
     exact ⟨fun a b => by rw [key a, key b]⟩
 
   have hQ := (ModuleCat.exists_isRegular_tfae 𝔪 n
-    (ModuleCat.of R (QuotSMulTop y M)) hltQ).out 1 3
+    (ModuleCat.of R (QuotSMulTop y M)) hltQ).out 2 4
   obtain ⟨zs, hlen, -, hzs⟩ := hQ.mp hExtQ
   exact ⟨zs, hlen, hzs⟩
 

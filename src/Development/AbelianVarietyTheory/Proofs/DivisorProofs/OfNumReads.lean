@@ -1,8 +1,13 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.FactorBounds
-import Formalism.LocalToGlobal.Divisibility.NumbersLink
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeightedNormSquareRows
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OrthogonalNormSquareSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FactorBounds
+public import Formalism.LocalToGlobal.Divisibility.NumbersLink
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeightedNormSquareRows
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OrthogonalNormSquareSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
+
+@[expose] public section
+
 open Module NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.DIV Formalism.L2.Indef Formalism.L2.Col Formalism.L2.Ker GlobalTheory.IndefiniteRowSideFullHecke.PlaceLogThetaBounds GlobalTheory.ColRows
 
 namespace GlobalTheory.ColRows.NumReads

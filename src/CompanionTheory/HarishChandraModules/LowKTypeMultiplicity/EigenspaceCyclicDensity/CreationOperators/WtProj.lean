@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
 
 open Finset
 open scoped InnerProductSpace
@@ -40,7 +44,7 @@ theorem exists_proj {M : Type} [AddCommGroup M] [Module ℂ M] (F : Module.End �
     · rw [Module.End.mul_apply, hQ3 z hz, hP3 z hz]
     · have h1 : (P * Q) x = P x := by rw [hPQ.eq, Module.End.mul_apply, hQ3 _ hP4]
       have h2 : (P * Q) y = Q y := by rw [Module.End.mul_apply, hP3 _ hQ4]
-      rw [map_add, h1, h2, map_add, hP4, hQ4, smul_add]
+      rw [map_add (f := _), h1, h2, map_add (f := _), hP4, hQ4, smul_add]
 
 theorem mem_iSup_eigenspace {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V] (T : Module.End ℂ V)
     (hT : T.IsSymmetric) (S : Submodule ℂ V) [FiniteDimensional ℂ S] (hS : ∀ v ∈ S, T v ∈ S) (x : V) (hx : x ∈ S) :
@@ -92,7 +96,7 @@ theorem Ft_commute {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (ε₀ �
       exact this
   refine LinearMap.ext fun x => funext fun A => ?_
   have h' : E c c (E d d (x A)) = E d d (E c c (x A)) := LinearMap.congr_fun h (x A)
-  simp only [Module.End.mul_apply, Ft_apply, map_add, map_smul, h', smul_add, smul_smul,
+  simp only [Module.End.mul_apply, Ft_apply, map_add (f := _), map_smul, h', smul_add, smul_smul,
     mul_comm (wt (A.filter (cpt ε₀)) c : ℂ)]
   abel
 

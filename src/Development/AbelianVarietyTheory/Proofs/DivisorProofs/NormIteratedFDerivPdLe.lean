@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTemperateGrowthElim
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClmSupBound
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzSeminormTranslateSubLineDerivLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTemperateGrowthElim
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClmSupBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzSeminormTranslateSubLineDerivLe
+
+@[expose] public section
 
 open GlobalTheory.SliceSchwartz GlobalTheory.SliceOp
 open scoped ContDiff
@@ -138,7 +142,7 @@ theorem seminorm_slice_taylor_le (V : Type) [NormedAddCommGroup V] [NormedSpace 
         gcongr
         refine (ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _).trans ?_
         refine mul_le_of_le_one_right (norm_nonneg _) ?_
-        exact Finset.prod_le_one (fun _ _ => norm_nonneg _) (fun _ _ => norm_inrL_le κ κ')
+        exact Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) (fun _ _ => norm_inrL_le κ κ')
     _ ≤ M := key
 
 end GlobalTheory.SliceTaylor

@@ -1,5 +1,9 @@
-import Formalism.GaussJetBounds.GaussJetProofs.LogarithmWeightComparison
-import Formalism.TorsionNormIteration.InverseIntegralClasses.NormNatCastOfNotDvd
+module
+
+public import Formalism.GaussJetBounds.GaussJetProofs.LogarithmWeightComparison
+public import Formalism.TorsionNormIteration.InverseIntegralClasses.NormNatCastOfNotDvd
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -16,7 +20,9 @@ theorem padicValNat_factorial_le_sub_one_div {l : ℕ} (hl : l.Prime) {k : ℕ} 
   have := Fact.mk hl
   have h := sub_one_mul_padicValNat_factorial_lt_of_ne_zero l hk
   have hl2 := hl.two_le
-  have h1 : (l - 1) * padicValNat l k.factorial ≤ k - 1 := by omega
+  have h1 : (l - 1) * padicValNat l k.factorial ≤ k - 1 := by
+    rw [Nat.padicValNat_def]
+    omega
   have h2 : (((l - 1) * padicValNat l k.factorial : ℕ) : ℝ) ≤ ((k - 1 : ℕ) : ℝ) := by
     exact_mod_cast h1
   rw [Nat.cast_mul, Nat.cast_sub (by omega : 1 ≤ l), Nat.cast_sub (Nat.one_le_iff_ne_zero.2 hk),

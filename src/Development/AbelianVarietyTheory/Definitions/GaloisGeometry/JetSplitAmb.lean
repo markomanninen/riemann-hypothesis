@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.BadPrimesPeriodBound
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KernelsOverOfFamily
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StdLvPr
-import Formalism.LocalToGlobal.AlgebraicTheory.StatementKer
-import Formalism.LocalToGlobal.KernelLattices.KerStd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.BadPrimesPeriodBound
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KernelsOverOfFamily
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StdLvPr
+public import Formalism.LocalToGlobal.AlgebraicTheory.StatementKer
+public import Formalism.LocalToGlobal.KernelLattices.KerStd
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,20 +28,21 @@ def JetSplitAmb : Prop :=
         ‖ι ((ambOf s B χ cD : Amb X).σ₀ ((ambOf s B χ cD : Amb X).jetK S N N' (p * c') x m))‖ * ‖ι (conj π)‖ ^ m.degree *
           ‖(p : ℂ_[p])‖ ^ (Fintype.card X.Tau * b * a) ≤ 1
 
-open GlobalTheory.IndefiniteRowSideFullHecke.BadPrimesPeriodBound in
 
+open GlobalTheory.IndefiniteRowSideFullHecke.BadPrimesPeriodBound in
 def TiesAt (D : D7) (EX : ErrX D) (Dx : DivX D) (μ : D.what₂.Tup) : Prop :=
   ∃ (Ch : Chars (recFields D) (recPrimes EX) D.R.m) (mu0 : _) (eta : _) (sel : _) (δ : ℂ) (B : Base D D.host.ccK δ) (χ : _) (cD : _),
-    HostTie EX ∧ CharTie Ch mu0 eta sel ∧ AnTie D δ χ cD ∧ ∀ u, ChainTie Ch sel Dx mu0 (ambOf (recSeam D) B χ cD) u μ
+    HostTie EX ∧ CharTie Ch mu0 eta sel ∧ AnTie D δ χ cD ∧
+      ∀ u, GlobalTheory.IndefiniteRowSideFullHecke.BadPrimesPeriodBound.ChainTie Ch sel Dx mu0 (ambOf (recSeam D) B χ cD) u μ
+
 
 open GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.KerRat in
-
-def RowPin {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} (I : TC B X) (h : I.Ok) (l : I.Laws) (Z : TC.Later B (I.cols l)) (a : (I.rec7 l Z).what₂.Tup) : Prop :=
-  ∀ u : B.Word, ∃ e : (I.per l u a).Mt ≃ₗ[ℂ] (I.rec7 l Z).what₂.Amb a,
-    (a = (I.rec7 l Z).what₂.mu0 → HEq e ((I.rec7 l Z).eMt u)) ∧ (a ≠ (I.rec7 l Z).what₂.mu0 → e = (I.rec7 l Z).eMtTw u a) ∧
-    (∀ v ∈ ((I.rec7 l Z).what₂.Mtilde a).gen, ∃ z, e (rowForm I l h u a z) = v) ∧
-    ∀ z, z ∈ Formalism.L2.Col.MtildeL (Pr := B.primes X) B.wts I.Ch I.sel (I.tup a) I.Ps ↔ ∃ c : (I.rec7 l Z).what₂.Amb a → 𝓞 (I.rec7 l Z).what₂.LL,
-      e (rowForm I l h u a z) = ∑ v ∈ ((I.rec7 l Z).what₂.Mtilde a).gen, (I.rec7 l Z).what₂.embLL ((c v : 𝓞 (I.rec7 l Z).what₂.LL) : (I.rec7 l Z).what₂.LL) • v
+def RowPin {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} (I : TC B X) (h : ColIn.Ok I) (l : I.Laws) (Z : TC.Later B (I.cols l)) (a : (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).what₂.Tup) : Prop :=
+  ∀ u : B.Word, ∃ e : (I.per l u a).Mt ≃ₗ[ℂ] (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).what₂.Amb a,
+    (a = (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).what₂.mu0 → HEq e ((_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).eMt u)) ∧ (a ≠ (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).what₂.mu0 → e = (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).eMtTw u a) ∧
+    (∀ v ∈ ((_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).what₂.Mtilde a).gen, ∃ z, e (rowForm I l h u a z) = v) ∧
+    ∀ z, z ∈ Formalism.L2.Col.MtildeL (Pr := B.primes X) B.wts I.Ch I.sel (I.tup a) I.Ps ↔ ∃ c : (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).what₂.Amb a → 𝓞 (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).what₂.LL,
+      e (rowForm I l h u a z) = ∑ v ∈ ((_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).what₂.Mtilde a).gen, (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).what₂.embLL ((c v : 𝓞 (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).what₂.LL) : (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).what₂.LL) • v
 
 end GlobalTheory.AtG
 

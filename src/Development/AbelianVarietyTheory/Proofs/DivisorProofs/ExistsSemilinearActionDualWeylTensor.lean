@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.L2.DIV GlobalTheory.ExpFrame Formalism.CohomologicalDescent.DepthNonnegative Formalism.CohomologicalDescent.LogSmallConstantBounds Formalism.CohomologicalDescent.ShortWeightBounds Formalism.CohomologicalDescent.LD Formalism.RankGapBounds.FormsTensorLocalization
 
@@ -60,7 +64,7 @@ instance {R : Type} [CommRing R] (σ : R →+* R) (M : Type) [AddCommGroup M] [M
 variable {R : Type} [CommRing R] {ι : Type} (N : ℕ) (mu : ι → ℕ → ℕ)
 
 def mlin (σ : R →+* R) :
-    MultilinearMap R (fun τ : ι => Formalism.GradedWeylDivisibility.dualWeyl R N N (Formalism.CohomologicalDescent.LD.res N (mu τ)))
+    MultilinearMap (RingHom.id R) (fun τ : ι => Formalism.GradedWeylDivisibility.dualWeyl R N N (Formalism.CohomologicalDescent.LD.res N (mu τ)))
       (Tw σ (NablaT R N mu)) where
   toFun x := (PiTensorProduct.tprod R (fun τ => onFactor σ N N _ (x τ)) : NablaT R N mu)
   map_update_add' := by
@@ -68,7 +72,7 @@ def mlin (σ : R →+* R) :
     have e : ∀ v, (fun τ => onFactor σ N N (Formalism.CohomologicalDescent.LD.res N (mu τ)) (Function.update x i v τ)) =
         Function.update (fun τ => onFactor σ N N _ (x τ)) i (onFactor σ N N _ v) := fun v =>
       funext fun τ => Function.apply_update (fun τ => onFactor σ N N (Formalism.CohomologicalDescent.LD.res N (mu τ))) x i v τ
-    simp only [e, map_add]
+    simp only [e, map_add (f := _)]
     exact (PiTensorProduct.tprod R).map_update_add _ i _ _
   map_update_smul' := by
     intro _ x i c a
@@ -110,7 +114,7 @@ theorem semi_left_inv (g : R ≃+* R) (y : NablaT R N mu) :
       funext τ
       ext1
       simp [onFactor, map_map, MvPolynomial.map_id]
-  | add a b ha hb => rw [map_add, map_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
 
 theorem fix_inv (g : R ≃+* R) (u : GL (Fin N) R)
     (hu : ∀ a b, g ((u : Matrix (Fin N) (Fin N) R) a b) = (u : Matrix (Fin N) (Fin N) R) a b) (a b : Fin N) :
@@ -132,12 +136,7 @@ theorem onFactor_rep (g : R ≃+* R) (u : GL (Fin N) R)
   unfold Formalism.UG.dwAct Formalism.GradedWeylDivisibility.rowAct
   rw [aeval_eq_bind₁, map_bind₁]
   congr 2
-  funext v
-  simp only [map_sum, map_mul, map_C, map_X]
-  refine Finset.sum_congr rfl fun b _ => ?_
-  have := fix_inv N g u hu v.1 b
-  simp only [RingHom.coe_coe] at this ⊢
-  rw [this]
+  simp only [map_sum, map_mul, map_C, map_X, RingHom.coe_coe, fix_inv N g u hu]
 
 theorem grp_tprod [DecidableEq ι] (h : ι → GL (Fin N) R)
     (x : ∀ τ, Formalism.GradedWeylDivisibility.dualWeyl R N N (Formalism.CohomologicalDescent.LD.res N (mu τ))) :
@@ -155,7 +154,7 @@ theorem semi_grp [DecidableEq ι] (g : R ≃+* R) (h : ι → GL (Fin N) R)
     congr 2
     funext τ
     exact onFactor_rep N g (h τ) (hh τ) _ (x τ)
-  | add a b ha hb => rw [map_add, map_add, ha, hb, map_add, map_add]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, map_add (f := _), map_add (f := _)]
 
 end GlobalTheory.SemilinTransport
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.DerivationPowerIdeal
 
@@ -16,7 +20,7 @@ theorem derivation_mem_pow {A' : Type} [CommRing A'] {k : Type} [CommRing k] [Al
       rw [pow_succ' I n]
       exact Ideal.mul_mem_mul ha (ih hb)
     · intro a b ha hb
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Ideal.add_mem _ ha hb
 
 end GlobalTheory.DerivationPowerIdeal

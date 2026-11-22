@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.PeterssonHilbertSpace
-import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.PeterssonHilbertSpace
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+
+@[expose] public section
 
 noncomputable section
 

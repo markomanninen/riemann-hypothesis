@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Filter Module MvPolynomial
 
@@ -37,7 +41,7 @@ theorem comp_zero_mul {h : MvPolynomial σ K} (hh : h.IsHomogeneous 1)
   | monomial d c =>
     have h1 := isHomogeneous_monomial (d := d) c rfl
     rw [homogeneousComponent_of_mem (hh.mul h1), if_neg (by omega)]
-  | add p q hp hq => rw [mul_add, map_add, hp, hq, add_zero]
+  | add p q hp hq => rw [mul_add, map_add (f := _), hp, hq, add_zero]
 
 theorem mem_sup_span {I : Ideal (MvPolynomial σ K)} {h F : MvPolynomial σ K} :
     F ∈ I ⊔ Ideal.span {h} ↔ ∃ A ∈ I, ∃ B, F = A + h * B := by
@@ -87,7 +91,7 @@ theorem hom_sup_span {I : Ideal (MvPolynomial σ K)}
     ∀ F ∈ I ⊔ Ideal.span {h}, ∀ e, homogeneousComponent e F ∈ I ⊔ Ideal.span {h} := by
   intro F hF e
   obtain ⟨A, hA, B, rfl⟩ := mem_sup_span.1 hF
-  rw [map_add]
+  rw [map_add (f := _)]
   cases e with
   | zero => exact mem_sup_span.2 ⟨_, hI A hA 0, 0, by rw [comp_zero_mul hh, mul_zero]⟩
   | succ e => exact mem_sup_span.2 ⟨_, hI A hA _, _, by rw [comp_succ_mul hh]⟩
@@ -108,7 +112,7 @@ theorem finrank_section [Finite σ] {I : Ideal (MvPolynomial σ K)}
     · rintro F ⟨hF1, hF2⟩
       obtain ⟨A, hA, B, hAB⟩ := mem_sup_span.1 hF2
       have : F = homogeneousComponent (e + 1) A + h * homogeneousComponent e B := by
-        rw [← comp_succ_mul hh, ← map_add, ← hAB, homogeneousComponent_eq_self hF1]
+        rw [← comp_succ_mul hh, ← map_add (f := _), ← hAB, homogeneousComponent_eq_self hF1]
       rw [this]
       exact Submodule.add_mem_sup ⟨homogeneousComponent_isHomogeneous _ _, hI A hA _⟩
         ⟨_, homogeneousComponent_isHomogeneous _ _, rfl⟩
@@ -136,7 +140,7 @@ theorem hom_genIn (I : Ideal (MvPolynomial σ K)) (d : ℕ) :
   intro F hF e
   letI := MvPolynomial.gradedAlgebra (σ := σ) (R := K)
   exact homogeneousComponent_mem_of_mem
-    (Ideal.homogeneous_span (homogeneousSubmodule σ K) _ fun G hG => ⟨d, hG.2⟩) hF e
+    (Ideal.homogeneous_span (homogeneousSubmodule σ K) {G | G ∈ I ∧ G.IsHomogeneous d} fun G hG => ⟨d, hG.2⟩) hF e
 
 theorem gen_of_section {I : Ideal (MvPolynomial σ K)}
     (hI : ∀ F ∈ I, ∀ e, homogeneousComponent e F ∈ I) {h : MvPolynomial σ K}
@@ -148,7 +152,7 @@ theorem gen_of_section {I : Ideal (MvPolynomial σ K)}
     rintro G ⟨hG, hGe⟩
     obtain ⟨A, hA, B, hAB⟩ := mem_sup_span.1 hG
     have : G = homogeneousComponent e A + homogeneousComponent e (h * B) := by
-      rw [← map_add, ← hAB, homogeneousComponent_eq_self hGe]
+      rw [← map_add (f := _), ← hAB, homogeneousComponent_eq_self hGe]
     rw [this]
     refine Submodule.add_mem_sup
       (Ideal.subset_span ⟨hI A hA _, homogeneousComponent_isHomogeneous _ _⟩) ?_
@@ -159,7 +163,7 @@ theorem gen_of_section {I : Ideal (MvPolynomial σ K)}
   have hAI : A ∈ I := (Ideal.span_le.2 fun G hG => hG.1 : genIn I e ≤ I) hA
   have hB : B ∈ I := hreg B (by simpa [hAB] using I.sub_mem hF hAI)
   have : F = homogeneousComponent (e + 1) A + h * homogeneousComponent e B := by
-    rw [← comp_succ_mul hh, ← map_add, ← hAB, homogeneousComponent_eq_self hFe]
+    rw [← comp_succ_mul hh, ← map_add (f := _), ← hAB, homogeneousComponent_eq_self hFe]
   rw [this]
   exact Ideal.add_mem _ (hom_genIn I e A hA _) (Ideal.mul_mem_left _ _
     (Ideal.subset_span ⟨hI B hB _, homogeneousComponent_isHomogeneous _ _⟩))
@@ -177,15 +181,15 @@ theorem eventually_mem_of_X_mul [Finite σ] {J L : Ideal (MvPolynomial σ K)}
     (hJ : ∀ F ∈ J, ∀ e, homogeneousComponent e F ∈ J) (hL : ∀ F ∈ L, ∀ i, X i * F ∈ J) :
     ∀ᶠ e in atTop, ∀ F ∈ L, F.IsHomogeneous e → F ∈ J := by
   obtain ⟨T, hT⟩ := IsNoetherian.noetherian L
-  have key : ∀ A G, G ∈ L → (A - C (coeff 0 A)) * G ∈ J := by
+  have key : ∀ A G, G ∈ L → (A - C (AddMonoidAlgebra.coeff A 0)) * G ∈ J := by
     intro A G hG
     induction A using MvPolynomial.induction_on with
     | C a => simp
     | add p q hp hq =>
       convert J.add_mem hp hq using 1
-      simp only [coeff_add, map_add]; ring
+      simp only [MvPolynomial.coeff_add, map_add (f := _)]; ring
     | mul_X p i _ =>
-      have : coeff 0 (p * X i) = 0 := by
+      have : AddMonoidAlgebra.coeff (p * X i) 0 = 0 := by
         have := map_mul (constantCoeff (σ := σ) (R := K)) p (X i)
         simpa [constantCoeff_eq] using this
       rw [this, map_zero, sub_zero, mul_assoc]
@@ -204,7 +208,7 @@ theorem eventually_mem_of_X_mul [Finite σ] {J L : Ideal (MvPolynomial σ K)}
       ring
     | smul A x _ hx =>
       obtain ⟨G, h1, h2, h3⟩ := hx
-      refine ⟨C (coeff 0 A) * G, L.mul_mem_left _ h1, ?_, ?_⟩
+      refine ⟨C (AddMonoidAlgebra.coeff A 0) * G, L.mul_mem_left _ h1, ?_, ?_⟩
       · exact (totalDegree_mul _ _).trans (by simpa using h2)
       · convert J.add_mem (J.mul_mem_left A h3) (key A G h1) using 1
         rw [smul_eq_mul]; ring
@@ -400,10 +404,10 @@ section BaseChange
 variable {L : Type} [Field L] [Algebra K L]
 
 noncomputable def contr (φ : L →ₗ[K] K) (F : MvPolynomial σ L) : MvPolynomial σ K :=
-  ∑ m ∈ F.support, monomial m (φ (coeff m F))
+  ∑ m ∈ F.support, monomial m (φ (AddMonoidAlgebra.coeff F m))
 
 @[simp] theorem coeff_contr (φ : L →ₗ[K] K) (F : MvPolynomial σ L) (m : σ →₀ ℕ) :
-    coeff m (contr φ F) = φ (coeff m F) := by
+    AddMonoidAlgebra.coeff (contr φ F) m = φ (AddMonoidAlgebra.coeff F m) := by
   classical
   simp only [contr, coeff_sum, coeff_monomial, Finset.sum_ite_eq', MvPolynomial.mem_support_iff]
   split_ifs with h
@@ -484,32 +488,37 @@ theorem finrank_extSub (W : Submodule K (MvPolynomial σ K)) [Module.Finite K W]
       w.linearIndependent.map' W.subtype W.ker_subtype
     refine Fintype.linearIndependent_iff.1 hw (fun i => φ (c i)) ?_ i
     ext m
-    have := congrArg (fun F => φ (coeff m F)) hc
-    simp only [coeff_sum, map_sum, coeff_zero, map_zero] at this ⊢
-    rw [← this]
-    refine Finset.sum_congr rfl fun j _ => ?_
-    rw [← coeff_contr, contr_smul_map]
+    have := congrArg (fun F => φ (AddMonoidAlgebra.coeff F m)) hc
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [coeff_sum, map_sum, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, map_zero] at this ⊢
+    calc
+      _ = ∑ j, φ (AddMonoidAlgebra.coeff (c j • v j) m) := by
+        refine Finset.sum_congr rfl fun j _ => ?_
+        rw [← coeff_contr, contr_smul_map]
+      _ = _ := this
   have hsp : extSub L W = Submodule.span L (Set.range v) := by
     apply le_antisymm
     · intro F hF
       let b := Basis.ofVectorSpace K L
-      have : F = ∑ j ∈ F.support.biUnion fun m => (b.repr (coeff m F)).support,
+      have : F = ∑ j ∈ F.support.biUnion fun m => (b.repr (AddMonoidAlgebra.coeff F m)).support,
           b j • map (algebraMap K L) (contr (b.coord j) F) := by
         ext m
         simp only [coeff_sum, coeff_smul, coeff_map, coeff_contr, smul_eq_mul]
-        conv_lhs => rw [← b.linearCombination_repr (coeff m F), Finsupp.linearCombination_apply]
+        conv_lhs => rw [← b.linearCombination_repr (AddMonoidAlgebra.coeff F m), Finsupp.linearCombination_apply]
         rw [Finsupp.sum_of_support_subset (s := F.support.biUnion
-          fun m => (b.repr (coeff m F)).support) _ _ _ (by simp)]
+          fun m => (b.repr (AddMonoidAlgebra.coeff F m)).support) _ _ _ (by simp)]
         · refine Finset.sum_congr rfl fun j _ => ?_
           rw [Algebra.smul_def, mul_comm, Basis.coord_apply]
         · by_cases hm : m ∈ F.support
-          · exact Finset.subset_biUnion_of_mem (fun m => (b.repr (coeff m F)).support) hm
+          · exact Finset.subset_biUnion_of_mem (fun m => (b.repr (AddMonoidAlgebra.coeff F m)).support) hm
           · simp [notMem_support_iff.1 hm]
       rw [this]
       refine Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ ?_
       have h1 := congrArg W.subtype (w.sum_repr ⟨_, hF (b.coord j)⟩)
-      simp only [map_sum, map_smul, Submodule.subtype_apply] at h1
-      rw [← h1, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, Submodule.subtype_apply] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← h1, map_sum]
       refine Submodule.sum_mem _ fun i _ => ?_
       rw [smul_eq_C_mul, map_mul, map_C, C_mul']
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -547,19 +556,19 @@ end GlobalTheory.RegBound
 
 namespace GlobalTheory
 
-open RegBound in
 
+open RegBound in
 theorem exists_uniform_regularity_bound :
     ∀ (σ : Type) [Finite σ] (Q : Polynomial ℚ), ∃ d₀ : ℕ, ∀ (K : Type) [Field K] (I : Ideal (MvPolynomial σ K)), (∀ F ∈ I, ∀ e, MvPolynomial.homogeneousComponent e F ∈ I) → (∀ F, (∀ i, MvPolynomial.X i * F ∈ I) → F ∈ I) → (∀ᶠ e in Filter.atTop, (Module.finrank K ↥(MvPolynomial.homogeneousSubmodule σ K e ⊓ I.restrictScalars K) : ℚ) = Q.eval (e : ℚ)) → ∀ e ≥ d₀, (Module.finrank K ↥(MvPolynomial.homogeneousSubmodule σ K e ⊓ I.restrictScalars K) : ℚ) = Q.eval (e : ℚ) ∧ ∀ F ∈ I, F.IsHomogeneous e → F ∈ Ideal.span {G | G ∈ I ∧ G.IsHomogeneous d₀} := by
   intro σ _ Q
-  obtain ⟨d, hd⟩ := bound_infinite σ (nmon σ 1) fun e => Q.eval (e : ℚ)
+  obtain ⟨d, hd⟩ := RegBound.bound_infinite σ (RegBound.nmon σ 1) fun e => Q.eval (e : ℚ)
   refine ⟨d, fun K _ I hI hsat hq => ?_⟩
   haveI : Infinite (AlgebraicClosure K) := IsAlgClosed.instInfinite
-  have hdim : ∀ e, finrank (AlgebraicClosure K) (piece (extIdeal (AlgebraicClosure K) I) e) =
-      finrank K (piece I e) := fun e => by rw [piece_extIdeal, finrank_extSub]
-  have h := hd (AlgebraicClosure K) (extIdeal (AlgebraicClosure K) I)
-    (fun F hF e φ => by rw [contr_comp]; exact hI _ (hF φ) e)
-    (fun F hF φ => hsat _ fun i => by rw [← contr_X_mul]; exact hF i φ)
+  have hdim : ∀ e, finrank (AlgebraicClosure K) (RegBound.piece (RegBound.extIdeal (AlgebraicClosure K) I) e) =
+      finrank K (RegBound.piece I e) := fun e => by rw [RegBound.piece_extIdeal, RegBound.finrank_extSub]
+  have h := hd (AlgebraicClosure K) (RegBound.extIdeal (AlgebraicClosure K) I)
+    (fun F hF e φ => by rw [RegBound.contr_comp]; exact hI _ (hF φ) e)
+    (fun F hF φ => hsat _ fun i => by rw [← RegBound.contr_X_mul]; exact hF i φ)
     (Nat.le_add_left _ _) (by simpa only [hdim] using hq)
   simp only [hdim] at h
   intro e he
@@ -568,9 +577,9 @@ theorem exists_uniform_regularity_bound :
   | base => exact fun F hF hFe => Ideal.subset_span ⟨hF, hFe⟩
   | succ n hn ih =>
     intro F hF hFe
-    refine (Ideal.span_le.2 fun G hG => ih G hG.1 hG.2 : genIn I n ≤ genIn I d) ?_
-    refine mem_genIn_of_map (L := AlgebraicClosure K) ((h n hn).2 _ (fun φ => ?_) (hFe.map _))
-    rw [contr_map, smul_eq_C_mul]
+    refine (Ideal.span_le.2 fun G hG => ih G hG.1 hG.2 : RegBound.genIn I n ≤ RegBound.genIn I d) ?_
+    refine RegBound.mem_genIn_of_map (L := AlgebraicClosure K) ((h n hn).2 _ (fun φ => ?_) (hFe.map _))
+    rw [RegBound.contr_map, smul_eq_C_mul]
     exact I.mul_mem_left _ hF
 
 end GlobalTheory

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
+
+@[expose] public section
+
 open GlobalTheory.UnitLemma Polynomial
 
 noncomputable section
@@ -26,7 +31,7 @@ theorem half_fst (f : Q) : τ (f - θ • (u • (f - τ f))) = f - θ • (u �
 
 theorem half_left (a b : Q) (ha : τ a = a) (hb : τ b = b) :
     u • ((a + θ • b) - τ (a + θ • b)) = b := by
-  rw [map_add, hθ, ha, hb]
+  rw [map_add (f := _), hθ, ha, hb]
   have : a + θ • b - (a + θ' • b) = (θ - θ') • b := by rw [sub_smul]; abel
   rw [this, hinv]
 
@@ -108,7 +113,7 @@ def graphSub (f : M₂ →ₗ[O] A₁ ⧸ M₁) : Submodule O (A₁ × A₂) whe
     rintro a b ⟨ha, ea⟩ ⟨hb, eb⟩
     refine ⟨M₂.add_mem ha hb, ?_⟩
     show _ = f (⟨a.2, ha⟩ + ⟨b.2, hb⟩)
-    rw [map_add, ← ea, ← eb]; simp
+    rw [map_add (f := _), ← ea, ← eb]; simp
   zero_mem' := ⟨M₂.zero_mem, by
     show _ = f 0
     simp⟩
@@ -168,7 +173,7 @@ def compat (g₁ : A₁ →ₗ[O] A₁) (g₂ : A₂ →ₗ[O] A₂) (hg₁ : M�
   carrier := {f | ∀ b : M₂, f ⟨g₂ b, hg₂ b.2⟩ = M₁.mapQ M₁ g₁ hg₁ (f b)}
   add_mem' := by
     intro f f' hf hf' b
-    simp only [LinearMap.add_apply, hf b, hf' b, map_add]
+    simp only [LinearMap.add_apply, hf b, hf' b, map_add (f := _)]
   zero_mem' := by intro b; simp
   smul_mem' := by
     intro o f hf b
@@ -198,7 +203,7 @@ def twist (f : M₂ →ₗ[O] A₁ ⧸ M₁) : M₂ →ₗ[O] A₁ ⧸ M₁ wher
   map_add' b b' := by
     have : (⟨σ₂ (b + b' : M₂), hs₂ (b + b').2⟩ : M₂) = ⟨σ₂ b, hs₂ b.2⟩ + ⟨σ₂ b', hs₂ b'.2⟩ :=
       Subtype.ext (by simp)
-    rw [this, map_add, map_add]
+    rw [this, map_add (f := _), map_add (f := _)]
   map_smul' o b := by
     have : (⟨σ₂ (o • b : M₂), hs₂ (o • b).2⟩ : M₂) = cO o • ⟨σ₂ b, hs₂ b.2⟩ :=
       Subtype.ext (by simp)
@@ -326,7 +331,7 @@ def conjO (K : UQ) : K.O →+* K.O where
   map_one' := IsFractionRing.injective K.O K.E (by simp only [algebraMap_conjFun, map_one])
   map_mul' a b := IsFractionRing.injective K.O K.E (by simp only [algebraMap_conjFun, map_mul])
   map_zero' := IsFractionRing.injective K.O K.E (by simp only [algebraMap_conjFun, map_zero])
-  map_add' a b := IsFractionRing.injective K.O K.E (by simp only [algebraMap_conjFun, map_add])
+  map_add' a b := IsFractionRing.injective K.O K.E (by simp only [algebraMap_conjFun, map_add (f := _)])
 
 theorem algebraMap_conjO (K : UQ) (o : K.O) :
     algebraMap K.O K.E (conjO K o) = K.c (algebraMap K.O K.E o) := algebraMap_conjFun K o

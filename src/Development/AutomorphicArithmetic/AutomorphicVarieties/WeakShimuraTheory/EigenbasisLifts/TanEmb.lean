@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.IsTanZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.CotDer
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.IsTanZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.CotDer
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial Matrix UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws UpperTheory.V.Ws.Eb GlobalTheory.GalOfCusp
 
@@ -40,7 +44,7 @@ private theorem dual_der (O R K : Type) [CommRing O] [IsDomain O] [CharZero O] [
     { toFun := fun f => yb (b.coord i (d f))
       map_add' := by
         intro f g
-        simp only [map_add]
+        simp only [map_add (f := _)]
       map_smul' := by
         intro c f
         rw [RingHom.id_apply, Algebra.smul_def, Derivation.leibniz, Derivation.map_algebraMap,
@@ -49,7 +53,7 @@ private theorem dual_der (O R K : Type) [CommRing O] [IsDomain O] [CharZero O] [
   · intro i
     intro f g
     show yb (b.coord i (d (f * g))) = y f • yb (b.coord i (d g)) + y g • yb (b.coord i (d f))
-    rw [Derivation.leibniz, map_add, map_add, hsm, hsm, smul_eq_mul, smul_eq_mul]
+    rw [Derivation.leibniz, map_add (f := _), map_add (f := _), hsm, hsm, smul_eq_mul, smul_eq_mul]
   · intro i j
     show yb (b.coord i (d (a j : R))) = _
     rw [hd, ha, Module.Basis.coord_apply, Module.Basis.repr_self, Finsupp.single_apply]

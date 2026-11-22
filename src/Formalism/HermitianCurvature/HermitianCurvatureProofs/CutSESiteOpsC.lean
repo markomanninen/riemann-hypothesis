@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVnice
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellZetaMinors
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelCoordinatesCommute
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVnice
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellZetaMinors
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelCoordinatesCommute
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped Matrix
@@ -152,7 +156,7 @@ theorem site_operators_preserve_orbital : SiteOpsWaveJC := by
     exact Submodule.subset_span (key x hx)
   · simp
   · intro x y _ _ hx hy
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hx hy
   · intro a x _ hx
     rw [map_smul]

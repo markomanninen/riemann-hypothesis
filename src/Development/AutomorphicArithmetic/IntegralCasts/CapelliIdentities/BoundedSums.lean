@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.GeNatCast
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.GeNatCast
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.BoundedSums.Bdd :
     {C : Type} → [inst : Field C] → Formalism.L2.FormalSeriesBounds.VF C → (ℕ → C) → Prop :=

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.ProdAcycPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ProdAcycPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry CochainComplex CochainComplex.HomComplex GlobalTheory.EtC

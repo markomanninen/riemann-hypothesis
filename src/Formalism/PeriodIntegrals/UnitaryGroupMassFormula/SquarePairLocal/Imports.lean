@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SquarePairLocal.IntAtOfDivAtZero
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SquarePairLocal.IntAtOfDivAtZero
+
+@[expose] public section
 
 noncomputable section
 open NumberField Matrix
@@ -195,7 +199,7 @@ theorem locMat : LocMat := by
       smul_eq_mul, map_sub, map_mul, map_pow, hσϖ]
   have hA : M.j.mapMatrix (Ym + (Ym.map (cj E))ᵀ - 1) =
       (M.j M.ϖ ^ (2 * k + K)) • (-(Zm + (Zm.map M.σ)ᵀ)) := by
-    rw [map_sub, map_add, map_one, hYcj, hYj, hs, heS]
+    rw [map_sub, map_add (f := _), map_one, hYcj, hYj, hs, heS]
     simp only [smul_neg, smul_add]
     abel
   have hcT : ((algebraMap (𝓞 E) E).mapMatrix Ym)ᴴ =
@@ -209,7 +213,7 @@ theorem locMat : LocMat := by
     rw [map_sub, map_mul]
   have hpl : (algebraMap (𝓞 E) E).mapMatrix Ym + ((algebraMap (𝓞 E) E).mapMatrix Ym)ᴴ - 1 =
       (algebraMap (𝓞 E) E).mapMatrix (Ym + (Ym.map (cj E))ᵀ - 1) := by
-    rw [hcT, map_sub, map_add, map_one]
+    rw [hcT, map_sub, map_add (f := _), map_one]
   have hdetA : ∀ (A : Matrix (Fin N) (Fin N) (𝓞 E)) (V : Matrix (Fin N) (Fin N) M.R),
       M.j.mapMatrix A = (M.j M.ϖ ^ (2 * k + K)) • V →
       ∀ a c, ∃ s : 𝓞 E, s ∉ Q ∧ ∃ w : 𝓞 E, s * A a c = M.ϖ ^ K * w := by

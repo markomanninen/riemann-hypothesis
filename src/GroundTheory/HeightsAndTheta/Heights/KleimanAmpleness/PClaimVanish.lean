@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GenericPointSectionHypotheses
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsClaimSeq
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PClaimVanishCech
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GenericPointSectionHypotheses
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsClaimSeq
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PClaimVanishCech
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -64,8 +69,8 @@ variable (T : StepData k x) (Jg : FinGradedSub (S := k) (x := x) Ω)
   (hJg : ∀ c : ℤ, Jg.piece c = Submodule.span k {z | ∃ (f : Poly k N) (e : ℕ), f ∈ T.J ∧
     f.IsHomogeneous e ∧ (e : ℤ) = c ∧ z = aeval x f})
 
-include hJg in
 
+include hJg in
 theorem claim_le : ∀ c, Jg.piece c ≤ (coordGraded k x).piece c := by
   intro c
   rw [hJg]
@@ -73,8 +78,8 @@ theorem claim_le : ∀ c, Jg.piece c ≤ (coordGraded k x).piece c := by
   rintro _ ⟨f, e, -, hf, he, rfl⟩
   exact ⟨f, e, hf, he, rfl⟩
 
-include hJg in
 
+include hJg in
 theorem claim_kill : ∀ (f : Poly k N) (e : ℕ), f ∈ T.J → f.IsHomogeneous e → ∀ (a : ℤ),
     ∀ z ∈ (coordGraded k x).piece a, aeval x f • z ∈ Jg.piece (a + e) := by
   intro f e hf hfe a z hz

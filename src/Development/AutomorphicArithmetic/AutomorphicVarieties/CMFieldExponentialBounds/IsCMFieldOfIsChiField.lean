@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.StmtFields
-import Development.AutomorphicArithmetic.QuadraticCharacters.GaussRoot
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.StmtFields
+public import Development.AutomorphicArithmetic.QuadraticCharacters.GaussRoot
+
+@[expose] public section
 
 open NumberField Formalism.HC UpperTheory.Top UpperTheory.V
 

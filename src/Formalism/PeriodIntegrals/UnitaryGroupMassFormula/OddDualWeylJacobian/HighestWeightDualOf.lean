@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.JacRev
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.MnrUpdateEqZero
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.JacRev
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.MnrUpdateEqZero
+
+@[expose] public section
 
 open MvPolynomial Matrix
 
@@ -14,12 +18,12 @@ lemma nuNext_castSucc {m : ℕ} (ν : Fin (m + 1) → ℕ) (t : Fin m) : nuNext 
   have ht := t.isLt
   have h : (t.castSucc : Fin (m + 1)).val + 1 < m + 1 := by rw [Fin.val_castSucc]; omega
   unfold PI.OddDualWeyl.nuNext
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   congr 1
 
 lemma nuNext_last {m : ℕ} (ν : Fin (m + 1) → ℕ) : nuNext ν (Fin.last m) = 0 := by
   unfold PI.OddDualWeyl.nuNext
-  rw [dif_neg (by simp)]
+  rw [dite_eq_right (by simp)]
 
 lemma nuStar_apply {m : ℕ} (lam : Fin (m + 1) → ℤ) (t : Fin (m + 1)) :
     nuOf (lamStar lam) t = (lam 0 - lam t.rev).toNat := by
@@ -110,12 +114,12 @@ lemma sum_expo {m : ℕ} (lam : Fin (m + 1) → ℤ) (hlam : Antitone lam) :
   have hG : ∀ t : Fin m, G t.val = PI.OddDualWeyl.nuOf lam t.castSucc := fun t => by
     have := t.isLt
     show (if h : t.val < m + 1 then _ else _) = _
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
     rfl
   have hG1 : ∀ t : Fin m, G (t.val + 1) = PI.OddDualWeyl.nuOf lam t.succ := fun t => by
     have := t.isLt
     show (if h : t.val + 1 < m + 1 then _ else _) = _
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
     rfl
   have hG0 : G 0 = PI.OddDualWeyl.nuOf lam 0 := by simp [G]
   have key : ((∑ t : Fin m, (m - 1 - t.val) * (PI.OddDualWeyl.nuOf lam t.castSucc - PI.OddDualWeyl.nuOf lam t.succ) : ℕ) : ℤ) =

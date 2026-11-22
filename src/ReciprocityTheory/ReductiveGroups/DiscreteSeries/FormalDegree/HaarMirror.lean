@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarHaar
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarHaar
+
+@[expose] public section
 
 noncomputable section
 

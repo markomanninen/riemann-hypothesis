@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.TangentLinearity.ConstPullback
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.TangentLinearity.ConstPullback
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
@@ -329,7 +333,7 @@ theorem Rel.gen (H : Rel p ε M V j hj u α) (hε : ε * ε = 0) (hM : M.IsLB) (
     fun a b x ha hb => ?_
   have he : cstS (𝟙 X ≫ p) x ε * cstS (𝟙 X ≫ p) x ε = 0 := by rw [← map_mul, hε, map_zero]
   have h := hβ a b x ha hb
-  simp only [map_mul, map_add, map_one, map_neg, gr_cst]
+  simp only [map_mul, map_add (f := _), map_one, map_neg, gr_cst]
   rw [H a b _ _ x ha hb]
   generalize gr (𝟙 X) x (V a ⊓ V b) ⟨ha, hb⟩ (α a b) = x₁ at *
   generalize gr (𝟙 X) x _ ha (β a) = x₂ at *
@@ -400,7 +404,7 @@ theorem Rel.slice (H : Rel p ε M V j hj u α) (hε : ε * ε = 0) (hV : ⨆ a, 
   have h1 := hr a b _ (𝟙 A) x ha hb
   have h2 := congrArg (gr (𝟙 A) x (s ⁻¹ᵁ V a) ha) (hβ a)
   have h3 := congrArg (gr (𝟙 A) x (s ⁻¹ᵁ V b) hb) (hβ b)
-  simp only [map_mul, map_add, map_one, map_neg, gr_cst, ← Category.assoc] at h2 h3
+  simp only [map_mul, map_add (f := _), map_one, map_neg, gr_cst, ← Category.assoc] at h2 h3
   have he : cstS ((𝟙 A ≫ s) ≫ p) x ε * cstS ((𝟙 A ≫ s) ≫ p) x ε = 0 := by
     rw [← map_mul, hε, map_zero]
   refine ((ru b).map (gr (𝟙 A) x (s ⁻¹ᵁ V b) hb)).mul_right_eq_zero.1 ?_
@@ -450,10 +454,10 @@ theorem Rel.cocycle_fibre (H : Rel p ε M V j hj u α) (hε : ε * ε = 0) (h0 :
         (α b d) -
       (X.presheaf.map (homOfLE (le_inf (inf_le_left.trans inf_le_left) inf_le_right)).op).hom
         (α a d)) (gr_ext fun x hx => by
-      rw [map_mul, map_sub, map_add, gr_res, gr_res, gr_res, gr_cst, map_zero]
+      rw [map_mul, map_sub, map_add (f := _), gr_res, gr_res, gr_res, gr_cst, map_zero]
       exact H.cocycle hε hM hu a b d _ x hx.1.1 hx.1.2 hx.2)
   have h' := congrArg (gr (𝟙 Y) y (i ⁻¹ᵁ (V a ⊓ V b ⊓ V d)) ⟨⟨ha, hb⟩, hd⟩) h
-  rw [gr_app, map_sub, map_add, gr_res, gr_res, gr_res, map_zero] at h'
+  rw [gr_app, map_sub, map_add (f := _), gr_res, gr_res, gr_res, map_zero] at h'
   exact sub_eq_zero.1 h'
 
 theorem Rel.slice_fibre (H : Rel p ε M V j hj u α) (hε : ε * ε = 0) (h0 : ε ≠ 0)
@@ -515,8 +519,8 @@ theorem Rel.gen_fibre (H : Rel p ε M V j hj u α) (hε : ε * ε = 0)
 
 end Residue
 
-open scoped CategoryTheory.Obj in
 
+open scoped CategoryTheory.Obj in
 theorem exists_gen_of_small_extension : GlobalFnsSt → (∀ (K : Type) [Field K] (X Y : Over (Spec (CommRingCat.of K))) (x₀ : 𝟙_ _ ⟶ X) (y₀ : 𝟙_ _ ⟶ Y), IsSeparated X.hom → QuasiCompact X.hom → IsSeparated Y.hom → QuasiCompact Y.hom → Function.Bijective X.hom.appTop.hom → Function.Bijective Y.hom.appTop.hom → ∀ (I : Type) (V : I → (X ⊗ Y).left.Opens), ⨆ a, V a = ⊤ → ∀ φ : ∀ a b, Γ((X ⊗ Y).left, V a ⊓ V b), (∀ a b d, ((X ⊗ Y).left.presheaf.map (homOfLE (inf_le_left : V a ⊓ V b ⊓ V d ≤ V a ⊓ V b)).op).hom (φ a b) + ((X ⊗ Y).left.presheaf.map (homOfLE (le_inf (inf_le_left.trans inf_le_right) inf_le_right : V a ⊓ V b ⊓ V d ≤ V b ⊓ V d)).op).hom (φ b d) = ((X ⊗ Y).left.presheaf.map (homOfLE (le_inf (inf_le_left.trans inf_le_left) inf_le_right : V a ⊓ V b ⊓ V d ≤ V a ⊓ V d)).op).hom (φ a d)) → (∃ ψ : ∀ a, Γ(X.left, (lift (𝟙 X) (toUnit X ≫ y₀)).left ⁻¹ᵁ V a), ∀ a b, ((lift (𝟙 X) (toUnit X ≫ y₀)).left.app (V a ⊓ V b)).hom (φ a b) = (X.left.presheaf.map (homOfLE (show (lift (𝟙 X) (toUnit X ≫ y₀)).left ⁻¹ᵁ (V a ⊓ V b) ≤ (lift (𝟙 X) (toUnit X ≫ y₀)).left ⁻¹ᵁ V a from fun _ h => h.1)).op).hom (ψ a) - (X.left.presheaf.map (homOfLE (show (lift (𝟙 X) (toUnit X ≫ y₀)).left ⁻¹ᵁ (V a ⊓ V b) ≤ (lift (𝟙 X) (toUnit X ≫ y₀)).left ⁻¹ᵁ V b from fun _ h => h.2)).op).hom (ψ b)) → (∃ ψ : ∀ a, Γ(Y.left, (lift (toUnit Y ≫ x₀) (𝟙 Y)).left ⁻¹ᵁ V a), ∀ a b, ((lift (toUnit Y ≫ x₀) (𝟙 Y)).left.app (V a ⊓ V b)).hom (φ a b) = (Y.left.presheaf.map (homOfLE (show (lift (toUnit Y ≫ x₀) (𝟙 Y)).left ⁻¹ᵁ (V a ⊓ V b) ≤ (lift (toUnit Y ≫ x₀) (𝟙 Y)).left ⁻¹ᵁ V a from fun _ h => h.1)).op).hom (ψ a) - (Y.left.presheaf.map (homOfLE (show (lift (toUnit Y ≫ x₀) (𝟙 Y)).left ⁻¹ᵁ (V a ⊓ V b) ≤ (lift (toUnit Y ≫ x₀) (𝟙 Y)).left ⁻¹ᵁ V b from fun _ h => h.2)).op).hom (ψ b)) → ∃ ψ : ∀ a, Γ((X ⊗ Y).left, V a), ∀ a b, φ a b = ((X ⊗ Y).left.presheaf.map (homOfLE inf_le_left).op).hom (ψ a) - ((X ⊗ Y).left.presheaf.map (homOfLE inf_le_right).op).hom (ψ b)) → ∀ (R : Type) [CommRing R] [IsLocalRing R] (ε : R), (∀ a ∈ IsLocalRing.maximalIdeal R, a * ε = 0) → ∀ (A : Over (Spec (CommRingCat.of R))) [GrpObj A], IsAbelianScheme A → ∀ M : LB (A ⊗ A).left, M.IsLB → (∃ t : LB.Gen (M.pull (lift (𝟙 A) 1).left), t.IsGen) → (∃ t : LB.Gen (M.pull (lift 1 (𝟙 A)).left), t.IsGen) → ∀ (X' : Scheme.{0}) (π : X' ⟶ (A ⊗ A).left) (f' : X' ⟶ Spec (CommRingCat.of (R ⧸ Ideal.span {ε}))), IsPullback π f' (A ⊗ A).hom (Spec.map (CommRingCat.ofHom (Ideal.Quotient.mk (Ideal.span {ε})))) → ε ∈ IsLocalRing.maximalIdeal R → (∃ t : LB.Gen (M.pull π), t.IsGen) → ∃ t : LB.Gen M, t.IsGen := by
   intro hG hK R _ _ ε hm A _ hA M hM ⟨t₁, ht₁⟩ ⟨t₂, ht₂⟩ X' π f' P hε ⟨t, ht⟩
   have hεε : ε * ε = 0 := hm ε hε
@@ -569,7 +573,7 @@ theorem exists_gen_of_small_extension : GlobalFnsSt → (∀ (K : Type) [Field K
     (fun a => i ⁻¹ᵁ V a) (by rw [← Scheme.Hom.preimage_iSup, hV]; rfl)
     (fun a b => (i.appLE (V a ⊓ V b) (i ⁻¹ᵁ V a ⊓ i ⁻¹ᵁ V b) (fun _ h => h)).hom (α a b))
     (fun a b d => gr_ext fun y hy => by
-      rw [map_add, gr_res, gr_res, gr_res, gr_appLE, gr_appLE, gr_appLE]
+      rw [map_add (f := _), gr_res, gr_res, gr_res, gr_appLE, gr_appLE, gr_appLE]
       exact H.cocycle_fibre hεε h0 hM haff hu Pk.w a b d y hy.1.1 hy.1.2 hy.2)
     (@slice _ (fst A A) (by change IsSeparated (pullback.fst A.hom A.hom); infer_instance)
       (by simp) t₁ ht₁ _ (by

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.AbelianSchemeQuotients.QSurjective
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.AbelianSchemeQuotients.QSurjective
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -155,8 +159,8 @@ lemma coeff_sum_single {A : Type} [CommRing A] (s : Finset X) (g : X → A) (χ�
     (∑ c ∈ s, AddMonoidAlgebra.single c (g c)).coeff χ₀ = g χ₀ := by
   classical
   first
-  | simp [AddMonoidAlgebra.coeff, Finsupp.finset_sum_apply, Finsupp.single_apply, h]
-  | simp [Finsupp.finset_sum_apply, Finsupp.single_apply, h]
+  | simp [AddMonoidAlgebra.coeff, Finsupp.finsetSum_apply, Finsupp.single_apply, h]
+  | simp [Finsupp.finsetSum_apply, Finsupp.single_apply, h]
   | simp [AddMonoidAlgebra.coeff_sum, AddMonoidAlgebra.coeff_single, h]
 
 theorem eq_zero_of_sum {V : Y.left.Opens} (s : Finset X) (h : X → Γ(Y.left, V))
@@ -181,9 +185,11 @@ theorem eq_zero_of_sum {V : Y.left.Opens} (s : Finset X) (h : X → Γ(Y.left, V
     rw [← CommRingCat.comp_apply, ← CommRingCat.comp_apply, Scheme.Hom.app_eq_appLE,
       Scheme.Hom.app_eq_appLE, Scheme.Hom.appLE_map, Scheme.Hom.map_appLE]
   have hres := congrArg ((splitTorus S X ⊗ Y).left.presheaf.map (homOfLE hle).op).hom hs
-  simp only [map_sum, map_mul, map_zero, e1, e2] at hres
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_zero, e1, e2] at hres
   have hev := congrArg (ev hW) hres
-  simp only [map_sum, map_mul, map_zero, ev_chi, ev_snd, AddMonoidAlgebra.single_mul_single,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_zero, ev_chi, ev_snd, AddMonoidAlgebra.single_mul_single,
     add_zero, one_mul] at hev
   have hc := congrArg (fun f => f.coeff χ₀) hev
   rw [coeff_sum_single X s _ χ₀ hχ₀, AddMonoidAlgebra.coeff_zero, Finsupp.coe_zero, Pi.zero_apply] at hc

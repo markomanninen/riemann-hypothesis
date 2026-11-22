@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsRealCoord
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.FundamentalDomainCusps.LogNormEstimates
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.FundamentalDomainCusps.HeightBoundSetup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsRealCoord
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.FundamentalDomainCusps.LogNormEstimates
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.FundamentalDomainCusps.HeightBoundSetup
+
+@[expose] public section
 
 open NumberField Matrix Formalism.MainNotions.S GlobalTheory.CuspGeo GlobalTheory.ClassFin
 open scoped Topology
@@ -84,15 +88,18 @@ theorem hform_dot (x y : Fin I.n → I.E) :
 
 theorem trForm_sum_right {ι : Type} [Fintype ι] (x : Fin I.n → I.E) (q : ι → ℚ) (y : ι → Fin I.n → I.E) :
     trForm I x (∑ j, q j • y j) = ∑ j, q j * trForm I x (y j) := by
-  simp only [trForm, hform_dot, mulVec_sum, mulVec_smul, dotProduct_sum, dotProduct_smul, map_sum, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [trForm, hform_dot, mulVec_sum, mulVec_smul, dotProduct_sum, dotProduct_smul, map_sum, map_smul,
     smul_eq_mul]
 
 theorem trForm_sum_left {ι : Type} [Fintype ι] (x : Fin I.n → I.E) (q : ι → ℚ) (y : ι → Fin I.n → I.E) :
     trForm I (∑ j, q j • y j) x = ∑ j, q j * trForm I (y j) x := by
   have e : (fun i => starRingEnd I.E ((∑ j, q j • y j) i)) = ∑ j, q j • fun i => starRingEnd I.E (y j i) := by
     funext i
-    simp [Finset.sum_apply, map_sum, map_rat_smul]
-  simp only [trForm, hform_dot, e, sum_dotProduct, smul_dotProduct, map_sum, map_smul, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Finset.sum_apply, map_sum, map_rat_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [trForm, hform_dot, e, sum_dotProduct, smul_dotProduct, map_sum, map_smul, smul_eq_mul]
 
 theorem trForm_smul_left (x u : Fin I.n → I.E) (q : ℚ) : trForm I (q • u) x = q * trForm I u x := by
   have := trForm_sum_left I x (fun _ : Fin 1 => q) (fun _ => u)

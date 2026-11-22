@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 open scoped TensorProduct
@@ -14,7 +18,7 @@ theorem mem_smul_top_iff_repr {ι : Type} [Fintype ι] (b : Module.Basis ι A Λ
     refine Submodule.smul_induction_on hz (fun r hr y _ => ?_) (fun y w hy hw => ?_)
     · rw [map_smul, Finsupp.smul_apply, smul_eq_mul]
       exact J.mul_mem_right _ hr
-    · rw [map_add, Finsupp.add_apply]
+    · rw [map_add (f := _), Finsupp.add_apply]
       exact add_mem hy hw
   · intro h
     rw [← b.sum_repr z]

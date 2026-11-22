@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.FaceRes
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.FaceRes
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC LateralTheory.CohomologicalPurity LateralTheory.CohomologicalPurity.TubeCut UpperTheory.Et.Prd
 
@@ -113,9 +117,9 @@ private theorem cl_next {C C' : DC} {Φ : C.Hom C'} {n : ℤ} {a : C.Tot} {y : C
     change Φ (p + 1) t (a (p + 1) t) = _ at h1
     have h3 : C'.δ p t (y p t) =
         C'.δ p t (Φ p t (x.u t)) + C'.d (p + 1) s t (C'.δ p s (x.v s)) := by
-      rw [x.hz t, x.sv.yv s t e, map_add, hC'.comm]
+      rw [x.hz t, x.sv.yv s t e, map_add (f := _), hC'.comm]
     have h4 : Φ (p + 1) t (C.δ p t (x.u t)) = C'.δ p t (Φ p t (x.u t)) := hΦ.2 p t (x.u t)
-    simp only [map_sub, map_add, map_us, h4]
+    simp only [map_sub, map_add (f := _), map_us, h4]
     rw [h1, h3, smul_add]
     abel
 
@@ -134,7 +138,7 @@ theorem UpperTheory.totalExact_of_columnExact :
       cl := cl_next hC hC' hΦ ha hy hD hP x
       sv := (solve (hcol (p + 1)) (cl_next hC hC' hΦ ha hy hD hP x)).choose_spec.choose_spec
       hb := fun s => by simp only [map_sub, map_us, hC.δδ, smul_zero, sub_zero]
-      hz := fun s => by simp only [map_add, map_us, hC'.δδ, smul_zero, add_zero] }
+      hz := fun s => by simp only [map_add (f := _), map_us, hC'.δδ, smul_zero, add_zero] }
   let S : ∀ p, St Φ n a y p := fun p => Nat.rec (motive := fun p => St Φ n a y p) S0 step p
   refine ⟨fun p s => (S p).u s, fun p s => (S p).v s, ?_, ?_, ?_, ?_⟩
   · intro p s hps

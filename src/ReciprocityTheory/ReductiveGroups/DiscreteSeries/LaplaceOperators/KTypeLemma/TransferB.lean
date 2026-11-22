@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.TransferStatement
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiFacts
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.TransferStatement
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ lemma tb_isUnit_of_omega {y : Matrix (Fin n) (Fin n) ℂ} (hy : y ∈ OmegaSet n
 
 lemma tb_isUnit_of_omegaP {x : Matrix (Fin n) (Fin n) ℂ} (hx : x ∈ OmegaP n) : IsUnit x := Matrix.isUnit_nonsing_inv_iff.mp (tb_isUnit_of_omega hx)
 
-lemma tb_contDiff_entry (a b : Fin n) : ContDiff ℂ ω (fun z : Matrix (Fin n) (Fin n) ℂ => z a b) := contDiff_apply_apply ℂ ℂ a b
+lemma tb_contDiff_entry (a b : Fin n) : ContDiff ℂ ω (fun z : Matrix (Fin n) (Fin n) ℂ => z a b) := contDiff_apply_apply ℂ a b
 
 lemma tb_contDiff_lead (i : ℕ) : ContDiff ℂ ω (lead (n := n) i) := by
   unfold lead

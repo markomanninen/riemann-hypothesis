@@ -1,5 +1,9 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsMulSubOneMemPow
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensityRatio
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsMulSubOneMemPow
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensityRatio
+
+@[expose] public section
 
 open NumberField Module
 
@@ -64,7 +68,7 @@ variable {V : Type} [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Modul
   [IsScalarTower (𝓞 K) K V]
 
 theorem card_quot_extP (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F) {L : Submodule (𝓞 K) V}
-    (hL : Submodule.IsLattice K L) {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) (k : ℕ) :
+    (hL : Submodule.IsFullLattice K L) {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) (k : ℕ) :
     Nat.card (↥L ⧸ ((extP K 𝔭) ^ k • ⊤ : Submodule (𝓞 K) ↥L)) =
       Ideal.absNorm 𝔭 ^ (2 * finrank K V * k) := by
   let _ : Module F V := Module.compHom V (algebraMap F K)
@@ -142,7 +146,7 @@ theorem star_mem_extP (hF : IsFixF K F) (𝔭 : Ideal (𝓞 F)) (k : ℕ) {z : �
   | add x y _ _ hx hy =>
     obtain ⟨x', hx', ex⟩ := hx
     obtain ⟨y', hy', ey⟩ := hy
-    exact ⟨x' + y', add_mem hx' hy', by rw [map_add, map_add, star_add, ex, ey]⟩
+    exact ⟨x' + y', add_mem hx' hy', by rw [map_add (f := _), map_add (f := _), star_add, ex, ey]⟩
   | smul a x _ hx =>
     obtain ⟨x', hx', ex⟩ := hx
     obtain ⟨a', ea⟩ := exists_star_int a
@@ -177,7 +181,7 @@ theorem exists_val (hF : IsFixF K F) (hs : h.IsSymm) (hLi : Formalism.HermitianL
   obtain ⟨a, ha⟩ := (hF (h y y)).1 (hs.eq y y)
   obtain ⟨z, hz⟩ := Submodule.mem_one.1 (hLi y y.2 y y.2)
   have hint : IsIntegral ℤ a := by
-    rw [← isIntegral_algebraMap_iff (algebraMap F K).injective, ha, ← hz]
+    rw [← isIntegral_algebraMap_iff (B := K), ha, ← hz]
     exact RingOfIntegers.isIntegral_coe z
   exact ⟨⟨a, hint⟩, ha.symm⟩
 
@@ -192,7 +196,7 @@ theorem form_mem_right (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h 
   | add a _ b _ ha hb =>
     obtain ⟨x', hx', ex⟩ := ha
     obtain ⟨y', hy', ey⟩ := hb
-    exact ⟨x' + y', add_mem hx' hy', by rw [map_add, ex, ey, Submodule.coe_add, map_add]⟩
+    exact ⟨x' + y', add_mem hx' hy', by rw [map_add (f := _), ex, ey, Submodule.coe_add, map_add (f := _)]⟩
 
 theorem val_congr (hF : IsFixF K F) (hs : h.IsSymm) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L)
     (𝔭 : Ideal (𝓞 F)) (k : ℕ) {y y' : ↥L} {n n' : 𝓞 F}
@@ -206,7 +210,7 @@ theorem val_congr (hF : IsFixF K F) (hs : h.IsSymm) (hLi : Formalism.HermitianLa
   have : algebraMap (𝓞 F) (𝓞 K) (n - n') = z1 + z2 + z3 := by
     apply RingOfIntegers.coe_injective
     have h3 : star (h (y' : V) ((y - y' : ↥L) : V)) = h ((y - y' : ↥L) : V) (y' : V) := hs.eq _ _
-    rw [algebraMap_comp, map_add, map_add, e1, e2, e3, e1, h3]
+    rw [algebraMap_comp, map_add (f := _), map_add (f := _), e1, e2, e3, e1, h3]
     have : algebraMap F K ((n - n' : 𝓞 F) : F) = algebraMap F K (n : F) - algebraMap F K (n' : F) := by
       simp
     rw [this, ← e, ← e']

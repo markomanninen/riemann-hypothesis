@@ -1,21 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspidalNoRadicalFixed
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConstantTermVanishing
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasTypeVec
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.CuspDiscreteDecompositionOfTraceClass
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IsClosedEmbeddingOfLocallyCompact
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsFactorisationCuspidal
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PseudoCoefficientUpqTrivial
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesCharacter
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LanglandsClassification
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LabesseWaldspurger
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RadfordShufflePolynomialHolds
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.PseudoCoefficientSeparation
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfinitePartActDiscreteSeriesHomFactorwise
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspidalNoRadicalFixed
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConstantTermVanishing
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasTypeVec
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.CuspDiscreteDecompositionOfTraceClass
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IsClosedEmbeddingOfLocallyCompact
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsFactorisationCuspidal
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PseudoCoefficientUpqTrivial
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesCharacter
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LanglandsClassification
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LabesseWaldspurger
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RadfordShufflePolynomialHolds
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.PseudoCoefficientSeparation
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfinitePartActDiscreteSeriesHomFactorwise
+
+@[expose] public section
+
 open MeasureTheory Set Filter NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.OpTrace GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary GlobalTheory.AutMult Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR.Mult
@@ -63,7 +68,7 @@ theorem isClosed_stage : IsClosed (stage e δ ρ s : Set (ContinuousMultilinearM
     ext Φ; simp [mem_stage]
   rw [this]
   exact (isClosed_biInter fun i _ => isClosed_iInter fun g => isClosed_iInter fun y => h1 _ _ _).inter
-    (isClosed_biInter fun i _ => isClosed_iInter fun y => h2 _ _ _)
+    (isClosed_iInter fun i => isClosed_iInter fun _ => isClosed_iInter fun y => h2 _ _ _)
 
 theorem comp_mem_stage (hΦ : Φ ∈ stage e δ ρ s) {g : G} (hg : ∀ i ∈ s, ∀ a, Commute g (e i a)) :
     (ρ g).compContinuousMultilinearMap Φ ∈ stage e δ ρ s := by
@@ -87,8 +92,8 @@ section Norm
 
 variable [∀ i, TopologicalSpace (Γ i)] [TopologicalSpace G] [CompleteSpace K]
 
-omit [Fintype ι] dec [∀ i, Group (Γ i)] [∀ i, TopologicalSpace (Γ i)] [TopologicalSpace G] in
 
+omit [Fintype ι] dec [∀ i, Group (Γ i)] [∀ i, TopologicalSpace (Γ i)] [TopologicalSpace G] in
 theorem norm_apply_eq_of {Γ₀ H₀ : Type} [Group Γ₀] [NormedAddCommGroup H₀] [InnerProductSpace ℂ H₀] [CompleteSpace H₀]
     {π : Γ₀ →* (H₀ →L[ℂ] H₀)} {ρ₀ : Γ₀ →* (K →L[ℂ] K)} (h1 : ∀ g x, ‖π g x‖ = ‖x‖) (h2 : IsTopIrreducible π)
     (h3 : ∀ g x, ‖ρ₀ g x‖ = ‖x‖) {T : H₀ →L[ℂ] K} (hT : T ∈ homIn π ρ₀ ⊤) (x : H₀) :
@@ -140,7 +145,7 @@ theorem norm_le_apply_unit (hδ : ∀ i, IsIrrUnitary (δ i)) (hρ : IsUnitaryRe
     ‖Φ‖ ≤ ‖Φ fun i => unitVec (Hs i)‖ := by
   refine ContinuousMultilinearMap.opNorm_le_bound (norm_nonneg _) fun y => ?_
   rw [norm_apply_eq hδ hρ hΦ y, mul_assoc, ← Finset.prod_mul_prod_compl s fun i => ‖y i‖]
-  refine mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left (Finset.prod_le_prod (fun i _ => norm_nonneg _)
+  refine mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left (Finset.prod_le_prod₀ (fun i _ => norm_nonneg _)
     fun i _ => ?_) (Finset.prod_nonneg fun i _ => norm_nonneg _)) (norm_nonneg _)
   have := (hδ i).irred.1
   exact (norm_inner_le_norm _ _).trans (by rw [norm_unitVec, one_mul])
@@ -207,7 +212,7 @@ noncomputable def insertMap (σ : ι) (u : Hs σ) (B : Hs σ →L[ℂ] Continuou
         obtain rfl : inst = dec := Subsingleton.elim _ _
         by_cases hi : i = σ
         · subst hi
-          simp only [Function.update_self, Function.update_idem, map_add, ContinuousMultilinearMap.add_apply]
+          simp only [Function.update_self, Function.update_idem, map_add (f := _), ContinuousMultilinearMap.add_apply]
         · simp only [Function.update_comm hi,
             ContinuousMultilinearMap.map_update_add]
           rw [Function.update_of_ne (Ne.symm hi), Function.update_of_ne (Ne.symm hi),
@@ -216,8 +221,8 @@ noncomputable def insertMap (σ : ι) (u : Hs σ) (B : Hs σ →L[ℂ] Continuou
         obtain rfl : inst = dec := Subsingleton.elim _ _
         by_cases hi : i = σ
         · subst hi
-          simp only [Function.update_self, Function.update_idem, map_smul, ContinuousMultilinearMap.smul_apply]
-        · simp only [Function.update_comm hi, ContinuousMultilinearMap.map_update_smul]
+          simp only [Function.update_self, Function.update_idem, map_smul, ContinuousMultilinearMap.smul_apply, RingHom.id_apply]
+        · simp only [Function.update_comm hi, ContinuousMultilinearMap.map_update_smul, RingHom.id_apply]
           rw [Function.update_of_ne (Ne.symm hi), Function.update_of_ne (Ne.symm hi)] }
     (‖B‖ * ‖u‖) fun y => by
       change ‖B (y σ) (Function.update y σ u)‖ ≤ _
@@ -388,8 +393,8 @@ end Main
 
 end GlobalTheory.TensorHom
 
-open GlobalTheory.TensorHom GlobalTheory.TrAct in
 
+open GlobalTheory.TensorHom GlobalTheory.TrAct in
 theorem GlobalTheory.TensorHom.exists_ne_zero_homDS : ∀ (D : D7) (V : HSp D) (S : D.what₂.Tau → SPar) (M : DSModel V S) (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] (π : GA D V →* (H →L[ℂ] H)), IsIrrUnitary π → HasDSComp M π → ∃ Φ ∈ homDS M π ⊤, Φ ≠ 0 := by
   intro D V S M H _ _ _ π hπ hds
   classical

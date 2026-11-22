@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PreimageSubsetImage
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.HuaInvOfTauDeriv
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.HasFDerivAtTauR
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.CayDensExLHU
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PreimageSubsetImage
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.HuaInvOfTauDeriv
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.HasFDerivAtTauR
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.CayDensExLHU
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,7 +73,7 @@ theorem cayDensU (P Q : ℕ) (m : Measure (UpqT P Q)) [hm : m.IsHaarMeasure] (la
         with x hx hxD
       exact rhoH_pos (P := P) (Q := Q) x hxD hx
     rw [ae_iff] at hF
-    simp only [not_false_eq_true, Set.setOf_true, Measure.restrict_apply_univ] at hF
+    simp only [not_false_eq_true, Set.ofPred_true, Measure.restrict_apply_univ] at hF
     exact hpos.ne' hF
   obtain ⟨t, ht0, httop, W', hW'1, hW'W, hβW'⟩ :=
     local_haar_unique (UpqT P Q) m hm (betaH P Q lam) (cayS (D0 P Q)) hW h1W hinv hcpt hne
@@ -81,7 +85,7 @@ theorem cayDensU (P Q : ℕ) (m : Measure (UpqT P Q)) [hm : m.IsHaarMeasure] (la
   have key : ∀ S ⊆ V, betaH P Q lam S = t * m S := by
     intro S hSV
     have h := congrArg (fun μ : Measure (UpqT P Q) => μ S) hβV
-    simp only [Measure.smul_apply, Measure.restrict_apply' hVo.measurableSet,
+    simp only [smul_apply, Measure.restrict_apply' hVo.measurableSet,
       Set.inter_eq_left.2 hSV, smul_eq_mul] at h
     exact h
 

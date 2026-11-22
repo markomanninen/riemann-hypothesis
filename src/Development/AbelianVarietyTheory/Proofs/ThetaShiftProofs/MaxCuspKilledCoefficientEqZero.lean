@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.MaximalCuspKernels.MaxCuspsSt
-import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.MaximalCuspKernels.MaxCuspsPfA
-import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.MaximalCuspKernels.MaxCuspsPfB
-import Formalism.LocalToGlobal.ProjectiveLattices.RdOrbIntOfLatZ
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.PeriodLatticeCountable
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.CountableOfIsAddFundamentalDomain
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.CuspFlowEqTorusActionStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.MaximalCuspKernels.MaxCuspsSt
+public import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.MaximalCuspKernels.MaxCuspsPfA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.SublatticeCoefficients
+public import Formalism.LocalToGlobal.ProjectiveLattices.RdOrbIntOfLatZ
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.PeriodLatticeCountable
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.CountableOfIsAddFundamentalDomain
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.CuspFlowEqTorusActionStatement
+
+@[expose] public section
 
 open ReciprocityTheory.ChartRestriction.G.FD NumberField Formalism.L2.Pj.FJ Formalism.L2.Pj.QAt
 
@@ -34,14 +38,17 @@ theorem coefFn_eq_cubeCoeff {Ω : Type} {N : ℕ} (act : (Fin N → ℝ) → Ω 
   simp only [h]
   congr 1
   funext t
-  simp only [integrand, chr, eNeg, dotForm_apply, one_mul, mul_comm (ph _)]
+  have hphase : (∑ k, t k * ph k) = ∑ k, ph k * t k :=
+    Finset.sum_congr rfl fun k _ => mul_comm (t k) (ph k)
+  simp only [integrand, chr, eNeg, dotForm_apply, one_mul, hphase]
 
 theorem herm_comb {E : Type} [Field E] [NumberField E] [IsCMField E] {r ρ : ℕ} {X : Data E r}
     (cu : CuspFD X ρ) (η : Fin ρ → E) :
     herm X.Gm (∑ a, η a • cu.e a) (∑ a, η a • cu.e a) = 0 := by
   have key : herm X.Gm (∑ a, η a • cu.e a) (∑ a, η a • cu.e a) =
       ∑ a, ∑ b, η a * cc (η b) * herm X.Gm (cu.e a) (cu.e b) := by
-    simp only [herm, cc, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [herm, cc, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul,
       Finset.mul_sum, Finset.sum_mul]
     calc _ = ∑ k, ∑ b, ∑ l, ∑ a, η a * cu.e a k * X.Gm k l *
             (IsCMField.complexConj E (η b) * IsCMField.complexConj E (cu.e b l)) :=
@@ -103,7 +110,7 @@ theorem coefFn_eq_zero_of_killed : ∀ (E : Type) [Field E] [NumberField E] [IsC
   refine B.1 ?_ _ (fun i => ?_) hcomp
   · funext b
     have h := hP.2 _ hiso ν hηc _ (hdom b)
-    rw [Data.fj, if_pos hfreq, dif_pos hex] at h
+    rw [Data.fj, if_pos hfreq, dite_eq_left hex] at h
     rw [partialCoeff, coeff_eq, Pi.zero_apply, ← h]
     congr 2
     funext s

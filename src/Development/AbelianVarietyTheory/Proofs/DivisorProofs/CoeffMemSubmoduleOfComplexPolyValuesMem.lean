@@ -1,7 +1,10 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemNilRad
-open Matrix GlobalTheory.TorFin
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableIffMemL2
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -17,13 +20,14 @@ theorem coeff_mem_of_poly_values_mem : ∀ (V : Type) [AddCommGroup V] [Module �
     have h1 : S.mkQ (∑ k ∈ Finset.range N, u ^ k • c k) = 0 :=
       (Submodule.Quotient.mk_eq_zero S).mpr (h u)
     have h0 := congrArg f h1
-    simp only [map_sum, map_smul, Submodule.mkQ_apply, smul_eq_mul, map_zero] at h0
-    simp only [hpdef, Polynomial.eval_finset_sum, Polynomial.eval_mul, Polynomial.eval_C,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Submodule.mkQ_apply, smul_eq_mul, map_zero] at h0
+    simp only [hpdef, Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_C,
       Polynomial.eval_pow, Polynomial.eval_X, Polynomial.eval_zero]
     rw [← h0]
     exact Finset.sum_congr rfl (fun j _ => mul_comm _ _)
   have hc := congrArg (fun q : Polynomial ℂ => q.coeff k) hp
-  simp only [hpdef, Polynomial.finset_sum_coeff, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow,
+  simp only [hpdef, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow,
     Polynomial.coeff_zero, mul_ite, mul_one, mul_zero] at hc
   rw [Finset.sum_ite_eq] at hc
   simpa [Finset.mem_range.mpr hk] using hc

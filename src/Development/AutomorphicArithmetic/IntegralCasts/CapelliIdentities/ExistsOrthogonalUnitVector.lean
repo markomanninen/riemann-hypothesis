@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsIsomFrame
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsNormOneOfPair
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsIsomFrame
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsNormOneOfPair
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.ExistsOrthogonalBasisWithUnitNorms.PairUnit :
     {K V : Type} →
@@ -15,8 +19,8 @@ noncomputable def UpperTheory.Reformulated.B.ExistsOrthogonalBasisWithUnitNorms.
               ∃ c ∈ S,
                 ∃ d ∈ S, Formalism.HermitianLattices.Ext.L3.WA.IsUnitIn S (((h : V → V →ₗ[K] K) (c • w + d • y) : V → K) (c • w + d • y))
 
-open Formalism.HermitianLattices.Ext.L3.WA in
 
+open Formalism.HermitianLattices.Ext.L3.WA in
 private theorem UpperTheory.Reformulated.B.ExistsOrthogonalBasisWithUnitNorms.exists_primitive {K V : Type} [Field K] [StarRing K] [AddCommGroup V]
     [Module K V] {S : Subring K} {h : V →ₗ⋆[K] V →ₗ[K] K} (hS : IsHermSemilocal S)
     (hn : h.Nondegenerate) {L : AddSubgroup V} (hL : IsSelfDualMod S h L) {v : V} (hv : v ≠ 0) :
@@ -53,8 +57,8 @@ private theorem UpperTheory.Reformulated.B.ExistsOrthogonalBasisWithUnitNorms.ex
   · simpa [mul_comm] using hdiv _ ⟨m, hm, rfl⟩
   · rw [map_smul, hα, smul_eq_mul, inv_mul_cancel₀ hα0]
 
-open Formalism.HermitianLattices.Ext.L3.WA in
 
+open Formalism.HermitianLattices.Ext.L3.WA in
 private theorem UpperTheory.Reformulated.B.ExistsOrthogonalBasisWithUnitNorms.exists_extend {K V : Type} [Field K] [StarRing K] [AddCommGroup V]
     [Module K V] [FiniteDimensional K V] {S : Subring K} {h : V →ₗ⋆[K] V →ₗ[K] K}
     (hS : IsHermSemilocal S) (hs : h.IsSymm) (hn : h.Nondegenerate)
@@ -78,11 +82,13 @@ private theorem UpperTheory.Reformulated.B.ExistsOrthogonalBasisWithUnitNorms.ex
     L.sub_mem hw₀ (L.sum_mem fun i _ =>
       hL.smul_mem _ (S.mul_mem (hxu i).2.2 (hL.int _ (hxL i) _ hw₀)) _ (hxL i))
   have hyw : h y w = 1 := by
-    simp [w, map_sub, map_sum, hyx, hyw₀]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [w, map_sub, map_sum, hyx, hyw₀]
   have hxw : ∀ j, h (x j) w = 0 := by
     intro j
     have hj := (hxu j).1
-    simp only [w, map_sub, map_sum, map_smul, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [w, map_sub, map_sum, map_smul, smul_eq_mul]
     rw [Finset.sum_eq_single j]
     · field_simp
       ring
@@ -91,7 +97,7 @@ private theorem UpperTheory.Reformulated.B.ExistsOrthogonalBasisWithUnitNorms.ex
     · simp
   obtain ⟨c, hc, d, hd, hu⟩ := hp w y hyw (hL.int _ hwL _ hwL) (hL.int _ hyL _ hyL)
   refine ⟨c • w + d • y, L.add_mem (hL.smul_mem _ hc _ hwL) (hL.smul_mem _ hd _ hyL), fun i => ?_, hu⟩
-  rw [map_add, map_smul, map_smul, hxw, hxy, smul_zero, smul_zero, add_zero]
+  rw [map_add (f := _), map_smul, map_smul, hxw, hxy, smul_zero, smul_zero, add_zero]
 
 theorem UpperTheory.Reformulated.B.ExistsOrthogonalBasisWithUnitNorms.exists_ortho_unit :
     ∀ {K V : Type} [inst : Field K] [inst_1 : StarRing K] [inst_2 : AddCommGroup V] [inst_3 : _root_.Module K V]

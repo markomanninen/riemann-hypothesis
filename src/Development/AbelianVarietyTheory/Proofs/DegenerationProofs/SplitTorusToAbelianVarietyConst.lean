@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SplitTorusHomProperTrivialField
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SplitTorusHomProperTrivialField
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -63,8 +67,8 @@ lemma natDegree_eq_zero_of_inv {F : Type} [Field F] (a b : F[X])
   rw [h3, natDegree_mul_X_pow _ ha] at h4
   omega
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 lemma exists_extension {W Z Y S : Scheme.{0}} [IsIntegral Z]
     (hZ : ∀ x : Z, ValuationRing (Z.presheaf.stalk x)) (w : W ⟶ Z) [IsOpenImmersion w] [Nonempty W]
     (sZ : Z ⟶ S) (sY : Y ⟶ S) [IsProper sY] [Y.IsSeparated] [S.IsSeparated] (u : W ⟶ Y)
@@ -148,9 +152,6 @@ lemma comp_aevalTower {R A A' : Type} [CommRing R] [Algebra K R] [CommRing A] [A
   · ext r
     simp
   · simp
-
-lemma aevalTower_apply' {R A : Type} [CommRing R] [Algebra K R] [CommRing A] [Algebra K A]
-    (c : R →ₐ[K] A) (x : A) (a : R[X]) : aevalTower c x a = eval₂ (c : R →+* A) x a := rfl
 
 noncomputable def val {R A : Type} [CommRing R] [Algebra K R] [CommRing A] [Algebra K A]
     (F : sp K R[X] ⟶ B) (c : R →ₐ[K] A) (x : A) : sp K A ⟶ B :=
@@ -346,16 +347,16 @@ noncomputable def ev {A : Type} [CommRing A] [Algebra K A] (c : L →ₐ[K] A) (
     rw [LaurentPolynomial.eval₂_C]
     exact c.commutes r
 
-variable (K L) in
 
+variable (K L) in
 noncomputable def inc : L[X] →ₐ[K] L[T;T⁻¹] := (toLaurentAlg : L[X] →ₐ[L] L[T;T⁻¹]).restrictScalars K
 
-variable (K L) in
 
+variable (K L) in
 noncomputable def cst : L →ₐ[K] L[T;T⁻¹] := (inc K L).comp CAlgHom
 
-variable (L) in
 
+variable (L) in
 noncomputable def tU : (L[T;T⁻¹])ˣ := (isUnit_T (R := L) 1).unit
 
 lemma ev_comp_inc {A : Type} [CommRing A] [Algebra K A] (c : L →ₐ[K] A) (x : Aˣ) :

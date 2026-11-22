@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.KGShift
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.AntitoneOfAppend
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.KGShift
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.AntitoneOfAppend
+
+@[expose] public section
 
 noncomputable section
 

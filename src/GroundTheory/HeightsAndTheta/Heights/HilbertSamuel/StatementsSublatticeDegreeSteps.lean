@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSublatticeDegree
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSublatticeDegree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -29,9 +34,6 @@ def GramContraction.Statement : Prop :=
     [InnerProductSpace ℝ V] (Ψ : EuclideanSpace ℝ ι →ₗ[ℝ] V) (u : ι → EuclideanSpace ℝ ι) (w : κ → V),
     (∀ y, ‖Ψ y‖ ≤ ‖y‖) →
       (Matrix.gram ℝ (Sum.elim (Ψ ∘ u) w)).det ≤ (Matrix.gram ℝ u).det * ∏ j, ‖w j‖ ^ 2
-
-example : DiscreteTopology (imageLattice SublatticeDegree.φ1) := inferInstance
-example : IsZLattice ℝ (imageLattice SublatticeDegree.φ1) := inferInstance
 
 end
 

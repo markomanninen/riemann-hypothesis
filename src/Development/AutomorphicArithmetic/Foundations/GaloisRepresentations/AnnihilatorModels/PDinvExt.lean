@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.DinvExact
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.DinvExact
+
+@[expose] public section
 
 open TensorProduct Module
 open UpperTheory.Gal.crystallineComparison
@@ -16,7 +20,7 @@ private theorem mem_baseChange_iInf_ker_sub_id_of_baseChange_eq {F L X ι : Type
     induction w using TensorProduct.induction_on with
     | zero => simp
     | tmul a x => simp [e, finsuppScalarLeft_apply_tmul_apply]
-    | add u v hu hv => simp only [map_add, Finsupp.add_apply, hu, hv]
+    | add u v hu hv => simp only [map_add (f := _), Finsupp.add_apply, hu, hv]
   have hmem : ∀ j, e z j ∈ ⨅ k, LinearMap.ker (A k - LinearMap.id) := by
     intro j
     simp only [Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply, LinearMap.id_apply,
@@ -29,7 +33,8 @@ private theorem mem_baseChange_iInf_ker_sub_id_of_baseChange_eq {F L X ι : Type
     simp [e]
   have hz' : z = (e z).sum (fun j x => b j ⊗ₜ[F] x) := by
     conv_lhs => rw [← e.symm_apply_apply z, ← Finsupp.sum_single (e z)]
-    simp only [Finsupp.sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finsupp.sum, map_sum]
     exact Finset.sum_congr rfl fun j _ => hsingle j _
   rw [hz']
   exact Submodule.sum_mem _ fun j _ => Submodule.tmul_mem_baseChange_of_mem _ (hmem j)
@@ -50,8 +55,8 @@ theorem UpperTheory.Gal.crystallineComparison.dinvExt_of :
       induction u using TensorProduct.induction_on with
       | zero => simp
       | tmul a v => simp [T, extRep, AlgebraTensorModule.map_tmul]
-      | add u₁ u₂ h₁ h₂ => simp only [TensorProduct.add_tmul, map_add, h₁, h₂]
-    | add u v hu hv => simp only [map_add, hu, hv]
+      | add u₁ u₂ h₁ h₂ => simp only [TensorProduct.add_tmul, map_add (f := _), h₁, h₂]
+    | add u v hu hv => simp only [map_add (f := _), hu, hv]
   ext z
   rw [Submodule.mem_map_equiv]
   constructor

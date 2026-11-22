@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsFormsThroughPoint
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsThroughPointIncIdeal
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChartZeroTrdeg
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsThroughTwoPointsTrdeg
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsTrdegBaseAlgebraic
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PComponentOfIncIdeal
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsFormsThroughPoint
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsThroughPointIncIdeal
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChartZeroTrdeg
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsThroughTwoPointsTrdeg
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsTrdegBaseAlgebraic
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PComponentOfIncIdeal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -14,7 +19,8 @@ open MvPolynomial
 theorem aeval_mul_homogeneousComponent {F Ω : Type*} [Field F] [Field Ω] [Algebra F Ω] {n : ℕ}
     (q : MvPolynomial (Fin n) F) (e : ℕ) (t : Ω) (x : Fin n → Ω) :
     aeval (fun m => t * x m) (homogeneousComponent e q) = t ^ e * aeval x (homogeneousComponent e q) := by
-  rw [homogeneousComponent_apply, map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [homogeneousComponent_apply, map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun α hα => ?_
   rw [Finset.mem_filter] at hα
   simp only [aeval_monomial, Finsupp.prod, mul_pow, Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum]
@@ -75,7 +81,8 @@ theorem FormsThroughPoint.proof (hZ : IncidenceZeroLocus.Statement) (hI : Throug
       by_contra h
       push Not at h
       apply hqx
-      rw [← sum_homogeneousComponent q, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← sum_homogeneousComponent q, map_sum]
       exact Finset.sum_eq_zero fun e _ => h e
     have ht0 : t ≠ 0 := by
       rintro rfl

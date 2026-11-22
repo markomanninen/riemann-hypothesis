@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.AugBij
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.AugBij
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC
@@ -89,7 +93,7 @@ theorem AugBij_of_loc (hS : Sep) (hG : Glue) (hSu : LocSurj) (hI : LocInj) : Lat
   intro q φ hnat hgen
   have inj : ∀ T : Scheme.{0}, IsUnit (q : Γ(T, ⊤)) → Function.Injective (φ T) := by
     intro T hT
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨ι, V, g, he, hs, h0⟩ := hI q φ hnat hgen T hT x hx
     exact hS _ _ T ι V g he hs x 0 (fun i => by rw [h0 i]; exact (map_zero ((tw q 0).obj.map (g i).op).hom).symm)

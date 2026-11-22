@@ -1,4 +1,8 @@
-import GroundTheory.AutomorphicForms.DixmierMalliavin
+module
+
+public import GroundTheory.AutomorphicForms.DixmierMalliavin
+
+@[expose] public section
 
 namespace CompanionTheory.DM
 
@@ -58,10 +62,10 @@ theorem decomp_direction {f : G → ℂ}
     rw [integral_tsum_of_summable_integral_norm hTi hsum]
     congr 1
     funext t
-    simp only [T, hD]
     rw [← tsum_mul_left]
     congr 1
     funext p
+    simp only [T, hD]
     ring
   · congr 1; funext t; rw [mul_comm]
 
@@ -71,8 +75,11 @@ theorem decomp_iter {ε : ℝ} (hε : 0 < ε) : ∀ {d : ℕ} (X : Fin d → �
       (∀ i, (letI := h.chartedSpace; ContMDiff 𝓘(ℝ, 𝔤) 𝓘(ℝ, ℂ) ∞ (F i)) ∧
         tsupport (F i) ⊆ tsupport f) ∧
       (∀ i, ContDiff ℝ ∞ (K i) ∧ tsupport (K i) ⊆ Metric.closedBall 0 ε) ∧
-      ∀ x, f x = ∑ i, ∫ t, K i t * F i (h.revProdExp X t * x)
-  | 0, X, f, hf, hfc => by
+      ∀ x, f x = ∑ i, ∫ t, K i t * F i (h.revProdExp X t * x) := by
+  intro d
+  induction d with
+  | zero =>
+    intro X f hf hfc
     refine ⟨1, fun _ => f, fun _ _ => 1, fun _ => ⟨hf, subset_rfl⟩, fun _ => ⟨contDiff_const, ?_⟩,
       fun x => ?_⟩
     · intro t _
@@ -80,12 +87,14 @@ theorem decomp_iter {ε : ℝ} (hε : 0 < ε) : ∀ {d : ℕ} (X : Fin d → �
     · have hv : (volume : Measure (Fin 0 → ℝ)).real univ = 1 := by
         simp [Measure.real, MeasureTheory.volume_pi]
       simp [h.revProdExp_zero, hv]
-  | d + 1, X, f, hf, hfc => by
+  | succ d ih =>
+    intro X f hf hfc
     let := h.chartedSpace
     obtain ⟨f₁, hf₁, hf₁c, g, k, hg, hk, hgs, hks, hdec⟩ :=
       decomp_direction h hf hfc (X 0) hε
-    obtain ⟨m₁, F₁, K₁, hF₁, hK₁, hd₁⟩ := decomp_iter hε (Fin.tail X) f₁ hf₁ (hfc.of_isClosed_subset (isClosed_tsupport _) hf₁c)
-    obtain ⟨m₂, F₂, K₂, hF₂, hK₂, hd₂⟩ := decomp_iter hε (Fin.tail X) f hf hfc
+    obtain ⟨m₁, F₁, K₁, hF₁, hK₁, hd₁⟩ :=
+      ih (Fin.tail X) f₁ hf₁ (hfc.of_isClosed_subset (isClosed_tsupport _) hf₁c)
+    obtain ⟨m₂, F₂, K₂, hF₂, hK₂, hd₂⟩ := ih (Fin.tail X) f hf hfc
     refine ⟨m₁ + m₂, Fin.append F₁ F₂,
       Fin.append (fun i t => g (t 0) * K₁ i (Fin.tail t)) (fun i t => k (t 0) * K₂ i (Fin.tail t)),
       ?_, ?_, ?_⟩

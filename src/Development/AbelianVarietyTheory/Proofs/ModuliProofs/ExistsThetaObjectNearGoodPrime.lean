@@ -1,26 +1,31 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsAdditionMorphismThetaFamilyNearGoodPrimeStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsEndomorphismsExtendNearGoodPrimeStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLocLoc
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ChartPullCompOfPullPull
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSectionsFam
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsGoodThetaObjectEmbeddingDataStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.GrpFamOfDenseFibres
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.KTrivNearGoodPrime
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsAwayFlatProjRep
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.NearCOfPolFamOfKTriv
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPolFamOfGrpFam
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PolFamBaseChange
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsProjProperRelAmpleOfProjectiveCoordinateRep
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsOpensSmoothOfRelativeDimensionOfFlat
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsGeometricallyConnectedAwayOfFibre
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaCosetNonvanishingOfHasTh
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DenseOfDenseP
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsAdditionMorphismThetaFamilyNearGoodPrimeStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsEndomorphismsExtendNearGoodPrimeStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLocLoc
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ChartPullCompOfPullPull
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSectionsFam
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsGoodThetaObjectEmbeddingDataStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.GrpFamOfDenseFibres
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.KTrivNearGoodPrime
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsAwayFlatProjRep
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.NearCOfPolFamOfKTriv
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPolFamOfGrpFam
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PolFamBaseChange
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsProjProperRelAmpleOfProjectiveCoordinateRep
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsOpensSmoothOfRelativeDimensionOfFlat
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsGeometricallyConnectedAwayOfFibre
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaCosetNonvanishingOfHasTh
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DenseOfDenseP
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
@@ -125,8 +130,8 @@ theorem nearC_of_smooth [Finite J]
     (fun i K _ _ x s t φ ht hφ => hF i K x s t φ ((good_comp _ _ _).1 ht) (hfib K x s t φ hφ) hφ.1.w)
   exact nearC_of_grpFam h1 h2 hn hodd hj hq₁ (span_map _ hv) hG
 
-omit h1 hodd hj in
 
+omit h1 hodd hj in
 theorem nearC_of_fam
     (H : ∀ {R : Type} [CommRing R] [IsNoetherianRing R] [IsReduced R] {β : o →+* R}
       {v : Ix g ((n ^ j) ^ 2) → R} {Z : Over (Sp R)} {M : LB Z.left} {th : Ix g ((n ^ j) ^ 2) → M.Sec}
@@ -150,8 +155,8 @@ theorem nearC_of_fam
     (Over.mk (pullback.snd Z.hom (spMap (loc f)))) _ (IsPullback.of_hasPullback _ _) hZ
   exact nearC_of_den_loc h2 h hf fun q₁ hq₁ => H hq₁ (span_map _ hv) hZ' hs
 
-omit h1 hodd hj in
 
+omit h1 hodd hj in
 theorem nearC_of_unimodular
     (H : ∀ {R : Type} [CommRing R] [IsNoetherianRing R] [IsReduced R] {β : o →+* R}
       {v : Ix g ((n ^ j) ^ 2) → R} {Z : Over (Sp R)} {M : LB Z.left} {th : Ix g ((n ^ j) ^ 2) → M.Sec}

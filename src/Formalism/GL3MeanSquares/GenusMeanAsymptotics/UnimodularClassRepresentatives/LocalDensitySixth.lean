@@ -1,5 +1,9 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CardQuotExtPPow
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MemSmulOfMemSmulLocF
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CardQuotExtPPow
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MemSmulOfMemSmulLocF
+
+@[expose] public section
 
 open NumberField Module Matrix
 
@@ -35,9 +39,11 @@ theorem coe_eq_sum (b : Basis κ K V) (y : spanO b) :
 theorem form_eq (h : V →ₗ⋆[K] V →ₗ[K] K) (b : Basis κ K V) {H : Matrix κ κ (𝓞 K)}
     (hH : ∀ i j, algebraMap (𝓞 K) K (H i j) = h (b i) (b j)) (y y' : spanO b) :
     h (y : V) (y' : V) = algebraMap (𝓞 K) K (star (crd b y) ⬝ᵥ (H *ᵥ crd b y')) := by
-  rw [coe_eq_sum b y, map_sum, LinearMap.sum_apply, dotProduct, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coe_eq_sum b y, map_sum, LinearMap.sum_apply, dotProduct, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [coe_eq_sum b y', map_smulₛₗ, LinearMap.smul_apply, map_sum, map_mul, mulVec, dotProduct, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coe_eq_sum b y', map_smulₛₗ, LinearMap.smul_apply, map_sum, map_mul, mulVec, dotProduct, map_sum,
     smul_eq_mul]
   congr 1
   refine Finset.sum_congr rfl fun j _ => ?_
@@ -53,8 +59,13 @@ theorem congrP_int {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) (k : ℕ) (a
       apply RingOfIntegers.coe_injective
       rw [e, map_mul, map_sub]
       rfl
-    have ht' : t ∉ 𝔭 ^ (0 + 1) := by rwa [zero_add, pow_one]
-    exact mem_of_mul_mem h𝔭 ht' (by rw [zero_add, ← e']; exact hz)
+    rw [e'] at hz
+    obtain ⟨u, hu⟩ := MeanA.exists_mul_sub_one_mem_pow h𝔭 ht k
+    have hu' : ι (u * t - 1) ∈ extP K 𝔭 ^ k := by
+      rw [extP, ← Ideal.map_pow]
+      exact Ideal.mem_map_of_mem ι hu
+    have hmem := sub_mem (Ideal.mul_mem_left _ (ι u) hz) (Ideal.mul_mem_right (a - c) _ hu')
+    simpa only [map_sub, map_mul, map_one, sub_mul, mul_assoc, one_mul, sub_sub_cancel] using hmem
   · intro hm
     exact ⟨1, fun h1 => h𝔭.ne_top ((Ideal.eq_top_iff_one _).2 h1), a - c, hm, by simp⟩
 

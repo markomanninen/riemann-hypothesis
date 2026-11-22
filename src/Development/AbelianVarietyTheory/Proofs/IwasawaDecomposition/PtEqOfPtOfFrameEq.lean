@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FirstIndexEqOfUnfolded
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FirstIndexEqOfUnfolded
+
+@[expose] public section
 
 open Matrix NumberField MeasureTheory Formalism.DegreeFormula Formalism.MJ Formalism.UG Formalism.L2.Geo
 open ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up GlobalTheory.HodgeDomain GlobalTheory.TrueCx
@@ -9,38 +13,10 @@ namespace GlobalTheory.TrueCx.PointWell
 
 open Formalism.L2.PjFree ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
-theorem moeb_mul {p q : ℕ} (g h : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) (z : Matrix (Fin p) (Fin q) ℂ)
-    (hu : IsUnit (h.toBlocks₂₁ * z + h.toBlocks₂₂).det) : moeb g (moeb h z) = moeb (g * h) z := by
-  set A := h.toBlocks₁₁ * z + h.toBlocks₁₂ with hA
-  set C := h.toBlocks₂₁ * z + h.toBlocks₂₂ with hC
-  have e1 : (g * h).toBlocks₁₁ * z + (g * h).toBlocks₁₂ = (g.toBlocks₁₁ * (A * C⁻¹) + g.toBlocks₁₂) * C := by
-    rw [Matrix.add_mul, Matrix.mul_assoc, Matrix.mul_assoc, nonsing_inv_mul _ hu, Matrix.mul_one, hA, hC]
-    conv_lhs => rw [← fromBlocks_toBlocks g, ← fromBlocks_toBlocks h, fromBlocks_multiply]
-    simp only [toBlocks_fromBlocks₁₁, toBlocks_fromBlocks₁₂, Matrix.add_mul, Matrix.mul_add, Matrix.mul_assoc]
-    abel
-  have e2 : (g * h).toBlocks₂₁ * z + (g * h).toBlocks₂₂ = (g.toBlocks₂₁ * (A * C⁻¹) + g.toBlocks₂₂) * C := by
-    rw [Matrix.add_mul, Matrix.mul_assoc, Matrix.mul_assoc, nonsing_inv_mul _ hu, Matrix.mul_one, hA, hC]
-    conv_lhs => rw [← fromBlocks_toBlocks g, ← fromBlocks_toBlocks h, fromBlocks_multiply]
-    simp only [toBlocks_fromBlocks₂₁, toBlocks_fromBlocks₂₂, Matrix.add_mul, Matrix.mul_add, Matrix.mul_assoc]
-    abel
-  show _ = ((g * h).toBlocks₁₁ * z + (g * h).toBlocks₁₂) * ((g * h).toBlocks₂₁ * z + (g * h).toBlocks₂₂)⁻¹
-  rw [e1, e2, Matrix.mul_inv_rev, ← Matrix.mul_assoc, mul_nonsing_inv_cancel_right _ _ hu]
-  rfl
-
 theorem moeb_one {p q : ℕ} (z : Matrix (Fin p) (Fin q) ℂ) : moeb 1 z = z := by
   rw [← fromBlocks_one, moeb, toBlocks_fromBlocks₁₁, toBlocks_fromBlocks₁₂, toBlocks_fromBlocks₂₁,
     toBlocks_fromBlocks₂₂]
   simp
-
-theorem orbR_symm {ι : Type} [Fintype ι] {p q : ℕ} {Γ : Subgroup (ι → GL (Fin p ⊕ Fin q) ℂ)} (hΓ : Γ ≤ UpqI ι p q)
-    {z z' : DomI ι p q} (h : orbR Γ z z') : orbR Γ z' z := by
-  obtain ⟨γ, hγ, e⟩ := h
-  refine ⟨γ⁻¹, Γ.inv_mem hγ, ?_⟩
-  rw [← e]
-  funext t
-  have hu := kapQ_isUnit (hΓ hγ t trivial) (z.2 t)
-  show moeb (γ t)⁻¹.1 (moeb (γ t).1 (z.1 t)) = _
-  rw [moeb_mul _ _ _ hu, Units.inv_mul, moeb_one]
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (X : Data E r)
 
@@ -99,12 +75,12 @@ theorem perFr_mem {A : Type} (S : Submodule ℂ (A → ℂ)) (w : A → Fin r �
         have hbr := b.2
         convert hS (b - X.p0) (by omega) using 2 with a
         unfold perFr
-        rw [dif_pos h, dif_pos (by omega)]
+        rw [dite_eq_left h, dite_eq_left (by omega)]
         congr 1
         exact Fin.ext (by simp; omega)
     convert key using 2 with a
     unfold perFr
-    rw [dif_pos h, dif_pos hi']
+    rw [dite_eq_left h, dite_eq_left hi']
     conv_lhs => rw [← mul_nonsing_inv_cancel_right (mat x ⟨τ, h⟩) (mat x' ⟨τ, h⟩)⁻¹ hd, ← mulVec_mulVec]
     simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
     rfl
@@ -119,13 +95,13 @@ theorem perFr_mem {A : Type} (S : Submodule ℂ (A → ℂ)) (w : A → Fin r �
       · refine Submodule.smul_mem _ _ ?_
         convert hS (X.p0 - 1 - b) (by omega) using 2 with a
         unfold perFr
-        rw [dif_neg h, dif_pos h', dif_pos (by omega)]
+        rw [dite_eq_right h, dite_eq_left h', dite_eq_left (by omega)]
         congr 2
         exact Fin.ext (by simp; omega)
       · rw [h1 _ _ _ (not_lt.1 hb) (by simp only; omega), zero_smul]; exact zero_mem _
     convert key using 2 with a
     unfold perFr
-    rw [dif_neg h, dif_pos h', dif_pos hi']
+    rw [dite_eq_right h, dite_eq_left h', dite_eq_left hi']
     conv_lhs => rw [← mul_nonsing_inv_cancel_left (mat x ⟨_, h'⟩) (mat x' ⟨_, h'⟩) hd]
     generalize (mat x ⟨_, h'⟩)⁻¹ * mat x' ⟨_, h'⟩ = n
     simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, hermC, ReciprocityTheory.ChartRestriction.G.FD.col, mul_apply, Finset.sum_mul,
@@ -133,6 +109,7 @@ theorem perFr_mem {A : Type} (S : Submodule ℂ (A → ℂ)) (w : A → Fin r �
     rw [Finset.sum_comm (s := Finset.univ) (f := fun b c => ∑ d, n b _ * _)]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [Finset.sum_comm]
+    simp only [Matrix.mul_apply, Finset.sum_mul]
     exact Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun d _ => by ring
 
 variable {H : Host E} {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {σ : c.F →+* ℂ}
@@ -173,39 +150,5 @@ theorem pt_eq_of_block (hU : IsUnf U) (hσ : GoodEmb c σ) (k : U.Comp) (x x' : 
   exact (F.fibre _ P P' hper hper').2 ⟨LinearEquiv.refl _ _,
     LinearEquiv.ofBijective _ ⟨LinearMap.injective_iff_surjective.2 hsurj, hsurj⟩, fun _ _ => rfl,
     fun a _ => ⟨0, by simp⟩, fun a => ⟨0, by simp⟩, hL⟩
-
-theorem pt_lact (hU : IsUnf U) (k : U.Comp) (x : (U.X k).dom) {γ : GL (Fin r) E} (hγ : γ ∈ (U.X k).Γ) :
-    (U.un k ⟨lact γ x.1, KU.lact_dom _ hγ x.2⟩).x = (U.un k x).x := by
-  obtain ⟨t, ht⟩ := (hU.2.2.2.1 k k x ⟨lact γ x.1, KU.lact_dom _ hγ x.2⟩).2
-    ⟨γ, hγ, fun _ => (1 : Matrix (Fin r) (Fin r) ℂ), fun τ => ⟨by
-      show (1 : Matrix (Fin r) (Fin r) ℂ).det ≠ 0
-      simp, fun a b h => one_apply_ne h.ne'⟩, by
-      congr 1
-      funext τ
-      exact (Matrix.mul_one (mat (lact γ x.1) τ)).symm⟩
-  exact ht.1
-
-theorem pt_eq_of_ptOfFrame_eq : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Datum H) (l : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H) (Xo : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Moduli Dw l) (c : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Coeff l) (σ : c.F →+* ℂ) (r j : ℕ) (U : Formalism.L2.PjFree.Unf Xo c σ r) (hU : Formalism.L2.PjFree.IsUnf U) (e : Dw.p = j) (Tau : Type) [Fintype Tau] (hr : 0 < r) (T : Tau ≃ {τ : E →+* ℂ // τ (H.rt : E) = H.rt0}) (B : ∀ k, BdData Tau j (r - j) (gammaU (U.X k) (le_of_isUnf U hU e) (cmEquiv U hU T k))) (s : U.Comp → Tau → ℂˣ), Formalism.L2.PjFree.GoodEmb c σ → ∀ (k k' : U.Comp) (x : (U.X k).dom) (x' : (U.X k').dom), ptOfFrame (le_of_isUnf U hU e) U.X hr (first_index_eq_of_unfolded U hU e) (cmEquiv U hU T) B s k x = ptOfFrame (le_of_isUnf U hU e) U.X hr (first_index_eq_of_unfolded U hU e) (cmEquiv U hU T) B s k' x' → (U.un k x).x = (U.un k' x').x := by
-  intro E _ _ _ H Dw l Xo c σ r j U hU e Tau _ hr T B s hσ k k' x x' h
-  obtain ⟨rfl, h2⟩ := Sigma.mk.inj h
-  have h3 := eq_of_heq h2
-  have hj := le_of_isUnf U hU e
-  have hp := first_index_eq_of_unfolded U hU e k
-  let S : DomI Tau j (r - j) → Set _ := fun z =>
-    {y | ∃ w : (U.X k).dom, domPt (U.X k) hj (cmEquiv U hU T k) w = z ∧ (U.un k w).x = y}
-  have hle : ∀ z z', orbR (gammaU (U.X k) hj (cmEquiv U hU T k)) z z' → S z ⊆ S z' := by
-    rintro z z' ⟨_, ⟨γ, hγ, rfl⟩, hz⟩ _ ⟨w, hw, rfl⟩
-    exact ⟨_, by rw [← hz, ← hw]; exact domPt_lact _ _ _ hp γ w.2, pt_lact hU k w hγ⟩
-  have h4 := congrArg (Quot.lift S fun z z' hz =>
-    (hle z z' hz).antisymm (hle z' z (orbR_symm (gammaU_le _ _ _ hp) hz))) h3
-  obtain ⟨w, hw, hy⟩ : (U.un k x).x ∈ S ⟨_, domPt_mem (U.X k) hj (cmEquiv U hU T k) hp x'.2⟩ := by
-    have : (U.un k x).x ∈ S ⟨_, domPt_mem (U.X k) hj (cmEquiv U hU T k) hp x.2⟩ := ⟨x, rfl, rfl⟩
-    exact (Set.ext_iff.1 h4 _).1 this
-  have h5 : ∀ τ, moeb (frameCo (U.X k) hj w.1 τ) 0 = moeb (frameCo (U.X k) hj x'.1 τ) 0 := fun τ => by
-    obtain ⟨t, rfl⟩ := (cmEquiv U hU T k).surjective τ
-    exact congrFun hw t
-  rw [← hy]
-  exact pt_eq_of_block hU hσ k w x' (fun τ => block_of_moeb_eq _ hj hp w.2 x'.2 τ (h5 τ))
-    fun τ => block_of_moeb_eq _ hj hp x'.2 w.2 τ (h5 τ).symm
 
 end GlobalTheory.TrueCx.PointWell

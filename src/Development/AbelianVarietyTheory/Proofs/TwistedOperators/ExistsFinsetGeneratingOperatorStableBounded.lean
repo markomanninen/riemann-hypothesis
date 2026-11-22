@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SimpleOver
+module
+
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SimpleOver
+
+@[expose] public section
 
 open scoped TensorProduct
 

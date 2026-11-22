@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
-import ReciprocityTheory.GaloisValuations.ContinuousConstSMulQuotient
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.KrullDimQuotientComapEq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
+public import ReciprocityTheory.GaloisValuations.ContinuousConstSMulQuotient
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.KrullDimQuotientComapEq
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -72,10 +76,10 @@ private theorem mem_coboundaries_compact (x : F.C2 M) : x ∈ F.framedTwoCobound
     obtain ⟨h', y', e', b1, b2, b3, b4, b5⟩ := hx'
     refine ⟨h + h', y + y', e + e', a1.add b1, fun q => ⟨(a2 q).1.add (b2 q).1, fun s t => ?_, fun n hn => ?_⟩, ?_,
       fun v s => ?_, fun q s => ?_⟩
-    · simp only [Pi.add_apply, (a2 q).2.1, (b2 q).2.1, map_add]; abel
+    · simp only [Pi.add_apply, (a2 q).2.1, (b2 q).2.1, map_add (f := _)]; abel
     · simp [(a2 q).2.2 n hn, (b2 q).2.2 n hn]
-    · rw [Prod.fst_add, a3, b3, dOne_eq, dOne_eq, dOne_eq, map_add]
-    · simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, a4, b4, map_add]; abel
+    · rw [Prod.fst_add, a3, b3, dOne_eq, dOne_eq, dOne_eq, map_add (f := _)]
+    · simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, a4, b4, map_add (f := _)]; abel
     · simp only [Prod.snd_add, Pi.add_apply, a5, b5]; abel
   | smul c x _ hx =>
     obtain ⟨h, y, e, a1, a2, a3, a4, a5⟩ := hx

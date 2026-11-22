@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePPTSelf
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePPTEx
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePLimSelf
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePPTSelf
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePPTEx
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePLimSelf
+
+@[expose] public section
 
 noncomputable section
 

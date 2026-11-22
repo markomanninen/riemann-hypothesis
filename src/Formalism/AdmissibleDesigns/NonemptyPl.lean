@@ -1,5 +1,58 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RingDataOfIdempotents
-import Formalism.WachLatticeTwists.RealDisplaySplitting.GaloisTheoremThirdForms
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RingDataOfIdempotents
+public import Formalism.WachLatticeTwists.RealClassMaps.RealClassMapSecondPlace
+public import Formalism.WachLatticeTwists.SplitClassesAll.Statement
+public import Formalism.WachLatticeTwists.SplitLocalLifts.Statement
+public import Mathlib
+public import Formalism.CoboundaryTransfers.Statement
+public import Formalism.CoboundaryTransfers.StatementAPI
+public import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.StatementTop
+public import Formalism.WachLatticeTwists.CharacterSplitJumps.WachTwistTheoremFromTorsionBound
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.StatBridgeChiOne
+public import Formalism.WachLatticeTwists.Statement
+public import Formalism.WachLatticeTwists.HodgeTateChains.HodgeTateFiltrations.MinimalExponentAttained
+public import Formalism.WachLatticeTwists.HodgeTateChains.InvariantsCohomologyData
+public import Formalism.CharacterColumnKernels.Statement
+public import Formalism.WachLatticeTwists.HodgeTateChains.HodgeTateFiltrations.Imports
+public import Formalism.WachLatticeTwists.HodgeTateChains.HodgeTateFiltrations.Complete
+public import Formalism.WachLatticeTwists.TorsionLengthCounts.SubmoduleLengthBoundStatement
+public import Formalism.WachLatticeTwists.HodgeTateChains.H2KilledByTateDuality
+public import Formalism.WachLatticeTwists.HodgeTateChains.Statement
+public import Formalism.WindowSums.AnnihilatorPolynomials.ZpowVal
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.ChainFromPrimitiveData
+public import Formalism.WachLatticeTwists.RealDisplaySplitting.SurjectionRankOneIdempotent
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.LocalToDisplayFree
+public import Formalism.WachLatticeTwists.SplitLocalLifts.Cocycles1MapOfEquivariant
+public import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.DualWByLettersExtended
+public import Formalism.WachLatticeTwists.SplitLocalLifts.SplitLocalLiftProofs.LocLift
+public import Formalism.WachLatticeTwists.LatticeDualFibres.LatticeDualProofs.LocDualOrth
+public import Formalism.WachLatticeTwists.LatticeDualFibres.LatticeDualProofs.QuotLen
+public import Formalism.WachLatticeTwists.LatticeDualFibres.Statement
+public import ReciprocityTheory.GaloisValuations.ContinuousConstSMulQuotient
+public import Formalism.WachLatticeTwists.LatticeDualFibres.FibreDualStable
+public import Formalism.WachLatticeTwists.LatticeDualFibres.LatticeDualProofs.ExistsPowSmulIntegral
+public import Formalism.WachLatticeTwists.LatticeDualFibres.StatDualFibreLattice
+public import Formalism.WachLatticeTwists.CharacterSplitJumps.CharacterJumpProofs.MemAnnih
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.FirstSummandActionMem
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.TheoremNFiveDeltaClause
+public import Formalism.WachLatticeTwists.CharacterSplitJumps.CharacterJumpProofs.PropLocBK
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.Bridge
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.CharacterColumnKernelsOfBlockChiCOfBlockChiOne
+public import Formalism.WachLatticeTwists.TorsionLengthCounts.RowCol
+public import Formalism.CharacterColumnKernels.CharacterColumnKernelEqualityForm
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthKerOfDetEqZero
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.SingleEqSmul
+public import Formalism.WachLatticeTwists.RealClassMaps.RealClassMapProofs.TheoremNFiveReal
+public import Formalism.WachLatticeTwists.RealClassMaps.RealClassMapProofs.InRowRealOf
+public import Formalism.LagrangeIdealLifts.Statement
+public import Formalism.CoboundaryTransfers.GammaStableTransfers.MemCoboundariesOfIsOneCoboundary
+public import Formalism.CoboundaryTransfers.GammaStableTransfers.GammaStableOfGammaQUnitHolds
+public import Formalism.CoboundaryTransfers.GammaStableTransfers.DiffOneSmulOfTower
+public import Formalism.WachLatticeTwists.RealDisplaySplitting.RealDisplayProofs.IdempotentRankOneAtPoint
+public import Formalism.WachLatticeTwists.RealClassMaps.RealClassMapProofs.TheoremNFiveRealAllLiftThird
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -29,7 +82,7 @@ def plOf (n : ℕ) : HeightOneSpectrum (𝓞 D.host.E) :=
 
 theorem plOf_idx {v : HeightOneSpectrum (𝓞 D.host.E)} (h : v ∈ plSet i dc) : plOf i dc (idx i dc v) = v := by
   unfold plOf idx
-  rw [dif_pos h, dif_pos ((plSet i dc).equivFin ⟨v, h⟩).isLt]
+  rw [dite_eq_left h, dite_eq_left ((plSet i dc).equivFin ⟨v, h⟩).isLt]
   simp
 
 theorem idx_inj {v w : HeightOneSpectrum (𝓞 D.host.E)} (hv : v ∈ plSet i dc) (hw : w ∈ plSet i dc)

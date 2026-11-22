@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+module
+
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+
+@[expose] public section
 
 open NumberField IntermediateField Ideal
 open scoped Pointwise
@@ -71,7 +75,7 @@ theorem ordCompl_q : ordCompl[H.q] H.condN = H.QS * H.d := by
   rw [condN_eq_q]
   apply ordCompl_mul_prime hq
   have hqd : Nat.Coprime H.d H.q := (Nat.coprime_primes hd hq).mpr (by omega)
-  exact Nat.Coprime.mul (Nat.Coprime.coprime_dvd_right (Nat.dvd_mul_right H.q H.d) H.QS_coprime) hqd
+  exact Nat.Coprime.mul_left (Nat.Coprime.coprime_dvd_right (Nat.dvd_mul_right H.q H.d) H.QS_coprime) hqd
 
 variable {H}
 
@@ -82,7 +86,7 @@ theorem PsQ.exists_q (hP : H.PsQ) :
   obtain ⟨hcop, hj⟩ := jacobi_pred hq4
   have hqd : Nat.Coprime H.d H.q := (Nat.coprime_primes hd hq).mpr (by omega)
   have hc : Nat.Coprime (H.QS * H.d) H.q :=
-    Nat.Coprime.mul (Nat.Coprime.coprime_dvd_right (Nat.dvd_mul_right H.q H.d) H.QS_coprime) hqd
+    Nat.Coprime.mul_left (Nat.Coprime.coprime_dvd_right (Nat.dvd_mul_right H.q H.d) H.QS_coprime) hqd
   haveI : NeZero H.condN := ⟨(Nat.mul_pos (Nat.mul_pos H.QS_pos hq.pos) hd.pos).ne'⟩
   obtain ⟨u, hu1, hu2⟩ := exists_unit_crt (N := H.condN) (condN_eq_q H) hc (Nat.coprime_one_left _) hcop
   refine ⟨u, hu1, ?_⟩
@@ -92,40 +96,6 @@ theorem PsQ.exists_q (hP : H.PsQ) :
   have h3 : (((H.art u).1.1 : ℤˣ) : ℤ) = -1 := by
     rw [hP u, jacobiSym.mod_left' h2, hj]
   exact Units.ext (by simpa using h3)
-
-theorem Exact.not_sq_dvd (hE : H.Exact) (h2 : φ.TwoGroup) {l : ℕ} (hl : l.Prime) (hl2 : l ≠ 2) : ¬ l ^ 2 ∣ H.QS := by
-  intro hdvd
-  obtain ⟨u, hu, hne⟩ := hE l hl ((dvd_pow_self l (by norm_num)).trans hdvd)
-  obtain ⟨m, hm⟩ := hdvd.trans H.QS_dvd_condN
-  have hdiv : H.condN / l = l * m := by rw [hm, sq, mul_assoc, Nat.mul_div_cancel_left _ hl.pos]
-  rw [hdiv] at hu
-  obtain ⟨a, ha⟩ := (Nat.modEq_iff_dvd.1 hu.symm)
-  set x : ZMod H.condN := (l : ZMod H.condN) * m * a with hx
-  have hN0 : (l : ZMod H.condN) ^ 2 * m = 0 := by
-    have := ZMod.natCast_self H.condN
-    conv_lhs at this => rw [show ((H.condN : ℕ) : ZMod H.condN) = ((l ^ 2 * m : ℕ) : ZMod H.condN) from congrArg _ hm]
-    exact_mod_cast this
-  have hux : (u : ZMod H.condN) = 1 + x := by
-    have := congrArg (fun z : ℤ => (z : ZMod H.condN)) ha
-    simp only [Int.cast_sub, Int.cast_natCast, ZMod.natCast_zmod_val, Nat.cast_one, Int.cast_one, Int.cast_mul,
-      Nat.cast_mul] at this
-    rw [hx]; linear_combination this
-  have hxx : x * x = 0 := by rw [hx]; linear_combination (m * a * a : ZMod H.condN) * hN0
-  have hpow : ∀ n : ℕ, (1 + x) ^ n = 1 + n * x := by
-    intro n
-    induction n with
-    | zero => simp
-    | succ n ih => rw [pow_succ, ih]; push_cast; linear_combination (n : ZMod H.condN) * hxx
-  have hul : u ^ l = 1 := by
-    apply Units.ext
-    rw [Units.val_pow_eq_pow_val, hux, hpow, Units.val_one, hx]
-    linear_combination (a : ZMod H.condN) * hN0
-  have h3 : orderOf (H.art u) ∣ l := orderOf_dvd_of_pow_eq_one (by rw [← map_pow, hul, map_one])
-  obtain ⟨i, hi⟩ := h2.orderOf_GG (H.art u)
-  rcases (Nat.dvd_prime hl).1 h3 with h | h
-  · exact hne (orderOf_eq_one_iff.1 h)
-  · rw [hi] at h
-    exact hl2 ((Nat.prime_dvd_prime_iff_eq hl Nat.prime_two).1 (hl.dvd_of_dvd_pow h.symm.dvd))
 
 end HostRaw
 
@@ -139,7 +109,7 @@ theorem exists_d : ∃ u : (ZMod H.condN)ˣ, (u : ZMod H.condN).val ≡ 1 [MOD H
   obtain ⟨hcop, hj⟩ := jacobi_pred hd4
   have hqd : Nat.Coprime H.q H.d := (Nat.coprime_primes hq hd).mpr (by omega)
   have hc : Nat.Coprime (H.QS * H.q) H.d :=
-    Nat.Coprime.mul (Nat.Coprime.coprime_dvd_right (Nat.dvd_mul_left H.d H.q) H.QS_coprime) hqd
+    Nat.Coprime.mul_left (Nat.Coprime.coprime_dvd_right (Nat.dvd_mul_left H.d H.q) H.QS_coprime) hqd
   haveI : NeZero H.condN := ⟨(Nat.mul_pos (Nat.mul_pos H.QS_pos hq.pos) hd.pos).ne'⟩
   obtain ⟨u, hu1, hu2⟩ := exists_unit_crt (N := H.condN) (a := H.QS * H.q) (b := H.d) rfl hc
     (Nat.coprime_one_left _) hcop
@@ -172,17 +142,6 @@ theorem exact_all (hP : H.PsQ) (hE : H.Exact) (l : ℕ) (hl : l.Prime) (h : l �
     refine ⟨u, hu1, fun h1 => ?_⟩
     have h3 := congrArg (fun g : φ.GG => ((g.1.2 : ℤˣ) : ℤ)) (hu2.symm.trans h1)
     simp [Frame.iod] at h3
-
-theorem ramificationIdx_eq_one_iff (p : ℕ) [hp : Fact p.Prime]
-    (P : Ideal (𝓞 H.E)) [P.IsPrime] [P.LiesOver (span {(p : ℤ)})] :
-    P.ramificationIdx ℤ = 1 ↔ ∀ σ : H.E ≃ₐ[ℚ] H.E, (∀ x : 𝓞 H.E, σ • x - x ∈ P) → σ = 1 := by
-  have := H.galois
-  have : IsGaloisGroup Gal(H.E/ℚ) ℤ (𝓞 H.E) := IsGaloisGroup.of_isFractionRing _ _ _ ℚ H.E
-  have := SplitK.span_prime p
-  rw [← ramificationIdxIn_eq_ramificationIdx (span {(p : ℤ)}) P Gal(H.E/ℚ),
-    ← card_inertia_eq_ramificationIdxIn (G := Gal(H.E/ℚ)) (span {(p : ℤ)}) P, Subgroup.card_eq_one,
-    Subgroup.eq_bot_iff_forall]
-  rfl
 
 end HostAx
 

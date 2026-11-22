@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.TwistingSheaf
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.NaturalLeray
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.Ordered
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.TwistingSheaf
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.NaturalLeray
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.Ordered
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -124,9 +129,16 @@ lemma theta_smulLDeg {p : ℕ} (i : Fin (p + 1) → Fin (n + 1)) (k : ℤ) (a : 
       single_zero_mul_eq_smul]
     congr 1
     rw [← awayDegEquiv_apply, hz, AddEquiv.apply_symm_apply]
-  apply ProjTwist.ext
+  apply Subtype.ext
   funext x
-  rw [ProjTwist.val_smul, val_theta, val_theta, h2]
+  change ProjTwist.val (theta i k (smulLDeg a ℓ)) x =
+    ProjTwist.val (restrictTop (inter (cover A n) i)
+      (algebraMap A Γ(projectiveSpace A n, ⊤) a) •
+        (show Γ(twistingSheaf (grading A n) k, inter (cover A n) i) from theta i k ℓ)) x
+  change ProjTwist.val (theta i k (smulLDeg a ℓ)) x =
+    ((restrictTop (inter (cover A n) i)
+      (algebraMap A Γ(projectiveSpace A n, ⊤) a)).1 x).val * ProjTwist.val (theta i k ℓ) x
+  erw [val_theta, val_theta, h2]
   change ProjTwist.locMap x.1 _ (_ * _) = _
   rw [map_mul]
   congr 1
@@ -136,9 +148,9 @@ lemma theta_smulLDeg {p : ℕ} (i : Fin (p + 1) → Fin (n + 1)) (k : ℤ) (a : 
 lemma lval_push_smul {k : ℤ} {p : ℕ} (a : A) (σ : Cochain (twistAb A n k) (cover A n) p)
     (i : Fin (p + 1) → Fin (n + 1)) :
     lval (push (cover A n) (smulAbRingHom (twistingSheaf (grading A n) k)
-      (algebraMap A Γ(projectiveSpace A n, ⊤) a)).hom p σ) i = a • lval σ i := by
+      (algebraMap A Γ(projectiveSpace A n, ⊤) a)).asHom.hom p σ) i = a • lval σ i := by
   have h : push (cover A n) (smulAbRingHom (twistingSheaf (grading A n) k)
-      (algebraMap A Γ(projectiveSpace A n, ⊤) a)).hom p σ i =
+      (algebraMap A Γ(projectiveSpace A n, ⊤) a)).asHom.hom p σ i =
       theta i k (smulLDeg a ⟨lval σ i, lval_mem σ i⟩) := by
     rw [theta_smulLDeg, theta_lval]
     rfl
@@ -158,14 +170,15 @@ def cechHLinearEquivTwist (k : ℤ) (p : ℕ) :
       rw [cechH.smul_def, H.smul_def]
       exact cechHEquiv_naturality _ (cover A n) iSup_stdOpen
         (fun {_} i => ⟨isAffineOpen_inter i, i 0, inter_le _ i 0⟩) p _ _
-        (smulAbRingHom (twistingSheaf (grading A n) k) (algebraMap A Γ(projectiveSpace A n, ⊤) a)) x
+        (smulAbRingHom (twistingSheaf (grading A n) k)
+          (algebraMap A Γ(projectiveSpace A n, ⊤) a)).asHom x
 
 end Leray
 
 lemma smul_cls {k : ℤ} {p : ℕ} (a : A) (σ : Cochain (twistAb A n k) (cover A n) p)
     (hσ : d _ _ p σ = 0) :
     a • cls σ hσ = cls (push (cover A n) (smulAbRingHom (twistingSheaf (grading A n) k)
-      (algebraMap A Γ(projectiveSpace A n, ⊤) a)).hom p σ)
+      (algebraMap A Γ(projectiveSpace A n, ⊤) a)).asHom.hom p σ)
         (by rw [← push_d, hσ, map_zero]) :=
   cechHMap_cls (cover A n) _ σ hσ
 
@@ -209,7 +222,7 @@ lemma zeroL_smul {k : ℤ} (a : A) (c : cechH (twistAb A n k) (cover A n) 0) :
   rw [smul_cls, zeroL_cls, zeroL_cls, lval_push_smul]
 
 lemma zeroL_injective {k : ℤ} : Function.Injective (zeroL (A := A) (n := n) k) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro c hc
   obtain ⟨σ, hσ, rfl⟩ := exists_cls c
   rw [zeroL_cls] at hc

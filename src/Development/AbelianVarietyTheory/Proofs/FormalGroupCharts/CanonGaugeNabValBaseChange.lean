@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MapDofIterate
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.FormalSecondPointDerivativeSecondCoordinate
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MapDofIterate
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.FormalSecondPointDerivativeSecondCoordinate
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -37,7 +41,8 @@ theorem map_dpolyOf (F : Fin d → PS k 2 d) {ι : Type} [Fintype ι] (u : ι �
     (P : MvPolynomial ι k) (f : PS k 1 d) :
     MvPowerSeries.map φ (DpolyOf F u P f) =
       DpolyOf (mapP φ F) (fun l i => φ (u l i)) (MvPolynomial.map φ P) (MvPowerSeries.map φ f) := by
-  rw [GE.dpolyOf_eq_sum_of_subset _ _ (MvPolynomial.map φ P) P.support
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [GE.dpolyOf_eq_sum_of_subset _ _ (MvPolynomial.map φ P) P.support
     (MvPolynomial.support_map_subset _ _), DpolyOf, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [map_mul, map_C, GlobalTheory.map_dmonOf, MvPolynomial.coeff_map]
@@ -86,14 +91,14 @@ theorem isCanonGauge_map {h : PS k 2 d} (H : B.IsCanonGauge k h) :
     rwa [map_ev_two _ _ _ (gp_pt 0) gp_zero₂, baseChange_zero₂, baseChange_pt, map_zero] at this
   · have := congrArg (MvPowerSeries.map (β : k →+* k')) H.ph1
     rw [map_map_alg, map_expS _ _ (by
-      rw [map_sub, map_add, c2 _ _ (gp_pt _) (gp_pt _), c2 _ _ (gp_pt _) (gp_pt _),
+      rw [map_sub, map_add (f := _), c2 _ _ (gp_pt _) (gp_pt _), c2 _ _ (gp_pt _) (gp_pt _),
         c2 _ _ (gA _ _) (gp_pt _), add_zero, sub_zero]), map_sub, map_add,
       map_ev_two _ _ _ (gp_pt _) (gp_pt _), map_ev_two _ _ _ (gp_pt _) (gp_pt _),
       map_ev_two _ _ _ (gA _ _) (gp_pt _), baseChange_addOf _ _ _ _ (gp_pt _) (gp_pt _), mapP_FK] at this
     simpa only [baseChange_pt] using this
   · have := congrArg (MvPowerSeries.map (β : k →+* k')) H.ph2
     rw [map_map_alg, map_expS _ _ (by
-      rw [map_sub, map_add, c2 _ _ (gp_pt _) (gp_pt _), c2 _ _ (gp_pt _) (gp_pt _),
+      rw [map_sub, map_add (f := _), c2 _ _ (gp_pt _) (gp_pt _), c2 _ _ (gp_pt _) (gp_pt _),
         c2 _ _ (gp_pt _) (gA _ _), add_zero, sub_zero]), map_sub, map_add,
       map_ev_two _ _ _ (gp_pt _) (gp_pt _), map_ev_two _ _ _ (gp_pt _) (gp_pt _),
       map_ev_two _ _ _ (gp_pt _) (gA _ _), baseChange_addOf _ _ _ _ (gp_pt _) (gp_pt _), mapP_FK] at this

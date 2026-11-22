@@ -1,14 +1,18 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSliceBranchInt
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PParamChartInt
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PChartIntCountAdd
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PParamPieceInt
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PParamCritNull
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PParamOffRegularZero
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRegularInjectivePieces
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PParamDensIntegrable
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AssemblyBase
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BranchProperAtPointHoldsStatement
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSliceBranchInt
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PParamChartInt
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PChartIntCountAdd
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PParamPieceInt
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PParamCritNull
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PParamOffRegularZero
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRegularInjectivePieces
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PParamDensIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AssemblyBase
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BranchProperAtPointHoldsStatement
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.SliceBranch
 

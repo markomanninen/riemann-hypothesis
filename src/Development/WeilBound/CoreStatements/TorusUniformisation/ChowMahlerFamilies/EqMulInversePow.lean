@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GermSys
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.ActGeneratorZero
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.CompListProd
-import Development.WeilBound.CoreStatements.HodgeTatePoints.CdChart
-import Development.WeilBound.CoreStatements.HodgeTatePoints.CdFrame
-import Development.WeilBound.CoreStatements.HodgeTatePoints.Comp1IdentityLeft
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GermSys
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.ActGeneratorZero
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.CompListProd
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.CdChart
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.CdFrame
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.Comp1IdentityLeft
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Crv GlobalTheory.CompanionTheory.Ar.Conj GlobalTheory.CompanionTheory.Ar.Flat GlobalTheory.CompanionTheory.Ar.Fl
 open scoped CategoryTheory.Obj
@@ -79,13 +84,14 @@ theorem stdLat_comp {Ω : Type} [Field Ω] (f : R →+* Ω) {φ ψ : Pt R 1 d} (
 
 theorem isMapOf_cancel {R₂ R₃ O : Type} [CommRing R₂] [CommRing R₃] [CommRing O] [StarRing O]
     {f : R →+* R₂} {g : R₂ →+* R₃} {B : Germ.FB R d O} {B₂ : Germ.FB R₂ d O} {B₃ : Germ.FB R₃ d O}
-    (h : IsMapOf f B B₂) (h' : IsMapOf (g.comp f) B B₃) : IsMapOf g B₂ B₃ where
-  F := fun i => by rw [h'.F, h.F, MvPowerSeries.map_comp]; rfl
-  act := fun a i => by rw [h'.act, h.act, MvPowerSeries.map_comp]; rfl
-  ph1 := by rw [h'.ph1, h.ph1, MvPowerSeries.map_comp]; rfl
-  ph2 := by rw [h'.ph2, h.ph2, MvPowerSeries.map_comp]; rfl
-  sy := by rw [h'.sy, h.sy, MvPowerSeries.map_comp]; rfl
-  ad := fun a => by rw [h'.ad, h.ad, MvPowerSeries.map_comp]; rfl
+    (h : IsMapOf f B B₂) (h' : IsMapOf (g.comp f) B B₃) : IsMapOf g B₂ B₃ := by
+  exact
+    { F := fun i => by simp only [h'.F i, h.F i, MvPowerSeries.map_comp, RingHom.comp_apply]
+      act := fun a i => by simp only [h'.act a i, h.act a i, MvPowerSeries.map_comp, RingHom.comp_apply]
+      ph1 := by simp only [h'.ph1, h.ph1, MvPowerSeries.map_comp, RingHom.comp_apply]
+      ph2 := by simp only [h'.ph2, h.ph2, MvPowerSeries.map_comp, RingHom.comp_apply]
+      sy := by simp only [h'.sy, h.sy, MvPowerSeries.map_comp, RingHom.comp_apply]
+      ad := fun a => by simp only [h'.ad a, h.ad a, MvPowerSeries.map_comp, RingHom.comp_apply] }
 
 theorem dualMap_comp {R₂ R₃ : Type} [CommRing R₂] [CommRing R₃] (f : R →+* R₂) (g : R₂ →+* R₃) :
     (GlobalTheory.CompanionTheory.Ar.dualMap g).comp (GlobalTheory.CompanionTheory.Ar.dualMap f) = GlobalTheory.CompanionTheory.Ar.dualMap (g.comp f) := by
@@ -111,7 +117,8 @@ theorem jetCoef_comp (f : S →+* S₂) (g : S₂ →+* S₃) (κ : Type) (m : �
 
 structure IsBC (f : S →+* S₂) (g : GermAt t x d) (g₂ : GermAt t x₂ d) : Prop where
   map : IsMapOf f g.B g₂.B
-  tg : ∀ l, g₂.tg l = spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ g.tg l
+  tg : ∀ l, g₂.tg l =
+    spMap (_root_.GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ g.tg l
   jet : ∀ m, (g₂.x m).left = spMap (jetCoef f (Fin 1 × Fin d) m) ≫ (g.x m).left
   fr : ∀ m (Z : Scheme.{0}) (r : Z ⟶ Sp (Jet S₂ (Fin 2 × Fin d) m)) (z : Z) (J), Good t.PP.L z J →
     vE g₂ m r z J = vE g m (r ≫ spMap (jetCoef f (Fin 2 × Fin d) m)) z J
@@ -119,25 +126,30 @@ structure IsBC (f : S →+* S₂) (g : GermAt t x d) (g₂ : GermAt t x₂ d) : 
 theorem exists_bc (f : S →+* S₂) (e : x₂ = spMap f ≫ x) (g : GermAt t x d) : ∃ g₂ : GermAt t x₂ d, IsBC f g g₂ := by
   subst e
   obtain ⟨e₂, h1, h2⟩ := Bc.exists_frBC t f x g.x g.e g.frame.gen
-  exact ⟨⟨FBMap.mapFB f g.B, Bc.yBC t f x g.x, e₂, fun l => spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ g.tg l,
+  exact ⟨⟨FBMap.mapFB f g.B, Bc.yBC t f x g.x, e₂,
+    fun l => spMap (_root_.GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ g.tg l,
     Bc.chart_bc t f x g.x g.chart, fun l => Bc.tan_bc t f x (g.tan l), Bc.basis_bc t f x g.tan g.basis,
     h2.frame h1 g.frame, h2.trunc g.trunc, h2.axes g.axes⟩,
     ⟨fun _ => rfl, fun _ _ => rfl, rfl, rfl, rfl, fun _ => rfl⟩, fun _ => rfl, fun _ => rfl, h2⟩
 
 theorem IsBC.cancel {f : S →+* S₂} {k : S₂ →+* S₃} {g : GermAt t x d} {g₂ : GermAt t x₂ d} {g₃ : GermAt t x₃ d}
-    (h : IsBC f g g₂) (h' : IsBC (k.comp f) g g₃) : IsBC k g₂ g₃ where
-  map := isMapOf_cancel h.map h'.map
-  tg l := by rw [h'.tg, h.tg, ← Category.assoc, Bc.spMap_cp, dualMap_comp]
-  jet m := by rw [h'.jet, h.jet, ← jetCoef_comp, ← Bc.spMap_cp, Category.assoc]
-  fr m Z r z J hJ := by
+    (h : IsBC f g g₂) (h' : IsBC (k.comp f) g g₃) : IsBC k g₂ g₃ := by
+  refine ⟨isMapOf_cancel h.map h'.map, ?_, ?_, ?_⟩
+  · intro l
+    rw [h'.tg, h.tg, ← Category.assoc, Bc.spMap_cp, dualMap_comp]
+  · intro m
+    rw [h'.jet, h.jet, ← jetCoef_comp, ← Bc.spMap_cp, Category.assoc]
+  · intro m Z r z J hJ
     rw [h'.fr m Z r z J hJ, h.fr m Z _ z J hJ, Category.assoc, Bc.spMap_cp, jetCoef_comp]
 
 theorem IsBC.trans {f : S →+* S₂} {k : S₂ →+* S₃} {g : GermAt t x d} {g₂ : GermAt t x₂ d} {g₃ : GermAt t x₃ d}
-    (h : IsBC f g g₂) (h' : IsBC k g₂ g₃) : IsBC (k.comp f) g g₃ where
-  map := h.map.trans h'.map
-  tg l := by rw [h'.tg, h.tg, ← Category.assoc, Bc.spMap_cp, dualMap_comp]
-  jet m := by rw [h'.jet, h.jet, ← jetCoef_comp, ← Bc.spMap_cp, Category.assoc]
-  fr m Z r z J hJ := by
+    (h : IsBC f g g₂) (h' : IsBC k g₂ g₃) : IsBC (k.comp f) g g₃ := by
+  refine ⟨h.map.trans h'.map, ?_, ?_, ?_⟩
+  · intro l
+    rw [h'.tg, h.tg, ← Category.assoc, Bc.spMap_cp, dualMap_comp]
+  · intro m
+    rw [h'.jet, h.jet, ← jetCoef_comp, ← Bc.spMap_cp, Category.assoc]
+  · intro m Z r z J hJ
     rw [h'.fr m Z r z J hJ, h.fr m Z _ z J hJ, Category.assoc, Bc.spMap_cp, jetCoef_comp]
 
 structure Cmp (g g₂ : GermAt t x d) (φ ψ : Q S d 1) (lam : PS S 2 d) : Prop where
@@ -191,18 +203,17 @@ theorem PP_bc {f : S →+* S₂} {g g₂ : GermAt t x d} {g' g₂' : GermAt t x�
 
 theorem Cmp.bc {f : S →+* S₂} {g g₂ : GermAt t x d} {g' g₂' : GermAt t x₂ d} (h : IsBC f g g') (h₂ : IsBC f g₂ g₂')
     {φ ψ : Q S d 1} {lam : PS S 2 d} (c : Cmp g g₂ φ ψ lam) :
-    Cmp g' g₂' (mQ f φ) (mQ f ψ) (MvPowerSeries.map f lam) where
-  hφ := PP_bc h h₂ c.hφ
-  hψ := PP_bc h₂ h c.hψ
-  hl m := by
-    obtain ⟨U, hU, k⟩ := c.hl m
-    refine ⟨Units.map (jetCoef f _ m).toMonoidHom U, by rw [← Bc.coef_psJet, ← hU]; rfl, fun Z r z J hJ => ?_⟩
-    have e := coef_jQ (x := x) (x₂ := x₂) f m (bb φ) (bb (mQ f φ)) fun j => by
-      fin_cases j <;> exact (mQ_ac f φ _).symm
-    refine (h₂.fr m Z r z J hJ).trans ((k Z _ z J hJ).trans (congrArg₂ (· * ·) (Bc.gm_unit_bc f x U r z).symm ?_))
-    refine Eq.trans ?_ (h.fr m Z _ z J hJ).symm
-    exact congrArg (fun s => vE g m s z J) ((Category.assoc _ _ _).trans
-      ((congrArg (r ≫ ·) e.symm).trans (Category.assoc _ _ _).symm))
+    Cmp g' g₂' (mQ f φ) (mQ f ψ) (MvPowerSeries.map f lam) := by
+  refine ⟨PP_bc h h₂ c.hφ, PP_bc h₂ h c.hψ, ?_⟩
+  intro m
+  obtain ⟨U, hU, k⟩ := c.hl m
+  refine ⟨Units.map (jetCoef f _ m).toMonoidHom U, by rw [← Bc.coef_psJet, ← hU]; rfl, fun Z r z J hJ => ?_⟩
+  have e := coef_jQ (x := x) (x₂ := x₂) f m (bb φ) (bb (mQ f φ)) fun j => by
+    fin_cases j <;> exact (mQ_ac f φ _).symm
+  refine (h₂.fr m Z r z J hJ).trans ((k Z _ z J hJ).trans (congrArg₂ (· * ·) (Bc.gm_unit_bc f x U r z).symm ?_))
+  refine Eq.trans ?_ (h.fr m Z _ z J hJ).symm
+  exact congrArg (fun s => vE g m s z J) ((Category.assoc _ _ _).trans
+    ((congrArg (r ≫ ·) e.symm).trans (Category.assoc _ _ _).symm))
 
 theorem Cmp.iso (hs : ∀ a : 𝓞 E, star a = H.bar a) (hp : PowFns t) {g g₂ : GermAt t x d} {φ ψ : Q S d 1}
     {lam : PS S 2 d} (c : Cmp g g₂ φ ψ lam) : GlobalTheory.CompanionTheory.Ar.Conj.IsIso g.B g₂.B φ.1 ψ.1 lam :=
@@ -232,7 +243,7 @@ def lieM (g : GermAt t x d) : GlobalTheory.CompanionTheory.Ar.LieModel t.G x (Fi
     obtain ⟨e, he⟩ := (tanModel t x).onto v hv
     obtain ⟨w, rfl⟩ := (gd_bij g).2 e
     exact ⟨w, he⟩
-  add v w := by rw [map_add, (tanModel t x).add]
+  add v w := by rw [map_add (f := _), (tanModel t x).add]
   smul c v := by rw [map_smul, (tanModel t x).smul]
 
 theorem germ_aff (hs : ∀ a : 𝓞 E, star a = H.bar a) (hp : PowFns t) (z : X0) :
@@ -345,7 +356,8 @@ theorem key_loc (hs : ∀ a : 𝓞 E, star a = H.bar a) (hp : PowFns t) {f : S �
 
 theorem key_dir {f : S →+* S₂} {g : GermAt t x d} {g₀ gq : GermAt t x₂ d} (h : IsBC f g gq) {φ ψ : Q S₂ d 1}
     {lam : PS S₂ 2 d} (c : Cmp g₀ gq φ ψ lam) (l : Fin d) :
-    ((lieM g₀).pt ((lin φ.1 1).mulVec (Pi.single l 1))).left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ g.tg l := by
+    ((lieM g₀).pt ((lin φ.1 1).mulVec (Pi.single l 1))).left =
+      spMap (_root_.GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ g.tg l := by
   have := (comb_iff g₀ _ _).1 (coord_tan c.hφ l)
   have e₂ : (fun j => lin φ.1 1 j l) = (lin φ.1 1).mulVec (Pi.single l 1) := by
     funext j; simp

@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.IndexExponentDegree
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EmbHInjective
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SpanImageLeOf
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaLatticeImageRationalHomLattice
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.IndexExponentDegree
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EmbHInjective
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SpanImageLeOf
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaLatticeImageRationalHomLattice
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker Formalism.MainNotions Formalism.L2.Th1.H GlobalTheory.ThetaMove GlobalTheory.IndefiniteRowSideFullHecke.IndexExponentDegree
 open GlobalTheory.IdealTransport GlobalTheory.InertSign GlobalTheory.ThetaLatImage
@@ -68,14 +72,51 @@ end Fields
 variable {X : Fields} {D : D7} (s : Seam D X)
 
 theorem sd_lat (hs : s.Ok) {n : ℕ} {N : Submodule (𝓞 X.E) (Sp X.E n)} (h : IsSdLat N) : StandardLatticesGL3.SD D (s.lat N) := by
-  refine (sd_iff D _).2 ⟨trL_fg s.iE h.1.fg, trL_span s.iE h.1.span_eq_top, fun y => ?_⟩
+  have hspan : Submodule.span X.E (N : Set (Sp X.E n)) = ⊤ := by
+    apply Submodule.dualAnnihilator_eq_bot_iff.mp
+    apply le_antisymm ?_ bot_le
+    intro f hf
+    let v : Sp X.E n := fun i => star (f (Pi.single i 1))
+    have hpair : hStd X.E n v = f := by
+      apply (Pi.basisFun X.E (Fin n)).ext
+      intro i
+      rw [Pi.basisFun_apply, hStd_apply, Finset.sum_eq_single i]
+      · simp [v]
+      · intro j _ hj
+        simp [hj]
+      · simp
+    have hline (r : X.E) : r • v ∈ N := by
+      rw [← show dual (hStd X.E n) N = N from h.2, dualBasic_mem_dual]
+      intro y hy
+      have hy0 : hStd X.E n v y = 0 := by
+        rw [hpair]
+        exact (Submodule.mem_dualAnnihilator f).mp hf y (Submodule.subset_span hy)
+      have hz : hStd X.E n y v = 0 := by
+        simpa [hy0] using ((hStd_isSymm (E := X.E) (n := n)).eq v y).symm
+      simp [hz]
+    have hv : v = 0 := by
+      funext i
+      change v i = 0
+      by_contra hi
+      let coord := (LinearMap.proj i : Sp X.E n →ₗ[X.E] X.E).restrictScalars (𝓞 X.E)
+      have htop : N.map coord = ⊤ := by
+        rw [eq_top_iff]
+        intro x _
+        exact ⟨(x / v i) • v, hline _, div_mul_cancel₀ _ hi⟩
+      have : Module.Finite (𝓞 X.E) X.E := Module.finite_def.mpr (htop ▸ h.1.fg.map coord)
+      exact RingOfIntegers.not_isField X.E
+        (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 X.E) X.E) (Field.toIsField X.E))
+    rw [Submodule.mem_bot]
+    simpa [hv] using hpair.symm
+  refine (sd_iff D _).2 ⟨trL_fg s.iE h.1.fg, trL_span s.iE hspan, fun y => ?_⟩
   have key : ∀ x : Fin n → D.host.E, IntE D (hE D y x) ↔
       hStd X.E n (fun i => s.iE.symm (x i)) (fun i => s.iE.symm (y i)) ∈ (1 : Submodule (𝓞 X.E) X.E) := by
     intro x
     have e1 : hStd X.E n (fun i => s.iE.symm (x i)) (fun i => s.iE.symm (y i)) = s.iE.symm (hE D y x) := by
       apply s.iE.injective
       change s.iE (∑ i, star (s.iE.symm (x i)) * s.iE.symm (y i)) = _
-      simp only [map_sum, map_mul, hs.2, RingEquiv.apply_symm_apply, hE, mul_comm]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, hs.2, RingEquiv.apply_symm_apply, hE, mul_comm]
     rw [e1, ← mem_one_iff, Submodule.mem_one]
     rfl
   have hm : ∀ x, x ∈ s.lat N ↔ (fun i => s.iE.symm (x i)) ∈ N := mem_trL s.iE N

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ValuationLambdaFieldProperties
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ValuationLambdaFieldProperties
+
+@[expose] public section
 
 noncomputable section
 

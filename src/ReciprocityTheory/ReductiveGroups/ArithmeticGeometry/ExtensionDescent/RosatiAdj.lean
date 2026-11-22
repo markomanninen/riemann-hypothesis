@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThickTransComp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LinCombTrivG
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThickTransComp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LinCombTrivG
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -79,8 +83,6 @@ def zeroOAct (O : Type) [Ring O] [StarRing O] (S : Scheme.{0}) : (zeroPolAV S).O
   map_add := fun _ _ => toUnit_unique _ _
   rosati := fun _ _ => ⟨⊤, trivial, ⟨fun _ => 1⟩, by
     intro i j; erw [linComb_triv_g, _root_.one_mul]; dsimp only; repeat erw [map_one]⟩
-
-example (S : Scheme.{0}) : (zeroPolAV S).OAct ℤ := zeroOAct ℤ S
 
 end Inh
 

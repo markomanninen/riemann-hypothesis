@@ -1,10 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.ContractMixedFieldStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsChartRankAdjoin
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PtsOver
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsFurtherTer
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsFurtherMore
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.ContractMixedFieldStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsChartRankAdjoin
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PtsOver
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsFurtherTer
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsFurtherMore
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -18,29 +23,29 @@ namespace PullbackDegreeCount
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
   {K' : Type} [Fintype K'] {ι' : K' → Type} [∀ k, Fintype (ι' k)]
 
-omit [Fintype K'] [∀ k, Fintype (ι' k)] in
 
+omit [Fintype K'] [∀ k, Fintype (ι' k)] in
 theorem sameOrbit_self (z : (Σ k', ι' k') → ℂ) : SameOrbit z z :=
   ⟨fun _ => 1, fun _ => one_ne_zero, by simp⟩
 
-omit [Fintype K'] [∀ k, Fintype (ι' k)] in
 
+omit [Fintype K'] [∀ k, Fintype (ι' k)] in
 theorem sameOrbit_comp {a b c : (Σ k', ι' k') → ℂ} (h1 : SameOrbit a b) (h2 : SameOrbit b c) :
     SameOrbit a c := by
   obtain ⟨s, hs, rfl⟩ := h1
   obtain ⟨t, ht, rfl⟩ := h2
   exact ⟨fun k => s k * t k, fun k => mul_ne_zero (hs k) (ht k), by funext p; simp [mul_assoc]⟩
 
-omit [Fintype K'] [∀ k, Fintype (ι' k)] in
 
+omit [Fintype K'] [∀ k, Fintype (ι' k)] in
 theorem sameOrbit_flip {a b : (Σ k', ι' k') → ℂ} (h : SameOrbit a b) : SameOrbit b a := by
   obtain ⟨s, hs, rfl⟩ := h
   refine ⟨fun k => (s k)⁻¹, fun k => inv_ne_zero (hs k), ?_⟩
   funext p
   simp [← mul_assoc, inv_mul_cancel₀ (hs p.1)]
 
-omit [Fintype K'] [∀ k, Fintype (ι' k)] in
 
+omit [Fintype K'] [∀ k, Fintype (ι' k)] in
 theorem normSegre_sameOrbit {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} (hv : IsBlockMap κ v) {n : ℕ}
     (Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (n + 1) → ℂ)) {z₁ z₂ : (Σ k', ι' k') → ℂ} (h : SameOrbit z₁ z₂) :
     (Ψ (segre fun p => z₁ (v p)) 0)⁻¹ • segre (fun p => z₁ (v p)) =
@@ -54,8 +59,8 @@ theorem normSegre_sameOrbit {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k'
   rw [h1, segre_smul, map_smul, Pi.smul_apply, smul_eq_mul, smul_smul, mul_inv_rev, mul_assoc,
     inv_mul_cancel₀ hne, mul_one]
 
-omit [Fintype K'] in
 
+omit [Fintype K'] in
 theorem ncard_pullW_eq {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} (hv : IsBlockMap κ v)
     {P' J' : Ideal (MRing ι')} {n : ℕ} (R : AnLogRes P' J' n) (Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (n + 1) → ℂ))
     (w : ((k : K) → ι k) → ℂ)
@@ -81,8 +86,8 @@ theorem ncard_pullW_eq {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} (h
 
 end PullbackDegreeCount
 
-open PullbackDegreeCount in
 
+open PullbackDegreeCount in
 theorem PullbackDegreeCount.proof (hDim : FibreDimStatement) (hRank : ChartRankAdjoin.Statement)
     (hCount : GenericPointsCount.Statement) (hB : PullbackVanishingOfNullCycle.Statement) (hBad : pullbackBadImage_holds.Statement) :
     PullbackDegreeCount.Statement := by

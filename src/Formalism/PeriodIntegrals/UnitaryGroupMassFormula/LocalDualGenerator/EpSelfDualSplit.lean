@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 open ValuativeRel Module
@@ -125,8 +129,9 @@ theorem int_iff (z : L) :
       isIntegral_algebraMap (R := 𝒪[K]) (x := (⟨_, hb⟩ : 𝒪[K]))
     exact (ia.mul hie).add (ib.mul hif)
 
-include hr he h0 h1 in
 
+include hr e he h0 h1 in
+include hr he h0 h1 in
 theorem selfDual_split (x : L) :
     (∀ y : L, IsIntegral 𝒪[K] y → Algebra.trace K L (x * y) ∈ 𝒪[K]) ↔ IsIntegral 𝒪[K] x := by
   have pe := pr_e hr e he h0 h1

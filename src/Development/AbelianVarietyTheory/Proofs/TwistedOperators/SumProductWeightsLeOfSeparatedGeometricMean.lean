@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.DepthPays
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PackingGeometricMeanSeparated
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.DepthPays
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PackingGeometricMeanSeparated
+
+@[expose] public section
 
 open GlobalTheory.SepPer Finset
 
@@ -45,7 +49,7 @@ theorem sum_prod_inv_two_le {ι : Type} [Fintype ι] [DecidableEq ι] (T : Finse
   refine (sum_le_sum_of_subset_of_nonneg hsub fun j _ _ => by positivity).trans ?_
   rw [← Finset.prod_univ_sum (fun _ : ι => range (M + 1)) (fun _ k => ((2 : ℝ) ^ k)⁻¹)]
   calc ∏ v : ι, ∑ k ∈ range (M + 1), ((2 : ℝ) ^ k)⁻¹ ≤ ∏ _v : ι, (2 : ℝ) :=
-        prod_le_prod (fun _ _ => by positivity) fun v _ => by
+        prod_le_prod₀ (fun _ _ => by positivity) fun v _ => by
           have := sum_geometric_two_le (M + 1)
           simpa [one_div, inv_pow] using this
     _ = 2 ^ Fintype.card ι := by simp
@@ -111,7 +115,7 @@ theorem sum_weights_le_of_separated : ∀ (ι : Type) [Fintype ι] [Nonempty ι]
   · have hcard : S.card ≤ 1 :=
       Finset.card_le_one.mpr fun a _ b _ => funext fun v => Matrix.ext fun i _ => i.elim0
     have hterm : ∀ s ∈ S, ∏ v, ((1 + hsn (s v)) ^ (2 * 0 ^ 2 + 1))⁻¹ ≤ (1 : ℝ) := fun s _ =>
-      Finset.prod_le_one (fun v _ => by have := hsn_nonneg (s v); positivity)
+      Finset.prod_le_one₀ (fun v _ => by have := hsn_nonneg (s v); positivity)
         fun v _ => inv_le_one_of_one_le₀ (one_le_pow₀ (by linarith [hsn_nonneg (s v)]))
     calc _ ≤ ∑ s ∈ S, (1 : ℝ) := sum_le_sum hterm
       _ = S.card := by simp
@@ -130,7 +134,7 @@ theorem sum_weights_le_of_separated : ∀ (ι : Type) [Fintype ι] [Nonempty ι]
           ∏ v, ((1 + hsn (s v)) ^ (N + 1))⁻¹ ≤ ∏ v, (((2 : ℝ) ^ j v) ^ (N + 1))⁻¹ := by
         intro s hs
         rw [Finset.mem_filter] at hs
-        refine prod_le_prod (fun v _ => by have := hsn_nonneg (s v); positivity) fun v _ => ?_
+        refine prod_le_prod₀ (fun v _ => by have := hsn_nonneg (s v); positivity) fun v _ => ?_
         have hd := (dyadic _ (hsn_nonneg (s v))).1
         rw [← hs.2]
         exact inv_anti₀ (by positivity) (pow_le_pow_left₀ (by positivity) hd _)

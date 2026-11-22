@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.CommutativeAlgebra.MaximalIdealSquares.RingKrullDimQuotientSpanSingletonAddOne
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.CommutativeAlgebra.MaximalIdealSquares.RingKrullDimQuotientSpanSingletonAddOne
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
@@ -11,18 +15,6 @@ namespace GlobalTheory
 namespace RegularFactorial
 
 open IsLocalRing
-
-theorem isRegularRing_of_isLocalization {R : Type*} [CommRing R] [IsRegularRing R]
-    (M : Submonoid R) (S : Type*) [CommRing S] [Algebra R S] [IsLocalization M S] :
-    IsRegularRing S := by
-  have : IsNoetherianRing S := IsLocalization.isNoetherianRing M S inferInstance
-  rw [isRegularRing_iff]
-  intro P hP
-  have h := IsLocalization.isLocalization_isLocalization_atPrime_isLocalization M
-    (Localization.AtPrime P) P
-  exact IsRegularLocalRing.of_ringEquiv
-    (IsLocalization.algEquiv (P.comap (algebraMap R S)).primeCompl
-      (Localization.AtPrime (P.comap (algebraMap R S))) (Localization.AtPrime P)).toRingEquiv
 
 end RegularFactorial
 
@@ -130,11 +122,11 @@ private lemma uniqueFactorizationMonoid_localization_of_height_le
         IsLocalRing.le_maximalIdeal (Ideal.comap_ne_top _ hq.ne_top)
       have hq₂Q : q₂ < Q := by
         refine lt_of_le_of_ne ?_ ?_
-        · rw [← IsLocalization.AtPrime.comap_maximalIdeal (Localization.AtPrime Q) Q]
+        · rw [← IsLocalization.AtPrime.under_maximalIdeal (Localization.AtPrime Q) Q]
           exact Ideal.comap_mono hq₁m
         · intro h
           apply hxq₁
-          have := IsLocalization.map_comap Q.primeCompl (Localization.AtPrime Q) q₁
+          have := IsLocalization.map_under Q.primeCompl (Localization.AtPrime Q) q₁
           rw [← this]
           change x ∈ Ideal.map _ q₂
           rw [h, IsLocalization.AtPrime.map_eq_maximalIdeal]
@@ -189,10 +181,10 @@ private lemma uniqueFactorizationMonoid_localization_of_height_le
     have hp : p = ⊥ := le_bot_iff.1 (hbot ▸ IsLocalRing.le_maximalIdeal (Ideal.IsPrime.ne_top ‹_›))
     exact absurd hph (by rw [hp, Ideal.height_bot]; exact zero_ne_one)
 
+
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry in
 attribute [local instance] Over.cartesianMonoidalCategory in
 open IsLocalRing in
-
 theorem _root_.GlobalTheory.uniqueFactorizationMonoid_of_isRegularRing_of_isLocalRing :
     (∀ (R : Type) [CommRing R] [IsRegularLocalRing R] (M : Type) [AddCommGroup M] [Module R M]
       [Module.Finite R M], ∃ n : ℕ, HasProjectiveDimensionLE (ModuleCat.of R M) n) →

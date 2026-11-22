@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaSumAdmissibility
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.RemovableLogGrowthSingularityStatement
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.SeesawThetaDualPairStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaSumAdmissibility
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.RemovableLogGrowthSingularityStatement
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.SeesawThetaDualPairStatement
+
+@[expose] public section
 
 open Matrix NumberField IsDedekindDomain GlobalTheory.WeilM MeasureTheory
 open scoped TensorProduct
@@ -43,7 +47,7 @@ def dblCoord {F : Type} [Field F] {E : Type} [AddCommGroup E] [Module F E] {α �
   map_add' x y := by
     have h1 : (x + y).toCols₁ = x.toCols₁ + y.toCols₁ := rfl
     have h2 : (x + y).toCols₂ = x.toCols₂ + y.toCols₂ := rfl
-    rw [h1, h2, map_add, map_add]
+    rw [h1, h2, map_add (f := _), map_add (f := _)]
     ext (i | i) <;> simp [add_comm]
   map_smul' a x := by
     have h1 : (a • x).toCols₁ = a • x.toCols₁ := rfl

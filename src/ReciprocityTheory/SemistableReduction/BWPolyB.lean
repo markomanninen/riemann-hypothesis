@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.BWPolyA
+module
+
+public import ReciprocityTheory.SemistableReduction.BWPolyA
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 
@@ -42,7 +46,7 @@ theorem bwp_ext_poly {σ : Type*} [Fintype σ] [DecidableEq σ] (k : ℕ) (g D :
         ∀ t, (∀ c ∈ S, D ((z + t • e) + c • w) ≠ 0) → G (z + t • e) = (R S).eval t := by
       intro S hS hSz t ht
       simp only [G, R]
-      rw [bwp_eval_eq_lagrange S (Qw (z + t • e)) k hS (hQd _) 0, Polynomial.eval_finset_sum]
+      rw [bwp_eval_eq_lagrange S (Qw (z + t • e)) k hS (hQd _) 0, Polynomial.eval_finsetSum]
       refine Finset.sum_congr rfl (fun c hc => ?_)
       rw [Polynomial.eval_mul, Polynomial.eval_C, ← hQ _ c (ht c hc)]
       congr 1

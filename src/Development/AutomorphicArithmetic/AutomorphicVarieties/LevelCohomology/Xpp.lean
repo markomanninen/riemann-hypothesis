@@ -1,11 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.DirGPowOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcVanOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcUnrOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcXppOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.DvrFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.EtaKer
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostNumber
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.DirGPowOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcVanOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcUnrOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcXppOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.DvrFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.EtaKer
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostNumber
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.X
 
 theorem UpperTheory.V.X.xpp :

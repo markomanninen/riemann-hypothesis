@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.DifferentLatIndex
-import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.PTorusIndex
-import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.DiffLatStep
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.DifferentLatIndex
+public import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.PTorusIndex
+public import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.DiffLatStep
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

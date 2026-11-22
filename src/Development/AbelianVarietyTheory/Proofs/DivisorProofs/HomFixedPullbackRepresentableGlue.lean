@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OfGroupPullbackDataBase
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExtCoverStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGlueDataStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GlueWitStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalRepUniversalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomFixRepOfUniversalStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OfGroupPullbackDataBase
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExtCoverStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGlueDataStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GlueWitStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalRepUniversalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomFixRepOfUniversalStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+
+@[expose] public section
 
 private theorem UpperTheory.Reformulated.B.Qh47.exists_nat_mul_integral {E : Type} [Field E] [NumberField E]
     (a : E) : ∃ n : ℕ, 0 < n ∧ IsIntegral ℤ ((n : E) * a) := by

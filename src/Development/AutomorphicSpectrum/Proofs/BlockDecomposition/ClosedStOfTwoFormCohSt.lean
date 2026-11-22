@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -46,7 +50,7 @@ theorem eq_zero_of_additive [Module.Finite R M] [Module.Projective R M] (A B : M
   let L : Module.Dual R N := v 0 ∘ₗ LinearMap.fst R M M ∘ₗ e.symm.toLinearMap
   let L' : Module.Dual R N := v 1 ∘ₗ LinearMap.snd R M M ∘ₗ e.symm.toLinearMap
   have key := congrArg (exteriorPower.pairingDual R N 2 (exteriorPower.ιMulti R 2 ![L, L'])) h
-  rw [map_add, pairing_map, pairing_map, pairing_map] at key
+  rw [map_add (f := _), pairing_map, pairing_map, pairing_map] at key
   have h0 : (fun i ↦ ![L, L'] i ∘ₗ (A + B)) = v := by
     funext i
     fin_cases i
@@ -111,10 +115,10 @@ theorem closedSt_of_twoFormCohSt : TwoFormCohSt → ClosedSt := by
       exteriorPower.map 2 (pullGlob1 p) t + exteriorPower.map 2 (pullGlob1 q) t := by
     have h1 : pullGlob1 p + pullGlob1 q = pullGlob1 m := LinearMap.ext fun ω ↦ (hm ω).symm
     apply hinj
-    rw [h1, step m, map_add, step p, step q]
+    rw [h1, step m, map_add (f := _), step p, step q]
     funext T'
     change dOne R _ ((pullGlob1 m ω₀).1 T') = dOne R _ ((pullGlob1 p ω₀).1 T') + dOne R _ ((pullGlob1 q ω₀).1 T')
-    rw [hm, ← map_add]
+    rw [hm, ← map_add (f := _)]
     rfl
   have ht0 : t = 0 := eq_zero_of_additive _ _ hb t hadd
   have := congrFun ht T

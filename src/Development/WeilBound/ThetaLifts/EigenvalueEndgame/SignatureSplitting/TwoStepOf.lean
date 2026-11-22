@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.SpanPairIff
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.SigSplitOf
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.ExistsAbsGt
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.SpanPairIff
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.SigSplitOf
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.ExistsAbsGt
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,9 +104,6 @@ theorem twoStep_of' (hM : SigMod) (hS : SigSplit) (hI : Iwa) (hA : IAut) : TwoSt
     have l2 : l - 1 ≠ 0 := sub_ne_zero.2 fun e => by simp [e] at l1
     exact (mul_eq_zero.1 (by linear_combination this : (l - 1) * C' y = 0)).resolve_left l2
   exact ⟨d₂, W₂, H₁, A', pl₁, by simpa [z] using h.1, h.2.1⟩
-
-theorem twoStep_of (hW : WeilConv) (hD : KDecay) (hS : SplitEx) (hP : Tow.PlaneSkew) (hI : Iwa) (hA : IAut) (hR : SigRe) : TwoStep :=
-  twoStep_of' (sigMod_of hW hD) (sigSplit_of hS hP hI ctBasic hA hR) hI hA
 
 end PositivityTheory.ThKEnd.Two
 

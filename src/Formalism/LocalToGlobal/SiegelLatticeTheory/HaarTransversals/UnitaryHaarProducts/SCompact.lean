@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.IUnfold
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HaarOn
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.ConcreteLevelAdelicSubset
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IndefiniteUnitaryPreservesForm
-import Formalism.RealPlaceAnalysis.FinalF
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHAlg
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.IUnfold
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HaarOn
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.ConcreteLevelAdelicSubset
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IndefiniteUnitaryPreservesForm
+public import Formalism.RealPlaceAnalysis.FinalF
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHAlg
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem Ksub_coe : ((Ksub I : Subgroup I.Gf) : Set I.Gf) = I.Kset := rfl
 
 theorem hs_continuous {n : ℕ} : Continuous (fun M : Matrix (Fin n) (Fin n) ℂ => Formalism.REAL.hs M) := by
   unfold Formalism.REAL.hs
-  refine continuous_finset_sum _ (fun i _ => continuous_finset_sum _ (fun j _ => ?_))
+  refine continuous_finsetSum _ (fun i _ => continuous_finsetSum _ (fun j _ => ?_))
   exact ((continuous_id.matrix_elem i j).norm).pow 2
 
 theorem omCover_holds : OmCover I := by
@@ -95,17 +99,10 @@ theorem hJ_sum_right' {ι : Type*} (s : Finset ι) (x : Fin n → ℂ) (c : ι �
   unfold hJ
   simp [Matrix.mulVec_sum, Matrix.mulVec_smul, dotProduct_sum, dotProduct_smul]
 
-theorem hJ_sub_right' (x y y' : Fin n → ℂ) : hJ ε x (y - y') = hJ ε x y - hJ ε x y' := by
-  unfold hJ
-  simp [Matrix.mulVec_sub]
-
-theorem hJ_zero_right' (x : Fin n → ℂ) : hJ ε x 0 = 0 := by
-  unfold hJ
-  simp
-
 theorem hJ_conj' (x y : Fin n → ℂ) : hJ ε x y = starRingEnd ℂ (hJ ε y x) := by
   unfold hJ Formalism.REAL.Jm
-  simp only [Matrix.mulVec_diagonal, dotProduct, map_sum, map_mul, Pi.star_apply, RCLike.star_def,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec_diagonal, dotProduct, map_sum, map_mul, Pi.star_apply, RCLike.star_def,
     Complex.conj_conj]
   refine Finset.sum_congr rfl (fun i _ => ?_)
   split_ifs <;> simp <;> ring
@@ -302,7 +299,8 @@ theorem hJ_rv_sc (I : AutInst) (v : InfinitePlace I.F) (x y : Fin I.n → I.E) :
   unfold hJ
   rw [key, dotProduct_mulVec, hx]
   unfold Formalism.UG.hform
-  simp only [map_sum, map_mul, dotProduct, Matrix.mulVec, Pi.star_apply, Matrix.map_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, dotProduct, Matrix.mulVec, Pi.star_apply, Matrix.map_apply,
     starRingEnd_apply, PI.UnitaryGroupMassFormula.LCG.ap_star, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring
@@ -444,9 +442,5 @@ theorem colBound_of (hK : X.LevelSubgroupCharacter) (hCF : Cut.ClassFin X u hK) 
     (fun _ _ => norm_nonneg _) (Finset.mem_univ c)
 
 end Col
-
-def SCompactC : Prop := ∀ (D : D7) (X : HidaSetting D) (u : D.what₂.Word), SCompact X u
-
-def SinfSectionC : Prop := ∀ (D : D7) (X : HidaSetting D) (u : D.what₂.Word), SinfSection X u
 
 end Formalism.L2.SG.Pf

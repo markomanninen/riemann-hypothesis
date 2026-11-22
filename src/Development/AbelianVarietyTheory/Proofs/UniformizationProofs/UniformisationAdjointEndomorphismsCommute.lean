@@ -1,28 +1,33 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DataRigidSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaVV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.VRatioGtStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ValuationMultiplicationInvariance
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PeriodicValuation
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBC
-import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
-import Development.AbelianVarietyTheory.Definitions.Uniformization.AllDV
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsAddInjective
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsNsmulAndNeg
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.MemOfNonempty
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CardQuotientKTorsionPairs
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AdicBaseEmbedsValuationAlgebraicClosure
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationEndomorphismsToCompleteDvrStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformizationEndomorphismCalculusStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsEndomorphismActionUniformizationDataStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TorsionPointEndomorphismImageEqMovedGtPointStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.EndomorphismTorusExtensionPeriodOfAdjointStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.QkToAkUInvariantUnderFieldEmbeddingStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionIdentificationWithPairingStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DataRigidSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaVV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.VRatioGtStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ValuationMultiplicationInvariance
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PeriodicValuation
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBC
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.AllDV
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsAddInjective
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsNsmulAndNeg
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.MemOfNonempty
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CardQuotientKTorsionPairs
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AdicBaseEmbedsValuationAlgebraicClosure
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationEndomorphismsToCompleteDvrStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformizationEndomorphismCalculusStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsEndomorphismActionUniformizationDataStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TorsionPointEndomorphismImageEqMovedGtPointStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.EndomorphismTorusExtensionPeriodOfAdjointStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.QkToAkUInvariantUnderFieldEmbeddingStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionIdentificationWithPairingStatement
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR
 open scoped CategoryTheory.Obj
@@ -148,7 +153,7 @@ theorem exists_equiv_qkExt (k : ℕ) (hk : 1 ≤ k) (p : QkPt D.toPre F' k) :
     rintro ⟨a⟩ ⟨b⟩ hab
     obtain ⟨z, hy, hg⟩ := (equiv_iff hB _ _).1 ((equiv_equivalence hB).eqvGen_iff.1 (Quot.eq.1 hab))
     refine Quot.sound ((equiv_iff hB _ _).2 ⟨z, hy, gtExt_injective σ.toRingHom (hom_comp σ) _ ?_⟩)
-    rw [map_add, gtExt_iota]
+    rw [map_add (f := _), gtExt_iota]
     exact hg
   have : Finite (Quot (QkPt.Equiv D.toPre F' (k := k))) :=
     Nat.finite_of_card_ne_zero (by rw [c']; exact pow_ne_zero _ (by omega))
@@ -178,31 +183,24 @@ theorem keepsTors_up (H₁ : KeepsIota E h F) (H : KeepsTors E h F) : KeepsTors 
   refine (hf' _ _).2 (c.trans ((he' _ _).2 ?_))
   obtain ⟨z, hz, hg⟩ := (equiv_iff hB _ _).1 hq
   refine (equiv_iff hB _ _).2 ⟨h z, ?_, ?_⟩
-  · rw [hy, hz, map_add, map_nsmul]; rfl
-  · rw [(hα' _ _).1 ha, hg, map_add, hι']
+  · rw [hy, hz, map_add (f := _), map_nsmul]; rfl
+  · rw [(hα' _ _).1 ha, hg, map_add (f := _), hι']
     exact congrArg (· + _) ((hα' _ _).1 (act_gtExt σ.toRingHom (hom_comp σ) E ((hα q.g _).2 rfl))).symm
 
 end Field
 
 theorem isMonHom_mul {S : Scheme.{0}} {G : Over S} [GrpObj G] [IsCommMonObj G]
-    (f g : G ⟶ G) [IsMonHom f] [IsMonHom g] : IsMonHom (f * g) where
-  one_hom := by
-    rw [MonObj.comp_mul, IsMonHom.one_hom, IsMonHom.one_hom, MonObj.one_eq_one, _root_.mul_one]
-  mul_hom := by
-    have h : ∀ k : G ⟶ G, [IsMonHom k] → (k ⊗ₘ k) ≫ μ[G] = (fst G G ≫ k) * (snd G G ≫ k) := fun k _ => by
-      rw [MonObj.mul_eq_mul, MonObj.comp_mul]
-      simp
-    rw [MonObj.comp_mul, IsMonHom.mul_hom, IsMonHom.mul_hom, h, h, MonObj.mul_eq_mul, MonObj.comp_mul]
-    simp only [← Category.assoc, tensorHom_fst, tensorHom_snd, MonObj.comp_mul]
-    exact mul_mul_mul_comm _ _ _ _
+    (f g : G ⟶ G) [IsMonHom f] [IsMonHom g] : IsMonHom (f * g) := by
+  rw [CategoryTheory.Hom.mul_def]
+  infer_instance
 
 section Main
 variable (hL : LL) {R : Type} [CommRing R] [IsDomain R] [CharZero R] {I : Ideal R} (hR : AdmBase R I) {D : DegData R I}
   {A : PolAV (Spec (CommRingCat.of (FractionRing R)))} {G : Over (Spec (CommRingCat.of R))} [GrpObj G] [IsCommMonObj G]
   (hG : IsSemiAbelian G) {U : Unif I D A G}
 
-include hL hR hG in
 
+include hL hR hG in
 theorem keeps_of_add (E : EndU U.toUnifPre) (h : D.toPre.X →+ D.toPre.X) (m : ℕ) (E₁ : EndU U.toUnifPre)
     (h₁ : D.toPre.X →+ D.toPre.X) (eG : E₁.aG = E.aG * 𝟙 G ^ m) (eA : E₁.aA = E.aA * 𝟙 A.A ^ m)
     (eh : ∀ y, h₁ y = h y + m • y) (F : Type) [Field F] [IsAlgClosed F] [Algebra (FractionRing R) F]
@@ -214,7 +212,7 @@ theorem keeps_of_add (E : EndU U.toUnifPre) (h : D.toPre.X →+ D.toPre.X) (m : 
     hsum g g' _ _ ha ((mAct F _ _).2 ((isNsmul_iff_eq _ _ _).2 rfl)) ((isAdd_iff_eq _ _ _).2 rfl)
   refine ⟨fun y g g' hy ha => ?_, fun k hk p p' x hy ha hx => ?_⟩
   · have := (isIota_iff_eq hB _ _).1 (H₁ y _ _ hy (sum g g' ha))
-    rw [eh, map_add, map_nsmul, (isIota_iff_eq hB _ _).1 hy] at this
+    rw [eh, map_add (f := _), map_nsmul, (isIota_iff_eq hB _ _).1 hy] at this
     exact (isIota_iff_eq hB _ _).2 (add_right_cancel this)
   · obtain ⟨f, hf, -, -, hadd, -⟩ := GlobalTheory.T.uniformisation_torsion_identification_with_pairing hL R I hR D A G hG U F k hk
     let q : ℕ → QkPt D.toPre F k := fun n => qkMk hB (n • p.y) (n • p.g) (by
@@ -236,8 +234,8 @@ theorem keeps_of_add (E : EndU U.toUnifPre) (h : D.toPre.X →+ D.toPre.X) (m : 
     rw [hadd _ _ _ (qkAdd_qkAdd hB p' (q m)), hq, eA, b, ← (hf _ _).1 hx] at a
     exact (hf _ _).2 (mul_right_cancel a)
 
-include hL hR hG in
 
+include hL hR hG in
 theorem exists_add (E : EndU U.toUnifPre) (m : ℕ) : ∃ E₁ : EndU U.toUnifPre, E₁.aG = E.aG * 𝟙 G ^ m ∧
     E₁.aA = E.aA * 𝟙 A.A ^ m ∧ ∀ y, E₁.h y = E.h y + m • y := by
   obtain ⟨M, mG, mA, -, mh, -⟩ := (GlobalTheory.IntEnd.exists_nsmul_and_neg hL R I hR D A G hG U).1 m
@@ -252,8 +250,8 @@ theorem exists_add (E : EndU U.toUnifPre) (m : ℕ) : ∃ E₁ : EndU U.toUnifPr
   obtain ⟨-, eh, -⟩ := (GlobalTheory.T.uniformizationEndomorphism_calculus hL R I hR D A G hG U (AlgebraicClosure (FractionRing R)) E M E₁).2.2.2.2.1 eG
   exact ⟨E₁, mG ▸ eG, mA ▸ eA, fun y => by rw [eh, AddMonoidHom.add_apply, mh]⟩
 
-include hL hR hG in
 
+include hL hR hG in
 theorem exists_keeps (h₁ : TwistBCSpanStatement) (h₂ : TWM.VRatioGtStatement) (h₃ : TWStatement) (h₄ : UUStatement)
     (E E' : EndU U.toUnifPre) (hE : Function.Injective E.h) (hE' : Function.Injective E'.h)
     (adj : LBIso (cubeLB G ![fst G G ≫ E.aG, snd G G] U.LG.L) (cubeLB G ![fst G G, snd G G ≫ E'.aG] U.LG.L)) :
@@ -332,8 +330,16 @@ theorem main : LL → TwistBCSpanStatement → TWM.VRatioGtStatement → TWState
   obtain ⟨E₁', eG', -, eh'⟩ := exists_add hL hR hG E' m
   obtain ⟨Ω, _, _, _, a, b⟩ := exists_keeps hL hR hG h₁ h₂ h₃ h₄ E₁ E₁' (funext eh ▸ hm) (funext eh' ▸ hm')
     (by rw [eG, eG']; exact adj_add U.LG U.cubG _ _ adj m)
-  let σ : AlgebraicClosure (FractionRing R) →ₐ[FractionRing R] Ω := IsAlgClosed.lift
-  let τ : AlgebraicClosure (FractionRing R) →ₐ[FractionRing R] F := IsAlgClosed.lift
+  let σ : AlgebraicClosure (FractionRing R) →ₐ[FractionRing R] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
+  let τ : AlgebraicClosure (FractionRing R) →ₐ[FractionRing R] F := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have a' := keepsIota_down E₁ σ a
   exact keeps_of_add hL hR hG E E'.h m E₁ E₁'.h eG eA eh' F (keepsIota_up hL hR hG E₁ τ a')
     (keepsTors_up hL hR hG E₁ τ a' (keepsTors_down hL hR hG E₁ σ b))

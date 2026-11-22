@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.Inertia
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.Inertia
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.W
 
@@ -12,7 +16,8 @@ private theorem zl_pow {R : Type} [CommRing R] (I : Ideal R) (l : ℕ) (hl : (l 
     refine Ideal.mul_mem_mul ih ?_
     rw [← Ideal.Quotient.eq_zero_iff_mem] at hl h1 ⊢
     rw [map_sub, map_one, sub_eq_zero] at h1
-    simp only [map_sum, map_pow _ (u ^ l ^ N), h1, one_pow]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_pow _ (u ^ l ^ N), h1, one_pow]
     simpa using hl
 
 private theorem zl_eq {R : Type} [CommRing R] (I : Ideal R) [IsHausdorff I R] {a b : R}
@@ -89,7 +94,7 @@ theorem UpperTheory.V.W.lam_zl :
     haveI : DiscreteTopology (R ⧸ maximalIdeal R ^ N) := ⟨rfl⟩
     rw [IsLocallyConstant.iff_continuous]
     simp only [MonoidHom.coe_mk, OneHom.coe_mk, Units.coe_prod, map_prod]
-    refine continuous_finset_prod _ fun i _ => ?_
+    refine continuous_finsetProd _ fun i _ => ?_
     exact (hc i N).continuous.comp (continuous_ofAdd.comp ((continuous_apply i).comp continuous_toAdd))
   · intro i
     simp only [MonoidHom.coe_mk, OneHom.coe_mk, toAdd_ofAdd]

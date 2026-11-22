@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+
+@[expose] public section
 
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -24,7 +28,7 @@ def partLₗ (e : ((κ → A) → ℂ) →ₗ[ℂ] (κ₁ → A) → ℂ) : ((κ
   toFun := partL e
   map_add' Φ Ψ := funext fun y => by
     show e ((fun x => Φ _) + fun x => Ψ _) _ = _
-    rw [map_add]; rfl
+    rw [map_add (f := _)]; rfl
   map_smul' c Φ := funext fun y => by
     show e (c • fun x => Φ _) _ = _
     rw [map_smul]; rfl
@@ -33,7 +37,7 @@ def partRₗ (e : ((κ' → A) → ℂ) →ₗ[ℂ] (κ₁' → A) → ℂ) : ((
   toFun := partR e
   map_add' Φ Ψ := funext fun y => by
     show e ((fun x => Φ _) + fun x => Ψ _) _ = _
-    rw [map_add]; rfl
+    rw [map_add (f := _)]; rfl
   map_smul' c Φ := funext fun y => by
     show e (c • fun x => Φ _) _ = _
     rw [map_smul]; rfl
@@ -52,7 +56,7 @@ def conjLin {X Y : Type} (e : (X → ℂ) →ₗ[ℂ] (Y → ℂ)) : (X → ℂ)
     have h : (fun x => starRingEnd ℂ (φ x + ψ x)) = (fun x => starRingEnd ℂ (φ x)) + fun x => starRingEnd ℂ (ψ x) :=
       funext fun x => map_add _ _ _
     simp only [Pi.add_apply]
-    rw [h, map_add, Pi.add_apply, map_add]
+    rw [h, map_add (f := _), Pi.add_apply, map_add (f := _)]
   map_smul' c φ := funext fun y => by
     have h : (fun x => starRingEnd ℂ (c * φ x)) = starRingEnd ℂ c • fun x => starRingEnd ℂ (φ x) :=
       funext fun x => by simp
@@ -66,15 +70,15 @@ section Loc
 
 variable (F : Type) [Field F] [NumberField F]
 
-def stdInd (κ : Type) (v : Pl F) : (κ → Fv F v) → ℂ := Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers F} 1
+def stdInd (κ : Type) (v : Pl (F := F)) : (κ → Fv F v) → ℂ := Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers F} 1
 
 variable {F}
 
 def IsLocOp {κ κ₁ : Type} [Fintype κ] [Fintype κ₁] (e : ((κ → AF F) → ℂ) →ₗ[ℂ] (κ₁ → AF F) → ℂ) : Prop :=
-  ∃ (ei : SInf F κ →L[ℂ] SInf F κ₁) (ev : ∀ v : Pl F, ((κ → Fv F v) → ℂ) →ₗ[ℂ] (κ₁ → Fv F v) → ℂ),
+  ∃ (ei : SInf F κ →L[ℂ] SInf F κ₁) (ev : ∀ v : Pl (F := F), ((κ → Fv F v) → ℂ) →ₗ[ℂ] (κ₁ → Fv F v) → ℂ),
     (∀ v, ∀ φ ∈ SB (κ → Fv F v), ev v φ ∈ SB (κ₁ → Fv F v)) ∧
     (∀ᶠ v in cofinite, ev v (stdInd F κ v) = stdInd F κ₁ v) ∧
-    ∀ (f : SInf F κ) (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ), (∀ v, φ v ∈ SB _) →
+    ∀ (f : SInf F κ) (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ), (∀ v, φ v ∈ SB _) →
       (∀ᶠ v in cofinite, φ v = stdInd F κ v) → e (pure f φ) = pure (ei f) fun v => ev v (φ v)
 
 end Loc

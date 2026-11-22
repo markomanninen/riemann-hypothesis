@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.RowForms
-import Formalism.LocalToGlobal.Columns.LevGSym
+module
+
+public import Formalism.LocalToGlobal.Columns.RowForms
+public import Formalism.LocalToGlobal.Columns.LevGSym
+
+@[expose] public section
 
 noncomputable section
 

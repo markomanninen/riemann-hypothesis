@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataExtra
-import Formalism.LocalRingCardinality.DataRRMetric
-import Formalism.LocalToGlobal.LatticeGeometry.DegFlLApply
-import Formalism.LocalToGlobal.LatticeGeometry.CmTypeMeetsConjugatePair
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataExtra
+public import Formalism.LocalRingCardinality.DataRRMetric
+public import Formalism.LocalToGlobal.LatticeGeometry.DegFlLApply
+public import Formalism.LocalToGlobal.LatticeGeometry.CmTypeMeetsConjugatePair
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,8 @@ structure AdelicLine where
 
 variable {F}
 
-open Classical in
 
+open Classical in
 def AdelicLine.of (a : InfinitePlace F → ℝ) (b : HeightOneSpectrum (𝓞 F) → ℝ) : AdelicLine F :=
   if h : (Function.mulSupport b).Finite then ⟨a, b, h⟩ else ⟨a, 1, by simp⟩
 
@@ -33,7 +37,7 @@ def AdelicLine.of (a : InfinitePlace F → ℝ) (b : HeightOneSpectrum (𝓞 F) 
 
 theorem AdelicLine.of_fin (a : InfinitePlace F → ℝ) {b : HeightOneSpectrum (𝓞 F) → ℝ}
     (h : (Function.mulSupport b).Finite) : (AdelicLine.of a b).fin = b := by
-  unfold AdelicLine.of; rw [dif_pos h]
+  unfold AdelicLine.of; rw [dite_eq_left h]
 
 def AdelicLine.deg (L : AdelicLine F) : ℝ :=
   -((∑ v : InfinitePlace F, (v.mult : ℝ) * Real.log (L.inf v)) + ∑ᶠ w, Real.log (L.fin w)) /

@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.SwRowGenMonomial
-import Formalism.LocalToGlobal.GroupLattices.FockModels.ElementaryDivisorBasis
-import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.SwRowGenMonomial
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.ElementaryDivisorBasis
+public import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
+
+@[expose] public section
 
 open MvPolynomial
 

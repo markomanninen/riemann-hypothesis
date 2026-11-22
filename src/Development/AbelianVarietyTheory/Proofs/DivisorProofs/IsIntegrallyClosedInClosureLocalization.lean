@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosureFiniteEtale
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosureFiniteEtale
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 open scoped TensorProduct
 
@@ -12,7 +17,7 @@ theorem isIntegrallyClosedIn_closure_localization : ∀ (A R : Type) [CommRing A
     [IsIntegrallyClosed R] [Algebra A R], Function.Injective (algebraMap A R) →
     ∀ (D : Type) [CommRing D] [Algebra (GlobalTheory.LocAcyc.GenFib A R) D]
     [Module.Finite (GlobalTheory.LocAcyc.GenFib A R) D] [Algebra.Etale (GlobalTheory.LocAcyc.GenFib A R) D],
-    letI := GlobalTheory.KeyOriginNoeth.closureAlg A R D
+    letI := GlobalTheory.KeyOriginNoeth.closureAlg A R D;
     IsIntegrallyClosedIn (GlobalTheory.KeyOriginNoeth.closure A R D)
       (Localization (Algebra.algebraMapSubmonoid (GlobalTheory.KeyOriginNoeth.closure A R D)
         (nonZeroDivisors R))) := by
@@ -54,7 +59,7 @@ theorem isIntegrallyClosedIn_closure_localization : ∀ (A R : Type) [CommRing A
   have hφ : φ.comp (algebraMap (closure A R D) _) = g := IsLocalization.lift_comp _
 
   have hφinj : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro z hz
     obtain ⟨⟨c, n⟩, rfl⟩ := IsLocalization.mk'_surjective
       (Algebra.algebraMapSubmonoid (closure A R D) (nonZeroDivisors R)) z

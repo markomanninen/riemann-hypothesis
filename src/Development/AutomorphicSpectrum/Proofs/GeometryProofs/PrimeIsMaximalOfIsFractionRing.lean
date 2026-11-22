@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.CurveSemiAbelianConjecture
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.SeparableFormGroupElementFixesUniquePositiveLine
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
-import GroundTheory.HeightsAndTheta.Heights.Intersections.OneNotMemOfIsPrime
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AssemblyBase
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.CurveVerticalPointChart
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PCurveVertPointResidue
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.ExistsAlgPtOff
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.CurveSemiAbelianConjecture
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.SeparableFormGroupElementFixesUniquePositiveLine
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.OneNotMemOfIsPrime
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AssemblyBase
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.CurveVerticalPointChart
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PCurveVertPointResidue
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.ExistsAlgPtOff
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Crv GlobalTheory.CompanionTheory.Ar.Conj
 
@@ -90,9 +95,9 @@ theorem chart_isFractionRing (w : (Σ k, J k) → K) (hbir : Birational w) (c : 
   show z = aeval w g * _ / (aeval w h * _)
   rw [mul_div_mul_right _ _ hm, hz, mul_div_cancel_right₀ _ h0]
 
+
 include p in
 omit [Fintype B] [∀ k, Fintype (J k)] in
-
 theorem prime_isMaximal_of_isFractionRing (A : Type) [CommRing A] [IsDomain A] [Algebra A K] [IsFractionRing A K]
     [Algebra.FiniteType ℤ A] (q : Ideal A) (hq : q.IsPrime) (h0 : q ≠ ⊥) : q.IsMaximal := by
   have hpK : CharP K p := charP_of_injective_algebraMap (algebraMap (ZMod p) K).injective p
@@ -110,8 +115,8 @@ theorem prime_isMaximal_of_isFractionRing (A : Type) [CommRing A] [IsDomain A] [
     rw [Ring.krullDimLE_iff, hd]; simp
   exact Ring.krullDimLE_one_iff_of_noZeroDivisors.1 hle q h0 hq
 
-include p in
 
+include p in
 theorem chart_prime_isMaximal (w : (Σ k, J k) → K) (hbir : Birational w) (c : ∀ k, J k)
     (hc : ∀ k, w ⟨k, c k⟩ ≠ 0) (q : Ideal (chartRingZ w c)) (hq : q.IsPrime) (h0 : q ≠ ⊥) : q.IsMaximal := by
   have hfr := chart_isFractionRing w hbir c hc
@@ -229,8 +234,10 @@ theorem IsRho.injective (hV : (mCoordIdeal w).IsPrime) (hW : W.IsPrime) (hVW : m
     Function.Injective ρ := by
   haveI := hV
   haveI := hW
-  rw [injective_iff_map_eq_zero]
+  change Function.Injective ρ.toAddMonoidHom
+  apply (injective_iff_map_eq_zero ρ.toAddMonoidHom).2
   intro x hx
+  change ρ x = 0 at hx
   obtain ⟨u, v, a, hu, hv, hvW, hxu⟩ := (mem_locRing_iff hVW).1 x.2
   have h1 := hρ x u v a hu hv hvW hxu
   rw [hx, zero_mul] at h1

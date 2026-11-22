@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RationalHeckeScalars
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckeTransferRankOne
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RayFieldTheta
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaTranslateRangeGap
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.LocalDataValues
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.VectorLevelCharacters
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsDCOfMemDoubleCoset
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClassPresBasic
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMemNotMem
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RationalHeckeScalars
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckeTransferRankOne
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RayFieldTheta
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaTranslateRangeGap
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.VectorLevelCharacters
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsDCOfMemDoubleCoset
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClassPresBasic
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMemNotMem
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -24,19 +28,6 @@ namespace GlobalTheory.HeckeClassSums
 section Linear
 
 variable {L : Type} [Field L] {σ : L →+* ℂ} {H : Type} [AddCommGroup H] [Module ℂ H]
-
-def carried {X : Type} [AddCommGroup X] [Module ℂ X] {n : ℕ} (j : (Fin n → L) →ₛₗ[σ] H) (e : H →ₗ[ℂ] X) {I : Type}
-    (p : I → Prop) (T : I → X →ₗ[ℂ] X) (c : ℂ) : Submodule L (Fin n → L) where
-  carrier := {y | ∃ y', ∀ a, p a → e (j y') = c • T a (e (j y))}
-  add_mem' := by
-    rintro x y ⟨x', hx⟩ ⟨y', hy⟩
-    exact ⟨x' + y', fun a ha => by simp only [map_add, hx a ha, hy a ha, smul_add]⟩
-  zero_mem' := ⟨0, fun a _ => by simp⟩
-  smul_mem' := by
-    rintro s x ⟨x', hx⟩
-    exact ⟨s • x', fun a ha => by rw [map_smulₛₗ, map_smul, hx a ha, map_smulₛₗ, map_smul, map_smul, smul_comm]⟩
-
-open Formalism.L2.Pj.KsHecke
 
 end Linear
 
@@ -61,17 +52,10 @@ section Local
 
 variable {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks)
 
-def ReadOverLLAt (i : Fin D.R.m) (P : Pl D.host.E) (k : ℕ) : Prop :=
-  ∃ hL : (Fin (R.nW i) → D.what₂.LL) →ₗ[D.what₂.LL] (Fin (R.nW i) → D.what₂.LL),
-    ∀ Rc, IsCosetSys R i P k Rc → ReadAs R i P k Rc hL
-
-def ReadOverLL (i : Fin D.R.m) : Prop :=
-  ∀ P : Pl D.host.E, GoodPlace R P → ∀ k : ℕ, k ≤ D.R.r → ReadOverLLAt R i P k
-
 variable {R}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem span_jV (hV : R.models_HV) (hj : R.models_jV) (i : Fin D.R.m) (t : T0) : Submodule.span ℂ (Set.range (R.jV i t)) = ⊤ := by
   apply Submodule.map_injective_of_injective (hV i t).1
   rw [Submodule.map_span, Submodule.map_top, (hV i t).2.1, ← Set.range_comp]

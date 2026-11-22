@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.Columns.ReductionExistsInLatticeStabilizerHolds
-import Formalism.LocalToGlobal.Columns.BlockTriangularMulVecMemPartialFlag
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnfoldingEquivalence.CompSymmComp
+module
+
+public import Formalism.LocalToGlobal.Columns.ReductionExistsInLatticeStabilizerHolds
+public import Formalism.LocalToGlobal.Columns.BlockTriangularMulVecMemPartialFlag
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnfoldingEquivalence.CompSymmComp
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -18,11 +22,16 @@ variable {E : Type} [Field E] [NumberField E] {P : HeightOneSpectrum (𝓞 E)} {
 
 theorem cq_rep_int (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu : ((q : ℕ) : 𝓞 E) ∉ P.asIdeal ^ 2) (hp : q.Prime)
     (hcard : Nat.card (𝓞 E ⧸ P.asIdeal) = q) :
-    ∀ (D : ℕ) (y : E), IntAt P y → ∃ i : ℕ, i < q ^ D ∧ IntAt P ((y - i) / (q : E) ^ D)
-  | 0, y, hy => ⟨0, by simp, by simpa using hy⟩
-  | D + 1, y, hy => by
+    ∀ (D : ℕ) (y : E), IntAt P y → ∃ i : ℕ, i < q ^ D ∧ IntAt P ((y - i) / (q : E) ^ D) := by
+  intro D
+  induction D with
+  | zero =>
+    intro y hy
+    exact ⟨0, by simp, by simpa using hy⟩
+  | succ D ih =>
+    intro y hy
     have hq0 : (q : E) ≠ 0 := ciQ_ne_zero hu
-    obtain ⟨i, hi, hz⟩ := cq_rep_int hq hu hp hcard D y hy
+    obtain ⟨i, hi, hz⟩ := ih y hy
     obtain ⟨d, hd, hdr⟩ := ocbS_natCast_surj hq hp hcard (redP P ((y - i) / (q : E) ^ D))
     have hzd : IntAt P (((y - i) / (q : E) ^ D - d) / q) := by
       refine ciIntAt_div hq hu (ciIntAt_sub hz (ocbS_intAt_natCast d)) ?_
@@ -76,11 +85,6 @@ theorem cq_rep_unique (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu : ((q : ℕ)
       exact ciIntAt_neg h
     rw [key i' i hi' hi hle h']
 
-theorem cq_vals_int {A B : ℕ} {v : E} (hv : v ∈ LocE.valsQ E q A B) (hq0 : (q : E) ≠ 0) : IntAt P ((q : E) ^ A * v) := by
-  obtain ⟨i, -, rfl⟩ := Finset.mem_image.1 hv
-  rw [mul_div_cancel₀ _ (pow_ne_zero _ hq0)]
-  exact ocbS_intAt_natCast i
-
 end Reps
 
 section Perm
@@ -127,7 +131,7 @@ theorem cq_decomp (z : Fin (n + c) → k) :
       show z (Fin.natAdd n i) * (if l.1 = n + i.1 then 1 else 0) = 0
       rw [if_neg (by omega), mul_zero]), add_zero]
     rfl
-  · rw [dif_neg hl, zero_add]
+  · rw [dite_eq_right hl, zero_add]
     obtain ⟨j, rfl⟩ : ∃ j : Fin c, l = Fin.natAdd n j := ⟨⟨l.1 - n, by omega⟩, Fin.ext (by simp; omega)⟩
     rw [Finset.sum_eq_single j]
     · rw [Pi.smul_apply, smul_eq_mul]
@@ -144,14 +148,15 @@ theorem cq_r_apply {r : (Fin (n + c) → k) ≃ₗ[k] (Fin (n + c) → k)} {g : 
     (hg : ∀ x, r (Loc.inX k n c x) = Loc.inX k n c (g x)) (z : Fin (n + c) → k) :
     r z = Loc.inX k n c (g (fun j => z (Fin.castAdd c j))) + ∑ i : Fin c, z (Fin.natAdd n i) • r (Loc.eN k (n + c) (n + i.1)) := by
   conv_lhs => rw [cq_decomp z]
-  rw [map_add, hg, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), hg, map_sum]
   simp only [map_smul]
 
 theorem reduction_entry_lower_block {r : (Fin (n + c) → k) ≃ₗ[k] (Fin (n + c) → k)} {g : (Fin n → k) ≃ₗ[k] (Fin n → k)}
     (hr : Loc.R1cond k n c r) (hg : ∀ x, r (Loc.inX k n c x) = Loc.inX k n c (g x)) (z : Fin (n + c) → k) (v : Fin c) :
     r z (Fin.natAdd n v) = z (Fin.natAdd n v) +
       ∑ i : Fin c, if v.1 < i.1 then z (Fin.natAdd n i) * r (Loc.eN k (n + c) (n + i.1)) (Fin.natAdd n v) else 0 := by
-  rw [cq_r_apply hg z, Pi.add_apply, cq_inX_apply, dif_neg (by simp), zero_add, Finset.sum_apply]
+  rw [cq_r_apply hg z, Pi.add_apply, cq_inX_apply, dite_eq_right (by simp), zero_add, Finset.sum_apply]
   rw [← Finset.add_sum_erase _ _ (Finset.mem_univ v), ← Finset.add_sum_erase _ _ (Finset.mem_univ v), if_neg (lt_irrefl _),
     zero_add]
   congr 1
@@ -241,10 +246,6 @@ theorem arithmetic_index_inequality {a c e i : ℕ} (hi : i < c) : a + (c - (i +
   have h2 : (c - i) * e ≤ c * e := Nat.mul_le_mul_right e (by omega)
   omega
 
-theorem arithmetic_exponent_inequality {a c e v : ℕ} (hv : v + 1 < c) : e ≤ a + (c - (v + 1)) * e := by
-  have : 1 * e ≤ (c - (v + 1)) * e := Nat.mul_le_mul_right e (by omega)
-  omega
-
 end TgtMain
 
 section TgtThm
@@ -255,8 +256,8 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E] {P : HeightOneSpectru
 
 def cqLev (n l : ℕ) : ℕ := if l < n then 0 else l - n + 1
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem finite_sum_target_equality (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu : ((q : ℕ) : 𝓞 E) ∉ P.asIdeal ^ 2) (hp : q.Prime)
     (hcard : Nat.card (𝓞 E ⧸ P.asIdeal) = q) {K : Type} [Field K] {n' n c : ℕ} (psi : E → K) {D a b e A B : ℕ}
     (hadd : ∀ x y : E, IntAt P ((q : E) ^ D * x) → IntAt P ((q : E) ^ D * y) → psi (x + y) = psi x * psi y)
@@ -306,7 +307,7 @@ theorem finite_sum_target_equality (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu
   have hbase : ∀ (s : Fin (n' + (c + 1))) (m : Fin (n + c)), n' ≤ s.1 → IntAt P (PI.UnfoldEquiv.UnitaryGroupMassFormula.base y m s) := by
     intro s m hs
     unfold PI.UnfoldEquiv.UnitaryGroupMassFormula.base
-    rw [dif_neg (by omega)]
+    rw [dite_eq_right (by omega)]
     split_ifs
     · exact ciIntAt_one
     · exact ciIntAt_zero

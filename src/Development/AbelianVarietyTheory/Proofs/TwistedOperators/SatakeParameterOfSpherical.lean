@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOfBasis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOfBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem exists_esymm_eq (n : ℕ) (a : ℕ → ℂ) (h0 : a 0 = 1) (hn : a n ≠
       Polynomial.natDegree_X_pow]
   have hqc : ∀ k (hk : k < n), q.coeff k = c ⟨k, hk⟩ := by
     intro k hk
-    rw [hq, Polynomial.finset_sum_coeff, Finset.sum_eq_single (⟨k, hk⟩ : Fin n)]
+    rw [hq, Polynomial.finsetSum_coeff, Finset.sum_eq_single (⟨k, hk⟩ : Fin n)]
     · rw [Polynomial.coeff_C_mul_X_pow, if_pos rfl]
     · intro i _ hi
       rw [Polynomial.coeff_C_mul_X_pow, if_neg]
@@ -138,9 +142,9 @@ theorem Tj_indep (j : ℕ) {ϖ ϖ' : w.adicCompletion E} (h : IsUnifV E w ϖ) (h
     rw [hab, hdiag', Units.val_mul, Matrix.mul_assoc, Matrix.mul_assoc, Matrix.mul_assoc]
 
 theorem heckeVec_Tj_zero (ρ : Representation ℂ (GL (Fin n) (w.adicCompletion E)) V) (ϖ : w.adicCompletion E)
-    {x : V} (hx : x ∈ fixed ρ (KGL w n)) : heckeVec ρ (KGL w n) (Tj ℂ n (Ov E w) ϖ 0) x = x := by
+    {x : V} (hx : x ∈ fixed ρ (KGL w (n := n))) : heckeVec ρ (KGL w (n := n)) (Tj ℂ n (Ov E w) ϖ 0) x = x := by
   classical
-  have hfix : ∀ k ∈ KGL w n, ρ k x = x := by
+  have hfix : ∀ k ∈ KGL w (n := n), ρ k x = x := by
     intro k hk
     have hx' := hx
     unfold fixed eig at hx'
@@ -149,11 +153,11 @@ theorem heckeVec_Tj_zero (ρ : Representation ℂ (GL (Fin n) (w.adicCompletion 
   have hd : diagJ n ϖ 0 = 1 := by
     unfold diagJ
     simp
-  have hK : ∀ g : GL (Fin n) (w.adicCompletion E), Tj ℂ n (Ov E w) ϖ 0 g = if g ∈ KGL w n then 1 else 0 := by
+  have hK : ∀ g : GL (Fin n) (w.adicCompletion E), Tj ℂ n (Ov E w) ϖ 0 g = if g ∈ KGL w (n := n) then 1 else 0 := by
     intro g
     unfold Tj
     rw [Set.indicator_apply]
-    by_cases hg : g ∈ KGL w n
+    by_cases hg : g ∈ KGL w (n := n)
     · rw [if_pos hg, if_pos]
       · rfl
       · simp only [Set.mem_setOf_eq]
@@ -166,8 +170,8 @@ theorem heckeVec_Tj_zero (ρ : Representation ℂ (GL (Fin n) (w.adicCompletion 
       rw [hg']
       exact mul_mem ha hb
   unfold heckeVec
-  rw [finsum_eq_single _ (QuotientGroup.mk 1 : GL (Fin n) (w.adicCompletion E) ⧸ KGL w n)]
-  · obtain ⟨k, hk⟩ := QuotientGroup.mk_out_eq_mul (KGL w n) (1 : GL (Fin n) (w.adicCompletion E))
+  rw [finsum_eq_single _ (QuotientGroup.mk 1 : GL (Fin n) (w.adicCompletion E) ⧸ KGL w (n := n))]
+  · obtain ⟨k, hk⟩ := QuotientGroup.mk_out_eq_mul (KGL w (n := n)) (1 : GL (Fin n) (w.adicCompletion E))
     rw [hk, one_mul, hK, if_pos k.2, one_smul, hfix _ k.2]
   · intro c hc
     rw [hK, if_neg, zero_smul]
@@ -178,11 +182,11 @@ theorem heckeVec_Tj_zero (ρ : Representation ℂ (GL (Fin n) (w.adicCompletion 
 
 theorem exists_hasSatGL (E : Type) [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) (n : ℕ) (V : Type)
     [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GL (Fin n) (w.adicCompletion E)) V)
-    (hs : GlobalTheory.LGrp.IsSpherical ρ (KGL w n))
-    (hH : ∀ h ∈ Hecke ℂ (KGL w n), ∃ c : ℂ, ∀ x ∈ fixed ρ (KGL w n), heckeVec ρ (KGL w n) h x = c • x) :
+    (hs : GlobalTheory.LGrp.IsSpherical ρ (KGL w (n := n)))
+    (hH : ∀ h ∈ Hecke ℂ (KGL w (n := n)), ∃ c : ℂ, ∀ x ∈ fixed ρ (KGL w (n := n)), heckeVec ρ (KGL w (n := n)) h x = c • x) :
     ∃ B, HasSatGL w ρ B := by
   classical
-  obtain ⟨x0, hx0, hx00⟩ : ∃ x ∈ fixed ρ (KGL w n), x ≠ 0 := by
+  obtain ⟨x0, hx0, hx00⟩ : ∃ x ∈ fixed ρ (KGL w (n := n)), x ≠ 0 := by
     have hsp := hs
     unfold GlobalTheory.LGrp.IsSpherical at hsp
     exact Submodule.exists_mem_ne_zero_of_ne_bot hsp
@@ -201,12 +205,12 @@ theorem exists_hasSatGL (E : Type) [Field E] [NumberField E] (w : HeightOneSpect
       g = a * GlobalTheory.LFun.ConjPlace.dGL n πu j * b then 1 else 0 := fun j g => by
     have := GlobalTheory.LFun.ConjPlace.Tj_apply (Ov E w) πu j g
     simpa [hπu] using this
-  have hbi : ∀ j, IsBiInv (KGL w n) (Tj ℂ n (Ov E w) π j) := by
+  have hbi : ∀ j, IsBiInv (KGL w (n := n)) (Tj ℂ n (Ov E w) π j) := by
     intro j
     unfold IsBiInv
     intro a b g
     rw [hTa, hTa]
-    have hK : ∀ k : KGL w n, (k : GL (Fin n) (w.adicCompletion E)) ∈ GLint (Fin n) (Ov E w) := fun k => k.2
+    have hK : ∀ k : KGL w (n := n), (k : GL (Fin n) (w.adicCompletion E)) ∈ GLint (Fin n) (Ov E w) := fun k => k.2
     split_ifs with h1 h2 h2
     · rfl
     · exfalso; apply h2
@@ -221,7 +225,7 @@ theorem exists_hasSatGL (E : Type) [Field E] [NumberField E] (w : HeightOneSpect
       refine ⟨(a : GL (Fin n) (w.adicCompletion E)) * a', mul_mem (hK a) ha', b' * b, mul_mem hb' (hK b), ?_⟩
       rw [h]; group
     · rfl
-  have hfin : ∀ j, FinDosetSupp (KGL w n) (Tj ℂ n (Ov E w) π j) := by
+  have hfin : ∀ j, FinDosetSupp (KGL w (n := n)) (Tj ℂ n (Ov E w) π j) := by
     intro j
     unfold FinDosetSupp
     refine ⟨{GlobalTheory.LFun.ConjPlace.dGL n πu j}, fun g hg => ?_⟩
@@ -230,7 +234,7 @@ theorem exists_hasSatGL (E : Type) [Field E] [NumberField E] (w : HeightOneSpect
     · obtain ⟨a, ha, b, hb, h⟩ := h1
       exact ⟨_, by simp, ⟨a, ha⟩, ⟨b, hb⟩, h⟩
     · exact absurd rfl hg
-  have hmem : ∀ j, Tj ℂ n (Ov E w) π j ∈ Hecke ℂ (KGL w n) := by
+  have hmem : ∀ j, Tj ℂ n (Ov E w) π j ∈ Hecke ℂ (KGL w (n := n)) := by
     intro j
     unfold Hecke
     simp only [Submodule.mem_mk, AddSubmonoid.mem_mk, AddSubsemigroup.mem_mk, Set.mem_setOf_eq]

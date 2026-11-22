@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EaApplyDScale
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NmRestNormOfPlace
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.ThRestGcVOf
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.BiadditiveSecondVariable
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EaApplyDScale
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NmRestNormOfPlace
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.ThRestGcVOf
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.BiadditiveSecondVariable
+
+@[expose] public section
 
 noncomputable section
 

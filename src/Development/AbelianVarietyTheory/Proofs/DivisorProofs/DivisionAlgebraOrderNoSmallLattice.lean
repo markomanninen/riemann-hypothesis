@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory
@@ -15,7 +20,7 @@ theorem divAlg_clear_denominators {B : Type} [Ring B] [Algebra ℚ B] {O : Type}
     obtain ⟨n₁, hn₁, c₁, hc₁⟩ := hx
     obtain ⟨n₂, hn₂, c₂, hc₂⟩ := hy
     refine ⟨n₁ * n₂, Nat.mul_pos hn₁ hn₂, (n₂ : O) * c₁ + (n₁ : O) * c₂, ?_⟩
-    rw [map_add, map_mul, map_mul, map_natCast, map_natCast, hc₁, hc₂, ← nsmul_eq_mul,
+    rw [map_add (f := _), map_mul, map_mul, map_natCast, map_natCast, hc₁, hc₂, ← nsmul_eq_mul,
       ← nsmul_eq_mul, ← Nat.cast_smul_eq_nsmul ℚ n₂, ← Nat.cast_smul_eq_nsmul ℚ n₁, smul_smul,
       smul_smul, smul_add]
     push_cast

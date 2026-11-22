@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsHomLocRingLocal
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PHomLocRingLocal
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PMultiHomogPrimeCriterion
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsHomLocRingLocal
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PHomLocRingLocal
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PMultiHomogPrimeCriterion
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -27,7 +32,8 @@ theorem frac_one (P : Ideal (MRing ι R)) [P.IsPrime] : frac P 1 = 1 := by
 
 theorem frac_add (P : Ideal (MRing ι R)) [P.IsPrime] (x y : MRing ι R) :
     frac P (x + y) = frac P x + frac P y := by
-  simp [frac]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [frac]
 
 theorem frac_mul (P : Ideal (MRing ι R)) [P.IsPrime] (x y : MRing ι R) :
     frac P (x * y) = frac P x * frac P y := by
@@ -86,7 +92,8 @@ theorem comp_mul_add [Fintype K] {c d : K → ℕ} {s : MRing ι R} (hs : IsMult
 
 theorem comp_mul_of_ne [Fintype K] {c b : K → ℕ} {s : MRing ι R} (hs : IsMultiHomog s c) (h : MRing ι R)
     (hb : ∀ d, b ≠ c + d) : weightedHomogeneousComponent (blockWeight ι) b (s * h) = 0 := by
-  rw [← sum_weightedHomogeneousComponent (blockWeight ι) h,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← sum_weightedHomogeneousComponent (blockWeight ι) h,
     finsum_eq_sum _ (weightedHomogeneousComponent_finsupp h), Finset.mul_sum, map_sum]
   exact Finset.sum_eq_zero fun d _ => IsWeightedHomogeneous.weightedHomogeneousComponent_ne b
     (IsWeightedHomogeneous.mul hs (weightedHomogeneousComponent_isWeightedHomogeneous d h)) (hb d)
@@ -99,7 +106,7 @@ theorem zero_mem_primeSet (q : Ideal (homLocRing P W)) : (0 : MRing ι R) ∈ pr
 theorem add_mem_primeSet {q : Ideal (homLocRing P W)} {x y : MRing ι R} (hx : x ∈ primeSet P W q)
     (hy : y ∈ primeSet P W q) : x + y ∈ primeSet P W q := by
   intro b g hg hgW
-  rw [map_add, frac_add, add_div]
+  rw [map_add (f := _), frac_add, add_div]
   exact valIn_add (hx b g hg hgW) (hy b g hg hgW)
 
 theorem form_mul_mem_primeSet [Fintype K] (hPW : P ≤ W) (hW : W.IsPrime) (hrel : IsRelevant W)
@@ -246,8 +253,8 @@ theorem primeAbove_strictMono [Fintype K] (hmem : HomLocRingMem.Statement.{u}) (
 
 end HomLocRingDimLe
 
-open HomLocRingDimLe in
 
+open HomLocRingDimLe in
 theorem HomLocRingDimLe.proof (h₁ : HomLocRingMem.Statement.{u})
     (h₂ : HomLocRingIsLocal.Statement.{u}) : HomLocRingDimLe.Statement.{u} := by
   intro R _ K _ _ ι _ P W _ hP hW hrel hPW

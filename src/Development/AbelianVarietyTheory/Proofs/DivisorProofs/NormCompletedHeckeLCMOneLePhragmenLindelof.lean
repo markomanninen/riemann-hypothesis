@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HeckeFunctionalEquationAbs
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CompletedLStripBounds
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormHeckeLFunctionLeZetaThreeHalvesPowStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPrimitiveHeckeLFunctionInvOfTrivialOnMaxRealStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareBottomHalfRankDiffLeHalfRank
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.LGrowthGamma
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HeckeFunctionalEquationAbs
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CompletedLStripBounds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormHeckeLFunctionLeZetaThreeHalvesPowStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPrimitiveHeckeLFunctionInvOfTrivialOnMaxRealStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareBottomHalfRankDiffLeHalfRank
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.LGrowthGamma
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CMVal
 
 noncomputable section
@@ -37,7 +42,7 @@ theorem norm_archFactor_le {I : Type} [Fintype I] (n : I → ℤ) {s : ℂ} (hs 
   rw [norm_archFactor_real n hs]
   unfold archFactor
   rw [norm_prod]
-  refine Finset.prod_le_prod (fun i _ => norm_nonneg _) fun i _ => ?_
+  refine Finset.prod_le_prod₀ (fun i _ => norm_nonneg _) fun i _ => ?_
   rw [norm_factor]
   have h0 : (0 : ℝ) ≤ ((|n i| : ℤ) : ℝ) := by exact_mod_cast abs_nonneg (n i)
   have hre : (s + ((|n i| : ℤ) : ℂ) / 2).re = s.re + ((|n i| : ℤ) : ℝ) / 2 := by simp
@@ -80,7 +85,7 @@ theorem archFactor_three_halves_le {I : Type} [Fintype I] (m : I → ℤ) (hm : 
   have e32 : (3 / 2 : ℂ) = ((3 / 2 : ℝ) : ℂ) := by push_cast; ring
   have e1 : (1 : ℂ) = ((1 : ℝ) : ℂ) := by simp
   rw [e32, e1, norm_archFactor_real _ (by norm_num), norm_archFactor_real _ (by norm_num), ← Finset.prod_mul_distrib]
-  refine Finset.prod_le_prod (fun i _ => ?_) fun i _ => ?_
+  refine Finset.prod_le_prod₀ (fun i _ => ?_) fun i _ => ?_
   · have : 0 < 3 / 2 + ((|2 * m i| : ℤ) : ℝ) / 2 := by
       have : (0 : ℝ) ≤ ((|2 * m i| : ℤ) : ℝ) := by exact_mod_cast abs_nonneg _
       linarith

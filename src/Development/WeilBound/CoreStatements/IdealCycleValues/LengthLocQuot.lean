@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace BaseChangeColon.Corr
 
@@ -36,7 +40,7 @@ def sat (h : ∀ r : R', ∃ (n : ℕ) (g : R), φ s ^ n * r - φ g ∈ P') (J :
     refine ⟨n + m, s ^ m * g + s ^ n * k, J.add_mem (J.mul_mem_left _ hg) (J.mul_mem_left _ hk), ?_⟩
     have := P'.add_mem (P'.mul_mem_left (φ s ^ m) ha) (P'.mul_mem_left (φ s ^ n) hb)
     convert this using 1
-    simp only [map_add, map_mul, map_pow]
+    simp only [map_add (f := _), map_mul, map_pow]
     ring
   smul_mem' := by
     rintro c x ⟨n, g, hg, hx⟩
@@ -157,7 +161,7 @@ theorem length_eq (h : ∀ r : R', ∃ (n : ℕ) (g : R), φ s ^ n * r - φ g �
         simpa using W'.sub_mem hh hr))
       obtain ⟨u, -, hu⟩ := hunit _ h1
       refine ⟨u - 1, ?_⟩
-      rw [map_sub, hu, map_one, map_add, map_add, map_one, map_one]
+      rw [map_sub, hu, map_one, map_add (f := _), map_add (f := _), map_one, map_one]
       ring
     · obtain ⟨u, -, hu⟩ := hunit _ hr
       exact ⟨u, hu⟩

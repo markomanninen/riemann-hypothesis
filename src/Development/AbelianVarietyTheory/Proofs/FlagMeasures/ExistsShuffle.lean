@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsColReduced
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsColReduced
+
+@[expose] public section
+
 open Polynomial Formalism.MainNotions.ArithmeticCylinders GlobalTheory.GLq GlobalTheory.GLm
 open scoped Classical
 
@@ -189,7 +194,7 @@ theorem exists_shuffle {a b c i : ℕ} (hn : n = a + b) (hia : i ≤ a) (hic : i
       funext r j
       simp only [pU, pMat, ← hs, Fin.val_inj]
     unfold wI toG
-    rw [e, dif_pos (Units.isUnit _), IsUnit.unit_of_val_units]
+    rw [e, dite_eq_left (Units.isUnit _), IsUnit.unit_of_val_units]
   · have e1 := card_split (fun j : Fin n => (j : ℕ) < a) (fun j => (s j : ℕ) < c)
     have e2 : #{j : Fin n | (j : ℕ) < a ∧ (s j : ℕ) < c} = #{j : Fin n | (j : ℕ) < i} := by
       congr 1

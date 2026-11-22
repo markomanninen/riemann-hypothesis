@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.BrgStdR
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousActP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StdSideUnique
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClassPresBasic
+module
+
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.BrgStdR
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousActP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StdSideUnique
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClassPresBasic
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH NumberField IsDedekindDomain Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links GlobalTheory.Mem GlobalTheory.Mem.R3
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 namespace GlobalTheory
@@ -33,7 +38,7 @@ theorem formsL_exists_baseChange_coordinates : ∀ {L L' Ks : Type} [Field L] [N
   let j' : ∀ σ' : L' →+* ℂ, (Fin n → L') →ₛₗ[σ'] W (σ'.comp ι) := fun σ' =>
     { toFun := fun x' => ∑ k, σ' (x' k) • F.j (σ'.comp ι) (Pi.single k 1)
       map_add' := fun x y => by
-        simp only [Pi.add_apply, map_add, add_smul, Finset.sum_add_distrib]
+        simp only [Pi.add_apply, map_add (f := _), add_smul, Finset.sum_add_distrib]
       map_smul' := fun c x => by
         simp only [Pi.smul_apply, smul_eq_mul, map_mul, mul_smul, Finset.smul_sum] }
   let F' : Formalism.IndefR.Arith.FormsL L' Ks (Fin n → L') (fun σ' => W (σ'.comp ι)) G :=
@@ -41,9 +46,9 @@ theorem formsL_exists_baseChange_coordinates : ∀ {L L' Ks : Type} [Field L] [N
       Pt := F.Pt
       nrm := fun lp y φ' => F.nrm lp y (e.symm φ')
       nrm_nonneg := fun lp y f => F.nrm_nonneg lp y _
-      nrm_zero := fun lp y => by simp only [map_zero]; exact F.nrm_zero lp y
-      nrm_add := fun lp y f g => by simp only [map_add]; exact F.nrm_add lp y _ _
-      nrm_smul := fun lp y a f => by simp only [map_smul]; exact F.nrm_smul lp y a _
+      nrm_zero := fun lp y => by rw [e.symm.map_zero]; exact F.nrm_zero lp y
+      nrm_add := fun lp y f g => by rw [e.symm.map_add]; exact F.nrm_add lp y _ _
+      nrm_smul := fun lp y a f => by rw [e.symm.map_smul]; exact F.nrm_smul lp y a _
       towKs := inferInstance
       ρ := ρ'
       chi := (Units.map ι.toMonoidHom).comp F.chi
@@ -54,7 +59,8 @@ theorem formsL_exists_baseChange_coordinates : ∀ {L L' Ks : Type} [Field L] [N
       funext i; simp [Finset.sum_apply, Pi.single_apply]
     show ∑ k, σ' (ι (x k)) • F.j (σ'.comp ι) (Pi.single k 1) = F.j (σ'.comp ι) x
     conv_rhs => rw [hx]
-    simp only [map_sum, map_smulₛₗ, RingHom.comp_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smulₛₗ, RingHom.comp_apply]
   · intro x'
     show x' ∈ F.WK.map m ↔ _
     rw [Submodule.mem_map]

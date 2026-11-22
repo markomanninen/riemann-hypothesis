@@ -1,7 +1,11 @@
-import Formalism.GaussJetBounds.GenLogInverse
-import Formalism.GaussJetBounds.StatementG
-import Formalism.GaussJetBounds.GaussJetProofs.ThmAJet
-import Formalism.GaussJetBounds.GaussJetProofs.LemmaRA
+module
+
+public import Formalism.GaussJetBounds.GenLogInverse
+public import Formalism.GaussJetBounds.StatementG
+public import Formalism.GaussJetBounds.GaussJetProofs.ThmAJet
+public import Formalism.GaussJetBounds.GaussJetProofs.LemmaRA
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

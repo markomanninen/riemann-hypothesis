@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocalizationOfData
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitMpOmjExtIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CovBy
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneCocycleCoboundaryCommaLocalBasis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GlueCommaOfBasis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocalizationOfData
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitMpOmjExtIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CovBy
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneCocycleCoboundaryCommaLocalBasis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GlueCommaOfBasis
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential GlobalTheory.CatCoh GlobalTheory.CechDR
 
 set_option autoImplicit false
@@ -39,7 +44,7 @@ theorem glue_upward_of_cov : ∀ {R : Type} [CommRing R] {C : Type} [Category.{0
       exact ⟨mp F w (s t' a), fun _ ↦ ⟨t', a, w, ha, rfl⟩⟩
     · exact ⟨0, fun h' ↦ absurd h' h⟩
   choose σ hσ using hex
-  obtain ⟨x, hx⟩ := glue_std H hb σ fun S S' u ψ hp ↦ by
+  obtain ⟨x, hx⟩ := glue_std (H := H) (hb := hb) σ fun S S' u ψ hp ↦ by
     obtain ⟨t₁, a₁, w₁, h₁, e₁⟩ := hσ S u hp
     obtain ⟨i, hi⟩ := hp
     have hi' : IsUnit (mp F (u ≫ ψ) (b i)) := by rw [mp_comp]; exact hi.map _

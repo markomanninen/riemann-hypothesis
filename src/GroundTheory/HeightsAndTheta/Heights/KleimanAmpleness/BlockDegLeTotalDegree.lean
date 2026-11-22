@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerFurther
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerFurther
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -21,8 +26,8 @@ theorem prod_block_pow {R : Type} [CommMonoid R] (e : (Σ k, ι k) →₀ ℕ) (
     (fun _ => pow_zero _) (fun _ _ _ => pow_add _ _ _)
   exact h.symm.trans (Finsupp.prod_fintype _ _ (fun _ => pow_zero _))
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem blockDeg_le_totalDegree (g : MvPolynomial (Σ k, ι k) S) :
     ∀ e ∈ g.support, ∀ k, blockDeg e k ≤ g.totalDegree := by
   intro e he k
@@ -33,7 +38,7 @@ theorem blockDeg_le_totalDegree (g : MvPolynomial (Σ k, ι k) S) :
   · rw [Finsupp.notMem_support_iff.mp hk]; exact Nat.zero_le _
 
 def homog (c : ∀ k, ι k) (D : ℕ) (g : MvPolynomial (Σ k, ι k) S) : MvPolynomial (Σ k, ι k) S :=
-  ∑ e ∈ g.support, monomial e (coeff e g) * ∏ k, X ⟨k, c k⟩ ^ (D - blockDeg e k)
+  ∑ e ∈ g.support, monomial e (AddMonoidAlgebra.coeff g e) * ∏ k, X ⟨k, c k⟩ ^ (D - blockDeg e k)
 
 variable {Ω : Type} [Field Ω] [Algebra S Ω]
 
@@ -47,7 +52,8 @@ theorem mConeMapOver_monomial (y : (Σ k, ι k) → Ω) (e : (Σ k, ι k) →₀
 theorem mConeMapOver_homog (y : (Σ k, ι k) → Ω) (c : ∀ k, ι k) {D : ℕ} {g : MvPolynomial (Σ k, ι k) S}
     (hD : ∀ e ∈ g.support, ∀ k, blockDeg e k ≤ D) :
     mConeMapOver S y (homog c D g) = C (aeval y (homog c D g)) * ∏ k, X k ^ D := by
-  simp only [homog, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [homog, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun e he => ?_
   have hX : ∏ k, (X k : MvPolynomial K Ω) ^ D =
       (∏ k, X k ^ blockDeg e k) * ∏ k, X k ^ (D - blockDeg e k) := by
@@ -61,7 +67,8 @@ theorem aeval_homog (w : (Σ k, ι k) → Ω) {c : ∀ k, ι k} (hw : ∀ k, w �
     {g : MvPolynomial (Σ k, ι k) S} (hD : ∀ e ∈ g.support, ∀ k, blockDeg e k ≤ D) :
     aeval w (homog c D g) = (∏ k, w ⟨k, c k⟩ ^ D) * aeval (fun p => w p / w ⟨p.1, c p.1⟩) g := by
   conv_rhs => rw [g.as_sum]
-  simp only [homog, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [homog, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun e he => ?_
   have hP : ∏ k, w ⟨k, c k⟩ ^ D =
       (∏ k, w ⟨k, c k⟩ ^ (D - blockDeg e k)) * ∏ k, w ⟨k, c k⟩ ^ blockDeg e k := by

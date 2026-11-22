@@ -1,4 +1,8 @@
-import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.IsSaturatedChain
+module
+
+public import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.IsSaturatedChain
+
+@[expose] public section
 
 namespace ReciprocityTheory.CA
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRootNormSubPowLe
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRootNormSubPowLe
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.MemLoc
 open scoped Formalism.Per
@@ -25,7 +29,7 @@ theorem norm_taylor_coeff_le (T : Finset K) (x : K) (r : ℝ) (hr : 0 ≤ r) (h 
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (by positivity) fun t ht => ?_
   rw [Finset.mem_powersetCard] at ht
   rw [norm_prod, ← ht.2, ← Finset.prod_const]
-  refine Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun z hz => ?_
+  refine Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun z hz => ?_
   rw [norm_sub_rev]
   exact h z (ht.1 hz)
 
@@ -56,7 +60,7 @@ theorem one_le_mul_norm_choose (n q : ℕ) (hn : 0 < n) (hq : q ≤ n) :
     Padic.valuation_natCast, zpow_neg, zpow_natCast]
   have h2 := Nat.pow_factorization_choose_le (p := l) (k := q) hn
   rw [Nat.factorization_def _ hl] at h2
-  have h3 : (0 : ℝ) < (l : ℝ) ^ padicValNat l (n.choose q) := by
+  have h3 : (0 : ℝ) < (l : ℝ) ^ multiplicity l (n.choose q) := by
     have := hl.pos
     positivity
   rw [← div_eq_mul_inv, le_div_iff₀ h3, one_mul]
@@ -159,7 +163,7 @@ theorem ax_step (H : Subgroup (GQ l)) (k : ℕ) : ∀ (x : Om l) (r : ℝ) (S : 
     have hpg : ∀ g ∈ H, p.map (g : Om l →+* Om l) = p := by
       intro g hg
       ext n
-      have := congrArg (fun u => coeff u (n + q)) (hfg g hg)
+      have := congrArg (fun u : (Om l)[X] => u.coeff (n + q)) (hfg g hg)
       simp only [coeff_map] at this
       rw [coeff_map, hp, hasseDeriv_coeff, map_mul, map_natCast, this]
     have hp0 : p ≠ 0 := by

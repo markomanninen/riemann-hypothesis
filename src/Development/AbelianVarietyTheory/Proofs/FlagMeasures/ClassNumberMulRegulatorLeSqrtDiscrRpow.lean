@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.HermitianLattices.StatementMass
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RegulatorLeSumSmallIdealsInClassStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SumAbsNormRpowNegLeDedekindZetaBoundStatement
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.StatementMass
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RegulatorLeSumSmallIdealsInClassStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SumAbsNormRpowNegLeDedekindZetaBoundStatement
+
+@[expose] public section
+
 open MeasureTheory NumberField Finset
 
 namespace GlobalTheory

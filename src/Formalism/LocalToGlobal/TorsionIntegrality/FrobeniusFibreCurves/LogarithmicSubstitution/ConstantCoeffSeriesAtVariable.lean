@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementB
-import Formalism.FormalGroupLog.FormalGroupLogProofs.ConstantCoeffSubstOfZero
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.LogarithmEquivalence
-import Formalism.GL3MeanSquares.HookFormulaTorsion.IntegralInverse
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementB
+public import Formalism.FormalGroupLog.FormalGroupLogProofs.ConstantCoeffSubstOfZero
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.LogarithmEquivalence
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.IntegralInverse
+
+@[expose] public section
 
 noncomputable section
 
@@ -158,70 +162,7 @@ theorem law_c0X : MvPowerSeries.constantCoeff (PowerSeries.X : PowerSeries K) = 
   have : PowerSeries.constantCoeff (PowerSeries.X : PowerSeries K) = 0 := by simp
   exact this
 
-theorem law_integral_zero {ι : Type} : Integral (0 : MvPowerSeries ι K) := by
-  intro n
-  simp
-
 end Ultra
-
-theorem formal_inverse_exists : InvExists := by
-  intro K _ _ _ F l h
-  obtain ⟨hF, hFi, hl0, hl1, -⟩ := id h
-  let T : Fin 2 → MvPowerSeries (Fin 2) K := ![MvPowerSeries.X 0, F]
-  let J' : Matrix (Fin 2) (Fin 2) K := !![1, 0; -1, 1]
-  obtain ⟨X', hX0, hXi, hXT, -⟩ := Formalism.HermitianLattices.ExpSeriesBivariate.integralInverse_statement K (Fin 2) T J'
-    (fun i => by fin_cases i <;> simp [T, hF])
-    (fun i => by
-      fin_cases i
-      · exact law_integral_X 0
-      · exact hFi)
-    (fun i j => by fin_cases i <;> fin_cases j <;> simp [J'])
-    (by
-      ext i j
-      fin_cases i <;> fin_cases j <;>
-        simp [T, J', Matrix.mul_apply, Fin.sum_univ_two, law_coeff_single h,
-          MvPowerSeries.coeff_X, Finsupp.single_left_inj (one_ne_zero : (1 : ℕ) ≠ 0)])
-  have hsX : MvPowerSeries.HasSubst X' := MvPowerSeries.hasSubst_of_constantCoeff_zero hX0
-  have e0 : X' 0 = MvPowerSeries.X 0 := by
-    have := hXT 0
-    simpa [T, MvPowerSeries.subst_X hsX] using this
-  have e1 : MvPowerSeries.subst X' F = MvPowerSeries.X 1 := hXT 1
-  have hb : MvPowerSeries.HasSubst ![(PowerSeries.X : PowerSeries K), 0] := Formalism.G.LogP.hb0
-  let i : PowerSeries K := MvPowerSeries.subst ![(PowerSeries.X : PowerSeries K), 0] (X' 1)
-  have hi0 : PowerSeries.constantCoeff i = 0 :=
-    MvPowerSeries.constantCoeff_subst_eq_zero hb
-      (fun k => by
-        fin_cases k
-        · exact law_c0X
-        · exact map_zero _) (hX0 1)
-  have hii : Integral (ι := Unit) i :=
-    Formalism.InvariantFactorPaths.G7.LogarithmEquivalence.integral_subst'
-      (fun k => by
-        fin_cases k
-        · exact law_c0X
-        · exact map_zero _)
-      (fun k => by
-        fin_cases k
-        · exact law_integral_X ()
-        · exact law_integral_zero) (hXi 1)
-  have e2 : MvPowerSeries.subst ![(PowerSeries.X : PowerSeries K), i] F = 0 := by
-    have := congrArg (MvPowerSeries.subst ![(PowerSeries.X : PowerSeries K), 0]) e1
-    rw [MvPowerSeries.subst_comp_subst_apply hsX hb, MvPowerSeries.subst_X hb] at this
-    have this' : _ = (0 : PowerSeries K) := this
-    rw [← this']
-    congr 1
-    funext k
-    fin_cases k
-    · show _ = MvPowerSeries.subst _ (X' 0)
-      rw [e0, MvPowerSeries.subst_X hb]
-      rfl
-    · rfl
-  refine ⟨i, hi0, hii, ?_⟩
-  have e3 := law_subst h (PowerSeries.X : PowerSeries K) i law_c0X hi0
-  rw [e2, law_subst_zero l hl0] at e3
-  have e4 : PowerSeries.subst (PowerSeries.X : PowerSeries K) l = l := PowerSeries.X_subst l
-  rw [e4] at e3
-  linear_combination -e3
 
 theorem law_coeff_one_subst {K : Type} [Field K] (l D : PowerSeries K)
     (hD : PowerSeries.constantCoeff D = 0) :
@@ -229,7 +170,7 @@ theorem law_coeff_one_subst {K : Type} [Field K] (l D : PowerSeries K)
       PowerSeries.coeff 1 l * PowerSeries.coeff 1 D := by
   have hs : PowerSeries.HasSubst D := PowerSeries.HasSubst.of_constantCoeff_zero' hD
   have key : ∀ g : PowerSeries K, PowerSeries.coeff 1 g =
-      PowerSeries.constantCoeff (PowerSeries.derivative K g) := by
+      PowerSeries.constantCoeff (PowerSeries.derivative (R := K) g) := by
     intro g
     rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, PowerSeries.coeff_derivative]
     simp
@@ -239,7 +180,7 @@ theorem law_coeff_one_subst {K : Type} [Field K] (l D : PowerSeries K)
     have e : g = PowerSeries.C (PowerSeries.constantCoeff g) +
         (g - PowerSeries.C (PowerSeries.constantCoeff g)) := by ring
     conv_lhs => rw [e]
-    rw [PowerSeries.subst_add hs, map_add, PowerSeries.subst_C]
+    rw [PowerSeries.subst_add hs, map_add (f := _), PowerSeries.subst_C]
     have := PowerSeries.constantCoeff_subst_eq_zero (a := D) hD
       (g - PowerSeries.C (PowerSeries.constantCoeff g)) (by simp)
     erw [this, add_zero]
@@ -261,7 +202,7 @@ theorem formal_halving_exists : HalfExists := by
     have e := law_subst h (PowerSeries.X : PowerSeries K) PowerSeries.X hX hX
     rw [eX] at e
     have e' := congrArg (PowerSeries.coeff 1) e
-    rw [law_coeff_one_subst l D hD0, map_add, hl1] at e'
+    rw [law_coeff_one_subst l D hD0, map_add (f := _), hl1] at e'
     linear_combination e'
   obtain ⟨X', hX0, hXi, hXT, -⟩ := Formalism.HermitianLattices.ExpSeriesBivariate.integralInverse_statement K Unit (fun _ => D)
     (Matrix.of fun _ _ => (2 : K)⁻¹) (fun _ => hD0) (fun _ => hDi)
@@ -311,10 +252,6 @@ theorem log_subst_formal_inverse {ι : Type} {l i : PowerSeries K} (hi : IsInv l
     PowerSeries.HasSubst.X x
   unfold at1
   rw [← PowerSeries.subst_comp_subst_apply hs hx, hi.2.2, ← PowerSeries.coe_substAlgHom hx, map_neg]
-
-theorem law_constantCoeff_FI {F : MvPowerSeries (Fin 2) K} {l i : PowerSeries K}
-    (h : LawLog F l) (hi : IsInv l i) : MvPowerSeries.constantCoeff (FI F i) = 0 :=
-  law_constantCoeff_subst2 F h.1 _ _ (by simp) (constantCoeff_series_at_variable 1 i hi.1)
 
 theorem law_integral_FI [IsUltrametricDist K] {F : MvPowerSeries (Fin 2) K} {l i : PowerSeries K}
     (h : LawLog F l) (hi : IsInv l i) : Integral (FI F i) :=

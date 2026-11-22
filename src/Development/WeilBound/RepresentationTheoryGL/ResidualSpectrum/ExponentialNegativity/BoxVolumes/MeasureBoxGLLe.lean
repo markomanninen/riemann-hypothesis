@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.ReductionLocalVolumeGL
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.ReductionLocalVolumeGL
+
+@[expose] public section
 
 open MeasureTheory Measure Set Matrix
 open scoped NNReal ENNReal
@@ -66,7 +70,7 @@ theorem measure_boxGL_le [MeasurableSpace (GL (Fin (m + 1)) 𝕜)] [BorelSpace (
 
   set μK : Measure (unitaryGroup (Fin (m + 1)) 𝕜) := Measure.haar with hμK
   set μN : Measure (upperUnipotentSubgroup (Fin (m + 1)) 𝕜) := Measure.haar with hμN
-  haveI := isHaarMeasure_map_expDiag (𝕜 := 𝕜) (m := m)
+  have := isHaarMeasure_map_expDiag (𝕜 := 𝕜) (m := m)
   set μA : Measure (diagPosSubgroup (Fin (m + 1)) 𝕜) :=
     Measure.map (expDiag 𝕜 m) (volume : Measure (Fin (m + 1) → ℝ)) with hμA
   obtain ⟨c, -, hc⟩ := hANK μK μA μN
@@ -143,7 +147,7 @@ theorem measure_boxGL_le [MeasurableSpace (GL (Fin (m + 1)) 𝕜)] [BorelSpace (
     intro a
     have hpre : μN (diagConj a ⁻¹' Nc) = δi a * μN Nc := by
       rw [← Measure.map_apply (continuous_diagConj a).measurable hNcm, map_diagConj_haar,
-        Measure.smul_apply, smul_eq_mul]
+        smul_apply, smul_eq_mul]
     calc ∫⁻ u, ∫⁻ k, (boxGL ω B x).indicator (1 : GL (Fin (m + 1)) 𝕜 → ℝ≥0∞)
           ((a : GL (Fin (m + 1)) 𝕜) * (u : GL (Fin (m + 1)) 𝕜) * Unitary.toUnits k) ∂μK ∂μN
         ≤ ∫⁻ u, ∫⁻ _k, R.indicator (1 : diagPosSubgroup (Fin (m + 1)) 𝕜 → ℝ≥0∞) a *

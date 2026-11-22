@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.DedekindLFunctions.LandauZeroFreeCriterion
-import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.MellinRamp
+module
+
+public import Development.AutomorphicArithmetic.DedekindLFunctions.LandauZeroFreeCriterion
+public import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.MellinRamp
+
+@[expose] public section
 
 open Complex MeasureTheory Set Filter Topology
 
@@ -92,8 +96,7 @@ theorem mellin_Gchi_of_ne_one_ramp (f : ℕ → ℂ) (s : ℂ) (hs : 1 < s.re)
       ((mellin_Gchi_of_ne_one_hasSum f y).mul_right ((y : ℂ) ^ (-s - 1)))
     have h2 : HasSum (fun n => F (n + 1) y) (ramp f y * (y : ℂ) ^ (-s - 1)) := by
       convert h1 using 1
-      · rfl
-      · ext m
+      · funext m
         simp only [F, ha]
         ring
       · simp
@@ -103,8 +106,7 @@ theorem mellin_Gchi_of_ne_one_ramp (f : ℕ → ℂ) (s : ℂ) (hs : 1 < s.re)
   have h1 := (hasSum_nat_add_iff' 1).mpr (hf.hasSum.div_const (s * (s - 1)))
   have h2 : HasSum (fun n => ∫ y in Ioi (1 : ℝ), F (n + 1) y) (LSeries a s / (s * (s - 1))) := by
     convert h1 using 1
-    · rfl
-    · ext m
+    · funext m
       simp only [F]
       rw [integral_const_mul, mellin_ramp (m + 1) (by omega) s hs,
         LSeries.term_of_ne_zero (by omega), cpow_neg]

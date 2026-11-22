@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.KProps
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.CechDefs
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.KProps
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.CechDefs
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -26,7 +30,7 @@ theorem rep_cup {a b a' b' a'' b'' : IdF A} (h : MulOk a b a' b' a'' b'') {p q n
   have ef : f = fun s => sqMk a b (z s) (hz s) := funext fun s => Subtype.ext (hv s)
   have ef' : f' = fun s => sqMk a' b' (z' s) (hz' s) := funext fun s => Subtype.ext (hv' s)
   subst ef ef'
-  obtain ⟨hc, ec⟩ := CrystallineSemistableComparison.P.cup_cls h.pair e _ _ hf hf'
+  obtain ⟨hc, ec⟩ := CrystallineSemistableComparison.P.cup_cls h.pair e (fun s => sqMk a b (z s) (hz s)) (fun s => sqMk a' b' (z' s) (hz' s)) hf hf'
   refine ⟨fun s => h.aa _ (a.map_mem _ (hz ((CH.front_mono e).functor ⋙ s))) (a'.map_mem _ (hz' ((CH.back_mono e).functor ⋙ s))), _, hc, ec, fun s => ?_⟩
   exact congrArg Subtype.val (h.mul_mk _ _ (a.map_mem _ (hz ((CH.front_mono e).functor ⋙ s))) (a'.map_mem _ (hz' ((CH.back_mono e).functor ⋙ s))))
 

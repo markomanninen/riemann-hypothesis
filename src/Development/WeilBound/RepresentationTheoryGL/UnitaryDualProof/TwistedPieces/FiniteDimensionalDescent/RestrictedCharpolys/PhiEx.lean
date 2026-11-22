@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.RestrictedCharpolys.PrimIdemZ
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.RestrictedCharpolys.PrimIdemZ
+
+@[expose] public section
 
 namespace PositivityTheory.RgUd.TP.Desc.Restr.Pphi1
 

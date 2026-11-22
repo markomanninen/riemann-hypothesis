@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.CyclotomicCharacters.Character
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ContinuousToZModPow
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.CyclotomicCharacters.Character
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ContinuousToZModPow
+
+@[expose] public section
 
 open scoped GroundTheory.LocalField.Abstract
 
@@ -40,8 +44,8 @@ theorem continuous_of_continuous_toZModPow {X : Type*} [TopologicalSpace X] {f :
   rw [dist_eq_norm]
   exact (norm_sub_le_of_toZModPow_eq hy).trans_lt hn
 
-variable (ℓ) in
 
+variable (ℓ) in
 theorem continuous_toPadicInt : Continuous (toPadicInt ℓ) :=
   continuous_of_continuous_toZModPow fun n =>
     (ProfiniteInteger.continuous_proj (primePowPNat ℓ n)).congr fun x =>
@@ -153,9 +157,6 @@ noncomputable def padicEquiv : ℤ̂ ≃+* ∀ q : Nat.Primes, ℤ_[q] :=
 
 @[simp] theorem padicEquiv_apply (x : ℤ̂) : padicEquiv x = toPadics x := rfl
 
-@[simp] theorem padicEquiv_symm_apply (x : ∀ q : Nat.Primes, ℤ_[q]) :
-    padicEquiv.symm x = ofPadics x := rfl
-
 theorem continuous_toPadics : Continuous toPadics :=
   continuous_pi fun q => continuous_toPadicInt q
 
@@ -174,10 +175,6 @@ theorem ext_toPadicInt {x y : ℤ̂} (h : ∀ q : Nat.Primes, toPadicInt q x = t
 
 noncomputable def unitsPadicEquiv : ℤ̂ˣ ≃* ∀ q : Nat.Primes, ℤ_[q]ˣ :=
   (Units.mapEquiv padicEquiv.toMulEquiv).trans MulEquiv.piUnits
-
-@[simp] theorem val_unitsPadicEquiv_apply (u : ℤ̂ˣ) (q : Nat.Primes) :
-    (unitsPadicEquiv u q : ℤ_[q]) = toPadicInt q u :=
-  rfl
 
 theorem unitsPadicEquiv_apply (u : ℤ̂ˣ) (q : Nat.Primes) :
     unitsPadicEquiv u q = Units.map (toPadicInt q).toMonoidHom u :=

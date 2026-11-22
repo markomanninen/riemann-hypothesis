@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UltraDefs
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UltraDefs
+
+@[expose] public section
 
 open Filter UpperTheory.V.AlgebraTools
 open scoped TensorProduct
@@ -44,7 +48,7 @@ private theorem exists_smul_mem {S M M' : Type} [CommRing S] (T : Submonoid S) [
       obtain ⟨s2, m2, hm2, h2⟩ := hy
       refine ⟨s1 * s2, (s2 : S) • m1 + (s1 : S) • m2,
         Submodule.add_mem _ (Submodule.smul_mem _ _ hm1) (Submodule.smul_mem _ _ hm2), ?_⟩
-      rw [map_add, map_smul, map_smul, ← h1, ← h2, smul_add, Submonoid.coe_mul, mul_smul, mul_smul,
+      rw [map_add (f := _), map_smul, map_smul, ← h1, ← h2, smul_add, Submonoid.coe_mul, mul_smul, mul_smul,
         smul_comm (s1 : S) (s2 : S) x]
   obtain ⟨s, m', hm', he⟩ := key _ h
   rw [← map_smul] at he
@@ -78,7 +82,8 @@ theorem UpperTheory.V.AlgebraTools.qRegAt_map :
     choose c hc using hs'
     have h1 : f (∑ β : GlobalTheory.MonoDeg σ a, GlobalTheory.monoVal y (β : σ →₀ ℕ) • c β) ∈
         ((Ideal.span (Set.range y) ^ (a + 1) ⊔ J) • ⊤ : Submodule S M') := by
-      simp only [map_sum, map_smul, hc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, hc]
       have e : (∑ β : GlobalTheory.MonoDeg σ a, GlobalTheory.monoVal y (β : σ →₀ ℕ) • ((s : S) • c' β)) =
           (s : S) • ∑ β : GlobalTheory.MonoDeg σ a, GlobalTheory.monoVal y (β : σ →₀ ℕ) • c' β := by
         rw [Finset.smul_sum]

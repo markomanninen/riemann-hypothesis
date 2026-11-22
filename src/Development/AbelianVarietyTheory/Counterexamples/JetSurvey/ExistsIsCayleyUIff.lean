@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UpqRep
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UpqRep
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+
+@[expose] public section
 
 open Matrix Finset PI.UpqRep
 

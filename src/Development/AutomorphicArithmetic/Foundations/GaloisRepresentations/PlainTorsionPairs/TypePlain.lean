@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.OrdinaryJacquetModules.FlagJ
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PlainTorsionPairs.IrrArithPointsAutomorphicAway
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.OrdinaryJacquetModules.FlagJ
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PlainTorsionPairs.IrrArithPointsAutomorphicAway
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ open UpperTheory.V.Z.Ord UpperTheory.Zero.LLC
 def TypePlain : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [IsCMField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (n : ℕ), 1 ≤ n →
     ∀ (π : CuspSub E n) (w : Plc E) (A : ValuationSubring Ω) (h : IsPlaceOver A w) (σ : SmIrr (GLw n w)), π.IsLocComp w σ →
-    ∀ rc : IrrGL (w.adicCompletion E) → WD h, IsRecT h rc → ∀ χ : Fin n → G E Ω →* ℂˣ,
+    ∀ rc : IrrGL (k := w.adicCompletion E) → WD h, IsRecT h rc → ∀ χ : Fin n → G E Ω →* ℂˣ,
       IsTypeWD h (fun i => (χ i).comp (Ine (F := E) A).subtype) (rc (algNorm σ)) →
       GlobalTheory.RoadU.PlainTor (IrrGL.of σ.ρ σ.smooth σ.irred)
 

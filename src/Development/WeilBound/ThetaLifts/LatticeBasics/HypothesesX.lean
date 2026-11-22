@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.Hypotheses2
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.Hypotheses2
+
+@[expose] public section
 
 noncomputable section
 

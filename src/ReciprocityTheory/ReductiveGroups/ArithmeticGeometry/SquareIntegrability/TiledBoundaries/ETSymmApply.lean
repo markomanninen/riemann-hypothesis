@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TiledBoundaries.MemSpanBn
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TiledBoundaries.MemSpanBn
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2.TiledBoundaries
 
@@ -93,10 +97,12 @@ def YT (X : PT E) (n q : ℕ) : GT (Fin n × Idx X.dim) where
       have hdec : y = ∑ k, incl k ⟨(eT X n).symm y k, hy k⟩ := by
         apply Subtype.ext
         simp only [incl, AddMonoidHom.mk'_apply, Submodule.coe_sum]
-        rw [← map_sum, Finset.univ_sum_single, LinearEquiv.apply_symm_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← map_sum, Finset.univ_sum_single, LinearEquiv.apply_symm_apply]
       have hL : ((φ y : ℤ) : ℝ) = ∑ k, (((φ.comp (incl k)) ⟨(eT X n).symm y k, hy k⟩ : ℤ) : ℝ) := by
         conv_lhs => rw [hdec]
-        rw [map_sum, Int.cast_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, Int.cast_sum]
         rfl
       have hR : (Hf (eT X n x) (y : EuclideanSpace ℂ (Fin n × Idx X.dim))).im =
           ∑ k, (Hf (x k) ((eT X n).symm y k)).im := by
@@ -115,7 +121,7 @@ theorem sec_map (X : PT E) {q n : ℕ} {F : (Fin n → Vsp X.dim) → ℂ} (hF :
   have hγ' := (mem_latT X n γ).mp hγ
   show F ((eT X n).symm (v + γ)) = (∏ k, (X.eps ((eT X n).symm γ k) : ℂ)) ^ q *
     cexp (q * Real.pi * Hf v γ + q * Real.pi * Hf γ γ / 2) * F ((eT X n).symm v)
-  rw [map_add, hF.2 _ hγ' _]
+  rw [map_add (f := _), hF.2 _ hγ' _]
   have e1 : Hf v γ = HC ((eT X n).symm v) ((eT X n).symm γ) := by
     rw [← Hf_eT, LinearEquiv.apply_symm_apply, LinearEquiv.apply_symm_apply]
   have e2 : Hf γ γ = HC ((eT X n).symm γ) ((eT X n).symm γ) := by

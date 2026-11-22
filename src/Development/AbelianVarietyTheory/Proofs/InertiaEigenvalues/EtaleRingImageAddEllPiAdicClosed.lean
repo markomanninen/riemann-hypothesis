@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffZeroEqZeroIff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NearPiSepCompleteStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EtaleComparisonPiAdicFiltrationModEllStatement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffZeroEqZeroIff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NearPiSepCompleteStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EtaleComparisonPiAdicFiltrationModEllStatement
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.MainNotions.LocalSituation GlobalTheory.Cyc GlobalTheory.Decompl
 open scoped TensorProduct
@@ -29,7 +33,7 @@ theorem powerSeries_exists_sum {O : Type} [CommRing O] (a : ℕ → PowerSeries 
       induction d with
       | zero => rfl
       | succ d ih =>
-        rw [show n + 1 + (d + 1) = n + 1 + d + 1 by omega, Finset.sum_range_succ, map_add, ih,
+        rw [show n + 1 + (d + 1) = n + 1 + d + 1 by omega, Finset.sum_range_succ, map_add (f := _), ih,
           PowerSeries.coeff_X_pow_mul', if_neg (by omega), add_zero]
     have := key (m - (n + 1))
     rw [show n + 1 + (m - (n + 1)) = m by omega] at this
@@ -75,7 +79,7 @@ theorem near_closed_abstract {A E S R : Type} [CommRing A] [CommRing E] [CommRin
     induction m with
     | zero => simp
     | succ k ih =>
-      rw [Finset.sum_range_succ, Finset.sum_range_succ, map_add]
+      rw [Finset.sum_range_succ, Finset.sum_range_succ, map_add (f := _)]
       linear_combination hae k + ih
   refine ⟨e 0 + j s, hsep _ fun m => ?_⟩
   obtain ⟨b, hb⟩ := hs m
@@ -83,7 +87,7 @@ theorem near_closed_abstract {A E S R : Type} [CommRing A] [CommRing E] [CommRin
   refine ⟨a0 - io b, r0 + f (∑ i ∈ Finset.range m, e' i), ?_⟩
   have key : f (e 0 + j s) = f (e m) - (p : R) * f (∑ i ∈ Finset.range m, e' i) + t ^ m * ι (io b) := by
     rw [hsumD m, hb]
-    simp only [map_add, map_mul, map_pow, map_natCast, hext, ht]
+    simp only [map_add (f := _), map_mul, map_pow, map_natCast, hext, ht]
     ring
   rw [key, map_sub]
   linear_combination h0

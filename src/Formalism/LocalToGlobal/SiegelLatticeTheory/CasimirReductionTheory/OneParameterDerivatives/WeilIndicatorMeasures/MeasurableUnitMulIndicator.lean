@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Measure Topology Set Filter
 open scoped ENNReal NNReal Pointwise
@@ -25,9 +29,6 @@ lemma fib_mul (κ : Measure H) [κ.IsMulLeftInvariant] (f : G → ℝ≥0∞) (g
   unfold fib
   have key := lintegral_mul_left_eq_self (μ := κ) (fun h : H => f (g * (h : G))) h₀
   simpa [mul_assoc] using key
-
-lemma measurable_mk : Measurable ((↑) : G → G ⧸ H) := by
-  first | exact measurable_quotient_mk'' | exact measurable_quotient_mk' | exact fun s hs => hs
 
 lemma measure_coset_le (κ : Measure H) [κ.IsMulLeftInvariant] (y : G) (E : Set G) :
     κ {h : H | y * h ∈ E} ≤ κ {h : H | (h : G) ∈ E⁻¹ * E} := by
@@ -103,11 +104,12 @@ lemma exists_fib_eq_one (hH : IsClosed (H : Set G)) (κ : Measure H) [SFinite κ
       rw [← lintegral_indicator_one (hS ((d n)⁻¹ * x))]
       congr 1
       funext h
-      simp only [Function.comp_apply, Set.indicator_apply, Set.mem_setOf_eq, Pi.one_apply, mul_assoc]
-      first | rfl | simp [Set.indicator_apply]
+      by_cases hh : (d n)⁻¹ * (x * (h : G)) ∈ V
+      · simp [Set.indicator_of_mem, hh, mul_assoc]
+      · simp [Set.indicator_of_notMem, hh, mul_assoc]
     have hC : κ {h : H | (h : G) ∈ V⁻¹ * V} < ∞ := measure_coset_lt_top hH κ hVc
     refine ⟨fun x => ∑' n, (2⁻¹ : ℝ≥0∞) ^ n * V.indicator 1 ((d n)⁻¹ * x), ?_, ?_, ?_⟩
-    · exact Measurable.ennreal_tsum (fun n => measurable_const.mul
+    · exact Measurable.tsum (fun n => measurable_const.mul
         ((measurable_one.indicator hVm).comp (measurable_const_mul _)))
     · intro x
       rw [hfib x]
@@ -124,7 +126,7 @@ lemma exists_fib_eq_one (hH : IsClosed (H : Set G)) (κ : Measure H) [SFinite κ
       have hpos' := measure_nhds_pos κ hnb
       calc (0 : ℝ≥0∞) < (2⁻¹ : ℝ≥0∞) ^ n * κ {h : H | (d n)⁻¹ * x * (h : G) ∈ V} :=
             ENNReal.mul_pos (by simp) hpos'.ne'
-        _ ≤ _ := ENNReal.le_tsum n
+        _ ≤ _ := ENNReal.le_tsum (f := fun n => (2⁻¹ : ℝ≥0∞) ^ n * κ {h : H | (d n)⁻¹ * x * (h : G) ∈ V}) n
     · intro x
       rw [hfib x]
       have hle : ∑' n, (2⁻¹ : ℝ≥0∞) ^ n * κ {h : H | (d n)⁻¹ * x * (h : G) ∈ V}
@@ -161,9 +163,6 @@ lemma exists_fib_eq_one (hH : IsClosed (H : Set G)) (κ : Measure H) [SFinite κ
 section Main
 
 variable (μ : Measure G) (ν : Measure H)
-
-noncomputable def qmeas (H : Subgroup G) (μ : Measure G) (β : G → ℝ≥0∞) : Measure (G ⧸ H) :=
-  (μ.withDensity β).map ((↑) : G → G ⧸ H)
 
 variable [SFinite μ] [μ.IsMulRightInvariant] [SFinite ν] [ν.IsMulLeftInvariant]
   {β : G → ℝ≥0∞} (hβ : Measurable β) (hβ1 : ∀ x, ∫⁻ h, β (x * (h : G)⁻¹) ∂ν = 1)

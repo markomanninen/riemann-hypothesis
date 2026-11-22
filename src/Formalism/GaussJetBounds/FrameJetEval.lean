@@ -1,4 +1,8 @@
-import Formalism.GaussJetBounds.StatementP
+module
+
+public import Formalism.GaussJetBounds.StatementP
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -48,8 +52,8 @@ def LabelsExist : Prop :=
 
 def GaussPow : Prop :=
   ∀ (F K : Type) [NormedField F] [NormedField K] (φ : F →+* K) (σ : Type) (Y : σ → K),
-    (∀ P : MvPolynomial σ F, ‖MvPolynomial.eval₂ φ Y P‖ = ⨆ n : σ →₀ ℕ, ‖MvPolynomial.coeff n P‖) →
+    (∀ P : MvPolynomial σ F, ‖MvPolynomial.eval₂ φ Y P‖ = ⨆ n : σ →₀ ℕ, ‖AddMonoidAlgebra.coeff P n‖) →
     ∀ (k : σ → ℕ), (∀ y, k y ≠ 0) → ∀ (P : MvPolynomial σ F) (n : σ →₀ ℕ),
-      ‖MvPolynomial.coeff n P‖ ≤ ‖MvPolynomial.eval₂ φ (fun y => Y y ^ k y) P‖
+      ‖AddMonoidAlgebra.coeff P n‖ ≤ ‖MvPolynomial.eval₂ φ (fun y => Y y ^ k y) P‖
 
 end Formalism.DworkPowerSeriesWeights

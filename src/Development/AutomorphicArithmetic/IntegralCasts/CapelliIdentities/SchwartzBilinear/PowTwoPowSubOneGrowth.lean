@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace UpperTheory.Reformulated.B.P6.r25a
 

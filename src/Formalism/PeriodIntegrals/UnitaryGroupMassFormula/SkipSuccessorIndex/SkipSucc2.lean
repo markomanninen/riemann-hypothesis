@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.QmSkip
+module
+
+public import Formalism.PeriodIntegrals.QmSkip
+
+@[expose] public section
 
 namespace PI.QmSkipWork
 

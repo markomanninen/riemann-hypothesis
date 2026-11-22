@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.InvAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.EqLagIff
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.InvAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.EqLagIff
+
+@[expose] public section
 
 open Polynomial Matrix IsLocalRing TensorProduct UpperTheory.V.AlgebraTools
 
@@ -15,32 +19,32 @@ theorem UpperTheory.V.AlgebraTools.trinv_baseChange :
   · intro x y
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => simp only [add_mul, mul_add, map_add, ha, hb]
+    | add a b ha hb => simp only [add_mul, mul_add, map_add (f := _), ha, hb]
     | tmul a u =>
       induction y using TensorProduct.induction_on with
       | zero => simp
-      | add c d hc hd => simp only [add_mul, mul_add, map_add, hc, hd]
+      | add c d hc hd => simp only [add_mul, mul_add, map_add (f := _), hc, hd]
       | tmul b v =>
         simp only [Algebra.TensorProduct.tmul_mul_tmul, hs, T.st_mul, mul_comm a b]
   · intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | tmul a u => simp only [hs, T.st_st]
   · intro x y
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => simp only [add_mul, mul_add, map_add, ha, hb]
+    | add a b ha hb => simp only [add_mul, mul_add, map_add (f := _), ha, hb]
     | tmul a u =>
       induction y using TensorProduct.induction_on with
       | zero => simp
-      | add c d hc hd => simp only [add_mul, mul_add, map_add, hc, hd]
+      | add c d hc hd => simp only [add_mul, mul_add, map_add (f := _), hc, hd]
       | tmul b v =>
         simp only [Algebra.TensorProduct.tmul_mul_tmul, ht, T.tr_comm u v, mul_comm a b]
   · intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | tmul a u => simp only [hs, ht, T.tr_st]
   · show t (1 ⊗ₜ y) = _
     rw [ht, Algebra.algebraMap_eq_smul_one]

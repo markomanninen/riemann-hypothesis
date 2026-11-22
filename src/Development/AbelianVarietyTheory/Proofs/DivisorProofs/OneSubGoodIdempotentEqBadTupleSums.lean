@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
-import Formalism.CyclotomicNorms.NonsquarefreeBounds.NonsquarefreeMonicBoundHolds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
+public import Formalism.CyclotomicNorms.NonsquarefreeBounds.NonsquarefreeMonicBoundHolds
+
+@[expose] public section
 
 noncomputable section
 

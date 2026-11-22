@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.PolyApproxZeroPadic
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPsCharOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteSemisimple
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.PolyApproxZeroPadic
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPsCharOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteSemisimple
+
+@[expose] public section
+
 open Formalism.MainNotions.N GlobalTheory.Cong GlobalTheory.PsChar
 
 namespace GlobalTheory
@@ -12,10 +17,8 @@ theorem polyApprox_trc_locally_cauchy : ∀ (l : ℕ) [Fact l.Prime] (Γ : Type)
   choose! R hRC hRη using hmem
   set F : Γ → PadicAlgCl l := fun h => ∑ η ∈ s, c η * trc (R η) h with hF
   have hFc : Continuous F := by
-    refine continuous_finset_sum _ fun η hη => continuous_const.mul ?_
-    have h1 : Continuous fun h => ((R η h : GL (Fin a) (PadicAlgCl l)) : Matrix (Fin a) (Fin a) (PadicAlgCl l)) :=
-      Units.continuous_val.comp (hC _ (hRC η hη))
-    exact (continuous_id.matrix_trace).comp h1
+    refine continuous_finsetSum _ fun η hη => continuous_const.mul ?_
+    exact (Units.continuous_val.comp (hC _ (hRC η hη))).matrix_trace
   refine ⟨F ⁻¹' Metric.ball (F g) (ε / 4), hFc.continuousAt.preimage_mem_nhds (Metric.ball_mem_nhds _ (by linarith)), ?_⟩
   intro i j hi hj
   have key := hP (MvPolynomial.X i - MvPolynomial.X j)

@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.NormsAndPolarizations.CjApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoCoefOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CoefSup
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.IntModel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CharacteristicPolynomials.CocField
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.NormsAndPolarizations.CjApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoCoefOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CoefSup
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.IntModel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CharacteristicPolynomials.CocField
+
+@[expose] public section
+
 open IsLocalRing Matrix NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.HV UpperTheory.V.Th UpperTheory.V.Th.Nm GlobalTheory.GalOfCusp
 
 private theorem ri_small {l : ℕ} [hl : Fact l.Prime] (C : ℝ) : ∃ N : ℕ, ‖((l : PadicAlgCl l)) ^ N‖ * C ≤ 1 := by
@@ -63,7 +68,7 @@ theorem UpperTheory.V.Th.Nm.repIn :
   obtain ⟨d, hd⟩ := UpperTheory.V.X.So.coefOf l E
   obtain ⟨c', h1, h2⟩ := (UpperTheory.V.HV.coefSup l).1 c d
   have hn : Continuous fun g => ∑ i, ∑ j, ‖z g i j‖ :=
-    continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => (hz.matrix_elem i j).norm
+    continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => (hz.matrix_elem i j).norm
   obtain ⟨C, hC⟩ := (isCompact_range hn).bddAbove
   obtain ⟨N, hN⟩ := ri_small (l := l) C
   refine ⟨c', (l : PadicAlgCl l) ^ N, h1, pow_ne_zero _ (Nat.cast_ne_zero.2 hl.out.ne_zero),

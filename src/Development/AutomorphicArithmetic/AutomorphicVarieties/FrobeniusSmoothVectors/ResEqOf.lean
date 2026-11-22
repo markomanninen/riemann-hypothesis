@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.IsInternalCongr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CoB
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.ClFin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.CplIs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.CplUniq
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.AdditiveValuation.UnramExtY
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.IsInternalCongr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CoB
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.ClFin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.CplIs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.CplUniq
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.AdditiveValuation.UnramExtY
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -31,7 +35,7 @@ private theorem unr_ex {l : ℕ} (O : Type) [CommRing O] [IsDomain O] [IsDiscret
   haveI : Module.Finite O (AdjoinRoot f) := hf.finite_adjoinRoot
   have hm : (maximalIdeal O).map (algebraMap O (AdjoinRoot f)) = maximalIdeal (AdjoinRoot f) := by
     rw [hϖ.maximalIdeal_eq, hi.maximalIdeal_eq, Ideal.map_span, Set.image_singleton]
-  haveI hl : IsLocalHom (algebraMap O (AdjoinRoot f)) := ((local_hom_TFAE _).out 0 2).2 hm.le
+  haveI hl : IsLocalHom (algebraMap O (AdjoinRoot f)) := ((local_hom_tfae _).out 1 3).2 hm.le
   have hcl : UpperTheory.V.CA.IsCL O (AdjoinRoot f) := UpperTheory.V.CA.cl_fin O O (AdjoinRoot f) (UpperTheory.V.CA.IsCL.of_isCO O O)
   have hfin : Finite (ResidueField (AdjoinRoot f)) := Nat.finite_of_card_ne_zero (by
     rw [hc]; exact pow_ne_zero _ Nat.card_pos.ne')
@@ -96,7 +100,7 @@ private theorem cpl_univ (O D R : Type) [CommRing O] [IsLocalRing O] [CommRing D
       exact (h3 _).trans (f.commutes a)
     · have := hu g.toRingHom ⟨RingHom.ext hg, fun z hz => by
         rw [Ideal.mem_comap, ← res_eq_zero_iff O]
-        exact (res_map g z).trans ((res_eq_zero_iff O R z).2 hz)⟩
+        exact (UpperTheory.V.Alg.res_map g z).trans ((res_eq_zero_iff O R z).2 hz)⟩
       exact AlgHom.ext fun z => DFunLike.congr_fun this z
 
 private theorem cpl_ex (O D : Type) [CommRing O] [IsLocalRing O] [CommRing D] [Algebra O D] [IsNoetherianRing D]
@@ -134,7 +138,7 @@ theorem UpperTheory.V.Fr.loc_ex :
   intro l _ O _ _ _ _ F C₀ n hF hn S x hx hB
   have hA : IsNoetherianRing S.A := (gr_A hF hn S).2.2.2.2.2.1
   have hT : Algebra.FiniteType S.B S.A := (gr_A hF hn S).2.2.2.2.1
-  obtain ⟨hco, hm⟩ := co_B hF hn S
+  obtain ⟨hco, hm⟩ := UpperTheory.V.Fr.co_B hF hn S
   rw [← hm] at hB
   haveI : Finite (S.A ⧸ x) := res_fin O S.B S.A x hB
   letI := Ideal.Quotient.field x

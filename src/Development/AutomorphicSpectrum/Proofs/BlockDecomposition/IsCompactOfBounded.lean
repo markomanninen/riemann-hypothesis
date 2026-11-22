@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.GlobalCharacterOfInputs
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.GlobalCharacterOfInputs
+
+@[expose] public section
 
 open Matrix Polynomial PositivityTheory.Rg.BcB PositivityTheory.Rg.BcB.G8
 
@@ -7,9 +11,9 @@ noncomputable section
 
 namespace GlobalTheory.CompanionTheory.DiagProperProof
 
-variable {n : ℕ}
-
 local notation "θ" => thetaR (starRingEnd ℂ) _
+
+variable {n : ℕ}
 
 theorem th_val (g : GL (Fin n) ℂ) : (θ g).val = ((g⁻¹ : GL (Fin n) ℂ).val)ᴴ := by
   ext i j
@@ -50,14 +54,14 @@ theorem continuous_th : Continuous (fun g : GL (Fin n) ℂ => θ g) := by
 theorem aeval_conj (p : GL (Fin n) ℂ) (A : Matrix (Fin n) (Fin n) ℂ) (f : ℂ[X]) :
     aeval (p.val * A * (p⁻¹ : GL (Fin n) ℂ).val) f = p.val * aeval A f * (p⁻¹ : GL (Fin n) ℂ).val := by
   induction f using Polynomial.induction_on' with
-  | add f g hf hg => simp only [map_add, hf, hg, mul_add, add_mul]
+  | add f g hf hg => simp only [map_add (f := _), hf, hg, mul_add, add_mul]
   | monomial k a =>
     simp only [aeval_monomial, Units.conj_pow, Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul, mul_smul_comm]
 
 theorem aeval_diag (w : Fin n → ℂ) (f : ℂ[X]) :
     aeval (diagonal w) f = diagonal fun k => f.eval (w k) := by
   induction f using Polynomial.induction_on' with
-  | add f g hf hg => simp only [map_add, hf, hg, eval_add, Matrix.diagonal_add]
+  | add f g hf hg => simp only [map_add (f := _), hf, hg, eval_add, Matrix.diagonal_add]
   | monomial k a =>
     ext i j
     by_cases h : i = j

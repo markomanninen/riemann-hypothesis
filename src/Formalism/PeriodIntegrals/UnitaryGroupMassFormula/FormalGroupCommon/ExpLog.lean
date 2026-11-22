@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupSplitting.ExpCongruenceExtendsToSum
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupSplitting.ExpCongruenceExtendsToSum
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,12 +23,12 @@ theorem constantCoeff_subst_of_zero {τ : Type} {a : MvPowerSeries τ K} (ha : c
     simp [ha, hd]
 
 theorem eq_one_add_X_of_deriv {g : PowerSeries K}
-    (hd : PowerSeries.derivative K g = g * (1 + PowerSeries.X)⁻¹)
+    (hd : PowerSeries.derivative (R := K) g = g * (1 + PowerSeries.X)⁻¹)
     (h0 : PowerSeries.constantCoeff g = 1) : g = 1 + PowerSeries.X := by
   have hu : PowerSeries.constantCoeff (1 + PowerSeries.X : PowerSeries K) ≠ 0 := by simp
   have hinv := PowerSeries.inv_mul_cancel _ hu
-  have hD : PowerSeries.derivative K (g * (1 + PowerSeries.X)⁻¹) = PowerSeries.derivative K 1 := by
-    simp only [Derivation.leibniz, PowerSeries.derivative_inv', hd, map_add,
+  have hD : PowerSeries.derivative (R := K) (g * (1 + PowerSeries.X)⁻¹) = PowerSeries.derivative (R := K) 1 := by
+    simp only [Derivation.leibniz, PowerSeries.derivative_inv', hd, map_add (f := _),
       Derivation.map_one_eq_zero, PowerSeries.derivative_X, smul_eq_mul, zero_add]
     ring
   have hc : PowerSeries.constantCoeff (g * (1 + PowerSeries.X)⁻¹) =
@@ -35,15 +39,15 @@ theorem eq_one_add_X_of_deriv {g : PowerSeries K}
     _ = (g * (1 + PowerSeries.X)⁻¹) * (1 + PowerSeries.X) := by ring
     _ = 1 + PowerSeries.X := by rw [h1, one_mul]
 
-theorem derivative_log_eq : PowerSeries.derivative K (PowerSeries.log K) = (1 + PowerSeries.X)⁻¹ := by
+theorem derivative_log_eq : PowerSeries.derivative (R := K) (PowerSeries.log K) = (1 + PowerSeries.X)⁻¹ := by
   rw [PowerSeries.deriv_log, PowerSeries.eq_inv_iff_mul_eq_one (by simp)]
   ext n
   rcases n with _ | n
-  · rw [mul_add, mul_one, map_add, PowerSeries.coeff_zero_mul_X, add_zero, PowerSeries.coeff_mk,
+  · rw [mul_add, mul_one, map_add (f := _), PowerSeries.coeff_zero_mul_X, add_zero, PowerSeries.coeff_mk,
       PowerSeries.coeff_one, if_pos rfl]
     simp
-  · rw [mul_add, mul_one, map_add, PowerSeries.coeff_succ_mul_X, PowerSeries.coeff_mk,
-      PowerSeries.coeff_mk, PowerSeries.coeff_one, if_neg (Nat.succ_ne_zero n), ← map_add]
+  · rw [mul_add, mul_one, map_add (f := _), PowerSeries.coeff_succ_mul_X, PowerSeries.coeff_mk,
+      PowerSeries.coeff_mk, PowerSeries.coeff_one, if_neg (Nat.succ_ne_zero n)]
     simp [pow_succ]
 
 theorem exp_subst_log :
@@ -146,7 +150,7 @@ theorem int_of_mul_eq_one {σ : Type} [DecidableEq σ] {u n : MvPowerSeries σ �
       exact hne (Prod.ext (by simpa [h0] using hx) (by simpa using h0))
     have hdeg : Finsupp.degree x.1 < d := by
       have hsum := congrArg Finsupp.degree hx
-      rw [map_add] at hsum
+      rw [map_add (f := _)] at hsum
       have : Finsupp.degree x.2 ≠ 0 := by rwa [Ne, Finsupp.degree_eq_zero_iff]
       omega
     rw [norm_mul]

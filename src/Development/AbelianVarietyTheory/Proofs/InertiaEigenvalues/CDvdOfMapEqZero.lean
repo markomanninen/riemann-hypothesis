@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.AdicCompleteness.IsAdicCompleteComapConstantCoeff
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemEurOfTeichmullerSeries
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicPowerSeriesAlgHomActionLaws
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsAdicCompleteOfPowLeOfPowLe
+module
+
+public import Mathlib
+public import ReciprocityTheory.AdicCompleteness.IsAdicCompleteComapConstantCoeff
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemEurOfTeichmullerSeries
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicPowerSeriesAlgHomActionLaws
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsAdicCompleteOfPowLeOfPowLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ theorem series_hom_ext {A B : Type} [CommRing A] [CommRing B] {f g : A⟦X⟧ �
   have hx := eq_X_pow_mul_shift_add_trunc (n + 1) x
   have h1 : f (trunc (n + 1) x : A⟦X⟧) = g (trunc (n + 1) x : A⟦X⟧) := RingHom.congr_fun hp (trunc (n + 1) x)
   have h2 : X ^ (n + 1) ∣ f x - g x := by
-    rw [hx, map_add, map_add, h1, add_sub_add_right_eq_sub, map_mul, map_mul, map_pow, map_pow, ← hX,
+    rw [hx, map_add (f := _), map_add (f := _), h1, add_sub_add_right_eq_sub, map_mul, map_mul, map_pow, map_pow, ← hX,
       ← mul_sub]
     exact (pow_dvd_pow_of_dvd hd _).mul_right _
   have h3 := X_pow_dvd_iff.1 h2 n (Nat.lt_succ_self n)
@@ -64,11 +68,11 @@ theorem map_act (e : A →ₐ[ℤ_[l]] B) (c : ℤ_[l]) (x : A⟦X⟧) :
 theorem constantCoeff_act (c : ℤ_[l]) (x : A⟦X⟧) : constantCoeff (act l A c x) = constantCoeff x := by
   obtain ⟨y, hy⟩ : X ∣ x - C (constantCoeff x) := by rw [X_dvd_iff]; simp
   have h : x = C (constantCoeff x) + X * y := by rw [← hy]; ring
-  conv_lhs => rw [h, map_add, map_mul, act_C, act_X, map_add, map_mul, cyc_const]
+  conv_lhs => rw [h, map_add (f := _), map_mul, act_C, act_X, map_add (f := _), map_mul, cyc_const]
   simp
 
-omit hl [Algebra ℤ_[l] A] [Algebra ℤ_[l] B] in
 
+omit hl [Algebra ℤ_[l] A] [Algebra ℤ_[l] B] in
 theorem map_QQ (e : A →+* B) (s : ℕ) : PowerSeries.map e (QQ l A s) = QQ l B s := by
   simp [QQ, XX]
 
@@ -91,7 +95,7 @@ theorem phiS_lift (σ : A →ₐ[ℤ_[l]] A) (hu : ¬ IsUnit (l : A)) (h : ∀ a
       rw [RingHom.comp_apply, RingHom.comp_apply, phiS_apply, h1, map_C, map_C, map_C, frobenius_def,
         ← map_pow]
       change C (q (σ a)) = _
-      rw [hb, map_add, map_mul, map_natCast, CharP.cast_eq_zero (A ⧸ Ideal.span {(l : A)}) l, zero_mul, add_zero,
+      rw [hb, map_add (f := _), map_mul, map_natCast, CharP.cast_eq_zero (A ⧸ Ideal.span {(l : A)}) l, zero_mul, add_zero,
         map_pow]
     · rw [RingHom.comp_apply, RingHom.comp_apply, hX, map_X, frobenius_def]
     · rw [RingHom.comp_apply, hX]; exact dvd_pow_self _ hl.out.ne_zero
@@ -109,7 +113,7 @@ theorem ker_eq_span {A B : Type} [CommRing A] [IsLocalRing A] [IsAdicComplete (I
     RingHom.ker f = Ideal.span {Q} := by
   refine le_antisymm (fun x hx => ?_) ((Ideal.span_singleton_le_iff_mem _).2 h0)
   have h1 : Q.map (IsLocalRing.residue A) = X ^ d := by
-    rw [hQ, map_add, map_mul, map_C, (IsLocalRing.residue_eq_zero_iff p).2 hp]
+    rw [hQ, map_add (f := _), map_mul, map_C, (IsLocalRing.residue_eq_zero_iff p).2 hp]
     simp
   obtain ⟨q, r, hr⟩ := exists_isWeierstrassDivision x (g := Q) (by rw [h1]; exact pow_ne_zero _ X_ne_zero)
   have h2 : r.degree < d := by
@@ -120,7 +124,7 @@ theorem ker_eq_span {A B : Type} [CommRing A] [IsLocalRing A] [IsAdicComplete (I
     by_contra hne
     refine hne (h r ((Polynomial.natDegree_lt_iff_degree_lt hne).2 h2) ?_)
     have := congrArg f hr.eq_mul_add
-    rw [map_add, map_mul, h0, zero_mul, zero_add] at this
+    rw [map_add (f := _), map_mul, h0, zero_mul, zero_add] at this
     exact this.symm.trans hx
   rw [hr.eq_mul_add, h3]
   simpa using Ideal.mul_mem_right _ _ (Ideal.mem_span_singleton_self Q)

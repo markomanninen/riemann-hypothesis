@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ChSumSubCMul
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormSubOnePowThreeLe
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SeriesEqZeroOfValsTendstoZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormPowSubPowLtOneOfUltra
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ChSumSubCMul
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormSubOnePowThreeLe
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SeriesEqZeroOfValsTendstoZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormPowSubPowLtOneOfUltra
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ PowerSeries GlobalTheory.KZ.Cmp
 
 namespace GlobalTheory.KZ.Cmp.PrimChar
@@ -43,7 +48,7 @@ theorem exists_root_close {x : Qbar l} {n : ℕ} (hn : n ≠ 0) (h : ‖x ^ n - 
   rw [h1, norm_prod] at h
   by_contra hc
   push Not at hc
-  refine absurd h (not_lt.2 (Finset.one_le_prod fun w hw => ?_))
+  refine absurd h (not_lt.2 (Finset.one_le_prod₀ fun w hw => ?_))
   rw [norm_sub_rev]
   exact hc w ((Polynomial.mem_nthRootsFinset (Nat.pos_of_ne_zero hn) 1).1 hw)
 
@@ -152,10 +157,10 @@ theorem isPrimitive_of_value (k : ℕ) (ζ : Qbar l) (h2 : l ≠ 2) (hk : 1 ≤ 
     rw [MonoidHom.mem_ker]
     ext
     have := congrArg (ZMod.castHom hd2 (ZMod χ.conductor)) h1
-    rw [map_pow, map_add, map_one, map_natCast] at this
+    rw [map_pow, map_add (f := _), map_one, map_natCast] at this
     rw [ZMod.unitsMap_def, Units.coe_map, Units.val_pow_eq_pow_val, hu, Units.val_one]
     show ZMod.castHom hd (ZMod χ.conductor) _ = 1
-    rw [map_pow, map_add, map_one, map_natCast]
+    rw [map_pow, map_add (f := _), map_one, map_natCast]
     exact this
   have h3 := hker hmem
   rw [MonoidHom.mem_ker] at h3
@@ -182,7 +187,7 @@ theorem exists_primitive_inComp : ∀ (l : ℕ) [Fact l.Prime] (φ : DirichletCh
       ZMod.castHom hd (ZMod l) (b : ZMod (l ^ (k + 1))) := fun b => rfl
   have hu1 : ZMod.unitsMap hd u = 1 := by
     ext
-    rw [hred, hu, map_add, map_one, map_natCast, ZMod.natCast_self, add_zero, Units.val_one]
+    rw [hred, hu, map_add (f := _), map_one, map_natCast, ZMod.natCast_self, add_zero, Units.val_one]
   let f : (ZMod (l ^ (k + 1)))ˣ →* (Qbar l)ˣ := ((ω ^ e * MulChar.toUnitHom φ).comp (ZMod.unitsMap hd)) * χ₂
   have hf : ∀ b, (f b : Qbar l) = (ω (ZMod.unitsMap hd b) : Qbar l) ^ e *
       φ ((ZMod.unitsMap hd b : (ZMod l)ˣ) : ZMod l) * χ₂ b := fun b => by

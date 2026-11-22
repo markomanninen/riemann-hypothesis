@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Arith.Abelian
 
@@ -250,7 +254,7 @@ theorem normEDS_invariant (n : ℤ) :
   have h := (uw_rel n).2
   simp only [InvAt, uw] at h
   have := congrArg (MvPolynomial.eval₂Hom (Int.castRingHom R) ![b, c, d]) h
-  simp only [map_sub, map_mul, map_pow, map_add, map_normEDS] at this
+  simp only [map_sub, map_mul, map_pow, map_add (f := _), map_normEDS] at this
   simpa using this
 
 end GroundTheory.Arith.Abelian

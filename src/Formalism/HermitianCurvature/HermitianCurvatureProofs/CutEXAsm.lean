@@ -1,11 +1,15 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEXp
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameTransportToLastLevel
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstBasisVectorIsRadialSlice
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbRadHeadOf
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParametersUPrimeForULower
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEXp
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameTransportToLastLevel
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstBasisVectorIsRadialSlice
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbRadHeadOf
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParametersUPrimeForULower
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,7 +86,8 @@ theorem isClosed_KU {n : ℕ} {Y : Type} [MetricSpace Y] {K : Set ((Fin n → Fi
     (hdetc.tendsto q).comp (hs.comp hφ.tendsto_atTop)
   have he : ∀ m, (Matrix.of (Matrix.of.symm (Matrix.of (s (φ m)).1 * u (φ m)), (s (φ m)).2).1).det =
       (Matrix.of (s (φ m)).1).det := by
-    intro m; simp [Matrix.det_mul, det_upUni (hu (φ m))]
+    intro m
+    rw [Equiv.apply_symm_apply, Matrix.det_mul, det_upUni (hu (φ m)), mul_one]
   have hd2 : Tendsto (fun m => (Matrix.of (s (φ m)).1).det) atTop (nhds (Matrix.of W.1).det) :=
     ((hdetc.tendsto W).comp hlim).congr (fun m => by simp only [Function.comp_apply]; exact he m)
   have hdq : (Matrix.of q.1).det = (Matrix.of W.1).det := tendsto_nhds_unique hd1 hd2
@@ -212,7 +217,7 @@ theorem exceptional_assumption_holds : Asm := by
     refine h1.trans ?_
     refine Eq.trans ?_ (congrArg (fun X => psiU p v • X) h2.symm)
     have hd : (Matrix.of (Matrix.of.symm (Matrix.of Z * v))).det = (Matrix.of Z).det := by
-      simp [Matrix.det_mul, det_upUni hv]
+      rw [Equiv.apply_symm_apply, Matrix.det_mul, det_upUni hv, mul_one]
     by_cases hq : (Z, Matrix.of.symm x.2) ∈ UT P.k P.r (p.T.bs P.r).z (p.T.bs P.r).z'
     · have hq' : (Matrix.of.symm (Matrix.of Z * v), Matrix.of.symm x.2) ∈ UT P.k P.r (p.T.bs P.r).z (p.T.bs P.r).z' :=
         ⟨hd ▸ hq.1, hq.2⟩
@@ -307,7 +312,7 @@ theorem exceptional_assumption_holds : Asm := by
     have hiff : (Matrix.of.symm (Matrix.of Z * v), y) ∈ UT P.k P.r (p.T.bs P.r).z (p.T.bs P.r).z' ↔
         (Z, y) ∈ UT P.k P.r (p.T.bs P.r).z (p.T.bs P.r).z' := by
       have hd : (Matrix.of (Matrix.of.symm (Matrix.of Z * v))).det = (Matrix.of Z).det := by
-        simp [Matrix.det_mul, det_upUni hv]
+        rw [Equiv.apply_symm_apply, Matrix.det_mul, det_upUni hv, mul_one]
       exact ⟨fun h' => ⟨hd ▸ h'.1, h'.2⟩, fun h' => ⟨hd.symm ▸ h'.1, h'.2⟩⟩
     show (if (Matrix.of.symm (Matrix.of Z * v), y) ∈ UT P.k P.r (p.T.bs P.r).z (p.T.bs P.r).z' then
         κ⁻¹ • Φf (Matrix.of.symm (Matrix.of Z * v)) e y else 0) =

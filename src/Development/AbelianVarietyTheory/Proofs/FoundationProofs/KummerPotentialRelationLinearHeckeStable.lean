@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsRootOne
-import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsKummerPotentialIncrementLinearLawsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsRootOne
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsKummerPotentialIncrementLinearLawsStatement
+
+@[expose] public section
+
 open GlobalTheory.KZ GlobalTheory.KZ.H3 Matrix
 open scoped MatrixGroups TensorProduct
 
@@ -57,7 +62,7 @@ theorem rel_act (m : Matrix (Fin 2) (Fin 2) ℤ) {b : X.Fn l} {F : ℂ → MvPol
   rw [e]
   by_cases hm : 0 < m.det
   · exact (GlobalTheory.T.r1_smul_and_kmap_of_r1_linear_laws Ω ε X l).2.2.2 m _ _ hm (h _)
-  · have h1 : toGQ m = 1 := by unfold toGQ; rw [dif_neg hm]
+  · have h1 : toGQ m = 1 := by unfold toGQ; rw [dite_eq_right hm]
     rw [h1, kmap_eq_self X l _ (fun f => X.sl_one f)]
     simp only [mob_one']
     exact h _
@@ -76,8 +81,8 @@ end Main
 
 end GlobalTheory.KZ.H3.RelOp
 
-open GlobalTheory.KZ.H3.RelOp in
 
+open GlobalTheory.KZ.H3.RelOp in
 theorem GlobalTheory.KZ.H3.rel_ops : ∀ (Ω : Type) [Field Ω] [Algebra ℚ Ω] (ε : Ω →+* ℂ) (X : Tower Ω ε) (l : ℕ) [Fact l.Prime],
     (∀ b b' F F', Rel X l b F → Rel X l b' F' → Rel X l (b + b') (F + F')) ∧ Rel X l 0 0 ∧
     (∀ (c : ℤ_[l]) b F, Rel X l b F → Rel X l (c • b) (c • F)) ∧

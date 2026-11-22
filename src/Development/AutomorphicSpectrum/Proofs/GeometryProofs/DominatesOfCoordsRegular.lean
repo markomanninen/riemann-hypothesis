@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EtaleLocalizationAtPrimeTensorOfLowHeight
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapGermEqGenMapGerm
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkMap
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EtaleLocalizationAtPrimeTensorOfLowHeight
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapGermEqGenMapGerm
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkMap
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj GlobalTheory.CompanionTheory.Ar
 
@@ -96,6 +100,7 @@ variable {j : W ⟶ Y} [IsOpenImmersion j] {ζ : Spec (CommRingCat.of Ω) ⟶ W}
 theorem specializes_comp_iff {w : W} : genPt (ζ ≫ j) ⤳ j w ↔ genPt ζ ⤳ w :=
   j.isOpenEmbedding.isInducing.specializes_iff
 
+omit [IsOpenImmersion j] in
 theorem dominates_open : Dominates ζ (ζ ≫ j) j (RingHom.id Ω) := by
   simp [Dominates]
 

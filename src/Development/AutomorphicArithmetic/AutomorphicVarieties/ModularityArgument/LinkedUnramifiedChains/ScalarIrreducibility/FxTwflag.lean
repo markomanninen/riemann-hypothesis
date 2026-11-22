@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.RedDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.ScalarIrreducibility.DerRep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.CocRel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.AeComm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.CocExt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ZpowWNe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.OrbitCount
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.SelfTwistEigenvalues.UnipTorsion
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.Factor
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.RedDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.ScalarIrreducibility.DerRep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.CocRel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.AeComm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.CocExt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ZpowWNe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.OrbitCount
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.SelfTwistEigenvalues.UnipTorsion
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.Factor
+
+@[expose] public section
 
 open NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp IsLocalRing UpperTheory.V UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Base UpperTheory.V.Af UpperTheory.V.Pr UpperTheory.V.Alg UpperTheory.V.J
 
@@ -133,7 +137,7 @@ private theorem fx_kk {A : Type} [CommRing A] [Algebra O A] (g : G.G₀) :
   exact congrArg Units.val h
 
 private theorem fx_form {A : Type} [CommRing A] [Algebra O A] (ρ : Fr.NRep F n A) :
-    G.IsForm O n (K.tw ρ).toHomUnits (Jgl A n) := fun g => by
+    G.IsForm O n (K.tw ρ).toHomUnits (Jgl (R := A) n) := fun g => by
   have h1 : (ρ.r (K.π g))ᵀ * Jmat A n * ρ.r (F.conj (K.π g)) = Jmat A n := by
     have e : ρ.r (F.star (K.π g)) * ρ.r (F.conj (K.π g)) = 1 := by
       rw [← map_mul, Fr.Frame.star, map_inv, inv_mul_cancel, map_one]
@@ -246,7 +250,7 @@ private theorem fx_core (ρD : Fr.NRep F n (DualNumber Q))
   have c2 : Continuous fun g : G.G₀ => (ρD.map (dF Q)).r (K.π g)⁻¹ :=
     continuous_matrix fun i j => (hrc i j).comp (K.π_cont.inv)
   have hy : fxY K ρD ∈ Z1 (Loc.adGL (K.tw (ρD.map (dF Q))).toHomUnits) := ⟨c1.matrix_mul c2, fx_coc K ρD⟩
-  obtain ⟨hP, hrel⟩ := cocRel G O _ (fxY K ρD) (K.tw ρD).toHomUnits (Jgl _ n) ht (fx_form K ρD)
+  obtain ⟨hP, hrel⟩ := cocRel G O _ (fxY K ρD) (K.tw ρD).toHomUnits (Jgl (R := DualNumber Q) n) ht (fx_form K ρD)
   obtain ⟨R, hR⟩ := adExt G O _ _ hfull hP
   obtain ⟨Z, hZ'⟩ := hrel R hR
   obtain ⟨z, hz, hzy⟩ := cocExt G _ _ R hfull hcont hR _ hy Z hZ'

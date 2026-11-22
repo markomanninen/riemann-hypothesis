@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.BoundedStatements
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.IsCompactImageClosureMid
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.GlueCharts
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PChartComparison
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshMoll
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.BoundedStatements
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.IsCompactImageClosureMid
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.GlueCharts
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PChartComparison
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshMoll
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Regular

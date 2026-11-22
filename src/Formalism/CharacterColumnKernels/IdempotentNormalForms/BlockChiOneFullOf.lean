@@ -1,8 +1,12 @@
-import Formalism.CharacterColumnKernels.CharacterColumnKernelEqualityForm
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.BlockRhoFull
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthKerSmulLe
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.BlockChiOneTriv
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.ColKerChiOne
+module
+
+public import Formalism.CharacterColumnKernels.CharacterColumnKernelEqualityForm
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.BlockRhoFull
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthKerSmulLe
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.BlockChiOneTriv
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.ColKerChiOne
+
+@[expose] public section
 
 open Finset Classical
 

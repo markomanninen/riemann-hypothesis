@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem dvr_loc_principal_prime : ∀ {L : Type} [Field L] (A : Subring L) (t : 
     rw [IsLocalRing.isField_iff_maximalIdeal_eq, hmax, Ideal.span_singleton_eq_bot]
     exact ht0
   have hdvr : IsDiscreteValuationRing V0 :=
-    ((IsDiscreteValuationRing.TFAE V0 hnf).out 0 4).2
+    ((IsDiscreteValuationRing.TFAE V0 hnf).out 1 5).2
       (⟨⟨_, hmax⟩⟩ : (IsLocalRing.maximalIdeal V0).IsPrincipal)
   haveI : IsFractionRing V0 L := IsFractionRing.of_field V0 L fun z => by
     obtain ⟨a, ha, b, hb, hb0, h⟩ := hfr z

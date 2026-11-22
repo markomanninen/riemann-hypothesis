@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.DegVand
-import Formalism.LocalRingCardinality.DataTies
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OneLeFoldrMax
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.DegVand
+public import Formalism.LocalRingCardinality.DataTies
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OneLeFoldrMax
+
+@[expose] public section
 
 open MeasureTheory Matrix Formalism.BasicNotions Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf GlobalTheory.Amp GlobalTheory.Amp.AbsRange
 open scoped InnerProductSpace ENNReal
@@ -37,7 +41,7 @@ theorem abs_range_constants_first : ∀ Cg cb Cu cT CT C1 CMo : ℝ, ∃ C₀ : 
   obtain ⟨-, -, hμN, hS1, hS2⟩ := GlobalTheory.T.local_data_both_amplitude_sides D τ w w' θ W lam' S hθ0 hv0 hTT hW hS
   rw [hμN] at hS1 hS2
   have hDr' : Dr D.R.k D.R.rS W.z W.z' γ = ‖DminN W.z W.z' γ D.R.rS‖ := by
-    unfold Dr DminN; rw [dif_pos (by omega)]
+    unfold Dr DminN; rw [dite_eq_left (by omega)]
   have hTF : TwoFl D.R.k D.R.rS W.z W.z' γ :=
     ⟨hS1.1, hS2.1, hS1.2.1, hS2.2.1, hp.1, hp.2.2, by rw [hDr']; exact norm_ne_zero_iff.2 hDr⟩
   obtain ⟨hends, -, -, -, hD0, -⟩ := GlobalTheory.T.cellPoint_blockEnds_leadingMinors D W.z W.z' γ p hS1.1 hS2.1 hS1.2.1 hS2.2.1 hp
@@ -46,7 +50,7 @@ theorem abs_range_constants_first : ∀ Cg cb Cu cT CT C1 CMo : ℝ, ∃ C₀ : 
   have hOK : DeOK D.R.k D.R.rS W.z W.z' γ De := by
     refine ⟨hDe1, fun l _ hl => ?_⟩
     have e : Dmin D.R.k D.R.rS W.z W.z' γ l = DminN W.z W.z' γ l.val := by
-      unfold DminN; rw [dif_pos l.2]
+      unfold DminN; rw [dite_eq_left l.2]
     rw [e] at hl ⊢
     rcases Nat.eq_zero_or_pos l.val with h0 | h0
     · rw [h0, hD0]; simpa using hDe1

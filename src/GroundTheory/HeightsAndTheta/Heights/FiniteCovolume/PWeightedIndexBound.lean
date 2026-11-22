@@ -1,11 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
 open NumberField Module
 
-theorem WeightedIndexBound.proof (E : Type*) [Field E] [NumberField E] [IsTotallyComplex E]
+theorem WeightedIndexBound.proof (E : Type*) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
     (h₁ : CoeffLatticeBasis.Statement E) (h₂ : IndexLeDet.Statement E)
     (h₃ : WeightedNormSq.Statement E) (h₄ : WeightedSpaceDim.Statement E)
     (h₅ : ∀ [Fact (finrank ℝ (EuclideanSpace ℝ (InfinitePlace E × Fin 2)) = finrank ℚ E)],
@@ -21,7 +25,8 @@ theorem WeightedIndexBound.proof (E : Type*) [Field E] [NumberField E] [IsTotall
   have hcoe : ∀ z : Fin (finrank ℚ E) → ℤ, ((∑ j, z j • e j : A) : E) = ∑ j, z j • (e j : E) := by
     intro z
     change A.subtype _ = _
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_zsmul]
     rfl
   have haT : ∀ i, (a i : E) = ∑ j, T i j • (e j : E) := by
@@ -45,7 +50,8 @@ theorem WeightedIndexBound.proof (E : Type*) [Field E] [NumberField E] [IsTotall
   have hmink : (lam / Real.sqrt (finrank ℚ E)) ^ finrank ℚ E ≤ |o.volumeForm b| := by
     refine h₅ o b lam hlam0 fun z hz => ?_
     have hsum : ∑ i, (z i : ℝ) • b i = Φ ((∑ i, z i • e i : A) : E) := by
-      rw [hcoe, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hcoe, map_sum]
       simp only [map_zsmul, b, Int.cast_smul_eq_zsmul]
     rw [hsum]
     set x : A := ∑ i, z i • e i
@@ -60,7 +66,8 @@ theorem WeightedIndexBound.proof (E : Type*) [Field E] [NumberField E] [IsTotall
 
   have hab : (fun i => Φ (a i : E)) = fun i => ∑ j, (T i j : ℝ) • b j := by
     funext i
-    rw [haT i, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [haT i, map_sum]
     simp only [map_zsmul, b, Int.cast_smul_eq_zsmul]
   have hvol : o.volumeForm (fun i => Φ (a i : E)) = (T.det : ℝ) * o.volumeForm b := by
     rw [hab]; exact h₆ o b T
@@ -79,7 +86,7 @@ theorem WeightedIndexBound.proof (E : Type*) [Field E] [NumberField E] [IsTotall
   have hhad : |o.volumeForm (fun i => Φ (a i : E))| ≤ (r * lam) ^ finrank ℚ E := by
     refine (o.abs_volumeForm_apply_le _).trans ?_
     calc ∏ i, ‖Φ (a i : E)‖ ≤ ∏ _i : Fin (finrank ℚ E), r * lam :=
-          Finset.prod_le_prod (fun i _ => norm_nonneg _) (fun i _ => hnorm i)
+          Finset.prod_le_prod₀ (fun i _ => norm_nonneg _) (fun i _ => hnorm i)
       _ = (r * lam) ^ finrank ℚ E := by simp
 
   have hpos : 0 < (lam / Real.sqrt (finrank ℚ E)) ^ finrank ℚ E := pow_pos (div_pos hlam0 hsd) _

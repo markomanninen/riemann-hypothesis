@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IwahoriEigenvaluesOfNewton
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IwahoriEigenvaluesOfNewton
+
+@[expose] public section
+
 open GlobalTheory.UnitLemma Polynomial
 
 noncomputable section
@@ -124,7 +129,7 @@ theorem iwahori_roots : ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValu
   have hrt : ∀ i, M.charpoly.IsRoot (r i) := fun i => by
     have h1 : ((G.map (algebraMap O E)).charpoly).IsRoot (algebraMap O E (ϖ ^ b i * z i)) := by
       rw [Matrix.charpoly_map]
-      exact (hzr i).map
+      exact Polynomial.IsRoot.map (algebraMap O E) (hzr i)
     rw [IsRoot.def, Matrix.eval_charpoly] at h1 ⊢
     have : Matrix.scalar (Fin n) (r i) - M = algebraMap O E ϖ ^ N •
         (Matrix.scalar (Fin n) (algebraMap O E (ϖ ^ b i * z i)) - G.map (algebraMap O E)) := by

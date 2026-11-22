@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsSchemeTheoreticallyDominantSpecMap
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsSchemeTheoreticallyDominantSpecMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,8 +64,8 @@ theorem hom_ext_of_dominant {W X Y Z : Scheme.{u}} {f g : X ⟶ Y} (s : Y ⟶ Z)
 
 variable {U S : Scheme.{u}} (j : U ⟶ S) [QuasiCompact j] [IsSchemeTheoreticallyDominant j]
 
-variable {j} in
 
+variable {j} in
 theorem over_hom_ext_of_isPullback {X Y : Over S} [Flat X.hom] [IsSeparated Y.hom] {X' : Scheme.{u}}
     {φ : X' ⟶ X.left} {p : X' ⟶ U} (h : IsPullback φ p X.hom j) {f g : X ⟶ Y}
     (hfg : φ ≫ f.left = φ ≫ g.left) : f = g := by
@@ -89,8 +93,8 @@ theorem isIso_of_pullback {X Y : Over S} [Flat X.hom] [IsSeparated X.hom] [Flat 
     (hf : (Over.pullback j).map f = e.hom) (hg : (Over.pullback j).map g = e.inv) : IsIso f :=
   ⟨g, comp_eq_id_of_pullback j e f g hf hg⟩
 
-variable {j} in
 
+variable {j} in
 theorem comp_eq_id_of_isPullback {X Y : Over S} [Flat X.hom] [IsSeparated X.hom] [Flat Y.hom] [IsSeparated Y.hom]
     {X' Y' : Over U} {φ : X'.left ⟶ X.left} {ψ : Y'.left ⟶ Y.left}
     (hX : IsPullback φ X'.hom X.hom j) (hY : IsPullback ψ Y'.hom Y.hom j) (e : X' ≅ Y') (f : X ⟶ Y) (g : Y ⟶ X)
@@ -104,8 +108,8 @@ theorem comp_eq_id_of_isPullback {X Y : Over S} [Flat X.hom] [IsSeparated X.hom]
     rw [Over.comp_left, ← Category.assoc, ← hg, Category.assoc, ← hf, ← Category.assoc, ← Over.comp_left,
       e.inv_hom_id, Over.id_left, Over.id_left, Category.id_comp, Category.comp_id]
 
-variable {j} in
 
+variable {j} in
 theorem isIso_of_isPullback {X Y : Over S} [Flat X.hom] [IsSeparated X.hom] [Flat Y.hom] [IsSeparated Y.hom]
     {X' Y' : Over U} {φ : X'.left ⟶ X.left} {ψ : Y'.left ⟶ Y.left}
     (hX : IsPullback φ X'.hom X.hom j) (hY : IsPullback ψ Y'.hom Y.hom j) (e : X' ≅ Y') (f : X ⟶ Y) (g : Y ⟶ X)
@@ -187,8 +191,8 @@ theorem existsUnique_oAct_of_isGrpPullback {O : Type} [CommRing O] {G : Over S} 
     rfl
   · exact over_hom_ext_of_isPullback hG.1 ((hb x).symm.trans (hf x))
 
-variable (j) in
 
+variable (j) in
 theorem existsUnique_oAct_pullback {O : Type} [CommRing O] {G : Over S} [GrpObj G] [IsCommMonObj G] [Flat G.hom]
     [IsSeparated G.hom] (i : OAct O ((Over.pullback j).obj G))
     (hi : ∀ x, ∃ f : G ⟶ G, (Over.pullback j).map f = i.act x) :
@@ -209,23 +213,6 @@ theorem flat_and_isSeparated_of_isSemiAbelian {S : Scheme.{u}} (G : Over S) [Grp
   have := h.smooth
   exact ⟨inferInstance, h.separated⟩
 
-def intAct {S : Scheme.{0}} (G : Over S) [GrpObj G] [IsCommMonObj G] : OAct ℤ G where
-  act n := 𝟙 G ^ n
-  hom n := by
-    induction n using Int.induction_on with
-    | zero => rw [zpow_zero, Hom.one_def]; infer_instance
-    | succ n ih => rw [zpow_add_one, Hom.mul_def]; infer_instance
-    | pred n ih => rw [zpow_sub_one, Hom.mul_def]; infer_instance
-  one := zpow_one _
-  mul a b := by rw [GrpObj.comp_zpow, Category.comp_id, zpow_mul]
-  add a b := zpow_add _ _ _
-
-theorem intAct_pullback {U S : Scheme.{0}} (j : U ⟶ S) (G : Over S) [GrpObj G] [IsCommMonObj G] (n : ℤ) :
-    (Over.pullback j).map ((intAct G).act n) = (intAct ((Over.pullback j).obj G)).act n := by
-  have h := map_zpow (MonoidHom.mk' (fun f : G ⟶ G => (Over.pullback j).map f)
-    fun _ _ => CategoryTheory.Functor.map_mul _ _ _) (𝟙 G) n
-  simpa [intAct] using h
-
 theorem splitTorusAff_flat_and_isSeparated (R : CommRingCat.{u}) (X : Type u) [AddCommGroup X] :
     Flat (splitTorusAff R X).hom ∧ IsSeparated (splitTorusAff R X).hom := by
   constructor
@@ -234,32 +221,6 @@ theorem splitTorusAff_flat_and_isSeparated (R : CommRingCat.{u}) (X : Type u) [A
     exact RingHom.flat_algebraMap_iff.2 inferInstance
   · change IsSeparated (Spec.map (CommRingCat.ofHom (algebraMap R (AddMonoidAlgebra R X))))
     infer_instance
-
-theorem intAct_splitTorusAff_zero_ne_one (R : CommRingCat.{0}) [Nontrivial R] (X : Type) [AddCommGroup X]
-    [Nontrivial X] : (intAct (splitTorusAff R X)).act 0 ≠ (intAct (splitTorusAff R X)).act 1 := by
-  intro h
-  rw [(intAct _).one] at h
-  change (𝟙 _ : splitTorusAff R X ⟶ _) ^ (0 : ℤ) = _ at h
-  rw [zpow_zero, Hom.one_def] at h
-  have h₁ : Spec.map (CommRingCat.ofHom (algebraMap R (AddMonoidAlgebra R X))) ≫ (η[splitTorusAff R X]).left =
-      𝟙 (Spec (torusRing R X)) := congrArg (fun z => z.left) h
-  obtain ⟨ψ, hψ⟩ := Spec.map_surjective (R := torusRing R X) (S := R) (η[splitTorusAff R X]).left
-  rw [← hψ] at h₁
-  have h₂ : ψ ≫ CommRingCat.ofHom (algebraMap R (AddMonoidAlgebra R X)) = 𝟙 (torusRing R X) :=
-    Spec.map_injective (by rw [Spec.map_comp, Spec.map_id]; exact h₁)
-  obtain ⟨x, hx⟩ := exists_ne (0 : X)
-  have h₃ : algebraMap R (AddMonoidAlgebra R X) (ψ (AddMonoidAlgebra.single x 1)) = AddMonoidAlgebra.single x 1 :=
-    congrArg (fun z => z.hom (AddMonoidAlgebra.single x 1)) h₂
-  rw [AddMonoidAlgebra.coe_algebraMap, Function.comp_apply] at h₃
-  have h₄ := congrArg (fun z : AddMonoidAlgebra R X => z.coeff x) h₃
-  simp [hx] at h₄
-
-theorem intAct_unique_extension (a : OAct ℤ (splitTorusAff (CommRingCat.of ℤ) ℤ))
-    (ha : OAct.pullback (Spec.map (CommRingCat.ofHom (algebraMap ℤ ℚ))) _ a = intAct _) : a = intAct _ := by
-  obtain ⟨_, _⟩ := spec_fractionRing ℤ ℚ
-  obtain ⟨_, _⟩ := splitTorusAff_flat_and_isSeparated (CommRingCat.of ℤ) ℤ
-  exact (existsUnique_oAct_pullback _ _ fun n => ⟨_, intAct_pullback _ _ n⟩).unique ha
-    (oAct_ext fun n => intAct_pullback _ _ n)
 
 end GlobalTheory.ExtUnique
 

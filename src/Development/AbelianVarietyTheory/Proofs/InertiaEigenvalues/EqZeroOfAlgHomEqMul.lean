@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBin
+
+@[expose] public section
 
 open PowerSeries GlobalTheory.CycFr
 
 namespace GlobalTheory.CycFr
 
-open PowerSeries in
 
+open PowerSeries in
 theorem _root_.GlobalTheory.CycFr.eq_act_of_comm {l : ℕ} [Fact l.Prime] {O : Type}
     [CommRing O] [IsDomain O] [CharZero O]
     [Algebra ℤ_[l] O] (φ₀ g : O⟦X⟧ →ₐ[O] O⟦X⟧) (c : ℤ_[l]) (hφ : φ₀ X = (1 + X) ^ l - 1)
@@ -26,10 +30,10 @@ theorem _root_.GlobalTheory.CycFr.eq_act_of_comm {l : ℕ} [Fact l.Prime] {O : T
   have hA0 : constantCoeff A = 0 :=
     PowerSeries.X_dvd_iff.mp (_root_.GlobalTheory.CycFr.X_dvd_act_X c)
   have hG : φ₀ G = (1 + G) ^ l - 1 := by
-    rw [hGdef, hc, hφ]; simp [map_sub, map_pow, map_add, map_one]
+    rw [hGdef, hc, hφ]; simp [map_sub, map_pow, map_add (f := _), map_one]
   have hA : φ₀ A = (1 + A) ^ l - 1 := by
     rw [hAdef, hφact, _root_.GlobalTheory.CycFr.act_comm, ← hφact, hφ]
-    simp [map_sub, map_pow, map_add, map_one]
+    simp [map_sub, map_pow, map_add (f := _), map_one]
   have hstep : ∀ n, 2 ≤ n → ∀ E : O⟦X⟧, G - A = X ^ n * E → constantCoeff E = 0 := by
     intro n hn E hE
     set S : O⟦X⟧ := ∑ i ∈ Finset.range l, (1 + G) ^ i * (1 + A) ^ (l - 1 - i) with hSdef

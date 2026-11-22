@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.CechDR
 
 set_option autoImplicit false
@@ -28,7 +33,7 @@ theorem pull1_restrict_surjective_of_comma : ∀ {R : Type} [CommRing R] {C : Ty
     have k2 := hx T T' φ t (ψ ≫ u)
     have k3 := hx T' T'' ψ t u
     rw [mp_comp] at k2
-    simp only [map_sub, map_add, Category.assoc] at k1 k2 ⊢
+    simp only [map_sub, map_add (f := _), Category.assoc] at k1 k2 ⊢
     linear_combination k1 - k2 - k3)
   refine ⟨H1.mk F ⟨x, hxc⟩, ?_⟩
   rw [CoefMap.pullCohomologyOne_class, H1.mk_eq_mk]

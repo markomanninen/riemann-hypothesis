@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.SymplecticIwahori.AdjMulSelf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.SymplecticIwahori.NilPoly
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteMaximalSpectrumOfFiniteOfIsLocalRing
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.SymplecticIwahori.AdjMulSelf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.SymplecticIwahori.NilPoly
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteMaximalSpectrumOfFiniteOfIsLocalRing
+
+@[expose] public section
+
 open IsLocalRing Polynomial UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws UpperTheory.V.Ws.Pp
 
 private theorem nearPoly_local (B S : Type) [CommRing B] [HenselianLocalRing B] [CommRing S] [IsDomain S]
@@ -31,10 +36,14 @@ theorem UpperTheory.V.Ws.Pp.nearPoly :
       IsFractionRing.injective B (FractionRing B) (congrArg Subtype.val e)
     obtain ⟨Q, _, hQ⟩ := Ideal.exists_ideal_over_prime_of_isIntegral_of_isDomain (S := S) (RingHom.ker x)
       (by rw [(RingHom.injective_iff_ker_eq_bot _).1 hinj]; exact bot_le)
-    have h3 : t ∈ Q.comap (algebraMap B S) := by rw [hQ]; exact ht
+    have h3 : t ∈ Q.comap (algebraMap B S) := by
+      change t ∈ Ideal.under B Q
+      rw [hQ]
+      exact ht
     have h4 : algebraMap O B d ∈ Q.comap (algebraMap B S) := by
       rw [Ideal.mem_comap, h2]
       exact Q.mul_mem_right _ h3
+    change algebraMap O B d ∈ Ideal.under B Q at h4
     rw [hQ, RingHom.mem_ker, x.commutes] at h4
     exact hd h4
   obtain ⟨p, hp, h0⟩ := nilPoly (B := B) w hw

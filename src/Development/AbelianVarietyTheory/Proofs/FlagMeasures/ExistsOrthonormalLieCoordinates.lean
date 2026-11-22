@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IpLEqZeroOfMemSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IpLEqZeroOfMemSpan
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas Formalism.REAL
 
@@ -135,7 +139,8 @@ theorem exists_continuous_section (n d m : ℕ) (ε : Fin n → Bool)
     rw [jInv_jInv_mul] at h'
     linarith
   rw [← ipL_apply, hfix x, map_sub, map_smul, h0, smul_zero, sub_zero]
-  simp only [Y, map_sum, map_smul, ipL_apply, hE, smul_eq_mul, mul_ite, mul_one, mul_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Y, map_sum, map_smul, ipL_apply, hE, smul_eq_mul, mul_ite, mul_one, mul_zero]
   simp
 
 end GlobalTheory.NilCovSec

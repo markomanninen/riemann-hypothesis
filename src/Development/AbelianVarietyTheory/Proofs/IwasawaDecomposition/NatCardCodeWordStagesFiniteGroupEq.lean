@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.HilbertRowConditions.KaTiedIffKapDef
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.HostPins
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.PublishedTheorems.WeberRayClassFields.WeberRayFieldSt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSmallFieldClassFieldPiecesStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.HilbertRowConditions.KaTiedIffKapDef
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.HostPins
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.PublishedTheorems.WeberRayClassFields.WeberRayFieldSt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSmallFieldClassFieldPiecesStatement
+
+@[expose] public section
 
 noncomputable section
 

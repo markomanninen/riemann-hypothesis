@@ -1,20 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ParamsEx
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GaussianBinomialClosedForm
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ActOfMemGfC
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RaisingLoweringOperators
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TranslateMemCoefLatFn
-import Development.AbelianVarietyTheory.Definitions.Foundations.ForallEventuallyFinLocIff
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SqEqOneOfFixDat
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RealTranslationCuspFormMapsEqSmoothLinearMap
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ParamsEx
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GaussianBinomialClosedForm
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ActOfMemGfC
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RaisingLoweringOperators
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TranslateMemCoefLatFn
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ForallEventuallyFinLocIff
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SqEqOneOfFixDat
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RealTranslationCuspFormMapsEqSmoothLinearMap
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
@@ -173,7 +178,17 @@ theorem om_ptP (hC : GlobalTheory.Hk3.Core R F) {B : Base (Vc D i) (Wc D i)} (h 
     rw [h.mu_mul ht, h.exponent]
     exact (GlobalTheory.PairInfTypes.infTypesAt D T0 R.toLevCh A.μ0 hL i t τ).mu
   rw [hpt, hpt]
-  exact om_fock_of (GlobalTheory.ConjTwist.Test.frame_good hC h) hsig (D.sp.W_sig _) heta hinf hω hf' hv' hu P
+  have hF : B.F.Good := by
+    refine { rank_le := B.hr, onbS := ?_, cartT := ?_, onbT := ?_, sdS := ?_, sdT := ?_, frS := ?_, frT := ?_, vac := ?_ }
+    · intro τ; rw [h.BS]; exact hC.models.BV i τ
+    · intro τ; rw [h.sT]; exact GlobalTheory.AdTh.VecFock.isCartanInv_cart _ τ
+    · intro τ; rw [h.sT, h.BT]; exact GlobalTheory.AdTh.VecFock.isONBasis_onb _ τ _ (hC.models.order i τ)
+    · rw [h.ΛS]; exact GlobalTheory.AdTh.RecPair.selfDual_of_coe (GlobalTheory.AdTh.RecPair.coe_eq_of_frame (hC.lev.βV i))
+    · rw [h.ΛT]; exact GlobalTheory.AdTh.RecPair.selfDual_of_coe (GlobalTheory.AdTh.RecPair.coe_eq_of_frame (hC.lev.βW i))
+    · rw [h.ΛS, h.βS]; exact (hC.lev.βV i).choose_spec.1
+    · rw [h.ΛT, h.βT]; exact (hC.lev.βW i).choose_spec.1
+    · rw [h.ψ, h.θ, h.sT, h.ΛS, h.ΛT, h.vac]; exact (hC.thP.vP i A.μ0).1
+  exact om_fock_of hF hsig (D.sp.W_sig _) heta hinf hω hf' hv' hu P
 
 theorem real_points_fock : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T : Type) (A : FamIn D.what₂.LL G Pl0 T D.R.m) (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A), GlobalTheory.LiftRows.Given R F → R.FullP → ∀ (i : Fin D.R.m) (t : T), ∃ (w : GlobalTheory.ExportSeries.Weight D (Vc D i).rank) (BS : GlobalTheory.ExportSeries.GLR D (Vc D i).rank) (r : ↥(GinfC (Vc D i)) →* GlobalTheory.ExportSeries.GLR D (Vc D i).rank), (∀ (u : ↥(GinfC (Vc D i))) (P : PolF D (Wc D i).rank (Vc D i).rank), R.ωP i t ((u : GA D (Vc D i)), 1) (R.ptP i t P) = R.ptP i t (GlobalTheory.ExportSeries.fockGL (Wc D i).rank w BS (r u) P)) ∧ (∀ (u : ↥(GinfC (Vc D i))) (τ : D.what₂.Tau), ((GlobalTheory.ExportSeries.inBasis BS (r u) τ : GL (Fin (Vc D i).rank) ℂ) : Matrix (Fin (Vc D i).rank) (Fin (Vc D i).rank) ℂ) ∈ Matrix.unitaryGroup (Fin (Vc D i).rank) ℂ) ∧ (∀ g : GlobalTheory.ExportSeries.GLR D (Vc D i).rank, (∀ τ, ((GlobalTheory.ExportSeries.inBasis BS g τ : GL (Fin (Vc D i).rank) ℂ) : Matrix (Fin (Vc D i).rank) (Fin (Vc D i).rank) ℂ) ∈ Matrix.unitaryGroup (Fin (Vc D i).rank) ℂ) → ∃ u, r u = g) ∧ (∀ (τ : D.what₂.Tau) (j : Fin (Wc D i).rank), (R.MW i (sg0 D A)).ε τ j = decide ((j : ℕ) < w.p τ)) := by
   intro D G _ _ Pl0 T A Ks _ _ _ R F hG _ i t
@@ -181,7 +196,16 @@ theorem real_points_fock : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T 
   obtain ⟨B, hb, ht, rfl⟩ : ∃ B : Base (Vc D i) (Wc D i), BaseOf R i B ∧ IsTupOf R B (tupTwist R t) t ∧
       B = baseAt R i hC.models.BV (Twist.triv Circle ∅) ⟨⊥, 1⟩ :=
     ⟨_, baseOf_baseAt R hC.models.BV _ _, isTupOf_tupTwist R hC.models.BV t _, rfl⟩
-  have hF := GlobalTheory.ConjTwist.Test.frame_good hC hb
+  have hF : (baseAt R i hC.models.BV (Twist.triv Circle ∅) ⟨⊥, 1⟩).F.Good := by
+    refine { rank_le := (baseAt R i hC.models.BV (Twist.triv Circle ∅) ⟨⊥, 1⟩).hr, onbS := ?_, cartT := ?_, onbT := ?_, sdS := ?_, sdT := ?_, frS := ?_, frT := ?_, vac := ?_ }
+    · intro τ; rw [hb.BS]; exact hC.models.BV i τ
+    · intro τ; rw [hb.sT]; exact GlobalTheory.AdTh.VecFock.isCartanInv_cart _ τ
+    · intro τ; rw [hb.sT, hb.BT]; exact GlobalTheory.AdTh.VecFock.isONBasis_onb _ τ _ (hC.models.order i τ)
+    · rw [hb.ΛS]; exact GlobalTheory.AdTh.RecPair.selfDual_of_coe (GlobalTheory.AdTh.RecPair.coe_eq_of_frame (hC.lev.βV i))
+    · rw [hb.ΛT]; exact GlobalTheory.AdTh.RecPair.selfDual_of_coe (GlobalTheory.AdTh.RecPair.coe_eq_of_frame (hC.lev.βW i))
+    · rw [hb.ΛS, hb.βS]; exact (hC.lev.βV i).choose_spec.1
+    · rw [hb.ΛT, hb.βT]; exact (hC.lev.βW i).choose_spec.1
+    · rw [hb.ψ, hb.θ, hb.sT, hb.ΛS, hb.ΛT, hb.vac]; exact (hC.thP.vP i A.μ0).1
   have hθ : IsInfFam R.θ := hF.vac.2.inf
   have hBS : ∀ τ, (R.BV i τ)ᴴ * gramAt D (Vc D i) τ * R.BV i τ = 1 := fun τ => onb_posDef (hC.models.BV i τ)
   have eu : ∀ (g : GLR D (Vc D i).rank) τ,

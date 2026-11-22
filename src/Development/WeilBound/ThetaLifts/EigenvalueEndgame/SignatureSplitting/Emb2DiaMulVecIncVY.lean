@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.ClosedEmb
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.StabClosed
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.EmbMMul
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.ClosedEmb
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.StabClosed
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.EmbMMul
+
+@[expose] public section
 
 noncomputable section
 

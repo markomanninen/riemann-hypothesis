@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.OperatorsPreserveLattices
-import Formalism.LocalRingCardinality.DataLatDefs
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.OperatorsPreserveLattices
+public import Formalism.LocalRingCardinality.DataLatDefs
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -39,7 +43,8 @@ def IsRat (F : W) : Prop := ∀ t, ev t F ∈ Set.range e
 theorem ev_pi (hsm : ∀ (a : LL) x, cmp (a • x) = e a • cmp x) (hval : ∀ x, IsRat e ev (cmp x))
     (π : Kf →+ LL) (hπ : ∀ a x, π (e a * x) = a * π x) (c : V →₀ Kf) (t : T) :
     ev t (cmp (c.sum fun x a => π a • x)) = e (π (ev t (c.sum fun x a => a • cmp x))) := by
-  simp only [Finsupp.sum, map_sum, hsm, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finsupp.sum, map_sum, hsm, map_smul, smul_eq_mul]
   refine Finset.sum_congr rfl fun x _ => ?_
   obtain ⟨r, hr⟩ := hval x t
   rw [← hr, mul_comm (c x), hπ, map_mul, mul_comm]
@@ -72,8 +77,10 @@ theorem li_of_rat (hsep : ∀ F : W, (∀ t, ev t F = 0) → F = 0)
     obtain ⟨r, hr⟩ := hval (b j) t
     rw [← hr, mul_comm (g j), hπ, map_mul, mul_comm]
   have h0 := congrArg (fun F => e (π (ev t F))) hg
-  simp only [map_sum, map_smul, smul_eq_mul, map_zero] at h0
-  simp only [map_sum, hsm, map_smul, smul_eq_mul, key]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, smul_eq_mul, map_zero] at h0
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, hsm, map_smul, smul_eq_mul, key]
   exact h0
 
 def descOp (hsm : ∀ (a : LL) x, cmp (a • x) = e a • cmp x) (hinj : Function.Injective cmp) (Tp : W →ₗ[Kf] W)
@@ -84,7 +91,7 @@ def descOp (hsm : ∀ (a : LL) x, cmp (a • x) = e a • cmp x) (hinj : Functio
     have h1 := Classical.choose_spec (h (x + y))
     have h2 := Classical.choose_spec (h x)
     have h3 := Classical.choose_spec (h y)
-    rw [map_add cmp (Classical.choose (h x)), h1, h2, h3, map_add, map_add]
+    rw [map_add cmp (Classical.choose (h x)), h1, h2, h3, map_add (f := _), map_add (f := _)]
   map_smul' a x := by
     apply hinj
     have h1 := Classical.choose_spec (h (a • x))
@@ -107,7 +114,7 @@ def evP (t : α × P.Tup × ((Σ v : Fin P.nV, Fin (P.n' v) × (Fin (P.m + 1) ×
     FnP P α →ₗ[Kf] Kf :=
   (MvPolynomial.lcoeff Kf t.2.2) ∘ₗ (LinearMap.proj t.2.1) ∘ₗ (LinearMap.proj t.1)
 
-theorem localComponent_apply₂ (i : α) (L : P.Tup) (m) (F : FnP P α) : evP P α (i, L, m) F = coeff m (F i L) := rfl
+theorem localComponent_apply₂ (i : α) (L : P.Tup) (m) (F : FnP P α) : evP P α (i, L, m) F = AddMonoidAlgebra.coeff (F i L) m := rfl
 
 theorem eq_zero_of_forall_evalCoeff_eq_zero (F : FnP P α) (h : ∀ t, evP P α t F = 0) : F = 0 := by
   funext i L
@@ -126,12 +133,13 @@ theorem isRational_iff (F : FnP P α) : RatFnP P α e F ↔ IsRat e (evP P α) F
     exact ⟨_, rfl⟩
   · intro h i L
     obtain ⟨π, -, hπe⟩ := exists_retr e
-    have hc : ∀ n, e (π (coeff n (F i L))) = coeff n (F i L) := fun n => by
+    have hc : ∀ n, e (π (AddMonoidAlgebra.coeff (F i L) n)) = AddMonoidAlgebra.coeff (F i L) n := fun n => by
       obtain ⟨r, hr⟩ := h (i, L, n)
       rw [localComponent_apply₂] at hr
       rw [← hr, hπe]
-    refine ⟨∑ n ∈ (F i L).support, MvPolynomial.monomial n (π (coeff n (F i L))), ?_⟩
-    rw [map_sum]
+    refine ⟨∑ n ∈ (F i L).support, MvPolynomial.monomial n (π (AddMonoidAlgebra.coeff (F i L) n)), ?_⟩
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [MvPolynomial.map_monomial, hc]
     exact (MvPolynomial.as_sum (F i L)).symm
 
@@ -143,7 +151,7 @@ variable {p : ℕ} (G : GAtP p) {LL : Type} [Field LL] (e : LL →+* G.Kf)
 
 abbrev evG := evP G.P G.comp
 
-theorem evG_apply (i : G.comp) (L : G.P.Tup) (m) (F : G.Fn) : evG G (i, L, m) F = coeff m (F i L) := rfl
+theorem evG_apply (i : G.comp) (L : G.P.Tup) (m) (F : G.Fn) : evG G (i, L, m) F = AddMonoidAlgebra.coeff (F i L) m := rfl
 
 theorem evG_sep (F : G.Fn) (h : ∀ t, evG G t F = 0) : F = 0 := eq_zero_of_forall_evalCoeff_eq_zero G.P G.comp F h
 
@@ -166,11 +174,11 @@ def yK (v : Fin G.P.nV) : G.Fn →ₗ[G.Kf] G.Fn where
 
 theorem yv_rat (v : Fin G.P.nV) (F : G.Fn) (h : IsRat e (evG G) F) : IsRat e (evG G) (G.yv v F) := by
   rintro ⟨i, L, m⟩
-  have hF : ∀ L', coeff m (F i L') ∈ e.range := fun L' => by
+  have hF : ∀ L', AddMonoidAlgebra.coeff (F i L') m ∈ e.range := fun L' => by
     obtain ⟨r, hr⟩ := h (i, L', m)
     exact RingHom.mem_range.2 ⟨r, hr.trans (evG_apply G i L' m F)⟩
   have hp : ((p : G.Kf) ^ G.P.ArV v) ∈ e.range := RingHom.mem_range.2 ⟨(p : LL) ^ G.P.ArV v, by simp⟩
-  show coeff m (Level.yv (P := G.P) v (F i) L) ∈ Set.range e
+  show AddMonoidAlgebra.coeff (Level.yv (P := G.P) v (F i) L) m ∈ Set.range e
   rw [LatticeSystems.ef_yv_eq, MvPolynomial.coeff_smul, MvPolynomial.coeff_sum, smul_eq_mul]
   exact RingHom.mem_range.1 (Subring.mul_mem _ hp (Subring.sum_mem _ fun L'' _ => hF _))
 
@@ -209,7 +217,8 @@ theorem cmp_inj u (w : D.what₂.places.Pl) (hg : GIdx D.host (D.mem u).A.T (D.w
   have hsum : ∑ a, (fun a => c.embW u w hg (((D.fm u).lat 0).b.repr x a)) a •
       c.cmp u w hg (((D.fm u).lat 0).b a) = 0 := by
     have h1 := congrArg (c.cmp u w hg) (((D.fm u).lat 0).b.sum_repr x)
-    rw [map_sum, hx] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, hx] at h1
     simpa only [c.cmp_smul] using h1
   have hz : ∀ a, ((D.fm u).lat 0).b.repr x a = 0 := fun a =>
     (c.embW u w hg).injective ((hli Finset.univ _ hsum a (Finset.mem_univ a)).trans (map_zero _).symm)
@@ -226,7 +235,7 @@ theorem cmp_mem_span u (w : D.what₂.places.Pl) (hg : GIdx D.host (D.mem u).A.T
     rw [← c.cmp_M u w hg]
     exact Submodule.subset_span ⟨y, hy, rfl⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add y z _ _ h1 h2 => rw [map_add]; exact Submodule.add_mem _ h1 h2
+  | add y z _ _ h1 h2 => rw [map_add (f := _)]; exact Submodule.add_mem _ h1 h2
   | smul a y _ h1 => rw [c.cmp_smul]; exact Submodule.smul_mem _ _ h1
 
 theorem ValRat.all (h : ValRat c) u (w : D.what₂.places.Pl) (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w))
@@ -263,7 +272,7 @@ theorem yv_span {p : ℕ} (G : GAtP p) (v : Fin G.P.nV) (F : G.Fn)
   induction hF using Submodule.span_induction with
   | mem y hy => exact Submodule.subset_span ((Model.operators_preserve_lattices D' G).2 v y hy)
   | zero => rw [← yK_apply, map_zero]; exact Submodule.zero_mem _
-  | add y z _ _ h1 h2 => rw [← yK_apply, map_add]; exact Submodule.add_mem _ h1 h2
+  | add y z _ _ h1 h2 => rw [← yK_apply, map_add (f := _)]; exact Submodule.add_mem _ h1 h2
   | smul a y _ h1 => rw [← yK_apply, map_smul]; exact Submodule.smul_mem _ _ h1
 
 theorem yvRat_of_valRat (h : ValRat c) (u : D.what₂.Word) (w : D.what₂.places.Pl)

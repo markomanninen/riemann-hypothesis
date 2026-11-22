@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCLoc
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCLoc
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBC
 

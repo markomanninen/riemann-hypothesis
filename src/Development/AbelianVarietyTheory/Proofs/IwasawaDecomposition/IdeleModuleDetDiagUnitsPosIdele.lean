@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspRapidDecaySiegelGL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspRapidDecaySiegelGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,9 +13,9 @@ open scoped NumberField.AdeleRing
 
 namespace GlobalTheory.CuspBoundSiegel
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem posIdele_mul (ρ σ : ℝ) (hρ : 0 < ρ) (hσ : 0 < σ) :
     posIdele (K := E) (ρ * σ) (mul_pos hρ hσ) = posIdele ρ hρ * posIdele σ hσ := by
   unfold posIdele
@@ -26,7 +30,7 @@ theorem posIdele_exp (u : ℝ) :
   refine Units.ext (ad_ext ?_ ?_)
   · have h : ∀ x, pInf E (sInf E x) = x := fun x => (infEq E).symm_apply_apply x
     change _ = pInf E (1 - sInf E 1 + sInf E _)
-    simp only [map_add, map_sub, map_one, h, sub_self, zero_add]
+    simp only [map_add (f := _), map_sub, map_one, h, sub_self, zero_add]
     funext w
     have hc := IsTotallyComplex.isComplex w
     have hw : ¬ w.IsReal := InfinitePlace.not_isReal_iff_isComplex.2 hc
@@ -34,13 +38,13 @@ theorem posIdele_exp (u : ℝ) :
     rw [← coe_infiniteProj, infiniteProj_posIdele]
     show (InfinitePlace.Completion.ringEquivComplexOfIsComplex hc) (posRealElem w _) = _
     unfold posRealElem
-    rw [dif_neg hw, RingEquiv.apply_symm_apply]
+    rw [dite_eq_right hw, RingEquiv.apply_symm_apply]
     simp [InfinitePlace.mult, hw, Real.sqrt_sq (Real.exp_pos u).le, expU, Complex.ofReal_exp]
   · change ((posIdele _ _ : IdeleGroup E) : AdeleRing (𝓞 E) E).2 = (1 : Af E) - 0 + 0
     rw [sub_zero, add_zero]
     exact IsDedekindDomain.FiniteAdeleRing.ext _ fun v => by rw [posIdele_finite]; rfl
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem posIdele_congr {x y : ℝ} (hx : 0 < x) (hy : 0 < y) (h : x = y) :
     posIdele (K := E) x hx = posIdele y hy := by subst h; rfl
 
@@ -51,16 +55,16 @@ theorem diagUnits_posIdele (a : ℕ) {x : ℝ} (hx : 0 < x) :
   rw [coe_diagUnits]
   rfl
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem continuous_posIdele_pos :
     Continuous fun r : {r : ℝ // 0 < r} => (posIdele (K := E) r.1 r.2 : IdeleGroup E) := by
   unfold posIdele
   exact continuous_finsetProd _ fun w _ => (continuous_moduleSection w).comp
     (Continuous.subtype_mk ((continuous_subtype_val).pow _) _)
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem ideleModule_det_diagUnits_posIdele (a : ℕ) {x : ℝ} (hx : 0 < x) :
     (IdeleGroup.ideleModule E (Matrix.GeneralLinearGroup.det
       (diagUnits a (fun _ : Fin a => posIdele (K := E) x hx))) : ℝ) = x ^ (a * Module.finrank ℚ E) := by

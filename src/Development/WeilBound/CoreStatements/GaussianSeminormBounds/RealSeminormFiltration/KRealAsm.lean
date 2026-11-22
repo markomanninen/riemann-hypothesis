@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPolynomialsLocallyFiniteRationalWeights
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorIrreducibleModules
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyFinitePiTensorSumOfFactorOperators
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeakExponentialActionOnFockVectors
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.KRealAsmOne
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLActs
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.EvIHalfTrace
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLFock
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLLines
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLFrame
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLParity
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.EigenKilling.PolRange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPolynomialsLocallyFiniteRationalWeights
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorIrreducibleModules
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyFinitePiTensorSumOfFactorOperators
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeakExponentialActionOnFockVectors
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.KRealAsmOne
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLActs
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.EvIHalfTrace
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLFock
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLLines
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLFrame
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLParity
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.EigenKilling.PolRange
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,8 @@ theorem map_atPl (p : ∀ i, V i →ₗ[ℂ] W i) (w : ι) (L : Module.End ℂ (
 theorem map_sumPl (p : ∀ i, V i →ₗ[ℂ] W i) (L : ∀ i, Module.End ℂ (V i)) (L' : ∀ i, Module.End ℂ (W i))
     (h : ∀ i, p i ∘ₗ L i = L' i ∘ₗ p i) : PiTensorProduct.map p ∘ₗ sumPl L = sumPl L' ∘ₗ PiTensorProduct.map p := by
   apply LinearMap.ext; intro x
-  simp only [sumPl, LinearMap.comp_apply, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [sumPl, LinearMap.comp_apply, LinearMap.sum_apply, map_sum]
   exact Finset.sum_congr rfl fun i _ => LinearMap.congr_fun (map_atPl p i (L i) (L' i) (h i)) x
 
 end Tensor
@@ -103,7 +108,7 @@ theorem atPl_add (w : ι) (L L' : Module.End ℂ (V w)) : atPl w (L + L') = atPl
   simp only [atPl_eq, MultilinearMap.map_update_add]
 
 theorem atPl_smul (w : ι) (c : ℂ) (L : Module.End ℂ (V w)) : atPl w (c • L) = c • atPl w L := by
-  simp only [atPl_eq, MultilinearMap.map_update_smul]
+  simp only [atPl_eq, MultilinearMap.map_update_smul, RingHom.id_apply]
 
 theorem atPl_one (w : ι) : atPl w (1 : Module.End ℂ (V w)) = 1 := by
   rw [atPl_eq, show Function.update (fun i => (LinearMap.id : V i →ₗ[ℂ] V i)) w 1 = fun i => LinearMap.id by
@@ -168,7 +173,7 @@ theorem isLift_fock1 {P Q R S : ℕ} {x t : ℚ} {N : GKMod R S} {p : Formalism.
     (h : IsLift x t N p) (X : Mat P Q) (c : ℂ) (hc : (x : ℂ) + c = 0) :
     p ∘ₗ (fockAct1 P Q R S X + (c * X.trace) • 1) = 0 ∘ₗ p := by
   refine LinearMap.ext fun f => ?_
-  simp only [LinearMap.comp_apply, LinearMap.add_apply, map_add, LinearMap.smul_apply, Module.End.one_apply, map_smul,
+  simp only [LinearMap.comp_apply, LinearMap.add_apply, map_add (f := _), LinearMap.smul_apply, Module.End.one_apply, map_smul,
     LinearMap.zero_apply]
   rw [h.2.1 X f, ← add_smul, show (x : ℂ) * X.trace + c * X.trace = ((x : ℂ) + c) * X.trace by ring, hc, zero_mul, zero_smul]
 
@@ -176,7 +181,7 @@ theorem isLift_fock2 {P Q R S : ℕ} {x t : ℚ} {N : GKMod R S} {p : Formalism.
     (h : IsLift x t N p) (Y : Mat R S) (c c' : ℂ) (hc : c = (t : ℂ) + c') :
     p ∘ₗ (fockAct2 P Q R S Y + (c * Y.trace) • 1) = (N.act Y + (c' * Y.trace) • 1) ∘ₗ p := by
   refine LinearMap.ext fun f => ?_
-  simp only [LinearMap.comp_apply, LinearMap.add_apply, map_add, LinearMap.smul_apply, Module.End.one_apply, map_smul]
+  simp only [LinearMap.comp_apply, LinearMap.add_apply, map_add (f := _), LinearMap.smul_apply, Module.End.one_apply, map_smul]
   rw [h.2.2 Y f, hc, add_mul, add_smul]
   abel
 
@@ -227,7 +232,8 @@ theorem side_quot (x t : InfinitePlace F → ℚ) (hp : ∀ w, IsLift (x w) (t w
     obtain ⟨U, hU, hSA⟩ := i_expact F (Fin n × Fin d) _ Φ _ ((om.comp (MonoidHom.inl _ _)).comp γ) hloc
       (fun t l hl => hadm _ l hl) (fun T => hact γ hγ Yg hgen T)
     have h1 := (i_actslaws F _ (Φ T) (Φ (U T)) f₁).2.1 _ (map_zero _) (hSA T)
-    rw [MonoidHom.comp_apply, hγ1] at h1
+    change Acts _ (om (MonoidHom.inl _ _ (γ (Multiplicative.ofAdd 1)))) _ _ at h1
+    rw [hγ1] at h1
     have e := (i_actslaws F _ (Φ T) _ f₁).2.2.2.1 _ h1 hf₁
     rw [← e, hpΦ, hpΦ]
     have h0 : PiTensorProduct.map p ∘ₗ (0 : Module.End ℂ (Tens F P Q R S)) =
@@ -249,7 +255,7 @@ theorem side_wlie (x t : InfinitePlace F → ℚ) (hp : ∀ w, IsLift (x w) (t w
     (hct : ∀ w, c w = (t w : ℂ) + c' w) (hΨ : Ψ ∘ₗ Φ = LinearMap.id) (hrange : LinearMap.range Φ = M.Pol B.ψ B.emb)
     (C : InfinitePlace F → Matrix (Fin d) (Ix R S) ℂ)
     (hact : ActsBy B.emb C (om.comp (MonoidHom.inr _ _)) Φ (fockAct2 P Q R S) c)
-    (γ : Multiplicative ℝ →* UG (cA σ) (incM F W.J)) (hγ : γ ∈ RLines σ (incM F W.J)) (Yg : InfinitePlace F → Mat R S)
+    (γ : Multiplicative ℝ →* UG (cA σ) (incM F W.J)) (hγ : γ ∈ RLines (σ := σ) (incM F W.J)) (Yg : InfinitePlace F → Mat R S)
     (hY : IsGen B.emb C γ Yg) {f f₁ : SInf F (Fin n × Fin d)} (hf : f ∈ M.Pol B.ψ B.emb)
     (hf₁ : ActsD (evI F) (fun t => om (1, γ (Multiplicative.ofAdd t))) f f₁) :
     (PiTensorProduct.map p ∘ₗ Ψ) f₁ =
@@ -268,7 +274,7 @@ theorem side_wcpt (x t : InfinitePlace F → ℚ) (hp : ∀ w, IsLift (x w) (t w
     (C : InfinitePlace F → Matrix (Fin d) (Ix R S) ℂ)
     (hact : ActsBy B.emb C (om.comp (MonoidHom.inr _ _)) Φ (fockAct2 P Q R S) c)
     (hadm : ∀ g, ∀ l ∈ (adeleClass F).adm (Fin n × Fin d), l ∘ₗ om g ∈ (adeleClass F).adm (Fin n × Fin d))
-    (γ : Multiplicative ℝ →* UG (cA σ) (incM F W.J)) (hγ : γ ∈ RLines σ (incM F W.J)) (Yg : InfinitePlace F → Mat R S)
+    (γ : Multiplicative ℝ →* UG (cA σ) (incM F W.J)) (hγ : γ ∈ RLines (σ := σ) (incM F W.J)) (Yg : InfinitePlace F → Mat R S)
     (hY : IsGen B.emb C γ Yg) (hKC : ∀ w, IsKC (Yg w)) {k : UA σ W.J} (hγ1 : γ (Multiplicative.ofAdd 1) = k)
     {f f₁ : SInf F (Fin n × Fin d)} (hf : f ∈ M.Pol B.ψ B.emb) (hf₁ : Acts (evI F) (om (1, k)) f f₁) :
     ∃ (T : Tens F P Q R S) (L U : Module.End ℂ (Tens F P Q R S)), (PiTensorProduct.map p ∘ₗ Ψ) f = PiTensorProduct.map p T ∧
@@ -281,7 +287,7 @@ theorem side_wcpt (x t : InfinitePlace F → ℚ) (hp : ∀ w, IsLift (x w) (t w
   obtain ⟨U, hU, hSA⟩ := i_expact F (Fin n × Fin d) _ Φ _ ((om.comp (MonoidHom.inr _ _)).comp γ) hloc
     (fun t l hl => hadm _ l hl) (fun T => hact γ hγ Yg hY T)
   have h1 := (i_actslaws F _ (Φ T) (Φ (U T)) f₁).2.1 _ (map_zero _) (hSA T)
-  rw [MonoidHom.comp_apply, hγ1] at h1
+  simp only [MonoidHom.coe_comp, Function.comp_apply, hγ1] at h1
   have e := (i_actslaws F _ (Φ T) _ f₁).2.2.2.1 _ h1 hf₁
   exact ⟨T, _, U, hpΦ T, by rw [← e, hpΦ], hU, map_sumPl p _ _ fun w => isLift_fock2 (hp w) _ _ _ (hct w)⟩
 

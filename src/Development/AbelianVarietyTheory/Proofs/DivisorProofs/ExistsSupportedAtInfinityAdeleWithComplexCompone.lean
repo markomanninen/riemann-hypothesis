@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CartanInvolutionConjOfPosDef
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBasisAdaptedToCartanInvolution
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CartanInvolutionConjOfPosDef
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBasisAdaptedToCartanInvolution
+
+@[expose] public section
 
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
@@ -11,7 +15,7 @@ namespace GlobalTheory.RealLift
 
 theorem exists_atInf_piInf_eq : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E),
     IsCMExt F E σ → ∀ (emb : ∀ w : InfinitePlace F, EmbOver E w) (f : InfinitePlace F → ℂ),
-    ∃ z : AE F E, At (evI F) z ∧ ∀ w, piInf (emb w) z = f w := by
+    ∃ z : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E), At (evI F) z ∧ ∀ w, piInf (emb w) z = f w := by
   intro F E _ _ _ _ _ σ h emb f
   have := h.1
 
@@ -50,9 +54,9 @@ theorem exists_atInf_piInf_eq : ∀ (F E : Type) [Field F] [NumberField F] [Fiel
     rw [smul_add, TensorProduct.smul_tmul', TensorProduct.smul_tmul', smul_eq_mul, smul_eq_mul, hA, hC,
       TensorProduct.zero_tmul, TensorProduct.zero_tmul, add_zero]
   · change infEmb (emb w) (compInf F E w (A ⊗ₜ[F] (1 : E) + C ⊗ₜ[F] e)) = f w
-    rw [map_add]
+    rw [map_add (f := _)]
     change infEmb (emb w) (evInf F w A ⊗ₜ[F] (1 : E) + evInf F w C ⊗ₜ[F] e) = f w
-    rw [map_add, infEmb_tmul, infEmb_tmul, map_one, mul_one]
+    rw [map_add (f := _), infEmb_tmul, infEmb_tmul, map_one, mul_one]
     change InfinitePlace.Completion.extensionEmbedding w (lift w (a w)) +
       InfinitePlace.Completion.extensionEmbedding w (lift w (c w)) * (emb w).1 e = f w
     rw [hlift, hlift]

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.FibreStA
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.FibreStA
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,9 +84,7 @@ theorem Gen.deh_zOf (hw : G.Good w) {ρ : ℂ} (hρ : G.P.eval₂ (deh w 0) ρ =
   congr 1
   funext i
   simp only [Gen.zOf]
-  first
-  | (field_simp; done)
-  | (field_simp; ring)
+  field_simp [h0]
 
 private theorem map_eval₂_X_mul_C_eq {K : Type*} [Field K] (φ : MvPolynomial (Fin (D + 1)) ℤ →+* K) (t : K)
     (f : MvPolynomial ι ℤ) :
@@ -148,7 +150,7 @@ theorem Gen.zOf_mem (hx0 : x (e 0) ≠ 0) (hw : G.Good w) {ρ : ℂ}
 
 private theorem sum_coeff_homogenize_eq_pow_mul_eval₂ {S : Type*} [Field S] (F : MvPolynomial ι ℤ) (v a : ι → S) (d : S)
     (hv : ∀ i, v i = a i / d) (hd : d ≠ 0) (N : ℕ) (hN : F.totalDegree ≤ N) :
-    ∑ m ∈ F.support, ((MvPolynomial.coeff m F : ℤ) : S) * d ^ (N - ∑ i ∈ m.support, m i) *
+    ∑ m ∈ F.support, ((AddMonoidAlgebra.coeff F m : ℤ) : S) * d ^ (N - ∑ i ∈ m.support, m i) *
       ∏ i ∈ m.support, a i ^ m i = d ^ N * MvPolynomial.eval₂ (Int.castRingHom S) v F := by
   rw [MvPolynomial.eval₂_eq, Finset.mul_sum]
   refine Finset.sum_congr rfl (fun m hm => ?_)
@@ -163,13 +165,13 @@ private theorem sum_coeff_homogenize_eq_pow_mul_eval₂ {S : Type*} [Field S] (F
 
 private theorem map_homogenized_sub_dd_pow_X_eq {S : Type*} [Field S] (φ : MvPolynomial (Fin (D + 1)) ℤ →+* S) (t : S)
     (hd : φ G.dd ≠ 0) :
-    Polynomial.eval₂ φ t ((∑ m ∈ G.Θ.support, Polynomial.C (MvPolynomial.C (MvPolynomial.coeff m G.Θ) *
+    Polynomial.eval₂ φ t ((∑ m ∈ G.Θ.support, Polynomial.C (MvPolynomial.C (AddMonoidAlgebra.coeff G.Θ m) *
         G.dd ^ (G.Θ.totalDegree - ∑ i ∈ m.support, m i)) * ∏ i ∈ m.support, G.Q i ^ m i) -
       Polynomial.C (G.dd ^ G.Θ.totalDegree) * Polynomial.X) =
       φ G.dd ^ G.Θ.totalDegree * (MvPolynomial.eval₂ (Int.castRingHom S) (G.evQ φ t) G.Θ - t) := by
   have hC : ∀ c : ℤ, φ (MvPolynomial.C c) = (c : S) := fun c => eq_intCast (φ.comp MvPolynomial.C) c
-  simp only [Polynomial.eval₂_sub, Polynomial.eval₂_finset_sum, Polynomial.eval₂_mul, Polynomial.eval₂_C,
-    Polynomial.eval₂_X, Polynomial.eval₂_finset_prod, Polynomial.eval₂_pow, map_mul, map_pow, hC]
+  simp only [Polynomial.eval₂_sub, Polynomial.eval₂_finsetSum, Polynomial.eval₂_mul, Polynomial.eval₂_C,
+    Polynomial.eval₂_X, Polynomial.eval₂_finsetProd, Polynomial.eval₂_pow, map_mul, map_pow, hC]
   rw [mul_sub, ← sum_coeff_homogenize_eq_pow_mul_eval₂ G.Θ (G.evQ φ t) (fun i => (G.Q i).eval₂ φ t) (φ G.dd) (fun i => rfl) hd
     G.Θ.totalDegree le_rfl]
 
@@ -197,14 +199,15 @@ private theorem deh_eq_zero_of_mem_pts_of_deh_eq_zero (hx0 : x (e 0) ≠ 0) (F :
     {z : ι → ℂ} (hz : z ∈ pts (coordIdeal ℤ x)) (hz0 : z (e 0) ≠ 0) : deh z (e 0) F = 0 := by
   have hz' : z ≠ 0 ∧ ∀ f ∈ coordIdeal ℤ x,
       MvPolynomial.eval z (MvPolynomial.map (Int.castRingHom ℂ) f) = 0 := hz
-  have hmem : (∑ m ∈ F.support, MvPolynomial.C (MvPolynomial.coeff m F) *
+  have hmem : (∑ m ∈ F.support, MvPolynomial.C (AddMonoidAlgebra.coeff F m) *
       X (e 0) ^ (F.totalDegree - ∑ i ∈ m.support, m i) * ∏ i ∈ m.support, X i ^ m i) ∈ coordIdeal ℤ x := by
     show _ ∈ RingHom.ker (coneMap ℤ x)
-    rw [RingHom.mem_ker, coneMap, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [RingHom.mem_ker, coneMap, map_sum]
     have h1 : ∀ m ∈ F.support, (aeval fun i => Polynomial.C (x i) * Polynomial.X)
-        (MvPolynomial.C (MvPolynomial.coeff m F) * X (e 0) ^ (F.totalDegree - ∑ i ∈ m.support, m i) *
+        (MvPolynomial.C (AddMonoidAlgebra.coeff F m) * X (e 0) ^ (F.totalDegree - ∑ i ∈ m.support, m i) *
           ∏ i ∈ m.support, X i ^ m i) =
-        Polynomial.C (((MvPolynomial.coeff m F : ℤ) : Ω) * x (e 0) ^ (F.totalDegree - ∑ i ∈ m.support, m i) *
+        Polynomial.C (((AddMonoidAlgebra.coeff F m : ℤ) : Ω) * x (e 0) ^ (F.totalDegree - ∑ i ∈ m.support, m i) *
           ∏ i ∈ m.support, x i ^ m i) * Polynomial.X ^ F.totalDegree := by
       intro m hm
       have hs : ∑ i ∈ m.support, m i ≤ F.totalDegree := MvPolynomial.le_totalDegree hm
@@ -213,7 +216,8 @@ private theorem deh_eq_zero_of_mem_pts_of_deh_eq_zero (hx0 : x (e 0) ≠ 0) (F :
       simp only [map_mul, map_pow, map_prod, MvPolynomial.aeval_C, MvPolynomial.aeval_X, mul_pow,
         Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum, algebraMap_int_eq, eq_intCast, map_intCast]
       ring
-    rw [Finset.sum_congr rfl h1, ← Finset.sum_mul, ← map_sum Polynomial.C,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_congr rfl h1, ← Finset.sum_mul, ← map_sum Polynomial.C,
       sum_coeff_homogenize_eq_pow_mul_eval₂ F (fun i => x i / x (e 0)) x (x (e 0)) (fun i => rfl) hx0 _ le_rfl, ← deh_apply, hF,
       mul_zero, map_zero, zero_mul]
   have h2 := hz'.2 _ hmem
@@ -265,7 +269,7 @@ theorem Gen.sep (hw : G.Good w) : (G.P.map (deh w 0)).Separable := by
       G.V.map (deh w 0) * Polynomial.derivative (G.P.map (deh w 0)) =
       Polynomial.C (deh w 0 G.cc) := by
     rw [Polynomial.derivative_map, ← sub_eq_zero, ← h0]
-    simp only [Polynomial.map_sub, Polynomial.map_add, Polynomial.map_mul, Polynomial.map_C]
+    simp only [Polynomial.map_sub, Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_C]
   rw [Polynomial.separable_def]
   refine ⟨Polynomial.C (deh w 0 G.cc)⁻¹ * G.U.map (deh w 0),
     Polynomial.C (deh w 0 G.cc)⁻¹ * G.V.map (deh w 0), ?_⟩
@@ -319,7 +323,7 @@ theorem Gen.fib_finite (hx0 : x (e 0) ≠ 0) (hw : G.Good w) : (fib x e w).Finit
 
 theorem Gen.fib_ncard (hx0 : x (e 0) ≠ 0) (hw : G.Good w) :
     (fib x e w).ncard = G.P.natDegree := by
-  rw [G.fib_eq hx0 hw, Set.ncard_image_of_injOn (G.injOn hw), G.roots_set, Set.ncard_coe_finset,
+  rw [G.fib_eq hx0 hw, Set.InjOn.ncard_image (G.injOn hw), G.roots_set, Set.ncard_coe_finset,
     Multiset.toFinset_card_of_nodup (Polynomial.nodup_roots (G.sep hw)), G.card_roots]
 
 theorem Gen.finsum_fib (hx0 : x (e 0) ≠ 0) (hw : G.Good w) (f : (ι → ℂ) → ℂ) :
@@ -360,9 +364,9 @@ theorem exists_implicit_section {E : Type*} [NormedAddCommGroup E] [NormedSpace 
     first
     | (ext; simp)
     | (ext x; simp [mul_comm])
-  have ev := IsContDiffImplicitAt.apply_implicitFunction hf one_ne_zero hinv
-  have cd := IsContDiffImplicitAt.contDiffAt_implicitFunction hf one_ne_zero hinv
-  have ev2 := IsContDiffImplicitAt.eventually_implicitFunction_apply_eq hf one_ne_zero hinv
+  have ev := ContDiffAt.eventually_apply_implicitFunction hf one_ne_zero hinv
+  have cd := ContDiffAt.contDiffAt_implicitFunction hf one_ne_zero hinv
+  have ev2 := ContDiffAt.eventually_apply_eq_iff_implicitFunction hf one_ne_zero hinv
   have hval : hf.implicitFunction one_ne_zero hinv u.1 = u.2 := (ev2.self_of_nhds).1 rfl
   have ecd : ∀ᶠ y in 𝓝 u.1, ContDiffAt ℂ 1 (hf.implicitFunction one_ne_zero hinv) y := by
     first
@@ -429,7 +433,7 @@ theorem Gen.exists_section (hx0 : x (e 0) ≠ 0) {W : Set (Fin (D + 1) → ℂ)}
     intro i
     first
     | fun_prop
-    | exact ((contDiff_apply ℂ ℂ i).comp contDiff_fst).contDiffAt
+    | exact ((contDiff_apply ℂ (fun _ => ℂ) i).comp contDiff_fst).contDiffAt
     | exact ((ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : Fin (D + 1) => ℂ) i).comp
         (ContinuousLinearMap.fst ℂ (Fin (D + 1) → ℂ) ℂ)).contDiff.contDiffAt
   have hcd : ContDiffAt ℂ 1 (fun p : (Fin (D + 1) → ℂ) × ℂ => G.P.eval₂ (deh p.1 0) p.2) (w, ρ) :=
@@ -454,7 +458,7 @@ theorem Gen.exists_section (hx0 : x (e 0) ≠ 0) {W : Set (Fin (D + 1) → ℂ)}
     intro v j
     first
     | fun_prop
-    | exact (contDiff_apply ℂ ℂ j).contDiffAt
+    | exact (contDiff_apply ℂ (fun _ => ℂ) j).contDiffAt
     | exact (ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : Fin (D + 1) => ℂ) j).contDiff.contDiffAt
   refine ⟨U' ∩ W, fun w' => G.zOf w' (τ w'), hU'o.inter hWo, ⟨hwU', hw⟩, ?_, ?_, ?_⟩
   · intro w' hw'

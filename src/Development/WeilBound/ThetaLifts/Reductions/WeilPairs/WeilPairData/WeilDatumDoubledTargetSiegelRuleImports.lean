@@ -1,1 +1,5 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LagrInt
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LagrInt
+
+@[expose] public section

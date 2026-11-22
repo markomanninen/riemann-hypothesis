@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasQExpansionOfLevelLinearOperations
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasQExpansionOfLevelMulOfPosLevel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasQExpansionOfLevelLinearOperations
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasQExpansionOfLevelMulOfPosLevel
+
+@[expose] public section
 
 open scoped UpperHalfPlane MatrixGroups ModularForm Manifold BigOperators
 
@@ -22,7 +26,7 @@ theorem QConj.add {f f' h h' : ℍ → ℂ} (hf : QConj g N f f') (hh : QConj g 
   obtain ⟨a, ha, ha'⟩ := hf
   obtain ⟨b, hb, hb'⟩ := hh
   refine ⟨fun n => a n + b n, ha.add hb, ?_⟩
-  simpa only [map_add] using ha'.add hb'
+  simpa only [map_add (f := _)] using ha'.add hb'
 
 theorem QConj.sub {f f' h h' : ℍ → ℂ} (hf : QConj g N f f') (hh : QConj g N h h') :
     QConj g N (fun τ => f τ - h τ) fun τ => f' τ - h' τ := by
@@ -33,7 +37,8 @@ theorem QConj.sub {f f' h h' : ℍ → ℂ} (hf : QConj g N f f') (hh : QConj g 
 
 theorem map_conv (g : ℂ ≃+* ℂ) (a b : ℕ → ℂ) (n : ℕ) :
     g (conv a b n) = conv (fun n => g (a n)) (fun n => g (b n)) n := by
-  simp only [conv, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [conv, map_sum, map_mul]
 
 theorem QConj.mul (hN : 0 < N) {f f' h h' : ℍ → ℂ} (hf : QConj g N f f') (hh : QConj g N h h') :
     QConj g N (fun τ => f τ * h τ) fun τ => f' τ * h' τ := by

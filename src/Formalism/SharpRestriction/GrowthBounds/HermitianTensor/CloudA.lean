@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.MemInvariantSectionsIffIntegral
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.MemInvariantSectionsIffIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,9 +22,9 @@ theorem cloudOne_of (h : ContractionStandardLattice) : CloudOne := by
   have hmpA : Antitone (wtPQ (mm + 1) (P + 2 * ccl) (Q + 2 * ccl)) := wtPQ_anti _ _ _ hm1
   have hzeA : Antitone (wtPQ (mm + 1) (2 * ccl) (2 * ccl)) := wtPQ_anti _ _ _ hm1
   have hlo0 : (lam - wtPQ (mm + 1) P Q) 0 = (ccl : ℤ) := by
-    rw [lo_val mm ccl P Q lam h0 hl, if_pos rfl]
+    rw [lo_val mm ccl P Q lam h0 hl, ite_eq_left rfl]
   have hloL : (lam - wtPQ (mm + 1) P Q) (Fin.last (mm + 1)) = -(ccl : ℤ) := by
-    rw [lo_val mm ccl P Q lam h0 hl, if_neg (caLast_ne_zero mm), if_pos rfl]
+    rw [lo_val mm ccl P Q lam h0 hl, ite_eq_right (caLast_ne_zero mm), ite_eq_left rfl]
   have hloL' : dualWt (lam - wtPQ (mm + 1) P Q) (Fin.last (mm + 1)) = -(ccl : ℤ) := by
     unfold dualWt
     rw [Fin.rev_last, hlo0]

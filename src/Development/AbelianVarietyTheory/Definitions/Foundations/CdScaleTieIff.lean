@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.MinfDensity
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.MinfDensity
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,8 +41,8 @@ def VolIs (cm : CMData F E) {I : Type} [Fintype I] (τ : I → (E →+* ℂ)) (c
   AllSome (fun 𝓕 => IsFundamentalDomain (HFinIn (AF F) cm.sig W.gram) 𝓕 μ) fun 𝓕 =>
     μ 𝓕 = ENNReal.ofReal x
 
-open Classical in
 
+open Classical in
 def trueVol (cm : CMData F E) {I : Type} [Fintype I] (τ : I → (E →+* ℂ)) (cd : CDHaar) (W : HSpace E) : ℝ :=
   if h : ∃ x : ℝ, 0 < x ∧ VolIs cm τ cd W x then Classical.choose h else 1
 
@@ -52,7 +56,7 @@ theorem trueVol_pos (cm : CMData F E) {I : Type} [Fintype I] (τ : I → (E →+
 theorem trueVol_spec (cm : CMData F E) {I : Type} [Fintype I] (τ : I → (E →+* ℂ)) (cd : CDHaar) (W : HSpace E)
     (h : ∃ x : ℝ, 0 < x ∧ VolIs cm τ cd W x) : VolIs cm τ cd W (trueVol cm τ cd W) := by
   unfold trueVol
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact (Classical.choose_spec h).2
 
 end Volume
@@ -64,8 +68,8 @@ def CdScaleIs (cd : CDHaar) (sc : ∀ n : ℕ, (Fin n → Bool) → NNReal) : Pr
       ((sc n ε : ENNReal) • Formalism.REAL.muG ε) A =
         cd.cd P Q {g | ∃ a ∈ A, umat a = Matrix.reindex e e (Formalism.BasicNotions.UpqT.mat g)}
 
-open Classical in
 
+open Classical in
 def trueScale (cd : CDHaar) : ∀ n : ℕ, (Fin n → Bool) → NNReal :=
   if h : ∃ sc : ∀ n : ℕ, (Fin n → Bool) → NNReal, (∀ n ε, 0 < sc n ε) ∧ CdScaleIs cd sc then Classical.choose h
   else fun _ _ => 1
@@ -96,8 +100,8 @@ def FormalDegreeFormula₂ : Prop :=
         (σ : Matrix (Fin N) (Fin N) ℂ → (H →L[ℂ] H)) (w : H), IsDS ε lam σ → w ≠ 0 →
         fdegOf ((sc N ε : ENNReal) • Formalism.REAL.muG ε) σ w = Formalism.QuantumDeterminants.fdegHC lam
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar in
 
+attribute [local instance] Formalism.BasicNotions.Host.cmStar in
 theorem volTieG_iff (D : D7) : Formalism.L2.Theta.VolTieG D ↔
     ∀ W : HSpace D.host.E, W.SigOK → VolIs D.sp.cm (Formalism.BasicNotions.TH.tauE D) D.cd W (D.vol W) := Iff.rfl
 

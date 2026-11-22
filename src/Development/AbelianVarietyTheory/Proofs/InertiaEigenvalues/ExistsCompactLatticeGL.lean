@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteIndexUnitIdlSup
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsFundamentalDomain
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IntegrableOnFundamentalDomainOfCocompact
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsNhdsZeroPrincipalEqZero
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import Development.AbelianVarietyTheory.BlockTheory.AdelicCMFields.UnitaryHeckeCharacterIdele
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUnitOfSumEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteIndexUnitIdlSup
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsFundamentalDomain
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IntegrableOnFundamentalDomainOfCocompact
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsNhdsZeroPrincipalEqZero
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+public import Development.AbelianVarietyTheory.BlockTheory.AdelicCMFields.UnitaryHeckeCharacterIdele
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUnitOfSumEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ open GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.IndefiniteRowSideF
 
 namespace GlobalTheory.IdeleCovolume
 
-open NumberField.Units NumberField.Units.dirichletUnitTheorem in
 
+open NumberField.Units NumberField.Units.dirichletUnitTheorem in
 theorem exists_bound_log (E : Type) [Field E] [NumberField E] :
     ∃ R : ℝ, ∀ t : InfinitePlace E → ℝ, ∃ (u : (𝓞 E)ˣ) (n : ℤ), ∀ w : InfinitePlace E,
       |t w + Real.log (w (u : E)) + n| ≤ R := by
@@ -43,7 +47,7 @@ theorem isCompact_units {A : Type} [Monoid A] [TopologicalSpace A] [ContinuousMu
     have : m = ((g⁻¹ : Aˣ) : A) := MulOpposite.op_injective hm'
     rw [← this]; exact hm
 
-variable (E : Type) [Field E] [NumberField E] [IsTotallyComplex E]
+variable (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 abbrev diag : Eˣ →* (Ad E)ˣ := Units.map (algebraMap E (Ad E)).toMonoidHom
 
@@ -52,7 +56,7 @@ def eIdele : (Ad E)ˣ := infId E (expU fun _ : InfinitePlace E => ((1 : ℝ) : �
 theorem pInf_eIdele (w : InfinitePlace E) : pInf E (eIdele E : Ad E) w = Complex.exp 1 := by
   have h : ∀ x, pInf E (sInf E x) = x := fun x => (infEq E).symm_apply_apply x
   change pInf E (1 - sInf E 1 + sInf E _) w = _
-  simp only [map_add, map_sub, map_one, h, sub_self, zero_add]
+  simp only [map_add (f := _), map_sub, map_one, h, sub_self, zero_add]
   rfl
 
 theorem pFin_eIdele : pFin E (eIdele E : Ad E) = 1 := by
@@ -173,20 +177,20 @@ theorem exists_nhds_idele : ∃ W ∈ 𝓝 (1 : (Ad E)ˣ), ∀ (k : Eˣ) (n : �
 
 abbrev toGL : (Ad E)ˣ →* GA E 1 := GeneralLinearGroup.scalar (Fin 1)
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem det_toGL (x : (Ad E)ˣ) : GeneralLinearGroup.det (toGL E x) = x :=
   Units.ext (by
     change (Matrix.scalar (Fin 1) (x : Ad E)).det = x
     simp)
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem toGL_det (g : GA E 1) : toGL E (GeneralLinearGroup.det g) = g := by
   ext i j
   change Matrix.scalar (Fin 1) (g : Matrix (Fin 1) (Fin 1) (Ad E)).det i j = _
   rw [Subsingleton.elim i 0, Subsingleton.elim j 0, Matrix.det_fin_one]
   simp
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem continuous_toGL : Continuous (toGL E) :=
   Continuous.units_map _ (by
     change Continuous fun x : Ad E => Matrix.diagonal fun _ : Fin 1 => x
@@ -199,7 +203,7 @@ theorem det_splitCentre : GeneralLinearGroup.det (splitCentre E 1 1) = eIdele E 
   change (Matrix.scalar (Fin 1) _).det = _
   simp
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem det_ratGL (g : GL (Fin 1) E) : GeneralLinearGroup.det (ratGL E 1 g) = diag E (GeneralLinearGroup.det g) :=
   Units.ext (by rw [ratGL, GlobalTheory.CuspRep.det_map]; rfl)
 
@@ -225,20 +229,6 @@ theorem mem_latticeGL (g : GA E 1) :
     rw [← toGL_det E g, ← e, map_mul, map_zpow, ← det_splitCentre, toGL_det, h1]
     exact Subgroup.mul_mem_sup ⟨_, rfl⟩ ⟨n, rfl⟩
 
-theorem discrete_latticeGL : DiscreteTopology (latticeGL E 1) := by
-  obtain ⟨W, hW, h⟩ := exists_nhds_idele E
-  refine discreteTopology_of_isOpen_singleton_one ?_
-  have h1 : (fun γ : latticeGL E 1 => GeneralLinearGroup.det (γ : GA E 1)) ⁻¹' W ∈ 𝓝 1 :=
-    (GeneralLinearGroup.continuous_det.comp continuous_subtype_val).continuousAt.preimage_mem_nhds (by simpa using hW)
-  refine isOpen_iff_mem_nhds.2 ?_
-  rintro _ rfl
-  refine Filter.mem_of_superset h1 fun γ hγ => ?_
-  obtain ⟨k, n, e⟩ := (mem_latticeGL E γ).1 γ.2
-  refine Subtype.ext ?_
-  have h2 := h k n (e ▸ hγ)
-  rw [← toGL_det E γ, ← e, h2, map_one]
-  rfl
-
 theorem exists_compact_latticeGL :
     ∃ K : Set (GA E 1), IsCompact K ∧ ∀ g, ∃ γ ∈ latticeGL E 1, γ * g ∈ K := by
   obtain ⟨K, hK, h⟩ := exists_compact_idele E
@@ -246,36 +236,6 @@ theorem exists_compact_latticeGL :
   obtain ⟨k, n, hk⟩ := h (GeneralLinearGroup.det g)
   exact ⟨toGL E (diag E k * eIdele E ^ n), (mem_latticeGL E _).2 ⟨k, n, (det_toGL E _).symm⟩,
     _, hk, by rw [map_mul (toGL E), toGL_det]⟩
-
-theorem isSqInt_const (c : ℂ) : IsSqInt fun _ : GA E 1 => c := by
-  refine ⟨fun _ _ => rfl, ?_⟩
-  letI : MeasurableSpace (GA E 1) := borel _
-  haveI : BorelSpace (GA E 1) := ⟨rfl⟩
-  haveI := GlobalTheory.AdelicUnitaryTop.locallyCompact_adele E
-  haveI := GlobalTheory.AdelicUnitaryTop.secondCountable_adele E
-  haveI := GlobalTheory.AdelicUnitaryTop.t2Space_adeleRing_numberField E
-  haveI : LocallyCompactSpace (Matrix (Fin 1) (Fin 1) (Ad E)) :=
-    inferInstanceAs (LocallyCompactSpace (Fin 1 → Fin 1 → Ad E))
-  haveI : LocallyCompactSpace (Matrix (Fin 1) (Fin 1) (Ad E))ᵐᵒᵖ :=
-    MulOpposite.opHomeomorph.symm.isClosedEmbedding.locallyCompactSpace
-  haveI : LocallyCompactSpace (GA E 1) := Units.isClosedEmbedding_embedProduct.locallyCompactSpace
-  haveI : SecondCountableTopology (Matrix (Fin 1) (Fin 1) (Ad E)) :=
-    inferInstanceAs (SecondCountableTopology (Fin 1 → Fin 1 → Ad E))
-  haveI : SecondCountableTopology (Matrix (Fin 1) (Fin 1) (Ad E))ᵐᵒᵖ :=
-    MulOpposite.opHomeomorph.symm.isEmbedding.secondCountableTopology
-  haveI : SecondCountableTopology (GA E 1) := Units.isEmbedding_embedProduct.secondCountableTopology
-  haveI := discrete_latticeGL E
-  haveI : Countable (latticeGL E 1) := TopologicalSpace.separableSpace_iff_countable.1 inferInstance
-  obtain ⟨K, hK, hcov⟩ := exists_compact_latticeGL E
-  obtain ⟨𝓕, h𝓕⟩ := GlobalTheory.FundDomDiscrete.exists_isFundamentalDomain (latticeGL E 1) Measure.haar
-  refine ⟨Measure.haar, 𝓕, inferInstance, h𝓕, ?_⟩
-  have h := GlobalTheory.integrableOn_fundamentalDomain_of_cocompact _ (latticeGL E 1) K hK hcov Measure.haar inferInstance 𝓕 h𝓕
-    (fun _ => c ^ 2) continuous_const fun _ _ _ => rfl
-  simpa only [HasFiniteIntegral, enorm_pow] using h.2
-
-theorem isDiscrete_const_one : ∀ (E : Type) [Field E] [NumberField E] [NumberField.IsCMField E],
-    GlobalTheory.UnitaryBC.IsDiscrete (Submodule.span ℂ {GlobalTheory.CuspRep.oneFn E 1}) :=
-  fun E _ _ _ => isDiscrete_const fun c => isSqInt_const E (c * 1)
 
 end GlobalTheory.IdeleCovolume
 

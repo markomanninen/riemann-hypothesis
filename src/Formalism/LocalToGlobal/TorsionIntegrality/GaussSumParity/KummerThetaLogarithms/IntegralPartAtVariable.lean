@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.BiextensionHypothesesOfLevelOne
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.CoboundaryCommutesHomomorphism
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementC
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FinalS
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.BiextensionHypothesesOfLevelOne
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.CoboundaryCommutesHomomorphism
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementC
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FinalS
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -119,7 +123,7 @@ theorem inS_add (hU : UnrOK K l σ) (hF : IsLawOfLog l F) (hF1 : F1 F be0) {α �
   have hG := integral_part_at_variable hU.1 σ (0 : Fin 2)
   have hH := integral_part_at_variable hU.1 σ (1 : Fin 2)
   refine ⟨(IsUltrametricDist.norm_add_le_max _ _).trans (max_le hα.1 hβ.1), ?_, ?_⟩
-  · rw [map_add, map_add, hα.2.1, hβ.2.1]
+  · rw [map_add (f := _), map_add (f := _), hα.2.1, hβ.2.1]
   · rw [map_add σ, map_add C, map_add C, add_mul, add_mul]
     refine sim_trans (hadd1 _ _ _ (hmul α _ hα.1 hα.2.1 hG) (hmul β _ hβ.1 hβ.2.1 hG) hH) ?_
     refine sim_trans (sim_add hα.2.2 hβ.2.2) (sim_symm ?_)
@@ -179,7 +183,7 @@ theorem approx_one (hU : UnrOK K l σ) (hF : IsLawOfLog l F) (hB : BetaHyp l F b
       (not_le.2 (hc z (inS_root hU hB ((Polynomial.mem_nthRootsFinset hN 1).1 hz))))
   have h5 : (1 : ℝ) ≤ ‖∏ z ∈ Polynomial.nthRootsFinset (l ^ 2 - 1) (1 : K), (α - z)‖ := by
     rw [norm_prod]
-    have := Finset.prod_le_prod (s := Polynomial.nthRootsFinset (l ^ 2 - 1) (1 : K))
+    have := Finset.prod_le_prod₀ (s := Polynomial.nthRootsFinset (l ^ 2 - 1) (1 : K))
       (f := fun _ => (1 : ℝ)) (g := fun z : K => ‖α - z‖) (fun _ _ => zero_le_one) h4
     simpa using this
   rw [e, norm_mul] at h1

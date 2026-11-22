@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardH1LevelRepFormula
-import Mathlib
-import Formalism.CharacterColumnKernels.StatementRho
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Formalism.WachLatticeTwists.CharacterSplitJumps.Statement
-import ReciprocityTheory.Hypotheses.GalCohDefs
-import ReciprocityTheory.ReductiveGroups.TraceFormulas.LatDefs
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LevRepZApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardH1LevelRepFormula
+public import Formalism.CharacterColumnKernels.StatementRho
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Formalism.WachLatticeTwists.CharacterSplitJumps.Statement
+public import ReciprocityTheory.Hypotheses.GalCohDefs
+public import ReciprocityTheory.ReductiveGroups.TraceFormulas.LatDefs
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LevRepZApply
+
+@[expose] public section
+
 open ReciprocityTheory.Gal
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.card_H1_level_rep_formula : ∀ {O : Type} [CommRing O] {G : Type} [Group G] [TopologicalSpace G]

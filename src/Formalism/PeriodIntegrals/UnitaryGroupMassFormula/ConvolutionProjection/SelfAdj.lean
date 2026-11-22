@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.PhConvProj
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ConvolutionProjection.ConvProjOf
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.PhConvProj
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ConvolutionProjection.ConvProjOf
+
+@[expose] public section
 
 noncomputable section
 

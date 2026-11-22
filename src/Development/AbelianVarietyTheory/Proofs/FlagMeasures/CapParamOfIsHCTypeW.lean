@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Admissible
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIsType
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Admissible
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIsType
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt GlobalTheory.ThA MeasureTheory Formalism.QuantumDeterminants Matrix
 open scoped InnerProductSpace

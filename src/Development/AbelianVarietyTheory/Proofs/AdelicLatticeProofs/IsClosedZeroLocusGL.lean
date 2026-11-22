@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.ClassNumberFinite
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsOpenIsCompact
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.ClassNumberFinite
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsOpenIsCompact
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -12,7 +16,7 @@ theorem continuous_aeval_comp {F A X σ : Type} [CommRing F] [CommRing A] [Algeb
     Continuous fun x => MvPolynomial.aeval (f x) P := by
   induction P using MvPolynomial.induction_on with
   | C a => simpa using continuous_const
-  | add p q hp hq => simp only [map_add]; exact hp.add hq
+  | add p q hp hq => simp only [map_add (f := _)]; exact hp.add hq
   | mul_X p i hp => simp only [map_mul, MvPolynomial.aeval_X]; exact hp.mul (hf i)
 
 theorem isClosed_zeroLocusGL {F : Type} [Field F] {n : ℕ}

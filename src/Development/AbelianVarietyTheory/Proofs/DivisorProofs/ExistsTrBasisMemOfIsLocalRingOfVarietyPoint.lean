@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLocModelIsPrimeOf
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotDominatesTopPlace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLocModelIsPrimeOf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotDominatesTopPlace
+
+@[expose] public section
+
 open GlobalTheory.FieldPair
 
 namespace GlobalTheory.FieldPair
@@ -8,7 +13,7 @@ namespace GlobalTheory.FieldPair
 theorem isAlgebraic_of_mul_eq {S K : Type} [CommRing S] [Field K] [Algebra S K] {f : K} (a b : S)
     (hb : b ≠ 0) (e : f * algebraMap S K b = algebraMap S K a) : IsAlgebraic S f := by
   refine ⟨Polynomial.C b * Polynomial.X - Polynomial.C a, fun h0 => hb ?_, ?_⟩
-  · have h1 := congrArg (fun p => Polynomial.coeff p 1) h0
+  · have h1 := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p 1) h0
     simpa only [Polynomial.coeff_sub, Polynomial.coeff_C_mul_X, Polynomial.coeff_C_succ, sub_zero,
       Polynomial.coeff_zero, if_true] using h1
   · rw [map_sub, map_mul, Polynomial.aeval_C, Polynomial.aeval_X, Polynomial.aeval_C, mul_comm, e,
@@ -33,7 +38,3 @@ theorem exists_trBasis_mem_of_isLocModel {K : Type} [Field K] (c : ℂ →+* K) 
   exact (isTranscendenceBasis_equiv e).2 ht
 
 end GlobalTheory.FieldPair
-
-example : ∀ {K : Type} [Field K] (c : ℂ →+* K) (R : Subring K) (n : ℕ), IsLocModel c R →
-    (∃ x : Fin n → K, TrBasis c x) → ∃ xi : Fin n → R, TrBasis c (fun j => (xi j : K)) :=
-  @GlobalTheory.FieldPair.exists_trBasis_mem_of_isLocModel

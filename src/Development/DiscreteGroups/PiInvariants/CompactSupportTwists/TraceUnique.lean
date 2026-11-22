@@ -1,5 +1,9 @@
-import Mathlib
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.TraceUniqueMatrix
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.TraceUniqueMatrix
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 set_option linter.style.longLine false

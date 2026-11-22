@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.SatDVR
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.SatDVR
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,8 @@ theorem decomp_coord {O LL : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuati
     funext i
     rw [DualFramesAlt.SatDVR.toK_apply, hrepr]
   · intro i
-    rw [Submodule.mem_map_equiv, LinearEquiv.symm_symm, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Submodule.mem_map_equiv, LinearEquiv.symm_symm, map_sub, map_sum]
     simp only [map_smul, LinearEquiv.apply_symm_apply]
     rw [hsum i, ← Submodule.ker_projectionOnto hc, LinearMap.mem_ker, map_sub, ← hpr,
       Submodule.projectionOnto_apply_left, sub_eq_zero]
@@ -59,7 +64,8 @@ theorem decomp_coord {O LL : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuati
       rw [Submodule.span_le]
       rintro _ ⟨y, hy, rfl⟩
       rw [SetLike.mem_coe, LinearMap.mem_ker, hψ]
-      simp only [DualFramesAlt.SatDVR.toK_apply, ← map_mul, ← map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [DualFramesAlt.SatDVR.toK_apply, ← map_mul, ← map_sum]
       rw [hrow j y]
       have h0 : pr y = 0 := Submodule.projectionOnto_apply_right hc ⟨y, hy⟩
       rw [h0, map_zero, map_zero]

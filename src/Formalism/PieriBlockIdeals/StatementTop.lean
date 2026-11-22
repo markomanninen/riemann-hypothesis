@@ -1,5 +1,9 @@
-import Formalism.PieriBlockIdeals.StatementDown
-import Formalism.PieriBlockIdeals.HidaLatticeInclusionAtCoarseWeightBound
+module
+
+public import Formalism.PieriBlockIdeals.StatementDown
+public import Formalism.PieriBlockIdeals.HidaLatticeInclusionAtCoarseWeightBound
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+
+@[expose] public section
 
 open Polynomial GlobalTheory.CuspGL
 
 namespace GlobalTheory.CuspGL
 
-open Polynomial in
 
+open Polynomial in
 theorem _root_.GlobalTheory.CuspGL.invariantSubspaceMobiusInverseRec_linearEquiv_conj {F : Type} [Field F]
     (s : F[X] → ℂ) (n : ℕ) :
     ∀ (V V' : Type) [AddCommGroup V] [Module F V] [FiniteDimensional F V] [AddCommGroup V']
@@ -38,8 +42,8 @@ theorem _root_.GlobalTheory.CuspGL.invariantSubspaceMobiusInverseRec_linearEquiv
     show _root_.GlobalTheory.CuspGL.invariantSubspaceMobiusInverseRec s n (W.1.map (e : V →ₗ[F] V')) _ = _
     congr 1
 
-open Polynomial in
 
+open Polynomial in
 theorem _root_.GlobalTheory.CuspGL.psi_conj (F : Type) [Field F]
     (s : F[X] → ℂ) (V V' : Type) [AddCommGroup V] [Module F V]
     [FiniteDimensional F V] [AddCommGroup V'] [Module F V'] [FiniteDimensional F V']

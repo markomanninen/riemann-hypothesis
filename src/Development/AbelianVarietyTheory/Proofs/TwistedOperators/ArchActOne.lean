@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulRealAdEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulRealAdEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ namespace GlobalTheory.ArchLine
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
   {n d : ℕ} {X : Spc F E n} {W : Spc F E d}
 
-open Classical in
 
+open Classical in
 def archOp (om : Rep σ X W) (h : UA σ W.J) (f : SInf F (Fin n × Fin d)) : SInf F (Fin n × Fin d) :=
   if hx : ∃ f₁ : SInf F (Fin n × Fin d), Acts (evI F) (om (1, h)) ⇑f ⇑f₁ then hx.choose else 0
 
@@ -28,7 +32,7 @@ theorem acts_archOp (om : Rep σ X W) (h : UA σ W.J) (f : SInf F (Fin n × Fin 
     Acts (evI F) (om (1, h)) ⇑f ⇑(archOp om h f) := by
   classical
   unfold archOp
-  rw [dif_pos hx]
+  rw [dite_eq_left hx]
   exact hx.choose_spec
 
 theorem archAct_one (M : Model σ X W)

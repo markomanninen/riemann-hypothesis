@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KurComplete
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementE
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FlowDouble
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalB
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KurComplete
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementE
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FlowDouble
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalB
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -83,7 +87,7 @@ theorem theta_homomorphism : ThetaHom := by
   have hsum : MvPowerSeries.constantCoeff
       (PowerSeries.subst (Formalism.L2.Th1.A.U₁ : MvPowerSeries (Fin 2) K) (logSer (shortW g2 g3)) +
         PowerSeries.subst (Formalism.L2.Th1.A.U₂ : MvPowerSeries (Fin 2) K) (logSer (shortW g2 g3))) = 0 := by
-    rw [map_add, Pair.cc_ps (by simp) hL0, Pair.cc_ps (by simp) hL0, add_zero]
+    rw [map_add (f := _), Pair.cc_ps (by simp) hL0, Pair.cc_ps (by simp) hL0, add_zero]
   have hFl : PowerSeries.subst F (lgF K l) = at1 0 (lgF K l) + at1 1 (lgF K l) := by
     unfold cob at hFc
     rw [sub_sub, sub_eq_zero] at hFc
@@ -246,10 +250,5 @@ theorem first_level_curve_holds : CurveExponentCoboundaryCocycle := by
   exact transport_first_level K l hl hn F hF (fgl (shortW g2 g3)) (thetaS l g2 g3 ε) (phCurve g2 g3 s2)
     (phFF l g2 g3 s2 ε) hLaw.1 hθ (theta_homomorphism K l hl hn F hF g2 g3 ε).2
     ⟨hO.1, hO.2.2.1, hO.2.2.2⟩ (phi_comparison K l hl g2 g3 s2 ε hε hθ)
-
-theorem biextension_hypotheses_curve : BHypCurve := by
-  intro K _ _ _ l d _ σ hU hd hev F hF g2 g3 s2 ε hg2 hg3 hε hθ ι _ om oms hO ζ hζ
-  exact biextension_hypotheses_of_level_one K l d σ hU hd hev F hF _
-    (first_level_curve_holds K l hU.1 hU.2.1 hU.2.2.1 F hF g2 g3 s2 ε hg2 hg3 hε hθ) ι om oms hO ζ hζ
 
 end Formalism.L2.Th1.D

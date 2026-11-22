@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ChSumSubCMul
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormSubOnePowThreeLe
-import Development.AbelianVarietyTheory.Definitions.Foundations.MapEvalOfFixCoeff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ChSumSubCMul
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormSubOnePowThreeLe
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MapEvalOfFixCoeff
+
+@[expose] public section
 
 noncomputable section
 

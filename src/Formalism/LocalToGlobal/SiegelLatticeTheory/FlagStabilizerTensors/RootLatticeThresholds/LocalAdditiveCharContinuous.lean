@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
-import Formalism.LocalToGlobal.SiegelLatticeTheory.EFSymmCont
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsMoreMore
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.EFSymmCont
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsMoreMore
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem span_th : Submodule.span (D.s.atP p).Fp ({1, th p} : Set (D.s.atP p).Ep)
   rw [eq_top_iff, ← (D.s.atP p).span, Submodule.span_le]
   rintro _ ⟨x, rfl⟩
   obtain ⟨a, b, hab⟩ := Submodule.mem_span_pair.1 (mem_span_aE x)
-  rw [← hab, map_add, Algebra.smul_def, Algebra.smul_def, mul_one, map_mul, (D.s.atP p).compat,
+  rw [← hab, map_add (f := _), Algebra.smul_def, Algebra.smul_def, mul_one, map_mul, (D.s.atP p).compat,
     (D.s.atP p).compat]
   refine Submodule.mem_span_pair.2 ⟨(D.s.atP p).ιF a, (D.s.atP p).ιF b, ?_⟩
   rw [Algebra.smul_def, Algebra.smul_def, mul_one, th]
@@ -93,14 +97,14 @@ theorem cj_alg' (z : (D.s.atP p).Fp) :
 
 theorem cj_cj (y : (D.s.atP p).Ep) : (D.s.atP p).cj ((D.s.atP p).cj y) = y := by
   obtain ⟨a, b, rfl⟩ := repr_th p y
-  simp only [map_add, map_mul, map_neg, cj_alg', cj_th, mul_neg, neg_neg]
+  simp only [map_add (f := _), map_mul, map_neg, cj_alg', cj_th, mul_neg, neg_neg]
 
 theorem cj_fix (y : (D.s.atP p).Ep) :
     (D.s.atP p).cj y = y ↔ ∃ a : (D.s.atP p).Fp, algebraMap (D.s.atP p).Fp (D.s.atP p).Ep a = y := by
   constructor
   · intro h
     obtain ⟨a, b, rfl⟩ := repr_th p y
-    simp only [map_add, map_mul, cj_alg', cj_th] at h
+    simp only [map_add (f := _), map_mul, cj_alg', cj_th] at h
     have h2 : algebraMap (D.s.atP p).Fp (D.s.atP p).Ep 0 +
         algebraMap (D.s.atP p).Fp (D.s.atP p).Ep (2 * b) * th p = 0 := by
       rw [map_zero, zero_add, map_mul, map_ofNat]; linear_combination -h
@@ -234,8 +238,8 @@ attribute [local instance] factRes
 
 variable {D : D7}
 
-variable (D) in
 
+variable (D) in
 def LocTied : Prop := ∀ p : PlF D, Nonempty (Formalism.L2.S.LocIso (D.s.atP p) (Formalism.L2.S.locC D p))
 
 def DualAt (p : PlF D) (δ : (D.s.atP p).Fp) : Prop :=
@@ -416,10 +420,10 @@ theorem psiFof_o (hd : DualAt p δ) (y : (D.s.atP p).Fp) (hy : y ∈ 𝒪[(D.s.a
 theorem local_additive_char_eq_trace (x : (D.s.atP p).Ep) : psi0 p δ x = psiFof p δ sg ((sg.e x).1 + (sg.e x).2) := by
   rw [psiFof_apply]
   have hx : x = sg.e.symm ((sg.e x).1, 0) + (D.s.atP p).cj (sg.e.symm ((sg.e x).2, 0)) := by
-    rw [e_symm_cj, ← map_add]
+    rw [e_symm_cj, ← map_add (f := _)]
     apply sg.e.injective; rw [AlgEquiv.apply_symm_apply]; ext <;> simp
   have hs : sg.e.symm ((sg.e x).1 + (sg.e x).2, 0) = sg.e.symm ((sg.e x).1, 0) + sg.e.symm ((sg.e x).2, 0) := by
-    rw [← map_add]; congr 1; ext <;> simp
+    rw [← map_add (f := _)]; congr 1; ext <;> simp
   have e1 : psi0 p δ x = psi0 p δ (sg.e.symm ((sg.e x).1, 0)) * psi0 p δ (sg.e.symm ((sg.e x).2, 0)) := by
     conv_lhs => rw [hx]
     rw [AddChar.map_add_eq_mul, local_additive_char_conj]

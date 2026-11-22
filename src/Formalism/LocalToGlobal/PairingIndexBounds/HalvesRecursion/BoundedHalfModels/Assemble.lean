@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.BoundedHalfModels.EqOffBound
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThIndep
-import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.BoundedHalfModels.AdicBoxOpenness.CentralCharacterLocalHolds
-import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.BoundedHalfModels.AdicBoxOpenness.SqPowMulInvDivPowEqProdPow
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.BoundedHalfModels.EqOffBound
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThIndep
+public import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.BoundedHalfModels.AdicBoxOpenness.CentralCharacterLocalHolds
+public import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.BoundedHalfModels.AdicBoxOpenness.SqPowMulInvDivPowEqProdPow
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -15,8 +19,6 @@ theorem conj_conj' (D : D7) (x : D.host.E) : D.host.conj (D.host.conj x) = x := 
   have h2 := Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.CU.star_conj D (D.host.conj x)
   let _ := D.host.cmStar
   rw [← h2, ← h1, star_star]
-
-theorem cO_coe (D : D7) (x : 𝓞 D.host.E) : ((cO D x : 𝓞 D.host.E) : D.host.E) = D.host.conj (x : D.host.E) := rfl
 
 theorem lowB_YY (D : D7) {N N' : ℕ} (L : Submodule (𝓞 D.host.E) (Fin N → D.host.E))
     (L' : Submodule (𝓞 D.host.E) (Fin N' → D.host.E)) (h : admitted D N N' L L') :
@@ -131,7 +133,7 @@ theorem halvesRec_of_facts (hG : GenHalves) (hLa : LaEqMap) (hMM : MMeq) (hPhi :
       intro z hz
       obtain ⟨y, hy, rfl⟩ := AddSubgroup.mem_map.1 hz
       obtain ⟨a, ha, b, hb, rfl⟩ := c1 y hy
-      rw [map_add]
+      rw [map_add (f := _)]
       exact AddSubgroup.add_mem_sup
         ⟨AddSubgroup.mem_map_of_mem _ (Submodule.mem_inf.1 ha).1, AddSubgroup.mem_map_of_mem _ (Submodule.mem_inf.1 ha).2⟩
         ⟨AddSubgroup.mem_map_of_mem _ (Submodule.mem_inf.1 hb).1, AddSubgroup.mem_map_of_mem _ (Submodule.mem_inf.1 hb).2⟩
@@ -145,7 +147,7 @@ theorem halvesRec_of_facts (hG : GenHalves) (hLa : LaEqMap) (hMM : MMeq) (hPhi :
     obtain ⟨a', ha', rfl⟩ := AddSubgroup.mem_map.1 ha
     obtain ⟨b', hb', rfl⟩ := AddSubgroup.mem_map.1 hb
     rw [hΛ] at hab ⊢
-    rw [← map_add, AddSubgroup.mem_map_iff_mem hinj] at hab
+    rw [← map_add (f := _), AddSubgroup.mem_map_iff_mem hinj] at hab
     exact AddSubgroup.mem_map_of_mem _ (c2 a' ha' b' hb' hab)
   have einf : ∀ X Y : Submodule (𝓞 D.host.E) (Matrix (Fin N') (Fin N) D.host.E),
       (X ⊓ Y).toAddSubgroup = X.toAddSubgroup ⊓ Y.toAddSubgroup := fun X Y => rfl

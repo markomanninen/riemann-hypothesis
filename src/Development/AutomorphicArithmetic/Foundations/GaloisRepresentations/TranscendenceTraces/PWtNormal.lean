@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.IsolateSpec
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.IsolateSpec
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Gal.TranscendenceTraces
 
 theorem UpperTheory.Gal.TranscendenceTraces.wtNormal_of :
@@ -11,5 +16,5 @@ theorem UpperTheory.Gal.TranscendenceTraces.wtNormal_of :
     obtain ⟨A, w, ho, hr, hw⟩ := hAff p U hU hd hi
     exact ⟨A, w, ho, by rw [hr]; exact hs, hw⟩
   unfold nwt
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec

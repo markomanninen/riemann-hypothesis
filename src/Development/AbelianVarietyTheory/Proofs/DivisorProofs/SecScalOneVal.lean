@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LabExt
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Definitions.Uniformization.SeriesFrame
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsIsFibreIso
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsExtensionPullOver
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniqueSecPull
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UnivIdentity
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LabExt
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.SeriesFrame
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsIsFibreIso
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsExtensionPullOver
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniqueSecPull
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UnivIdentity
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -175,7 +179,7 @@ theorem exists_famDown (hF : Compat φ F) {k : ℕ} (s : Fam D F k) :
     subst e
     exact hs α
   refine ⟨⟨s', fun mu α => ?_⟩, hs'⟩
-  have e₁ : hD.xe (α + k • mu) = hD.xe α + k • hD.xe mu := by rw [map_add, map_nsmul]
+  have e₁ : hD.xe (α + k • mu) = hD.xe α + k • hD.xe mu := by rw [map_add (f := _), map_nsmul]
   exact secRel_down hκ hF rfl e₁ ((cPoint_proj hD (T := TF (R := R) F) (T' := TF (R := R') F) (𝟙 _)
     (hF.base.trans (Category.id_comp _).symm) mu).trans (Category.id_comp _)) (trF_eq D' F mu) (trF_eq D F _)
     (hs' _ _ rfl) (hs' _ _ e₁) (famMult_val hF k mu α) (s.fe (hD.xe mu) (hD.xe α))
@@ -186,7 +190,7 @@ theorem phiRel_down (hF : Compat φ F) {k : ℕ} {p : QkPt D F k} {p' : QkPt D' 
     {s t : Fam D F k} {s' t' : Fam D' F k} (hs : ∀ α β, hD.xe α = β → SecUp hD κ (s'.s α) (s.s β))
     (ht : ∀ α β, hD.xe α = β → SecUp hD κ (t'.s α) (t.s β)) (H : PhiRel D F k p w s t) : PhiRel D' F k p' w' s' t' := by
   intro α
-  have e₁ : hD.xe (α + p'.y) = hD.xe α + p.y := by rw [map_add, hy, AddEquiv.apply_symm_apply]
+  have e₁ : hD.xe (α + p'.y) = hD.xe α + p.y := by rw [map_add (f := _), hy, AddEquiv.apply_symm_apply]
   refine secRel_down hκ hF rfl e₁ hg.1 rfl rfl (hs _ _ rfl) (ht _ _ e₁) (fun y J J' hJ hJ' => ?_) (H (hD.xe α))
   have b := pullGt_val hD hg α (𝟙 _) hJ hJ'
   simp only [Category.id_comp] at b
@@ -481,8 +485,8 @@ open GlobalTheory.Mum
 
 namespace GlobalTheory.FamPull
 
-open GlobalTheory.ArcPull ReciprocityTheory.ChartRestriction.G.DVR in
 
+open GlobalTheory.ArcPull ReciprocityTheory.ChartRestriction.G.DVR in
 theorem fam_transport : ∀ (R : Type) [CommRing R] [IsDomain R] [IsLocalRing R] (D : DegData R (maximalIdeal R)) (W : Type) [CommRing W] [IsDomain W] [IsLocalRing W] (φ : R →+* W) (D' : DegData W (maximalIdeal W)) (hD : IsPullDeg φ D.toPre D'.toPre) (F : Type) [Field F] [Algebra (FractionRing R) F] [Algebra (FractionRing W) F], (∀ r, algebraMap (FractionRing R) F (algebraMap R _ r) = algebraMap (FractionRing W) F (algebraMap W _ (φ r))) → ∀ k : ℕ, ∃ Φ : Fam D.toPre F k → Fam D'.toPre F k, Function.Bijective Φ ∧ (∀ s s' s'' : Fam D.toPre F k, (∀ α i, (s''.s α).f i = (s.s α).f i + (s'.s α).f i) → ∀ α i, ((Φ s'').s α).f i = ((Φ s).s α).f i + ((Φ s').s α).f i) ∧ (∀ (c : F) (s s' : Fam D.toPre F k), Fam.IsSmul D.toPre F c s s' → Fam.IsSmul D'.toPre F c (Φ s) (Φ s')) ∧ (∀ (s : Fam D.toPre F k) (F₀ : IntFam (maximalIdeal R) D.toPre k), F₀.Over s → ∀ f' : ∀ x, D'.toPre.SecB k x, (∀ x, PullB hD x (F₀.f (hD.xe x)) (f' x)) → ∀ x, GeneratorPullback.SecScal D'.toPre.P.L (DegPre.famφ D'.toPre F x) (DegPre.famε k) ((Φ s).s x) (D'.toPre.famφB x) (DegPre.famε k) (f' x) (DegPre.prB D'.toPre F).left 1) ∧ (∀ p : QkPt D.toPre F k, ∃ p' : QkPt D'.toPre F k, p'.y = hD.xe.symm p.y ∧ IsPullGtF φ hD F p.g p'.g) ∧ ∀ (p : QkPt D.toPre F k) (p' : QkPt D'.toPre F k), p'.y = hD.xe.symm p.y → IsPullGtF φ hD F p.g p'.g → ((∃ w', GlobalTheory.UT.TXFrame k p' w') → ∃ w, GlobalTheory.UT.TXFrame k p w) ∧ ∀ w, GlobalTheory.UT.TXFrame k p w → ∃ w', GlobalTheory.UT.TXFrame k p' w' ∧ ∀ s s' : Fam D.toPre F k, PhiRel D.toPre F k p w s s' → PhiRel D'.toPre F k p' w' (Φ s) (Φ s') := by
   intro R _ _ _ D W _ _ _ φ D' hD F _ _ _ hF k
   have hF : Compat φ F := hF

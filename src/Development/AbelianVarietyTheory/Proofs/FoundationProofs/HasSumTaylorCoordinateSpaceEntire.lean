@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.PderivIterEqPderivListOfDifferentiableOn
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsTraceCompatibleTorusEmbeddingStandardTorus
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LineDerivListCompForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.PderivIterEqPderivListOfDifferentiableOn
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsTraceCompatibleTorusEmbeddingStandardTorus
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LineDerivListCompForm
+
+@[expose] public section
 
 namespace GlobalTheory.EntireTaylor
 
@@ -54,7 +58,7 @@ theorem summable_of_entire {σ : Type*} [Fintype σ] [DecidableEq σ] {f : (σ �
           ring
       _ ≤ M * ∏ j, (1 / 2 : ℝ) ^ α j :=
           mul_le_mul_of_nonneg_left
-            (Finset.prod_le_prod (fun j _ => by have := (hR j).le; positivity)
+            (Finset.prod_le_prod₀ (fun j _ => by have := (hR j).le; positivity)
               fun j _ => pow_le_pow_left₀ (by have := (hR j).le; positivity) (hw j) _) hM0
   exact Summable.of_norm_bounded
     ((GlobalTheory.ProdThetaConj.summable_prod_half_pow (σ := σ)).mul_left M) key

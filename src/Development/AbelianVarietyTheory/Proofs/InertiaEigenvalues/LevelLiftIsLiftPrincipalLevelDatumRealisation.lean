@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ToUnitsCompToCircle
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnivCoefNeZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ThetaSeriesTypeUnderSupportedLifts
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsPlaceModelCompTensorHalf
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VacuumVectorDropAuxiliaryPlaces
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrameMatrixReductionEqOfHalfIdempotentSubset
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ToUnitsCompToCircle
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnivCoefNeZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ThetaSeriesTypeUnderSupportedLifts
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsPlaceModelCompTensorHalf
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VacuumVectorDropAuxiliaryPlaces
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrameMatrixReductionEqOfHalfIdempotentSubset
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,8 +38,8 @@ def princ (B : Base S T) : Base S T := { B with G := princG B.G }
 theorem princ_good {B : Base S T} (h : B.Good) : (princ B).Good :=
   ⟨h.even, h.odd, h.frame, h.de, h.places, h.wt, h.sig, h.sigOK, h.eta, h.hecke, h.real, h.unram, h.tame, h.inf⟩
 
-open Classical in
 
+open Classical in
 theorem omegaG_princ {n r : ℕ} (G : TypeDat D r) (y : Reds D n r) :
     omegaG (princG G).levT (princG G).muC y = omegaK G.Pg y := by
   unfold omegaK
@@ -57,8 +61,8 @@ theorem low_top {κ : Type} [CommRing κ] {n r : ℕ} (hr : r ≤ n) (K : GL (Fi
     Units.val_one, Matrix.one_mul]
   exact ⟨fun h => (Units.eq_inv_of_mul_eq_one_right h).symm, fun h => by rw [← h]; exact K.inv_mul⟩
 
-open Classical in
 
+open Classical in
 theorem omegaG_eq_sum {n r : ℕ} (hr : r ≤ n) (G : TypeDat D r) [Fintype G.P.H]
     (K : G.P.H → ∀ PP : Pl D.host.E, GL (Fin r) (kP PP)) (hK : ∀ (p : G.P.H) (PP : ↥G.Pg), p.1 PP = K p PP.1) (y : Reds D n r) :
     omegaG G.levT G.muC y = ∑ p : G.P.H, (((G.P.chi p)⁻¹ * ∏ PP ∈ G.Pg, G.muC PP (GeneralLinearGroup.det (K p PP)) : ℂˣ) : ℂ) *
@@ -115,8 +119,8 @@ theorem locFn_mul (B : Base S T) (ψ : Twist D Circle) (K : ∀ PP : Pl D.host.E
   simp only [Units.val_mul, Units.coe_prod]
   ring
 
-open Classical in
 
+open Classical in
 theorem datumFn_eq_sum (B : Base S T) {ψ : Twist D Circle} (hQ : B.admitted ψ.Q) [Fintype B.G.P.H] (k : B.G.P.H → GA D T)
     (hk : ∀ p, Lifts B p.1 (k p)) (x : WO S T) :
     B.F.datumFn B.G (B.de.Q ∪ ψ.Q) (B.locFn ψ.Q fun PP => flat (ψ.resC PP.1)) x =
@@ -151,8 +155,8 @@ theorem datumFn_eq_sum (B : Base S T) {ψ : Twist D Circle} (hQ : B.admitted ψ.
   have := b.ne_zero
   field_simp
 
-open Classical in
 
+open Classical in
 theorem vecFlat_eq_sum_princ {B : Base S T} (hB : B.Good) (hS : S.SigOK) {ψ : Twist D Circle} (hψ : ψ.Good) (hQ : B.admitted ψ.Q)
     {ω : PairRep S T} (hω : B.IsWeil ψ.chi ω) [Fintype B.G.P.H] (k : B.G.P.H → GA D T) (hk : ∀ p, Lifts B p.1 (k p)) :
     B.vecFlat ψ = ∑ p : B.G.P.H, (((B.G.P.chi p)⁻¹ : ℂˣ) : ℂ) • ω (1, k p) ((princ B).vecFlat ψ) := by
@@ -184,7 +188,8 @@ theorem vecFlat_eq_sum_princ {B : Base S T} (hB : B.Good) (hS : S.SigOK) {ψ : T
     funext x
     rw [datumFn_eq_sum B hQ k hk x, Finset.sum_apply]
     rfl
-  rw [Base.vecFlat, Base.vecAt, Frame.vec, e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Base.vecFlat, Base.vecAt, Frame.vec, e, map_sum]
   refine Finset.sum_congr rfl fun p _ => ?_
   rw [mv, map_smul, smul_smul, mul_one, Units.val_mul]
 
@@ -197,7 +202,7 @@ theorem ct_ct {a b : ℕ} (A : Matrix (Fin a) (Fin b) (EAf D)) : ct (ct A) = A :
   change cF D (cF D (A i j)) = A i j
   induction A i j using TensorProduct.induction_on with
   | zero => simp only [RingHom.map_zero]
-  | add a b ha hb => simp only [RingHom.map_add, ha, hb]
+  | add a b ha hb => simp only [RingHom.map_add (f := _), ha, hb]
   | tmul y e => exact congrArg (· ⊗ₜ[D.host.F] e) (star_star y)
 
 theorem int_of_int_adj {F : Frame S T} (hF : F.Good) {x : WO S T} (h : IsIntM (frMapAdj S T F.βS F.βT x)) :
@@ -224,15 +229,16 @@ theorem idem_orth {Pg Q : Finset (Pl D.host.E)} (h : PlacesOK Pg Q) :
       ∀ PP ∈ Q, idemAt PP * cA D (idem Pg) = 0 ∧ Formalism.L2.NTheta.IsIdemAt (idemAt PP) PP := by
   obtain ⟨P, h1, h2, hP⟩ := h.split
   have key : ∀ R ⊆ P, ∀ PP ∈ P, idemAt PP * cA D (idem R) = 0 := fun R hR PP hPP => by
-    rw [idem, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [idem, map_sum, Finset.mul_sum]
     exact Finset.sum_eq_zero fun j hj => hP.mul_conj hPP (hR hj)
   refine ⟨GlobalTheory.PlaceVec.idemSum_mul_self (hP.mono h1).isIdemSum, GlobalTheory.PlaceVec.idemSum_mul_self (hP.mono h2).isIdemSum, ?_,
     fun PP hPP => ⟨key _ h2 _ (h1 hPP), hP.isIdemAt (h1 hPP)⟩, fun PP hPP => ⟨key _ h1 _ (h2 hPP), hP.isIdemAt (h2 hPP)⟩⟩
   rw [show idem Q = ∑ PP ∈ Q, idemAt PP from rfl, Finset.sum_mul]
   exact Finset.sum_eq_zero fun j hj => key _ h1 _ (h2 hj)
 
-open Classical in
 
+open Classical in
 theorem datumFn_eq_tensor {F : Frame S T} (hF : F.Good) {G : TypeDat D T.rank} {Q : Finset (Pl D.host.E)} (h : PlacesOK G.Pg Q)
     {ω : Reds D T.rank S.rank → ℂ} (hω : ∀ y y', (∀ PP ∈ Q, y PP = y' PP) → ω y = ω y') :
     F.datumFn G Q ω = tensorHalf (idem Q) (cA D (idem G.Pg))
@@ -282,8 +288,8 @@ theorem datumFn_eq_tensor {F : Frame S T} (hF : F.Good) {G : TypeDat D T.rank} {
       exact fun i j => add_mem (int_of_int_adj hF k1.2 i j) (k2 i j)
     · rw [if_neg fun h => k2 h.2, zero_mul]
 
-open Classical in
 
+open Classical in
 theorem eq_vec_of_two_steps {F : Frame S T} (hF : F.Good) {G : TypeDat D T.rank} {Q : Finset (Pl D.host.E)} (h : PlacesOK G.Pg Q)
     {ω : Reds D T.rank S.rank → ℂ} (hω : ∀ y y', (∀ PP ∈ Q, y PP = y' PP) → ω y = ω y') {fg f : WO S T → ℂ}
     (h1 : IsThetaAt F.ψ (symplO S T) (heisO F.ψ S T) (cA D (idem G.Pg)) F.lat 1 F.f₀
@@ -296,7 +302,9 @@ theorem eq_vec_of_two_steps {F : Frame S T} (hF : F.Good) {G : TypeDat D T.rank}
   have hg' : cA D (idem G.Pg) * cA D (idem G.Pg) = cA D (idem G.Pg) := by rw [← RingHom.map_mul, hg]
   have hΛ : ∀ a : AE D, a * a = a → ∀ u ∈ F.lat, a • u ∈ F.lat := fun a ha u hu => GlobalTheory.PlaceModelSum.idem_smul_latO ha hu
   obtain ⟨P, s1, -, hP⟩ := h.split
-  have hSB := GlobalTheory.PlaceVec.isSBHalf_of_red hF.sdS.1 hF.sdT.1
+  have hSB := GlobalTheory.PlaceVec.isSBHalf_of_red
+    (GlobalTheory.PlaceVec.selfDual_isFullLattice S F.ΛS hF.sdS)
+    (GlobalTheory.PlaceVec.selfDual_isFullLattice T F.ΛT hF.sdT)
     (GlobalTheory.PlaceVec.infPart_cA (GlobalTheory.PlaceVec.idemSum_infPart (hP.mono s1).isIdemSum)) (frMapAdj S T F.βS F.βT)
     (GlobalTheory.PlaceVec.frMapAdj_add S T _ _) (GlobalTheory.PlaceVec.frMapAdj_up S T _ _) (GlobalTheory.PlaceVec.frMapAdj_down S T _ _) G.Pg
     (omegaG G.levT G.muC) (GlobalTheory.PlaceDatum.omegaG_congr G.levT G.muC)
@@ -330,8 +338,8 @@ variable {G : Type} [Group G] [Fintype G] {Pl0 T0 : Type} {A : FamIn D.what₂.L
   {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] {R : RealDat D A Ks} {i : Fin D.R.m}
   {B : Base (Vc D i) (Wc D i)}
 
-open Classical in
 
+open Classical in
 theorem omegaFlat_eq_locFn {ψ : Twist D Circle} {t t₀ : T0} (ht : IsTupOf R B ψ t) (hL : R.toLevCh.Is t₀) (hB : B.Good)
     (hψ : ψ.Good) (hQ : B.admitted ψ.Q) (y : Reds D (Wc D i).rank (Vc D i).rank) :
     omegaFlat (R.Q t) (Wc D i).rank (R.xiR t) y = B.locFn ψ.Q (fun PP => flat (ψ.resC PP.1)) y := by
@@ -345,8 +353,8 @@ theorem omegaFlat_eq_locFn {ψ : Twist D Circle} {t t₀ : T0} (ht : IsTupOf R B
   · refine Finset.prod_congr rfl fun PP hP => ?_
     rw [hx PP (Finset.mem_union_right _ hP), Twist.locC, Twist.locC, if_pos hP, if_neg (Finset.disjoint_right.1 hQ.2 hP), one_mul]
 
-open Classical in
 
+open Classical in
 theorem eq_vecFlat_princ (h : BaseOf R i B) {ψ : Twist D Circle} {t t₀ : T0} (ht : IsTupOf R B ψ t) (hL : R.toLevCh.Is t₀)
     (hB : B.Good) (hψ : ψ.Good) (hQ : B.admitted ψ.Q) {f : WO (Vc D i) (Wc D i) → ℂ} (hf : IsFlatVec R i t f) :
     f = (princ B).vecFlat ψ := by

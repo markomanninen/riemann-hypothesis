@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MultisetManySeparatedPointsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FewRootsSmallDiscStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardRootsClosedBallBoundsUltrametricStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MultisetManySeparatedPointsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FewRootsSmallDiscStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardRootsClosedBallBoundsUltrametricStatement
+
+@[expose] public section
+
 open Polynomial
 open Classical
 
@@ -14,7 +19,7 @@ theorem separated_roots_additive_poly : ∀ (l : ℕ) [Fact l.Prime] (E M h : �
   set G : ℂ_[l][X] := ∑ k ∈ Finset.range (E + 1), Polynomial.monomial (l ^ k) (a k) with hG
   have hcoeff : ∀ j, G.coeff j = ∑ k ∈ Finset.range (E + 1), if l ^ k = j then a k else 0 := by
     intro j
-    simp only [hG, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial]
+    simp only [hG, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial_apply]
   have hcd : G.coeff (l ^ (M + h)) = a (M + h) := by
     rw [hcoeff, Finset.sum_eq_single (M + h)]
     · simp

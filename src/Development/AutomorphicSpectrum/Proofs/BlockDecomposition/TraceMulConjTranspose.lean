@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.SymZeroCommFrame
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.SymZeroCommFrame
+
+@[expose] public section
 
 noncomputable section
 
@@ -471,15 +475,13 @@ theorem suppSt : PositivityTheory.RgBcC.SuppSt := by
   have hdd1 : diagonal z * (diagonal z)ᴴ = 1 := by
     rw [diagonal_conjTranspose, diagonal_mul_diagonal, ← diagonal_one]
     congr 1
-    funext a
-    simp only [Pi.star_apply, Complex.star_def, Complex.mul_conj, Complex.normSq_eq_norm_sq, hz a]
-    norm_num
+    funext i
+    simpa [hz i] using Complex.mul_conj' (z i)
   have hdd2 : (diagonal z)ᴴ * diagonal z = 1 := by
     rw [diagonal_conjTranspose, diagonal_mul_diagonal, ← diagonal_one]
     congr 1
-    funext a
-    simp only [Pi.star_apply, Complex.star_def, Complex.conj_mul', hz a]
-    norm_num
+    funext i
+    simpa [hz i] using Complex.conj_mul' (z i)
   have hinvA : (x⁻¹ * diagonal z * (yᴴ)⁻¹)⁻¹ = yᴴ * (diagonal z)ᴴ * x := by
     apply Matrix.inv_eq_right_inv
     rw [← Matrix.conjTranspose_nonsing_inv]

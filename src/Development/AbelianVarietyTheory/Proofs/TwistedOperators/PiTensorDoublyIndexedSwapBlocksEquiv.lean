@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmRep
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PiExteriorTensorFlattenedIndexEquivNested
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmRep
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PiExteriorTensorFlattenedIndexEquivNested
+
+@[expose] public section
+
 open scoped TensorProduct
 
 noncomputable section
@@ -28,8 +33,8 @@ theorem exists_pairCurry : ∃ e : (⨂[ℂ] p : (Σ _ : α, β), Y p.1 p.2) ≃
   exact ⟨sigmaCurry (fun p : (Σ _ : α, β) => Y p.1 p.2),
     sigmaCurry_tprod (fun p : (Σ _ : α, β) => Y p.1 p.2)⟩
 
-omit [Finite α] [Finite β] in
 
+omit [Finite α] [Finite β] in
 theorem exists_pairSwap :
     ∃ e : (⨂[ℂ] p : (Σ _ : α, β), Y p.1 p.2) ≃ₗ[ℂ] ⨂[ℂ] q : (Σ _ : β, α), Y q.2 q.1,
     ∀ x : ∀ p : (Σ _ : α, β), Y p.1 p.2,
@@ -78,7 +83,7 @@ theorem piTensor_swapBlocks_equiv : ∀ (k : Type) [Field k] [ValuativeRel k] [T
         exact piTensor_tprod (fun i => σ i j) _ _
       rw [map_smul, map_smul, map_smul, map_smul, map_smul, map_smul, h, h', LinearEquiv.symm_apply_apply]
     | add w w' hw hw' =>
-      rw [map_add, map_add, map_add, map_add, map_add, map_add, hw, hw']
+      rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hw, hw']
   refine LinearMap.ext fun v => ?_
   obtain ⟨w, rfl⟩ := e₁.surjective v
   have h := key w

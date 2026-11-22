@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.ModelFourth
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.ModelFourth
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,12 +20,14 @@ local notation "W" => wPt pN
 theorem mp_model {k0 : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
     [InnerProductSpace ℂ Wq] (Ds : Formalism.FourierDecayAlt.B.RealPlaceData (k0 + 1) r Wp Wq) {δ : Formalism.FourierDecayAlt.B.Mat (k0 + 1) r}
     (hδ : δ ∈ Formalism.FourierDecayAlt.B.GV (k0 + 1) r) {d : Fin (r + 1) → ℂ} (hd : ∀ a, d a ≠ 0)
-    (hdm : ∀ q : Formalism.FourierDecayAlt.C2.Lstidx W, ‖d (W q.1.1)‖ = ‖d (W q.1.2)‖)
-    (hZ : Zhat (k0 + 1) r Ds.z Ds.z' δ = Formalism.FourierDecayAlt.C2.monoP W d) (μ : Measure (Mt (k0 + 1) r))
+    (hdm : ∀ q : Formalism.FourierDecayAlt.C2.Lstidx (wPt pN),
+      ‖d (wPt pN q.1.1)‖ = ‖d (wPt pN q.1.2)‖)
+    (hZ : Zhat (k0 + 1) r Ds.z Ds.z' δ = Formalism.FourierDecayAlt.C2.monoP (wPt pN) d)
+    (μ : Measure (Mt (k0 + 1) r))
     (hconc : μ {x | Matrix.of x ∉ Formalism.FourierDecayAlt.C6.Rset δ} = 0) (c : ℝ≥0∞)
     (hmap : μ.map (fun x => Formalism.MainNotions.S.rootCoords (k0 + 1) r Ds.z' pN (Matrix.of.symm (δ⁻¹ * Matrix.of x * δ))) =
       c • volume) :
-    μ = c • Formalism.FourierDecayAlt.D.muR Ds δ W := by
+    μ = c • Formalism.FourierDecayAlt.D.muR Ds δ (wPt pN) := by
   have hzS : Formalism.FourierDecayAlt.C2.StdZ (k0 + 1) r Ds.z := ⟨Ds.z_mem, Ds.T_pos⟩
   have hz'S : Formalism.FourierDecayAlt.C2.StdZ (k0 + 1) r Ds.z' := ⟨Ds.z'_mem, Ds.T'_pos⟩
   have hG := good_of Ds hδ hd hZ
@@ -115,8 +121,9 @@ theorem mp_model {k0 : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProduct
     have hTm : Measurable (Tmap pN) := (Tmap_mp pN).measurable
     have e : φ' = Tinv pN ∘ (Tmap pN ∘ φ') := by
       funext x; simp [Tinv_Tmap]
-    rw [e, ← Measure.map_map (Tinv_mp pN).measurable (hTm.comp hφ'c.measurable), hA, Measure.map_smul,
-      (Tinv_mp pN).map_eq]
+    have hTi := Tinv_mp pN
+    rw [e, ← Measure.map_map hTi.measurable (hTm.comp hφ'c.measurable), hA,
+      Measure.map_smul c hTi.aemeasurable, hTi.map_eq]
   have hC : μ.map φ = c • volume := by
     have hlinv := Formalism.L2.SG.lowerTriangularModel.linv_mp W
     have hR := Rm_mp pN d hd hdm
@@ -124,8 +131,8 @@ theorem mp_model {k0 : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProduct
       filter_upwards [hae] with x hx
       exact hkey x hx)]
     rw [← Measure.map_map hlinv.measurable (hR.measurable.comp hφ'c.measurable),
-      ← Measure.map_map hR.measurable hφ'c.measurable, hB, Measure.map_smul, hR.map_eq, Measure.map_smul,
-      hlinv.map_eq]
+      ← Measure.map_map hR.measurable hφ'c.measurable, hB, Measure.map_smul c hR.aemeasurable, hR.map_eq,
+      Measure.map_smul c hlinv.aemeasurable, hlinv.map_eq]
   have hrho := rhoF_meas Ds hδ hd hG
   have hD : μ = μ.map ((fun y => Matrix.of.symm (rhoF Ds δ W y)) ∘ φ) := by
     conv_lhs => rw [← Measure.map_id (μ := μ)]
@@ -137,7 +144,7 @@ theorem mp_model {k0 : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProduct
     show x = Matrix.of.symm (rhoF Ds δ W (φ x))
     rw [← hρ]
     rfl
-  rw [hD, ← Measure.map_map hrho hφc.measurable, hC, Measure.map_smul]
+  rw [hD, ← Measure.map_map hrho hφc.measurable, hC, Measure.map_smul c hrho.aemeasurable]
   rfl
 
 end Formalism.L2.SG.flagStabilizerModel

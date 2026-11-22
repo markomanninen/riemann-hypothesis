@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SplitLinearModelNorm
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentMulCutSubOneEntry
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilRepThetaDatumHalfEqSmul
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsPlaceChartOfSplitIdempotent
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsSplitSupportedUnitaryComponent
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsNsmulActO
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplitChartUniformiserAndResidueCard
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RelativeLatticeVolumeOfDetValuation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryGroupCharacterOfHeckeChar
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RelIndexMatrixLattice
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmEqSumLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SplitLinearModelNorm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentMulCutSubOneEntry
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilRepThetaDatumHalfEqSmul
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsPlaceChartOfSplitIdempotent
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsSplitSupportedUnitaryComponent
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsNsmulActO
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplitChartUniformiserAndResidueCard
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RelativeLatticeVolumeOfDetValuation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryGroupCharacterOfHeckeChar
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RelIndexMatrixLattice
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmEqSumLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,11 +60,18 @@ theorem exists_section (he : e * e = e) (hπ : Chart e v π) :
     rw [Matrix.map_apply, Matrix.smul_apply, smul_eq_mul, RingHom.map_mul, chart_e he hπ, one_mul, Matrix.map_apply, hs]
   exact ⟨AddMonoidHom.mk' (fun w => e • w.map s) fun w w' => chart_inj hπ (isHalf_smul' he _)
     (GlobalTheory.SplitScalar.isHalf_add (isHalf_smul' he _) (isHalf_smul' he _)) (by
-      rw [Matrix.map_add _ π.map_add, p1, p1, p1]), p1, fun w => isHalf_smul' he _⟩
+      calc
+        _ = w + w' := p1 _
+        _ = _ := by
+          apply Matrix.ext
+          intro i j
+          simpa [Matrix.map_apply, RingHom.map_add] using
+            congrArg₂ (· + ·) (congrFun (congrFun (p1 w).symm i) j)
+              (congrFun (congrFun (p1 w').symm i) j)), p1, fun w => isHalf_smul' he _⟩
 
 theorem chart_det (he : e * e = e) (hπ : Chart e v π) {V : HSp D} {k : GA D V} {z : (AE D)ˣ} (hz : IsDetAt e V k z) :
     ((mt V k).map π).det = π z := by
-  rw [hz, RingHom.map_add, RingHom.map_mul, RingHom.map_sub, RingHom.map_one, chart_e he hπ, one_mul, sub_self, add_zero,
+  rw [hz, RingHom.map_add (f := _), RingHom.map_mul, RingHom.map_sub, RingHom.map_one, chart_e he hπ, one_mul, sub_self, add_zero,
     RingHom.map_det]
   rfl
 
@@ -122,7 +133,7 @@ theorem relIndex_comap_range {G G' : Type} [AddCommGroup G] [AddCommGroup G'] (�
   rw [← AddSubgroup.relIndex_map_map_of_injective _ _ h, AddSubgroup.map_comap_eq, AddSubgroup.map_comap_eq,
     inf_comm A, inf_comm B]
 
-theorem sqrt_index (hS : Submodule.IsLattice D.host.E ΛS) (hT : Submodule.IsLattice D.host.E ΛT) {e : AE D}
+theorem sqrt_index (hS : Submodule.IsFullLattice D.host.E ΛS) (hT : Submodule.IsFullLattice D.host.E ΛT) {e : AE D}
     (he : IsSplitIdem D e) {g : GA D S} {h : GA D T} {x y : (AE D)ˣ} (hx : IsDetAt e S g x) (hy : IsDetAt e T h y)
     (hle : ∀ w ∈ latO S T ΛS ΛT fun _ => True, IsHalf e w → actO S T g⁻¹ h⁻¹ w ∈ latO S T ΛS ΛT fun _ => True) :
     (Real.sqrt ((((latO S T ΛS ΛT fun _ => True) ⊓ half S T e).relIndex
@@ -134,7 +145,7 @@ theorem sqrt_index (hS : Submodule.IsLattice D.host.E ΛS) (hT : Submodule.IsLat
     ⟨Unit, {()}, fun _ => e, fun _ _ => he, fun _ _ _ _ h => absurd rfl h, (Finset.sum_singleton (fun _ => e) ()).symm⟩
   have hA := relIndex_matrix_lattice D.host.F v S.rank T.rank ((latO S T ΛS ΛT fun _ => True).comap σ)
     (((latO S T ΛS ΛT fun _ => True).comap (actAdd S T g⁻¹ h⁻¹)).comap σ) (section_smul he.1 hπ q1 q2)
-    (section_den hS hT hπ q1 q2) (fun w => ?_)
+    (section_den hS.toIsLattice hT.toIsLattice hπ q1 q2) (fun w => ?_)
     ((mt T h⁻¹).map π) ((mt S g).map π) (Units.map π.toMonoidHom x) (Units.map π.toMonoidHom y)⁻¹ (chart_det he.1 hπ hx)
     (chart_det_inv he.1 hπ hy) (fun m hm => ?_) (fun w => ?_)
   · rw [← section_range hπ q1 q2, relIndex_comap_range σ inj, hA, absV_inv, ← absFin_split D e v π he hπ x (off_det he.1 hx),
@@ -159,18 +170,23 @@ def Law (om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)) (a : AE D) 
 
 variable {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)} {a : AE D} {Tm : (WO S T → ℂ) →ₗ[ℂ] (WO S T → ℂ)}
 
-theorem Law.mul (hS : Submodule.IsLattice D.host.E ΛS) (hT : Submodule.IsLattice D.host.E ΛT) {g g' : GA D S}
+theorem Law.mul (hS : Submodule.IsFullLattice D.host.E ΛS) (hT : Submodule.IsFullLattice D.host.E ΛT) {g g' : GA D S}
     {h h' : GA D T} {C C' : ℂ} (H : Law om a (latO S T ΛS ΛT fun _ => True) Tm g h C)
     (H' : Law om a (latO S T ΛS ΛT fun _ => True) Tm g' h' C') :
     Law om a (latO S T ΛS ΛT fun _ => True) Tm (g * g') (h * h') (C * C') := fun Φ hΦ => by
-  rw [← Prod.mk_mul_mk, map_mul, Module.End.mul_apply, H' Φ hΦ, map_smul, H _ (isSBHalf_actO hS hT _ _ hΦ), smul_smul,
+  letI := hS
+  letI := hT
+  rw [← Prod.mk_mul_mk, map_mul, Module.End.mul_apply, H' Φ hΦ, map_smul,
+    H _ (isSBHalf_actO inferInstance inferInstance _ _ hΦ), smul_smul,
     mul_comm C']
   simp only [_root_.mul_inv_rev, actO_mul]
 
-theorem Law.inv (hS : Submodule.IsLattice D.host.E ΛS) (hT : Submodule.IsLattice D.host.E ΛT) {g : GA D S}
+theorem Law.inv (hS : Submodule.IsFullLattice D.host.E ΛS) (hT : Submodule.IsFullLattice D.host.E ΛT) {g : GA D S}
     {h : GA D T} {C : ℂ} (hC : C ≠ 0) (H : Law om a (latO S T ΛS ΛT fun _ => True) Tm g h C) :
     Law om a (latO S T ΛS ΛT fun _ => True) Tm g⁻¹ h⁻¹ C⁻¹ := fun Φ hΦ => by
-  have h1 := H _ (isSBHalf_actO hS hT g h hΦ)
+  letI := hS
+  letI := hT
+  have h1 := H _ (isSBHalf_actO inferInstance inferInstance g h hΦ)
   simp only [act_act_inv] at h1
   have h2 := congrArg (om (g⁻¹, h⁻¹)) h1
   rw [← Module.End.mul_apply, ← map_mul, Prod.mk_mul_mk, inv_mul_cancel, inv_mul_cancel, Prod.mk_one_one, map_one,
@@ -244,13 +260,17 @@ theorem law_enlarge {e : AE D} (he : IsSplitIdem D e) (hae : a * e = e) {g : GA 
     Law om a (latO S T ΛS ΛT fun _ => True) Tm g h (fac S T χS χT (detAt e he.1 S g) (detAt e he.1 T h)) := by
   have h1 := om_base_enlarge D ψ S T χS χT om ΛS ΛT a f₀ Tm hW hS hT ha hinf hf hTm hc hv e he hae g h hg hh _ _
     (isDetAt_detAt e he.1 S g) (isDetAt_detAt e he.1 T h) hle
-  rw [← Complex.ofReal_inv, sqrt_index hS.1 hT.1 he (isDetAt_detAt e he.1 S g) (isDetAt_detAt e he.1 T h) hle] at h1
+  letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull S ΛS hS
+  letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull T ΛT hT
+  rw [← Complex.ofReal_inv, sqrt_index inferInstance inferInstance he (isDetAt_detAt e he.1 S g) (isDetAt_detAt e he.1 T h) hle] at h1
   exact om_model_of_base D ψ S T χS χT om ΛS ΛT a f₀ Tm hW hS hT ha hinf hf hTm g h _ h1
 
 theorem law_place {e : AE D} (he : IsSplitIdem D e) (hae : a * e = e) {g : GA D S} {h : GA D T} (hg : SuppAt e S g)
     (hh : SuppAt e T h) :
     Law om a (latO S T ΛS ΛT fun _ => True) Tm g h (fac S T χS χT (detAt e he.1 S g) (detAt e he.1 T h)) := by
-  obtain ⟨N, hN, h1⟩ := exists_nsmul_actO hS.1 hT.1 g⁻¹ h⁻¹
+  letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull S ΛS hS
+  letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull T ΛT hT
+  obtain ⟨N, hN, h1⟩ := exists_nsmul_actO (ΛS := ΛS) (ΛT := ΛT) inferInstance inferInstance g⁻¹ h⁻¹
   obtain ⟨z, z1, z2⟩ := exists_scalar he T hN
   have z4 : SuppAt e T z⁻¹ := suppAt_of (GlobalTheory.SplitScalar.off_smul_mt_inv z1)
   have l1 := law_enlarge hW hS hT ha hinf hc hf hv hTm he hae hg (suppAt_mul hh z4) fun w hw hwe => by
@@ -259,7 +279,7 @@ theorem law_place {e : AE D} (he : IsSplitIdem D e) (hae : a * e = e) {g : GA D 
   have l2 := law_enlarge hW hS hT ha hinf hc hf hv hTm he hae (suppAt_one e S) z4 fun w hw hwe => by
     rw [inv_one, inv_inv, actO_scalar z2 hwe]
     exact nsmul_mem hw N
-  have l3 := l1.mul hS.1 hT.1 (l2.inv hS.1 hT.1 (fac_ne_zero _ _))
+  have l3 := l1.mul inferInstance inferInstance (l2.inv inferInstance inferInstance (fac_ne_zero _ _))
   have e1 : fac S T χS χT (detAt e he.1 S g) (detAt e he.1 T (h * z⁻¹)) =
       fac S T χS χT (detAt e he.1 S g) (detAt e he.1 T h) * fac S T χS χT (detAt e he.1 S 1) (detAt e he.1 T z⁻¹) := by
     rw [← fac_mul, ← MonoidHom.map_mul, ← MonoidHom.map_mul, mul_one]
@@ -304,7 +324,8 @@ theorem law_sum {ι : Type} (es : ι → AE D) (P : Finset ι) :
       rw [Finset.sum_mul]
       exact Finset.sum_eq_zero fun j hj => h3 j (Finset.mem_insert_of_mem hj) i m0
     have a3 : (∑ j ∈ P, es j) * cA D (∑ j ∈ P, es j) = 0 := by
-      rw [map_sum, Finset.sum_mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_mul_sum]
       exact Finset.sum_eq_zero fun j hj => Finset.sum_eq_zero fun k hk =>
         h3 j (Finset.mem_insert_of_mem hj) k (Finset.mem_insert_of_mem hk)
     rw [Finset.sum_insert hi] at hg hh hx hy
@@ -320,7 +341,9 @@ theorem law_sum {ι : Type} (es : ι → AE D) (P : Finset ι) :
         exact d4 _ (hg i j)
     have r1 := law_place hW hS hT ha hinf hc hf hv hTm he (h4 i m0) (s1 S g) (s1 T h)
     have r2 := ih' _ _ (s2 S g hg) (s2 T h hh) _ _ (isDetAt_detAt e' a0 S _) (isDetAt_detAt e' a0 T _)
-    have r3 := r1.mul hS.1 hT.1 r2
+    letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull S ΛS hS
+    letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull T ΛT hT
+    have r3 := r1.mul inferInstance inferInstance r2
     exact r3.congr (GlobalTheory.WeilSplit.cut_mul_cut hb hc₁ hb' hc' S g) (GlobalTheory.WeilSplit.cut_mul_cut hb hc₁ hb' hc' T h)
       ((fac_mul _ _ _ _).symm.trans (congrArg₂ (fac S T χS χT)
         (GlobalTheory.WeilSplit.split_det hb hc₁ he.1 a0 a1 d2 d3 hb' hc' hx).symm
@@ -365,7 +388,7 @@ theorem idempotent_mul_add_one_sub_inverse {R : Type} [CommRing R] {c d d' : R} 
 
 theorem det_conj {e : AE D} (he : cA D e * cA D e = cA D e) {V : HSp D} {g : GA D V} {x : (AE D)ˣ}
     (hx : IsDetAt e V g x) : (detAt (cA D e) he V g : AE D) * cA D x = 1 := by
-  rw [hx, RingHom.map_add, RingHom.map_mul, RingHom.map_sub, RingHom.map_one]
+  rw [hx, RingHom.map_add (f := _), RingHom.map_mul, RingHom.map_sub, RingHom.map_one]
   exact idempotent_mul_add_one_sub_inverse he (GlobalTheory.SplitDetCharacter.det_mul_conj V g)
 
 theorem norm_aux {R : Type} [CommRing R] {x y x' y' : R} (h : y * x' = 1) (h' : y' * x = 1) : y * x * (y' * x') = 1 := by

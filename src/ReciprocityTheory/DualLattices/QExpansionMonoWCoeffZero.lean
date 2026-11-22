@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.Eisenstein4CoeffBound
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.Eisenstein4CoeffBound
+
+@[expose] public section
 
 namespace ReciprocityTheory.PGsh
 
@@ -123,10 +127,5 @@ theorem coe_mem_monoSpanF (w : ℕ) (f : ModularForm 𝒮ℒ (w : ℤ)) : (⇑f 
   · have : f = 0 := ModularForm.levelOne_odd_weight_eq_zero (by exact_mod_cast ho.natCast) f
     subst this
     simp
-
-noncomputable def coeLin (k : ℤ) : ModularForm 𝒮ℒ k →ₗ[ℂ] (ℍ → ℂ) where
-  toFun f := ⇑f
-  map_add' _ _ := rfl
-  map_smul' _ _ := rfl
 
 end ReciprocityTheory.PGsh

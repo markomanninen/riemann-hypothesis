@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.MeasInvStatementPfE
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.MeasInvStatementPfE
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.MI
 
@@ -19,11 +23,11 @@ lemma continuous_lu : Continuous (lu (ι := ι) (r := r)) := by
     by_cases h : b < a <;> simp [up, h] <;> fun_prop
   refine continuous_pi fun i => ?_
   simp only [lu, Matrix.mul_apply, Matrix.add_apply]
-  exact continuous_finset_sum _ fun k _ => (continuous_const.add (hsl _ _ _)).mul (hup _ _ _)
+  exact continuous_finsetSum _ fun k _ => (continuous_const.add (hsl _ _ _)).mul (hup _ _ _)
 
 lemma continuous_jac : Continuous (jac (ι := ι) (r := r)) := by
   unfold jac
-  refine continuous_finset_prod _ fun i _ => ?_
+  refine continuous_finsetProd _ fun i _ => ?_
   by_cases h : i.2.2 < i.2.1 <;> simp [h] <;> fun_prop
 
 lemma measurableSet_sS : MeasurableSet (sS ι r) := by
@@ -57,17 +61,6 @@ lemma eS_symm_apply (x : LoI ι r → ℂ) (y : UpI ι r → ℂ) (i : Ix ι r) 
 def Nmat (x : LoI ι r → ℂ) (τ : ι) : Matrix (Fin r) (Fin r) ℂ :=
   Matrix.of fun a b => if h : b < a then x ⟨(τ, a, b), h⟩ else if a = b then 1 else 0
 
-lemma one_add_sl_eS (x : LoI ι r → ℂ) (y : UpI ι r → ℂ) (τ : ι) :
-    1 + sl ((eS ι r).symm (x, y)) τ = Nmat x τ := by
-  ext a b
-  by_cases h : b < a
-  · simp [sl, Nmat, eS_symm_apply, Matrix.one_apply, h, h.ne']
-  · simp [sl, Nmat, eS_symm_apply, Matrix.one_apply, h]
-
-lemma up_eS (x : LoI ι r → ℂ) (y : UpI ι r → ℂ) (τ : ι) : up ((eS ι r).symm (x, y)) τ = Umat y τ := by
-  ext a b
-  by_cases h : b < a <;> simp [up, Umat, eS_symm_apply, h]
-
 lemma jac_eS (x : LoI ι r → ℂ) (y : UpI ι r → ℂ) : jac ((eS ι r).symm (x, y)) = jacU y := by
   unfold jac jacU
   refine Finset.prod_congr rfl fun i _ => ?_
@@ -76,13 +69,6 @@ lemma jac_eS (x : LoI ι r → ℂ) (y : UpI ι r → ℂ) : jac ((eS ι r).symm
 lemma mem_sS_eS (x : LoI ι r → ℂ) (y : UpI ι r → ℂ) :
     (eS ι r).symm (x, y) ∈ sS ι r ↔ ∀ τ b, y (dI τ b) ≠ 0 := by
   simp [sS, eS_symm_apply, dI]
-
-lemma Mt_lu_eS (x : LoI ι r → ℂ) (y : UpI ι r → ℂ) (τ : ι) :
-    Mt (lu ((eS ι r).symm (x, y))) τ = Nmat x τ * Umat y τ := by
-  unfold Mt
-  ext a b
-  simp only [Matrix.of_apply, lu]
-  rw [one_add_sl_eS, up_eS]
 
 theorem lintegral_flat {g : (Ix ι r → ℂ) → ENNReal} (hg : Measurable g) :
     ∫⁻ v, g v = ∫⁻ x, ∫⁻ y, (if ∀ τ b, y (dI τ b) ≠ 0 then

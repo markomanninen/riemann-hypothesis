@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPullHermPullLine
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedA
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.IsSmoothHermConstLine
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUniqueComplexPointUnder
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAffineOpenAndIsPushout
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPullHermPullLine
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedA
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.IsSmoothHermConstLine
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUniqueComplexPointUnder
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAffineOpenAndIsPushout
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -37,8 +41,10 @@ theorem closure_ratio (N : ℕ) (i : Fin (N + 1)) : Subring.closure (Set.range (
   induction p using MvPolynomial.induction_on with
   | C r =>
     rw [aeval_C]
-    simpa using intCast_mem (Subring.closure (Set.range (ratio ℤ N i))) r
-  | add p q hp hq => rw [map_add]; exact add_mem (hp trivial) (hq trivial)
+    simp
+  | add p q hp hq =>
+    rw [map_add]
+    exact add_mem (hp trivial) (hq trivial)
   | mul_X p j hp =>
     rw [map_mul, aeval_X]
     exact mul_mem (hp trivial) (Subring.subset_closure ⟨j, rfl⟩)
@@ -72,15 +78,20 @@ theorem mchart_succ {m : ℕ} {n : Fin (m + 2) → ℕ} (c : ∀ k, Bk n k) :
 
 theorem add_one_pow_eq_ringHom_image_add_prime_mul_zero : ∀ (m : ℕ) (n : Fin (m + 1) → ℕ) (c : ∀ k, Bk n k) (W : (MP ℤ m n).Opens), W = mchart c →
     ∀ h : ∀ k, W ≤ blockChart n k (c k),
-      IsAffineOpen W ∧ Subring.closure (Set.range (rtOn c W h)) = ⊤
-  | 0, n, c, W, hW, h => by
+      IsAffineOpen W ∧ Subring.closure (Set.range (rtOn c W h)) = ⊤ := by
+  intro m
+  induction m with
+  | zero =>
+    intro n c W hW h
     have e : W = (chart ℤ (n 0) (c 0) : (MP ℤ 0 n).Opens) := by
       rw [hW]
       refine TopologicalSpace.Opens.ext (Set.ext fun x => ⟨fun hx => Set.mem_iInter.1 hx 0, fun hx => ?_⟩)
       refine Set.mem_iInter.2 fun k => ?_
-      obtain rfl : k = 0 := Subsingleton.elim (α := Fin 1) _ _
+      have hk : k = 0 := Fin.eq_zero k
+      subst k
       exact hx
-    subst e
+    clear hW
+    subst W
     refine ⟨isAffineOpen_chart ℤ (n 0) (c 0), ?_⟩
     refine eq_top_iff.2 fun x _ => ?_
     have hx : (x : Γ(PSpace ℤ (n 0), chart ℤ (n 0) (c 0))) ∈
@@ -89,9 +100,12 @@ theorem add_one_pow_eq_ringHom_image_add_prime_mul_zero : ∀ (m : ℕ) (n : Fin
       trivial
     refine Subring.closure_mono ?_ hx
     rintro _ ⟨j, rfl⟩
-    exact ⟨⟨0, j⟩, (resG_self _ _)⟩
-  | m + 1, n, c, W, hW, h => by
-    obtain ⟨ha, hc⟩ := add_one_pow_eq_ringHom_image_add_prime_mul_zero m (Fin.tail n) (fun k => c k.succ) _ rfl (mchart_le _)
+    refine ⟨⟨0, j⟩, ?_⟩
+    exact (Conormal.id_appLE _ _).trans (resG_self _ _)
+  | succ m ih =>
+    intro n c W hW h
+    let c' : ∀ k, Bk (Fin.tail n) k := fun k => c k.succ
+    obtain ⟨ha, hc⟩ := ih (Fin.tail n) c' _ rfl (mchart_le c')
     have H := IsPullback.of_hasPullback (toSpecBase ℤ (n 0)) (mpStr ℤ m (Fin.tail n))
     obtain ⟨h1, h2⟩ := GlobalTheory.Conormal.isAffineOpen_and_isPushout H (U := ⊤) (isAffineOpen_top _) ha
       (isAffineOpen_chart ℤ (n 0) (c 0)) le_top le_top
@@ -230,7 +244,7 @@ theorem isSmoothHerm_of_isHermRep (m : ℕ) (n : Fin (m + 1) → ℕ) (M : HermL
   have hP : ContDiffAt ℝ ∞ (fun z : (Σ k, Bk n k) → ℂ => ∏ k, ‖z ⟨k, c k⟩‖ ^ A.a k) z₀ := by
     refine contDiffAt_prod fun k _ => ?_
     have hn : ContDiffAt ℝ ∞ (fun z : (Σ k, Bk n k) → ℂ => ‖z ⟨k, c k⟩‖) z₀ :=
-      (contDiff_apply ℝ ℂ (⟨k, c k⟩ : Σ k, Bk n k)).contDiffAt.norm ℝ (hc k)
+      (contDiff_apply ℝ (fun _ => ℂ) (⟨k, c k⟩ : Σ k, Bk n k)).contDiffAt.norm ℝ (hc k)
     exact contDiffAt_zpow_of_ne' hn (norm_ne_zero_iff.2 (hc k)) (A.a k)
   have hE : ContDiffAt ℝ ∞ (fun z => Real.exp ((M.φ σ₀).φ i (s z) / 2)) z₀ :=
     (hφ.div_const 2).exp

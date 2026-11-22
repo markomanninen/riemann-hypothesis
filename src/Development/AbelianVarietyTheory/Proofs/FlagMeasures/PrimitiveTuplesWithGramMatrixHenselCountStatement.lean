@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PrimitiveTuplesWithGramMatrixHenselCount
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PrimOfIsUnitDet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PrimitiveTuplesWithGramMatrixHenselCount
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PrimOfIsUnitDet
+
+@[expose] public section
+
 open GlobalTheory.GramCount
 open scoped Classical
 set_option maxHeartbeats 1000000 in

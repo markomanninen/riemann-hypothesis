@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RatioBound
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RatioBound
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.LiftDegreeLemmas
 
@@ -12,11 +16,14 @@ open Classical
 theorem toStd_append_blk (r : ℕ) (g : ℝ) (s : ℕ) (c : ℂ) : ∀ (h : C.LPt) (b : ℕ),
     D.toStd r g b (h ++ [(s, c)]) = D.toStd r g b h ++
       [(s, (((g / (2 * Real.pi)) ^ S6.nuBlock r ((b + D.ptSize h : ℕ) : ℤ) (s : ℤ) : ℝ) : ℂ) *
-        Complex.I ^ (s - 1) * c)]
-  | [], b => by simp [D.toStd, D.ptSize]
-  | (s', t) :: rest, b => by
-    have ih := toStd_append_blk r g s c rest (b + s')
-    simp only [List.cons_append, D.toStd, ih, D.ptSize, List.map_cons, List.sum_cons, add_assoc]
+        Complex.I ^ (s - 1) * c)] := by
+  intro h b
+  induction h generalizing b with
+  | nil => simp [D.toStd, D.ptSize]
+  | cons blk rest ih =>
+    obtain ⟨s', t⟩ := blk
+    simp only [List.cons_append, D.toStd, ih (b + s'), D.ptSize, List.map_cons,
+      List.sum_cons, add_assoc]
 
 theorem slv_congr {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
     [InnerProductSpace ℂ Wq] (T : D.LevTower k r Wp Wq) (F : B.Mat k r → (Wq →L[ℂ] Wp)) (i : ℕ) (hi : i ≤ r)

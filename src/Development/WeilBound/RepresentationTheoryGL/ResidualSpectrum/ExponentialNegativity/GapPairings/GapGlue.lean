@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.ExpNegGlue
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRightHaarMeasure
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.ExpNegGlue
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRightHaarMeasure
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,9 +13,9 @@ open GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.AutomorphicL2Unita
 
 namespace PositivityTheory.Rg.Rs.JGapGlue
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
-def locRep (V : Submodule ℂ (Sm E a)) (hs : IsStable V) (w : HeightOneSpectrum (𝓞 E)) :
+def locRep (V : Submodule ℂ (Sm E a)) (hs : _root_.GlobalTheory.CuspRep.IsStable V) (w : HeightOneSpectrum (𝓞 E)) :
     Representation ℂ (GL (Fin a) (w.adicCompletion E)) V where
   toFun g := (finRep E a (locGL E a w g)).restrict fun ψ hψ => hs (.fin (locGL E a w g)) ψ hψ
   map_one' := by
@@ -25,9 +29,9 @@ def locRep (V : Submodule ℂ (Sm E a)) (hs : IsStable V) (w : HeightOneSpectrum
 def pairing {X W : Type} [AddCommGroup X] [Module ℂ X] [NormedAddCommGroup W] [InnerProductSpace ℂ W]
     (F : X →ₗ[ℂ] W) : X →ₗ[ℂ] X →ₗ⋆[ℂ] ℂ :=
   LinearMap.mk₂'ₛₗ (RingHom.id ℂ) (starRingEnd ℂ) (fun x y => inner ℂ (F y) (F x))
-    (fun x x' y => by simp only [map_add, inner_add_right])
+    (fun x x' y => by simp only [map_add (f := _), inner_add_right])
     (fun c x y => by simp only [map_smul, inner_smul_right, smul_eq_mul, RingHom.id_apply])
-    (fun x y y' => by simp only [map_add, inner_add_left])
+    (fun x y y' => by simp only [map_add (f := _), inner_add_left])
     (fun c x y => by simp only [map_smul, inner_smul_left, smul_eq_mul])
 
 theorem pairing_apply {X W : Type} [AddCommGroup X] [Module ℂ X] [NormedAddCommGroup W] [InnerProductSpace ℂ W]

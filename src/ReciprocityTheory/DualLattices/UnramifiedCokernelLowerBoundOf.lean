@@ -1,5 +1,9 @@
-import ReciprocityTheory.DualLattices.UnramifiedCokernelLowerBoundStatement
-import ReciprocityTheory.DualLattices.MapSmulOneMulVec
+module
+
+public import ReciprocityTheory.DualLattices.UnramifiedCokernelLowerBoundStatement
+public import ReciprocityTheory.DualLattices.MapSmulOneMulVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,14 +34,6 @@ def IdemGenStatement : Prop :=
   ∀ (R : Type) [CommRing R] (g d : ℕ) (P : Matrix (Fin g) (Fin g) R), P * P = P →
     Nonempty (LinearMap.range (Matrix.mulVecLin P) ≃ₗ[R] (Fin d → R)) →
     ∃ y : Fin d → LinearMap.range (Matrix.mulVecLin Pᵀ), Submodule.span R (Set.range y) = ⊤
-
-private lemma stdJ_form'' {D : Type} [CommRing D] {g : ℕ}
-    (M : Matrix (Fin g ⊕ Fin g) (Fin g ⊕ Fin g) D) (i j : Fin g ⊕ Fin g) :
-    (Mᵀ * stdJ D g * M) i j =
-      ∑ a, (M (Sum.inr a) i * M (Sum.inl a) j - M (Sum.inl a) i * M (Sum.inr a) j) := by
-  rw [Matrix.mul_assoc]
-  simp [Matrix.mul_apply, stdJ, Fintype.sum_sum_type, Matrix.one_apply, Finset.sum_sub_distrib]
-  try ring
 
 private lemma mul_eq_smul_one_comm_of_ne_zero {n : Type*} [Fintype n] [DecidableEq n] {R : Type*} [CommRing R]
     [IsDomain R] {A B : Matrix n n R} {c : R} (hc : c ≠ 0) (h : A * B = c • 1) :
@@ -276,9 +272,5 @@ theorem unramifiedCokernelLowerBound_of (hU7 : UnramifiedCokernelLengthStatement
   rw [hsplit, Real.rpow_add hx, h2, h3]
   apply mul_le_mul_of_nonneg_right _ (Real.rpow_nonneg hx.le _)
   exact_mod_cast h1
-
-theorem cokernelLowerBound_of (hU6 : CokernelLengthComparisonStatement) (hU7 : UnramifiedCokernelLengthStatement) (hEx : LenExStatement)
-    (hKG : KilledGenStatement) (hIG : IdemGenStatement) : CokernelLowerBoundStatement := by
-  exact And.intro (permutedCokernelLowerBound_of hU6 hEx hKG hIG) (unramifiedCokernelLowerBound_of hU7 hEx hKG hIG)
 
 end ReciprocityTheory.PGsh.Up

@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.GenFibreChartDeg
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StChartScalingIndep
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StAdjoinIndepRelfinrank
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PFinrankAdjoinRange
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodB
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.GenFibreChartDeg
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StChartScalingIndep
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StAdjoinIndepRelfinrank
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PFinrankAdjoinRange
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodB
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -110,7 +115,7 @@ theorem GenFibreChartDeg.proof (hT : GroundTheory.Heights₂.Heights.Inter.Chart
           rw [aeval_C, ← IsScalarTower.algebraMap_apply, algebraMap_int_eq, eq_intCast]
           exact intCast_mem _ a
         | add f g hf hg =>
-          rw [map_add, map_add]
+          rw [map_add (f := _), map_add (f := _)]
           exact add_mem hf hg
         | mul_X f q hf =>
           rw [map_mul, map_mul, aeval_X, ← G.compat]

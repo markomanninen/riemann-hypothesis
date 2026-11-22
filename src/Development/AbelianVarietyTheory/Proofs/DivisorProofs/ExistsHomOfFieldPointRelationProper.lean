@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsIsoOfIsProperOfExistsUniqueFieldPointOfIsInteg
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.GeometricallyReducedOfPerfectField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsIsoOfIsProperOfExistsUniqueFieldPointOfIsInteg
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.GeometricallyReducedOfPerfectField
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
@@ -143,7 +147,7 @@ theorem exists_section {W Q : Scheme.{0}} (r : W ⟶ Q) [IsProper r] [IsNoetheri
     obtain ⟨c, ⟨hc, hcr⟩, hu⟩ := hU K z
     have hker : I.subschemeι.ker ≤ c.ker := by
       rw [Scheme.IdealSheafData.ker_subschemeι]
-      refine ReducedSubgroup.vanishingIdeal_le_ker c _ ?_
+      apply ReducedSubgroup.vanishingIdeal_le_ker c ⟨T, hcl⟩
       rintro _ ⟨t, rfl⟩
       rw [eq_pt t]
       exact (hT K c).mp hc

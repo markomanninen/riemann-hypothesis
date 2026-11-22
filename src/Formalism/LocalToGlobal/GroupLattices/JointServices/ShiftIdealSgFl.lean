@@ -1,6 +1,28 @@
-import Formalism.LocalToGlobal.GroupLattices.JointServices
-import Formalism.LocalToGlobal.Divisibility.Inputs
-import Formalism.SizeWindowBrackets.ChainSlopeWindows.LocalizationStructureHolds
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.JointServices
+public import Formalism.LocalToGlobal.Divisibility.Inputs
+public import Mathlib
+public import Formalism.SizeWindowBrackets.SlopesHypothesisFinitePlaces
+public import Formalism.SizeWindowBrackets.Chain2aCoreNoAnalytic
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.ExistsNsmulMem
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.PChain
+public import Formalism.SizeWindowBrackets.ClaimGaFree
+public import Formalism.SizeWindowBrackets.QuotientSlopeBoundsWith
+public import Formalism.SizeWindowBrackets.FrameTraceRatioFinEquiv
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.WeightedSlopeExcessDecomposition
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.LevelOfCongruence
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.JointDModelAppliesUnitLattice
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.GaloisMapComplexConjugation
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.AdmissibleSchurLemma
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.OneLeThresholdMulPowers
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.StronglyIrreducible
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SlopeIneqMean
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HtGram
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.PolygonSlopeSum
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SizeMu
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open Formalism.BasicNotions Formalism.BasicNotions.DV Formalism.L2.DIV Formalism.L2.Indef Formalism.HermitianLatticesTheory

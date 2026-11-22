@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
+
+@[expose] public section
 
 noncomputable section
 

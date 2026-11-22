@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open CategoryTheory TensorProduct
 
@@ -39,7 +43,7 @@ theorem flat_prod [Module.Flat R A] [Module.Flat R B] : Module.Flat R (A × B) :
     induction x using TensorProduct.induction_on with
     | zero => simp only [map_zero]; ext <;> simp
     | tmul m y => simp
-    | add x y hx hy => simp only [map_add, hx, hy]; ext <;> simp
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]; ext <;> simp
   intro x y hxy
   apply (TensorProduct.prodRight R R I A B).injective
   apply h1.prodMap h2
@@ -98,10 +102,6 @@ structure ConeExact {K : ℕ → Type v} {C : ℕ → Type w} [∀ p, AddCommGro
   succ : ∀ (p : ℕ) (c : C (p + 1)) (k : K (p + 2)), dC (p + 1) c = φ (p + 2) k →
     dK (p + 2) k = 0 → ∃ (c' : C p) (k' : K (p + 1)),
       dC p c' + φ (p + 1) k' = c ∧ dK (p + 1) k' = k
-
-theorem coneExact_id {K : ℕ → Type v} [∀ p, AddCommGroup (K p)] (d : ∀ p, K p →+ K (p + 1)) :
-    ConeExact (fun p => d p) (fun p => d p) (fun _ x => x) :=
-  ⟨fun _ h _ => h, fun c _ h _ => ⟨c, rfl, h⟩, fun p c _ h _ => ⟨0, c, by simp, h⟩⟩
 
 section Cone
 
@@ -199,7 +199,7 @@ theorem ConeExact.lTensor [∀ p, Module.Flat R (K (p + 1))] [∀ p, Module.Flat
     induction x using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul m y => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have e1 : ∀ p x, coneD (fun p => (dK p).lTensor M) (fun p => (dC p).lTensor M)
       (fun p => (φ p).lTensor M) p (TensorProduct.prodRight R R M _ _ x) =
       TensorProduct.prodRight R R M _ _ ((coneD dK dC φ p).lTensor M x) := by
@@ -207,7 +207,7 @@ theorem ConeExact.lTensor [∀ p, Module.Flat R (K (p + 1))] [∀ p, Module.Flat
     induction x using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul m y => simp [tmul_sub, tmul_neg]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   refine (coneExact_iff (fun p x => ?_) (fun p x => ?_) (fun p x => ?_)).2 ⟨?_, ?_, fun p => ?_⟩
   · rw [← LinearMap.comp_apply, ← LinearMap.lTensor_comp,
       show dK (p + 1) ∘ₗ dK p = 0 from LinearMap.ext (hK p)]
@@ -439,12 +439,12 @@ theorem quasiIso_iff_coneExact {K C : CochainComplex (ModuleCat.{v} R) ℕ} (φ 
     · obtain ⟨w, rfl⟩ := (h1 0).2 k c hk hc
       obtain ⟨x, hx, hx'⟩ := h0.1 (c - (φ.f 0).hom w)
         (by rw [map_sub, cochain_comm_apply, sub_eq_zero]; exact hc)
-      exact ⟨x + w, by rw [map_add, hx', sub_add_cancel], by rw [map_add, hx]; exact zero_add _⟩
+      exact ⟨x + w, by rw [map_add (f := _), hx', sub_add_cancel], by rw [map_add (f := _), hx]; exact zero_add _⟩
     · obtain ⟨w, rfl⟩ := (h1 (p + 1)).2 k c hk hc
       obtain ⟨x, z, hx, hx'⟩ := (h1 p).1 (c - (φ.f (p + 1)).hom w)
         (by rw [map_sub, cochain_comm_apply, sub_eq_zero]; exact hc)
-      exact ⟨z, x + w, by rw [map_add, ← add_assoc, hx', sub_add_cancel],
-        by rw [map_add, hx, zero_add]⟩
+      exact ⟨z, x + w, by rw [map_add (f := _), ← add_assoc, hx', sub_add_cancel],
+        by rw [map_add (f := _), hx, zero_add]⟩
   · rintro ⟨h0, h1, h2⟩ (_ | p)
     · refine (quasiIsoAt_zero_iff φ).2 ⟨fun y hy => ?_, fun x hx hx' => h0 x hx' hx⟩
       obtain ⟨x, hx, hx'⟩ := h1 y 0 (by rw [map_zero]; exact hy) (map_zero _)

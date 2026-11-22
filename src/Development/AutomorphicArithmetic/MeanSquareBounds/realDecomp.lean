@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.MeanSquareBounds.PrimeSetTwoBounds
+module
+
+public import Development.AutomorphicArithmetic.MeanSquareBounds.PrimeSetTwoBounds
+
+@[expose] public section
 
 open Finset Formalism.HermitianLattices.ZeroFreeRegionGL2 Formalism.HermitianLattices.Ext.LogarithmicIntegralBounds
 

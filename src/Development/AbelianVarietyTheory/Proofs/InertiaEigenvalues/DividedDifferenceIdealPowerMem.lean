@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfEvalNatCastAdd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfEvalNatCastAdd
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory.FilCoeff
@@ -120,7 +125,8 @@ theorem d_mul_x_one_mem_span_pow :
       intro k
       rw [add_sub_cancel]
       have := (Ideal.Quotient.eq_zero_iff_mem).2 (hx k)
-      rw [map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at this
       simpa only [map_mul, map_pow, map_sub, map_one, mul_assoc] using this)
   simp only [Nat.factorial_one, Nat.cast_one, Ring.inverse_one, one_mul] at key
   rw [← map_one (Ideal.Quotient.mk I), ← map_sub, hq, ← map_mul,

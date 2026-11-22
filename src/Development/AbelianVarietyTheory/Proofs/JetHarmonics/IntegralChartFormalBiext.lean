@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.JetsOnCopiesCompatibleFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsFormalBiextMap
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.CanonGaugeNabValBaseChange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.JetsOnCopiesCompatibleFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsFormalBiextMap
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.CanonGaugeNabValBaseChange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -14,6 +18,12 @@ namespace GlobalTheory.FBDescent
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ GlobalTheory.FBMap
 
 variable {R k : Type} [CommRing R] [CommRing k] {f : R →+* k} {d : ℕ}
+
+local macro "map_descent_series" : tactic =>
+  `(tactic|
+    simp (disch := solve | apply_rules [nc_zero, nc_pt, nc_comp1, nc_addOf, nc_law, nc_act])
+      only [FGLaw.add, map_ev1, map_ev2, map_ev3, mapPt_zero, mapPt_pt, mapPt_comp1,
+        mapPt_addOf, map_X, map_one, map_mul])
 
 theorem map_inj (hf : Function.Injective f) {σ : Type} {a b : MvPowerSeries σ R}
     (h : MvPowerSeries.map f a = MvPowerSeries.map f b) : a = b := by
@@ -33,20 +43,6 @@ theorem nc_of_map (hf : Function.Injective f) {n : ℕ} {a : Pt R n d} (h : NoCo
   rw [mapPt, MvPowerSeries.constantCoeff_map] at this
   rw [this, map_zero]
 
-local macro "no_const" : tactic =>
-  `(tactic| repeat' first
-    | exact nc_zero
-    | exact nc_pt _
-    | exact nc_law _
-    | exact nc_act _ _
-    | assumption
-    | apply nc_comp1
-    | apply nc_addOf)
-
-local macro "push_map" : tactic =>
-  `(tactic| simp (disch := no_const) only [map_mul, map_one, map_ev1, map_ev2, map_ev3,
-    mapPt_zero, mapPt_pt, mapPt_comp1, mapPt_addOf, FGLaw.add])
-
 theorem exists_law (hf : Function.Injective f) (G : FGLaw k d) (F : Pt R 2 d) (hF : G.F = mapPt f F) :
     ∃ G' : FGLaw R d, G'.F = F := by
   have c : NoConst F := nc_of_map hf (hF ▸ nc_law G)
@@ -55,19 +51,19 @@ theorem exists_law (hf : Function.Injective f) (G : FGLaw k d) (F : Pt R 2 d) (h
     rw [hF] at h
     apply map_inj hf
     rw [map_X]
-    push_map
+    map_descent_series
     exact h
   · have h := G.comm i
     rw [hF] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   · have h := G.assoc i
     rw [hF] at h
     change ev (n := 3) ![addOf F (pt R d 0) (pt R d 1), pt R d 2] (F i) =
         ev (n := 3) ![pt R d 0, addOf F (pt R d 1) (pt R d 2)] (F i)
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
 
 variable {O : Type} [CommRing O]
@@ -81,26 +77,26 @@ theorem exists_act (hf : Function.Injective f) {G : FGLaw k d} (A : OAct O G) (G
     have ca := c a
     simp only [FGLaw.add, hF, hA] at h
     apply mapPt_inj hf
-    push_map
+    map_descent_series
     exact h
   · have h := A.add_act a b
     have ca := c a
     have cb := c b
     simp only [FGLaw.add, hF, hA] at h
     apply mapPt_inj hf
-    push_map
+    map_descent_series
     exact h
   · have h := A.mul_act a b
     have ca := c a
     have cb := c b
     simp only [hA] at h
     apply mapPt_inj hf
-    push_map
+    map_descent_series
     exact h
   · have h := A.one_act
     simp only [hA] at h
     apply mapPt_inj hf
-    push_map
+    map_descent_series
     exact h
 
 def descFB [StarRing O] (hf : Function.Injective f) (B : FB k d O) (G' : FGLaw R d) (A' : OAct O G')
@@ -118,139 +114,139 @@ def descFB [StarRing O] (hf : Function.Injective f) (B : FB k d O) (G' : FGLaw R
     have h := B.cocycleLeft_zero_fst
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   cocycleLeft_zero_snd := by
     have h := B.cocycleLeft_zero_snd
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   cocycleLeft_zero_thd := by
     have h := B.cocycleLeft_zero_thd
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   cocycleRight_zero_fst := by
     have h := B.cocycleRight_zero_fst
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   cocycleRight_zero_snd := by
     have h := B.cocycleRight_zero_snd
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   cocycleRight_zero_thd := by
     have h := B.cocycleRight_zero_thd
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   symmetry_zero_fst := by
     have h := B.symmetry_zero_fst
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   symmetry_zero_snd := by
     have h := B.symmetry_zero_snd
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   adjoint_zero_fst a := by
     have h := B.adjoint_zero_fst a
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   adjoint_zero_snd a := by
     have h := B.adjoint_zero_snd a
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   cocycleLeft_assoc := by
     have h := B.cocycleLeft_assoc
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   cocycleLeft_comm := by
     have h := B.cocycleLeft_comm
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   cocycleRight_assoc := by
     have h := B.cocycleRight_assoc
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   cocycleRight_comm := by
     have h := B.cocycleRight_comm
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   interchange := by
     have h := B.interchange
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   sy_inv := by
     have h := B.sy_inv
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   sy_law := by
     have h := B.sy_law
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   adjoint_compat_left a := by
     have h := B.adjoint_compat_left a
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   adjoint_compat_right a := by
     have h := B.adjoint_compat_right a
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   ad_one := by
     have h := B.ad_one
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   ad_mul a b := by
     have h := B.ad_mul a b
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   ad_add a b := by
     have h := B.ad_add a b
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
   ad_sy a := by
     have h := B.ad_sy a
     simp only [FGLaw.add, hF, hA, h1, h2, hs, ha] at h
     apply map_inj hf
-    push_map
+    map_descent_series
     exact h
 
 theorem exists_fb [StarRing O] (hf : Function.Injective f) (B : FB k d O)

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EqOneOfSmulHaarEq
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EqOneOfSmulHaarEq
+
+@[expose] public section
 
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible MeasureTheory
 
@@ -15,9 +19,9 @@ theorem exists_eigen_form {E H : Type} [AddCommGroup E] [Module ℂ E] [FiniteDi
   have : Nontrivial E := nontrivial_of_ne v 0 hv
   let Φ : E →ₗ[ℂ] E →ₗ⋆[ℂ] ℂ := LinearMap.mk₂'ₛₗ (RingHom.id ℂ) (starRingEnd ℂ)
     (fun y w => inner ℂ (j w) (j y))
-    (fun y₁ y₂ w => by simp only [map_add, inner_add_right])
+    (fun y₁ y₂ w => by simp only [map_add (f := _), inner_add_right])
     (fun c y w => by simp only [map_smul, inner_smul_right, RingHom.id_apply, smul_eq_mul])
-    (fun y w₁ w₂ => by simp only [map_add, inner_add_left])
+    (fun y w₁ w₂ => by simp only [map_add (f := _), inner_add_left])
     (fun c y w => by simp only [map_smul, inner_smul_left, smul_eq_mul])
   have hΦ : ∀ y w, Φ y w = inner ℂ (j w) (j y) := fun y w => rfl
   have hinj : Function.Injective Φ := by
@@ -35,7 +39,7 @@ theorem exists_eigen_form {E H : Type} [AddCommGroup E] [Module ℂ E] [FiniteDi
     have he : ∀ x, ((e x : K) : H) = j x := fun x => rfl
     let ℓ : K →ₗ[ℂ] ℂ :=
       { toFun := fun x => star (f (e.symm x))
-        map_add' := fun x y => by simp only [map_add, star_add]
+        map_add' := fun x y => by simp only [map_add (f := _), star_add]
         map_smul' := fun c x => by
           show star (f (e.symm (c • x))) = c * star (f (e.symm x))
           rw [map_smul, map_smulₛₗ, smul_eq_mul, star_mul', starRingEnd_apply, star_star] }
@@ -114,7 +118,7 @@ theorem vanish : ∀ (p q : ℕ) (T : GrpData p q) (π₁ π₂ : URep T) (E : T
       { carrier := {u | Integrable (fun g => inner ℂ (j₂ u) (π₂.π g (j₂ v))) T.haar}
         add_mem' := by
           intro x y hx hy
-          simp only [Set.mem_ofPred_eq, map_add, inner_add_left] at hx hy ⊢
+          simp only [Set.mem_ofPred_eq, map_add (f := _), inner_add_left] at hx hy ⊢
           exact hx.add hy
         zero_mem' := by simp
         smul_mem' := by
@@ -137,7 +141,7 @@ theorem vanish : ∀ (p q : ℕ) (T : GrpData p q) (π₁ π₂ : URep T) (E : T
           intro x y hx hy
           simp only [Set.mem_ofPred_eq] at hx hy ⊢
           intro u
-          simp only [map_add, inner_add_right]
+          simp only [map_add (f := _), inner_add_right]
           exact (hx u).add (hy u)
         zero_mem' := by simp
         smul_mem' := by
@@ -183,7 +187,7 @@ theorem vanish : ∀ (p q : ℕ) (T : GrpData p q) (π₁ π₂ : URep T) (E : T
           intro x y hx hy
           simp only [Set.mem_ofPred_eq] at hx hy ⊢
           intro a
-          simp only [map_add, inner_add_left, star_add, mul_add]
+          simp only [map_add (f := _), inner_add_left, star_add, mul_add]
           rw [integral_add (prodI a (j₁ v) x v) (prodI a (j₁ v) y v), hx a, hy a, add_zero]
         zero_mem' := by
           simp only [Set.mem_ofPred_eq]
@@ -217,13 +221,13 @@ theorem vanish : ∀ (p q : ℕ) (T : GrpData p q) (π₁ π₂ : URep T) (E : T
     let β : E →ₗ[ℂ] E →ₗ⋆[ℂ] ℂ := LinearMap.mk₂'ₛₗ (RingHom.id ℂ) (starRingEnd ℂ)
       (fun y w => ∫ g, inner ℂ a (π₁.π g (j₁ y)) * star (inner ℂ (j₂ u) (π₂.π g (j₂ w))) ∂T.haar)
       (fun y₁ y₂ w => by
-        simp only [map_add, inner_add_right, add_mul]
+        simp only [map_add (f := _), inner_add_right, add_mul]
         exact integral_add (prodI a (j₁ y₁) u w) (prodI a (j₁ y₂) u w))
       (fun c y w => by
         simp only [map_smul, inner_smul_right, mul_assoc, RingHom.id_apply, smul_eq_mul]
         exact integral_const_mul c _)
       (fun y w₁ w₂ => by
-        simp only [map_add, inner_add_right, star_add, mul_add]
+        simp only [map_add (f := _), inner_add_right, star_add, mul_add]
         exact integral_add (prodI a (j₁ y) u w₁) (prodI a (j₁ y) u w₂))
       (fun c y w => by
         simp only [map_smul, inner_smul_right, star_mul', mul_left_comm _ (star c), smul_eq_mul,
@@ -254,7 +258,7 @@ theorem vanish : ∀ (p q : ℕ) (T : GrpData p q) (π₁ π₂ : URep T) (E : T
       intro k hk
       let Ak : E →ₗ[ℂ] E :=
         { toFun := act k
-          map_add' := fun x y => hj₂ (by simp only [hj2a k hk, map_add])
+          map_add' := fun x y => hj₂ (by simp only [hj2a k hk, map_add (f := _)])
           map_smul' := fun d x => hj₂ (by simp only [hj2a k hk, map_smul, RingHom.id_apply]) }
       have hAk : Function.Injective Ak := by
         intro x y hxy

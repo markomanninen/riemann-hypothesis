@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.MeanHeightDescent.DivisionInequalityWithCovolume
-import Formalism.BranchSandwichDivisors.DivFromPassageAndNorm
+module
+
+public import Mathlib
+public import Formalism.MeanHeightDescent.DivisionInequalityWithCovolume
+public import Formalism.BranchSandwichDivisors.DivFromPassageAndNorm
+
+@[expose] public section
 
 set_option linter.deprecated false
 
@@ -35,7 +39,7 @@ theorem dense_emb {K : Type} [Field K] [NumberField K] (v : InfinitePlace K) (hv
         | simp [NumberField.InfinitePlace.Completion.extensionEmbedding_coe]
         | rfl)
 
-theorem dense_fcoord {K V ι : Type} [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K]
+theorem dense_fcoord {K V ι : Type} [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K]
     [AddCommGroup V] [Module K V] [Fintype ι] [DecidableEq ι] (b : Basis ι K V)
     (X : InfinitePlace K → Matrix ι ι ℂ) (hX : ∀ v, IsUnit (X v).det) (v : InfinitePlace K) :
     DenseRange fun x : V => (WithLp.toLp 2 (Formalism.HermitianLatticesTheory.fcoord b X v x) : EuclideanSpace ℂ ι) := by
@@ -75,7 +79,7 @@ private theorem vecAt_apply_linearMap {K V ι W κ : Type} [Field K] [AddCommGro
   rfl
 
 theorem opNormAt_le_of_points {K V ι W κ : Type} [Field K] [NumberField K] [StarRing K]
-    [IsTotallyComplex K] [AddCommGroup V] [Module K V] [Fintype ι] [DecidableEq ι]
+    [_root_.NumberField.IsTotallyComplex K] [AddCommGroup V] [Module K V] [Fintype ι] [DecidableEq ι]
     [AddCommGroup W] [Module K W] [Fintype κ] [DecidableEq κ] (b : Basis ι K V)
     (X : InfinitePlace K → Matrix ι ι ℂ) (b' : Basis κ K W) (X' : InfinitePlace K → Matrix κ κ ℂ)
     (hX : ∀ v, IsUnit (X v).det) (φ : V →ₗ[K] W) (v : InfinitePlace K) (C : ℝ) (hC : 0 ≤ C)
@@ -96,40 +100,7 @@ theorem opNormAt_le_of_points {K V ι W κ : Type} [Field K] [NumberField K] [St
         Formalism.HermitianLatticesTheory.fcoord b' X' v (φ f) := by
       simp only [Formalism.HermitianLatticesTheory.fcoord, Matrix.mulVec_mulVec, Matrix.mul_nonsing_inv_cancel_right _ _ (hX v)]
       rw [vecAt_apply_linearMap b b' φ v f, Matrix.mulVec_mulVec]
-    have h' := h f
-    simp only [LinearMap.coe_toContinuousLinearMap', Matrix.toEuclideanLin_toLp, Matrix.toLin'_apply, hm]
-    first
-      | exact h'
-      | (rw [hn, hn]; exact h')
-
-theorem sq_sum_le {C Hb : Type} [AddCommGroup C] [Fintype Hb] (B : C →+ C →+ ℂ)
-    (hpos : ∀ x, 0 ≤ (B x x).re) (y : Hb → C) :
-    (B (∑ g, y g) (∑ g, y g)).re ≤ (Fintype.card Hb : ℝ) * ∑ g, (B (y g) (y g)).re := by
-  classical
-  have hS : (B (∑ g, y g) (∑ g, y g)).re = ∑ g, ∑ h, (B (y g) (y h)).re := by
-    simp only [map_sum, AddMonoidHom.finset_sum_apply, Complex.re_sum]
-    first
-      | rfl
-      | exact Finset.sum_comm
-  have hD : ∀ g h, (B (y g - y h) (y g - y h)).re =
-      (B (y g) (y g)).re + (B (y h) (y h)).re - (B (y g) (y h)).re - (B (y h) (y g)).re := by
-    intro g h
-    simp only [map_sub, AddMonoidHom.sub_apply, Complex.sub_re]
-    ring
-  have hnn : 0 ≤ ∑ g, ∑ h, (B (y g - y h) (y g - y h)).re :=
-    Finset.sum_nonneg fun g _ => Finset.sum_nonneg fun h _ => hpos _
-  have expand : ∑ g, ∑ h, (B (y g - y h) (y g - y h)).re =
-      ∑ g, ∑ h : Hb, (B (y g) (y g)).re + ∑ g : Hb, ∑ h, (B (y h) (y h)).re -
-        ∑ g, ∑ h, (B (y g) (y h)).re - ∑ g, ∑ h, (B (y h) (y g)).re := by
-    simp only [hD, Finset.sum_sub_distrib, Finset.sum_add_distrib]
-  have a1 : ∑ g, ∑ h : Hb, (B (y g) (y g)).re = (Fintype.card Hb : ℝ) * ∑ g, (B (y g) (y g)).re := by
-    rw [Finset.mul_sum]
-    simp
-  have a2 : ∑ g : Hb, ∑ h, (B (y h) (y h)).re = (Fintype.card Hb : ℝ) * ∑ g, (B (y g) (y g)).re := by
-    simp
-  have a3 : ∑ g, ∑ h, (B (y h) (y g)).re = ∑ g, ∑ h, (B (y g) (y h)).re := Finset.sum_comm
-  rw [expand, a1, a2, a3] at hnn
-  rw [hS]
-  linarith
+    simpa only [LinearMap.coe_toContinuousLinearMap', Matrix.toEuclideanLin, Matrix.toLpLin_toLp,
+      Matrix.toLin'_apply, hm, hn, Formalism.HermitianLatticesTheory.normAt] using h f
 
 end Formalism.L2.Geo.ExtensionFiltration

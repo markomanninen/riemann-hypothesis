@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
+module
+
+public import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
+
+@[expose] public section
 
 open MvPolynomial NumberField IsDedekindDomain
 open scoped Matrix
@@ -52,10 +56,10 @@ theorem du_tl_span (φ : E →+* K) (S : Set (Fin n → E)) :
     | smul c x _ hx => rw [du_f_osmul]; exact Submodule.smul_mem _ _ hx
   · exact Submodule.span_mono (Set.image_mono Submodule.subset_span)
 
-theorem du_tl_lattice (φ : E →+* K) (L : Submodule (𝓞 E) (Fin n → E)) (hL : Submodule.IsLattice E L) :
-    Submodule.IsLattice K (du_tl φ L) := by
+theorem du_tl_lattice (φ : E →+* K) (L : Submodule (𝓞 E) (Fin n → E)) (hL : Submodule.IsFullLattice E L) :
+    Submodule.IsFullLattice K (du_tl φ L) := by
   classical
-  constructor
+  refine { toIsLattice := Submodule.IsLattice.of_fg K ?_, span_eq_top := ?_ }
   · obtain ⟨S, hS⟩ := hL.fg
     rw [← hS, du_tl_span]
     exact ⟨S.image (du_f φ), by rw [Finset.coe_image]⟩
@@ -67,15 +71,17 @@ theorem du_tl_lattice (φ : E →+* K) (L : Submodule (𝓞 E) (Fin n → E)) (h
       | zero => rw [du_f_zero]; exact zero_mem _
       | add x y _ _ hx hy => rw [du_f_add]; exact add_mem hx hy
       | smul c x _ hx => rw [du_f_smul]; exact Submodule.smul_mem _ _ hx
-    rw [eq_top_iff]
-    intro z _
-    have hz : z = ∑ j, z j • du_f φ (Pi.single j (1 : E)) := by
+    apply top_unique
+    rw [← (Pi.basisFun K (Fin n)).span_eq, Submodule.span_le]
+    rintro _ ⟨j, rfl⟩
+    have hj : Pi.single j (1 : E) ∈ Submodule.span E (L : Set (Fin n → E)) := by
+      rw [hL.span_eq_top]
+      exact Submodule.mem_top
+    have hmap : du_f φ (Pi.single j (1 : E)) = Pi.single j (1 : K) := by
       funext a
-      simp [du_f, Pi.single_apply, apply_ite φ]
-    rw [hz]
-    refine Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (h1 _ ?_)
-    rw [hL.span_eq_top]
-    trivial
+      simp only [du_f, Pi.single_apply, apply_ite φ, map_one, map_zero]
+    rw [Pi.basisFun_apply, ← hmap]
+    exact h1 _ hj
 
 end TL
 
@@ -165,7 +171,7 @@ theorem du_local (w : HeightOneSpectrum (𝓞 K)) (M : Submodule (𝓞 K) (Fin n
   rw [← Finset.mul_prod_erase Finset.univ s (Finset.mem_univ j), mul_comm, mul_smul]
   exact Submodule.smul_mem _ _ (hsM j)
 
-theorem du_one_mem (hBA : BasisAtEx) (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsLattice K M) :
+theorem du_one_mem (hBA : BasisAtEx) (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsFullLattice K M) :
     (1 : Matrix (Fin n) (Fin n) K) ∈ latticeTensorDualSpan M := by
   let I : Ideal (𝓞 K) := (latticeTensorDualSpan M).comap (LinearMap.toSpanSingleton (𝓞 K) _ (1 : Matrix (Fin n) (Fin n) K))
   have hI : I = ⊤ := by
@@ -179,7 +185,7 @@ theorem du_one_mem (hBA : BasisAtEx) (M : Submodule (𝓞 K) (Fin n → K)) (hM 
   have : (1 : 𝓞 K) ∈ I := hI ▸ Submodule.mem_top
   simpa [I] using this
 
-theorem du_DB (hBA : BasisAtEx) (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsLattice K M) :
+theorem du_DB (hBA : BasisAtEx) (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsFullLattice K M) :
     ∃ (m : ℕ) (x φ : Fin m → Fin n → K), (∀ i, x i ∈ M) ∧ (∀ i, φ i ∈ dualFr M) ∧
       ∀ a b, ∑ i, x i a * φ i b = if a = b then 1 else 0 := by
   obtain ⟨m, f, g, hfg⟩ := (Submodule.mem_span_set').1 (du_one_mem hBA M hM)
@@ -227,11 +233,11 @@ theorem du_smul_of_mem_one {W : Type} [AddCommGroup W] [Module K W] [Module (�
   rw [algebraMap_smul]
   exact N.smul_mem r hz
 
-theorem du_dualFr_lattice (hBA : BasisAtEx) (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsLattice K M) :
-    Submodule.IsLattice K (dualFr M) := by
+theorem du_dualFr_lattice (hBA : BasisAtEx) (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsFullLattice K M) :
+    Submodule.IsFullLattice K (dualFr M) := by
   classical
   obtain ⟨m, x, φ, hx, hφ, h⟩ := du_DB hBA M hM
-  constructor
+  refine { toIsLattice := Submodule.IsLattice.of_fg K ?_, span_eq_top := ?_ }
   · refine ⟨Finset.univ.image φ, le_antisymm (Submodule.span_le.2 ?_) ?_⟩
     · intro z hz
       simp only [Finset.coe_image, Finset.coe_univ, Set.image_univ, Set.mem_range] at hz
@@ -241,12 +247,12 @@ theorem du_dualFr_lattice (hBA : BasisAtEx) (M : Submodule (𝓞 K) (Fin n → K
       rw [du_expand_left x φ h ψ]
       refine Submodule.sum_mem _ fun i _ => du_smul_of_mem_one _ (hψ _ (hx i)) (Submodule.subset_span ?_)
       simp
-  · rw [eq_top_iff]
+  · apply top_unique
     intro ψ _
     rw [du_expand_left x φ h ψ]
     exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span (hφ i))
 
-theorem du_dualFr_dualFr (hBA : BasisAtEx) (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsLattice K M) :
+theorem du_dualFr_dualFr (hBA : BasisAtEx) (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsFullLattice K M) :
     dualFr (dualFr M) = M := by
   obtain ⟨m, x, φ, hx, hφ, h⟩ := du_DB hBA M hM
   apply le_antisymm
@@ -262,7 +268,8 @@ theorem du_dualFr_dualFr (hBA : BasisAtEx) (M : Submodule (𝓞 K) (Fin n → K)
 variable {E : Type} [Field E] [NumberField E]
 
 theorem du_f_dot (φ : E →+* K) (x y : Fin n → E) : du_f φ x ⬝ᵥ du_f φ y = φ (x ⬝ᵥ y) := by
-  simp [du_f, dotProduct, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [du_f, dotProduct, map_sum]
 
 theorem du_map_mem_one (φ : E →+* K) {c : E} (hc : c ∈ (1 : Submodule (𝓞 E) E)) :
     φ c ∈ (1 : Submodule (𝓞 K) K) := by
@@ -282,14 +289,15 @@ theorem du_mem_dualFr_tl (φ : E →+* K) (L : Submodule (𝓞 E) (Fin n → E))
     | smul c x _ hx => rw [dotProduct_smul]; exact Submodule.smul_mem _ _ hx
 
 theorem du_dualFr_tl (hBA : BasisAtEx) (φ : E →+* K) (L : Submodule (𝓞 E) (Fin n → E))
-    (hL : Submodule.IsLattice E L) : dualFr (du_tl φ L) = du_tl φ (dualFr L) := by
+    (hL : Submodule.IsFullLattice E L) : dualFr (du_tl φ L) = du_tl φ (dualFr L) := by
   obtain ⟨m, x, ξ, hx, hξ, h⟩ := du_DB hBA L hL
   apply le_antisymm
   · intro ψ hψ
     have h' : ∀ a b, ∑ i, du_f φ (x i) a * du_f φ (ξ i) b = if a = b then 1 else 0 := by
       intro a b
       have := congrArg φ (h a b)
-      rw [map_sum, apply_ite φ, map_one, map_zero] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, apply_ite φ, map_one, map_zero] at this
       simpa [du_f] using this
     rw [du_expand_left _ _ h' ψ]
     exact Submodule.sum_mem _ fun i _ =>
@@ -326,23 +334,26 @@ theorem du_gLat_one (M : Submodule (𝓞 K) (Fin n → K)) : gLat 1 M = M := by
   ext x
   rw [du_mem_gLat, inv_one, Units.val_one, Matrix.one_mulVec]
 
-theorem du_gLat_lattice (g : GL (Fin n) K) (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsLattice K M) :
-    Submodule.IsLattice K (gLat g M) := by
-  constructor
-  · exact hM.fg.map _
-  · rw [eq_top_iff]
-    intro z _
-    have h1 : ((g⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K) *ᵥ z ∈ Submodule.span K (M : Set (Fin n → K)) := by
-      rw [hM.span_eq_top]; trivial
-    have h2 : (Submodule.span K (M : Set (Fin n → K))).map (Matrix.mulVecLin (g : Matrix (Fin n) (Fin n) K)) ≤
-        Submodule.span K (gLat g M : Set (Fin n → K)) := by
-      rw [Submodule.map_span]
-      refine Submodule.span_mono ?_
-      rintro _ ⟨y, hy, rfl⟩
-      exact ⟨y, hy, rfl⟩
-    have h3 := h2 ⟨_, h1, rfl⟩
-    rwa [Matrix.mulVecLin_apply, Matrix.mulVec_mulVec, ← Units.val_mul, mul_inv_cancel, Units.val_one,
-      Matrix.one_mulVec] at h3
+theorem du_gLat_lattice (g : GL (Fin n) K) (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsFullLattice K M) :
+    Submodule.IsFullLattice K (gLat g M) := by
+  refine { toIsLattice := Submodule.IsLattice.of_fg K (hM.fg.map _), span_eq_top := ?_ }
+  apply top_unique
+  intro z _
+  let A := Matrix.mulVecLin (g : Matrix (Fin n) (Fin n) K)
+  have himage : (Submodule.span K (M : Set (Fin n → K))).map A ≤
+      Submodule.span K (gLat g M : Set (Fin n → K)) := by
+    rw [Submodule.map_span]
+    apply Submodule.span_mono
+    rintro _ ⟨y, hy, rfl⟩
+    exact ⟨y, hy, rfl⟩
+  have hz : ((g⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K) *ᵥ z ∈
+      Submodule.span K (M : Set (Fin n → K)) := by
+    rw [hM.span_eq_top]
+    exact Submodule.mem_top
+  apply himage
+  refine ⟨_, hz, ?_⟩
+  simp only [A, Matrix.mulVecLin_apply, Matrix.mulVec_mulVec, ← Units.val_mul,
+    mul_inv_cancel, Units.val_one, Matrix.one_mulVec]
 
 theorem du_transpose_dot (A : Matrix (Fin n) (Fin n) K) (x z : Fin n → K) :
     (Aᵀ *ᵥ x) ⬝ᵥ z = x ⬝ᵥ (A *ᵥ z) := by
@@ -380,7 +391,7 @@ theorem dualFrLattice_of (hBA : BasisAtEx) : DualFrLattice := by
 
 theorem dualFrHdual_of (hBA : BasisAtEx) : DualFrHdual := by
   intro K _ _ _ n G M _ hG hM
-  have hc : Submodule.IsLattice K (du_tl (starRingEnd K) M) := du_tl_lattice _ M hM
+  have hc : Submodule.IsFullLattice K (du_tl (starRingEnd K) M) := du_tl_lattice _ M hM
   ext x
   rw [du_mem_hdualFr, ← du_dualFr_tl hBA _ M hM, du_dualFr_dualFr hBA _ hc]
   rw [← du_dualFr_dualFr hBA _ hc]

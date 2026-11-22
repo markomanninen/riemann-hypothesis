@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.OneMemNbh
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DiscreteBranchingUpq
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DKerHasCompactSupport
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.OneMemNbh
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ProjExists
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DKerHasCompactSupport
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,6 @@ theorem taylor_der (f f1 f2 : ℝ → ℂ) (τ M : ℝ) (hf : ∀ t, HasDerivAt 
       have := (hasDerivAt_id x).ofReal_comp
       convert this using 1
       · rfl
-      · exact Complex.ofReal_one.symm
     have h2 := (hf x).sub (h1.mul_const (f1 0))
     rw [one_mul] at h2
     exact h2

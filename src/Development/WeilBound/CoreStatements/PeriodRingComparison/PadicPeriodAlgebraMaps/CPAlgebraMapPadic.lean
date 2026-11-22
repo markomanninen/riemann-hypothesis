@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.GammaEqDpow
-import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.AcrisNAlgebraMapAinf
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Period
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Embedding
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.DeRhamMap
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.ExistsMapEqOfPowMul
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.GammaEqDpow
+public import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.AcrisNAlgebraMapAinf
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Period
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Embedding
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.DeRhamMap
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.ExistsMapEqOfPowMul
+
+@[expose] public section
 
 noncomputable section
 

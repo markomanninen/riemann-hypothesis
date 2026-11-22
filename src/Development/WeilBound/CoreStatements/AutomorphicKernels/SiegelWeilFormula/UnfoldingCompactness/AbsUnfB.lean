@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.AbsUnfA
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.AbsUnfA
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem abs_integrable {V : Type} [AddCommGroup V] [TopologicalSpace V] [IsTopol
   obtain ⟨S, hS_def⟩ : ∃ S : V → ℝ≥0∞, S = fun β => ∑' q, ‖A q β‖ₑ := ⟨_, rfl⟩
   have hSm : Measurable S := by
     rw [hS_def]
-    exact Measurable.ennreal_tsum fun q => hAm q
+    exact Measurable.tsum fun q => hAm q
   have hSper : ∀ (ν : Λ) β, S (β + ν) = S β := by
     intro ν β
     let e : Q ≃ Q := ⟨fun q => act q ν, fun q => act q (-ν),

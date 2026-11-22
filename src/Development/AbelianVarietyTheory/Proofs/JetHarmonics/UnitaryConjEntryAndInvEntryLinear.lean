@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementU
-import Formalism.HermitianCurvature.StatementQ
-import Formalism.HermitianCurvature.LetterProductDoubleDegreeCount
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BesselJUnitaryEquivariant
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementU
+public import Formalism.HermitianCurvature.StatementQ
+public import Formalism.HermitianCurvature.LetterProductDoubleDegreeCount
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BesselJUnitaryEquivariant
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Finset Matrix
 
@@ -36,7 +40,8 @@ theorem unitary_conj_entry_and_inv_entry : ∀ (k r : ℕ) (i j : Fin (2 * r + k
       rw [MvPolynomial.totalDegree_C, MvPolynomial.totalDegree_X]
     · show (Hpk k r * gᴴ * Hpk k r) i j = _
       rw [sandwich_entry_sum]
-      simp only [map_sum, map_mul, MvPolynomial.eval_C, MvPolynomial.eval_X, Sum.elim_inr,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, MvPolynomial.eval_C, MvPolynomial.eval_X, Sum.elim_inr,
         Matrix.conjTranspose_apply]
 
 end GlobalTheory

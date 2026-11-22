@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DltEqZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedQuadraticNormsTraceUniformizerFacts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DltEqZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedQuadraticNormsTraceUniformizerFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem sigma_e {e : ι → B.A} {S : Finset ι} (h : IsPre B e S) (i : ι) : B.
   obtain ⟨f, -, -, -, h1, h2⟩ := h.2 i
   by_cases hi : i ∈ S
   · rw [(h1 hi).1, (h1 hi).2]
-  · rw [(h2 hi).2, map_add, B.σ_σ, add_comm]
+  · rw [(h2 hi).2, map_add (f := _), B.σ_σ, add_comm]
 
 theorem sigma_eS {e : ι → B.A} {S : Finset ι} (h : IsPre B e S) (I : Finset ι) : B.σ (eS B e I) = eS B e I := by
   unfold eS; rw [map_sum]; exact Finset.sum_congr rfl fun i _ => sigma_e B h i
@@ -71,7 +75,7 @@ theorem chi_norm {e : ι → B.A} {S : Finset ι} (h : IsPre B e S) (I : Finset 
   unfold chi
   have hE := eS_idem B h.1.toOrthogonalIdempotents I
   have hσ : B.σ (w * eS B e I + (1 - eS B e I)) = B.σ w * eS B e I + (1 - eS B e I) := by
-    rw [map_add, map_mul, map_sub, map_one, sigma_eS B h]
+    rw [map_add (f := _), map_mul, map_sub, map_one, sigma_eS B h]
   rw [← twist_mul B hE, ← hσ]
   exact eta_norm_mul_sigma B (twist_isUnit B hE hw)
 
@@ -171,7 +175,7 @@ theorem chi_plus {e : ι → B.A} {S : Finset ι} (h : IsPre B e S) {y : B.A} (h
     rw [h1, ← hcomp, ← Finset.sum_add_sum_compl S e, hEdef, eS]; ring
   set w := y * F + G + E with hwdef
   have hσw : B.σ w = y * G + F + E := by
-    rw [hwdef, map_add, map_add, map_mul, hy.2, hσE, hGσ, B.σ_σ]
+    rw [hwdef, map_add (f := _), map_add (f := _), map_mul, hy.2, hσE, hGσ, B.σ_σ]
   have hw : w * B.σ w = y * (1 - E) + E := by
     rw [hσw, ← hFGsum]
     linear_combination (y ^ 2 + 1) * hFG + y * hFF + (y + 1) * hFE + y * hGG + (y + 1) * hGE + hE

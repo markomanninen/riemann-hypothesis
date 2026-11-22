@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.LUnH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LocalPowerUnitsTowerClosurePropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitEvalEqKummerClassStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TowerUnitClassModPrimePowPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerCompletionNoPrimeTorsionStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.LUnH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LocalPowerUnitsTowerClosurePropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitEvalEqKummerClassStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TowerUnitClassModPrimePowPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerCompletionNoPrimeTorsionStatement
+
+@[expose] public section
+
 open GlobalTheory.KZ GlobalTheory.K4 UpperTheory.Kd.K4 Polynomial
 open scoped Matrix MatrixGroups
 
@@ -61,7 +66,7 @@ private theorem mem_BSet {Ω : Type} [Field Ω] [Algebra ℚ Ω] {ε : Ω →+* 
     obtain ⟨⟨c, hc, ex⟩, ix⟩ := hx
     obtain ⟨⟨d, hd, ey⟩, iy⟩ := hy
     refine ⟨⟨c + d, fun i => Submodule.add_mem _ (hc i) (hd i), fun u => ?_⟩,
-      fun γ hγ => by rw [map_add, ix γ hγ, iy γ hγ]⟩
+      fun γ hγ => by rw [map_add (f := _), ix γ hγ, iy γ hγ]⟩
     simp only [Pi.add_apply, ex u, ey u, smul_add, Finset.sum_add_distrib]
   | smul r x _ hx =>
     obtain ⟨⟨c, hc, ex⟩, ix⟩ := hx
@@ -97,7 +102,8 @@ theorem UpperTheory.Kd.K4.pur :
   have hk : ∀ i, ∃ k : X.Khat l, ((l : ℤ_[l]) ^ n) • k = ((l : ℤ_[l]) ^ V.det.valuation) • cf i := by
     intro i
     have h1 : V.det • cf i ∈ LinearMap.ker (AdicCompletion.eval (idl l) (X.Kl l) n) := by
-      rw [LinearMap.mem_ker, e1 i, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [LinearMap.mem_ker, e1 i, map_sum]
       refine Finset.sum_eq_zero fun t _ => ?_
       have h2 := h0 ![((t : ℕ) : ℤ_[l]), 1]
       simp only [Pi.zero_apply, sub_zero] at h2

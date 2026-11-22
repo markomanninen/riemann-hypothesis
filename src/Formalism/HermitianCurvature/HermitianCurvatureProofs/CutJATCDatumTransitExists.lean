@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDatumTransitPt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDtrSGen
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDtrSIo
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDatumTransitPt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDtrSGen
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDtrSIo
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField
 open scoped ComplexConjugate Matrix
@@ -59,14 +63,14 @@ theorem io_fam (hk : 2 ≤ k) (hz : inWb k r z) (hz' : inWb k r z') (hT : 0 < Tz
   rw [ioMulVec]
   by_cases hout : i.val < r ∨ r + k < i.val
   · rw [fam_out hout, prWv_bvec_out z' hout, herm_zero_l, zero_smul, sub_zero, Matrix.mulVec_zero,
-      dif_neg (by omega)]
+      dite_eq_right (by omega)]
   · by_cases h0 : i.val = r
-    · rw [frame_family_middle_index h0, hfix, h11, one_smul, sub_self, Matrix.mulVec_zero, dif_neg (by omega)]
+    · rw [frame_family_middle_index h0, hfix, h11, one_smul, sub_self, Matrix.mulVec_zero, dite_eq_right (by omega)]
     · by_cases hl : i.val = r + k
       · rw [frame_family_last_index (by omega) hl, TF.prWv_smul, prWv_self hz' hT', smul_zero, herm_zero_l, zero_smul, sub_zero,
-          Matrix.mulVec_zero, dif_neg (by omega)]
+          Matrix.mulVec_zero, dite_eq_right (by omega)]
       · have hm : r + 1 ≤ i.val ∧ i.val < r + k := by omega
-        rw [frame_family_middle_range hm, dif_pos hm,
+        rw [frame_family_middle_range hm, dite_eq_left hm,
           DU.prWv_fix (hFr.1 _) (hFr.2.2 _ z' (by simp)), hFr.2.2 _ _ (by simp), zero_smul, sub_zero]
 
 end pt
@@ -172,11 +176,11 @@ theorem datum_transit_existence : DTExists := by
       rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, hh' i, hx', io_fam hk hz hz' hT hT' hsec h₁ hFr₁ c' i,
         hy', io_fam hk hz hz' hT hT' hsec h₂ hFr₂ c' i]
       by_cases hm : r + 1 ≤ i.val ∧ i.val < r + k
-      · rw [dif_pos hm, dif_pos hm]
+      · rw [dite_eq_left hm, dite_eq_left hm]
         have := hh i
         rw [hx, hy, frame_family_middle_range hm, frame_family_middle_range hm] at this
         exact this
-      · rw [dif_neg hm, dif_neg hm, Matrix.mulVec_zero]
+      · rw [dite_eq_right hm, dite_eq_right hm, Matrix.mulVec_zero]
     rw [key, Matrix.mul_assoc, FrameEntries.mul_inv_uh hh'U, Matrix.mul_one]
 
 end

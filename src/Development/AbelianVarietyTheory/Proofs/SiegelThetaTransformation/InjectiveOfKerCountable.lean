@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.DatEqZero
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsSymplecticCoordinatesOfIsPeriod
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianFormAtFrameLaws
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ConstOfNormFactorUnitFr
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ComponentEqOfMatchedLatticesMarkings
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsTestRingInjective
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CongrOfDvdModulus
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIsUnf
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsHermCoordOfDatum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.DatEqZero
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsSymplecticCoordinatesOfIsPeriod
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianFormAtFrameLaws
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ConstOfNormFactorUnitFr
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ComponentEqOfMatchedLatticesMarkings
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsTestRingInjective
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CongrOfDvdModulus
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIsUnf
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsHermCoordOfDatum
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr
@@ -25,15 +29,15 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : D
 
 theorem injective_of_ker_countable {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
     (h : V →ₗ[ℂ] W) {S : Set V} (hS : S.Countable) (hk : ∀ v, h v = 0 → v ∈ S) : Function.Injective h := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro v hv
   by_contra hne
   have hi : Function.Injective fun t : ℂ => t • v := smul_left_injective ℂ hne
   have : (Set.univ : Set ℂ).Countable := (hS.preimage hi).mono fun t _ => hk _ (by rw [map_smul, hv, smul_zero])
   exact not_countable_complex this
 
-open MonObj in
 
+open MonObj in
 theorem exists_isometry [Algebra c.F ℂ] {r g g' : ℕ} {X : Data E r} {bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.Λ}
     {idx : Fin g ≃ X.Ψ × Fin r} {e : Fin g ≃ Lt1 Dw} {x : Frame X.Ψ r} {L : Lt E r} {y : FrPt Xo c ℂ}
     (A : AnFib X bas idx e x L y) (hs : IsSympl X bas) (hx : x ∈ X.dom) (hg : g = g') {σ' : KA l →+* ℂ}
@@ -67,7 +71,7 @@ theorem exists_isometry [Algebra c.F ℂ] {r g g' : ℕ} {X : Data E r} {bas : (
       rw [← hh, ← hh]; exact A.ex_lin a v
   let gam₁ : L →ₗ[𝓞 E] (F.Di i).La :=
     { toFun := gam
-      map_add' := fun a b => hP.2.1 (by rw [map_add, hgam, hgam, hgam, ← map_add, ← hadd]; rfl)
+      map_add' := fun a b => hP.2.1 (by rw [map_add (f := _), hgam, hgam, hgam, ← map_add (f := _), ← hadd]; rfl)
       map_smul' := fun a b => hP.2.1 (funext fun k => by
         rw [RingHom.id_apply, hP.1, hgam, hgam, ← hlin]
         exact congrArg (fun z => h z k) (hsm a b)) }
@@ -115,7 +119,7 @@ theorem exists_isometry [Algebra c.F ℂ] {r g g' : ℕ} {X : Data E r} {bas : (
     obtain ⟨w, hw⟩ := (F.ex_ker i P hP _).1 h2
     refine ⟨w, hP.2.1 ?_⟩
     change P (gam _) = _
-    rw [map_add, map_nsmul, hw, ← Nat.cast_smul_eq_nsmul ℂ, ← smul_sub, smul_inv_smul₀ hM, add_sub_cancel]
+    rw [map_add (f := _), map_nsmul, hw, ← Nat.cast_smul_eq_nsmul ℂ, ← smul_sub, smul_inv_smul₀ hM, add_sub_cancel]
 
 theorem exists_const {σ : c.F →+* ℂ} {r : ℕ} {U : Formalism.L2.PjFree.Unf Xo c σ r} (hU : Formalism.L2.PjFree.IsUnf U) (W : UW U) {f : Rul Xo c}
     (hf : f ∈ sec Xo c 0 0) (h1 : ∀ y : FrPt Xo c (CAt σ), ‖Formalism.L2.PjFree.toC (evR Xo c f y)‖ = 1) :

@@ -1,10 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+
+@[expose] public section
 
 open Matrix UpperTheory.V.U3
 
 theorem UpperTheory.V.U3.mat_gstar :
-    ∀ {G R : Type} [Group G] [CommRing R] {m : ℕ} (r : G →* GG m R) (c g : G), (r c).mat = 1 → (r c).right = -1 → (r g).right = 1 →
-    (r (gstar c g)).mat = Jmat R m * (r g).matᵀ * Jmat R m ∧ (r (gstar c g)).right = 1 := by
+    ∀ {G R : Type} [Group G] [CommRing R] {m : ℕ} (r : G →* GG (m := m) (R := R)) (c g : G),
+      (r c).mat = 1 → (r c).right = -1 → (r g).right = 1 →
+      (r (gstar c g)).mat = Jmat (R := R) m * (r g).matᵀ * Jmat (R := R) m ∧
+        (r (gstar c g)).right = 1 := by
   intro G R _ _ m r c g h1 h2 h3
   have hc : r c = SemidirectProduct.mk 1 (-1) := by
     apply SemidirectProduct.ext
@@ -18,5 +24,5 @@ theorem UpperTheory.V.U3.mat_gstar :
     SemidirectProduct.inv_right, inv_one, map_one, mul_one, one_mul, MulAut.one_apply, map_inv,
     sgnAct_neg_one, theta_inv_val]
   refine ⟨?_, ?_⟩
-  · simp [map_one, theta_inv_val]
+  · simp
   · norm_num

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ToGlob0
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ToGlob0
+
+@[expose] public section
 
 open Formalism.BasicNotions GlobalTheory.Diag.PG
 

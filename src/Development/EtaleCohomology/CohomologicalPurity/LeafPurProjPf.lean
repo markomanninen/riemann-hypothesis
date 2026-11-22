@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafPurPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafActNatPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafPurPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafActNatPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CochainComplex.HomComplex
@@ -42,7 +46,7 @@ theorem act_cup (hA : DivisorNaturality) (hR : DivisorRingCompatibility) (q : �
 theorem fgt_act (hA : DivisorNaturality) (q : ℕ) [NeZero q] {P : Arrow Spc} {n m i j : ℤ} (a : Ht q P.right n i)
     (s : Hs q P m j) : Hs.fgt q P _ _ (Hs.act q a s) = cup q a (Hs.fgt q P m j s) := by
   change pull _ (dbl.inl P) _ _ (Hs.act q a s).1 = cup q a (pull _ (dbl.inl P) _ _ s.1)
-  rw [act_val hA, (hA q).1, ← pull_comp, show dbl.inl P ≫ dbl.fold P = 𝟙 _ from pushout.inl_desc _ _ _, pull_id]
+  rw [act_val hA, (hA q).1, ← pull_comp, show dbl.inl P ≫ dbl.fold P = 𝟙 _ from pushout.inl_desc (f := P.hom) (g := P.hom) _ _ _, pull_id]
 
 theorem purT_char {d : ℕ} (T : ∀ P : SP d, Tube P) (q : ℕ) [NeZero q] (P : SP d) (hq : IsUnit (q : Γ(P.X, ⊤)))
     (n i : ℤ) (x : Ht q (sch.obj P.Z) n i) : ∃ e : Ht q (T P).E n i,
@@ -55,7 +59,7 @@ theorem purT_char {d : ℕ} (T : ∀ P : SP d, Tube P) (q : ℕ) [NeZero q] (P :
     (pull _ (pullback.snd (T P).π (sch.map P.ι)) (tw q i) n x), ?_, ?_⟩
   · exact AddEquiv.ofBijective_apply_symm_apply _ (((T P).ok q hq).1 i n)
   · unfold purT
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     exact AddEquiv.ofBijective_apply_symm_apply _ (((T P).ok q hq).2.2.1 (n + 2 * d) (i + d))
 
 end PurProjPf
@@ -70,7 +74,8 @@ theorem LeafPurProj_of : EtalePurityProjection := by
   obtain ⟨ex, hex1, hex2⟩ := purT_char T q P hq (n + m) (i + j) (cup q (pull _ (sch.map P.ι) _ _ a) b)
   have hex : ex = cup q (pull (ZMod q) (T P).π (tw q i) n a) eb := by
     apply (((T P).ok q hq).1 (i + j) (n + m)).1
-    rw [hex1, (hA q).1, (hA q).1, heb1, ← pull_comp, ← pull_comp, pullback.condition]
+    set_option synthInstance.maxHeartbeats 200000 in
+      rw [hex1, (hA q).1, (hA q).1, heb1, ← pull_comp, ← pull_comp, pullback.condition]
   have hN : n + (m + 2 * (d : ℤ)) = n + m + 2 * d := by ring
   have hI : i + (j + (d : ℤ)) = i + j + d := by ring
   have key : purT T q P (n + m) (i + j) (cup q (pull _ (sch.map P.ι) _ _ a) b) =

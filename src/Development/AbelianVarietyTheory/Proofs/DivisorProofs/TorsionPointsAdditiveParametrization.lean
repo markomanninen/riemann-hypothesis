@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsEtLevOver
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CardTorsionBySetPowOfDivisibleNumberFieldStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionBySetPowFreeOfCardPowNumberFieldStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CardTorsionKilledByPrimeAtEtalePlaceStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowEqOfIsAlgClosedStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsEtLevOver
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CardTorsionBySetPowOfDivisibleNumberFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionBySetPowFreeOfCardPowNumberFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CardTorsionKilledByPrimeAtEtalePlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowEqOfIsAlgClosedStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.EtLev
 
@@ -40,7 +45,7 @@ def ptModule {G : Over S} [GrpObj G] [IsCommMonObj G] (act : OActN D.O G) (T : O
     add_smul := fun a b g => by
       show Additive.ofMul (g.toMul ≫ act.act (algebraMap (𝓞 D.F) D.O (a + b))) =
         Additive.ofMul ((g.toMul ≫ act.act (algebraMap (𝓞 D.F) D.O a)) * (g.toMul ≫ act.act (algebraMap (𝓞 D.F) D.O b)))
-      rw [map_add, act.add, MonObj.comp_mul]
+      rw [map_add (f := _), act.add, MonObj.comp_mul]
     zero_smul := fun g => by
       show Additive.ofMul (g.toMul ≫ act.act (algebraMap (𝓞 D.F) D.O 0)) = Additive.ofMul 1
       rw [map_zero, act_zero, MonObj.comp_one] }
@@ -99,7 +104,7 @@ theorem free_torsion_geomPt : ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (R : Ty
   refine ⟨fun a => (f a).toMul, ?_, ?_, ?_, ?_⟩
   · intro a a'
     show Additive.toMul (f (a + a')) = Additive.toMul (f a) * Additive.toMul (f a')
-    rw [map_add]; rfl
+    rw [map_add (f := _)]; rfl
   · intro c a
     show Additive.toMul (f (Ideal.Quotient.mk (w0 ^ r) c • a)) = Additive.toMul (f a) ≫ _
     rw [hf1, hsm]; rfl

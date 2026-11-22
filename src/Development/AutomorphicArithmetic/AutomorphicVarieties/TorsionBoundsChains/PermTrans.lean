@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.FaceDSingle
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.Shapiro
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.FinGroup
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.Transport
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.FaceDSingle
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.Shapiro
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.FinGroup
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.Transport
+
+@[expose] public section
 
 open CategoryTheory UpperTheory.V.KH
 

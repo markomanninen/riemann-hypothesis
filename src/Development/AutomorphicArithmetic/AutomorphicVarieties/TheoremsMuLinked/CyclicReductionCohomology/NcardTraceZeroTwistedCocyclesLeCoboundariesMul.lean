@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.DualPair
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.FinTwO
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.OmFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.SolCnt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.DualPair
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.FinTwO
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.OmFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.SolCnt
+
+@[expose] public section
 
 open IsLocalRing Matrix Filter NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.HV UpperTheory.V.Th GlobalTheory.GalOfCusp
 
@@ -190,7 +194,7 @@ private theorem dgPhi_nat {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S
     φ.mapMatrix (dgPhi ρ e P cj sg z i) =
       dgPhi (fun g => φ.mapMatrix (ρ g)) (fun g => φ (e g)) (φ.mapMatrix P) cj sg (fun g => φ.mapMatrix (z g)) i := by
   rcases i with p | g | j
-  · simp only [dgPhi, map_sub, map_add, dg_smul, map_mul]
+  · simp only [dgPhi, map_sub, map_add (f := _), dg_smul, map_mul]
   · simp only [dgPhi, map_sub, map_mul, dg_tr]
   · ext1 a b
     simp only [dgPhi]

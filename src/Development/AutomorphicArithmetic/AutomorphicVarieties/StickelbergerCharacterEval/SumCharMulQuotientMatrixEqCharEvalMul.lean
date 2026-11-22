@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerCharacterEval.MemZpowersIff
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerCharacterEval.MemZpowersIff
+
+@[expose] public section
 
 open Finset UpperTheory.V.Bern UpperTheory.V.B4 UpperTheory.V.B5
 
@@ -24,6 +28,6 @@ theorem UpperTheory.V.B5.sum_char_mul_quotientMatrix_eq_charEval_mul :
   rw [ev_eq_sum, Finset.sum_mul, ← Equiv.sum_comp (Equiv.mulRight (rep j)⁻¹), sum_rep h2 h1]
   refine Finset.sum_congr rfl fun i _ => ?_
   have hj : ((χ.1 (rep j) : Ωˣ) : Ω) ≠ 0 := Units.ne_zero _
-  simp only [mat, Matrix.of_apply, Equiv.coe_mulRight, map_add, map_mul, map_intCast, mul_assoc, map_inv,
+  simp only [mat, Matrix.of_apply, Equiv.coe_mulRight, map_add (f := _), map_mul, map_intCast, mul_assoc, map_inv,
     Units.val_mul, Units.val_inv_eq_inv_val, hc, inv_mul_cancel₀ hj]
   ring

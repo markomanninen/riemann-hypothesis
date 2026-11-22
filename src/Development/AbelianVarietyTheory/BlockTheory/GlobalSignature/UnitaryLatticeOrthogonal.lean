@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+
+@[expose] public section
 
 noncomputable section
 
@@ -143,24 +147,18 @@ private lemma involution_apply_eq_tensorProductMap_restrictScalars (a : _root_.G
   induction a using TensorProduct.induction_on with
   | zero => simp
   | tmul r e => unfold _root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR; simp
-  | add x y hx hy => simp [map_add, hx, hy]
+  | add x y hx hy => simp [map_add (f := _), hx, hy]
+
 
 open scoped TensorProduct in
 open NumberField IsDedekindDomain in
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   (σ : E →ₐ[F] E) (v : HeightOneSpectrum (𝓞 F)) in
-
 theorem _root_.GlobalTheory.IndefiniteRowSideFullHecke.UnitaryLatticeOrthogonal.sigR_mem {a : _root_.GlobalTheory.IndefiniteRowSideFullHecke.UnitaryLatticeOrthogonal.Ev F E v}
     (ha : a ∈ _root_.GlobalTheory.IndefiniteRowSideFullHecke.UnitaryLatticeOrthogonal.OEv F E v) :
     _root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv F v) σ a ∈ _root_.GlobalTheory.IndefiniteRowSideFullHecke.UnitaryLatticeOrthogonal.OEv F E v := by
   rw [involution_apply_eq_tensorProductMap_restrictScalars]
   exact IsIntegral.map _ ha
-
-theorem hR_one {M : ℕ} (z y : Fin M → Ev F E v) :
-    hR (Fv F v) σ (1 : Matrix (Fin M) (Fin M) E) z y = ∑ i, sigR (Fv F v) σ (z i) * y i := by
-  simp only [hR, Formalism.UG.hform, JR]
-  rw [Matrix.map_one _ (map_zero _) (map_one _)]
-  simp [Matrix.one_apply]
 
 end Basic₂
 

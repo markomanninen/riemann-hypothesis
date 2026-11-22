@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ExistsTeichmullerRepModPrime
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.MuMEvalPowEqZero
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ExistsTeichmullerRepModPrime
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.MuMEvalPowEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -133,7 +137,7 @@ end Generic
 theorem frobeniusLift_injective (s : Rmu l →+* Rmu l)
     (hs : ∀ (ζ : ℂ_[l]) (hζ : ζ ∈ muP l),
       ((s ⟨ζ, Subring.subset_closure hζ⟩ : Rmu l) : ℂ_[l]) = ζ ^ l) : Function.Injective s := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   have := rmu_sigma_norm l s hs x
   rw [hx, Subring.coe_zero, norm_zero] at this

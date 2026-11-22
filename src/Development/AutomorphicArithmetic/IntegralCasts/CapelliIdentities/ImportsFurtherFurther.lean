@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qo3.exists_smul_mem_of_mem_span :
     ∀ {L V : Type} [inst : Field L] [NumberField L] [inst_2 : AddCommGroup V]

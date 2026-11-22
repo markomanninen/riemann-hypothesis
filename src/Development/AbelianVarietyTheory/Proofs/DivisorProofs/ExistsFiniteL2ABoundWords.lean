@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubledUnitaryPartnerDiagStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsContOnOfLocal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdeleJoinZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergWordL2Bound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubledUnitaryPartnerDiagStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsContOnOfLocal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdeleJoinZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergWordL2Bound
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta
 open IsDedekindDomain NumberField
@@ -45,7 +49,8 @@ theorem exists_bound_foldr_le {M U : Type*} [AddCommGroup M] [Module ℝ M] [Nor
       set y := l.foldr (fun u x => D u x) m with hy
       have e : T (D u y) = ∑ j, b.repr u j • T (D (b j) y) := by
         conv_lhs => rw [← b.sum_repr u]
-        simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply]
       rw [e]
       have hR : 0 ≤ R := (norm_nonneg u).trans (hu u List.mem_cons_self)
       refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun j _ => ?_)
@@ -60,7 +65,7 @@ def lForm (ℓ : mixedEmbedding.mixedSpace F →ₗ[ℝ] ℝ) (c : κ → mixedE
     (κ → mixedEmbedding.mixedSpace F) →L[ℝ] ℝ :=
   LinearMap.toContinuousLinearMap
     { toFun := fun y => ℓ (y ⬝ᵥ c)
-      map_add' := fun y y' => by rw [add_dotProduct, map_add]
+      map_add' := fun y y' => by rw [add_dotProduct, map_add (f := _)]
       map_smul' := fun r y => by rw [smul_dotProduct, map_smul]; rfl }
 
 theorem lForm_apply (ℓ : mixedEmbedding.mixedSpace F →ₗ[ℝ] ℝ) (c y : κ → mixedEmbedding.mixedSpace F) :
@@ -89,7 +94,7 @@ def lLin (ℓ : mixedEmbedding.mixedSpace F →ₗ[ℝ] ℝ) :
   LinearMap.mk₂ ℝ (fun v f => lOp ℓ v f)
     (fun v v' f => by
       ext x
-      simp only [SchwartzMap.add_apply, lOp_apply, lForm_apply, Prod.fst_add, Prod.snd_add, map_add,
+      simp only [SchwartzMap.add_apply, lOp_apply, lForm_apply, Prod.fst_add, Prod.snd_add, map_add (f := _),
         dotProduct_add]
       push_cast; ring)
     (fun c v f => by
@@ -98,7 +103,7 @@ def lLin (ℓ : mixedEmbedding.mixedSpace F →ₗ[ℝ] ℝ) :
         dotProduct_smul, smul_eq_mul, Complex.real_smul]
       push_cast; ring)
     (fun v f f' => by
-      simp only [lOp, map_add, smul_add]
+      simp only [lOp, map_add (f := _), smul_add]
       abel)
     (fun c v f => by
       simp only [lOp, ContinuousLinearMap.map_smul_of_tower, smul_add]
@@ -125,7 +130,7 @@ theorem schr_pureA_arch (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ) (ℓ : mixedEm
     funext i
     change InfiniteAdeleRing.ringEquiv_mixedSpace F ((a i).1 + (InfiniteAdeleRing.ringEquiv_mixedSpace F).symm ((t • h1) i)) =
       InfiniteAdeleRing.ringEquiv_mixedSpace F (a i).1 + (t • h1) i
-    rw [map_add, RingEquiv.apply_symm_apply]
+    rw [map_add (f := _), RingEquiv.apply_symm_apply]
   set A := a ⬝ᵥ GlobalTheory.WeilL2Words.arch F (t • h2) +
     ⅟(2 : AdeleRing (𝓞 F) F) * (GlobalTheory.WeilL2Words.arch F (t • h1) ⬝ᵥ GlobalTheory.WeilL2Words.arch F (t • h2)) with hA
   have hev : ∀ w : κ → mixedEmbedding.mixedSpace F,
@@ -141,12 +146,12 @@ theorem schr_pureA_arch (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ) (ℓ : mixedEm
     rfl
   have hA2 : A.2 = 0 := by
     change s A = 0
-    rw [hA, map_add, map_mul, RingHom.map_dotProduct, RingHom.map_dotProduct, hsnd, hsnd, dotProduct_zero,
+    rw [hA, map_add (f := _), map_mul, RingHom.map_dotProduct, RingHom.map_dotProduct, hsnd, hsnd, dotProduct_zero,
       dotProduct_zero, mul_zero, add_zero]
   have hpa : ⇑(GlobalTheory.ThetaSobolevBase.evHom F) ∘ a = GlobalTheory.WeilL2Words.archPart F a := rfl
   have hA1 : GlobalTheory.ThetaSobolevBase.evHom F A = GlobalTheory.WeilL2Words.archPart F a ⬝ᵥ (t • h2) +
       algebraMap ℝ (mixedEmbedding.mixedSpace F) (1 / 2) * ((t • h1) ⬝ᵥ (t • h2)) := by
-    rw [hA, map_add, map_mul, RingHom.map_dotProduct, RingHom.map_dotProduct, GlobalTheory.ThetaSobolevBase.evHom_invOf_two,
+    rw [hA, map_add (f := _), map_mul, RingHom.map_dotProduct, RingHom.map_dotProduct, GlobalTheory.ThetaSobolevBase.evHom_invOf_two,
       hev, hev, hpa]
   have hAe : A = GlobalTheory.WeilL2Words.arch1 F (GlobalTheory.ThetaSobolevBase.evHom F A) := by
     refine Prod.ext ?_ ?_
@@ -157,7 +162,7 @@ theorem schr_pureA_arch (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ) (ℓ : mixedEm
       algebraMap ℝ (mixedEmbedding.mixedSpace F) (1 / 2) * ((t • h1) ⬝ᵥ (t • h2))) =
       t * lForm ℓ h2 (GlobalTheory.WeilL2Words.archPart F a) + t ^ 2 * (1 / 2 * ℓ (h1 ⬝ᵥ h2)) := by
     rw [← Algebra.smul_def, lForm_apply]
-    simp only [dotProduct_smul, smul_dotProduct, map_add, map_smul, smul_eq_mul]
+    simp only [dotProduct_smul, smul_dotProduct, map_add (f := _), map_smul, smul_eq_mul]
     ring
   rw [hAe, hℓ, hA1, hfin, harch, hl]
   ring
@@ -215,8 +220,8 @@ theorem word_sumPure (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ) (ℓ : mixedEmbed
     rw [GlobalTheory.WeilL2Words.word_cons, ih, dS_sumPure ψ ℓ hℓ]
     rfl
 
-omit [Invertible (2 : AdeleRing (𝓞 F) F)] in
 
+omit [Invertible (2 : AdeleRing (𝓞 F) F)] in
 theorem l2A_sumPure_le {m : ℕ} (μ : @Measure (κ → FiniteAdeleRing (𝓞 F) F) (borel _))
     (g : Fin m → (κ → FiniteAdeleRing (𝓞 F) F) → ℂ) (hg : ∀ i, Continuous (g i))
     (f : Fin m → SchwartzMap (κ → mixedEmbedding.mixedSpace F) ℂ) :
@@ -251,18 +256,20 @@ theorem l2A_sumPure_le {m : ℕ} (μ : @Measure (κ → FiniteAdeleRing (𝓞 F)
     _ = ∫⁻ y, (m : ENNReal) * ∑ i, (∫⁻ x, ‖f i x‖ₑ ^ 2) * ‖g i y‖ₑ ^ 2 ∂μ := by
         congr 1
         funext y
-        rw [lintegral_const_mul _ (Finset.measurable_sum _ fun i _ => (hfm i).mul_const _),
-          lintegral_finset_sum _ fun i _ => (hfm i).mul_const _]
+        rw [lintegral_const_mul _ (Finset.measurable_sum _ fun i _ => (hfm i).mul_const _)]
+        congr 1
+        rw [lintegral_finsetSum _ fun i _ => (hfm i).mul_const _]
         simp_rw [lintegral_mul_const _ (hfm _)]
     _ = _ := by
-        rw [lintegral_const_mul _ (Finset.measurable_sum _ fun i _ => (hgm i).const_mul _),
-          lintegral_finset_sum _ fun i _ => (hgm i).const_mul _]
+        rw [lintegral_const_mul _ (Finset.measurable_sum _ fun i _ => (hgm i).const_mul _)]
+        congr 1
+        rw [lintegral_finsetSum _ fun i _ => (hgm i).const_mul _]
         simp_rw [lintegral_const_mul _ (hgm _)]
 
 end GlobalTheory.FoldrBoundLinearForms
 
-open GlobalTheory.FoldrBoundLinearForms in
 
+open GlobalTheory.FoldrBoundLinearForms in
 theorem GlobalTheory.WeilL2Words.l2A_word_le : ∀ (F : Type) [Field F] [NumberField F] [Invertible (2 : AdeleRing (𝓞 F) F)] (κ : Type) [Fintype κ]
     (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ), GlobalTheory.WeilL2Words.IsStdInf F ψ → ∀ Φ ∈ GlobalTheory.WeilM.schA F κ,
     ∀ (μ : @MeasureTheory.Measure (κ → FiniteAdeleRing (𝓞 F) F) (borel _)), @MeasureTheory.Measure.IsAddHaarMeasure _ _ _ (borel _) μ →
@@ -281,8 +288,10 @@ theorem GlobalTheory.WeilL2Words.l2A_word_le : ∀ (F : Type) [Field F] [NumberF
   haveI := hμ
   have hG : ∀ i, ∫⁻ y, ‖g i y‖ₑ ^ 2 ∂μ ≠ ⊤ := by
     intro i
-    have h := ((hgc i).memLp_of_hasCompactSupport (p := 2) (μ := μ) (hg i).2).2
-    rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (by norm_num) (by norm_num)] at h
+    have h := (hgc i).memLp_of_hasCompactSupport (p := 2) (μ := μ) (hg i).2
+    have ha := h.aestronglyMeasurable
+    change eLpNorm (g i) 2 μ < ⊤ at h
+    rw [eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top (by norm_num) (by norm_num) ha] at h
     simpa using h.ne
   let T : SchwartzMap (κ → mixedEmbedding.mixedSpace F) ℂ →ₗ[ℝ]
       Lp ℂ 2 (volume : Measure (κ → mixedEmbedding.mixedSpace F)) :=
@@ -305,11 +314,11 @@ theorem GlobalTheory.WeilL2Words.l2A_word_le : ∀ (F : Type) [Field F] [NumberF
   have hm := f'.memLp 2 (volume : Measure (κ → mixedEmbedding.mixedSpace F))
   have h2 : eLpNorm f' 2 volume ≤ ENNReal.ofReal (B i) := by
     have h3 : ‖T f'‖ = (eLpNorm f' 2 volume).toReal := Lp.norm_toLp _ hm
-    rw [← ENNReal.ofReal_toReal hm.2.ne, ← h3]
+    rw [← ENNReal.ofReal_toReal hm.ne, ← h3]
     exact ENNReal.ofReal_le_ofReal h1
   have h4 : ∫⁻ x, ‖f' x‖ₑ ^ 2 = eLpNorm f' 2 volume ^ 2 := by
     have := eLpNorm_nnreal_pow_eq_lintegral (f := (f' : (κ → mixedEmbedding.mixedSpace F) → ℂ))
-      (μ := volume) (p := 2) (by norm_num)
+      (μ := volume) (p := 2) (by norm_num) hm.aestronglyMeasurable
     simpa using this.symm
   rw [h4]
   exact pow_le_pow_left' h2 2

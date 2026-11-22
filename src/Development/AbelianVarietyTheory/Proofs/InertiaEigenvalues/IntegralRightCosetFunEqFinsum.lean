@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+
+@[expose] public section
+
 open GlobalTheory.UnitLemma Matrix MeasureTheory
 
 namespace GlobalTheory
@@ -16,7 +21,7 @@ theorem integral_rightCoset_fun_eq_finsum (G Λ : Type) [Group G] [TopologicalSp
   have hfib : ∀ g, π ⁻¹' {π g} = (fun x => x * g⁻¹) ⁻¹' H := by
     intro g; ext x; simp [hπ g x]
   have hfibO : ∀ g, IsOpen (π ⁻¹' {π g}) := by
-    intro g; rw [hfib g]; exact hH.preimage (continuous_mul_right _)
+    intro g; rw [hfib g]; exact hH.preimage (continuous_mul_const _)
   have hfibM : ∀ l, MeasurableSet (π ⁻¹' {l}) := by
     intro l
     by_cases hl : l ∈ Set.range π
@@ -43,7 +48,7 @@ theorem integral_rightCoset_fun_eq_finsum (G Λ : Type) [Group G] [TopologicalSp
       · have : π g ∉ S := by rw [hT, Set.Finite.mem_toFinset] at *; exact h
         by_contra hne
         exact this ⟨⟨g, rfl⟩, Ne.symm hne |>.symm⟩
-    rw [hfun, integral_finset_sum]
+    rw [hfun, MeasureTheory.integral_finsetSum]
     · rw [← finsum_mem_inter_support, finsum_mem_eq_finite_toFinset_sum _ hS]
       refine Finset.sum_congr rfl ?_
       intro l hl
@@ -75,7 +80,7 @@ theorem integral_rightCoset_fun_eq_finsum (G Λ : Type) [Group G] [TopologicalSp
             obtain ⟨⟨g, rfl⟩, _⟩ := hF hl
             simp [hfib1 g]
         _ = ∫⁻ g, ∑ l ∈ F, (π ⁻¹' {l}).indicator 1 g ∂μ := by
-            rw [lintegral_finset_sum]
+            rw [MeasureTheory.lintegral_finsetSum]
             · refine Finset.sum_congr rfl ?_
               intro l _
               rw [lintegral_indicator_one (hfibM l)]

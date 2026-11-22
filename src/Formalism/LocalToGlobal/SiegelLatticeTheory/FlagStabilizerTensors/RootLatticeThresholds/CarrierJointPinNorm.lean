@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierJointPin
-import Formalism.HermitianCurvature.HeisenbergConjugationMeasurePreserving
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralIdentities
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierJointPin
+public import Formalism.HermitianCurvature.HeisenbergConjugationMeasurePreserving
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralIdentities
+
+@[expose] public section
 
 noncomputable section
 
@@ -133,7 +137,8 @@ theorem orbDirac_holds : OrbDirac := by
     filter_upwards [Formalism.FourierDecayAlt.P.B5.ae_inSS D] with p hp
     have h1 := hnc.2.2 p hp
     rw [integral_dirac, hact] at h1
-    simp [h1]
+    rw [h1]
+    exact one_smul ℝ _
   · rw [hJF]
     symm
     apply integral_undef

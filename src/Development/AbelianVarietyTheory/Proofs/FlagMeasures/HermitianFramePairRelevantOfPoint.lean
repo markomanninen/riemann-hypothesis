@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NotField
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToZero
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramesCharactersAgreeCommonStabiliser
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NotField
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToZero
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramesCharactersAgreeCommonStabiliser
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.Loc Formalism.MainNotions.S.LocNG GlobalTheory.LocOver GlobalTheory.HL
 open scoped Classical
@@ -66,10 +70,10 @@ theorem exists_coord_of_point {F : Type} [Field F] [ValuativeRel F] [Topological
   · simp only [hf_basis]
     have h1 : H.Dl P.A.f P.B.f (r + 1) =
         lead (Matrix.of fun a c => H.h (P.B.f c) (P.A.f a)) (Fin.last (r + 1)) := by
-      unfold HermSp.Dl; rw [dif_pos le_rfl]; rfl
+      unfold HermSp.Dl; rw [dite_eq_left le_rfl]; rfl
     have h2 : H.Dl P.A.f P.B.f r =
         lead (Matrix.of fun a c => H.h (P.B.f c) (P.A.f a)) (Fin.last r).castSucc := by
-      unfold HermSp.Dl; rw [dif_pos (Nat.le_succ r)]; rfl
+      unfold HermSp.Dl; rw [dite_eq_left (Nat.le_succ r)]; rfl
     rw [← h1, ← h2]
     exact hG
   · obtain ⟨g, hg⟩ := Option.isSome_iff_exists.1 h
@@ -90,7 +94,7 @@ theorem relG_of_point : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSp
   have hDm : ∀ l (hl : l ≤ r + 1), P.Dm l = S.D ⟨l, Nat.lt_succ_of_le hl⟩ := by
     intro l hl
     unfold FPair.Dm HermSp.Dl
-    rw [dif_pos hl]
+    rw [dite_eq_left hl]
     unfold Frames.D lead
     rw [hZm]
   have hmap : ∀ (f : Fin (r + 1) → V) (g : Fin (r + 1) → S.V), (∀ a, g a = c.e (f a)) →

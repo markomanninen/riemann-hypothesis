@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLExhAll
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACSmooth
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLExhAll
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACSmooth
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA.SA
 

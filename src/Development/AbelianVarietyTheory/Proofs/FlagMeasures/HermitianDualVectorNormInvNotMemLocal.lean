@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
-import Formalism.LocalToGlobal.HermitianForms.TiedStep
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DualLatticeLocalCharacterization
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
+public import Formalism.LocalToGlobal.HermitianForms.TiedStep
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DualLatticeLocalCharacterization
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.UG Formalism.L2.Forms NumberField IsDedekindDomain Matrix GlobalTheory.St.G
 open scoped TensorProduct
@@ -58,7 +62,7 @@ theorem dual_not_loc_of_norm_inv : ∀ (F E : Type) [Field F] [NumberField F] [F
   have h1 : inclE (F := F) (v.adicCompletion F) ((T : E)⁻¹) ∈ intV E v := by
     have he : Formalism.UG.hform (cm.sig : E →+* E) J d d = algebraMap (𝓞 E) E a + (T : E)⁻¹ := by
       rw [ha]; ring
-    rw [he, map_add] at hxx
+    rw [he, map_add (f := _)] at hxx
     have ha' : inclE (F := F) (v.adicCompletion F) (algebraMap (𝓞 E) E a) ∈ intV E v :=
       Subring.subset_closure (Or.inl ⟨⟨_, a, rfl⟩, rfl⟩)
     have := sub_mem hxx ha'

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Matrix
 open scoped ComplexOrder
 
@@ -123,7 +128,8 @@ theorem mem_span_translates_vacuum (X M : Type) [AddCommGroup X] [AddCommGroup M
     rw [h1, ← hA, h3]
   have hAsum : ∀ (u : Λ) (f : Λ ⧸ H → M), A u (∑ q, f q) = ∑ q, A u (f q) := by
     intro u f
-    simp only [A, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [A, map_sum, Finset.smul_sum]
   have hP : ∀ w, (∀ u ∈ Λ, ρ (K • u) w = w) → ∃ c : ℂ, (∑ q : Λ ⧸ H, A q.out w) = c • e := by
     intro w hw
     apply hvac
@@ -147,7 +153,8 @@ theorem mem_span_translates_vacuum (X M : Type) [AddCommGroup X] [AddCommGroup M
       intro u hu
       rw [hcomm, hvK u hu, hp1, ← hp2, (hΛ u).1 hu _ ((hTg _).1 (Tg.neg_mem ht)), one_smul])
     have h1 := congrArg (ρ t) hc
-    rw [map_sum, map_smul] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_smul] at h1
     have h3 : c • ρ t e ∈ S := S.smul_mem c (Submodule.subset_span ⟨t, rfl⟩)
     rw [← h1] at h3
     convert h3 using 2 with q
@@ -183,7 +190,8 @@ theorem mem_span_translates_vacuum (X M : Type) [AddCommGroup X] [AddCommGroup M
     funext t
     have h3 := (Submodule.Quotient.mk_eq_zero S).2 (hmem _ (t.toAdd).2)
     have h4 := congrArg φ h3
-    rw [← Submodule.mkQ_apply, map_sum, map_sum, map_zero] at h4
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Submodule.mkQ_apply, map_sum, map_sum, map_zero] at h4
     simp only [map_smul, smul_eq_mul] at h4
     simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply]
     rw [← h4]

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientLattice
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientLattice
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.FixedPointImaginarySpan
 
@@ -133,7 +137,8 @@ theorem exists_basis (hg : 0 < g) : ∃ ω, X.IsLZBasis g ω := by
             refine Finset.sum_congr rfl fun j _ => ?_
             rw [heR, Int.cast_smul_eq_zsmul]
         _ = ∑ j, (n j : ℂ) • th (eR j) := by
-            rw [map_sum]
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [map_sum]
             refine Finset.sum_congr rfl fun j _ => ?_
             rw [map_smul, hc]
             rfl

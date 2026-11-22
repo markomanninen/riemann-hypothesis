@@ -1,24 +1,32 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ModelSmall
-import Development.AutomorphicSpectrum.Statements.TowerExistence.GoodTowerExistsX
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.VolumeInputs
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.OverLaUnique
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.Reframe
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RootOriginRootIndexBound
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TriangularSpanCoeffRatio
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagEqualChangeLowerTriangular
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianMapLieModelLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FrameNormsContinuousAlongEmbeddingFamilies
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalFractionField
-import Development.WeilBound.CoreStatements.CommonZeroEvaluation.ExistsLocalChartCentre
-import Development.WeilBound.CoreStatements.CommonZeroEvaluation.SubringSpecMorphismExt
-import Development.WeilBound.CoreStatements.CommonZeroEvaluation.LieLatticeLocalRing
-import Development.WeilBound.CoreStatements.CommonZeroEvaluation.LieModelLocalSubringAction
-import Development.WeilBound.CoreStatements.CommonZeroEvaluation.EigenLatticeDecomposition
-import Development.WeilBound.CoreStatements.CommonZeroEvaluation.LieLatticeActionStable
-import Development.WeilBound.CoreStatements.CommonZeroEvaluation.ConstantRegularAwayFibres
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ModelSmall
+public import Development.AutomorphicSpectrum.Statements.TowerExistence.GoodTowerExistsX
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEmbeddingPieces
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.HasMultiplier
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.OverLaUnique
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.Reframe
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RootOriginRootIndexBound
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TriangularSpanCoeffRatio
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagEqualChangeLowerTriangular
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianMapLieModelLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FrameNormsContinuousAlongEmbeddingFamilies
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalFractionField
+public import Development.WeilBound.CoreStatements.CommonZeroEvaluation.ExistsLocalChartCentre
+public import Development.WeilBound.CoreStatements.CommonZeroEvaluation.SubringSpecMorphismExt
+public import Development.WeilBound.CoreStatements.CommonZeroEvaluation.LieLatticeLocalRing
+public import Development.WeilBound.CoreStatements.CommonZeroEvaluation.LieModelLocalSubringAction
+public import Development.WeilBound.CoreStatements.CommonZeroEvaluation.EigenLatticeDecomposition
+public import Development.WeilBound.CoreStatements.CommonZeroEvaluation.LieLatticeActionStable
+public import Development.WeilBound.CoreStatements.CommonZeroEvaluation.ConstantRegularAwayFibres
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Filter Topology
 open Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.BasicNotions Formalism.MainNotions
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Rec GlobalTheory.CompanionTheory.Ar.Plug
@@ -107,11 +115,35 @@ theorem final_unit {Ω : Type} [Field Ω] (V : ValuationSubring Ω) {D t m c₁ 
 
 theorem tangent_span : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (O : Type) [CommRing O] (β : O →+* c.F) (Y : Model Xo c β) (X : Scheme.{0}) (tX : SAB H X) (f : X ⟶ Y.X) (m : SABMap tX Y.t f) (Ω : Type) [Field Ω] [Algebra c.F Ω] (A : Subring Ω) [IsLocalRing A] [Algebra c.F A] [IsScalarTower c.F A Ω] (ξ : Spec (CommRingCat.of Ω) ⟶ X), IsCptGen ξ → ∀ (Li : Type) [AddCommGroup Li] [Module Ω Li] (M : LieModel tX.G ξ Li) (ρ : 𝓞 E →+* Module.End Ω Li), M.IsActOf tX.act.act ρ → ∀ (zq : Spec (CommRingCat.of A) ⟶ X), Spec.map (CommRingCat.ofHom (algebraMap A Ω)) ≫ zq = ξ → ∀ (hc : genPt ξ ⤳ centre zq) (y : FrPt Xo c A), Small.ptY Y y = zq ≫ f → ∀ yΩ : FrPt Xo c Ω, yΩ.x = spMap (algebraMap A Ω) ≫ y.x → (∀ τ i, yΩ.u τ i = spMap (Formalism.L2.Pj.dualMap (algebraMap A Ω)) ≫ y.u τ i) → ∀ (τ : E →+* ℂ) (r : ℕ) (hr : r = Dw.mult τ), ∃ w : Fin r → Li, (∀ i, (M.pt (w i)).left ≫ m.φ = Small.tanY Y yΩ τ (Fin.cast hr i)) ∧ ∀ e : Li, (e ∈ Submodule.span A (M.lat ⟨centre zq, hc⟩ : Set Li) ∧ e ∈ eigSp ρ ((algebraMap c.F Ω).comp (embK c τ))) ↔ e ∈ Submodule.span A (Set.range w) := by
   intro E _ _ _ H Dw l Xo c O _ β Y X tX f m Ω _ _ A _ _ _ ξ hξ Li _ _ M ρ hρ zq hz hc y hpt yΩ hx hu τ r hr
-  obtain ⟨w, hw, h⟩ := ModelDimension.lie_model_local_subring_action E H Dw l Xo c O β Y X tX f m Ω A ξ hξ Li M ρ hρ zq hz y hpt yΩ hx hu τ r hr
-  refine ⟨w, hw, fun e => ?_⟩
-  rw [ModelDimension.lie_lattice_local_ring X tX.G Ω ξ Li M A hξ tX.semi.smooth zq hz hc e]
-  exact h e
+  subst hr
+  obtain ⟨ub, hb1, hb2, hb3, hb4⟩ := ModelDimension.Tan.exists_basis Y tX f m zq y hpt τ
+  obtain ⟨w, hw1, hw2⟩ := ModelDimension.Tan.span_eig (R := A) (F := Ω) Subtype.val_injective zq ξ hz M tX.act.act tX.act.hom ρ hρ
+    ((algebraMap c.F A).comp (embK c τ)) ((algebraMap c.F Ω).comp (embK c τ))
+    (fun a => IsScalarTower.algebraMap_apply c.F A Ω _) ub hb2 hb3 hb4
+  refine ⟨w, ?_, fun e => ?_⟩
+  · intro i
+    rw [hw1, Category.assoc, hb1]
+    simp only [Fin.cast_refl]
+    symm
+    have hF : Small.ptF yΩ = spMap (algebraMap A Ω) ≫ Small.ptF y := by
+      apply Limits.pullback.hom_ext
+      · rw [Category.assoc, Small.ptF_fst, Small.ptF_fst, hx]
+      · rw [Category.assoc, Small.ptF_snd, Small.ptF_snd, ← Spec.map_comp, ← CommRingCat.ofHom_comp,
+          ← IsScalarTower.algebraMap_eq]
+    rw [Small.tanY, Small.tanY, ← Category.assoc,
+      Small.eq_tanF Y yΩ τ i (spMap (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap A Ω)) ≫ Small.tanF Y y τ i)]
+    · rfl
+    · rw [Category.assoc, Small.tanF_φ, hu]
+      rfl
+    · rw [Category.assoc, Small.tanF_hom, hF, ← Category.assoc, ← Category.assoc, ← Spec.map_comp, ← Spec.map_comp,
+        ← CommRingCat.ofHom_comp, ← CommRingCat.ofHom_comp]
+      congr 3
+      ext a <;> simp [GlobalTheory.CompanionTheory.Ar.dualMap, TrivSqZeroExt.algebraMap_eq_inl]
+  · rw [ModelDimension.lie_lattice_local_ring X tX.G Ω ξ Li M A hξ tX.semi.smooth zq hz hc e]
+    exact hw2 e
 
+attribute [local instance 1100] Subalgebra.algebra in
+attribute [local instance 100] IntermediateField.instAlgebraSubtypeMem in
 theorem diag_root_line : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (Y : Model Xo c (algebraMap (𝓞 c.F) c.F)) (S : Finset ℕ) (RM : Top.RootModel (CMType H) (Dw.p + Dw.q)) (Sys : PB.AnSys (Top.dimFl (CMType H) (Dw.p + Dw.q)) (Option (RootIx Dw))) (Fx : FixedData Y Sys) (Or : RootOrigin Y S RM Fx) (Fr : Small.GenFrame Or) (h : GenFrEx Xo c) (C : GlobalTheory.Reg.FChart h) (V : ValuationSubring RM.Ω), letI := Small.cstAlg Or; ∀ (ψ : C.R →ₐ[c.F] RM.Ω) (z : FrPt Xo c RM.Ω) (d : Ix Dw → (RM.Ω)ˣ), FrMap ψ C.y z → FrBor d Fr.y₀ z → (∀ x, ψ x ∈ V) → ∀ cc : (k : RM.K) → RM.ι k, (∀ k, RM.y ⟨k, cc k⟩ ≠ 0) → (∀ k i, RM.y ⟨k, i⟩ / RM.y ⟨k, cc k⟩ ∈ V) → ∀ r : RootIx Dw, ∃ v : Vˣ, ((d (Small.rootFrameIx Dw r) ^ HodgeCpt.rootSgn Dw r : (RM.Ω)ˣ) : RM.Ω) = ((v : V) : RM.Ω) * ((∏ k, RM.y ⟨k, cc k⟩ ^ RM.xdeg r k) * Or.e r) := by
   intro E _ _ _ H Dw l Xo c Y S RM Sys Fx Or Fr h C V
   letI := Small.cstAlg Or
@@ -264,5 +296,7 @@ theorem diag_root_line : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
 
 end GlobalTheory.CompanionTheory.Ar.Plug.KeyRootZ
 
+attribute [local instance 1100] Subalgebra.algebra in
+attribute [local instance 100] IntermediateField.instAlgebraSubtypeMem in
 theorem ModelDimension.generic_frame_root_origin : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (Y : Model Xo c (algebraMap (𝓞 c.F) c.F)) (S : Finset ℕ) (RM : Top.RootModel (CMType H) (Dw.p + Dw.q)) (Sys : PB.AnSys (Top.dimFl (CMType H) (Dw.p + Dw.q)) (Option (RootIx Dw))) (Fx : FixedData Y Sys) (Or : RootOrigin Y S RM Fx) (Fr : Small.GenFrame Or) (h : GenFrEx Xo c) (C : GlobalTheory.Reg.FChart h) (V : ValuationSubring RM.Ω), letI := Small.cstAlg Or; ∀ (ψ : C.R →ₐ[c.F] RM.Ω) (z : FrPt Xo c RM.Ω) (d : Ix Dw → (RM.Ω)ˣ), FrMap ψ C.y z → FrBor d Fr.y₀ z → (∀ x, ψ x ∈ V) → ∀ cc : (k : RM.K) → RM.ι k, (∀ k, RM.y ⟨k, cc k⟩ ≠ 0) → (∀ k i, RM.y ⟨k, i⟩ / RM.y ⟨k, cc k⟩ ∈ V) → ∀ r : RootIx Dw, ∃ v : Vˣ, ((d (Small.rootFrameIx Dw r) ^ HodgeCpt.rootSgn Dw r : (RM.Ω)ˣ) : RM.Ω) = ((v : V) : RM.Ω) * ((∏ k, RM.y ⟨k, cc k⟩ ^ RM.xdeg r k) * Or.e r) :=
   GlobalTheory.CompanionTheory.Ar.Plug.KeyRootZ.diag_root_line

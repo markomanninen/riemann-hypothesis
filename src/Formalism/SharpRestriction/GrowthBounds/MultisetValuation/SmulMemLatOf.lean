@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.IsLatticeBetween
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.IsLatticeBetween
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,7 +102,7 @@ theorem LatOf_surj (h : Res π F) (g : Matrix (Fin n) (Fin n) Qq) (hg : IsUnit g
     have h0 : red F n (w - w') = 0 := by rw [map_sub, he, sub_self]
     obtain ⟨w'', hw''⟩ := (red_eq_zero h _).1 h0
     have : psi g w = psi g w' + π • psi g w'' := by
-      rw [← map_smul, ← hw'', ← map_add]
+      rw [← map_smul, ← hw'', ← map_add (f := _)]
       congr 1
       abel
     rw [this]

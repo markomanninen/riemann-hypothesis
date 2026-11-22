@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Reframe
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.LocSpBot
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Reframe
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.LocSpBot
+
+@[expose] public section
+
 open Formalism.BasicNotions NumberField IsDedekindDomain Formalism.MainNotions.G Formalism.MainNotions.FormalGroupSystem Formalism.L2.G.Pend Formalism.MainNotions Formalism.L2.Ker Formalism.L2.PairingIndexBounds.F Formalism.L2.KerInert Formalism.UG Formalism.MainNotions.G.KAat Formalism.MainNotions.G.CmpJ Formalism.L2.Forms Formalism.L2.KerInert.SecondKernelInstances Formalism.L2.KerInert.SecondKernelSeries Formalism.L2.KerInert.QuadraticBaseChangeGL3 Formalism.L2.KerInert.SecondKernelDifference Formalism.L2.KerInert.SecondKernelHermitian GlobalTheory.TwU GlobalTheory.TwV GlobalTheory.TwV.DelB TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -96,13 +101,13 @@ theorem embT_mem_qbar (D : D7) (τ : D.what₂.Tau) (x : D.host.E) : TaylorLogMe
 
 end GlobalTheory.TwU.NormOne
 
-open GlobalTheory.TwU.NormOne in
 
+open GlobalTheory.TwU.NormOne in
 theorem GlobalTheory.TwV.prod_embT_norm_one : AllSites (fun {D L hT Gi Gl Kc Dx cX ex u μ w hg Lv I H X} [Fact (D.what₂.places.resChar w).Prime] {std t J} S => S.Pos → ∀ ι : ℂ →+* ℂ_[D.what₂.places.resChar w], (∀ z : TaylorLogMetric.Qbar, ι z = S.lam z) → ∀ z : D.host.E, z * D.host.conj z = 1 → ‖ι (∏ τ, TaylorLogMetric.embT D τ z)‖ = 1) := by
   intro D _ hT _ _ _ _ _ _ u _ w hg _ _ H X _ std _ J S hPos ι hι z hz
   have hl : ∀ τ, ι (TaylorLogMetric.embT D τ z) = TaylorLogMetric.lamC S.lam (TaylorLogMetric.embT D τ z) := by
     intro τ
-    rw [TaylorLogMetric.lamC, dif_pos (embT_mem_qbar D τ z)]
+    rw [TaylorLogMetric.lamC, dite_eq_left (embT_mem_qbar D τ z)]
     exact hι ⟨_, embT_mem_qbar D τ z⟩
   rw [map_prod, norm_prod]
   simp only [hl]

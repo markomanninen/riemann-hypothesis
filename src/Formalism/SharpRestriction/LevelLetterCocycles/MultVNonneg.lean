@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CocyclesToWachVectorsBoundOfExtTool
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.MemZeroSubCoe
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CocyclesToWachVectorsBoundOfExtTool
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.MemZeroSubCoe
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,7 @@ theorem multV_nonneg' [NeZero n] (hFD : Sh.FilDim W) (hA : Formalism.MainNotions
     | tmul v w =>
       exact LinearMap.mem_range.mpr ⟨v ⊗ₜ ⟨(w : BdR), PD.Fil_anti k w.2⟩, by simp⟩
     | add y z hy hz =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem hy hz
   haveI := finiteDimensional_filLev W T c hfd k
   have h2 : Module.finrank LL ↥(Formalism.MainNotions.WachCoordinates.FilLev W T c 0 (k + 1)) ≤
@@ -115,7 +119,7 @@ theorem step1Pass_pass [NeZero n] (hA : Formalism.MainNotions.LiftingTheory.Case
   have hex : ∀ f, ∃! d, Sh.IsExp W T c ζ (u f) d := fun f => R.1 (u f) _ (hu f).2.1 hlev
   choose ex hexs huniq using hex
   have ex_add : ∀ f g, ex (f + g) = ex f + ex g := fun f g =>
-    (huniq (f + g) _ (by rw [map_add]; exact R.2.2.1 _ _ _ _ (hexs f) (hexs g))).symm
+    (huniq (f + g) _ (by rw [map_add (f := _)]; exact R.2.2.1 _ _ _ _ (hexs f) (hexs g))).symm
   have ex_smul : ∀ (r : O) f, ex (r • f) = fun k => algebraMap O LL r • ex f k := fun r f =>
     (huniq (r • f) _ (by rw [map_smul]; exact R.2.2.2.1 r _ _ (hexs f))).symm
   set F0 := Formalism.MainNotions.WachCoordinates.FilLev W T c 0 0 with hF0

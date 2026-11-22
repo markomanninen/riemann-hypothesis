@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HermSysHypOneLeLambdaZero
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HermSysHypOneLeLambdaZero
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+
+@[expose] public section
 
 set_option autoImplicit false
 

@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.KloostermanDensityOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceContOn
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.EmbeddedGroupMeasurePreserving
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KloostermanDensityOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceContOn
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.EmbeddedGroupMeasurePreserving
+
+@[expose] public section
 
 noncomputable section
 

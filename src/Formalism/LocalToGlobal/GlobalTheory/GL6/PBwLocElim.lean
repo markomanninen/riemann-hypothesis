@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL6.LatticeInclusionOfDecompGlob
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.LatticeInclusionOfDecompGlob
+
+@[expose] public section
 
 noncomputable section
 
@@ -222,7 +226,8 @@ theorem bwE_loc_Ow (w : D.what₂.places.Pl) : bwE_Loc (bwA_Ow D w) := by
     exact lt_of_lt_of_le (lt_of_le_of_ne h0 (Ne.symm hne)) (le_add_of_nonneg_left (hγ i))
   have h1 : ∑ i ∈ s, γ i * μ i = 1 := by
     apply D.what₂.embLL.injective
-    rw [map_sum, map_one, ← hsum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_one, ← hsum]
     exact Finset.sum_congr rfl (fun i _ => by rw [map_mul, hγe, hμe])
   have h2 : (0 : WithTop ℤ) < D.what₂.places.val w (∑ i ∈ s, γ i * μ i) :=
     AddValuation.map_lt_sum _ (by simp) hpos

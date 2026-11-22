@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.EigenKilling.ConeIntegralFactorisation
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.EigenKilling.ConeIntegralFactorisation
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,13 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.FockModels.TiltedDrinfeld.LinearIndepOnOfInvariant
-import Development.AutomorphicArithmetic.ThetaCorrespondence.FockModels.TiltedDrinfeld.ExistsBeta
-import Development.AutomorphicArithmetic.ThetaCorrespondence.LocalComparison.LocTied6
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FinrankDpstUnramifiedLeDimRepresentation
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.KummerNotFrac
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.FockModels.TiltedDrinfeld.ExistsBeta
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.LocalComparison.LocTied6
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace CompanionTheory.D.gk.admitted.CholeskyDecomposition
 
@@ -25,9 +29,7 @@ variable [WellFoundedLT n] [LocallyFiniteOrderBot n]
 
 theorem exists_isUpperTriangular_conjTranspose_mul_self {S : Matrix n n 𝕜} (hS : S.PosDef) :
     ∃ R : Matrix n n 𝕜, R.IsUpperTriangular ∧ Rᴴ * R = S := by
-  have hLi : (LDL.lowerInv hS).IsLowerTriangular := fun i j hij =>
-    LDL.lowerInv_triangular hS (OrderDual.toDual_lt_toDual.1 hij)
-  have hL : (LDL.lower hS).IsLowerTriangular := blockTriangular_inv_of_blockTriangular hLi
+  have hL : (LDL.lower hS).IsLowerTriangular := LDL.isLowerTriangular_lower hS
   have hD : (LDL.diag hS).PosDef := by
     rw [LDL.diag_eq_lowerInv_conj]
     exact hS.mul_mul_conjTranspose_same

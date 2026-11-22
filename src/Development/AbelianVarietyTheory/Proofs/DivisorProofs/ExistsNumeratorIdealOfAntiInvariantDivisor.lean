@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ThClass
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThClass
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2.Pj
 open scoped nonZeroDivisors
 

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwZ
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImageCochainExists
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GeneralLinearGroupDetMapFinOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwZ
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImageCochainExists
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GeneralLinearGroupDetMapFinOne
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC GlobalTheory.EtC.KumPic
 
 set_option backward.isDefEq.respectTransparency false
@@ -31,23 +36,46 @@ theorem post_eq_picClass (C : Shv ℤ) (qb : C ⟶ Gm) (E : Spc) (L : E ⟶ ofCa
     (ha : ∀ (U : Scheme.{0}) (x : Sx E 1 U), ∃ c : Sec C U, Sec.map qb c = unitSec (lineUnit L x) ∧
       ev a.1 1 0 (by simp) U x = Sec.map (sglι C) c) :
     HK.post ℤ _ qb 1 (CohomologyClass.mk (zcomp a (Cocycle.ofHom (resAug C)) (add_zero 1))) = picClass L := by
-  obtain ⟨γ, hγ, h0, h1⟩ := GlobalTheory.EtC.PicSpec.spec L
-  rw [← hγ]
-  change CohomologyClass.mk (zcomp (zcomp a (Cocycle.ofHom (resAug C)) (add_zero 1))
-    (Cocycle.ofHom (resMap ℤ qb)) (add_zero 1)) = _
-  congr 1
-  refine GlobalTheory.EtC.PicSpec.cocycle_ext _ _ (fun U x => ?_) (fun U x => ?_)
-  · rw [h0]
-    change ev ((a.1.comp (Cochain.ofHom (resAug C)) (add_zero 1)).comp (Cochain.ofHom (resMap ℤ qb)) (add_zero 1))
+  let β := zcomp (zcomp a (Cocycle.ofHom (resAug C)) (add_zero 1))
+    (Cocycle.ofHom (resMap ℤ qb)) (add_zero 1)
+  change CohomologyClass.mk β = picClass L
+  have hβ₀ (U : Scheme.{0}) (x : Sx E 0 U) : ev β.1 0 1 (by simp) U x = 0 := by
+    change ev ((a.1.comp (Cochain.ofHom (resAug C)) (add_zero 1)).comp
+      (Cochain.ofHom (resMap ℤ qb)) (add_zero 1))
       0 1 _ U x = 0
     rw [ev_comp_ofHom, ev_comp_ofHom,
       GlobalTheory.EtC.PicSpec.sec_eq_zero (HomologicalComplex.isZero_single_obj_X _ _ _ _ (by decide)) (ev a.1 0 1 _ U x),
       GlobalTheory.EtC.PicSpec.sec_map_zero, GlobalTheory.EtC.PicSpec.sec_map_zero]
-  · obtain ⟨c, hc, hv⟩ := ha U x
-    rw [h1]
-    change ev ((a.1.comp (Cochain.ofHom (resAug C)) (add_zero 1)).comp (Cochain.ofHom (resMap ℤ qb)) (add_zero 1))
+  have hβ₁ (U : Scheme.{0}) (x : Sx E 1 U) :
+      ev β.1 1 0 (by simp) U x = Sec.map (resι ℤ Gm) (unitSec (lineUnit L x)) := by
+    obtain ⟨c, hc, hv⟩ := ha U x
+    change ev ((a.1.comp (Cochain.ofHom (resAug C)) (add_zero 1)).comp
+      (Cochain.ofHom (resMap ℤ qb)) (add_zero 1))
       1 0 _ U x = _
     rw [ev_comp_ofHom, ev_comp_ofHom, hv, GlobalTheory.EtC.PicSpec.sec_map_comp, GlobalTheory.EtC.PicSpec.sec_map_comp, ← hc,
       GlobalTheory.EtC.PicSpec.sec_map_comp, ← Category.assoc, sglι_resAug, resι_resMap]
+  let P (c : H ℤ E Gm 1) : Prop :=
+    ∃ γ : Cocycle ((chains ℤ).obj E) (res ℤ Gm) 1, CohomologyClass.mk γ = c ∧
+      (∀ (U : Scheme.{0}) (x : Sx E 0 U), ev γ.1 0 1 (by simp) U x = 0) ∧
+      ∀ (U : Scheme.{0}) (x : Sx E 1 U),
+        ev γ.1 1 0 (by simp) U x = Sec.map (resι ℤ Gm) (unitSec (lineUnit L x))
+  have hspec : P (picClass L) := by
+    change P (pick P)
+    exact pick_spec ⟨_, β, rfl, hβ₀, hβ₁⟩
+  obtain ⟨γ, hγ, hγ₀, hγ₁⟩ := hspec
+  have hEq : β = γ := by
+    refine Cocycle.ext (CupSpec.ev_ext β.1 γ.1 fun p s h U x => ?_)
+    match p with
+    | 0 =>
+      obtain rfl : s = 1 := by omega
+      exact (hβ₀ U x).trans (hγ₀ U x).symm
+    | 1 =>
+      obtain rfl : s = 0 := by omega
+      exact (hβ₁ U x).trans (hγ₁ U x).symm
+    | p + 2 =>
+      have hZ := GlobalTheory.EtC.PicSpec.res_isZero Gm s (by omega)
+      exact (GlobalTheory.EtC.PicSpec.sec_eq_zero hZ _).trans
+        (GlobalTheory.EtC.PicSpec.sec_eq_zero hZ _).symm
+  rw [hEq, hγ]
 
 end GlobalTheory.EtC.KumPic.PostVal

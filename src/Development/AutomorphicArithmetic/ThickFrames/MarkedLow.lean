@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SubspaceCounting.GoodOrbitIntervalTileCondition
+module
+
+public import Mathlib
+public import Formalism.SubspaceCounting.GoodOrbitIntervalTileCondition
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,9 +17,11 @@ def pw {α : Type} [Fintype α] [DecidableEq α] (p : α → ℝ) (T : Finset α
 def exP (p : ℕ → ℝ) (S : Finset ℕ) (f : Finset ℕ → ℝ) : ℝ :=
   ∑ T ∈ S.powerset, (∏ a ∈ T, p a) * (∏ a ∈ S \ T, (1 - p a)) * f T
 
-open Classical in
 
-def ind (q : Prop) : ℝ := if q then 1 else 0
+open Classical in
+def ind (q : Prop) : ℝ := by
+  classical
+  exact if q then 1 else 0
 
 def markedLow (δ : ℝ) (r u : ℕ) : ℝ :=
   ((1 - δ) ^ u) ^ (3 * r + 1) * (((u / 2 : ℕ) : ℝ) * (3 / 4 * δ) * (1 - δ) ^ (u - 1)) ^ (3 * r)

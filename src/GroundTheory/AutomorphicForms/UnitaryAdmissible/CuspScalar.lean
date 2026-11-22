@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.UnitaryAdmissible.Scalar
-import GroundTheory.AutomorphicForms.TensorProductTheorem.NonemptyAdelicDecomposition
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableCartan
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableLaplacian
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.UnitaryAdmissible.Scalar
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.NonemptyAdelicDecomposition
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableCartan
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableLaplacian
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -19,8 +23,8 @@ variable (U : Submodule ℂ (cuspForms K n))
   (hρ : ∀ X, ∀ φ ∈ U, (gkModuleCusp K n).ρ X φ ∈ U) (hσ : ∀ k, ∀ φ ∈ U, (gkModuleCusp K n).σ k φ ∈ U)
   (hτ : ∀ g, ∀ φ ∈ U, finRepCusp K n g φ ∈ U)
 
-include hρ in
 
+include hρ in
 theorem uActionCusp_mem (u : UEnv K n) {φ : cuspForms K n}
     (hφ : φ ∈ U) : uActionCusp K n u φ ∈ U := by
   obtain ⟨t, rfl⟩ : ∃ t, UniversalEnvelopingAlgebra.mkAlgHom ℝ _ t = u :=
@@ -34,7 +38,7 @@ theorem uActionCusp_mem (u : UEnv K n) {φ : cuspForms K n}
     rw [map_mul, map_mul, Module.End.mul_apply]
     exact ha (hb hφ)
   | add a b ha hb =>
-    rw [map_add, map_add, LinearMap.add_apply]
+    rw [map_add (f := _), map_add (f := _), LinearMap.add_apply]
     exact U.add_mem (ha hφ) (hb hφ)
 
 theorem archTraceForm_AdLie (g : archGroup K n) (X Y : (isExpLieAlgebra K n).lieSubalgebra) :
@@ -48,7 +52,7 @@ theorem archTraceForm_AdLie (g : archGroup K n) (X Y : (isExpLieAlgebra K n).lie
     rfl
   have hgi' : mat (((g⁻¹ : archGroup K n) : (ArchMatrix K n)ˣ) : ArchMatrix K n) *
       mat (((g : archGroup K n) : (ArchMatrix K n)ˣ) : ArchMatrix K n) = 1 := by
-    rw [← mat_mul, hgi, mat_one]
+    exact hgi
   set A := mat (((g : archGroup K n) : (ArchMatrix K n)ˣ) : ArchMatrix K n)
   set C := mat (((g⁻¹ : archGroup K n) : (ArchMatrix K n)ˣ) : ArchMatrix K n)
   change Matrix.trace (A * mat (X : ArchMatrix K n) * C * (A * mat (Y : ArchMatrix K n) * C)) =
@@ -115,7 +119,7 @@ theorem exists_uActionCusp_eq_smul (hirr : (cuspSubmodule K n U hρ hσ hτ).IsI
             show uActionCusp K n (u * z) (v : cuspForms K n) = _
             rw [map_mul, Module.End.mul_apply]
           | zero => rw [map_zero]; exact S₀.zero_mem
-          | add x y _ _ hx hy => rw [map_add]; exact S₀.add_mem hx hy
+          | add x y _ _ hx hy => rw [map_add (f := _)]; exact S₀.add_mem hx hy
           | smul a x _ hx => rw [map_smul]; exact S₀.smul_mem a hx
         intro w hw
         exact key _ hw)
@@ -127,7 +131,8 @@ theorem casimirOp_gkModuleCusp {ι : Type*} [Fintype ι]
     (b : Module.Basis ι ℝ (isExpLieAlgebra K n).lieSubalgebra) (ε : ι → ℝ) :
     casimirOp (gkModuleCusp K n) b ε = uActionCusp K n (casimir b ε) := by
   unfold casimirOp casimir
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, map_mul]
   rfl
@@ -210,7 +215,8 @@ theorem aeval_laplacian_eq_zero {d : ℕ}
     have e1 : L ψ = ω • ψ + ∑ i, (1 - ε i) • uActionCusp K n (UniversalEnvelopingAlgebra.ι ℝ (b i))
           (uActionCusp K n (UniversalEnvelopingAlgebra.ι ℝ (b i)) ψ) := by
       show uActionCusp K n (laplacianU K n b) ψ = _
-      rw [laplacianU_eq_casimir_add b ε, map_add, LinearMap.add_apply, hω _ hψ, map_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [laplacianU_eq_casimir_add b ε, map_add (f := _), LinearMap.add_apply, hω _ hψ, map_sum,
         LinearMap.sum_apply]
       congr 1
       refine Finset.sum_congr rfl fun i _ => ?_
@@ -231,7 +237,8 @@ theorem aeval_laplacian_eq_zero {d : ℕ}
   rw [e2, aeval_apply_eq_of_eqOn (L - ω • 1) B U hAU hAB q φ.2]
   have h3 := AutomorphicForm.map_aeval_apply_of_intertwine U.subtype
     (A := ∑ i, M.ρ (lapZ b ε i) * M.ρ (lapZ b ε i)) (B := B) (fun x => by
-      simp only [B, LinearMap.sum_apply, Module.End.mul_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [B, LinearMap.sum_apply, Module.End.mul_apply, map_sum]
       rfl) q φ
   rw [Submodule.subtype_apply, Submodule.subtype_apply, hq] at h3
   exact h3.symm.trans rfl

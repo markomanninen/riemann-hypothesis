@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.HiComm
-import Mathlib.LinearAlgebra.Eigenspace.Pi
-import Mathlib.LinearAlgebra.Eigenspace.Triangularizable
-import Mathlib.RingTheory.Support
-import Mathlib.RingTheory.LocalRing.ResidueField.Ideal
-import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsSemi
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.HiComm
+public import Mathlib.LinearAlgebra.Eigenspace.Pi
+public import Mathlib.LinearAlgebra.Eigenspace.Triangularizable
+public import Mathlib.RingTheory.Support
+public import Mathlib.RingTheory.LocalRing.ResidueField.Ideal
+public import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsSemi
+
+@[expose] public section
 
 open Polynomial TensorProduct
 
@@ -167,7 +171,7 @@ private theorem joint_ne [IsAlgClosed K] [Module.Finite A M] [Algebra A K] (hK :
   · intro b v
     induction v using TensorProduct.induction_on with
     | zero => simp
-    | add u v hu hv => simp only [map_add, hu, hv, smul_add]
+    | add u v hu hv => simp only [map_add (f := _), hu, hv, smul_add]
     | tmul k m =>
       rw [LinearMap.baseChange_tmul, TensorProduct.mapOfCompatibleSMul_tmul, TensorProduct.mapOfCompatibleSMul_tmul]
       exact (TensorProduct.tmul_smul b k m).trans (algebraMap_smul K b _).symm
@@ -195,7 +199,7 @@ private theorem joint_gen {I : Type} (g : I → B)
       obtain ⟨b1, rfl, m1⟩ := h1
       obtain ⟨b2, rfl, m2⟩ := h2
       refine ⟨b1 + b2, act_add lam M hs b1 b2, ?_⟩
-      rw [act_add, LinearMap.baseChange_add, map_add]
+      rw [act_add, LinearMap.baseChange_add, map_add (f := _)]
       exact ge_add (act_comm lam M hs b1 b2) m1 m2
     | mul _ _ _ _ h1 h2 =>
       obtain ⟨b1, rfl, m1⟩ := h1
@@ -235,7 +239,7 @@ private theorem mu_eq [IsAlgClosed K] [Module.Finite A M] [Module.Free A M] {I :
   have tr := transport ι Ψ hk hi _ hr (fun i => (actL lam M hs (g i)).baseChange K) γ (fun i v => by
     induction v using TensorProduct.induction_on with
     | zero => simp
-    | add u v hu hv => simp only [map_add, hu, hv]
+    | add u v hu hv => simp only [map_add (f := _), hu, hv]
     | tmul k m => rw [LinearMap.baseChange_tmul, ht, ht, map_smul, ← hop]; rfl) fun i => y (g i)
   subst hZ
   refine ⟨fun h0 => hne ?_, congrArg Cardinal.toNat tr⟩

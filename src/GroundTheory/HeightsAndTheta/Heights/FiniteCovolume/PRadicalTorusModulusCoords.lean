@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentModulusHomeo
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentModulusHomeo
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -25,8 +29,8 @@ theorem heisMat_conj_scale {g : Matrix ι ι ℂ} (hg : gᴴ * H * g = H) {α : 
   simp only [mulVec_add, mulVec_sub, mulVec_smul, hga, hgy]
   module
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem heisS_conj_smul (α : ℂ) (y : ι → ℂ) (t : ℝ) :
     heisS H (starRingEnd ℂ α • y) (Complex.normSq α * t) = (Complex.normSq α : ℂ) * heisS H y t := by
   have e : hForm H (starRingEnd ℂ α • y) (starRingEnd ℂ α • y) =
@@ -41,7 +45,7 @@ theorem heisS_conj_smul (α : ℂ) (y : ι → ℂ) (t : ℝ) :
 end Mat
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 variable {h : HermitianForm F E W} {v : Basis ι E W} {x₀ w₀ : W}
 

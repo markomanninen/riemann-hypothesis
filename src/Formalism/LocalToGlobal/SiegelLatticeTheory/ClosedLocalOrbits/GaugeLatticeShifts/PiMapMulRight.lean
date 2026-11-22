@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LintegralFinProd
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LintegralFinProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ theorem pi_map_mul_left (μ : ∀ i, Measure (G i)) [∀ i, SigmaFinite (μ i)] 
   symm
   refine Measure.pi_eq fun s hs => ?_
   have hm : Measurable (fun x : ∀ i, G i => g * x) :=
-    measurable_pi_lambda _ fun i => (measurable_const_mul (g i)).comp (measurable_pi_apply i)
+    Measurable.of_eval fun i => (measurable_const_mul (g i)).comp (measurable_pi_apply i)
   rw [Measure.map_apply hm (MeasurableSet.univ_pi hs)]
   have hpre : (fun x : ∀ i, G i => g * x) ⁻¹' Set.univ.pi s =
       Set.univ.pi fun i => (fun y => g i * y) ⁻¹' s i := by
@@ -65,7 +69,7 @@ theorem pi_map_mul_right (μ : ∀ i, Measure (G i)) [∀ i, SigmaFinite (μ i)]
   symm
   refine Measure.pi_eq fun s hs => ?_
   have hm : Measurable (fun x : ∀ i, G i => x * g) :=
-    measurable_pi_lambda _ fun i => (measurable_mul_const (g i)).comp (measurable_pi_apply i)
+    Measurable.of_eval fun i => (measurable_mul_const (g i)).comp (measurable_pi_apply i)
   rw [Measure.map_apply hm (MeasurableSet.univ_pi hs)]
   have hpre : (fun x : ∀ i, G i => x * g) ⁻¹' Set.univ.pi s =
       Set.univ.pi fun i => (fun y => y * g i) ⁻¹' s i := by
@@ -166,6 +170,7 @@ theorem uniq_on_closed {G : Type*} [Group G] [TopologicalSpace G] [IsTopological
       exact htμi hval
   · conv_lhs => rw [← hback μ hμc, key]
     rw [Measure.map_smul, hback ν hνc]
+    exact he.measurable.aemeasurable
 
 end Uniq
 

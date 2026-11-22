@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.JointServices.ValIntNonneg
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.JointServices.ValIntNonneg
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open Formalism.BasicNotions Formalism.BasicNotions.DV Formalism.MainNotions.G Formalism.MainNotions.WeilJacquetShalikaLaw Formalism.L2.DIV Formalism.L2.Indef
@@ -65,7 +69,8 @@ theorem perToVal2F (D : D7) (B : ColBrF D) (hB : B.Tied) (u : D.what₂.Word) (t
         apply D.what₂.embLL.injective
         rw [hB.dcPt u t x F, hf]
         refine (congrArg f hx0).trans ?_
-        rw [map_sum, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, map_sum]
         refine Finset.sum_congr rfl fun y hy => ?_
         rw [map_smul, smul_eq_mul, map_mul, (ha y hy).1, hf]
       rw [heq]
@@ -74,7 +79,7 @@ theorem perToVal2F (D : D7) (B : ColBrF D) (hB : B.Tied) (u : D.what₂.Word) (t
       rw [map_zero, LinearMap.zero_apply]
       exact VGeq.zero z s
     | add x y _ _ hx hy =>
-      rw [map_add, LinearMap.add_apply]
+      rw [map_add (f := _), LinearMap.add_apply]
       exact hx.add hy
     | smul a x _ hx =>
       rw [← algebraMap_smul D.what₂.LL a x, map_smul, LinearMap.smul_apply, smul_eq_mul]
@@ -100,29 +105,6 @@ theorem val2AllAtRF (D : D7) (L : SizeData₂ D) (B : ColBrF D) (hB : B.Tied) (h
       simp only [Equiv.apply_symm_apply] at h'
       exact h' G hG hG0)
   exact key φ (Submodule.subset_span hφ) F hF
-
-def ColBr.toF {D : D7} (B : ColBr D) : ColBrF D where
-  Bs := B.A.fam.base
-  Df1 := B.A.side B.Ps B.ψs B.Zs
-  Dc := B.Dc
-  wU := B.I.wU
-  eNu := fun u x => B.I.eNu u x
-  tup := B.I.tup
-  eV := fun t F => B.I.jA t ((rV0 D B.A B.Ps B.ψs t).mulVec F)
-  tz := B.S1.μ
-
-theorem ColBr.toF_tied {D : D7} {B : ColBr D} (hB : B.Tied) : (ColBr.toF B).Tied where
-  mu := hB.mu
-  v0 := fun t F _ => by
-    obtain ⟨s0, hOk⟩ := hB.ok
-    refine ⟨B.I.jA t ((rV0 D B.A B.Ps B.ψs t).mulVec F), ?_⟩
-    have h1 := (hB.sharp.forms t).op_eq ((rV0 D B.A B.Ps B.ψs t).mulVec F)
-    rw [level_operator_fixes_image hOk B.Ps B.ψs B.Zs t F] at h1
-    exact h1
-  gen := fun t F hF => by
-    obtain ⟨s0, hOk⟩ := hB.ok
-    exact ((hB.sharp.Mtilde t).2 _).1 ((image_mem_nabla_iff hOk B.Ps B.ψs B.Zs t F).2 hF)
-  dcPt := hB.dcPt
 
 end Formalism.L2.G.ServJointF
 

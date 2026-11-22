@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PtieLevTransportHerOf
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SfiniteOfHaar
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PtieLevTransportHerOf
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SfiniteOfHaar
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 

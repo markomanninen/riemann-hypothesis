@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeOperatorCommGaloisActionModularTowerStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EichlerShimuraKummerModularUnitStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerBettiModuleFreeFiniteStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SlMulToRingEquiv
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MobToGQScalar
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GalMulApply
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TowerUnitClassModPrimePowProperties
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GlTwoPosRatMobiusBasicLaws
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCommonLevelSpanMultiple
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsCuspFunctionalValueModPrimePowDiamondIndepende
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BettiFunctionSubMemOfColumnsCongr
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CyclotomicCharacterFrobV
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumActUpperRep
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitEvalEqKummerClass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeOperatorCommGaloisActionModularTowerStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EichlerShimuraKummerModularUnitStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerBettiModuleFreeFiniteStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SlMulToRingEquiv
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MobToGQScalar
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GalMulApply
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TowerUnitClassModPrimePowProperties
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GlTwoPosRatMobiusBasicLaws
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCommonLevelSpanMultiple
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsCuspFunctionalValueModPrimePowDiamondIndepende
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BettiFunctionSubMemOfColumnsCongr
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CyclotomicCharacterFrobV
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumActUpperRep
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitEvalEqKummerClass
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem map_mem_smul_top {R A B : Type} [CommRing R] [AddCommGroup A] [Module R 
     φ x ∈ I • (⊤ : Submodule R B) := by
   refine Submodule.smul_induction_on hx (fun r hr y _ => ?_) (fun y z hy hz => ?_)
   · rw [map_smul]; exact Submodule.smul_mem_smul hr Submodule.mem_top
-  · rw [map_add]; exact Submodule.add_mem _ hy hz
+  · rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
 
 theorem exists_frobV {q : ℕ} (hq : 0 < q) {s : Ω ≃ₐ[ℚ] Ω} (h : FrobAt q s) : ∃ V, ES.FrobV V q s := by
   obtain ⟨V, hV, hs⟩ := h
@@ -109,7 +113,8 @@ theorem defect_mem (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n M q : ℕ) (σ 
     | zero => simpa using hone
     | succ k ih => rw [pow_succ, hmul, ih, Nat.cast_succ, add_smul, one_smul]
   rw [AdicCompletion.pow_smul_top_eq_ker_eval (Submodule.fg_span_singleton _), LinearMap.mem_ker]
-  simp only [defect, LinearMap.sub_apply, LinearMap.add_apply, LinearMap.smul_apply, LinearMap.comp_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [defect, LinearMap.sub_apply, LinearMap.add_apply, LinearMap.smul_apply, LinearMap.comp_apply,
     LinearMap.sum_apply, map_sub, map_add, map_sum, map_smul]
   rw [hk _ _ _ hc, hk _ _ _ hc, hk _ _ _ (hk _ _ _ hc), Finset.sum_congr rfl (fun j _ => hk _ _ _ hc),
     sub_eq_zero, ← hprod, ← hmul, ← hpow, ← hmul, hiff]
@@ -281,7 +286,8 @@ theorem rel_BSet [IsAlgClosure ℚ Ω] (X : Tower Ω ε) (hε : Function.Injecti
   obtain ⟨σ, h01, h10, h11⟩ := exists_diag M q hcop
   refine rel_of_defect X N l w n M q σ s b hb hNM hlM hnM hq.pos hcop
     (ES.cyclotomicCharacter_frobV l q hq hql V s hV) h01 h10 h11 (fun v => ?_) u
-  rw [hc, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hc, map_sum]
   refine Submodule.sum_mem _ fun i _ => ?_
   rw [map_smul]
   obtain ⟨g, hg⟩ := hS i q hq (fun h => hqS.1 ⟨i, Finset.mem_univ i, h⟩) s hs σ ⟨h01, h10, h11⟩
@@ -291,8 +297,8 @@ end GlobalTheory.KZ.ESmod
 
 namespace GlobalTheory.KZ
 
-open ESmod in
 
+open ESmod in
 theorem eichlerShimura_B_mod : ∀ {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] (ε : Ω →+* ℂ) (X : Tower Ω ε), Function.Injective ε → (∃ φ : ℂ → ℂ, DifferentiableOn ℂ φ Hs ∧ X.an X.jK = (φ : Mero)) → ∀ (N l w : ℕ) [Fact l.Prime], l ≠ 2 → 5 ≤ N → Nat.Coprime N l → Odd w → ∀ n : ℕ, ∃ S : Finset ℕ, ∀ q : ℕ, q.Prime → q ∉ S → ∀ s : Ω ≃ₐ[ℚ] Ω, FrobAt q s → ∀ b ∈ X.B N l w, ∀ u, (X.galB l s (X.galB l s b) - X.heckeT N l q (X.galB l s b) + ((q : ℤ_[l]) ^ (w + 1)) • X.diam N l q b) u ∈ (idl l) ^ n • (⊤ : Submodule ℤ_[l] (X.Khat l)) := by
   classical
   intro Ω _ _ _ ε X hε hj N l w _ hl2 hN hNl hw n
@@ -312,13 +318,13 @@ theorem eichlerShimura_B_mod : ∀ {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAl
     induction hb' using Submodule.span_induction with
     | mem x hx => exact hS ⟨x, hx⟩ q hq (fun h => hqS.1 ⟨_, Finset.mem_univ _, h⟩) s hs
     | zero => intro u; rw [map_zero]; exact Submodule.zero_mem _
-    | add x y _ _ hx hy => intro u; rw [map_add]; exact Submodule.add_mem _ (hx u) (hy u)
+    | add x y _ _ hx hy => intro u; rw [map_add (f := _)]; exact Submodule.add_mem _ (hx u) (hy u)
     | smul a x _ hx => intro u; rw [map_smul]; exact Submodule.smul_mem _ _ (hx u)
   have hcomm : X.heckeT N l q (X.galB l s b) = X.galB l s (X.heckeT N l q b) :=
     GlobalTheory.T.hecke_operator_comm_galois_action_modular_tower ε X hε hj N l w hl2 hN hNl hw (Letter.T q) hadm s b hb
   have e : X.galB l s (X.galB l s b) - X.heckeT N l q (X.galB l s b) + ((q : ℤ_[l]) ^ (w + 1)) • X.diam N l q b =
       X.galB l s (L b) := by
-    simp only [L, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply, LinearMap.comp_apply, map_add,
+    simp only [L, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply, LinearMap.comp_apply, map_add (f := _),
       map_sub, map_smul, galB_galB_symm, hcomm]
   rw [e]
   exact map_mem_smul_top _ (X.kmap l (X.gal s)) (hL _)

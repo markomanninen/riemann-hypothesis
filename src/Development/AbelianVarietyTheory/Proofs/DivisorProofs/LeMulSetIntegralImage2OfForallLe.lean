@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 
 namespace GlobalTheory
@@ -28,7 +33,7 @@ theorem le_mul_setIntegral_image2_of_forall_le (G : Type) [Group G] [Topological
     rw [← (measurePreserving_mul_left μ (Θ t)).setIntegral_image_emb
       (measurableEmbedding_mulLeft (Θ t)) F B]
     refine setIntegral_mono_set hFΩ (Filter.Eventually.of_forall hF0) ?_
-    refine HasSubset.Subset.eventuallyLE ?_
+    refine Filter.Eventually.of_forall ?_
     rintro _ ⟨b, hb, rfl⟩
     exact Set.mem_image2_of_mem ht hb
   have hint : Integrable (Function.uncurry fun (x : G) (t : Fin N → ℝ) => F (Θ t * x))

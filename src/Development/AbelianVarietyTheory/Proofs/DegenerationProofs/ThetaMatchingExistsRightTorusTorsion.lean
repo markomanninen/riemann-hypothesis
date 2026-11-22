@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.NotAllMatchRankZero
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FourierExtractionTsumClass
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TendstoTsumZeroOfEventuallyNotMemRange
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUniqueAddEquivOfCompatibleCongr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.NotAllMatchRankZero
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FourierExtractionTsumClass
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TendstoTsumZeroOfEventuallyNotMemRange
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUniqueAddEquivOfCompatibleCongr
+
+@[expose] public section
+
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Ex Module Filter
 open scoped BigOperators Topology
 
@@ -80,13 +85,13 @@ section
 variable {C : Type} [NormedField C] {N N' : NumD C} {n : ℕ} (μ : Match N N' n)
 
 theorem r_left {k : ℕ} {p q : N.QT k} {p' : N'.QT k} (h : μ.r k p p') (e : N.QEq p q) : μ.r k q p' :=
-  (μ.eqv k p q p' p' h e).2 ((N'.qEq_equivalence k).refl _)
+  (μ.eqv k p q p' p' h e).2 ⟨0, by simp, by simp⟩
 
 theorem r_right {k : ℕ} {p : N.QT k} {p' q' : N'.QT k} (h : μ.r k p p') (e : N'.QEq p' q') : μ.r k p q' :=
-  (μ.eqv k p p p' q' h ((N.qEq_equivalence k).refl _)).2 e
+  (μ.eqv k p p p' q' h ⟨0, by simp, by simp⟩).2 e
 
 theorem qeq_right {k : ℕ} {p : N.QT k} {p' q' : N'.QT k} (h : μ.r k p p') (e : μ.r k p q') : N'.QEq p' q' :=
-  (μ.eqv k p p p' q' h ((N.qEq_equivalence k).refl _)).1 e
+  (μ.eqv k p p p' q' h ⟨0, by simp, by simp⟩).1 e
 
 theorem eq_of_qeq {N : NumD C} {k : ℕ} (hk : k ≠ 0) {p q : N.QT k} (h : N.QEq p q) (e : p.1.1 = q.1.1) : p = q := by
   obtain ⟨z, h1, h2⟩ := h
@@ -103,7 +108,10 @@ theorem r_one {k : ℕ} (hk : ∃ j, k = n ^ j) : μ.r k 1 1 := by
   have h := μ.mul _ _ _ _ _ hu hu
   rw [mul_one] at h
   obtain ⟨z, hz⟩ := (N'.qEq_iff _ _).1 (qeq_right μ hu h)
-  refine r_right μ hu ((N'.qEq_equivalence _).symm ((N'.qEq_iff _ _).2 ⟨z, ?_⟩))
+  have hsymm : ∀ {a b : N'.QT (n ^ j)}, N'.QEq a b → N'.QEq b a := by
+    rintro a b ⟨w, hw, hw'⟩
+    exact ⟨-w, by rw [hw, smul_neg, add_neg_cancel_right], by rw [hw', N'.io_neg, mul_inv_cancel_right]⟩
+  refine r_right μ hu (hsymm ((N'.qEq_iff _ _).2 ⟨z, ?_⟩))
   rw [one_mul]
   exact mul_left_cancel hz
 
@@ -121,7 +129,10 @@ theorem r_inv {k : ℕ} (hk : ∃ j, k = n ^ j) {p : N.QT k} {p' : N'.QT k} (h :
   have h2 := μ.mul _ _ _ _ _ h hu
   rw [mul_inv_cancel] at h2
   obtain ⟨z, hz⟩ := (N'.qEq_iff _ _).1 (qeq_right μ h1 h2)
-  refine r_right μ hu ((N'.qEq_equivalence _).symm ((N'.qEq_iff _ _).2 ⟨z, ?_⟩))
+  have hsymm : ∀ {a b : N'.QT (n ^ j)}, N'.QEq a b → N'.QEq b a := by
+    rintro a b ⟨w, hw, hw'⟩
+    exact ⟨-w, by rw [hw, smul_neg, add_neg_cancel_right], by rw [hw', N'.io_neg, mul_inv_cancel_right]⟩
+  refine r_right μ hu (hsymm ((N'.qEq_iff _ _).2 ⟨z, ?_⟩))
   rw [one_mul] at hz
   rw [← hz, inv_mul_cancel_left]
 
@@ -165,7 +176,7 @@ theorem exists_tor_of_inT {N : NumD C} {k : ℕ} {p : N.QT k} (h : N.InT p) :
   exact this ▸ e
 
 theorem inT_tor {N : NumD C} {k : ℕ} (t : Multiplicative N.X →* Cˣ) (ht : t ^ k = 1) : N.InT (N.qTor t ht) :=
-  ⟨_, (N.qEq_equivalence k).refl _, rfl, rfl⟩
+  ⟨N.qTor t ht, ⟨0, by simp, by simp⟩, rfl, rfl⟩
 
 theorem thetaMatching_exists_right_torus_torsion (hA : μ.A) {k : ℕ} (hk : ∃ j, k = n ^ j) (t : Multiplicative N.X →* Cˣ) (ht : t ^ k = 1) :
     ∃ t' ht', μ.r k (N.qTor t ht) (N'.qTor t' ht') := by

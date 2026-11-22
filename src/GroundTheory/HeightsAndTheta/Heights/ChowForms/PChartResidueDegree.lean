@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.ImportsBis
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.Imports
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormSection
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.ImportsBis
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.Imports
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormSection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -17,7 +22,8 @@ theorem aeval_mul_of_isHomogeneous {F : Type} [Field F] {n : ℕ} {A : Type*} [C
     aeval (fun m => a * x m) g = a ^ d * aeval x g := by
   conv_lhs => rw [g.as_sum]
   conv_rhs => rw [g.as_sum]
-  rw [map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun s hs => ?_
   have hd := hg (mem_support_iff.mp hs)
   simp only [aeval_monomial, mul_pow]
@@ -47,7 +53,8 @@ theorem exists_chartHom {F : Type} [Field F] {n e : ℕ} {I W : Ideal (MvPolynom
     rw [aeval_rename, Sum.elim_comp_inr]
   have hdeh : ∀ h ∈ W, aeval (fun m => ξ m / ℓ) h = 0 := by
     intro h hh
-    rw [← sum_homogeneousComponent h, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← sum_homogeneousComponent h, map_sum]
     refine Finset.sum_eq_zero fun d _ => ?_
     have : (fun m => ξ m / ℓ) = fun m => ℓ⁻¹ * ξ m := funext fun m => by rw [div_eq_inv_mul]
     rw [this, aeval_mul_of_isHomogeneous (homogeneousComponent_isHomogeneous d h), hξ,
@@ -67,7 +74,8 @@ theorem exists_chartHom {F : Type} [Field F] {n e : ℕ} {I W : Ideal (MvPolynom
           hΦinl, hlt1, C_0]
     · rw [Ideal.span_le]
       rintro _ ⟨i, rfl⟩
-      rw [SetLike.mem_coe, RingHom.mem_ker, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [SetLike.mem_coe, RingHom.mem_ker, map_sum]
       simp only [map_mul, Φ, aeval_X, Sum.elim_inl, Sum.elim_inr, genSubst]
       set S := ∑ l, X (i, l) * C (ξ l)
       have h1 : ∑ m, X (i, m) * C (ξ m / ℓ) = S * C ℓ⁻¹ := by
@@ -75,7 +83,8 @@ theorem exists_chartHom {F : Type} [Field F] {n e : ℕ} {I W : Ideal (MvPolynom
         refine Finset.sum_congr rfl fun m _ => ?_
         rw [div_eq_mul_inv, C_mul, mul_assoc]
       have h2 : ∑ m, S * C (c m) * C (ξ m / ℓ) = S * C ℓ⁻¹ := by
-        simp_rw [mul_assoc, ← C_mul, ← Finset.mul_sum, ← map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp_rw [mul_assoc, ← C_mul, ← Finset.mul_sum, ← map_sum]
         congr 2
         simp_rw [div_eq_mul_inv, ← mul_assoc, ← Finset.sum_mul]
         rw [hc, one_mul]
@@ -131,8 +140,8 @@ theorem length_quotient_eq_one {O R : Type*} [CommRing O] [CommRing R] [Algebra 
 
 end ChartResidueDegree
 
-open ChartResidueDegree in
 
+open ChartResidueDegree in
 theorem ChartResidueDegree.proof (h₁ : ChowFormBirational.Statement) (h₂ : ChartFinite.Statement)
     (h₃ : ChartKernel.Statement) (h₄ : ConeDimOfChowForm.Statement) (h₅ : ConeDimComponent.Statement)
     (h₆ : ChowFormExists.Statement) (h₇ : IncidenceGeneric.Statement) (h₈ : ChartLocalOrder.Statement) :
@@ -142,7 +151,7 @@ theorem ChartResidueDegree.proof (h₁ : ChowFormBirational.Statement) (h₂ : C
     cases e with
     | zero =>
       exfalso
-      have h0 : coeff 0 q ≠ 0 := fun h => hq.ne_zero (by rw [eq_C_of_isEmpty q, h, C_0])
+      have h0 : AddMonoidAlgebra.coeff q 0 ≠ 0 := fun h => hq.ne_zero (by rw [eq_C_of_isEmpty q, h, C_0])
       exact hq.not_isUnit (by rw [eq_C_of_isEmpty q]; exact (Ne.isUnit h0).map C)
     | succ k => exact ⟨k, rfl⟩
 
@@ -167,7 +176,8 @@ theorem ChartResidueDegree.proof (h₁ : ChowFormBirational.Statement) (h₂ : C
     exact (map_ne_zero_iff _ (IsFractionRing.injective _ K)).mpr
       fun h => htW (Ideal.Quotient.eq_zero_iff_mem.mp h)
   have hℓsum : ℓ = ∑ l, algebraMap F K (t l) * ξ l := by
-    simp [hℓdef, linForm, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hℓdef, linForm, map_sum]
     all_goals rfl
   set c : Fin n → K := fun m => algebraMap F K (t m) / ℓ with hcdef
   have hc : ∑ j, c j * ξ j = 1 := by
@@ -250,7 +260,7 @@ theorem ChartResidueDegree.proof (h₁ : ChowFormBirational.Statement) (h₂ : C
     exact IsLocalRing.maximalIdeal.isMaximal _
   have : Module.Finite (Localization.AtPrime p) (ChartLoc I t (k + 1) p) :=
     h₂ F n (k + 1) I f t p hI hf fun h => hqt (by rw [hp] at h; exact Ideal.mem_span_singleton.mp h)
-  have h𝔓max : 𝔓.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap 𝔓 hcomap
+  have h𝔓max : 𝔓.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := Localization.AtPrime p) 𝔓 hcomap
   have h𝔓ker : 𝔓 ≤ RingHom.ker ψ := by
     rw [h𝔓def, chartIdeal, Ideal.map_le_iff_le_comap, Ideal.map_le_iff_le_comap]
     intro h hh
@@ -269,7 +279,8 @@ theorem ChartResidueDegree.proof (h₁ : ChowFormBirational.Statement) (h₂ : C
     (fun m => aeval (genSubst ξ c) (pderiv (0, m) g)) B ℓ' hB (hℓsum ▸ hℓ) hrel
   have hDtω : aeval (genSubst ξ c) Dt =
       ∑ l, C (algebraMap F K (t l)) * aeval (genSubst ξ c) (pderiv (0, l) g) := by
-    rw [hDtdef, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hDtdef, map_sum]
     simp only [map_mul, hωC]
   have hAt : aeval (genSubst ξ c) Dt ≠ 0 := by rw [hDtω]; exact hAt'
   have hη : ∀ m, aeval (genSubst ξ c) (pderiv (0, m) g) = C (ξ m / ℓ) * aeval (genSubst ξ c) Dt := by
@@ -313,7 +324,7 @@ theorem ChartResidueDegree.proof (h₁ : ChowFormBirational.Statement) (h₂ : C
       obtain ⟨o₁, e₁⟩ := ih₁
       obtain ⟨o₂, e₂⟩ := ih₂
       refine ⟨o₁ + o₂, ?_⟩
-      simpa only [map_add] using congrArg₂ (· + ·) e₁ e₂
+      simpa only [map_add (f := _)] using congrArg₂ (· + ·) e₁ e₂
     | mul_X P v ih =>
       obtain ⟨o₁, e₁⟩ := ih
       cases v with

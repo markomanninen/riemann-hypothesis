@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsInnerApprox
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsKFinDRep
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CasselmanWallachExtensionBanachTargetStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAveragedOperatorMappingToKFiniteStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsInnerApprox
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsKFinDRep
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CasselmanWallachExtensionBanachTargetStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAveragedOperatorMappingToKFiniteStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,8 +50,6 @@ abbrev Bd (I : Type) : Type := lp (fun _ : I => ℂ) ∞
 def mkBd {I : Type} (f : I → ℂ) (h : ∃ C, ∀ i, ‖f i‖ ≤ C) : Bd I :=
   ⟨f, memℓp_infty (by obtain ⟨C, hC⟩ := h; exact ⟨C, by rintro _ ⟨i, rfl⟩; exact hC i⟩)⟩
 
-@[simp] theorem mkBd_apply {I : Type} (f : I → ℂ) (h : ∃ C, ∀ i, ‖f i‖ ≤ C) (i : I) : mkBd f h i = f i := rfl
-
 theorem apply_le {I : Type} (F : Bd I) (i : I) : ‖F i‖ ≤ ‖F‖ := lp.norm_apply_le_norm (by simp) F i
 
 theorem wcomp_le {I : Type} {c : I → ℂ} {B : ℝ} (hB : ∀ i, ‖c i‖ ≤ B) (φ : I → I) (F : Bd I) (i : I) :
@@ -58,8 +60,11 @@ theorem wcomp_le {I : Type} {c : I → ℂ} {B : ℝ} (hB : ∀ i, ‖c i‖ ≤
 def wcomp {I : Type} (c : I → ℂ) (B : ℝ) (hB0 : 0 ≤ B) (hB : ∀ i, ‖c i‖ ≤ B) (φ : I → I) : Bd I →L[ℂ] Bd I :=
   LinearMap.mkContinuous
     { toFun := fun F => mkBd (fun i => c i * F (φ i)) ⟨_, wcomp_le hB φ F⟩
-      map_add' := fun F G => by ext i; simp [mul_add]
-      map_smul' := fun a F => by ext i; simp; ring } B
+      map_add' := fun F G => by
+        ext i
+        change c i * (F (φ i) + G (φ i)) = c i * F (φ i) + c i * G (φ i)
+        exact mul_add _ _ _
+      map_smul' := fun a F => by ext i; simp [mkBd]; ring } B
     fun F => lp.norm_le_of_forall_le (by positivity) (wcomp_le hB φ F)
 
 theorem wcomp_apply {I : Type} (c : I → ℂ) (B : ℝ) (hB0 : 0 ≤ B) (hB : ∀ i, ‖c i‖ ≤ B) (φ : I → I) (F : Bd I) (i : I) :
@@ -86,8 +91,8 @@ theorem continuous_wt (N : ℕ) : Continuous (wt N : Mx n → ℝ) := (continuou
 theorem norm_wt (N : ℕ) (g : Mx n) : ‖(wt N g : ℂ)‖ = wt N g := by
   rw [Complex.norm_real, Real.norm_of_nonneg (wt_pos N g).le]
 
-open Classical in
 
+open Classical in
 def rt (ε : Fin n → Bool) (Λ : Type) (N : ℕ) (h : Mx n) : Bd (Λ × UJset ε) →L[ℂ] Bd (Λ × UJset ε) :=
   if hh : h ∈ UJset ε then
     wcomp (fun i => (wt N (i.2.1 * h) : ℂ) / wt N i.2.1) (wt N h) (wt_pos N h).le
@@ -98,7 +103,7 @@ def rt (ε : Fin n → Bool) (Λ : Type) (N : ℕ) (h : Mx n) : Bd (Λ × UJset 
 
 theorem rt_apply {Λ : Type} {N : ℕ} {h : Mx n} (hh : h ∈ UJset ε) (F : Bd (Λ × UJset ε)) (i : Λ × UJset ε) :
     rt ε Λ N h F i = (wt N (i.2.1 * h) : ℂ) / wt N i.2.1 * F (i.1, ⟨i.2.1 * h, mul_mem_UJ i.2.2 hh⟩) := by
-  rw [rt, dif_pos hh, wcomp_apply]
+  rw [rt, dite_eq_left hh, wcomp_apply]
 
 theorem modRep_rt (ε : Fin n → Bool) (Λ : Type) (N : ℕ) : ModRep ε (rt ε Λ N) := by
   refine ⟨?_, fun a ha b hb => ?_, 1, N, fun g hg => ?_⟩
@@ -110,7 +115,7 @@ theorem modRep_rt (ε : Fin n → Bool) (Λ : Type) (N : ℕ) : ModRep ε (rt ε
     simp only [mul_assoc]
     have := wt_ne N (i.2.1 * a)
     field_simp
-  · rw [rt, dif_pos hg, one_mul]
+  · rw [rt, dite_eq_left hg, one_mul]
     exact norm_wcomp _ _ _ _ _
 
 variable {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] {σ : Mx n → (H →L[ℂ] H)}
@@ -196,8 +201,11 @@ theorem exists_map (h : Std ε σ) {a : H} (ha : Sm ε σ a) (ha0 : a ≠ 0) (N 
         refine ⟨C, fun i => ?_⟩
         rw [norm_div, norm_wt, div_le_iff₀ (wt_pos _ _)]
         exact hC _ _ i.2.2)
-      map_add' := fun v w => by ext i; simp [add_div]
-      map_smul' := fun c v => by ext i; simp [mul_div_assoc] }
+      map_add' := fun v w => by
+        ext i
+        simp [mkBd, add_div]
+        rfl
+      map_smul' := fun c v => by ext i; simp [mkBd, mul_div_assoc] }
   obtain ⟨T, hT⟩ := LinearMap.exists_extend f
   refine ⟨T, fun v hv i => ?_⟩
   have : T v = f ⟨v, hv⟩ := LinearMap.congr_fun hT ⟨v, hv⟩
@@ -251,8 +259,8 @@ end GlobalTheory.TypeSum.CoefLow
 
 namespace GlobalTheory.TypeSum
 
-open CoefLow in
 
+open CoefLow in
 theorem coefBound_of_casselmanWallach : GlobalTheory.Published.CasselmanWallach → ∀ (n : ℕ) (ε : Fin n → Bool) (H : Type)
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] (σ : Mx n → (H →L[ℂ] H)), Std ε σ →
     CoefBound ε σ := by

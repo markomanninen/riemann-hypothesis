@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SmulSubMulLe
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SmulSubMulLe
+
+@[expose] public section
 
 set_option linter.style.haveILetI false
 
@@ -23,8 +27,8 @@ abbrev QX : Type _ := W ⧸ (L ⊓ X)
 
 abbrev QY : Type _ := W ⧸ (L ⊓ Y)
 
-open Classical in
 
+open Classical in
 def tfun (Φ : W → ℂ) : V :=
   ∑ᶠ q : QX L X × QY L Y, if q.2.out ∈ Y then term ρ χ L X f₀ Φ q.1.out q.2.out else 0
 
@@ -131,7 +135,7 @@ theorem coef_add_left (Φ : W → ℂ) (a y : W) {l : W} (hl : l ∈ L ⊓ X) :
   · have h1 : ¬ ∃ k, 0 < k ∧ IsInv k (L ⊓ X) (fun t => Φ (a + l + t) * (χ t y)⁻¹) :=
       fun ⟨k, hk, hi⟩ => h0 ⟨k, hk, (hiff k).mp hi⟩
     unfold integ
-    rw [dif_neg h1, dif_neg h0, mul_zero]
+    rw [dite_eq_right h1, dite_eq_right h0, mul_zero]
 
 include hfinX in
 theorem coef_add_right (hχr : ∀ t y y', χ t (y + y') = χ t y * χ t y')

@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocFacts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocFacts
+
+@[expose] public section
+
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc Formalism.L2.SG.TermDef GlobalTheory.LocOver
 open scoped Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LocMinor
 
-theorem leadMinor_atBase : ∀ (D : D7) (Z : LocDat D) (p : PlF D) {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T)
-    (F' : LFlag (VS D) D.R.rS T') (Tn T'n : ℕ) (P : Formalism.MainNotions.S.LocNG.FPair (locH Z p) D.R.rS),
+theorem leadMinor_atBase : ∀ (D : D7) (Z : LocDat D) (p : PlF D) {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T)
+    (F' : LFlag (D.sp.Y 0) D.R.rS T') (Tn T'n : ℕ) (P : Formalism.MainNotions.S.LocNG.FPair (locH Z p) D.R.rS),
     AtBase Z p F F' Tn T'n P → ∀ l : ℕ, P.Dm l =
       (∏ a : Fin (D.R.rS + 1), if a.val < l then (Z.M p).L.cj (frFac Z.δ p a) * frFac Z.δ p a else 1) *
         (D.s.atP p).ιE (Formalism.MainNotions.S.Dl F.fl F'.fl l) := by
@@ -48,14 +53,14 @@ theorem leadMinor_atBase : ∀ (D : D7) (Z : LocDat D) (p : PlF D) {T T' : D.hos
       rw [← Fin.prod_univ_eq_prod_range (fun k => if k < l then g k else 1)]
       refine Finset.prod_congr rfl fun a _ => ?_
       show _ = (if a.val < l then g a.val else 1)
-      rw [hg]; dsimp only; rw [dif_pos a.isLt]
+      rw [hg]; dsimp only; rw [dite_eq_left a.isLt]
     have h2 : (∏ i : Fin l, (Z.M p).L.cj (frFac Z.δ p (Fin.castLE hl i)) * frFac Z.δ p (Fin.castLE hl i))
         = ∏ k ∈ Finset.range l, g k := by
       rw [← Fin.prod_univ_eq_prod_range g]
       refine Finset.prod_congr rfl fun i _ => ?_
       have : i.val < D.R.rS + 1 := lt_of_lt_of_le i.isLt hl
       show _ = g i.val
-      rw [hg]; dsimp only; rw [dif_pos this]; rfl
+      rw [hg]; dsimp only; rw [dite_eq_left this]; rfl
     rw [h1, h2, ← Finset.prod_filter]
     congr 1
     ext k

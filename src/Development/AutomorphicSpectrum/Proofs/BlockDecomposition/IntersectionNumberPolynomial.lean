@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsPresents
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsPresents
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
-open GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts GlobalTheory.Published.ArDegreeModel
+open GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts
 
 namespace GlobalTheory.CompanionTheory.ChernPoly
 
@@ -36,6 +40,8 @@ theorem inter_add_nsmul_polynomial :
   have key := Y.interForm.map_piecewise_smul (fun _ => (m : ℤ)) (s.piecewise (fun _ => Δ₀) (fun _ => Δ)) s
   rw [hpw, Finset.prod_const, smul_eq_mul] at key
   rw [key]
+  push_cast
+  simp only [id_eq]
   push_cast
   ring
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Qi27.muPrime :
     (l : ℕ) → [inst : Fact (Nat.Prime l)] → Set ℂ_[l] :=

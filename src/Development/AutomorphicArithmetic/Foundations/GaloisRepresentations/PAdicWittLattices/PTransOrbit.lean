@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.TransCancel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntIntCast
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorInverseHeckeTranslatesForgetLevel
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.TransCancel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntIntCast
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorInverseHeckeTranslatesForgetLevel
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen GlobalTheory.LKTrip GlobalTheory.LKGeo UpperTheory.Gal.G3
@@ -132,8 +136,8 @@ theorem UpperTheory.Gal.G3.pTransOrbit :
       refine ⟨m₁ - m₂ + ((L.actG w₀) m - (L.actG w) m), ?_, ?_⟩
       · exact add_mem (sub_mem hm₁ hm₂) (sub_mem (UpperTheory.Gal.Int.Geo.integ_of_mem (kn1 hw₀) _ hm)
           (UpperTheory.Gal.Int.Geo.integ_of_mem (kn1 hw) _ hm))
-      · rw [map_mul, Module.End.mul_apply, hz, map_add, map_nsmul, e₁]
-        rw [hz, map_add, map_nsmul, e₂] at hback
+      · rw [map_mul, Module.End.mul_apply, hz, map_add (f := _), map_nsmul, e₁]
+        rw [hz, map_add (f := _), map_nsmul, e₂] at hback
         rw [← hback]
         simp only [smul_add, smul_sub]
         abel

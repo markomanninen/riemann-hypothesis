@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.KillAdd
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.KillAdd
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,17 +20,17 @@ def QuadColDerivSt : Prop :=
       C (if b = b' then dotProduct u (β.mulVec v) + dotProduct v (β.mulVec u) else 0)
 
 private theorem pderiv_X_eq_C_ite {k : Type} [CommRing k] {n d : ℕ} (p q : Fin n × Fin d) :
-    pderiv k p (X q : PS k n d) = C (if q = p then (1 : k) else 0) := by
+    MvPowerSeries.pderiv p (X q : PS k n d) = C (if q = p then (1 : k) else 0) := by
   classical
   rw [MvPowerSeries.pderiv_X, Pi.single_apply]
   split_ifs <;> simp
 
 private theorem pderiv_C_mul' {k : Type} [CommRing k] {n d : ℕ} (p : Fin n × Fin d) (a : k)
-    (Y : PS k n d) : pderiv k p (C a * Y) = C a * pderiv k p Y := by
+    (Y : PS k n d) : MvPowerSeries.pderiv p (C a * Y) = C a * MvPowerSeries.pderiv p Y := by
   rw [Derivation.leibniz, MvPowerSeries.pderiv_C, smul_zero, add_zero, smul_eq_mul]
 
 private theorem pderiv_C_mul_X_mul_X {k : Type} [CommRing k] {n d : ℕ} (p q r : Fin n × Fin d) (a : k) :
-    pderiv k p (C a * X q * X r : PS k n d) =
+    MvPowerSeries.pderiv p (C a * X q * X r : PS k n d) =
       C (a * (if r = p then 1 else 0)) * X q + C (a * (if q = p then 1 else 0)) * X r := by
   rw [Derivation.leibniz, pderiv_C_mul', pderiv_X_eq_C_ite, pderiv_X_eq_C_ite, smul_eq_mul, smul_eq_mul,
     map_mul, map_mul]
@@ -62,16 +66,20 @@ theorem quadratic_column_derivative : QuadColDerivSt := by
   intro k _ d n β
   classical
   refine ⟨?_, ?_, ?_⟩
-  · simp [quadCol, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp [quadCol, map_sum]
   · intro u b
-    simp only [dAdd, quadCol, map_sum, pderiv_C_mul_X_mul_X, pderiv_C_mul', map_add, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dAdd, quadCol, map_sum, pderiv_C_mul_X_mul_X, pderiv_C_mul', map_add (f := _), map_mul,
       MvPowerSeries.constantCoeff_X, mul_zero, add_zero, Finset.sum_const_zero]
   · intro u v b b'
 
-    simp only [dAdd, quadCol, map_sum, pderiv_C_mul_X_mul_X, pderiv_C_mul', map_add, Finset.mul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dAdd, quadCol, map_sum, pderiv_C_mul_X_mul_X, pderiv_C_mul', map_add (f := _), Finset.mul_sum,
       mul_add, pderiv_X_eq_C_ite]
     simp only [← mul_assoc, ← map_mul]
-    simp only [← map_add, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← map_add (f := _), ← map_sum]
     congr 1
     rw [← sum_quadratic_column_indicator_eq_dotProduct_mulVec β u v b b']
     refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ =>

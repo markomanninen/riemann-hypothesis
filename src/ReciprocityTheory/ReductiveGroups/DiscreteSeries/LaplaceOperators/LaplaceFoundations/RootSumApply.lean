@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.EqSmulHighestWeightOfIsWeight
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.EqSmulHighestWeightOfIsWeight
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ theorem wt_full (hε : ∀ a : Fin (2 * r + k + 1), a.val < k → ε a = true) {
       (∑ a, Λ a * th2 θ a) + ∑ q, μ q * th1 θ q := by
     have e : ∑ q, μ q * th1 θ q = ∑ a : Fin (2 * r + k + 1), (if h : a.val < k then μ ⟨a.val, h⟩ * θ a else 0) := by
       rw [sumF' (k := k) (r := r) (fun a : Fin (2 * r + k + 1) => if h : a.val < k then μ ⟨a.val, h⟩ * θ a else 0)
-        (fun p hp => by rw [dif_neg hp])]
+        (fun p hp => by rw [dite_eq_right hp])]
       refine Finset.sum_congr rfl fun q _ => ?_
       have hq : (fI k r q).val < k := q.2
       rw [dif_pos hq]
@@ -220,7 +224,7 @@ theorem spanW_irred (hε : ∀ a : Fin (2 * r + k + 1), a.val < k → ε a = tru
     set c := Complex.exp (((∑ a, Λ (fI k r a) * t a : ℝ) : ℂ) * Complex.I)
     change rhoK (k := k) (r := r) T (dgk t) T.w = c • T.w at h1
     change rhoK (k := k) (r := r) T (dgk t) p = c • p
-    rw [hpq, map_add, smul_add] at h1
+    rw [hpq, map_add (f := _), smul_add] at h1
     have hA : rhoK (k := k) (r := r) T (dgk t) p - c • p ∈ S' := S'.sub_mem (hS' _ hu _ hp) (S'.smul_mem _ hp)
     have hB : rhoK (k := k) (r := r) T (dgk t) p - c • p ∈ S'ᗮ := by
       have e : rhoK (k := k) (r := r) T (dgk t) p - c • p = c • q - rhoK (k := k) (r := r) T (dgk t) q := by

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.StrongMultiplicityOne.StrongMultOneC
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.StrongMultiplicityOne.StrongMultOneC
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.FourierWhittaker (whittaker)
@@ -27,7 +31,7 @@ private theorem exists_bil {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V]
     { toFun := fun u => lmul (toL (L u))
       map_add' := fun u v => by
         ext1 x
-        rw [ContinuousLinearMap.add_apply, of_lmul, of_lmul, of_lmul, map_add, add_mul]; rfl
+        rw [ContinuousLinearMap.add_apply, of_lmul, of_lmul, of_lmul, map_add (f := _), add_mul]; rfl
       map_smul' := fun c u => by
         ext1 x
         rw [ContinuousLinearMap.smul_apply, of_lmul, of_lmul, map_smul, smul_mul_assoc]; rfl }
@@ -108,7 +112,8 @@ private theorem inner_eta (b' : Module.Basis (Fin d) ℝ (Cinf E))
     (H : ∀ x y, TG.tr E (x * y) = ∑ i, b'.repr x i * b.repr y i) (m : Fin n) (ξ : Fin n → Cinf E)
     (u : EuclideanSpace ℝ (Fin n × Fin d)) :
     ⟪eta b' m ξ, u⟫ = -TG.tr E (dotLe m ξ fun j => crd b j u) := by
-  rw [PiLp.inner_apply, Fintype.sum_prod_type, dotLe, map_sum, ← Finset.sum_neg_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [PiLp.inner_apply, Fintype.sum_prod_type, dotLe, map_sum, ← Finset.sum_neg_distrib]
   refine Finset.sum_congr rfl fun j _ => ?_
   by_cases h : j ≤ m
   · rw [if_pos h, H, ← Finset.sum_neg_distrib]

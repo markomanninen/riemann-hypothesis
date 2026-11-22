@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocClosed
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.UnitriangularLatticeStabiliserSubFrameAutomorphi
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.SymmMemOfMem
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RatIota
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.ConcreteLevelAdelicSubset
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocClosed
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.UnitriangularLatticeStabiliserSubFrameAutomorphi
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.SymmMemOfMem
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RatIota
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.ConcreteLevelAdelicSubset
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,20 +39,20 @@ theorem orth_iff {β : GV D} (hi : β ∈ Formalism.HermitianLatticesTheory.isom
     have e : x = β (β.symm x) := by simp
     rw [e, hi]; exact h _ ((hU _).1 (by rwa [← e]))
 
-theorem lrep_iff {T1 T2 : D.host.E} {F1 : LFlag (VS D) D.R.rS T1} {G1 : LFlag (VS D) D.R.rS T2} {β : GV D}
+theorem lrep_iff {T1 T2 : D.host.E} {F1 : LFlag (D.sp.Y 0) D.R.rS T1} {G1 : LFlag (D.sp.Y 0) D.R.rS T2} {β : GV D}
     {Λ : LV D} (hi : β ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT) (hΛ : ∀ x, β x ∈ Λ ↔ x ∈ Λ)
     (hX : ∀ x, β x ∈ Xsp G1 ↔ x ∈ Xsp F1) (x : (VS D).V) : β x ∈ Lrep Λ G1 ↔ x ∈ Lrep Λ F1 := by
   show (β x ∈ Λ ∧ β x ∈ orth (VS D) (Xsp G1)) ↔ (x ∈ Λ ∧ x ∈ orth (VS D) (Xsp F1))
   exact and_congr (hΛ x) (orth_iff hi hX x)
 
-theorem xlam_iff {T1 T2 : D.host.E} {F1 : LFlag (VS D) D.R.rS T1} {G1 : LFlag (VS D) D.R.rS T2} {β : GV D}
+theorem xlam_iff {T1 T2 : D.host.E} {F1 : LFlag (D.sp.Y 0) D.R.rS T1} {G1 : LFlag (D.sp.Y 0) D.R.rS T2} {β : GV D}
     {Λ : LV D} (hΛ : ∀ x, β x ∈ Λ ↔ x ∈ Λ)
     (hX : ∀ x, β x ∈ Xsp G1 ↔ x ∈ Xsp F1) (x : (VS D).V) : β x ∈ XLam Λ G1 ↔ x ∈ XLam Λ F1 := by
   show (β x ∈ Λ ∧ β x ∈ Xsp G1) ↔ (x ∈ Λ ∧ x ∈ Xsp F1)
   exact and_congr (hΛ x) (hX x)
 
-theorem ngx_iff {T T1 : D.host.E} {F : LFlag (VS D) D.R.rS T} {F1 : LFlag (VS D) D.R.rS T1}
-    {G1 : LFlag (VS D) D.R.rS T1} {β : GV D} {Λ : LV D} (g : ℕ) (hΛ : ∀ x, β x ∈ Λ ↔ x ∈ Λ)
+theorem ngx_iff {T T1 : D.host.E} {F : LFlag (D.sp.Y 0) D.R.rS T} {F1 : LFlag (D.sp.Y 0) D.R.rS T1}
+    {G1 : LFlag (D.sp.Y 0) D.R.rS T1} {β : GV D} {Λ : LV D} (g : ℕ) (hΛ : ∀ x, β x ∈ Λ ↔ x ∈ Λ)
     (hF : ∀ x, β x ∈ Xsp F ↔ x ∈ Xsp F) (hX : ∀ x, β x ∈ Xsp G1 ↔ x ∈ Xsp F1) (x : (VS D).V) :
     β x ∈ NgX Λ g F G1 ↔ x ∈ NgX Λ g F F1 := by
   apply mem_iff_of_gmap
@@ -67,7 +71,7 @@ namespace GlobalTheory.KeyGroup
 variable {D : D7}
 
 open Formalism.L2.SG.NGCut.NormalVectorPairings in
-theorem adapt_flag {T : D.host.E} (F : LFlag (VS D) D.R.rS T) {a : GV D} (ha : Adapt a F F) (j : ℕ) :
+theorem adapt_flag {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) {a : GV D} (ha : Adapt a F F) (j : ℕ) :
     ∀ x ∈ Xflag F j, a x ∈ Xflag F j := by
   intro x hx
   unfold Xflag FlagG.Xa at hx ⊢
@@ -83,18 +87,18 @@ theorem adapt_flag {T : D.host.E} (F : LFlag (VS D) D.R.rS T) {a : GV D} (ha : A
     have e : a (F.fl.e i) = F.fl.e i + (a (F.fl.e i) - F.fl.e i) := by abel
     rw [e]; exact Submodule.add_mem _ hmem (hle h)
   · simp
-  · intro x y _ _ hx hy; rw [map_add]; exact Submodule.add_mem _ hx hy
+  · intro x y _ _ hx hy; rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   · intro c x _ hx; rw [map_smul]; exact Submodule.smul_mem _ c hx
 
 open Formalism.L2.SG.NGCut.NormalVectorPairings in
-theorem adapt_X {T : D.host.E} (F : LFlag (VS D) D.R.rS T) {a : GV D} (ha : Adapt a F F) (x : (VS D).V) :
+theorem adapt_X {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) {a : GV D} (ha : Adapt a F F) (x : (VS D).V) :
     a x ∈ Xsp F ↔ x ∈ Xsp F := by
   have h : ∀ x ∈ Xsp F, a x ∈ Xsp F := by rw [X_eq_Xflag]; exact adapt_flag F ha _
   exact ⟨fun hx => by simpa using symm_mem_of_mem a _ h _ hx, h x⟩
 
-open Formalism.L2.SG.NGCut.NormalVectorPairings in
 
-def flagLatticeAutomorphismGroup {T : D.host.E} (F : LFlag (VS D) D.R.rS T) (Λ : LV D) : Subgroup (GV D) where
+open Formalism.L2.SG.NGCut.NormalVectorPairings in
+def flagLatticeAutomorphismGroup {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (Λ : LV D) : Subgroup (GV D) where
   carrier := Aut0 F Λ
   one_mem' := ⟨GlobalTheory.Unfold.Model.adapt_one F, GlobalTheory.Unfold.Model.gmap_one Λ⟩
   mul_mem' := by
@@ -114,13 +118,13 @@ def flagLatticeAutomorphismGroup {T : D.host.E} (F : LFlag (VS D) D.R.rS T) (Λ 
     · conv_lhs => rw [← haΛ]
       rw [← GlobalTheory.Unfold.Model.gmap_mul, inv_mul_cancel, GlobalTheory.Unfold.Model.gmap_one]
 
-theorem one_mem_nrat {T : D.host.E} (F : LFlag (VS D) D.R.rS T) : (1 : GV D) ∈ NRat F :=
+theorem one_mem_nrat {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) : (1 : GV D) ∈ NRat F :=
   ⟨(Formalism.HermitianLatticesTheory.isom _).one_mem, fun j x _ => by show x - x ∈ _; rw [sub_self]; exact Submodule.zero_mem _,
     fun x _ => by show x - x ∈ _; rw [sub_self]; exact Submodule.zero_mem _⟩
 
-open Formalism.L2.SG.NGCut.NormalVectorPairings in
 
-theorem nrat_conj {T : D.host.E} {F : LFlag (VS D) D.R.rS T} {Λ : LV D} {a n : GV D} (ha : a ∈ Aut0 F Λ)
+open Formalism.L2.SG.NGCut.NormalVectorPairings in
+theorem nrat_conj {T : D.host.E} {F : LFlag (D.sp.Y 0) D.R.rS T} {Λ : LV D} {a n : GV D} (ha : a ∈ Aut0 F Λ)
     (hn : n ∈ NRat F) : a * n * a⁻¹ ∈ NRat F := by
   obtain ⟨⟨hai, haf⟩, -⟩ := ha
   refine ⟨(Formalism.HermitianLatticesTheory.isom _).mul_mem ((Formalism.HermitianLatticesTheory.isom _).mul_mem hai hn.1) ((Formalism.HermitianLatticesTheory.isom _).inv_mem hai),
@@ -145,7 +149,7 @@ end GlobalTheory.KeyGroup
 
 namespace GlobalTheory.KeyGroup
 
-variable {D : D7} {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F0' : FlagG (VS D) D.R.rS T') (Λ : LV D)
+variable {D : D7} {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F0' : FlagG (VS D) D.R.rS T') (Λ : LV D)
 
 theorem keyEq_refl (γ : GV D) : KeyEq F (lf D F0') Λ γ γ := by
   refine ⟨⟨1, one_mem_nrat F, 1, one_mem_nrat _, by group⟩, ?_⟩
@@ -155,7 +159,7 @@ theorem keyEq_refl (γ : GV D) : KeyEq F (lf D F0') Λ γ γ := by
 
 variable {F F0' Λ}
 
-theorem iota_transport {F1 F2 G1 G2 : LFlag (VS D) D.R.rS T'} (g : ℕ) {a β : GV D}
+theorem iota_transport {F1 F2 G1 G2 : LFlag (D.sp.Y 0) D.R.rS T'} (g : ℕ) {a β : GV D}
     (hi : a ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT) (hΛ : ∀ x, a x ∈ Λ ↔ x ∈ Λ) (hF : ∀ x, a x ∈ Xsp F ↔ x ∈ Xsp F)
     (h1 : ∀ x, a x ∈ Xsp G1 ↔ x ∈ Xsp F1) (h2 : ∀ x, a x ∈ Xsp G2 ↔ x ∈ Xsp F2)
     (h : IotaCompat Λ F F1 F2 β g) : IotaCompat Λ F G1 G2 (a * β * a⁻¹) g := by
@@ -236,10 +240,10 @@ end GlobalTheory.KeyGroup
 
 namespace GlobalTheory.KeyGroup
 
-variable {D : D7} {T T' : D.host.E} {F : LFlag (VS D) D.R.rS T} {F0' : FlagG (VS D) D.R.rS T'} {Λ : LV D}
+variable {D : D7} {T T' : D.host.E} {F : LFlag (D.sp.Y 0) D.R.rS T} {F0' : FlagG (VS D) D.R.rS T'} {Λ : LV D}
+
 
 open Formalism.L2.SG.NGCut.NormalVectorPairings in
-
 theorem keyEq_left {γ n : GV D} (hγ : γ ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT) (hn : n ∈ NLam Λ F) :
     KeyEq F (lf D F0') Λ γ (n * γ) := by
   have hni : n ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT := hn.1.1

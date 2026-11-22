@@ -1,4 +1,8 @@
-import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.ExistsIsRegularOfLeHeight
+module
+
+public import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.ExistsIsRegularOfLeHeight
+
+@[expose] public section
 
 namespace ReciprocityTheory.CA
 

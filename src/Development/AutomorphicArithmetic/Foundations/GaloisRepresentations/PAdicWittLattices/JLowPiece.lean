@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.CoverLowOfCov
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.CoverLowOfCov
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.Et GlobalTheory.GalV UpperTheory.Gal.G3
 open UpperTheory.Gal.Int.Geo PositivityTheory.AutomorphicGaloisHodgeTate.G8
 open Formalism.ConjugateSelfDual (Qbar)
@@ -20,7 +25,8 @@ private theorem intertwine_of_restrict {K V₁ V₀ G : Type*} [Field K] [AddCom
   have hA : ∀ j, f (b₁ j).1 = ∑ i, A i j • (b₀ i).1 := by
     intro j
     have e2 := congrArg W₀.subtype (b₀.sum_repr (f' (b₁ j)))
-    rw [map_sum] at e2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at e2
     simp only [map_smul, Submodule.subtype_apply] at e2
     simp only [A, LinearMap.toMatrix_apply]
     exact e2.symm
@@ -39,12 +45,14 @@ private theorem intertwine_of_restrict {K V₁ V₀ G : Type*} [Field K] [AddCom
       b₀.linearIndependent.map' W₀.subtype (Submodule.ker_subtype _)
     ext i j
     have e₁ : g₀ σ (f (b₁ j).1) = ∑ i, (ρ₀ σ * A) i j • (b₀ i).1 := by
-      rw [hA, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hA, map_sum]
       simp only [map_smul, h₀, Finset.smul_sum, smul_smul, Matrix.mul_apply, Finset.sum_smul]
       rw [Finset.sum_comm]
       exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by rw [mul_comm]
     have e₂ : f (g₁ σ (b₁ j).1) = ∑ i, (A * ρ₁ σ) i j • (b₀ i).1 := by
-      rw [h₁, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [h₁, map_sum]
       simp only [map_smul, hA, Finset.smul_sum, smul_smul, Matrix.mul_apply, Finset.sum_smul]
       rw [Finset.sum_comm]
       exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by rw [mul_comm]

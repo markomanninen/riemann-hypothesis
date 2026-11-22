@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntFOneMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntFOneMul
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -52,7 +57,7 @@ theorem trAF_mem_of_mem_SE {z : AF F ⊗[F] E} (hz : z ∈ SE F E) : trAF z ∈ 
     have hi : IsIntegral ℤ (Algebra.trace F E (o : E)) := Algebra.isIntegral_trace o.2
     exact intF_one_mul (intF_algebraMap (⟨_, hi⟩ : 𝓞 F)) hs
   | zero => rw [map_zero]; exact intF_zero
-  | add a b _ _ ha hb => rw [map_add]; exact intF_add ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _)]; exact intF_add ha hb
   | neg a _ ha => rw [map_neg]; exact intF_neg ha
 
 theorem trAF_algebraMap (x : AF F) :

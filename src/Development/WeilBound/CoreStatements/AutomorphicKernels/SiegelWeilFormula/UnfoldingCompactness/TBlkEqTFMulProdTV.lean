@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldB
-import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesE
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.CompactStandardSubgroup.KCptPf
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldB
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesE
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.CompactStandardSubgroup.KCptPf
+
+@[expose] public section
 
 noncomputable section
 

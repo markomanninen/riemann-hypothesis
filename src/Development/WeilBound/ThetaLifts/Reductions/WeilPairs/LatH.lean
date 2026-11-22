@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.GoodLat
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.GoodLat
+
+@[expose] public section
 
 noncomputable section
 

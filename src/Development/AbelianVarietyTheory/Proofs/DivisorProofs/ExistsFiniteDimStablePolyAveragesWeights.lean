@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.MeasurePreservingMulRight
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.Smooth
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.PropsKfin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.MeasurePreservingMulRight
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.Smooth
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.PropsKfin
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,8 @@ variable {n : ℕ}
 theorem totalDegree_bind_le {α β : Type} (g : α → MvPolynomial β ℂ) (hg : ∀ i, (g i).totalDegree ≤ 1)
     (Q : MvPolynomial α ℂ) : (bind₁ g Q).totalDegree ≤ Q.totalDegree := by
   classical
-  conv_lhs => rw [Q.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [Q.as_sum, map_sum]
   refine totalDegree_finsetSum_le fun s hs => ?_
   rw [bind₁_monomial]
   refine (totalDegree_mul _ _).trans ?_
@@ -93,7 +98,7 @@ def avg (hσ : IsURepOn (UJset ε) σ) (u : H) : Poly n →ₗ[ℂ] H where
   toFun P := ∫ k : KG ε, ev (toMK k) P • σ (toMK k) u ∂(muK ε)
   map_add' P Q := by
     rw [← integral_add (integrable_avg hσ u P) (integrable_avg hσ u Q)]
-    simp only [map_add, add_smul]
+    simp only [map_add (f := _), add_smul]
   map_smul' c P := by
     rw [RingHom.id_apply, ← integral_smul]
     simp [ev, smul_eq_C_mul, mul_smul]
@@ -148,12 +153,13 @@ theorem polyAvg : ∀ (n : ℕ) (ε : Fin n → Bool) (d : ℕ), ∃ A : Set (Fi
     apply hv
     have hP' : P.totalDegree ≤ d := (mem_restrictTotalDegree _ _ _).1 hP
     rw [← inner_self_eq_zero (𝕜 := ℂ)]
-    have e : avg hσ u P = ∑ s ∈ P.support, coeff s P • avg hσ u (monomial s 1) := by
-      conv_lhs => rw [P.as_sum, map_sum]
+    have e : avg hσ u P = ∑ s ∈ P.support, AddMonoidAlgebra.coeff P s • avg hσ u (monomial s 1) := by
+      set_option synthInstance.maxHeartbeats 100000 in
+        conv_lhs => rw [P.as_sum, map_sum]
       refine Finset.sum_congr rfl fun s _ => ?_
       rw [← map_smul, smul_monomial, smul_eq_mul, mul_one]
     generalize avg hσ u P = v at e hw
-    have : inner ℂ v (∑ s ∈ P.support, coeff s P • avg hσ u (monomial s 1)) = 0 := by
+    have : inner ℂ v (∑ s ∈ P.support, AddMonoidAlgebra.coeff P s • avg hσ u (monomial s 1)) = 0 := by
       rw [inner_sum]
       refine Finset.sum_eq_zero fun s hs => ?_
       rw [inner_smul_right, ReciprocityTheory.ChartRestriction.DS.kfin_wt_orth hσ hw (isWtOn_avg hσ u s), mul_zero]

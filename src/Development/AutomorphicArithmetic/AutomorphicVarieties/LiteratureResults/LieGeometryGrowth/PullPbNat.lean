@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.PullStmt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.PullHkSmooth
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.PullStmt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.PullHkSmooth
+
+@[expose] public section
 
 open UpperTheory.V.Lit.Geo
 open scoped ContDiff
@@ -20,7 +24,7 @@ private theorem pbNat_flow {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V]
   constructor
   · simp only [flow]
     rw [he p hp]
-    simp [map_add, map_smul]
+    simp [map_add (f := _), map_smul]
   · intro v
     have hWd : DifferentiableAt ℝ W p :=
       (hW.1.contDiffAt (hY.mem_nhds hp)).differentiableAt (by simp)
@@ -37,7 +41,7 @@ private theorem pbNat_flow {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V]
       have h3 := congrArg (fun L => L v) (c1.symm.trans (h1.trans c2))
       simpa using h3
     rw [hd W' (ρ p) hW'd, hd W p hWd, hder]
-    simp [map_add, map_smul]
+    simp [map_add (f := _), map_smul]
 
 theorem UpperTheory.V.Lit.Geo.pbNat :
     PbNat := by

@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldC
-import Development.WeilBound.ThetaLifts.LatticeBasics.ContinuousFlat
-import Development.WeilBound.ThetaLifts.LatticeBasics.PolZero
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldC
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ContinuousFlat
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PolZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem IsRapid.bound {φ : UA σ Y.J → ℂ} (hφ : IsRapid φ) (h1 : ∀ h : 
   obtain ⟨C, hC⟩ := hφ.2.2 N
   refine ⟨2 ^ N * max C 0, by positivity, fun T A hA hi hb h => ?_⟩
   have q1 : 1 ≤ qht h := le_ciInf fun γ => h1 _
-  obtain ⟨γ, hγ⟩ := exists_lt_of_ciInf_lt (f := fun γ : ratU σ Y.J => ht (γ.1 * h)) (a := 2 * qht h)
+  obtain ⟨γ, hγ⟩ := exists_lt_of_ciInf_lt (f := fun γ : ratU σ Y.J => ht (γ.1 * h)) (b := 2 * qht h)
     (lt_two_mul_self (zero_lt_one.trans_le q1))
   calc _ ≤ A * (2 * qht h : ℝ) ^ N * ‖φ h‖ := mul_le_mul_of_nonneg_right (hi γ γ.2 h ▸ (hb _).trans
         (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ (NNReal.coe_nonneg _) (by exact_mod_cast hγ.le) N) hA)) (norm_nonneg _)

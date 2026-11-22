@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -37,12 +41,6 @@ def HasString (l : ℕ) (π : Submodule ℂ (UA E n → ℂ)) (t : ℕ) : Prop :
       IsCompAlong π (locU n w) ((cLoc w).comp (locU n w).subtype) σ.ρ ∧ GlobalTheory.LFun.HasSatGL w σ.ρ T ∧ ‖ν‖ = 1 ∧
         (Multiset.range t).map (fun c : ℕ => ν * ((Ideal.absNorm w.asIdeal : ℕ) : ℂ) ^ (((t : ℂ) - 1) / 2 - c)) ≤
           T.map fun z : ℂˣ => (z : ℂ)
-
-example : IsRunAt (n := 3) ⟨![1, 1, 0], by
-    intro a b h; fin_cases a <;> fin_cases b <;> simp_all [Fin.le_def]⟩ 0 2 := by
-  refine ⟨by norm_num, fun k h1 h2 => ?_, fun h => absurd h (by norm_num), fun _ => ?_⟩
-  · interval_cases k <;> simp [wAt]
-  · simp [wAt]
 
 end GlobalTheory.GalDef
 

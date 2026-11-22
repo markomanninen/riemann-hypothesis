@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PPairCocycle
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.OfSteps
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.VerticalDivisorsCommuteStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FlagIndependenceStatement
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PPairCocycle
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.OfSteps
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.VerticalDivisorsCommuteStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FlagIndependenceStatement
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.CommAlg.PairCocycleClosed
 

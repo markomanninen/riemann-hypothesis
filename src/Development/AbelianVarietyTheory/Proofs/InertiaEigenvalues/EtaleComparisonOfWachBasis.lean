@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NBasisLoc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapMulLeft
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusSubOneWittTensorLatticeSurjectiveFixed
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBasisDD
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NBasisLoc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapMulLeft
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusSubOneWittTensorLatticeSurjectiveFixed
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBasisDD
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc TensorProduct GlobalTheory.NL Formalism.MainNotions.DeltaInvariantLattices
 
@@ -18,7 +22,7 @@ theorem map_incl_smul {O R R' M : Type} [CommRing O] [CommRing R] [CommRing R'] 
       f a • TensorProduct.map f.toLinearMap (LinearMap.id : M →ₗ[O] M) y := by
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add x x' hx hx' => simp only [smul_add, map_add, hx, hx']
+  | add x x' hx hx' => simp only [smul_add, map_add (f := _), hx, hx']
   | tmul r u => simp [TensorProduct.smul_tmul']
 
 section Generic
@@ -62,7 +66,7 @@ theorem p5inf_of_sand (T : LocLat G Qp LL O) (c : RW) (m : ℕ) (hc : c = inclR 
   · obtain ⟨y, rfl⟩ := hz
     induction y using TensorProduct.induction_on with
     | zero => rw [map_zero, smul_zero]; exact zero_mem _
-    | add x x' hx hx' => rw [map_add, smul_add]; exact add_mem hx hx'
+    | add x x' hx hx' => rw [map_add (f := _), smul_add]; exact add_mem hx hx'
     | tmul r t =>
       have e : inclR (E.io W.X) ^ m • TensorProduct.map inclR.toLinearMap LinearMap.id (r ⊗ₜ[O] t) =
           inclR r • ((inclR (E.io W.X) ^ m) ⊗ₜ[O] t : TW RW T) := by
@@ -102,8 +106,8 @@ theorem etale_comparison_of_wach_basis (T : LocLat G Qp LL O) (hT : IsCrys PD T.
 
 end Generic
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem main : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW),
     p1eL D.loc D.locA HW F := by
   intro D HW F l _ K s LL h T hT

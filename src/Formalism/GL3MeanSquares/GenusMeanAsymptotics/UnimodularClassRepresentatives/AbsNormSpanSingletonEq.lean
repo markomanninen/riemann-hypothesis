@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.AbsNormDiscrIdealOfLe
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.AbsNormDiscrIdealOfLe
+
+@[expose] public section
 
 open NumberField Module
 
@@ -17,7 +21,8 @@ theorem exists_det_span (b : Basis (Fin (finrank K V)) K V) {x : Fin (finrank K 
   have hrepr : ∀ j i, b.repr (x j) i = algebraMap (𝓞 K) K (c j i) := by
     intro j i
     rw [← hc j]
-    simp [← algebraMap_smul K, map_sum, Finsupp.single_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [← algebraMap_smul K, map_sum, Finsupp.single_apply]
   refine ⟨(Matrix.of fun i j => c j i).det, ?_⟩
   rw [RingHom.map_det, Basis.det_apply]
   congr 1
@@ -44,7 +49,7 @@ theorem discrIdeal_span {h : V →ₗ⋆[K] V →ₗ[K] K} (b : Basis (Fin (finr
     simp
 
 omit [StarRing K] in
-theorem absNorm_span_singleton_eq [IsTotallyComplex K] (g₀ : 𝓞 K) :
+theorem absNorm_span_singleton_eq [_root_.NumberField.IsTotallyComplex K] (g₀ : 𝓞 K) :
     (Ideal.absNorm (Ideal.span {g₀}) : ℝ) =
       (∏ w : InfinitePlace K, w (algebraMap (𝓞 K) K g₀)) ^ 2 := by
   have hm : ∀ w : InfinitePlace K, w.mult = 2 := by

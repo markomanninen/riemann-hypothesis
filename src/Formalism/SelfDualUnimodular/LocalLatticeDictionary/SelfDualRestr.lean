@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SelfDualUnimodular.LocalLatticeDictionary.ExistsUnitNorm
+module
+
+public import Mathlib
+public import Formalism.SelfDualUnimodular.LocalLatticeDictionary.ExistsUnitNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem ext_apply (h : V →ₗ⋆[K] V →ₗ[K] K) (X : V) (hX : h X X ≠ 0)
 theorem coef_ext (h : V →ₗ⋆[K] V →ₗ[K] K) (X : V) (hX : h X X ≠ 0)
     (g : LinearMap.ker (h X) ≃ₗ[K] LinearMap.ker (h X)) (x : V) :
     coef h X (ext h X hX g x) = coef h X x := by
-  rw [ext_apply, map_add, map_smul, coef_self h X hX, coef_ker h X (g (proj h X hX x)), smul_eq_mul,
+  rw [ext_apply, map_add (f := _), map_smul, coef_self h X hX, coef_ker h X (g (proj h X hX x)), smul_eq_mul,
     mul_one, add_zero]
 
 theorem proj_ext (h : V →ₗ⋆[K] V →ₗ[K] K) (X : V) (hX : h X X ≠ 0)
@@ -72,7 +76,7 @@ theorem ext_comp (h : V →ₗ⋆[K] V →ₗ[K] K) (X : V) (hX : h X X ≠ 0)
 
 def extE (h : V →ₗ⋆[K] V →ₗ[K] K) (X : V) (hX : h X X ≠ 0)
     (g : LinearMap.ker (h X) ≃ₗ[K] LinearMap.ker (h X)) : V ≃ₗ[K] V :=
-  LinearEquiv.ofLinear (ext h X hX g) (ext h X hX g.symm)
+  LinearEquiv.ofLinearMap (ext h X hX g) (ext h X hX g.symm)
     (by
       ext x
       have := ext_comp h X hX g.symm x
@@ -91,7 +95,7 @@ theorem h_decomp (h : V →ₗ⋆[K] V →ₗ[K] K) (X : V) (hX : h X X ≠ 0) (
     (x y : V) :
     h x y = star (coef h X x) * coef h X y * h X X + h (proj h X hX x) (proj h X hX y) := by
   conv_lhs => rw [decomp h X hX x, decomp h X hX y]
-  simp only [LinearMap.map_add₂, map_add, LinearMap.map_smulₛₗ₂, map_smul, smul_eq_mul, starRingEnd_apply,
+  simp only [LinearMap.map_add₂, map_add (f := _), LinearMap.map_smulₛₗ₂, map_smul, smul_eq_mul, starRingEnd_apply,
     LinearMap.add_apply, LinearMap.smul_apply]
   rw [LinearMap.mem_ker.mp (proj h X hX y).2, h_ker_X h X hs (proj h X hX x)]
   ring
@@ -123,24 +127,25 @@ theorem mem_iff_split {h : V →ₗ⋆[K] V →ₗ[K] K} {M : AddSubgroup V} (hM
 theorem selfDual_restr {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : ∀ u v, star (h u v) = h v u) {M : AddSubgroup V}
     (hM : IsSelfDualMod S h M) {X : V} (hXM : X ∈ M) (hXu : IsUnitIn S (h X X)) :
     IsSelfDualMod S (restr h (LinearMap.ker (h X)))
-      (M.comap ((LinearMap.ker (h X)).subtype : LinearMap.ker (h X) →ₗ[K] V).toAddMonoidHom) where
-  smul_mem := fun a ha m hm => by
+      (M.comap ((LinearMap.ker (h X)).subtype : LinearMap.ker (h X) →ₗ[K] V).toAddMonoidHom) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro a ha m hm
     change ((a • m : LinearMap.ker (h X)) : V) ∈ M
     rw [Submodule.coe_smul]
     exact hM.smul_mem a ha _ hm
-  int := fun x hx y hy => hM.int _ hx _ hy
-  dual := fun x hx => by
+  · exact fun x hx y hy => hM.int _ hx _ hy
+  · intro x hx
     change (x : V) ∈ M
     apply hM.dual
     intro m hm
     have hpm : ((proj h X hXu.1 m : LinearMap.ker (h X)) : V) ∈ M := ((mem_iff_split hM hXM hXu m).1 hm).2
     have e : h m x = h (proj h X hXu.1 m) x := by
       conv_lhs => rw [decomp h X hXu.1 m]
-      rw [map_add, LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply, LinearMap.mem_ker.1 x.2,
+      rw [map_add (f := _), LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply, LinearMap.mem_ker.1 x.2,
         smul_zero, zero_add]
     rw [e]
     exact hx (proj h X hXu.1 m) hpm
-  span := fun x => by
+  · intro x
     obtain ⟨t, ht, htx⟩ := hM.span (x : V)
     exact ⟨t, ht, by change ((t • x : LinearMap.ker (h X)) : V) ∈ M; rw [Submodule.coe_smul]; exact htx⟩
 
@@ -148,7 +153,7 @@ theorem nondeg_restr {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : ∀ u v, star (h u
     (hnd : ∀ x, (∀ y, h x y = 0) → x = 0) {X : V} (hX : h X X ≠ 0) (w : LinearMap.ker (h X))
     (hw : ∀ y, restr h (LinearMap.ker (h X)) w y = 0) : w = 0 := by
   refine Subtype.ext (hnd _ (fun z => ?_))
-  rw [decomp h X hX z, map_add, map_smul, smul_eq_mul, h_ker_X h X hs w, mul_zero, zero_add]
+  rw [decomp h X hX z, map_add (f := _), map_smul, smul_eq_mul, h_ker_X h X hs w, mul_zero, zero_add]
   exact hw (proj h X hX z)
 
 theorem symm_restr {h : V →ₗ⋆[K] V →ₗ[K] K} (hsy : h.IsSymm) (W : Submodule K V) :
@@ -159,22 +164,23 @@ theorem symm_restr {h : V →ₗ⋆[K] V →ₗ[K] K} (hsy : h.IsSymm) (W : Subm
 
 theorem selfDual_map {h : V →ₗ⋆[K] V →ₗ[K] K} {M : AddSubgroup V} (hM : IsSelfDualMod S h M)
     (g : V ≃ₗ[K] V) (hg : ∀ x y, h (g x) (g y) = h x y) :
-    IsSelfDualMod S h (M.comap (g.symm : V →ₗ[K] V).toAddMonoidHom) where
-  smul_mem := fun a ha m hm => by
+    IsSelfDualMod S h (M.comap (g.symm : V →ₗ[K] V).toAddMonoidHom) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro a ha m hm
     change g.symm (a • m) ∈ M
     rw [map_smul]; exact hM.smul_mem a ha _ hm
-  int := fun x hx y hy => by
+  · intro x hx y hy
     have := hM.int _ hx _ hy
     change h (g.symm x) (g.symm y) ∈ S at this
     rwa [← hg, LinearEquiv.apply_symm_apply, LinearEquiv.apply_symm_apply] at this
-  dual := fun x hx => by
+  · intro x hx
     change g.symm x ∈ M
     apply hM.dual
     intro m hm
     have := hx (g m) (by change g.symm (g m) ∈ M; rwa [LinearEquiv.symm_apply_apply])
     rw [← hg m (g.symm x), LinearEquiv.apply_symm_apply]
     exact this
-  span := fun x => by
+  · intro x
     obtain ⟨t, ht, htx⟩ := hM.span (g.symm x)
     exact ⟨t, ht, by change g.symm (t • x) ∈ M; rwa [map_smul]⟩
 

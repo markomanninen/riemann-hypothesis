@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.FlagsAndDiagonals.WMConjDiagonal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.CompactIntegralFields.ChainMap
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.FlagsAndDiagonals.WMConjDiagonal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.CompactIntegralFields.ChainMap
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -90,8 +94,6 @@ theorem qM (h : Supp qQ P.r) : Supp nM P.r :=
   fun g i j hij hw => h g i j hij fun hq => hw (by revert hq; revert i j; decide)
 
 theorem samePs_symm (h : P.SamePs P') : P'.SamePs P := ⟨fun g => (h.1 g).symm, fun v => (h.2 v).symm⟩
-
-theorem sameAl_symm (h : P.SameAl P') : P'.SameAl P := ⟨fun g => (h.1 g).symm, fun v => (h.2 v).symm⟩
 
 end In
 

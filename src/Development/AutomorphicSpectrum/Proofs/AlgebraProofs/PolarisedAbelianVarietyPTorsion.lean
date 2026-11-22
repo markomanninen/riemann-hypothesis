@@ -1,17 +1,22 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.CotangentSurjective
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.NonzeroLocus
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsFinFlatSub
-import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.QuotientByFiniteFlatStatement
-import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.ZarhinStatement
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateDatumStatement
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.OrdinaryCurveStatement
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.PolarisedFlagStatement
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.ExistsLiftAddOfIsReducedEq
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsGrpObjPolarised
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.DivisionPoints
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.NonzeroLocus
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsFinFlatSub
+public import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.QuotientByFiniteFlatStatement
+public import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.ZarhinStatement
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateDatumStatement
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.OrdinaryCurveStatement
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.PolarisedFlagStatement
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.ExistsLiftAddOfIsReducedEq
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsGrpObjPolarised
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.DivisionPoints
+
+@[expose] public section
+
 open ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Up GlobalTheory.CompanionTheory.Ar.GR
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi
@@ -33,10 +38,10 @@ theorem equation_map {A B : Type} [CommRing A] [CommRing B] (f : A →+* B)
     (W.map f).toAffine.Equation (f x) (f y) := by
   rw [WeierstrassCurve.Affine.equation_iff] at h ⊢
   have := congrArg f h
-  simpa only [map_add, map_mul, map_pow, WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₂, WeierstrassCurve.map_a₃, WeierstrassCurve.map_a₄, WeierstrassCurve.map_a₆] using this
+  simpa only [map_add (f := _), map_mul, map_pow, WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₂, WeierstrassCurve.map_a₃, WeierstrassCurve.map_a₄, WeierstrassCurve.map_a₆] using this
+
 
 open GlobalTheory.WeierstrassCurve in
-
 theorem exists_polAV_of_root (p : ℕ) {R C : Type} [CommRing R] [IsDomain R] [Field C] [Algebra R C]
     (hinj : Function.Injective (algebraMap R C)) (W : _root_.WeierstrassCurve R) (hΔ : IsUnit W.Δ)
     (x y : R) (hE : W.toAffine.Equation x y)
@@ -471,8 +476,8 @@ theorem isAlgClosed_residueField {C : Type} [Field C] [IsAlgClosed C] (v : Valua
 
 end GlobalTheory.CompanionTheory.Ar.GR.OrdPt
 
-open GlobalTheory.CompanionTheory.Ar.GR.OrdPt in
 
+open GlobalTheory.CompanionTheory.Ar.GR.OrdPt in
 theorem GlobalTheory.CompanionTheory.Ar.GR.exists_ord_point : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → v (p : C) < 1 → IsAdicComplete (Ideal.span {(p : R)}) R → ∃ (P : Out.PolAV (Spec (CommRingCat.of R))) (z : sp (R₀ := R) R ⟶ P.A), P.g = 1 ∧ z ^ p = 1 ∧ ∀ (k : Type) [Field k] [Algebra R k], spMap (Algebra.ofId R k) ≫ z ≠ 1 := by
   intro p _ C _ _ _ v R _ _ hv hp _
   have hinj := hv.hom_inj
@@ -482,7 +487,7 @@ theorem GlobalTheory.CompanionTheory.Ar.GR.exists_ord_point : ∀ (p : ℕ) [Fac
     exact ⟨fun h => lt_of_le_of_ne (hv.map_le_one a) h, fun h => h.ne⟩
   haveI : IsLocalRing R := IsLocalRing.of_nonunits_add fun a b ha hb => by
     rw [hnon] at ha hb ⊢
-    rw [map_add]
+    rw [map_add (f := _)]
     exact (Valuation.map_add v _ _).trans_lt (max_lt ha hb)
   haveI : IsAlgClosed (IsLocalRing.ResidueField R) := isAlgClosed_residueField v hv
   haveI : CharP (IsLocalRing.ResidueField R) p := by

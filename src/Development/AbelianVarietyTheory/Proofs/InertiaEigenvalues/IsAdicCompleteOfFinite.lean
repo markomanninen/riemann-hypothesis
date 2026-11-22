@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing TensorProduct
 
@@ -19,7 +23,7 @@ theorem isPrecomplete_of_finite {R M : Type} [CommRing R] (I : Ideal R) [IsPreco
   | add x y hx hy =>
     obtain ⟨a, ha⟩ := hx
     obtain ⟨b, hb⟩ := hy
-    exact ⟨a + b, by rw [map_add, map_add, ha, hb]⟩
+    exact ⟨a + b, by rw [map_add (f := _), map_add (f := _), ha, hb]⟩
 
 theorem isPrecomplete_of_pow_le {S : Type} [CommRing S] {I J : Ideal S} (hIJ : I ≤ J) {k : ℕ}
     (hk : J ^ k ≤ I) [h : IsPrecomplete I S] : IsPrecomplete J S := by
@@ -43,7 +47,7 @@ theorem isAdicComplete_of_finite (R S : Type) [CommRing R] [IsLocalRing R] [IsNo
   haveI : IsNoetherianRing S := IsNoetherianRing.of_finite R S
   haveI : Algebra.IsIntegral R S := Algebra.IsIntegral.of_finite R S
   have hcomap : (maximalIdeal S).comap (algebraMap R S) = maximalIdeal R :=
-    eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (maximalIdeal S))
+    eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (algebraMap _ _) (RingHom.Finite.to_isIntegral (RingHom.finite_algebraMap.mpr inferInstance)) (maximalIdeal S))
   have hle : (maximalIdeal R).map (algebraMap R S) ≤ maximalIdeal S :=
     Ideal.map_le_iff_le_comap.mpr hcomap.ge
   have hrad : maximalIdeal S ≤ ((maximalIdeal R).map (algebraMap R S)).radical := by
@@ -54,7 +58,8 @@ theorem isAdicComplete_of_finite (R S : Type) [CommRing R] [IsLocalRing R] [IsNo
     have h2 : P.comap (algebraMap R S) = maximalIdeal R :=
       ((maximalIdeal.isMaximal R).eq_of_le (Ideal.comap_ne_top _ hprime.ne_top) h1).symm
     have h3 : P.IsMaximal :=
-      Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := R) P
+      Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (algebraMap R S)
+        (RingHom.Finite.to_isIntegral (RingHom.finite_algebraMap.mpr inferInstance)) P
         (h2 ▸ maximalIdeal.isMaximal R)
     exact (eq_maximalIdeal h3).ge
   obtain ⟨k, hk⟩ := Ideal.exists_pow_le_of_le_radical_of_fg hrad (IsNoetherian.noetherian _)

@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.RowFormsLemmas
-import Formalism.LocalToGlobal.Columns.CoefficientsModP
+module
+
+public import Formalism.LocalToGlobal.Columns.HeckeSpCount
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.RowFormsLemmas
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 open scoped Matrix ComplexOrder
@@ -45,30 +50,67 @@ structure CoefPk.DualP {D : Type} (C : CoefPk X n D) : Prop where
   del_le : ∀ d, C.Del d ≤ C.Nab d
   dual : ∀ d, Formalism.HermitianLatticesTheory.dual C.pair (C.Nab d) = C.Del d
 
-theorem formGSD_rat (hX : X.Ok) (C : CoefPk X n (DecoSet X.E n ST SG)) (Λ : LevFam X.E X.K n SG) (hC : C.RatP) :
-    (formGSD C Λ).Rat where
-  pair_rat := hC.pair_rat
-  act_rat g i j := by
-    show C.bV.repr (((Λ.chr g.2 : X.Kˣ) : X.K) • C.rho g.1 (C.bV j)) i ∈ cmMax X.K
-    rw [map_smul, Finsupp.smul_apply, smul_eq_mul]
-    obtain ⟨m, hm, hc⟩ := LevFam.chr_root Λ g.2
-    exact mul_mem (rf_root_mem_cmMax hX hm hc) (hC.act_rat g.1 i j)
-  pos := hC.pos
+theorem formGSD_rat (hX : X.Ok) (C : CoefPk X n (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))) (Λ : LevFam X.E X.K n SG) (hC : C.RatP) :
+    (formGSD C Λ).Rat := by
+  refine { pair_rat := hC.pair_rat, act_rat := ?_, pos := hC.pos }
+  intro g i j
+  show C.bV.repr (((Λ.chr g.2 : X.Kˣ) : X.K) • C.rho g.1 (C.bV j)) i ∈ cmMax X.K
+  rw [map_smul, Finsupp.smul_apply, smul_eq_mul]
+  obtain ⟨m, hm, hc⟩ := LevFam.chr_root Λ g.2
+  exact mul_mem (rf_root_mem_cmMax hX hm hc) (hC.act_rat g.1 i j)
 
-theorem formGSD_good (hX : X.Ok) (C : CoefPk X n (DecoSet X.E n ST SG)) (Λ : LevFam X.E X.K n SG) (hE : C.Eqv)
-    (hC : C.DualP) : (formGSD C Λ).Good 1 where
-  ok := formGSD_ok C Λ hX hE
-  symm := hC.symm
-  nondeg := hC.nondeg
-  nab_lat := hC.nab_lat
-  del_le := hC.del_le
-  s_pos := Nat.one_pos
-  dual_le d y hy := by
+theorem formGSD_good (hX : X.Ok) (C : CoefPk X n (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))) (Λ : LevFam X.E X.K n SG) (hE : C.Eqv)
+    (hC : C.DualP) : (formGSD C Λ).Good 1 := by
+  have hOk : (formGSD C Λ).Ok := by
+    refine ⟨?_, ?_, ?_, ?_, ?_⟩
+    · obtain ⟨s, hs, hrep⟩ := DecoSet.finite_reps (ST := ST) (SG := SG) (n := n)
+        (posStar_of_conj hX.conjE)
+      have : Finite s := hs
+      refine Finite.of_surjective (fun d : s => (formGSD C Λ).cls d.1) ?_
+      intro c
+      induction c using Quotient.inductionOn' with
+      | h d =>
+        obtain ⟨d0, hd0, g, hg⟩ := hrep d
+        refine ⟨⟨d0, hd0⟩, ((formGSD C Λ).cls_eq_iff d0 d).mpr
+          ⟨((g, 1) : FormG Λ)⁻¹, ?_⟩⟩
+        change d = (((g, 1) : FormG Λ) : (formGSD C Λ).G) • d0 at hg
+        rw [hg, inv_smul_smul]
+    · intro d
+      have := DecoSet.finite_stabilizer (posStar_of_conj hX.conjE)
+        (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))
+      refine Finite.of_injective (fun a : MulAction.stabilizer (formGSD C Λ).G d =>
+        (⟨FormG.incl Λ a.1, a.2⟩ :
+          MulAction.stabilizer (UF X.E n × GLG (E := X.E) (n := n) (SG := SG)) d)) ?_
+      intro a b hab
+      exact Subtype.ext (FormG.incl_injective Λ (congrArg Subtype.val hab))
+    · intro g d
+      obtain ⟨m, hm, hc⟩ := Λ.chr_root g.2
+      exact (hE.nab_smul (FormG.incl Λ g) d).trans (map_root_smul _ _ hm hc).symm
+    · intro g d
+      obtain ⟨m, hm, hc⟩ := Λ.chr_root g.2
+      exact (hE.del_smul (FormG.incl Λ g) d).trans (map_root_smul _ _ hm hc).symm
+    · intro g x y
+      obtain ⟨m, hm, hc⟩ := Λ.chr_root g.2
+      let c : X.K := (Λ.chr g.2 : X.Kˣ)
+      change C.pair (c • C.rho g.1 x) (c • C.rho g.1 y) = C.pair x y
+      rw [LinearMap.map_smulₛₗ₂, map_smul, hE.inv, smul_smul]
+      change (star c * c) • C.pair x y = C.pair x y
+      rw [star_mul_root hX.conjK hm (show c ^ m = 1 from hc), one_smul]
+  refine
+    { ok := hOk
+      symm := hC.symm
+      nondeg := hC.nondeg
+      nab_lat := hC.nab_lat
+      del_le := hC.del_le
+      s_pos := Nat.one_pos
+      dual_le := ?_
+      del_dual := ?_ }
+  · intro d y hy
     rw [Nat.cast_one, one_smul]
     have : y ∈ Formalism.HermitianLatticesTheory.dual C.pair (C.Nab d) := hy
     rw [hC.dual d] at this
     exact this
-  del_dual d y hy := by
+  · intro d y hy
     rw [Nat.cast_one, one_smul]
     show y ∈ Formalism.HermitianLatticesTheory.dual C.pair (C.Nab d)
     rw [hC.dual d]
@@ -98,20 +140,28 @@ theorem rf_one_map_posDef (φ : X.K →+* ℂ) : ((1 : Matrix (Fin n) (Fin n) X.
   rw [Matrix.map_one _ (map_zero _) (map_one _)]
   exact Matrix.PosDef.one
 
-theorem squarePk_ratP (hX : X.Ok) : (squarePk X lam L).RatP where
-  pair_rat i j := pairRat X.K X.Tau n lam (cmMax X.K) _ (fun τ a b => by rw [rf_gramK_one]; exact rf_one_entry_mem _ a b) i j
-  act_rat γ i j := actRat X.K X.Tau n lam (cmMax X.K) _ (fun τ a b => by
-    rw [embGL_coe]
-    exact rf_emb_mem_cmMax hX τ _) i j
-  pos v := pairPos X.K X.Tau n lam _ v.embedding fun τ => by rw [rf_gramK_one]; exact rf_one_map_posDef _
+theorem squarePk_ratP (hX : X.Ok) : (squarePk X lam L).RatP := by
+  refine { pair_rat := ?_, act_rat := ?_, pos := ?_ }
+  · intro i j
+    exact pairRat X.K X.Tau n lam (cmMax X.K) _ (fun τ a b => by rw [rf_gramK_one]; exact rf_one_entry_mem _ a b) i j
+  · intro γ i j
+    exact actRat X.K X.Tau n lam (cmMax X.K) _ (fun τ a b => by
+      rw [embGL_coe]
+      exact rf_emb_mem_cmMax hX τ _) i j
+  · intro v
+    exact pairPos X.K X.Tau n lam _ v.embedding fun τ => by rw [rf_gramK_one]; exact rf_one_map_posDef _
 
-theorem roundPk_ratP (hX : X.Ok) : (roundPk X lam L).RatP where
-  pair_rat i j := pairRat X.K X.Tau n lam (cmMax X.K) _ (fun τ a b => by rw [rf_gramKd_one]; exact rf_one_entry_mem _ a b) i j
-  act_rat γ i j := actRat X.K X.Tau n lam (cmMax X.K) _ (fun τ a b => by
-    show ((invTrK (embGL X.emb (ufGL X.E n γ)) τ : GL (Fin n) X.K) : Matrix (Fin n) (Fin n) X.K) a b ∈ cmMax X.K
-    rw [invTrK_coe, embGL_inv, embGL_coe]
-    exact rf_emb_mem_cmMax hX τ _) i j
-  pos v := pairPos X.K X.Tau n lam _ v.embedding fun τ => by rw [rf_gramKd_one]; exact rf_one_map_posDef _
+theorem roundPk_ratP (hX : X.Ok) : (roundPk X lam L).RatP := by
+  refine { pair_rat := ?_, act_rat := ?_, pos := ?_ }
+  · intro i j
+    exact pairRat X.K X.Tau n lam (cmMax X.K) _ (fun τ a b => by rw [rf_gramKd_one]; exact rf_one_entry_mem _ a b) i j
+  · intro γ i j
+    exact actRat X.K X.Tau n lam (cmMax X.K) _ (fun τ a b => by
+      show ((invTrK (embGL X.emb (ufGL X.E n γ)) τ : GL (Fin n) X.K) : Matrix (Fin n) (Fin n) X.K) a b ∈ cmMax X.K
+      rw [invTrK_coe, embGL_inv, embGL_coe]
+      exact rf_emb_mem_cmMax hX τ _) i j
+  · intro v
+    exact pairPos X.K X.Tau n lam _ v.embedding fun τ => by rw [rf_gramKd_one]; exact rf_one_map_posDef _
 
 theorem rf_hform_one (x y : Sp X.E n) : Formalism.UG.hform (starRingEnd X.E) (1 : Matrix (Fin n) (Fin n) X.E) x y = hStd X.E n x y := by
   unfold Formalism.UG.hform
@@ -125,7 +175,7 @@ theorem rf_hform_one (x y : Sp X.E n) : Formalism.UG.hform (starRingEnd X.E) (1 
   · intro h
     exact absurd (Finset.mem_univ i) h
 
-theorem rf_hdualFr_tauLat (hX : X.Ok) {N : Submodule (𝓞 X.E) (Sp X.E n)} (hl : Submodule.IsLattice X.E N)
+theorem rf_hdualFr_tauLat (hX : X.Ok) {N : Submodule (𝓞 X.E) (Sp X.E n)} (hl : Submodule.IsFullLattice X.E N)
     (hu : IsUnimodular (hStd X.E n) N) (τ : X.Tau) :
     hdualFr (1 : Matrix (Fin n) (Fin n) X.K) (tauLat X.emb τ N) = tauLat X.emb τ N := by
   have h := tauLatDual X.E X.K X.Tau n X.emb (starRingEnd X.E) τ (fun x => (hX.emb_star τ x).symm) 1 N N
@@ -138,13 +188,14 @@ theorem rf_hdualFr_tauLat (hX : X.Ok) {N : Submodule (𝓞 X.E) (Sp X.E n)} (hl 
   rw [rf_gramK_one] at h
   exact h
 
-theorem squarePk_dualP (hX : X.Ok) (hl : ∀ d, Submodule.IsLattice X.E (L d))
-    (hu : ∀ d, IsUnimodular (hStd X.E n) (L d)) : (squarePk X lam L).DualP where
-  symm := pairSymm X.K X.Tau n lam _ fun τ => by rw [rf_gramK_one, Matrix.conjTranspose_one]
-  nondeg := pairNondeg X.K X.Tau n lam _ fun τ => by rw [rf_gramK_one, Matrix.det_one]; exact isUnit_one
-  nab_lat d := (nabDelLattice X.K X.Tau n lam _ fun τ => tauLatLattice X.E X.K X.Tau n X.emb τ _ (hl d)).1
-  del_le := squarePk_del_le X lam L
-  dual d := by
+theorem squarePk_dualP (hX : X.Ok) (hl : ∀ d, Submodule.IsFullLattice X.E (L d))
+    (hu : ∀ d, IsUnimodular (hStd X.E n) (L d)) : (squarePk X lam L).DualP := by
+  refine { symm := ?_, nondeg := ?_, nab_lat := ?_, del_le := squarePk_del_le X lam L, dual := ?_ }
+  · exact pairSymm X.K X.Tau n lam _ fun τ => by rw [rf_gramK_one, Matrix.conjTranspose_one]
+  · exact pairNondeg X.K X.Tau n lam _ fun τ => by rw [rf_gramK_one, Matrix.det_one]; exact isUnit_one
+  · intro d
+    exact (nabDelLattice X.K X.Tau n lam _ fun τ => tauLatLattice X.E X.K X.Tau n X.emb τ _ (hl d)).1.toIsLattice
+  · intro d
     have h := (nabDelDual X.K X.Tau n lam (gramK X.emb 1) (fun τ => tauLat X.emb τ (L d))
       (fun τ => by rw [rf_gramK_one, Matrix.conjTranspose_one])
       (fun τ => by rw [rf_gramK_one, Matrix.det_one]; exact isUnit_one)
@@ -156,16 +207,17 @@ theorem squarePk_dualP (hX : X.Ok) (hl : ∀ d, Submodule.IsLattice X.E (L d))
     funext τ
     rw [rf_gramK_one, rf_hdualFr_tauLat hX (hl d) (hu d)]
 
-theorem roundPk_dualP (hX : X.Ok) (hl : ∀ d, Submodule.IsLattice X.E (L d))
-    (hu : ∀ d, IsUnimodular (hStd X.E n) (L d)) : (roundPk X lam L).DualP where
-  symm := pairSymm X.K X.Tau n lam _ fun τ => by rw [rf_gramKd_one, Matrix.conjTranspose_one]
-  nondeg := pairNondeg X.K X.Tau n lam _ fun τ => by rw [rf_gramKd_one, Matrix.det_one]; exact isUnit_one
-  nab_lat d := (nabDelLattice X.K X.Tau n lam _ fun τ =>
-    (dualFrLattice X.K n 1 _ (by rw [Matrix.det_one]; exact isUnit_one)
-      (tauLatLattice X.E X.K X.Tau n X.emb τ _ (hl d))).1).1
-  del_le := roundPk_del_le X lam L
-  dual d := by
-    have hlat : ∀ τ, Submodule.IsLattice X.K (dualFr (tauLat X.emb τ (L d))) := fun τ =>
+theorem roundPk_dualP (hX : X.Ok) (hl : ∀ d, Submodule.IsFullLattice X.E (L d))
+    (hu : ∀ d, IsUnimodular (hStd X.E n) (L d)) : (roundPk X lam L).DualP := by
+  refine { symm := ?_, nondeg := ?_, nab_lat := ?_, del_le := roundPk_del_le X lam L, dual := ?_ }
+  · exact pairSymm X.K X.Tau n lam _ fun τ => by rw [rf_gramKd_one, Matrix.conjTranspose_one]
+  · exact pairNondeg X.K X.Tau n lam _ fun τ => by rw [rf_gramKd_one, Matrix.det_one]; exact isUnit_one
+  · intro d
+    exact (nabDelLattice X.K X.Tau n lam _ fun τ =>
+      (dualFrLattice X.K n 1 _ (by rw [Matrix.det_one]; exact isUnit_one)
+        (tauLatLattice X.E X.K X.Tau n X.emb τ _ (hl d))).1).1.toIsLattice
+  · intro d
+    have hlat : ∀ τ, Submodule.IsFullLattice X.K (dualFr (tauLat X.emb τ (L d))) := fun τ =>
       (dualFrLattice X.K n 1 _ (by rw [Matrix.det_one]; exact isUnit_one)
         (tauLatLattice X.E X.K X.Tau n X.emb τ _ (hl d))).1
     have h := (nabDelDual X.K X.Tau n lam (gramKd X.emb 1) (fun τ => dualFr (tauLat X.emb τ (L d)))
@@ -195,53 +247,41 @@ theorem mtVal_ratP (hX : X.Ok) (j : ℕ) (SG : Finset (HeightOneSpectrum (𝓞 X
   roundPk_ratP _ _ hX
 
 theorem rowVal_dualP (hX : X.Ok) (SG : Finset (HeightOneSpectrum (𝓞 X.E))) : (rowVal W SG).DualP :=
-  squarePk_dualP _ _ hX (fun d => d.2.lat) fun d => d.2.uni
+  squarePk_dualP _ _ hX (fun d => (let d := d; _root_.Formalism.L2.Col.hcnt_isFullLattice_of_unimodular d.2.lat d.2.uni)) fun d => d.2.uni
 
 theorem mtVal_dualP (hX : X.Ok) (j : ℕ) (SG : Finset (HeightOneSpectrum (𝓞 X.E))) : (mtVal W j SG).DualP :=
-  roundPk_dualP _ _ hX (fun d => d.2.lat) fun d => d.2.uni
+  roundPk_dualP _ _ hX (fun d => (let d := d; _root_.Formalism.L2.Col.hcnt_isFullLattice_of_unimodular d.2.lat d.2.uni)) fun d => d.2.uni
 
-theorem mtilde_good (hX : X.Ok) (P : LevFam X.E X.K R.r Pr.vGs) : (mtildeGSD W Ch sel mu P).Good 1 :=
-  formGSD_good hX _ _ (rowVal_eqv W hX _) (rowVal_dualP W hX _)
+theorem mtilde_good (hX : X.Ok) (P : LevFam X.E X.K R.r Pr.vGs) : (mtildeGSD W Ch sel mu P).Good 1 := by
+  have hEqv : (rowVal W (rowSG Pr sel mu)).Eqv :=
+    ⟨rowVal_nab_smul W, rowVal_del_smul W, squarePk_inv X _ _ hX.emb_star⟩
+  exact formGSD_good hX _ _ hEqv (rowVal_dualP W hX _)
 
-theorem mtildeK_good (hX : X.Ok) : (mtildeKGSD W Ch sel mu).Good 1 :=
-  formGSD_good hX _ _ (rowVal_eqv W hX _) (rowVal_dualP W hX _)
+theorem mtildeK_good (hX : X.Ok) : (mtildeKGSD W Ch sel mu).Good 1 := by
+  have hEqv : (rowVal W (rowSG Pr sel mu)).Eqv :=
+    ⟨rowVal_nab_smul W, rowVal_del_smul W, squarePk_inv X _ _ hX.emb_star⟩
+  exact formGSD_good hX _ _ hEqv (rowVal_dualP W hX _)
 
-theorem mt_good (hX : X.Ok) (P : LevFam X.E X.K R.r Pr.vGs) (j : ℕ) : (mtGSD W Ch sel mu P j).Good 1 :=
-  formGSD_good hX _ _ (mtVal_eqv W hX j _) (mtVal_dualP W hX j _)
-
-theorem mtK_good (hX : X.Ok) (j : ℕ) : (mtKGSD W Ch sel mu j).Good 1 :=
-  formGSD_good hX _ _ (mtVal_eqv W hX j _) (mtVal_dualP W hX j _)
+theorem mtK_good (hX : X.Ok) (j : ℕ) : (mtKGSD W Ch sel mu j).Good 1 := by
+  have hEqv : (mtVal W j (rowSG Pr sel mu)).Eqv :=
+    ⟨mtVal_nab_smul W j, mtVal_del_smul W j, roundPk_inv X _ _ hX.emb_star⟩
+  exact formGSD_good hX _ _ hEqv (mtVal_dualP W hX j _)
 
 theorem mtilde_rat (hX : X.Ok) (P : LevFam X.E X.K R.r Pr.vGs) : (mtildeGSD W Ch sel mu P).Rat :=
   formGSD_rat hX _ _ (rowVal_ratP W hX _)
 
 theorem mtildeK_rat (hX : X.Ok) : (mtildeKGSD W Ch sel mu).Rat := formGSD_rat hX _ _ (rowVal_ratP W hX _)
 
-theorem mt_rat (hX : X.Ok) (P : LevFam X.E X.K R.r Pr.vGs) (j : ℕ) : (mtGSD W Ch sel mu P j).Rat :=
-  formGSD_rat hX _ _ (mtVal_ratP W hX j _)
-
 theorem mtK_rat (hX : X.Ok) (j : ℕ) : (mtKGSD W Ch sel mu j).Rat := formGSD_rat hX _ _ (mtVal_ratP W hX j _)
-
-theorem MtildeCSD_good (hX : X.Ok) (P : LevFam X.E X.K R.r Pr.vGs) (h : (mtildeGSD W Ch sel mu P).Ok) :
-    (MtildeCSD W Ch sel mu P h).Good 1 := (mtildeGSD W Ch sel mu P).toCSDOf_good (mtilde_good W Ch sel mu hX P) _
 
 theorem MtildeKCSD_good (hX : X.Ok) (h : (mtildeKGSD W Ch sel mu).Ok) : (MtildeKCSD W Ch sel mu h).Good 1 :=
   (mtildeKGSD W Ch sel mu).toCSDOf_good (mtildeK_good W Ch sel mu hX) _
 
-theorem MtCSD_good (hX : X.Ok) (P : LevFam X.E X.K R.r Pr.vGs) (j : ℕ) (h : (mtGSD W Ch sel mu P j).Ok) :
-    (MtCSD W Ch sel mu P j h).Good 1 := (mtGSD W Ch sel mu P j).toCSDOf_good (mt_good W Ch sel mu hX P j) _
-
 theorem MtKCSD_good (hX : X.Ok) (j : ℕ) (h : (mtKGSD W Ch sel mu j).Ok) : (MtKCSD W Ch sel mu j h).Good 1 :=
   (mtKGSD W Ch sel mu j).toCSDOf_good (mtK_good W Ch sel mu hX j) _
 
-theorem MtildeCSD_rat (hX : X.Ok) (P : LevFam X.E X.K R.r Pr.vGs) (h : (mtildeGSD W Ch sel mu P).Ok) :
-    (MtildeCSD W Ch sel mu P h).Rat := (mtildeGSD W Ch sel mu P).toCSDOf_rat h (mtilde_rat W Ch sel mu hX P) _
-
 theorem MtildeKCSD_rat (hX : X.Ok) (h : (mtildeKGSD W Ch sel mu).Ok) : (MtildeKCSD W Ch sel mu h).Rat :=
   (mtildeKGSD W Ch sel mu).toCSDOf_rat h (mtildeK_rat W Ch sel mu hX) _
-
-theorem MtCSD_rat (hX : X.Ok) (P : LevFam X.E X.K R.r Pr.vGs) (j : ℕ) (h : (mtGSD W Ch sel mu P j).Ok) :
-    (MtCSD W Ch sel mu P j h).Rat := (mtGSD W Ch sel mu P j).toCSDOf_rat h (mt_rat W Ch sel mu hX P j) _
 
 theorem MtKCSD_rat (hX : X.Ok) (j : ℕ) (h : (mtKGSD W Ch sel mu j).Ok) : (MtKCSD W Ch sel mu j h).Rat :=
   (mtKGSD W Ch sel mu j).toCSDOf_rat h (mtK_rat W Ch sel mu hX j) _

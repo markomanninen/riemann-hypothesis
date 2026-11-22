@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.NormMod
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.NormMod
+
+@[expose] public section
 
 noncomputable section
 

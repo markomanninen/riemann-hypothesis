@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedR
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedR
+
+@[expose] public section
 
 open Matrix
 

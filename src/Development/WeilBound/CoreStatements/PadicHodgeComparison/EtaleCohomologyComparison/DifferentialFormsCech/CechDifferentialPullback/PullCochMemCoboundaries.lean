@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.HodgeC
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.NaturalLeray
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.HigherDirectImagesVanishOfIsAffineHom
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SurjectiveOfLocallySurjective
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.HodgeC
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.NaturalLeray
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.HigherDirectImagesVanishOfIsAffineHom
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SurjectiveOfLocallySurjective
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -22,8 +26,8 @@ variable {X Y : TopCat.{0}} (f : X ⟶ Y) {P : (Opens Y)ᵒᵖ ⥤ AddCommGrpCat
   {κ ι : Type} (V : κ → Opens Y) (U : ι → Opens X) (τ : ι → κ)
   (hτ : ∀ i, U i ≤ (Opens.map f).obj (V (τ i)))
 
-include hτ in
 
+include hτ in
 theorem inter_le_map {n : ℕ} (t : Fin n → ι) : inter U t ≤ (Opens.map f).obj (inter V (τ ∘ t)) := by
   intro x hx
   rw [mem_inter_iff] at hx
@@ -45,7 +49,8 @@ theorem app_res_map {A B : Opens Y} (h : A ≤ B) (x : P.obj (op B)) :
 theorem pullCoch_d (n : ℕ) (σ : Cochain P V n) :
     pullCoch f φ V U τ hτ (n + 1) (d P V n σ) = d Q U n (pullCoch f φ V U τ hτ n σ) := by
   funext t
-  simp only [pullCoch, AddMonoidHom.coe_mk, ZeroHom.coe_mk, d_apply, map_sum, map_zsmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [pullCoch, AddMonoidHom.coe_mk, ZeroHom.coe_mk, d_apply, map_sum, map_zsmul]
   refine Finset.sum_congr rfl fun k _ => ?_
   congr 1
   rw [app_res_map, res_res, res_res]

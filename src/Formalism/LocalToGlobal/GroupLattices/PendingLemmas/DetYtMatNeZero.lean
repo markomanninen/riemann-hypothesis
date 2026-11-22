@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+
+@[expose] public section
 
 open Formalism.MainNotions.G Formalism.MainNotions.FormalGroupSystem Finset
 
@@ -82,8 +86,8 @@ def denD (j : ℕ) : DA X Kc j :=
     if IsOddPos s then (yMat X Kc j v s).det ^ (-exY X j v s).toNat * (YtMat X Kc j v s).det ^ (-exT X j v s).toNat
     else 1
 
-open Classical in
 
+open Classical in
 def divD (j : ℕ) : DA X Kc j →ₗ[X.G.Kf] DA X Kc j :=
   if h : Function.Injective (LinearMap.mulLeft X.G.Kf (denD X Kc j)) then
     Classical.choose (LinearMap.exists_leftInverse_of_injective (LinearMap.mulLeft X.G.Kf (denD X Kc j))
@@ -93,7 +97,7 @@ def divD (j : ℕ) : DA X Kc j →ₗ[X.G.Kf] DA X Kc j :=
 theorem divD_mul (j : ℕ) (h : Function.Injective (LinearMap.mulLeft X.G.Kf (denD X Kc j))) (P : DA X Kc j) :
     divD X Kc j (denD X Kc j * P) = P := by
   unfold divD
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact LinearMap.congr_fun (Classical.choose_spec (LinearMap.exists_leftInverse_of_injective
     (LinearMap.mulLeft X.G.Kf (denD X Kc j)) (LinearMap.ker_eq_bot.2 h))) P
 
@@ -104,8 +108,8 @@ def GoodDeg (j : ℕ) (n : X.ZA j →₀ ℕ) : Prop :=
   ∀ (v : X.Pl) (s : Fin (X.G.P.n' v)),
     ((∑ a, ∑ b, n ⟨v, (s, a, b)⟩ : ℕ) : ℤ) = ∑ i ∈ Icc 1 (NN X.G.P.m X.t (j + 1)), X.nuv v (j + 1) s i
 
-open Classical in
 
+open Classical in
 def derAt (j : ℕ) (n : X.ZA j →₀ ℕ) (f : MvPowerSeries (X.ZA j) Kc) : Kc :=
   if GoodDeg X j n then (∏ x ∈ n.support, ((n x).factorial : Kc)) * MvPowerSeries.coeff n f else 0
 
@@ -122,10 +126,10 @@ theorem derAt_smul (j : ℕ) (n : X.ZA j →₀ ℕ) (c : X.G.Kf) (f : MvPowerSe
   · rw [smul_zero]
 
 def pairD (j : ℕ) (P : DA X Kc j) (f : MvPowerSeries (X.ZA j) Kc) : XspC (X.Pj (j + 1)) Kc :=
-  ∑ n ∈ P.support, derAt X Kc j n f • MvPolynomial.coeff n P
+  ∑ n ∈ P.support, derAt X Kc j n f • AddMonoidAlgebra.coeff P n
 
 theorem pairD_eq (j : ℕ) (P : DA X Kc j) (f : MvPowerSeries (X.ZA j) Kc) (S : Finset (X.ZA j →₀ ℕ))
-    (hS : P.support ⊆ S) : pairD X Kc j P f = ∑ n ∈ S, derAt X Kc j n f • MvPolynomial.coeff n P := by
+    (hS : P.support ⊆ S) : pairD X Kc j P f = ∑ n ∈ S, derAt X Kc j n f • AddMonoidAlgebra.coeff P n := by
   unfold pairD
   refine Finset.sum_subset hS fun n _ hn => ?_
   simp only [MvPolynomial.mem_support_iff, not_not] at hn
@@ -164,7 +168,7 @@ theorem pairD_smul_right (j : ℕ) (c : X.G.Kf) (P : DA X Kc j) (f : MvPowerSeri
 
 def delF (j : ℕ) : (X.Pj j).Xsp →ₗ[X.G.Kf] MvPowerSeries (X.ZA j) Kc →ₗ[X.G.Kf] XspC (X.Pj (j + 1)) Kc :=
   LinearMap.mk₂ X.G.Kf (fun G f => pairD X Kc j (polDel X Kc j G) f)
-    (fun G G' f => by rw [map_add, pairD_add_left])
+    (fun G G' f => by rw [map_add (f := _), pairD_add_left])
     (fun c G f => by rw [map_smul, pairD_smul_left])
     (fun G f f' => pairD_add_right X Kc j _ f f')
     (fun c G f => pairD_smul_right X Kc j c _ f)
@@ -186,8 +190,8 @@ theorem del_deg (j : ℕ) (G : (X.Pj j).Xsp) (f : MvPowerSeries (X.ZA j) Kc)
 
 section NonZero
 
-open Classical in
 
+open Classical in
 def evPt (j : ℕ) : DA X Kc j →+* Kc :=
   MvPolynomial.eval₂Hom
     (MvPolynomial.eval fun i : (Σ v : Fin (X.Pj (j + 1)).nV, Fin ((X.Pj (j + 1)).n' v) ×
@@ -210,7 +214,8 @@ theorem evPt_YtMat (j : ℕ) (v : X.Pl) (s : Fin (X.G.P.n' v)) : (evPt X Kc j).m
     simp only [RingHom.mapMatrix_apply, Matrix.map_apply] at this
     rw [this, ← RingHom.mapMatrix_apply, evPt_yMat, Matrix.adjugate_one]
   ext t a
-  simp only [RingHom.mapMatrix_apply, Matrix.map_apply, YtMat, Matrix.mul_apply, Matrix.submatrix_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [RingHom.mapMatrix_apply, Matrix.map_apply, YtMat, Matrix.mul_apply, Matrix.submatrix_apply,
     Matrix.transpose_apply, id, map_sum, map_mul, hadj, dMat, Matrix.one_apply]
   simp [evPt, (shiftI_injective X j).eq_iff, eq_comm]
 

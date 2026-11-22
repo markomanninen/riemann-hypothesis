@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.ContinuousFlat
-import Development.WeilBound.ThetaLifts.LatticeBasics.NonZero
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ContinuousFlat
+public import Development.WeilBound.ThetaLifts.LatticeBasics.NonZero
+
+@[expose] public section
 
 noncomputable section
 

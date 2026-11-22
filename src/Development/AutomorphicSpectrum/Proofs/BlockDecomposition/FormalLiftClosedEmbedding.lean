@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubPairRight
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThickeningAffinePreimageStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThickeningCechCoverCompatible
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThickeningCechRestrictionCommutesStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThickeningTwistedSectionTransition
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubPairRight
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThickeningAffinePreimageStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThickeningCechCoverCompatible
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThickeningCechRestrictionCommutesStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThickeningTwistedSectionTransition
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.AbLaw PositivityTheory.FormalThickening
 open GlobalTheory.ProjSpace GlobalTheory.QCoh.Qcqs GlobalTheory.Cartier GlobalTheory.CompanionTheory.FormalAlg GlobalTheory.CompanionTheory.FormalAlg.Lift
 
@@ -34,7 +39,7 @@ theorem exists_form_of_eval {ι R B G : Type} [CommRing R] [CommRing B] [AddComm
     obtain ⟨Q₁, a₁, b₁⟩ := h₁ n (le_trans (le_max_left _ _) hn)
     obtain ⟨Q₂, a₂, b₂⟩ := h₂ n (le_trans (le_max_right _ _) hn)
     refine ⟨Q₁ + Q₂, a₁.add a₂, ?_⟩
-    rw [map_add, map_add, smul_add, b₁, b₂, add_smul]
+    rw [map_add (f := _), map_add (f := _), smul_add, b₁, b₂, add_smul]
   | mul_X p j hp =>
     obtain ⟨n₀, h⟩ := hp
     refine ⟨n₀ + 1, fun n hn => ?_⟩
@@ -126,7 +131,7 @@ theorem exists_form_chart (hN : N.IsLB) (σ : ι → SecOn (pw N d) V)
         Q • GrSum.of hx 0 (SecOnR.of f _ V (oneOn N (mul_zero d) V)) := by
   set one : SecOnR f (pw N (d * 0)) V := SecOnR.of f _ V (oneOn N (mul_zero d) V) with hone
   let μ : Γ(X, V) →+ GrSum hx := AddMonoidHom.mk' (fun c => GrSum.of hx 0 (c • one))
-    (fun a b => by rw [add_smul, map_add])
+    (fun a b => by rw [add_smul, map_add (f := _)])
   have hμ : ∀ c, μ c = GrSum.of hx 0 (c • one) := fun _ => rfl
   have hC : ∀ (a : R) (c : Γ(X, V)), μ (cst f V a * c) =
       (MvPolynomial.C a : MvPolynomial ι R) • μ c := by
@@ -174,8 +179,8 @@ variable (R : Type) [CommRing R] (I : Ideal R) (Y : ∀ e : ℕ, Over (Spec (Com
   (hc : ∀ e, OperatorsCommute (ι := ι) (R := R) (A := fun t => Tm I Y N D d e t S)
     fun j t => mulT I Y N D d e t S (sh e j))
 
-include hshp hDa in
 
+include hshp hDa in
 theorem form_step (i : ι) (e : ℕ)
     (ih : ∀ (t : ℤ) (a : Tm I Y N D d e t S), ∃ (k n : ℕ) (Q : MvPolynomial ι R)
       (w : Tm I Y N D d e (n : ℤ) S), Q.IsHomogeneous n ∧ (k : ℤ) + t = n ∧
@@ -245,7 +250,7 @@ theorem form_step (i : ι) (e : ℕ)
     rw [(hred n).2] at h3
     exact Submodule.smul_mono_left (Ideal.pow_le_self (by omega)) h3
   refine ⟨k, n, Q, w' + z, hQ, hk, add_mem hw' hzI, ?_⟩
-  rw [map_add, hz]
+  rw [map_add (f := _), hz]
   abel
 
 end Step

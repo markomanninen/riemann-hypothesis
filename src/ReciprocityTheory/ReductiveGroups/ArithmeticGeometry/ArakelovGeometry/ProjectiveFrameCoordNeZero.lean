@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ProjDefs
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsBisFurther
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ProjDefs
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,7 @@ theorem div_isIntegral (x : κ → Ω) (e : Fin (D + 1) → κ) (h : IsRatProjFr
     intro f
     induction f using MvPolynomial.induction_on with
     | C a => simp [coneMap, ψ]
-    | add p q hp hq => rw [map_add, map_add, map_add, hp, hq]
+    | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
     | mul_X p k hp => rw [map_mul, map_mul, map_mul, hp]; simp [coneMap, ψ]
   have hmem : ∀ r : coneRing ℚ y, ψ r ∈ fnField y := by
     intro r
@@ -136,13 +140,5 @@ theorem projDeg_pos' [Finite κ] (x : κ → Ω) (e : Fin (D + 1) → κ) (h : I
   have := finiteDimensional_ext x e h
   rw [projDeg_eq]
   exact Module.finrank_pos
-
-def homogz {σ : Type*} (j : σ → Fin (D + 1)) (l : Fin (D + 1)) (N : ℕ) (g : MvPolynomial σ ℤ) :
-    MvPolynomial (Fin (D + 1)) ℤ :=
-  ∑ d ∈ Finset.range (N + 1), MvPolynomial.X l ^ (N - d) *
-    MvPolynomial.rename j (MvPolynomial.homogeneousComponent d g)
-
-def dehom (l : Fin (D + 1)) : MvPolynomial (Fin (D + 1)) ℤ →ₐ[ℤ] MvPolynomial {k // k ≠ l} ℤ :=
-  MvPolynomial.aeval fun k => if h : k = l then 1 else MvPolynomial.X ⟨k, h⟩
 
 end ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.TraceNormBounds

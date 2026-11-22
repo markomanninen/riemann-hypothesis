@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GlobalCore
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRingClassHost
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GlobalCore
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRingClassHost
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,11 +73,11 @@ theorem length_le {l : ℕ} (hl : l.Prime) (hu : ∀ p : ℕ, p.Prime → p ≠ 
       ev.surjective_rangeRestrict (by
         rw [LinearMap.exact_iff, LinearMap.ker_rangeRestrict, Submodule.range_subtype])
   have hr' := Module.length_le_of_injective (Submodule.inclusion hr) (Submodule.inclusion_injective hr)
-  rw [hsum, hk, ← hi, padicValNat.mul hp.ne_zero hi0, Nat.cast_add, mul_add, add_comm (L * _)]
+  rw [hsum, hk, ← hi, (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) hp.ne_zero hi0, Nat.cast_add, mul_add, add_comm (L * _)]
   refine add_le_add hC' (hr'.trans ?_)
   by_cases hpl : p = l
   · subst hpl
-    rwa [padicValNat_self, Nat.cast_one, mul_one]
+    rwa [Nat.padicValNat_def, Nat.Prime.multiplicity_self, Nat.cast_one, mul_one]
   · have : Submodule.torsionBy O M (p : O) = ⊥ := (Submodule.eq_bot_iff _).2 fun m hm =>
       ((hu p hp hpl).smul_eq_zero).1 ((Submodule.mem_torsionBy_iff _ _).1 hm)
     rw [this]
@@ -114,7 +118,7 @@ open Neutral.B1 ReciprocityTheory.Neutral.Bridge.HCFR Formalism.L2.Host GlobalTh
 
 variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
 
-theorem eq_one_of_class [IsTotallyComplex E] {art : Ideles E →* Gab E Ω} (ha : IsGlobalArtin art)
+theorem eq_one_of_class [_root_.NumberField.IsTotallyComplex E] {art : Ideles E →* Gab E Ω} (ha : IsGlobalArtin art)
     {B : Type} [CommGroup B] [TopologicalSpace B] [DiscreteTopology B] (φ : G E Ω →* B) (hφ : Continuous φ)
     (A : HeightOneSpectrum (𝓞 E) → ValuationSubring Ω) (hA : ∀ v, IsPlaceOver (A v) v)
     (hI : ∀ v, ∀ σ ∈ Ine (F := E) (A v), φ σ = 1) (σ : G E Ω)
@@ -147,8 +151,8 @@ theorem eq_one_of_class [IsTotallyComplex E] {art : Ideles E →* Gab E Ω} (ha 
   have := MonoidHom.mem_ker.1 (hle (ker_classHom_le E hx))
   rwa [MonoidHom.comp_apply, e, liftAb_toAb] at this
 
-omit [IsAlgClosure E Ω] in
 
+omit [IsAlgClosure E Ω] in
 theorem index_dvd_classNumber {art : Ideles E →* Gab E Ω} (ha : IsGlobalArtin art) :
     ((classHom E).ker.map art).index ∣ classNumber E := by
   refine (Subgroup.index_map_dvd _ ha.quot.surjective).trans ?_
@@ -198,7 +202,7 @@ theorem length_le_classNumber : GlobalTheory.Published.GlobalArtinReciprocity �
     rw [hres v, Submodule.mem_bot] at h1
     exact congrArg Multiplicative.ofAdd (congrFun h1 ⟨τ, hτ⟩)
   · refine mul_le_mul_right (Nat.cast_le.2 ?_) _
-    exact (padicValNat_dvd_iff_le hh).1 (pow_padicValNat_dvd.trans hd)
+    exact ((by simpa only [_root_.Nat.padicValNat_def] using @_root_.multiplicity_dvd_iff_le : ∀ {p : _root_.Nat} [hp : _root_.Fact (_root_.Nat.Prime p)] {a n : _root_.Nat} (ha : a ≠ 0), p ^ n ∣ a ↔ n ≤ _root_.padicValNat p a) hh).1 ((_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _)).trans hd)
 
 end GlobalTheory.UnramHom
 

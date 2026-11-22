@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.InertKernelTheory.StatementJets
-import Formalism.LocalToGlobal.InertKernelTheory.DefsMM
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntTens
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntPull
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntEasy
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementJets
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsMM
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntTens
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntPull
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntEasy
+
+@[expose] public section
 
 noncomputable section
 

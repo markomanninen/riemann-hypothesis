@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.Hypotheses2
-import Development.WeilBound.ThetaLifts.LatticeBasics.SliceSeminorm
-import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.Hypotheses2
+public import Development.WeilBound.ThetaLifts.LatticeBasics.SliceSeminorm
+public import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+
+@[expose] public section
 
 noncomputable section
 

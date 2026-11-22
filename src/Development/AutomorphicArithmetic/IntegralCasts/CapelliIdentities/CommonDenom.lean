@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Qn19.AIC :
     (A : Type) → [CommRing A] → Prop :=

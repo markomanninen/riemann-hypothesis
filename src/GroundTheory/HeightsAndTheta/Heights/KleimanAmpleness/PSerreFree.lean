@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -18,8 +23,8 @@ variable {M : Type v} [AddCommGroup M] [Module (Poly S N) M] [Module S M]
 variable {M' : Type w} [AddCommGroup M'] [Module (Poly S N) M'] [Module S M']
   [IsScalarTower S (Poly S N) M']
 
-omit [IsScalarTower S (Poly S N) M] in
 
+omit [IsScalarTower S (Poly S N) M] in
 theorem smul_mem_of_mem_polyGraded (𝓜 : GradedPMod S N M) {a c : ℤ} {p : Poly S N} {m : M}
     (hp : p ∈ (polyGraded S N).piece a) (hm : m ∈ 𝓜.piece c) : p • m ∈ 𝓜.piece (c + a) := by
   change p ∈ weightedHomogeneousSubmodule S (fun _ => (1 : ℤ)) a at hp
@@ -72,8 +77,8 @@ def cohomMapShift {𝓜 : GradedPMod S N M} {𝓜' : GradedPMod S N M'} (f : M �
 
 variable (𝓜 : GradedPMod S N M) {r : ℕ} (b : Module.Basis (Fin r) (Poly S N) M) (d : Fin r → ℤ)
 
-omit [IsScalarTower S (Poly S N) M] in
 
+omit [IsScalarTower S (Poly S N) M] in
 theorem coord_mem_piece (hb : ∀ j, b j ∈ 𝓜.piece (d j)) {a : ℤ} {m : M} (hm : m ∈ 𝓜.piece a)
     (j : Fin r) : b.coord j m ∈ (polyGraded S N).piece (a - d j) := by
   classical
@@ -119,8 +124,8 @@ theorem cohomMapShift_mk {𝓜 : GradedPMod S N M} {𝓜' : GradedPMod S N M'} (
         (Submodule.Quotient.mk z' : cohom 𝓜' i c') ∧ ∀ I, z'.1 I = locMap f I.1.1 (z.1 I) :=
   ⟨_, rfl, fun _ => rfl⟩
 
-omit [Module S M] [IsScalarTower S (Poly S N) M] in
 
+omit [Module S M] [IsScalarTower S (Poly S N) M] in
 theorem sum_locMap_basis (I : Finset (Fin (N + 1))) (y : LocMod S N M I) :
     ∑ j, locMap (LinearMap.toSpanSingleton (Poly S N) M (b j)) I (locMap (b.coord j) I y) = y := by
   have h1 : ∀ j, locMap (LinearMap.toSpanSingleton (Poly S N) M (b j)) I (locMap (b.coord j) I y) =
@@ -139,7 +144,8 @@ theorem sum_locMap_basis (I : Finset (Fin (N + 1))) (y : LocMod S N M I) :
       = ∑ j, locMap ((LinearMap.toSpanSingleton (Poly S N) M (b j)).comp (b.coord j)) I y :=
         Finset.sum_congr rfl fun j _ => h1 j
     _ = locMap (∑ j, (LinearMap.toSpanSingleton (Poly S N) M (b j)).comp (b.coord j)) I y := by
-        simp only [locMap, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [locMap, map_sum]
         exact (LinearMap.sum_apply Finset.univ _ y).symm
     _ = y := by
         rw [h2]
@@ -190,8 +196,8 @@ theorem sum_freeIncl_freeCoord (i : ℕ) (c : ℤ) (x : cohom 𝓜 i c) :
     refine (Finset.sum_congr rfl fun j _ => hw j).trans ?_
     exact (map_sum (Submodule.mkQ _) w Finset.univ).symm.trans (congrArg _ hz)
 
-omit [IsScalarTower S (Poly S N) M] in
 
+omit [IsScalarTower S (Poly S N) M] in
 theorem smul_basis_mem (c : ℤ) (j : Fin r) (p : (polyGraded S N).piece (c - d j)) :
     (p : Poly S N) • b j ∈ 𝓜.piece c := by
   have h := smul_mem_of_mem_polyGraded 𝓜 p.2 (hb j)
@@ -251,7 +257,8 @@ theorem SerreFree.proof (hP : SerrePoly.Statement.{u}) : SerreFree.Statement.{u,
     have hsurj := fun j => (hpos (c - d j) (by linarith [hc j])).2.2
     choose p hp using fun j => hsurj j (freeCoord 𝓜 b d hb 0 c j y)
     refine ⟨∑ j, ⟨(p j : Poly S N) • b j, smul_basis_mem 𝓜 b d hb c j (p j)⟩, ?_⟩
-    rw [map_sum, ← sum_freeIncl_freeCoord 𝓜 b d hb 0 c y]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← sum_freeIncl_freeCoord 𝓜 b d hb 0 c y]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← hp j, freeInclusion_toH0]
 

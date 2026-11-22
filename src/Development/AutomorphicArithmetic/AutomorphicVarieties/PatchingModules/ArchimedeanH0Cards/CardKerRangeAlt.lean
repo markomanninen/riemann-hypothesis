@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.ObstructionBoundFromDuality
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.ObstructionBoundFromDuality
+
+@[expose] public section
 
 open Matrix Filter ReciprocityTheory.Gal UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.Pa.B2
 
@@ -31,7 +35,7 @@ private theorem card_Zu {l : ℕ} [Fact l.Prime] {A G : Type} [CommRing A] [Grou
     ext z
     show (z ∈ Z1 M.ρ ∧ ∀ g ∈ J, z g = 0) ↔ _
     rw [mem_Z1_iff_cocycle, Set.mem_setOf_eq, mem_Zl, IsLocallyConstant.iff_continuous]
-  have e : (Zu M J) ≃ {z | z ∈ Zl M.ρ ∧ ∀ g ∈ J, z g = 0} := Equiv.setCongr hset
+  have e : (Zu M J) ≃ {z | z ∈ Zl M.ρ ∧ ∀ g ∈ J, z g = 0} := Set.equivOfEq hset
   refine ⟨?_, ?_⟩
   · haveI := hfin.to_subtype
     exact Finite.of_equiv _ e.symm
@@ -54,7 +58,7 @@ private theorem comp_mem_Zu_of_equivariant {A G : Type} [CommRing A] [Group G] [
   refine ⟨(mem_Z1_iff_cocycle _ _).2 ⟨?_, ?_⟩, ?_⟩
   · exact (continuous_of_discreteTopology (f := u)).comp hzc.1
   · intro g h
-    simp only [hzc.2 g h, map_add, hu]
+    simp only [hzc.2 g h, map_add (f := _), hu]
   · intro g hg
     simp only [hz'.2 g hg, map_zero]
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.DensDefs
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsBisMore
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.DensDefs
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsBisMore
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ theorem evX_bound (P : PX m n) : ∃ (C : ℝ) (d : ℕ), ∀ x : Fin m → Fin 
       (mul_le_mul_of_nonneg_right (le_abs_self C2) (by positivity)).trans
         (mul_le_mul_of_nonneg_left e2 (abs_nonneg _))
     calc ‖evX (p + q) x‖ ≤ ‖evX p x‖ + ‖evX q x‖ := by
-          simp only [evX, map_add]; exact norm_add_le _ _
+          simp only [evX, map_add (f := _)]; exact norm_add_le _ _
       _ ≤ C1 * (1 + ‖x‖) ^ d1 + C2 * (1 + ‖x‖) ^ d2 := add_le_add (h1 x) (h2 x)
       _ ≤ |C1| * (1 + ‖x‖) ^ (d1 + d2) + |C2| * (1 + ‖x‖) ^ (d1 + d2) := add_le_add f1 f2
       _ = (|C1| + |C2|) * (1 + ‖x‖) ^ (d1 + d2) := by ring

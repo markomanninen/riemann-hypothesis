@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.LeibnizOrders.PhiPG0
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicPsiMinusExactStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicPhiMinusExactStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothPhiMinusStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothPsiMinusStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothSmInd
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.LeibnizOrders.PhiPG0
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicPsiMinusExactStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicPhiMinusExactStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothPhiMinusStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothPsiMinusStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothSmInd
+
+@[expose] public section
 
 noncomputable section
 

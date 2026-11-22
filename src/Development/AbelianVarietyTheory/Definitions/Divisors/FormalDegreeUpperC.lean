@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ConjScalarThm
-import Development.AbelianVarietyTheory.Definitions.Divisors.OfCore
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilGramSignature
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ConjScalarThm
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OfCore
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilGramSignature
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,8 +62,8 @@ def LiftIsCuspC (F : Face D A) : Prop :=
       ∃ U ∈ R.Wall i σ, ∀ (v : ∀ ρ, lowT (R.MW i σ) ρ) (g : GA D (Wc D i)), U (fun ρ => v ρ) g =
         Lift.thetaPInt ν 𝓕 (fun g h f => Datum.thetaKO ω h g f) (ptAt R i σ BW f) io (c.ext φ) (PiTensorProduct.tprod ℂ v) g
 
-open Datum in
 
+open Datum in
 def FiniteZetaC (F : Face D A) : Prop :=
   ForLiftDataC R F fun i t σ P _ ω _ f _ _ =>
     ∀ (μ : Measure (WO (Vc D i) (Wc D i))) (𝓧 : Set (WO (Vc D i) (Wc D i))), IsCovolOne (ratL (Wc D i) (Vc D i)) μ 𝓧 →
@@ -106,13 +110,6 @@ def ConjRatLift5 : Prop :=
     GlobalTheory.Core5 R F → IsStdChar D R.ψ (-1) → ∀ fw : FWTie T R κ v₀, BarTie fw → IoExt R → R.LUnif → (∀ i, OMPins T R κ v₀ O i) →
     ∀ i : Fin D.R.m, (O i).OneMapOf (κ i) (v₀ i (sg0 D A)) (T.cE ((i : ℕ) + 1) (O i).s0) ph →
      GalOut R i ph
-
-theorem AdelC.full {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m}
-    {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] {R : RealDat D A Ks} {F : Face D A} (h : AdelC R F) :
-    AdelicLiftScalar R F := fun hc => h ⟨hc.lev, hc.grp, hc.fam, hc.models, hc.chain, hc.thP⟩
-
-theorem ConjRatLift5.full (h : ConjRatLift5) : GlobalTheory.ConjScalar.ConjRatLift :=
-  fun D G _ _ Pl0 T0 A T _ R F κ v₀ O ph hc => h D G Pl0 T0 A T R F κ v₀ O ph (GlobalTheory.Core5.of_char hc)
 
 end GlobalTheory.LowRow
 

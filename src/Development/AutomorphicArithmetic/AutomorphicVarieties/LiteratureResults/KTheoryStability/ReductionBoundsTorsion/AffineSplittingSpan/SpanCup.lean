@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.AffineSplittingSpan.SpanPrism
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.AffineSplittingSpan.SpanPrism
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,34 +14,40 @@ section General
 
 variable {Y : Type}
 
-theorem dc_dc : ∀ (m : ℕ) (F : (Fin (m + 1) → Y) → ℝ), dc (dc F) = 0
-  | 0, F => by
+theorem dc_dc : ∀ (m : ℕ) (F : (Fin (m + 1) → Y) → ℝ), dc (dc F) = 0 := by
+  intro m
+  induction m with
+  | zero =>
+    intro F
     funext y
     simp [dc, Fin.sum_univ_succ]
     have hCD : (fun j : Fin 1 => y (Fin.succAbove 1 (Fin.succAbove 1 j))) =
         fun j => y (Fin.succAbove 2 (Fin.succAbove 1 j)) := by
-      funext j; fin_cases j; rfl
-    rw [hCD]
-    ring
-  | m + 1, F => by
+      funext j
+      rw [Subsingleton.elim j (0 : Fin 1)]
+      rfl
+    linear_combination congrArg F hCD
+  | succ m ih =>
+    intro F
     funext y
     rw [← Fin.cons_self_tail y, dc_cons]
     have e : (fun w' => dc F (Fin.cons (y 0) w')) = F - dc (fun w' => F (Fin.cons (y 0) w')) := by
       funext w'; rw [dc_cons]; rfl
-    rw [e, dc_sub, dc_dc m]
+    rw [e, dc_sub, ih]
     simp
 
 theorem dc_neg {m : ℕ} (F : (Fin (m + 1) → Y) → ℝ) : dc (-F) = -dc F := by
   funext y; simp [dc, Finset.sum_neg_distrib]
 
-theorem prism_zero (φ : Y → Y) : ∀ {n : ℕ}, prism φ (0 : (Fin (n + 1) → Y) → ℝ) = 0
-  | 0 => rfl
-  | n + 1 => by
+theorem prism_zero (φ : Y → Y) : ∀ {n : ℕ}, prism φ (0 : (Fin (n + 1) → Y) → ℝ) = 0 := by
+  intro n
+  induction n with
+  | zero => rfl
+  | succ n ih =>
     funext y
     rw [prism_succ]
-    have : (fun w : Fin (n + 1) → Y => (0 : (Fin (n + 2) → Y) → ℝ) (Fin.cons (y 0) w)) = 0 := rfl
-    rw [this, prism_zero φ (n := n)]
-    simp
+    change 0 - prism φ (0 : (Fin (n + 1) → Y) → ℝ) (Fin.tail y) = 0
+    simp only [ih, Pi.zero_apply, sub_zero]
 
 end General
 

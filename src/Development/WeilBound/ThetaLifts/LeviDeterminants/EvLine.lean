@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.NormIteratedFDerivIdLeOneAdd
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.BoundMulTranslate
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.NormIteratedFDerivIdLeOneAdd
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.BoundMulTranslate
+
+@[expose] public section
 
 noncomputable section
 

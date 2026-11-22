@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ConjSplit
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitaryFiniteAdelesSplitPlaceDecomposition
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ConjSplit
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitaryFiniteAdelesSplitPlaceDecomposition
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX GlobalTheory.HeightCounting NumberField IsDedekindDomain Polynomial
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -14,9 +19,9 @@ theorem rt_mul_apply {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ
 theorem exists_ne_zero_of_irrRep {G : Type} [Group G] [TopologicalSpace G] (σ : GlobalTheory.SmGL.IrrRep G) :
     ∃ a : σ.V, a ≠ 0 := by
   by_contra hne
-  push_neg at hne
+  push Not at hne
   have h := σ.irr
-  haveI : Subsingleton σ.V := ⟨fun a b => by rw [hne a, hne b]⟩
+  have : Subsingleton σ.V := ⟨fun a b => by rw [hne a, hne b]⟩
   exact (bot_ne_top : (⊥ : Subrepresentation σ.ρ) ≠ ⊤)
     (Subrepresentation.toSubmodule_injective (Subsingleton.elim _ _))
 

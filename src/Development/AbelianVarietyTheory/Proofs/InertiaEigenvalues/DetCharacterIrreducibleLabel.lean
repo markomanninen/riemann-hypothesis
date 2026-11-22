@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsCharLab
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemRootsBarXSubC
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PadicIntGLSmulMemPrincipalCongruenceFixed
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsCharLab
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemRootsBarXSubC
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PadicIntGLSmulMemPrincipalCongruenceFixed
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,10 +18,10 @@ open scoped Classical ComplexOrder
 
 variable {g : ℕ} [hg : Fact g.Prime]
 
+
 open Polynomial in
 open scoped Classical ComplexOrder in
 variable {g : ℕ} [hg : Fact g.Prime] in
-
 theorem _root_.GlobalTheory.GLq.LabelDet.isIrr_hom {G : Type} [Group G] [Fintype G] (φ : G →* ℂˣ) :
     _root_.GlobalTheory.GLq.IsIrr (fun x : G => ((φ x : ℂˣ) : ℂ)) := by
   have hchar : ∀ x : G, (FDRep.of (_root_.GlobalTheory.GLp.Model.chRep φ)).character x = φ x := by
@@ -29,9 +33,6 @@ theorem _root_.GlobalTheory.GLq.LabelDet.isIrr_hom {G : Type} [Group G] [Fintype
   rw [FDRep.simple_iff_char_is_norm_one]
   simp [hchar, Nat.card_eq_fintype_card]
 
-theorem level_pos : 0 < g ^ 1 - 1 :=
-  Nat.sub_pos_of_lt (Nat.one_lt_pow one_ne_zero hg.out.one_lt)
-
 open Polynomial in
 open scoped Classical ComplexOrder in
 variable {g : ℕ} [hg : Fact g.Prime] in
@@ -41,19 +42,19 @@ theorem _root_.GlobalTheory.GLq.LabelDet.theta_gen_pow (L : _root_.GlobalTheory.
       L.teich x ^ n :=
   _root_.GlobalTheory.GLq.Model.thetaOf_gen_pow L one_pos hx n
 
+
 open Polynomial in
 open scoped Classical ComplexOrder in
 variable {g : ℕ} [hg : Fact g.Prime] in
-
 theorem _root_.GlobalTheory.GLq.LabelDet.gen_one_mem (L : _root_.GlobalTheory.GLq.LabelDatum g) :
     ∃ u : (ZMod g)ˣ, algebraMap (ZMod g) (_root_.Formalism.CyclotomicNorms.Fbar g) u = L.gen 1 := by
   obtain ⟨u, hu, -⟩ := _root_.GlobalTheory.GLp.Model.exists_gen L
   exact ⟨u, hu⟩
 
+
 open Polynomial in
 open scoped Classical ComplexOrder in
 variable {g : ℕ} [hg : Fact g.Prime] in
-
 theorem _root_.GlobalTheory.GLq.LabelDet.det_inPar (a b : ℕ) (M : _root_.GlobalTheory.GLq.Mt g (a + b))
     (h : _root_.GlobalTheory.GLq.InPar a M) :
     M.det = (_root_.GlobalTheory.GLq.tl a M).det * (_root_.GlobalTheory.GLq.br a b M).det := by
@@ -64,7 +65,7 @@ theorem _root_.GlobalTheory.GLq.LabelDet.det_inPar (a b : ℕ) (M : _root_.Globa
       have hi := i.isLt
       have hj := j.isLt
       unfold _root_.Formalism.MainNotions.ArithmeticCylinders.entN
-      rw [dif_pos ⟨by omega, by omega⟩]
+      rw [dite_eq_left ⟨by omega, by omega⟩]
       rfl
     · simp
     · exact h _ _ (by simp) (by simp)
@@ -77,7 +78,7 @@ variable {g : ℕ} [hg : Fact g.Prime] in
 theorem _root_.GlobalTheory.GLq.LabelDet.det_toG {n : ℕ} (M : _root_.GlobalTheory.GLq.Mt g n) (h : M.det ≠ 0) :
     ((Matrix.GeneralLinearGroup.det (_root_.GlobalTheory.GLq.toG M) : (ZMod g)ˣ) : ZMod g) = M.det := by
   unfold _root_.GlobalTheory.GLq.toG
-  rw [dif_pos ((Matrix.isUnit_iff_isUnit_det M).mpr (isUnit_iff_ne_zero.mpr h))]
+  rw [dite_eq_left ((Matrix.isUnit_iff_isUnit_det M).mpr (isUnit_iff_ne_zero.mpr h))]
   simp [Matrix.GeneralLinearGroup.val_det_apply]
 
 open Polynomial in
@@ -104,24 +105,7 @@ open scoped Classical ComplexOrder in
 variable {g : ℕ} [hg : Fact g.Prime] in
 theorem _root_.GlobalTheory.GLq.LabelDet.toG_one {n : ℕ} : _root_.GlobalTheory.GLq.toG (1 : _root_.GlobalTheory.GLq.Mt g n) = 1 := by
   unfold _root_.GlobalTheory.GLq.toG
-  rw [dif_pos isUnit_one]
+  rw [dite_eq_left isUnit_one]
   exact Units.ext (by simp)
-
-theorem inPar_one (a n : ℕ) : InPar a (1 : Mt g n) := fun i j h1 h2 =>
-  Matrix.one_apply_ne (by rintro rfl; omega)
-
-theorem br_one (a b : ℕ) : br a b (1 : Mt g (a + b)) = 1 := by
-  ext i j
-  simp [br, entN, Matrix.one_apply, Fin.ext_iff]
-
-theorem tl_one (a b : ℕ) : tl a (1 : Mt g (a + b)) = 1 := by
-  ext i j
-  have hi : (i : ℕ) < a + b := by omega
-  have hj : (j : ℕ) < a + b := by omega
-  simp [tl, entN, Matrix.one_apply, Fin.ext_iff, hi, hj]
-
-def PosMul (χ : (ZMod g)ˣ →* ℂˣ) {n : ℕ} (F : Gn g n → ℂ) : Prop :=
-  ∃ r : Gn g n → ℂ, (∀ x, 0 ≤ r x) ∧ 0 < r 1 ∧
-    ∀ x, F x = r x * ((χ (Matrix.GeneralLinearGroup.det x) : ℂˣ) : ℂ)
 
 end GlobalTheory.GLq.LabelDet

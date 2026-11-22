@@ -1,4 +1,8 @@
-import Formalism.TorsionNormIteration.InvIntegralOfClass
+module
+
+public import Formalism.TorsionNormIteration.InvIntegralOfClass
+
+@[expose] public section
 
 noncomputable section
 
@@ -129,7 +133,8 @@ lemma Bd.pow {a : ℝ} {F : MvPowerSeries ι K} (hF : Bd a F) (ha : 0 ≤ a) :
 lemma Bd.sum {α : Type*} {a : ℝ} (ha : 0 ≤ a) {s : Finset α} {F : α → MvPowerSeries ι K}
     (h : ∀ i ∈ s, Bd a (F i)) : Bd a (∑ i ∈ s, F i) := by
   intro d
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg ha (fun i hi => h i hi d)
 
 lemma Bd.mul_natCast {a : ℝ} {F : MvPowerSeries ι K} (hF : Bd a F) (n : ℕ) :
@@ -141,7 +146,7 @@ lemma Bd.mul_natCast {a : ℝ} {F : MvPowerSeries ι K} (hF : Bd a F) (n : ℕ) 
 private lemma bd_add' {c : ℝ} {F G : MvPowerSeries ι K} (hF : Bd c F) (hG : Bd c G) :
     Bd c (F + G) := by
   intro d
-  rw [map_add]
+  rw [map_add (f := _)]
   exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hF d) (hG d))
 
 lemma powp_step {p : ℕ} (hp : p.Prime) {r : ℕ} (hr : 1 ≤ r) {A B : MvPowerSeries ι K}

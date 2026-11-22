@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.QuotientMetricDivisors.ProdFormula
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HtGram
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
-import Formalism.HermitianLattices.HermitianLatticesProofs.IndexBasic
+module
+
+public import Mathlib
+public import Formalism.QuotientMetricDivisors.ProdFormula
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HtGram
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
+public import Formalism.HermitianLattices.HermitianLatticesProofs.IndexBasic
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain Formalism.HermitianLatticesTheory
 
@@ -319,14 +323,24 @@ end Formalism.DivisionValues.LocalCovolumeBasis
 
 namespace Formalism.DivisionValues
 
-open LocalCovolumeBasis in
 
-theorem covolume_via_basis : LcvBasis := by
+open LocalCovolumeBasis in
+theorem covolume_via_basis :
+    ∀ (K : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] (d : ℕ)
+      (X : InfinitePlace K → Matrix (Fin d) (Fin d) ℂ), (∀ v, IsUnit (X v).det) →
+      ∀ L : Submodule (𝓞 K) (Fin d → K), Submodule.IsFullLattice K L →
+      ∀ e : Fin d → Fin d → K, LinearIndependent K e →
+        (Function.support fun w : HeightOneSpectrum (𝓞 K) =>
+          lw w * (idx w (Submodule.span (𝓞 K) (Set.range e)) L : ℝ)).Finite ∧
+        lcv X L = (2 / (finrank ℚ K : ℝ)) * ∑ v, Real.log (gram X v e).det.re +
+          2 * ∑ᶠ w : HeightOneSpectrum (𝓞 K),
+            lw w * (idx w (Submodule.span (𝓞 K) (Set.range e)) L : ℝ) := by
   intro K _ _ _ _ d X hX L hL e he
   classical
   set E := Submodule.span (𝓞 K) (Set.range e) with hEdef
   have hLfg : L.FG := hL.fg
-  have hLsp : Submodule.span K (L : Set (Fin d → K)) = ⊤ := hL.span_eq_top
+  have hLsp : Submodule.span K (L : Set (Fin d → K)) = ⊤ :=
+    Submodule.IsFullLattice.span_eq_top (self := hL)
   obtain ⟨y, hy0, hyL⟩ := exists_int_mul L hLsp e
   have hyK : (y : K) ≠ 0 := Int.cast_ne_zero.mpr hy0
   set e' : Fin d → Fin d → K := fun i => (y : K) • e i with he'def

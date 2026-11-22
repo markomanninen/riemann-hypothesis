@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DiagScaleApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DiagScaleApply
+
+@[expose] public section
+
 open PowerSeries GlobalTheory.BK
 
 namespace GlobalTheory.PowKill
@@ -50,7 +55,7 @@ theorem l_mem_maximal {K : Type} [NormedField K] [IsUltrametricDist K] [Algebra 
     rw [Ideal.mem_jacobson_bot]
     intro y
     have key : IsUnit ((equivA O K).symm ((l : A O K) * y + 1)) := by
-      rw [map_add, map_mul, map_natCast, map_one, PowerSeries.isUnit_iff_constantCoeff, map_add,
+      rw [map_add (f := _), map_mul, map_natCast, map_one, PowerSeries.isUnit_iff_constantCoeff, map_add (f := _),
         map_mul, map_natCast, map_one]
       exact isUnit_l_mul_add_one l K _
     simpa using key.map (equivA O K).toRingEquiv.toRingHom

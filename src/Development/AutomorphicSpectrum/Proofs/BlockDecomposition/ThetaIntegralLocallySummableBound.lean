@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.WeilSiegelTheta.BigCellDefs
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SummableCell
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.WeilSiegelTheta.BigCellDefs
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SummableCell
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem norm_le_of_law {n : ℕ} {χ : (AE D)ˣ →* Circle} {t : ℂ} {f : G D 
   refine ⟨max C 0, le_max_right _ _, fun g => ?_⟩
   have hlaw : GlobalTheory.Doubling.IndLaw GlobalTheory.StdUnn.PolesModel.modP (χ.comp GlobalTheory.StdUnn.PolesModel.detP) t f := by
     intro p g
-    exact hl p.1 p.2 (GlobalTheory.StdUnn.HeightExists.leviBlock p) rfl g
+    exact hl p.1 p.2 ((GlobalTheory.StdUnn.HeightExists.leviBlock (D := D) (n := n)) p) rfl g
   exact (GlobalTheory.StdUnn.PolesModel.isIwasawa (D := D) (n := n)).norm_le hlaw
     (fun k hk => (hC k hk).trans (le_max_left _ _)) g
 
@@ -96,9 +100,9 @@ theorem exists_hermQ {n : ℕ} (c : ratHerm D n) : ∃ b : HermQ D n, b.1.map (i
 
 private theorem leftInv_ht {n : ℕ} : GlobalTheory.AutomorphicL2Unitary.LeftInv (P D n ⊓ GF D n) (ht D n) := by
   intro γ hγ g
-  obtain ⟨u, hu⟩ := GlobalTheory.StdUnn.LeftInvSect.det_rat hγ.2 (GlobalTheory.StdUnn.HeightExists.leviBlock ⟨γ, hγ.1⟩) rfl
+  obtain ⟨u, hu⟩ := GlobalTheory.StdUnn.LeftInvSect.det_rat hγ.2 ((GlobalTheory.StdUnn.HeightExists.leviBlock (D := D) (n := n)) ⟨γ, hγ.1⟩) rfl
   have h1 : GlobalTheory.StdUnn.PolesModel.modP (⟨γ, hγ.1⟩ : P D n) = 1 := by
-    show GlobalTheory.Doubling.absA D (Matrix.GeneralLinearGroup.det (GlobalTheory.StdUnn.HeightExists.leviBlock ⟨γ, hγ.1⟩)) = 1
+    show GlobalTheory.Doubling.absA D (Matrix.GeneralLinearGroup.det ((GlobalTheory.StdUnn.HeightExists.leviBlock (D := D) (n := n)) ⟨γ, hγ.1⟩)) = 1
     rw [hu]
     exact GlobalTheory.Doubling.absE_inclR u
   have h := (GlobalTheory.StdUnn.PolesModel.isIwasawa (D := D) (n := n)).iwAbs_left ⟨γ, hγ.1⟩ g

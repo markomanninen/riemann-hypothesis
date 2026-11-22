@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ContinuousOnFderivPhiP
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiCas
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CasPsA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ContinuousOnFderivPhiP
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiCas
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CasPsA
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +76,7 @@ theorem contDiff_lead' (i : ℕ) {m : ℕ∞ω} : ContDiff ℂ m (fun z : 𝕄 =
       rfl
     rw [e]
     exact ContDiff.sum fun σ _ => contDiff_const.mul
-      (contDiff_prod fun j _ => contDiff_apply_apply ℂ ℂ _ _)
+      (contDiff_prod fun j _ => contDiff_apply_apply ℂ _ _)
   · have e : (fun z : 𝕄 => lead i z) = fun _ => 0 := by
       funext z
       simp only [lead, dif_neg h]
@@ -135,8 +139,10 @@ theorem FY_facts (T : KType ε Λ) (μ : Fin n → ℤ) (Y : Matrix (Fin n) (Fin
   have h := ((h2.comp x h1).clm_apply h4).smul_const (T.op k * projW T * T.op k⁻¹)
   have hd : HasFDerivAt (fun y : 𝕄 => FY T μ Y y k) _ x := h
   refine ⟨hd.differentiableAt.hasFDerivAt, fun H => ?_⟩
-  rw [FY', hd.fderiv]
-  all_goals rfl
+  change (fderiv ℂ (fun y : 𝕄 => FY T μ Y y k) x) H = _
+  have hd' : HasFDerivAt (fun y : 𝕄 => FY T μ Y y k) _ (Matrix.of.symm x) := hd
+  set_option backward.isDefEq.respectTransparency false in
+    exact congrArg (fun f : 𝕄 →L[ℂ] (T.V →L[ℂ] T.V) => f H) hd'.fderiv
 
 theorem contOn_FY (T : KType ε Λ) (μ : Fin n → ℤ) (Y : Matrix (Fin n) (Fin n) ℂ)
     {U : Set (Matrix (Fin n) (Fin n) ℂ)}

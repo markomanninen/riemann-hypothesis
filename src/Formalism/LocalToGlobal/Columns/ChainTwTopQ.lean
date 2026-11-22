@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.Columns.KOneCharacterTrivialNearOne
-import Formalism.LocalToGlobal.Columns.ChainInstY
-import Formalism.LocalToGlobal.Columns.ChainTwPsi
+module
+
+public import Formalism.LocalToGlobal.Columns.KOneCharacterTrivialNearOne
+public import Formalism.LocalToGlobal.Columns.ChainInstY
+public import Formalism.LocalToGlobal.Columns.ChainTwPsi
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -55,7 +59,7 @@ theorem twPar_block {n r : ℕ} (hr : r < n) (H : Sp E n ≃ₗ[E] Sp E n) (h' :
   intro l
   rw [hH]
   by_cases hl : l.1 < n - 1
-  · rw [dif_pos hl]
+  · rw [dite_eq_left hl]
     by_cases hDl : r ≤ l.1
     · rw [if_pos ⟨hDl, l.2⟩, zpow_one]
       rw [twApply_coordE h' (twInit x) ⟨l.1, hl⟩, Finset.mul_sum]
@@ -80,7 +84,7 @@ theorem twPar_block {n r : ℕ} (hr : r < n) (H : Sp E n ≃ₗ[E] Sp E n) (h' :
         · rw [Pi.single_eq_of_ne hj]; exact ⟨0, 1, one_notMem P, by simp⟩
     · rw [if_neg (fun h => hDl h.1), zpow_zero, inv_one, one_mul]
       exact hint (twInit x) (fun i => hxI _) ⟨l.1, hl⟩
-  · rw [dif_neg hl]
+  · rw [dite_eq_right hl]
     exact hx l
 
 theorem mem_kOne_of_block {n r c : ℕ} (hr : r < n) (G : ↥(GLint E n P)) (g' : Sp E (n - 1) ≃ₗ[E] Sp E (n - 1))
@@ -93,14 +97,14 @@ theorem mem_kOne_of_block {n r c : ℕ} (hr : r < n) (G : ↥(GLint E n P)) (g' 
   have hinitG : ∀ x, twInit (Gm x) = g' (twInit x) := fun x => by
     funext i
     show Gm x ⟨i.1, by have := i.2; omega⟩ = g' (twInit x) i
-    rw [hblk, dif_pos i.2]
+    rw [hblk, dite_eq_left i.2]
   have hlastG : ∀ x, Gm x (twLastI hn) = x (twLastI hn) := fun x => by
-    rw [hblk, dif_neg (by unfold twLastI; simp)]
+    rw [hblk, dite_eq_right (by unfold twLastI; simp)]
   have hinv : ∀ x (l : Fin n), Gm.symm x l = if h : l.1 < n - 1 then g'.symm (twInit x) ⟨l.1, h⟩ else x l := by
     intro x l
     have hx : Gm (Gm.symm x) = x := Gm.apply_symm_apply x
     by_cases h : l.1 < n - 1
-    · rw [dif_pos h]
+    · rw [dite_eq_left h]
       have e1 : twInit (Gm.symm x) = g'.symm (twInit x) := by
         have h2 := hinitG (Gm.symm x)
         rw [hx] at h2
@@ -108,16 +112,16 @@ theorem mem_kOne_of_block {n r c : ℕ} (hr : r < n) (G : ↥(GLint E n P)) (g' 
       have := congrFun e1 ⟨l.1, h⟩
       unfold twInit at this
       exact this
-    · rw [dif_neg h]
+    · rw [dite_eq_right h]
       have := congrFun hx l
-      rw [hblk, dif_neg h] at this
+      rw [hblk, dite_eq_right h] at this
       exact this
   have hinitG' : ∀ x, twInit (Gm.symm x) = g'.symm (twInit x) := fun x => by
     funext i
     show Gm.symm x ⟨i.1, by have := i.2; omega⟩ = g'.symm (twInit x) i
-    rw [hinv, dif_pos i.2]
+    rw [hinv, dite_eq_left i.2]
   have hlastG' : ∀ x, Gm.symm x (twLastI hn) = x (twLastI hn) := fun x => by
-    rw [hinv, dif_neg (by unfold twLastI; simp)]
+    rw [hinv, dite_eq_right (by unfold twLastI; simp)]
 
   have hstd : ∀ v : Sp E n, (∀ l, IntAt P (v l)) → ∀ l, IntAt P (Gm v l) := fun v hv =>
     (twStd_mem _).1 ((G.2 v).2 ((twStd_mem _).2 hv))
@@ -129,11 +133,11 @@ theorem mem_kOne_of_block {n r c : ℕ} (hr : r < n) (G : ↥(GLint E n P)) (g' 
     · exact ⟨0, 1, one_notMem P, by simp⟩
   have hg1 : ∀ x' : Sp E (n - 1), (∀ i, IntAt P (x' i)) → ∀ i, IntAt P (g' x' i) := fun x' hx i => by
     have h1 := hstd _ (hsnoc x' hx) ⟨i.1, by have := i.2; omega⟩
-    rw [hblk, dif_pos i.2, twInit_snoc] at h1
+    rw [hblk, dite_eq_left i.2, twInit_snoc] at h1
     exact h1
   have hg2 : ∀ x' : Sp E (n - 1), (∀ i, IntAt P (x' i)) → ∀ i, IntAt P (g'.symm x' i) := fun x' hx i => by
     have h1 := hstd' _ (hsnoc x' hx) ⟨i.1, by have := i.2; omega⟩
-    rw [hinv, dif_pos i.2, twInit_snoc] at h1
+    rw [hinv, dite_eq_left i.2, twInit_snoc] at h1
     exact h1
   have hsc : ∀ (f : Sp E (n - 1) ≃ₗ[E] Sp E (n - 1)), (∀ x' : Sp E (n - 1), (∀ i, IntAt P (x' i)) → ∀ i, IntAt P (f x' i)) →
       ∀ x' : Sp E (n - 1), (∀ i, IntAt P (((qOf P : E) ^ (c : ℤ))⁻¹ * x' i)) → ∀ i, IntAt P (((qOf P : E) ^ (c : ℤ))⁻¹ * f x' i) :=
@@ -217,12 +221,12 @@ theorem mem_kOne_of_block {n r c : ℕ} (hr : r < n) (G : ↥(GLint E n P)) (g' 
     show IntAt P (((qOf P : E) ^ (c : ℤ))⁻¹ * (Gm w l - w l))
     rw [hblk]
     by_cases hl : l.1 < n - 1
-    · rw [dif_pos hl, mul_sub]
+    · rw [dite_eq_left hl, mul_sub]
       have a1 := hsc g' hg1 _ hw.1 ⟨l.1, hl⟩
       have a2 := hw.1 ⟨l.1, hl⟩
       unfold twInit at a2
       exact ciIntAt_sub a1 a2
-    · rw [dif_neg hl, sub_self, mul_zero]; exact ⟨0, 1, one_notMem P, by simp⟩
+    · rw [dite_eq_right hl, sub_self, mul_zero]; exact ⟨0, 1, one_notMem P, by simp⟩
 
 end TwTopQ
 

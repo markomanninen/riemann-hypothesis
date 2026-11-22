@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.LocalFourierChar
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.LocalFourierChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,8 @@ variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchi
 
 section SchwartzBruhat
 
-variable (K) in
 
+variable (K) in
 def schwartzBruhat : Submodule ℂ (K → ℂ) where
   carrier := {f | IsLocallyConstant f ∧ HasCompactSupport f}
   add_mem' hf hg := ⟨hf.1.add hg.1, hf.2.add hg.2⟩
@@ -89,8 +93,8 @@ section Fourier
 
 variable [MeasurableSpace K] [BorelSpace K] (μ : Measure K) [μ.IsAddHaarMeasure]
 
-open scoped Classical in
 
+open scoped Classical in
 theorem integral_valBall_char (χ : AddChar K Circle) (k : ℤ) :
     ∫ x in valBall K k, (χ x : ℂ) ∂μ =
       if IsTrivialOn χ k then (μ.real (valBall K k) : ℂ) else 0 := by
@@ -132,11 +136,6 @@ theorem integrable_of_mem_schwartzBruhat {f : K → ℂ} (hf : f ∈ schwartzBru
 variable {ψ} (hψ : Continuous ψ) (hψ1 : ψ ≠ 1)
 include hψ hψ1
 
-omit hψ1 in
-theorem integrable_mul_char_of_mem_schwartzBruhat {f : K → ℂ} (hf : f ∈ schwartzBruhat K)
-    (y : K) : Integrable (fun x => f x * (ψ (x * y) : ℂ)) μ :=
-  (hf.1.continuous.mul ((continuous_subtype_val.comp hψ).comp
-    (continuous_id.mul continuous_const))).integrable_of_hasCompactSupport hf.2.mul_right
 
 theorem localFourier_eq_zero_of_notMem {f : K → ℂ} {N : ℤ}
     (hfN : ∀ x, ∀ h ∈ valBall K N, f (x + h) = f x) {y : K}
@@ -157,8 +156,8 @@ theorem localFourier_eq_zero_of_notMem {f : K → ℂ} {N : ℤ}
   rw [mul_comm]
   exact Circle.coe_eq_one.mp h'
 
-omit [BorelSpace K] [μ.IsAddHaarMeasure] in
 
+omit [BorelSpace K] [μ.IsAddHaarMeasure] in
 theorem localFourier_add_eq {f : K → ℂ} {M : ℤ} (hfM : ∀ x, f x ≠ 0 → x ∈ valBall K M) (y : K)
     {h : K} (hh : h ∈ valBall K (addCharConductor ψ - M)) :
     localFourier μ ψ f (y + h) = localFourier μ ψ f y := by

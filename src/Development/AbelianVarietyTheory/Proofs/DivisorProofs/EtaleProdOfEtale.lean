@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.EtaleProd
 
@@ -17,8 +21,8 @@ theorem etale_fam (B A₁ A₂ : Type) [CommRing B] [CommRing A₁] [CommRing A�
 
 end GlobalTheory.EtaleProd
 
-open GlobalTheory.EtaleProd in
 
+open GlobalTheory.EtaleProd in
 theorem GlobalTheory.etale_prod : ∀ (B A₁ A₂ : Type) [CommRing B] [CommRing A₁] [CommRing A₂] [Algebra B A₁] [Algebra B A₂], Algebra.Etale B A₁ → Algebra.Etale B A₂ → Algebra.Etale B (A₁ × A₂) := by
   intro B A₁ A₂ _ _ _ _ _ h₁ h₂
   haveI := etale_fam B A₁ A₂ h₁ h₂

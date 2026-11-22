@@ -1,9 +1,13 @@
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDictDef
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsLocallyConstantSplitOm
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.IntegrablePair
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.CyclicAndLine
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ExistsInvariantForm
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.DualNumberGraphFiltrationIsotropicOfSkew
+module
+
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDictDef
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsLocallyConstantSplitOm
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.IntegrablePair
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.CyclicAndLine
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ExistsInvariantForm
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.DualNumberGraphFiltrationIsotropicOfSkew
+
+@[expose] public section
 
 noncomputable section
 
@@ -115,7 +119,7 @@ theorem model (hc : Continuous ψ) (h1 : ψ ≠ 1) (e : ((μ → k) × (μ → k
   let ι : ((κ → k) → ℂ) →ₗ[ℂ] ((μ → k) → ℂ) :=
     { toFun := fun φ y => l (schr ψ (e (y, 0)) φ)
       map_add' := fun φ φ' => funext fun y => by
-        rw [Pi.add_apply, ← map_add]
+        rw [Pi.add_apply, ← map_add (f := _)]
         congr 1
         funext x
         simp [schr, mul_add]
@@ -128,8 +132,8 @@ theorem model (hc : Continuous ψ) (h1 : ψ ≠ 1) (e : ((μ → k) × (μ → k
   have h0 : ∀ φ, ι φ 0 = l φ := fun φ => by rw [hι, show ((0 : μ → k), (0 : μ → k)) = 0 from rfl, map_zero, schr_zero]
   have hint : ∀ w, ∀ φ ∈ SB (κ → k), ι (schr ψ (e w) φ) = schr ψ w (ι φ) := fun w φ hφ => funext fun y => by
     have a := hl' w.2 _ (schr_mem hc (e (y + w.1, 0)) hφ)
-    rw [schr_schr, he, ← map_add, map_smul] at a
-    rw [hι, schr_schr, he, ← map_add, map_smul, schr, hι, ← a,
+    rw [schr_schr, he, ← map_add (f := _), map_smul] at a
+    rw [hι, schr_schr, he, ← map_add (f := _), map_smul, schr, hι, ← a,
       show ((y, 0) + w : (μ → k) × (μ → k)) = (0, w.2) + (y + w.1, 0) from Prod.ext (by simp) (by simp),
       smul_eq_mul, smul_eq_mul, ← mul_assoc, ← AddChar.map_add_eq_mul]
     congr 2

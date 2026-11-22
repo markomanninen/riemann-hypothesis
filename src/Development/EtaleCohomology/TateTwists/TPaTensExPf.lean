@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.EtaleCohomology.TateTwists.TPairAssocPf
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.EtaleCohomology.TateTwists.TPairAssocPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -59,7 +63,7 @@ theorem dT_res (I J : Cx R) {V U : Scheme.{0}} (g : V ⟶ U) (w : ℤ) :
     dT I J V w ∘ₗ Tens.res g w = Tens.res g (w + 1) ∘ₗ dT I J U w := by
     apply DirectSum.linearMap_ext; intro p; apply TensorProduct.ext'; intro a b
     simp only [LinearMap.comp_apply]
-    rw [tres_lof, dT_lof, dT_lof, map_add, map_zsmul, tres_lof, tres_lof, sec_nat, sec_nat]
+    rw [tres_lof, dT_lof, dT_lof, map_add (f := _), map_zsmul, tres_lof, tres_lof, sec_nat, sec_nat]
 
 def dP (I J : Cx R) (w : ℤ) : TP I J w ⟶ TP I J (w + 1) where
   app U := ModuleCat.ofHom (dT I J U.unop w)
@@ -82,7 +86,7 @@ theorem dT_dT (I J : Cx R) (U : Scheme.{0}) (w : ℤ) (x : Tens I J U w) :
   suffices h : dT I J U (w + 1) ∘ₗ dT I J U w = 0 by rw [h]; rfl
   apply DirectSum.linearMap_ext; intro p; apply TensorProduct.ext'; intro a b
   simp only [LinearMap.comp_apply, LinearMap.zero_apply]
-  rw [dT_lof, map_add, map_zsmul, dT_lof, dT_lof]
+  rw [dT_lof, map_add (f := _), map_zsmul, dT_lof, dT_lof]
   simp only [sec_dd, TensorProduct.zero_tmul, TensorProduct.tmul_zero, map_zero, zero_add, add_zero, smul_add,
     smul_zero, Int.negOnePow_succ, Units.val_neg, neg_smul, smul_smul]
   exact neg_add_cancel _
@@ -133,7 +137,7 @@ def tau (I J : Cx R) : Pair I J (T I J) where
     rw [mulT_apply, mulT_apply, mulT_apply, T_d]
     refine Eq.trans (toS_map (dP I J w) _) ?_
     show tS I J U (w + 1) (dT I J U w _) = tS I J U (w + 1) _ + s.negOnePow • tS I J U (w + 1) _
-    rw [dT_lof, map_add, map_zsmul, Units.smul_def]
+    rw [dT_lof, map_add (f := _), map_zsmul, Units.smul_def]
 
 theorem tau_lift (I J : Cx R) (U : Scheme.{0}) (w : ℤ) :
     (tau I J).lift U w = tS I J U w := by

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedCoefficientFieldInComplex
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.NonemptyAlgHomOfIsRayOfDvd
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.PublishedTheorems.WeberRayClassFields.WeberRayFieldSt
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsLineOfAddAddEqZero
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.NatCastMulFinrankMemDifferentIdeal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedCoefficientFieldInComplex
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.NonemptyAlgHomOfIsRayOfDvd
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.PublishedTheorems.WeberRayClassFields.WeberRayFieldSt
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsLineOfAddAddEqZero
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.NatCastMulFinrankMemDifferentIdeal
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -92,8 +96,8 @@ theorem torsion_mem (h20 : (2 : k) ≠ 0) (h2 : (2 : k)⁻¹ ∈ V) (h30 : (3 : 
     V.zero_mem V.zero_mem ?_
   linear_combination y ^ 2 * he
 
-open IsLocalRing in
 
+open IsLocalRing in
 theorem torsion_inj (h20 : (2 : k) ≠ 0) (h2 : (2 : k)⁻¹ ∈ V) (h30 : (3 : k) ≠ 0) (h3 : (3 : k)⁻¹ ∈ V)
     (hΔ : IsUnit W.Δ) {x y x' y' : k} (h : (W.map V.subtype).toAffine.Nonsingular x y)
     (h' : (W.map V.subtype).toAffine.Nonsingular x' y') (h12 : 12 • Point.some x y h = 0)
@@ -156,7 +160,7 @@ theorem torsion_inj (h20 : (2 : k) ≠ 0) (h2 : (2 : k)⁻¹ ∈ V) (h30 : (3 : 
   have f2 := congrArg (residue V) e2
   rw [map_mul, e3] at f1
   rw [map_mul, e4] at f2
-  simp only [map_mul, map_add, map_sub, map_pow] at f1 f2 e3 e4
+  simp only [map_mul, map_add (f := _), map_sub, map_pow] at f1 f2 e3 e4
   rw [sub_eq_zero] at e3 e4
   rw [← e3] at f1 f2
   rw [← e4] at f1
@@ -194,8 +198,8 @@ theorem valuation_eq_one (w : HeightOneSpectrum (𝓞 M)) {a : 𝓞 M} (ha : a �
     w.valuation M (a : M) = 1 :=
   le_antisymm (w.valuation_le_one a) (not_lt.1 fun h => ha ((w.valuation_lt_one_iff_mem a).1 h))
 
-omit [NumberField H] in
 
+omit [NumberField H] in
 theorem valuation_sub_lt [Algebra H M] (w : HeightOneSpectrum (𝓞 M)) (σ : M ≃ₐ[H] M)
     (hσ : ∀ x : 𝓞 M, σ • x - x ∈ w.asIdeal) {x : M} (hx : w.valuation M x ≤ 1) : w.valuation M (σ x - x) < 1 := by
   obtain ⟨n, d, h⟩ := w.exists_primeCompl_mul_eq_of_integer x hx
@@ -222,8 +226,8 @@ theorem inv_natCast_mem (w : HeightOneSpectrum (𝓞 M)) {n : ℕ} (hn : (n : �
   rw [RingOfIntegers.coe_eq_algebraMap, map_natCast] at this
   rw [Valuation.mem_valuationSubring_iff, map_inv₀, this, inv_one]
 
-open Classical in
 
+open Classical in
 theorem inertia_fixes [Algebra F H] [Algebra H M] [Algebra F M] [IsScalarTower F H M] (A : WeierstrassCurve F)
     (w : HeightOneSpectrum (𝓞 M)) (v : HeightOneSpectrum (𝓞 F)) (hv : v.asIdeal = w.asIdeal.under (𝓞 F))
     (h2 : ((2 : ℕ) : 𝓞 M) ∉ w.asIdeal) (h3 : ((3 : ℕ) : 𝓞 M) ∉ w.asIdeal) (C : VariableChange F)
@@ -298,8 +302,8 @@ variable {F H M : Type} [Field F] [NumberField F] [Field H] [NumberField H] [Fie
 
 include hsub
 
-open Classical in
 
+open Classical in
 theorem exists_point {z : M} (hz : algebraMap M ℂ z ∈ torsionCoords (A.baseChange ℂ) 12) :
     ∃ (x y : M) (h : (A.baseChange M).toAffine.Nonsingular x y), 12 • Point.some x y h = 0 ∧ (z = x ∨ z = y) := by
   obtain ⟨x, y, h, h12, hz⟩ := hz

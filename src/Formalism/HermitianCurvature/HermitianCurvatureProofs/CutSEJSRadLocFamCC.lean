@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSRadLocCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfBetaAdjCOfLemmaBNorm
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSRadLocCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfBetaAdjCOfLemmaBNorm
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ContDiff
@@ -30,7 +34,8 @@ theorem phiP_contDiffAt (f : ℂ × Mat k r → E) {U : Set (ℂ × Mat k r)} (h
         (q.1.1, ((fun i : Fin j => q.1.2.1 i.succ), q.2))) :=
       (contDiff_fst.comp contDiff_fst).prodMk
         ((contDiff_pi.2 fun (i : Fin j) =>
-          (contDiff_apply ℝ (Mat k r) i.succ).comp (contDiff_fst.comp (contDiff_snd.comp contDiff_fst))).prodMk
+          (by simpa only [Function.comp_def] using
+            (contDiff_apply ℝ (fun _ : Fin (j + 1) => Mat k r) i.succ).comp (contDiff_fst.comp (contDiff_snd.comp contDiff_fst)))).prodMk
           contDiff_snd)
     have h1 : ContDiffAt ℝ ∞ (Function.uncurry fun (q : ℂ × ((Fin (j + 1) → Mat k r) × Mat k r)) (g : Mat k r) =>
         Phi (fun x => f (q.1, x)) j (fun i => bs i.succ) ((fun i => q.2.1 i.succ), g)) (p, p.2.2) :=
@@ -39,7 +44,8 @@ theorem phiP_contDiffAt (f : ℂ × Mat k r → E) {U : Set (ℂ × Mat k r)} (h
         (ih (fun i => bs i.succ) (p.1, ((fun i => p.2.1 i.succ), p.2.2)) hp) hsh.contDiffAt
     have h2 := ContDiffAt.fderiv h1 (contDiffAt_snd.comp p contDiffAt_snd) top_add_one_le
     have h3 : ContDiff ℝ ∞ (fun q : ℂ × ((Fin (j + 1) → Mat k r) × Mat k r) => vf (bs 0) (q.2.1 0) q.2.2) :=
-      vf_contDiff (bs 0) ((contDiff_apply ℝ (Mat k r) 0).comp (contDiff_fst.comp contDiff_snd))
+      vf_contDiff (bs 0) (by simpa only [Function.comp_def] using
+        (contDiff_apply ℝ (fun _ : Fin (j + 1) => Mat k r) 0).comp (contDiff_fst.comp contDiff_snd))
         (contDiff_snd.comp contDiff_snd)
     exact h2.clm_apply h3.contDiffAt
 

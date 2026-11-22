@@ -1,8 +1,12 @@
-import Formalism.HarderNarasimhan.DegSupermodZ
-import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
-import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
-import Formalism.LatticeSlopes.LatticeSlopesProofs.MuMaxAttained
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.ExistsSmulMemOfFinrankEq
+module
+
+public import Formalism.HarderNarasimhan.DegSupermodZ
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.MuMaxAttained
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.ExistsSmulMemOfFinrankEq
+
+@[expose] public section
 
 open Module Submodule
 

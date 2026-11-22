@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.RedPEqZeroOfDiv
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.FourierColumnIndicator
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.RedPEqZeroOfDiv
+public import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.FourierColumnIndicator
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col GlobalTheory.TopStep GlobalTheory.IndefiniteRowSideFullHecke.FourierColumnIndicator
@@ -32,9 +36,8 @@ theorem addChar_mem (ψ : AddChar (𝓞 E ⧸ P.asIdeal) K) (c : 𝓞 E ⧸ P.as
 theorem char_pow (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) (u : (𝓞 E ⧸ P.asIdeal)ˣ) : ((χ u : Kˣ) : K) ^ (qOf P - 1) = 1 := by
   have := P.isMaximal
   have h : Nat.card (𝓞 E ⧸ P.asIdeal)ˣ = qOf P - 1 := by
-    letI := Ideal.Quotient.field P.asIdeal
-    rw [Nat.card_units]
-    rfl
+    let _ := Ideal.Quotient.field P.asIdeal
+    rw [Nat.card_units, qOf, Ideal.absNorm_eq_natCard]
   rw [← h, ← Units.val_pow_eq_pow_val, ← map_pow, pow_card_eq_one', map_one, Units.val_one]
 
 theorem unitV_mem (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) (a : E) : LocE.unitV χ a ∈ Zmu K (qOf P) := by
@@ -257,7 +260,7 @@ theorem homS_of_entB {n' c' n c k₀ : ℕ} (hk' : k₀ ≤ n') (hk : k₀ ≤ n
   obtain ⟨h1', h2'⟩ := fIdx_fPos hk' l'.2
   have := h _ _ h1 h1'
   unfold LocE.entB Loc.atN at this
-  rw [h2, h2', dif_pos l.2, eN_eq l'.2] at this
+  rw [h2, h2', dite_eq_left l.2, eN_eq l'.2] at this
   exact this
 
 omit [NumberField E] [StarRing E] in
@@ -481,7 +484,7 @@ theorem joinCol_restr {n' c' n c : ℕ} (hc' : c' = 1) (hc : c = 0) (x : HomE E 
     · simp [Loc.inX, Loc.eN, j.2.ne, LinearMap.funLeft_apply]
       rfl
   rw [joinCol_apply]
-  conv_rhs => rw [e, map_add, map_smul]
+  conv_rhs => rw [e, map_add (f := _), map_smul]
   rfl
 
 omit [NumberField E] [StarRing E] in
@@ -542,7 +545,8 @@ theorem inDual_iff {n : ℕ} (ξ : Sp E n →ₗ[E] E) : InDual P ξ ↔ ∀ i, 
   have e : y = ∑ i, y i • (Pi.single i 1 : Sp E n) := by
     funext j
     simp [Finset.sum_apply, Pi.single_apply]
-  rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   refine intAt_sum _ fun i _ => ?_
   rw [map_smul, smul_eq_mul]
   exact (mem_stdAt.1 hy i).mul (h i)

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.OperatorsCommuteTranslations
+module
+
+public import Formalism.HermitianCurvature.OperatorsCommuteTranslations
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ContDiff
@@ -116,8 +120,8 @@ def QExpand : Prop :=
         ∑ c : Fin t → Fin n, ∑ d : Fin t → Fin n,
           ((∏ j, P (c j) (a j)) * ∏ j, Q (b j) (d j)) • qminor E c d u
 
-open scoped Classical in
 
+open scoped Classical in
 def AlgAA : Prop :=
   ∀ (A : Type) [Ring A] [Algebra ℂ A] (k r m : ℕ) (hm : m ≤ r)
     (E : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → A) (P Q : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ)
@@ -132,8 +136,8 @@ def AlgAA : Prop :=
       if StrictMono C then (Matrix.of fun a l : Fin m => ∑ d, Q d (C l) * xi a d).det •
         qminor E (xR k r m hm) C u else 0
 
-open scoped Classical in
 
+open scoped Classical in
 def AlgAAv : Prop :=
   ∀ (A : Type) [Ring A] [Algebra ℂ A] (k r m : ℕ) (hm : m ≤ r)
     (E : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → A) (P Q : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ)

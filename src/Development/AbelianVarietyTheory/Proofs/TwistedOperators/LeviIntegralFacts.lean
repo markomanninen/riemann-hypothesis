@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BlockTriangularOneAddMat
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwasawaBlockTriangular
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantModulus
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BlockTriangularOneAddMat
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwasawaBlockTriangular
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantModulus
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL Topology
 open scoped ENNReal
 
 namespace GlobalTheory.SmGL.LeviInt
 
+
 open MeasureTheory Topology in
 open scoped ENNReal in
 open ValuativeRel Matrix in
-
 theorem _root_.GlobalTheory.SmGL.LeviInt.nabs_det_eq_one {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k] {n : Type} [Fintype n] [DecidableEq n] {g : GL n k}
     (hg : g ∈ _root_.GlobalTheory.SplitWeil.KO k n) :
@@ -38,9 +42,9 @@ theorem _root_.GlobalTheory.SmGL.LeviInt.nabs_det_eq_one {k : Type} [Field k] [V
     rw [← map_mul, Units.mul_inv, map_one]
   exact le_antisymm hd1 (hprod ▸ mul_le_of_le_one_right' hd2)
 
+
 open MeasureTheory Topology in
 open scoped ENNReal in
-
 theorem _root_.GlobalTheory.SmGL.LeviInt.levi_integral_facts : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (α n : Type) (m : α → Type) [Fintype α] [LinearOrder α] [∀ a, Fintype (m a)] [∀ a, DecidableEq (m a)] [Fintype n] [DecidableEq n] (e : (Σ a, m a) ≃ n), (∀ (g : _root_.GlobalTheory.SmGL.Levi k m) (u : GL n k), u ∈ _root_.GlobalTheory.SmGL.unipRad k e → (_root_.GlobalTheory.SmGL.leviEmb k e g * u ∈ _root_.GlobalTheory.SplitWeil.KO k n ↔ (∀ a, g a ∈ _root_.GlobalTheory.SplitWeil.KO k (m a)) ∧ u ∈ _root_.GlobalTheory.SplitWeil.KO k n)) ∧ (∀ p : _root_.GlobalTheory.SmGL.parab k e, (p : GL n k) ∈ _root_.GlobalTheory.SplitWeil.KO k n → ∀ a, _root_.GlobalTheory.SmGL.leviProj k e p a ∈ _root_.GlobalTheory.SplitWeil.KO k (m a)) ∧ (∀ g : _root_.GlobalTheory.SmGL.Levi k m, (∀ a, g a ∈ _root_.GlobalTheory.SplitWeil.KO k (m a)) → _root_.GlobalTheory.SmGL.modulus k m g = 1) ∧ (∀ g h : _root_.GlobalTheory.SmGL.Levi k m, _root_.GlobalTheory.SmGL.modulus k m (g * h) = _root_.GlobalTheory.SmGL.modulus k m g * _root_.GlobalTheory.SmGL.modulus k m h) ∧ Continuous (_root_.GlobalTheory.SmGL.modulus k m) ∧ Continuous (_root_.GlobalTheory.SmGL.leviProj k e) ∧ IsClosed (_root_.GlobalTheory.SmGL.parab k e : Set (GL n k)) ∧ IsClosed (_root_.GlobalTheory.SmGL.unipRad k e : Set (GL n k)) ∧ ∀ g : GL n k, ∃ p ∈ _root_.GlobalTheory.SmGL.parab k e, ∃ x ∈ _root_.GlobalTheory.SplitWeil.KO k n, g = p * x := by
   intro k _ _ _ _ α n m _ _ _ _ _ _ e
   have hT2 : T2Space k := (_root_.GlobalTheory.SplitWeil.Model.secondCountable_and_t2_local_field (k := k)).2
@@ -54,11 +58,35 @@ theorem _root_.GlobalTheory.SmGL.LeviInt.levi_integral_facts : ∀ (k : Type) [F
     have hinv : ∀ a, (g⁻¹) a = (g a)⁻¹ := fun a => rfl
     simp only [hinv, Subgroup.inv_mem_iff]
     exact and_comm
+  have hemb : ∀ g : _root_.GlobalTheory.SmGL.Levi k m,
+      _root_.GlobalTheory.SmGL.leviEmb k e g ∈ _root_.GlobalTheory.SmGL.parab k e := by
+    intro g
+    apply _root_.GlobalTheory.SmGL.mem_parab_iff.2
+    intro a b i j hab
+    classical
+    simp [_root_.GlobalTheory.SmGL.leviEmb, Matrix.blockDiagonal'_apply, hab.ne']
+  have hdec : ∀ p : _root_.GlobalTheory.SmGL.parab k e,
+      ∃ u ∈ _root_.GlobalTheory.SmGL.unipRad k e,
+        (p : GL n k) = _root_.GlobalTheory.SmGL.leviEmb k e (_root_.GlobalTheory.SmGL.leviProj k e p) * u := by
+    intro p
+    let L : _root_.GlobalTheory.SmGL.parab k e :=
+      ⟨_root_.GlobalTheory.SmGL.leviEmb k e (_root_.GlobalTheory.SmGL.leviProj k e p), hemb _⟩
+    have hL : _root_.GlobalTheory.SmGL.leviProj k e L = _root_.GlobalTheory.SmGL.leviProj k e p := by
+      funext a
+      ext i j
+      simp [_root_.GlobalTheory.SmGL.leviProj_apply, L, _root_.GlobalTheory.SmGL.leviEmb, Matrix.blockDiagonal'_apply_eq]
+    refine ⟨((L⁻¹ * p : _root_.GlobalTheory.SmGL.parab k e) : GL n k), ?_, ?_⟩
+    · unfold _root_.GlobalTheory.SmGL.unipRad
+      refine Subgroup.mem_map.mpr ⟨L⁻¹ * p, ?_, rfl⟩
+      change _root_.GlobalTheory.SmGL.leviProj k e (L⁻¹ * p) = 1
+      rw [map_mul, map_inv, hL, inv_mul_cancel]
+    · rw [Subgroup.coe_mul, Subgroup.coe_inv]
+      exact (mul_inv_cancel_left _ _).symm
   have hproj : ∀ p : _root_.GlobalTheory.SmGL.parab k e,
       (p : GL n k) ∈ _root_.GlobalTheory.SplitWeil.KO k n →
         ∀ a, _root_.GlobalTheory.SmGL.leviProj k e p a ∈ _root_.GlobalTheory.SplitWeil.KO k (m a) := by
     intro p hp a
-    obtain ⟨u, hu, hpu⟩ := _root_.GlobalTheory.SmGL.exists_levi_mul_unip k e p
+    obtain ⟨u, hu, hpu⟩ := hdec p
     rw [hpu] at hp
     exact ((hlevi _ u hu).1 hp).1 a
   have hmod : ∀ g : _root_.GlobalTheory.SmGL.Levi k m,
@@ -114,6 +142,6 @@ theorem _root_.GlobalTheory.SmGL.LeviInt.levi_integral_facts : ∀ (k : Type) [F
     hP, hN, fun g => ?_⟩
   obtain ⟨u, h, w, hw, rfl⟩ := _root_.GlobalTheory.SmGL.UnitInd.exists_iwasawa e g
   exact ⟨_, mul_mem (_root_.GlobalTheory.SmGL.unipRad_le_parab k e u.2)
-    (_root_.GlobalTheory.SmGL.leviEmb_mem_parab k e h), w, hw, rfl⟩
+    (hemb h), w, hw, rfl⟩
 
 end GlobalTheory.SmGL.LeviInt

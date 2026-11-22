@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,6 +39,7 @@ theorem mulEquivHaarChar_eq_of_chart (μ : Measure G) [IsHaarMeasure μ] [Regula
   have h1 : mulEquivHaarChar φ • map L ν = ν := by
     have e := congrArg (Measure.map χ) (mulEquivHaarChar_smul_map μ φ)
     rw [Measure.map_smul, Measure.map_map hχm hφ, hcomp, ← Measure.map_map hL hχm, hχ] at e
+      <;> try exact hχm.aemeasurable
     exact e
   have h2 : addEquivAddHaarChar L • map L ν = ν := addEquivAddHaarChar_smul_map ν L
   have h3 : addEquivAddHaarChar L • ν = mulEquivHaarChar φ • ν := by

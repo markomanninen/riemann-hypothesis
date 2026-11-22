@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjPlInvolutive
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbLLMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjPlInvolutive
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbLLMem
+
+@[expose] public section
 
 noncomputable section
 

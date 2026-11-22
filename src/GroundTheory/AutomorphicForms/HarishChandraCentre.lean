@@ -1,11 +1,14 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HarishChandraCentre.Projection
-import GroundTheory.AutomorphicForms.HarishChandraCentre.Injective
-import GroundTheory.AutomorphicForms.HarishChandraCentre.VermaCoordEqZeroOfMemNPlusU
-import GroundTheory.AutomorphicForms.HarishChandraCentre.LeadingTerm
-import GroundTheory.AutomorphicForms.HarishChandraCentre.Symmetric
-import GroundTheory.AutomorphicForms.HarishChandraCentre.Capelli
-import GroundTheory.AutomorphicForms.HarishChandraCentre.Consequences
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.Projection
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.Injective
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.VermaCoordEqZeroOfMemNPlusU
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.LeadingTerm
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.Symmetric
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.Capelli
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.HarishChandra
 

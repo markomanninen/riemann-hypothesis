@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.TateCohomology.DimensionShift
-import GroundTheory.TateCohomology.TateLow
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.DimensionShift
+public import GroundTheory.TateCohomology.TateLow
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.GroupCoh
@@ -18,7 +23,7 @@ theorem norm_apply_of_mem_invariants (A : Rep.{u} R G) {a : A} (ha : a ∈ A.ρ.
 
 theorem card_smul_tateCohomology_zero (A : Rep.{u} R G) (x : tateCohomology A 0) :
     Fintype.card G • x = 0 := by
-  let e := ((tateCohomologyZeroIso R G).app A).toLinearEquiv
+  let e := ((tateCohomologyZeroIso (R := R) (G := G)).app A).toLinearEquiv
   apply e.injective
   rw [map_nsmul, map_zero]
   obtain ⟨y, hy⟩ := Submodule.Quotient.mk_surjective (normRangeInvariants A) (e x)

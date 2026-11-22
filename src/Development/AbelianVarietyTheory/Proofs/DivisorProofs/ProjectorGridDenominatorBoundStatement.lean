@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjectorGridDenominatorBound
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NablaSchur
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjectorGridDenominatorBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NablaSchur
+
+@[expose] public section
+
 open GlobalTheory.LeviCut
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.projector_grid_denominator_bound : GlobalTheory.LeviCut.GridInt := by

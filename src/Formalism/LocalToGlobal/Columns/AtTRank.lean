@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.AtTLemmas
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.AtTLemmas
+
+@[expose] public section
 
 open Module
 
@@ -12,8 +16,8 @@ namespace RamFun
 variable {K : Type} [Field K] {ι : Type} [Fintype ι] [DecidableEq ι] {G : ι → Type} [∀ i, CommGroup (G i)]
   [∀ i, Fintype (G i)] {M : Type} [AddCommGroup M] [Module K M]
 
-variable (K M) in
 
+variable (K M) in
 def trl (b : ∀ i, G i) : Module.End K ((∀ i, G i) → M) := LinearMap.funLeft K M fun c => b * c
 
 theorem trl_apply (b : ∀ i, G i) (F : (∀ i, G i) → M) (c : ∀ i, G i) : trl K M b F c = F (b * c) := rfl
@@ -33,16 +37,16 @@ theorem trl_comm (b b' : ∀ i, G i) : Commute (trl K M b) (trl K M b') := by
   show trl K M b * trl K M b' = trl K M b' * trl K M b
   rw [trl_mul, trl_mul, mul_comm]
 
-variable (K M) in
 
+variable (K M) in
 def nmF (i : ι) : Module.End K ((∀ i, G i) → M) := ∑ g : G i, trl K M (Pi.mulSingle i g)
 
-variable (K M G) in
 
+variable (K M G) in
 def ramFun : Submodule K ((∀ i, G i) → M) := ⨅ i, LinearMap.ker (nmF K M (G := G) i)
 
-variable (K M G) in
 
+variable (K M G) in
 def offAlg (i : ι) : Submodule K (Module.End K ((∀ i, G i) → M)) :=
   Submodule.span K {x | ∃ b : ∀ i, G i, b i = 1 ∧ x = trl K M b}
 
@@ -117,13 +121,14 @@ theorem trace_mul_offAlg {i : ι} {g : G i} (hg : g ≠ 1) {x : Module.End K ((�
     have := congrFun h i
     simpa [hb] using this
   | zero => simp
-  | add x y _ _ hx hy => rw [mul_add, map_add, hx, hy, add_zero]
+  | add x y _ _ hx hy => rw [mul_add, map_add (f := _), hx, hy, add_zero]
   | smul a x _ hx => rw [mul_smul_comm, map_smul, hx, smul_zero]
 
 theorem trace_nmF_mul {i : ι} {x : Module.End K ((∀ i, G i) → M)} (hx : x ∈ offAlg K G M i) :
     LinearMap.trace K _ (nmF K M i * x) = LinearMap.trace K _ x := by
   show LinearMap.trace K _ ((∑ g : G i, trl K M (Pi.mulSingle i g)) * x) = _
-  rw [Finset.sum_mul, map_sum, Finset.sum_eq_single (1 : G i)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_mul, map_sum, Finset.sum_eq_single (1 : G i)]
   · rw [Pi.mulSingle_one, trl_one, one_mul]
   · intro g _ hg
     exact trace_mul_offAlg hg hx
@@ -141,8 +146,8 @@ section Proj
 variable {K : Type} [Field K] [CharZero K] {ι : Type} [Fintype ι] [DecidableEq ι] {G : ι → Type}
   [∀ i, CommGroup (G i)] [∀ i, Fintype (G i)] {M : Type} [AddCommGroup M] [Module K M]
 
-variable (K M G) in
 
+variable (K M G) in
 def eF (i : ι) : Module.End K ((∀ i, G i) → M) := 1 - ((Fintype.card (G i) : K)⁻¹) • nmF K M i
 
 theorem card_ne (i : ι) : (Fintype.card (G i) : K) ≠ 0 :=
@@ -159,8 +164,8 @@ theorem eF_mem_offAlg {i j : ι} (h : j ≠ i) : eF K G M j ∈ offAlg K G M i :
 theorem nmF_comm_eF (i j : ι) : Commute (nmF K M (G := G) i) (eF K G M j) :=
   (Commute.one_right _).sub_right ((nmF_comm i j).smul_right _)
 
-variable (K M G) in
 
+variable (K M G) in
 def eL (l : List ι) : Module.End K ((∀ i, G i) → M) := (l.map (eF K G M)).prod
 
 theorem eL_mem_offAlg {i : ι} {l : List ι} (h : i ∉ l) : eL K G M l ∈ offAlg K G M i := by
@@ -209,13 +214,12 @@ theorem trace_eL {l : List ι} (hl : l.Nodup) :
       List.map_cons, List.prod_cons, smul_eq_mul]
     ring
 
-theorem isProj_eL : LinearMap.IsProj (ramFun K G M) (eL K G M Finset.univ.toList) where
-  map_mem F := by
-    refine (Submodule.mem_iInf _).2 fun i => ?_
-    show nmF K M i (eL K G M Finset.univ.toList F) = 0
-    rw [← Module.End.mul_apply, nmF_mul_eL (Finset.mem_toList.2 (Finset.mem_univ i))]
-    rfl
-  map_id F hF := eL_fix hF _
+theorem isProj_eL : LinearMap.IsProj (ramFun K G M) (eL K G M Finset.univ.toList) := by
+  refine ⟨?_, fun F hF => eL_fix hF _⟩
+  refine fun F => (Submodule.mem_iInf _).2 fun i => ?_
+  show nmF K M i (eL K G M Finset.univ.toList F) = 0
+  rw [← mul_apply_eq_comp, nmF_mul_eL (Finset.mem_toList.2 (Finset.mem_univ i))]
+  rfl
 
 theorem finrank_ramFun : finrank K (ramFun K G M) = finrank K M * ∏ i, (Fintype.card (G i) - 1) := by
   have h := (isProj_eL (K := K) (G := G) (M := M)).trace
@@ -244,121 +248,8 @@ open NumberField IsDedekindDomain Formalism.BasicNotions
 
 variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m)
 
-instance colDiaComm (u : Pr.Word) (j : ℕ) :
-    SMulCommClass (DiaG X.E (Pr.vT u)) (colGSD W Ch u j).G (colGSD W Ch u j).D :=
-  ⟨fun c a d => DecoSet.dia_smul c (FormG.incl (colLev Ch j) a) d⟩
 
-theorem colDiaFree (hX : X.Ok) (hPr : Pr.Ok) (hbig : 2 * X.f * R.k < Pr.g 0 - 1) (u : Pr.Word) :
-    (colGSD W Ch u 0).FreeOnCl (DiaG X.E (Pr.vT u)) := by
-  intro c d h
-  obtain ⟨a, ha⟩ := ((colGSD W Ch u 0).cls_eq_iff _ _).1 h
-  have hpos : 0 < (Pr.vG 0).card := by
-    rw [hPr.vG_card 0, Fields.f, hX.card_Tau]
-    exact Module.finrank_pos
-  obtain ⟨w, hw⟩ := Finset.card_pos.mp hpos
-  have hw' : w ∈ Pr.vGs := by
-    classical
-    unfold Primes.vGs
-    exact Finset.mem_union_left _ hw
-  have hN : R.N 0 = R.k := by simp [Ranks.N]
-  have hm : 0 < R.m := lt_of_lt_of_le (by norm_num) R.two_le_m
-  have hmem : (a.2 : GLG X.E (R.N 0) Pr.vGs) ⟨w, hw'⟩ ∈ (colLev Ch 0 ⟨w, hw'⟩).H :=
-    (Subgroup.mem_pi _).mp a.2.2 ⟨w, hw'⟩ (Set.mem_univ _)
-  rw [colLev_of_lt Ch hm] at hmem
-  exact DecoSet.dia_free_cols hX hPr (d : DecoSet X.E (R.N 0) (Pr.vT u) Pr.vGs)
-    (a := FormG.incl (colLev Ch 0) a) (c := c) ha 0 ⟨w, hw'⟩ hw (by rw [hN]; exact hbig)
-    (isNilpotent_of_mem_HX_zero hN.le hmem)
 
-@[reducible] def fintypeResU (P : HeightOneSpectrum (𝓞 X.E)) : Fintype (𝓞 X.E ⧸ P.asIdeal)ˣ := Fintype.ofFinite _
-
-open Classical in
-
-theorem split_NmOp (u : Pr.Word) (j : ℕ) (σ : (colGSD W Ch u j).Slice (DiaG X.E (Pr.vT u)))
-    (P : {P // P ∈ Pr.vT u}) (φ : ColV W Ch u j) :
-    letI : ∀ P : {P // P ∈ Pr.vT u}, Fintype (𝓞 X.E ⧸ P.1.asIdeal)ˣ := fun P => fintypeResU P.1
-    σ.split (NmOp W Ch u j P φ) = RamFun.nmF X.K _ P (σ.split φ) := by
-  letI : Fintype (𝓞 X.E ⧸ P.1.asIdeal)ˣ := fintypeResU P.1
-  have e : ∀ (x : DiaG X.E (Pr.vT u)) (d : (colGSD W Ch u j).D), x • d = DecoSet.dia x d := fun _ _ => rfl
-  have hc : ∀ c : (𝓞 X.E ⧸ P.1.asIdeal)ˣ,
-      σ.split (diamondOperatorOnForms' (colVal W u j (Pr.vT u) Pr.vGs) (colLev Ch j) P c φ) =
-        RamFun.trl X.K _ (Pi.mulSingle P c) (σ.split φ) := by
-    intro c
-    funext b
-    apply Subtype.ext
-    funext t
-    simp only [diamondOperatorOnForms', LocOp.op, LocOp.ofMap, LocOp.app, GSD.Slice.split, RamFun.trl_apply,
-      LinearEquiv.coe_mk, LinearMap.coe_mk, AddHom.coe_mk]
-    rw [Finsupp.sum_single_index (by simp)]
-    simp only [LinearMap.id_apply, DecoSet.dia1]
-    congr 1
-    rw [e, e, DecoSet.dia_mul]
-  have hN : NmOp W Ch u j P φ = ∑ c, diamondOperatorOnForms' (colVal W u j (Pr.vT u) Pr.vGs) (colLev Ch j) P c φ := by
-    simp only [NmOp, NmG, LinearMap.sum_apply]
-  rw [hN, map_sum]
-  simp only [hc]
-  show _ = (∑ g, RamFun.trl X.K _ (Pi.mulSingle P g)) (σ.split φ)
-  rw [LinearMap.sum_apply]
-
-theorem card_resU (hPr : Pr.Ok) (u : Pr.Word) (P : {P // P ∈ Pr.vT u}) :
-    Nat.card (𝓞 X.E ⧸ P.1.asIdeal)ˣ = Pr.T u - 1 := by
-  haveI := P.1.isMaximal
-  letI := Ideal.Quotient.field P.1.asIdeal
-  rw [Nat.card_units, ← Submodule.cardQuot_apply, ← Ideal.absNorm_apply, hPr.vT_norm u P.1 P.2]
-
-open Classical in
-
-theorem finrank_ColRamV_of_slice (hX : X.Ok) (u : Pr.Word) (j : ℕ)
-    (σ : (colGSD W Ch u j).Slice (DiaG X.E (Pr.vT u))) :
-    finrank X.K (ColRamV W Ch u j) = finrank X.K ((colGSD W Ch u j).restr σ.T).EqFun *
-      ∏ P : {P // P ∈ Pr.vT u}, (Nat.card (𝓞 X.E ⧸ P.1.asIdeal)ˣ - 1) := by
-  letI : ∀ P : {P // P ∈ Pr.vT u}, Fintype (𝓞 X.E ⧸ P.1.asIdeal)ˣ := fun P => fintypeResU P.1
-  have hok : (colGSD W Ch u j).Ok := formGSD_ok _ _ hX (colVal_eqv W hX u j _ _)
-  haveI : FiniteDimensional X.K ((colGSD W Ch u j).restr σ.T).EqFun :=
-    GSD.finiteDimensional_EqFun (h := GSD.restr_ok (h := hok) (T := σ.T))
-  have key : ColRamV W Ch u j = (RamFun.ramFun X.K (fun P : {P // P ∈ Pr.vT u} => (𝓞 X.E ⧸ P.1.asIdeal)ˣ)
-      ((colGSD W Ch u j).restr σ.T).EqFun).comap σ.split.toLinearMap := by
-    ext φ
-    simp only [ColRamV, Submodule.mem_iInf, LinearMap.mem_ker, Submodule.mem_comap, RamFun.ramFun]
-    refine forall_congr' fun P => ?_
-    rw [LinearEquiv.coe_coe, ← split_NmOp W Ch u j σ P φ, LinearEquiv.map_eq_zero_iff]
-  rw [key, Submodule.comap_equiv_eq_map_symm, LinearEquiv.finrank_map_eq, RamFun.finrank_ramFun]
-  simp only [Nat.card_eq_fintype_card]
-
-open Classical in
-
-theorem finrank_ColV_of_slice (hX : X.Ok) (u : Pr.Word) (j : ℕ)
-    (σ : (colGSD W Ch u j).Slice (DiaG X.E (Pr.vT u))) :
-    finrank X.K (ColV W Ch u j) = finrank X.K ((colGSD W Ch u j).restr σ.T).EqFun *
-      ∏ P : {P // P ∈ Pr.vT u}, Nat.card (𝓞 X.E ⧸ P.1.asIdeal)ˣ := by
-  letI : ∀ P : {P // P ∈ Pr.vT u}, Fintype (𝓞 X.E ⧸ P.1.asIdeal)ˣ := fun P => fintypeResU P.1
-  have hok : (colGSD W Ch u j).Ok := formGSD_ok _ _ hX (colVal_eqv W hX u j _ _)
-  haveI : FiniteDimensional X.K ((colGSD W Ch u j).restr σ.T).EqFun :=
-    GSD.finiteDimensional_EqFun (h := GSD.restr_ok (h := hok) (T := σ.T))
-  rw [σ.split.finrank_eq, Module.finrank_pi_fintype, Finset.sum_const, Finset.card_univ, smul_eq_mul,
-    Fintype.card_pi, mul_comm]
-  simp only [Nat.card_eq_fintype_card]
-
-theorem finrank_MramV_mul (hX : X.Ok) (hPr : Pr.Ok) (hbig : 2 * X.f * R.k < Pr.g 0 - 1) (u : Pr.Word) :
-    finrank X.K (MramV W Ch u) * (Pr.T u - 1) ^ X.f = finrank X.K (MfV W Ch u) * (Pr.T u - 2) ^ X.f := by
-  classical
-  obtain ⟨σ⟩ := GSD.exists_slice (hf := colDiaFree W Ch hX hPr hbig u)
-  have h1 := finrank_ColRamV_of_slice W Ch hX u 0 σ
-  have h2 := finrank_ColV_of_slice W Ch hX u 0 σ
-  simp only [card_resU hPr u] at h1 h2
-  rw [Finset.prod_const, Finset.card_univ, Fintype.card_coe, hPr.vT_card u] at h1 h2
-  show finrank X.K (ColRamV W Ch u 0) * _ = finrank X.K (ColV W Ch u 0) * _
-  have e : Pr.T u - 1 - 1 = Pr.T u - 2 := by omega
-  rw [h1, h2, e]
-  ring
-
-theorem finrank_MramV_pos (hX : X.Ok) (hPr : Pr.Ok) (hbig : 2 * X.f * R.k < Pr.g 0 - 1) (u : Pr.Word)
-    (hT : 2 < Pr.T u) : 0 < finrank X.K (MramV W Ch u) := by
-  have h := finrank_MramV_mul W Ch hX hPr hbig u
-  have hM := finrank_MfV_pos W Ch hX hPr hbig u
-  have hpos : 0 < finrank X.K (MfV W Ch u) * (Pr.T u - 2) ^ X.f :=
-    Nat.mul_pos hM (pow_pos (by omega) _)
-  rw [← h] at hpos
-  exact Nat.pos_of_ne_zero fun h0 => by rw [h0, zero_mul] at hpos; exact lt_irrefl 0 hpos
 
 end ColsRank
 

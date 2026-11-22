@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.GoodCoverEigenspaces.JumpStepOf
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsDeRhamOfIsCrystallineSpan
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.GoodCoverEigenspaces.JumpStepOf
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsDeRhamOfIsCrystallineSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibl
 
 namespace PositivityTheory.AutomorphicGaloisHodgeTate.G8
 
-theorem jumpsEx_holds : JumpsEx := by
+theorem jumpsEx_holds : JumpsEx := set_option synthInstance.maxHeartbeats 200000 in by
   intro E Ω _ _ _ _ _ l _ P AI hT Gw O _ _ _ Bw d r hc τ LL' τ' hτ
   obtain ⟨T⟩ := hT
   obtain ⟨L, r₁, hm, hcr⟩ := hc

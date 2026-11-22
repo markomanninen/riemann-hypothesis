@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.Localization.UnweightBackStatement
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
+module
+
+public import ReciprocityTheory.L2DbarEstimates.Localization.UnweightBackStatement
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.F
 
@@ -12,8 +16,8 @@ theorem multA_integrable_of_sq {α : Type*} [MeasurableSpace α] (ν : Measure �
     (F : α → ℂ) (hF : AEStronglyMeasurable F ν) (h : ∫⁻ x, ‖F x‖ₑ ^ 2 ∂ν < ⊤) :
     Integrable F ν := by
   have h2 : MemLp F 2 ν := by
-    refine ⟨hF, ?_⟩
-    rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top two_ne_zero ENNReal.ofNat_ne_top]
+    rw [memLp_iff, eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+      two_ne_zero ENNReal.ofNat_ne_top hF]
     simpa using h
   exact h2.integrable one_le_two
 

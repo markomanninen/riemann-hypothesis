@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IsCplAtSelf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplLift
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IsCplAtSelf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplLift
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.AlgebraTools
 

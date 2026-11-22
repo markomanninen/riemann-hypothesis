@@ -1,5 +1,37 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutCptManual
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutCptCopy
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutCptManual
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimENF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimET
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermMean
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermContinuityAllLevels
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermLowAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermLowGram
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermLowFibre
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermLow
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermLowGerm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermTopA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermTopB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermTopC
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermTopD
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermTopFields
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopFormDone
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFId
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopPtw
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopForm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutFpmDecay
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimBdPf
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnergyReal
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyContinuousOn
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HasFDerivAtFsvOther
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplySub
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFIdPolTop
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ModuleFormPosCompactSupport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VectorIsomorphismCompactSupport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SizeStandardCompact
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsNormBoundThreeFamilies
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.TBBx3
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Filter Topology MeasureTheory
@@ -291,8 +323,8 @@ end Formalism.FourierDecayAlt.P.CutBP
 namespace Formalism.FourierDecayAlt.P.CutBP
 open Formalism.FourierDecayAlt Formalism.QuantumDeterminants
 noncomputable section
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 theorem _root_.Formalism.FourierDecayAlt.P.CutBP.thmBpAt_mainCpt (hA : P5.ThmPActualCpt) (Cb C₃ CΛ C₀ Cκ : ℝ) (hC₃ : 0 ≤ C₃) (hCΛ : 0 ≤ CΛ) (hC₀ : 1 / 2 ≤ C₀) :
     ∃ C₄ c₃ Cc : ℝ, ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
       [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (P : M.Par) (p : KB.Pl P Wp Wq)
@@ -338,8 +370,8 @@ end Formalism.FourierDecayAlt.P.CutBP
 namespace Formalism.FourierDecayAlt.P.CutBP
 open Formalism.FourierDecayAlt Formalism.QuantumDeterminants
 noncomputable section
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 theorem _root_.Formalism.FourierDecayAlt.P.CutBP.thmBpAt_main1Cpt (hA : P5.ThmPActualCpt) (Cb C₃ CΛ C₀ : ℝ) (hC₃ : 0 ≤ C₃) (hCΛ : 0 ≤ CΛ) (hC₀ : 1 / 2 ≤ C₀) :
     ∃ C₄ c₃ Cc : ℝ, ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
       [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (P : M.Par) (p : KB.Pl P Wp Wq)
@@ -369,8 +401,8 @@ end Formalism.FourierDecayAlt.P.CutBP
 namespace Formalism.FourierDecayAlt.P.CutBP
 open Formalism.FourierDecayAlt Formalism.QuantumDeterminants Filter Topology
 noncomputable section
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 theorem _root_.Formalism.FourierDecayAlt.P.CutBP.thmBpAt_main2Cpt (hA : P5.ThmPActualCpt) (Cb C₃ CΛ C₀ : ℝ) (hC₃ : 0 ≤ C₃) (hCΛ : 0 ≤ CΛ) (hC₀ : 1 / 2 ≤ C₀) :
     ∃ C₄ c₃ Cc Cc' : ℝ, ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
       [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (P : M.Par) (p : KB.Pl P Wp Wq)
@@ -470,8 +502,8 @@ end Formalism.FourierDecayAlt.P.CutBP
 namespace Formalism.FourierDecayAlt.P.CutBP
 open Formalism.FourierDecayAlt Formalism.QuantumDeterminants Filter Topology MeasureTheory
 noncomputable section
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 theorem _root_.Formalism.FourierDecayAlt.P.CutBP.thmBpAt_main4Cpt (hA : P5.ThmPActualCpt) (h1 : NFTopFormAllCpt) (h2 : NFTopPtwAll) (h3 : NFTopDomAll)
     (h4 : NFTopIdAll) (Cb C₃ CΛ C₀ : ℝ) (hC₃ : 0 ≤ C₃) (hCΛ : 0 ≤ CΛ) (hC₀ : 1 / 2 ≤ C₀) :
     ∃ C₄ c₃ Cc Cc' Cc'' : ℝ, ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
@@ -512,8 +544,8 @@ open Formalism.FourierDecayAlt Formalism.QuantumDeterminants Filter Topology Mea
 open scoped ComplexConjugate InnerProductSpace
 noncomputable section
 open Classical
-open GLG in
 
+open GLG in
 theorem _root_.Formalism.FourierDecayAlt.P.CutBP.low_level_germCpt : GLGermCpt := by
   intro _hA Wp Wq _ _ _ _ _ _ P p nn F Y N Cb _hCb hF hnn b s hb hs hbs h hh w _hw _hN H _ _ _ Vec hVec K hK hK0
   obtain ⟨m, rfl⟩ : ∃ m, s = m + 2 := ⟨s - 2, by omega⟩
@@ -847,7 +879,8 @@ theorem _root_.Formalism.FourierDecayAlt.P.CutBP.GT.germDataTopAll_of_partsCpt (
           coT s x j • ((omT p w.length (ptT s h x D j) : ℂ) • L i (p.V (Fi i) (ptT s h x D j))) =
           L i (∑ j ∈ Finset.insertNone (G.rootSet s (epsT s * D)),
             (coT s x j * (omT p w.length (ptT s h x D j) : ℂ)) • p.V (Fi i) (ptT s h x D j)) := by
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         refine Finset.sum_congr rfl fun j _ => ?_
         rw [map_smul, smul_smul]
       rw [e]
@@ -939,7 +972,49 @@ theorem _root_.Formalism.FourierDecayAlt.P.CutBP.block_growth_bound_of_compact_c
     (hL : GermDataLowAllCpt) (hT : GermDataTopAllCpt) : TBB.BlockGrowthBound p nn G Y K N :=
   block_growth_bound_of_germ_dataCpt hA p nn G Y K N Cb hCb hG hnn germ_continuity_all_levels hL hT germ_mean_property
 
-end Formalism.FourierDecayAlt.P.CutBP
+open Formalism.QuantumDeterminants MeasureTheory in
+theorem block_growth_bound_of_compact_coefCpt (hA : P5.ThmPActualCpt) {Wp Wq : Type}
+    [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq]
+    [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] {P : M.Par}
+    (p : KB.Pl P Wp Wq) (nn : ℝ → ℝ) (G : B.Mat P.k P.r → (Wq →L[ℂ] Wp))
+    (Y : Finset ℝ) (K N : ℕ) (Cb : ℝ) (hCb : KB.InDDplus2 P p.l0 p.T.base Cb p.Θ)
+    (hG : KB.CptCoef p.T.base G) (hnn : ∀ y, 0 < nn y) : TBB.BlockGrowthBound p nn G Y K N := by
+  have hFibre : GLFibreCpt := by
+    intro hA Wp Wq _ _ _ _ _ _ P p nn F Y N Cb hCb hF _ j hj w hw _ a b ha hb
+    have hPS := Formalism.FourierDecayAlt.P.standard_pairing_of_headsCpt
+      Formalism.FourierDecayAlt.P.radial_head Formalism.FourierDecayAlt.P.head_top
+    have hjr : j ≤ P.r := by omega
+    obtain ⟨φ, -, hφi, hφ, hφs⟩ := hPS hA Wp Wq P p F j hjr w a b ha hb Cb hCb hF hw.1
+    let A := Real.sqrt (TBB.nPt P.k P.r (TBB.TTp p) a)
+    let B := Real.sqrt (TBB.nPt P.k P.r (TBB.TTp p) b)
+    let k := A * B / TBB.normC nn w
+    have hae : (fun c => TBB.NP p nn F (j + 1) w (a ++ [(1, c)]) (b ++ [(1, c)])) =ᵐ[volume]
+        fun c => (k : ℂ) * φ c := by
+      filter_upwards [Formalism.FourierDecayAlt.P.TBBx1.ae_ne_zero] with c hc
+      rw [hφ c hc]
+      unfold TBB.NP
+      rw [nPt_append_one P _ a j ha hj c, nPt_append_one P _ b j hb hj c,
+        Real.sqrt_mul (nPt_nonneg_loc P _ a j ha hjr), Real.sqrt_mul (nPt_nonneg_loc P _ b j hb hjr)]
+      have hweight : let u := Real.sqrt (KB.levW P (j + 1) c)
+          (A * u) * (B * u) / TBB.normC nn w = k * KB.levW P (j + 1) c := by
+        dsimp only [k]
+        rw [show ∀ x : ℝ, A * x * (B * x) = A * B * (x * x) by intro x; ring,
+          Real.mul_self_sqrt (levW_nonneg_low P j hj c)]
+        ring
+      rw [hweight, Complex.ofReal_mul]
+      ring
+    refine ⟨(hφi.const_mul (k : ℂ)).congr hae.symm, ?_⟩
+    rw [integral_congr_ae hae, integral_const_mul]
+    have h0 := hφs 0
+    simp only [P5.fsv, zero_mul, map_zero, sub_zero, Complex.exp_zero, one_mul,
+      Formalism.FourierDecayAlt.P.PBASM.waveG_zero_eq_self] at h0
+    rw [h0]
+    unfold TBB.NP
+    congr 1
+    unfold KB.Pl.RR D.RRplace
+    rw [dite_eq_left ⟨ha, hb⟩, dite_eq_left hjr]
+    rfl
+  exact block_growth_bound_of_compact_coef_of_germ_dataCpt hA p nn G Y K N Cb hCb hG hnn
+    (germDataLowAll_of_partsCpt glGramCpt hFibre low_level_continuityCpt low_level_germCpt) germ_data_top_levelCpt
 
-set_option maxHeartbeats 0 in
-cpt_copy_thms
+end Formalism.FourierDecayAlt.P.CutBP

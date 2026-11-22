@@ -1,9 +1,14 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.WKTensFockGenSub
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.TotalDegreeBindLeOfLinear
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.DetOneSubEqSumMinors
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.InvoluteExteriorPower
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.EquivSigLamOfIsDS
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.Arbitrary
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.WKTensFockGenSub
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.TotalDegreeBindLeOfLinear
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.DetOneSubEqSumMinors
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.InvoluteExteriorPower
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.TraceIntegralRestrict
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.EquivSigLamOfIsDS
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.Arbitrary
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,8 +75,8 @@ theorem trace_map_subtype {L : Submodule ℂ D} [FiniteDimensional ℂ L] (g : D
 
 end Helpers2
 
-open MeasureTheory in
 
+open MeasureTheory in
 theorem supTrace (n : ℕ) : SupTraceStatement n := by
   intro ε lam h H _ _ σ hDS hHC hgap hthr hp hq
   have : CompleteSpace H := hDS.1
@@ -107,7 +112,8 @@ theorem supTrace (n : ℕ) : SupTraceStatement n := by
   set Q := ∑ s ∈ Finset.univ.filter (IsPhysSet ε), ((-1 : ℂ) ^ s.card) • Qm s s with hQdef
   have hQ : ∀ m, MvPolynomial.eval (entVar m) Q = physDet ε m := by
     intro m
-    rw [← strPhys_eq_physDet, strPhys, hQdef, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← strPhys_eq_physDet, strPhys, hQdef, map_sum]
     refine Finset.sum_congr rfl fun s _ => ?_
     rw [MvPolynomial.smul_eval, hQm]
     rfl

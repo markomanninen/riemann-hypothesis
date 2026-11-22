@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlaceLaws
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.DoubleCollapse
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlaceLaws
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.DoubleCollapse
+
+@[expose] public section
 
 set_option genSizeOfSpec false
 set_option genInjectivity false

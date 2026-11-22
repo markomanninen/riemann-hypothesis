@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsSplitGaussChars
-import GroundTheory.FunctionField.DivisorDegree
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsSplitGaussChars
+public import GroundTheory.FunctionField.DivisorDegree
+
+@[expose] public section
 
 noncomputable section
 

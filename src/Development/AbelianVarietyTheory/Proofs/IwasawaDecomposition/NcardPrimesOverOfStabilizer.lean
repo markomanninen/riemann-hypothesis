@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.RootOfUnityEightQMemCoeffGaloisSubfield
-import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
-import Formalism.SharpRestriction.InertJacobiLevels.HostFam
-import Formalism.FrobeniusOrbits.HostCorollaries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.RootOfUnityEightQMemCoeffGaloisSubfield
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
+public import Formalism.SharpRestriction.InertJacobiLevels.HostFam
+public import Formalism.FrobeniusOrbits.HostCorollaries
+
+@[expose] public section
 
 open Formalism.BasicNotions NumberField IsDedekindDomain GlobalTheory.Mem
 open scoped TensorProduct Pointwise

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ActEqZeroOfMem
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SchwartzBilinear.EigenvectorsSumZeroEqZero
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ActEqZeroOfMem
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SchwartzBilinear.EigenvectorsSumZeroEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,12 +51,13 @@ theorem mem_span_isAdW_of_kills {n : ℕ} {A : Type} [AddCommGroup A] [Module �
       have h1 : e (k, k) * wtPart x w = wtPart x w * e (k, k) + (w k : ℂ) • wtPart x w := by
         rw [← isAdW_wtPart x w k]; abel
       have h2 := congrArg (fun u => φ u t) h1
-      simp only [map_mul, map_add, map_smul, Module.End.mul_apply, LinearMap.add_apply,
+      simp only [map_mul, map_add (f := _), map_smul, Module.End.mul_apply, LinearMap.add_apply,
         LinearMap.smul_apply, hd k, add_smul] at h2 ⊢
       rw [h2])
     (by
       have h3 := congrArg (fun u => φ u t) (sum_wtPart x)
-      simp only [map_sum, LinearMap.sum_apply] at h3
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, LinearMap.sum_apply] at h3
       rw [h3, hx])
   rw [← sum_wtPart x]
   exact Submodule.sum_mem _ fun w hw => Submodule.subset_span ⟨w, isAdW_wtPart x w, hz w hw⟩

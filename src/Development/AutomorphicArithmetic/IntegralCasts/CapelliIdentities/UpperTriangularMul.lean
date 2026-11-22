@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qe38.upper_triangular_mul :
     ∀ {K : Type} [inst : Field K] {n : ℕ}

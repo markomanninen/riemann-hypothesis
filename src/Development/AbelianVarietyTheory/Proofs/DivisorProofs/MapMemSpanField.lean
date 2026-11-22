@@ -1,4 +1,8 @@
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+module
+
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+
+@[expose] public section
 
 namespace GlobalTheory.StandardLatticeSpan
 
@@ -80,7 +84,8 @@ theorem map_mem_span_field (s : Set (Fin n → E)) {x : Fin n → E}
 theorem stdH_map [StarRing E] [StarRing E'] (hf : ∀ x : E, f (star x) = star (f x))
     (x y : Fin n → E) :
     Formalism.BasicNotions.stdH E' n (fun i ↦ f (x i)) (fun i ↦ f (y i)) = f (Formalism.BasicNotions.stdH E n x y) := by
-  simp only [Formalism.BasicNotions.stdH, map_sum, map_mul, hf]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.BasicNotions.stdH, map_sum, map_mul, hf]
 
 theorem isSDLat_map {E E' : Type} [Field E] [Field E'] (f : E ≃+* E') {n : ℕ}
     [NumberField E] [NumberField E'] [StarRing E] [StarRing E']

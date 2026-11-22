@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryOsc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryOsc
+
+@[expose] public section
 
 open scoped TensorProduct Matrix
 open MeasureTheory Formalism.BasicNotions.TH GlobalTheory.RealLift GlobalTheory.RealWeil Matrix
@@ -64,16 +68,12 @@ theorem lineSign_eq (a : Ix P Q) (b : Ix R S) : lineSign a b = if linePos (a, b)
 theorem Jm_transpose (R S : ℕ) : (Jm R S)ᵀ = Jm R S := by
   simp [Jm, Formalism.UG.Jpq, fromBlocks_transpose]
 
-theorem Jm_map_star (R S : ℕ) : (Jm R S).map star = Jm R S := by
-  ext a b
-  rcases a with a | a <;> rcases b with b | b <;> simp [Jm, Formalism.UG.Jpq, one_apply] <;> split_ifs <;> simp
-
 theorem diagonal_sgn : (diagonal fun n : Ix R S × (ι × Ix P Q) => if sgn n then (1 : ℂ) else -1) =
     blockDiagonal fun o : ι × Ix P Q => Jm P Q o.2 o.2 • Jm R S := by
   ext ⟨b, w, a⟩ ⟨b', w', a'⟩
   rcases a with a | a <;> rcases b with b | b <;> rcases b' with b' | b' <;>
     simp [diagonal_apply, blockDiagonal_apply, Jm, Formalism.UG.Jpq, sgn, linePos, one_apply, Prod.ext_iff] <;>
-    split_ifs <;> simp_all
+    split_ifs <;> simp_all [Matrix.one_apply]
 
 theorem blockDiagonal_mem (M : ι → Mat R S) (hM : ∀ w, (M w)ᴴ * Jm R S * M w = Jm R S) :
     (blockDiagonal fun o : ι × Ix P Q => M o.1)ᵀ *
@@ -205,7 +205,8 @@ theorem coordOf_mulVec {G : Type} [Group G] (k : G →* (ι → Mat R S)) (hk : 
   rw [numHom_apply, reindex_apply, submatrix_mulVec_equiv]
   funext w
   ext a b
-  simp [coordOf, mulVec, dotProduct, blockDiagonal_apply, Fintype.sum_prod_type, mul_apply, Finset.mul_sum, ite_mul]
+  simp only [Matrix.mul_apply, transpose_apply, coordOf]
+  simp [mulVec, dotProduct, blockDiagonal_apply, Fintype.sum_prod_type, ite_mul]
   rw [mul_add, Finset.mul_sum, Finset.mul_sum]
   congr 1 <;> exact Finset.sum_congr rfl fun _ _ => by ring
 
@@ -230,7 +231,7 @@ theorem GlobalTheory.SchrodOsc.exists_osc : ∀ (ι l : Type) [Fintype ι] [Deci
     (fun v => (hcont v).comp ((LinearMap.continuous_of_finiteDimensional φ.toLinearMap).comp
       GlobalTheory.SchrodOsc.continuous_coordOf))
     (fun z z' v => by
-      rw [rho_rho, ← map_add, ← GlobalTheory.SchrodOsc.coordOf_add, hφ, ← GlobalTheory.SchrodOsc.two_mul_sum_coordOf]
+      rw [rho_rho, ← map_add (f := _), ← GlobalTheory.SchrodOsc.coordOf_add, hφ, ← GlobalTheory.SchrodOsc.two_mul_sum_coordOf]
       congr 2
       simp [Complex.mul_im]
       ring)

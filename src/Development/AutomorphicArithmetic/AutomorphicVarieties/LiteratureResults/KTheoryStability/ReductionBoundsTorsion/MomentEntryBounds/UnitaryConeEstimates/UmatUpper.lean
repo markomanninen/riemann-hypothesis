@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.UnitaryConeEstimates.OmG
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.UnitaryConeEstimates.OmG
+
+@[expose] public section
 
 noncomputable section
 
@@ -130,10 +134,10 @@ theorem count (s0 : Fin N → ℝ) : ∃ F : Finset (SpecialLinearGroup (Fin N) 
       push_cast
       unfold Phi
       rw [Finset.mul_sum, Real.exp_sum]
-      apply Finset.prod_le_prod (fun i _ => (Real.exp_pos _).le)
+      apply Finset.prod_le_prod₀ (fun i _ => (Real.exp_pos _).le)
       intro i _
       rw [Finset.mul_sum, Real.exp_sum]
-      apply Finset.prod_le_prod (fun j _ => (Real.exp_pos _).le)
+      apply Finset.prod_le_prod₀ (fun j _ => (Real.exp_pos _).le)
       intro j _
       split_ifs with h
       · rw [show 2 * (s0 i - s0 j) = (s0 i - s0 j) + (s0 i - s0 j) by ring, Real.exp_add]

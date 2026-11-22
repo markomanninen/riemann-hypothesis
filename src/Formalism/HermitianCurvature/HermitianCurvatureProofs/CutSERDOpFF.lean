@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialIdentityOfQuadratic
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStable
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralIdentities
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialIdentityOfQuadratic
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStable
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralIdentities
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -39,8 +43,8 @@ theorem radial_operator_function_field : RDOpFF := by
       B.SuppIn (B.GPos D) f' := by
     intro f' hs x hx
     have hxG : x ∈ B.GV k r :=
-      (Formalism.FourierDecayAlt.P.B5.GV_closed (k := k) (r := r)).closure_subset_iff.2 (fun y hy => hy.1) hx
-    have hxT : x ∈ tsupport f' := closure_mono (fun y hy => hy.2) hx
+      (Formalism.FourierDecayAlt.P.B5.GV_closed (k := k) (r := r)).closure_subset_iff.2 (by exact fun y hy => hy.1) hx
+    have hxT : x ∈ tsupport f' := closure_mono (by exact fun y hy => hy.2) hx
     exact hPos x (hs hxT) hxG
   constructor
   · refine equivariant_operators_holds extension_locality_holds _ _ _ _ D (Q.OmPlus k r D.z D.z') (B.opApply Θ) hDom

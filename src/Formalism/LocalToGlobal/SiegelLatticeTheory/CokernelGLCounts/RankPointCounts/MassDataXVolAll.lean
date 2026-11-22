@@ -1,9 +1,13 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.TheoremSRecursion
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.MassDataVolumesS
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.MassDataLevelS
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXMasses
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXColumns
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXRed
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.TheoremSRecursion
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.MassDataVolumesS
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.MassDataLevelS
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXMasses
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXColumns
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXRed
+
+@[expose] public section
 
 namespace Formalism.L2.SG.Pf.MassDataX
 

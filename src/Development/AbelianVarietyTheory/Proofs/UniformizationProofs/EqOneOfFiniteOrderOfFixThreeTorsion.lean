@@ -1,17 +1,21 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DataRigidSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaVV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
-import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.EqOneOfPowEqOneOfCongrOne
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsEqPowOfTorsionCompEqOne
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsOddNeZero
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.EqOfDominantGeometricPointsOfUnramified
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CardTorsionZerosTwistLe
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.EqOfAgreeOnTorsion
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DataRigidSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaVV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.EqOneOfPowEqOneOfCongrOne
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsEqPowOfTorsionCompEqOne
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsOddNeZero
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.EqOfDominantGeometricPointsOfUnramified
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CardTorsionZerosTwistLe
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.EqOfAgreeOnTorsion
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR
@@ -21,8 +25,8 @@ open GlobalTheory.UT
 
 namespace GlobalTheory.FiniteOrderFix
 
-open TorsionZero in
 
+open TorsionZero in
 theorem exists_sec_le {K : Type} [Field K] {X : Scheme.{0}} [IsIntegral X] (p : X ⟶ Sp K) {L : LB X}
     (hL : L.IsLB) {N : ℕ} {σ : Type} (s : σ → (lbPow L N).Sec)
     (hcov : ⨆ i, nonzeroLocus (s i) = ⊤) (haff : ∀ i, IsAffineOpen (nonzeroLocus (s i)))
@@ -111,27 +115,27 @@ theorem eq_of_agree_on_pow_torsion (h : Laws) {K : Type} [Field K] [IsAlgClosed 
     ((genericPoint_spec P.A.left).def.ge.trans (closure_mono (Set.singleton_subset_iff.2 (not_not.1 hU)))))⟩
   exact Over.OverMorphism.ext (ext_of_isDominant_of_isSeparated P'.A.hom hw _ (equalizer.condition _ _))
 
-open SerreField in
 
+open SerreField in
 theorem eq_one_of_field (h : Laws) {K : Type} [Field K] [IsAlgClosed K] [CharZero K] (P : PolAV (Sp K))
-    {M : ℕ} (hM : 3 ≤ M) (σ : CategoryTheory.End P.A) [hσ : IsMonHom (σ : P.A ⟶ P.A)] {m : ℕ} (hm : m ≠ 0)
-    (hord : σ ^ m = 1) (hfix : ∀ x : baseOver (Sp K) ⟶ P.A, x ^ M = 1 → x ≫ σ = x) : σ = 1 := by
+    {M : ℕ} (hM : 3 ≤ M) (σ : CategoryTheory.End P.A) [hσ : IsMonHom σ.asHom] {m : ℕ} (hm : m ≠ 0)
+    (hord : σ ^ m = 1) (hfix : ∀ x : baseOver (Sp K) ⟶ P.A, x ^ M = 1 → x ≫ σ.asHom = x) : σ = 1 := by
   have hdiv := DivisibleHom.exists_eq_pow_of_torsion_comp_eq_one (fun S _ P n hn =>
     ⟨(h.mulN S P n hn).1, (h.mulN S P n hn).2.1, (h.mulN S P n hn).2.2.1, (h.mulN S P n hn).2.2.2.1⟩)
   have hfix' := fix_torsion_of_fix_geometric_of_isDominant h.mulN P M (by omega) (by
     simpa using (Nat.cast_ne_zero.2 (by omega) : (M : K) ≠ 0).isUnit.map
-      (Scheme.ΓSpecIso (CommRingCat.of K)).inv.hom) (𝟙 _) σ hσ hfix
-  let τ : P.A ⟶ P.A := σ
+      (Scheme.ΓSpecIso (CommRingCat.of K)).inv.hom) (𝟙 _) σ.asHom hσ hfix
+  let τ : P.A ⟶ P.A := σ.asHom
   have hu : IsMonHom (τ * (𝟙 P.A)⁻¹) := by
     rw [Hom.mul_def, Hom.inv_def]; infer_instance
   obtain ⟨⟨φ, hφ, e⟩, -⟩ := hdiv _ P P.A M (by omega) (τ * (𝟙 P.A)⁻¹) hu (fun T x hx => by
     rw [MonObj.comp_mul, GrpObj.comp_inv, hfix' T x hx, Category.comp_id, mul_inv_cancel])
   have hpow : ∀ (n : ℕ) (x : P.A ⟶ P.A), (toRing τ ^ n).1 (Additive.ofMul x) =
-      Additive.ofMul (x ≫ (σ ^ n : CategoryTheory.End P.A)) := fun n x => by
+      Additive.ofMul (x ≫ (σ ^ n).asHom) := fun n x => by
     induction n with
     | zero => exact congrArg Additive.ofMul (Category.comp_id x).symm
     | succ n ih =>
-      rw [pow_succ', pow_succ', End.mul_def, ← Category.assoc]
+      rw [pow_succ', pow_succ', End.mul_asHom, ← Category.assoc]
       exact (congrArg (toRing τ).1 ih).trans (toRing_apply _ _)
   have key : toRing τ = 1 := by
     refine eq_one_of_pow_eq_one_of_congr_one (homRing P.A) M hM ?_ ?_ (toRing τ) (toRing φ) m hm ?_ ?_
@@ -156,13 +160,17 @@ theorem eq_one_of_field (h : Laws) {K : Type} [Field K] [IsAlgClosed K] [CharZer
       change _ = Additive.ofMul (𝟙 P.A) + ((M : homRing P.A) * toRing φ).1 _
       rw [natCast_mul_apply, toRing_apply, toRing_apply, Category.id_comp, Category.id_comp,
         ← ofMul_pow, ← e, ← ofMul_mul, mul_comm, inv_mul_cancel_right]
-    · exact homRing_ext (by rw [hpow, hord, Category.id_comp]; rfl)
+    · exact homRing_ext (by rw [hpow, hord, End.one_asHom, Category.id_comp]; rfl)
   have h1 := congrArg (fun g : homRing P.A => g.1 (Additive.ofMul (𝟙 P.A))) key
   simp only [toRing_apply, Category.id_comp] at h1
-  exact h1
+  exact End.ext h1
 
 theorem eq_one_of_finite_order_of_fix_three_torsion :
-    LL → ∀ (S : Scheme.{0}) [IsLocallyNoetherian S] (P : PolAV S) (F : Type) [Field F] [IsAlgClosed F] [CharZero F] (p : Spec (CommRingCat.of F) ⟶ S) (h : CategoryTheory.End (Over.mk p ⊗ P.A)), h ≫ fst _ _ = fst _ _ → ptSecT P.A 1 ≫ h = ptSecT P.A 1 → (∃ n, 1 ≤ n ∧ h ^ n = 1) → (∀ x : Over.mk p ⟶ P.A, x ^ 3 = 1 → ptSecT P.A x ≫ h = ptSecT P.A x) → h = 1 := by
+    LL → ∀ (S : Scheme.{0}) [IsLocallyNoetherian S] (P : PolAV S) (F : Type) [Field F] [IsAlgClosed F] [CharZero F]
+      (p : Spec (CommRingCat.of F) ⟶ S) (h : CategoryTheory.End (Over.mk p ⊗ P.A)),
+      h.asHom ≫ fst _ _ = fst _ _ → ptSecT P.A 1 ≫ h.asHom = ptSecT P.A 1 →
+      (∃ n, 1 ≤ n ∧ h ^ n = 1) →
+      (∀ x : Over.mk p ⟶ P.A, x ^ 3 = 1 → ptSecT P.A x ≫ h.asHom = ptSecT P.A x) → h = 1 := by
   rintro ⟨laws, -⟩ S _ P F _ _ _ p h hfst h0 ⟨n, hn, hord⟩ hfix
   obtain ⟨P', g, hg, -, pm, -⟩ := laws.polBaseChange S _ p P
   have hg' : IsPullback (snd (Over.mk p) P.A).left (fst (Over.mk p) P.A).left P.A.hom p :=
@@ -170,17 +178,17 @@ theorem eq_one_of_finite_order_of_fix_three_torsion :
   let e := hg.isoIsPullback _ _ hg'
   have e₁ : e.hom ≫ (snd (Over.mk p) P.A).left = g := hg.isoIsPullback_hom_fst _ _ hg'
   have e₂ : e.hom ≫ (fst (Over.mk p) P.A).left = P'.A.hom := hg.isoIsPullback_hom_snd _ _ hg'
-  have e₃ : h.left ≫ (fst (Over.mk p) P.A).left = (fst (Over.mk p) P.A).left := congrArg (·.left) hfst
-  let σ : CategoryTheory.End P'.A := Over.homMk (e.hom ≫ h.left ≫ e.inv) (by
-    rw [← e₂, Category.assoc, Category.assoc, e.inv_hom_id_assoc, e₃])
-  have hσ : σ.left ≫ e.hom = e.hom ≫ h.left := by
-    change (e.hom ≫ h.left ≫ e.inv) ≫ e.hom = _
+  have e₃ : h.asHom.left ≫ (fst (Over.mk p) P.A).left = (fst (Over.mk p) P.A).left := congrArg (·.left) hfst
+  let σ : CategoryTheory.End P'.A := End.of (Over.homMk (e.hom ≫ h.asHom.left ≫ e.inv) (by
+    rw [← e₂, Category.assoc, Category.assoc, e.inv_hom_id_assoc, e₃]))
+  have hσ : σ.asHom.left ≫ e.hom = e.hom ≫ h.asHom.left := by
+    change (e.hom ≫ h.asHom.left ≫ e.inv) ≫ e.hom = _
     simp
-  have hpow : ∀ k : ℕ, (σ ^ k).left ≫ e.hom = e.hom ≫ (h ^ k).left := fun k => by
+  have hpow : ∀ k : ℕ, (σ ^ k).asHom.left ≫ e.hom = e.hom ≫ (h ^ k).asHom.left := fun k => by
     induction k with
     | zero => exact (Category.id_comp _).trans (Category.comp_id _).symm
     | succ k ih =>
-      rw [pow_succ', pow_succ', End.mul_def, End.mul_def, Over.comp_left, Over.comp_left, Category.assoc, hσ,
+      rw [pow_succ', pow_succ', End.mul_asHom, End.mul_asHom, Over.comp_left, Over.comp_left, Category.assoc, hσ,
         reassoc_of% ih]
   let c : Over.mk p ⟶ Over.mk ((baseOver (Sp F)).hom ≫ p) := Over.homMk (𝟙 _) (by simp)
   let ρ : (baseOver (Sp F) ⟶ P'.A) →* (Over.mk p ⟶ P.A) := MonoidHom.mk' (fun x => c ≫ toBase hg.w x)
@@ -191,20 +199,20 @@ theorem eq_one_of_finite_order_of_fix_three_torsion :
       exact Category.id_comp _
     · rw [← Over.comp_left, ptSecT, lift_fst, Category.assoc, e₂]
       exact (Over.w x).symm
-  have key : ∀ x, ptSecT P.A (ρ x) ≫ h = ptSecT P.A (ρ x) → x ≫ σ = x := fun x hx => by
+  have key : ∀ x, ptSecT P.A (ρ x) ≫ h.asHom = ptSecT P.A (ρ x) → x ≫ σ.asHom = x := fun x hx => by
     have := congrArg (·.left) hx
     simp only [Over.comp_left, hρ] at this
     refine Over.OverMorphism.ext ((cancel_mono e.hom).1 ?_)
     rw [Over.comp_left, Category.assoc, hσ, ← Category.assoc, this]
   have hη : (1 : baseOver (Sp F) ⟶ P'.A) = η[P'.A] :=
     (congrArg (· ≫ η[P'.A]) toUnit_unit).trans (Category.id_comp _)
-  have : IsMonHom (σ : P'.A ⟶ P'.A) := laws.rigidity _ _ _ P'.isAb P'.isAb σ (by
+  have : IsMonHom σ.asHom := laws.rigidity _ _ _ P'.isAb P'.isAb σ.asHom (by
     have := key 1 (by rw [map_one]; exact h0)
     rwa [hη] at this)
   have h1 : σ = 1 := eq_one_of_field laws P' le_rfl σ (m := n) (by omega)
-    (Over.OverMorphism.ext ((cancel_mono e.hom).1 ((hpow n).trans (by rw [hord]; exact (hpow 0).symm))))
+    (End.ext (Over.OverMorphism.ext ((cancel_mono e.hom).1 ((hpow n).trans (by rw [hord]; exact (hpow 0).symm)))))
     fun x hx => key x (hfix _ (by rw [← map_pow, hx, map_one]))
-  refine Over.OverMorphism.ext ((cancel_epi e.hom).1 ?_)
+  refine End.ext (Over.OverMorphism.ext ((cancel_epi e.hom).1 ?_))
   rw [← hσ, h1]
   exact hpow 0
 

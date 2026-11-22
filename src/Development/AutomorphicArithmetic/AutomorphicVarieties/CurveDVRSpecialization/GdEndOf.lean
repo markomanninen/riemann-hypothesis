@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.RatTorsionFree
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.RankTwoAutomorphyDescendsFromAbelianCMToRat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShapeFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.LkMarks
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.FinEndOfFinPt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.OrthogonalPairingFromIntertwiner
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.AutEnd2OfAutPt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.ClsFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.DvrFacts
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IneLeFixingSubgroup
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.RatTorsionFree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.RankTwoAutomorphyDescendsFromAbelianCMToRat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShapeFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.LkMarks
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.FinEndOfFinPt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.OrthogonalPairingFromIntertwiner
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.AutEnd2OfAutPt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.ClsFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.DvrFacts
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IneLeFixingSubgroup
+
+@[expose] public section
 
 attribute [-instance] UpperTheory.V.Pr.IsCD.toIsDiscreteValuationRing
 
@@ -42,9 +46,9 @@ private theorem fix_iff {K Ω : Type} [Field K] [NumberField K] [Field Ω] [Char
     obtain ⟨a, b, hab⟩ := hmem
     rw [Rat.smul_def, Rat.smul_def, mul_one] at hab
     have hg : g x * g x = a + b * g x := by
-      rw [← map_mul, ← hab, map_add, map_mul, map_ratCast, map_ratCast]
+      rw [← map_mul, ← hab, map_add (f := _), map_mul, map_ratCast, map_ratCast]
     have hf : f x * f x = a + b * f x := by
-      rw [← map_mul, ← hab, map_add, map_mul, map_ratCast, map_ratCast]
+      rw [← map_mul, ← hab, map_add (f := _), map_mul, map_ratCast, map_ratCast]
     have hprod : (g x - f x) * (g x - ((b : Ω) - f x)) = 0 := by
       linear_combination hg - hf
     rcases mul_eq_zero.mp hprod with h1 | h1

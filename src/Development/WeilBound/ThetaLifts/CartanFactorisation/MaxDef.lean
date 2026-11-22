@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.LocalDef
+module
+
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.LocalDef
+
+@[expose] public section
 
 noncomputable section
 

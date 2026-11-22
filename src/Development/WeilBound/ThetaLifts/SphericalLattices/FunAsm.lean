@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.FunDefs
-import Development.WeilBound.CoreStatements.LocalThetaKernels.EvlMain
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.Inertof
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.Kcompact
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.FunDefs
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.EvlMain
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.Inertof
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.Kcompact
+
+@[expose] public section
 
 noncomputable section
 

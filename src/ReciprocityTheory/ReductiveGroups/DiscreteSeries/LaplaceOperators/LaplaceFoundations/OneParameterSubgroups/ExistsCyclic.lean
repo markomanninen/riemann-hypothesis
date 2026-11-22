@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Finset Matrix
 
@@ -48,7 +52,7 @@ private theorem sum_pow_mul_inv_prod_sub_eq_ite {m : ℕ} (x : Fin m → ℝ) (h
   have hI := Lagrange.eq_interpolate hinj hdeg
   have hc := congrArg (fun p : Polynomial ℝ => p.coeff (m - 1)) hI
   try simp only at hc
-  rw [Lagrange.interpolate_apply, Polynomial.finset_sum_coeff] at hc
+  rw [Lagrange.interpolate_apply, Polynomial.finsetSum_coeff] at hc
   have hb : ∀ s : Fin m, (Lagrange.basis univ x s).coeff (m - 1) =
       (∏ j ∈ univ.erase s, (x s - x j))⁻¹ := by
     intro s

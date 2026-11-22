@@ -1,12 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.EigBoxE
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.SpecIntIff
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.EigBoxE
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.SpecIntIff
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel IsLocalRing GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V UpperTheory.V.Hi
 open UpperTheory.V.HV (Coef)
 open UpperTheory.V.Z.Desc.V0
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
-open private spec_intIff spec_int spec_unit spec_chi spec_cl from Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.SpecIntIff
 
 namespace UpperTheory.V.Hi.Sp
 
@@ -85,9 +87,8 @@ private theorem absSpec2 {A O Ω : Type} [CommRing A] [IsCNL A] [CommRing O] [Is
     · rw [Submodule.span_le]
       rintro _ ⟨y, hy, rfl⟩
       refine hb.inductionOn (⟨y, hy⟩ : X.Ord _ _ (U K))
-        (fun n => X.mapFn (B := Ω) (n : X.Fn O m) ∈ Submodule.span Ω (X.mapFn (B := Ω) '' (X.Ord τ θ (U K) : Set (X.Fn A m))))
-        ?_ ?_ ?_ ?_
-      · simp
+        (motive := fun n => X.mapFn (B := Ω) (n : X.Fn O m) ∈
+          Submodule.span Ω (X.mapFn (B := Ω) '' (X.Ord τ θ (U K) : Set (X.Fn A m)))) ?_ ?_ ?_
       · intro f
         rw [hj, hmapTwo]
         exact Submodule.subset_span ⟨f, f.2, rfl⟩
@@ -95,7 +96,7 @@ private theorem absSpec2 {A O Ω : Type} [CommRing A] [IsCNL A] [CommRing O] [Is
         rw [Submodule.coe_smul, map_smul, ← algebraMap_smul Ω s]
         exact Submodule.smul_mem _ _ hn
       · intro n₁ n₂ h₁ h₂
-        rw [Submodule.coe_add, map_add]
+        rw [Submodule.coe_add, map_add (f := _)]
         exact add_mem h₁ h₂
     · rw [Submodule.span_le]
       rintro _ ⟨f, hf, rfl⟩
@@ -143,7 +144,7 @@ private theorem absSpec2 {A O Ω : Type} [CommRing A] [IsCNL A] [CommRing O] [Is
   · intro K f hf f' hf'
     obtain ⟨h1, h2⟩ := hgood K f hf
     obtain ⟨h3, h4⟩ := hgood K f' hf'
-    exact hsp (f + f') K _ (add_mem h1 h3) (by rw [map_add, h2, h4, map_add])
+    exact hsp (f + f') K _ (add_mem h1 h3) (by rw [map_add (f := _), h2, h4, map_add (f := _)])
   · intro K f hf b
     obtain ⟨h1, h2⟩ := hgood K f hf
     exact hsp (b • f) K _ (Submodule.smul_mem _ _ h1) (by rw [map_smul, h2, map_smul, algebraMap_smul])
@@ -195,7 +196,8 @@ private theorem absSpec2 {A O Ω : Type} [CommRing A] [IsCNL A] [CommRing O] [Is
   · intro K K' κ _ u hyp f hf
     obtain ⟨h1, h2⟩ := hgood K f hf
     refine hsp _ K' _ (sum_clOrd X W _ _ c (U K) (U K') u hyp _ h1) ?_
-    rw [LinearMap.sum_apply, map_sum, LinearMap.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.sum_apply, map_sum, LinearMap.sum_apply, map_sum]
     refine Finset.sum_congr rfl fun q _ => ?_
     rw [(ctrlEq Γ Ga Gp X O Ω W m _).1, h2, mapFn_ra]
 
@@ -217,7 +219,8 @@ private theorem tr_uOp {Ω : Type} [Field Ω] {d m : ℕ} (g : Ga) (a : Gp) (ha 
   set f := fun q : ↥X.I.N ⧸ (X.I.Nconj a).subgroupOf X.I.N => X.rpF Ω d m (↑(Quotient.out q) * a) with hf
   by_cases h : (Function.support f).Finite
   · rw [finsum_eq_sum f h]
-    rw [LinearMap.sum_apply, LinearMap.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.sum_apply, LinearMap.sum_apply, map_sum]
     refine Finset.sum_congr rfl fun q _ => ?_
     exact tr_rpF X g _ F
   · rw [finsum_of_infinite_support h]
@@ -304,10 +307,24 @@ theorem UpperTheory.V.Z.Desc.V0.spec2 :
   haveI : IsScalarTower A c'.O ℂ := IsScalarTower.of_algebraMap_eq fun a => rfl
   haveI hDVR : IsDiscreteValuationRing c'.O := c'.dvr
   haveI : Module.Finite ℤ_[l] c'.O := c'.fin
+  haveI : Algebra.IsIntegral ℤ_[l] c'.O := Algebra.IsIntegral.of_finite ℤ_[l] c'.O
+  have hpadic : ∀ z : Qbar l, IsIntegral ℤ_[l] z ↔ ‖z‖ ≤ 1 := by
+    intro z
+    have hi : IsIntegral ℚ_[l] z := Algebra.IsIntegral.isIntegral z
+    change IsIntegral ℤ_[l] z ↔ spectralValue (minpoly ℚ_[l] z) ≤ 1
+    rw [spectralValue_le_one_iff (minpoly.monic hi)]
+    constructor
+    · intro h k
+      rw [minpoly.isIntegrallyClosed_eq_field_fractions' ℚ_[l] h, coeff_map]
+      exact PadicInt.norm_le_one _
+    · intro h
+      have hl : minpoly ℚ_[l] z ∈ lifts (algebraMap ℤ_[l] ℚ_[l]) :=
+        (lifts_iff_coeff_lifts _).2 fun k => ⟨⟨_, h k⟩, rfl⟩
+      obtain ⟨q, hq, -, hqm⟩ := lifts_and_degree_eq_and_monic hl (minpoly.monic hi)
+      exact ⟨q, hqm, by rw [← aeval_def, ← aeval_map_algebraMap ℚ_[l], hq, minpoly.aeval]⟩
   have hle1 : ∀ y : c'.O, ‖(y : Qbar l)‖ ≤ 1 := by
     intro y
-    rw [← spec_intIff]
-    exact (Algebra.IsIntegral.isIntegral (R := ℤ_[l]) y).map c'.O.val
+    exact (hpadic _).1 ((Algebra.IsIntegral.isIntegral (R := ℤ_[l]) y).map c'.O.val)
   haveI : IsLocalHom (algebraMap A c'.O) := by
     refine ⟨fun a ha => ?_⟩
     by_contra hna
@@ -332,7 +349,23 @@ theorem UpperTheory.V.Z.Desc.V0.spec2 :
     exact ⟨h1, h2⟩
   have hinj : Function.Injective (algebraMap c'.O ℂ) := ι.injective.comp Subtype.val_injective
   let W : WtRep H.X.I c'.O ℂ := R
-  obtain ⟨ψ, hψ⟩ := spec_chi hinj W
+  have hψexists : ∃ ψ : H.X.I.T →* c'.Oˣ, ∀ t : H.X.I.T,
+      algebraMap c'.O ℂ (ψ t) = W.χ ⟨t, H.X.I.T_le t.2⟩ := by
+    have h : ∀ t : H.X.I.T, ∃ a : c'.O, algebraMap c'.O ℂ a = W.χ ⟨t, H.X.I.T_le t.2⟩ := by
+      intro t
+      have hact := W.torusAction ⟨t, H.X.I.T_le t.2⟩ 0
+      rw [ite_eq_left (by rfl)] at hact
+      rw [← hact]
+      exact W.integral_torusCharacter t t.2 0 0
+    choose a ha using h
+    let f : H.X.I.T →* c'.O :=
+      { toFun := a
+        map_one' := hinj (by rw [ha, map_one]; exact congrArg Units.val (map_one W.χ))
+        map_mul' := fun s t => hinj (by
+          rw [map_mul, ha, ha, ha, ← Units.val_mul, ← map_mul]
+          rfl) }
+    exact ⟨f.toHomUnits, ha⟩
+  obtain ⟨ψ, hψ⟩ := hψexists
   let φ : H.X.I.T →* c'.Oˣ := (Units.map (algebraMap A c'.O : A →* c'.O)).comp θ * ψ⁻¹
   obtain ⟨e, he⟩ := hAr
   have hχ : ∀ t : H.X.I.T, algebraMap A ℂ (θ t) = algebraMap c'.O ℂ (φ t) * W.χ ⟨t, H.X.I.T_le t.2⟩ := by
@@ -374,8 +407,39 @@ theorem UpperTheory.V.Z.Desc.V0.spec2 :
     Sp.absSpec2 H.X hinj W (H.τA A) θ hWt.cont φ c0 (le_max_left _ _) hφ hχ H.lev (Sp.lev_dir H) hAx.fin hWt.free
       (H.τC ι) hτ' _ rfl
   have hcl : ∀ K e', H.ClAt θ ι x.toRingHom lam W.ξ K e' =
-      H.X.Cl (H.τC ι) W.ξ (H.lev K) e' ((Units.map (algebraMap c'.O ℂ : c'.O →* ℂ)).comp φ) :=
-    fun K e' => spec_cl H θ ι x.toRingHom lam W.ξ K e' _ (fun v i y => hφeV v i y)
+      H.X.Cl (H.τC ι) W.ξ (H.lev K) e' ((Units.map (algebraMap c'.O ℂ : c'.O →* ℂ)).comp φ) := by
+    intro K e'
+    let φC := (Units.map (algebraMap c'.O ℂ : c'.O →* ℂ)).comp φ
+    have hφC : ∀ v i y, (φC (eV n H.Sl v i y) : ℂ) = ι (H.finPart θ x.toRingHom lam v i y) := hφeV
+    change H.ClAt θ ι x.toRingHom lam W.ξ K e' = H.X.Cl (H.τC ι) W.ξ (H.lev K) e' φC
+    ext F
+    constructor
+    · rintro ⟨⟨⟨⟨⟨h1, -⟩, h2⟩, h3⟩, h4⟩, h5⟩
+      refine ⟨⟨h1, h2⟩, h3, h4, ?_⟩
+      let M : Submonoid H.X.I.T :=
+        { carrier := {t | H.X.rpF ℂ (W.d + 1) H.m t F = (((φC t)⁻¹ : ℂˣ) : ℂ) • F}
+          one_mem' := by simp
+          mul_mem' := fun {a b} ha hb => by
+            have ha' : H.X.rpF ℂ (W.d + 1) H.m a F = (((φC a)⁻¹ : ℂˣ) : ℂ) • F := ha
+            have hb' : H.X.rpF ℂ (W.d + 1) H.m b F = (((φC b)⁻¹ : ℂˣ) : ℂ) • F := hb
+            change H.X.rpF ℂ (W.d + 1) H.m ((a : GV n H.Sl) * b) F = (((φC (a * b))⁻¹ : ℂˣ) : ℂ) • F
+            rw [map_mul, Module.End.mul_apply, hb', map_smul, ha', smul_smul, map_mul,
+              mul_inv_rev, Units.val_mul] }
+      refine Sp.torus_mem_submonoid_of_elementaryTorus H.Sl M fun v i y => ?_
+      have h6 : F ∈ ⨅ (v) (i) (y), Module.End.eigenspace (H.X.rpF ℂ (W.d + 1) H.m (eV n H.Sl v i y : H.X.I.T))
+        (ι (H.finPart θ x.toRingHom lam v i y))⁻¹ := h5
+      simp only [Submodule.mem_iInf, Module.End.mem_eigenspace_iff] at h6
+      change H.X.rpF ℂ (W.d + 1) H.m _ F = _
+      rw [Units.val_inv_eq_inv_val, hφC]
+      exact h6 v i y
+    · rintro ⟨⟨h1, h2⟩, h3, h4, h5⟩
+      refine ⟨⟨⟨⟨⟨h1, fun u hu => h2 u (Subgroup.mem_sup_left hu)⟩, h2⟩, h3⟩, h4⟩, ?_⟩
+      change F ∈ ⨅ (v) (i) (y), Module.End.eigenspace (H.X.rpF ℂ (W.d + 1) H.m (eV n H.Sl v i y : H.X.I.T))
+        (ι (H.finPart θ x.toRingHom lam v i y))⁻¹
+      simp only [Submodule.mem_iInf, Module.End.mem_eigenspace_iff]
+      intro v i y
+      rw [← hφC, ← Units.val_inv_eq_inv_val]
+      exact h5 _
   have hP : ∀ (v : H.V) (j : ℕ), alV n H.Sl v j ∈ H.X.I.P := by
     intro v j
     exact Sp.alV_mem H.Sl v j
@@ -396,8 +460,26 @@ theorem UpperTheory.V.Z.Desc.V0.spec2 :
       exact Sp.chi_alV H.Sl ι lam R.χ hχR v j
     simp only [HSet.uzC, Frame.UF, Subtype.coe_mk]
     rw [Units.val_inv_eq_inv_val, hz]
-  have hint : ∀ μ : ℂ, IsIntegral c'.O μ ↔ ‖ι.symm μ‖ ≤ 1 := spec_int c' ι (fun a => rfl)
-  have hunit : ∀ μ : ℂ, IsIntUnit c'.O μ ↔ ‖ι.symm μ‖ = 1 := spec_unit c' ι (fun a => rfl)
+  have hint : ∀ μ : ℂ, IsIntegral c'.O μ ↔ ‖ι.symm μ‖ ≤ 1 := by
+    intro μ
+    let iAlg : Qbar l →ₐ[c'.O] ℂ := { ι.toRingHom with commutes' := fun _ => rfl }
+    calc
+      IsIntegral c'.O μ ↔ IsIntegral c'.O (ι.symm μ) := by
+        have h := isIntegral_algHom_iff iAlg ι.injective (x := ι.symm μ)
+        rwa [show iAlg (ι.symm μ) = μ from ι.apply_symm_apply μ] at h
+      _ ↔ IsIntegral ℤ_[l] (ι.symm μ) := ⟨fun h => isIntegral_trans _ h, fun h => h.tower_top⟩
+      _ ↔ ‖ι.symm μ‖ ≤ 1 := hpadic _
+  have hunit : ∀ μ : ℂ, IsIntUnit c'.O μ ↔ ‖ι.symm μ‖ = 1 := by
+    intro μ
+    rw [IsIntUnit, hint, hint, map_inv₀, norm_inv]
+    constructor
+    · rintro ⟨h0, h1, h2⟩
+      have hpos : 0 < ‖ι.symm μ‖ := norm_pos_iff.2 ((map_ne_zero ι.symm).2 h0)
+      exact le_antisymm h1 ((inv_le_one₀ hpos).1 h2)
+    · intro h
+      refine ⟨fun h0 => ?_, h.le, by rw [h, inv_one]⟩
+      rw [h0, map_zero, norm_zero] at h
+      exact zero_ne_one h
   have hord : ∀ K e', H.OrdAt θ ι x.toRingHom lam W.ξ K e' =
       H.X.ClOrd W (H.τC ι) (H.lev K) e' ((Units.map (algebraMap c'.O ℂ : c'.O →* ℂ)).comp φ) := by
     intro K e'

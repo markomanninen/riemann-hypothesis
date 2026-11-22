@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
-import Formalism.LocalToGlobal.Columns.HeckeSp
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Formalism.LocalToGlobal.Columns.HeckeSp
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,8 +34,8 @@ def SphOp (V : HSp D) (P : Pl D.host.E) (d : List ℤ) (R : Finset (GA D V)) : P
 
 def IsLab (V : HSp D) (P : Pl D.host.E) (d : List ℤ) : Prop := ∃ R, SphOp V P d R
 
-open Classical in
 
+open Classical in
 def rep (V : HSp D) (P : Pl D.host.E) (d : List ℤ) : Finset (GA D V) :=
   if h : IsLab V P d then h.choose else ∅
 
@@ -51,8 +55,8 @@ def hkF (V : HSp D) {W : Type} [AddCommGroup W] [Module ℂ W] (P : Pl D.host.E)
 
 def dualC (c : List ℤ →₀ ℂ) : List ℤ →₀ ℂ := Finsupp.mapDomain dualLab c
 
-open Classical in
 
+open Classical in
 def evC (V : HSp D) (P : Pl D.host.E) (a : List ℤ → ℂ) (c : List ℤ →₀ ℂ) : ℂ :=
   c.sum fun d z => if IsLab V P d then z * a d else 0
 
@@ -100,9 +104,6 @@ def Good (t : T) (P : Pl D.host.E) : Prop := ∀ PP, PP ∈ R.Pg ∨ PP ∈ R.Q 
 
 def IsSF (SF : Finset (HeightOneSpectrum (𝓞 D.host.F))) : Prop :=
   ∀ v, v ∈ SF ↔ ∃ PP ∈ R.Pg, PP.asIdeal.comap (algebraMap (𝓞 D.host.F) (𝓞 D.host.E)) = v.asIdeal
-
-def CorrAll (t : T) (P : Pl D.host.E) : Prop :=
-  (∀ k, k + 1 < D.R.m → SphCorr R.ψ (R.ωY t k) P) ∧ SphCorr R.ψ (R.ωX t) P ∧ ∀ i, SphCorr R.ψ (R.ωP i t) P
 
 def FixAll (t : T) (P : Pl D.host.E) : Prop :=
   (∀ k, k + 1 < D.R.m → VacFix R.ψ (R.ωY t k) P) ∧ VacFix R.ψ (R.ωX t) P ∧ ∀ i, VacFix R.ψ (R.ωP i t) P

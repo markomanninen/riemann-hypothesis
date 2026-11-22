@@ -1,10 +1,15 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.IsFirstChernClassOfLineBundle
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.DatPull
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.Precomp
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.GrSplit
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DividedPowerLogMultiplicativeStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.IsFirstChernClassOfLineBundle
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.DatPull
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.Precomp
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.GrSplit
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DividedPowerLogMultiplicativeStatement
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb GroundTheory.PAdicHodge
 
@@ -21,7 +26,8 @@ variable {A A' : Type} [CommRing A] [CommRing A'] {J : Ideal A} {J' : Ideal A'}
 theorem dlog_map {δ : DividedPowers J} {δ' : DividedPowers J'} {f : A →+* A'} (hf : IsDPMorphism δ δ' f)
     (N : ℕ) {v : A} (hv : v - 1 ∈ J) : f (dlog δ N v) = dlog δ' N (f v) := by
   unfold dlog
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   have e : f v - 1 = f (v - 1) := by rw [map_sub, map_one]
   rw [e, hf.dpow_comp _ hv]
@@ -94,10 +100,6 @@ theorem uq_mul (a b c : Spec (CommRingCat.of A) ⟶ D.Y) (h : a ≫ D.f = b ≫ 
     uq D a b h * uq D b c h' = uq D a c (h.trans h') := by
   rw [uq, uq, ← map_mul, D.coc]
   rfl
-
-theorem uq_self (a : Spec (CommRingCat.of A) ⟶ D.Y) : uq D a a rfl = 1 := by
-  have := uq_mul D a a a rfl rfl
-  simpa using this
 
 theorem uq_congr {a a' b b' : Spec (CommRingCat.of A) ⟶ D.Y} (ea : a = a') (eb : b = b')
     (h : a ≫ D.f = b ≫ D.f) (h' : a' ≫ D.f = b' ≫ D.f) : uq D a b h = uq D a' b' h' := by

@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.SpecialMaps.QuotObjDefs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuotGlobalHolds
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPullbackKernelOfKernelPair
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsClopenTorsionKernelLocusStatement
-import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.ExistsMemUIdealIdempotentModPrimePow
+module
+
+public import Development.AutomorphicArithmetic.SpecialMaps.QuotObjDefs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuotGlobalHolds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPullbackKernelOfKernelPair
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsClopenTorsionKernelLocusStatement
+public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.ExistsMemUIdealIdempotentModPrimePow
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.ES GlobalTheory.IwLevel UpperTheory.QO
 
@@ -46,13 +51,13 @@ private theorem uIdeal_pow_le (r : ℤ) (w : Ideal (𝓞 D.F)) (hw : w ≠ ⊤) 
   have hbar1 : π (D.bar ε) = 1 := by
     obtain ⟨d, hd⟩ := h1
     have e0 : D.bar ε = 1 + (p : 𝓞 D.F) ^ e * d - ε := by linear_combination hd
-    rw [e0, map_sub, map_add, map_mul, hpe, hε0, map_one]
+    rw [e0, map_sub, map_add (f := _), map_mul, hpe, hε0, map_one]
     ring
   obtain ⟨x, y, hxy⟩ := Ideal.mem_span_pair.1 hε
   obtain ⟨z, hz⟩ := mul_bar_eq r w hw hu
   have hb : D.bar ε = D.bar x * (p : 𝓞 D.F) + D.bar y * (D.bar D.ω - (r : 𝓞 D.F)) := by
     rw [← hxy]
-    simp only [map_add, map_mul, map_sub, map_natCast, map_intCast]
+    simp only [map_add (f := _), map_mul, map_sub, map_natCast, map_intCast]
   have hkey : π (D.ω - (r : 𝓞 D.F)) ∈ Ideal.span {π (p : 𝓞 D.F)} := by
     refine Ideal.mem_span_singleton'.2 ⟨π (D.bar x * (D.ω - (r : 𝓞 D.F)) + D.bar y * z), ?_⟩
     have e2 : (D.bar x * (D.ω - (r : 𝓞 D.F)) + D.bar y * z) * (p : 𝓞 D.F)
@@ -100,7 +105,7 @@ private def ann (o : Obj b N s) {T : Over S} (g : T ⟶ o.A) : Ideal (𝓞 D.F) 
   add_mem' := by
     intro x y hx hy
     simp only [Set.mem_setOf_eq] at hx hy ⊢
-    rw [map_add, o.act.add, MonObj.comp_mul, hx, hy, _root_.mul_one]
+    rw [map_add (f := _), o.act.add, MonObj.comp_mul, hx, hy, _root_.mul_one]
   zero_mem' := by
     have h := o.act.add 0 0
     rw [add_zero] at h
@@ -128,7 +133,7 @@ private theorem act_natCast (o : Obj b N s) (n : ℕ) :
     have h0 : o.act.act 0 = 1 := left_eq_mul.1 h
     rw [Nat.cast_zero, map_zero, h0, pow_zero]
   | succ n ih =>
-    rw [Nat.cast_succ, map_add, o.act.add, ih, map_one, o.act.one, pow_succ]
+    rw [Nat.cast_succ, map_add (f := _), o.act.add, ih, map_one, o.act.one, pow_succ]
 
 private theorem natCast_mem_ann {o : Obj b N s} {T : Over S} (g : T ⟶ o.A) (n : ℕ) :
     (n : 𝓞 D.F) ∈ ann o g ↔ g ^ n = 1 := by

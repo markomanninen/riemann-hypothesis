@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RingEquivPlaceCorrespondencePlaceUnder
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RingEquivPlaceCorrespondencePlaceUnder
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -13,7 +17,7 @@ noncomputable section
 namespace UpperTheory.ConvolutionTheory.R2.Ff.VectorFieldOperators
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-  [IsTotallyReal F] [IsTotallyComplex E]
+  [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 
 private def Dm (s : ℂ) (d : Fin 4 → ℂ) : Matrix (Fin 2) (Fin 2) ℂ :=
   !![d 1, (2 : ℂ)⁻¹ * (d 2 + s⁻¹ * d 3); (2 : ℂ)⁻¹ * (d 2 - s⁻¹ * d 3), d 0]
@@ -80,7 +84,7 @@ private theorem emb_ext (D : Dat F E) {τ τ' : E →+* ℂ} (h : τ.comp (algeb
   have hc : ∀ c : F, τ (algebraMap F E c) = τ' (algebraMap F E c) := fun c => RingHom.congr_fun h c
   refine RingHom.ext fun x => ?_
   rw [← D.b.sum_repr x, Fin.sum_univ_two, D.b0, D.b1]
-  simp only [Algebra.smul_def, map_add, map_mul, map_one, hc, hθ]
+  simp only [Algebra.smul_def, map_add (f := _), map_mul, map_one, hc, hθ]
 
 private theorem conj_comp (τ : E →+* ℂ) :
     (ComplexEmbedding.conjugate τ).comp (algebraMap F E) = τ.comp (algebraMap F E) := by
@@ -89,7 +93,7 @@ private theorem conj_comp (τ : E →+* ℂ) :
   have := RingHom.congr_fun hr x
   simpa [ComplexEmbedding.conjugate_coe_eq] using congrArg id this
 
-private theorem pl_conj (τ : E →+* ℂ) : pl F (ComplexEmbedding.conjugate τ) = pl F τ := by
+private theorem pl_conj (τ : E →+* ℂ) : pl (F := F) (ComplexEmbedding.conjugate τ) = pl (F := F) τ := by
   unfold pl
   rw [conj_comp]
 
@@ -103,7 +107,7 @@ private theorem conj_ne (D : Dat F E) (τ : E →+* ℂ) : τ ≠ ComplexEmbeddi
   have h2 := (θ_im D τ).2
   exact h2 (self_eq_neg.1 h1)
 
-private theorem pl_fiber (D : Dat F E) {τ τ' : E →+* ℂ} (h : pl F τ' = pl F τ) :
+private theorem pl_fiber (D : Dat F E) {τ τ' : E →+* ℂ} (h : pl (F := F) τ' = pl (F := F) τ) :
     τ' = τ ∨ τ' = ComplexEmbedding.conjugate τ := by
   have h1 : τ'.comp (algebraMap F E) = τ.comp (algebraMap F E) := by
     rcases InfinitePlace.mk_eq_iff.1 h with h | h
@@ -115,7 +119,7 @@ private theorem pl_fiber (D : Dat F E) {τ τ' : E →+* ℂ} (h : pl F τ' = pl
   · exact Or.inl (emb_ext D h1 h3)
   · exact Or.inr (emb_ext D (h1.trans (conj_comp τ).symm) (h3.trans (conj_θ D τ).symm))
 
-private theorem pl_surj (D : Dat F E) (w : InfinitePlace F) : ∃ τ : E →+* ℂ, pl F τ = w := by
+private theorem pl_surj (D : Dat F E) (w : InfinitePlace F) : ∃ τ : E →+* ℂ, pl (F := F) τ = w := by
   haveI : Module.Finite F E := Module.Finite.of_basis D.b
   obtain ⟨w', hw'⟩ := InfinitePlace.comap_surjective (k := F) (K := E) w
   refine ⟨w'.embedding, ?_⟩
@@ -124,11 +128,11 @@ private theorem pl_surj (D : Dat F E) (w : InfinitePlace F) : ∃ τ : E →+* �
   exact hw'
 
 private theorem sum_pl (D : Dat F E) (f : (E →+* ℂ) → ℂ) (g : InfinitePlace F → ℂ)
-    (h : ∀ τ, f τ + f (ComplexEmbedding.conjugate τ) = g (pl F τ)) : ∑ τ, f τ = ∑ w, g w := by
-  rw [← Finset.sum_fiberwise Finset.univ (pl F) f]
+    (h : ∀ τ, f τ + f (ComplexEmbedding.conjugate τ) = g (pl (F := F) τ)) : ∑ τ, f τ = ∑ w, g w := by
+  rw [← Finset.sum_fiberwise Finset.univ (fun τ => pl (F := F) τ) f]
   refine Finset.sum_congr rfl fun w _ => ?_
   obtain ⟨τ, rfl⟩ := pl_surj D w
-  have hf : (Finset.univ.filter fun τ' : E →+* ℂ => pl F τ' = pl F τ) = {τ, ComplexEmbedding.conjugate τ} := by
+  have hf : (Finset.univ.filter fun τ' : E →+* ℂ => pl (F := F) τ' = pl (F := F) τ) = {τ, ComplexEmbedding.conjugate τ} := by
     ext τ'
     simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert, Finset.mem_singleton]
     refine ⟨pl_fiber D, ?_⟩
@@ -140,17 +144,17 @@ private theorem sum_pl (D : Dat F E) (f : (E →+* ℂ) → ℂ) (g : InfinitePl
 variable (D : Dat F E) (O : Fo.Ops F) (v : V4 F)
 
 private theorem X_apply (τ : E →+* ℂ) (a b : Fin 2) (ψ' : S4 F) :
-    (O.X D τ a b ψ').1 v = Hm (τ D.θ) (pl F τ) (fun i => TR.pInf F (v i)) a b * ψ'.1 v := by
+    (O.X D τ a b ψ').1 v = Hm (τ D.θ) (pl (F := F) τ) (fun i => TR.pInf F (v i)) a b * ψ'.1 v := by
   fin_cases a <;> fin_cases b <;> simp [Fo.Ops.X, Hm, O.x_apply, Fo.cw] <;> ring
 
 private theorem DX_apply (τ : E →+* ℂ) (a b : Fin 2) (ψ' : S4 F) :
-    (O.DX D τ a b ψ').1 v = Dm (τ D.θ) (fun i => (O.d (pl F τ) i ψ').1 v) a b := by
+    (O.DX D τ a b ψ').1 v = Dm (τ D.θ) (fun i => (O.d (pl (F := F) τ) i ψ').1 v) a b := by
   fin_cases a <;> fin_cases b <;> simp [Fo.Ops.DX, Dm] <;> ring
 
 private theorem dE_apply (τ : E →+* ℂ) (i j : Fin 2) (ψ' : S4 F) :
     (O.dE D τ i j ψ').1 v = -(if i = j then ψ'.1 v else 0) -
-      ∑ b, Hm (τ D.θ) (pl F τ) (fun i => TR.pInf F (v i)) j b *
-        Dm (τ D.θ) (fun i => (O.d (pl F τ) i ψ').1 v) i b := by
+      ∑ b, Hm (τ D.θ) (pl (F := F) τ) (fun i => TR.pInf F (v i)) j b *
+        Dm (τ D.θ) (fun i => (O.d (pl (F := F) τ) i ψ').1 v) i b := by
   unfold Fo.Ops.dE
   rw [Fin.sum_univ_two, Fin.sum_univ_two]
   by_cases h : i = j
@@ -162,13 +166,13 @@ private theorem dL_apply (Y : Lie E 2) (ψ' : S4 F) :
   simp [Fo.Ops.dL, LinearMap.sum_apply, Finset.sum_apply]
 
 private def T (Y : Lie E 2) (ψ' : S4 F) (τ : E →+* ℂ) : ℂ :=
-  ∑ a, ∑ b, ((Matrix.of Y).map (coord τ) * Hm (τ D.θ) (pl F τ) (fun i => TR.pInf F (v i))) a b *
-    Dm (τ D.θ) (fun i => (O.d (pl F τ) i ψ').1 v) a b
+  ∑ a, ∑ b, ((Matrix.of Y).map (coord τ) * Hm (τ D.θ) (pl (F := F) τ) (fun i => TR.pInf F (v i))) a b *
+    Dm (τ D.θ) (fun i => (O.d (pl (F := F) τ) i ψ').1 v) a b
 
 private theorem T_conj (Y : Lie E 2) (ψ' : S4 F) (τ : E →+* ℂ) :
     T D O v Y ψ' (ComplexEmbedding.conjugate τ) =
-      ∑ a, ∑ b, (Hm (τ D.θ) (pl F τ) (fun i => TR.pInf F (v i)) * ((Matrix.of Y).map (coord τ))ᴴ) a b *
-        Dm (τ D.θ) (fun i => (O.d (pl F τ) i ψ').1 v) a b := by
+      ∑ a, ∑ b, (Hm (τ D.θ) (pl (F := F) τ) (fun i => TR.pInf F (v i)) * ((Matrix.of Y).map (coord τ))ᴴ) a b *
+        Dm (τ D.θ) (fun i => (O.d (pl (F := F) τ) i ψ').1 v) a b := by
   have hy : (Matrix.of Y).map (coord (ComplexEmbedding.conjugate τ)) =
       ((Matrix.of Y).map (coord τ)).map (starRingEnd ℂ) := by
     ext a b
@@ -181,7 +185,7 @@ private theorem term (Y : Lie E 2) (hY : (Matrix.of Y).trace = 0) (ψ' : S4 F) (
     ∑ i, ∑ j, coord τ (Y i j) * (O.dE D τ i j ψ').1 v = -T D O v Y ψ' τ := by
   have tr : coord τ (Y 0 0) + coord τ (Y 1 1) = 0 := by
     rw [Matrix.trace_fin_two] at hY
-    rw [← map_add]
+    rw [← map_add (f := _)]
     have : Y 0 0 + Y 1 1 = 0 := hY
     rw [this, map_zero]
   simp only [dE_apply, T, Fin.sum_univ_two, Matrix.mul_apply, Matrix.map_apply, Matrix.of_apply]
@@ -194,13 +198,13 @@ end
 
 open UpperTheory.ConvolutionTheory.R2.Ff.VectorFieldOperators in
 theorem UpperTheory.ConvolutionTheory.R2.Ff.vfOps :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E] (D : Dat F E) (O : Fo.Ops F), VfOps D O := by
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (D : Dat F E) (O : Fo.Ops F), VfOps D O := by
   intro F E _ _ _ _ _ _ _ D O Y hY v x' hx φ
   rw [Finset.sum_comm, dL_apply]
   simp_rw [term D O v Y hY φ]
   symm
   refine sum_pl D (fun τ => -T D O v Y φ τ) _ fun τ => ?_
-  have h1 := pair (τ D.θ) (θ_im D τ).2 (pl F τ) x' (fun i => (O.d (pl F τ) i φ).1 v)
+  have h1 := pair (τ D.θ) (θ_im D τ).2 (pl (F := F) τ) x' (fun i => (O.d (pl (F := F) τ) i φ).1 v)
   rw [hx τ, pair_neg] at h1
   rw [← h1, T_conj]
   unfold T

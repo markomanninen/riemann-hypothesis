@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PReproA
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PReproC
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.CompatFub
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PReproA
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PReproC
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.CompatFub
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,7 +98,7 @@ theorem reproEx (hK : KerEx) (hM : MultAlg) (hB : Bridge.BridgeSt) : ReproEx := 
     · rw [norm_mul, Complex.norm_of_nonneg hc.le, norm_prod]
       gcongr
       rw [← Finset.card_univ, ← Finset.prod_const]
-      exact Finset.prod_le_prod (fun _ _ => by norm_num) fun v _ => hs1 v
+      exact Finset.prod_le_prod₀ (fun _ _ => by norm_num) fun v _ => hs1 v
     · set f : (InfinitePlace E → G N) → ℂ := fun t => φ.1 (x * infP N t) with hfdef
       have hfc : Continuous f := continuous_smooth_infP N φ x
       have e1 : (fun y => (U0 : Set (GA E N)).indicator (fun y => A (pInfH N y)) y * φ.1 (x * y)) =

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.SemisimpleDecompositionOf
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.SemisimpleDecompositionOf
+
+@[expose] public section
 
 noncomputable section
 

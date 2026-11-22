@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.LevCompact
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.LevCompact
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum
 
@@ -104,10 +108,11 @@ theorem UpperTheory.V.Kum.homExt :
     hclosed
     (U := {a | ∃ c ∈ cycU l U, ∃ w ∈ E.fixingSubgroup, a = c * w})
     (by
+      apply mem_nhdsSet_iff_forall.mpr
       intro x hx
       have hxc := hinter x hx
       refine Filter.mem_of_superset
-        (IsOpen.mem_nhds (hNopen.preimage (continuous_mul_left x⁻¹)) (by simpa using Subgroup.one_mem _))
+        (IsOpen.mem_nhds (hNopen.preimage (continuous_const_mul x⁻¹)) (by simpa using Subgroup.one_mem _))
         (fun a ha => ⟨x, hxc, x⁻¹ * a, ha, by group⟩))
   have hex : ∀ y : levU l U n, ∃ c : cycU l U, ∃ w ∈ E.fixingSubgroup, (y : G F Ω) = c * w := by
     intro y

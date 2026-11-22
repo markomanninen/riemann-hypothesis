@@ -1,19 +1,27 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SameUnifRefl
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FinitePartOfIsFinitePart
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.WeilIsGrpPullbackOfCommute
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsFiniteCubeInduction
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsLinearOfIsPullUniformisation
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.QkToAkBaseChange
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.QkToAkDescendsAlongBaseChange
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIdentityPullbackDegeneration
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PullPointIdentityDegeneration
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsBaseChangeUniformization
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SameUniformizationIdentityPullback
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.UniformizationPowerGroup
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IotaPointsAdditive
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TauBalOfIsPullDeg
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TorsionFiniteFlatIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SameUnifRefl
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FinitePartOfIsFinitePart
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.WeilIsGrpPullbackOfCommute
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsFiniteCubeInduction
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsLinearOfIsPullUniformisation
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.QkToAkBaseChange
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.QkToAkDescendsAlongBaseChange
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIdentityPullbackDegeneration
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PullPointIdentityDegeneration
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsBaseChangeUniformization
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SameUniformizationIdentityPullback
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExpPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifPowOf3
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.WeightedChartPullback.CancelSecAct
+public import Development.AbelianVarietyTheory.BlockTheory.CMModuli.FlatIsoUnitGenerator
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsSmulPtSmulPt
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TauBalOfIsPullDeg
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -47,10 +55,6 @@ end Flat
 section Move
 
 variable {I : Ideal R} {t t' : SAB H (Sp R)}
-
-def withUnif (P : PELUnif I t) (U' : Unif I P.D P.A t'.G) (hb : U'.LG = t'.PP)
-    (hl : letI := H.starRing; U'.toUnifPre.OLinear (𝓞 E) P.oD P.oA t'.act.toRingAct) : PELUnif I t' :=
-  { D := P.D, mod := P.mod, oD := P.oD, A := P.A, oA := P.oA, U := U', bundle := hb, lin := hl, w0 := P.w0 }
 
 end Move
 

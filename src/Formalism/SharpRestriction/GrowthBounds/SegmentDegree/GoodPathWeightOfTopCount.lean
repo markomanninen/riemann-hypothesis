@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DistAddTwoLeOfSameVec
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ProdFromSelfEqOne
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.TypOfTypical
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DistAddTwoLeOfSameVec
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ProdFromSelfEqOne
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.TypOfTypical
+
+@[expose] public section
 
 noncomputable section
 

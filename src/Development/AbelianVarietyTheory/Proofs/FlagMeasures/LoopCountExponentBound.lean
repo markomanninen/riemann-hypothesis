@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
-import Formalism.FlagUnipotentLattices.CardSubmodulesAndLinearEquivBounds
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Formalism.FlagUnipotentLattices.CardSubmodulesAndLinearEquivBounds
+
+@[expose] public section
+
 open NumberField Module Matrix Formalism.BasicNotions
 open scoped ENNReal
 

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 open scoped Matrix
 
@@ -62,7 +67,7 @@ theorem exists_det_ne_zero_col_mem_of_span_eq_top {E : Type} [Field E] {n : ℕ}
 
 theorem exists_local_basis_of_isLattice (E : Type) [Field E] [NumberField E]
     (w : HeightOneSpectrum (𝓞 E)) (n : ℕ) (L : Submodule (𝓞 E) (Fin n → E))
-    (hL : L.IsLattice E) :
+    (hL : L.IsFullLattice E) :
     ∃ X : Matrix (Fin n) (Fin n) E, IsUnit X.det ∧ (∀ j, (fun i => X i j) ∈ L) ∧
       ∀ x ∈ L, ∀ i, w.valuation E ((X⁻¹ *ᵥ x) i) ≤ 1 := by
   classical

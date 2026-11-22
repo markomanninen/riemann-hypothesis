@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFShiftZeroIff
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsExtensionPullOver
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.GermEqZeroOfThickenings
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ValRPullbackTwistingSheafTransition
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFShiftZeroIff
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsExtensionPullOver
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.GermEqZeroOfThickenings
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ValRPullbackTwistingSheafTransition
+
+@[expose] public section
 
 noncomputable section
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
@@ -88,6 +92,10 @@ theorem exists_chart_loc (hL : L.IsLB) (x : Sp R ⟶ Z) : ∃ j, ⊤ ≤ x ⁻¹
 theorem valR_cocycle (hL : L.IsLB) (x : Sp R ⟶ Z) {i j k : L.ι} (hi : ⊤ ≤ x ⁻¹ᵁ L.U i) (hj : ⊤ ≤ x ⁻¹ᵁ L.U j)
     (hk : ⊤ ≤ x ⁻¹ᵁ L.U k) : valR x (L.U i ⊓ L.U j) (L.g i j).val * valR x (L.U j ⊓ L.U k) (L.g j k).val =
       valR x (L.U i ⊓ L.U k) (L.g i k).val := by
+  have toStkA_valR (f : Sp R ⟶ Z) (U : Z.Opens) (z : Sp R)
+      (ht : ⊤ ≤ f ⁻¹ᵁ U) (a : Γ(Z, U)ˣ) :
+      toStkA z (valR f U a.val) = (gm f z U a).val := by
+    rw [FormalValue.toStkA_valR_eq_gs f U z ht, gs_unit f z U (ht trivial)]
   apply toStkA_injective
   rw [map_mul, toStkA_valR x (L.U i ⊓ L.U j) _ (fun _ hz => ⟨hi hz, hj hz⟩),
     toStkA_valR x (L.U j ⊓ L.U k) _ (fun _ hz => ⟨hj hz, hk hz⟩),
@@ -114,6 +122,10 @@ theorem le_wchart {p : Y ⟶ Z} {A : Type} [CommRing A] {y : Sp A ⟶ Y} {j : L.
 theorem sval_trans' {p : Y ⟶ Z} {m : ℕ} (s : SecP L p m) (y : Sp R ⟶ Y) {i j : L.ι} (hi : ⊤ ≤ (y ≫ p) ⁻¹ᵁ L.U i)
     (hj : ⊤ ≤ (y ≫ p) ⁻¹ᵁ L.U j) :
     ArcPts.sval s y i = valR (y ≫ p) (L.U i ⊓ L.U j) (L.g i j).val ^ m * ArcPts.sval s y j := by
+  have toStkA_valR (f : Sp R ⟶ Z) (U : Z.Opens) (z : Sp R)
+      (ht : ⊤ ≤ f ⁻¹ᵁ U) (a : Γ(Z, U)ˣ) :
+      toStkA z (valR f U a.val) = (gm f z U a).val := by
+    rw [FormalValue.toStkA_valR_eq_gs f U z ht, gs_unit f z U (ht trivial)]
   apply toStkA_injective
   have e := sec_trans s y (cpt R) (j := fun _ => i) (j' := fun _ => j) (le_wchart hi trivial) (le_wchart hj trivial)
   rw [map_mul, map_pow, toStkA_valR (y ≫ p) (L.U i ⊓ L.U j) _ (fun _ hz => ⟨hi hz, hj hz⟩)]

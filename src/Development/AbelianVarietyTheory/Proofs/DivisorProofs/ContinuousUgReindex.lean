@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
-import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceAdeleRing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
+public import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceAdeleRing
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,8 +86,8 @@ theorem isDblCoord_transD {ξ : E} {JA : Matrix α α E} {JB : Matrix β β E} {
     (d : GlobalTheory.WeilM.Darboux (GlobalTheory.WeilM.symp c ξ JA JB) κ) :
     GlobalTheory.WeilM.IsDblCoord c ξ JB JA (transD c d) (transD c (dblRows d)) := by
   intro w₁ w₂
-  have h1 : (Matrix.fromCols w₁ w₂)ᵀ.submatrix Sum.inl id = w₁ᵀ := by ext i j; simp [Matrix.fromCols]
-  have h2 : (Matrix.fromCols w₁ w₂)ᵀ.submatrix Sum.inr id = w₂ᵀ := by ext i j; simp [Matrix.fromCols]
+  have h1 : (Matrix.fromCols w₁ w₂)ᵀ.submatrix Sum.inl id = w₁ᵀ := by ext i j; simp [Matrix.fromCols, Function.swap]
+  have h2 : (Matrix.fromCols w₁ w₂)ᵀ.submatrix Sum.inr id = w₂ᵀ := by ext i j; simp [Matrix.fromCols, Function.swap]
   change (dblRows d).e (Matrix.fromCols w₁ w₂)ᵀ =
     (Sum.elim (d.e w₁ᵀ).1 (d.e w₂ᵀ).1, Sum.elim (d.e w₁ᵀ).2 (-(d.e w₂ᵀ).2))
   rw [dblRows_e, h1, h2]

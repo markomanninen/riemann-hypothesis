@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinMapsOfForall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AntiCols
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalBlockOfMatrix
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorLatticeInertPlaceSelfDual
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemAdelicLatticeAtFinitePlaceIffInert
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.QuadraticUnramifiedIffInertOrSplit
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AntiCols
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalBlockOfMatrix
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorLatticeInertPlaceSelfDual
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemAdelicLatticeAtFinitePlaceIffInert
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.QuadraticUnramifiedIffInertOrSplit
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped TensorProduct Matrix
 
 noncomputable section
@@ -16,7 +21,7 @@ open GlobalTheory.InertLocField GlobalTheory.InertSelfDual
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem nonempty_emb {σ : E →ₐ[F] E} (h : IsCMExt F E σ) [Algebra.Unramified (𝓞 F) (𝓞 E)] (v : Pl F)
+theorem nonempty_emb {σ : E →ₐ[F] E} (h : IsCMExt F E σ) [Algebra.Unramified (𝓞 F) (𝓞 E)] (v : Pl (F := F))
     (hv : ∀ w : HeightOneSpectrum (𝓞 E), ¬ Formalism.UG.IsInertAt F E v w) : Nonempty (E →ₐ[F] Fv F v) := by
   rcases (GlobalTheory.quadratic_unramified_iff_inert_or_split F E h.2.2.1 v).1 (fun w _ => inferInstance) with hp | hp
   · refine (hv ⟨_, hp, fun h0 => v.ne_bot ?_⟩ rfl).elim
@@ -24,29 +29,28 @@ theorem nonempty_emb {σ : E →ₐ[F] E} (h : IsCMExt F E σ) [Algebra.Unramifi
   · exact (nonempty_split_iff h).2 hp
 
 omit [NumberField E] in
-theorem piW_apply {v : Pl F} (τ : E →ₐ[F] Fv F v) (z : AE F E) : piW τ z = splitProj τ (evT E v z) := rfl
+theorem piW_apply {v : Pl (F := F)} (τ : E →ₐ[F] Fv F v) (z : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) : piW τ z = splitProj τ (evT (E := E) v z) := rfl
 
 omit [NumberField E] in
-theorem piW_cA {v : Pl F} (τ : E →ₐ[F] Fv F v) (σ : E →ₐ[F] E) (z : AE F E) :
+theorem piW_cA {v : Pl (F := F)} (τ : E →ₐ[F] Fv F v) (σ : E →ₐ[F] E) (z : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) :
     piW τ (cA σ z) = piW (τ.comp σ) z := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
+  induction z using TensorProduct.inductionOn with
   | tmul a e => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 omit [NumberField E] in
-theorem piW_algebraMap {v : Pl F} (τ : E →ₐ[F] Fv F v) (a : AF F) :
-    piW τ (algebraMap (AF F) (AE F E) a) = evFin F v a := by
+theorem piW_algebraMap {v : Pl (F := F)} (τ : E →ₐ[F] Fv F v) (a : AF F) :
+    piW τ (algebraMap (AF F) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) a) = evFin F v a := by
   show evFin F v a * τ 1 = _
   rw [map_one, mul_one]
 
 omit [NumberField E] in
-theorem piW_inclR {v : Pl F} (τ : E →ₐ[F] Fv F v) (e : E) : piW τ (inclR (F := F) (AF F) e) = τ e := by
+theorem piW_inclR {v : Pl (F := F)} (τ : E →ₐ[F] Fv F v) (e : E) : piW τ (inclR (F := F) (AF F) e) = τ e := by
   show evFin F v 1 * τ e = _
   rw [map_one, one_mul]
 
-theorem mem_latAt_iff {d : ℕ} (W : Spc F E d) (v : Pl F) (z : Fin d → AE F E) :
-    z ∈ GlobalTheory.InertSph.latAt W v ↔ At (evFin F v) z ∧ (fun i => evT E v (z i)) ∈ latLoc F W.L v := by
+theorem mem_latAt_iff {d : ℕ} (W : Spc F E d) (v : Pl (F := F)) (z : Fin d → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) :
+    z ∈ GlobalTheory.InertSph.latAt W v ↔ At (evFin F v) z ∧ (fun i => evT (E := E) v (z i)) ∈ latLoc F W.L v := by
   constructor
   · intro hz
     induction hz using AddSubgroup.closure_induction with
@@ -70,8 +74,8 @@ theorem mem_latAt_iff {d : ℕ} (W : Spc F E d) (v : Pl F) (z : Fin d → AE F E
       convert neg_mem hx.2 using 1
       funext i; simp
   · rintro ⟨hz, hm⟩
-    have key : ∀ y ∈ latLoc F W.L v, (fun i => liftT E v (y i)) ∈ GlobalTheory.InertSph.latAt W v := fun y hy => by
-      refine latLoc_induction (p := fun y => (fun i => liftT E v (y i)) ∈ GlobalTheory.InertSph.latAt W v)
+    have key : ∀ y ∈ latLoc F W.L v, (fun i => liftT (E := E) v (y i)) ∈ GlobalTheory.InertSph.latAt W v := fun y hy => by
+      refine latLoc_induction (p := fun y => (fun i => liftT (E := E) v (y i)) ∈ GlobalTheory.InertSph.latAt W v)
         (fun a ha x hx => GlobalTheory.InertSphLat.gen_mem W ha hx) ?_ (fun p q hp hq => ?_) (fun p hp => ?_) hy
       · convert zero_mem (GlobalTheory.InertSph.latAt W v) using 1
         funext i; simp
@@ -81,10 +85,18 @@ theorem mem_latAt_iff {d : ℕ} (W : Spc F E d) (v : Pl F) (z : Fin d → AE F E
         funext i; simp
     convert key _ hm using 1
     funext i
-    obtain ⟨y, hy⟩ := (at_iff v (z i)).1 fun u hu => congrFun (hz u hu) i
-    rw [← hy, evT_liftT]
+    have hproj : ∀ x : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E),
+        GlobalTheory.LatVac.liftV v 1 • x = liftT (E := E) v (evT (E := E) v x) := by
+      intro x
+      induction x using TensorProduct.inductionOn with
+      | tmul a e =>
+        rw [TensorProduct.smul_tmul', smul_eq_mul, liftV_one_mul]
+        rfl
+      | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy]
+    have hi := congrFun (hz _ (evFin_one_sub v)) i
+    rwa [Pi.smul_apply, Pi.zero_apply, sub_smul, one_smul, sub_eq_zero, hproj] at hi
 
-theorem mem_of_trace_int {ψ : AddChar (AF F) ℂ} (hψ : IsStd ψ) {v : Pl F} (hu : PsiUnr ψ v) (t : F)
+theorem mem_of_trace_int {ψ : AddChar (AF F) ℂ} (hψ : IsStd ψ) {v : Pl (F := F)} (hu : PsiUnr ψ v) (t : F)
     (ht : ∀ a : 𝓞 F, ∃ k : ℤ, Algebra.trace ℚ F ((a : F) * t) = k) :
     algebraMap F (Fv F v) t ∈ v.adicCompletionIntegers F := by
   refine (hu _).1 fun y hy => ?_
@@ -99,13 +111,14 @@ theorem mem_of_trace_int {ψ : AddChar (AF F) ℂ} (hψ : IsStd ψ) {v : Pl F} (
   exact h
 
 theorem form_mem {σ : E →ₐ[F] E} {B : Base F E} (hB : B.IsGood σ) {d r s : ℕ} {W : Spc F E d}
-    (hW : W.IsSkew σ B r s) {v : Pl F} (hu : PsiUnr B.ψ v) (τ : E →ₐ[F] Fv F v) {x y : Fin d → E}
+    (hW : W.IsSkew σ B r s) {v : Pl (F := F)} (hu : PsiUnr B.ψ v) (τ : E →ₐ[F] Fv F v) {x y : Fin d → E}
     (hx : x ∈ W.L) (hy : y ∈ W.L) : τ (form σ W.J x y) ∈ v.adicCompletionIntegers F := by
   haveI := hB.unram
   obtain ⟨m, p, c, hsc⟩ := exists_traceFamily (F := F) (E := E)
-  rw [← hsc (form σ W.J x y), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hsc (form σ W.J x y), map_sum]
   refine sum_mem fun i _ => ?_
-  rw [map_smul, Algebra.smul_def]
+  rw [Algebra.smul_def, map_mul, τ.commutes]
   refine mul_mem (mem_of_trace_int hB.std hu _ fun a => ?_) (apply_coe_mem τ _)
   have h := (hW.dual x).1 hx y hy (algebraMap (𝓞 F) (𝓞 E) a * c i)
   have e : (a : F) * Algebra.trace F E ((c i : E) * form σ W.J x y) =
@@ -117,7 +130,7 @@ theorem form_mem {σ : E →ₐ[F] E} {B : Base F E} (hB : B.IsGood σ) {d r s :
   exact ⟨k, by rw [← hk]; simp⟩
 
 omit [NumberField E] in
-theorem splitLat_induction {d : ℕ} {L : Submodule (𝓞 E) (Fin d → E)} {v : Pl F} {τ : E →ₐ[F] Fv F v}
+theorem splitLat_induction {d : ℕ} {L : Submodule (𝓞 E) (Fin d → E)} {v : Pl (F := F)} {τ : E →ₐ[F] Fv F v}
     (N : Submodule (v.adicCompletionIntegers F) (Fin d → Fv F v)) (hN : ∀ x ∈ L, (fun i => τ (x i)) ∈ N)
     {u : Fin d → Fv F v} (hu : u ∈ splitLat τ L) : u ∈ N := by
   obtain ⟨y, hy, rfl⟩ := hu
@@ -131,12 +144,12 @@ theorem splitLat_induction {d : ℕ} {L : Submodule (𝓞 E) (Fin d → E)} {v :
     funext i; simp [splitVec]
 
 omit [NumberField E] in
-theorem apply_mem_splitLat {d : ℕ} {L : Submodule (𝓞 E) (Fin d → E)} {v : Pl F} (τ : E →ₐ[F] Fv F v)
+theorem apply_mem_splitLat {d : ℕ} {L : Submodule (𝓞 E) (Fin d → E)} {v : Pl (F := F)} (τ : E →ₐ[F] Fv F v)
     {x : Fin d → E} (hx : x ∈ L) : (fun i => τ (x i)) ∈ splitLat τ L :=
   ⟨_, tmul_mem_latLoc (one_mem _) hx, funext fun i => by simp [splitVec]⟩
 
 theorem pairing_mem {σ : E →ₐ[F] E} {B : Base F E} (hB : B.IsGood σ) {d r s : ℕ} {W : Spc F E d}
-    (hW : W.IsSkew σ B r s) {v : Pl F} (hu : PsiUnr B.ψ v) (τ : E →ₐ[F] Fv F v) {u₁ u₂ : Fin d → Fv F v}
+    (hW : W.IsSkew σ B r s) {v : Pl (F := F)} (hu : PsiUnr B.ψ v) (τ : E →ₐ[F] Fv F v) {u₁ u₂ : Fin d → Fv F v}
     (h₁ : u₁ ∈ splitLat τ W.L) (h₂ : u₂ ∈ splitLat (τ.comp σ) W.L) :
     u₁ ⬝ᵥ W.J.map τ *ᵥ u₂ ∈ v.adicCompletionIntegers F := by
   let O : Submodule (v.adicCompletionIntegers F) (Fv F v) :=
@@ -152,10 +165,11 @@ theorem pairing_mem {σ : E →ₐ[F] E} {B : Base F E} (hB : B.IsGood σ) {d r 
   show β _ _ ∈ v.adicCompletionIntegers F
   rw [hβ]
   convert form_mem hB hW hu τ hx hy using 1
-  simp [form, dotProduct, Matrix.mulVec, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [form, dotProduct, Matrix.mulVec, map_sum]
 
 omit [NumberField E] in
-theorem col_mem {d : ℕ} {L : Submodule (𝓞 E) (Fin d → E)} {v : Pl F} {τ : E →ₐ[F] Fv F v}
+theorem col_mem {d : ℕ} {L : Submodule (𝓞 E) (Fin d → E)} {v : Pl (F := F)} {τ : E →ₐ[F] Fv F v}
     {b : GL (Fin d) (Fv F v)} (hb : IsSplitBasis τ L b) (j : Fin d) : (fun i => b.1 i j) ∈ splitLat τ L := by
   have := (hb (Pi.single j 1)).1 fun i => by
     by_cases e : i = j
@@ -164,7 +178,7 @@ theorem col_mem {d : ℕ} {L : Submodule (𝓞 E) (Fin d → E)} {v : Pl F} {τ 
   rwa [Matrix.mulVec_single_one] at this
 
 theorem exists_gram {σ : E →ₐ[F] E} {B : Base F E} (hB : B.IsGood σ) {d r s : ℕ} {W : Spc F E d}
-    (hW : W.IsSkew σ B r s) {v : Pl F} (hu : PsiUnr B.ψ v) (τ : E →ₐ[F] Fv F v) {b₁ b₂ : GL (Fin d) (Fv F v)}
+    (hW : W.IsSkew σ B r s) {v : Pl (F := F)} (hu : PsiUnr B.ψ v) (τ : E →ₐ[F] Fv F v) {b₁ b₂ : GL (Fin d) (Fv F v)}
     (h₁ : IsSplitBasis τ W.L b₁) (h₂ : IsSplitBasis (τ.comp σ) W.L b₂) :
     ∃ S : Matrix (Fin d) (Fin d) (v.adicCompletionIntegers F), IsUnit S.det ∧
       S.map (fun x => (x : Fv F v)) = b₁.1ᵀ * W.J.map τ * b₂.1 := by
@@ -209,7 +223,7 @@ open GlobalTheory.InertLocField
 
 theorem exists_split_dictionary : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E)
     {d : ℕ} (W : Spc F E d) (r s : ℕ), B.IsGood σ → W.IsSkew σ B r s →
-    ∀ (v : Pl F), (∀ w : HeightOneSpectrum (𝓞 E), ¬ Formalism.UG.IsInertAt F E v w) → PsiUnr B.ψ v →
+    ∀ (v : Pl (F := F)), (∀ w : HeightOneSpectrum (𝓞 E), ¬ Formalism.UG.IsInertAt F E v w) → PsiUnr B.ψ v →
     ∃ (π₁ π₂ : AE F E →+* Fv F v) (b₁ b₂ : GL (Fin d) (Fv F v)),
       ((∀ z, π₁ (cA σ z) = π₂ z) ∧ (∀ z, π₂ (cA σ z) = π₁ z) ∧
       (∀ a : AF F, π₁ (algebraMap (AF F) (AE F E) a) = evFin F v a) ∧
@@ -231,15 +245,37 @@ theorem exists_split_dictionary : ∀ {F E : Type} [Field F] [NumberField F] [Fi
   obtain ⟨τ⟩ := nonempty_emb h v hv
   obtain ⟨b₁, h₁⟩ := exists_isSplitBasis τ W.L h
   obtain ⟨b₂, h₂⟩ := exists_isSplitBasis (τ.comp σ) W.L h
+  have ev_lift (y : Fv F v ⊗[F] E) : evT (E := E) v (liftT (E := E) v y) = y := by
+    induction y using TensorProduct.inductionOn with
+    | tmul a e =>
+      change evFin F v (GlobalTheory.LatVac.liftV v a) ⊗ₜ[F] e = a ⊗ₜ[F] e
+      rw [GlobalTheory.LatVac.evFin_liftV]
+    | add x y hx hy => rw [map_add, map_add, hx, hy]
   refine ⟨piW τ, piW (τ.comp σ), b₁, b₂, ⟨piW_cA τ σ, fun z => ?_, piW_algebraMap τ, piW_algebraMap _,
     fun z hz e₁ e₂ => ?_, fun x₁ x₂ => ?_, fun z => ?_⟩, ?_⟩
   · rw [piW_cA, comp_conj_conj h]
-  · obtain ⟨y, rfl⟩ := (at_iff v z).1 hz
-    rw [piW_apply, evT_liftT] at e₁ e₂
-    rw [split_ext h τ (y := y) (z := 0) (by rw [e₁, map_zero]) (by rw [e₂, map_zero]), map_zero]
-  · refine ⟨liftT E v ((splitAlgEquiv h τ).symm (x₁, x₂)), at_liftT v _, ?_, ?_⟩
-    · rw [piW_apply, evT_liftT, splitProj_symm]
-    · rw [piW_apply, evT_liftT, splitProj_comp_symm]
+  · have hproj : ∀ x : AE F E,
+        GlobalTheory.LatVac.liftV v 1 • x = liftT (E := E) v (evT (E := E) v x) := by
+      intro x
+      induction x using TensorProduct.inductionOn with
+      | tmul a e =>
+        rw [TensorProduct.smul_tmul', smul_eq_mul, liftV_one_mul]
+        rfl
+      | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy]
+    have hz' := hz _ (evFin_one_sub v)
+    rw [sub_smul, one_smul, sub_eq_zero, hproj] at hz'
+    rw [piW_apply] at e₁ e₂
+    rw [hz', split_ext h τ (y := evT (E := E) v z) (z := 0) (by rw [e₁, map_zero]) (by rw [e₂, map_zero]), map_zero]
+  · have at_lift (y : Fv F v ⊗[F] E) : At (evFin F v) (liftT (E := E) v y) := by
+      intro u hu
+      induction y using TensorProduct.inductionOn with
+      | tmul a e =>
+        change u • (GlobalTheory.LatVac.liftV v a ⊗ₜ[F] e) = 0
+        rw [TensorProduct.smul_tmul', GlobalTheory.LatVac.at_liftV v a u hu, TensorProduct.zero_tmul]
+      | add x y hx hy => rw [map_add, smul_add, hx, hy, add_zero]
+    refine ⟨liftT (E := E) v ((splitAlgEquiv h τ).symm (x₁, x₂)), at_lift _, ?_, ?_⟩
+    · rw [piW_apply, ev_lift, splitProj_symm]
+    · rw [piW_apply, ev_lift, splitProj_comp_symm]
   · rw [mem_latAt_iff, mem_latLoc_iff_split τ h, h₁.mem_iff, h₂.mem_iff]
     rfl
   · have e : (incM F W.J).map (piW τ) = W.J.map τ := Matrix.ext fun i j => piW_inclR τ (W.J i j)

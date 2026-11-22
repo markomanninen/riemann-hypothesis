@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsNonzeroIntSmulMemOfIsLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsNonzeroIntSmulMemOfIsLattice
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.InertSph Matrix Filter
 open scoped TensorProduct
@@ -14,8 +18,8 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 theorem eventually_integral (a : AF F) : ∀ᶠ v : Pl F in cofinite, evFin F v a ∈ v.adicCompletionIntegers F :=
   a.2.2
 
-theorem smul_mem_latAt (X : Spc F E n) (w : Pl F) {b : AF F} (hb : evFin F w b ∈ w.adicCompletionIntegers F)
-    {z : Fin n → AE F E} (hz : z ∈ latAt X w) : b • z ∈ latAt X w := by
+theorem smul_mem_latAt (X : Spc F E n) (w : Pl (F := F)) {b : AF F} (hb : evFin F w b ∈ w.adicCompletionIntegers F)
+    {z : Fin n → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)} (hz : z ∈ latAt X w) : b • z ∈ latAt X w := by
   induction hz using AddSubgroup.closure_induction with
   | mem z hz =>
     obtain ⟨a, ha, hv, y, hy, rfl⟩ := hz
@@ -29,17 +33,11 @@ theorem smul_mem_latAt (X : Spc F E n) (w : Pl F) {b : AF F} (hb : evFin F w b �
   | add x y _ _ hx hy => rw [smul_add]; exact add_mem hx hy
   | neg x _ hx => rw [smul_neg]; exact neg_mem hx
 
-theorem exists_int_smul_mem (L : Submodule (𝓞 E) (Fin n → E)) (hL : L.IsLattice E) (v : Fin n → E) :
+theorem exists_int_smul_mem (L : Submodule (𝓞 E) (Fin n → E)) (hL : L.IsFullLattice E) (v : Fin n → E) :
     ∃ c : ℤ, c ≠ 0 ∧ c • v ∈ L := by
-  first
-  | exact @_root_.GlobalTheory.IntSmulMemLatticeTwistedOperators.exists_nonzero_int_smul_mem_of_isLattice
-  | exact _root_.GlobalTheory.IntSmulMemLatticeTwistedOperators.exists_nonzero_int_smul_mem_of_isLattice
-  | (apply _root_.GlobalTheory.IntSmulMemLatticeTwistedOperators.exists_nonzero_int_smul_mem_of_isLattice <;> assumption)
-  | (intros; apply _root_.GlobalTheory.IntSmulMemLatticeTwistedOperators.exists_nonzero_int_smul_mem_of_isLattice <;> assumption)
-  | (intros; apply @_root_.GlobalTheory.IntSmulMemLatticeTwistedOperators.exists_nonzero_int_smul_mem_of_isLattice <;> first | assumption | infer_instance)
-  | (intros; exact _root_.GlobalTheory.IntSmulMemLatticeTwistedOperators.exists_nonzero_int_smul_mem_of_isLattice ..)
+  exact _root_.GlobalTheory.IntSmulMemLatticeTwistedOperators.exists_nonzero_int_smul_mem_of_isLattice L hL v
 
-theorem exists_int_mulVec_mem (L : Submodule (𝓞 E) (Fin n → E)) (hL : L.IsLattice E) (N : Matrix (Fin n) (Fin n) E) :
+theorem exists_int_mulVec_mem (L : Submodule (𝓞 E) (Fin n → E)) (hL : L.IsFullLattice E) (N : Matrix (Fin n) (Fin n) E) :
     ∃ c : ℤ, c ≠ 0 ∧ ∀ y ∈ L, c • (N *ᵥ y) ∈ L := by
   have key : ∀ L' : Submodule (𝓞 E) (Fin n → E), L'.FG → ∃ c : ℤ, c ≠ 0 ∧ ∀ y ∈ L', c • (N *ᵥ y) ∈ L := by
     intro L' hL'
@@ -61,7 +59,7 @@ theorem exists_int_mulVec_mem (L : Submodule (𝓞 E) (Fin n → E)) (hL : L.IsL
       · rw [mul_smul]; exact zsmul_mem (hB b hb) c
   exact key L hL.fg
 
-theorem eventually_incM (X : Spc F E n) (hL : X.L.IsLattice E) (N : Matrix (Fin n) (Fin n) E) :
+theorem eventually_incM (X : Spc F E n) (hL : X.L.IsFullLattice E) (N : Matrix (Fin n) (Fin n) E) :
     ∀ᶠ w : Pl F in cofinite, ∀ z ∈ latAt X w, incM F N *ᵥ z ∈ latAt X w := by
   obtain ⟨c, hc, hN⟩ := exists_int_mulVec_mem X.L hL N
   filter_upwards [eventually_integral (algebraMap F (AF F) (c : F)⁻¹)] with w hw z hz
@@ -84,12 +82,12 @@ theorem eventually_incM (X : Spc F E n) (hL : X.L.IsLattice E) (N : Matrix (Fin 
   | add x y _ _ hx hy => rw [Matrix.mulVec_add]; exact add_mem hx hy
   | neg x _ hx => rw [Matrix.mulVec_neg]; exact neg_mem hx
 
-theorem eventually_single (X : Spc F E n) (hL : X.L.IsLattice E) (i j : Fin n) (t : AE F E) :
+theorem eventually_single (X : Spc F E n) (hL : X.L.IsFullLattice E) (i j : Fin n) (t : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) :
     ∀ᶠ w : Pl F in cofinite, ∀ z ∈ latAt X w, Matrix.single i j t *ᵥ z ∈ latAt X w := by
   induction t using TensorProduct.induction_on with
   | zero => exact Eventually.of_forall fun w z _ => by simp [zero_mem]
   | tmul a e =>
-    have h : Matrix.single i j (a ⊗ₜ[F] e : AE F E) = a • incM F (Matrix.single i j e) := by
+    have h : Matrix.single i j (a ⊗ₜ[F] e : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) = a • incM F (Matrix.single i j e) := by
       ext k l
       simp only [incM, Matrix.smul_apply, Matrix.map_apply, Matrix.single_apply]
       split_ifs
@@ -103,7 +101,7 @@ theorem eventually_single (X : Spc F E n) (hL : X.L.IsLattice E) (i j : Fin n) (
     rw [Matrix.single_add, Matrix.add_mulVec]
     exact add_mem (h1 z hz) (h2 z hz)
 
-theorem eventually_mulVec_mem (X : Spc F E n) (hL : X.L.IsLattice E) (M : Matrix (Fin n) (Fin n) (AE F E)) :
+theorem eventually_mulVec_mem (X : Spc F E n) (hL : X.L.IsFullLattice E) (M : Matrix (Fin n) (Fin n) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) :
     ∀ᶠ w : Pl F in cofinite, ∀ z ∈ latAt X w, M *ᵥ z ∈ latAt X w := by
   have h : ∀ᶠ w : Pl F in cofinite, ∀ i j, ∀ z ∈ latAt X w, Matrix.single i j (M i j) *ᵥ z ∈ latAt X w :=
     eventually_all.2 fun i => eventually_all.2 fun j => eventually_single X hL i j (M i j)
@@ -114,8 +112,8 @@ theorem eventually_mulVec_mem (X : Spc F E n) (hL : X.L.IsLattice E) (M : Matrix
   exact sum_mem fun j _ => hw i j z hz
 
 theorem exists_finset_keeps : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-    (σ : E →ₐ[F] E) {n : ℕ} (X : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Spc F E n), X.L.IsLattice E → ∀ g : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.UA σ X.J,
-    ∃ S₁ : Finset (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F), ∀ w ∉ S₁, ∀ z ∈ GlobalTheory.InertSph.latAt X w,
+    (σ : E →ₐ[F] E) {n : ℕ} (X : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Spc F E n), X.L.IsFullLattice E → ∀ g : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.UA σ X.J,
+    ∃ S₁ : Finset (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)), ∀ w ∉ S₁, ∀ z ∈ GlobalTheory.InertSph.latAt X w,
       GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.mat g *ᵥ z ∈ GlobalTheory.InertSph.latAt X w ∧ GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.mat g⁻¹ *ᵥ z ∈ GlobalTheory.InertSph.latAt X w := by
   intro F E _ _ _ _ _ σ n X hL g
   have h := (eventually_mulVec_mem X hL (mat g)).and (eventually_mulVec_mem X hL (mat g⁻¹))

@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsBaseClassLevelAdapted
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnChartAsm
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LatticeSpanMembership
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CmTypeLetterFrameColumnDictionary
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HermFormConjDiag
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ContinuousRmulPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsBaseClassLevelAdapted
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnChartAsm
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LatticeSpanMembership
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CmTypeLetterFrameColumnDictionary
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HermFormConjDiag
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ContinuousRmulPair
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level
@@ -114,9 +119,9 @@ theorem EF_sub_left (X : Data E r) (u v w : Fin r → E) : EF X (u - v) w = EF X
   simp only [herm, Pi.sub_apply, sub_mul, Finset.sum_sub_distrib, mul_sub]
 
 theorem EF_add_right (X : Data E r) (u v w : Fin r → E) : EF X u (v + w) = EF X u v + EF X u w := by
-  simp only [EF_def, ← map_add]
+  simp only [EF_def, ← map_add (f := _)]
   congr 1
-  simp only [herm, cc, Pi.add_apply, map_add, Finset.sum_add_distrib, mul_add]
+  simp only [herm, cc, Pi.add_apply, map_add (f := _), Finset.sum_add_distrib, mul_add]
 
 theorem EF_nat_left (X : Data E r) (N : ℕ) (u w : Fin r → E) : EF X ((N : E) • u) w = N * EF X u w := by
   simp only [EF_def]
@@ -135,7 +140,7 @@ theorem selfD_of_unimod {H : Host E} (X : Data E r) (D : Datum H) (f : D.La →�
   · choose k hk using fun b => hx (f b) ((hf _).2 ⟨b, rfl⟩)
     let φ : D.La →+ ℤ := AddMonoidHom.mk' k fun b b' => by
       apply Int.cast_injective (α := ℚ)
-      rw [Int.cast_add, ← hk, ← hk, ← hk, map_add, EF_add_right]
+      rw [Int.cast_add, ← hk, ← hk, ← hk, map_add (f := _), EF_add_right]
     obtain ⟨a, ha⟩ := D.unimod.2 φ.toIntLinearMap
     have h0 : ∀ b, EF X (x - f a) (f b) = 0 := fun b => by
       rw [EF_sub_left, ← hE, ha, hk]
@@ -178,16 +183,16 @@ theorem isMark_of {H : Host E} (Dw D : Datum H) (l : Geo.Tor.Level H) (L : Lt E 
     · obtain ⟨b, rfl⟩ := (hf w).1 hw
       obtain ⟨a, e, rfl⟩ := hs b
       refine ⟨s • a, Submodule.smul_mem_smul hs' Submodule.mem_top, f (s • m • e), (hf _).2 ⟨_, rfl⟩, ?_⟩
-      rw [LinearMap.comp_apply, ← map_nsmul, ← map_add, ← map_smul, map_smul t, smul_add, hm, mul_smul,
+      rw [LinearMap.comp_apply, ← map_nsmul, ← map_add (f := _), ← map_smul, map_smul t, smul_add, hm, mul_smul,
         smul_comm s l.M]
     · rintro x y ⟨a, ha, u, hu, rfl⟩ ⟨a', ha', u', hu', rfl⟩
       refine ⟨a + a', add_mem ha ha', u + u', add_mem hu hu', ?_⟩
-      rw [map_add, smul_add]; abel
+      rw [map_add (f := _), smul_add]; abel
 
 end GlobalTheory.Dict.UWLat
 
-open GlobalTheory.Dict.UWLat in
 
+open GlobalTheory.Dict.UWLat in
 theorem GlobalTheory.Dict.uw_lattice : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Geo.Tor.Level H) (Xo : Moduli Dw l) (c : Coeff l) (σ : c.F →+* ℂ) (r : ℕ) (U : Unf Xo c σ r), GoodEmb c σ → IsUnf U → 1 ≤ r → ∀ (W : UW U) (k : U.Comp), (U.X k).κ0 = 2 * (U.X k).ξ0 ∧ SelfD (U.X k) (U.X k).Λ ∧ IsMark l (U.X k).Λ (W.mark k) ∧ r = (W.F.Di (W.ik k)).p + (W.F.Di (W.ik k)).q ∧ Function.Injective (W.emb k) ∧ Submodule.span E (Set.range (W.emb k)) = ⊤ ∧ ∀ a b, (((W.F.Di (W.ik k)).EF a b : ℤ) : ℚ) = EF (U.X k) (W.emb k a) (W.emb k b) := by
   intro E _ _ _ H Dw l Xo c σ r U hσ hU hr W k
   obtain ⟨hrank, htype, -⟩ := hU
@@ -223,10 +228,10 @@ theorem GlobalTheory.Dict.uw_lattice : ∀ (E : Type) [Field E] [NumberField E] 
       rcases h with ⟨a, rfl, rfl⟩ | ⟨a, rfl, rfl, d⟩
       · rw [if_neg (by omega)]
         unfold perFr
-        rw [dif_pos a, dif_pos hn]
+        rw [dite_eq_left a, dite_eq_left hn]
       · rw [if_pos (by omega)]
         unfold perFr
-        rw [dif_neg a, dif_pos (show conjEmb (relab c σ (W.e j).1) ∈ (U.X k).Ψ from hτ), dif_pos hn]
+        rw [dite_eq_right a, dite_eq_left (show conjEmb (relab c σ (W.e j).1) ∈ (U.X k).Ψ from hτ), dite_eq_left hn]
         rfl
     obtain ⟨B, hB, hBE⟩ := exists_pos_form (U.X k) idx hx
     haveI : Nonempty (Fin W.g) := by

@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SmallCones.SoZero
-import Development.WeilBound.ThetaLifts.SmallCones.LinExOf
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.SoZero
+public import Development.WeilBound.ThetaLifts.SmallCones.LinExOf
+
+@[expose] public section
 
 namespace PositivityTheory.ThKCT
 

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.LevRefine
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.PIntConj
-import GroundTheory.GlobalFields.Adele.BaseChange.FiniteMap
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.LevRefine
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.PIntConj
+public import GroundTheory.GlobalFields.Adele.BaseChange.FiniteMap
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKGeo GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.CuspRep GlobalTheory.UnitaryBC Formalism.UG UpperTheory.Gal.W2.Seed
 open UpperTheory.Gal.CertificateRingHomMap (GUf Gam0 AfQ Plc sim mat comp rat lev ZU)
 open scoped TensorProduct Classical
@@ -18,18 +23,18 @@ private theorem rel_at {E : Type} [Field E] [NumberField E] [IsCMField E] {n : �
     by_cases hij : i = j <;> simp [hij, Matrix.one_apply, sim]
 
 private theorem val_le_one {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} (hn : 0 < n) (k : GUf E n)
-    (hk : ∀ u : Plc E, comp u k ∈ GlobalTheory.LFun.KGL u n) (u : Plc E) :
+    (hk : ∀ u : Plc E, comp u k ∈ GlobalTheory.LFun.KGL u (n := n)) (u : Plc E) :
     Valued.v (pLoc E u (GroundTheory.Global.AdeleBaseChange.finiteAdeleMap ℚ E ((sim k : AfQˣ) : AfQ))) ≤ 1 := by
   have h := congrFun (congrFun (rel_at k u) ⟨0, hn⟩) ⟨0, hn⟩
   simp only [Matrix.mul_apply, Matrix.smul_apply, Matrix.one_apply_eq, smul_eq_mul, mul_one,
     Matrix.transpose_apply, Matrix.map_apply] at h
   rw [← h]
-  have hG := (GlobalTheory.BCT.GlobLev.mem_KGL_iff_val u _).1
-    ((GlobalTheory.CompanionTheory.LFixDPf.mem_KGL_map_conj u (comp (UpperTheory.Gal.CertificateRingHomMap.cj u) k)).2 (hk _))
+  have hG := (GlobalTheory.BCT.GlobLev.mem_KGL_iff_val (UpperTheory.Gal.CertificateRingHomMap.cj u) _).1 (hk _)
   have ha := (GlobalTheory.BCT.GlobLev.mem_KGL_iff_val u _).1 (hk u)
   rw [← HeightOneSpectrum.mem_adicCompletionIntegers]
   refine sum_mem fun j _ => mul_mem ?_ ?_
   · rw [HeightOneSpectrum.mem_adicCompletionIntegers]
+    rw [(conjLoc_spec (GlobalTheory.SplitPts.conjE E) u).2.2]
     exact hG.1 j ⟨0, hn⟩
   · rw [HeightOneSpectrum.mem_adicCompletionIntegers]
     exact ha.1 j ⟨0, hn⟩
@@ -42,7 +47,7 @@ private theorem exists_over {E : Type} [Field E] [NumberField E] (v : Plc ℚ) :
     (GroundTheory.Global.AdeleBaseChange.below_eq_iff _ _).2 hlo⟩
 
 private theorem sim_unit {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} (hn : 0 < n) (g : GUf E n)
-    (hg : ∀ u : Plc E, comp u g ∈ GlobalTheory.LFun.KGL u n) : sim g ∈ ZU := by
+    (hg : ∀ u : Plc E, comp u g ∈ GlobalTheory.LFun.KGL u (n := n)) : sim g ∈ ZU := by
   intro v
   obtain ⟨w, rfl⟩ := exists_over (E := E) v
   have h1 := val_le_one hn g hg w
@@ -67,13 +72,13 @@ private theorem sim_unit {E : Type} [Field E] [NumberField E] [IsCMField E] {n :
   exact (pow_eq_one_iff.1 h4).resolve_right he
 
 private theorem finite_bad {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} (g : GUf E n) :
-    {u : Plc E | comp u g ∉ GlobalTheory.LFun.KGL u n}.Finite := by
+    {u : Plc E | comp u g ∉ GlobalTheory.LFun.KGL u (n := n)}.Finite := by
   have hx : ∀ x : GlobalTheory.CuspRep.Af E, ∀ᶠ u : Plc E in Filter.cofinite, Valued.v (pLoc E u x) ≤ 1 := fun x => x.2
   have h1 : ∀ᶠ u : Plc E in Filter.cofinite, ∀ i j, Valued.v (pLoc E u ((mat g).val i j)) ≤ 1 :=
     Filter.eventually_all.2 fun i => Filter.eventually_all.2 fun j => hx _
   have h2 : ∀ᶠ u : Plc E in Filter.cofinite, ∀ i j, Valued.v (pLoc E u ((mat g⁻¹).val i j)) ≤ 1 :=
     Filter.eventually_all.2 fun i => Filter.eventually_all.2 fun j => hx _
-  have h3 : ∀ᶠ u : Plc E in Filter.cofinite, comp u g ∈ GlobalTheory.LFun.KGL u n := by
+  have h3 : ∀ᶠ u : Plc E in Filter.cofinite, comp u g ∈ GlobalTheory.LFun.KGL u (n := n) := by
     filter_upwards [h1, h2] with u a b
     refine (GlobalTheory.BCT.GlobLev.mem_KGL_iff_val u _).2 ⟨a, ?_⟩
     rw [← map_inv]

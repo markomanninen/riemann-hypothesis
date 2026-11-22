@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RepIntCastMul
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RepIntCastMul
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ContDiff

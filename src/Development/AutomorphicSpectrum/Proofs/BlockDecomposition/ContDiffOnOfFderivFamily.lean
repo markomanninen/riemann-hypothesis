@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.MirabolicColumnBlock
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.MirabolicColumnBlock
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,37 +44,12 @@ section Chart
 
 variable {ι : Type} [Fintype ι] {a : ℕ}
 
-def mulL : LieI ι a →ₗ[ℝ] LieI ι a →ₗ[ℝ] LieI ι a :=
-  LinearMap.mk₂ ℝ (fun P Z => Matrix.of.symm (Matrix.of P * Matrix.of Z))
-    (fun P P' Z => by
-      change Matrix.of.symm ((Matrix.of P + Matrix.of P') * Matrix.of Z) = _
-      rw [add_mul]; rfl)
-    (fun c P Z => by
-      change Matrix.of.symm ((c • Matrix.of P) * Matrix.of Z) = _
-      rw [Matrix.smul_mul]; rfl)
-    (fun P Z Z' => by
-      change Matrix.of.symm (Matrix.of P * (Matrix.of Z + Matrix.of Z')) = _
-      rw [mul_add]; rfl)
-    (fun c P Z => by
-      change Matrix.of.symm (Matrix.of P * (c • Matrix.of Z)) = _
-      rw [Matrix.mul_smul]; rfl)
-
-def mulC : LieI ι a →L[ℝ] LieI ι a →L[ℝ] LieI ι a :=
-  LinearMap.toContinuousLinearMap
-    ((LinearMap.toContinuousLinearMap :
-      (LieI ι a →ₗ[ℝ] LieI ι a) ≃ₗ[ℝ] (LieI ι a →L[ℝ] LieI ι a)).toLinearMap ∘ₗ mulL)
-
-def invC (M : LieI ι a) : LieI ι a := Matrix.of.symm (Ring.inverse (Matrix.of M))
-
 section Norm
 
 attribute [-instance] instTopologicalSpaceMatrix
 
 attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra
   Matrix.linftyOpNormedSpace
-
-def chart : LieI ι a ≃L[ℝ] Matrix (Fin a) (Fin a) (ι → ℂ) :=
-  (Matrix.ofLinearEquiv ℝ).toContinuousLinearEquiv
 
 end Norm
 

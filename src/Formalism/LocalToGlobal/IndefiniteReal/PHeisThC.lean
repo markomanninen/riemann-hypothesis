@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.PHeisThP
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.PHeisThP
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,7 +104,7 @@ theorem psiSmooth : PsiSmoothP := by
     let L : (Fin k → ℝ) →+ ℂ :=
       { toFun := fun t => θ ρ (s t ⊗ₜ[D.host.F] (1 : D.host.E))
         map_zero' := by simp
-        map_add' := fun a b => by simp [map_add, TensorProduct.add_tmul] }
+        map_add' := fun a b => by simp [map_add (f := _), TensorProduct.add_tmul] }
     have hL : Continuous L := (hθ ρ).2.comp hs
     exact (L.toRealLinearMap hL).contDiff
   have e : (fun t => ψ (pairA D.host.F (s t) 0)) = fun t =>

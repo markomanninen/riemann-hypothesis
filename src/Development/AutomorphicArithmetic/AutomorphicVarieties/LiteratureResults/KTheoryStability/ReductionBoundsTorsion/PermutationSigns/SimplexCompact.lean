@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.PadMHerm
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.PadMHerm
+
+@[expose] public section
 
 noncomputable section
 
@@ -183,7 +187,7 @@ private theorem isClosed_nonneg_sum_le_one_simplex {q : ℕ} :
   rw [simplex_eq]
   refine (isClosed_iInter fun j => ?_).inter ?_
   · exact isClosed_le continuous_const (continuous_apply j)
-  · exact isClosed_le (continuous_finset_sum _ fun j _ => continuous_apply j) continuous_const
+  · exact isClosed_le (by fun_prop) continuous_const
 
 theorem simplex_meas {q : ℕ} : MeasurableSet {t : Fin q → ℝ | (∀ j, 0 ≤ t j) ∧ ∑ j, t j ≤ 1} := isClosed_nonneg_sum_le_one_simplex.measurableSet
 
@@ -208,10 +212,10 @@ theorem intS_pull {V V' : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] [Norm
   unfold intS pullF
   congr 1
   funext t
-  simp only [ContinuousAlternatingMap.compContinuousLinearMap_apply]
+  simp only [map_add (f := _), map_sum, map_sub, map_smul, add_sub_add_right_eq_sub,
+    ContinuousAlternatingMap.compContinuousLinearMap_apply]
   congr 1
-  · simp only [map_add, map_sum, map_sub, map_smul, add_sub_add_right_eq_sub]
-    abel
+  · abel
   · funext j
     simp
 
@@ -242,7 +246,7 @@ theorem intP_sum {q : ℕ} {ι : Type} [Fintype ι] (c : ι → ℝ) (ω : ι �
     intro p v
     simp
   simp only [e]
-  rw [MeasureTheory.integral_finset_sum _ fun x _ => (intP_integrable (hω x) y).const_mul (c x)]
+  rw [MeasureTheory.integral_finsetSum _ fun x _ => (intP_integrable (hω x) y).const_mul (c x)]
   simp only [MeasureTheory.integral_const_mul]
 
 theorem intP_inv {q : ℕ} {ω : Form (HS L N) q} (hω : ∀ g, FInv ω g) (g : Gp L N) (y : Fin (q + 1) → Pos L N) :
@@ -256,7 +260,8 @@ theorem intP_inv {q : ℕ} {ω : Form (HS L N) q} (hω : ∀ g, FInv ω g) (g : 
   unfold FInv at hF
   have h1 := hF _ hmem
   rw [← h1]
-  simp only [ContinuousAlternatingMap.compContinuousLinearMap_apply, map_add, map_sum, map_sub, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ContinuousAlternatingMap.compContinuousLinearMap_apply, map_add (f := _), map_sum, map_sub, map_smul,
     Function.comp_def]
 
 def evL {G H Y : Type} [Group G] [Group H] [MulAction H Y] (ρ : G →* H) {m : ℕ}

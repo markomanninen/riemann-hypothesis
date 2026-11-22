@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.CorA3primeB
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.ExistsSuppOfEvalNe
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.IndexWeightsDominance
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.CorA3primeB
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.ExistsSuppOfEvalNe
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.IndexWeightsDominance
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,15 +65,15 @@ theorem mem_polB {R : Type*} [CommRing R] {N : ℕ} {B : ℕ → ℕ} {f : MvPol
 
 def Gc {k : Type*} [CommRing k] (i : ℕ) (G : MvPolynomial (ℕ × Fin n) k) (β : ℕ × Fin n →₀ ℕ) :
     MvPolynomial (ℕ × Fin n) k :=
-  ∑ e ∈ G.support.filter (fun e => highP i e = β), monomial (lowP i e) (coeff e G)
+  ∑ e ∈ G.support.filter (fun e => highP i e = β), monomial (lowP i e) (AddMonoidAlgebra.coeff G e)
 
 theorem decomp {k : Type*} [CommRing k] (i : ℕ) (G : MvPolynomial (ℕ × Fin n) k) :
     G = ∑ β ∈ G.support.image (highP i), Gc i G β * monomial β 1 := by
   symm
   simp only [Gc, Finset.sum_mul, monomial_mul, mul_one]
   have h1 : ∀ β ∈ G.support.image (highP i),
-      ∑ e ∈ G.support.filter (fun e => highP i e = β), monomial (lowP i e + β) (coeff e G) =
-      ∑ e ∈ G.support.filter (fun e => highP i e = β), monomial e (coeff e G) :=
+      ∑ e ∈ G.support.filter (fun e => highP i e = β), monomial (lowP i e + β) (AddMonoidAlgebra.coeff G e) =
+      ∑ e ∈ G.support.filter (fun e => highP i e = β), monomial e (AddMonoidAlgebra.coeff G e) :=
     fun β _ => Finset.sum_congr rfl fun e he => by rw [← (Finset.mem_filter.mp he).2, low_add_high]
   rw [Finset.sum_congr rfl h1, Finset.sum_fiberwise_of_maps_to (fun x hx => Finset.mem_image_of_mem _ hx)]
   exact G.as_sum.symm
@@ -78,7 +82,7 @@ theorem supp_zero {σ L : Type*} [CommRing L] {Lo : Set σ} {P : MvPolynomial σ
     {e : σ →₀ ℕ} (he : e ∈ P.support) {x : σ} (hx : x ∉ Lo) : e x = 0 := by
   by_contra h
   apply hx
-  exact (mem_supported.mp hP) (Finset.mem_coe.mpr ((mem_vars x).mpr ⟨e, he, Finsupp.mem_support_iff.mpr h⟩))
+  exact (mem_supported.mp hP) (Finset.mem_coe.mpr ((MvPolynomial.mem_vars_iff_mem_support x).mpr ⟨e, he, Finsupp.mem_support_iff.mpr h⟩))
 
 theorem coeff_key {σ τ L : Type*} [CommRing L] (Lo : Set σ) (T : Finset τ) (A : τ → MvPolynomial σ L)
     (m : τ → σ →₀ ℕ) (hA : ∀ β ∈ T, A β ∈ supported L Lo) (hm : ∀ β ∈ T, ∀ x ∈ Lo, m β x = 0)
@@ -192,7 +196,8 @@ theorem wExp_high (last : Bool) {e : ℕ × Fin n →₀ ℕ} (he : ∀ j a, j �
 
 theorem Psi_Gc_low {i : ℕ} (hS : ∀ j, j ∈ S ↔ j < i) (G : MvPolynomial (ℕ × Fin n) k) (β : ℕ × Fin n →₀ ℕ) :
     Psi isVec S (Gc i G β) ∈ supported (GenField k n) (loSet n S) := by
-  simp only [Gc, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Gc, map_sum]
   exact Subalgebra.sum_mem _ fun e _ =>
     Psi_low isVec S (fun j a hj => by rw [lowerUnipotent_symm_apply, if_neg ((hS j).not.mp hj)]) _
 
@@ -206,7 +211,8 @@ theorem Psi_decomp {i : ℕ} (hS : ∀ j, j ∈ S ↔ j < i) (G : MvPolynomial (
     Psi isVec S G = ∑ β ∈ G.support.image (highP i),
       Psi isVec S (Gc i G β) * monomial (β.mapDomain Sum.inl) 1 := by
   conv_lhs => rw [decomp i G]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   apply Finset.sum_congr rfl
   intro β hβ
   rw [map_mul, Psi_high isVec S (high_zero S hS hβ)]
@@ -226,7 +232,7 @@ theorem supp_sub {i : ℕ} (hS : ∀ j, j ∈ S ↔ j < i) (last : Bool) (G : Mv
       (fun γ _ δ _ h => Finsupp.mapDomain_injective Sum.inl_injective h) hβ he
     intro γ hγ x hx
     obtain ⟨j', a, hj', rfl⟩ := hx
-    rw [Finsupp.mapDomain_apply Sum.inl_injective]
+    rw [Finsupp.mapDomain_apply_of_injective Sum.inl_injective]
     exact high_zero S hS hγ j' a hj'
   · rw [wExp_add, wExp_high isVec S last (high_zero S hS hβ), add_zero]
 
@@ -252,7 +258,7 @@ theorem factSplit_valid : FactSplit := by
     rw [mem_polB]
     intro e he j
     have he2 : e ∈ (∑ e ∈ G.support.filter (fun e => highP i e = β),
-        monomial (lowP i e) (coeff e G)).support := he
+        monomial (lowP i e) (AddMonoidAlgebra.coeff G e)).support := he
     have hsub := Finset.mem_of_subset support_sum he2
     simp only [Finset.mem_biUnion, Finset.mem_filter] at hsub
     obtain ⟨e', ⟨he', -⟩, hmem⟩ := hsub

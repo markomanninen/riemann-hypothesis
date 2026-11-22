@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.GlobalIrreducibility.LConvBigB
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvBigB
+
+@[expose] public section
 
 noncomputable section
 

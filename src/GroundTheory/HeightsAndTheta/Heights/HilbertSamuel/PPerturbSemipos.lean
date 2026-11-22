@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPerturbSemipos
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PFsLineSmooth
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PFsLineLevi
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPerturbSemipos
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PFsLineSmooth
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PFsLineLevi
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -40,8 +45,8 @@ theorem levi_const_mul {f : ((Σ k, ι k) → ℂ) → ℝ} {z : (Σ k, ι k) �
 
 end PerturbedSemipositivity
 
-open PerturbedSemipositivity in
 
+open PerturbedSemipositivity in
 theorem PerturbSemipos.proof : PerturbSemipos.Statement := by
   intro K _ ι _ P0 P M b a hM hb ha
   obtain ⟨m, rfl⟩ := Int.eq_ofNat_of_zero_le hb

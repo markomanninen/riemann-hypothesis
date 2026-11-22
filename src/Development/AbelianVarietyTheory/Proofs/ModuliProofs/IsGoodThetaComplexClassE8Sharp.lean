@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.GoodThetaClassOfLatticeFamiliesStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.E8SharpClassPrimitiveIsoClosedStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPeriodsEighthPowerEvenUnimodularBundleStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EighthPowerThetaObjectOfUniformisationStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TransportThetaLevelUniformisationCoordinates
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.BijectiveTensorOmegaStd
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsOpenPosDefOfContinuous
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.GoodThetaClassOfLatticeFamiliesStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.E8SharpClassPrimitiveIsoClosedStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPeriodsEighthPowerEvenUnimodularBundleStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EighthPowerThetaObjectOfUniformisationStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TransportThetaLevelUniformisationCoordinates
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.BijectiveTensorOmegaStd
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsOpenPosDefOfContinuous
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
@@ -41,7 +46,8 @@ theorem exists_hom_representatives {ν : Type} [Fintype ν] (k : ℕ) (hk : k �
     ext q; simp [Finset.sum_apply, Pi.single_apply]
   have key : ∀ q, ((m x q : ℤ) : ZMod k) = ((s i x q : ℤ) : ZMod k) := by
     intro q
-    rw [hx, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx, map_sum, map_sum]
     simp only [map_zsmul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Int.cast_sum, Int.cast_mul]
     refine Finset.sum_congr rfl fun p _ => ?_
     rw [congrFun (congrFun hi p) q]
@@ -103,7 +109,8 @@ theorem tensor_form_adjoint {h : ℕ} (G A A' : Matrix (Fin 8) (Fin 8) ℤ)
       = ∑ u, ∑ v, G u v * omegaStd (x u) (∑ s, A' v s • y s) := by
   have h1 : ∑ u, ∑ v, G u v * omegaStd (∑ s, A u s • x s) (y v)
       = ∑ s, ∑ v, (A.transpose * G) s v * omegaStd (x s) (y v) := by
-    simp only [← omegaBil_apply, map_sum, LinearMap.sum_apply, map_zsmul, LinearMap.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← omegaBil_apply, map_sum, LinearMap.sum_apply, map_zsmul, LinearMap.smul_apply,
       smul_eq_mul, Matrix.mul_apply, Matrix.transpose_apply, Finset.mul_sum, Finset.sum_mul]
     rw [Finset.sum_comm]
     conv_rhs => rw [Finset.sum_comm]
@@ -112,7 +119,8 @@ theorem tensor_form_adjoint {h : ℕ} (G A A' : Matrix (Fin 8) (Fin 8) ℤ)
     refine Finset.sum_congr rfl fun s _ => Finset.sum_congr rfl fun u _ => by ring
   have h2 : ∑ u, ∑ v, G u v * omegaStd (x u) (∑ s, A' v s • y s)
       = ∑ u, ∑ s, (G * A') u s * omegaStd (x u) (y s) := by
-    simp only [← omegaBil_apply, map_sum, map_zsmul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← omegaBil_apply, map_sum, map_zsmul,
       smul_eq_mul, Matrix.mul_apply, Finset.mul_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun u _ => ?_
     rw [Finset.sum_comm]
@@ -142,10 +150,12 @@ theorem action_on_basis {h g : ℕ}
       rw [hz, LinearEquiv.apply_symm_apply]
     rw [← this]
     conv_lhs => rw [hx]
-    simp only [map_sum, map_zsmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul]
   funext u
   have h2 := congrArg m (congrFun h1 u)
-  simp only [Finset.sum_apply, Pi.smul_apply, map_sum, map_zsmul] at h2 ⊢
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_apply, Pi.smul_apply, map_sum, map_zsmul] at h2 ⊢
   exact h2
 
 theorem goodClass_sharpClass : Out.Laws → Out.Laws2 → (∀ (S : Scheme.{0}) (P : Out.PolAV S) (M : LB P.A.left), M.IsLB → ∃ t : LB.Gen (Theta P.A M), t.IsGen) → ThetaUnifAV → ∀ (h g : ℕ) (W : Matrix (Fin 8) (Fin 8) ℤ) (J : Type) [Finite J] (a : J → Matrix (Fin 8) (Fin 8) ℤ) (w w' : J) (bas : (Fin (2 * g) → ℤ) ≃ₗ[ℤ] (Fin 8 → (Fin h ⊕ Fin h → ℤ))), IsE8 W → IsSharpBasis W bas → (W + W.transpose) * a w = W → (W + W.transpose) * a w' = W.transpose → (∀ u v, ∃ j, a j = Matrix.single u v 1) → ∃ (Mat : J → Matrix (Fin (2 * g)) (Fin (2 * g)) ℤ) (κ : ℕ), ∀ n : ℕ, n.Prime → Odd n → ∃ j₀ : ℕ, ∀ j ≥ j₀, ∀ N' : ℕ, N' = n ^ j → ∀ (o : Type) [CommRing o] (b : TBase o (N' ^ 2)) (em : o →+* ℂ), GoodClass em (SharpClass (b := b) W a bas em) Mat κ w w' (h * (h + 1) / 2) := by

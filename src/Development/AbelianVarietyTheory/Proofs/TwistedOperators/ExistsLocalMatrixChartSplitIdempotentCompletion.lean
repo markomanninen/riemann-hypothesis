@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RealPoints
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryLatticeSelfDualTraceForm
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvolutionSphericalHeckeAnti
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitPlaceHeckeDoubleCosetCardGaussBinom
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsMatrixOfIsLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RealPoints
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryLatticeSelfDualTraceForm
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvolutionSphericalHeckeAnti
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitPlaceHeckeDoubleCosetCardGaussBinom
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsMatrixOfIsLattice
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.FWT Formalism.L2.Pj
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -41,8 +45,8 @@ theorem smul_mem_hat (D : D7) {n : ℕ} (L : Submodule (𝓞 D.host.E) (Fin n �
   | add a₁ a₂ _ _ h₁ h₂ => rw [add_smul]; exact add_mem h₁ h₂
   | neg a _ h => rw [neg_smul]; exact neg_mem h
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_chart : ∀ (D : D7) (e : AE D) (v : HeightOneSpectrum (𝓞 D.host.F))
     (π : GlobalTheory.SplitPlace.RF D →+* Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv D.host.F v) (s : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv D.host.F v → AE D) (n : ℕ)
     (L : Submodule (𝓞 D.host.E) (Fin n → D.host.E)), e * e = e →
@@ -88,9 +92,7 @@ theorem exists_chart : ∀ (D : D7) (e : AE D) (v : HeightOneSpectrum (𝓞 D.ho
       rw [hx']
       exact N.smul_mem _ (Submodule.subset_span ⟨⟨x, hx⟩, rfl⟩)
     | zero =>
-      convert N.zero_mem using 1
-      funext i
-      simp
+      convert N.zero_mem using 1 <;> ext i <;> simp
     | add x y _ _ hx hy =>
       convert N.add_mem hx hy using 1
       funext i
@@ -109,17 +111,11 @@ theorem exists_chart : ∀ (D : D7) (e : AE D) (v : HeightOneSpectrum (𝓞 D.ho
       obtain ⟨a, ha, x, hx, rfl⟩ := hz
       exact hL a ha x hx
     | zero =>
-      convert N.zero_mem using 1
-      funext i
-      simp
+      convert N.zero_mem using 1 <;> ext i <;> simp
     | add z₁ z₂ _ _ h₁ h₂ =>
-      convert N.add_mem h₁ h₂ using 1
-      funext i
-      simp
+      convert N.add_mem h₁ h₂ using 1 <;> ext i <;> simp
     | neg z _ h =>
-      convert N.neg_mem h using 1
-      funext i
-      simp
+      convert N.neg_mem h using 1 <;> ext i <;> simp
   have hgen : ∀ j, gen j ∈ GlobalTheory.AdLat.hat D.host.F (L : Set (Fin n → D.host.E)) := fun j =>
     AddSubgroup.subset_closure ⟨1, hone, j, hg ▸ Submodule.subset_span j.2, rfl⟩
   have hiff : ∀ y : Fin n → GlobalTheory.SplitPlace.RF D,
@@ -148,9 +144,7 @@ theorem exists_chart : ∀ (D : D7) (e : AE D) (v : HeightOneSpectrum (𝓞 D.ho
       induction hx using Submodule.span_induction with
       | mem x hx => exact Submodule.subset_span (hL 1 hone x hx)
       | zero =>
-        convert S.zero_mem using 1
-        funext i
-        simp
+        convert S.zero_mem using 1 <;> ext i <;> simp
       | add x y _ _ hx hy =>
         convert S.add_mem hx hy using 1
         funext i
@@ -169,7 +163,8 @@ theorem exists_chart : ∀ (D : D7) (e : AE D) (v : HeightOneSpectrum (𝓞 D.ho
     split_ifs
     · rw [← Algebra.TensorProduct.one_def, map_one]
     · rw [TensorProduct.tmul_zero, map_zero]
-  haveI : Submodule.IsLattice (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv D.host.F v) N := ⟨hfin, htop⟩
+  haveI : Submodule.IsLattice (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv D.host.F v) N := Submodule.IsLattice.of_fg _ hfin
+  haveI : Submodule.IsFullLattice (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv D.host.F v) N := ⟨htop⟩
   obtain ⟨B, hB⟩ := GlobalTheory.SplitLatBasis.exists_matrix_of_isLattice (R := O) N
   refine ⟨B, fun y => (hiff y).trans ((hB _).trans (forall_congr' fun i => ?_))⟩
   constructor

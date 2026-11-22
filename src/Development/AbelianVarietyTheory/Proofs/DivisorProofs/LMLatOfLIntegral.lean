@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.FWExist
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNeZeroSmulMemOfMemSpan
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.FWExist
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNeZeroSmulMemOfMemSpan
+import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.AuxStatement14
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,23 +35,14 @@ theorem isLattice_comap [IsNoetherianRing R] {U : Type} [AddCommGroup U] [Module
   refine ⟨?_, ?_⟩
   · refine Submodule.fg_of_fg_map_injective (f.restrictScalars R) hf ?_
     exact hN.fg.of_le (Submodule.map_comap_le _ _)
-  · rw [eq_top_iff]
-    intro x _
-    obtain ⟨a, ha, hax⟩ := exists_smul_mem (K := K) N (x := f x) (hN.span_eq_top ▸ Submodule.mem_top)
-    have ha1 : algebraMap R K a ≠ 0 := (map_ne_zero_iff _ (IsFractionRing.injective R K)).2 ha
-    have e : x = (algebraMap R K a)⁻¹ • (a • x) := by
-      rw [← algebraMap_smul K a x, smul_smul, inv_mul_cancel₀ ha1, one_smul]
-    rw [e]
-    refine Submodule.smul_mem _ _ (Submodule.subset_span ?_)
-    show (f.restrictScalars R) (a • x) ∈ N
-    rw [map_smul]
-    exact hax
-
+  · intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
 end General
 
 section Forms
 
 open Formalism.IndefR.Arith
+open Formalism.DivisionValues.exponent_index_lattice (span_comap_eq_top)
 
 variable {LL Ks : Type} [Field LL] [NumberField LL] [Field Ks] [NumberField Ks] [Algebra Ks LL]
 variable {WL : Type} [AddCommGroup WL] [Module LL WL] [Module Ks WL] [IsScalarTower Ks LL WL]
@@ -55,8 +51,8 @@ variable {W : (LL →+* ℂ) → Type} [∀ σ, NormedAddCommGroup (W σ)] [∀ 
 variable {G0 : Type} [Group G0] [Fintype G0]
 variable (A : FormsL LL Ks WL W G0)
 
-omit [Fintype G0] in
 
+omit [Fintype G0] in
 theorem isLattice_span_MK (hK : A.IsKsForm) (hM : A.MKFull) :
     Submodule.IsLattice LL (Submodule.span (𝓞 LL) (A.MK : Set WL)) := by
   obtain ⟨⟨s, hs⟩, hsp⟩ := hM
@@ -75,25 +71,41 @@ theorem isLattice_span_MK (hK : A.IsKsForm) (hM : A.MKFull) :
       rw [SetLike.mem_coe, e]
       exact Submodule.smul_mem _ _ ih
   · obtain ⟨n, b, hb, -, -, -, h4⟩ := hK
-    rw [eq_top_iff, ← h4, Submodule.span_le]
-    rintro _ ⟨i, rfl⟩
-    have h1 : b i ∈ Submodule.span Ks (A.MK : Set WL) := hsp ▸ hb i
-    exact Submodule.span_mono Submodule.subset_span (Submodule.span_le_restrictScalars Ks LL _ h1)
+    intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
 
-theorem isLattice_Mcoord (hK : A.IsKsForm) (hM : A.MKFull) (J0 : Subgroup G0) (lam0 : J0 →* LLˣ) (eC : G0 → LL)
+private theorem span_MK_eq_top (hK : A.IsKsForm) (hM : A.MKFull) :
+    Submodule.span LL (Submodule.span (𝓞 LL) (A.MK : Set WL) : Set WL) = ⊤ := by
+  obtain ⟨n, b, hb, -, -, -, hbt⟩ := hK
+  apply top_unique
+  rw [← hbt]
+  apply Submodule.span_le.mpr
+  rintro x ⟨i, rfl⟩
+  have hx : b i ∈ Submodule.span Ks (A.MK : Set WL) := hM.2 ▸ hb i
+  have hs : Submodule.span Ks (A.MK : Set WL) ≤
+      (Submodule.span LL (Submodule.span (𝓞 LL) (A.MK : Set WL) : Set WL)).restrictScalars Ks := by
+    apply Submodule.span_le.mpr
+    intro x hx
+    exact Submodule.subset_span (Submodule.subset_span hx)
+  exact hs hx
+
+theorem isFullLattice_Mcoord (hK : A.IsKsForm) (hM : A.MKFull) (J0 : Subgroup G0) (lam0 : J0 →* LLˣ) (eC : G0 → LL)
     {d : ℕ} (b : Fin d → WL) (hb : LinearIndependent LL b) (hW : ∀ i, b i ∈ A.Wgood J0 lam0 eC) :
-    Submodule.IsLattice LL (A.Mcoord J0 lam0 eC b) := by
+    Submodule.IsFullLattice LL (A.Mcoord J0 lam0 eC b) := by
+  let f := (Fintype.linearCombination LL b).restrictScalars (𝓞 LL)
   have e : A.Mcoord J0 lam0 eC b = (Submodule.span (𝓞 LL) (A.MK : Set WL)).comap
-      ((Fintype.linearCombination LL b).restrictScalars (𝓞 LL)) := by
+      f := by
     ext c
     have hc : Fintype.linearCombination LL b c ∈ A.Wgood J0 lam0 eC := by
       rw [Fintype.linearCombination_apply]
       exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (hW i)
     exact ⟨fun h => h.1.1, fun h => ⟨⟨h, hc.1⟩, hc.2⟩⟩
   rw [e]
-  refine isLattice_comap _ (isLattice_span_MK A hK hM) _ ?_
-  refine LinearMap.ker_eq_bot.1 (LinearMap.ker_eq_bot'.2 fun c hc => funext ?_)
-  exact Fintype.linearIndependent_iff.1 hb c hc
+  have hf : Function.Injective f := by
+    refine LinearMap.ker_eq_bot.1 (LinearMap.ker_eq_bot'.2 fun c hc => funext ?_)
+    exact Fintype.linearIndependent_iff.1 hb c hc
+  refine { toIsLattice := isLattice_comap _ (isLattice_span_MK A hK hM) (Fintype.linearCombination LL b) hf
+           span_eq_top := span_comap_eq_top (Fintype.linearCombination LL b) _ (span_MK_eq_top A hK hM) }
 
 theorem mj_full (hK : A.IsKsForm) (hM : A.MKFull) (J0 : Subgroup G0) (lam0 : J0 →* LLˣ) (eC : G0 → LL) :
     (A.Mj J0 lam0 eC).FG ∧ Submodule.span LL (A.Mj J0 lam0 eC : Set WL) = A.Wgood J0 lam0 eC := by
@@ -106,7 +118,29 @@ theorem mj_full (hK : A.IsKsForm) (hM : A.MKFull) (J0 : Subgroup G0) (lam0 : J0 
   refine ⟨e ▸ h.fg.map _, ?_⟩
   rw [e]
   show Submodule.span LL ((A.Wgood J0 lam0 eC).subtype '' _) = _
-  rw [Submodule.span_image, h.span_eq_top, Submodule.map_subtype_top]
+  rw [Submodule.span_image]
+  have hspan := span_MK_eq_top A hK hM
+  have htop : Submodule.span LL
+      (((Submodule.span (𝓞 LL) (A.MK : Set WL)).comap
+        ((A.Wgood J0 lam0 eC).subtype.restrictScalars (𝓞 LL))) : Set (A.Wgood J0 lam0 eC)) = ⊤ := by
+    apply top_unique
+    intro x _
+    obtain ⟨a, ha, hax⟩ := exists_smul_mem (Submodule.span (𝓞 LL) (A.MK : Set WL))
+      (show (x : WL) ∈ Submodule.span LL (Submodule.span (𝓞 LL) (A.MK : Set WL) : Set WL) by rw [hspan]; trivial)
+    have ha' : algebraMap (𝓞 LL) LL a ≠ 0 := by
+      intro hz
+      apply ha
+      apply FaithfulSMul.algebraMap_injective (𝓞 LL) LL
+      simpa using hz
+    have hx : a • x ∈ ((Submodule.span (𝓞 LL) (A.MK : Set WL)).comap
+        ((A.Wgood J0 lam0 eC).subtype.restrictScalars (𝓞 LL))) := hax
+    have hx' := Submodule.smul_mem (Submodule.span LL
+      (((Submodule.span (𝓞 LL) (A.MK : Set WL)).comap
+        ((A.Wgood J0 lam0 eC).subtype.restrictScalars (𝓞 LL))) : Set (A.Wgood J0 lam0 eC)))
+      (algebraMap (𝓞 LL) LL a)⁻¹ (Submodule.subset_span hx)
+    rw [← algebraMap_smul LL a x, smul_smul, inv_mul_cancel₀ ha', one_smul] at hx'
+    exact hx'
+  rw [htop, Submodule.map_subtype_top]
 
 end Forms
 
@@ -120,7 +154,7 @@ variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T0 : Type} {A : FamIn D.
 
 theorem mLat_of_full {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A)
     (hK : ∀ i, (R.FW i).IsKsForm) (hM : ∀ i, (R.FW i).MKFull) (b : Bool) : (R.toCx F).MLat b := fun i =>
-  isLattice_Mcoord (R.FW i) (hK i) (hM i) _ _ _ (R.bL F b i)
+  isFullLattice_Mcoord (R.FW i) (hK i) (hM i) _ _ _ (R.bL F b i)
     ((Module.finBasis D.what₂.LL (R.WL F b i)).linearIndependent.map' (R.WL F b i).subtype (Submodule.ker_subtype _))
     fun k => (Module.finBasis D.what₂.LL (R.WL F b i) k).2
 

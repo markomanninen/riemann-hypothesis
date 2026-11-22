@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.NegWeightLe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.Satfil
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.NegWeightLe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.Satfil
+
+@[expose] public section
 
 open IsLocalRing Filter Formalism.MainNotions.V.Pf.V2.Calc UpperTheory.V.Alg UpperTheory.V.Alg.M
 
@@ -20,7 +24,9 @@ private theorem fil_of_wt {j : ℤ} {g : MvPowerSeries τ E} (hg : g ∈ wtPart 
 
 private def sf (j : ℤ) (n : ℕ) : Submodule (𝒜 0) A where
   carrier := {f | f ∈ 𝒜 j ∧ φ f ∈ fil E wt n}
-  add_mem' hf hg := ⟨add_mem hf.1 hg.1, by rw [map_add]; exact add_mem hf.2 hg.2⟩
+  add_mem' hf hg := ⟨add_mem hf.1 hg.1, by
+    rw [map_add φ]
+    exact add_mem hf.2 hg.2⟩
   zero_mem' := ⟨zero_mem _, by rw [map_zero]; exact zero_mem _⟩
   smul_mem' c f hf := by
     refine ⟨(oz 𝒜 j).smul_mem c hf.1, ?_⟩

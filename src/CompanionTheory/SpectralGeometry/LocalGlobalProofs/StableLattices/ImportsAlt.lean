@@ -1,8 +1,12 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FreeAlgebraActionCapelliDeterminantEqOperator
-import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.Imports
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FreeAlgebraActionCapelliDeterminantEqOperator
+public import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.Imports
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.DSCapelliAction
 

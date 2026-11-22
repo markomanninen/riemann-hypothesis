@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafSemiPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafSemiPf
+
+@[expose] public section
 
 namespace LateralTheory.Fin.LeafSemi
 theorem etale_purity_semilocal_of_reduction : LateralTheory.CohomologicalPurity.LeafSemi := by

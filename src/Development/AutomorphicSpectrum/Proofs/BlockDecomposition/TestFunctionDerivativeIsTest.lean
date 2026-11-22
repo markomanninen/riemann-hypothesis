@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.NotIsFinitePartOfBot
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsTestZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.NotIsFinitePartOfBot
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsTestZero
+
+@[expose] public section
+
 open NumberField MeasureTheory Topology Matrix GlobalTheory.AutomorphicL2Unitary GlobalTheory.DiscreteSum GlobalTheory.OpTrace GlobalTheory.UnitaryBC GlobalTheory.DiscSpec GlobalTheory.CuspRep GlobalTheory.CuspRep.CuspidalL2GL GlobalTheory.CompanionTheory.SmoothRep
 open scoped ContDiff
 
@@ -27,7 +32,7 @@ theorem tsupport_dTest_subset {E : Type} [Field E] [NumberField E] {a : ℕ} (X 
   apply hw
   simp [dTest, h]
 
-theorem isTest_dTest (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (β : Lie E a → ℂ)
+theorem isTest_dTest (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (β : Lie E a → ℂ)
     (hβ : IsTest β) (X : Lie E a) : IsTest (dTest X β) := by
   have hfd := (contDiff_infty_iff_fderiv.mp hβ.contDiff).2
   refine IsTest.mk ?_ ?_ ?_

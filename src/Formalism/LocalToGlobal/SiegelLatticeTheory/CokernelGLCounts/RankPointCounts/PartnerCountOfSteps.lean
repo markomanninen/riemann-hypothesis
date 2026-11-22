@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCount
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCount
+
+@[expose] public section
 
 noncomputable section
 
@@ -142,8 +146,8 @@ theorem loUp_of_hyp {p : PlF D} {uL uU : MatP D p} (h1 : ∀ a, uL a a = 1 ∧ u
     (h2 : ∀ a b, a < b → uL a b = 0 ∧ uU b a = 0) : IsLo uL ∧ IsUp uU :=
   ⟨⟨fun a => (h1 a).1, fun a b hab => (h2 a b hab).1⟩, ⟨fun a => (h1 a).2, fun a b hab => (h2 a b hab).2⟩⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem partnerIsomorphismCount_of_bounds (hT2 : Formalism.MainNotions.ThinScalesBound.T2 D) (hI : IntGenP Zd) (hL : LeadZZ Zd) (hK : ModKind Zd) (hB : BridgeBA) :
     PartnerIsomorphismCount Zd := by
   intro p T T' w w' t₁ f₂' φ φ' hk hT hT' hyp h1 h2 hint2
@@ -189,7 +193,7 @@ theorem partnerIsomorphismCount_of_bounds (hT2 : Formalism.MainNotions.ThinScale
       rw [nIso_mk_out]
       exact hT2p.1 hDl _ _ rfl rfl
     · have hc2 : clsOf (Zd.M p) (Loc.HermSp.ZZplusOf (Zd.M p) ((locH Zd p).Zhat t₁.f f₂') t₁.T t₁.T') = none := by
-        unfold clsOf; rw [dif_neg (fun h => hu2 h.2)]
+        unfold clsOf; rw [dite_eq_right (fun h => hu2 h.2)]
       rw [hc2]
       have h0 : ∀ o : Option ((Zd.M p).Cls D.R.rS), nIsoO Zd.M p o none = 0 := fun o => by cases o <;> rfl
       rw [h0, Nat.card_eq_zero]

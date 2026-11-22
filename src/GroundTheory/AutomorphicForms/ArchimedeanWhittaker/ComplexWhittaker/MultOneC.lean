@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.ArchimedeanWhittaker.ComplexWhittaker.IsClosedDivisorComponent
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.ArchimedeanWhittaker.ComplexWhittaker.IsClosedDivisorComponent
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.ArchWhittakerC
 
@@ -34,6 +38,10 @@ def transposeHomeo : U2 ≃ₜ U2 where
 
 theorem map_transpose_μK : Measure.map transposeU μK = μK := by
   have hmeas : Measurable transposeU := continuous_transposeU.measurable
+  haveI : μK.IsMulRightInvariant := by
+    refine ⟨fun g => ?_⟩
+    haveI : (Measure.map (· * g) μK).IsHaarMeasure := Measure.isHaarMeasure_map_mul_right μK g
+    exact Measure.isHaarMeasure_eq_of_isProbabilityMeasure _ _
   haveI : (Measure.map transposeU μK).IsMulLeftInvariant := by
     refine ⟨fun g => ?_⟩
     rw [Measure.map_map (measurable_const_mul g) hmeas]
@@ -47,7 +55,7 @@ theorem map_transpose_μK : Measure.map transposeU μK = μK := by
         exact (hU.preimage continuous_transposeU).measure_ne_zero μK
           (by obtain ⟨u, hu⟩ := hne; exact ⟨transposeU u, by simpa [transposeU_transposeU] using hu⟩)⟩ }
   haveI : IsProbabilityMeasure (Measure.map transposeU μK) :=
-    Measure.isProbabilityMeasure_map hmeas.aemeasurable
+    by infer_instance
   exact Measure.isHaarMeasure_eq_of_isProbabilityMeasure _ _
 
 theorem integral_transpose_K {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] (f : U2 → E) :
@@ -126,7 +134,8 @@ theorem inner_Q_map_dC_eq_zero (n : ℕ) (q : ℤ) {i j : ℕ} (hi : i ≤ n) (h
 theorem inner_sum_smul_sum {ι : Type*} (s : Finset ι) (a b : ι → ℂ) (u v : ι → H) (T : H →L[ℂ] H) :
     ⟪∑ j ∈ s, a j • u j, T (∑ i ∈ s, b i • v i)⟫_ℂ =
       ∑ j ∈ s, ∑ i ∈ s, conj (a j) * b i * ⟪u j, T (v i)⟫_ℂ := by
-  rw [map_sum, sum_inner]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, sum_inner]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [inner_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
@@ -164,9 +173,6 @@ theorem inner_map_iotaC {n : ℕ} {q : ℤ} {x y : H} (hx : x ∈ W σ n q) (hy 
     inner_map_kak σ hx hy, transposeU_transposeU]
   refine Finset.sum_congr rfl fun i _ => ?_
   ring
-
-instance completeSpace_alt (n : ℕ) (q : ℤ) : CompleteSpace (W σ n q) :=
-  (isClosed_divisorComponent σ n q).completeSpace_coe
 
 noncomputable def compr (n : ℕ) (q : ℤ) (g : GL2C) : W σ n q →L[ℂ] W σ n q :=
   ((PL σ n q).comp ((σ g).comp (W σ n q).subtypeL)).codRestrict (W σ n q)

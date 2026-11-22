@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.StatementFr
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositionInsertionDiagonalCompat
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuasiDeterminantFromEntries
+module
+
+public import Formalism.HermitianCurvature.StatementFr
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositionInsertionDiagonalCompat
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuasiDeterminantFromEntries
+
+@[expose] public section
 
 open Matrix Formalism.YangianSpanCharacter.T Formalism.YangianSpanCharacter.Y Formalism.FourierDecayAlt.R Formalism.FourierDecayAlt.Wd Formalism.FourierDecayAlt.Fr
 
@@ -211,10 +215,169 @@ theorem di_d (h : IsFrame L f) : f.di L * f.d L = 1 := by
   rw [Formalism.FourierDecayAlt.Fr.FrameData.di, Formalism.FourierDecayAlt.Fr.FrameData.d, mul_assoc, ← mul_assoc (Formalism.FourierDecayAlt.Fr.wti L ^ f.N),
     pow_inv (wti_wt L) f.N, one_mul, h.c_ci.2]
 
+private theorem gaussMinusFrameModel (hf : IsFrame L f) :
+    ModHyp (FrameData.hatT f) (fun Y => io L.GGi * f.xi Y) (FrameData.hatQ f) f.inv ∧
+      ∀ Y ∈ f.inv, Y + 1 ∈ f.inv → lf (FrameData.hatT f) (fun Y => io L.GGi * f.xi Y) Y = f.l L Y := by
+  have hLeft (M N : M2 (SlopeTestRemainingChoices S A)) (i j : Fin 2) :
+      (Mᵀ * YangianSpanCharacter.T.J (SlopeTestRemainingChoices S A) * N) i j =
+        M 0 i * N 1 j - M 1 i * N 0 j := by
+    simp [Matrix.mul_apply, Fin.sum_univ_two, YangianSpanCharacter.T.J] <;> noncomm_ring
+  have hRight (M N : M2 (SlopeTestRemainingChoices S A)) (i j : Fin 2) :
+      (M * YangianSpanCharacter.T.J (SlopeTestRemainingChoices S A) * Nᵀ) i j =
+        M i 0 * N j 1 - M i 1 * N j 0 := by
+    simp [Matrix.mul_apply, Fin.sum_univ_two, YangianSpanCharacter.T.J] <;> noncomm_ring
+  have hGG1 : (io L.GG : SlopeTestRemainingChoices S A) * io L.GGi = 1 := by
+    rw [← io_mul, L.GG_GGi, io_one]
+  have hGG2 : (io L.GGi : SlopeTestRemainingChoices S A) * io L.GG = 1 := by
+    rw [← io_mul, L.GGi_GG, io_one]
+  have hFFi := hf.F_Fi
+  have hFiF := hf.Fi_F
+  have hc_mul : ∀ a b : SlopeTestRemainingChoices S A, f.F * a * f.Fi * (f.F * b * f.Fi) = f.F * (a * b) * f.Fi := by
+    intro a b
+    calc f.F * a * f.Fi * (f.F * b * f.Fi) = f.F * a * (f.Fi * f.F) * b * f.Fi := by
+          simp only [mul_assoc]
+      _ = f.F * (a * b) * f.Fi := by rw [hFiF, mul_one, mul_assoc f.F]
+  have hT : ∀ Y ∈ f.reg, f.hatT Y = (f.TT Y).map (fun b => f.F * b * f.Fi) := by
+    intro Y hY
+    unfold Formalism.FourierDecayAlt.Fr.FrameData.hatT
+    rw [ite_eq_left hY]
+  have hT0 : ∀ Y, Y ∉ f.reg → f.hatT Y = 0 := by
+    intro Y hY
+    unfold Formalism.FourierDecayAlt.Fr.FrameData.hatT
+    rw [ite_eq_right hY]
+  have hτ11 : ∀ Y ∈ f.reg, f.hatT Y 1 1 = io L.GG * f.x Y := by
+    intro Y hY
+    rw [hT Y hY, Matrix.map_apply, hf.frame_τ Y hY, mul_assoc, hFFi, mul_one]
+  have hxiG (Y : ℂ) (hY : Y ∈ f.inv) (g : A) (hg : g ∈ zfns L) :
+      Commute (f.xi Y) (io g) := by
+    obtain ⟨h1, h2⟩ := hf.x_xi Y hY
+    exact comm_inv h1 h2 (hf.x_fn Y g hg)
+  have hq : ∀ Y, Y ∈ f.reg → Y + 1 ∈ f.reg → f.hatQ Y = f.q Y := by
+    intro Y h1 h2
+    unfold Formalism.FourierDecayAlt.Fr.FrameData.hatQ
+    rw [ite_eq_left ⟨h1, h2⟩]
+  have hq0 : ∀ Y, ¬ (Y ∈ f.reg ∧ Y + 1 ∈ f.reg) → f.hatQ Y = 0 := by
+    intro Y h
+    unfold Formalism.FourierDecayAlt.Fr.FrameData.hatQ
+    rw [ite_eq_right h]
+  have hJ : ∀ i j : Fin 2, f.F * Formalism.YangianSpanCharacter.T.J (SlopeTestRemainingChoices S A) i j * f.Fi = Formalism.YangianSpanCharacter.T.J (SlopeTestRemainingChoices S A) i j := by
+    intro i j
+    fin_cases i <;> fin_cases j <;> simp [Formalism.YangianSpanCharacter.T.J, hFFi]
+  have h1 : ∀ (u v : ℂ) (i j k l : Fin 2),
+      (u - v) • (f.hatT u i j * f.hatT v k l - f.hatT v k l * f.hatT u i j) =
+        f.hatT u k j * f.hatT v i l - f.hatT v k j * f.hatT u i l := by
+    intro u v i j k l
+    by_cases hu : u ∈ f.reg
+    · by_cases hv : v ∈ f.reg
+      · have hR := rtt_relation_entries ℂ (SlopeTestRemainingChoices S A) f.TT v u (hf.module.rtt v hv u hu) i j k l
+        simp only [hT u hu, hT v hv, Matrix.map_apply, hc_mul]
+        simp only [← sub_mul, ← mul_sub]
+        rw [← smul_mul_assoc, ← mul_smul_comm, hR]
+      · simp [hT0 v hv]
+    · simp [hT0 u hu]
+  have h2 : ∀ Y, (f.hatT (Y + 1))ᵀ * Formalism.YangianSpanCharacter.T.J (SlopeTestRemainingChoices S A) * f.hatT Y =
+      f.hatQ Y • Formalism.YangianSpanCharacter.T.J (SlopeTestRemainingChoices S A) := by
+    intro Y
+    by_cases hY : Y ∈ f.reg ∧ Y + 1 ∈ f.reg
+    · rw [hq Y hY.1 hY.2]
+      have hD := (hf.module.det Y hY.1 hY.2).1
+      ext i j : 1
+      have e := congrFun (congrFun hD i) j
+      rw [hLeft] at e ⊢
+      rw [hT Y hY.1, hT (Y + 1) hY.2]
+      simp only [Matrix.map_apply, hc_mul]
+      simp only [← sub_mul, ← mul_sub]
+      rw [e]
+      simp only [Matrix.smul_apply, smul_eq_mul]
+      rw [← Algebra.smul_def, mul_smul_comm, smul_mul_assoc, hJ]
+    · rw [hq0 Y hY, zero_smul]
+      by_cases h1 : Y ∈ f.reg
+      · have h2' : Y + 1 ∉ f.reg := fun h => hY ⟨h1, h⟩
+        rw [hT0 _ h2']
+        simp
+      · rw [hT0 _ h1]
+        simp
+  have h3 : ∀ Y, f.hatT Y * Formalism.YangianSpanCharacter.T.J (SlopeTestRemainingChoices S A) * (f.hatT (Y + 1))ᵀ =
+      f.hatQ Y • Formalism.YangianSpanCharacter.T.J (SlopeTestRemainingChoices S A) := by
+    intro Y
+    by_cases hY : Y ∈ f.reg ∧ Y + 1 ∈ f.reg
+    · rw [hq Y hY.1 hY.2]
+      have hD := (hf.module.det Y hY.1 hY.2).2
+      ext i j : 1
+      have e := congrFun (congrFun hD i) j
+      rw [hRight] at e ⊢
+      rw [hT Y hY.1, hT (Y + 1) hY.2]
+      simp only [Matrix.map_apply, hc_mul]
+      simp only [← sub_mul, ← mul_sub]
+      rw [e]
+      simp only [Matrix.smul_apply, smul_eq_mul]
+      rw [← Algebra.smul_def, mul_smul_comm, smul_mul_assoc, hJ]
+    · rw [hq0 Y hY, zero_smul]
+      by_cases h1 : Y ∈ f.reg
+      · have h2' : Y + 1 ∉ f.reg := fun h => hY ⟨h1, h⟩
+        rw [hT0 _ h2']
+        simp
+      · rw [hT0 _ h1]
+        simp
+  have h4 : ∀ u ∈ f.inv, f.hatT u 1 1 * (io L.GGi * f.xi u) = 1 ∧
+      io L.GGi * f.xi u * f.hatT u 1 1 = 1 := by
+    intro u hu
+    rw [hτ11 u (hf.inv_reg hu)]
+    obtain ⟨hx1, hx2⟩ := hf.x_xi u hu
+    have hc1 := (hf.x_fn u L.GGi (mGGi L)).eq
+    have hc2 := (hxiG u hu L.GG (mGG L)).eq
+    constructor
+    · calc io L.GG * f.x u * (io L.GGi * f.xi u) = io L.GG * (f.x u * io L.GGi) * f.xi u := by
+            simp only [mul_assoc]
+        _ = io L.GG * (io L.GGi * f.x u) * f.xi u := by rw [hc1]
+        _ = (io L.GG * io L.GGi) * (f.x u * f.xi u) := by simp only [mul_assoc]
+        _ = 1 := by rw [hGG1, hx1, one_mul]
+    · calc io L.GGi * f.xi u * (io L.GG * f.x u) = io L.GGi * (f.xi u * io L.GG) * f.x u := by
+            simp only [mul_assoc]
+        _ = io L.GGi * (io L.GG * f.xi u) * f.x u := by rw [hc2]
+        _ = (io L.GGi * io L.GG) * (f.xi u * f.x u) := by simp only [mul_assoc]
+        _ = 1 := by rw [hGG2, hx2, one_mul]
+  have h5 : ∀ u v, Commute (f.hatT u 1 1) (f.hatT v 1 1) := by
+    intro u v
+    by_cases hu : u ∈ f.reg
+    · by_cases hv : v ∈ f.reg
+      · rw [hτ11 u hu, hτ11 v hv]
+        have hGGx : ∀ w, Commute (io L.GG : SlopeTestRemainingChoices S A) (f.x w) := fun w => (hf.x_fn w L.GG (mGG L)).symm
+        exact Commute.mul_left ((Commute.refl _).mul_right (hGGx v))
+          (((hGGx u).symm).mul_right (hf.x_commute u v))
+      · rw [hT0 v hv]
+        simp
+    · rw [hT0 u hu]
+      simp
+  have h6 : ∀ u v, Commute (f.hatT u 1 0) (f.hatT v 1 0) := by
+    intro u v
+    by_cases hu : u ∈ f.reg
+    · by_cases hv : v ∈ f.reg
+      · rw [hT u hu, hT v hv, Matrix.map_apply, Matrix.map_apply]
+        show _ * _ = _ * _
+        rw [hc_mul, hc_mul, (hf.lowerLeftEntry_commute u hu v hv).eq]
+      · rw [hT0 v hv]
+        simp
+    · rw [hT0 u hu]
+      simp
+  refine ⟨⟨h1, h2, h3, h4, h5, h6⟩, ?_⟩
+  intro Y hY hY1
+  have hr := hf.inv_reg hY
+  unfold lf
+  rw [hT Y hr, Matrix.map_apply, hf.frame_l Y hY hY1]
+  obtain ⟨hx1, hx2⟩ := hf.x_xi Y hY
+  have hc2 := (hxiG Y hY L.GG (mGG L)).eq
+  calc io L.GGi * f.xi Y * (io L.GG * f.x Y * f.l L Y * f.F * f.Fi)
+      = io L.GGi * (f.xi Y * io L.GG) * f.x Y * f.l L Y * (f.F * f.Fi) := by simp only [mul_assoc]
+    _ = io L.GGi * (io L.GG * f.xi Y) * f.x Y * f.l L Y * (f.F * f.Fi) := by rw [hc2]
+    _ = (io L.GGi * io L.GG) * (f.xi Y * f.x Y) * f.l L Y * (f.F * f.Fi) := by simp only [mul_assoc]
+    _ = f.l L Y := by simp only [hGG2, hx2, hFFi, one_mul, mul_one]
+
 theorem d_m (hS : IsStarLevel L) (h : IsFrame L f) (Yb : ℂ) (hr : star Yb = Yb) (h0 : Yb ∈ f.inv)
     (h1 : Yb - 1 ∈ f.inv) :
-    f.d L * mf f.hatT (fun Y => io L.GGi * f.xi Y) Yb = star (f.l L (Yb - 1)) * f.d L := by
-  obtain ⟨H, Hl⟩ := frame_gives_one_letter_hyps A S r L f h
+    f.d L * mf (FrameData.hatT f) (fun Y => io L.GGi * f.xi Y) Yb =
+      star (f.l L (Yb - 1)) * f.d L := by
+  obtain ⟨H, Hl⟩ := gaussMinusFrameModel h
   have h1' : Yb - 1 + 1 ∈ f.inv := by rwa [sub_add_cancel]
   have hr1 : star (Yb - 1) = Yb - 1 := by rw [star_sub, hr, star_one]
   have hreg := h.inv_reg h1
@@ -237,7 +400,7 @@ theorem d_m (hS : IsStarLevel L) (h : IsFrame L f) (Yb : ℂ) (hr : star Yb = Yb
     intro i j
     rw [key, key, star_mul, star_mul, star_star, he]
     simp only [mul_assoc]
-  have e := adjoint_l_shift_relation ℂ (SlopeTestRemainingChoices S A) f.hatT _ f.hatQ f.inv (f.d L) H (star_d hS h) (Yb - 1) h1 h1' hh
+  have e := adjoint_l_shift_relation ℂ (SlopeTestRemainingChoices S A) (FrameData.hatT f) _ (FrameData.hatQ f) f.inv (f.d L) H (star_d hS h) (Yb - 1) h1 h1' hh
   rw [sub_add_cancel, Hl (Yb - 1) h1 h1'] at e
   exact e
 
@@ -260,14 +423,14 @@ theorem asm {R : Type} [Ring R] [StarRing R] {F Fi d U D Λ : R} (hFFi : F * Fi 
 theorem gaussFormMinus : GaussFormMinus := by
   intro A S _ _ _ _ _ _ r L f b Yb hyp
   obtain ⟨hS, h, hF, hr, h0, -, h1, -⟩ := hyp
-  obtain ⟨H, Hl⟩ := frame_gives_one_letter_hyps A S r L f h
+  obtain ⟨H, Hl⟩ := gaussMinusFrameModel h
   obtain ⟨-, -, -, fFi, fx, fxi, fc, fci, fee⟩ := hF
   have h1' : Yb - 1 + 1 ∈ f.inv := by rwa [sub_add_cancel]
   have hdm := d_m hS h Yb hr h0 h1
-  have hm : mf f.hatT (fun Y => io L.GGi * f.xi Y) Yb = f.m L Yb := by
+  have hm : mf (FrameData.hatT f) (fun Y => io L.GGi * f.xi Y) Yb = f.m L Yb := by
     unfold FrameData.m
     rw [mul_assoc, ← hdm, ← mul_assoc, di_d h, one_mul]
-  have G := gauss_decomp_minus_letter ℂ (SlopeTestRemainingChoices S A) f.hatT _ f.hatQ f.inv H Yb h0 h1
+  have G := gauss_decomp_minus_letter ℂ (SlopeTestRemainingChoices S A) (FrameData.hatT f) _ (FrameData.hatQ f) f.inv H Yb h0 h1
   have hQ : f.hatQ (Yb - 1) = f.q (Yb - 1) := by
     simp [FrameData.hatQ, h.inv_reg h1, h.inv_reg h0]
   have hτ : f.hatT Yb 1 1 = io L.GG * f.x Yb := by
@@ -397,8 +560,6 @@ theorem minusForm : MinusForm := by
 end Formalism.FourierDecayAlt.P.Fr8
 
 namespace Formalism.FourierDecayAlt.P
-
-theorem gauss_form_minus_letter : Formalism.FourierDecayAlt.Fr.GaussFormMinus := Formalism.FourierDecayAlt.P.Fr8.gaussFormMinus
 
 theorem minus_letter_form : Formalism.FourierDecayAlt.Fr.MinusForm := Formalism.FourierDecayAlt.P.Fr8.minusForm
 

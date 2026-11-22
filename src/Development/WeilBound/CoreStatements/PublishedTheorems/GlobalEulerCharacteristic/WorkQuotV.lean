@@ -1,12 +1,16 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.WorkKilledC
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.WorkKilledC
+
+@[expose] public section
 
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheory.Global
 
 namespace PositivityTheory.Lit1.GEN.QuotientActionGlobalEulerCharacteristic
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 open W_killed_c
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 def addAct {G : Type} [Group G] (M : Rep.{0} (ULift.{0} ℤ) G) : G →* AddMonoid.End M where
   toFun g := (M.ρ g).toAddMonoidHom

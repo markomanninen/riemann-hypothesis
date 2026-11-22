@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.WedgeSub
-import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.DetIneq
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.WedgeSub
+public import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.DetIneq
+
+@[expose] public section
 
 open Matrix PositivityTheory.Rg.BcB.D1
 
@@ -29,7 +33,7 @@ theorem detMono : DetMono := by
         push_cast; rfl, Complex.ofReal_re]
       calc (1 : ℝ) = ∏ _i : κ, (1 : ℝ) := by rw [Finset.prod_const_one]
         _ ≤ ∏ i, (1 + hQ.1.eigenvalues i) :=
-          Finset.prod_le_prod (fun _ _ => zero_le_one) fun i _ => le_add_of_nonneg_right (hQ.eigenvalues_nonneg i)
+          Finset.prod_le_prod₀ (fun _ _ => zero_le_one) fun i _ => le_add_of_nonneg_right (hQ.eigenvalues_nonneg i)
     intro κ _ _ X Y hX hP
     have hY : Y = X + (Y - X) := by abel
     by_cases h0 : X.det = 0

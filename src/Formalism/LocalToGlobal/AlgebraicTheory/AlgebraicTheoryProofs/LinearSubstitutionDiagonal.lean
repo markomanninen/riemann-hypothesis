@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.AlgebraicTheory.DefsKer
-import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.ScalarConst
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.AlternatingFormStandardHermitian
+module
+
+public import Formalism.LocalToGlobal.AlgebraicTheory.DefsKer
+public import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.ScalarConst
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.AlternatingFormStandardHermitian
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate

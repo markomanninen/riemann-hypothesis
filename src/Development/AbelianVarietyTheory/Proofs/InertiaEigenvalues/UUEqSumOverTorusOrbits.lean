@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,14 +86,14 @@ theorem torusOrb_mulLat_mem_X (x : B.A) (t : B.Aˣ) (ht : t ∈ B.T) (L : Submod
 def torusOrbRel (x : B.A) (L M : B.X x) : Prop :=
   ∃ t ∈ B.T, (M : Submodule K.O B.A) = mulLat K.O (t : B.A) (L : Submodule K.O B.A)
 
-theorem torusOrb_orbRel_equivalence (x : B.A) : Equivalence (B.torusOrbRel x) where
-  refl L := ⟨1, B.T.one_mem, by rw [Units.val_one, torusOrb_mulLat_one]⟩
-  symm := by
-    rintro L M ⟨t, ht, h⟩
+theorem torusOrb_orbRel_equivalence (x : B.A) : Equivalence (B.torusOrbRel x) := by
+  refine { refl := ?_, symm := ?_, trans := ?_ }
+  · intro L
+    exact ⟨1, B.T.one_mem, by rw [Units.val_one, torusOrb_mulLat_one]⟩
+  · rintro L M ⟨t, ht, h⟩
     refine ⟨t⁻¹, B.T.inv_mem ht, ?_⟩
     rw [h, torusOrb_mulLat_inv]
-  trans := by
-    rintro L M N ⟨s, hs, h1⟩ ⟨t, ht, h2⟩
+  · rintro L M N ⟨s, hs, h1⟩ ⟨t, ht, h2⟩
     refine ⟨t * s, B.T.mul_mem ht hs, ?_⟩
     rw [h2, h1, torusOrb_mulLat_mul]
 

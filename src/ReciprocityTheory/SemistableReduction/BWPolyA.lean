@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 
@@ -9,7 +13,8 @@ theorem bwp_poly_eq_of_eval_eq_off (P Q : ℂ[X]) (E : Set ℂ) (hE : E.Finite)
   apply Polynomial.eq_of_infinite_eval_eq
   refine Set.Infinite.mono (fun t ht => h t ht) hE.infinite_compl
 
-theorem bwp_finite_eval_eq_zero {P : ℂ[X]} (hP : P ≠ 0) : {t : ℂ | P.eval t = 0}.Finite := Polynomial.finite_setOf_isRoot hP
+theorem bwp_finite_eval_eq_zero {P : ℂ[X]} (hP : P ≠ 0) : {t : ℂ | P.eval t = 0}.Finite :=
+  Polynomial.finite_setOfPred_isRoot hP
 
 theorem bwp_exists_nodes (E : Set ℂ) (hE : E.Finite) (k : ℕ) :
     ∃ S : Finset ℂ, S.card = k + 1 ∧ ∀ c ∈ S, c ∉ E := by
@@ -25,7 +30,7 @@ theorem bwp_eval_eq_lagrange (S : Finset ℂ) (Q : ℂ[X]) (k : ℕ) (hS : S.car
     calc Q.degree ≤ (k : WithBot ℕ) := Polynomial.degree_le_of_natDegree_le hQ
       _ < ((k + 1 : ℕ) : WithBot ℕ) := by exact_mod_cast Nat.lt_succ_self k
   conv_lhs => rw [Lagrange.eq_interpolate hinj hdeg]
-  rw [Lagrange.interpolate_apply, Polynomial.eval_finset_sum]
+  rw [Lagrange.interpolate_apply, Polynomial.eval_finsetSum]
   refine Finset.sum_congr rfl (fun c _ => ?_)
   simp [mul_comm]
 
@@ -37,15 +42,20 @@ theorem bwp_eval_aeval_X {σ : Type*} (L : ℂ[X]) (i : σ) (y : σ → ℂ) :
 
 theorem bwp_sepPoly_fin (k : ℕ) : ∀ (n : ℕ) (G : (Fin n → ℂ) → ℂ),
     (∀ y m, ∃ Q : ℂ[X], Q.natDegree ≤ k ∧ ∀ t, G (Function.update y m t) = Q.eval t) →
-    ∃ F : MvPolynomial (Fin n) ℂ, ∀ y, G y = MvPolynomial.eval y F
-  | 0, G, _ => ⟨MvPolynomial.C (G 0), fun y => by
+    ∃ F : MvPolynomial (Fin n) ℂ, ∀ y, G y = MvPolynomial.eval y F := by
+  intro n
+  induction n with
+  | zero =>
+    intro G _
+    exact ⟨MvPolynomial.C (G 0), fun y => by
       rw [MvPolynomial.eval_C, Subsingleton.elim y 0]⟩
-  | n + 1, G, hG => by
+  | succ n ih =>
+    intro G hG
     obtain ⟨S, hS, -⟩ := bwp_exists_nodes ∅ Set.finite_empty k
     have hsub : ∀ c : ℂ, ∃ F : MvPolynomial (Fin n) ℂ,
         ∀ y', G (Fin.cons c y') = MvPolynomial.eval y' F := by
       intro c
-      refine bwp_sepPoly_fin k n (fun y' => G (Fin.cons c y')) ?_
+      refine ih (fun y' => G (Fin.cons c y')) ?_
       intro y' m
       obtain ⟨Q, hQ, hQt⟩ := hG (Fin.cons c y') m.succ
       exact ⟨Q, hQ, fun t => by simp only [Fin.cons_update]; exact hQt t⟩
@@ -59,9 +69,9 @@ theorem bwp_sepPoly_fin (k : ℕ) : ∀ (n : ℕ) (G : (Fin n → ℂ) → ℂ),
       exact Fin.update_cons_zero _ _ _
     have h1 : G y = Q.eval (y 0) := by
       rw [← hQt]; simp
-    rw [h1, bwp_eval_eq_lagrange S Q k hS hQ, map_sum]
+    rw [h1, bwp_eval_eq_lagrange S Q k hS hQ, MvPolynomial.eval_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
-    rw [map_mul, bwp_eval_aeval_X, MvPolynomial.eval_rename, ← hQt c, hy c, hFc c]
+    rw [MvPolynomial.eval_mul, bwp_eval_aeval_X, MvPolynomial.eval_rename, ← hQt c, hy c, hFc c]
     rfl
 
 theorem bwp_sepPoly {σ : Type*} [Fintype σ] [DecidableEq σ] (k : ℕ) (G : (σ → ℂ) → ℂ)

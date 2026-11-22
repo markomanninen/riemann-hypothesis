@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
+module
+
+public import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -67,7 +71,8 @@ theorem diag_move {n : ℕ} {E : Fin n → Fin n → Module.End ℂ V} (hE : GlR
 theorem hop_move {n : ℕ} {E : Fin n → Fin n → Module.End ℂ V} (hE : GlRel E) (a b : Fin n) (x : V) :
     hop E (E a b x) = E a b (hop E x) + (((b : ℕ) : ℂ) - ((a : ℕ) : ℂ)) • E a b x := by
   unfold hop
-  simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, diag_move hE, smul_add, smul_sub,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, diag_move hE, smul_add, smul_sub,
     smul_ite, smul_zero, Finset.sum_add_distrib, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq,
     Finset.mem_univ, if_true]
   rw [← sub_smul]

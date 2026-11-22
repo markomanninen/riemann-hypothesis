@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+
+@[expose] public section
+
 open scoped Matrix
 open Formalism.BasicNotions.TH
 
@@ -105,7 +110,7 @@ def inPlane (i0 : Fin R) (j0 : Fin S) (M : Matrix (Fin 2) (Fin 2) ℂ) : Mat R S
 
 variable (i0 : Fin R) (j0 : Fin S)
 theorem embT_emb : (emb i0 j0)ᵀ * emb i0 j0 = 1 := by
-  ext p q; fin_cases p <;> fin_cases q <;> simp [Matrix.mul_apply, emb, pl, Fintype.sum_sum_type, Matrix.one_apply]
+  ext p q; fin_cases p <;> fin_cases q <;> simp [Matrix.mul_apply, emb, pl, Fintype.sum_sum_type, Matrix.one_apply, Function.swap]
 theorem emb_ct : (emb i0 j0)ᴴ = (emb i0 j0)ᵀ := by
   ext p k; simp only [emb, Matrix.conjTranspose_apply, Matrix.transpose_apply, Matrix.of_apply]; split_ifs <;> simp
 theorem embT_ct : ((emb i0 j0)ᵀ)ᴴ = emb i0 j0 := by
@@ -126,7 +131,7 @@ theorem embT_Jm : (emb i0 j0)ᵀ * Jm R S = signatureOneOneForm * (emb i0 j0)ᵀ
 theorem inPlane_diag (a b : ℂ) : inPlane i0 j0 !![a, 0; 0, b] = Matrix.fromBlocks (Matrix.diagonal (Function.update 1 i0 a)) 0 0
     (Matrix.diagonal (Function.update 1 j0 b)) := by
   ext k l; rcases k with k | k <;> rcases l with l | l <;>
-    simp [inPlane, emb, pl, Matrix.mul_apply, Fin.sum_univ_two, Matrix.one_apply, Matrix.diagonal_apply, Function.update_apply]
+    simp [inPlane, emb, pl, Matrix.mul_apply, Fin.sum_univ_two, Matrix.one_apply, Matrix.diagonal_apply, Function.update_apply, Function.swap]
   · by_cases h1 : k = i0 <;> by_cases h2 : l = i0 <;> simp [h1, h2]
     subst h1; simp [Ne.symm h2]
   · by_cases h1 : k = j0 <;> by_cases h2 : l = j0 <;> simp [h1, h2]

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoLowerBoundLargeConductor
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoLowerBoundLargeConductor
+
+@[expose] public section
 
 noncomputable section
 
@@ -178,8 +182,8 @@ theorem topW_zero {n' m : ℕ} {TT : Finset (Fin n')} (lam0 : Fin n' → Fin (m 
     topW TT lam0 s = 0 := by
   simp [topW, hs]
 
-open Classical in
 
+open Classical in
 theorem midLP_of (h60c : RhoLowerBoundLargeConductor) (h62 : CloudWeightLowerBound) (h63 : ResidueClassCount) : ∀ K C, MidLP K C := by
   intro K C X hF R aw bw lam0 hW t ht
   have hcst := hF.cst

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.FamilyGroupSumFactorsWeightAmplitude
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GenericTermsScalarClassesFormFamilyStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CorankOneScalarPairSymmetricStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ScalarCorankOnePairsTransStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.FamilyGroupSumFactorsWeightAmplitude
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GenericTermsScalarClassesFormFamilyStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CorankOneScalarPairSymmetricStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ScalarCorankOnePairsTransStatement
+
+@[expose] public section
+
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.FourierDecayAlt Formalism.L2.SG.RowsConc Formalism.L2.SG.NGData Formalism.L2.SG.TermLoc GlobalTheory.SnFam
 open scoped Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar

@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.CharZeroOfW
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SymVarInlFst
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.MemIntPolOfCoeff
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SymbolVariableLowerLetter
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FactorsOfPerturb
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.CharZeroOfW
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SymVarInlFst
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.MemIntPolOfCoeff
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SymbolVariableLowerLetter
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FactorsOfPerturb
+
+@[expose] public section
 
 noncomputable section
 
@@ -197,7 +201,7 @@ theorem kapAt_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hN : KapNumAt C0 CYb Cd
     Finset.prod_ne_zero_iff.2 fun x _ => Nat.factorial_ne_zero _
   have hvN : padicValNat X.p (Nblk C0 CE1 CE2 X j b) =
       (∏ x : X.TT × Bool, (cdeg C0 CE1 CE2 X j b x).factorial).factorization X.p + sp.factorization X.p := by
-    rw [← Nat.factorization_def _ hp]
+    rw [Nat.padicValNat_def, ← Nat.factorization_def _ hp]
     unfold Nblk
     rw [Nat.factorization_mul hc0 hsp0]
     rfl

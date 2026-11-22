@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExc
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExc
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -58,19 +63,6 @@ theorem linPointMap_first {T : Type} [Fintype T] {k : Type} [Field k] {n : ℕ} 
 theorem linPointMap_second {T : Type} [Fintype T] {k : Type} [Field k] {n : ℕ} (α : T → k) (M : T → Fin n → k)
     (t : T) : linPointMap α M (graphSecond t) = ∑ j, C (M t j) * X (some j) := by
   simp [linPointMap, graphSecond]
-
-def idForms : Fin 2 → Fin 2 → ZMod 2 := fun t j => if t = j then 1 else 0
-
-theorem two_mem_not_one : (C 2 : MRing (stackedBlocks Unit)) ∈
-      linPrime (fun _ : Unit => (1 : ZMod 2)) (fun (_ : Unit) (_ : Fin 1) => (1 : ZMod 2)) ∧
-    (1 : MRing (stackedBlocks Unit)) ∉
-      linPrime (fun _ : Unit => (1 : ZMod 2)) (fun (_ : Unit) (_ : Fin 1) => (1 : ZMod 2)) := by
-  refine ⟨?_, ?_⟩
-  · rw [linPrime, RingHom.mem_ker, linPointMap, coe_eval₂Hom, eval₂_C, eq_intCast,
-      ← map_intCast (C : ZMod 2 →+* MvPolynomial (Option (Fin 1)) (ZMod 2)),
-      show ((2 : ℤ) : ZMod 2) = 0 by decide, map_zero]
-  · rw [linPrime, RingHom.mem_ker, map_one]
-    exact one_ne_zero
 
 end LinPrimeExample
 

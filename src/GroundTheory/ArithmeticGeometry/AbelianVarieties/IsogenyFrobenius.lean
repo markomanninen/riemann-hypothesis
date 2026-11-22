@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.Isogeny
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.Isogeny
+
+@[expose] public section
 
 namespace GroundTheory.Arith.Abelian
 
@@ -112,7 +116,7 @@ theorem Ψ₂Sq_eq_sq_of_two (h2 : p = 2) : E.Ψ₂Sq = (C E.a₁ * X + C E.a₃
   have h2X : (2 : F[X]) = 0 := by rw [← C_ofNat, h2F, C_0]
   have e : E.Ψ₂Sq = (C E.a₁ * X + C E.a₃) ^ 2 + 2 * (2 * X ^ 3 + C (2 * E.a₂) * X ^ 2 +
       C E.b₄ * X - C E.a₁ * C E.a₃ * X + C (2 * E.a₆)) := by
-    simp only [Ψ₂Sq, b₂, b₆, map_add, map_mul, map_pow, map_ofNat]
+    simp only [Ψ₂Sq, b₂, b₆, map_add (f := _), map_mul, map_pow, map_ofNat]
     ring
   rw [e, h2X, zero_mul, add_zero]
 
@@ -239,8 +243,8 @@ theorem relfinrank_powField : relfinrank F⟮genX E ^ p⟯ (powField E p) = 2 :=
     simp only [WeierstrassCurve.baseChange, WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₂,
       WeierstrassCurve.map_a₃, WeierstrassCurve.map_a₄, WeierstrassCurve.map_a₆] at e
     have e' := congrArg (frobenius E.toAffine.FunctionField p) e
-    simp only [map_add, map_mul, map_pow, frobenius_def] at e'
-    simp only [q, map_sub, map_add, map_mul, map_pow, aeval_X, aeval_C, w,
+    simp only [map_add (f := _), map_mul, map_pow, frobenius_def] at e'
+    simp only [q, map_sub, map_add (f := _), map_mul, map_pow, aeval_X, aeval_C, w,
       IntermediateField.algebraMap_apply]
     linear_combination e'
   have hqdeg : q.natDegree = 2 := by simp only [q]; compute_degree!

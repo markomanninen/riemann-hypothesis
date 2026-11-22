@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiSeenA
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiSeenA
+
+@[expose] public section
 
 open UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi DiscreteGroups.T1.G
 open NumberField IsDedekindDomain Matrix MeasureTheory Filter
@@ -34,7 +38,7 @@ private theorem measurable_cnt (D : Dom E n 0) {Ω : Set (H E n 0)} (hΩ : IsCom
   haveI : BorelSpace (H E n 0) := ⟨rfl⟩
   haveI : Countable (ratH E n 0) := Dcy.countable_ratH'
   unfold cnt
-  refine Measurable.ennreal_tsum fun γ => ?_
+  refine Measurable.tsum fun γ => ?_
   have hc : Continuous fun x : H E n 0 => x⁻¹ * (γ : H E n 0) * x :=
     (continuous_inv.mul continuous_const).mul continuous_id
   exact (measurable_one.indicator hΩ.isClosed.measurableSet).comp hc.measurable
@@ -78,7 +82,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.halfTerm_pf :
 
   have hFj : Continuous (Function.uncurry F) := by
     refine (hψc.comp (continuous_fst.comp continuous_snd)).mul ?_
-    refine continuous_finset_sum _ fun i _ => ?_
+    refine continuous_finsetSum _ fun i _ => ?_
     refine Continuous.inner ?_ ?_
     · exact (s.vecs.cont i).1.comp ((hacc.comp continuous_fst).mul continuous_const)
     · exact m.Uπ.continuous.comp ((s.vecs.cont i).2.comp continuous_snd)

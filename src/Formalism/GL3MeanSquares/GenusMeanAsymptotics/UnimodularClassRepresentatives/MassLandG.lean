@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassLandA
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassLandA
+
+@[expose] public section
 
 open NumberField Module
 

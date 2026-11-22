@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.XTwApplyApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.QzInj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ZmodToQZ
-import Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.QzSep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.DualKer
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.XTwApplyApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.QzInj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ZmodToQZ
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.QzSep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.DualKer
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum UpperTheory.V.Tower
 

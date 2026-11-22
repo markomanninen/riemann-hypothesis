@@ -1,10 +1,14 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_JA_LocLemmas
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStable2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAdjCont
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointLeibnizExpansion
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfExhaustOfAvgCutoff
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableGerm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGCut
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_JA_LocLemmas
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStable2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAdjCont
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointLeibnizExpansion
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfExhaustOfAvgCutoff
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableGerm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGCut
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
@@ -119,8 +123,9 @@ theorem adjComm_at (hAC : Formalism.FourierDecayAlt.P.CutMP.JA.FFS.AdjComm) (D :
     exact h0.smul_right
   have hf₁S : B.SuppIn (B.GPos D) f₁ := by
     have hcl : IsClosed (Metric.closedBall y (ε / 2) ∩ B.GV k r) := Metric.isClosed_closedBall.inter Formalism.FourierDecayAlt.P.BetaSesquilinearity.gv_closed
-    refine (closure_minimal (fun x (hx : x ∈ B.GV k r ∧ f₁ x ≠ 0) => ?_) hcl).trans ?_
-    · refine ⟨?_, hx.1⟩
+    have hsub : {x | x ∈ B.GV k r ∧ f₁ x ≠ 0} ⊆ Metric.closedBall y (ε / 2) ∩ B.GV k r := by
+      intro x hx
+      refine ⟨?_, hx.1⟩
       by_contra hxb
       apply hx.2
       have : b x = 0 := by
@@ -128,12 +133,13 @@ theorem adjComm_at (hAC : Formalism.FourierDecayAlt.P.CutMP.JA.FFS.AdjComm) (D :
         rw [Metric.mem_closedBall, not_le] at hxb
         rw [hbo]; exact hxb.le
       simp [hf₁, this]
-    · intro x hx
-      refine ⟨hx.2, hball ?_⟩
-      have := hx.1
-      rw [Metric.mem_closedBall] at this
-      rw [Metric.mem_ball]
-      linarith
+    refine (closure_minimal hsub hcl).trans ?_
+    intro x hx
+    refine ⟨hx.2, hball ?_⟩
+    have := hx.1
+    rw [Metric.mem_closedBall] at this
+    rw [Metric.mem_ball]
+    linarith
   have hmain := hAC k r Wp Wq D Θ hSC hC f₁ hf₁C hf₁cs hf₁S p hp g hg
   have hone : ∀ x ∈ Metric.ball y (ε / 4), f₁ x = F x := by
     intro x hx

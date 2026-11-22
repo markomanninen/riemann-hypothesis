@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.PropFTop
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntersectionFamilyMultilinearStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArMonoAddSingle
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MonoLinesLineSmooth
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.PropFTop
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntersectionFamilyMultilinearStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArMonoAddSingle
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MonoLinesLineSmooth
+
+@[expose] public section
+
 open MvPolynomial NumberField Filter Topology ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I2 GlobalTheory.CompanionTheory.Ar.Top GlobalTheory.CompanionTheory.Ar.Flat
 
 namespace GlobalTheory.CompanionTheory.Ar.Flat.RootSum
@@ -32,7 +37,8 @@ theorem geoFun_monomial {Ψ : Type} [Fintype Ψ] {N : ℕ} (M : RootModel Ψ N)
 theorem toA_pk_monomial {Ψ : Type} [Fintype Ψ] {N : ℕ} (τ : Ψ) (m : Ψ × Fin N →₀ ℕ) :
     toA (pk τ 1 * monomial m (1 : ℝ) : RP Ψ N) =
       ∑ i : Fin N, monomial ((m + Finsupp.single (τ, i) 1).mapDomain some) (1 : ℝ) := by
-  rw [toA, pk, Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [toA, pk, Finset.sum_mul, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [pow_one, X, monomial_mul, rename_monomial, add_comm, mul_one]
 
@@ -57,7 +63,8 @@ theorem PP_mono (hP : PtsIntegrableStatement) (hM : MetricLocalStatement) (hD : 
     (R : RootFlat M τ) (hII : IsIntersectionSystem II) (hC : M.Converges II) (m : Ψ × Fin N →₀ ℕ)
     (hm : m.degree = dimFl Ψ N) :
     M.PP II (toA (pk τ 1 * monomial m 1)) = R.ht * M.geoFun (toA (monomial m 1)) := by
-  rw [toA_pk_monomial, map_sum, toA, rename_monomial, geoFun_monomial]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [toA_pk_monomial, map_sum, toA, rename_monomial, geoFun_monomial]
   simp only [PP_monomial]
   have h1 : Tendsto (fun t => ∑ i : Fin N, M.arMono II t ((m + Finsupp.single (τ, i) 1).mapDomain some))
       (𝓝[>] 0) (𝓝 (∑ i : Fin N, limUnder (𝓝[>] 0) fun t =>
@@ -81,7 +88,8 @@ theorem GlobalTheory.CompanionTheory.Ar.Flat.root_flat_pushforward_eq : PtsInteg
   have hA : ∀ (c : ℝ) (F : RP Ψ N), toA (c • F) = c • toA F := fun c F => map_smul (rename some) c F
   have hS : ∀ (s : Finset (Ψ × Fin N →₀ ℕ)) (F : _ → RP Ψ N), toA (∑ m ∈ s, F m) = ∑ m ∈ s, toA (F m) :=
     fun s F => map_sum (rename some) F s
-  rw [hQ', Finset.mul_sum, hS, hS, map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hQ', Finset.mul_sum, hS, hS, map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
   have hd : m.degree = dimFl Ψ N := by
     rw [Finsupp.degree_eq_weight_one]

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.InvAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.EqLagIff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IdemLiftComplete
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.InvAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.EqLagIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IdemLiftComplete
+
+@[expose] public section
 
 open Polynomial Matrix IsLocalRing TensorProduct UpperTheory.V.AlgebraTools
 
@@ -45,7 +49,7 @@ private theorem scl_st_pow (T : TrInv B E) {z : E} (hz : T.st z = z) (n : ℕ) :
 private theorem scl_st_aeval (T : TrInv B E) {z : E} (hz : T.st z = z) (q : B[X]) :
     T.st (aeval z q) = aeval z q := by
   induction q using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq]
   | monomial n b => rw [aeval_monomial, ← Algebra.smul_def, map_smul, scl_st_pow T hz]
 
 private theorem scl_idem_zero (I : Ideal B) [IsAdicComplete I E] {g : E} (hg : IsIdempotentElem g) {M : ℕ}
@@ -85,13 +89,13 @@ private theorem scl_step (T : TrInv B E) (I : Ideal B) [IsAdicComplete I E] {F :
     · intro a ha n _
       rw [map_smul, ← algebraMap_smul F a (r n), RingHom.mem_ker.1 (hI ha), zero_smul]
     · intro x y hx hy
-      rw [map_add, hx, hy, add_zero]
+      rw [map_add (f := _), hx, hy, add_zero]
   obtain ⟨c, hc⟩ : ∃ c : B, c * 2 = 1 := ⟨((h2.unit⁻¹ : Bˣ) : B), h2.val_inv_mul⟩
   let u : E := c • (y + T.st y)
   have hsu : T.st u = u := by
-    simp only [u, map_smul, map_add, T.st_st, add_comm]
+    simp only [u, map_smul, map_add (f := _), T.st_st, add_comm]
   have hru : r u = r y := by
-    simp only [u, map_smul, map_add, hst, hyt]
+    simp only [u, map_smul, map_add (f := _), hst, hyt]
     rw [← two_smul B (r y), smul_smul, hc, one_smul]
   let z : E := e * u * e
   have hsz : T.st z = z := by
@@ -133,7 +137,7 @@ private theorem scl_step (T : TrInv B E) (I : Ideal B) [IsAdicComplete I E] {F :
     rw [map_sub, sub_eq_zero] at h0
     have h3 : r ((z * z - z) * aeval z q) = 0 := by
       rw [map_mul, map_sub, map_mul, hrz, hy.eq, sub_self, zero_mul]
-    rw [h0, map_add, h3, add_zero, hrz]
+    rw [h0, map_add (f := _), h3, add_zero, hrz]
 
 end aux
 
@@ -185,11 +189,13 @@ theorem UpperTheory.V.AlgebraTools.st_coi_lift :
       obtain ⟨hSid, hSj⟩ := hsum ep s (fun i hi => (hp i hi).1) ho
       have he : IsIdempotentElem (1 - ∑ i ∈ s, ep i) := hSid.one_sub
       have hse : T.st (1 - ∑ i ∈ s, ep i) = 1 - ∑ i ∈ s, ep i := by
-        rw [map_sub, scl_st_one, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sub, scl_st_one, map_sum]
         congr 1
         exact Finset.sum_congr rfl (fun i hi => (hp i hi).2.1)
       have hre : r (1 - ∑ i ∈ s, ep i) = 1 - ∑ i ∈ s, Matrix.single i i (1 : F) := by
-        rw [map_sub, map_one, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sub, map_one, map_sum]
         congr 1
         exact Finset.sum_congr rfl (fun i hi => (hp i hi).2.2)
       have hl : (1 - ∑ i ∈ s, Matrix.single i i (1 : F)) * Matrix.single a a 1 = Matrix.single a a 1 := by
@@ -247,7 +253,8 @@ theorem UpperTheory.V.AlgebraTools.st_coi_lift :
       rintro ⟨rfl, rfl⟩
       exact h rfl
   have hr0 : r (1 - ∑ i, ep i) = 0 := by
-    rw [map_sub, map_one, map_sum, sub_eq_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_one, map_sum, sub_eq_zero]
     rw [Finset.sum_congr rfl (fun i _ => (hp i (Finset.mem_univ i)).2.2), hone]
   obtain ⟨M, hM⟩ := hk _ hr0
   have h0 := scl_idem_zero I hSid.one_sub hM

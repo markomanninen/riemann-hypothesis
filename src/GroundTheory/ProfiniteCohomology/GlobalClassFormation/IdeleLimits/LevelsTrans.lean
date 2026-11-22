@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.Levels
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.Levels
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -23,8 +28,8 @@ theorem levelRestrict_levelRestrict (τ : M.1 ≃ₐ[K.1] M.1) :
   have h3 := congrArg Subtype.val (coe_levelRestrict_apply (K := K) (F := F) (E := M) τ x)
   exact h1.trans (h2.trans h3.symm)
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem levelTransition_comp_levelTransition (n : ℕ) :
     levelTransition K F E n ≫ levelTransition K E M n = levelTransition K F M n := by
   unfold levelTransition cohomologyMapAlong

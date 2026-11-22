@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.IsKumCoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.IsKumCoc
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 

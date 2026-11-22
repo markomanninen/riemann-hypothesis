@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IsSplitFrame
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IsSplitFrame
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,7 @@ theorem mat_lift_core {O : Type} [CommRing O] {k : ℕ} (gO eO wO : O) (he2 : eO
     have hQ : (Ideal.Quotient.mk (Ideal.span {gO})).mapMatrix Q = 1 := by
       have hπg : Ideal.Quotient.mk (Ideal.span {gO}) gO = 0 :=
         Ideal.Quotient.eq_zero_iff_mem.2 (Ideal.mem_span_singleton_self _)
-      rw [hQdef, map_add, map_one]
+      rw [hQdef, map_add (f := _), map_one]
       ext i j
       simp [hπg]
     have h1 : Ideal.Quotient.mk (Ideal.span {gO}) (Q.det - 1) = 0 := by
@@ -157,7 +161,7 @@ theorem idxDMat_of (hJ : IdxDJacE) : IdxDMat := by
     have hmem : epsX X e * (CO.map (IntAf X.B.I.F X.B.I.E).subtype) i j ∈ IntAf X.B.I.F X.B.I.E :=
       (eO * wO * CO i j).2
     unfold resT
-    rw [dif_pos hmem]
+    rw [dite_eq_left hmem]
     have : (⟨epsX X e * (CO.map (IntAf X.B.I.F X.B.I.E).subtype) i j, hmem⟩ : IntAf X.B.I.F X.B.I.E) =
         eO * wO * Mo i j := by
       rw [← hent i j]; rfl

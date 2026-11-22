@@ -1,4 +1,8 @@
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.HilbertSchmidtNorms.HsConjTranspose
+module
+
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.HilbertSchmidtNorms.HsConjTranspose
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,7 @@ theorem psiK_meas (q : Matrix (Fin n) (Fin n) ℂ → ℂ) (w : ℝ) (hq : Conti
     intro k
     have hc : Continuous fun g : S7.UJ ε => q (S7.toM (g * (k : S7.UJ ε))) :=
       hq.comp (continuous_mul_const (k : S7.UJ ε))
-    exact (ENNReal.continuous_pow 2).comp hc.enorm
+    exact (ENNReal.continuous_pow 2).comp hc.eNorm
   have hsup : Measurable fun g : S7.UJ ε => ⨆ k : S7.KG ε, ‖q (S7.toM g * S7.toMK k)‖ₑ ^ 2 :=
     (lowerSemicontinuous_iSup fun k => (h1 k).lowerSemicontinuous).measurable
   have hw : Measurable fun g : S7.UJ ε => ENNReal.ofReal (Formalism.REAL.hs (S7.toM g) ^ w) :=
@@ -113,7 +117,7 @@ theorem psiK_lint (q : Matrix (Fin n) (Fin n) ℂ → ℂ) (w : ℝ) (T : Finset
     _ = ENNReal.ofReal Cf * ∑ h ∈ T, ∫⁻ g : S7.UJ ε, ‖h (S7.toM g)‖ₑ ^ 2 * ENNReal.ofReal (Formalism.REAL.hs (S7.toM g) ^ w) ∂Measure.haar := by
         rw [lintegral_const_mul' _ _ ENNReal.ofReal_ne_top, lintegral_finsetSum']
         intro h hh
-        exact (((ENNReal.continuous_pow 2).comp (hTc h hh).enorm).measurable.mul
+        exact (((ENNReal.continuous_pow 2).comp (hTc h hh).eNorm).measurable.mul
           (ENNReal.measurable_ofReal.comp ((continuous_hs.comp (S7.continuous_toM ε)).measurable.pow_const w))).aemeasurable
     _ < ⊤ := ENNReal.mul_lt_top ENNReal.ofReal_lt_top (ENNReal.sum_lt_top.2 fun h hh => hT h hh)
 

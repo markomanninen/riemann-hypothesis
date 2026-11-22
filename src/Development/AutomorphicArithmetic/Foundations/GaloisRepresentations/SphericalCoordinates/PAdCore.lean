@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.PAdicLatticeApproximation.PrimeToPIsogenyOfAdelicEndoPreservingLattice
-import Development.AutomorphicArithmetic.PAdicLatticeApproximation.FormScalarOfAdelicEndoPreservingLattice
-import Development.AutomorphicArithmetic.PAdicLatticeApproximation.ExistsUnitTrivOfSimilitudeFactor
-import Development.AutomorphicArithmetic.PAdicLatticeApproximation.OneTmulMemCompletedLatticeIff
-import Development.AutomorphicArithmetic.PAdicLatticeApproximation.ExistsRationalEquivOfIsPlace
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimilitudeActionAdelicLattice
+module
+
+public import Development.AutomorphicArithmetic.PAdicLatticeApproximation.PrimeToPIsogenyOfAdelicEndoPreservingLattice
+public import Development.AutomorphicArithmetic.PAdicLatticeApproximation.FormScalarOfAdelicEndoPreservingLattice
+public import Development.AutomorphicArithmetic.PAdicLatticeApproximation.ExistsUnitTrivOfSimilitudeFactor
+public import Development.AutomorphicArithmetic.PAdicLatticeApproximation.OneTmulMemCompletedLatticeIff
+public import Development.AutomorphicArithmetic.PAdicLatticeApproximation.ExistsRationalEquivOfIsPlace
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimilitudeActionAdelicLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,14 +32,14 @@ private theorem sys_lim {D' : PLat D.O D.inv} (ψ : D'.La ≃+ D.La) {f : ℕ �
   have htw : ∀ n m : ℕ, 0 < n → 0 < m → (n * m).Coprime p → ∀ x, ∃ z, g (n * m) x = g n x + n • z := by
     intro n m hn hm hc x
     obtain ⟨e, he⟩ := (hw.1 n m hn hm hc).2 x
-    exact ⟨ψ e, by rw [hgv, hgv, he, map_add, map_nsmul]⟩
+    exact ⟨ψ e, by rw [hgv, hgv, he, map_add (f := _), map_nsmul]⟩
   have hsurj : ∀ n, 0 < n → n.Coprime p → ∀ x, ∃ y z, g n y = x + n • z := by
     intro n hn hc x
     obtain ⟨-, -, -, h4, -⟩ := hw.2 n hn hc
     obtain ⟨a, e, he⟩ := h4 (ψ.symm x)
     refine ⟨a, -ψ e, ?_⟩
     have : x = ψ (f n a) + n • ψ e := by
-      rw [← map_nsmul, ← map_add, ← he, AddEquiv.apply_symm_apply]
+      rw [← map_nsmul, ← map_add (f := _), ← he, AddEquiv.apply_symm_apply]
     rw [hgv, this, smul_neg]; abel
   have hinj : ∀ n, 0 < n → n.Coprime p → ∀ x z, g n x = n • z → ∃ w, x = n • w := by
     intro n hn hc x z h
@@ -58,7 +62,7 @@ private theorem sys_lim {D' : PLat D.O D.inv} (ψ : D'.La ≃+ D.La) {f : ℕ �
       obtain ⟨w', hw', e'⟩ := hk₀ n hn hc (f₁ n x)
       obtain ⟨z, hz⟩ := hf n hn hc x
       refine ⟨inAf D z + w' + k₀ w, add_mem (add_mem (inAf_mem D z) hw') (hk₀L w hw), ?_⟩
-      rw [Module.End.mul_apply, e, map_add, e', hz, inAf_add, inAf_nsmul, map_nsmul]
+      rw [Module.End.mul_apply, e, map_add (f := _), e', hz, inAf_add, inAf_nsmul, map_nsmul]
       simp only [smul_add]; abel
     rw [Module.End.one_apply]; exact sub_eq_zero.1 this
   exact ⟨h₀, h₁, inv_of g g' h₀ h₁ h₀L h₀c h₁c hgg', inv_of g' g h₁ h₀ h₁L h₁c h₀c hg'g, h₀L, h₁L, h₀c⟩
@@ -96,7 +100,7 @@ private theorem bc_inv (T : VQ D ≃ₗ[ℚ] VQ D) :
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp
-  | add x y hx hy => rw [map_add, hx, hy, map_add]
+  | add x y hx hy => rw [map_add (f := _), hx, hy, map_add (f := _)]
 
 private theorem actOn_inC (L : Link D G) (c : G.C) (u : VQ D) :
     actOn L.rep (AfP p) (inC G (AfP p) c) ((1 : AfP p) ⊗ₜ[ℚ] u) = (1 : AfP p) ⊗ₜ[ℚ] L.rep c u := by

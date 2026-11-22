@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsPolyLocalGenerators
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsPolyLocalGenerators
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -50,7 +55,7 @@ theorem eval_tanLinPoly (p w : Fin n → ℂ) : eval p (tanLinPoly p w) = 0 := b
   simp [tanLinPoly]
 
 theorem tanLinPoly_add (p w w' : Fin n → ℂ) : tanLinPoly p (w + w') = tanLinPoly p w + tanLinPoly p w' := by
-  simp only [tanLinPoly, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [tanLinPoly, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem tanLinPoly_smul (p w : Fin n → ℂ) (c : ℂ) : tanLinPoly p (c • w) = C c * tanLinPoly p w := by
   simp only [tanLinPoly, Pi.smul_apply, smul_eq_mul, map_mul, Finset.mul_sum, mul_assoc]
@@ -84,7 +89,7 @@ theorem sub_tanLinPoly_mem_sq (p : Fin n → ℂ) (f : MvPolynomial (Fin n) ℂ)
     have e : f + g - C (eval p (f + g)) - tanLinPoly p (polyDiff p (f + g)) =
         (f - C (eval p f) - tanLinPoly p (polyDiff p f)) +
           (g - C (eval p g) - tanLinPoly p (polyDiff p g)) := by
-      rw [map_add, map_add, map_add, tanLinPoly_add]; ring
+      rw [map_add (f := _), map_add (f := _), map_add (f := _), tanLinPoly_add]; ring
     rw [e]
     exact add_mem hf hg
   | mul_X f i hf =>
@@ -120,7 +125,8 @@ theorem mem_span_sup_sq_of_polyDiff_mem (p : Fin n → ℂ) {ι : Type*} [Fintyp
   obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun ℂ).1 hd
   have hg0 : eval p (f - ∑ i, C (c i) * h i) = 0 := by simp [hf, hh]
   have hg1 : polyDiff p (f - ∑ i, C (c i) * h i) = 0 := by
-    simp only [map_sub, map_sum, C_mul', map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, C_mul', map_smul]
     rw [← hc]
     simp
   have hsum : ∑ i, C (c i) * h i ∈ Ideal.span (Set.range h) :=

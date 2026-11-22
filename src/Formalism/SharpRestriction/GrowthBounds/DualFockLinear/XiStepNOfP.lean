@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.WspanLeOpCl
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.WspanLeOpCl
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,7 +85,7 @@ theorem xiStepN_of_P (C CD CLa : ℝ) (hP : XiStepP C CD CLa) : XiStepN C CD CLa
       unfold symB toK symP
       rw [subst_SPtrue w F hF.2.1 hSet.1.even (by omega) hrk hg, map_mul]
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul a x _ hx => rw [map_smul]; exact Submodule.smul_mem _ _ hx
   · exact substPol p n' W Qq O Kf ι σ j w hSet.1 φ hφ (m + 1) r (dT TT lam0) g hg _ F1.2
   · have h4 : Θ' F1 ∈ scale (algebraMap O Kf w ^ ((0 : ℕ) : ℤ)) (Re p ι σ w r (flW (dT TT lam0)) e) := by

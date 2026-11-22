@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Finset Classical
 
@@ -17,7 +21,8 @@ theorem meansq_expand (PP I : Finset ℕ) (c : ℕ → ℝ) (hc : ∀ n, 0 ≤ c
         ∑ n ∈ I, ∑ n' ∈ I, ((c n : ℝ) : ℂ) * ((c n' : ℝ) : ℂ) * (κ n * (starRingEnd ℂ) (κ n')) *
           (((J n q * J n' q : ℤ) : ℝ) : ℂ) := by
       intro q
-      rw [Complex.ofReal_pow, ← Complex.mul_conj', map_sum, Finset.sum_mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Complex.ofReal_pow, ← Complex.mul_conj', map_sum, Finset.sum_mul_sum]
       refine Finset.sum_congr rfl fun n _ => Finset.sum_congr rfl fun n' _ => ?_
       simp only [map_mul, Complex.conj_ofReal, map_intCast]
       push_cast

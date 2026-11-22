@@ -1,8 +1,12 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SetAtOfSizeAt
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SettingAtPoint
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.Realised
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LeafInfinitePlaceBound
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SetAtOfSizeAt
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SettingAtPoint
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.Realised
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LeafInfinitePlaceBound
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -17,25 +21,25 @@ variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotio
   {Y : DivX D} {cX : ExtraC} {ex : Extra D L hT Gi Gl Kc Y cX} {Csz : ℝ}
 set_option maxHeartbeats 1600000 in
 theorem setting_of_size_alt (p : PtAt ex Csz) (hp : p.PointConditions') (hs : GlobalTheory.IndefiniteRowSideFullHecke.LevelPlusSubgroup.SizeRows L) (he : GlobalTheory.GLq.ESerTie D) :
-    HidaSetting L p.R.toRealDat p.F.lv2 where
-  size := hs
-  eser := he
-  host := p.host
-  hF := p.hF
-  core := (GlobalTheory.OneMapBridge.heckeChoiceClauses_of_weakCharacterisation_at_face D _ _ _ _ _ _ p.R p.F p.charW hp.exAt).1
-  mu_off := p.charW.tup.mu_off
-  mu_used := p.charW.tup.mu_used
-  mu_ne := p.charW.tup.mu_ne
-  mu_conj := p.charW.tup.mu_conj
-  mu_on := p.charW.tup.mu_on
-  grp := p.charW.base.grp.record
-  guard := p.qGuard
-  fin := finite_tup p
-  fullY := p.charW.fullY
-  fullX := p.charW.fullX
-  std := p.stdChar
-  stdX := p.stdX
-  betaX := p.betaStd.2
+    HidaSetting L p.R.toRealDat p.F.lv2 :=
+  { size := hs
+    eser := he
+    host := p.host
+    hF := p.hF
+    core := (GlobalTheory.OneMapBridge.heckeChoiceClauses_of_weakCharacterisation_at_face D _ _ _ _ _ _ p.R p.F p.charW hp.exAt).1
+    mu_off := p.charW.tup.mu_off
+    mu_used := p.charW.tup.mu_used
+    mu_ne := p.charW.tup.mu_ne
+    mu_conj := p.charW.tup.mu_conj
+    mu_on := p.charW.tup.mu_on
+    grp := p.charW.base.grp.record
+    guard := p.qGuard
+    fin := finite_tup p
+    fullY := p.charW.fullY
+    fullX := p.charW.fullX
+    std := p.stdChar
+    stdX := p.stdX
+    betaX := p.betaStd.2 }
 end GlobalTheory.BigTop.Fun.SetFromSize
 namespace GlobalTheory.BigTop.Fun
 theorem setAt_of_sizeAt_alt (h : _root_.GlobalTheory.BigTop.Fun.SizeAtAlt) : _root_.GlobalTheory.BigTop.Fun.SettingAtPoint :=

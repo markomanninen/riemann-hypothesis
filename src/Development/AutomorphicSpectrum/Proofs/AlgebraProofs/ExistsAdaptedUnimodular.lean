@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped BigOperators ComplexOrder
@@ -90,7 +94,7 @@ theorem mulVec_eq_zero_of_quad {g : ℕ} {A : Matrix (Fin g) (Fin g) ℤ}
   have h1 : star (fun i => (v i : ℝ)) ⬝ᵥ (A.map (fun x : ℤ => (x : ℝ))) *ᵥ
       (fun i => (v i : ℝ)) = 0 := by
     rw [GlobalTheory.CompanionTheory.ToricBasis.cast_quad, h, Int.cast_zero]
-  have h2 := (hA.dotProduct_mulVec_zero_iff _).mp h1
+  have h2 := hA.dotProduct_mulVec_zero_iff.mp h1
   funext i
   have h3 := congrFun h2 i
   simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, Pi.zero_apply] at h3 ⊢
@@ -174,7 +178,7 @@ theorem exists_adapted_unimodular :
     refine Matrix.PosDef.of_dotProduct_mulVec_pos hNpsd.isHermitian ?_
     intro x hx
     refine lt_of_le_of_ne (hNpsd.dotProduct_mulVec_nonneg x) fun h0 => ?_
-    have hNx := (hNpsd.dotProduct_mulVec_zero_iff x).mp h0.symm
+    have hNx := hNpsd.dotProduct_mulVec_zero_iff.mp h0.symm
     have hdetN : ((Cᵀ * S * C).map (fun x : ℤ => (x : ℝ))).det = 0 :=
       Matrix.exists_mulVec_eq_zero_iff.mp ⟨x, hx, hNx⟩
     have hdetZ : (Cᵀ * S * C).det = 0 := by

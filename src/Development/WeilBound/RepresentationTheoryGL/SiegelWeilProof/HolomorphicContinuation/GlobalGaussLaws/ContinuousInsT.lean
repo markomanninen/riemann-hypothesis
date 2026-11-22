@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.PsiEqOfFin
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.FibFact
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LocCellT
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.PsiEqOfFin
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.FibFact
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LocCellT
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,9 +35,9 @@ theorem insT_add (τ : D.what₂.Tau) (v w : Matrix (Fin m) (Fin n) ℂ) : insT 
   ext i j
   apply ae_ext' D
   · intro τ'
-    rw [Matrix.add_apply, RingHom.map_add, psiT_insT, psiT_insT, psiT_insT]
+    rw [Matrix.add_apply, RingHom.map_add (f := _), psiT_insT, psiT_insT, psiT_insT]
     split_ifs <;> simp
-  · rw [Matrix.add_apply, RingHom.map_add, finPart_insT, finPart_insT, finPart_insT, add_zero]
+  · rw [Matrix.add_apply, RingHom.map_add (f := _), finPart_insT, finPart_insT, finPart_insT, add_zero]
 
 theorem insT_zero (τ : D.what₂.Tau) : insT (D := D) (m := m) (n := n) τ 0 = 0 := by
   ext i j
@@ -67,8 +71,8 @@ def sIns (τ : D.what₂.Tau) (fr : Matrix (Fin m) (Fin m) ℂ) : (Fin m → Fin
   map_add' u v := by
     rw [show Matrix.of (u + v) = Matrix.of u + Matrix.of v from rfl, Matrix.mul_add, insT_add]
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def piF (θ : InfFam D) (τ : D.what₂.Tau) (fr : Matrix (Fin m) (Fin m) ℂ) : Mx D m n →+ (Fin m → Fin n → ℂ) where
   toFun y := Matrix.of.symm (fr⁻¹ * compAt θ τ y)
   map_zero' := by
@@ -76,7 +80,7 @@ def piF (θ : InfFam D) (τ : D.what₂.Tau) (fr : Matrix (Fin m) (Fin m) ℂ) :
     simp [compAt]
   map_add' y y' := by
     have h : compAt θ τ (y + y') = compAt θ τ y + compAt θ τ y' := by
-      ext i j; simp only [compAt, Matrix.map_apply, Matrix.add_apply, RingHom.map_add]
+      ext i j; simp only [compAt, Matrix.map_apply, Matrix.add_apply, RingHom.map_add (f := _)]
     ext i j
     simp only [h, Matrix.mul_add]
     rfl

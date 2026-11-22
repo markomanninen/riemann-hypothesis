@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PInvertibleIdealIndex
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PInvertibleIdealIndex
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -108,8 +113,8 @@ theorem exists_family : ∃ S : Set (𝓞 L), S.Finite ∧ LinearIndepOn B (fun 
 
 end OrderIdealIndexExtensionAlt
 
-open OrderIdealIndexExtensionAlt InvertibleIdealIndexAlt in
 
+open OrderIdealIndexExtensionAlt InvertibleIdealIndexAlt in
 theorem OrderIdealIndexExtension.proof : OrderIdealIndexExtension.Statement := by
   intro L _ _ B hB
   classical
@@ -168,13 +173,13 @@ theorem OrderIdealIndexExtension.proof : OrderIdealIndexExtension.Statement := b
         rw [map_zero, map_zero])
       map_add' := fun x y => RingOfIntegers.ext (by
         show φ (x + y) = algebraMap (𝓞 L) L (_ + _)
-        rw [map_add]
+        rw [map_add (f := _)]
         exact (map_add (algebraMap (𝓞 L) L) (⟨φ x, hint x⟩ : 𝓞 L) ⟨φ y, hint y⟩).symm) }
   have hg1 : Function.Injective g1 := fun a b h => hφinj (congrArg (fun x : 𝓞 L => (x : L)) h)
   have hsurj : ∀ x : 𝓞 L, ∃ β, φ β = (N : L) * (x : L) := fun x => (hrange _).1 (hNF x)
   choose g2 hg2 using hsurj
   have hg2add : ∀ x y, g2 (x + y) = g2 x + g2 y := fun x y => hφinj (by
-    rw [map_add, hg2, hg2, hg2]; push_cast; ring)
+    rw [map_add (f := _), hg2, hg2, hg2]; push_cast; ring)
   let g2' : 𝓞 L →+ (S → B) := AddMonoidHom.mk' g2 hg2add
   have hg2inj : Function.Injective g2' := fun x y h => by
     have h1 := congrArg φ h

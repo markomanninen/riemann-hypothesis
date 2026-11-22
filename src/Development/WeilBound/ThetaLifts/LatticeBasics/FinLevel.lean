@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.ThetaBox
-import Development.WeilBound.ThetaLifts.LatticeBasics.SecondFromFirstStatement
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ThetaBox
+public import Development.WeilBound.ThetaLifts.LatticeBasics.SecondFromFirstStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.IndefiniteRowSideFullH
 
 variable {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ] {ψ : AddChar (AF F) ℂ}
 
-variable (F) in
 
+variable (F) in
 def epsF : AF F := mk 0 1
 
 theorem epsF_mul (t : AF F) : epsF F * t = mk 0 (p2 t) := Prod.ext (zero_mul _) (one_mul _)

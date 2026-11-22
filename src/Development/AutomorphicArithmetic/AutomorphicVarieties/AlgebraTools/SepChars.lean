@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial Matrix IsLocalRing TensorProduct
 
@@ -20,7 +24,8 @@ theorem UpperTheory.V.AlgebraTools.sep_chars :
     have hf : ∀ v, f v = ∑ i, v i * c i := by
       intro v
       conv_lhs => rw [pi_eq_sum_univ v]
-      simp [c, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [c, map_sum, map_smul]
     have hc : ∀ i, c i = 0 := by
       apply hli c
       funext g
@@ -41,7 +46,8 @@ theorem UpperTheory.V.AlgebraTools.sep_chars :
     intro i
     have hwi := congrFun hw i
     rw [← hwi]
-    simp only [z, L, map_sum, MonoidAlgebra.lift_single, Finsupp.linearCombination_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [z, L, map_sum, MonoidAlgebra.lift_single, Finsupp.linearCombination_apply,
       Finsupp.sum, Finset.sum_apply, smul_eq_mul, map_mul, hχ]
     refine Finset.sum_congr rfl (fun g _ => ?_)
     rw [Function.surjInv_eq (IsLocalRing.residue_surjective (R := R))]

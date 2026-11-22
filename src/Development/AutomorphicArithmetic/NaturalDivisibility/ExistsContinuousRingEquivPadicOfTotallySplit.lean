@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.Transported
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DepthZeroLabelsOfLabelLaws
-import GroundTheory.GlobalFields.SemilocalAlgebras.Finite
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EqZeroOfForallLeExp
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.Transported
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DepthZeroLabelsOfLabelLaws
+public import GroundTheory.GlobalFields.SemilocalAlgebras.Finite
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EqZeroOfForallLeExp
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions GroundTheory.Global.SemiLocal
 

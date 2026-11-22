@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FinrankMaxUnramifiedSubfieldPadicFinExtPos
-import Development.AutomorphicArithmetic.CyclotomicBounds.ZmodTwoQuadraticNeZero
-import Development.AutomorphicArithmetic.ResidueCharacters.TwistedPlaces
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SqrtNegPrimeMemKur
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FinrankMaxUnramifiedSubfieldPadicFinExtPos
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ZmodTwoQuadraticNeZero
+public import Development.AutomorphicArithmetic.ResidueCharacters.TwistedPlaces
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SqrtNegPrimeMemKur
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations Module
 
 namespace GlobalTheory.HubLoc

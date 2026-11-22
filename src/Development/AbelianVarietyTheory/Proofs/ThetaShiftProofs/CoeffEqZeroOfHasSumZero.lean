@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowDomainCriterionHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.M3bExpHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajPos
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowDomainCriterionHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.M3bExpHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajPos
+
+@[expose] public section
 
 namespace GlobalTheory.LaurentFJ
 
@@ -95,7 +99,8 @@ theorem flow_mem_dom_of_im_nonneg (X : Data E r) {ξ : Fin r → E} (hξ : X.IsI
     intro τ
     refine ⟨?_, ?_⟩
     · have key : hermC τ.1 X.Gm (Data.emb τ.1 ξ) (Data.emb τ.1 ξ) = τ.1 (herm X.Gm ξ ξ) := by
-        simp only [hermC, herm, Data.emb, map_sum, map_mul, cc,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [hermC, herm, Data.emb, map_sum, map_mul, cc,
           NumberField.IsCMField.complexEmbedding_complexConj]
       change hermC τ.1 X.Gm (Data.emb τ.1 ξ) (Data.emb τ.1 ξ) = 0
       rw [key, hξ.2.1, map_zero]
@@ -192,45 +197,6 @@ theorem coeff_mul_zpow_eq_mul_fj (X : Data E r) {la : Wt X.Ψ r} {P : Frame X.Ψ
   by_cases h0 : X.fj la ξ ν P x = 0
   · simp [h0]
   · exact absurd (Subtype.ext (huniq ν h0 ν.2)) hν
-
-theorem coeff_eq_fj (X : Data E r) {la : Wt X.Ψ r} {P : Frame X.Ψ r → ℂ}
-    (hP : X.IsSec la P) {ξ : Fin r → E} (hξ : X.IsIso ξ) {x : Frame X.Ψ r} (hx : x ∈ X.dom)
-    (sb : X.Ψ → ℝ) (hsb : ∀ τ, 0 < sb τ) (ν₀ : X.Ψ → ℝ) (j : ℤ)
-    (hj : 2 * ∑ τ, ν₀ τ * sb τ = j)
-    (huniq : ∀ ν : X.Ψ → ℝ, X.fj la ξ ν P x ≠ 0 → 2 * ∑ τ, ν τ * sb τ = j → ν = ν₀)
-    (hint : ∀ ν : X.Ψ → ℝ, X.fj la ξ ν P x ≠ 0 → ∃ k : ℤ, 2 * ∑ τ, ν τ * sb τ = k)
-    (a : ℤ → ℂ) (T : ℝ)
-    (ha : ∀ w : ℂ, T < w.im → HasSum (fun n : ℤ => a n * cexp (2 * Real.pi * I * w) ^ n)
-      (P (X.flow ξ (fun τ => w * sb τ) x))) :
-    a j = X.fj la ξ ν₀ P x := by
-  simpa using coeff_mul_zpow_eq_mul_fj X hP hξ hx sb (fun τ => (hsb τ).le) ν₀ j hj huniq hint
-    1 1 a T (by simpa using ha)
-
-theorem coeff_eq_zero_of_mem_SSgt' (X : Data E r) {la : Wt X.Ψ r} {c : ℝ} {P : Frame X.Ψ r → ℂ}
-    (hP : P ∈ X.SSgt la c) {ξ : Fin r → E} (hξ : X.IsIso ξ) {x : Frame X.Ψ r} (hx : x ∈ X.dom)
-    (sb : X.Ψ → ℝ) (hsb : ∀ τ, 0 ≤ sb τ) (ν₀ : X.Ψ → ℝ) (hν₀ : ∑ τ, ν₀ τ ≤ c) (j : ℤ)
-    (hj : 2 * ∑ τ, ν₀ τ * sb τ = j)
-    (huniq : ∀ ν : X.Ψ → ℝ, X.fj la ξ ν P x ≠ 0 → 2 * ∑ τ, ν τ * sb τ = j → ν = ν₀)
-    (hint : ∀ ν : X.Ψ → ℝ, X.fj la ξ ν P x ≠ 0 → ∃ k : ℤ, 2 * ∑ τ, ν τ * sb τ = k)
-    (κ u₁ : ℂ) (hu₁ : u₁ ≠ 0) (a : ℤ → ℂ) (T : ℝ)
-    (ha : ∀ w : ℂ, T < w.im → HasSum (fun n : ℤ => a n * (u₁ * cexp (2 * Real.pi * I * w)) ^ n)
-      (κ * P (X.flow ξ (fun τ => w * sb τ) x))) :
-    a j = 0 := by
-  have h := coeff_mul_zpow_eq_mul_fj X hP.1.1.1 hξ hx sb hsb ν₀ j hj huniq hint κ u₁ a T ha
-  rw [hP.2 ξ hξ ν₀ hν₀ x hx, mul_zero] at h
-  exact (mul_eq_zero.mp h).resolve_right (zpow_ne_zero _ hu₁)
-
-theorem coeff_eq_zero_of_mem_SSgt (X : Data E r) {la : Wt X.Ψ r} {c : ℝ} {P : Frame X.Ψ r → ℂ}
-    (hP : P ∈ X.SSgt la c) {ξ : Fin r → E} (hξ : X.IsIso ξ) {x : Frame X.Ψ r} (hx : x ∈ X.dom)
-    (sb : X.Ψ → ℝ) (hsb : ∀ τ, 0 < sb τ) (ν₀ : X.Ψ → ℝ) (hν₀ : ∑ τ, ν₀ τ ≤ c) (j : ℤ)
-    (hj : 2 * ∑ τ, ν₀ τ * sb τ = j)
-    (huniq : ∀ ν : X.Ψ → ℝ, X.fj la ξ ν P x ≠ 0 → 2 * ∑ τ, ν τ * sb τ = j → ν = ν₀)
-    (hint : ∀ ν : X.Ψ → ℝ, X.fj la ξ ν P x ≠ 0 → ∃ k : ℤ, 2 * ∑ τ, ν τ * sb τ = k)
-    (a : ℤ → ℂ) (T : ℝ)
-    (ha : ∀ w : ℂ, T < w.im → HasSum (fun n : ℤ => a n * cexp (2 * Real.pi * I * w) ^ n)
-      (P (X.flow ξ (fun τ => w * sb τ) x))) :
-    a j = 0 := by
-  rw [coeff_eq_fj X hP.1.1.1 hξ hx sb hsb ν₀ j hj huniq hint a T ha, hP.2 ξ hξ ν₀ hν₀ x hx]
 
 end
 

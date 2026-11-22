@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.CommuteTheta
-import Development.WeilBound.ThetaLifts.LatticeBasics.BadStmt
-import Development.WeilBound.ThetaLifts.LatticeBasics.SchrUnit
-import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.AdelInt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigenIntertwinerTransitive
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.CommuteTheta
+public import Development.WeilBound.ThetaLifts.LatticeBasics.BadStmt
+public import Development.WeilBound.ThetaLifts.LatticeBasics.SchrUnit
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.AdelInt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigenIntertwinerTransitive
+
+@[expose] public section
 
 noncomputable section
 
@@ -168,7 +172,7 @@ theorem _root_.GlobalTheory.ThK.Dbl.badFactor_of (hD : DblX) (hS : StabEx) (hV :
     exact funext fun x => mul_right_cancel₀ (star_ne_zero.2 hy) (congrFun this (Sum.elim x y))
   have cl : IsClosed {g : UA σ X.J | ∀ v ∉ T, IntAt v g} := by
     simp only [Set.setOf_forall]
-    exact isClosed_iInter fun v => isClosed_iInter fun _ => Euler.isClosed_int P.herm.lat v
+    exact isClosed_iInter fun v => isClosed_iInter fun _ => Euler.isClosed_int P.herm.lat.toIsLattice v
   have ct : Continuous (coef om ν Φ) := by
     refine (((d1.weil.2.1.cont l d1.adm _ (d2 Φ m Φ m).1).comp (cont_emb he)).div_const (c : ℂ)).congr fun g => ?_
     exact (congrArg (· / (c : ℂ)) (cf g)).trans (mul_div_cancel_left₀ _ c1)
@@ -188,7 +192,8 @@ theorem _root_.GlobalTheory.ThK.Dbl.badFactor_of (hD : DblX) (hS : StabEx) (hV :
     exact mem_of_superset (int_nhds P.herm.lat) fun g h v _ => h v
   · have := P.good.haar
     obtain ⟨K₁, -, -, k1, k2, -⟩ := hS F E σ B n X r s P.base P.herm
-    exact ((measure_mono fun g h => (stab_iff P.base P.herm h0 k1).2 (key g h.2 h.1).1).trans_lt k2.measure_lt_top).ne
+    exact ((measure_mono fun g (h : g ∈ {g | coef om ν Φ g ≠ 0} ∩ {g | ∀ v ∉ T, IntAt v g}) =>
+      (stab_iff P.base P.herm h0 k1).2 (key g h.2 h.1).1).trans_lt k2.measure_lt_top).ne
 
 end GlobalTheory.ThK.Dbl.Bad
 

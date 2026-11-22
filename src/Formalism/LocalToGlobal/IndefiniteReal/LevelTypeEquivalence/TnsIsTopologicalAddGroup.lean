@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.AdlEqZeroOfMemNbhd
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.AdlEqZeroOfMemNbhd
+
+@[expose] public section
 
 open scoped TensorProduct
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -35,17 +39,6 @@ theorem tnsCoord_continuous : Continuous (tnsCoord b) := by
   first
     | exact IsModuleTopology.continuous_of_linearMap (R := AF F) (tnsCoord b).toLinearMap
     | exact IsModuleTopology.continuous_of_linearMap (tnsCoord b).toLinearMap
-
-theorem tnsCoord_symm_continuous : Continuous (tnsCoord b).symm := by
-  haveI : IsTopologicalAddGroup (AF F ⊗[F] E) := tns_isTopologicalAddGroup
-  haveI : ContinuousSMul (AF F) (AF F ⊗[F] E) := by
-    first
-      | exact IsModuleTopology.toContinuousSMul (AF F) (AF F ⊗[F] E)
-      | exact IsModuleTopology.toContinuousSMul (R := AF F)
-      | infer_instance
-  first
-    | exact IsModuleTopology.continuous_of_linearMap (R := AF F) (tnsCoord b).symm.toLinearMap
-    | exact IsModuleTopology.continuous_of_linearMap (tnsCoord b).symm.toLinearMap
 
 theorem tnsCoord_inclR (e : E) (k : Fin d) :
     tnsCoord b (inclR (AF F) e) k = algebraMap F (AF F) (b.repr e k) := by
@@ -123,7 +116,7 @@ private theorem exists_isOpen_nhd_zero_algebraMap_discrete : ∃ V : Set (AF F),
         | exact w.nonneg _
         | exact apply_nonneg w _
     have hle : ∏ w ∈ Finset.univ.erase w0, w (algebraMap (𝓞 F) F x) ^ w.mult ≤ 1 :=
-      Finset.prod_le_one (fun w _ => pow_nonneg (hnn w) _)
+      Finset.prod_le_one₀ (fun w _ => pow_nonneg (hnn w) _)
         fun w _ => pow_le_one₀ (hnn w) (hw w).le
     have hm : w0.mult ≠ 0 := by
       first
@@ -161,27 +154,6 @@ theorem tns_disc : ∃ V : Set (AF F ⊗[F] E), IsOpen V ∧ (0 : AF F ⊗[F] E)
     apply hV
     rw [← tnsCoord_inclR b e k]
     exact he k
-
-theorem tns_cocompact : ∃ K : Set (AF F ⊗[F] E), IsCompact K ∧
-    ∀ y, ∃ e : E, y - inclR (AF F) e ∈ K := by
-  obtain ⟨K0, hK0, hx⟩ : ∃ K : Set (AF F), IsCompact K ∧
-      ∀ x, ∃ a : F, x - algebraMap F (AF F) a ∈ K := adl_cocompact
-  haveI := module_finite_F_E (F := F) (E := E)
-  have b := Module.finBasis F E
-  refine ⟨(tnsCoord b).symm '' Set.univ.pi (fun _ => K0),
-    (isCompact_univ_pi fun _ => hK0).image (tnsCoord_symm_continuous b), fun y => ?_⟩
-  choose a ha using fun k => hx (tnsCoord b y k)
-  refine ⟨b.equivFun.symm a, tnsCoord b (y - inclR (AF F) (b.equivFun.symm a)), ?_,
-    (tnsCoord b).symm_apply_apply _⟩
-  rw [Set.mem_univ_pi]
-  intro k
-  have hr : b.repr (b.equivFun.symm a) k = a k := by
-    have h := congrFun (b.equivFun.apply_symm_apply a) k
-    first
-      | (rwa [Module.Basis.equivFun_apply] at h)
-      | exact h
-  rw [map_sub, Pi.sub_apply, tnsCoord_inclR, hr]
-  exact ha k
 
 theorem tup_disc (M n : ℕ) :
     DiscreteTopology (Set.range (ratTup (F := F) (AF F) : (Fin n → Fin M → E) → _)) := by

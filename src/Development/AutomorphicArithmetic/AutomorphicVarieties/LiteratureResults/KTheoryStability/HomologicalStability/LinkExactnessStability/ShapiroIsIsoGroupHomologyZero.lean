@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PermRepSingle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PermRepSingle
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits GlobalTheory.HomStab
 
@@ -22,8 +26,8 @@ theorem linkExactnessStability_hom_fact {k G : Type} [CommRing k] [Group G] (B :
 
 end GlobalTheory.HomStab.ShapiroZero
 
-open GlobalTheory.HomStab.ShapiroZero in
 
+open GlobalTheory.HomStab.ShapiroZero in
 theorem GlobalTheory.HomStab.isIso_map_ptMap_zero : ∀ (k G H X : Type) [CommRing k] [Group G] [Group H] [MulAction G X] (φ : H →* G) (x : X)
     (hx : ∀ h, φ h • x = x), φ.range = MulAction.stabilizer G x → (∀ y : X, ∃ g : G, g • x = y) →
     ∀ A : Rep k G, IsIso (groupHomology.map φ (ptMap φ x hx A) 0) := by
@@ -96,7 +100,7 @@ theorem GlobalTheory.HomStab.isIso_map_ptMap_zero : ∀ (k G H X : Type) [CommRi
     | add u w hu hw =>
       obtain ⟨a, ha⟩ := hu
       obtain ⟨b, hb⟩ := hw
-      exact ⟨a + b, by rw [map_add, ha, hb, map_add]⟩
+      exact ⟨a + b, by rw [map_add (f := _), ha, hb, map_add (f := _)]⟩
     | single y a =>
       refine ⟨(groupHomology.H0π (Rep.res φ A)).hom (A.ρ (s y)⁻¹ a), ?_⟩
       rw [key, ← permInv (s y), act, hs, ← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one,

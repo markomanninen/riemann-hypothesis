@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.ChainOfFin
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.ChainOfFin
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,8 @@ theorem chainOf'_of (hDC : DCinCE) (hP : ParamInt) (hA : ActDer) (hI : IBPAct) (
   have hΓc : ∀ f ∈ CE E, act μ E k (fun x => Γ (f x)) 1 = Γ (act μ E k f 1) := by
     intro f hf
     have hfΓ : ContinuousOn (fun x => Γ (f x)) (GLs n) := continuousOn_const.clm_apply hf.1.continuousOn
-    rw [act_sum hL μ E c ks k hsum hcont hkc1 _ hfΓ 1 h1, act_sum hL μ E c ks k hsum hcont hkc1 _ hf.1.continuousOn 1 h1,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [act_sum hL μ E c ks k hsum hcont hkc1 _ hfΓ 1 h1, act_sum hL μ E c ks k hsum hcont hkc1 _ hf.1.continuousOn 1 h1,
       map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul]

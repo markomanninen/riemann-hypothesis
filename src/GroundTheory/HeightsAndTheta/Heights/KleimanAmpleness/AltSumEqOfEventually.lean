@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsExtraLast
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsLastMore
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsSideExtra
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsMoreAlt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsMultiProjPrimeMIdealOverGraph
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RestrLenPrimeOfEqFinrank
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsExtraLast
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsLastMore
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsSideExtra
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsMoreAlt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsMultiProjPrimeMIdealOverGraph
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RestrLenPrimeOfEqFinrank
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -37,11 +42,12 @@ theorem altSum_eq_of_eventually (p : MvPolynomial K ℚ) {n : ℕ} (δ : Fin n �
   have hq : ∀ w : K → ℤ, eval (fun k => (w k : ℚ)) q =
       ∑ T : Finset (Fin n), (-1 : ℚ) ^ T.card * eval (fun k => (((w - ∑ i ∈ T, δ i) k : ℤ) : ℚ)) p := by
     intro w
-    simp only [q, map_sum, map_mul, eval_C, eval_bind₁_shift]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [q, map_sum, map_mul, eval_C, eval_bind₁_shift]
     refine Finset.sum_congr rfl fun T _ => ?_
     congr 3
     funext k
-    simp
+    simp only [Pi.sub_apply, Int.cast_sub]
   obtain ⟨m₀, hm₀⟩ := eventually_atTop.mp h
   let s : K → Set ℚ := fun k => (fun t : ℤ => (t : ℚ)) '' Set.Ici (m₀ k)
   have hs : ∀ k, (s k).Infinite := fun k =>

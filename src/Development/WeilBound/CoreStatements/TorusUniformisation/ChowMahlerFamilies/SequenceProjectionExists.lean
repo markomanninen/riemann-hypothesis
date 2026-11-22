@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DifferentGeneratorDualIntegral
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.SequenceDifferentialsExist
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DifferentGeneratorDualIntegral
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.SequenceDifferentialsExist
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointIdeal segreVec IsFlagFrame IsFlagPair SameGenericFibre IsModelOver divCycle)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg fnField)
@@ -24,7 +29,7 @@ def locAt (Ω : Type) [Field Ω] [Algebra R Ω] (𝔮 : Ideal R) [h : 𝔮.IsPri
   add_mem' := by
     rintro a b ⟨u, v, hv, e⟩ ⟨u', v', hv', e'⟩
     refine ⟨u * v' + u' * v, v * v', fun hh => (h.mem_or_mem hh).elim hv hv', ?_⟩
-    rw [map_add, map_mul, map_mul, map_mul, ← e, ← e']; ring
+    rw [map_add (f := _), map_mul, map_mul, map_mul, ← e, ← e']; ring
   algebraMap_mem' := fun r => ⟨r, 1, (Ideal.ne_top_iff_one 𝔮).1 h.ne_top, by simp⟩
 
 theorem inv_mem (hinj : Function.Injective (algebraMap R Ω)) (𝔮 : Ideal R) [h : 𝔮.IsPrime] {v : R} (hv : v ∉ 𝔮) :

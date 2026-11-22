@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasTypeVec
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ExponentSeparation
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConvolutionFiniteAdelicPureTensorEqLocalConvolut
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasTypeVec
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ExponentSeparation
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConvolutionFiniteAdelicPureTensorEqLocalConvolut
+
+@[expose] public section
 
 open MeasureTheory Set Filter NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.OpTrace GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary GlobalTheory.AutMult Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -81,7 +85,7 @@ theorem exists_op (ι : A →* G) (π : G →* A) (hι : Continuous ι) (hπ : C
     congr 1
     refine (hσN.map_smoothOp_of_intertwining (μ := μN) hσN hφN1 hφN2 (σ (ι g)) (fun h y => ?_) x).symm
     show σ (ι g) (σ h y) = σ h (σ (ι g) y)
-    rw [← Module.End.mul_apply, ← map_mul, (hc g h h.2).eq, map_mul, Module.End.mul_apply]
+    rw [← mul_apply_eq_comp, ← map_mul, (hc g h h.2).eq, map_mul, mul_apply_eq_comp]
   · intro x k hk hk1
     have hmem := hσN.smoothOp_mem_fixed (μ := μN) hφN1 hφN2
       (K := (leftStabilizer φ).comap π.ker.subtype) (fun k' hk' g => hk' g) x
@@ -125,7 +129,7 @@ theorem exists_op (ι : A →* G) (π : G →* A) (hι : Continuous ι) (hπ : C
         rw [hT, ← integral_const_mul]
         refine integral_congr_ae (Filter.Eventually.of_forall fun h => ?_)
         show φN h * f a * l (σ (e (h, a)) v) = f a * (φN h * l (σ h (σ (ι a) v)))
-        rw [he, map_mul, Module.End.mul_apply]
+        rw [he, map_mul, mul_apply_eq_comp]
         ring
       have hB2 := (hB v (l ∘ₗ T)).2
       simp only [LinearMap.comp_apply, MonoidHom.comp_apply] at hB2
@@ -138,6 +142,9 @@ theorem exists_op (ι : A →* G) (π : G →* A) (hι : Continuous ι) (hπ : C
 end General
 
 variable {D : D7}
+
+local instance (V : HSp D) : Submodule.IsFullLattice D.host.E (frameLat V) :=
+  GlobalTheory.AdelicU.SelfDual.isLattice_frameLat V
 
 theorem isFinFamily_update {V : HSp D} {ff : ∀ v, GLoc D.sp.cm.sig V.gram v → ℂ}
     (hff : IsFinFamily D.sp.cm.sig V.gram (frameLat V) ff) (u : HeightOneSpectrum (𝓞 D.host.F))

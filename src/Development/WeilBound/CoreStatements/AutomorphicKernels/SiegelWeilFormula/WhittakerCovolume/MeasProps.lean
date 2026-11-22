@@ -1,4 +1,8 @@
-import Formalism.UnipotentAdelicQuotients.SWXSDefs
+module
+
+public import Formalism.UnipotentAdelicQuotients.SWXSDefs
+
+@[expose] public section
 
 noncomputable section
 

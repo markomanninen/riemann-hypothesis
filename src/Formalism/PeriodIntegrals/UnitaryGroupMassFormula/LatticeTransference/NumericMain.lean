@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeTransference.DualTransport
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeTransference.GaussAbs
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeTransference.DualTransport
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeTransference.GaussAbs
+
+@[expose] public section
 
 open Module
 open scoped Real

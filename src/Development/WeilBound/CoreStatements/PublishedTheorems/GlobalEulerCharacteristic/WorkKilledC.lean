@@ -1,15 +1,19 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.Reduce
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.Shapiro
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ApplySubrepresentationCongr
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ToFunEqZeroOfForallIsCyclic
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseFixed
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.DefsForms
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.Reduce
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.Shapiro
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ApplySubrepresentationCongr
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ToFunEqZeroOfForallIsCyclic
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseFixed
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.DefsForms
+
+@[expose] public section
 
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheory.Global
 
-namespace PositivityTheory.Lit1.GEN.W_killed_c
-
 local notation "ℚ̄" => AlgebraicClosure ℚ
+
+namespace PositivityTheory.Lit1.GEN.W_killed_c
 
 section Infl
 
@@ -41,7 +45,7 @@ end Infl
 
 theorem rat_eq_one_of_padicValRat {q : ℚ} (hq : 0 < q) (h : ∀ p : ℕ, p.Prime → padicValRat p q = 0) :
     q = 1 := by
-  have hval : ∀ p : ℕ, p.Prime → padicValNat p q.num.natAbs = padicValNat p q.den := by
+  have hval : ∀ p : ℕ, p.Prime → multiplicity p q.num.natAbs = multiplicity p q.den := by
     intro p hp
     have := h p hp
     simp only [padicValRat, padicValInt] at this
@@ -51,20 +55,20 @@ theorem rat_eq_one_of_padicValRat {q : ℚ} (hq : 0 < q) (h : ∀ p : ℕ, p.Pri
     omega
   have hnum : ∀ p : ℕ, p.Prime → ¬ p ∣ q.num.natAbs := by
     intro p hp hd
-    haveI := Fact.mk hp
-    have h1 := one_le_padicValNat_of_dvd hn0 hd
+    have := Fact.mk hp
+    have h1 := one_le_multiplicity_of_dvd hn0 hd
     have hd' : p ∣ q.den := by
       by_contra hnd
-      rw [hval p hp, padicValNat.eq_zero_of_not_dvd hnd] at h1
+      rw [hval p hp, multiplicity_eq_zero_of_not_dvd hnd] at h1
       omega
     exact Nat.not_coprime_of_dvd_of_dvd hp.one_lt hd hd' q.reduced
   have hden : ∀ p : ℕ, p.Prime → ¬ p ∣ q.den := by
     intro p hp hd
-    haveI := Fact.mk hp
-    have h1 := one_le_padicValNat_of_dvd q.den_nz hd
+    have := Fact.mk hp
+    have h1 := one_le_multiplicity_of_dvd q.den_nz hd
     have hd' : p ∣ q.num.natAbs := by
       by_contra hnd
-      rw [← hval p hp, padicValNat.eq_zero_of_not_dvd hnd] at h1
+      rw [← hval p hp, multiplicity_eq_zero_of_not_dvd hnd] at h1
       omega
     exact Nat.not_coprime_of_dvd_of_dvd hp.one_lt hd' hd q.reduced
   have h1 : q.num.natAbs = 1 := Nat.eq_one_iff_not_exists_prime_dvd.2 hnum
@@ -76,13 +80,12 @@ theorem rat_eq_one_of_padicValRat {q : ℚ} (hq : 0 < q) (h : ∀ p : ℕ, p.Pri
 
 theorem shortExact_of_fun {k G : Type} [CommRing k] [Group G] (T : ShortComplex (Rep.{0} k G))
     (h1 : Function.Injective T.f.hom) (h2 : ∀ y, T.g.hom y = 0 → ∃ x, T.f.hom x = y)
-    (h3 : Function.Surjective T.g.hom) : T.ShortExact where
-  exact := by
-    rw [← ShortComplex.exact_map_iff_of_faithful _ (forget₂ (Rep.{0} k G) (ModuleCat.{0} k)),
-      ShortComplex.moduleCat_exact_iff]
-    exact h2
-  mono_f := (Rep.mono_iff_injective _).2 h1
-  epi_g := (Rep.epi_iff_surjective _).2 h3
+    (h3 : Function.Surjective T.g.hom) : T.ShortExact := by
+  refine ShortComplex.ShortExact.mk' ?_ ((Rep.mono_iff_injective _).2 h1)
+    ((Rep.epi_iff_surjective _).2 h3)
+  rw [← ShortComplex.exact_map_iff_of_faithful _ (forget₂ (Rep.{0} k G) (ModuleCat.{0} k)),
+    ShortComplex.moduleCat_exact_iff]
+  exact h2
 
 section Artin
 
@@ -176,15 +179,32 @@ theorem gs_posKilled (ℓ : ℕ) [Fact ℓ.Prime] (K : FiniteSubfield) (S : Set 
     (ιr : ∀ v : {v : InfinitePlace K.1 // v.IsReal}, ℚ̄ →ₐ[K.1] AlgebraicClosure v.1.Completion) :
     PosKilled ℓ (fun A [IsDiscreteRep A] => gsEulerRatio S A ιr) := by
   intro A _ _ hA
-  haveI : Finite S := hS
-  apply gsEulerRatio_pos (S := S) (M := A) (ιr := ιr)
-  intro v hv
-  obtain ⟨n, hn⟩ := exists_card_eq_pow' (ℓ := ℓ) (X := A) hA
-  rw [hn, Nat.cast_pow] at hv
-  exact hSl v (v.isPrime.mem_of_pow_mem n hv)
+  classical
+  have : Finite S := hS
+  have hSupport : ∀ v : HeightOneSpectrum (𝓞 K.1), (Nat.card A : 𝓞 K.1) ∈ v.asIdeal → v ∈ S := by
+    intro v hv
+    obtain ⟨n, hn⟩ := exists_card_eq_pow' (ℓ := ℓ) (X := A) hA
+    rw [hn, Nat.cast_pow] at hv
+    exact hSl v (v.isPrime.mem_of_pow_mem n hv)
+  have hEuler : 0 < eulerChar A := by
+    refine Finset.prod_pos fun q hq => ?_
+    have : Finite (cohomology A q) :=
+      finite_cohomology_gs K S A hSupport q (Nat.lt_succ_iff.1 (Finset.mem_range.1 hq))
+    have hCard : (0 : ℚ) < Nat.card (cohomology A q) := by exact_mod_cast Nat.card_pos
+    exact zpow_pos hCard _
+  have hCard : (0 : ℚ) < Nat.card A := by exact_mod_cast Nat.card_pos
+  have hReal : (0 : ℚ) < ∏ v : {v : InfinitePlace K.1 // v.IsReal}, (gsRealH0Card S A ιr v : ℚ) := by
+    refine Finset.prod_pos fun v _ => ?_
+    let B := Rep.res (gsRealFamily S ιr v).toMonoidHom A
+    have : Finite B := inferInstanceAs (Finite A)
+    have : Finite (cohomology B 0) := finite_cohomology_zero B
+    change (0 : ℚ) < Nat.card (cohomology B 0)
+    exact_mod_cast Nat.card_pos
+  unfold gsEulerRatio
+  convert div_pos (mul_pos hEuler (pow_pos hCard (Fintype.card (InfinitePlace K.1)))) hReal
+
 
 set_option maxHeartbeats 1000000 in
-
 theorem exists_field_of_cyclic (ℓ : ℕ) [Fact ℓ.Prime] (K : FiniteSubfield) (S : Set (HeightOneSpectrum (𝓞 K.1)))
     (ιr : ∀ v : {v : InfinitePlace K.1 // v.IsReal}, ℚ̄ →ₐ[K.1] AlgebraicClosure v.1.Completion)
     (L : FiniteSubfield) [Fact (K ≤ L)]

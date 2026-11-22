@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.DpSplit
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.DpSplit
+
+@[expose] public section
 
 set_option autoImplicit false
 

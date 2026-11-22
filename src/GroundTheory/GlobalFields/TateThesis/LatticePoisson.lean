@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.LatticePoissonBasic
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.LatticePoissonBasic
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -130,7 +134,7 @@ theorem perCoord_factorsThrough (f : 𝓢(E, ℂ)) :
     exact zsmul_mem (basis_mem b i) _
   change per L f ((b.ofZLatticeBasis ℝ L).equivFun.symm x) =
     per L f ((b.ofZLatticeBasis ℝ L).equivFun.symm y)
-  rw [hy, LinearEquiv.map_add]
+  rw [hy, (b.ofZLatticeBasis ℝ L).equivFun.symm.map_add]
   exact (per_add f _ hmem).symm
 
 def perTorus (f : 𝓢(E, ℂ)) : C(UnitAddTorus ι, ℂ) :=
@@ -144,8 +148,8 @@ theorem perTorus_toTorus (f : 𝓢(E, ℂ)) (x : ι → ℝ) :
 
 variable [MeasurableSpace E] [BorelSpace E]
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem integral_fundamentalDomain (f : 𝓢(E, ℂ)) {μ : E} (hμ : μ ∈ dualLattice L) :
     ∫ y in ZSpan.fundamentalDomain (b.ofZLatticeBasis ℝ L),
       (𝐞 (-⟪y, μ⟫) : ℂ) * ∑' ℓ : L, f (y + ℓ) = 𝓕 (f : E → ℂ) μ := by
@@ -186,8 +190,8 @@ theorem integral_fundamentalDomain (f : 𝓢(E, ℂ)) {μ : E} (hμ : μ ∈ dua
   rw [← tsum_mul_left]
   exact tsum_congr fun ℓ => by rw [add_comm y]
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem setIntegral_cube (φ : E → ℂ) :
     ∫ x in {x : ι → ℝ | ∀ i, x i ∈ Ico (0 : ℝ) 1}, φ ((b.ofZLatticeBasis ℝ L).equivFun.symm x) =
       (ZLattice.covolume L)⁻¹ • ∫ y in ZSpan.fundamentalDomain (b.ofZLatticeBasis ℝ L), φ y := by
@@ -294,8 +298,8 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDim
   [MeasurableSpace E] [BorelSpace E]
 variable (L : Submodule ℤ E) [DiscreteTopology L] [IsZLattice ℝ L]
 
-omit [MeasurableSpace E] [BorelSpace E] [IsZLattice ℝ L] in
 
+omit [MeasurableSpace E] [BorelSpace E] [IsZLattice ℝ L] in
 theorem lattice_summable_norm (f : 𝓢(E, ℂ)) (a : E) : Summable fun ℓ : L => ‖f (ℓ + a)‖ := by
   simpa [add_comm] using summable_norm_comp_add L f a
 
@@ -309,13 +313,6 @@ theorem lattice_poisson_summation (f : 𝓢(E, ℂ)) (a : E) :
   rw [← tsum_const_smul'', (LatticePoisson.hasSum_smul_fourier (L := L) f a).tsum_eq,
     LatticePoisson.per]
   exact tsum_congr fun ℓ => by rw [add_comm]
-
-theorem hasSum_lattice_poisson (f : 𝓢(E, ℂ)) (a : E) :
-    HasSum (fun μ : dualLattice L => 𝓕 (f : E → ℂ) μ * 𝐞 ⟪(μ : E), a⟫)
-      (ZLattice.covolume L • ∑' ℓ : L, f (ℓ + a)) := by
-  rw [lattice_poisson_summation, smul_smul, mul_inv_cancel₀ (ZLattice.covolume_ne_zero L volume),
-    one_smul]
-  exact (dualLattice_summable_norm L f a).of_norm.hasSum
 
 end Main
 

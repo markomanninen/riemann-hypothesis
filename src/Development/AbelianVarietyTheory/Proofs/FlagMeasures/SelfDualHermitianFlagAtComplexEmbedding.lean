@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LowersMulZero
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PerpSetBaseChange
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MainTheorem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LowersMulZero
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PerpSetBaseChange
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MainTheorem
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.FlagBase GlobalTheory.RadCov
 
@@ -53,7 +57,8 @@ omit [NumberField E] in
 theorem form_emb [StarRing E] (φ : E →+* ℂ) (hφ : ∀ x, φ (star x) = starRingEnd ℂ (φ x))
     (J : Matrix (Fin n) (Fin n) E) (x y : Fin n → E) :
     star (fun l => φ (x l)) ⬝ᵥ (J.map φ *ᵥ fun l => φ (y l)) = φ (star x ⬝ᵥ (J *ᵥ y)) := by
-  simp [dotProduct, Matrix.mulVec, map_sum, map_mul, hφ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [dotProduct, Matrix.mulVec, map_sum, map_mul, hφ]
 
 theorem locDual : ∀ (E : Type) [Field E] [NumberField E] [StarRing E] (n m : ℕ) (J : Matrix (Fin n) (Fin n) E) (φ : E →+* ℂ) (P : Matrix (Fin n) (Fin n) ℂ) (ε : Fin n → Bool) (F : ℕ → Submodule (𝓞 E) (Fin n → E)), (∀ x, φ (star x) = starRingEnd ℂ (φ x)) → IsUnit P → Pᴴ * J.map φ * P = Formalism.REAL.Jm ε → IsDualFlag J F m → Submodule.span E (F m : Set (Fin n → E)) = ⊤ → IsDualFlag (Formalism.REAL.Jm ε) (locFlag φ P F) m ∧ locFlag φ P F m = ⊤ := by
   intro E _ _ _ n m J φ P ε F hφ hP hJ hF hsp
@@ -123,7 +128,8 @@ theorem locDual : ∀ (E : Type) [Field E] [NumberField E] [StarRing E] (n m : �
         rw [← h1]
         generalize P *ᵥ z = u
         simp only [hf, Matrix.mulVec_single_one]
-        simp only [dotProduct, Matrix.mulVec, map_sum, map_mul, hφ, Finset.sum_mul, Finset.mul_sum,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [dotProduct, Matrix.mulVec, map_sum, map_mul, hφ, Finset.sum_mul, Finset.mul_sum,
           Pi.star_apply, Matrix.map_apply, Matrix.col_apply, mul_assoc]
         rw [Finset.sum_comm]
         rfl

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.CasimirGapAtNoncompactWeight
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.CasimirGapAtNoncompactWeight
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,8 @@ theorem phi_Wm_last_of_sch (hSch : ∀ x ∈ Wm ε E V, phi E 1 x = 0) {k : ℕ}
     simp only [sch_slice_apply, Fin.update_snoc_last] at h0
     have hs : ∀ x : Fin n × Fin n, (Fin.snocEquiv (fun _ => Fin n × Fin n)) (x, init) = Fin.snoc init x :=
       fun x => rfl
-    simp only [hs, sch_word_snoc, Module.End.mul_apply, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hs, sch_word_snoc, Module.End.mul_apply, ← map_sum]
     rw [show (∑ x : Fin n × Fin n, (E x.1 x.2) (F (Fin.snoc init x))) = 0 from h0, map_zero]
 
 theorem phi_Wm_position_of_sch (hE : IsGlRep E) (hV : IsKIrrHW ε E (lowK ε lam) V)
@@ -314,14 +319,15 @@ theorem no_of_casimir (hE : IsGlRep E) (hU : IsInfUnitary ε E)
       · rw [hkhw.2 d c hcd hs, map_zero, inner_zero_left, map_zero, if_neg (ne_of_gt hcd),
           if_neg (fun h => lt_asymm hcd h.1), if_neg (fun h => h.2 hs)]
         simp
-      · rw [hcomm c d, inner_add_left, map_add, hneg d c hs, hsm, if_neg (ne_of_gt hcd),
+      · rw [hcomm c d, inner_add_left, map_add (f := _), hneg d c hs, hsm, if_neg (ne_of_gt hcd),
           if_neg (fun h => lt_asymm hcd h.1), if_pos ⟨hcd, hs⟩]
         have := sq_nonneg ‖E c d w‖
         simp only [zero_add]
         linarith
   have hsumre : RCLike.re (inner ℂ (casimir E w) w) =
       ∑ c, ∑ d, RCLike.re (inner ℂ (E c d (E d c w)) w) := by
-    simp only [casimir, LinearMap.sum_apply, Module.End.mul_apply, sum_inner, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [casimir, LinearMap.sum_apply, Module.End.mul_apply, sum_inner, map_sum]
   have hT : ∑ c, ∑ d, ((if c = d then ν c ^ 2 else 0) + (if c < d ∧ ε d = ε c then ν c - ν d else 0) +
       (if d < c ∧ ε d ≠ ε c then ν c - ν d else 0)) = casValK ε ν - 2 * dot ν (rhoN ε) := by
     rw [← sum_pairs_eq_casValK ν, sub_eq_add_neg, ← sum_opposite_sign_pairs_eq_neg_two_dot_rhoN ν]

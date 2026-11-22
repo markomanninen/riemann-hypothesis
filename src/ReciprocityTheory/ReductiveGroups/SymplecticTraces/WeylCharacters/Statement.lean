@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.Branch
-import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.BlockCombStatement
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiExistsStatement
-import Formalism.LocalRingCardinality.DataCoeff
+module
+
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.Branch
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.BlockCombStatement
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiExistsStatement
+public import Formalism.LocalRingCardinality.DataCoeff
+
+@[expose] public section
 
 noncomputable section
 

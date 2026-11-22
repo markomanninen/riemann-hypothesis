@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PeriodDiscExtensionTateElement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PeriodDiscExtensionTateElement
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,7 +91,8 @@ theorem series_transport {M M' : Type} [AddCommGroup M] [Module L M] [AddCommGro
       rw [cz_C_mul, cz_rescale, show k + (w : ℤ) - (i : ℤ) = k - (i : ℤ) + (w : ℤ) by ring, zpow_add₀ hκ,
         zpow_natCast]
       ring
-    simp only [key, Finset.sum_smul, map_sum, map_smul, hD, Finset.smul_sum, smul_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [key, Finset.sum_smul, map_sum, map_smul, hD, Finset.smul_sum, smul_smul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Finset.sum_comm]
@@ -117,8 +122,10 @@ theorem basis_transport {C S : Type} [CommRing C] [CommRing S] (J : C →+* S) (
       rw [hh, map_pow, smul_smul, smul_smul]
       congr 1
       ring
-    rw [this, hd, map_sum, Finset.smul_sum, Finset.smul_sum]
-    simp only [hh, smul_comm (J q), hH, Finset.smul_sum, smul_smul, map_mul, map_sum, map_pow, hJ,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [this, hd, map_sum, Finset.smul_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hh, smul_comm (J q), hH, Finset.smul_sum, smul_smul, map_mul, map_sum, map_pow, hJ,
       Finset.mul_sum, Finset.sum_smul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun i _ => ?_
@@ -133,7 +140,8 @@ theorem basis_transport {C S : Type} [CommRing C] [CommRing S] (J : C →+* S) (
       congr 1
       ring
     rw [Finset.smul_sum]
-    simp only [this, hd', Finset.smul_sum, smul_smul, map_mul, map_sum, map_pow, hJ,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [this, hd', Finset.smul_sum, smul_smul, map_mul, map_sum, map_pow, hJ,
       Finset.mul_sum, Finset.sum_smul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun i _ => ?_

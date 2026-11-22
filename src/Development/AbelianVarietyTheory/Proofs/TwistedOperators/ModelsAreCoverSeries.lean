@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.BarMatrix
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsOfIsDSPar
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiscreteSeriesModelOfDualParameter
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsLocalFockIntertwinerRealPlaceOfCoverContra
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiscreteSeriesHarishChandra
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.BarMatrix
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsOfIsDSPar
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiscreteSeriesModelOfDualParameter
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsLocalFockIntertwinerRealPlaceOfCoverContra
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiscreteSeriesHarishChandra
+
+@[expose] public section
 
 noncomputable section
 
@@ -237,7 +241,8 @@ theorem exists_numbering {l₁ l₂ : List ℚ} {c : ℚ} {lam : Fin n → ℝ} 
     · rintro ⟨_, ⟨_, ⟨i, rfl⟩, rfl⟩ | ⟨_, ⟨i, rfl⟩, rfl⟩, rfl⟩
       · exact .inl ⟨i, by simp⟩
       · exact .inr ⟨i, by simp⟩
-  let e₀ : Ix p q ≃ Fin n := (Equiv.ofInjective f hf).trans ((Equiv.setCongr hrange).trans (Equiv.ofInjective g hg).symm)
+  let e₀ : Ix p q ≃ Fin n :=
+    (Equiv.ofInjective f hf).trans ((Set.equivOfEq hrange).trans (Equiv.ofInjective g hg).symm)
   have he : ∀ a, g (e₀ a) = f a := fun a => by
     simp only [e₀, Equiv.trans_apply, Equiv.apply_ofInjective_symm]
     rfl
@@ -268,28 +273,37 @@ structure IsFormIso (ε : Fin n → Bool) (φ : Mat p q → Matrix (Fin n) (Fin 
 
 variable {ε : Fin n → Bool} {φ : Mat p q → Matrix (Fin n) (Fin n) ℂ}
 
-theorem isFormIso_plainMat {e : Ix p q ≃ Fin n} (h : SignCompat ε e) : IsFormIso ε (plainMat e) where
-  bij := (Matrix.reindex e e).bijective
-  mul a b := by simp [plainMat]
-  add _ _ := rfl
-  ct _ := rfl
-  form := reindex_form h
-  exp := exp_plainMat e
+theorem isFormIso_plainMat {e : Ix p q ≃ Fin n} (h : SignCompat ε e) : IsFormIso ε (plainMat e) := by
+  refine
+    { bij := (Matrix.reindex e e).bijective
+      mul := ?_
+      add := fun _ _ => rfl
+      ct := fun _ => rfl
+      form := reindex_form h
+      exp := exp_plainMat e }
+  intro a b
+  simp [plainMat]
 
-theorem isFormIso_barMat {e : Ix p q ≃ Fin n} (h : SignCompat ε e) : IsFormIso ε (barMat e) where
-  bij := (Matrix.reindex e e).bijective.comp (Function.Involutive.bijective
-    (f := fun g : Mat p q => g.map (starRingEnd ℂ)) fun g => by ext a b; simp)
-  mul a b := by simp [barMat, Matrix.map_mul]
-  add a b := by ext; simp [barMat]
-  ct _ := rfl
-  form := by
-    have hJ : (Jm p q).map (starRingEnd ℂ) = Jm p q := by
+theorem isFormIso_barMat {e : Ix p q ≃ Fin n} (h : SignCompat ε e) : IsFormIso ε (barMat e) := by
+  refine
+    { bij := (Matrix.reindex e e).bijective.comp (Function.Involutive.bijective
+        (f := fun g : Mat p q => g.map (starRingEnd ℂ)) fun g => by ext a b; simp)
+      mul := ?_
+      add := ?_
+      ct := fun _ => rfl
+      form := ?_
+      exp := exp_barMat e }
+  · intro a b
+    simp [barMat, Matrix.map_mul]
+  · intro a b
+    ext
+    simp [barMat]
+  · have hJ : (Jm p q).map (starRingEnd ℂ) = Jm p q := by
       conv_rhs => rw [← KStabLie.Jm_ct, KStabLie.Jm_eq, Matrix.diagonal_conjTranspose]
       rw [KStabLie.Jm_eq, Matrix.diagonal_map (map_zero _)]
       rfl
     rw [barMat, hJ]
     exact reindex_form h
-  exp := exp_barMat e
 
 theorem IsFormIso.mem_UJ (h : IsFormIso ε φ) (g : Mat p q) : φ g ∈ UJset ε ↔ gᴴ * Jm p q * g = Jm p q := by
   change (φ g)ᴴ * Formalism.REAL.Jm ε * φ g = Formalism.REAL.Jm ε ↔ _
@@ -428,7 +442,7 @@ theorem matches_of_grp (hH : GlobalTheory.Published.HarishChandraModules) (hs : 
     intro Z hZ v x hx
     have h1 := (hasDerivAt_sq_zpow T m hZ).fun_smul (R.der Z hZ v)
     have h2 := (realCLM hs U.symm).hasFDerivAt.comp_hasDerivAt (0 : ℝ) h1
-    convert h2 using 1
+    convert (preTransparency := .reducible) h2 using 1
     · funext t
       apply U.injective
       change _ = U (U.symm _)

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SuppInd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SuppInd
+
+@[expose] public section
+
 open Classical
 
 namespace GlobalTheory.LevelVecNorm

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.TruncLogEqOfPowEqZero
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.TruncLogEqOfPowEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,6 @@ variable {S : Type v} [CommRing S] [Fact ¬IsUnit (p : S)] [IsAdicComplete (span
 namespace Tilt
 
 variable (p R) in
-
 def seqEquiv : Perfection R p ≃* Tilt p R := Perfection.quotientMulEquiv p (span {(p : R)})
 
 def seq (n : ℕ) : Tilt p R →* R :=
@@ -47,31 +50,9 @@ theorem seq_pow_self (y : Tilt p R) (n : ℕ) : seq n y ^ p ^ n = PreTilt.untilt
 theorem ext_seq {x y : Tilt p R} (h : ∀ n, seq n x = seq n y) : x = y :=
   (seqEquiv p R).symm.injective (Perfection.extMonoid h)
 
-theorem ofSeq_seq (y : Tilt p R) : ofSeq (fun n => seq n y) (seq_succ_pow y) = y :=
-  ext_seq fun n => seq_ofSeq _ _ n
-
-theorem mk_seq (y : Tilt p R) (n : ℕ) :
-    Ideal.Quotient.mk (span {(p : R)}) (seq n y) = PreTilt.coeff n y := by
-  obtain ⟨z, rfl⟩ := (seqEquiv p R).surjective y
-  simp only [seq, MonoidHom.comp_apply, MulEquiv.coe_toMonoidHom, MulEquiv.symm_apply_apply]
-  rfl
-
 theorem seq_frobeniusEquiv_symm (y : Tilt p R) (n : ℕ) :
     seq n ((frobeniusEquiv (Tilt p R) p).symm y) = seq (n + 1) y := by
   conv_rhs => rw [← frobeniusEquiv_symm_pow_p (Tilt p R) p y, map_pow, seq_succ_pow]
-
-theorem seq_eq_untilt (y : Tilt p R) (n : ℕ) :
-    seq n y = PreTilt.untilt (((frobeniusEquiv (Tilt p R) p).symm)^[n] y) := by
-  induction n generalizing y with
-  | zero => exact seq_zero y
-  | succ n ih => rw [Function.iterate_succ_apply, ← ih, seq_frobeniusEquiv_symm]
-
-theorem seq_map (f : R →+* S) (y : Tilt p R) (n : ℕ) : seq n (map p f y) = f (seq n y) := by
-  have : map p f y = ofSeq (fun n => f (seq n y)) (fun n => by rw [← map_pow, seq_succ_pow]) := by
-    refine ext fun n => ?_
-    rw [coeff_map, ← mk_seq, ← mk_seq, seq_ofSeq]
-    rfl
-  rw [this, seq_ofSeq]
 
 end Tilt
 
@@ -121,15 +102,12 @@ theorem seq_padicPow_of_eq (η : tateModule p R) {a : ℤ_[p]} {n m : ℕ}
 @[simp] theorem padicPow_zero (η : tateModule p R) : padicPow η 0 = 1 := by
   simpa using padicPow_natCast η 0
 
-@[simp] theorem padicPow_one (η : tateModule p R) : padicPow η 1 = η := by
-  simpa using padicPow_natCast η 1
-
 theorem padicPow_add (η : tateModule p R) (a b : ℤ_[p]) :
     padicPow η (a + b) = padicPow η a * padicPow η b :=
   ext_seq fun n => by
     rw [Submonoid.coe_mul, map_mul, seq_padicPow η a, seq_padicPow η b, ← pow_add]
     apply seq_padicPow_of_eq
-    rw [Nat.cast_add, cast_val_toZModPow, cast_val_toZModPow, map_add]
+    rw [Nat.cast_add, cast_val_toZModPow, cast_val_toZModPow, map_add (f := _)]
 
 theorem padicPow_mul (η : tateModule p R) (a b : ℤ_[p]) :
     padicPow η (a * b) = padicPow (padicPow η a) b :=
@@ -137,37 +115,6 @@ theorem padicPow_mul (η : tateModule p R) (a b : ℤ_[p]) :
     rw [seq_padicPow _ b, seq_padicPow η a, ← pow_mul]
     apply seq_padicPow_of_eq
     rw [Nat.cast_mul, cast_val_toZModPow, cast_val_toZModPow, map_mul]
-
-theorem mul_padicPow (η η' : tateModule p R) (a : ℤ_[p]) :
-    padicPow (η * η') a = padicPow η a * padicPow η' a :=
-  ext_seq fun n => by
-    simp only [Submonoid.coe_mul, map_mul, seq_padicPow, mul_pow]
-
-@[simp] theorem one_padicPow (a : ℤ_[p]) : padicPow (1 : tateModule p R) a = 1 :=
-  ext_seq fun n => by simp [seq_padicPow]
-
-instance : CommGroup (tateModule p R) :=
-  { (inferInstance : CommMonoid (tateModule p R)) with
-    inv := fun η => padicPow η (-1)
-    inv_mul_cancel := fun η => by
-      conv_lhs => rw [← padicPow_one η, ← padicPow_mul, ← padicPow_add]
-      simp }
-
-theorem inv_eq_padicPow (η : tateModule p R) : η⁻¹ = padicPow η (-1) := rfl
-
-instance : Module ℤ_[p] (Additive (tateModule p R)) where
-  smul a η := Additive.ofMul (padicPow η.toMul a)
-  one_smul η := padicPow_one _
-  mul_smul a b η := by
-    change Additive.ofMul (padicPow η.toMul (a * b)) = _
-    rw [mul_comm, padicPow_mul]; rfl
-  smul_zero a := one_padicPow a
-  smul_add a η η' := mul_padicPow _ _ a
-  add_smul a b η := padicPow_add _ a b
-  zero_smul η := padicPow_zero _
-
-theorem smul_ofMul (a : ℤ_[p]) (η : tateModule p R) :
-    a • Additive.ofMul η = Additive.ofMul (padicPow η a) := rfl
 
 theorem exists_padicPow_eq (η : tateModule p R) {a : ℤ_[p]} {m k : ℕ}
     (h : (p : ℤ_[p]) ^ k ∣ a - m) : ∃ η' : tateModule p R, padicPow η a = η ^ m * η' ^ p ^ k := by
@@ -177,11 +124,6 @@ theorem exists_padicPow_eq (η : tateModule p R) {a : ℤ_[p]} {m k : ℕ}
   congr 1
   push_cast
   linear_combination hb
-
-theorem map_padicPow (f : R →+* S) (η : tateModule p R) (η' : tateModule p S)
-    (h : Tilt.map p f η.1 = η'.1) (a : ℤ_[p]) :
-    Tilt.map p f (padicPow η a).1 = (padicPow η' a).1 :=
-  Tilt.ext_seq fun n => by rw [seq_map, seq_padicPow, seq_padicPow, map_pow, ← seq_map, h]
 
 end tateModule
 
@@ -197,15 +139,6 @@ theorem IsPrimitive.isPrimitiveRoot {ε : tateModule p R} (hε : IsPrimitive ε)
   · rw [← orderOf_eq_prime_pow (x := seq (n + 1) ε.1) _ (seq_pow_eq_one ε _)]
     · exact IsPrimitiveRoot.orderOf _
     · rw [add_comm, seq_add_pow]; exact (isPrimitive_iff ε).1 hε
-
-theorem IsPrimitive.padicPow_injective {ε : tateModule p R} (hε : IsPrimitive ε) :
-    Function.Injective (padicPow ε) := by
-  intro a b h
-  refine PadicInt.ext_of_toZModPow.1 fun n => ?_
-  haveI : NeZero (p ^ n) := ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
-  apply ZMod.val_injective
-  apply (hε.isPrimitiveRoot n).pow_inj (ZMod.val_lt _) (ZMod.val_lt _)
-  rw [← seq_padicPow, ← seq_padicPow, h]
 
 theorem IsPrimitive.padicPow_iff {ε : tateModule p R} (hε : IsPrimitive ε) (a : ℤ_[p]) :
     IsPrimitive (padicPow ε a) ↔ IsUnit a := by
@@ -241,33 +174,11 @@ theorem IsPrimitive.padicPow_surjective {ε : tateModule p R} (hε : IsPrimitive
   rw [PadicInt.toZModPow_ofIntSeq_of_pow_dvd_sub _ _ hd]
   simp
 
-def IsPrimitive.padicPowEquiv {ε : tateModule p R} (hε : IsPrimitive ε) :
-    Multiplicative ℤ_[p] ≃* tateModule p R :=
-  MulEquiv.ofBijective
-    ({ toFun := fun a => padicPow ε a.toAdd
-       map_one' := padicPow_zero ε
-       map_mul' := fun a b => padicPow_add ε a.toAdd b.toAdd } :
-      Multiplicative ℤ_[p] →* tateModule p R)
-    ⟨fun _ _ h => hε.padicPow_injective h, fun η => hε.padicPow_surjective η⟩
-
-@[simp] theorem IsPrimitive.padicPowEquiv_apply {ε : tateModule p R} (hε : IsPrimitive ε)
-    (a : ℤ_[p]) : hε.padicPowEquiv (Multiplicative.ofAdd a) = padicPow ε a := rfl
-
-def IsPrimitive.linearEquiv {ε : tateModule p R} (hε : IsPrimitive ε) :
-    ℤ_[p] ≃ₗ[ℤ_[p]] Additive (tateModule p R) :=
-  LinearEquiv.ofBijective (LinearMap.toSpanSingleton ℤ_[p] _ (Additive.ofMul ε))
-    ⟨fun _ _ h => hε.padicPow_injective h, fun η => hε.padicPow_surjective η.toMul⟩
-
 theorem IsPrimitive.exists_unit {ε ε' : tateModule p R} (hε : IsPrimitive ε)
     (hε' : IsPrimitive ε') : ∃ a : ℤ_[p]ˣ, ε' = padicPow ε a := by
   obtain ⟨a, rfl⟩ := hε.padicPow_surjective ε'
   obtain ⟨a, rfl⟩ := (hε.padicPow_iff a).1 hε'
   exact ⟨a, rfl⟩
-
-theorem IsPrimitive.hasEnoughRootsOfUnity {ε : tateModule p R} (hε : IsPrimitive ε) (n : ℕ) :
-    HasEnoughRootsOfUnity R (p ^ n) :=
-  haveI : NeZero (p ^ n) := ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
-  ⟨⟨_, hε.isPrimitiveRoot n⟩, rootsOfUnity.isCyclic _ _⟩
 
 end Domain
 
@@ -299,8 +210,8 @@ instance : Nonempty (PFlat p R) :=
   let ⟨y, hy⟩ := Tilt.untilt_surjective_of_isAlgClosed (p := p) (p : R)
   ⟨⟨y, hy⟩⟩
 
-variable (p R) in
 
+variable (p R) in
 def pflat : PFlat p R := Classical.arbitrary _
 
 variable [CharZero R]
@@ -323,87 +234,18 @@ theorem exists_isPrimitive : ∃ ε : tateModule p R, IsPrimitive ε := by
     exact hz.ne_one (Fact.out : p.Prime).one_lt
 
 variable (p R) in
-
 def eps : tateModule p R := (exists_isPrimitive p R).choose
 
 variable (p R) in
 theorem isPrimitive_eps : IsPrimitive (eps p R) := (exists_isPrimitive p R).choose_spec
 
-theorem tateModule.map_eq_padicPow_cyclotomicCharacter (e : R ≃+* R) (η : tateModule p R) :
-    Tilt.map p (e : R →+* R) η.1 = (padicPow η (cyclotomicCharacter R p e)).1 := by
-  haveI := (isPrimitive_eps p R).hasEnoughRootsOfUnity
-  refine Tilt.ext_seq fun n => ?_
-  rw [seq_map, seq_padicPow]
-  exact cyclotomicCharacter.spec p e _ (seq_pow_eq_one η n)
-
 end Good
 
 namespace PFlat
 
-theorem ext {ϖ ϖ' : PFlat p R} (h : ϖ.1 = ϖ'.1) : ϖ = ϖ' := Subtype.ext h
-
-@[simp] theorem twist_val (η : tateModule p R) (ϖ : PFlat p R) : (ϖ.twist η).1 = η.1 * ϖ.1 := rfl
-
-@[simp] theorem twist_one (ϖ : PFlat p R) : ϖ.twist 1 = ϖ := ext (one_mul _)
-
-theorem twist_twist (η η' : tateModule p R) (ϖ : PFlat p R) :
-    (ϖ.twist η').twist η = ϖ.twist (η * η') := ext (mul_assoc _ _ _).symm
-
-theorem seq_pow (ϖ : PFlat p R) (n : ℕ) : seq n ϖ.1 ^ p ^ n = (p : R) := by
-  rw [seq_pow_self, ϖ.2]
-
 variable [IsDomain R] [CharZero R]
 
-theorem seq_ne_zero (ϖ : PFlat p R) (n : ℕ) : seq n ϖ.1 ≠ 0 := fun h => by
-  have := seq_pow ϖ n
-  rw [h, zero_pow (pow_ne_zero _ (Fact.out : p.Prime).ne_zero)] at this
-  exact (Fact.out : p.Prime).ne_zero (by exact_mod_cast this.symm)
-
-theorem twist_injective (ϖ : PFlat p R) : Function.Injective fun η => ϖ.twist η := by
-  intro η η' h
-  refine tateModule.ext_seq fun n => mul_right_cancel₀ (seq_ne_zero ϖ n) ?_
-  have h1 : η.1 * ϖ.1 = η'.1 * ϖ.1 := by
-    rw [← twist_val, ← twist_val]
-    exact congrArg Subtype.val h
-  rw [← map_mul, ← map_mul, h1]
-
 variable [ValuationRing R]
-
-theorem twist_surjective (ϖ : PFlat p R) : Function.Surjective fun η => ϖ.twist η := by
-  intro ϖ'
-  have hd : ∀ n, seq n ϖ.1 ∣ seq n ϖ'.1 := fun n => by
-    rw [← IsIntegrallyClosed.pow_dvd_pow_iff (pow_ne_zero n (Fact.out : p.Prime).ne_zero),
-      seq_pow, seq_pow]
-  choose c hc using hd
-  have hp : ∀ n, c (n + 1) ^ p = c n := fun n => by
-    apply mul_left_cancel₀ (seq_ne_zero ϖ n)
-    rw [← hc, ← seq_succ_pow ϖ.1, ← mul_pow, ← hc, seq_succ_pow]
-  refine ⟨⟨ofSeq c hp, ?_⟩, ext (Tilt.ext_seq fun n => ?_)⟩
-  · change PreTilt.untilt _ = 1
-    rw [untilt_ofSeq]
-    apply mul_left_cancel₀ (seq_ne_zero ϖ 0)
-    rw [← hc, mul_one, seq_zero, seq_zero, ϖ.2, ϖ'.2]
-  · change seq n (ofSeq c hp * ϖ.1) = _
-    rw [map_mul, seq_ofSeq, hc, mul_comm]
-
-theorem existsUnique_twist (ϖ ϖ' : PFlat p R) : ∃! η : tateModule p R, ϖ' = ϖ.twist η := by
-  obtain ⟨η, hη⟩ := twist_surjective ϖ ϖ'
-  exact ⟨η, hη.symm, fun η' h => twist_injective ϖ (h.symm.trans hη.symm)⟩
-
-def div (ϖ' ϖ : PFlat p R) : tateModule p R := (twist_surjective ϖ ϖ').choose
-
-@[simp] theorem twist_div (ϖ' ϖ : PFlat p R) : ϖ.twist (ϖ'.div ϖ) = ϖ' :=
-  (twist_surjective ϖ ϖ').choose_spec
-
-@[simp] theorem twist_div_self (η : tateModule p R) (ϖ : PFlat p R) : (ϖ.twist η).div ϖ = η :=
-  twist_injective ϖ (twist_div _ _)
-
-@[simp] theorem div_self (ϖ : PFlat p R) : ϖ.div ϖ = 1 := by
-  simpa using twist_div_self 1 ϖ
-
-theorem twist_div_eq (η : tateModule p R) (ϖ' ϖ : PFlat p R) :
-    (ϖ'.twist η).div ϖ = η * ϖ'.div ϖ := by
-  conv_lhs => rw [← twist_div ϖ' ϖ, twist_twist, twist_div_self]
 
 end PFlat
 

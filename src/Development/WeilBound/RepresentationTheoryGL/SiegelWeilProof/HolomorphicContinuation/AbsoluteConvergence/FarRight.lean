@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.SplitMul
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.SplitMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,7 +97,7 @@ theorem farId [MeasurableSpace (KR n)] [BorelSpace (KR n)] (hD : CayleyBlocksInv
     rw [tsum_mul_left]
   have hswap : ∫ k, ∑' q' : S, F q' k ∂ν = ∑' q' : S, ∫ k, F q' k ∂ν :=
     (integral_tsum_of_summable_integral_norm (F := fun (q' : S) k => F q' k)
-      (fun q' => hint q') (hsumm.subtype S)).symm
+      (fun q' => hint q') (hsumm.subtype (fun x => x ∈ S))).symm
   rw [hL1, hswap, ← e2]
   simp_rw [hq]
   rw [Summable.tsum_finsetSum (fun j _ => (hsum j).mul_left _)]

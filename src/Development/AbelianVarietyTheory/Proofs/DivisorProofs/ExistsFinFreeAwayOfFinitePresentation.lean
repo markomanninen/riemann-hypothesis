@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsSecOfFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AffineFiniteProjectiveRankAtStalk
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsSecOfFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AffineFiniteProjectiveRankAtStalk
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -45,7 +49,7 @@ theorem tr_of_isPushout {φ : A →+* B} {α : A →+* A'} {β : B →+* B'} {φ
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul r x => simp [IsBaseChange.equiv_tmul]; rfl
-  | add s t hs ht => simp only [map_add, hs, ht]
+  | add s t hs ht => simp only [map_add (f := _), hs, ht]
 
 theorem tr_map (φ : A →+* B) (h : FinFree φ) (r : ℕ)
     (hr : Nontrivial A → (letI := φ.toAlgebra; Module.finrank A B) = r) (a : A) :
@@ -106,10 +110,6 @@ theorem resG_tr [IsFinite f] {V W : Y.Opens} (hV : IsAffineOpen V) (hW : IsAffin
 
 variable [IsFinite f] [Flat f] [LocallyOfFinitePresentation f]
 
-omit [Flat f] [LocallyOfFinitePresentation f] in
-
-theorem isAffineOpen_preimage {V : Y.Opens} (hV : IsAffineOpen V) : IsAffineOpen (f ⁻¹ᵁ V) :=
-  hV.preimage f
 
 theorem exists_finFree_app_of_finitePresentation {y : Y} {U : Y.Opens} (hy : y ∈ U) :
     ∃ V : Y.Opens, IsAffineOpen V ∧ y ∈ V ∧ V ≤ U ∧ FinFree (f.app V).hom := by
@@ -161,7 +161,7 @@ def trFun (V : Y.Opens) : Γ(X, f ⁻¹ᵁ V) →+ Γ(Y, V) where
   map_zero' := ext_freeOpen f fun W => by
     rw [(exists_trFun f V 0).choose_spec W, map_zero, map_zero, map_zero]
   map_add' a b := ext_freeOpen f fun W => by
-    rw [(exists_trFun f V _).choose_spec W, map_add, map_add, map_add,
+    rw [(exists_trFun f V _).choose_spec W, map_add (f := _), map_add (f := _), map_add (f := _),
       (exists_trFun f V a).choose_spec W, (exists_trFun f V b).choose_spec W]
 
 theorem resG_trFun_free {V : Y.Opens} (b : Γ(X, f ⁻¹ᵁ V)) (W : FreeOpen f V) :
@@ -269,26 +269,25 @@ theorem resG_cst_comp {V : Y.Opens} {V' : X.Opens} (e : f ⁻¹ᵁ V ≤ V') (r 
   rw [Scheme.Hom.app_eq_appLE, appLE_cst (comp_eq_comp_id f q) (le_refl (f ⁻¹ᵁ V)) r]
   exact rs_cst (f ≫ q) e r
 
-theorem natCast_eq_cst (V : Y.Opens) (r : ℕ) : cst q V (r : R) = (r : Γ(Y, V)) := map_natCast _ r
-
 variable [IsFinite f] [Flat f] [LocallyOfFinitePresentation f] {L : LB Y}
 
-variable (L) in
 
+variable (L) in
 def trR (V : Y.Opens) (V' : X.Opens) (e : f ⁻¹ᵁ V ≤ V') :
     SecOnR (f ≫ q) (L.pull f) V' →ₗ[R] SecOnR q L V where
   toFun x := SecOnR.of q L V (trSec f V (SecOn.restrict (L.pull f) e ((SecOnR.of (f ≫ q) _ V').symm x)))
-  map_add' x y := by simp only [map_add]
+  map_add' x y := by simp only [map_add (f := _)]
   map_smul' r x := by
     rw [SecOnR.smul_def, LinearEquiv.map_smul, (SecOn.restrict (L.pull f) e).map_smulₛₗ]
     erw [resG_cst_comp f q e r, trSec_smul]
     rfl
 
-variable (L) in
 
+variable (L) in
 def trCube {κ : Type} (D : κ → Y.Opens) :
     secCube (f ≫ q) (L.pull f) (fun i => f ⁻¹ᵁ D i) ⟶ secCube q L D :=
-  GlobalTheory.Cube.homMk (fun s => trR f q L (⨅ i ∈ s, D i) (⨅ i ∈ s, f ⁻¹ᵁ D i) (preimage_biInf D f s).le)
+  GlobalTheory.Cube.homMk κ R
+    (fun s => trR f q L (⨅ i ∈ s, D i) (⨅ i ∈ s, f ⁻¹ᵁ D i) (preimage_biInf D f s).le)
     fun {s t} h x => by
       show trSec f _ (SecOn.restrict (L.pull f) (preimage_biInf D f t).le
           (SecOn.restrict (L.pull f) (iInf_le_iInf_of_subset (fun i => f ⁻¹ᵁ D i) h) x)) =
@@ -299,11 +298,11 @@ def trCube {κ : Type} (D : κ → Y.Opens) :
       exact (SecOn.restrict_restrict (M := L.pull f) _ _ (x : SecOn (L.pull f) (⨅ i ∈ s, f ⁻¹ᵁ D i))).trans
         (SecOn.restrict_restrict _ _ _).symm
 
-variable (L) in
 
+variable (L) in
 def pullCube {κ : Type} (D : κ → Y.Opens) :
     secCube q L D ⟶ secCube (f ≫ q) (L.pull f) (fun i => f ⁻¹ᵁ D i) :=
-  GlobalTheory.Cube.homMk (fun s => secCubePull L D (comp_eq_comp_id f q) s)
+  GlobalTheory.Cube.homMk κ R (fun s => secCubePull L D (comp_eq_comp_id f q) s)
     fun h x => secCubePull_res D (comp_eq_comp_id f q) h x
 
 end Cech
@@ -323,43 +322,22 @@ theorem exactAt_of_isIso_comp {R : Type} [CommRing R] {C D : CochainComplex (Mod
     rw [← Category.assoc, ← HomologicalComplex.homologyMap_comp, IsIso.hom_inv_id]
   rw [e, hD.eq_of_tgt (HomologicalComplex.homologyMap i n) 0, zero_comp]
 
-def smulCube {R : Type} [CommRing R] {κ : Type} (A : GlobalTheory.Cube.{0} κ R) (u : Rˣ) : A ≅ A :=
-  GlobalTheory.Cube.isoMk (fun _ => LinearEquiv.smulOfUnit u) fun h x => ((GlobalTheory.Cube.res A h).map_smul (u : R) x).symm
-
 section Cech
 
 variable {X Y : Scheme.{0}} (f : X ⟶ Y) {R : Type} [CommRing R] (q : Y ⟶ Spec (CommRingCat.of R))
   [IsFinite f] [Flat f] [LocallyOfFinitePresentation f]
 
-theorem pullCube_trCube (r : ℕ) (hr : ∀ V : Y.Opens, IsAffineOpen V → FinFree (f.app V).hom →
-      Nontrivial Γ(Y, V) → (letI := (f.app V).hom.toAlgebra; Module.finrank Γ(Y, V) Γ(X, f ⁻¹ᵁ V)) = r)
-    (hu : IsUnit (r : R)) (L : LB Y) {κ : Type} (D : κ → Y.Opens) :
-    pullCube f q L D ≫ trCube f q L D = (smulCube (secCube q L D) hu.unit).hom := by
-  ext s x
-  obtain ⟨y, rfl⟩ : ∃ y : SecOn L (⨅ i ∈ s, D i), y = x := ⟨x, rfl⟩
-  change trSec f _ (SecOn.restrict (L.pull f) (preimage_biInf D f s).le
-    (SecOn.pullLE L f _ _ (preimage_biInf D f s).ge y)) = ((hu.unit : R)) • (show SecOnR q L _ from y)
-  rw [SecOn.restrict_pullLE]
-  erw [SecOn.pullLE_self, trSec_pull f r hr]
-  rw [IsUnit.unit_spec, SecOnR.smul_def, natCast_eq_cst]
-  rfl
-
-theorem cechLB_exactAt_of_pull (r : ℕ) (hr : ∀ V : Y.Opens, IsAffineOpen V → FinFree (f.app V).hom →
-      Nontrivial Γ(Y, V) → (letI := (f.app V).hom.toAlgebra; Module.finrank Γ(Y, V) Γ(X, f ⁻¹ᵁ V)) = r)
-    (hu : IsUnit (r : R)) (L : LB Y) {κ : Type} [LinearOrder κ] (D : κ → Y.Opens) (n : ℕ)
-    (h : (cechLB (f ≫ q) (L.pull f) (fun i => f ⁻¹ᵁ D i)).ExactAt n) : (cechLB q L D).ExactAt n := by
-  haveI : IsIso ((cechFunctor κ R).map (pullCube f q L D) ≫ (cechFunctor κ R).map (trCube f q L D)) := by
-    rw [← Functor.map_comp, pullCube_trCube f q r hr hu]
-    infer_instance
-  exact exactAt_of_isIso_comp ((cechFunctor κ R).map (pullCube f q L D))
-    ((cechFunctor κ R).map (trCube f q L D)) h
 
 omit [IsFinite f] [Flat f] [LocallyOfFinitePresentation f] in
-
 def funCube (a : Γ(Y, ⊤)) (L : LB Y) {κ : Type} (D : κ → Y.Opens) : secCube q L D ⟶ secCube q L D :=
-  secCubeMap q D (fun V => LinearMap.lsmul Γ(Y, V) (SecOn L V) (rs Y (le_top : V ≤ ⊤) a))
-    fun h s => by
-      rw [LinearMap.lsmul_apply, LinearMap.lsmul_apply, map_smulₛₗ, rs_rs]
+  GlobalTheory.Cube.homMk κ R
+    (fun s => SecOnR.lin q (LinearMap.lsmul Γ(Y, ⨅ i ∈ s, D i) (SecOn L (⨅ i ∈ s, D i))
+      (rs Y le_top a))) fun {s t} h x => by
+      let e := iInf_le_iInf_of_subset D h
+      let y : SecOn L (⨅ i ∈ s, D i) := x
+      change rs Y (le_top : (⨅ i ∈ t, D i) ≤ ⊤) a • SecOn.restrict L e y =
+        SecOn.restrict L e (rs Y (le_top : (⨅ i ∈ s, D i) ≤ ⊤) a • y)
+      rw [map_smulₛₗ, rs_rs]
 
 def cechPull (L : LB Y) {κ : Type} [LinearOrder κ] (D : κ → Y.Opens) :
     cechLB q L D ⟶ cechLB (f ≫ q) (L.pull f) (fun i => f ⁻¹ᵁ D i) :=
@@ -402,11 +380,6 @@ theorem cechLB_retract_and_exactAt (r : ℕ) (hr : ∀ y, f.finrank y = r) (hu :
     rw [cechLB_retract f q r hr hu]
     infer_instance
   exact exactAt_of_isIso_comp (cechPull f q L D) (cechTr f q L D ≫ cechSMul q (hu.unit⁻¹).val L D) h
-
-theorem cechLB_exactAt_of_pull_of_finrank (r : ℕ) (hr : ∀ y, f.finrank y = r)
-    (hu : IsUnit (r : Γ(Y, ⊤))) (L : LB Y) {κ : Type} [LinearOrder κ] (D : κ → Y.Opens) (n : ℕ)
-    (h : (cechLB (f ≫ q) (L.pull f) (fun i => f ⁻¹ᵁ D i)).ExactAt n) : (cechLB q L D).ExactAt n :=
-  (cechLB_retract_and_exactAt f q r hr hu L D).2 n h
 
 end Cech
 

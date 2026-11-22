@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.HkLatTupUpdate
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.HkLatTupUpdate
+
+@[expose] public section
 
 noncomputable section
 

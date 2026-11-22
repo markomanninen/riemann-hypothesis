@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.CentralUnit
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ParUniq
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.NormEqProd
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ParOne
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.TwTame
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ClBasic
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.WDBasic
+module
+
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.CentralUnit
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ParUniq
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.NormEqProd
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ParOne
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.TwTame
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ClBasic
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.WDBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,22 +24,22 @@ section Classes
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k]
 
-private theorem tw_tw (y : IrrGL k) {χ χ' : kˣ →* ℂˣ} (hχ : IsSmoothChar χ) (hχ' : IsSmoothChar χ')
+private theorem tw_tw (y : IrrGL (k := k)) {χ χ' : kˣ →* ℂˣ} (hχ : IsSmoothChar χ) (hχ' : IsSmoothChar χ')
     (h'' : IsSmoothChar (χ * χ')) : (y.tw χ hχ).tw χ' hχ' = y.tw (χ * χ') h'' :=
   ((clBasic k y).2.1 χ hχ).2.2.2.1 χ' hχ' h''
 
-private theorem tw_one (y : IrrGL k) (h1 : IsSmoothChar (1 : kˣ →* ℂˣ)) : y.tw 1 h1 = y :=
+private theorem tw_one (y : IrrGL (k := k)) (h1 : IsSmoothChar (1 : kˣ →* ℂˣ)) : y.tw 1 h1 = y :=
   (clBasic k y).2.2.1 h1
 
-private theorem tw_congr (y : IrrGL k) {χ χ' : kˣ →* ℂˣ} (e : χ = χ') (hχ : IsSmoothChar χ)
+private theorem tw_congr (y : IrrGL (k := k)) {χ χ' : kˣ →* ℂˣ} (e : χ = χ') (hχ : IsSmoothChar χ)
     (hχ' : IsSmoothChar χ') : y.tw χ hχ = y.tw χ' hχ' := by
   subst e; rfl
 
-private theorem tw_tw_inv' (y : IrrGL k) {χ : kˣ →* ℂˣ} (hχ : IsSmoothChar χ) :
+private theorem tw_tw_inv' (y : IrrGL (k := k)) {χ : kˣ →* ℂˣ} (hχ : IsSmoothChar χ) :
     (y.tw χ hχ).tw χ⁻¹ hχ.inv = y := by
   rw [tw_tw y hχ hχ.inv (hχ.mul hχ.inv), tw_congr y (mul_inv_cancel χ) _ isSmoothChar_one, tw_one]
 
-private theorem eq_tw_of_tw_eq {y y' : IrrGL k} {χ χ' : kˣ →* ℂˣ} {hχ : IsSmoothChar χ}
+private theorem eq_tw_of_tw_eq {y y' : IrrGL (k := k)} {χ χ' : kˣ →* ℂˣ} {hχ : IsSmoothChar χ}
     {hχ' : IsSmoothChar χ'} (e : y.tw χ hχ = y'.tw χ' hχ') :
     y' = y.tw (χ * χ'⁻¹) (hχ.mul hχ'.inv) := by
   rw [← tw_tw y hχ hχ'.inv, e, tw_tw_inv']
@@ -63,15 +67,15 @@ private theorem lpTwist_lpTwist' (V : WD h) {a : Weil h →* (w.adicCompletion E
     (ha.smooth hχ') (e ▸ ha.smooth h'')).trans (lpTwist_congr' V e.symm _ _)
 
 private def Rel (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a)
-    (x : IrrGL (w.adicCompletion E)) (V : WD h) : Prop :=
+    (x : IrrGL (k := w.adicCompletion E)) (V : WD h) : Prop :=
   (∃ χ hχ, x = .ofChar χ hχ ∧ V = WD.lpOfChar h (χ.comp a) (ha.smooth hχ)) ∨
   ((∃ (g : ℕ) (_ : Fact g.Prime) (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i) ∧
-    ∃ (y₀ : IrrGL (w.adicCompletion E)) (V₀ : WD h) (χ : (w.adicCompletion E)ˣ →* ℂˣ) (hχ : IsSmoothChar χ),
+    ∃ (y₀ : IrrGL (k := w.adicCompletion E)) (V₀ : WD h) (χ : (w.adicCompletion E)ˣ →* ℂˣ) (hχ : IsSmoothChar χ),
       y₀.IsCusp ∧ DZ y₀ ∧ Par a y₀ V₀ ∧ x = y₀.tw χ hχ ∧ V = V₀.lpTwist (χ.comp a) (ha.smooth hχ))
 
 private theorem twist_eq_of_tw_eq {a : Weil h →* (w.adicCompletion E)ˣ} (ha : IsLocalArtin h a)
     (hq : ∃ (g : ℕ) (_ : Fact g.Prime) (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i)
-    {y₀ y₁ : IrrGL (w.adicCompletion E)} {V₀ V₁ : WD h} {χ χ₁ : (w.adicCompletion E)ˣ →* ℂˣ}
+    {y₀ y₁ : IrrGL (k := w.adicCompletion E)} {V₀ V₁ : WD h} {χ χ₁ : (w.adicCompletion E)ˣ →* ℂˣ}
     {hχ : IsSmoothChar χ} {hχ₁ : IsSmoothChar χ₁}
     (c : y₀.IsCusp) (d : DZ y₀) (p : Par a y₀ V₀) (c₁ : y₁.IsCusp) (d₁ : DZ y₁) (p₁ : Par a y₁ V₁)
     (e : y₀.tw χ hχ = y₁.tw χ₁ hχ₁) :
@@ -91,7 +95,7 @@ private theorem twist_eq_of_tw_eq {a : Weil h →* (w.adicCompletion E)ˣ} (ha :
 private theorem ofChar_eq_of_tw_eq {a : Weil h →* (w.adicCompletion E)ˣ} (ha : IsLocalArtin h a)
     (hq : ∃ (g : ℕ) (_ : Fact g.Prime) (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i)
     {ψ χ : (w.adicCompletion E)ˣ →* ℂˣ} {hψ : IsSmoothChar ψ} {hχ : IsSmoothChar χ}
-    {y₀ : IrrGL (w.adicCompletion E)} {V₀ : WD h} (c : y₀.IsCusp) (d : DZ y₀) (p : Par a y₀ V₀)
+    {y₀ : IrrGL (k := w.adicCompletion E)} {V₀ : WD h} (c : y₀.IsCusp) (d : DZ y₀) (p : Par a y₀ V₀)
     (e : IrrGL.ofChar ψ hψ = y₀.tw χ hχ) :
     WD.lpOfChar h (ψ.comp a) (ha.smooth hψ) = V₀.lpTwist (χ.comp a) (ha.smooth hχ) := by
   obtain ⟨g, hg, i, hi⟩ := hq
@@ -110,7 +114,7 @@ private theorem ofChar_eq_of_tw_eq {a : Weil h →* (w.adicCompletion E)ˣ} (ha 
   exact lpOfChar_congr' (by rw [inv_mul_cancel_right]) _ _
 
 private theorem rel_unique {a : Weil h →* (w.adicCompletion E)ˣ} (ha : IsLocalArtin h a)
-    {x : IrrGL (w.adicCompletion E)} {V V' : WD h} (H : Rel a ha x V) (H' : Rel a ha x V') : V = V' := by
+    {x : IrrGL (k := w.adicCompletion E)} {V V' : WD h} (H : Rel a ha x V) (H' : Rel a ha x V') : V = V' := by
   rcases H with ⟨χ, hχ, e, rfl⟩ | ⟨hq, y₀, V₀, χ, hχ, c, d, p, e, rfl⟩ <;>
     rcases H' with ⟨χ', hχ', e', rfl⟩ | ⟨hq', y₁, V₁, χ₁, hχ₁, c₁, d₁, p₁, e', rfl⟩
   · have : χ = χ' := (parOne E Ω A w h a ha χ hχ).2.2.2.2.2.2.2.2 χ' hχ' (e.symm.trans e')
@@ -121,7 +125,7 @@ private theorem rel_unique {a : Weil h →* (w.adicCompletion E)ˣ} (ha : IsLoca
   · exact twist_eq_of_tw_eq ha hq c d p c₁ d₁ p₁ (e.symm.trans e')
 
 private theorem rel_tw {a : Weil h →* (w.adicCompletion E)ˣ} (ha : IsLocalArtin h a)
-    {x : IrrGL (w.adicCompletion E)} {V : WD h} (H : Rel a ha x V)
+    {x : IrrGL (k := w.adicCompletion E)} {V : WD h} (H : Rel a ha x V)
     {χ : (w.adicCompletion E)ˣ →* ℂˣ} (hχ : IsSmoothChar χ) :
     Rel a ha (x.tw χ hχ) (V.lpTwist (χ.comp a) (ha.smooth hχ)) := by
   rcases H with ⟨ψ, hψ, rfl, rfl⟩ | ⟨hq, y₀, V₀, ψ, hψ, c, d, p, rfl, rfl⟩
@@ -131,7 +135,7 @@ private theorem rel_tw {a : Weil h →* (w.adicCompletion E)ˣ} (ha : IsLocalArt
       lpTwist_lpTwist' V₀ ha hψ hχ (hψ.mul hχ)⟩
 
 private theorem rel_of_good {a : Weil h →* (w.adicCompletion E)ˣ} (ha : IsLocalArtin h a)
-    {x : IrrGL (w.adicCompletion E)} (c : x.IsCusp) (gd : GoodCusp x) : ∃ V, Rel a ha x V := by
+    {x : IrrGL (k := w.adicCompletion E)} (c : x.IsCusp) (gd : GoodCusp x) : ∃ V, Rel a ha x V := by
   rcases gd with h1 | ⟨hq, y₀, χ, hχ, hfix, rfl⟩
   · obtain ⟨-, χ, hχ, e⟩ := (clBasic _ x).2.2.2.2.1 h1
     exact ⟨_, Or.inl ⟨χ, hχ, e, rfl⟩⟩

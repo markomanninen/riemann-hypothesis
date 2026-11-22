@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.MOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtLevZero
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.MOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtLevZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -34,7 +38,7 @@ private theorem functional_mem (hb : Function.Surjective (algebraMap A B)) (f : 
   | add x y _ _ hx hy =>
     obtain ⟨d₁, h₁, e₁⟩ := hx
     obtain ⟨d₂, h₂, e₂⟩ := hy
-    exact ⟨d₁ + d₂, 𝔞.add_mem h₁ h₂, by rw [map_add, e₁, e₂, map_add]⟩
+    exact ⟨d₁ + d₂, 𝔞.add_mem h₁ h₂, by rw [map_add (f := _), e₁, e₂, map_add (f := _)]⟩
   | smul b x _ hx =>
     obtain ⟨d, hd, e⟩ := hx
     obtain ⟨a, rfl⟩ := hb b
@@ -77,7 +81,7 @@ private theorem exists_sub_mem {ε : A} {𝔟 : Ideal A} {z : M}
     obtain ⟨u, hu, v, hv, rfl⟩ := Submodule.mem_sup.mp hc
     obtain ⟨a, rfl⟩ := Ideal.mem_span_singleton'.mp hu
     refine ⟨algebraMap A B a • z', ?_⟩
-    rw [smul_smul, ← map_mul, mul_comm ε a, map_add, add_smul, add_sub_cancel_left]
+    rw [smul_smul, ← map_mul, mul_comm ε a, map_add (f := _), add_smul, add_sub_cancel_left]
     exact smul_mem_idealSub hv z'
   | zero =>
     refine ⟨0, ?_⟩
@@ -119,7 +123,7 @@ private theorem smul_mem_of_eps {ε c : A} {𝔟 : Ideal A} {y : M} (hc : c ∈ 
     (hy : algebraMap A B ε • y ∈ idealSub B M 𝔟) : algebraMap A B c • y ∈ idealSub B M 𝔟 := by
   obtain ⟨u, hu, v, hv, rfl⟩ := Submodule.mem_sup.mp hc
   obtain ⟨a, rfl⟩ := Ideal.mem_span_singleton'.mp hu
-  rw [map_add, add_smul, map_mul, ← smul_smul]
+  rw [map_add (f := _), add_smul, map_mul, ← smul_smul]
   exact Submodule.add_mem _ (Submodule.smul_mem _ _ hy) (smul_mem_idealSub hv y)
 
 end Generic

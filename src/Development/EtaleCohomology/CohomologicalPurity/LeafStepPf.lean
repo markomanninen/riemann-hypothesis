@@ -1,6 +1,10 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafFlqPf
-import Development.EtaleCohomology.KummerTheory.GluePf
-import Development.EtaleCohomology.KummerTheory.FlasquePf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafFlqPf
+public import Development.EtaleCohomology.KummerTheory.GluePf
+public import Development.EtaleCohomology.KummerTheory.FlasquePf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CochainComplex.HomComplex
@@ -162,7 +166,7 @@ theorem sep_cover (G : Shv R) {Y : Scheme.{0}} {A : Type} (P : A → Scheme.{0})
     [∀ i, IsOpenImmersion (f i)] (hcov : ∀ y, ∃ i, y ∈ Set.range (f i)) (s : Sec G Y)
     (hs : ∀ i, Sec.res (f i) s = 0) : s = 0 := by
   have hG : Presheaf.IsSheaf (Scheme.etaleTopology) (G.obj ⋙ forget (ModuleCat.{1} (ULift.{1} R))) :=
-    (Presheaf.isSheaf_iff_isSheaf_forget _ _ (forget (ModuleCat.{1} (ULift.{1} R)))).1 G.cond
+    (Presheaf.isSheaf_iff_isSheaf_forget _ _ (forget (ModuleCat.{1} (ULift.{1} R)))).1 G.property
   have hmem : Sieve.generate (Presieve.ofArrows P f) ∈ Scheme.etaleTopology Y := by
     apply Precoverage.generate_mem_toGrothendieck
     refine (Scheme.ofArrows_mem_precoverage_iff (P := (@Etale : MorphismProperty Scheme.{0}))).2

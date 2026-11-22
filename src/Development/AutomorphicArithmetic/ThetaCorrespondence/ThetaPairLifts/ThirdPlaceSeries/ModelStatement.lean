@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.SumExpSt
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExportSt
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SumExpSt
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExportSt
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 

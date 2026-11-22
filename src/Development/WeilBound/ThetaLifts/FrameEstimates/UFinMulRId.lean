@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.SquareIntegrableWeilRange
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IntegralFiniteAdeleCompactClosedMultiples
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.SquareIntegrableWeilRange
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IntegralFiniteAdeleCompactClosedMultiples
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,8 +48,8 @@ theorem denom_fin {K : Set (Af F)} (hK : IsCompact K) :
   rw [he, Nat.cast_mul, mul_comm (d : F) (e : F), mul_assoc]
   exact hei.mul hdx
 
-variable (F) in
 
+variable (F) in
 def uFin : AF F := pairA F 0 1
 
 theorem evI_uFin : evI F (uFin F) = 0 := by
@@ -132,7 +136,7 @@ theorem piInf_rId {w : InfinitePlace F} (τ : EmbOver E w) (t : ℝ) :
       ((fun _ => Real.exp t), (fun _ => ((Real.exp t : ℝ) : ℂ))) := by
     show InfiniteAdeleRing.ringEquiv_mixedSpace F (1 + (InfiniteAdeleRing.ringEquiv_mixedSpace F).symm
       (algebraMap ℝ (mixedEmbedding.mixedSpace F) (Real.exp t - 1))) = _
-    rw [map_add, map_one, RingEquiv.apply_symm_apply]
+    rw [map_add (f := _), map_one, RingEquiv.apply_symm_apply]
     refine Prod.ext ?_ ?_ <;> funext v <;> simp
   by_cases hw : w.IsReal
   · have h1 := congrArg (fun z => z.1 ⟨w, hw⟩) hy

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EllFamNontrivial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EllFamNontrivial
+
+@[expose] public section
+
 open TopologicalSpace CategoryTheory GlobalTheory.CatCoh GlobalTheory.AnPer GlobalTheory.AnPer.Charts
 
 namespace GlobalTheory.SecondOrderNbhd

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpanRangeMulVecLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpanRangeMulVecLe
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits Opposite AlgebraicTopology
@@ -54,8 +58,8 @@ section Ev
 
 variable {C : Type*} [Category* C] [Preadditive C]
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 def ev (Y : SimplicialObject (SimplicialObject C)) : BOp ⥤ C where
   obj X := (Functor.uncurry.obj Y).obj X
   map {_ _} f := f.sum fun f' (r : ℤ) => r • (Functor.uncurry.obj Y).map f'

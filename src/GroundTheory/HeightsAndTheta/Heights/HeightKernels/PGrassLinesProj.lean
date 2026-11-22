@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassLinesProj
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGrassArithVar
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PIntDomainDim
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PFsLineSmooth
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.ContractMixedFieldStatement
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassLinesProj
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGrassArithVar
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PIntDomainDim
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PFsLineSmooth
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.ContractMixedFieldStatement
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -52,7 +57,7 @@ theorem card_plIdx (m : ℕ) : Fintype.card (PlIdx 1 m) = m + 1 := by
 
 theorem ringKrullDim_mring {K : Type} [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] :
     ringKrullDim (MRing ι) = ((1 + Fintype.card (Σ k, ι k) : ℕ) : WithBot ℕ∞) := by
-  rw [MvPolynomial.ringKrullDim_of_isNoetherianRing, IsPrincipalIdealRing.ringKrullDim_eq_one ℤ Int.not_isField,
+  rw [MvPolynomial.ringKrullDim_of_isNoetherianRing_of_finite, IsPrincipalIdealRing.ringKrullDim_eq_one ℤ Int.not_isField,
     Nat.card_eq_fintype_card]
   push_cast
   rfl
@@ -104,8 +109,8 @@ theorem blockFnField_le (m : ℕ) :
 
 end GrassmannianLinesProjective
 
-open GrassmannianLinesProjective in
 
+open GrassmannianLinesProjective in
 theorem GrassLinesProj.proof (hPF : PFCoordStatement) : GrassLinesProj.Statement := by
   intro m II hII
   have hd : 1 * 1 * m + 1 = m + 1 := by ring
@@ -125,9 +130,6 @@ theorem GrassLinesProj.proof (hPF : PFCoordStatement) : GrassLinesProj.Statement
     show mCoordIdeal (grassCoord 1 1 m) = grassIdeal 1 1 m from rfl, himg, Nat.cast_one, one_mul] at h
   rw [hd]
   exact h
-
-example : IsBlockMap GrassmannianLinesProjective.blk (GrassmannianLinesProjective.coordMap 1) :=
-  GrassmannianLinesProjective.isBlockMap 1
 
 end
 

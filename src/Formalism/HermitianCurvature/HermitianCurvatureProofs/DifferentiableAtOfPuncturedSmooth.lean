@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BasePointInChart
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BasePointInChart
+
+@[expose] public section
 
 open scoped ContDiff ComplexConjugate
 

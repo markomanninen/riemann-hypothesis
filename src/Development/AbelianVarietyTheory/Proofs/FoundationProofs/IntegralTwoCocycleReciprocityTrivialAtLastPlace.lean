@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsQuotientMapToGSProd
+module
+
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsQuotientMapToGSProd
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2
 open scoped Matrix
 

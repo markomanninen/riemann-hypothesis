@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasLenOfLatLen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasLenOfLatLen
+
+@[expose] public section
+
 open GlobalTheory.InertZeta
 
 noncomputable section
@@ -53,8 +58,8 @@ section Entries
 
 variable {σ : L →+* L} {N : ℕ}
 
-omit [Valued L (WithZero (Multiplicative ℤ))] in
 
+omit [Valued L (WithZero (Multiplicative ℤ))] in
 theorem leviElt_mul_rad_entries {ϖ : L} {a : ℤ} {g₀ : GU σ N} {m u : GU σ (N + 2)} (hm : IsLeviElt ϖ a g₀ m)
     (hu : u ∈ radQ σ N) :
     mat (m * u) 0 0 = ϖ ^ a ∧ (∀ j, mat (m * u) 0 (mid j) = ϖ ^ a * rowOf u j) ∧
@@ -211,7 +216,5 @@ theorem pointwise_of_steps (hA : AddVec) (hD : Dual) (hS : SpanEq) (hH : Heis) :
     have hR : R (j - e) := ⟨by omega, (hvl' _).2 (h2.trans_eq (by congr 1; push_cast; omega))⟩
     have := Nat.find_min' hRex hR
     omega
-
-example : AddVec → Dual → SpanEq → Heis → Pointwise := pointwise_of_steps
 
 end GlobalTheory.InertZeta

@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.Divisibility.NumbersLemmas
-import Formalism.LocalToGlobal.Divisibility.ZscOfNum
-import Formalism.SharpRestriction.ElevenLe
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.GZeroLogBound
+module
+
+public import Formalism.LocalToGlobal.Divisibility.NumbersLemmas
+public import Formalism.LocalToGlobal.Divisibility.ZscOfNum
+public import Formalism.SharpRestriction.ElevenLe
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.GZeroLogBound
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions
 

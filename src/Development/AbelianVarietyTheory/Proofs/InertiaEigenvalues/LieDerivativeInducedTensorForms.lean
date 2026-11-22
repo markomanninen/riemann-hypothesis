@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DiscreteSpectrumResidual
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LieDSingleLeviEmbEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DiscreteSpectrumResidual
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LieDSingleLeviEmbEqZero
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.L2.Host
 open GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.DiscSpec
@@ -10,10 +14,10 @@ noncomputable section
 
 namespace GlobalTheory.LieTensor
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem exists_curve {a : ℕ} (Z : Matrix (Fin a) (Fin a) (Cinf E)) :
     ∃ c : ℝ → GL (Fin a) (Cinf E), c 0 = 1 ∧ HasDerivAt (fun t => toL (c t).val) (toL Z) 0 ∧
       (Z.conjTranspose = -Z → ∀ t, (c t).val ∈ Matrix.unitaryGroup (Fin a) (Cinf E)) := by
@@ -56,9 +60,8 @@ theorem map_leviEmb {R S : Type} [CommRing R] [CommRing S] (p : R →+* S) {c N 
   change p ((leviEmb R e x).val _ _) = _
   by_cases h : i = j
   · subst h
-    rw [leviEmb_apply_same, leviEmb_apply_same]
-    rfl
-  · rw [leviEmb_apply_ne _ _ _ h, leviEmb_apply_ne _ _ _ h, map_zero]
+    simp [leviEmb, Matrix.blockDiagonal'_apply_eq]
+  · simp [leviEmb, Matrix.blockDiagonal'_apply, h]
 
 theorem infGL_leviEmb {c N : ℕ} {n : Fin c → ℕ} (e : (Σ i, Fin (n i)) ≃ Fin N) (x : ∀ i, GL (Fin (n i)) (Cinf E)) :
     infGL E N (leviEmb (Cinf E) e x) = leviEmb (Ad E) e fun i => infGL E (n i) (x i) := by
@@ -112,11 +115,11 @@ theorem lie_block_tensor {c N : ℕ} (n : Fin c → ℕ)
       (Matrix.reindex e e (Matrix.blockDiagonal' Z) (e ⟨i, a⟩) (e ⟨j, b⟩)) 0
     by_cases hij : i = j
     · subst hij
-      simp only [leviEmb_apply_same, Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_apply_apply,
-        Matrix.blockDiagonal'_apply_eq]
+      simp [leviEmb, Matrix.reindex_apply, Matrix.submatrix_apply,
+        Equiv.symm_apply_apply, Matrix.blockDiagonal'_apply_eq]
       exact hasDerivAt_pi.1 (hasDerivAt_pi.1 (hγ i) a) b
-    · simp only [leviEmb_apply_ne _ _ _ hij, Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_apply_apply,
-        Matrix.blockDiagonal'_apply_ne _ _ _ hij]
+    · simp [leviEmb, Matrix.reindex_apply, Matrix.submatrix_apply,
+        Equiv.symm_apply_apply, Matrix.blockDiagonal'_apply, hij]
       exact hasDerivAt_const _ _
   convert hG using 1
   funext m
@@ -126,8 +129,8 @@ theorem lie_block_tensor {c N : ℕ} (n : Fin c → ℕ)
   simp only [infGL_leviEmb, ← map_mul]
   exact h m
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem exists_decomp {c N : ℕ} {n : Fin c → ℕ} (e : (Σ i, Fin (n i)) ≃ Fin N)
     (Y : Matrix (Fin N) (Fin N) (Cinf E)) :
     ∃ (S : Matrix (Fin N) (Fin N) (Cinf E)) (Z : ∀ i, Matrix (Fin (n i)) (Fin (n i)) (Cinf E))
@@ -169,7 +172,7 @@ theorem leviTensor_add {c N : ℕ} {n : Fin c → ℕ} {e : (Σ i, Fin (n i)) �
   have : (fun m => (lie E N (toL (A + B)) ψ).1 (leviEmb (Ad E) e m)) =
       (fun m => (lie E N (toL A) ψ).1 (leviEmb (Ad E) e m)) + (fun m => (lie E N (toL B) ψ).1 (leviEmb (Ad E) e m)) := by
     funext m
-    rw [show toL (A + B) = toL A + toL B from rfl, map_add]
+    rw [show toL (A + B) = toL A + toL B from rfl, map_add (f := _)]
     rfl
   unfold LeviTensor
   rw [this]
@@ -200,7 +203,7 @@ theorem leviTensor_all {c N : ℕ} {n : Fin c → ℕ} (e : (Σ i, Fin (n i)) �
     · rw [hU p q hpq, Matrix.single_zero]
       exact leviTensor_zero e π ψ
 
-theorem lie_tensorForms : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] {c N : ℕ} (n : Fin c → ℕ)
+theorem lie_tensorForms : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {c N : ℕ} (n : Fin c → ℕ)
     (h : ∑ i, n i = N) (π : ∀ i, CuspSub E (n i)) (X : Lie E N) (φ : Sm E N), φ ∈ indForms h π →
     ∀ (k : Kinf E N) (g : GL (Fin N) (Af E)),
       (fun m => (lie E N X φ).1 (leviEmb (Ad E) (stdBlocks n h) m * (infGL E N (Unitary.toUnits k) * finGL E N g)))

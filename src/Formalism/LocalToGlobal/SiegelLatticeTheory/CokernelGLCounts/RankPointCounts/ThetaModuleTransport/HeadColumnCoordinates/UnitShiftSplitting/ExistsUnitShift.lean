@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.DetUpdateRowLastSingle
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.ThetaMbeG
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.DetUpdateRowLastSingle
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.ThetaMbeG
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,9 +67,9 @@ theorem exists_unit_shift (g : SplitG M.L) (u : E) : ∃ a : 𝒪[F], IsUnit (u 
     · exact Or.inr (Or.inr h2)
     left
     apply isUnit_of_comp g
-    · rw [map_add, e_alg g]
+    · rw [map_add (f := _), e_alg g]
       exact h1
-    · rw [map_add, e_alg g]
+    · rw [map_add (f := _), e_alg g]
       exact h2
   rcases hsh 0 with h0 | h0
   · exact ⟨0, h0⟩

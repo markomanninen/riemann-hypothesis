@@ -1,14 +1,24 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsingletonRankZero
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsNormalisedOfIsDiscrete
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
-import Development.AutomorphicSpectrum.PublishedTheorems.PublishedGlobalResults.HasInfCharOfIsRegAlg
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.ClozelCohomologicalModel
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DiscreteSpectrumGLTwoOfCuspidalSpectrum
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ClozelPurity.EopV
-import GroundTheory.IdeleRoots.ConstantFrames.GaugeExistence.QdetSub
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsingletonRankZero
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsNormalisedOfIsDiscrete
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.RegularAlgebraicPurity
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RegularAlgebraicPurityOfClozel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinGLMemOfPow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharExponentOfInfinityType
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AbsPowOneNotIsAlgRat
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsEqMulMultOfUnits
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.ClozelCohomologicalModel
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DiscreteSpectrumGLTwoOfCuspidalSpectrum
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ClozelPurity.EopV
+public import GroundTheory.IdeleRoots.ConstantFrames.GaugeExistence.QdetSub
+
+@[expose] public section
+
 open NumberField GlobalTheory.CuspRep GlobalTheory.CuspRep.CuspidalL2GL MeasureTheory PositivityTheory.S2.Clozel
 
 noncomputable section
@@ -33,12 +43,17 @@ theorem coeff_eq_zero_of_forall {V : Type} [AddCommGroup V] [Module ℂ V] (N : 
   have hP : (∑ j ∈ Finset.range N, C (f (w j)) * X ^ j : ℂ[X]) = 0 := by
     refine Polynomial.funext fun u => ?_
     have := congrArg f (h u)
-    simp only [map_sum, map_smul, smul_eq_mul, map_zero] at this
-    simp only [eval_finset_sum, eval_mul, eval_C, eval_pow, eval_X, eval_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul, map_zero] at this
+    simp only [eval_finsetSum, eval_mul, eval_C, eval_pow, eval_X, eval_zero]
     rw [← this]
     exact Finset.sum_congr rfl fun j _ => mul_comm _ _
-  have := congrArg (fun p => coeff p i) hP
-  simpa [finset_sum_coeff, coeff_C_mul, coeff_X_pow, hi] using this
+  have := congrArg (fun p : ℂ[X] => p.coeff i) hP
+  rw [finsetSum_coeff, Finset.sum_eq_single i] at this
+  · simpa using this
+  · intro j _ hji
+    simp [coeff_C_mul_X_pow, Ne.symm hji]
+  · simp [hi]
 
 section Gen
 
@@ -52,7 +67,7 @@ theorem evU_prod_lin (l : List ℂ) (c v : ℂ) :
   | cons x l ih =>
     simp only [List.map_cons, List.prod_cons, map_mul, ih]
     congr 1
-    simp only [evU_apply, eval₂_add, eval₂_X, eval₂_C, RingHom.id_apply, ← map_add]
+    simp only [evU_apply, eval₂_add, eval₂_X, eval₂_C, RingHom.id_apply, ← map_add (f := _)]
     congr 1
     ring
 
@@ -62,7 +77,7 @@ theorem sum_map_lin (l : List ℂ) (c : ℂ) :
   induction l with
   | nil => simp
   | cons x l ih =>
-    simp only [List.map_cons, List.sum_cons, ih, List.length_cons, ← map_add]
+    simp only [List.map_cons, List.sum_cons, ih, List.length_cons, ← map_add (f := _)]
     congr 1
     push_cast
     ring
@@ -87,14 +102,15 @@ theorem trace_of_qdet {n : ℕ} (Eo : Fin (n + 1) → Fin (n + 1) → Module.End
     rw [← map_pow, RingHom.id_apply, Module.End.mul_apply, Module.algebraMap_end_apply, map_smul]
   have h0 := coeff_eq_zero_of_forall _ (fun j => (D.coeff j) φ) hsum n (by omega)
   have hq : (qdetPoly Eo).coeff n = ∑ k, Eo k k - algebraMap ℂ _ (((n + 1 : ℕ) : ℂ) * (((n + 1 : ℕ) : ℂ) - 1) / 2) := by
-    rw [coeff_qdetPoly_top Eo n (by omega), (prod_linear (n + 1) _).2.2 n rfl, Finset.sum_sub_distrib, ← map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [coeff_qdetPoly_top Eo n (by omega), (prod_linear (n + 1) _).2.2 n rfl, Finset.sum_sub_distrib, ← map_sum,
       sum_fin_cast]
   have hr : R.coeff n = algebraMap ℂ _ (l.sum - l.length * c) := by
     rw [hR, coeff_prod_lin L n (by simp [hL, hl]), hL, sum_map_lin]
   simp only [hD, coeff_sub, hq, hr] at h0
   have hs : (∑ k, Eo k k) - algebraMap ℂ (Module.End ℂ V) (((n + 1 : ℕ) : ℂ) * (((n + 1 : ℕ) : ℂ) - 1) / 2) -
       algebraMap ℂ _ (l.sum - l.length * c) = (∑ k, Eo k k) - algebraMap ℂ _ l.sum := by
-    rw [sub_sub, ← map_add]
+    rw [sub_sub, ← map_add (f := _)]
     congr 2
     rw [hl, hc]
     push_cast
@@ -104,7 +120,7 @@ theorem trace_of_qdet {n : ℕ} (Eo : Fin (n + 1) → Fin (n + 1) → Module.End
 
 end Gen
 
-theorem trace_Eop_eq : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (π : CuspSub E a) (τ : E →+* ℂ) (m : Multiset ℂ), π.HasInfChar τ m → ∀ φ ∈ π.V, (∑ i : Fin a, Eop τ i i) φ = m.sum • φ := by
+theorem trace_Eop_eq : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (π : CuspSub E a) (τ : E →+* ℂ) (m : Multiset ℂ), π.HasInfChar τ m → ∀ φ ∈ π.V, (∑ i : Fin a, Eop τ i i) φ = m.sum • φ := by
   intro E _ _ _ a π τ m hm φ hφ
   obtain ⟨hc, hu⟩ := hm
   rcases a with _ | n

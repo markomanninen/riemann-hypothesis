@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsEqTransposeMulMapOfIdempotent
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsEqTransposeMulMapOfIdempotent
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+
+@[expose] public section
 
 open IsDedekindDomain NumberField IsLocalRing
 
@@ -17,7 +21,7 @@ theorem exists_eq_of_henselian {R : Type*} [CommRing R] [IsLocalRing R]
   obtain ⟨r, rfl⟩ := residue_surjective r
   obtain ⟨s, rfl⟩ := residue_surjective s
   have hN : residue R (r ^ 2 + t * r * s + n * s ^ 2) = residue R u := by
-    simpa only [map_add, map_mul, map_pow] using hrs
+    simpa only [map_add (f := _), map_mul, map_pow] using hrs
   have hNu : IsUnit (r ^ 2 + t * r * s + n * s ^ 2) := by
     rw [← residue_ne_zero_iff_isUnit, hN]
     exact (hu.map _).ne_zero

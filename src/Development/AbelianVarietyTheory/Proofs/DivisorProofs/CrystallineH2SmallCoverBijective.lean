@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLocalization
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsNilpotentOfMemSmallCover
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLocalization
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsNilpotentOfMemSmallCover
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry DividedPowers ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.DeRham
 
@@ -17,7 +21,7 @@ theorem small_descent_H2_bijective (R : Type) [CommRing R] (I : Ideal R) (κ : D
     exact ⟨T', l, by simpa only [mp_O] using h1, by simpa only [mp_O] using h2,
       by simpa only [mp_O] using h3, by simpa only [mp_O] using h4⟩
   · rintro S S' φ ⟨i, hi⟩
-    exact ⟨i, Thick.Hom.le_preimage φ hi⟩
+    exact ⟨i, GlobalTheory.Cris.Thick.Hom.le_preimage φ hi⟩
   · intro T
     obtain ⟨n, b, hb, h⟩ := exists_finite_small_cover R I κ X s K U hU T
     exact ⟨n, b, hb, fun i S u hu => h i S u (by simpa only [mp_O] using hu)⟩

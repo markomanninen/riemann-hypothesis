@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.LocalQuadraticParts
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.LocalQuadraticParts
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.DV Formalism.MainNotions NumberField IsDedekindDomain
 
 namespace GlobalTheory.HCEntries
@@ -140,7 +145,7 @@ theorem b_bounds (h : SizesAt L) (hx : 2 ≤ L.sc.x) (τ : D.what₂.Tau) (j : F
   obtain ⟨a1, a2⟩ := wj_bounds h hx (j.1 + 1) (by omega) j.2 τ
   have hw : wj D (j.1 + 1) τ = (((D.hc τ).e j : ℚ) : ℝ) := by
     unfold wj
-    rw [dif_pos (by simp)]
+    rw [dite_eq_left (by simp)]
     rfl
   rw [hw] at a1 a2
   obtain ⟨-, -, -, -, -, -, -, -, -, -, -, -, -, hE, -⟩ := h
@@ -226,7 +231,7 @@ theorem entries : ∀ (eps : ℝ) (Fm : FamP eps), (∃ x0 : ℝ, ∀ x ≥ x0, 
     obtain ⟨a1, a2⟩ := wj_bounds hS h2 j h1 hm τ
     refine ⟨a1, a2, ?_⟩
     unfold wSz wj
-    rw [dif_pos ⟨h1, hm⟩, dif_pos (by omega)]
+    rw [dite_eq_left ⟨h1, hm⟩, dite_eq_left (by omega)]
   · have := u_bound hS (Fm.params x hx i) h2 u τ l
     rwa [hsx] at this
 

@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.CechFam
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.FiniteCohPushforwardIffOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSubsingletonCohTwistTensLbPow
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CechFam
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.FiniteCohPushforwardIffOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSubsingletonCohTwistTensLbPow
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.LogDR
@@ -32,34 +37,35 @@ theorem delta_toFam {m : ℕ} (hm : 0 < m)
   funext t
   unfold DI.delta toFam
   by_cases ht : t.card = m + 1
-  · rw [dif_pos ht, Cube.d_apply, map_sum, ← Finset.sum_coe_sort t]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [dite_eq_left ht, Cube.d_apply, map_sum, ← Finset.sum_coe_sort t]
     refine Finset.sum_congr rfl fun i _ => ?_
     have hc : (t.erase i.1).card = m := by rw [Finset.card_erase_of_mem i.2, ht]; rfl
-    rw [dif_pos hc, map_zsmul, hres _ _ _ (nonempty_of_card hm hc)]
-  · rw [dif_neg ht]
+    rw [dite_eq_left hc, map_zsmul, hres _ _ _ (nonempty_of_card hm hc)]
+  · rw [dite_eq_right ht]
     refine Finset.sum_eq_zero fun i hi => ?_
     have hc : (t.erase i).card ≠ m := by
       have := Finset.card_pos.2 ⟨i, hi⟩
       rw [Finset.card_erase_of_mem hi]; omega
-    rw [dif_neg hc, smul_zero]
+    rw [dite_eq_right hc, smul_zero]
 
 theorem toFam_inCech {N : Finset ι → AddSubgroup V} {m : ℕ} (hm : 0 < m)
     (hrange : ∀ s, s.Nonempty → (φ s).range = N s) (x : Cube.Term A m) :
     DI.InCech N m (toFam A φ m x) := by
   refine ⟨?_, fun s => ?_, fun s hs => ?_⟩
-  · unfold toFam; rw [dif_neg (by simp; omega)]
+  · unfold toFam; rw [dite_eq_right (by simp; omega)]
   · unfold toFam
     split_ifs with h
     · rw [← hrange s (nonempty_of_card hm h)]; exact AddMonoidHom.mem_range.2 ⟨_, rfl⟩
     · exact zero_mem _
-  · unfold toFam; rw [dif_neg hs]
+  · unfold toFam; rw [dite_eq_right hs]
 
 theorem toFam_injective {m : ℕ} (hm : 0 < m) (hinj : ∀ s, s.Nonempty → Function.Injective (φ s))
     {x y : Cube.Term A m} (h : toFam A φ m x = toFam A φ m y) : x = y := by
   funext s
   have := congrFun h s.1
   unfold toFam at this
-  rw [dif_pos s.2, dif_pos s.2] at this
+  rw [dite_eq_left s.2, dite_eq_left s.2] at this
   exact hinj _ (nonempty_of_card hm s.2) this
 
 theorem exists_toFam {N : Finset ι → AddSubgroup V} {m : ℕ} (hm : 0 < m)
@@ -107,8 +113,10 @@ theorem cechZero_latSec_iff_subsingleton_coh : ∀ (X : Scheme.{0}) [IsIntegral 
     (∀ i, IsAffineOpen (U i)) → (∀ i, genericPoint X ∈ U i) → ⨆ i, U i = ⊤ → ∀ b : ℕ, 0 < b →
     (DI.CechZero (fun s => latSec M (inter U s)) b ↔ Subsingleton (coh F b)) := by
   intro X _ hsepX V _ _ M F _ ι _ _ U hL hA hg hc b hb
-  have hsep := (cech_computes_coh_of_affine_cover.{0, 0, 0} X ℤ).1 (Or.inl hsepX) ι U hA
-  obtain ⟨e, -⟩ := ((cech_computes_coh_of_affine_cover.{0, 0, 0} X ℤ).2.1 ι U hc hsep).1
+  letI : X.IsSeparated := hsepX
+  have hsep : ∀ s : Finset ι, s.Nonempty → IsAffineOpen (⨅ i ∈ s, U i) :=
+    isAffineOpen_finset_biInf hA
+  let e := fun (F : X.Modules) [F.IsQuasicoherent] (n : ℕ) => cechHEquivCoh ℤ hc hsep F n
   have hO : ∀ s : Finset ι, cechOpen ⊤ U s = inter U s := fun s => by
     simp [cechOpen, inter, Finset.inf_eq_iInf]
   have hgen : ∀ s : Finset ι, genericPoint X ∈ cechOpen ⊤ U s := fun s => by

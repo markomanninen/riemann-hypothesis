@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TamagawaSpecialUnitary
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TamagawaSpecialUnitary
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix GlobalTheory.AdLat GlobalTheory.UCls GlobalTheory.SUVol ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up
 open scoped ENNReal
 
@@ -20,7 +25,7 @@ theorem aeval_mulVec_of_eigen {R S : Type*} [CommRing R] [CommRing S] [Algebra R
     | succ k ih =>
       rw [pow_succ', ← Matrix.mulVec_mulVec, ih, Matrix.mulVec_smul, hv, smul_smul, pow_succ]
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, map_add, Matrix.add_mulVec, hp, hq, add_smul]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), Matrix.add_mulVec, hp, hq, add_smul]
   | monomial k a =>
     rw [aeval_monomial, aeval_monomial, ← Matrix.mulVec_mulVec, hpow,
       Algebra.algebraMap_eq_smul_one, Algebra.algebraMap_eq_smul_one, Matrix.smul_mulVec,
@@ -41,7 +46,7 @@ theorem aeval_restrict_coe {S : Type*} [CommRing S] {n : Type*} [Fintype n] [Dec
         ← Matrix.mulVec_mulVec, ← ih]
       rfl
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, map_add, LinearMap.add_apply, Submodule.coe_add, hp, hq,
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, Submodule.coe_add, hp, hq,
       Matrix.add_mulVec]
   | monomial k a =>
     rw [aeval_monomial, aeval_monomial, Module.End.mul_apply, Module.algebraMap_end_apply,
@@ -59,7 +64,8 @@ theorem isIntegral_trace_of_isIntegral {K : Type} [Field K] {n : ℕ}
     rw [hpM, map_zero] at h
     exact h
   have htr : φ M.trace = M'.trace := by
-    simp [Matrix.trace, M', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.trace, M', map_sum]
   have hroots : ∀ μ ∈ M'.charpoly.roots, IsIntegral ℤ μ := by
     intro μ hμ
     have h0 : M'.charpoly.eval μ = 0 := (Polynomial.mem_roots'.1 hμ).2

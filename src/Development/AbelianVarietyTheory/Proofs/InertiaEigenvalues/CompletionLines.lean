@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ def serLine (u : ℤ) (d : M) (c : F⟦X⟧) : ℤ → M :=
 
 theorem serAct_one (y : ℤ → M) : serAct (1 : F⟦X⟧) y = y := by
   funext m
-  rw [serAct, finsum_eq_single _ 0 (fun j hj => by rw [coeff_one, if_neg hj, zero_smul])]
+  rw [serAct, finsum_eq_single _ 0 (fun j hj => by rw [coeff_one, ite_eq_right hj, zero_smul])]
   simp
 
 def SpanIsLines {N : Type} (L : N → ℤ → M) {r : ℕ} (u : Fin r → ℤ) (d : Fin r → M) (F : Type) [Field F]
@@ -55,14 +59,5 @@ def QFrame (g : W.Gam) (J : O⟦X⟧ →ₐ[O] O⟦X⟧) : Prop :=
   IsUnit (algebraMap (LetA O n) W.EE (W.π₀ + ((PD.p : ℕ) : LetA O n)))
 
 end Generic
-
-def CompletionLines : Prop :=
-  ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P), LocTied l P AI →
-    ∀ (H : LocHW l P) (F : LocFon l P AI H), LocCmpT l P AI H F →
-    ∀ (K LL : FinExt l) (hA : CaseA K LL) (U : ZMod (Module.finrank ℚ_[l] ↥(K0 K)) → Multiset ℤ)
-      (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)),
-      CrysWith (P.PD K) (H.W K 1 LL hA.2.2).emb T.ρ U → (∀ i, ∀ u ∈ U i, 0 ≤ u) →
-      ∀ (i : ZMod (Module.finrank ℚ_[l] ↥(K0 K))) (ζ : ↥LL.1), IsPrimitiveRoot ζ l →
-        LinesAt (H.W K 1 LL hA.2.2) T i ζ (U i)
 
 end GlobalTheory.SenLines

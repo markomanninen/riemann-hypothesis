@@ -1,7 +1,12 @@
-import GroundTheory.GlobalFields.AnalyticClassNumber.HeckeContinued
-import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
-import GroundTheory.GlobalFields.IdeleGroups.ClassGroup
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation
+module
+
+public import GroundTheory.GlobalFields.AnalyticClassNumber.HeckeContinued
+public import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
+public import GroundTheory.GlobalFields.IdeleGroups.ClassGroup
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation
+
+@[expose] public section
+
 open NumberField GroundTheory.Global GroundTheory.Global.IdeleGroup
 open scoped nonZeroDivisors
 

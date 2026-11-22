@@ -1,7 +1,13 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.L2LocalComponents.Summand
-import GroundTheory.AutomorphicForms.L2LocalComponents.CenterCommute
-import GroundTheory.AutomorphicForms.L2LocalComponents.ArchBump
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsIsOpenForallCuspRepTFinOneEq
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsArchConv
+public import GroundTheory.AutomorphicForms.L2LocalComponents.Summand
+public import GroundTheory.AutomorphicForms.L2LocalComponents.CenterCommute
+public import GroundTheory.AutomorphicForms.L2LocalComponents.ArchBump
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped InnerProductSpace
@@ -55,14 +61,14 @@ theorem uAction_of_commute (S : E →L[ℂ] E) (hS : ∀ g, S ∘L π g = π g �
     rw [uAction_ι, coe_derivEnd, coe_derivEnd]
     exact h.derivOp_of_commute π S hS v.2 _
   | mul a b iha ihb =>
-    rw [map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply]
+    rw [map_mul, map_mul, mul_apply_eq_comp, mul_apply_eq_comp]
     have e : (h.uAction π (UniversalEnvelopingAlgebra.mkAlgHom ℝ h.lieSubalgebra b)
         ⟨S v, h.isSmoothVector_of_commute π S hS v.2⟩) =
         ⟨S (h.uAction π (UniversalEnvelopingAlgebra.mkAlgHom ℝ h.lieSubalgebra b) v),
           h.isSmoothVector_of_commute π S hS (h.uAction π _ v).2⟩ := Subtype.ext (ihb v)
     rw [e, iha]
   | add a b iha ihb =>
-    rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, Submodule.coe_add, Submodule.coe_add,
+    rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, Submodule.coe_add, Submodule.coe_add,
       iha, ihb, map_add]
 
 end IsExpLieAlgebra
@@ -75,7 +81,7 @@ attribute [local instance 100] LieRing.ofAssociativeRing
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
-variable (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+variable (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
 theorem norm_archRepT_le (a : archGroup K n) : ‖archRepT μ a‖ ≤ 1 :=
   (archURepT μ).norm_map_le a
@@ -86,13 +92,10 @@ def archOp {κ : archGroup K n → ℂ} (hκ : (isExpLieAlgebra K n).IsTestFunct
     CuspL2 μ →L[ℂ] CuspL2 μ :=
   LinearMap.mkContinuous
     { toFun := (archRepT μ).integrated ν κ
-      map_add' := (isExpLieAlgebra K n).integrated_add (archRepT μ) hκ
-      map_smul' := fun c x => IsExpLieAlgebra.integrated_smul (archRepT μ) κ c x }
+      map_add' := (isExpLieAlgebra K n).integrated_add (archRepT μ) (μ := ν) hκ
+      map_smul' := IsExpLieAlgebra.integrated_smul (archRepT μ) (μ := ν) κ }
     (∫ a, ‖κ a‖ ∂ν) fun x =>
       (isExpLieAlgebra K n).norm_integrated_le (archRepT μ) ν (norm_archRepT_le μ) hκ x
-
-@[simp] theorem archOp_apply {κ : archGroup K n → ℂ} (hκ : (isExpLieAlgebra K n).IsTestFunction κ)
-    (x : CuspL2 μ) : archOp μ ν hκ x = (archRepT μ).integrated ν κ x := rfl
 
 theorem archOp_eq_integral {κ : archGroup K n → ℂ} (hκ : (isExpLieAlgebra K n).IsTestFunction κ)
     (x : CuspL2 μ) : archOp μ ν hκ x = ∫ a, κ a • archRepT μ a x ∂ν := rfl
@@ -141,7 +144,7 @@ theorem archOp_comm_archCompact {κ : archGroup K n → ℂ} (hκ : (isExpLieAlg
 
 def fixU (U : Subgroup (AdelicGLn.integralFiniteGL K n)) : Submodule ℂ (CuspL2 μ) where
   carrier := {y | ∀ u ∈ U, cuspRepT μ (finOne K n u) y = y}
-  add_mem' hx hy u hu := by rw [map_add, hx u hu, hy u hu]
+  add_mem' hx hy u hu := by rw [map_add (f := _), hx u hu, hy u hu]
   zero_mem' u _ := map_zero _
   smul_mem' c x hx u hu := by rw [map_smul, hx u hu]
 
@@ -174,8 +177,8 @@ theorem starProjection_fixU_comm (U : Subgroup (AdelicGLn.integralFiniteGL K n))
 
 theorem integrated_eq_smul_archOp {U : Subgroup (AdelicGLn.integralFiniteGL K n)}
     {κ : archGroup K n → ℂ} (hκ : (isExpLieAlgebra K n).IsTestFunction κ)
-    {F₀ : CompactlySupportedContinuousMap (normOneGL K n) ℂ} {c : ℝ}
-    (hint : ∀ Θ : normOneGL K n → ℂ, Continuous Θ → (∀ u ∈ U, ∀ x, Θ (x * finOne K n u) = Θ x) →
+    {F₀ : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ} {c : ℝ}
+    (hint : ∀ Θ : normOneGL (K := K) (n := n) → ℂ, Continuous Θ → (∀ u ∈ U, ∀ x, Θ (x * finOne K n u) = Θ x) →
       ∫ x, F₀ x * Θ x ∂μ = c * ∫ a, κ a * Θ (archP K n a) ∂ν)
     {y : CuspL2 μ} (hy : y ∈ fixU μ U) :
     (cuspRepT μ).integrated μ (UnitaryRep.ccToL1 μ F₀) y = (c : ℂ) • archOp μ ν hκ y := by

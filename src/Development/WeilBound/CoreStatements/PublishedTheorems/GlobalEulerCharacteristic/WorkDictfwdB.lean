@@ -1,107 +1,17 @@
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.DefsForms
-import ReciprocityTheory.GaloisValuations.SeparatedDvrSecondCohomologyMem
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.LocalMaps
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.RatioOneKilled
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalFiniteness.Transport
+module
+
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.DefsForms
+public import ReciprocityTheory.GaloisValuations.SeparatedDvrSecondCohomologyMem
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.LocalMaps
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.RatioOneKilled
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalFiniteness.Transport
+
+@[expose] public section
 
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheory.Global
 
 namespace PositivityTheory.Lit1.GEN.W_dictfwd_b
 
-theorem eulerChar_eq_div {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
-    (A : Rep.{0} (ULift.{0} ℤ) G) [IsDiscreteRep A] :
-    eulerChar A = (Nat.card (cohomology A 0) : ℚ) * Nat.card (cohomology A 2) /
-      Nat.card (cohomology A 1) := by
-  unfold eulerChar
-  simp [Finset.prod_range_succ, div_eq_mul_inv]
-  ring
-
-open scoped Classical in
-
-theorem natEq_of_gsEulerRatio_eq_one {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
-    (ιr : ∀ v : {v : InfinitePlace K.1 // v.IsReal},
-      AlgebraicClosure ℚ →ₐ[K.1] AlgebraicClosure v.1.Completion)
-    (A : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 (AlgebraicClosure ℚ) S)) [IsDiscreteRep A]
-    [Finite A] (h : gsEulerRatio S A ιr = 1) :
-    Nat.card (cohomology A 0) * Nat.card (cohomology A 2) * Nat.card A ^ Module.finrank ℚ K.1 =
-      Nat.card (cohomology A 1) *
-        ((∏ v : {v : InfinitePlace K.1 // v.IsReal}, gsRealH0Card S A ιr v) *
-          Nat.card A ^ InfinitePlace.nrComplexPlaces K.1) := by
-  have hP : (∏ v : {v : InfinitePlace K.1 // v.IsReal}, (gsRealH0Card S A ιr v : ℚ)) ≠ 0 :=
-    (Finset.prod_pos fun v _ => by exact_mod_cast gsRealH0Card_pos S A ιr v).ne'
-  have hn : (0 : ℚ) < Nat.card A := by exact_mod_cast Nat.card_pos
-  unfold gsEulerRatio at h
-  rw [eulerChar_eq_div] at h
-  have hcard : Fintype.card (InfinitePlace K.1) =
-      InfinitePlace.nrRealPlaces K.1 + InfinitePlace.nrComplexPlaces K.1 :=
-    InfinitePlace.card_eq_nrRealPlaces_add_nrComplexPlaces K.1
-  have hrank : Module.finrank ℚ K.1 =
-      InfinitePlace.nrRealPlaces K.1 + 2 * InfinitePlace.nrComplexPlaces K.1 :=
-    (InfinitePlace.card_add_two_mul_card_eq_rank K.1).symm
-  rw [hcard] at h
-  rw [hrank]
-  set a : ℚ := ((Nat.card (cohomology A 0) : ℕ) : ℚ)
-  set b : ℚ := ((Nat.card (cohomology A 1) : ℕ) : ℚ)
-  set c : ℚ := ((Nat.card (cohomology A 2) : ℕ) : ℚ)
-  set n : ℚ := ((Nat.card A : ℕ) : ℚ)
-  set P : ℚ := ∏ v : {v : InfinitePlace K.1 // v.IsReal}, (gsRealH0Card S A ιr v : ℚ)
-  have hb : b ≠ 0 := by
-    intro hb0
-    rw [hb0, div_zero, zero_mul, zero_div] at h
-    exact zero_ne_one h
-  have key : a * c * n ^ (InfinitePlace.nrRealPlaces K.1 + InfinitePlace.nrComplexPlaces K.1) = b * P := by
-    field_simp at h
-    linarith [h]
-  have : (a * c * n ^ (InfinitePlace.nrRealPlaces K.1 + 2 * InfinitePlace.nrComplexPlaces K.1) : ℚ) =
-      b * (P * n ^ InfinitePlace.nrComplexPlaces K.1) := by
-    rw [show InfinitePlace.nrRealPlaces K.1 + 2 * InfinitePlace.nrComplexPlaces K.1 =
-      (InfinitePlace.nrRealPlaces K.1 + InfinitePlace.nrComplexPlaces K.1) +
-        InfinitePlace.nrComplexPlaces K.1 by ring, pow_add, ← mul_assoc, key]
-    ring
-  apply Nat.cast_injective (R := ℚ)
-  push_cast
-  exact this
-
-theorem mem_Zn_zero_iff {R G M : Type*} [CommRing R] [Group G] [TopologicalSpace G] [AddCommGroup M]
-    [Module R M] [TopologicalSpace M] [IsTopologicalAddGroup M] [ContinuousConstSMul R M]
-    (rho : Representation R G M) (f : (Fin 0 → G) → M) :
-    f ∈ ReciprocityTheory.Gal.Zn rho 0 ↔ ∀ g, rho g (f Fin.elim0) = f Fin.elim0 := by
-  have hc : Continuous f := continuous_of_discreteTopology
-  have e : ∀ (j : Fin 1) (g' : Fin 1 → G), Fin.contractNth j (· * ·) g' = Fin.elim0 :=
-    fun _ _ => Subsingleton.elim _ _
-  have key : ∀ g' : Fin 1 → G, ReciprocityTheory.Gal.dn rho 0 f g' = rho (g' 0) (f Fin.elim0) - f Fin.elim0 := by
-    intro g'
-    rw [ReciprocityTheory.Gal.dn_apply]
-    have e1 : (fun i : Fin 0 => g' i.succ) = Fin.elim0 := Subsingleton.elim _ _
-    simp only [e1, e, Fin.sum_univ_one]
-    simp [sub_eq_add_neg]
-  constructor
-  · rintro ⟨_, hk⟩ g
-    have h1 := congrFun (LinearMap.mem_ker.1 hk) (fun _ => g)
-    rw [key] at h1
-    exact sub_eq_zero.1 h1
-  · intro h
-    refine ⟨hc, LinearMap.mem_ker.2 (funext fun g => ?_)⟩
-    rw [key, h (g 0), sub_self]
-    rfl
-
-theorem card_H0_eq_card_Hn_zero_alt {R G M : Type*} [CommRing R] [Group G] [TopologicalSpace G]
-    [AddCommGroup M] [Module R M] [TopologicalSpace M] [IsTopologicalAddGroup M]
-    [ContinuousConstSMul R M] (rho : Representation R G M) :
-    Nat.card (ReciprocityTheory.Gal.H0 rho) = Nat.card (ReciprocityTheory.Gal.Hn rho 0) := by
-  have hbot : (ReciprocityTheory.Gal.Bn rho 0).comap (ReciprocityTheory.Gal.Zn rho 0).subtype = ⊥ := by
-    show (⊥ : Submodule R _).comap _ = ⊥
-    rw [Submodule.comap_bot, Submodule.ker_subtype]
-  have e1 : ReciprocityTheory.Gal.Hn rho 0 ≃ ReciprocityTheory.Gal.Zn rho 0 :=
-    (Submodule.quotEquivOfEqBot _ hbot).toEquiv
-  rw [Nat.card_congr e1]
-  refine Nat.card_congr
-    { toFun := fun m => ⟨fun _ => m.1, (mem_Zn_zero_iff rho _).2 fun g => m.2 g⟩
-      invFun := fun f => ⟨f.1 Fin.elim0, fun g => ((mem_Zn_zero_iff rho f.1).1 f.2) g⟩
-      left_inv := fun m => rfl
-      right_inv := fun f => Subtype.ext (funext fun x => by
-        simp only
-        rw [Subsingleton.elim x Fin.elim0]) }
 
 section DictA
 
@@ -310,18 +220,6 @@ theorem places_transport (K : FiniteSubfield) (τ : Ω ≃+* AlgebraicClosure �
       hC.symm hx
     rwa [RingEquiv.symm_apply_apply] at this
 
-theorem exists_transport_elem (K : FiniteSubfield) (τ : Ω ≃+* AlgebraicClosure ℚ) (σ : F ≃+* K.1)
-    (hτ : ∀ x : F, τ (algebraMap F Ω x) = ((σ x : K.1) : AlgebraicClosure ℚ))
-    (g' : G K.1 (AlgebraicClosure ℚ)) : ∃ g : G F Ω, ∀ x : Ω, g' (τ x) = τ (g x) := by
-  refine ⟨AlgEquiv.ofRingEquiv (f := (τ.trans g'.toRingEquiv).trans τ.symm) fun r => ?_, fun x => ?_⟩
-  · show τ.symm (g' (τ (algebraMap F Ω r))) = algebraMap F Ω r
-    rw [hτ]
-    have h1 : g' ((σ r : K.1) : AlgebraicClosure ℚ) = ((σ r : K.1) : AlgebraicClosure ℚ) :=
-      g'.commutes (σ r)
-    rw [h1, ← hτ, RingEquiv.symm_apply_apply]
-  · show g' (τ x) = τ (τ.symm (g' (τ x)))
-    rw [RingEquiv.apply_symm_apply]
-
 end DictA
 
 section Arch
@@ -346,8 +244,8 @@ theorem real_H0_card_eq_fixed_of_gen (K : FiniteSubfield) (S' : Set (HeightOneSp
   · rw [hg]
     exact h
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_cc_gen (K : FiniteSubfield) (v : {v : InfinitePlace K.1 // v.IsReal}) :
     ∃ (κ : AlgebraicClosure v.1.Completion →+* ℂ) (s : Gal(AlgebraicClosure v.1.Completion / v.1.Completion)),
       (∀ y, κ (s y) = starRingEnd ℂ (κ y)) ∧ (∀ g, g = 1 ∨ g = s) ∧
@@ -356,7 +254,11 @@ theorem exists_cc_gen (K : FiniteSubfield) (v : {v : InfinitePlace K.1 // v.IsRe
   let ρ := InfinitePlace.Completion.ringEquivRealOfIsReal hv
   let φ : v.1.Completion →+* ℂ := Complex.ofRealHom.comp ρ.toRingHom
   let _ : Algebra v.1.Completion ℂ := φ.toAlgebra
-  let κA : AlgebraicClosure v.1.Completion →ₐ[v.1.Completion] ℂ := IsAlgClosed.lift
+  let κA : AlgebraicClosure v.1.Completion →ₐ[v.1.Completion] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hκr : ∀ r : v.1.Completion, κA (algebraMap v.1.Completion _ r) = (ρ r : ℂ) := fun r =>
     κA.commutes r
 
@@ -365,7 +267,7 @@ theorem exists_cc_gen (K : FiniteSubfield) (v : {v : InfinitePlace K.1 // v.IsRe
     (by rw [← Polynomial.C_1, Polynomial.degree_X_pow_add_C (by norm_num : 0 < 2)]; norm_num)
   have hy2 : κA y ^ 2 = -1 := by
     have h := congrArg κA (show y ^ 2 + 1 = 0 by simpa using hy)
-    rw [map_add, map_pow, map_one, map_zero] at h
+    rw [map_add (f := _), map_pow, map_one, map_zero] at h
     linear_combination h
   have hsurj : Function.Surjective κA := by
     intro z
@@ -378,7 +280,7 @@ theorem exists_cc_gen (K : FiniteSubfield) (v : {v : InfinitePlace K.1 // v.IsRe
       · exact ⟨-y, by rw [map_neg]; linear_combination -h⟩
     obtain ⟨t, ht⟩ := hI
     refine ⟨algebraMap v.1.Completion _ (ρ.symm z.re) + algebraMap v.1.Completion _ (ρ.symm z.im) * t, ?_⟩
-    rw [map_add, map_mul, hκr, hκr, ht, RingEquiv.apply_symm_apply, RingEquiv.apply_symm_apply]
+    rw [map_add (f := _), map_mul, hκr, hκr, ht, RingEquiv.apply_symm_apply, RingEquiv.apply_symm_apply]
     exact Complex.re_add_im z
   let e : AlgebraicClosure v.1.Completion ≃+* ℂ :=
     RingEquiv.ofBijective κA.toRingHom ⟨κA.toRingHom.injective, hsurj⟩
@@ -423,7 +325,9 @@ theorem exists_cc_gen (K : FiniteSubfield) (v : {v : InfinitePlace K.1 // v.IsRe
     show κA (algebraMap K.1 (AlgebraicClosure v.1.Completion) x) = _
     rw [hsc, hκr, InfinitePlace.Completion.ringEquivRealOfIsReal_apply, ← InfinitePlace.embedding_of_isReal_apply hv]
     congr 1
-    exact InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe hv _
+    rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+      Algebra.algebraMap_self_apply]
+    simp
 
 theorem real_H0_card_eq_fixed (K : FiniteSubfield) (S' : Set (HeightOneSpectrum (𝓞 K.1)))
     (ιr : ∀ v : {v : InfinitePlace K.1 // v.IsReal},

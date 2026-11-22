@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSPair
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.BFCell
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSPair
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.BFCell
+
+@[expose] public section
 
 noncomputable section
 

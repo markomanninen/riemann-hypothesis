@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Num
 
@@ -33,17 +37,6 @@ def LocPair.IsVertOff [DecidableEq K] (T : LocPair ι ℤ σ) (P : Ideal (MvPoly
       GroundTheory.Heights₂.Heights.NumbersDVR.IsRelevant W →
       (∀ p ∈ S, (C ((p : ℕ) : ℤ) : MvPolynomial (Σ k, ι k) ℤ) ∉ W) →
       ∃ u v : MvPolynomial (Σ k, ι k) ℤ, u ∉ W ∧ v ∉ W ∧ u * T.f i - v * T.g i ∈ P
-
-def LocPair.linNum [Fintype σ] {R : Type} [CommRing R] (T : LocPair ι R σ) (la : σ → ℤ) :
-    MvPolynomial (Σ k, ι k) R :=
-  ∏ i, T.f i ^ (la i).toNat * T.g i ^ (-la i).toNat
-
-def LocPair.linDen [Fintype σ] {R : Type} [CommRing R] (T : LocPair ι R σ) (la : σ → ℤ) :
-    MvPolynomial (Σ k, ι k) R :=
-  ∏ i, T.g i ^ (la i).toNat * T.f i ^ (-la i).toNat
-
-def LocPair.lin [Fintype σ] {R : Type} [CommRing R] (T : LocPair ι R σ) (la : σ → ℤ) : LocPair ι R Unit :=
-  ⟨fun _ => ∑ i, la i • T.x i, fun _ => ∑ i, la i • T.x' i, fun _ => T.linNum la, fun _ => T.linDen la⟩
 
 variable [Fintype K]
 

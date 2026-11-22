@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.GoodXgFin
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.GoodXgFin
+
+@[expose] public section
+
 open Formalism.L2.DIV
 
 namespace GlobalTheory.IdemExpand

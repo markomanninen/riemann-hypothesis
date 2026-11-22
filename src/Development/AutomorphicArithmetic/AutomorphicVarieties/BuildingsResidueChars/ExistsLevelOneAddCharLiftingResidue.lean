@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.KirCusp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.KirCusp
+
+@[expose] public section
+
 open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi UpperTheory.V.Z.Desc.V0
 
 private theorem sep_char {A : Type} [AddCommGroup A] (H : AddSubgroup A) {a : A} (ha : a ∉ H) :
@@ -25,7 +30,7 @@ private theorem sep_char {A : Type} [AddCommGroup A] (H : AddSubgroup A) {a : A}
   let ψ : AddChar A Circle :=
     { toFun := fun x => AddCircle.toCircle (f x)
       map_zero_eq_one' := by rw [map_zero, AddCircle.toCircle_zero]
-      map_add_eq_mul' := fun x y => by rw [map_add, AddCircle.toCircle_add] }
+      map_add_eq_mul' := fun x y => by rw [map_add (f := _), AddCircle.toCircle_add] }
   refine ⟨ψ, fun u hu => ?_, fun h => ?_⟩
   · have h0 : f u = 0 := by
       have : QuotientAddGroup.mk' H u = 0 := (QuotientAddGroup.eq_zero_iff _).2 hu
@@ -60,7 +65,7 @@ theorem UpperTheory.exists_level_one_addChar_lifting_residue :
         show valuation k (-a) < 1
         rw [Valuation.map_neg]; exact ha }
   have hMo : IsOpen (M : Set k) := by
-    have h := IsValuativeTopology.isOpen_ball (R := k) (v := valuation k) 1
+    have h := Valuation.isOpen_ball (v := valuation k) 1
     convert h using 1
     ext x
     exact ((valuation k).restrict_lt_one_iff (x := x)).symm
@@ -84,7 +89,7 @@ theorem UpperTheory.exists_level_one_addChar_lifting_residue :
         have : ψ (σ 0 : k) = ψ ((0 : 𝒪[k]) : k) := hres _ _ (by rw [hσ, map_zero])
         rw [this]; simp
       map_add_eq_mul' := fun c d => by
-        have : ψ (σ (c + d) : k) = ψ ((σ c + σ d : 𝒪[k]) : k) := hres _ _ (by rw [hσ, map_add, hσ, hσ])
+        have : ψ (σ (c + d) : k) = ψ ((σ c + σ d : 𝒪[k]) : k) := hres _ _ (by rw [hσ, map_add (f := _), hσ, hσ])
         rw [this]; push_cast; rw [AddChar.map_add_eq_mul] }
   have hφ : ∀ y : 𝒪[k], ψ (y : k) = φ (IsLocalRing.residue 𝒪[k] y) := fun y =>
     hres _ _ (hσ _).symm

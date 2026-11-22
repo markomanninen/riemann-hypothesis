@@ -1,7 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TailRd
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.OnFramesRdApply
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TailRd
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.OnFramesRdApply
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValLastX
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.VacOfShape
+
+@[expose] public section
 
 noncomputable section
 

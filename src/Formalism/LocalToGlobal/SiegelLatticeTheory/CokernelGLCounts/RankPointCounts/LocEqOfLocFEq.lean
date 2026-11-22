@@ -1,13 +1,29 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.EmbeddingIntegerAlgebraMap
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CardPiOfUnique
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LatLocGlob
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.PSurjF
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.EmbeddingIntegerAlgebraMap
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LatLocGlob
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.PSurjF
+
+@[expose] public section
 
 noncomputable section
 
 open scoped Classical
 open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc
+
+namespace Formalism.L2.SG.Pf.FrameGlobalPatching
+
+attribute [local instance] Formalism.BasicNotions.Host.cmStar
+
+def LatPatch : Prop :=
+  ∀ (D : D7) (Zd : LocDat D) (Λ₀ : Submodule (𝓞 D.host.E) (VS D).V), Submodule.IsFullLattice D.host.E Λ₀ →
+    ∀ Mf : ∀ p : PlF D, Submodule (Zd.M p).L.O (Vp D p),
+      (∀ p, ∃ Λ' : Submodule (𝓞 D.host.E) (VS D).V, Submodule.IsFullLattice D.host.E Λ' ∧ Mf p = lattice₂ D Zd.M p Λ') →
+      {p | Mf p ≠ lattice₂ D Zd.M p Λ₀}.Finite →
+      ∃! Λ : Submodule (𝓞 D.host.E) (VS D).V, Submodule.IsFullLattice D.host.E Λ ∧ ∀ p, lattice₂ D Zd.M p Λ = Mf p
+
+end Formalism.L2.SG.Pf.FrameGlobalPatching
 
 namespace Formalism.L2.SG.Pf.LocalDenominators
 
@@ -16,24 +32,29 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 variable {D : D7}
 
 theorem localLattice_eq_iff (Zd : LocDat D) (p : PlF D) {Λ₁ Λ₂ : Submodule (𝓞 D.host.E) (VS D).V}
-    (h₁ : Submodule.IsLattice D.host.E Λ₁) (h₂ : Submodule.IsLattice D.host.E Λ₂) :
+    (h₁ : Submodule.IsFullLattice D.host.E Λ₁) (h₂ : Submodule.IsFullLattice D.host.E Λ₂) :
     lattice₂ D Zd.M p Λ₁ = lattice₂ D Zd.M p Λ₂ ↔
       Formalism.HermitianLattices.Ext.L3.locF p.asIdeal Λ₁ = Formalism.HermitianLattices.Ext.L3.locF p.asIdeal Λ₂ := by
   haveI := p.isPrime
+  letI := h₁
+  letI := h₂
+  have mem_iff {Λ : Submodule (𝓞 D.host.E) (VS D).V} [Submodule.IsFullLattice D.host.E Λ] (x : (VS D).V) :
+      baseChange₂ D p x ∈ lattice₂ D Zd.M p Λ ↔ x ∈ Formalism.HermitianLattices.Ext.L3.locF p.asIdeal Λ :=
+    baseChangeAt_mem_localLattice_iff Zd p (by infer_instance) x
   constructor
   · intro h
     ext x
-    rw [← baseChangeAt_mem_localLattice_iff Zd p h₁, ← baseChangeAt_mem_localLattice_iff Zd p h₂, h]
+    rw [← mem_iff (Λ := Λ₁), ← mem_iff (Λ := Λ₂), h]
   · intro h
-    have key : ∀ {A B : Submodule (𝓞 D.host.E) (VS D).V}, Submodule.IsLattice D.host.E B →
-        Formalism.HermitianLattices.Ext.L3.locF p.asIdeal A = Formalism.HermitianLattices.Ext.L3.locF p.asIdeal B → lattice₂ D Zd.M p A ≤ lattice₂ D Zd.M p B := by
-      intro A B hB hAB
+    have key {A B : Submodule (𝓞 D.host.E) (VS D).V} [Submodule.IsFullLattice D.host.E B]
+        (hAB : Formalism.HermitianLattices.Ext.L3.locF p.asIdeal A = Formalism.HermitianLattices.Ext.L3.locF p.asIdeal B) :
+        lattice₂ D Zd.M p A ≤ lattice₂ D Zd.M p B := by
       refine Submodule.span_le.2 ?_
       rintro _ ⟨y, hy, rfl⟩
-      rw [SetLike.mem_coe, baseChangeAt_mem_localLattice_iff Zd p hB, ← hAB]
+      rw [SetLike.mem_coe, mem_iff, ← hAB]
       exact (Formalism.HermitianLattices.Ext.L3.LocalSpans.mem_locF p.asIdeal A y).2
         ⟨1, fun h1 => p.isPrime.ne_top ((Ideal.eq_top_iff_one _).2 h1), by simpa using hy⟩
-    exact le_antisymm (key h₂ h) (key h₁ h.symm)
+    exact le_antisymm (key h) (key h.symm)
 
 section Loc
 
@@ -63,7 +84,7 @@ theorem locF_of_loc (p : PlF D) (B : Submodule (𝓞 D.host.E) V) {x : V}
     by_contra htp
     exact hnot ((Formalism.HermitianLattices.Ext.L3.LocalSpans.mem_locF p.asIdeal B x).2 ⟨t, htp, ht⟩)
   obtain ⟨Q, hIQ, hQ, hQp⟩ := Ideal.exists_ideal_over_prime_of_isIntegral p.asIdeal I hle
-  have hQm : Q.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := 𝓞 D.host.F) Q (by rw [hQp]; exact p.isMaximal)
+  have hQm : Q.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := 𝓞 D.host.F) Q (by rw [hQp]; exact p.isMaximal)
   obtain ⟨s, hs, hsx⟩ := hx Q hQm hQp
   exact hs (hIQ hsx)
 
@@ -125,8 +146,8 @@ end Patch
 theorem latPatch_holds : Formalism.L2.SG.Pf.FrameGlobalPatching.LatPatch := by
   intro D Zd Λ₀ hΛ₀ Mf hMf hfin
   choose Λ' hΛ' hMΛ' using hMf
-  have hfullΛ : ∀ L : Submodule (𝓞 D.host.E) (VS D).V, Submodule.IsLattice D.host.E L →
-      PI.LatLocGlob.IsFullLat D.host.E L := fun L hL => ⟨hL.fg, hL.span_eq_top⟩
+  have hfullΛ (L : Submodule (𝓞 D.host.E) (VS D).V) (hL : Submodule.IsFullLattice D.host.E L) :
+      PI.LatLocGlob.IsFullLat D.host.E L := ⟨hL.toIsLattice.fg, hL.span_eq_top⟩
   let M : Ideal (𝓞 D.host.E) → Set (VS D).V := fun P =>
     if hP : P.IsMaximal then PI.LatLocGlob.loc P (Λ' (plOf P hP)) else ∅
   have hMP : ∀ P (hP : P.IsMaximal), M P = PI.LatLocGlob.loc P (Λ' (plOf P hP)) := fun P hP => by
@@ -143,7 +164,9 @@ theorem latPatch_holds : Formalism.L2.SG.Pf.FrameGlobalPatching.LatPatch := by
     exact loc_eq_of_locF_eq (plOf P hPm) hPm.isPrime rfl ((localLattice_eq_iff Zd _ (hΛ' _) hΛ₀).1 h1)
   obtain ⟨L, ⟨hLfull, hLloc⟩, huniq⟩ := latLocGlob (𝓞 D.host.E) D.host.E (VS D).V Λ₀ (hfullΛ Λ₀ hΛ₀) M
     (fun P hP => ⟨Λ' (plOf P hP), hfullΛ _ (hΛ' _), hMP P hP⟩) hexc
-  have hL : Submodule.IsLattice D.host.E L := ⟨hLfull.1, hLfull.2⟩
+  have hL : Submodule.IsFullLattice D.host.E L := by
+    letI := Submodule.IsLattice.of_fg D.host.E hLfull.1
+    exact ⟨hLfull.2⟩
   have hlocP : ∀ (p : PlF D) (P : Ideal (𝓞 D.host.E)), P.IsMaximal →
       P.comap (algebraMap (𝓞 D.host.F) (𝓞 D.host.E)) = p.asIdeal →
       PI.LatLocGlob.loc P L = PI.LatLocGlob.loc P (Λ' p) := by
@@ -179,6 +202,6 @@ theorem latPatch_holds : Formalism.L2.SG.Pf.FrameGlobalPatching.LatPatch := by
         exact (Formalism.HermitianLattices.Ext.L3.LocalSpans.mem_locF v.asIdeal A x).2
           ⟨1, fun h1 => v.isPrime.ne_top ((Ideal.eq_top_iff_one _).2 h1), by simpa using hx⟩
       exact (Formalism.HermitianLattices.Ext.L3.LocalSpans.mem_locF v.asIdeal B x).1 h2
-    exact le_antisymm (sub hL h1) (sub hΛ fun p => (h1 p).symm)
+    exact le_antisymm (sub hL.toIsLattice h1) (sub hΛ.toIsLattice fun p => (h1 p).symm)
 
 end Formalism.L2.SG.Pf.LocalDenominators

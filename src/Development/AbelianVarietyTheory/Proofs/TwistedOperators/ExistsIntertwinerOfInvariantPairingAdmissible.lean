@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasTypeVec
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ExponentSeparation
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasTypeVec
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ExponentSeparation
+
+@[expose] public section
+
 open MeasureTheory Set Filter NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.OpTrace GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary GlobalTheory.AutMult Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR.Mult
@@ -87,7 +92,8 @@ theorem exists_fixed_avg (σ : Representation ℂ G W) (hs : GlobalTheory.PRep.I
   refine ⟨((O.card : ℂ))⁻¹ • ∑ v ∈ O, v, ?_, ?_⟩
   · rw [mem_fixed_iff]
     intro k hk
-    rw [map_smul, map_sum, hperm k hk]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_sum, hperm k hk]
   · intro ℓ hℓ
     have hconst : ∀ v ∈ O, ℓ v = ℓ x := by
       intro v hv
@@ -97,7 +103,8 @@ theorem exists_fixed_avg (σ : Representation ℂ G W) (hs : GlobalTheory.PRep.I
     have hcard : (O.card : ℂ) ≠ 0 := by
       have : 0 < O.card := Finset.card_pos.mpr ⟨x, hxO⟩
       exact_mod_cast this.ne'
-    rw [map_smul, map_sum, Finset.sum_congr rfl hconst, Finset.sum_const, smul_eq_mul, nsmul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_sum, Finset.sum_congr rfl hconst, Finset.sum_const, smul_eq_mul, nsmul_eq_mul,
       ← mul_assoc, inv_mul_cancel₀ hcard, one_mul]
 
 theorem exists_rep (U : Submodule ℂ W) [FiniteDimensional ℂ U]
@@ -173,7 +180,7 @@ theorem exists_intertwiner : ∀ (G : Type) [Group G] [TopologicalSpace G] [IsTo
   · intro a b
     apply huniq
     intro x
-    rw [map_add (B x), ← hφ₀, ← hφ₀, ← hφ₀, map_add]
+    rw [map_add (B x), ← hφ₀, ← hφ₀, ← hφ₀, map_add (f := _)]
   · intro c a
     apply huniq
     intro x

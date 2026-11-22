@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.AdicContMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NearOfAdjoin
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.AdicContMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NearOfAdjoin
+
+@[expose] public section
 
 open IsLocalRing Polynomial UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -49,7 +53,7 @@ private theorem bound_fin {R : Type} [CommRing R] (S : Subalgebra (PowerSeries R
   | add a b _ _ ha hb =>
     obtain ⟨p, hp⟩ := ha
     obtain ⟨q, hq⟩ := hb
-    exact ⟨p + q, by rw [map_add, hp, hq, smul_add]⟩
+    exact ⟨p + q, by rw [map_add (f := _), hp, hq, smul_add]⟩
   | smul r a _ ha =>
     obtain ⟨p, hp⟩ := ha
     exact ⟨r * p, by rw [map_mul, hp, ← Algebra.smul_def, smul_comm]⟩
@@ -62,7 +66,7 @@ private theorem alg_monomial {R : Type} [CommRing R] (n : ℕ) (x : R) :
     HahnSeries.single_mul_single, zero_add, mul_one]
 
 theorem UpperTheory.V.Ws.sxLaur :
-    ∀ {Λ : Type} [CommRing Λ] [IsLocalRing Λ] {R : Type} [CommRing R] [Algebra Λ R] [IsCO Λ R], IsNilpotent (maximalIdeal R) → ∀ c : ℕ, ∃ (S : Type) (_ : CommRing S) (_ : Algebra Λ S) (_ : IsCO Λ S) (e : S →+* LaurentSeries R), Laur Λ c e := by
+    ∀ {Λ : Type} [CommRing Λ] [IsLocalRing Λ] {R : Type} [CommRing R] [Algebra Λ R] [IsCO Λ R], IsNilpotent (maximalIdeal R) → ∀ c : ℕ, ∃ (S : Type) (_ : CommRing S) (_ : Algebra Λ S) (_ : IsCO Λ S) (e : S →+* LaurentSeries R), Laur (Λ := Λ) c e := by
   intro Λ _ _ R _ _ hR hnil c
   haveI hP : IsCO Λ (PowerSeries R) := co_mvps Λ R Unit
   have hnilx : ∀ x ∈ maximalIdeal R, IsNilpotent x := fun x hx => by
@@ -93,7 +97,7 @@ theorem UpperTheory.V.Ws.sxLaur :
   letI : Algebra Λ S := ((algebraMap (PowerSeries R) S).comp (algebraMap Λ (PowerSeries R))).toAlgebra
   haveI : IsScalarTower Λ (PowerSeries R) S := IsScalarTower.of_algebraMap_eq fun _ => rfl
   have hcomap : (maximalIdeal S).comap (algebraMap (PowerSeries R) S) = maximalIdeal (PowerSeries R) :=
-    eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (maximalIdeal S))
+    eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (algebraMap _ _) (RingHom.Finite.to_isIntegral (RingHom.finite_algebraMap.mpr inferInstance)) (maximalIdeal S))
   have hin : ∀ p ∈ maximalIdeal (PowerSeries R), algebraMap _ S p ∈ maximalIdeal S := fun p hp => by
     rw [← hcomap] at hp; exact hp
   haveI hS : IsCO Λ S := co_finite Λ (PowerSeries R) S fun x => by

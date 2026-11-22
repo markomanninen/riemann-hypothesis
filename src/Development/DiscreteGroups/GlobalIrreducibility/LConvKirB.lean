@@ -1,6 +1,10 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.InHCorner
-import GroundTheory.GlobalFields.TateThesis.NoSmallSubgroups
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.InHCorner
+public import GroundTheory.GlobalFields.TateThesis.NoSmallSubgroups
+
+@[expose] public section
 
 noncomputable section
 open Matrix GlobalTheory.SmGL GlobalTheory.Whittaker GlobalTheory.LocLanglands ValuativeRel Filter Topology

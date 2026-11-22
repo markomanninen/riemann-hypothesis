@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EightDvdNCol
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
-import Development.AbelianVarietyTheory.Definitions.Divisors.MulSmulIdemMem
-import Development.AbelianVarietyTheory.Definitions.Divisors.WedgeNrmLeOfWedgeNormLe
-import Development.AbelianVarietyTheory.Definitions.Divisors.CongModRefl
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NotDvdDiscrHost
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EightDvdNCol
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MulSmulIdemMem
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WedgeNrmLeOfWedgeNormLe
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CongModRefl
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NotDvdDiscrHost
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,12 +95,6 @@ theorem dvd_of_mem_badPrimes {T : Core D} (hQ : T.Q.Pins) {j : ℕ} {Y : Deep T 
     · exact (hp.dvd_of_dvd_pow h').mul_left _
   · rw [h.lev.2] at h'
     exact absurd (Nat.dvd_one.1 h') hp.ne_one
-
-theorem logSum_badPrimes_le : Size → Covers fun Fm x _ ι p _ Y _ C => logSum (badPrimes p.T.Q.H Y.d.l₂) ≤ C * zBase (Fm.L x ι) :=
-  fun h => Closed.imp h fun Fm _ _ _ => ⟨2 * |Fm.CYL| + 17, by positivity, 0, fun x hx _ ι p _ i _ Y hY => by
-    obtain ⟨a, b⟩ := log_level_le (Fm.params x hx ι)
-    rw [Fm.params_CYL] at b
-    exact (logSum_le_log a fun q hq => dvd_of_mem_badPrimes p.fw.laws.pins hY.1 hq).trans b⟩
 
 end GlobalTheory.BadLog
 

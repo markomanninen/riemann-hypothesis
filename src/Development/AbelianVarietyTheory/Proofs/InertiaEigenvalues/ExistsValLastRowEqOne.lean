@@ -1,37 +1,41 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadNatZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RsTermZero
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ZintZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.MemMspan
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnrOutside
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAddHaarMeasureVolumeLie
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SchurDir
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicUnitriangularMulMemUnipotentTimesIntegral
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CellLintegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOfMemSmoothSpan
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LintegralUnipotentCellPosLtTopContinuous
-import Development.AbelianVarietyTheory.Definitions.Divisors.NAInterSupSSubset
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CuspFormRapidKernelSmoothSpanSmoothCuspidalBound
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivariantProj
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WhitMulLocGLDiagPowOfFixed
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousGlobalWhittakerCoefficientGLAdeles
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinsuppVanishingOnEquivComplProd
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsOpenAdelicUnipotentTimesIntegralOutsideSet
-import GroundTheory.AutomorphicForms.MultiplicityOne.Injective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMulSupSFinGL
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SuperDiagBlockGL
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicDiagonalUniformizerCommuteOfOneOff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicDiagonalUniformizerEqProdLocalDiagonal
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IdelicAbsDetPowDiagonalUniformizerMul
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfNotAntitoneInt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicIwasawaDecompositionOffFinset
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalCutOperatorTransferAdelicWhittaker
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsClopenKGLInvEntries
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnfoldedIntegrandMeasurableInvariantBounded
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RankinSelbergLocalTermEqSphericalWhittakerProduc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadNatZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RsTermZero
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ZintZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAddHaarMeasureVolumeLie
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnrOutside
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SchurDir
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicUnitriangularMulMemUnipotentTimesIntegral
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CellLintegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOfMemSmoothSpan
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LintegralUnipotentCellPosLtTopContinuous
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NAInterSupSSubset
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CuspFormRapidKernelSmoothSpanSmoothCuspidalBound
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivariantProj
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WhitMulLocGLDiagPowOfFixed
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousGlobalWhittakerCoefficientGLAdeles
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinsuppVanishingOnEquivComplProd
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsOpenAdelicUnipotentTimesIntegralOutsideSet
+public import GroundTheory.AutomorphicForms.MultiplicityOne.Injective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMulSupSFinGL
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SuperDiagBlockGL
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicDiagonalUniformizerCommuteOfOneOff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicDiagonalUniformizerEqProdLocalDiagonal
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IdelicAbsDetPowDiagonalUniformizerMul
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfNotAntitoneInt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicIwasawaDecompositionOffFinset
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalCutOperatorTransferAdelicWhittaker
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsClopenKGLInvEntries
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnfoldedIntegrandMeasurableInvariantBounded
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RankinSelbergLocalTermEqSphericalWhittakerProduc
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory GlobalTheory.CuspRep GlobalTheory.JSW Formalism.UG GlobalTheory.LFun Formalism.L2.Host
 open scoped ENNReal ComplexConjugate ContDiff
 
@@ -61,7 +65,7 @@ theorem blockGL_finGL {j n : ℕ} (hj : j ≤ n) (k : GL (Fin j) (Af E)) :
   split_ifs with h1 h2 h3 <;> simp only [hf, Matrix.one_apply, Fin.ext_iff] <;> split_ifs <;> first | (simp; done) | (exfalso; omega) | (exfalso; simp_all; done) | (simp only [map_zero]; abel)
 
 theorem blockGL_mem_KGL (w : HeightOneSpectrum (𝓞 E)) {j n : ℕ} (hj : j ≤ n) {y : GL (Fin j) (w.adicCompletion E)}
-    (hy : y ∈ KGL w j) : blockGL hj y ∈ KGL w n := by
+    (hy : y ∈ KGL w (n := j)) : blockGL hj y ∈ KGL w (n := n) := by
   rw [GlobalTheory.HenQ.Basic.mem_KGL_iff] at hy ⊢
   refine ⟨fun a b => ?_, fun a b => ?_⟩
   · rw [coe_blockGL, blockMat_apply]
@@ -83,12 +87,12 @@ namespace GlobalTheory.CellEvalNM
 
 open GroundTheory.Automorphic.FourierWhittaker (blockGL blockMat blockMat_apply coe_blockGL)
 
-theorem eq_zero_of_comp_diag (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (N : ℕ)
+theorem eq_zero_of_comp_diag (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (N : ℕ)
     (w : HeightOneSpectrum (𝓞 E))
-    (hψ : ∀ x : w.adicCompletion E, (∀ y ∈ Ov E w, GlobalTheory.JSW.psiLoc w (x * y) = 1) ↔ x ∈ Ov E w)
+    (hψ : ∀ x : w.adicCompletion E, (∀ y ∈ Ov E w, (GroundTheory.Global.adelicChar _ (GlobalTheory.CuspRep.sFin _ (GlobalTheory.CuspRep.sLoc _ w (x * y))) : ℂ) = 1) ↔ x ∈ Ov E w)
     (ϖw : (w.adicCompletion E)ˣ) (hϖ : IsUnifV E w (ϖw : w.adicCompletion E)) (W : GA E N → ℂ)
-    (hWN : ∀ u ∈ GlobalTheory.JSW.NA E N, ∀ g, W (u * g) = GlobalTheory.JSW.psiN u * W g)
-    (hWK : ∀ k ∈ KGL w N, ∀ g, W (g * finGL E N (locGL E N w k)) = W g)
+    (hWN : ∀ u ∈ GlobalTheory.JSW.NA (E := E) (a := N), ∀ g, W (u * g) = GlobalTheory.JSW.psiN u * W g)
+    (hWK : ∀ k ∈ KGL w (n := N), ∀ g, W (g * finGL E N (locGL E N w k)) = W g)
     (e : Fin N → ℤ) (he : ¬ Antitone e) (P : GA E N)
     (hP : ((GlobalTheory.CellDec.compV E N w P : GL (Fin N) (w.adicCompletion E)) : Matrix (Fin N) (Fin N) (w.adicCompletion E)) =
       Matrix.diagonal fun a => ((ϖw ^ e a : (w.adicCompletion E)ˣ) : w.adicCompletion E)) :
@@ -108,7 +112,7 @@ theorem eq_zero_of_comp_diag (E : Type) [Field E] [NumberField E] [IsTotallyComp
     rw [map_mul, map_mul, ← mul_assoc P', GlobalTheory.JSW.commute_finGL_locGL w hP'w, mul_assoc,
       hWN _ (GlobalTheory.JSW.CutTransfer.finGL_locGL_mem_NA' w hu), GlobalTheory.JSW.CutTransfer.psiN_finGL_locGL]
     rfl
-  have hfK : ∀ g, ∀ k ∈ KGL w N, f (g * k) = f g := by
+  have hfK : ∀ g, ∀ k ∈ KGL w (n := N), f (g * k) = f g := by
     intro g k hk
     simp only [f]
     rw [map_mul, map_mul, ← mul_assoc]
@@ -125,7 +129,7 @@ theorem lastRow_diag_mul {m : ℕ} (d : Fin (m + 1) → (Ad E)ˣ) (g : GA E (m +
   simp only [GlobalTheory.ZEul.lastRow, Units.val_mul, GlobalTheory.SmGL.val_diagT, Matrix.diagonal_mul]
 
 theorem exists_val_lastRow_eq_one (w : HeightOneSpectrum (𝓞 E)) {m : ℕ} {k : GL (Fin (m + 1)) (w.adicCompletion E)}
-    (hk : k ∈ KGL w (m + 1)) : ∃ j, Valued.v ((k : Matrix (Fin (m + 1)) (Fin (m + 1)) (w.adicCompletion E)) (Fin.last m) j) = 1 := by
+    (hk : k ∈ KGL w (n := (m + 1))) : ∃ j, Valued.v ((k : Matrix (Fin (m + 1)) (Fin (m + 1)) (w.adicCompletion E)) (Fin.last m) j) = 1 := by
   rw [GlobalTheory.HenQ.Basic.mem_KGL_iff] at hk
   by_contra hne
   push_neg at hne
@@ -274,24 +278,24 @@ theorem compV_tl {E : Type} [Field E] [NumberField E] (N : ℕ) (ϖ : ∀ w : He
     simp
   · simp [Matrix.diagonal_apply_ne _ hij]
 
-theorem cell_values (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (N : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E)))
-    (hψ : ∀ w ∉ S, ∀ x : w.adicCompletion E, (∀ y ∈ Ov E w, GlobalTheory.JSW.psiLoc w (x * y) = 1) ↔ x ∈ Ov E w)
+theorem cell_values (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (N : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E)))
+    (hψ : ∀ w ∉ S, ∀ x : w.adicCompletion E, (∀ y ∈ Ov E w, (GroundTheory.Global.adelicChar _ (GlobalTheory.CuspRep.sFin _ (GlobalTheory.CuspRep.sLoc _ w (x * y))) : ℂ) = 1) ↔ x ∈ Ov E w)
     (ϖ : ∀ w : HeightOneSpectrum (𝓞 E), (w.adicCompletion E)ˣ) (hϖ : ∀ w, IsUnifV E w (ϖ w : w.adicCompletion E))
     (g : GA E N) (hg : g ∈ GlobalTheory.CellDec.C0 E N S) (l : GlobalTheory.CellDec.abelian₂ E N S) :
-    ∃ c : ℂ, ‖c‖ = 1 ∧ ∀ V : GA E N → ℂ, (∀ u ∈ GlobalTheory.JSW.NA E N, ∀ g, V (u * g) = GlobalTheory.JSW.psiN u * V g) →
-      (∀ k : GL (Fin N) (Af E), (∀ v, Matrix.GeneralLinearGroup.map (pLoc E v) k ∈ KGL v N) →
+    ∃ c : ℂ, ‖c‖ = 1 ∧ ∀ V : GA E N → ℂ, (∀ u ∈ GlobalTheory.JSW.NA (E := E) (a := N), ∀ g, V (u * g) = GlobalTheory.JSW.psiN u * V g) →
+      (∀ k : GL (Fin N) (Af E), (∀ v, Matrix.GeneralLinearGroup.map (pLoc E v) k ∈ KGL v (n := N)) →
         (∀ v ∈ S, Matrix.GeneralLinearGroup.map (pLoc E v) k = 1) → ∀ g, V (g * finGL E N k) = V g) →
       ((∃ w, ¬ Antitone (l.1 w)) → V (GlobalTheory.CellDec.tl N ϖ l.1 * g) = 0) ∧
       ∀ p : HeightOneSpectrum (𝓞 E) → (Fin N → ℕ) → ℂ,
-        (∀ l' : HeightOneSpectrum (𝓞 E) →₀ (Fin N → ℕ), (∀ w ∈ l'.support, w ∉ S) → ∀ h ∈ GlobalTheory.JSW.supS E N S,
+        (∀ l' : HeightOneSpectrum (𝓞 E) →₀ (Fin N → ℕ), (∀ w ∈ l'.support, w ∉ S) → ∀ h ∈ GlobalTheory.JSW.supS (E := E) (a := N) S,
           V (h * GlobalTheory.JSW.tl ϖ l') = (∏ w ∈ l'.support, p w (l' w)) * V h) →
         (∀ w i, 0 ≤ l.1 w i) →
         V (GlobalTheory.CellDec.tl N ϖ l.1 * g) = c * (∏ w ∈ l.1.support, p w (fun i => (l.1 w i).toNat)) * V g := by
   obtain ⟨u, hu, h, hh, k, hk, hkS, rfl⟩ := GlobalTheory.CellDec.exists_mul_supS_finGL E N S g hg
   set t := GlobalTheory.CellDec.tl N ϖ l.1 with ht
   have hcomm : h * t = t * h := GlobalTheory.CellDec.TlComm.tl_commute_of_one_off E N S ϖ l h hh
-  have hu0 : u ∈ GlobalTheory.JSW.NA E N := (GlobalTheory.SmGL.mem_unipB (Ad E)).1 hu
-  have hu' : t * u * t⁻¹ ∈ GlobalTheory.JSW.NA E N := (GlobalTheory.SmGL.mem_unipB (Ad E)).1 (GlobalTheory.CellDec.tl_conj_mem ϖ l.1 hu)
+  have hu0 : u ∈ GlobalTheory.JSW.NA (E := E) (a := N) := (GlobalTheory.SmGL.mem_unipB (Ad E)).1 hu
+  have hu' : t * u * t⁻¹ ∈ GlobalTheory.JSW.NA (E := E) (a := N) := (GlobalTheory.SmGL.mem_unipB (Ad E)).1 (GlobalTheory.CellDec.tl_conj_mem ϖ l.1 hu)
   have hσ : t * (u * h * finGL E N k) = (t * u * t⁻¹) * (h * t) * finGL E N k := by
     rw [hcomm]; group
   have hne : GlobalTheory.JSW.psiN u ≠ 0 := norm_ne_zero_iff.1 (by rw [GlobalTheory.RSnmUnfProps.norm_psiN]; exact one_ne_zero)
@@ -329,13 +333,13 @@ theorem cell_values (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (N
     rw [hσ, hK k hk hkS, hN _ hu', e1, hK k hk hkS, hN _ hu0]
     field_simp
 
-theorem lastRow_prim (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (m : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E)))
+theorem lastRow_prim (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (m : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E)))
     (g : GA E (m + 1)) (hg : g ∈ GlobalTheory.CellDec.C0 E (m + 1) S) (w : HeightOneSpectrum (𝓞 E)) (hw : w ∉ S) :
     (∀ j, pLoc E w (pFin E (GlobalTheory.ZEul.lastRow g j)) ∈ w.adicCompletionIntegers E) ∧
       ∃ j, Valued.v (pLoc E w (pFin E (GlobalTheory.ZEul.lastRow g j))) = 1 := by
   obtain ⟨u, hu, k, hk, rfl⟩ := hg
   rw [GlobalTheory.ZEulProps.lastRow_unip hu]
-  have hkw : GlobalTheory.CellDec.compV E (m + 1) w k ∈ KGL w (m + 1) := by
+  have hkw : GlobalTheory.CellDec.compV E (m + 1) w k ∈ KGL w (n := (m + 1)) := by
     simp only [GlobalTheory.CellDec.US, Subgroup.mem_iInf, Subgroup.mem_comap] at hk
     exact hk w hw
   have he : ∀ j, pLoc E w (pFin E (GlobalTheory.ZEul.lastRow k j)) = ((GlobalTheory.CellDec.compV E (m + 1) w k : GL (Fin (m + 1)) (w.adicCompletion E)) :
@@ -348,26 +352,26 @@ theorem lastRow_prim (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (
 
 end GlobalTheory.CellEvalNM
 
+
 open GroundTheory.Automorphic.FourierWhittaker (blockGL) in
 open GlobalTheory.CellEvalNM in
-
-theorem GlobalTheory.CellEvalNM.uIntNM_cell_eval : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (m r : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E))),
-    (∀ w ∉ S, ∀ x : w.adicCompletion E, (∀ y ∈ Ov E w, GlobalTheory.JSW.psiLoc w (x * y) = 1) ↔ x ∈ Ov E w) →
+theorem GlobalTheory.CellEvalNM.uIntNM_cell_eval : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (m r : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E))),
+    (∀ w ∉ S, ∀ x : w.adicCompletion E, (∀ y ∈ Ov E w, (GroundTheory.Global.adelicChar _ (GlobalTheory.CuspRep.sFin _ (GlobalTheory.CuspRep.sLoc _ w (x * y))) : ℂ) = 1) ↔ x ∈ Ov E w) →
     ∀ (ϖ : ∀ w : HeightOneSpectrum (𝓞 E), (w.adicCompletion E)ˣ), (∀ w, IsUnifV E w (ϖ w : w.adicCompletion E)) →
     ∀ (α : HeightOneSpectrum (𝓞 E) → Fin (m + r + 1 + 1) → ℂˣ) (β : HeightOneSpectrum (𝓞 E) → Fin (m + 1) → ℂˣ)
       (φ : GA E (m + r + 1 + 1) → ℂ) (φ' : GA E (m + 1) → ℂ) (F : (Fin (m + 1) → Ad E) → ℂ),
-    (∀ u ∈ GlobalTheory.JSW.NA E (m + r + 1 + 1), ∀ g, GlobalTheory.JSW.whit φ (u * g) = GlobalTheory.JSW.psiN u * GlobalTheory.JSW.whit φ g) →
-    (∀ u ∈ GlobalTheory.JSW.NA E (m + 1), ∀ g, GlobalTheory.JSW.whit φ' (u * g) = GlobalTheory.JSW.psiN u * GlobalTheory.JSW.whit φ' g) →
-    (∀ k : GL (Fin (m + r + 1 + 1)) (Af E), (∀ v, Matrix.GeneralLinearGroup.map (pLoc E v) k ∈ KGL v (m + r + 1 + 1)) →
+    (∀ u ∈ GlobalTheory.JSW.NA (E := E) (a := (m + r + 1 + 1)), ∀ g, GlobalTheory.JSW.whit φ (u * g) = GlobalTheory.JSW.psiN u * GlobalTheory.JSW.whit φ g) →
+    (∀ u ∈ GlobalTheory.JSW.NA (E := E) (a := (m + 1)), ∀ g, GlobalTheory.JSW.whit φ' (u * g) = GlobalTheory.JSW.psiN u * GlobalTheory.JSW.whit φ' g) →
+    (∀ k : GL (Fin (m + r + 1 + 1)) (Af E), (∀ v, Matrix.GeneralLinearGroup.map (pLoc E v) k ∈ KGL v (n := (m + r + 1 + 1))) →
       (∀ v ∈ S, Matrix.GeneralLinearGroup.map (pLoc E v) k = 1) → ∀ g, GlobalTheory.JSW.whit φ (g * finGL E (m + r + 1 + 1) k) = GlobalTheory.JSW.whit φ g) →
-    (∀ k : GL (Fin (m + 1)) (Af E), (∀ v, Matrix.GeneralLinearGroup.map (pLoc E v) k ∈ KGL v (m + 1)) →
+    (∀ k : GL (Fin (m + 1)) (Af E), (∀ v, Matrix.GeneralLinearGroup.map (pLoc E v) k ∈ KGL v (n := (m + 1))) →
       (∀ v ∈ S, Matrix.GeneralLinearGroup.map (pLoc E v) k = 1) → ∀ g, GlobalTheory.JSW.whit φ' (g * finGL E (m + 1) k) = GlobalTheory.JSW.whit φ' g) →
     (∀ l : HeightOneSpectrum (𝓞 E) →₀ (Fin (m + 1) → ℕ), (∀ w ∈ l.support, w ∉ S) →
-      ∀ h ∈ GlobalTheory.JSW.supS E (m + 1) S,
+      ∀ h ∈ GlobalTheory.JSW.supS (E := E) (a := (m + 1)) S,
         GlobalTheory.JSW.whit φ' (h * GlobalTheory.JSW.tl ϖ l) =
           (∏ w ∈ l.support, GlobalTheory.JSW.sphW (qV E w) (fun i => (β w i : ℂ)) (l w)) * GlobalTheory.JSW.whit φ' h) →
     (∀ l : HeightOneSpectrum (𝓞 E) →₀ (Fin (m + 1) → ℕ), (∀ w ∈ l.support, w ∉ S) →
-      ∀ h ∈ GlobalTheory.JSW.supS E (m + 1) S,
+      ∀ h ∈ GlobalTheory.JSW.supS (E := E) (a := (m + 1)) S,
         GlobalTheory.JSW.whit φ (GroundTheory.Automorphic.FourierWhittaker.blockGL (by omega : m + 1 ≤ m + r + 1 + 1) (h * GlobalTheory.JSW.tl ϖ l)) =
           (∏ w ∈ l.support, GlobalTheory.JSW.sphW (qV E w) (fun i => (α w i : ℂ)) (GlobalTheory.RSnmUnf.padNat (l w))) *
             GlobalTheory.JSW.whit φ (GroundTheory.Automorphic.FourierWhittaker.blockGL (by omega : m + 1 ≤ m + r + 1 + 1) h)) →

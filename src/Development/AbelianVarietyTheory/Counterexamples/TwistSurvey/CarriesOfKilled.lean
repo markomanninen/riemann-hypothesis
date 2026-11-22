@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
-import Formalism.LocalToGlobal.IndefiniteReal.BaseLiftsPackageOfPrimitiveLinks
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
+public import Formalism.LocalToGlobal.IndefiniteReal.BaseLiftsPackageOfPrimitiveLinks
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,6 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 I0 T : Type} {A3 : FamIn3 D.what₂.LL G Pl0 I0 (List ℕ) T D.R.m}
   {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
-
-def shift (R : RealDat3 D A3 Ks) : RealDat3 D A3 Ks := { R with lam3 := fun i t p v => R.lam3 i t p v + 1 }
 
 theorem apply_eq_smul_of_unique_eigenvalue {M : Type} [AddCommGroup M] [Module ℂ M] (f : M → M) (h0 : f 0 = 0) (P : Submodule ℂ M) (m : ℝ)
     (h : ∀ l : ℝ, P ≠ ⊥ → (∀ x ∈ P, f x = (l : ℂ) • x) → m = l) (hA : ∃ l : ℝ, ∀ x ∈ P, f x = (l : ℂ) • x) :
@@ -42,12 +44,15 @@ theorem scal_of_one {M C : Type} [AddCommGroup M] [Module ℂ M] (f : M → M) (
       exact hc ⟨c', hc', fun e => hn e.le⟩
     rw [(Submodule.mem_bot ℂ).1 (hle hx), h0, smul_zero]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem iff_of_pin (R : RealDat3 D A3 Ks) (h : R.eigenvalue_at_base_of_scalar) :
     R.PThmA ↔ ∀ i t p, ∃ l : ℝ, ∀ x ∈ R.Wp3 i p, R.thG i t (LinearMap.adjoint (R.thG i t) x) = (l : ℂ) • x := by
-  refine ⟨fun hA i t p => ⟨_, hA i t p⟩, fun hA i t p => ?_⟩
-  exact apply_eq_smul_of_unique_eigenvalue (fun x => R.thG i t (LinearMap.adjoint (R.thG i t) x)) (by simp only [map_zero]) (R.Wp3 i p) _ (h i t p) (hA i t p)
+  constructor
+  · intro hA i t p
+    exact ⟨R.lam3 i t p A3.A.v0, hA i t p⟩
+  · intro hA i t p
+    exact apply_eq_smul_of_unique_eigenvalue (fun x => R.thG i t (LinearMap.adjoint (R.thG i t) x)) (by simp only [map_zero]) (R.Wp3 i p) _ (h i t p) (hA i t p)
 
 def OnePart (R : RealDat3 D A3 Ks) : Prop := ∀ i p c c', R.Carries p c → R.Carries p c' → R.Wc' i c = R.Wc' i c'
 

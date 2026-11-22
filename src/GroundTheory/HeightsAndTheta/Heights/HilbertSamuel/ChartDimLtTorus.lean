@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ConeChartA
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ConeChartA
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -108,7 +113,7 @@ theorem exists_dim_add_card_le {J : Ideal (MvPolynomial (Σ k, ι k) ℂ)}
       simp only [θ, aeval_C, MvPolynomial.algebraMap_apply]
       rfl
     · intro f g hf hg
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact AC.add_mem hf hg
     · intro f q hf
       rw [map_mul, map_mul]

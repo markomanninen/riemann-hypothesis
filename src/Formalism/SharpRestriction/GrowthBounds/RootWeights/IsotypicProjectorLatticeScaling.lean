@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicProjectorSelfAdjoint
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicProjectorSelfAdjoint
+
+@[expose] public section
 
 noncomputable section
 

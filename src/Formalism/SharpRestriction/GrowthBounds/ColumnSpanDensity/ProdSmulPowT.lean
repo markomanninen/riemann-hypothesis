@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.LatticeMapsOfFunctorComparison
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.Tensor
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.LatticeMapsOfFunctorComparison
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.Tensor
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,7 @@ theorem prodTopsT (G : TT → MvPolynomial (Fin k × Fin n) K) :
   rw [← Finset.prod_subset (Finset.subset_univ TT)]
   · rw [← Finset.prod_coe_sort TT]
     refine Finset.prod_congr rfl fun s _ => ?_
-    rw [dif_pos s.2]
+    rw [dite_eq_left s.2]
     rfl
   · intro s _ hs
     rw [dif_neg hs, map_one]
@@ -114,7 +118,7 @@ theorem ioMem (hK2 : RegroupP) (i : TT → MvPolynomial (Fin k × Fin n) K →�
     rw [map_zero, smul_zero]
     exact Submodule.zero_mem _
   | add x y _ _ ihx ihy =>
-    rw [map_add, smul_add]
+    rw [map_add (f := _), smul_add]
     exact Submodule.add_mem _ ihx ihy
   | smul a x _ ih =>
     rw [LinearMap.map_smul_of_tower, hcomm]
@@ -147,7 +151,7 @@ theorem prMem (pr : TT → MvPolynomial (Bool × (Fin k × Fin n)) K →ₗ[K] M
       c • pr ⟨s, h⟩ (∏ b, blockEmb K b (F (⟨s, h⟩, b))) else 1, fun s => ?_, rfl⟩
     dsimp only
     by_cases h : s ∈ TT
-    · rw [dif_pos h]
+    · rw [dite_eq_left h]
       exact h1 ⟨s, h⟩ _ (Submodule.subset_span ⟨fun b => F (⟨s, h⟩, b), fun b => hF _, rfl⟩)
     · rw [dif_neg h]
       exact h0 s h
@@ -155,7 +159,7 @@ theorem prMem (pr : TT → MvPolynomial (Bool × (Fin k × Fin n)) K →ₗ[K] M
     rw [map_zero, smul_zero]
     exact Submodule.zero_mem _
   | add x y _ _ ihx ihy =>
-    rw [map_add, smul_add]
+    rw [map_add (f := _), smul_add]
     exact Submodule.add_mem _ ihx ihy
   | smul a x _ ih =>
     rw [LinearMap.map_smul_of_tower, hcomm]

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffOfContinuousOneParameterStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffOfContinuousOneParameterStatement
+
+@[expose] public section
+
 open MeasureTheory Filter Topology
 open scoped ContDiff
 
@@ -12,9 +17,9 @@ theorem contDiff_prod_ofFn_coord {A : Type} [NormedRing A] [NormedAlgebra ℝ A]
   | zero => simpa using contDiff_const
   | succ k ih =>
     simp only [List.ofFn_succ, List.prod_cons]
-    refine ContDiff.mul ((hR (I 0)).comp (contDiff_apply ℝ ℝ 0)) ?_
+    refine ContDiff.mul ((hR (I 0)).comp (contDiff_apply ℝ (fun _ => ℝ) 0)) ?_
     have h : ContDiff ℝ ∞ fun (t : Fin (k + 1) → ℝ) (a : Fin k) => t a.succ :=
-      contDiff_pi.2 fun a => contDiff_apply ℝ ℝ a.succ
+      contDiff_pi.2 fun a => contDiff_apply ℝ (fun _ => ℝ) a.succ
     exact (ih fun a => I a.succ).comp h
 
 theorem smooth_of_finiteDimensional_translation_stable :

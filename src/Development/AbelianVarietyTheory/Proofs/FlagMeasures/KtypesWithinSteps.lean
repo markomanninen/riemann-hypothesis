@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.StatementU
-import Formalism.RealPlaceAnalysis.QuotientSettingHolds
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.StatementU
+public import Formalism.RealPlaceAnalysis.QuotientSettingHolds
+
+@[expose] public section
 
 open Formalism.REAL
 open scoped InnerProductSpace

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NablaSchur
-import Formalism.GradedWeylDivisibility.FinalB
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.PieriBlockIdeals.PieriColumnMinors.HighestWeightMemWZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NablaSchur
+public import Formalism.GradedWeylDivisibility.FinalB
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.HighestWeightMemWZero
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility
 

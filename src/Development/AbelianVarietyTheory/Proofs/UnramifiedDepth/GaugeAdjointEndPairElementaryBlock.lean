@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
-import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
-import Formalism.LocalToGlobal.CharacterGerms.NegMem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IntSOfMulEqOne
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+public import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
+public import Formalism.LocalToGlobal.CharacterGerms.NegMem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IntSOfMulEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,8 @@ variable {d : ℕ} {I : Fin 2 → Type} {κ : Type} [Fintype κ] (X : RawChart C
 theorem cc_lin (hlg : ∀ i, constantCoeff (X.lg i) = 0) (M : Matrix κ κ C) {τ : Type}
     {a : κ → MvPowerSeries τ C} (ha : ∀ i, constantCoeff (a i) = 0) (x : κ) :
     constantCoeff (∑ y, M x y • subst a (X.lg y)) = 0 := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun y _ => ?_
   rw [constantCoeff_smul, cc_subst ha, hlg, smul_zero]
 
@@ -54,7 +59,8 @@ theorem subst_endP (hlg : ∀ i, constantCoeff (X.lg i) = 0) (M : Matrix κ κ C
   rw [subst_comp_subst_apply (hasSubst_of_constantCoeff_zero (cc_lin X hlg M ha)) hB]
   congr 1
   funext x
-  rw [← coe_substAlgHom hB, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← coe_substAlgHom hB, map_sum]
   refine Finset.sum_congr rfl fun y _ => ?_
   rw [map_smul, coe_substAlgHom hB, subst_comp_subst_apply hA hB]
 
@@ -142,7 +148,8 @@ theorem hAt_square (hh : Z.h = ∑ col, hCol col X.h) {τ : Type} {a b : Fin 2 �
     hAt Z a b = ∑ col, hAt X (fun k => a (col, k)) (fun k => b (col, k)) := by
   have hA := hasSubst_of_constantCoeff_zero (cc_pair ha hb)
   unfold hAt
-  rw [hh, ← coe_substAlgHom hA, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hh, ← coe_substAlgHom hA, map_sum]
   refine Finset.sum_congr rfl fun col _ => ?_
   rw [coe_substAlgHom hA, hCol,
     subst_comp_subst_apply (hasSubst_of_constantCoeff_zero fun _ => constantCoeff_X _) hA]

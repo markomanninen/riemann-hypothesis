@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ScalarPairDr
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PairCorankPositivity.EqZeroOfMulVec
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ScalarPairDr
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PairCorankPositivity.EqZeroOfMulVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem mem_orth {U : Submodule E S.V} {v : S.V} : v ∈ orth S U ↔ ∀ x ∈ 
   simp only [orth, Submodule.mem_iInf, LinearMap.mem_ker]
 
 theorem hT_add_left (x y v : S.V) : S.hT (x + y) v = S.hT x v + S.hT y v := by
-  rw [map_add, LinearMap.add_apply]
+  rw [map_add (f := _), LinearMap.add_apply]
 
 theorem hT_sub_left (x y v : S.V) : S.hT (x - y) v = S.hT x v - S.hT y v := by
   rw [map_sub, LinearMap.sub_apply]
@@ -51,7 +55,8 @@ theorem finrank_orth (U : Submodule E S.V) :
     rw [Fintype.linearIndependent_iff]
     intro c hc
     have h1 : S.hT (∑ i, star (c i) • u i) = 0 := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [LinearMap.map_smulₛₗ, starRingEnd_apply, star_star]
       exact hc
     have h2 : ∑ i, star (c i) • u i = 0 :=
@@ -68,10 +73,12 @@ theorem finrank_orth (U : Submodule E S.V) :
     · intro h x hx
       have hx' : x = ∑ i, b.repr ⟨x, hx⟩ i • u i := by
         have e := congrArg U.subtype (b.sum_repr ⟨x, hx⟩)
-        simp only [map_sum, map_smul, Submodule.subtype_apply] at e
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_smul, Submodule.subtype_apply] at e
         exact e.symm
       have hmem : S.hT x ∈ Submodule.span E (Set.range φ) := by
-        rw [hx', map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hx', map_sum]
         refine Submodule.sum_mem _ fun i _ => ?_
         rw [LinearMap.map_smulₛₗ]
         exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -151,7 +158,8 @@ theorem exists_b (F : FlagG S r T) (F' : FlagG S r T') (hG : Gflag F F' ≠ 0) (
   let w : S.V := ∑ j, v j • F'.e j
   have hrow : ∀ i, (Zhat F F' *ᵥ v') i = S.hT (F.fvec i) w := by
     intro i
-    simp only [v', w, Matrix.mulVec, dotProduct, Fin.sum_univ_castSucc, Fin.snoc_castSucc,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [v', w, Matrix.mulVec, dotProduct, Fin.sum_univ_castSucc, Fin.snoc_castSucc,
       Fin.snoc_last, mul_zero, add_zero, map_sum, map_smul, smul_eq_mul, zhat_apply, fvec_castSucc]
     exact Finset.sum_congr rfl fun j _ => mul_comm _ _
   have hsub : ∀ a, (Zhat F F' *ᵥ v') (Fin.castSucc a) =
@@ -199,7 +207,8 @@ theorem Dr_zero_of (F : FlagG S r T) (F' : FlagG S r T') {w : S.V} (hw : w ∈ F
     simp
   · funext a
     have := he a
-    simp only [map_sum, map_smul, smul_eq_mul] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul] at this
     simp only [Matrix.mulVec, dotProduct, Matrix.submatrix_apply, zhat_apply, fvec_castSucc,
       Pi.zero_apply]
     rw [← this]
@@ -224,7 +233,8 @@ theorem eq_zero_of_orth (F : FlagG S r T) (F' : FlagG S r T') (hG : Gflag F F' �
     have h := ho b
     rw [hT_swap S (∑ a, c a • F.e a) (F'.fvec b), star_eq_zero] at h
     rw [← h]
-    simp only [map_sum, LinearMap.sum_apply, hT_smul_left, zhat_apply, fvec_castSucc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply, hT_smul_left, zhat_apply, fvec_castSucc]
   apply hG
   let v' : Fin (r + 1) → E := Fin.snoc (α := fun _ => E) (fun a => star (c a)) 0
   have hne' : v' ≠ 0 := by

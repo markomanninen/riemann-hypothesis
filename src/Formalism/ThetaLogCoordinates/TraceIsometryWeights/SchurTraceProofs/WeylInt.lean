@@ -1,6 +1,10 @@
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.SchurTraceOfHomInv
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.InvInv
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.InvInt
+module
+
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.SchurTraceOfHomInv
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.InvInv
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.InvInt
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.PW
 
@@ -32,7 +36,7 @@ theorem wl_iso_le_iSup (G : GlW K V n) (W : Submodule K V) (la : Fin n → ℤ) 
 theorem wl_iso_wt (G : GlW K V n) (W : Submodule K V) (la : Fin n → ℤ) {x : V} (hx : x ∈ IsoW G W la)
     {ν : Fin n → ℤ} (hν : ¬ Dle ν la) : G.comp ν x = 0 := by
   refine Submodule.iSup_induction _ (motive := fun x => G.comp ν x = 0) (wl_iso_le_iSup G W la hx)
-    (fun v y hy => ?_) (by simp) (fun y z hy hz => by rw [map_add, hy, hz, add_zero])
+    (fun v y hy => ?_) (by simp) (fun y z hy hz => by rw [map_add (f := _), hy, hz, add_zero])
   by_contra h
   exact hν (G.wt_le_of_mem v.2.1 hy h)
 
@@ -55,7 +59,8 @@ theorem wl_comp_comm {U : Type} [AddCommGroup U] [Module K U] (G₁ : GlW K U n)
   obtain ⟨S, hS⟩ := G₁.dec x
   have hx' := G₁.sum_comp x (insert μ S) (fun ν hν => hS ν (fun h => hν (Finset.mem_insert_of_mem h)))
   conv_rhs => rw [← hx']
-  rw [map_sum, map_sum, Finset.sum_eq_single μ (fun ν _ hν => by rw [G₂.comp_of_isWt (hwt ν), if_neg (Ne.symm hν)])
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.sum_eq_single μ (fun ν _ hν => by rw [G₂.comp_of_isWt (hwt ν), if_neg (Ne.symm hν)])
     (fun h => absurd (Finset.mem_insert_self μ S) h), G₂.comp_of_isWt (hwt μ), if_pos rfl]
 
 theorem wl_transport (G : GlW K V n) {W : Submodule K V} (hW : G.Stable W) (hWf : G.FinW W) {la : Fin n → ℤ}

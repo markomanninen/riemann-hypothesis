@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.FinrankEqSpanGen
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.FinrankEqSpanGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,12 +36,6 @@ theorem xi_span (ι : ℚ_[p] →+* KK O) {N r t b : ℕ} (g : MvPolynomial (BVa
   rw [h2]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, h1, rfl⟩)
 
-def PG {N r : ℕ} (D : BlockData N) (j : Fin (gmB D).T.t → ℕ) (jp : ℕ) :
-    MvPolynomial (Formalism.GM.M.BVar N r (gmB D).T.t) ℚ_[p] :=
-  (∏ i, (gmB D).Ehat p (r := r) i ^ j i) * (gmB D).Eplus p (r := r) ^ jp *
-    (∏ i, X (Formalism.GM.M.scalZ N r (gmB D).T.t (Fin.castSucc i)) ^ (gmB D).T.z i) *
-    X (Formalism.GM.M.scalZ N r (gmB D).T.t (Fin.last (gmB D).T.t)) ^ (gmB D).zPlus
-
 theorem finrank_span_image_le (ι : ℚ_[p] →+* KK O) {V₁ V₂ : Type} [AddCommGroup V₁] [Module ℚ_[p] V₁]
     [AddCommGroup V₂] [Module (KK O) V₂] (f : V₁ → V₂) (hadd : ∀ u v, f (u + v) = f u + f v)
     (hsm : ∀ (c : ℚ_[p]) u, f (c • u) = ι c • f u) (W : Submodule ℚ_[p] V₁) [FiniteDimensional ℚ_[p] W] :
@@ -60,7 +58,8 @@ theorem finrank_span_image_le (ι : ℚ_[p] →+* KK O) {V₁ V₂ : Type} [AddC
     have hw' : (⟨w, hw⟩ : W) = ∑ i, (bW.repr ⟨w, hw⟩ i) • bW i := (bW.sum_repr _).symm
     have hw'' : w = ∑ i, (bW.repr ⟨w, hw⟩ i) • (bW i : V₁) := by
       have h3 := congrArg (Submodule.subtype W) hw'
-      rw [map_sum] at h3
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at h3
       simpa only [Submodule.subtype_apply, map_smul] using h3
     rw [hw'', hsum]
     exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)

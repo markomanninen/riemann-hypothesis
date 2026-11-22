@@ -1,11 +1,15 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdStep
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdUpper
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.SumNormAdjointSqEqHsOp
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdLower
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdPointwise
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdConst
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.IntegrableOfContinuousCompact
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Sandwich
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdStep
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdUpper
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.SumNormAdjointSqEqHsOp
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdLower
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdPointwise
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdConst
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.IntegrableOfContinuousCompact
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Transported
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HasDerivAtMexpCommAddBracket
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.DetPbC
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HasDerivAtMexpCommAddBracket
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.DetPbC
+
+@[expose] public section
 
 noncomputable section
 

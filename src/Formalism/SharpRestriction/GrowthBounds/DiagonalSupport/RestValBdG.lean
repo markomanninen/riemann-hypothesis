@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembTop
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.LowestWeightCNonpos
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembTop
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.LowestWeightCNonpos
+
+@[expose] public section
 
 noncomputable section
 

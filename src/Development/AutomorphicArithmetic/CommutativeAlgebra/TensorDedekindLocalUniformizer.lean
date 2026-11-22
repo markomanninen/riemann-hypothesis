@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.IsChart
-import Development.AutomorphicArithmetic.CommutativeAlgebra.SpecializationTensorRingHomProperties
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsPsi
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.IsChart
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.SpecializationTensorRingHomProperties
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsPsi
+
+@[expose] public section
+
 open GroundTheory.FunctionField UpperTheory.Et.Sel
 open scoped TensorProduct
 
@@ -85,7 +90,7 @@ private lemma val_unif {k B : Type} [Field k] [CommRing B] [IsDedekindDomain B] 
     | add x y _ _ hx hy =>
       have : x + y - algebraMap k B (χ (x + y)) =
           (x - algebraMap k B (χ x)) + (y - algebraMap k B (χ y)) := by
-        rw [map_add, map_add]; ring
+        rw [map_add (f := _), map_add (f := _)]; ring
       rw [this]
       exact I.add_mem hx hy
     | mul x y _ _ hx hy =>

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlkLat
-import Formalism.LocalToGlobal.InertKernelTheory.StatementAlg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlkLat
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementAlg
+
+@[expose] public section
+
 open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Ker Formalism.L2.Th1.H GlobalTheory.BaseVacuum
 open Classical
 
@@ -54,7 +59,8 @@ theorem trace_xv (B : Base D cc δ) (w w' : Fin 4 × D.what₂.Tau) :
   apply (algebraMap D.host.K D.host.E).injective
   have h := B.γ₀.isom (xv B w) (xv B w')
   rw [gamma_g_xv, gamma_g_xv] at h
-  rw [map_sum, ← h]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← h]
   simp only [Pi.single_apply]
   by_cases hw : w = w'
   · subst hw
@@ -72,10 +78,7 @@ theorem orthonormal_bas (B : Base D cc δ) (n n' : ℕ) : TaylorLogMetric.Orthon
   unfold bas
   rw [hYY_putB]
   by_cases hk : (ixE D n n' i).1 = (ixE D n n' j).1
-  · rw [if_pos hk, map_sum]
-    have := trace_xv B (ixE D n n' i).2 (ixE D n n' j).2
-    rw [map_sum] at this
-    rw [this]
+  · rw [if_pos hk, trace_xv]
     congr 1
     apply propext
     constructor
@@ -87,15 +90,16 @@ theorem orthonormal_bas (B : Base D cc δ) (n n' : ℕ) : TaylorLogMetric.Orthon
     intro h
     exact hk (by rw [h])
 
-set_option synthInstance.maxHeartbeats 200000 in
 
+set_option synthInstance.maxHeartbeats 200000 in
 theorem sum_g_smul_xv (B : Base D cc δ) (y : Fin 4 → D.host.E) :
     ∑ w, B.γ₀.g y w • xv B w = y := by
   have h1 : ∑ w, B.γ₀.g y w • (Pi.single w (1 : D.host.K) : Fin 4 × D.what₂.Tau → D.host.K) = B.γ₀.g y := by
     ext u
     simp [Finset.sum_apply, Pi.single_apply]
   calc ∑ w, B.γ₀.g y w • xv B w = B.γ₀.g.symm (∑ w, B.γ₀.g y w • Pi.single w (1 : D.host.K)) := by
-        simp only [map_sum, map_smul, xv]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_smul, xv]
     _ = y := by rw [h1, LinearEquiv.symm_apply_apply]
 
 theorem matrix_eq_sum_putB (B : Base D cc δ) (n n' : ℕ) (M : Matrix (Fin (n' * 2)) (Fin (n * 2)) D.host.E) :

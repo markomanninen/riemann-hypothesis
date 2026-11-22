@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.Transport
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LiftToLogResolutionAnalyticStatement
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.Transport
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LiftToLogResolutionAnalyticStatement
+
+@[expose] public section
 
 noncomputable section
 

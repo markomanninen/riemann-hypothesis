@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.TameInertiaTowers.StatementField
+module
+
+public import Mathlib
+public import Formalism.TameInertiaTowers.StatementField
+
+@[expose] public section
 
 open NumberField Ideal Polynomial
 

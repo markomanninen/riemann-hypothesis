@@ -1,22 +1,27 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LengthGeFinrankOfSemilinearSurjectiveStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsThetaDieudonneModFrobeniusDifferentialsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LengthGeFinrankOfSemilinearSurjectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsThetaDieudonneModFrobeniusDifferentials
+
+@[expose] public section
+
 open CategoryTheory TensorProduct Coalgebra Bialgebra GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Dieu
 
 namespace GlobalTheory.Dieu
 
-theorem colength_range_map_ge (p : ℕ) [Fact p.Prime] (T : Theory p) (k : Type) [Field k] [CharP k p]
+theorem colength_range_map_ge (p : ℕ) [Fact p.Prime] (T : GlobalTheory.Dieu.Theory p) (k : Type) [Field k] [CharP k p]
     [PerfectRing k p] (G H : PDivGroup p k) (q : G ⟶ H) :
     (Module.finrank k (G.omega ⧸ LinearMap.range (omegaMap G H q)) : ℕ∞) ≤
         Module.length (WittVector p k) (T.M G ⧸ LinearMap.range (T.map q)) ∧
       (Module.finrank k (G.dual.Lie ⧸ LinearMap.range (lieMap H.dual G.dual (dualHom G H q))) : ℕ∞) ≤
         Module.length (WittVector p k) (T.M G ⧸ LinearMap.range (T.map q)) := by
   have hp : (p : k) = 0 := CharP.cast_eq_zero k p
-  obtain ⟨hfin, -⟩ := rigExt_field_of_charP p k hp G
-  obtain ⟨θ, hθ⟩ := GlobalTheory.T.exists_theta_dieudonne_mod_frobenius_differentials p T k
+  haveI : Module.Finite k G.RigExt := (GlobalTheory.T.finrank_rigidExtensions_eq_height_and_dim_add_dual p k hp G).2.1
+  obtain ⟨θ, hθ⟩ := GlobalTheory.Dieu.theta_exists p T k
   have hred : ∀ m : T.M H, T.red G (T.map q m) = rigExtMap q (T.red H m) := fun m => by
     show T.base.red G trivial (T.base.smap trivial trivial (SemiHom.ofHom q) m) = _
     rw [T.base.red_smap, SemiHom.ofHom_rig]
@@ -29,7 +34,7 @@ theorem colength_range_map_ge (p : ℕ) [Fact p.Prime] (T : Theory p) (k : Type)
       (Q.mkQ.toAddMonoidHom.comp (θ G)) (Q.mkQ_surjective.comp hsurj) (fun a n => ?_)
       (LinearMap.range (T.map q))).1 ?_
     · show Q.mkQ (θ G (WittVector.frobenius a • n)) = WittVector.constantCoeff a • Q.mkQ (θ G n)
-      rw [hsemi, LinearMap.map_smul]
+      exact (congrArg Q.mkQ (hsemi a n)).trans (Q.mkQ.map_smul _ _)
     · rintro _ ⟨m, rfl⟩
       show Q.mkQ (θ G (T.map q m)) = 0
       rw [hnat, Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
@@ -41,10 +46,14 @@ theorem colength_range_map_ge (p : ℕ) [Fact p.Prime] (T : Theory p) (k : Type)
       ((Q.mkQ_surjective.comp (G.rigToLie_surjective hp)).comp (T.base.red_surjective G trivial))
       (fun a n => ?_) (LinearMap.range (T.map q))).1 ?_
     · show Q.mkQ (G.rigToLie hp (T.red G (a • n))) = WittVector.constantCoeff a • Q.mkQ (G.rigToLie hp (T.red G n))
-      rw [LinearMap.map_smulₛₗ, LinearMap.map_smul, LinearMap.map_smul]
+      rw [LinearMap.map_smulₛₗ]
+      exact (congrArg Q.mkQ ((G.rigToLie hp).map_smul _ _)).trans (Q.mkQ.map_smul _ _)
     · rintro _ ⟨m, rfl⟩
       show Q.mkQ (G.rigToLie hp (T.red G (T.map q m))) = 0
-      rw [hred, rigToLie_rigExtMap, Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
+      rw [hred]
+      have heq := rigToLie_rigExtMap hp q (T.red H m)
+      apply (congrArg Q.mkQ heq).trans
+      rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
       exact ⟨_, rfl⟩
 
 end GlobalTheory.Dieu

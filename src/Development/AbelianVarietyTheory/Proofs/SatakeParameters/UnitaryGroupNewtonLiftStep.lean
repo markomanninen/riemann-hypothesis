@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SelfDualOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DvdPowZeroIff
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EqZeroOfForallDvdPow
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MulSelfEqOneIffOfLinearOrderedCommGroupWithZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SelfDualOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DvdPowZeroIff
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EqZeroOfForallDvdPow
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MulSelfEqOneIffOfLinearOrderedCommGroupWithZero
+
+@[expose] public section
+
 open Matrix
 
 noncomputable section

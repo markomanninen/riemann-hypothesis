@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
-import Formalism.SharpRestriction.LevelLetterCocycles.SaturationUnramifiedOfRingCondition
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
+public import Formalism.SharpRestriction.LevelLetterCocycles.SaturationUnramifiedOfRingCondition
+
+@[expose] public section
 
 noncomputable section
 
@@ -181,7 +185,7 @@ theorem coef_step_of (hcase : Formalism.MainNotions.LiftingTheory.CaseA W) (hP9 
   · rw [hh]
     exact mul_mem (pow_mem hwiΔ _) (sub_mem (add_mem (add_mem hg2 (mul_mem hg ht))
       (mul_mem (mul_mem (mul_mem hπ hQΔ) hg2) ht)) (mul_mem hg hZΔ))
-  · rw [← hC, hfin2, map_add]
+  · rw [← hC, hfin2, map_add (f := _)]
     ring
 
 end Formalism.MainNotions.N.FrobeniusPowerSeries

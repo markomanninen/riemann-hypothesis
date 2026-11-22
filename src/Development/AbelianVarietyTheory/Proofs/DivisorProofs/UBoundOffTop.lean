@@ -1,11 +1,16 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.LocalQuadraticParts
-import Formalism.SharpRestriction.GrowthBounds.WeilJacquetShalikaLaw
-import Formalism.SharpRestriction.GlobalSchurBounds.MainIn
-import Formalism.QuotientMetricDivisors.FinalW
-import Formalism.QuotientMetricDivisors.SixthReductionExplicit
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDegreeGapBound
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.LocalQuadraticParts
+public import Formalism.SharpRestriction.GrowthBounds.WeilJacquetShalikaLaw
+public import Formalism.SharpRestriction.GlobalSchurBounds.MainIn
+public import Formalism.QuotientMetricDivisors.FinalW
+public import Formalism.QuotientMetricDivisors.SixthReductionExplicit
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDegreeGapBound
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.DV Formalism.MainNotions NumberField Classical
 
 namespace GlobalTheory.LevelLoss

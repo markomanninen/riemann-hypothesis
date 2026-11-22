@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.JointSmooth
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EventuallyFinEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.JointSmooth
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EventuallyFinEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,19 +62,19 @@ theorem main : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D), (∀
     refine ⟨∑ x ∈ c.support, ∑ y ∈ c'.support, Finsupp.single (x + y) (c x * c' y * ψ (symplOH S T x y)), ?_,
       fun f => ?_⟩
     · intro w hw
-      have h1 := Finsupp.support_finset_sum hw
+      have h1 := Finsupp.support_finsetSum hw
       rw [Finset.mem_biUnion] at h1
       obtain ⟨x, hx, hw2⟩ := h1
-      have h2 := Finsupp.support_finset_sum hw2
+      have h2 := Finsupp.support_finsetSum hw2
       rw [Finset.mem_biUnion] at h2
       obtain ⟨y, hy, hw3⟩ := h2
       have h3 := Finsupp.support_single_subset hw3
       rw [Finset.mem_singleton] at h3
       exact ⟨x, hx, y, hy, h3⟩
     · rw [comb_comb, comb_eq_sum]
-      rw [← Finsupp.sum_finset_sum_index (fun u => zero_smul ℂ (heisO ψ S T u f)) (fun u a b => add_smul a b (heisO ψ S T u f))]
+      rw [← Finsupp.sum_finsetSum_index (fun u => zero_smul ℂ (heisO ψ S T u f)) (fun u a b => add_smul a b (heisO ψ S T u f))]
       refine Finset.sum_congr rfl fun x _ => ?_
-      rw [← Finsupp.sum_finset_sum_index (fun u => zero_smul ℂ (heisO ψ S T u f)) (fun u a b => add_smul a b (heisO ψ S T u f))]
+      rw [← Finsupp.sum_finsetSum_index (fun u => zero_smul ℂ (heisO ψ S T u f)) (fun u a b => add_smul a b (heisO ψ S T u f))]
       refine Finset.sum_congr rfl fun y _ => ?_
       rw [Finsupp.sum_single_index (zero_smul ℂ (heisO ψ S T (x + y) f)), GlobalTheory.WeilVacMove.heisO_heisO, smul_smul]
   · rw [comb_comb, comb_comb, Finset.sum_comm]

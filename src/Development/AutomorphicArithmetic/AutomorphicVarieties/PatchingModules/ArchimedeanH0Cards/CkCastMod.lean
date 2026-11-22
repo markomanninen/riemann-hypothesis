@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.ObstructionBoundFromDuality
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.ScalQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.CardOfAddEquiv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.DecSplit
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.ObstructionBoundFromDuality
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.ScalQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.CardOfAddEquiv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.DecSplit
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.Pa.B2
 
 noncomputable section
@@ -63,12 +68,12 @@ private theorem ck_castMod (l : ℕ) [Fact l.Prime] (x : ℤ_[l]) :
     ext y
     obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.1 (PadicInt.appr_spec 1 y)
     rw [sub_add_cancel y (PadicInt.appr y 1 : ℤ_[l]) |>.symm, ← hc]
-    simp only [map_add, map_mul, map_pow, map_natCast]
+    simp only [map_add (f := _), map_mul, map_pow, map_natCast]
     rw [ZMod.natCast_self]; simp
   exact RingHom.congr_fun h x
 
-open GlobalTheory.Published GlobalTheory.Published.PoitouTate in
 
+open GlobalTheory.Published GlobalTheory.Published.PoitouTate in
 private theorem ck_pt (hP : GlobalTheory.Published.PoitouTateNormalised) (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Algebra F Ω]
     [IsAlgClosure F Ω] (l : ℕ) [Fact l.Prime] (h2 : l ≠ 2) (S : Set (HeightOneSpectrum (𝓞 F))) (hf : S.Finite)
     (hS : ∀ v : HeightOneSpectrum (𝓞 F), ((l : ℕ) : 𝓞 F) ∈ v.asIdeal → v ∈ S)
@@ -130,7 +135,10 @@ private theorem ck_pt (hP : GlobalTheory.Published.PoitouTateNormalised) (F Ω :
       show c (y.1 (M.ρ g m)) = _ * c (y.1 m)
       rw [← e, map_mul, ← ck_castMod]
       rfl
-    · refine Subtype.ext (TDual.ext fun m => c.injective ?_)
+    · apply Subtype.ext
+      apply LinearMap.ext
+      intro m
+      apply c.injective
       exact DFunLike.congr_fun (congrArg Subtype.val h) m
 
 end UpperTheory.V.Pa.B2

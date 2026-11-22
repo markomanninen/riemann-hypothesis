@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ConjInv
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ConjInv
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,8 @@ def sZ (D : Dat ℚ E) (z : (A E)ˣ) : GL (Fin 2) (A E) := aE z * dM (Units.map 
 def SLP (M : Meas ℚ) (φ : GL (Fin 2) (A E) → ℂ) : ℂ := ∫ g in M.D, φ (em E (gl g)) ∂M.μ
 
 def UPer (D : Dat ℚ E) (M : Meas ℚ) (φ : GL (Fin 2) (A E) → ℂ) : ℂ := UI fun z => SLP M fun x => φ (x * sZ D z)
-variable (E) in
 
+variable (E) in
 structure MeasE where
   μ : Measure (G1 E)
   D : Set (G1 E)
@@ -49,7 +53,7 @@ def X0 : Fin 4 → ℚ := ![0, 0, 0, 1]
 def PosInv (π : TR.CuspSub ℚ 2) : Prop :=
   ∀ f ∈ π.V, ∀ s g, f.1 (GroundTheory.Automorphic.Reduction.centralSection ℚ 2 s * g) = f.1 g
 
-variable [IsTotallyComplex E] {D : Dat ℚ E} (W : Weil D) (N : MeasE E)
+variable [_root_.NumberField.IsTotallyComplex E] {D : Dat ℚ E} (W : Weil D) (N : MeasE E)
 
 def fOn (S : Set (Fin 4 → ℚ)) (ph : S4 ℚ) (φ : GL (Fin 2) (A E) → ℂ) (g : G1 ℚ) : ℂ :=
   J1 D N fun x => ThOn S (W.Om g (W.L x ph)).1 * φ x
@@ -58,9 +62,9 @@ def f0 (ph : S4 ℚ) (φ : GL (Fin 2) (A E) → ℂ) (g : G1 ℚ) : ℂ := J1 D 
 
 end Objects
 
-def All (Q : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (D : Dat ℚ E), Weil D → Meas ℚ → MeasE E → CuspSub E 2 → Prop) :
+def All (Q : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (D : Dat ℚ E), Weil D → Meas ℚ → MeasE E → CuspSub E 2 → Prop) :
     Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (D : Dat ℚ E) (W : Weil D) (M : Meas ℚ) (N : MeasE E) (P : CuspSub E 2),
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (D : Dat ℚ E) (W : Weil D) (M : Meas ℚ) (N : MeasE E) (P : CuspSub E 2),
     Q E D W M N P
 
 def MeasEEx : Prop := ∀ (E : Type) [Field E] [NumberField E], Nonempty (MeasE E)
@@ -77,7 +81,7 @@ def InvE : Prop := ∀ (E : Type) [Field E] [NumberField E] (N : MeasE E),
 def TorCo : Prop := ∀ (E : Type) [Field E] [NumberField E], ∃ α : G1 E → IdeleGroup E, Measurable α ∧
   (∀ u h, α (nU u * h) = α h) ∧ ∀ t h, α (mD t * h) = t * α h
 
-def SzLaws : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (D : Dat ℚ E),
+def SzLaws : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (D : Dat ℚ E),
   (∀ z z', sZ D (z * z') = sZ D z * sZ D z') ∧ Continuous (sZ D) ∧ (∀ z, nu ℚ (sZ D z) = 1) ∧ (∀ h : G1 E, nu ℚ (gl h) = 1) ∧
   (∀ z, D.act (sZ D z) (rp X0) = rp X0) ∧ (∀ g : G1 ℚ, D.act (em E (gl g)) (rp X0) = rp X0) ∧
   (∀ e : Eˣ, ∃ γ, sZ D (IdeleGroup.diagonal E e) = ratGL E 2 γ) ∧
@@ -85,7 +89,7 @@ def SzLaws : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex 
   (∀ z, sZ D z = Matrix.GeneralLinearGroup.scalar (Fin 2) z * em E (dM (ideleNorm ℚ E z)⁻¹)) ∧
   (∀ x, nu ℚ x = 1 → ∀ v, q4 D.δ (D.act x v) = q4 D.δ v) ∧ ∀ ξ, q4 D.δ (rp ξ) = rt (qr D.δ ξ)
 
-def LatSum : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (D : Dat ℚ E) (K : Set (Fin 4 → FiniteAdeleRing (𝓞 ℚ) ℚ))
+def LatSum : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (D : Dat ℚ E) (K : Set (Fin 4 → FiniteAdeleRing (𝓞 ℚ) ℚ))
   (C : Set (GL (Fin 2) (A E))) (c : ℝ) (s : ℕ), IsCompact K → IsCompact C → (∀ k ∈ C, nu ℚ k = 1) → 0 < c →
     ∃ (n r : ℕ) (B : ℝ), ∀ (a : (A ℚ)ˣ) u (b : (A E)ˣ), ∀ k ∈ C, c ≤ ab a → c ≤ ab b →
       (Summable fun ξ : Fin 4 → ℚ => wt K n fun i => (a : A ℚ) * D.act (gl (nU u * mD b) * k)⁻¹ (rp ξ) i) ∧
@@ -93,7 +97,7 @@ def LatSum : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex 
       ∑' ξ : {ξ : Fin 4 → ℚ // qr D.δ ξ ≠ 0}, (wt K n fun i => (a : A ℚ) * D.act (gl (nU u * mD b) * k)⁻¹ (rp ξ.1) i) ≤
         B * (ab a)⁻¹ ^ s * ab b ^ r
 
-def DecE : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (P : CuspSub E 2), ∀ φ ∈ P.V,
+def DecE : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (P : CuspSub E 2), ∀ φ ∈ P.V,
   Pp.Lf φ.1 ∧ (∀ g, ∫ b in fundamentalSet E, φ.1 (gl (nU b) * g) ∂(adeleMeasure E) = 0) ∧
   ∀ C : Set (GL (Fin 2) (A E)), IsCompact C → ∀ c : ℝ, 0 < c → ∀ r : ℕ,
     ∃ B : ℝ, ∀ b a, ∀ k ∈ C, c ≤ ab a → ‖φ.1 (gl (nU b * mD a) * k)‖ ≤ B * (ab a)⁻¹ ^ r
@@ -110,14 +114,14 @@ def ThCont : Prop := All fun E _ _ _ D W _ _ _ => ∀ ph ∈ Fock D.δ, ∀ S : 
 
 def MeanZero : Prop := All fun _ _ _ _ _ _ _ N P => ∀ φ ∈ P.V, ∀ y, (mean N fun x => φ.1 (x * y)) = 0
 
-def Orb1 : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (D : Dat ℚ E),
+def Orb1 : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (D : Dat ℚ E),
   (∀ γ : SpecialLinearGroup (Fin 2) E, ∃ ρ : (Fin 4 → ℚ) ≃ₗ[ℚ] (Fin 4 → ℚ), ∀ ξ, D.act (gl (ratS E γ)) (rp ξ) = rp (ρ ξ)) ∧
   (∀ ξ, ξ ≠ 0 → qr D.δ ξ = 0 → ∃ (γ : SpecialLinearGroup (Fin 2) E) (r : ℚ), r ≠ 0 ∧ rp ξ = D.act (gl (ratS E γ)) (rp ![0, r, 0, 0])) ∧
   (∀ (γ : SpecialLinearGroup (Fin 2) E) (r r' : ℚ), r ≠ 0 → D.act (gl (ratS E γ)) (rp ![0, r, 0, 0]) = rp ![0, r', 0, 0] → γ 1 0 = 0) ∧
   (∀ γ : SpecialLinearGroup (Fin 2) E, γ 1 0 = 0 → ∃ c : ℚ, c ≠ 0 ∧ ∀ r, D.act (gl (ratS E γ)) (rp ![0, r, 0, 0]) = rp ![0, c * r, 0, 0]) ∧
   ∀ (u : A E) (r : ℚ), D.act (gl (nU u)) (rp ![0, r, 0, 0]) = rp ![0, r, 0, 0]
 
-def OrbS : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (D : Dat ℚ E),
+def OrbS : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (D : Dat ℚ E),
   (∀ ξ, qr D.δ ξ = qr D.δ X0 → ∃ γ : SpecialLinearGroup (Fin 2) E, rp ξ = D.act (gl (ratS E γ)) (rp X0)) ∧
   (∀ h : G1 E, D.act (gl h) (rp X0) = rp X0 ↔ ∃ g : G1 ℚ, gl h = em E (gl g)) ∧
   ∀ γ : SpecialLinearGroup (Fin 2) E, D.act (gl (ratS E γ)) (rp X0) = rp X0 ↔ ∃ g, gl (ratS E γ) = em E (gl (ratS ℚ g))
@@ -150,7 +154,7 @@ def MomKill : Prop := ∀ (δ : ℚ), δ < 0 → ∀ (Y : Type) [MeasurableSpace
   (∀ ph ∈ Fock δ, ∫ y, ph.1 (p y) * w y ∂m = 0) →
   ∀ Ψ : V4 ℚ → ℂ, Measurable Ψ → Integrable (fun y => Ψ (p y) * w y) m → ∫ y, Ψ (p y) * w y ∂m = 0
 
-def OrbFn : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (D : Dat ℚ E) (M : Meas ℚ) (j : G1 ℚ →* G1 E),
+def OrbFn : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (D : Dat ℚ E) (M : Meas ℚ) (j : G1 ℚ →* G1 E),
   (∀ g, gl (j g) = em E (gl g)) → ∀ c : G1 E → ℂ, Continuous c → HasCompactSupport c →
     ∃ Ψ : V4 ℚ → ℂ, Measurable Ψ ∧ ∀ h : G1 E, Ψ (D.act (gl h)⁻¹ (rp X0)) = ∫ g, c (j g * h) ∂M.μ
 

@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumLieCoord
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumLieCoord
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,7 +11,7 @@ open scoped ContDiff
 
 namespace GlobalTheory.SmOfDeriv
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 def compLmul (ℓ : Lie E a →L[ℝ] ℂ) : Lie E a →L[ℝ] (Lie E a →L[ℝ] ℂ) :=
   LinearMap.toContinuousLinearMap
@@ -70,7 +74,7 @@ theorem hasFDerivAt_chart {f : GA E a → ℂ} {ι : Type} [Fintype ι] {fs : ι
   rw [chart_val]
   rfl
 
-theorem mem_Sm_of_hasFDerivAt : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (K : Set (GA E a → ℂ)),
+theorem mem_Sm_of_hasFDerivAt : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (K : Set (GA E a → ℂ)),
     (∀ f ∈ K, ∃ (ι : Type) (_ : Fintype ι) (fs : ι → GA E a → ℂ) (ℓ : ι → (Lie E a →L[ℝ] ℂ)), (∀ i, fs i ∈ K) ∧
       ∀ g, HasFDerivAt (chart f g) (∑ i, fs i g • ℓ i) (oneL E a)) → ∀ f ∈ K, f ∈ Sm E a := by
   intro E _ _ _ a K hK

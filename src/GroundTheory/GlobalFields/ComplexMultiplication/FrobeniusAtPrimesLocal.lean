@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.IsogenyDegreeOne
-import GroundTheory.GlobalFields.ComplexMultiplication.ReductionNumberField
-import GroundTheory.GlobalFields.ComplexMultiplication.GoodReductionAlmostAll
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.IsogenyDegreeOne
+public import GroundTheory.GlobalFields.ComplexMultiplication.ReductionDifferential
+public import GroundTheory.GlobalFields.ComplexMultiplication.GoodReductionAlmostAll
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

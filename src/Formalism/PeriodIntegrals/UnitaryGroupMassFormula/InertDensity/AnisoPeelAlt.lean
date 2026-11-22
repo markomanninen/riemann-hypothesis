@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.SiegelMassRatios.DensExact
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.SiegelMassRatios.DensExact
+
+@[expose] public section
 
 open Finset
 
@@ -31,9 +35,11 @@ def Fr (q : ℕ) : ℕ → ℕ → ℕ → ℤ
   | d, r + 1, c => valN q d * Fr q (d - 1) r c
   | d, 0, c + 1 => (valZ q d - 1) * (q : ℤ) ^ (2 * c) * Fr q (d - 2) 0 c
 
-open Classical in
 
-def ValCount : Prop :=
+open Classical in
+def ValCount : Prop := by
+  classical
+  exact
   ∀ (K L : Type) [Field K] [Fintype K] [Field L] [Fintype L] [Algebra K L],
     Module.finrank K L = 2 →
     ∀ (n : ℕ) (M : Matrix (Fin n) (Fin n) L) (W : Submodule L (Fin n → L)),

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.NormOneInfinite
 
@@ -49,7 +53,7 @@ theorem normOne_infinite {F E : Type} [Field F] [Field E] [CharZero E] [Algebra 
   · intro n
     change ((n : E) + (x - c x)) / ((n : E) - (x - c x)) *
       c (((n : E) + (x - c x)) / ((n : E) - (x - c x))) = 1
-    rw [map_div₀, map_add, map_sub c (n : E) (x - c x), hcn, hcd]
+    rw [map_div₀, map_add (f := _), map_sub c (n : E) (x - c x), hcn, hcd]
     have h4 : (n : E) + -(x - c x) = (n : E) - (x - c x) := by ring
     have h5 : (n : E) - -(x - c x) = (n : E) + (x - c x) := by ring
     rw [h4, h5, div_mul_div_comm, mul_comm ((n : E) - (x - c x))]

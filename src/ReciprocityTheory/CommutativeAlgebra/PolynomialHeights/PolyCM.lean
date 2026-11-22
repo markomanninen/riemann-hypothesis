@@ -1,5 +1,9 @@
-import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.PolySeq
-import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.RingKrullDimLocalizationQuotientEqHeight
+module
+
+public import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.PolySeq
+public import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.RingKrullDimLocalizationQuotientEqHeight
+
+@[expose] public section
 
 namespace ReciprocityTheory.CA
 
@@ -19,7 +23,7 @@ theorem isCM_localization_mvPolynomial {P : Type*} [CommRing P] [IsLocalRing P] 
     calc (𝔑.height : WithBot ℕ∞) ≤ ringKrullDim (MvPolynomial (Fin N) P) :=
           Ideal.height_le_ringKrullDim_of_ne_top (Ideal.IsMaximal.ne_top ‹_›)
       _ = ringKrullDim P + N := by
-          rw [MvPolynomial.ringKrullDim_of_isNoetherianRing, Nat.card_eq_fintype_card,
+          rw [MvPolynomial.ringKrullDim_of_isNoetherianRing_of_finite, Nat.card_eq_fintype_card,
             Fintype.card_fin]
   have hht : (𝔑.height : WithBot ℕ∞) = ((n + N : ℕ) : WithBot ℕ∞) := by
     apply le_antisymm

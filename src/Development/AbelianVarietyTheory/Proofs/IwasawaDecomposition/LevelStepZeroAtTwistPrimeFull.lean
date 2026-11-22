@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsAdmissibleIntegralBasisChangeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsAdmissibleIntegralBasisChangeOne
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.Col Formalism.L2.DIV GlobalTheory.QNormal GlobalTheory.Mem.Col2.IdxEx
 
 namespace GlobalTheory.Mem.Col2.IdxExZeroQ
@@ -19,8 +24,8 @@ theorem parL_self (q kj n c : ℕ) (h : n ≤ kj) : LocE.parL P q kj n c = stdAt
 theorem lamY_zero (q n c : ℕ) : LocE.lamY P q n c 0 = stdAt E (n + c) P :=
   Submodule.ext fun _ => GlobalTheory.GO.ChRoot.mem_lamY_zero
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem lamQB_empty {K : Type} [Field K] (ξ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) (kj n : ℕ) (hn : n ≤ kj) {N : ℕ}
     (h : HomE E N N) : LocE.lamQB ξ kj n h = 1 := by
   unfold LocE.lamQB
@@ -28,7 +33,7 @@ theorem lamQB_empty {K : Type} [Field K] (ξ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ
   have h1 : redP P (1 : E) = 1 := by simpa using reduction_coe P 1
   rw [Matrix.det_isEmpty]
   unfold LocE.unitV
-  rw [dif_pos (by rw [h1]; exact isUnit_one)]
+  rw [dite_eq_left (by rw [h1]; exact isUnit_one)]
   have : ∀ hu : IsUnit (redP P (1 : E)), hu.unit = 1 := fun hu => Units.ext (by simp [h1])
   rw [this, map_one]
   simp

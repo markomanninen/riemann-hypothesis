@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SplitPart
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CongAt
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MemPrinCongOfSm
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LastTwoStepsGuarded
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmulCompSmul
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SplitPart
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CongAt
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MemPrinCongOfSm
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LastTwoStepsGuarded
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmulCompSmul
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
+
+@[expose] public section
 
 noncomputable section
 
@@ -118,7 +122,8 @@ theorem lift_cong {g : GL (Fin n) (AfE F E)} {p : DecoF E n ST SG Q} (h : IsPtOf
     exact CharValCompare.val_of_notMem hs
   have e : adAt F w.1 (Col2.pullV g (s • f (Pi.single j 1)) i) =
       algebraMap E (w.1.adicCompletion E) (algebraMap (𝓞 E) E s) * (locM w.1 g⁻¹ * ratM w.1 f) i j := by
-    simp only [Col2.pullV, Matrix.mulVec, dotProduct, map_sum, map_mul, adAt_inclE, Matrix.mul_apply, Finset.mul_sum, Pi.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Col2.pullV, Matrix.mulVec, dotProduct, map_sum, map_mul, adAt_inclE, Matrix.mul_apply, Finset.mul_sum, Pi.smul_apply,
       Algebra.smul_def]
     exact Finset.sum_congr rfl fun l _ => by rw [mul_left_comm]; rfl
   have h6 := Valuation.map_add_lt _ h2 h4
@@ -130,8 +135,8 @@ theorem lift_cong {g : GL (Fin n) (AfE F E)} {p : DecoF E n ST SG Q} (h : IsPtOf
 def homM (P : HeightOneSpectrum (𝓞 E)) (x : HomE E a b) : Matrix (Fin b) (Fin a) (P.adicCompletion E) :=
   (LinearMap.toMatrix' x).map (algebraMap E (P.adicCompletion E))
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem ratM_mul_homM (P : HeightOneSpectrum (𝓞 E)) (f : Sp E a ≃ₗ[E] Sp E a) (f' : Sp E b ≃ₗ[E] Sp E b) (x : HomE E a b) :
     ratM P f' * homM P (inFr f f' x) = homM P x * ratM P f := by
   have e : ∀ {m : ℕ} (g : Sp E m ≃ₗ[E] Sp E m), ratM P g = homM P g.toLinearMap := fun g => by
@@ -154,8 +159,8 @@ theorem mem_homS_iff (P : HeightOneSpectrum (𝓞 E)) (x : HomE E a b) :
     have := h i j
     rwa [e, valued_algebraMap, ← CharValCompare.intAt_iff] at this
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem val_le_q {P : HeightOneSpectrum (𝓞 E)} (hq : ((qOf P : ℕ) : 𝓞 E) ∉ P.asIdeal ^ 2) {z : WithZero (Multiplicative ℤ)}
     (hz : z < 1) : z ≤ P.valuation E ((qOf P : ℕ) : E) := by
   have e : P.valuation E ((qOf P : ℕ) : E) = P.intValuation ((qOf P : ℕ) : 𝓞 E) := by
@@ -275,7 +280,7 @@ theorem psiAt_frames (hX : X.Ok) (hPr : Pr.Ok) (hL : L.Ok Ch sel mu cst G m2) (a
   rw [psiAt_cosetIn hL al P hP p' q' h]
   have hlift : ∀ {j : ℕ} (r : ChPt (R := R) sel mu u j), IsLiftFr r.deco.1 ⟨P.1, hP⟩ (frsF sel mu r P) := fun r => by
     unfold frsF
-    rw [dif_pos hP]
+    rw [dite_eq_left hP]
     exact liftFr_spec r.deco.2 _
   have key := frames_cong (P := P.1) (k := k) (y := y) (k' := k') (y' := y')
     (f := frsF sel mu p.1.1 P) (g := frsF sel mu q.1.1 P) (f' := frsF sel mu p'.1.1 P) (g' := frsF sel mu q'.1.1 P)
@@ -303,7 +308,8 @@ theorem lt_of_congAt {B : Base} {a b : ℕ} {P : HeightOneSpectrum (𝓞 B.host.
   intro r s
   refine lt_of_le_of_lt (le_of_eq_of_le ?_ (hx r s)) hv
   congr 1
-  simp only [Matrix.sub_apply, Matrix.mul_apply, map_sub, map_sum, map_mul, Matrix.map_apply, adAt_inclE, ColAd.locM, homM]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.sub_apply, Matrix.mul_apply, map_sub, map_sum, map_mul, Matrix.map_apply, adAt_inclE, ColAd.locM, homM]
 
 end Cong
 

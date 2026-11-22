@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSncModel
-import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffAtOfIsPotential
-import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeInhab
-import ReciprocityTheory.AnalyticForms.LeviForms.TailBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedB
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LeviPullEq
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSncModel
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffAtOfIsPotential
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeInhab
+public import ReciprocityTheory.AnalyticForms.LeviForms.TailBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedB
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LeviPullEq
+
+@[expose] public section
 
 noncomputable section
 

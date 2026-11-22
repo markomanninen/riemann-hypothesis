@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
+
+@[expose] public section
+
 open IsLocalRing GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.Poinc
 
 namespace GlobalTheory.Poinc
@@ -18,7 +23,7 @@ theorem eq_refl_of_isometry_congMod : ∀ (X : Type) [AddCommGroup X] [Module.Fr
     have h2 : β (e x - x) (e x - x) = (N : ℤ) * ((N : ℤ) * β (u x) (u x)) := by
       rw [show e x - x = N • u x by rw [hu x]; abel]
       simp only [map_nsmul, LinearMap.smul_apply, nsmul_eq_mul]
-    simp only [map_add, map_sub, LinearMap.add_apply, LinearMap.sub_apply, he x x] at h1 h2
+    simp only [map_add (f := _), map_sub, LinearMap.add_apply, LinearMap.sub_apply, he x x] at h1 h2
     have hc := hpos x hx
     have hd := hQ0 (u x)
     have hN' : (3 : ℤ) ≤ N := by exact_mod_cast hN
@@ -57,7 +62,7 @@ theorem eq_refl_of_isometry_congMod : ∀ (X : Type) [AddCommGroup X] [Module.Fr
   set x := u^[Nat.find hex - 2] y
   have key := he x (u x)
   rw [hu x, hu (u x), huux] at key
-  simp only [smul_zero, add_zero, map_add, map_nsmul, LinearMap.add_apply, LinearMap.smul_apply,
+  simp only [smul_zero, add_zero, map_add (f := _), map_nsmul, LinearMap.add_apply, LinearMap.smul_apply,
     nsmul_eq_mul] at key
   have hp := hpos (u x) hux
   have hN0 : (0 : ℤ) < N := by exact_mod_cast (show 0 < N by omega)

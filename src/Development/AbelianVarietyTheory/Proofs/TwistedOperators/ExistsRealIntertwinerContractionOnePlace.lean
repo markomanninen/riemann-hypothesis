@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqMulProdOfPartial
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiscreteSeriesPureInnerProductsTensorProduct
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubstitutionTotalDegreeLe
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqMulProdOfPartial
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiscreteSeriesPureInnerProductsTensorProduct
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubstitutionTotalDegreeLe
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Matrix GlobalTheory.Chain GlobalTheory.Chain.RealIt GlobalTheory.Chain.RealLine
 open scoped TensorProduct InnerProductSpace
@@ -102,7 +106,7 @@ theorem exists_ctr (M : DSModel V S) (τ : D.what₂.Tau) (w : ∀ ρ, M.H ρ) :
         congr 1
         exact Finset.prod_congr rfl fun ρ hρ => by rw [Function.update_of_ne (Finset.ne_of_mem_erase hρ)]
       simp only [e, Function.update_of_ne (Ne.symm h), inner_smul_right, mul_assoc, mul_smul]
-  let m : MultilinearMap ℂ (fun ρ => M.H ρ) (M.H τ) :=
+  let m : MultilinearMap (RingHom.id ℂ) (fun ρ => M.H ρ) (M.H τ) :=
     { toFun := fun z => (∏ ρ ∈ Finset.univ.erase τ, ⟪w ρ, z ρ⟫_ℂ) • z τ
       map_update_add' := fun z i x y => by convert hadd z i x y
       map_update_smul' := fun z i a x => by convert hsmul z i a x }
@@ -234,7 +238,7 @@ theorem exists_semiW : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPar
       rw [e]
       exact hL.1 X hXm φ z
     have h2 := hX τ X hXm φ _ hder (PiTensorProduct.tprod ℂ (Function.update v τ y)) (Function.update w τ u)
-    convert h2 using 1
+    convert (preTransparency := .reducible) h2 using 1
     · funext t
       rw [hA, ← hcg, hc]
     · rw [hA, hc]

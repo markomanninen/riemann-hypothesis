@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.SecondIsoComponentLinearOf
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.SecondIsoComponentLinearOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,7 @@ include hs
 theorem zzMinus_firstProj (Zh : Matrix (Fin (r + 1)) (Fin (r + 1)) E) (T T' : F) :
     (ZZm g Zh T T').map (p1 g) = (g.q : F)⁻¹ • Zh.map (p1 g) := by
   ext b a
-  simp only [ZZm, Matrix.map_apply, Matrix.add_apply, Matrix.of_apply, map_add, Matrix.smul_apply,
+  simp only [ZZm, Matrix.map_apply, Matrix.add_apply, Matrix.of_apply, map_add (f := _), Matrix.smul_apply,
     smul_eq_mul, adeleInfiniteComponent_apply]
   rw [zz_comp hs, e_cor]
   simp only [ind, AlgEquiv.apply_symm_apply]
@@ -61,7 +65,7 @@ theorem zzMinus_firstProj (Zh : Matrix (Fin (r + 1)) (Fin (r + 1)) E) (T T' : F)
 theorem zzMinus_secondProj (Zh : Matrix (Fin (r + 1)) (Fin (r + 1)) E) (T T' : F) :
     (ZZm g Zh T T').map (p2 g) = -(g.q : F)⁻¹ • (Zh.map (p2 g)).transpose := by
   ext b a
-  simp only [ZZm, Matrix.map_apply, Matrix.add_apply, Matrix.of_apply, map_add, Matrix.smul_apply,
+  simp only [ZZm, Matrix.map_apply, Matrix.add_apply, Matrix.of_apply, map_add (f := _), Matrix.smul_apply,
     smul_eq_mul, adele_ext_components, Matrix.transpose_apply]
   rw [zz_comp hs, e_cor]
   simp only [ind, AlgEquiv.apply_symm_apply]
@@ -100,7 +104,8 @@ theorem lastCoordinate_firstProj {Zh : Matrix (Fin (r + 1)) (Fin (r + 1)) E} (hZ
     (l : Fin (r + 1) → M.R) :
     p1 g (laG (ZZm g Zh T T') l) = ∑ b, (g.q : F) * (Zh.map (p1 g))⁻¹ (Fin.last r) b * p1 g (l b) := by
   have hq := q_ne g
-  simp only [laG, Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [laG, Matrix.mulVec, dotProduct, map_sum, map_mul]
   refine Finset.sum_congr rfl fun b _ => ?_
   have h := congrFun (congrFun (map_inv_of (p1 g) _ (zm_unit hs hZh T T')) (Fin.last r)) b
   rw [Matrix.map_apply] at h
@@ -110,7 +115,8 @@ theorem lastCoordinate_secondProj {Zh : Matrix (Fin (r + 1)) (Fin (r + 1)) E} (h
     (l : Fin (r + 1) → M.R) :
     p2 g (laG (ZZm g Zh T T') l) = ∑ b, -(g.q : F) * (Zh.map (p2 g))⁻¹ b (Fin.last r) * p2 g (l b) := by
   have hq := q_ne g
-  simp only [laG, Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [laG, Matrix.mulVec, dotProduct, map_sum, map_mul]
   refine Finset.sum_congr rfl fun b _ => ?_
   have h := congrFun (congrFun (map_inv_of (p2 g) _ (zm_unit hs hZh T T')) (Fin.last r)) b
   rw [Matrix.map_apply] at h
@@ -119,13 +125,15 @@ theorem lastCoordinate_secondProj {Zh : Matrix (Fin (r + 1)) (Fin (r + 1)) E} (h
 
 theorem lambda_firstProj {Zh : Matrix (Fin (r + 1)) (Fin (r + 1)) E} (hZh : IsUnit Zh.det) (y : Fin (r + 1) → E) :
     p1 g (lamC Zh y) = ∑ b, (Zh.map (p1 g))⁻¹ (Fin.last r) b * p1 g (y b) := by
-  simp only [lamC, Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [lamC, Matrix.mulVec, dotProduct, map_sum, map_mul]
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [← map_inv_of (p1 g) _ hZh, Matrix.map_apply]
 
 theorem lambda_secondProj {Zh : Matrix (Fin (r + 1)) (Fin (r + 1)) E} (hZh : IsUnit Zh.det) (y : Fin (r + 1) → E) :
     p2 g (lamC Zh y) = ∑ b, (Zh.map (p2 g))⁻¹ (Fin.last r) b * p2 g (y b) := by
-  simp only [lamC, Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [lamC, Matrix.mulVec, dotProduct, map_sum, map_mul]
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [← map_inv_of (p2 g) _ hZh, Matrix.map_apply]
 
@@ -137,13 +145,15 @@ theorem secondProj_conj_split (x : E) : p2 g ((M.L.cj : E →+* E) x) = p1 g x :
 
 theorem lambdaStar_firstProj {Zh : Matrix (Fin (r + 1)) (Fin (r + 1)) E} (hZh : IsUnit Zh.det) (y : Fin (r + 1) → E) :
     p1 g (lamStarC (M.L.cj : E →+* E) Zh y) = ∑ b, (Zh.map (p2 g))⁻¹ b (Fin.last r) * p1 g (y b) := by
-  simp only [lamStarC, map_sum, map_mul, firstProj_conj_split hs]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [lamStarC, map_sum, map_mul, firstProj_conj_split hs]
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [← map_inv_of (p2 g) _ hZh, Matrix.map_apply]
 
 theorem lambdaStar_secondProj {Zh : Matrix (Fin (r + 1)) (Fin (r + 1)) E} (hZh : IsUnit Zh.det) (y : Fin (r + 1) → E) :
     p2 g (lamStarC (M.L.cj : E →+* E) Zh y) = ∑ b, (Zh.map (p1 g))⁻¹ b (Fin.last r) * p2 g (y b) := by
-  simp only [lamStarC, map_sum, map_mul, secondProj_conj_split hs]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [lamStarC, map_sum, map_mul, secondProj_conj_split hs]
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [← map_inv_of (p1 g) _ hZh, Matrix.map_apply]
 

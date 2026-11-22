@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VecPairApply
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalDualityFiniteDiscreteModules
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VecPairApply
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalDualityFiniteDiscreteModules
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,10 +17,10 @@ theorem exists_dual_equiv {n : ℕ} [NeZero n] {M : Type} [AddCommGroup M] [Modu
     (h1 : ∀ x, (∀ y, P x y = 0) → x = 0) (h2 : ∀ y, (∀ x, P x y = 0) → y = 0) :
     ∃ e : M' ≃+ TDual (ZMod n) M, ∀ y x, e y x = P x y := by
   let f : M' →+ TDual (ZMod n) M := AddMonoidHom.mk'
-    (fun y => TDual.mk ((P.flip y).toZModLinearMap n)) (fun y y' => by ext x; simp)
+    (fun y => TDual.mk ((P.flip y).toZModLinearMap n)) (fun y y' => by refine DFunLike.ext _ _ fun x => ?_; simp)
   have hf : ∀ y x, f y x = P x y := fun _ _ => rfl
   have inj : Function.Injective f := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro y hy
     refine h2 y fun x => ?_
     rw [← hf, hy]
@@ -40,7 +44,7 @@ theorem dual_equivariant {n : ℕ} {Λ D : Type} [CommRing Λ] [Group D]
     (ρ : Representation Λ D M) (ρ' : Representation Λ D M') (P : M →+ M' →+ ZMod n) (χ : D →* (ZMod n)ˣ)
     (hP : ∀ g x y, P (ρ g x) (ρ' g y) = (χ g : ZMod n) * P x y) (e : M' ≃+ TDual (ZMod n) M)
     (he : ∀ y x, e y x = P x y) (g : D) (y : M') : e (ρ' g y) = twDual χ (zmodRep n ρ) g (e y) := by
-  ext x
+  refine DFunLike.ext _ _ fun x => ?_
   rw [twDual_apply, he, he]
   change _ = _ * P (ρ g⁻¹ x) y
   rw [← hP, ← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply]
@@ -56,18 +60,18 @@ variable {R R' : Type} [CommRing R] [CommRing R'] {D : Type} [Group D] [Topologi
 private def cocycleTransport : Z1 ρ ≃+ Z1 ρ' where
   toFun z := ⟨fun g => e (z.1 g), continuous_of_discreteTopology.comp z.2.1, fun g h => by
     beta_reduce
-    rw [z.2.2, map_add, he]⟩
+    rw [z.2.2, map_add (f := _), he]⟩
   invFun z := ⟨fun g => e.symm (z.1 g), continuous_of_discreteTopology.comp z.2.1, fun g h => by
     apply e.injective
-    rw [map_add, he]
+    rw [map_add (f := _), he]
     simp only [AddEquiv.apply_symm_apply]
     exact z.2.2 g h⟩
   left_inv z := Subtype.ext (funext fun g => e.symm_apply_apply _)
   right_inv z := Subtype.ext (funext fun g => e.apply_symm_apply _)
   map_add' z w := Subtype.ext (funext fun g => map_add e _ _)
 
-include he in
 
+include he in
 private theorem exists_H1_transport : ∃ T : H1 ρ ≃+ H1 ρ', ∀ (z : Z1 ρ) (z' : Z1 ρ'),
     (∀ g, z'.1 g = e (z.1 g)) → T (Submodule.Quotient.mk z) = Submodule.Quotient.mk z' := by
   refine ⟨QuotientAddGroup.congr ((B1 ρ).comap (Z1 ρ).subtype).toAddSubgroup
@@ -133,7 +137,7 @@ theorem local_pair : LocalFiniteness → LocalTateDuality → LocalEulerChar →
         (x.2.1.prodMk (hρ'.comp (continuous_id.prodMk continuous_const)))).neg
     · beta_reduce
       rw [mul_neg, ← hP, x.2.2, hm, map_mul, Module.End.mul_apply]
-      simp only [map_add, map_sub, AddMonoidHom.add_apply]
+      simp only [map_add (f := _), map_sub, AddMonoidHom.add_apply]
       ring
   · obtain ⟨e, he⟩ := exists_dual_equiv P h1 h2
     have hee := dual_equivariant ρ ρ' P χ hP e he

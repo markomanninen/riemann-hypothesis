@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ZerosWindowIn
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.LGrowthDefs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.LGrowthFE
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ZerosWindowIn
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.LGrowthDefs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.LGrowthFE
+
+@[expose] public section
 
 noncomputable section
 

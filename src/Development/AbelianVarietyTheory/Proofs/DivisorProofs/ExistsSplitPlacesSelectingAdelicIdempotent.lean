@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIntegralSplitIdempotentOverTwo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIntegralSplitIdempotentOverTwo
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.WeilParts
 open scoped TensorProduct Topology
@@ -86,7 +90,7 @@ theorem tensor_decomp {F A E : Type} [Field F] [CommRing A] [Algebra F A] [CommR
   | add x y hx hy =>
     obtain ⟨a, b, rfl⟩ := hx
     obtain ⟨a', b', rfl⟩ := hy
-    exact ⟨a + a', b + b', by rw [map_add, map_add]; ring⟩
+    exact ⟨a + a', b + b', by rw [map_add (f := _), map_add (f := _)]; ring⟩
 
 theorem tensor_inj {F A E : Type} [Field F] [CommRing A] [Algebra F A] [Field E] [Algebra F E] :
     Function.Injective (algebraMap A (A ⊗[F] E)) :=
@@ -187,7 +191,7 @@ theorem exists_half_abstract {F T T' : Type} [Field F] [NumberField F] [CommRing
   · rintro e ⟨he1, he2, v, η, ⟨α, rfl, hα1, hα0⟩, he3⟩
     obtain ⟨a, b, hab⟩ := hdec e
     have hce : c e = j a - j b * δ := by
-      rw [hab, map_add, map_mul, hcj, hcj, hcδ]; ring
+      rw [hab, map_add (f := _), map_mul, hcj, hcj, hcδ]; ring
     have he4 : c e * c e = c e := by rw [← map_mul, he1]
     obtain ⟨B, hB⟩ : ∃ B : AF F, B = 2 * n * b := ⟨_, rfl⟩
     have hjB : j B = -δ * (e - c e) := by
@@ -209,7 +213,7 @@ theorem exists_half_abstract {F T T' : Type} [Field F] [NumberField F] [CommRing
     have hNI : (e + c e) * I = e + c e := by
       rw [he3, ← hI, ← map_mul, pair_mul, place_ext _ hα0 (y := 1) (by rw [hι, map_one]), mul_one]
     have hcc : c (c ε) = ε := by
-      rw [hcε, hε, ← hHH, ← hI, ← hS, ← hd, map_mul, map_add, map_mul, map_mul, hcj, hcj, hcj, hcδ, map_natCast]; ring
+      rw [hcε, hε, ← hHH, ← hI, ← hS, ← hd, map_mul, map_add (f := _), map_mul, map_mul, hcj, hcj, hcj, hcδ, map_natCast]; ring
     rcases mul_self_eq_mul_self_iff.1 (hB3.trans hs.symm) with hp | hp
     · right
       have : j B = (e + c e) * S := by

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartCover
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartCover
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -61,7 +66,7 @@ theorem taylor_le {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {f : E 
     fun w hw => ((hd1 w hw).hasFDerivAt.sub ℓ.hasFDerivAt).hasFDerivWithinAt
   have h2 := hconv.norm_image_sub_le_of_norm_hasFDerivWithin_le hh h1 hys hyzs
   have h3 := (Real.le_norm_self _).trans h2
-  rw [map_add, add_sub_cancel_left] at h3
+  rw [map_add (f := _), add_sub_cancel_left] at h3
   have h4 : M * ‖z‖ * ‖z‖ = M * ‖z‖ ^ 2 := by ring
   linarith
 
@@ -109,7 +114,7 @@ theorem proof : ChartTaylorCover.Statement := by
   have hVo : ∀ p, IsOpen (V p) := fun p =>
     (A.chart _).continuousOn.isOpen_inter_preimage (A.chart _).open_source isOpen_ball
   obtain ⟨t, ht⟩ := isCompact_univ.elim_finite_subcover V hVo
-    (fun p _ => mem_iUnion.2 ⟨p, hsrc p, mem_ball_self (hρ p)⟩)
+    (fun p _ => mem_iUnion.2 ⟨p, hsrc p, by exact Set.mem_preimage.mpr (mem_ball_self (hρ p))⟩)
   set Mt := ∑ p ∈ t, (|M W₀ p| + |M W₁ p|) with hMt
   have hMt0 : 0 ≤ Mt := Finset.sum_nonneg fun p _ => by positivity
   refine ⟨(∑ p ∈ t, 1 / ρ p + 1)⁻¹, inv_sum_pos t ρ hρ, Mt, (∑ p ∈ t, 1 / c p + 1)⁻¹,

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsRedMap
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsRedMap
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting GlobalTheory.PlaceTensor GlobalTheory.StepVec
 open scoped TensorProduct ComplexOrder
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -36,13 +41,13 @@ theorem omegaG_eq_prod_gLoc : ∀ (D : D7) (a b : ℕ) (L : Formalism.L2.DIV.Lev
         fun PP => (hall PP).2.choose_spec.2.1, (hmem _).2 fun PP => (hall PP).2.choose_spec.2.2⟩
     have key : ∀ PP, hG.2.choose PP = (hall PP).2.choose := fun PP =>
       Units.ext ((hG.2.choose_spec.1 PP).trans ((hall PP).2.choose_spec.1).symm)
-    rw [omegaG, dif_pos hG]
+    rw [omegaG, dite_eq_left hG]
     have hloc : ∀ PP : ↥L.Pg, gLoc L PP.1 (Hl PP) (cl PP) (χ PP.1) (y PP.1) =
         ((cl PP ⟨Formalism.L2.DIV.upperLeftBlock L.hr (hall PP).2.choose, (hall PP).2.choose_spec.2.2⟩ : ℂˣ) : ℂ) *
           (∏ i ∈ Finset.range L.s,
             ((L.cg (i + 1) PP.1 (Formalism.L2.DIV.dBlk (Formalism.L2.DIV.blkOf L.r L.t) (i + 1) (hall PP).2.choose) : ℂˣ) : ℂ)) *
           (((χ PP.1 (Matrix.GeneralLinearGroup.det (hall PP).2.choose)) : ℂˣ) : ℂ)⁻¹ := fun PP => by
-      rw [gLoc, dif_pos (hall PP)]
+      rw [gLoc, dite_eq_left (hall PP)]
     rw [Finset.prod_congr rfl fun PP _ => hloc PP]
     rw [Finset.prod_mul_distrib, Finset.prod_mul_distrib]
     have hx' : (fun PP => Formalism.L2.DIV.upperLeftBlock L.hr (hG.2.choose PP)) ∈ (Formalism.L2.DIV.LevelP.ofLocal Hl cl).H := by
@@ -66,9 +71,9 @@ theorem omegaG_eq_prod_gLoc : ∀ (D : D7) (a b : ℕ) (L : Formalism.L2.DIV.Lev
       exact hall fun PP => ⟨h1 PP.1 PP.2, g PP, hg1 PP, hg2 PP, (hmem _).1 hg3 PP⟩
     push_neg at hall
     obtain ⟨PP, hPP⟩ := hall
-    rw [omegaG, dif_neg hG]
+    rw [omegaG, dite_eq_right hG]
     refine (Finset.prod_eq_zero (Finset.mem_univ PP) ?_).symm
-    rw [gLoc, dif_neg]
+    rw [gLoc, dite_eq_right]
     rintro ⟨h1, g, hg1, hg2, hg3⟩
     exact hPP h1 g hg1 hg2 hg3
 

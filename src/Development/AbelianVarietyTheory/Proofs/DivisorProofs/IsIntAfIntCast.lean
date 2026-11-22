@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.AV GlobalTheory.AV.AbVar GlobalTheory.PDivGroup GlobalTheory.Dieu GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKMid GlobalTheory.LKGeo GlobalTheory.LKRes
@@ -50,10 +55,10 @@ theorem isIntAf_EFA (D : Datum p) {v w : AfP p ⊗[ℚ] VQ D} (hv : v ∈ LaHat 
       obtain ⟨a', x', ha', rfl⟩ := hw
       rw [EFA_tmul]; exact isIntAf_mul (isIntAf_mul ha ha') (isIntAf_intCast _)
     | zero => simpa using isIntAf_zero
-    | add u u' _ _ h h' => rw [map_add]; exact isIntAf_add h h'
+    | add u u' _ _ h h' => rw [map_add (f := _)]; exact isIntAf_add h h'
     | neg u _ h => rw [map_neg]; exact isIntAf_neg h
   | zero => simpa using isIntAf_zero
-  | add u u' _ _ h h' => rw [map_add, LinearMap.add_apply]; exact isIntAf_add h h'
+  | add u u' _ _ h h' => rw [map_add (f := _), LinearMap.add_apply]; exact isIntAf_add h h'
   | neg u _ h => rw [map_neg, LinearMap.neg_apply]; exact isIntAf_neg h
 
 section Sim
@@ -65,11 +70,11 @@ theorem bc_adj {V : Type} [AddCommGroup V] [Module ℚ V] (A : Type) [CommRing A
     B.baseChange A (f.baseChange A v) w = B.baseChange A v (g.baseChange A w) := by
   induction v using TensorProduct.induction_on with
   | zero => simp
-  | add v v' hv hv' => simp only [map_add, LinearMap.add_apply, hv, hv']
+  | add v v' hv hv' => simp only [map_add (f := _), LinearMap.add_apply, hv, hv']
   | tmul a x =>
     induction w using TensorProduct.induction_on with
     | zero => simp
-    | add w w' hw hw' => simp only [map_add, hw, hw']
+    | add w w' hw hw' => simp only [map_add (f := _), hw, hw']
     | tmul a' y => simp only [LinearMap.baseChange_tmul, LinearMap.BilinForm.baseChange_tmul, h]
 
 theorem actOn_tmul {C V : Type} [Ring C] [Algebra ℚ C] [AddCommGroup V] [Module ℚ V]
@@ -85,7 +90,7 @@ theorem EFA_actOn (L : Link D G) (X : AfP p ⊗[ℚ] G.C) (v w : AfP p ⊗[ℚ] 
     EFA D (actOn L.rep (AfP p) X v) w = EFA D v (actOn L.rep (AfP p) (starT G.star (AfP p) X).unop w) := by
   induction X using TensorProduct.induction_on with
   | zero => simp
-  | add X X' hX hX' => simp only [map_add, MulOpposite.unop_add, LinearMap.add_apply, hX, hX']
+  | add X X' hX hX' => simp only [map_add (f := _), MulOpposite.unop_add, LinearMap.add_apply, hX, hX']
   | tmul r c =>
     rw [starT_tmul, actOn_tmul, actOn_tmul, LinearMap.smul_apply, LinearMap.smul_apply, map_smul,
       LinearMap.smul_apply, map_smul]

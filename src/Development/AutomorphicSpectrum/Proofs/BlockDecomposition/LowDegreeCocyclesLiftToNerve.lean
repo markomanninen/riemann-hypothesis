@@ -1,4 +1,8 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Cup1CoboundaryMemBoundaries
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Cup1CoboundaryMemBoundaries
+
+@[expose] public section
 
 set_option autoImplicit false
 

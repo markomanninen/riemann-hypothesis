@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SemisimpleLevels.CsdSsOfFull
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.TaylorWilesObstructionBound
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.CoefficientRepTrivialOnUnramified
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SemisimpleLevels.CsdSsOfFull
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.TaylorWilesObstructionBound
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.CoefficientRepTrivialOnUnramified
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,7 +90,7 @@ structure LevPt (A : LevMod b h w) (ι : Qbar l ≃+* ℂ) : Type 1 where
   sp_act : ∀ g m, sp (A.ρ g m) = π g (sp m)
   σ : ∀ j, SmIrr (GLw n (w j))
   iso : ∀ j, IsoSum (π.comp (atJ n w j)) ⊤ (σ j)
-  lg : ∀ j (Bq : ValuationSubring Ω) (hB : IsPlaceOver Bq (w j)) (rc : IrrGL ((w j).adicCompletion L) → WD hB), IsRec hB rc →
+  lg : ∀ j (Bq : ValuationSubring Ω) (hB : IsPlaceOver Bq (w j)) (rc : IrrGL (k := (w j).adicCompletion L) → WD hB), IsRec hB rc →
     UpperTheory.V.Lev.WO ι (rep.comp V.pr) (rc (algNorm (σ j)))
 
 attribute [instance] LevPt.add LevPt.mod
@@ -94,8 +98,8 @@ attribute [instance] LevPt.add LevPt.mod
 def LevMod.Classical (A : LevMod b h w) : Prop :=
   ∃ ι : Qbar l ≃+* ℂ, ∀ m : A.P, (∀ x : LevPt A ι, x.sp m = 0) → m = 0
 
-variable (B J) in
 
+variable (B J) in
 def Level : Prop :=
   ∃ b : TWBase (pairOf B.u) J Empty (n * Module.finrank ℚ (Lp L)),
     ∀ (V : s.Lev) (h : (globOf r V).Hom (globOf r V0)) (q : ℕ) (v : Fin q → Plc (Lp L)) (w : Fin q → Plc L)
@@ -108,10 +112,5 @@ structure LocP : Prop where
   bz : GlobalTheory.Published.BernsteinZelevinskyFiniteness
   gl : GlobalTheory.Published.GeometricLemma
   tame : GlobalTheory.Published.TameLocal
-
-def HasAutOf : Prop :=
-  LocP → ∀ (l : ℕ) [Fact l.Prime] (L Ω : Type) [Field L] [NumberField L] [IsCMField L] [Field Ω] [Algebra L Ω] [IsAlgClosure L Ω]
-    (s : HidaSetting l L Ω) (V0 : s.Lev) (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsCoef l O]
-    [Algebra ℤ_[l] O] (n : ℕ) (r : Resid V0.frame O n) (B : UniversalOrdinaryDeterminantRing r) (J : Ideal B.B), V0.S' = s.S → Level B J → HasAut B J
 
 end UpperTheory.V.Pa

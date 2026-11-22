@@ -1,6 +1,10 @@
-import Formalism.GaussJetBounds.GenLogInverse
-import Formalism.GaussJetBounds.StatementA
-import Formalism.IncomingBounds.FlowDegreeBounds.PadicValFactorialRatioProd
+module
+
+public import Formalism.GaussJetBounds.GenLogInverse
+public import Formalism.GaussJetBounds.StatementA
+public import Formalism.IncomingBounds.FlowDegreeBounds.PadicValFactorialRatioProd
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

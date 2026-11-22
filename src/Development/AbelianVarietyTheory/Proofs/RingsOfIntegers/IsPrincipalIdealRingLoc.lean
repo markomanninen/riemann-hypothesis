@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -16,14 +20,15 @@ theorem exists_basis_up_to {O A E : Type} [CommRing O] [CommRing A] [IsDomain A]
       ∀ w ∈ L, (s : O) • w ∈ Submodule.span O (Set.range b) := by
   classical
   set M : Submodule A (Fin n → E) := Submodule.span A (L : Set (Fin n → E)) with hM
-  have : Submodule.IsLattice E M :=
-    { fg := by
+  have : Submodule.IsFullLattice E M :=
+    { toIsLattice := Submodule.IsLattice.of_fg E <| by
         obtain ⟨s, hs⟩ := hfg
         refine ⟨s, ?_⟩
         rw [hM, ← hs, Submodule.span_span_of_tower]
       span_eq_top := by rw [hM, Submodule.span_span_of_tower, hsp] }
   have hrk : Module.finrank A M = n := by
-    simpa using Submodule.IsLattice.finrank_of_pi E M
+    simpa using ((Submodule.IsFullLattice.finrank_eq E M).trans (Module.finrank_fintype_fun_eq_card E))
+  haveI : Module.Finite A M := Submodule.IsLattice.finite E M
   let c : Basis (Fin n) A M := Module.finBasisOfFinrankEq A M hrk
   have hc : ∀ i, ∃ t : S, (t : O) • (c i : Fin n → E) ∈ L := fun i => by
     obtain ⟨t, ht⟩ := multiple_mem_span_of_mem_localization_span S A (L : Set (Fin n → E)) _ (c i).2
@@ -37,9 +42,9 @@ theorem exists_basis_up_to {O A E : Type} [CommRing O] [CommRing A] [IsDomain A]
       Submodule.coe_smul_of_tower]
   let b : Fin n → Fin n → E := fun i => (c' i : Fin n → E)
   have hli : LinearIndependent E b := by
-    have h : b = c'.extendOfIsLattice E := funext fun i => by simp [b]
+    have h : b = c'.extendOfIsFullLattice E := funext fun i => by simp [b]
     rw [h]
-    exact (c'.extendOfIsLattice E).linearIndependent
+    exact (c'.extendOfIsFullLattice E).linearIndependent
   have hspanA : Submodule.span A (Set.range b) = M := by
     have : Set.range b = M.subtype '' Set.range c' := by
       rw [← Set.range_comp]; rfl

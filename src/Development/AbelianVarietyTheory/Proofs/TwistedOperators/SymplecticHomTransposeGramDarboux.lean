@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsReading
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsReading
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.IndefR.Datum
@@ -27,11 +31,13 @@ theorem gram_det_ne_zero (V : HSp D) : V.gram.det ≠ 0 := by
     apply V.nondeg.2
     intro x
     have hx : x = ∑ i, V.frame.repr x i • V.frame i := (V.frame.sum_repr x).symm
-    rw [hx, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx, map_sum, LinearMap.sum_apply]
     refine Finset.sum_eq_zero fun i _ => ?_
     have h1 : ∑ j, V.gram i j * v j = 0 := congr_fun h0 i
     have h2 : V.hT (V.frame i) (V.frame.equivFun.symm v) = ∑ j, V.gram i j * v j := by
-      rw [Module.Basis.equivFun_symm_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Module.Basis.equivFun_symm_apply, map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_smul, smul_eq_mul, mul_comm]; rfl
     rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, h2, h1, smul_zero]
@@ -72,7 +78,8 @@ theorem hO_darboux (S T S' T' : HSp D) (e₁ : Fin T'.rank ≃ Fin S.rank) (e₂
   have L2 : ∀ c b, cA D ((HMul.hMul (yᵀ.submatrix e₂.symm e₁.symm) (S.gram.map (incA D)) : Matrix (Fin T.rank) (Fin S.rank) (AE D)) c b)
       = ∑ k, cA D (y (e₁.symm k) (e₂.symm c)) * incA D (S.gram b k) := by
     intro c b
-    rw [Matrix.mul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.mul_apply, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_mul, Matrix.map_apply, cA_incA_eq, gram_star_eq]
     rfl

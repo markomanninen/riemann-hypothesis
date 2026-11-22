@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDiscriminantSheetCover
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PNullSmaller
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PMassFinite
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetAreaCompare
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDiscriminantSheetCover
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PNullSmaller
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PMassFinite
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetAreaCompare
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

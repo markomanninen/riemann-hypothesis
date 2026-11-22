@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.CupLocal
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ExtensionEmbeddingOfIsRealAlgebraMap
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.CupLocal
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ExtensionEmbeddingOfIsRealAlgebraMap
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -9,17 +14,17 @@ open NumberField NumberField.InfinitePlace GroundTheory.Global FiniteSubfield
 
 open scoped NumberField.LiesOver
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
 
-variable {K : FiniteSubfield}
+local notation "ℚ̄" => AlgebraicClosure ℚ
+
+variable {K : GroundTheory.Global.FiniteSubfield}
 
 section Norms
 
 variable (v : InfinitePlace K.1)
 
-theorem range_norm_infAlgClosure_eq {F : FiniteSubfield} [Fact (K ≤ F)] (w : v.placesOver F.1)
+theorem range_norm_infAlgClosure_eq {F : GroundTheory.Global.FiniteSubfield} [Fact (K ≤ F)] (w : v.placesOver F.1)
     [(w : InfinitePlace F.1).LiesOver v]
     (e : (w : InfinitePlace F.1).Completion ≃ₐ[v.Completion] AlgebraicClosure v.Completion) :
     Set.range (Algebra.norm v.Completion : AlgebraicClosure v.Completion → v.Completion) =
@@ -31,7 +36,7 @@ theorem range_norm_infAlgClosure_eq {F : FiniteSubfield} [Fact (K ≤ F)] (w : v
   · rintro ⟨y, rfl⟩
     exact ⟨e y, Algebra.norm_eq_of_algEquiv e y⟩
 
-theorem mem_range_norm_iff_mem_normSubgroup {F : FiniteSubfield} [Fact (K ≤ F)] (w : v.placesOver F.1)
+theorem mem_range_norm_iff_mem_normSubgroup {F : GroundTheory.Global.FiniteSubfield} [Fact (K ≤ F)] (w : v.placesOver F.1)
     [(w : InfinitePlace F.1).LiesOver v] (c : v.Completionˣ) :
     (c : v.Completion) ∈ Set.range (Algebra.norm v.Completion : (w : InfinitePlace F.1).Completion → v.Completion) ↔
       c ∈ InfinitePlace.normSubgroup v (w : InfinitePlace F.1) := by
@@ -117,10 +122,9 @@ theorem apply_sqrtNegOne_eq_or (σ : ℚ̄ ≃ₐ[ℚ] ℚ̄) : σ sqrtNegOne = 
   · exact Or.inl (sub_eq_zero.1 h)
   · exact Or.inr (eq_neg_of_add_eq_zero_left h)
 
-variable (K) in
-open Classical in
 
-def iCharFun (g : Additive K.1.fixingSubgroup) : QZ :=
+open Classical in
+def iCharFun (K : GroundTheory.Global.FiniteSubfield) (g : Additive K.1.fixingSubgroup) : QZ :=
   if ((Additive.toMul g : K.1.fixingSubgroup) : ℚ̄ ≃ₐ[ℚ] ℚ̄) sqrtNegOne = sqrtNegOne then 0 else QZ.mk (1 / 2)
 
 theorem iCharFun_of_fix {g : Additive K.1.fixingSubgroup}
@@ -160,8 +164,8 @@ theorem continuous_iCharFun : Continuous (iCharFun K) := by
     rw [Subgroup.coe_mul, Subgroup.coe_inv, mul_smul, inv_smul_eq_iff] at hh
     exact hh
 
-variable (K) in
 
+variable (K) in
 def iChar : Additive K.1.fixingSubgroup →ₜ+ QZ where
   toFun := iCharFun K
   map_zero' := iCharFun_of_fix rfl
@@ -243,13 +247,13 @@ theorem placeInv_brauerLocal_globalCupClass_iChar_of_isComplex (v : InfinitePlac
     (Units.map (algebraMap K.1 v.Completion : K.1 →* v.Completion) a)
   rwa [Units.coe_map, MonoidHom.coe_coe] at h
 
-open Classical in
 
+open Classical in
 theorem placeInv_brauerLocal_globalCupClass_iChar (v : InfinitePlace K.1) :
     placeInv (.inl v) (brauerLocal ι (globalCupClass (iChar K) a) (.inl v)) =
       if h : v.IsReal then (if v.embedding_of_isReal h (a : K.1) < 0 then QZ.mk (1 / 2) else 0) else 0 := by
   by_cases hv : v.IsReal
-  · rw [dif_pos hv]
+  · rw [dite_eq_left hv]
     by_cases ha : embedding_of_isReal hv (a : K.1) < 0
     · rw [if_pos ha]
       exact placeInv_brauerLocal_globalCupClass_iChar_of_neg ι a v hv ha
@@ -257,7 +261,7 @@ theorem placeInv_brauerLocal_globalCupClass_iChar (v : InfinitePlace K.1) :
       have hpos : 0 < embedding_of_isReal hv (a : K.1) :=
         lt_of_le_of_ne (not_lt.1 ha) (fun h => a.ne_zero ((map_eq_zero _).1 h.symm))
       exact placeInv_brauerLocal_globalCupClass_iChar_of_pos ι a v hv hpos
-  · rw [dif_neg hv]
+  · rw [dite_eq_right hv]
     exact placeInv_brauerLocal_globalCupClass_iChar_of_isComplex ι a v (not_isReal_iff_isComplex.1 hv)
 
 end Invariants
@@ -268,10 +272,6 @@ theorem exists_units_neg_iff {L : Type*} [Field L] [NumberField L] (s : {v : Inf
     ∃ a : Lˣ, ∀ v : {v : InfinitePlace L // v.IsReal}, (v.1.embedding_of_isReal v.2 (a : L) < 0 ↔ s v = true) := by
   obtain ⟨a, ha⟩ := exists_units_neg_iff_mem {v | s v = true}
   exact ⟨a, fun v => (ha v).1⟩
-
-example (s : {v : InfinitePlace K.1 // v.IsReal} → Bool) :
-    ∃ a : K.1ˣ, ∀ v : {v : InfinitePlace K.1 // v.IsReal}, (v.1.embedding_of_isReal v.2 (a : K.1) < 0 ↔ s v = true) :=
-  exists_units_neg_iff s
 
 end Bool
 

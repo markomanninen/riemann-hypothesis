@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinPtHomApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinPtHomApply
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.BCT.TraceBlocks
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -81,15 +86,15 @@ theorem secM_off (ι : H →* G) (ρ : Representation ℂ H V) (K : Subgroup G) 
 
 end GlobalTheory.BCT.TraceBlocks.Decomp
 
-open GlobalTheory.BCT.TraceBlocks.Decomp in
 
+open GlobalTheory.BCT.TraceBlocks.Decomp in
 theorem GlobalTheory.BCT.TraceBlocks.eqvM_eq_finsum_secM : ∀ (G H V : Type) [Group G] [Group H] [AddCommGroup V] [Module ℂ V] (ι : H →* G), Function.Injective ι → ∀ (ρ : Representation ℂ H V) (K' : Subgroup G), Finite (DoubleCoset.Quotient (ι.range : Set G) (K' : Set G)) → (∀ x : G, Finite (ι.range ⊓ K'.map (MulAut.conj x).toMonoidHom : Subgroup G)) → ∀ φ ∈ eqvM ι ρ K', ∑ᶠ q : DoubleCoset.Quotient (ι.range : Set G) (K' : Set G), secM ι ρ K' (Quotient.out q) (φ (Quotient.out q)) = φ := by
   intro G H V _ _ _ _ ι hι ρ K' hQ hS φ hφ
   haveI := Fintype.ofFinite (DoubleCoset.Quotient (ι.range : Set G) (K' : Set G))
   funext y
   rw [finsum_eq_sum_of_fintype, Finset.sum_apply, Finset.sum_eq_single (DoubleCoset.mk ι.range K' y)]
-  · obtain ⟨g, hg, k₀, hk₀, hy⟩ := (DoubleCoset.eq ι.range K'
-      (Quotient.out (DoubleCoset.mk ι.range K' y)) y).mp (DoubleCoset.out_eq' _ _ _)
+  · obtain ⟨g, hg, k₀, hk₀, hy⟩ := (@DoubleCoset.eq _ _ ι.range K'
+      (Quotient.out (DoubleCoset.mk ι.range K' y)) y).mp (DoubleCoset.out_eq' _)
     obtain ⟨h₀, rfl⟩ := hg
     haveI := hS (Quotient.out (DoubleCoset.mk ι.range K' y))
     have key := secM_self ι hι ρ K' hφ (Quotient.out (DoubleCoset.mk ι.range K' y)) h₀ hk₀
@@ -97,7 +102,7 @@ theorem GlobalTheory.BCT.TraceBlocks.eqvM_eq_finsum_secM : ∀ (G H V : Type) [G
     exact key
   · intro q _ hq
     refine secM_off ι ρ K' _ y _ fun h hh => hq ?_
-    refine (DoubleCoset.out_eq' _ _ q).symm.trans ((DoubleCoset.eq _ _ _ _).mpr
+    refine (DoubleCoset.out_eq' q).symm.trans ((@DoubleCoset.eq _ _ _ _ _ _).mpr
       ⟨ι h, ⟨h, rfl⟩, _, hh, (mul_inv_cancel_left _ _).symm⟩)
   · intro h
     exact absurd (Finset.mem_univ _) h

@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ParabolicBlockForms.UpperBlockRankOneUpdate
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.IncMTranspose
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ParabolicBlockForms.UpperBlockRankOneUpdate
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.IncMTranspose
+
+@[expose] public section
 
 noncomputable section
 
@@ -127,8 +131,9 @@ theorem even_im_hermitian_sub (hs : ∀ a, s (s a) = a) (he : e * e = 1) (hse : 
     rw [Finset.mul_sum]; exact Finset.sum_congr rfl fun j _ => by ring
   rw [hA, hB, he, one_mul] at h0
   have hS : s S2 = S1 := by
-    simp only [S2, S1, map_sum, map_mul, hs]
-  rw [map_add, hS]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [S2, S1, map_sum, map_mul, hs]
+  rw [map_add (f := _), hS]
   linear_combination e * h0 - (s α + S1) * he
 
 end PositivityTheory.SiegelWeilFormula.Act.C6.M

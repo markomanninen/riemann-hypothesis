@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MooreNorm
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LangXRoot
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MooreNorm
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LangXRoot
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,8 @@ theorem langCount_card_fixed (F : Type) [Field F] [IsAlgClosed F] (p : ℕ) [Fac
     (e : ℕ) (he : 0 < e) : Nat.card {c : F // c ^ p ^ e = c} = p ^ e := by
   have hq : 1 < p ^ e := Nat.one_lt_pow he.ne' (Fact.out : p.Prime).one_lt
   have hsep : (X ^ p ^ e - X : F[X]).Separable := galois_poly_separable p (p ^ e) (dvd_pow_self p he.ne')
-  have hdeg : (X ^ p ^ e - X : F[X]).natDegree = p ^ e := FiniteField.X_pow_card_sub_X_natDegree_eq F hq
-  have hne : (X ^ p ^ e - X : F[X]) ≠ 0 := FiniteField.X_pow_card_sub_X_ne_zero F hq
+  have hdeg : (X ^ p ^ e - X : F[X]).natDegree = p ^ e := Polynomial.natDegree_X_pow_sub_X (R := F) hq
+  have hne : (X ^ p ^ e - X : F[X]) ≠ 0 := Polynomial.X_pow_sub_X_ne_zero hq
   have hcard := Polynomial.card_rootSet_eq_natDegree (K := F) hsep (IsAlgClosed.splits_domain _)
   rw [hdeg] at hcard
   have h2 : Nat.card ((X ^ p ^ e - X : F[X]).rootSet F) = p ^ e := by
@@ -53,7 +57,8 @@ theorem langCount_card_semilinear (F : Type) [Field F] [IsAlgClosed F] (p : ℕ)
     intro v
     have hv : Φ v = b.equivFun.symm (fun i => b.equivFun v i ^ p ^ e) := by
       conv_lhs => rw [← b.sum_equivFun v]
-      rw [map_sum, Module.Basis.equivFun_symm_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Module.Basis.equivFun_symm_apply]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [hΦ, hb]
     rw [hv, LinearEquiv.apply_symm_apply]
@@ -86,9 +91,8 @@ theorem langCount : ∀ (F : Type) [NontriviallyNormedField F] [IsUltrametricDis
     intro a b
     rw [← Matrix.mulVec_add]
     congr 1
-    funext i
-    simp only [Pi.add_apply]
-    rw [add_pow_char_pow])
+    ext i
+    simpa using (add_pow_char_pow (a i) (b i) p e))
   have hΦ : ∀ (c : F) (v : m → F), Φ (c • v) = c ^ p ^ e • Φ v := by
     intro c v
     show A⁻¹.mulVec (fun i => (c • v) i ^ p ^ e) = c ^ p ^ e • A⁻¹.mulVec (fun i => v i ^ p ^ e)

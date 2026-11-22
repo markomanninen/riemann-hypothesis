@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.ClassFormations.Quotient
-import GroundTheory.ProfiniteCohomology.ContinuousCochains.Functoriality
-import GroundTheory.ProfiniteCohomology.InflationRestriction.Higher
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.ClassFormations.Quotient
+public import GroundTheory.ProfiniteCohomology.ContinuousCochains.Functoriality
+public import GroundTheory.ProfiniteCohomology.InflationRestriction.Higher
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -44,16 +49,16 @@ variable [CompactSpace G] [TotallyDisconnectedSpace G]
   (A : Rep.{u} k G) [IsDiscreteRep A] {U V : Subgroup G} (hU : IsOpen (U : Set G))
   (hV : IsOpen (V : Set G)) (hVU : V ≤ U) [(V.subgroupOf U).Normal]
 
+
 omit [CompactSpace G] [TotallyDisconnectedSpace G] [(V.subgroupOf U).Normal] in
 include hVU in
-
 theorem isZero_H1_subgroupOf (h1 : IsZero (cohomology (Rep.res V.subtype A) 1)) :
     IsZero (cohomology (Rep.res (V.subgroupOf U).subtype (Rep.res U.subtype A)) 1) :=
   h1.of_iso (asIso (cohomologyMapAlong (Subgroup.subgroupOfEquivOfLe hVU).symm.toMonoidHom
     (continuous_subgroupOfEquivOfLe_symm hVU) (resSubgroupOfHom hVU A) 1))
 
-include hU hV hVU in
 
+include hU hV hVU in
 theorem cohomologyInfl_two_injective_of_open (h1 : IsZero (cohomology (Rep.res V.subtype A) 1)) :
     Function.Injective (cohomologyInfl (Rep.res U.subtype A) (V.subgroupOf U) 2).hom := by
   have := compactSpace_of_isOpen hU
@@ -62,8 +67,8 @@ theorem cohomologyInfl_two_injective_of_open (h1 : IsZero (cohomology (Rep.res V
       obtain rfl : i = 1 := by omega
       exact isZero_H1_subgroupOf A hVU h1
 
-include hU hV in
 
+include hU hV in
 theorem mem_range_cohomologyInfl_two_iff (h1 : IsZero (cohomology (Rep.res V.subtype A) 1))
     (x : cohomology (Rep.res U.subtype A) 2) :
     (∃ y, (cohomologyInfl (Rep.res U.subtype A) (V.subgroupOf U) 2).hom y = x) ↔
@@ -116,8 +121,8 @@ theorem mem_range_cohomologyInfl_two_iff (x : H2Open C U) :
       (cohomologyResLE C (show (V : Subgroup G) ≤ U from hVU) 2).hom x = 0 :=
   GroundTheory.ProfCoh.mem_range_cohomologyInfl_two_iff C U.isOpen V.isOpen hVU (F.isZero_H1_open_subgroups V) x
 
-include hVU in
 
+include hVU in
 theorem inv_cohomologyInfl_fundamentalClass (hVinj : Function.Injective (F.inv V))
     (hex : ∃ x : H2Open C U, F.inv U x = QZ.mk (1 / ((V : Subgroup G).relIndex U : ℚ))) :
     F.inv U ((cohomologyInfl (Rep.res (U : Subgroup G).subtype C)
@@ -136,17 +141,17 @@ section Subgroup
 
 variable (S : Subgroup (U ⧸ (V : Subgroup G).subgroupOf U))
 
+
 omit [CompactSpace G] [TotallyDisconnectedSpace G] F in
 include hVU in
-
 theorem cohomologyInflQuot_one_injective : Function.Injective (cohomologyInflQuot C S 1).hom := by
   rw [cohomologyInflQuot_eq C (show (V : Subgroup G) ≤ U from hVU) S 1, ModuleCat.hom_comp]
   have := isIso_cohomologyMapAlong_quotPreimageEquiv C V.isOpen
     (show (V : Subgroup G) ≤ U from hVU) S 1
   exact (cohomologyInfl_one_injective _ _).comp ((ModuleCat.mono_iff_injective _).1 inferInstance)
 
-include hVU in
 
+include hVU in
 theorem cohomologyInflQuot_two_injective : Function.Injective (cohomologyInflQuot C S 2).hom := by
   have hVW : (V : Subgroup G) ≤ quotPreimageOpen hVU S :=
     le_quotPreimage (show (V : Subgroup G) ≤ U from hVU) S
@@ -166,8 +171,8 @@ theorem resLE_cohomologyInflQuot (y) :
   rw [cohomologyInflQuot_eq C (show (V : Subgroup G) ≤ U from hVU) S 2, ModuleCat.hom_comp]
   exact ⟨_, rfl⟩
 
-omit [CompactSpace G] [TotallyDisconnectedSpace G] in
 
+omit [CompactSpace G] [TotallyDisconnectedSpace G] in
 theorem inv_cohomologyInflQuot_cohomologyRes (z : H2Quotient C U V) :
     F.inv (quotPreimageOpen hVU S) ((cohomologyInflQuot C S 2).hom
         ((cohomologyRes ((Rep.res (U : Subgroup G).subtype C).quotientToInvariants
@@ -180,8 +185,8 @@ theorem inv_cohomologyInflQuot_cohomologyRes (z : H2Quotient C U V) :
   rw [h]
   exact F.inv_res U (quotPreimageOpen hVU S) (quotPreimage_le S) _
 
-include hVU in
 
+include hVU in
 theorem inv_cohomologyInflQuot_cohomologyRes_fundamentalClass
     (hVinj : Function.Injective (F.inv V))
     (hex : ∃ x : H2Open C U, F.inv U x = QZ.mk (1 / ((V : Subgroup G).relIndex U : ℚ))) :
@@ -200,8 +205,8 @@ theorem inv_cohomologyInflQuot_cohomologyRes_fundamentalClass
     hVinj hex, hidx, QZ.nsmul_mk_one_div_mul (relIndex_ne_zero_of_isOpen
       (quotPreimageOpen hVU S).isOpen _)]
 
-include hVU in
 
+include hVU in
 theorem cyclic_cohomologyRes_fundamentalClass (hinj : ∀ W : OpenSubgroup G, Function.Injective (F.inv W))
     (hex : ∃ x : H2Open C U, F.inv U x = QZ.mk (1 / ((V : Subgroup G).relIndex U : ℚ))) :
     addOrderOf ((cohomologyRes ((Rep.res (U : Subgroup G).subtype C).quotientToInvariants
@@ -241,8 +246,8 @@ theorem groupCohomology_map_groupFundamentalClass
       S 2)
   exact h.symm
 
-include hVU in
 
+include hVU in
 theorem tate_hypotheses (hinj : ∀ W : OpenSubgroup G, Function.Injective (F.inv W))
     (hex : ∃ x : H2Open C U, F.inv U x = QZ.mk (1 / ((V : Subgroup G).relIndex U : ℚ)))
     (S : Subgroup (U ⧸ (V : Subgroup G).subgroupOf U)) :

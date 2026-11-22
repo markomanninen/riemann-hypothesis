@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierJointQuot
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NilradicalLatticeZMemSpan
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ProductExactness
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierJointQuot
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NilradicalLatticeZMemSpan
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ProductExactness
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,24 +68,24 @@ theorem relAlg (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) (π : Fin (r + 1) �
     by_cases h : (π k.succ).val + 1 = (π k.castSucc).val
     · obtain ⟨j, hjv⟩ : ∃ j : Fin r, j.val = (π k.succ).val := ⟨⟨_, hcond k h⟩, rfl⟩
       have hψk : ψ k = j := by
-        rw [hψdef, dif_pos h]
+        rw [hψdef, dite_eq_left h]
         exact Fin.ext hjv.symm
       have hjc : j.castSucc = π k.succ := Fin.ext (by rw [Fin.coe_castSucc, hjv])
       have hjs : j.succ = π k.castSucc := Fin.ext (by rw [Fin.val_succ, hjv]; exact h)
       have h' : (π j.succ).val + 1 = (π j.castSucc).val := by
         rw [hjs, hjc, hπ, hπ, Fin.coe_castSucc, Fin.val_succ]
-      rw [hψk, hψdef, dif_pos h']
+      rw [hψk, hψdef, dite_eq_left h']
       apply Fin.ext
       show (π j.succ).val = k.val
       rw [hjs, hπ, Fin.coe_castSucc]
-    · have hψk : ψ k = k := by rw [hψdef, dif_neg h]
+    · have hψk : ψ k = k := by rw [hψdef, dite_eq_right h]
       rw [hψk, hψk]
   have hterm : ∀ k : Fin r, (U k k.succ).re = -(m (ψ k) (ψ k).succ).re := by
     intro k
     by_cases h : (π k.succ).val + 1 = (π k.castSucc).val
     · obtain ⟨j, hjv⟩ : ∃ j : Fin r, j.val = (π k.succ).val := ⟨⟨_, hcond k h⟩, rfl⟩
       have hψk : ψ k = j := by
-        rw [hψdef, dif_pos h]
+        rw [hψdef, dite_eq_left h]
         exact Fin.ext hjv.symm
       have hjc : j.castSucc = π k.succ := Fin.ext (by rw [Fin.coe_castSucc, hjv])
       have hjs : j.succ = π k.castSucc := Fin.ext (by rw [Fin.val_succ, hjv]; exact h)
@@ -112,7 +116,7 @@ theorem relAlg (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ) (π : Fin (r + 1) �
         rcases hP2 k with ⟨h', _⟩ | hlt
         · exact absurd h' h
         · exact hlt
-      have hψk : ψ k = k := by rw [hψdef, dif_neg h]
+      have hψk : ψ k = k := by rw [hψdef, dite_eq_right h]
       have eL : (∑ c : Fin r, if c.castSucc < π k.castSucc then
           conj (m c (π k.castSucc)) * Z c.castSucc k.succ else 0) = 0 :=
         Finset.sum_eq_zero fun c _ => by
@@ -262,14 +266,16 @@ theorem hJ_sum_r' {ι : Type*} [Fintype ι] (x : Fin n → ℂ) (a : ι → ℂ)
   simp only [hJ, Matrix.mulVec_sum, Matrix.mulVec_smul, dotProduct_sum, dotProduct_smul, smul_eq_mul]
 
 theorem hJ_cj' (x y : Fin n → ℂ) : hJ ε x y = conj (hJ ε y x) := by
-  simp only [hJ, Formalism.REAL.Jm, Matrix.mulVec_diagonal, dotProduct, Pi.star_apply, RCLike.star_def, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hJ, Formalism.REAL.Jm, Matrix.mulVec_diagonal, dotProduct, Pi.star_apply, RCLike.star_def, map_sum,
     map_mul, Complex.conj_conj]
   refine Finset.sum_congr rfl fun a _ => ?_
   split_ifs <;> simp <;> ring
 
 theorem hJ_sum_l' {ι : Type*} [Fintype ι] (x : Fin n → ℂ) (a : ι → ℂ) (y : ι → Fin n → ℂ) (w : Fin n → ℂ) :
     hJ ε (x + ∑ c, a c • y c) w = hJ ε x w + ∑ c, conj (a c) * hJ ε (y c) w := by
-  rw [hJ_cj' ε (x + ∑ c, a c • y c) w, hJ_add_r', hJ_sum_r', map_add, map_sum, ← hJ_cj' ε x w]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hJ_cj' ε (x + ∑ c, a c • y c) w, hJ_add_r', hJ_sum_r', map_add (f := _), map_sum, ← hJ_cj' ε x w]
   congr 1
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [map_mul, ← hJ_cj' ε (y c) w]

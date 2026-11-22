@@ -1,11 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
 open NumberField NumberField.InfinitePlace Module
 
-theorem WeightedSpaceDim.proof (E : Type*) [Field E] [NumberField E] [IsTotallyComplex E] :
+theorem WeightedSpaceDim.proof (E : Type*) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] :
     WeightedSpaceDim.Statement E := by
   unfold WeightedSpaceDim.Statement
   rw [finrank_euclideanSpace, Fintype.card_prod, Fintype.card_fin,

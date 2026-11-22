@@ -1,10 +1,14 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementA
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.IsogenyFormulaInstance
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.TaylorSigma
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.Bridge
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.BridgeTwoMore
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalB
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.BaseChangeCompatible
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementA
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.IsogenyFormulaInstance
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.TaylorSigma
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.Bridge
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.BridgeTwoMore
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalB
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.BaseChangeCompatible
+
+@[expose] public section
 
 open PowerSeries
 
@@ -18,9 +22,13 @@ open Formalism.L2.Th1
 
 variable (l : ℕ) [Fact l.Prime] (L : PeriodPair) (ι : ℂ ≃+* ℂ_[l])
 
-theorem lg0 : constantCoeff (A.logSer (curveL l L ι)) = 0 := (A.logSpec ℂ_[l] (curveL l L ι)).1
+theorem lg0 : constantCoeff (A.logSer (curveL l L ι)) = 0 := by
+  simp [A.logSer, A.integ]
 
-theorem lg1 : coeff 1 (A.logSer (curveL l L ι)) = 1 := (A.logSpec ℂ_[l] (curveL l L ι)).2.1
+theorem lg1 : coeff 1 (A.logSer (curveL l L ι)) = 1 := by
+  have h : constantCoeff (A.om (curveL l L ι)) = 1 := by
+    simp [A.om, constantCoeff_invOfUnit]
+  simp [A.logSer, A.integ, coeff_zero_eq_constantCoeff_apply, h]
 
 theorem lg_ne : A.logSer (curveL l L ι) ≠ 0 := by
   intro h
@@ -38,7 +46,7 @@ theorem inU_mul {f g : ℂ → ℂ} (hf : AnalyticAt ℂ f 0) (hg : AnalyticAt �
 theorem inU_add {f g : ℂ → ℂ} (hf : AnalyticAt ℂ f 0) (hg : AnalyticAt ℂ g 0) :
     inU l L ι (fun z => f z + g z) = inU l L ι f + inU l L ι g := by
   unfold inU
-  rw [F.Taylor.taylor0_add hf hg, map_add, subst_add (lgS l L ι)]
+  rw [F.Taylor.taylor0_add hf hg, map_add (f := _), subst_add (lgS l L ι)]
 
 theorem inU_const (c : ℂ) : inU l L ι (fun _ => c) = C (ι c) := by
   unfold inU
@@ -228,7 +236,7 @@ theorem T_dwp (ht : t ∉ L.lattice) :
   exact AnalyticAt.fun_comp h1 (analyticAt_id.add analyticAt_const)
 
 theorem flowC (ht : t ∉ L.lattice) :
-    A.IsFlow (A.curveS (A.shortW L.g₂ L.g₃)) (derivative ℂ)
+    A.IsFlow (A.curveS (A.shortW L.g₂ L.g₃)) (derivative (R := ℂ))
       (F.taylor0 fun z => L.weierstrassP (z + t))
       (C (1 / 2 : ℂ) * F.taylor0 fun z => L.derivWeierstrassP (z + t)) := by
   have hr := F.taylorRing
@@ -244,15 +252,15 @@ theorem flowC (ht : t ∉ L.lattice) :
     filter_upwards [ev_notMem L t ht] with z hz
     have := L.derivWeierstrassP_sq (z + t) hz
     linear_combination this
-  have e2 : derivative ℂ (F.taylor0 fun z => L.weierstrassP (z + t)) =
+  have e2 : derivative (F.taylor0 fun z => L.weierstrassP (z + t)) =
       F.taylor0 fun z => L.derivWeierstrassP (z + t) := by
-    rw [← F.Taylor.taylor0_deriv]
+    rw [← F.taylorDeriv.1 _ hp.1]
     congr 1
     funext z
     rw [deriv_comp_add_const, L.deriv_weierstrassP]
-  have e3 : derivative ℂ (F.taylor0 fun z => L.derivWeierstrassP (z + t)) =
+  have e3 : derivative (F.taylor0 fun z => L.derivWeierstrassP (z + t)) =
       C (6 : ℂ) * (F.taylor0 fun z => L.weierstrassP (z + t)) ^ 2 + C (-(L.g₂ / 2)) := by
-    rw [← F.Taylor.taylor0_deriv, ← (T.add hr (T.mul hr (T.const hr 6) (T.pow hr hp 2))
+    rw [← F.taylorDeriv.1 _ hq.1, ← (T.add hr (T.mul hr (T.const hr 6) (T.pow hr hp 2))
       (T.const hr (-(L.g₂ / 2)))).2]
     apply F.Taylor.taylor0_congr
     filter_upwards [ev_notMem L t ht] with z hz
@@ -382,8 +390,6 @@ end AnaSys
 
 theorem PtOfZero_of : PtOfZero := fun l _ L ι t => AnaSys.ptOf_zero_iff l L ι t
 
-theorem WpBridge_of : WpBridge := AnaSys.wpBridge
-
 theorem AnalyticSys_of (hT : TransWpBridge) : AnalyticSys := by
   intro l _ L ι π hπ
   refine ⟨?_, ?_, ?_⟩
@@ -405,9 +411,5 @@ theorem AnalyticSys_of (hT : TransWpBridge) : AnalyticSys := by
     by_cases hP : P ∈ L.lattice
     · exact AnaSys.prod_mem l L ι P Q hQ' hP
     · exact AnaSys.prod_notMem l L ι hT P Q hQ' hP
-
-theorem TransWpBridge_of : TransWpBridge := AnaSys.transWpBridge
-
-theorem analytic_translate_system : AnalyticSys := AnalyticSys_of TransWpBridge_of
 
 end Formalism.L2.Th1.E

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNegHermitianSquareCurvatureBoundedDomainHodgeG
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNegSqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNegHermitianSquareCurvatureBoundedDomainHodgeG
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNegSqZero
+
+@[expose] public section
+
 open Matrix MvPolynomial GlobalTheory.GoodMetric GlobalTheory.HermFrame GlobalTheory.PointFormSign
 open ReciprocityTheory.L2DbarEstimates (V)
 open scoped ComplexOrder Topology

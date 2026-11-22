@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsLocSec
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorIJMap
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsLocSec
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorIJMap
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
 open GlobalTheory.CompanionTheory.Ar.PB.WSq GlobalTheory.CompanionTheory.Ar.PB.WSq.Sec GlobalTheory.CompanionTheory.Ar.PB.CovMap.LocImg
@@ -28,7 +33,7 @@ theorem xiDeg_self (M : FlagModel y Ψ N j) {τ : Ψ} {a : Fin N} {k₀ : K} (hk
   have hd : ∀ p, M.dy p k₀ = if p = (τ, a) then 1 else 0 := fun p => by
     have hn : ¬ ∀ p', M.blk p' ≠ some k₀ := fun h => h _ hk
     unfold FlagModel.dy
-    rw [dif_neg hn]
+    rw [dite_eq_right hn]
     by_cases hp : p = (τ, a)
     · rw [if_pos (hp ▸ hk), if_pos hp]
     · rw [if_neg fun e => hp (M.blk_inj _ _ k₀ e hk), if_neg hp]

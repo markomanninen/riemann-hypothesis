@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsClasses
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsEqSum
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFiniteReproducingOfSubmodule
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VecMemThetaSub
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairFnUpdateLinear
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairFnUpdateMoveV
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExpansionTensorSumInvariantGridRowLevelStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsClasses
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsEqSum
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFiniteReproducingOfSubmodule
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VecMemThetaSub
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairFnUpdateLinear
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairFnUpdateMoveV
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExpansionTensorSumInvariantGridRowLevelStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.RowVertexInv
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
@@ -48,7 +53,7 @@ theorem pairPts_update_row : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Const
         ((W.om_is _ h1).om_pres _ _ (hth d hd (.inr ⟨j, by omega⟩))))
       ((W.om_is _ h2).om_pres _ _ (hth d hd (.inr ⟨j + 1, him⟩))) a
   let V := fun a : Fin D.R.m ⊕ Fin D.R.m => thetaSub W.ψ (G.pS (positionPair t D.R.m a)) (G.pT (positionPair t D.R.m a))
-  let M : MultilinearMap ℂ (fun a => ↥(V a)) (VV ℂ (wt G (.top 0)) →ₗ[ℂ] VV ℂ (listedWt G (.grid 0 D.R.m)) →ₗ[ℂ] ℂ) :=
+  let M : MultilinearMap (RingHom.id ℂ) (fun a => ↥(V a)) (VV ℂ (wt G (.top 0)) →ₗ[ℂ] VV ℂ (listedWt G (.grid 0 D.R.m)) →ₗ[ℂ] ℂ) :=
     MultilinearMap.mk' (fun v => pairFn S x y fun a => (v a : FactorFn G t a))
       (fun v a f g => by
         have e : ∀ w : V a, (fun b => ((Function.update v a w b : V b) : FactorFn G t b)) =

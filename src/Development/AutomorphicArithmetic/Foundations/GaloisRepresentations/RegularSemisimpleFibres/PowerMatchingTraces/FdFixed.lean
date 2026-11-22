@@ -1,17 +1,21 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchPowAlt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.TrBasic
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.TrEx
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.LevEx
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.CmpIso
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchCutAlt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.FibTrace
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.BaseTw
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.PowNe
-import Development.AutomorphicArithmetic.Foundations.Convolution.Cbcc
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.Outright
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.TermEV
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.LocGalEx
-import GroundTheory.AutomorphicForms.LocallyProfinite
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchPowAlt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.TrBasic
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.TrEx
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.LevEx
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.CmpIso
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchCutAlt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.FibTrace
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.BaseTw
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.PowNe
+public import Development.AutomorphicArithmetic.Foundations.Convolution.Cbcc
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.Outright
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.TermEV
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.LocGalEx
+public import GroundTheory.AutomorphicForms.LocallyProfinite
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace GroundTheory.Automorphic.AutomorphicForm
@@ -100,7 +104,7 @@ theorem UpperTheory.Gal.InertialTypesAlt.G.core :
   haveI : ∀ x : Pl E, BorelSpace (Gw n x) := fun _ => ⟨rfl⟩
   letI : ∀ x : Pl F, MeasurableSpace (Gw n x) := fun _ => borel _
   haveI : ∀ x : Pl F, BorelSpace (Gw n x) := fun _ => ⟨rfl⟩
-  let μF : Measure (normOneGL F n) := Measure.haar
+  let μF : Measure (normOneGL (K := F) (n := n)) := Measure.haar
   have hV := hC.summand
   obtain ⟨-, hAtE, -, -, hnp, θ, hθ, hst⟩ := carryLift F E σ hσ hp n hn μE μF
   obtain ⟨Λ, t, hAt⟩ := hAtE V hV
@@ -193,10 +197,8 @@ theorem UpperTheory.Gal.InertialTypesAlt.G.core :
   let ψ : ∀ y : Pl F, Gw n (T.mk' y).1 → ℂ := fun y =>
     (T.J (T.mk' y).1 : Set (Gw n (T.mk' y).1)).indicator fun x => conj (T.χ (T.mk' y).1 x)
   have hψs : ∀ y, GM.Split E y → ψ y = (T.J (T.mk' y).1 : Set (Gw n (T.mk' y).1)).indicator 1 := fun y hy => by
-    simp only [ψ, T.triv y hy (T.mk' y)]
-    congr 1
-    funext x
-    simp
+    simp [ψ, T.triv y hy (T.mk' y)]
+    rfl
   have hunit := fun y (hy : GM.Split E y) =>
     unitTrace E n μE V hV (T.mk' y).1 (m _) (hm _) (X y).1 (T.J _) (hX y).1 (T.co _) (hfixS y hy _)
   have hbase := fun y (hyS : y ∈ T.S) (hy : ¬ GM.Split E y) =>

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsInvDer
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LeISupInfPreimage
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsInvDer
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LeISupInfPreimage
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -16,21 +20,21 @@ variable {X X₂ Y Z : Scheme.{0}}
 
 theorem app_eq_pbT (f : Z ⟶ Y) (W : Y.Opens) (s : Γ(Y, W)) : (f.app W).hom s = pbT f s (f ⁻¹ᵁ W) := by
   unfold pbT
-  rw [dif_pos le_rfl]
+  rw [dite_eq_left le_rfl]
   simp [Scheme.Hom.appLE]
 
 theorem pbT_pbT (f : Z ⟶ Y) (g : Y ⟶ X) {O₀ : X.Opens} {O₁ : Y.Opens} {O₂ : Z.Opens} (h₁ : O₁ ≤ g ⁻¹ᵁ O₀)
     (h₂ : O₂ ≤ f ⁻¹ᵁ O₁) (s : Γ(X, O₀)) : pbT f (pbT g s O₁) O₂ = pbT (f ≫ g) s O₂ := by
   have h₃ : O₂ ≤ (f ≫ g) ⁻¹ᵁ O₀ := h₂.trans (fun x hx => h₁ hx)
   unfold pbT
-  rw [dif_pos h₁, dif_pos h₂, dif_pos h₃, ← CommRingCat.comp_apply, Scheme.Hom.appLE_comp_appLE]
+  rw [dite_eq_left h₁, dite_eq_left h₂, dite_eq_left h₃, ← CommRingCat.comp_apply, Scheme.Hom.appLE_comp_appLE]
 
 theorem pbT_id {O₀ : Y.Opens} (s : Γ(Y, O₀)) (O : Y.Opens) : pbT (𝟙 Y) s O = rsT s O := by
   unfold pbT rsT
   by_cases h : O ≤ O₀
-  · rw [dif_pos (show O ≤ 𝟙 Y ⁻¹ᵁ O₀ from h), dif_pos h]
+  · rw [dite_eq_left (show O ≤ 𝟙 Y ⁻¹ᵁ O₀ from h), dite_eq_left h]
     rfl
-  · rw [dif_neg (show ¬O ≤ 𝟙 Y ⁻¹ᵁ O₀ from h), dif_neg h]
+  · rw [dite_eq_right (show ¬O ≤ 𝟙 Y ⁻¹ᵁ O₀ from h), dite_eq_right h]
 
 theorem constFn_comp_spMap {R K : Type} [CommRing R] [CommRing K] (x₀ : R →+* K) (q : Y ⟶ Sp K) (O : Y.Opens) (r : R) :
     constFn (q ≫ spMap x₀) O r = constFn q O (x₀ r) := by
@@ -55,19 +59,19 @@ private lemma rsT_mul_moduli {O₀ : Z.Opens} (a b : Γ(Z, O₀)) (O : Z.Opens) 
 
 private lemma rsT_eq_resG_of_le_moduli {O₀ O : Z.Opens} (s : Γ(Z, O₀)) (h : O ≤ O₀) : rsT s O = resG Z h s := by
   unfold rsT
-  rw [dif_pos h]
+  rw [dite_eq_left h]
 
 private lemma rsT_pbT_of_le_of_le_preimage (f : Z ⟶ Y) {O₀ : Y.Opens} (s : Γ(Y, O₀)) {O O' : Z.Opens} (h : O' ≤ O)
     (e : O ≤ f ⁻¹ᵁ O₀) : rsT (pbT f s O) O' = pbT f s O' := by
   unfold rsT pbT
-  rw [dif_pos h, dif_pos e, dif_pos (h.trans e)]
+  rw [dite_eq_left h, dite_eq_left e, dite_eq_left (h.trans e)]
   dsimp only [resG]
   rw [← CommRingCat.comp_apply, Scheme.Hom.appLE_map]
 
 private lemma pbT_rsT_of_le_of_le_preimage' (f : Z ⟶ Y) {O₀ O₁ : Y.Opens} (s : Γ(Y, O₀)) (h : O₁ ≤ O₀) {O : Z.Opens}
     (e : O ≤ f ⁻¹ᵁ O₁) : pbT f (rsT s O₁) O = pbT f s O := by
   unfold rsT pbT
-  rw [dif_pos h, dif_pos e, dif_pos (e.trans (fun x hx => h hx))]
+  rw [dite_eq_left h, dite_eq_left e, dite_eq_left (e.trans (fun x hx => h hx))]
   dsimp only [resG]
   rw [← CommRingCat.comp_apply, Scheme.Hom.map_appLE]
 
@@ -89,7 +93,7 @@ private lemma pbT_add_moduli (f : Z ⟶ Y) {O₀ : Y.Opens} (a b : Γ(Y, O₀)) 
 private lemma rsT_rsT_of_le_of_le {O₀ A B : Z.Opens} (s : Γ(Z, O₀)) (hB : B ≤ A) (hA : A ≤ O₀) :
     rsT (rsT s A) B = rsT s B := by
   unfold rsT
-  rw [dif_pos hB, dif_pos hA, dif_pos (hB.trans hA)]
+  rw [dite_eq_left hB, dite_eq_left hA, dite_eq_left (hB.trans hA)]
   dsimp only [resG]
   rw [← CommRingCat.comp_apply, ← Functor.map_comp]
   rfl
@@ -107,13 +111,13 @@ private lemma rsT_sum_moduli {κ : Type} {O₀ : Z.Opens} (s : Finset κ) (F : �
 private lemma pbT_constFn_preimage {R : Type} [CommRing R] (m : Z ⟶ Y) (s : Y ⟶ Sp R) (V : Y.Opens) (r : R) :
     pbT m (constFn s V r) (m ⁻¹ᵁ V) = constFn (m ≫ s) (m ⁻¹ᵁ V) r := by
   unfold pbT constFn
-  rw [dif_pos le_rfl, ← CommRingCat.comp_apply]
+  rw [dite_eq_left le_rfl, ← CommRingCat.comp_apply]
   erw [Scheme.Hom.appLE_comp_appLE]
 
 private lemma pbT_one_of_le_preimage (f : Z ⟶ Y) {O₀ : Y.Opens} {O : Z.Opens} (e : O ≤ f ⁻¹ᵁ O₀) :
     pbT f (1 : Γ(Y, O₀)) O = 1 := by
   unfold pbT
-  rw [dif_pos e, map_one]
+  rw [dite_eq_left e, map_one]
 
 private lemma rsT_natCast_of_le {O₀ O : Z.Opens} (k : ℕ) (h : O ≤ O₀) : rsT (k : Γ(Z, O₀)) O = k := by
   rw [rsT_eq_resG_of_le_moduli _ h, map_natCast]
@@ -124,7 +128,7 @@ private lemma rsT_zero' {O₀ : Z.Opens} (O : Z.Opens) : rsT (0 : Γ(Z, O₀)) O
 
 private lemma rsT_self' {O₀ : Z.Opens} (s : Γ(Z, O₀)) : rsT s O₀ = s := by
   unfold rsT
-  rw [dif_pos le_rfl]
+  rw [dite_eq_left le_rfl]
   show (Z.presheaf.map (𝟙 (Opposite.op O₀))).hom s = s
   rw [CategoryTheory.Functor.map_id]
   rfl
@@ -181,7 +185,7 @@ theorem Der.eq_zero {h : Z ⟶ X} {T : Z.Opens} {δ : ∀ O : X.Opens, Γ(X, O) 
       a.2.1 O _ f _ hbO k₁ k₂, ← a.2.2 O f O' _ inf_le_right h₁ h₂] at e1
     have hu : IsUnit (pbT h (rsT (b ^ k) (X.basicOpen b)) (h ⁻¹ᵁ X.basicOpen b ⊓ O')) := by
       unfold pbT
-      rw [dif_pos k₂]
+      rw [dite_eq_left k₂]
       apply IsUnit.map
       rw [rsT_eq_resG_of_le_moduli _ hbW, map_pow]
       apply IsUnit.pow
@@ -202,7 +206,7 @@ def dl (h : Z ⟶ X) (L : LB X) (δ : ∀ O : X.Opens, Γ(X, O) → ∀ O' : Z.O
 theorem pbT_val_inv (h : Z ⟶ X) {O : X.Opens} (u : Γ(X, O)ˣ) {O' : Z.Opens} (e : O' ≤ h ⁻¹ᵁ O) :
     pbT h u.val O' * pbT h u.inv O' = 1 := by
   unfold pbT
-  rw [dif_pos e, dif_pos e, ← map_mul, u.val_inv, map_one]
+  rw [dite_eq_left e, dite_eq_left e, ← map_mul, u.val_inv, map_one]
 
 theorem Der.rsT_dl {h : Z ⟶ X} {T : Z.Opens} {δ : ∀ O : X.Opens, Γ(X, O) → ∀ O' : Z.Opens, Γ(Z, O')}
     (a : Der h T δ) (L : LB X) (i j : L.ι) {O' O'' : Z.Opens} (h₀ : O'' ≤ O') (h₁ : O' ≤ T)

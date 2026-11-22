@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfPderivStable
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsFockVacAtOfIsThetaAt
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContinuousIsotropicSandwichMeanTranslation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfPderivStable
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsFockVacAtOfIsThetaAt
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContinuousIsotropicSandwichMeanTranslation
+
+@[expose] public section
 
 namespace GlobalTheory.FockLevelDim
 
@@ -166,7 +170,7 @@ theorem fg_vacua (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) {κ : Type}
     exact om.continuous.clm_apply continuous_id
   have sk : ∀ u v, omO S T v u = -omO S T u v := fun u v => by
     have h1 := omO_self h (S := S) (T := T) (u + v)
-    simp only [LinearMap.map_add, LinearMap.add_apply, omO_self h] at h1
+    simp only [LinearMap.map_add (f := _), LinearMap.add_apply, omO_self h] at h1
     linarith
   let fin : WO S T → WO S T := fun n => n - iotaW σ T S (piW θ T S n)
   have hfin : Continuous fin := continuous_id.sub ((h.continuous_iota T S).comp hπ)
@@ -211,12 +215,12 @@ theorem fg_vacua (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) {κ : Type}
         rw [← this]
         congr 1
         funext y
-        rw [add_assoc, ← AddMonoidHom.map_add]
+        rw [add_assoc, ← AddMonoidHom.map_add (f := _)]
       rw [h2, AddMonoidHom.map_add (piW θ T S), h.pi_iota] at h1
       refine h1.trans ?_
       show π * I * (omO S T (piW θ T S w + (s • x + t • J x)) x +
         I * omO S T (piW θ T S w + (s • x + t • J x)) (J x)) * _ = _
-      simp only [LinearMap.map_add, LinearMap.map_smul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
+      simp only [LinearMap.map_add (f := _), LinearMap.map_smul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
         omO_self h, sk (J x) x]
       push_cast
       ring

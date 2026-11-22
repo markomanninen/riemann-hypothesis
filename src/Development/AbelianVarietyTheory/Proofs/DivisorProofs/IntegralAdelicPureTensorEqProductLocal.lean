@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActFromBlocks
-import Development.AbelianVarietyTheory.Definitions.Foundations.OfInfProjInfMulOfFinProjFin
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHaarAdelicVectorsBoundsPureTensorsSlices
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MeasurableEmbeddingAdelicTupleLocalComponents
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RestrictedProductIntegralPureTensorEqProd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralFiniteAdelicFactorOffPlaceStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralAdelicHaarSplitArchimedeanFiniteStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteAdelicHaarIntegralPointsOneStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActFromBlocks
+public import Development.AbelianVarietyTheory.Definitions.Foundations.OfInfProjInfMulOfFinProjFin
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHaarAdelicVectorsBoundsPureTensorsSlices
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MeasurableEmbeddingAdelicTupleLocalComponents
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RestrictedProductIntegralPureTensorEqProd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralFiniteAdelicFactorOffPlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralAdelicHaarSplitArchimedeanFiniteStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteAdelicHaarIntegralPointsOneStatement
+
+@[expose] public section
+
 open scoped Matrix GlobalTheory.VacAny ENNReal
 open NumberField IsDedekindDomain MeasureTheory Filter Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.RatWeilOp
 
@@ -27,7 +32,7 @@ theorem measurableSet_box (F : Type) [Field F] [NumberField F] (κ : Type) [Meas
 
 theorem evalV_add_singleFin_ne {F : Type} [Field F] [NumberField F] {v w : HeightOneSpectrum (𝓞 F)} (h : v ≠ w)
     (a : Af F) (t : Fv F w) : evalV F v (a + singleFin w t) = evalV F v a := by
-  rw [map_add, evalV_singleFin_ne h, add_zero]
+  rw [map_add (f := _), evalV_singleFin_ne h, add_zero]
 
 theorem finPart (F : Type) [Field F] [NumberField F] (κ : Type) [Fintype κ] [MeasurableSpace (κ → Af F)] [BorelSpace (κ → Af F)]
     [∀ v : HeightOneSpectrum (𝓞 F), MeasurableSpace (κ → Fv F v)] [∀ v : HeightOneSpectrum (𝓞 F), BorelSpace (κ → Fv F v)]
@@ -122,18 +127,18 @@ theorem finPart (F : Type) [Field F] [NumberField F] (κ : Type) [Fintype κ] [M
 
 theorem integral_pure_haar : ∀ (F : Type) [Field F] [NumberField F] (κ : Type) [Fintype κ] [MeasurableSpace (κ → AF F)] [BorelSpace (κ → AF F)]
     [MeasurableSpace (κ → mixedEmbedding.mixedSpace F)] [BorelSpace (κ → mixedEmbedding.mixedSpace F)]
-    [∀ v : Pl F, MeasurableSpace (κ → Fv F v)] [∀ v : Pl F, BorelSpace (κ → Fv F v)]
+    [∀ v : Pl (F := F), MeasurableSpace (κ → Fv F v)] [∀ v : Pl (F := F), BorelSpace (κ → Fv F v)]
     (μ : Measure (κ → AF F)) [μ.IsAddHaarMeasure] (μi : Measure (κ → mixedEmbedding.mixedSpace F)) [μi.IsAddHaarMeasure]
-    (μv : ∀ v : Pl F, Measure (κ → Fv F v)) [∀ v, (μv v).IsAddHaarMeasure],
+    (μv : ∀ v : Pl (F := F), Measure (κ → Fv F v)) [∀ v, (μv v).IsAddHaarMeasure],
     (∀ v, μv v {x | ∀ i, x i ∈ v.adicCompletionIntegers F} = 1) → ∃ c : ℂ, c ≠ 0 ∧
-      ∀ (f : (κ → mixedEmbedding.mixedSpace F) → ℂ) (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ), Continuous f → Integrable f μi → IsFam φ →
+      ∀ (f : (κ → mixedEmbedding.mixedSpace F) → ℂ) (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ), Continuous f → Integrable f μi → IsFam φ →
         Integrable (fun x : κ → AF F => f (fun i => evI F (x i)) * ∏ᶠ v, φ v fun i => evFin F v (x i)) μ ∧
         ∫ x, f (fun i => evI F (x i)) * ∏ᶠ v, φ v (fun i => evFin F v (x i)) ∂μ = c * (∫ x, f x ∂μi) * ∏ᶠ v, ∫ x, φ v x ∂(μv v) := by
   intro F _ _ κ _ _ _ _ _ _ _ μ _ μi _ μv _ hμv
   classical
   letI : MeasurableSpace (κ → Af F) := borel _
   haveI : BorelSpace (κ → Af F) := ⟨rfl⟩
-  haveI : ∀ v : Pl F, ProperSpace (Fv F v) := fun v => GlobalTheory.AdelicUnitaryTop.properSpace_adicCompletion F v
+  haveI : ∀ v : Pl (F := F), ProperSpace (Fv F v) := fun v => GlobalTheory.AdelicUnitaryTop.properSpace_adicCompletion F v
   obtain ⟨μf, hμfH, hμf1⟩ := GlobalTheory.T.exists_finiteAdelicHaar_integralPoints_one F κ
   obtain ⟨c, hc0, hctop, hc⟩ := GlobalTheory.T.lintegral_adelicHaar_split_archimedean_finite F κ μ μi μf
   refine ⟨(c.toReal : ℂ), Complex.ofReal_ne_zero.2 (ENNReal.toReal_ne_zero.2 ⟨hc0, hctop⟩), fun f φ hfc hfi hφ => ?_⟩
@@ -145,7 +150,7 @@ theorem integral_pure_haar : ∀ (F : Type) [Field F] [NumberField F] (κ : Type
     exact hv (by simpa [hS] using hne)
   have hpi : Continuous fun x : κ → AF F => fun i => evI F (x i) :=
     continuous_pi fun i => (GlobalTheory.Core.Rk.RapidInt.continuous_toMixed F).comp (continuous_fst.comp (continuous_apply i))
-  have hpv : ∀ v : Pl F, Continuous fun x : κ → AF F => fun i => evFin F v (x i) := fun v =>
+  have hpv : ∀ v : Pl (F := F), Continuous fun x : κ → AF F => fun i => evFin F v (x i) := fun v =>
     continuous_pi fun i => (GlobalTheory.GaugeGlue.continuous_evalV v).comp (continuous_snd.comp (continuous_apply i))
   set B : Set (κ → AF F) := {x | ∀ v ∉ S, ∀ i, evFin F v (x i) ∈ v.adicCompletionIntegers F} with hB
   have hBm : MeasurableSet B := by
@@ -155,7 +160,7 @@ theorem integral_pure_haar : ∀ (F : Type) [Field F] [NumberField F] (κ : Type
     have hsnd : Continuous (fun x : κ → AF F => fun i => sndA F (x i)) :=
       continuous_pi fun i => continuous_snd.comp (continuous_apply i)
     exact hsnd.measurable (measurableSet_box F κ S)
-  have hlin : ∀ (fi : (κ → mixedEmbedding.mixedSpace F) → ℝ≥0∞) (fv : ∀ v : Pl F, (κ → Fv F v) → ℝ≥0∞),
+  have hlin : ∀ (fi : (κ → mixedEmbedding.mixedSpace F) → ℝ≥0∞) (fv : ∀ v : Pl (F := F), (κ → Fv F v) → ℝ≥0∞),
       Measurable fi → (∀ v, Measurable (fv v)) →
       ∫⁻ x, fi (fun i => evI F (x i)) * ∏ v ∈ S, fv v (fun i => evFin F v (x i)) ∂(μ.restrict B) =
         (∫⁻ z, fi z ∂μi) * (∏ v ∈ S, ∫⁻ t, fv v t ∂(μv v)) * c := by

@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsSymmRelabel
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.RelabelTransport
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.IntNumCompPerm
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsSymmRelabel
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.RelabelTransport
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.IntNumCompPerm
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets

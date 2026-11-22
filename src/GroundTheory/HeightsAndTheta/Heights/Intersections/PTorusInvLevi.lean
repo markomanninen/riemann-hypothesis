@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StTorusInvLevi
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.FubiniLevi
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StTorusInvLevi
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.FubiniLevi
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -128,8 +133,8 @@ theorem norm_mul_self_le_sum (v : J → ℂ) : ‖v‖ * ‖v‖ ≤ ∑ p, ‖v
         mul_self_le_mul_self (norm_nonneg _) h
     _ = _ := Real.mul_self_sqrt hS
 
-theorem log_rho_eq_phi (x : J → ℂ) : Real.log ((fsMetric J).ρ x) = phi x := by
-  have h : (fsMetric J).ρ x = Real.sqrt (sqSum x) := by
+theorem log_rho_eq_phi (x : J → ℂ) : Real.log ((fsMetric (ι := J)).ρ x) = phi x := by
+  have h : (fsMetric (ι := J)).ρ x = Real.sqrt (sqSum x) := by
     simp [fsMetric, EuclideanSpace.norm_eq, sqSum]
   rw [h, Real.log_sqrt (sqSum_nonneg x), phi]
   ring
@@ -170,7 +175,7 @@ def blk (k : K) : ((Σ k, ι k) → ℂ) →L[ℂ] (ι k → ℂ) :=
     ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : (Σ k, ι k) => ℂ) ⟨k, i⟩
 
 theorem levi_Phi {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) (w : (Σ k, ι k) → ℂ) :
-    leviForm (fun y => ∑ k, Real.log ((fsMetric (ι k)).ρ (fun i => y ⟨k, i⟩))) z w =
+    leviForm (fun y => ∑ k, Real.log ((fsMetric (ι := ι k)).ρ (fun i => y ⟨k, i⟩))) z w =
       ∑ k, leviForm phi (blk k z) (blk k w) := by
   have hS : ∀ k, sqSum (blk k z) ≠ 0 := by
     intro k
@@ -180,7 +185,7 @@ theorem levi_Phi {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠
       (Finset.mem_univ i)
   have hf : ∀ k, ContDiffAt ℝ 2 (phi ∘ blk (ι := ι) k) z := fun k =>
     (contDiffAt_phi (hS k)).comp z ((blk (ι := ι) k).restrictScalars ℝ).contDiff.contDiffAt
-  have hfun : (fun y => ∑ k, Real.log ((fsMetric (ι k)).ρ (fun i => y ⟨k, i⟩))) =
+  have hfun : (fun y => ∑ k, Real.log ((fsMetric (ι := ι k)).ρ (fun i => y ⟨k, i⟩))) =
       fun y => (fun _ => (0 : ℝ)) y + ∑ k ∈ Finset.univ, (fun _ => (1 : ℝ)) k * (phi ∘ blk (ι := ι) k) y := by
     funext y
     simp only [zero_add, one_mul, Function.comp_apply]
@@ -202,7 +207,6 @@ end Blocks
 end TorusInvariantLevi
 
 open TorusInvariantLevi in
-
 theorem TorusInvLevi.proof : TorusInvLevi.Statement := by
   intro K _ ι _ u hu hinv
   have hUo := isOpen_noZeroBlock (ι := ι)

@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
-import Development.WeilBound.ThetaLifts.LatticeBasics.LeviEx
-import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldA
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
+public import Development.WeilBound.ThetaLifts.LatticeBasics.LeviEx
+public import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldA
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,8 +38,8 @@ theorem HasSig.aniso {n r s : ℕ} {M : Matrix (Fin n) (Fin n) ℂ} (h : HasSig 
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {n : ℕ} {Y : Spc F E n}
 
-variable (σ) in
 
+variable (σ) in
 def Aniso (J : Matrix (Fin n) (Fin n) E) : Prop := ∀ x, form σ J x x = 0 → x = 0
 
 theorem aniso_of {B : Base F E} {r s : ℕ} (hB : B.IsGood σ) (hY : Y.IsHerm σ B r s ∨ Y.IsSkew σ B r s) (h0 : min r s = 0) :

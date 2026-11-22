@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory
@@ -70,7 +75,7 @@ theorem exists_rank_ideal_of_idempotent : ∀ (A : Type) [CommRing A] (I : Type)
     rw [RingHom.mem_ker, RingHom.comp_apply]
     have : f e = 1 := by
       have := congrArg f hadd
-      rw [map_add, hx, add_zero, map_one] at this; exact this
+      rw [map_add (f := _), hx, add_zero, map_one] at this; exact this
     rw [this, map_one]; exact one_ne_zero
 
 end GlobalTheory

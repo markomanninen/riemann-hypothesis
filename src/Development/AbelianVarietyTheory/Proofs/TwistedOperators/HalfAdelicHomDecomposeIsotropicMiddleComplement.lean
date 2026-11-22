@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.T2SpaceHalfAdelicMatrixAddSubgroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.T2SpaceHalfAdelicMatrixAddSubgroup
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory GlobalTheory.IndefiniteRowSideFullHecke.AdjointIsotropicDecomposition GlobalTheory.HalfAverage
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -95,7 +100,7 @@ theorem half_decomp : ∀ (D : D7) (V V' W : HSp D) (r : ℕ) (C : Matrix (Fin V
     HMul.hMul (u : Matrix (Fin W.rank) (Fin V.rank) (AE D)) (C.map (incA D)),
     isHalf_mul hu _, isHalf_mul hu _, isHalf_mul hu _, ?_⟩
   have h1 := congrArg (fun M : Matrix (Fin V.rank) (Fin V.rank) D.host.E => M.map (incA D)) hN'
-  simp only [Matrix.map_add, Matrix.map_mul, Matrix.map_one _ (map_zero _) (map_one _)] at h1
+  simp only [Matrix.map_add (f := _), Matrix.map_mul, Matrix.map_one _ (map_zero _) (map_one _)] at h1
   simp only [isoPart, midPart, restEmb, Matrix.map_mul, Matrix.mul_assoc]
   conv_lhs => rw [← Matrix.mul_one u, ← h1]
   simp only [Matrix.map_add _ (map_add (incA D)), Matrix.map_mul, Matrix.mul_add, Matrix.mul_assoc]

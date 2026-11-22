@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.MemOfExp
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.PchainDN
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.NDlCoords
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.MemOfExp
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.PchainDN
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.NDlCoords
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -68,7 +72,7 @@ theorem fam_exp [IsDomain O] {A : Type} [AddCommGroup A] [Module O A] (hs : W.s 
     have e1 : (⟨W.Q ^ K • w (f + g), hK (f + g)⟩ : ↥(W.N T)) =
         ⟨W.Q ^ K • w f, hK f⟩ + ⟨W.Q ^ K • w g, hK g⟩ := Subtype.ext (by simp [smul_add])
     have e2 := hde (f + g)
-    rw [e1, map_add, hde f, hde g, ← smulS_add (LB_mono h2 (min_le_left m2 m3))
+    rw [e1, map_add (f := _), hde f, hde g, ← smulS_add (LB_mono h2 (min_le_left m2 m3))
       (LB_mono h3 (min_le_right m2 m3))] at e2
     exact div_unique (m := min m1 (min m2 m3)) (LB_mono h1 (min_le_left _ _))
       (LB_mono (LB_add (LB_mono h2 (min_le_left m2 m3)) (LB_mono h3 (min_le_right m2 m3)))

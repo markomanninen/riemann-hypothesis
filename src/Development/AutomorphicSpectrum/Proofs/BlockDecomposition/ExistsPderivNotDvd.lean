@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FaithfulIntegralClosure
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FaithfulIntegralClosure
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 
 namespace GlobalTheory.CompanionTheory.TraceJac
@@ -11,10 +16,10 @@ theorem exists_pderiv_not_dvd {K σ : Type*} [Field K] [CharZero K] (π : MvPoly
   have hT : π.totalDegree ≠ 0 := by
     intro h
     have hC := totalDegree_eq_zero_iff_eq_C.1 h
-    by_cases ha : coeff 0 π = 0
+    by_cases ha : π.coeff 0 = 0
     · rw [ha, map_zero] at hC
       exact hπ.ne_zero hC
-    · apply hπ.not_unit
+    · apply hπ.not_isUnit
       rw [hC]
       exact (IsUnit.mk0 _ ha).map C
   have h1 : ¬ ∀ m ∈ π.support, ∀ x, m x = 0 := by
@@ -28,11 +33,11 @@ theorem exists_pderiv_not_dvd {K σ : Type*} [Field K] [CharZero K] (π : MvPoly
     · subst hi
       simp
       omega
-    · simp [Finsupp.single_apply, Ne.symm hi]
+    · simp [Ne.symm hi]
   have hne : pderiv j π ≠ 0 := by
     intro h0
     have h2 := coeff_pderiv (i := j) π (m - Finsupp.single j 1)
-    rw [h0, hm', coeff_zero] at h2
+    rw [h0, hm', AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at h2
     have h3 : (((m - Finsupp.single j 1 : σ →₀ ℕ) j : ℕ) + 1 : K) ≠ 0 := by
       exact Nat.cast_add_one_ne_zero _
     exact mul_ne_zero (mem_support_iff.1 hm) h3 h2.symm
@@ -83,7 +88,7 @@ theorem finite_frac {A B F L : Type*} [CommRing A] [IsDomain A] [CommRing B] [Is
       simp only [Finset.coe_image]
       exact ⟨s, hs, rfl⟩
     | zero => simp
-    | add a b _ _ ha hb => rw [map_add]; exact W.add_mem ha hb
+    | add a b _ _ ha hb => rw [map_add (f := _)]; exact W.add_mem ha hb
     | smul r a _ ha =>
       have h1 : algebraMap B L (r • a) = algebraMap F L (algebraMap A F r) * algebraMap B L a := by
         rw [Algebra.smul_def, map_mul, ← IsScalarTower.algebraMap_apply,
@@ -155,7 +160,7 @@ theorem at_prime_abs {P L F R n : Type*} [CommRing P] [IsDomain P] [IsNoetherian
     simpa using hπR0
   have hprin : (IsLocalRing.maximalIdeal R).IsPrincipal := ⟨⟨_, hmax⟩⟩
   haveI : IsDiscreteValuationRing R := by
-    have h5 := (IsDiscreteValuationRing.TFAE R hnf).out 0 4
+    have h5 := (IsDiscreteValuationRing.TFAE R hnf).out 1 5
     exact h5.2 hprin
   have hirr : Irreducible (algebraMap P R π) :=
     (IsDiscreteValuationRing.irreducible_iff_uniformizer _).2 hmax

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.KernelOfEmbedding
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AmpFibreConstOf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.KernelOfEmbedding
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AmpFibreConstOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,8 +38,8 @@ section Amp
 
 variable {D : D7} {X : HidaSetting D} {Y : Full X} {u u' : D.what₂.Word}
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem oot_cov (hR : RatPt) (hC : ChiTrivialC) {s s' : TT Y u u'} (h : s.toTerm = s'.toTerm) :
     ∃ (b : ℂ) (U : X.Vpi u' ≃ₗᵢ[ℂ] X.Vpi u'), ‖b‖ = 1 ∧ OOt s' = b • (OOt s).comp (cl U) := by
   haveI := FiniteDimensional.complete ℂ (X.Vpi u)
@@ -65,9 +69,9 @@ theorem oot_cov (hR : RatPt) (hC : ChiTrivialC) {s s' : TT Y u u'} (h : s.toTerm
   by_cases hE : ∃ Ω, IsSFund X.B.I (ROinf s') Ω
   · have hE0 := hex.2 hE
     have hΩp : IsSFund X.B.I (ROinf s) (FundOf s) := by
-      unfold FundOf; rw [dif_pos hE0]; exact hE0.choose_spec
+      unfold FundOf; rw [dite_eq_left hE0]; exact hE0.choose_spec
     have hΩq : IsSFund X.B.I (ROinf s') (FundOf s') := by
-      unfold FundOf; rw [dif_pos hE]; exact hE.choose_spec
+      unfold FundOf; rw [dite_eq_left hE]; exact hE.choose_spec
     have key := oo_rel nLamNinf_holds hC Y s.mem s.mem' s.rep hn hν hxn hxν hΩp (isSFund_congr hset hΩq)
     have hsinv : xc.1⁻¹ ∈ X.SinfU u' := Formalism.L2.SG.RealObj.InfCut.sinfU_inv X u' (sinf_of_fix hxc hfix)
     have hB : ∀ x, X.Wu u' (xc.1⁻¹ * x) =
@@ -92,9 +96,9 @@ theorem oot_cov (hR : RatPt) (hC : ChiTrivialC) {s s' : TT Y u u'} (h : s.toTerm
       rw [hU, ContinuousLinearMap.smul_comp, smul_smul]
   · have hE0 : ¬ ∃ Ω, IsSFund X.B.I (ROinf s) Ω := fun h0 => hE (hex.1 h0)
     have h1 : OOt s' = 0 := by
-      unfold OOt FundOf; rw [dif_neg hE]; exact OO_empty _ _ _ _
+      unfold OOt FundOf; rw [dite_eq_right hE]; exact OO_empty _ _ _ _
     have h2 : OOt s = 0 := by
-      unfold OOt FundOf; rw [dif_neg hE0]; exact OO_empty _ _ _ _
+      unfold OOt FundOf; rw [dite_eq_right hE0]; exact OO_empty _ _ _ _
     refine ⟨1, LinearIsometryEquiv.refl ℂ _, norm_one, ?_⟩
     rw [h1, h2]
     simp

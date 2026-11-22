@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleTrace.LCompDecPf
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsIntegralOfSmoothFieldOfConnectedSpace
+module
+
+public import Development.EtaleCohomology.EtaleTrace.LCompDecPf
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsIntegralOfSmoothFieldOfConnectedSpace
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory AlgebraicGeometry

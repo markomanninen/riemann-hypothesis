@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -82,8 +87,6 @@ theorem valuation_algebraMap_of_isUnramifiedAt (w : HeightOneSpectrum (𝓞 K))
     [Algebra.IsUnramifiedAt (𝓞 K) W.asIdeal] (x : K) :
     W.valuation L (algebraMap K L x) = w.valuation K x := by
   rw [← valuation_liesOver L w W x,
-    Ideal.ramificationIdx'_eq_ramificationIdx' w.asIdeal W.asIdeal
-      (Ideal.map_ne_bot_of_ne_bot w.ne_bot),
     Ideal.ramificationIdx_eq_one, pow_one]
 
 end Unramified

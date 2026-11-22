@@ -1,10 +1,14 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.UpPositionOfModels
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.MixLocal
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.WLocal
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.KapPiPf
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.PhibOLComplete
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GeneratorBoundOfHypotheses
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfC
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.UpPositionOfModels
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.MixLocal
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.WLocal
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.KapPiPf
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.PhibOLComplete
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GeneratorBoundOfHypotheses
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfC
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,8 @@ namespace Formalism.MainNotions.N.Ln34
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Module Formalism.MainNotions.ElementDenominator Formalism.MainNotions.ElementDenominator.CongruenceModules Formalism.MainNotions.N.Ln34.DescentValuation
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem u3mixlink_pf : MixedSlotOfModels := by
   intro D HW Fo Cm CA CB CK hA hdr hrk hMF l hlp hl K LL hG π' E hp T₁ T₂ F S η m h' up b c α β hfr hN he
   obtain ⟨hc1, hc2, hon, hd1, hd2, hηb, hbS, hh, -, -⟩ := hN

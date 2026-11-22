@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.SelmerCrystallineCocycles
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthQuotientMaximalIdealPowSmulTop
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthRestrictScalarsEqSumInertiaDegOfSubset
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.SelmerCrystallineCocycles
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthQuotientMaximalIdealPowSmulTop
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthRestrictScalarsEqSumInertiaDegOfSubset
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ variable {R R' : Type} [CommRing R] [CommRing R'] [Algebra R R']
 
 def cZ : Z1 ρ' →ₗ[R] Z1 ρ where
   toFun f := ⟨u ∘ f.1, hu.comp f.2.1, fun g h => by
-    simp only [Function.comp_apply, f.2.2 g h, map_add, he]⟩
+    simp only [Function.comp_apply, f.2.2 g h, map_add (f := _), he]⟩
   map_add' f f' := Subtype.ext (funext fun g => map_add u _ _)
   map_smul' r f := Subtype.ext (funext fun g => map_smul u _ _)
 
@@ -99,17 +103,6 @@ theorem trep_one_apply (g : Gen.GE N) (m : Fin D.R.r → KmodO (X.Ok i k)) (a : 
     Trep i s k 1 g m a = ∑ j, phiK X i k (Tmat i s g a j) • m j := by
   simp [Trep, twRep, matAct, Tmat, Finset.smul_sum, smul_smul]
 
-def bkGen (v : HeightOneSpectrum (𝓞 D.host.E)) (hv : v ∈ placesOver D.host.E (X.l i)) :
-    Set (H1 ((Trep i s k 1).comp (DecV N v).subtype)) :=
-  {x | ∃ (z : Z1 ((Trep i s k 1).comp (DecV N v).subtype))
-      (c : ↥(Loc.GK (bkP.br i v hv).Kw) → Fin D.R.r → ↥(bkP.br i v hv).LL.1)
-      (y : ↥(DecV N v) → Fin D.R.r → FractionRing (X.Ok i k)),
-      c ∈ Formalism.WeaklyAdmissibleFiltrations.finiteCocycles (PDv bkP i v hv) (Gen.repV bkP i v hv (Tgl i s)) ∧
-      (∀ g a, IsImgK bkP i v hv k (c ((bkP.br i v hv).e g) a) (y g a)) ∧
-      (∀ g a, (z : ↥(DecV N v) → Fin D.R.r → Formalism.BasicNotions.KmodO (X.Ok i k)) g a =
-        Submodule.Quotient.mk (y g a)) ∧
-      x = Submodule.Quotient.mk z}
-
 variable [Algebra (X.Ok i k) (X.Ok i k')] [IsScalarTower (X.O i) (X.Ok i k) (X.Ok i k')]
 
 theorem phiK_eq (a : X.O0 i) :
@@ -122,7 +115,8 @@ theorem equivariant (g : Gen.GE N) (m : Fin D.R.r → KmodO (X.Ok i k')) :
     p.compLeft (Fin D.R.r) (Trep i s k' 1 g m) = Trep i s k 1 g (p.compLeft (Fin D.R.r) m) := by
   funext a
   show p (Trep i s k' 1 g m a) = _
-  rw [trep_one_apply, trep_one_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [trep_one_apply, trep_one_apply, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [phiK_eq i k k', algebraMap_smul, map_smul]
   rfl

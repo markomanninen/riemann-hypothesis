@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.EqLagIff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.SepChars
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.OrdExt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LagTriangular
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LagNeZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CoiConjSingle
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.EqLagIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.SepChars
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.OrdExt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LagTriangular
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LagNeZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CoiConjSingle
+
+@[expose] public section
 
 open Polynomial Matrix IsLocalRing TensorProduct UpperTheory.V.AlgebraTools
 

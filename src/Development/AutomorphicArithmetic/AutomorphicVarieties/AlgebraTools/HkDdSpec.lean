@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkDefs
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ProdPrimesDvd
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkDefs
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ProdPrimesDvd
+
+@[expose] public section
 
 open MvPolynomial Equiv UpperTheory.V.AlgebraTools.Hk
 
@@ -16,7 +20,7 @@ private theorem dvd_sub_sb {R : Type} [CommRing R] {n : ℕ} (i j : Fin n) (y : 
   | C a => simp
   | add p q hp hq =>
     have := dvd_add hp hq
-    rw [map_add]
+    rw [map_add (f := _)]
     convert this using 1
     ring
   | mul_X p k hp =>
@@ -57,7 +61,8 @@ private theorem alt_sb {R : Type} [CommRing R] {n : ℕ} {i j : Fin n} (h : i �
     · by_cases h2 : k = j
       · subst h2; simp [sb]
       · rw [swap_apply_of_ne_of_ne h1 h2]
-  rw [alt, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [alt, map_sum]
   refine Finset.sum_involution (fun w _ => swap i j * w) (fun w _ => ?_) (fun w _ _ e => ?_)
     (fun w _ => Finset.mem_univ _) (fun w _ => ?_)
   · have e : sb i j ∘ (swap i j * w : Perm (Fin n)) = sb i j ∘ w := funext fun k => hs _
@@ -88,5 +93,5 @@ theorem UpperTheory.V.AlgebraTools.hkDdSpec :
     · exact absurd e h2.ne'
   obtain ⟨y, hy⟩ := hd
   have h : ∃ y, De R n * y = alt x := ⟨y, hy.symm⟩
-  rw [dd, dif_pos h]
+  rw [dd, dite_eq_left h]
   exact h.choose_spec

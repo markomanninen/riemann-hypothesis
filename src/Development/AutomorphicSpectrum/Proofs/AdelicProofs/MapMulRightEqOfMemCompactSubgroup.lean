@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal Pointwise
@@ -42,5 +46,6 @@ theorem map_mul_right_eq_of_mem_compact_subgroup :
     rw [h1, h4, one_smul]
   have h := Measure.isMulLeftInvariant_eq_smul μ ν
   rw [h, Measure.map_smul, key]
+  exact hmeas.aemeasurable
 
 end GlobalTheory.CompanionTheory.Xa1

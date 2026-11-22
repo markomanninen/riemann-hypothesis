@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.SigDEqStar
-import Formalism.LocalToGlobal.GlobalTheory.GL4.PCoordH
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.SigDEqStar
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.PCoordH
+
+@[expose] public section
 
 noncomputable section
 

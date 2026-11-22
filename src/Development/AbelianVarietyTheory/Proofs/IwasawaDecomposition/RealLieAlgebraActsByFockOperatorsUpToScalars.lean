@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.WeilFull
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsVacFOfIsVacVec
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MulNonsingInvCancelRightGram
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.WeilFull
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsVacFOfIsVacVec
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MulNonsingInvCancelRightGram
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,8 +13,8 @@ namespace GlobalTheory.LieFock
 
 section Abstract
 
-open Formalism.IndefR.Datum in
 
+open Formalism.IndefR.Datum in
 theorem exists_lift_on {ι X : Type} [DecidableEq ι] (M : Submodule ℂ (X → ℂ)) (A : ι → (X → ℂ) → (X → ℂ))
     (a b : ι → Module.End ℂ M) (hA : ∀ i (g : M), A i g = a i g) (haa : ∀ i j, a i * a j = a j * a i)
     (hba : ∀ i j, b i * a j = a j * b i + (if i = j then (1 : ℂ) else 0) • 1) (f : M) (S : Set ι)
@@ -24,7 +28,7 @@ theorem exists_lift_on {ι X : Type} [DecidableEq ι] (M : Submodule ℂ (X → 
       rw [hA j ⟨g, hg⟩, hA i ⟨g, hg⟩, hA, hA]
       exact congrArg Subtype.val (LinearMap.congr_fun (haa i j) ⟨g, hg⟩))
     (fun i g g' hg hg' => by
-      rw [hA i ⟨g, hg⟩, hA i ⟨g', hg'⟩, ← Submodule.coe_add, ← map_add, ← hA]; rfl)
+      rw [hA i ⟨g, hg⟩, hA i ⟨g', hg'⟩, ← Submodule.coe_add, ← map_add (f := _), ← hA]; rfl)
     (fun i c g hg => by rw [hA i ⟨g, hg⟩, ← Submodule.coe_smul, ← map_smul, ← hA]; rfl) f.2
   let E : MvPolynomial ι ℂ →ₗ[ℂ] M := (pureTensorL A (f : X → ℂ)).codRestrict M hm
   have hE : ∀ v Q, E (MvPolynomial.X v * Q) = a v (E Q) := fun v Q => Subtype.ext ((hX Q v).trans (hA v (E Q)))
@@ -33,7 +37,7 @@ theorem exists_lift_on {ι X : Type} [DecidableEq ι] (M : Submodule ℂ (X → 
   clear_value E
   induction Q using MvPolynomial.induction_on with
   | C r => rw [MvPolynomial.pderiv_C, map_zero, MvPolynomial.C_eq_smul_one, map_smul, map_smul, h0, hf i hi, smul_zero]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p j hp =>
     rw [mul_comm, hE, ← Module.End.mul_apply, hba, LinearMap.add_apply, Module.End.mul_apply, hp,
       MvPolynomial.pderiv_mul, map_add, hE, add_comm]
@@ -229,7 +233,7 @@ theorem lieFockUpTo_at : ∀ (D : D7) (V W : HSp D) (A : GlobalTheory.ChainFr.Fr
       rw [Matrix.map_apply, lie_entry (fr_det A τ) (A.fr_gram τ) hX]
       simp only [hw, ← Finset.smul_sum]
       module
-    rw [h1, h1, map_add, map_smul, fockS, lift_quad E (fun j i => raiO τ (A.ε τ) (B.ε τ) i j)
+    rw [h1, h1, map_add (f := _), map_smul, fockS, lift_quad E (fun j i => raiO τ (A.ε τ) (B.ε τ) i j)
       (fun j i => lowO τ (A.ε τ) (B.ε τ) i j) (fun j i => R i j) (fun j i => L i j) (fun j i => h2 i j)
       (fun j i => h3 i j), add_assoc, ← add_smul, add_sub_cancel, ← e]
     exact hl (E P) z
@@ -261,7 +265,7 @@ theorem lieFockUpTo_at : ∀ (D : D7) (V W : HSp D) (A : GlobalTheory.ChainFr.Fr
         ∑ i, ∑ k, (B.fr τ * Y * (B.fr τ)⁻¹) i k • ∑ j, R i j * L k j := by
       rw [WeylAction.sum_left]
       simp only [hw, sgn_mul_self, one_smul]
-    rw [h1, h1, map_add, map_smul, fockT, lift_quad E _ _ R L h2 h3, add_assoc, ← add_smul, add_sub_cancel, ← e]
+    rw [h1, h1, map_add (f := _), map_smul, fockT, lift_quad E _ _ R L h2 h3, add_assoc, ← add_smul, add_sub_cancel, ← e]
     exact hl (E P) z
   choose κS hS using hS
   choose κT hT using hT

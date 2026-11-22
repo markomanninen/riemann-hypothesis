@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.DegProd
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsUnitDetOfProductMapNeZero
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.PointMatrixMulLeftMulMatrix
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.DegProd
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsUnitDetOfProductMapNeZero
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.PointMatrixMulLeftMulMatrix
+
+@[expose] public section
+
 open GlobalTheory.KeyKa
 
 namespace GlobalTheory.KeyKa
@@ -22,7 +27,7 @@ theorem exists_basis_det_ne_zero_of_points {O B Ix : Type} [CommRing O] [IsDomai
         obtain ⟨y, hy⟩ := hs t
         exact ⟨y, hy⟩)
     refine LinearMap.finrank_le_finrank_of_injective (f := ψ) ?_
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro t ht
     have h3 : c • t = 0 := congrArg Subtype.val ht
     exact (smul_eq_zero.1 h3).resolve_left hc
@@ -37,7 +42,8 @@ theorem exists_basis_det_ne_zero_of_points {O B Ix : Type} [CommRing O] [IsDomai
     ext a
     have := congrFun hMv a
     simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, Pi.zero_apply] at this
-    rw [map_sum, Finset.sum_apply, Pi.zero_apply, ← this]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_apply, Pi.zero_apply, ← this]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, Pi.smul_apply, smul_eq_mul, mul_comm]
   have h5 : ∑ a, v a • b a = 0 := hφ (h4.trans (map_zero φ).symm)
@@ -55,7 +61,7 @@ theorem discr_jacobian_of_points :
         (∀ G, ∃! r : Ix → O, G - ∑ a, r a • β a ∈ Ideal.span (Set.range F)) ∧
         (Matrix.of fun a a' => e a (β a')).det ≠ 0 ∧
         Associated ((Matrix.of fun a a' => e a (β a')).det ^ 2)
-          (∏ a, e a (Matrix.of fun i j => MvPowerSeries.pderiv O j (F i)).det) := by
+          (∏ a, e a (Matrix.of fun i j => MvPowerSeries.pderiv (R := O) j (F i)).det) := by
   intro O _ _ _ _ g Ix _ _ F e hF hX hker ⟨c, hc, hs⟩
   let S := MvPowerSeries (Fin g) O
   let I : Ideal S := Ideal.span (Set.range F)
@@ -67,7 +73,7 @@ theorem discr_jacobian_of_points :
   have heb : ∀ a s, eb a (Ideal.Quotient.mk I s) = e a s := fun a s => rfl
   let φ : (S ⧸ I) →ₗ[O] (Ix → O) := LinearMap.pi fun a => (eb a).toLinearMap
   have hφ : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro y hy
     obtain ⟨s, rfl⟩ := Ideal.Quotient.mk_surjective y
     exact Ideal.Quotient.eq_zero_iff_mem.2 (hker s fun a => congrFun hy a)
@@ -82,7 +88,8 @@ theorem discr_jacobian_of_points :
   have hq : ∀ (G : S) (r : Ix → O), G - ∑ a, r a • β a ∈ I ↔
       Ideal.Quotient.mk I G = ∑ a, r a • b a := by
     intro G r
-    rw [← Ideal.Quotient.eq, ← Ideal.Quotient.mkₐ_eq_mk O, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Ideal.Quotient.eq, ← Ideal.Quotient.mkₐ_eq_mk O, map_sum]
     simp only [map_smul, Ideal.Quotient.mkₐ_eq_mk, hβ]
   refine ⟨β, fun G => ⟨b.equivFun (Ideal.Quotient.mk I G), ?_, fun r hr => ?_⟩, ?_, ?_⟩
   · exact (hq G _).2 (b.sum_equivFun _).symm
@@ -96,7 +103,8 @@ theorem discr_jacobian_of_points :
         have h1 := congrArg (e a) hu
         have h2 : e a (MvPowerSeries.C (MvPowerSeries.constantCoeff (F i)))
             = MvPowerSeries.constantCoeff (F i) := (e a).commutes _
-        rw [hF, map_add, h2, map_sum] at h1
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hF, map_add (f := _), h2, map_sum] at h1
         rw [eq_neg_of_add_eq_zero_left h1.symm]
         refine neg_mem (Ideal.sum_mem _ fun j _ => ?_)
         rw [map_mul]

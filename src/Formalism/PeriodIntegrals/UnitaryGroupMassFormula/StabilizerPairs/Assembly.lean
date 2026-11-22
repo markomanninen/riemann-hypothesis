@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerPairs.StabPairsOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerPairs.Forward
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FrameInd
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerPairs.StabPairsOf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerPairs.Forward
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FrameInd
+
+@[expose] public section
 
 namespace PI.StabPairsW
 

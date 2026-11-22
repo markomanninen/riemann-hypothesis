@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantFinprodSchwartzBruhatFiniteAdel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportFinprodSchwartzBruhatFiniteAdel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactOpenSubgroupsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantFinprodSchwartzBruhatFiniteAdel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportFinprodSchwartzBruhatFiniteAdel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactOpenSubgroupsStatement
+
+@[expose] public section
 
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -72,7 +76,7 @@ theorem coset_indicator_finprod : ∀ (F : Type) [Field F] [NumberField F] (κ :
     · rw [Set.indicator_of_notMem hy]
       simp only [Set.mem_setOf_eq, not_forall] at hy
       obtain ⟨i, v, hv⟩ := hy
-      refine (finprod_eq_zero _ v (Set.indicator_of_notMem (fun h => hv (by simpa [map_sub] using h i)) _) ?_).symm
+      refine (finprod_eq_zero _ v (Set.indicator_of_notMem (show (fun j => Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F v (y j)) ∉ {x | ∀ j, x j - Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F v (a j) ∈ N v} from fun h => hv (by simpa [map_sub] using h i)) _) ?_).symm
       refine (Filter.eventually_cofinite.1 ((hNcof.and (hint a)).and (hint y))).subset fun w hw h' => hw ?_
       refine Set.indicator_of_mem (fun j => ?_) _
       rw [← SetLike.mem_coe, h'.1.1, SetLike.mem_coe]
@@ -102,7 +106,7 @@ theorem sb_decomp : ∀ (F : Type) [Field F] [NumberField F] (κ : Type) [Fintyp
   let U : AddSubgroup (κ → FiniteAdeleRing (𝓞 F) F) :=
     { carrier := {y | ∀ i v, Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F v (y i) ∈ N v}
       zero_mem' := fun i v => by simp
-      add_mem' := fun ha hb i v => by simpa [map_add] using add_mem (ha i v) (hb i v)
+      add_mem' := fun ha hb i v => by simpa [map_add (f := _)] using add_mem (ha i v) (hb i v)
       neg_mem' := fun ha i v => by simpa [map_neg] using neg_mem (ha i v) }
   have hinv : ∀ u ∈ U, ∀ z, g (z + u) = g z := fun u hu z => by
     by_cases hz : z ∈ tsupport g
@@ -185,7 +189,8 @@ theorem pullback_adm : GlobalTheory.FunPr.Hypotheses₂ → ∀ (F E : Type) [Fi
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [mul_left_comm]
     rfl
-  rw [LinearMap.comp_apply, hsplit, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.comp_apply, hsplit, map_sum, map_sum]
   simp only [map_smul, ContinuousLinearMap.coe_sum', Finset.sum_apply, ContinuousLinearMap.coe_smul', Pi.smul_apply,
     ContinuousLinearMap.coe_comp', Function.comp_apply]
   refine Finset.sum_congr rfl fun j _ => ?_

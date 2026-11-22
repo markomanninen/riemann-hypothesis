@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.RecLevelLocT
+module
+
+public import Formalism.LocalToGlobal.Columns.RecLevelLocT
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix
 open scoped TensorProduct
@@ -73,7 +77,7 @@ private theorem sigR_sigR_apply (x : Rv) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [sigR, Formalism.BasicNotions.CMData.sig, starRingEnd_apply]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem rll_col {g : GL (Fin n) Rv} (hg : g ∈ UPts hc.sig (1 : Matrix (Fin n) (Fin n) E) (v.adicCompletion F))
     (hi : rowLocalCondition n π v g⁻¹) (i : Fin n) (hne : i ≠ lastIdx n) :
@@ -114,31 +118,6 @@ theorem rll_p_mul_pinv (x : Rv) : ιv pE * (ιv pE⁻¹ * x) = x := by
 
 theorem rll_cp_mul (x : Rv) : ιv (star pE / pE) * (ιv pE * x) = ιv (star pE) * x := by
   rw [← mul_assoc, ← map_mul, div_mul_cancel₀ _ (pE_ne_zero h)]
-
-theorem rll_Row_maps_L {g : GL (Fin n) Rv} (hg : rowLocalCondition n π v g) (z : Fin n → Rv)
-    (hz : z ∈ Formalism.L2.Herm.locL v (rll_dLat n pE⁻¹)) :
-    (g : Matrix (Fin n) (Fin n) Rv) *ᵥ z ∈ Formalism.L2.Herm.locL v (rll_dLat n pE⁻¹) := by
-  rw [rll_mem_loc_dLat n v _ (inv_ne_zero h.coe_ne_zero)] at hz ⊢
-  obtain ⟨h1, h2⟩ := hz
-  have hzi : ∀ j, z j ∈ 𝒪v := fun j => by
-    by_cases hj : j = lastIdx n
-    · subst hj
-      rw [← rll_p_mul_pinv v h (z (lastIdx n))]
-      exact mul_mem (rll_incl_int v π) h2
-    · exact h1 j hj
-  refine ⟨fun i _ => ?_, ?_⟩
-  · show ∑ j, (g : Matrix (Fin n) (Fin n) Rv) i j * z j ∈ 𝒪v
-    exact sum_mem fun j _ => mul_mem (hg.1 i j) (hzi j)
-  show ιv pE⁻¹ * ∑ j, (g : Matrix (Fin n) (Fin n) Rv) (lastIdx n) j * z j ∈ 𝒪v
-  rw [Finset.mul_sum]
-  refine sum_mem fun j _ => ?_
-  by_cases hj : j = lastIdx n
-  · subst hj
-    rw [mul_left_comm]; exact mul_mem (hg.1 _ _) h2
-  · obtain ⟨s, hs, e⟩ := hg.2 j
-    rw [Matrix.one_apply_ne (Ne.symm hj), sub_zero] at e
-    rw [e, mul_assoc, rll_pinv_mul v h]
-    exact mul_mem hs (h1 j hj)
 
 theorem rll_maps_Sh {g : GL (Fin n) Rv} (hg : ∀ i j, (g : Matrix (Fin n) (Fin n) Rv) i j ∈ 𝒪v)
     (hcol : ∀ i, i ≠ lastIdx n → ∃ s ∈ 𝒪v, (g : Matrix (Fin n) (Fin n) Rv) i (lastIdx n) = ιv (star pE) * s)
@@ -242,7 +221,7 @@ theorem rll_Row_of_maps {g : GL (Fin n) Rv}
   refine ⟨hint, fun j => ?_⟩
   obtain ⟨a, b, hab⟩ := h.cop
   have hab' : ιv (algebraMap (𝓞 E) E a) * ιv pE + ιv (algebraMap (𝓞 E) E b) * ιv (star pE) = 1 := by
-    rw [← algebraMap_cO, ← map_mul, ← map_mul, ← map_mul, ← map_mul, ← map_add, ← map_add, hab, map_one, map_one]
+    rw [← algebraMap_cO, ← map_mul, ← map_mul, ← map_mul, ← map_mul, ← map_add (f := _), ← map_add (f := _), hab, map_one, map_one]
   have h1 := H3 _ (rll_single_mem_Sh n v h j)
   rw [rll_mem_loc_dLat n v _ (div_ne_zero h.star_ne_zero h.coe_ne_zero)] at h1
   have h2 := h1.2
@@ -266,7 +245,7 @@ section Main
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
 variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] {ST : Finset (Pl E)} (SG : Finset (Pl E))
-  (H : Subgroup (GLG E n SG)) {π : 𝓞 E} (v : HeightOneSpectrum (𝓞 F))
+  (H : Subgroup (GLG (E := E) (n := n) (SG := SG))) {π : 𝓞 E} (v : HeightOneSpectrum (𝓞 F))
 
 local notation "Rv" => E ⊗[F] v.adicCompletion F
 local notation "ιv" => inclE (F := F) (E := E) (v.adicCompletion F)
@@ -281,7 +260,7 @@ theorem rll_IE_incl_mul (e : E) (x : Rv) :
     show LinearMap.lTensor E (afsplitI v) (inclE (F := F) (v.adicCompletion F) e * a ⊗ₜ[F] b) =
       inclE (F := F) (Formalism.L2.Herm.Af F) e * LinearMap.lTensor E (afsplitI v) (a ⊗ₜ[F] b)
     simp [inclE, Algebra.TensorProduct.tmul_mul_tmul, LinearMap.lTensor_tmul]
-  | add x y hx hy => simp only [mul_add, map_add, hx, hy]
+  | add x y hx hy => simp only [mul_add, map_add (f := _), hx, hy]
 
 theorem rll_resS_one (P : Pl E) (i j : Fin n) :
     resS F P ((1 : Matrix (Fin n) (Fin n) (Formalism.L2.Herm.intAf F E)) i j) = if j = i then 1 else 0 := by

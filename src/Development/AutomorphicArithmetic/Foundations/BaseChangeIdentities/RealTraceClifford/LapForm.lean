@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.CfBasic
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.SgSmul
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.SymOfMul
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PartialDerivMonomialLaplace
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.CfBasic
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.SgSmul
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.SymOfMul
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PartialDerivMonomialLaplace
+
+@[expose] public section
 
 noncomputable section
 
@@ -168,7 +172,7 @@ private theorem lapL_mul (f g : FR n) :
   simp only [lapL]
   rw [sum_mul, mul_sum, ← sum_add_distrib, ← sum_add_distrib]
   refine sum_congr rfl fun a _ => ?_
-  simp only [lapD_mul, map_add]
+  simp only [lapD_mul, map_add (f := _)]
   ring
 
 private theorem rt_sum (g : Fin n → FR n) (i j : Fin n) :

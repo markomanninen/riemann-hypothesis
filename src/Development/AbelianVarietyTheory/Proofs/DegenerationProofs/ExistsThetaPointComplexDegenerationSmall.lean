@@ -1,35 +1,39 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ReframeSt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.HasThEqClassicalThetaFunctionValues
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusProjPeriodZeroEqReal
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HasSumLocallyUniformlyOnTerm
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FormalThetaSumShiftPeriodDiv
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AnalyticDictionaryIsPointPeriodOrigin
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.PeriodConstantPartEqZeroInjective
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CubNFrame
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TxStOfPtSt
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaSumAppellHumbert
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ValIso
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPullEndo
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.VFEqGenValMul
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsSymPmaps
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.StalkUnitsSymmGm
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DifferentiableQuot
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ValIsoChart
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FibLieOfLaws
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.VFCorr
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CmFieldHostElementAddConjEqOne
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsLogFrame
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsPtNsmul
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TraceEqSumFinrank
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TripleStOfLaws
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.Reframe
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ObjStOfTripleReframe
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TorusTorsionPointsCorrespondValues
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FamiliesValuesCorrespond
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TorsionPairingValuesOfFamiliesValues
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ReframeSt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.HasThEqClassicalThetaFunctionValues
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusProjPeriodZeroEqReal
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HasSumLocallyUniformlyOnTerm
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FormalThetaSumShiftPeriodDiv
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AnalyticDictionaryIsPointPeriodOrigin
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.PeriodConstantPartEqZeroInjective
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CubNFrame
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TxStOfPtSt
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaSumAppellHumbert
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ValIso
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPullEndo
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.VFEqGenValMul
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsSymPmaps
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.StalkUnitsSymmGm
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DifferentiableQuot
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ValIsoChart
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FibLieOfLaws
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.VFCorr
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CmFieldHostElementAddConjEqOne
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsLogFrame
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsPtNsmul
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TraceEqSumFinrank
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TripleStOfLaws
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.Reframe
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ObjStOfTripleReframe
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TorusTorsionPointsCorrespondValues
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FamiliesValuesCorrespond
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TorsionPairingValuesOfFamiliesValues
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -93,14 +97,14 @@ theorem exists_tateIso (D : Datum H) {La : Type} [AddCommGroup La] [Module (𝓞
   have sm' : ∀ n : ℕ, 0 < n → ∀ z : Fin g → ℂ, n • (n : ℂ)⁻¹ • z = z := fun n h z => by
     rw [← Nat.cast_smul_eq_nsmul ℂ, smul_inv_smul₀ (hn n h)]
   have md : ∀ n : ℕ, 0 < n → ∀ a b, e ((n : ℂ)⁻¹ • P (a + n • b)) = e ((n : ℂ)⁻¹ • P a) := fun n h a b => by
-    rw [map_add, smul_add, eadd, sm n h, (eker _).2 ⟨b, rfl⟩, _root_.mul_one]
+    rw [map_add (f := _), smul_add, eadd, sm n h, (eker _).2 ⟨b, rfl⟩, _root_.mul_one]
   refine ⟨{ ζ := ζ, ζ_prim := hp, ζ_pow := hc, ev := fun n a => e ((n : ℂ)⁻¹ • P (f n a)), add := fun n a b => ?_,
             lin := fun n c a => ?_, ker := fun n h a => ?_, onto := fun n h x => ⟨fun hx => ?_, ?_⟩,
             tower := fun n m h h' a => ?_, isom := fun n h a b => ?_ }, rfl, fun _ _ => rfl⟩
   · rcases n.eq_zero_or_pos with rfl | h
     · simp only [Nat.cast_zero, inv_zero, zero_smul, e0, _root_.mul_one]
     · obtain ⟨c, hc⟩ := (hf n h).1 a b
-      rw [hc, md n h, map_add, smul_add, eadd]
+      rw [hc, md n h, map_add (f := _), smul_add, eadd]
   · rcases n.eq_zero_or_pos with rfl | h
     · haveI := hact c
       simp only [Nat.cast_zero, inv_zero, zero_smul, e0, MonObj.one_comp]

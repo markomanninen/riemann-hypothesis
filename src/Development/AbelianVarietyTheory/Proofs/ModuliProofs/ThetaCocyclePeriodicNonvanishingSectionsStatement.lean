@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaCocyclePeriodicNonvanishingSections
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaCocyclePeriodicNonvanishingSections
+
+@[expose] public section
+
 open Complex Matrix
 open scoped ContDiff BigOperators Real
 set_option maxHeartbeats 1000000 in

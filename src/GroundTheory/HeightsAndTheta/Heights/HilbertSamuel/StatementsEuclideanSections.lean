@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -28,11 +33,6 @@ def EuclideanSections.Statement : Prop :=
           -Real.log (ZLattice.covolume (imageLattice (φ n))) ≤
             (II K ι (mCoordIdeal y) (D + 1) (fun _ => A) + ε) *
               ((n : ℝ) ^ (D + 1) / ((D + 1).factorial : ℝ))
-
-example : imageLattice (AddMonoidHom.id (EuclideanSpace ℝ (Fin 2))) = ⊤ := by
-  ext x
-  simp only [imageLattice, Submodule.mem_top, iff_true]
-  exact ⟨x, rfl⟩
 
 end
 

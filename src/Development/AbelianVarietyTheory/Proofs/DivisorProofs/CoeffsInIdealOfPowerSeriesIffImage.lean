@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CobOneEqZeroOfConnecting
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CobOneEqZeroOfConnecting
+
+@[expose] public section
 
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup
 
@@ -23,7 +27,7 @@ theorem series_in_ideal_iff_image :
   · obtain ⟨b₁, hb₁N, hb₁⟩ := hf α
     obtain ⟨b₂, hb₂N, hb₂⟩ := hg α
     refine ⟨b₁ + a * b₂, N.add_mem hb₁N (N.mul_mem_left a hb₂N), ?_⟩
-    rw [map_add, map_smul, smul_eq_mul, hb₁, hb₂, map_add, map_mul]
+    rw [map_add (f := _), map_smul, smul_eq_mul, hb₁, hb₂, map_add (f := _), map_mul]
   · obtain ⟨b₁, hb₁N, hb₁⟩ := hf α
     obtain ⟨b₂, hb₂N, hb₂⟩ := hg α
     exact ⟨b₁ - b₂, N.sub_mem hb₁N hb₂N, by rw [map_sub, hb₁, hb₂, map_sub]⟩

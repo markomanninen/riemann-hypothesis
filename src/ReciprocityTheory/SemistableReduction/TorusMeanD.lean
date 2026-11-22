@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.TorusMeanC
+module
+
+public import ReciprocityTheory.SemistableReduction.TorusMeanC
+
+@[expose] public section
 
 noncomputable section
 

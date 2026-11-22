@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GaloisRepOfPolarizedCuspidal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GaloisRepOfPolarizedCuspidal
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ def LocalGlobalAboveL : Prop :=
       (O : Type) [CommRing O] [Algebra ℤ_[l] O] [TopologicalSpace O]
       (Bw : LocBridge l E Ω (Dec (F := E) A) O) (hj : Pst.Induces Bw)
       (σ : SmIrr (GL (Fin a) (w.adicCompletion E))), π.IsLocComp w σ →
-      ∀ rc : IrrGL (w.adicCompletion E) → WD h, IsRec h rc →
+      ∀ rc : IrrGL (k := w.adicCompletion E) → WD h, IsRec h rc →
         wdAt P ι Bw h hj (r.comp (Dec (F := E) A).subtype) = rc (algNorm σ)
 
 end GlobalTheory.GalOfCusp

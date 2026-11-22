@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LFixWB
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LIdemEx
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CharacterConductorCondition
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LFixWB
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LIdemEx
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CharacterConductorCondition
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,8 @@ theorem trace_map {R R' : Type} [CommRing R] [Algebra F R] [CommRing R'] [Algebr
     Algebra.trace R' (R' ⊗[F] E) (Algebra.TensorProduct.map φ (AlgHom.id F E) z) =
       φ (Algebra.trace R (R ⊗[F] E) z) := by
   classical
-  rw [Algebra.trace_eq_matrix_trace (Algebra.TensorProduct.basis R' (bE F E)),
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Algebra.trace_eq_matrix_trace (Algebra.TensorProduct.basis R' (bE F E)),
     Algebra.trace_eq_matrix_trace (Algebra.TensorProduct.basis R (bE F E)), Matrix.trace, Matrix.trace, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Matrix.diag_apply, Matrix.diag_apply, Algebra.leftMulMatrix_eq_repr_mul, Algebra.leftMulMatrix_eq_repr_mul,
@@ -62,8 +67,8 @@ theorem iV_fst (v : HeightOneSpectrum (𝓞 F)) (a : Fv F v) : (iV v a).1 = 0 :=
 
 theorem iV_snd (v : HeightOneSpectrum (𝓞 F)) (a : Fv F v) : (iV v a).2 = singleV F v a := rfl
 
-variable (E) in
 
+variable (E) in
 def plc (v : HeightOneSpectrum (𝓞 F)) : Fv F v ⊗[F] E →ₗ[F] AF F ⊗[F] E := TensorProduct.map (iV v) LinearMap.id
 
 theorem plc_tmul (v : HeightOneSpectrum (𝓞 F)) (a : Fv F v) (e : E) : plc E v (a ⊗ₜ[F] e) = iV v a ⊗ₜ[F] e := rfl
@@ -75,7 +80,7 @@ theorem evInf_apply (w : InfinitePlace F) (y : AF F) : evInf F w y = y.1 w := rf
 theorem compFin_plc_self (v : HeightOneSpectrum (𝓞 F)) (t : Fv F v ⊗[F] E) : compFin F E v (plc E v t) = t := by
   induction t using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   | tmul a e =>
     rw [plc_tmul]
     show evFin F v (iV v a) ⊗ₜ[F] e = _
@@ -85,7 +90,7 @@ theorem compFin_plc_ne {v w : HeightOneSpectrum (𝓞 F)} (h : w ≠ v) (t : Fv 
     compFin F E w (plc E v t) = 0 := by
   induction t using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy, add_zero]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, add_zero]
   | tmul a e =>
     rw [plc_tmul]
     show evFin F w (iV v a) ⊗ₜ[F] e = 0
@@ -95,7 +100,7 @@ theorem compInf_plc (w : InfinitePlace F) (v : HeightOneSpectrum (𝓞 F)) (t : 
     compInf F E w (plc E v t) = 0 := by
   induction t using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy, add_zero]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, add_zero]
   | tmul a e =>
     rw [plc_tmul]
     show evInf F w (iV v a) ⊗ₜ[F] e = 0

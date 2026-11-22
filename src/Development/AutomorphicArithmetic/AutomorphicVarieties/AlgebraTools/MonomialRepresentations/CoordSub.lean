@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial Matrix
 
@@ -14,8 +18,8 @@ theorem UpperTheory.V.AlgebraTools.coordSub :
       have h2 := W.sub_mem (hD _ ih) (W.smul_mem (d j) ih)
       convert h2 using 1
       funext k
-      simp only [Finset.prod_insert hj, mulVec_diagonal, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
-      ring
+      simp only [Finset.prod_insert hj, Pi.sub_apply, Matrix.mulVec_diagonal,
+        Pi.smul_apply, smul_eq_mul, mul_assoc, sub_mul]
   have hu : IsUnit (∏ j ∈ Finset.univ.erase i, (d i - d j)) :=
     IsUnit.prod_iff.mpr fun j hj => hd i j (Finset.ne_of_mem_erase hj).symm
   have h3 := W.smul_mem (↑hu.unit⁻¹ : C) (key (Finset.univ.erase i))

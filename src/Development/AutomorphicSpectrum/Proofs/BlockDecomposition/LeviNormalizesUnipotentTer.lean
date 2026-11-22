@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnipMinSubsetMinParOne
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnipMinSubsetMinParOne
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -133,7 +137,8 @@ theorem leviMin_normalises_unipMin (F E : Type) [Field F] [NumberField F] [Field
       rw [e1]
       funext i
       have := congrArg (inclR (F := F) (AF F)) (congrFun hzz i)
-      simpa [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul] using this
     obtain ⟨a, ha⟩ := clause_extend hF eU (by
       unfold JR
       rw [← cT_map_inclR, ← cT_map_inclR, orthProj, Matrix.map_sub _ (map_sub _), Matrix.map_sub _ (map_sub _),

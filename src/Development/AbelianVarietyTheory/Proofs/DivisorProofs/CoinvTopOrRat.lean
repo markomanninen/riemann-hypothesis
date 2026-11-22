@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ActAtApply
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ActAtApply
+
+@[expose] public section
+
 open scoped TensorProduct
 open Formalism.BasicNotions.TH GlobalTheory.FockAlg GlobalTheory.RealLift GlobalTheory.HoweR
 
@@ -51,8 +56,8 @@ theorem coinv_top_or_rat (P Q R S : ℕ) (x : ℂ) :
     intro f _
     rw [f.as_sum]
     refine Submodule.sum_mem _ fun α _ => ?_
-    have he : (MvPolynomial.monomial α (MvPolynomial.coeff α f) : Pol P Q R S) =
-        MvPolynomial.coeff α f • MvPolynomial.monomial α 1 := by
+    have he : (MvPolynomial.monomial α (AddMonoidAlgebra.coeff f α) : Pol P Q R S) =
+        AddMonoidAlgebra.coeff f α • MvPolynomial.monomial α 1 := by
       rw [MvPolynomial.smul_monomial, smul_eq_mul, mul_one]
     rw [he]
     exact (coinv P Q R S x).smul_mem _ (hmon α)

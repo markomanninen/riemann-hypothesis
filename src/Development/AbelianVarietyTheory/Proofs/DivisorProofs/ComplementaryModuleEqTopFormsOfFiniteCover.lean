@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemTraceDualLocalizationIffForallRegularFormStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemOfForallHeightOneLocalizationIntegrallyClosedStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLocalKaehlerDBasisSmoothSubalgebraStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KahlerFormsOverSubalgebraClosurePropertiesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemTraceDualLocalizationIffForallRegularFormStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemOfForallHeightOneLocalizationIntegrallyClosedStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLocalKaehlerDBasisSmoothSubalgebraStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KahlerFormsOverSubalgebraClosurePropertiesStatement
+
+@[expose] public section
+
 open GlobalTheory.PD GlobalTheory.CechDR KaehlerDifferential
 
 set_option autoImplicit false
@@ -30,7 +35,7 @@ theorem height_under_eq_one {A B : Type} [CommRing A] [IsDomain A] [CommRing B]
     haveI := hr
     obtain ⟨P₁, hP₁Q, hP₁, hP₁o⟩ := Ideal.exists_ideal_lt_liesOver_of_lt (p := r) (q := p) Q hrp
     haveI := hP₁
-    haveI : (⊥ : Ideal A).IsPrime := Ideal.bot_prime
+    haveI : (⊥ : Ideal A).IsPrime := Ideal.isPrime_bot
     obtain ⟨P₀, hP₀P₁, hP₀, -⟩ := Ideal.exists_ideal_lt_liesOver_of_lt (p := ⊥) (q := r) P₁
       (bot_lt_iff_ne_bot.mpr hr0)
     haveI := hP₀
@@ -40,13 +45,13 @@ theorem height_under_eq_one {A B : Type} [CommRing A] [IsDomain A] [CommRing B]
     have h4 : (1 : ℕ∞) ≤ P₁.height := le_trans le_add_self h1
     have h3 : (1 : ℕ∞) + 1 ≤ 1 := le_trans (by gcongr) h2
     exact absurd h3 (by decide)
-  · haveI : (⊥ : Ideal A).IsPrime := Ideal.bot_prime
+  · haveI : (⊥ : Ideal A).IsPrime := Ideal.isPrime_bot
     have := Ideal.height_add_one_le_of_lt_of_isPrime (bot_lt_iff_ne_bot.mpr hne)
     simpa using this
 
+
 open KaehlerDifferential in
 open scoped IntermediateField.algebraAdjoinAdjoin in
-
 theorem exists_basis_D (k F K : Type) [Field k] [Field F] [Field K] [Algebra k F] [Algebra k K]
     [Algebra F K] [IsScalarTower k F K] [Algebra.IsSeparable F K] (d : ℕ) (v : Fin d → F)
     (hv : AlgebraicIndependent k v) (hgen : IntermediateField.adjoin k (Set.range v) = ⊤) :
@@ -131,7 +136,7 @@ theorem local_frame (k K : Type) [Field k] [Field K] [Algebra k K] (B : Subalgeb
   | add x y _ _ hx hy =>
     obtain ⟨c₁, h₁⟩ := hx
     obtain ⟨c₂, h₂⟩ := hy
-    exact ⟨c₁ + c₂, by rw [map_add, mul_add, h₁, h₂]; push_cast; ring⟩
+    exact ⟨c₁ + c₂, by rw [map_add (f := _), mul_add, h₁, h₂]; push_cast; ring⟩
   | smul a x _ hx =>
     obtain ⟨c, h⟩ := hx
     refine ⟨algebraMap k B a * c, ?_⟩
@@ -220,7 +225,7 @@ theorem complementary_eq_topForms : ∀ (k F K : Type) [Field k] [CharZero k] [F
       { carrier := {c | ∃ y ∈ omB k K B d, τ y = (c : K) * z}
         add_mem' := by
           rintro c₁ c₂ ⟨y₁, hy₁, h₁⟩ ⟨y₂, hy₂, h₂⟩
-          exact ⟨y₁ + y₂, add_mem hy₁ hy₂, by rw [map_add, h₁, h₂]; push_cast; ring⟩
+          exact ⟨y₁ + y₂, add_mem hy₁ hy₂, by rw [map_add (f := _), h₁, h₂]; push_cast; ring⟩
         zero_mem' := ⟨0, zero_mem _, by simp⟩
         smul_mem' := by
           rintro c c' ⟨y, hy, h⟩

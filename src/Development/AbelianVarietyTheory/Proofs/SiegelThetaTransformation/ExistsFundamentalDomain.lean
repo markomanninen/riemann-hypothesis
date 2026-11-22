@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.PeriodsLactSymplectic
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIsFundamentalDomainAndQuotMeasureEq
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientDomain
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LactMulFrame
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.Imports
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.PeriodsLactSymplectic
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIsFundamentalDomainAndQuotMeasureEq
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientDomain
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LactMulFrame
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.Imports
+
+@[expose] public section
 
 open Matrix Complex NumberField MeasureTheory GlobalTheory GlobalTheory.SW GlobalTheory.ThFr ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD
 open scoped ComplexConjugate ComplexOrder Real Classical Topology
@@ -49,8 +53,8 @@ theorem continuous_lact {Ψ : Finset (E →+* ℂ)} (γ : GL (Fin r) E) :
   simp only [lact, mat, Matrix.mul_apply, Matrix.of_apply]
   fun_prop
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem countable_fg : {L : Lt E r | L.FG}.Countable := by
   have : Countable E := Finsupp.Countable.of_moduleFinite (R := ℚ)
   refine (Set.countable_range fun s : Finset (Fin r → E) =>
@@ -58,8 +62,8 @@ theorem countable_fg : {L : Lt E r | L.FG}.Countable := by
   rintro L ⟨s, hs⟩
   exact ⟨s, hs⟩
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem exists_den {L : Lt E r} (hL : L.FG) :
     ∃ d : 𝓞 E, d ≠ 0 ∧ ∀ v ∈ L, ∀ a, ∃ c : 𝓞 E, (c : E) = (d : E) * v a := by
   first

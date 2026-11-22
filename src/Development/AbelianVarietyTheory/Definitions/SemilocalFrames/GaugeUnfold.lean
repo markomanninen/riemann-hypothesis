@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset
 
@@ -49,7 +53,5 @@ def GaugeUnfold : Prop :=
         gaugeVol I' c' μf' * ENNReal.ofReal (2 ^ (I.n * I.f) * ∏ v, gaussDens (I.ε v) (sgn ℝ s))
 
 theorem gauss_pos {n : ℕ} (y : Fin n → ℂ) : 0 < gauss y := Real.exp_pos _
-
-example : qEps (fun _ : Fin 1 => true) (fun _ => 1) = 1 := by simp [qEps]
 
 end GlobalTheory.GaussMean

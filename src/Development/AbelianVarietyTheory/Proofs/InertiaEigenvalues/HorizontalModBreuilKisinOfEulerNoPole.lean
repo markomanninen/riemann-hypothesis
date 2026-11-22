@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinXiExtMemRigidTensorIffStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinXiExtMemRigidTensorIffStatement
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 
@@ -104,11 +109,11 @@ theorem pos_step (D : BKDat O K l e a ι η H) (j : ℕ) (v : Vec K a ι)
   simp only [LinearEquiv.symm_apply_apply] at hv hG
   have hco : ∀ τ i, D.xiExt.symm (D.xiExt w + c⁻¹ • D.EN (D.xiExt w)) τ i =
       w τ i + c⁻¹ • (E K l e * N K (w τ i)) := fun τ i => by
-    rw [EN_xiExt, ← map_smul, ← map_add, LinearEquiv.symm_apply_apply]
+    rw [EN_xiExt, ← map_smul, ← map_add (f := _), LinearEquiv.symm_apply_apply]
     rfl
   refine ⟨D.xiExt w + c⁻¹ • D.EN (D.xiExt w), ?_, ?_, fun τ i => ?_, fun τ i => ?_⟩
   · rw [sub_add_cancel_left]; exact neg_mem (D.Man.smul_mem _ hN)
-  · rw [map_add, map_smul]; exact add_mem hN (D.Man.smul_mem _ (D.EN_mem_Man hN))
+  · rw [map_add (f := _), map_smul]; exact add_mem hN (D.Man.smul_mem _ (D.EN_mem_Man hN))
   · rw [hco, smul_eq_C_mul]
     exact add_mem (hv τ i) (mul_mem (C_mem_Rpi _) (mul_mem (E_mem l e _) (N_mem_Rpi (hv τ i))))
   · obtain ⟨G, hGm, hGe⟩ := hG τ i
@@ -118,7 +123,7 @@ theorem pos_step (D : BKDat O K l e a ι η H) (j : ℕ) (v : Vec K a ι)
     have h3 := N_pow_mul (l := l) (e := e) j G
     have h1 := C_inv_mul (K := K) (l := l) (e := e) j
     have hX := X_pow_eq (K := K) (l := l) (e := e)
-    rw [map_add, Derivation.map_smul, hGe, ← mul_assoc, ← pow_succ', h3, smul_eq_C_mul]
+    rw [map_add (f := _), Derivation.map_smul, hGe, ← mul_assoc, ← pow_succ', h3, smul_eq_C_mul]
     linear_combination (C c⁻¹ * ((j + 1 : ℕ) : K⟦X⟧) * (e : K⟦X⟧) * E K l e ^ j * G) * hX +
       (-(E K l e ^ j * G)) * h1
 
@@ -160,8 +165,9 @@ theorem fin (D : BKDat O K l e a ι η H) (r : Vec K a ι) (hr : ∀ τ i, r τ 
 
 theorem taylor (f : K⟦X⟧) (hf : f ∈ Rpi O K l e) (B : ℕ) :
     ∃ g ∈ invL l (A O K), ∃ r ∈ Rpi O K l e, f - g = E K l e ^ B * r := by
-  obtain ⟨g, hg⟩ := Ideal.Quotient.mk_surjective
-    (AdicCompletion.evalₐ (idE O K l e) B (toHat O K l e ⟨f, hf⟩))
+  obtain ⟨g, hg⟩ : ∃ g : invL l (A O K),
+      Ideal.Quotient.mk _ g = AdicCompletion.evalₐ (idE O K l e) B (toHat O K l e ⟨f, hf⟩) :=
+    Ideal.Quotient.mk_surjective _
   obtain ⟨r, hr, h⟩ := (evalₐ_toHat_eq_iff l e B ⟨f, hf⟩ g).1 hg.symm
   exact ⟨g, g.2, r, hr, h⟩
 

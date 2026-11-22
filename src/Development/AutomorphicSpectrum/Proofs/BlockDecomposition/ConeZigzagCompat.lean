@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.CechDefs
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.TotPairing
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DvMemOf
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.CechDefs
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.TotPairing
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DvMemOf
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -27,14 +31,6 @@ theorem shift_sub (x y : ∀ p q, K.X p q) : shift B (x - y) = shift B x - shift
   funext p q
   rcases p with _ | p <;> rcases q with _ | q <;> simp [shift, smul_sub]
 
-theorem shift_zero : shift B (0 : ∀ p q, K.X p q) = 0 := by
-  funext p q
-  rcases p with _ | p <;> rcases q with _ | q <;> simp [shift]
-
-theorem shift_add (x y : ∀ p q, K.X p q) : shift B (x + y) = shift B x + shift B y := by
-  funext p q
-  rcases p with _ | p <;> rcases q with _ | q <;> simp [shift, smul_add]
-
 theorem shift_sgl (p q : ℕ) (x : K.X p q) :
     shift B (K.sgl p q x) = (-1 : ℤ) ^ q • K.sgl (p + 1) (q + 1) (B p q x) := by
   funext a b
@@ -51,16 +47,6 @@ theorem shift_sgl (p q : ℕ) (x : K.X p q) :
         simp only [shift]
         rw [K.sgl_ne _ (by omega)]
         simp
-
-theorem shift_mem (m : ℕ) (x : ∀ p q, K.X p q) (hx : x ∈ K.T m) : shift B x ∈ K.T (m + 2) := by
-  intro p q h
-  rcases p with _ | p
-  · rfl
-  · rcases q with _ | q
-    · rfl
-    · simp only [shift]
-      rw [hx p q (by omega)]
-      simp
 
 theorem D_shift (hh : ∀ p q x, K.dh (p + 1) (q + 1) (B p q x) = B (p + 1) q (K.dh p q x))
     (hv : ∀ p q x, K.dv (p + 1) (q + 1) (B p q x) = B p (q + 1) (K.dv p q x)) (x : ∀ p q, K.X p q) :
@@ -83,7 +69,7 @@ theorem D_shift (hh : ∀ p q x, K.dh (p + 1) (q + 1) (B p q x) = B (p + 1) q (K
           simp
       rw [h1, h2]
       show _ = (-1 : ℤ) ^ q • B p q (K.D x p q)
-      rw [K.D_apply, map_add, map_zsmul, smul_add, smul_smul, smul_smul, pow_succ, pow_succ]
+      rw [K.D_apply, map_add (f := _), map_zsmul, smul_add, smul_smul, smul_smul, pow_succ, pow_succ]
       congr 2
       ring
 
@@ -111,7 +97,7 @@ theorem cone_zigzag_compat (hh : ∀ p q x, K.dh (p + 1) (q + 1) (B p q x) = B (
         · simp only [shift]
           rw [hU p q (by omega)]
           simp
-    · rw [map_add, D_shift B hh hv, hDU, shift_sub, shift_sgl, shift_sgl, K.D_sgl, hg1, hg2, hPs, map_neg, map_zsmul]
+    · rw [map_add (f := _), D_shift B hh hv, hDU, shift_sub, shift_sgl, shift_sgl, K.D_sgl, hg1, hg2, hPs, map_neg, map_zsmul]
       have e : ((-1 : ℤ) ^ (2 * k)) = 1 := by rw [pow_mul]; simp
       rw [e, one_smul, pow_zero, one_smul]
       have e2 : K.sgl 0 (2 * k + 1 + 1) (a (k + 1)) = K.sgl 0 (2 * (k + 1)) (a (k + 1)) := rfl

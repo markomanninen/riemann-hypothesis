@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelicUnitaryCongruenceTopology
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormPosOfIsUnit
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RowsAutIdemElementary
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SummableAndTsumLeOfBoxCount
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ShellSumMajorant
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CountRationalElementsBoundedDistanceStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DiscreteSeriesCoefficientIntegrableMajorantStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelicUnitaryCongruenceTopology
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormPosOfIsUnit
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RowsAutIdemElementary
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SummableAndTsumLeOfBoxCount
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ShellSumMajorant
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CountRationalElementsBoundedDistanceStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DiscreteSeriesCoefficientIntegrableMajorantStatement
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec
 open scoped InnerProductSpace ComplexOrder ContDiff
@@ -136,8 +140,10 @@ theorem continuous_kern_phe : ∀ (B : RowsAut) (d : InfinitePlace B.I.F → ℝ
           Nat.cast_le.mpr (Set.ncard_le_ncard hsub hpre)
       _ = (({γ ∈ B.I.GFset | (x0⁻¹ * γ * y0).2 ∈ B.I.Kset ∧
             ∀ v, dOp (uMat ((x0⁻¹ * γ * y0).1 v)) ≤ r v}.ncard : ℕ) : ℝ) := by
-          rw [Set.ncard_preimage_of_injective_subset_range Subtype.val_injective
-            (fun γ hγ => ⟨⟨γ, hγ.1⟩, rfl⟩)]
+          apply congrArg (fun k : ℕ => (k : ℝ))
+          apply Set.ncard_preimage_of_injective_subset_range Subtype.val_injective
+          intro γ hγ
+          exact ⟨⟨γ, hγ.1⟩, rfl⟩
       _ ≤ _ := hcard
   obtain ⟨hsum, -⟩ := GlobalTheory.summable_and_tsum_le_of_box_count (InfinitePlace B.I.F) B.I.GFset D t
     (2 * (n : ℝ) ^ 2) _ C' hA hC'0 ha hDnn ht0 hcount
@@ -173,7 +179,7 @@ theorem continuous_kern_phe : ∀ (B : RowsAut) (d : InfinitePlace B.I.F → ℝ
       simp only [majPh]
       refine mul_le_mul (le_abs_self _) ?_ (Finset.prod_nonneg fun v _ => (Real.exp_pos _).le)
         (abs_nonneg _)
-      refine Finset.prod_le_prod (fun v _ => (Real.exp_pos _).le) fun v _ => ?_
+      refine Finset.prod_le_prod₀ (fun v _ => (Real.exp_pos _).le) fun v _ => ?_
       exact decE_dOp_le_exp_floor (B.I.ε v) h hn (hb v) (w.1 v)
     have hshift : ∀ v, Real.exp (-(4 * (n : ℝ) ^ 2 * (⌊dOp (uMat (w.1 v))⌋₊ : ℝ))) ≤
         Real.exp (4 * (n : ℝ) ^ 2 * (1 + 2 * Mv v)) *
@@ -200,7 +206,7 @@ theorem continuous_kern_phe : ∀ (B : RowsAut) (d : InfinitePlace B.I.F → ℝ
         (∏ v, Real.exp (4 * (n : ℝ) ^ 2 * (1 + 2 * Mv v))) *
           ∏ v, Real.exp (-(2 * (2 * (n : ℝ) ^ 2) * (⌊D γ v⌋₊ : ℝ))) := by
       rw [← Finset.prod_mul_distrib]
-      exact Finset.prod_le_prod (fun v _ => (Real.exp_pos _).le) fun v _ => hshift v
+      exact Finset.prod_le_prod₀ (fun v _ => (Real.exp_pos _).le) fun v _ => hshift v
     calc ‖ph B d w.1‖ * ‖B.e w.2‖
         ≤ (|∏ v, d v| * ((∏ v, Real.exp (4 * (n : ℝ) ^ 2 * (1 + 2 * Mv v))) *
             ∏ v, Real.exp (-(2 * (2 * (n : ℝ) ^ 2) * (⌊D γ v⌋₊ : ℝ))))) * (B.e 1).re := by

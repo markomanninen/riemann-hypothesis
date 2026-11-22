@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KernelsRest
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KernelsRest
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -26,13 +31,15 @@ theorem frobDelta_add_const {r : ℕ} (s : ℕ) (ν : Fin r → ℕ) :
 
 theorem prod_sub_eq_prod_factorial : ∀ r : ℕ,
     (∏ a : Fin r, ∏ b : Fin r, if a < b then ((b : ℕ) : ℚ) - ((a : ℕ) : ℚ) else 1) =
-      ∏ a : Fin r, (((r - 1 - (a : ℕ)).factorial : ℕ) : ℚ)
-  | 0 => by simp
-  | r + 1 => by
+      ∏ a : Fin r, (((r - 1 - (a : ℕ)).factorial : ℕ) : ℚ) := by
+  intro r
+  induction r with
+  | zero => simp
+  | succ r ih =>
     have h0 : (∏ b : Fin (r + 1), if (0 : Fin (r + 1)) < b
         then (((b : ℕ) : ℚ) - (((0 : Fin (r + 1)) : ℕ) : ℚ)) else 1) = (r.factorial : ℚ) := by
       rw [Fin.prod_univ_succ]
-      simp only [lt_self_iff_false, if_false, Fin.succ_pos, if_true, one_mul, Fin.val_succ,
+      simp only [lt_self_iff_false, ite_false, Fin.succ_pos, ite_true, one_mul, Fin.val_succ,
         Fin.val_zero, Nat.cast_zero, sub_zero]
       push_cast
       rw [Fin.prod_univ_eq_prod_range (fun i => ((i : ℚ) + 1)) r]
@@ -42,20 +49,18 @@ theorem prod_sub_eq_prod_factorial : ∀ r : ℕ,
         ∏ b : Fin r, if a < b then (((b : ℕ) : ℚ) - ((a : ℕ) : ℚ)) else 1 := by
       intro a
       rw [Fin.prod_univ_succ]
-      simp only [Fin.not_lt_zero, if_false, one_mul, Fin.succ_lt_succ_iff, Fin.val_succ]
+      simp only [Fin.not_lt_zero, ite_false, one_mul, Fin.succ_lt_succ_iff, Fin.val_succ]
       refine prod_congr rfl fun b _ => ?_
       split_ifs
       · push_cast; ring
       · rfl
-    rw [Fin.prod_univ_succ, h0, prod_congr rfl (fun a _ => hs a), prod_sub_eq_prod_factorial r,
-      Fin.prod_univ_succ]
-    congr 1
-    all_goals first
-      | (refine prod_congr rfl fun a _ => ?_
-         congr 2
-         simp only [Fin.val_succ]
-         omega)
-      | simp
+    have hshift (a : Fin r) : r + 1 - 1 - (a.succ : ℕ) = r - 1 - (a : ℕ) := by
+      simp only [Fin.val_succ]
+      omega
+    conv_lhs => rw [Fin.prod_univ_succ]
+    conv_rhs => rw [Fin.prod_univ_succ]
+    simp only [h0, hs, ih, hshift]
+    simp only [Fin.val_zero, Nat.sub_zero, Nat.add_sub_cancel]
 
 theorem frobDelta_const {r : ℕ} (s : ℕ) :
     frobDelta (fun _ : Fin r => s) = ∏ a : Fin r, (((r - 1 - (a : ℕ)).factorial : ℕ) : ℚ) := by
@@ -103,7 +108,7 @@ theorem prod_factorial_le {r : ℕ} (s : ℕ) (ν : Fin r → ℕ) :
       (∏ a : Fin r, (((r - 1 - (a : ℕ)).factorial : ℕ) : ℚ)) *
         ∏ a : Fin r, ((s + ν a + (r - 1 - (a : ℕ))).factorial : ℚ) := by
   rw [← prod_mul_distrib, ← prod_mul_distrib]
-  apply prod_le_prod
+  apply prod_le_prod₀
   · intro a _; positivity
   · intro a _
     have := factorial_mul_le s (r - 1 - (a : ℕ)) (ν a)

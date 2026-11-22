@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SameSetup
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExtOfIsKsForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SameSetup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExtOfIsKsForm
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links IsDedekindDomain NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.ExportSeries GlobalTheory.SeriesTie GlobalTheory.TwInputs GlobalTheory.TwInputs.Move
 open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ HkIdx V0 Fm0 FullRk SgJ BasisOf)
 open Formalism.L2.Host (embLL0 CharFrame)
@@ -139,7 +144,7 @@ theorem rdRel_move (hsup) (ρ : Setup D.ntw) (ρ' : Setup D'.ntw) (hs : SameSetu
       refine (congrArg (fun z => evK (tie h m YS hsup) X'.geo.v₀ hρ' i' (h.cm j) b z g')
         ((fmOf (S' := dat h m YS) (h.scal hi b) (ks h m YS j)).map_add x y)).trans ?_
       refine (congrFun ((evK (tie h m YS hsup) X'.geo.v₀ hρ' i' (h.cm j) b).map_add _ _) g').trans ?_
-      rw [map_add, Pi.add_apply, Pi.add_apply, hx, hy]
+      rw [map_add (f := _), Pi.add_apply, Pi.add_apply, hx, hy]
     | tmul a y =>
       exact congrArg₂ (· * ·)
         ((record_heq h.gal h.set h.frm h.Bsup h.delta hi).2.1 _ _ hs.e b _ _ (h.frac_heq hi a).symm).symm
@@ -149,9 +154,9 @@ theorem rdRel_move (hsup) (ρ : Setup D.ntw) (ρ' : Setup D'.ntw) (hs : SameSetu
 
 variable {YS} (H : NX.NExpRealH X.R X.cG S YS)
 
+
 omit H in
 include h m in
-
 theorem hecke_sameMap (j : Fin D.R.m) {R : Finset (GA D (Wc D j))} {R' : Finset (GA D' (Wc D' (h.cm j)))}
     (hF : ∀ F F', HEq F F' → HEq (Mult.heckeLin (Wc D j) R F) (Mult.heckeLin (Wc D' (h.cm j)) R' F'))
     {T₁ T₂ : Mult.MMap (model X j)} {T₁' T₂' : Mult.MMap (model X' (h.cm j))} (h1 : SameMap T₁ T₁') (h2 : SameMap T₂ T₂') {c : ℂ}
@@ -166,37 +171,6 @@ theorem hecke_sameMap (j : Fin D.R.m) {R : Finset (GA D (Wc D j))} {R' : Finset 
     subst h1; subst h2; subst h3; rfl
   rw [← h1 v v' hv g g' hg, h3]
   exact congrArg (c * ·) (e2 hG e1 hg)
-
-def rdL (X : RealSide D) (j : Fin D.R.m) : (Fin (X.R.nW j) → D.what₂.LL) →ₛₗ[sg0 D X.A3.A] Mult.MMap (model X j) :=
-  (X.R.HW j (sg0 D X.A3.A)).e.comp ((X.R.FW j).j (sg0 D X.A3.A))
-
-def hecke (hsup) (hL : ∀ j, ℕ → PlE D'.host → Module.End D'.what₂.LL ((dat h m YS).WL j))
-    (hs : ∀ j, NX.HeckeStabR (dat h m YS) j (hL j))
-    (hc : ∀ (j : Fin D.R.m) (k : ℕ) (P : PlE D.host) (P' : PlE D'.host), HEq P P' → ∀ y : (S.A ((j : ℕ) + 1)).WK,
-      ((ks h m YS j).φ ⟨H.hL _ k P y, H.hs _ (Nat.le_add_left _ _) j.2 k P _ y.2⟩ : (dat h m YS).WL ((j : ℕ) + 1)) =
-        hL ((j : ℕ) + 1) k P' ((ks h m YS j).φ y)) : NX.NExpRealH X'.R X'.cG (dat h m YS) (tie h m YS hsup) where
-  hL := hL
-  hs j _ _ := hs j
-  cHk i' b k P' := fracEquiv (h.oEquiv (back_heq h i')) (H.cHk _ b k (cast (place_geo h.gal.R h.gal.host).1.symm P'))
-  cHk_zero i' b P' := by rw [H.cHk_zero, map_one]
-  cHk_unit i' b P' := (H.cHk_unit _ b _).map _
-  cHk_pow i' b k P' := by rw [H.cHk_pow, map_pow]
-  hkEq i' j b h1 h2 k P' x p1 p2 p3 := by
-    obtain ⟨n, rfl⟩ := Nat.exists_eq_add_of_le' h1
-    have hi := back_heq h i'
-    have hP : HEq (cast (place_geo h.gal.R h.gal.host).1.symm P') P' := cast_heq _ _
-    generalize cast (place_geo h.gal.R h.gal.host).1.symm P' = P at hP ⊢
-    obtain ⟨x, rfl⟩ := (h.fmCast hi _ b).surjective x
-    obtain ⟨r1, -, r3⟩ := record_heq h.gal h.set h.frm h.Bsup h.delta hi
-    have e1 : D'.nexp.hkF i' (n + 1) b k P' (h.fmCast hi _ b x) = h.fmCast hi _ b (D.nexp.hkF _ (n + 1) b k P x) :=
-      eq_of_heq (((r1 _ b _ _ (h.fmCast_heq hi _ b x).symm).2.2 k _ _ hP).symm.trans (h.fmCast_heq hi _ b _).symm)
-    change eFm h m YS i' (n + 1) b h1 h2 _ = _ • NX.hkFR (dat h m YS) i' (n + 1) b (hL (n + 1)) (hs (n + 1)) k P'
-      (eFm h m YS i' (n + 1) b h1 h2 _)
-    rw [e1, eFm_cast h m YS hi ⟨n, lt_m h h2⟩ b h1 h2, eFm_cast h m YS hi ⟨n, lt_m h h2⟩ b h1 h2,
-      H.hkEq _ _ b _ _ k P x (fun hh => p1 ((r3 P P' hP).1.1 hh)) (((place_geo h.gal.R h.gal.host).2 P P' hP).1.2 p2)
-        (by rw [h.gal.R]; exact p3), fmOf_smul]
-    exact congrArg _ (fmOf_restrict (S' := dat h m YS) (h.scal hi b) (ks h m YS ⟨n, lt_m h h2⟩) _ _ _ (hs (n + 1) k P')
-      (hc ⟨n, lt_m h h2⟩ k P P' hP) _)
 
 end GlobalTheory.TwInputs.Move.Forms
 

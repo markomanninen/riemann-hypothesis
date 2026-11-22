@@ -1,5 +1,9 @@
-import Formalism.AdmissibleDesigns.InertiaActsTrivially
-import Formalism.AdmissibleDesigns.HigherColumnInvariantsBound
+module
+
+public import Formalism.AdmissibleDesigns.InertiaActsTrivially
+public import Formalism.AdmissibleDesigns.HigherColumnInvariantsBound
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -60,10 +64,6 @@ def koE (e : ℕ) : Representation (D.nd.O i) (GE D.nd) (KO (D.nd.O i)) :=
 
 def selZ (e : ℕ) : Submodule ℤ_[D.nd.l i] (H1z (qzE i e)) :=
   selRep2 (qzE i e) (Io i) (IS i) (decs D.host.E (Aw i dc)) (Fsha (qzE i e) (decs D.host.E (Aw i dc)) (I i dc) (qsN i dc))
-    (Pall i dc)
-
-def selO (e : ℕ) : Submodule (D.nd.O i) (H1z (koE i e)) :=
-  selRep2 (koE i e) (Io i) (IS i) (decs D.host.E (Aw i dc)) (Fsha (koE i e) (decs D.host.E (Aw i dc)) (I i dc) (qsN i dc))
     (Pall i dc)
 
 def BlockTwistedCyclotomic (c : Fin (D.R.t + 1)) : Prop :=

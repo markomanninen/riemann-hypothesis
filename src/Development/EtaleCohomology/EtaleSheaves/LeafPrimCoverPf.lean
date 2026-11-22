@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafOneSpecPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafOneSpecPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite Polynomial GlobalTheory.EtC
@@ -45,8 +49,6 @@ theorem ff_adjoin (A : Type) [CommRing A] [Nontrivial A] (q : ℕ) [NeZero q] :
     rw [natDegree_cyclotomic]; exact Nat.totient_pos.2 (Nat.pos_of_neZero q)
   have : Nonempty (Fin (cyclotomic q A).natDegree) := ⟨⟨0, hpos⟩⟩
   exact Module.FaithfullyFlat.of_linearEquiv _ _ b.repr
-
-example (U : Scheme.{0}) : U ⟶ Spec Γ(U, ⊤) := U.toSpecΓ
 
 theorem prim_adjoin (A : Type) [CommRing A] (q : ℕ) [NeZero q] (hq : IsUnit (q : A)) :
     Nonempty (Prim q (AdjoinRoot (cyclotomic q A))) := by

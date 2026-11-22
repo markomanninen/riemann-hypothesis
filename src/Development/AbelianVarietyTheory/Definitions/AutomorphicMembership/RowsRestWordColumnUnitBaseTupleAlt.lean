@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AssembleLattice
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SemilinearBasisImageIndepOfBasis
-import Formalism.LocalRingCardinality.DataIdx
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AssembleLattice
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SemilinearBasisImageIndepOfBasis
+public import Formalism.LocalRingCardinality.DataIdx
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ variable {K G}
 
 structure Mat1.Laws (m : Mat1 K G) (σ : K →+* ℂ) (e : MonoidAlgebra K G) : Prop where
   pos : (m.H.map σ).PosDef
-  lat : Submodule.IsLattice K m.N
+  lat : Submodule.IsFullLattice K m.N
   add : ∀ a b, m.op (a + b) = m.op a + m.op b
   smul : ∀ (c : K) a, m.op (c • a) = c • m.op a
   one : m.op 1 = 1
@@ -98,9 +102,9 @@ def lMat (A : FamIn D.what₂.LL G Pl0 T D.R.m) (P : Subgroup G) (ψ : P →* D.
 
 variable {A : FamIn D.what₂.LL G Pl0 T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure Hd (R : RealDat D A Ks) : Type where
   tup : T → D.what₂.Tup
   tupT : D.what₂.Tup → T
@@ -152,10 +156,10 @@ def levP (F : Face D A) : Bool → Σ P : Subgroup G, P →* D.what₂.LLˣ
   | true => ⟨F.P1, F.ψ1⟩
   | false => ⟨F.P0, F.ψ0⟩
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
 set_option maxHeartbeats 2000000 in
-
 structure ChT {R : RealDat D A Ks} (y : Hd R) (F : Face D A) (b : Bool) {Φ : Type} (rep : Φ → Formalism.L2.NG.FinTyp D.host.E D.R.r)
     {Top : D.what₂.Tup → Hs} (jA : ∀ t, (Fin (rDim D A (levP F b).1 (levP F b).2 t) → D.what₂.LL) → (Top (y.tup t)).T)
     (c : ChD D.what₂.Tup Φ D.R.m Top) : Type where
@@ -185,10 +189,10 @@ structure ChT {R : RealDat D A Ks} (y : Hd R) (F : Face D A) (b : Bool) {Φ : Ty
   top : ∀ t, y.Us (y.tup t) → ∀ x,
     jX (y.tup t) (jA t x) = R.cX.toMap R.prX ((R.HX t).e (R.jX t (rowForm A (levP F b).1 (levP F b).2 t x)))
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
 set_option maxHeartbeats 2000000 in
-
 structure LfT {R : RealDat D A Ks} (y : Hd R) (F : Face D A) {Φ : Type} (rep : Φ → Formalism.L2.NG.FinTyp D.host.E D.R.r)
     {Mt : D.what₂.Tup → ℕ → Hs}
     (jL : ∀ (i : Fin D.R.m) t, (Fin (lDim D A F.P0 F.ψ0 i t) → D.what₂.LL) → (Mt (y.tup t) ((i : ℕ) + 1)).T)
@@ -251,10 +255,10 @@ def RrT {R : RealDat3 D A3 Ks} (F : Face3 D A3) (y : Hd R.toRealDat) (b : Bool) 
 abbrev PkD (D : D7) (G : Type) [Group G] : Type 1 :=
   Pk D.what₂.LL D.what₂.embLL D.what₂.O (D.what₂.embLL.comp D.what₂.OtoLL) D.what₂.Tup G D.R.m
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
 set_option maxHeartbeats 2000000 in
-
 structure PkT {R : RealDat3 D A3 Ks} (F : Face3 D A3) (y : Hd R.toRealDat) (mA : Bool → D.what₂.Tup → Mat1 D.what₂.LL G)
     (p : PkD D G) : Type where
   rep : p.Φ → Formalism.L2.NG.FinTyp D.host.E D.R.r
@@ -277,10 +281,10 @@ def etaOf (R : RealDat3 D A3 Ks) (F : Face3 D A3) (j : ℕ) (w : D.what₂.place
       A3.A.fam.etaJ F.P0 F.ψ0 (A3.fam3.toSub2 (R.toCx3 F).zs) ⟨j - 1, by omega⟩ (R.mu (D.plEq w)) (D.plEq w) else 0
   else 0
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
 set_option maxHeartbeats 4000000 in
-
 structure RationalReadingWithoutCongruence (R : RealDat3 D A3 Ks) (F : Face3 D A3) (X0 : BaseLevelRowSide D) (Y : Read (A3 := A3) R.toRealDat F.lv2 X0) : Type where
   eRR : (Fin ((R.toCx3 F).data F.cr true).D → D.what₂.LL) ≃ₗ[D.what₂.LL] D.div.RR.V
   eRR0 : (Fin ((R.toCx3 F).data F.cr false).D → D.what₂.LL) ≃ₗ[D.what₂.LL] X0.s.RR.V
@@ -304,7 +308,7 @@ def RationalReadingWithoutCongruence.full {R : RealDat3 D A3 Ks} {F : Face3 D A3
     have hi : 1 ≤ (i : ℕ) + 1 ∧ (i : ℕ) + 1 ≤ D.R.m := ⟨by omega, i.2⟩
     rw [h _ w hi.1 hi.2]
     unfold etaOf
-    rw [dif_pos hi]
+    rw [dite_eq_left hi]
     congr⟩
 
 def ZeDef (D : D7) : Prop :=
@@ -344,8 +348,8 @@ structure Nums (p : PkB B C G) (W₀ : RowsRest B C) : Type where
   Ij : C.Tup → ℕ → B.places.Pl → ℤ
   jw : C.Tup → ℕ → B.places.Pl → ℤ
 
-open Classical in
 
+open Classical in
 def perOf (p : PkB B C G) (e : PerD p) (W₀ : RowsRest B C) (u : B.Word) (μ : C.Tup) (φ : W₀.Mu u) (F : (p.sA true μ).A.T) : ℂ :=
   if h : μ = C.mu0 then
     (C.mem u).P.PtilCol ((W₀.eMu u φ : (C.mem u).A.Mram) : (C.mem u).C.cls 0 → (C.mem u).C.Y 0 → ℂ)
@@ -415,11 +419,11 @@ def perOf (p : PkB B C G) (e : PerD p) (W₀ : RowsRest B C) (u : B.Word) (μ : 
   shaLen_nonneg := W₀.shaLen_nonneg
   eMu := W₀.eMu
   eMt0 := e.e0
-  perCol_base_eq_PtilCol u φ F := by unfold perOf; rw [dif_pos rfl]; rfl
+  perCol_base_eq_PtilCol u φ F := by unfold perOf; rw [dite_eq_left rfl]; rfl
   Bu_linL := n.linL
   Bu_linR := n.linR
   eMtTw := e.eT
-  perCol_tie u μ h φ F := by unfold perOf; rw [dif_neg h]
+  perCol_tie u μ h φ F := by unfold perOf; rw [dite_eq_right h]
   eMu_isom := W₀.eMu_isom
 
 structure CenIs (p : PkB B C G) {e : PerD p} {W₀ : RowsRest B C} {n : Nums p W₀} {η : ℕ → B.places.Pl → ℚ} {hη : ∀ j w, 0 ≤ η j w}

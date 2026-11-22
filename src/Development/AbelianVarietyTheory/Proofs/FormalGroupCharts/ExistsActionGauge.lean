@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -268,7 +272,7 @@ theorem logAd_mem (h1 : B.ph1 = 1) (h2 : B.ph2 = 1) (c : O) : logAd B c ∈ biad
   · have hs := gp_addOf _ B.G.const _ _ ha ha'
     have hV := triple_points_zero_constant ha ha' hb
     refine expS_inj (ev_logAd_const B c _ _ hs hb)
-      (by rw [map_add, ev_logAd_const B c _ _ ha hb, ev_logAd_const B c _ _ ha' hb, add_zero]) ?_
+      (by rw [map_add (f := _), ev_logAd_const B c _ _ ha hb, ev_logAd_const B c _ _ ha' hb, add_zero]) ?_
     rw [gt_expS_add _ _ (ev_logAd_const B c _ _ ha hb) (ev_logAd_const B c _ _ ha' hb),
       expS_ev_logAd B c _ _ hs hb, expS_ev_logAd B c _ _ ha hb, expS_ev_logAd B c _ _ ha' hb]
     have h := B.adjoint_compat_left c
@@ -283,7 +287,7 @@ theorem logAd_mem (h1 : B.ph1 = 1) (h2 : B.ph2 = 1) (c : O) : logAd B c ∈ biad
   · have hs := gp_addOf _ B.G.const _ _ hb hb'
     have hV := triple_points_zero_constant ha hb hb'
     refine expS_inj (ev_logAd_const B c _ _ ha hs)
-      (by rw [map_add, ev_logAd_const B c _ _ ha hb, ev_logAd_const B c _ _ ha hb', add_zero]) ?_
+      (by rw [map_add (f := _), ev_logAd_const B c _ _ ha hb, ev_logAd_const B c _ _ ha hb', add_zero]) ?_
     rw [gt_expS_add _ _ (ev_logAd_const B c _ _ ha hb) (ev_logAd_const B c _ _ ha hb'),
       expS_ev_logAd B c _ _ ha hs, expS_ev_logAd B c _ _ ha hb, expS_ev_logAd B c _ _ ha hb']
     have h := B.adjoint_compat_right c
@@ -298,7 +302,7 @@ theorem logAd_mem (h1 : B.ph1 = 1) (h2 : B.ph2 = 1) (c : O) : logAd B c ∈ biad
 
 theorem logAd_add (h1 : B.ph1 = 1) (h2 : B.ph2 = 1) (a b : O) :
     logAd B (a + b) = logAd B a + logAd B b := by
-  refine expS_inj (logAd_const B _) (by rw [map_add, logAd_const, logAd_const, add_zero]) ?_
+  refine expS_inj (logAd_const B _) (by rw [map_add (f := _), logAd_const, logAd_const, add_zero]) ?_
   rw [gt_expS_add _ _ (logAd_const B a) (logAd_const B b), expS_logAd, expS_logAd, expS_logAd]
   have h := B.ad_add a b
   rwa [h1, h2, ev_one, ev_one, one_mul, mul_one] at h
@@ -312,7 +316,7 @@ theorem logAd_mul (a b : O) : logAd B (a * b) =
     gp_comp1 _ _ (B.A.const _) (gp_pt 1)
   have c1 := ev_logAd_const B a _ _ hx (gp_pt 1)
   have c2 := ev_logAd_const B b _ _ (gp_pt 0) hz
-  refine expS_inj (logAd_const B _) (by rw [map_add, c1, c2, add_zero]) ?_
+  refine expS_inj (logAd_const B _) (by rw [map_add (f := _), c1, c2, add_zero]) ?_
   rw [gt_expS_add _ _ c1 c2, expS_logAd, expS_ev_logAd B a _ _ hx (gp_pt 1),
     expS_ev_logAd B b _ _ (gp_pt 0) hz, B.ad_mul]
 

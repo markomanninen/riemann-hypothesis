@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+
+@[expose] public section
 
 open Metric Set Filter
 open scoped Topology
@@ -84,8 +88,8 @@ noncomputable def scaledRealPoints (ι : Type*) (a : ℂ) : Submodule ℝ (ι �
     rintro t _ ⟨x, rfl⟩
     exact ⟨t • x, by ext i; simp [mul_left_comm]⟩
 
-omit [Fintype ι] in
 
+omit [Fintype ι] in
 theorem span_scaledRealPoints {a : ℂ} (ha : a ≠ 0) :
     Submodule.span ℂ (scaledRealPoints ι a : Set (ι → ℂ)) = ⊤ := by
   refine eq_top_iff.mpr fun z _ => ?_

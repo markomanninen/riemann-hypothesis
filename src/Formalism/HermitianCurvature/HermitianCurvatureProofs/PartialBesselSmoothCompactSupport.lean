@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbWords
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftFubiniNormalizedTower
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbWords
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftFubiniNormalizedTower
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 
@@ -69,9 +73,6 @@ theorem lw_rtransl (t : Mat k r) : ∀ (u : List (Mat k r)) (f : Mat k r → E),
     funext g
     show LdV X (u.foldr LdV (fun y => f (y * t))) g = LdV X (u.foldr LdV f) (g * t)
     rw [lw_rtransl t u f, ldV_rtransl]
-
-theorem dLR_rtransl (t : Mat k r) (u : List (Mat k r)) (f : Mat k r → E) :
-    dLR u [] (fun y => f (y * t)) = fun y => dLR u [] f (y * t) := lw_rtransl t u f
 
 end words
 
@@ -209,8 +210,8 @@ section main
 variable {k p ρ n : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq]
 
-open Classical in
 
+open Classical in
 def fam (Bj : B.RealPlaceData k ρ Wp Wq) (e : p + ρ = n) (Φt : Mat k n → (Wq →L[ℂ] Wp)) (x : PBQ.XP k p ρ)
     (g : Mat k n) : Wq →L[ℂ] Wp :=
   if PBQ.GoodP Bj x then (Bj.π (Matrix.of x.1.1)).comp (Φt (g * iotL k n (sxF e x))) else 0

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open TensorProduct
 
 namespace GlobalTheory
@@ -33,7 +38,7 @@ theorem fibre_going_down_tensor : ∀ (S A C : Type) [CommRing S] [CommRing A] [
       = algebraMap F₁ E (Algebra.TensorProduct.includeRight c) := by
     intro c
     simp only [Φ, e1, e2, e3, Algebra.TensorProduct.includeRight_apply, RingEquiv.trans_apply,
-      AlgEquiv.toRingEquiv_eq_coe, AlgEquiv.coe_ringEquiv, Algebra.TensorProduct.cancelBaseChange_tmul, one_smul]
+      AlgEquiv.coe_toRingEquiv, AlgEquiv.coe_ringEquiv, Algebra.TensorProduct.cancelBaseChange_tmul, one_smul]
     erw [Algebra.TensorProduct.cancelBaseChange_symm_tmul]
     rfl
 

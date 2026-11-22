@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.Development
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.Development
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -27,7 +31,7 @@ theorem fockR_add_left (f₁ f₂ g : MvPolynomial σ R) : fockR (f₁ + f₂) g
     fockR_eq_sum f₁ g _ Finset.subset_union_left, fockR_eq_sum f₂ g _ Finset.subset_union_right,
     ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun m _ => ?_
-  rw [coeff_add]
+  rw [MvPolynomial.coeff_add]
   ring
 
 theorem fockR_smul_left (a : R) (f g : MvPolynomial σ R) : fockR (a • f) g = a * fockR f g := by
@@ -42,7 +46,7 @@ theorem fockR_add_right (f g₁ g₂ : MvPolynomial σ R) : fockR f (g₁ + g₂
   unfold fockR
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun m _ => ?_
-  rw [coeff_add]
+  rw [MvPolynomial.coeff_add]
   ring
 
 theorem fockR_smul_right (a : R) (f g : MvPolynomial σ R) : fockR f (a • g) = a * fockR f g := by
@@ -78,19 +82,13 @@ theorem opWord_add (l : List (Fin n' × (Fin k × Fin k))) (f g : MvPolynomial (
     opWord l (f + g) = opWord l f + opWord l g := by
   induction l with
   | nil => rfl
-  | cons y l ih => rw [opWord_cons, opWord_cons, opWord_cons, ih, map_add, mul_add]
+  | cons y l ih => rw [opWord_cons, opWord_cons, opWord_cons, ih, map_add (f := _), mul_add]
 
 theorem opWord_smul (l : List (Fin n' × (Fin k × Fin k))) (a : K) (f : MvPolynomial (Fin n' × Fin k) K) :
     opWord l (a • f) = a • opWord l f := by
   induction l with
   | nil => rfl
   | cons y l ih => rw [opWord_cons, opWord_cons, ih, Derivation.map_smul, mul_smul_comm]
-
-def opWordL (l : List (Fin n' × (Fin k × Fin k))) :
-    MvPolynomial (Fin n' × Fin k) K →ₗ[K] MvPolynomial (Fin n' × Fin k) K where
-  toFun := opWord l
-  map_add' := opWord_add l
-  map_smul' a f := opWord_smul l a f
 
 theorem combo_add_fun (f : List (Fin n' × (Fin k × Fin k)) →₀ K) (G₁ G₂ : MvPolynomial (Fin n' × Fin k) K) :
     combo f (G₁ + G₂) = combo f G₁ + combo f G₂ := by
@@ -136,7 +134,8 @@ theorem bilin_ext_restrict {K : Type} [CommRing K] {σ : Type*} (T : Set (σ →
   intro G hG H hH
   rw [MvPolynomial.mem_restrictSupport_iff] at hG hH
   rw [G.as_sum, H.as_sum]
-  simp only [map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply]
   refine Finset.sum_congr rfl fun μ hμ => Finset.sum_congr rfl fun ν hν => ?_
   rw [e μ, e ν]
   simp only [map_smul, LinearMap.smul_apply]

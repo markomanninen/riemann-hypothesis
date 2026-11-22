@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsPrimitiveRootTopZeta
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KmapSubMemOfASet
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsPrimitiveRootTopZeta
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KmapSubMemOfASet
+
+@[expose] public section
 
 open scoped MatrixGroups Matrix
 open GlobalTheory.KZ GlobalTheory.K4 Polynomial
@@ -38,7 +42,7 @@ theorem UpperTheory.algEquiv_mem_ringOfIntegers_modularTowerTop :
   intro P
   induction P using Polynomial.induction_on' with
   | add p q hp hq =>
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     exact hp.add hq
   | monomial n c =>
     have e : algebraMap (Polynomial Ω) (topL X M) (monomial n c) =

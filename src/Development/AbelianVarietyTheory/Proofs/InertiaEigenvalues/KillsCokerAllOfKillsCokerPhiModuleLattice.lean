@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.RepresentationBounds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.RepresentationBounds
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,8 @@ theorem psi_mulVec {ι κ : Type} [Fintype ι] (l : ℕ) [Fact l.Prime] (Y : Mat
     (m : ι → K⟦X⟧) :
     (fun i => psi l ((Y.map (frob K l) *ᵥ m) i)) = Y *ᵥ fun j => psi l (m j) := by
   funext i
-  simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, psi_frob_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, psi_frob_mul]
 
 end Psi
 

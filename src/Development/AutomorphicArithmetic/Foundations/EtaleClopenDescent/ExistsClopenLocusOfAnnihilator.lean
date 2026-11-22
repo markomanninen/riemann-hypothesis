@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsQuasiInv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsClopenTorsionKernelLocus
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFiniteEtaleLatticeTorsionHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsQuasiInv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsClopenTorsionKernelLocus
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFiniteEtaleLatticeTorsionHom
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.ES
@@ -56,7 +60,7 @@ private def ann (o : Obj b N s) {T : Over Y} (g : T ⟶ o.A) : Ideal (𝓞 D.F) 
   add_mem' := by
     intro a a' ha ha'
     simp only [Set.mem_setOf_eq] at ha ha' ⊢
-    rw [map_add, o.act.add, MonObj.comp_mul, ha, ha', _root_.one_mul]
+    rw [map_add (f := _), o.act.add, MonObj.comp_mul, ha, ha', _root_.one_mul]
   zero_mem' := by
     simp only [Set.mem_setOf_eq]
     rw [map_zero, act_zero, MonObj.comp_one]

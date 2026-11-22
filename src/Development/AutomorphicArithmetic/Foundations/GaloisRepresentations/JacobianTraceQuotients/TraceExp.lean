@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.JacobianTraceQuotients.TraceQuot
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriTraceOfBorelCasselman
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LiftEigen
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.JacobianTraceQuotients.TraceQuot
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriTraceOfBorelCasselman
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LiftEigen
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter ValuativeRel
 open GroundTheory.Global GroundTheory.Global.SemiLocal
@@ -75,7 +79,7 @@ theorem UpperTheory.Gal.Join.traceExp :
         simp }
   obtain ⟨E, h1, h2⟩ := exists_eigenchars (T := T) _ P R rfl
   refine ⟨E, fun t => ?_, fun μ => ?_⟩
-  · rw [trIn, dif_pos (hP t)]
+  · rw [trIn, dite_eq_left (hP t)]
     exact h1 t
   · rw [h2]
     constructor

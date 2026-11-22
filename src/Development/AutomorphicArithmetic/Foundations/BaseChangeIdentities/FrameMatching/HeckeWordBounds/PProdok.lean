@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.FrameMatching.HeckeWordBounds.HeckeLevelWordBase
+module
+
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.FrameMatching.HeckeWordBounds.HeckeLevelWordBase
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem _root_.UpperTheory.BaseChangeIdentities.FrameWordIdentity.prodok_pf :
     | cons p ls ih =>
       simp only [List.map_cons, List.foldr_cons]
       exact hT E a (n - a) d.kap d.P hk _ _ (hW E n d hd a ha p).1 ih
-  rw [prodL, dif_pos ha, List.foldr_cons]
+  rw [prodL, dite_eq_left ha, List.foldr_cons]
   exact hT E a (n - a) d.kap d.P hk _ _ hfix hrest
 
 end

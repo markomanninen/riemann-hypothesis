@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NewtonPowerSeriesSurjectiveLinearizationSolutionStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PowerSeriesTaylorSubstFirstOrderStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NewtonPowerSeriesSurjectiveLinearizationSolutionStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PowerSeriesTaylorSubstFirstOrderStatement
+
+@[expose] public section
 
 open Polynomial
 
@@ -32,7 +36,7 @@ noncomputable def lin (N : ℕ) (ξ : J → PowerSeries k) (s : I → J → Powe
     funext e; rcases e with _ | ⟨i, l⟩ <;> simp [linFun, Finset.mul_sum, mul_assoc, mul_add]
 
 lemma iter_eq (f : PowerSeries k) (l : ℕ) :
-    (PowerSeries.derivativeFun)^[l] f = (PowerSeries.derivative k)^[l] f := by
+    (PowerSeries.derivativeFun)^[l] f = (PowerSeries.derivative (R := k))^[l] f := by
   induction l generalizing f with
   | zero => rfl
   | succ n ih => rw [Function.iterate_succ_apply, Function.iterate_succ_apply, ih]; rfl
@@ -64,7 +68,7 @@ lemma dvd_step {m : ℕ} (hm : 1 ≤ m) (y g S S' : PowerSeries k) (y0 c A : k)
           + (g * S - PowerSeries.C (PowerSeries.constantCoeff g * A)))
         + PowerSeries.X ^ (n + 1 + 1) * (y * r + PowerSeries.X ^ n *
           (g * PowerSeries.C c + PowerSeries.X * g * r)) := by
-    rw [hS', map_add]; ring
+    rw [hS', map_add (f := _)]; ring
   rw [heq]
   refine dvd_add ?_ (dvd_mul_right _ _)
   rw [pow_succ]
@@ -120,7 +124,7 @@ theorem deform : ∀ (k J I : Type) [Field k] [CharZero k] [Fintype J] [Fintype 
             = w (some (i, l)) := by
           simp only [hA]
           have := hvl i l.1 hl
-          rw [dif_pos l.2] at this
+          rw [dite_eq_left l.2] at this
           calc ∑ j, hv j * ((l.1.factorial : k) * PowerSeries.coeff l.1 (s i j))
               = (l.1.factorial : k) * ∑ j, hv j * PowerSeries.coeff l.1 (s i j) := by
                 rw [Finset.mul_sum]; exact Finset.sum_congr rfl fun j _ => by ring
@@ -141,8 +145,10 @@ theorem deform : ∀ (k J I : Type) [Field k] [CharZero k] [Fintype J] [Fintype 
 
     intro e
     rcases e with _ | ⟨i, l⟩
-    · simp [sys, map_sum, h0]
-    · simp only [sys, map_sum, map_mul, PowerSeries.constantCoeff_C, Sum.elim_inl, Sum.elim_inr]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp [sys, map_sum, h0]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        simp only [sys, map_sum, map_mul, PowerSeries.constantCoeff_C, Sum.elim_inl, Sum.elim_inr]
       have h' : ∀ j, PowerSeries.constantCoeff (((PowerSeries.derivativeFun)^[l.1] (s i j)).subst
           (PowerSeries.C ((0 : I → k) i)) : PowerSeries k) = (l.1.factorial : k) * PowerSeries.coeff l.1 (s i j) := by
         intro j; rw [cc_subst _ _ (by simp), hA]
@@ -167,7 +173,8 @@ theorem deform : ∀ (k J I : Type) [Field k] [CharZero k] [Fintype J] [Fintype 
       rw [heq, pow_succ]
       refine mul_dvd_mul_left _ ?_
       rw [PowerSeries.X_dvd_iff]
-      simp [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum]
     · simp only [sys, lin, linFun, LinearMap.coe_mk, AddHom.coe_mk]
       set a := x (Sum.inr i)
       set b := h (Sum.inr i)
@@ -194,7 +201,8 @@ theorem deform : ∀ (k J I : Type) [Field k] [CharZero k] [Fintype J] [Fintype 
           - PowerSeries.X ^ m * PowerSeries.C (PowerSeries.constantCoeff (h (Sum.inl j)) *
               PowerSeries.constantCoeff ((PowerSeries.derivativeFun)^[l.1] (s i j))
               + y₀ j * (PowerSeries.constantCoeff b * PowerSeries.coeff 1 ((PowerSeries.derivativeFun)^[l.1] (s i j))))) := by
-        rw [Finset.sum_sub_distrib, Finset.sum_sub_distrib, ← Finset.mul_sum, ← map_sum,
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [Finset.sum_sub_distrib, Finset.sum_sub_distrib, ← Finset.mul_sum, ← map_sum,
           Finset.sum_add_distrib, Finset.mul_sum (a := PowerSeries.constantCoeff b)]
         congr 4
         refine Finset.sum_congr rfl fun j _ => by ring

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumOpTransversal
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeisenbergIntertwiningSumsCompEqIndex
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormalizedHeisenbergIntertwinerComp
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIntertwinerHeisenbergCocycleOfFixedVector
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsWeilRepresentationHeisenberg
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpanHeisenbergTranslatesVacuumEqTop
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumOpTransversal
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeisenbergIntertwiningSumsCompEqIndex
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormalizedHeisenbergIntertwinerComp
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIntertwinerHeisenbergCocycleOfFixedVector
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsWeilRepresentationHeisenberg
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpanHeisenbergTranslatesVacuumEqTop
+
+@[expose] public section
 
 open Classical GlobalTheory.FinWeil
 open scoped BigOperators
@@ -27,7 +31,8 @@ private theorem eq_zero_of_sum_eigenvectors_eq_zero_of_injective {M ι α : Type
       refine ih (fun i => (χ i a - χ j a) • v i) (fun i hi b => ?_) ?_
       · rw [map_smul, hv i (Finset.mem_insert_of_mem hi) b, smul_comm]
       · have h1 := congrArg (T a) hsum
-        rw [map_add, map_sum, map_zero, hv j (Finset.mem_insert_self _ _)] at h1
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_add (f := _), map_sum, map_zero, hv j (Finset.mem_insert_self _ _)] at h1
         have h2 : v j = -∑ i ∈ s, v i := eq_neg_of_add_eq_zero_left hsum
         rw [Finset.sum_congr rfl fun i hi => hv i (Finset.mem_insert_of_mem hi) a] at h1
         simp only [sub_smul, Finset.sum_sub_distrib]
@@ -98,7 +103,8 @@ private theorem isHeis_sum_filter_quotient_eq_zero_of_sum_eq_zero {R X M : Type}
   have key := eq_zero_of_sum_eigenvectors_eq_zero_of_injective (fun a : A => W a) χ hχ (s.image fun i => (x i : X ⧸ A.toAddSubgroup))
     (fun q' => ∑ i ∈ s.filter (fun i => (x i : X ⧸ A.toAddSubgroup) = q'), c i • W (x i) (e i))
     (fun q' _ a => by
-      rw [map_sum, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.smul_sum]
       refine Finset.sum_congr rfl fun i hi => ?_
       rw [map_smul, isHeis_apply_apply_eq_smul_of_fixes hW (he i) a.2, smul_comm,
         hval q' (x i) (Finset.mem_filter.1 hi).2 a])
@@ -161,7 +167,8 @@ private theorem isHeis_sum_map_eq_zero_of_sum_eq_zero {R X M : Type} [CommRing R
     (c i * (γ (w • x0) (-x0 + x i))⁻¹) • e i
   have hu : u = 0 := by
     apply eq_zero_of_isHeis_apply_eq_zero hW x0
-    rw [← hfib, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hfib, map_sum]
     refine Finset.sum_congr rfl fun i hi => ?_
     rw [map_smul, mul_smul, ← isHeis_apply_add_eq_inv_smul_of_fixes hW (he i) (hd i hi), ← hxi]
   have hfixρ : ∀ i ∈ s.filter (fun i => (x i : X ⧸ A.toAddSubgroup) = q),
@@ -173,17 +180,19 @@ private theorem isHeis_sum_map_eq_zero_of_sum_eq_zero {R X M : Type} [CommRing R
         rw [map_smul, mul_smul]
         congr 1
         have h := isHeis_apply_add_eq_inv_smul_of_fixes hW (hL _ (he i)) (hfixρ i hi) (ρ x0)
-        rw [← map_add, ← hxi, ← ρ.map_smul w x0, hρ] at h
+        rw [← map_add (f := _), ← hxi, ← ρ.map_smul w x0, hρ] at h
         exact h
     _ = W (ρ x0) (L u) := by
-        rw [map_sum, ← map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, ← map_sum]
         congr 1
-        simp only [u, map_sum, map_smul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [u, map_sum, map_smul]
     _ = 0 := by rw [hu, map_zero, map_zero]
+
 
 open Classical in
 open scoped BigOperators in
-
 theorem _root_.GlobalTheory.FinWeil.exists_weil_rep_of_vacua : ∀ {R X M : Type} [CommRing R]
     [AddCommGroup X] [Module R X] [AddCommGroup M] [Module ℂ M] {σ : R →+* R} {w : R}
     {γ : X → X → ℂ} {W : X → M →ₗ[ℂ] M}, _root_.GlobalTheory.FinWeil.IsHeis σ w γ W →
@@ -260,7 +269,7 @@ theorem _root_.GlobalTheory.FinWeil.exists_weil_rep_of_vacua : ∀ {R X M : Type
     intro g x
     refine hext _ _ fun y e he => ?_
     simp only [LinearMap.comp_apply]
-    rw [hmul, map_smul, hgen _ _ _ he, hgen _ _ _ he, hmul, map_add, ← (ρ g).map_smul, hρ]
+    rw [hmul, map_smul, hgen _ _ _ he, hgen _ _ _ he, hmul, map_add (f := _), ← (ρ g).map_smul, hρ]
   have hmapmul : ∀ g h, A.map (ρ (g * h)) = (A.map (ρ h)).map (ρ g) := by
     intro g h; rw [map_mul, Module.End.mul_eq_comp, Submodule.map_comp]
   let Om : Γ →* Module.End ℂ M :=
@@ -305,7 +314,8 @@ theorem _root_.GlobalTheory.FinWeil.exists_weil_rep_of_vacua : ∀ {R X M : Type
             (lam (_root_.GlobalTheory.FinWeil.idx (A.map (ρ g)) (A.map (ρ (g * h)))))⁻¹ •
               _root_.GlobalTheory.FinWeil.sumOp W (A.map (ρ g)) (A.map (ρ (g * h))) (large₂ g e) := rfl
         rw [hLg (g * h) e he, ← hcomp, ← hLg g e he, h3, hsum2, hcard2, ← hcard1, hLh]
-        simp only [map_smul, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_smul, map_sum]
         congr 1
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [hmul (ρ h x) (f i) e, map_smul, hgen _ _ _ he, hmul, map_mul, Module.End.mul_apply,

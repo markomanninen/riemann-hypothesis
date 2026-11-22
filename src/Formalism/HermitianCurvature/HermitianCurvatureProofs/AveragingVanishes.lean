@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.BigCellVanishingOfCommute
+module
+
+public import Formalism.HermitianCurvature.BigCellVanishingOfCommute
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Finset
 
@@ -199,7 +203,5 @@ theorem averaging_vanishes : C6.AveragingZero := by
   rw [div_lt_iff₀ hδ] at hN2
   rw [le_div_iff₀ hNpos] at hb
   nlinarith
-
-theorem averaging_of_parts : C6.AveragingOfParts := fun _ => averaging_vanishes
 
 end Formalism.FourierDecayAlt.P

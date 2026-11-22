@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsAlgClosedBaseChange
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsFiniteSubsetNonzeroLocus
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsAlgClosedBaseChange
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsFiniteSubsetNonzeroLocus
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,10 +20,10 @@ section SlopeTestRemainingChoices
 
 variable {k : Type} [Field k] {X : Scheme.{0}} [Algebra k Γ(X, ⊤)]
 
-theorem isLocallyNoetherian_of_isProjOver (hp : IsProjOver (strHom k X)) :
+theorem isLocallyNoetherian_of_isProjOver (hp : IsProjOver (strHom k (X := X))) :
     IsLocallyNoetherian X := by
   obtain ⟨N, ι, _, h⟩ := hp
-  have : LocallyOfFiniteType (strHom k X) := h ▸ inferInstance
+  have : LocallyOfFiniteType (strHom k (X := X)) := h ▸ inferInstance
   exact LocallyOfFiniteType.isLocallyNoetherian (strHom k X)
 
 theorem lineBundleGlobalSectionsDim_eq_zero_of_isEmpty [IsEmpty X] (L : LB X) : lbH0 k L = 0 := by
@@ -47,7 +51,7 @@ end SlopeTestRemainingChoices
 open GlobalTheory.Published
 
 theorem lineBundleGlobalSectionsDim_nefPow_tensor_ample_isBigO : GlobalTheory.Published.NefNumerics → ∀ (F : Type) [Field F] (Z : Scheme.{0})
-    [Algebra F Γ(Z, ⊤)] (d : ℕ), IsProjOver (strHom F Z) → topologicalKrullDim Z ≤ d →
+    [Algebra F Γ(Z, ⊤)] (d : ℕ), IsProjOver (strHom F (X := Z)) → topologicalKrullDim Z ≤ d →
     ∀ L A : LB Z, IsNef F L → IsAmpleLB A → ∃ C : ℝ, ∀ᶠ m : ℕ in atTop,
       (lbH0 F (tens (lbPow L m) A) : ℝ) ≤ C * (m : ℝ) ^ d := by
   intro hNum F _ Z _ d hp hd L A hL hA

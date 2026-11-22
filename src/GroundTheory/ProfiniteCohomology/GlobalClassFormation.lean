@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ClassFormationGlobal
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleInvariants
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.SubsingletonCohomologyThreeInfiniteDecomposition
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ClassFormationGlobal
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleInvariants
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.SubsingletonCohomologyThreeInfiniteDecomposition
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh

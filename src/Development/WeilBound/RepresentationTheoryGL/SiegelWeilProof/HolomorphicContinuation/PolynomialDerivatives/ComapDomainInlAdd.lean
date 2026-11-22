@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.PairSym
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.PairSym
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,13 +21,13 @@ abbrev Dk (k : Ix m n) : Module.End ℂ (PX m n) := (pderiv (R := ℂ) k).toLine
 theorem pderiv_comm (i j : Ix m n) (p : PX m n) : pderiv i (pderiv j p) = pderiv j (pderiv i p) := by
   induction p using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p k hp =>
     have hc : ∀ a b : Ix m n, pderiv a (pderiv b (X k : PX m n)) = 0 := by
       intro a b; rw [pderiv_X]; by_cases h : b = k
       · subst h; simp
       · simp [Pi.single_apply, h]
-    simp only [pderiv_mul, map_add, hp, hc, mul_zero, add_zero]
+    simp only [pderiv_mul, map_add (f := _), hp, hc, mul_zero, add_zero]
     ring
 
 theorem dk_comm (i j : Ix m n) : Commute (Dk i) (Dk j) :=
@@ -71,7 +75,7 @@ theorem opMono_eq (t : Ix m n ⊕ Ix m n →₀ ℕ) (f : PX m n) :
     opMono t f = monomial (t.comapDomain Sum.inl Sum.inl_injective.injOn) 1 * dvE (fun k => t (Sum.inr k)) f := rfl
 
 theorem opMono_add (t : Ix m n ⊕ Ix m n →₀ ℕ) (f g : PX m n) : opMono t (f + g) = opMono t f + opMono t g := by
-  simp only [opMono_eq, map_add, mul_add]
+  simp only [opMono_eq, map_add (f := _), mul_add]
 
 theorem opMono_smul (t : Ix m n ⊕ Ix m n →₀ ℕ) (a : ℂ) (f : PX m n) : opMono t (a • f) = a • opMono t f := by
   simp only [opMono_eq, map_smul, mul_smul_comm]
@@ -89,7 +93,7 @@ theorem op_add (u v : Sym m n) (f : PX m n) : op (u + v) f = op u f + op v f := 
     op_eq_of_subset u (u.support ∪ v.support) Finset.subset_union_left,
     op_eq_of_subset v (u.support ∪ v.support) Finset.subset_union_right, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun t _ => ?_
-  rw [coeff_add, add_smul]
+  rw [MvPolynomial.coeff_add, add_smul]
 
 theorem op_smul (a : ℂ) (u : Sym m n) (f : PX m n) : op (a • u) f = a • op u f := by
   classical
@@ -175,7 +179,7 @@ theorem op_X_mul (u : Sym m n) : ∀ (k : Ix m n) (g : PX m n),
     op u (X k * g) = X k * op u g + op (pderiv (Sum.inr k) u) g := by
   induction u using MvPolynomial.induction_on with
   | C a => intro k g; simp [op_C, op_zero, mul_smul_comm]
-  | add p q hp hq => intro k g; rw [op_add, op_add, hp, hq, map_add, op_add]; ring
+  | add p q hp hq => intro k g; rw [op_add, op_add, hp, hq, map_add (f := _), op_add]; ring
   | mul_X p j hp =>
     intro k g
     rcases j with j | j

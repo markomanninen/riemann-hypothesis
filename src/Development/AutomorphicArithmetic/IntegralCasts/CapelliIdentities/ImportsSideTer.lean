@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Yhd8.main :
     ∀ {n : ℕ} (g g' D : Matrix (Fin n) (Fin n) ℂ),

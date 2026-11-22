@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsLimitOfChart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsLimitOfChart
+
+@[expose] public section
+
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
 open Filter Topology Metric Formalism.REAL
 
@@ -15,8 +20,9 @@ variable {n : ℕ}
 theorem exp_sub_one_mem (A : Submodule ℝ (Matrix (Fin n) (Fin n) ℂ))
     (hA : ∀ X ∈ A, ∀ Y ∈ A, X * Y ∈ A) {X : Matrix (Fin n) (Fin n) ℂ} (hX : X ∈ A) :
     NormedSpace.exp X - 1 ∈ A := by
-  letI := Matrix.linftyOpNormedRing (n := Fin n) (α := ℂ)
-  letI := Matrix.linftyOpNormedAlgebra (n := Fin n) (R := ℝ) (α := ℂ)
+  letI : NormedAddCommGroup (Matrix (Fin n) (Fin n) ℂ) := Matrix.frobeniusNormedAddCommGroup
+  letI : NormedRing (Matrix (Fin n) (Fin n) ℂ) := Matrix.frobeniusNormedRing
+  letI : NormedAlgebra ℝ (Matrix (Fin n) (Fin n) ℂ) := Matrix.frobeniusNormedAlgebra
   haveI : CompleteSpace (Matrix (Fin n) (Fin n) ℂ) := FiniteDimensional.complete ℝ _
   have h := NormedSpace.exp_series_hasSum_exp' (𝕂 := ℝ) X
   have h1 := (hasSum_nat_add_iff' 1).2 h
@@ -92,13 +98,15 @@ theorem exists_preimage {M : Type} [NormedAddCommGroup M] [NormedSpace ℝ M] [F
   rintro _ ⟨Y, hY, rfl⟩
   exact ⟨Y.1, Y.2, hY, (congrArg Subtype.val (hp' ⟨_, hA _ Y.2⟩)).symm⟩
 
-open scoped Matrix.Norms.Frobenius in
 
+open scoped Matrix.Norms.Frobenius in
 theorem exists_log (A : Submodule ℝ (Matrix (Fin n) (Fin n) ℂ))
     (hA : ∀ X ∈ A, ∀ Y ∈ A, X * Y ∈ A) {W : Set (Matrix (Fin n) (Fin n) ℂ)}
     (hW : W ∈ 𝓝 (0 : Matrix (Fin n) (Fin n) ℂ)) :
-    ∀ᶠ a : A in 𝓝 0, ∃ Y ∈ A, Y ∈ W ∧ NormedSpace.exp Y - 1 = a.1 :=
-  exists_preimage A (f := fun Y => NormedSpace.exp Y - 1)
+    ∀ᶠ a : A in 𝓝 0, ∃ Y ∈ A, Y ∈ W ∧ NormedSpace.exp Y - 1 = a.1 := by
+  letI := Matrix.linftyOpNormedRing (n := Fin n) (α := ℂ)
+  letI := Matrix.linftyOpNormedAlgebra (n := Fin n) (R := ℝ) (α := ℂ)
+  exact exists_preimage (M := Matrix (Fin n) (Fin n) ℂ) A (f := fun Y => NormedSpace.exp Y - 1)
     (HasStrictFDerivAt.sub_const (f := NormedSpace.exp) 1 CompactDualExists.exp_strict)
     (sub_eq_zero.2 (NormedSpace.exp_zero (𝔸 := Matrix (Fin n) (Fin n) ℂ)))
     (fun _ hX => exp_sub_one_mem A hA hX) hW
@@ -149,24 +157,37 @@ theorem finrank_eq (ε : Fin n → Bool) (A : Submodule ℝ (Matrix (Fin n) (Fin
     simpa using h
   rw [h1, finrank_span_eq_card h2, Fintype.card_fin]
 
-open scoped Matrix.Norms.Frobenius in
 
+open scoped Matrix.Norms.Frobenius in
 theorem exists_limit (ε : Fin n → Bool) (A : Submodule ℝ (Matrix (Fin n) (Fin n) ℂ))
     (hA : ∀ X ∈ A, ∀ Y ∈ A, X * Y ∈ A) (μ : Measure (algSub ε A hA)) [μ.IsHaarMeasure] :
     ∃ c : ℝ, 0 < c ∧ Tendsto
       (fun r : ℝ => (μ {g | Real.sqrt (Formalism.REAL.hs (uMat g.1 - 1)) ≤ r}).toReal /
         r ^ Module.finrank ℝ ↥(A ⊓ lieJ ε)) (𝓝[>] 0) (𝓝 c) := by
+  letI : NormedAddCommGroup (Matrix (Fin n) (Fin n) ℂ) := Matrix.frobeniusNormedAddCommGroup
+  letI : NormedRing (Matrix (Fin n) (Fin n) ℂ) := Matrix.frobeniusNormedRing
+  letI : NormedAlgebra ℝ (Matrix (Fin n) (Fin n) ℂ) := Matrix.frobeniusNormedAlgebra
   let L₀ : Matrix (Fin n) (Fin n) ℂ →ₗ[ℝ] (Matrix (Fin n) (Fin n) ℂ →L[ℝ] Matrix (Fin n) (Fin n) ℂ) :=
     LinearMap.toContinuousLinearMap.toLinearMap ∘ₗ LinearMap.mul ℝ _
   have hL₀ : Continuous L₀ := L₀.continuous_of_finiteDimensional
   have h := exists_limit_of_chart ↥(A ⊓ lieJ ε) (Matrix (Fin n) (Fin n) ℂ) (algSub ε A hA) μ
     (expSub ε A hA) (fun g => uMat g.1)
     (A ⊓ lieJ ε).subtypeₗᵢ (fun g => L₀ (uMat g.1)) (continuous_expSub ε A hA)
-    (Subtype.ext (uMat_injective ε (NormedSpace.exp_zero (𝔸 := Matrix (Fin n) (Fin n) ℂ))))
-    (HasStrictFDerivAt.comp (0 : ↥(A ⊓ lieJ ε)) (g := NormedSpace.exp) (f := Subtype.val)
-      CompactDualExists.exp_strict (A ⊓ lieJ ε).subtypeL.hasStrictFDerivAt)
+    (by
+      apply Subtype.ext
+      apply uMat_injective ε
+      change NormedSpace.exp 0 = 1
+      exact NormedSpace.exp_zero (𝔸 := Matrix (Fin n) (Fin n) ℂ))
+    (by
+      change HasStrictFDerivAt (fun x : ↥(A ⊓ lieJ ε) => NormedSpace.exp x.1)
+        (A ⊓ lieJ ε).subtypeL 0
+      exact CompactDualExists.exp_strict.comp
+        (0 : ↥(A ⊓ lieJ ε)) (A ⊓ lieJ ε).subtypeL.hasStrictFDerivAt)
     (hL₀.comp ((continuous_uMat ε).comp continuous_subtype_val)).continuousAt
-    (by ext1 A; exact Matrix.one_mul A) (fun g h => rfl)
+    (by
+      change (L₀ 1) = ContinuousLinearMap.id ℝ (Matrix (Fin n) (Fin n) ℂ)
+      ext X
+      simp [L₀]) (fun g h => rfl)
     (fun r hr => expSub_image_mem_nhds ε A hA (ball_mem_nhds 0 hr))
     ((uJEmb n ε).1.isInducing.comp IsInducing.subtypeVal)
   simp only [sqrt_hs]

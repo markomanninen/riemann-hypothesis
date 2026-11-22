@@ -1,12 +1,17 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegFixedBallMass
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegDensNonneg
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StStokesOnChart
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartMassCompact
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.CutOffNear
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRegBallMass
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PLelongRegularise
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCutOff
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegFixedBallMass
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegDensNonneg
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StStokesOnChart
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartMassCompact
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.CutOffNear
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRegBallMass
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PLelongRegularise
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCutOff
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -38,8 +43,8 @@ theorem chartDens_weight_mono (hN : RegDensNonneg.Statement) (hA : IsFiniteProje
 
 end RegFixedBallMass
 
-open RegFixedBallMass in
 
+open RegFixedBallMass in
 theorem RegFixedBallMass.proof (hN : RegDensNonneg.Statement) (hS : StokesOnChart.Statement)
     (hL : LogIntegrable.Statement) (hC : ChartMassCompact.Statement) : RegFixedBallMass.Statement := by
   intro n d J A u R hJ hdim hA hu

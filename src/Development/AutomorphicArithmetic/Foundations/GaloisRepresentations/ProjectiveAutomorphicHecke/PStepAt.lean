@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DefU GlobalTheory.PRep Formalism.L2.Host GlobalTheory.HeckeGal UpperTheory.Gal.CertificateRingHomMap
 open scoped Classical
 
@@ -61,9 +66,9 @@ private theorem finite_index {w : Plc E} (hw : IsSplitAt w) (J : Subgroup (GLw n
         conv_lhs => rw [← ha]
         rw [← Module.End.mul_apply, ← map_mul]
         simp }
-  have hle : (CJ J : Subgroup (UA E n)) ≤ finU E n := fun k hk => (Subgroup.mem_inf.1 (Subgroup.mem_inf.1 hk).1).1
+  have hle : (CJ J : Subgroup (UA E n)) ≤ finU (E := E) (n := n) := fun k hk => (Subgroup.mem_inf.1 (Subgroup.mem_inf.1 hk).1).1
   have hop : IsOpen (N : Set (CJ J : Subgroup (UA E n))) :=
-    hφ.level.preimage (f := fun k : (CJ J : Subgroup (UA E n)) => (⟨k.1, hle k.2⟩ : finU E n))
+    hφ.level.preimage (f := fun k : (CJ J : Subgroup (UA E n)) => (⟨k.1, hle k.2⟩ : finU (E := E) (n := n)))
       (Continuous.subtype_mk continuous_subtype_val _)
   haveI := Subgroup.quotient_finite_of_isOpen N hop
   exact ⟨N, Subgroup.finiteIndex_of_finite_quotient, fun k hk => hk⟩
@@ -71,8 +76,8 @@ private theorem finite_index {w : Plc E} (hw : IsSplitAt w) (J : Subgroup (GLw n
 private theorem step_core (π : AutSub E n) (W : Wt E n) (f : algForms W) {w : Plc E} (hw : IsSplitAt w)
     (hf : f ∈ π.finPart W) (r : UA E n →₀ ℂ) (hr : ∀ g ∈ r.support, g ∈ locU n w) :
     ∃ f' ∈ π.finPart W, (∀ v, f'.1 v = r.sum fun g a => a • RU E n g (f.1 v)) ∧
-      ∀ u : finU E n, cLoc w u.1 = 1 → algRep W u f = f → algRep W u f' = f' := by
-  have hle : locU n w ≤ finU E n := inf_le_left
+      ∀ u : finU (E := E) (n := n), cLoc w u.1 = 1 → algRep W u f = f → algRep W u f' = f' := by
+  have hle : locU n w ≤ finU (E := E) (n := n) := inf_le_left
   let F : r.support → algForms W := fun g => r g.1 • algRep W ⟨g.1, hle (hr _ g.2)⟩ f
   have hval : ∀ v, (∑ g : r.support, F g).1 v = r.sum fun g a => a • RU E n g (f.1 v) := by
     intro v
@@ -81,16 +86,17 @@ private theorem step_core (π : AutSub E n) (W : Wt E n) (f : algForms W) {w : P
   refine ⟨∑ g : r.support, F g, AutSub.mem_finPart.2 fun v => ?_, hval, fun u hu hfix => ?_⟩
   · rw [hval]
     exact Submodule.sum_mem _ fun g _ => Submodule.smul_mem _ _ (π.isAut.stable _ _ (AutSub.mem_finPart.1 hf v))
-  · rw [map_sum]
-    refine Finset.sum_congr rfl fun g _ => ?_
-    have hcm : u * (⟨g.1, hle (hr _ g.2)⟩ : finU E n) = ⟨g.1, hle (hr _ g.2)⟩ * u :=
-      Subtype.ext (comm_of_cLoc hw u.1 hu g.1 (hr _ g.2)).symm
-    simp only [F]
-    rw [map_smul, ← Module.End.mul_apply, ← map_mul, hcm, map_mul, Module.End.mul_apply, hfix]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum]
+      refine Finset.sum_congr rfl fun g _ => ?_
+      have hcm : u * (⟨g.1, hle (hr _ g.2)⟩ : finU (E := E) (n := n)) = ⟨g.1, hle (hr _ g.2)⟩ * u :=
+        Subtype.ext (comm_of_cLoc hw u.1 hu g.1 (hr _ g.2)).symm
+      simp only [F]
+      rw [map_smul, ← Module.End.mul_apply, ← map_mul, hcm, map_mul, Module.End.mul_apply, hfix]
 
 private theorem mem_lev_off (hC : LocComm) {S : Finset (Plc E)} {Kw : ∀ w : Plc E, Subgroup (GLw n w)} {w : Plc E}
-    (hw : IsSplitAt w) (hwS : w ∈ S) (hcj : cj w ∉ S) {J : Subgroup (GLw n w)} (u : finU E n)
-    (hu : ofU u ∈ lev S (Function.update Kw w J)) (x : GLw n w) (u' : finU E n) (hx : u = locF hw x * u')
+    (hw : IsSplitAt w) (hwS : w ∈ S) (hcj : cj w ∉ S) {J : Subgroup (GLw n w)} (u : finU (E := E) (n := n))
+    (hu : ofU u ∈ lev S (Function.update Kw w J)) (x : GLw n w) (u' : finU (E := E) (n := n)) (hx : u = locF hw x * u')
     (h1 : cLoc w u'.1 = 1) : ofU u' ∈ lev S Kw := by
   obtain ⟨-, hap, -, -, hcc, -⟩ := hC E n w hw
   obtain ⟨-, hu2, hu3⟩ := mem_lev.1 hu
@@ -138,8 +144,8 @@ theorem UpperTheory.Gal.CertificateRingHomMap.pStepAt_of :
   · set x := cLoc w u.1 with hxdef
     set a := locF hw x with hadef
     have hax : cLoc w a.1 = x := cLoc_locF hw x
-    have h1 : cLoc w ((a⁻¹ * u : finU E n) : UA E n) = 1 := by
-      have : ((a⁻¹ * u : finU E n) : UA E n) = a.1⁻¹ * u.1 := rfl
+    have h1 : cLoc w ((a⁻¹ * u : finU (E := E) (n := n)) : UA E n) = 1 := by
+      have : ((a⁻¹ * u : finU (E := E) (n := n)) : UA E n) = a.1⁻¹ * u.1 := rfl
       rw [this, map_mul, map_inv, hax, ← hxdef, inv_mul_cancel]
     have hu' : u = a * (a⁻¹ * u) := by group
     have hfix' : algRep W (a⁻¹ * u) f = f :=

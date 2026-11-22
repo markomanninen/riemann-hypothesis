@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.DedekindLFunctions.LandauZeroFreeCriterion
+module
+
+public import Development.AutomorphicArithmetic.DedekindLFunctions.LandauZeroFreeCriterion
+
+@[expose] public section
 
 open Complex MeasureTheory Set Filter Topology
 

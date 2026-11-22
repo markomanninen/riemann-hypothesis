@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataCD
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.PerpendicularEmbedding
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ContinuousMatrixEntryAbsSum
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpqLocallyCompactGroup
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataCD
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.PerpendicularEmbedding
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ContinuousMatrixEntryAbsSum
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpqLocallyCompactGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,18 +23,6 @@ def blk (e : Option (Fin P' ⊕ Fin Q') ≃ (Fin P ⊕ Fin Q))
     (m : Matrix (Fin P' ⊕ Fin Q') (Fin P' ⊕ Fin Q') ℂ) : Matrix (Fin P ⊕ Fin Q) (Fin P ⊕ Fin Q) ℂ :=
   Matrix.of fun i l => (e.symm i).elim ((e.symm l).elim 1 fun _ => 0)
     fun a => (e.symm l).elim 0 fun b => m a b
-
-theorem ext_e (e : Option (Fin P' ⊕ Fin Q') ≃ (Fin P ⊕ Fin Q))
-    {u v : Matrix (Fin P ⊕ Fin Q) (Fin P ⊕ Fin Q) ℂ} (h : ∀ x y, u (e x) (e y) = v (e x) (e y)) :
-    u = v := by
-  ext i l
-  simpa using h (e.symm i) (e.symm l)
-
-theorem blk_mul (e : Option (Fin P' ⊕ Fin Q') ≃ (Fin P ⊕ Fin Q))
-    (m n : Matrix (Fin P' ⊕ Fin Q') (Fin P' ⊕ Fin Q') ℂ) : blk e (m * n) = blk e m * blk e n := by
-  refine ext_e e fun x y => ?_
-  rw [Matrix.mul_apply, ← e.sum_comp, Fintype.sum_option]
-  rcases x with _ | x <;> rcases y with _ | y <;> simp [blk, Matrix.mul_apply, -Fintype.sum_sum_type]
 
 open MeasureTheory Matrix Filter Topology in
 open scoped ENNReal NNReal in
@@ -148,10 +140,10 @@ private lemma blk_mul_global_interpolation (e : Option (Fin P' ⊕ Fin Q') ≃ (
     simp [blk_none_none, blk_none_some, blk_some_none, blk_some_some,
       Matrix.mul_apply]
 
+
 open MeasureTheory Matrix Filter Topology in
 open scoped ENNReal NNReal in
 variable {P Q P' Q' : ℕ} in
-
 theorem _root_.GlobalTheory.BlockEmbedding.exists_blockEmb : ∀ (P Q P' Q' : ℕ) (e : Option (Fin P' ⊕ Fin Q') ≃ (Fin P ⊕ Fin Q)),
     _root_.GlobalTheory.CompactDualQuot.SignCompat e → ∃ j : _root_.Formalism.BasicNotions.UpqT P' Q' →* _root_.Formalism.BasicNotions.UpqT P Q, _root_.GlobalTheory.CompactDualQuot.IsBlockEmb e j ∧ Topology.IsClosedEmbedding j ∧
       Set.range j = {g | _root_.GlobalTheory.IndefiniteRowSideFullHecke.PerpendicularEmbedding.act g (_root_.GlobalTheory.CompactDualQuot.baseVec e) = _root_.GlobalTheory.CompactDualQuot.baseVec e} := by

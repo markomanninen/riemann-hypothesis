@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.GlOperatorsFormRepresentation
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.LiePolarizationDerEqZeroOfDisjoint
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.StandardPathBasisAnyRing
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.GlOperatorsFormRepresentation
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.LiePolarizationDerEqZeroOfDisjoint
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.StandardPathBasisAnyRing
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,10 +26,10 @@ theorem multideg_mapDomain_headVar (m : Fin N × Fin r →₀ ℕ) (i : Fin N) :
   have h1 : ∀ c : Fin r, (m.mapDomain (plVar (K := K))) (i, Fin.castAdd K c) = m (i, c) := by
     intro c
     have : (i, Fin.castAdd K c) = plVar (K := K) (i, c) := rfl
-    rw [this, Finsupp.mapDomain_apply]
-    intro a b h
-    simp only [plVar, Prod.mk.injEq] at h
-    exact Prod.ext h.1 (Fin.castAdd_injective r K h.2)
+    rw [this, Finsupp.mapDomain_apply_of_injective (by
+      intro a b h
+      simp only [plVar, Prod.mk.injEq] at h
+      exact Prod.ext h.1 (Fin.castAdd_injective r K h.2))]
   have h2 : ∀ c : Fin K, (m.mapDomain (plVar (K := K))) (i, Fin.natAdd r c) = 0 := by
     intro c
     apply Finsupp.mapDomain_of_notMem_range
@@ -44,10 +48,10 @@ theorem multideg_mapDomain_tailVar (m : Fin N × Fin K →₀ ℕ) (i : Fin N) :
   have h1 : ∀ c : Fin K, (m.mapDomain (tanVar (r := r))) (i, Fin.natAdd r c) = m (i, c) := by
     intro c
     have : (i, Fin.natAdd r c) = tanVar (r := r) (i, c) := rfl
-    rw [this, Finsupp.mapDomain_apply]
-    intro a b h
-    simp only [tanVar, Prod.mk.injEq] at h
-    exact Prod.ext h.1 (Fin.natAdd_injective K r h.2)
+    rw [this, Finsupp.mapDomain_apply_of_injective (by
+      intro a b h
+      simp only [tanVar, Prod.mk.injEq] at h
+      exact Prod.ext h.1 (Fin.natAdd_injective K r h.2))]
   have h2 : ∀ c : Fin r, (m.mapDomain (tanVar (r := r))) (i, Fin.castAdd K c) = 0 := by
     intro c
     apply Finsupp.mapDomain_of_notMem_range
@@ -113,10 +117,10 @@ theorem rename_mul_rename_mem_span_productBasis (R : Type) [CommRing R] (N r K :
       exact Submodule.subset_span
         ⟨⟨((P1.mu, I'), (P2.mu, I'')), ⟨b', b'', hb, ⟨P1, rfl⟩, ⟨P2, rfl⟩⟩, hI', hI''⟩, rfl⟩
     | zero => rw [map_zero, mul_zero]; exact Submodule.zero_mem _
-    | add a b _ _ ha hb => rw [map_add, mul_add]; exact Submodule.add_mem _ ha hb
+    | add a b _ _ ha hb => rw [map_add (f := _), mul_add]; exact Submodule.add_mem _ ha hb
     | smul c a _ ha => rw [map_smul, mul_smul_comm]; exact Submodule.smul_mem _ _ ha
   | zero => rw [map_zero, zero_mul]; exact Submodule.zero_mem _
-  | add a b _ _ ha hb => rw [map_add, add_mul]; exact Submodule.add_mem _ ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _), add_mul]; exact Submodule.add_mem _ ha hb
   | smul c a _ ha => rw [map_smul, smul_mul_assoc]; exact Submodule.smul_mem _ _ ha
 
 theorem headVar_injective (N r K : ℕ) : Function.Injective (plVar (N := N) (r := r) (K := K)) := by
@@ -137,7 +141,7 @@ theorem finsupp_eq_head_add_tail {N r K : ℕ} (m : Fin N × Fin (r + K) →₀ 
   rw [Finsupp.add_apply]
   refine Fin.addCases (fun a => ?_) (fun a => ?_) c
   · have e1 : (i, Fin.castAdd K a) = plVar (K := K) (i, a) := rfl
-    rw [e1, Finsupp.mapDomain_apply (headVar_injective N r K), Finsupp.comapDomain_apply,
+    rw [e1, Finsupp.mapDomain_apply_of_injective (headVar_injective N r K), Finsupp.comapDomain_apply,
       Finsupp.mapDomain_of_notMem_range, add_zero]
     rintro ⟨⟨l, b⟩, h⟩
     simp only [tanVar, plVar, Prod.mk.injEq] at h
@@ -145,7 +149,7 @@ theorem finsupp_eq_head_add_tail {N r K : ℕ} (m : Fin N × Fin (r + K) →₀ 
     simp only [Fin.val_castAdd, Fin.val_natAdd] at this
     omega
   · have e1 : (i, Fin.natAdd r a) = tanVar (r := r) (i, a) := rfl
-    rw [e1, Finsupp.mapDomain_apply (tailVar_injective N r K), Finsupp.comapDomain_apply,
+    rw [e1, Finsupp.mapDomain_apply_of_injective (tailVar_injective N r K), Finsupp.comapDomain_apply,
       Finsupp.mapDomain_of_notMem_range, zero_add]
     rintro ⟨⟨l, b⟩, h⟩
     simp only [tanVar, plVar, Prod.mk.injEq] at h
@@ -179,7 +183,7 @@ theorem span_productBasis_eq_multihomogeneous (R : Type) [CommRing R] (N r K : �
     set m1 := m.comapDomain plVar (headVar_injective N r K).injOn with hm1
     set m2 := m.comapDomain tanVar (tailVar_injective N r K).injOn with hm2
     have hs : m = m1.mapDomain plVar + m2.mapDomain tanVar := finsupp_eq_head_add_tail m
-    have hmon : monomial m (coeff m G) = coeff m G •
+    have hmon : monomial m (AddMonoidAlgebra.coeff G m) = AddMonoidAlgebra.coeff G m •
         (rename (plVar (K := K)) (monomial m1 (1 : R)) * rename (tanVar (r := r)) (monomial m2 (1 : R))) := by
       rw [rename_monomial, rename_monomial, monomial_mul, ← hs, smul_monomial, one_mul, smul_eq_mul, mul_one]
     rw [hmon]

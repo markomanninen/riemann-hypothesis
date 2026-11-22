@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GroupDict
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsProved
-import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.Assembly
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntEmbInjective
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.BlockGLSupportedMemMirabolicSupported
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GroupDict
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsProved
+public import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.Assembly
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntEmbInjective
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.BlockGLSupportedMemMirabolicSupported
+
+@[expose] public section
+
 open NumberField Matrix MeasureTheory Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GroundTheory.Heights₂.Heights.FiniteCovolume GroundTheory.Automorphic GlobalTheory.CompanionTheory.Ar.Cusp.Dict
 open scoped ENNReal InnerProductSpace
 open scoped ComplexOrder
@@ -47,7 +52,7 @@ theorem exists_embedding : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
     exact (smul_eq_zero.1 hkx).resolve_left (by exact_mod_cast hk)
   let g := (Module.finBasis E (E ⊗[𝓞 E] Λ)).equivFun
   refine ⟨Module.finrank E (E ⊗[𝓞 E] Λ), hrank,
-    AddMonoidHom.mk' (fun x => g (f x)) (fun x y => by simp only [map_add]), ?_, ?_, ?_⟩
+    AddMonoidHom.mk' (fun x => g (f x)) (fun x y => by simp only [map_add (f := _)]), ?_, ?_, ?_⟩
   · refine (injective_iff_map_eq_zero _).2 fun x hx => htors x ?_
     exact g.map_eq_zero_iff.1 hx
   · intro a x

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.CharacterHypothesisUnramified
-import Formalism.LocalToGlobal.CharacterGerms.RowTieCharS
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.CharacterHypothesisUnramified
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieCharS
+
+@[expose] public section
 
 set_option autoImplicit false
 

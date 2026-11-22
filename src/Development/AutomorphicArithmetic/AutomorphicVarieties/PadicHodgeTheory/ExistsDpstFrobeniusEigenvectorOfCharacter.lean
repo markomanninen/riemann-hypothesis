@@ -1,14 +1,19 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.AinfActionTiltFixedOfFrobeniusRelation
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsAlgebraicVectorSpanningSubspace
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.MemIK
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LaWDDefs
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedIsCrysAndJumpEqZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.ConclusionFinite
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.AinfActionTiltFixedOfFrobeniusRelation
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsAlgebraicVectorSpanningSubspace
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.MemIK
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LaWDDefs
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedIsCrysAndJumpEqZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.ConclusionFinite
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.WeilDeligne GlobalTheory.GalOfCusp GlobalTheory.HeckeGal GlobalTheory.LocLanglands GlobalTheory.Published UpperTheory.V.W
 set_option synthInstance.maxHeartbeats 400000
 
-open Module in
 
+open Module in
 private theorem exists_int_basis {l : ℕ} [Fact l.Prime] {G : Type} [Group G] [TopologicalSpace G] [CompactSpace G]
     {V : Type} [AddCommGroup V] [Module ℚ_[l] V] [FiniteDimensional ℚ_[l] V] [TopologicalSpace V]
     [IsModuleTopology ℚ_[l] V] (ρ : Representation ℚ_[l] G V) (hρ : ∀ x, Continuous fun g => ρ g x) :
@@ -43,8 +48,9 @@ private theorem exists_int_basis {l : ℕ} [Fact l.Prime] {G : Type} [Group G] [
     rw [h2]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
   haveI : Submodule.IsLattice ℚ_[l] Λ :=
-    { fg := (Submodule.fg_span (Set.finite_range _)).of_le hle
-      span_eq_top := by
+    Submodule.IsLattice.of_fg ℚ_[l] ((Submodule.fg_span (Set.finite_range _)).of_le hle)
+  haveI : Submodule.IsFullLattice ℚ_[l] Λ :=
+    { span_eq_top := by
         rw [eq_top_iff, ← e₀.span_eq]
         refine Submodule.span_mono ?_
         rintro _ ⟨i, rfl⟩
@@ -59,14 +65,15 @@ private theorem exists_int_basis {l : ℕ} [Fact l.Prime] {G : Type} [Group G] [
       obtain ⟨⟨h, j⟩, rfl⟩ := hx
       exact Submodule.subset_span ⟨(g * h, j), by simp⟩
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact Λ.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Λ.add_mem hx hy
     | smul a x _ hx => rw [LinearMap.map_smul_of_tower]; exact Λ.smul_mem a hx
-  refine ⟨_, b.extendOfIsLattice ℚ_[l], fun g i j => ?_⟩
-  have h1 : ρ g (b.extendOfIsLattice ℚ_[l] j) =
-      ∑ k, ((b.repr ⟨_, hst g _ (b j).2⟩ k : ℤ_[l]) : ℚ_[l]) • b.extendOfIsLattice ℚ_[l] k := by
+  refine ⟨_, b.extendOfIsFullLattice ℚ_[l], fun g i j => ?_⟩
+  have h1 : ρ g (b.extendOfIsFullLattice ℚ_[l] j) =
+      ∑ k, (algebraMap ℤ_[l] ℚ_[l] (b.repr ⟨_, hst g _ (b j).2⟩ k)) • b.extendOfIsFullLattice ℚ_[l] k := by
     have := congrArg Λ.subtype (b.sum_repr ⟨_, hst g _ (b j).2⟩)
-    rw [map_sum] at this
-    simp only [Basis.extendOfIsLattice_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
+    simp only [Basis.extendOfIsFullLattice_apply]
     exact this.symm
   rw [h1, Basis.repr_sum_self]
   exact PadicInt.norm_le_one _
@@ -79,8 +86,8 @@ private theorem map_iterFrob {p : ℕ} [Fact p.Prime] {R : Type} [CommRing R] [C
   ext i
   simp [iterateFrobenius_def, frobenius_def, pow_succ, pow_mul]
 
-open TensorProduct GlobalTheory.Pst in
 
+open TensorProduct GlobalTheory.Pst in
 private theorem phiV_pow {l : ℕ} [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P) {LL : Type} [Field LL]
     [Algebra ℚ_[l] LL] {V : Type} [AddCommGroup V] [Module LL V] [Module ℚ_[l] V] [IsScalarTower ℚ_[l] LL V]
     (k : ℕ) (v : V) (w : Ainf l) :
@@ -134,7 +141,6 @@ private theorem period {l : ℕ} [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l
         rw [hI (Subgroup.inclusion (GK_le hKK) g) g.2 ((UpperTheory.V.Loc.memIK K' g).1 hg), one_smul]
       rw [← map_one M]
       ext i j
-      apply PadicInt.ext
       rw [hM, hM, h, map_one, Module.End.one_apply])
   haveI : Nontrivial P.R.B := nontrivial_B P
   haveI : Nontrivial (Ainf l) := AI.ιA.domain_nontrivial
@@ -148,29 +154,34 @@ private theorem period {l : ℕ} [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l
   let x : V ⊗[ℚ_[l]] Bst P := ∑ i, e i ⊗ₜ (Polynomial.C (AI.ιA (W i j0)) : Bst P)
   have hx : x ∈ Dpst P ρ := ⟨K', hKK, (mem_Dst P _).2 fun g => by
     have h1 : ∀ i, AI.ιA (W i j0) = ∑ k, e.repr (ρ' g (e k)) i • P.actQ g (AI.ιA (W k j0)) := fun i => by
-      conv_lhs => rw [← hWg g, Matrix.mul_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        conv_lhs => rw [← hWg g, Matrix.mul_apply, map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_mul, Matrix.map_apply, Matrix.map_apply, ιA_zlW AI Ti, hM, ← AI.ιA_act, Algebra.smul_def]
       rfl
     have h2 : x = ∑ i, ∑ k, (e.repr (ρ' g (e k)) i • e i) ⊗ₜ[ℚ_[l]]
         (Polynomial.C (P.actQ g (AI.ιA (W k j0))) : Bst P) := by
       refine Finset.sum_congr rfl fun i _ => ?_
-      rw [h1 i, map_sum, tmul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [h1 i, map_sum, tmul_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [← Polynomial.smul_C, smul_tmul]
     conv_rhs => rw [h2, Finset.sum_comm]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [stRep_tmul, actSt_C, ← sum_tmul, e.sum_repr]⟩
   refine ⟨⟨x, hx⟩, fun h0 => hij ?_, fun g a b hg => Subtype.ext ?_⟩
   · have h1 : x = 0 := congrArg Subtype.val h0
     have h2 := congrArg (fun y => TensorProduct.lid ℚ_[l] _ (LinearMap.rTensor (Bst P) (e.coord i0) y)) h1
-    simp only [x, map_sum, LinearMap.rTensor_tmul, lid_tmul, Module.Basis.coord_apply, Module.Basis.repr_self,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [x, map_sum, LinearMap.rTensor_tmul, lid_tmul, Module.Basis.coord_apply, Module.Basis.repr_self,
       Finsupp.single_apply, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true, map_zero,
       Polynomial.C_eq_zero] at h2
     exact AI.ιA_inj (h2.trans (map_zero _).symm)
   · rw [coe_actD, Submodule.coe_smul, coe_phiD_pow, coe_phiD_pow]
-    simp only [x, map_sum, phiV_pow, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [x, map_sum, phiV_pow, Finset.smul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [stRep_tmul, actSt_C, hρ, smul_tmul', ← AI.ιA_act]
     congr 3

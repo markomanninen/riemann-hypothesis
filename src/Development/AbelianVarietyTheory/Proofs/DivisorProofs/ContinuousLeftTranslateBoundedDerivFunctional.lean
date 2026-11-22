@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsExpLieAlgebraComplexUnits
-import GroundTheory.AutomorphicForms.GKModules.Casimir
-import GroundTheory.AutomorphicForms.HarishChandraRegularity.ExpHaar
-import GroundTheory.AutomorphicForms.HarishChandraInvariance.Compact
-import GroundTheory.AutomorphicForms.DixmierMalliavin
-import GroundTheory.AutomorphicForms.GKModules.ParametricIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsExpLieAlgebraComplexUnits
+public import GroundTheory.AutomorphicForms.GKModules.Casimir
+public import GroundTheory.AutomorphicForms.HarishChandraRegularity.ExpHaar
+public import GroundTheory.AutomorphicForms.HarishChandraInvariance.Compact
+public import GroundTheory.AutomorphicForms.DixmierMalliavin
+public import GroundTheory.AutomorphicForms.GKModules.ParametricIntegral
+
+@[expose] public section
+
 open GlobalTheory.HCA MeasureTheory GroundTheory.Automorphic
 open scoped ContDiff
 
@@ -12,7 +17,8 @@ namespace GlobalTheory.HCA
 
 theorem SmFn.continuous_leftTranslate : ∀ (𝔸 : Type) [NormedRing 𝔸] [NormedAlgebra ℝ 𝔸] [CompleteSpace 𝔸] [FiniteDimensional ℝ 𝔸] (G : Subgroup 𝔸ˣ) (𝔤 : Submodule ℝ 𝔸) (h : IsExpLieAlgebra G 𝔤) (d : ℕ) (b : Module.Basis (Fin d) ℝ 𝔤) [MeasurableSpace G] [BorelSpace G] (μ : Measure G), μ.IsHaarMeasure → ∀ (S : Submodule ℂ (G → ℂ)), (∀ f ∈ S, Continuous f) → (∀ f ∈ S, ∀ g, (fun y => f (g * y)) ∈ S) → ∀ K : Set G, IsCompact K → ∀ Λ : List (Fin d) → (G → ℂ) → ℂ, SmFn h b μ S K Λ → ∀ l, ∀ f ∈ S, Continuous fun x : G => Λ l fun y => f (x * y) := by
   intro 𝔸 _ _ _ _ G 𝔤 h d b _ _ μ hμ S hS hL K hK Λ hΛ l f hf
-  haveI := h.locallyCompactSpace
+  letI := h.chartedSpace
+  haveI : LocallyCompactSpace G := ChartedSpace.locallyCompactSpace 𝔤 G
   haveI : SecondCountableTopology 𝔸ˣ := Units.isEmbedding_embedProduct.secondCountableTopology
   haveI : SecondCountableTopology G := Topology.IsEmbedding.subtypeVal.secondCountableTopology
   obtain ⟨C, hC⟩ := hΛ.bdd l

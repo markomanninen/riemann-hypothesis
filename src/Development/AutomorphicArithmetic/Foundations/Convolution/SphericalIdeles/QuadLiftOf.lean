@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.RamDefs
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.QuadLiftUnr
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.NormRam
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.RamDefs
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.QuadLiftUnr
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.NormRam
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.CuspRep Formalism.L2.Host Formalism.ConjugateSelfDual UpperTheory.V.Published UpperTheory.CBC
 

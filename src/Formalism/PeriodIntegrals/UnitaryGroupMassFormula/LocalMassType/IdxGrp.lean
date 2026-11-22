@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.IdxLin
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.IdxLin
+
+@[expose] public section
 
 noncomputable section
 
@@ -111,7 +115,7 @@ theorem cong_lat_iff (hSD : IsSDLoc σ J v Λ) {r : ℕ} {P : Frame E n r}
     obtain ⟨z, hz, hzeq⟩ := h b
     rw [locF_frU_sub] at hzeq
     have := prim_div hP _ hg hz hzeq a
-    rw [uMat_sub, dif_pos hab] at this
+    rw [uMat_sub, dite_eq_left hab] at this
     dsimp only
     convert this using 1
     rw [Pi.add_apply, Pi.neg_apply, neg_add_eq_sub, ← mul_assoc, sc_mul']

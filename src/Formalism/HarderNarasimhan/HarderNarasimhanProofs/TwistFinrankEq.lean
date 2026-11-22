@@ -1,7 +1,11 @@
-import Formalism.HarderNarasimhan.StatementPl
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.ShiftInvariance
-import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+module
+
+public import Formalism.HarderNarasimhan.StatementPl
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.ShiftInvariance
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+
+@[expose] public section
 
 open Module NumberField
 
@@ -9,7 +13,7 @@ noncomputable section
 
 namespace Formalism.HN
 
-theorem twist_finrank_eq (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] :
+theorem twist_finrank_eq (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] :
     (Module.finrank ℚ K : ℝ) = 2 * (nPl K : ℝ) := by
   have key : Module.finrank ℚ K = 2 * nPl K := by
     have h1 := NumberField.InfinitePlace.card_add_two_mul_card_eq_rank K

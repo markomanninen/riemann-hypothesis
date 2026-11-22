@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
-import Development.WeilBound.ThetaLifts.LatticeBasics.SiegelWeilAnisoOf
-import Development.WeilBound.ThetaLifts.LatticeBasics.SecLaw
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
+public import Development.WeilBound.ThetaLifts.LatticeBasics.SiegelWeilAnisoOf
+public import Development.WeilBound.ThetaLifts.LatticeBasics.SecLaw
+
+@[expose] public section
 
 noncomputable section
 

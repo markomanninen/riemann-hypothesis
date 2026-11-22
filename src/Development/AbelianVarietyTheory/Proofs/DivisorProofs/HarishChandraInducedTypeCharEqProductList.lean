@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LabelsCharOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspidalCharacterFormula
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraSeriesLabelExistsUniqueGLn
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BlockParabolicUnitriangularSubgroupsGLnPrimeFiel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TypeCharacterConjugateInverse
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LabelsCharOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspidalCharacterFormula
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraSeriesLabelExistsUniqueGLn
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BlockParabolicUnitriangularSubgroupsGLnPrimeFiel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TypeCharacterConjugateInverse
+
+@[expose] public section
 
 noncomputable section
 
@@ -133,7 +137,7 @@ variable {p : ℕ} [Fact p.Prime]
 
 theorem coe_toG {n : ℕ} {M : Mt p n} (h : IsUnit M) : ((toG M : Gn p n) : Mt p n) = M := by
   unfold toG
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact IsUnit.unit_spec _
 
 def stdP (L : List (Pc p)) : (n : ℕ) → Mt p n → Prop :=

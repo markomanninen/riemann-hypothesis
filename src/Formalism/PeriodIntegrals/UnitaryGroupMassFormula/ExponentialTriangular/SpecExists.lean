@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExponentialTriangular.SortedSpec
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExponentialTriangular.SortedSpec
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -38,7 +42,7 @@ theorem hsEq : HSEq := by
     rw [hD, Matrix.diagonal_conjTranspose]
     congr 1
     funext i
-    simp
+    simp [Pi.star_apply, Complex.star_def]
   have hAh : Aᴴ = W * D * Wᴴ := by
     rw [hA, Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose, hDh,
       Matrix.mul_assoc]

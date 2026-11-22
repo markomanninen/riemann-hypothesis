@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TranslateMomentsAll
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StandardRankOneLatticeOfLocal
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SpanImageLeOf
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StarDetMulDetMem
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsPowPrincipal
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MaxVDetLat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TranslateMomentsAll
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StandardRankOneLatticeOfLocal
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SpanImageLeOf
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StarDetMulDetMem
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsPowPrincipal
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MaxVDetLat
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.MainNotions Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker Formalism.L2.Th1.H GlobalTheory.IndefiniteRowSideFullHecke.JetSumTable GlobalTheory.MomT
 
 noncomputable section
@@ -42,7 +47,7 @@ theorem exists_prime_under {E : Type} [Field E] [NumberField E] {p : ℕ} [Fact 
     { carrier := {r | ‖ψ r‖ < 1}
       add_mem' := fun {a b} ha hb => by
         show ‖ψ ((a + b : 𝓞 E) : E)‖ < 1
-        rw [RingOfIntegers.coe_eq_algebraMap, map_add, map_add]
+        rw [RingOfIntegers.coe_eq_algebraMap, map_add (f := _), map_add (f := _)]
         exact (IsUltrametricDist.norm_add_le_max _ _).trans_lt (max_lt ha hb)
       zero_mem' := by
         show ‖ψ ((0 : 𝓞 E) : E)‖ < 1
@@ -171,7 +176,7 @@ theorem chi_det_unit : ∀ (D : D7) (X : Fields) (s : Seam D X) (χ : TaylorLogM
     rw [e']
     exact mem_algebraicClosure_iff.1 (Subtype.prop _)
   refine ⟨hmem, ?_⟩
-  rw [TaylorLogMetric.lamC, dif_pos hmem]
+  rw [TaylorLogMetric.lamC, dite_eq_left hmem]
   have e2 : (⟨_, hmem⟩ : TaylorLogMetric.Qbar) ^ h = ∏ τ, (φ τ y)⁻¹ := Subtype.ext (by rw [← e']; simp)
   have e3 := congrArg (fun z => ‖lam z‖) e2
   simp only [map_pow, norm_pow, map_prod, norm_prod, map_inv₀, norm_inv] at e3

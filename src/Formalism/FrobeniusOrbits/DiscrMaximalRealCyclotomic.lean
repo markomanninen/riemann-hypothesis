@@ -1,4 +1,8 @@
-import Formalism.FrobeniusOrbits.Statement
+module
+
+public import Formalism.FrobeniusOrbits.Statement
+
+@[expose] public section
 
 open NumberField IntermediateField Ideal
 
@@ -34,10 +38,6 @@ def HostOrdersFrob : Prop :=
       g.2 = hcl e u → orderOf g ≤ 2 ^ j →
       ((l : ZMod (2 ^ (e + 2 - j))) = 1 ∨ (l : ZMod (2 ^ (e + 2 - j))) = -1)
 
-def HostTwoAdicSq : Prop :=
-  (∀ d : ℕ, d % 8 = 7 → IsSquare (-(d : ℤ_[2]))) ∧
-  ∀ (q d : ℕ) [Fact q.Prime], HostHyp q d → IsSquare (-(d : ℤ_[q]))
-
 def DiscrMaximalRealCyclotomic : Prop :=
   ∀ (e : ℕ) (L : Type) [Field L] [NumberField L] (ζ : L), IsPrimitiveRoot ζ (2 ^ (e + 2)) →
     discr (F1 ζ) = 2 ^ (2 ^ e * (e + 1) - 1)
@@ -53,27 +53,15 @@ def HostDiscr : Prop :=
     (|(discr (hostF ζ a b) : ℝ)| ^ ((1 : ℝ) / (2 ^ (e + 1) : ℝ)) =
       (2 : ℝ) ^ ((e : ℝ) + 1 - (2 : ℝ) ^ (-(e : ℝ))) * Real.sqrt ((q : ℝ) * d))
 
-def HostRamified : Prop :=
-  ∀ (e q d : ℕ), 1 ≤ e → HostHyp q d →
-  ∀ (L : Type) [Field L] [NumberField L] (ζ a b : L), IsLayer (e + 2) q d ζ a b →
-  ∀ (p : ℕ) [Fact p.Prime] (P : Ideal (𝓞 (hostE ζ a b))) [P.IsPrime]
-    [P.LiesOver (span {(p : ℤ)})],
-    (∃ σ : hostE ζ a b ≃ₐ[ℚ] hostE ζ a b, σ ≠ 1 ∧ ∀ x : 𝓞 (hostE ζ a b), σ • x - x ∈ P) ↔
-      (p = 2 ∨ p = q ∨ p = d)
-
-def HostOrderD : Prop :=
-  ∀ (e q d : ℕ), 1 ≤ e → HostHyp q d →
-  ∀ ud : (ZMod (2 ^ (e + 2)))ˣ, (ud : ZMod (2 ^ (e + 2))) = (d : ZMod _) →
-    orderOf (hcl e ud) = 2 ^ (e - 1)
-
 def HostPartner : Prop :=
   ∀ (e : ℕ) (τ : GG e), τ ∈ Psi e →
     Set.BijOn (fun g : GG e => cc e * g * τ) {g | g ∉ Psi e} (Psi e : Set (GG e))
 
 def chC (e : ℕ) : GG e →* ℂˣ := (Units.map (Int.castRingHom ℂ).toMonoidHom).comp (chD e)
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def HostCharSum : Prop :=
   ∀ e : ℕ,
     (∀ χ : GG e →* ℂˣ,

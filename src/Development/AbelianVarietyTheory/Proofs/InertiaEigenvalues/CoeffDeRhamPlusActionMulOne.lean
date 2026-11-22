@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,15 +24,15 @@ theorem tensorAct_mul (s : O → V → V) (φ : B →+* C)
     (d d' : O ⊗[R] B) (w : V ⊗[K] C) : act (d * d') w = act d (act d' w) := by
   induction d using TensorProduct.induction_on with
   | zero => simp only [zero_mul, map_zero, AddMonoidHom.zero_apply]
-  | add x y hx hy => simp only [add_mul, map_add, AddMonoidHom.add_apply, hx, hy]
+  | add x y hx hy => simp only [add_mul, map_add (f := _), AddMonoidHom.add_apply, hx, hy]
   | tmul o b =>
     induction d' using TensorProduct.induction_on with
     | zero => simp only [mul_zero, map_zero, AddMonoidHom.zero_apply]
-    | add x y hx hy => simp only [mul_add, map_add, AddMonoidHom.add_apply, hx, hy]
+    | add x y hx hy => simp only [mul_add, map_add (f := _), AddMonoidHom.add_apply, hx, hy]
     | tmul o' b' =>
       induction w using TensorProduct.induction_on with
       | zero => simp only [map_zero]
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]
       | tmul v c =>
         rw [Algebra.TensorProduct.tmul_mul_tmul, h, h, h, hs, map_mul, mul_assoc]
 
@@ -40,7 +44,7 @@ theorem tensorAct_one (s : O → V → V) (φ : B →+* C)
   rw [Algebra.TensorProduct.one_def]
   induction w using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul v c => rw [h, hs, map_one, one_mul]
 
 end Abstract

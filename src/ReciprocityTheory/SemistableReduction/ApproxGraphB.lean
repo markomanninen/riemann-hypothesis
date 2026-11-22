@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.ApproxGraphA
+module
+
+public import ReciprocityTheory.SemistableReduction.ApproxGraphA
+
+@[expose] public section
 
 noncomputable section
 

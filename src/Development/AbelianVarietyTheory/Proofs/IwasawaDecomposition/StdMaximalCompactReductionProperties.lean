@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DatVtEq
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FramesStdMatched
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicSubLtOne
-import Formalism.LocalToGlobal.Divisibility.DefGroupLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DatVtEq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FramesStdMatched
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicSubLtOne
+public import Formalism.LocalToGlobal.Divisibility.DefGroupLemmas
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice IsDedekindDomain NumberField Formalism.L2 Formalism.L2.Host Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev GlobalTheory.Mem GlobalTheory.Mem.R3 GlobalTheory.MtIn
 open scoped TensorProduct
@@ -54,7 +58,7 @@ theorem psiR_surj : Function.Surjective (psiR s) := by
 def kEqv : kP s.w ≃+* IsLocalRing.ResidueField (s.v.adicCompletionIntegers (maximalRealSubfield E)) :=
   RingEquiv.ofBijective (Ideal.Quotient.lift s.w.asIdeal (psiR s) fun a ha => (psiR_eq_zero s a).2 ha)
     ⟨by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro q hq
       obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective q
       rw [Ideal.Quotient.lift_mk, psiR_eq_zero] at hq

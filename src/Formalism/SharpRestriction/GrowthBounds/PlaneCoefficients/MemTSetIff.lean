@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.RestPlOf
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.ProdRangeZmod
-import Formalism.SharpRestriction.GrowthBounds.AevalValuation.ValGen
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.RestPlOf
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.ProdRangeZmod
+public import Formalism.SharpRestriction.GrowthBounds.AevalValuation.ValGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -110,7 +114,8 @@ theorem linkL : LinkL := by
     exact congrArg (fun φ : _ →ₐ[KK O] _ => φ H) (aeval_unique (PhiJ Fr Dt j))
   have hsum := sum_wCoeff w F
   have e := congrArg (PhiJ Fr Dt j) hsum
-  rw [map_sum] at e
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum] at e
   rw [e]
   refine valS_sum_ge _ _ _ _ _ fun M hM => ?_
   rw [map_mul]

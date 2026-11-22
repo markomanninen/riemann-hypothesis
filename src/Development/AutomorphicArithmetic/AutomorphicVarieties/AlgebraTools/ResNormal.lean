@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ProfDefs
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ProfDefs
+
+@[expose] public section
 
 open Filter UpperTheory.V.AlgebraTools
 open scoped TensorProduct
@@ -37,41 +41,36 @@ private theorem res_pow (l : ℕ) (G : Type) [Group G] [TopologicalSpace G] [IsT
   let t : ι → Set G := fun i => ((i.1.toOpenSubgroup : Subgroup G) : Set G)
   have ht : ∀ i, IsClosed (t i) := fun i => i.1.toOpenSubgroup.isClosed
   have hs : IsCompact ((K : Set G)ᶜ) := (hK.isClosed_compl).isCompact
-  have hempty : (K : Set G)ᶜ ∩ ⋂ i, t i = ∅ := by
-    ext y
-    simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_iInter, Set.mem_empty_iff_false,
-      iff_false, not_and]
-    intro hy hall
+  have hdisjoint : Disjoint (K : Set G)ᶜ (⋂ i, t i) := by
+    simp only [Set.disjoint_left, Set.mem_compl_iff, Set.mem_iInter]
+    intro y hy hall
     apply hy
     apply h
     rw [mem_proLRes]
     intro N hN
     exact hall ⟨N, hN⟩
-  obtain ⟨u, hu⟩ := hs.elim_finite_subfamily_closed t ht hempty
+  obtain ⟨u, hu⟩ := hs.elim_finite_subfamily_closed t ht hdisjoint
   have hk : ∀ i : ι, ∃ k : ℕ, g ^ l ^ k ∈ (i.1.toOpenSubgroup : Subgroup G) := fun i =>
     (pq_iff l G _).mp i.2 g
   choose kf hkf using hk
   refine ⟨∑ i ∈ u, kf i, ?_⟩
   by_contra hg
-  have hmem : g ^ l ^ (∑ i ∈ u, kf i) ∈ (K : Set G)ᶜ ∩ ⋂ i ∈ u, t i := by
-    refine ⟨hg, ?_⟩
-    simp only [Set.mem_iInter]
-    intro i hi
-    have hle : kf i ≤ ∑ j ∈ u, kf j := Finset.single_le_sum (fun _ _ => Nat.zero_le _) hi
-    have heq : l ^ (∑ j ∈ u, kf j) = l ^ kf i * l ^ (∑ j ∈ u, kf j - kf i) := by
-      rw [← pow_add, Nat.add_sub_cancel' hle]
-    show g ^ l ^ (∑ j ∈ u, kf j) ∈ ((i.1.toOpenSubgroup : Subgroup G) : Set G)
-    rw [heq, pow_mul]
-    exact Subgroup.pow_mem _ (hkf i) _
-  rw [hu] at hmem
-  exact hmem
+  apply Set.disjoint_left.mp hu hg
+  simp only [Set.mem_iInter]
+  intro i hi
+  have hle : kf i ≤ ∑ j ∈ u, kf j := Finset.single_le_sum (fun _ _ => Nat.zero_le _) hi
+  have heq : l ^ (∑ j ∈ u, kf j) = l ^ kf i * l ^ (∑ j ∈ u, kf j - kf i) := by
+    rw [← pow_add, Nat.add_sub_cancel' hle]
+  show g ^ l ^ (∑ j ∈ u, kf j) ∈ ((i.1.toOpenSubgroup : Subgroup G) : Set G)
+  rw [heq, pow_mul]
+  exact Subgroup.pow_mem _ (hkf i) _
 
 theorem UpperTheory.V.AlgebraTools.proLResOf_normal :
     ∀ (l : ℕ) [Fact l.Prime] (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] (H : Subgroup G) [H.Normal], IsClosed (H : Set G) →
       (proLResOf l H).Normal ∧ IsClosed (proLResOf l H : Set G) ∧ proLResOf l H ≤ H ∧
       ∀ (O : OpenNormalSubgroup G), proLResOf l H ≤ O.toSubgroup → ∀ h ∈ H, ∃ k : ℕ, h ^ l ^ k ∈ O.toSubgroup := by
   intro l _ G _ _ _ _ _ H _ hH
-  haveI : CompactSpace H := isCompact_iff_compactSpace.mp hH.isCompact
+  have : CompactSpace H := isCompact_iff_compactSpace.mp hH.isCompact
   refine ⟨?_, ?_, ?_, ?_⟩
   · constructor
     intro x hx g

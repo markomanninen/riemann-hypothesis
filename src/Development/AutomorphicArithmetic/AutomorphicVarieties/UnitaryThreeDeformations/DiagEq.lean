@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.FiniteResidue
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.MapDiagonalRepMatrixEq
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.FiniteResidue
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.MapDiagonalRepMatrixEq
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia UpperTheory.V.Pr
 
 namespace UpperTheory.V.UnitaryThreeInertia
 
-private theorem tc_conj_mat {R D : Type} [CommRing R] [Group D] (r : D →* GG 3 R) (h : GL (Fin 3) R) (g : D)
+private theorem tc_conj_mat {R D : Type} [CommRing R] [Group D] (r : D →* GG (m := 3) (R := R)) (h : GL (Fin 3) R) (g : D)
     (hg : (r g).right = 1) :
     (conjBy h⁻¹ r g).mat = ((h⁻¹ : GL (Fin 3) R) : Matrix (Fin 3) (Fin 3) R) * (r g).mat * h := by
   simp [conjBy, GG.mat, hg]
@@ -66,14 +70,15 @@ private theorem unit_eq_one_of_pow_eq_one_of_residue_one {R : Type} [CommRing R]
     rwa [map_sub, map_one, sub_eq_zero] at this
   have hs : IsUnit (∑ i ∈ Finset.range N, (u : R) ^ i) := by
     rw [← residue_ne_zero_iff_isUnit] at hN ⊢
-    simpa [map_sum, hu] using hN
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, hu] using hN
   exact Units.ext (sub_eq_zero.1 (hs.mul_left_eq_zero.1 e))
 
-private theorem de_mul' {R D : Type} [CommRing R] [Group D] (r : D →* GG 3 R) (g h : D) (hg : (r g).right = 1) :
+private theorem de_mul' {R D : Type} [CommRing R] [Group D] (r : D →* GG (m := 3) (R := R)) (g h : D) (hg : (r g).right = 1) :
     (r (g * h)).mat = (r g).mat * (r h).mat := by
   simp [GG.mat, hg]
 
-private theorem de_mul {R D : Type} [CommRing R] [Group D] {η : D →* ℤˣ} {r : D →* GG 3 R} (hm : HasMult η r)
+private theorem de_mul {R D : Type} [CommRing R] [Group D] {η : D →* ℤˣ} {r : D →* GG (m := 3) (R := R)} (hm : HasMult η r)
     (hT : Upper η r ∨ Lower η r) (g h : D) (hg : η g = 1) (hh : η h = 1) (a : Fin 3) :
     (r (g * h)).mat a a = (r g).mat a a * (r h).mat a a := by
   rw [de_mul' r g h ((hm g).trans hg), Matrix.mul_apply]
@@ -109,7 +114,7 @@ private theorem de_eig {R : Type} [CommRing R] (X U : Matrix (Fin 3) (Fin 3) R) 
     IsUnit.prod_iff.2 fun b hb => hu b (Finset.ne_of_mem_erase hb).symm
   exact sub_eq_zero.1 (h3.mul_left_eq_zero.1 h2.symm)
 
-private def kap {R D : Type} [CommRing R] [Group D] (η : D →* ℤˣ) (r : D →* GG 3 R) (hm : HasMult η r)
+private def kap {R D : Type} [CommRing R] [Group D] (η : D →* ℤˣ) (r : D →* GG (m := 3) (R := R)) (hm : HasMult η r)
     (hT : Upper η r ∨ Lower η r) (a : Fin 3) : η.ker →* R where
   toFun g := (r g).mat a a
   map_one' := by simp [GG.mat]
@@ -118,7 +123,7 @@ private def kap {R D : Type} [CommRing R] [Group D] (η : D →* ℤˣ) (r : D �
 
 private theorem de_ine {O R D : Type} [CommRing O] [IsLocalRing O] [CommRing R] [IsLocalRing R] [Algebra O R]
     [IsLocalHom (algebraMap O R)] [Group D]
-    {η : D →* ℤˣ} {Ψ : D →* Oˣ} {I : Subgroup D} {r : D →* GG 3 R} (hr : Red η Ψ r)
+    {η : D →* ℤˣ} {Ψ : D →* Oˣ} {I : Subgroup D} {r : D →* GG (m := 3) (R := R)} (hr : Red η Ψ r)
     (hd : Upper η r ∨ Lower η r) (hx : ∃ x, η x = 1 ∧ IsUnit ((Ψ x : O) ^ 2 - 1)) (hT : CondT η Ψ I r)
     (s : D) (hs : s ∈ I) (hη : η s = 1) (a : Fin 3) : (r s).mat a a = algebraMap O R (psi Ψ a s) := by
   obtain ⟨x, hx, hx'⟩ := hx
@@ -151,7 +156,7 @@ private theorem de_ine {O R D : Type} [CommRing O] [IsLocalRing O] [CommRing R] 
     rw [de_mul hr.mult hd x s hx hη, de_mul hm' (Or.inl ht.tri) x s hx hη, ← key x hx hx'] at e
     exact ((kap η r hr.mult hd a).toHomUnits ⟨x, hx⟩).isUnit.mul_left_cancel e
 
-private theorem de_c {R D : Type} [CommRing R] [Group D] (r : D →* GG 3 R) (c x : D) (hc : (r c).mat = 1)
+private theorem de_c {R D : Type} [CommRing R] [Group D] (r : D →* GG (m := 3) (R := R)) (c x : D) (hc : (r c).mat = 1)
     (hc' : (r c).right = -1) (hx : (r x).right = 1) (a : Fin 3) :
     (r (c * x * c⁻¹)).mat a a = (r x⁻¹).mat a.rev a.rev := by
   have h1 : (r c).left = 1 := Units.ext hc
@@ -168,7 +173,7 @@ private theorem de_core {O R G Γ ι : Type} [CommRing O] [IsLocalRing O] [Finit
     [CommRing R] [IsLocalRing R] [IsNoetherianRing R] [Algebra O R] [IsLocalHom (algebraMap O R)] [Group G]
     [TopologicalSpace G]
     [IsTopologicalGroup G] [Group Γ] [TopologicalSpace Γ] (F : Frame O G Γ ι) (hF : F.Ok) (hC : F.Cl1) (g₁ : Γ)
-    (r ρ : Γ →* GG 3 R) (hr : F.IsPt g₁ r) (hρ : F.IsPt g₁ ρ) (hd : Upper F.η r ∨ Lower F.η r)
+    (r ρ : Γ →* GG (m := 3) (R := R)) (hr : F.IsPt g₁ r) (hρ : F.IsPt g₁ ρ) (hd : Upper F.η r ∨ Lower F.η r)
     (hd' : Upper F.η ρ ∨ Lower F.η ρ) (g : Γ) (a : Fin 3) : (r g).mat a a = (ρ g).mat a a := by
   classical
   let u : Fin 3 → (F.η.ker →* Rˣ) := fun a =>
@@ -189,7 +194,7 @@ private theorem de_core {O R G Γ ι : Type} [CommRing O] [IsLocalRing O] [Finit
       (r (F.loc v s)).mat a a = (ρ (F.loc v s)).mat a a := by
     intro v s hs hη a
     by_cases hv : v ∈ F.Tb
-    · have key : ∀ r : Γ →* GG 3 R, F.IsPt g₁ r → (Upper F.η r ∨ Lower F.η r) →
+    · have key : ∀ r : Γ →* GG (m := 3) (R := R), F.IsPt g₁ r → (Upper F.η r ∨ Lower F.η r) →
           (r (F.loc v s)).mat a a = algebraMap O R (psi (F.Ψv v) a s) := by
         intro r hr hd
         refine de_ine (η := F.ηv v) (Ψ := F.Ψv v) (I := F.Iv v) (r := r.comp (F.loc v))
@@ -223,7 +228,7 @@ private theorem de_core {O R G Γ ι : Type} [CommRing O] [IsLocalRing O] [Finit
         have e1 := (hr.loc v).2.2 hv _ hmem
         have e2 := (hρ.loc v).2.2 hv _ hmem
         rw [MonoidHom.comp_apply, map_pow (F.loc v)] at e1 e2
-        exact congrArg (fun y : GG 3 R => y.mat a a) (e1.trans e2.symm)
+        exact congrArg (fun y : GG (m := 3) (R := R) => y.mat a a) (e1.trans e2.symm)
   have hsplit : ∀ g, F.η g = 1 ∨ ∃ g', F.η g' = 1 ∧ g = g' * F.c := fun g => by
     rcases Int.units_eq_one_or (F.η g) with h | h
     · exact Or.inl h
@@ -240,7 +245,7 @@ private theorem de_core {O R G Γ ι : Type} [CommRing O] [IsLocalRing O] [Finit
       Submodule.mem_iInf]
     intro n
     let q : R →* R ⧸ maximalIdeal R ^ n := (Ideal.Quotient.mk (maximalIdeal R ^ n)).toMonoidHom
-    have lc : ∀ (r : Γ →* GG 3 R) (hr : F.IsPt g₁ r) (hd : Upper F.η r ∨ Lower F.η r),
+    have lc : ∀ (r : Γ →* GG (m := 3) (R := R)) (hr : F.IsPt g₁ r) (hd : Upper F.η r ∨ Lower F.η r),
         IsLocallyConstant fun g => Units.map q ((kap F.η r hr.mult hd a).toHomUnits g) := fun r hr hd =>
       IsLocallyConstant.desc _ Units.val
         (((hr.cont n).comp fun X => X a a).comp_continuous continuous_subtype_val) Units.val_injective
@@ -278,7 +283,7 @@ theorem UpperTheory.V.UnitaryThreeInertia.diag_eq_of_tri :
     ∀ {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsAdicComplete (maximalIdeal O) O] [CharZero O] [Finite (ResidueField O)]
       {G Γ ι : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [T2Space G] [TotallyDisconnectedSpace G]
       [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [T2Space Γ] [TotallyDisconnectedSpace Γ] [Finite ι] (F : Frame O G Γ ι), F.Ok →
-    F.Cl1 → ∀ g₁, F.Marked g₁ → ∀ {A : Type} [CommRing A] [IsDomain A] [IsLocalRing A] [IsNoetherianRing A] [Algebra O A] [IsLocalHom (algebraMap O A)] (r : Γ →* GG 3 A), F.IsPt g₁ r →
+    F.Cl1 → ∀ g₁, F.Marked g₁ → ∀ {A : Type} [CommRing A] [IsDomain A] [IsLocalRing A] [IsNoetherianRing A] [Algebra O A] [IsLocalHom (algebraMap O A)] (r : Γ →* GG (m := 3) (R := A)), F.IsPt g₁ r →
       Upper F.η r ∨ Lower F.η r → ∀ g a, (r g).mat a a = (F.rz A g).mat a a := by
   intro O _ _ _ _ _ _ G Γ ι _ _ _ _ _ _ _ _ _ _ _ _ _ F hF hC g₁ _ A _ _ _ _ _ _ r hp hT g a
   refine de_core F hF hC g₁ r (F.rz A) hp (isPt_rz F hF g₁) hT (Or.inl fun g _ a b hab => ?_) g a

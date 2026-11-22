@@ -1,5 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MinpolyIrreducibleNatDegreeOfRankOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointsNonemptyUnitaryRankOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MarkedSumIrr
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount GlobalTheory.LKCx
 open scoped TensorProduct Classical
 
@@ -13,7 +19,7 @@ theorem sh_mul' (G : HTGroup p) (x y : G.C) : sh G (x * y) = sh G y * sh G x := 
   simp only [sh, map_mul, MulOpposite.unop_mul]
 
 theorem sh_add' (G : HTGroup p) (x y : G.C) : sh G (x + y) = sh G x + sh G y := by
-  simp only [sh, map_add, MulOpposite.unop_add]
+  simp only [sh, map_add (f := _), MulOpposite.unop_add]
 
 theorem sh_one' (G : HTGroup p) : sh G 1 = 1 := by
   simp only [sh, map_one, MulOpposite.unop_one]

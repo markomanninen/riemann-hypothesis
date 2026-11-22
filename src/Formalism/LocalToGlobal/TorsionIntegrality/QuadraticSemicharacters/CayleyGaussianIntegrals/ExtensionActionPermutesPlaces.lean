@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.KerPNonzero
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.MatrixFormFourfoldBlock
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.KerPNonzero
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.MatrixFormFourfoldBlock
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -21,17 +25,6 @@ theorem wt_eq_cexp (H : Sesq V) (hH : IsHerm H) (z : V) :
 
 end SlopeTestRemainingChoices
 
-theorem diagonalTerm : DiagTerm := by
-  intro V _ _ H hH v z
-  rw [opU, kerK, wt_eq_cexp H hH, ← Complex.exp_add, ← Complex.exp_add, ← Complex.exp_add]
-  congr 1
-  have hc : H z v = conj (H v z) := hH v z
-  have hw : conj (H v z) = H v z - 2 * Complex.I * ((H v z).im : ℂ) := by
-    apply Complex.ext <;> simp
-    all_goals ring
-  simp only [map_add, LinearMap.add_apply, hc, hw, altE]
-  ring
-
 theorem kernelTermShift : TermShift := by
   intro V _ _ H hH α δ Ae hI hA
   have hi : ∀ a b, H (δ a) (δ b) = H a b := fun a b => hI a b
@@ -41,7 +34,7 @@ theorem kernelTermShift : TermShift := by
     simp only [termT, phiC, gq, opU, kerK, cayC, wt_eq_cexp H hH, LinearEquiv.symm_apply_apply]
     simp only [← Complex.exp_add, mul_assoc]
     congr 2
-    simp only [hA, LinearEquiv.symm_apply_apply, map_sub, map_add, map_smul, LinearMap.sub_apply,
+    simp only [hA, LinearEquiv.symm_apply_apply, map_sub, map_add (f := _), map_smul, LinearMap.sub_apply,
       LinearMap.add_apply, LinearMap.smul_apply, hi, smul_eq_mul]
     ring
   · obtain ⟨y, rfl⟩ : ∃ y, z = δ y := ⟨δ.symm z, by simp⟩
@@ -63,7 +56,8 @@ theorem formNormEquiv : FormNorm := by
   have hexp : ∀ z, H z z = ∑ i, ∑ j, conj (b.repr z i) * (b.repr z j * H (b j) (b i)) := by
     intro z
     conv_lhs => rw [← b.sum_repr z]
-    simp only [map_sum, map_smul, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply,
       smul_eq_mul, Finset.mul_sum]
   have hcont : Continuous fun z : V => (H z z).re := by
     have hc : ∀ i, Continuous fun z : V => b.repr z i := fun i => (b.coord i).continuous_of_finiteDimensional
@@ -71,7 +65,7 @@ theorem formNormEquiv : FormNorm := by
         = fun z => (∑ i, ∑ j, conj (b.repr z i) * (b.repr z j * H (b j) (b i))).re := by
       funext z; rw [hexp z]
     rw [e]
-    exact Complex.continuous_re.comp (continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+    exact Complex.continuous_re.comp (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       (Complex.continuous_conj.comp (hc i)).mul ((hc j).mul continuous_const))
   have hunit : ∀ w : V, w ≠ 0 → ((‖w‖⁻¹ : ℝ) : ℂ) • w ∈ Metric.sphere (0 : V) 1 := fun w hw => by
     rw [mem_sphere_zero_iff_norm, norm_smul, Complex.norm_real, norm_inv, norm_norm,

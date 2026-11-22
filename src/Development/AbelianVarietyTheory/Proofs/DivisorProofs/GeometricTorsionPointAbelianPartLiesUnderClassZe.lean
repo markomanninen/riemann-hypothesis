@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsTheta
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionIdentificationWithPairing
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdmissibleBaseOfCompleteNormalLocalCharZero
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RelationsAreFunctions
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowEqOfBaseChange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsTheta
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionIdentificationWithPairing
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdmissibleBaseOfCompleteNormalLocalCharZero
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RelationsAreFunctions
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowEqOfBaseChange
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,8 @@ theorem torsion_lies_under : ∀ (V : Type) [CommRing V] [IsDomain V] [IsLocalRi
     exact ((hf.1 p (f p)).2 rfl w hw).1
   · have e : f p = f p' := (hf.1 p' (f p)).1 hp'
     letI := GlobalTheory.TorusExt.gtGroup D.toPre (AlgebraicClosure (FractionRing V))
-    obtain ⟨z, hy, hg⟩ := (GlobalTheory.TorusExt.equiv_iff D.tau_bimult p p').1 ((hf.2.2.1 p p').1 e)
+    obtain ⟨z, hy, w, hw₁, hw₂⟩ := (hf.2.2.1 p p').1 e
+    have hg := (GlobalTheory.TorusExt.isAdd_iff_eq _ _ _).1 hw₂
     rw [hp'y, hpy, zero_add] at hy
     have hz : z = 0 := by
       have h2 : (N : ℤ) • z = 0 := by rw [natCast_zsmul]; exact hy.symm
@@ -47,6 +52,8 @@ theorem torsion_lies_under : ∀ (V : Type) [CommRing V] [IsDomain V] [IsLocalRi
       · omega
       · exact h
     subst hz
-    rw [hg, map_zero, add_zero, hpb]
+    have hw : w.b = 1 := by
+      exact hw₁.1.trans (cPoint_zero _)
+    rw [hg, GlobalTheory.TorusExt.add_b, hw, _root_.mul_one, hpb]
 
 end GlobalTheory.Poinc.IntTerm

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.PolynomialEvaluationMembership
 
@@ -18,7 +22,7 @@ theorem aeval_apply_mem {F V : Type} [Field F] [AddCommGroup V] [Module F V]
   induction p using Polynomial.induction_on' with
   | add p q hp hq =>
     intro x hx
-    rw [map_add, LinearMap.add_apply]
+    rw [map_add (f := _), LinearMap.add_apply]
     exact W.add_mem (hp x hx) (hq x hx)
   | monomial n a =>
     intro x hx

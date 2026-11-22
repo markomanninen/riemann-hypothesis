@@ -1,13 +1,36 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IwasawaMeasureExistence.AlgebraMapIntMemIntAd
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IwasawaMeasureExistence.ParabolicDecomposition
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IwasawaMeasureExistence.NatSmulMulEq
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IwasawaMeasureExistence.AlgebraMapIntMemIntAd
+public import Formalism.PeriodIntegrals.LatCountG
+public import Formalism.HarderNarasimhan.StatementPl
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.SphericalFunctionIntegrableOfLocal
+public import Formalism.FlagUnipotentLattices.HalfDifferenceL1Bound
+public import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.ExtensionInterSubspace
+public import Formalism.LogSumExpBounds.StatementD
+public import Formalism.LatticeRigidity.HeightMinimum.PackingCountGeometricMean
+public import Mathlib
+public import Formalism.LatticeRigidity.HeightMinimum.PowFinrankEqZeroOfTracePow
+public import Formalism.GelfandTransference.EnergyIdentity
+public import Formalism.NormUnitaryBounds.DetPolynomialWeights.ShortIndependentVectorsOfDualMinimum
+public import Formalism.LatticeTheta.ThetaShiftInversion
+public import Formalism.LatticeRigidity.StatementC
+public import Formalism.LatticeRigidity.HeightMinimum.SqrtAbsNormLeProd
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PlaceDegreeData
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.TraceConjMulEqHilbertSchmidt
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IndefiniteUnitaryPreservesForm
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.InclusionInjective
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirVolumeRatios.DetNorm
+public import Formalism.HermitianLattices.StatementMass
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IwasawaMeasureExistence.NatSmulMulEq
+
+@[expose] public section
 
 noncomputable section
 
 namespace PI.IwaMeasEx.Nrm
 
-open Matrix NumberField Topology Filter MeasureTheory Formalism.MainNotions.S Formalism.MainNotions.LeviCoordinates Formalism.L2.S.S7.DensDefs
-  Formalism.L2.S.S7.WittLeviSubgroups Formalism.L2.S.S7.PositiveOrthantChangeOfVariables Formalism.L2.S.S7.GLOne
+open Matrix NumberField Topology Filter MeasureTheory Formalism.MainNotions.S
+  Formalism.MainNotions.LeviCoordinates Formalism.L2.S.S7.GLOne
 open scoped TensorProduct nonZeroDivisors
 
 section Top
@@ -63,7 +86,7 @@ theorem continuous_inclR :
 
 theorem continuous_embC {ι : Type} [Fintype ι] (b : Module.Basis ι I.F I.E) :
     Continuous (fun c : ι → Af I.F => (∑ j, b j ⊗ₜ[I.F] c j : AEf I)) := by
-  refine continuous_finset_sum _ fun j _ => ?_
+  refine continuous_finsetSum _ fun j _ => ?_
   have e : (fun c : ι → Af I.F => (b j ⊗ₜ[I.F] c j : AEf I)) =
       fun c => iE I (b j) * Algebra.TensorProduct.includeRight (c j) := by
     funext c
@@ -84,16 +107,6 @@ theorem isCompact_IntAf : IsCompact ((IntAf I.F I.E : Subring (AEf I)) : Set (AE
   rw [nsmul_eq_mul]
   exact AfT.crd_mem I b hDb (AfT.IntAf_le_sumsInt I hx) j
 
-def Bs (𝔞 : FractionalIdeal (𝓞 I.E)⁰ I.E) : Set (AEf I) :=
-  {x | ∃ b ∈ (𝔞 : Submodule (𝓞 I.E) I.E), ∃ N : ℕ, 1 ≤ N ∧ (N : I.E) ∈ (𝔞 : Submodule (𝓞 I.E) I.E) ∧
-    ∃ z ∈ IntAf I.F I.E, x = iE I b + iE I N * z}
-
-def Sa (𝔞 : FractionalIdeal (𝓞 I.E)⁰ I.E) : Set (AEf I) :=
-  Bs I 𝔞 ∩ ⋂ 𝔟 : {𝔟 : FractionalIdeal (𝓞 I.E)⁰ I.E // 𝔟 ≠ 0 ∧ 𝔟 < 𝔞}, (Bs I 𝔟.1)ᶜ
-
-open Classical in
-
-def hq (u : AEf I) : ℚ := if h : IsUnit u then (FractionalIdeal.absNorm (FI I h.unit))⁻¹ else 0
 
 end Top
 

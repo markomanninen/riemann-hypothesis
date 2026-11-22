@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.LAbove
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.CoLaws
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.LongWeylSwapsBlockDiagonal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsBase
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.LAbove
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.CoLaws
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.LongWeylSwapsBlockDiagonal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsBase
+
+@[expose] public section
 
 open MeasureTheory NumberField Filter Topology Matrix
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace GroundTheory.Automorphic.AutomorphicForm
@@ -17,7 +21,7 @@ private theorem int_map {K : Type} [Field K] [NumberField K] {ι : Type} [Fintyp
   ((C.Φ n).symm.toHomeomorph.measurableEmbedding).integral_map F
 
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.EA.lineVal :
-    ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (ι : Type) [Fintype ι] (C : Co K ι) (μ₂ : Measure (G1 K 2)) [μ₂.IsHaarMeasure] (τ₁ τ₂ : Submodule ℂ (L2 μ₂)), Pair μ₂ τ₁ τ₂ →
+    ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (ι : Type) [Fintype ι] (C : Co K ι) (μ₂ : Measure (G1 K 2)) [μ₂.IsHaarMeasure] (τ₁ τ₂ : Submodule ℂ (L2 μ₂)), Pair μ₂ τ₁ τ₂ →
       ∀ (μ : Measure U4) (e : ι → U4 → ℂ) n q n' q' (x : ι → U4), Haar4 μ → ExtP μ e n q n' q' x →
       IdemA (C.κ₄ μ) (C.e e) ∧ ∀ f, IsSec τ₁ τ₂ f → FixA (C.κ₄ μ) (C.e e) f → ∀ h : FA K (2 + 2),
         (∀ m₂, FixA C.κ₂ (C.p n q) fun m₁ => f (lv m₁ m₂ 0 * arc1 ((C.Φ (2 + 2)).symm x) * fin1 h)) ∧
@@ -32,7 +36,11 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.EA.lineVal :
     intro a b k; simp only [Co.p, ContinuousMulEquiv.apply_symm_apply]
   have ha : ∀ a b : ι → U4, arc1 ((C.Φ (2 + 2)).symm (a * b)) =
       arc1 ((C.Φ (2 + 2)).symm a) * arc1 ((C.Φ (2 + 2)).symm b) := by
-    intro a b; simp [arc1, map_mul]
+    intro a b
+    change arc1 ((C.Φ (2 + 2)).symm.toMulEquiv (a * b)) =
+      arc1 ((C.Φ (2 + 2)).symm.toMulEquiv a) * arc1 ((C.Φ (2 + 2)).symm.toMulEquiv b)
+    rw [(C.Φ (2 + 2)).symm.toMulEquiv.map_mul]
+    simp [arc1]
   have h1 : (arc1 ((C.Φ 2).symm (1 : ι → U2)) : G1 K 2) = 1 := by simp [arc1, map_one]
   refine ⟨⟨hκ₄ μ h4, ?_, ?_, ?_⟩, ?_⟩
   · exact hE.idem.cont.comp (C.Φ (2 + 2)).continuous

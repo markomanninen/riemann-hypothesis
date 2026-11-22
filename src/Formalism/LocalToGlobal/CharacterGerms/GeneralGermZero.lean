@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.CoeffSingleSubstOfLowDegree
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.CoeffSingleSubstOfLowDegree
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,21 +23,6 @@ def gsumK {σ ι : Type} (F : κ → MvPowerSeries (Fin 2 × κ) C) (Γ : ι →
     List ι → κ → MvPowerSeries σ C
   | [] => 0
   | c :: l => addK F (Γ c) (gsumK F Γ l)
-
-private theorem cc_subst_lemma {σ τ A : Type} [Finite σ] [CommRing A] (a : σ → MvPowerSeries τ A)
-    (ha : ∀ s, MvPowerSeries.constantCoeff (a s) = 0) (f : MvPowerSeries σ A) :
-    MvPowerSeries.constantCoeff (MvPowerSeries.subst a f) = MvPowerSeries.constantCoeff f := by
-  rw [MvPowerSeries.constantCoeff_subst (MvPowerSeries.hasSubst_of_constantCoeff_zero ha)]
-  rw [finsum_eq_single _ 0]
-  · simp
-  · intro e he
-    obtain ⟨s, hs⟩ : ∃ s, e s ≠ 0 := by
-      by_contra h
-      push_neg at h
-      exact he (Finsupp.ext h)
-    rw [map_finsuppProd]
-    simp only [map_pow, ha, Finsupp.prod]
-    rw [Finset.prod_eq_zero (Finsupp.mem_support_iff.mpr hs) (zero_pow hs), smul_zero]
 
 theorem pairK_const {σ : Type} {a b : κ → MvPowerSeries σ C} (ha : ∀ j, MvPowerSeries.constantCoeff (a j) = 0)
     (hb : ∀ j, MvPowerSeries.constantCoeff (b j) = 0) :
@@ -152,7 +141,8 @@ theorem sysK_P {g : Fin 2} (hg : X.CartHyp V g) (S : Sys (RawChart.cart hg)) :
       show _ = MvPowerSeries.subst (fun _ : Unit => (MvPowerSeries.X c : MvPowerSeries (I g) C)) _
       rw [MvPowerSeries.subst_comp_subst_apply (MvPowerSeries.hasSubst_of_constantCoeff_zero (hγ0 c)) (hXc c)]
       rfl
-    rw [e1, hlog c i, ← PowerSeries.coe_substAlgHom
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, hlog c i, ← PowerSeries.coe_substAlgHom
       (PowerSeries.HasSubst.of_constantCoeff_zero (MvPowerSeries.constantCoeff_X c)), map_sum]
     simp only [map_smul]
   set P : κ → MvPowerSeries (I g) C := gsumK F Γ Finset.univ.toList with hPdef
@@ -166,8 +156,10 @@ theorem sysK_P {g : Fin 2} (hg : X.CartHyp V g) (S : Sys (RawChart.cart hg)) :
   refine ⟨P, hP0, gsumK_int hF0 hFI Γ hΓ0 hΓI _, ?_, ?_⟩
   · intro j c
     have hl1 := coeff_single_subst_lin P hP0 (X.lg j) j (hlin j) c
-    rw [← hl1, hPlg j, map_sum]
-    simp only [map_sum, MvPowerSeries.coeff_smul, coeff_single_substX_tyS hl, mul_ite, mul_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hl1, hPlg j, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, MvPowerSeries.coeff_smul, coeff_single_substX_tyS hl, mul_ite, mul_zero]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun c' _ => ?_
     rw [Finset.sum_ite_eq']
@@ -194,8 +186,10 @@ theorem sysK_P {g : Fin 2} (hg : X.CartHyp V g) (S : Sys (RawChart.cart hg)) :
         congr 1
         funext u
         rw [MvPowerSeries.subst_X hts]
-      rw [e1, hPlg i, ← MvPowerSeries.coe_substAlgHom hts, map_sum]
-      simp only [map_sum, map_smul, MvPowerSeries.coe_substAlgHom hts, e2]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [e1, hPlg i, ← MvPowerSeries.coe_substAlgHom hts, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, MvPowerSeries.coe_substAlgHom hts, e2]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun c' _ => ?_
       rw [← Finset.smul_sum, isT_sum S ht c']
@@ -228,11 +222,13 @@ theorem general_germ_zero
   refine AbstractGermZero.abstract_germ_zero V I t t₂ (fun g k => ∑ x, w g x k • P g x) (fun g k => ∑ x, w g x k • P₂ g x)
     (fun g c => (hT g).1 c) (fun g c => (hT₂ g).1 c) ?_ ?_ ?_ ?_ ?_ ?_ ?_
   · intro g k
-    rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, map_sum]
     simp [MvPowerSeries.coeff_smul, hP0]
   · intro g k μ
     show (0 : WithTop ℝ) ≤ V.v (MvPowerSeries.coeff μ (∑ x, w g x k • P g x))
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine v_sum_lemma X F hF0 hFI hadd hlin hexlg V.v _ _ (fun x _ => ?_)
     have h1 : (0 : WithTop ℝ) ≤ V.v (w g x k) := hw0 g x k
     have h2 : (0 : WithTop ℝ) ≤ V.v (MvPowerSeries.coeff μ (P g x)) := hPI g x μ
@@ -242,7 +238,8 @@ theorem general_germ_zero
     have hm : (Matrix.of fun k c : I g => MvPowerSeries.coeff (Finsupp.single c 1) (∑ x, w g x k • P g x)) =
         (Matrix.of (S g).tan).transpose := by
       ext k c
-      simp only [Matrix.of_apply, Matrix.transpose_apply, map_sum, MvPowerSeries.coeff_smul, hPlin, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.of_apply, Matrix.transpose_apply, map_sum, MvPowerSeries.coeff_smul, hPlin, Finset.mul_sum]
       rw [Finset.sum_comm]
       have hr : ∀ c' : I g, ∑ x, w g x k * (X.u g c' x * (S g).tan c c') =
           (∑ x, X.u g c' x * w g x k) * (S g).tan c c' := by
@@ -253,11 +250,13 @@ theorem general_germ_zero
     rw [hm, Matrix.det_transpose]
     exact (S g).unimod
   · intro g k
-    rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, map_sum]
     simp [MvPowerSeries.coeff_smul, hP0₂]
   · intro g k μ
     show (0 : WithTop ℝ) ≤ V.v (MvPowerSeries.coeff μ (∑ x, w g x k • P₂ g x))
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine v_sum_lemma X F hF0 hFI hadd hlin hexlg V.v _ _ (fun x _ => ?_)
     have h1 : (0 : WithTop ℝ) ≤ V.v (w g x k) := hw0 g x k
     have h2 : (0 : WithTop ℝ) ≤ V.v (MvPowerSeries.coeff μ (P₂ g x)) := hPI₂ g x μ
@@ -267,7 +266,8 @@ theorem general_germ_zero
     have hm : (Matrix.of fun k c : I g => MvPowerSeries.coeff (Finsupp.single c 1) (∑ x, w g x k • P₂ g x)) =
         (Matrix.of (S₂ g).tan).transpose := by
       ext k c
-      simp only [Matrix.of_apply, Matrix.transpose_apply, map_sum, MvPowerSeries.coeff_smul, hPlin₂, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.of_apply, Matrix.transpose_apply, map_sum, MvPowerSeries.coeff_smul, hPlin₂, Finset.mul_sum]
       rw [Finset.sum_comm]
       have hr : ∀ c' : I g, ∑ x, w g x k * (X.u g c' x * (S₂ g).tan c c') =
           (∑ x, X.u g c' x * w g x k) * (S₂ g).tan c c' := by
@@ -281,7 +281,8 @@ theorem general_germ_zero
     have ht : MvPowerSeries.HasSubst (t g) := MvPowerSeries.hasSubst_of_constantCoeff_zero (hT g).1
     have ht₂ : MvPowerSeries.HasSubst (t₂ g) := MvPowerSeries.hasSubst_of_constantCoeff_zero (hT₂ g).1
     rw [← MvPowerSeries.coe_substAlgHom ht, ← MvPowerSeries.coe_substAlgHom ht₂]
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
     simp only [MvPowerSeries.coe_substAlgHom, hPeq g (t g) (hT g), hPeq₂ g (t₂ g) (hT₂ g)]
 
 end Sys1

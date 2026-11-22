@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.MemPowSub
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsForallAbvSubLt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.MemPowSub
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsForallAbvSubLt
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Polynomial GlobalTheory.QNorm GlobalTheory.CNorm
 open scoped WithZero TensorProduct
 
@@ -16,9 +21,11 @@ theorem mul_pow_mem_nhds {K : Type*} [NontriviallyNormedField K] [CompleteSpace 
     simp [hy, this]
   have h := hd.map_nhds_eq hne
   simp only [one_pow, mul_one] at h
-  refine Filter.inter_mem (isOpen_ne.mem_nhds hy) ?_
-  rw [← h]
-  exact Filter.mem_map.2 (Filter.Eventually.of_forall fun r => ⟨r, rfl⟩)
+  have hpow : {a : K | ∃ r : K, a = y * r ^ p} ∈ nhds y := by
+    rw [← h]
+    exact Filter.mem_map.2 (Filter.Eventually.of_forall fun r => ⟨r, rfl⟩)
+  filter_upwards [isOpen_ne.mem_nhds hy, hpow] with a ha hb
+  exact ⟨ha, hb⟩
 
 theorem exists_approx_mod_powers :
     ∀ (p : ℕ) (F : Type) [Field F] [NumberField F] (S : Finset (HeightOneSpectrum (𝓞 F))) (y : ∀ v : HeightOneSpectrum (𝓞 F), v.adicCompletion F), 0 < p → (∀ v, y v ≠ 0) → ∃ x : F, x ≠ 0 ∧ ∀ v ∈ S, ∃ r : v.adicCompletion F, algebraMap F (v.adicCompletion F) x = y v * r ^ p := by

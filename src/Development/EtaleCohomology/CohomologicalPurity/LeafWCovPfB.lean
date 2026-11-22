@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafWCovPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafWCovPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -25,7 +29,7 @@ theorem LeafCovLoc_of (hP : LeafPLoc) : LeafCovLoc := by
     biprod.lift (S.map (biprod.fst : P ⟶ _)) (S.map (biprod.snd : P ⟶ _))
   have h2 : k ≫ biprod.desc (S.map a) (S.map b) = S.map (biprod.desc a b) := by
     simp only [k]
-    rw [biprod.lift_desc, ← S.map_comp, ← S.map_comp, ← S.map_add, biprod.desc_eq]
+    rw [biprod.lift_desc, ← S.map_comp, ← S.map_comp, ← S.map_add (f := _), biprod.desc_eq]
   rw [← h2] at h1
   exact epi_of_epi k _
 

@@ -1,21 +1,25 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.TsgPolyVolPolyCoeffEven
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreLocal
-import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.AlgebraicSquareBaseIntersectionStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.PtsIntegralLogNormRatEqBaseStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RealisationPotentialDegreeCompatibilityStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ArithmeticIntersectionMultilinearPolarStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MongeAmpereIntegralMultilinearExpansion
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.AnalyticSystemRegularityProperties
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsC2AtOfIsPotential
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PRFormula
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PZeroSetNull
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AssemblyBase
-import ReciprocityTheory.AnalyticForms.PotentialTheory.LogInt
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IntegrableOnTargetOfTsupport
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.IsHomogeneousGrL
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.TsgPolyVolPolyCoeffEven
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreLocal
+public import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.AlgebraicSquareBaseIntersectionStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PtsIntegralLogNormRatEqBaseStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RealisationPotentialDegreeCompatibilityStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ArithmeticIntersectionMultilinearPolarStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MongeAmpereIntegralMultilinearExpansion
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.AnalyticSystemRegularityProperties
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsC2AtOfIsPotential
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PRFormula
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PZeroSetNull
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AssemblyBase
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LogInt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IntegrableOnTargetOfTsupport
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.IsHomogeneousGrL
+
+@[expose] public section
 
 open MvPolynomial MeasureTheory Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 
@@ -51,8 +55,8 @@ theorem word_map {V W : Type} (f : V → W) (D k i : ℕ) (x y a : V) :
 
 def i0 (c : σ → ℤ) : Option σ → ℤ := fun o => o.elim 0 c
 
-open Classical in
 
+open Classical in
 def i1 (a₀ : σ) (c : σ → ℤ) : Option σ → ℤ :=
   fun o => o.elim (c a₀) fun a => if a = a₀ then 0 else c a
 
@@ -258,7 +262,7 @@ theorem mIntegrable_gT {d : ℕ} {SY : AnSys (d + 1) σ} {a₀ : σ} {ε : σ �
     continuous_of_smooth SY.A (((SY.reg a).2.2 t ht ht').1)
   have hcont : Continuous fun x => Q.cst + (1 / 2) * ∑ a, (ε a : ℝ) *
       (SY.phT a t (Q.q 0 x) + SY.phT a t (Q.q 1 x)) :=
-    continuous_const.add (continuous_const.mul (continuous_finset_sum _ fun a _ =>
+    continuous_const.add (continuous_const.mul (continuous_finsetSum _ fun a _ =>
       continuous_const.mul (((hc a).comp (Q.holo 0).1).add ((hc a).comp (Q.holo 1).1))))
   have h2 := mIntegrableCont Q.SW.A Φ hΦ _ hcont
   intro j C hC hcpt
@@ -284,6 +288,23 @@ theorem pts_eq_polar (hE : ResExistsStatement) (Q : SqSys Re a₀ ε) {t : ℝ} 
       (Re.deg : ℝ) * polar (d + 2)
         (fun w => mInt Q.an.SW.A (fun r => Q.an.SW.potT (w r) t) (Q.an.gT t)) (fun r o => (c r o : ℝ)) := by
   classical
+  have smooth_comb : ∀ {J : Type} [Fintype J] {κ : Type} [Fintype κ]
+      {v : κ → Type} [∀ k, Fintype (v k)] {A : J → HermLine v},
+      (∀ a, IsSmoothHerm (A a)) → ∀ n : J → ℤ, IsSmoothHerm (combLine A n) := by
+    intro J _ κ _ v _ A hA n
+    refine contDiffOn_prod fun a _ => ?_
+    intro z hz
+    have h0 : (A a).h z ≠ 0 := ((A a).pos z hz).ne'
+    have hf := hA a z hz
+    have key : ∀ m : ℤ, ContDiffWithinAt ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun z => (A a).h z ^ m)
+        {z | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0} z := by
+      intro m
+      cases m with
+      | ofNat k => simpa only [Int.ofNat_eq_natCast, zpow_natCast] using hf.pow k
+      | negSucc k =>
+        simp only [zpow_negSucc]
+        exact (hf.pow (k + 1)).inv (pow_ne_zero _ h0)
+    exact key _
   have hgh : IsMultiHomog (Q.alg.g * Q.alg.h) (Q.alg.dg + Q.alg.dh) :=
     ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.isMultiHomog_mul Q.alg.g_deg Q.alg.h_deg
   have hprime : Q.alg.PW.IsPrime := Q.alg.arithW.2.1.1
@@ -313,14 +334,22 @@ theorem pts_eq_polar (hE : ResExistsStatement) (Q : SqSys Re a₀ ε) {t : ℝ} 
       ((Φ j).pullback Q.ReW.π Q.ReW.holo.1) := fun j =>
     samePot_comb Q.ReW.R _ _ _ Pt (c j) fun o => hre.1 o t ht ht'
   have hsmooth : ∀ j, IsSmoothHerm (combLine (fun o => Q.ReW.line o t) (c j)) := fun j =>
-    GlobalTheory.CompanionTheory.Ar.Cmp.isSmoothHerm_combLine (fun o => Q.ReW.line_smooth o t ht ht') _
+    smooth_comb (fun o => Q.ReW.line_smooth o t ht ht') _
   have hw : ∀ w : Fin (d + 2) → Option σ,
       MIntegrable Q.an.SW.A (fun i => Pt (w i)) (Q.an.gT t) := fun w =>
     mIntegrable_gT Q.an ht (ht'.trans Q.an.t₀_le) _ fun i => hpotT _
   have hNull : IsNull Q.an.SW.A (Set.univ : Set Q.an.SW.X)ᶜ := fun j => by simp
   have hexp := GlobalTheory.CompanionTheory.Ar.PB.mInt_sumPot_expand (d + 2) Q.an.SW.X Q.an.SW.A (Option σ) Set.univ Pt
     (fun r o => (c r o : ℝ)) (Q.an.gT t) hNull
-    (fun o x _ => GlobalTheory.CompanionTheory.Ar.Cmp.isC2At_of_isPotential _ (hpotT o) x) hw
+    (fun o x _ => by
+      intro j hj
+      have hopen := (Q.an.SW.A.chart j).isOpen_inter_preimage_symm ((Pt o).isOpen_U x)
+      have hm : Q.an.SW.A.chart j x ∈ (Q.an.SW.A.chart j).target ∩
+          (Q.an.SW.A.chart j).symm ⁻¹' (Pt o).U x :=
+        ⟨(Q.an.SW.A.chart j).map_source hj, by
+          rw [Set.mem_preimage, (Q.an.SW.A.chart j).left_inv hj]; exact (Pt o).mem_U x⟩
+      exact (((hpotT o).1 x j).contDiffAt (hopen.mem_nhds hm)).of_le
+        (WithTop.coe_le_coe.2 (le_top : (2 : ℕ∞) ≤ ⊤))) hw
   have hEq : ∀ x ∉ N ∪ Z, logNormRat Am Q.alg.g Q.alg.h (Q.ReW.R.lift x x) = Q.an.gT t (Q.ReW.π x) := by
     intro x hx
     have hxN : x ∉ N := fun h => hx (Or.inl h)
@@ -340,8 +369,8 @@ end GlobalTheory.CompanionTheory.Ar.PB.SqAt
 
 namespace GlobalTheory.CompanionTheory.Ar.PB
 
-open GlobalTheory.CompanionTheory.Ar.PB.SqAt in
 
+open GlobalTheory.CompanionTheory.Ar.PB.SqAt in
 theorem first_half_at_scale : Inputs → ∀ (II : IntersectionSystem), IsFullIntersectionSystem II →
     ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (d : ℕ) (σ : Type) [Fintype σ]
     (SY : AnSys (d + 1) σ) (P : Ideal (MRing ι)) (Re : Realis SY P) (a₀ : σ) (ε : σ → ℤ)
@@ -353,6 +382,23 @@ theorem first_half_at_scale : Inputs → ∀ (II : IntersectionSystem), IsFullIn
           (Q.an.wcoef (fun a => (n a : ℝ)) k i) := by
   intro hI II hII K _ ι _ d σ _ SY P Re a₀ ε Q n hn t ht ht'
   classical
+  have smooth_comb : ∀ {J : Type} [Fintype J] {κ : Type} [Fintype κ]
+      {v : κ → Type} [∀ k, Fintype (v k)] {A : J → HermLine v},
+      (∀ a, IsSmoothHerm (A a)) → ∀ n : J → ℤ, IsSmoothHerm (combLine A n) := by
+    intro J _ κ _ v _ A hA n
+    refine contDiffOn_prod fun a _ => ?_
+    intro z hz
+    have h0 : (A a).h z ≠ 0 := ((A a).pos z hz).ne'
+    have hf := hA a z hz
+    have key : ∀ m : ℤ, ContDiffWithinAt ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun z => (A a).h z ^ m)
+        {z | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0} z := by
+      intro m
+      cases m with
+      | ofNat k => simpa only [Int.ofNat_eq_natCast, zpow_natCast] using hf.pow k
+      | negSucc k =>
+        simp only [zpow_negSucc]
+        exact (hf.pow (k + 1)).inv (pow_ne_zero _ h0)
+    exact key _
   have htY : t ≤ SY.t₀ := ht'.trans Q.an.t₀_le
   let LY : σ → HermLine ι := fun a => Re.line a t
   let LW : Option σ → HermLine Q.alg.ιW := fun o => Q.ReW.line o t
@@ -378,10 +424,10 @@ theorem first_half_at_scale : Inputs → ∀ (II : IntersectionSystem), IsFullIn
     funext k
     show ∑ x, ε x * (Re.line x t).a k = ∑ x, ε x * (Re.ref x).a k
     simp only [Re.line_deg]
-  have hsXi : IsSmoothHerm Xi := GlobalTheory.CompanionTheory.Ar.Cmp.isSmoothHerm_combLine hsY _
-  have hsA : IsSmoothHerm A := GlobalTheory.CompanionTheory.Ar.Cmp.isSmoothHerm_combLine hsY _
-  have hs0 : IsSmoothHerm X₀ := GlobalTheory.CompanionTheory.Ar.Cmp.isSmoothHerm_combLine hsW _
-  have hs1 : IsSmoothHerm X₁ := GlobalTheory.CompanionTheory.Ar.Cmp.isSmoothHerm_combLine hsW _
+  have hsXi : IsSmoothHerm Xi := smooth_comb hsY _
+  have hsA : IsSmoothHerm A := smooth_comb hsY _
+  have hs0 : IsSmoothHerm X₀ := smooth_comb hsW _
+  have hs1 : IsSmoothHerm X₁ := smooth_comb hsW _
   have hp0 : IsPullHerm (Q.alg.κ 0) (Q.alg.v 0) Xi X₀ :=
     pull_comb0 (Q.alg.block 0).1 LY LW ε fun a => Q.pull0 a t
   have hp1 : IsPullHerm (Q.alg.κ 1) (Q.alg.v 1) Xi X₁ :=

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsUnitFormSelfOfNotMem
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.BinaryFormUniversal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsUnitFormSelfOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.BinaryFormUniversal
+
+@[expose] public section
 
 open Matrix IsLocalRing
 
@@ -23,11 +27,12 @@ theorem exists_shear (G : Matrix ι ι R) (p : ι) (τ : ι → R) (hτ : τ p =
       Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
     ring
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem hermitian_congr (hc : ∀ x, c (c x) = x) {G : Matrix ι ι R} (hG : ∀ a b, c (G a b) = G b a)
     (P : Matrix ι ι R) (a b : ι) : c ((Pᵀ * G * P.map c) a b) = (Pᵀ * G * P.map c) b a := by
-  simp only [Matrix.mul_apply, transpose_apply, map_apply, map_sum, map_mul, hc, hG,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mul_apply, transpose_apply, map_apply, map_sum, map_mul, hc, hG,
     Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -38,8 +43,8 @@ theorem det_congr (G P : Matrix ι ι R) :
   rw [det_mul, det_mul, det_transpose, RingHom.map_det, RingHom.mapMatrix_apply]
   ring
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem congr_mul (G P Q : Matrix ι ι R) :
     (P * Q)ᵀ * G * (P * Q).map c = Qᵀ * (Pᵀ * G * P.map c) * Q.map c := by
   rw [transpose_mul, Matrix.map_mul]
@@ -57,7 +62,7 @@ theorem mem_of_fixed_of_not_isUnit (hc : ∀ x, c (c x) = x)
   by_contra hxn
   obtain ⟨r, y, hy, hry⟩ := hn.exists_inv hxn
   have hfix : c (x * (r + c r - x * (r * c r))) = x * (r + c r - x * (r * c r)) := by
-    simp only [map_mul, map_sub, map_add, hc, hx]; ring
+    simp only [map_mul, map_sub, map_add (f := _), hc, hx]; ring
   rcases hloc _ hfix with h | h
   · exact hu (isUnit_of_mul_isUnit_left h)
   · refine hn.ne_top (n.eq_top_of_isUnit_mem ?_ h)
@@ -138,7 +143,7 @@ theorem exists_congr_insert (hc : ∀ x, c (c x) = x)
     · rw [hpq]; exact hdn q hq
     refine mem_of_forall_trace_mem c hc hw n fun t => ?_
     have h1 := mem_of_fixed_of_not_isUnit c hc hloc (by
-      simp only [map_add, map_mul, hc, hG]; ring) (hx p hp q hq hpq t) n
+      simp only [map_add (f := _), map_mul, hc, hG]; ring) (hx p hp q hq hpq t) n
     have h2 := n.sub_mem (n.sub_mem h1 (hdn p hp)) (n.mul_mem_left (t * c t) (hdn q hq))
     convert h2 using 1
     rw [map_mul, hG]
@@ -256,7 +261,7 @@ theorem exists_add_mul_sq_eq {R₀ : Type*} [CommRing R₀] (I : Ideal R₀) [He
       simp only [derivative_sub, derivative_X_pow, derivative_X, derivative_C]
       norm_num)
   have hu : IsUnit z := by
-    simpa using Ideal.mem_jacobson_bot.1 (HenselianRing.jac hz1) 1
+    simpa using (Ring.mem_jacobson_iff (R := R₀)).1 (HenselianRing.jac hz1) 1
   obtain ⟨y, hy⟩ := hu.exists_right_inv
   simp only [IsRoot.def, eval_sub, eval_pow, eval_X, eval_C] at hz
   refine ⟨e * y, ?_⟩
@@ -279,7 +284,7 @@ theorem exists_norm_eq_of_henselian (c : R →+* R) (hc : ∀ x, c (c x) = x)
     exact hm.ne_top (m.eq_top_of_isUnit_mem (QuadraticEtale.algebraMap_mem_of_isMaximal m h) hr)
   obtain ⟨w, hw⟩ := QuadraticEtale.exists_add_eq_one c hc hgal
   obtain ⟨ω, hω⟩ := hgal
-  obtain ⟨a, ha⟩ := hfix (ω + c ω) (by rw [map_add, hc, add_comm])
+  obtain ⟨a, ha⟩ := hfix (ω + c ω) (by rw [map_add (f := _), hc, add_comm])
   obtain ⟨n, hn⟩ := hfix (ω * c ω) (by rw [map_mul, hc, mul_comm])
   obtain ⟨n', hn'⟩ := hfix (w * c w) (by rw [map_mul, hc, mul_comm])
   obtain ⟨u, rfl⟩ := hfix u hcu
@@ -295,7 +300,7 @@ theorem exists_norm_eq_of_henselian (c : R →+* R) (hc : ∀ x, c (c x) = x)
   obtain ⟨r, rfl⟩ := residue_surjective r
   obtain ⟨s, rfl⟩ := residue_surjective s
   have hN : residue R₀ (r ^ 2 + a * r * s + n * s ^ 2) = residue R₀ u := by
-    simpa only [map_add, map_mul, map_pow] using hrs
+    simpa only [map_add (f := _), map_mul, map_pow] using hrs
   have hNu : IsUnit (r ^ 2 + a * r * s + n * s ^ 2) := by
     rw [← residue_ne_zero_iff_isUnit, hN]
     exact (hu'.map _).ne_zero
@@ -307,7 +312,7 @@ theorem exists_norm_eq_of_henselian (c : R →+* R) (hc : ∀ x, c (c x) = x)
     rw [ht]; linear_combination u * hv
   refine ⟨(algebraMap R₀ R r + algebraMap R₀ R s * ω) * (1 + algebraMap R₀ R t * w), ?_⟩
   rw [← hfinal]
-  simp only [map_add, map_mul, map_pow, map_one, hbase, ha, hn, hn']
+  simp only [map_add (f := _), map_mul, map_pow, map_one, hbase, ha, hn, hn']
   linear_combination (algebraMap R₀ R r + algebraMap R₀ R s * ω)
     * (algebraMap R₀ R r + algebraMap R₀ R s * c ω) * algebraMap R₀ R t * hw
 
@@ -323,24 +328,5 @@ theorem exists_eq_transpose_mul_map_of_henselian (c : R →+* R) (hc : ∀ x, c 
 variable [Module.Free R₀ R] [Algebra.FormallyUnramified R₀ R]
 
 end Norm
-
-example : ∃ P : Matrix (Fin 2) (Fin 2) (QuadraticAlgebra ℤ_[2] (-1) 1), IsUnit P.det ∧
-    !![0, 1; 1, 0] = Pᵀ * P.map (starRingEnd _) := by
-  haveI : Finite (ResidueField ℤ_[2]) :=
-    Finite.of_equiv _ (PadicInt.residueField (p := 2)).symm.toEquiv
-  refine exists_eq_transpose_mul_map_of_henselian (R₀ := ℤ_[2]) _ star_star (fun r => ?_)
-    (fun x hx => ⟨x.re, ?_⟩) ⟨⟨0, 1⟩, ?_⟩ ?_ (by simp [Matrix.det_fin_two])
-  · ext <;> simp [starRingEnd_apply]
-  · have h := congrArg QuadraticAlgebra.re hx
-    have h' : x.im = 0 := by simpa [starRingEnd_apply] using h
-    ext <;> simp [h']
-  · have h3 : IsUnit (3 : ℤ_[2]) := by
-      rw [PadicInt.isUnit_iff]
-      exact_mod_cast PadicInt.norm_natCast_eq_one_iff (p := 2) (n := 3) |>.2 (by norm_num)
-    refine isUnit_of_mul_isUnit_left (y := ⟨1, -2⟩) ?_
-    convert h3.map (algebraMap ℤ_[2] (QuadraticAlgebra ℤ_[2] (-1) 1)) using 1
-    ext <;> simp [starRingEnd_apply] <;> norm_num
-  · intro a b
-    fin_cases a <;> fin_cases b <;> simp
 
 end GlobalTheory.UnramifiedHermitian

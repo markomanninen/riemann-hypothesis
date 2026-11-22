@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DefsObj
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.InfZcCoeff
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.CapZcMemOfE
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.LactCenGen
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.ExpGen
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DiracSep
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ClsBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.FormsIrr
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DefsObj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.InfZcCoeff
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.CapZcMemOfE
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.LactCenGen
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.ExpGen
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DiracSep
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ClsBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.FormsIrr
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -14,11 +18,11 @@ open GlobalTheory.CuspRep (CuspSub GA Af Ad finGL locGL)
 open UpperTheory.ConvolutionTheory.C UpperTheory.ConvolutionTheory.Dp UpperTheory.V
 open scoped TensorProduct
 
-private theorem UpperTheory.ConvolutionTheory.Dp.sInfIff_uC {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ}
+private theorem UpperTheory.ConvolutionTheory.Dp.sInfIff_uC {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ}
     (p q : UEnv E n) (ψ : cuspForms E n) :
     Cm.uC E n ((1 : ℂ) ⊗ₜ p + Complex.I ⊗ₜ q) (Cm.ofCusp E n ψ) =
       Cm.ofCusp E n (uActionCusp E n p ψ + Complex.I • uActionCusp E n q ψ) := by
-  rw [map_add, map_add, map_smul, Cm.ofCusp_uAction, Cm.ofCusp_uAction, Cm.uC_tmul, Cm.uC_tmul, one_smul]
+  rw [map_add (f := _), map_add (f := _), map_smul, Cm.ofCusp_uAction, Cm.ofCusp_uAction, Cm.uC_tmul, Cm.uC_tmul, one_smul]
   rfl
 
 theorem UpperTheory.ConvolutionTheory.Dp.sInfIff :

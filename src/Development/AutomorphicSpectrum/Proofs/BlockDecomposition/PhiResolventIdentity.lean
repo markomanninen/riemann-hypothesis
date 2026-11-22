@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FactorRapid
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FactorRapid
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ theorem toC0_eq_of_coe (p : C₀(ℝ, ℂ)) (f : ℝ → ℂ) (h : ∀ y, p y = 
   subst hf
   have hc : Continuous (⇑p) ∧ Tendsto (⇑p) (cocompact ℝ) (𝓝 0) := ⟨p.continuous, p.zero_at_infty'⟩
   unfold toC0
-  rw [dif_pos hc]
+  rw [dite_eq_left hc]
   ext y
   rfl
 

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.ThreeApartOf
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.ThreeApartOf
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.HeckeGal GlobalTheory.CuspRep UpperTheory.V.Published GlobalTheory.RealGal GlobalTheory.UnitaryBC
 open UpperTheory.Gal.UnramifiedFromSplittingCriterion
 
@@ -14,7 +19,7 @@ private theorem exists_real_lift (K M : Type) [Field K] [NumberField K] [IsCMFie
     exact (mem_maximalRealSubfield_iff _).2 fun φ =>
       (mem_maximalRealSubfield_iff _).1 (x : maximalRealSubfield K).2 (φ.comp (algebraMap K M))
   have hint : IsIntegral ℤ (⟨(y₀ : M), hmem⟩ : maximalRealSubfield M) :=
-    (isIntegral_algebraMap_iff (B := M) (algebraMap (maximalRealSubfield M) M).injective).1
+    (isIntegral_algebraMap_iff (B := M) ).1
       (RingOfIntegers.isIntegral_coe y₀)
   exact ⟨⟨⟨(y₀ : M), hmem⟩, hint⟩, RingOfIntegers.ext rfl⟩
 
@@ -39,7 +44,7 @@ theorem UpperTheory.Gal.UnramifiedFromSplittingCriterion.apartUp :
     have hne : Q ≠ ⊥ := by
       rintro rfl
       apply v.ne_bot
-      rw [← hQm, ← RingHom.ker_eq_comap_bot, (RingHom.injective_iff_ker_eq_bot _).1 hinj]
+      rw [← hQm, Ideal.under_def, ← RingHom.ker_eq_comap_bot, (RingHom.injective_iff_ker_eq_bot _).1 hinj]
     refine ⟨⟨Q, hQ.isPrime, hne⟩, ?_⟩
     apply HeightOneSpectrum.ext
     rw [HeightOneSpectrum.under_asIdeal]

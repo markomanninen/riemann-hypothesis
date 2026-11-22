@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.HeckeRI
-import Formalism.LocalToGlobal.Divisibility.InertPartitionLePartF
-import Formalism.LocalToGlobal.Divisibility.LiftLatLemmas
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.HeckeRI
+public import Formalism.LocalToGlobal.Divisibility.InertPartitionLePartF
+public import Formalism.LocalToGlobal.Divisibility.LiftLatLemmas
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain Polynomial
 open scoped Matrix ComplexOrder
@@ -23,10 +27,6 @@ theorem side_well_formed {s : ℕ} (h : A3.fam3.Ok3 s) (P : Subgroup G) (ψ : P 
   | exact DefFam3.side_well_formed h P ψ Zs hst hin hsep
   | exact A3.fam3.side_well_formed h P ψ Zs hst hin hsep
   | exact DefFam3.side_well_formed (F3 := A3.fam3) h P ψ Zs hst hin hsep
-
-theorem typesSep3_of' (hq : ∀ P, A3.A.q P ≠ 0) (h0 : ∀ P, A3.A.heckeR A3.A.μ0 (P, 0) = 1)
-    (hc : Col.PairComm (A3.A.heckeR A3.A.μ0)) (hI : A3.fam3.TrISep) : A3.fam3.TypesSep3 := by
-  exact DefFam3.typesSep3_of (F3 := A3.fam3) hc (FamIn.typesSep_of' A3.A hq h0) hI
 
 end FamIn3
 

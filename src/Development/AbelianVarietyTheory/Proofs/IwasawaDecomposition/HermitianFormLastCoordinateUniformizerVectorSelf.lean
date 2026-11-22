@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoordsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnsPeriodMapDatumOkAndOverLevelPrime
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExtMCastSuccLast
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValDetSubOneLt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteOrbitsOfFiniteFibres
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoordsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnsPeriodMapDatumOkAndOverLevelPrime
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExtMCastSuccLast
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValDetSubOneLt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteOrbitsOfFiniteFibres
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
@@ -42,7 +47,8 @@ theorem adAt_eq_zero_of_prV (P : HeightOneSpectrum (𝓞 E)) (z : AfE F E) (h : 
   obtain ⟨c, rfl⟩ := TensorProduct.eq_repr_basis_left b z
   have h1 : (c.mapRange (evalV F (P.under (𝓞 F))) (map_zero _)).sum (fun i n => b i ⊗ₜ[F] n) = 0 := by
     rw [Finsupp.sum_mapRange_index (fun i => TensorProduct.tmul_zero _ _)]
-    rw [Finsupp.sum, map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finsupp.sum, map_sum] at h
     rw [Finsupp.sum]
     exact h
   have h2 := TensorProduct.sum_tmul_basis_left_eq_zero b _ h1
@@ -50,7 +56,8 @@ theorem adAt_eq_zero_of_prV (P : HeightOneSpectrum (𝓞 E)) (z : AfE F E) (h : 
     have h4 := DFunLike.congr_fun h2 i
     have h5 : evalV F (P.under (𝓞 F)) (c i) = 0 := by simpa using h4
     exact h5
-  rw [Finsupp.sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finsupp.sum, map_sum]
   refine Finset.sum_eq_zero fun i _ => ?_
   have e : b i ⊗ₜ[F] c i = (b i ⊗ₜ[F] (1 : FiniteAdeleRing (𝓞 F) F)) * ((1 : E) ⊗ₜ[F] c i) := by
     simp [Algebra.TensorProduct.tmul_mul_tmul]
@@ -122,7 +129,7 @@ theorem mem_hatL_gmap (γ : UF E n) (L : Submodule (𝓞 E) (Sp E n)) (x : Fin n
 
 theorem isPtOf_rat {hc : Formalism.BasicNotions.CMData F E} {ST SG Q : Finset (HeightOneSpectrum (𝓞 E))}
     {g : GL (Fin n) (AfE F E)} {p : DecoF E n ST SG Q} (h : IsPtOf hc g p) (γ : UF E n) :
-    IsPtOf hc (ratAd F γ * g) (((γ, 1, 1) : UF E n × GLG E n SG × GLQ E n Q) • p) := by
+    IsPtOf hc (ratAd F γ * g) (((γ, 1, 1) : UF E n × GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) • p) := by
   refine ⟨?_, fun x => ?_, fun P x hx i hi => ?_, fun w x hx i => ?_, fun P i j => ?_⟩
   · refine mul_mem ?_ h.uni
     have hg : ufGL E n γ ∈ UJ (hc.sig : E →+* E) (1 : Matrix (Fin n) (Fin n) E) := by
@@ -138,18 +145,20 @@ theorem isPtOf_rat {hc : Formalism.BasicNotions.CMData F E} {ST SG Q : Finset (H
   · rw [pullV_rat]
     exact h.f P _ ((mem_gmap _ _ _).1 hx) i hi
   · rw [pullV_rat]
-    have e : (((γ, 1, 1) : UF E n × GLG E n SG × GLQ E n Q) • p).deco.1.be w x = p.deco.1.be w (γ⁻¹.1 x) := by
-      show ((1 : GLG E n SG) w).1.mulVec _ = _
+    have e : (((γ, 1, 1) : UF E n × GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) • p).deco.1.be w x = p.deco.1.be w (γ⁻¹.1 x) := by
+      show ((1 : GLG (E := E) (n := n) (SG := SG)) w).1.mulVec _ = _
       simp
       rfl
     rw [e]
     exact h.be w _ ((mem_gmap _ _ _).1 hx) i
-  · have e : (((γ, 1, 1) : UF E n × GLG E n SG × GLQ E n Q) • p).fr P (Pi.single j 1) = γ.1 (p.fr P (Pi.single j 1)) := by
+  · have e : (((γ, 1, 1) : UF E n × GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) • p).fr P (Pi.single j 1) = γ.1 (p.fr P (Pi.single j 1)) := by
       show (γ.1 * p.1.2 P * (((1 : GLQ E n Q) P)⁻¹).1) _ = _
       simp
       rfl
-    rw [e, ← ufGL_mulVec', Units.val_mul, Matrix.mul_apply, map_sum]
-    simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, ratAd_val, Matrix.map_apply, adAt_inclE, h.fr]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, ← ufGL_mulVec', Units.val_mul, Matrix.mul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, ratAd_val, Matrix.map_apply, adAt_inclE, h.fr]
 
 end GenR
 
@@ -336,7 +345,7 @@ section GenU
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [StarRing E]
 
-theorem tilH_be {N n : ℕ} (hN : N = n + 1) {ST SG : Finset (HeightOneSpectrum (𝓞 E))} (d : DecoSet E n ∅ SG) {pi : 𝓞 E}
+theorem tilH_be {N n : ℕ} (hN : N = n + 1) {ST SG : Finset (HeightOneSpectrum (𝓞 E))} (d : DecoSet (E := E) (n := n) (ST := ∅) (SG := SG)) {pi : 𝓞 E}
     (hT : ∀ P : ST, cO E pi ∉ P.1.asIdeal) (hG : ∀ w : SG, pi ∉ w.1.asIdeal) (w : SG) (x : Sp E N)
     (hx : x ∈ (DecoSet.tilH (ST := ST) hN pi d).1.N) :
     (∀ i : Fin n, (DecoSet.tilH (ST := ST) hN pi d).1.be w x (Br.iC hN i) = d.1.be w (iniH hN x) i) ∧
@@ -390,7 +399,8 @@ theorem isPtOf_tilFr {hc : Formalism.BasicNotions.CMData F E} {N n : ℕ} (hN : 
       ∑ j, adAt F P ((k⁻¹ : GL (Fin N) (AfE F E)).1 i j) * adAt F P (pullV (extGL hN y) x j) := by
     intro P x i
     rw [hpull]
-    simp only [Matrix.mulVec, dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, map_sum, map_mul]
   refine ⟨mul_mem (extGL_mem_ustd hN hy.uni) hku, fun x => ?_, fun P x hx i hi => ?_, fun w x hx i => ?_, fun P => isEmptyElim P⟩
   · have e : ((extGL hN y * k)⁻¹ : GL (Fin N) (AfE F E)).1 *ᵥ x =
         (k⁻¹ : GL (Fin N) (AfE F E)).1 *ᵥ (((extGL hN y)⁻¹ : GL (Fin N) (AfE F E)).1 *ᵥ x) := by
@@ -544,8 +554,8 @@ namespace GlobalTheory.Mem.Col2.TilX
 
 variable {B : Base} {X : PreX B.toPre} (I : TC B X)
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_ka (hI : I.Ok) (u : B.Word) {Lb : Unit → Submodule (𝓞 B.host.E) (Fin (B.R.N B.R.m) → B.host.E)}
     {U : Unit → Subgroup (GA B (B.R.N B.R.m))} {chi : ∀ β, U β →* ℂˣ} {y : (I.stp u I.mu0 B.R.m).Cl → GA B (B.R.N B.R.m)}
     {st : ∀ c, (I.stp u I.mu0 B.R.m).Stab c → GL (Fin (B.R.N B.R.m)) B.host.E} {k : Unit → GA B (B.R.N B.R.m)}
@@ -571,7 +581,7 @@ theorem exists_ka (hI : I.Ok) (u : B.Word) {Lb : Unit → Submodule (𝓞 B.host
     exact h
   have hact : ((I.stp u I.mu0 B.R.m).act (I.perIn u I.mu0).b0 κ0 ((I.stp u I.mu0 B.R.m).rep ((I.perIn u I.mu0).tilC c))).1.1 =
       (((m.1 : UF B.fields.E (B.R.N B.R.m))⁻¹, 1, 1) :
-        UF B.fields.E (B.R.N B.R.m) × GLG B.fields.E (B.R.N B.R.m) (B.primes X).vGs × GLQ B.fields.E (B.R.N B.R.m) (I.Q I.mu0)) •
+        UF B.fields.E (B.R.N B.R.m) × GLG (E := B.fields.E) (n := B.R.N B.R.m) (SG := (B.primes X).vGs) × GLQ B.fields.E (B.R.N B.R.m) (I.Q I.mu0)) •
         (tilF (Pr := B.primes X) (R := B.R) I.sel (I.tup I.mu0) u ((I.stX I.mu0).rep c).1.1) := by
     have e1 : FrmG.incl _ _ m • ((I.stp u I.mu0 B.R.m).rep ((I.perIn u I.mu0).tilC c)).1.1 =
         tilF (Pr := B.primes X) (R := B.R) I.sel (I.tup I.mu0) u ((I.stX I.mu0).rep c).1.1 :=
@@ -581,7 +591,7 @@ theorem exists_ka (hI : I.Ok) (u : B.Word) {Lb : Unit → Submodule (𝓞 B.host
     have e2 : FrmG.incl (levGAt I.sel (I.tup I.mu0) (I.idx I.mu0) (I.Tp I.mu0) B.R.m (I.perIn u I.mu0).b0)
         (levQAt I.sel (I.tup I.mu0) (I.idx I.mu0) (I.Tp I.mu0) B.R.m (I.perIn u I.mu0).b0) κ0 =
         (((m.1 : UF B.fields.E (B.R.N B.R.m))⁻¹, 1, 1) :
-        UF B.fields.E (B.R.N B.R.m) × GLG B.fields.E (B.R.N B.R.m) (B.primes X).vGs × GLQ B.fields.E (B.R.N B.R.m) (I.Q I.mu0)) *
+        UF B.fields.E (B.R.N B.R.m) × GLG (E := B.fields.E) (n := B.R.N B.R.m) (SG := (B.primes X).vGs) × GLQ B.fields.E (B.R.N B.R.m) (I.Q I.mu0)) *
         FrmG.incl _ _ m := by
       refine Prod.ext ?_ (Prod.ext ?_ ?_)
       · exact (inv_mul_cancel _).symm
@@ -622,7 +632,7 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E]
 
 theorem til_L_eq {N n : ℕ} (hN : N = n + 1) {ST SG : Finset (HeightOneSpectrum (𝓞 E))} {pi : 𝓞 E}
     (hT : ∀ P : ST, cO E pi ∉ P.1.asIdeal) (hG : ∀ w : SG, pi ∉ w.1.asIdeal) (hpi : ∀ P : ST, pi ∈ P.1.asIdeal)
-    (hdvd : ∀ r : 𝓞 E, (∀ P : ST, r ∈ P.1.asIdeal) → pi ∣ r) (d : DecoSet E n ∅ SG)
+    (hdvd : ∀ r : 𝓞 E, (∀ P : ST, r ∈ P.1.asIdeal) → pi ∣ r) (d : DecoSet (E := E) (n := n) (ST := ∅) (SG := SG))
     (f : (Fin n → E) →ₗ[E] (Fin N → E)) (hf : ∀ x j, f x j = if h : j.1 < n then x ⟨j.1, h⟩ else 0)
     (z : Fin N → E) (hz : ∀ j, z j = if j.1 + 1 = N then (pi : E) else 0) :
     (DecoSet.tilH (ST := ST) hN pi d).1.L = d.1.N.map (f.restrictScalars (𝓞 E)) ⊔ Submodule.span (𝓞 E) {z} := by
@@ -647,7 +657,7 @@ theorem til_L_eq {N n : ℕ} (hN : N = n + 1) {ST SG : Finset (HeightOneSpectrum
   exact d.2.til_L hT hG hpi hdvd
 
 theorem L_act {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 E))} {d : Deco E n ST SG} (hd : d.Ok)
-    {ga : Sp E n ≃ₗ[E] Sp E n} (hga : ga ∈ UF E n) (h : GLG E n SG) : (d.act ga h).L = Formalism.HermitianLatticesTheory.gmap ga d.L := by
+    {ga : Sp E n ≃ₗ[E] Sp E n} (hga : ga ∈ UF E n) (h : GLG (E := E) (n := n) (SG := SG)) : (d.act ga h).L = Formalism.HermitianLatticesTheory.gmap ga d.L := by
   ext x
   rw [(hd.act hga h).mem_L, mem_gmap, hd.mem_L]
   exact and_congr (mem_gmap _ _ _) Iff.rfl
@@ -859,8 +869,8 @@ namespace GlobalTheory.Mem.Col2.TilX
 
 variable {B : Base} {X : PreX B.toPre} (I : TC B X)
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem til_fv_eq (hI : I.Ok) (l : I.Laws) (Z : TC.Later B (I.cols l))
     (hg : gramN (I.rec7 l Z) B.R.m le_rfl = 1) (u : B.Word)
     (hsu : ∀ c, clsCrd (I.rec7 l Z) u B.R.m le_rfl c = ((I.stp u I.mu0 B.R.m).rep c).1.1.deco.1.L)
@@ -1081,8 +1091,8 @@ theorem baseL_sup (u : B.Word) {Lb : Submodule (𝓞 B.host.E) (Fin (B.R.N B.R.m
 
 end GlobalTheory.Mem.Col2.TilX
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem GlobalTheory.Mem.Col2.TC.til_ties : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.Pins B X → ∀ (l : I.Laws) (Z : TC.Later B (I.cols l)), ∀ (u : B.Word) (A : AtTTied (D := (I.rec7 l Z)) u) (K : ClsTied (D := (I.rec7 l Z)) u B.R.m le_rfl) (KP : ClsPTied (D := (I.rec7 l Z)) u) (L : LvTied (D := (I.rec7 l Z)) u A B.R.m le_rfl) (W : ValTied (D := (I.rec7 l Z)) u A.eV B.R.m le_rfl K), A.res = I.resT l u I.mu0 → (∃ k, I.Reads u I.mu0 B.R.m (fun _ => ()) (fun _ => K.lev.Lb) (fun _ => K.lev.U) (fun _ => K.lev.chi) (fun c => (K.y c).1) (fun c s => (K.stabI c s).1) k) → I.ReadsP I.mu0 KP.lev.Lb KP.lev.U KP.lev.chi (fun c => (KP.y c).1) KP.lat (fun c s => (KP.stabI c s).1) → (∀ v c (z : Ld (I.rec7 l Z) u B.R.m le_rfl c) (h : z.1 ∈ ((I.stp u I.mu0 B.R.m).rep c).1.1.deco.1.N), L.pr v c z = Submodule.Quotient.mk ⟨z.1, h⟩) → I.IdY l Z u I.mu0 B.R.m le_rfl W.eY → ∃ (Tl : TilTied (D := (I.rec7 l Z)) u A KP L) (Ta : TilAd Tl K), (∀ j, Tl.z0 j = if j.1 + 1 = B.R.N B.R.m then ((X.piT u : 𝓞 B.host.E) : B.host.E) else 0) ∧ TilBaseLat Tl K ∧ ∃ e, (∀ z, e z = z) ∧ EvzTie (D := (I.rec7 l Z)) Ta W e := by
   intro B X I hI hP l Z u A K KP L W hres hRd hRP hL hY
   obtain ⟨k, hk⟩ := hRd

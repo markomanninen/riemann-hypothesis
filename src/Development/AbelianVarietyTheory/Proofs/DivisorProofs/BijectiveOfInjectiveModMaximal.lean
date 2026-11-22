@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -42,7 +46,7 @@ theorem bijective_of_injective_mod_maximal
       intro m hm y _
       letI := Ideal.Quotient.field m
       have hi : Function.Injective (f.baseChange (R ⧸ m)) := by
-        rw [injective_iff_map_eq_zero]
+        set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
         intro z hz
         obtain ⟨x, rfl⟩ := exists_one_tmul m z
         rw [LinearMap.baseChange_tmul, one_tmul_eq_zero_iff] at hz

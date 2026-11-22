@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -40,10 +44,6 @@ def variableChangePoint (C : VariableChange F) {W W' : WeierstrassCurve F} (hC :
   | .zero => .zero
   | .some x y h => .some (↑C.u⁻¹ ^ 2 * (x - C.r)) (↑C.u⁻¹ ^ 3 * (y - C.s * (x - C.r) - C.t))
       (by subst hC; exact nonsingular_variableChange C W h)
-
-@[simp]
-theorem variableChangePoint_zero (C : VariableChange F) {W W' : WeierstrassCurve F}
-    (hC : C • W = W') : variableChangePoint C hC .zero = .zero := rfl
 
 theorem variableChangePoint_some (C : VariableChange F) {W W' : WeierstrassCurve F}
     (hC : C • W = W') {x y : F} (h : W.toAffine.Nonsingular x y) :

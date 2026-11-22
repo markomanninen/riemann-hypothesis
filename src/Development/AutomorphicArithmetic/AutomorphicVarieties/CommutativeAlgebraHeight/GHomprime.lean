@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.GHommem
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.GHommem
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -42,7 +46,7 @@ private theorem UpperTheory.V.CA.homprime_mul (R σ : Type) [CommRing R]
     · intro hq
       exfalso
       apply hq
-      rw [Finset.HasAntidiagonal.mem_antidiagonal, ← h, ← hx, map_add]
+      rw [Finset.HasAntidiagonal.mem_antidiagonal, ← h, ← hx, map_add (f := _)]
   · symm
     refine Finset.sum_eq_zero ?_
     intro x hx
@@ -53,7 +57,7 @@ private theorem UpperTheory.V.CA.homprime_mul (R σ : Type) [CommRing R]
     · by_cases h2 : x.2.degree = q.2
       · exfalso
         apply h
-        rw [← hx, map_add, h1, h2, hq]
+        rw [← hx, map_add (f := _), h1, h2, hq]
       · simp [h2]
     · simp [h1]
 

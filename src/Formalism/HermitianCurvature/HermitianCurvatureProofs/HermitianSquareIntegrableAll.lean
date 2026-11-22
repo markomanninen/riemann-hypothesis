@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThmPActualCptOfOuter
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableCfLast
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasurableOfContinuousOnZero
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThmPActualCptOfOuter
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableCfLast
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasurableOfContinuousOnZero
+
+@[expose] public section
 
 open MeasureTheory
 

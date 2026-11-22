@@ -1,4 +1,8 @@
-import Formalism.PieriBlockIdeals.PieriColumnMinors.BinaryFormsExample
+module
+
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.BinaryFormsExample
+
+@[expose] public section
 
 namespace Formalism.CohomologicalDescent.LR
 

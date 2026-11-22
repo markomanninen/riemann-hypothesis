@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IntFormsSubset
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.XiValIffXiAt
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.MarkedIsometryHalf
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsFiniteAdelicElementMarkingComponent
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCoversOfHalves
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.TriangularFrameChangeOfTriangularPeriod
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IntFormsSubset
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.XiValIffXiAt
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.MarkedIsometryHalf
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsFiniteAdelicElementMarkingComponent
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCoversOfHalves
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.TriangularFrameChangeOfTriangularPeriod
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ open AlgebraicGeometry CategoryTheory Limits ReciprocityTheory.ChartRestriction.
 open scoped TensorProduct Matrix
 open GlobalTheory.ShortMove GlobalTheory.ShortMoveIso GlobalTheory.TwistTie
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem frBor_of_isometry {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E}
     {Dw : Datum H} {l : Geo.Tor.Level H} {Xo : Moduli Dw l} {c : Coeff l} {σ : c.F →+* ℂ} {g : ℕ}
     (e : Fin g ≃ Σ τ : E →+* ℂ, Fin (Dw.mult τ))
@@ -43,10 +47,10 @@ theorem frBor_of_isometry {E : Type} [Field E] [NumberField E] [IsCMField E] {H 
     · obtain ⟨a, d, rfl⟩ := F.t_surj k b
       obtain ⟨x, hx⟩ := hM (s • a) (Submodule.smul_mem_smul hs Submodule.mem_top)
       refine ⟨x + m • (gam (s • d) - s • d), ?_⟩
-      rw [smul_add, ← map_smul, map_add, hx, smul_comm s l.M' d, map_nsmul, hm, smul_add, ← mul_smul, smul_sub]
+      rw [smul_add, ← map_smul, map_add (f := _), hx, smul_comm s l.M' d, map_nsmul, hm, smul_add, ← mul_smul, smul_sub]
       abel
     · rintro a b ⟨x, hx⟩ ⟨z, hz⟩
-      exact ⟨x + z, by rw [map_add, hx, hz, smul_add]; abel⟩
+      exact ⟨x + z, by rw [map_add (f := _), hx, hz, smul_add]; abel⟩
   obtain ⟨-, -, hex⟩ := GlobalTheory.FamRigid.ex_eq_of_level_group GlobalTheory.latMinkowski E H Dw l Xo _ g _ F k P P' gam 1 hP hP' hEF hM'
     (fun a => ⟨gam a - a, by rw [hA, one_smul, add_sub_cancel]⟩) (fun a => by rw [Matrix.one_mulVec, h])
   simp only [Matrix.one_mulVec] at hex
@@ -63,8 +67,8 @@ theorem frBor_of_isometry {E : Type} [Field E] [NumberField E] [IsCMField E] {H 
       one_smul]
     exact d
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_dict_comp {D : D7} (V : HSp D) {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E} {Dw : Datum H}
     {l : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H} {Xo : Moduli Dw l} {c : Coeff l} {σ : c.F →+* ℂ} {r : ℕ} (hr : V.rank = r)
     (U : Unf Xo c σ r) (dict : GA D V → Σ k, Frame (U.X k).Ψ r)
@@ -135,8 +139,8 @@ theorem exists_dict_comp {D : D7} (V : HSp D) {H : ReciprocityTheory.ChartRestri
       rfl) _ _ hy hy' hd hd')
   exact congrArg Sigma.fst hk
 
-open GlobalTheory.CoverRead GlobalTheory.Member in
 
+open GlobalTheory.CoverRead GlobalTheory.Member in
 theorem exists_dict₂_comp : ∀ (D : D7) (T : CoreJ D), LawsJ T → ∀ j, Formalism.L2.Pj.InR D j → ∀ σ : T.Q.c.F →+* ℂ, GoodEmb T.Q.c σ → ∀ C : Cover T j σ, C.IsUnif → ∀ k₂ : C.U₂.Comp, ∃ h : GA D (T.V j σ), (C.dict₂ h).1 = k₂ := by
   intro D T hT j hj σ hσ C hC k₂
   obtain ⟨-, hA, hinc, hU, hdom, hr, g, e, F, ik, φ, th, hW, hth, hD⟩ := hC

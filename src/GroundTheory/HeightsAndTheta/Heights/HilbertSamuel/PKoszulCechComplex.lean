@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKoszulCech
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenTwistGenerated
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKoszulCech
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenTwistGenerated
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -303,7 +308,8 @@ theorem kosCech_kosD {V : Ideal (MRingOver S ι)} {R : ℕ} {z : Fin R → KH.Ce
     · rfl
     · exact (zsmul_eq_mul (restrict0 (z j) I' * kosExt φ (insert j J.1) I') (kosSign J.1 j)).symm
   show KH.cechD S ι _ n (kosD z p n φ J) I = kosD z p (n + 1) (kosCech S ι V R (p + 1) n φ) J I
-  rw [hsplit, map_sum, Finset.sum_apply, kosD_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsplit, map_sum, Finset.sum_apply, kosD_apply]
   refine Finset.sum_congr rfl fun j _ => ?_
   split_ifs
   · rw [map_zero]; rfl
@@ -397,8 +403,8 @@ theorem kosD_kosD {V : Ideal (MRingOver S ι)} {R : ℕ} (z : Fin R → KH.CechC
 
 end KoszulCechComplex
 
-open KoszulCech KoszulCechComplex in
 
+open KoszulCech KoszulCechComplex in
 theorem KoszulCechComplex.proof : KoszulCechComplex.Statement := by
   intro S _ K _ _ ι _ _ V α R z hz c p n
   exact ⟨kosD_mem_kosPart hz c p n, kosCech_kosD (fun j => LinearMap.mem_ker.mp (hz j).2) p n,

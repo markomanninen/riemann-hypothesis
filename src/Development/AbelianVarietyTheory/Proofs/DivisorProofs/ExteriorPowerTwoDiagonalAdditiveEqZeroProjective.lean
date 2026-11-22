@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveStructureSheafDegTwoVanish
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianUnobstructed
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveStructureSheafDegTwoVanish
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianUnobstructed
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential MonoidalCategory CartesianMonoidalCategory MonObj
 open scoped TensorProduct
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.LiftSys GlobalTheory.Obs
@@ -70,7 +75,7 @@ noncomputable def crossWedge :
   toFun v := lowerWedge (v 0).1 (v 1).2 - lowerWedge (v 1).1 (v 0).2
   map_update_add' := by
     intro _ v i x y
-    fin_cases i <;> simp [Function.update_of_ne, map_add, LinearMap.add_apply] <;> abel
+    fin_cases i <;> simp [Function.update_of_ne, map_add (f := _), LinearMap.add_apply] <;> abel
   map_update_smul' := by
     intro _ v i c x
     fin_cases i <;> simp [Function.update_of_ne, map_smul, LinearMap.smul_apply, smul_sub]
@@ -109,7 +114,7 @@ theorem free_case (t : ⋀[R]^2 (I →₀ R))
       exteriorPower.map 2 (LinearMap.inl R (I →₀ R) (I →₀ R)) t +
         exteriorPower.map 2 (LinearMap.inr R (I →₀ R) (I →₀ R)) t) : t = 0 := by
   have h := congrArg crossWedgeLin H
-  rw [map_add, ← LinearMap.comp_apply, ← LinearMap.comp_apply crossWedgeLin, ← LinearMap.comp_apply crossWedgeLin,
+  rw [map_add (f := _), ← LinearMap.comp_apply, ← LinearMap.comp_apply crossWedgeLin, ← LinearMap.comp_apply crossWedgeLin,
     crossWedgeLin_diag, crossWedgeLin_inl, crossWedgeLin_inr] at h
   simpa using h
 
@@ -132,7 +137,7 @@ theorem eq_zero_of_diag_additive : ∀ (R M : Type) [CommRing R] [AddCommGroup M
   have hu : exteriorPower.map 2 s t = 0 := by
     apply free_case
     have h := congrArg (exteriorPower.map 2 (s.prodMap s)) H
-    rw [map_add] at h
+    rw [map_add (f := _)] at h
     simp only [← LinearMap.comp_apply, ← exteriorPower.map_comp] at h ⊢
     rw [e0, ← e1, ← e2]
     exact h

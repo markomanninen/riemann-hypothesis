@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DminusLeBeS
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DiscriminantNonzeroModUniformiser
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.FourHundredSixteenLeA
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DminusLeBeS
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DiscriminantNonzeroModUniformiser
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.FourHundredSixteenLeA
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,8 +94,8 @@ def discPowerTimesMonomial (O : Type) [CommRing O] (j : ℤ) (b : ℤ → ℕ) :
       (∏ i : Fin r, MvPolynomial.X (X.F.fr (j - 1) i.val, (0 : Fin r)) ^
         ((b (X.F.fr (j - 1) i.val) : ℤ) - X.Bw p K j (X.F.fr (j - 1) i.val)).toNat)
 
-omit [NeZero n'] [NeZero r] in
 
+omit [NeZero n'] [NeZero r] in
 def memMu (O : Type) [CommRing O] (j : ℤ) (u : Fin r × Fin r → ℕ) : MvPolynomial (ℤ × Fin r) O :=
   ∏ v : Fin r × Fin r, MvPolynomial.X (X.F.fr j v.1.val, v.2) ^ u v
 

@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.TensorProductVectors
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.TensorProductVectors
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,5 +37,6 @@ theorem step_tensorVec : TensorProductVectors := by
       fun a => ((μ a (GeneralLinearGroup.det (m a)) : ℂˣ) : ℂ) • x a :=
     funext fun a => hx a (m a) (hm a)
   rw [this, MultilinearMap.map_smul_univ]
+  simp only [RingHom.id_apply]
 
 end UpperTheory.TNZ

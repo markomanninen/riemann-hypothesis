@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafIndExc
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafIndExc
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CochainComplex.HomComplex
@@ -38,10 +42,10 @@ theorem map_aug {D' D : J ⥤ PSh} {Y : PSh} (α : D' ⟶ D) (c' : ∀ j, D'.obj
 
 def mkChn {I : Type} [SmallCategory I] {F : J ⥤ Type} (σ : I ⥤ J) (s : ∀ i, F.obj (σ.obj i))
     (h : ∀ i k (g : i ⟶ k), F.map (σ.map g) (s i) = s k) : I ⥤ F.Elements where
-  obj i := ⟨σ.obj i, s i⟩
-  map g := ⟨σ.map g, h _ _ g⟩
-  map_id i := Subtype.ext (σ.map_id i)
-  map_comp g g' := Subtype.ext (σ.map_comp g g')
+  obj i := F.elementsMk (σ.obj i) (s i)
+  map g := Functor.Elements.homMk (σ.map g) (h _ _ g)
+  map_id i := Functor.Elements.hom_ext (σ.map_id i)
+  map_comp g g' := Functor.Elements.hom_ext (σ.map_comp g g')
 
 theorem mkChn_congr {I : Type} [SmallCategory I] {F : J ⥤ Type} (σ : I ⥤ J) {s s' : ∀ i, F.obj (σ.obj i)} (e : s = s') h h' :
     mkChn σ s h = mkChn σ s' h' := by subst e; rfl

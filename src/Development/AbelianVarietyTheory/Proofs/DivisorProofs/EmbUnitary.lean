@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OneMemH0WeightZero
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.QuadraticExtNormFormOverAlgebra
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmExtensionConjugationInvolutiveFixedField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OneMemH0WeightZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.QuadraticExtNormFormOverAlgebra
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmExtensionConjugationInvolutiveFixedField
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ theorem det_emb {A : Matrix n (Fin 2) R} {B : Matrix (Fin 2) n R} (hBA : B * A =
 
 theorem emb_map {S : Type} [CommRing S] (f : R →+* S) (A : Matrix n (Fin 2) R) (B : Matrix (Fin 2) n R)
     (X : Matrix (Fin 2) (Fin 2) R) : (emb A B X).map f = emb (A.map f) (B.map f) (X.map f) := by
-  simp [emb, Matrix.map_mul, Matrix.map_add, Matrix.map_sub, Matrix.map_one]
+  simp [emb, Matrix.map_mul, Matrix.map_add (f := _), Matrix.map_sub, Matrix.map_one]
 
 theorem cT_add (c : R →+* R) {m p : Type} (P Q : Matrix m p R) : cT c (P + Q) = cT c P + cT c Q := by
   ext i j; simp [cT]
@@ -118,7 +122,7 @@ theorem qm_unitary (c : T →+* T) (hc : ∀ s, c (ι s) = ι s) (hcθ : c θ = 
   have hθ2 : θ ^ 2 = ι a := by rw [sq, hθ]
   have hn : ι x.re ^ 2 - ι a * ι x.imI ^ 2 - ι b * ι x.imJ ^ 2 + ι a * ι b * ι x.imK ^ 2 = 1 := by
     have := congrArg ι hx
-    simp only [GlobalTheory.QSA.nrm, map_sub, map_add, map_mul, map_pow, map_one] at this
+    simp only [GlobalTheory.QSA.nrm, map_sub, map_add (f := _), map_mul, map_pow, map_one] at this
     exact this
   have hh2 : h₂ = -(ι b * h₁) := by rw [hb, neg_neg]
   subst hh2

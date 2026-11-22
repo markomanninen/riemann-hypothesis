@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePAllSet
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePAllSet
+
+@[expose] public section
 
 noncomputable section
 

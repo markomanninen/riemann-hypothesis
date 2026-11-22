@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasureB
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StMIntMonoOfDensLe
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasureB
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StMIntMonoOfDensLe
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit

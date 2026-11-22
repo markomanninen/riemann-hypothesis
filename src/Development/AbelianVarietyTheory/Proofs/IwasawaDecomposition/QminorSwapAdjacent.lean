@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwConj
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwConj
+
+@[expose] public section
 
 open Finset
 
@@ -19,8 +23,8 @@ theorem prod_ofFn_sum_smul {n : ℕ} {ι : Type} [Fintype ι] (a : Fin n → ι 
   simp only [MultilinearMap.map_smul_univ, MultilinearMap.mkPiAlgebraFin_apply] at h
   exact h
 
-omit [Algebra ℂ A] in
 
+omit [Algebra ℂ A] in
 theorem prod_ofFn_adjacent : ∀ (m : ℕ) (i : Fin m) (g₁ g₂ g₃ g₄ : Fin (m + 1) → A),
     (∀ k, k ≠ i.castSucc → k ≠ i.succ → g₂ k = g₁ k ∧ g₃ k = g₁ k ∧ g₄ k = g₁ k) →
     g₁ i.castSucc * g₁ i.succ + g₂ i.castSucc * g₂ i.succ =
@@ -38,13 +42,14 @@ theorem prod_ofFn_adjacent : ∀ (m : ℕ) (i : Fin m) (g₁ g₂ g₃ g₄ : Fi
       have hk : ∀ k : Fin m, g₂ k.succ.succ = g₁ k.succ.succ ∧ g₃ k.succ.succ = g₁ k.succ.succ ∧
           g₄ k.succ.succ = g₁ k.succ.succ := fun k =>
         h _ (Fin.succ_ne_zero _) (fun hh => Fin.succ_ne_zero _ (Fin.succ_injective _ hh))
-      rw [List.ofFn_succ (f := g₁), List.ofFn_succ (f := g₂), List.ofFn_succ (f := g₃),
-        List.ofFn_succ (f := g₄), List.ofFn_succ (f := fun k => g₁ (Fin.succ k)),
-        List.ofFn_succ (f := fun k => g₂ (Fin.succ k)),
-        List.ofFn_succ (f := fun k => g₃ (Fin.succ k)),
-        List.ofFn_succ (f := fun k => g₄ (Fin.succ k))]
-      simp only [List.prod_cons, (hk _).1, (hk _).2.1, (hk _).2.2, ← mul_assoc, ← add_mul]
-      congr 1
+      have h₂ : (fun k : Fin m => g₂ k.succ.succ) = fun k => g₁ k.succ.succ :=
+        funext fun k => (hk k).1
+      have h₃ : (fun k : Fin m => g₃ k.succ.succ) = fun k => g₁ k.succ.succ :=
+        funext fun k => (hk k).2.1
+      have h₄ : (fun k : Fin m => g₄ k.succ.succ) = fun k => g₁ k.succ.succ :=
+        funext fun k => (hk k).2.2
+      simp only [List.ofFn_succ, List.prod_cons, h₂, h₃, h₄, ← mul_assoc, ← add_mul]
+      exact congrArg (· * (List.ofFn fun k : Fin m => g₁ k.succ.succ).prod) e
     · intro j h e
       have h0 := h 0 (by
         rw [← Fin.succ_castSucc]; exact (Fin.succ_ne_zero _).symm) (Fin.succ_ne_zero _).symm
@@ -56,7 +61,8 @@ theorem prod_ofFn_adjacent : ∀ (m : ℕ) (i : Fin m) (g₁ g₂ g₃ g₄ : Fi
         (by simpa only [Fin.succ_castSucc] using e)
       rw [List.ofFn_succ (f := g₁), List.ofFn_succ (f := g₂), List.ofFn_succ (f := g₃),
         List.ofFn_succ (f := g₄)]
-      simp only [List.prod_cons, h0.1, h0.2.1, h0.2.2, ← mul_add, ih]
+      simp only [List.prod_cons, h0.1, h0.2.1, h0.2.2, ← mul_add]
+      exact congrArg (g₁ 0 * ·) ih
 
 open Formalism.REAL
 
@@ -194,7 +200,7 @@ theorem Tm_conj {n : ℕ} (E : Fin n → Fin n → A) (P Q : Matrix (Fin n) (Fin
     rw [this]; simp [eq_comm]
   simp only [Tm, smul_add, Finset.sum_add_distrib]
   congr 1
-  · simp only [smul_ite, smul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true, smul_smul,
+  · simp only [smul_ite, smul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true, smul_smul,
       ← Finset.sum_smul, h1]
     split_ifs <;> simp
   · rw [Finset.sum_comm]

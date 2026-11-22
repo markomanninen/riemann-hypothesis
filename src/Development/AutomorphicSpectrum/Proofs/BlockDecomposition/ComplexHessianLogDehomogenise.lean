@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JoinCol
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PAreaMultiplicityWeight
-import Development.AbelianVarietyTheory.Definitions.Divisors.ChartMeasApplyOfSubset
-import ReciprocityTheory.L2DbarEstimates.LeviForms.DetUpdateColEq
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.CmpaCHessComp
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.CmpbHessAtAddConst
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JoinCol
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PAreaMultiplicityWeight
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ChartMeasApplyOfSubset
+public import ReciprocityTheory.L2DbarEstimates.LeviForms.DetUpdateColEq
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.CmpaCHessComp
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.CmpbHessAtAddConst
+
+@[expose] public section
 
 open MeasureTheory ReciprocityTheory.L2DbarEstimates GlobalTheory.CompanionTheory.FSCrofton
 open scoped ENNReal ComplexConjugate ContDiff

@@ -1,14 +1,19 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProper
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.AffineSpaceCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineResolutionRule
-import Development.ResolutionOfSingularities.Foundations.Schemes.AffineOpens
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.FunctorialPrincipalization
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedStrictTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.DiscardedLocus
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProper
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.AffineSpaceCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineResolutionRule
+public import Development.ResolutionOfSingularities.Foundations.Schemes.AffineOpens
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.FunctorialPrincipalization
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedStrictTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.DiscardedLocus
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry CategoryTheory.Limits
@@ -61,10 +66,6 @@ theorem isNoetherian_schemeAt {X : Scheme.{u}} (B : SequenceOfBlowups X)
     have hn : n < B.length := hi
     exact @isNoetherian_of_isBlowupAlongIdealSheaf (B.schemeAt n) (B.schemeAt (n + 1)) (ih (le_of_lt hn)) _ _
       (B.isBlowupAlongIdealSheaf_blowupMorphism n hn)
-
-instance SequenceOfBlowups.instIsNoetherianTop {X : Scheme.{u}} (B : SequenceOfBlowups X)
-    [AlgebraicGeometry.IsNoetherian X] : AlgebraicGeometry.IsNoetherian B.lastObj :=
-  isNoetherian_schemeAt B B.length le_rfl
 
 theorem isNoetherian_ambientLevel {k : Type u} [Field k] [CharZero k] {Y : Scheme.{u}}
     [AlgebraicGeometry.IsAffine Y] {pY : Y ⟶ Spec (CommRingCat.of k)}

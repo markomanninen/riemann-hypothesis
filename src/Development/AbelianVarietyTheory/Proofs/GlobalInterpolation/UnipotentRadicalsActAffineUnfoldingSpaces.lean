@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SandwichNormalForm
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SourceLatticeInvariance
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.LatticeNormalFormUnipotent
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormalFormAtPrime
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnipotentCharacterArgumentMulStabilizer
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SandwichNormalForm
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SourceLatticeInvariance
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.LatticeNormalFormUnipotent
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormalFormAtPrime
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnipotentCharacterArgumentMulStabilizer
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col GlobalTheory.QNormal
 
 namespace GlobalTheory.Proof.unipotentRadicals_act_affine_unfoldingSpaces
@@ -28,7 +33,7 @@ noncomputable def linPart (xj : (Fin n' → F) →ₗ[F] (Fin n → F)) :
 
 theorem unfoldingAffineLinearMap_apply_freeEntry (xj : (Fin n' → F) →ₗ[F] (Fin n → F)) (t : Loc.FC n' c' n c → F) (p : Loc.FC n' c' n c) :
     Loc.xx1 xj t (Pi.single p.1.2 1) p.1.1 = t p := by
-  rw [linearMap_unfolding_apply_single, dif_pos p.2]
+  rw [linearMap_unfolding_apply_single, dite_eq_left p.2]
 
 theorem map_Ufl {xj : (Fin n' → F) →ₗ[F] (Fin n → F)} {x : (Fin (n' + c') → F) →ₗ[F] (Fin (n + c) → F)}
     (h1 : ∀ v, x (Loc.inX F n' c' v) = Loc.inX F n c (xj v))
@@ -63,7 +68,8 @@ theorem map_Ufl {xj : (Fin n' → F) →ₗ[F] (Fin n → F)} {x : (Fin (n' + c'
       rw [hsingle, ← sub_add_cancel (x (Loc.eN F (n' + c') (n' + (l.1 - n'))))
         (Loc.eN F (n + c) (n + (l.1 - n')))]
       exact Submodule.add_mem _ (Ufl_mono (by omega) (h3 (l.1 - n'))) (eN_mem_Ufl (by omega))
-  rw [← Finset.univ_sum_single v, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Finset.univ_sum_single v, map_sum]
   refine Submodule.sum_mem _ fun l _ => ?_
   by_cases hl : l.1 < n' + s
   · have hsm : (Pi.single l (v l) : Fin (n' + c') → F) = v l • Pi.single l 1 := by
@@ -122,7 +128,7 @@ theorem affine_action : (∀ (F : Type) [Field F] (n' c' n c : ℕ), 1 ≤ c →
     ⟨{ toFun := fun t p => (r.toLinearMap ∘ₗ linPart xj t ∘ₗ r'.toLinearMap) (Pi.single p.1.2 1) p.1.1
        map_add' := fun t u => by
          funext p
-         simp only [map_add, LinearMap.add_comp, LinearMap.comp_add, LinearMap.add_apply, Pi.add_apply]
+         simp only [map_add (f := _), LinearMap.add_comp, LinearMap.comp_add, LinearMap.add_apply, Pi.add_apply]
        map_smul' := fun a t => by
          funext p
          simp only [map_smul, LinearMap.smul_comp, LinearMap.comp_smul, LinearMap.smul_apply, Pi.smul_apply,

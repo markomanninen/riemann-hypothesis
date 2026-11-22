@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL
 open scoped TensorProduct Topology
@@ -28,7 +32,7 @@ theorem eq_zero_of_sum_apply_eq_zero (σ : Representation ℂ G S) (π : Represe
       have hΦ : ∀ f : J → S, Φ f = ∑ j : J, b j.1 (f j) := fun f => by
         simp [Φ, LinearMap.sum_apply]
       have hinj : Function.Injective Φ := by
-        rw [injective_iff_map_eq_zero]
+        set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
         intro f hf
         rw [hΦ] at hf
         funext j
@@ -37,7 +41,8 @@ theorem eq_zero_of_sum_apply_eq_zero (σ : Representation ℂ G S) (π : Represe
           simpa using hf) j.1 j.2
         simpa using h0
       have hequi : ∀ (g : G) (f : J → S), Φ (fun j => σ g (f j)) = π g (Φ f) := fun g f => by
-        rw [hΦ, hΦ, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hΦ, hΦ, map_sum]
         exact Finset.sum_congr rfl fun j _ => hb j.1 g (f j)
       let W : Subrepresentation σ :=
         { toSubmodule := (LinearMap.range Φ).comap (b a)
@@ -100,13 +105,14 @@ theorem lift_flip_subtype_injective : ∀ {G S V : Type} [Group G] [AddCommGroup
   let β := Module.Basis.ofVectorSpace ℂ M
   have hli : LinearIndependent ℂ (fun i => ((β i : M) : S →ₗ[ℂ] V)) :=
     β.linearIndependent.map' M.subtype (Submodule.ker_subtype M)
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   let E := TensorProduct.equivFinsuppOfBasisRight (M := S) β
   have hxs : x = (E x).sum fun i s => s ⊗ₜ[ℂ] β i := by
     rw [← TensorProduct.equivFinsuppOfBasisRight_symm_apply, LinearEquiv.symm_apply_apply]
   have hsum : ∑ i ∈ (E x).support, ((β i : M) : S →ₗ[ℂ] V) (E x i) = 0 := by
-    rw [hxs, Finsupp.sum, map_sum] at hx
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hxs, Finsupp.sum, map_sum] at hx
     simpa using hx
   have h0 := eq_zero_of_sum_apply_eq_zero σ π hirr hschur _ hli
     (fun i g s => hM _ (β i).2 g s) (E x).support (fun i => E x i) hsum

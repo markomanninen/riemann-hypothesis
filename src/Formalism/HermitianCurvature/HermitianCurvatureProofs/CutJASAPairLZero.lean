@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairL
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnTrSmooth
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnFibMem
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnBetaFrame
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairL
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnTrSmooth
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnFibMem
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnBetaFrame
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsLatIntVec
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsLatIntVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,7 @@ open scoped Matrix
 variable {K : Type} [Field K] [NumberField K]
 
 theorem index_toAddSubgroup (a : Ideal (𝓞 K)) :
-    (Submodule.toAddSubgroup a).index = Ideal.absNorm a := rfl
+    (Submodule.toAddSubgroup a).index = Ideal.absNorm a := (Ideal.absNorm_eq_index a).symm
 
 theorem relIndex_mul_ideal (𝔱 a : Ideal (𝓞 K)) (ha : a ≠ ⊥) :
     (Submodule.toAddSubgroup (𝔱 * a)).relIndex (Submodule.toAddSubgroup a) =
@@ -72,7 +76,7 @@ theorem absNorm_den_le (x : K) (d e : 𝓞 K) (hd : d ≠ 0) (hex : (e : K) = (d
   have hidx : (den K x).toAddSubgroup.index = Nat.card f.range := by
     rw [← hker]; exact AddSubgroup.index_ker f
   have hfinite : Finite ((Submodule.toAddSubgroup B) ⧸ H) := Nat.finite_of_card_ne_zero hfin
-  calc Ideal.absNorm (den K x) = Nat.card f.range := hidx
+  calc Ideal.absNorm (den K x) = Nat.card f.range := by rw [Ideal.absNorm_eq_index]; exact hidx
     _ ≤ Nat.card ((Submodule.toAddSubgroup B) ⧸ H) :=
         Nat.card_le_card_of_injective _ Subtype.val_injective
     _ = _ := rfl

@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CrudeOrd
-import Formalism.LocalToGlobal.ProjectiveLattices.CrudeDiv
-import Formalism.LocalToGlobal.ProjectiveLattices.CrudeMin
-import Formalism.LocalToGlobal.ProjectiveLattices.CrudeVal
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CrudeOrd
+public import Formalism.LocalToGlobal.ProjectiveLattices.CrudeDiv
+public import Formalism.LocalToGlobal.ProjectiveLattices.CrudeMin
+public import Formalism.LocalToGlobal.ProjectiveLattices.CrudeVal
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,8 +24,8 @@ def SatDir (T : CDVR) {d : ℕ} (uvec : Lt1 Dw → Fin d → T.Fr) : Prop :=
   ∀ τ : E →+* ℂ, ∃ W : Fin (Dw.mult τ) → Fin d → T.V,
     ∀ i i' : Fin (Dw.mult τ), ∑ j, uvec ⟨τ, i'⟩ j * algebraMap T.V T.Fr (W i j) = if i' = i then 1 else 0
 
-variable (Dw) in
 
+variable (Dw) in
 def DomW (a : (E →+* ℂ) × ℕ → ℕ) : Prop := Crude.Dom Dw.mult (fun τ i => a (τ, i))
 
 def crudeBd {K : Type} [Field K] [NumberField K] (la : HeightOneSpectrum (𝓞 K)) (D : ℕ) : ℝ :=
@@ -44,22 +48,22 @@ theorem Crude.le_degree {σ : Type} (α : σ →₀ ℕ) (s : σ) : α s ≤ α.
     rw [h0]
     exact Nat.zero_le _
 
+
 omit [IsCMField E] [StarRing (𝓞 E)] in
 variable (Dw) in
-
 def colP {n : ℕ} (hn : Fintype.card (Lt1 Dw) ≤ n) : Lt1 Dw → Fin n :=
   fun p => Fin.castLE hn (Fintype.equivFin (Lt1 Dw) p)
 
+
 open Classical in
 variable (Dw) in
-
 def P1 (T : CDVR) (a : (E →+* ℂ) × ℕ → ℕ) {n : ℕ} (hn : Fintype.card (Lt1 Dw) ≤ n) :
     MvPolynomial (LtN Dw n) T.Fr :=
   MvPolynomial.map (Int.castRingHom T.Fr) (Crude.Pmin Dw.mult n (colP Dw hn) (fun τ i => a (τ, i)))
 
+
 open Classical in
 variable (Dw) in
-
 def fact1 (a : (E →+* ℂ) × ℕ → ℕ) {n : ℕ} (hn : Fintype.card (Lt1 Dw) ≤ n) : ℕ :=
   (Crude.diagExp Dw.mult n (colP Dw hn) (fun τ i => a (τ, i))).prod fun _ t => t.factorial
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColLieApply
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RowActCoefPolyAndUnitaryDense
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColLieApply
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RowActCoefPolyAndUnitaryDense
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,8 @@ section RowLie
 
 variable {ι : Type} {m n : ℕ}
 
-open Classical in
 
+open Classical in
 def rowSubst (n : ℕ) (τ : ι) (g : Matrix (Fin m) (Fin m) ℂ) : Pol ι m n →ₐ[ℂ] Pol ι m n :=
   subst (fun _ => 1) (fun ρ => if ρ = τ then g else 1)
 
@@ -62,22 +66,24 @@ theorem exists_poly_rowSubst_coef (τ : ι) (k l : Fin m) (f : Pol ι m n) (φ :
   | add p q hp hq =>
     obtain ⟨P, hP, hP'⟩ := hp φ
     obtain ⟨Q, hQ, hQ'⟩ := hq φ
-    exact ⟨P + Q, fun g => by simp only [map_add, hP, hQ], by simp only [map_add, hP', hQ']⟩
+    exact ⟨P + Q, fun g => by simp only [map_add (f := _), hP, hQ], by simp only [map_add (f := _), hP', hQ']⟩
   | mul_X p v hp =>
     obtain ⟨ρ, j, c⟩ := v
     by_cases h : ρ = τ
     · subst h
       choose P hP hP' using fun b : Fin m => hp (φ ∘ₗ LinearMap.mulRight ℂ (X (ρ, b, c)))
       refine ⟨∑ b, X (b, j) * P b, fun g => ?_, ?_⟩
-      · rw [map_mul, rowSubst_X_self, Finset.mul_sum, map_sum, map_sum]
+      · set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_mul, rowSubst_X_self, Finset.mul_sum, map_sum, map_sum]
         refine Finset.sum_congr rfl fun b _ => ?_
         rw [mul_smul_comm, map_smul, map_mul (eval _), eval_X, ← hP b g]
         rfl
       · have h1 : ∀ b, eval (fun x => (1 : Matrix (Fin m) (Fin m) ℂ) x.1 x.2) (P b) = φ (p * X (ρ, b, c)) := by
           intro b
           rw [← hP b 1, rowSubst_one]; rfl
-        rw [rowLie_mul, rowLie_X_self, map_add, map_sum, map_sum]
-        simp only [Derivation.leibniz, smul_eq_mul, map_add, map_mul, eval_X, ← hP', h1, Finset.sum_add_distrib,
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [rowLie_mul, rowLie_X_self, map_add (f := _), map_sum, map_sum]
+        simp only [Derivation.leibniz, smul_eq_mul, map_add (f := _), map_mul, eval_X, ← hP', h1, Finset.sum_add_distrib,
           pderiv_X]
         congr 1
         · simp [Matrix.one_apply]
@@ -99,12 +105,14 @@ theorem rowLie_mem_span_rowSub {J : Type} [Fintype J] (f : J → Pol ι m n) (τ
   have hs : ∀ x : J → Pol ι m n, φ x = ∑ j, (φ ∘ₗ LinearMap.single ℂ (fun _ : J => Pol ι m n) j) (x j) := by
     intro x
     conv_lhs => rw [← Finset.univ_sum_single x]
-    rw [map_sum]; rfl
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]; rfl
   choose Q hQ hQ' using fun j =>
     exists_poly_rowSubst_coef τ k l (f j) (φ ∘ₗ LinearMap.single ℂ (fun _ : J => Pol ι m n) j)
   have h0 : ∑ j, Q j = 0 := by
     refine GlobalTheory.Branching.eq_zero_of_vanish_unitaryGroup m _ fun u hu => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [← hQ]
     have hm : φ (fun j => rowSub n τ ⟨u, hu⟩ (f j)) ∈ (⊥ : Submodule ℂ ℂ) :=
       hφ0 ▸ Submodule.mem_map_of_mem (Submodule.subset_span ⟨⟨u, hu⟩, rfl⟩)
@@ -113,7 +121,8 @@ theorem rowLie_mem_span_rowSub {J : Type} [Fintype J] (f : J → Pol ι m n) (τ
   apply hφ
   rw [hs]
   simp only [hQ']
-  rw [← map_sum, ← map_sum, h0, map_zero, map_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, ← map_sum, h0, map_zero, map_zero]
 
 end RowLie
 

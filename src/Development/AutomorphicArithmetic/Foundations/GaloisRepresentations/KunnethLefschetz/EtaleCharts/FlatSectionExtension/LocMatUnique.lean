@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FlatSectionExtension.ChartRange
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FlatSectionExtension.TrUnique
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FlatSectionExtension.SectionExt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FlatSectionExtension.ChartRange
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FlatSectionExtension.TrUnique
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FlatSectionExtension.SectionExt
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC CrystallineSemistableComparison CrystallineSemistableComparison.Onto UpperTheory.Gal.KunnethLefschetz.G.PX
 
@@ -26,7 +30,8 @@ private theorem res_isTr {K : Type} [CommRing K] {W Z Y : Scheme.{0}} {q : Z ⟶
     intro γ hγ l
     simp only [tN, ← CommRingCat.comp_apply, ← Functor.map_comp]
     rfl
-  rw [e β h₂ m, hG m, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e β h₂ m, hG m, map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [map_mul, e α h₁ l]
   rfl

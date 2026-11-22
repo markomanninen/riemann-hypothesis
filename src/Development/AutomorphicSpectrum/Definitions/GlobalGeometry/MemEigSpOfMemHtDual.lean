@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TwoWeightEqOneAddRoot
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TwoWeightEqOneAddRoot
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,22 +93,14 @@ theorem mem_htDual (q : Cpt ξ) (e : eigSp ρ σ) :
 theorem eigLat_le_htDual (q : Cpt ξ) : M.eigLat ρ σ q ≤ M.htDual L n ρ σ q :=
   fun e he => Submodule.subset_span ⟨he.2, fun w hw => (M.htOm_le L n q hw) e he.1⟩
 
-theorem mem_eigSp_of_mem_htW (𝔡 : Ideal O) {q : Cpt ξ} {e : E} (he : e ∈ M.htW L n ρ σ 𝔡 q) :
-    e ∈ eigSp ρ σ := by
-  induction he using Submodule.span_induction with
-  | mem x hx => exact hx.1
-  | zero => exact (eigSp ρ σ).zero_mem
-  | add x y _ _ hx hy => exact (eigSp ρ σ).add_mem hx hy
-  | smul c x _ hx => exact (eigSp ρ σ).smul_mem (c : Ω) hx
-
-example (q : Cpt ξ) : (0 : Module.Dual Ω (eigSp ρ σ)) ∈ M.htOmEig L n ρ σ q := Submodule.zero_mem _
-
 end LieModel
 
-open Classical in
 
-def Lat.patch (S : Finset ℕ) (L₀ : Lat ξ E) (Lp : ℕ → Lat ξ E) : Lat ξ E := fun q =>
-  if ∃ p ∈ S, InFibre ξ p q then ⨅ p ∈ S, ⨅ _ : InFibre ξ p q, Lp p q else L₀ q
+open Classical in
+def Lat.patch (S : Finset ℕ) (L₀ : Lat ξ E) (Lp : ℕ → Lat ξ E) : Lat ξ E := by
+  classical
+  exact fun q =>
+    if ∃ p ∈ S, InFibre ξ p q then ⨅ p ∈ S, ⨅ _ : InFibre ξ p q, Lp p q else L₀ q
 
 theorem Lat.patch_empty (L₀ : Lat ξ E) (Lp : ℕ → Lat ξ E) : Lat.patch ∅ L₀ Lp = L₀ := by
   funext q; simp [Lat.patch]

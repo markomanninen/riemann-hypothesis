@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.TwistedEisensteinNonvanishing
+module
+
+public import Formalism.PeriodIntegrals.TwistedEisensteinNonvanishing
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 

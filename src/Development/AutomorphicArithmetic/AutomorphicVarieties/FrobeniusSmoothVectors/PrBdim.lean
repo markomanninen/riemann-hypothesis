@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
-import Mathlib.Data.Sym.Card
-import Mathlib.Data.Sym.Sym2.Order
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+public import Mathlib.Data.Sym.Card
+public import Mathlib.Data.Sym.Sym2.Order
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -18,7 +22,7 @@ private def borEquiv (K : Type) [Field K] (n : ℕ) (g : GL (Fin n) K) :
       (Matrix.of fun i j => if h : i ≤ j then f ⟨(i, j), h⟩ else 0) * (g : Matrix (Fin n) (Fin n) K), by
     intro i j h
     rw [← Matrix.mul_assoc, ← Matrix.mul_assoc, Units.mul_inv, Matrix.one_mul, Matrix.mul_assoc,
-      Units.mul_inv, Matrix.mul_one, Matrix.of_apply, dif_neg (not_le.mpr h)]⟩
+      Units.mul_inv, Matrix.mul_one, Matrix.of_apply, dite_eq_right (not_le.mpr h)]⟩
   left_inv X := by
     apply Subtype.ext
     have e : (Matrix.of fun i j => if i ≤ j then ((g : Matrix (Fin n) (Fin n) K) * X.1 *
@@ -40,7 +44,7 @@ private def borEquiv (K : Type) [Field K] (n : ℕ) (g : GL (Fin n) K) :
       (Matrix.of fun i j => if h : i ≤ j then f ⟨(i, j), h⟩ else 0) * (g : Matrix (Fin n) (Fin n) K)) *
       ((g⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K)) p.1.1 p.1.2 = f p
     rw [← Matrix.mul_assoc, ← Matrix.mul_assoc, Units.mul_inv, Matrix.one_mul, Matrix.mul_assoc,
-      Units.mul_inv, Matrix.mul_one, Matrix.of_apply, dif_pos p.2]
+      Units.mul_inv, Matrix.mul_one, Matrix.of_apply, dite_eq_left p.2]
 
 theorem UpperTheory.V.Fr.pr_bdim :
     ∀ (K : Type) [Field K] (n : ℕ) (g : GL (Fin n) K), 2 * Module.finrank K (bor g) = n * (n + 1) := by

@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.QuadraticCoefficientForms
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LminorSubmatrixCastSucc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainExtension.UnipotentMoves.BotMulVecExt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainExtension.PointAssembly.Frames
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.QuadraticCoefficientForms
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LminorSubmatrixCastSucc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainExtension.UnipotentMoves.BotMulVecExt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainExtension.PointAssembly.Frames
+
+@[expose] public section
 
 namespace GlobalTheory.FrameNet
 
@@ -18,7 +22,7 @@ theorem norm_det_le {r : ℕ} {m : Matrix (Fin r) (Fin r) ℂ} {s : ℝ} (hs : 0
     have hp : ‖∏ i, m (σ i) i‖ ≤ s ^ r := by
       rw [norm_prod]
       calc ∏ i, ‖m (σ i) i‖ ≤ ∏ _i : Fin r, s :=
-            Finset.prod_le_prod (fun _ _ => norm_nonneg _) (fun i _ => hm _ _)
+            Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) (fun i _ => hm _ _)
         _ = s ^ r := by simp
     rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h | h <;> simpa [h] using hp
   have hfac : ((Nat.factorial r : ℕ) : ℝ) ≤ (r : ℝ) ^ r := by exact_mod_cast Nat.factorial_le_pow r
@@ -209,7 +213,7 @@ theorem exists_net_of_matrices {α ι : Type*} [Fintype ι] {r : ℕ} (O : Set �
     calc (N.card : ℝ) ≤ S.card := by exact_mod_cast hNcard
       _ = ∏ τ, ((Finset.Icc (0 : ℤ) ⌊2 * s / δ τ⌋).card : ℝ) ^ (2 * r ^ 2) := hS
       _ ≤ ∏ τ, (Q / D τ) ^ (2 * r ^ 2) :=
-          Finset.prod_le_prod (fun τ _ => by positivity)
+          Finset.prod_le_prod₀ (fun τ _ => by positivity)
             (fun τ _ => pow_le_pow_left₀ (Nat.cast_nonneg _) (hcnt τ) _)
       _ = (Q ^ Fintype.card ι / ∏ τ, D τ) ^ (2 * r ^ 2) := by
           rw [Finset.prod_pow, Finset.prod_div_distrib, Finset.prod_const, Finset.card_univ]
@@ -248,7 +252,8 @@ def gramMat (G : Matrix (Fin r) (Fin r) E) (v : Fin r → Fin r → E) : Matrix 
 theorem gram_basisMat (τ : E →+* ℂ) (G : Matrix (Fin r) (Fin r) E) (v : Fin r → Fin r → E) :
     gram τ G (basisMat τ v) = (gramMat G v).map τ := by
   ext a b
-  simp only [ReciprocityTheory.ChartRestriction.G.FD.gram, gramMat, basisMat, hermC, herm, ReciprocityTheory.ChartRestriction.G.FD.col, Matrix.of_apply, Matrix.map_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ReciprocityTheory.ChartRestriction.G.FD.gram, gramMat, basisMat, hermC, herm, ReciprocityTheory.ChartRestriction.G.FD.col, Matrix.of_apply, Matrix.map_apply,
     Matrix.transpose_apply, map_sum, map_mul, cc, NumberField.IsCMField.complexEmbedding_complexConj]
 
 omit [NumberField E] [IsCMField E] in
@@ -336,12 +341,6 @@ def shortFrames (v : Fin r → Fin r → E) (B : ℝ) : Set (Frame X.Ψ r) :=
   {x | (∀ τ : X.Ψ, gram τ.1 X.Gm (mat x τ) =
       Matrix.diagonal fun a : Fin r => ((sgn X.p0 (a : ℕ) : ℝ) : ℂ)) ∧
     ∀ i, ∑ τ : X.Ψ, X.maj x τ (Data.emb τ.1 (v i)) ≤ B}
-
-theorem mem_shortFrames {v : Fin r → Fin r → E} {B : ℝ} {x : Frame X.Ψ r} :
-    x ∈ shortFrames X v B ↔ (∀ τ : X.Ψ, gram τ.1 X.Gm (mat x τ) =
-      Matrix.diagonal fun a : Fin r => ((sgn X.p0 (a : ℕ) : ℝ) : ℂ)) ∧
-    ∀ i, ∑ τ : X.Ψ, X.maj x τ (Data.emb τ.1 (v i)) ≤ B := by
-  exact Iff.rfl
 
 theorem shortFrames_subset_dom (v : Fin r → Fin r → E) (B : ℝ) : shortFrames X v B ⊆ X.dom := by
   intro x hx

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.OrbitIntegrals.ModulusBounds.DetEqOfSurj
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.OrbitIntegrals.ModulusBounds.DetEqOfSurj
+
+@[expose] public section
 
 noncomputable section
 
@@ -194,7 +198,7 @@ private theorem det_sq_lemma_2 [CharZero k] (Z : Subalgebra k (Matrix (Fin n) (F
     have hk : β ((LinearMap.ker β).projection Wc hWc.symm.symm v) = 0 :=
       LinearMap.mem_ker.mp (Submodule.projection_apply_mem _ v)
     conv_lhs => rw [← hsplit]
-    rw [map_add, hk, add_zero]
+    rw [map_add (f := _), hk, add_zero]
     rfl
   let Pk : (Fin n → k) →ₗ[k] (Fin n → k) := P.restrictScalars k
   have hPk : ∀ v, Pk v = P v := fun v => rfl

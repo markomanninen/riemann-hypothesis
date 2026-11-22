@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.IsGalAd
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.IsGalAd
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,17 +28,5 @@ def SplitLift (π : Cusp K n) (P : Cusp M n) : Prop :=
     Continuous i → (∀ x : K, i (algebraMap K _ x) = algebraMap M _ (algebraMap K M x)) →
     ∀ σ σ', π.locComp v σ → P.locComp w σ' →
       ∃ e : σ.V ≃ₗ[ℂ] σ'.V, ∀ g x, e (σ.ρ g x) = σ'.ρ (Matrix.GeneralLinearGroup.map i.toRingHom g) (e x)
-
-def LitCBC2 : Prop :=
-  ∀ (K M : Type) [Field K] [NumberField K] [Field M] [NumberField M] [Algebra K M] [IsGalois K M],
-    (Module.finrank K M).Prime → (IsTotallyReal K ∨ IsTotallyComplex K) → (IsTotallyReal M ∨ IsTotallyComplex M) →
-    ∀ n : ℕ, 1 ≤ n →
-      (∀ π : Cusp K n, (∃ η : HChar K, IsNormChar M η ∧ (π.twist η).Iso π) ∨
-        ∃ P : Cusp M n, WeakBC π.sat P.sat ∧ (∀ τ m, π.inf (τ.comp (algebraMap K M)) m → P.inf τ m) ∧ SplitLift π P) ∧
-      (∀ P : Cusp M n, (∀ σ : M ≃ₐ[K] M, P.ConjIso σ.toRingEquiv) →
-        ∃ π : Cusp K n, WeakBC π.sat P.sat ∧ (∀ τ m, P.inf τ m → π.inf (τ.comp (algebraMap K M)) m) ∧ SplitLift π P) ∧
-      ∀ (π : Cusp K n) (P : Cusp M n), (∀ σ : M ≃ₐ[K] M, P.ConjIso σ.toRingEquiv) → WeakBC π.sat P.sat →
-        (∀ η : HChar K, IsNormChar M η → ¬ (π.twist η).Iso π) ∧
-        ∀ π₁ : Cusp K n, WeakBC π₁.sat P.sat → ∃ η : HChar K, (η = 1 ∨ IsNormChar M η) ∧ (π.twist η).Iso π₁
 
 end UpperTheory.CBC

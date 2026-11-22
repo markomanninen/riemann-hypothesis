@@ -1,5 +1,10 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.CountData
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.CountData
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology GlobalTheory.CompanionTheory.SW.Core
 open scoped ENNReal NNReal MatrixGroups
 
@@ -133,13 +138,14 @@ theorem finite_small (F : Type) [Field F] [NumberField F] (ρ : InfinitePlace F 
     rw [h1, ← h2, ← hρ, Complex.norm_real, Real.norm_eq_abs]
     exact (hα _).le
 
-open Classical in
 
+open Classical in
 theorem sum_le_of_fibres {α ι : Type} [Fintype ι] (a : α → ℝ) (φ : α → ι → ℤ)
     (g : ι → ℤ → ℝ) (K : ℕ) (ha : ∀ r, 0 ≤ a r) (hg : ∀ w k, 0 ≤ g w k)
     (hgs : ∀ w, Summable (g w)) (hle : ∀ r, a r ≤ ∏ w, g w (φ r w))
     (hfib : ∀ (T : Finset α) (n : ι → ℤ), (T.filter fun r => φ r = n).card ≤ K) :
     Summable a ∧ ∑' r, a r ≤ K * ∏ w, ∑' k, g w k := by
+  classical
   have key : ∀ T : Finset α, ∑ r ∈ T, a r ≤ K * ∏ w, ∑' k, g w k := by
     intro T
     have hG : ∀ n : ι → ℤ, 0 ≤ ∏ w, g w (n w) :=
@@ -163,7 +169,7 @@ theorem sum_le_of_fibres {α ι : Type} [Fintype ι] (a : α → ℝ) (φ : α �
     have s5 : ∑ n ∈ Fintype.piFinset (fun w => (T.image φ).image (fun n => n w)), ∏ w, g w (n w)
         ≤ ∏ w, ∑' k, g w k := by
       rw [← Finset.prod_univ_sum]
-      refine Finset.prod_le_prod (fun w _ => Finset.sum_nonneg fun k _ => hg w k) fun w _ => ?_
+      refine Finset.prod_le_prod₀ (fun w _ => Finset.sum_nonneg fun k _ => hg w k) fun w _ => ?_
       exact (hgs w).sum_le_tsum _ fun k _ => hg w k
     rw [← Finset.mul_sum] at s3
     have hK : (0 : ℝ) ≤ K := Nat.cast_nonneg K
@@ -174,8 +180,8 @@ theorem sum_le_of_fibres {α ι : Type} [Fintype ι] (a : α → ℝ) (φ : α �
   have hsum : Summable a := summable_of_sum_le ha key
   exact ⟨hsum, hsum.tsum_le_of_sum_le key⟩
 
-open Classical in
 
+open Classical in
 theorem fibre_card (F : Type) [Field F] [NumberField F] (ρ : InfinitePlace F → (F →+* ℝ))
     (S : Finset (𝓞 F)) (hS : ∀ α : 𝓞 F, (∀ w, |ρ w (α : F)| < 1) → α ∈ S)
     (x : InfinitePlace F → ℝ) (T : Finset (𝓞 F)) (n : InfinitePlace F → ℤ) :
@@ -225,7 +231,7 @@ theorem lattice_sum : ∀ (F : Type) [Field F] [NumberField F], IsTotallyReal F 
     (fun w => (hint w).1.mul_left _)
     (fun r => by
       rw [← Finset.prod_inv_distrib]
-      refine Finset.prod_le_prod (fun w _ => by positivity) fun w _ => ?_
+      refine Finset.prod_le_prod₀ (fun w _ => by positivity) fun w _ => ?_
       have h1 := norm_lower ht (τ w) (hτ w) (ρ w (r : F))
       rw [← hc] at h1
       have hpos : 0 < c * (|((⌊(τ w).re + ρ w (r : F)⌋ : ℤ) : ℝ)| + (τ w).im) := by
@@ -245,7 +251,7 @@ theorem lattice_sum : ∀ (F : Type) [Field F] [NumberField F], IsTotallyReal F 
       = ∏ _w : InfinitePlace F, ((c ^ (m + 2))⁻¹ * (2 * (1 + 1 / t))) := by
     rw [Finset.prod_const, Finset.card_univ]
   rw [hconst, ← Finset.prod_mul_distrib]
-  refine Finset.prod_le_prod (fun w _ => ?_) fun w _ => ?_
+  refine Finset.prod_le_prod₀ (fun w _ => ?_) fun w _ => ?_
   · exact tsum_nonneg fun k => by have := hy0 w; positivity
   · rw [tsum_mul_left, mul_assoc]
     refine mul_le_mul_of_nonneg_left ?_ (by positivity)

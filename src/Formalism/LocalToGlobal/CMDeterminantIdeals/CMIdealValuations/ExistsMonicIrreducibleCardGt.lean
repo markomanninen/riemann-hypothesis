@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementG
+module
+
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementG
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem mem_smul_top_iff_repr {R M ι : Type} [CommRing R] [AddCommGroup M] [Mod
     refine Submodule.smul_induction_on (p := fun x => b.repr x i ∈ J) hx (fun r hr m _ => ?_) (fun x y hx hy => ?_)
     · simp only [map_smul, Finsupp.smul_apply, smul_eq_mul]
       exact J.mul_mem_right _ hr
-    · simp only [map_add, Finsupp.add_apply]
+    · simp only [map_add (f := _), Finsupp.add_apply]
       exact J.add_mem hx hy
   · intro h
     rw [← b.sum_repr x]
@@ -109,7 +113,10 @@ theorem largeResidueExtension : BigResExt := by
   have hM0 : M0.IsMaximal := (Ideal.Quotient.maximal_ideal_iff_isField_quotient _).2
     (MulEquiv.isField (Field.toIsField (AdjoinRoot (g.map (residue V)))) (quotResidueEquiv g).toMulEquiv)
   have hloc : IsLocalRing W := IsLocalRing.of_unique_max_ideal ⟨M0, hM0, fun M hM => by
-    have hc : (M.comap (algebraMap V W)).IsMaximal := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal M
+    letI := hM
+    have hc : (M.comap (algebraMap V W)).IsMaximal :=
+      Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (algebraMap V W)
+        (fun x => Algebra.IsIntegral.isIntegral x) M
     have h1 := eq_maximalIdeal hc
     have hle : M0 ≤ M := by
       rw [hM0def, ← h1]
@@ -133,7 +140,7 @@ theorem largeResidueExtension : BigResExt := by
     have h1 : maximalIdeal W = ⊥ := (IsLocalRing.isField_iff_maximalIdeal_eq).1 hf
     rw [hmax, hM0def, Ideal.map_eq_bot_iff_of_injective hinj] at h1
     exact IsDiscreteValuationRing.not_a_field V h1
-  have hdvr : IsDiscreteValuationRing W := ((IsDiscreteValuationRing.TFAE W hnf).out 0 4).2 hprin
+  have hdvr : IsDiscreteValuationRing W := ((IsDiscreteValuationRing.TFAE W hnf).out 1 5).2 hprin
   have ecard : Nat.card (ResidueField W) = Nat.card (AdjoinRoot (g.map (residue V))) :=
     Nat.card_congr ((Ideal.quotEquivOfEq hmax).trans (quotResidueEquiv g)).toEquiv
   refine ⟨W, inferInstance, hdom, hdvr, inferInstance, ?_, ?_, ?_, hinj, ?_⟩

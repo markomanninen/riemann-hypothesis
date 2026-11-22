@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ColumnData
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.LinkThIndep
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.LinkThU
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.LinkThIndep
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.LinkThU
+
+@[expose] public section
 
 noncomputable section
 
@@ -177,8 +181,8 @@ open NumberField Formalism.BasicNotions Matrix nonZeroDivisors
 open Formalism.L2.Ker.Cd.TaylorLogMetric
 open Formalism.MainNotions.TaylorLogMetric hiding admitted AdmittedStatements AllSplit CoefIn DataIn DualB EqAt EqAway FamE Hf IdE InProd Iop IsChi IsComb IsCurveIdeal IsDiscriminantTwelfthRootOfIdealLattice IsFrobC IsIdem JetsInt La LocBasis LocBasisW Mono N1 NNBasis OrthoBasisW Orthonormal Pos Qd QdB Stmt TVar TVarB Th ThSp Tor TorsPrime U VC Wop XiF YYl adm1 al atLog chK chg chgB coordV der detId logDerivativeAtOne ellT embT embV eq22 fF fnConj hYY hh homL int22 jet kap lamOf letterOf liftY logOmVal meanLogNormSq meanLogOm mmM mom22 LargerSupportMomentCondition mono normSq pSer pairN per22 posEmb posG aux₃ pull qH sE sgm str22 tauEmb tauSg taylor th22 tor0 torConj vec22 vecN wPh zB
 
-open FractionalIdeal in
 
+open FractionalIdeal in
 theorem spanPow {R K : Type*} [CommRing R] [IsDedekindDomain R] [Field K] [Algebra R K]
     [IsFractionRing R K] (I : FractionalIdeal R⁰ K) (hI : I ≠ 0) (S : Set K)
     (hIS : (I : Submodule R K) = Submodule.span R S) (k : ℕ) :
@@ -369,15 +373,6 @@ open Formalism.MainNotions.TaylorLogMetric hiding admitted AdmittedStatements Al
 
 theorem relative_determinant_norm_one (D : Car) : DetIdealsKernelNormOne D :=
   DN.determinant_norm_one_of_unit_disc D (DN.unitDisc D)
-
-theorem character_unit_on_determinant (D : Car) (χ : IdE D → ℂ) (hχ : IsChi D χ) : ChiUnitDet D χ :=
-  chi_unit_of_det_norm_one D (relative_determinant_norm_one D) χ hχ
-
-theorem LinkThIndep_of_IopIso
-    (hI : ∀ D : Car, ∀ cc : Ideal (𝓞 D.host.K), IsCurveIdeal D cc → ∀ δ : ℂ, IsDiscriminantTwelfthRootOfIdealLattice D cc δ →
-      IopIso D (tor0 D cc δ)) :
-    LinkThIndep :=
-  theta_norm_indep_of_det_norm_one hI relative_determinant_norm_one
 
 end Formalism.L2.Ker.Cd.IntegralLatticeDensity
 

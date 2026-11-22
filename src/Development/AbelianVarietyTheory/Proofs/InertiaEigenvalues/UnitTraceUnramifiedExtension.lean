@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OverExtAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemRangeOfValNonneg
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIntegerSpanningFamilyOfUnramifiedExt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OverExtAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemRangeOfValNonneg
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIntegerSpanningFamilyOfUnramifiedExt
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ def intMap (hU : IsUnrExt K K' d φ) : K.O →+* K'.O where
     have h1 := Classical.choose_spec (exists_int_image hU (a + b))
     have h2 := Classical.choose_spec (exists_int_image hU a)
     have h3 := Classical.choose_spec (exists_int_image hU b)
-    rw [h1]; simp only [map_add, h2, h3])
+    rw [h1]; simp only [map_add (f := _), h2, h3])
 
 theorem intMap_spec (hU : IsUnrExt K K' d φ) (a : K.O) :
     algebraMap K'.O K'.E (intMap hU a) = φ (algebraMap K.O K.E a) :=
@@ -88,8 +92,8 @@ theorem map_maximalIdeal (hU : IsUnrExt K K' d φ) :
   rw [h1, Ideal.map_span, Set.image_singleton,
     (IsDiscreteValuationRing.irreducible_iff_uniformizer _).1 h2]
 
-open scoped nonZeroDivisors in
 
+open scoped nonZeroDivisors in
 theorem exists_trace_unit_of_span (K K' : UQ) (d : ℕ) (φ : K.E →+* K'.E) (hU : IsUnrExt K K' d φ)
     (hB : ∃ u : Fin d → K'.O, ∀ y : K'.O, ∃ a : Fin d → K.O,
       algebraMap K'.O K'.E y = ∑ i, φ (algebraMap K.O K.E (a i)) * algebraMap K'.O K'.E (u i)) :
@@ -109,7 +113,8 @@ theorem exists_trace_unit_of_span (K K' : UQ) (d : ℕ) (φ : K.E →+* K'.E) (h
     obtain ⟨a, ha⟩ := hu y
     have hy : y = ∑ i, a i • u i := by
       apply IsFractionRing.injective K'.O K'.E
-      rw [ha, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [ha, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [Algebra.smul_def, map_mul, hmap, intMap_spec]
     rw [hy]

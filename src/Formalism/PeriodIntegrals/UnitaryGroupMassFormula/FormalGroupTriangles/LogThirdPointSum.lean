@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupTriangles.SubstUpdateVarTwoLiftedThirdRoot
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.GlueHoldsVar
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupTriangles.SubstUpdateVarTwoLiftedThirdRoot
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.GlueHoldsVar
+
+@[expose] public section
 
 noncomputable section
 
@@ -109,7 +113,7 @@ theorem add_factor {S : Subring ℂ_[p]} {W : WeierstrassCurve ℂ_[p]} {wq ex :
   have hlab : lg l (add l ex (MvPowerSeries.X 0 : MvPowerSeries (Fin 3) ℂ_[p]) (MvPowerSeries.X 1)) =
       lg l (MvPowerSeries.X 0) + lg l (MvPowerSeries.X 1) := by
     unfold add
-    exact lg_pt hex0 hex (by rw [map_add, cc_lg hl0 (cc_X 0), cc_lg hl0 (cc_X 1), add_zero])
+    exact lg_pt hex0 hex (by rw [map_add (f := _), cc_lg hl0 (cc_X 0), cc_lg hl0 (cc_X 1), add_zero])
   have HU := hasSubst_upd (2 : Fin 3) (constantCoeff_liftedThirdRoot W wq)
   obtain ⟨u, huS, hu⟩ := fact_div (k := 2) (constantCoeff_liftedThirdRoot W wq) (liftedThirdRoot_mem_coeffSubring h1 h2 h3 h4 h6 h) (subst_updateVar_two_liftedThirdRoot W wq) hGS (by
       rw [subst_add hl0 HU hab0 (cc_X 2), subst_add hl0 HU (cc_X 0) (cc_X 1), MvPowerSeries.subst_X HU,

@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.TowerRallisLemma
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.TowerRallisLemma
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,7 +121,7 @@ theorem piInf_cA (h : IsCMExt F E σ) {w : InfinitePlace F} (τ : EmbOver E w) (
   have hw : w.IsReal := h.1.isReal w
   induction z using TensorProduct.induction_on with
   | zero => simp only [map_zero, star_zero]
-  | add x y hx hy => simp only [map_add, hx, hy, star_add]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, star_add]
   | tmul a x =>
     change piInf τ (a ⊗ₜ[F] σ x) = _
     rw [piInf_tmul', piInf_tmul', h.2.2.2, star_mul',

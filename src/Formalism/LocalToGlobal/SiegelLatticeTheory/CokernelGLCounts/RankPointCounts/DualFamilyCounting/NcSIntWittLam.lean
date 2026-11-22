@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSIntWittSt
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSIntWittOEv
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TensTop
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSIntWittSt
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSIntWittOEv
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TensTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,7 +71,7 @@ theorem core_loc {R S : Type} [CommRing R] [IsLocalRing R] [CommRing S] (ι : R 
     exact (IsLocalRing.maximalIdeal.isMaximal R).ne_top (top_le_iff.1 hle)
   set L : S := ι (pp i) + ι (qq i) * Θ with hL
   set M : S := ι (pp i) - ι (qq i) * Θ with hM
-  have hsL : s L = M := by rw [hL, hM, map_add, map_mul, hsι, hsι, hsΘ]; ring
+  have hsL : s L = M := by rw [hL, hM, map_add (f := _), map_mul, hsι, hsι, hsΘ]; ring
   have hsM : s M = L := by rw [hL, hM, map_sub, map_mul, hsι, hsι, hsΘ]; ring
   have hLM : L * M = 1 := by
     rw [hL, hM, norm_one _ _ _ _ hΘ, ← map_pow, ← map_pow, ← map_mul, ← map_sub, hnorm i, map_one]
@@ -75,7 +79,7 @@ theorem core_loc {R S : Type} [CommRing R] [IsLocalRing R] [CommRing S] (ι : R 
   set sc : S := ι Bt - L * (ι a - ι b * Θ) with hsc
   have hcc : c * sc = ι (f i) := by
     rw [hc, hsc, hL, hM]
-    simp only [f, map_sub, map_add, map_mul, map_pow]
+    simp only [f, map_sub, map_add (f := _), map_mul, map_pow]
     exact norm_id _ _ _ _ _ _ _ hΘ
   obtain ⟨u, hu⟩ := hi
   have hLO : L ∈ O := O.add_mem (hιO _) (O.mul_mem (hιO _) hΘO)

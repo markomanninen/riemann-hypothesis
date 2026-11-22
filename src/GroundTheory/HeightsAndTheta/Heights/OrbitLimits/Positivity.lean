@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.CurvePt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsMonomialNotMem
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsSegreDivisor
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.CurvePt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsMonomialNotMem
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsSegreDivisor
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets
@@ -68,8 +73,8 @@ theorem nonneg_of_isFieldIntersection {I : IFamily F ι} (hI : IsFieldIntersecti
     exact cycEval_ratDiv_one_nonneg _ _ _ fun W hW =>
       ih W (isProjVarF_of_mem_divSupp hV hf hfV hW) _ fun j k => hL _ k
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem const_one_eq_snoc (n : ℕ) :
     (fun _ _ => (1 : ℤ) : Fin (n + 1) → K → ℤ) =
       Fin.snoc (α := fun _ => K → ℤ) (fun _ _ => 1) (fun _ => 1) := by

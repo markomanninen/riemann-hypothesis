@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.SpecialLinearCosets.GoodU
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.SpecialLinearCosets.GoodU
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -9,7 +13,7 @@ private theorem tendsto_pow_zero_of_valuation {K : Type} [Field K] [NumberField 
     (hy : Valued.v y < 1) : Tendsto (fun n : ℕ => y ^ n) atTop (𝓝 0) := by
   rw [(Valued.hasBasis_nhds_zero (Kv v) _).tendsto_right_iff]
   intro γ _
-  obtain ⟨n, hn⟩ := exists_pow_lt₀ hy (Units.map (MonoidWithZeroHom.ValueGroup₀.embedding (f := .ofClass (Valued.v : Valuation (Kv v) _))) γ)
+  obtain ⟨n, hn⟩ := exists_pow_lt₀ hy (Units.map (MonoidWithZeroHom.ValueGroup₀.embedding (f := ((Valued.v : Valuation (Kv v) (WithZero (Multiplicative ℤ))) : Kv v →*₀ WithZero (Multiplicative ℤ)))).toMonoidHom γ)
   filter_upwards [eventually_ge_atTop n] with m hm
   simp only [Set.mem_setOf_eq, Valuation.restrict_lt_iff_lt_embedding]
   rw [map_pow]

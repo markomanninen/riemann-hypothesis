@@ -1,5 +1,26 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirVolumeRatios.DensDefs
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+module
+
+public import Formalism.PeriodIntegrals.LatCountG
+public import Formalism.HarderNarasimhan.StatementPl
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.SphericalFunctionIntegrableOfLocal
+public import Formalism.FlagUnipotentLattices.HalfDifferenceL1Bound
+public import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.ExtensionInterSubspace
+public import Formalism.LogSumExpBounds.StatementD
+public import Formalism.LatticeRigidity.HeightMinimum.PackingCountGeometricMean
+public import Mathlib
+public import Formalism.LatticeRigidity.HeightMinimum.PowFinrankEqZeroOfTracePow
+public import Formalism.GelfandTransference.EnergyIdentity
+public import Formalism.NormUnitaryBounds.DetPolynomialWeights.ShortIndependentVectorsOfDualMinimum
+public import Formalism.LatticeTheta.ThetaShiftInversion
+public import Formalism.LatticeRigidity.StatementC
+public import Formalism.LatticeRigidity.HeightMinimum.SqrtAbsNormLeProd
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PlaceDegreeData
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.TraceConjMulEqHilbertSchmidt
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IndefiniteUnitaryPreservesForm
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.InclusionInjective
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,7 +28,7 @@ namespace Formalism.L2.S.S7.DensRat
 
 open NumberField
 open scoped Matrix
-open Formalism.MainNotions.S Formalism.L2.S.S7.DensDefs
+open Formalism.MainNotions.S
 
 def ratReal (I : AutInst) (γ : GL (Fin I.n) I.E) (hγ : γ ∈ Formalism.UG.UJ (starRingEnd I.E) I.J)
     (v : InfinitePlace I.F) : Formalism.REAL.UJ (I.ε v) :=
@@ -63,14 +84,6 @@ def ratReal (I : AutInst) (γ : GL (Fin I.n) I.E) (hγ : γ ∈ Formalism.UG.UJ 
     congr 1
     simp only [← Matrix.mul_assoc]
     rw [hu]⟩
-
-theorem ratPoint_holds (I : AutInst) : RatPoint I := by
-  intro g hg
-  have hf : Formalism.UG.bc (Formalism.UG.inclE (F := I.F) (Af I.F)) g ∈ Formalism.UG.UPts I.cm.sig I.J (Af I.F) :=
-    Formalism.UG.Final.RatPtsLe I.F I.E (Fin I.n) I.cm.sig I.J (Af I.F) (Subgroup.mem_map_of_mem _ hg)
-  let x : I.GA := (fun v => ratReal I g hg v, ⟨_, hf⟩)
-  have hx : x ∈ I.GFset := ⟨g, hg, fun v => rfl, rfl⟩
-  exact ⟨x, hx, ratM_eq I hx g rfl⟩
 
 end Formalism.L2.S.S7.DensRat
 

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.KillWinLOf
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.KillWinLOf
+
+@[expose] public section
 
 noncomputable section
 

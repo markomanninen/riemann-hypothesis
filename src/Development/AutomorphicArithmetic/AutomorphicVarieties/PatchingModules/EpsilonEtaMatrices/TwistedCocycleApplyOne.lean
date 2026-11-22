@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.FinTwLc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.LcOfOpen
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.DdSumZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.AdicLC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.PlSub
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.PlProps
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.FinTwLc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.LcOfOpen
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.DdSumZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.AdicLC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.PlSub
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.PlProps
+
+@[expose] public section
 
 open Matrix Filter NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 
@@ -108,10 +112,9 @@ private theorem pow_mem_of_PL (l : ℕ) {Γ : Type} [Group Γ] [TopologicalSpace
   obtain ⟨u, hu⟩ := hc.elim_finite_subfamily_closed
     (fun i : {U : OpenNormalSubgroup Γ // ∀ h ∈ H, ∃ e : ℕ, h ^ l ^ e ∈ U} => (i.1.toSubgroup : Set Γ))
     (fun i => Subgroup.isClosed_of_isOpen _ i.1.isOpen') (by
-      ext y
-      simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_iInter, Set.mem_empty_iff_false, iff_false,
-        not_and]
-      intro hy hall
+      apply Set.disjoint_left.mpr
+      simp only [Set.mem_compl_iff, Set.mem_iInter]
+      intro y hy hall
       apply hy
       apply hle
       simp only [PL, SetLike.mem_coe, Subgroup.mem_iInf]
@@ -128,8 +131,7 @@ private theorem pow_mem_of_PL (l : ℕ) {Γ : Type} [Group Γ] [TopologicalSpace
     have hpow : l ^ u.sup e = l ^ e i * l ^ (u.sup e - e i) := by rw [← pow_add, Nat.add_sub_cancel' hle']
     rw [SetLike.mem_coe, hpow, pow_mul]
     exact Subgroup.pow_mem _ (i.2 h hh).choose_spec _
-  rw [hu] at hmem
-  exact hmem
+  exact Set.disjoint_left.mp hu hmem.1 hmem.2
 
 private theorem epM_mul {X : Type} [CommRing X] {g n : ℕ} (Z : Fin g → Matrix (Fin n) (Fin n) X) :
     DD.epM Z * DD.epM Z = 0 := by
@@ -185,13 +187,13 @@ private theorem epsD_one (l : ℕ) [Fact l.Prime] (F : GFrame l) (n : ℕ) (x : 
     (k : Kap x) (m : ℕ) (g : F.Γ) (hg : PadicInt.toZMod ((F.ε g : ℤ_[l]ˣ) : ℤ_[l]) = 1) : epsD k (x.Am m) g = 1 := by
   set y : ℤ_[l] := ((F.ε g : ℤ_[l]ˣ) : ℤ_[l]) with hyd
   have hy : y - 1 ∈ RingHom.ker (PadicInt.toZMod (p := l)) := by
-    rw [RingHom.mem_ker, map_sub, hg, map_one, sub_self]
+    rw [RingHom.mem_ker, RingHom.map_sub, hg, map_one, sub_self]
   rw [PadicInt.ker_toZMod, PadicInt.maximalIdeal_eq_span_p, Ideal.mem_span_singleton'] at hy
   obtain ⟨u, hu⟩ := hy
   have hl : ∀ w : DD (x.Am m) k.g, l • w = 0 := (finAm l F n x m k.g).2.2.2.2.1
   have hy1 : y = 1 + u * l := by rw [hu]; ring
   unfold epsD
-  rw [← hyd, hy1, map_add, map_one, map_add, map_one, map_mul, map_mul, map_natCast, map_natCast,
+  rw [← hyd, hy1, map_add (f := _), map_one, map_add (f := _), map_one, map_mul, map_mul, map_natCast, map_natCast,
     ← nsmul_eq_mul', hl, add_zero]
 
 private theorem epsD_am_eq_one_of_mem_frame_g' (l : ℕ) [Fact l.Prime] (L : Loc) (G0 : Glob l L) (n : ℕ) (x : NP G0.frame n)

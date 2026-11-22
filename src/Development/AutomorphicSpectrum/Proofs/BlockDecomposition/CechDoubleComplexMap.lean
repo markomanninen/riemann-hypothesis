@@ -1,9 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.GlobalDifferentialForms.PullHEq
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.HdgAffIso
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GrCechFin
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SerreClassOfCechSpectralSequence
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.GlobalDifferentialForms.PullHEq
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.HdgAffIso
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GrCechFin
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SerreClassOfCechSpectralSequence
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry GlobalTheory.LogCris DividedPowers GlobalTheory.CechDR GlobalTheory.HodgeCoh CrystallineSemistableComparison CrystallineSemistableComparison.Pb CrystallineSemistableComparison.Om CrystallineSemistableComparison.Om.Glob GlobalTheory.CompanionTheory.CechSerre
 universe w
@@ -21,17 +26,18 @@ variable {R : Type} [CommRing R] {C C' : Type 1} [Category.{0} C] [Category.{0} 
 
 def nerveG (m : CH.Mor F F' (RingHom.id R)) (τ : ι' → ι) (hτ : ∀ α T, U' α T → U (τ α) (m.G.obj T)) (p : ℕ) :
     (CH.cech (idxπ U' hU') p).Elements ⥤ (CH.cech (idxπ U hU) p).Elements where
-  obj x := ⟨m.G.obj x.1, ⟨fun k => ⟨τ (x.2.1 k).1, hτ _ _ (x.2.1 k).2⟩, fun _ _ => rfl⟩⟩
-  map {x y} f := ⟨m.G.map f.1, Subtype.ext (funext fun k => Subtype.ext
-    (congrArg (fun z : (CH.cech (idxπ U' hU') p).obj y.1 => τ (z.1 k).1) f.2))⟩
-  map_id x := Subtype.ext (m.G.map_id _)
-  map_comp f g := Subtype.ext (m.G.map_comp _ _)
+  obj x := (CH.cech (idxπ U hU) p).elementsMk (m.G.obj x.obj)
+    ⟨fun k => ⟨τ (x.val.1 k).1, hτ _ _ (x.val.1 k).2⟩, fun _ _ => rfl⟩
+  map {_x y} f := ⟨m.G.map f.hom, Subtype.ext (funext fun k => Subtype.ext
+    (congrArg (fun z : (CH.cech (idxπ U' hU') p).obj y.obj => τ (z.1 k).1) f.map_val))⟩
+  map_id x := Functor.Elements.hom_ext (m.G.map_id x.obj)
+  map_comp f g := Functor.Elements.hom_ext (m.G.map_comp f.hom g.hom)
 
 def nerveM (m : CH.Mor F F' (RingHom.id R)) (τ : ι' → ι) (hτ : ∀ α T, U' α T → U (τ α) (m.G.obj T)) (p : ℕ) :
     CH.Mor (CH.elF (CH.cech (idxπ U hU) p) F) (CH.elF (CH.cech (idxπ U' hU') p) F') (RingHom.id R) where
   G := nerveG m τ hτ p
-  τ T := m.τ T.1
-  nat φ x := m.nat φ.1 x
+  τ T := m.τ T.obj
+  nat φ x := m.nat φ.hom x
 
 theorem nerveM_face (m : CH.Mor F F' (RingHom.id R)) (τ : ι' → ι) (hτ : ∀ α T, U' α T → U (τ α) (m.G.obj T))
     (p q : ℕ) (k : Fin (p + 2)) (x : CH.Cn (CH.elF (CH.cech (idxπ U hU) p) F) q) :
@@ -45,7 +51,8 @@ def dblHom (m : CH.Mor F F' (RingHom.id R)) (τ : ι' → ι) (hτ : ∀ α T, U
   ch p q x := by
     refine (Cos.d_apply ((CH.cechCos (idxπ U' hU') F').cos q) p _).trans ?_
     refine Eq.trans ?_ (congrArg _ (Cos.d_apply ((CH.cechCos (idxπ U hU) F).cos q) p x).symm)
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_zsmul]
     exact congrArg _ (nerveM_face m τ hτ p q k x)
@@ -69,9 +76,9 @@ theorem dbl_mor : ∀ {R : Type} [CommRing R] {C C' : Type 1} [Category.{0} C] [
     (hU' : ∀ α, Cosieve (U' α)) (m : CH.Mor F F' (RingHom.id R)) (τ : ι' → ι) (hτ : ∀ α T, U' α T → U (τ α) (m.G.obj T)),
     ∃ φ : DCx.Hom (dbl U hU F) (dbl U' hU' F') (RingHom.id R),
       (∀ n (x : CH.H F n), φ.tot.mapH n ((CH.cechAugRow (idxπ U hU) F).edge.mapH n
-          ((CH.Mor.restrict F (CategoryOfElements.π ((Functor.const C).obj PUnit.{1}))).hom.mapH n x)) =
+          ((CH.Mor.restrict F (Functor.Elements.π ((Functor.const C).obj PUnit.{1}))).hom.mapH n x)) =
         (CH.cechAugRow (idxπ U' hU') F').edge.mapH n
-          ((CH.Mor.restrict F' (CategoryOfElements.π ((Functor.const C').obj PUnit.{1}))).hom.mapH n (m.pull n x))) ∧
+          ((CH.Mor.restrict F' (Functor.Elements.π ((Functor.const C').obj PUnit.{1}))).hom.mapH n (m.pull n x))) ∧
       ∀ p q (x : ((dbl U hU F).col p).H q) (i : Fin (p + 1) → ι'),
         (tupM U' hU' F' i).pull q ((φ.col p).mapH q x) =
           (morU m (U := capT U (τ ∘ i)) (U' := capT U' i) fun T hT k => hτ (i k) T (hT k)).pull q ((tupM U hU F (τ ∘ i)).pull q x) := by

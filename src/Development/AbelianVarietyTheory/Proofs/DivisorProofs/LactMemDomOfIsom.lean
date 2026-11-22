@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsArchOne
-import Development.AbelianVarietyTheory.BlockTheory.PoincareCuspForms.SmallUnipotentElements
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MemCuspFormsOfMultipleRationalIsometryMove
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPfB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetPf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsArchOne
+public import Development.AbelianVarietyTheory.BlockTheory.PoincareCuspForms.SmallUnipotentElements
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MemCuspFormsOfMultipleRationalIsometryMove
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPfB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetPf
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -40,12 +44,6 @@ theorem lact_mem_dom_of_isom (M : TwoLevels E r U C) {γ : GL (Fin r) E}
 theorem lact_tr_mem (M : TwoLevels E r U C) (u : U) (c : C) {x : Frame M.Ψ r} (hx : x ∈ M.dom) :
     lact (M.tr u c) x ∈ M.dom :=
   lact_mem_dom_of_isom M (M.tr_herm u c) hx
-
-theorem lact_Γ_mem (M : TwoLevels E r U C) (c : C) {γ : GL (Fin r) E} (hγ : γ ∈ (M.comp c).Γ)
-    {x : Frame M.Ψ r} (hx : x ∈ M.dom) : lact γ x ∈ M.dom :=
-  lact_mem_dom_of_isom M (fun v w => by
-    have := ((M.comp c).Γ_stab γ hγ).1 v w
-    rwa [M.comp_Gm c] at this) hx
 
 def Lmap (M : TwoLevels E r U C) (u : U) (c : C) (x : M.dom) : M.dom :=
   ⟨lact (M.tr u c) x.1, lact_tr_mem M u c x.2⟩

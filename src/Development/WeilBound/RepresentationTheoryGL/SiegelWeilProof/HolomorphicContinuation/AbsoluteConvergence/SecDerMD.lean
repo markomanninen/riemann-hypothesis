@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.SecDerMC
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.SecDerMA
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.SecDerMC
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.SecDerMA
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ theorem dom_boundE (c : ℝ) (hc : 0 < c) (H : Matrix (Fin n) (Fin n) ℂ) (P : 
   obtain ⟨Cd, hCd, hdec⟩ := PositivityTheory.Rg.Sw.AbsSt.DF.decay k c hc r
   obtain ⟨L, hL⟩ := (isCompact_Icc (a := s - 1) (b := s + 1)).exists_bound_of_continuousOn
     (f := fun σ : ℝ => ∑ i, ∑ j, ‖aE H (-σ) i j‖)
-    (Continuous.continuousOn (continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+    (Continuous.continuousOn (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       ((continuous_aE_entry H i j).comp continuous_neg).norm))
   set L' := max L 1 with hL'
   have hL'1 : 1 ≤ L' := le_max_right _ _

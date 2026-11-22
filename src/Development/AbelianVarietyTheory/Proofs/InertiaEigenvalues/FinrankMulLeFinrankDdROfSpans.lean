@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfForallMemFilV
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfForallMemFilV
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,7 @@ theorem finrank_mul_le_finrank_DdR_of_spans {G : Type} [Group G] {Qp K₀ K : Ty
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul v y => simp [e, TensorProduct.smul_tmul']
-    | add x y hx hy => simp only [map_add, smul_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), smul_add, hx, hy]
 
   have hK : ∀ (c : K) (x : V ⊗[Qp] F), x ∈ W →
       AlgebraTensorModule.map (LinearMap.id : V →ₗ[LL] V) (LinearMap.mulLeft Qp (algebraMap K F c)) x ∈ W := by
@@ -68,7 +72,7 @@ theorem finrank_mul_le_finrank_DdR_of_spans {G : Type} [Group G] {Qp K₀ K : Ty
       induction y using TensorProduct.induction_on with
       | zero => simp
       | tmul v z => simp [actVdR]
-      | add y y' hy hy' => simp only [map_add, hy, hy']
+      | add y y' hy hy' => simp only [map_add (f := _), hy, hy']
     rw [hcomm, hx g]
 
   let D' : Submodule K (F ⊗[Qp] V) :=
@@ -86,7 +90,8 @@ theorem finrank_mul_le_finrank_DdR_of_spans {G : Type} [Group G] {Qp K₀ K : Ty
     intro y _
     obtain ⟨m, b, d, hd, hy⟩ := hs (e.symm y)
     have hy' : y = ∑ i, b i • e (d i) := by
-      rw [← e.apply_symm_apply y, hy, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← e.apply_symm_apply y, hy, map_sum]
       simp only [he]
     rw [hy']
     exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _

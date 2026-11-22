@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.ExistsLocFEq
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.GmapEqSelfOfFix
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.ExistsLocFEq
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.GmapEqSelfOfFix
+
+@[expose] public section
 
 open NumberField Module
 
@@ -89,13 +93,18 @@ theorem fibS_eq_singleton (hF : IsFixF K F) {h : V →ₗ⋆[K] V →ₗ[K] K} {
 
 theorem card_glue (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F) {h : V →ₗ⋆[K] V →ₗ[K] K}
     {U : Submodule K V} (hUc : IsCompl U (orthK h U)) {M : Submodule (𝓞 K) V} (hM : IsLatIn U M)
-    {Λ₀ : Submodule (𝓞 K) V} (hΛ₀ : Λ₀ ∈ GlueSet h U M) {T : Submodule (𝓞 K) V}
+    {Λ₀ : Submodule (𝓞 K) V} (hΛ₀ : Λ₀ ∈ GlueSet h U M)
+    (hΛ₀full : Submodule.IsFullLattice K Λ₀) {T : Submodule (𝓞 K) V}
     (hT : IsLatIn (orthK h U) T) :
     Nat.card {Λ : Submodule (𝓞 K) V // Λ ∈ GlueSet h U M ∧ Λ ⊓ (orthK h U).restrictScalars (𝓞 K) = T} =
       ∏' 𝔭 : {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal}, fibP h U 𝔭.1 M T := by
   classical
-  have hN := isLattice_sup hUc hM hT
-  obtain ⟨s, hs⟩ := exists_locF_eq (F := F) hN hΛ₀.1
+  have hN : Submodule.IsFullLattice K (M ⊔ T) := by
+    refine { toIsLattice := isLattice_sup hUc hM hT, span_eq_top := ?_ }
+    rw [eq_top_iff, ← hUc.sup_eq_top, ← hT.2, ← hM.2]
+    exact sup_le (Submodule.span_mono (SetLike.coe_subset_coe.mpr le_sup_left))
+      (Submodule.span_mono (SetLike.coe_subset_coe.mpr le_sup_right))
+  obtain ⟨s, hs⟩ := exists_locF_eq (F := F) hN hΛ₀full
   have hsing : ∀ 𝔭 ∉ s, fibS h U 𝔭.1 M T = {locF 𝔭.1 (M ⊔ T)} := fun 𝔭 h𝔭 =>
     fibS_eq_singleton hF hUc hM hT hΛ₀.1 hΛ₀.2.1 𝔭.2 (hs 𝔭 h𝔭)
   have hone : ∀ 𝔭 ∉ s, fibP h U 𝔭.1 M T = 1 := by
@@ -122,8 +131,17 @@ theorem card_glue (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsF
       (fun 𝔭 => if hp : 𝔭 ∈ s then (τ ⟨𝔭, hp⟩).1 else ⊥) (by
         intro 𝔭 hp
         simp only [dif_pos hp]
-        obtain ⟨⟨A, hA, e⟩, -, -, -⟩ := (τ ⟨𝔭, hp⟩).2
-        exact ⟨by rw [← e, LocF.locF_idem], A, hA, e⟩)
+        obtain ⟨⟨A, hA, e⟩, -, hU, hW⟩ := (τ ⟨𝔭, hp⟩).2
+        refine ⟨by rw [← e, LocF.locF_idem], A, { toIsLattice := hA, span_eq_top := ?_ }, e⟩
+        have hle : locF 𝔭.1 A ≤ (Submodule.span K (A : Set V)).restrictScalars (𝓞 K) := by
+          rw [← G7.locF_subspace (Submodule.span K (A : Set V)) 𝔭.2.isPrime]
+          exact LocF.locF_mono 𝔭.1 (fun _ hx => Submodule.subset_span hx)
+        have hNle : M ⊔ T ≤ locF 𝔭.1 A := by
+          rw [e]
+          exact sup_le ((LocF.le_locF 𝔭.1 M).trans (hU ▸ inf_le_left))
+            ((LocF.le_locF 𝔭.1 T).trans (hW ▸ inf_le_left))
+        rw [eq_top_iff, ← hN.span_eq_top, Submodule.span_le]
+        exact hNle.trans hle)
     have hfib : ∀ 𝔭 : {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal}, locF 𝔭.1 Λ ∈ fibS h U 𝔭.1 M T := by
       intro 𝔭
       by_cases hp : 𝔭 ∈ s

@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.LgAway
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.JTwist
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.DualOfWeights
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.OrdinaryJacquetModules.CoreOrd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.AuTeichEx
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.LgAway
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.JTwist
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.DualOfWeights
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.OrdinaryJacquetModules.CoreOrd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.AuTeichEx
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel IsLocalRing GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.UnitaryBC UpperTheory.V UpperTheory.V.Hi UpperTheory.V.Hi.CaseU
 open UpperTheory.V.W (Plc Lp HidaSetting Vl Resid LamObj UniversalOrdinaryDeterminantRing Pair)
 open UpperTheory.V.HV (Coef)
@@ -11,8 +16,6 @@ open scoped TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 set_option synthInstance.maxHeartbeats 200000
 open UpperTheory.GalN.V UpperTheory.V.Z.Win UpperTheory.V.Z.Desc.W UpperTheory.Zero.LLC
-open private au_isTeich au_open from Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.AuTeichEx
-attribute [-instance] UpperTheory.V.GradeZeroInterpolatingElement.instIsLocalRingSubtypePadicAlgClMemSubalgebraPadicIntO
 
 private theorem twRep_one {H M : Type} [Group H] [AddCommGroup M] [Module ℂ M] (ρ : Representation ℂ H M) :
     twRep ρ 1 = ρ := by
@@ -25,7 +28,7 @@ private theorem twRep_inv {H M : Type} [Group H] [AddCommGroup M] [Module ℂ M]
   simp [twRep, smul_smul]
 
 private theorem locDet_KGL {E : Type} [Field E] [NumberField E] {n : ℕ} {χ : Formalism.L2.Host.HChar E} {w : Plc E}
-    (h : χ.UnrAt w) {g : GL (Fin n) (w.adicCompletion E)} (hg : g ∈ GlobalTheory.LFun.KGL w n) : CuspSub.locDet n χ w g = 1 :=
+    (h : χ.UnrAt w) {g : GL (Fin n) (w.adicCompletion E)} (hg : g ∈ GlobalTheory.LFun.KGL w (n := n)) : CuspSub.locDet n χ w g = 1 :=
   h _ (GlobalTheory.SphGal.isUnitAt_det_of_mem hg)
 
 private theorem det_tw {n : ℕ} {k Γ H : Type} [Field k] [Group Γ] [Group H] {D D' : W.GDet n k Γ} {β : Γ →* kˣ}
@@ -38,7 +41,7 @@ private theorem det_tw {n : ℕ} {k Γ H : Type} [Field k] [Group Γ] [Group H] 
   induction y using MonoidAlgebra.induction_linear with
   | zero => simp
   | add a b ha hb =>
-    rw [map_add (W.GDet.repAlg _ B), ← ha, ← hb, ← map_add, ← map_add]
+    rw [map_add (W.GDet.repAlg _ B), ← ha, ← hb, ← map_add (f := _), ← map_add (f := _)]
     congr 2
     exact map_add (MonoidAlgebra.mapDomainRingHom B φ) a b
   | single g r =>
@@ -59,7 +62,7 @@ private theorem tw_aut (P : GlobalTheory.Mem.LiteralAutomorphy.LitN) {L Ω : Typ
         ∃ τ' : SmIrr (GLw n w), IsCompAlong σ' (locU n w) ((cLoc w).comp (locU n w).subtype) τ'.ρ ∧
           Nonempty (τ'.ρ.Equiv (twRep τ.ρ (CuspSub.locDet n κ w))) ∧
           ∀ A : ValuationSubring Ω, IsPlaceOver A w → (∀ g ∈ Ine (F := L) A, β g = 1) →
-            ∀ U ≤ GlobalTheory.LFun.KGL w n, fixd τ.ρ U ≠ ⊥ → fixd τ'.ρ U ≠ ⊥) ∧
+            ∀ U ≤ GlobalTheory.LFun.KGL w (n := n), fixd τ.ρ U ≠ ⊥ → fixd τ'.ρ U ≠ ⊥) ∧
       ∀ w, IsSplitAt w → ∀ τ' : SmIrr (GLw n w), IsCompAlong σ' (locU n w) ((cLoc w).comp (locU n w).subtype) τ'.ρ →
         ∃ τ : SmIrr (GLw n w), IsCompAlong σ (locU n w) ((cLoc w).comp (locU n w).subtype) τ.ρ ∧
           Nonempty (τ'.ρ.Equiv (twRep τ.ρ (CuspSub.locDet n κ w))) := by
@@ -165,10 +168,6 @@ private theorem ord_congr {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Al
     (e : ∀ g, (ψ g : Qbar l) = ψ' g) : OrdChar ι a ω hh ψ' :=
   (MonoidHom.ext fun g => Units.ext (e g) : ψ = ψ') ▸ H
 
-theorem UpperTheory.V.Z.Desc.W.woGd {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] {A : ValuationSubring Ω}
-    {w : Plc E} {h : IsPlaceOver A w} {l : ℕ} [Fact l.Prime] {n : ℕ} {ι : Qbar l ≃+* ℂ} {r : G E Ω →* GL (Fin n) (Qbar l)} {y : WD h}
-    (k : Lev.WO ι r y) (_g : Gd y) : IsWDOf ι r y := k
-
 theorem UpperTheory.V.Z.Desc.W.woGd' {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] {A : ValuationSubring Ω}
     {w : Plc E} {h : IsPlaceOver A w} {l : ℕ} [Fact l.Prime] {n : ℕ} {ι : Qbar l ≃+* ℂ} {r : G E Ω →* GL (Fin n) (Qbar l)} {y : WD h}
     (k : WDT ι r y) (g : Gd y) : IsWDOf ι r y := k.isWDOf g
@@ -189,9 +188,34 @@ private theorem autP (hP : Af.HypothesesH) (hn : 1 ≤ n) (r : Resid V.frame c.O
     Z.Ord.AutY (hset Q τ₀) ι (PartOf Q τ₀ ι) := by
   intro lam _ d ξ hξ F hF hK hI
   obtain ⟨e, he⟩ := hξ
-  obtain ⟨t, ht⟩ := au_isTeich c r
-  have hop : IsOpen (τ₀.ker : Set (KT n (wt s))) :=
-    au_open _ (ι.injective.comp Subtype.val_injective) τ₀ (hτ t ht).1
+  have hTeich : ∃ t, r.IsTeich t := by
+    obtain ⟨hc, hfin, hlm, -⟩ := UpperTheory.V.abelian₂.dvr_finite l c.O
+    have : CharP (ResidueField c.O) l := by
+      refine (CharP.charP_iff_prime_eq_zero (Fact.out : l.Prime)).2 ?_
+      rw [← map_natCast (residue c.O), residue_eq_zero_iff]
+      exact hlm
+    have : CharP (c.O ⧸ maximalIdeal c.O) l := inferInstanceAs (CharP (ResidueField c.O) l)
+    have : PerfectRing (ResidueField c.O) l := inferInstance
+    let lift := Perfection.lift l (ResidueField c.O) (c.O ⧸ maximalIdeal c.O)
+    let j := lift (RingHom.id (ResidueField c.O))
+    let τ := (Perfection.teichmuller l (maximalIdeal c.O)).comp j.toMonoidHom
+    have hres (x : ResidueField c.O) : residue c.O (τ x) = x :=
+      (Perfection.mk_teichmuller (j x)).trans
+        (RingHom.congr_fun (lift.symm_apply_apply (RingHom.id (ResidueField c.O))) x)
+    refine ⟨fun i => (Units.map τ).comp (r.chib i), fun i g => ⟨hres _, ?_⟩⟩
+    rw [MonoidHom.comp_apply, ← map_pow, ← Nat.card_units, pow_card_eq_one', map_one]
+  obtain ⟨t, ht⟩ := hTeich
+  have hop : IsOpen (τ₀.ker : Set (KT n (wt s))) := by
+    let f := ι.toRingHom.comp (algebraMap c.O (Qbar l))
+    have hf : Function.Injective f := ι.injective.comp Subtype.val_injective
+    have hmap : Function.Injective (Matrix.GeneralLinearGroup.map (n := Fin m) f) := by
+      intro A B hAB
+      apply Units.ext
+      apply Matrix.ext
+      intro i j
+      exact hf (congrArg (fun M : GL (Fin m) ℂ => (M : Matrix (Fin m) (Fin m) ℂ) i j) hAB)
+    rw [← MonoidHom.ker_comp_of_injective τ₀ _ hmap]
+    exact (hτ t ht).1
   have h1 := decompU l L Ω s n hn V Q c m τ₀ ι hop lam d e ξ he F hF hK hI
   refine SetLike.le_def.1 (iSup_le fun σ => ?_) h1
   by_cases h0 : YOf Q ι τ₀ e ξ σ.1 = ⊥
@@ -202,8 +226,8 @@ private theorem autP (hP : Af.HypothesesH) (hn : 1 ≤ n) (r : Resid V.frame c.O
 
 end Pt
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 private theorem pt_part (PH : Af.HypothesesH) {l : ℕ} [Fact l.Prime] {L Ω : Type} [Field L] [NumberField L] [IsCMField L] [Field Ω]
     [Algebra L Ω] [IsAlgClosure L Ω] {s : HidaSetting l L Ω} {n : ℕ} (hn : 1 ≤ n) {V : s.Lev} {Q : QData V} {c : Coef l}
     {r : Resid V.frame c.O n} {ι : Qbar l ≃+* ℂ} {B : UniversalOrdinaryDeterminantRing r} {Λ : LamObj r} {R : HD Q ι Λ} {K : (hset Q R.τ₀).Lev}
@@ -228,69 +252,3 @@ private theorem pt_part (PH : Af.HypothesesH) {l : ℕ} [Fact l.Prime] {L Ω : T
   refine ⟨ω, w1, fun i => ?_⟩
   exact ord_congr (w2 i) fun g => hy _
 
-set_option maxHeartbeats 1000000 in
-theorem UpperTheory.V.Z.Desc.W.jTwist_of : TypeGd → TwAway → SphUntw → OrdTw → PsFull →
-    Af.HypothesesH → ∀ (l : ℕ) [Fact l.Prime] (L Ω : Type) [Field L] [NumberField L] [IsCMField L] [Field Ω] [Algebra L Ω] [IsAlgClosure L Ω] (s : HidaSetting l L Ω) (n : ℕ), 1 ≤ n →
-    ∀ (V : s.Lev) (Q : QData V) (c : Coef l), ∀ (r : Resid V.frame c.O n) (ι : Qbar l ≃+* ℂ), ∀ (B : UniversalOrdinaryDeterminantRing r) (Λ : LamObj r) (R : HD Q ι Λ) (K : (hset Q R.τ₀).Lev), V.S' = s.S → ∀ J : Ideal B.B, R.IsJ B K J → B.TwistOk J := by
-  intro hTy hTw hSp hOr hPs PH l _ L Ω _ _ _ _ _ _ s n hn V Q c r ι B Λ R K hS J hJ x x' h β hx hg hβ ⟨k, hk⟩ hc _ h0 hD hψ
-  have P := PH.litN
-  have hAx := axU P l L Ω s n hn V Q c R.m R.τ₀
-  obtain ⟨⟨lam, hlam⟩, hW⟩ := wtBridge P l L Ω s n hn V Q c R.m R.τ₀ r B Λ R.θ R.theta h hg.1
-  obtain ⟨d, ξ, Y, ⟨σ, e, hσ, hb, hY, hcomp, s1⟩, hDx, hord⟩ := pt_part PH hn hJ hx ((hW lam hlam x).2.1 hg)
-  have hpr := V.pr_cont W.continuous_resP
-  have hρ : Continuous (Y.r.comp V.pr) := Y.cont.comp hpr
-  have hβ' : IsOpen ((β.comp V.pr).ker : Set (G L Ω)) := hβ.preimage hpr
-  have hβc := GlobalTheory.HeckeGal.continuous_of_isOpen_ker' _ hβ'
-  obtain ⟨N, hN⟩ : Odd (l ^ k) := ((Fact.out : l.Prime).odd_of_ne_two s.odd).pow
-  have s2 := partUR2Wt l L Ω s n hn V Q c ι R.m R.τ₀ lam d e ξ hb σ hσ hY
-  have s3 := partUR2Unr l L Ω s n hn V Q c ι R.m R.τ₀ lam d e ξ hb σ hσ hY
-  obtain ⟨σ', art, κ, t0, ha, hκ, t2, t3, t4, t5⟩ := tw_aut P ι hβc (N := N)
-    (MonoidHom.ext fun g => by rw [← hN]; exact DFunLike.congr_fun hk (V.pr g)) s.hc
-    (fun g g' e => (congrArg β (pr_conj V e)).trans (DFunLike.congr_fun hc (V.pr g))) hσ
-  have hcont := UpperTheory.galoisRep_irreducibility_criterion.2 _ _ n (Y.r.comp V.pr) _ hρ hβc
-  choose ph hph hinj using hg.2
-  have hph' : ∀ (v : Vl l L) j, W.IsWtPart (s.hw v) (x'.psi v j) (h v j)
-      (ph v j * ((β.comp V.pr).comp (Ine (F := L) (s.A v)).subtype)⁻¹) := fun v j => by
-    rw [hψ]
-    exact part_tw (hph v j) hβ'
-  refine upU_w PH l L Ω s n hn V Q c r ι B Λ R K hS J hJ x' h lam ⟨hg.1, fun v j => ⟨_, hph' v j⟩⟩ hlam σ' _ t0 hcont
-    ((UpperTheory.galoisRep_irreducibility_criterion.1 _ (G L Ω) _ n _).2.2 _ (ss_comp (pr_surj V) Y.ss)) (det_tw V.pr hDx hD) (fun w hs hw τ' b hτ' hb' => ?_)
-    (fun y => t2 _ _ (s2 y)) (fun w hw => ?_) ?_ (fun v => ?_) fun u τ' hu hτ' rc hrc => ?_
-  · obtain ⟨τ, h1, h2⟩ := t5 w hs τ' hτ'
-    obtain ⟨g1, g2⟩ := hSp P L Ω n κ w τ τ' b hb' h2
-    exact satFrobW PH.toClassicalTheorems L Ω l ι n _ hcont w hw τ' b hb' fun A hA rc hrc =>
-      woOf (hTw P L Ω l ι n _ hρ art κ 0 _ ha hβc hκ w hw τ τ' g1 h2 A hA rc (toT PH.toClassicalTheorems hrc)
-        (woGd (lgAway (s1 w hs τ h1) hw A hA rc hrc) (g2 A hA rc (toT PH.toClassicalTheorems hrc))))
-  · obtain ⟨A, hA⟩ := (exists_isPlaceOver Ω w : ∃ A : ValuationSubring Ω, IsPlaceOver A w)
-    exact t3 w A hA (fun g hg => (congrArg β (pr_ine V hw hA hg)).trans β.map_one) (s3 w hw)
-  · obtain ⟨τ₀, s5⟩ := Up.comp_ex hσ (split_at_base_place (s := s))
-    obtain ⟨τ', u1, -, u2⟩ := t4 _ (split_at_base_place (s := s)) τ₀ s5
-    refine ⟨τ', u1, u2 _ (s.hw _) (fun g hg => h0 ⟨g, hg, rfl⟩) _ ?_
-      (partUR2V0 l L Ω s n hn V Q c ι R.m R.τ₀ lam d e ξ hb σ hσ hY _ s5)⟩
-    refine le_trans ?_ (SphCompletion.KO_completion _ n).le
-    rintro _ ⟨u, -, rfl⟩
-    exact ⟨u, rfl⟩
-  · have hv : IsSplitAt (s.w v.1) := split_l (s := s) ⟨v.1, v.2⟩
-    obtain ⟨τ', u1, u2, -⟩ := t4 _ hv _ (hcomp v)
-    obtain ⟨ω, w1, w2⟩ := hord v
-    obtain ⟨ω', w3, w4⟩ := hOr L Ω l ι n art κ _ ha hβc hκ _ _ (s.hw v.1) _ (hAx.art_spec v) _ τ' ω (htW lam) (x.psi v)
-      (hPs P L Ω l ι n _ _ (s.hw v.1) _ (hAx.art_spec v) _ ω (htW lam) (x.psi v) (ph v) w1 w2
-        (fun j => (funext (hlam v j)).symm ▸ hph v j) (hinj v)) w2 u2
-    exact ⟨τ', ω', u1, w3, fun i => ord_congr (w4 i) fun g => congrArg Units.val (DFunLike.congr_fun (hψ v i) g).symm⟩
-  · have hsp : ∀ u : s.St, IsSplitAt (s.w u) := fun u =>
-      UpperTheory.isSplitAt_of_decomposition_le_restriction_range L Ω _ _ (s.hA u) (s.split _ (Or.inr (Or.inl u.2))) _ (Up.under_w _)
-    obtain ⟨τ, h1, h2⟩ := t5 _ (hsp u) τ' hτ'
-    obtain ⟨t, ht⟩ := au_isTeich c r
-    choose loc hloc using fun u : s.St => Up.comp_ex hσ (hsp u)
-    classical
-    have hT := partUR2Type l L Ω s n hn V Q c ι R.m R.τ₀ lam d e ξ hb σ hσ hY _ (R.type t ht) (Function.update loc u τ) (fun u' => by
-      by_cases e : u' = u
-      · subst e
-        rwa [Function.update_self]
-      · rw [Function.update_of_ne e]
-        exact hloc _) u rc hrc
-    rw [Function.update_self] at hT
-    obtain ⟨g1, g2⟩ := hTy L Ω n _ _ (s.hw u) τ rc (toT PH.toClassicalTheorems hrc)
-      (fun i => W.pushCh (ι.toRingHom.comp (algebraMap c.O (Qbar l))) ((t i).comp V.pr)) hT
-    exact hTw P L Ω l ι n _ hρ art κ 0 _ ha hβc hκ _ hu τ τ' g1 h2 _ (s.hw u) rc (toT PH.toClassicalTheorems hrc)
-      (woGd (lgAway (s1 _ (hsp u) τ h1) hu _ (s.hw u) rc hrc) g2)

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalDegreeLower
-import Formalism.SharpRestriction.Divisibility.LocalNonemptiness.LiftErrorLocal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalDegreeLower
+public import Formalism.SharpRestriction.Divisibility.LocalNonemptiness.LiftErrorLocal
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH MeasureTheory NumberField IsDedekindDomain
 open GlobalTheory.IndefiniteRowSideFullHecke.MatrixMinorProducts GlobalTheory.BlockSizes
@@ -42,7 +46,7 @@ theorem aPlus_le (D : D7) (j : ℕ) (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) (τ : D.wh
   have a2 : DV.aPlusQ D j τ 0 ≤ (D.hc τ).v ⟨0, h0⟩ + (D.hc τ).e ⟨j - 1, hj⟩ := by
     rw [DV.aPlusQ_eq]
     unfold DV.sigPar DV.eQ
-    rw [dif_pos h0, dif_pos ⟨h1, h2⟩]
+    rw [dite_eq_left h0, dite_eq_left ⟨h1, h2⟩]
     have ht : (0 : ℚ) ≤ D.R.t := Nat.cast_nonneg _
     have hk' : (2 : ℚ) ≤ D.R.k := by exact_mod_cast (show 2 ≤ D.R.k by omega)
     have hj' : (0 : ℚ) ≤ j := Nat.cast_nonneg _
@@ -65,7 +69,7 @@ theorem aMinus_le (D : D7) (j : ℕ) (h1 : 1 ≤ j) (τ : D.what₂.Tau) (L : Si
   have hj : j - 1 < D.R.m := by omega
   have a2 : DV.aMinusQ D j τ c ≤ (D.hc τ).b ⟨j + c, hc⟩ - (D.hc τ).e ⟨j - 1, hj⟩ := by
     unfold DV.aMinusQ DV.eQ
-    rw [dif_pos hc, dif_pos ⟨h1, by omega⟩]
+    rw [dite_eq_left hc, dite_eq_left ⟨h1, by omega⟩]
     have ht : (0 : ℚ) ≤ D.R.t := Nat.cast_nonneg _
     have hc' : (0 : ℚ) ≤ c := Nat.cast_nonneg _
     linarith

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.IntToFracInjective
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.IntToFracInjective
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -49,7 +54,7 @@ theorem ParDVRIsDVR.proof : ParDVRIsDVR.Statement := by
       IsLocalization.injective R (Ideal.primeCompl_le_nonZeroDivisors (parPrime e n v))
     exact hx0 (MvPolynomial.C_injective _ _ (hinj (by rw [hmem, map_zero, map_zero])))
   have hnf : ¬IsField R := fun h => hne (isField_iff_maximalIdeal_eq.mp h)
-  exact ((IsDiscreteValuationRing.TFAE R hnf).out 4 0).mp
+  exact ((IsDiscreteValuationRing.TFAE R hnf).out 5 1).mp
     (show (maximalIdeal R).IsPrincipal from ⟨⟨φ ϖ, hspan⟩⟩)
 
 end

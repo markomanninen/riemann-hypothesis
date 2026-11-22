@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormUniq
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinitePartLePreimageOfClosedFibreSubset
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormUniq
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinitePartLePreimageOfClosedFibreSubset
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -82,8 +86,6 @@ def omEquiv (hL : FormLaws) (ψ : A ≃ₐ[K] B) (a : ℕ) : Om K A a ≃ₗ[K] 
       have : ψ.symm.toAlgHom.comp ψ.toAlgHom = AlgHom.id K A := by ext; simp
       rw [this, omMap_id hL]; rfl)
 
-theorem omEquiv_apply (hL : FormLaws) (ψ : A ≃ₐ[K] B) (a : ℕ) (ω : Om K A a) : omEquiv hL ψ a ω = omMap ψ.toAlgHom a ω := rfl
-
 end Om
 
 section Et
@@ -102,8 +104,7 @@ theorem etale_map_left {S A T : Type} [CommRing S] [CommRing A] [CommRing T] [Al
   convert h3 using 1
   refine RingHom.ext fun z => ?_
   induction z with
-  | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul s t =>
     change f s ⊗ₜ[K] t = Algebra.TensorProduct.cancelBaseChange K S S A T
       (Algebra.TensorProduct.comm S (TensorProduct K S T) A ((s ⊗ₜ[K] t) ⊗ₜ[S] (1 : A)))
@@ -119,8 +120,7 @@ theorem etale_map_right {S A T : Type} [CommRing S] [CommRing A] [CommRing T] [A
   convert h3 using 1
   refine RingHom.ext fun z => ?_
   induction z with
-  | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul s t => simp
 
 def polyEquiv (d d' : ℕ) : MvPolynomial (Fin (d + d')) K ≃ₐ[K] TensorProduct K (MvPolynomial (Fin d) K) (MvPolynomial (Fin d') K) :=
@@ -170,15 +170,9 @@ def secMap {Z Y : Scheme.{0}} {p : Z ⟶ Spec (CommRingCat.of K)} {q : Y ⟶ Spe
       rw [← e]
       rfl }
 
-theorem secMap_apply {Z Y : Scheme.{0}} {p : Z ⟶ Spec (CommRingCat.of K)} {q : Y ⟶ Spec (CommRingCat.of K)} (u : Y ⟶ Z) (hu : u ≫ p = q)
-    (V : Z.Opens) (V' : Y.Opens) (hV : V' ≤ u ⁻¹ᵁ V) (g : Sec p V) : secMap u hu V V' hV g = (u.appLE V V' hV).hom g := rfl
-
 def pairU {Z : Scheme.{0}} (q : Z ⟶ Spec (CommRingCat.of K)) (U : ObjectProperty (Thick (smFun Z q))) {a a' c : ℕ} (ha : a + a' = c) :
     CH.Pairing (U.ι ⋙ G q a) (U.ι ⋙ G q a') (U.ι ⋙ G q c) :=
   ⟨fun T => (grOk (smFun Z q) ha).pair.μ T.obj, fun φ => (grOk (smFun Z q) ha).pair.nat φ.hom⟩
-
-theorem cupU_eq {Z : Scheme.{0}} (q : Z ⟶ Spec (CommRingCat.of K)) (U : ObjectProperty (Thick (smFun Z q))) {a a' c i j n : ℕ} (ha : a + a' = c)
-    (h : i + j = n) : cupU q U ha h = (pairU q U ha).cupC h := rfl
 
 theorem gen (hU : FormUniq) (hN : OmNat) (hL : FormLaws) (hC : FormCup)
     (q : X ⟶ Spec (CommRingCat.of K)) (q' : X' ⟶ Spec (CommRingCat.of K)) (p₁ : P ⟶ X) (p₂ : P ⟶ X')
@@ -285,8 +279,7 @@ theorem pushout_bij {K A B C : Type} [CommRing K] [CommRing A] [CommRing B] [Com
   have h : ∀ z, Algebra.TensorProduct.productMap φ₁ φ₂ z = i.hom.hom z := by
     intro z
     induction z with
-    | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul a b =>
       have : a ⊗ₜ[K] b = (a ⊗ₜ[K] (1 : B)) * ((1 : A) ⊗ₜ[K] b) := by simp
       rw [this, map_mul, map_mul, e₁, e₂]
@@ -325,7 +318,8 @@ theorem form_tensor (hL : FormLaws) {K A B C : Type} [CommRing K] [CommRing A] [
   congr 1
   funext j
   simp only [Function.comp_apply]
-  refine Fin.addCases (fun i => ?_) (fun i => ?_) (τ j)
+  generalize τ j = t
+  refine Fin.addCases (fun i => ?_) (fun i => ?_) t
   · rw [Fin.append_left, Fin.append_left]
     change ψ _ = _
     rw [hψ, map_one, mul_one]
@@ -336,8 +330,8 @@ end Ft
 
 section Main
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem kunAff (hU : FormUniq) (hS : SiteLaws) (hA : AffOm) (hN : OmNat) (hL : FormLaws) (hC : FormCup) (hK : OmKun) : KunAff := by
   intro K _ _ X X' P q q' p₁ p₂ hP V V' d d' ⟨cV⟩ ⟨cV'⟩
   have haff := prod_affine q q' p₁ p₂ hP V V' cV.affine cV'.affine

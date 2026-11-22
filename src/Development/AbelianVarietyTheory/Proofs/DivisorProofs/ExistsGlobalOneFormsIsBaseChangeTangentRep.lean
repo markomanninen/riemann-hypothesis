@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.Definitions.Divisors.HopfLaurent
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuasiCompactZeroSec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueRingHomOfSqZeroExtPointAffineStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTranslationSqZeroPointsUnitToPointStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HopfLaurent
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuasiCompactZeroSec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueRingHomOfSqZeroExtPointAffineStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTranslationSqZeroPointsUnitToPointStatement
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry KaehlerDifferential MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.AbCoh GlobalTheory.AbTan
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -53,7 +58,7 @@ def derOf (c : B →+* TrivSqZeroExt B M) (h1 : ∀ b, (c b).fst = b)
   toFun b := (c b).snd
   map_add' a b := by
     show (c (a + b)).snd = (c a).snd + (c b).snd
-    rw [map_add]; rfl
+    rw [map_add (f := _)]; rfl
   map_smul' r b := by
     simp only [RingHom.id_apply, Algebra.smul_def, map_mul, h2, TrivSqZeroExt.snd_mul, TrivSqZeroExt.fst_inl,
       TrivSqZeroExt.snd_inl, op_smul_eq_smul, smul_zero, add_zero]
@@ -89,12 +94,6 @@ def sumHom (α : B →+* B') (f : M →+ M') (hf : ∀ (b : B) (m : M), f (b •
 theorem sumHom_isSum (α : B →+* B') (f : M →+ M') (hf : ∀ (b : B) (m : M), f (b • m) = α b • f m) :
     IsSum (sumHom α f hf) α f :=
   ⟨fun b ↦ by ext <;> simp [sumHom], fun m ↦ by ext <;> simp [sumHom]⟩
-
-@[simp] theorem sumHom_fst (α : B →+* B') (f : M →+ M') (hf : ∀ (b : B) (m : M), f (b • m) = α b • f m)
-    (x : TrivSqZeroExt B M) : (sumHom α f hf x).fst = α x.fst := by simp [sumHom]
-
-@[simp] theorem sumHom_snd (α : B →+* B') (f : M →+ M') (hf : ∀ (b : B) (m : M), f (b • m) = α b • f m)
-    (x : TrivSqZeroExt B M) : (sumHom α f hf x).snd = f x.snd := by simp [sumHom]
 
 end Sum
 

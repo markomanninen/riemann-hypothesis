@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.SqIntCritOf
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.LatticeReduction.RedApplyCongr
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SumHyperplanesComplementFlags
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.SqIntCritOf
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.LatticeReduction.RedApplyCongr
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SumHyperplanesComplementFlags
+
+@[expose] public section
 
 namespace PositivityTheory.Rg.Rs
 

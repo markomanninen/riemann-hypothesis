@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TwistedLevelValues
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLiftModelsOn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TwistedLevelValues
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLiftModelsOn
+
+@[expose] public section
 
 open Formalism.IndefR Formalism.IndefR.Links
 open scoped InnerProductSpace
@@ -25,7 +29,7 @@ theorem finiteDimensional_adForms [FiniteDimensional ℂ W] [Finite I] (hy : Bri
   let ev : Bridge.AdForms ι ρ J χ →ₗ[ℂ] (I → W) :=
     (LinearMap.funLeft ℂ W y).comp (Bridge.AdForms ι ρ J χ).subtype
   refine FiniteDimensional.of_injective ev ?_
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro F hF
   exact Subtype.ext (eq_zero_of_reps hy F.2 fun i => congrFun hF i)
 

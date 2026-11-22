@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementQ
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FlowDouble
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementQ
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FlowDouble
+
+@[expose] public section
 
 open PowerSeries
 
@@ -113,9 +117,9 @@ theorem flow_unique_integral : FlowUniqueZ.{u} := by
     (mul_eq_zero.1 h).resolve_left (Nat.cast_ne_zero.2 hn)
   simp only [WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₂, WeierstrassCurve.map_a₃,
     WeierstrassCurve.map_a₄] at hx hy hx' hy'
-  have dx : derivative K (x - x') = 2 * (y - y') + C W.a₁ * (x - x') := by
+  have dx : PowerSeries.derivative (x - x') = 2 * (y - y') + C W.a₁ * (x - x') := by
     rw [map_sub, hx, hx']; ring
-  have dy : derivative K (y - y')
+  have dy : PowerSeries.derivative (y - y')
       = (x - x') * (3 * (x + x') + 2 * C W.a₂) - C W.a₁ * (y - y') := by
     rw [map_sub, hy, hy']; ring
   have cx : constantCoeff (x - x') = 0 := by rw [map_sub, hx0, sub_self]

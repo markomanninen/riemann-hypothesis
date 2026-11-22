@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.BlockLowerRightMulBlockMatrix
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.BlockLowerRightMulBlockMatrix
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,9 +84,9 @@ theorem locRedSplit : LocRedSplit := by
       funext x
       rcases x with ⟨i, hi⟩ | ⟨j, hj⟩
       · simp only [Φ, LinearMap.coe_mk, AddHom.coe_mk, Sum.elim_inl, add_vecMul, hu2C, add_zero]
-        rw [hu1 i hi, dif_pos hi]
+        rw [hu1 i hi, dite_eq_left hi]
       · simp only [Φ, LinearMap.coe_mk, AddHom.coe_mk, Sum.elim_inr, add_vecMul, Pi.add_apply]
-        rw [hu2 j hj, dif_pos hj]
+        rw [hu2 j hj, dite_eq_left hj]
         ring
     have := LinearMap.finrank_range_le Φ
     rw [LinearMap.range_eq_top.2 hsurj, finrank_top, Module.finrank_fintype_fun_eq_card,

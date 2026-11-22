@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.IntegOfMem
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.IsEtIdealOfPlace
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.IntegOfMem
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.IsEtIdealOfPlace
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -50,11 +54,6 @@ def LiesAbs : Prop :=
     (∀ x ∈ (g j).K, ∃ t : Y' ⟶ C.Y, t ≫ C.p = s ≫ C.p ∧
       ∀ a b, π' ≫ t = T.X.tr (T.lev (g j).M) (T.lev N) ((g j).h * x) a b ≫ C.π) →
     ∃ (Z : Scheme.{0}) (s' t' : Z ⟶ C.Y) (d' m : ℕ), FEt s' d' ∧ t' ≫ C.p = s' ≫ C.p ∧ C.Lies j s' t' m
-
-def LiftLev : Prop :=
-  ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (G : HTGroup p) (L : Link D G), D.m = 1 → ∀ (q : ℕ) (r : ℤ) (𝔴 𝔞 : Ideal (𝓞 D.F)) (N₀ : ℕ),
-    AtPrime D q r 𝔴 → (∃ e : ℕ, uId D q r ^ e ≤ 𝔞) → N₀.Coprime q → ∀ gg : LevGrp D 𝔞 1, ∃ u ∈ L.KN N₀,
-      ∀ x y : D.La, gg ((wSub D 𝔞 1).mkQ x) = (wSub D 𝔞 1).mkQ y → L.actG u (inAf D x) - inAf D y ∈ idHat D 𝔞
 
 def NormExt : Prop :=
   ∀ (U S Y B : Scheme.{0}) (i : U ⟶ S) (f : S ⟶ B) (g : Y ⟶ B) (y : U ⟶ Y), IsOpenImmersion i → IsDominant i → IsLocallyNoetherian S →

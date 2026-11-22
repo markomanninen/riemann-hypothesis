@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FixingSubgroupEquivBicontinuous
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FixingSubgroupEquivBicontinuous
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct Module
 
 namespace GlobalTheory.GaloisTransport
@@ -42,7 +47,7 @@ theorem card_H1_transport (φ : G' ≃* G) (hφ : Continuous φ ∧ Continuous �
   have hZf : ∀ c : ↥Z, F c.1 ∈ ReciprocityTheory.Gal.Z1 rho := fun c => by
     obtain ⟨hc1, hc2⟩ := (hZ c.1).1 c.2
     refine ⟨((hc1.comp_continuous hφ.2).comp e).continuous, fun g h => ?_⟩
-    simp only [F, map_mul, hc2, map_add, hr]
+    simp only [F, map_mul, hc2, map_add (f := _), hr]
   have hZb : ∀ f : ↥(ReciprocityTheory.Gal.Z1 rho), (fun g => e.symm (f.1 (φ g))) ∈ Z := fun f => by
     obtain ⟨hf1, hf2⟩ := (ReciprocityTheory.Gal.mem_Z1_iff_cocycle _ _).1 f.2
     refine (hZ _).2 ⟨((IsLocallyConstant.iff_continuous _).2 (hf1.comp hφ.1)).comp e.symm,
@@ -50,7 +55,7 @@ theorem card_H1_transport (φ : G' ≃* G) (hφ : Continuous φ ∧ Continuous �
     apply e.injective
     have h2 := hr' g (e.symm (f.1 (φ h)))
     rw [e.apply_symm_apply] at h2
-    simp only [map_mul, hf2, map_add, AddEquiv.apply_symm_apply, h2]
+    simp only [map_mul, hf2, map_add (f := _), AddEquiv.apply_symm_apply, h2]
   let E : ↥Z ≃ ↥(ReciprocityTheory.Gal.Z1 rho) :=
     { toFun := fun c => ⟨F c.1, hZf c⟩
       invFun := fun f => ⟨fun g => e.symm (f.1 (φ g)), hZb f⟩

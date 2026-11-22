@@ -1,13 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StdLvPr
-import Formalism.LocalToGlobal.HermitianForms.TiedTwJSym
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.SplitIntPI
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.SelfDualPI
-import Formalism.LocalToGlobal.GroupLattices.TrivialTransfer.OneAddPowOfSq
-import Formalism.LocalRingCardinality.IntCastDvdOfDvdIntegers
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsEquiv
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemStabGLAdeleIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StdLvPr
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.FiniteAdeleRingNontrivial
+public import Formalism.LocalToGlobal.HermitianForms.TiedTwJSym
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.SplitIntPI
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.SelfDualPI
+public import Formalism.LocalToGlobal.GroupLattices.TrivialTransfer.OneAddPowOfSq
+public import Formalism.LocalRingCardinality.IntCastDvdOfDvdIntegers
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsEquiv
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemStabGLAdeleIff
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
@@ -92,7 +98,7 @@ theorem exists_place (p : ℕ) (hp : p.Prime) : ∃ v : HeightOneSpectrum (𝓞 
 
 theorem inJ_iff {k : Type} [Field k] {n a t fc : ℕ} (ha : n ≤ a) (hfc : n ≤ fc) (M : Matrix (Fin n) (Fin n) k) :
     InJ a t fc false M ↔ ∀ i j : Fin n, (j < i → M i j = 0) ∧ M i i = 1 := by
-  have hb : ∀ x : Fin n, blkOf a t x = x := fun x => if_pos (lt_of_lt_of_le x.2 ha)
+  have hb : ∀ x : Fin n, Formalism.L2.Forms.blkOf a t x = x := fun x => if_pos (lt_of_lt_of_le x.2 ha)
   constructor
   · rintro ⟨h1, h2, -, -⟩ i j
     exact ⟨fun h => h1 i j (by rw [hb, hb]; exact h), h2 i (lt_of_lt_of_le i.2 ha)⟩
@@ -103,8 +109,8 @@ theorem inJ_iff {k : Type} [Field k] {n a t fc : ℕ} (ha : n ≤ a) (hfc : n �
 variable {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin n) (Fin n) E} {T f : ℕ} {bad : Set (HeightOneSpectrum (𝓞 F))}
   {gp : Fin 2 → ℕ}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem mem_Uloc_iff_iwU (S : Formalism.L2.Forms.StepLevel F E σ J T f bad) {G : GLoc F E σ gp} {a t nb skip fc : ℕ}
     (L : GLev S G a t nb skip fc false) (ha : n ≤ a) (hfc : n ≤ fc) (i : Fin 2) (v : HeightOneSpectrum (𝓞 F))
     (hv : (gp i : 𝓞 F) ∈ v.asIdeal) (hT : (T : 𝓞 F) ∉ v.asIdeal) (x : GL (Fin n) (E ⊗[F] v.adicCompletion F))
@@ -138,10 +144,10 @@ theorem mem_Uloc_iff_iwU (S : Formalism.L2.Forms.StepLevel F E σ J T f bad) {G 
     exact (L.mem i v hv x (h1.2 ⟨g, e⟩)).2
       ((key g e).2 (Formalism.L2.G.Triv.closure_upperUni _ _ (Subgroup.mem_comap.1 hg)))
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem stab_class_lattice (S : Formalism.L2.Forms.StepLevel F E σ J T f bad) (M : Submodule (𝓞 E) (Fin n → E))
-    (hfin : Module.Finite (𝓞 E) M) (hspan : Submodule.span E (M : Set (Fin n → E)) = ⊤)
+    (hfin : Module.Finite (𝓞 E) M)
     (y : GL (Fin n) (E ⊗[F] FiniteAdeleRing (𝓞 F) F))
     (hy : ∀ x : Fin n → E ⊗[F] FiniteAdeleRing (𝓞 F) F,
         x ∈ latS (F := F) (FiniteAdeleRing (𝓞 F) F)
@@ -160,11 +166,8 @@ theorem stab_class_lattice (S : Formalism.L2.Forms.StepLevel F E σ J T f bad) (
         (tensInt (F := F) (FiniteAdeleRing (𝓞 F) F) (intOE E) (intAd F)) S.Lb := by
     intro z
     rw [← hy]
-    have h1 : z ∈ Formalism.UG.CS.globLat (F := F) 1 M ↔
-        ((1 : GL (Fin n) (E ⊗[F] FiniteAdeleRing (𝓞 F) F))⁻¹).1 *ᵥ
-          (fun i => inclE (F := F) (FiniteAdeleRing (𝓞 F) F) (z i)) ∈ latS (F := F) (FiniteAdeleRing (𝓞 F) F)
-          (tensInt (F := F) (FiniteAdeleRing (𝓞 F) F) (intOE E) (intAd F)) M := Iff.rfl
-    rwa [Formalism.UG.P.global_lattice_one_holds F E (Fin n) M hfin hspan, inv_one, Units.val_one, one_mulVec] at h1
+    exact ⟨Formalism.L2.GlobalTheoryTheory.Br.latS_of_mem (F := F) M z,
+      Formalism.L2.GlobalTheoryTheory.Br.latLocGlob_main (F := F) M hfin z⟩
   have e2 : (fun i => inclE (F := F) (FiniteAdeleRing (𝓞 F) F) ((γ.1 *ᵥ x) i)) =
       (bc (inclE (F := F) (FiniteAdeleRing (𝓞 F) F)) γ).1 *ᵥ
         (fun i => inclE (F := F) (FiniteAdeleRing (𝓞 F) F) (x i)) := by
@@ -189,15 +192,7 @@ theorem crdLat0_fin (D : D7) (u : D.what₂.Word) (c : (D.mem u).C.cls 0) :
     Module.Finite (𝓞 D.host.E) (D.sp.crdLat0 (D.clsLat u 0 c)) :=
   Module.Finite.iff_fg.2 ((D.clsLat_lat u 0 c).fg.map _)
 
-theorem crdLat0_span (D : D7) (u : D.what₂.Word) (c : (D.mem u).C.cls 0) :
-    Submodule.span D.host.E (D.sp.crdLat0 (D.clsLat u 0 c) : Set (Fin D.R.k → D.host.E)) = ⊤ := by
-  have : (D.sp.crdLat0 (D.clsLat u 0 c) : Set (Fin D.R.k → D.host.E)) =
-      (D.sp.crd0 : (D.sp.X 0).V →ₗ[D.host.E] (Fin D.R.k → D.host.E)) '' (D.clsLat u 0 c : Set (D.sp.X 0).V) := rfl
-  rw [this, Submodule.span_image, (D.clsLat_lat u 0 c).span_eq_top, Submodule.map_top, LinearMap.range_eq_top]
-  exact D.sp.crd0.surjective
-
 set_option maxHeartbeats 4000000 in
-
 theorem exists_colLevel (D : D7) (u : D.what₂.Word) {Ch : ℕ → Type} {chOf : ∀ i, (D.mem u).C.cls i → Ch i}
     (F : FormsTiedSym D u Ch chOf) :
     ∃ L : ColLevel D.R D.host.F D.host.E D.sp D.host.g (D.mem u).C (D.mem u).A (D.clsLat u),
@@ -252,11 +247,11 @@ theorem exists_colLevel (D : D7) (u : D.what₂.Word) {Ch : ℕ → Type} {chOf 
     stabI := st
     stabI_inj := hinj
     stabI_range := fun c γ hγ => hrange c ⟨γ, hγ⟩
-    stabI_lat := fun c γ x => stab_class_lattice S _ (crdLat0_fin D u c) (crdLat0_span D u c) (y c).1 (hlat c)
+    stabI_lat := fun c γ x => stab_class_lattice S _ (crdLat0_fin D u c) (y c).1 (hlat c)
       (st c γ).1 ((hrange c (st c γ)).1 ⟨γ, rfl⟩) x }, hcar, rfl, hfr⟩
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem colLevel_of_forms : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.Pins B X → ∀ (l : I.Laws) (Z : TC.Later B (I.cols l)) (u : B.Word) {Ch : ℕ → Type} {chOf : ∀ i, ((I.rec7 l Z).mem u).C.cls i → Ch i} (F : FormsTiedSym (I.rec7 l Z) u Ch chOf), I.StdF l Z u F →
   ∃ L : ColLevel (I.rec7 l Z).R (I.rec7 l Z).host.F (I.rec7 l Z).host.E (I.rec7 l Z).sp (I.rec7 l Z).host.g ((I.rec7 l Z).mem u).C ((I.rec7 l Z).mem u).A ((I.rec7 l Z).clsLat u),
     SameCar (rank_eq_first_level (I.rec7 l Z).R) L.Lb (F.cls 0 (Nat.zero_le _) (Or.inl rfl)).lev.Lb

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsComplementaryProductOfIsCuspidal
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LanglandsQuotientOfSpehTypeProductIsL
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.GenericUnitaryDualGLOfTwo
-import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.Outright
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsComplementaryProductOfIsCuspidal
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LanglandsQuotientOfSpehTypeProductIsL
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.GenericUnitaryDualGLOfTwo
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.Outright
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ namespace PositivityTheory.Gud.Symm.Pf
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-theorem isL_of_noPrec {h N : ℕ} (Γ : Fin h → Segment k) (x : Fin h → IrrGL k) (hL : ∀ j, IsLSeg (Γ j) (x j).rep)
+theorem isL_of_noPrec {h N : ℕ} (Γ : Fin h → Segment k) (x : Fin h → IrrGL (k := k)) (hL : ∀ j, IsLSeg (Γ j) (x j).rep)
     (hp : ∀ i j, ¬ (Γ i).Precedes (Γ j)) (hd : ∑ j, (x j).1 = N) :
     (prodIrr x hd).IsIrreducible ∧ ∀ {W : Type} [AddCommGroup W] [Module ℂ W] (σ : Representation ℂ (GL (Fin N) k) W),
       Nonempty ((prodIrr x hd).Equiv σ) → IsL (Finset.univ.val.map Γ) σ := by
@@ -25,7 +29,7 @@ theorem isL_of_noPrec {h N : ℕ} (Γ : Fin h → Segment k) (x : Fin h → IrrG
   exact ⟨h, x, hd, ⟨Γ, ⟨rfl, fun i j _ => hp i j⟩, hL⟩,
     GlobalTheory.LocGL.IsCosocle.of_equiv (GlobalTheory.LocGL.isCosocle_self hirr) e (Representation.Equiv.refl _)⟩
 
-theorem multiset_of_equiv [CharZero k] {h N : ℕ} (Γ : Fin h → Segment k) (y : Fin h → IrrGL k) (t t' : Fin h → ℝ)
+theorem multiset_of_equiv [CharZero k] {h N : ℕ} (Γ : Fin h → Segment k) (y : Fin h → IrrGL (k := k)) (t t' : Fin h → ℝ)
     (hL : ∀ j, IsLSeg (Γ j) (y j).rep)
     (hp : ∀ i j, ¬ ((Γ i).nu (t i : ℂ)).Precedes ((Γ j).nu (t j : ℂ)))
     (hp' : ∀ i j, ¬ ((Γ i).nu (t' i : ℂ)).Precedes ((Γ j).nu (t' j : ℂ)))

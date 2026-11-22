@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.ExistsExpEqOfMemKset
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.ExistsExpEqOfMemKset
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.UnitaryExp
 
 open Matrix
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem map_exp_matrix {m n : Type} [Fintype m] [DecidableEq m] [Fintype n] [DecidableEq n]
     (f : Matrix m m ℂ ≃ₐ[ℂ] Matrix n n ℂ) (hf : Continuous f) (S : Matrix m m ℂ) :
     f (NormedSpace.exp S) = NormedSpace.exp (f S) := by

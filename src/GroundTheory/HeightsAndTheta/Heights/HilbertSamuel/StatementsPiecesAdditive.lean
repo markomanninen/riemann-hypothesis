@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -18,8 +23,6 @@ def PiecesAdditive.Statement : Prop :=
       ∑ i, c i * ptsIntegral P (pot L) ((S i).indicator fun _ => (1 : ℝ))
 
 section Inhabitants
-
-def piecesTest : Bool → Set ((Σ k, PBlk 2 k) → ℂ) := fun b => if b then Set.univ else ∅
 
 end Inhabitants
 

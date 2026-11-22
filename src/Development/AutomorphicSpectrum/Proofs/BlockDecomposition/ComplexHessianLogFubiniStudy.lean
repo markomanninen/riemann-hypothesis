@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JoinCol
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PAreaMultiplicityWeight
-import ReciprocityTheory.L2DbarEstimates.SkodaWeights.LeviVA
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.HoloSmooth
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JoinCol
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PAreaMultiplicityWeight
+public import ReciprocityTheory.L2DbarEstimates.SkodaWeights.LeviVA
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.HoloSmooth
+
+@[expose] public section
 
 noncomputable section
 
@@ -116,7 +120,8 @@ theorem cHess_log_one_add_sum : ∀ (d : ℕ) (β : Type) [Fintype β] (U : Set 
     fun j a => (wd_of_differentiableAt ((hC j).differentiableAt (by simp))).symm
   have hval : ((1 + ∑ j, ‖f j z‖ ^ 2 : ℝ) : ℂ) = ((S z : ℝ) : ℂ) := by rw [hnorm]
   simp only [cHess, fsLevi, Matrix.of_apply, hF, hfun, hval]
-  rw [hessLog_chain hS hlog a c, hd1, hd2, hwd a, hwd c, hhess a c, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hessLog_chain hS hlog a c, hd1, hd2, hwd a, hwd c, hhess a c, map_sum]
   have hconj : ∑ j, conj (wd d c (f j) z * conj (f j z)) = ∑ j, f j z * conj (wd d c (f j) z) :=
     Finset.sum_congr rfl fun j _ => by rw [map_mul, Complex.conj_conj, mul_comm]
   rw [hconj]

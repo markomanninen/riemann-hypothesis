@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ZeroPartEigenvalueConvention
-import Formalism.LocalToGlobal.IndefiniteReal.EvalTieTOne
-import Formalism.LocalToGlobal.IndefiniteReal.RationalEmbedding
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RowLevelMatch
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TensTInner
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AdelicIdentificationRespectsRealFinite
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TranslatedRowEvaluationSquareIntegrableNorm
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RightRegularRepUnitaryStronglyContinuous
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ZeroPartEigenvalueConvention
+public import Formalism.LocalToGlobal.IndefiniteReal.EvalTieTOne
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalEmbedding
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RowLevelMatch
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TensTInner
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AdelicIdentificationRespectsRealFinite
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TranslatedRowEvaluationSquareIntegrableNorm
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RightRegularRepUnitaryStronglyContinuous
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.AutomorphicEvaluation Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned Formalism.L2.SG.RowLevelMatch Formalism.L2.SG.PoincareInHH.PoincareSetting MeasureTheory NumberField IsDedekindDomain
 open scoped InnerProductSpace TensorProduct
@@ -31,8 +35,11 @@ private lemma ae_comp_of_map_eq (B : RowsAut) (φ : B.I.GA → B.I.GA)
   · rw [h0]; simp
   · have hm : AEMeasurable φ (B.I.muA B.μf) := by
       by_contra hn
-      rw [Measure.map_of_not_aemeasurable hn] at hφ
-      exact h0 hφ.symm
+      rw [Measure.map_of_not_aemeasurable_of_ne_zero hn h0] at hφ
+      apply hn
+      rw [← hφ]
+      haveI : T2Space B.I.Gf := (GlobalTheory.T.finiteAdelicUnitary_congruenceTopology B.I).1
+      exact aemeasurable_dirac
     exact ae_of_ae_map hm (by rw [hφ]; exact hp)
 
 private lemma ext_ae_eq_of_leftInvariant (B : RowsAut) (f : B.I.GA → ℂ) (hf : ∀ γ ∈ B.I.GFset, ∀ y, f (γ * y) = f y)
@@ -67,8 +74,8 @@ theorem memLp_mul_right (B : RowsAut) (f : B.I.GA → ℂ) (hf : ∀ γ ∈ B.I.
   have h := rightReg_ae B f hf (hm.toLp f) hm.coeFn_toLp g
   exact (Lp.memLp (B.R g (hm.toLp f))).ae_eq h
 
-open Classical in
 
+open Classical in
 theorem mult_props {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar}
     (θ : D.what₂.Tau → (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ))
     (M : DSModel V S) (J : Set (GA D V)) (χ : GA D V → ℂ) (T : MMap M) (hT : T ∈ Mult θ M J χ) :
@@ -105,8 +112,8 @@ end GlobalTheory.RowEvalHH
 
 namespace GlobalTheory.RowEvalHH
 
-open Classical in
 
+open Classical in
 theorem star_dite_mul_right (B : RowsAut) (f f' : B.I.GA → ℂ) (G : B.I.GA)
     (hf : ∀ γ ∈ B.I.GFset, ∀ y, f (γ * y) = f y) (key : ∀ x, f' x = f (x * G)) :
     (star (if hm : MemLp f' 2 ((B.I.muA B.μf).restrict B.fund) then hm.toLp f' else 0) : B.I.L2 B.μf B.fund) =
@@ -115,7 +122,7 @@ theorem star_dite_mul_right (B : RowsAut) (f f' : B.I.GA → ℂ) (G : B.I.GA)
   subst hf'
   by_cases hm : MemLp f 2 ((B.I.muA B.μf).restrict B.fund)
   · have hm' := memLp_mul_right B f hf hm G
-    rw [dif_pos hm', dif_pos hm]
+    rw [dite_eq_left hm', dite_eq_left hm]
     have hsf : ∀ γ ∈ B.I.GFset, ∀ y, (star f) (γ * y) = (star f) y := fun γ hγ y => by
       simp only [Pi.star_apply, hf γ hγ y]
     have hS : ((star (hm.toLp f) : B.I.L2 B.μf B.fund) : B.I.GA → ℂ)
@@ -134,7 +141,7 @@ theorem star_dite_mul_right (B : RowsAut) (f f' : B.I.GA → ℂ) (G : B.I.GA)
       have h2 := memLp_mul_right B (fun x => f (x * G)) hl h' G⁻¹
       have he : ∀ x, f (x * G⁻¹ * G) = f x := fun x => by rw [mul_assoc, inv_mul_cancel, mul_one]
       exact h2.ae_eq (Filter.Eventually.of_forall he)
-    rw [dif_neg hn', dif_neg hm, star_zero_L2, map_zero]
+    rw [dite_eq_right hn', dite_eq_right hm, star_zero_L2, map_zero]
 
 private lemma isUnit_of_mem_UH' {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar} (M : DSModel V S) (τ : D.what₂.Tau)
     {g : Matrix (Fin V.rank) (Fin V.rank) ℂ} (hg : g ∈ Formalism.QuantumDeterminants.UH (gramAt D V τ)) : IsUnit g := by

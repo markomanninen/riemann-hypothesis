@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockGraphFibreRatio
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockGraphFibreRatio
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -20,7 +25,7 @@ theorem eval_mConeMap {Ω : Type} [Field Ω] (v : (Σ k, ι k) → Ω) (s : K �
     eval s (mConeMap v f) = aeval (fun p => s p.1 * v p) f := by
   induction f using MvPolynomial.induction_on with
   | C a => simp [mConeMap]
-  | add f g hf hg => rw [map_add, map_add, map_add, hf, hg]
+  | add f g hf hg => rw [map_add (f := _), map_add (f := _), map_add (f := _), hf, hg]
   | mul_X f p hf =>
     rw [map_mul, map_mul, map_mul, hf]
     simp [mConeMap, mul_comm]
@@ -68,7 +73,10 @@ theorem graphMap_rename_inlV (P : Ideal (MRing ι)) (g : (Σ k, ι₂ k) → MRi
     graphMap P g (rename (inlV (ι₂ := ι₂)) f) = C (Ideal.Quotient.mk P f) := by
   induction f using MvPolynomial.induction_on with
   | C a => simp [graphMap]
-  | add f f' hf hf' => rw [map_add, map_add, hf, hf', map_add, map_add]
+  | add f f' hf hf' =>
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), map_add (f := _), hf, hf', map_add (Ideal.Quotient.mk P),
+        map_add (C : (MRing ι ⧸ P) →+* MvPolynomial K₂ (MRing ι ⧸ P))]
   | mul_X f p hf =>
     rw [map_mul, map_mul, hf, rename_X, map_mul, map_mul]
     congr 1
@@ -95,13 +103,17 @@ theorem sub_mem_mCoordIdeal {Ω : Type} [Field Ω] {y : (Σ k, ι k) → Ω} {k�
     X ⟨k₀, i⟩ - ∑ j, C (N i j) * blockForms k₀ M j ∈ mCoordIdeal y := by
   have hf : ∀ j, mConeMap y (blockForms k₀ M j) = MvPolynomial.C (x j) * MvPolynomial.X k₀ := by
     intro j
-    rw [h.1 j, map_sum, Finset.sum_mul]
-    simp [blockForms, mConeMap, map_sum, mul_assoc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h.1 j, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [blockForms, mConeMap, map_sum, mul_assoc]
   have hX : mConeMap y (X ⟨k₀, i⟩) = MvPolynomial.C (y ⟨k₀, i⟩) * MvPolynomial.X k₀ := by
     simp [mConeMap]
-  rw [mCoordIdeal, RingHom.mem_ker, map_sub, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [mCoordIdeal, RingHom.mem_ker, map_sub, map_sum]
   simp only [map_mul, hf]
-  rw [hX, h.2 i, map_sum, Finset.sum_mul, sub_eq_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hX, h.2 i, map_sum, Finset.sum_mul, sub_eq_zero]
   refine Finset.sum_congr rfl fun j _ => ?_
   simp [mConeMap, mul_assoc]
 
@@ -112,7 +124,8 @@ theorem graphMap_nForm {Ω : Type} [Field Ω] {y : (Σ k, ι k) → Ω} {k₀ : 
     {N : Matrix (ι k₀) (Ix κ) ℤ} {x : Ix κ → Ω} (h : IsBlockImage y k₀ M N x) (l : ι k₀) :
     graphMap (mCoordIdeal y) (blockForms k₀ M) (nForm k₀ N l) =
       C (Ideal.Quotient.mk (mCoordIdeal y) (X ⟨k₀, l⟩)) * X () := by
-  rw [Ideal.Quotient.eq.2 (sub_mem_mCoordIdeal h l), nForm, map_sum, map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Ideal.Quotient.eq.2 (sub_mem_mCoordIdeal h l), nForm, map_sum, map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun q _ => ?_
   obtain ⟨⟨⟩, j⟩ := q
   rw [map_mul, graphMap, eval₂Hom_C, eval₂Hom_X']
@@ -123,8 +136,8 @@ end Block
 
 end BlockGraphFibreRatio
 
-open BlockGraphFibreRatio in
 
+open BlockGraphFibreRatio in
 theorem BlockGraphFibreRatio.proof : BlockGraphFibreRatio.Statement := by
   intro D K _ _ ι _ Ω _ _ κ _ y k₀ M N x hy hB hI G k i j hj
   classical
@@ -172,8 +185,8 @@ theorem BlockGraphFibreRatio.proof : BlockGraphFibreRatio.Statement := by
   have hwl : aeval G.x' (nForm k₀ N l) ≠ 0 := by
     intro h0
     rw [hker, graphMap_nForm hI] at h0
-    have h1 := congrArg (MvPolynomial.coeff (Finsupp.single () 1)) h0
-    rw [coeff_C_mul, coeff_X, if_pos rfl, mul_one, coeff_zero, Ideal.Quotient.eq_zero_iff_mem] at h1
+    have h1 := congrArg (AddMonoidAlgebra.coeff · (Finsupp.single () 1)) h0
+    rw [coeff_C_mul, coeff_X, if_pos rfl, mul_one, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, Ideal.Quotient.eq_zero_iff_mem] at h1
     exact hl h1
   have hcross : ∀ a, aeval G.x' (nForm k₀ N a) * z ⟨k₀, l⟩ = z ⟨k₀, a⟩ * aeval G.x' (nForm k₀ N l) := by
     intro a

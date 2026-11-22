@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.CutPassage3S
-import Formalism.LocalToGlobal.GlobalTheory.PassageAtBaseSymmetricLevels
-import Formalism.LocalToGlobal.IndefiniteReal.LevelAmbTransfer
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.CutPassage3S
+public import Formalism.LocalToGlobal.GlobalTheory.DivPassage
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelAmbTransfer
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder InnerProductSpace
@@ -59,8 +63,8 @@ def Jt (b : Bool) (t : I.A3.fam3.base3.Tup) :
       (Fin ((lv (faceOf3 I.A3 I.P0 I.ψ0 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) b).dQ t)) K :=
   kMat I.A3.fam3.base3.v0.embedding (relMat (I.X.iC I.cg false t) (I.X.iC I.cr b t))
 
-open Classical in
 
+open Classical in
 def epM (P : Subgroup G) (ψ : P →* Kˣ) : Matrix (Fin I.Sg.D) (Fin I.Sg.D) K :=
   haveI : Fintype P := Fintype.ofFinite P
   ((Nat.card P : K)⁻¹) • ∑ h : P, (((ψ h)⁻¹ : Kˣ) : K) • I.ρf (h : G)

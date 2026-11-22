@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
+
+@[expose] public section
 
 noncomputable section
 
@@ -136,7 +140,7 @@ def pM (π : Equiv.Perm (Fin n)) : Matrix (Fin n) (Fin n) ℂ := (1 : Matrix (Fi
 
 theorem diag_pM (π : Equiv.Perm (Fin n)) (t : Fin n → ℂ) : diagonal (fun a => t (π a)) * pM π = pM π * diagonal t := by
   ext a b
-  simp only [diagonal_mul, mul_diagonal, pM, submatrix_apply, id, one_apply]
+  simp only [pM, diagonal_mul, mul_diagonal, submatrix_apply, id, Matrix.one_apply]
   split_ifs with h
   · rw [h, mul_comm]
   · simp
@@ -160,8 +164,8 @@ theorem diag_mem (θ : Fin n → ℝ) : diagonal (fun a => Complex.exp ((θ a : 
   refine ⟨?_, ?_⟩
   · rw [Matrix.mem_unitaryGroup_iff, star_eq_conjTranspose, diagonal_conjTranspose, diagonal_mul_diagonal, ← diagonal_one]
     congr 1
-    funext a
-    simp only [Pi.star_apply, RCLike.star_def]
+    funext i
+    change Complex.exp ((θ i : ℂ) * Complex.I) * (starRingEnd ℂ) (Complex.exp ((θ i : ℂ) * Complex.I)) = 1
     rw [Complex.mul_conj, Complex.normSq_eq_norm_sq, Complex.norm_exp_ofReal_mul_I]
     simp
   · unfold Formalism.REAL.Jm
@@ -272,15 +276,15 @@ theorem exists_chosen_extremal_vector (i : Fin D.R.m) (σ : D.what₂.LL →+* �
   · obtain ⟨v, hv⟩ := exists_isExtVec _ h
     exact ⟨v, hv, fun h' => absurd h' hσ⟩
 
-open Classical in
 
+open Classical in
 def v0 (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ) : (R.MW i σ).Vec :=
   if h : ∃ v, IsChosenExtremalVector R i σ v then h.choose else 0
 
 theorem extremal_vector_is_chosen (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ) (h : LowSm (R.MW i σ)) : IsChosenExtremalVector R i σ (v0 R i σ) := by
   have h' := exists_chosen_extremal_vector R i σ h
   unfold v0
-  rw [dif_pos h']
+  rw [dite_eq_left h']
   exact h'.choose_spec
 
 theorem IsChosenExtremalVector.norm {i : Fin D.R.m} {σ : D.what₂.LL →+* ℂ} {v : (R.MW i σ).Vec} (h : IsChosenExtremalVector R i σ v) (τ : D.what₂.Tau) :
@@ -288,11 +292,6 @@ theorem IsChosenExtremalVector.norm {i : Fin D.R.m} {σ : D.what₂.LL →+* ℂ
 
 theorem IsChosenExtremalVector.io {i : Fin D.R.m} {v : (R.MW i (sg0 D A)).Vec} (h : IsChosenExtremalVector R i (sg0 D A) v) (hio : IoExt R) : ExtremalVectorPairsToDelta R i v :=
   h.2 rfl (hio i)
-
-def JConj : Prop :=
-  ∀ i (σ : D.what₂.LL →+* ℂ) (x y : Fin (R.nW i) → D.what₂.LL),
-    ⟪(R.FW i).j ((starRingEnd ℂ).comp σ) x, (R.FW i).j ((starRingEnd ℂ).comp σ) y⟫_ℂ =
-      starRingEnd ℂ ⟪(R.FW i).j σ x, (R.FW i).j σ y⟫_ℂ
 
 end Collected
 

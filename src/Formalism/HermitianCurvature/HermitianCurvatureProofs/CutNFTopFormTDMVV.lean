@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopFormTDM
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopFormTDM
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP.TDM
 
@@ -38,12 +42,12 @@ theorem orbJ_congr_gpos (Bs : B.RealPlaceData k r Wp Wq) {γ : B.Mat k r} (hγ :
   unfold D.orbJ
   by_cases h : ∃ θ, D.IsNormCut Bs γ μR θ ∧ Integrable (fun q => θ q • D.orbIntegrand Bs γ Y q) Bs.μSS
   · have h2 : ∃ θ, D.IsNormCut Bs γ μR θ ∧ Integrable (fun q => θ q • D.orbIntegrand Bs γ Y' q) Bs.μSS := hP ▸ h
-    rw [dif_pos h, dif_pos h2, vv_choose_congr hP h h2]
+    rw [dite_eq_left h, dite_eq_left h2, vv_choose_congr hP h h2]
     apply integral_congr_ae
     filter_upwards [hae] with q hq
     rw [hq]
   · have h2 : ¬∃ θ, D.IsNormCut Bs γ μR θ ∧ Integrable (fun q => θ q • D.orbIntegrand Bs γ Y' q) Bs.μSS := hP ▸ h
-    rw [dif_neg h, dif_neg h2]
+    rw [dite_eq_right h, dite_eq_right h2]
 
 end orb
 
@@ -52,16 +56,16 @@ theorem vector_positive_cone : VecVGPos := by
   unfold KB.Pl.V D.vecV
   by_cases h : D.IsLocPt a (P.r + 1) ∧
       0 < D.ptG (Tz P.k P.r p.T.base.z * Tz P.k P.r p.T.base.z') P.r a
-  · rw [dif_pos h, dif_pos h]
+  · rw [dite_eq_left h, dite_eq_left h]
     by_cases h' : ∃ γ ∈ B.GV P.k P.r, Zhat P.k P.r p.T.base.z p.T.base.z' γ = D.ptMatN a (P.r + 1) ∧
         D.IsDFrame p.T.base p.ν' p.m₀ γ
-    · rw [dif_pos h', dif_pos h']
+    · rw [dite_eq_left h', dite_eq_left h']
       obtain ⟨hγ, hZ, -⟩ := h'.choose_spec
       have hpos : 0 < Gf P.k P.r p.T.base.z p.T.base.z' h'.choose := by
         rw [← Formalism.FourierDecayAlt.P.ptG_spec P.k P.r _ _ a _ h.1 hZ]; exact h.2
       exact orbJ_congr_gpos p.T.base hγ hpos _ Y Y' hYY
-    · rw [dif_neg h', dif_neg h']
-  · rw [dif_neg h, dif_neg h]
+    · rw [dite_eq_right h', dite_eq_right h']
+  · rw [dite_eq_right h, dite_eq_right h]
 
 end
 

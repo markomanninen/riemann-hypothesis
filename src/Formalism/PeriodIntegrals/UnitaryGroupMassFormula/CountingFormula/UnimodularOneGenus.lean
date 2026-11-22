@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.ExistsIsomSelfDual
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.PairUnitLoc
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.ExistsTraceNotMem
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.UnimodOneGenus
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularGenus.StdLatEqSpan
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.ExistsIsomSelfDual
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.PairUnitLoc
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.ExistsTraceNotMem
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.UnimodOneGenus
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularGenus.StdLatEqSpan
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardBaseFlagComplementIntegralLattice
+
+@[expose] public section
 
 open NumberField
 
@@ -20,8 +25,14 @@ theorem unimodOneGenus_of (hP : PairUnitLoc) : PI.UnitaryGroupMassFormula.CntFor
   have huL := (Formalism.HermitianLatticesTheory.locDual (𝓞 K) K V h hs hstar L hLl.fg).2.mp hLu p hp
   have huM := (Formalism.HermitianLatticesTheory.locDual (𝓞 K) K V h hs hstar M hMl.fg).2.mp hMu p hp
   have hS := isHermSemilocal_locRing hK hp
-  have hL' := isSelfDualMod_loc hLl hp.isPrime huL
-  have hM' := isSelfDualMod_loc hMl hp.isPrime huM
+  have hLfull : Submodule.IsFullLattice K L :=
+    { toIsLattice := hLl
+      span_eq_top := GlobalTheory.LoopC.Base.span_eq_top_of_unimodular h hs hnd hLl hLu }
+  have hMfull : Submodule.IsFullLattice K M :=
+    { toIsLattice := hMl
+      span_eq_top := GlobalTheory.LoopC.Base.span_eq_top_of_unimodular h hs hnd hMl hMu }
+  have hL' := isSelfDualMod_loc hLfull hp.isPrime huL
+  have hM' := isSelfDualMod_loc hMfull hp.isPrime huM
   obtain ⟨g, hg, hiff⟩ := exists_isom_selfDual hS hs hnd
     (fun w y hyw hw hy => hP K hK p hp V h hs w y hyw hw hy) hL' hM'
   refine ⟨g, hg, ?_⟩

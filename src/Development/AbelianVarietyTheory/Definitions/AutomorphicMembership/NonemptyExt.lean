@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingKrullDimIntegers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingKrullDimIntegers
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -16,13 +20,17 @@ theorem nonempty_ext (v : HeightOneSpectrum (𝓞 F)) : Nonempty (Ext v) := by
   letI : NontriviallyNormedField K := NontriviallyNormedField.ofNormNeOne ⟨_, h0, h1.ne⟩
   let L := AlgebraicClosure K
   letI : Algebra F L := ((algebraMap K L).comp (FinitePlace.embedding v)).toAlgebra
-  let j : AlgebraicClosure F →ₐ[F] L := IsAlgClosed.lift
+  let j : AlgebraicClosure F →ₐ[F] L := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let N := spectralMulAlgNorm K L
   let w : AbsoluteValue (AlgebraicClosure F) ℝ :=
     (MulRingNorm.mulRingNormEquivAbsoluteValue N.toMulRingNorm).comp (f := j.toRingHom) j.injective
   have hw (x) : w x = spectralNorm K L (j x) := rfl
   have hn (x y) : w (x + y) ≤ max (w x) (w y) := by
-    rw [hw, hw, hw, map_add]; exact isNonarchimedean_spectralNorm _ _
+    rw [hw, hw, hw, map_add (f := _)]; exact isNonarchimedean_spectralNorm _ _
   refine ⟨⟨w, fun x => ?_, ⟨⟨⟨⟨⟨{x | w x ≤ 1}, ?_⟩, by simp⟩, ?_, by simp⟩, ?_⟩, ?_⟩, fun _ => Iff.rfl⟩⟩
   · rw [hw, j.commutes, ← FinitePlace.norm_embedding]
     exact spectralNorm_extends _

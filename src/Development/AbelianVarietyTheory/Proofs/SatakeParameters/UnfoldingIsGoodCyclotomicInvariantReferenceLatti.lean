@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetOpIntegral
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LastTwoStepsGuarded
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SumValsQOfInvariant
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SumPiFinsetFinSuccCons
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetOpIntegral
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LastTwoStepsGuarded
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SumValsQOfInvariant
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SumPiFinsetFinSuccCons
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col GlobalTheory.TopStep GlobalTheory.IndefiniteRowSideFullHecke.FourierColumnIndicator GlobalTheory.LastSteps
@@ -63,7 +67,7 @@ theorem standardLattice_restriction_of_freeExtension_mem {n' c' n c : ℕ} {ex' 
   have h1 := mem_homS_sclLat.1 h (Fin.castAdd c l) (Fin.castAdd c' s)
   have hs : (Fin.castAdd c' s).1 < n' := s.2
   have hl : (Fin.castAdd c l).1 < n := l.2
-  rw [freeCoordinateExtension_apply_single, dif_neg (fun hf => absurd hf.1 (by omega)), dif_pos hs, dif_pos hl] at h1
+  rw [freeCoordinateExtension_apply_single, dite_eq_right (fun hf => absurd hf.1 (by omega)), dite_eq_left hs, dite_eq_left hl] at h1
   simpa [LocE.scE] using h1
 
 theorem chArg_int {n' c' n c : ℕ} {x : HomE E (n' + c') (n + c)}
@@ -179,8 +183,8 @@ theorem unfolding_isGoodCyclotomicInvariant_referenceLattices [CharZero K] {n' c
         simpa using hu
       · simpa [hp] using intAt_zero
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem volN_inv_nat {n c : ℕ} {Λ : Submodule (𝓞 E) (Sp E (n + c))} {J : Subgroup (Sp E (n + c) ≃ₗ[E] Sp E (n + c))}
     (hJ : J ≤ stabL E _ Λ) {k : Sp E (n + c) ≃ₗ[E] Sp E (n + c)} (hk : k ∈ stabL E _ Λ) :
     ∃ m : ℕ, (Loc.volN K (Loc.Cbe J k) (Loc.N1 E n c ⊓ stabL E _ Λ))⁻¹ = m := by

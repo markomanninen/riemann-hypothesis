@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
-import Formalism.LocalToGlobal.Divisibility.RowLatLemmas
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TwistedLevelValues
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilGramSignature
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.PolarisedDualSystem
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Formalism.LocalToGlobal.Divisibility.RowLatLemmas
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TwistedLevelValues
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilGramSignature
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.PolarisedDualSystem
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,15 +38,10 @@ def IsNormSys (i : Fin D.R.m) (c : GlobalTheory.IndefiniteRowSideFullHecke.Polar
 def projH (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ) : (R.HW i σ).H →ₗ[ℂ] (R.HW i σ).H :=
   ∑ g, RealDat.eC (A := A) σ g • R.gW i σ g
 
-variable (D) in
 
+variable (D) in
 def hookPlus (i : Fin D.R.m) : ℝ :=
   ∑ ρ : D.what₂.Tau, Real.log (GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues.hookOf (GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues.pW D i ρ) (aPl D i (GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues.pW D i ρ) ρ) : ℝ)
-
-structure NumTie (F : Face D A) (b : ℝ) : Prop where
-  sizes : ∀ i, GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues.Sizes D i b
-  main : ∀ i, (F.Zsc (R.toCx F).zs).l6m i = hookPlus D i
-  unit : (F.Zsc (R.toCx F).zs).l6u = (D.R.f : ℝ) * (D.R.nV : ℝ) ^ 2 * GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues.Lp D b
 
 variable {R}
 
@@ -68,7 +67,8 @@ theorem typePart_base (h : R.toLevCh.Is A.μ0) (i : Fin D.R.m) (σ : D.what₂.L
 theorem e_projH (h : R.models_gW) (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ) (x : (R.HW i σ).H) :
     (R.HW i σ).e (projH R i σ x) = postOn _ (R.eWf i σ) ((R.HW i σ).e x) := by
   unfold projH RealDat.eWf gaL
-  rw [LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.sum_apply, map_sum]
   ext v g
   simp only [LinearMap.smul_apply, map_smul, h i σ, postOn_apply, LinearMap.sum_apply, MultilinearMap.sum_apply,
     MultilinearMap.smul_apply]

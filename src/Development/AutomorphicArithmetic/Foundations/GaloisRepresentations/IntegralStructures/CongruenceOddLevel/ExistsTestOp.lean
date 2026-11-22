@@ -1,9 +1,13 @@
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.LimWPhi
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsLevelAwayAdapted
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsUniqueSplitPlaceComponentDefiniteUnitaryStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LocalOperatorActsByLocalComponentScalarStatement
-import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.SphericalOperatorsExist
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.CAllFin
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.LimWPhi
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsLevelAwayAdapted
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsUniqueSplitPlaceComponentDefiniteUnitaryStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LocalOperatorActsByLocalComponentScalarStatement
+public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.SphericalOperatorsExist
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.CAllFin
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,14 +60,14 @@ theorem fixed_ne_bot {U : Submodule ℂ (UA E a → ℂ)} (hU : IsAutRepU U) {w 
   exact GlobalTheory.Cong.AdaptLev.fixed_ne_bot_of_fix hU hw σ hσ inf_le_left hφ h0 fun x hx' => hx x hx'.1 hx'.2
 
 theorem exists_satU {U : Submodule ℂ (UA E a → ℂ)} (hU : IsAutRepU U) {w : HeightOneSpectrum (𝓞 E)} (hw : IsSplitAt w)
-    (h : ∃ φ ∈ U, φ ≠ 0 ∧ ∀ x ∈ locU a w, cLoc w x ∈ GlobalTheory.LFun.KGL w a → RU E a x φ = φ) : ∃ B, SatU U w B := by
+    (h : ∃ φ ∈ U, φ ≠ 0 ∧ ∀ x ∈ locU a w, cLoc w x ∈ GlobalTheory.LFun.KGL w (n := a) → RU E a x φ = φ) : ∃ B, SatU U w B := by
   obtain ⟨σ, hσ⟩ := (GlobalTheory.T.exists_unique_splitPlaceComponent_definiteUnitary E a U hU w hw).1
   obtain ⟨B, hB⟩ := (UpperTheory.Cb.spherical_operators_exist E w a).1 σ (fixed_ne_bot hU hw h σ hσ)
   exact ⟨B, σ, hσ, hB⟩
 
 theorem exists_powOp {w : HeightOneSpectrum (𝓞 E)} (hw : IsSplitAt w) (n : ℤ) :
     ∃ t : UA E a →₀ ℂ, (∀ g ∈ t.support, g ∈ locU a w) ∧ ∀ U, IsAutRepU U → ∀ φ ∈ U,
-      (∀ x ∈ locU a w, cLoc w x ∈ GlobalTheory.LFun.KGL w a → RU E a x φ = φ) → opOf (RU E a) t φ = PowSatU U w n • φ := by
+      (∀ x ∈ locU a w, cLoc w x ∈ GlobalTheory.LFun.KGL w (n := a) → RU E a x φ = φ) → opOf (RU E a) t φ = PowSatU U w n • φ := by
   classical
   obtain ⟨h1, h2⟩ := UpperTheory.Cb.spherical_operators_exist E w a
   obtain ⟨f, -, hf⟩ := h2 n
@@ -88,8 +92,8 @@ theorem exists_powOp {w : HeightOneSpectrum (𝓞 E)} (hw : IsSplitAt w) (n : �
     rw [PowSatU, dif_pos h, ← hz σ _ hB]
     exact hact U hU σ hσ φ hφ hx
 
-open UpperTheory.Gal.Gen in
 
+open UpperTheory.Gal.Gen in
 theorem exists_testOp (K : Subgroup (UA E a)) {w : HeightOneSpectrum (𝓞 E)} (hw : IsSplitAt w) (hK : HypAt K w)
     (Φ : MvPolynomial (Fin a) ℂ) : ∃ (f : UA E a →₀ ℂ) (η : Submodule ℂ (UA E a → ℂ) → ℂ),
       (∀ g ∈ f.support, g ∈ locU a w) ∧ ∀ U, IsAutRepU U →
@@ -136,10 +140,10 @@ theorem exists_testOp (K : Subgroup (UA E a)) {w : HeightOneSpectrum (𝓞 E)} (
         exact h2
       exact hgen _ hs
 
-open UpperTheory.Gal.Gen in
 
+open UpperTheory.Gal.Gen in
 theorem exists_scale {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (lam : (E →+* ℂ) → DomWeight a) (f : UA E a →₀ ℂ)
-    (hf : ∀ g ∈ f.support, g ∈ finU E a) : ∃ c : ℂ, c ≠ 0 ∧ IntW ι lam (c • f) ∧ Loc.IntL ι lam (c • f) := by
+    (hf : ∀ g ∈ f.support, g ∈ finU (E := E) (n := a)) : ∃ c : ℂ, c ≠ 0 ∧ IntW ι lam (c • f) ∧ Loc.IntL ι lam (c • f) := by
   have hl : Nat.Prime l := Fact.out
   obtain ⟨d, hd⟩ := denomBdd_holds E l hl a (f.support : Set (UA E a)) f.support.finite_toSet.isCompact
   have hl1 : (1 : ℝ) < (l : ℝ) := by exact_mod_cast hl.one_lt

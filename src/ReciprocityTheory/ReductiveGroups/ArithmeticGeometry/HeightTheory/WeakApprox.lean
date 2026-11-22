@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -60,19 +64,6 @@ theorem wa_zpow (w : AddValuation F (WithTop ℤ)) {a : F} {m : ℤ} (h : w a = 
   · rw [zpow_neg, zpow_natCast, wa_inv w (wa_pow w h n)]
     congr 1
     ring
-
-theorem wa_prod {ι : Type*} (w : AddValuation F (WithTop ℤ)) (S : Finset ι) (f : ι → F)
-    (e : ι → ℤ) (h : ∀ i ∈ S, w (f i) = e i) :
-    w (∏ i ∈ S, f i) = ((∑ i ∈ S, e i : ℤ) : WithTop ℤ) := by
-  classical
-  revert h
-  refine Finset.induction_on S ?_ ?_
-  · intro _
-    rw [Finset.prod_empty, Finset.sum_empty, AddValuation.map_one, WithTop.coe_zero]
-  · intro j S hj ih h
-    rw [Finset.prod_insert hj, Finset.sum_insert hj]
-    exact wa_mul w (h j (Finset.mem_insert_self j S))
-      (ih fun i hi => h i (Finset.mem_insert_of_mem hi))
 
 private theorem exists_pos_neg_valuation (A B : AddValuation F (WithTop ℤ)) {z x : F} {a b m n : ℤ}
     (hza : A z = a) (hzb : B z = b) (hxa : A x = m) (hxb : B x = n) (ha : 0 < a) (hm : 0 ≤ m)

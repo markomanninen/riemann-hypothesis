@@ -1,19 +1,23 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.HkApply
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.KilledOps
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.ResTyp
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.GoodSmul
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.EigComp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.Gl2LocalToAdelicEmbedding
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.BlockEmbeddingFiniteAdelicGLCompatContinuous
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HeightBlockEmbeddingLe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsRestrictionBlockEmbeddingIntertwinesLie
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.UpperTriangularEqUnipotentMulLevi
-import Development.AutomorphicArithmetic.WhittakerHecke.BlockDiagonalEqLeviEmbedding
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSliceA
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSliceB
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsDecay
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.HkApply
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.KilledOps
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.ResTyp
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.GoodSmul
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.EigComp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.Gl2LocalToAdelicEmbedding
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.BlockEmbeddingFiniteAdelicGLCompatContinuous
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HeightBlockEmbeddingLe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsRestrictionBlockEmbeddingIntertwinesLie
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.UpperTriangularEqUnipotentMulLevi
+public import Development.AutomorphicArithmetic.WhittakerHecke.BlockDiagonalEqLeviEmbedding
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSliceA
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSliceB
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsDecay
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,9 +29,9 @@ open UpperTheory.V.Af.Fin (emb e1 blk ext0 toLie lam)
 
 namespace UpperTheory.ConvolutionTheory.BW
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n r s : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n r s : ℕ}
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 private theorem ct_growth {φ : GA E n → ℂ} {N : ℕ} (h : HasGrowth φ N) : HasGrowth (constantTerm r φ) N := by
   obtain ⟨C, hφ⟩ := h
   obtain ⟨D, hD, hsub⟩ := exists_isCompact_superset_unipFundamentalDomain (K := E) (n := n) (r := r)
@@ -72,10 +76,10 @@ private theorem exists_res (e : Fin r ↪ Fin n) (h : GA E n) : ∃ T : Sm E n �
     | hadd a b ha hb =>
       obtain ⟨a', ha⟩ := ha
       obtain ⟨b', hb⟩ := hb
-      exact ⟨a' + b', fun G => by rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, hb, ha, map_add]⟩
+      exact ⟨a' + b', fun G => by rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, hb, ha, map_add (f := _)]⟩
   refine ⟨(smEq E r).symm.toLinearMap ∘ₗ f ∘ₗ (smEq E n).toLinearMap, fun G x => hf _ x, fun u => ?_⟩
   induction u using TensorProduct.induction_on with
-  | zero => exact ⟨0, fun G => by simp⟩
+  | zero => exact ⟨0, fun G => by simp only [map_zero, LinearMap.zero_apply]⟩
   | tmul c x =>
     obtain ⟨x', hx⟩ := key x
     refine ⟨c ⊗ₜ x', fun G => ?_⟩
@@ -86,7 +90,7 @@ private theorem exists_res (e : Fin r ↪ Fin n) (h : GA E n) : ∃ T : Sm E n �
   | add a b ha hb =>
     obtain ⟨a', ha⟩ := ha
     obtain ⟨b', hb⟩ := hb
-    exact ⟨a' + b', fun G => by rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, hb, ha, map_add]⟩
+    exact ⟨a' + b', fun G => by rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, hb, ha, map_add (f := _)]⟩
 
 private def stab (ψ : Sm E n) : Subgroup (GL (Fin n) (Af E)) where
   carrier := {k | GlobalTheory.CuspRep.finRep E n k ψ = ψ}
@@ -99,18 +103,18 @@ private def stab (ψ : Sm E n) : Subgroup (GL (Fin n) (Af E)) where
     conv_lhs => rw [← hx]
     rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply]
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 private theorem lev_right (z g y : GA E r) (m : GA E s) :
     lev (Ad E) r s (z * (g * y), m) = lev (Ad E) r s (z * g, m) * lev (Ad E) r s (y, 1) := by
   rw [← map_mul, Prod.mk_mul_mk, mul_one, mul_assoc]
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 private theorem lev_left (t : ℝ) (g y : GA E r) (m : GA E s) :
     lev (Ad E) r s (zt E r t * (y * g), m) = lev (Ad E) r s (y, 1) * lev (Ad E) r s (zt E r t * g, m) := by
   have : zt E r t * y = y * zt E r t := centralSection_mul_comm _ y
   rw [← map_mul, Prod.mk_mul_mk, one_mul, ← mul_assoc, this, mul_assoc]
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 private theorem ct_right {φ : GA E (r + s) → ℂ} {y : GA E r} (h : ∀ x, φ (x * lev (Ad E) r s (y, 1)) = φ x)
     (z g : GA E r) (m : GA E s) :
     constantTerm r φ (lev (Ad E) r s (z * (g * y), m)) = constantTerm r φ (lev (Ad E) r s (z * g, m)) := by
@@ -164,7 +168,7 @@ private theorem cusp_of {φ : GA E (r + s) → ℂ} (hc : Continuous φ) (hl : I
     ← constantTermPar_eq_top hpr hc, constantTermPar_eq_bot hpr hc hl]
   simp only [h p hp hpr, integral_zero]
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 private theorem killed_of {d : ℕ} {ρ : KA E (r + s) → Matrix (Fin d) (Fin d) ℂ} {φ : GA E (r + s) → ℂ}
     (hc : Continuous φ) (hK : Killed ρ φ) (hlev : ∀ k : KA E r, lev (Ad E) r s ((k : GA E r), 1) ∈ KA E (r + s))
     (z : GA E r) (m : GA E s) :
@@ -175,16 +179,16 @@ private theorem killed_of {d : ℕ} {ρ : KA E (r + s) → Matrix (Fin d) (Fin d
     have := hK (x.mapDomain ι) (by
       rw [Finsupp.sum_mapDomain_index (h := fun k (c : ℂ) => c • ρ k) (fun _ => zero_smul _ _) (fun _ _ _ => add_smul _ _ _), ← hx]
       refine Finsupp.sum_congr fun k _ => ?_
-      rw [resL, dif_pos (hlev k)]) y
+      rw [resL, dite_eq_left (hlev k)]) y
     rwa [Finsupp.sum_mapDomain_index (h := fun (k : KA E (r + s)) (c : ℂ) => c * φ (y * (k : GA E (r + s)))) (fun _ => zero_mul _) (fun _ _ _ => add_mul _ _ _)] at this
   simp only [Finsupp.sum, lev_right, constantTerm, ← integral_const_mul] at h1 ⊢
-  rw [← integral_finset_sum _ fun k _ => (integrableOn_constantTerm hc _).const_mul _]
+  rw [← integral_finsetSum _ fun k _ => (integrableOn_constantTerm hc _).const_mul _]
   simp only [← mul_assoc, h1, integral_zero]
 
 end UpperTheory.ConvolutionTheory.BW
 
 theorem UpperTheory.ConvolutionTheory.BW.langStep :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.LangStep E := by
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.LangStep E := by
   intro E _ _ _ S r s ρ φ hr hU hK hS h0 hsl g
   by_contra hne
   obtain ⟨b₀, hb₀, k₀, hk₀, rfl⟩ := exists_adelicBorel_mul_maxCompact g

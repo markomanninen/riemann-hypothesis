@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelL2RowsColumns
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelL2RowsColumns
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,9 +16,9 @@ open PositivityTheory.Rg.BcB.E1
 
 variable {α : Type} [MeasurableSpace α] {ν : Measure α}
 
-theorem eLpNorm_two_sq (f : α → ℂ) : eLpNorm f 2 ν ^ 2 = ∫⁻ x, ‖f x‖ₑ ^ 2 ∂ν := by
-  have h := eLpNorm_nnreal_pow_eq_lintegral (f := f) (μ := ν) (p := 2) (by norm_num)
-  simpa [ENNReal.rpow_ofNat] using h
+theorem eLpNorm_two_sq (f : α → ℂ) : eLpNorm' f 2 ν ^ 2 = ∫⁻ x, ‖f x‖ₑ ^ 2 ∂ν := by
+  simpa [ENNReal.rpow_ofNat] using
+    (lintegral_rpow_eNorm_eq_rpow_eLpNorm' (f := f) (μ := ν) (q := 2) (by norm_num)).symm
 
 theorem schur_memLp (hS : SchurL) [SFinite ν] (k : α → α → ℂ) (A : ℝ≥0∞)
     (hk : Measurable (Function.uncurry k)) (hA : A ≠ ⊤)
@@ -23,30 +27,34 @@ theorem schur_memLp (hS : SchurL) [SFinite ν] (k : α → α → ℂ) (A : ℝ�
     MemLp (fun x => ∫ y, k x y * g y ∂ν) 2 ν ∧
       eLpNorm (fun x => ∫ y, k x y * g y ∂ν) 2 ν ≤ A * eLpNorm g 2 ν ∧
       ∀ᵐ x ∂ν, Integrable (fun y => k x y * g y) ν := by
-  have hkK : Measurable (Function.uncurry fun x y => ‖k x y‖ₑ) := hk.enorm
-  have hgm : AEMeasurable (fun y => ‖g y‖ₑ) ν := hg.1.enorm
+  have norm_sq (f : α → ℂ) (hf : AEStronglyMeasurable f ν) :
+      eLpNorm f 2 ν ^ 2 = ∫⁻ x, ‖f x‖ₑ ^ 2 ∂ν := by
+    simpa [ENNReal.rpow_ofNat] using eLpNorm_nnreal_pow_eq_lintegral (p := 2) (by norm_num) hf
+  have hkK : Measurable (Function.uncurry fun x y => ‖k x y‖ₑ) := hk.eNorm
+  have hgSm := hg.aestronglyMeasurable
+  have hgm : AEMeasurable (fun y => ‖g y‖ₑ) ν := hgSm.eNorm
   have key := hS α ν (fun x y => ‖k x y‖ₑ) A (fun y => ‖g y‖ₑ) hkK hgm hr hc
-  have hgfin : eLpNorm g 2 ν ≠ ⊤ := hg.2.ne
-  have hsq : ∫⁻ y, ‖g y‖ₑ ^ 2 ∂ν = eLpNorm g 2 ν ^ 2 := (eLpNorm_two_sq g).symm
+  have hgfin : eLpNorm g 2 ν ≠ ⊤ := hg.ne
+  have hsq : ∫⁻ y, ‖g y‖ₑ ^ 2 ∂ν = eLpNorm g 2 ν ^ 2 := (norm_sq g hgSm).symm
   have hbound : ∫⁻ x, (∫⁻ y, ‖k x y‖ₑ * ‖g y‖ₑ ∂ν) ^ 2 ∂ν ≤ (A * eLpNorm g 2 ν) ^ 2 := by
     rw [mul_pow, ← hsq]; exact key
   have hfin : (A * eLpNorm g 2 ν) ^ 2 ≠ ⊤ := ENNReal.pow_ne_top (ENNReal.mul_ne_top hA hgfin)
   have hprod : AEStronglyMeasurable (fun p : α × α => k p.1 p.2 * g p.2) (ν.prod ν) :=
-    (hk.stronglyMeasurable.aestronglyMeasurable).mul hg.1.comp_snd
+    hk.stronglyMeasurable.aestronglyMeasurable.mul hgSm.comp_snd
   have hSm : AEStronglyMeasurable (fun x => ∫ y, k x y * g y ∂ν) ν :=
     hprod.integral_prod_right'
   have hhm : AEMeasurable (fun x => ∫⁻ y, ‖k x y‖ₑ * ‖g y‖ₑ ∂ν) ν := by
     have : AEMeasurable (fun p : α × α => ‖k p.1 p.2‖ₑ * ‖g p.2‖ₑ) (ν.prod ν) := by
-      simpa [enorm_mul] using hprod.enorm
+      simpa [eNorm_mul] using hprod.eNorm
     exact this.lintegral_prod_right'
   have hle : eLpNorm (fun x => ∫ y, k x y * g y ∂ν) 2 ν ≤ A * eLpNorm g 2 ν := by
     refine (ENNReal.pow_right_strictMono two_ne_zero).le_iff_le.1 ?_
-    rw [eLpNorm_two_sq]
+    rw [norm_sq _ hSm]
     refine le_trans (lintegral_mono fun x => ?_) hbound
     refine pow_le_pow_left' ?_ 2
-    refine (enorm_integral_le_lintegral_enorm _).trans ?_
-    simp [enorm_mul]
-  refine ⟨⟨hSm, lt_of_le_of_lt hle (ENNReal.mul_ne_top hA hgfin).lt_top⟩, hle, ?_⟩
+    refine (eNorm_integral_le_lintegral_eNorm _).trans ?_
+    simp [eNorm_mul]
+  refine ⟨hle.trans_lt (ENNReal.mul_ne_top hA hgfin).lt_top, hle, ?_⟩
   have hae : ∀ᵐ x ∂ν, (∫⁻ y, ‖k x y‖ₑ * ‖g y‖ₑ ∂ν) ^ 2 < ⊤ :=
     ae_lt_top' (hhm.pow_const 2) (ne_top_of_le_ne_top hfin hbound)
   filter_upwards [hae] with x hx
@@ -54,8 +62,8 @@ theorem schur_memLp (hS : SchurL) [SFinite ν] (k : α → α → ℂ) (A : ℝ�
     refine lt_top_iff_ne_top.2 fun hcon => ?_
     simp [hcon] at hx
   have hkx : Measurable (k x) := hk.of_uncurry_left
-  refine ⟨hkx.aestronglyMeasurable.mul hg.1, ?_⟩
-  simpa [HasFiniteIntegral, enorm_mul] using hxf
+  refine ⟨hkx.aestronglyMeasurable.mul hgSm, ?_⟩
+  simpa [HasFiniteIntegral, eNorm_mul] using hxf
 
 theorem schurOp_of_schurL (hS : SchurL) : SchurOp := by
   intro α _ ν _ k A hk hA hr hc
@@ -90,7 +98,7 @@ theorem schurOp_of_schurL (hS : SchurL) : SchurOp := by
   intro f
   change ‖(H f).1.toLp _‖ ≤ A.toReal * ‖f‖
   rw [Lp.norm_toLp, Lp.norm_def, ← ENNReal.toReal_mul]
-  exact ENNReal.toReal_mono (ENNReal.mul_ne_top hA (Lp.memLp f).2.ne) (H f).2.1
+  exact ENNReal.toReal_mono (ENNReal.mul_ne_top hA (Lp.memLp f).ne) (H f).2.1
 
 end GlobalTheory.CompanionTheory.Schur
 

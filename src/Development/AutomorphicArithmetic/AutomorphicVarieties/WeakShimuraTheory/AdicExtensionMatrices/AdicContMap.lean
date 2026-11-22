@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedIdeal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedIdeal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,8 +60,8 @@ def Fr.RUniv {R : Type} [CommRing R] [Algebra Λ R] [IsCO Λ R] (D : RD Φ R) : 
   Φ.Near a 0 D ∧ ∀ (R' : Type) [CommRing R'] [Algebra Λ R'] [IsCO Λ R'] (D' : RD Φ R'), Φ.Near a 0 D' →
     ∃! f : R →ₐ[Λ] R', D.map (f : R →+* R') = D'
 
-variable {Φ} in
 
+variable {Φ} in
 structure RD.Graded {R : Type} [CommRing R] [Algebra Λ R] [IsCO Λ R] (D : RD Φ R) (W : WPres Λ (ℤ × ℤ) R) : Prop where
   max : ∀ s, W.z s ∈ maximalIdeal R
   ent : ∀ g i j, D.r g i j ∈ W.part (wt i j)
@@ -138,8 +142,8 @@ def Pre.toSpace (Y : Pre Φ a) (h : Function.Injective (algebraMap Y.B Y.A)) (hl
     cp_map := Y.cp_map, cp_cont := Y.cp_cont, cp_red := Y.cp_red, ψ := Y.ψ, ψ_map := Y.ψ_map, ψ_cont := Y.ψ_cont,
     ψ_red := Y.ψ_red, genB := Y.genB, univ := Y.univ, line := hl }
 
-variable (Λ) in
 
+variable (Λ) in
 structure Laur {R S : Type} [CommRing R] [Algebra Λ R] [IsCO Λ R] [CommRing S] [Algebra Λ S] [IsCO Λ S] (c : ℕ)
     (e : S →+* LaurentSeries R) : Prop where
   inj : Function.Injective e

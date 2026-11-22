@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoeffZeroNeOfMonicIrr
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoeffZeroNeOfMonicIrr
+
+@[expose] public section
 
 noncomputable section
 

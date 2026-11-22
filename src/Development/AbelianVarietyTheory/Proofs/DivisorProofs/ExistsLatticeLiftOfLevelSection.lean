@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.GeomIntSelf
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnitOnInjectiveOfCommRing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.GeomIntSelf
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnitOnInjectiveOfCommRing
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
@@ -31,7 +36,7 @@ theorem exists_linear_lift {J G V : Type} [Fintype J] [DecidableEq J] [Group G] 
     rw [Pi.basisFun_apply] at this
     exact congrArg Subtype.val this
   let F' : (J → ℤ) →+ Additive G := AddMonoidHom.mk' (fun a => E ((k : ℂ)⁻¹ • (l a : V))) (fun a b => by
-    rw [map_add, Submodule.coe_add, smul_add, map_add])
+    rw [map_add (f := _), Submodule.coe_add, smul_add, map_add (f := _)])
   refine ⟨l, fun a => ?_⟩
   have hmem : a ∈ F.eqLocus F' := by
     have ha : a = ∑ j, a j • (Pi.single j 1 : J → ℤ) := by

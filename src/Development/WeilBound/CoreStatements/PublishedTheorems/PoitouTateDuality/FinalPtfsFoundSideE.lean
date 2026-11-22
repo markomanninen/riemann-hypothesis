@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.FinalPtfsFoundSideD
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.FinalPtfsFoundSideD
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory
@@ -81,16 +86,18 @@ theorem integral_flag_lift_of_residue : ∀ (O Γ : Type) [CommRing O] [IsDomain
           sub_add_cancel _ _⟩
         rw [hM, map_sub, map_smul, ← hvw]
         convert hv using 1
-        funext i
-        simp only [Pi.sub_apply, Pi.add_apply, Pi.smul_apply, smul_eq_mul, Algebra.smul_def]
-        simp [k, f]
+        ext i
+        simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
+        change v i + f c' * π x i - (algebraMap O k) c' * π x i = v i
+        rw [show algebraMap O k = f from IsLocalRing.ResidueField.algebraMap_eq O]
+        exact add_sub_cancel_right _ _
       · refine sup_le (hMmono (Fin.castSucc_le_succ _)) ?_
         rw [Submodule.span_le, Set.singleton_subset_iff]
         exact hxb
     · intro g
       rw [hM, map_sub, hπmul]
       convert hchi g using 2
-      funext i
-      simp only [Pi.smul_apply, smul_eq_mul, hπ, map_mul, hψk]
+      ext i
+      simp [hπ, hψk, map_mul]
 
 end GlobalTheory

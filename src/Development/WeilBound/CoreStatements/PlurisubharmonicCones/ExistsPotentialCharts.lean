@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.PotentialsBoundedRegSettingEqReference
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.BoundedStatements
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChartLocalAnalyticTrivializationStatement
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.ContinuousAtOfHolo
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.PotentialsBoundedRegSettingEqReference
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.BoundedStatements
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChartLocalAnalyticTrivializationStatement
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.ContinuousAtOfHolo
+
+@[expose] public section
 
 namespace LevelTowerAlt.Charts
 
@@ -175,11 +179,11 @@ theorem LevelTowerAlt.exists_potential_charts : ∀ (K : Type) [Fintype K] (J : 
     (fun p => (E _).isOpen_inter_preimage isOpen_ball) (fun x _ => by
       obtain ⟨z, hz, rfl⟩ := M.surj x
       obtain ⟨a, t, ht, c, hc, e⟩ := D.chart_cover z hz
-      have h0 : (0 : Fin D.n → ℂ) ∈ (E (⟨(a, t), ht⟩, false)).target := hEt _ ▸ mem_ball_self one_pos
+      have h0 : (0 : Fin D.n → ℂ) ∈ (E (⟨(a, t), ht⟩, false)).target := hEt _ ▸ by exact Set.mem_preimage.mpr (mem_ball_self one_pos)
       have e0 : g' (⟨(a, t), ht⟩, false) 0 = (D.chart a).γ t := hg0 ⟨(a, t), ht⟩
       have e1 : M.proj z = (E (⟨(a, t), ht⟩, false)).symm 0 := by
         rw [hEs]
-        exact ((M.fibre _ ((hg' _).mem _ (mem_ball_self one_pos)) _ hz).2 ⟨c, hc, by rw [e0]; exact e⟩).symm
+        exact ((M.fibre _ ((hg' _).mem _ (by exact Set.mem_preimage.mpr (mem_ball_self one_pos))) _ hz).2 ⟨c, hc, by rw [e0]; exact e⟩).symm
       refine mem_iUnion.2 ⟨⟨(a, t), ht⟩, ?_⟩
       rw [e1]
       refine ⟨(E _).map_target h0, ?_⟩

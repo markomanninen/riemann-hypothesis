@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.LevBMemFil
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.KerEqOfSpan
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.LevBMemFil
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.KerEqOfSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,8 @@ theorem graded_class_decomposition (F : ℤ → Submodule LL D)
   have e : ∑ j ∈ Finset.Ico a b, singleCoeffClass F j ((g : ℤ → D) j) (Submodule.mem_pi.1 g.2 j (Set.mem_univ j)) =
       Submodule.mkQ _ (∑ j ∈ Finset.Ico a b,
         singleCoeffElement F j ((g : ℤ → D) j) (Submodule.mem_pi.1 g.2 j (Set.mem_univ j))) := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     rfl
   rw [e, Submodule.mkQ_apply, Submodule.Quotient.eq, Submodule.mem_comap, Submodule.mem_pi]
   intro i _
@@ -258,7 +263,8 @@ theorem span_classes (hP4 : LevelMapHodgeFiltration W) (hcrys : IsCrys PD T.ρ)
       rw [← he', ← hβ, coord_t_finset_sum]
       exact Finset.sum_congr rfl fun i _ => C.t_smul c (β i) (e i)
     refine ⟨⟨_, hN⟩, rfl, ?_⟩
-    rw [hy, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hy, map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [hsm]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -274,7 +280,8 @@ theorem span_classes (hP4 : LevelMapHodgeFiltration W) (hcrys : IsCrys PD T.ρ)
   have hx1 : cls x = cls ((letE c : LetA O n) • x) := by
     rw [hsm, level_idempotent_eq_one, map_one, one_smul]
   show cls x ∈ U
-  rw [hx1, hx, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hx1, hx, map_sum]
   refine Submodule.sum_mem _ fun j _ => ?_
   rw [hsm]
   exact Submodule.smul_mem _ _ (hyU j)

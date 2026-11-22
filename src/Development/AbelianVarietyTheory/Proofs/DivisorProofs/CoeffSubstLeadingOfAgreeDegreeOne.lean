@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ theorem Near.prod {a b : σ → MvPowerSeries τ R}
   | zero => simpa using (Near.one : Near 0 (1 : MvPowerSeries τ R) 1)
   | add f g hf hg =>
     rw [Finsupp.prod_add_index' (by simp) (by simp [pow_add]),
-      Finsupp.prod_add_index' (by simp) (by simp [pow_add]), map_add]
+      Finsupp.prod_add_index' (by simp) (by simp [pow_add]), map_add (f := _)]
     exact hf.mul hg
   | single s n =>
     rw [Finsupp.prod_single_index (by simp), Finsupp.prod_single_index (by simp),
@@ -63,8 +67,8 @@ theorem near_one {u v : MvPowerSeries τ R} (hu : constantCoeff u = 0) (hv : con
 
 end LeadSubst
 
-open MvPowerSeries in
 
+open MvPowerSeries in
 theorem coeff_subst_leading :
     ∀ (R : Type) [CommRing R] (σ τ : Type) [Finite σ] (u v : σ → MvPowerSeries τ R) (N : ℕ)
       (f : MvPowerSeries σ R), (∀ i, constantCoeff (u i) = 0) → (∀ i, constantCoeff (v i) = 0) →

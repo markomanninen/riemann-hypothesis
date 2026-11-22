@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.SecondConstantNonneg
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.SecondConstantNonneg
+
+@[expose] public section
 
 noncomputable section
 

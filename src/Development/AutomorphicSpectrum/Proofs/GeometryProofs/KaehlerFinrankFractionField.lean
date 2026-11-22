@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open TensorProduct
 
@@ -17,7 +21,7 @@ theorem finrank_kaehler_fractionRing_eq_of_basis
   haveI : Subsingleton (KaehlerDifferential S K) :=
     Algebra.FormallyUnramified.subsingleton_kaehlerDifferential
   have hinj : Function.Injective (KaehlerDifferential.map S K L L) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨y, rfl⟩ := (KaehlerDifferential.exact_mapBaseChange_map S K L x).1 hx
     have hy : y = 0 := Subsingleton.elim _ _

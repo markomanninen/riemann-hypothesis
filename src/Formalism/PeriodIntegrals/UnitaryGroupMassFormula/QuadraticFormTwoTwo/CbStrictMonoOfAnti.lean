@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticFormTwoTwo.InLieW
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticFormTwoTwo.InLieW
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ContDiff
@@ -72,7 +76,7 @@ theorem cb_eq_of_prod_eq {n : ℕ} {a b : ℕ → ℝ}
 theorem cb_rho_eq' (Q : M.Par) (π : M.Ty Q) (j : Fin (Q.k - 1)) :
     M.rho Q π (j.1 + 1) = Q.lo (j.1 + 1) + (((π j : Fin _) : ℕ) : ℝ) := by
   unfold M.rho
-  rw [dif_pos ⟨by omega, by have := j.isLt; omega⟩]
+  rw [dite_eq_left ⟨by omega, by have := j.isLt; omega⟩]
   first
     | rfl
     | simp

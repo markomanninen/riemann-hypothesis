@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.ReductionImageOfTransitive
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.CongSpanSingleIff
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.ReductionImageOfTransitive
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.CongSpanSingleIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,8 @@ theorem firstCoords_mulVec (M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) (TpX X p)) (v
   have key : ∀ j, (pr1 θ (M *ᵥ v)) j = ((M.map fun t => (θ t).1) *ᵥ pr1 θ v) j := by
     intro j
     change (θ ((M *ᵥ v) j)).1 = ∑ k, (θ (M j k)).1 * (θ (v k)).1
-    simp [Matrix.mulVec, dotProduct, map_sum, Prod.fst_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mulVec, dotProduct, map_sum, Prod.fst_sum]
   have key2 : pr1 θ (M *ᵥ v) ∘ (idxEquiv X).symm =
       Matrix.reindex (idxEquiv X) (idxEquiv X) (M.map fun t => (θ t).1) *ᵥ
         (pr1 θ v ∘ (idxEquiv X).symm) := by

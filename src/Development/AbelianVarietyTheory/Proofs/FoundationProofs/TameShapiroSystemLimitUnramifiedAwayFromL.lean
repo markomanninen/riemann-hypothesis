@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ShCocOn
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsLocallyConstantCycMod
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnivNormUnramOfOrderOf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ShCocOn
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsLocallyConstantCycMod
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnivNormUnramOfOrderOf
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ GlobalTheory.KA
 open scoped Matrix
@@ -66,8 +70,10 @@ theorem mem_of_fibre_sums {l : ℕ} [Fact l.Prime] {X : ℕ → Type} [∀ r, Gr
       exact mul_le_of_le_one_right (by positivity) (IsUltrametricDist.norm_natCast_le_one _ m)
     exact lt_of_mul_lt_mul_left (this.trans_lt hk) hE0.le
   refine ⟨b - o • y, ?_, ?_⟩
-  · rw [← map_sum, ← map_sum, ← map_nsmul] at h3
-    have := Wo.add_mem (hb r) ((Submodule.Quotient.eq Wo).1 h3)
+  · have h3' : Wo.mkQ (∑ x, a' r x) = Wo.mkQ (o • y) := by
+      rw [map_nsmul, hy, map_sum, map_sum]
+      exact h3
+    have := Wo.add_mem (hb r) ((Submodule.Quotient.eq Wo).1 h3')
     rwa [sub_add_sub_cancel] at this
   · rw [dist_eq_norm, sub_sub_cancel, ← Nat.cast_smul_eq_nsmul (Qbar l), norm_smul]
     refine (mul_le_of_le_one_right (norm_nonneg _) ((pi_norm_le_iff_of_nonneg zero_le_one).2 fun i => ?_)).trans_lt h5
@@ -108,7 +114,7 @@ theorem exists_cob_of_limit {l : ℕ} [Fact l.Prime] {ι : Type} (M : ι → Mat
       (M s - 1) i 1 • ((Pi.single 1 1, 0) : (Fin 2 → Qbar l) × Qbar l) + f s i • ((0, 1) : (Fin 2 → Qbar l) × Qbar l) := by
     refine Prod.ext (funext fun k => ?_) (by simp [row])
     fin_cases k <;> simp [row]
-  rw [e, map_add, map_add, map_smul, map_smul, map_smul, smul_eq_mul, smul_eq_mul, smul_eq_mul] at h0
+  rw [e, map_add (f := _), map_add (f := _), map_smul, map_smul, map_smul, smul_eq_mul, smul_eq_mul, smul_eq_mul] at h0
   conv_rhs => rw [← Matrix.one_mulVec (fun k => -(g (Pi.single k 1, 0) / g (0, 1))), Matrix.mulVec_mulVec, mul_one, ← Matrix.sub_mulVec]
   simp only [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
   field_simp
@@ -258,7 +264,7 @@ theorem slice_unram : ∀ (l : ℕ) [Fact l.Prime] (Ω : Type) [Field Ω] [Algeb
   refine eq_zero_of_gen (G ℚ Ω) l W (fun s => Yw r₀ s z₀ - (mat W s *ᵥ (v r₀ z₀ + w) - (v r₀ z₀ + w))) (Ine (F := ℚ) B) J γ
     (isClosed_Ine B) hJI hγI (fun i => ?_) (fun s hs t _ => ?_) ?_ (fun j hj => ?_) hgen s hs
   · show Continuous fun s => Yw r₀ s z₀ i - (∑ k, mat W s i k * (v r₀ z₀ + w) k - (v r₀ z₀ + w) i)
-    exact (hYc r₀ z₀ i).sub ((continuous_finset_sum _ fun k _ => (hWc i k).mul continuous_const).sub continuous_const)
+    exact (hYc r₀ z₀ i).sub ((continuous_finsetSum _ fun k _ => (hWc i k).mul continuous_const).sub continuous_const)
   · show _ = _ + mat W s *ᵥ _
     rw [hcoc r₀ z₀ s hs t, hWmul, ← Matrix.mulVec_mulVec, Matrix.mulVec_sub, Matrix.mulVec_sub]; abel
   · show Yw r₀ γ z₀ - _ = 0

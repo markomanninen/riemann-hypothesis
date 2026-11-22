@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsShortHarmonicFamilyLinear
-import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsShortHarmonicFamilyFewColumnsLinear
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.LogShortFamilyNumbersLe
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ThetaLetterEquivConjugate
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsShortHarmonicFamilyLinear
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsShortHarmonicFamilyFewColumnsLinear
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.LogShortFamilyNumbersLe
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ThetaLetterEquivConjugate
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 
@@ -30,7 +34,8 @@ theorem mem_iff_herm_of_unimod {n : ℕ} {Λ : GenLat E n} (h : Λ.Unimod) (x : 
   have key : ∀ y : Fin n → E, FD.herm 1 x y =
       IsCMField.complexConj E (∑ j, IsCMField.complexConj E (x j) * y j) := by
     intro y
-    simp only [FD.herm, FD.cc, Matrix.one_apply, mul_ite, mul_one, mul_zero, ite_mul, zero_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [FD.herm, FD.cc, Matrix.one_apply, mul_ite, mul_one, mul_zero, ite_mul, zero_mul,
       Finset.sum_ite_eq, Finset.mem_univ, if_true, map_sum, map_mul,
       IsCMField.complexConj_apply_apply]
   rw [h x]
@@ -149,8 +154,89 @@ theorem exists_short_harmL_family : ∀ (E : Type) [Field E] [NumberField E] [Is
         exact Submodule.smul_mem _ _ hmem
 
   have ha1 : 1 ≤ typeDegree k k' := by rw [hdeg]; exact hpos
-  obtain ⟨S0, hHa, hspan, hnorm, hcard⟩ := short_harmonic_family_few_columns E n Λ.La hfg hint
-    hdual Dw.p Dw.q hn {τ : E →+* ℂ // InPsi H τ} k k' ha1
+  have det_mem_subalgebra_of_entries_mem' {A B : Type} [CommRing A] [CommRing B] [Algebra A B]
+      (S : Subalgebra A B) {m : ℕ} (M : Matrix (Fin m) (Fin m) B) (hM : ∀ i j, M i j ∈ S) :
+      M.det ∈ S := by
+    rw [Matrix.det_apply]
+    refine Subalgebra.sum_mem _ fun σ _ => ?_
+    rw [Units.smul_def]
+    exact zsmul_mem (Subalgebra.prod_mem _ fun i _ => hM _ _) _
+
+  have minorProd_mem_Ha_of_herm_orthogonal {Λ₀ : Submodule (𝓞 E) (Fin n → E)} {K : Type} [Field K] {T : Type} [Fintype T] {p q : ℕ}
+      (τ : T → E →+* K) (c : T → Fin p → ℕ) (c' : T → Fin q → ℕ) (e : Fin p → Fin n → E)
+      (f : Fin q → Fin n → E) (he : ∀ a, e a ∈ Λ₀) (hf : ∀ b, f b ∈ Λ₀)
+      (hef : ∀ a b, FD.herm 1 (e a) (f b) = 0) :
+      minorProd c c' (fun t a k => τ t (e a k)) (fun t b k => τ t (FD.cc (f b k))) ∈ GlobalTheory.Harm.symO p q τ Λ₀ := by
+    unfold GlobalTheory.Harm.symO minorProd
+    refine Subalgebra.prod_mem _ fun t _ => Subalgebra.mul_mem _
+        (Subalgebra.prod_mem _ fun i _ => Subalgebra.pow_mem _ ?_ _)
+        (Subalgebra.prod_mem _ fun i _ => Subalgebra.pow_mem _ ?_ _)
+    · unfold xMinor
+      exact det_mem_subalgebra_of_entries_mem' _ _ fun a b => Algebra.subset_adjoin (Or.inl ⟨t, _, e _, he _, rfl⟩)
+    · unfold yMinor
+      exact det_mem_subalgebra_of_entries_mem' _ _ fun a b => Algebra.subset_adjoin (Or.inr ⟨t, _, f _, hf _, rfl⟩)
+
+  have local_short_family {Λ₀ : Submodule (𝓞 E) (Fin n → E)} (hfg : Λ₀.FG)
+      (hint : ∀ x ∈ Λ₀, ∀ y ∈ Λ₀, IsIntegral ℤ (FD.herm 1 x y))
+      (hdual : ∀ x, (∀ y ∈ Λ₀, IsIntegral ℤ (FD.herm 1 x y)) → x ∈ Λ₀)
+      {p q : ℕ} (hn : p + q ≤ n) {T : Type} [Fintype T] (c : T → Fin p → ℕ)
+      (c' : T → Fin q → ℕ) (ha : 1 ≤ typeDegree c c') :
+      ∃ S : Finset ((Fin p → Fin n → E) × (Fin q → Fin n → E)),
+        (∀ s ∈ S, (∀ a, s.1 a ∈ Λ₀) ∧ (∀ b, s.2 b ∈ Λ₀) ∧ ∀ a b, FD.herm 1 (s.1 a) (s.2 b) = 0) ∧
+        (∀ (K : Type) [Field K] (τ : T → E →+* K), ∀ s ∈ S,
+          (minorProd c c' (fun t a k => τ t (s.1 a k)) fun t b k => τ t (FD.cc (s.2 b k))) ∈
+            GlobalTheory.Harm.symO p q τ Λ₀) ∧
+        (∀ (K : Type) [Field K] [CharZero K] (τ : T → E →+* K),
+          (Function.Injective fun s : T × Bool => fun x : E => τ s.1 (if s.2 then FD.cc x else x)) →
+          Submodule.span K ((fun s : (Fin p → Fin n → E) × (Fin q → Fin n → E) =>
+            minorProd c c' (fun t a k => τ t (s.1 a k)) fun t b k => τ t (FD.cc (s.2 b k))) '' S) =
+            rowHighest K c c') ∧
+        (∀ (τ : T → E →+* ℂ), ∀ s ∈ S,
+          MvPoly.l1Norm (minorProd c c' (fun t a k => τ t (s.1 a k)) fun t b k => τ t (FD.cc (s.2 b k))) ≤
+            (((p + q : ℕ) : ℝ) * Real.sqrt n * (((p + q) + 1).factorial * ((2 * FD.fdeg E * n) *
+              ((2 * (p + q : ℕ) + 1) * typeDegree c c') *
+              (2 * (FD.fdeg E : ℝ) ^ ((3 : ℝ) / 2) * n ^ 2 * FD.rdE E)) ^ (2 * (p + q) + 1))) ^
+              typeDegree c c') ∧
+        S.card ≤ ((2 * (p + q) + 1) * typeDegree c c' + 1) ^ (2 * FD.fdeg E * n * (2 * p + q)) := by
+    classical
+    obtain ⟨hfg', hint', hdual'⟩ := conjLattice_selfDual hfg hint hdual
+    obtain ⟨S', hS'1, hS'2, hS'3, hS'4⟩ :=
+      exists_short_harmonic_family_few_columns (Λ := conjLattice Λ₀) hfg' hint' hdual' hn c c' ha
+    let cj : (Fin p → Fin n → E) × (Fin q → Fin n → E) → (Fin p → Fin n → E) × (Fin q → Fin n → E) :=
+      fun s => (fun a => conjVec E n (s.1 a), fun b => conjVec E n (s.2 b))
+    have hcc : ∀ x : E, FD.cc (FD.cc x) = x := fun x => by
+      have := congrFun (conjVec_conjVec (E := E) (n := 1) (fun _ => x)) 0
+      simpa only [conjVec_apply] using this
+    have hpoly : ∀ (K : Type) [Field K] (τ : T → E →+* K) (s : (Fin p → Fin n → E) × (Fin q → Fin n → E)),
+        minorProd c c' (fun t a k => τ t ((cj s).1 a k)) (fun t b k => τ t (FD.cc ((cj s).2 b k))) =
+          minorProd c c' (fun t a k => τ t (FD.cc (s.1 a k))) (fun t b k => τ t (s.2 b k)) := by
+      intro K _ τ s
+      simp only [cj, conjVec_apply, hcc]
+    have hmem : ∀ s ∈ S', (∀ a, (cj s).1 a ∈ Λ₀) ∧ (∀ b, (cj s).2 b ∈ Λ₀) ∧
+        ∀ a b, FD.herm 1 ((cj s).1 a) ((cj s).2 b) = 0 := by
+      intro s hs
+      obtain ⟨h1, h2, h3⟩ := hS'1 s hs
+      refine ⟨fun a => mem_conjLattice.mp (h1 a), fun b => mem_conjLattice.mp (h2 b), fun a b => ?_⟩
+      simp only [cj]
+      rw [herm_conjVec]
+      exact h3 a b
+    refine ⟨S'.image cj, ?_, ?_, ?_, ?_, ?_⟩
+    · intro s hs
+      obtain ⟨s', hs', rfl⟩ := Finset.mem_image.mp hs
+      exact hmem s' hs'
+    · intro K _ τ s hs
+      obtain ⟨s', hs', rfl⟩ := Finset.mem_image.mp hs
+      obtain ⟨h1, h2, h3⟩ := hmem s' hs'
+      exact minorProd_mem_Ha_of_herm_orthogonal τ c c' _ _ h1 h2 h3
+    · intro K _ _ τ hτ
+      rw [← hS'2 K τ hτ, Finset.coe_image, ← Set.image_comp]
+      exact congrArg _ (Set.image_congr fun s _ => hpoly K τ s)
+    · intro τ s hs
+      obtain ⟨s', hs', rfl⟩ := Finset.mem_image.mp hs
+      rw [hpoly ℂ τ s']
+      exact hS'3 τ s' hs'
+    · exact Finset.card_image_le.trans hS'4
+  obtain ⟨S0, _, hHa, hspan, hnorm, hcard⟩ := local_short_family hfg hint hdual hn k k' ha1
   have hinj := injective_embF_inPsi (H := H) c
   have hsp := hspan c.F (fun t => embF c t.1) hinj
   refine ⟨S0.image fun s => rename e.symm (minorProd k k' (fun t a kk => embF c t.1 (s.1 a kk))
@@ -164,8 +250,7 @@ theorem exists_short_harmL_family : ∀ (E : Type) [Field E] [NumberField E] [Is
         (fun t b kk => embF c t.1 (FD.cc (s.2 b kk))) ∈
         GlobalTheory.Harm.symO Dw.p Dw.q (fun t : {τ : E →+* ℂ // InPsi H τ} => embF c t.1) Λ.La := by
       have := hHa c.F (fun t => embF c t.1) s hs
-      unfold GlobalTheory.Harm.Ha at this
-      exact (Subalgebra.mem_toSubmodule _).1 (Submodule.mem_inf.1 this).2
+      exact this
     refine ⟨⟨(hiff _).2 (by rw [hre]; exact hM), (hsym Λ _).2 (by rw [hre]; exact hS)⟩,
       fun σ' => ?_⟩
     rw [sum_norm_coeff_eq_l1Norm e σ', hre, map_minorProd]

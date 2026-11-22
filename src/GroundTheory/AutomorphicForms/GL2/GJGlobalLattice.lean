@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJGlobalDefs
-import GroundTheory.GlobalFields.TateThesis.GlobalZetaFinite
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsDecay
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJGlobalDefs
+public import GroundTheory.GlobalFields.TateThesis.GlobalZetaFinite
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsDecay
+
+@[expose] public section
 
 open MeasureTheory NumberField Topology Filter Set
 open scoped NumberField.AdeleRing Classical nonZeroDivisors
@@ -66,7 +70,8 @@ theorem norm_apply_le_infNorm (X : Matrix (Fin n) (Fin n) 𝔸[K]) (i j : Fin n)
 theorem mul_apply_fst_apply (X Y : Matrix (Fin n) (Fin n) 𝔸[K]) (i j : Fin n)
     (w : InfinitePlace K) : ((X * Y) i j).1 w = ∑ k, (X i k).1 w * (Y k j).1 w := by
   change Reduction.infEval w ((X * Y) i j) = ∑ k, Reduction.infEval w (X i k) * Reduction.infEval w (Y k j)
-  rw [Matrix.mul_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.mul_apply, map_sum]
   simp only [map_mul]
 
 theorem infNorm_mul_le (X Y : Matrix (Fin n) (Fin n) 𝔸[K]) :
@@ -595,7 +600,7 @@ theorem exists_le_infNorm_of_isInBox (hn : 0 < n) (I : (FractionalIdeal (𝓞 K)
       ((n.factorial : ℝ) * X ^ n) ^ d := by
     calc ∏ w : InfinitePlace K, ‖((u : 𝔸[K])).1 w‖ ^ w.mult
         ≤ ∏ w : InfinitePlace K, ((n.factorial : ℝ) * X ^ n) ^ w.mult :=
-          Finset.prod_le_prod (fun w _ => pow_nonneg (norm_nonneg _) _)
+          Finset.prod_le_prod₀ (fun w _ => pow_nonneg (norm_nonneg _) _)
             (fun w _ => pow_le_pow_left₀ (norm_nonneg _) (hinf w) _)
       _ = ((n.factorial : ℝ) * X ^ n) ^ d := by
           rw [Finset.prod_pow_eq_pow_sum, InfinitePlace.sum_mult_eq]

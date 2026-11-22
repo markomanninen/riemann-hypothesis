@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntBTmulBasis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntBTmulBasis
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount IsDedekindDomain GlobalTheory.AdicSpan
 open scoped TensorProduct Classical
 
@@ -103,7 +108,7 @@ theorem GlobalTheory.AbsLattice.exists_unit_of_conj_stable : ∀ {A B : Type} [R
       (by show (X : A) * (j 0 * e 0) ∈ Λ; simpa using h0)
       (fun x hx y hy => by
         show (X : A) * (j (x + y) * e 0) ∈ Λ
-        rw [map_add, add_mul, mul_add]; exact hadd _ hx _ hy)
+        rw [map_add (f := _), add_mul, mul_add]; exact hadd _ hx _ hy)
       (fun ρ hρ x hx => by
         show (X : A) * (j (ρ * x) * e 0) ∈ Λ
         rw [map_mul, mul_assoc]; exact hL ρ hρ _ hx)

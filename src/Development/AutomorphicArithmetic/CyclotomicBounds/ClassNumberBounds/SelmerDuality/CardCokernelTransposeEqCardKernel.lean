@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.SelmerDuality.Frobenius
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.SelmerDuality.PerfCard
+
+@[expose] public section
 
 namespace KStar.Selmer
 

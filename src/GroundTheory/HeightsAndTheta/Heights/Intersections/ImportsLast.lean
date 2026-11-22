@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerBis
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PrimeComplMapLeNonZeroDivisorsQuot
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsLocalizedQuotientLength
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerBis
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PrimeComplMapLeNonZeroDivisorsQuot
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsLocalizedQuotientLength
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -31,7 +36,7 @@ theorem regularityDehomogenization_holds.proof (h₁ : GroundTheory.Heights₂.H
   refine ⟨hyO, ?_⟩
   obtain ⟨_, _, _, hmax⟩ := h₂ K ι P W hP hWm hPW
   have : IsLocalHom (algebraMap (locRing P W) (coneLocRing P W hPW)) :=
-    ((local_hom_TFAE _).out 2 0).mp hmax.le
+    ((local_hom_tfae _).out 3 1).mp hmax.le
 
   have hu : IsUnit (algebraMap (MRing ι ⧸ P) (coneLocRing P W hPW) (Ideal.Quotient.mk P t)) :=
     IsLocalization.map_units (coneLocRing P W hPW)
@@ -56,7 +61,7 @@ theorem regularityDehomogenization_holds.proof (h₁ : GroundTheory.Heights₂.H
     rw [(Algebra.TensorProduct.quotIdealMapEquivTensorQuot B (Ideal.span {x})).toLinearEquiv.length_eq,
       IsLocalRing.length_baseChange, hm, hres, mul_one]
   unfold multAt
-  rw [dif_pos hWp, h₁ (MRing ι) P W s (coneLocRing P W hPW) inferInstance, hspan, locIdeal_eq_span hyO,
+  rw [dite_eq_left hWp, h₁ (MRing ι) P W s (coneLocRing P W hPW) inferInstance, hspan, locIdeal_eq_span hyO,
     key (locRing P W) (coneLocRing P W hPW) hmax]
 
 end

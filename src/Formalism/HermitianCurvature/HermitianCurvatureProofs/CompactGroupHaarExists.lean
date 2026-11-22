@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ENNReal NNReal
@@ -206,7 +210,9 @@ theorem shellInt : ShellInt := by
       _ = {x | N x ≤ (2:ℝ) ^ m0}.indicator (fun _ => ENNReal.ofReal (((2:ℝ) ^ m0 / 2) ^ (-A))) x := by
           rw [Set.indicator_of_mem (show x ∈ {x | N x ≤ (2:ℝ) ^ m0} from hm0)]
       _ ≤ ∑' m : ℕ, {x | N x ≤ (2:ℝ) ^ m}.indicator
-            (fun _ => ENNReal.ofReal (((2:ℝ) ^ m / 2) ^ (-A))) x := ENNReal.le_tsum m0
+            (fun _ => ENNReal.ofReal (((2:ℝ) ^ m / 2) ^ (-A))) x :=
+        ENNReal.le_tsum (f := fun m : ℕ => {x | N x ≤ (2:ℝ) ^ m}.indicator
+          (fun _ => ENNReal.ofReal (((2:ℝ) ^ m / 2) ^ (-A))) x) m0
   have hq0 : 0 ≤ (2:ℝ) ^ (d - A) := by positivity
   have hq1 : (2:ℝ) ^ (d - A) < 1 := Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by linarith)
   have hsum : Summable fun m : ℕ => |C| * 2 ^ A * ((2:ℝ) ^ (d - A)) ^ m :=
@@ -522,7 +528,7 @@ theorem invM_meas {k r : ℕ} : Measurable (invM : Mt k r → Mt k r) := by
     simp only [invM, inv_eq, Matrix.smul_apply, smul_eq_mul]
   rw [h]
   have hof : Continuous (fun x : Mt k r => (Matrix.of x : Mat k r)) := continuous_id
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   exact hof.matrix_det.measurable.inv.mul ((hof.matrix_adjugate).matrix_elem i j).measurable
 
 theorem sfin {k r : ℕ} {U : Set (Mat k r)} {μ : Measure (Mt k r)} (h : IsHaarOn U μ) : SigmaFinite μ := by

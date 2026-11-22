@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BDataOfR
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BDataOfR
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,7 +75,7 @@ theorem zhatO_gamP (w : Point D.host.E (D.R.rS + 1)) (hw : ∃ g, Formalism.L2.S
       ptMat (ptLoc D τ w) := by
   have hrep : Formalism.L2.SG.RealObj.IsPtRep X u u' w (Formalism.L2.SG.RealObj.gamW X u u' w) := by
     unfold Formalism.L2.SG.RealObj.gamW
-    rw [dif_pos hw]
+    rw [dite_eq_left hw]
     exact hw.choose_spec
   ext a b
   have h1 := congrFun (congrFun (hrep (vOf X τ)) a) b

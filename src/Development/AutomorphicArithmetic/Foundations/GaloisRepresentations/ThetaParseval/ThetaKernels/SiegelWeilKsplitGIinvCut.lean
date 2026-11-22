@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaSplitting.GIinvCut
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKsplitGIinvA
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaSplitting.GIinvCut
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKsplitGIinvA
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -22,7 +26,7 @@ theorem T_lin_k (d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ) (Φ Φ' 
     ring
   show d.l (d.dd.rho d.B.ψ (X * (incM F d.b.1.toCols₂)ᵀ) (Φ + a • Φ')) =
     d.l (d.dd.rho d.B.ψ (X * (incM F d.b.1.toCols₂)ᵀ) Φ) + a • d.l (d.dd.rho d.B.ψ (X * (incM F d.b.1.toCols₂)ᵀ) Φ')
-  rw [e, map_add, map_smul]
+  rw [e, map_add (f := _), map_smul]
 theorem mu_right_k (d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ) : d.μ.IsMulRightInvariant := by
   exact _root_.PositivityTheory.SiegelWeilFormula.KSplitA.mu_right_k d
 theorem thetaSum_S_rat_k (hT : _root_.PositivityTheory.SiegelWeilFormula.TAll_k) (d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ) : ∀ Φ ∈ d.sch, ∀ γ ∈ ratU σ d.A.J, thetaSum F (d.S γ Φ) = thetaSum F Φ := by
@@ -79,7 +83,7 @@ theorem I_lin_k (hT : _root_.PositivityTheory.SiegelWeilFormula.TAll_k) (d : _ro
     fun Ξ hΞ => ((hT.2.2.2.2 F E σ d).2.2 Ξ hΞ).1 x
   have e : ∀ h, thetaSum F (d.om x (d.S h (Φ + a • Φ'))) =
       thetaSum F (d.om x (d.S h Φ)) + a * thetaSum F (d.om x (d.S h Φ')) := fun h => by
-    rw [map_add, map_smul, map_add, map_smul]
+    rw [map_add (f := _), map_smul, map_add (f := _), map_smul]
     exact _root_.PositivityTheory.SiegelWeilFormula.KSplit.thetaSum_lin_k hT d (d.ok.dbl.weil.2.1.pres _ _ (d.ok.dbl.lin.pres _ _ hΦ))
       (d.ok.dbl.weil.2.1.pres _ _ (d.ok.dbl.lin.pres _ _ hΦ')) a
   simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.I, thetaMean, MeasureTheory.setAverage_eq, e]
@@ -124,7 +128,7 @@ theorem gIinv_of_k : _root_.PositivityTheory.SiegelWeilFormula.TAll_k → _root_
       map_add' := fun P Q => by
         have e := _root_.PositivityTheory.SiegelWeilFormula.KSplit.I_lin_k hT d (hφ P).1 (hφ Q).1 1 g
         rw [one_smul, one_mul] at e
-        simp only [map_add]; exact e
+        simp only [map_add (f := _)]; exact e
       map_smul' := fun c P => by
         have e := _root_.PositivityTheory.SiegelWeilFormula.KSplit.I_lin_k hT d (Submodule.zero_mem _) (hφ P).1 c g
         rw [zero_add, hI0, zero_add] at e

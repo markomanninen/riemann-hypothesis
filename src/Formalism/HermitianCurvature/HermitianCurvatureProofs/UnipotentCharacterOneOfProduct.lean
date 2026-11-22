@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MatExtMulVec
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SubMulRight
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MatExtMulVec
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SubMulRight
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.StabilizerDisintegration.FB
 

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConstMemBddAut
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.StepVectorLiftPairFlagLevelRealizedChain
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilActionLiftPairStepVectorInvLevelChar
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AdjointHalfDatumStabilizerPairMove
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConjugatedThetaCharactersRestrictionRamificationStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsCharFamIsVacVec
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSelfDualCoordLatticeOfSelfDualFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConstMemBddAut
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.StepVectorLiftPairFlagLevelRealizedChain
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilActionLiftPairStepVectorInvLevelChar
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AdjointHalfDatumStabilizerPairMove
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConjugatedThetaCharactersRestrictionRamificationStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsCharFamIsVacVec
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSelfDualCoordLatticeOfSelfDualFrame
+
+@[expose] public section
 
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice MeasureTheory IsDedekindDomain NumberField Matrix
@@ -23,9 +27,9 @@ open GlobalTheory.AdjDatumMove
 
 variable {D : D7}
 
+
 open Matrix in
 open scoped ComplexOrder in
-
 theorem isCartanInv_one_of_onb {k : ℕ} {G B : Matrix (Fin k) (Fin k) ℂ} (h : IsONBasis G 1 B k) : IsCartanInv G 1 := by
   obtain ⟨e, he, h1, -⟩ := h
   have h2 : Bᴴ * G * B = 1 := by
@@ -98,7 +102,7 @@ theorem omegaG_mul_right {a b : ℕ} (L : LevDat D.host.E ℂ a) (hs : L.s = 0)
   unfold omegaG
   by_cases hy : GCond L y
   · have hy' : GCond L (fun PP => y PP * (γ PP).val) := gCond_mul L γ hγ hP y _ (fun _ => rfl) hy
-    rw [dif_pos hy', dif_pos hy]
+    rw [dite_eq_left hy', dite_eq_left hy]
     have key : ∀ PP : ↥L.Pg, hy'.2.choose PP = hy.2.choose PP * γ PP.1 := fun PP => Units.ext (by
       rw [Units.val_mul, hy'.2.choose_spec.1 PP, hy.2.choose_spec.1 PP, topL_mul_right])
     have hc : (⟨fun PP => upperLeftBlock L.hr (hy'.2.choose PP), hy'.2.choose_spec.2.2⟩ : L.P.H) =
@@ -113,7 +117,7 @@ theorem omegaG_mul_right {a b : ℕ} (L : LevDat D.host.E ℂ a) (hs : L.s = 0)
     ring
   · have hy' : ¬ GCond L (fun PP => y PP * (γ PP).val) := fun h => hy (gCond_mul L (fun PP => (γ PP)⁻¹) hγi hPi _ y
       (fun PP => by rw [Matrix.mul_assoc, ← Units.val_mul, mul_inv_cancel, Units.val_one, Matrix.mul_one]) h)
-    rw [dif_neg hy', dif_neg hy, mul_zero]
+    rw [dite_eq_right hy', dite_eq_right hy, mul_zero]
 
 theorem omegaQ_mul_right {n r : ℕ} (hr : r ≤ n) (Q : Finset (Pl D.host.E)) (ξ : ∀ PP : Pl D.host.E, (kP PP)ˣ →* ℂˣ)
     (γ : ∀ PP : Pl D.host.E, GL (Fin r) (kP PP)) (u : ∀ PP : Pl D.host.E, Matrix (Fin n) (Fin r) (kP PP)) :
@@ -127,8 +131,8 @@ theorem omegaQ_mul_right {n r : ℕ} (hr : r ≤ n) (Q : Finset (Pl D.host.E)) (
   have e1 : upperLeftBlock hr (1 : GL (Fin n) (kP PP)) = 1 := blockDiagonalExtendByOnePrimeField_one _ _
   rw [e1, map_one, map_one, inv_one, one_mul, map_inv, map_inv, Units.val_inv_eq_inv_val]
 
-open Formalism.IndefR.Lev (finE) in
 
+open Formalism.IndefR.Lev (finE) in
 theorem levDatum_actO (S T : HSp D) (βS : GL (Fin S.rank) (EAf D)) (βT : GL (Fin T.rank) (EAf D))
     (L : LevDat D.host.E ℂ T.rank) (hs : L.s = 0) (Q : Finset (Pl D.host.E)) (m : ∀ PP : Pl D.host.E, (kP PP)ˣ →* ℂˣ)
     (e : AE D) (hr : T.rank ≤ S.rank) (h : GA D T) (sh : finE T h ∈ St βT)
@@ -151,10 +155,10 @@ theorem levDatum_actO (S T : HSp D) (βS : GL (Fin S.rank) (EAf D)) (βT : GL (F
     have h2 : ∀ PP, redM PP (frMapAdj S T βS βT (actO S T 1⁻¹ h⁻¹ x)) =
         redM PP (frMapAdj S T βS βT x) * (redFn βT PP (finE T h)).val := fun PP => by
       rw [h1.2 PP, hG1 PP, hH PP, Units.val_one, Matrix.one_mul]
-    rw [if_pos hx, if_pos ⟨isHalf_actO' _ _ hx.1, h1.1⟩, funext h2,
+    rw [ite_eq_left hx, ite_eq_left ⟨isHalf_actO' _ _ hx.1, h1.1⟩, funext h2,
       omegaG_mul_right L hs m (fun PP => redFn βT PP (finE T h)) hγ hP, omegaQ_mul_right hr Q m]
     ring
-  · rw [if_neg hx, if_neg, mul_zero]
+  · rw [ite_eq_right hx, ite_eq_right, mul_zero]
     rintro ⟨h1, h2⟩
     have e' := GlobalTheory.AdelicLatMove.actO_actO_inv S T (1 : GA D S) h x
     have h3 := isHalf_actO' (1 : GA D S) h h1
@@ -162,9 +166,9 @@ theorem levDatum_actO (S T : HSp D) (βS : GL (Fin S.rank) (EAf D)) (βT : GL (F
     rw [e'] at h3 h4
     exact hx ⟨h3, h4⟩
 
+
 open Formalism.IndefR.Lev (finE) in
 set_option maxHeartbeats 1000000 in
-
 theorem zeta_law : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A) i t σ s P cμ cη m ω BW f₀ f c io, IsLiftDataC R F i t σ s P cμ cη m ω BW f₀ f c io → ∀ k ∈ levG (Wc D i) (R.βW i) (R.datWp i P), ω (1, k) f = levChi (Wc D i) (R.βW i) (R.datWp i P) k • f := by
   intro D G _ _ Pl0 T A Ks _ _ _ R F i t σ s P cμ cη m ω BW f₀ f c io h k hk
   classical
@@ -180,10 +184,39 @@ theorem zeta_law : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} 
   have dW := GlobalTheory.SDFrameLattice.isSelfDualC_of_isSDFrame D _ _ _ _ (hL.βW i)
   have fV := (hL.βV i).choose_spec.1
   have fW := (hL.βW i).choose_spec.1
-  have hch' := GlobalTheory.T.conjugatedThetaCharacters_restriction_ramification R hL i t s cμ cη m hch
-  have hres : ∀ PP ∈ (R.datWp i P).Pg ∪ R.Q t, GlobalTheory.StepLaw.ResAt cμ PP (m PP) ∧ GlobalTheory.StepLaw.ResAt (cμ * cη⁻¹) PP (m PP) :=
-    fun PP hP => hch'.1 PP (Finset.mem_union.1 hP)
-  have hun := hch'.2.1 ((R.datWp i P).Pg ∪ R.Q t) (fun PP h => Finset.mem_union.2 h)
+  have hchars :
+      (∀ PP ∈ R.Pg ∪ R.Q t, GlobalTheory.StepLaw.ResAt cμ PP (m PP) ∧
+        GlobalTheory.StepLaw.ResAt (cμ * cη⁻¹) PP (m PP)) ∧
+      (GlobalTheory.StepLaw.UnrOff cμ (R.Pg ∪ R.Q t) ∧
+        GlobalTheory.StepLaw.UnrOff (cμ * cη⁻¹) (R.Pg ∪ R.Q t)) := by
+    obtain ⟨μ', η', hμ, hη, ecμ, ecη, hres⟩ := hch
+    obtain ⟨-, p1, p2, p3⟩ :=
+      GlobalTheory.T.levelCharacters_unramified_off_levelPlaces D T R.toLevCh A.μ0 hL t
+    have uη : ∀ PP, η'.UnrAt PP :=
+      fun PP => GlobalTheory.ConjSplitChars.unrAt_conj hη (R.C.isEta.unr PP)
+    have uoη : GlobalTheory.StepLaw.UnrOff cη (R.Pg ∪ R.Q t) := fun v ε hε _ =>
+      GlobalTheory.T.isUnramifiedAtPlaceIdempotent_of_heckeChar_unramified_above D cη η' ecη v ε hε
+        (fun PP _ => uη PP)
+    constructor
+    · intro PP hPP
+      have hP := Finset.mem_union.1 hPP
+      have tμ : μ'.TameAt PP := by
+        apply GlobalTheory.ConjSplitChars.tameAt_conj hμ
+        rcases hP with hP | hP
+        · exact ((R.C.isMu0 i).tame PP).mul ((p1 PP hP).levelLe 1)
+        · exact ((p2 PP hP i).levelLe 1).mul (hL.xi_tame t PP)
+      have rμ := (GlobalTheory.T.ideleChar_restrict_localUnits_residueChar D cμ μ' ecμ PP).1
+        (m PP) tμ (hres PP hP)
+      have rη := ((GlobalTheory.T.ideleChar_restrict_localUnits_residueChar D cη η' ecη PP).2 (uη PP)).inv
+      exact ⟨rμ, by simpa only [inv_one, mul_one] using rμ.mul rη⟩
+    · have uoμ : GlobalTheory.StepLaw.UnrOff cμ (R.Pg ∪ R.Q t) := by
+        intro v ε hε hv
+        apply GlobalTheory.T.isUnramifiedAtPlaceIdempotent_of_heckeChar_unramified_above D cμ μ' ecμ v ε hε
+        intro PP hPP
+        have haway := p3 PP (fun P' hP => hPP ▸ hv P' (Finset.mem_union.2 hP))
+        exact GlobalTheory.ConjSplitChars.unrAt_conj hμ ((haway.2 i).mul haway.1)
+      exact ⟨uoμ, uoμ.mul uoη.inv⟩
+  obtain ⟨hres, hun⟩ := hchars
   have hvac1 := GlobalTheory.StepVecLaw.om_vac hW (D.sp.V_sig _) (D.sp.W_sig _)
     (fun τ => isCartanInv_one_of_onb (hC.models.BV i τ)) (GlobalTheory.Chain.VacVec.cart_isCartanInv (R.MW i σ)) dV dW fV fW hvac he
     (fun PP hP => (hres PP hP).1) (fun PP hP => (hres PP hP).2) hun.1 hun.2 (one_mem _) hkG sV sW

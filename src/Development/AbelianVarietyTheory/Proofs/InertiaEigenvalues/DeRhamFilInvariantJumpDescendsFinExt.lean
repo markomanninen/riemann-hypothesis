@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.MainNotions.LocalSituation GlobalTheory.Cyc TensorProduct
 
@@ -34,7 +38,8 @@ theorem exists_invariant_of_subgroup {G F Ω V : Type} [Group G] [Field F] [Fiel
   let T : F → V := fun c => ∑ q : G ⧸ H, A q.out (ι c • y)
   have hTinv : ∀ c g, A g (T c) = T c := by
     intro c g
-    simp only [T, map_sum, ← hA]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [T, map_sum, ← hA]
     refine Fintype.sum_equiv (MulAction.toPerm g) _ _ (fun q => ?_)
     apply key _ (hfix c)
     rw [MulAction.toPerm_apply, QuotientGroup.out_eq']
@@ -70,7 +75,8 @@ theorem exists_invariant_of_subgroup {G F Ω V : Type} [Group G] [Field F] [Fiel
     intro c
     have hz := (Submodule.Quotient.mk_eq_zero N₁).mpr (hT1 c)
     simp only [T, hAs] at hz
-    rw [← Submodule.mkQ_apply, map_sum] at hz
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Submodule.mkQ_apply, map_sum] at hz
     simpa [χ, w] using hz
   have hw : ∀ q, w q = 0 := by
     intro q
@@ -79,7 +85,8 @@ theorem exists_invariant_of_subgroup {G F Ω V : Type} [Group G] [Field F] [Fiel
     have hsum : ∑ q', φ (w q') • (χ q' : F → Ω) = 0 := by
       funext c
       have hcq := congrArg φ (hrel c)
-      simp only [map_sum, map_smul, smul_eq_mul, map_zero] at hcq
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, smul_eq_mul, map_zero] at hcq
       simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply]
       rw [← hcq]
       exact Finset.sum_congr rfl (fun q' _ => mul_comm _ _)
@@ -106,7 +113,7 @@ theorem smul_mem_Fil (P : LocPrime l) (K : FinExt l) (a : ℤ) (c : Om l) {x : P
   rw [← SetLike.mem_coe, P.PD_Fil K K' a, SetLike.mem_coe]
   exact ((P.PD K').Fil a).smul_mem (⟨c, hcK⟩ : K'.1) hx'
 
-def filOm (P : LocPrime l) (K : FinExt l) (a : ℤ) : Submodule (Om l) P.R.BdR where
+noncomputable def filOm (P : LocPrime l) (K : FinExt l) (a : ℤ) : Submodule (Om l) P.R.BdR where
   carrier := ((P.PD K).Fil a : Set P.R.BdR)
   zero_mem' := ((P.PD K).Fil a).zero_mem
   add_mem' := fun h h' => ((P.PD K).Fil a).add_mem h h'
@@ -145,14 +152,14 @@ theorem jump_descends (l : ℕ) [Fact l.Prime] (P : LocPrime l) (K E : FinExt l)
 
   let A : ↥(GK K) → (Fin d → P.R.BdR) →+ (Fin d → P.R.BdR) := fun g =>
     AddMonoidHom.mk' (fun v => ((M g).map am).mulVec (fun i => P.actQdR g (v i)))
-      (fun v w => by simp only [Pi.add_apply, map_add]; exact Matrix.mulVec_add _ _ _)
+      (fun v w => by simp only [Pi.add_apply, map_add (f := _)]; exact Matrix.mulVec_add _ _ _)
   have hAapp : ∀ g v, A g v = ((M g).map am).mulVec (fun i => P.actQdR g (v i)) := fun _ _ => rfl
-  let σ : ↥(GK K) → Om l →* Om l := fun g => MonoidHomClass.toMonoidHom (g : GQ l)
-  let ι : ↥E.1 →* Om l := MonoidHomClass.toMonoidHom E.1.val
+  let σ : ↥(GK K) → Om l →* Om l := fun g => MonoidHom.ofClass (g : GQ l)
+  let ι : ↥E.1 →* Om l := MonoidHom.ofClass E.1.val
   have hσ : ∀ g h c, σ (g * h) c = σ g (σ h c) := fun g h c => by
-    simp only [σ, MonoidHom.coe_coe, Subgroup.coe_mul, AlgEquiv.mul_apply]
+    simp only [σ, MonoidHom.coe_ofClass, Subgroup.coe_mul, AlgEquiv.mul_apply]
   have hσ1 : ∀ c, σ 1 c = c := fun c => by
-    simp only [σ, MonoidHom.coe_coe, OneMemClass.coe_one, AlgEquiv.one_apply]
+    simp only [σ, MonoidHom.coe_ofClass, OneMemClass.coe_one, AlgEquiv.one_apply]
   have hH : ∀ g, g ∈ (GK E).subgroupOf (GK K) ↔ ∀ c, σ g (ι c) = ι c := by
     intro g
     rw [Subgroup.mem_subgroupOf]
@@ -163,7 +170,8 @@ theorem jump_descends (l : ℕ) [Fact l.Prime] (P : LocPrime l) (K E : FinExt l)
       (w : Fin d → P.R.BdR), (fun i => f ((N.map am).mulVec w i)) = (N.map am).mulVec (fun i => f (w i)) := by
     intro f N w
     funext i
-    simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul, am, AlgEquiv.commutes]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul, am, AlgEquiv.commutes]
   have hA : ∀ g h v, A (g * h) v = A g (A h v) := by
     intro g h v
     rw [hAapp, hAapp, hAapp, hcomm, Matrix.mulVec_mulVec, ← Matrix.map_mul,
@@ -176,7 +184,7 @@ theorem jump_descends (l : ℕ) [Fact l.Prime] (P : LocPrime l) (K E : FinExt l)
     rw [hAapp, hAapp]
     funext i
     simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, Pi.smul_apply, Algebra.smul_def,
-      map_mul, P.actQdR_Om, Finset.mul_sum, σ, MonoidHom.coe_coe]
+      map_mul, P.actQdR_Om, Finset.mul_sum, σ, MonoidHom.coe_ofClass]
     exact Finset.sum_congr rfl (fun j _ => by ring)
   let N₀ : Submodule (Om l) (Fin d → P.R.BdR) := Submodule.pi Set.univ (fun _ => filOm P K a)
   let N₁ : Submodule (Om l) (Fin d → P.R.BdR) := Submodule.pi Set.univ (fun _ => filOm P K (a + 1))

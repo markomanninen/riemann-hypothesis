@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCMean
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCMean
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBC
 
@@ -48,9 +52,9 @@ theorem phiG_tendsto (Y : Finset H) (κ : H → H → ℂ) (K : Fin f → H × �
   · filter_upwards [eventually_good σ] with x hx
     rw [phiG, if_pos hx]
   · unfold phi Hh
-    refine tendsto_finset_sum _ (fun h hh => tendsto_finset_sum _ (fun h' hh' => ?_))
+    refine tendsto_finsetSum _ (fun h hh => tendsto_finsetSum _ (fun h' hh' => ?_))
     refine Tendsto.const_mul _ ?_
-    refine tendsto_finset_prod _ (fun v _ => ?_)
+    refine tendsto_finsetProd _ (fun v _ => ?_)
     exact (hlim v h hh h' hh' (σ v)).comp (tendsto_coord v)
 
 theorem phiG_conj_tendsto (Y : Finset H) (κ : H → H → ℂ) (hκ : TB.PSDOn Y κ) (K : Fin f → H × ℂ → H × ℂ → ℂ)
@@ -68,29 +72,21 @@ theorem phiG_conj_tendsto (Y : Finset H) (κ : H → H → ℂ) (hκ : TB.PSDOn 
   · filter_upwards [eventually_good σ] with x hx
     symm
     rw [phiG, if_pos ⟨hx.2, hx.1⟩, phi]
-    simp only [map_sum, map_mul, map_prod]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_prod]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl (fun h hh => Finset.sum_congr rfl (fun h' hh' => ?_))
     rw [hherm h hh h' hh']
     rfl
   · unfold Hh
-    refine tendsto_finset_sum _ (fun h hh => tendsto_finset_sum _ (fun h' hh' => ?_))
+    refine tendsto_finsetSum _ (fun h hh => tendsto_finsetSum _ (fun h' hh' => ?_))
     refine Tendsto.const_mul _ ?_
-    refine tendsto_finset_prod _ (fun v _ => ?_)
+    refine tendsto_finsetProd _ (fun v _ => ?_)
     exact (hlim v h hh h' hh' (σ v)).comp (tendsto_coord v)
 
 section mean
 
 variable (Λ : AddSubgroup (crystallineComparison.V f)) (LIM : (Λ → ℂ) → ℂ)
-
-theorem bdd_add {α : Type} {g k : α → ℂ} (hg : crystallineComparison.Bdd g) (hk : crystallineComparison.Bdd k) : crystallineComparison.Bdd (g + k) := by
-  obtain ⟨B1, h1⟩ := hg
-  obtain ⟨B2, h2⟩ := hk
-  exact ⟨B1 + B2, fun x => (norm_add_le _ _).trans (add_le_add (h1 x) (h2 x))⟩
-
-theorem mean_smul (hL : crystallineComparison.IsMean LIM) (c : ℂ) {g : Λ → ℂ} (hg : crystallineComparison.Bdd g) :
-    LIM (fun x => c * g x) = c * LIM g := by
-  exact hL.2.1 c g hg
 
 end mean
 

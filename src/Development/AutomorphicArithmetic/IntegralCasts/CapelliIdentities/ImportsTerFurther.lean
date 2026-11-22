@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Ga5b.exists_nat_smul_mem :
     ∀ {E : Type} [inst : Field E] [inst_1 : NumberField E]

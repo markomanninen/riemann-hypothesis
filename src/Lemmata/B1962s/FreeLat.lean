@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def Bl.FreeLattices.FreeLat :
   Prop :=

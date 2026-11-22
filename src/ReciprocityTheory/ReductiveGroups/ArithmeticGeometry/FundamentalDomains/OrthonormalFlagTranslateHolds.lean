@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ProdCastLESucc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajPos
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowMatMulVec
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ProdCastLESucc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajPos
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowMatMulVec
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -148,7 +152,7 @@ private theorem hermC_eq_zero_of_mem_span' {r : ℕ} (τ : E →+* ℂ) (G : Mat
   | zero => simp [hermC]
   | add x y _ _ hx hy =>
     have e : hermC τ G w (x + y) = hermC τ G w x + hermC τ G w y := by
-      simp only [hermC, Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+      simp only [hermC, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
     rw [e, hx, hy, add_zero]
   | smul c x _ hx =>
     have e : hermC τ G w (c • x) = (starRingEnd ℂ) c * hermC τ G w x := by

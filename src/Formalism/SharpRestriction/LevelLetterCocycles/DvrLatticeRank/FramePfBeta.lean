@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfAlpha
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfPhi
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfAlpha
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfPhi
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem framepf_smulLA_eq (π' : LetA O n) (c : ZMod n) (a : LetA O n) (z : W.EE
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul e ℓ => rw [framepf_smulLA_tmul, TensorProduct.smul_tmul', smul_eq_mul]
-  | add x y hx hy => rw [map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [map_add (f := _), hx, hy, smul_add]
 
 variable (Bs : FramepfBas W T) (π' : LetA O n) (c : ZMod n)
     (hπ0 : ∀ j, PowerSeries.constantCoeff (π' j) = 0)
@@ -42,7 +46,8 @@ theorem framepf_φD_vec (H : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O)) (k : 
     W.φD T (framepf_vec Bs π' (c - 1) H k) =
       ∑ m, W.φA (framepf_ι π' (c - 1) (H m k)) • W.φD T (Bs.b m) := by
   unfold framepf_vec
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun m _ => framepf_φD_smul _ _
 
 def framepf_ebar (j : Fin Bs.r) : LcQ W T π' c :=
@@ -54,18 +59,6 @@ theorem framepf_hh_ebar (H : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O)) (j : 
   unfold framepf_hh framepf_ebar
   rw [LinearMap.comp_apply, LinearEquiv.coe_coe, LinearEquiv.apply_symm_apply,
     Fintype.linearCombination_apply_single, one_smul]
-
-theorem framepf_sum_ebar (ℓ : LcQ W T π' c) :
-    ∑ k, framepf_Lbas Bs π' c hπ0 hΔπ hR2 γ0 hu ℓ k • framepf_ebar Bs π' c hπ0 hΔπ hR2 γ0 hu k = ℓ := by
-  unfold framepf_ebar
-  simp_rw [← LinearEquiv.map_smul, ← map_sum]
-  rw [LinearEquiv.symm_apply_eq]
-  conv_rhs => rw [← Finset.univ_sum_single (framepf_Lbas Bs π' c hπ0 hΔπ hR2 γ0 hu ℓ)]
-  refine Finset.sum_congr rfl fun k _ => ?_
-  ext m
-  by_cases h : m = k
-  · subst h; simp
-  · simp [h]
 
 def framepf_Ψβ (βφ : Module.Basis (Fin Bs.r) W.EE (W.DD T)) (F : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O)) :
     W.DD T →ₗ[W.EE] W.EE ⊗[O] LcQ W T π' c :=
@@ -88,12 +81,14 @@ theorem framepf_Ψβ_sum (F : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O)) (a :
     rw [Module.Basis.constr_basis, Finset.smul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [TensorProduct.smul_tmul', smul_eq_mul, ← map_mul]
-  rw [map_sum, Finset.sum_congr rfl fun k _ => e1 k, Finset.sum_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_congr rfl fun k _ => e1 k, Finset.sum_comm]
   refine Finset.sum_congr rfl fun j _ => ?_
-  rw [← TensorProduct.sum_tmul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← TensorProduct.sum_tmul, ← map_sum]
+
 
 include hπ0 hΔπ γ0 hβφ in
-
 theorem framepf_Ψβ_Pc (hT : IsCrys PD T.ρ) (F : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O))
     (p : W.DD T) (hp : p ∈ PcS W T c) :
     ∃ t, framepf_Ψβ Bs π' c hπ0 hΔπ hR2 γ0 hu βφ F p = toLA W T π' c ⊤ t := by
@@ -102,7 +97,8 @@ theorem framepf_Ψβ_Pc (hT : IsCrys PD T.ρ) (F : Matrix (Fin Bs.r) (Fin Bs.r) 
     Subalgebra.sum_mem _ fun k _ => Subalgebra.mul_mem _ (haΔ k) (framepf_φA_ι_mem π' c hπ0 hΔπ γ0 _)
   refine ⟨∑ j, (⟨_, hmem j⟩ : ↥W.AΔ) ⊗ₜ (⟨framepf_ebar Bs π' c hπ0 hΔπ hR2 γ0 hu j, trivial⟩ :
     ↥(⊤ : Submodule O (LcQ W T π' c))), ?_⟩
-  rw [hap, framepf_Ψβ_sum Bs π' c hπ0 hΔπ hR2 γ0 hu βφ hβφ, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hap, framepf_Ψβ_sum Bs π' c hπ0 hΔπ hR2 γ0 hu βφ hβφ, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [framepf_toLA_tmul]
   congr 2
@@ -113,8 +109,8 @@ theorem framepf_Ψβ_Pc (hT : IsCrys PD T.ρ) (F : Matrix (Fin Bs.r) (Fin Bs.r) 
 variable (Eπ : LetA O n) (hEu : IsUnit (algebraMap (LetA O n) W.EE Eπ))
     (hEΔ : ∀ δ ∈ W.DelF, W.γA δ Eπ = Eπ) (h' M : ℕ)
 
-include hπ0 hΔπ γ0 hβφ hEΔ in
 
+include hπ0 hΔπ γ0 hβφ hEΔ in
 theorem framepf_Ψβ_Lam (hT : IsCrys PD T.ρ) (F : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O))
     (y : W.DD T) (hy : y ∈ LamPS W T Eπ h' c) :
     framepf_Ψβ Bs π' c hπ0 hΔπ hR2 γ0 hu βφ F y ∈ LamLA W T π' Eπ h' c ⊤ := by
@@ -131,8 +127,8 @@ theorem framepf_Ψβ_Lam (hT : IsCrys PD T.ρ) (F : Matrix (Fin Bs.r) (Fin Bs.r)
   refine Submodule.mem_comap.2 ⟨t, ?_⟩
   rw [← ht, framepf_smulLA_eq, ← LinearMap.map_smul, algebraMap_smul]
 
-include hπ0 hΔπ γ0 hβφ in
 
+include hπ0 hΔπ γ0 hβφ in
 theorem framepf_Ψβ_J (hT : IsCrys PD T.ρ) (F : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O))
     (y : W.DD T) (hy : y ∈ JP W T π' Eπ h' M c) :
     framepf_Ψβ Bs π' c hπ0 hΔπ hR2 γ0 hu βφ F y ∈ JLA W T π' Eπ h' M c := by
@@ -155,8 +151,8 @@ theorem framepf_ι_X_pow_mul (k : ℕ) (g : PowerSeries O) :
         = π' * π' ^ k * (letE (c - 1) * framepf_ι π' (c - 1) g) := by ring
       _ = π' * π' ^ k * framepf_ι π' (c - 1) g := by rw [this]
 
-include hπ0 in
 
+include hπ0 in
 theorem framepf_φA_ι_entry (M : ℕ) (lam : O) (K : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O))
     (j k : Fin Bs.r) :
     W.φA (framepf_ι π' (c - 1) ((PowerSeries.C lam • (1 : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O)) +
@@ -176,7 +172,8 @@ include hπ0 in
 theorem framepf_φA_ι_matmul (F H : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O)) (j k : Fin Bs.r) :
     ∑ m, W.φA (framepf_ι π' (c - 1) (F j m)) * W.φA (framepf_ι π' (c - 1) (H m k)) =
       W.φA (framepf_ι π' (c - 1) ((F * H) j k)) := by
-  rw [Matrix.mul_apply, framepf_ι_sum π' (c - 1) hπ0, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.mul_apply, framepf_ι_sum π' (c - 1) hπ0, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [framepf_ι_mul π' (c - 1) (hπ0 _), map_mul]
 

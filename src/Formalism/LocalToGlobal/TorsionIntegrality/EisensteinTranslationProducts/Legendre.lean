@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.SemiChar
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.SemiChar
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -13,9 +17,6 @@ def ZetaHasDeriv : Prop :=
   ∀ (L : PeriodPair) (z : ℂ), z ∉ L.lattice → HasDerivAt (wZeta L) (-(L.weierstrassP z)) z
 
 def ZetaOdd : Prop := ∀ (L : PeriodPair) (z : ℂ), wZeta L (-z) = -wZeta L z
-
-def ZetaPole : Prop :=
-  ∀ L : PeriodPair, Filter.Tendsto (fun z => wZeta L z - 1 / z) (nhdsWithin 0 {0}ᶜ) (nhds 0)
 
 def ZetaQuasi : Prop :=
   ∀ (L : PeriodPair) (ω z : ℂ), ω ∈ L.lattice → z ∉ L.lattice → wZeta L (z + ω) = wZeta L z + wEta L ω
@@ -38,11 +39,6 @@ def SigmaSimple : Prop :=
 
 def SigmaLogDeriv : Prop :=
   ∀ (L : PeriodPair) (z : ℂ), z ∉ L.lattice → HasDerivAt (wSigma L) (wZeta L z * wSigma L z) z
-
-def SigmaLogDeriv2 : Prop :=
-  ∀ (L : PeriodPair) (z : ℂ), z ∉ L.lattice →
-    wSigma L z * iteratedDeriv 2 (wSigma L) z - deriv (wSigma L) z ^ 2
-      = -(L.weierstrassP z) * wSigma L z ^ 2
 
 def SigmaQuasi : Prop :=
   ∀ (L : PeriodPair) (ω z : ℂ), ω ∈ L.lattice →

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.EFam
-import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.IsSeparatedOfProj
-import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.IsIntegralRBIff
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCorrespondenceFunctionFieldStatementOne
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ComplexPointsBijectiveAlgHomAffineOpen
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.EFam
+public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.IsSeparatedOfProj
+public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.IsIntegralRBIff
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCorrespondenceFunctionFieldStatementOne
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ComplexPointsBijectiveAlgHomAffineOpen
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.HodgeCoh GlobalTheory.CechDR GlobalTheory.PD KaehlerDifferential GlobalTheory.W1 GlobalTheory.WH
 
 private theorem germ_ex {X : Scheme.{0}} [IsIntegral X] {V W : X.Opens} (e : V = W) (hV : genericPoint X ∈ V)

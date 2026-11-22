@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Lam1
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Lam1
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.GermRateSplit
 

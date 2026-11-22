@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 open scoped TensorProduct
@@ -11,7 +15,7 @@ theorem exists_ne_zero_aeval_eq_zero {K V : Type} [Field K] [AddCommGroup V] [Mo
   by_contra hcon
   push_neg at hcon
   have hinj : Function.Injective (aeval g p) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro w hw
     by_contra hw0
     exact hcon w hw0 hw
@@ -59,7 +63,7 @@ theorem exists_annihilator_eq {K V : Type} [Field K] [AddCommGroup V] [Module K 
       obtain ⟨a, b, hab⟩ := (hp.irreducible.coprime_iff_not_dvd).2 hnd
       apply hw0
       have := congrArg (fun r => aeval g r w) hab
-      simp only [map_add, map_mul, map_one, LinearMap.add_apply, Module.End.mul_apply, hw, hq,
+      simp only [map_add (f := _), map_mul, map_one, LinearMap.add_apply, Module.End.mul_apply, hw, hq,
         map_zero, add_zero, Module.End.one_apply] at this
       exact this.symm
     · exfalso
@@ -74,17 +78,17 @@ theorem exists_annihilator_eq {K V : Type} [Field K] [AddCommGroup V] [Module K 
     obtain ⟨e₁, h1, h1'⟩ := hx (dvd_trans (dvd_mul_right x y) h)
     obtain ⟨e₂, h2, h2'⟩ := hy (dvd_trans (dvd_mul_left y x) h)
     refine ⟨e₁ + e₂, ?_, fun q hq => ?_⟩
-    · rw [map_add]
+    · rw [map_add (f := _)]
       have a1 : aeval g (x * y) e₁ = 0 := by
         rw [mul_comm, map_mul, Module.End.mul_apply, h1, map_zero]
       have a2 : aeval g (x * y) e₂ = 0 := by
         rw [map_mul, Module.End.mul_apply, h2, map_zero]
       rw [a1, a2, add_zero]
-    · rw [map_add] at hq
+    · rw [map_add (f := _)] at hq
       have b1 : x ∣ q := by
         have : aeval g (q * y) e₁ = 0 := by
           have c := congrArg (aeval g y) hq
-          rw [map_add, map_zero, ← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul,
+          rw [map_add (f := _), map_zero, ← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul,
             mul_comm y q] at c
           have c2 : aeval g (q * y) e₂ = 0 := by
             rw [map_mul, Module.End.mul_apply, h2, map_zero]
@@ -93,7 +97,7 @@ theorem exists_annihilator_eq {K V : Type} [Field K] [AddCommGroup V] [Module K 
       have b2 : y ∣ q := by
         have : aeval g (q * x) e₂ = 0 := by
           have c := congrArg (aeval g x) hq
-          rw [map_add, map_zero, ← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul,
+          rw [map_add (f := _), map_zero, ← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul,
             mul_comm x q] at c
           have c2 : aeval g (q * x) e₁ = 0 := by
             rw [map_mul, Module.End.mul_apply, h1, map_zero]
@@ -110,7 +114,7 @@ theorem exists_cyclic {K V : Type} [Field K] [AddCommGroup V] [Module K V]
   have hφ : ∀ p, φ p = aeval g p e := fun p => rfl
   let ψ : degreeLT K (Module.finrank K V) →ₗ[K] V := φ ∘ₗ (degreeLT K (Module.finrank K V)).subtype
   have hinj : Function.Injective ψ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro q hq
     have h1 : g.charpoly ∣ (q : K[X]) := he _ hq
     have h2 : (q : K[X]).degree < g.charpoly.degree := by

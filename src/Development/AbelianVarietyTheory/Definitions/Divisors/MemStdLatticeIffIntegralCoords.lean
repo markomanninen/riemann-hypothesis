@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.InstCMHostS
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryEqRealMulFiniteSplit
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsReframeVStdOfPosDef
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.InstCMHostS
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryEqRealMulFiniteSplit
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsReframeVStdOfPosDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,14 +25,12 @@ abbrev sw (D : D7) : Af D.host.F ⊗[D.host.F] D.host.E ≃+* ReciprocityTheory.
 
 theorem sw_tmul (a : Af D.host.F) (x : D.host.E) : sw D (a ⊗ₜ x) = x ⊗ₜ a := rfl
 
-theorem sw_symm_tmul (a : Af D.host.F) (x : D.host.E) : (sw D).symm (x ⊗ₜ a) = a ⊗ₜ x := rfl
-
 theorem sw_sig (y : ReciprocityTheory.Aut.AL D.host.E) :
     (sw D).symm (ReciprocityTheory.Aut.conjAL D.host.E y) = sigR (Af D.host.F) D.sp.cm.sig ((sw D).symm y) := by
   induction y using TensorProduct.induction_on with
   | zero => rw [RingHom.map_zero, RingEquiv.map_zero, RingHom.map_zero]
   | tmul x a => rfl
-  | add x y hx hy => rw [RingHom.map_add, RingEquiv.map_add, RingEquiv.map_add, RingHom.map_add, hx, hy]
+  | add x y hx hy => rw [RingHom.map_add (f := _), RingEquiv.map_add (e := _), RingEquiv.map_add (e := _), RingHom.map_add (f := _), hx, hy]
 
 theorem mem_GA_iff {V : HSp D} (hg : V.gram = 1) (κ : GL (Fin V.rank) (ReciprocityTheory.Aut.AL D.host.E)) :
     κ ∈ ReciprocityTheory.Aut.GA D.host.E V.rank ↔
@@ -97,7 +99,7 @@ theorem int_of_mem {V : HSp D} (h : OrthFrame V) {y : Fin V.rank → Af D.host.F
     rw [show (o : D.host.E) = x i from ho] at this
     exact this
   | zero => rw [Pi.zero_apply, RingEquiv.map_zero]; exact zero_mem _
-  | add y z _ _ hy hz => rw [Pi.add_apply, RingEquiv.map_add]; exact add_mem hy hz
+  | add y z _ _ hy hz => rw [Pi.add_apply, RingEquiv.map_add (e := _)]; exact add_mem hy hz
   | neg y _ hy => rw [Pi.neg_apply, RingEquiv.map_neg]; exact neg_mem hy
 
 theorem smul_gen {M : ℕ} (L : Set (Fin M → D.host.E)) (c : Af D.host.F ⊗[D.host.F] D.host.E)
@@ -118,7 +120,7 @@ theorem smul_closure {A B : Type} [CommRing A] [CommRing B] {M : ℕ} (e : B →
   | mem r hr => exact h r hr
   | zero => intro w _; rw [map_zero, zero_smul]; exact zero_mem _
   | one => intro w hw; rwa [map_one, one_smul]
-  | add x y _ _ hx hy => intro w hw; rw [map_add, add_smul]; exact add_mem (hx w hw) (hy w hw)
+  | add x y _ _ hx hy => intro w hw; rw [map_add (f := _), add_smul]; exact add_mem (hx w hw) (hy w hw)
   | neg x _ hx => intro w hw; rw [map_neg, neg_smul]; exact neg_mem (hx w hw)
   | mul x y _ _ hx hy => intro w hw; rw [map_mul, mul_smul]; exact hx _ (hy w hw)
 
@@ -176,7 +178,8 @@ theorem mulVec_mem {V : HSp D} (h : OrthFrame V) {κ : Formalism.AUTREP.GAf D.ho
   rw [mem_latHat_iff h] at hy ⊢
   intro i
   change (sw D).toRingHom (∑ j, (sw D).symm (κ.1.1 i j) * y j) ∈ _
-  rw [map_sum (sw D).toRingHom]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum (sw D).toRingHom]
   refine sum_mem fun j _ => ?_
   change sw D _ ∈ _
   rw [RingEquiv.map_mul, RingEquiv.apply_symm_apply]
@@ -198,121 +201,15 @@ theorem stdPsi_unitPsi {V : HSp D} (h : OrthFrame V) : StdPsi (hostF_eq D) (unit
     change sw D ((sw D).symm (κ.1.1 i j)) ∈ _ at this
     rwa [RingEquiv.apply_symm_apply] at this
 
-theorem exists_stdPsi (D : D7) (n : ℕ) :
-    ∃ (V : HSp D) (P : RowPsi V V.rank), V.rank = n ∧ StdPsi (hostF_eq D) P :=
-  ⟨Examples₂.stdSpace Examples₂.star_isIntegral n (fun _ => false) n 0, _, rfl, stdPsi_unitPsi (orthFrame_stdSpace _ n n 0)⟩
-
-theorem nontrivial_Af (F : Type) [Field F] [NumberField F] : Nontrivial (Af F) := by
-  obtain ⟨m, hm⟩ := Ideal.exists_maximal (𝓞 F)
-  exact (evalV F ⟨m, hm.isPrime, Ring.ne_bot_of_isMaximal_of_not_isField hm (RingOfIntegers.not_isField F)⟩).toRingHom.domain_nontrivial
-
-theorem incl_inj (F E : Type) [Field F] [NumberField F] [Field E] [Algebra F E] :
-    Function.Injective (Algebra.TensorProduct.includeRight : E →ₐ[F] Af F ⊗[F] E) :=
-  haveI := nontrivial_Af F
-  Algebra.TensorProduct.includeRight_injective (algebraMap F (Af F)).injective
-
-theorem rank_eq {V : HSp D} {n : ℕ} {hF : D.host.F = maximalRealSubfield D.host.E} {P : RowPsi V n} (h : StdPsi hF P) :
-    V.rank = n := by
-  haveI := (incl_inj D.host.F D.host.E).nontrivial
-  obtain ⟨⟨β, β', h1, h2, -⟩, -⟩ := h
-  simpa using Matrix.square_of_invertible β β' h1 h2
-
 section Conj
 
 variable (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ)
 
 open ReciprocityTheory.Aut
 
-def conjG : Formalism.AUTREP.GAf L n →* Formalism.AUTREP.GAf L n :=
-  ((Formalism.UG.bc (conjAL L)).comp (GA L n).subtype).codRestrict _ fun κ => by
-    have h : κ.1.1 * conjT (conjAL L) κ.1.1 = 1 := κ.2
-    change κ.1.1.map (conjAL L) * (conjT (conjAL L) κ.1.1).map (conjAL L) = 1
-    rw [← Matrix.map_mul, h, Matrix.map_one _ (RingHom.map_zero _) (RingHom.map_one _)]
-
-theorem conjG_conjG (κ : Formalism.AUTREP.GAf L n) : conjG L n (conjG L n κ) = κ := by
-  refine Subtype.ext (Units.ext ?_)
-  ext i j
-  exact conjAL_conjAL L _
-
-theorem exists_normOne : ∃ u : L, u * IsCMField.complexConj L u = 1 ∧ IsCMField.complexConj L u ≠ u := by
-  obtain ⟨x, hx⟩ : ∃ x, IsCMField.complexConj L x ≠ x := by
-    by_contra hc
-    push Not at hc
-    exact IsCMField.complexConj_ne_one L (AlgEquiv.ext hc)
-  set b := x - IsCMField.complexConj L x with hb
-  have h1 : IsCMField.complexConj L b = -b := by
-    rw [hb, map_sub, IsCMField.complexConj_apply_apply, neg_sub]
-  have h0 : b ≠ 0 := sub_ne_zero.2 hx.symm
-  clear_value b
-  have hp : 1 + b ≠ 0 := fun h => by
-    have := congrArg (IsCMField.complexConj L) h
-    rw [map_add, map_one, h1, map_zero] at this
-    exact two_ne_zero (α := L) (by linear_combination h + this)
-  have hm : 1 - b ≠ 0 := fun h => by
-    have := congrArg (IsCMField.complexConj L) h
-    rw [map_sub, map_one, h1, map_zero] at this
-    exact two_ne_zero (α := L) (by linear_combination h + this)
-  have hc : IsCMField.complexConj L ((1 + b) / (1 - b)) = (1 - b) / (1 + b) := by
-    rw [map_div₀, map_add, map_sub, map_one, h1, sub_neg_eq_add, ← sub_eq_add_neg]
-  refine ⟨(1 + b) / (1 - b), by rw [hc]; field_simp, fun h => h0 ?_⟩
-  rw [hc, div_eq_div_iff hp hm] at h
-  have h4 : (4 : L) * b = 0 := by linear_combination -h
-  exact (mul_eq_zero.1 h4).resolve_left (by norm_num)
-
 variable {L}
 
-def scalG {u : L} (hu : u * IsCMField.complexConj L u = 1) : Formalism.AUTREP.GAf L n :=
-  have e : (u ⊗ₜ 1 : AL L) * (IsCMField.complexConj L u ⊗ₜ 1) = 1 := by
-    rw [Algebra.TensorProduct.tmul_mul_tmul, hu, mul_one]; rfl
-  ⟨⟨Matrix.diagonal fun _ => (u ⊗ₜ 1 : AL L), Matrix.diagonal fun _ => (IsCMField.complexConj L u ⊗ₜ 1 : AL L),
-    by rw [Matrix.diagonal_mul_diagonal]; simp only [e]; rfl,
-    by rw [Matrix.diagonal_mul_diagonal]; simp only [mul_comm _ (u ⊗ₜ 1 : AL L), e]; rfl⟩, by
-    change (Matrix.diagonal fun _ => (u ⊗ₜ 1 : AL L)) * conjT (conjAL L) (Matrix.diagonal fun _ => (u ⊗ₜ 1 : AL L)) = 1
-    rw [conjT, Matrix.diagonal_map (RingHom.map_zero _), Matrix.diagonal_transpose, Matrix.diagonal_mul_diagonal]
-    exact congrArg Matrix.diagonal (funext fun _ => e)⟩
-
 end Conj
-
-def twist {V : HSp D} {n : ℕ} (P : RowPsi V n) : RowPsi V n where
-  ψ := P.ψ.comp (conjG D.host.E n)
-  inj := P.inj.comp (Function.LeftInverse.injective (conjG_conjG D.host.E n))
-  into := fun _ => P.into _
-  onto := fun g hg => by
-    obtain ⟨h, rfl⟩ := P.onto g hg
-    exact ⟨conjG D.host.E n h, congrArg P.ψ (conjG_conjG _ _ _)⟩
-
-theorem conj_diag {A : Type} [CommRing A] {m n : ℕ} (β : Matrix (Fin m) (Fin n) A) (β' : Matrix (Fin n) (Fin m) A)
-    (h : β * β' = 1) (c : A) :
-    (β * (Matrix.diagonal fun _ => c : Matrix (Fin n) (Fin n) A) : Matrix (Fin m) (Fin n) A) * β' = c • (1 : Matrix (Fin m) (Fin m) A) := by
-  rw [← Matrix.smul_one_eq_diagonal, Matrix.mul_smul, Matrix.mul_one, Matrix.smul_mul, h]
-
-theorem not_stdPsi_twist {V : HSp D} {n : ℕ} (hn : 0 < n) {P : RowPsi V n} (h : StdPsi (hostF_eq D) P) :
-    ¬ StdPsi (hostF_eq D) (twist P) := by
-  intro h'
-  have hr := rank_eq h
-  obtain ⟨u, hu, hne⟩ := exists_normOne D.host.E
-  obtain ⟨⟨β, β', h1, -, h2⟩, -⟩ := h
-  obtain ⟨⟨γ, γ', k1, -, k2⟩, -⟩ := h'
-  have a := (h2 (conjG D.host.E n (scalG n hu))).symm.trans (k2 (scalG n hu))
-  have e1 : ((conjG D.host.E n (scalG n hu)).1.1 : Matrix (Fin n) (Fin n) (ReciprocityTheory.Aut.AL D.host.E)).map (sw D).symm =
-      Matrix.diagonal fun _ => (1 : Af D.host.F) ⊗ₜ[D.host.F] (IsCMField.complexConj D.host.E u) := by
-    change ((Matrix.diagonal fun _ => (u ⊗ₜ 1 : ReciprocityTheory.Aut.AL D.host.E)).map (ReciprocityTheory.Aut.conjAL D.host.E)).map (sw D).symm = _
-    rw [Matrix.diagonal_map (RingHom.map_zero _), Matrix.diagonal_map (RingEquiv.map_zero _)]
-    rfl
-  have e2 : ((scalG n hu).1.1 : Matrix (Fin n) (Fin n) (ReciprocityTheory.Aut.AL D.host.E)).map (sw D).symm =
-      Matrix.diagonal fun _ => (1 : Af D.host.F) ⊗ₜ[D.host.F] u := by
-    change (Matrix.diagonal fun _ => (u ⊗ₜ 1 : ReciprocityTheory.Aut.AL D.host.E)).map (sw D).symm = _
-    rw [Matrix.diagonal_map (RingEquiv.map_zero _)]
-    rfl
-  rw [e1, e2, conj_diag _ _ h1, conj_diag _ _ k1] at a
-  have b := congrFun (congrFun a ⟨0, hr ▸ hn⟩) ⟨0, hr ▸ hn⟩
-  rw [Matrix.smul_apply, Matrix.smul_apply, Matrix.one_apply_eq, smul_eq_mul, smul_eq_mul, mul_one, mul_one] at b
-  exact hne (incl_inj D.host.F D.host.E b)
-
-theorem exists_std_and_not (D : D7) {n : ℕ} (hn : 0 < n) :
-    ∃ (V : HSp D) (P Q : RowPsi V V.rank), V.rank = n ∧ StdPsi (hostF_eq D) P ∧ ¬ StdPsi (hostF_eq D) Q := by
-  obtain ⟨V, P, h1, h2⟩ := exists_stdPsi D n
-  exact ⟨V, P, twist P, h1, h2, not_stdPsi_twist (h1 ▸ hn) h2⟩
 
 end GlobalTheory.StdFrameModel
 

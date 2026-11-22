@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.HeckeInert
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.HfsAevalRestrict
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.HeckeInert
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.HfsAevalRestrict
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain Polynomial
 
@@ -26,7 +30,7 @@ theorem hfs_iSup_maxGen_of_splits [FiniteDimensional L W] (f : Module.End L W) (
       (minpoly L f).Splits → finrank L W = n → ⨆ μ, f.maxGenEigenspace μ = ⊤ from H _ W f hs rfl
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
   intro W _ _ _ f hs h_dim
   rcases n with - | n
   · rw [← top_le_iff]
@@ -198,7 +202,8 @@ variable {ι} {S : GSD K} {S' : GSD L} (b : GSDBC ι S S')
 
 theorem j_sum {α : Type} (s : Finset α) (a : α → K) (v : α → S.V) :
     b.j (∑ x ∈ s, a x • v x) = ∑ x ∈ s, ι (a x) • b.j (v x) := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun x _ => b.j_smul _ _
 
 def bas : Basis S.ιV L S'.V := Basis.mk b.li b.sp
@@ -224,7 +229,7 @@ theorem lift_apply (φ : S.EqFun) (d' : S'.D) :
   rfl
 
 theorem lift_add (φ ψ : S.EqFun) : b.lift (φ + ψ) = b.lift φ + b.lift ψ :=
-  Subtype.ext (funext fun d' => by simp only [lift_apply, Submodule.coe_add, Pi.add_apply, map_add])
+  Subtype.ext (funext fun d' => by simp only [lift_apply, Submodule.coe_add, Pi.add_apply, map_add (f := _)])
 
 theorem lift_smul (a : K) (φ : S.EqFun) : b.lift (a • φ) = ι a • b.lift φ :=
   Subtype.ext (funext fun d' => by simp only [lift_apply, Submodule.coe_smul, Pi.smul_apply, b.j_smul])
@@ -264,18 +269,22 @@ theorem sum_coord (x : S'.V) : ∑ k, F.e k • b.j (b.coord F k x) = x := by
 theorem repr_rho (g : S'.G) (x : S'.V) (l : S.ιV) :
     b.bas.repr (S'.ρ g x) l = ∑ i, b.bas.repr x i * ι (S.bV.repr (S.ρ (b.eG g) (S.bV i)) l) := by
   conv_lhs => rw [← b.bas.sum_repr x]
-  rw [map_sum, map_sum, Finsupp.finset_sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finsupp.finsetSum_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, b.bas_apply, b.rho, map_smul, Finsupp.smul_apply, b.repr_j, smul_eq_mul]
 
 theorem coord_rho (k : Fin F.r) (g : S'.G) (x : S'.V) :
     b.coord F k (S'.ρ g x) = S.ρ (b.eG g) (b.coord F k x) := by
   refine S.bV.ext_elem fun l => ?_
-  rw [repr_coord, repr_rho, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [repr_coord, repr_rho, map_sum]
   have h2 : S.ρ (b.eG g) (b.coord F k x) = ∑ i, (F.c (b.bas.repr x i) k) • S.ρ (b.eG g) (S.bV i) := by
-    rw [coord, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [coord, map_sum]
     exact Finset.sum_congr rfl fun i _ => map_smul _ _ _
-  rw [h2, map_sum, Finsupp.finset_sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h2, map_sum, Finsupp.finsetSum_apply]
   simp only [Finset.sum_apply, map_smul, Finsupp.smul_apply, smul_eq_mul]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [mul_comm, F.smul, Pi.smul_apply, smul_eq_mul, mul_comm]
@@ -298,9 +307,11 @@ theorem sum_lift_coordForm (φ : S'.EqFun) : ∑ k, F.e k • b.lift (b.coordFor
   show ∑ k, F.e k • b.j (b.coord F k ((φ : S'.D → S'.V) (b.eD.symm (b.eD d')))) = _
   rw [Equiv.symm_apply_apply, b.sum_coord]
 
-include F in
 
+include F in
 theorem mem_span_lift (φ : S'.EqFun) : φ ∈ Submodule.span L (Set.range b.lift) := by
+  classical
+  let ⟨F⟩ := CoefFrame.nonempty ι
   rw [← b.sum_lift_coordForm F φ]
   exact Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, rfl⟩)
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+
+@[expose] public section
 
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI
 
@@ -118,9 +122,9 @@ private lemma toLin'_mem_nilRad_lowSub_iff {d a : ℕ} (N : Matrix (Fin d) (Fin 
       · simp [h0]
       · simp [hx j hj]
 
+
 open Polynomial in
 variable {F : Type} [Field F] in
-
 theorem _root_.GlobalTheory.CuspGL.UnipNilRad.exists_unip_bijOn_nilRad :
     ∀ (F : Type) [Field F] [Finite F] (d a : ℕ), a ≤ d → ∃ (A : Submodule F (Fin d → F)) (H : Subgroup (GL (Fin d) F)), Module.finrank F A = a ∧ (H : Set (GL (Fin d) F)) = {u : GL (Fin d) F | ∀ i j : Fin d, (u : Matrix (Fin d) (Fin d) F) i j = (if i = j then 1 else 0) ∨ (i.val < a ∧ a ≤ j.val)} ∧ Set.BijOn (fun u : GL (Fin d) F => Matrix.toLin' (u : Matrix (Fin d) (Fin d) F) - 1) (H : Set (GL (Fin d) F)) (_root_.GlobalTheory.CuspGL.nilRad A) := by
   intro F _ _ d a had
@@ -149,7 +153,7 @@ theorem _root_.GlobalTheory.CuspGL.UnipNilRad.exists_unip_bijOn_nilRad :
         by noncomm_ring; rw [hN]; simp⟩
       have hu : Matrix.toLin' (u : Matrix (Fin d) (Fin d) F) - 1 = f := by
         show Matrix.toLin' (1 + N) - 1 = f
-        rw [map_add, Matrix.toLin'_one, hNf]
+        rw [map_add (f := _), Matrix.toLin'_one, hNf]
         exact add_sub_cancel_left (1 : Module.End F (Fin d → F)) f
       refine ⟨u, ?_, hu⟩
       show Matrix.toLin' (u : Matrix (Fin d) (Fin d) F) - 1 ∈

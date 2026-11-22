@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulTransposeInjective
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulTransposeInjective
+
+@[expose] public section
 
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -51,7 +55,3 @@ theorem finrank_le_card_of_isotropic_prod_pi (F : Type) [Field F] (κ : Type) [F
   omega
 
 end GlobalTheory
-
-example : ∀ (F : Type) [Field F] (κ : Type) [Fintype κ] (L : Submodule F ((κ → F) × (κ → F))),
-    (∀ a ∈ L, ∀ b ∈ L, a.1 ⬝ᵥ b.2 = b.1 ⬝ᵥ a.2) → Module.finrank F L ≤ Fintype.card κ :=
-  GlobalTheory.finrank_le_card_of_isotropic_prod_pi

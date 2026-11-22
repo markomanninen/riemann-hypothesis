@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.TruncLogEqOfPowEqZero
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.TruncLogEqOfPowEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,6 @@ theorem exists_pow_eq_of_isAlgClosed {R : Type u} [CommRing R] [IsDomain R] [IsI
 namespace Tilt
 
 variable (p R) in
-
 def sharpEquiv : Tilt p R ≃* Perfection R p :=
   (Perfection.quotientMulEquiv p (span {(p : R)})).symm
 
@@ -213,8 +216,8 @@ theorem coeff_zero_xi (ϖ : PFlat p R) : (xi ϖ).coeff 0 = -ϖ.1 := by
   rw [xi, map_sub, map_natCast]
   simp
 
-omit [IsAdicComplete (span {(p : R)}) R] in
 
+omit [IsAdicComplete (span {(p : R)}) R] in
 theorem isUnit_iff_isUnit_coeff (x : Ainf p R) : IsUnit x ↔ IsUnit (x.coeff 0) := by
   refine ⟨fun h => h.map WittVector.constantCoeff, fun h => ?_⟩
   obtain ⟨c, hc⟩ := p_dvd_sub_teich x
@@ -248,10 +251,6 @@ theorem xi_ne_zero [CharZero R] (ϖ : PFlat p R) : xi ϖ ≠ 0 := by
   exact (Fact.out : p.Prime).ne_zero h2
 
 variable [ValuationRing R]
-
-theorem isUnit_iff_isUnit_theta (x : Ainf p R) : IsUnit x ↔ IsUnit (theta p R x) := by
-  rw [isUnit_iff_isUnit_coeff, Tilt.isUnit_iff_isUnit_untilt, ← Tilt.isUnit_iff_isUnit_coeff (p := p),
-    ← mk_theta, Tilt.isUnit_iff_isUnit_coeff]
 
 theorem theta_surjective [IsAlgClosed (FractionRing R)] : Function.Surjective (theta p R) := by
   intro a
@@ -315,16 +314,6 @@ theorem xi_pow_dvd_of_forall (ϖ : PFlat p R) {n : ℕ} {x : Ainf p R}
       ⟨y - xi ϖ ^ n * b, by linear_combination -e⟩
     exact ⟨a', b, mul_left_cancel₀ (xi_ne_zero ϖ) (by linear_combination e)⟩
 
-theorem mem_span_xi_pow_of_forall (ϖ : PFlat p R) {n : ℕ} {x : Ainf p R}
-    (h : ∀ k : ℕ, x ∈ span {(p : Ainf p R)} ^ k ⊔ span {xi ϖ} ^ n) : x ∈ span {xi ϖ} ^ n := by
-  rw [Ideal.span_singleton_pow, mem_span_singleton]
-  refine xi_pow_dvd_of_forall ϖ fun k => ?_
-  have := h k
-  rw [Ideal.span_singleton_pow, Ideal.span_singleton_pow, ← Ideal.span_insert,
-    Ideal.mem_span_pair] at this
-  obtain ⟨a, b, e⟩ := this
-  exact ⟨a, b, by linear_combination -e⟩
-
 theorem eq_zero_of_forall_xi_pow_dvd (ϖ : PFlat p R) {x : Ainf p R}
     (h : ∀ n : ℕ, xi ϖ ^ n ∣ x) : x = 0 := by
   refine eq_zero_of_forall_pow_dvd (p : Ainf p R) fun k => ?_
@@ -343,13 +332,6 @@ theorem eq_zero_of_forall_xi_pow_dvd (ϖ : PFlat p R) {x : Ainf p R}
     rw [pow_succ']
     exact mul_dvd_mul_left _ (ih fun n =>
       xi_pow_dvd_of_dvd_p_pow_mul ϖ (k := 1) (by simpa using h n))
-
-theorem iInf_span_xi_pow (ϖ : PFlat p R) : ⨅ n : ℕ, span {xi ϖ} ^ n = ⊥ := by
-  rw [eq_bot_iff]
-  intro x hx
-  refine eq_zero_of_forall_xi_pow_dvd ϖ fun n => ?_
-  have := Ideal.mem_iInf.1 hx n
-  rwa [Ideal.span_singleton_pow, mem_span_singleton] at this
 
 end Ainf
 
@@ -397,7 +379,8 @@ theorem associated_xi_omega (ϖ : PFlat p R) {ε : tateModule p R} (hε : IsPrim
       Tilt.isUnit_iff_isUnit_coeff] at h3
     exact not_isUnit_zero h3
   have h4 := congrArg (WittVector.map (p := p) ρ) ha
-  simp only [omega, xi, map_sum, map_pow, map_mul, map_sub, map_natCast,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [omega, xi, map_sum, map_pow, map_mul, map_sub, map_natCast,
     WittVector.map_teichmuller, h1, h2, map_one, one_pow, Finset.sum_const, Finset.card_range,
     nsmul_eq_mul, mul_one, WittVector.teichmuller_zero, sub_zero] at h4
   have h5 : WittVector.map (p := p) ρ a = 1 :=
@@ -415,12 +398,6 @@ theorem exists_teich_sub_one_eq (ϖ : PFlat p R) {ε : tateModule p R} (hε : Is
   refine ⟨u * (teich p (tateRoot ε) - 1), by rw [← mul_assoc, hu, omega_mul], ?_⟩
   rw [map_mul, map_sub, map_one, theta_teich]
   exact mul_ne_zero (u.isUnit.map _).ne_zero (sub_ne_zero.2 hε)
-
-theorem ker_theta_eq_span_omega [IsAlgClosed (FractionRing R)] {ε : tateModule p R}
-    (hε : IsPrimitive ε) : RingHom.ker (theta p R) = span {omega ε} := by
-  obtain ⟨ϖ⟩ : Nonempty (PFlat p R) := inferInstance
-  rw [ker_theta ϖ, Ideal.span_singleton_eq_span_singleton]
-  exact associated_xi_omega ϖ hε
 
 end Ainf
 
@@ -483,12 +460,6 @@ theorem algebraMap_mem_kerTheta_pow_iff (ϖ : PFlat p R) (n : ℕ) (x : Ainf p R
   rw [map_mul, map_mul, hy, ← h, map_pow (algebraMap (Ainf p R) (AinfInv p R)) (p : Ainf p R),
     map_natCast]
   ring
-
-theorem comap_kerTheta_pow (ϖ : PFlat p R) (n : ℕ) :
-    (kerTheta p R ^ n).comap (algebraMap (Ainf p R) (AinfInv p R)) = span {Ainf.xi ϖ} ^ n := by
-  ext x
-  rw [Ideal.mem_comap, algebraMap_mem_kerTheta_pow_iff ϖ, Ideal.span_singleton_pow,
-    mem_span_singleton]
 
 theorem eq_zero_of_forall_mem_kerTheta_pow (ϖ : PFlat p R) {x : AinfInv p R}
     (h : ∀ n : ℕ, x ∈ kerTheta p R ^ n) : x = 0 := by

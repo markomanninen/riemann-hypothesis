@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedKur
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.EllipticOnePole
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedKur
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.EllipticOnePole
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical

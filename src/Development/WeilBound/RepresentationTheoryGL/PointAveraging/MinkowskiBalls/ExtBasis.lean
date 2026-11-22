@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GermIntegrals.StepSt
+module
+
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GermIntegrals.StepSt
+
+@[expose] public section
 
 open ValuativeRel Matrix GlobalTheory.SplitWeil PositivityTheory.Tls2.Ming3
 
@@ -15,7 +19,7 @@ theorem E_apply {R : Type*} [Semiring R] {a b j : ℕ} (i : Fin a) (l : Fin b) :
 theorem E_mul {R : Type*} [Semiring R] {a b c j : ℕ} (hb : j ≤ b) :
     E R a b j * E R b c j = E R a c j := by
   ext i l
-  simp only [mul_apply, E_apply]
+  simp only [Matrix.mul_apply, E_apply]
   by_cases h : (i : ℕ) = l ∧ (l : ℕ) < j
   · rw [if_pos h]
     obtain ⟨h1, h2⟩ := h
@@ -119,7 +123,7 @@ theorem ext_basis {k : Type*} [Field k] {a j : ℕ} (hj : j ≤ a) (v : Fin j �
 private theorem E_mul_apply_eq_dite_lt {R : Type*} [Semiring R] {a b c j : ℕ} (hb : j ≤ b)
     (M : Matrix (Fin b) (Fin c) R) (i : Fin a) (m : Fin c) :
     (E R a b j * M) i m = if h : (i : ℕ) < j then M ⟨i, by omega⟩ m else 0 := by
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   simp only [E_apply]
   split_ifs with h
   · rw [Finset.sum_eq_single (⟨i, by omega⟩ : Fin b)]
@@ -175,7 +179,7 @@ theorem nf1 {k : Type*} [Field k] {n r j : ℕ} (x : Matrix (Fin n) (Fin r) k) (
   have hzero : ∀ i : Fin n, ¬ (i : ℕ) < j → y i = 0 := by
     intro i hi
     ext m
-    rw [← hrows, E_mul_apply_eq_dite_lt hn, dif_neg hi]
+    rw [← hrows, E_mul_apply_eq_dite_lt hn, dite_eq_right hi]
     rfl
   obtain ⟨z, hzd⟩ : ∃ z : Fin j → (Fin r → k), z = fun l => y (Fin.castLE hn l) := ⟨_, rfl⟩
   have hz : LinearIndependent k z := by
@@ -216,7 +220,7 @@ def Bd {a b : ℕ} (γ : ValueGroupWithZero k) (M : Matrix (Fin a) (Fin b) k) : 
 
 theorem bd_mul {a b d : ℕ} {γ δ : ValueGroupWithZero k} {P : Matrix (Fin a) (Fin b) k}
     {Q : Matrix (Fin b) (Fin d) k} (hP : Bd γ P) (hQ : Bd δ Q) : Bd (γ * δ) (P * Q) := fun i m => by
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   exact Valuation.map_sum_le _ fun l _ => by rw [map_mul]; exact mul_le_mul' (hP i l) (hQ l m)
 
 theorem bd_sub {a b : ℕ} {γ : ValueGroupWithZero k} {P Q : Matrix (Fin a) (Fin b) k}
@@ -230,7 +234,7 @@ theorem bd_E {a b j : ℕ} : Bd (1 : ValueGroupWithZero k) (E k a b j) := fun i 
 
 theorem bd_one {a : ℕ} : Bd (1 : ValueGroupWithZero k) (1 : Matrix (Fin a) (Fin a) k) := by
   intro i l
-  rw [one_apply]
+  rw [Matrix.one_apply]
   split_ifs <;> simp
 
 theorem bd_KO {a : ℕ} {H : GL (Fin a) k} (hH : H ∈ KO k (Fin a)) : Bd (1 : ValueGroupWithZero k) H.val := by
@@ -247,7 +251,7 @@ theorem mem_KO {a : ℕ} {γ : ValueGroupWithZero k} (hc : γ < 1) (A : Matrix (
     have h1 : A i l = (A - 1) i l + (1 : Matrix (Fin a) (Fin a) k) i l := by simp
     rw [h1]
     refine (Valuation.map_add _ _ _).trans (max_le ((hA i l).trans hc.le) ?_)
-    rw [one_apply]
+    rw [Matrix.one_apply]
     split_ifs <;> simp
   have hI : (valuation k).Integers 𝒪[k] := Valuation.integer.integers (valuation k)
   obtain ⟨B, hB⟩ : ∃ B : Matrix (Fin a) (Fin a) 𝒪[k], B = Matrix.of fun i l => ⟨A i l, hint i l⟩ :=
@@ -267,7 +271,7 @@ theorem mem_KO {a : ℕ} {γ : ValueGroupWithZero k} (hc : γ < 1) (A : Matrix (
       exact lt_of_le_of_lt (hA i l) hc
     have h0 := (IsLocalRing.residue_eq_zero_iff _).2 hm
     rw [map_sub, sub_eq_zero] at h0
-    rw [RingHom.mapMatrix_apply, Matrix.map_apply, h0, one_apply, one_apply]
+    rw [RingHom.mapMatrix_apply, Matrix.map_apply, h0, Matrix.one_apply, Matrix.one_apply]
     split_ifs <;> simp
   have hdet : IsUnit B.det := by
     by_contra hnu

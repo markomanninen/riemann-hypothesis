@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
-import Formalism.SharpRestriction.LevelLetterCocycles.ExistsInertiaCharpolyFactorOfTameType
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.NoLocalInvariants
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.LocalInvariantsOfColumns
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousCharpolyCoeffOfMatrix
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExistsInertiaCharpolyFactorOfTameType
+public import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.NoLocalInvariants
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousCharpolyCoeffOfMatrix
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.N
 
 namespace GlobalTheory.CharpolyFrobDense
@@ -16,7 +21,7 @@ theorem CoeffCont.mul {Γ K : Type} [TopologicalSpace Γ] [CommRing K] [Topologi
     CoeffCont (F * F') := by
   intro k
   simp only [Pi.mul_apply, coeff_mul]
-  exact continuous_finset_sum _ fun x _ => (h x.1).mul (h' x.2)
+  exact continuous_finsetSum _ fun x _ => (h x.1).mul (h' x.2)
 
 theorem coeffCont_one {Γ K : Type} [TopologicalSpace Γ] [CommRing K] [TopologicalSpace K] :
     CoeffCont (1 : Γ → K[X]) := fun _ => continuous_const

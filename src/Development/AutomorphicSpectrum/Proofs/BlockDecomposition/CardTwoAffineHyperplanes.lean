@@ -1,4 +1,9 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemRiemannRochSpaceIffRegularAtEverywhere
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemRiemannRochSpaceIffRegularAtEverywhere
+
+@[expose] public section
+
 open Matrix Classical PositivityTheory.Rg.Rs GlobalTheory.CompanionTheory.GLFirstBasisOrbit
 
 namespace GlobalTheory.CompanionTheory.GapOpCount
@@ -16,7 +21,7 @@ theorem pairMap_range {k : Type} [Field k] {n : ℕ} (a b : Fin (n + 1) → k)
   have hform : ∀ u v : k, φ (u, v) = u * φ (1, 0) + v * φ (0, 1) := by
     intro u v
     have h : ((u, v) : k × k) = u • ((1, 0) : k × k) + v • ((0, 1) : k × k) := by simp
-    rw [h, map_add, map_smul, map_smul]
+    rw [h, map_add (f := _), map_smul, map_smul]
     simp
   have hzero : (φ (1, 0) • a + φ (0, 1) • b) = 0 := by
     apply dotProduct_eq_zero

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.FourierProjections.PaUContinuous
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.FourierProjections.PaUContinuous
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2.FPw
 
@@ -132,7 +136,7 @@ theorem paPoly_mul {c d : ℕ} {F G : EuclideanSpace ℂ ι → ℂ} (hF : F ∈
   rintro _ ⟨α, hα, rfl⟩ _ ⟨β, hβ, rfl⟩
   rw [paMono_mul]
   refine Submodule.subset_span ⟨α + β, mem_paS'.mpr ?_, rfl⟩
-  rw [map_add]
+  rw [map_add (f := _)]
   exact add_le_add (mem_paS'.mp hα) (mem_paS'.mp hβ)
 
 theorem paPoly_const (a : ℂ) : (fun _ : EuclideanSpace ℂ ι => a) ∈ paPoly 0 := by

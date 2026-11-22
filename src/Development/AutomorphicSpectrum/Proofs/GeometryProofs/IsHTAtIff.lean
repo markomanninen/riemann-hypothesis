@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StalkLoc
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateWeilUnique
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StalkLoc
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateWeilUnique
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,7 +87,7 @@ theorem isHTAt_iff (h455 : type_of% @GlobalTheory.T.lie_model_finite_base_change
       have : ((n : Ω)⁻¹ • (w' - w)) e' = r' - genMap ξ q r := by
         have he' : w' e' = genMap ξ q (BT.valAt v.left W hm f).snd + n * r' := he
         have hc' : w e' = genMap ξ q (BT.valAt v.left W hm f).snd + n * genMap ξ q r := by
-          rw [hc, hr, map_add, map_mul, map_natCast]
+          rw [hc, hr, map_add (f := _), map_mul, map_natCast]
           rfl
         rw [LinearMap.smul_apply, LinearMap.sub_apply, smul_eq_mul, inv_mul_eq_iff_eq_mul₀ hn', mul_sub, he', hc',
           add_sub_add_left_eq_sub]
@@ -109,7 +113,7 @@ theorem isHTAt_iff (h455 : type_of% @GlobalTheory.T.lie_model_finite_base_change
       obtain ⟨c, hc', hr⟩ := hcore W₀ f₀ hval₀ e' v hv'
       obtain ⟨r, hr⟩ := hr h
       refine ⟨genMap ξ q r + u e', add_mem ⟨r, rfl⟩ (hu e' ((hlat e').2 ⟨v, hv'⟩)), ?_⟩
-      rw [LinearMap.add_apply, LinearMap.smul_apply, hc', hr, map_add, map_mul, map_natCast, nsmul_eq_mul, mul_add,
+      rw [LinearMap.add_apply, LinearMap.smul_apply, hc', hr, map_add (f := _), map_mul, map_natCast, nsmul_eq_mul, mul_add,
         ← add_assoc]
       rfl
 

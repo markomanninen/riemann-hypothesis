@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.FirstCountableBlockMatrices
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.FirstCountableBlockMatrices
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,7 +98,8 @@ theorem basis_of (hI : Iwa) (hD : CayleyBlocksInvertible) (hM : Mult) (hC : CycS
     rw [h]; rfl
   have hsum_sL : ∀ (d : Fin N → ℂ) (y : GR n), sL (∑ j, d j • QQ j) y = ∑ j, d j * sL (QQ j) y := by
     intro d y
-    simp [map_sum, map_smul, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_smul, Finset.sum_apply]
   let cc : Fin N → ℂ := fun j => b.repr ⟨sK P, Submodule.mem_map_of_mem hP⟩ j
   have hPsum : ∀ y, sL P y = ∑ j, cc j * sL (QQ j) y := by
     intro y

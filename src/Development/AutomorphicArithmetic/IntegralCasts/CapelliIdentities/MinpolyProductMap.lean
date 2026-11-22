@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.LocalFields.Uniqueness
-import GroundTheory.LocalFields.Interface
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.Uniqueness
+public import GroundTheory.LocalFields.Interface
+
+@[expose] public section
 
 open scoped IntermediateField Algebra TensorProduct Matrix Pointwise NumberField Topology ContDiff NNReal ENNReal Polynomial DirectSum BigOperators InnerProductSpace Manifold
 
@@ -72,7 +76,7 @@ theorem UpperTheory.Reformulated.B.MinpolyProductMap.map_minpoly_eq_prod.{u_1, u
       Polynomial.lifts (algebraMap (ValuativeRel.valuation K).integer K) := by
     rw [Polynomial.lifts_iff_coeff_lifts]
     intro n
-    have h4 := congrArg (fun p => Polynomial.coeff p n) hprod
+    have h4 := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p n) hprod
     simp only [Polynomial.coeff_map] at h4
     have h5 : algebraMap K L ((minpoly K (x : L)).coeff n) ∈ (ValuativeRel.valuation L).integer := by
       rw [← h4]

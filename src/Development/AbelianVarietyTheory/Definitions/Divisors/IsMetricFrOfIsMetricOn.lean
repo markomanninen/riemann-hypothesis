@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineSCShortExact
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ChernWeilNumbers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineSCShortExact
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ChernWeilNumbers
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -118,9 +122,6 @@ def pullGram (φ : X.Fn →ₐ[F] Y.Fn) (f : Y.X ⟶ X.X) (hf : f ≫ X.str = Y.
 end Variety
 
 section Inhabitants
-
-def expGram {n : ℕ} (r : Type) [Fintype r] [DecidableEq r] (u : V n → ℝ) (v : V n) : Matrix r r ℂ :=
-  ((Real.exp (u v) : ℝ) : ℂ) • 1
 
 end Inhabitants
 

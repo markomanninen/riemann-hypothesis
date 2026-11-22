@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsFibreCut
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsFibreCut
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -38,7 +43,7 @@ theorem FibreClosedComponent.proof : FibreClosedComponent.Statement := by
         PrimeSpectrum.mem_zeroLocus, SetLike.coe_subset_coe, Ideal.map_le_iff_le_comap, exists_prop,
         and_assoc]
     rw [← isClosed_compl_iff, hUc]
-    exact Set.Finite.isClosed_biUnion (hfin.subset fun _ h => h.1)
+    exact Set.Finite.isClosed_biUnion (hfin.subset (by exact fun _ h => h.1))
       fun _ _ => PrimeSpectrum.isClosed_zeroLocus _
   have hiso : IsOpen (X := PrimeSpectrum.comap (algebraMap O (MvPolynomial (Fin n) O ⧸ P)) ⁻¹'
       {Q.comap (algebraMap O (MvPolynomial (Fin n) O ⧸ P))}) {⟨Q, rfl⟩} := by
@@ -117,7 +122,7 @@ theorem FibreClosedComponent.proof : FibreClosedComponent.Statement := by
     obtain ⟨p, rfl⟩ := Ideal.Quotient.mk_surjective x
     induction p using MvPolynomial.induction_on with
     | C a => exact isIntegral_algebraMap
-    | add p q hp hq => rw [map_add]; exact hp.add hq
+    | add p q hp hq => rw [map_add (f := _)]; exact hp.add hq
     | mul_X p i hp => rw [map_mul]; exact hp.mul (hX i)
   have : Algebra.IsIntegral F (MvPolynomial (Fin n) F ⧸ I) := ⟨hint⟩
   have hfield : IsField (MvPolynomial (Fin n) F ⧸ I) :=

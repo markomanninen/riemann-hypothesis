@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.EnergyAbs
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HaarOn
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.EnergyAbs
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HaarOn
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +84,7 @@ theorem haarSub_prop {S : Set G} {μ ν : Measure G} (hμ : LeftHaarSub S μ) (h
   rw [Measure.add_apply] at hAfin
   have hμA : μ' A ≠ ⊤ := (lt_of_le_of_lt le_self_add hAfin).ne
   have hνA : ν' A ≠ ⊤ := (lt_of_le_of_lt le_add_self hAfin).ne
-  haveI : BorelSpace H := Subtype.borelSpace (H : Set G)
+  haveI : BorelSpace H := Subtype.borelSpace (fun x => x ∈ (H : Set G))
   haveI : SecondCountableTopology H := by
     first
       | exact inferInstanceAs (SecondCountableTopology (H : Set G))
@@ -94,7 +98,7 @@ theorem haarSub_prop {S : Set G} {μ ν : Measure G} (hμ : LeftHaarSub S μ) (h
     rw [heq, hc, zero_smul]
   · calc μ = μ'.map Subtype.val := hμm.symm
       _ = ((μ' A / ν' A) • ν').map Subtype.val := by rw [← heq]
-      _ = (μ' A / ν' A) • ν'.map Subtype.val := Measure.map_smul _ _ _
+      _ = (μ' A / ν' A) • ν'.map Subtype.val := Measure.map_smul _ hemb.measurable.aemeasurable
       _ = (μ' A / ν' A) • ν := by rw [hνm]
 
 def cjB (b : G) (y : G) : G := b⁻¹ * y * b
@@ -138,14 +142,14 @@ theorem map_cjB {S : Set G} {μ : Measure G} (hμ : LeftHaarSub S μ) (b : G) (h
       ext x
       simp only [Set.mem_preimage, Set.mem_compl_iff, hb x]
     · intro s hs
-      rw [Measure.map_map (continuous_mul_left s).measurable hcont.measurable]
+      rw [Measure.map_map (continuous_const_mul s).measurable hcont.measurable]
       have e1 : (fun x => s * x) ∘ cjB b = cjB b ∘ (fun y => (b * s * b⁻¹) * y) := by
         funext y
         simp [cjB, mul_assoc]
       have hs' : b * s * b⁻¹ ∈ S := by
         rw [hb]
         simpa [cjB, mul_assoc] using hs
-      rw [e1, ← Measure.map_map hcont.measurable (continuous_mul_left _).measurable, hl _ hs']
+      rw [e1, ← Measure.map_map hcont.measurable (continuous_const_mul _).measurable, hl _ hs']
   exact haarSub_prop hL ⟨hC, h1, hm, hi, hσ, h0, hc, hl⟩
 
 theorem cjB_pow_iff {S : Set G} {a : G} (ha : ∀ s, s ∈ S ↔ cjB a s ∈ S) (m : ℕ) (s : G) :

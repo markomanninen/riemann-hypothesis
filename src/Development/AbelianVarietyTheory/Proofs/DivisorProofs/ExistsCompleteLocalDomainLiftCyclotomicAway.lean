@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SRelOneOneIff
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SRelOneOneIff
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.ZM GlobalTheory.SiegLev GlobalTheory.SiegelTor
@@ -20,7 +25,7 @@ theorem charZero_witt (p : ℕ) [hp : Fact p.Prime] (K : Type) [Field K] [CharP 
       rwa [map_natCast, map_zero] at this
     have h4 : p = l := (Nat.prime_dvd_prime_iff_eq hp.out h).1 ((CharP.cast_eq_zero_iff K p l).1 h2)
     subst h4
-    exact WittVector.p_nonzero p K h1
+    exact WittVector.p_ne_zero p K h1
   · subst h
     exact CharP.charP_to_charZero _
 
@@ -50,7 +55,7 @@ theorem hom_ext {n : ℕ} (hn : n ≠ 0) {R : Type} [CommRing R] (f g : cycAway 
   | one => exact (map_one f).trans (map_one g).symm
   | add x y hx hy ihx ihy =>
     change f (⟨x, hx⟩ + ⟨y, hy⟩) = g (⟨x, hx⟩ + ⟨y, hy⟩)
-    rw [map_add, map_add, ihx, ihy]
+    rw [map_add (f := _), map_add (f := _), ihx, ihy]
   | neg x hx ih =>
     change f (-⟨x, hx⟩) = g (-⟨x, hx⟩)
     rw [map_neg, map_neg, ih]
@@ -102,10 +107,10 @@ theorem exists_complete_domain_lift : ∀ (n : ℕ), 3 ≤ n → ∀ (K : Type) 
   have hnK : (n : K) ≠ 0 := by simpa using ((isUnit_natCast hn).map β).ne_zero
   obtain ⟨p, hp⟩ := CharP.exists K
   rcases CharP.char_is_prime_or_zero K p with hpp | hp0
-  · haveI : Fact p.Prime := ⟨hpp⟩
-    haveI := charZero_witt p K
+  · have : Fact p.Prime := ⟨hpp⟩
+    have := charZero_witt p K
     have hinj := IsFractionRing.injective (WittVector p K) (FractionRing (WittVector p K))
-    haveI : CharZero (FractionRing (WittVector p K)) := charZero_of_injective_algebraMap hinj
+    have : CharZero (FractionRing (WittVector p K)) := charZero_of_injective_algebraMap hinj
     have hc : ∀ a : K, (WittVector.constantCoeff : WittVector p K →+* K) (WittVector.teichmuller p a) = a :=
       fun a => by rw [WittVector.constantCoeff_apply, WittVector.teichmuller_coeff_zero]
     set t : WittVector p K := WittVector.teichmuller p (β (zetaAway n)) with ht_def
@@ -158,7 +163,7 @@ theorem exists_complete_domain_lift : ∀ (n : ℕ), 3 ≤ n → ∀ (K : Type) 
       show WittVector.constantCoeff (βV (zetaAway n)) = β (zetaAway n)
       rw [h1, hc]
   · subst hp0
-    haveI : CharZero K := CharP.charP_to_charZero K
+    have : CharZero K := CharP.charP_to_charZero K
     obtain ⟨f, hf, hfζ⟩ := exists_hom hn hβζ
     have hβ : β = f := hom_ext hn _ _ hfζ.symm
     refine ⟨K, inferInstance, inferInstance, inferInstance, inferInstance, β, RingHom.id K, ?_, hβ ▸ hf,

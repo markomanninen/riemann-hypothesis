@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.ExpDefs
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.ExpDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,8 @@ theorem uup_eq_one_of_le_one {ι : Type} [Fintype ι] (p : ι → ℕ) (r : ℕ)
 theorem map_uElt {E L G : Type} [Field E] [Field L] [Group G] [Fintype G] (j : E →+* L) (U : Subgroup G) [Fintype U]
     (f : U → E) (e : MonoidAlgebra E G) :
     MonoidAlgebra.mapRingHom G j (uElt U f e) = uElt U (fun u => j (f u)) (MonoidAlgebra.mapRingHom G j e) := by
-  simp only [uElt, cU, pU, map_add, map_mul, map_sub, map_one, map_sum, MonoidAlgebra.mapRingHom_single, map_inv₀,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [uElt, cU, pU, map_add (f := _), map_mul, map_sub, map_one, map_sum, MonoidAlgebra.mapRingHom_single, map_inv₀,
     map_natCast]
 
 theorem eq_sum_of_uElt_mul {K G : Type} [Field K] [Group G] [Fintype G] (U : Subgroup G) [Fintype U] (f : U → K)

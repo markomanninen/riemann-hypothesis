@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CubeResApply
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CubeResApply
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -152,8 +156,8 @@ theorem dNC_contr (M : P → ModuleCat.{0} R) {n : ℕ} (f : NC (coind M) (n + 1
 
 end GlobalTheory.CompanionTheory.Hodge.Nerve.Acyc
 
-open GlobalTheory.CompanionTheory.Hodge.Nerve.Acyc in
 
+open GlobalTheory.CompanionTheory.Hodge.Nerve.Acyc in
 theorem GlobalTheory.CompanionTheory.Hodge.Nerve.isZero_homology_coind {R : Type} [CommRing R] {P : Type} [SemilatticeInf P]
     (M : P → ModuleCat.{0} R) (n : ℕ) : IsZero ((nerveCx.obj (coind M)).homology (n + 1)) := by
   rw [← HomologicalComplex.exactAt_iff_isZero_homology,

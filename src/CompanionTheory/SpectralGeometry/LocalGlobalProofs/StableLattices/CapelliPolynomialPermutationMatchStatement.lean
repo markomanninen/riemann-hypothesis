@@ -1,13 +1,12 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CapelliPolynomialPermutationMatch
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.Bdy
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CapelliPolynomialPermutationMatch
+
+@[expose] public section
+
 open Finset Polynomial
-open Formalism.REAL (GlRel KHighest IsWeight qdet Tm qminor)
-open CompanionTheory.D.LK (Pos Cn ann cre lift bd cpt allT wt ev)
-open CompanionTheory.RgExh CompanionTheory.RgExh.U
-open GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.DiscSpec
-open GlobalTheory.CompanionTheory.RgCOBlock
+
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.capelli_polynomial_permutation_match : ∀ (n M : ℕ) (lev : Fin n → ℕ) (χ : Fin n → ℂ) (P : Fin M → ℂ[X]) (s : Fin M → ℂ),
     (∀ a, lev a < M) → (∀ i, (P i).Monic ∧ (P i).natDegree = (univ.filter fun a => lev a = (i : ℕ)).card) →

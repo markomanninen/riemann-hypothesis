@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.SurjectiveOfInjectiveOfInjective
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.SurjectiveOfInjectiveOfInjective
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -9,16 +14,14 @@ open CategoryTheory NumberField IsDedekindDomain IntermediateField GroundTheory.
 
 open scoped GroundTheory.LocalField.Abstract
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
 
 section Degree
 
 variable {K : FiniteSubfield} (w : HeightOneSpectrum (𝓞 K.1))
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem eq_univ_of_unramifiedDegree
     (σ : Gal(AlgebraicClosure (w.adicCompletion K.1)/w.adicCompletion K.1))
     (hσ : unramifiedDegree (w.adicCompletion K.1) (AlgebraicClosure (w.adicCompletion K.1)) σ =
@@ -60,24 +63,20 @@ theorem gsDecomp_eq_one_of_unramifiedDegree_eq_one
 theorem continuous_rangeRestrict_gsDecomp : Continuous (gsDecomp K S ιs v).rangeRestrict :=
   (continuous_gsDecomp K S ιs v).subtype_mk _
 
-instance t2Space_galUnramifiedOutside : T2Space (galUnramifiedOutside K.1 ℚ̄ S) :=
-  galois_t2Space K.1 (maxUnramifiedOutside K.1 ℚ̄ S)
+instance t2Space_galUnramifiedOutside : T2Space (galUnramifiedOutside K.1 (AlgebraicClosure ℚ) S) :=
+  galois_t2Space K.1 (maxUnramifiedOutside K.1 (AlgebraicClosure ℚ) S)
 
 instance compactSpace_range_gsDecomp : CompactSpace (gsDecomp K S ιs v).range := by
   refine isCompact_iff_compactSpace.mp ?_
   rw [MonoidHom.coe_range]
   exact isCompact_range (continuous_gsDecomp K S ιs v)
 
-theorem isClosed_range_gsDecomp : IsClosed ((gsDecomp K S ιs v).range : Set (galUnramifiedOutside K.1 ℚ̄ S)) := by
-  rw [MonoidHom.coe_range]
-  exact (isCompact_range (continuous_gsDecomp K S ιs v)).isClosed
-
 theorem isQuotientMap_rangeRestrict_gsDecomp : Topology.IsQuotientMap (gsDecomp K S ιs v).rangeRestrict :=
   ((continuous_rangeRestrict_gsDecomp K S ιs v).isClosedMap).isQuotientMap
     (continuous_rangeRestrict_gsDecomp K S ιs v) (MonoidHom.rangeRestrict_surjective _)
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem isTopologicalGenerator_rangeRestrict_gsDecomp
     (σ : Gal(AlgebraicClosure (v.1.adicCompletion K.1)/v.1.adicCompletion K.1))
     (hσ : unramifiedDegree (v.1.adicCompletion K.1) (AlgebraicClosure (v.1.adicCompletion K.1)) σ =

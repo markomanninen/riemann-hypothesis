@@ -1,16 +1,20 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.DataParams₂
-import Formalism.LocalRingCardinality.DataNChoice
-import Formalism.LocalRingCardinality.DataErr
-import Formalism.LocalRingCardinality.DataKap
-import Formalism.SharpRestriction.ParamsHeightRankConstant
-import Formalism.SharpRestriction.Divisibility.WeightAlgebra
-import Formalism.SharpRestriction.Divisibility.ModuliIntegralCharts
-import Formalism.SharpRestriction.LevelLetterCocycles.IntegralHeckeForms
-import Formalism.SharpRestriction.LevelLetterCocycles.TwGood
-import Formalism.SharpRestriction.GrowthBounds.WeilJacquetShalikaLaw
-import Formalism.SharpRestriction.LevelLetterCocycles.LocsCoverTw
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.DataParams₂
+public import Formalism.LocalRingCardinality.DataNChoice
+public import Formalism.LocalRingCardinality.DataErr
+public import Formalism.LocalRingCardinality.DataKap
+public import Formalism.SharpRestriction.ParamsHeightRankConstant
+public import Formalism.SharpRestriction.Divisibility.WeightAlgebra
+public import Formalism.SharpRestriction.Divisibility.ModuliIntegralCharts
+public import Formalism.SharpRestriction.LevelLetterCocycles.IntegralHeckeForms
+public import Formalism.SharpRestriction.LevelLetterCocycles.TwGood
+public import Formalism.SharpRestriction.GrowthBounds.WeilJacquetShalikaLaw
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocsCoverTw
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,8 +83,8 @@ namespace GeoX
 
 variable {D : D7} {r j p : ℕ} {Lc : ModuliIntegralCharts.Loc D r j p} (G : GeoX Lc)
 
-open Classical in
 
+open Classical in
 def typeDeg {y : Lc.Pt Lc.Xm} {La : Lc.Unim} (e : G.Lt y La →₀ ℕ) (σ : ModuliIntegralCharts.PsiT D × Bool) : ℕ :=
   ∑ l ∈ e.support, if G.ltype y La l = σ then e l else 0
 
@@ -96,8 +100,8 @@ def nnOf {y : Lc.Pt Lc.Xm} {La : Lc.Unim} (x : D.host.E) (e : G.Lt y La →₀ �
 def IsV {y : Lc.Pt Lc.Xm} {La : Lc.Unim} (x : D.host.E) (l : G.Lt y La) : Prop :=
   ‖G.sgE y (G.ltype y La l) x‖ < 1
 
-open Classical in
 
+open Classical in
 def subV {y : Lc.Pt Lc.Xm} {La : Lc.Unim} (x : D.host.E) (yy : G.Lt y La → (Lc.fld y).C)
     (P : MvPolynomial (G.Lt y La) (Lc.fld y).C) : MvPolynomial (G.Lt y La) (Lc.fld y).C :=
   MvPolynomial.bind₁ (fun l => if G.IsV x l then MvPolynomial.C (yy l) else MvPolynomial.X l) P
@@ -142,13 +146,6 @@ def pib {D : D7} (EX : ErrX D) (i : Fin 2) : D.host.E := D.host.conj (EX.piG i :
 def plS {D : D7} (nch : NChoice D) (w : Pl D) (b : Bool) : Pl D :=
   if b = nch.sd w then w else D.what₂.places.conj w
 
-theorem plS_self {D : D7} (nch : NChoice D) (w : Pl D) (h : D.what₂.places.conj w = w) (b : Bool) :
-    plS nch w b = w := by
-  unfold plS
-  split_ifs
-  · rfl
-  · exact h
-
 structure Run (D : D7) (B : WeightFamilies.Prov D) (j : ℕ) where
   S : WeightAlgebra.Scal B
   ka : WeightFamilies.Wt D j
@@ -161,8 +158,8 @@ structure Run (D : D7) (B : WeightFamilies.Prov D) (j : ℕ) where
   n2 : ℕ
   nus : HeightOneSpectrum (𝓞 B.KO) → ℝ
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 structure Loc (D : D7) (nch : NChoice D) where
 
   B : WeightFamilies.Prov D
@@ -326,11 +323,6 @@ def adm7 : Prop := ∀ i0 w, Over D i0 w → ∀ j ∈ lifts D,
         (D.what₂.places.ramIdx (plS nch w b) : ℝ) * X.IsgTw w j b) ∧
     (D.what₂.jw (D.what₂.muTw w) j w : ℝ) ≤ (D.what₂.places.ramIdx w : ℝ) * (D.what₂.etaJ j w : ℝ))
 
-def SelfConjIdx : Prop :=
-  ∀ w, TwistedAt D w → D.what₂.places.conj w = w → ∀ j ∈ lifts D,
-    IntegralHeckeForms.eThPMt D.nexp (nch.twI w) j (!nch.sd w) (nch.k' w) (nch.Q w) (X.psiW w (!nch.sd w)) ≤ twistV0Submodule D nch w j (!nch.sd w) ∧
-      X.IsgTw w j (!nch.sd w) = X.IsgTw w j (nch.sd w)
-
 def adm8 : Prop := ∀ i0 w, Over D i0 w → TwistedAt D w →
   X.I.Ok (nch.twI w) ∧ TwGoodOne D X.I (nch.twI w) (nch.sd w) (nch.Q w) (nch.k' w) (nch.psi' w)
 
@@ -370,16 +362,6 @@ def admitted (H : WeightAlgebra.KHyp) (C2 A2 CR CT CRd : ℝ) : Prop :=
   adm1 D X ∧ adm2 D X ∧ adm3 D X ∧ adm3b D X CRd ∧ ArchimedeanSignatureMatching D L X H C2 A2 CR CT ∧ adm5 D nch ∧
     adm6 D nch ∧ TorsionSectionsReflex D nch ∧ adm7 D X ∧ adm8 D X ∧ adm9 D X ∧ adm10 D X ∧ adm11 D L X H C2 A2 CR CT CRd ∧
     adm12 D
-
-def AdmLA : Prop := adm1 D X ∧ adm2 D X
-
-def AdmLB (CRd : ℝ) : Prop := adm1 D X ∧ adm2 D X ∧ adm3 D X ∧ adm3b D X CRd
-
-def AdmC : Prop := adm1 D X ∧ adm2 D X ∧ adm9 D X
-
-def AdmA (H : WeightAlgebra.KHyp) (C2 A2 CR CT CRd : ℝ) : Prop :=
-  adm3b D X CRd ∧ ArchimedeanSignatureMatching D L X H C2 A2 CR CT ∧ adm5 D nch ∧ adm6 D nch ∧ TorsionSectionsReflex D nch ∧ adm7 D X ∧ adm8 D X ∧
-    adm10 D X ∧ adm11 D L X H C2 A2 CR CT CRd ∧ adm12 D
 
 end admitted
 
@@ -480,90 +462,14 @@ def Conclusion₂ (CRd C1 C2 C3 CA CD : ℝ) : Prop :=
   LemmaOneDefinite D EX X ∧ L2BoundAlt D ∧ LemmaAGaloisBound D EX X ∧ LemmaBWeightBound D X CRd ∧ PropositionCLatticeBound D L EX C1 C2 ∧ JetConsequence D L EX C1 C2 C3 ∧
     ConjugationNormInvariance D L X CA ∧ ThetaAdjointPositiveScalar D L CD
 
-def Stmt (H : WeightAlgebra.KHyp) (C2h A2 CR CT CRd C1 C2 C3 CA CD : ℝ) : Prop :=
-  admitted D L X H C2h A2 CR CT CRd → Conclusion₂ D L EX X CRd C1 C2 C3 CA CD
-
-def LemmasOneTwoAStatement : Prop := AdmLA D X → LemmaOneDefinite D EX X ∧ L2BoundAlt D ∧ LemmaAGaloisBound D EX X
-
-def LemmaBStatementAlt (CRd : ℝ) : Prop := AdmLB D X CRd → LemmaBWeightBound D X CRd
-
-def PropositionCStatement (C1 C2 C3 : ℝ) : Prop := AdmC D X → PropositionCLatticeBound D L EX C1 C2 ∧ JetConsequence D L EX C1 C2 C3
-
-def IntegralityGoodReduction (H : WeightAlgebra.KHyp) (C2h A2 CR CT CRd CA : ℝ) : Prop :=
-  AdmA D L X H C2h A2 CR CT CRd → LemmaBWeightBound D X CRd → ConjugationNormInvariance D L X CA
-
-def KappaDegreeStatement (CD : ℝ) : Prop := ThetaAdjointPositiveScalar D L CD
-
 end Conclusion₂
-
-abbrev ObjClass : Type 1 := ∀ {D : D7} (_ : SizeData₂ D) (nch : NChoice D), Loc D nch → Prop
 
 section Fam
 
 variable {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps)
   (XF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), Loc (Fm.D x i) (Fm.ex x hx i).nch)
 
-def AdmF (H : WeightAlgebra.KHyp) (C2h A2 CR CRd : ℝ) : Prop :=
-  ∃ x0 : ℝ, ∀ x (hx : Fm.x1 < x), x0 ≤ x → ∀ i : Fm.Ix x,
-    admitted (Fm.D x i) (Fm.L x i) (XF x hx i) H C2h A2 CR (Fm.Ct + 1) CRd
-
-def OrbitValuationBound (CRd C1 C2 C3 CA CD : ℝ) : Prop :=
-  ∃ x0 : ℝ, ∀ x (hx : Fm.x1 < x), x0 ≤ x → ∀ i : Fm.Ix x,
-    Conclusion₂ (Fm.D x i) (Fm.L x i) (Fm.ex x hx i).errX (XF x hx i) CRd C1 C2 C3 CA CD
-
-def AdmLAF : Prop :=
-  ∃ x0 : ℝ, ∀ x (hx : Fm.x1 < x), x0 ≤ x → ∀ i : Fm.Ix x, AdmLA (Fm.D x i) (XF x hx i)
-
-def LemmasOneTwoAFamily : Prop :=
-  ∃ x0 : ℝ, ∀ x (hx : Fm.x1 < x), x0 ≤ x → ∀ i : Fm.Ix x,
-    LemmaOneDefinite (Fm.D x i) (Fm.ex x hx i).errX (XF x hx i) ∧ L2BoundAlt (Fm.D x i) ∧
-      LemmaAGaloisBound (Fm.D x i) (Fm.ex x hx i).errX (XF x hx i)
-
-def AdmLBF (CRd : ℝ) : Prop :=
-  ∃ x0 : ℝ, ∀ x (hx : Fm.x1 < x), x0 ≤ x → ∀ i : Fm.Ix x, AdmLB (Fm.D x i) (XF x hx i) CRd
-
-def LemmaBFamily (CRd : ℝ) : Prop :=
-  ∃ x0 : ℝ, ∀ x (hx : Fm.x1 < x), x0 ≤ x → ∀ i : Fm.Ix x, LemmaBWeightBound (Fm.D x i) (XF x hx i) CRd
-
-def AdmCF : Prop :=
-  ∃ x0 : ℝ, ∀ x (hx : Fm.x1 < x), x0 ≤ x → ∀ i : Fm.Ix x, AdmC (Fm.D x i) (XF x hx i)
-
-def familyJetConsequence (C1 C2 C3 : ℝ) : Prop :=
-  ∃ x0 : ℝ, ∀ x (hx : Fm.x1 < x), x0 ≤ x → ∀ i : Fm.Ix x,
-    PropositionCLatticeBound (Fm.D x i) (Fm.L x i) (Fm.ex x hx i).errX C1 C2 ∧ JetConsequence (Fm.D x i) (Fm.L x i) (Fm.ex x hx i).errX C1 C2 C3
-
 end Fam
-
-def KudlaFamilyStatement (𝒪 : ObjClass) (H : WeightAlgebra.KHyp) (C2h A2 CR CRd C1 C2 C3 CA CD : ℝ) {eps : ℝ}
-    (Fm : Formalism.MainNotions.FamP eps) (_CH : ℝ) : Prop :=
-  ∀ XF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), Loc (Fm.D x i) (Fm.ex x hx i).nch,
-    (∀ x hx i, 𝒪 (Fm.L x i) (Fm.ex x hx i).nch (XF x hx i)) →
-    AdmF Fm XF H C2h A2 CR CRd → OrbitValuationBound Fm XF CRd C1 C2 C3 CA CD
-
-def ClosedAbsoluteShare (𝒪 : ObjClass) (𝒞 : Formalism.MainNotions.FamClass) : Prop :=
-  ∃ C1 C2 C3 CA CD : ℝ, Formalism.MainNotions.Closed 𝒞 (fun Fm CH => ∀ (H : WeightAlgebra.KHyp) (C2h A2 CR CRd : ℝ), 2 ≤ CRd →
-    KudlaFamilyStatement 𝒪 H C2h A2 CR CRd C1 C2 C3 CA CD Fm CH)
-
-def LemmasOneTwoAFamilyStatement (𝒪 : ObjClass) {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) (_CH : ℝ) : Prop :=
-  ∀ XF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), Loc (Fm.D x i) (Fm.ex x hx i).nch,
-    (∀ x hx i, 𝒪 (Fm.L x i) (Fm.ex x hx i).nch (XF x hx i)) → AdmLAF Fm XF → LemmasOneTwoAFamily Fm XF
-
-def ClosedLemmasOneTwoA (𝒪 : ObjClass) (𝒞 : Formalism.MainNotions.FamClass) : Prop :=
-  Formalism.MainNotions.Closed 𝒞 (fun Fm CH => LemmasOneTwoAFamilyStatement 𝒪 Fm CH)
-
-def LemmaBFamilyStatement (𝒪 : ObjClass) (CRd : ℝ) {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) (_CH : ℝ) : Prop :=
-  ∀ XF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), Loc (Fm.D x i) (Fm.ex x hx i).nch,
-    (∀ x hx i, 𝒪 (Fm.L x i) (Fm.ex x hx i).nch (XF x hx i)) → AdmLBF Fm XF CRd → LemmaBFamily Fm XF CRd
-
-def ClosedLemmaB (𝒪 : ObjClass) (𝒞 : Formalism.MainNotions.FamClass) : Prop :=
-  Formalism.MainNotions.Closed 𝒞 (fun Fm CH => ∀ CRd : ℝ, 2 ≤ CRd → LemmaBFamilyStatement 𝒪 CRd Fm CH)
-
-def PropositionCFamily (𝒪 : ObjClass) (C1 C2 C3 : ℝ) {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) (_CH : ℝ) : Prop :=
-  ∀ XF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), Loc (Fm.D x i) (Fm.ex x hx i).nch,
-    (∀ x hx i, 𝒪 (Fm.L x i) (Fm.ex x hx i).nch (XF x hx i)) → AdmCF Fm XF → familyJetConsequence Fm C1 C2 C3
-
-def ClosedPropositionC (𝒪 : ObjClass) (𝒞 : Formalism.MainNotions.FamClass) : Prop :=
-  ∃ C1 C2 C3 : ℝ, Formalism.MainNotions.Closed 𝒞 (fun Fm CH => PropositionCFamily 𝒪 C1 C2 C3 Fm CH)
 
 end Formalism.MainNotions.LiftErrorLocal
 

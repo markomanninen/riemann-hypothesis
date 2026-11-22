@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SecondCoordsProjectionOrth
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SecondCoordsProjectionOrth
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,8 +59,8 @@ theorem adq_Z_lat :
     (adq_lat (X := X) (hb := hb) (u := u) (p := p) _ (colV_lat (X := X) (p := p) zI))
     (adq_z_cong (X := X) (hb := hb) (u := u) (p := p))
 
-include hb in
 
+include hb in
 theorem adq_tau (hθ : IsSplitEquiv X p θ) (hL : LatBasis X p θ (reindex₂ X p Q)) :
     ∃ o : OvA X p, adqTau X u p θ Q = -1 + ((gOf p : ℕ) : FpX X p) * (o : FpX X p) := by
   have hw := adq_ref_lat X hb u p zI
@@ -79,8 +83,8 @@ theorem adq_tau (hθ : IsSplitEquiv X p θ) (hL : LatBasis X p θ (reindex₂ X 
   push_cast
   linear_combination hy
 
-include hb in
 
+include hb in
 theorem adq_tau_inv (hθ : IsSplitEquiv X p θ) (hL : LatBasis X p θ (reindex₂ X p Q)) :
     (adqTau X u p θ Q)⁻¹ ∈ OvA X p ∧ adqTau X u p θ Q ≠ 0 := by
   obtain ⟨o, ho⟩ := adq_tau X hb u p θ Q hθ hL

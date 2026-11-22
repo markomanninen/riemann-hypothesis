@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.ConePairing
-import GroundTheory.ProfiniteCohomology.MackeyFormula.ConeHomotopy
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.ConePairing
+public import GroundTheory.ProfiniteCohomology.MackeyFormula.ConeHomotopy
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -51,7 +56,6 @@ variable {KA LA KC LC N LN KA' LA' KC' LC' N' LN' : CochainComplex (ModuleCat.{u
   (μL' : LeibnizPairing LA' LN' LC') (μK' : LeibnizPairing KA' N' KC')
 
 include hN in
-
 theorem homotopy_apply_zero_of_d_eq_zero (z : N.X 0) (hz : (N.d 0 1).hom z = 0) :
     (βN.f 0).hom ((ρ.f 0).hom z) = (ρ'.f 0).hom ((αN.f 0).hom z) := by
   have e := congrArg (fun φ => φ.hom z) (hN.comm 0)
@@ -92,7 +96,7 @@ theorem snd_sub_eq_neg_d (hβ : ∀ {r s n : ℕ} (h : r + s = n) (y : LA.X r) (
         μL'.μ (show j + l = j + l from rfl) ((βA.f j).hom b) ((hN.hom (l + 1) l).hom z)) := by
   rw [hβ, homotopy_apply_succ_of_d_eq_zero hN l z hz, hh h a z, map_smul, μL'.leibniz,
     hom_apply_hom_apply_eq_of_comp_eq (βA.comm j (j + 1)) b, ← hab]
-  simp only [map_add, map_sub, LinearMap.sub_apply, smul_add, smul_smul, ← pow_add]
+  simp only [map_add (f := _), map_sub, LinearMap.sub_apply, smul_add, smul_smul, ← pow_add]
   have e : (-1 : k) ^ (j + 1 + j) = -1 := by
     rw [show j + 1 + j = 2 * j + 1 by ring, pow_succ, pow_mul]
     norm_num

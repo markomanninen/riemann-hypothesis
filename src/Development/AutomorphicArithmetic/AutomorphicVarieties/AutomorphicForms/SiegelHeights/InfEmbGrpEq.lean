@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RealCusp
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RealCusp
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,9 +28,6 @@ def mixEq : TR.Rinf E ≃ₐ[ℝ] mixedSpace E :=
 
 def matEq : Matrix (Fin a) (Fin a) (TR.Rinf E) ≃ₐ[ℝ] ArchMatrix E a := (mixEq E).mapMatrix
 
-variable {E a} in
-theorem matEq_apply (x : Matrix (Fin a) (Fin a) (TR.Rinf E)) (i j : Fin a) :
-    (matEq E a x : Matrix (Fin a) (Fin a) (mixedSpace E)) i j = mixEq E (x i j) := rfl
 
 def lieEq : TR.Lie E a ≃ₗ[ℝ] (isExpLieAlgebra E a).lieSubalgebra where
   toFun X := ⟨matEq E a (Matrix.of X), Submodule.mem_top⟩
@@ -40,8 +41,6 @@ def grpEq : GL (Fin a) (TR.Rinf E) ≃* archGroup E a :=
   (Units.mapEquiv (matEq E a).toMulEquiv).trans Subgroup.topEquiv.symm
 
 variable {E a}
-
-@[simp] theorem coe_lieEq (X : TR.Lie E a) : (lieEq E a X : ArchMatrix E a) = matEq E a (Matrix.of X) := rfl
 
 @[simp] theorem coe_grpEq (y : GL (Fin a) (TR.Rinf E)) :
     (((grpEq E a y : archGroup E a) : (ArchMatrix E a)ˣ) : ArchMatrix E a) = matEq E a y.val := rfl

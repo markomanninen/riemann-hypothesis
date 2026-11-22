@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.IrreducibleFactorHeightBound
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.IrreducibleFactorHeightBound
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -58,7 +62,7 @@ theorem sum_le_sqrt_card_mul {α : Type*} (s : Finset α) (a : α → ℝ) :
 
 theorem coeff_Ey_le {D N n n' : ℕ} (R : MvPolynomial (UXVar D N) ℂ) (hx : XHom n R)
     (hu : UDegLE n' R) (y : Fin (N + 1) → ℂ) (β : Fin (D + 2) × Fin (N + 1) →₀ ℕ) :
-    ‖coeff β (Ey y R)‖ ≤ ReciprocityTheory.MultiplicativeHeights.polyL2 R *
+    ‖AddMonoidAlgebra.coeff (Ey y R) β‖ ≤ ReciprocityTheory.MultiplicativeHeights.polyL2 R *
       Real.sqrt ((n + D + 1).choose (D + 1) *
         (n' + (D + 2) * (N + 1)).choose ((D + 2) * (N + 1)) : ℕ) * (∑ j, ‖y j‖) ^ n := by
   obtain ⟨θ, hθ⟩ := (ReciprocityTheory.MultiplicativeHeights.Closed.torus_l2_cauchy_inequality _ (Ey y R)).2 β
@@ -82,7 +86,8 @@ theorem coeff_Ey_le {D N n n' : ℕ} (R : MvPolynomial (UXVar D N) ℂ) (hx : XH
   have hpt1 : ∀ p, ‖pt (Sum.inl p)‖ = 1 := fun p => by simp [hpt, hz]
   have hpt2 : ∀ i, ‖pt (Sum.inr i)‖ ≤ Y := by
     intro i
-    simp only [hpt, Sum.elim_inr, map_sum, map_mul, eval_X, eval_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hpt, Sum.elim_inr, map_sum, map_mul, eval_X, eval_C]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun j _ => ?_)
     rw [norm_mul, hz, one_mul]
   have hY0 : 0 ≤ Y := Finset.sum_nonneg fun _ _ => norm_nonneg _
@@ -91,16 +96,16 @@ theorem coeff_Ey_le {D N n n' : ℕ} (R : MvPolynomial (UXVar D N) ℂ) (hx : XH
     rw [norm_prod, Fintype.prod_sum_type]
     simp only [norm_pow, hpt1, one_pow, Finset.prod_const_one, one_mul]
     calc ∏ i, ‖pt (Sum.inr i)‖ ^ α (Sum.inr i) ≤ ∏ i, Y ^ α (Sum.inr i) :=
-          Finset.prod_le_prod (fun _ _ => by positivity) fun i _ => pow_le_pow_left₀ (norm_nonneg _) (hpt2 i) _
+          Finset.prod_le_prod₀ (fun _ _ => by positivity) fun i _ => pow_le_pow_left₀ (norm_nonneg _) (hpt2 i) _
       _ = Y ^ n := by rw [Finset.prod_pow_eq_pow_sum, ← hx α hα]; rfl
   have hcard := card_support_le R hx hu
-  calc ‖coeff β (Ey y R)‖ ≤ ‖eval z (Ey y R)‖ := hθ
-    _ = ‖∑ α ∈ R.support, coeff α R * ∏ v, pt v ^ α v‖ := by rw [hev, eval_eq']
-    _ ≤ ∑ α ∈ R.support, ‖coeff α R‖ * Y ^ n := by
+  calc ‖AddMonoidAlgebra.coeff (Ey y R) β‖ ≤ ‖eval z (Ey y R)‖ := hθ
+    _ = ‖∑ α ∈ R.support, AddMonoidAlgebra.coeff R α * ∏ v, pt v ^ α v‖ := by rw [hev, eval_eq']
+    _ ≤ ∑ α ∈ R.support, ‖AddMonoidAlgebra.coeff R α‖ * Y ^ n := by
         refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun α hα => ?_)
         rw [norm_mul]
         exact mul_le_mul_of_nonneg_left (hmono α hα) (norm_nonneg _)
-    _ = (∑ α ∈ R.support, ‖coeff α R‖) * Y ^ n := by rw [Finset.sum_mul]
+    _ = (∑ α ∈ R.support, ‖AddMonoidAlgebra.coeff R α‖) * Y ^ n := by rw [Finset.sum_mul]
     _ ≤ (Real.sqrt R.support.card * ReciprocityTheory.MultiplicativeHeights.polyL2 R) * Y ^ n := by
         gcongr
         exact sum_le_sqrt_card_mul _ _

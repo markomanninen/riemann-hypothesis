@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangeMapMemLattice
-import Formalism.SharpRestriction.LevelLetterCocycles.Imports
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.CoefExt
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.BaseCoefJump
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangeMapMemLattice
+public import Formalism.SharpRestriction.LevelLetterCocycles.Imports
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.CoefExt
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.BaseCoefJump
+
+@[expose] public section
 
 noncomputable section
 

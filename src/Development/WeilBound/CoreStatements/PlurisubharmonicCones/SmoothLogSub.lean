@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.LevelFree
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.LeviShift
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.OneSlot
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ArithIntersectionMultilinearAllStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HermitianCombinationSmoothConjStatement
+module
+
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.LevelFree
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.LeviShift
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.OneSlot
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ArithIntersectionMultilinearAllStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HermitianCombinationSmoothConjStatement
+
+@[expose] public section
 
 open Filter Topology ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cmp
 

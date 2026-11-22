@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ReLatSelf
-import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.AdelicUnitaryGroups
-import Formalism.LocalToGlobal.BesselHermitianTheta.IsAutFunDef
-import Formalism.LocalToGlobal.ProjectiveLattices.UnramBridgeHolds
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ReLatSelf
+public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.AdelicUnitaryGroups
+public import Formalism.LocalToGlobal.BesselHermitianTheta.IsAutFunDef
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnramBridgeHolds
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta
 open scoped TensorProduct Matrix
@@ -19,11 +24,57 @@ attribute [local instance] IsCMField.starRing
 noncomputable def coordLat (V : Formalism.BasicNotions.HSpace E) (L : Submodule (𝓞 E) V.V) : Submodule (𝓞 E) (Fin V.rank → E) :=
   L.map (V.frame.equivFun.restrictScalars (𝓞 E)).toLinearMap
 
-theorem isLattice_coordLat (V : Formalism.BasicNotions.HSpace E) (L : Submodule (𝓞 E) V.V) (h : Submodule.IsLattice E L) :
+theorem span_eq_top_of_unimodular (V : Formalism.BasicNotions.HSpace E)
+    (L : Submodule (𝓞 E) V.V) (h : Submodule.IsLattice E L)
+    (hu : Formalism.HermitianLatticesTheory.IsUnimodular V.hT L) :
+    Submodule.span E (L : Set V.V) = ⊤ := by
+  classical
+  by_contra hspan
+  obtain ⟨φ, hφ₀, hφ⟩ := Submodule.exists_le_ker_of_lt_top _ (lt_top_iff_ne_top.mpr hspan)
+  obtain ⟨bs, hbs⟩ := Formalism.HermitianLatticesTheory.dualLattice_dualBasis V.hT V.nondeg V.frame
+  let μ := ∑ j, star (φ (V.frame j)) • bs j
+  have hμ : ∀ v, V.hT μ v = φ v := by
+    have key : V.hT μ = φ := by
+      apply V.frame.ext
+      intro i
+      dsimp only [μ]
+      rw [map_sum, LinearMap.sum_apply]
+      have hs : ∀ j, V.hT (star (φ (V.frame j)) • bs j) (V.frame i) =
+          φ (V.frame j) * (if i = j then 1 else 0) := by
+        intro j
+        rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, star_star]
+        congr 1
+        rw [← V.herm.eq (V.frame i) (bs j), hbs]
+        split_ifs <;> simp
+      simp only [hs, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
+    exact fun v => congrArg (fun f : V.V →ₗ[E] E => f v) key
+  have hμ₀ : μ ≠ 0 := by
+    intro hz
+    apply hφ₀
+    ext y
+    simpa [hz] using (hμ y).symm
+  have hline (a : E) : a • μ ∈ L := by
+    rw [← hu]
+    change a • μ ∈ Formalism.E.hdual V.hT L
+    simp only [Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap, LinearMap.restrictScalars_apply]
+    intro y hy
+    have hy₀ := LinearMap.mem_ker.mp (hφ (Submodule.subset_span hy))
+    simp [← V.herm.eq (a • μ) y, LinearMap.map_smulₛₗ, hμ, hy₀]
+  let i : E →ₗ[𝓞 E] L :=
+    ((LinearMap.toSpanSingleton E _ μ).restrictScalars (𝓞 E)).codRestrict L hline
+  let : Module.Finite (𝓞 E) L := Module.Finite.iff_fg.mpr h.fg
+  let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
+    smul_left_injective E hμ₀ (congrArg Subtype.val hab)
+  exact RingOfIntegers.not_isField E
+    (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
+
+theorem isLattice_coordLat (V : Formalism.BasicNotions.HSpace E) (L : Submodule (𝓞 E) V.V)
+    (h : Submodule.IsLattice E L)
+    (hu : Formalism.HermitianLatticesTheory.IsUnimodular V.hT L := by exact V.baseLattice_isUnimodular) :
     ReciprocityTheory.MultiplicativeHeights.IsLattice (coordLat V L) := by
   refine ⟨h.fg.map _, ?_⟩
   have : (coordLat V L : Set (Fin V.rank → E)) = V.frame.equivFun.toLinearMap '' (L : Set V.V) := rfl
-  rw [this, ← Submodule.map_span, h.span_eq_top, Submodule.map_top, LinearEquiv.range]
+  rw [this, ← Submodule.map_span, span_eq_top_of_unimodular V L h hu, Submodule.map_top, LinearEquiv.range]
 
 theorem herm_coord (V : Formalism.BasicNotions.HSpace E) (x y : V.V) :
     herm V.gramᵀ (V.frame.equivFun x) (V.frame.equivFun y) = V.hT y x := by
@@ -108,8 +159,8 @@ theorem exists_conj (hc : CMData (maximalRealSubfield E) E) (V : Formalism.Basic
   have hG : ∀ a b, cc (V.gramᵀ a b) = V.gramᵀ b a := fun a b => V.herm.eq (V.frame b) (V.frame a)
   have hd : V.gramᵀ.det ≠ 0 := by
     rw [Matrix.det_transpose]; exact (GlobalTheory.IndefiniteRowSideFullHecke.AdelicUnitaryGroups.gram_det_isUnit V).ne_zero
-  obtain ⟨γ, hγ, hfin⟩ := (GlobalTheory.selfDual_lattices_one_genus hG hG hd hd (isLattice_coordLat V L h1)
-    (isLattice_coordLat V V.L0 V.standardTuple_isLattice)
+  obtain ⟨γ, hγ, hfin⟩ := (GlobalTheory.selfDual_lattices_one_genus hG hG hd hd (isLattice_coordLat V L h1 h2)
+    (isLattice_coordLat V V.L0 V.standardTuple_isLattice V.baseLattice_isUnimodular)
     (Or.inl ⟨selfDual_coordLat V L h2, selfDual_coordLat V V.L0 V.baseLattice_isUnimodular⟩)).2.1 rfl
   have hmem : ∀ v, γ v ∈ HR (Fv (maximalRealSubfield E) v) hc.sig V.gram := fun v => by
     have h := congrArg Matrix.transpose (hγ v).1

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPos
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPos
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep UpperTheory.V UpperTheory.V.Af UpperTheory.V.Sd GlobalTheory.HilbertThetaSeries
 open scoped Matrix
@@ -102,7 +106,7 @@ def sP (z : Hn F) : ℝ := ∏ v, sF (z v)
 
 lemma one_le_sP (z : Hn F) : 1 ≤ sP z := by
   calc (1 : ℝ) = ∏ v, (1 : ℝ) := by simp
-    _ ≤ ∏ v, sF (z v) := Finset.prod_le_prod (fun _ _ => zero_le_one) (fun v _ => one_le_sF _)
+    _ ≤ ∏ v, sF (z v) := Finset.prod_le_prod₀ (fun _ _ => zero_le_one) (fun v _ => one_le_sF _)
 
 lemma sP_nonneg (z : Hn F) : 0 ≤ sP z := zero_le_one.trans (one_le_sP z)
 
@@ -153,7 +157,7 @@ lemma gr_act (h : GL (Fin 2) (InfinitePlace F → ℝ)) {f : Hn F → ℂ} (hf :
     intro z
     unfold sP
     rw [← Finset.prod_mul_distrib]
-    apply Finset.prod_le_prod
+    apply Finset.prod_le_prod₀
     · intro v _
       exact sF_nonneg _
     · intro v _
@@ -175,7 +179,7 @@ lemma gr_denom (k : ℕ) (h : GL (Fin 2) (InfinitePlace F → ℝ)) :
     rw [norm_inv, norm_prod, ← Finset.prod_inv_distrib]
     unfold sP
     rw [← Finset.prod_mul_distrib]
-    apply Finset.prod_le_prod
+    apply Finset.prod_le_prod₀
     · intro v _
       positivity
     · intro v _

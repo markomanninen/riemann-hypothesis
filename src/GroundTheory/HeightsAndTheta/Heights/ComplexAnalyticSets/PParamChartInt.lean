@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StParamChartInt
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartIntCountAdd
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StParamPieceInt
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StParamCritNull
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StParamOffRegularZero
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegularInjectivePieces
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StParamDensIntegrable
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StParamChartInt
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartIntCountAdd
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StParamPieceInt
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StParamCritNull
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StParamOffRegularZero
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegularInjectivePieces
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StParamDensIntegrable
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -30,8 +35,8 @@ theorem ParamChartInt.proof (hCA : ChartIntCountAdd.Statement) (hPI : ParamPiece
   have hmv : Differentiable ℂ (fun x : Fin n → ℂ => A *ᵥ x) := by
     have h := (Matrix.mulVecLin A).toContinuousLinearMap.differentiable
     convert h using 1
-    funext x
-    simp
+    ext x i
+    rfl
   have hgd : DifferentiableOn ℂ g Ω := hmv.comp_differentiableOn (hσ.mono Set.inter_subset_left)
   set Reg : Set (Fin d → ℂ) := {w | w ∈ Metric.ball (0 : Fin d → ℂ) r ∧ σ w ∈ N ∧
       LinearMap.det (fderiv ℂ g w : (Fin d → ℂ) →ₗ[ℂ] Fin d → ℂ) ≠ 0} with hReg

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KFacDifferentiable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KFacDifferentiable
+
+@[expose] public section
+
 open NumberField Complex
 open scoped nonZeroDivisors ContDiff
 open GlobalTheory.IndefiniteRowSideFullHecke.OmegaFactorization GlobalTheory.HeckeTwo
@@ -41,7 +46,7 @@ lemma hasDerivAt_neg_inv_ofReal_add_I (t : ℝ) :
   have h1 : HasDerivAt (fun w : ℂ => w + I) 1 (t : ℂ) := (hasDerivAt_id _).add_const I
   have h2 := (h1.inv (ofReal_add_I_ne_zero t)).neg
   have h3 := h2.comp_ofReal
-  convert h3 using 1
+  convert (preTransparency := .reducible) h3 using 1
   · funext s
     simp
   · rw [inv_pow]

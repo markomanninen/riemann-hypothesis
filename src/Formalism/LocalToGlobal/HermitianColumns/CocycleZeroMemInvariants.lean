@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.HermitianColumns.HermCols
+module
+
+public import Formalism.LocalToGlobal.HermitianColumns.HermCols
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,8 +33,8 @@ abbrev Lk (P : Ideal (𝓞 D.host.E)) (i : ℕ) (c : (D.mem u).C.cls i) : Submod
 
 end Abbr
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 structure AtT (D : D7) (u : D.what₂.Word)
     (e : (D.mem u).A.vT ≃ {v : HeightOneSpectrum (𝓞 D.host.F) // (((D.mem u).A.T : ℕ) : 𝓞 D.host.F) ∈ v.asIdeal})
     (eF : ∀ v : (D.mem u).A.vT, (D.mem u).A.Fv v ≃+* (𝓞 D.host.F ⧸ (e v).1.asIdeal)) where

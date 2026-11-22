@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.MacdonaldAlternant
-import GroundTheory.AutomorphicForms.SatakeNormalized
-import GroundTheory.AutomorphicForms.WhittakerGroups
-import GroundTheory.AutomorphicForms.AffineBruhat
-import GroundTheory.AutomorphicForms.MeasuresGL
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.MacdonaldAlternant
+public import GroundTheory.AutomorphicForms.SatakeNormalized
+public import GroundTheory.AutomorphicForms.WhittakerGroups
+public import GroundTheory.AutomorphicForms.AffineBruhat
+public import GroundTheory.AutomorphicForms.MeasuresGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -127,8 +131,8 @@ theorem sum_gMat_torusPow {f : GL (Fin n) F → ℂ}
   simp only [torusPow_mul_gMat, hN _ (torusPow_conj_unipC_mem hl S _), Finset.sum_const,
     Finset.card_univ, nsmul_eq_mul, kappa, Nat.card_eq_fintype_card]
 
-omit [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)] in
 
+omit [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)] in
 theorem kappa_mul_halfModulus {r : ℕ} (hr : r ≤ n) {S : Finset (Fin n)} (hS : S.card = r) :
     (kappa F S : ℂ) * halfModulus F (lamS S) = sqrtQ F ^ (r * (n - r)) := by
   classical
@@ -170,7 +174,8 @@ omit [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)] in
 theorem evalAt_esymmL (z : Fin n → ℂˣ) (r : ℕ) :
     evalAt z (esymmL n r) = ∑ S ∈ (Finset.univ : Finset (Fin n)).powersetCard r,
       monomialChar (lamS S) z := by
-  rw [esymmL, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [esymmL, map_sum]
   simp only [monomial, evalAt_single, one_mul]
 
 theorem evalAt_satakeTransform_minusculeHecke (z : Fin n → ℂˣ) {r : ℕ} (hr : r ≤ n) :
@@ -179,7 +184,8 @@ theorem evalAt_satakeTransform_minusculeHecke (z : Fin n → ℂˣ) {r : ℕ} (h
         evalAt z (esymmL n r) := by
   classical
   rw [satakeTransform_apply, satake_minusculeHecke]
-  simp only [map_smul, map_sum, smul_eq_mul, evalAt_esymmL]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_smul, map_sum, smul_eq_mul, evalAt_esymmL]
   rw [mul_assoc]
   congr 1
   rw [Finset.mul_sum]
@@ -194,9 +200,9 @@ theorem exists_lt_succ_of_not_antitone {μ : Fin n → ℤ} (h : ¬ Antitone μ)
   push Not at hne
   exact h (antitone_of_forall_succ_le hne)
 
+
 omit [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)] [TopologicalSpace F]
   [IsNonarchimedeanLocalField F] in
-
 theorem psiN_eq_one_of_mem {ψ₀ : AddChar F ℂ} (hψ : ∀ x ∈ 𝒪[F], ψ₀ x = 1) {u : GL (Fin n) F}
     (hu : u ∈ unipotent F n ⊓ integralGL F n) : Whittaker.psiN ψ₀ u = 1 := by
   rw [Whittaker.psiN]
@@ -205,8 +211,8 @@ theorem psiN_eq_one_of_mem {ψ₀ : AddChar F ℂ} (hψ : ∀ x ∈ 𝒪[F], ψ�
   · exact ((mem_unipotent_inf_integralGL_iff F n).1 hu).2 i j
   · exact Subring.zero_mem _
 
-omit [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)] in
 
+omit [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)] in
 theorem eq_zero_of_not_antitone {ψ₀ : AddChar F ℂ} (hψ₁ : ∃ x : F, π * x ∈ 𝒪[F] ∧ ψ₀ x ≠ 1)
     {W : GL (Fin n) F → ℂ} (hWN : ∀ u ∈ unipotent F n, ∀ g, W (u * g) = Whittaker.psiN ψ₀ u * W g)
     (hWK : ∀ g, ∀ k ∈ integralGL F n, W (g * k) = W g) {μ : Fin n → ℤ} (hμ : ¬ Antitone μ) :
@@ -249,8 +255,8 @@ theorem eq_zero_of_not_antitone {ψ₀ : AddChar F ℂ} (hψ₁ : ∃ x : F, π 
   have : (ψ₀ x - 1) * W (torusPow F n μ) = 0 := by rw [sub_mul, h1, one_mul, sub_self]
   exact (mul_eq_zero.1 this).resolve_left (sub_ne_zero.2 hψx)
 
-omit [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)] in
 
+omit [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)] in
 theorem permGL_conj_torusPow (σ : Equiv.Perm (Fin n)) (μ : Fin n → ℤ) :
     (permGL F σ)⁻¹ * torusPow F n μ * permGL F σ = torusPow F n (μ ∘ σ) := by
   refine Units.ext (Matrix.ext fun a b => ?_)
@@ -258,8 +264,8 @@ theorem permGL_conj_torusPow (σ : Equiv.Perm (Fin n)) (μ : Fin n → ℤ) :
     coe_torusPow, coe_torusPow, diagonal_apply, diagonal_apply]
   simp only [Function.comp_apply, σ.injective.eq_iff]
 
-omit [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)] in
 
+omit [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)] in
 theorem continuous_of_mul_right_invariant {f : GL (Fin n) F → ℂ}
     (hf : ∀ g, ∀ k ∈ integralGL F n, f (g * k) = f g) : Continuous f := by
   refine IsLocallyConstant.continuous ((IsLocallyConstant.iff_exists_open f).2 fun g => ?_)

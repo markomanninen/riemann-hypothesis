@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.PolyApproxZeroPadic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.PolyApproxZeroPadic
+
+@[expose] public section
+
 open GlobalTheory.Cong
 
 namespace GlobalTheory.CongChar
@@ -61,7 +66,7 @@ noncomputable def congChar (hc : c ≠ 0) (φ : R →+ A) (hφ : ∀ x, φ (c * 
       show Multiplicative.ofAdd _ = Multiplicative.ofAdd _ * Multiplicative.ofAdd _
       rw [← ofAdd_add, hz]
       congr 1
-      rw [mul_add, mul_add, Matrix.trace_add, Matrix.trace_add, map_add, map_add,
+      rw [mul_add, mul_add, Matrix.trace_add, Matrix.trace_add, map_add (f := _), map_add (f := _),
         Matrix.mul_smul, Matrix.trace_smul, smul_eq_mul, hφ, add_zero])
 
 theorem congChar_apply (hc : c ≠ 0) (φ : R →+ A) (hφ : ∀ x, φ (c * x) = 0)

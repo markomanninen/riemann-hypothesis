@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
+
+@[expose] public section
+
 open scoped BigOperators
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ Formalism.L2.Pj NumberField
 
@@ -39,7 +44,7 @@ theorem exists_integral_basis_linear_coordinates :
   have hxM : x ∈ M := Submodule.subset_span hx
   have h1 : x = Fintype.linearCombination K c (fun j => algebraMap V K (b.repr ⟨x, hxM⟩ j)) := by
     have := congrArg Subtype.val (b.sum_repr ⟨x, hxM⟩)
-    simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul] at this
+    simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul] at this
     rw [Fintype.linearCombination_apply]
     simp only [algebraMap_smul]
     exact this.symm

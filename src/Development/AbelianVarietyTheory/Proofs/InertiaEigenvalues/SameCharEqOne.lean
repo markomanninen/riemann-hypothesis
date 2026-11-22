@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsRhoPtOfSplitting
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedRhoConjLatTpsi
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SPiTopEqSTLoc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsLocalHomOfNatCast
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NlenLeLenN
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsRhoPtOfSplitting
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedRhoConjLatTpsi
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SPiTopEqSTLoc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsLocalHomOfNatCast
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NlenLeLenN
+
+@[expose] public section
 
 noncomputable section
 

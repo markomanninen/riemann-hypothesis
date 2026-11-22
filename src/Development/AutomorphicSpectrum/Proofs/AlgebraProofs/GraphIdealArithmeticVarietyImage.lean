@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.EqSumMultihomogeneousComponents
-import GroundTheory.HeightsAndTheta.Heights.SemipositiveHeights.FibreDimB
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.EqSumMultihomogeneousComponents
+public import GroundTheory.HeightsAndTheta.Heights.SemipositiveHeights.FibreDimB
+
+@[expose] public section
 
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I4 ReciprocityTheory.ChartRestriction.G.ArakelovGeometry
 
@@ -39,15 +43,15 @@ theorem graphMap_eq (P : Ideal (MRing ι)) (g : (Σ k, ι₂ k) → MRing ι) (F
   exact congrArg (fun f => f F) this
 
 theorem mem_graphIdeal_iff (P : Ideal (MRing ι)) (g : (Σ k, ι₂ k) → MRing ι) (F : MRing (Sum.elim ι ι₂)) :
-    F ∈ graphIdeal P g ↔ ∀ b, coeff b (graphLift g F) ∈ P := by
+    F ∈ graphIdeal P g ↔ ∀ b, AddMonoidAlgebra.coeff (graphLift g F) b ∈ P := by
   rw [graphIdeal, RingHom.mem_ker, graphMap_eq]
   constructor
   · intro h b
-    have := congrArg (coeff b) h
-    rwa [coeff_map, coeff_zero, Ideal.Quotient.eq_zero_iff_mem] at this
+    have := congrArg (AddMonoidAlgebra.coeff · b) h
+    rwa [coeff_map, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, Ideal.Quotient.eq_zero_iff_mem] at this
   · intro h
     ext b
-    rw [coeff_map, coeff_zero, Ideal.Quotient.eq_zero_iff_mem]
+    rw [coeff_map, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, Ideal.Quotient.eq_zero_iff_mem]
     exact h b
 
 def baseDeg (δ : K₂ → K → ℕ) (c : K ⊕ K₂ → ℕ) : K → ℕ :=
@@ -197,12 +201,12 @@ theorem exists_graphLift_monomial {g : (Σ k, ι₂ k) → MRing ι} {δ : K₂ 
 theorem coeff_graphLift_i2comp {g : (Σ k, ι₂ k) → MRing ι} {δ : K₂ → K → ℕ}
     (hg : ∀ q, IsMultiHomog (g q) (δ q.1)) (c : K ⊕ K₂ → ℕ) (F : MRing (Sum.elim ι ι₂))
     (b : K₂ →₀ ℕ) :
-    coeff b (graphLift g (i2comp c F)) =
-      if b = expDeg c then i2comp (baseDeg δ c) (coeff b (graphLift g F)) else 0 := by
+    AddMonoidAlgebra.coeff (graphLift g (i2comp c F)) b =
+      if b = expDeg c then i2comp (baseDeg δ c) (AddMonoidAlgebra.coeff (graphLift g F) b) else 0 := by
   classical
   induction F using MvPolynomial.induction_on' with
   | add F F' hF hF' =>
-    rw [i2comp_add, map_add, coeff_add, hF, hF', map_add, coeff_add]
+    rw [i2comp_add, map_add (f := _), MvPolynomial.coeff_add, hF, hF', map_add (f := _), MvPolynomial.coeff_add]
     split_ifs
     · rw [i2comp_add]
     · simp
@@ -232,7 +236,7 @@ theorem coeff_graphLift_i2comp {g : (Σ k, ι₂ k) → MRing ι} {δ : K₂ →
       · subst hb
         simp only [↓reduceIte, i2comp_self hnh]
       · simp [hb, Ne.symm hb]
-    · rw [if_neg hd, map_zero, coeff_zero]
+    · rw [if_neg hd, map_zero, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
       by_cases hb : b = expDeg c
       · subst hb
         rw [if_pos rfl]
@@ -375,7 +379,7 @@ theorem graphPt_closure (hne : ∀ k₂, ∃ j, g ⟨k₂, j⟩ ∉ P) (z : L) :
         Subfield.closure (Set.range (graphPt P g L)) := fun b => by
     induction b using MvPolynomial.induction_on with
     | C a => exact hC a
-    | add p q hp hq => rw [map_add]; exact add_mem hp hq
+    | add p q hp hq => rw [(algebraMap (MvPolynomial K₂ (MRing ι ⧸ P)) L).map_add]; exact add_mem hp hq
     | mul_X p k hp => rw [map_mul]; exact mul_mem hp (hT k)
   obtain ⟨x, y, _, rfl⟩ := IsFractionRing.div_surjective (A := MvPolynomial K₂ (MRing ι ⧸ P)) z
   exact div_mem (hB x) (hB y)

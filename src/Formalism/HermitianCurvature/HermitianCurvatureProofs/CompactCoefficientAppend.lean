@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.VectorVanishesBigCell
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VectorVanishesBigCell
+
+@[expose] public section
 
 open Matrix MeasureTheory Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -60,7 +64,9 @@ theorem orbJ_one_eq (S : B.RealPlaceData k ρ Wp Wq) {γ : B.Mat k ρ} (hγ : γ
     intro θ hθ p hp
     have h := hθ.2.2 p hp
     rw [hR, integral_dirac] at h
-    simpa [hact] using h
+    change θ (C6.actR γ (1 : B.Mat k ρ) p) = 1 at h
+    rw [hact p] at h
+    exact h
   unfold D.orbJ
   split_ifs with hex
   · have h1 := hθ _ hex.choose_spec.1
@@ -108,7 +114,7 @@ theorem vector_level_zero_degenerate (hρ : ρ = 0) (B0 : B.RealPlaceData k ρ W
     D.vecV B0 ν m Φ [(1, ζ)] = 0 := by
   subst hρ
   unfold D.vecV
-  rw [dif_neg]
+  rw [dite_eq_right]
   rintro ⟨_, h⟩
   rw [ptG_one] at h
   linarith

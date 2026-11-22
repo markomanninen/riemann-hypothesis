@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.TorsionOrderFrobenius.RedUnique
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.TorsionOrderFrobenius.NotDvdTorsionOrder
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShapeFacts
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.TorsionOrderFrobenius.RedUnique
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.TorsionOrderFrobenius.NotDvdTorsionOrder
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShapeFacts
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.HeckeGal UpperTheory.V.Base
 
 private theorem glue {G H : Type*} [CommGroup G] [CommGroup H] (p : G →* H)
@@ -122,7 +127,9 @@ private theorem kap_of_fst {K : Type} [Field K] [NumberField K] (a : ℤ) (x : I
   rw [coe_kap, h]
   refine Finset.prod_congr rfl fun w _ => ?_
   congr 1
-  exact InfinitePlace.Completion.extensionEmbedding_coe w (WithAbs.toAbs _ k)
+  simpa [InfiniteAdeleRing.algebraMap_apply, AbsoluteValue.Completion.algebraMap_def,
+    WithAbs.algebraMap_right_apply] using
+    InfinitePlace.Completion.extensionEmbedding_coe w (WithAbs.toAbs _ k)
 
 open Classical in
 private theorem prod_type (E : Type) [Field E] [NumberField E] (a : ℤ) (k : E) :
@@ -180,7 +187,7 @@ private theorem exists_unit {E : Type} [Field E] [NumberField E] (k : Eˣ)
   exact ⟨Units.mkOfMulEqOne r s e, hr⟩
 
 theorem UpperTheory.V.Sd.Tw.hecke :
-    ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K], Module.finrank ℚ K = 2 → ∀ (l : ℕ), l.Prime → l ≠ 2 →
+    ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K], Module.finrank ℚ K = 2 → ∀ (l : ℕ), l.Prime → l ≠ 2 →
         ¬ (l : ℤ) ∣ discr K → ∀ (N : ℕ), 3 ≤ N → ∀ (χ : (ZMod N)ˣ →* ℂˣ), χ ^ 2 = 1 → χ (-1) = -1 →
         ∃ (Y : HChar K) (a : (K →+* ℂ) → ℤ) (τ : K →+* ℂ), Y.IsAlg a ∧ a τ = -1 ∧ a (ComplexEmbedding.conjugate τ) = 0 ∧
           (∀ v : HeightOneSpectrum (𝓞 K), (N : 𝓞 K) ∉ v.asIdeal → Y.UnrAt v) ∧

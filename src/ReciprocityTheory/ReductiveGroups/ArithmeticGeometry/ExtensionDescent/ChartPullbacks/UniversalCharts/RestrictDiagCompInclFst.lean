@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.DualLiftInjective
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.DualLiftInjective
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -41,7 +45,7 @@ theorem qD_apply (i : Fin 2) (a : DualNumber R) :
 
 theorem jetAug_comp_qD (i : Fin 2) : (jetAug R (Fin 2) 1).comp (qD i) = fstD R := by
   ext a
-  rw [AlgHom.comp_apply, qD_apply, map_add, map_smul, AlgHom.commutes, jetAug_zR, smul_zero, add_zero]
+  rw [AlgHom.comp_apply, qD_apply, map_add (f := _), map_smul, AlgHom.commutes, jetAug_zR, smul_zero, add_zero]
   rfl
 
 theorem delta_sq : (RingHom.ker (TrivSqZeroExt.fstHom R R (R × R))) ^ (1 + 1) = ⊥ := by
@@ -53,7 +57,7 @@ theorem delta_sq : (RingHom.ker (TrivSqZeroExt.fstHom R R (R × R))) ^ (1 + 1) =
     show b = TrivSqZeroExt.inr b.snd from TrivSqZeroExt.ext hb0 rfl, TrivSqZeroExt.inr_mul_inr]
 
 def deltaJ : JetR R (Fin 2) 1 →ₐ[R] TrivSqZeroExt R (R × R) :=
-  jetLift R (RingHom.ker (TrivSqZeroExt.fstHom R R (R × R))) delta_sq
+  jetLift (R := R) (RingHom.ker (TrivSqZeroExt.fstHom R R (R × R))) delta_sq
     (fun i => TrivSqZeroExt.inr (if i = 0 then ((1 : R), (0 : R)) else (0, 1)))
     (fun i => (RingHom.mem_ker).mpr rfl)
 

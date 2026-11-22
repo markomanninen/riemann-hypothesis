@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ArtSch
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ArtSch
+
+@[expose] public section
 
 namespace PI.ArtSch.Glue
 
@@ -104,7 +108,7 @@ theorem tiltGlue : TiltGlue := by
   have hS0 : algebraMap (OCb l) (Cb l) (s : OCb l) ≠ 0 :=
     IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors s.2
   have hmap := congrArg (algebraMap (OCb l) (Cb l)) key
-  rw [map_sub, map_sub, map_mul, map_pow, map_zero, hc, hb, map_mul, map_pow] at hmap
+  rw [RingHom.map_sub, map_sub, map_mul, map_pow, map_zero, hc, hb, map_mul, map_pow] at hmap
   have hT0 : algebraMap (OCb l) (Cb l) (s : OCb l) ^ (l - 1) ≠ 0 := pow_ne_zero _ hS0
   have hSl : algebraMap (OCb l) (Cb l) (s : OCb l) ^ l =
       algebraMap (OCb l) (Cb l) (s : OCb l) ^ (l - 1) * algebraMap (OCb l) (Cb l) (s : OCb l) := by

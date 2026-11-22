@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
-import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
+
+@[expose] public section
 
 noncomputable section
 
@@ -167,9 +171,6 @@ section Top
 
 variable [TopologicalSpace G]
 
-theorem isSmooth_iff_isSmoothRep {X : Type} [AddCommGroup X] [Module ℂ X] (ρ : Representation ℂ G X) :
-    IsSmooth ρ ↔ IsSmoothRep ρ := Iff.rfl
-
 def IsSmoothChar (χ : G →* Fˣ) : Prop := IsOpen (χ.ker : Set G)
 
 theorem isSmooth_comp [TopologicalSpace H] {ρ : Representation F G V} (hρ : IsSmooth ρ) (s : H →* G)
@@ -255,7 +256,6 @@ theorem isSmooth_extTensor [TopologicalSpace H] [IsTopologicalGroup H] {ρ : Rep
   intro x
   show x ∈ smoothPart (extTensor ρ σ)
   induction x with
-  | zero => exact zero_mem _
   | add x y hx hy => exact add_mem hx hy
   | tmul v w =>
     refine mem_smoothPart_of_nhds (Filter.mem_of_superset

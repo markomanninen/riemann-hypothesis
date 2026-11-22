@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.TheoremIIClosedOfTestBound
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.TransStep
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.SubstSPtrue
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.TheoremIIClosedOfTestBound
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.TransStep
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.SubstSPtrue
+
+@[expose] public section
 
 noncomputable section
 

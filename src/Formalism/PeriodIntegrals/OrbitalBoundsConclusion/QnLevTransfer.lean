@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementQ
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelTransfer.SecondCapelliMinorLevel
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementQ
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelTransfer.SecondCapelliMinorLevel
+
+@[expose] public section
 
 theorem level_transfer_of_levHom : Formalism.QuantumDeterminants.LevHom → Formalism.FourierDecayAlt.Q.LevelTransfer := by
   open PIQnLT Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q in

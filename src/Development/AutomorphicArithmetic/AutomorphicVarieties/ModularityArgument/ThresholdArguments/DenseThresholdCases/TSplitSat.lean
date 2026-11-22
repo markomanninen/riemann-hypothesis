@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.UnramifiedTwists.SplitSat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.WStmtx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.UnramifiedTwists.SplitSat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.WStmtx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -33,13 +37,16 @@ theorem UpperTheory.V.Z.Desc.W.splitSat_alt :
   apply Multiset.map_injective (f := fun z : ℂˣ => (z : ℂ)) Units.val_injective
   rw [← s2]
   unfold satTot
-  rw [← Multiset.coe_mapAddMonoidHom (fun z : ℂˣ => (z : ℂ)), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Multiset.coe_mapAddMonoidHom (fun z : ℂˣ => (z : ℂ)), map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_sum, ← Equiv.sum_comp Fin.revPerm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← Equiv.sum_comp Fin.revPerm]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [Multiset.coe_mapAddMonoidHom, Multiset.map_map]
   refine Multiset.map_congr rfl fun x _ => ?_
-  have hq : Ideal.absNorm w.asIdeal = normV w := rfl
+  have hq : Ideal.absNorm w.asIdeal = normV w := by
+    simp [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
   simp only [Function.comp_apply, Units.val_mul, coe_qPow, Fin.revPerm_apply, Fin.val_rev, hq]
   congr 2
   rw [Nat.cast_sub k.2]

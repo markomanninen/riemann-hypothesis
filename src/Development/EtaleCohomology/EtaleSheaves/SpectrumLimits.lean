@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.CechLevelsGeneration.LevelsOfGen
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.CechLevelsGeneration.LevelsOfGen
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC

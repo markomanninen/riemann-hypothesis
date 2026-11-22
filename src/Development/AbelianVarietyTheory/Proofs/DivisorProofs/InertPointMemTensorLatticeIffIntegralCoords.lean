@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InclRMulPtAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc GlobalTheory.InertCoord
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InclRMulPtAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.InertCoord
 open scoped TensorProduct Matrix
 
 noncomputable section
 namespace GlobalTheory.InertLat
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-  {v : Pl F} {w : HeightOneSpectrum (𝓞 E)} (hw : Formalism.UG.IsInertAt F E v w) (h : w.under (𝓞 F) = v)
+  {v : Pl (F := F)} {w : HeightOneSpectrum (𝓞 E)} (hw : Formalism.UG.IsInertAt F E v w) (h : w.under (𝓞 F) = v)
 
 theorem ptAt_complMap (b : Fv F v) : ptAt hw h (complMap h b) = GlobalTheory.LatVac.liftV v b • (1 : AE F E) := by
   have hat : At (evFin F v) (GlobalTheory.LatVac.liftV v b • (1 : AE F E)) := by
@@ -46,7 +51,7 @@ end GlobalTheory.InertLat
 namespace GlobalTheory.InertLat
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-  {v : Pl F} {w : HeightOneSpectrum (𝓞 E)} (hw : Formalism.UG.IsInertAt F E v w) (h : w.under (𝓞 F) = v)
+  {v : Pl (F := F)} {w : HeightOneSpectrum (𝓞 E)} (hw : Formalism.UG.IsInertAt F E v w) (h : w.under (𝓞 F) = v)
   {n d : ℕ} (X : Spc F E n) (Y : Spc F E d)
 
 theorem smul_mem_latAtV {t : w.adicCompletion E} (ht : t ∈ Formalism.UG.Ov E w) {γ : Matrix (Fin n) (Fin d) (AE F E)}
@@ -74,7 +79,7 @@ theorem smul_mem_latAtV {t : w.adicCompletion E} (ht : t ∈ Formalism.UG.Ov E w
     | add x y _ _ hx hy => rw [smul_add]; exact add_mem hx hy
     | neg x _ hx => rw [smul_neg]; exact neg_mem hx
   · intro γ hγ; rw [map_zero, map_zero, zero_smul]; exact zero_mem _
-  · intro y z hy hz γ hγ; rw [map_add, map_add, add_smul]; exact add_mem (hy γ hγ) (hz γ hγ)
+  · intro y z hy hz γ hγ; rw [map_add (f := _), map_add (f := _), add_smul]; exact add_mem (hy γ hγ) (hz γ hγ)
   · intro y hy γ hγ; rw [map_neg, map_neg, neg_smul]; exact neg_mem (hy γ hγ)
 
 end GlobalTheory.InertLat
@@ -82,7 +87,7 @@ end GlobalTheory.InertLat
 namespace GlobalTheory.InertLat
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-  {v : Pl F} {w : HeightOneSpectrum (𝓞 E)} (hw : Formalism.UG.IsInertAt F E v w) (h : w.under (𝓞 F) = v)
+  {v : Pl (F := F)} {w : HeightOneSpectrum (𝓞 E)} (hw : Formalism.UG.IsInertAt F E v w) (h : w.under (𝓞 F) = v)
   {n d : ℕ} (X : Spc F E n) (Y : Spc F E d)
 
 theorem ptAt_algebraMap (e : E) :
@@ -134,9 +139,9 @@ end GlobalTheory.InertLat
 
 namespace GlobalTheory.InertLat
 
-open GlobalTheory.InertCoord in
 
-theorem kap_mem_latAtV_iff : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (v : Pl F)
+open GlobalTheory.InertCoord in
+theorem kap_mem_latAtV_iff : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (v : Pl (F := F))
     (w : HeightOneSpectrum (𝓞 E)) (hw : Formalism.UG.IsInertAt F E v w) (h : w.under (𝓞 F) = v) {n d : ℕ}
     (X : Spc F E n) (Y : Spc F E d) (A : GL (Fin n) (w.adicCompletion E)) (Bm : GL (Fin d) (w.adicCompletion E)),
     IsFrameAt w X.L A → IsFrameAt w Y.L Bm → ∀ x,
@@ -190,7 +195,7 @@ theorem kap_mem_latAtV_iff : ∀ (F E : Type) [Field F] [NumberField F] [Field E
       | zero => intro k l; simp [Ψ]
       | add x y _ _ hx hy =>
         intro k l
-        simp only [Ψ, map_add, Matrix.mul_add, Matrix.add_mul, Matrix.add_apply]
+        simp only [Ψ, map_add (f := _), Matrix.mul_add, Matrix.add_mul, Matrix.add_apply]
         exact add_mem (hx k l) (hy k l)
       | neg x _ hx =>
         intro k l

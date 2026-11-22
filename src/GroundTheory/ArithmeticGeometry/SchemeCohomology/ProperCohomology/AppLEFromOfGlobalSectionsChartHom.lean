@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.SegreGlue
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.SegreGlue
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -206,8 +211,8 @@ lemma segre_resLE_comp_segreRetr (k : Fin (n + 1)) (l : Fin (m + 1)) :
       rw [segre_resLE_appTop_chart A k l (X_mem _), segreRing_X, segreU_self, one_mul]
       rfl
 
-variable (n m) in
 
+variable (n m) in
 instance isClosedImmersion_segre : IsClosedImmersion (segre A n m) := by
   rw [IsZariskiLocalAtTarget.iff_of_iSup_eq_top (P := @IsClosedImmersion)
     (fun c => Proj.basicOpen (grading A (n * m + n + m)) (X c)) iSup_basicOpen_X]

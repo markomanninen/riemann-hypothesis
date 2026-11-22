@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StepLevelContainsDeepCongruenceAtBadPrime
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNatMulIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StepLevelContainsDeepCongruenceAtBadPrime
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNatMulIntegral
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.UG Formalism.L2.Forms Matrix
 open scoped TensorProduct
 

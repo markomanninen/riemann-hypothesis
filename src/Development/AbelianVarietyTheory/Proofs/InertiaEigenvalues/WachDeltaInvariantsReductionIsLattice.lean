@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GammaActionReductionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GammaActionReductionStatement
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.Present.RedLat
@@ -50,11 +54,10 @@ theorem γD_smulA (T : LocLat G Qp LL O) (g : W.Gam) (a : LetA O n₀) (x : W.DD
   rw [algebraMap_smul, W.γE_ext, algebraMap_smul] at this
   exact this
 
-theorem γA_apply (g : W.Gam) (a : LetA O n₀) (i : ZMod n₀) : W.γA g a i = W.γ₀ g (a i) := rfl
-
 theorem trace_mem (T : LocLat G Qp LL O) (x : W.DD T) : ∑ δ ∈ W.DelF, W.γD T δ x ∈ DΔ W T := by
   intro d hd
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp_rw [← W.γD_mul]
   exact sum_del W (fun δ => W.γD T δ x) hd
 
@@ -68,7 +71,7 @@ theorem smul_mem_DΔ (T : LocLat G Qp LL O) {a : LetA O n₀} (ha : ∀ i, ∀ �
 
 theorem approx (T : LocLat G Qp LL O) (hT : IsCrys PD T.ρ) (x : W.DD T) :
     ∃ (m : ℕ) (y z : W.DD T), y ∈ W.N T ∧ ((letπ : LetA O n₀) ^ m) • x = y + PD.p • z := by
-  refine (W.N_base T hT).inductionOn x _ ⟨0, 0, 0, zero_mem _, by simp⟩ ?_ ?_ ?_
+  refine (W.N_base T hT).inductionOn x ?_ ?_ ?_
   · intro y
     exact ⟨0, y, 0, y.2, by simp⟩
   · rintro e x ⟨m, y, z, hy, h⟩
@@ -138,9 +141,11 @@ theorem exists_lat {l n : ℕ} {R : RingPG k l} {F : DFun R n G} {ι : k⸨X⸩ 
       let x : _ → ↥(DΔ W T) := fun j => ⟨((fun _ => a j) : LetA O n₀) • b j,
         smul_mem_DΔ W T (fun _ => ha j) (hbΔ j).2⟩
       refine ⟨∑ j, x j, ?_, ?_⟩
-      · rw [AddSubgroup.val_finset_sum]
+      · change (DΔ W T).subtype (∑ j, x j) ∈ W.N T
+        rw [map_sum]
         exact sum_mem fun j _ => (W.N T).smul_mem _ (hbΔ j).1
-      · rw [map_sum]
+      · set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         exact Finset.sum_congr rfl fun j _ =>
           p.j_smul T A q hq i (fun _ => a j) (c j) (b' j) (x j) (hι j) rfl
     · rintro ⟨x, hx, rfl⟩
@@ -149,7 +154,8 @@ theorem exists_lat {l n : ℕ} {R : RingPG k l} {F : DFun R n G} {ι : k⸨X⸩ 
       have hinv : ∀ j t, ∀ δ ∈ W.DelF, W.γ₀ δ (a j t) = a j t := by
         intro j t δ hδ
         have h1 := x.2 δ hδ
-        rw [← ha, map_sum] at h1
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← ha, map_sum] at h1
         simp_rw [γD_smulA, (hbΔ _).2 δ hδ] at h1
         have h2 := (Fintype.linearIndependent_iffₛ.1 hli) _ _ h1 j
         exact congrFun h2 t
@@ -157,9 +163,13 @@ theorem exists_lat {l n : ℕ} {R : RingPG k l} {F : DFun R n G} {ι : k⸨X⸩ 
       let x' : _ → ↥(DΔ W T) := fun j => ⟨a j • b j, smul_mem_DΔ W T (hinv j) (hbΔ j).2⟩
       have hx' : x = ∑ j, x' j := by
         apply Subtype.ext
-        rw [AddSubgroup.val_finset_sum, ← ha]
+        change (DΔ W T).subtype x = (DΔ W T).subtype (∑ j, x' j)
+        rw [map_sum]
+        change (x : W.DD T) = ∑ j, a j • b j
+        exact ha.symm
       refine ⟨c, ?_⟩
-      rw [hx', map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hx', map_sum]
       exact Finset.sum_congr rfl fun j _ =>
         (p.j_smul T A q hq i (a j) (c j) (b' j) (x' j) (hc j) rfl).symm
   refine ⟨_, hmem, Submodule.fg_span (Set.finite_range _), ?_⟩
@@ -186,9 +196,9 @@ theorem exists_lat {l n : ℕ} {R : RingPG k l} {F : DFun R n G} {ι : k⸨X⸩ 
     change W.DelF.card • (x₁ : W.DD T) = ∑ δ ∈ W.DelF, W.γD T δ (a' • y) + PD.p • ∑ δ ∈ W.DelF, W.γD T δ (a' • z)
     rw [Finset.smul_sum, ← Finset.sum_add_distrib, ← Finset.sum_const]
     refine Finset.sum_congr rfl fun δ hδ => ?_
-    rw [← map_nsmul, ← map_add, ← hx₁, x₁.2 δ hδ]
+    rw [← map_nsmul, ← map_add (f := _), ← hx₁, x₁.2 δ hδ]
   have hj := congrArg (p.j T A q i) key
-  rw [map_nsmul, map_add, map_nsmul, p.j_smul T A q hq i a c x x₁ hc rfl,
+  rw [map_nsmul, map_add (f := _), map_nsmul, p.j_smul T A q hq i a c x x₁ hc rfl,
     ← Nat.cast_smul_eq_nsmul k PD.p, hp, zero_smul, add_zero] at hj
   have hy₁ : p.j T A q i y₁ ∈ Submodule.span k⟦X⟧ (Set.range fun j => p.j T A q i (b' j)) :=
     (hmem _).2 ⟨y₁, sum_mem fun δ _ => W.N_Γ T δ _ ((W.N T).smul_mem _ hy), rfl⟩
@@ -251,11 +261,13 @@ theorem red_lift {l : ℕ} [Fact l.Prime] [CharP k l] {R : RingPG k l} {ι : k�
     obtain ⟨d, hd⟩ := hs ((W.DelF.card : ℕ) : k)⁻¹
     refine ⟨∑ δ ∈ W.DelF, W.γ₀ δ (d • b₀), ?_, ?_⟩
     · intro g hg
-      rw [map_sum, ← sum_del W (fun δ => W.γ₀ δ (d • b₀)) hg]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, ← sum_del W (fun δ => W.γ₀ δ (d • b₀)) hg]
       refine Finset.sum_congr rfl fun δ _ => ?_
       rw [map_mul]
       rfl
-    · rw [hb, map_sum]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [hb, map_sum]
       congr 1
       have h1 : ∀ δ ∈ W.DelF, PowerSeries.map (algebraMap O k) (W.γ₀ δ (d • b₀)) =
           ((W.DelF.card : ℕ) : k)⁻¹ • PowerSeries.map (algebraMap O k) b₀ := by
@@ -272,8 +284,8 @@ end GlobalTheory.Present.RedLat
 open GlobalTheory.PhiGam GlobalTheory.AdmLoc GlobalTheory.Models GlobalTheory.TopSteps GlobalTheory.Present Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 open scoped LaurentSeries PowerSeries
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem GlobalTheory.Present.RedLat.red_isLat : ∀ {l : ℕ} [Fact l.Prime] {P : LocPrime l} (H : LocHW l P) (S : TopSit P) (k : Type) [Field k] [Algebra S.O k] [CharP k l], S.IsRes k → ∀ {R : RingPG k l} (ι : k⸨X⸩ →ₐ[k] k⸨X⸩) (F : DFun R S.n S.G) (τ : ZMod S.n → ZMod (Module.finrank ℚ_[l] ↥(K0 S.K))) (γ : (S.W H).Gam) (p : Pres (S.W H) F ι τ γ), GlobalTheory.IndefiniteRowSideFullHecke.OnePlusPowerCharacters.IsCyclotomic R ι → (∀ i, (S.W H).emb (τ i) = S.emb i) → ((S.W H).χΓ γ : S.O) = 1 + (l : S.O) → GlobalTheory.WachUse.QN (S.W H) → ∀ (T : LocLat S.G ℚ_[l] ↥S.LL.1 S.O) (A : Ob k S.G) q (U : ZMod S.n → Multiset ℤ), Onto T A q → KerIs S.Γ.lam q → CrysWith (P.PD S.K) S.emb T.ρ U → ∃ N : Lats k S.n A.m, (∀ i y, y ∈ N i ↔ ∃ x : ↥(DΔ (S.W H) T), (x : (S.W H).DD T) ∈ (S.W H).N T ∧ p.j T A q i x = y) ∧ ∀ i, IsLat (N i) := by
   intro l _ P H S k _ _ _ hres R ι F τ γ p hι _ _ hQ T A q U hq _ hT
   obtain ⟨-, e, he⟩ := GlobalTheory.T.map_gamma_eq_deltaPi_teichmuller H S k

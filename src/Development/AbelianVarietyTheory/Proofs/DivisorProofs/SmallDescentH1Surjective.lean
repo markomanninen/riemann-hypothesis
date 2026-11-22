@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDPMorphismOfComp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDPMorphismOfComp
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -78,12 +82,12 @@ theorem exists_isLoc (T : Thick κ s) (x : T.B) : ∃ (L : Thick κ s) (ι : T �
           obtain ⟨b, rfl⟩ := T.surj b
           rw [RingHom.comp_apply, hj₀, a.comm, ← hg]
           rfl }
-    exact ⟨ψ, Thick.hom_ext hg⟩
+    exact ⟨ψ, Thick.Hom.ext' (AlgHom.ext hg)⟩
 
 theorem IsLoc.hom_ext {T L S : Thick κ s} {ι : T ⟶ L} {x : T.B} (h : IsLoc ι x) {ψ ψ' : L ⟶ S}
     (e : ι ≫ ψ = ι ≫ ψ') : ψ = ψ' := by
   have e' : ∀ b, ψ.φ (ι.φ b) = ψ'.φ (ι.φ b) := fun b ↦ congrArg (fun u : T ⟶ S ↦ u.φ b) e
-  refine Thick.hom_ext fun c ↦ ?_
+  refine Thick.Hom.ext' (AlgHom.ext fun c ↦ ?_)
   obtain ⟨n, N, hc⟩ := h.2.1 c
   refine ((h.1.map ψ.φ).pow N).mul_right_cancel ?_
   rw [← map_pow, ← map_mul, hc, ← map_pow, e', e', ← map_mul, map_pow, hc]
@@ -216,7 +220,7 @@ theorem Gen.cech {T : Thick κ s} {ι : Type} [Fintype ι] {b : ι → T.B} (hb 
   obtain ⟨M, hM⟩ := exists_pow_mul_eq_zero' (fun p : ι × ι × ι ↦ b p.1 * b p.2.1 * b p.2.2)
     (fun p ↦ b p.2.2 ^ N * n (p.1, p.2.1) + b p.1 ^ N * n (p.2.1, p.2.2) -
       b p.2.1 ^ N * n (p.1, p.2.2)) fun p S a ha ↦ by
-      simp only [map_sub, map_add, map_mul, map_pow, hn' S a _ _ (l (l ha)) (l' (l ha)),
+      simp only [map_sub, map_add (f := _), map_mul, map_pow, hn' S a _ _ (l (l ha)) (l' (l ha)),
         hn' S a _ _ (l' (l ha)) (l' ha), hn' S a _ _ (l (l ha)) (l' ha)]
       ring
   obtain ⟨r, hr⟩ := hb (N + M)
@@ -344,7 +348,7 @@ theorem small_descent_H1_surjective (hU : ⨆ i, U i = ⊤) :
   refine ⟨H1.mk _ ⟨F, fun T T' T'' φ ψ ↦ ?_⟩, ?_⟩
   · change F T T'' (φ ≫ ψ) = ψ.φ (F T T' φ) + F T' T'' ψ
     refine sep hU fun S a h ↦ ?_
-    rw [map_add, ← Thick.comp_φ, hF _ _ _ _ _ h, hF _ _ _ _ _ h, hF _ _ _ _ _ h, Category.assoc]
+    rw [map_add (f := _), ← Thick.comp_φ, hF _ _ _ _ _ h, hF _ _ _ _ _ h, hF _ _ _ _ _ h, Category.assoc]
     ring
   · rw [CoefMap.pullCohomologyOne_class, H1.mk_eq_mk]
     refine ⟨fun T ↦ -e T.obj T.obj (𝟙 _) T.property, ?_⟩

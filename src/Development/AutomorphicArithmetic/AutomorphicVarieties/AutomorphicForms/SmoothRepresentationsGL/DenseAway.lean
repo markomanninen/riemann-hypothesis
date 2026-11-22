@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
-import GroundTheory.GlobalFields.Adele.WeakApprox
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+public import GroundTheory.GlobalFields.Adele.WeakApprox
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.FourierWhittaker (whittaker)
@@ -72,7 +76,8 @@ variable (S : Finset (HeightOneSpectrum (𝓞 E)))
 
 private theorem sum_mem (x : ∀ v : S, v.1.adicCompletion E) (w : S) : pLoc E w.1 (∑ v : S, sLoc E v.1 (x v)) = x w := by
   classical
-  rw [map_sum, Finset.sum_eq_single w]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single w]
   · exact Pi.single_eq_same (M := fun v : HeightOneSpectrum (𝓞 E) => v.adicCompletion E) w.1 _
   · exact fun v _ h => Pi.single_eq_of_ne (M := fun v : HeightOneSpectrum (𝓞 E) => v.adicCompletion E)
       (fun e => h (Subtype.ext e.symm)) _
@@ -81,7 +86,8 @@ private theorem sum_mem (x : ∀ v : S, v.1.adicCompletion E) (w : S) : pLoc E w
 private theorem sum_notMem (x : ∀ v : S, v.1.adicCompletion E) {w : HeightOneSpectrum (𝓞 E)} (hw : w ∉ S) :
     pLoc E w (∑ v : S, sLoc E v.1 (x v)) = 0 := by
   classical
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_eq_zero fun v _ => Pi.single_eq_of_ne (M := fun v : HeightOneSpectrum (𝓞 E) => v.adicCompletion E)
     (fun e : w = v.1 => hw (e ▸ v.2)) _
 
@@ -108,7 +114,7 @@ private def sS : RS S →ₙ+* Ad E where
 
 private theorem cont_sS : Continuous (sS S) :=
   Continuous.prodMk (continuous_pi fun w => (continuous_apply _).comp continuous_snd)
-    (continuous_finset_sum _ fun v _ => (cont_sLoc v.1).comp ((continuous_apply v).comp continuous_fst))
+    (continuous_finsetSum _ fun v _ => (cont_sLoc v.1).comp ((continuous_apply v).comp continuous_fst))
 
 private theorem pS_sS (x : RS S) : pS S (sS S x) = x :=
   Prod.ext (funext fun v => sum_mem S x.1 v) rfl

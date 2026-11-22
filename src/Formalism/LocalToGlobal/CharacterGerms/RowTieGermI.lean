@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTieCartTop
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePGerm
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieCartTop
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePGerm
+
+@[expose] public section
 
 namespace Formalism.L2.FormalSeriesBounds
 

@@ -1,5 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarBasic
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarBasic
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,76 +58,16 @@ def intMuCD_eM (ε : Fin n → Bool) : UJ ε → (Fin n → Fin n → ℂ) := fu
 
 def intMuCD_eU (ε : Fin n → Bool) : Formalism.REAL.UJ ε → (Fin n → Fin n → ℂ) := fun g => Formalism.MainNotions.S.umat g
 
-private theorem Jm_mul_self_eq_oneFormalDegree (ε : Fin n → Bool) : Jm ε * Jm ε = 1 := by
-  first
-  | exact Jm_mul_Jm ε
-  | (rw [Jm, Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-     congr 1
-     funext a
-     split_ifs <;> norm_num)
-
-private theorem Jm_mul_conjTranspose_mul_Jm_mul_eq_one_of_inUJ' {ε : Fin n → Bool} {g : Matrix (Fin n) (Fin n) ℂ} (hg : inUJ ε g) :
-    Jm ε * gᴴ * Jm ε * g = 1 := by
-  have hg' : gᴴ * (Jm ε * g) = Jm ε := by
-    rw [← Matrix.mul_assoc]
-    exact hg
-  simp only [Matrix.mul_assoc]
-  rw [hg', Jm_mul_self_eq_oneFormalDegree]
-
 private theorem exists_UJ_toM_eq_of_inUJ {ε : Fin n → Bool} {g : Matrix (Fin n) (Fin n) ℂ} (hg : inUJ ε g) :
     ∃ u : UJ ε, toM u = g := by
-  have hl := Jm_mul_conjTranspose_mul_Jm_mul_eq_one_of_inUJ' hg
-  have hr : g * (Jm ε * gᴴ * Jm ε) = 1 := by
-    first
-    | exact mul_eq_one_comm.mp hl
-    | exact Matrix.mul_eq_one_comm.mp hl
-    | (letI := Matrix.invertibleOfLeftInverse g _ hl
-       exact mul_invOf_self g)
-  exact ⟨⟨⟨g, Jm ε * gᴴ * Jm ε, hr, hl⟩, hg⟩, rfl⟩
-
-private theorem isClosedEmbedding_intMuCD_eM (ε : Fin n → Bool) :
-    Topology.IsClosedEmbedding (intMuCD_eM ε) := by
-  have hC : ∀ g : UJ ε, inUJ ε (toM g) := fun g => g.2
-  have hcont : Continuous (fun g : UJ ε => ((g : (Matrix (Fin n) (Fin n) ℂ)ˣ) : Matrix (Fin n) (Fin n) ℂ)) :=
-    Units.continuous_val.comp continuous_subtype_val
-  have hJt : Continuous (fun x : Matrix (Fin n) (Fin n) ℂ => Jm ε * xᴴ * Jm ε) :=
-    (continuous_const.matrix_mul continuous_id.matrix_conjTranspose).matrix_mul continuous_const
-  have hG : Continuous (fun x : Matrix (Fin n) (Fin n) ℂ => (x, MulOpposite.op (Jm ε * xᴴ * Jm ε))) := by
-    first
-    | exact continuous_id.prodMk (MulOpposite.continuous_op.comp hJt)
-    | exact continuous_id.prod_mk (MulOpposite.continuous_op.comp hJt)
-  have hcomp : (fun x : Matrix (Fin n) (Fin n) ℂ => (x, MulOpposite.op (Jm ε * xᴴ * Jm ε))) ∘
-        (fun g : UJ ε => ((g : (Matrix (Fin n) (Fin n) ℂ)ˣ) : Matrix (Fin n) (Fin n) ℂ)) =
-      Units.embedProduct (Matrix (Fin n) (Fin n) ℂ) ∘ (fun g : UJ ε => (g : (Matrix (Fin n) (Fin n) ℂ)ˣ)) := by
-    funext g
-    have h1 : (((g : (Matrix (Fin n) (Fin n) ℂ)ˣ)⁻¹ : (Matrix (Fin n) (Fin n) ℂ)ˣ) : Matrix (Fin n) (Fin n) ℂ) = Jm ε * (toM g)ᴴ * Jm ε :=
-      Units.inv_eq_of_mul_eq_one_left (Jm_mul_conjTranspose_mul_Jm_mul_eq_one_of_inUJ' (g := toM g) (hC g))
-    show (toM g, MulOpposite.op (Jm ε * (toM g)ᴴ * Jm ε)) = Units.embedProduct _ (g : (Matrix (Fin n) (Fin n) ℂ)ˣ)
-    rw [Units.embedProduct_apply, h1]
-  have hind : Topology.IsInducing (fun g : UJ ε => ((g : (Matrix (Fin n) (Fin n) ℂ)ˣ) : Matrix (Fin n) (Fin n) ℂ)) := by
-    refine Topology.IsInducing.of_comp hcont hG ?_
-    rw [hcomp]
-    exact Units.isInducing_embedProduct.comp Topology.IsInducing.subtypeVal
-  have hrange : Set.range (fun g : UJ ε => ((g : (Matrix (Fin n) (Fin n) ℂ)ˣ) : Matrix (Fin n) (Fin n) ℂ)) = {x | inUJ ε x} := by
-    ext x
-    constructor
-    · rintro ⟨g, rfl⟩
-      exact hC g
-    · intro hx
-      exact exists_UJ_toM_eq_of_inUJ hx
-  have hclosed : IsClosed (Set.range (fun g : UJ ε => ((g : (Matrix (Fin n) (Fin n) ℂ)ˣ) : Matrix (Fin n) (Fin n) ℂ))) := by
-    rw [hrange]
-    show IsClosed {x : Matrix (Fin n) (Fin n) ℂ | xᴴ * Jm ε * x = Jm ε}
-    exact isClosed_eq ((continuous_id.matrix_conjTranspose.matrix_mul continuous_const).matrix_mul
-      continuous_id) continuous_const
-  have hce : Topology.IsClosedEmbedding (fun g : UJ ε => ((g : (Matrix (Fin n) (Fin n) ℂ)ˣ) : Matrix (Fin n) (Fin n) ℂ)) :=
-    ⟨⟨hind, fun a b h => Subtype.ext (Units.ext h)⟩, hclosed⟩
-  exact hce
+  change g ∈ Set.range (fun u : UJ ε => toM u)
+  rw [range_toM]
+  exact hg
 
 theorem lintegral_muPolar (ε : Fin n → Bool) (F : (Fin n → Fin n → ℂ) → ENNReal) (hF : Measurable F) :
     ∫⁻ g, F (toM g) ∂(muPolar ε) =
       ∫⁻ k, ∫⁻ z, F (polarM (k, z)) * ENNReal.ofReal (Jac z) ∂volume ∂(dk ε) := by
-  have hemb : MeasurableEmbedding (intMuCD_eM ε) := (isClosedEmbedding_intMuCD_eM ε).measurableEmbedding
+  have hemb : MeasurableEmbedding (intMuCD_eM ε) := (isClosedEmbedding_toM ε).measurableEmbedding
   have hae : ∀ᵐ x ∂(muPolarMat ε), x ∈ Set.range (intMuCD_eM ε) :=
     intMuCD_ae_range ε _ hemb.measurableSet_range fun kz => exists_UJ_toM_eq_of_inUJ (polarM_inUJ kz)
   calc ∫⁻ g, F (toM g) ∂(muPolar ε)
@@ -133,10 +78,7 @@ theorem lintegral_muPolar (ε : Fin n → Bool) (F : (Fin n → Fin n → ℂ) �
 theorem lintegral_muCD (ε : Fin n → Bool) (F : (Fin n → Fin n → ℂ) → ENNReal) (hF : Measurable F) :
     ∫⁻ g, F (Formalism.MainNotions.S.umat g) ∂(muCD ε) =
       ENNReal.ofReal (cPQ ε) * ∫⁻ k, ∫⁻ z, F (polarM (k, z)) * ENNReal.ofReal (Jac z) ∂volume ∂(dk ε) := by
-  have hemb : MeasurableEmbedding (intMuCD_eU ε) := by
-    first
-    | exact (isClosedEmbedding_intMuCD_eM ε).measurableEmbedding
-    | exact (isClosedEmbedding_intMuCD_eM ε).measurableEmbedding (α := Formalism.REAL.UJ ε)
+  have hemb : MeasurableEmbedding (intMuCD_eU ε) := (isClosedEmbedding_toM ε).measurableEmbedding
   have hae : ∀ᵐ x ∂(muPolarMat ε), x ∈ Set.range (intMuCD_eU ε) :=
     intMuCD_ae_range ε _ hemb.measurableSet_range fun kz => exists_UJ_toM_eq_of_inUJ (polarM_inUJ kz)
   calc ∫⁻ g, F (Formalism.MainNotions.S.umat g) ∂(muCD ε)

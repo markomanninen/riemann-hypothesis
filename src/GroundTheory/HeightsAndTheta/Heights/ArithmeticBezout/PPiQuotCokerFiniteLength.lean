@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsPiQuotCokerFiniteLength
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsPiQuotCokerFiniteLength
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -53,8 +58,9 @@ theorem PiQuotCokerFiniteLength.proof : PiQuotCokerFiniteLength.Statement := by
     choose x hx using fun P => Ideal.Quotient.mk_surjective (v P)
     refine ⟨Submodule.Quotient.mk (∑ P, a P * x P), ?_⟩
     funext Q
-    rw [hfac, Pi.smul_apply, ← hx Q, map_sum, Finset.sum_eq_single Q]
-    · rw [← hab Q, Algebra.smul_def, Ideal.Quotient.algebraMap_eq, map_add, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hfac, Pi.smul_apply, ← hx Q, map_sum, Finset.sum_eq_single Q]
+    · rw [← hab Q, Algebra.smul_def, Ideal.Quotient.algebraMap_eq, map_add (f := _), map_mul,
         Ideal.Quotient.eq_zero_iff_mem.mpr (hb Q), add_zero]
     · intro P _ hPQ
       have hle : IP P ≤ (Q : Ideal B) :=

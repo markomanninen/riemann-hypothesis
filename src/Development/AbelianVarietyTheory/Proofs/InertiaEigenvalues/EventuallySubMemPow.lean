@@ -1,18 +1,22 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Acris0TorsionFree
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaBdRPlusSurjectiveKerUnitsEquivariant
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOrbitPadicComplex
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AcrisMembershipSpanIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraMapAinfInvPrimeBdRPlusInjective
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMaps
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Acris0TorsionFree
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaBdRPlusSurjectiveKerUnitsEquivariant
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOrbitPadicComplex
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AcrisMembershipSpanIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraMapAinfInvPrimeBdRPlusInjective
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMaps
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
@@ -90,7 +94,8 @@ theorem eventually_sub_mem_pow (hξ : RingHom.ker (Per.θ l) = Ideal.span {ξ}) 
     (fun i _ => ht ((((_root_.frobeniusEquiv (Per.Fl l) l).symm ^ i) (y.coeff i))))
   filter_upwards [hall] with g hg
   rw [sub_eq_iff_eq_add] at hc
-  rw [hc, map_add, map_mul, map_pow, map_natCast, map_sum, add_sub_add_comm, ← mul_sub,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hc, map_add (f := _), map_mul, map_pow, map_natCast, map_sum, add_sub_add_comm, ← mul_sub,
     ← Finset.sum_sub_distrib]
   refine add_mem (Ideal.mul_mem_right _ _ (Ideal.pow_mem_pow hlI _)) (sum_mem fun i hi => ?_)
   rw [map_mul, map_pow, map_natCast, ← sub_mul]
@@ -111,7 +116,7 @@ theorem dvd_of_mem (hξ : RingHom.ker (Per.θ l) = Ideal.span {ξ}) (N : ℕ) {z
   obtain ⟨a, ha, b, hb, rfl⟩ := h1
   obtain ⟨a', rfl⟩ := Ideal.mem_span_singleton'.1 ha
   obtain ⟨b', rfl⟩ := Ideal.mem_span_singleton'.1 hb
-  rw [map_add, map_mul, map_mul, map_pow, map_pow, map_natCast, pow_mul]
+  rw [map_add (f := _), map_mul, map_mul, map_pow, map_pow, map_natCast, pow_mul]
   exact dvd_add (Dvd.intro_left _ rfl) (Dvd.dvd.mul_left (pow_dvd_pow_of_dvd hxl N) _)
 
 theorem eventually_dvd_ainf (N : ℕ) (y : Per.Ainf l) :
@@ -151,8 +156,8 @@ theorem eventually_dvd_dpow {x : Per.Ainf l} (hx : Per.θ l x = 0) (k N : ℕ) :
   refine Finset.dvd_sum fun m hm => Dvd.dvd.mul_left (Dvd.dvd.mul_right (Dvd.dvd.mul_left
     (pow_dvd_pow _ (Nat.le_mul_of_pos_right N (by have := Finset.mem_range.1 hm; omega))) _) _) _
 
-variable (l) in
 
+variable (l) in
 def fixNear : Subring (Per.Acris l) where
   carrier := {x | ∀ N : ℕ, ∀ᶠ g : GQ l in 𝓝 1, (l : Per.Acris l) ^ N ∣ galC g x - x}
   mul_mem' {a b} ha hb N := by
@@ -163,7 +168,7 @@ def fixNear : Subring (Per.Acris l) where
   one_mem' N := .of_forall fun g => ⟨0, by simp⟩
   add_mem' {a b} ha hb N := by
     filter_upwards [ha N, hb N] with g ⟨u, hu⟩ ⟨v, hv⟩
-    exact ⟨u + v, by rw [map_add]; linear_combination hu + hv⟩
+    exact ⟨u + v, by rw [map_add (f := _)]; linear_combination hu + hv⟩
   zero_mem' N := .of_forall fun g => ⟨0, by simp⟩
   neg_mem' {a} ha N := by
     filter_upwards [ha N] with g ⟨u, hu⟩
@@ -197,7 +202,8 @@ theorem algebraMap_mem_fixNear (s : Per.Acris0 l) :
       have hy0 := (GlobalTheory.MemLoc.mem_Acris0_iff_span l e he y).2 hy
       have hz0 := (GlobalTheory.MemLoc.mem_Acris0_iff_span l e he z).2 hz
       have e0 : (⟨y + z, h0⟩ : Per.Acris0 l) = ⟨y, hy0⟩ + ⟨z, hz0⟩ := Subtype.ext rfl
-      rw [e0, map_add]; exact add_mem (ihy hy0) (ihz hz0)
+      set_option synthInstance.maxHeartbeats 200000 in
+        rw [e0, map_add (f := _)]; exact add_mem (ihy hy0) (ihz hz0)
     | smul r y hy ihy =>
       intro h0
       have hy0 := (GlobalTheory.MemLoc.mem_Acris0_iff_span l e he y).2 hy
@@ -213,7 +219,7 @@ theorem galC_sub_dvd_mem_nhds : ∀ (l : ℕ) [Fact l.Prime] (x : Per.Acris l) (
   obtain ⟨s, z, rfl⟩ := (GlobalTheory.MemLoc.acris_basic l).2.2.1 x n
   filter_upwards [algebraMap_mem_fixNear s n] with g ⟨u, hu⟩
   refine ⟨u + (galC g z - z), ?_⟩
-  rw [map_add, map_mul, map_pow, map_natCast]
+  rw [map_add (f := _), map_mul, map_pow, map_natCast]
   linear_combination hu
 
 end GlobalTheory.AcrisGal

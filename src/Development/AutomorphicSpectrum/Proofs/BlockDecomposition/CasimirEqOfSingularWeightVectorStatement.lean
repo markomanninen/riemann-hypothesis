@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CasimirEqOfSingularWeightVector
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ActEqZeroOfMem
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CasimirEqOfSingularWeightVector
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ActEqZeroOfMem
+
+@[expose] public section
+
 open GroundTheory.Automorphic.HarishChandra GlobalTheory.CompanionTheory.PresRho
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.casimir_eq_of_singular_weight_vector : ∀ {n : ℕ} (μ : Fin n → ℤ) (x : U n), IsAdW μ x → (∀ a : Fin n × Fin n, IsUpper a → e a * x ∈ Jp n) → x ∉ Jp n → casC (fun k => rhoVec n k + (μ k : ℂ)) = casC (rhoVec n) := by

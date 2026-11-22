@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ArchCone
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEqSumWeilComponentsAddTwoSmulLattice
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ArchCone
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEqSumWeilComponentsAddTwoSmulLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,15 +51,16 @@ theorem at_real {M : Type} [AddCommMonoid M] [Module (AF F) M] (z : M) : At (evI
   rw [smul_smul, show u * realAd F 1 = 0 from af_ext' (by rw [evI_mul, hu, zero_mul, evI_zero]) fun t => by
     rw [map_mul, evFin_real, mul_zero, map_zero], zero_smul]
 
-variable (F) in
 
+variable (F) in
 def aS (S : Finset (Pl F)) : AF F := realAd F 1 + ∑ v ∈ S, idem F v
 
 theorem idem_mul_aS {S : Finset (Pl F)} {v : Pl F} (hv : v ∉ S) : idem F v * aS F S = 0 :=
   af_ext' (by rw [evI_mul, evI_idem, zero_mul, evI_zero]) fun u => by
     rcases eq_or_ne u v with rfl | h
-    · rw [map_mul, aS, map_add, evFin_real, map_sum, Finset.sum_eq_zero fun t ht => evFin_idem_ne (fun e : u = t => hv (e ▸ ht))]
-      simp
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [map_mul, aS, map_add (f := _), evFin_real, map_sum, Finset.sum_eq_zero fun t ht => evFin_idem_ne (fun e : u = t => hv (e ▸ ht))]
+        simp
     · rw [map_mul, evFin_idem_ne h, zero_mul, map_zero]
 
 open Classical in
@@ -80,8 +85,9 @@ theorem tendsto_aS : Tendsto (aS F) atTop (𝓝 1) := by
       Finset.sum_induction _ (fun a => evI F a = 0) (fun a b ha hb => by rw [evI_add, ha, hb, add_zero]) evI_zero
         fun v _ => evI_idem v, add_zero]
     exact map_one (InfiniteAdeleRing.ringEquiv_mixedSpace F)
-  · rw [aS, map_add, evFin_real, zero_add, map_sum, sub_sub_cancel]
-    exact map_sum (evalV F u) _ _
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [aS, map_add (f := _), evFin_real, zero_add, map_sum, sub_sub_cancel]
+      exact map_sum (evalV F u) _ _
 
 section U
 
@@ -182,7 +188,7 @@ theorem partU_mem_kAt {B : Base F E} {K : Subgroup (UA σ X.J)} (hK : IsStab B K
         have := congrFun (congrFun (partU_sub_one (idem_mul_self v) k) i) j
         rw [Matrix.sub_apply, Matrix.smul_apply] at this
         rw [← this, sub_add_cancel]
-      rw [Matrix.map_apply, e, map_add, piInf_idem, zero_add]
+      rw [Matrix.map_apply, e, map_add (f := _), piInf_idem, zero_add]
       by_cases hij : i = j <;> simp [Matrix.one_apply, hij]
     rw [this]; exact Commute.one_left _
   · have i1 : ∀ u, evFin F u (idem F v) ∈ u.adicCompletionIntegers F := fun u => by

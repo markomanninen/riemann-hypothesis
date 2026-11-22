@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContinuousMulMt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UhMeasurableSet
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaContOn
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContinuousMulMt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UhMeasurableSet
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaContOn
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped InnerProductSpace ENNReal
@@ -25,7 +29,7 @@ theorem psi_cont (z : Fin (2 * r + k + 1) → ℂ) (c : ℂ) :
   unfold Formalism.QuantumDeterminants.psi Formalism.QuantumDeterminants.ell
   refine Complex.continuous_exp.comp (continuous_const.mul (Complex.continuous_ofReal.comp
     (Complex.continuous_re.comp (continuous_const.mul ?_))))
-  refine continuous_finset_sum _ fun a _ => ?_
+  refine continuous_finsetSum _ fun a _ => ?_
   by_cases h : a.val + 1 < r
   · simp only [dif_pos h]
     fun_prop

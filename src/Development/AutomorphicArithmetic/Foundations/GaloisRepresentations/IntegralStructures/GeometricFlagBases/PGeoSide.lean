@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.ExistsLin
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.CardResOK
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.NiceBc
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.LocTowerHolds
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.ExistsLin
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.CardResOK
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.NiceBc
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.LocTowerHolds
+
+@[expose] public section
 
 theorem UpperTheory.Gal.Int.Geo.geoSide_of :
     UpperTheory.Gal.crystallineComparison.Br.FinAll → CrystallineSemistableComparison.SmoothModelCrystalline → UpperTheory.Ru.crystallineComparison.GeoSide := by

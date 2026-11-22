@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.CompatFub
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.OnlyIsotropic
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.LeftInv
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.Counting
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.CompatFub
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.OnlyIsotropic
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.LeftInv
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.Counting
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,7 @@ theorem adicAbv_eq_zpow (w : HeightOneSpectrum (𝓞 E)) {α : E} (hα : α ≠ 
   refine ⟨(WithZero.unzero h0).toAdd, ?_⟩
   rw [HeightOneSpectrum.adicAbv_def, WithZeroMulInt.toNNReal_neg_apply _ h0]
   push_cast
-  rfl
+  rw [WithZero.toAdd_unzero_eq_log h0]
 
 theorem adicAbv_le_one_iff (w : HeightOneSpectrum (𝓞 E)) (α : E) :
     NumberField.HeightOneSpectrum.adicAbv E w α ≤ 1 ↔ HeightOneSpectrum.valuation E w α ≤ 1 := by
@@ -88,7 +92,7 @@ theorem exists_den (α : E) (S : Finset (HeightOneSpectrum (𝓞 E)))
   · refine ⟨1, one_pos, ?_, 0, by simp [hα]⟩
     rw [Nat.cast_one]
     calc (1 : ℝ) = ∏ _w ∈ S, (1 : ℝ) := Finset.prod_const_one.symm
-      _ ≤ _ := Finset.prod_le_prod (fun _ _ => zero_le_one) (fun _ _ => le_max_left _ _)
+      _ ≤ _ := Finset.prod_le_prod₀ (fun _ _ => zero_le_one) (fun _ _ => le_max_left _ _)
   set N : HeightOneSpectrum (𝓞 E) → ℕ := fun w => Ideal.absNorm w.asIdeal with hNdef
   have hN1 : ∀ w, (1 : ℝ) < N w := fun w => by exact_mod_cast HeightOneSpectrum.one_lt_absNorm w
   choose z hz using fun w => adicAbv_eq_zpow w hα
@@ -117,7 +121,7 @@ theorem exists_den (α : E) (S : Finset (HeightOneSpectrum (𝓞 E)))
       by_cases hw0 : w0 ∈ S
       · rw [← Finset.mul_prod_erase S _ hw0]
         have h1 : ∏ w ∈ S.erase w0, A ((N w : E) ^ k w) ≤ 1 :=
-          Finset.prod_le_one (fun w _ => hnn w) (fun w _ => hle1 w)
+          Finset.prod_le_one₀ (fun w _ => hnn w) (fun w _ => hle1 w)
         have h2 : A ((N w0 : E) ^ k w0) ≤ ((N w0 : ℝ)⁻¹) ^ k w0 := by
           rw [map_pow]
           exact pow_le_pow_left₀ (A.nonneg _) (adicAbv_absNorm_le w0) _
@@ -131,7 +135,7 @@ theorem exists_den (α : E) (S : Finset (HeightOneSpectrum (𝓞 E)))
                 (A.nonneg _) (mul_nonneg (pow_nonneg (inv_nonneg.2 (Nat.cast_nonneg _)) _) zero_le_one)
           _ = 1 := by rw [mul_one, h4]
       · have h1 : ∏ w ∈ S, A ((N w : E) ^ k w) ≤ 1 :=
-          Finset.prod_le_one (fun w _ => hnn w) (fun w _ => hle1 w)
+          Finset.prod_le_one₀ (fun w _ => hnn w) (fun w _ => hle1 w)
         calc (∏ w ∈ S, A ((N w : E) ^ k w)) * A α ≤ 1 * 1 :=
               mul_le_mul h1 (hS w0 hw0) (A.nonneg _) zero_le_one
           _ = 1 := one_mul 1
@@ -185,7 +189,7 @@ theorem entry_mem {n : ℕ} {R : ℝ} (hR : 0 ≤ R) (γ : GL (Fin n) E) (h : lo
   refine ⟨fun v => ?_, ?_⟩
   · have h1 : ‖cV v (A i j)‖ ^ 2 ≤ ⨆ p : Fin n × Fin n, ‖cV v (A p.1 p.2)‖ ^ 2 :=
       le_ciSup (f := fun p : Fin n × Fin n => ‖cV v (A p.1 p.2)‖ ^ 2) (Set.finite_range _).bddAbove (i, j)
-    have h2 := (Real.posLog_le_posLog (sq_nonneg _) h1).trans (hinf0 v)
+    have h2 := (Real.posLog_le_posLog (le_trans (by norm_num) (sq_nonneg _)) h1).trans (hinf0 v)
     rw [hA, norm_cV_alg] at h2
     exact le_exp_of_posLog_sq_le (AbsoluteValue.nonneg _ _) hR h2
   · have hFfin := supp_fin A
@@ -195,7 +199,7 @@ theorem entry_mem {n : ℕ} {R : ℝ} (hR : 0 ≤ R) (γ : GL (Fin n) E) (h : lo
       have h1 : ‖cW w (A i j)‖ ≤ ⨆ p : Fin n × Fin n, ‖cW w (A p.1 p.2)‖ :=
         le_ciSup (f := fun p : Fin n × Fin n => ‖cW w (A p.1 p.2)‖) (Set.finite_range _).bddAbove (i, j)
       rw [hA, norm_cW_alg] at h1
-      exact Real.posLog_le_posLog (AbsoluteValue.nonneg _ _) h1
+      exact Real.posLog_le_posLog (le_trans (by norm_num) (AbsoluteValue.nonneg _ _)) h1
     have hS : ∀ w ∉ S, NumberField.HeightOneSpectrum.adicAbv E w α ≤ 1 := by
       intro w hw
       rw [Set.Finite.mem_toFinset, Function.mem_support, not_not] at hw
@@ -539,7 +543,7 @@ theorem growth_main (hS : SizeBasic) (a b : ℕ) (D : Dom E a b) (ι : Type) [Fi
     set Lx := logSize x.1 + logSize x.2
     have hLx : 0 ≤ Lx := by positivity
     set P : H E a b → ℝ≥0∞ := fun y => ∑' γ : ratH E a b, S.indicator 1 (x⁻¹ * ((γ : H E a b) * y))
-    have hPm : Measurable P := Measurable.ennreal_tsum fun γ => (hmi x).comp (measurable_const_mul _)
+    have hPm : Measurable P := Measurable.tsum fun γ => (hmi x).comp (measurable_const_mul _)
     have s1 : ∫⁻ y, ENNReal.ofReal ‖Φ i j y * f j (x * y)‖ ∂D.μ ≤
         ENNReal.ofReal B0 * ∫⁻ y, S.indicator 1 (x⁻¹ * y) * ‖f j y‖ₑ ∂D.μ := by
       rw [← lintegral_mul_left_eq_self (fun y => S.indicator (1 : H E a b → ℝ≥0∞) (x⁻¹ * y) * ‖f j y‖ₑ) x,

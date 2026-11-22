@@ -1,27 +1,54 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CInfGood
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BcMapBcVec
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.FlatChernWeightEqOfIndependence
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.OnbMat
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.RegularFormsIsBundleProjectiveCover
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.TwistedDualRegularFormsFiniteCover
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CuspOnto
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.AdelicGLLastRowAndDetModuleUnderLeftMultiplicati
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.GoodOrigin
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.LamLevel
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.ThmFlatA
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatDegree
-import Development.AutomorphicSpectrum.Statements.MetricStatements.SmallOnTower
-import Development.AutomorphicSpectrum.Statements.MetricStatements.RankBound
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsProbabilityMeasureMuPart
-import Formalism.LocalToGlobal.ProjectiveLattices.CompHt
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LogMeanShares.LogMeanStatements.HSClaim
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LogMeanShares.LogMeanStatements.ShareLow
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LogMeanShares.LogMeanStatements.LineDegreeClosedFormula
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.SpecFirstDetFormNeZero
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvaluationLawsGenericFramesAtlasHold
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsLocalRingTrivSqZeroExt
-import Formalism.LocalToGlobal.ProjectiveLattices.CompFin
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CInfGood
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BcMapBcVec
+public import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.OnbMat
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpolationModelInequalities
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.QuotientIsHausdorff
+public import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAt
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.GoodOrigin
+public import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.UnitaryHaarVolume
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.NonvanishingNearMaximum
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.CMIdealValuations.OneLeAbsNormOfLeOne
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.CMIdealValuations.ProdMulLeDetIdeal
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.CMIdealValuations.ValuationLeOfEqAlgebraMap
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.CMIdealValuations.AbsNormSpanGalois
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.CMIdealValuations.DetValuationLeOne
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.CMIdealValuations.ExistsEvalNeZeroOfTotalDegreeLt
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.CMIdealValuations.ExistsMonicIrreducibleCardGt
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.CMIdealValuations.FiniteDetAddSmulOneEqZero
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.CMIdealValuations.LargeResidueExtensionLemma
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.CMIdealValuations.HermitianFormGramBlockBasis
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsProbabilityMeasureMuPart
+public import Formalism.LocalToGlobal.ProjectiveLattices.PartitionExtendByZeroAntitone
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
+public import Formalism.LocalToGlobal.Divisibility.Frames
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.ThmFlatA
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatDegree
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEmbeddingPieces
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.HasMultiplier
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
+public import Formalism.MeanHeightDescent.CombinedAverageDegreeBound
+public import Formalism.MonomialMeanResidues.FilteredDegree
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.GROWCountStatement
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Statements
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompHt
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LogMeanShares.LogMeanStatements.HSClaim
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.TheoremA
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.SpecFirstDetFormNeZero
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvaluationLawsGenericFramesAtlasHold
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsLocalRingTrivSqZeroExt
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompFin
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Filter Topology
 open Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.ChartRestriction.G.AR.Inst Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Rec
@@ -39,34 +66,35 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheo
 
 theorem allWt_eq_zero_of_generic (h : GenFrEx Xo c) {e : Ix Dw → ℤ} {g : Rul Xo c}
     (hg : g ∈ GlobalTheory.AllWt.secZ Xo c e) (h0 : ∀ Z, evC h Z g = 0) : g = 0 := by
-  obtain ⟨hL, -, -, hA'⟩ := GlobalTheory.Reg.evLaws_genFr_atlas E H Dw l Xo c
-  have hA := hA' h
-  have hfield : ∀ (L : Type) [Field L] [Algebra c.F L] (w : FrPt Xo c L), evR Xo c g w = 0 := by
-    intro L _ _ w
-    obtain ⟨C, ψ, z, t', hz, hb⟩ := hA L w
-    obtain ⟨q, χ, y₀, hy₀⟩ := hL.test C.R C.y
-    have h1 : evR Xo c g C.yg = 0 := by
-      rw [GlobalTheory.FlagTan.evR_frBor hg C.bor]
-      have := h0 C.Z
-      unfold evC at this
-      rw [this, mul_zero]
-    have h2 : χ (g q y₀) = 0 := by
-      rw [GlobalTheory.FlagTan.evR_eq hg.1 (frMap_trans _ _ _ _ _ _ _ _ hy₀ C.gen)] at h1
-      exact Subtype.ext h1
-    have h3 : evR Xo c g z = 0 := by
-      rw [GlobalTheory.FlagTan.evR_eq hg.1 (frMap_trans _ _ _ _ _ _ _ _ hy₀ hz), AlgHom.comp_apply, h2, map_zero]
-    rw [GlobalTheory.FlagTan.evR_frBor hg hb, h3, mul_zero]
-  funext p y
-  have hred : IsReduced p.R := (Ideal.isRadical_iff_quotient_reduced _).1 p.rad
-  show g p y = 0
-  refine IsNilpotent.eq_zero ?_
-  rw [nilpotent_iff_mem_prime]
-  intro P hP
-  let φ : p.R →ₐ[c.F] P.ResidueField := IsScalarTower.toAlgHom c.F p.R P.ResidueField
-  obtain ⟨w, hw⟩ := hL.bc _ _ φ y
-  have h4 := hfield _ w
-  rw [GlobalTheory.FlagTan.evR_eq hg.1 hw] at h4
-  exact Ideal.algebraMap_residueField_eq_zero.1 h4
+  set_option synthInstance.maxHeartbeats 200000 in
+    obtain ⟨hL, -, -, hA'⟩ := GlobalTheory.Reg.evLaws_genFr_atlas E H Dw l Xo c
+    have hA := hA' h
+    have hfield : ∀ (L : Type) [Field L] [Algebra c.F L] (w : FrPt Xo c L), evR Xo c g w = 0 := by
+      intro L _ _ w
+      obtain ⟨C, ψ, z, t', hz, hb⟩ := hA L w
+      obtain ⟨q, χ, y₀, hy₀⟩ := hL.test C.R C.y
+      have h1 : evR Xo c g C.yg = 0 := by
+        rw [GlobalTheory.FlagTan.evR_frBor hg C.bor]
+        have := h0 C.Z
+        unfold evC at this
+        rw [this, mul_zero]
+      have h2 : χ (g q y₀) = 0 := by
+        rw [GlobalTheory.FlagTan.evR_eq hg.1 (frMap_trans _ _ _ _ _ _ _ _ hy₀ C.gen)] at h1
+        exact Subtype.ext h1
+      have h3 : evR Xo c g z = 0 := by
+        rw [GlobalTheory.FlagTan.evR_eq hg.1 (frMap_trans _ _ _ _ _ _ _ _ hy₀ hz), AlgHom.comp_apply, h2, map_zero]
+      rw [GlobalTheory.FlagTan.evR_frBor hg hb, h3, mul_zero]
+    funext p y
+    have hred : IsReduced p.R := (Ideal.isRadical_iff_quotient_reduced _).1 p.rad
+    show g p y = 0
+    refine IsNilpotent.eq_zero ?_
+    rw [nilpotent_iff_mem_prime]
+    intro P hP
+    let φ : p.R →ₐ[c.F] P.ResidueField := IsScalarTower.toAlgHom c.F p.R P.ResidueField
+    obtain ⟨w, hw⟩ := hL.bc _ _ φ y
+    have h4 := hfield _ w
+    rw [GlobalTheory.FlagTan.evR_eq hg.1 hw] at h4
+    exact Ideal.algebraMap_residueField_eq_zero.1 h4
 
 theorem mem_allWt_of_secZ {a : WZ E} {f : Rul Xo c} (hf : f ∈ GlobalTheory.CompanionTheory.Ar.Rec.secZ Xo c a) :
     f ∈ GlobalTheory.AllWt.secZ Xo c (GlobalTheory.CompanionTheory.Ar.Rec.exZ Dw a) := by
@@ -99,13 +127,13 @@ theorem one_mem_secZ_zero : (1 : Rul Xo c) ∈ GlobalTheory.CompanionTheory.Ar.R
 theorem evC_mul_of_test {h : GenFrEx Xo c} (hT : GenFromTest Xo c h) (Z : Comp Xo c) (f g : Rul Xo c) :
     evC h Z (f * g) = evC h Z f * evC h Z g := by
   unfold evC evR evalAt
-  rw [dif_pos (hT Z), dif_pos (hT Z), dif_pos (hT Z)]
+  rw [dite_eq_left (hT Z), dite_eq_left (hT Z), dite_eq_left (hT Z)]
   exact map_mul _ _ _
 
 theorem evC_one_of_test {h : GenFrEx Xo c} (hT : GenFromTest Xo c h) (Z : Comp Xo c) :
     evC h Z (1 : Rul Xo c) = 1 := by
   unfold evC evR evalAt
-  rw [dif_pos (hT Z)]
+  rw [dite_eq_left (hT Z)]
   exact map_one _
 
 end GenInj
@@ -159,7 +187,8 @@ theorem sections_generic_indicators : ∀ (E : Type) [Field E] [NumberField E] [
     · rw [(hC.e_val Z).2 Y hY, zero_mul]
   · rw [finsum_eq_sum_of_fintype]
     refine heq (Submodule.sum_mem _ fun Z _ => hz Z) one_mem_secZ_zero fun Y => ?_
-    rw [evC_one_of_test hT, ← evL_apply, map_sum, Finset.sum_eq_single Y]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [evC_one_of_test hT, ← evL_apply, map_sum, Finset.sum_eq_single Y]
     · rw [evL_apply]
       exact (hC.e_val Y).1
     · intro Z _ hZ

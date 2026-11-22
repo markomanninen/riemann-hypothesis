@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Module Function
 
@@ -66,12 +70,6 @@ theorem right_left [DecidableEq ι] (h : IsSymplecticFamily B e f d) (hB : B.IsA
   · subst hij; simp
   · simp [hij, Ne.symm hij]
 
-theorem swap (h : IsSymplecticFamily B e f d) (hB : B.IsAlt) : IsSymplecticFamily (-B) f e d where
-  left_left i j := by simp [h.right_right]
-  right_right i j := by simp [h.left_left]
-  left_right_self i := by simp [hB.neg_eq, h.left_right_self]
-  left_right_ne i j hij := by simp [hB.neg_eq, h.left_right_ne j i hij.symm]
-
 theorem apply_left_sum [Fintype ι] (h : IsSymplecticFamily B e f d) (c : ι ⊕ ι → R) (k : ι) :
     B (e k) (∑ i, c i • Sum.elim e f i) = c (Sum.inr k) * d k := by
   classical
@@ -130,8 +128,8 @@ section Frobenius
 variable {R M : Type*} [CommRing R] [IsDomain R] [IsPrincipalIdealRing R] [AddCommGroup M]
   [Module R M]
 
-omit [IsDomain R] in
 
+omit [IsDomain R] in
 theorem exists_pair_dvd_of_bilinForm (B : LinearMap.BilinForm R M) (N : Submodule R M) :
     ∃ e ∈ N, ∃ f ∈ N, (∀ y ∈ N, B e f ∣ B e y) ∧ (∀ x ∈ N, B e f ∣ B x f) ∧
       (∀ x ∈ N, ∀ y ∈ N, B e y = 0 → B x f = 0 → B e f ∣ B x y) := by
@@ -290,7 +288,8 @@ theorem apply_eq_sum [Fintype ι] (h : IsSymplecticBasisOfType B b d) (hB : B.Is
     B x y = ∑ i, d i * (b.repr x (Sum.inl i) * b.repr y (Sum.inr i) -
       b.repr x (Sum.inr i) * b.repr y (Sum.inl i)) := by
   conv_lhs => rw [← b.sum_repr x]
-  simp only [Fintype.sum_sum_type, map_add, map_sum, map_smul, LinearMap.add_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Fintype.sum_sum_type, map_add (f := _), map_sum, map_smul, LinearMap.add_apply,
     LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, h.apply_left,
     ← hB.neg_eq y (b (Sum.inr _)), h.apply_right]
   rw [← Finset.sum_add_distrib]
@@ -309,10 +308,6 @@ theorem toMatrix_eq [Fintype ι] [DecidableEq ι] (h : IsSymplecticBasisOfType B
     rw [this]
     split_ifs <;> simp
   · simpa using IsSymplecticFamily.right_right h i j
-
-theorem swap (h : IsSymplecticBasisOfType B b d) (hB : B.IsAlt) :
-    IsSymplecticBasisOfType (-B) (b.reindex (Equiv.sumComm ι ι)) d := by
-  simpa [IsSymplecticBasisOfType] using IsSymplecticFamily.swap h hB
 
 theorem reindex {κ : Type*} (h : IsSymplecticBasisOfType B b d) (σ : ι ≃ κ) :
     IsSymplecticBasisOfType B (b.reindex (σ.sumCongr σ)) fun k => d (σ.symm k) := by
@@ -371,10 +366,6 @@ theorem toMatrix_eq [Fintype ι] [DecidableEq ι] (h : IsSymplecticBasis B b) (h
     LinearMap.BilinForm.toMatrix b B = -Matrix.J ι R := by
   rw [IsSymplecticBasisOfType.toMatrix_eq h hB, Matrix.J, Matrix.fromBlocks_neg]
   simp
-
-theorem swap (h : IsSymplecticBasis B b) (hB : B.IsAlt) :
-    IsSymplecticBasis (-B) (b.reindex (Equiv.sumComm ι ι)) :=
-  IsSymplecticBasisOfType.swap h hB
 
 theorem reindex {κ : Type*} (h : IsSymplecticBasis B b) (σ : ι ≃ κ) :
     IsSymplecticBasis B (b.reindex (σ.sumCongr σ)) :=
@@ -478,28 +469,6 @@ section Maps
 
 variable {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M]
 
-def quotientOrthogonalToDual (B : LinearMap.BilinForm R M) (hB : B.IsAlt) (I : Submodule R M) :
-    (M ⧸ B.orthogonal I) →ₗ[R] Dual R I :=
-  (B.orthogonal I).liftQ (I.dualRestrict ∘ₗ B) fun _ hy =>
-    LinearMap.ext fun x => hB.eq_iff.1 (hy x x.2)
-
-@[simp]
-theorem quotientOrthogonalToDual_mk (B : LinearMap.BilinForm R M) (hB : B.IsAlt)
-    (I : Submodule R M) (y : M) (x : I) :
-    quotientOrthogonalToDual B hB I (Submodule.Quotient.mk y) x = B y x := rfl
-
-def orthogonalQuotientForm (B : LinearMap.BilinForm R M) (hB : B.IsAlt) (I : Submodule R M) :
-    LinearMap.BilinForm R (B.orthogonal I ⧸ I.submoduleOf (B.orthogonal I)) :=
-  LinearMap.liftQ₂ _ _ (B.restrict (B.orthogonal I))
-    (fun x hx => LinearMap.ext fun y => y.2 x hx)
-    (fun x hx => LinearMap.ext fun y => hB.eq_iff.1 (y.2 x hx))
-
-@[simp]
-theorem orthogonalQuotientForm_mk (B : LinearMap.BilinForm R M) (hB : B.IsAlt)
-    (I : Submodule R M) (x y : B.orthogonal I) :
-    orthogonalQuotientForm B hB I (Submodule.Quotient.mk x) (Submodule.Quotient.mk y) =
-      B x y := rfl
-
 theorem isTorsionFree_quotient_iff [IsDomain R] (I : Submodule R M) :
     IsTorsionFree R (M ⧸ I) ↔ ∀ (r : R) (x : M), r ≠ 0 → r • x ∈ I → x ∈ I := by
   rw [isTorsionFree_iff_smul_eq_zero]
@@ -571,15 +540,18 @@ theorem exists_isSymplecticFamily_of_isotropic {ι : Type*} [Finite ι] (hB : B.
     rw [← hB.neg_eq, hy]; split_ifs <;> simp
   refine ⟨fun i => y i - ∑ j, (if i < j then B (y i) (y j) else 0) • (v j : M), hvv,
     fun i k => ?_, fun i => ?_, fun i k hik => ?_⟩
-  · simp only [map_sub, map_sum, map_smul, LinearMap.sub_apply, LinearMap.sum_apply,
-      LinearMap.smul_apply, smul_eq_mul, hvv, hy, hy', mul_zero, Finset.sum_const_zero, sub_zero,
-      mul_ite, mul_one, mul_neg, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_smul, LinearMap.sub_apply, LinearMap.sum_apply,
+        LinearMap.smul_apply, smul_eq_mul, hvv, hy, hy', mul_zero, Finset.sum_const_zero, sub_zero,
+        mul_ite, mul_one, mul_neg, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     rcases lt_trichotomy i k with h | rfl | h
     · simp [h, h.not_gt]
     · simp [hB.self_eq_zero]
     · simp [h, h.not_gt, ← hB.neg_eq (y i)]
-  · simp [hvv, hy, -ite_smul]
-  · simp [hvv, hy, hik, -ite_smul]
+  · simp only [map_sub, map_sum, map_smul, hvv, smul_zero, Finset.sum_const_zero, sub_zero,
+      hy, ite_true]
+  · simp only [map_sub, map_sum, map_smul, hvv, smul_zero, Finset.sum_const_zero, sub_zero,
+      hy, ite_eq_right hik]
 
 theorem exists_isSymplecticBasis_extend [Module.Free R M] {ι : Type*} [Finite ι] (hB : B.IsAlt)
     (hp : Bijective B) (hI : IsTorsionFree R (M ⧸ I)) (hiso : I ≤ B.orthogonal I)
@@ -629,8 +601,8 @@ theorem exists_isSymplecticBasis_extend [Module.Free R M] {ι : Type*} [Finite �
       · exact ⟨Sum.inr (Sum.inr i), rfl⟩) hp.2
   exact ⟨g, b, hb, fun i => hbe _⟩
 
-omit [IsDomain R] [IsPrincipalIdealRing R] [Module.Finite R M] in
 
+omit [IsDomain R] [IsPrincipalIdealRing R] [Module.Finite R M] in
 theorem IsSymplecticBasis.mem_orthogonal_iff {ι κ : Type*} [Finite ι] [Finite κ]
     {b : Basis ((ι ⊕ κ) ⊕ (ι ⊕ κ)) R M} (hb : IsSymplecticBasis B b) {v : Basis ι R I}
     (hv : ∀ i, b (Sum.inl (Sum.inl i)) = v i) (x : M) :
@@ -644,8 +616,8 @@ theorem IsSymplecticBasis.mem_orthogonal_iff {ι κ : Type*} [Finite ι] [Finite
       simp [← hv, hb.apply_left, hx]
     exact LinearMap.congr_fun this ⟨n, hn⟩
 
-omit [IsDomain R] [IsPrincipalIdealRing R] [Module.Finite R M] in
 
+omit [IsDomain R] [IsPrincipalIdealRing R] [Module.Finite R M] in
 theorem IsSymplecticBasis.orthogonal_eq_span {ι κ : Type*} [Finite ι] [Finite κ]
     {b : Basis ((ι ⊕ κ) ⊕ (ι ⊕ κ)) R M} (hb : IsSymplecticBasis B b) {v : Basis ι R I}
     (hv : ∀ i, b (Sum.inl (Sum.inl i)) = v i) :

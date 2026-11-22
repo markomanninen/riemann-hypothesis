@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.TruncatedCoefficientPoly
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.SmulEqZeroOfAevalProd
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.LeValOneAddPowSub
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.StepIi
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.StepOneGG
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.TruncatedCoefficientPoly
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.SmulEqZeroOfAevalProd
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.LeValOneAddPowSub
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.StepIi
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.StepOneGG
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +84,7 @@ theorem existsLiftMapEqPrimePowSmul (W : LocWach PD LL O v n) (hcase : Formalism
         (imgSub W F i).mkQ (aeval dop₂ p z) := by
     intro p
     induction p using Polynomial.induction_on' with
-    | add p q hp hq => intro z; rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, hp, hq, map_add]
+    | add p q hp hq => intro z; rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, hp, hq, map_add (f := _)]
     | monomial k c =>
       intro z
       rw [aeval_monomial, aeval_monomial, Module.End.mul_apply, Module.End.mul_apply, hpow,

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormPeriodSq
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.CharLem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardLatticeDoubleCosetClassesStabilisers
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DefiniteThetaPairTestVectorExpansion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormPeriodSq
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.CharLem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardLatticeDoubleCosetClassesStabilisers
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DefiniteThetaPairTestVectorExpansion
+
+@[expose] public section
 
 open NumberField MeasureTheory
 open scoped Classical
@@ -96,7 +100,7 @@ theorem finIncl_finPart {a : AE D} (h : infPart D a = 0) : finIncl D (finPart D 
     intro a
     induction a using TensorProduct.induction_on with
     | zero => simp only [smul_zero, map_zero]
-    | add a b ha hb => rw [smul_add, ha, hb, RingHom.map_add, map_add]
+    | add a b ha hb => rw [smul_add, ha, hb, RingHom.map_add (f := _), map_add (f := _)]
     | tmul a x =>
       rw [TensorProduct.smul_tmul']
       have : (1 - GlobalTheory.FinTranslate.eInf D) • a =
@@ -157,9 +161,11 @@ theorem char_sympl_nsmul_int : ∀ {D : D7} (ψ : AddChar (AF D.host.F) ℂ), Co
     (fun p : Fin T.rank × Fin S.rank => (symplR S T A0).comp (Matrix.singleLinearMap (AF D.host.F) p.1 p.2))
   refine ⟨N, hN, fun v hv hint => ?_⟩
   show symplR S T A0 (N • v) ∈ kerSub ψ
-  rw [map_nsmul, Matrix.matrix_eq_sum_single v, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_nsmul, Matrix.matrix_eq_sum_single v, map_sum, Finset.smul_sum]
   refine sum_mem fun i _ => ?_
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   exact sum_mem fun j _ => h (i, j) (v i j) (hv i j) (hint i j)
 
 end GlobalTheory.FinCharInt

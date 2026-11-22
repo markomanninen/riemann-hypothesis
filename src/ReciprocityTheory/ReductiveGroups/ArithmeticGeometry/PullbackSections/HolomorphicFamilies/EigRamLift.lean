@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.EigRamCore
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.GermSC
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.EigRamCore
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.GermSC
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -34,15 +38,18 @@ theorem actP_mem (hRQ : IsRQ (R := R) k) (B : FB R d O) (h : PS k 2 d) (hc : B.I
   have hvec : (fun j => algebraMap R k ((∑ i, a i • u i) j)) =
       ∑ i, algebraMap R k (a i) • fun j => algebraMap R k (u i j) := by
     funext j
-    simp [Finset.sum_apply, map_sum, map_mul, smul_eq_mul, Algebra.smul_def]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Finset.sum_apply, map_sum, map_mul, smul_eq_mul, Algebra.smul_def]
   simp_rw [hu]
   refine Prod.ext ?_ ?_
   · funext j
-    simp [Prod.fst_sum, Finset.sum_apply, map_sum, map_mul, smul_eq_mul, Algebra.smul_def]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Prod.fst_sum, Finset.sum_apply, map_sum, map_mul, smul_eq_mul, Algebra.smul_def]
   · rw [hvec, Matrix.mulVec_sum]
     simp only [Matrix.mulVec_smul]
     funext j
-    simp [Prod.snd_sum, Finset.sum_apply, map_sum, map_mul, smul_eq_mul, Matrix.mulVec_smul, mul_sub,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Prod.snd_sum, Finset.sum_apply, map_sum, map_mul, smul_eq_mul, Matrix.mulVec_smul, mul_sub,
       Finset.sum_sub_distrib, Algebra.smul_def]
 
 theorem actP_smul (B : FB R d O) {n : ℕ} (b : Fin n → O) (c : Fin n → k) (r : k) (ξ : (Fin d → k) × (Fin d → k)) :
@@ -85,8 +92,8 @@ theorem betaH_sub_right (ξ η η' : (Fin d → k) × (Fin d → k)) : betaH k �
   simp only [Prod.fst_sub, Prod.snd_sub, Pi.sub_apply]
   ring
 
-open Classical in
 
+open Classical in
 theorem eigLiftRam_core (hRQ : IsRQ (R := R) k) (B : FB R d O) (h : PS k 2 d) (hc : B.IsCanonGauge k h)
     {L Ty Pl π : Type} [Fintype Ty] (ty : L → Ty) (χ : Ty → O →+* k) (cjT : Ty → Ty)
     (hχsep : ∀ t t', t' ≠ cjT t → ∃ a, χ t a ≠ χ t' (star a)) (hχinj : ∀ t t', t ≠ t' → ∃ a, χ t a ≠ χ t' a)

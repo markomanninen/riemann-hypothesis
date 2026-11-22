@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.BadPrimesPeriodBound
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.InterlacingEquivariance
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsMulAddEqOneOfNotMem
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TransportedWeylLatticeHermitianDuality
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ActPMemLocPDelStdOfIsBasisAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.BadPrimesPeriodBound
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.InterlacingEquivariance
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsMulAddEqOneOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TransportedWeylLatticeHermitianDuality
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ActPMemLocPDelStdOfIsBasisAt
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.InvSmulMemOfRedL
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,7 +62,7 @@ section Stab
 
 variable {X : Fields} {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))}
 
-theorem glg_eq_one_of_fix (d : DecoSet X.E n ST SG) (h : GLG X.E n SG) (e : d.1.act 1 h = d.1) : h = 1 := by
+theorem glg_eq_one_of_fix (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) (h : GLG (E := X.E) (n := n) (SG := SG)) (e : d.1.act 1 h = d.1) : h = 1 := by
   funext w
   apply Units.ext
   refine Matrix.mulVec_injective (funext fun c => ?_)
@@ -67,7 +72,7 @@ theorem glg_eq_one_of_fix (d : DecoSet X.E n ST SG) (h : GLG X.E n SG) (e : d.1.
   rw [hx] at this
   simpa using this
 
-theorem not_dvd_card_stab_form (Λ : LevFam X.E X.K n SG) (d : DecoSet X.E n ST SG)
+theorem not_dvd_card_stab_form (Λ : LevFam X.E X.K n SG) (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))
     [Finite (MulAction.stabilizer (FormG Λ) d)] {p : ℕ} (hp : p.Prime) (hb : Module.finrank ℚ X.E * n + 1 < p) :
     ¬ p ∣ Nat.card (MulAction.stabilizer (FormG Λ) d) := by
   refine not_dvd_card_of_injective (((UF X.E n).subtype.comp (MonoidHom.fst _ _)).comp (Subgroup.subtype _)) ?_ hp hb
@@ -85,7 +90,7 @@ section Pair
 variable {K : Type} [Field K] [NumberField K] {ι : Type} [Fintype ι] {n : ℕ}
 
 theorem pairBK_mem_one (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K))
-    (hM : ∀ τ, Submodule.IsLattice K (M τ)) {x y : VV K lam} (hx : x ∈ delK lam fun τ => dualFr (M τ))
+    (hM : ∀ τ, Submodule.IsFullLattice K (M τ)) {x y : VV K lam} (hx : x ∈ delK lam fun τ => dualFr (M τ))
     (hy : y ∈ nabK lam M) : pairBK lam x y ∈ (1 : Submodule (𝓞 K) K) := by
   let _ : StarRing K := starRingOfComm
   have h := (GlobalTheory.TransDual.nabDelDual K ι n lam (fun _ => 1) M (fun _ => by simp) (fun _ => by simp) hM).1
@@ -119,8 +124,8 @@ theorem mem_dualFr_tauLat {E : Type} [Field E] [NumberField E] (emb : ι → E �
     | add y z _ _ hy hz => rw [dotProduct_add]; exact Submodule.add_mem _ hy hz
     | smul c y _ hy => rw [dotProduct_smul]; exact Submodule.smul_mem _ c hy
 
-omit [Fintype ι] in
 
+omit [Fintype ι] in
 theorem dualFr_tauLat_tilN {E : Type} [Field E] [NumberField E] [StarRing E] (emb : ι → E →+* K) (τ : ι)
     (L : Submodule (𝓞 E) (Sp E n)) :
     dualFr (tauLat emb τ (tilN L)) = Br.sumLat rfl (dualFr (tauLat emb τ L)) 1 := by
@@ -172,7 +177,7 @@ theorem valuation_pair_br_le_one {X : Fields} {N n : ℕ} (hN : N = n + 1) (lam 
     (hT : ∀ P : ST, cO X.E pi ∉ P.1.asIdeal) (hG : ∀ v : SG, pi ∉ v.1.asIdeal) {p : ℕ}
     (hp : ∀ Q ∈ ST, ((p : ℕ) : 𝓞 X.E) ∉ Q.asIdeal) (w : HeightOneSpectrum (𝓞 X.K))
     (hw : ((p : ℕ) : 𝓞 X.K) ∈ w.asIdeal) (t : X.Tau → X.K) (ht : ∀ τ, w.valuation X.K (t τ) = 1)
-    (d : DecoSet X.E n ∅ SG) {x : VV X.K lam}
+    (d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG)) {x : VV X.K lam}
     (hx : x ∈ localization₂ w.asIdeal (delAtr X.emb lam (DecoSet.tilH (ST := ST) hN pi d).1.Lsh)) {y : VV X.K sg}
     (hy : y ∈ nabAt X.emb sg d.1.N) : w.valuation X.K (pairBK sg (Br.brAt hN lam sg t x) y) ≤ 1 := by
   subst hN
@@ -183,7 +188,10 @@ theorem valuation_pair_br_le_one {X : Fields} {N n : ℕ} (hN : N = n + 1) (lam 
   change s • x ∈ delK lam fun τ => dualFr (tauLat X.emb τ (tilN d.1.N)) at hsx
   simp only [dualFr_tauLat_tilN] at hsx
   have h1 := hB hI hS _ (fun _ => 1) (fun _ => one_ne_zero) _ hsx
-  have h2 := pairBK_mem_one sg _ (fun τ => GlobalTheory.TauLat.tauLatLattice X.E X.K X.Tau n X.emb τ _ d.2.lat) h1 hy
+  have hN : Submodule.IsFullLattice X.E d.1.N :=
+    { toIsLattice := d.2.lat
+      span_eq_top := GlobalTheory.LvT.Pts.span_eq_top_of_unimodular d.1.N d.2.lat d.2.uni }
+  have h2 := pairBK_mem_one sg _ (fun τ => GlobalTheory.TauLat.tauLatLattice X.E X.K X.Tau n X.emb τ _ hN) h1 hy
   have h3 : Br.brAt rfl lam sg (fun _ => (1 : X.K)) = Br.brStd rfl lam sg := by simp [Br.brAt]
   rw [h3, LinearMap.map_smul_of_tower, LinearMap.map_smul_of_tower, LinearMap.smul_apply] at h2
   have h4 := valuation_le_one_of_smul w hs h2

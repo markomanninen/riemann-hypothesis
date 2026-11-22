@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStable
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,8 @@ theorem mem_prodSpan_inf_left (U S : Submodule ℂ (A → ℂ)) (V : Submodule �
     intro φ
     have : (fun x => φ (T x)) = ∑ i, (f i * φ (bw i)) • a i := by
       funext x
-      simp only [T, map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [T, map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
       exact Finset.sum_congr rfl fun i _ => by ring
     rw [this]
     exact U.sum_mem fun i _ => U.smul_mem _ (ha i)

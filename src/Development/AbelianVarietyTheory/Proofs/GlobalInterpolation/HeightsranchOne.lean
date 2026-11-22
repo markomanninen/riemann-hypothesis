@@ -1,8 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PredMemGamRanks
-import Formalism.LocalToGlobal.Columns.TiedValLatG
-import Formalism.LocalToGlobal.Columns.CoefModB
-import Formalism.LocalToGlobal.KernelLattices.InterlaceAll
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.InterlaceDifferenceShiftInvariant
+module
+
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PredMemGamRanks
+public import Formalism.LocalToGlobal.Columns.TiedValLatG
+public import Formalism.LocalToGlobal.Columns.CoefModB
+public import Formalism.LocalToGlobal.KernelLattices.InterlaceAll
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.InterlaceDifferenceShiftInvariant
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Forms GlobalTheory.Mem.Col2 Matrix
 
@@ -114,7 +118,8 @@ private theorem fockB_proj_of_isUnit_gramB {κ : Type} [Fintype κ] {m : ℕ} (l
   simp only [LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.smulRight_apply,
     Submodule.coe_sum, Submodule.coe_smul, Formalism.L2.DIV.bVV_coe, Formalism.L2.DIV.fockBL_apply]
   rw [← Formalism.L2.DIV.fockBL_apply]
-  simp only [map_sum, map_smul, smul_eq_mul, Formalism.L2.DIV.fockBL_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, smul_eq_mul, Formalism.L2.DIV.fockBL_apply]
   have e1 : ∀ i, Formalism.L2.DIV.fockB (Formalism.L2.DIV.bVVfun ℂ lam j) (Formalism.L2.DIV.bVVfun ℂ lam i) =
       Formalism.L2.Col.Br.gramB (K := ℂ) lam j i := fun i => rfl
   simp_rw [e1]
@@ -147,7 +152,8 @@ private theorem proj_unique_of_isUnit_gramB {κ : Type} [Fintype κ] {m : ℕ} (
     have := hd0 j
     rw [← (Formalism.L2.DIV.bVV ℂ lam).sum_repr (Formalism.L2.Col.Br.projVV lam x - ⟨v, hv⟩)] at this
     simp only [Submodule.coe_sum, Submodule.coe_smul, Formalism.L2.DIV.bVV_coe] at this
-    rw [← Formalism.L2.DIV.fockBL_apply, map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Formalism.L2.DIV.fockBL_apply, map_sum] at this
     simp only [map_smul, smul_eq_mul, Formalism.L2.DIV.fockBL_apply] at this
     simp only [Matrix.mulVec, dotProduct, Pi.zero_apply]
     rw [← this]
@@ -193,7 +199,7 @@ private theorem fockB_eq_fockS_of_map_conj_eq {σ : Type} (f g : MvPolynomial σ
     Formalism.L2.DIV.fockB f g = Formalism.L2.DIV.fockS f g := by
   unfold Formalism.L2.DIV.fockB Formalism.L2.DIV.fockS
   refine Finset.sum_congr rfl fun m _ => ?_
-  have := congrArg (MvPolynomial.coeff m) hf
+  have := congrArg (AddMonoidAlgebra.coeff · m) hf
   rw [MvPolynomial.coeff_map, starRingEnd_apply] at this
   rw [this]
 
@@ -238,12 +244,14 @@ private theorem isUnit_gramB {κ : Type} [Fintype κ] {m : ℕ} (lam : κ → Do
   have hS : ∀ y : Formalism.L2.DIV.Pol ℂ κ m, Formalism.L2.DIV.fockL (∑ i, v i • Formalism.L2.DIV.bVVfun ℂ lam i) y =
       ∑ i, star (v i) * Formalism.L2.DIV.fockL (Formalism.L2.DIV.bVVfun ℂ lam i) y := by
     intro y
-    rw [map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply]
   have hz : ∀ i, Formalism.L2.DIV.fockL (Formalism.L2.DIV.bVVfun ℂ lam i) (∑ j, v j • Formalism.L2.DIV.bVVfun ℂ lam j) = 0 := by
     intro i
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smul, smul_eq_mul, Formalism.L2.DIV.fockL_apply]
     have := congrFun hv i
     simp only [Matrix.mulVec, dotProduct, Pi.zero_apply] at this
@@ -278,7 +286,7 @@ private theorem toUnit_symm_mem_nablaSq_of_mem_VV {n : ℕ} (s : DomWeight n) (P
     exact hF ()
   | zero => simp
   | add x y _ _ hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hx hy
   | smul a x _ hx =>
     rw [map_smul]
@@ -297,7 +305,7 @@ private theorem toUnit_symm_monomial {n : ℕ} (W : Unit × Fin n × Fin n →�
   have e : (W.comapDomain (Prod.mk ()) (Prod.mk_right_injective ()).injOn).mapDomain (Prod.mk ()) = W := by
     ext ⟨u, x⟩
     cases u
-    rw [Finsupp.mapDomain_apply (Prod.mk_right_injective ()), Finsupp.comapDomain_apply]
+    rw [Finsupp.mapDomain_apply_of_injective (Prod.mk_right_injective ()), Finsupp.comapDomain_apply]
   apply (Formalism.L2.Ker.toUnit ℂ n).injective
   rw [AlgEquiv.apply_symm_apply, toUnit_monomial, e]
 
@@ -314,7 +322,7 @@ private theorem coefLast_monomial' {ι : Type} [Fintype ι] {N n : ℕ} (hN : N 
         M (τ, x) := by
     intro τ u x
     cases u
-    rw [Finsupp.mapDomain_apply (Prod.mk_right_injective ()), Finsupp.comapDomain_apply]
+    rw [Finsupp.mapDomain_apply_of_injective (Prod.mk_right_injective ()), Finsupp.comapDomain_apply]
   have hiff : Formalism.L2.Col.Br.IsTop hN (Formalism.L2.Col.Br.bExp hN lam sg) M ↔
       ∀ τ, Formalism.L2.Col.Br.IsTop hN (Formalism.L2.Col.Br.bExp hN (fun _ : Unit => lam τ) (fun _ : Unit => sg τ))
         ((M.comapDomain (Prod.mk τ) (Prod.mk_right_injective τ).injOn).mapDomain (Prod.mk ())) := by

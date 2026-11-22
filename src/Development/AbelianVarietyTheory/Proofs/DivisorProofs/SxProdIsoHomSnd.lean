@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjectiveBundleFormulaOfUnitOnEtalePoints
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrivV
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CotDComp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZeroChains
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjectiveBundleFormulaOfUnitOnEtalePoints
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrivV
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CotDComp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZeroChains
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
 noncomputable section
@@ -77,8 +82,6 @@ theorem sxPair_map {A B A' B' : Spc} (f : A ⟶ A') (f' : B ⟶ B') {p : ℕ} {V
   sx_prod_ext (by rw [← sxMap_comp, prod.map_fst, sxMap_comp, sxPair_fst, sxPair_fst])
     (by rw [← sxMap_comp, prod.map_snd, sxMap_comp, sxPair_snd, sxPair_snd])
 
-open CupSpec
-
 variable {R : Type} [CommRing R]
 
 theorem secRes_res {F : Shv R} {U V W : Scheme.{0}} (g : V ⟶ U) (g' : W ⟶ V) (b : Sec F U) :
@@ -86,8 +89,11 @@ theorem secRes_res {F : Shv R} {U V W : Scheme.{0}} (g : V ⟶ U) (g' : W ⟶ V)
   rw [Sec.res, Sec.res, Sec.res, op_comp, Functor.map_comp, ModuleCat.hom_comp, LinearMap.comp_apply]
 
 theorem ev_smulU {E : Spc} {I : Cx R} {n : ℤ} (r : ULift.{1} R) (α : Cochain ((chains R).obj E) I n) (p : ℕ) (s : ℤ)
-    (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U) : ev (r • α) p s h U x = r • ev α p s h U x := by
-  rw [ev_def, ev_def, Cochain.smul_v, Linear.comp_smul]
+    (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U) :
+    _root_.GlobalTheory.EtC.ev (R := R) (r • α) p s h U x =
+      r • _root_.GlobalTheory.EtC.ev (R := R) α p s h U x := by
+  unfold _root_.GlobalTheory.EtC.ev
+  rw [Cochain.smul_v, Linear.comp_smul]
   rfl
 
 def schSx {V W : Scheme.{0}} (v : W ⟶ V) (p : ℕ) : Sx (sch.obj V) p W := v
@@ -97,16 +103,27 @@ theorem schSx_map {V V' W : Scheme.{0}} (v : W ⟶ V) (u : V ⟶ V') (p : ℕ) :
 
 def evLin (I : Cx R) (E : Spc) (n : ℤ) (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U) :
     Cochain ((chains R).obj E) I n →ₗ[ULift.{1} R] Sec (I.X s) U where
-  toFun α := ev α p s h U x
-  map_add' α β := ev_add α β p s h U x
+  toFun α := _root_.GlobalTheory.EtC.ev (R := R) α p s h U x
+  map_add' α β := by
+    simp [_root_.GlobalTheory.EtC.ev, Cochain.add_v]
   map_smul' r α := ev_smulU r α p s h U x
 
 theorem cotPre_ev (q N : ℕ) (I : Cx R) (n : ℤ) {U V : Scheme.{0}} (v : V ⟶ U)
     (c : Cochain ((chains R).obj (sch.obj U ⨯ fibQ q N)) I n) (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (W : Scheme.{0})
     (y : Sx (sch.obj V ⨯ fibQ q N) p W) :
-    ev (I := I) (E := sch.obj V ⨯ fibQ q N) (((cotPre R q N I n).map v.op).hom c) p s h W y =
-      ev c p s h W (y.map (prod.map (sch.map v) (𝟙 _))) :=
-  ev_pull _ _ p s h W y
+    _root_.GlobalTheory.EtC.ev (R := R) (I := I) (E := sch.obj V ⨯ fibQ q N)
+        (((cotPre R q N I n).map v.op).hom c) p s h W y =
+      _root_.GlobalTheory.EtC.ev (R := R) c p s h W (y.map (prod.map (sch.map v) (𝟙 _))) := by
+  let f : sch.obj V ⨯ fibQ q N ⟶ sch.obj U ⨯ fibQ q N := prod.map (sch.map v) (𝟙 _)
+  change _root_.GlobalTheory.EtC.ev (R := R) ((Cochain.ofHom ((chains R).map f)).comp c (zero_add n))
+    p s h W y = _root_.GlobalTheory.EtC.ev (R := R) c p s h W (y.map f)
+  unfold _root_.GlobalTheory.EtC.ev
+  rw [Cochain.zero_cochain_comp_v, Cochain.ofHom_v, ← Category.assoc,
+    _root_.GlobalTheory.EtC.CupSpec.chains_map, Category.assoc]
+  change Sec.map ((chainsXIso R (sch.obj U ⨯ fibQ q N) p).inv ≫ c.v _ _ h)
+    (Sec.map ((free R).map (f.app (op (SimplexCategory.mk p)))) (freeGen R _ W y)) = _
+  rw [_root_.GlobalTheory.EtC.CupSpec.freeGen_map]
+  rfl
 
 end GlobalTheory.EtC
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PlaceCh
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PsiInv
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PlaceCh
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PsiInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -138,7 +142,7 @@ theorem sup_eq_gLie (ε : Fin n → Bool) (S : Finset (Fin n)) :
       · show X i j - blk S X i j = 0
         simp [blk, hi, hj]
     have e : x = rlM n (X - blk S X) + rlM n (blk S X) := by
-      rw [← map_add, sub_add_cancel, hXd, rl_ur]
+      rw [← map_add (f := _), sub_add_cancel, hXd, rl_ur]
     rw [e]
     exact Submodule.add_mem_sup (Submodule.mem_map_of_mem hc) (Submodule.mem_map_of_mem hb)
 

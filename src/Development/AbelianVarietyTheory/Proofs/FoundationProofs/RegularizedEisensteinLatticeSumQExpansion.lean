@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.PetIPSmulRight
-import Development.AbelianVarietyTheory.Definitions.Foundations.RepL
-import CompanionTheory.EightfoldTheory.VariationTheory.AutomorphicForms.Newform
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CoeffEisensteinSeriesTwistedQExpansionDoubleStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SummableRegularizedEisensteinLatticeTermStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LipschitzWeightOnePeriodicMeanZeroStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LipschitzFormulaPeriodicWeightStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TendstoAtTopOfCofinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.PetIPSmulRight
+public import Development.AbelianVarietyTheory.Definitions.Foundations.RepL
+public import CompanionTheory.EightfoldTheory.VariationTheory.AutomorphicForms.Newform
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CoeffEisensteinSeriesTwistedQExpansionDoubleStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SummableRegularizedEisensteinLatticeTermStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LipschitzWeightOnePeriodicMeanZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LipschitzFormulaPeriodicWeightStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TendstoAtTopOfCofinite
+
+@[expose] public section
+
 open UpperHalfPlane Complex MeasureTheory CongruenceSubgroup GlobalTheory.EisM UpperTheory.V.Af Filter Topology
 open scoped MatrixGroups Real ComplexConjugate Manifold ModularForm
 
@@ -47,7 +52,7 @@ theorem trm_tendsto (j : ℕ) (hj : 1 ≤ j) (z : ℂ) :
 
 theorem sum_range_eq_univ (L : ℕ) (hL : 0 < L) (φ : ZMod L → ℂ) (f : ℕ → ZMod L)
     (hf : Set.InjOn f (Finset.range L)) :
-    haveI : NeZero L := ⟨hL.ne'⟩
+    haveI : NeZero L := ⟨hL.ne'⟩;
     ∑ r ∈ Finset.range L, φ (f r) = ∑ y, φ y := by
   haveI : NeZero L := ⟨hL.ne'⟩
   rw [← Finset.sum_image (fun x hx y hy h => hf hx hy h)]

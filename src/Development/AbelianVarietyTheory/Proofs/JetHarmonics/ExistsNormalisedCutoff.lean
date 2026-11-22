@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Formalism.PeriodIntegrals.QuotSetU
-import Formalism.PeriodIntegrals.QuotInv
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MatGroupHaarUniqueFiniteCompactOpenPosStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Formalism.PeriodIntegrals.QuotSetU
+public import Formalism.PeriodIntegrals.QuotInv
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MatGroupHaarUniqueFiniteCompactOpenPosStatement
+
+@[expose] public section
+
 open BranchingSupport Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
 
@@ -122,7 +127,7 @@ lemma exists_precutoff {m : ℕ} {G S : Set (Matrix (Fin m) (Fin m) ℂ)} {μ : 
     rw [← lintegral_indicator_const ((continuous_mulM_left x).measurable (hP j))]
     rfl
   refine ⟨fun y => ∑' j, (piece G j).indicator (fun _ => w j) y,
-    Measurable.ennreal_tsum hmeas, fun x hx => ?_⟩
+    Measurable.tsum hmeas, fun x hx => ?_⟩
   rw [hI x]
   constructor
   · obtain ⟨j, hj⟩ := exists_pos hG hS hSG hμ x hx
@@ -149,8 +154,8 @@ lemma exists_precutoff {m : ℕ} {G S : Set (Matrix (Fin m) (Fin m) ℂ)} {μ : 
 
 end QuotCutoff
 
-open QuotCutoff in
 
+open QuotCutoff in
 theorem exists_normalised_cutoff : ∀ (m : ℕ) (G S : Set (Matrix (Fin m) (Fin m) ℂ)) (μS : Measure (PI.MtM m)), PI.IsMatGroup G → PI.IsMatGroup S → S ⊆ G → PI.IsHaarOnM S μS → PI.IsRightInvM S μS → ∃ φ : PI.MtM m → ℝ≥0∞, Measurable φ ∧ ∀ x : PI.MtM m, Matrix.of x ∈ G → ∫⁻ s, φ (fun i j => (Matrix.of s * Matrix.of x) i j) ∂μS = 1 := by
   intro m G S μ hG hS hSG hμ hR
   obtain ⟨φ, hφ, hI⟩ := exists_precutoff hG hS hSG hμ hR

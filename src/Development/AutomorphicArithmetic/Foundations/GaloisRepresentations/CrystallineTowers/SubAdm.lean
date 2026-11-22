@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.LocTower
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.AdmCrys
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsModelOfMem
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.LocTower
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.AdmCrys
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsModelOfMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,8 +40,8 @@ private theorem isAdmP_block (P : LocPrime l) (G : Subgroup (PadicAlgCl l ≃ₐ
 
 end UpperTheory.Gal.Seam
 
-open UpperTheory.Gal.Seam in
 
+open UpperTheory.Gal.Seam in
 theorem UpperTheory.Gal.Seam.subAdm : UpperTheory.Gal.Seam.SubAdm := by
   intro l _ P AI hT E Ω _ _ _ Gw O _ _ _ Bw N d a R r hR M hM hint
   let D := Fintype.card (Σ n, Fin (a n))

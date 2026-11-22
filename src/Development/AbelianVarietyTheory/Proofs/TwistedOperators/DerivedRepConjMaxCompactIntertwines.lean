@@ -1,11 +1,16 @@
-import Mathlib
-import Formalism.PeriodIntegrals.DSInfCharCap
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.PseudoCoefficientSeparation
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Formalism.RealPlaceAnalysis.StatementE
-import Formalism.RealPlaceAnalysis.StatementB
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DifferentiableAtOrbit
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffSetIntegralNat
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.DSInfCharCap
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.PseudoCoefficientSeparation
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Formalism.RealPlaceAnalysis.StatementE
+public import Formalism.RealPlaceAnalysis.StatementB
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DifferentiableAtOrbit
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffSetIntegralNat
+
+@[expose] public section
+
 open scoped InnerProductSpace
 
 noncomputable section

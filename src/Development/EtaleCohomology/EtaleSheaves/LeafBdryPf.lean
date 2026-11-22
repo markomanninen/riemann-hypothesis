@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafGeoCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafGeoCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Set Order TopologicalSpace Topology

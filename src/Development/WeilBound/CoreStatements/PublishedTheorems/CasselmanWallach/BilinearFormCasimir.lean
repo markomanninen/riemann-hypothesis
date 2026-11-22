@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.SmoothSeminormAndSobolevBounds
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.SmoothSeminormAndSobolevBounds
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,7 +101,7 @@ theorem key (hU : IsURepOn (UJset ε) σ) (hD : Dens ε σ) {E : Fin n → Fin n
   have stW : ∀ g ∈ Kset ε, ∀ x ∈ W, σ g x ∈ W := by
     intro g hg x hx
     obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hx
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (stv g hg a ha) (sty g hg b hb)
   have hWk : W ≤ kfin ε σ := fun x hx => ⟨W, inferInstance, hx, stW⟩
   have hclosed : IsClosed (W : Set H) := Submodule.closed_of_finiteDimensional W
@@ -121,7 +125,7 @@ theorem key (hU : IsURepOn (UJset ε) σ) (hD : Dens ε σ) {E : Fin n → Fin n
   let ι : W →ₗ[ℂ] kfin ε σ := Submodule.inclusion hWk
   let ℓ1 : W →ₗ[ℝ] ℂ :=
     { toFun := fun w => B (ι w) y
-      map_add' := fun a b => by simp only [map_add, LinearMap.add_apply]
+      map_add' := fun a b => by simp only [map_add (f := _), LinearMap.add_apply]
       map_smul' := fun c a => by
         simp only [RingHom.id_apply]
         rw [← Complex.coe_smul, map_smul, LinearMap.map_smulₛₗ, LinearMap.smul_apply]
@@ -186,7 +190,8 @@ theorem e2a : E2a := by
     intro a b h
     rw [Module.End.mul_apply, Module.End.mul_apply, compact_pair hU hD hE hB a b h.symm,
       compact_pair hU hD hE hB b a h]
-  simp only [ReciprocityTheory.ChartRestriction.DS.casimirK, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ReciprocityTheory.ChartRestriction.DS.casimirK, LinearMap.sum_apply, map_sum]
   exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b hb =>
     hterm a b (Finset.mem_filter.mp hb).2
 

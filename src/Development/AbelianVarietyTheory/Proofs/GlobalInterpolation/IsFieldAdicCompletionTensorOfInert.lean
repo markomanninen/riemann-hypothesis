@@ -1,61 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
+
+@[expose] public section
 
 open scoped TensorProduct
 open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum Polynomial
 
 namespace GlobalTheory.InertField
 
-theorem isField_tensor_of_no_root {F K E : Type} [Field F] [Field K] [Field E] [Algebra F K] [Algebra F E]
-    (h2 : Module.finrank F E = 2) (a : E) (ha : ∀ x : F, algebraMap F E x ≠ a) (b c : F)
-    (hq : a ^ 2 + algebraMap F E b * a + algebraMap F E c = 0)
-    (hK : ∀ x : K, x ^ 2 + algebraMap F K b * x + algebraMap F K c ≠ 0) : IsField (K ⊗[F] E) := by
-  have hli : LinearIndependent F ![(1 : E), a] := by
-    rw [LinearIndependent.pair_iff' one_ne_zero]
-    intro x hx
-    exact ha x (by rw [Algebra.algebraMap_eq_smul_one, hx])
-  let B := basisOfLinearIndependentOfCardEqFinrank hli (by simp [h2])
-  have hB : ⇑B = ![(1 : E), a] := coe_basisOfLinearIndependentOfCardEqFinrank _ _
-  let B' := Algebra.TensorProduct.basis K B
-  set α : K ⊗[F] E := (1 : K) ⊗ₜ[F] a with hα
-  let ι := algebraMap K (K ⊗[F] E)
-  have hιF : ∀ x : F, ι (algebraMap F K x) = (1 : K) ⊗ₜ[F] algebraMap F E x := fun x => by
-    rw [← IsScalarTower.algebraMap_apply, Algebra.TensorProduct.algebraMap_apply']
-  have hq' : α ^ 2 + ι (algebraMap F K b) * α + ι (algebraMap F K c) = 0 := by
-    have := congrArg (Algebra.TensorProduct.includeRight : E →ₐ[F] K ⊗[F] E) hq
-    rw [map_add, map_add, map_mul, map_pow, map_zero] at this
-    rw [hιF, hιF]
-    exact this
-  refine ⟨exists_pair_ne _, mul_comm, fun {z} hz => ?_⟩
-  obtain ⟨x, y, rfl⟩ : ∃ x y : K, z = ι x + ι y * α := by
-    refine ⟨B'.repr z 0, B'.repr z 1, ?_⟩
-    have h := B'.sum_repr z
-    rw [Fin.sum_univ_two] at h
-    have h0 : B' 0 = 1 := by simp [B', hB, Algebra.TensorProduct.one_def]
-    have h1 : B' 1 = α := by simp [B', hB, hα]
-    rw [h0, h1, Algebra.smul_def, Algebra.smul_def, mul_one] at h
-    exact h.symm
-  have hN : x ^ 2 - algebraMap F K b * x * y + algebraMap F K c * y ^ 2 ≠ 0 := by
-    intro hN
-    by_cases hy : y = 0
-    · subst hy
-      have : x = 0 := by simpa using hN
-      subst this
-      simp at hz
-    · apply hK (-x / y)
-      field_simp
-      linear_combination hN
-  refine ⟨ι (x ^ 2 - algebraMap F K b * x * y + algebraMap F K c * y ^ 2)⁻¹ *
-    (ι x - ι (algebraMap F K b) * ι y - ι y * α), ?_⟩
-  have h1 := congrArg ι (mul_inv_cancel₀ hN)
-  rw [map_mul, map_one] at h1
-  set N := ι (x ^ 2 - algebraMap F K b * x * y + algebraMap F K c * y ^ 2)⁻¹
-  simp only [map_add, map_sub, map_mul, map_pow] at h1
-  linear_combination h1 - N * ι y ^ 2 * hq'
 
 open scoped TensorProduct in
 open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum Polynomial in
-
 theorem _root_.GlobalTheory.InertField.exists_not_congr {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     (h2 : Module.finrank F E = 2) (v : HeightOneSpectrum (𝓞 F)) :
     ∃ a : 𝓞 E, ∀ r : 𝓞 F, a - algebraMap (𝓞 F) (𝓞 E) r ∉ v.asIdeal.map (algebraMap (𝓞 F) (𝓞 E)) := by
@@ -136,7 +93,7 @@ private lemma exists_integer_valuation_sub_lt_one {F : Type} [Field F] [NumberFi
   refine ⟨e, ?_⟩
   have heq : algebraMap (𝓞 F) F n / algebraMap (𝓞 F) F d - algebraMap (𝓞 F) F e
       = algebraMap (𝓞 F) F z / algebraMap (𝓞 F) F d := by
-    rw [← hyz, map_add, map_mul]
+    rw [← hyz, map_add (f := _), map_mul]
     field_simp
     ring
   rw [heq, map_div₀, valuation_of_algebraMap, valuation_of_algebraMap,
@@ -216,13 +173,13 @@ private lemma exists_quadratic_root_mod_of_adic_root {F : Type} [Field F] [Numbe
       _ < 1 := by rw [mul_one]; exact hδ
   have heq : R ^ 2 + B * R + C
       = algebraMap F (v.adicCompletion F) (algebraMap (𝓞 F) F (r ^ 2 + b * r + c)) := by
-    simp only [hR, hB, hC, map_add, map_mul, map_pow]
+    simp only [hR, hB, hC, map_add (f := _), map_mul, map_pow]
   rw [heq, hvF, valuation_of_algebraMap] at hval
   exact (intValuation_lt_one_iff_mem v _).mp hval
 
+
 open scoped TensorProduct in
 open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum Polynomial in
-
 theorem _root_.GlobalTheory.InertField.isField_of_inert : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E], Module.finrank F E = 2 → ∀ v : HeightOneSpectrum (𝓞 F), (v.asIdeal.map (algebraMap (𝓞 F) (𝓞 E))).IsPrime → IsField (v.adicCompletion F ⊗[F] E) := by
   intro F E _ _ _ _ _ h2 v hP
   classical
@@ -267,7 +224,7 @@ theorem _root_.GlobalTheory.InertField.isField_of_inert : ∀ (F E : Type) [Fiel
     have hfac : algebraMap (𝓞 F) (𝓞 E) (r ^ 2 + b * r + c)
         = (algebraMap (𝓞 F) (𝓞 E) r - a)
           * (algebraMap (𝓞 F) (𝓞 E) r + algebraMap (𝓞 F) (𝓞 E) b + a) := by
-      simp only [map_add, map_mul, map_pow]
+      simp only [map_add (f := _), map_mul, map_pow]
       linear_combination hrel
     rw [hfac] at hmem
     rcases hP.mem_or_mem hmem with h | h
@@ -275,7 +232,7 @@ theorem _root_.GlobalTheory.InertField.isField_of_inert : ∀ (F E : Type) [Fiel
       rw [← neg_sub]
       exact P.neg_mem h
     · apply ha (-(r + b))
-      rw [map_neg, map_add, sub_neg_eq_add]
+      rw [map_neg, map_add (f := _), sub_neg_eq_add]
       convert h using 1
       ring
   have hnotF : ∀ s : F, (a : E) ≠ algebraMap F E s := by
@@ -306,7 +263,7 @@ theorem _root_.GlobalTheory.InertField.isField_of_inert : ∀ (F E : Type) [Fiel
   have hrelE : (a : E) ^ 2 + algebraMap F E (algebraMap (𝓞 F) F b) * (a : E)
       + algebraMap F E (algebraMap (𝓞 F) F c) = 0 := by
     have h := congrArg (algebraMap (𝓞 E) E) hrel
-    rw [map_add, map_add, map_mul, map_pow, map_zero,
+    rw [map_add (f := _), map_add (f := _), map_mul, map_pow, map_zero,
       ← IsScalarTower.algebraMap_apply (𝓞 F) (𝓞 E) E,
       ← IsScalarTower.algebraMap_apply (𝓞 F) (𝓞 E) E,
       IsScalarTower.algebraMap_apply (𝓞 F) F E,
@@ -316,7 +273,7 @@ theorem _root_.GlobalTheory.InertField.isField_of_inert : ∀ (F E : Type) [Fiel
       + algebraMap (v.adicCompletion F) _ C = 0 := by
     have h := congrArg (Algebra.TensorProduct.includeRight (R := F) (A := v.adicCompletion F)
       (B := E)) hrelE
-    rw [map_add, map_add, map_mul, map_pow, map_zero, AlgHom.commutes, AlgHom.commutes,
+    rw [map_add (f := _), map_add (f := _), map_mul, map_pow, map_zero, AlgHom.commutes, AlgHom.commutes,
       Algebra.TensorProduct.includeRight_apply] at h
     rw [hB, hC, ← IsScalarTower.algebraMap_apply, ← IsScalarTower.algebraMap_apply]
     exact h
@@ -364,7 +321,7 @@ theorem _root_.GlobalTheory.InertField.isField_of_inert : ∀ (F E : Type) [Fiel
         - algebraMap (v.adicCompletion F) (v.adicCompletion F ⊗[F] E) y * α)
         = algebraMap (v.adicCompletion F) (v.adicCompletion F ⊗[F] E) N := by
       rw [hz', hN]
-      simp only [map_add, map_sub, map_mul, map_pow]
+      simp only [map_add (f := _), map_sub, map_mul, map_pow]
       linear_combination
         (-(algebraMap (v.adicCompletion F) (v.adicCompletion F ⊗[F] E) y) ^ 2) * hα
     rw [← mul_assoc, hzN, ← map_mul, mul_inv_cancel₀ hN0, map_one]

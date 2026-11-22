@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.GenOutGluePf
+module
+
+public import Development.EtaleCohomology.EtaleTrace.GenOutGluePf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry MvPolynomial
@@ -11,7 +15,7 @@ variable {k : Type} [Field k] {N : ℕ}
 instance isIso_stalkMap_ι (X : Scheme.{0}) (U : X.Opens) (x : U) : IsIso (U.ι.stalkMap x) :=
   (IsOpenImmersion.iff_isIso_stalkMap.1 inferInstance).2 _
 
-lemma pn_cover (y : PN k N) : ∃ i : Fin (N + 1), y ∈ Proj.basicOpen (homogeneousSubmodule (Fin (N + 1)) k) (X i) := by
+lemma pn_cover (y : PN (k := k) N) : ∃ i : Fin (N + 1), y ∈ Proj.basicOpen (homogeneousSubmodule (Fin (N + 1)) k) (X i) := by
   have htop := Proj.iSup_basicOpen_eq_top' (homogeneousSubmodule (Fin (N + 1)) k) (fun i : Fin (N + 1) => (X i : MvPolynomial (Fin (N + 1)) k))
     (fun i => ⟨1, (isHomogeneous_X k i)⟩) (by
       rw [eq_top_iff]
@@ -21,11 +25,11 @@ lemma pn_cover (y : PN k N) : ∃ i : Fin (N + 1), y ∈ Proj.basicOpen (homogen
         exact Subalgebra.algebraMap_mem _ (⟨C c, isHomogeneous_C _ c⟩ : homogeneousSubmodule (Fin (N + 1)) k 0)
       | add p q hp hq => exact add_mem hp hq
       | mul_X p i hp => exact mul_mem hp (Algebra.subset_adjoin ⟨i, rfl⟩))
-  have : y ∈ (⊤ : (PN k N).Opens) := trivial
+  have : y ∈ (⊤ : (PN (k := k) N).Opens) := trivial
   rw [← htop] at this
   exact TopologicalSpace.Opens.mem_iSup.1 this
 
-lemma pn_nbhd (y : PN k N) (W : (PN k N).Opens) (hy : y ∈ W) :
+lemma pn_nbhd (y : PN (k := k) N) (W : (PN (k := k) N).Opens) (hy : y ∈ W) :
     ∃ n, 0 < n ∧ ∃ F ∈ homogeneousSubmodule (Fin (N + 1)) k n,
       y ∈ Proj.basicOpen (homogeneousSubmodule (Fin (N + 1)) k) F ∧
       Proj.basicOpen (homogeneousSubmodule (Fin (N + 1)) k) F ≤ W := by
@@ -43,12 +47,12 @@ lemma pn_nbhd (y : PN k N) (W : (PN k N).Opens) (hy : y ∈ W) :
     exact inf_le_right.trans (le_iSup (fun i => Proj.basicOpen _ (GradedRing.proj _ i f)) j)
 
 lemma genOn_value {X : Scheme.{0}} [IsIntegral X] (p : X ⟶ S k) (w : Fin (N + 1) → X.functionField)
-    (U : X.Opens) (πU : U.toScheme ⟶ PN k N) (hG : GenOn p w U πU) (hη : genericPoint X ∈ U)
+    (U : X.Opens) (πU : U.toScheme ⟶ PN (k := k) N) (hG : GenOn p w U πU) (hη : genericPoint X ∈ U)
     {n : ℕ} (hn : 0 < n) (F : MvPolynomial (Fin (N + 1)) k) (hF : F ∈ homogeneousSubmodule (Fin (N + 1)) k n)
     (hy : πU ⟨genericPoint X, hη⟩ ∈ Proj.basicOpen (homogeneousSubmodule (Fin (N + 1)) k) F)
     (m : ℕ) (g : MvPolynomial (Fin (N + 1)) k) (hg : g ∈ homogeneousSubmodule (Fin (N + 1)) k (m • n)) :
     (πU.stalkMap ⟨genericPoint X, hη⟩ ≫ inv (U.ι.stalkMap ⟨genericPoint X, hη⟩)).hom
-      ((PN k N).presheaf.germ _ _ hy (Proj.awayToSection _ F (HomogeneousLocalization.Away.mk _ hF m g hg))) =
+      ((PN (k := k) N).presheaf.germ _ _ hy (Proj.awayToSection _ F (HomogeneousLocalization.Away.mk _ hF m g hg))) =
       eval₂ (kHom p) w g / eval₂ (kHom p) w F ^ m := by
   have hy' : (⟨genericPoint X, hη⟩ : U) ∈ πU ⁻¹ᵁ Proj.basicOpen _ F := hy
   obtain ⟨h1, h2⟩ := hG hη n hn F hF
@@ -90,7 +94,7 @@ lemma gU_eq {X : Scheme.{0}} (U : X.Opens) (Y : Scheme.{0}) (πU : U.toScheme �
   rfl
 
 lemma transfer {X : Scheme.{0}} [IsIntegral X] (p : X ⟶ S k) (w : Fin (N + 1) → X.functionField)
-    (U U' : X.Opens) (πU : U.toScheme ⟶ PN k N) (πU' : U'.toScheme ⟶ PN k N)
+    (U U' : X.Opens) (πU : U.toScheme ⟶ PN (k := k) N) (πU' : U'.toScheme ⟶ PN (k := k) N)
     (hG : GenOn p w U πU) (hG' : GenOn p w U' πU') (hη : genericPoint X ∈ U) (hη' : genericPoint X ∈ U')
     {n : ℕ} (hn : 0 < n) (F : MvPolynomial (Fin (N + 1)) k) (hF : F ∈ homogeneousSubmodule (Fin (N + 1)) k n)
     (hy : πU ⟨genericPoint X, hη⟩ ∈ Proj.basicOpen (homogeneousSubmodule (Fin (N + 1)) k) F) :
@@ -98,7 +102,7 @@ lemma transfer {X : Scheme.{0}} [IsIntegral X] (p : X ⟶ S k) (w : Fin (N + 1) 
   (hG' hη' n hn F hF).1.2 ((hG hη n hn F hF).1.1 hy)
 
 lemma pt_eq {X : Scheme.{0}} [IsIntegral X] (p : X ⟶ S k) (w : Fin (N + 1) → X.functionField)
-    (U U' : X.Opens) (πU : U.toScheme ⟶ PN k N) (πU' : U'.toScheme ⟶ PN k N)
+    (U U' : X.Opens) (πU : U.toScheme ⟶ PN (k := k) N) (πU' : U'.toScheme ⟶ PN (k := k) N)
     (hG : GenOn p w U πU) (hG' : GenOn p w U' πU') (hη : genericPoint X ∈ U) (hη' : genericPoint X ∈ U') :
     πU ⟨genericPoint X, hη⟩ = πU' ⟨genericPoint X, hη'⟩ := by
   refine Inseparable.eq (inseparable_iff_forall_isOpen.2 fun s hs => ⟨fun h => ?_, fun h => ?_⟩)
@@ -108,17 +112,17 @@ lemma pt_eq {X : Scheme.{0}} [IsIntegral X] (p : X ⟶ S k) (w : Fin (N + 1) →
     exact hFW (transfer p w U' U πU' πU hG' hG hη' hη hn F hF hyF)
 
 lemma germ_agree {X : Scheme.{0}} [IsIntegral X] (p : X ⟶ S k) (w : Fin (N + 1) → X.functionField)
-    (U U' : X.Opens) (πU : U.toScheme ⟶ PN k N) (πU' : U'.toScheme ⟶ PN k N)
+    (U U' : X.Opens) (πU : U.toScheme ⟶ PN (k := k) N) (πU' : U'.toScheme ⟶ PN (k := k) N)
     (hG : GenOn p w U πU) (hG' : GenOn p w U' πU') (hη : genericPoint X ∈ U) (hη' : genericPoint X ∈ U')
-    (W : (PN k N).Opens) (hy : πU ⟨genericPoint X, hη⟩ ∈ W) (hy' : πU' ⟨genericPoint X, hη'⟩ ∈ W) (s : Γ(PN k N, W)) :
-    (πU.stalkMap ⟨genericPoint X, hη⟩ ≫ inv (U.ι.stalkMap ⟨genericPoint X, hη⟩)).hom ((PN k N).presheaf.germ W _ hy s) =
+    (W : (PN (k := k) N).Opens) (hy : πU ⟨genericPoint X, hη⟩ ∈ W) (hy' : πU' ⟨genericPoint X, hη'⟩ ∈ W) (s : Γ(PN (k := k) N, W)) :
+    (πU.stalkMap ⟨genericPoint X, hη⟩ ≫ inv (U.ι.stalkMap ⟨genericPoint X, hη⟩)).hom ((PN (k := k) N).presheaf.germ W _ hy s) =
     (πU'.stalkMap ⟨genericPoint X, hη'⟩ ≫ inv (U'.ι.stalkMap ⟨genericPoint X, hη'⟩)).hom
-      ((PN k N).presheaf.germ W _ hy' s) := by
+      ((PN (k := k) N).presheaf.germ W _ hy' s) := by
   obtain ⟨n, hn, F, hF, hyF, hFW⟩ := pn_nbhd _ W hy
   have hyF' := transfer p w U U' πU πU' hG hG' hη hη' hn F hF hyF
-  rw [← (PN k N).presheaf.germ_res_apply (homOfLE hFW) _ hyF s,
-    ← (PN k N).presheaf.germ_res_apply (homOfLE hFW) _ hyF' s]
-  set t := (PN k N).presheaf.map (homOfLE hFW).op s
+  rw [← (PN (k := k) N).presheaf.germ_res_apply (homOfLE hFW) _ hyF s,
+    ← (PN (k := k) N).presheaf.germ_res_apply (homOfLE hFW) _ hyF' s]
+  set t := (PN (k := k) N).presheaf.map (homOfLE hFW).op s
   have ht : Proj.awayToSection _ F ((Proj.basicOpenIsoAway _ F hF hn).inv t) = t := by
     show ((Proj.basicOpenIsoAway _ F hF hn).inv ≫ (Proj.basicOpenIsoAway _ F hF hn).hom) t = t
     rw [Iso.inv_hom_id]; rfl

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurableSetHsBall
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TraceCmbMulCmbStar
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurePreservingOfSumSqEq
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.VolumeShearedBalls
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurableSetHsBall
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TraceCmbMulCmbStar
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurePreservingOfSumSqEq
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.VolumeShearedBalls
+
+@[expose] public section
+
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.IwConst
 
 namespace GlobalTheory.IwConst

@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.PrSingle
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.PrSingle
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -26,12 +30,8 @@ theorem PositivityTheory.ThKW.PhaseFourierInjectivity.finj_k : ∀ (F E : Type) 
   intro F E _ _ _ _ _ σ B hB nS nT JS JT hS hT ξ₀ hξ₀ hσ ν 𝓕 hν h𝓕 N₁ N₂ c₁ c₂ i₁ i₂ hN
   have hψ : IsStd B.ψ := hB.std
   have hψn : ∀ a, ‖B.ψ a‖ = 1 := GlobalTheory.StdCharWeilDatum.norm_psi hB.std
-  have hcc : ∀ z : AF F ⊗[F] E, cAF σ (cAF σ z) = z := by
-    intro z
-    induction z using TensorProduct.induction_on with
-    | zero => simp
-    | tmul a x => simp [cAF, sigR, GlobalTheory.DblSiegelChar.invol hB.cm]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+  have hcc : ∀ z : AF F ⊗[F] E, cAF σ (cAF σ z) = z :=
+    GlobalTheory.HeisLineF.cAF_cAF σ (GlobalTheory.SplitDetCharF.sig_invol hB.cm)
   have he : Continuous (vecE F E nS nT) := by
     show Continuous fun (w : WOF F E nS nT) (k : Fin (nT * nS)) => w (finProdFinEquiv.symm k).1 (finProdFinEquiv.symm k).2
     exact continuous_pi fun k => continuous_id.matrix_elem _ _

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsIsoOfGenerators
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsIsoOfGenerators
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,8 +43,7 @@ theorem oneT_inj_gen {G : Type} [Group G] [TopologicalSpace G] (LL : FinExt l)
   have h2 := h1.comp (TensorProduct.lid ↥(OL LL) ↥T.L.T).symm.injective
   convert h2 using 1
   funext t
-  simp
-  rw [Algebra.TensorProduct.one_def]
+  simp [Algebra.TensorProduct.one_def]
 
 theorem oneInj_sit (LT : LocTheory) (HW : HWOf LT) (AI : LocAinf l (LT l)) (K : FinExt l) (s : ℕ)
     (LL : FinExt l) (h : Good K s LL) : OneInj (sit LT HW l AI K s LL h) :=

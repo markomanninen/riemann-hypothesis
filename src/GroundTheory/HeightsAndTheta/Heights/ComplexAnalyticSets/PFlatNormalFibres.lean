@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFlatNormalFibres
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSerreConditions
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSerreCriterion
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSerreRFlatAscent
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSerreSFlatAscent
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFlatNormalFibres
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSerreConditions
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSerreCriterion
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSerreRFlatAscent
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSerreSFlatAscent
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry TopologicalSpace
 
@@ -244,8 +248,10 @@ theorem exists_splits_of_isAffineOpen (hV : ⨆ a, V a = ⊤) (hφ : IsCocycle V
       rw [hc]
       linear_combination (rs hM (e l) * rs hM (f l) ^ c) * this
     have e3 := Finset.sum_congr (rfl : (Finset.univ : Finset s) = _) (fun l _ => e2 l)
-    rw [Finset.sum_sub_distrib, ← Finset.sum_mul, ← map_sum, he, map_one, one_mul] at e3
-    simp only [ψ, g, rs_rs, map_neg, map_sum, map_mul] at e3 ⊢
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_sub_distrib, ← Finset.sum_mul, ← map_sum, he, map_one, one_mul] at e3
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [ψ, g, rs_rs, map_neg, map_sum, map_mul] at e3 ⊢
     linear_combination e3 + e1
 
 end GlobalTheory.KuennethOne

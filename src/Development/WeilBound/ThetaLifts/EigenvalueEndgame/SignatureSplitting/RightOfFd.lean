@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsFundamentalDomain
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsFundamentalDomain
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem right_of_fd [Countable Γ] (μ : Measure G) [μ.IsHaarMeasure] {𝓕 : S
   have e := Measure.isMulLeftInvariant_eq_smul (μ.map (· * g)) μ
   set c := Measure.haarScalarFactor (μ.map (· * g)) μ
   have q : Measure.QuasiMeasurePreserving (· * g) μ μ :=
-    ⟨measurable_mul_const g, by rw [e]; exact Measure.smul_absolutelyContinuous⟩
+    ⟨(measurable_mul_const g).aemeasurable, by rw [e]; exact Measure.smul_absolutelyContinuous⟩
   have h2 : IsFundamentalDomain Γ ((Equiv.mulRight g) ⁻¹' 𝓕) μ :=
     h.preimage_of_equiv q Function.bijective_id fun γ x => by
       change _ * x * g = _ * (x * g)

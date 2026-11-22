@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleTateTwistGeneratorMapIsIsoOfInjSurj
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleTateTwistGeneratorMapIsIsoOfInjSurj
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -152,4 +156,5 @@ theorem LateralTheory.EtaleFoundations.etale_tate_twist_generator_map_locally_su
   choose e he using hW
   refine ⟨∑ m, e m, sglι_inj T ?_⟩
   rw [← res_map, ← res_res, hy]
-  simp only [map_sum, he, μ.nat, res_map]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, he, μ.nat, res_map]

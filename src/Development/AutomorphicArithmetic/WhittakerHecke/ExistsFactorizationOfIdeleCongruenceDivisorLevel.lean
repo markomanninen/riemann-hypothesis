@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SgLaws
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CharpolySmulMap
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.FacDefs
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SgLaws
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CharpolySmulMap
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.FacDefs
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
 open UpperTheory.ConvolutionTheory.R2 UpperTheory.ConvolutionTheory.RankTwoDescent
@@ -12,7 +17,7 @@ open scoped ComplexOrder
 private theorem cp_pv (v w : H.P ℚ) :
     H.cp v ((pv w : (A ℚ)ˣ) : A ℚ) = if w = v then ((atFin v (unif v) : (H.Kv v)ˣ) : H.Kv v) else 1 := by
   obtain ⟨-, -, h3, h4, -, -, -, h8, -⟩ := UpperTheory.ConvolutionTheory.R2.H.sgLaws ℚ w
-  rw [pv, h4, map_add, map_one]
+  rw [pv, h4, map_add (f := _), map_one]
   split_ifs with h
   · subst h
     rw [h3, add_sub_cancel]
@@ -48,13 +53,13 @@ private theorem fst_pin (n : ℕ) : ((pin n : (A ℚ)ˣ) : A ℚ).1 = 1 := by
 
 private theorem iy_val {r : ℝ} (hr : r ≠ 0) :
     ((iy r : (A ℚ)ˣ) : A ℚ).1 = TR.infEq ℚ (fun _ => r) ∧ ∀ v : H.P ℚ, H.cp v ((iy r : (A ℚ)ˣ) : A ℚ) = 1 := by
-  rw [iy, dif_neg hr]
+  rw [iy, dite_eq_right hr]
   have e : ∀ u : (TR.Rinf ℚ)ˣ, ((TR.infId ℚ u : (A ℚ)ˣ) : A ℚ) = 1 - TR.sInf ℚ 1 + TR.sInf ℚ u := fun _ => rfl
   rw [e]
   refine ⟨?_, fun v => ?_⟩
   · change 1 - TR.infEq ℚ 1 + TR.infEq ℚ _ = _
     rw [map_one, sub_self, zero_add]
-  · rw [map_add, map_sub, map_one]
+  · rw [map_add (f := _), map_sub, map_one]
     change 1 - 0 + 0 = _
     simp
 
@@ -94,7 +99,7 @@ theorem UpperTheory.exists_factorization_of_ideleCongruence_divisor_level :
     have h6 : Valued.v (H.cp v ((y⁻¹ : (A ℚ)ˣ) : A ℚ)) ≤ 1 := h4
     exact h5.symm.trans_le (mul_le_of_le_one_right' h6)
   let f : ℕ →₀ ℕ := Finsupp.mapDomain normV (Finsupp.ofSupportFinite e hfin)
-  have hf : ∀ v, f (normV v) = e v := fun v => Finsupp.mapDomain_apply GlobalTheory.TwAtt.normV_injective _ v
+  have hf : ∀ v, f (normV v) = e v := fun v => Finsupp.mapDomain_apply_of_injective GlobalTheory.TwAtt.normV_injective _ v
   have hfs : ∀ p ∈ f.support, ∃ v : H.P ℚ, normV v = p := fun p hp => by
     obtain ⟨v, -, hv'⟩ := Finset.mem_image.1 (Finsupp.mapDomain_support hp)
     exact ⟨v, hv'⟩

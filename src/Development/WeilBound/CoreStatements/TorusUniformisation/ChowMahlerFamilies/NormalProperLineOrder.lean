@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenericCentreSpecializes
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LocalComponentsSurjective
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.PropZ
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StalkClosedPointToGermTop
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenPtSpecializesOfSpecializes
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsRegularSectionGenerator
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapGermEqGenMapGerm
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SpecialFibreClosedSpecializationStatement
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.DegreeZeroCurvePositive
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenericCentreSpecializes
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LocalComponentsSurjective
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.PropZ
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StalkClosedPointToGermTop
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenPtSpecializesOfSpecializes
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsRegularSectionGenerator
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapGermEqGenMapGerm
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SpecialFibreClosedSpecializationStatement
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.DegreeZeroCurvePositive
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Flat
 
 namespace PositivityTheory.Xgn.ProperZeroNumerical
@@ -30,7 +35,7 @@ theorem subset_of_specializes {T : Type} [TopologicalSpace T] [TopologicalSpace.
         obtain ⟨y, hy⟩ := QuasiSober.sober (hSirr t ht) (hScl t ht)
         exact ⟨hsub hxt, hs y x (hsub hy.mem) ((hy.mem_open_set_iff hV).2 htV) (hy.specializes hxt)⟩
     rw [e]
-    exact (hfin.subset fun t ht => ht.1).isClosed_biUnion fun t ht => hScl t ht.1
+    exact (hfin.subset (by exact fun t ht => ht.1)).isClosed_biUnion fun t ht => hScl t ht.1
   intro x hx
   by_contra hxV
   obtain ⟨z, hz, hzV, hz'⟩ := hc V (Z ∩ V)ᶜ hV hcl.isOpen_compl

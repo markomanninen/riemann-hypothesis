@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.TraceGramBReal
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ContinuousSplitInv
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.TraceGramBReal
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ContinuousSplitInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ variable {D : D7} {n : ℕ}
 theorem compAt_add {m : ℕ} (θ : InfFam D) (τ : D.what₂.Tau) (x y : Mx D m n) :
     compAt θ τ (x + y) = compAt θ τ x + compAt θ τ y := by
   ext i j
-  simp only [compAt, Matrix.map_apply, Matrix.add_apply, map_add]
+  simp only [compAt, Matrix.map_apply, Matrix.add_apply, map_add (f := _)]
 
 theorem pointAt {m : ℕ} (θ : InfFam D) (hθ : IsInfFam θ) (τ : D.what₂.Tau) (fr : Matrix (Fin m) (Fin m) ℂ)
     (hfr : IsUnit fr.det) (x₀ : Mx D m n) (u : Fin m → Fin n → ℂ) :
@@ -35,7 +39,7 @@ theorem pointAt {m : ℕ} (θ : InfFam D) (hθ : IsInfFam θ) (τ : D.what₂.Ta
     rw [compAt_add, hLz 1 τ', if_neg h, add_zero]
   · ext i j
     have h1 := congrFun (congrFun (hLf 1) i) j
-    simp only [Matrix.map_apply, Matrix.add_apply, map_add, Matrix.zero_apply] at h1 ⊢
+    simp only [Matrix.map_apply, Matrix.add_apply, map_add (f := _), Matrix.zero_apply] at h1 ⊢
     rw [h1, add_zero]
 
 end PositivityTheory.Rg.Sw.Glob.DilBH

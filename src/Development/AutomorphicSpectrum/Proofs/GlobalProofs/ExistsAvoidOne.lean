@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.RayClassGroupFiniteRepresentativesStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsShintaniConeDomainStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.RayClassConeParametrizationStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuationBis
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialZetaTwistedEntireDifferenceStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialZetaRayClassSummableStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsPrimeDegreeOneAvoidingStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialZetaMeromorphicFromTwistsStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.RayClassPrimeMultiplicationPermutationStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialZetaPrimeTwistSummableStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.RayClassGroupFiniteRepresentativesStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsShintaniConeDomainStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.RayClassConeParametrizationStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuationBis
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialZetaTwistedEntireDifferenceStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialZetaRayClassSummableStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsPrimeDegreeOneAvoidingStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialZetaMeromorphicFromTwistsStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.RayClassPrimeMultiplicationPermutationStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialZetaPrimeTwistSummableStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -101,8 +105,8 @@ end GlobalTheory.CompanionTheory.Hypotheses₂.Shintani
 
 namespace GlobalTheory.CompanionTheory.Hypotheses₂
 
-open GlobalTheory.CompanionTheory.Hypotheses₂.Shintani in
 
+open GlobalTheory.CompanionTheory.Hypotheses₂.Shintani in
 theorem siegelKlingen : GlobalTheory.Published.SiegelKlingen := by
   classical
   intro F _ _ _ 𝔣 h𝔣 ε hε

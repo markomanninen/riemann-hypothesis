@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
-import Formalism.LocalToGlobal.HermitianColumns.SymAll
-import Formalism.LocalToGlobal.Columns.DecoFin
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.EqOfLeOfAbsNormEq
-import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
+public import Formalism.LocalToGlobal.HermitianColumns.SymAll
+public import Formalism.LocalToGlobal.Columns.DecoFin
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.EqOfLeOfAbsNormEq
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.L2.Host GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Top NumberField IsDedekindDomain
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -20,7 +25,7 @@ theorem trace_rat {R : Ranks} (H : Host R) (x : H.E) (hx : x ∈ H.K) :
   rw [eq_ratCast] at h1 h2
   push_cast
   rw [h1, h2]
-  simp only [map_add, map_one]
+  simp only [map_add (f := _), map_one]
   ring
 
 theorem no_ramified_norm {T d : ℕ} (hT : T.Prime) (hd : d.Prime) (h2 : T ≠ 2) (hTd : T ≠ d)
@@ -82,7 +87,7 @@ theorem not_both_mem {R : Ranks} (H : Host R) {T : ℕ} (hT : T.Prime) (π π' :
     have : IsIntegral ℤ (algebraMap ℚ H.E r) := by
       rw [eq_ratCast, hr, ← hc]
       exact π.isIntegral_coe.add π'.isIntegral_coe
-    exact (isIntegral_algebraMap_iff (algebraMap ℚ H.E).injective).1 this
+    exact (isIntegral_algebraMap_iff ).1 this
   obtain ⟨a, ha⟩ := IsIntegrallyClosed.isIntegral_iff.1 hint
   rw [eq_intCast] at ha
   have haE : (a : 𝓞 H.E) = π + π' := by
@@ -144,7 +149,7 @@ theorem seenDef (D : D7) (H : Formalism.L2.Herm.ColsHermS D) : SeenDef D (errOfT
     letI := (D.mem u).A.vTFin
     rw [← Fintype.card_pos_iff, (D.mem u).A.card_vT]
     unfold Ranks.f Ranks.n
-    positivity
+    exact Nat.mul_pos (by decide) D.R.toFrame.ord_pos
   have hτ : ∀ τ, tauLL D τ ((H.atT u).piU : D.host.E) = D.embE ((H.atT u).piU : D.host.E) := by
     intro τ
     rw [tauLL, Formalism.MainNotions.UnusedSlot33.HK.sigmaOf_fix_K D.host _ (D.eTau τ).2 _ (H.atT u).piU_K]

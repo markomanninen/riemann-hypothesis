@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentHeisenbergDecomposition
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianLeviVectorBaseOrthogonal
+module
+
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentHeisenbergDecomposition
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianLeviVectorBaseOrthogonal
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ComplexConjugate ENNReal NNReal
@@ -17,18 +21,6 @@ theorem conjM_cont {k r : ℕ} (a : Mat k r) : Continuous (conjM a : Mt k r → 
     | (show Continuous fun x : Mt k r => (a * Matrix.of x * a⁻¹ : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ)
        exact (continuous_const.matrix_mul continuous_id).matrix_mul continuous_const)
     | (unfold conjM; fun_prop)
-
-theorem lmulM_cont {k r : ℕ} (a : Mat k r) : Continuous (lmulM a : Mt k r → Mt k r) := by
-  first
-    | (show Continuous fun x : Mt k r => (a * Matrix.of x : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ)
-       exact continuous_const.matrix_mul continuous_id)
-    | (unfold lmulM; fun_prop)
-
-theorem rmulF_cont {n : ℕ} (a : Matrix (Fin n) (Fin n) ℂ) : Continuous (rmulF a) := by
-  first
-    | (show Continuous fun x : Fin n → Fin n → ℂ => (Matrix.of x * a : Matrix (Fin n) (Fin n) ℂ)
-       exact continuous_id.matrix_mul continuous_const)
-    | (unfold rmulF; fun_prop)
 
 def mid (k r' : ℕ) (p : Fin (2 * (1 + r') + k + 1)) : Prop := 1 ≤ p.val ∧ p.val < 2 * r' + k + 1 + 1
 
@@ -83,16 +75,6 @@ theorem lev_mul (k r' : ℕ) (g h : Mat k r') : ιLev k 1 r' (g * h) = ιLev k 1
 
 def blk (k r' : ℕ) (x : Mt k (1 + r')) : Mt k r' := fun s t => x (levPos k 1 r' s) (levPos k 1 r' t)
 
-theorem blk_cont (k r' : ℕ) : Continuous (blk k r') := by
-  first
-    | (unfold blk; fun_prop)
-    | exact continuous_pi fun s => continuous_pi fun t =>
-        (continuous_apply (levPos k 1 r' t)).comp (continuous_apply (levPos k 1 r' s))
-
-theorem blk_lev (k r' : ℕ) (x : Mt k r') : blk k r' (levM k r' x) = x := by
-  funext s t
-  exact lev_mm k r' (Matrix.of x) s t
-
 theorem levM_cont (k r' : ℕ) : Continuous (levM k r') := by
   refine continuous_pi fun p => continuous_pi fun q => ?_
   show Continuous fun x : Mt k r' => ιLev k 1 r' (Matrix.of x) p q
@@ -112,14 +94,6 @@ variable {k r' : ℕ}
 
 def iZ (k r' : ℕ) : Fin (2 * (1 + r') + k + 1) := ⟨0, by omega⟩
 def iL (k r' : ℕ) : Fin (2 * (1 + r') + k + 1) := ⟨2 * (1 + r') + k, by omega⟩
-
-lemma weight_zero_not_pos_det (c : ℂ) (i q : Fin (2 * (1 + r') + k + 1)) (h1 : ¬(i.val = 0 ∧ q.val = 2 * (1 + r') + k))
-    (h2 : ¬(i.val = 2 * (1 + r') + k ∧ q.val = 0)) (h3 : ¬(i.val = q.val ∧ 0 < i.val ∧ i.val < 2 * (1 + r') + k)) :
-    w0 k r' c i q = 0 := by
-  simp only [w0]
-  rw [if_neg h1, if_neg h2, if_neg]
-  rintro ⟨h, h'⟩
-  exact h3 ⟨congrArg Fin.val h, h'⟩
 
 private lemma w0_apply_eq_ite_first_index (c : ℂ) (i m : Fin (2 * (1 + r') + k + 1)) :
     w0 k r' c i m = if i.val = 0 then (if m = iL k r' then (star c)⁻¹ else 0)
@@ -197,8 +171,8 @@ private lemma matrix_apply_congr_of_eq {n m : ℕ} (μ : Matrix (Fin n) (Fin m) 
   subst h2
   rfl
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem t_bigcellrec : BigCellRec := by
   intro k r' c μ
   ext i j
@@ -351,10 +325,6 @@ lemma lev_col_iff (g : Mat k r') (t : Fin (2 * r' + k + 1)) :
       rw [lev_mm, h s]
       exact if_congr (levPos_inj k r').eq_iff.symm rfl rfl
     · exact lev_n k r' g p _ hp
-
-lemma eI_zero : eI k (1 + r') (a0 r') = iZ k r' := rfl
-
-lemma esI_zero : esI k (1 + r') (a0 r') = iL k r' := rfl
 
 lemma eI_succ (a : Fin r') : eI k (1 + r') (Fin.natAdd 1 a) = levPos k 1 r' (eI k r' a) := by
   apply Fin.ext
@@ -517,12 +487,6 @@ lemma bc_mid_row_out (c : Fin r → ℂ) (μ : Matrix (Fin (k + 1)) (Fin (k + 1)
 lemma bc_out_col (c : Fin r → ℂ) (μ ν : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (i j : Fin (2 * r + k + 1))
     (hj : ¬ midW k r j) : bigCell k r c μ i j = bigCell k r c ν i j := by
   have hj' : ¬ (r ≤ j.val ∧ j.val ≤ r + k) := hj
-  simp only [bigCell]
-  split_ifs <;> first | rfl | (exfalso; omega)
-
-lemma bc_out_row (c : Fin r → ℂ) (μ ν : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (i j : Fin (2 * r + k + 1))
-    (hi : ¬ midW k r i) : bigCell k r c μ i j = bigCell k r c ν i j := by
-  have hi' : ¬ (r ≤ i.val ∧ i.val ≤ r + k) := hi
   simp only [bigCell]
   split_ifs <;> first | rfl | (exfalso; omega)
 
@@ -785,7 +749,7 @@ theorem heisF_meas : Measurable (heisF k r') := by
 def bcF (k r : ℕ) (c : Fin r → ℂ) : Mt k r := bigCell k r c 1
 
 theorem bcF_meas : Measurable (bcF k r) := by
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   show Measurable fun c : Fin r → ℂ => bigCell k r c 1 i j
   simp only [bigCell]
   split_ifs <;> first | exact measurable_const | exact measurable_pi_apply _ | exact (continuous_star.measurable.comp (measurable_pi_apply _)).inv | exact continuous_star.measurable.inv | exact measurable_id | fun_prop | measurability
@@ -793,7 +757,7 @@ theorem bcF_meas : Measurable (bcF k r) := by
 def w0F (k r' : ℕ) (c : ℂ) : Mt k (1 + r') := w0 k r' c
 
 theorem long_weyl_element_measurable : Measurable (w0F k r') := by
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   show Measurable fun c : ℂ => w0 k r' c i j
   simp only [w0]
   split_ifs <;> first | exact measurable_const | exact measurable_pi_apply _ | exact (continuous_star.measurable.comp (measurable_pi_apply _)).inv | exact continuous_star.measurable.inv | exact measurable_id | fun_prop | measurability

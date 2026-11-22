@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StCriticalFibreInfinite
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PHolomorphicFibreInfinite
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StCriticalFibreInfinite
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PHolomorphicFibreInfinite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -76,7 +81,8 @@ theorem CriticalFibreInfinite.proof : CriticalFibreInfinite.Statement := by
     simp [A']
   have hLA : ∀ p : ℂ × (Fin r → ℂ), Λ (fderiv ℂ f s (A' p)) = p.2 := by
     intro p
-    rw [hA', map_add, map_add, map_smul, map_smul, hw', smul_zero, zero_add, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hA', map_add (f := _), map_add (f := _), map_smul, map_smul, hw', smul_zero, zero_add, map_sum, map_sum]
     simp only [map_smul, hΛv]
     ext i
     simp [Finset.sum_apply, Pi.single_apply]

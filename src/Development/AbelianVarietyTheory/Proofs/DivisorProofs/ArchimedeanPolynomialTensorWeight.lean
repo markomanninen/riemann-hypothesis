@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndLineInf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KStab
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolEqISupFockDeg
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KEqOnId
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FixPartEqBotOfLt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TprodMemDegLE
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeakExponentialActionOnFockVectors
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyFinitePiTensorSumOfFactorOperators
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPolynomialsLocallyFiniteRationalWeights
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndLineInf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KStab
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolEqISupFockDeg
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KEqOnId
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FixPartEqBotOfLt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TprodMemDegLE
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeakExponentialActionOnFockVectors
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyFinitePiTensorSumOfFactorOperators
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPolynomialsLocallyFiniteRationalWeights
+
+@[expose] public section
 
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -146,7 +150,7 @@ theorem atPl_add' (w : ι) (L L' : Module.End ℂ (V w)) : atPl w (L + L') = atP
   simp only [atPl_eq', MultilinearMap.map_update_add]
 
 theorem atPl_smul' (w : ι) (c : ℂ) (L : Module.End ℂ (V w)) : atPl w (c • L) = c • atPl w L := by
-  simp only [atPl_eq', MultilinearMap.map_update_smul]
+  simp only [atPl_eq', MultilinearMap.map_update_smul, RingHom.id_apply]
 
 theorem atPl_zero' (w : ι) : atPl w (0 : Module.End ℂ (V w)) = 0 := by
   simp only [atPl_eq', MultilinearMap.map_update_zero]
@@ -165,8 +169,8 @@ theorem locFin_fock2' (P Q R S : ℕ) (Y : Mat R S) (hY : IsKC Y) (c : ℂ) :
   obtain ⟨⟨W, hW, hv, hs⟩, -⟩ := (GlobalTheory.FockPolGK.pol_locFin_weights P Q R S).2 v
   exact ⟨W, hW, hv, fun y hy => W.add_mem (hs Y hY y hy) (W.smul_mem c hy)⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem kstab_skew : GlobalTheory.RealLift.ActsLaws → GlobalTheory.RealLift.LineEx → ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E)
     (n d P Q R S : ℕ) (X : Spc F E n) (W : Spc F E d) (om : Rep σ X W)
     (C : InfinitePlace F → Matrix (Fin d) (Formalism.BasicNotions.TH.Ix R S) ℂ) (Φ : GlobalTheory.RealLift.Tens F P Q R S →ₗ[ℂ] SInf F (Fin n × Fin d))
@@ -231,8 +235,8 @@ theorem kstab_skew : GlobalTheory.RealLift.ActsLaws → GlobalTheory.RealLift.Li
   rw [e] at hmem
   simpa using N.sub_mem hmem (N.smul_mem (c w * Y.trace) hT)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem kstab : GlobalTheory.RealLift.ActsLaws → GlobalTheory.RealLift.LineEx →
     ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E)
     (n d P Q R S : ℕ) (X : Spc F E n) (W : Spc F E d) (om : Rep σ X W)
@@ -262,7 +266,7 @@ theorem kstab : GlobalTheory.RealLift.ActsLaws → GlobalTheory.RealLift.LineEx 
   have s2 : Y2ᴴ = -Y2 := by
     rw [hY2, Matrix.conjTranspose_smul, Matrix.conjTranspose_add, Matrix.conjTranspose_conjTranspose]
     rw [show star (1 / (2 * Complex.I)) = -(1 / (2 * Complex.I)) by simp, neg_smul, add_comm]
-  rw [hZ', map_add, map_smul, atPl_add', atPl_smul', LinearMap.add_apply, LinearMap.smul_apply]
+  rw [hZ', map_add (f := _), map_smul, atPl_add', atPl_smul', LinearMap.add_apply, LinearMap.smul_apply]
   exact N.add_mem (key Y1 k1 s1 T hT) (N.smul_mem _ (key Y2 k2 s2 T hT))
 
 end GlobalTheory.FockKStab

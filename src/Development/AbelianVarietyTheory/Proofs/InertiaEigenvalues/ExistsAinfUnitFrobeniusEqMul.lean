@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsAlgClosedTiltFieldAndValuationRing
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TensorRight
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsAlgClosedTiltFieldAndValuationRing
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TensorRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem onto_of_cpl' {l : ℕ} {M : Type} [AddCommGroup M] (hM : Cpl l M) (f : M
     obtain ⟨u, hu⟩ := mem_Dv.1 hx
     obtain ⟨a, z, haz⟩ := h (-u)
     refine ⟨x + l ^ r • a, mem_Dv.2 ⟨z, ?_⟩, mem_Dv.2 ⟨a, by abel⟩⟩
-    rw [pow_succ, mul_smul, ← haz, map_add, map_nsmul, add_sub_right_comm, ← hu, sub_neg_eq_add,
+    rw [pow_succ, mul_smul, ← haz, map_add (f := _), map_nsmul, add_sub_right_comm, ← hu, sub_neg_eq_add,
       smul_add, add_comm]
   choose nx hnx using hstep
   let g : (r : ℕ) → {x // f x - y ∈ Dv l r M} := fun r =>
@@ -84,7 +88,7 @@ theorem lang_unit
     rw [← hx']; ring
 
   obtain ⟨t₀, ht₀⟩ := hroot (X ^ (p - 1) - C ω₀) (monic_X_pow_sub_C _ (by omega))
-    (by rw [natDegree_X_pow_sub_C]; omega)
+    (by rw [natDegree_X_pow_sub_C _]; omega)
   have ht₀' : t₀ ^ (p - 1) = ω₀ := by simpa [sub_eq_zero] using ht₀
   have hut : IsUnit t₀ := (isUnit_pow_iff (by omega : p - 1 ≠ 0)).1 (ht₀' ▸ hu0)
   have htp : t₀ ^ p = ω₀ * t₀ := by
@@ -111,13 +115,14 @@ namespace GlobalTheory.Per
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem OCb_exists_root (l : ℕ) [Fact l.Prime] (f : (OCb l)[X]) (hf : f.Monic)
     (hd : 0 < f.natDegree) : ∃ x, f.IsRoot x := by
   haveI : IsAlgClosed (Cb l) := (GlobalTheory.TiltAlgClosed.isAlgClosed_tilt_and_valuationRing l).1
   haveI : ValuationRing (OCb l) := (GlobalTheory.TiltAlgClosed.isAlgClosed_tilt_and_valuationRing l).2
-  haveI : IsIntegrallyClosed (OCb l) := inferInstance
+  haveI : IsIntegrallyClosed (OCb l) :=
+    (ValuationRing.integers (OCb l) (Cb l)).isIntegrallyClosed
   obtain ⟨z, hz⟩ := IsAlgClosed.exists_root (f.map (algebraMap (OCb l) (Cb l))) (by
     rw [degree_map_eq_of_injective (IsFractionRing.injective (OCb l) (Cb l)),
       degree_eq_natDegree hf.ne_zero]

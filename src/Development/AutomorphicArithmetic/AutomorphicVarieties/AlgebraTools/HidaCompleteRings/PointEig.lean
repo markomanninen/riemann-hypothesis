@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.OrdBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.FibreNe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.EigOfQuot
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.OrdBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.FibreNe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.EigOfQuot
+
+@[expose] public section
 
 open UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite TensorProduct
 
@@ -33,7 +37,7 @@ theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.pointEig :
       rw [Module.End.mul_apply, Module.End.mul_apply, hA, hA, hA, hA, smul_comm]
     | add a b ha hb =>
       rw [Module.End.mul_apply, Module.End.mul_apply] at ha hb ⊢
-      rw [map_add, map_add, ha, hb, map_add, map_add]
+      rw [map_add (f := _), map_add (f := _), ha, hb, map_add (f := _), map_add (f := _)]
   have hφA : ∀ t y, φ (A t y) = x t • φ y := by
     intro t y
     induction y using TensorProduct.induction_on with
@@ -42,7 +46,7 @@ theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.pointEig :
       rw [hA, hφt, hφt, ← TensorProduct.smul_tmul, TensorProduct.smul_tmul']
       congr 1
     | add a b ha hb =>
-      rw [map_add, map_add, ha, hb, map_add, smul_add]
+      rw [map_add (f := _), map_add (f := _), ha, hb, map_add (f := _), smul_add]
   have hφ0 : φ ≠ 0 := by
     intro h0
     have hall : ∀ p : K ⊗[T] M, p = 0 := by

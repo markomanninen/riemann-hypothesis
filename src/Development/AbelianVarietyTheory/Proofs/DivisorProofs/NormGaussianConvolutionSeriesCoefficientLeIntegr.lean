@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowForm
+
+@[expose] public section
+
 open MeasureTheory Filter Topology
 
 namespace GlobalTheory.ConvSeries
@@ -19,7 +24,7 @@ theorem norm_powForm_le {E : Type} [NormedAddCommGroup E] [InnerProductSpace ℝ
     ContinuousMultilinearMap.mkPiAlgebra_apply]
   rw [norm_prod]
   calc ∏ i, ‖innerC a (m i)‖ ≤ ∏ i, (‖a‖ * ‖m i‖) :=
-        Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun i _ => norm_innerC_apply_le a (m i)
+        Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun i _ => norm_innerC_apply_le a (m i)
     _ = ‖a‖ ^ k * ∏ i, ‖m i‖ := by
         rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
 
@@ -40,8 +45,8 @@ theorem continuous_wt {E : Type} [NormedAddCommGroup E] [InnerProductSpace ℝ E
 
 end CoefNorm
 
-open CoefNorm in
 
+open CoefNorm in
 theorem norm_coef_le_integral (E : Type) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
     [MeasurableSpace E] [BorelSpace E] (b c : ℝ) (hb : 0 ≤ b) (hc : 0 ≤ c) (h : SchwartzMap E ℂ) (j : ℕ) :
     ‖coef b c (⇑h) j‖ ≤ ∫ a, ‖wt b c (⇑h) a‖ * ‖a‖ ^ j := by

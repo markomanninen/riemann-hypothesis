@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.EtaleCohomology.TateTwists.EtaleCupCompatibleWithCoefficientMapsOfSpec
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.EtaleCohomology.TateTwists.EtaleCupCompatibleWithCoefficientMapsOfSpec
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -53,11 +57,11 @@ theorem awalg_of (hu : EtaleAlexanderWhitneyCupCochainUnique) : EtaleAlexanderWh
   · intro α α' β γ γ' h h' N w hw U x
     rw [ev_add', h, h', ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun p _ => ?_
-    rw [ev_add', map_add, LinearMap.add_apply, smul_add]
+    rw [ev_add', map_add (f := _), LinearMap.add_apply, smul_add]
   · intro α β β' γ γ' h h' N w hw U x
     rw [ev_add', h, h', ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun p _ => ?_
-    rw [ev_add', map_add, smul_add]
+    rw [ev_add', map_add (f := _), smul_add]
   · intro β N w hw U x
     rw [ev_zero']
     symm

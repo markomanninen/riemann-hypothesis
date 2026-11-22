@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HarishChandraCentre.Triangular
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.Triangular
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.HarishChandra
 
@@ -9,9 +13,10 @@ open MvPolynomial
 
 variable {n : ℕ}
 
-open Classical in
 
+open Classical in
 noncomputable def hcProjLin : U n →ₗ[ℂ] MvPolynomial (Fin n) ℂ :=
+  open scoped Classical in
   pbw.constr ℂ fun m => if IsDiagExp m then monomial (diagExp m) 1 else 0
 
 theorem hcProjLin_canon_of_isDiagExp {m : Fin n × Fin n →₀ ℕ} (h : IsDiagExp m) :
@@ -47,7 +52,7 @@ theorem isDiagExp_diagEmbExp (μ : Fin n →₀ ℕ) : IsDiagExp (diagEmbExp μ)
 
 theorem diagExp_diagEmbExp (μ : Fin n →₀ ℕ) : diagExp (diagEmbExp μ) = μ := by
   ext i
-  rw [diagExp_apply, diagEmbExp, Finsupp.mapDomain_apply diagEmbExp_injective]
+  rw [diagExp_apply, diagEmbExp, Finsupp.mapDomain_apply_of_injective diagEmbExp_injective]
 
 theorem hcEmb_monomial_one (μ : Fin n →₀ ℕ) : hcEmb (monomial μ 1) = canon (diagEmbExp μ) := by
   rw [canon_of_isDiagExp (isDiagExp_diagEmbExp μ), diagExp_diagEmbExp]
@@ -58,10 +63,7 @@ theorem hcProjLin_hcEmb (p : MvPolynomial (Fin n) ℂ) : hcProjLin (hcEmb p) = p
     rw [show monomial μ c = c • monomial μ (1 : ℂ) by rw [smul_monomial, smul_eq_mul, mul_one],
       map_smul, map_smul, hcEmb_monomial_one, hcProjLin_canon_of_isDiagExp (isDiagExp_diagEmbExp μ),
       diagExp_diagEmbExp]
-  | add p q hp hq => rw [map_add, map_add, hp, hq]
-
-theorem hcEmb_injective : Function.Injective (hcEmb (n := n)) :=
-  Function.LeftInverse.injective hcProjLin_hcEmb
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq]
 
 theorem hcProjLin_eq_zero_of_mem_nPlusU {x : U n} (hx : x ∈ nPlusU n) : hcProjLin x = 0 := by
   have hx' : x ∈ Submodule.span ℂ {x | ∃ m : Fin n × Fin n →₀ ℕ, HasUpper m ∧ canon m = x} :=
@@ -72,63 +74,8 @@ theorem hcProjLin_eq_zero_of_mem_nPlusU {x : U n} (hx : x ∈ nPlusU n) : hcProj
     obtain ⟨m, hm, rfl⟩ := hx
     exact hcProjLin_canon_of_not (not_isDiagExp_of_hasUpper hm)
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
   | smul r x _ hx => rw [map_smul, hx, smul_zero]
-
-theorem hcProjLin_eq_zero_of_mem_nMinusU {x : U n} (hx : x ∈ nMinusU n) : hcProjLin x = 0 := by
-  have hx' : x ∈ Submodule.span ℂ {x | ∃ m : Fin n × Fin n →₀ ℕ, HasLower m ∧ canon m = x} :=
-    nMinusU_le_spanLower hx
-  clear hx
-  induction hx' using Submodule.span_induction with
-  | mem x hx =>
-    obtain ⟨m, hm, rfl⟩ := hx
-    exact hcProjLin_canon_of_not (not_isDiagExp_of_hasLower hm)
-  | zero => simp
-  | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
-  | smul r x _ hx => rw [map_smul, hx, smul_zero]
-
-theorem hcProjLin_eq_zero_of_mem_sup {x : U n} (hx : x ∈ nMinusU n ⊔ nPlusU n) :
-    hcProjLin x = 0 := by
-  obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hx
-  rw [map_add, hcProjLin_eq_zero_of_mem_nMinusU hy, hcProjLin_eq_zero_of_mem_nPlusU hz, add_zero]
-
-theorem sub_hcEmb_mem (u : U n) : u - hcEmb (hcProjLin u) ∈ nMinusU n ⊔ nPlusU n := by
-  let φ : U n →ₗ[ℂ] U n := LinearMap.id - hcEmb.toLinearMap ∘ₗ hcProjLin
-  have hφ : ∀ u, φ u = u - hcEmb (hcProjLin u) := fun _ => rfl
-  suffices ⊤ ≤ (nMinusU n ⊔ nPlusU n).comap φ by
-    have := this (Submodule.mem_top (x := u))
-    rwa [Submodule.mem_comap, hφ] at this
-  rw [← span_canon_eq_top, Submodule.span_le]
-  rintro _ ⟨m, rfl⟩
-  rw [SetLike.mem_coe, Submodule.mem_comap, hφ]
-  rcases isDiagExp_or m with h | h | h
-  · rw [hcProjLin_canon_of_isDiagExp h, ← canon_of_isDiagExp h, sub_self]
-    exact Submodule.zero_mem _
-  · rw [hcProjLin_canon_of_not (not_isDiagExp_of_hasUpper h), map_zero, sub_zero]
-    exact Submodule.mem_sup_right (canon_mem_nPlusU h)
-  · rw [hcProjLin_canon_of_not (not_isDiagExp_of_hasLower h), map_zero, sub_zero]
-    exact Submodule.mem_sup_left (canon_mem_nMinusU h)
-
-theorem hcProjLin_eq_iff (u : U n) (p : MvPolynomial (Fin n) ℂ) :
-    hcProjLin u = p ↔ u - hcEmb p ∈ nMinusU n ⊔ nPlusU n := by
-  constructor
-  · rintro rfl; exact sub_hcEmb_mem u
-  · intro h
-    have := hcProjLin_eq_zero_of_mem_sup h
-    rwa [map_sub, hcProjLin_hcEmb, sub_eq_zero] at this
-
-theorem isCompl_range_hcEmb :
-    IsCompl (LinearMap.range (hcEmb (n := n)).toLinearMap) (nMinusU n ⊔ nPlusU n) := by
-  constructor
-  · rw [Submodule.disjoint_def]
-    rintro x ⟨p, rfl⟩ hx
-    have := hcProjLin_eq_zero_of_mem_sup hx
-    rw [AlgHom.toLinearMap_apply, hcProjLin_hcEmb] at this
-    simp [this]
-  · rw [codisjoint_iff, eq_top_iff]
-    intro u _
-    rw [← sub_add_cancel u (hcEmb (hcProjLin u)), add_comm]
-    exact Submodule.add_mem_sup ⟨_, rfl⟩ (sub_hcEmb_mem u)
 
 theorem sum_mul_rootAt (a : Fin n × Fin n) :
     ∑ k : Fin n, (k : ℤ) * rootAt a k = (a.1 : ℤ) - a.2 := by
@@ -182,7 +129,8 @@ theorem sub_hcEmb_mem_nPlusU {z : U n} (hz : ∀ k, e (k, k) * z = z * e (k, k))
     have := linearIndependent_iff'.1 linearIndependent_canon s _ h0 m hm
     have hc : c m ≠ 0 := Finsupp.mem_support_iff.1 hm
     exact_mod_cast (mul_eq_zero.1 this).resolve_left hc
-  rw [hzs, map_sum, map_sum, ← Finset.sum_sub_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hzs, map_sum, map_sum, ← Finset.sum_sub_distrib]
   refine Submodule.sum_mem _ fun m hm => ?_
   rw [map_smul, map_smul, ← smul_sub]
   refine Submodule.smul_mem _ _ ?_
@@ -224,7 +172,8 @@ theorem mul_mem_nPlusU_of_mem_cartanSub {x y : U n} (hx : x ∈ nPlusU n) (hy : 
     exact mul_e_diag_mem_nPlusU hx k
   exact this hy x hx
 
-abbrev centralizerT (n : ℕ) : Subalgebra ℂ (U n) := Subalgebra.centralizer ℂ (cartanSet n)
+noncomputable abbrev centralizerT (n : ℕ) : Subalgebra ℂ (U n) :=
+  Subalgebra.centralizer ℂ (cartanSet n)
 
 theorem commute_e_diag_of_mem {z : U n} (hz : z ∈ centralizerT n) (k : Fin n) :
     e (k, k) * z = z * e (k, k) :=
@@ -245,7 +194,7 @@ theorem hcProjLin_mul {z z' : U n} (hz : z ∈ centralizerT n) (hz' : z' ∈ cen
   set x' := z' - hcEmb p'
   have hzz : z * z' = hcEmb (p * p') + (hcEmb p * x' + x * hcEmb p' + x * x') := by
     rw [map_mul]; simp only [x, x']; noncomm_ring
-  rw [hzz, map_add, hcProjLin_hcEmb]
+  rw [hzz, map_add (f := _), hcProjLin_hcEmb]
   have : hcEmb p * x' + x * hcEmb p' + x * x' ∈ nPlusU n :=
     Submodule.add_mem _ (Submodule.add_mem _ (mul_mem_nPlusU _ hx')
       (mul_mem_nPlusU_of_mem_cartanSub hx (hcEmb_mem_cartanSub p'))) (mul_mem_nPlusU _ hx')
@@ -261,8 +210,6 @@ noncomputable def hcProj0 : centralizerT n →ₐ[ℂ] MvPolynomial (Fin n) ℂ 
     show hcProjLin (algebraMap ℂ (U n) r) = algebraMap ℂ _ r
     rw [Algebra.algebraMap_eq_smul_one, map_smul, hcProjLin_one, Algebra.algebraMap_eq_smul_one]
 
-@[simp] theorem hcProj0_apply (z : centralizerT n) : hcProj0 z = hcProjLin (z : U n) := rfl
-
 theorem rep_apply_of_highestWeight {V : Type*} [AddCommGroup V] [Module ℂ V]
     (φ : U n →ₐ[ℂ] Module.End ℂ V) {v : V} (lam : Fin n → ℂ)
     (hup : ∀ a, IsUpper a → φ (e a) v = 0) (hH : ∀ k, φ (e (k, k)) v = lam k • v)
@@ -275,13 +222,13 @@ theorem rep_apply_of_highestWeight {V : Type*} [AddCommGroup V] [Module ℂ V]
       obtain ⟨u, a, ha, rfl⟩ := hx
       rw [map_mul, Module.End.mul_apply, hup a ha, map_zero]
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, LinearMap.add_apply, hx, hy, add_zero]
+    | add x y _ _ hx hy => rw [map_add (f := _), LinearMap.add_apply, hx, hy, add_zero]
     | smul r x _ hx => rw [map_smul, LinearMap.smul_apply, hx, smul_zero]
   have hC : ∀ p, φ (hcEmb p) v = eval lam p • v := by
     intro p
     induction p using MvPolynomial.induction_on with
     | C a => simp [AlgHom.commutes, Module.algebraMap_end_apply]
-    | add p q hp hq => rw [map_add, map_add, LinearMap.add_apply, hp, hq, map_add, add_smul]
+    | add p q hp hq => rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, hp, hq, map_add (f := _), add_smul]
     | mul_X p i hp =>
       rw [map_mul, map_mul, Module.End.mul_apply, hcEmb_X, hH, map_smul, hp, smul_smul,
         eval_mul, eval_X, mul_comm]
@@ -299,7 +246,7 @@ theorem eval_translate (c lam : Fin n → ℂ) (p : MvPolynomial (Fin n) ℂ) :
     eval lam (translate c p) = eval (lam + c) p := by
   induction p using MvPolynomial.induction_on with
   | C a => simp [translate]
-  | add p q hp hq => rw [map_add, eval_add, eval_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), eval_add, eval_add, hp, hq]
   | mul_X p i hp =>
     rw [map_mul, eval_mul, eval_mul, hp]
     simp [translate]

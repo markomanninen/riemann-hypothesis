@@ -1,24 +1,29 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.IsPtRepTrDat
-import Formalism.SharpRestriction.CuspSpanNormBounds.AbsoluteAmplitudeSecondOfSource
-import Formalism.SharpRestriction.CuspSpanNormBounds.PExtra
-import Formalism.SharpRestriction.CuspSpanNormBounds.AmplitudeAndVolumeBounds
-import Formalism.SharpRestriction.CuspSpanNormBounds.BranchingAndRankConstants
-import Formalism.SharpRestriction.CuspSpanNormBounds.MassAndBranchingHypotheses
-import Formalism.SharpRestriction.CuspSpanNormBounds.SBridge
-import Formalism.LocalRingCardinality.DataTies
-import Development.AbelianVarietyTheory.Statements.DiscreteSeriesShifts.ThmBpDS
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.FormalDegreeCompactDualIff
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OnePlaceKF
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SumPlacesEqTrace
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.JEqOrbInt
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AmplifierOfHypotheses
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselGapDimensionFormula
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.UniqGapOfUniq
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselCoefficientNonzero
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.HaarEqSmul
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.SumNonneg
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPtRepTrDat
+public import Formalism.SharpRestriction.CuspSpanNormBounds.AbsoluteAmplitudeSecondOfSource
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PExtra
+public import Formalism.SharpRestriction.CuspSpanNormBounds.AmplitudeAndVolumeBounds
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BranchingAndRankConstants
+public import Formalism.SharpRestriction.CuspSpanNormBounds.MassAndBranchingHypotheses
+public import Formalism.SharpRestriction.CuspSpanNormBounds.SBridge
+public import Formalism.LocalRingCardinality.DataTies
+public import Development.AbelianVarietyTheory.Statements.DiscreteSeriesShifts.ThmBpDS
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.FormalDegreeCompactDualIff
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OnePlaceKF
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SumPlacesEqTrace
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.JEqOrbInt
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AmplifierOfHypotheses
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselGapDimensionFormula
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.UniqGapOfUniq
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselCoefficientNonzero
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.HaarEqSmul
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.SumNonneg
+
+@[expose] public section
+
 open MeasureTheory Matrix
 open scoped InnerProductSpace ENNReal
 open Formalism.BasicNotions Formalism.QuantumDeterminants Formalism.MainNotions.S BranchingSupport GlobalTheory.CellAmp
@@ -177,7 +182,8 @@ theorem oneAt : GlobalTheory.GapIn.Hyp → ∀ (k r : ℕ) (L : Formalism.MainNo
     intro T
     ext η
     conv_lhs => rw [← e.sum_repr' η]
-    simp [ContinuousLinearMap.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [ContinuousLinearMap.sum_apply, map_sum]
   have hFe : ∀ g ∈ UH (Hpk k r), F g = ∑ i, ∑ j, coefF L (x i) (y i) (X i (e j)) (e j) g := by
     intro g hg
     rw [hF g hg]
@@ -199,14 +205,15 @@ theorem oneAt : GlobalTheory.GapIn.Hyp → ∀ (k r : ℕ) (L : Formalism.MainNo
     fun i j => (key (hxy i).1 (hxy i).2 _ _).1
   have e2 : OrbInt L F γ ν = ∑ i, ∑ j, OrbInt L (coefF L (x i) (y i) (X i (e j)) (e j)) γ ν := by
     unfold OrbInt
-    rw [integral_congr_ae hae, integral_finset_sum _ fun i _ => integrable_finset_sum _ fun j _ => hi i j]
-    exact Finset.sum_congr rfl fun i _ => integral_finset_sum _ fun j _ => hi i j
+    rw [integral_congr_ae hae, integral_finsetSum _ fun i _ => integrable_finsetSum _ fun j _ => hi i j]
+    exact Finset.sum_congr rfl fun i _ => integral_finsetSum _ fun j _ => hi i j
   rw [e2, Finset.sum_smul]
   refine Finset.sum_congr rfl fun i _ => ?_
   simp only [hc]
   rw [← Finset.sum_smul]
   congr 1
-  conv_rhs => rw [← e.sum_repr' (l' (y i)), map_sum, inner_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [← e.sum_repr' (l' (y i)), map_sum, inner_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_smul, inner_smul_right, mul_comm]
 

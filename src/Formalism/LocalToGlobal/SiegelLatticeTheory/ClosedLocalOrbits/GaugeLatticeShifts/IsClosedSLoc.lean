@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacExGoodOfN
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.UpMatZero
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SigmaFiniteOfFcG
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HaarUniquenessConjugation
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSB
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GroupFactorizationHolds
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacExGoodOfN
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.UpMatZero
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SigmaFiniteOfFcG
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HaarUniquenessConjugation
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSB
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GroupFactorizationHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,7 +106,7 @@ theorem unique_sf (S : Subgroup G) (hS : IsClosed (S : Set G)) (μ m : Measure G
       ENNReal.inv_mul_cancel hms0 hmsT, one_mul]
   have hfin : μ = (μ' s / m' s) • m := by
     conv_lhs => rw [← hμ3, hμ'eq]
-    rw [Measure.map_smul, hm3]
+    rw [Measure.map_smul _ he.measurable.aemeasurable, hm3]
   exact ⟨μ' s / m' s, (ENNReal.div_pos_iff.2 ⟨hs0, hmsT⟩).ne', ENNReal.div_ne_top hsT hms0, hfin⟩
 
 end Gen
@@ -163,20 +167,17 @@ theorem isClosed_sLoc (ε : Fin n → Bool) (e : Fin r → Fin n → ℂ) (z : F
   rw [hset]
   exact (isClosed_iInter fun a => hcl _ _).inter (hcl _ _)
 
-theorem sLoc_clSub (ε : Fin n → Bool) (e : Fin r → Fin n → ℂ) (z : Fin n → ℂ) : IsClSub (SLoc ε e z) where
-  one_mem := by
-    show InS e z (uMat (1 : Formalism.REAL.UJ ε))
+theorem sLoc_clSub (ε : Fin n → Bool) (e : Fin r → Fin n → ℂ) (z : Fin n → ℂ) : IsClSub (SLoc ε e z) := by
+  refine ⟨?_, ?_, ?_, isClosed_sLoc ε e z⟩
+  · show InS e z (uMat (1 : Formalism.REAL.UJ ε))
     have : uMat (1 : Formalism.REAL.UJ ε) = 1 := by simp [uMat]
     rw [this]; exact inS_one e z
-  mul_mem := by
-    intro x hx y hy
+  · intro x hx y hy
     show InS e z (uMat (x * y))
     have : uMat (x * y) = uMat x * uMat y := by simp [uMat]
     rw [this]; exact inS_mul e z hx hy
-  inv_mem := by
-    intro x hx
+  · intro x hx
     exact Formalism.L2.SG.RealObj.InfCut.inS_inv e z (uMat x) (uMat x⁻¹) (Formalism.L2.SG.RealObj.InfCut.uMat_inv_mul' x) hx
-  closed := isClosed_sLoc ε e z
 
 end SL
 
@@ -233,7 +234,10 @@ theorem haarCorr_of (hSC : SetCorr) : HaarCorr := by
     fun u => hSC r k ε e z zH P hH hP he hzH hz hT u
   have hSsub : ∀ x : Formalism.QuantumDeterminants.Mt k r, Matrix.of x ∈ Formalism.QuantumDeterminants.Sset k r zH → x ∈ Set.range φ := fun x hx =>
     (Formalism.FourierDecayAlt.P.HaarUniquenessConjugation.phi_range_iff Formalism.REAL.uJEmb Formalism.QuantumDeterminants.uHConj hP hH x).2 (Formalism.QuantumDeterminants.Sset_UH hx)
-  have hνc : ν (Set.range φ)ᶜ = 0 := measure_mono_null (fun x hx hS' => hx (hSsub x hS')) hSS.2.2.1
+  have hνc : ν (Set.range φ)ᶜ = 0 := by
+    refine measure_mono_null ?_ hSS.2.2.1
+    intro x hx hS'
+    exact hx (hSsub x hS')
   have hmap : (ν.comap φ).map φ = ν := by
     rw [hme.map_comap]
     exact Measure.restrict_eq_self_of_ae_mem (ae_iff.2 hνc)
@@ -276,6 +280,6 @@ theorem haarCorr_of (hSC : SetCorr) : HaarCorr := by
   obtain ⟨c, hc0, hcT, hμS⟩ :=
     unique_sf _ hSg μS (ν.comap φ) hS.1.2.1 hS.1.2.2.1 hS.1.2.2.2 hS.2 hm0 hmσ hmc hmi
   refine ⟨c.toReal, ENNReal.toReal_pos hc0 hcT, ?_⟩
-  rw [ENNReal.ofReal_toReal hcT, hμS, Measure.map_smul, hmap]
+  rw [ENNReal.ofReal_toReal hcT, hμS, Measure.map_smul _ hme.measurable.aemeasurable, hmap]
 
 end Formalism.L2.SG.RealObj.InfCut.JacobianCoordinates.JL

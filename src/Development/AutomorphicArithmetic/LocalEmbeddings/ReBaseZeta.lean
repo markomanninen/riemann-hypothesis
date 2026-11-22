@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ZetaIdentityPersistsRowColumnChanges
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeisenbergOperatorIsotropicTranslationCharSplitStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitPlaceCharacterAndTranslationCoordsSurjectivStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSmulOfCommuteHeisenbergLinearModelSchwartzBruhStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinearModelUnitaryConjugate
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatchedFiniteMapsRestriction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ZetaIdentityPersistsRowColumnChanges
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeisenbergOperatorIsotropicTranslationCharSplitStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitPlaceCharacterAndTranslationCoordsSurjectivStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSmulOfCommuteHeisenbergLinearModelSchwartzBruhStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinearModelUnitaryConjugate
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatchedFiniteMapsRestriction
+
+@[expose] public section
 
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
@@ -87,9 +91,9 @@ open GlobalTheory.FlipMatch (coX coY pairM)
 open scoped GlobalTheory.VacAny ValuativeRel
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
-  {n d r s r' s' : ℕ} {X : Spc F E n} {W : Spc F E d} {B : Base F E} {v : Pl F}
+  {n d r s r' s' : ℕ} {X : Spc F E n} {W : Spc F E d} {B : Base F E} {v : Pl (F := F)}
 
-theorem psiLoc_zero' (ψ : AddChar (AF F) ℂ) (v : Pl F) : psiLoc ψ v 0 = 1 := by
+theorem psiLoc_zero' (ψ : AddChar (AF F) ℂ) (v : Pl (F := F)) : psiLoc ψ v 0 = 1 := by
   rw [psiLoc, map_zero, map_zero]
   exact AddChar.map_zero_eq_one ψ
 
@@ -125,14 +129,20 @@ theorem linW_change (hB : B.IsGood σ) (hX : X.IsHerm σ B r s) (hW : W.IsSkew �
   have act := fun b c u hu hp φ hφ => (GlobalTheory.T.heisenbergOperator_isotropic_translation_char_split hB.cm X W hX.herm hW.skew (GlobalTheory.FinUniq.det_ne_zero_herm hX)
     (GlobalTheory.FinUniq.det_ne_zero_skew hW) M B.ψ hB.std t b c u hu hp φ hφ _ (hsb u φ hφ)
     (GlobalTheory.VacBridge.rho_acts_locCo M.co B.ψ v u hu φ)).1
-  choose zX hzX hzX0 hzXe using fun Z => (GlobalTheory.T.splitPlace_characterAndTranslationCoords_surjective F E σ B hB n d _ _ _ _ X W hX hW v t (b * g) (c * k) Z).1
-  choose zY hzY hzY0 hzYe using fun Z => (GlobalTheory.T.splitPlace_characterAndTranslationCoords_surjective F E σ B hB n d _ _ _ _ X W hX hW v t (b * g) (c * k) Z).2
+  choose zX hzX using fun Z => (GlobalTheory.T.splitPlace_characterAndTranslationCoords_surjective F E σ B hB n d _ _ _ _ X W hX hW v t (b * g) (c * k) Z).1
+  have hzX0 := fun Z => (hzX Z).2.1
+  have hzXe := fun Z => (hzX Z).2.2
+  have hzX := fun Z => (hzX Z).1
+  choose zY hzY using fun Z => (GlobalTheory.T.splitPlace_characterAndTranslationCoords_surjective F E σ B hB n d _ _ _ _ X W hX hW v t (b * g) (c * k) Z).2
+  have hzY0 := fun Z => (hzY Z).2.1
+  have hzYe := fun Z => (hzY Z).2.2
+  have hzY := fun Z => (hzY Z).1
   have y0 : ∀ b c Z, coY σ X W t b c (zX Z) = 0 := fun b c Z => by simp [coY, hzX0]
   have x0 : ∀ b c Z, coX t b c (zY Z) = 0 := fun b c Z => by simp [coX, hzY0]
   have p0 : ∀ Y : Matrix (Fin n) (Fin d) (Fv F v), pairM Y 0 = 0 := fun Y => by simp [pairM]
   have p0' : ∀ Y : Matrix (Fin n) (Fin d) (Fv F v), pairM 0 Y = 0 := fun Y => by simp [pairM]
   refine GlobalTheory.T.eq_smul_of_commute_heisenberg_linearModel_schwartzBruhat (SB (Fin n × Fin d → Fv F v)) (GlobalTheory.LatVac.psiAt B.ψ v) hψc hψ1 ι₂
-    (fun φ Y => ι φ (g.val * Y * k.valᵀ)) (Model.IsLin.bij hι₂) (fun x _ y _ a => by rw [map_add, map_smul]; rfl)
+    (fun φ Y => ι φ (g.val * Y * k.valᵀ)) (Model.IsLin.bij hι₂) (fun x _ y _ a => by rw [map_add (f := _), map_smul]; rfl)
     (fun C φ => schr (GlobalTheory.LatVac.psiAt B.ψ v) (GlobalTheory.LatVac.locCo M.co v (zX C)) φ)
     (fun l φ => schr (GlobalTheory.LatVac.psiAt B.ψ v)
       (GlobalTheory.LatVac.locCo M.co v (zY (Matrix.of fun i j => l (Matrix.single i j 1)))) φ)
@@ -159,8 +169,14 @@ theorem linBar_change (hB : B.IsGood σ) (hX : X.IsHerm σ B r s) (hW : W.IsSkew
   have act := fun b c u hu hp φ hφ => (GlobalTheory.T.heisenbergOperator_isotropic_translation_char_split hB.cm X W hX.herm hW.skew (GlobalTheory.FinUniq.det_ne_zero_herm hX)
     (GlobalTheory.FinUniq.det_ne_zero_skew hW) M B.ψ hB.std t b c u hu hp φ hφ _ (hsb u φ hφ)
     (GlobalTheory.VacBridge.rho_acts_locCo M.co B.ψ v u hu φ)).2
-  choose zX hzX hzX0 hzXe using fun Z => (GlobalTheory.T.splitPlace_characterAndTranslationCoords_surjective F E σ B hB n d _ _ _ _ X W hX hW v t (b * g) (c * k) Z).1
-  choose zY hzY hzY0 hzYe using fun Z => (GlobalTheory.T.splitPlace_characterAndTranslationCoords_surjective F E σ B hB n d _ _ _ _ X W hX hW v t (b * g) (c * k) Z).2
+  choose zX hzX using fun Z => (GlobalTheory.T.splitPlace_characterAndTranslationCoords_surjective F E σ B hB n d _ _ _ _ X W hX hW v t (b * g) (c * k) Z).1
+  have hzX0 := fun Z => (hzX Z).2.1
+  have hzXe := fun Z => (hzX Z).2.2
+  have hzX := fun Z => (hzX Z).1
+  choose zY hzY using fun Z => (GlobalTheory.T.splitPlace_characterAndTranslationCoords_surjective F E σ B hB n d _ _ _ _ X W hX hW v t (b * g) (c * k) Z).2
+  have hzY0 := fun Z => (hzY Z).2.1
+  have hzYe := fun Z => (hzY Z).2.2
+  have hzY := fun Z => (hzY Z).1
   have y0 : ∀ b c Z, coY σ X W t b c (zX Z) = 0 := fun b c Z => by simp [coY, hzX0]
   have x0 : ∀ b c Z, coX t b c (zY Z) = 0 := fun b c Z => by simp [coX, hzY0]
   have p0 : ∀ Y : Matrix (Fin n) (Fin d) (Fv F v), pairM Y 0 = 0 := fun Y => by simp [pairM]
@@ -173,7 +189,7 @@ theorem linBar_change (hB : B.IsGood σ) (hX : X.IsHerm σ B r s) (hW : W.IsSkew
     rwa [mul_inv_cancel_right, mul_inv_cancel_right] at this
   refine GlobalTheory.T.eq_smul_of_commute_heisenberg_linearModel_schwartzBruhat (SB (Fin n × Fin d → Fv F v)) (GlobalTheory.LatVac.psiAt B.ψ v) hψc hψ1 ι₂
     (fun φ Y => ι φ ((GlobalTheory.SplitFlip.invT g).val * Y * (k⁻¹).val)) (Model.IsLin.bij hι₂)
-    (fun x _ y _ a => by rw [map_add, map_smul]; rfl)
+    (fun x _ y _ a => by rw [map_add (f := _), map_smul]; rfl)
     (fun C φ => schr (GlobalTheory.LatVac.psiAt B.ψ v) (GlobalTheory.LatVac.locCo M.co v (zY C)) φ)
     (fun l φ => schr (GlobalTheory.LatVac.psiAt B.ψ v)
       (GlobalTheory.LatVac.locCo M.co v (zX (-Matrix.of fun i j => l (Matrix.single i j 1)))) φ)
@@ -187,7 +203,7 @@ theorem linBar_change (hB : B.IsGood σ) (hX : X.IsHerm σ B r s) (hW : W.IsSkew
   · rw [act _ _ _ (hzX _) (by rw [y0, p0]) x hx ι hι, y0, add_zero, pairM_mul, ← eX, hzXe, pairM_neg, neg_neg, pairM_lin]
     rfl
 
-theorem mem_O_iff (v : Pl F) (a : Fv F v) : a ∈ 𝒪[Fv F v] ↔ a ∈ v.adicCompletionIntegers F := by
+theorem mem_O_iff (v : Pl (F := F)) (a : Fv F v) : a ∈ 𝒪[Fv F v] ↔ a ∈ v.adicCompletionIntegers F := by
   rw [Valuation.mem_integer_iff, ← map_one (ValuativeRel.valuation (Fv F v)), ← Valuation.Compatible.vle_iff_le,
     IsDedekindDomain.HeightOneSpectrum.mem_adicCompletionIntegers,
     ← map_one (Valued.v : Valuation (v.adicCompletion F) (WithZero (Multiplicative ℤ)))]
@@ -201,7 +217,7 @@ theorem mem_KO_of_bases {t : E →ₐ[F] Fv F v} {L : Submodule (𝓞 E) (Fin n 
 
 variable {a a' : ℕ}
 
-def kap (G : Geo σ a a') (V : Spc F E a) (V' : Spc F E a') (Z : Spc F E (a + a')) (v : Pl F) : (Fv F v)ˣ :=
+def kap (G : Geo σ a a') (V : Spc F E a) (V' : Spc F E a') (Z : Spc F E (a + a')) (v : Pl (F := F)) : (Fv F v)ˣ :=
   GlobalTheory.SplitFlip.gdet ((G.V.bas v)⁻¹ * V.bas v) * GlobalTheory.SplitFlip.gdet ((G.V'.bas v)⁻¹ * V'.bas v) *
     GlobalTheory.SplitFlip.gdet ((G.W.bas v)⁻¹ * Z.bas v)
 
@@ -214,8 +230,8 @@ theorem valuation_kap (hG : G.IsGood B) (hG₂ : (reG G V V' Z).IsGood B) (v : B
     GlobalTheory.SplitFlip.valuation_gdet_of_mem_KO (mem_KO_of_bases (b₂ := V'.bas v) (hG.hV'.bas v) (hG₂.hV'.bas v)),
     GlobalTheory.SplitFlip.valuation_gdet_of_mem_KO (mem_KO_of_bases (b₂ := Z.bas v) (hG.hW.bas v) (hG₂.hW.bas v)), one_mul, one_mul]
 
-attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL Formalism.DoubleCosetMeasures.instBorelGL Formalism.DoubleCosetMeasures.instMeasMat in
 
+attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL Formalism.DoubleCosetMeasures.instBorelGL Formalism.DoubleCosetMeasures.instMeasMat in
 theorem zeta_rel (hB : B.IsGood σ) (hG : G.IsGood B) (hG₂ : (reG G V V' Z).IsGood B) {X : Chars F E}
     {Rf S : FinMaps F a a'} {v : B.P} (h : IsZetaAt B G X Rf v) (h₂ : IsZetaAt B (reG G V V' Z) X S v)
     {φ φ'} (hφ : φ ∈ SB (Fin a × Fin (a + a') → Fv F v.1)) (hφ' : φ' ∈ SB (Fin a' × Fin (a + a') → Fv F v.1))

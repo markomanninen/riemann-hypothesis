@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.FinPosEqCast
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.FinPosEqCast
+
+@[expose] public section
 
 noncomputable section
 

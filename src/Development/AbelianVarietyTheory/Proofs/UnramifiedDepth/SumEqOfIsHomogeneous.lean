@@ -1,20 +1,24 @@
-import Mathlib
-import Formalism.FormalGroupLog.FormalGroupLogProofs.ChainRule
-import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
-import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.LegendreBoundsFactorialMultiIndexCapelliStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.DetFrobeniusSubPowSupportStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.WeightNonnegExpOfWeightGeInvPrimeSubOneStatement
-import Formalism.LocalToGlobal.CharacterGerms.BiadditiveInSingleVariables
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FactorialWeightedPairingDetPowProportionalStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.DeterminantPairingQuotientValuationLowerBoundStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ProdIccMulFactorial
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.LegendreAndCapelli
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.RadiiValuationDifferences
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.NewtonBoundPosAndNewtonStep
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.BlockValueOnRowsEqStatement
+module
+
+public import Mathlib
+public import Formalism.FormalGroupLog.FormalGroupLogProofs.ChainRule
+public import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
+public import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.LegendreBoundsFactorialMultiIndexCapelliStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.DetFrobeniusSubPowSupportStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.WeightNonnegExpOfWeightGeInvPrimeSubOneStatement
+public import Formalism.LocalToGlobal.CharacterGerms.BiadditiveInSingleVariables
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FactorialWeightedPairingDetPowProportionalStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.DeterminantPairingQuotientValuationLowerBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ProdIccMulFactorial
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.LegendreAndCapelli
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.RadiiValuationDifferences
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.NewtonBoundPosAndNewtonStep
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.BlockValueOnRowsEqStatement
+
+@[expose] public section
 
 section
 open ReciprocityTheory.PGsh
@@ -37,16 +41,17 @@ theorem form_monomial (φ : (σ →₀ ℕ) → C) (A : σ →₀ ℕ) (c : C) :
   rw [h, map_smul, form, Module.Basis.constr_basis, smul_eq_mul]
 
 theorem form_eq_sum (φ : (σ →₀ ℕ) → C) (P : MvPolynomial σ C) :
-    form φ P = ∑ A ∈ P.support, MvPolynomial.coeff A P * φ A := by
+    form φ P = ∑ A ∈ P.support, AddMonoidAlgebra.coeff P A * φ A := by
   conv_lhs => rw [P.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [form_monomial]
 
 theorem form_mul_X (φ : (σ →₀ ℕ) → C) (P : MvPolynomial σ C) (i : σ) :
     form φ (P * MvPolynomial.X i) = form (fun A => φ (A + Finsupp.single i 1)) P := by
   induction P using MvPolynomial.induction_on' with
   | monomial u a => rw [MvPolynomial.X, MvPolynomial.monomial_mul, form_monomial, form_monomial, mul_one]
-  | add p q hp hq => rw [add_mul, map_add, map_add, hp, hq]
+  | add p q hp hq => rw [add_mul, map_add (f := _), map_add (f := _), hp, hq]
 
 theorem form_add (φ ψ : (σ →₀ ℕ) → C) (P : MvPolynomial σ C) :
     form (fun A => φ A + ψ A) P = form φ P + form ψ P := by
@@ -61,7 +66,7 @@ theorem form_rename {τ : Type} (e : σ → τ) (φ : (τ →₀ ℕ) → C) (P 
     form φ (MvPolynomial.rename e P) = form (fun A => φ (A.mapDomain e)) P := by
   induction P using MvPolynomial.induction_on' with
   | monomial u a => rw [MvPolynomial.rename_monomial, form_monomial, form_monomial]
-  | add p q hp hq => rw [map_add, map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
 
 def fact (C : Type) [Field C] (A : σ →₀ ℕ) : C := A.prod fun _ e => (e.factorial : C)
 
@@ -78,7 +83,7 @@ def pair (P : MvPolynomial σ C) (f : MvPowerSeries σ C) : C :=
   form (fun A => fact C A * MvPowerSeries.coeff A f) P
 
 theorem pair_mul_X (P : MvPolynomial σ C) (f : MvPowerSeries σ C) (i : σ) :
-    pair (P * MvPolynomial.X i) f = pair P (MvPowerSeries.pderiv C i f) := by
+    pair (P * MvPolynomial.X i) f = pair P (MvPowerSeries.pderiv (R := C) i f) := by
   rw [pair, pair, form_mul_X]
   congr 2
   funext A
@@ -87,7 +92,7 @@ theorem pair_mul_X (P : MvPolynomial σ C) (f : MvPowerSeries σ C) (i : σ) :
 
 theorem pair_add_right (P : MvPolynomial σ C) (f g : MvPowerSeries σ C) :
     pair P (f + g) = pair P f + pair P g := by
-  simp only [pair, map_add, mul_add, form_add]
+  simp only [pair, map_add (f := _), mul_add, form_add]
 
 theorem pair_smul_right (P : MvPolynomial σ C) (c : C) (f : MvPowerSeries σ C) :
     pair P (c • f) = c * pair P f := by
@@ -112,7 +117,7 @@ theorem coeff_slice (b : κ' →₀ ℕ) (g : MvPowerSeries (κ ⊕ κ') C) (A :
 theorem slice_add (b : κ' →₀ ℕ) (f g : MvPowerSeries (κ ⊕ κ') C) :
     slice b (f + g) = slice b f + slice b g := by
   ext A
-  simp only [coeff_slice, map_add]
+  simp only [coeff_slice, map_add (f := _)]
 
 theorem slice_smul (b : κ' →₀ ℕ) (c : C) (g : MvPowerSeries (κ ⊕ κ') C) :
     slice b (c • g) = c • slice b g := by
@@ -120,7 +125,7 @@ theorem slice_smul (b : κ' →₀ ℕ) (c : C) (g : MvPowerSeries (κ ⊕ κ') 
   simp only [coeff_slice, map_smul]
 
 theorem slice_pderiv (b : κ' →₀ ℕ) (g : MvPowerSeries (κ ⊕ κ') C) (j : κ') :
-    slice b (MvPowerSeries.pderiv C (Sum.inr j) g) = ((b j : C) + 1) • slice (b + Finsupp.single j 1) g := by
+    slice b (MvPowerSeries.pderiv (R := C) (Sum.inr j) g) = ((b j : C) + 1) • slice (b + Finsupp.single j 1) g := by
   classical
   ext A
   have h : Finsupp.sumFinsuppEquivProdFinsupp.symm (A, b) + Finsupp.single (Sum.inr j) 1 =
@@ -157,7 +162,7 @@ theorem pair_rename_inl (F : MvPolynomial κ C) (g : MvPowerSeries (κ ⊕ κ') 
   have h : A.mapDomain Sum.inl = Finsupp.sumFinsuppEquivProdFinsupp.symm (A, (0 : κ' →₀ ℕ)) := by
     ext x
     rcases x with x | x
-    · rw [Finsupp.mapDomain_apply Sum.inl_injective]; simp
+    · rw [Finsupp.mapDomain_apply_of_injective Sum.inl_injective]; simp
     · rw [Finsupp.mapDomain_notin_range _ _ (by simp)]; simp
   rw [coeff_slice, ← h, fact, fact, Finsupp.prod_mapDomain_index_inj Sum.inl_injective]
 
@@ -179,7 +184,7 @@ theorem mixed_smul_right (F : MvPolynomial κ C) (H : MvPolynomial (κ ⊕ κ') 
 
 theorem mixed_mul_X_inr (F : MvPolynomial κ C) (H : MvPolynomial (κ ⊕ κ') C)
     (g : MvPowerSeries (κ ⊕ κ') C) (j : κ') :
-    mixed F (H * MvPolynomial.X (Sum.inr j)) g = mixed F H (MvPowerSeries.pderiv C (Sum.inr j) g) := by
+    mixed F (H * MvPolynomial.X (Sum.inr j)) g = mixed F H (MvPowerSeries.pderiv (R := C) (Sum.inr j) g) := by
   classical
   rw [mixed, mixed, form_mul_X]
   congr 2
@@ -220,7 +225,7 @@ theorem mixed_mul_rename_inl (F : MvPolynomial κ C) (p : MvPolynomial κ C) :
       mul_comm H, MvPolynomial.C_mul', mixed, map_smul, smul_eq_mul, mixed]
   | add p q hp hq =>
     intro H g
-    rw [map_add, MvPolynomial.coe_add, add_mul, mixed_add_right, ← hp, ← hq, mul_add, mixed, map_add,
+    rw [map_add (f := _), MvPolynomial.coe_add, add_mul, mixed_add_right, ← hp, ← hq, mul_add, mixed, map_add (f := _),
       mixed, mixed]
   | mul_X p i hp =>
     intro H g
@@ -236,7 +241,7 @@ theorem mixed_one (F : MvPolynomial κ C) (g : MvPowerSeries (κ ⊕ κ') C) :
 
 theorem pair_eq_mixed (ζ : κ' → MvPolynomial κ C) (F : MvPolynomial κ C)
     (E : MvPowerSeries (κ ⊕ κ') C) (h0 : ∀ g, slice 0 (E * g) = slice 0 g)
-    (hd : ∀ j, MvPowerSeries.pderiv C (Sum.inr j) E =
+    (hd : ∀ j, MvPowerSeries.pderiv (R := C) (Sum.inr j) E =
       E * ((MvPolynomial.rename Sum.inl (ζ j) : MvPolynomial (κ ⊕ κ') C) : MvPowerSeries (κ ⊕ κ') C))
     (G : MvPolynomial κ' C) : ∀ g : MvPowerSeries (κ ⊕ κ') C,
     pair (MvPolynomial.rename Sum.inl F * MvPolynomial.rename Sum.inr G) (E * g) =
@@ -249,13 +254,13 @@ theorem pair_eq_mixed (ζ : κ' → MvPolynomial κ C) (F : MvPolynomial κ C)
       MvPolynomial.aeval_C, Algebra.algebraMap_eq_smul_one, mixed, map_smul, ← mixed, mixed_one]
   | add p q hp hq =>
     intro g
-    rw [map_add, mul_add, pair, map_add, ← pair, ← pair, hp, hq, map_add, mixed, mixed, mixed, map_add]
+    rw [map_add (f := _), mul_add, pair, map_add (f := _), ← pair, ← pair, hp, hq, map_add (f := _), mixed, mixed, mixed, map_add (f := _)]
   | mul_X p j hp =>
     intro g
     rw [map_mul, MvPolynomial.rename_X, ← mul_assoc, pair_mul_X, Derivation.leibniz, hd, smul_eq_mul,
       smul_eq_mul, mul_comm g, mul_assoc E, ← mul_add, hp, mixed_add_right, map_mul, MvPolynomial.aeval_X,
       mul_add, ← mixed_mul_X_inr, ← mixed_mul_rename_inl, add_comm]
-    simp only [mixed, map_add]
+    simp only [mixed, map_add (f := _)]
 
 end Two
 
@@ -272,9 +277,9 @@ theorem exp_eq_one_add {C : Type} [Field C] [CharZero C] {σ : Type} (f : MvPowe
 
 theorem main :
   (∀ (C : Type) [Field C] [CharZero C] (κ κ' : Type) [Fintype κ] [Fintype κ'] [DecidableEq κ] [DecidableEq κ'] (ζ : κ' → MvPolynomial κ C) (F : MvPolynomial κ C) (G : MvPolynomial κ' C) (g : MvPowerSeries (κ ⊕ κ') C),
-    (∑ A ∈ ((MvPolynomial.rename Sum.inl F * MvPolynomial.rename Sum.inr G : MvPolynomial (κ ⊕ κ') C)).support, MvPolynomial.coeff A ((MvPolynomial.rename Sum.inl F * MvPolynomial.rename Sum.inr G : MvPolynomial (κ ⊕ κ') C)) * (A.prod fun _ e => (e.factorial : C)) * MvPowerSeries.coeff A (PowerSeries.subst (((∑ j, MvPolynomial.rename Sum.inl (ζ j) * MvPolynomial.X (Sum.inr j) : MvPolynomial (κ ⊕ κ') C) : MvPowerSeries (κ ⊕ κ') C)) (PowerSeries.exp C) * g)) =
-    ∑ m ∈ (MvPolynomial.aeval (fun j => (MvPolynomial.rename Sum.inl (ζ j) + MvPolynomial.X (Sum.inr j) : MvPolynomial (κ ⊕ κ') C)) G).support, MvPolynomial.coeff m (MvPolynomial.aeval (fun j => (MvPolynomial.rename Sum.inl (ζ j) + MvPolynomial.X (Sum.inr j) : MvPolynomial (κ ⊕ κ') C)) G) * ((Finsupp.sumFinsuppEquivProdFinsupp m).2.prod fun _ e => (e.factorial : C)) *
-      (∑ A ∈ (F).support, MvPolynomial.coeff A (F) * (A.prod fun _ e => (e.factorial : C)) * MvPowerSeries.coeff A (MvPowerSeries.monomial (Finsupp.sumFinsuppEquivProdFinsupp m).1 (1 : C) * (show MvPowerSeries κ C from fun A' => MvPowerSeries.coeff (Finsupp.sumFinsuppEquivProdFinsupp.symm (A', (Finsupp.sumFinsuppEquivProdFinsupp m).2)) g)))) := by
+    (∑ A ∈ ((MvPolynomial.rename Sum.inl F * MvPolynomial.rename Sum.inr G : MvPolynomial (κ ⊕ κ') C)).support, AddMonoidAlgebra.coeff ((MvPolynomial.rename Sum.inl F * MvPolynomial.rename Sum.inr G : MvPolynomial (κ ⊕ κ') C)) A * (A.prod fun _ e => (e.factorial : C)) * MvPowerSeries.coeff A (PowerSeries.subst (((∑ j, MvPolynomial.rename Sum.inl (ζ j) * MvPolynomial.X (Sum.inr j) : MvPolynomial (κ ⊕ κ') C) : MvPowerSeries (κ ⊕ κ') C)) (PowerSeries.exp C) * g)) =
+    ∑ m ∈ (MvPolynomial.aeval (fun j => (MvPolynomial.rename Sum.inl (ζ j) + MvPolynomial.X (Sum.inr j) : MvPolynomial (κ ⊕ κ') C)) G).support, AddMonoidAlgebra.coeff (MvPolynomial.aeval (fun j => (MvPolynomial.rename Sum.inl (ζ j) + MvPolynomial.X (Sum.inr j) : MvPolynomial (κ ⊕ κ') C)) G) m * ((Finsupp.sumFinsuppEquivProdFinsupp m).2.prod fun _ e => (e.factorial : C)) *
+      (∑ A ∈ (F).support, AddMonoidAlgebra.coeff (F) A * (A.prod fun _ e => (e.factorial : C)) * MvPowerSeries.coeff A (MvPowerSeries.monomial (Finsupp.sumFinsuppEquivProdFinsupp m).1 (1 : C) * (show MvPowerSeries κ C from fun A' => MvPowerSeries.coeff (Finsupp.sumFinsuppEquivProdFinsupp.symm (A', (Finsupp.sumFinsuppEquivProdFinsupp m).2)) g)))) := by
   intro C _ _ κ κ' _ _ _ _ ζ F G g
   set q : MvPolynomial (κ ⊕ κ') C :=
     ∑ j, MvPolynomial.rename Sum.inl (ζ j) * MvPolynomial.X (Sum.inr j) with hq
@@ -317,9 +322,9 @@ section
 open ReciprocityTheory.PGsh
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.OddBlock.expShift : (∀ (C : Type) [Field C] [CharZero C] (κ κ' : Type) [Fintype κ] [Fintype κ'] [DecidableEq κ] [DecidableEq κ'] (ζ : κ' → MvPolynomial κ C) (F : MvPolynomial κ C) (G : MvPolynomial κ' C) (g : MvPowerSeries (κ ⊕ κ') C),
-    (∑ A ∈ ((MvPolynomial.rename Sum.inl F * MvPolynomial.rename Sum.inr G : MvPolynomial (κ ⊕ κ') C)).support, MvPolynomial.coeff A ((MvPolynomial.rename Sum.inl F * MvPolynomial.rename Sum.inr G : MvPolynomial (κ ⊕ κ') C)) * (A.prod fun _ e => (e.factorial : C)) * MvPowerSeries.coeff A (PowerSeries.subst (((∑ j, MvPolynomial.rename Sum.inl (ζ j) * MvPolynomial.X (Sum.inr j) : MvPolynomial (κ ⊕ κ') C) : MvPowerSeries (κ ⊕ κ') C)) (PowerSeries.exp C) * g)) =
-    ∑ m ∈ (MvPolynomial.aeval (fun j => (MvPolynomial.rename Sum.inl (ζ j) + MvPolynomial.X (Sum.inr j) : MvPolynomial (κ ⊕ κ') C)) G).support, MvPolynomial.coeff m (MvPolynomial.aeval (fun j => (MvPolynomial.rename Sum.inl (ζ j) + MvPolynomial.X (Sum.inr j) : MvPolynomial (κ ⊕ κ') C)) G) * ((Finsupp.sumFinsuppEquivProdFinsupp m).2.prod fun _ e => (e.factorial : C)) *
-      (∑ A ∈ (F).support, MvPolynomial.coeff A (F) * (A.prod fun _ e => (e.factorial : C)) * MvPowerSeries.coeff A (MvPowerSeries.monomial (Finsupp.sumFinsuppEquivProdFinsupp m).1 (1 : C) * (show MvPowerSeries κ C from fun A' => MvPowerSeries.coeff (Finsupp.sumFinsuppEquivProdFinsupp.symm (A', (Finsupp.sumFinsuppEquivProdFinsupp m).2)) g)))) := by
+    (∑ A ∈ ((MvPolynomial.rename Sum.inl F * MvPolynomial.rename Sum.inr G : MvPolynomial (κ ⊕ κ') C)).support, AddMonoidAlgebra.coeff ((MvPolynomial.rename Sum.inl F * MvPolynomial.rename Sum.inr G : MvPolynomial (κ ⊕ κ') C)) A * (A.prod fun _ e => (e.factorial : C)) * MvPowerSeries.coeff A (PowerSeries.subst (((∑ j, MvPolynomial.rename Sum.inl (ζ j) * MvPolynomial.X (Sum.inr j) : MvPolynomial (κ ⊕ κ') C) : MvPowerSeries (κ ⊕ κ') C)) (PowerSeries.exp C) * g)) =
+    ∑ m ∈ (MvPolynomial.aeval (fun j => (MvPolynomial.rename Sum.inl (ζ j) + MvPolynomial.X (Sum.inr j) : MvPolynomial (κ ⊕ κ') C)) G).support, AddMonoidAlgebra.coeff (MvPolynomial.aeval (fun j => (MvPolynomial.rename Sum.inl (ζ j) + MvPolynomial.X (Sum.inr j) : MvPolynomial (κ ⊕ κ') C)) G) m * ((Finsupp.sumFinsuppEquivProdFinsupp m).2.prod fun _ e => (e.factorial : C)) *
+      (∑ A ∈ (F).support, AddMonoidAlgebra.coeff (F) A * (A.prod fun _ e => (e.factorial : C)) * MvPowerSeries.coeff A (MvPowerSeries.monomial (Finsupp.sumFinsuppEquivProdFinsupp m).1 (1 : C) * (show MvPowerSeries κ C from fun A' => MvPowerSeries.coeff (Finsupp.sumFinsuppEquivProdFinsupp.symm (A', (Finsupp.sumFinsuppEquivProdFinsupp m).2)) g)))) := by
   exact @GlobalTheory.OddBlock.ExpShift.main
 
 end
@@ -354,9 +359,10 @@ theorem act_monomial (g : MvPowerSeries (κ ⊕ κ') C) (m : κ ⊕ κ' →₀ �
   rw [h, map_smul, act, Module.Basis.constr_basis]
 
 theorem act_eq (g : MvPowerSeries (κ ⊕ κ') C) (P : MvPolynomial (κ ⊕ κ') C) :
-    act g P = ∑ m ∈ P.support, MvPolynomial.coeff m P • actMon g m := by
+    act g P = ∑ m ∈ P.support, AddMonoidAlgebra.coeff P m • actMon g m := by
   conv_lhs => rw [P.as_sum]
-  simp only [map_sum, act_monomial]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, act_monomial]
 
 theorem act_mul (g : MvPowerSeries (κ ⊕ κ') C) (R : MvPolynomial κ C)
     (P : MvPolynomial (κ ⊕ κ') C) :
@@ -365,12 +371,12 @@ theorem act_mul (g : MvPowerSeries (κ ⊕ κ') C) (R : MvPolynomial κ C)
   | add p q hp hq => simp [add_mul, hp, hq]
   | monomial a c =>
     induction P using MvPolynomial.induction_on' with
-    | add p q hp hq => simp only [mul_add, map_add, hp, hq]
+    | add p q hp hq => simp only [mul_add, map_add (f := _), hp, hq]
     | monomial m d =>
       have h1 : (Finsupp.sumFinsuppEquivProdFinsupp (a.mapDomain Sum.inl + m)).1 =
           a + (Finsupp.sumFinsuppEquivProdFinsupp m).1 := by
         ext x
-        simp [Finsupp.mapDomain_apply Sum.inl_injective]
+        simp [Finsupp.mapDomain_apply_of_injective Sum.inl_injective]
       have h2 : (Finsupp.sumFinsuppEquivProdFinsupp (a.mapDomain Sum.inl + m)).2 =
           (Finsupp.sumFinsuppEquivProdFinsupp m).2 := by
         ext x
@@ -390,11 +396,11 @@ theorem act_mul (g : MvPowerSeries (κ ⊕ κ') C) (R : MvPolynomial κ C)
       ring
 
 def pair (F : MvPolynomial κ C) : MvPowerSeries κ C →ₗ[C] C :=
-  ∑ A ∈ F.support, (MvPolynomial.coeff A F * (A.prod fun _ e => (e.factorial : C))) •
+  ∑ A ∈ F.support, (AddMonoidAlgebra.coeff F A * (A.prod fun _ e => (e.factorial : C))) •
     MvPowerSeries.coeff A
 
 theorem pair_apply (F : MvPolynomial κ C) (S : MvPowerSeries κ C) :
-    pair F S = ∑ A ∈ F.support, MvPolynomial.coeff A F * (A.prod fun _ e => (e.factorial : C)) *
+    pair F S = ∑ A ∈ F.support, AddMonoidAlgebra.coeff F A * (A.prod fun _ e => (e.factorial : C)) *
       MvPowerSeries.coeff A S := by
   simp [pair, LinearMap.sum_apply]
 
@@ -404,7 +410,7 @@ def homPart (N : ℕ) (S : MvPowerSeries κ C) : MvPolynomial κ C :=
   ∑ A ∈ Finset.finsuppAntidiag Finset.univ N, MvPolynomial.monomial A (MvPowerSeries.coeff A S)
 
 theorem coeff_homPart (N : ℕ) (S : MvPowerSeries κ C) (A : κ →₀ ℕ) :
-    MvPolynomial.coeff A (homPart N S) =
+    AddMonoidAlgebra.coeff (homPart N S) A =
       if ∑ q, A q = N then MvPowerSeries.coeff A S else 0 := by
   simp [homPart, MvPolynomial.coeff_sum, MvPolynomial.coeff_monomial,
     Finset.mem_finsuppAntidiag]
@@ -415,7 +421,7 @@ theorem weight_one (A : κ →₀ ℕ) : Finsupp.weight (1 : κ → ℕ) A = ∑
 
 omit [DecidableEq κ] in
 theorem sum_eq_of_isHomogeneous {F : MvPolynomial κ C} {N : ℕ} (hF : F.IsHomogeneous N)
-    {A : κ →₀ ℕ} (hA : MvPolynomial.coeff A F ≠ 0) : ∑ q, A q = N := by
+    {A : κ →₀ ℕ} (hA : AddMonoidAlgebra.coeff F A ≠ 0) : ∑ q, A q = N := by
   have := hF hA
   rw [← this, weight_one]
 
@@ -430,8 +436,8 @@ theorem homPart_isHomogeneous (N : ℕ) (S : MvPowerSeries κ C) :
 theorem pair_mul {F R : MvPolynomial κ C} {d N : ℕ} (hF : F.IsHomogeneous (d + N))
     (hR : R.IsHomogeneous d) (S : MvPowerSeries κ C) :
     pair F ((R : MvPowerSeries κ C) * S) =
-      ∑ A ∈ F.support, MvPolynomial.coeff A F * (A.prod fun _ e => (e.factorial : C)) *
-        MvPolynomial.coeff A (R * homPart N S) := by
+      ∑ A ∈ F.support, AddMonoidAlgebra.coeff F A * (A.prod fun _ e => (e.factorial : C)) *
+        AddMonoidAlgebra.coeff (R * homPart N S) A := by
   rw [pair_apply]
   refine Finset.sum_congr rfl fun A hA => ?_
   congr 1
@@ -439,7 +445,7 @@ theorem pair_mul {F R : MvPolynomial κ C} {d N : ℕ} (hF : F.IsHomogeneous (d 
   rw [MvPowerSeries.coeff_mul, MvPolynomial.coeff_mul]
   refine Finset.sum_congr rfl fun x hx => ?_
   rw [MvPolynomial.coeff_coe]
-  by_cases h : MvPolynomial.coeff x.1 R = 0
+  by_cases h : AddMonoidAlgebra.coeff R x.1 = 0
   · simp [h]
   · have h1 := sum_eq_of_isHomogeneous hR h
     have h2 : x.1 + x.2 = A := by simpa using hx
@@ -512,7 +518,7 @@ theorem v_prod_factorial {C : Type} [Field C] (v : AddValuation C (WithTop ℝ))
       ((padicValNat l (∏ j, (B j).factorial) : ℝ) : WithTop ℝ) := by
   rw [Finsupp.prod_fintype _ _ (by simp), ← Nat.cast_prod,
     natCast_eq_factorization v hl hv (Finset.prod_ne_zero_iff.mpr fun j _ => Nat.factorial_ne_zero _),
-    Nat.factorization_def _ hl]
+    Nat.factorization_def _ hl, ← Nat.padicValNat_def]
 
 theorem real_bound {l : ℕ} (hl : 5 ≤ l) {L E n s K : ℕ} (hL : 1 ≤ L)
     (hE : (E : ℝ) = 1 + ((L : ℝ) - l) / ((l : ℝ) ^ 2 - 1)) (hs : 1 ≤ s) (hn : 1 ≤ n)
@@ -554,8 +560,8 @@ theorem main :
   (∀ (C : Type) [Field C] [CharZero C] (v : AddValuation C (WithTop ℝ)) (l : ℕ), l.Prime → v (l : C) = 1 → 5 ≤ l → ∀ (i E n₀ : ℕ), Odd i → (E : ℝ) = 1 + ((l : ℝ) ^ i - l) / ((l : ℝ) ^ 2 - 1) → ∀ h₁ : MvPowerSeries ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) C,
     (∀ α, (((1 / (l - 1)) - α.sum (fun j e => Sum.elim (fun _ => 1 / ((l : ℝ) ^ 2 - 1) + 3 / (8 * (l : ℝ) ^ i)) (fun _ => 1 / ((l : ℝ) ^ 2 - 1) + 1 / 2 - 1 / (8 * (l : ℝ) ^ i)) j * (e : ℝ)) : ℝ) : WithTop ℝ) ≤ v (MvPowerSeries.coeff α (h₁))) → (∀ α, MvPowerSeries.coeff α h₁ ≠ 0 → ∃ q, α (Sum.inr q) ≠ 0) →
     ∃ Q : ℕ → MvPolynomial (Fin n₀ × Fin n₀) C, Q 0 = 1 ∧ (∀ s, (Q s).IsHomogeneous (n₀ * (l ^ i * s))) ∧
-      (∀ s : ℕ, 1 ≤ s → 1 ≤ n₀ → ∀ A, (((s : ℝ) / 8 - (n₀ : ℝ) ^ 2 * (Real.logb l (n₀ * s) + 1) : ℝ) : WithTop ℝ) ≤ v (MvPolynomial.coeff A (Q s))) ∧
-      ∀ y : ℕ, (∑ A ∈ ((MvPolynomial.rename Sum.inl (cayDet n₀ C) ^ (l ^ i * y) * MvPolynomial.rename Sum.inr (cayDet n₀ C) ^ y : MvPolynomial ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) C)).support, MvPolynomial.coeff A ((MvPolynomial.rename Sum.inl (cayDet n₀ C) ^ (l ^ i * y) * MvPolynomial.rename Sum.inr (cayDet n₀ C) ^ y : MvPolynomial ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) C)) * (A.prod fun _ e => (e.factorial : C)) * MvPowerSeries.coeff A (PowerSeries.subst (((∑ q : Fin n₀ × Fin n₀, MvPolynomial.C (-((l : C) ^ E)⁻¹) * MvPolynomial.X (Sum.inl q) ^ (l ^ i) * MvPolynomial.X (Sum.inr q) : MvPolynomial ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) C) : MvPowerSeries ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) C) + h₁) (PowerSeries.exp C))) = (-((l : C) ^ E)⁻¹) ^ (n₀ * y) * ∑ s ∈ Finset.range (y + 1), (y.choose s : C) * (∑ A ∈ (cayDet n₀ C ^ (l ^ i * y)).support, MvPolynomial.coeff A (cayDet n₀ C ^ (l ^ i * y)) * (A.prod fun _ e => (e.factorial : C)) * MvPolynomial.coeff A (cayDet n₀ C ^ (l ^ i * y - l ^ i * s) * Q s))) := by
+      (∀ s : ℕ, 1 ≤ s → 1 ≤ n₀ → ∀ A, (((s : ℝ) / 8 - (n₀ : ℝ) ^ 2 * (Real.logb l (n₀ * s) + 1) : ℝ) : WithTop ℝ) ≤ v (AddMonoidAlgebra.coeff (Q s) A)) ∧
+      ∀ y : ℕ, (∑ A ∈ ((MvPolynomial.rename Sum.inl (cayDet n₀ C) ^ (l ^ i * y) * MvPolynomial.rename Sum.inr (cayDet n₀ C) ^ y : MvPolynomial ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) C)).support, AddMonoidAlgebra.coeff ((MvPolynomial.rename Sum.inl (cayDet n₀ C) ^ (l ^ i * y) * MvPolynomial.rename Sum.inr (cayDet n₀ C) ^ y : MvPolynomial ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) C)) A * (A.prod fun _ e => (e.factorial : C)) * MvPowerSeries.coeff A (PowerSeries.subst (((∑ q : Fin n₀ × Fin n₀, MvPolynomial.C (-((l : C) ^ E)⁻¹) * MvPolynomial.X (Sum.inl q) ^ (l ^ i) * MvPolynomial.X (Sum.inr q) : MvPolynomial ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) C) : MvPowerSeries ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) C) + h₁) (PowerSeries.exp C))) = (-((l : C) ^ E)⁻¹) ^ (n₀ * y) * ∑ s ∈ Finset.range (y + 1), (y.choose s : C) * (∑ A ∈ (cayDet n₀ C ^ (l ^ i * y)).support, AddMonoidAlgebra.coeff (cayDet n₀ C ^ (l ^ i * y)) A * (A.prod fun _ e => (e.factorial : C)) * AddMonoidAlgebra.coeff (cayDet n₀ C ^ (l ^ i * y - l ^ i * s) * Q s) A)) := by
   intro C _ _ v l hl hv h5 i E n hi hE h₁ hw hz
   have hi1 : 1 ≤ i := hi.pos
   have hlC : (l : C) ≠ 0 := Nat.cast_ne_zero.mpr hl.ne_zero
@@ -597,7 +603,8 @@ theorem main :
     split_ifs with hA
     swap
     · simp
-    rw [act_eq, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [act_eq, map_sum]
     refine v.map_le_sum fun m hm => ?_
     rw [hψ, ← map_pow] at hm ⊢
     obtain ⟨a1, a2, a3⟩ := GlobalTheory.T.det_frobenius_sub_pow_support_bounds l i E n s hl hi1 (psi l (l ^ i) E n) rfl m
@@ -651,12 +658,14 @@ theorem main :
     generalize hP : (MvPolynomial.C ((-((l : C) ^ E)⁻¹) ^ n) *
       (ψ + MvPolynomial.rename Sum.inl (cayDet n C ^ l ^ i))) ^ y = P
     refine Eq.trans (b := pair (cayDet n C ^ (l ^ i * y)) (act g P)) ?_ ?_
-    · rw [act_eq, map_sum]
-      refine Finset.sum_congr rfl fun m _ => ?_
-      rw [actMon, LinearMap.map_smul, LinearMap.map_smul, smul_eq_mul, smul_eq_mul, ← mul_assoc,
-        pair_apply]
-      rfl
-    rw [← hP, mul_pow, ← map_pow, ← pow_mul, MvPolynomial.C_mul', map_smul, map_smul, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [act_eq, map_sum]
+        refine Finset.sum_congr rfl fun m _ => ?_
+        rw [actMon, LinearMap.map_smul, LinearMap.map_smul, smul_eq_mul, smul_eq_mul, ← mul_assoc,
+          pair_apply]
+        rfl
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hP, mul_pow, ← map_pow, ← pow_mul, MvPolynomial.C_mul', map_smul, map_smul, smul_eq_mul,
       add_pow, map_sum, map_sum]
     congr 1
     refine Finset.sum_congr rfl fun s hs => ?_
@@ -680,8 +689,8 @@ set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.OddBlock.expBinomial : (∀ (C : Type) [Field C] [CharZero C] (v : AddValuation C (WithTop ℝ)) (l : ℕ), l.Prime → v (l : C) = 1 → 5 ≤ l → ∀ (i E n₀ : ℕ), Odd i → (E : ℝ) = 1 + ((l : ℝ) ^ i - l) / ((l : ℝ) ^ 2 - 1) → ∀ h₁ : MvPowerSeries ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) C,
     (∀ α, (((1 / (l - 1)) - α.sum (fun j e => Sum.elim (fun _ => 1 / ((l : ℝ) ^ 2 - 1) + 3 / (8 * (l : ℝ) ^ i)) (fun _ => 1 / ((l : ℝ) ^ 2 - 1) + 1 / 2 - 1 / (8 * (l : ℝ) ^ i)) j * (e : ℝ)) : ℝ) : WithTop ℝ) ≤ v (MvPowerSeries.coeff α (h₁))) → (∀ α, MvPowerSeries.coeff α h₁ ≠ 0 → ∃ q, α (Sum.inr q) ≠ 0) →
     ∃ Q : ℕ → MvPolynomial (Fin n₀ × Fin n₀) C, Q 0 = 1 ∧ (∀ s, (Q s).IsHomogeneous (n₀ * (l ^ i * s))) ∧
-      (∀ s : ℕ, 1 ≤ s → 1 ≤ n₀ → ∀ A, (((s : ℝ) / 8 - (n₀ : ℝ) ^ 2 * (Real.logb l (n₀ * s) + 1) : ℝ) : WithTop ℝ) ≤ v (MvPolynomial.coeff A (Q s))) ∧
-      ∀ y : ℕ, (∑ A ∈ ((MvPolynomial.rename Sum.inl (cayDet n₀ C) ^ (l ^ i * y) * MvPolynomial.rename Sum.inr (cayDet n₀ C) ^ y : MvPolynomial ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) C)).support, MvPolynomial.coeff A ((MvPolynomial.rename Sum.inl (cayDet n₀ C) ^ (l ^ i * y) * MvPolynomial.rename Sum.inr (cayDet n₀ C) ^ y : MvPolynomial ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) C)) * (A.prod fun _ e => (e.factorial : C)) * MvPowerSeries.coeff A (PowerSeries.subst (((∑ q : Fin n₀ × Fin n₀, MvPolynomial.C (-((l : C) ^ E)⁻¹) * MvPolynomial.X (Sum.inl q) ^ (l ^ i) * MvPolynomial.X (Sum.inr q) : MvPolynomial ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) C) : MvPowerSeries ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) C) + h₁) (PowerSeries.exp C))) = (-((l : C) ^ E)⁻¹) ^ (n₀ * y) * ∑ s ∈ Finset.range (y + 1), (y.choose s : C) * (∑ A ∈ (cayDet n₀ C ^ (l ^ i * y)).support, MvPolynomial.coeff A (cayDet n₀ C ^ (l ^ i * y)) * (A.prod fun _ e => (e.factorial : C)) * MvPolynomial.coeff A (cayDet n₀ C ^ (l ^ i * y - l ^ i * s) * Q s))) := by
+      (∀ s : ℕ, 1 ≤ s → 1 ≤ n₀ → ∀ A, (((s : ℝ) / 8 - (n₀ : ℝ) ^ 2 * (Real.logb l (n₀ * s) + 1) : ℝ) : WithTop ℝ) ≤ v (AddMonoidAlgebra.coeff (Q s) A)) ∧
+      ∀ y : ℕ, (∑ A ∈ ((MvPolynomial.rename Sum.inl (cayDet n₀ C) ^ (l ^ i * y) * MvPolynomial.rename Sum.inr (cayDet n₀ C) ^ y : MvPolynomial ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) C)).support, AddMonoidAlgebra.coeff ((MvPolynomial.rename Sum.inl (cayDet n₀ C) ^ (l ^ i * y) * MvPolynomial.rename Sum.inr (cayDet n₀ C) ^ y : MvPolynomial ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) C)) A * (A.prod fun _ e => (e.factorial : C)) * MvPowerSeries.coeff A (PowerSeries.subst (((∑ q : Fin n₀ × Fin n₀, MvPolynomial.C (-((l : C) ^ E)⁻¹) * MvPolynomial.X (Sum.inl q) ^ (l ^ i) * MvPolynomial.X (Sum.inr q) : MvPolynomial ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) C) : MvPowerSeries ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) C) + h₁) (PowerSeries.exp C))) = (-((l : C) ^ E)⁻¹) ^ (n₀ * y) * ∑ s ∈ Finset.range (y + 1), (y.choose s : C) * (∑ A ∈ (cayDet n₀ C ^ (l ^ i * y)).support, AddMonoidAlgebra.coeff (cayDet n₀ C ^ (l ^ i * y)) A * (A.prod fun _ e => (e.factorial : C)) * AddMonoidAlgebra.coeff (cayDet n₀ C ^ (l ^ i * y - l ^ i * s) * Q s) A)) := by
   exact @GlobalTheory.OddBlock.ExpBinomial.main
 
 end
@@ -740,7 +749,7 @@ theorem detR_eq (n : ℕ) : detR C n = MvPolynomial.rename Sum.inr (cayDet n C) 
 
 theorem jetAt0_rename {σ τ : Type} (f : σ → τ) (hf : Function.Injective f) (P Q : MvPolynomial σ C) :
     jetAt0 (MvPolynomial.rename f P) ((MvPolynomial.rename f Q : MvPolynomial τ C) : MvPowerSeries τ C) =
-      ∑ A ∈ P.support, MvPolynomial.coeff A P * (A.prod fun _ e => (e.factorial : C)) * MvPolynomial.coeff A Q := by
+      ∑ A ∈ P.support, AddMonoidAlgebra.coeff P A * (A.prod fun _ e => (e.factorial : C)) * AddMonoidAlgebra.coeff Q A := by
   classical
   rw [jetAt0, MvPolynomial.support_rename_of_injective hf,
     Finset.sum_image fun a _ b _ h => Finsupp.mapDomain_injective hf h]
@@ -749,8 +758,8 @@ theorem jetAt0_rename {σ τ : Type} (f : σ → τ) (hf : Function.Injective f)
     ← mfact_cast, Finsupp.prod_mapDomain_index_inj hf]
 
 theorem pair_self [CharZero C] (n x : ℕ) :
-    ∑ A ∈ (cayDet n C ^ x).support, MvPolynomial.coeff A (cayDet n C ^ x) * (A.prod fun _ e => (e.factorial : C)) *
-      MvPolynomial.coeff A (cayDet n C ^ x) = (capNat n x : C) := by
+    ∑ A ∈ (cayDet n C ^ x).support, AddMonoidAlgebra.coeff (cayDet n C ^ x) A * (A.prod fun _ e => (e.factorial : C)) *
+      AddMonoidAlgebra.coeff (cayDet n C ^ x) A = (capNat n x : C) := by
   obtain ⟨h1, h2, -, -⟩ := GlobalTheory.CayleyCapelli.main.2 C n x
   rw [h2, GlobalTheory.CayleyCapelli.detL_eq, ← map_pow, jetAt0_rename _ Sum.inl_injective] at h1
   exact h1
@@ -759,7 +768,8 @@ theorem hP_eq (l i n : ℕ) (h1 : MvPowerSeries (PVar n) C) :
     hP C l i n h1 = ((∑ q : Fin n × Fin n, MvPolynomial.C (-((l : C) ^ expE l i)⁻¹) *
       MvPolynomial.X (Sum.inl q) ^ (l ^ i) * MvPolynomial.X (Sum.inr q) : MvPolynomial (PVar n) C) :
         MvPowerSeries (PVar n) C) + h1 := by
-  rw [hP, ← MvPolynomial.coeToMvPowerSeries.ringHom_apply, map_sum, Fintype.sum_prod_type, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hP, ← MvPolynomial.coeToMvPowerSeries.ringHom_apply, map_sum, Fintype.sum_prod_type, Finset.smul_sum]
   congr 1
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [Finset.smul_sum]
@@ -774,8 +784,10 @@ theorem constantCoeff_hP (l i n : ℕ) (h1 : MvPowerSeries (PVar n) C) (h : HM2 
     by_contra hc
     have := h 0 (by simpa using hc)
     simp [degR] at this
-  rw [hP, map_add, h0, MvPowerSeries.smul_eq_C_mul, map_mul, map_sum]
-  simp [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hP, map_add (f := _), h0, MvPowerSeries.smul_eq_C_mul, map_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum]
 
 theorem weight_sum (n : ℕ) (α : PVar n →₀ ℕ) (a b : ℝ) :
     α.sum (fun j e => Sum.elim (fun _ => a) (fun _ => b) j * (e : ℝ)) = (degL α : ℝ) * a + (degR α : ℝ) * b := by
@@ -828,8 +840,8 @@ theorem main : CoefficientExpansionLambda := by
       simp [degR, hc] at h)
   have hcap : ∀ x, (capNat n0 x : C) ≠ 0 := fun x =>
     Nat.cast_ne_zero.2 (GlobalTheory.CayleyCapelli.main.2 C n0 x).2.2.2
-  refine ⟨fun s => (∑ A ∈ (cayDet n0 C ^ (l ^ i * s)).support, MvPolynomial.coeff A (cayDet n0 C ^ (l ^ i * s)) *
-    (A.prod fun _ e => (e.factorial : C)) * MvPolynomial.coeff A (Q s)) / (capNat n0 (l ^ i * s) : C), ?_, fun y => ?_,
+  refine ⟨fun s => (∑ A ∈ (cayDet n0 C ^ (l ^ i * s)).support, AddMonoidAlgebra.coeff (cayDet n0 C ^ (l ^ i * s)) A *
+    (A.prod fun _ e => (e.factorial : C)) * AddMonoidAlgebra.coeff (Q s) A) / (capNat n0 (l ^ i * s) : C), ?_, fun y => ?_,
     fun s hs => ?_⟩
   · have := pair_self (C := C) n0 0
     simp only [mul_zero, hQ0]
@@ -932,7 +944,7 @@ theorem main : ThmP := by
   have hcap : v (capNat n0 (l ^ i * y) : C) =
       ((padicValNat l (capNat n0 (l ^ i * y)) : ℝ) : WithTop ℝ) := by
     rw [ReciprocityTheory.ChartRestriction.G.Sh.PowerSeriesCoeffGaps.natCast_eq_factorization v hl hv (capNat_ne_zero _ _),
-      Nat.factorization_def _ hl]
+      Nat.factorization_def _ hl, ← Nat.padicValNat_def]
   rw [hLam y, v.map_mul, v.map_mul,
     val_pow_real v (val_neg_inv_real v (val_pow_real v hv' (expE l i))) (n0 * y), hcap,
     ← WithTop.coe_add]
@@ -1007,8 +1019,8 @@ theorem val_le_padicValNat {l N : ℕ} (hl : l.Prime) (hv : v (l : C) = 1) (hN :
   obtain ⟨e, m, hm, rfl⟩ := Nat.exists_eq_pow_mul_and_not_dvd hN l hl.ne_one
   haveI := Fact.mk hl
   have hm0 : m ≠ 0 := by rintro rfl; exact hm (dvd_zero _)
-  rw [padicValNat.mul (pow_ne_zero _ hl.ne_zero) hm0, padicValNat.prime_pow,
-    padicValNat.eq_zero_of_not_dvd hm, add_zero, Nat.cast_mul, Nat.cast_pow, v.map_mul, v.map_pow, hv]
+  rw [(show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (pow_ne_zero _ hl.ne_zero) hm0, Nat.padicValNat_def, Nat.multiplicity_prime_pow, Nat.padicValNat_def,
+    multiplicity_eq_zero_of_not_dvd hm, add_zero, Nat.cast_mul, Nat.cast_pow, v.map_mul, v.map_pow, hv]
   have := val_coprime_le v hv ((Nat.Prime.coprime_iff_not_dvd hl).2 hm)
   calc e • (1 : WithTop ℝ) + v (m : C) ≤ e • (1 : WithTop ℝ) + 0 := by gcongr
     _ = _ := by simp
@@ -1017,8 +1029,10 @@ theorem val_factorial_le {l : ℕ} (hl : l.Prime) (hv : v (l : C) = 1) (N : ℕ)
     v ((N.factorial : ℕ) : C) ≤ (((N : ℝ) / ((l : ℝ) - 1) : ℝ) : WithTop ℝ) := by
   refine (val_le_padicValNat v hl hv N.factorial_ne_zero).trans ?_
   haveI := Fact.mk hl
-  have h := sub_one_mul_padicValNat_factorial (p := l) N
-  have h2 : (l - 1) * padicValNat l N.factorial ≤ N := h ▸ Nat.sub_le _ _
+  have h := hl.sub_one_mul_multiplicity_factorial (n := N)
+  have h2 : (l - 1) * padicValNat l N.factorial ≤ N := by
+    rw [Nat.padicValNat_def, h]
+    exact Nat.sub_le _ _
   have hl2 : (2 : ℝ) ≤ l := by exact_mod_cast hl.two_le
   have h3 : ((l : ℝ) - 1) * (padicValNat l N.factorial : ℝ) ≤ N := by
     have : (((l - 1) * padicValNat l N.factorial : ℕ) : ℝ) ≤ N := by exact_mod_cast h2

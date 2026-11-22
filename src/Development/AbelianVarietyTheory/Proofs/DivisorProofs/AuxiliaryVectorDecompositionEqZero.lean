@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.InvVolConjLevelOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationLeOneOfMem
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPolynomialModelCoefficientSpaceRealPoints
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PrimeDvdAbsNormHalfDifferent
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPoint
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DefNodeIsV
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockVacEqJets
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AntiDiagonalEpsilonGramMulVec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.InvVolConjLevelOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationLeOneOfMem
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPolynomialModelCoefficientSpaceRealPoints
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PrimeDvdAbsNormHalfDifferent
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DefNodeIsV
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockVacEqJets
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AntiDiagonalEpsilonGramMulVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,11 +80,11 @@ theorem auxiliaryVectorDecomposition_eq_zero {A B : HSp D} {c : ℕ} {ε : D.hos
   have h4 : (if p.rev = p then ε else 1) ≠ 0 := by split_ifs; exacts [hε, one_ne_zero]
   exact (mul_eq_zero.1 h3).resolve_left h4
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 2000000 in
-
 theorem exists_sumFrame {A B : HSp D} {c : ℕ} {ε : D.host.E} (hε : ε ≠ 0) (d : HermitianOrthogonalExtensionData A B c ε)
-    {Λ : Submodule (𝓞 D.host.E) (Fin A.rank → D.host.E)} (hΛ : Submodule.IsLattice D.host.E Λ)
+    {Λ : Submodule (𝓞 D.host.E) (Fin A.rank → D.host.E)} (hΛ : Submodule.IsFullLattice D.host.E Λ)
     {β : GL (Fin A.rank) (Lev.EAf D)} (hβ : IsFrame β Λ) {𝔟 : Fin c → FractionalIdeal (𝓞 D.host.E)⁰ D.host.E}
     (h𝔟 : ∀ p, 𝔟 p ≠ 0) (y : Fin c → (Lev.EAf D)ˣ)
     (hy : ∀ p Q, Valued.v (cpt (D := D) Q (y p).1) = WithZero.exp (-FractionalIdeal.count D.host.E Q (𝔟 p))) :
@@ -413,8 +417,8 @@ theorem valued_frameSign (w : Pl D.host.E) (c : ℕ) (p : Fin c) (k : ℕ) :
 
 variable {G : GridData L sc} (W : G.Weil)
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem gridChoice_nonempty {U : Set T} (N : Std G U) (Z : Normal W N)
     (hfin : (⋃ t ∈ U, (locPl G t : Set (Pl D.host.E))).Finite)
     (hAA : ∀ t ∈ U, ∀ w ∈ locPl G t,
@@ -424,11 +428,70 @@ theorem gridChoice_nonempty {U : Set T} (N : Std G U) (Z : Normal W N)
   have hm : 1 ≤ D.R.m := by have := D.R.two_le_m; omega
   have hS : ∀ t ∈ U, ∀ w ∈ locPl G t, w ∈ ⋃ t ∈ U, (locPl G t : Set (Pl D.host.E)) := fun t ht w hw =>
     Set.mem_iUnion₂.2 ⟨t, ht, hw⟩
-  have hlatTop : ∀ j, j ≤ D.R.m → Submodule.IsLattice D.host.E (G.Λ (.top j)) := fun j hj =>
-    (G.isV (X := .top j) hj fun _ e => by cases e).sd.1
+  have hfull : ∀ (V : HSp D) (Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)),
+      IsSelfDualC V Λ → Submodule.IsFullLattice D.host.E Λ := by
+    intro V Λ hΛ
+    haveI : Submodule.IsLattice D.host.E Λ := hΛ.1
+    refine ⟨?_⟩
+    obtain ⟨s, hs⟩ := hΛ.1.fg
+    apply eq_top_iff.mpr
+    intro y _
+    let f : (Fin V.rank → D.host.E) → D.host.E := fun x =>
+      ∑ i, ∑ j, star (x i) * V.gram i j * y j
+    obtain ⟨a, ha⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors (𝓞 D.host.E)) s f
+    have ha0 : (algebraMap (𝓞 D.host.E) D.host.E a) ≠ 0 := by
+      exact (FaithfulSMul.algebraMap_injective _ _).ne (mem_nonZeroDivisors_iff_ne_zero.mp a.2)
+    let P : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E) := {
+      carrier := {x | ∃ b : 𝓞 D.host.E, (b : D.host.E) = (algebraMap (𝓞 D.host.E) D.host.E a) * f x}
+      zero_mem' := by refine ⟨0, ?_⟩; simp [f]
+      add_mem' := by
+        rintro x z ⟨b, hb⟩ ⟨c, hc⟩
+        refine ⟨b + c, ?_⟩
+        change (b : D.host.E) + c = _
+        rw [hb, hc]
+        simp [f, map_add, add_mul, Finset.sum_add_distrib, mul_add]
+      smul_mem' := by
+        rintro c x ⟨b, hb⟩
+        refine ⟨RingOfIntegers.mapRingHom (starRingEnd D.host.E) c * b, ?_⟩
+        simp only [map_mul, hb, f, Pi.smul_apply, Algebra.smul_def, map_mul, RingOfIntegers.mapRingHom_apply, star_mul]
+        simp only [Finset.mul_sum]
+        apply Finset.sum_congr rfl
+        intro i _
+        apply Finset.sum_congr rfl
+        intro j _
+        change star (c : D.host.E) * _ = _
+        ring }
+    have hsP : (s : Set (Fin V.rank → D.host.E)) ⊆ P := by
+      intro x hx
+      obtain ⟨b, hb⟩ := ha x hx
+      exact ⟨b, by simpa [Algebra.smul_def] using hb⟩
+    have hy : (algebraMap (𝓞 D.host.E) D.host.E a) • y ∈ Λ := by
+      apply (hΛ.2 _).2
+      intro x hx
+      have hxP : x ∈ P := (hs ▸ Submodule.span_le.mpr hsP) hx
+      obtain ⟨b, hb⟩ := hxP
+      refine ⟨b, ?_⟩
+      rw [hb]
+      dsimp only [f, Pi.smul_apply]
+      simp only [smul_eq_mul, Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro i _
+      apply Finset.sum_congr rfl
+      intro j _
+      ring
+    have hy' : (algebraMap (𝓞 D.host.E) D.host.E a) • y ∈ Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E)) :=
+      Submodule.subset_span hy
+    have := (Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E))).smul_mem
+      (algebraMap (𝓞 D.host.E) D.host.E a)⁻¹ hy' 
+    change (algebraMap (𝓞 D.host.E) D.host.E a)⁻¹ •
+      ((algebraMap (𝓞 D.host.E) D.host.E a) • y) ∈ _ at this
+    rw [← smul_assoc, smul_eq_mul, inv_mul_cancel₀ ha0, one_smul] at this
+    exact this
+  have hlatTop : ∀ j, j ≤ D.R.m → Submodule.IsFullLattice D.host.E (G.Λ (.top j)) := fun j hj =>
+    hfull _ _ (G.isV (X := .top j) hj fun _ e => by cases e).sd
   have hb : ∀ j, ∃ β : GL (Fin (G.V (.top j)).rank) (Lev.EAf D), j ≤ D.R.m → IsFrame β (G.Λ (.top j)) := fun j => by
     by_cases hj : j ≤ D.R.m
-    · obtain ⟨β, hβ⟩ := GlobalTheory.AdelicFrame.exists_isFrame D.host.F _ (hlatTop j hj).fg (hlatTop j hj).span_eq_top
+    · obtain ⟨β, hβ⟩ := GlobalTheory.AdelicFrame.exists_isFrame D.host.F _ (hlatTop j hj).fg (Submodule.IsFullLattice.span_eq_top (self := hfull _ _ ((G.isV (X := .top j) hj fun _ e => by cases e).sd)))
       exact ⟨β, fun _ => hβ⟩
     · exact ⟨1, fun h => absurd h hj⟩
   choose b0 hb0 using hb
@@ -465,10 +528,11 @@ theorem gridChoice_nonempty {U : Set T} (N : Std G U) (Z : Normal W N)
       obtain ⟨β', h1, h2⟩ := hrow j hj
       exact ⟨β', fun _ _ _ => h1, fun _ _ => h2⟩
     · by_cases hr : 1 ≤ i ∧ i ≤ D.R.m ∧ j ≤ D.R.m
-      · have hl := (G.isV (X := .grid i j) ⟨hr.2.1, hr.2.2⟩ fun j' e => by
+      · have hsd := (G.isV (X := .grid i j) ⟨hr.2.1, hr.2.2⟩ fun j' e => by
           cases e
-          exact absurd hr.1 (by norm_num)).sd.1
-        obtain ⟨β, hβ⟩ := GlobalTheory.AdelicFrame.exists_isFrame D.host.F _ hl.fg hl.span_eq_top
+          exact absurd hr.1 (by norm_num)).sd
+        have hl := hsd.1
+        obtain ⟨β, hβ⟩ := GlobalTheory.AdelicFrame.exists_isFrame D.host.F _ hl.fg (Submodule.IsFullLattice.span_eq_top (self := hfull _ _ hsd))
         exact ⟨β, fun _ _ _ => hβ, fun hi hj => absurd ⟨hi, hj⟩ hij⟩
       · exact ⟨1, fun a b c => absurd ⟨a, b, c⟩ hr, fun hi hj => absurd ⟨hi, hj⟩ hij⟩
   choose F hF1 hF2 using hF
@@ -480,10 +544,10 @@ theorem gridChoice_nonempty {U : Set T} (N : Std G U) (Z : Normal W N)
   have hB : ∀ i j, 1 ≤ i → B.β i j = F i j := fun i j hi => by
     match i, hi with
     | k + 1, _ => rfl
-  have hlatm : Submodule.IsLattice D.host.E (G.Λ (.grid D.R.m D.R.m)) :=
-    (G.isV (X := .grid D.R.m D.R.m) ⟨le_rfl, le_rfl⟩ fun j' e => by
+  have hlatm : Submodule.IsFullLattice D.host.E (G.Λ (.grid D.R.m D.R.m)) :=
+    hfull _ _ (G.isV (X := .grid D.R.m D.R.m) ⟨le_rfl, le_rfl⟩ fun j' e => by
       injection e with e1 e2
-      omega).sd.1
+      omega).sd
   obtain ⟨βl, hl1, hl2⟩ := exists_sumFrame (one_ne_zero : (1 : D.host.E) ≠ 0) G.sp.topDec hlatm
     (hF1 D.R.m D.R.m hm le_rfl le_rfl) (fun _ => one_ne_zero) (fun _ => 1)
     (fun _ Q => by rw [Units.val_one, map_one, map_one, FractionalIdeal.count_one, neg_zero, WithZero.exp_zero])

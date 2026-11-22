@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffOfW
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffOfW
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Filter GlobalTheory.CrysPrism
 open scoped Formalism.Per
@@ -39,7 +43,7 @@ theorem coeff_frob2_congr_box : ∀ (l : ℕ) [Fact l.Prime] (K : Type) [NormedF
   have e2 : φ₂ (C (X ^ (n + 1)) * B) = C (X ^ (l * (n + 1))) * φ₂ B := by
     rw [map_mul, hC, map_pow, frob_X, ← pow_mul]
   have hz : coeff n (coeff i (φ₂ (G - H))) = 0 := by
-    rw [hAB, map_add, e1, e2, map_add, map_add, coeff_X_pow_mul',
+    rw [hAB, map_add (f := _), e1, e2, map_add (f := _), map_add (f := _), coeff_X_pow_mul',
       if_neg (show ¬ (i + 1 ≤ i) by omega), map_zero, zero_add, coeff_C_mul, coeff_X_pow_mul',
       if_neg (show ¬ (l * (n + 1) ≤ n) by nlinarith)]
   rwa [map_sub, map_sub, map_sub, sub_eq_zero] at hz

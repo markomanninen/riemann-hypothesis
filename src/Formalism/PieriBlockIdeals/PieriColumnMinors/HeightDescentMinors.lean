@@ -1,4 +1,8 @@
-import Formalism.PieriBlockIdeals.CapelliCentralEnveloping
+module
+
+public import Formalism.PieriBlockIdeals.CapelliCentralEnveloping
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,8 @@ section Ode
 variable {R : Type*} [CommRing R]
 
 theorem coeff_one_add_X_mul_derivative (H : R⟦X⟧) (n : ℕ) :
-    coeff n ((1 + X) * d⁄dX R H) = coeff (n + 1) H * ((n : R) + 1) + coeff n H * (n : R) := by
+    coeff n ((1 + X) * PowerSeries.derivative H) =
+      coeff (n + 1) H * ((n : R) + 1) + coeff n H * (n : R) := by
   rcases n with _ | m
   · simp [add_mul]
     rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, PowerSeries.coeff_derivative]
@@ -21,7 +26,7 @@ theorem coeff_one_add_X_mul_derivative (H : R⟦X⟧) (n : ℕ) :
   · simp [add_mul, PowerSeries.coeff_derivative, PowerSeries.coeff_succ_X_mul]
 
 theorem eq_zero_of_binomial_ode [IsAddTorsionFree R] (c : R) (H : R⟦X⟧)
-    (h : (1 + X) * d⁄dX R H = C c * H) (h0 : constantCoeff H = 0) : H = 0 := by
+    (h : (1 + X) * PowerSeries.derivative H = C c * H) (h0 : constantCoeff H = 0) : H = 0 := by
   ext n
   simp only [map_zero]
   induction n with
@@ -34,10 +39,12 @@ theorem eq_zero_of_binomial_ode [IsAddTorsionFree R] (c : R) (H : R⟦X⟧)
       rw [nsmul_eq_mul, mul_comm]
       push_cast
       exact e
-    exact nsmul_right_injective (Nat.succ_ne_zero n) (by simpa using e2)
+    exact eq_of_nsmul_eq_nsmul_of_addCommute (Nat.succ_ne_zero n)
+      (AddCommute.zero_right _) (by simpa using e2)
 
 theorem eq_of_binomial_ode_of_constantCoeff_eq [IsAddTorsionFree R] (c : R) (F G : R⟦X⟧)
-    (hF : (1 + X) * d⁄dX R F = C c * F) (hG : (1 + X) * d⁄dX R G = C c * G)
+    (hF : (1 + X) * PowerSeries.derivative F = C c * F)
+    (hG : (1 + X) * PowerSeries.derivative G = C c * G)
     (h0 : constantCoeff F = constantCoeff G) : F = G := by
   have := eq_zero_of_binomial_ode c (F - G) (by rw [map_sub, mul_sub, hF, hG, mul_sub])
     (by rw [map_sub, h0, sub_self])
@@ -46,7 +53,7 @@ theorem eq_of_binomial_ode_of_constantCoeff_eq [IsAddTorsionFree R] (c : R) (F G
 variable [BinomialRing R]
 
 theorem binomialSeries_one_add_X_mul_derivative (c : R) :
-    (1 + X) * d⁄dX R (binomialSeries R c) = C c * binomialSeries R c := by
+    (1 + X) * PowerSeries.derivative (binomialSeries R c) = C c * binomialSeries R c := by
   ext n
   rw [coeff_one_add_X_mul_derivative, coeff_C_mul]
   simp only [binomialSeries_coeff, smul_eq_mul, mul_one]
@@ -62,7 +69,7 @@ theorem hasSubst_binomialSeries_sub_one {A : Type*} [CommRing A] [Algebra R A] (
   change PowerSeries.constantCoeff (binomialSeries A e - 1 : A⟦X⟧) = 0
   simp
 
-attribute [local instance] BinomialRing.toIsAddTorsionFree in
+attribute [local instance] BinomialRing.toHasUniqueDiv in
 theorem binomialSeries_subst_comp (d e : R) :
     (binomialSeries R d).subst (binomialSeries R e - 1 : R⟦X⟧) = binomialSeries R (d * e) := by
   have ha := hasSubst_binomialSeries_sub_one (A := R) e
@@ -70,15 +77,18 @@ theorem binomialSeries_subst_comp (d e : R) :
   have hFe : (1 + X : R⟦X⟧).subst a = binomialSeries R e := by
     rw [subst_add ha, subst_X ha, ← map_one (C (R := R)), subst_C]
     simp [hadef]
-  have hda : d⁄dX R a = d⁄dX R (binomialSeries R e) := by
+  have hda : PowerSeries.derivative a = PowerSeries.derivative (binomialSeries R e) := by
     rw [hadef, map_sub, derivative_one, sub_zero]
   apply eq_of_binomial_ode_of_constantCoeff_eq (d * e)
   · rw [derivative_subst ha, hda]
-    calc (1 + X) * ((d⁄dX R (binomialSeries R d)).subst a * d⁄dX R (binomialSeries R e))
-        = (d⁄dX R (binomialSeries R d)).subst a * ((1 + X) * d⁄dX R (binomialSeries R e)) := by ring
-      _ = (d⁄dX R (binomialSeries R d)).subst a * (C e * (1 + X : R⟦X⟧).subst a) := by
+    calc (1 + X) * ((PowerSeries.derivative (binomialSeries R d)).subst a *
+          PowerSeries.derivative (binomialSeries R e))
+        = (PowerSeries.derivative (binomialSeries R d)).subst a *
+            ((1 + X) * PowerSeries.derivative (binomialSeries R e)) := by ring
+      _ = (PowerSeries.derivative (binomialSeries R d)).subst a *
+            (C e * (1 + X : R⟦X⟧).subst a) := by
           rw [binomialSeries_one_add_X_mul_derivative, hFe]
-      _ = C e * ((1 + X) * d⁄dX R (binomialSeries R d)).subst a := by
+      _ = C e * ((1 + X) * PowerSeries.derivative (binomialSeries R d)).subst a := by
           rw [subst_mul ha]; ring
       _ = C e * (C d * (binomialSeries R d).subst a) := by
           rw [binomialSeries_one_add_X_mul_derivative, subst_mul ha, subst_C]; rfl
@@ -86,7 +96,7 @@ theorem binomialSeries_subst_comp (d e : R) :
           rw [map_mul]; ring
   · exact binomialSeries_one_add_X_mul_derivative _
   · have h1 : binomialSeries R d = 1 + (binomialSeries R d - 1) := by ring
-    rw [h1, subst_add ha, ← map_one (C (R := R)), subst_C, map_add]
+    rw [h1, subst_add ha, ← map_one (C (R := R)), subst_C, map_add (f := _)]
     have h2 : constantCoeff ((binomialSeries R d - C 1 : R⟦X⟧).subst a) = 0 :=
       constantCoeff_subst_eq_zero
         (show constantCoeff a = 0 by rw [hadef]; simp) _ (by simp)
@@ -171,7 +181,7 @@ theorem action_laws_holds : ActLaws := by
     have hs := hasSubst_br_padic l O c
     refine ⟨?_, ?_⟩
     · rw [act, act, act, ← PowerSeries.coe_substAlgHom hs, map_mul]
-    · rw [act, act, act, ← PowerSeries.coe_substAlgHom hs, map_add]
+    · rw [act, act, act, ← PowerSeries.coe_substAlgHom hs, map_add (f := _)]
   · intro c a
     have hs := hasSubst_br_padic l O c
     rw [act, ← PowerSeries.coe_substAlgHom hs]
@@ -526,8 +536,8 @@ theorem r5_frobenius_holds : FrobeniusCongruence := by
   have hl : l ≠ 0 := (Fact.out : l.Prime).ne_zero
   have hX : HasSubst (X ^ l : (ZMod l)⟦X⟧) := hasSubst_X_pow_of_ne_zero hl
   have h1 : PowerSeries.map (PadicInt.toZMod (p := l)) ((1 + X) ^ l - 1 : ℤ_[l]⟦X⟧) = X ^ l := by
-    simp only [map_sub, map_pow, map_add, map_one, PowerSeries.map_X]
-    rw [pow_prime_eq_subst_X_pow, ← PowerSeries.coe_substAlgHom hX, map_add, map_one,
+    simp only [map_sub, map_pow, map_add (f := _), map_one, PowerSeries.map_X]
+    rw [pow_prime_eq_subst_X_pow, ← PowerSeries.coe_substAlgHom hX, map_add (f := _), map_one,
       PowerSeries.substAlgHom_X]
     ring
   have key : PowerSeries.map (PadicInt.toZMod (p := l)) (phi l ℤ_[l] f - f ^ l) = 0 := by
@@ -595,7 +605,8 @@ lemma q_dvd_prod_sub_l (hq : QMul) (hl2 : l ≠ 2) :
   simp only [map_sub, map_prod, map_pow, Polynomial.aeval_X, map_one, Polynomial.aeval_C,
     map_mul] at h
   have hc : Polynomial.aeval (1 + X : ℤ_[l]⟦X⟧) (Polynomial.cyclotomic l ℤ) = q l ℤ_[l] := by
-    rw [Polynomial.cyclotomic_prime, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Polynomial.cyclotomic_prime, map_sum]
     simp only [map_pow, Polynomial.aeval_X]
     apply mul_left_cancel₀ (X_ne_zero (R := ℤ_[l]))
     rw [(hq l ℤ_[l]).1]
@@ -772,7 +783,8 @@ theorem eq_sum_coeff_add_division (n : ℕ) (w : (R⟦X⟧)ˣ) (f : R⟦X⟧) :
       _ = X ^ n * PowerSeries.mk fun i => coeff (i + n) f := by rw [Units.mul_inv, one_mul]
   rw [e]
   ext m
-  rw [map_add, map_sum, coeff_X_pow_mul']
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), map_sum, coeff_X_pow_mul']
   simp only [coeff_C_mul_X_pow, coeff_mk]
   by_cases hm : m < n
   · rw [if_neg (by omega), add_zero, Finset.sum_eq_single (⟨m, hm⟩ : Fin n)]
@@ -848,7 +860,8 @@ theorem constantCoeff_eq_zero_of_sum_subst (n : ℕ) (hn : 0 < n) (w : (R⟦X⟧
     exact Finset.sum_congr rfl fun j _ => by ring
   rw [e] at h0
   have h1 := congrArg (coeff (i : ℕ)) h0
-  rw [map_add, map_sum, coeff_X_pow_mul', if_neg (by have := i.2; omega), add_zero, map_zero] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), map_sum, coeff_X_pow_mul', if_neg (by have := i.2; omega), add_zero, map_zero] at h1
   simp only [coeff_C_mul_X_pow] at h1
   rw [Finset.sum_eq_single i] at h1
   · simpa using h1
@@ -909,7 +922,8 @@ theorem coeff_subst_X_mul_of_low_zero (s f : R⟦X⟧) (j : ℕ) (hj : 0 < j)
     coeff j (f.subst (X * s)) = coeff j f * constantCoeff s ^ j := by
   have ha : HasSubst (X * s) := HasSubst.of_constantCoeff_zero' (by simp)
   obtain ⟨h, hh⟩ := subst_eq_sum_range_add_pow_mul ha (j + 1) f
-  rw [hh, map_add, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hh, map_add (f := _), map_sum]
   have e1 : coeff j ((X * s) ^ (j + 1) * h) = 0 := by
     rw [mul_pow, mul_assoc, coeff_X_pow_mul', if_neg (by omega)]
   rw [e1, add_zero, Finset.sum_eq_single j]
@@ -1178,7 +1192,7 @@ lemma constantCoeff_inc (hm : MuFacts) (f : O⟦X⟧) : constantCoeff (inc l O f
   obtain ⟨Φ, hΦ, hX⟩ := exists_algHom_inc_pi0 l O hm
   rw [hΦ]
   conv_lhs => rw [eq_X_mul_shift_add_const f]
-  rw [map_add, map_mul, hX, algHom_C_eq, map_add, map_mul, constantCoeff_pi0_eq_zero_alt l O hm, zero_mul,
+  rw [map_add (f := _), map_mul, hX, algHom_C_eq, map_add (f := _), map_mul, constantCoeff_pi0_eq_zero_alt l O hm, zero_mul,
     zero_add, constantCoeff_C]
 
 lemma binomialSeriesSubOne_add_prime_mul_cong (ha : ActLaws) (hq : QMul) (d e : ℤ_[l]) :
@@ -1282,7 +1296,7 @@ theorem act_unit_pi0_eq_mul_padic (ha : ActLaws) (hm : MuFacts) (hq : QMul) (hi 
     have h0 : ρ = 1 + (X - C (l : ℤ_[l])) * un := by
       rw [pow_one] at hun
       linear_combination hun
-    rw [hρ, hΦ ρ, h0, map_add, map_one, map_mul, map_sub, hΦX, algHom_C_eq, ← hΦ, q0]
+    rw [hρ, hΦ ρ, h0, map_add (f := _), map_one, map_mul, map_sub, hΦX, algHom_C_eq, ← hΦ, q0]
     ring
   refine ⟨un, by rw [hr, hrr], ?_⟩
 
@@ -1297,7 +1311,7 @@ theorem act_unit_pi0_eq_mul_padic (ha : ActLaws) (hm : MuFacts) (hq : QMul) (hi 
     rw [q0, map_sub, constantCoeff_pi0_eq_zero_alt l ℤ_[l] hm, constantCoeff_C, zero_sub]
   have hmain : u ^ (l - 1) = 1 + constantCoeff un * (-(l : ℤ_[l])) := by
     have h0 := congrArg constantCoeff hrr
-    rw [hr0, map_add, map_one, map_mul, constantCoeff_inc l ℤ_[l] hm, hq00] at h0
+    rw [hr0, map_add (f := _), map_one, map_mul, constantCoeff_inc l ℤ_[l] hm, hq00] at h0
     exact h0
   obtain ⟨e, he⟩ := one_add_pow_eq_linear_add_sq_mul ((l : ℤ_[l]) * c) (l - 1)
   have hn : ((l - 1 : ℕ) : ℤ_[l]) = (l : ℤ_[l]) - 1 := by
@@ -1316,7 +1330,7 @@ theorem sixth_relation_of_action_and_mu_laws (ha : ActLaws) (hm : MuFacts) (hq :
   have H1 : act l O u (pi0 l O) =
       pi0 l O * (1 + inc l O (PowerSeries.map (algebraMap ℤ_[l] O) unZ) * q0 l O) := by
     have h0 := congrArg (PowerSeries.map (algebraMap ℤ_[l] O)) hA
-    rw [map_act_padic, map_mul, map_add, map_one, map_mul, map_algebraMap_pi0Subst l O hm,
+    rw [map_act_padic, map_mul, map_add (f := _), map_one, map_mul, map_algebraMap_pi0Subst l O hm,
       map_q0_padic_alt, map_pi0_padicInt_algebraMap] at h0
     exact h0
   refine ⟨PowerSeries.map (algebraMap ℤ_[l] O) unZ, H1, ⟨algebraMap ℤ_[l] O e, ?_⟩, ?_, ?_⟩
@@ -1326,7 +1340,7 @@ theorem sixth_relation_of_action_and_mu_laws (ha : ActLaws) (hm : MuFacts) (hq :
     obtain ⟨Φ, hΦ, hΦX⟩ := exists_algHom_inc_pi0 l O hm
     have h0 : act l O u (q0 l O) = act l O u (pi0 l O) - C (l : O) := by
       rw [hΨ, q0, map_sub, algHom_C_eq, ← hΨ]
-    rw [h0, H1, hΦ (1 + X * _), map_add, map_one, map_mul, hΦX, ← hΦ, q0]
+    rw [h0, H1, hΦ (1 + X * _), map_add (f := _), map_one, map_mul, hΦX, ← hΦ, q0]
     ring
   · exact isUnit_iff_constantCoeff.mpr (by simp)
 
@@ -1337,14 +1351,6 @@ section PartC
 section CapelliProof
 
 variable {𝒰 : Type} [Ring 𝒰]
-
-def orderedProd {N : ℕ} (a : Fin N → 𝒰) : 𝒰 := (List.ofFn a).prod
-
-def columnDet {N : ℕ} (c : Fin N → Fin N → 𝒰) : 𝒰 :=
-  ∑ σ : Equiv.Perm (Fin N), ((Equiv.Perm.sign σ : ℤˣ) : ℤ) • orderedProd (fun p => c p (σ p))
-
-def columnDetAt {N : ℕ} (E : Fin N → Fin N → 𝒰) (u : 𝒰) (J : Fin N → Fin N) : 𝒰 :=
-  columnDet (fun p s => capA E (u - ((p : ℕ) : 𝒰)) s (J p))
 
 end CapelliProof
 
@@ -1483,63 +1489,6 @@ theorem dvd_det_submatrix_of_minorsDvd {m p t : ℕ} (x : R) (P : Matrix (Fin m)
   rcases Int.units_eq_one_or (Equiv.Perm.sign (Tuple.sort g)) with e2 | e2 <;>
   simpa [e1, e2] using h1
 
-theorem exists_submatrix_det_not_dvd_of_mul_eq {ι τ : Type} [Fintype ι] [DecidableEq ι] [Fintype τ] [DecidableEq τ]
-    (x : R) (h : ℕ) (M M' : Matrix ι ι R) (e : τ → ι) (he : Function.Injective e)
-    (hM : M * M' = (x ^ h) • (1 : Matrix ι ι R))
-    (hx : ¬ x ^ (Fintype.card τ * h + 1) ∣ x ^ (Fintype.card τ * h)) :
-    ∃ f g : τ → ι, ¬ x ^ (Fintype.card τ * h + 1) ∣ (M.submatrix f g).det := by
-  by_contra hcon
-  push Not at hcon
-  apply hx
-  have h1 := dvd_det_submatrix_mul_right _ M M' hcon e e
-  have h2 : ((x ^ h) • (1 : Matrix ι ι R)).submatrix e e = (x ^ h) • (1 : Matrix τ τ R) := by
-    rw [← Matrix.submatrix_one e he]; rfl
-  rw [hM, h2, Matrix.det_smul, Matrix.det_one, mul_one, ← pow_mul, mul_comm h] at h1
-  exact h1
-
-theorem not_pow_dvd_mul_of_not_pow_dvd [IsDomain R] {π x y : R} {a b : ℕ} (hπ : Prime π)
-    (hx : ¬ π ^ (a + 1) ∣ x) (hy : ¬ π ^ (b + 1) ∣ y) : ¬ π ^ (a + b + 1) ∣ x * y := by
-  rw [pow_dvd_iff_le_emultiplicity, not_le] at hx hy ⊢
-  rw [emultiplicity_mul hπ]
-  obtain ⟨m, hm⟩ := ENat.ne_top_iff_exists.1 (ne_top_of_lt hx)
-  obtain ⟨k, hk⟩ := ENat.ne_top_iff_exists.1 (ne_top_of_lt hy)
-  rw [← hm] at hx ⊢
-  rw [← hk] at hy ⊢
-  norm_cast at hx hy ⊢
-  omega
-
-theorem not_pow_sum_dvd_prod [IsDomain R] {π : R} (hπ : Prime π) {κ : Type} (s : Finset κ)
-    (v : κ → ℕ) (y : κ → R) (h : ∀ r ∈ s, ¬ π ^ (v r + 1) ∣ y r) :
-    ¬ π ^ (∑ r ∈ s, v r + 1) ∣ ∏ r ∈ s, y r := by
-  classical
-  induction s using Finset.induction_on with
-  | empty =>
-    intro hd
-    exact hπ.not_isUnit (isUnit_of_dvd_one (by simpa using hd))
-  | insert a s ha ih =>
-    rw [Finset.sum_insert ha, Finset.prod_insert ha]
-    exact not_pow_dvd_mul_of_not_pow_dvd hπ (h a (Finset.mem_insert_self _ _))
-      (ih fun r hr => h r (Finset.mem_insert_of_mem hr))
-
-theorem det_sigma_reindexed_square_block {n : ℕ} (Φ : Matrix (Fin n) (Fin n) R) (b : Fin n → ℕ) (I : Finset ℕ)
-    (tt : ↥I → ℕ) (F G : ∀ r : ↥I, Fin (tt r) → {j // b j = r.1}) (r : ↥I) :
-    ((Φ.submatrix (fun x : (Σ r : ↥I, Fin (tt r)) => (F x.1 x.2).1)
-        (fun x : (Σ r : ↥I, Fin (tt r)) => (G x.1 x.2).1)).toSquareBlock
-          (fun x : (Σ r : ↥I, Fin (tt r)) => x.1.1) r.1).det =
-      ((Φ.toSquareBlock b r.1).submatrix (F r) (G r)).det := by
-  let e0 : Fin (tt r) → {y : (Σ r : ↥I, Fin (tt r)) // y.1.1 = r.1} := fun i => ⟨⟨r, i⟩, rfl⟩
-  have he0 : Function.Bijective e0 := by
-    constructor
-    · intro i j hij
-      have h1 : (⟨r, i⟩ : Σ r : ↥I, Fin (tt r)) = ⟨r, j⟩ := congrArg Subtype.val hij
-      simpa using h1
-    · rintro ⟨⟨r', i⟩, hy⟩
-      have hr : r' = r := Subtype.ext hy
-      subst hr
-      exact ⟨i, rfl⟩
-  rw [← Matrix.det_submatrix_equiv_self (Equiv.ofBijective e0 he0)]
-  rfl
-
 end PartE
 
 theorem minors_divide_all_holds : MinorsDvdAll := by
@@ -1562,92 +1511,6 @@ theorem diagonal_minors_holds : DiagMinors := by
   refine Dvd.dvd.mul_right (pow_dvd_pow x ?_) _
   have h2 := hS (Finset.univ.image f) (by rw [Finset.card_image_of_injective _ hf.injective]; simp)
   rwa [Finset.sum_image (fun i _ j _ h => hf.injective h)] at h2
-
-theorem minor_bound_extra_holds : MinorBoundExtra := by
-  intro R _ _ π n h c Φ b ch al ν hπ hΦ hsub hch hoth hdvd
-  generalize hI : Finset.univ.image b = I at hsub hoth hdvd ⊢
-  have hloc : ∀ r : ↥I, ∃ (t v : ℕ) (F G : Fin t → {j // b j = r.1}),
-      t = (if r.1 ∈ ch then 1 else ν r.1) ∧ v = (if r.1 ∈ ch then al r.1 else ν r.1 * h) ∧
-      ¬ π ^ (v + 1) ∣ ((Φ.toSquareBlock b r.1).submatrix F G).det := by
-    intro r
-    by_cases hr : r.1 ∈ ch
-    · obtain ⟨s, hs, u, hu⟩ := hch r.1 hr
-      refine ⟨1, al r.1, fun _ => ⟨s, (hs s).2 rfl⟩, fun _ => ⟨s, (hs s).2 rfl⟩,
-        (if_pos hr).symm, (if_pos hr).symm, ?_⟩
-      rw [Matrix.det_fin_one]
-      show ¬ π ^ (al r.1 + 1) ∣ Φ s s
-      rw [hu, pow_succ, mul_comm (π ^ al r.1) π,
-        mul_dvd_mul_iff_right (pow_ne_zero _ hπ.ne_zero)]
-      exact fun hd => hπ.not_isUnit (isUnit_of_dvd_unit hd u.isUnit)
-    · obtain ⟨⟨M', hM'⟩, hν⟩ := hoth r.1 (Finset.mem_sdiff.2 ⟨r.2, hr⟩)
-      have hcard : Fintype.card (Fin (ν r.1)) ≤ Fintype.card {j // b j = r.1} := by
-        rw [Fintype.card_fin, Fintype.card_subtype]; exact hν
-      obtain ⟨e⟩ := Function.Embedding.nonempty_of_card_le hcard
-      have hx : ¬ π ^ (Fintype.card (Fin (ν r.1)) * h + 1) ∣
-          π ^ (Fintype.card (Fin (ν r.1)) * h) := by
-        rw [pow_dvd_pow_iff hπ.ne_zero hπ.not_isUnit]; omega
-      obtain ⟨F, G, hFG⟩ := exists_submatrix_det_not_dvd_of_mul_eq π h _ M' e e.injective hM' hx
-      rw [Fintype.card_fin] at hFG
-      exact ⟨ν r.1, ν r.1 * h, F, G, (if_neg hr).symm, (if_neg hr).symm, hFG⟩
-  choose tt vv F G htt hvv hnd using hloc
-  have hBT : (Φ.submatrix (fun x : (Σ r : ↥I, Fin (tt r)) => (F x.1 x.2).1)
-      (fun x : (Σ r : ↥I, Fin (tt r)) => (G x.1 x.2).1)).BlockTriangular
-        (fun x : (Σ r : ↥I, Fin (tt r)) => x.1.1) := by
-    intro x y hxy
-    refine hΦ ?_
-    show b (G y.1 y.2).1 < b (F x.1 x.2).1
-    rw [(F x.1 x.2).2, (G y.1 y.2).2]
-    exact hxy
-  have hnd' : ¬ π ^ (∑ a ∈ Finset.univ.image (fun x : (Σ r : ↥I, Fin (tt r)) => x.1.1),
-      (if a ∈ ch then al a else ν a * h) + 1) ∣
-      (Φ.submatrix (fun x : (Σ r : ↥I, Fin (tt r)) => (F x.1 x.2).1)
-        (fun x : (Σ r : ↥I, Fin (tt r)) => (G x.1 x.2).1)).det := by
-    rw [hBT.det]
-    refine not_pow_sum_dvd_prod hπ _ _ _ ?_
-    intro a ha
-    obtain ⟨x, -, rfl⟩ := Finset.mem_image.1 ha
-    rw [det_sigma_reindexed_square_block Φ b I tt F G x.1]
-    have h3 := hnd x.1
-    rwa [hvv x.1] at h3
-  have hle : ∑ a ∈ Finset.univ.image (fun x : (Σ r : ↥I, Fin (tt r)) => x.1.1),
-      (if a ∈ ch then al a else ν a * h) ≤ ∑ a ∈ I, (if a ∈ ch then al a else ν a * h) := by
-    refine Finset.sum_le_sum_of_subset ?_
-    intro a ha
-    obtain ⟨x, -, rfl⟩ := Finset.mem_image.1 ha
-    exact x.1.2
-  have hsumv : ∑ a ∈ I, (if a ∈ ch then al a else ν a * h) =
-      ∑ r ∈ ch, al r + (∑ r ∈ I \ ch, ν r) * h := by
-    rw [← Finset.sum_sdiff hsub, add_comm, Finset.sum_mul]
-    congr 1
-    · exact Finset.sum_congr rfl fun r hr => if_pos hr
-    · exact Finset.sum_congr rfl fun r hr => if_neg (Finset.mem_sdiff.1 hr).2
-  have hcardT : Fintype.card (Σ r : ↥I, Fin (tt r)) = ch.card + ∑ r ∈ I \ ch, ν r := by
-    rw [Fintype.card_sigma]
-    simp only [Fintype.card_fin, htt]
-    rw [Finset.sum_coe_sort I (fun r => if r ∈ ch then 1 else ν r), ← Finset.sum_sdiff hsub,
-      add_comm]
-    congr 1
-    · rw [Finset.card_eq_sum_ones]
-      exact Finset.sum_congr rfl fun r hr => if_pos hr
-    · exact Finset.sum_congr rfl fun r hr => if_neg (Finset.mem_sdiff.1 hr).2
-  have hall := dvd_det_submatrix_of_minorsDvd (π ^ c) Φ hdvd
-  have h1 := hall
-    (fun i => (F ((Fintype.equivFinOfCardEq hcardT).symm i).1
-      ((Fintype.equivFinOfCardEq hcardT).symm i).2).1)
-    (fun i => (G ((Fintype.equivFinOfCardEq hcardT).symm i).1
-      ((Fintype.equivFinOfCardEq hcardT).symm i).2).1)
-  have h2 : Φ.submatrix
-      (fun i => (F ((Fintype.equivFinOfCardEq hcardT).symm i).1
-        ((Fintype.equivFinOfCardEq hcardT).symm i).2).1)
-      (fun i => (G ((Fintype.equivFinOfCardEq hcardT).symm i).1
-        ((Fintype.equivFinOfCardEq hcardT).symm i).2).1) =
-      (Φ.submatrix (fun x : (Σ r : ↥I, Fin (tt r)) => (F x.1 x.2).1)
-        (fun x : (Σ r : ↥I, Fin (tt r)) => (G x.1 x.2).1)).submatrix
-          (Fintype.equivFinOfCardEq hcardT).symm (Fintype.equivFinOfCardEq hcardT).symm := rfl
-  rw [h2, Matrix.det_submatrix_equiv_self] at h1
-  by_contra hc
-  rw [not_le, ← hsumv] at hc
-  exact hnd' (dvd_trans (pow_dvd_pow π (Nat.succ_le_of_lt (lt_of_le_of_lt hle hc))) h1)
 
 end PartE
 
@@ -1812,7 +1675,8 @@ theorem height_descent_of_r3_r2 (h3 : UnitFactorQ) (hb : PowerSeriesFreeBasis) :
             refine Finset.sum_congr rfl fun c _ => ?_
             rw [← hG c b]; ring
         _ = ∑ j, inc l O (∑ c, P a c * G c b j) * X ^ (j : ℕ) := by
-            simp only [hinc, map_sum, map_mul, Finset.mul_sum, Finset.sum_mul]
+            set_option synthInstance.maxHeartbeats 100000 in
+              simp only [hinc, map_sum, map_mul, Finset.mul_sum, Finset.sum_mul]
             rw [Finset.sum_comm]
             exact Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun c _ => by ring
     · rw [Finset.sum_eq_single (⟨0, hl1⟩ : Fin (l - 1))]

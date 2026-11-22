@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermLat
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsEqZpowMulUnit
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermLat
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsEqZpowMulUnit
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical
@@ -289,9 +293,15 @@ theorem block_of : ∀ (bs : List (Eˣ × ℕ+)) (i : ℕ), i < (bs.map (fun b =
     ∃ (l' l : ℕ) (t : E), l' ≤ i ∧ i < l ∧ l ≤ (bs.map (fun b => (b.2 : ℕ))).sum ∧
       (∀ a b, l' ≤ a → a < l → l' ≤ b → b < l → sameBlock bs a b = true) ∧
       (∀ a b, l' ≤ a → a < l → ptEntryL bs a b = if a + b + 1 = l + l' then t else 0) ∧
-      (∀ a b, l ≤ a → b < l → ptEntryL bs a b = 0) ∧ (∀ a b, l' ≤ a → b < l' → ptEntryL bs a b = 0)
-  | [], i, h => by simp at h
-  | (t, s) :: bs, i, h => by
+      (∀ a b, l ≤ a → b < l → ptEntryL bs a b = 0) ∧ (∀ a b, l' ≤ a → b < l' → ptEntryL bs a b = 0) := by
+  intro bs
+  induction bs with
+  | nil =>
+    intro i h
+    simp at h
+  | cons head bs ih =>
+    rcases head with ⟨t, s⟩
+    intro i h
     simp only [List.map_cons, List.sum_cons] at h ⊢
     by_cases h1 : i < s
     · refine ⟨0, s, t, by omega, h1, by omega, ?_, ?_, ?_, ?_⟩
@@ -305,7 +315,7 @@ theorem block_of : ∀ (bs : List (Eˣ × ℕ+)) (i : ℕ), i < (bs.map (fun b =
         split_ifs <;> first | rfl | omega
       · intro a b ha hb
         omega
-    · obtain ⟨l', l, t', e1, e2, e3, e4, e5, e6, e7⟩ := block_of bs (i - s) (by omega)
+    · obtain ⟨l', l, t', e1, e2, e3, e4, e5, e6, e7⟩ := ih (i - s) (by omega)
       refine ⟨s + l', s + l, t', by omega, by omega, by omega, ?_, ?_, ?_, ?_⟩
       · intro a b ha' ha hb' hb
         have := e4 (a - s) (b - s) (by omega) (by omega) (by omega) (by omega)

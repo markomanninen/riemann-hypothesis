@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.ComplementarySeries.Complementary
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistedJacquetPhiMinusEquiv
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicTwistedKernelDerivativeZeroStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RestrictionMirabolicTwistedKernelStatement
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.ComplementarySeries.Complementary
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistedJacquetPhiMinusEquiv
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicTwistedKernelDerivativeZeroStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RestrictionMirabolicTwistedKernelStatement
+
+@[expose] public section
 
 open Matrix GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.BZMir
 
@@ -52,7 +56,7 @@ theorem comap_twKer (ρ : Representation ℂ G V) (N₁ : Subgroup G) (θ₁ : N
       have hz : ρ (u₁ : G) (ρ (s a) v) - ((θ₁ u₁ : ℂˣ) : ℂ) • ρ (s a) v ∈ twKer ρ N₁ θ₁ :=
         Submodule.subset_span ⟨u₁, _, rfl⟩
       show (twKer ρ N₁ θ₁).mkQ _ ∈ twKer σ N₂ θ₂
-      rw [hdec, map_add, Submodule.mkQ_apply, (Submodule.Quotient.mk_eq_zero _).2 hz, zero_add, map_smul]
+      rw [hdec, map_add (f := _), Submodule.mkQ_apply, (Submodule.Quotient.mk_eq_zero _).2 hz, zero_add, map_smul]
       refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨a, Submodule.Quotient.mk v, ?_⟩)
       rw [Submodule.mkQ_apply, Submodule.Quotient.mk_sub, Submodule.Quotient.mk_smul, hσ]
   rw [key, Submodule.comap_map_mkQ, sup_eq_right.2 hle]
@@ -61,8 +65,8 @@ end Abstract
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-variable (k) in
 
+variable (k) in
 def Q (ψ : AddChar k Circle) {n : ℕ} : (j : ℕ) → (τ : MRep k (n + j)) →
     τ.V →ₗ[ℂ] TwJacquet (iterPhi k ψ j τ).ρ (MirUin k n) 1
   | 0, τ => (twKer τ.ρ (MirUin k n) 1).mkQ
@@ -93,8 +97,8 @@ theorem ker_Q (ψ : AddChar k Circle) {n : ℕ} : ∀ (j : ℕ) (τ : MRep k (n 
       ((twKer τ.ρ (MirUin k (n + j + 1)) (mirChar k ψ (n + j))).mkQ v)
     exact e2
 
-variable (k) in
 
+variable (k) in
 def E {n : ℕ} : (j : ℕ) → GL (Fin n) k →* Mir k (n + j)
   | 0 => levi k n
   | j + 1 => (levi k (n + j + 1)).comp ((Mir k (n + j)).subtype.comp (E j))
@@ -175,15 +179,15 @@ theorem E_eq {n j : ℕ} (g : GL (Fin n) k) :
   · have ha := a.2
     have hb := b.2
     simp only [stdSum_inl, fromBlocks_apply₁₁]
-    rw [dif_pos ⟨ha, hb⟩]
+    rw [dite_eq_left ⟨ha, hb⟩]
   · simp only [stdSum_inl, stdSum_inr, fromBlocks_apply₁₂, Matrix.zero_apply]
-    rw [dif_neg (by omega), one_std]
+    rw [dite_eq_right (by omega), one_std]
     simp
   · simp only [stdSum_inl, stdSum_inr, fromBlocks_apply₂₁, Matrix.zero_apply]
-    rw [dif_neg (by omega), one_std]
+    rw [dite_eq_right (by omega), one_std]
     simp
   · simp only [stdSum_inr, fromBlocks_apply₂₂]
-    rw [dif_neg (by omega), one_std]
+    rw [dite_eq_right (by omega), one_std]
     simp [Matrix.one_apply]
 
 section Blocks
@@ -233,8 +237,8 @@ theorem mem_of_inU {g : GL (Fin N) k} (H : InU (n := n) g) : g ∈ unipRad k (tw
 
 end Blocks
 
-variable (k) in
 
+variable (k) in
 def Q' (ψ : AddChar k Circle) {n t N : ℕ} (h : n + t = N) {V : Type} [AddCommGroup V] [Module ℂ V]
     (π : Representation ℂ (GL (Fin N) k) V) :
     V →ₗ[ℂ] TwJacquet (jacU₂ (stdSum h) π) (rightUnip k n t) (rightWhit k ψ n t) :=

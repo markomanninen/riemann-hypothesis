@@ -1,14 +1,18 @@
-import Development.AutomorphicArithmetic.AdelicQuotients.RieszRepresentationSesquilinear
-import Development.AutomorphicArithmetic.AdelicQuotients.MeasurableOfSeparatingFunctionals
-import Development.AutomorphicArithmetic.AdelicQuotients.InnerProductIntegralFundamentalDomainOfCompact
-import Development.AutomorphicArithmetic.AdelicQuotients.IrreducibleHermitianFormUnique
-import Development.WeilBound.ThetaLifts.LatticeBasics.ThetaBox
-import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.ArchHeisOf
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.GalTPDefs
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThetaBasicK
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.TPGDecomp
+module
+
+public import Development.AutomorphicArithmetic.AdelicQuotients.RieszRepresentationSesquilinear
+public import Development.AutomorphicArithmetic.AdelicQuotients.MeasurableOfSeparatingFunctionals
+public import Development.AutomorphicArithmetic.AdelicQuotients.InnerProductIntegralFundamentalDomainOfCompact
+public import Development.AutomorphicArithmetic.AdelicQuotients.IrreducibleHermitianFormUnique
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ThetaBox
+public import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.ArchHeisOf
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.GalTPDefs
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThetaBasicK
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.TPGDecomp
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -41,7 +45,7 @@ private theorem assemble_pk {H A V : Type} [Group H] [TopologicalSpace H] [IsTop
   have addR : ∀ g₁ g₂ g₃ : H → ℂ, Continuous g₁ → Continuous g₂ → Continuous g₃ → (∀ γ ∈ Γ, ∀ h, g₁ (γ * h) = g₁ h) →
       (∀ γ ∈ Γ, ∀ h, g₂ (γ * h) = g₂ h) → (∀ γ ∈ Γ, ∀ h, g₃ (γ * h) = g₃ h) →
       pet μ 𝓕 g₃ (g₁ + g₂) = pet μ 𝓕 g₃ g₁ + pet μ 𝓕 g₃ g₂ := fun g₁ g₂ g₃ c₁ c₂ c₃ l₁ l₂ l₃ => by
-    simp only [hpet, Pi.add_apply, map_add, mul_add]
+    simp only [hpet, Pi.add_apply, map_add (f := _), mul_add]
     exact integral_add (P _ _ c₃ c₁ l₃ l₁).1 (P _ _ c₃ c₂ l₃ l₂).1
   have smL : ∀ (c : ℂ) (g₁ g₂ : H → ℂ), pet μ 𝓕 (c • g₁) g₂ = c * pet μ 𝓕 g₁ g₂ := fun c g₁ g₂ => by
     simp only [hpet, Pi.smul_apply, smul_eq_mul, mul_assoc]
@@ -51,10 +55,10 @@ private theorem assemble_pk {H A V : Type} [Group H] [TopologicalSpace H] [IsTop
     exact integral_const_mul _ _
   let B : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ := LinearMap.mk₂'ₛₗ (RingHom.id ℂ) (starRingEnd ℂ) (fun a b => pet μ 𝓕 (f a) (f b))
     (fun a b c => by
-      rw [map_add]; exact addL _ _ _ (hfc a) (hfc b) (hfc c) (hfl a) (hfl b) (hfl c))
+      rw [map_add (f := _)]; exact addL _ _ _ (hfc a) (hfc b) (hfc c) (hfl a) (hfl b) (hfl c))
     (fun c a b => by rw [map_smul]; exact smL _ _ _)
     (fun a b c => by
-      rw [map_add]; exact addR _ _ _ (hfc b) (hfc c) (hfc a) (hfl b) (hfl c) (hfl a))
+      rw [map_add (f := _)]; exact addR _ _ _ (hfc b) (hfc c) (hfc a) (hfl b) (hfl c) (hfl a))
     (fun c a b => by rw [map_smul]; exact smR _ _ _)
   have hB : ∀ a b, B a b = pet μ 𝓕 (f a) (f b) := fun _ _ => rfl
   have hh : ∀ a b, B b a = star (B a b) := fun a b => by
@@ -72,12 +76,12 @@ private theorem assemble_pk {H A V : Type} [Group H] [TopologicalSpace H] [IsTop
   obtain ⟨c', hc'⟩ := UpperTheory.invariant_sesquilinearForm_eq_smul_of_irreducible π hI B hh hp hinv B₁ hB₁
   let L : V →ₗ⋆[ℂ] ℂ :=
     { toFun := fun b => pet μ 𝓕 u (f b)
-      map_add' := fun a b => by rw [map_add]; exact addR _ _ _ (hfc a) (hfc b) huc (hfl a) (hfl b) hul
+      map_add' := fun a b => by rw [map_add (f := _)]; exact addR _ _ _ (hfc a) (hfc b) huc (hfl a) (hfl b) hul
       map_smul' := fun c a => by rw [map_smul]; exact smR _ _ _ }
   obtain ⟨u₀, hu₀⟩ := UpperTheory.riesz_representation_sesquilinear B hh hp L
   have hL : ∀ b, pet μ 𝓕 u (f b) = B u₀ b := hu₀
   have key : ∀ x, pet μ 𝓕 (fun y => u (y * ι x)) (f x₀) = B (π x u₀) x₀ := fun x => by
-    have e1 := (P (fun y => u (y * ι x)) (f x₀) (huc.comp (continuous_mul_right _)) (hfc x₀)
+    have e1 := (P (fun y => u (y * ι x)) (f x₀) (huc.comp (continuous_mul_const _)) (hfc x₀)
       (fun γ hγ h => by simp only [mul_assoc, hul γ hγ]) (hfl x₀)).2.1 (ι x⁻¹)
     have e2 : ∀ h, f x₀ (h * ι x⁻¹) = f (π x⁻¹ x₀) h := fun h => (hfr _ _ _).symm
     have e3 : ∀ h, u (h * ι x⁻¹ * ι x) = u h := fun h => by
@@ -182,9 +186,9 @@ theorem UpperTheory.TP.schurStep_k : _root_.UpperTheory.TP.Tools_k → _root_.Up
   have hsp := IsUWeilPair.isUSplitting P.weil
   let B₁ : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ := LinearMap.mk₂'ₛₗ (RingHom.id ℂ) (starRingEnd ℂ)
     (fun a b => lD _ (Fin n × Fin d) (boxFun (Ψ a) (star (Ψ b))))
-    (fun a b c => by rw [map_add, GlobalTheory.SchwartzBox.boxFun_add_left, map_add])
+    (fun a b c => by rw [map_add (f := _), GlobalTheory.SchwartzBox.boxFun_add_left, map_add (f := _)])
     (fun c a b => by rw [map_smul, GlobalTheory.SchwartzBox.boxFun_smul_left, map_smul]; rfl)
-    (fun a b c => by rw [map_add, star_add, GlobalTheory.SchwartzBox.boxFun_add_right, map_add])
+    (fun a b c => by rw [map_add (f := _), star_add, GlobalTheory.SchwartzBox.boxFun_add_right, map_add (f := _)])
     (fun c a b => by rw [map_smul, star_smul, GlobalTheory.SchwartzBox.boxFun_smul_right, map_smul]; rfl)
   have hB₁a : ∀ a b, B₁ a b = lD _ (Fin n × Fin d) (boxFun (Ψ a) (star (Ψ b))) := fun _ _ => rfl
   have hB₁ : ∀ g a b, B₁ (π g a) (π g b) = B₁ a b := fun g a b => by
@@ -209,7 +213,7 @@ theorem UpperTheory.TP.schurStep_k : _root_.UpperTheory.TP.Tools_k → _root_.Up
     exact Complex.ofReal_ne_zero.2 (div_pos h1 h3).ne'
   have hmain := UpperTheory.TP.assemble_pk M.μ (ratU (UpperTheory.TP.cj E) X.J) M.dom P.good.dom (C.fin _ _ hHaar P.good.dom) Ω hΩ hcov μA π hI
     (UpperTheory.TP.gInf (UpperTheory.TP.cj E) X).subtype measurable_subtype_coe f hf0 hfc hleft hfr B₁ hB₁ x₀
-    (fun y => φ (e.symm (y * cc))) (hform.cont.comp (e.symm.continuous.comp (continuous_mul_right cc)))
+    (fun y => φ (e.symm (y * cc))) (hform.cont.comp (e.symm.continuous.comp (continuous_mul_const cc)))
     (fun γ hγ h => by
       show φ (e.symm (γ * h * cc)) = φ (e.symm (h * cc))
       rw [mul_assoc, map_mul]

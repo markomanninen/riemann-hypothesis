@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.WeylProd
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.WeylProd
+
+@[expose] public section
 
 namespace PI.WeylProdWork
 

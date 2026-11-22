@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsLocalCoeffRing
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsLocalCoeffRing
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -22,7 +27,7 @@ theorem LocalQuotColon.proof : LocalQuotColon.Statement.{u} := by
       rw [hφ, Ideal.Quotient.eq_zero_iff_mem]
       exact Ideal.mem_map_of_mem _ hp
     refine Ideal.mem_span_singleton'.mpr ⟨localQuotMap P U a, ?_⟩
-    rw [← map_mul, ← map_mul, ← hpz, map_add, hp0, zero_add, map_mul]
+    rw [← map_mul, ← map_mul, ← hpz, map_add (f := _), hp0, zero_add, map_mul]
   · intro y hy
     rw [Submodule.mem_colon_singleton, smul_eq_mul] at hy
     obtain ⟨b, hb⟩ := Ideal.mem_span_singleton'.mp hy

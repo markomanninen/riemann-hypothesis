@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParamCommF
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParamCommF
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexConjugate

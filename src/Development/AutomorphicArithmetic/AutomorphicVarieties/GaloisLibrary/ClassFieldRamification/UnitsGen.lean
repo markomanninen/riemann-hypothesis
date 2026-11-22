@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.IsClassFieldHilbert
-import GroundTheory.GlobalFields.TateThesis.Chebotarev
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.CycInertia
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.IsClassFieldHilbert
+public import GroundTheory.GlobalFields.TateThesis.Chebotarev
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.CycInertia
+
+@[expose] public section
 
 open NumberField IsDedekindDomain IntermediateField UpperTheory.V.Kum UpperTheory.V.CF
 open scoped Pointwise
@@ -91,7 +95,7 @@ private theorem aux (N : ℕ) [NeZero N] (b : ℕ) : ∀ (a : ℕ) (ha : a ∣ N
       rw [mul_assoc, hbsplit, hab]
     have ha'dvd : a * p ^ b.factorization p ∣ N := ⟨_, ha'N.symm⟩
     have ha'cop : (a * p ^ b.factorization p).Coprime (b / p ^ b.factorization p) :=
-      Nat.Coprime.mul (Nat.Coprime.coprime_dvd_right hb'dvd hcop) (Nat.Coprime.pow_left _ hpb')
+      Nat.Coprime.mul_left (Nat.Coprime.coprime_dvd_right hb'dvd hcop) (Nat.Coprime.pow_left _ hpb')
     have IH := ih _ hb'lt (a * p ^ b.factorization p) ha'dvd ha'N ha'cop
     have hvN : N.factorization p = b.factorization p := by
       rw [← hab, Nat.factorization_mul ha0 hb0, Finsupp.add_apply,

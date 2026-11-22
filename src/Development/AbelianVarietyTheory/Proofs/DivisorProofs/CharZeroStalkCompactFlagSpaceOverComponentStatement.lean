@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharZeroStalkCompactFlagSpaceOverComponent
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PhiAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharZeroStalkCompactFlagSpaceOverComponent
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PhiAt
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory Formalism.L2.Pj Formalism.BasicNotions
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -12,4 +16,8 @@ open GlobalTheory.HSApp
 
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.charZero_stalk_compactFlagSpaceOverComponent : ∀ {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} (TF : TorFlag Xo c) (Z : Comp Xo c) (y : Y₀ TF.X Z), CharZero ((Y₀ TF.X Z).presheaf.stalk y) := by
-  first | exact @GlobalTheory.CompHS.charZero_stalk_Y₀ | exact GlobalTheory.CompHS.charZero_stalk_Y₀ | (intros; apply GlobalTheory.CompHS.charZero_stalk_Y₀ <;> assumption)
+  intro E _ _ _ H Dw l Xo c TF Z y
+  let f : c.F →+* (Y₀ TF.X Z).presheaf.stalk y :=
+    ((Y₀ TF.X Z).presheaf.germ ⊤ y trivial).hom.comp
+      ((str₀ TF.X Z).appTop.hom.comp (Scheme.ΓSpecIso (CommRingCat.of c.F)).inv.hom)
+  exact charZero_of_injective_ringHom f.injective

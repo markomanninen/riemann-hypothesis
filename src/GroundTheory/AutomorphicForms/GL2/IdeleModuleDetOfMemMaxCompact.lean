@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.AdeleScaling
-import GroundTheory.AutomorphicForms.ReductionIwasawa
-import GroundTheory.AutomorphicForms.NormDetDiagUnitsPosRealToUnits
-import GroundTheory.AutomorphicForms.ReductionMeasure
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+public import GroundTheory.AutomorphicForms.ReductionIwasawa
+public import GroundTheory.AutomorphicForms.NormDetDiagUnitsPosRealToUnits
+public import GroundTheory.AutomorphicForms.ReductionMeasure
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.Adele2
 
@@ -17,9 +21,6 @@ variable (K : Type*) [Field K] [NumberField K]
 def adeleMeasure2 : Measure (Fin 2 → 𝔸[K]) := Measure.pi fun _ => adeleMeasure K
 
 instance : (adeleMeasure2 K).IsAddHaarMeasure := by
-  unfold adeleMeasure2; infer_instance
-
-instance : SigmaFinite (adeleMeasure2 K) := by
   unfold adeleMeasure2; infer_instance
 
 variable {K}
@@ -261,6 +262,8 @@ theorem map_vecMul_adelicBorel {b : GL (Fin 2) 𝔸[K]}
     ← map_map hshear (hdiag.comp e.measurable), ← map_map hdiag e.measurable, he.map_eq,
     hmapdiag, Measure.map_smul, (measurePreserving_shear t).map_eq, Measure.map_smul,
     he.symm.map_eq, hconst]
+  · exact e.symm.measurable.aemeasurable
+  · exact hshear.aemeasurable
 
 theorem map_vecMul_adeleMeasure2 (g : GL (Fin 2) 𝔸[K]) :
     (adeleMeasure2 K).map (fun x => x ᵥ* (g : Matrix (Fin 2) (Fin 2) 𝔸[K])) =
@@ -276,6 +279,7 @@ theorem map_vecMul_adeleMeasure2 (g : GL (Fin 2) 𝔸[K]) :
   rw [hcomp, ← map_map (measurable_vecMul k) (measurable_vecMul b), map_vecMul_adelicBorel hb,
     Measure.map_smul, map_vecMul_maxCompact hk, map_mul, map_mul,
     ideleModule_det_of_mem_maxCompact hk, mul_one]
+  exact (measurable_vecMul k).aemeasurable
 
 theorem integral_comp_vecMul (g : GL (Fin 2) 𝔸[K]) (f : (Fin 2 → 𝔸[K]) → ℂ) :
     ∫ x, f (x ᵥ* (g : Matrix (Fin 2) (Fin 2) 𝔸[K])) ∂adeleMeasure2 K =

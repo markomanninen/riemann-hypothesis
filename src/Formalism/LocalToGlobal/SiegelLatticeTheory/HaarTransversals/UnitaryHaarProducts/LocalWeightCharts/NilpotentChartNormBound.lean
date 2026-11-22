@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.NilpotentChartRightInverse
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.NilpotentChartRightInverse
+
+@[expose] public section
 
 open Matrix Formalism.QuantumDeterminants
 
@@ -18,8 +22,7 @@ theorem entry_le_opn {n : ℕ} (M : Matrix (Fin n) (Fin n) ℂ) (i j : Fin n) :
     (EuclideanSpace.single j (1 : ℂ))
   rw [PiLp.norm_single, norm_one, mul_one] at h1
   refine le_trans (le_of_eq ?_) ((PiLp.norm_apply_le _ i).trans h1)
-  rw [← EuclideanSpace.toLp_single, Matrix.toEuclideanCLM_toLp, Matrix.mulVec_single_one]
-  simp
+  rw [Matrix.ofLp_toEuclideanCLM, PiLp.ofLp_single, Matrix.mulVec_single_one, Matrix.col_apply]
 
 theorem one_le_opn {g : Mx k r} (hg : g ∈ Nset k r) : 1 ≤ Formalism.L2.SG.WuDecay.opn g := by
   have h := entry_le_opn g (wI k r 0) (wI k r 0)

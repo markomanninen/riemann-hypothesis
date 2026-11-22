@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitDetRoot
+module
+
+public import Formalism.PeriodIntegrals.UnitDetRoot
+
+@[expose] public section
 
 noncomputable section
 open scoped ComplexConjugate

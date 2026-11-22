@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
-import Formalism.LocalRingCardinality.DataExtra
-import Formalism.LocalRingCardinality.DataTies
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Formalism.LocalRingCardinality.DataExtra
+public import Formalism.LocalRingCardinality.DataTies
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped TensorProduct InnerProductSpace
@@ -44,9 +48,6 @@ theorem OffEq.unique {R : RealDat D A Ks} {F : Face D A} {b : Bool} {i : Fin D.R
   have h1 := (h x hx x).symm.trans (h' x hx x)
   have h2 := mul_right_cancel₀ (by exact_mod_cast hx0) h1
   exact_mod_cast h2
-
-theorem zs_withScal (R : RealDat D A Ks) (F : Face D A) (lam) (kap : ℝ) :
-    ((withScal R lam kap).toCx F).zs = (R.toCx F).zs := rfl
 
 theorem partAt_withScal (R : RealDat D A Ks) (F : Face D A) (lam) (kap : ℝ) (b i p v) :
     (withScal R lam kap).PartAt F b i p v ↔ R.PartAt F b i p v := Iff.rfl

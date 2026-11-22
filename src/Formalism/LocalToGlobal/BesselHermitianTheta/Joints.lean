@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.BesselHermitianTheta.Lemmas
-import Formalism.LocalToGlobal.HermitianColumns.HermCols
+module
+
+public import Formalism.LocalToGlobal.BesselHermitianTheta.Lemmas
+public import Formalism.LocalToGlobal.HermitianColumns.HermCols
+
+@[expose] public section
 
 noncomputable section
 

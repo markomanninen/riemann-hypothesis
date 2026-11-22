@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.IntCoresB
+module
+
+public import ReciprocityTheory.SemistableReduction.IntCoresB
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,8 @@ def blockSlice {B n : ℕ} (b : Fin B) (p : Fin B → Fin n → ℂ) :
 theorem blockSlice_isHomogeneous {B n : ℕ} {a : Fin B → ℕ} {f : MvPolynomial (Fin B × Fin n) ℂ}
     (hf : IsMultiHomogeneous a f) (b : Fin B) (p : Fin B → Fin n → ℂ) :
     (bind₁ (blockSlice b p) f).IsHomogeneous (a b) := by
-  rw [f.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [f.as_sum, map_sum]
   apply IsHomogeneous.sum
   intro s hs
   rw [bind₁_monomial]

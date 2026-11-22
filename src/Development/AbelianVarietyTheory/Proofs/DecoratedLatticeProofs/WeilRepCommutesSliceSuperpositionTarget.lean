@@ -1,12 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaAbsoluteSum
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContinuousIsotropicSandwichMeanTranslation
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilOperatorIntegralCommOfBoundedFiniteMeasureStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsThetaFunSuperpositionTargetOrthSummandStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilOperatorTargetSummandPreservesThetaFunctionsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittDecompSymplInclIsotropicInclAnisotropic
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContinuousIsotropicSandwichMeanTranslation
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilOperatorIntegralCommOfBoundedFiniteMeasureStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsThetaFunSuperpositionTargetOrthSummandStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilOperatorTargetSummandPreservesThetaFunctionsStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
@@ -76,7 +83,7 @@ theorem weil_comm_sliceSum_target : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ
       funext u
       simp only [Pi.add_apply, add_mul]
       exact integral_add (intF _ h₁.1 u) (intF _ h₂.1 u)
-    rw [e1, map_add, Pi.add_apply, h₁.2, h₂.2]
+    rw [e1, map_add (f := _), Pi.add_apply, h₁.2, h₂.2]
     simp only [Pi.add_apply, add_mul]
     exact (integral_add (intG _ h₁.1) (intG _ h₂.1)).symm
   have Psmul : ∀ (z : ℂ) c, P c → P (fun w => z * c w) := by
@@ -131,12 +138,17 @@ theorem weil_comm_sliceSum_target : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ
   have P4 := Psmul (-Complex.I) _ (Ppos _ (mim.neg.max measurable_const) (fun w => le_max_right _ _) him.neg_part)
   have Pa' := Padd _ _ (Padd _ _ (Padd _ _ P1 P2) P3) P4
   have Pa'' : P a' := by
-    convert Pa' using 1
-    funext w
-    simp only [Pi.add_apply, Pi.neg_apply]
-    first
-      | exact (decomp_re_im (a' w)).symm
-      | exact decomp_re_im (a' w)
+    have heq : (fun w => (((max (a' w).re 0 : ℝ) : ℂ) +
+        -1 * ((max (-(a' w).re) 0 : ℝ) : ℂ) +
+        Complex.I * ((max (a' w).im 0 : ℝ) : ℂ)) +
+        -Complex.I * ((max (-(a' w).im) 0 : ℝ) : ℂ)) = a' := by
+      funext w
+      exact decomp_re_im (a' w)
+    change P (fun w => (((max (a' w).re 0 : ℝ) : ℂ) +
+        -1 * ((max (-(a' w).re) 0 : ℝ) : ℂ) +
+        Complex.I * ((max (a' w).im 0 : ℝ) : ℂ)) +
+        -Complex.I * ((max (-(a' w).im) 0 : ℝ) : ℂ)) at Pa'
+    rwa [heq] at Pa'
   have e1 : (fun u => ∫ w, a w * Fs (k w) u ∂μ) = fun u => ∫ w, a' w * Fs (k w) u ∂μ := by
     funext u; exact integral_congr_ae (hae.mono fun w hw => by simp only [hw])
   have e2 : ∫ w, a w * om p (Fs (k w)) u₀ ∂μ = ∫ w, a' w * om p (Fs (k w)) u₀ ∂μ :=

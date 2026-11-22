@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PartsConj
-import Development.AutomorphicArithmetic.CharacterBoxes.ExistsPageN
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PartsConj
+public import Development.AutomorphicArithmetic.CharacterBoxes.ExistsPageN
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ theorem length_eq_add_eigen {R M : Type} [CommRing R] [AddCommGroup M] [Module R
   have hc : (2 : R) * c = 1 := h2.mul_val_inv
   have eP : ∀ x : M, f (x + s • f x) = s • (x + s • f x) := by
     intro x
-    rw [map_add, map_smul, hf, smul_add, smul_smul, hs, one_smul, add_comm]
+    rw [map_add (f := _), map_smul, hf, smul_add, smul_smul, hs, one_smul, add_comm]
   have eQ : ∀ x : M, f (x - s • f x) = (-s) • (x - s • f x) := by
     intro x
     rw [map_sub, map_smul, hf, smul_sub, smul_smul, neg_mul, hs, neg_smul, neg_smul, one_smul]
@@ -60,7 +64,6 @@ variable {E Ω : Type} [Field E] [NumberField E] [IsCMField E] [Field Ω] [Algeb
   {l : ℕ} [Fact l.Prime]
 
 variable (E) in
-
 def cE : E ≃+* E := (IsCMField.complexConj E).toRingEquiv
 
 def cAct (D : LData E Ω l) (e : ℤ) : Module.End ℤ_[l] (H1 (qzTw D e)) := galoisActionOnCohomology D e (cE E)

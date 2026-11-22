@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsSnapper
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TildeFiniteESt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistTildeSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TildeShiftSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PClaimVanish
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsSnapper
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TildeFiniteESt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistTildeSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TildeShiftSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PClaimVanish
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman

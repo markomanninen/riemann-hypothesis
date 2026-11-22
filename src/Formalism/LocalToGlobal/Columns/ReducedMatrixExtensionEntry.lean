@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.StdBasisFlagSubmoduleOfBlockTriangular
+module
+
+public import Formalism.LocalToGlobal.Columns.StdBasisFlagSubmoduleOfBlockTriangular
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -62,13 +66,13 @@ theorem extendedMatrix_mulVec_single {n c : ℕ} (A : Matrix (Fin n) (Fin n) E) 
     (ciExtM c A).mulVec (Pi.single y 1) (Fin.castAdd c l) = if h : y.1 < n then A l ⟨y.1, h⟩ else 0 := by
   rw [ciExtM_castAdd]
   by_cases h : y.1 < n
-  · rw [dif_pos h, Finset.sum_eq_single (⟨y.1, h⟩ : Fin n)]
+  · rw [dite_eq_left h, Finset.sum_eq_single (⟨y.1, h⟩ : Fin n)]
     · rw [Pi.single_apply, if_pos (show Fin.castAdd c (⟨y.1, h⟩ : Fin n) = y from Fin.ext rfl), mul_one]
     · intro b _ hb
       rw [Pi.single_apply, if_neg (fun h' => hb (Fin.ext (by have := congrArg Fin.val h'; simpa using this))), mul_zero]
     · intro h'
       exact absurd (Finset.mem_univ _) h'
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     refine Finset.sum_eq_zero fun b _ => ?_
     rw [Pi.single_apply, if_neg (fun h' => h (by rw [← h']; simp)), mul_zero]
 
@@ -82,10 +86,10 @@ theorem reducedMatrix_blockExtension {n c : ℕ} (G : Matrix (Fin n) (Fin n) E) 
     rw [extendedMatrix_mulVec_single]
     simp only [Fin.val_castAdd]
     by_cases h' : y'.1 < n
-    · rw [dif_pos h', dif_pos ⟨l.2, h'⟩, ciScE_lt _ h', ciScE_lt _ l.2, sub_self, zpow_zero, mul_one]
-    · rw [dif_neg h', zero_mul, redP_zero, dif_neg (fun h => h' h.2), if_neg (fun h => h' (by rw [← h]; simp))]
+    · rw [dite_eq_left h', dite_eq_left ⟨l.2, h'⟩, ciScE_lt _ h', ciScE_lt _ l.2, sub_self, zpow_zero, mul_one]
+    · rw [dite_eq_right h', zero_mul, redP_zero, dite_eq_right (fun h => h' h.2), if_neg (fun h => h' (by rw [← h]; simp))]
   | right jj =>
-    rw [ciExtM_natAdd, dif_neg (fun h => by simp at h), Pi.single_apply]
+    rw [ciExtM_natAdd, dite_eq_right (fun h => by simp at h), Pi.single_apply]
     by_cases he : Fin.natAdd n jj = y'
     · subst he
       rw [if_pos rfl, if_pos rfl, one_mul, sub_self, zpow_zero, redP_one]
@@ -146,7 +150,7 @@ theorem ocbGrpGLoc_holds (m2 : ℕ) : OcbGrpGLoc Ch sel mu cst m2 := by
       fun l l' => by rw [ciEntry hred, reducedMatrix_extension_entry hrg]
     refine ⟨fun p hp => ?_, fun p p' hp hp' hne hnz => ?_⟩
     · unfold ocbM
-      rw [dif_pos ⟨by omega, by omega⟩, hent]
+      rw [dite_eq_left ⟨by omega, by omega⟩, hent]
       refine reducedMatrix_parahoric_diag_one hq hu hk hr hJ _ ?_
       show LocE.fPos R.k (cOf R j) (R.N j) p < R.r
       rw [framePos_of_lt_dim (by omega), hrr]
@@ -154,7 +158,7 @@ theorem ocbGrpGLoc_holds (m2 : ℕ) : OcbGrpGLoc Ch sel mu cst m2 := by
     · by_contra hna
       apply hnz
       unfold ocbM
-      rw [dif_pos ⟨hp, hp'⟩, hent]
+      rw [dite_eq_left ⟨hp, hp'⟩, hent]
       rcases beta_lt_of_not_allowed (t := R.t) hcj hp hp' hne hna with h | ⟨h1, h2⟩
       · have h' : betaExponentOfRanks R.k R.rS R.r R.t (LocE.fPos R.k (cOf R j) (R.N j) (Fin.castAdd (cOf R j) (⟨p', hp'⟩ : Fin (R.N j))).1) <
             betaExponentOfRanks R.k R.rS R.r R.t (LocE.fPos R.k (cOf R j) (R.N j) (Fin.castAdd (cOf R j) (⟨p, hp⟩ : Fin (R.N j))).1) := by
@@ -196,7 +200,7 @@ theorem ocbGrpGLoc_holds (m2 : ℕ) : OcbGrpGLoc Ch sel mu cst m2 := by
                 betaExponentOfRanks R.k R.rS R.r R.t (LocE.fPos R.k (cOf R j) (R.N j) y.1) := hlt
             rw [he'] at hlt'
             exact lt_irrefl _ hlt'
-          have hall := hpat.2 y.1 y'.1 h1.1 h1.2 hne (by unfold ocbM; rw [dif_pos h1]; exact hnz)
+          have hall := hpat.2 y.1 y'.1 h1.1 h1.2 hne (by unfold ocbM; rw [dite_eq_left h1]; exact hnz)
           refine not_allowed_of_beta_lt (t := R.t) hcj h1.1 h1.2 (Or.inl ?_) hall
           rw [← hrr]
           exact hlt
@@ -212,7 +216,7 @@ theorem ocbGrpGLoc_holds (m2 : ℕ) : OcbGrpGLoc Ch sel mu cst m2 := by
             split_ifs at hy <;> omega
           have h3 := hpat.1 y.1 hyk
           unfold ocbM at h3
-          rw [dif_pos ⟨h1.1, h1.1⟩] at h3
+          rw [dite_eq_left ⟨h1.1, h1.1⟩] at h3
           exact h3
         · rfl
         · exact absurd rfl h2
@@ -225,7 +229,7 @@ theorem ocbGrpGLoc_holds (m2 : ℕ) : OcbGrpGLoc Ch sel mu cst m2 := by
             intro he'
             rw [he'] at hy
             omega
-          have hall := hpat.2 y.1 y'.1 h1.1 h1.2 hne (by unfold ocbM; rw [dif_pos h1]; exact hnz)
+          have hall := hpat.2 y.1 y'.1 h1.1 h1.2 hne (by unfold ocbM; rw [dite_eq_left h1]; exact hnz)
           exact not_allowed_of_beta_lt (t := R.t) hcj h1.1 h1.2 (Or.inr ⟨hy, hy'⟩) hall
         · subst h2
           omega

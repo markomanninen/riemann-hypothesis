@@ -1,18 +1,22 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FactorRapid
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RapidFactorizationStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EigenvalueAdjointFactsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelRowExistsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelRowMatrixStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelAdjointSmoothStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LeftTranslateSobolevStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LeftTranslateCommutesStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelRowLeftInvariantStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelActionFormulaStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveRepresentationStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveUniquenessStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PhiResolventIdentityStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveIntegralIdentityStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelRowSupportStatement
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FactorRapid
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RapidFactorizationStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EigenvalueAdjointFactsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelRowExistsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelRowMatrixStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelAdjointSmoothStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LeftTranslateSobolevStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LeftTranslateCommutesStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelRowLeftInvariantStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelActionFormulaStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveRepresentationStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveUniquenessStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PhiResolventIdentityStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveIntegralIdentityStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelRowSupportStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 theorem coe_toC0 {f : ℝ → ℂ} (h₁ : Continuous f) (h₂ : Tendsto f (cocompact ℝ) (𝓝 0)) (y : ℝ) : toC0 f y = f y := by
   have : Continuous f ∧ Tendsto f (cocompact ℝ) (𝓝 0) := ⟨h₁, h₂⟩
   simp only [toC0]
-  rw [dif_pos this]
+  rw [dite_eq_left this]
   rfl
 
 theorem adj_rho {n : ℕ} (E : KMod n) [CompleteSpace E.V] (k : Matrix.unitaryGroup (Fin n) ℂ) :

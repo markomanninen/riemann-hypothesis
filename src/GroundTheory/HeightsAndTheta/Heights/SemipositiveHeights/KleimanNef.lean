@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.KleimanSt
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.GeoNum
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNefAmpleFibre
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSemiampleNef
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.KleimanSt
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.GeoNum
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNefAmpleFibre
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSemiampleNef
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.ForSecondHalf
@@ -27,8 +32,8 @@ theorem isMultiProjPrime_map_red (p : ℕ) {V : Ideal (MRing ι)} (hV : IsMultiP
     simpa only [red, map_X] using h
   exact (mem_map_red_iff p hp _).1 h'
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem charOf_mem (W : Ideal (MRing ι)) : ((charOf W : ℕ) : MRing ι) ∈ W := by
   have hg := Submodule.IsPrincipal.generator_mem (W.comap (C : ℤ →+* MRing ι))
   have hdvd : Submodule.IsPrincipal.generator (W.comap (C : ℤ →+* MRing ι)) ∣
@@ -40,8 +45,8 @@ theorem charOf_mem (W : Ideal (MRing ι)) : ((charOf W : ℕ) : MRing ι) ∈ W 
 
 end KleimanNef
 
-open KleimanNef in
 
+open KleimanNef in
 theorem KleimanNef.proof (hF : KH.KleimanNefFStatement) : KH.KleimanNefIntersectionNonneg := by
   classical
   intro K _ ι _ V n a hV hchar hdim hnef

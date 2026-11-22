@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CompletedLStripBounds
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsUniqueIsStandardAdeleCharUnramifiedCMBase
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DualLatticeDifferentIndex
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsHeckeLOfHasInf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CompletedLStripBounds
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsUniqueIsStandardAdeleCharUnramifiedCMBase
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DualLatticeDifferentIndex
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsHeckeLOfHasInf
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,24 +18,21 @@ namespace GlobalTheory.HeckeEps
 
 variable {E : Type} [Field E] [NumberField E]
 
-variable (E) in
 
+variable (E) in
 def stdChar : AddChar (AF E) ℂ := (GlobalTheory.StdCharUnique.existsUnique_isStdChar E).exists.choose
 
-variable (E) in
 
+variable (E) in
 theorem isStdChar_stdChar : GlobalTheory.IndefiniteRowSideFullHecke.LocalDualIndex.IsStdChar E (stdChar E) :=
   (GlobalTheory.StdCharUnique.existsUnique_isStdChar E).exists.choose_spec
-
-theorem eq_stdChar {ψ : AddChar (AF E) ℂ} (h : GlobalTheory.IndefiniteRowSideFullHecke.LocalDualIndex.IsStdChar E ψ) : ψ = stdChar E :=
-  (GlobalTheory.StdCharUnique.existsUnique_isStdChar E).unique h (isStdChar_stdChar E)
 
 def psiAt (w : HeightOneSpectrum (𝓞 E)) (x : w.adicCompletion E) : ℂ := psiV E (stdChar E) w x
 
 def diffExp (w : HeightOneSpectrum (𝓞 E)) : ℕ := multiplicity w.asIdeal (differentIdeal ℤ (𝓞 E))
 
-open Classical in
 
+open Classical in
 def gaussTerm (χ : HChar E) (w : HeightOneSpectrum (𝓞 E)) (c : Eˣ) (y : E) : ℂ :=
   if h : y = 0 then 0 else
     (((χ.locK w (Units.mk0 y h))⁻¹ : ℂˣ) : ℂ) * psiAt w (algebraMap E (w.adicCompletion E) (y / c))
@@ -81,7 +82,7 @@ theorem gaussTerm_congr' {χ : HChar E} {w : HeightOneSpectrum (𝓞 E)} {a : �
     exact zero_ne_one hz
   have hval : ∀ x : E, Valued.v (algebraMap E (w.adicCompletion E) x) = w.valuation E x := fun x =>
     HeightOneSpectrum.valuedAdicCompletion_eq_valuation' w x
-  rw [gaussTerm, gaussTerm, dif_neg (h0 hy), dif_neg (h0 hy')]
+  rw [gaussTerm, gaussTerm, dite_eq_right (h0 hy), dite_eq_right (h0 hy')]
   congr 1
   · have h1 : χ.loc w (atFin w (Units.mk0 _ (h0 hy) * (Units.mk0 _ (h0 hy'))⁻¹)) = 1 := by
       have e : ((atFin w (Units.mk0 _ (h0 hy) * (Units.mk0 _ (h0 hy'))⁻¹) : (w.adicCompletion E)ˣ) : w.adicCompletion E) =
@@ -94,7 +95,7 @@ theorem gaussTerm_congr' {χ : HChar E} {w : HeightOneSpectrum (𝓞 E)} {a : �
     rw [map_mul, map_inv, map_mul, map_inv, mul_inv_eq_one] at h1
     exact congrArg (fun u : ℂˣ => ((u⁻¹ : ℂˣ) : ℂ)) h1
   · have e : y / c = y' / c + (y - y') / c := by ring
-    rw [e, map_add, psiAt_add, psiAt_eq_one (t := algebraMap E _ ((y - y') / c)), mul_one]
+    rw [e, map_add (f := _), psiAt_add, psiAt_eq_one (t := algebraMap E _ ((y - y') / c)), mul_one]
     rw [hval, map_div₀, hc, div_le_iff₀ (zero_lt_iff.2 WithZero.exp_ne_zero), ← WithZero.exp_add]
     convert hd using 2
     push_cast
@@ -127,60 +128,6 @@ theorem out_notMem (w : HeightOneSpectrum (𝓞 E)) {a : ℕ} (ha : a ≠ 0) (y 
   have := Ideal.Quotient.nontrivial_iff.2 w.isPrime.ne_top
   exact not_isUnit_zero h1
 
-theorem locK_mul_gaussSumAt_eq {χ : HChar E} {w : HeightOneSpectrum (𝓞 E)} {a : ℕ} (ha : a ≠ 0) (hχ : LevelLe χ w a) {c c' : Eˣ}
-    (hc : w.valuation E (c : E) = WithZero.exp (-((a + diffExp w : ℕ) : ℤ)))
-    (hc' : w.valuation E (c' : E) = WithZero.exp (-((a + diffExp w : ℕ) : ℤ))) :
-    ((χ.locK w c' : ℂˣ) : ℂ) * gaussSumAt χ w a c' = ((χ.locK w c : ℂˣ) : ℂ) * gaussSumAt χ w a c := by
-  have := Fintype.ofFinite (𝓞 E ⧸ w.asIdeal ^ a)ˣ
-  have := w.isMaximal
-  have hu : w.valuation E ((c : E) / c') = 1 := by rw [map_div₀, hc, hc', div_self WithZero.exp_ne_zero]
-  obtain ⟨r, hr⟩ := w.exists_valuation_sub_lt_of_integer hu.le (Units.mk0 _ (WithZero.exp_ne_zero (a := -(a : ℤ))))
-  rw [Units.val_mk0] at hr
-  have hr1 : w.valuation E (r : E) = 1 := by
-    rw [← hu]
-    refine Valuation.map_eq_of_sub_lt _ (hr.trans_le ?_)
-    rw [hu, ← WithZero.exp_zero, WithZero.exp_le_exp]
-    omega
-  obtain ⟨ρ, hρ⟩ := Ideal.Quotient.isUnit_mk_pow_of_notMem w.asIdeal (n := a) ((w.valuation_eq_one_iff_notMem (K := E)).1 hr1)
-  rw [gaussSumAt, gaussSumAt, finsum_eq_sum_of_fintype, finsum_eq_sum_of_fintype, Finset.mul_sum, Finset.mul_sum]
-  refine Fintype.sum_equiv (Equiv.mulRight ρ) _ _ fun y => ?_
-  set z : 𝓞 E := Quotient.out (y : 𝓞 E ⧸ w.asIdeal ^ a) with hz
-  have hz1 : w.valuation E (z : E) = 1 := (w.valuation_eq_one_iff_notMem (K := E)).2 (out_notMem w ha y)
-  have hz0 : (z : E) ≠ 0 := fun h => by
-    rw [h, map_zero] at hz1
-    exact zero_ne_one hz1
-  have hzc : (z : E) * (c / c') ≠ 0 := mul_ne_zero hz0 (div_ne_zero c.ne_zero c'.ne_zero)
-  have h1 : gaussTerm χ w c ((Quotient.out ((Equiv.mulRight ρ y : (𝓞 E ⧸ w.asIdeal ^ a)ˣ) : 𝓞 E ⧸ w.asIdeal ^ a) : 𝓞 E) : E) =
-      gaussTerm χ w c (z * (c / c')) := by
-    have h2 : (Quotient.out ((Equiv.mulRight ρ y : (𝓞 E ⧸ w.asIdeal ^ a)ˣ) : 𝓞 E ⧸ w.asIdeal ^ a) : 𝓞 E) - z * r ∈ w.asIdeal ^ a := by
-      rw [← Ideal.Quotient.eq, Ideal.Quotient.mk_out, map_mul, hz, Ideal.Quotient.mk_out, ← hρ]
-      rfl
-    have h3 : w.valuation E ((z * r : 𝓞 E) : E) = 1 := by
-      push_cast
-      rw [map_mul, hz1, hr1, one_mul]
-    rw [gaussTerm_congr' hχ hc ((w.valuation_eq_one_iff_notMem (K := E)).2 (out_notMem w ha _)) h3 (valuation_sub_le h2)]
-    refine gaussTerm_congr' hχ hc h3 (by rw [map_mul, hz1, hu, one_mul]) ?_
-    push_cast
-    rw [← mul_sub, map_mul, hz1, one_mul]
-    exact hr.le
-  have e1 : Units.mk0 _ hzc = Units.mk0 _ hz0 * c * c'⁻¹ := by
-    ext
-    simp [div_eq_mul_inv, mul_assoc]
-  have e2 : (z : E) * (c / c') / c = z / c' := by
-    have := c.ne_zero
-    field_simp
-  rw [h1, gaussTerm, gaussTerm, dif_neg hz0, dif_neg hzc, e1, e2, map_mul, map_mul, map_inv]
-  simp only [mul_inv, inv_inv, Units.val_mul, Units.val_inv_eq_inv_val]
-  have := (χ.locK w c).ne_zero
-  field_simp
-
-theorem locEps_of_ne_zero {χ : HChar E} {w : HeightOneSpectrum (𝓞 E)} {a : ℕ} (ha : a ≠ 0) (hχ : LevelLe χ w a) {c : Eˣ}
-    (hc : w.valuation E (c : E) = WithZero.exp (-((a + diffExp w : ℕ) : ℤ))) (s : ℂ) :
-    locEps χ w a s = ((Ideal.absNorm w.asIdeal : ℕ) : ℂ) ^ (-s * ((a + diffExp w : ℕ) : ℂ)) *
-      ((Ideal.absNorm w.asIdeal : ℕ) : ℂ) ^ ((diffExp w : ℂ) / 2) * (((χ.locK w c : ℂˣ) : ℂ) * gaussSumAt χ w a c) := by
-  rw [locEps, if_neg ha, locK_mul_gaussSumAt_eq ha hχ (valuation_unif_pow w _) hc]
-  ring
-
 theorem locEps_zero (χ : HChar E) (w : HeightOneSpectrum (𝓞 E)) (s : ℂ) :
     locEps χ w 0 s = ((val χ w : ℂˣ) : ℂ) ^ diffExp w * ((Ideal.absNorm w.asIdeal : ℕ) : ℂ) ^ (-s * (diffExp w : ℂ)) *
       ((Ideal.absNorm w.asIdeal : ℕ) : ℂ) ^ ((diffExp w : ℂ) / 2) := by
@@ -194,7 +141,7 @@ theorem finite_mulSupport_locEps (χ : HChar E) (a : HeightOneSpectrum (𝓞 E) 
   refine ((Ideal.finite_factors (differentIdeal_ne_bot (A := ℤ) (B := 𝓞 E))).union a.support.finite_toSet).subset fun w hw => ?_
   by_contra hn
   simp only [Set.mem_union, Set.mem_setOf_eq, Finset.mem_coe, Finsupp.mem_support_iff, not_or, not_not] at hn
-  exact hw (by simp only [hn.2]; exact locEps_eq_one χ (multiplicity_eq_zero.2 hn.1) s)
+  exact hw (by simp only [hn.2]; exact locEps_eq_one χ (multiplicity_eq_zero_of_not_dvd hn.1) s)
 
 theorem archEps_two_mul {I : Type} [Fintype I] (m : I → ℤ) :
     archEps (fun i => 2 * m i) = Complex.I ^ (∑ i, (2 * m i).natAbs) := by
@@ -216,7 +163,7 @@ theorem completed_eq_mul {I : Type} [Fintype I] {χ : HChar E} {n : I → ℤ} {
       refine Finset.prod_congr rfl fun i _ => ?_
       rw [mul_inv, mul_inv, Complex.cpow_neg, inv_inv]
     rw [this]
-    refine Differentiable.fun_finset_prod fun i _ => Differentiable.mul (Differentiable.const_mul ?_ _) ?_
+    refine Differentiable.fun_finsetProd fun i _ => Differentiable.mul (Differentiable.const_mul ?_ _) ?_
     · exact (differentiable_id.add_const _).const_cpow (Or.inl hπ)
     · exact Complex.differentiable_one_div_Gamma.comp (differentiable_id.add_const _)
   have key : (fun s => (archFactor n s)⁻¹ * Λ s) = L := by
@@ -242,7 +189,7 @@ def HeckeEntire : Prop :=
 theorem HeckeEntire_holds : HeckeEntire := GlobalTheory.ToricDistribution.exists_isHeckeL_of_hasInf
 
 def HeckeTateFunctionalEquation : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (I : Type) [Fintype I] (φ : I → E →+* ℂ), IsCMType φ →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (I : Type) [Fintype I] (φ : I → E →+* ℂ), IsCMType φ →
     ∀ (χ : HChar E) (n : I → ℤ) (a : HeightOneSpectrum (𝓞 E) →₀ ℕ), IsUnitary χ → Formalism.L2.Host.HChar.HasInf χ φ n →
       (∃ i, n i ≠ 0) → (∀ w, ExpAt χ w (a w)) →
         ∃ Λ Λ' : ℂ → ℂ, IsCompletedL χ n Λ ∧ IsCompletedL χ⁻¹ (fun i => -n i) Λ' ∧

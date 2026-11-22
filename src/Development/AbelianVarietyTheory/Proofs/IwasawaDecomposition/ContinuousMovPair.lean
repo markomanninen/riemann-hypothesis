@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqTopOfTranslates
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LintegralCompactLe
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqTopOfTranslates
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LintegralCompactLe
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,7 +97,7 @@ theorem exists_sup_bound : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : 
   obtain ⟨K₀, h0, hK₀, hlev⟩ := uniform_level_pair hom hU hC
   obtain ⟨c, hc0, hcube⟩ := cube_bound_at hom hc b h0 hK₀
   obtain ⟨C₁, hC₁0, hC₁⟩ := words_bound (dvL hc hψ S T) (fun w => (LinearMap.proj w).comp (thetaSub ψ S T).subtype)
-    (fun m => theta_bounded hψ m.2) N ⟨f, hf⟩
+    (fun (m : thetaSub ψ S T) => theta_bounded hψ m.2) N ⟨f, hf⟩
   obtain ⟨κ, hκ⟩ := hC.exists_bound_of_continuousOn
     (f := fun (p : GA D S × GA D T) (i : Fin N) => mov θ p.1⁻¹ p.2⁻¹ (b i))
     (continuous_pi fun i => continuous_mov_pair hθ (b i)).continuousOn

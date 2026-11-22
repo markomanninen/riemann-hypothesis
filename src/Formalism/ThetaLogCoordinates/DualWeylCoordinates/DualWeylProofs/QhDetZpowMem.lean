@@ -1,4 +1,8 @@
-import Formalism.ThetaLogCoordinates.DualWeylCoordinates.StatementH
+module
+
+public import Formalism.ThetaLogCoordinates.DualWeylCoordinates.StatementH
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,7 +89,7 @@ lemma qh_zero_mem (mu : Fin n → ℤ) : (0 : GLCoord R n) ∈ inducedSections R
 lemma qh_add_mem {mu : Fin n → ℤ} {f f' : GLCoord R n} (hf : f ∈ inducedSections R mu) (hf' : f' ∈ inducedSections R mu) :
     f + f' ∈ inducedSections R mu := by
   intro R' _ _ b g hb
-  rw [map_add, map_add, add_mul, mul_add, hf R' b g hb, hf' R' b g hb]
+  rw [map_add (f := _), map_add (f := _), add_mul, mul_add, hf R' b g hb, hf' R' b g hb]
 
 lemma qh_smul_mem {mu : Fin n → ℤ} (r : R) {f : GLCoord R n} (hf : f ∈ inducedSections R mu) :
     r • f ∈ inducedSections R mu := by

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.NumData
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.NumData
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictPlan
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Bridge
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.RationalPointsLeHolds
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsDual
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictPlan
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Bridge
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.RationalPointsLeHolds
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsDual
+
+@[expose] public section
 
 noncomputable section
 namespace PIW.AdelClassFin
@@ -53,7 +57,8 @@ private theorem inclE_hform (I : AutInst) (w v : Fin I.n → I.E) :
     Formalism.UG.inclE (F := I.F) (Af I.F) (Formalism.UG.hform (starRingEnd I.E) I.J w v) =
       hhat I (iv I w) (iv I v) := by
   unfold hhat iv
-  simp only [Formalism.UG.hform, map_sum, map_mul, Matrix.map_apply, sigR_inclE']
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.UG.hform, map_sum, map_mul, Matrix.map_apply, sigR_inclE']
 
 private theorem sigR_mem_intAf (I : AutInst) (c : I.E ⊗[I.F] Af I.F) (hc : c ∈ IntAf I.F I.E) :
     Formalism.UG.sigR I.cm.sig (Af I.F) c ∈ IntAf I.F I.E := by
@@ -82,7 +87,7 @@ private theorem hhat_zero_left' (I : AutInst) (z : Fin I.n → I.E ⊗[I.F] Af I
 
 private theorem hhat_add_left' (I : AutInst) (a b z : Fin I.n → I.E ⊗[I.F] Af I.F) :
     hhat I (a + b) z = hhat I a z + hhat I b z := by
-  simp only [hhat, Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hhat, Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 private theorem hhat_smul_left' (I : AutInst) (r : I.E ⊗[I.F] Af I.F)
     (a z : Fin I.n → I.E ⊗[I.F] Af I.F) :

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FlowTwoTorsionWp
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.Points
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.CurveEndoAll
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FlowTwoTorsionWp
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.Points
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.CurveEndoAll
+
+@[expose] public section
 
 open PowerSeries
 
@@ -106,7 +110,7 @@ theorem D_phi : D W (phi W C) = PowerSeries.C (C.u : R) * (fw (C • W)).subst (
     have h2 := den_mul_vv W C
     linear_combination (vv W C) * h1 - (D W (vv W C)) * h2
   have hdenD : D W (den W C) = PowerSeries.C C.s * D W X + PowerSeries.C (C.t - C.s * C.r) * D W (wSer W) := by
-    simp only [den, map_add, Derivation.leibniz, smul_eq_mul, D_C, Derivation.map_one_eq_zero]
+    simp only [den, map_add (f := _), Derivation.leibniz, smul_eq_mul, D_C, Derivation.map_one_eq_zero]
     ring
   have hphiD : D W (phi W C) = PowerSeries.C (C.u : R) * ((D W X - PowerSeries.C C.r * D W (wSer W)) * vv W C
       + (X - PowerSeries.C C.r * wSer W) * D W (vv W C)) := by
@@ -142,23 +146,24 @@ section Field
 variable {K : Type} [Field K] [CharZero K] (W : WeierstrassCurve K) (C : WeierstrassCurve.VariableChange K)
 
 theorem derivative_C_mul' (a : K) (f : K⟦X⟧) :
-    derivative K (PowerSeries.C a * f) = PowerSeries.C a * derivative K f := by
+    derivative (PowerSeries.C a * f) = PowerSeries.C a * derivative f := by
   rw [Derivation.leibniz, derivative_C, smul_eq_mul, smul_eq_mul, mul_zero, add_zero]
 
 theorem log_phi : (logSer (C • W)).subst (phi W C) = PowerSeries.C (C.u : K) * logSer W := by
   have hs : HasSubst (phi W C) := HasSubst.of_constantCoeff_zero' (phi_cc W C)
-  have h1 : derivative K (phi W C) * fw W = PowerSeries.C (C.u : K) * (fw (C • W)).subst (phi W C) := by
+  have h1 : derivative (phi W C) * fw W =
+      PowerSeries.C (C.u : K) * (fw (C • W)).subst (phi W C) := by
     rw [← D_phi, CurveSer.D_apply, mul_comm]
   have h2 : (fw (C • W)).subst (phi W C) * (om (C • W)).subst (phi W C) = 1 := by
     rw [← subst_mul hs, CurveSer.fw_mul_om, ← coe_substAlgHom hs, map_one]
   have h3 := CurveSer.fw_mul_om W
-  have hd : derivative K ((logSer (C • W)).subst (phi W C)) = PowerSeries.C (C.u : K) * om W := by
+  have hd : derivative ((logSer (C • W)).subst (phi W C)) = PowerSeries.C (C.u : K) * om W := by
     rw [derivative_subst hs, (logSpec K (C • W)).2.2.1]
-    linear_combination (-((om (C • W)).subst (phi W C) * derivative K (phi W C))) * h3
+    linear_combination (-((om (C • W)).subst (phi W C) * derivative (phi W C))) * h3
       + ((om (C • W)).subst (phi W C) * om W) * h1 + (PowerSeries.C (C.u : K) * om W) * h2
   have hc : constantCoeff ((logSer (C • W)).subst (phi W C)) = 0 :=
     cc_subst0 (phi_cc W C) (logSpec K (C • W)).1
-  have hd2 : derivative K (PowerSeries.C (C.u : K) * logSer W) = PowerSeries.C (C.u : K) * om W := by
+  have hd2 : derivative (PowerSeries.C (C.u : K) * logSer W) = PowerSeries.C (C.u : K) * om W := by
     rw [derivative_C_mul', (logSpec K W).2.2.1]
   have hc2 : constantCoeff (PowerSeries.C (C.u : K) * logSer W) = 0 := by
     simp [(logSpec K W).1]
@@ -226,7 +231,7 @@ theorem intPS_X' : IntPS R' (X : K⟦X⟧) := by
   intro n; rw [coeff_X]; split_ifs; exacts [R'.one_mem, R'.zero_mem]
 
 theorem intPS_add' {f g : K⟦X⟧} (hf : IntPS R' f) (hg : IntPS R' g) : IntPS R' (f + g) := by
-  intro n; rw [map_add]; exact R'.add_mem (hf n) (hg n)
+  intro n; rw [map_add (f := _)]; exact R'.add_mem (hf n) (hg n)
 
 theorem intPS_sub' {f g : K⟦X⟧} (hf : IntPS R' f) (hg : IntPS R' g) : IntPS R' (f - g) := by
   intro n; rw [map_sub]; exact R'.sub_mem (hf n) (hg n)

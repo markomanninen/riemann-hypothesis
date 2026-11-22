@@ -1,5 +1,9 @@
-import ReciprocityTheory.DualLattices.MonomialDeterminantStatement
-import ReciprocityTheory.DualLattices.ProdEraseUpdate
+module
+
+public import ReciprocityTheory.DualLattices.MonomialDeterminantStatement
+public import ReciprocityTheory.DualLattices.ProdEraseUpdate
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem u5 : MonomialDeterminantStatement := by
        add_mem' := by
          intro a b ha hb
          show v (algebraMap R C (a + b)) < 1
-         rw [map_add]
+         rw [map_add (f := _)]
          exact lt_of_le_of_lt (v.map_add _ _) (max_lt ha hb)
        zero_mem' := by
          show v (algebraMap R C 0) < 1
@@ -80,7 +84,8 @@ theorem u5 : MonomialDeterminantStatement := by
     intro j x
     rw [show Ideal.Quotient.mk I (w j x) = Ideal.Quotient.mk I (∑ i, Λ j i * ((x i).val : R)) from
       Ideal.Quotient.eq.mpr ((hmem _).mpr (by rw [map_sub, hw]; exact hc j x))]
-    simp only [map_sum, map_mul, map_natCast]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_natCast]
     simp only [lam, xc, Matrix.map_apply, ZMod.castHom_apply, ZMod.natCast_val]
   have hWN : Ideal.Quotient.mk I (Matrix.of fun (x α : ι → ZMod p) => ∏ j, w j x ^ (α j).val).det =
       (Matrix.of fun (x α : ι → ZMod p) => monF (Λ.map (Ideal.Quotient.mk I)) α x).det := by

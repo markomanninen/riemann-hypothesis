@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.IsKUnitaryOfIsInfUnitary
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.IsKUnitaryOfIsInfUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,8 @@ private theorem re_inner_basis_lemma {E ι : Type*} [NormedAddCommGroup E] [Inne
   have hx : x = ∑ i, (inner ℂ (b i) x) • b i := (b.sum_repr' x).symm
   have hTx : T x = ∑ i, (inner ℂ (b i) x * (lam i : ℂ)) • b i := by
     conv_lhs => rw [hx]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, hb, smul_smul]
   have h1 : inner ℂ (T x) x =
@@ -153,7 +158,7 @@ theorem lift_khw (hU : IsKUnitary ε A) {Y : Type*} [AddCommGroup Y] [Module ℂ
     rw [e]
     exact S.sub_mem hx₀ hyS.1
   have hfx : f x = f x₀ := by
-    rw [hsum, map_add, hyS.2, zero_add]
+    rw [hsum, map_add (f := _), hyS.2, zero_add]
   have hperp : ∀ z ∈ K, inner ℂ z x = 0 := fun z hz => (Submodule.mem_orthogonal K x).1 hxo z hz
   have hKst : ∀ a b, ε a = ε b → ∀ z ∈ K, A a b z ∈ K := by
     intro a b hab z hz

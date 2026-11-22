@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContinuousExptPY
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContinuousExptPY
+
+@[expose] public section
+
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible GlobalTheory.PolarU Matrix MeasureTheory
 
 noncomputable section
@@ -32,7 +37,7 @@ theorem hasStrictFDerivAt_exp_two_pY : ∀ (p q : ℕ) (B : Fin p → Fin q → 
   have hc : ContDiff ℝ 1 (fun (C : Fin p → Fin q → ℂ) (a b : Ix p q) =>
       NormedSpace.exp (pY C + pY C) a b) :=
     contDiff_pi.2 fun a => contDiff_pi.2 fun b => contDiff_exp_two_pY_entry p q a b
-  have hs := hc.contDiffAt.hasStrictFDerivAt (x := B) (by simp)
+  have hs := hc.contDiffAt.hasStrictFDerivAt_fderiv (x := B) (by simp)
   refine ⟨_, hs, fun C => ?_⟩
   ext a b
   have hl : HasDerivAt (fun t : ℝ => B + t • C) C 0 := by

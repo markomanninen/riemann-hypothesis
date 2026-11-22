@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ImportsBis
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ImportsBisFurther
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ImportsBis
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ImportsBisFurther
+
+@[expose] public section
+
 open scoped BigOperators
 
 namespace GlobalTheory.CommTriang
@@ -60,7 +65,7 @@ theorem lift_eigen : ∀ (k ι V : Type) [Field k] [AddCommGroup V] [Module k V]
   have htd : t * (μ i₀ - χ i₀) = r i₀ := div_mul_cancel₀ _ hd
   have hfx : ∀ j, f j (u + t • v) = μ j • (u + t • v) + (r j + t * χ j - t * μ j) • v := by
     intro j
-    rw [map_add, map_smul, hu, hv]
+    rw [map_add (f := _), map_smul, hu, hv]
     module
   have h0 : f i₀ (u + t • v) = μ i₀ • (u + t • v) := by
     rw [hfx]
@@ -71,7 +76,7 @@ theorem lift_eigen : ∀ (k ι V : Type) [Field k] [AddCommGroup V] [Module k V]
   refine ⟨x, hx ▸ hu0 t, fun j => ?_⟩
   have e1 : f i₀ (f j x) = f j (f i₀ x) := by
     rw [← Module.End.mul_apply, hc, Module.End.mul_apply]
-  rw [h0, map_smul, hfx j, map_add, map_smul, map_smul, h0, hv] at e1
+  rw [h0, map_smul, hfx j, map_add (f := _), map_smul, map_smul, h0, hv] at e1
   have e2 : ((r j + t * χ j - t * μ j) * (χ i₀ - μ i₀)) • v = 0 := by
     linear_combination (norm := module) e1
   rcases smul_eq_zero.mp e2 with h | h
@@ -93,30 +98,27 @@ def blockOne {k : Type} [Field k] {n : ℕ} (Q : Matrix (Fin n) (Fin n) k) : Mat
 section
 variable {k : Type} [Field k] {n : ℕ}
 
-@[simp] theorem blockOne_zero_zero (Q : Matrix (Fin n) (Fin n) k) : blockOne Q 0 0 = 1 := rfl
-@[simp] theorem blockOne_zero_succ (Q : Matrix (Fin n) (Fin n) k) (b : Fin n) : blockOne Q 0 b.succ = 0 := rfl
-@[simp] theorem blockOne_succ_zero (Q : Matrix (Fin n) (Fin n) k) (a : Fin n) : blockOne Q a.succ 0 = 0 := rfl
-@[simp] theorem blockOne_succ_succ (Q : Matrix (Fin n) (Fin n) k) (a b : Fin n) : blockOne Q a.succ b.succ = Q a b := rfl
-
 theorem blockOne_mul (Q R : Matrix (Fin n) (Fin n) k) : blockOne Q * blockOne R = blockOne (Q * R) := by
   ext a b
-  cases a using Fin.cases <;> cases b using Fin.cases <;> simp [Matrix.mul_apply, Fin.sum_univ_succ]
+  cases a using Fin.cases <;> cases b using Fin.cases <;>
+    simp [blockOne, Matrix.mul_apply, Fin.sum_univ_succ]
 
 theorem blockOne_one : blockOne (1 : Matrix (Fin n) (Fin n) k) = 1 := by
   ext a b
-  cases a using Fin.cases <;> cases b using Fin.cases <;> simp [Matrix.one_apply, Fin.succ_ne_zero] <;> exact (Fin.succ_ne_zero _).symm
+  cases a using Fin.cases <;> cases b using Fin.cases <;>
+    simp [blockOne, Matrix.one_apply] <;> exact (Fin.succ_ne_zero _).symm
 
 theorem conj_succ_succ (R Q : Matrix (Fin n) (Fin n) k) (S : Matrix (Fin (n+1)) (Fin (n+1)) k) (a b : Fin n) :
     (blockOne R * S * blockOne Q) a.succ b.succ = (R * S.submatrix Fin.succ Fin.succ * Q) a b := by
-  simp [Matrix.mul_apply, Fin.sum_univ_succ]
+  simp [blockOne, Matrix.mul_apply, Fin.sum_univ_succ]
 
 theorem conj_succ_zero (R Q : Matrix (Fin n) (Fin n) k) (S : Matrix (Fin (n+1)) (Fin (n+1)) k) (a : Fin n) :
     (blockOne R * S * blockOne Q) a.succ 0 = ∑ c, R a c * S c.succ 0 := by
-  simp [Matrix.mul_apply, Fin.sum_univ_succ]
+  simp [blockOne, Matrix.mul_apply, Fin.sum_univ_succ]
 
 theorem conj_zero_zero (R Q : Matrix (Fin n) (Fin n) k) (S : Matrix (Fin (n+1)) (Fin (n+1)) k) :
     (blockOne R * S * blockOne Q) 0 0 = S 0 0 := by
-  simp [Matrix.mul_apply, Fin.sum_univ_succ]
+  simp [blockOne, Matrix.mul_apply, Fin.sum_univ_succ]
 
 end
 

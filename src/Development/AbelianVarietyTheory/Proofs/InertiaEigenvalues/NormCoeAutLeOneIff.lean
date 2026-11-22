@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.MainNotions.LocalSituation GlobalTheory.Cyc
 open scoped TensorProduct
@@ -25,7 +29,8 @@ theorem exists_basis_mem_iff {O L V : Type} [CommRing O] [IsDomain O] [Field L] 
   have hsum : ∀ x : T, (x : V) = ∑ i, algebraMap O L (c.repr x i) • (c i : V) := by
     intro x
     have h := congrArg T.subtype (c.sum_repr x)
-    rw [map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h
     simp only [map_smul, Submodule.subtype_apply] at h
     simp only [algebraMap_smul]
     exact h.symm
@@ -69,7 +74,8 @@ theorem exists_matrix_of_basis {F L C V : Type} [NormedField F] [Field L] [Norme
   have key : ∀ (y : Fin d → F) (i : Fin ρ),
       ∑ j, φ (t.repr (b j) i) * algebraMap F C (y j) = φ (t.repr (∑ j, y j • b j) i) := by
     intro y i
-    rw [map_sum, Finsupp.finset_sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finsupp.finsetSum_apply, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← algebraMap_smul L (y j), map_smul, Finsupp.smul_apply, smul_eq_mul, map_mul,
       AlgHom.commutes, mul_comm]

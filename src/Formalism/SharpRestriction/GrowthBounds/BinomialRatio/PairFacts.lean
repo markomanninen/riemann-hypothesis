@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreeRatioConsecutive
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.PairCount
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.UpperCountOfTopRows
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreeRatioConsecutive
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.PairCount
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.UpperCountOfTopRows
+
+@[expose] public section
 
 noncomputable section
 

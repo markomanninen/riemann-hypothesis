@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.NotIsFinitePartOfBot
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsTestZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContDiffIntegralDensity
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TestFunctionContinuousCompactSupport
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.NotIsFinitePartOfBot
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsTestZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContDiffIntegralDensity
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TestFunctionContinuousCompactSupport
+
+@[expose] public section
+
 open NumberField MeasureTheory Topology Matrix GlobalTheory.AutomorphicL2Unitary GlobalTheory.DiscreteSum GlobalTheory.OpTrace GlobalTheory.UnitaryBC GlobalTheory.DiscSpec GlobalTheory.CuspRep GlobalTheory.CuspRep.CuspidalL2GL GlobalTheory.CompanionTheory.SmoothRep
 open scoped ContDiff
 
@@ -11,15 +16,15 @@ noncomputable section
 
 namespace GlobalTheory.CompanionTheory.SmoothRep.TstConv
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 def psi (v : GA E a) : Lie E a := toL (GeneralLinearGroup.map (pInf E) v⁻¹).val
 
 def wt (U : Subgroup (GL (Fin a) (Af E))) (F : GA E a → ℂ) (g : GA E a) : GA E a → ℂ :=
   Set.indicator {v | GeneralLinearGroup.map (pFin E) v⁻¹ ∈ U} fun v => F (g * v)
 
-open Classical in
 
+open Classical in
 theorem wt_apply (U : Subgroup (GL (Fin a) (Af E))) (F : GA E a → ℂ) (g v : GA E a) :
     wt U F g v = if GeneralLinearGroup.map (pFin E) v⁻¹ ∈ U then F (g * v) else 0 := by
   simp only [wt, Set.indicator_apply, Set.mem_setOf_eq]
@@ -46,9 +51,9 @@ end GlobalTheory.CompanionTheory.SmoothRep.TstConv
 
 namespace GlobalTheory.CompanionTheory.SmoothRep.TstConv
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
-theorem exists_compact_of_mul_mem_tsupport : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (β : Lie E a → ℂ), IsTest β →
+theorem exists_compact_of_mul_mem_tsupport : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (β : Lie E a → ℂ), IsTest β →
     ∀ x₀ ∈ invSet E a, ∃ Kc : Set (Lie E a), IsCompact Kc ∧ Kc ⊆ invSet E a ∧ ∃ N ∈ 𝓝 x₀,
       ∀ y x : Lie E a, x ∈ N → toL (Matrix.of y * Matrix.of x) ∈ tsupport β → y ∈ Kc := by
   intro E _ _ _ a β hβ x₀ hx₀
@@ -81,7 +86,7 @@ theorem exists_compact_of_mul_mem_tsupport : ∀ (E : Type) [Field E] [NumberFie
       rw [e]
       rfl
 
-theorem measurableSet_integrableOn_wt : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (μ : Measure (GA E a))
+theorem measurableSet_integrableOn_wt : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (μ : Measure (GA E a))
     [μ.IsHaarMeasure] (U : Subgroup (GL (Fin a) (Af E))), IsOpen (U : Set (GL (Fin a) (Af E))) →
     IsCompact (U : Set (GL (Fin a) (Af E))) → ∀ Fl : GA E a → ℂ, LocallyIntegrable Fl μ →
     ∀ Kc : Set (Lie E a), IsCompact Kc → Kc ⊆ invSet E a → ∀ g : GA E a,
@@ -128,7 +133,13 @@ theorem convR_tst_mul_infGL (μ : Measure (GA E a)) [μ.IsMulLeftInvariant] (U :
   by_cases h : GeneralLinearGroup.map (pFin E) v⁻¹ ∈ U
   · have h' : GeneralLinearGroup.map (pFin E) (infGL E a y * v)⁻¹ ∈ U := hf ▸ h
     simp only [tst, ker, if_pos h, if_pos h', hb, psi, hi]
-    simp [toL, mul_assoc]
+    have he : toL ((GeneralLinearGroup.map (pInf E) v⁻¹ * y⁻¹).val * y.val) =
+        toL (GeneralLinearGroup.map (pInf E) v⁻¹).val := by
+      rw [← Units.val_mul, inv_mul_cancel_right]
+    simp only [show ∀ m, Matrix.of (toL m) = m from fun m => Matrix.of.apply_symm_apply m, mul_assoc]
+    change β (toL (GeneralLinearGroup.map (pInf E) v⁻¹).val) * Fl (g * (infGL E a y * v)) =
+      β (toL ((GeneralLinearGroup.map (pInf E) v⁻¹ * y⁻¹).val * y.val)) * Fl (g * (infGL E a y * v))
+    rw [he]
   · have h' : GeneralLinearGroup.map (pFin E) (infGL E a y * v)⁻¹ ∉ U := hf ▸ h
     simp only [tst, ker, if_neg h, if_neg h']
     simp
@@ -136,7 +147,7 @@ end GlobalTheory.CompanionTheory.SmoothRep.TstConv
 
 namespace GlobalTheory.CompanionTheory.SmoothRep.TstConv
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem fderiv_hb_one {β : Lie E a → ℂ} (hβ : ContDiff ℝ ∞ β) (y X : Lie E a) :
     fderiv ℝ (fun q => hb β (q, y)) (oneL E a) X = dTest X β y := by
@@ -168,9 +179,9 @@ theorem integrand_eq_zero {U : Subgroup (GL (Fin a) (Af E))} {β : Lie E a → �
 
 end GlobalTheory.CompanionTheory.SmoothRep.TstConv
 
-open GlobalTheory.CompanionTheory.SmoothRep.TstConv in
 
-theorem GlobalTheory.CompanionTheory.SmoothRep.convR_tst_mem_Sm : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (μ : Measure (GA E a)) [μ.IsHaarMeasure] [μ.IsMulRightInvariant] (U : Subgroup (GL (Fin a) (Af E))), IsOpen (U : Set (GL (Fin a) (Af E))) → IsCompact (U : Set (GL (Fin a) (Af E))) → ∀ β : Lie E a → ℂ, IsTest β → ∀ Fl : GA E a → ℂ, LocallyIntegrable Fl μ → convR μ (tst U β) Fl ∈ Sm E a ∧ ∀ (X : Lie E a) (g : GA E a), lieD X (convR μ (tst U β) Fl) g = convR μ (tst U (dTest X β)) Fl g := by
+open GlobalTheory.CompanionTheory.SmoothRep.TstConv in
+theorem GlobalTheory.CompanionTheory.SmoothRep.convR_tst_mem_Sm : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (μ : Measure (GA E a)) [μ.IsHaarMeasure] [μ.IsMulRightInvariant] (U : Subgroup (GL (Fin a) (Af E))), IsOpen (U : Set (GL (Fin a) (Af E))) → IsCompact (U : Set (GL (Fin a) (Af E))) → ∀ β : Lie E a → ℂ, IsTest β → ∀ Fl : GA E a → ℂ, LocallyIntegrable Fl μ → convR μ (tst U β) Fl ∈ Sm E a ∧ ∀ (X : Lie E a) (g : GA E a), lieD X (convR μ (tst U β) Fl) g = convR μ (tst U (dTest X β)) Fl g := by
   intro E _ _ _ a μ _ _ U hU hUc β hβ Fl hFl
 
   have hchart : ∀ g, ∀ x ∈ invSet E a,

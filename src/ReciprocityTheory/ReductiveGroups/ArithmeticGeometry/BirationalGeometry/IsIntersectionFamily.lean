@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,8 +42,9 @@ def IsArithVar (P : Ideal (MRing ι)) (d : ℕ) : Prop :=
 def divSupp (P : Ideal (MRingOver R ι)) (s : MRingOver R ι) : Set (Ideal (MRingOver R ι)) :=
   {W | W ∈ (P ⊔ Ideal.span {s}).minimalPrimes ∧ IsRelevant W}
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def multAt (J W : Ideal (MRingOver R ι)) : ℕ :=
   if h : W.IsPrime then
     haveI := h
@@ -56,13 +61,14 @@ def divCycle [IsNoetherianRing R] (P : Ideal (MRingOver R ι)) (s : MRingOver R 
     (fun W => if W ∈ divSupp P s then multAt (P ⊔ Ideal.span {s}) W else 0)
     ((divSupp_finite P s).subset fun W hW => by
       by_contra h
-      exact hW (if_neg h))
+      exact hW (ite_eq_right h))
 
 def charOf (W : Ideal (MRing ι)) : ℕ :=
   (Submodule.IsPrincipal.generator (W.comap (C : ℤ →+* MRing ι))).natAbs
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def geoNum : (n : ℕ) → Ideal (MRing ι) → (Fin n → K → ℤ) → ℤ
   | 0, V, _ =>
     if h : IsRelevant V then
@@ -83,9 +89,9 @@ section Complex
 def mcPts (P : Ideal (MRing ι)) : Set ((Σ k, ι k) → ℂ) :=
   {z | (∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) ∧ ∀ f ∈ P, eval z (map (Int.castRingHom ℂ) f) = 0}
 
-variable (ι) in
 
-structure HermLine where
+variable (ι) in
+structure HermLine (ι : K → Type*) where
 
   a : K → ℤ
 
@@ -154,7 +160,7 @@ end Complex
 
 section Constructors
 
-def HermLine.ofMetrics (m : ∀ k, ConeMetric ℂ (ι k)) (a : K → ℤ) : HermLine ι where
+def HermLine.ofMetrics (m : ∀ k, ConeMetric (C := ℂ) (ι := ι k)) (a : K → ℤ) : HermLine ι where
   a := a
   h z := ∏ k, (m k).ρ (fun i => z ⟨k, i⟩) ^ a k
   pos z hz := Finset.prod_pos fun k _ => by

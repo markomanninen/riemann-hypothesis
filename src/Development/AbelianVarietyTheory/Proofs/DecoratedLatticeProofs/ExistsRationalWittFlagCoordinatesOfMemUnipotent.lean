@@ -1,12 +1,20 @@
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.KerBF
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaAbsoluteSum
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsClosedNFlag
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GinfCSecondCountable
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsMulRightInvariantOfFundamentalDomain
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlagUnipotentFourierJacobiGroupStructureStatement
+module
+
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.KerBF
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittDecompSymplInclIsotropicInclAnisotropic
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsClosedNFlag
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GinfCSecondCountable
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsMulRightInvariantOfFundamentalDomain
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlagUnipotentFourierJacobiGroupStructureStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
@@ -17,8 +25,8 @@ noncomputable section
 
 namespace GlobalTheory.RatCoord
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem coords_rat {D : D7} {V V₀ : HSp D} {ρ : ℕ} (d : HypDec V V₀ ρ) (c' : skewA D ρ) (b' : Mx D ρ V₀.rank)
     (u : GL (Fin ρ) (AE D)) (hQ : d.nC c' * (d.nB b' * d.levi u) ∈ GQ V) :
     c'.1 ∈ ratMx D ρ ρ ∧ b' ∈ ratMx D ρ V₀.rank ∧ u.1 ∈ ratMx D ρ ρ ∧ (u⁻¹).1 ∈ ratMx D ρ ρ := by
@@ -36,8 +44,8 @@ theorem coords_rat {D : D7} {V V₀ : HSp D} {ρ : ℕ} (d : HypDec V V₀ ρ) (
   have hY : d.pX ⬝ (mt V g ⬝ d.jY) = (c'.1 - half D • (b' ⬝ plus V₀ b')) ⬝ adj (u⁻¹).1 := by
     rw [← hg, mt_mul, mt_mul, Matrix.mul_assoc, Matrix.mul_assoc, d.levi_jY, cancel₂ (d.nB_jY _)]
     simp only [Matrix.sub_mul, Matrix.mul_sub, Matrix.add_mul, Matrix.mul_add, Matrix.mul_assoc, cancel₂ (d.nC_jY _),
-      cancel₂ (d.nC_j0 _), cancel₂ (d.nC_jX _), cancel₂ d.pX_jY, cancel₂ d.pX_jX, cancel₂ d.pX_j0, d.pX_jY, d.pX_jX,
-      d.pX_j0, Matrix.one_mul, Matrix.zero_mul, zero_add, zero_sub, sub_zero]
+      cancel₂ (d.nC_j0 _), cancel₂ (d.nC_jX _), cancel₂ d.pX_jY, cancel₂ d.pX_jX, cancel₂ d.pX_j0,
+      Matrix.one_mul, Matrix.zero_mul, zero_add, sub_zero]
   have hu1 : u.1 ∈ ratMx D ρ ρ := by
     have e : d.pX ⬝ (mt V g ⬝ d.jX) = u.1 := by rw [hX, cancel₂ d.pX_jX, Matrix.one_mul]
     rw [← e]; exact ratMx_mul (rat_mem _) (ratMx_mul hM (rat_mem _))
@@ -58,12 +66,50 @@ theorem coords_rat {D : D7} {V V₀ : HSp D} {ρ : ℕ} (d : HypDec V V₀ ρ) (
 
 theorem rat_coords_of_mem_flagN : ∀ (D : D7) (V V₀ : HSp D) (ρ : ℕ) (d : HypDec V V₀ ρ) (γ : GA D V), γ ∈ GQ V → γ ∈ flagN d → ∃ (c : skewA D ρ) (b : Mx D ρ V₀.rank) (u : UX D ρ), γ = d.nC c * (d.nB b * d.levi u.1) ∧ c.1 ∈ ratMx D ρ ρ ∧ b ∈ ratMx D ρ V₀.rank ∧ u ∈ UXQ D ρ := by
   intro D V V₀ ρ d γ hQ hN
-  obtain ⟨u, hu, b, c, rfl⟩ := ((GlobalTheory.T.flag_unipotent_fourier_jacobi_group_structure D V V₀ ρ d).1 γ).1 hN
-  have hγ : d.levi u * (d.nB b * d.nC c) = d.nC (skewConj u.1 c) * (d.nB (u.1 ⬝ b) * d.levi u) := by
-    rw [← mul_assoc, d.levi_mul_nB, mul_assoc, d.levi_mul_nC, ← mul_assoc, ← d.nC_mul_nB, mul_assoc]
+  obtain ⟨T, b, hT, hX, h0⟩ := exists_blocks d hN
+  obtain ⟨u, hu, hu1⟩ := GlobalTheory.MixPer.Decomp.exists_unit hT
+  let g := d.nB b * d.levi u
+  let n := g⁻¹ * γ
+  have fixed {k : ℕ} {X : Mx D V.rank k} (h : mt V γ ⬝ X = mt V g ⬝ X) : mt V n ⬝ X = X := by
+    rw [show n = g⁻¹ * γ from rfl, mt_mul, Matrix.mul_assoc, h, ← Matrix.mul_assoc, mt_inv_mul,
+      Matrix.one_mul]
+  have fixX : mt V n ⬝ d.jX = d.jX := fixed (by
+    rw [hX, show g = d.nB b * d.levi u from rfl, mt_mul, Matrix.mul_assoc, d.levi_jX,
+      cancel₂ (d.nB_jX b), hu1, Matrix.mul_add, Matrix.mul_one])
+  have fix0 : mt V n ⬝ d.j0 = d.j0 := fixed (by
+    rw [h0, show g = d.nB b * d.levi u from rfl, mt_mul, Matrix.mul_assoc,
+      d.wittDecomp_levi_inclAnisotropic, d.nB_j0])
+  have gram {k l : ℕ} (X : Mx D V.rank k) (Y : Mx D V.rank l) :
+      adj (mt V n ⬝ X) ⬝ (gA V ⬝ (mt V n ⬝ Y)) = adj X ⬝ (gA V ⬝ Y) := by
+    rw [adj_mul, Matrix.mul_assoc, ← Matrix.mul_assoc (gA V) _ Y, ← Matrix.mul_assoc (adj (mt V n)),
+      GlobalTheory.MixModel.mt_unitary]
+  let c := d.pX ⬝ (mt V n ⬝ d.jY)
+  have imageY : mt V n ⬝ d.jY = d.jY + d.jX ⬝ c := by
+    have projY : d.pY ⬝ (mt V n ⬝ d.jY) = 1 := by
+      rw [d.pY_eq, Matrix.mul_assoc, ← fixX, gram, d.gram_XY]
+    have proj0 : d.p0 ⬝ (mt V n ⬝ d.jY) = 0 := by
+      rw [d.p0_eq, Matrix.mul_assoc, Matrix.mul_assoc, ← fix0, gram, d.gram_0Y, Matrix.mul_zero]
+    conv_lhs => rw [← Matrix.one_mul (mt V n ⬝ d.jY), ← d.sum_eq_one]
+    simp only [Matrix.add_mul, Matrix.mul_assoc, proj0, projY, Matrix.mul_zero, Matrix.mul_one, add_zero]
+    exact add_comm _ _
+  have skew : c ∈ skewA D ρ := by
+    have h := gram d.jY d.jY
+    rw [imageY, d.gram_YY] at h
+    simp only [adj_add, adj_mul, Matrix.mul_add, Matrix.add_mul, Matrix.mul_assoc, d.gram_YY, d.gram_XY,
+      cancel₃ d.gram_XX, cancel₃ d.gram_YX, Matrix.zero_mul, Matrix.mul_zero, Matrix.one_mul,
+      Matrix.mul_one, add_zero, zero_add] at h
+    exact eq_neg_of_add_eq_zero_left h
+  let c₀ : skewA D ρ := ⟨c, skew⟩
+  have hn : n = d.nC c₀ := d.ga_ext (fixX.trans (d.nC_jX c₀).symm) (fix0.trans (d.nC_j0 c₀).symm)
+    (imageY.trans (d.nC_jY c₀).symm)
+  have hγ : γ = d.nC (skewConj u.1 c₀) * (d.nB b * d.levi u) := by
+    calc
+      γ = g * n := (mul_inv_cancel_left g γ).symm
+      _ = _ := by rw [hn, show g = d.nB b * d.levi u from rfl, mul_assoc, d.levi_mul_nC,
+        ← mul_assoc, ← d.nC_mul_nB, mul_assoc]
   rw [hγ] at hQ ⊢
   obtain ⟨h1, h2, h3, h4⟩ := coords_rat d _ _ u hQ
-  exact ⟨skewConj u.1 c, u.1 ⬝ b, ⟨u, hu⟩, rfl, h1, h2, h3, h4⟩
+  exact ⟨skewConj u.1 c₀, b, ⟨u, hu⟩, rfl, h1, h2, h3, h4⟩
 
 end GlobalTheory.RatCoord
 

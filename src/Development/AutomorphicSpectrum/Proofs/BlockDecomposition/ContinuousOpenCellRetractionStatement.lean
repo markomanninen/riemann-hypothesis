@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousOpenCellRetraction
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsBump
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCIndValue
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousOpenCellRetraction
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsBump
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCIndValue
+
+@[expose] public section
+
 open Matrix GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.BZMir GlobalTheory.BZMir.Leib GlobalTheory.RgGu.Leib GlobalTheory.CompanionTheory.BZPhiPG GlobalTheory.CompanionTheory.BZPhiPG.OntoO Topology
 open scoped TensorProduct
 set_option maxHeartbeats 1000000 in

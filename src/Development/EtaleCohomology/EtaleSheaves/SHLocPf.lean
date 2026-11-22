@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.SHExistsPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SHExistsPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E3Cut Polynomial
@@ -101,7 +105,7 @@ theorem SHLoc_of (hB : Build) (hL : Lift) : LateralTheory.E.SHExistsPf.SHLoc := 
     intro a b ha hb hab
     have ha' : ψ a = 0 := by by_contra h; exact ha (hU a h)
     have hb' : ψ b = 0 := by by_contra h; exact hb (hU b h)
-    exact hZ _ hab (by rw [map_add, ha', hb', add_zero]))
+    exact hZ _ hab (by rw [map_add (f := _), ha', hb', add_zero]))
   have hmem : ∀ x : O, x ∈ IsLocalRing.maximalIdeal O ↔ ψ x = 0 := by
     intro x
     rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff]

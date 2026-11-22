@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,14 +16,6 @@ structure TrInv (B E : Type*) [CommRing B] [Ring E] [Algebra B E] where
   tr_comm : ∀ x y, tr (x * y) = tr (y * x)
   tr_st : ∀ x, tr (st x) = tr x
 
-def TrInv.matrix (B ι : Type*) [CommRing B] [Fintype ι] [DecidableEq ι] : TrInv B (Matrix ι ι B) where
-  st := (Matrix.transposeLinearEquiv ι ι B B).toLinearMap
-  st_mul x y := Matrix.transpose_mul x y
-  st_st _ := rfl
-  tr := Matrix.traceLinearMap ι B B
-  tr_comm x y := Matrix.trace_mul_comm x y
-  tr_st x := Matrix.trace_transpose x
-
 structure OddForm (B N : Type*) [CommRing B] [AddCommGroup N] [Module B N] where
   be : N →ₗ[B] N →ₗ[B] B
   symm : ∀ b b', be b b' = be b' b
@@ -30,11 +26,6 @@ namespace OddForm
 variable {B N : Type*} [CommRing B] [AddCommGroup N] [Module B N]
 
 instance : Inhabited (OddForm B N) := ⟨⟨0, fun _ _ => rfl, fun _ _ _ => by simp⟩⟩
-
-def ofScalar (c : B) : OddForm B B where
-  be := c • LinearMap.mul B B
-  symm b b' := by simp [mul_comm]
-  assoc b b' b'' := by simp; ring
 
 @[nolint unusedArguments]
 def Ext (_ : OddForm B N) : Type _ := B × N
@@ -52,19 +43,18 @@ def Ext.ev (z : Φ.Ext) : B := Prod.fst z
 
 def Ext.od (z : Φ.Ext) : N := Prod.snd z
 
-@[ext] theorem Ext.ext {z w : Φ.Ext} (h : z.ev = w.ev) (h' : z.od = w.od) : z = w := Prod.ext h h'
+@[ext] theorem ext {z w : Φ.Ext} (hev : z.ev = w.ev) (hod : z.od = w.od) : z = w :=
+  Prod.ext hev hod
 
 instance : One Φ.Ext := ⟨Φ.el 1 0⟩
 instance : Mul Φ.Ext := ⟨fun z w => Φ.el (z.ev * w.ev + Φ.be z.od w.od) (z.ev • w.od + w.ev • z.od)⟩
 
-@[simp] theorem ev_el (a : B) (b : N) : (Φ.el a b).ev = a := rfl
-@[simp] theorem od_el (a : B) (b : N) : (Φ.el a b).od = b := rfl
-@[simp] theorem ev_add (z w : Φ.Ext) : (z + w).ev = z.ev + w.ev := rfl
-@[simp] theorem od_add (z w : Φ.Ext) : (z + w).od = z.od + w.od := rfl
-@[simp] theorem ev_zero : (0 : Φ.Ext).ev = 0 := rfl
-@[simp] theorem od_zero : (0 : Φ.Ext).od = 0 := rfl
 @[simp] theorem ev_one : (1 : Φ.Ext).ev = 1 := rfl
 @[simp] theorem od_one : (1 : Φ.Ext).od = 0 := rfl
+@[simp] theorem ev_zero : (0 : Φ.Ext).ev = 0 := rfl
+@[simp] theorem od_zero : (0 : Φ.Ext).od = 0 := rfl
+@[simp] theorem ev_add (z w : Φ.Ext) : (z + w).ev = z.ev + w.ev := rfl
+@[simp] theorem od_add (z w : Φ.Ext) : (z + w).od = z.od + w.od := rfl
 @[simp] theorem ev_smul (c : B) (z : Φ.Ext) : (c • z).ev = c * z.ev := rfl
 @[simp] theorem od_smul (c : B) (z : Φ.Ext) : (c • z).od = c • z.od := rfl
 @[simp] theorem ev_mul (z w : Φ.Ext) : (z * w).ev = z.ev * w.ev + Φ.be z.od w.od := rfl
@@ -131,28 +121,6 @@ structure TrInv.Units (T : TrInv B E) (ι : Type*) [Fintype ι] (o : ι → ι) 
   x_base : ∀ i, x (o i) = ep (o i)
   x_st : ∀ i, x i * T.st (x i) = ep (o i)
   st_mul_x_eq : ∀ i, T.st (x i) * x i = ep i
-
-def TrInv.matrixUnits (B ι : Type*) [CommRing B] [Fintype ι] [DecidableEq ι] (o : ι → ι) (ho : ∀ i, o (o i) = o i) :
-    (TrInv.matrix B ι).Units ι o where
-  ep i := Matrix.single i i 1
-  x i := Matrix.single (o i) i 1
-  o_o := ho
-  coi :=
-    { idem := fun i => by simp [IsIdempotentElem]
-      ortho := fun i j h => Matrix.single_mul_single_of_ne _ _ _ _ h _
-      complete := by
-        ext i j
-        simp only [Matrix.sum_apply, Matrix.single_apply, Matrix.one_apply]
-        by_cases h : i = j
-        · subst h; simp
-        · rw [if_neg h]; exact Finset.sum_eq_zero fun k _ => if_neg fun hk => h (hk.1.symm.trans hk.2) }
-  st_ep i := Matrix.transpose_single _ _ _
-  tr_ep i := by simp [TrInv.matrix]
-  rank_one i y := ⟨y i i, by simp [Matrix.single_mul_mul_single]⟩
-  x_mem i := by simp
-  x_base i := by rw [ho]
-  x_st i := by simp [TrInv.matrix]
-  st_mul_x_eq i := by simp [TrInv.matrix]
 
 namespace TrInv.Units
 

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.MatrixTwoByTwoCongr
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeG
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsFiniteMchartCover
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NonemptyLift
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.MatrixTwoByTwoCongr
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeG
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsFiniteMchartCover
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NonemptyLift
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+
+@[expose] public section
 
 noncomputable section
 
@@ -253,12 +257,14 @@ theorem vec_apply (M : MChart Y) (x : Sp S ⟶ Y.X) (h : ⊤ ≤ x ⁻¹ᵁ M.U)
 theorem tanPull_vec (M : MChart Y) (φ : S →+* S') {x : Sp S ⟶ Y.X} {x' : Sp S' ⟶ Y.X} (e : spMap φ ≫ x = x')
     (h : ⊤ ≤ x ⁻¹ᵁ M.U) (h' : ⊤ ≤ x' ⁻¹ᵁ M.U) (cv : Fin M.n → S) :
     tanPull φ e (vec M x h cv) = vec M x' h' (fun j => φ (cv j)) := by
-  rw [vec_apply, vec_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [vec_apply, vec_apply, map_sum]
   exact Finset.sum_congr rfl fun j _ => by rw [map_smulₛₗ, tanPull_lieBasis M φ e h h']
 
 theorem actR_vec (M : MChart Y) (x : Sp S ⟶ Y.X) (h : ⊤ ≤ x ⁻¹ᵁ M.U) (a : 𝓞 E) (cv : Fin M.n → S) :
     actR Y.t.act a (vec M x h cv) = vec M x h (((M.ρ a).map (ev x M.U h)).mulVec cv) := by
-  rw [vec_apply, vec_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [vec_apply, vec_apply, map_sum]
   simp only [map_smul, actR_lieBasis, Finset.smul_sum, smul_smul, Matrix.mulVec, dotProduct, Matrix.map_apply,
     Finset.sum_smul]
   rw [Finset.sum_comm]
@@ -283,7 +289,8 @@ theorem chg_map (M M' : MChart Y) (x : Sp S ⟶ Y.X) (h : ⊤ ≤ x ⁻¹ᵁ M.U
   have h1 := (lieBasis M (tau (isAffineOpen_inf M M')) (tau_le _ inf_le_left)).sum_toMatrix_smul_self
     (lieBasis M' (tau (isAffineOpen_inf M M')) (tau_le _ inf_le_right)) j
   have h2 := congrArg (tanPull (G := Y.t.G) _ e) h1
-  rw [map_sum, tanPull_lieBasis M' _ e _ h'] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, tanPull_lieBasis M' _ e _ h'] at h2
   simp only [map_smulₛₗ, tanPull_lieBasis M _ e _ h] at h2
   rw [Module.Basis.toMatrix_apply, ← h2, Module.Basis.repr_sum_self]
   rfl
@@ -293,7 +300,8 @@ theorem vec_chg (M M' : MChart Y) (x : Sp S ⟶ Y.X) (h : ⊤ ≤ x ⁻¹ᵁ M.U
     vec M x h (((chg M M').map (ev x _ hh)).mulVec cv) = vec M' x h' cv := by
   rw [chg_map M M' x h h' hh]
   apply (lieBasis M x h).equivFun.injective
-  rw [vec, LinearEquiv.apply_symm_apply, vec_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [vec, LinearEquiv.apply_symm_apply, vec_apply, map_sum]
   funext i
   simp [Matrix.mulVec, dotProduct, Module.Basis.toMatrix_apply, Finset.sum_apply, _root_.mul_comm]
 
@@ -307,13 +315,13 @@ def rdet {n n' : ℕ} (A : Matrix (Fin n) (Fin n') R) : R :=
   if h : n = n' then (A.submatrix id (Fin.cast h)).det else 1
 
 theorem rdet_self {n : ℕ} (A : Matrix (Fin n) (Fin n) R) : rdet A = A.det := by
-  rw [rdet, dif_pos rfl]; rfl
+  rw [rdet, dite_eq_left rfl]; rfl
 
 theorem map_rdet (φ : R →+* R') {n n' : ℕ} (A : Matrix (Fin n) (Fin n') R) : φ (rdet A) = rdet (A.map φ) := by
   by_cases h : n = n'
   · subst h
     rw [rdet_self, rdet_self, RingHom.map_det]; rfl
-  · rw [rdet, rdet, dif_neg h, dif_neg h, map_one]
+  · rw [rdet, rdet, dite_eq_right h, dite_eq_right h, map_one]
 
 variable {N : Type} [AddCommGroup N] [Module R N]
 
@@ -496,16 +504,22 @@ theorem isLB_detLie [IsNoetherianRing O] (hP : PushInvertible Y.t.G Y.t.PP.L) : 
       TopologicalSpace.Opens.mem_iSup.2 ⟨M.toMChart, hM⟩)
     fun i j k _ _ z => ev_detChg_mul i j k z
 
-theorem isLB_detOm [IsNoetherianRing O] (hP : PushInvertible Y.t.G Y.t.PP.L) : (detOm Y).IsLB :=
-  GlobalTheory.CechPic.isLB_dual (isLB_detLie hP)
+theorem isLB_detOm [IsNoetherianRing O] (hP : PushInvertible Y.t.G Y.t.PP.L) : (detOm Y).IsLB := by
+  have hA := isLB_detLie hP
+  refine ⟨hA.cover, ?_, ?_⟩
+  · intro i
+    have h := congrArg (·⁻¹) (hA.g_self i)
+    simp only [inv_one, ← map_inv] at h
+    exact h
+  · intro i j k
+    have h := congrArg (·⁻¹) (hA.cocycle i j k)
+    simp only [mul_inv, ← map_inv] at h
+    exact h
 
 theorem isLB_pushPP [IsNoetherianRing O] (hP : PushInvertible Y.t.G Y.t.PP.L) : (pushPP Y).IsLB :=
   isLB_of_ev _ (eq_top_iff.2 fun x _ => (exists_gChart hP x).elim fun M hM =>
       TopologicalSpace.Opens.mem_iSup.2 ⟨M, hM⟩)
     fun i j k _ _ z => ev_thRat_mul i j k z
-
-theorem isLB_de [IsNoetherianRing O] (hP : PushInvertible Y.t.G Y.t.PP.L) : (de Y).IsLB :=
-  GlobalTheory.CechPic.isLB_dual (isLB_pushPP hP)
 
 end Lines
 

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMQuotientUnmixed
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMParameterQuotient
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMRingUnmixed
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMQuotientUnmixed
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMParameterQuotient
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMRingUnmixed
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

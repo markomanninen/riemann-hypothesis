@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
-import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TsumNatCastEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TsumNatCastEq
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -48,7 +52,7 @@ theorem fourier_with_support :
     have hz₀ : z₀ ∈ upperHalf F := fun _ ↦ by simp [z₀]
     have hq : qPow ξ z₀ ≠ 0 := Complex.exp_ne_zero _
     have hsum : Summable (fun c : p ⁻¹' {ξ} ↦ (pairCoef 𝔞 𝔟 k c : ℂ)) := by
-      have := ((hE z₀ hz₀).1.subtype (p ⁻¹' {ξ})).mul_right (qPow ξ z₀)⁻¹
+      have := ((hE z₀ hz₀).1.subtype (fun c ↦ c ∈ p ⁻¹' {ξ})).mul_right (qPow ξ z₀)⁻¹
       refine this.congr fun c ↦ ?_
       simp only [Function.comp_apply]
       rw [hfib z₀ ξ c, mul_assoc, mul_inv_cancel₀ hq, mul_one]

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsSemidirectHaar
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsSemidirectHaar
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -47,7 +51,8 @@ theorem SemidirectHaar.proof (G T : Type*) [Group G] [TopologicalSpace G] [IsTop
         ∫⁻ x : H, f (τ s * (τ t * x * (τ t)⁻¹) * (τ s)⁻¹) ∂ν := by
       congr 1
       funext x
-      simp only [map_mul, mul_inv_rev, mul_assoc]
+      simp only [map_mul, mul_inv_rev]
+      group
     rw [e, e2, e3, ← mul_assoc] at e1
     have h := (ENNReal.mul_left_inj hI0 hItop).1 e1
     exact (ENNReal.coe_injective (by rw [ENNReal.coe_mul]; exact h)).symm.trans (mul_comm _ _)

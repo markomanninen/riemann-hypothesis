@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
-import ReciprocityTheory.ThetaQuasiPeriods.Transl
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+module
+
+public import Mathlib
+public import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
+public import ReciprocityTheory.ThetaQuasiPeriods.Transl
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -151,7 +155,7 @@ theorem valAt'_eval₂ {κ : Type} (x : 𝟙_ (Over (Sp ℂ)) ⟶ X) (U : X.left
   | C a =>
     rw [MvPolynomial.eval₂_C, MvPolynomial.eval_C]
     exact valAt'_constFn x.left X.hom (Over.w x) U a h
-  | add p q hp hq => rw [MvPolynomial.eval₂_add, valAt'_add, hp, hq, map_add]
+  | add p q hp hq => rw [MvPolynomial.eval₂_add, valAt'_add, hp, hq, map_add (f := _)]
   | mul_X p c hp => rw [MvPolynomial.eval₂_mul, valAt'_mul, hp, MvPolynomial.eval₂_X, map_mul, MvPolynomial.eval_X]
 
 def PointCriterion : Prop :=
@@ -223,8 +227,8 @@ theorem locallyOfFiniteType_tensor [LocallyOfFiniteType X.hom] [LocallyOfFiniteT
 
 end ThetaModelGroup
 
-open ThetaModelGroup in
 
+open ThetaModelGroup in
 theorem thetaModel_groupLaw : (∀ (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E] (W : Set E) (X
     Y : Over (Sp ℂ)) (a : E → (𝟙_ (Over (Sp ℂ)) ⟶ X)) (b : E → (𝟙_ (Over (Sp ℂ)) ⟶ Y)), (∀ (U
     : (X).left.Opens) (f : Γ((X).left, U)), IsOpen {w | w ∈ W ∧ ⊤ ≤ (a

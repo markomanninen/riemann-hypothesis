@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasLenOfLatLen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasLenOfLatLen
+
+@[expose] public section
 
 open GlobalTheory.InertZeta
 
@@ -67,7 +71,6 @@ theorem core (Y : Type) (q N : ℕ) (l : Y → ℕ) (ψ : Y → ℂ) (β X₀ Z�
     ring
   rw [← ev]
   convert hprod using 1
-  case e'_3 => rfl
   funext p
   obtain ⟨a, b⟩ := p
   simp only
@@ -78,8 +81,8 @@ end GlobalTheory.InertZeta.LeviSum
 
 namespace GlobalTheory.InertZeta
 
-open LeviSum in
 
+open LeviSum in
 theorem step : Step := by
   intro Y C q N ℓ l φ₀ α X y Z hq hα hy hy1 hyα hyα' H hZ
   subst hy

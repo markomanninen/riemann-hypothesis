@@ -1,21 +1,23 @@
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuadraticInequalityBoundHolds
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.HalfSumRootsStandard
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.SumOfSquaresIdentityHolds
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CasKHW
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CasComm
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.GeneratorPowUpperVanishHolds
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.HWDiag
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.TrPowSumFilterZero
-import Formalism.RealPlaceAnalysis.StatementD
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.GeneratorCommutatorQuantumDet
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CharId
+module
+
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuadraticInequalityBoundHolds
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.HalfSumRootsStandard
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.SumOfSquaresIdentityHolds
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CasKHW
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CasComm
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.GeneratorPowUpperVanishHolds
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.HWDiag
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.TrPowSumFilterZero
+public import Formalism.RealPlaceAnalysis.StatementA
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.GeneratorCommutatorQuantumDet
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CharId
+
+@[expose] public section
 
 namespace Formalism.REAL
 
-theorem casKHighest : CasKHighest := compactCasimirOnHighestWeight_holds
-theorem sumSq : SumSq := sumOfSquaresIdentity_holds
 theorem wdCas : WDCas := by
   intro V _ _ n ε E μ w hGl hU hKH
   have hK := compactCasimirOnHighestWeight_holds V n ε E μ w hGl hKH

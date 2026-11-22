@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
-import Formalism.SharpRestriction.LevelLetterCocycles.NatCastEqZeroOfNotDvd
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
+public import Formalism.SharpRestriction.LevelLetterCocycles.NatCastEqZeroOfNotDvd
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,8 @@ theorem padicValInt_mul_pow {p : ℕ} (hp : p.Prime) {i : ℤ} (hi : i ≠ 0) (e
     padicValInt p (i * (p : ℤ) ^ ell) = padicValInt p i + ell := by
   have := Fact.mk hp
   simp only [padicValInt, Int.natAbs_mul, Int.natAbs_pow, Int.natAbs_natCast]
-  rw [padicValNat.mul (Int.natAbs_ne_zero.2 hi) (pow_ne_zero _ hp.ne_zero), padicValNat.prime_pow]
+  rw [Nat.multiplicity_mul (Int.natAbs_ne_zero.2 hi) (pow_ne_zero _ hp.ne_zero),
+    Nat.multiplicity_prime_pow]
 
 theorem eval_PPO (W : LocWach PD LL O v n) (ell : ℕ) (JS : Finset ℤ) :
     algebraMap O LL ((PPO W ell JS).eval 1) =

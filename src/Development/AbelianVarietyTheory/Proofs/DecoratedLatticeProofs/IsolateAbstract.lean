@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -54,7 +58,8 @@ theorem isolate_abstract : ∀ (X : Type) [AddCommGroup X] (Γ G : AddSubgroup X
     intro γ hγ k c v hv
     have hb : ∀ x, T γ (T x v) = (χ x γ * a γ) • T x v := by
       intro x; rw [hχ γ hγ x v, (ha γ hγ).2 v hv, map_smul, smul_smul]
-    simp only [LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply, map_sum, map_smul, hb,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply, map_sum, map_smul, hb,
       Finset.smul_sum, ← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun x _ => ?_
     simp only [smul_smul, ← sub_smul]

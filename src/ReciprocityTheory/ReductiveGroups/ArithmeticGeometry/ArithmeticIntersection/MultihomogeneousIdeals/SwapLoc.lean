@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.LocalLengthAdditivityTorsionFree
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.LocalLengthAdditivityTorsionFree
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AI.I1.SwapLoc
 
@@ -33,7 +37,7 @@ theorem length_localizedModule_quot_eq {R T : Type*} [CommRing R] [CommRing T] [
     rw [Algebra.ofId_apply, IsScalarTower.algebraMap_apply R T (T ⧸ J), Ideal.Quotient.algebraMap_eq,
       Ideal.Quotient.eq_zero_iff_mem]
     refine Submodule.mem_sup.mp ha |>.elim fun v ⟨hv, y, hy, e⟩ => ?_
-    rw [← e, map_add, hV v hv, zero_add]
+    rw [← e, map_add (f := _), hV v hv, zero_add]
     obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton'.mp hy
     rw [map_mul]
     exact Ideal.mul_mem_left _ _ (Ideal.subset_span rfl)
@@ -205,17 +209,19 @@ theorem IsLocData.length_eq (h : IsLocData R T S V) (x : R) :
 
 end LocData
 
-open Classical in
 
+open Classical in
 noncomputable def lenAt {R : Type*} [CommRing R] (J W : Ideal R) : ℕ∞ :=
-  if h : W.IsPrime then
-    haveI := h
-    Module.length (Localization.AtPrime W) (LocalizedModule W.primeCompl (R ⧸ J))
-  else 0
+  by
+    classical
+    exact if h : W.IsPrime then
+      haveI := h
+      Module.length (Localization.AtPrime W) (LocalizedModule W.primeCompl (R ⧸ J))
+    else 0
 
 theorem lenAt_eq {R : Type*} [CommRing R] (J W : Ideal R) [hW : W.IsPrime] :
     lenAt J W = Module.length (Localization.AtPrime W) (LocalizedModule W.primeCompl (R ⧸ J)) := by
-  rw [lenAt, dif_pos hW]
+  rw [lenAt, dite_eq_left hW]
 
 theorem length_quot_ne_top_of_mem_minimalPrimes {A : Type*} [CommRing A] [IsNoetherianRing A]
     [IsLocalRing A] (I : Ideal A) (hm : IsLocalRing.maximalIdeal A ∈ I.minimalPrimes) :
@@ -241,7 +247,7 @@ theorem exists_prime_comap_atPrime_quot {R : Type*} [CommRing R] (V Z : Ideal R)
     IsLocalization.isPrime_of_isPrime_disjoint _ _ _ hQV hd, ?_⟩
   rw [IsScalarTower.algebraMap_eq R (R ⧸ V) (Localization.AtPrime (Z.map (Ideal.Quotient.mk V))),
     ← Ideal.comap_comap]
-  have hcm := IsLocalization.comap_map_of_isPrime_disjoint (Z.map (Ideal.Quotient.mk V)).primeCompl
+  have hcm := IsLocalization.under_map_of_isPrime_disjoint (Z.map (Ideal.Quotient.mk V)).primeCompl
     (Localization.AtPrime (Z.map (Ideal.Quotient.mk V))) hQV hd
   rw [show Ideal.comap (algebraMap (R ⧸ V) (Localization.AtPrime (Z.map (Ideal.Quotient.mk V))))
       (Ideal.map (algebraMap (R ⧸ V) (Localization.AtPrime (Z.map (Ideal.Quotient.mk V))))

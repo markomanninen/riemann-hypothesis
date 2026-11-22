@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.ThetaDilations.SdTransport
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicTupleProjectionsStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRingStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountableStatement
+module
+
+public import Development.WeilBound.CoreStatements.ThetaDilations.SdTransport
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicTupleProjectionsStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRingStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountableStatement
+
+@[expose] public section
 
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
@@ -36,7 +40,7 @@ theorem euler_move : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Numbe
     have h3 : Measurable (projInf : (Fin n → Fin M → AF F ⊗[F] E) → _) := by
       have : BorelSpace (Ainf F ⊗[F] E) := ⟨rfl⟩
       have : BorelSpace (AF F ⊗[F] E) := ⟨rfl⟩
-      exact measurable_pi_lambda _ fun a => measurable_pi_lambda _ fun i =>
+      exact Measurable.of_eval fun a => Measurable.of_eval fun i =>
         ((continuous_apply_apply a i).comp r1).measurable
     exact ((hφi.comp h3).mul (Finset.measurable_fun_prod _ fun v _ =>
       (hφ v).comp ((r3 v).comp r2).measurable)).indicator (r5 S).measurableSet

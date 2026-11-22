@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.MixedPositionHypothesis
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.MixedPositionHypothesis
+
+@[expose] public section
 
 noncomputable section
 

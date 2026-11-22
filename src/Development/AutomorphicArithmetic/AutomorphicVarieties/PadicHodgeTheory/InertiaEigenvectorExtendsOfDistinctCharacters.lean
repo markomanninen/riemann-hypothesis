@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.WdDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CharAbove
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WdParameterMonodromyZeroIffPotentiallyCrystallin
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.WdDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CharAbove
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WdParameterMonodromyZeroIffPotentiallyCrystallin
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N GlobalTheory.WeilDeligne GlobalTheory.Pst Polynomial Module Matrix UpperTheory.V.W UpperTheory.V.Hi
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -134,7 +138,8 @@ theorem UpperTheory.inertia_eigenvector_extends_of_distinct_characters :
           exact Equiv.sum_comp (Equiv.mulLeft g) F
   have htrP : ∀ k, LinearMap.trace ℂ W (P k) = (Fintype.card U.range : ℂ) := by
     intro k
-    simp only [P, map_sum, map_smul, hpreval, htr, smul_eq_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [P, map_sum, map_smul, hpreval, htr, smul_eq_mul, Finset.mul_sum]
     rw [Finset.sum_comm]
     have h1 : ∀ m, ∑ h : U.range, (((ψ k)⁻¹ h : ℂˣ) : ℂ) * (μ m (i (pre h)) : ℂ) =
         if m = k then (Fintype.card U.range : ℂ) else 0 := by
@@ -164,14 +169,15 @@ theorem UpperTheory.inertia_eigenvector_extends_of_distinct_characters :
     rw [Fintype.linearIndependent_iff]
     intro g hg j
     have h1 := congrArg (P j) hg
-    rw [map_sum, map_zero] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h1
     simp only [map_smul, hPE', smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true] at h1
     rw [smul_smul] at h1
     have h2 := (smul_eq_zero.mp h1).resolve_right (hw j)
     exact (mul_eq_zero.mp h2).resolve_right hcard0
   have hdim : Module.finrank ℂ W = n := by
     rw [← LinearMap.charpoly_natDegree (ρ 1), hchar 1]
-    rw [Polynomial.natDegree_finset_prod_X_sub_C_eq_card, Finset.card_univ, Fintype.card_fin]
+    rw [Polynomial.natDegree_finsetProd_X_sub_C_eq_card, Finset.card_univ, Fintype.card_fin]
   let b := basisOfLinearIndependentOfCardEqFinrank' yv hli (by rw [Fintype.card_fin, hdim])
   have hb : ∀ k, b k = yv k := fun k => by simp [b]
   have hspan : ∀ k y, E k y → y = b.repr y k • yv k := by
@@ -180,7 +186,8 @@ theorem UpperTheory.inertia_eigenvector_extends_of_distinct_characters :
     have hzero : ∀ m, m ≠ k → b.repr y m = 0 := by
       intro m hm
       have h1 := congrArg (P m) hsum
-      rw [map_sum] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at h1
       simp only [map_smul, hb, hPE', smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ,
         if_true] at h1
       rw [hPE k y hy m, if_neg hm, smul_smul] at h1
@@ -240,7 +247,8 @@ theorem UpperTheory.inertia_eigenvector_extends_of_distinct_characters :
     have htr1 : LinearMap.trace ℂ W (ρ σ * P j) = c * (Fintype.card U.range : ℂ) := by
       rw [hσP, map_smul, htrP, smul_eq_mul]
     have htr2 : LinearMap.trace ℂ W (ρ σ * P j) = (μ j σ : ℂ) * (Fintype.card U.range : ℂ) := by
-      simp only [P, Finset.mul_sum, mul_smul_comm, map_sum, map_smul, htrσ, smul_eq_mul, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [P, Finset.mul_sum, mul_smul_comm, map_sum, map_smul, htrσ, smul_eq_mul, Finset.mul_sum]
       rw [Finset.sum_comm]
       have h1 : ∀ m, ∑ h : U.range, (((ψ j)⁻¹ h : ℂˣ) : ℂ) * ((μ m σ : ℂ) * (μ m (i (pre h)) : ℂ)) =
           (μ m σ : ℂ) * (if m = j then (Fintype.card U.range : ℂ) else 0) := by

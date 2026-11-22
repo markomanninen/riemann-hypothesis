@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataTheta
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PderivPderivCommFock
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataTheta
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PderivPderivCommFock
+
+@[expose] public section
 
 open Formalism.BasicNotions.TH
 
@@ -65,7 +69,7 @@ theorem omAct_lie (p q r s : ℕ) (Y Z : Matrix (Ln p q r s) (Ln p q r s) ℂ) :
   | h_add Y Y' hY hY' =>
     have : (Y + Y') * Z - Z * (Y + Y') = (Y * Z - Z * Y) + (Y' * Z - Z * Y') := by
       rw [add_mul, mul_add]; abel
-    rw [this, map_add, hY, hY', map_add, add_mul, mul_add]; abel
+    rw [this, map_add (f := _), hY, hY', map_add (f := _), add_mul, mul_add]; abel
   | h_std_basis i j x =>
     induction Z using Matrix.induction_on' with
     | h_zero => simp
@@ -74,7 +78,7 @@ theorem omAct_lie (p q r s : ℕ) (Y Z : Matrix (Ln p q r s) (Ln p q r s) ℂ) :
           (Matrix.single i j x * Z - Z * Matrix.single i j x) +
             (Matrix.single i j x * Z' - Z' * Matrix.single i j x) := by
         rw [add_mul, mul_add]; abel
-      rw [this, map_add, hZ, hZ', map_add, add_mul, mul_add]; abel
+      rw [this, map_add (f := _), hZ, hZ', map_add (f := _), add_mul, mul_add]; abel
     | h_std_basis k l y =>
       rw [map_sub, omAct_single_mul, omAct_single_mul, omAct_single, omAct_single,
         smul_mul_smul_comm, smul_mul_smul_comm, mul_comm y x, ← smul_sub, ← smul_sub, omE_comm]

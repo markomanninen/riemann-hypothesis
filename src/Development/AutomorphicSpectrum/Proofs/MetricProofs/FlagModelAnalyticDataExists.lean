@@ -1,25 +1,30 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SingularWeightMonotoneRegularization
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlatWeightExtends
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagBundlePartialBlockMapStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SncAdaptedAtlasProjection
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.PartialFlagBundleMetricLineStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogResolutionFunctorialHolomorphic
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogResolutionFubiniStudyPositive
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SmoothFunctionAsDegreeZeroMetric
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHFlProdLinear
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.PartialFlagBlocks
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SamePotBlock
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SingWeightRegFamilyTransport
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LeviPullEq
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.EvalNeZeroOfNotMem
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.NotMemMcPtsTop
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.WeightDescendsOfSameOrbit
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsSmoothHermPullHerm
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MCoordIdealCompLeImageZ
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SingularWeightMonotoneRegularization
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlatWeightExtends
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagBundlePartialBlockMapStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SncAdaptedAtlasProjection
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PartialFlagBundleMetricLineStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogResolutionFunctorialHolomorphic
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogResolutionFubiniStudyPositive
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SmoothFunctionAsDegreeZeroMetric
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHFlProdLinear
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PartialFlagBlocks
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SamePotBlock
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SingWeightRegFamilyTransport
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LeviPullEq
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.EvalNeZeroOfNotMem
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.NotMemMcPtsTop
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.WeightDescendsOfSameOrbit
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsSmoothHermPullHerm
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MCoordIdealCompLeImageZ
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GlobalTheory.CompanionTheory.Ar.PB.FA GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
 
@@ -69,7 +74,7 @@ theorem dy_eq_zero (M : FlagModel y Ψ N j) (p : Ψ × Fin N) (k : K)
   have h1 : ¬ ∀ p', M.blk p' ≠ some k := fun h => hk ⟨⟨k, Or.inl h⟩, rfl⟩
   have h2 : M.blk p ≠ some k := fun h => hk ⟨⟨k, Or.inr h⟩, rfl⟩
   unfold FlagModel.dy
-  rw [dif_neg h1, if_neg h2]
+  rw [dite_eq_right h1, if_neg h2]
 
 theorem step_member (hR : RegGlobalStatement) (hP : PullbackStatement) [Fintype Ψ] [DecidableEq Ψ]
     (M : FlagModel y Ψ N j) {n e : ℕ} (BM : BaseMetric M n) (R : AnLogRes (mCoordIdeal y) ⊤ e)

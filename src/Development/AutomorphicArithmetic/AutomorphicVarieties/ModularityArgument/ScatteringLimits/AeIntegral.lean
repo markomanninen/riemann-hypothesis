@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.Carries
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.Carries
+
+@[expose] public section
 
 open MeasureTheory PositivityTheory.Rg.Tf.IntegralApplyAeEq Set Filter Topology
 open scoped InnerProductSpace ENNReal
@@ -16,7 +20,7 @@ theorem UpperTheory.V.Z.IntegralApplyAeEq.ae_integral {W : Type} [NormedAddCommG
     have hb : ∀ᵐ t ∂μ, ∫⁻ x in s, ‖g (t, x)‖ₑ ≤ ‖G t‖ₑ * volume s ^ (1 / (1 : ℝ≥0∞).toReal - 1 / (2 : ℝ≥0∞).toReal) := by
       filter_upwards [h] with t ht
       have e : ∫⁻ x in s, ‖g (t, x)‖ₑ = eLpNorm (G t) 1 (volume.restrict s) := by
-        rw [eLpNorm_one_eq_lintegral_enorm]
+        rw [eLpNorm_one_eq_lintegral_eNorm (Lp.aestronglyMeasurable (G t)).restrict]
         exact lintegral_congr_ae (ae_restrict_of_ae (ht.mono fun x hx => by simp only [hx]))
       rw [e]
       refine (eLpNorm_le_eLpNorm_mul_rpow_measure_univ (p := 1) (q := 2) (by norm_num)

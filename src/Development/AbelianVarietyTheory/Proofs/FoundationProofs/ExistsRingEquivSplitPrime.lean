@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NonemptyAlgHomOfNotIsField
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsContinuousExtension
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NonemptyAlgHomOfNotIsField
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsContinuousExtension
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 
@@ -21,8 +25,8 @@ theorem continuous_of_valued_eq {A B Γ : Type*} [Ring A] [Ring B] [LinearOrdere
   rw [hf, ← ha]
   exact hx
 
-open scoped WithZeroTopology in
 
+open scoped WithZeroTopology in
 theorem exists_extension {K L : Type} [Field K] [NumberField K] [Field L] [NumberField L]
     (w : HeightOneSpectrum (𝓞 K)) (u : HeightOneSpectrum (𝓞 L)) (f : K →+* u.adicCompletion L)
     (hf : ∀ x, Valued.v (f x) = w.valuation K x) :

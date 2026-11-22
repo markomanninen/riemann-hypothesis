@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
-import GroundTheory.GlobalFields.TateThesis.AdeleScaling
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.KkCpt
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.AbLeOne
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.IdeleSum
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
+public import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.KkCpt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.AbLeOne
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.IdeleSum
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open GroundTheory.Global GroundTheory.Automorphic GroundTheory.Automorphic.GJMatrix
@@ -65,13 +69,13 @@ theorem UpperTheory.ConvolutionTheory.R2.M.siegJ :
     rw [e]
     refine MeasurableSet.iUnion fun n => ?_
     have hc : IsCompact ((mD '' ((ρ ^ n * ·) '' C)) * KK F) :=
-      ((hC.image (continuous_mul_left _)).image M.continuous_mD).mul hKc
+      ((hC.image (continuous_const_mul _)).image M.continuous_mD).mul hKc
     exact (isClosed_range_nU.mul_right_of_isCompact hc).measurableSet
   · set S : Set (G1 F) := {g : G1 F | ∃ (b : A F) (n : ℕ), ∃ x ∈ C, ∃ k ∈ KK F, g = nU b * mD (ρ ^ n * x) * k} with hS
     set W : Set (IdeleGroup F) := ⋃ n : ℕ, (ρ ^ n * ·) '' (C * U) with hW
     have hCU : IsCompact (C * U) := hC.mul hU
     have hWm : MeasurableSet W := MeasurableSet.iUnion fun n =>
-      (hCU.image (continuous_mul_left _)).measurableSet
+      (hCU.image (continuous_const_mul _)).measurableSet
     haveI := M₀.prob
     have hae : ∀ᵐ p ∂M₀.ν, p.2 ∈ KK F := by
       have h0 : ∀ᵐ k ∂M₀.κ, k ∈ KK F := M₀.supp

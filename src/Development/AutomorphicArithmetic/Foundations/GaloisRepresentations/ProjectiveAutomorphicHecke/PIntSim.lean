@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfLocalLevelsUnitaryIsOpenIsCompactIsLeve
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfLocalLevelsUnitaryIsOpenIsCompactIsLeve
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DefU GlobalTheory.PRep Formalism.L2.Host GlobalTheory.HeckeGal UpperTheory.Gal.CertificateRingHomMap
 open scoped Classical
 
@@ -21,7 +26,7 @@ private theorem rel {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
 open GroundTheory.Global.AdeleBaseChange in
 private theorem val_le {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} (hn : 0 < n) (k : GUf E n)
-    (hk : ∀ w, comp w k ∈ GlobalTheory.LFun.KGL w n) (u : Plc E) :
+    (hk : ∀ w, comp w k ∈ GlobalTheory.LFun.KGL w (n := n)) (u : Plc E) :
     Valued.v (pLoc E u (finiteAdeleMap ℚ E (sim k : AfQˣ))) ≤ 1 := by
   have h := congrFun (congrFun (rel k u) ⟨0, hn⟩) ⟨0, hn⟩
   rw [Matrix.mul_apply, Matrix.smul_apply, Matrix.one_apply_eq, smul_eq_mul, mul_one] at h
@@ -53,4 +58,4 @@ theorem UpperTheory.Gal.CertificateRingHomMap.pIntSim_of :
       _ = _ := mul_one _
   have h4 : Valued.v (GroundTheory.Global.SemiLocal.completionMap (below ℚ u) u (((sim k : AfQˣ) : AfQ) (below ℚ u))) = 1 := h3
   rw [GroundTheory.Global.SemiLocal.valued_completionMap] at h4
-  exact (pow_eq_one_iff.1 h4).resolve_right (Ideal.ramificationIdx_pos u.asIdeal (𝓞 ℚ)).ne'
+  exact (pow_eq_one_iff.1 h4).resolve_right (Ideal.ramificationIdx_pos (R := 𝓞 ℚ) u.asIdeal).ne'

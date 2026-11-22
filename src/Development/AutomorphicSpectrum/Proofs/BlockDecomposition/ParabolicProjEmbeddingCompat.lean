@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCIndValue
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCIndValue
+
+@[expose] public section
+
 open Matrix GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.BZMir GlobalTheory.BZMir.Leib GlobalTheory.RgGu.Leib GlobalTheory.CompanionTheory.LeibPhi Topology
 open scoped TensorProduct
 
@@ -42,8 +47,12 @@ theorem glEmbMat_last_last (k : Type) [Field k] (n : ℕ) (A : Matrix (Fin n) (F
     glEmbMat k n A (Fin.last n) (Fin.last n) = 1 := by
   simp [GlobalTheory.BZMir.glEmbMat]
 
-theorem gpProj_iotaM : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (m j : ℕ) (y : MirabolicParabolic k m j) (hh : embedding₂ k (m + j) y ∈ MirabolicParabolic k m (j + 1)),
-    gpProj k m (j + 1) ⟨_, hh⟩ = ((gpProj k m j y).1, embedding₂ k j (gpProj k m j y).2) := by
+theorem gpProj_iotaM : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]
+    [IsNonarchimedeanLocalField k] (m j : ℕ) (y : GlobalTheory.BZMir.Leib.MirabolicParabolic k m j)
+    (hh : embedding₂ k (m + j) y ∈ GlobalTheory.BZMir.Leib.MirabolicParabolic k m (j + 1)),
+    GlobalTheory.BZMir.Leib.gpProj k m (j + 1) ⟨_, hh⟩ =
+      ((GlobalTheory.BZMir.Leib.gpProj k m j y).1,
+        embedding₂ k j (GlobalTheory.BZMir.Leib.gpProj k m j y).2) := by
   intro k _ _ _ _ m j y hh
   refine Prod.ext ?_ ?_
   · refine Units.ext (Matrix.ext fun a b => ?_)

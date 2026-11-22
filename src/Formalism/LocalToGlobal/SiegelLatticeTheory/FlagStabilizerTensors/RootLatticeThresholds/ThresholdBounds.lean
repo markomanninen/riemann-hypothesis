@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementSz
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementSz
+
+@[expose] public section
 
 noncomputable section
 
@@ -167,7 +171,7 @@ private theorem continuousOn_mul_be_of_window (hOk : c.Ok) (hb1 : 40 * (c.m : �
   have hq : Continuous (fun Y => c.q de de' T T' Y) := by
     show Continuous (fun Y : ℝ =>
       -(T * T') * ∏ i ∈ Icc 1 c.k, ((Y + 1 / 2 + c.u de i) * (Y + 1 / 2 + c.u de' i)))
-    exact continuous_const.mul (continuous_finsetProd _ (fun i _ => by fun_prop))
+    exact continuous_const.fun_mul (continuous_finsetProd _ (fun i _ => by fun_prop))
   have hP1 : Continuous (fun Y : ℝ => c.P (Y + 1)) := hP.comp (continuous_add_const 1)
   have hd : ContinuousOn (fun Y => c.P Y * c.P (Y + 1) / c.q de de' T T' Y) S :=
     (hP.mul hP1).continuousOn.div hq.continuousOn

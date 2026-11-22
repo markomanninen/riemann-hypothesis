@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagIndependenceAlgebra
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagIndependenceAlgebra
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -62,7 +67,7 @@ theorem FlagIndependence.proof (hExp : PairNumberExpansionIndependence.Statement
     (by
       intro A B'
       have h2 : IsPairExpansion m (homogeneousComponent m (A + B')) (ex A + ex B') := by
-        rw [map_add]
+        rw [map_add (f := _)]
         exact isPairExpansion_add (hex A) (hex B')
       rw [hind _ _ _ (homogeneousComponent_isHomogeneous m _) (hex (A + B')) h2]
       exact map_add (pairNumHom (pointIdeal O y) (Fin.append x u) (Fin.append x' u')
@@ -167,7 +172,8 @@ theorem FlagIndependence.proof (hExp : PairNumberExpansionIndependence.Statement
   have hren : ∀ (φ : Fin N → Fin (N + N)), rename φ G =
       ∑ μ, c μ • (μ.parts.map fun b => rename φ (hsymm (Fin N) ℤ b)).prod := by
     intro φ
-    rw [← hc, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hc, map_sum]
     refine Finset.sum_congr rfl fun μ _ => ?_
     rw [map_zsmul, hsymmPart, map_multiset_prod, Multiset.map_map]
     rfl
@@ -179,7 +185,8 @@ theorem FlagIndependence.proof (hExp : PairNumberExpansionIndependence.Statement
     rw [pn_eq _ _ hGm.rename_isHomogeneous (isPairExpansion_push (Fin.natAdd N) hHs),
       pairNum_pushExpansion]
     simp only [Function.comp_def, Fin.append_right]
-  rw [hLHS, hRHS, hren, hren, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hLHS, hRHS, hren, hren, map_sum, map_sum]
   refine Finset.sum_congr rfl fun μ _ => ?_
   rw [map_zsmul, map_zsmul]
   congr 1

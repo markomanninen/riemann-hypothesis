@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.StatementC
+module
+
+public import Formalism.GradedWeylDivisibility.StatementC
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -51,9 +55,9 @@ private theorem domCongr_cmIdx_apply_cmIdx {r n : ℕ} (x : Fin r × Fin n →�
 private theorem sum_single_castLE_apply' {r n s : ℕ} (τ : Fin s → Fin r) (hs : s ≤ n) (b : Fin r) (t : Fin n) :
     (∑ q : Fin s, Finsupp.single (τ q, Fin.castLE hs q) 1 : Fin r × Fin n →₀ ℕ) (b, t) =
       if h : t.val < s then (if τ ⟨t.val, h⟩ = b then 1 else 0) else 0 := by
-  rw [Finsupp.finset_sum_apply]
+  rw [Finsupp.finsetSum_apply]
   by_cases h : t.val < s
-  · rw [dif_pos h, Finset.sum_eq_single ⟨t.val, h⟩]
+  · rw [dite_eq_left h, Finset.sum_eq_single ⟨t.val, h⟩]
     · rw [Finsupp.single_apply]
       by_cases hb : τ ⟨t.val, h⟩ = b
       · have hp : (τ ⟨t.val, h⟩, Fin.castLE hs ⟨t.val, h⟩) = (b, t) := by
@@ -74,7 +78,7 @@ private theorem sum_single_castLE_apply' {r n s : ℕ} (τ : Fin s → Fin r) (h
       exact h2
     · intro hq
       exact absurd (Finset.mem_univ _) hq
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     apply Finset.sum_eq_zero
     intro q _
     rw [Finsupp.single_apply, if_neg]
@@ -147,10 +151,10 @@ theorem minorExponentLt : MinorExpLt := by
       have hlt' : (⟨t.val, ht⟩ : Fin s) < q0 := by
         show t.val < q0.val
         omega
-      rw [dif_pos ht, dif_pos ht, hfix _ hlt']
-    · rw [dif_pos ht0, dif_pos ht0, e1, if_neg (lt_trans hb hIlt).ne', if_neg hb.ne']
+      rw [dite_eq_left ht, dite_eq_left ht, hfix _ hlt']
+    · rw [dite_eq_left ht0, dite_eq_left ht0, e1, if_neg (lt_trans hb hIlt).ne', if_neg hb.ne']
   · rw [domCongr_cmIdx_apply_cmIdx, domCongr_cmIdx_apply_cmIdx, hA, hB]
-    rw [dif_pos ht0, dif_pos ht0, e1, if_neg hIlt.ne', if_pos (rfl : I q0 = I q0)]
+    rw [dite_eq_left ht0, dite_eq_left ht0, e1, if_neg hIlt.ne', if_pos (rfl : I q0 = I q0)]
     exact Nat.zero_lt_one
 
 end Formalism.GradedWeylDivisibility

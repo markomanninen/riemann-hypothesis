@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SymbolCongr
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SymbolCongr
+
+@[expose] public section
 
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible GlobalTheory.InducedPBW
 
@@ -28,7 +32,7 @@ theorem ug_mem_span_listProd (p q : ℕ) (u : Ug p q) :
       rw [map_mul]
       exact mul_mem ha hb
     | add a b ha hb =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem ha hb
   have hu : u ∈ Subalgebra.toSubmodule (Algebra.adjoin ℂ (Set.range (ugι p q))) := by
     rw [Subalgebra.mem_toSubmodule, htop]
@@ -53,7 +57,7 @@ theorem iSup_indF_eq_top (p q : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V]
   induction t using TensorProduct.induction_on with
   | zero => simp
   | add a b ha hb =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem ha hb
   | tmul u v =>
     have hu := ug_mem_span_listProd p q u
@@ -64,7 +68,7 @@ theorem iSup_indF_eq_top (p q : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V]
       exact Submodule.subset_span ⟨l, le_rfl, rfl⟩
     | zero => simp
     | add a b _ _ ha hb =>
-      rw [TensorProduct.add_tmul, map_add]
+      rw [TensorProduct.add_tmul, map_add (f := _)]
       exact add_mem ha hb
     | smul c a _ ha =>
       rw [← TensorProduct.smul_tmul', map_smul]

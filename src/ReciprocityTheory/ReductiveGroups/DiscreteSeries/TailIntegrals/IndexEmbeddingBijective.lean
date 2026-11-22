@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.DelFormula
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.DelFormula
+
+@[expose] public section
 
 noncomputable section
 
@@ -125,7 +129,7 @@ theorem lin_eq (k r' : ℕ) (hk : 1 ≤ k) (y : Fin (2 * r' + k + 1) → ℂ) :
   refine Prod.ext (funext fun j => ?_) (Prod.ext (funext fun j => ?_) (funext fun i => ?_))
   · have := j.isLt
     show rotF k r' y ⟨j.val, by omega⟩ = (hcoord k r' (y, 0)).1 j
-    rw [hc1 k r' hk, AN, dif_pos (by omega), aF]
+    rw [hc1 k r' hk, AN, dite_eq_left (by omega), aF]
     split_ifs with hj
     · have hj' : j.val < r' := hj
       have n1 : (⟨j.val, by omega⟩ : Fin (2 * r' + k + 1)) ≠ wI k r' (Fin.last k) :=
@@ -140,7 +144,7 @@ theorem lin_eq (k r' : ℕ) (hk : 1 ≤ k) (y : Fin (2 * r' + k + 1) → ℂ) :
       rw [e, rotF, Function.update_of_ne hne, Function.update_self]
   · have := j.isLt
     show rotF k r' y ⟨2 * r' + k - j.val, by omega⟩ = (hcoord k r' (y, 0)).2.1 j
-    rw [hc2, AN', dif_pos (by omega), aF']
+    rw [hc2, AN', dite_eq_left (by omega), aF']
     split_ifs with hj
     · have hj' : j.val < r' := hj
       have n1 : (⟨2 * r' + k - j.val, by omega⟩ : Fin (2 * r' + k + 1)) ≠ wI k r' (Fin.last k) :=

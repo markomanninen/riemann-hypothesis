@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimENF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutFpmDecay
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaCutoffLimit
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjS
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimENF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutFpmDecay
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaCutoffLimit
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjS
+
+@[expose] public section
 
 namespace CompanionTheory.BpCpt.NFId
 

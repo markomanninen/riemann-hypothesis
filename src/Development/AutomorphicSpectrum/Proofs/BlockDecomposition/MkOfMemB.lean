@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LocalSystemQuotients.FlatL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MapHCompEqSmul
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LocalSystemQuotients.FlatL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MapHCompEqSmul
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -69,9 +73,9 @@ theorem rel_add {j : ℕ} {x x' : C.H j} {v v' : A.H (j + 1)} (h : Rel f g j x v
   obtain ⟨z, β, w, rfl, rfl, h1, h2⟩ := h
   obtain ⟨z', β', w', rfl, rfl, h1', h2'⟩ := h'
   refine ⟨z + z', β + β', w + w', rfl, rfl, ?_, ?_⟩
-  · rw [map_add, h1, h1']; rfl
+  · rw [map_add (f := _), h1, h1']; rfl
   · change f.f (j + 1) (w.1 + w'.1) = _
-    rw [map_add, map_add, h2, h2']
+    rw [map_add (f := _), map_add (f := _), h2, h2']
 
 theorem rel_smul {j : ℕ} (s : W) {x : C.H j} {v : A.H (j + 1)} (h : Rel f g j x v) :
     Rel f g j (s • x) (s • v) := by

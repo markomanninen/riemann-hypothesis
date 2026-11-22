@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.MirabolicMackeyTheory.StatementL
-import Formalism.HermitianLattices.HermitianLatticesProofs.LocBasic
-import Formalism.HermitianLattices.HermitianLatticesProofs.IndexBasic
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ImageLcv
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.IdxChange
+module
+
+public import Mathlib
+public import Formalism.MirabolicMackeyTheory.StatementL
+public import Formalism.HermitianLattices.HermitianLatticesProofs.LocBasic
+public import Formalism.HermitianLattices.HermitianLatticesProofs.IndexBasic
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ImageLcv
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.IdxChange
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped nonZeroDivisors
@@ -227,7 +231,7 @@ theorem idxRules_cut_le (p : Ideal R) [p.IsPrime] (W' : Submodule K V) (A B : Su
       rintro ⟨x, hx⟩ hxB
       exact locBasic_locS_mono _ inf_le_left hxB)
   refine Module.length_le_of_injective f ?_
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x
   induction x using Submodule.Quotient.induction_on with
   | H x =>

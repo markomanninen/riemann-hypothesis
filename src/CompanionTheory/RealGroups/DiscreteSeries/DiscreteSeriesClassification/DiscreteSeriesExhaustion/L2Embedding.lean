@@ -1,6 +1,10 @@
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.IsSimpleTriv
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.EqZeroOfDatumEmbeddingEqZero
+module
+
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.GoodPathReplicate
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.EqZeroOfDatumEmbeddingEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,10 +20,6 @@ variable {n : ℕ}
 def L2Embedding (ε : Fin n → Bool) (X : GMod n) : Prop :=
   ∀ u : X.V, u ≠ 0 → ∃ c : X.V →ₗ[ℂ] ReciprocityTheory.ChartRestriction.DS.smD ε (ReciprocityTheory.ChartRestriction.DS.rreg ε),
     (∀ a b x, c (X.E a b x) = ReciprocityTheory.ChartRestriction.DS.smE ε (ReciprocityTheory.ChartRestriction.DS.rreg ε) a b (c x)) ∧ c u ≠ 0
-
-def FarLabels (χ χ' : Fin n → ℂ) (B : ℝ) : Prop :=
-  ∀ I I' : Finset (Fin n), Disjoint I I' → I.card = I'.card → (∑ i ∈ I, χ i - ∑ i ∈ I', χ i).re < 0 →
-    (∑ i ∈ I, χ' i - ∑ i ∈ I', χ' i).re < -B
 
 def Decay : Prop :=
   ∀ n : ℕ, ∃ B : ℝ, ∀ (ε : Fin n → Bool) (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]

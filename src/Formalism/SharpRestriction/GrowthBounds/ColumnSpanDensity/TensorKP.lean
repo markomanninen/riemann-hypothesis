@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -9,7 +13,7 @@ private theorem tm_comap {S α : Type} [Fintype S] [DecidableEq S] (n : S → α
       (Prod.mk_right_injective s).injOn = n s := by
   ext a
   rw [Finsupp.comapDomain_apply, Finsupp.finsetSum_apply, Finset.sum_eq_single s]
-  · exact Finsupp.mapDomain_apply (Prod.mk_right_injective s) (n s) a
+  · exact Finsupp.mapDomain_apply_of_injective (Prod.mk_right_injective s) (n s) a
   · intro t _ hts
     apply Finsupp.mapDomain_of_notMem_range
     rintro ⟨v, hv⟩

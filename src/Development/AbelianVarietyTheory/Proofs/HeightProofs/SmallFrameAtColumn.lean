@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.OntoAlong
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DvdOfEqMulIntegral
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedCoefficientFieldInComplex
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.FiniteDimensionalOfSz
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.LeOfFiniteSplitNotSplitBauer
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.NcardEqIffStabilizer
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CompleteSplittingCompositumDegreeOnePrime
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ContainsRayFieldComp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.OntoAlong
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DvdOfEqMulIntegral
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedCoefficientFieldInComplex
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.FiniteDimensionalOfSz
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.LeOfFiniteSplitNotSplitBauer
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.NcardEqIffStabilizer
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CompleteSplittingCompositumDegreeOnePrime
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ContainsRayFieldComp
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links GlobalTheory.FinalJoin2
   GlobalTheory.AtMember GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Top GlobalTheory.Mem.Top.Bl GlobalTheory.Fc GlobalTheory.BigTop GlobalTheory.BigOn GlobalTheory.Plug GlobalTheory.PlugPt
@@ -43,8 +47,8 @@ theorem normDescent : ∀ (K E : Type) [Field K] [NumberField K] [Field E] [Numb
   · exact Ideal.mem_span_singleton.2
       (GlobalTheory.RayDescent.dvd_intNorm_sub_one K E n π (Ideal.mem_span_singleton.1 hπ1))
 
-theorem rayLe : ∀ (K E L Ω : Type) [Field K] [NumberField K] [IsTotallyComplex K] [Field E] [NumberField E]
-    [IsTotallyComplex E] [Algebra K E] [Field L] [NumberField L] [Algebra K L] [IsAbelianGalois K L] [Field Ω]
+theorem rayLe : ∀ (K E L Ω : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] [Field E] [NumberField E]
+    [_root_.NumberField.IsTotallyComplex E] [Algebra K E] [Field L] [NumberField L] [Algebra K L] [IsAbelianGalois K L] [Field Ω]
     [Algebra E Ω] [Algebra K Ω] [IsScalarTower K E Ω] (n : ℕ), 0 < n →
     GlobalTheory.FieldSize.IsRay L (Ideal.span {(n : 𝓞 K)}) → ∀ (R : IntermediateField E Ω) [NumberField R] [IsAbelianGalois E R],
     GlobalTheory.FieldSize.IsRay R (Ideal.span {(n : 𝓞 E)}) → ∀ (j : L →ₐ[K] Ω) (x : L), j x ∈ R := by
@@ -59,7 +63,8 @@ theorem rayLe : ∀ (K E L Ω : Type) [Field K] [NumberField K] [IsTotallyComple
   haveI : NumberField M' := NumberField.of_module_finite E M'
   have hmem : ∀ y, j y ∈ M' := by
     intro y
-    rw [← b.sum_repr y, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr y, map_sum]
     refine sum_mem fun i _ => ?_
     rw [map_smul, Algebra.smul_def, IsScalarTower.algebraMap_apply K E Ω]
     exact mul_mem (M'.algebraMap_mem _) (IntermediateField.subset_adjoin E _ ⟨i, rfl⟩)
@@ -94,8 +99,8 @@ theorem rayLe : ∀ (K E L Ω : Type) [Field K] [NumberField K] [IsTotallyComple
     exact GlobalTheory.SplitCompositum.ncard_eq_finrank_of_generated K E L M' f hgen 𝔭 𝔓 hover hnorm hsplL
   exact hle (hmem x)
 
-theorem rayLeC : ∀ (K E L : Type) [Field K] [NumberField K] [IsTotallyComplex K] [Field E] [NumberField E]
-    [IsTotallyComplex E] [Algebra K E] [Field L] [NumberField L] [Algebra K L] [IsAbelianGalois K L] (n : ℕ), 0 < n →
+theorem rayLeC : ∀ (K E L : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] [Field E] [NumberField E]
+    [_root_.NumberField.IsTotallyComplex E] [Algebra K E] [Field L] [NumberField L] [Algebra K L] [IsAbelianGalois K L] (n : ℕ), 0 < n →
     GlobalTheory.FieldSize.IsRay L (Ideal.span {(n : 𝓞 K)}) → ∀ (φ : E →+* ℂ) (M : IntermediateField ℚ ℂ),
     GlobalTheory.Mem.Fld.IsRayFieldIn φ (GlobalTheory.Mem.Fld.natIdeal E n) M →
     ∃ j : L →+* ℂ, j.comp (algebraMap K L) = φ.comp (algebraMap K E) ∧ ∀ x, j x ∈ M := by
@@ -119,7 +124,11 @@ theorem rayLeC : ∀ (K E L : Type) [Field K] [NumberField K] [IsTotallyComplex 
   haveI : NumberField R := NumberField.of_module_finite ℚ _
   have hR : GlobalTheory.Mem.Fld.IsRayField E R (GlobalTheory.Mem.Fld.natIdeal E n) := hray.of_algEquiv e
   haveI : IsAbelianGalois E R := hR.1
-  let j : L →ₐ[K] ℂ := IsAlgClosed.lift
+  let j : L →ₐ[K] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hsub := rayLe K E L ℂ n hn hL R hR.2 j
   exact ⟨(j : L →+* ℂ), j.comp_algebraMap, fun x => hsub x⟩
 

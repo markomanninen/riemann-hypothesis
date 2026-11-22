@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryLieGeneratorsRep
-import Formalism.SatakeDualWeyl.Statement
-import Formalism.FormalDegreeBessel.StatementG
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryLieGeneratorsRep
+public import Formalism.SatakeDualWeyl.Statement
+public import Formalism.FormalDegreeBessel.StatementG
+
+@[expose] public section
+
 open Matrix
 attribute [local instance 100] LieRing.ofAssociativeRing
 
@@ -69,7 +74,8 @@ theorem casimir_move {A : Type} [Ring A] [Algebra ℂ A] (R R' : Matrix (Fin n) 
     (U V : Matrix (Fin n) (Fin n) ℂ) :
     ∑ a, ∑ b, R (U * single a b 1 * V) * R' (single b a 1) =
       ∑ c, ∑ d, R (single c d 1) * R' (V * single d c 1 * U) := by
-  simp only [mul_single_mul, map_sum, map_smul, Finset.sum_mul, Finset.mul_sum, smul_mul_assoc, mul_smul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mul_single_mul, map_sum, map_smul, Finset.sum_mul, Finset.mul_sum, smul_mul_assoc, mul_smul_comm]
   rw [← Fintype.sum_prod_type', ← Fintype.sum_prod_type' (f := fun c d => ∑ b, ∑ a, (V b d * U c a) • (R (single c d 1) * R' (single b a 1)))]
   simp only [← Fintype.sum_prod_type']
   refine Fintype.sum_equiv ((Equiv.prodComm _ _).trans (Equiv.prodCongr (Equiv.refl _) (Equiv.prodComm _ _))) _ _
@@ -200,7 +206,7 @@ theorem casimir_eq_neg_sum_sq : ∀ (n : ℕ) (J B : Matrix (Fin n) (Fin n) ℂ)
     have e1 : ρ (X (a, b, true)) = (1 / 2 : ℂ) • (R (F a b) - R (F b a)) := by
       rw [← hX]
       change R ((1 / 2 : ℂ) • (F a b + cj J (F a b))) = _
-      rw [cj_conj_single B hB h, map_smul, map_add, map_neg, ← sub_eq_add_neg]
+      rw [cj_conj_single B hB h, map_smul, map_add (f := _), map_neg, ← sub_eq_add_neg]
     have e2 : ρ (X (a, b, false)) = (1 / (2 * Complex.I) : ℂ) • (R (F a b) + R (F b a)) := by
       rw [← hX]
       change R ((1 / (2 * Complex.I) : ℂ) • (F a b - cj J (F a b))) = _

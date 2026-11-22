@@ -1,4 +1,8 @@
-import Formalism.SatakeDualWeyl.StatementE
+module
+
+public import Formalism.SatakeDualWeyl.StatementE
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.UG
 
@@ -50,7 +54,7 @@ theorem spherical_ordV_mul (x y : v.adicCompletion F)
   have hx' : Valued.v x ≠ 0 := by simpa using hx
   have hy' : Valued.v y ≠ 0 := by simpa using hy
   have hxy : Valued.v (x * y) ≠ 0 := by simpa using mul_ne_zero hx hy
-  rw [dif_neg hx', dif_neg hy', dif_neg hxy]
+  rw [dite_eq_right hx', dite_eq_right hy', dite_eq_right hxy]
   have : WithZero.unzero hxy = WithZero.unzero hx' * WithZero.unzero hy' := by
     apply WithZero.coe_injective; simp [WithZero.coe_unzero, map_mul]
   rw [this, toAdd_mul]; ring
@@ -67,7 +71,7 @@ theorem spherical_ordV_unit (x y : v.adicCompletion F) (hx : x ∈ Ov F v) (hy :
       _ = Valued.v x := one_mul _
   unfold ordV
   have h0 : Valued.v x ≠ 0 := by rw [h1]; exact one_ne_zero
-  rw [dif_neg h0]
+  rw [dite_eq_right h0]
   have : WithZero.unzero h0 = 1 := by
     apply WithZero.coe_injective; rw [WithZero.coe_unzero, h1]; rfl
   rw [this]; rfl

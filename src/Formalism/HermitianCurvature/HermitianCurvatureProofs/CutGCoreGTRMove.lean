@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCRefTraceCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCSecMove
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCRefTraceCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCSecMove
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 open scoped ContDiff
@@ -180,7 +184,8 @@ theorem radial_gauge_move : GTRMove := by
       rw [hrhs]
       conv_lhs => rw [hXX, hsp0]
       ext v
-      simp only [ContinuousLinearMap.comp_apply, FunLike.coe_sum, Finset.sum_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [ContinuousLinearMap.comp_apply, FunLike.coe_sum, Finset.sum_apply,
         FunLike.coe_smul, Pi.smul_apply, map_sum, map_smul]
   refine ⟨e, hframe, fun Φ => ?_⟩
   funext ρ

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsEqSubOfMemCob
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsEqSubOfMemCob
+
+@[expose] public section
 
 noncomputable section
 

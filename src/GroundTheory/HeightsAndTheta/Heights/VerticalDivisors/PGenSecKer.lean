@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDimStrictDrop
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.Statements
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.ComapMaximalIdealParDVR
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsGenSecKer
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDimStrictDrop
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.Statements
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.ComapMaximalIdealParDVR
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsGenSecKer
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -84,7 +89,7 @@ theorem ker_eq {k L : Type} [Field k] [CommRing L] (hL : IsField L) [Algebra k L
         ← IsScalarTower.algebraMap_apply k (GenParField k e n) L]
       exact IntermediateField.algebraMap_mem _ c
     | add a b ha hb =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact add_mem ha hb
     | mul_X a p ha =>
       rw [map_mul, map_mul]
@@ -102,7 +107,7 @@ theorem ker_eq {k L : Type} [Field k] [CommRing L] (hL : IsField L) [Algebra k L
       rw [aeval_C]
       exact hF c
     | add a b ha hb =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem ha hb
     | mul_X a j ha =>
       rw [map_mul, aeval_X]

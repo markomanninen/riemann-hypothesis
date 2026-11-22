@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,8 +40,8 @@ theorem pU_symm_val (f : InfinitePlace F → ℝˣ) (w : InfinitePlace F) :
 omit [NumberField F] [IsTotallyReal F] in
 theorem pU_val (s : (TR.Rinf F)ˣ) (w : InfinitePlace F) : ((pU s w : ℝˣ) : ℝ) = (s : TR.Rinf F) w := rfl
 
-open Classical in
 
+open Classical in
 def atV (v : InfinitePlace F) (x : ℝˣ) : (TR.Rinf F)ˣ := pU.symm (Pi.mulSingle v x : InfinitePlace F → ℝˣ)
 
 open Classical in
@@ -121,7 +125,7 @@ theorem fin_rat {k : InfinitePlace F → ℕ} {ω : HChar F} (hω : IsOfFinOrder
         TR.pInf F (1 - GlobalTheory.CuspRep.sFin F 1 + GlobalTheory.CuspRep.sFin F _) = φ a
       have h1 : ∀ x, TR.pInf F (TR.sInf F x) = x := fun x => (TR.infEq F).symm_apply_apply x
       have h2 : ∀ x, TR.pInf F (GlobalTheory.CuspRep.sFin F x) = 0 := fun x => map_zero (TR.infEq F).symm
-      simp only [map_add, map_sub, map_one, h1, h2, sub_self, zero_add, sub_zero, add_zero, mul_one]
+      simp only [map_add (f := _), map_sub, map_one, h1, h2, sub_self, zero_add, sub_zero, add_zero, mul_one]
     · rw [Units.val_mul, map_mul]
       change ((1 : Af F) - 0 + 0) * ((1 : Af F) - 1 + algebraMap F (Af F) a) = algebraMap F (Af F) a
       simp only [sub_self, zero_add, sub_zero, add_zero, one_mul]

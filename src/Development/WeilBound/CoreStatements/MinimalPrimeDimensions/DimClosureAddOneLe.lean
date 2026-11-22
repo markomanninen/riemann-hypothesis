@@ -1,9 +1,13 @@
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.RangeOfMemSupportPush
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.FinrankEqOfDimZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TopologicalKrullDimLeZeroOfSubset
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChowDegreeSection
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChowDegreeClosedPoint
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PConeDimComponent
+module
+
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.RangeOfMemSupportPush
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.FinrankEqOfDimZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TopologicalKrullDimLeZeroOfSubset
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChowDegreeSection
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChowDegreeClosedPoint
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PConeDimComponent
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option linter.style.haveILetI false
@@ -67,7 +71,7 @@ theorem isRelevant_of_dim {W : Ideal (MvPolynomial (Fin m) κ)}
 theorem field_case (h1 : StPts) (h2 : StPull) (h3 : StDiv) (hS : ChowDegreeSection.Statement)
     (hP : ChowDegreeClosedPoint.Statement) [PerfectField κ] (e : ℕ) :
     ∀ (Z : Scheme.{0}) [IsIntegral Z] [Algebra κ Γ(Z, ⊤)] (B : LB Z) (s : Fin m → B.Sec),
-      IsProjOver (strHom κ Z) → Emb (strHom κ Z) s →
+      IsProjOver (strHom κ (X := Z)) → Emb (strHom κ Z) s →
       ringKrullDim (MvPolynomial (Fin m) κ ⧸ ptIdeal (strHom κ Z) s (genericPoint Z)) = (e + 1 : ℕ) →
       topologicalKrullDim Z = e ∧
         topSelfIntersection κ B e = chowDegree (ptIdeal (strHom κ Z) s (genericPoint Z)) (e + 1) := by

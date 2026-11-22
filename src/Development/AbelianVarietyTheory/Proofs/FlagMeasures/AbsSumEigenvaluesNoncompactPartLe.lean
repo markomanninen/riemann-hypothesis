@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+
+@[expose] public section
+
 open Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants
 
 namespace GlobalTheory.EigenPartialSum
@@ -57,7 +62,7 @@ theorem sum_sq_eigenvalues {n : ℕ} (Y : Matrix (Fin n) (Fin n) ℂ) (hY : Y.Is
       diagonal_mul_diagonal, trace_diagonal]
     simp [sq]
   have h2 : (Y * Y).trace = ((hs Y : ℝ) : ℂ) := by
-    simp only [trace, diag_apply, mul_apply, hs]
+    simp only [trace, diag_apply, Matrix.mul_apply, hs]
     push_cast
     refine sum_congr rfl fun i _ => sum_congr rfl fun j _ => ?_
     rw [← hY.apply j i, Complex.star_def, Complex.mul_conj, Complex.normSq_eq_norm_sq]

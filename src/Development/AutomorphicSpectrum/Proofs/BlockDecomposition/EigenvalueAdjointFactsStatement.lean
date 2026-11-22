@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EigenvalueAdjointFacts
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FactorRapid
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EigenvalueAdjointFacts
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FactorRapid
+
+@[expose] public section
 
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.eigenvalue_adjoint_facts : GlobalTheory.CompanionTheory.KerFc.EvAdj := by

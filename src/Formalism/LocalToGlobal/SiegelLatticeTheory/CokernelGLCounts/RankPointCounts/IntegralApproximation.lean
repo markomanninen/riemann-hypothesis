@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.DataInst
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.DataInst
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,7 +78,7 @@ theorem exists_int_approx (x : F) (hx : p.valuation F x ≤ 1) :
   have hsF : algebraMap (𝓞 F) F (s : 𝓞 F) ≠ 0 :=
     (map_ne_zero_iff _ (IsFractionRing.injective (𝓞 F) F)).2 hs0
   have key : IsLocalization.mk' F b s - algebraMap (𝓞 F) F c = IsLocalization.mk' F r s := by
-    rw [IsFractionRing.mk'_eq_div, IsFractionRing.mk'_eq_div, ← hyr, map_add, map_mul]
+    rw [IsFractionRing.mk'_eq_div, IsFractionRing.mk'_eq_div, ← hyr, map_add (f := _), map_mul]
     field_simp
     ring
   rw [key, HeightOneSpectrum.valuation_of_mk', div_lt_one₀ (zero_lt_iff.mpr hvs)]
@@ -219,9 +223,9 @@ theorem prod_bounds (N : ℕ) (hN : 2 ≤ N) (η : ℝ) (hη : η = 1 ∨ η = -
       _ = ∏ i ∈ Finset.Icc a b, Real.exp (-(2 * x ^ i)) := by
           rw [← Finset.sum_neg_distrib, Real.exp_sum]
       _ ≤ ∏ i ∈ Finset.Icc a b, (1 - η ^ i / (N : ℝ) ^ i) :=
-          Finset.prod_le_prod (fun i _ => (Real.exp_pos _).le) hlo
+          Finset.prod_le_prod₀ (fun i _ => (Real.exp_pos _).le) hlo
   · calc ∏ i ∈ Finset.Icc a b, (1 - η ^ i / (N : ℝ) ^ i) ≤ ∏ i ∈ Finset.Icc a b, Real.exp (2 * x ^ i) :=
-          Finset.prod_le_prod (fun i hi => le_trans (Real.exp_pos _).le (hlo i hi)) hhi
+          Finset.prod_le_prod₀ (fun i hi => le_trans (Real.exp_pos _).le (hlo i hi)) hhi
       _ = Real.exp (∑ i ∈ Finset.Icc a b, 2 * x ^ i) := by rw [Real.exp_sum]
       _ ≤ Real.exp (4 * x ^ k) := Real.exp_le_exp.2 hsum
 

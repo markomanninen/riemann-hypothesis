@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.DiagonalPhaseFirstVector
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.DiagonalPhaseFirstVector
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem scale_prod (μ0 : Measure V) [μ0.IsAddHaarMeasure] (c : Fv F v) (hc : c
     rw [this, Measure.map_id]
   have hss : ((s1 : ENNReal) * s2) * μ0 A = 1 * μ0 A := by
     have h := congrArg (fun m : Measure V => m A) hcomp
-    rw [e1, Measure.map_smul, e2, smul_smul] at h
+    rw [e1, Measure.map_smul s1 hm'.aemeasurable, e2, smul_smul] at h
     rw [one_mul]
     conv_rhs => rw [← h]
     rw [Measure.smul_apply, ENNReal.smul_def, smul_eq_mul, ENNReal.coe_mul]

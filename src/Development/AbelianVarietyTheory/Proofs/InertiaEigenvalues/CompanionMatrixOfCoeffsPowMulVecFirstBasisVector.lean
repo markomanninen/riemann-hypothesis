@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 noncomputable section
@@ -17,9 +22,9 @@ theorem companionMatrixOfCoeffs_pow_mulVec_firstBasisVector (p : Fin r → k) : 
     ext i; simp [e1, Pi.single_apply, Fin.ext_iff]
   | j + 1, hj => by
     rw [pow_succ', ← mulVec_mulVec, companionMatrixOfCoeffs_pow_mulVec_firstBasisVector p j (by omega), Matrix.mulVec_single_one]
-    ext i
-    have : j + 1 ≠ r := by omega
-    simp [companion, Pi.single_apply, Fin.ext_iff, this]
+    funext i
+    have hj' : j + 1 ≠ r := Nat.ne_of_lt hj
+    simp [Matrix.col_apply, companion, Pi.single_apply, Fin.ext_iff, hj']
 
 theorem mom_sec_add (a : Inv r k) (n : ℕ) (j : Fin r) :
     mom (sec a) (n + j) = (a.2.1 ᵥ* (companion a.1 ^ n)) j := by
@@ -144,8 +149,8 @@ section Unit
 variable {F E : Type} [NontriviallyNormedField F] [NontriviallyNormedField E] [NormedAlgebra F E] [StarRing E]
   [Unram F E] {r : ℕ}
 
-omit [Unram F E] in
 
+omit [Unram F E] in
 theorem continuousStar (F : Type) [NontriviallyNormedField F] [NormedAlgebra F E] [Unram F E] : ContinuousStar E :=
   ⟨(Isometry.of_dist_eq fun x y => by
     rw [dist_eq_norm, dist_eq_norm, ← star_sub, Unram.norm_star (F := F)]).continuous⟩

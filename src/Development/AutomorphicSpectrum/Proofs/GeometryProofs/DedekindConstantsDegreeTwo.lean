@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsLatFlagPair
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DedekindConstantsDegreeOneStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.LocalizationModelOverPlaceStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIffChartLocalization
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PrimeChartExistsUniquePoint
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsLatFlagPair
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DedekindConstantsDegreeOneStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.LocalizationModelOverPlaceStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIffChartLocalization
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PrimeChartExistsUniquePoint
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointIdeal segreVec IsFlagFrame IsFlagPair SameGenericFibre IsModelOver)
 
@@ -326,7 +331,8 @@ theorem cone_eq {h : MvPolynomial (Σ k, J k) O} {b : K → ℕ}
   classical
   conv_lhs => rw [← support_sum_monomial_coeff h]
   conv_rhs => rw [← support_sum_monomial_coeff h]
-  rw [map_sum, map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun d hd => ?_
   have hw : Finsupp.weight (blockWeight J) d = b := hh (mem_support_iff.1 hd)
   rw [GroundTheory.Heights₂.Heights.NumbersDVR.pointConeMap, aeval_monomial, aeval_monomial, cone_prod, hw, map_mul]
@@ -386,7 +392,7 @@ theorem form_add (c : (k : K) → J k) {s t : Ω} {b1 b2 : K → ℕ} {h1 h2 : M
         (s + t) * ∏ k, y ⟨k, c k⟩ ^ (b1 + b2) k := by
   refine ⟨mh_add (mh_mul hh1 (isMultiHomog_coord (O := O) c b2))
     (mh_mul' (add_comm b1 b2) hh2 (isMultiHomog_coord (O := O) c b1)), ?_⟩
-  rw [map_add, map_mul, map_mul, aeval_coord, aeval_coord, hv1, hv2, Y_add]
+  rw [map_add (f := _), map_mul, map_mul, aeval_coord, aeval_coord, hv1, hv2, Y_add]
   ring
 
 theorem form_mul (c : (k : K) → J k) {s t : Ω} {b1 b2 : K → ℕ} {h1 h2 : MvPolynomial (Σ k, J k) O}

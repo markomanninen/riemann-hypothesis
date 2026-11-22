@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
+
+@[expose] public section
 
 open MeasureTheory Matrix Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf
 open scoped InnerProductSpace
@@ -15,6 +19,6 @@ theorem folner_single_translate : ∀ (k r : ℕ) (S : Set (Mat k r)) (μ : Meas
   refine tendsto_of_tendsto_of_tendsto_of_le_of_le hlim tendsto_const_nhds (fun j => ?_) (fun j => ?_)
   · refine ENNReal.div_le_div_right (measure_mono fun x hx => ?_) _
     exact ⟨(hOc j).2.1 hx, (hOc j).2.2 p rfl x hx⟩
-  · exact (ENNReal.div_le_div_right (measure_mono fun x hx => hx.1) _).trans ENNReal.div_self_le_one
+  · exact (ENNReal.div_le_div_right (measure_mono fun x (hx : x ∈ {s | s ∈ Om j ∧ lmulM p s ∈ Om j}) => hx.1) _).trans ENNReal.div_self_le_one
 
 end GlobalTheory.SgInf

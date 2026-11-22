@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjSCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjFrom
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjSCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjFrom
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.ER
 
@@ -75,7 +79,7 @@ theorem lam_opAdj_tail (i j) (s : ℂ) {ψ : B.Mat k r → (Wq →L[ℂ] Wp)} (h
         B.Rw cw.2.reverse (fun x => lam i j (ψ x)) g).sum
   | [], _, g => by simp
   | cw :: L, hL, g => by
-    simp only [List.map_cons, List.sum_cons, map_add, mul_add]
+    simp only [List.map_cons, List.sum_cons, map_add (f := _), mul_add]
     rw [lam_opAdj_tail i j s hψ L (fun cw' h => hL cw' (List.mem_cons_of_mem _ h)) g]
     congr 1
     rw [TLB.cTerm_word (hL cw List.mem_cons_self)]
@@ -93,7 +97,7 @@ theorem lam_wordSum (i j) {ψ : B.Mat k r → (Wq →L[ℂ] Wp)} (hψ : ContDiff
       (L.map fun cw => cw.1 • B.Rw cw.2 (fun x => lam i j (ψ x)) g).sum
   | [], _ => by simp
   | cw :: L, g => by
-    simp only [List.map_cons, List.sum_cons, map_add, map_smul]
+    simp only [List.map_cons, List.sum_cons, map_add (f := _), map_smul]
     rw [lam_wordSum i j hψ L g, congrFun (rw_clm' (lam i j) hψ cw.2) g]
 
 theorem wsAdj_contDiff (L : List (ℂ × List (B.Mat k r))) {b : B.Mat k r → ℂ} (hb : ContDiff ℝ ∞ b) :
@@ -121,7 +125,7 @@ theorem capacity_adjoint_integral_scalar : CapAdjIntOfScalar := by
   have hAdj : ∀ i j g, lam i j (B.opAdj (capTh k r Wp Wq s Y) ψ g) = conj s * wsAdj (capLw k r Y) (b i j) g := by
     intro i j g
     unfold B.opAdj
-    rw [capTh, TLB.capOp, List.map_cons, List.sum_cons, map_add]
+    rw [capTh, TLB.capOp, List.map_cons, List.sum_cons, map_add (f := _)]
     have h0 : (fun x => (TLB.cTerm (Wp := Wp) (Wq := Wq) 0
         (List.replicate (2 * r + k + 1) (0 : B.Mat k r))).coefAdj x (ψ x)) = (0 : ℂ) • ψ := by
       funext x; simp [TLB.cTerm]
@@ -175,10 +179,10 @@ theorem capacity_adjoint_integral_scalar : CapAdjIntOfScalar := by
     filter_upwards [Formalism.FourierDecayAlt.P.HaarUniquenessConjugation.ae_mem hμ] with x hx
     rw [hCV' _ (B.GV k r) (b i j) (ckOn_of_contDiff (hb_s i j) _ _) _ hx hx]
   rw [integral_congr_ae (Eventually.of_forall hP1), integral_congr_ae hP2,
-    integral_finset_sum _ (fun i _ => integrable_finset_sum _ fun j _ => hI1 i j),
-    integral_finset_sum _ (fun i _ => integrable_finset_sum _ fun j _ => hI2 i j)]
+    integral_finsetSum _ (fun i _ => integrable_finsetSum _ fun j _ => hI1 i j),
+    integral_finsetSum _ (fun i _ => integrable_finsetSum _ fun j _ => hI2 i j)]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [integral_finset_sum _ (fun j _ => hI1 i j), integral_finset_sum _ (fun j _ => hI2 i j)]
+  rw [integral_finsetSum _ (fun j _ => hI1 i j), integral_finsetSum _ (fun j _ => hI2 i j)]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [integral_const_mul, integral_const_mul,
     hS k r Y μ hμ (a i j) (b i j) (ha_s i j) (ha_c i j) (hb_s i j) (hb_c i j)]

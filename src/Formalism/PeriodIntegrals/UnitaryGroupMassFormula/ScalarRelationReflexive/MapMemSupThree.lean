@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ScalRelRepFree
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Lemmas
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ScalRelRepFree
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Lemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,7 +98,7 @@ theorem gL_map (φ : S.V →ₗ[E] S.V) (hφ : ∀ v ∈ Λ, φ v ∈ Λ) (g : �
   refine Submodule.smul_induction_on hv (fun a ha m hm => ?_) (fun x y hx hy => ?_)
   · rw [LinearMap.map_smul_of_tower]
     exact Submodule.smul_mem_smul ha (hφ m hm)
-  · rw [map_add]
+  · rw [map_add (f := _)]
     exact add_mem hx hy
 
 theorem map_mem_sup_three (φ : S.V →ₗ[E] S.V) {A B C A' B' C' : Submodule (𝓞 E) S.V}
@@ -102,7 +106,7 @@ theorem map_mem_sup_three (φ : S.V →ₗ[E] S.V) {A B C A' B' C' : Submodule (
     (hv : v ∈ A ⊔ B ⊔ C) : φ v ∈ A' ⊔ B' ⊔ C' := by
   obtain ⟨y, hy, c, hc, rfl⟩ := Submodule.mem_sup.mp hv
   obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hy
-  rw [map_add, map_add]
+  rw [map_add (f := _), map_add (f := _)]
   exact add_mem (add_mem (Submodule.mem_sup_left (Submodule.mem_sup_left (hA a ha)))
     (Submodule.mem_sup_left (Submodule.mem_sup_right (hB b hb))))
     (Submodule.mem_sup_right (hC c hc))
@@ -145,7 +149,7 @@ theorem xplus_map {T₀ T₁ : E} {A : LFlag S r T₀} {B : LFlag S r T₁} (φ 
   rw [hXp] at hv ⊢
   obtain ⟨x, hx, w, hw, rfl⟩ := Submodule.mem_sup.mp hv
   obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.mp hw
-  rw [map_add, map_smul]
+  rw [map_add (f := _), map_smul]
   have hB : φ A.fl.z ∈ Xsp B ⊔ E ∙ B.fl.z := by
     rw [← sub_add_cancel (φ A.fl.z) B.fl.z]
     exact add_mem (Submodule.mem_sup_left hz)
@@ -291,7 +295,7 @@ theorem uue_map {T₂ T₃ : E} {G : LFlag S r T₂} {G' : LFlag S r T₃} (φ :
     obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hy2
     obtain ⟨t, rfl⟩ := Submodule.mem_span_singleton.mp hb
     obtain ⟨t', rfl⟩ := Submodule.mem_span_singleton.mp hd
-    simp only [map_add, LinearMap.map_smul_of_tower]
+    simp only [map_add (f := _), LinearMap.map_smul_of_tower]
     exact add_mem (add_mem (add_mem (hA a ha) (Submodule.smul_of_tower_mem _ t hB)) (hC c hc))
       (Submodule.smul_of_tower_mem _ t' hD)
   unfold UUE spanE at hv
@@ -299,7 +303,7 @@ theorem uue_map {T₂ T₃ : E} {G : LFlag S r T₂} {G' : LFlag S r T₃} (φ :
   | mem u hu => exact key u hu
   | zero => simp
   | add x y _ _ hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hx hy
   | smul c x _ hx =>
     rw [map_smul]

@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.CompCA
-import Development.WeilBound.ThetaLifts.LatticeBasics.SchrUnit
-import Development.WeilBound.ThetaLifts.LatticeBasics.BadStmt
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.PresOfHat
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.CompCA
+public import Development.WeilBound.ThetaLifts.LatticeBasics.SchrUnit
+public import Development.WeilBound.ThetaLifts.LatticeBasics.BadStmt
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.PresOfHat
+
+@[expose] public section
 
 noncomputable section
 

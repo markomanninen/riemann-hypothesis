@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealMapOneInjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RiemannRelationConverseConjAffineStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyPosDefHermFormNearZeroMatrixStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPeriodMapCompInjectiveRealLinearStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealMapOneInjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RiemannRelationConverseConjAffineStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyPosDefHermFormNearZeroMatrixStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPeriodMapCompInjectiveRealLinearStatement
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexConjugate
@@ -19,7 +23,8 @@ variable {g : ℕ}
 theorem coords_sum {d : ℕ} (π : Matrix (Fin g) (Fin g) ℂ →ₗ[ℂ] (Fin d → ℂ)) (S : Matrix (Fin g) (Fin g) ℂ) (k : Fin d) :
     π S k = ∑ i, ∑ j, S i j * π (Matrix.single i j 1) k := by
   conv_lhs => rw [matrix_eq_sum_single S]
-  simp only [map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.sum_apply]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [show Matrix.single i j (S i j) = S i j • Matrix.single i j (1 : ℂ) by rw [smul_single, smul_eq_mul, mul_one],
     map_smul, Pi.smul_apply, smul_eq_mul]
@@ -86,7 +91,7 @@ theorem perCoord_exists : ∀ (O : Type) [Ring O] (bar : O → O) (g : ℕ) (ρ 
   refine ⟨Cof ⁻¹' U, Q, Z, s, ε, hUo.preimage hCofc, hε, ⟨fun b hb => hQper b hb, fun x => ?_⟩, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · let F : (Fin d → ℂ) →ₗ[ℂ] (Fin g → ℂ) :=
       { toFun := fun b => Cof b *ᵥ star (P₀ x)
-        map_add' := fun b b' => by simp only [Cof, map_add, Matrix.add_mul, transpose_add, add_mulVec]
+        map_add' := fun b b' => by simp only [Cof, map_add (f := _), Matrix.add_mul, transpose_add, add_mulVec]
         map_smul' := fun c b => by
           simp only [Cof, map_smul, Matrix.smul_mul, transpose_smul, smul_mulVec, RingHom.id_apply] }
     have hF : Differentiable ℂ (fun b => F b) := (LinearMap.toContinuousLinearMap F).differentiable
@@ -138,13 +143,16 @@ theorem perCoord_exists : ∀ (O : Type) [Ring O] (bar : O → O) (g : ℕ) (ρ 
       (hc α) (fun b hb => nonsing_inv_mul _ (isUnit_iff_ne_zero.2 (hs _ (hnear b hb)).1))
     refine differentiableOn_pi.2 fun k => ?_
     show DifferentiableOn ℂ (fun b => π (((colMat α (P b))⁻¹ * colMat β (P b))ᵀ * M₀) k) B'
-    rw [show (fun b => π (((colMat α (P b))⁻¹ * colMat β (P b))ᵀ * M₀) k) = fun b => ∑ i, ∑ j,
-      (((colMat α (P b))⁻¹ * colMat β (P b))ᵀ * M₀) i j * π (Matrix.single i j 1) k from
-      funext fun b => coords_sum π _ k]
-    simp only [mul_apply, transpose_apply]
-    exact DifferentiableOn.fun_sum fun i _ => DifferentiableOn.fun_sum fun j _ =>
-      (DifferentiableOn.fun_sum fun l _ => (DifferentiableOn.fun_sum fun n _ =>
-        (hinv _ _).mul (hc β _ _)).mul_const _).mul_const _
+    have hd : DifferentiableOn ℂ (fun b => ∑ i : Fin g, ∑ j : Fin g,
+        (∑ l : Fin g, (∑ n : Fin g, (colMat α (P b))⁻¹ l n * colMat β (P b) n i) * M₀ l j) *
+          π (Matrix.single i j 1) k) B' :=
+      DifferentiableOn.fun_sum fun i _ => DifferentiableOn.fun_sum fun j _ =>
+        (DifferentiableOn.fun_sum fun l _ => (DifferentiableOn.fun_sum fun n _ =>
+          (hinv _ _).mul (hc β _ _)).mul_const _).mul_const _
+    apply hd.congr
+    intro b _
+    simpa only [Matrix.mul_apply, Matrix.transpose_apply] using
+      (coords_sum π (((colMat α (P b))⁻¹ * colMat β (P b))ᵀ * M₀) k)
 
 end
 

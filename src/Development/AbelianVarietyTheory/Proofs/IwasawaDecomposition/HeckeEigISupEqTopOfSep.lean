@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CenUsedOfCenReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CenUsedOfCenReal
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem _root_.GlobalTheory.heckeEig_iSup_eq_top_of_sep {O X M : Type} [CommRing
   have hsum : ∑ x, F x • E x = algebraMap O T c := by
     apply Subtype.ext
     funext z
-    rw [AddSubmonoidClass.coe_finset_sum, Finset.sum_apply]
+    rw [AddSubmonoidClass.coe_finsetSum, Finset.sum_apply]
     simp only [SetLike.val_smul, Pi.smul_apply, smul_eq_mul]
     rw [Finset.sum_eq_single z]
     · simp only [F, c]
@@ -74,7 +78,8 @@ theorem _root_.GlobalTheory.heckeEig_iSup_eq_top_of_sep {O X M : Type} [CommRing
   have hcm : algebraMap O K c • m = ∑ x, F x • ψ (E x) m := by
     rw [algebraMap_smul]
     have := congrArg (fun f => ψ f m) hsum
-    simp only [map_sum, map_smul, AlgHom.commutes] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, AlgHom.commutes] at this
     rw [LinearMap.sum_apply] at this
     simp only [LinearMap.smul_apply] at this
     rw [this, Module.algebraMap_end_apply]
@@ -86,13 +91,6 @@ theorem _root_.GlobalTheory.heckeEig_iSup_eq_top_of_sep {O X M : Type} [CommRing
 
 theorem eigSpan_of_record (D : D7) : D.nd.EigSpan :=
   fun i => GlobalTheory.heckeEig_iSup_eq_top_of_sep (D.nd.T i) (D.nd.act i) (D.nd.T_sep i)
-
-theorem ptSt_eigSpan : ∀ hL : GlobalTheory.Published.LocalLanglandsGL, PrN → AllSt fun _ _ _ _ _ _ x =>
-    ∀ l : LC hL x, GlobalTheory.CoefDuty.EvO l.a.A l.mt.M l.c.ch l.c.tp.tup fun D' => D'.nd.EigSpan := by
-  intro hL _
-  refine StepW.of_all fun K B f T w _ _ _ => ?_
-  intro P x l
-  exact ⟨fun _ => ∅, fun L _ => eigSpan_of_record _⟩
 
 end GlobalTheory.HeightCounting.Up
 

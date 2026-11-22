@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SquareSplitPairs.SqSplitOf
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.PolFamInhabited
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SquareSplitPairs.SqSplitOf
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.PolFamInhabited
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.BasicNotions Classical

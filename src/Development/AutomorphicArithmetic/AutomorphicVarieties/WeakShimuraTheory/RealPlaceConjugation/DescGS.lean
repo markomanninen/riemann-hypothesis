@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RbUVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.FerreroWashington
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RbUVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.FerreroWashington
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws UpperTheory.V.Two
 open scoped Classical
@@ -9,7 +13,7 @@ private theorem continuous_of_right_invariant_open_subgroup {Γ X : Type*} [Grou
     (hf : ∀ g, ∀ h ∈ H, f (g * h) = f g) : Continuous f := by
   refine continuous_iff_continuousAt.2 fun g => ?_
   have ht : Filter.Tendsto (fun x => g⁻¹ * x) (nhds g) (nhds 1) := by
-    have := (continuous_mul_left g⁻¹).tendsto g
+    have := (continuous_const_mul g⁻¹).tendsto g
     simpa using this
   have hev : ∀ᶠ x in nhds g, f x = f g := by
     filter_upwards [ht (hH.mem_nhds H.one_mem)] with x hx
@@ -83,7 +87,7 @@ theorem UpperTheory.V.Ws.exists_descent_to_galoisGroupUnramifiedOutside :
           intro g h
           funext m
           show ρ (g * h) m + z (g * h) = ρ g (ρ h m + z h) + z g
-          rw [hzc, map_mul, Module.End.mul_apply, map_add]
+          rw [hzc, map_mul, Module.End.mul_apply, map_add (f := _)]
           abel }
     have hkerφ : ∀ g, g ∈ φ.ker ↔ z g = 0 ∧ ∀ m, ρ g m = m := by
       intro g

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MultiplicationLatticeSecond
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsBlockMetricDiagForm
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeG
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MultiplicationLatticeSecond
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsBlockMetricDiagForm
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeG
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -82,14 +86,6 @@ theorem Diag.symm {p q : Fin m → M} {d : Fin m → k} (h : Diag p q d) (hq : L
       (finrank_span_eq_card (hq.comp (fun b : Set.Iic a => (b : Fin m)) Subtype.val_injective)).ge)
   rw [e]
   exact Submodule.subset_span ⟨a, Set.mem_Iic.2 le_rfl, rfl⟩
-
-theorem coeff_eq {n : ℕ} {V : Fin n → M} (hV : LinearIndependent k V) (e : Fin m ↪ Fin n) {c : Fin n → k}
-    {cf : Fin m → k} (h : ∑ j, c j • V j = ∑ b, cf b • V (e b)) (a : Fin m) : c (e a) = cf a := by
-  have e1 : ∑ b, cf b • V (e b) = ∑ j, Function.extend e cf 0 j • V j :=
-    Fintype.sum_of_injective e e.injective _ _
-      (fun j hj => by rw [Function.extend_apply' _ _ _ hj, Pi.zero_apply, zero_smul])
-      (fun b => by rw [e.injective.extend_apply])
-  rw [Fintype.linearIndependent_iffₛ.1 hV _ _ (h.trans e1) (e a), e.injective.extend_apply]
 
 end Linear
 
@@ -177,8 +173,8 @@ theorem linInd_of_basis {v : Fin m → (Sp (DualNumber k) ⟶ t.G.left)} (hv : �
     ((hb _ (isTan_tv (∑ i, c i • tanOf (hv i)))).unique ((isComb_iff (fun i => tanOf (hv i)) c _).2 rfl)
       ((isComb_iff (fun i => tanOf (hv i)) c' _).2 h))
 
-variable (t y) in
 
+variable (t y) in
 def DiagAt (p q : Fin m → (Sp (DualNumber k) ⟶ t.G.left)) (d : Fin m → k) : Prop :=
   ∀ a, ∃ cf : Fin m → k, cf a = d a ∧ (∀ b, a < b → cf b = 0) ∧ IsCombAtG t y p cf (q a)
 
@@ -241,49 +237,6 @@ theorem linInd_bc {U : Z.X.Opens} {hU : IsAffineOpen U} {w : Vecs Dw (Y Z.i).t �
   convert li using 2 with i
   exact tan_ext (congrArg (spMap (dualMap φ) ≫ ·) (he i).symm)
 
-theorem exists_diag (hty : ∀ σ, Z.ty σ = Finset.range (Dw.mult σ + 1)) {U U' : Z.X.Opens} {hU : IsAffineOpen U}
-    {hU' : IsAffineOpen U'} (hV : IsAffineOpen (U ⊓ U')) {w : Vecs Dw (Y Z.i).t Γ(Z.X, U)}
-    {w' : Vecs Dw (Y Z.i).t Γ(Z.X, U')} (hw : IntFrame Z hU w) (hw' : IntFrame Z hU' w') (σ : E →+* ℂ) :
-    ∃ D : Fin (Dw.mult σ) → Γ(Z.X, U ⊓ U'), ∀ (k : Type) [Field k] (φ : Γ(Z.X, U) →+* k) (φ' : Γ(Z.X, U') →+* k)
-      (x : Sp k ⟶ Z.X) (hx : spMap φ ≫ hU.fromSpec = x) (hx' : spMap φ' ≫ hU'.fromSpec = x), Set.range x ⊆ Z.opn →
-      Diag (fun i => tanOf (tan_bc hw' φ' hx' σ i)) (fun i => tanOf (tan_bc hw φ hx σ i))
-        fun a => valR x (U ⊓ U') (D a) := by
-  obtain ⟨n, v, e, he, hv, hb⟩ := hw'.1 σ
-  let ρ : Γ(Z.X, U) →+* Γ(Z.X, U ⊓ U') := (Z.X.presheaf.map (homOfLE inf_le_left).op).hom
-  let ρ' : Γ(Z.X, U') →+* Γ(Z.X, U ⊓ U') := (Z.X.presheaf.map (homOfLE inf_le_right).op).hom
-  have hρ : spMap ρ ≫ hU.fromSpec = hV.fromSpec := hU.map_fromSpec hV _
-  have hρ' : spMap ρ' ≫ hU'.fromSpec = hV.fromSpec := hU'.map_fromSpec hV _
-  have hρ2 : spMap ρ' ≫ hU'.fromSpec ≫ Z.π = hV.fromSpec ≫ Z.π := by rw [← hρ', Category.assoc]
-  choose c hc using fun a => (basis_map ρ' hρ2 hv hb _ (tan_bc hw ρ hρ σ a)).exists
-  refine ⟨fun a => c a (e a), fun k _ φ φ' x hx hx' ho => ?_⟩
-  have h1 : ⊤ ≤ x ⁻¹ᵁ U := hx ▸ le_preimage_specMap_fromSpec hU (CommRingCat.ofHom φ)
-  have h2 : ⊤ ≤ x ⁻¹ᵁ U' := hx' ▸ le_preimage_specMap_fromSpec hU' (CommRingCat.ofHom φ')
-  have h3 : ⊤ ≤ x ⁻¹ᵁ (U ⊓ U') := fun z hz => ⟨h1 hz, h2 hz⟩
-  let ψ : Γ(Z.X, U ⊓ U') →+* k := (valMap x _ h3).hom
-  have hψ : spMap ψ ≫ hV.fromSpec = x := specMap_valMap_fromSpec hV x h3
-  have e1 : ψ.comp ρ = φ := by
-    subst hx
-    exact congrArg (fun f => f.hom) ((res_valMap _ inf_le_left h3 h1).trans
-      (valMap_specMap_fromSpec hU (CommRingCat.ofHom φ) h1))
-  have e2 : ψ.comp ρ' = φ' := by
-    subst hx'
-    exact congrArg (fun f => f.hom) ((res_valMap _ inf_le_right h3 h2).trans
-      (valMap_specMap_fromSpec hU' (CommRingCat.ofHom φ') h2))
-  have hx2 : spMap φ' ≫ hU'.fromSpec ≫ Z.π = x ≫ Z.π := by rw [← hx', Category.assoc]
-  have hvk := fun i => isTan_map φ' hx2 (hv i)
-  have li := linInd_of_basis hvk (basis_map φ' hx2 hv hb)
-  obtain ⟨d, hd⟩ := exists_diag_of_flagAt Z hty (hx ▸ hw.2 k φ (hx ▸ ho)) (hx' ▸ hw'.2 k φ' (hx' ▸ ho)) σ
-    (tan_bc hw φ hx σ) (tan_bc hw' φ' hx' σ) (linInd_bc hw' φ' hx' σ)
-  intro a
-  obtain ⟨cf, -, h0, hs⟩ := hd a
-  refine ⟨cf, ?_, h0, hs⟩
-  have hk := comb_map ψ (x' := x ≫ Z.π) (by rw [← hψ, Category.assoc]) (hc a)
-  simp only [Vecs.bc, dual_comp, e1, e2] at hk
-  have hk' := (comb_iff hvk _ (tan_bc hw φ hx σ a)).1 hk
-  refine Eq.trans ?_ (valR_eq x _ h3 _).symm
-  refine (coeff_eq li e (hk'.symm.trans (hs.trans (Finset.sum_congr rfl fun b _ => ?_))) a).symm
-  exact congrArg (cf b • ·) (tan_ext (congrArg (spMap (dualMap φ') ≫ ·) (he b).symm))
-
 variable (Z)
 
 theorem fn_ext {U : Z.X.Opens} {f g : Γ(Z.X, U)}
@@ -329,59 +282,6 @@ theorem valR_prod_zpow {X : Scheme.{0}} {k : Type} [Field k] (x : Sp k ⟶ X) {U
   simp only [Units.coe_prod, Units.val_zpow_eq_zpow_val] at this
   exact this
 
-theorem exists_isGrLB' (hZ : HasDR Z) (e : ∀ σ : E →+* ℂ, Fin (Dw.mult σ) → ℤ) : ∃ L, IsGrLB Z e L := by
-  obtain ⟨hty, hc⟩ := hZ
-  choose U hU w hm hw using hc
-  choose D hD using fun (i j : Z.X) σ => exists_diag hty (isAffineOpen_inf Z (hU i) (hU j)) (hw i) (hw j) σ
-  have pt : ∀ {k : Type} [Field k] (x : Sp k ⟶ Z.X) i (h : ⊤ ≤ x ⁻¹ᵁ U i),
-      spMap (valMap x _ h).hom ≫ (hU i).fromSpec = x := fun x i h => specMap_valMap_fromSpec (hU i) x h
-  have self : ∀ {k : Type} [Field k] (x : Sp k ⟶ Z.X) i, ⊤ ≤ x ⁻¹ᵁ U i → Set.range x ⊆ Z.opn → ∀ σ a,
-      valR x _ (D i i σ a) = 1 := fun x i h ho σ a =>
-    congrFun ((hD i i σ _ _ _ x (pt x i h) (pt x i h) ho).unique (linInd_bc (hw i) _ (pt x i h) σ) (Diag.refl _)) a
-  have coc : ∀ {k : Type} [Field k] (x : Sp k ⟶ Z.X) i j l, ⊤ ≤ x ⁻¹ᵁ U i → ⊤ ≤ x ⁻¹ᵁ U j → ⊤ ≤ x ⁻¹ᵁ U l →
-      Set.range x ⊆ Z.opn → ∀ σ a, valR x _ (D i j σ a) * valR x _ (D j l σ a) = valR x _ (D i l σ a) :=
-    fun x i j l hi hj hl ho σ a =>
-      congrFun (((hD j l σ _ _ _ x (pt x j hj) (pt x l hl) ho).trans (hD i j σ _ _ _ x (pt x i hi) (pt x j hj) ho)).unique
-        (linInd_bc (hw l) _ (pt x l hl) σ) (hD i l σ _ _ _ x (pt x i hi) (pt x l hl) ho)) a
-  have unit : ∀ i j σ a, IsUnit (D i j σ a) := fun i j σ a => by
-    refine IsUnit.of_mul_eq_one ((Z.X.presheaf.map (homOfLE (inf_comm (U i) (U j)).le).op).hom (D j i σ a))
-      (fn_ext Z fun k _ x h ho => ?_)
-    have hi := le_preimage_mono x inf_le_left h
-    rw [valR_mul x _ h, valR_res x _ h, valR_one x _ h, coc x i j i hi (le_preimage_mono x inf_le_right h) hi ho,
-      self x i hi ho]
-  let g : ∀ i j, Γ(Z.X, U i ⊓ U j)ˣ := fun i j => ∏ σ, ∏ a, (unit i j σ a).unit ^ e σ a
-  have hg : ∀ {k : Type} [Field k] (x : Sp k ⟶ Z.X) i j, ⊤ ≤ x ⁻¹ᵁ (U i ⊓ U j) →
-      valR x _ (g i j).val = ∏ σ, ∏ a, valR x _ (D i j σ a) ^ e σ a := fun x i j h => valR_prod_zpow x h _ e
-  have hr : ∀ {k : Type} [Field k] (x : Sp k ⟶ Z.X) i j {V : Z.X.Opens} (hV : V ≤ U i ⊓ U j), ⊤ ≤ x ⁻¹ᵁ V →
-      valR x V (res hV (g i j)).val = ∏ σ, ∏ a, valR x _ (D i j σ a) ^ e σ a := fun x i j V hV h =>
-    (valR_res x hV h _).trans (hg x i j (le_preimage_mono x hV h))
-  refine ⟨⟨Z.X, U, g⟩, ⟨?_, fun i => ?_, fun i j l => ?_⟩, hU, w, hw, fun i j k _ φ φ' d hx ho hd => ?_⟩
-  · exact top_unique fun z _ => Opens.mem_iSup.2 ⟨z, hm z⟩
-  · refine Units.ext (fn_ext Z fun k _ x h ho => ?_)
-    refine (hr x i i _ h).trans ?_
-    simp only [self x i h ho, one_zpow, Finset.prod_const_one]
-    exact (valR_one x _ h).symm
-  · refine Units.ext (fn_ext Z fun k _ x h ho => ?_)
-    refine (valR_mul x _ h _ _).trans ?_
-    rw [hr x i j _ h, hr x j l _ h, hr x i l _ h]
-    simp only [← Finset.prod_mul_distrib, ← mul_zpow, coc x i j l (le_preimage_mono x (inf_le_left.trans inf_le_left) h)
-      (le_preimage_mono x (inf_le_left.trans inf_le_right) h) (le_preimage_mono x inf_le_right h) ho]
-  · have h1 := le_preimage_specMap_fromSpec (hU i) (CommRingCat.ofHom φ)
-    have h2 : ⊤ ≤ (spMap φ ≫ (hU i).fromSpec) ⁻¹ᵁ U j := hx ▸ le_preimage_specMap_fromSpec (hU j) (CommRingCat.ofHom φ')
-    refine (hg _ i j fun z hz => ⟨h1 hz, h2 hz⟩).trans
-      (Finset.prod_congr rfl fun σ _ => Finset.prod_congr rfl fun a _ => ?_)
-    have h3 : DiagAt (Y Z.i).t ((spMap φ ≫ (hU i).fromSpec) ≫ Z.π) ((w j).bc φ' σ) ((w i).bc φ σ) (d σ) := by
-      rw [Category.assoc]
-      exact hd σ
-    rw [diagAt_iff (tan_bc (hw j) φ' hx.symm σ) (tan_bc (hw i) φ rfl σ)] at h3
-    exact congrArg (· ^ e σ a)
-      (congrFun ((hD i j σ k φ φ' _ rfl hx.symm ho).unique (linInd_bc (hw j) φ' hx.symm σ) h3) a)
-
 end Model
-
-theorem exists_isGrLB : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E)
-    (Dw : Datum H) (Xo : ∀ l : Level H, Moduli Dw l) (p : ℕ) (W : ValuationSubring ℂ), p.Prime → (p : ℂ) ∈ W.nonunits →
-    ∀ (Y : LocalSystem Xo p W) (i₀ : Idx H p), ∀ (Z : Mdl Y i₀), HasDR Z → ∀ e, ∃ L, IsGrLB Z e L :=
-  fun _ _ _ _ _ _ _ _ _ _ _ _ _ Z hZ e => exists_isGrLB' Z hZ e
 
 end GlobalTheory.GradedPieces

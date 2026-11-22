@@ -1,11 +1,15 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Height
-import GroundTheory.AutomorphicForms.TraceFormulaConvolution
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsAreCuspForms
-import GroundTheory.AutomorphicForms.MultiplicityOne.OpenSubgroupRep
-import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteLevelGroups
-import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteAdelicHaar
-import GroundTheory.AutomorphicForms.L2LocalComponents.CenterCommute
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Height
+public import GroundTheory.AutomorphicForms.TraceFormulaConvolution
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsAreCuspForms
+public import GroundTheory.AutomorphicForms.MultiplicityOne.OpenSubgroupRep
+public import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteLevelGroups
+public import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteAdelicHaar
+public import GroundTheory.AutomorphicForms.L2LocalComponents.CenterCommute
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -63,7 +67,7 @@ private theorem UpperTheory.ConvolutionTheory.Tf.act_zero {U : Set G} (hU : IsOp
     exact iha _ (ihb f hf)
   | add a b iha ihb =>
     intro f hf g hg
-    rw [map_add, map_add, LinearMap.add_apply, Submodule.coe_add, Pi.add_apply, iha f hf g hg,
+    rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, Submodule.coe_add, Pi.add_apply, iha f hf g hg,
       ihb f hf g hg, add_zero]
 
 end

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+
+@[expose] public section
 
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI GlobalTheory.Shin SemidirectProduct
 open scoped Classical
@@ -31,10 +35,10 @@ theorem toG_map (t : F →+* F') {n : ℕ} (M : Matrix (Fin n) (Fin n) F) :
     toG (M.map t) = gal t n (toG M) := by
   unfold toG
   by_cases h : IsUnit M
-  · rw [dif_pos h, dif_pos ((isUnit_map_iff t M).2 h)]
+  · rw [dite_eq_left h, dite_eq_left ((isUnit_map_iff t M).2 h)]
     apply Units.ext
     rw [gal_coe, IsUnit.unit_spec, IsUnit.unit_spec]
-  · rw [dif_neg h, dif_neg (fun h' => h ((isUnit_map_iff t M).1 h')), map_one]
+  · rw [dite_eq_right h, dite_eq_right (fun h' => h ((isUnit_map_iff t M).1 h')), map_one]
 
 theorem tlG_gal (t : F →+* F') (a : ℕ) {n : ℕ} (x : GL (Fin n) F) :
     tlG a (gal t n x) = gal t a (tlG a x) := by

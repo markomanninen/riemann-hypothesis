@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountPositivity.HermFormAnisotropicOrthSecond
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountPositivity.HermFormAnisotropicOrthSecond
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ theorem zhat_apply (F : FlagG S r (T : E)) (F' : FlagG S r (T' : E)) (a b : Fin 
 theorem lead_r (F : FlagG S r (T : E)) (F' : FlagG S r (T' : E)) :
     leadMinorE (Zhat F F') r = (Pm F F').det := by
   unfold leadMinorE
-  rw [dif_pos (Nat.le_succ r)]
+  rw [dite_eq_left (Nat.le_succ r)]
   congr 1
   ext a b
   have hc : ∀ x : Fin r, Fin.castLE (Nat.le_succ r) x = Fin.castSucc x := fun x => Fin.ext rfl
@@ -25,7 +29,7 @@ theorem lead_r (F : FlagG S r (T : E)) (F' : FlagG S r (T' : E)) :
 theorem leadingMinor_full_eq_det (F : FlagG S r (T : E)) (F' : FlagG S r (T' : E)) :
     leadMinorE (Zhat F F') (r + 1) = (Zhat F F').det := by
   unfold leadMinorE
-  rw [dif_pos le_rfl]
+  rw [dite_eq_left le_rfl]
   rfl
 
 def kk (F : FlagG S r (T : E)) (F' : FlagG S r (T' : E)) (c : Fin r) : E :=
@@ -175,7 +179,7 @@ theorem gflag_pos (F : FlagG S r (T : E)) (F' : FlagG S r (T' : E)) (τ : E →+
           rw [h_zt_zt]
           simp
         · simp only [w, d, Sum.elim_inr, ↓reduceIte]
-          rw [hermForm_second_anisotropic F F' hTE, map_add, map_div₀, map_mul, hns, map_neg, map_natCast, map_natCast, hnb]
+          rw [hermForm_second_anisotropic F F' hTE, map_add (f := _), map_div₀, map_mul, hns, map_neg, map_natCast, map_natCast, hnb]
           push_cast
           ring
     have hneg : ∀ i, d i < 0 := by

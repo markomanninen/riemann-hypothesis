@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagLineDegree
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PSplitRelDeg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagLineDegree
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PSplitRelDeg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -25,7 +30,8 @@ theorem cone_of_isMultiHomog {K Kt : Type*} [Fintype K] [DecidableEq K] {ι : K 
       C (eval₂ r x h) * ∏ k, (X (τ k) : MvPolynomial Kt S) ^ D k := by
   conv_lhs => rw [h.as_sum]
   conv_rhs => rw [h.as_sum]
-  rw [map_sum, eval₂_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, eval₂_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun μ hμ => ?_
   rw [eval₂Hom_monomial, eval₂_monomial,
     Finsupp.prod_fintype _ _ (fun _ => pow_zero _), Finsupp.prod_fintype _ _ (fun _ => pow_zero _)]
@@ -75,7 +81,7 @@ theorem chart_form {K : Type*} [Fintype K] [DecidableEq K] {ι : K → Type*} {F
       rw [hdeg] at h1 h2
       rw [add_comm n m] at h2
       exact h1.add h2
-    · rw [map_add, map_mul, map_mul, map_pow, map_pow, hσ, ← hAe, ← hBe]
+    · rw [map_add (f := _), map_mul, map_mul, map_pow, map_pow, hσ, ← hAe, ← hBe]
       ring
   | mul z z' _ _ hz hz' =>
     obtain ⟨m, A, hA, hAe⟩ := hz
@@ -111,24 +117,26 @@ theorem subst_homog {K : Type*} [DecidableEq K] {ι : K → Type} {M : ℕ} {F :
         funext k'; simp [L, blockWeight, Pi.single_apply]
       rw [this]; exact isWeightedHomogeneous_X F _ _
   have hD : (fun k => D (some k) + D none * m) = L D := rfl
-  rw [hD, h.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hD, h.as_sum, map_sum]
   apply IsWeightedHomogeneous.sum
   intro μ hμ
   rw [aeval_monomial, algebraMap_eq, Finsupp.prod]
-  have := (isWeightedHomogeneous_C (blockWeight ι) (coeff μ h)).mul (IsWeightedHomogeneous.prod
+  have := (isWeightedHomogeneous_C (blockWeight ι) (AddMonoidAlgebra.coeff h μ)).mul (IsWeightedHomogeneous.prod
     μ.support (fun v => substVar A v ^ μ v) (fun v => μ v • L (blockWeight _ v))
     (fun v _ => (hω v).pow (μ v)))
   rw [zero_add] at this
   have e : L D = ∑ i ∈ μ.support, μ i • L (blockWeight _ i) := by
-    rw [← hh (mem_support_iff.mp hμ), Finsupp.weight_apply, Finsupp.sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hh (mem_support_iff.mp hμ), Finsupp.weight_apply, Finsupp.sum, map_sum]
     simp only [map_nsmul]
   rw [e]
   exact this
 
 end FlagLineDegreeProof
 
-open FlagLineDegreeProof in
 
+open FlagLineDegreeProof in
 theorem FlagLineDegree.proof : FlagLineDegree.Statement := by
   intro F _ Ω _ _ K _ _ ι _ y e hV _ N E _ _ B w b hflag M a φ hφ Φ _ _ t ht h0
   classical
@@ -152,7 +160,8 @@ theorem FlagLineDegree.proof : FlagLineDegree.Statement := by
   have hφv : ∀ l, φ l v = s * φ l (w i0) := by
     intro l
     conv_lhs => rw [← w.sum_repr v]
-    rw [map_sum, Finset.sum_eq_single i0]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single i0]
     · rw [map_smul, smul_eq_mul, hvs]
     · intro j _ hj
       have hj' : i0 < j := by

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnimodularPosDefAdjointActionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCmFieldTraceFormGramMatrixPosDefStatement
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsProjOverWeierstrass
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordConstruction
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnimodularPosDefAdjointActionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCmFieldTraceFormGramMatrixPosDefStatement
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsProjOverWeierstrass
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -49,7 +54,7 @@ theorem unimodLattice_w0_add {E : Type} [Field E] [NumberField E] [IsCMField E] 
   have h1 := H.two_weight_eq_one_add_root
   have h2 : 2 * H.bar H.w0 = 1 - H.rt := by
     have := congrArg H.bar h1
-    rw [map_mul, map_add, map_one, unimodLattice_bar_rt, map_ofNat] at this
+    rw [map_mul, map_add (f := _), map_one, unimodLattice_bar_rt, map_ofNat] at this
     rw [this]; ring
   have h3 : (2 : 𝓞 E) * (H.w0 + H.bar H.w0) = 2 * 1 := by
     rw [mul_add, h1, h2]; ring
@@ -62,7 +67,7 @@ theorem unimodLattice :
   obtain ⟨r, b, ρ, hr, hbs, hbpd, hbu, hbadj⟩ :=
     GlobalTheory.T.exists_unimodular_posDef_form_adjoint_rep_of_posDef (𝓞 E) (H.bar : 𝓞 E →+* 𝓞 E) (unimodLattice_bar_bar H) m B0 ρ0 hm hsym hpd hadj
   have hW : b * ρ H.w0 + (b * ρ H.w0).transpose = b := by
-    rw [Matrix.transpose_mul, hbs, hbadj, ← Matrix.mul_add, ← map_add]
+    rw [Matrix.transpose_mul, hbs, hbadj, ← Matrix.mul_add, ← map_add (f := _)]
     erw [unimodLattice_w0_add H]
     rw [map_one, Matrix.mul_one]
   refine ⟨r, b * ρ H.w0, ρ, hr, ?_, ?_, ?_, ?_⟩

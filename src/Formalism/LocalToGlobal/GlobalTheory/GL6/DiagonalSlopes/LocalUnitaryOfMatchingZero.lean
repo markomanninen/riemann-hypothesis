@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.StabiliserOfLocalTransport
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.StabiliserOfLocalTransport
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ section Loc
 
 variable {D : D7} {u : D.what₂.Word} {i : ℕ} {hi : i ≤ D.R.m}
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem stabiliser_of_class_local_eq (A : AtTTied u) (K : ClsTied u i hi) (v : (D.mem u).A.vT) (c c2 : (D.mem u).C.cls i)
     (g : GL (Fin (D.R.N i)) D.host.E)
     (hP : Formalism.HermitianLatticesTheory.localization₂ (A.Pv v) (mulLat (g : Matrix _ _ D.host.E) (clsCrd D u i hi c2)) =
@@ -29,8 +33,8 @@ theorem stabiliser_of_class_local_eq (A : AtTTied u) (K : ClsTied u i hi) (v : (
     (rlv_locV (A.eV v).1 (A.Pv v) (rlvQ A v) hN hP.le hQ.le)
     (rlv_locV (A.eV v).1 (A.Pv v) (rlvQ A v) hN hP.ge hQ.ge)
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem local_Q_eq_of_dual_P (A : AtTTied u) (v : (D.mem u).A.vT) (c c2 : (D.mem u).C.cls i)
     (g : GL (Fin (D.R.N i)) D.host.E) (hgU : g ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D i hi))
     (hPd : Formalism.HermitianLatticesTheory.localization₂ (A.Pv v) (mulLat (g : Matrix _ _ D.host.E) (Ld D u i hi c2)) =
@@ -63,8 +67,8 @@ theorem local_Q_eq_of_dual_P (A : AtTTied u) (v : (D.mem u).A.vT) (c c2 : (D.mem
     rw [e3] at h3
     exact h3
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem local_dual_Q_eq_of_P (A : AtTTied u) (v : (D.mem u).A.vT) (c c2 : (D.mem u).C.cls i)
     (g : GL (Fin (D.R.N i)) D.host.E) (hgU : g ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D i hi))
     (hP : Formalism.HermitianLatticesTheory.localization₂ (A.Pv v) (mulLat (g : Matrix _ _ D.host.E) (clsCrd D u i hi c2)) =
@@ -99,9 +103,9 @@ theorem local_dual_Q_eq_of_P (A : AtTTied u) (v : (D.mem u).A.vT) (c c2 : (D.mem
     rw [e3] at h3
     exact h3
 
+
 set_option maxHeartbeats 2000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem stabiliser_of_dual_local_eq (A : AtTTied u) (K : ClsTied u i hi) (v : (D.mem u).A.vT) (c c2 : (D.mem u).C.cls i)
     (g : GL (Fin (D.R.N i)) D.host.E)
     (hP : Formalism.HermitianLatticesTheory.localization₂ (A.Pv v) (mulLat (g : Matrix _ _ D.host.E) (Ld D u i hi c2)) =
@@ -131,9 +135,9 @@ section ULoc
 
 variable {D : D7} {u : D.what₂.Word} {i : ℕ} {hi : i ≤ D.R.m}
 
+
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem local_unitary_of_matching {A : AtTTied u} (K : ClsTied u i hi) (L : LvTied u A i hi)
     (fMe : ∀ v, K.lev.fM (A.eV v).1 (A.eV v).2 ≃+ (D.mem u).A.Fv v) (hfv : FvTie L K fMe)
     (v : (D.mem u).A.vT) (c c2 : (D.mem u).C.cls i) (Γ : GL (Fin (D.R.N i)) D.host.E)
@@ -162,9 +166,9 @@ section Match
 
 variable {D : D7} {u : D.what₂.Word} {i : ℕ} {hi : i ≤ D.R.m}
 
+
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem matching_unitary_eq (K : ClsTied u i hi) (c c1 c2 c3 : (D.mem u).C.cls i) (γ γ2 γd : GL (Fin (D.R.N i)) D.host.E)
     (η η2 δ : UPts (sigD D) (gramN D i hi) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) (κ κ2 κd : K.lev.U)
     (h1 : bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) γ * (K.y c1).1 = (K.y c).1 * η.1 * κ.1)
@@ -190,9 +194,9 @@ theorem matching_unitary_eq (K : ClsTied u i hi) (c c1 c2 c3 : (D.mem u).C.cls i
   have H := fun (x : UPts (sigD D) (gramN D i hi) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) => x.2
   exact mul_mem (mul_mem (mul_mem (mul_mem (mul_mem (inv_mem (hk κ2)) (inv_mem (H η2))) (hk κd)) (inv_mem (H δ))) (H η)) (hk κ)
 
+
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem matching_move_mem_level {A : AtTTied u} (K : ClsTied u i hi) (v : (D.mem u).A.vT)
     (c c1 c2 c3 : (D.mem u).C.cls i) (γ γ2 γd : GL (Fin (D.R.N i)) D.host.E)
     (η η2 δ : UPts (sigD D) (gramN D i hi) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) (κ κ2 κd : K.lev.U)
@@ -230,9 +234,9 @@ section OnForms0
 
 variable {D : D7} {u : D.what₂.Word}
 
+
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem local_unitary_of_matching_zero (T : Forms0 D u)
     (v : (D.mem u).A.vT) (c c2 : (D.mem u).C.cls 0) (Γ : GL (Fin (D.R.N 0)) D.host.E)
     (hΓ : Γ ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _)))
@@ -250,9 +254,9 @@ theorem local_unitary_of_matching_zero (T : Forms0 D u)
             Submodule.smul_mem _ _ hz⟩)) :
     bc (prV (E := D.host.E) (T.atT.eV v).1) ((T.cls0.y c).1⁻¹ * bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) Γ * (T.cls0.y c2).1) ∈ T.cls0.lev.Uloc (T.atT.eV v).1 := local_unitary_of_matching T.cls0 T.lv0 T.fMe0 T.fv0 v c c2 Γ hΓ hU hP hPd hF
 
+
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem matching_move_mem_level_zero (T : Forms0 D u) (v : (D.mem u).A.vT)
     (c c1 c2 c3 : (D.mem u).C.cls 0) (γ γ2 γd : GL (Fin (D.R.N 0)) D.host.E)
     (η η2 δ : UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) (κ κ2 κd : T.cls0.lev.U)

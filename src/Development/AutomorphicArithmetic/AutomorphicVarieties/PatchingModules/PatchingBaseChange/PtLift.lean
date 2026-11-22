@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.AlgebraMapEq
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.PsEv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaOverLift
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.AlgebraMapEq
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.PsEv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaOverLift
+
+@[expose] public section
+
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 open scoped TensorProduct
 
@@ -107,7 +112,7 @@ theorem UpperTheory.V.Pa.BC.pt_lift :
     | add a b _ _ ha hb =>
       obtain ⟨a', ha⟩ := ha
       obtain ⟨b', hb⟩ := hb
-      exact ⟨a' + b', by rw [map_add, map_add, ha, hb]⟩
+      exact ⟨a' + b', by rw [map_add (f := _), map_add (f := _), ha, hb]⟩
     | mul a b _ _ ha hb =>
       obtain ⟨a', ha⟩ := ha
       obtain ⟨b', hb⟩ := hb

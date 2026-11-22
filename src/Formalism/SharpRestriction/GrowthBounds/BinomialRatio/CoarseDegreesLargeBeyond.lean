@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.NkExponent
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.LeAndHalfLeProdOneSubExpNegOfBounds
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.NkExponent
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.LeAndHalfLeProdOneSubExpNegOfBounds
+
+@[expose] public section
 
 noncomputable section
 

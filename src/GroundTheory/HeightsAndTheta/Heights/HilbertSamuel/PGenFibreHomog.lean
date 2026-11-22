@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenFibreHomog
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenFibreHomog
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -23,7 +28,7 @@ theorem isMultiHomog_of_weighted {f : MRing ι} {b : K → ℕ}
   rw [sum_block_eq_weight, hf (mem_support_iff.mp hm)]
 
 theorem coeff_mConeMap {Ω : Type} [Field Ω] (y : (Σ k, ι k) → Ω) (b : K → ℕ) (f : MRing ι) :
-    coeff (Finsupp.equivFunOnFinite.symm b) (mConeMap y f) =
+    AddMonoidAlgebra.coeff (mConeMap y f) (Finsupp.equivFunOnFinite.symm b) =
       aeval y (weightedHomogeneousComponent (NumbersDVR.blockWeight ι) b f) := by
   classical
   induction f using MvPolynomial.induction_on' with
@@ -41,7 +46,7 @@ theorem coeff_mConeMap {Ω : Type} [Field Ω] (y : (Σ k, ι k) → Ω) (b : K �
     · subst h; simp
     · rw [if_neg h, if_neg (fun h' => h (Finsupp.equivFunOnFinite.symm.injective h').symm)]
       simp
-  | add p q hp hq => rw [map_add, coeff_add, hp, hq, map_add, map_add]
+  | add p q hp hq => rw [map_add (f := _), MvPolynomial.coeff_add, hp, hq, map_add (f := _), map_add (f := _)]
 
 theorem isMultiHomogIdeal_mCoordIdeal {Ω : Type} [Field Ω] (y : (Σ k, ι k) → Ω) :
     NumbersDVR.IsMultiHomogIdeal (R := ℤ) (mCoordIdeal y) := by
@@ -51,12 +56,13 @@ theorem isMultiHomogIdeal_mCoordIdeal {Ω : Type} [Field Ω] (y : (Σ k, ι k) �
   change mConeMap y _ = 0
   rw [ProjLine.mConeMap_eq_of_isMultiHomog y
       (isMultiHomog_of_weighted (weightedHomogeneousComponent_isWeightedHomogeneous b f)),
-    ← coeff_mConeMap, hf', coeff_zero, map_zero, zero_mul]
+    ← coeff_mConeMap, hf']
+  simp
 
 attribute [local instance] MvPolynomial.weightedGradedAlgebra
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem isHomogeneous_of_isMultiHomogIdeal {R : Type} [CommRing R] {I : Ideal (MvPolynomial (Σ k, ι k) R)}
     (h : NumbersDVR.IsMultiHomogIdeal I) :
     I.IsHomogeneous (weightedHomogeneousSubmodule R (NumbersDVR.blockWeight ι)) := by
@@ -69,9 +75,9 @@ theorem isHomogeneous_of_isMultiHomogIdeal {R : Type} [CommRing R] {I : Ideal (M
 
 end GenFibreHomog
 
+
 open GenFibreHomog in
 attribute [local instance] MvPolynomial.weightedGradedAlgebra in
-
 theorem GenFibreHomog.proof : GenFibreHomog.Statement := by
   intro K _ _ ι _ Ω _ y
   have hI := isHomogeneous_of_isMultiHomogIdeal (isMultiHomogIdeal_mCoordIdeal y)

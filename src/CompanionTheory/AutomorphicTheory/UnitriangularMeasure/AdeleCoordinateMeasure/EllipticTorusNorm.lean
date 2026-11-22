@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.GJGlobalModulus
-import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms.BaseChange
-import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.GJGlobalModulus
+public import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms.BaseChange
+public import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 
@@ -17,8 +21,8 @@ namespace EllipticTorus
 
 variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
 
-variable (K L) in
 
+variable (K L) in
 def adeleCoordEquiv : 𝔸[L] ≃ₗ[𝔸[K]] (Fin (Module.finrank K L) → 𝔸[K]) :=
   (adeleBasis (Module.finBasis K L)).equivFun
 
@@ -30,8 +34,8 @@ theorem continuous_adeleCoordEquiv_symm : Continuous (adeleCoordEquiv K L).symm 
   have := isModuleTopology_adeleRing (K := K) (L := L)
   exact IsModuleTopology.continuous_of_linearMap (adeleCoordEquiv K L).symm.toLinearMap
 
-variable (K L) in
 
+variable (K L) in
 def adeleCoordHomeomorph : 𝔸[L] ≃ₜ (Fin (Module.finrank K L) → 𝔸[K]) where
   toEquiv := (adeleCoordEquiv K L).toEquiv
   continuous_toFun := continuous_adeleCoordEquiv
@@ -59,8 +63,8 @@ theorem adeleCoordEquiv_mul (x : (𝔸[L])ˣ) (y : 𝔸[L]) :
   rw [Matrix.vecMul_transpose, adeleCoordEquiv, Module.Basis.equivFun_apply, Module.Basis.equivFun_apply,
     Algebra.leftMulMatrix_mulVec_repr]
 
-variable (K L) in
 
+variable (K L) in
 def coordMeasure : Measure 𝔸[L] :=
   (adeleMeasurePi K (ι := Fin (Module.finrank K L))).map (adeleCoordEquiv K L).symm
 
@@ -89,6 +93,7 @@ theorem map_smul_coordMeasure (x : IdeleGroup L) :
     ← Measure.map_map measurable_adeleCoordEquiv_symm
       (GJGlobal.Modulus.measurable_vecMul' (mulMatrixGL (K := K) x)),
     GJGlobal.Modulus.map_vecMul_adeleMeasurePi, Measure.map_smul, hdet]
+  exact measurable_adeleCoordEquiv_symm.aemeasurable
 
 theorem ideleModule_ideleNorm (x : IdeleGroup L) :
     IdeleGroup.ideleModule K (ideleNorm K L x) = IdeleGroup.ideleModule L x := by
@@ -103,6 +108,7 @@ theorem ideleModule_ideleNorm (x : IdeleGroup L) :
   have htop : adeleMeasure L S ≠ ⊤ := hS.measure_lt_top.ne
   have h1 := map_smul_coordMeasure (K := K) x
   rw [hc, Measure.map_smul, map_smul_adeleMeasure] at h1
+  case hf => exact (continuous_const_smul x).measurable.aemeasurable
   have h2 := congrArg (fun μ : Measure 𝔸[L] ↦ μ S) h1
   simp only [Measure.smul_apply, ENNReal.smul_def, smul_eq_mul] at h2
   rw [mul_left_comm] at h2

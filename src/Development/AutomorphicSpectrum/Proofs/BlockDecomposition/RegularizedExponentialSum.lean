@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.FibreFactorHolds
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VandermondeSeparation
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.FibreFactorHolds
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VandermondeSeparation
+
+@[expose] public section
 
 open Filter Topology
 open scoped Classical

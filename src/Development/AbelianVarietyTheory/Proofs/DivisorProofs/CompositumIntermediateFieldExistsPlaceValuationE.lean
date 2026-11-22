@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -23,7 +27,7 @@ theorem ramificationIdx_eq_one_iff_fix (k E N : Type) [Field k] [NumberField k] 
   have h2 := card_inertia E N Q
   have h3 : Q.ramificationIdx (𝓞 k) = (Q.under (𝓞 E)).ramificationIdx (𝓞 k) * Q.ramificationIdx (𝓞 E) :=
     Ideal.ramificationIdx_tower (Q.under (𝓞 E)) Q
-  have h4 : 0 < Q.ramificationIdx (𝓞 E) := Ideal.ramificationIdx_pos Q (𝓞 E)
+  have h4 : 0 < Q.ramificationIdx (𝓞 E) := Ideal.ramificationIdx_pos (R := 𝓞 E) Q
   let f : Q.inertia (N ≃ₐ[E] N) → Q.inertia (N ≃ₐ[k] N) := fun σ =>
     ⟨σ.1.restrictScalars k, AddSubgroup.mem_inertia.mpr fun x => AddSubgroup.mem_inertia.mp σ.2 x⟩
   have hf : Function.Injective f := fun σ σ' h =>
@@ -82,13 +86,12 @@ theorem exists_valuation_eq (F F' K : Type) [Field F] [NumberField F] [Field F']
     ⟨Q.under (𝓞 K), inferInstance, Ideal.ne_bot_of_liesOver_of_ne_bot w.ne_bot _⟩
   have hlo' : 𝔭.asIdeal.LiesOver w.asIdeal := hlo
   refine ⟨𝔭, fun a => ?_⟩
-  rw [← HeightOneSpectrum.valuation_liesOver K w 𝔭 a,
-    Ideal.ramificationIdx'_eq_ramificationIdx w.asIdeal 𝔭.asIdeal w.ne_bot]
+  rw [← HeightOneSpectrum.valuation_liesOver K w 𝔭 a]
   change _ ^ (Q.under (𝓞 K)).ramificationIdx (𝓞 F) = _
   rw [he, pow_one]
 
-open Formalism.L2.Pj in
 
+open Formalism.L2.Pj in
 theorem exists_vLa_eq : ∀ (F F' K : IntermediateField ℚ ℂ) [NumberField F] [NumberField F'] [NumberField K]
     (hF : F ≤ K), K = F ⊔ F' → ∀ q : ℕ, q.Prime → ¬ (q : ℤ) ∣ discr F' → ∀ w : HeightOneSpectrum (𝓞 F),
     ((q : ℕ) : 𝓞 F) ∈ w.asIdeal → ∃ 𝔭 : HeightOneSpectrum (𝓞 K),

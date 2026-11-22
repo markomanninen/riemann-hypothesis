@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.BallVolDefs
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ConjugateUniversalFamily
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.BallVolDefs
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ConjugateUniversalFamily
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LocalSystemQuotients.ModFSW
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LocalSystemQuotients.ModFSW
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -47,7 +51,7 @@ theorem exact_quo (D : Cx.{1} W) (l m : ℕ) (hF : FlatL l m D)
     have hw' : D.d n w = ((l : W) ^ (m - c)) • x := hw
     obtain ⟨u, v, hv, e⟩ := ih (m - c) (Nat.sub_le _ _) w (by rw [hw']; exact mem_lp.2 ⟨x, rfl⟩)
     have hd : D.d n w = ((l : W) ^ (m - c)) • D.d n u := by
-      rw [e, map_add, B_ker D n v hv, add_zero, map_smul]
+      rw [e, map_add (f := _), B_ker D n v hv, add_zero, map_smul]
     have h1 : ((l : W) ^ (m - c)) • (x - D.d n u) = 0 := by
       rw [smul_sub, ← hw', hd, sub_self]
     obtain ⟨t, ht⟩ := mem_lp.1 ((hF (n + 1)).2 c (m - c) (by omega) _ h1)
@@ -163,9 +167,9 @@ theorem cone_exact {K L : Cx.{1} W} (f : Cx.Hom K L (RingHom.id W))
     obtain ⟨t, ht⟩ := B_shD L n _ h6
     refine ⟨(w + z.1, t), Prod.ext ?_ ?_⟩
     · change K.d n (w + z.1) = x1
-      rw [map_add, hw', LinearMap.mem_ker.1 z.2, add_zero]
+      rw [map_add (f := _), hw', LinearMap.mem_ker.1 z.2, add_zero]
     · change f.f n (w + z.1) - sdL L n t = x2
-      rw [ht, map_add]
+      rw [ht, map_add (f := _)]
       abel
 
 section Main
@@ -281,7 +285,7 @@ theorem qred_bij : ∀ (W : Type) [CommRing W] (l : ℕ) (K L : Cx.{1} W) (m : �
     change z.1 ∈ (quo l K b).B j
     have e2 : z.1 = (prj l K b).f j v.1 := by
       have e3 : (prj l K b).f j (((l : W) ^ b) • u1.1) = 0 := (prj_zero K b j _).2 ⟨u1.1, rfl⟩
-      rw [← hx, e1, map_add, e3, zero_add]
+      rw [← hx, e1, map_add (f := _), e3, zero_add]
     rw [e2]
     exact prj_B K b j _ (cone_B_fst f j v hv)
   · obtain ⟨z, rfl⟩ := Submodule.Quotient.mk_surjective _ u
@@ -312,7 +316,7 @@ theorem qred_bij : ∀ (W : Type) [CommRing W] (l : ℕ) (K L : Cx.{1} W) (m : �
     have e3 : (qred l f h).f j ((prj l K b).f j g1) - z.1 = (redg l L h).f j (sdL (quo l L m) j g2) := by
       have e4 : (redg l L h).f j (((l : W) ^ b) • u2) = 0 := (redg_zero L h j _).2 ⟨u2, rfl⟩
       have e5 : (qred l f h).f j ((prj l K b).f j g1) = (redg l L h).f j (f.f j g1) := rfl
-      rw [← hw, e2, map_add, e4, zero_add, map_sub, e5]
+      rw [← hw, e2, map_add (f := _), e4, zero_add, map_sub, e5]
       abel
     rw [e3]
     exact redg_shD L h j g2

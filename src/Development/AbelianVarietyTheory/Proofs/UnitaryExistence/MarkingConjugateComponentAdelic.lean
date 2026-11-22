@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.PermutesRefl
-import Formalism.LocalToGlobal.ProjectiveLattices.ThClassPins
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.MarkingConj
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIsSplitPeriod
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsDatumRankOne
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RationalPointsAdelicUnitaryEqUnitaryStatement
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicElementLatticeFullAndCompletionStatement
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryLatticeRationalTranslateInvarianceStatement
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RelabelEmbeddingsGoodBijectiveConjCompatStatement
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CramerMemAdelicCompletionOfElementSet
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUnitaryMatrixOfLatticeIsometry
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameUniformEmbeddingThird
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsEqSmulOfFinrankOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.PermutesRefl
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThClassPins
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.MarkingConj
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIsSplitPeriod
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsDatumRankOne
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RationalPointsAdelicUnitaryEqUnitaryStatement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicElementLatticeFullAndCompletionStatement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryLatticeRationalTranslateInvarianceStatement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RelabelEmbeddingsGoodBijectiveConjCompatStatement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CramerMemAdelicCompletionOfElementSet
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUnitaryMatrixOfLatticeIsometry
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameUniformEmbeddingThird
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsEqSmulOfFinrankOne
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Pj GlobalTheory.Member
 open scoped TensorProduct Matrix nonZeroDivisors
@@ -163,7 +167,8 @@ theorem exists_matrix_split {E : Type} [Field E] [NumberField E] {n p q : ℕ} (
       have hc' : (c : E) ≠ 0 := by simpa using hc
       have e : (c : E) • φ a = ∑ i, (s i : E) • φ (v i) := by
         have := congrArg (fun z : L => φ z) hs
-        simp only [Submodule.coe_smul, Submodule.coe_sum, map_smul, map_sum] at this
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Submodule.coe_smul, Submodule.coe_sum, map_smul, map_sum] at this
         exact this
       rw [SetLike.mem_coe, ← Submodule.smul_mem_iff _ hc', e]
       exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -174,7 +179,7 @@ theorem exists_matrix_split {E : Type} [Field E] [NumberField E] {n p q : ℕ} (
     rw [eq_top_iff, ← hsp, Submodule.span_le]
     rintro _ ⟨v, rfl⟩
     obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 (hs ▸ Submodule.mem_top : v ∈ Lp ⊔ Lm)
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (Submodule.subset_span ⟨a, ha, rfl⟩) (Submodule.subset_span ⟨b, hb, rfl⟩)
   have h1 : Module.finrank E Wp ≤ p := hle Lp p hp
   have h2 : Module.finrank E Wm ≤ q := hle Lm q hq
@@ -225,8 +230,8 @@ theorem gLat_eq_of_finCong {D : D7} (V : HSp D) (u : GA D V) (h : FinCong V 1 u)
     exact key u h z hz
   · rw [Matrix.mulVec_mulVec, ← Units.val_mul, ← map_mul, mul_inv_cancel, map_one, Units.val_one, Matrix.one_mulVec]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_of_matched {D : D7} (V : HSp D) (g g' δ : GA D V) (δ' : GL (Fin V.rank) D.host.E)
     (S : Matrix (Fin V.rank) (Fin V.rank) D.host.E) (M : ℕ) (hM : M ≠ 0) (I I' : Ideal (𝓞 D.host.E))
     (hI : I * I' = Ideal.span {(M : 𝓞 D.host.E)}) (hδ : IsRat V δ δ')
@@ -289,8 +294,8 @@ theorem exists_of_matched {D : D7} (V : HSp D) (g g' δ : GA D V) (δ' : GL (Fin
   simp only [Matrix.det_mul]
   ring
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem marking_of_conjugate : ∀ (D : D7) (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (σ : c.F →+* ℂ) (V : HSp D) (r : ℕ) (C : Ctx Xo c σ V r), C.OK → (Dw.p = 0 ∨ Dw.q = 0 ∨ 3 ≤ Dw.p + Dw.q) → ∀ τ : ℂ ≃+* ℂ, τ H.rt0 = H.rt0 → ∀ (Cv : Curve H) (io : Cv.P.A.left ⟶ Cv.P.A.left) (s : ℤ × ℤ) (π : Fin C.F.n → Fin C.F.n), Cv.ActsBy τ io l.M s → ConjugationPermutesPeriods C.F τ π → ∀ h γ k h' γ', C.Mark h k γ → C.Mark h' (π k) γ' → ∃ δ ∈ GQ V, ∃ u : GA D V, gLat V u = latHat V ∧ finHom V (γ' * h') * finHom V u = finHom V δ * finHom V (γ * h) ∧ ((Matrix.GeneralLinearGroup.det (finHom V (u)) : (Af D.host.F ⊗[D.host.F] D.host.E)ˣ) : (Af D.host.F ⊗[D.host.F] D.host.E)) * ((1 : Af D.host.F) ⊗ₜ[D.host.F] ((wE H s ^ Dw.p * H.bar (wE H s) ^ Dw.q : 𝓞 D.host.E) : D.host.E)) - 1 ∈ GlobalTheory.AdLat.hat1 D.host.F ((algebraMap (𝓞 D.host.E) D.host.E) '' (l.Mb : Set (𝓞 D.host.E))) := by
   intro D H Dw l Xo c σ V r C hC hsig τ hτ Cv io s π hact hπ h γ k h' γ' hm hm'
   obtain rfl : V.rank = r := C.hr
@@ -329,7 +334,7 @@ theorem marking_of_conjugate : ∀ (D : D7) (H : ReciprocityTheory.ChartRestrict
     (hp.trans (C.F.sig k).1) (hq.trans (C.F.sig k).2) (wE H s : D.host.E) (H.bar (wE H s) : D.host.E)
   have hS : ∀ a ∈ GlobalTheory.PureType.lat hP H.rt0, ∀ b ∈ GlobalTheory.PureType.lat hP (-H.rt0),
       S *ᵥ φ k (a + b) = φ k (wE H s • a + H.bar (wE H s) • b) := fun a ha b hb => by
-    rw [map_add, Matrix.mulVec_add, hSp a ha, hSm b hb, map_add, map_smul, map_smul]
+    rw [map_add (f := _), Matrix.mulVec_add, hSp a ha, hSm b hb, map_add (f := _), map_smul, map_smul]
     rfl
   have hdec : ∀ v : (C.F.Di k).La, ∃ a ∈ GlobalTheory.PureType.lat hP H.rt0, ∃ b ∈ GlobalTheory.PureType.lat hP (-H.rt0), a + b = v :=
     fun v => Submodule.mem_sup.1 (by rw [show _ ⊔ _ = ⊤ from hsplit]; trivial)
@@ -362,7 +367,7 @@ theorem marking_of_conjugate : ∀ (D : D7) (H : ReciprocityTheory.ChartRestrict
       obtain ⟨a, ha, a', ha', e⟩ := hdec (C.F.t k (b • x))
       obtain ⟨z, hz⟩ := hΦ _ hv a ha a' ha' e.symm
       refine ⟨φ (π k) z, by rw [← SetLike.mem_coe, ← hL']; exact ⟨z, rfl⟩, ?_⟩
-      rw [hz, ← e, hS a ha a' ha', map_add, map_nsmul, hδ2])
+      rw [hz, ← e, hS a ha a' ha', map_add (f := _), map_nsmul, hδ2])
   refine ⟨δ, (r1 δ).2 ⟨δ', hδ⟩, u, h1, h2, ?_⟩
   rw [hdet] at h3
   rw [RingOfIntegers.coe_eq_algebraMap, map_mul, map_pow, map_pow]

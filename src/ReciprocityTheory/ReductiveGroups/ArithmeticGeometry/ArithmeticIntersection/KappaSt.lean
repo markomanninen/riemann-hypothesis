@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AI
 
@@ -6,7 +10,7 @@ open MeasureTheory
 
 abbrev E3 := EuclideanSpace ℝ (Fin 3)
 
-abbrev S2 := Metric.sphere (0 : E3) 1
+noncomputable abbrev S2 := Metric.sphere (0 : E3) 1
 
 noncomputable def sphereMeasure : Measure S2 :=
   ((volume : Measure E3).toSphere Set.univ)⁻¹ • (volume : Measure E3).toSphere
@@ -21,10 +25,6 @@ noncomputable def dgPoly (k : ℕ) : MvPolynomial (Fin 2) ℝ :=
 noncomputable def kappa (k : ℕ) : ℝ :=
   -∫ n₁ : S2, ∫ n₂ : S2, (1 / 2 : ℝ) * Real.log ((1 - inner ℝ (n₁ : E3) (n₂ : E3)) / 2) *
       MvPolynomial.eval ![(n₁ : E3) 2, (n₂ : E3) 2] (dgPoly k) ∂sphereMeasure ∂sphereMeasure
-
-def Kappa1Statement : Prop := kappa 1 = 1 / 2
-
-def Kappa2Statement : Prop := kappa 2 = 2 / 3
 
 def SphereInvStatement : Prop :=
   IsProbabilityMeasure sphereMeasure ∧

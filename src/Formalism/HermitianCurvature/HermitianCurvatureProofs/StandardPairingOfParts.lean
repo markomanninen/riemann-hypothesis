@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WordCorrespondence
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContinuousHsInner
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WordCorrespondence
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContinuousHsInner
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTKLineCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreKLAtMost
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreKLExistsOfAlg
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ProductIntervalFrames
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTKLineCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreKLAtMost
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreKLExistsOfAlg
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ProductIntervalFrames
+
+@[expose] public section
 
 open Matrix Finset Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 

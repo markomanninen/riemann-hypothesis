@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffHasse
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapQuotBijective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompletionEmbedding
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DegreeCountGenerates
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClassGroupNthPowerOfCodimOneMod
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalBoundedIn
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JetsMemSubalgebraOfFiniteType
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CcSubst
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsNeZeroForallPointExtendSubalgebra
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasseDerivativePowerSeriesMulSubstLeibnizStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasseJetVanishingMemPowStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFinrankQuotientSpanModEqOneStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSeparableNormalisationReducedFibresStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffHasse
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapQuotBijective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompletionEmbedding
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DegreeCountGenerates
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClassGroupNthPowerOfCodimOneMod
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalBoundedIn
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JetsMemSubalgebraOfFiniteType
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CcSubst
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsNeZeroForallPointExtendSubalgebra
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasseDerivativePowerSeriesMulSubstLeibnizStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasseJetVanishingMemPowStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFinrankQuotientSpanModEqOneStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSeparableNormalisationReducedFibresStatement
+
+@[expose] public section
 
 open Polynomial
 
@@ -49,14 +53,28 @@ theorem not_mem_pow_succ {A : Type} [CommRing A] [IsDedekindDomain A] {N : ℕ} 
   · rcases hp.dvd_or_dvd h with h | h
     · exact hQP i (hP₀.eq_of_le (hQmax i).ne_top (Ideal.le_of_dvd h)).symm
     · exact hDQ i (Ideal.le_of_dvd h)
-  · obtain ⟨j, hj, hji⟩ := (hp.dvd_finset_prod_iff _).mp h
+  · have hex : ∀ s : Finset I, Q i ∣ ∏ j ∈ s, Q j ^ N →
+        ∃ j ∈ s, Q i ∣ Q j ^ N := by
+      intro s
+      induction s using Finset.induction_on with
+      | empty =>
+        intro hd
+        exact (hp.not_dvd_one (by simpa only [Finset.prod_empty] using hd)).elim
+      | @insert a s ha ih =>
+        simp only [Finset.prod_insert ha, Finset.mem_insert, exists_eq_or_imp]
+        intro hd
+        rcases hp.dvd_or_dvd hd with hd | hd
+        · exact Or.inl hd
+        · exact Or.inr (ih hd)
+    obtain ⟨j, hj, hji⟩ := hex _ h
     have hle : Q j ≤ Q i := Ideal.le_of_dvd (hp.dvd_of_dvd_pow hji)
     exact (Finset.mem_erase.mp hj).1 (hQinj ((hQmax j).eq_of_le (hQmax i).ne_top hle))
 
 theorem coeff_map_sum {k A : Type} [Field k] [CommRing A] [Algebra k A] {m : ℕ}
     (σ : A →ₐ[k] PowerSeries k) (v : Fin m → A) (c : Fin m → k) (l : ℕ) :
     ∑ j, c j * PowerSeries.coeff l (σ (v j)) = PowerSeries.coeff l (σ (∑ j, c j • v j)) := by
-  simp [map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul]
 
 theorem formal_deformation : ∀ (k A : Type) [Field k] [IsAlgClosed k] [CommRing A] [IsDedekindDomain A] [Algebra k A] [Algebra.FiniteType k A] (N : ℕ) (I : Type) [Fintype I] (V : Submodule k A) (D P₀ : Ideal A) (Q : I → Ideal A) (f₀ : A), 2 ≤ N → (N : k) ≠ 0 → P₀.IsMaximal → (FiniteDimensional k V ∧ (∀ v ∈ V, v ∈ D) ∧ (∀ i, (Q i).IsMaximal) ∧ Function.Injective Q ∧ (∀ i, Q i ≠ P₀) ∧ (∀ i, ¬ D ≤ Q i) ∧ ¬ D ≤ P₀ ∧ f₀ ∈ V ∧ f₀ ≠ 0 ∧ Ideal.span {f₀} = P₀ * D * ∏ i, Q i ^ N ∧ (∀ u : A, ∃ v ∈ V, u - v ∈ P₀ * ∏ i, Q i ^ (N - 1))) → ∃ (ξ : A →ₐ[k] PowerSeries k) (Δ : I → ℕ → A →ₗ[k] PowerSeries k) (m : ℕ) (v : Fin m → A) (y : Fin m → PowerSeries k),
   Function.Injective ξ ∧ (∀ i, Δ i 0 1 = 1) ∧ (∀ i, (∀ l, ∀ u w : A, Δ i l (u * w) = ∑ p ∈ Finset.range (l + 1), Δ i p u * Δ i (l - p) w)) ∧ (∀ i, ∃ π : A, Δ i 1 π = 1) ∧
@@ -323,7 +341,8 @@ theorem specialise_generic_solution_hasse : ∀ (k A : Type) [Field k] [IsAlgClo
     apply GlobalTheory.T.exists_maximal_mem_pow_of_hasse_vanishing k A N (Δ' i) hN
     · rw [hΔ' i 0 hN0, h01 i, hone]
     · intro l hl u w
-      rw [hΔ' i l hl, hleib i l u w, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hΔ' i l hl, hleib i l u w, map_sum]
       refine Finset.sum_congr rfl fun p hp => ?_
       have hp' : p < l + 1 := Finset.mem_range.1 hp
       rw [hmul _ (hSΔ i p (by omega) u) _ (hSΔ i (l - p) (by omega) w),
@@ -371,7 +390,8 @@ theorem specialise_generic_solution_hasse : ∀ (k A : Type) [Field k] [IsAlgClo
     exact hunit _ (hy j0) hj0 (hTS _ (by simp [T])) this
   · apply (hφ f).2
     have : φ f = L (∑ j, y j * ξ (v j)) := by
-      simp only [f, map_sum, map_smul, smul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [f, map_sum, map_smul, smul_eq_mul]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [hmul _ (hy j) _ (hξS _), hLξ]
     rw [this, heq0, map_zero]
@@ -379,7 +399,8 @@ theorem specialise_generic_solution_hasse : ∀ (k A : Type) [Field k] [IsAlgClo
     apply hQpow i
     intro l hl
     have : Δ' i l f = L (∑ j, y j * Δ i l (v j)) := by
-      simp only [f, map_sum, map_smul, smul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [f, map_sum, map_smul, smul_eq_mul]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [hmul _ (hy j) _ (hSΔ i l hl _), hΔ' i l hl]
     rw [this, heqΔ i l hl, map_zero]
@@ -460,7 +481,7 @@ namespace GlobalTheory.PicDiv
 theorem injective_of_finite_not_field (k B : Type) [Field k] [IsAlgClosed k] [CommRing B] [IsDomain B]
     [Algebra k B] (y : B) (hfin : (Polynomial.aeval (R := k) y).Finite) (hB : ¬ IsField B) :
     Function.Injective (Polynomial.aeval (R := k) y) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro p hp
   by_contra hp0
   have hint : IsIntegral k y := (isAlgebraic_iff_isIntegral).mp ⟨p, hp0, hp⟩
@@ -525,7 +546,7 @@ theorem pic_divisible : ∀ (k B : Type) [Field k] [IsAlgClosed k] [CommRing B] 
     rw [hmap, Polynomial.algebraMap_eq, Polynomial.aeval_C])
   haveI : Module.Finite k[X] B := hfin
   have hinj : Function.Injective (algebraMap k[X] B) := injective_of_finite_not_field k B y hfin hfield
-  haveI : Module.IsTorsionFree k[X] B := (NoZeroSMulDivisors.iff_algebraMap_injective).mpr hinj
+  haveI : Module.IsTorsionFree k[X] B := Module.isTorsionFree_iff_algebraMap_injective.mpr hinj
   haveI : Module.Free k[X] B := Module.free_of_finite_type_torsion_free'
   have hred' : (∃ δ : k[X], δ ≠ 0 ∧ ∀ α : k, δ.eval α ≠ 0 → ∀ Q : Ideal B, Q.IsMaximal → algebraMap k[X] B (X - C α) ∉ Q ^ 2) := by
     obtain ⟨δ, hδ0, hδ⟩ := hred

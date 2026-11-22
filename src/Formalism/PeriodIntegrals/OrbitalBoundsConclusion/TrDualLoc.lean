@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.TrDualLoc
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TraceDualLocal.Imports
+module
+
+public import Formalism.PeriodIntegrals.TrDualLoc
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TraceDualLocal.Imports
+
+@[expose] public section
 
 theorem trace_dual_local : PI.TrDualLoc.Stmt := by
   intro K _ _ p _ Fp _ _ _ _ _ hc hfin ι hd _ t ht c hcO

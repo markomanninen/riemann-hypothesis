@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.WhittakerVanishingImpliesZero
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.WhittakerVanishingImpliesZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,37 +46,44 @@ theorem norm_whit_le (hψ : StdPsi ψ) (m : ℕ) {f : GA E a → ℂ} {C : ℝ} 
     exact ih (fun g => norm_colT_le hψ (m + 1) h0 hf g) g
 
 theorem good_add {m : ℕ} {f f' : GA E a → ℂ} (hf : Good ψ m f) (hf' : Good ψ m f') :
-    Good ψ m (fun g => f g + f' g) where
-  cont := hf.cont.add hf'.cont
-  left γ hγ g := by simp only [hf.left γ hγ g, hf'.left γ hγ g]
-  law k hk y g := by simp only [hf.law k hk y g, hf'.law k hk y g, mul_add]
-  van r hr hrm g := by
+    Good ψ m (fun g => f g + f' g) := by
+  refine ⟨hf.cont.add hf'.cont, ?_, ?_, ?_⟩
+  · intro γ hγ g
+    simp only [hf.left γ hγ g, hf'.left γ hγ g]
+  · intro k hk y g
+    simp only [hf.law k hk y g, hf'.law k hk y g, mul_add]
+  · intro r hr hrm g
     have := GlobalTheory.T.quotientAverage_add_of_periodic _ (ratV E (UnipotentBlockColumnIndex a r m)) (isCoLat_ratV E _) _ _
       (per_blk hf.cont (fun c g => hf.left _ (isMir_blkU c) g) g)
       (per_blk hf'.cont (fun c g => hf'.left _ (isMir_blkU c) g) g)
     rw [this, hf.van r hr hrm g, hf'.van r hr hrm g, add_zero]
 
-theorem good_smul (c : ℂ) {m : ℕ} {f : GA E a → ℂ} (hf : Good ψ m f) : Good ψ m (fun g => c * f g) where
-  cont := continuous_const.mul hf.cont
-  left γ hγ g := by simp only [hf.left γ hγ g]
-  law k hk y g := by simp only [hf.law k hk y g]; ring
-  van r hr hrm g := by
+theorem good_smul (c : ℂ) {m : ℕ} {f : GA E a → ℂ} (hf : Good ψ m f) : Good ψ m (fun g => c * f g) := by
+  refine ⟨continuous_const.mul hf.cont, ?_, ?_, ?_⟩
+  · intro γ hγ g
+    simp only [hf.left γ hγ g]
+  · intro k hk y g
+    simp only [hf.law k hk y g]
+    ring
+  · intro r hr hrm g
     show avg _ (fun x => c * f (blkU x * g)) = 0
     rw [avg_const_mul, hf.van r hr hrm g, mul_zero]
 
-theorem good_zero (m : ℕ) : Good ψ m (fun _ : GA E a => (0 : ℂ)) where
-  cont := continuous_const
-  left _ _ _ := rfl
-  law _ _ _ _ := by simp
-  van r _ _ g := by
+theorem good_zero (m : ℕ) : Good ψ m (fun _ : GA E a => (0 : ℂ)) := by
+  refine ⟨continuous_const, fun _ _ _ => rfl, ?_, ?_⟩
+  · intro _ _ _ _
+    simp
+  · intro r _ _ g
     have := avg_const_mul (ratV E (UnipotentBlockColumnIndex a r m)) 0 (fun _ => 0)
     simpa using this
 
-theorem good_rt {m : ℕ} {f : GA E a → ℂ} (hf : Good ψ m f) (h : GA E a) : Good ψ m (fun x => f (x * h)) where
-  cont := hf.cont.comp (continuous_id.mul continuous_const)
-  left γ hγ g := by simp only [mul_assoc, hf.left γ hγ (g * h)]
-  law k hk y g := by simp only [mul_assoc, hf.law k hk y (g * h)]
-  van r hr hrm g := by
+theorem good_rt {m : ℕ} {f : GA E a → ℂ} (hf : Good ψ m f) (h : GA E a) : Good ψ m (fun x => f (x * h)) := by
+  refine ⟨hf.cont.comp (continuous_id.mul continuous_const), ?_, ?_, ?_⟩
+  · intro γ hγ g
+    simp only [mul_assoc, hf.left γ hγ (g * h)]
+  · intro k hk y g
+    simp only [mul_assoc, hf.law k hk y (g * h)]
+  · intro r hr hrm g
     simp only [mul_assoc]
     exact hf.van r hr hrm (g * h)
 
@@ -81,8 +92,8 @@ theorem dot_eLast (k : ℕ) (y : UnipotentBlockColumnIndex a k k → Ad E) : dot
   refine Finset.sum_congr rfl fun t _ => ?_
   split_ifs <;> simp
 
-variable (E a) in
 
+variable (E a) in
 def Yg (hψ : StdPsi ψ) : Submodule ℂ (XB E a) where
   carrier := {φ | Good ψ (a - 1) φ}
   add_mem' h h' := good_add h h'

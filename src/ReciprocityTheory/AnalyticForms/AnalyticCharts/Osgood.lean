@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.OsgoodA
+module
+
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.OsgoodA
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,7 +130,50 @@ def fctlCLM (c : Fin n → ℂ) {r : ℝ} (hr : 0 < r) (f : (Fin n → ℂ) → 
 theorem fctlCLM_kern {c z : Fin n → ℂ} {r : ℝ} (hr : 0 < r) {f : (Fin n → ℂ) → ℂ}
     (hf : ∀ ζ ∈ closedBall c r, DifferentiableAt ℂ f ζ) (hz : z ∈ ball c r) :
     fctlCLM c hr f hf (kern c r z) = (2 * π * I) ^ n * f z := by
-  rw [← cauchy_polydisc n f c r hr hf z hz]
+  have hcauchy : ∀ (m : ℕ) (g : (Fin m → ℂ) → ℂ) (a : Fin m → ℂ),
+      (∀ ζ ∈ closedBall a r, DifferentiableAt ℂ g ζ) → ∀ w ∈ ball a r,
+      (∯ ζ in T(a, fun _ => r), (∏ i, (ζ i - w i)⁻¹) * g ζ) = (2 * π * I) ^ m * g w := by
+    intro m
+    induction m with
+    | zero =>
+      intro g a _ w _
+      rw [torusIntegral_dim0]
+      simp [Subsingleton.elim w a]
+    | succ m ih =>
+      intro g a hg w hw
+      rw [torusIntegral_succ (torusIntegrable_kernel hr hg hw)]
+      have hw₀ : w 0 ∈ ball (a 0) r := (mem_ball_pi_iff hr).mp hw 0
+      have hwTail : Fin.tail w ∈ ball (a ∘ Fin.succ) r :=
+        (mem_ball_pi_iff hr).mpr fun i => (mem_ball_pi_iff hr).mp hw i.succ
+      have hcons : ∀ x ∈ closedBall (a 0) r, ∀ y ∈ closedBall (a ∘ Fin.succ) r,
+          Fin.cons x y ∈ closedBall a r := by
+        intro x hx y hy
+        refine (mem_closedBall_pi_iff hr.le).mpr (Fin.cases ?_ fun j => ?_)
+        · simpa using hx
+        · simpa using (mem_closedBall_pi_iff hr.le).mp hy j
+      have hslice : EqOn (fun x => ∯ y in T(a ∘ Fin.succ, (fun _ => r) ∘ Fin.succ),
+            (∏ i, (Fin.cons x y i - w i)⁻¹) * g (Fin.cons x y))
+          (fun x => (2 * π * I) ^ m * ((x - w 0)⁻¹ * g (Fin.cons x (Fin.tail w))))
+          (sphere (a 0) r) := by
+        intro x hx
+        have hxc := sphere_subset_closedBall hx
+        have htail := ih (fun y => g (Fin.cons x y)) (a ∘ Fin.succ)
+          (fun ζ hζ => (hg _ (hcons x hxc ζ hζ)).comp ζ (differentiable_cons_right x ζ))
+          (Fin.tail w) hwTail
+        simp only [Fin.prod_univ_succ, Fin.cons_zero, Fin.cons_succ, Function.comp_def, mul_assoc]
+        rw [torusIntegral_const_mul]
+        simp only [Fin.tail, Function.comp_def] at htail
+        rw [htail]
+        ring
+      rw [circleIntegral.integral_congr hr.le hslice, circleIntegral.integral_const_mul]
+      have hd : DifferentiableOn ℂ (fun x => g (Fin.cons x (Fin.tail w))) (closedBall (a 0) r) :=
+        fun x hx => ((hg _ (hcons x hx _ (ball_subset_closedBall hwTail))).comp x
+          (differentiable_cons_left (Fin.tail w) x)).differentiableWithinAt
+      have hcircle := hd.circleIntegral_sub_inv_smul hw₀
+      simp only [smul_eq_mul] at hcircle
+      rw [hcircle, Fin.cons_self_tail, pow_succ]
+      ring
+  rw [← hcauchy n f c hf z hz]
   show fctl c r f (kern c r z) = _
   unfold fctl torusIntegral
   refine setIntegral_congr_fun measurableSet_Icc fun θ hθ => ?_

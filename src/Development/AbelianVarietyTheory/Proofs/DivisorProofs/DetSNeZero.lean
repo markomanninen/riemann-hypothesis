@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataTheta
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsBilinearFischerPairingMatrixEntryPolynomia
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataTheta
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsBilinearFischerPairingMatrixEntryPolynomia
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,14 +57,8 @@ def opS (k' : ℕ) : Ix P Q → Ix P Q → Module.End ℂ (Mdl P Q)
 def actR (k : ℕ) : Mat P Q →ₗ[ℂ] Module.End ℂ (Mdl P Q) :=
   ∑ i, ∑ j, (Matrix.entryLinearMap ℂ ℂ i j).smulRight (opR P Q R k i j)
 
-def actS (k' : ℕ) : Mat P Q →ₗ[ℂ] Module.End ℂ (Mdl P Q) :=
-  ∑ i, ∑ j, (Matrix.entryLinearMap ℂ ℂ i j).smulRight (opS P Q S k' i j)
-
 theorem actR_apply (k : ℕ) (Z : Mat P Q) : actR P Q R k Z = ∑ i, ∑ j, Z i j • opR P Q R k i j := by
   simp [actR, LinearMap.sum_apply]
-
-theorem actS_apply (k' : ℕ) (Z : Mat P Q) : actS P Q S k' Z = ∑ i, ∑ j, Z i j • opS P Q S k' i j := by
-  simp [actS, LinearMap.sum_apply]
 
 theorem detR_ne_zero (P Q R : ℕ) (h : P ≤ R) : detR P Q R h ≠ 0 := by
   let g : Fin P × Fin P → Ix P Q × Ix R 0 := fun ac => (Sum.inl ac.1, Sum.inl (Fin.castLE h ac.2))

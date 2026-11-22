@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsTjCorrDiagModel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsTjCorrDiagModel
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.ES
 
@@ -61,7 +66,7 @@ theorem uIdeal_sup_comap_bar_and_mul_le : ∀ (p : ℕ) [Fact p.Prime] (D : Datu
     obtain ⟨b1, b2, hb12⟩ := Ideal.mem_span_pair.1 hb
     have hb' : b = D.bar b1 * p + D.bar b2 * (D.bar D.ω - r) := by
       have := congrArg D.bar hb12
-      rw [hbb, map_add, map_mul, map_mul, map_natCast, map_sub, map_intCast] at this
+      rw [hbb, map_add (f := _), map_mul, map_mul, map_natCast, map_sub, map_intCast] at this
       exact this.symm
     subst hb'
     have h0 := hn0

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.LevelStarExponents Formalism.MainNotions Formalism.MainNotions.Inhab GlobalTheory.EX NumberField
 
@@ -58,9 +62,5 @@ theorem szRow_exact : SzRow (fun C D L => (∀ τ (t : D.host.TT) (hm : 0 < D.R.
     have : 1 ≤ D.host.d := D.host.hyp.2.1.one_le
     simp only [Nat.cast_one, one_mul]
     exact_mod_cast this
-
-theorem szRow_mu : SzRow (fun _ D _ => ∀ j : Fin D.R.m, UpperTheory.MUQ (fun τ => D.host.emb (D.eTau τ : D.R.GG)) (fun τ => (D.hc τ).e j)) := by
-  intro eps _ _ C _
-  exact ⟨0, fun cD _ => ⟨0, fun ch _ => ⟨0, fun D L _ _ hV => hV.hc.2.2.2⟩⟩⟩
 
 end GlobalTheory.EX

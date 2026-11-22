@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.HasLevel
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RegPolOfRepOf
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.Imports
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.ArthurClozelStrongTC
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsComplementaryProductOfIsCuspidal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyLocalIntegralPointsMemOpenSubgroupDefi
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousRetractionOntoUnitaryLocalPoints
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.HasLevel
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RegPolOfRepOf
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.Imports
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.ArthurClozelStrongTC
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsComplementaryProductOfIsCuspidal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyLocalIntegralPointsMemOpenSubgroupDefi
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousRetractionOntoUnitaryLocalPoints
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -21,7 +26,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {a : ℕ}
 theorem rU_mul (x y : UA E a) (f : UA E a → ℂ) : RU E a (x * y) f = RU E a x (RU E a y f) := by
   rw [map_mul]; rfl
 
-theorem locU_le_finU (w : HeightOneSpectrum (𝓞 E)) : locU a w ≤ finU E a :=
+theorem locU_le_finU (w : HeightOneSpectrum (𝓞 E)) : locU a w ≤ finU (E := E) (n := a) :=
   fun _ hx => (Subgroup.mem_inf.1 hx).1
 
 theorem commute_of_apart {w u : HeightOneSpectrum (𝓞 E)} (h : Apart w u) {x y : UA E a}
@@ -48,7 +53,8 @@ theorem avg_apply (f : UA E a → ℂ) :
 
 theorem avg_comm {c : UA E a} (hc : ∀ k ∈ K, Commute c k) (f : UA E a → ℂ) :
     avg K K' (RU E a c f) = RU E a c (avg K K' f) := by
-  rw [avg_apply, avg_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [avg_apply, avg_apply, map_sum]
   refine Finset.sum_congr rfl fun q _ => ?_
   rw [← rU_mul, ← rU_mul, (hc _ (Quotient.out q).2).eq]
 
@@ -61,7 +67,8 @@ set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
 theorem avg_fixed {f : UA E a → ℂ} (hf : ∀ k ∈ K', RU E a ((k : K) : UA E a) f = f) (k : UA E a) (hk : k ∈ K) :
     RU E a k (avg K K' f) = avg K K' f := by
-  rw [avg_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [avg_apply, map_sum]
   have key : ∀ q : K ⧸ K', RU E a k (RU E a ((Quotient.out q : K) : UA E a) f) =
       RU E a ((Quotient.out ((⟨k, hk⟩ : K) • q) : K) : UA E a) f := by
     intro q
@@ -118,7 +125,7 @@ theorem mend (U : Submodule ℂ (UA E a → ℂ)) (hU : IsAutRepU U) (w : Height
     intro g
     rw [← rU_mul, (hd g (r g) (hr g)).eq, mul_inv_cancel_left]
 
-  have hKf : K ≤ finU E a := hKw.trans (locU_le_finU w)
+  have hKf : K ≤ finU (E := E) (n := a) := hKw.trans (locU_le_finU w)
   haveI : CompactSpace K := isCompact_iff_compactSpace.1 hKc
   let K' : Subgroup K :=
     { carrier := {k | ∀ g ∈ c.support, RU E a (k : UA E a) (RU E a (r g) φ) = RU E a (r g) φ}
@@ -142,13 +149,14 @@ theorem mend (U : Submodule ℂ (UA E a → ℂ)) (hU : IsAutRepU U) (w : Height
     rw [e]
     refine isOpen_biInter_finset fun g _ => ?_
     have ho := (hU.aut _ (hU.stable (r g) φ hφU)).level
-    have hcont : Continuous fun k : K => (⟨(k : UA E a), hKf k.2⟩ : finU E a) :=
+    have hcont : Continuous fun k : K => (⟨(k : UA E a), hKf k.2⟩ : finU (E := E) (n := a)) :=
       continuous_subtype_val.subtype_mk _
     exact ho.preimage hcont
   haveI : Finite (K ⧸ K') := Subgroup.quotient_finite_of_isOpen K' hK'o
   letI : Fintype (K ⧸ K') := Fintype.ofFinite _
   have hA : avg K K' φw = c.sum fun g b => b • RU E a ((r g)⁻¹ * g) (avg K K' (RU E a (r g) φ)) := by
-    rw [← hc, Finsupp.sum, Finsupp.sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hc, Finsupp.sum, Finsupp.sum, map_sum]
     refine Finset.sum_congr rfl fun g _ => ?_
     rw [map_smul, hsplit g, avg_comm K K' (fun k hk => hd g k (hKw hk))]
   by_cases h0 : ∀ g ∈ c.support, avg K K' (RU E a (r g) φ) = 0
@@ -169,11 +177,11 @@ theorem mend (U : Submodule ℂ (UA E a → ℂ)) (hU : IsAutRepU U) (w : Height
     · intro y hy hyφ
       rw [← avg_comm K K' (fun k hk => hy k (hKw hk)), ← rU_mul, (hy (r g) (hr g)).eq, rU_mul, hyφ]
 
-theorem fix_prod : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (a : ℕ) (U : Submodule ℂ (UA E a → ℂ)), IsAutRepU U → ∀ (w₀ : HeightOneSpectrum (𝓞 E)) (K : HeightOneSpectrum (𝓞 E) → Subgroup (UA E a)), (∀ w, K w ≤ locU a w) → (∀ w u, ¬ Apart w u → K w = K u) → (∀ w, IsCompact (K w : Set (UA E a))) → (∀ᶠ w in Filter.cofinite, ∀ x ∈ K w, cLoc w x ∈ GlobalTheory.LFun.KGL w a) → (∀ w, IsOpen ((K w).subgroupOf (locU a w) : Set (locU a w))) → (∀ w, Apart w w₀ → ∃ φ ∈ U, φ ≠ 0 ∧ ∀ x ∈ K w, RU E a x φ = φ) → ∃ φ ∈ U, φ ≠ 0 ∧ ∀ w, Apart w w₀ → ∀ x ∈ K w, RU E a x φ = φ := by
+theorem fix_prod : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (a : ℕ) (U : Submodule ℂ (UA E a → ℂ)), IsAutRepU U → ∀ (w₀ : HeightOneSpectrum (𝓞 E)) (K : HeightOneSpectrum (𝓞 E) → Subgroup (UA E a)), (∀ w, K w ≤ locU a w) → (∀ w u, ¬ Apart w u → K w = K u) → (∀ w, IsCompact (K w : Set (UA E a))) → (∀ᶠ w in Filter.cofinite, ∀ x ∈ K w, cLoc w x ∈ GlobalTheory.LFun.KGL w (n := a)) → (∀ w, IsOpen ((K w).subgroupOf (locU a w) : Set (locU a w))) → (∀ w, Apart w w₀ → ∃ φ ∈ U, φ ≠ 0 ∧ ∀ x ∈ K w, RU E a x φ = φ) → ∃ φ ∈ U, φ ≠ 0 ∧ ∀ w, Apart w w₀ → ∀ x ∈ K w, RU E a x φ = φ := by
   intro E _ _ _ a U hU w₀ K hKl hKeq hKc hKint _ hφ'
   classical
   obtain ⟨φ₀, hφ₀U, hφ₀⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hU.ne_bot
-  let L : Subgroup (finU E a) :=
+  let L : Subgroup (finU (E := E) (n := a)) :=
     { carrier := {k | RU E a (k : UA E a) φ₀ = φ₀}
       mul_mem' := fun {x y} hx hy => by
         show RU E a ((x : UA E a) * (y : UA E a)) φ₀ = φ₀
@@ -187,7 +195,7 @@ theorem fix_prod : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (a : �
         have hx' : RU E a (x : UA E a) φ₀ = φ₀ := hx
         calc _ = RU E a ((x : UA E a)⁻¹) (RU E a (x : UA E a) φ₀) := by rw [hx']
           _ = _ := by rw [← rU_mul, inv_mul_cancel, map_one]; rfl }
-  have hLo : IsOpen (L : Set (finU E a)) := (hU.aut φ₀ hφ₀U).level
+  have hLo : IsOpen (L : Set (finU (E := E) (n := a))) := (hU.aut φ₀ hφ₀U).level
   have hev := GlobalTheory.BCT.GlobLev.eventually_locU_mem E a L hLo
   have hgood : ∀ᶠ w in Filter.cofinite, ∀ x ∈ K w, RU E a x φ₀ = φ₀ := by
     filter_upwards [hev, hKint] with w h1 h2 x hx

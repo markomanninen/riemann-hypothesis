@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.IsTheta
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.NotIsGenericDetRepTwo
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.IsTheta
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.NotIsGenericDetRepTwo
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,7 +85,7 @@ def LocE : Prop :=
         fixd τ (Kc k n 1) ≠ ⊥ → Module.rank ℂ ↥(fixd τ (Kc k n 1) ⊓ ePart τ a (Nat.card 𝓀[k] ^ j)) = D
 
 def KirCusp : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ), 1 ≤ n → ∀ (π : CuspSub E n) (w : HeightOneSpectrum (𝓞 E))
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ), 1 ≤ n → ∀ (π : CuspSub E n) (w : HeightOneSpectrum (𝓞 E))
     (σ : SmIrr (GL (Fin n) (w.adicCompletion E))), π.IsLocComp w σ → Kir σ.ρ
 
 end UpperTheory.V.Z.Desc.V0

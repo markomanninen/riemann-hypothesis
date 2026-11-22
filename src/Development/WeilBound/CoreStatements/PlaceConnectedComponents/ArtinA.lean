@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.GaloisValuations.Global
+module
+
+public import Mathlib
+public import ReciprocityTheory.GaloisValuations.Global
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ namespace PositivityTheory.FamInh
 variable {K L Ω : Type} [Field K] [NumberField K] [Field L] [NumberField L] [Field Ω] [Algebra K L] [Algebra L Ω]
   [Algebra K Ω] [IsScalarTower K L Ω] [IsAlgClosure K Ω] [IsAlgClosure L Ω]
 
-omit [IsAlgClosure K Ω] in
 
+omit [IsAlgClosure K Ω] in
 theorem exists_place_between {A : ValuationSubring Ω} {v : HeightOneSpectrum (𝓞 K)} (hA : IsPlaceOver A v) :
     ∃ w : HeightOneSpectrum (𝓞 L), IsPlaceOver A w ∧ w.asIdeal.LiesOver v.asIdeal := by
   let P : Ideal (𝓞 L) := (primeBelow (F := L) A).under (𝓞 L)
@@ -161,8 +165,8 @@ theorem exists_lift_ine (hw : IsPlaceOver A w) {τ : L ≃ₐ[K] L} (hτ : τ �
     exact hcong ⟨b, hb.tower_top⟩
   · rw [map_mul, map_inv, res_restrictScalars, inv_one, one_mul]
 
-omit [IsAlgClosure K Ω] [IsAlgClosure L Ω] in
 
+omit [IsAlgClosure K Ω] [IsAlgClosure L Ω] in
 theorem inertia_eq_bot_iff (v : HeightOneSpectrum (𝓞 K)) (w : HeightOneSpectrum (𝓞 L))
     [w.asIdeal.LiesOver v.asIdeal] :
     w.asIdeal.inertia (L ≃ₐ[K] L) = ⊥ ↔ w.asIdeal.ramificationIdx (𝓞 K) = 1 := by

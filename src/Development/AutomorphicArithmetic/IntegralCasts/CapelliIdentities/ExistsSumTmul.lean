@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qj2.exists_sum_tmul :
     ∀ {R O B σ : Type} [inst : CommRing R]

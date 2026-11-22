@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.LemmaBStatement
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.LemmaBStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 

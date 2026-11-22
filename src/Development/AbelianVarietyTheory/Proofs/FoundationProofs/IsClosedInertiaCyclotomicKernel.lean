@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotZeroChi
-import Development.AbelianVarietyTheory.Definitions.Foundations.ZetaSysUOfHalves
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContinuousToZModPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTLawAt
+public import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ZetaUr
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsLocallyConstantCycMod
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContinuousToZModPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +37,6 @@ theorem isClosed_setOf_apply [Algebra.IsAlgebraic ℚ Ω] (x : Ω) (P : Ω → P
   have h := isOpen_setOf_apply x (fun y => ¬ P y)
   rw [← isOpen_compl_iff]
   convert h using 1
-  ext σ; simp
 
 theorem mem_dec_of_forall {A : ValuationSubring Ω} {σ : G ℚ Ω} (h : ∀ x, σ x ∈ A ↔ x ∈ A) :
     σ ∈ A.decompositionSubgroup ℚ := by
@@ -84,8 +88,8 @@ theorem isClosed_ker_cycMod (l : ℕ) [Fact l.Prime] (m : ℕ) :
 
 end GlobalTheory.InertiaClosed
 
-open GlobalTheory.InertiaClosed in
 
+open GlobalTheory.InertiaClosed in
 theorem GlobalTheory.isClosed_Ine_inf_ker_cycMod : ∀ (l : ℕ) [Fact l.Prime] (Ω : Type) [Field Ω] [Algebra ℚ Ω]
     [Algebra.IsAlgebraic ℚ Ω] (A : ValuationSubring Ω) (m : ℕ),
     IsClosed ((Ine (F := ℚ) A ⊓ (cycMod ℚ Ω l m).ker : Subgroup (G ℚ Ω)) : Set (G ℚ Ω)) := by

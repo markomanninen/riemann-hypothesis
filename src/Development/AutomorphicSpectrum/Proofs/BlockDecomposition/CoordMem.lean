@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -16,13 +20,13 @@ variable {Λ : Type} [CommRing Λ] {C : Type 1} [Category.{0} C] {F : C ⥤ Modu
   {T₁ T₂ : C} {ι : Type} (e : (ι →₀ F.obj T₁) ≃ₗ[Λ] F.obj T₂)
   (he : ∀ r z, e z ∈ (Φ.S r).S T₂ ↔ ∀ a, z a ∈ (Φ.S r).S T₁)
 
-include he in
 
+include he in
 theorem coord_mem (r : ℕ) (w : F.obj T₂) (hw : w ∈ (Φ.S r).S T₂) (a : ι) : e.symm w a ∈ (Φ.S r).S T₁ :=
   (he r _).1 (by simpa using hw) a
 
-include he in
 
+include he in
 theorem filt_mem (p : ι → Prop) (r : ℕ) (w : F.obj T₂) (hw : w ∈ (Φ.S r).S T₂) :
     e (Finsupp.filter p (e.symm w)) ∈ (Φ.S r).S T₂ := by
   refine (he r _).2 fun a => ?_
@@ -68,8 +72,8 @@ def fl (p : ι → Prop) : Φ.Pr T₂ →ₗ[ℤ[X]] Φ.Pr T₂ :=
 theorem fl_coe (p : ι → Prop) (x : Φ.Pr T₂) (r : ℕ) :
     (fl Φ e he p x r).1 = e (Finsupp.filter p (e.symm (x r).1)) := rfl
 
-omit he in
 
+omit he in
 theorem diag {φ₂ : T₂ ⟶ T₂} {φ₁ : T₁ ⟶ T₁} {c : ι → Λ}
     (hd : ∀ a m, (F.map φ₂).hom (e (Finsupp.single a m)) = e (Finsupp.single a (c a • (F.map φ₁).hom m)))
     (w : F.obj T₂) (a : ι) : e.symm ((F.map φ₂).hom w) a = c a • (F.map φ₁).hom (e.symm w a) := by
@@ -77,7 +81,7 @@ theorem diag {φ₂ : T₂ ⟶ T₂} {φ₁ : T₁ ⟶ T₁} {c : ι → Λ}
   rw [e.symm_apply_apply]
   induction z using Finsupp.induction_linear with
   | zero => simp
-  | add f g hf hg => simp only [map_add, Finsupp.add_apply, smul_add, hf, hg]
+  | add f g hf hg => simp only [map_add (f := _), Finsupp.add_apply, smul_add, hf, hg]
   | single b m =>
     rw [hd, e.symm_apply_apply]
     by_cases h : b = a
@@ -154,11 +158,12 @@ theorem fl_sum {d : ℕ} {a₀ : ι} {t : T₁ ⟶ T₂} (ht : ∀ m, e (Finsupp
     map_sum (ev Φ T₂ r) (fun k => fl Φ e he (fun a => K a = some k) x) Finset.univ
   simp only [fl_coe] at h1
   refine (show ((Φ.prMap t (co Φ e he a₀ x)) r).1 + ((∑ k, fl Φ e he (fun a => K a = some k) x) r).1 = (x r).1 from ?_)
-  rw [h1, show ((Φ.prMap t (co Φ e he a₀ x)) r).1 = (F.map t).hom (e.symm (x r).1 a₀) from rfl, ← ht, ← map_sum, ← map_add]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, show ((Φ.prMap t (co Φ e he a₀ x)) r).1 = (F.map t).hom (e.symm (x r).1 a₀) from rfl, ← ht, ← map_sum, ← map_add (f := _)]
   apply e.symm.injective
   rw [e.symm_apply_apply]
   ext a
-  rw [Finsupp.add_apply, Finsupp.finset_sum_apply]
+  rw [Finsupp.add_apply, Finsupp.finsetSum_apply]
   cases hKa : K a with
   | none =>
     obtain rfl := hK a hKa

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.RhsWLim
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.VolumeLieE
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.RhsWLim
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.VolumeLieE
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ lemma wI_inj {a b : Fin (k + 1)} (h : wI k r a = wI k r b) : a = b := by
 lemma emb_out_col (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * r + k + 1)) (hj : ¬ mid k r j) :
     embWb k r μ q j = if q = j then 1 else 0 := by
   unfold embWb
-  rw [dif_neg (fun h => hj h.2)]
+  rw [dite_eq_right (fun h => hj h.2)]
   by_cases h : q = j
   · subst h; rw [if_pos ⟨rfl, hj⟩, if_pos rfl]
   · rw [if_neg (fun h' => h h'.1), if_neg h]
@@ -50,7 +54,7 @@ lemma emb_out_col (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * 
 lemma emb_out_row (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * r + k + 1)) (hq : ¬ mid k r q) :
     embWb k r μ q j = if q = j then 1 else 0 := by
   unfold embWb
-  rw [dif_neg (fun h => hq h.1)]
+  rw [dite_eq_right (fun h => hq h.1)]
   by_cases h : q = j
   · rw [if_pos ⟨h, hq⟩, if_pos h]
   · rw [if_neg (fun h' => h h'.1), if_neg h]
@@ -58,7 +62,7 @@ lemma emb_out_row (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * 
 lemma emb_mid (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * r + k + 1)) (hq : mid k r q) (hj : mid k r j) :
     embWb k r μ q j = μ (midx hq) (midx hj) := by
   unfold embWb
-  rw [dif_pos ⟨hq, hj⟩]
+  rw [dite_eq_left ⟨hq, hj⟩]
   rfl
 
 def Em (k r : ℕ) : Matrix (Fin (2 * r + k + 1)) (Fin (k + 1)) ℂ := fun i m => if i = wI k r m then 1 else 0

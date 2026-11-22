@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open TensorProduct Polynomial
 
 namespace GlobalTheory.NakAug
@@ -155,7 +160,7 @@ theorem augmentation_agrees_after_inverting
     refine Submodule.mul_induction_on hy (fun y1 hy1 y2 hy2 => ?_) (fun a b ha hb => ?_)
     · rw [map_mul, ← mul_assoc]
       exact Ideal.mul_mem_mul (hfαQ y1 hy1) (Ideal.mem_map_of_mem α hy2)
-    · rw [map_add, mul_add]; exact Ideal.add_mem _ ha hb
+    · rw [map_add (f := _), mul_add]; exact Ideal.add_mem _ ha hb
   have hKt : ∀ m ∈ K.restrictScalars A, (s * f) • m ∈ P • K.restrictScalars A := by
     intro m hm
     rw [← Ideal.smul_restrictScalars, Submodule.restrictScalars_mem, Ideal.smul_eq_mul,

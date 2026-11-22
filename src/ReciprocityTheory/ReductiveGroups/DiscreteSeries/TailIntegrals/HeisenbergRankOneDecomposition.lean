@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.StarLastDotLast
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.StarLastDotLast
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.IsogenySeparable
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.IsogenyFrobeniusSep
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.IsogenySeparable
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.IsogenyFrobeniusSep
+
+@[expose] public section
 
 namespace GroundTheory.Arith.Abelian
 
@@ -146,8 +150,8 @@ theorem comp_mulIsogeny (φ : Isogeny E E') (n : ℤ) (hn : n ≠ 0) :
     φ.comp (mulIsogeny E n hn) = (mulIsogeny E' n hn).comp φ :=
   Subtype.ext (by rw [comp_mulIsogeny_val, mulIsogeny_comp_val])
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem exists_lift (φ : Isogeny E E') {L : Type u} [Field L] [Algebra F L]
     (P : (E'.baseChange L).toAffine.Point) (hP : IsGenPt E' P) :
     ∃ τ : E.toAffine.FunctionField →ₐ[F] AlgebraicClosure L,
@@ -159,7 +163,11 @@ theorem exists_lift (φ : Isogeny E E') {L : Type u} [Field L] [Algebra F L]
   set j : M →ₐ[F] Ω := (ι.comp (genEval E' P hP)).comp φ.comap.equivFieldRange.symm.toAlgHom
   letI : Algebra M Ω := j.toRingHom.toAlgebra
   haveI : IsScalarTower F M Ω := IsScalarTower.of_algebraMap_eq fun c => (j.commutes c).symm
-  let τ₀ : E.toAffine.FunctionField →ₐ[M] Ω := IsAlgClosed.lift
+  let τ₀ : E.toAffine.FunctionField →ₐ[M] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨τ₀.restrictScalars F, AlgHom.ext fun f => ?_⟩
   have h1 := τ₀.commutes ⟨φ.comap f, f, rfl⟩
   have h2 : φ.comap.equivFieldRange.symm ⟨φ.comap f, f, rfl⟩ = f := by
@@ -264,16 +272,16 @@ theorem respectsAdd_dualPt : RespectsAdd E' E φ.dualPt := by
     have e₂ := happ P₂ h₂ τ₂ hτ₂
     rw [e₂, e₁] at e
     have : Point.map ι (P₁ + P₂) = constMap E' Ω (φ.pointMap c) := by
-      rw [map_add, e]; abel
+      rw [map_add (f := _), e]; abel
     have hg := isGenPt_map E' ι h₃
     rw [this] at hg
     exact not_isGenPt_constMap E' (φ.pointMap c) hg
   have hτ₃ : (genEval E (R₁ + R₂) hR₃).comp φ.comap = ι.comp (genEval E' (P₁ + P₂) h₃) := by
     rw [← genEval_app, ← genEval_map]
     apply genEval_congr
-    rw [φ.app_add hR₁ hR₂ hR₃, happ P₁ h₁ τ₁ hτ₁, happ P₂ h₂ τ₂ hτ₂, map_add]
+    rw [φ.app_add hR₁ hR₂ hR₃, happ P₁ h₁ τ₁ hτ₁, happ P₂ h₂ τ₂ hτ₂, map_add (f := _)]
   apply Point.map_injective (W' := E) ι
-  rw [map_add, φ.map_dualPt_of_lift _ h₁ τ₁ hτ₁, φ.map_dualPt_of_lift _ h₂ τ₂ hτ₂,
+  rw [map_add (f := _), φ.map_dualPt_of_lift _ h₁ τ₁ hτ₁, φ.map_dualPt_of_lift _ h₂ τ₂ hτ₂,
     φ.map_dualPt_of_lift _ h₃ _ hτ₃, map_genEval_genericPoint, zsmul_add]
 
 noncomputable def dual : Isogeny E' E :=
@@ -299,10 +307,6 @@ theorem degree_dual : φ.dual.degree = φ.degree := by
   have h := congrArg Isogeny.degree φ.dual_comp
   rw [degree_comp, degree_mulIsogeny, Int.natAbs_natCast, sq] at h
   exact Nat.eq_of_mul_eq_mul_right φ.degree_pos h
-
-theorem eq_dual_of_comp {ψ : Isogeny E' E}
-    (h : ψ.comp φ = mulIsogeny E φ.degree (Nat.cast_ne_zero.mpr φ.degree_pos.ne')) : ψ = φ.dual :=
-  comp_cancel_right φ (h.trans φ.dual_comp.symm)
 
 theorem pointMap_surjective : Function.Surjective φ.pointMap := by
   intro Q

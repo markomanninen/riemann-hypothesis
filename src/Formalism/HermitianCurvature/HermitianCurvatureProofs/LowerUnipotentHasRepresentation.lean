@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRCoreCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRDatumConst
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVectorEqZeta
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRCoreCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRDatumConst
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVectorEqZeta
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q NumberField
 open scoped ComplexConjugate Matrix
@@ -152,7 +156,7 @@ theorem annulus_polynomial_sigma (TT : ℝ) : AnnulusPolynomial TT (fun ζ => si
 theorem annulus_polynomial_add {TT : ℝ} {f g : ℂ → ℂ} (hf : AnnulusPolynomial TT f) (hg : AnnulusPolynomial TT g) : AnnulusPolynomial TT (fun ζ => f ζ + g ζ) := by
   obtain ⟨p, hp⟩ := hf
   obtain ⟨q, hq⟩ := hg
-  exact ⟨p + q, fun ζ hζ => by rw [map_add, ← hp ζ hζ, ← hq ζ hζ]⟩
+  exact ⟨p + q, fun ζ hζ => by rw [map_add (f := _), ← hp ζ hζ, ← hq ζ hζ]⟩
 
 theorem annulus_polynomial_mul {TT : ℝ} {f g : ℂ → ℂ} (hf : AnnulusPolynomial TT f) (hg : AnnulusPolynomial TT g) : AnnulusPolynomial TT (fun ζ => f ζ * g ζ) := by
   obtain ⟨p, hp⟩ := hf
@@ -298,7 +302,7 @@ theorem lower_unipotent_has_representation (hk : 1 ≤ k) (hz : inWb k r z) (hz'
     HasRep k r z z' (fun _ _ _ F ζ => Q.tL k r z z' (Fin.last r) Y 1 0 F (mu0 k r z z' ζ)) := by
   have hfv : fvec k r z (Fin.last r) = z := by
     unfold fvec
-    rw [dif_neg (by simp)]
+    rw [dite_eq_right (by simp)]
   refine hr_congr (hr_sum Finset.univ
     (fun i : Ix k r => fun E _ _ F ζ => ∑ j ∈ (Finset.univ : Finset (Ix k r)),
       (-((-1 : ℂ) ^ ((i : ℕ) + (j : ℕ)) * xbv k r z' (Fin.last r) i) * ((mu0 k r z z' ζ)⁻¹ *ᵥ z) (pL k r j)) •

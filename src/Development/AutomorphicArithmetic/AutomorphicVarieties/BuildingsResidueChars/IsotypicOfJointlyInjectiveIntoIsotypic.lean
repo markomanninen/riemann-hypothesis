@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EquivOfISupRange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EquivOfISupRange
+
+@[expose] public section
+
 open GlobalTheory.CuspRep
 
 private theorem iSup_range_of_jointly_injective {R M S N I : Type} [Ring R] [AddCommGroup M] [Module R M]
@@ -13,7 +18,7 @@ private theorem iSup_range_of_jointly_injective {R M S N I : Type} [Ring R] [Add
     · exact le_sSup (IsSimpleModule.congr (LinearEquiv.ofInjective f hf).symm)
     · simp
   have hinj : Function.Injective (LinearMap.pi j) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     exact fun z hz => hj z fun i => congrFun hz i
   have hN : IsSemisimpleModule R N := IsSemisimpleModule.congr (LinearEquiv.ofInjective _ hinj)
   have hy : y ∈ sSup {m : Submodule R N | IsSimpleModule R m} := by

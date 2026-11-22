@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SelfAdjointDescentHolds
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASASecRad
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASASecCover
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASASecAsm
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SelfAdjointDescentHolds
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASASecRad
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASASecCover
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASASecAsm
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA
 

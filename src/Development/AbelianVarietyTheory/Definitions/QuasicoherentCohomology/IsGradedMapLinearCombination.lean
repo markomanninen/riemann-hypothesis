@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.XSmulMemWeightedHomogeneousSubmodule
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.WeightAddLeOfMemSupportDividedContraction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.XSmulMemWeightedHomogeneousSubmodule
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.WeightAddLeOfMemSupportDividedContraction
+
+@[expose] public section
 
 open DirectSum MvPolynomial
 
@@ -16,7 +20,8 @@ variable {R : Type*} [CommRing R] {M : Type*} [AddCommGroup M] [Module R M]
 
 theorem grProj_sum (ℳ : ℤ → Submodule R M) [Decomposition ℳ] (T : Finset ℤ) (v : ℤ → M)
     (hv : ∀ j ∈ T, v j ∈ ℳ j) {n : ℤ} (hn : n ∈ T) : proj ℳ n (∑ j ∈ T, v j) = v n := by
-  rw [map_sum, Finset.sum_eq_single n (fun j hj h => proj_of_mem_ne ℳ (hv j hj) h)
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single n (fun j hj h => proj_of_mem_ne ℳ (hv j hj) h)
     (fun h => absurd hn h), proj_of_mem ℳ (hv n hn)]
 
 theorem exists_sum_grProj (ℳ : ℤ → Submodule R M) [Decomposition ℳ] (m : M) :
@@ -49,7 +54,7 @@ theorem weight_one_int (a : ι →₀ ℕ) :
   simp [Finsupp.weight_apply, Finsupp.degree_apply, Finsupp.sum]
 
 theorem mem_polyGrading_iff {p : MvPolynomial ι R} {n : ℤ} :
-    p ∈ polyGrading ι R n ↔ ∀ a, coeff a p ≠ 0 → (a.degree : ℤ) = n := by
+    p ∈ polyGrading ι R n ↔ ∀ a, AddMonoidAlgebra.coeff p a ≠ 0 → (a.degree : ℤ) = n := by
   simp only [polyGrading, mem_weightedHomogeneousSubmodule, IsWeightedHomogeneous, weight_one_int]
 
 theorem mem_polyGrading_natCast {p : MvPolynomial ι R} {d : ℕ} :
@@ -58,13 +63,8 @@ theorem mem_polyGrading_natCast {p : MvPolynomial ι R} {d : ℕ} :
     Finsupp.degree_eq_weight_one]
   rfl
 
-variable (ι R) in
-
-theorem polyGrading_natCast (d : ℕ) : polyGrading ι R d = homogeneousSubmodule ι R d :=
-  Submodule.ext fun _ => mem_polyGrading_natCast
 
 variable (ι R) in
-
 theorem polyGrading_of_neg {n : ℤ} (hn : n < 0) : polyGrading ι R n = ⊥ := by
   rw [eq_bot_iff]
   intro p hp
@@ -89,8 +89,8 @@ variable {ι : Type*} {R : Type*} [CommRing R]
   {N : Type*} [AddCommGroup N] [Module R N] [Module (MvPolynomial ι R) N]
   {P : Type*} [AddCommGroup P] [Module R P] [Module (MvPolynomial ι R) P]
 
-variable (ι) in
 
+variable (ι) in
 abbrev PolyGradedSMul (ℳ : ℤ → Submodule R M) : Prop :=
   SetLike.GradedSMul (polyGrading ι R) ℳ
 
@@ -116,11 +116,6 @@ theorem polyGradedSMul_of_X_smul_mem [IsScalarTower R (MvPolynomial ι R) M]
       rw [vadd_eq_add, add_comm]
       exact smul_mem_of_isHomogeneous ℳ hX (mem_polyGrading_natCast.1 hp) n m hm
 
-theorem polyGradedSMul_iff [IsScalarTower R (MvPolynomial ι R) M] (ℳ : ℤ → Submodule R M) :
-    PolyGradedSMul ι ℳ ↔
-      ∀ (i : ι) (n : ℤ), ∀ m ∈ ℳ n, (X i : MvPolynomial ι R) • m ∈ ℳ (n + 1) :=
-  ⟨fun _ => X_smul_mem_gr ℳ, polyGradedSMul_of_X_smul_mem ℳ⟩
-
 def IsGradedMap (ℳ : ℤ → Submodule R M) (𝒩 : ℤ → Submodule R N)
     (f : M →ₗ[MvPolynomial ι R] N) : Prop :=
   ∀ ⦃n : ℤ⦄ ⦃m : M⦄, m ∈ ℳ n → f m ∈ 𝒩 n
@@ -129,12 +124,8 @@ namespace IsGradedMap
 
 variable {ℳ : ℤ → Submodule R M} {𝒩 : ℤ → Submodule R N} {𝒬 : ℤ → Submodule R P}
 
-variable (ι ℳ) in
-
-theorem id : IsGradedMap ℳ ℳ (LinearMap.id : M →ₗ[MvPolynomial ι R] M) := fun _ _ h => h
 
 variable (ι ℳ 𝒩) in
-
 theorem zero : IsGradedMap ℳ 𝒩 (0 : M →ₗ[MvPolynomial ι R] N) := fun _ _ _ => zero_mem _
 
 theorem comp {g : N →ₗ[MvPolynomial ι R] P} {f : M →ₗ[MvPolynomial ι R] N}
@@ -147,20 +138,11 @@ theorem add {f g : M →ₗ[MvPolynomial ι R] N} (hf : IsGradedMap ℳ 𝒩 f) 
 theorem neg {f : M →ₗ[MvPolynomial ι R] N} (hf : IsGradedMap ℳ 𝒩 f) :
     IsGradedMap ℳ 𝒩 (-f) := fun _ _ h => neg_mem (hf h)
 
-theorem sum {κ : Type*} (T : Finset κ) {f : κ → M →ₗ[MvPolynomial ι R] N}
-    (hf : ∀ k ∈ T, IsGradedMap ℳ 𝒩 (f k)) : IsGradedMap ℳ 𝒩 (∑ k ∈ T, f k) := fun _ _ h => by
-  rw [LinearMap.sum_apply]
-  exact Submodule.sum_mem _ fun k hk => hf k hk h
-
 variable [IsScalarTower R (MvPolynomial ι R) M] [IsScalarTower R (MvPolynomial ι R) N]
   [IsScalarTower R (MvPolynomial ι R) P]
 
 def piece {f : M →ₗ[MvPolynomial ι R] N} (hf : IsGradedMap ℳ 𝒩 f) (n : ℤ) : ℳ n →ₗ[R] 𝒩 n :=
   (f.restrictScalars R).restrict fun _ h => hf h
-
-@[simp]
-theorem coe_piece {f : M →ₗ[MvPolynomial ι R] N} (hf : IsGradedMap ℳ 𝒩 f) (n : ℤ) (m : ℳ n) :
-    (hf.piece n m : N) = f m := rfl
 
 variable [Decomposition ℳ] [Decomposition 𝒩]
 
@@ -186,7 +168,7 @@ theorem exists_mem_of_mem_range {f : M →ₗ[MvPolynomial ι R] N} (hf : IsGrad
 theorem injective_iff {f : M →ₗ[MvPolynomial ι R] N} (hf : IsGradedMap ℳ 𝒩 f) :
     Function.Injective f ↔ ∀ n, Function.Injective (hf.piece n) := by
   refine ⟨fun h n a b hab => Subtype.ext (h (congrArg Subtype.val hab)), fun h => ?_⟩
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro m hm
   obtain ⟨T, hT⟩ := exists_sum_grProj ℳ m
   rw [← hT]
@@ -217,25 +199,6 @@ theorem exact_piece {f : M →ₗ[MvPolynomial ι R] N} {g : N →ₗ[MvPolynomi
   · rintro ⟨m, rfl⟩
     exact Subtype.ext (h.apply_apply_eq_zero m)
 
-theorem exact_of_exact_piece [Decomposition 𝒬] {f : M →ₗ[MvPolynomial ι R] N}
-    {g : N →ₗ[MvPolynomial ι R] P} (hf : IsGradedMap ℳ 𝒩 f) (hg : IsGradedMap 𝒩 𝒬 g)
-    (h : ∀ n, Function.Exact (hf.piece n) (hg.piece n)) : Function.Exact f g := by
-  intro y
-  constructor
-  · intro hy
-    obtain ⟨T, hT⟩ := exists_sum_grProj 𝒩 y
-    rw [← hT]
-    refine (LinearMap.range f).sum_mem fun n _ => ?_
-    obtain ⟨m, hm⟩ := (h n ⟨_, proj_mem 𝒩 n y⟩).1 (Subtype.ext (by
-      change g (proj 𝒩 n y) = 0
-      rw [← hg.proj_apply, hy, map_zero]))
-    exact ⟨m, congrArg Subtype.val hm⟩
-  · rintro ⟨m, rfl⟩
-    obtain ⟨T, hT⟩ := exists_sum_grProj ℳ m
-    rw [← hT, map_sum, map_sum]
-    exact Finset.sum_eq_zero fun n _ =>
-      congrArg Subtype.val ((h n).apply_apply_eq_zero ⟨_, proj_mem ℳ n m⟩)
-
 theorem symm {e : M ≃ₗ[MvPolynomial ι R] N} (he : IsGradedMap ℳ 𝒩 e.toLinearMap) :
     IsGradedMap 𝒩 ℳ e.symm.toLinearMap := fun n y hy => by
   obtain ⟨m, hm, rfl⟩ := he.exists_mem_of_mem_range hy (e.surjective y)
@@ -247,14 +210,6 @@ def grShift (ℳ : ℤ → Submodule R M) (d : ℤ) : ℤ → Submodule R M := f
 
 @[simp]
 theorem grShift_apply (ℳ : ℤ → Submodule R M) (d n : ℤ) : grShift ℳ d n = ℳ (n + d) := rfl
-
-@[simp]
-theorem grShift_zero (ℳ : ℤ → Submodule R M) : grShift ℳ 0 = ℳ := by
-  funext n; simp
-
-theorem grShift_grShift (ℳ : ℤ → Submodule R M) (d e : ℤ) :
-    grShift (grShift ℳ d) e = grShift ℳ (d + e) := by
-  funext n; simp only [grShift_apply]; congr 1; ring
 
 instance grShift.polyGradedSMul (ℳ : ℤ → Submodule R M) [PolyGradedSMul ι ℳ] (d : ℤ) :
     PolyGradedSMul ι (grShift ℳ d) where
@@ -280,19 +235,10 @@ theorem proj_grShift (ℳ : ℤ → Submodule R M) [Decomposition ℳ] (d n : �
     proj (grShift ℳ d) n m = proj ℳ (n + d) m := by
   simpa using (proj_map (grShift ℳ d) ℳ LinearMap.id d (fun n m hm => hm) n m).symm
 
-theorem IsGradedMap.shift {ℳ : ℤ → Submodule R M} {𝒩 : ℤ → Submodule R N}
-    {f : M →ₗ[MvPolynomial ι R] N} (hf : IsGradedMap ℳ 𝒩 f) (d : ℤ) :
-    IsGradedMap (grShift ℳ d) (grShift 𝒩 d) f := fun _ _ h => hf h
-
 theorem isGradedMap_lsmul (ℳ : ℤ → Submodule R M) [PolyGradedSMul ι ℳ] {p : MvPolynomial ι R}
     {d : ℤ} (hp : p ∈ polyGrading ι R d) :
     IsGradedMap ℳ (grShift ℳ d) (LinearMap.lsmul (MvPolynomial ι R) M p) :=
   fun _ _ h => grSMul_mem ℳ hp h
-
-theorem isGradedMap_lsmul' (ℳ : ℤ → Submodule R M) [PolyGradedSMul ι ℳ] {p : MvPolynomial ι R}
-    {d : ℤ} (hp : p ∈ polyGrading ι R d) :
-    IsGradedMap (grShift ℳ (-d)) ℳ (LinearMap.lsmul (MvPolynomial ι R) M p) :=
-  fun _ _ h => by simpa using grSMul_mem ℳ hp h
 
 theorem isGradedMap_toSpanSingleton (ℳ : ℤ → Submodule R M) [PolyGradedSMul ι ℳ] {m : M} {d : ℤ}
     (hm : m ∈ ℳ d) : IsGradedMap (grShift (polyGrading ι R) (-d)) ℳ
@@ -339,17 +285,8 @@ instance grQuot.polyGradedSMul (ℳ : ℤ → Submodule R M) [PolyGradedSMul ι 
 theorem isGradedMap_subtype (ℳ : ℤ → Submodule R M) (K : Submodule (MvPolynomial ι R) M) :
     IsGradedMap (grSub ℳ K) ℳ K.subtype := fun _ _ h => h
 
-theorem isGradedMap_mkQ (ℳ : ℤ → Submodule R M) (K : Submodule (MvPolynomial ι R) M) :
-    IsGradedMap ℳ (grQuot ℳ K) K.mkQ := fun _ m h => ⟨m, h, rfl⟩
-
-omit [IsScalarTower R (MvPolynomial ι R) M] in
-
-theorem IsGradedMap.codRestrict {ℳ : ℤ → Submodule R M} {𝒩 : ℤ → Submodule R N}
-    {f : M →ₗ[MvPolynomial ι R] N} (hf : IsGradedMap ℳ 𝒩 f) (K : Submodule (MvPolynomial ι R) N)
-    (h : ∀ m, f m ∈ K) : IsGradedMap ℳ (grSub 𝒩 K) (f.codRestrict K h) := fun _ _ h => hf h
 
 omit [IsScalarTower R (MvPolynomial ι R) N] in
-
 theorem IsGradedMap.liftQ {ℳ : ℤ → Submodule R M} {𝒩 : ℤ → Submodule R N}
     {f : M →ₗ[MvPolynomial ι R] N} (hf : IsGradedMap ℳ 𝒩 f) (K : Submodule (MvPolynomial ι R) M)
     (h : K ≤ LinearMap.ker f) : IsGradedMap (grQuot ℳ K) 𝒩 (K.liftQ f h) := by
@@ -402,21 +339,14 @@ def grQuotDecomposition (ℳ : ℤ → Submodule R M) [Decomposition ℳ]
     Decomposition (grQuot ℳ K) :=
   (isInternal_grQuot ℳ hK).chooseDecomposition _
 
-instance grSub.decomposition (ℳ : ℤ → Submodule R M) [Decomposition ℳ]
-    [PolyGradedSMul ι ℳ] (K : HomogeneousSubmodule (polyGrading ι R) ℳ) :
-    Decomposition (grSub ℳ K.toSubmodule) := grSubDecomposition ℳ K.isHomogeneous
-
-instance grQuot.decomposition (ℳ : ℤ → Submodule R M) [Decomposition ℳ]
-    [PolyGradedSMul ι ℳ] (K : HomogeneousSubmodule (polyGrading ι R) ℳ) :
-    Decomposition (grQuot ℳ K.toSubmodule) := grQuotDecomposition ℳ K.isHomogeneous
-
 theorem isHomogeneous_span_gr (ℳ : ℤ → Submodule R M) [Decomposition ℳ] [PolyGradedSMul ι ℳ]
     {G : Set M} (hG : ∀ g ∈ G, ∃ d, g ∈ ℳ d) :
     (Submodule.span (MvPolynomial ι R) G).IsHomogeneous ℳ := by
   intro n m hm
   change proj ℳ n m ∈ _
   obtain ⟨c, hc, rfl⟩ := (Finsupp.mem_span_iff_linearCombination _ _ _).1 hm
-  rw [Finsupp.linearCombination_apply, Finsupp.sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finsupp.linearCombination_apply, Finsupp.sum, map_sum]
   refine Submodule.sum_mem _ fun g _ => ?_
   obtain ⟨d, hd⟩ := hG g g.2
   rw [proj_smul_of_mem_right ℳ _ hd]
@@ -465,27 +395,19 @@ instance grPi.decomposition [Finite κ] (ℳ : ∀ k, ℤ → Submodule R (M k))
         · rw [Pi.single_eq_of_ne h]; exact zero_mem _
       | add a b ha hb => rw [Pi.single_add]; exact add_mem ha hb
 
-variable (ι) in
 
+variable (ι) in
 theorem isGradedMap_piProj (ℳ : ∀ k, ℤ → Submodule R (M k)) (k : κ) :
     IsGradedMap (grPi ℳ) (ℳ k) (LinearMap.proj (R := MvPolynomial ι R) k) :=
   fun _ _ h => mem_grPi.1 h k
 
-variable (ι) in
-
-theorem isGradedMap_piSingle [DecidableEq κ] (ℳ : ∀ k, ℤ → Submodule R (M k)) (k : κ) :
-    IsGradedMap (ℳ k) (grPi ℳ) (LinearMap.single (MvPolynomial ι R) M k) :=
-  fun _ m hm => mem_grPi.2 fun j => by
-    by_cases h : j = k
-    · subst h; simpa using hm
-    · rw [LinearMap.coe_single, Pi.single_eq_of_ne h]; exact zero_mem _
 
 theorem IsGradedMap.pi {𝒩 : ℤ → Submodule R N} {ℳ : ∀ k, ℤ → Submodule R (M k)}
     {f : ∀ k, N →ₗ[MvPolynomial ι R] M k} (hf : ∀ k, IsGradedMap 𝒩 (ℳ k) (f k)) :
     IsGradedMap 𝒩 (grPi ℳ) (LinearMap.pi f) := fun _ _ h => mem_grPi.2 fun k => hf k h
 
-variable (ι R) in
 
+variable (ι R) in
 abbrev grFree (d : κ → ℤ) : ℤ → Submodule R (κ → MvPolynomial ι R) :=
   grPi fun k => grShift (polyGrading ι R) (-d k)
 
@@ -538,8 +460,6 @@ variable {x : ι → ∀ n, A n →ₗ[R] A (n + 1)} (hx : OperatorsCommute x)
 instance : AddCommGroup (GrSum hx) := inferInstanceAs (AddCommGroup (⨁ n, A n))
 
 instance : Module R (GrSum hx) := inferInstanceAs (Module R (⨁ n, A n))
-
-def equivDirectSum : GrSum hx ≃ₗ[R] ⨁ n, A n := LinearEquiv.refl R _
 
 def of (n : ℤ) : A n →ₗ[R] GrSum hx := DirectSum.lof R ℤ A n
 
@@ -601,9 +521,6 @@ theorem of_mem_grading (n : ℤ) (a : A n) : of hx n a ∈ grading hx n := ⟨a,
 
 def pieceEquiv (n : ℤ) : A n ≃ₗ[R] grading hx n := LinearEquiv.ofInjective _ (of_injective hx n)
 
-@[simp]
-theorem coe_pieceEquiv (n : ℤ) (a : A n) : (pieceEquiv hx n a : GrSum hx) = of hx n a := rfl
-
 instance : PolyGradedSMul ι (grading hx) :=
   polyGradedSMul_of_X_smul_mem _ (by
     rintro i n _ ⟨a, rfl⟩
@@ -614,7 +531,8 @@ instance : Decomposition (grading hx) :=
     (fun T v hv h j hj => by
       choose! a ha using fun i hi => (mem_grading hx).1 (hv i hi)
       have := congrArg (component hx j) h
-      rw [← Finset.sum_congr rfl ha, map_sum, Finset.sum_eq_single j
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← Finset.sum_congr rfl ha, map_sum, Finset.sum_eq_single j
         (fun i _ e => component_of_ne hx e _) (fun e => absurd hj e), component_of,
         map_zero] at this
       rw [← ha j hj, this, map_zero])
@@ -647,7 +565,7 @@ def lift (φ : ∀ n, A n →ₗ[R] N)
     rw [RingHom.id_apply]
     induction p using MvPolynomial.induction_on generalizing m with
     | C a => rw [← MvPolynomial.algebraMap_eq, algebraMap_smul, algebraMap_smul, map_smul]
-    | add p q hp hq => rw [add_smul, add_smul, map_add, hp, hq]
+    | add p q hp hq => rw [add_smul, add_smul, map_add (f := _), hp, hq]
     | mul_X p i hp =>
       rw [mul_smul, mul_smul, hp]
       exact congrArg _ congr($(hX i) m)

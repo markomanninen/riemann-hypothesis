@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusMemPullbackOfInvariant
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusMemPullbackOfInvariant
+
+@[expose] public section
 
 noncomputable section
 
@@ -174,13 +178,13 @@ theorem extDataOne_exists [NeZero n] (W : LocWach PD LL O v n)
     have htΔ : ∀ δ ∈ W.DelF, W.γD T δ t = t := fun δ hδ => hinj (by rw [W.map_γ, ht, hw.2 δ hδ])
     refine ⟨t, htN, htΔ, hinj ?_⟩
     rw [pow_one, liftb_map_smul W ι W.π₀ t, ht, ← hwe]
-    simp only [natCast_pow_smul_eq_algebra W T N, map_add, map_sub, liftb_map_smul, hγdef, W.map_γ, hz', hμ i,
+    simp only [natCast_pow_smul_eq_algebra W T N, map_add (f := _), map_sub, liftb_map_smul, hγdef, W.map_γ, hz', hμ i,
       gammaD_semilinear, gammaA_natCast_pow, gammaA_letter_idempotent, smul_sub]
     abel
 
   have hw4 : W.map ι (((PD.p : ℕ) : O) ^ N • ((letE i : LetA O n) • y) + W.φD T (μ (i - 1)) - μ i) =
       W.φD Y (ε (i - 1)) - ε i := by
-    simp only [natCast_pow_smul_eq_algebra W T N, map_add, map_sub, liftb_map_smul, W.map_φ, hy, hμ, liftb_φ_smul,
+    simp only [natCast_pow_smul_eq_algebra W T N, map_add (f := _), map_sub, liftb_map_smul, W.map_φ, hy, hμ, liftb_φ_smul,
       frobeniusA_natCast_pow, wmap_φA_letE, smul_sub]
     abel
   have h4 : qp W ^ Mi i • (((PD.p : ℕ) : O) ^ N • ((letE i : LetA O n) • y) + W.φD T (μ (i - 1)) - μ i) ∈
@@ -201,7 +205,7 @@ theorem extDataOne_exists [NeZero n] (W : LocWach PD LL O v n)
     have hβz : β • W.φD Y (ε (i - 1)) = 0 := by
       have hπ0 : W.map π (((PD.p : ℕ) : LetA O n) ^ N • (qp W ^ hi i • (W.φD Y (ε (i - 1)) - ε i))) = 0 := by
         rw [← hw4, ← liftb_map_smul, ← liftb_map_smul, hπι]
-      rw [hβe, map_add, hπι, zero_add, liftb_map_smul, W.map_φ, hεπ'' (i - 1), liftb_φ_smul,
+      rw [hβe, map_add (f := _), hπι, zero_add, liftb_map_smul, W.map_φ, hεπ'' (i - 1), liftb_φ_smul,
         frobeniusA_natCast_pow, frobenius_idempotent_shift, hφe', smul_smul, smul_smul] at hπ0
       by_cases he'0 : e' = 0
       · rw [hβ0 he'0, zero_smul]

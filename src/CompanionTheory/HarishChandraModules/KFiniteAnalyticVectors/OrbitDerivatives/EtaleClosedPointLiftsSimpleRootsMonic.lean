@@ -1,10 +1,14 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.OrbitDerivatives.HasDerivAtMatrixExpZero
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.HaarBumpFunctions.PoulsenSmoothVectorsDense
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.AdmissibleOfIwasawa
-import CompanionTheory.AutomorphicTheory.ZuckermanCommutation.ZuckermanFunctors.IsSimpleFam
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LowerSmoothStability.ExistsFinStableOfMemSSup
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingExistence
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.ZhatNormLinearBound
+module
+
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.OrbitDerivatives.HasDerivAtMatrixExpZero
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.HaarBumpFunctions.PoulsenSmoothVectorsDense
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.AdmissibleOfIwasawa
+public import CompanionTheory.AutomorphicTheory.ZuckermanCommutation.ZuckermanFunctors.IsSimpleFam
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LowerSmoothStability.ExistsFinStableOfMemSSup
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingExistence
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.ZhatNormLinearBound
+
+@[expose] public section
 
 open Matrix Filter Topology Set MeasureTheory MeasureTheory.Measure
 open scoped ContDiff InnerProductSpace
@@ -99,7 +103,7 @@ theorem etaleClosed_point_lifts_simple_roots_monic : Lift := by
   have ht : ∀ c (v : X.2.R.smSub), t c v = f (Pi.single c v) := fun c v => dif_pos v.2
   have htw : TwInt (GG k r) (InLieHpk k r) X.2.R.σ T.R.σ (fun g c d => X.1.ρ g d c) t :=
     { lin := fun c => ⟨fun v w hv hw => by
-          rw [ht c ⟨v, hv⟩, ht c ⟨w, hw⟩, ← map_add, ← Pi.single_add]
+          rw [ht c ⟨v, hv⟩, ht c ⟨w, hw⟩, ← map_add (f := _), ← Pi.single_add]
           exact ht c (⟨v, hv⟩ + ⟨w, hw⟩), fun a v hv => by
           rw [ht c ⟨v, hv⟩, ← map_smul, ← Pi.single_smul]
           exact ht c (a • ⟨v, hv⟩)⟩
@@ -121,14 +125,16 @@ theorem etaleClosed_point_lifts_simple_roots_monic : Lift := by
           rw [act_coe X hg, Finset.sum_eq_single c (fun d _ hd => by simp [Pi.single_eq_of_ne hd]) (by simp),
             Finset.sum_apply, Finset.sum_eq_single e (fun d _ hd => by simp [Pi.single_eq_of_ne' hd]) (by simp)]
           simp
-        rw [e, _root_.map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [e, _root_.map_sum]
         refine Finset.sum_congr rfl fun d _ => ?_
         rw [map_smul, ← ht] }
   have hM : ∀ c d, SmOn (GG k r) fun g => X.1.ρ g d c := fun c d => hX.smooth d c
   have hM1 : ∀ c d, X.1.ρ 1 d c = if c = d then 1 else 0 := fun c d => by
     rw [hX.one, Matrix.one_apply]; exact if_congr eq_comm rfl rfl
   have hfx : ∀ x : M X, f x = ∑ c, t c (x c) := fun x => by
-    conv_lhs => rw [← Finset.univ_sum_single x, _root_.map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← Finset.univ_sum_single x, _root_.map_sum]
     exact Finset.sum_congr rfl fun c _ => (ht c (x c)).symm
   have hsum : ∀ (x : M X) (W : List (Mx k r)), LieWd k r W → ∀ s : Finset X.1.ι,
       IsSm (GG k r) T.R.σ (∑ c ∈ s, t c (x c)) ∧
@@ -172,7 +178,7 @@ theorem isHaarOn_map : PI.BesselPeriodGGP.IsHaarOn (k := k) (r := r) (GG k r)
     ext x
     exact ⟨fun h => h x.mem, False.elim⟩
   · have hm : Measurable (Formalism.QuantumDeterminants.lmulM (k := k) (r := r) s) := by
-      refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+      refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
       show Measurable fun x : Formalism.QuantumDeterminants.Mt k r => ∑ l, s i l * x l j
       fun_prop
     rw [Measure.map_map hm hE.measurable]
@@ -190,7 +196,7 @@ theorem integrable_gN [(haar : Measure (GM k r)).IsInvInvariant] :
       left := isHaarOn_map.2.2.2
       right := fun s hs => by
         have hm : Measurable (B.rmulF s : Formalism.QuantumDeterminants.Mt k r → Formalism.QuantumDeterminants.Mt k r) := by
-          refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+          refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
           show Measurable fun x : Formalism.QuantumDeterminants.Mt k r => ∑ l, x i l * s l j
           fun_prop
         rw [Measure.map_map hm hE.measurable]
@@ -291,7 +297,8 @@ theorem act_mul {X : Obj k r} (hX : X.1.OK) {g h : Mx k r} (hg : g ∈ GG k r) (
   funext c
   refine Subtype.ext ?_
   rw [act_coe X (X.2.repOn.mul_mem _ hg _ hh), act_coe X hg]
-  simp only [act_coe X hh, hX.mul g hg h hh, Matrix.mul_apply, _root_.map_sum, map_smul, Finset.smul_sum, smul_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [act_coe X hh, hX.mul g hg h hh, Matrix.mul_apply, _root_.map_sum, map_smul, Finset.smul_sum, smul_smul,
     Finset.sum_smul, X.2.repOn.apply_mul hg hh]
   exact Finset.sum_comm
 
@@ -311,7 +318,7 @@ theorem exists_pr [(haar : Measure (GM k r)).IsInvInvariant] {X : Obj k r} (hX :
     { toFun := fun x => ∫ g : GM k r, cf X c w x g • T.R.σ g.mat y ∂haar
       map_add' := fun x x' => by
         rw [← integral_add (hI x) (hI x')]
-        simp only [cf, map_add, Pi.add_apply, Submodule.coe_add, inner_add_right, add_smul]
+        simp only [cf, map_add (f := _), Pi.add_apply, Submodule.coe_add, inner_add_right, add_smul]
       map_smul' := fun a x => by
         rw [RingHom.id_apply, ← integral_smul]
         simp only [cf, map_smul, Pi.smul_apply, Submodule.coe_smul, inner_smul_right, smul_smul] }
@@ -441,7 +448,7 @@ theorem injectivity_induction : InjStep := by
   obtain ⟨ε, μ, hDS⟩ := hσ
   let V : Submodule ℂ X.2.R.H :=
     { carrier := {z | ∀ g ∈ GG k r, ⟪w, X.2.R.σ g z⟫_ℂ = 0}
-      add_mem' := fun ha hb g hg => by rw [map_add, inner_add_right, ha g hg, hb g hg, add_zero]
+      add_mem' := fun ha hb g hg => by rw [map_add (f := _), inner_add_right, ha g hg, hb g hg, add_zero]
       zero_mem' := fun g _ => by simp
       smul_mem' := fun a z hz g hg => by rw [map_smul, inner_smul_right, hz g hg, mul_zero] }
   have hcl : IsClosed (V : Set X.2.R.H) := by

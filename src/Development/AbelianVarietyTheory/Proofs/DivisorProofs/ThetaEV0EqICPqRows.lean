@@ -1,8 +1,13 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.TieTest
-import Formalism.LocalToGlobal.IndefiniteReal.CxLemmas
-import Development.AbelianVarietyTheory.Definitions.Divisors.MulVecEqOfBasis
-import Formalism.LocalToGlobal.IndefiniteReal.PackageFromPrimitiveStatements
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.RatHerm
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TieTest
+public import Formalism.LocalToGlobal.IndefiniteReal.CxLemmas
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MulVecEqOfBasis
+public import Formalism.LocalToGlobal.IndefiniteReal.PackageFromPrimitiveStatements
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.RatHerm
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions NumberField IsDedekindDomain Formalism.L2 Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.L2.Indef Formalism.IndefR.Cx GlobalTheory.BigTop GlobalTheory.BigTop.Fun
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -17,7 +22,8 @@ theorem iC_cpt_eq_theta_toR {K : Type} [Field K] [NumberField K] [StarRing K] {B
     {fc : DefSub A → DefFace Bs} (cr : Crd A fc) (b : Bool) (t : Bs.Tup) (z : Fin ((lv (fc X.zs) b).dQ t) → K) :
     X.iC cr b t (cpt Bs.v0.embedding z) = X.Θ t (X.jR t (cr.toR X.zs b t z)) := by
   conv_rhs => rw [pi_eq_sum_univ z]
-  simp only [map_sum, map_smul, LinearMap.map_smulₛₗ, iC, lin, Fintype.linearCombination_apply, cpt]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, LinearMap.map_smulₛₗ, iC, lin, Fintype.linearCombination_apply, cpt]
   refine Finset.sum_congr rfl fun i _ => ?_
   congr 4
   ext j
@@ -109,12 +115,13 @@ theorem csum_goodPart_perp_eq_zero {K : Type} [Field K] [NumberField K] [StarRin
     · show (B.S.gaOp B.r (goodAt ℓ.X ℓ.P ℓ.ψ) w) ∈ Z
       simp only [CSD.gaOp, LinearMap.sum_apply, LinearMap.smul_apply]
       exact Submodule.sum_mem _ fun t _ => Submodule.smul_mem _ _ (hZ t hw)
-    · simp only [CSD.gaOp, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, hGm,
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [CSD.gaOp, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, hGm,
         CSD.gaMat, Matrix.sum_mulVec, Matrix.smul_mulVec]
-      refine Finset.sum_congr rfl fun t _ => ?_
-      congr 1
-      show B.S.basis.equivFun (B.r t w) = (LinearMap.toMatrix B.S.basis B.S.basis (B.r t)) *ᵥ (B.S.basis.equivFun w)
-      rw [Module.Basis.equivFun_apply, Module.Basis.equivFun_apply, LinearMap.toMatrix_mulVec_repr]
+        refine Finset.sum_congr rfl fun t _ => ?_
+        congr 1
+        show B.S.basis.equivFun (B.r t w) = (LinearMap.toMatrix B.S.basis B.S.basis (B.r t)) *ᵥ (B.S.basis.equivFun w)
+        rw [Module.Basis.equivFun_apply, Module.Basis.equivFun_apply, LinearMap.toMatrix_mulVec_repr]
   rw [hmove, hGx, ← Formalism.L2.DIV.hform_cut]
   have hP : (Nat.card ℓ.P : K) ≠ 0 := Nat.cast_ne_zero.mpr Nat.card_pos.ne'
   have hH : Eᴴ * B.S.H * E = (Nat.card ℓ.P : K) • B.HV ℓ := by
@@ -122,24 +129,6 @@ theorem csum_goodPart_perp_eq_zero {K : Type} [Field K] [NumberField K] [StarRin
   rw [hH, Formalism.DivisionValues.RationalHermitianForm.hform_eq_dot, Matrix.smul_mulVec, dotProduct_smul, ← Formalism.DivisionValues.RationalHermitianForm.hform_eq_dot,
     hu z' hz', smul_zero]
 
-set_option maxHeartbeats 1000000 in
-
-theorem theta_eV0_eq_iC_Pq : ∀ {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst D L} {Gl : Formalism.MainNotions.G.LatInst D} {Kc : Formalism.MainNotions.G.Consts} {Y : DivX D} {cX : ExtraC} {ex : Extra D L hT Gi Gl Kc Y cX} {Csz : ℝ} (p : PtAt ex Csz), p.Rows → ∀ (t : Tup p) (y : Fin ((Df p).nV t) → D.what₂.LL), (p.R.toCx3 p.F).Θ t ((p.R.toCx3 p.F).jR t (eV0 p t y)) = (p.R.toCx3 p.F).iC p.F.cr false t (cpt p.P.A3.fam3.base3.v0.embedding (((Df p).Pq t).mulVec y)) := by
-  intro D L hT Gi Gl Kc Y cX ex Csz p hp t y
-  have hCx := Formalism.IndefR.Links.complex_data_conditions_base_level_of_primitive_links hp.ok hp.sep p.charW hp.prim
-  rw [iC_cpt_eq_theta_toR, TieModel.toR_eq]
-  let y' : Fin ((p.P.A3.A.fam.R t).nV (p.P.A3.A.fam.lvl p.P.P0 p.P.ψ0)) → D.what₂.LL := y
-  have hu := sub_zE_Pq_mem_U (p.P.A3.A.fam.R t) (p.P.A3.A.fam.lvl p.P.P0 p.P.ψ0) ((p.R.toCx3 p.F).zs.Z t)
-    ((hCx.wf false).Pq_surj t) y'
-  have h := theta_jR_eq_zero_of_perp _ p.F.cv hCx.jIsoR hCx.ratZ t (eV0 p t (y' - ((p.P.A3.A.fam.R t).zE (p.P.A3.A.fam.lvl p.P.P0 p.P.ψ0)
-      ((p.R.toCx3 p.F).zs.Z t)).mulVec (((Df p).Pq t).mulVec y))) (fun w hw =>
-    csum_goodPart_perp_eq_zero (p.P.A3.A.fam.R t) 1 (hp.ok.ok2.what₂ t) _ hp.ok.ok2.conj _ hp.ok.ok2.irr _
-      (fun g => Submodule.map_le_iff_le_comap.mp (hCx.stable.1 t (Sum.inr g))) _ hu w hw)
-  erw [(eV0 p t).map_sub] at h
-  have h2 := ((p.R.toCx3 p.F).jR t).map_sub (eV0 p t y') (eV0 p t (((p.P.A3.A.fam.R t).zE (p.P.A3.A.fam.lvl p.P.P0 p.P.ψ0)
-      ((p.R.toCx3 p.F).zs.Z t)).mulVec (((Df p).Pq t).mulVec y)))
-  erw [h2, map_sub] at h
-  exact sub_eq_zero.mp h
 
 end GlobalTheory.BigTop.Fun
 

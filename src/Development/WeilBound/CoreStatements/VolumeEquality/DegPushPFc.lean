@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.DegPushPFa
-import Development.WeilBound.CoreStatements.VolumeEquality.DegPushPFb
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Assembly
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ImageCoord
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.DegPushPFa
+public import Development.WeilBound.CoreStatements.VolumeEquality.DegPushPFb
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Assembly
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ImageCoord
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem image_join (y : (Σ b, ι b) → Ω₁) (y' : (Σ b, ι' b) → Ω) :
     intro f
     induction f using MvPolynomial.induction_on with
     | C a => simp [mConeMap]
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | mul_X p n hp =>
       simp only [map_mul, hp]
       simp [mConeMap, inlV, joinPt]
@@ -65,7 +69,7 @@ theorem ker_aeval_cone {Φ : Type} [Field Φ] (y : (Σ b, ι b) → Ω) (ν : Mv
     intro f
     induction f using MvPolynomial.induction_on with
     | C a => simp [mConeMap]
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | mul_X p n hp =>
       rw [map_mul, hp, map_mul (mConeMap y), map_mul ν, aeval_X]
       congr 1
@@ -91,7 +95,7 @@ theorem gen_cone {Φ : Type} [Field Φ] [Algebra (MvPolynomial K Ω₁) Φ] [IsF
     intro f
     induction f using MvPolynomial.induction_on with
     | C a => simp [hφ, mConeMap]
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | mul_X p n hp =>
       rw [map_mul, hp, map_mul (mConeMap y), map_mul (algebraMap _ Φ), hφ, aeval_X]
       congr 1

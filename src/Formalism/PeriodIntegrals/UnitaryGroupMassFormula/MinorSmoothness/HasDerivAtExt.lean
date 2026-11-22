@@ -1,7 +1,10 @@
-import Formalism.HermitianCurvature.StatementQ
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
+module
 
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+public import Formalism.HermitianCurvature.StatementQ
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped ContDiff

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.TwoMemRegRingSpecZ
-import GroundTheory.HeightsAndTheta.Heights.Intersections.CardLeRingKrullDim
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.TwoMemRegRingSpecZ
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.CardLeRingKrullDim
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter

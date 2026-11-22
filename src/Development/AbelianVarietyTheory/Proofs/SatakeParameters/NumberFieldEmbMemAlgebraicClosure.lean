@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -26,7 +30,11 @@ theorem padic_emb_extends_algebraicClosure (p : ℕ) [Fact p.Prime] (LL : Type) 
   haveI : Algebra.IsAlgebraic ℚ (algebraicClosure ℚ ℂ) := algebraicClosure.isAlgebraic ℚ ℂ
   haveI : Algebra.IsAlgebraic LL (algebraicClosure ℚ ℂ) :=
     Algebra.IsAlgebraic.tower_top (K := ℚ) LL
-  let lamA : algebraicClosure ℚ ℂ →ₐ[LL] ℂ_[p] := IsAlgClosed.lift
+  let lamA : algebraicClosure ℚ ℂ →ₐ[LL] ℂ_[p] := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨lamA.toRingHom, fun z hz => ?_⟩
   have h1 : (⟨e z, hz⟩ : algebraicClosure ℚ ℂ) = algebraMap LL (algebraicClosure ℚ ℂ) z := rfl
   rw [h1]

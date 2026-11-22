@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -18,7 +22,8 @@ theorem annihilator_diagonal_form_swap {R B : Type} [CommRing R] [CommRing B] [A
   rw [mul_sub, sub_eq_zero] at e
   simp only [Finset.sum_mul, smul_mul_assoc, Algebra.TensorProduct.tmul_mul_tmul, mul_one] at e
   have e2 := congrArg L e
-  simp only [map_sum, map_smul, hL, smul_smul] at e2
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, hL, smul_smul] at e2
   exact e2
 
 theorem annihilator_diagonal_trace {R B : Type} [CommRing R] [CommRing B] [Algebra R B]

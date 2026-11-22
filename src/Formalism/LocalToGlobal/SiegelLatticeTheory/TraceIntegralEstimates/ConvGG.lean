@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.ConvGOne
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.ConvGOne
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 

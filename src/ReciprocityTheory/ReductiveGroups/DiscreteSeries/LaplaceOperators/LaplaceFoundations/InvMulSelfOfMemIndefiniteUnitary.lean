@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.RaisingLoweringNormIdentities
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.RaisingLoweringNormIdentities
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothA
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ private theorem Jm_conjTransposeDiscreteSeriesExistence (ε : Fin n → Bool) : 
   rw [Matrix.diagonal_conjTranspose]
   congr 1
   funext a
-  simp only [Pi.star_apply]
+  change star (if ε a = true then (1 : ℂ) else -1) = _
   split_ifs <;> simp
 
 private theorem Jm_mul_Jm_mul_eq (ε : Fin n → Bool) (Y : Matrix (Fin n) (Fin n) ℂ) :

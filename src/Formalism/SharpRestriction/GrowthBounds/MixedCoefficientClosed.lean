@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.CharacterGerms.CoefficientIdentitySelfConjugate
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePHStabSelf
-import Formalism.LocalToGlobal.CharacterGerms.MaximalOfValuationGeOne
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.CoefficientIdentitySelfConjugate
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePHStabSelf
+public import Formalism.LocalToGlobal.CharacterGerms.MaximalOfValuationGeOne
+
+@[expose] public section
 
 noncomputable section
 

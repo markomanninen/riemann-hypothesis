@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrobeniusSplitPrimeDatum
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.HthPlace
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.HlayPlace
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.RootOfUnityEqOneOfCloseResidue
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.PlaceBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PartsSign
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrobeniusSplitPrimeDatum
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.HthPlace
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.HlayPlace
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.RootOfUnityEqOneOfCloseResidue
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.PlaceBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PartsSign
+
+@[expose] public section
 
 open NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Base UpperTheory.V.Pr UpperTheory.V.Fr UpperTheory.V
 open scoped Pointwise
@@ -49,9 +53,6 @@ variable {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (l : ℕ) [F
 private theorem uf_om {s : G ℚ Ω} (h : cycMod ℚ Ω l 1 s = -1) : omO Ω l O s = -1 := by
   simp [omO, GC.cycF, h]
 
-private theorem omega_eq_one_of_cyclotomic_one {s : G ℚ Ω} (h : cycMod ℚ Ω l 1 s = 1) : omO Ω l O s = 1 := by
-  simp [omO, GC.cycF, h]
-
 private theorem uf_cc {σ : G ℚ Ω} (h : IsCC σ) : cycMod ℚ Ω l 1 σ = -1 := by
   obtain ⟨j, hj⟩ := h
   have hc : IsConjOm (σ : Ω ≃+* Ω) := ⟨j, hj⟩
@@ -95,7 +96,7 @@ theorem UpperTheory.V.Fr.ufacts :
     intro B' hB'
     obtain ⟨c, hc⟩ := hG.l_dvd
     have := (pb3 B' l c).2 (Or.inl hB')
-    simpa [ML.Over, hc] using this
+    simpa only [ML.Over, hc] using this
   have hσom : omO Ω l O σ = -1 := uf_om l (uf_cc l hG.cc)
   have hσb := hG.even
   have hneg : (-1 : (ResidueField O)ˣ) ≠ 1 := uf_neg l hG.odd
@@ -131,7 +132,7 @@ theorem UpperTheory.V.Fr.ufacts :
       have hno : ∀ e : ℕ, ¬ ML.Over B' (M ^ e) := by
         intro e
         induction e with
-        | zero => simp [ML.Over]
+        | zero => simp only [pow_zero, ML.Over, Nat.cast_one, map_one, lt_self_iff_false, not_false_eq_true]
         | succ e ih =>
           rw [pow_succ, pb3]
           rintro (h | h)

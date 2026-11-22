@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.HasPres
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.HasPres
+
+@[expose] public section
+
 open Formalism Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations TensorProduct UpperTheory.KN
 
 theorem _root_.UpperTheory.KN.hasPres_of_injective_equivariant :

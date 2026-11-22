@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedCharacterOne.IsIntegralAtSuperdiagonalSum
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedCharacterOne.IsIntegralAtSuperdiagonalSum
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -33,21 +37,29 @@ theorem twChrOne_main : PI.TwChrOne.TwChrOne := by
     rw [chi_eq r hJ]
     refine inv_ne_zero ?_
     unfold LocE.unitV
-    rw [dif_pos (unit_of r hJ)]
+    rw [dite_eq_left (unit_of r hJ)]
     exact Units.ne_zero _
   · have hJ := memJ r hr
     have hJ' := memJ r' hr'
     have hJ'' := memJ r'' hr''
     rw [chi_eq r hJ, chi_eq r' hJ', chi_eq r'' hJ'', ← mul_inv]
     congr 1
-    apply unitV_mul P ξ (unit_of r hJ) (unit_of r' hJ')
-    rw [redP_det_Ment P (hI_of P hJ''), redP_det_Ment P (hI_of P hJ), redP_det_Ment P (hI_of P hJ'),
-      ← Matrix.det_mul]
-    congr 1
-    apply Mb_mul_of P (fun i hi1 hi2 j hj => red_DA P hJ i hi1 hi2 j hj) (hI_of P hJ) (hI_of P hJ')
-    intro t
-    have ht : kj + t.1 < N := by have := t.isLt; omega
-    have := hx (Loc.eN E N (kj + t.1))
-    rwa [inX_eN ht] at this
+    have hd : redP P (Ment kj N c r'').det =
+        redP P (Ment kj N c r).det * redP P (Ment kj N c r').det := by
+      rw [redP_det_Ment P (hI_of P hJ''), redP_det_Ment P (hI_of P hJ),
+        redP_det_Ment P (hI_of P hJ'), ← Matrix.det_mul]
+      congr 1
+      apply Mb_mul_of P (fun i hi1 hi2 j hj => red_DA P hJ i hi1 hi2 j hj) (hI_of P hJ) (hI_of P hJ')
+      intro t
+      have ht : kj + t.1 < N := by have := t.isLt; omega
+      have := hx (Loc.eN E N (kj + t.1))
+      rwa [inX_eN ht] at this
+    have hu := unit_of r hJ
+    have hu' := unit_of r' hJ'
+    have hu'' := unit_of r'' hJ''
+    unfold LocE.unitV
+    rw [dite_eq_left hu'', dite_eq_left hu, dite_eq_left hu']
+    have hmul : hu''.unit = hu.unit * hu'.unit := Units.ext (by simp [hd])
+    rw [hmul, map_mul, Units.val_mul]
 
 end PI.TwChrOne.Pf

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MinkowskiBound.PowerSumStep
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MinkowskiBound.PowerSumStep
+
+@[expose] public section
 
 namespace PI.Mk
 
@@ -46,7 +50,7 @@ theorem good_mul (ℓ : ℕ) (p q : ℚ[X]) (hp : Good ℓ p) (hq : Good ℓ q) 
 theorem nextCoeff_X_pow_sub_one (n : ℕ) (hn : 0 < n) :
     (X ^ n - 1 : ℚ[X]).nextCoeff = if n = 1 then -1 else 0 := by
   have hdeg : (X ^ n - 1 : ℚ[X]).natDegree = n := by
-    simpa using natDegree_X_pow_sub_C (R := ℚ) (n := n) (r := 1)
+    simpa using natDegree_X_pow_sub_C (R := ℚ) (n := n) (a := 1)
   rw [nextCoeff_of_natDegree_pos (by rw [hdeg]; exact hn), hdeg]
   split_ifs with h1
   · subst h1; simp

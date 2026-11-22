@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial in
 private lemma eval_prod_add (m : Multiset ℂ) (u : ℂ) :

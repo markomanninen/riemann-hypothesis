@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalFractionField
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalFractionField
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,9 +18,6 @@ variable {R : Type} [CommRing R]
 
 abbrev sc {S : Scheme.{0}} (x : Spec (CommRingCat.of R) ⟶ S) (c : R) : epsAt x ⟶ epsAt x :=
   LieEx.hom x (c • (LinearMap.id : R →ₗ[R] R))
-
-theorem sc_left {S : Scheme.{0}} (x : Spec (CommRingCat.of R) ⟶ S) (c : R) :
-    (sc x c).left = Spec.map (CommRingCat.ofHom (epsMul c)) := rfl
 
 structure Corr {S₁ S₂ : Scheme.{0}} (G₁ : Over S₁) (G₂ : Over S₂) [GrpObj G₁] [GrpObj G₂] {O : Type}
     (a₁ : O → (G₁ ⟶ G₁)) (a₂ : O → (G₂ ⟶ G₂)) (x₁ : Spec (CommRingCat.of R) ⟶ S₁)
@@ -147,7 +148,21 @@ theorem span_eig (hinj : Function.Injective (algebraMap R F)) (z : Spec (CommRin
   let j : epsAt x ⟶ epsAt z := LieCarrier.epsHom (algebraMap R F) z x hx
   have hj : ∀ c, sc x (algebraMap R F c) ≫ j = j ≫ sc z c := sc_epsHom _ z x hx
   have hsm : ∀ (c : F) e, M.pt (c • e) = sc x c ≫ M.pt e := fun c e => Over.OverMorphism.ext (M.smul c e)
-  have hw : ∀ i, ∃ w, M.pt w = j ≫ ub i := fun i => M.onto _ (LieFib.isTanAt_epsHom _ _ _ _ _ (hut i))
+  have hw : ∀ i, ∃ w, M.pt w = j ≫ ub i := by
+    intro i
+    apply M.onto
+    rw [LieEx.isTanAt_iff] at *
+    have hv := hut i
+    rw [LieEx.isTanAt_iff] at hv
+    have key : (LieEx.zsec x : _ ⟶ LieEx.ob x F) ≫ j =
+        (Over.homMk (Spec.map (CommRingCat.ofHom (algebraMap R F))) hx : Over.mk x ⟶ Over.mk z) ≫ LieEx.zsec z := by
+      ext1
+      change Spec.map _ ≫ Spec.map _ = Spec.map _ ≫ Spec.map _
+      rw [← Spec.map_comp, ← Spec.map_comp, ← CommRingCat.ofHom_comp, ← CommRingCat.ofHom_comp]
+      congr 2
+      refine RingHom.ext fun a => ?_
+      simp [GlobalTheory.CompanionTheory.Ar.dualMap]
+    rw [← Category.assoc, key, Category.assoc, hv, MonObj.comp_one]
   choose w hw using hw
   have key : ∀ cf : Fin r → R, M.pt (∑ i, cf i • w i) = j ≫ (List.ofFn fun i => sc z (cf i) ≫ ub i).prod := by
     intro cf
@@ -157,7 +172,8 @@ theorem span_eig (hinj : Function.Injective (algebraMap R F)) (z : Spec (CommRin
     refine congrArg List.prod (congrArg List.ofFn (funext fun i => ?_))
     change M.pt (cf i • w i) = j ≫ sc z (cf i) ≫ ub i
     rw [← algebraMap_smul F (cf i) (w i), hsm, hw, ← Category.assoc, hj, Category.assoc]
-  refine ⟨w, fun i => congrArg (fun q => q.left) (hw i), fun e => ⟨?_, ?_⟩⟩
+  refine ⟨w, fun i => ?_, fun e => ⟨?_, ?_⟩⟩
+  · simpa only [Over.comp_left, j, LieCarrier.epsHom, Over.homMk_left] using congrArg (fun q => q.left) (hw i)
   · rintro ⟨⟨v, hvT, hv⟩, hE⟩
     have hv' : M.pt e = j ≫ v := Over.OverMorphism.ext hv
     have hE' := (mem_eigSp ρ _ e).1 hE

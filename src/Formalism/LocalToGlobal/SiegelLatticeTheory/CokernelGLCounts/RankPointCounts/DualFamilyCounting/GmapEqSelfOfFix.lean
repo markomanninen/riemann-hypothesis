@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.SameGenusFix
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.InvMemLocROfUnimod
-import Formalism.HermitianLattices.HermitianLatticesProofs.IsomAct
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.SameGenusFix
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.InvMemLocROfUnimod
+public import Formalism.HermitianLattices.HermitianLatticesProofs.IsomAct
+
+@[expose] public section
 
 open NumberField Module
 
@@ -128,11 +132,14 @@ theorem fibP_gmap [FiniteDimensional K V] {h : V →ₗ⋆[K] V →ₗ[K] K} {U 
   rw [dualF_gmap hg.1, gmap_eq_iff, e1, e3, e4, gmap_eq_iff]
   conv_rhs => rw [e2, gmap_eq_iff]
   refine and_congr_left fun _ => ?_
+  have lattice_gmap (a : V ≃ₗ[K] V) {L : Submodule (𝓞 K) V} (hL : Submodule.IsLattice K L) :
+      Submodule.IsLattice K (Formalism.HermitianLatticesTheory.gmap a L) :=
+    Submodule.IsLattice.of_fg K (hL.fg.map _)
   constructor
   · rintro ⟨Λ₀, h0, e0⟩
-    exact ⟨Formalism.HermitianLatticesTheory.gmap g Λ₀, LocalizedFibreSets.isLattice_gmap g h0, by rw [← LocalizedFibreSets.gmap_locF, e0]⟩
+    exact ⟨Formalism.HermitianLatticesTheory.gmap g Λ₀, lattice_gmap g h0, by rw [← LocalizedFibreSets.gmap_locF, e0]⟩
   · rintro ⟨Λ₀, h0, e0⟩
-    refine ⟨Formalism.HermitianLatticesTheory.gmap g.symm Λ₀, LocalizedFibreSets.isLattice_gmap g.symm h0, ?_⟩
+    refine ⟨Formalism.HermitianLatticesTheory.gmap g.symm Λ₀, lattice_gmap g.symm h0, ?_⟩
     rw [← LocalizedFibreSets.gmap_locF, e0, Formalism.HermitianLatticesTheory.isomAct_gmap_symm]
 
 end Formalism.L2.SG.Pf.G6

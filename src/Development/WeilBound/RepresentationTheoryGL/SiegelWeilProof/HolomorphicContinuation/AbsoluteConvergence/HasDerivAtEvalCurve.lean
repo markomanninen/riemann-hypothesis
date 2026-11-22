@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.ContinuousEvX
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.ContinuousEvX
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ theorem hasDerivAt_eval_curve {σ : Type*} [Fintype σ] [DecidableEq σ] (Q : Mv
   | add p q hp hq =>
     have e : (∑ k, eval (w h) (pderiv k (p + q)) * w' k) =
         (∑ k, eval (w h) (pderiv k p) * w' k) + ∑ k, eval (w h) (pderiv k q) * w' k := by
-      simp [map_add, add_mul, Finset.sum_add_distrib]
+      simp [map_add (f := _), add_mul, Finset.sum_add_distrib]
     rw [e]
     exact (hp.add hq).congr_of_eventuallyEq (Filter.Eventually.of_forall fun s => by simp)
   | mul_X p i hp =>
@@ -40,7 +44,7 @@ theorem hasDerivAt_eval_curve {σ : Type*} [Fintype σ] [DecidableEq σ] (Q : Mv
       have e1 : ∀ k, eval (w h) (pderiv k (p * X i)) * w' k =
           eval (w h) (pderiv k p) * w' k * w h i + (if k = i then eval (w h) p * w' i else 0) := by
         intro k
-        rw [Derivation.leibniz, pderiv_X, smul_eq_mul, smul_eq_mul, map_add, map_mul, map_mul, eval_X]
+        rw [Derivation.leibniz, pderiv_X, smul_eq_mul, smul_eq_mul, map_add (f := _), map_mul, map_mul, eval_X]
         by_cases hk : k = i
         · subst hk; simp; ring
         · simp [Pi.single_apply, hk]; ring

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousComplEquivSymm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousComplEquivSymm
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix
 open scoped Pointwise
@@ -13,7 +17,8 @@ theorem dualLat_latCorr {k k' : Type} [Field k] [ValuativeRel k] [TopologicalSpa
     {Λ₂ : Submodule 𝒪[k'] (D₂ → k')} (h : LatCorr j cD Λ Λ₂) : LatCorr j cD (dualLat Λ) (dualLat Λ₂) := by
   have key : ∀ y x : D → k, (fun c => j (y (cD c))) ⬝ᵥ (fun c => j (x (cD c))) = j (y ⬝ᵥ x) := by
     intro y x
-    simp only [dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, map_sum, map_mul]
     exact Fintype.sum_equiv cD _ _ fun c => rfl
   intro y
   rw [mem_dualLat, mem_dualLat]

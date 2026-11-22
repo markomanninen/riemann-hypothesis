@@ -1,10 +1,15 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PfFacts
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRingHomPowPrimePow
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsPQ
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PqLift
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PerfectTensorProductStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PfFacts
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRingHomPowPrimePow
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsPQ
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PqLift
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PerfectTensorProductStatement
+
+@[expose] public section
+
 open TensorProduct CrystallineSemistableComparison.D
 open scoped LaurentPolynomial
 
@@ -20,7 +25,7 @@ theorem pq_baseChange : ∀ (p : ℕ) [Fact p.Prime] (A : Type) [CommRing A](S :
   have addT : ∀ (k : ℕ) (a b : B ⊗[A] K), (a + b) ^ p ^ k = a ^ p ^ k + b ^ p ^ k := by
     intro k a b
     obtain ⟨F, hF⟩ := GlobalTheory.CompanionTheory.Frobenius.exists_ringHom_pow_prime_pow p (B ⊗[A] K) hT.char k
-    rw [← hF, ← hF, ← hF, map_add]
+    rw [← hF, ← hF, ← hF, map_add (f := _)]
   have hkill : ∀ x ∈ I.map j, i₁ x = 0 := by
     have hle : I.map j ≤ RingHom.ker i₁ := by
       refine Ideal.map_le_iff_le_comap.2 fun s hs => ?_
@@ -42,7 +47,7 @@ theorem pq_baseChange : ∀ (p : ℕ) [Fact p.Prime] (A : Type) [CommRing A](S :
       obtain ⟨k, x, hx⟩ := h
       obtain ⟨k', x', hx'⟩ := h'
       refine ⟨k + k', x ^ p ^ k' + x' ^ p ^ k, ?_⟩
-      rw [addT, map_add, map_pow, map_pow, ← hx, ← hx', ← pow_mul, ← pow_mul, ← pow_add, ← pow_add,
+      rw [addT, map_add (f := _), map_pow, map_pow, ← hx, ← hx', ← pow_mul, ← pow_mul, ← pow_add, ← pow_add,
         Nat.add_comm k' k]
   · intro x
     constructor

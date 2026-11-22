@@ -1,9 +1,14 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowup
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
-import Development.ResolutionOfSingularities.Foundations.Blowup.ReesGrading
-import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowup
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
+public import Development.ResolutionOfSingularities.Foundations.Blowup.ReesGrading
+public import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry Opposite
 
 noncomputable section

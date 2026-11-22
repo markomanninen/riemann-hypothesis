@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory NumberField Matrix Filter Topology
 open scoped Pointwise ENNReal
 
@@ -21,7 +26,7 @@ theorem rootOfUnity_eq_one_of_sub_one_mem_span : ∀ (E : Type) [Field E] [Numbe
     exact h
   have hwE : (w : E) * (M : E) = (z : E) - 1 := by
     have h := congrArg (algebraMap (𝓞 E) E) hw
-    rw [map_mul, map_sub, map_natCast, map_one] at h
+    rw [map_mul, RingHom.map_sub, map_natCast, map_one] at h
     rw [NumberField.RingOfIntegers.coe_eq_algebraMap w, NumberField.RingOfIntegers.coe_eq_algebraMap z]
     exact h
   have hbound : ∀ σ : E →ₐ[ℚ] ℂ, ‖σ (w : E)‖ ≤ 2 / M := by
@@ -49,7 +54,7 @@ theorem rootOfUnity_eq_one_of_sub_one_mem_span : ∀ (E : Type) [Field E] [Numbe
       rw [← Algebra.coe_norm_int, map_intCast]
     rw [h1, Algebra.norm_eq_prod_embeddings ℚ ℂ (w : E), norm_prod]
     calc ∏ σ : E →ₐ[ℚ] ℂ, ‖σ (w : E)‖ ≤ ∏ _σ : E →ₐ[ℚ] ℂ, (2 / M : ℝ) :=
-          Finset.prod_le_prod (fun _ _ => norm_nonneg _) (fun σ _ => hbound σ)
+          Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) (fun σ _ => hbound σ)
       _ = (2 / M : ℝ) ^ Fintype.card (E →ₐ[ℚ] ℂ) := by rw [Finset.prod_const, Finset.card_univ]
       _ < 1 := pow_lt_one₀ (by positivity) ((div_lt_one hMpos).mpr (by linarith)) hcard
   have hN : Algebra.norm ℤ w = 0 := by

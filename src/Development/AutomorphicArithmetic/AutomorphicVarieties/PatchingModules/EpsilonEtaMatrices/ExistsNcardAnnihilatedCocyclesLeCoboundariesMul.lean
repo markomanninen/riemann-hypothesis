@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.SolCnt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.FinTwLc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.DdSumZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.MapEta
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.SolCnt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.FinTwLc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.DdSumZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.MapEta
+
+@[expose] public section
+
 open Matrix Filter NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 
 private theorem dg_mem {A C : Type} [CommRing A] [AddCommGroup C] [Module A C] (a : A) (x : C) :
@@ -242,7 +247,7 @@ private theorem dg_ρ1 (m : ℕ) (g : F.G₀) : (x.redD k.g m).mapMatrix (k.ρ1 
       Z.map (algebraMap x.A (DD (x.Am m) k.g)) := fun Z => by
     ext1 a b
     exact (x.redD k.g m).commutes _
-  simp only [Kap.ρ1, NP.ρX, map_mul, map_add, map_one, a1, a2]
+  simp only [Kap.ρ1, NP.ρX, map_mul, map_add (f := _), map_one, a1, a2]
 
 private theorem dg_eps (m : ℕ) (g : F.Γ) (Z : Matrix (Fin n) (Fin n) (DD x.A k.g)) :
     (x.redD k.g m).mapMatrix (epsD k x.A g • Z) = epsD k (x.Am m) g • (x.redD k.g m).mapMatrix Z := by
@@ -317,7 +322,7 @@ private theorem dgPhi_nat (m : ℕ) (z : F.G₀ → Matrix (Fin n) (Fin n) (DD x
   · ext1 a b
     simp only [dgPhi, dgCut, AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply]
     split_ifs <;> ext <;> simp
-  · simp only [dgPhi, map_sub, map_add, dg_eps, map_mul, dg_ρ1]
+  · simp only [dgPhi, map_sub, map_add (f := _), dg_eps, map_mul, dg_ρ1]
   · simp only [dgPhi, map_sub, map_neg, dg_eps]
     rfl
   · have : ell k (x.Am m) (sg j) (fun g => (x.redD k.g m).mapMatrix (z g)) =
@@ -330,7 +335,7 @@ private theorem dgPhi_nat (m : ℕ) (z : F.G₀ → Matrix (Fin n) (Fin n) (DD x
     simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply]
     ext <;> simp
 
-private def dgB : Submodule x.A (F.G₀ → Matrix (Fin n) (Fin n) (DD x.A k.g)) where
+private noncomputable def dgB : Submodule x.A (F.G₀ → Matrix (Fin n) (Fin n) (DD x.A k.g)) where
   carrier := TwB k x.A
   add_mem' := by
     rintro _ _ ⟨Y, a1, a2, rfl⟩ ⟨Y', b1, b2, rfl⟩

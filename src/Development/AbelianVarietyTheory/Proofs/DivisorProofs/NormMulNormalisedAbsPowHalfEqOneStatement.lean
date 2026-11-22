@@ -1,7 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormMulNormalisedAbsPowHalfEqOne
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntIndMemSB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormMulNormalisedAbsPowHalfEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntIndMemSB
+
+@[expose] public section
 
 open MeasureTheory Matrix ValuativeRel
 

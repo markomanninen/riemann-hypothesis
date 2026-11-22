@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.ExistsJacQuot
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LanglandsClassificationCuspidalSupport
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSubquotientCompMulSingle
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SocleOfMultiplicityOne
-import GroundTheory.AutomorphicForms.SmoothRepSchur
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.ExistsJacQuot
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LanglandsClassificationCuspidalSupport
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSubquotientCompMulSingle
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SocleOfMultiplicityOne
+public import GroundTheory.AutomorphicForms.SmoothRepSchur
+
+@[expose] public section
 
 open Filter Topology GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult UpperTheory.Lit.Cas UpperTheory.Lit.Red
 
@@ -84,7 +88,7 @@ private theorem isSocle_of {l d N : ℕ} (e : (Σ _ : Fin l, Fin d) ≃ Fin N) {
 
 private theorem exists_unit_one_add_generator (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness)
     {Z : ∀ Δ : Segment k, IrrCl (GL (Fin (Δ.len * Δ.d)) k)} (hZ : IsSegmentClass k Z) (Δ : Segment k) :
-    ∃ z : IrrGL k, IsZSeg Δ z.rep := by
+    ∃ z : IrrGL (k := k), IsZSeg Δ z.rep := by
   have hd : ∑ a, (Δ.term a).1 = Δ.len * Δ.d := Δ.sum_term_fst
   have H := hZ Δ Δ.start.rep Δ.start.cl_rep (stdBlocks (fun _ : Fin Δ.len => Δ.d) hd)
   obtain ⟨f, hf⟩ := (H (Z Δ).rep).1.1 (Z Δ).cl_rep
@@ -95,15 +99,15 @@ private theorem exists_unit_one_add_generator (hBZ : GlobalTheory.Published.Bern
       fun τ g hg => IrrRep.cl_eq_iff.1 (((H τ).1.2 ⟨g, hg⟩).trans (Z Δ).cl_rep.symm)
   exact ⟨⟨_, Z Δ⟩, hd, hS.of_equiv (.refl _) (segProdEquiv Δ hd)⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 private theorem glue {n s : ℕ} (π : IrrRep (GL (Fin n) k)) (d : Fin s → ℕ) (e : (Σ a, Fin (d a)) ≃ Fin n)
     (σ : ∀ a, IrrRep (GL (Fin (d a)) k)) (φ : π.ρ.IntertwiningMap (multiProd e fun a => (σ a).ρ))
-    (hφ : Function.Injective φ) (t : Fin s → ℕ) (u : ∀ a, Fin (t a) → IrrGL k)
+    (hφ : Function.Injective φ) (t : Fin s → ℕ) (u : ∀ a, Fin (t a) → IrrGL (k := k))
     (e' : ∀ a, (Σ b, Fin (u a b).1) ≃ Fin (d a))
     (ψ : ∀ a, (σ a).ρ.IntertwiningMap (multiProd (e' a) fun b => (u a b).rep))
     (hψ : ∀ a, Function.Injective (ψ a)) :
-    ∃ (w : Fin (∑ a, t a) → IrrGL k) (E : (Σ c, Fin (w c).1) ≃ Fin n)
+    ∃ (w : Fin (∑ a, t a) → IrrGL (k := k)) (E : (Σ c, Fin (w c).1) ≃ Fin n)
       (Φ : π.ρ.IntertwiningMap (multiProd E fun c => (w c).rep)), Function.Injective Φ ∧
         ∀ c, w c = u (finSigmaFinEquiv.symm c).1 (finSigmaFinEquiv.symm c).2 := by
   obtain ⟨E0, ⟨χ⟩⟩ := GlobalTheory.SmGL.Stages.stages_equiv (k := k) s d t (fun a b => (u a b).1) e'
@@ -122,13 +126,13 @@ private theorem glue {n s : ℕ} (π : IrrRep (GL (Fin n) k)) (d : Fin s → ℕ
     (χ.trans ω).toLinearEquiv.injective.comp (hΨ.comp hφ), fun _ => rfl⟩
 
 private theorem embeds' (hG : GlobalTheory.Published.GeometricLemma) (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness)
-    (x : IrrGL k) : ∃ (s : ℕ) (u : Fin s → IrrGL k) (e : (Σ a, Fin (u a).1) ≃ Fin x.1),
+    (x : IrrGL (k := k)) : ∃ (s : ℕ) (u : Fin s → IrrGL (k := k)) (e : (Σ a, Fin (u a).1) ≃ Fin x.1),
       (∀ a, (u a).IsCusp) ∧ ∃ φ : x.rep.IntertwiningMap (multiProd e fun a => (u a).rep), Function.Injective φ :=
   GlobalTheory.CompanionTheory.CuspEmbed.main hBZ hG k x.1 (GlobalTheory.SplitRead.Irr.ofIrrRep x.2.rep)
 
 private theorem word (hG : GlobalTheory.Published.GeometricLemma) (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness)
     {Z : ∀ Δ : Segment k, IrrCl (GL (Fin (Δ.len * Δ.d)) k)} (hZ : IsSegmentClass k Z) (Δ : Segment k) {N : ℕ}
-    (π : IrrRep (GL (Fin N) k)) (h : IsZSeg Δ π.ρ) {s : ℕ} (u : Fin s → IrrGL k) (hu : ∀ a, (u a).IsCusp)
+    (π : IrrRep (GL (Fin N) k)) (h : IsZSeg Δ π.ρ) {s : ℕ} (u : Fin s → IrrGL (k := k)) (hu : ∀ a, (u a).IsCusp)
     (e : (Σ a, Fin (u a).1) ≃ Fin N) (φ : π.ρ.IntertwiningMap (multiProd e fun a => (u a).rep))
     (hφ : Function.Injective φ) (a : Fin s) : u a = Δ.first.nu (a : ℕ) := by
   obtain rfl : Δ.len * Δ.d = N := h.deg_eq
@@ -157,13 +161,13 @@ private theorem word (hG : GlobalTheory.Published.GeometricLemma) (hBZ : GlobalT
       (GlobalTheory.LocGL.SupportUnique.isSubquotient_comp h5 _))
   obtain ⟨ω⟩ := h6.nonempty_equiv (c a).rep.irr (segTerm_irr _ _ a)
   have ω' := ω.symm.trans (Δ.first.twEquiv _ (isSmoothChar_absPow ((a : ℕ) : ℂ)))
-  exact (IrrGL.of_rep (⟨Δ.d, c a⟩ : IrrGL k)).symm.trans
+  exact (IrrGL.of_rep (⟨Δ.d, c a⟩ : IrrGL (k := k))).symm.trans
     ((IrrGL.of_eq_of.2 ⟨ω'⟩).trans (IrrGL.of_rep (Δ.first.nu (a : ℕ))))
 
 end
 
 theorem UpperTheory.Lit.Full.zfirst :
-    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → GlobalTheory.Published.ZelevinskyPolynomialRing → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (Δ : Segment k), (∃ z : IrrGL k, IsZSeg Δ z.rep) ∧ ∀ z : IrrGL k, IsZSeg Δ z.rep → FirstIn z {Δ.first} := by
+    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → GlobalTheory.Published.ZelevinskyPolynomialRing → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (Δ : Segment k), (∃ z : IrrGL (k := k), IsZSeg Δ z.rep) ∧ ∀ z : IrrGL (k := k), IsZSeg Δ z.rep → FirstIn z {Δ.first} := by
   intro hG hBZ hP k _ _ _ _ Δ
   obtain ⟨Z, -, hZ, -⟩ := hP k
   refine ⟨exists_unit_one_add_generator hBZ hZ Δ, fun z hz q hq hc hj => ?_⟩

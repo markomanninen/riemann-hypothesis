@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.NonemptyCubicalPull
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniqueSecPull
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.NonemptyCubicalPull
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniqueSecPull
+
+@[expose] public section
 
 noncomputable section
 
@@ -239,7 +243,8 @@ def IsComb (π : Y ⟶ T) {N : LB Y} (b : Fin m → LB.Sec N) (s : LB.Sec N) (c 
 theorem gs_comb (π : Y ⟶ T) (U : Y.Opens) (c : Fin m → Γ(T, ⊤)) (a : Fin m → Γ(Y, U)) (r : Z ⟶ Y) (z : Z)
     (hz : r z ∈ U) : gs r z U (∑ i, (Y.presheaf.map (homOfLE le_top).op).hom (π.appTop.hom (c i)) * a i) =
       ∑ i, gs (r ≫ π) z ⊤ (c i) * gs r z U (a i) := by
-  rw [gs_eq r z U hz, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [gs_eq r z U hz, map_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [← gs_eq r z U hz, gs_mul r z U hz]
   exact congrArg (· * _) ((gs_res r z (le_top : U ≤ π ⁻¹ᵁ ⊤) hz _).trans (gs_pull r π z ⊤ trivial _))

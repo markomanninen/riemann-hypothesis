@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.Localization.ChartA
+module
+
+public import ReciprocityTheory.L2DbarEstimates.Localization.ChartA
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.F
 
@@ -321,7 +325,7 @@ theorem chT_back (hExt : ExtendStatement n M) (hz : IsLocalHomeomorph z) (he : I
     rw [heq]
     exact h1
   · have hcs' : Continuous (fun y => ∑ i, wd n i (fun u => G' u i) y) :=
-      continuous_finset_sum _ fun i _ => (hcf _ (hG'j i) i).1
+      continuous_finsetSum _ fun i _ => (hcf _ (hG'j i) i).1
     have heq : wint n z (fun x => divF n z g x - D x) (fun _ => 0) =
         ∫⁻ y, ‖(∑ j, wd n j (fun u => G' u j) y) - e.target.indicator (D ∘ e.symm) y‖ₑ ^ 2 := by
       simp only [wint, neg_zero, Real.exp_zero, mul_one, hdiv]

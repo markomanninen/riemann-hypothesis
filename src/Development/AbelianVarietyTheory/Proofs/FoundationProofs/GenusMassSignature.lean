@@ -1,13 +1,19 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL5.Statement
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.SelfDualLatticeMass
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.MassFormulaPositivity
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.Statement
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GapAtLeast
+public import Formalism.HermitianLattices.StatementMass
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.MassFormulaPositivity
+
+@[expose] public section
 
 noncomputable section
 
 namespace GlobalTheory.Proof.GenusMassSignature
 
-open NumberField Formalism.BasicNotions GlobalTheory.IndefiniteRowSideFullHecke.SelfDualLatticeMass Matrix
+open NumberField Formalism.BasicNotions Matrix
 open scoped ComplexOrder MatrixOrder
 
 theorem denseRange_of_not_isReal {K : Type} [Field K] (σ : K →+* ℂ)
@@ -67,7 +73,8 @@ theorem emb_form (hst : ∀ (φ : E →+* ℂ) (a : E), φ (star a) = starRingEn
         (W.gram.map τ).mulVec (fun i => τ (W.frame.repr x i)) := by
   unfold HSpace.hD
   conv_lhs => rw [← W.frame.sum_repr x]
-  simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply,
     smul_eq_mul, map_mul, RingHom.id_apply, starRingEnd_apply, hst, dotProduct, Matrix.mulVec,
     Matrix.map_apply, HSpace.gram, Pi.star_apply, Finset.mul_sum]
   rw [Finset.sum_comm]
@@ -137,8 +144,6 @@ theorem pos_iff_posDef (htc : IsTotallyComplex E)
       simpa using congrFun h i
     rw [emb_form hst]
     exact h.re_dotProduct_pos hv
-
-def withPosSig (W : HSpace E) : HSpace E := { W with sig := fun _ => (W.rank, 0) }
 
 end Field
 

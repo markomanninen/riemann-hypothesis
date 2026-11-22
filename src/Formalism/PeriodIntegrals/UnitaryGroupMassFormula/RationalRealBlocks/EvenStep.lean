@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.BlockRatReal
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.BlockRatReal
+
+@[expose] public section
 
 open MvPolynomial Matrix
 

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial ValuativeRel IsLocalRing Filter
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.UnitaryBC
@@ -51,7 +55,7 @@ private theorem pow_anti {h h' : (L →+* Qbar l) → ℤ} (hh : ∀ τ, h τ �
   haveI := Fintype.ofFinite {j : w.adicCompletion L →+* Qbar l // Continuous j}
   unfold algPow
   rw [finprod_eq_prod_of_fintype, finprod_eq_prod_of_fintype, norm_prod, norm_prod]
-  refine Finset.prod_le_prod (fun j _ => norm_nonneg _) fun j _ => ?_
+  refine Finset.prod_le_prod₀ (fun j _ => norm_nonneg _) fun j _ => ?_
   rw [norm_zpow, norm_zpow]
   have hlt := norm_unif_lt (k := w.adicCompletion L) (l := l) j.1 j.2
   have hpos : 0 < ‖j.1 ((unif (w.adicCompletion L) : (w.adicCompletion L)ˣ) : w.adicCompletion L)‖ :=

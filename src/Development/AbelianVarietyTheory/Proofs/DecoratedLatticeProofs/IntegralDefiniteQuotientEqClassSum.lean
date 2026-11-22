@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsRatDatum
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleExact
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ClassSumIntegral
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntegralFundamentalDomainEqSumDoubleCosetAvg
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMulRightInvariantHaarAdelicUnitaryGroupHermiti
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.LevelADef
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GEqBase
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChartNonempty
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicFormsFiniteStabilisers
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicUnitaryTopCong
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRepsOfOpenCompact
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LatHatOpenAndContinuous
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsRatDatum
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleExact
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ClassSumIntegral
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntegralFundamentalDomainEqSumDoubleCosetAvg
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMulRightInvariantHaarAdelicUnitaryGroupHermiti
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.LevelADef
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GEqBase
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChartNonempty
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicFormsFiniteStabilisers
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicUnitaryTopCong
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRepsOfOpenCompact
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LatHatOpenAndContinuous
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Forms Formalism.UG
 open NumberField IsDedekindDomain Matrix MeasureTheory GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.MixPer GlobalTheory.Core.Rk GlobalTheory.AdForm
 open scoped TensorProduct Classical ComplexOrder
@@ -94,8 +99,8 @@ theorem finM_eq_one_of_mem_GinfC {D : D7} (V : HSp D) {n : ℕ} (hn : V.rank = n
   rw [h3, h2]
   rfl
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem ncard_stab {D : D7} (V : HSp D) {n : ℕ} (hn : V.rank = n) {J : Matrix (Fin n) (Fin n) D.host.E} {T f : ℕ}
     {bad : Set (HeightOneSpectrum (𝓞 D.host.F))} (S : StepLevel D.host.F D.host.E (sigD D) J T f bad) (a : GA D V)
     (y : UPts (sigD D) J (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) (ha : finM V hn a = y.1.1) :
@@ -227,7 +232,7 @@ theorem existsUnique_class {D : D7} (V : HSp D) {n : ℕ} (hn : V.rank = n) {T f
   have key : ∀ c, (∃ γ ∈ GQ V, ∃ k ∈ levG V hn S, x = γ * h c * k) ↔
       (Quotient.mk'' (yc c) : Cls S) = Quotient.mk'' ⟨finGLHom V hn x, GlobalTheory.AdForm.Model.finGL_mem V hn x⟩ := by
     intro c
-    refine Iff.trans ?_ (DoubleCoset.eq _ _ (yc c) _).symm
+    refine Iff.trans ?_ (@DoubleCoset.eq _ _ _ _ (yc c) _).symm
     constructor
     · rintro ⟨γ, hγ, k, hk, rfl⟩
       refine ⟨⟨finGLHom V hn γ, GlobalTheory.AdForm.Model.finGL_mem V hn γ⟩, finGLHom_mem_ratPts V hn hγ,

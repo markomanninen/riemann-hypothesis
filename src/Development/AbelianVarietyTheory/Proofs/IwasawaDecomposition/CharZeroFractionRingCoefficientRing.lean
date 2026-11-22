@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IncludeLInjective
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IncludeLInjective
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX GlobalTheory.HeightCounting GlobalTheory.HeightCounting.FormsStep NumberField IsDedekindDomain Polynomial
 open scoped TensorProduct
 
@@ -8,7 +13,7 @@ namespace GlobalTheory.HeightCounting.FracCharZero
 theorem injective_of_finite_dvr {A B : Type} [CommRing A] [IsDomain A] [IsPrincipalIdealRing A]
     [CommRing B] [IsDomain B] [IsDiscreteValuationRing B] [Algebra A B] [Module.Finite A B] :
     Function.Injective (algebraMap A B) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   by_contra hne
   push_neg at hne
   obtain ⟨a, ha, ha0⟩ := hne
@@ -21,7 +26,7 @@ theorem injective_of_finite_dvr {A B : Type} [CommRing A] [IsDomain A] [IsPrinci
   have hmax : ((⊥ : Ideal B).comap (algebraMap A B)).IsMaximal :=
     Ideal.IsPrime.isMaximal inferInstance hker
   have hbot : (⊥ : Ideal B).IsMaximal :=
-    Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := A) _ hmax
+    Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := A) ⊥ hmax
   exact IsDiscreteValuationRing.not_a_field B (IsLocalRing.eq_maximalIdeal hbot).symm
 
 theorem charZero_of_injective {R S : Type*} [NonAssocSemiring R] [NonAssocSemiring S] [CharZero R]

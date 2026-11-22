@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelPosOfCoprime
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorLevelForgettingFiniteEtaleSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocallyOfFinitePresentationOfIsQProjOver
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtModelForgetFiniteEtale
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowEqPowOfModEqSim
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AmpleRigidLevelRigid
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntDvdOfEqNatMulIntegralAdeleAwayFromPStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLatticeVectorEqNsmulOfAdelicNsmulStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelPosOfCoprime
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorLevelForgettingFiniteEtaleSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocallyOfFinitePresentationOfIsQProjOver
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtModelForgetFiniteEtale
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowEqPowOfModEqSim
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AmpleRigidLevelRigid
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntDvdOfEqNatMulIntegralAdeleAwayFromPStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLatticeVectorEqNsmulOfAdelicNsmulStatement
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -31,9 +35,9 @@ def inAfHom (D : Datum p) : D.La →+ AfP p ⊗[ℚ] VQ D where
   map_zero' := by simp [inAf]
   map_add' x y := by simp [inAf, TensorProduct.tmul_add]
 
-theorem acts_one_iff {G : HTGroup p} (L : Link D G) (n : ℕ) (hn : 0 < n) (hp : n.Coprime p) (x y : D.La) :
+theorem acts_one_iff {G : HTGroup p} (L : GlobalTheory.LKGeo.Link D G) (n : ℕ) (hn : 0 < n) (hp : n.Coprime p) (x y : D.La) :
     (∃ w ∈ LaHat D, ((1 : ℕ) : ℤ) • L.actG 1 (inAf D x) = inAf D y + n • w) ↔ ∃ u : D.La, x - y = n • u := by
-  simp only [map_one, Nat.cast_one, one_smul, Module.End.one_apply]
+  simp only [map_one, Nat.cast_one, one_smul, one_apply_eq_self]
   constructor
   · rintro ⟨w, hw, e⟩
     refine lattice_dvd n hn hp _ ⟨w, hw, ?_⟩
@@ -48,7 +52,7 @@ theorem acts_one_iff {G : HTGroup p} (L : Link D G) (n : ℕ) (hn : 0 < n) (hp :
     · have h1 : x = y + n • u := by rw [← hu]; abel
       rw [h1]
       change inAfHom D (y + n • u) = inAfHom D y + n • inAfHom D u
-      rw [map_add, map_nsmul]
+      rw [map_add (f := _), map_nsmul]
 
 end GlobalTheory.LKGeo.ForgetHecke
 

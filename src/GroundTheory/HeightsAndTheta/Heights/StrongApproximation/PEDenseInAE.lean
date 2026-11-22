@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -29,7 +34,7 @@ theorem EDenseInAE.proof (hT : AETopologicalRing.Statement) : EDenseInAE.Stateme
   refine hD.mono ?_
   rintro _ ⟨⟨x, y⟩, rfl⟩
   refine ⟨algebraMap F E x + algebraMap F E y * δ, ?_⟩
-  simp only [Function.comp_apply, Prod.map_apply, φ, algebraMap_smul, map_add, map_mul]
+  simp only [Function.comp_apply, Prod.map_apply, φ, algebraMap_smul, map_add (f := _), map_mul]
   have hinc : ∀ z : F, inclA F E (algebraMap F E z) = z • (1 : AE F E) := fun z => by
     rw [← Algebra.algebraMap_eq_smul_one]
     exact (Algebra.TensorProduct.includeRight : E →ₐ[F] AE F E).commutes z

@@ -1,6 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
-import GroundTheory.AutomorphicForms.StableConjCyclic
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ProjectiveLineOf
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+public import GroundTheory.AutomorphicForms.StableConjCyclic
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ProjectiveLineOf
+
+@[expose] public section
+
 open PositivityTheory.Rg.Tf.Geo
 
 private theorem exists_krylov_det_ne_zero {k : Type*} [Field k] [Infinite k] {n : ℕ}
@@ -42,20 +47,6 @@ private theorem continuous_krylov {k : Type*} [NontriviallyNormedField k] {n : �
   refine continuous_matrix fun i j => ?_
   simp only [GroundTheory.Automorphic.krylov, Matrix.of_apply]
   exact (continuous_apply i).comp (((Units.continuous_val.pow _)).matrix_mulVec continuous_const)
-
-private theorem conj_of_compM {k : Type*} [Field k] {n : ℕ} (γ g B U : GL (Fin n) k)
-    (T : Matrix (Fin n) (Fin n) k)
-    (hB : (γ : Matrix (Fin n) (Fin n) k) * B = B * T)
-    (hU : (g : Matrix (Fin n) (Fin n) k) * U = U * T) :
-    g = (B * U⁻¹)⁻¹ * γ * (B * U⁻¹) := by
-  have hT : ((B⁻¹ * γ * B : GL (Fin n) k) : Matrix (Fin n) (Fin n) k) = T := by
-    rw [Units.val_mul, Units.val_mul, mul_assoc, hB, ← mul_assoc]
-    simp
-  have h1 : g * U = U * (B⁻¹ * γ * B) := by
-    apply Units.ext
-    rw [Units.val_mul, Units.val_mul, hT, hU]
-  calc g = U * (B⁻¹ * γ * B) * U⁻¹ := by rw [← h1]; group
-    _ = (B * U⁻¹)⁻¹ * γ * (B * U⁻¹) := by group
 
 theorem UpperTheory.ConvolutionTheory.G.p1_holds :
     P1 :=

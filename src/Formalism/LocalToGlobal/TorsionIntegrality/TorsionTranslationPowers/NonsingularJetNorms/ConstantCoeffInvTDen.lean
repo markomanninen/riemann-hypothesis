@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementT
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.TwoTorsionU
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SeriesSubgroup
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementT
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.TwoTorsionU
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SeriesSubgroup
+
+@[expose] public section
 
 open PowerSeries
 
@@ -9,19 +13,6 @@ noncomputable section
 namespace Formalism.L2.Th1.E
 
 namespace Shape
-
-def ball (K : Type) [NormedField K] [IsUltrametricDist K] : Subring K where
-  carrier := {a | ‖a‖ ≤ 1}
-  mul_mem' := fun {a b} ha hb => by
-    change ‖a * b‖ ≤ 1
-    rw [norm_mul]; exact mul_le_one₀ ha (norm_nonneg _) hb
-  one_mem' := by simp
-  add_mem' := fun {a b} ha hb => (IsUltrametricDist.norm_add_le_max a b).trans (max_le ha hb)
-  zero_mem' := by simp
-  neg_mem' := fun {a} ha => by simpa using ha
-
-theorem mem_ball {K : Type} [NormedField K] [IsUltrametricDist K] {a : K} :
-    a ∈ ball K ↔ ‖a‖ ≤ 1 := Iff.rfl
 
 section Alg
 

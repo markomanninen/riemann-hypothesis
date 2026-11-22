@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.PathWeight.GeOldest
-import Formalism.SharpRestriction.GrowthBounds.PathWeight.LeadingDepthOneMemClosure
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PathWeight.GeOldest
+public import Formalism.SharpRestriction.GrowthBounds.PathWeight.LeadingDepthOneMemClosure
+
+@[expose] public section
 
 noncomputable section
 

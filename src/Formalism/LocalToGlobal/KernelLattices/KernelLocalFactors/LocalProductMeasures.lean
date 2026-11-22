@@ -1,16 +1,20 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.MuProd
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.PenultimateKernelDiamondInvariant
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.LocalProductMeasures.AbsoluteValueInertPrimes
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.LocalProductMeasures.TwistComponentsCompatibleSystem
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.LocalProductMeasures.TwistValueAtUniformizer
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.LocalProductMeasures.XiProd
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.LocalProductMeasures.HeckeCharacterCompatibleSystem
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.LocalProductMeasures.MlZFacSupport
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.LocalProductMeasures.HilbertNinetyNormOne
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.LocalProductMeasures.MqRowSGUnif
-import Formalism.LocalToGlobal.Columns.RowFormsSel
-import Formalism.LocalToGlobal.Columns.DetChrJoint
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.MuProd
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.PenultimateKernelDiamondInvariant
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.LocalProductMeasures.AbsoluteValueInertPrimes
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.LocalProductMeasures.TwistComponentsCompatibleSystem
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.LocalProductMeasures.TwistValueAtUniformizer
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.LocalProductMeasures.XiProd
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.LocalProductMeasures.HeckeCharacterCompatibleSystem
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.LocalProductMeasures.MlZFacSupport
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.LocalProductMeasures.HilbertNinetyNormOne
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.LocalProductMeasures.MqRowSGUnif
+public import Formalism.LocalToGlobal.Columns.RowFormsSel
+public import Formalism.LocalToGlobal.Columns.DetChrJoint
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped TensorProduct
@@ -24,17 +28,24 @@ section Sys
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
 theorem LocSys.mul' {A : Type} [CommGroup A] {l₁ l₂ : HeightOneSpectrum (𝓞 F) → Eˣ →* A} {R₁ R₂ R : Set (HeightOneSpectrum (𝓞 F))}
-    (h₁ : LocSys l₁ R₁) (h₂ : LocSys l₂ R₂) (s₁ : R₁ ⊆ R) (s₂ : R₂ ⊆ R) : LocSys (fun v => l₁ v * l₂ v) R where
-  wild v a h := by rw [MonoidHom.mul_apply, h₁.wild v a h, h₂.wild v a h, one_mul]
-  trivF v k := by rw [MonoidHom.mul_apply, h₁.trivF v k, h₂.trivF v k, one_mul]
-  unr v hv a h := by
+    (h₁ : LocSys l₁ R₁) (h₂ : LocSys l₂ R₂) (s₁ : R₁ ⊆ R) (s₂ : R₂ ⊆ R) : LocSys (fun v => l₁ v * l₂ v) R := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro v a h
+    rw [MonoidHom.mul_apply, h₁.wild v a h, h₂.wild v a h, one_mul]
+  · intro v k
+    rw [MonoidHom.mul_apply, h₁.trivF v k, h₂.trivF v k, one_mul]
+  · intro v hv a h
     rw [MonoidHom.mul_apply, h₁.unr v (fun h' => hv (s₁ h')) a h, h₂.unr v (fun h' => hv (s₂ h')) a h, one_mul]
 
 theorem LocSys.map' {A B : Type} [CommGroup A] [CommGroup B] {l : HeightOneSpectrum (𝓞 F) → Eˣ →* A} {R : Set (HeightOneSpectrum (𝓞 F))}
-    (h : LocSys l R) (f : A →* B) : LocSys (fun v => f.comp (l v)) R where
-  wild v a h' := by rw [MonoidHom.comp_apply, h.wild v a h', map_one]
-  trivF v k := by rw [MonoidHom.comp_apply, h.trivF v k, map_one]
-  unr v hv a h' := by rw [MonoidHom.comp_apply, h.unr v hv a h', map_one]
+    (h : LocSys l R) (f : A →* B) : LocSys (fun v => f.comp (l v)) R := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro v a h'
+    rw [MonoidHom.comp_apply, h.wild v a h', map_one]
+  · intro v k
+    rw [MonoidHom.comp_apply, h.trivF v k, map_one]
+  · intro v hv a h'
+    rw [MonoidHom.comp_apply, h.unr v hv a h', map_one]
 
 theorem OneAt.one (P : HeightOneSpectrum (𝓞 E)) : OneAt P (1 : E) := by
   unfold OneAt
@@ -123,8 +134,8 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Ch
   (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
   (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu)) (G : ChGlob X R.m)
 
-variable (Pr) in
 
+variable (Pr) in
 def RmOf : Set (HeightOneSpectrum (𝓞 X.F)) := {v | ∃ P ∈ rowSG Pr sel mu, P.asIdeal.under (𝓞 X.F) = v.asIdeal}
 
 def muLam (σ₀ : X.K →+* ℂ) (χ : HChar X.E) (ξ : Chr X.F X.E X.K) (v : HeightOneSpectrum (𝓞 X.F)) : X.Eˣ →* ℂˣ :=
@@ -258,7 +269,7 @@ theorem md_fac_off (hX : X.AbelianUnramifiedExtensionConditions) (hPr : Pr.Ok) (
         (fun P' h1 h2 => by rw [hoth P' h1 h2]; exact hb2)
     have e3 : Units.map σ₀.toMonoidHom (mUof Ch mu i (sel v)) = (muLam σ₀ (m0 ⟨i, hi⟩) (mu : Chr X.F X.E X.K) v w)⁻¹ := by
       unfold muLam mUof
-      rw [MonoidHom.mul_apply, MonoidHom.comp_apply, e1, e2, dif_pos hi, map_mul, map_inv, map_inv, mul_inv]
+      rw [MonoidHom.mul_apply, MonoidHom.comp_apply, e1, e2, dite_eq_left hi, map_mul, map_inv, map_inv, mul_inv]
       congr 2
       apply Units.ext
       exact hT.muVal ⟨i, hi⟩ (sel v) (md_no_g hX.ok hPr hv (hsel v))
@@ -388,7 +399,7 @@ theorem md_fac_bad (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) (hg : XiOffG P
     · exact h3
   rw [hL]
   unfold muAtT LocE.locChar LocE.unitV
-  rw [dif_pos hu]
+  rw [dite_eq_left hu]
   generalize LocE.vP P.1 (Col.qOf P.1) ((x : X.E) / star (x : X.E)) = n at *
   by_cases hP : P.1 ∈ Pr.vGs
   · rw [if_pos hP, if_pos hP]
@@ -400,7 +411,7 @@ theorem md_fac_bad (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) (hg : XiOffG P
     have h3 := hχ.atg ⟨P.1, hP⟩ c c₀ hu.unit hcc (by rw [IsUnit.unit_spec]; exact hmk.symm)
     have h4 : chiP Ch P.1 i = Ch.chi ⟨i, hi⟩ ⟨P.1, hP⟩ := by
       unfold chiP chiAt extChi
-      rw [dif_pos hP, dif_pos hi]
+      rw [dite_eq_left hP, dite_eq_left hi]
     rw [map_mul, map_zpow₀, h1, h4, h2, map_one, mul_one]
     have hb : G.σ₀ (((qVal (mu : Chr X.F X.E X.K) P.1)⁻¹ : X.Kˣ) : X.K) = (G.σ₀ ((qVal (mu : Chr X.F X.E X.K) P.1 : X.Kˣ) : X.K))⁻¹ := by
       rw [Units.val_inv_eq_inv_val, map_inv₀]
@@ -428,7 +439,7 @@ theorem md_fac_bad (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) (hg : XiOffG P
       twist_residue_character X.F X.E X.K S mu v P.1 hv c c₀ hu.unit hcc (by rw [IsUnit.unit_spec]; exact hmk)
         (fun P' h1 h2 => by rw [hoth P' h1 h2]; exact hc2)
     unfold muqT
-    rw [dif_pos hi, h1, h3, h4, one_mul, map_mul, map_zpow₀]
+    rw [dite_eq_left hi, h1, h3, h4, one_mul, map_mul, map_zpow₀]
     have hL1 : G.σ₀ ((((Ch.muVal ⟨i, hi⟩ P.1)⁻¹ * (qVal (mu : Chr X.F X.E X.K) P.1)⁻¹ : X.Kˣ)) : X.K) =
         (((G.mu0 ⟨i, hi⟩).val P.1 : ℂˣ) : ℂ)⁻¹ * (G.σ₀ ((qVal (mu : Chr X.F X.E X.K) P.1 : X.Kˣ) : X.K))⁻¹ := by
       rw [Units.val_mul, Units.val_inv_eq_inv_val, Units.val_inv_eq_inv_val, map_mul, map_inv₀, map_inv₀, h2]
@@ -565,12 +576,6 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks} {W : Wts X Pr.Word R} {Ch : Ch
   {sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)} {S : Set ℕ}
   {mu : Tup X.F X.E X.K S} {cst : LocCst X (rowSG Pr sel mu)} {G : ChGlob X R.m}
 
-theorem muProdLaw_muAt (hX : X.AbelianUnramifiedExtensionConditions) (hPr : Pr.Ok) (hsel : IsSel X sel) (hg : XiOffG Pr (mu : Chr X.F X.E X.K)) (hT : LawTies W Ch sel mu cst G)
-    (i : ℕ) (hi : i < R.m) (e : X.Tau → ℤ) (he : ∀ τ, (e τ : ℚ) = (W.row τ).e ⟨i, hi⟩) (n : ℕ) :
-    MuProdLaw n sel (rowSG Pr sel mu) (mUof Ch mu i) (muAt Ch sel mu cst i) e := by
-  rw [muAt_eq_muAtT Ch sel mu cst hT.1 i hi]
-  exact muProdLaw_of hX hPr hsel hg hT i hi e he n
-
 theorem xiOffG_of_mem (hPr : Pr.Ok) (hS : ∀ i, Pr.g i ∈ S) : XiOffG Pr (mu : Chr X.F X.E X.K) := by
   intro P hP v hv hQ
   obtain ⟨i, hi⟩ := ciVGs_cases hP
@@ -591,33 +596,6 @@ theorem xiOffG_of_mem (hPr : Pr.Ok) (hS : ∀ i, Pr.g i ∈ S) : XiOffG Pr (mu :
     exact CharP.char_is_prime (𝓞 X.F ⧸ v.asIdeal) (ringChar (𝓞 X.F ⧸ v.asIdeal))
   have h3 : plc v = Pr.g i := (Nat.prime_dvd_prime_iff_eq hpp (hPr.g_prime i)).mp h2
   exact (mu.good hQ).2.2 (h3 ▸ hS i)
-
-theorem test_not_oneAt_zero {E : Type} [Field E] [NumberField E] (P : HeightOneSpectrum (𝓞 E)) : ¬ OneAt P (0 : E) := by
-  unfold OneAt
-  rw [zero_sub, Valuation.map_neg, map_one]
-  exact lt_irrefl _
-
-theorem test_not_oneAt_unif {E : Type} [Field E] [NumberField E] (P : HeightOneSpectrum (𝓞 E)) {a : E}
-    (h : P.valuation E a = WithZero.exp (-1 : ℤ)) : ¬ OneAt P a := by
-  intro h1
-  rw [h1.val_eq_one] at h
-  exact absurd h (by simp)
-
-theorem test_locId_same {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (v : HeightOneSpectrum (𝓞 F)) (a : Eˣ) :
-    Formalism.UG.prV (E := E) v ((locId E v a : (AfE F E)ˣ) : AfE F E) = (a : E) ⊗ₜ[F] (1 : v.adicCompletion F) := by
-  show (Algebra.TensorProduct.map (AlgHom.id F E) (Formalism.UG.evalV F v))
-    ((a : E) ⊗ₜ[F] Formalism.L2.G.sgl F v 1 + (1 : E) ⊗ₜ[F] (1 - Formalism.L2.G.sgl F v 1)) = _
-  rw [map_add, Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.map_tmul, map_sub, Formalism.L2.G.sgl_apply_same, map_one (Formalism.UG.evalV F v), sub_self,
-    TensorProduct.tmul_zero, add_zero]
-  rfl
-
-theorem test_locId_ne {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {v v' : HeightOneSpectrum (𝓞 F)} (h : v' ≠ v) (a : Eˣ) :
-    Formalism.UG.prV (E := E) v' ((locId E v a : (AfE F E)ˣ) : AfE F E) = 1 := by
-  show (Algebra.TensorProduct.map (AlgHom.id F E) (Formalism.UG.evalV F v'))
-    ((a : E) ⊗ₜ[F] Formalism.L2.G.sgl F v 1 + (1 : E) ⊗ₜ[F] (1 - Formalism.L2.G.sgl F v 1)) = _
-  rw [map_add, Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.map_tmul, map_sub, Formalism.L2.G.sgl_apply_ne F v 1 h, map_one (Formalism.UG.evalV F v'), sub_zero,
-    TensorProduct.tmul_zero, zero_add]
-  rfl
 
 end More
 

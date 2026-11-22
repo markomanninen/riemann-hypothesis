@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapR
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAlgebraFacts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapR
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAlgebraFacts
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 

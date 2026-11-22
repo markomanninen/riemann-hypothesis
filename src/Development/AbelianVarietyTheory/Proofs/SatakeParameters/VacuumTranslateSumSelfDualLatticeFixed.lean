@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SelfDualOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LatticeModelVacuumTranslateClassesIndependent
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MulSelfEqOneIffOfLinearOrderedCommGroupWithZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SelfDualOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LatticeModelVacuumTranslateClassesIndependent
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MulSelfEqOneIffOfLinearOrderedCommGroupWithZero
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory.Hk3.HoweG
@@ -65,7 +70,7 @@ theorem vacuum_sum_selfDual_fixed : ∀ (L : Type) [Field L] [CharZero L] [Value
     apply hpsi
     · rw [GlobalTheory.Hk3.mem_intL_iff, map_div₀, h2, div_one]
       exact (Formalism.UG.intL L).add_mem hcI hσc
-    · rw [map_div₀, map_add, hσσ, map_ofNat]; ring
+    · rw [map_div₀, map_add (f := _), hσσ, map_ofNat]; ring
   have hcomb : ∀ w w' : Matrix (Fin n') (Fin n) L, (∀ i j, w i j ∈ Formalism.UG.intL L) → (∀ i j, w' i j ∈ Formalism.UG.intL L) →
       ∀ t : M, ρ (w * A) (ρ (w' * A) t) = ρ (w * A + w' * A) t := by
     intro w w' hw hw' t
@@ -90,7 +95,8 @@ theorem vacuum_sum_selfDual_fixed : ∀ (L : Type) [Field L] [CharZero L] [Value
       _ = ρ (v' * A) (ρ ((u + v - v') * A) s) := (hcomb v' _ hv' hw s).symm
       _ = ρ (v' * A) s := by rw [hl]
   choose! f hfZ hf hfd using key
-  rw [map_sum, Finset.sum_congr rfl hf]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_congr rfl hf]
   have hinj : ∀ x ∈ Z, ∀ y ∈ Z, f x = f y → x = y := by
     intro z1 h1 z2 h2 he
     apply hZdist z1 h1 z2 h2

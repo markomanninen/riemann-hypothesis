@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameTransport
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParametersUPrimeForULower
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Interlace
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleRecOfAdmissibleWord
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameTransport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParametersUPrimeForULower
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Interlace
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleRecOfAdmissibleWord
+
+@[expose] public section
 
 noncomputable section
 

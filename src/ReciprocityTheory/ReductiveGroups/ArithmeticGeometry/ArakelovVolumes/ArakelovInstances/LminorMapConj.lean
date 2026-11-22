@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.LeviVReLine
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajorantNormalForms
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.DetSubUpper
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.KappaStatementHolds
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.LeviVReLine
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajorantNormalForms
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.DetSubUpper
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.KappaStatementHolds
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,7 +33,7 @@ theorem sub_LMU {m : ℕ} (hm : m ≤ r) (L M U : Matrix (Fin r) (Fin r) ℂ)
       (L.submatrix (Fin.castLE hm) (Fin.castLE hm))ᵀ * M.submatrix (Fin.castLE hm) (Fin.castLE hm) *
         U.submatrix (Fin.castLE hm) (Fin.castLE hm) := by
   ext i j
-  simp only [submatrix_apply, mul_apply, transpose_apply]
+  simp only [submatrix_apply, Matrix.mul_apply, transpose_apply]
   rw [sum_eq_castLE hm (fun b => (∑ a, L a (Fin.castLE hm i) * M a b) * U b (Fin.castLE hm j))]
   · refine Finset.sum_congr rfl fun b _ => ?_
     congr 1

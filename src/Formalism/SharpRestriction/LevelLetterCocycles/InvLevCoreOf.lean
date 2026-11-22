@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.KillWinFromCut
-import Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
-import Formalism.SharpRestriction.LevelLetterCocycles.PrecompConst
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalInputsFromLiterature
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.KillWinFromCut
+public import Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
+public import Formalism.SharpRestriction.LevelLetterCocycles.PrecompConst
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalInputsFromLiterature
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsAmpleTensorAmplePowProjective
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegExp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsAmpleTensorAmplePowProjective
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegExp
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,9 +26,15 @@ theorem exists_secB_generating : ∀ (R : Type) [CommRing R] [IsDomain R] [IsNoe
   refine ⟨k₀, fun k h => ?_⟩
   have hP := isLB_lbPow hL k
   have hT := isLB_tens (hN 0) hP
-  refine (hk k h).of_lbIso (hN k) ((cls_eq_iff (hN k) hT).1 ?_)
-  rw [cls_tens (hN 0) hP hT, cls_lbPow hL, cls_linComb hL, cls_linComb hL]
-  simp only [Fin.sum_univ_four, DegPre.famφB, DegPre.famε, Matrix.cons_val, pull_id]
-  module
+  refine (hk k h).of_lbIso (hN k) (iso_of_chart hT ⟨fun j => (j, fun _ => j 0), fun _ _ hj => ⟨hj, ?_⟩, ?_⟩)
+  · exact Set.mem_iInter.2 fun _ => Set.mem_iInter.1 hj 0
+  · intro y p q hp hq
+    set_option maxHeartbeats 200000 in
+    refine (gm_linComb D.P.L (D.famφB α) (DegPre.famε k) (𝟙 _) y p q hp hq).trans ?_
+    refine ((gm_tens (LB.LinComb D.P.L (D.famφB α) (DegPre.famε 0)) (lbPow D.P.L k) (𝟙 _) y (p, fun _ => p 0) (q, fun _ => q 0) ⟨hp, Set.mem_iInter.2 fun _ => Set.mem_iInter.1 hp 0⟩ ⟨hq, Set.mem_iInter.2 fun _ => Set.mem_iInter.1 hq 0⟩).trans ?_).symm
+    refine (congrArg₂ (· * ·) (gm_linComb D.P.L (D.famφB α) (DegPre.famε 0) (𝟙 _) y p q hp hq) (gm_linComb D.P.L (fun _ : PUnit => 𝟙 _) (fun _ => (k : ℤ)) (𝟙 _) y (fun _ => p 0) (fun _ => q 0) (Set.mem_iInter.2 fun _ => Set.mem_iInter.1 hp 0) (Set.mem_iInter.2 fun _ => Set.mem_iInter.1 hq 0))).trans ?_
+    simp only [Fin.prod_univ_four, Fintype.prod_unique, DegPre.famφB, DegPre.famε, Matrix.cons_val, Category.id_comp, zpow_sub, zpow_one]
+    simp only [Nat.cast_zero, zpow_zero, one_mul]
+    ac_rfl
 
 end GlobalTheory.Mum

@@ -1,11 +1,15 @@
-import ReciprocityTheory.GroupCohomology.CupConnRightStatement
-import ReciprocityTheory.GroupCohomology.HomogExistsStatement
-import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
-import ReciprocityTheory.GroupCohomology.ContractNthCastAddCastSucc
-import ReciprocityTheory.GroupCohomology.HomogIso
-import ReciprocityTheory.GroupCohomology.PrismOpZeroEval
-import ReciprocityTheory.GroupCohomology.ResNormalHolds
-import ReciprocityTheory.GroupCohomology.CupCorB
+module
+
+public import ReciprocityTheory.GroupCohomology.CupConnRightStatement
+public import ReciprocityTheory.GroupCohomology.HomogExistsStatement
+public import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
+public import ReciprocityTheory.GroupCohomology.ContractNthCastAddCastSucc
+public import ReciprocityTheory.GroupCohomology.HomogIso
+public import ReciprocityTheory.GroupCohomology.PrismOpZeroEval
+public import ReciprocityTheory.GroupCohomology.ResNormalHolds
+public import ReciprocityTheory.GroupCohomology.CupCorB
+
+@[expose] public section
 
 namespace ReciprocityTheory.Coh
 
@@ -13,8 +17,8 @@ open ReciprocityTheory.Gal Cx Function
 
 universe u
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem cupCor_holds : CupCorStatement.{u} := by
   unfold CupCorStatement
   intro R _ G _ _ _ M N P U _ b bU cup cupU corM corP hU hβ hcup hcupU hcorM hcorP p q x y

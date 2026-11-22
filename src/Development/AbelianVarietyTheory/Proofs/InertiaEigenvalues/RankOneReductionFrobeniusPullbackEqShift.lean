@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsPresOfRealD
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GammaActionReduction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsPresOfRealD
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GammaActionReduction
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.RankOneReduction
@@ -88,12 +92,14 @@ theorem free_rank_one {O k M : Type} [CommRing O] [Field k] [Algebra O k] [AddCo
     intro s g hg i hi
     choose g' hg' using fun i => hs (g i)
     have h0 : q (∑ j ∈ s, g' j • b j) = 0 := by
-      rw [map_sum, ← hg]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, ← hg]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_smul, ← hg', algebraMap_smul]
     obtain ⟨y, hy⟩ := (hker _).mp h0
     have := congrArg (fun z => b.repr z i) hy
-    simp only [map_sum, map_smul, Module.Basis.repr_self, Finsupp.coe_finsetSum, Finset.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Module.Basis.repr_self, Finsupp.coe_finsetSum, Finset.sum_apply,
       Finsupp.smul_apply, smul_eq_mul] at this
     rw [Finset.sum_eq_single i (fun j _ hj => by simp [hj]) (fun h => absurd hi h)] at this
     rw [← hg', hk]
@@ -152,7 +158,7 @@ theorem red_Q {l : ℕ} [Fact l.Prime] [CharP k l] (hp : PD.p = l) (hs : W.s = 1
     rfl
   have h := congrArg (PowerSeries.map (algebraMap O k)) W.q₀_def
   have : CharP k⟦X⟧ l := charP_of_injective_algebraMap (algebraMap k k⟦X⟧).injective l
-  simp only [map_mul, map_sub, map_pow, map_add, map_one, PowerSeries.map_X, hp] at h
+  simp only [map_mul, map_sub, map_pow, map_add (f := _), map_one, PowerSeries.map_X, hp] at h
   rw [add_pow_char, one_pow, add_sub_cancel_left] at h
   rw [hQ]
   apply mul_left_cancel₀ (PowerSeries.X_ne_zero (R := k))

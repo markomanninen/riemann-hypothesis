@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CommOfBezout
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CommOfBezout
+
+@[expose] public section
+
 open GlobalTheory.UnitDiscAlg
 
 namespace GlobalTheory.UnitDiscAlg
@@ -21,12 +26,12 @@ theorem norm_det_one_add_smul (E : Type) [NontriviallyNormedField E] [IsUltramet
   let y : Matrix (Fin n) (Fin n) O := fun i j => ⟨x i j, hx i j⟩
   let w : O := ⟨ϖ, hϖ.le⟩
   have hmap : O.subtype.mapMatrix (1 + w • y) = 1 + ϖ • x := by
-    rw [map_add, map_one]
+    rw [map_add (f := _), map_one]
     congr 1
   have hdet : (1 + ϖ • x).det = ((1 + w • y).det : E) := by
     rw [← hmap, ← RingHom.map_det]; rfl
   have hq : (Ideal.Quotient.mk (Ideal.span {w})) (1 + w • y).det = 1 := by
-    rw [RingHom.map_det, map_add, map_one]
+    rw [RingHom.map_det, map_add (f := _), map_one]
     have : (Ideal.Quotient.mk (Ideal.span {w})).mapMatrix (w • y) = 0 := by
       ext i j
       simp [Ideal.Quotient.eq_zero_iff_mem, Ideal.mem_span_singleton']

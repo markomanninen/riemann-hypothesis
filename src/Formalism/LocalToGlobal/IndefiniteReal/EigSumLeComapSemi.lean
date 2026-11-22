@@ -1,8 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.CxToPkgFamIn
-import Formalism.LocalToGlobal.IndefiniteReal.MemRangeAdjointOfKerStable
-import Formalism.LocalToGlobal.Divisibility.RowLatLemmas
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MapPowSub
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.CxToPkgFamIn
+public import Formalism.LocalToGlobal.IndefiniteReal.MemRangeAdjointOfKerStable
+public import Formalism.LocalToGlobal.Divisibility.RowLatLemmas
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder InnerProductSpace
@@ -94,7 +97,8 @@ theorem inj_of_li {ι : Type*} (b : Basis ι K V) (f : V →ₛₗ[σ] E)
   have e := b.linearCombination_repr v
   rw [Finsupp.linearCombination_apply, Finsupp.sum] at e
   have h3 : ∑ i ∈ (b.repr v).support, σ (b.repr v i) • f (b i) = f v := by
-    rw [← congrArg f e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← congrArg f e, map_sum]
     simp only [map_smulₛₗ]
   have hall := linearIndependent_iff'.1 h _ _ (h3.trans hv)
   have hr : b.repr v = 0 := by
@@ -135,7 +139,8 @@ theorem iC_cpt_eq (t : Bs.Tup) (x : Fin ((lv (fc X.zs) b).dQ t) → K) :
     funext i
     simp [Finset.sum_apply, Pi.single_apply]
   conv_rhs => rw [hx]
-  simp only [map_sum, map_smul, map_smulₛₗ, CxData.iC, lin, Fintype.linearCombination_apply, cpt]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, map_smulₛₗ, CxData.iC, lin, Fintype.linearCombination_apply, cpt]
 
 theorem tC_cpt_eq (j : Bs.J) (t : Bs.Tup) (x : Fin ((lv (fc X.zs) b).dZ j t) → K) :
     X.tC cr b j t (cpt Bs.v0.embedding x) = X.θ' j t (X.jL j t (cr.toL X.zs b j t x)) := by
@@ -143,7 +148,8 @@ theorem tC_cpt_eq (j : Bs.J) (t : Bs.Tup) (x : Fin ((lv (fc X.zs) b).dZ j t) →
     funext i
     simp [Finset.sum_apply, Pi.single_apply]
   conv_rhs => rw [hx]
-  simp only [map_sum, map_smul, map_smulₛₗ, CxData.tC, lin, Fintype.linearCombination_apply, cpt]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, map_smulₛₗ, CxData.tC, lin, Fintype.linearCombination_apply, cpt]
 
 end CxData
 
@@ -152,51 +158,7 @@ section Concrete
 variable {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {m : ℕ}
 variable (A : FamIn K G Pl0 T m) (X : CxData A.fam.amb)
 
-structure HeckeThetaR (hE : ∀ t, (A.fam.R t).Pl × ℕ → Module.End ℂ X.EE) : Prop where
-
-  intw : ∀ t i (u : X.FC t), X.Θ t (X.opC t (Sum.inl i) u) = hE t i (X.Θ t u)
-
-  comm : PairComm (hE A.fam.μ0)
-
-  parts : ∀ p : A.fam.base.Ix,
-    X.EEp p = eigSum (hE A.fam.μ0) (cxSys A.fam.base.v0.embedding ((A.fam.R A.fam.μ0).HasRes p.1))
-
-structure HeckeThetaL (hW : ∀ j t, (A.fam.L j t).Pl × ℕ → Module.End ℂ (X.W j)) : Prop where
-
-  intw : ∀ j t i (u : X.FLC j t), X.θ' j t (X.opLC j t (Sum.inl i) u) = hW j t i (X.θ' j t u)
-
-  comm : ∀ j, PairComm (hW j A.fam.μ0)
-
-  parts : ∀ (j : Fin m) (p : A.fam.base.Ix),
-    X.Wp j p = eigSum (hW j A.fam.μ0)
-      (cxSys A.fam.base.v0.embedding ((A.fam.L j A.fam.μ0).HasRes (A.fam.tr j p.1)))
-
 variable {A X}
-
-theorem kerStabR_hecke {hE : ∀ t, (A.fam.R t).Pl × ℕ → Module.End ℂ X.EE} (hH : HeckeThetaR A X hE)
-    (t : T) (i : (A.fam.R t).Pl × ℕ) (u : X.FC t) (hu : X.Θ t u = 0) :
-    X.Θ t (X.opC t (Sum.inl i) u) = 0 := by
-  rw [hH.intw, hu, map_zero]
-
-theorem kerStabL_hecke {hW : ∀ j t, (A.fam.L j t).Pl × ℕ → Module.End ℂ (X.W j)} (hH : HeckeThetaL A X hW)
-    (j : Fin m) (t : T) (i : (A.fam.L j t).Pl × ℕ) (u : X.FLC j t) (hu : X.θ' j t u = 0) :
-    X.θ' j t (X.opLC j t (Sum.inl i) u) = 0 := by
-  rw [hH.intw, hu, map_zero]
-
-theorem kerStabR_of {hE : ∀ t, (A.fam.R t).Pl × ℕ → Module.End ℂ X.EE} (hH : HeckeThetaR A X hE)
-    (hG : ∀ t (g : G) (u : X.FC t), X.Θ t u = 0 → X.Θ t (X.opC t (Sum.inr g) u) = 0) : X.KerStabR := by
-  intro t i u hu
-  rcases i with i | g
-  · exact kerStabR_hecke hH t i u hu
-  · exact hG t g u hu
-
-theorem kerStabL_of {hW : ∀ j t, (A.fam.L j t).Pl × ℕ → Module.End ℂ (X.W j)} (hH : HeckeThetaL A X hW)
-    (hG : ∀ j t (g : G) (u : X.FLC j t), X.θ' j t u = 0 → X.θ' j t (X.opLC j t (Sum.inr g) u) = 0) :
-    X.KerStabL := by
-  intro j t i u hu
-  rcases i with i | g
-  · exact kerStabL_hecke hH j t i u hu
-  · exact hG j t g u hu
 
 theorem toF_mem_Z {B : BlockDat K G Pl0} (ℓ : Lvl K G) (Z : Submodule K B.S.Forms) (y : Fin (B.dZ ℓ Z) → K) :
     B.toF ℓ Z y ∈ Z := by
@@ -214,81 +176,9 @@ theorem toF_mem_Z {B : BlockDat K G Pl0} (ℓ : Lvl K G) (Z : Submodule K B.S.Fo
   rw [e]
   exact hw
 
-theorem part_iff_rows (hR : X.KFormR) (hst : X.zs.Stable) {s : ℕ} (hOk : A.fam.Ok s)
-    {hE : ∀ t, (A.fam.R t).Pl × ℕ → Module.End ℂ X.EE} (hH : HeckeThetaR A X hE) (p : A.fam.base.Ix)
-    (ℓ : Lvl K G) (y : Fin ((A.fam.R A.fam.μ0).dZ ℓ (X.Z A.fam.μ0)) → K) :
-    y ∈ (A.fam.R A.fam.μ0).part ℓ (X.Z A.fam.μ0) p.1 ↔
-      X.Θ A.fam.μ0 (X.jR A.fam.μ0 ((A.fam.R A.fam.μ0).toF ℓ (X.Z A.fam.μ0) y)) ∈ X.EEp p := by
-  have hB := hOk.what₂ A.fam.μ0
-  have hZ : ∀ i, X.Z A.fam.μ0 ≤ (X.Z A.fam.μ0).comap ((A.fam.R A.fam.μ0).op i) := fun i =>
-    Submodule.map_le_iff_le_comap.1 (hst.1 A.fam.μ0 (Sum.inl i))
-  have hmemZ := toF_mem_Z ℓ (X.Z A.fam.μ0) y
-  have e1 : y ∈ (A.fam.R A.fam.μ0).part ℓ (X.Z A.fam.μ0) p.1 ↔
-      (A.fam.R A.fam.μ0).toF ℓ (X.Z A.fam.μ0) y ∈ (A.fam.R A.fam.μ0).partF p.1 := by
-    simp only [BlockDat.part, BlockDat.inV0, BlockDat.coord, Submodule.mem_comap, Submodule.mem_map,
-      BlockDat.toF, LinearMap.coe_comp, Function.comp_apply, LinearEquiv.coe_coe]
-    constructor
-    · rintro ⟨w, hw, hwe⟩
-      rw [← hwe, LinearEquiv.symm_apply_apply]
-      exact hw
-    · intro h
-      exact ⟨_, h, LinearEquiv.apply_symm_apply _ _⟩
-  rw [e1, hH.parts p]
-  exact mem_eigSum_iff_map ((X.Θ A.fam.μ0).comp (X.jR A.fam.μ0)) hB.comm hB.split hH.comm
-    (fun i v => by
-      rw [LinearMap.comp_apply, LinearMap.comp_apply,
-        show (A.fam.R A.fam.μ0).op i v = A.fam.amb.opR A.fam.μ0 (Sum.inl i) v from rfl,
-        X.jR_opR hR, hH.intw])
-    hZ (fun z hz h0 => X.theta_jR_inj hR _ z hz h0) _ hmemZ
-
-theorem part_iff_lifts (hL : X.KFormL) (hst : X.zs.Stable) {s : ℕ} (hOk : A.fam.Ok s)
-    {hW : ∀ j t, (A.fam.L j t).Pl × ℕ → Module.End ℂ (X.W j)} (hH : HeckeThetaL A X hW) (j : Fin m)
-    (p : A.fam.base.Ix) (ℓ : Lvl K G) (y : Fin ((A.fam.L j A.fam.μ0).dZ ℓ (X.Zl j A.fam.μ0)) → K) :
-    y ∈ (A.fam.L j A.fam.μ0).part ℓ (X.Zl j A.fam.μ0) (A.fam.tr j p.1) ↔
-      X.θ' j A.fam.μ0 (X.jL j A.fam.μ0 ((A.fam.L j A.fam.μ0).toF ℓ (X.Zl j A.fam.μ0) y)) ∈ X.Wp j p := by
-  have hB := hOk.lifts j A.fam.μ0
-  have hZ : ∀ i, X.Zl j A.fam.μ0 ≤ (X.Zl j A.fam.μ0).comap ((A.fam.L j A.fam.μ0).op i) := fun i =>
-    Submodule.map_le_iff_le_comap.1 (hst.2 j A.fam.μ0 (Sum.inl i))
-  have hmemZ := toF_mem_Z ℓ (X.Zl j A.fam.μ0) y
-  have e1 : y ∈ (A.fam.L j A.fam.μ0).part ℓ (X.Zl j A.fam.μ0) (A.fam.tr j p.1) ↔
-      (A.fam.L j A.fam.μ0).toF ℓ (X.Zl j A.fam.μ0) y ∈ (A.fam.L j A.fam.μ0).partF (A.fam.tr j p.1) := by
-    simp only [BlockDat.part, BlockDat.inV0, BlockDat.coord, Submodule.mem_comap, Submodule.mem_map,
-      BlockDat.toF, LinearMap.coe_comp, Function.comp_apply, LinearEquiv.coe_coe]
-    constructor
-    · rintro ⟨w, hw, hwe⟩
-      rw [← hwe, LinearEquiv.symm_apply_apply]
-      exact hw
-    · intro h
-      exact ⟨_, h, LinearEquiv.apply_symm_apply _ _⟩
-  rw [e1, hH.parts j p]
-  exact mem_eigSum_iff_map ((X.θ' j A.fam.μ0).comp (X.jL j A.fam.μ0)) hB.comm hB.split (hH.comm j)
-    (fun i v => by
-      rw [LinearMap.comp_apply, LinearMap.comp_apply,
-        show (A.fam.L j A.fam.μ0).op i v = A.fam.amb.opL j A.fam.μ0 (Sum.inl i) v from rfl,
-        X.jL_opL hL, hH.intw])
-    hZ (fun z hz h0 => X.theta_jL_inj hL j _ z hz h0) _ hmemZ
-
 variable (P0 : Subgroup G) (ψ0 : P0 →* Kˣ) (P1 : Subgroup G) (ψ1 : P1 →* Kˣ)
   (Dc : ∀ Zs : DefSub A.fam.amb, DefCols (A.side P1 ψ1 Zs)) (Sp : ∀ Zs : DefSub A.fam.amb, SPer (Dc Zs))
   (Zsc : DefSub A.fam.amb → IndefScale A.fam.base)
-
-theorem equivRows_of (hR : X.KFormR) (hst : X.zs.Stable) {s : ℕ} (hOk : A.fam.Ok s)
-    {hE : ∀ t, (A.fam.R t).Pl × ℕ → Module.End ℂ X.EE} (hH : HeckeThetaR A X hE) (b : Bool) :
-    X.H3 (crdOf A P0 ψ0 P1 ψ1 Dc Sp Zsc) b := by
-  intro p x
-  rw [X.iC_cpt_eq]
-  cases b
-  · exact part_iff_rows hR hst hOk hH p (A.fam.lvl P0 ψ0) x
-  · exact part_iff_rows hR hst hOk hH p (A.fam.lvl P1 ψ1) x
-
-theorem equivLifts_of (hL : X.KFormL) (hst : X.zs.Stable) {s : ℕ} (hOk : A.fam.Ok s)
-    {hW : ∀ j t, (A.fam.L j t).Pl × ℕ → Module.End ℂ (X.W j)} (hH : HeckeThetaL A X hW) (b : Bool) :
-    X.H3W (crdOf A P0 ψ0 P1 ψ1 Dc Sp Zsc) b := by
-  intro j p x
-  rw [X.tC_cpt_eq]
-  cases b
-  · exact part_iff_lifts hL hst hOk hH j p (A.fam.lvlA P0 ψ0) x
-  · exact part_iff_lifts hL hst hOk hH j p (A.fam.lvlA P1 ψ1) x
 
 end Concrete
 

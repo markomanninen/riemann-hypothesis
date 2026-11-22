@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.UnlinkedHalfIntegral.UnitFormC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.UnitFam
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.TsumNormEisensteinTranslate
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.EisSlash
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.EisVan
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.EisCoef
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.EulerianNumeratorThree
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.LevelOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.UnlinkedHalfIntegral.UnlinkedHeckeRoots.MapLk
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.UnlinkedHalfIntegral.UnitFormC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.UnitFam
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.TsumNormEisensteinTranslate
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.EisSlash
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.EisVan
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.EisCoef
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.EulerianNumeratorThree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.LevelOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.UnlinkedHalfIntegral.UnlinkedHeckeRoots.MapLk
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,29 +61,32 @@ private lemma Good.coef_mul {k k' : ℤ} {f g : (ZMod N)ˣ → ℍ → ℂ} (hf 
   simp
 
 private lemma Pre.mul {k k' : ℤ} {f g : (ZMod N)ˣ → ℍ → ℂ} (hf : Pre k f) (hg : Pre k' g) :
-    Pre (k + k') (fun a => f a * g a) where
-  mf a := by
+    Pre (k + k') (fun a => f a * g a) := by
+  refine { mf := ?_, fam := ?_ }
+  · intro a
     obtain ⟨F, hF⟩ := hf.mf a
     obtain ⟨G, hG⟩ := hg.mf a
     exact ⟨F.mul G, by rw [ModularForm.coe_mul, hF, hG]⟩
-  fam a b γ hγ h := by
+  · intro a b γ hγ h
     rw [ModularForm.mul_slash_SL2, hf.fam a b γ hγ h, hg.fam a b γ hγ h]
 
 private lemma Good.mul {k k' : ℤ} {f g : (ZMod N)ˣ → ℍ → ℂ} (hf : Good ι k f) (hg : Good ι k' g) :
-    Good ι (k + k') (fun a => f a * g a) where
-  pre := hf.pre.mul hg.pre
-  int a n := by
+    Good ι (k + k') (fun a => f a * g a) := by
+  refine { pre := hf.pre.mul hg.pre, int := ?_, cg := ?_ }
+  · intro a n
     show ‖ι.symm (coef (f a * g a) n)‖ ≤ 1
-    rw [hf.pre.coef_sum hg.pre, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hf.pre.coef_sum hg.pre, map_sum]
     refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one fun p _ => ?_
     rw [map_mul, norm_mul]
     exact mul_le_one₀ (hf.int a p.1) (norm_nonneg _) (hg.int a p.2)
-  cg σ := by
+  · intro σ
     obtain ⟨f', pf, cf⟩ := hf.cg σ
     obtain ⟨g', pg, cg⟩ := hg.cg σ
     refine ⟨fun a => f' a * g' a, pf.mul pg, fun a n => ?_⟩
     show coef (f' a * g' a) n = σ (coef (f a * g a) n)
-    rw [pf.coef_sum pg, hf.pre.coef_sum hg.pre, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [pf.coef_sum pg, hf.pre.coef_sum hg.pre, map_sum]
     exact Finset.sum_congr rfl fun p _ => by rw [map_mul, cf, cg]
 
 private lemma Pre.coef_comb {k : ℤ} {f g : (ZMod N)ˣ → ℍ → ℂ} (hf : Pre k f) (hg : Pre k g) (c : ℂ) (a) (n : ℕ) :
@@ -99,29 +106,30 @@ private lemma Good.coef_comb {k : ℤ} {f g : (ZMod N)ˣ → ℍ → ℂ} (hf : 
   hf.pre.coef_comb hg.pre c a n
 
 private lemma Pre.comb {k : ℤ} {f g : (ZMod N)ˣ → ℍ → ℂ} (hf : Pre k f) (hg : Pre k g) (c : ℂ) :
-    Pre k (fun a => f a + c • g a) where
-  mf a := by
+    Pre k (fun a => f a + c • g a) := by
+  refine { mf := ?_, fam := ?_ }
+  · intro a
     obtain ⟨F, hF⟩ := hf.mf a
     obtain ⟨G, hG⟩ := hg.mf a
     exact ⟨F + c • G, by rw [FunLike.coe_add, FunLike.coe_smul, hF, hG]⟩
-  fam a b γ hγ h := by
+  · intro a b γ hγ h
     rw [SlashAction.add_slash, ModularForm.SL_smul_slash, hf.fam a b γ hγ h, hg.fam a b γ hγ h]
 
 private lemma Good.comb {k : ℤ} {f g : (ZMod N)ˣ → ℍ → ℂ} (hf : Good ι k f) (hg : Good ι k g) (c : ℂ)
-    (hc : ‖ι.symm c‖ ≤ 1) : Good ι k (fun a => f a + c • g a) where
-  pre := hf.pre.comb hg.pre c
-  int a n := by
+    (hc : ‖ι.symm c‖ ≤ 1) : Good ι k (fun a => f a + c • g a) := by
+  refine { pre := hf.pre.comb hg.pre c, int := ?_, cg := ?_ }
+  · intro a n
     show ‖ι.symm (coef (f a + c • g a) n)‖ ≤ 1
-    rw [hf.coef_comb hg, map_add, map_mul]
+    rw [hf.coef_comb hg, map_add (f := _), map_mul]
     refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hf.int a n) ?_)
     rw [norm_mul]
     exact mul_le_one₀ hc (norm_nonneg _) (hg.int a n)
-  cg σ := by
+  · intro σ
     obtain ⟨f', pf, cf⟩ := hf.cg σ
     obtain ⟨g', pg, cg⟩ := hg.cg σ
     refine ⟨fun a => f' a + σ c • g' a, pf.comb pg (σ c), fun a n => ?_⟩
     show coef (f' a + σ c • g' a) n = σ (coef (f a + c • g a) n)
-    rw [pf.coef_comb pg, hf.coef_comb hg, map_add, map_mul, cf, cg]
+    rw [pf.coef_comb pg, hf.coef_comb hg, map_add (f := _), map_mul, cf, cg]
 
 private lemma good_one (k : ℕ) (hk : Even k) (h2 : k ≠ 2) :
     ∃ E : (ZMod N)ˣ → ℍ → ℂ, Good ι (k : ℤ) E ∧ ∀ a, coef (E a) 0 = 1 := by
@@ -182,26 +190,27 @@ private lemma eis_coef0 (hN : 3 ≤ N) (k : ℕ) (hk : 3 ≤ k) (a : (ZMod N)ˣ)
   rfl
 
 private lemma pre_eis (k : ℕ) (hk : 3 ≤ k) (s : (ZMod N)ˣ) :
-    Pre (k : ℤ) (fun a : (ZMod N)ˣ => eisFun N k ((s * a : (ZMod N)ˣ) : ZMod N)) where
-  mf a := eisMF N k hk _
-  fam a b γ hγ h := by
-    show eisFun N k ((s * a : (ZMod N)ˣ) : ZMod N) ∣[(k : ℤ)] γ = eisFun N k ((s * b : (ZMod N)ˣ) : ZMod N)
-    rw [Units.val_mul, Units.val_mul, h, ← mul_assoc]
-    exact eisSlash N k hk _ γ hγ
+    Pre (k : ℤ) (fun a : (ZMod N)ˣ => eisFun N k ((s * a : (ZMod N)ˣ) : ZMod N)) := by
+  refine { mf := fun a => eisMF N k hk _, fam := ?_ }
+  intro a b γ hγ h
+  show eisFun N k ((s * a : (ZMod N)ˣ) : ZMod N) ∣[(k : ℤ)] γ = eisFun N k ((s * b : (ZMod N)ˣ) : ZMod N)
+  rw [Units.val_mul, Units.val_mul, h, ← mul_assoc]
+  exact eisSlash N k hk _ γ hγ
 
 private lemma good_eis (hl : l ≠ 2) (hN : 3 ≤ N) (hlN : ¬ l ∣ N) (k : ℕ) (hk : 3 ≤ k) :
-    Good ι (k : ℤ) (fun a : (ZMod N)ˣ => eisFun N k a) where
-  pre :=
-    { mf := fun a => eisMF N k hk a
-      fam := fun a b γ hγ h => by
-        show eisFun N k a ∣[(k : ℤ)] γ = eisFun N k b
-        rw [h]; exact eisSlash N k hk a γ hγ }
-  int a n := by
+    Good ι (k : ℤ) (fun a : (ZMod N)ˣ => eisFun N k a) := by
+  refine { pre := { mf := fun a => eisMF N k hk a, fam := ?_ }, int := ?_, cg := ?_ }
+  · intro a b γ hγ h
+    show eisFun N k a ∣[(k : ℤ)] γ = eisFun N k b
+    rw [h]
+    exact eisSlash N k hk a γ hγ
+  · intro a n
     rcases Nat.eq_zero_or_pos n with rfl | hn
     · rw [eis_coef0 hN k hk]
       refine (lkSep l hl N (by omega) hlN).1 k _ (rt_powN _) fun h => rt_sq (ι := ι) hN a ?_
       rw [h, one_pow]
-    · rw [(eisCoef N k hk a (unit_ne_zero hN a)).2 n hn, map_sum]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [(eisCoef N k hk a (unit_ne_zero hN a)).2 n hn, map_sum]
       refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one fun e _ => ?_
       have hr : ∀ b : ZMod N, ‖ι.symm (ZMod.stdAddChar b : ℂ)‖ = 1 := fun b => rt_norm (ι := ι) b
       rw [map_mul ι.symm, norm_mul, map_pow ι.symm, map_natCast ι.symm, norm_pow, map_add ι.symm, map_mul ι.symm]
@@ -210,7 +219,7 @@ private lemma good_eis (hl : l ≠ 2) (hN : 3 ≤ N) (hlN : ¬ l ∣ N) (k : ℕ
       refine (IsUltrametricDist.norm_add_le_max _ _).trans ?_
       rw [norm_mul, hr, hr, map_pow ι.symm, map_neg ι.symm, map_one ι.symm, norm_pow, norm_neg, norm_one, one_pow, one_mul,
         max_self]
-  cg σ := by
+  · intro σ
     obtain ⟨s, -, hs⟩ := eisCj N (by omega) σ
     exact ⟨_, pre_eis k hk s, hs k hk⟩
 
@@ -279,7 +288,8 @@ private lemma VC.mul {k k' : ℕ} {f g : (ZMod N)ˣ → ℍ → ℂ} (hv : VC k 
   obtain ⟨g', pg, cg⟩ := hg.cg σ
   refine ⟨fun a => f' a * g' a, by rw [Nat.cast_add]; exact p'.mul pg, fun a => van_mul (v' a) pg a, fun a n => ?_⟩
   show coef (f' a * g' a) n = σ (coef (f a * g a) n)
-  rw [p'.coef_sum pg, pf.coef_sum hg.pre, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [p'.coef_sum pg, pf.coef_sum hg.pre, map_sum]
   exact Finset.sum_congr rfl fun p _ => by rw [map_mul, c', cg]
 
 private lemma vc_eis (hN : 3 ≤ N) : VC 3 (fun a : (ZMod N)ˣ => eisFun N 3 a) := by

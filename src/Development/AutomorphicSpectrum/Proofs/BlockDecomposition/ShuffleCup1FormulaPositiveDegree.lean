@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Cup1CoboundaryMemBoundaries
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Cup1CoboundaryMemBoundaries
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -26,10 +30,6 @@ theorem val_sI {n : ℕ} (i : Fin (n + 1)) (t : Fin (n + 1 + 1)) :
   · rw [if_pos (by simpa [Fin.lt_def] using h), if_pos h]; rfl
   · rw [if_neg (by simpa [Fin.lt_def] using h), if_neg h]; rfl
 
-macro "fin_order'" : tactic =>
-  `(tactic| (apply Fin.ext; simp only [OrderHom.comp_coe, Function.comp_apply, OrderHom.id_coe, id_eq, val_dl, val_fr, cst_apply,
-    val_sI, val_predAbove, Fin.val_succ, Fin.val_zero, Fin.val_one]; grind))
-
 theorem shuffle_cup1_product_formula {R : Type} [CommRing R] {C : Type} [Category.{0} C] (F : C ⥤ CommAlgCat.{0} R) (n : ℕ)
     (u : Cn (box F) 1) (w : Cn (box F) (n + 1)) :
     Sh F (n + 1) (cup1 (box F) (n + 1) u w) =
@@ -38,19 +38,68 @@ theorem shuffle_cup1_product_formula {R : Type} [CommRing R] {C : Type} [Categor
   have a1 : bv F (sI (0 : Fin (n + 1 + 1))) (Fin.predAboveOrderHom 0) (pr (box F) (fr (n + 1)) u) =
       bv F OrderHom.id (cst 1 0) u := by
     rw [bv_pr]
-    exact bv_congr (fun t ↦ by fin_order') (fun t ↦ by fin_order') u
+    refine bv_congr ?_ ?_ u
+    · intro t
+      apply Fin.ext
+      simp only [OrderHom.comp, OrderHom.coe_mk, Function.comp_apply, val_sI, val_predAbove]
+      change (if 0 < t.val then 1 else 0) = t.val
+      have ht := t.isLt
+      split_ifs <;> omega
+    · intro t
+      apply Fin.ext
+      simp only [OrderHom.comp, OrderHom.coe_mk, Function.comp_apply, val_sI, val_predAbove]
+      change (if 0 < t.val then t.val - 1 else t.val) = 0
+      have ht := t.isLt
+      split_ifs <;> omega
   have a2 : bv F (sI (0 : Fin (n + 1 + 1))) (Fin.predAboveOrderHom 0) (pr (box F) (dl 0) w) =
       bv F (cst (n + 1) 1) OrderHom.id w := by
     rw [bv_pr]
-    exact bv_congr (fun t ↦ by fin_order') (fun t ↦ by fin_order') w
+    refine bv_congr ?_ ?_ w
+    · intro t
+      apply Fin.ext
+      simp only [OrderHom.comp, OrderHom.coe_mk, Function.comp_apply, val_sI, val_predAbove]
+      change (if 0 < t.val + 1 then 1 else 0) = 1
+      have ht := t.isLt
+      split_ifs <;> omega
+    · intro t
+      apply Fin.ext
+      simp only [OrderHom.comp, OrderHom.coe_mk, Function.comp_apply, val_sI, val_predAbove]
+      change (if 0 < t.val + 1 then t.val + 1 - 1 else t.val + 1) = t.val
+      have ht := t.isLt
+      split_ifs <;> omega
   have b1 : ∀ j : Fin (n + 1), bv F (sI j.succ) (Fin.predAboveOrderHom j.succ) (pr (box F) (fr (n + 1)) u) =
       bv F (cst 1 0) (fr n) u := fun j ↦ by
     rw [bv_pr]
-    exact bv_congr (fun t ↦ by fin_order') (fun t ↦ by fin_order') u
+    refine bv_congr ?_ ?_ u
+    · intro t
+      apply Fin.ext
+      simp only [OrderHom.comp, OrderHom.coe_mk, Function.comp_apply, val_sI, val_predAbove]
+      change (if j.val + 1 < t.val then 1 else 0) = 0
+      have ht := t.isLt
+      split_ifs <;> omega
+    · intro t
+      apply Fin.ext
+      simp only [OrderHom.comp, OrderHom.coe_mk, Function.comp_apply, val_sI, val_predAbove]
+      change (if j.val + 1 < t.val then t.val - 1 else t.val) = t.val
+      have ht := t.isLt
+      split_ifs <;> omega
   have b2 : ∀ j : Fin (n + 1), bv F (sI j.succ) (Fin.predAboveOrderHom j.succ) (pr (box F) (dl 0) w) =
       prB F (dl 0) (bv F (sI j) (Fin.predAboveOrderHom j) w) := fun j ↦ by
     rw [bv_pr, prB_bv]
-    exact bv_congr (fun t ↦ by fin_order') (fun t ↦ by fin_order') w
+    refine bv_congr ?_ ?_ w
+    · intro t
+      apply Fin.ext
+      simp only [OrderHom.comp, OrderHom.coe_mk, Function.comp_apply, val_sI, val_predAbove]
+      change (if j.val + 1 < t.val + 1 then 1 else 0) = (if j.val < t.val then 1 else 0)
+      have ht := t.isLt
+      split_ifs <;> omega
+    · intro t
+      apply Fin.ext
+      simp only [OrderHom.comp, OrderHom.coe_mk, Function.comp_apply, val_sI, val_predAbove]
+      change (if j.val + 1 < t.val + 1 then t.val + 1 - 1 else t.val + 1) = (j.predAboveOrderHom t).succ.val
+      rw [Fin.val_succ, val_predAbove]
+      have ht := t.isLt
+      split_ifs <;> omega
   simp only [Sh, LinearMap.sum_apply, LinearMap.smul_apply, AlgHom.toLinearMap_apply, cup1_apply, map_mul, map_sum,
     map_smul]
   rw [Fin.sum_univ_succ]

@@ -1,9 +1,14 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.HcVOfCentralChar
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.CapQdet
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.InfCharData
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.TopCap
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiFor
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Exists
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.HcVOfCentralChar
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.CapQdet
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.InfCharData
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.TopCap
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiGelfand
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiFor
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Exists
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.DS.Lap.LemK
 
@@ -16,8 +21,12 @@ theorem centralChar (n : ℕ) : CentralCharStatement n := by
   obtain ⟨T⟩ := HW.kType_exists ε lam hlam
   obtain ⟨μ, hμ⟩ := S7.exists_mu hlam
   have hq0 : 1 ≤ S7.q0 ε := le_min hp hq
-  have hP := (S7.isPsiFor_psiM ε lam h T μ hlam hμ hg hq0
-    (by unfold S7.q0; push_cast; exact h8)).1
+  have hP : IsPsiFor ε lam T (S7.PsiM T μ) := by
+    refine ⟨fun k₁ k₂ g hg' => S7.psiM_equiv T μ k₁ k₂ hg', S7.psiM_one T μ,
+      S7.psiM_smooth T μ hμ, fun g hg' => S7.psiM_casimir T μ hμ hg', ?_⟩
+    intro ν hν
+    exact (S7.psiM_integrable T μ hμ hlam hg hq0 ν).2.1
+      (by unfold S7.q0; push_cast; exact h8)
   have hstd : StdGap ε lam := ⟨hanti, h, hg, hnpq⟩
   have hV0 : V ≠ ⊥ := by
     obtain ⟨w, hw, hw0, -⟩ := hV.2.2.2

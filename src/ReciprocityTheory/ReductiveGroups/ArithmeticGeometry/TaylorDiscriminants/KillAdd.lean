@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -11,7 +15,7 @@ namespace ReciprocityTheory.ChartRestriction.G.TB
 variable {k : Type} [CommRing k] {d n : ℕ}
 
 def dAdd (u : Fin d → k) (b : Fin n) (G : PS k n d) : PS k n d :=
-  ∑ j : Fin d, C (u j) * pderiv k (b, j) G
+  ∑ j : Fin d, C (u j) * MvPowerSeries.pderiv (b, j) G
 
 def polyAdd {ι : Type} [Fintype ι] (u : ι → Fin d → k) (P : MvPolynomial (ι × Fin n) k) (G : PS k n d) :
     PS k n d :=

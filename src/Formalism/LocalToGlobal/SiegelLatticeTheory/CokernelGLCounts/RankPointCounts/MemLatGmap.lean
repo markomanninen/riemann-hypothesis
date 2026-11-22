@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CardAutLzGmap
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CardAutLzGmap
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,8 @@ theorem fix_sub_prV (g : (VS D).V ≃ₗ[D.host.E] (VS D).V)
     (hge : ∀ a, g (X.eX a) = X.eX a) (hgf : ∀ a, g (X.fY a) = X.fY a) (v : (VS D).V) :
     g (v - prV X v) = v - prV X v := by
   rw [sub_prV_eq]
-  simp [map_sum, map_smul, hge, hgf]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul, hge, hgf]
 
 theorem indA_inj (Λ : Submodule (𝓞 D.host.E) (VS D).V) : Function.Injective (indA X u Λ) := by
   intro γ γ' hγγ
@@ -78,10 +83,10 @@ theorem indA_inj (Λ : Submodule (𝓞 D.host.E) (VS D).V) : Function.Injective 
     exact hq
   have h0 := prV_Xs X hd
   rw [map_sub, prV_of_fix X γ.1 hi he hf, prV_of_fix X γ'.1 hi' he' hf', sub_eq_zero] at h0
-  calc γ.1 y = γ.1 (y - prV X y) + γ.1 (prV X y) := by rw [← map_add, sub_add_cancel]
+  calc γ.1 y = γ.1 (y - prV X y) + γ.1 (prV X y) := by rw [← map_add (f := _), sub_add_cancel]
     _ = γ'.1 (y - prV X y) + γ'.1 (prV X y) := by
         rw [fix_sub_prV X γ.1 he hf, fix_sub_prV X γ'.1 he' hf', h0]
-    _ = γ'.1 y := by rw [← map_add, sub_add_cancel]
+    _ = γ'.1 y := by rw [← map_add (f := _), sub_add_cancel]
 
 theorem mem_lat_gmap (h : Hfin X u) {γ0 : (VS D).V ≃ₗ[D.host.E] (VS D).V}
     (hΛ : Formalism.HermitianLatticesTheory.gmap γ0 (lat X u h) = lat X u h) :

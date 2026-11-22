@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.StrictHenselianAcyclic
+module
+
+public import Development.EtaleCohomology.TateTwists.StrictHenselianAcyclic
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite TensorProduct GlobalTheory.EtC GlobalTheory.IndefiniteRowSideFullHecke.ProjectiveSpaceOverSpec

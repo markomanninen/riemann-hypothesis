@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfPt
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.DvdOfCoeffSubstXPowNeZero
-import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantUniformizer
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfA
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfPt
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.DvdOfCoeffSubstXPowNeZero
+public import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantUniformizer
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfA
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem framepf_ι_add (g h : PowerSeries O) :
   let S : PowerSeries O →ₐ[O] PowerSeries O := PowerSeries.substAlgHom ha
   have hS : ∀ g, PowerSeries.subst (π' i) g = S g := fun g => by
     first | exact (congrFun (PowerSeries.coe_substAlgHom ha) g).symm | rfl
-  simp only [framepf_ι, hS, map_add, Pi.single_add]
+  simp only [framepf_ι, hS, map_add (f := _), Pi.single_add]
 
 theorem framepf_ι_sub (g h : PowerSeries O) :
     framepf_ι π' i (g - h) = framepf_ι π' i g - framepf_ι π' i h := by
@@ -75,18 +79,6 @@ theorem framepf_ι_X : framepf_ι π' i PowerSeries.X = letE i * π' := by
   · subst hj; simp
   · simp [Pi.single_apply, hj]
 
-theorem framepf_ι_pow (g : PowerSeries O) (k : ℕ) :
-    framepf_ι π' i (g ^ k) = letE i * framepf_ι π' i g ^ k := by
-  have ha : PowerSeries.HasSubst (π' i) := PowerSeries.HasSubst.of_constantCoeff_zero' hπ0
-  let S : PowerSeries O →ₐ[O] PowerSeries O := PowerSeries.substAlgHom ha
-  have hS : ∀ g, PowerSeries.subst (π' i) g = S g := fun g => by
-    first | exact (congrFun (PowerSeries.coe_substAlgHom ha) g).symm | rfl
-  simp only [framepf_ι, hS, map_pow, letE]
-  funext j
-  by_cases hj : j = i
-  · subst hj; simp
-  · simp [Pi.single_apply, hj]
-
 private lemma powerSeries_algHom_eq_subst_X (ψ : PowerSeries O →ₐ[O] PowerSeries O)
     (hψ : PowerSeries.constantCoeff (ψ PowerSeries.X) = 0) (f : PowerSeries O) :
     ψ f = PowerSeries.subst (ψ PowerSeries.X) f := by
@@ -103,7 +95,7 @@ private lemma powerSeries_algHom_eq_subst_X (ψ : PowerSeries O →ₐ[O] PowerS
     intro p
     refine Polynomial.induction_on' p ?_ ?_
     · intro p q hp hq
-      rw [Polynomial.coe_add, map_add, map_add, hp, hq]
+      rw [Polynomial.coe_add, map_add (f := _), map_add (f := _), hp, hq]
     · intro m a
       rw [← Polynomial.C_mul_X_pow_eq_monomial, Polynomial.coe_mul, Polynomial.coe_C,
         Polynomial.coe_pow, Polynomial.coe_X, map_mul, map_mul, map_pow, map_pow, hSX, hC]
@@ -118,7 +110,7 @@ private lemma powerSeries_algHom_eq_subst_X (ψ : PowerSeries O →ₐ[O] PowerS
     rw [← hq]; ring
   have hXd : PowerSeries.X ∣ ψ PowerSeries.X := PowerSeries.X_dvd_iff.mpr hψ
   have hdiff : PowerSeries.X ^ (k + 1) ∣ ψ f - S f := by
-    rw [hf, map_add, map_add, map_mul, map_mul, map_pow, map_pow, hSX, hpoly,
+    rw [hf, map_add (f := _), map_add (f := _), map_mul, map_mul, map_pow, map_pow, hSX, hpoly,
       add_sub_add_left_eq_sub, ← mul_sub]
     exact Dvd.dvd.mul_right (pow_dvd_pow_of_dvd hXd _) _
   have h0 := PowerSeries.X_pow_dvd_iff.mp hdiff k (Nat.lt_succ_self k)
@@ -189,8 +181,8 @@ variable {W T} (Bs : FramepfBas W T) (π' : LetA O n) (i : ZMod n)
     (hR2 : ∀ a : LetA O n, a ∈ W.AΔ → ∃! f : ZMod n → PowerSeries O,
       ∀ j, a j = PowerSeries.subst (π' j) (f j))
 
-include hπ0 hR2 in
 
+include hπ0 hR2 in
 theorem framepf_coord {x : W.DD T} (hx : x ∈ NcS W T i) :
     ∃ g : Fin Bs.r → PowerSeries O, x = ∑ k, framepf_ι π' i (g k) • Bs.b k := by
   have memNcS : ∀ z : W.DD T, z ∈ NcS W T i ↔
@@ -210,8 +202,8 @@ theorem framepf_coord {x : W.DD T} (hx : x ∈ NcS W T i) :
   · subst hj; simp [framepf_ι, letE, hf k]
   · simp [framepf_ι, letE, Pi.single_apply, hj]
 
-include hπ0 hΔπ hR2 in
 
+include hπ0 hΔπ hR2 in
 theorem framepf_subst_inj (γ0 : ∀ δ ∈ W.DelF, PowerSeries.constantCoeff (W.γ₀ δ PowerSeries.X) = 0)
     {g g' : PowerSeries O} (h : PowerSeries.subst (π' i) g = PowerSeries.subst (π' i) g') : g = g' := by
   have ha : PowerSeries.HasSubst (π' i) := PowerSeries.HasSubst.of_constantCoeff_zero' (hπ0 i)
@@ -271,8 +263,8 @@ theorem framepf_letE_ι (g : PowerSeries O) : letE i * framepf_ι π' i g = fram
   · subst hj; simp [letE, framepf_ι]
   · simp [letE, framepf_ι, Pi.single_apply, hj]
 
-include hπ0 hΔπ hR2 in
 
+include hπ0 hΔπ hR2 in
 theorem framepf_coord_uniq (γ0 : ∀ δ ∈ W.DelF, PowerSeries.constantCoeff (W.γ₀ δ PowerSeries.X) = 0)
     {g g' : Fin Bs.r → PowerSeries O}
     (h : ∑ k, framepf_ι π' i (g k) • Bs.b k = ∑ k, framepf_ι π' i (g' k) • Bs.b k) : g = g' := by
@@ -296,8 +288,8 @@ theorem framepf_vec_add (H H' : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O)) (k
     framepf_vec Bs π' i (H + H') k = framepf_vec Bs π' i H k + framepf_vec Bs π' i H' k := by
   simp only [framepf_vec, Matrix.add_apply, framepf_ι_add π' i (hπ0 i), add_smul, Finset.sum_add_distrib]
 
-include hπ0 in
 
+include hπ0 in
 theorem framepf_γ_vec (Gs : PowerSeries O) (hGs0 : PowerSeries.constantCoeff Gs = 0)
     (hGs : W.γ₀ W.gam (π' i) = PowerSeries.subst (π' i) Gs)
     (Γ : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O))
@@ -312,7 +304,8 @@ theorem framepf_γ_vec (Gs : PowerSeries O) (hGs0 : PowerSeries.constantCoeff Gs
   have hι : ∀ h : PowerSeries O, letγ (W.γ₀ W.gam) (framepf_ι π' i h) = framepf_ι π' i (PowerSeries.subst Gs h) :=
     fun h => framepf_ι_letγ π' i (hπ0 i) (W.γ₀ W.gam) hγ0 Gs hGs0 hGs h
   unfold framepf_vec
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   have hterm : ∀ m, W.γD T W.gam (framepf_ι π' i (H m k) • Bs.b m) =
       ∑ p, framepf_ι π' i (Γ p m * PowerSeries.subst Gs (H m k)) • Bs.b p := by
     intro m
@@ -371,8 +364,8 @@ theorem framepf_letE_mem (m : Fin Bs.r) : (letE i : LetA O n) • Bs.b m ∈ NcS
   · rw [hsm, hfixE, hb.2 δ hδ]
   · rw [smul_smul, hEE]
 
-include hπ0 hΔπ hR2 in
 
+include hπ0 hΔπ hR2 in
 theorem framepf_Γ (hu : IsUnit (algebraMap (LetA O n) W.EE π'))
     (hγN : ∀ y ∈ W.NΔ T, ∃ d ∈ W.N T, W.γD T W.gam y - y = π' • d) :
     ∃ Γ : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O),

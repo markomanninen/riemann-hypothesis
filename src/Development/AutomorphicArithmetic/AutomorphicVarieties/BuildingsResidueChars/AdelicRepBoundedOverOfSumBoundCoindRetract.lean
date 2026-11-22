@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
+
+@[expose] public section
 
 open CategoryTheory in
 theorem UpperTheory.adelic_rep_bounded_over_of_sum_bound_coind_retract :

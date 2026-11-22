@@ -1,5 +1,10 @@
-import Development.WeilBound.CoreStatements.SesquilinearFractions.RetractionTwoProjectionOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnChartX
+module
+
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.RetractionTwoProjectionOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnChartX
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open Matrix GlobalTheory GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl
@@ -63,8 +68,6 @@ theorem top_le_of_fst {Y : Scheme.{0}} (v : Sp (DualNumber ℂ) ⟶ Y) (y0 : Sp 
   rw [spMap, Spec_closedPoint] at hm
   exact hm
 
-theorem epsMul_eq (c : ℂ) : ReciprocityTheory.ChartRestriction.G.Geo.Tor.epsMul c = GlobalTheory.CompanionTheory.Ar.epsMul c := rfl
-
 def rhoTy {E : Type} [Field E] [NumberField E] {g : ℕ} (ty : Fin g → (E →+* ℂ)) :
     𝓞 E →+* Module.End ℂ (Fin g → ℂ) where
   toFun a :=
@@ -109,7 +112,7 @@ theorem lie_model_with_cm_action : ∀ (E : Type) [Field E] [NumberField E] [IsC
     have h2 := top_le_of_fst _ _ (he0 _ (htan w')) U hU
     have := epsPart_mul (FU.u i P) (htan w) (htan w') U h h1 h2 f
     simp only [epsPart] at this
-    rw [this, (hpt w).2 U h1 f, (hpt w').2 U h2 f, map_add]
+    rw [this, (hpt w).2 U h1 f, (hpt w').2 U h2 f, map_add (f := _)]
   let M : LieModel Xo.univ.t.G (FU.u i P) (Fin g → ℂ) :=
     { pt := pt
       tan := htan
@@ -152,7 +155,8 @@ theorem lie_model_with_cm_action : ∀ (E : Type) [Field E] [NumberField E] [IsC
       · exact HT.LatBasic.eigProj_of_ne (fun h => hj h.symm) (hmem j)
     have hw : w = ∑ j, w j • (Pi.single j 1 : Fin g → ℂ) := by
       funext k; simp [Pi.single_apply]
-    conv_lhs => rw [hw, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [hw, map_sum]
     simp only [map_smul, hproj]
     funext k
     rw [Finset.sum_apply, Finset.sum_eq_single k]

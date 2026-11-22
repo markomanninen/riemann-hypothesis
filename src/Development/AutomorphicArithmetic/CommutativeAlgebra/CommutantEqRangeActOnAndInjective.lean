@@ -1,8 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.ComplexUniformizationSigOne
-import Development.AutomorphicArithmetic.RealSpanData.RealData
-import Development.AutomorphicArithmetic.RealSpanData.JSpan
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsSumBaseChangeOfCommuteBaseChange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.PointsNonemptyUnitaryGaussian
+public import Development.AutomorphicArithmetic.RealSpanData.RealData
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsSumBaseChangeOfCommuteBaseChange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -42,7 +45,7 @@ private theorem actOn_inj {C V R : Type} [Ring C] [Algebra ℚ C] [AddCommGroup 
       induction w using TensorProduct.induction_on with
       | zero => simp
       | tmul r c => simp [Φ, Ψ, actOn_tmul]
-      | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb]
+      | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb]
     have hΨ : ∀ f, Ψ f z = 0 := by
       intro f
       apply hrep
@@ -55,7 +58,7 @@ private theorem actOn_inj {C V R : Type} [Ring C] [Algebra ℚ C] [AddCommGroup 
       induction w using TensorProduct.induction_on with
       | zero => simp
       | tmul r c => simp [Ψ, Module.Basis.tensorProduct_repr_tmul_apply, mul_comm]
-      | add a b ha hb => simp only [map_add, Finsupp.add_apply, ha, hb]
+      | add a b ha hb => simp only [map_add (f := _), Finsupp.add_apply, ha, hb]
     apply (bR.tensorProduct bC).repr.injective
     ext ⟨i, j⟩
     rw [hrepr, hΨ]
@@ -74,7 +77,8 @@ theorem UpperTheory.commutant_eq_range_actOn_and_injective :
   have hx : ∀ l, ∃ x, L.rep x = h l := fun l => (L.rep_range (h l)).2 (fun b => hh l b)
   choose x hx using hx
   refine ⟨∑ l, r l ⊗ₜ[ℚ] x l, ?_⟩
-  rw [hA', map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hA', map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   refine TensorProduct.AlgebraTensorModule.curry_injective (LinearMap.ext_ring (LinearMap.ext fun v => ?_))
   simp only [TensorProduct.AlgebraTensorModule.curry_apply, LinearMap.restrictScalars_apply,

@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgAnLat
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgTorInt
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgAnTwo
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.KapUnit
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.NormNatCastClOfNotDvd
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgAnLat
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgTorInt
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgAnTwo
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.KapUnit
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.NormNatCastClOfNotDvd
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,7 @@ theorem level_le (L : PeriodPair) (l : ℕ) [Fact l.Prime] (hl : 5 ≤ l) (ι : 
   have hle : ‖(l : ℂ_[l]) ^ 2‖ * ∏ P ∈ S, ‖ι (L'.weierstrassP (L'.ω₁ / 2)) - ι (L'.weierstrassP P)‖
       ≤ ‖(l : ℂ_[l]) ^ 2‖ * ∏ P ∈ S, max 1 ‖ι (L'.weierstrassP P)‖ := by
     refine mul_le_mul_of_nonneg_left ?_ (norm_nonneg _)
-    refine Finset.prod_le_prod (fun P _ => norm_nonneg _) fun P _ => ?_
+    refine Finset.prod_le_prod₀ (fun P _ => norm_nonneg _) fun P _ => ?_
     exact (norm_sub_le_max_Cl l _ _).trans (max_le_max he1 le_rfl)
   rw [hp] at hle
   obtain ⟨i, hi, hi1⟩ := unit_coeff_mul hUi hGi (by rw [hU0, norm_one]) _

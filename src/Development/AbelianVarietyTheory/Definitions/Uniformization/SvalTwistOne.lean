@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
-import Development.AbelianVarietyTheory.Definitions.Uniformization.WCompat
-import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsUniqueSamePt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.WCompat
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsUniqueSamePt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -88,11 +92,6 @@ def PreU.ProdExp (U : PreU I D A G) (T : Over (Spec (CommRingCat.of R))) {k l : 
         (∑ α ∈ s, sval (f α) rB z J * (val ((U.gt e).t α) x z J).val) *
           ∑ α ∈ s', sval (g α) rB z J * (val ((U.gt e).t α) x z J).val
 section Inhabitants
-
-theorem Lvl.precomp {R : Type} [CommRing R] {I : Ideal R} {e : ℕ} {Z Z' : Scheme.{0}}
-    {p : Z ⟶ Spec (CommRingCat.of R)} (h : Lvl I e p) (q : Z' ⟶ Z) : Lvl I e (q ≫ p) := by
-  obtain ⟨ρ, hρ⟩ := h
-  exact ⟨q ≫ ρ, by rw [Category.assoc, hρ]⟩
 
 theorem sval_twist {W : Type} [CommRing W] [Algebra R W] {k : ℕ} (a : Multiplicative D.X →* Wˣ)
     (f : ∀ α, SecBT D (TA R W) k α) (α : D.X) {Z : Scheme.{0}} (r : Z ⟶ (TA R W ⊗ D.P.A).left) (z : Z) {J}

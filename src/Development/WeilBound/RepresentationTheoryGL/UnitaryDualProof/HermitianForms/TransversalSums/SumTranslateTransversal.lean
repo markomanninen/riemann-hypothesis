@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.TransversalSums.ContinuousBlkAtApply
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MatrixIntegralOfAddCharTraceDual
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.TransversalSums.ContinuousBlkAtApply
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MatrixIntegralOfAddCharTraceDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,7 +111,7 @@ theorem avg_spec (hψ : Continuous ψ) (hπ : IsSmooth π) (ξ : Fin (m + 1) →
       ((p.2.card : ℂ)⁻¹) • ∑ t ∈ p.2, (starRingEnd ℂ ((ψ (ξ ⬝ᵥ t) : Circle) : ℂ)) • π (colEl k m N h t) v := by
   have hd : ∃ p, AvgData ψ h π ξ A v p := avgData_exists ψ h π hψ hπ ξ A hA v
   refine ⟨hd.choose, hd.choose_spec, ?_⟩
-  rw [avg, dif_pos hd]
+  rw [avg, dite_eq_left hd]
 
 theorem avg_eigen (hψ : Continuous ψ) (hπ : IsSmooth π) (ξ : Fin (m + 1) → k) (A : AddSubgroup (Fin (m + 1) → k))
     (hA : IsLat A) (v : V) (y : Fin (m + 1) → k) (hy : y ∈ A) :
@@ -127,7 +131,8 @@ theorem avg_eigen (hψ : Continuous ψ) (hπ : IsSmooth π) (ξ : Fin (m + 1) �
       AddChar.map_add_eq_mul, Circle.coe_mul, map_mul]
     congr 1
     linear_combination (-starRingEnd ℂ ((ψ (ξ ⬝ᵥ t) : Circle) : ℂ)) * conj_circle_mul_self (ψ (ξ ⬝ᵥ y))
-  rw [hav, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hav, map_smul, map_sum]
   simp only [map_smul]
   rw [Finset.sum_congr rfl (fun t _ => key t), ← Finset.smul_sum, smul_comm]
   congr 2

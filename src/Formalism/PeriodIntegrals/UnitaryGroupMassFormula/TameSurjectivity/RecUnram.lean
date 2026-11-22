@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,7 +66,7 @@ theorem notMem_sq_of_split {E : Type} [Field E] [NumberField E] {p : ℕ} (hp : 
     rw [Fintype.card_eq_sum_ones]
     apply Finset.sum_lt_sum
     · intro r _
-      exact Nat.mul_pos (Ideal.ramificationIdx_pos r.1 ℤ) (Ideal.inertiaDeg_pos r.1 ℤ)
+      exact Nat.mul_pos (Ideal.ramificationIdx_pos (R := ℤ) r.1) (Ideal.inertiaDeg_pos r.1 ℤ)
     · refine ⟨q, Finset.mem_univ _, ?_⟩
       have hf : 0 < v.asIdeal.inertiaDeg ℤ := Ideal.inertiaDeg_pos v.asIdeal ℤ
       show 1 < v.asIdeal.ramificationIdx ℤ * v.asIdeal.inertiaDeg ℤ

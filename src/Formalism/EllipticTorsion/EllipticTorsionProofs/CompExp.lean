@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.EllipticTorsion.CompExpWeight
+module
+
+public import Mathlib
+public import Formalism.EllipticTorsion.CompExpWeight
+
+@[expose] public section
 
 open PowerSeries IsUltrametricDist
 
@@ -34,7 +38,7 @@ theorem W_mul (hc : 0 < c) {w₁ w₂ : ℤ} {f g : MvPowerSeries σ K} (hf : W 
       ≤ c ^ (w₁ - (p.1.degree : ℤ)) * c ^ (w₂ - (p.2.degree : ℤ)) :=
         mul_le_mul (hf _) (hg _) (norm_nonneg _) (by positivity)
     _ = c ^ (w₁ + w₂ - (e.degree : ℤ)) := by
-        rw [← zpow_add₀ hc.ne', ← hp, map_add]; push_cast; ring_nf
+        rw [← zpow_add₀ hc.ne', ← hp, map_add (f := _)]; push_cast; ring_nf
 
 theorem W_pow (hc : 0 < c) (hc1 : c ≤ 1) {w : ℤ} {f : MvPowerSeries σ K} (hf : W c w f) (n : ℕ) :
     W c (n * w) (f ^ n) := by

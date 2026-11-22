@@ -1,6 +1,10 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.ConjNeOne
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.RadialIntegralUnitCircleEq
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.ExistsFix
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.ConjNeOne
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.RadialIntegralUnitCircleEq
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.ExistsFix
+
+@[expose] public section
 
 noncomputable section
 
@@ -190,12 +194,12 @@ theorem rot_of_fix (m : GL (Fin 2) ℝ) (hm : m • iP = iP) : m 1 1 = m 0 0 ∧
   simp [num, den, iP] at h1 h2
   constructor <;> linarith
 
-theorem ch_mul {R : Type*} [CommRing R] (x y : R) : ∀ n, ch (x + y) (x * y) n * (x - y) = x ^ n - y ^ n
-  | 0 => by simp [ch]
-  | 1 => by simp [ch]
-  | (n + 2) => by
-    have h1 := ch_mul x y (n + 1)
-    have h0 := ch_mul x y n
+theorem ch_mul {R : Type*} [CommRing R] (x y : R) : ∀ n, ch (x + y) (x * y) n * (x - y) = x ^ n - y ^ n := by
+  intro n
+  induction n using Nat.twoStepInduction with
+  | zero => simp [ch]
+  | one => simp [ch]
+  | more n h0 h1 =>
     simp only [ch]
     linear_combination (x + y) * h1 - x * y * h0
 

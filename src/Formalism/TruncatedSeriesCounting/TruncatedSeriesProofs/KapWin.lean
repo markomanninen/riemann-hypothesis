@@ -1,5 +1,9 @@
-import Formalism.TruncatedSeriesCounting.PowMemSpanOfMemSpanLinearDistinguished
-import Formalism.WindowSums.PowerSeriesRelationList
+module
+
+public import Formalism.TruncatedSeriesCounting.PowMemSpanOfMemSpanLinearDistinguished
+public import Formalism.WindowSums.PowerSeriesRelationList
+
+@[expose] public section
 
 namespace Formalism.TruncatedSeriesCounting.TruncatedSeriesCountingBounds
 

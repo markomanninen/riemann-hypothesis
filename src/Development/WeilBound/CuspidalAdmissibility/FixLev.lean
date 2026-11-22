@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OfinProd
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OfinProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,27 +25,7 @@ theorem finAt_finEmb (u : AdelicGLn.FiniteAdelicGL K n) (v : Pl K) :
 
 section Rep
 
-variable (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
-
-theorem rhoF_mul (a b : AdelicGLn.FiniteAdelicGL K n) (x : LL μ) :
-    rhoF μ (a * b) x = rhoF μ a (rhoF μ b x) := by
-  simp only [rhoF, map_mul]
-  exact UnitaryRep.map_mul_apply _ _ _ _
-
-theorem rhoF_one (x : LL μ) : rhoF μ 1 x = x := by
-  simp only [rhoF, map_one]
-  exact UnitaryRep.map_one_apply _ _
-
-def stab (x : LL μ) : Subgroup (AdelicGLn.FiniteAdelicGL K n) where
-  carrier := {g | rhoF μ g x = x}
-  one_mem' := rhoF_one μ x
-  mul_mem' {a b} ha hb := by
-    simp only [Set.mem_ofPred_eq] at *
-    rw [rhoF_mul, hb, ha]
-  inv_mem' {a} ha := by
-    simp only [Set.mem_ofPred_eq] at *
-    calc rhoF μ a⁻¹ x = rhoF μ a⁻¹ (rhoF μ a x) := by rw [ha]
-      _ = x := by rw [← rhoF_mul, inv_mul_cancel, rhoF_one]
+variable (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
 end Rep
 

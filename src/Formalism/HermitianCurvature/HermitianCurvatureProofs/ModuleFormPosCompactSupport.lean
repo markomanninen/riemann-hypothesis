@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SizeStandardCompact
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SizeStandardCompact
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.ModuleFormPositivity
 

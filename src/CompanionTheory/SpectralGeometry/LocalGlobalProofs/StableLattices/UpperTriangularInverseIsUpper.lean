@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.IsCongIdealTwoTorsion
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.IsCongIdealTwoTorsion
+
+@[expose] public section
 
 open CompanionTheory.Rg.FlB
 
@@ -12,7 +16,7 @@ variable {L V ι : Type} [Field L] [AddCommGroup V] [Module L V] [Fintype ι]
 
 def low (wt : ι → ℕ) (P : ι → Module.End L V) (m : ℕ) : Submodule L V where
   carrier := {x | ∀ i, m ≤ wt i → P i x = 0}
-  add_mem' {x y} hx hy i hi := by rw [map_add, hx i hi, hy i hi, add_zero]
+  add_mem' {x y} hx hy i hi := by rw [map_add (f := _), hx i hi, hy i hi, add_zero]
   zero_mem' i _ := map_zero _
   smul_mem' c x hx i hi := by rw [map_smul, hx i hi, smul_zero]
 
@@ -26,7 +30,8 @@ theorem map_low_le {wt : ι → ℕ} {P : ι → Module.End L V} (hP : IsPieces 
     (low wt P m).map a ≤ low wt P m := by
   rintro _ ⟨x, hx, rfl⟩ i hi
   have hx' : x ∈ low wt P m := hx
-  rw [← sum_pieces hP x, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← sum_pieces hP x, map_sum, map_sum]
   refine Finset.sum_eq_zero fun j _ => ?_
   by_cases hj : m ≤ wt j
   · rw [hx' j hj, map_zero, map_zero]

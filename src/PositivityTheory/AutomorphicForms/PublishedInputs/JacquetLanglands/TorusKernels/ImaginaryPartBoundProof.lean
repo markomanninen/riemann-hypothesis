@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,9 +74,9 @@ theorem no_eig {F : Type} [Field F] {I : Type} (σ : I → F →+* ℝ) (v : I) 
         linear_combination (M 0 0 - c) * h1 - M 0 1 * h0
       exact (mul_eq_zero.mp this).resolve_left h'
   have hσ := congrArg (σ v) hp
-  simp only [map_add, map_sub, map_mul, map_pow, map_zero] at hσ
+  simp only [map_add (f := _), map_sub, map_mul, map_pow, map_zero] at hσ
   rw [Matrix.trace_fin_two, Matrix.det_fin_two] at h
-  simp only [map_add, map_sub, map_mul] at h
+  simp only [map_add (f := _), map_sub, map_mul] at h
   nlinarith [sq_nonneg (2 * σ v c - (σ v (M 0 0) + σ v (M 1 1)))]
 
 theorem kap_lb (C c U : ℝ) (hc : 0 < c) (z w : P) (hz : |z.1.re| ≤ C ∧ c ≤ |z.1.im| ∧ |z.1.im| ≤ U)
@@ -135,7 +139,7 @@ theorem fixX (γ : PG F) (hell : D.TotEll γ.out) : ∃ z : D.Xs, γ • z = z :
     intro v
     apply fixed_pt
     have ht : (D.r v γ.out).val.trace = D.σ v γ.out.val.trace := by
-      rw [Matrix.trace_fin_two, Matrix.trace_fin_two, map_add]; rfl
+      rw [Matrix.trace_fin_two, Matrix.trace_fin_two, map_add (f := _)]; rfl
     have hd : (D.r v γ.out).val.det = D.σ v γ.out.val.det := by
       rw [Matrix.det_fin_two, Matrix.det_fin_two, map_sub, map_mul, map_mul]; rfl
     rw [ht, hd]
@@ -176,7 +180,7 @@ theorem bound_im [Nonempty I] {C c : ℝ} (hc : 0 < c) (z : X I) (hz : Sg C c z)
   · push Not at hle
     have hP : |(z v0).1.im| ^ (Finset.univ : Finset I).card ≤ ∏ u, |(z u).1.im| := by
       calc |(z v0).1.im| ^ (Finset.univ : Finset I).card = ∏ _u : I, |(z v0).1.im| := (Finset.prod_const _).symm
-        _ ≤ ∏ u, |(z u).1.im| := Finset.prod_le_prod (fun _ _ => abs_nonneg _) (fun u _ => hv0 u)
+        _ ≤ ∏ u, |(z u).1.im| := Finset.prod_le_prod₀ (fun _ _ => abs_nonneg _) (fun u _ => hv0 u)
     have hcard : (Finset.univ : Finset I).card ≠ 0 := Finset.card_ne_zero.mpr Finset.univ_nonempty
     have hself : |(z v0).1.im| ≤ |(z v0).1.im| ^ (Finset.univ : Finset I).card := by
       exact le_self_pow₀ hle.le hcard

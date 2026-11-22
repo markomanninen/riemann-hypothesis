@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertDensity.FinrankInfKerAddOne
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertDensity.ExistsTraceNeZero
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertDensity.FinrankInfKerAddOne
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertDensity.ExistsTraceNeZero
+
+@[expose] public section
 
 open Finset Module
 
@@ -39,7 +43,7 @@ theorem diag_orth_family {m q : ℕ} {B : Matrix (Fin m) (Fin m) L}
     · obtain ⟨e, he, hee⟩ := h
       have := finrank_perp_aniso W e he hee
       omega
-    · push_neg at h
+    · push Not at h
       exact iso 0 W hW h
   | succ d ih =>
     intro W hW
@@ -58,7 +62,7 @@ theorem diag_orth_family {m q : ℕ} {B : Matrix (Fin m) (Fin m) L}
       · induction i using Fin.cases with
         | zero => simpa using he
         | succ j => simpa using (Submodule.mem_inf.mp (hvW j)).1
-      · rw [linearIndependent_fin_cons]
+      · rw [linearIndependent_finCons]
         refine ⟨hli, fun hmem => hee ?_⟩
         have hle : Submodule.span L (Set.range v) ≤ LinearMap.ker (hfL q B e) := by
           rw [Submodule.span_le]
@@ -81,7 +85,7 @@ theorem diag_orth_family {m q : ℕ} {B : Matrix (Fin m) (Fin m) L}
           simp only [Fin.cons_succ, Fin.val_succ]
           rw [hdiag i]
           omega
-    · push_neg at h
+    · push Not at h
       exact iso _ W hW h
 
 theorem diag_of_hyps {m q : ℕ} (B : Matrix (Fin m) (Fin m) L)
@@ -93,7 +97,7 @@ theorem diag_of_hyps {m q : ℕ} (B : Matrix (Fin m) (Fin m) L)
   obtain ⟨v, r, hr, -, hli, horth, hdiag⟩ := diag_orth_family hadd hinv hB htr m ⊤
     (by rw [finrank_top, Module.finrank_fin_fun])
   refine ⟨Matrix.of fun i => v i, ?_, fun i => hf q B (v i) (v i), r, hr, ?_, hdiag, fun i => ?_⟩
-  · exact (Matrix.isUnit_iff_isUnit_det _).mp (Matrix.linearIndependent_rows_iff_isUnit.mp hli)
+  · exact (Matrix.isUnit_iff_isUnit_det _).mp (Matrix.linearIndependent_row_iff_isUnit.mp hli)
   · ext i j
     have e : (Matrix.of (fun i => v i) * B * ((Matrix.of fun i => v i).map fun y => y ^ q).transpose) i j =
         hf q B (v i) (v j) := by
@@ -124,7 +128,7 @@ theorem hermitianDiagonalization : Diag := by
   have htr : ∀ z : L, z ≠ 0 → ∃ c : L, c * z + (c * z) ^ Fintype.card K ≠ 0 := by
     intro z hz
     by_contra hall
-    push_neg at hall
+    push Not at hall
     let P : Polynomial L := Polynomial.X ^ Fintype.card K + Polynomial.X
     have hroot : ∀ y : L, P.eval y = 0 := fun y => by
       have h := hall (y / z)
@@ -133,7 +137,7 @@ theorem hermitianDiagonalization : Diag := by
       linear_combination h
     have hP0 : P ≠ 0 := by
       intro h0
-      have h := congrArg (Polynomial.coeff · 1) h0
+      have h := congrArg (fun p : Polynomial L => p.coeff 1) h0
       simp only [P, Polynomial.coeff_add, Polynomial.coeff_X_pow, Polynomial.coeff_X_one,
         Polynomial.coeff_zero] at h
       split_ifs at h with hh

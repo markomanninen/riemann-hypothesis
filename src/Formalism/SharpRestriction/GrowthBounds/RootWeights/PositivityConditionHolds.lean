@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.PieAltApply
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.PieAltApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,8 +77,8 @@ theorem pie_alt_zero (n : ℕ) (ga : Fin n → ℕ) {i j : Fin n} (hij : i ≠ j
   unfold alt
   exact Matrix.det_zero_of_column_eq hij fun k => by simp [h]
 
-open Classical in
 
+open Classical in
 def pie_S {n : ℕ} (lam : Fin n → ℕ) (b : ℕ) : Finset (Fin n → ℕ) :=
   (Fintype.piFinset fun _ : Fin n => Finset.range (∑ j, lam j + b + 1)).filter
     fun mu => (∀ j, lam j ≤ mu j) ∧ ∑ j, mu j = ∑ j, lam j + b
@@ -225,7 +229,7 @@ theorem pie_bad_zero (n b : ℕ) (lam : Fin n → ℕ) (hlam : Antitone lam) :
     have hl : lam j ≤ lam (pie_pr j) := hlam hprj
     have hg : pie_g lam mu = pie_sw mu j := by
       unfold pie_g
-      rw [dif_pos hB, hjdef]
+      rw [dite_eq_left hB, hjdef]
     refine ⟨j, hj.1, by omega, hg, ?_, pie_B_sw hjB hmax (hle _)⟩
     intro k
     by_cases hkj : k = j
@@ -279,7 +283,7 @@ theorem pie_bad_zero (n b : ℕ) (lam : Fin n → ℕ) (hlam : Antitone lam) :
     show pie_g lam (pie_g lam mu) = mu
     rw [hg]
     unfold pie_g
-    rw [dif_pos hne', hmax', pie_sw_sw mu hj0 hj1]
+    rw [dite_eq_left hne', hmax', pie_sw_sw mu hj0 hj1]
 
 theorem pie_good_iff {n : ℕ} (lam mu : Fin n → ℕ) :
     ¬ (pie_B lam mu).Nonempty ↔ ∀ i j : Fin n, i.val + 1 = j.val → mu j ≤ lam i := by

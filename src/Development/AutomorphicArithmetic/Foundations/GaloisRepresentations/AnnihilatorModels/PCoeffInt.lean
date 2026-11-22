@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TensorProduct
 open UpperTheory.Gal.crystallineComparison
@@ -13,7 +17,8 @@ theorem UpperTheory.Gal.crystallineComparison.coeffInt_of :
   have hform : ∀ i, form (c i) = (form (c' i)).map f := by
     intro i
     simp [form, f, Polynomial.map_sub, MvPolynomial.map_C, c']
-    rw [Polynomial.map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Polynomial.map_sum]
     simp [Polynomial.map_mul, Polynomial.map_C, MvPolynomial.map_C, MvPolynomial.map_X]
   have hP : (∏ i, form (c i)) = (∏ i, form (c' i)).map f := by
     rw [Polynomial.map_prod]

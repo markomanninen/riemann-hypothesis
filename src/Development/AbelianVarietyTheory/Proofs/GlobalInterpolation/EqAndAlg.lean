@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LatIntZero
-import Formalism.LocalToGlobal.KernelLattices.LateralTheory
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.FinalEq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AlgTAll
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LatIntZero
+public import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.FinalEq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AlgTAll
+
+@[expose] public section
+
 open NumberField Formalism.BasicNotions Classical Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker GlobalTheory.MomN
 
 namespace GlobalTheory.MomEq

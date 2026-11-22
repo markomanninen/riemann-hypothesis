@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NabBaseChange
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ActsLinOfSplitLin
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdemSumMulOfSubset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NabBaseChange
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ActsLinOfSplitLin
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdemSumMulOfSubset
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice IsDedekindDomain NumberField Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR
 open Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.IndefR.FWT Formalism.L2.Pj
 open GlobalTheory.ConjTwist GlobalTheory.ExportSeries GlobalTheory.SeriesTie GlobalTheory.OnTies GlobalTheory.OnCmp GlobalTheory.BaseCmp
@@ -40,7 +45,8 @@ theorem half_duality {D : D7} {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar 
     rw [Finset.mul_sum, Finset.sum_congr rfl hmul, ← hsum]
   have hc1 : cA D e * cA D e = cA D e := by rw [← RingHom.map_mul, he1]
   have hinf : infPart D e = 0 := by
-    rw [hsum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsum, map_sum]
     exact Finset.sum_eq_zero fun P hP => GlobalTheory.SplitScalar.infPart_splitIdem (hes P hP).1
   have hfin : x.map (infPart D) = 0 := by
     ext i j
@@ -62,11 +68,13 @@ theorem sum_heisO_base_eq : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStd
       Tm (fun t => ψ (symplO S T t u) * halfInd e (latAll S T ΛS ΛT) t) := by
     intro u hu
     rw [← hvac, hM.modul _ hSB u (hRr u hu).2]
-  rw [Finset.sum_congr rfl h1, ← map_sum, ← map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_congr rfl h1, ← map_sum, ← map_smul]
   congr 1
   funext t
-  simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, actPull, inv_one]
+  simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
   rw [← Finset.sum_mul]
+  simp only [actPull, inv_one]
   set Λ := latAll S T ΛS ΛT with hΛ
   set x := actO S T z⁻¹ 1 t with hx
   by_cases hte : IsHalf e t

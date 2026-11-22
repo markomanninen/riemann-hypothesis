@@ -1,5 +1,9 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.LConvSepF
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvSepF
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,8 @@ theorem delta_avg {K K' : Subgroup (GL (Fin m) k)} (hK : Good ψ K) (hK' : Good 
     rw [e, map_mul, Module.End.mul_apply, rhoW_delta (Subgroup.mem_subgroupOf.1 hab)]
   have hfix : ∀ κ ∈ K, rhoW ψ κ P = P := by
     intro κ hκ
-    rw [hP, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hP, map_sum]
     refine Fintype.sum_equiv (MulAction.toPerm (⟨κ, hκ⟩ : K)) _ _ fun q => ?_
     rw [MulAction.toPerm_apply, ← Module.End.mul_apply, ← map_mul]
     have e : (QuotientGroup.mk (Quotient.out ((⟨κ, hκ⟩ : K) • q)) : K ⧸ K'.subgroupOf K) =
@@ -38,7 +43,8 @@ theorem delta_avg {K K' : Subgroup (GL (Fin m) k)} (hK : Good ψ K) (hK' : Good 
   have hL : ∀ L : WT (m := m) ψ →ₗ[ℂ] ℂ, (∀ κ ∈ K, ∀ x, L (rhoW ψ κ x) = L x) →
       L P = (Fintype.card (K ⧸ K'.subgroupOf K) : ℂ) * L (delta ψ K') := by
     intro L hL
-    rw [hP, map_sum, Finset.sum_congr rfl fun q _ => hL _ (Quotient.out q).2 _, Finset.sum_const,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hP, map_sum, Finset.sum_congr rfl fun q _ => hL _ (Quotient.out q).2 _, Finset.sum_const,
       Finset.card_univ, nsmul_eq_mul]
   have hs : ∀ g, (P : GL (Fin m) k → ℂ) g ≠ 0 → ∃ u ∈ unipB k (Fin m), ∃ κ ∈ K, g = u * κ := by
     intro g hg
@@ -61,21 +67,21 @@ theorem delta_avg {K K' : Subgroup (GL (Fin m) k)} (hK : Good ψ K) (hK' : Good 
 def pairI (I : (GL (Fin m) k → ℂ) →ₗ[ℂ] ℂ) (x y : WT (m := m) ψ) : ℂ :=
   I fun g => (starRingEnd ℂ) ((x : GL (Fin m) k → ℂ) g) * (y : GL (Fin m) k → ℂ) g
 
-variable (ψ) in
 
+variable (ψ) in
 def formI (I : (GL (Fin m) k → ℂ) →ₗ[ℂ] ℂ) : WT (m := m) ψ →ₗ⋆[ℂ] WT (m := m) ψ →ₗ[ℂ] ℂ :=
   LinearMap.mk₂'ₛₗ (starRingEnd ℂ) (RingHom.id ℂ) (pairI I)
     (fun x x' y => by
       simp only [pairI]
-      rw [← map_add]; congr 1; funext g
-      simp only [Submodule.coe_add, Pi.add_apply, map_add]; ring)
+      rw [← map_add (f := _)]; congr 1; funext g
+      simp only [Submodule.coe_add, Pi.add_apply, map_add (f := _)]; ring)
     (fun c x y => by
       simp only [pairI]
       rw [← map_smul]; congr 1; funext g
       simp only [Submodule.coe_smul, Pi.smul_apply, smul_eq_mul, map_mul]; ring)
     (fun x y y' => by
       simp only [pairI]
-      rw [← map_add]; congr 1; funext g
+      rw [← map_add (f := _)]; congr 1; funext g
       simp only [Submodule.coe_add, Pi.add_apply]; ring)
     (fun c x y => by
       simp only [pairI]

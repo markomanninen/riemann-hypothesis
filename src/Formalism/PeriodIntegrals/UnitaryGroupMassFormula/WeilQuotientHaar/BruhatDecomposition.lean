@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeilQuotientHaar.HaarExist
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeilQuotientHaar.HaarExist
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem gf_pos (μ : Measure G) (K : ℕ → Set G) (S : Set G) (h1 : (1 : G) �
     (hpos : PosOn μ S) (n : ℕ) {x : G} (hx : x ∈ interior (K n)) : gf μ K n x ≠ 0 := by
   intro h0
   have hU : IsOpen ((fun s => s * x) ⁻¹' interior (K n)) :=
-    isOpen_interior.preimage (continuous_mul_right x)
+    isOpen_interior.preimage (continuous_mul_const x)
   have hne := hpos _ hU ⟨1, by simpa using hx, h1⟩
   exact hne (measure_mono_null (Set.preimage_mono interior_subset) h0)
 
@@ -98,7 +102,7 @@ theorem Eset_inv (μ : Measure G) (K : ℕ → Set G) (hK : ∀ n, IsClosed (K n
 theorem bf_meas (μ : Measure G) [SFinite μ] (K : ℕ → Set G) (hK : ∀ n, IsClosed (K n)) :
     Measurable (bf μ K) := by
   unfold bf
-  refine Measurable.ennreal_tsum fun n => ?_
+  refine Measurable.tsum fun n => ?_
   refine Measurable.indicator ?_ (Eset_meas μ K hK n)
   exact (measurable_one.indicator (hK n).measurableSet).mul (gf_meas μ K hK n).inv
 

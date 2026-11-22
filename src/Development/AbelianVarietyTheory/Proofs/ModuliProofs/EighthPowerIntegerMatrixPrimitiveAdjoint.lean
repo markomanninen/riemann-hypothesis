@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegPreBundleMulLeft
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegPreBundleMulLeft
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,7 +31,8 @@ def form (B : M →+ M →+ V) (W : Matrix n n ℤ) (x y : n → M) : V := ∑ u
 theorem form_left (B : M →+ M →+ V) (W m : Matrix n n ℤ) (x y : n → M) :
     form B W (fun u => ∑ v, m u v • x v) y = form B (m.transpose * W) x y := by
   have hL : form B W (fun u => ∑ v, m u v • x v) y = ∑ u, ∑ v, ∑ w, (W u v * m u w) • B (x w) (y v) := by
-    simp [form, Finset.smul_sum, smul_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [form, Finset.smul_sum, smul_smul, map_sum]
   have hR : form B (m.transpose * W) x y = ∑ w, ∑ v, ∑ u, (m u w * W u v) • B (x w) (y v) := by
     simp [form, Matrix.mul_apply, Finset.sum_smul]
   rw [hL, hR]
@@ -41,7 +46,8 @@ theorem form_left (B : M →+ M →+ V) (W m : Matrix n n ℤ) (x y : n → M) :
 theorem form_right (B : M →+ M →+ V) (W m : Matrix n n ℤ) (x y : n → M) :
     form B W x (fun u => ∑ v, m u v • y v) = form B (W * m) x y := by
   have hL : form B W x (fun u => ∑ v, m u v • y v) = ∑ u, ∑ v, ∑ w, (W u v * m v w) • B (x u) (y w) := by
-    simp [form, Finset.smul_sum, smul_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [form, Finset.smul_sum, smul_smul, map_sum]
   have hR : form B (W * m) x y = ∑ u, ∑ w, ∑ v, (W u v * m v w) • B (x u) (y w) := by
     simp [form, Matrix.mul_apply, Finset.sum_smul]
   rw [hL, hR]
@@ -52,7 +58,7 @@ theorem form_polar (B : M →+ M →+ V) (hB : ∀ a b, B a b = B b a) (W : Matr
   have hyx : ∑ u, ∑ v, W u v • B (y u) (x v) = ∑ u, ∑ v, W v u • B (x u) (y v) := by
     rw [Finset.sum_comm]
     simp only [hB (y _) (x _)]
-  simp only [form, Pi.add_apply, Pi.zero_apply, map_add, map_zero, AddMonoidHom.add_apply,
+  simp only [form, Pi.add_apply, Pi.zero_apply, map_add (f := _), map_zero, AddMonoidHom.add_apply,
     smul_add, smul_zero, Finset.sum_add_distrib, Finset.sum_const_zero, Matrix.add_apply, Matrix.transpose_apply, add_smul]
   rw [hyx]
   abel
@@ -63,8 +69,8 @@ section Square
 
 variable {S : Scheme.{0}} {B : Over S} [GrpObj B] [IsCommMonObj B]
 
-omit [IsCommMonObj B] in
 
+omit [IsCommMonObj B] in
 theorem exists_biadditive {P : LB (G2 B).left} (hP : P.IsLB) (hs : LBIso P (P.pull (lift (snd B B) (fst B B)).left))
     (T : Over S) (hb : ∀ x x' y : T ⟶ B, ∃ t : LB.Gen (LB.LinComb P (K := Fin 3)
       ![(lift (x * x') y).left, (lift x y).left, (lift x' y).left] ![1, -1, -1]), t.IsGen) :
@@ -131,7 +137,8 @@ theorem exists_form {P : LB (G2 B).left} (hP : P.IsLB) (hs : LBIso P (P.pull (li
   have hpt : ∀ x : T ⟶ Q, pull x.left (cls L hL) =
       form β W (fun u => .ofMul (x ≫ pr u)) (fun u => .ofMul (x ≫ pr u)) := by
     intro x
-    rw [(cls_eq_iff hL (LB.isLB_linComb hP _ _)).2 hW, cls_linComb hP, map_sum, Fintype.sum_prod_type]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [(cls_eq_iff hL (LB.isLB_linComb hP _ _)).2 hW, cls_linComb hP, map_sum, Fintype.sum_prod_type]
     simp only [form]
     refine Finset.sum_congr rfl fun u _ => Finset.sum_congr rfl fun v _ => ?_
     rw [map_zsmul, ← pull_comp, ← Over.comp_left, comp_lift, hβ]

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselSubgroupsClosedUnitaryWCompact
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ClosedSubgroupBesselHaarFiniteCompactPosOpen
-import Formalism.FormalDegreeBessel.FinalG
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RightDerivativeSmoothOnIndefiniteUnitaryGroupStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselUnitaryHaarTransportDiagonalStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SobolevValueAtOneFixedCompactDiagSignUnitaryStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselSubgroupsClosedUnitaryWCompact
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ClosedSubgroupBesselHaarFiniteCompactPosOpen
+public import Formalism.FormalDegreeBessel.FinalG
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RightDerivativeSmoothOnIndefiniteUnitaryGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselUnitaryHaarTransportDiagonalStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SobolevValueAtOneFixedCompactDiagSignUnitaryStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,9 @@ theorem sobolev_at_one_G : ∀ (k r : ℕ) (μG : Measure (Mt k r)), IsHaarOn (G
   have hK₀ : IsCompact (ψ '' Q) := hQ.image hψc
   have hK₀G : ∀ x ∈ ψ '' Q, Matrix.of x ∈ GG k r := by
     rintro _ ⟨y, -, rfl⟩
-    simpa [ψ] using hmemG _ y.2
+    change Matrix.of (Matrix.of.symm (cj (umat y))) ∈ GG k r
+    rw [Equiv.apply_symm_apply]
+    exact hmemG _ y.2
   have hfin : IsFiniteMeasureOnCompacts μG := by
     obtain ⟨hG, -⟩ := closedSub_groups k r (bvec (wI k r (Fin.last k))) (fun i hi => by
       simp only [bvec, wI]
@@ -155,7 +161,9 @@ theorem sobolev_at_one_G : ∀ (k r : ℕ) (μG : Measure (Mt k r)), IsHaarOn (G
     show _ ≤ φ (ψ y)
     rw [hφy]
     refine ENNReal.ofReal_le_ofReal (pow_le_pow_left₀ (norm_nonneg _) ?_ 2)
-    have : (Matrix.of (ψ y) : Mat k r) = cj (umat y) := by simp [ψ]
+    have : (Matrix.of (ψ y) : Mat k r) = cj (umat y) := by
+      change Matrix.of (Matrix.of.symm (cj (umat y))) = _
+      exact Equiv.apply_symm_apply _ _
     rw [this]
     refine (ℓ.le_opNorm _).trans ?_
     rw [hℓ1, one_mul]

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEuclideanSections
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEuclideanSections
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -18,11 +23,6 @@ def L2GramLattice.Statement : Prop :=
       Function.Injective φ ∧ DiscreteTopology (imageLattice φ) ∧
       (∀ [DiscreteTopology (imageLattice φ)], IsZLattice ℝ (imageLattice φ)) ∧
       ∀ s, ‖φ s‖ = Real.sqrt (∫ z, ‖w s z‖ ^ 2 ∂μ)
-
-def L2GramLattice.intConst : ℤ →+ (Unit → ℂ) where
-  toFun n := fun _ => (n : ℂ)
-  map_zero' := by funext; simp
-  map_add' a b := by funext; simp
 
 end
 

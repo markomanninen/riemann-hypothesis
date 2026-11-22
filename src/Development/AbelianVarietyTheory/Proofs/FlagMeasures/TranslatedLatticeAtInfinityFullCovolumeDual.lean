@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsLatMeasurableConst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsLatMeasurableConst
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.FlagBase Module
 
@@ -120,7 +124,8 @@ theorem covAt_dual (b : Basis (Idx E j) ℝ (VecInf E j)) :
       exact if_congr eq_comm rfl rfl
     rw [h3]
     conv_rhs => rw [← (stdB E j).sum_repr (d i), ← (stdB E j).sum_repr (b k)]
-    simp only [Matrix.mul_apply, Matrix.transpose_apply, Basis.toMatrix_apply, LinearMap.BilinForm.toMatrix_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.transpose_apply, Basis.toMatrix_apply, LinearMap.BilinForm.toMatrix_apply,
       map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, Finset.sum_mul, Finset.mul_sum]
     first
       | exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
@@ -132,9 +137,6 @@ theorem covAt_dual (b : Basis (Idx E j) ℝ (VecInf E j)) :
 
 def act (M : InfinitePlace E → Matrix (Fin j) (Fin j) ℂ) : VecInf E j →ₗ[ℝ] VecInf E j :=
   LinearMap.pi fun w => ((Matrix.toLin' (M w)).restrictScalars ℝ).comp (LinearMap.proj w)
-
-theorem act_apply (M : InfinitePlace E → Matrix (Fin j) (Fin j) ℂ) (x : VecInf E j) (w : InfinitePlace E) :
-    act E j M x w = M w *ᵥ x w := rfl
 
 theorem det_act (M : InfinitePlace E → Matrix (Fin j) (Fin j) ℂ) :
     LinearMap.det (act E j M) = ∏ w, ‖(M w).det‖ ^ 2 := by
@@ -153,7 +155,7 @@ def emb : (Fin j → E) →+ VecInf E j where
   map_zero' := by ext; simp
   map_add' x y := by ext; simp
 
-def mix [IsTotallyComplex E] : (Fin j → mixedEmbedding.mixedSpace E) ≃ₗ[ℝ] VecInf E j where
+def mix [_root_.NumberField.IsTotallyComplex E] : (Fin j → mixedEmbedding.mixedSpace E) ≃ₗ[ℝ] VecInf E j where
   toFun x w a := (x a).2 ⟨w, IsTotallyComplex.isComplex w⟩
   invFun y a := (fun _ => 0, fun w => y w.1 a)
   map_add' _ _ := rfl
@@ -165,16 +167,16 @@ def mix [IsTotallyComplex E] : (Fin j → mixedEmbedding.mixedSpace E) ≃ₗ[�
     exact absurd w.2 (InfinitePlace.not_isReal_iff_isComplex.2 (IsTotallyComplex.isComplex w.1))
   right_inv _ := rfl
 
-theorem mix_apply [IsTotallyComplex E] (x : Fin j → mixedEmbedding.mixedSpace E) (w : InfinitePlace E) (a : Fin j) :
+theorem mix_apply [_root_.NumberField.IsTotallyComplex E] (x : Fin j → mixedEmbedding.mixedSpace E) (w : InfinitePlace E) (a : Fin j) :
     mix E j x w a = (x a).2 ⟨w, IsTotallyComplex.isComplex w⟩ := rfl
 
 def ratB : Basis (Σ _ : Fin j, Free.ChooseBasisIndex ℤ (𝓞 E)) ℚ (Fin j → E) :=
   Pi.basis fun _ => integralBasis E
 
-def intB [IsTotallyComplex E] : Basis (Σ _ : Fin j, Free.ChooseBasisIndex ℤ (𝓞 E)) ℝ (VecInf E j) :=
+def intB [_root_.NumberField.IsTotallyComplex E] : Basis (Σ _ : Fin j, Free.ChooseBasisIndex ℤ (𝓞 E)) ℝ (VecInf E j) :=
   (Pi.basis fun _ => mixedEmbedding.latticeBasis E).map (mix E j)
 
-theorem intB_apply [IsTotallyComplex E] (i) : intB E j i = emb E j (ratB E j i) := by
+theorem intB_apply [_root_.NumberField.IsTotallyComplex E] (i) : intB E j i = emb E j (ratB E j i) := by
   obtain ⟨a, i⟩ := i
   funext w c
   simp only [intB, ratB, Basis.map_apply, Pi.basis_apply, mix_apply, emb, AddMonoidHom.coe_mk, ZeroHom.coe_mk]
@@ -186,7 +188,7 @@ theorem intB_apply [IsTotallyComplex E] (i) : intB E j i = emb E j (ratB E j i) 
 instance : MeasurableAdd (mixedEmbedding.mixedSpace E) := MeasurableAdd₂.toMeasurableAdd
 
 open Classical in
-theorem volume_fd_map [IsTotallyComplex E] {ι : Type} [Fintype ι] (b : Basis ι ℝ (mixedEmbedding.mixedSpace E)) :
+theorem volume_fd_map [_root_.NumberField.IsTotallyComplex E] {ι : Type} [Fintype ι] (b : Basis ι ℝ (mixedEmbedding.mixedSpace E)) :
     volume.real (ZSpan.fundamentalDomain ((Pi.basis fun _ : Fin j => b).map (mix E j))) =
       volume.real (ZSpan.fundamentalDomain b) ^ j := by
   haveI : (volume : Measure (Fin j → mixedEmbedding.mixedSpace E)).IsAddHaarMeasure := Measure.pi.isAddHaarMeasure _
@@ -223,7 +225,7 @@ theorem volume_fd_map [IsTotallyComplex E] {ι : Type} [Fintype ι] (b : Basis �
         exact ⟨fun w => absurd w.2 (InfinitePlace.not_isReal_iff_isComplex.2 (IsTotallyComplex.isComplex w.1)),
           fun w => h w.1⟩
     simp only [this, cube, Set.mem_setOf_eq]
-    exact forall_swap
+    exact forall_comm
   rw [ZSpan.measureReal_fundamentalDomain _ volume ((Pi.basis fun _ : Fin j => s).map (mix E j)), hc,
     ← hpi b, ZSpan.measureReal_fundamentalDomain _ volume (Pi.basis fun _ : Fin j => s), hpi s, hs1,
     Measure.real, volume_cube, Basis.det_map]
@@ -232,7 +234,7 @@ theorem volume_fd_map [IsTotallyComplex E] {ι : Type} [Fintype ι] (b : Basis �
   rw [this]
   simp
 
-theorem volume_fd_intB [IsTotallyComplex E] :
+theorem volume_fd_intB [_root_.NumberField.IsTotallyComplex E] :
     volume.real (ZSpan.fundamentalDomain (intB E j)) = Formalism.HermitianLatticesTheory.vInv E ^ (Formalism.HermitianLatticesTheory.fDeg E * j) := by
   classical
   rw [intB, volume_fd_map, pow_mul]
@@ -249,37 +251,37 @@ theorem volume_fd_intB [IsTotallyComplex E] :
   rw [this, ← Real.sqrt_eq_rpow]
   simp [div_eq_inv_mul, Int.norm_eq_abs]
 
-theorem isLattice_int (Λ : Submodule (𝓞 E) (Fin j → E)) (h : Submodule.IsLattice E Λ) :
-    Submodule.IsLattice ℚ (Λ.restrictScalars ℤ) where
-  fg := by
-    have : Module.Finite (𝓞 E) Λ := Module.Finite.iff_fg.2 h.fg
-    have : Module.Finite ℤ Λ := Module.Finite.trans (𝓞 E) Λ
-    exact Module.Finite.iff_fg.1 (this : Module.Finite ℤ (Λ.restrictScalars ℤ))
-  span_eq_top := by
-    rw [eq_top_iff]
-    intro y _
-    have hy : y ∈ Submodule.span E (Λ : Set (Fin j → E)) := by rw [h.span_eq_top]; trivial
-    obtain ⟨n, c, v, rfl⟩ := Submodule.mem_span_set'.1 hy
-    refine Submodule.sum_mem _ fun i _ => ?_
-    rw [← (integralBasis E).sum_repr (c i), Finset.sum_smul]
-    refine Submodule.sum_mem _ fun k _ => ?_
-    rw [smul_assoc]
-    refine Submodule.smul_mem _ _ (Submodule.subset_span ?_)
-    rw [integralBasis_apply, algebraMap_smul]
-    exact Λ.smul_mem _ (v i).2
+theorem isLattice_int (Λ : Submodule (𝓞 E) (Fin j → E)) (h : Submodule.IsFullLattice E Λ) :
+    Submodule.IsFullLattice ℚ (Λ.restrictScalars ℤ) := by
+  have : Submodule.IsLattice ℚ (Λ.restrictScalars ℤ) :=
+    Submodule.IsLattice.of_fg ℚ (Submodule.FG.restrictScalars h.fg)
+  refine { span_eq_top := ?_ }
+  rw [eq_top_iff]
+  intro y _
+  have hy : y ∈ Submodule.span E (Λ : Set (Fin j → E)) := by rw [h.span_eq_top]; trivial
+  obtain ⟨n, c, v, rfl⟩ := Submodule.mem_span_set'.1 hy
+  refine Submodule.sum_mem _ fun i _ => ?_
+  rw [← (integralBasis E).sum_repr (c i), Finset.sum_smul]
+  refine Submodule.sum_mem _ fun k _ => ?_
+  rw [smul_assoc]
+  refine Submodule.smul_mem _ _ (Submodule.subset_span ?_)
+  rw [integralBasis_apply, algebraMap_smul]
+  exact Λ.smul_mem _ (v i).2
 
-theorem exists_basis [IsTotallyComplex E] (Λ : Submodule (𝓞 E) (Fin j → E)) (h : Submodule.IsLattice E Λ) :
+theorem exists_basis [_root_.NumberField.IsTotallyComplex E] (Λ : Submodule (𝓞 E) (Fin j → E)) (h : Submodule.IsFullLattice E Λ) :
     ∃ b : Basis (Idx E j) ℝ (VecInf E j),
       Submodule.span ℤ (emb E j '' (Λ : Set (Fin j → E))) = Submodule.span ℤ (Set.range b) := by
   classical
-  haveI := isLattice_int E j Λ h
+  have := isLattice_int E j Λ h
+  have := Submodule.IsLattice.free ℚ (Λ.restrictScalars ℤ)
   let β₀ := Module.Free.chooseBasis ℤ (Λ.restrictScalars ℤ)
-  let β := β₀.reindex (((β₀.extendOfIsLattice ℚ).indexEquiv (ratB E j)).trans ((intB E j).indexEquiv (stdB E j)))
-  let q := β.extendOfIsLattice ℚ
-  have hq : ∀ i, q i = (β i : Fin j → E) := fun i => Basis.extendOfIsLattice_apply ℚ β i
+  let β := β₀.reindex (((β₀.extendOfIsFullLattice ℚ).indexEquiv (ratB E j)).trans ((intB E j).indexEquiv (stdB E j)))
+  let q := β.extendOfIsFullLattice ℚ
+  have hq : ∀ i, q i = (β i : Fin j → E) := fun i => Basis.extendOfIsFullLattice_apply ℚ β i
   have hall : ∀ y, emb E j y ∈ Submodule.span ℝ (Set.range fun i => emb E j (q i)) := by
     intro y
-    rw [← q.sum_repr y, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← q.sum_repr y, map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [map_rat_smul, ← Rat.cast_smul_eq_qsmul ℝ]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -296,7 +298,8 @@ theorem exists_basis [IsTotallyComplex E] (Λ : Submodule (𝓞 E) (Fin j → E)
     have := congrArg Subtype.val (β.sum_repr ⟨y, hy⟩)
     rw [Submodule.coe_sum] at this
     simp only [Submodule.coe_smul_of_tower] at this
-    rw [← this, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← this, map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [map_zsmul, ← hq]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -315,7 +318,7 @@ theorem latAt_eq_map (Λ : Submodule (𝓞 E) (Fin j → E)) (g : MatInf E j) :
   rw [this, Set.image_image]
   rfl
 
-theorem span_std [IsTotallyComplex E] :
+theorem span_std [_root_.NumberField.IsTotallyComplex E] :
     latAt E j (Submodule.span (𝓞 E) (Set.range fun a => (Pi.single a 1 : Fin j → E)))
       (fun _ a b => if a = b then 1 else 0) = Submodule.span ℤ (Set.range (intB E j)) := by
   have h1 : (Matrix.of fun a b : Fin j => if a = b then (1 : ℂ) else 0) = 1 := rfl
@@ -332,9 +335,11 @@ theorem span_std [IsTotallyComplex E] :
   · rw [Submodule.span_le]
     rintro _ ⟨y, hy, rfl⟩
     obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun (𝓞 E)).1 hy
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Submodule.sum_mem _ fun a _ => ?_
-    rw [← (RingOfIntegers.basis E).sum_repr (c a), Finset.sum_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← (RingOfIntegers.basis E).sum_repr (c a), Finset.sum_smul, map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [smul_assoc, map_zsmul, ← h3, ← intB_apply]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, rfl⟩)
@@ -344,7 +349,7 @@ theorem span_std [IsTotallyComplex E] :
     rw [h3]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨a, rfl⟩)
 
-theorem lattice_facts : ∀ (E : Type) [Field E] [NumberField E], IsTotallyComplex E → ∀ j : ℕ, (∀ Λ : Submodule (𝓞 E) (Fin j → E), Submodule.IsLattice E Λ → ∃ κ : ℝ, 0 < κ ∧ ∀ g : MatInf E j, 0 < detNorm E j g → (∃ _ : DiscreteTopology (latAt E j Λ g), IsZLattice ℝ (latAt E j Λ g)) ∧ covAt E j (latAt E j Λ g) = κ / detNorm E j g ∧ covAt E j (dualAt E j (latAt E j Λ g)) = (covAt E j (latAt E j Λ g))⁻¹ ∧ dualAt E j (dualAt E j (latAt E j Λ g)) = latAt E j Λ g) ∧ covAt E j (latAt E j (Submodule.span (𝓞 E) (Set.range fun a => (Pi.single a 1 : Fin j → E))) fun _ a b => if a = b then 1 else 0) = Formalism.HermitianLatticesTheory.vInv E ^ (Formalism.HermitianLatticesTheory.fDeg E * j) := by
+theorem lattice_facts : ∀ (E : Type) [Field E] [NumberField E], IsTotallyComplex E → ∀ j : ℕ, (∀ Λ : Submodule (𝓞 E) (Fin j → E), Submodule.IsFullLattice E Λ → ∃ κ : ℝ, 0 < κ ∧ ∀ g : MatInf E j, 0 < detNorm E j g → (∃ _ : DiscreteTopology (latAt E j Λ g), IsZLattice ℝ (latAt E j Λ g)) ∧ covAt E j (latAt E j Λ g) = κ / detNorm E j g ∧ covAt E j (dualAt E j (latAt E j Λ g)) = (covAt E j (latAt E j Λ g))⁻¹ ∧ dualAt E j (dualAt E j (latAt E j Λ g)) = latAt E j Λ g) ∧ covAt E j (latAt E j (Submodule.span (𝓞 E) (Set.range fun a => (Pi.single a 1 : Fin j → E))) fun _ a b => if a = b then 1 else 0) = Formalism.HermitianLatticesTheory.vInv E ^ (Formalism.HermitianLatticesTheory.fDeg E * j) := by
   intro E _ _ hE j
   refine ⟨fun Λ hΛ => ?_, by rw [span_std, covAt_span, volume_fd_intB]⟩
   classical

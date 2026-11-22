@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoeffZeroNeOfMonicIrr
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IrreducibleCharacterSeries.ConjugateCharacterFormula
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RootsReverseProd
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoeffZeroNeOfMonicIrr
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IrreducibleCharacterSeries.ConjugateCharacterFormula
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RootsReverseProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,13 +30,14 @@ def semiMap (σ : ℂ →+* ℂ) (j : ∀ i, V i →+ W i) (hj : ∀ i (a : ℂ)
       have e : ∀ m : V i, (fun k => j k (Function.update f i m k)) =
           Function.update (fun k => j k (f k)) i (j i m) := fun m =>
         funext fun k => Function.apply_update (fun k => j k) f i m k
-      simp only [e, map_add, MultilinearMap.map_update_add, smul_add])
+      simp only [e, map_add (f := _), MultilinearMap.map_update_add, smul_add])
     (fun r r' f => by simp [add_smul])
     (fun r f i r' => by
       have e : ∀ m : V i, (fun k => j k (Function.update f i m k)) =
           Function.update (fun k => j k (f k)) i (j i m) := fun m =>
         funext fun k => Function.apply_update (fun k => j k) f i m k
-      simp only [e, hj, MultilinearMap.map_update_smul, Function.update_eq_self, map_mul, smul_smul, mul_comm])
+      simp only [e, hj, MultilinearMap.map_update_smul, RingHom.id_apply, Function.update_eq_self,
+        map_mul, smul_smul, mul_comm])
 
 theorem semiMap_tprod (σ : ℂ →+* ℂ) (j : ∀ i, V i →+ W i) (hj : ∀ i (a : ℂ) v, j i (a • v) = σ a • j i v)
     (a : ℂ) (f : ∀ i, V i) :
@@ -44,7 +49,7 @@ theorem semiMap_smul (σ : ℂ →+* ℂ) (j : ∀ i, V i →+ W i) (hj : ∀ i 
     (a : ℂ) (x : PiTensorProduct ℂ V) : semiMap σ j hj (a • x) = σ a • semiMap σ j hj x := by
   induction x using PiTensorProduct.induction_on with
   | smul_tprod r f => rw [smul_smul, semiMap_tprod, semiMap_tprod, smul_smul, map_mul]
-  | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
 
 theorem semiMap_map (σ : ℂ →+* ℂ) (j : ∀ i, V i →+ W i) (hj : ∀ i (a : ℂ) v, j i (a • v) = σ a • j i v)
     (A : ∀ i, V i →ₗ[ℂ] V i) (B : ∀ i, W i →ₗ[ℂ] W i) (h : ∀ i v, j i (A i v) = B i (j i v))
@@ -54,7 +59,7 @@ theorem semiMap_map (σ : ℂ →+* ℂ) (j : ∀ i, V i →+ W i) (hj : ∀ i (
   | smul_tprod r f =>
     rw [map_smul, PiTensorProduct.map_tprod, semiMap_tprod, semiMap_tprod, map_smul, PiTensorProduct.map_tprod]
     simp only [h]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem symm_smul {A B : Type} [AddCommGroup A] [Module ℂ A] [AddCommGroup B] [Module ℂ B] (σ : ℂ ≃+* ℂ)
     (j : A ≃+ B) (hj : ∀ (a : ℂ) v, j (a • v) = σ a • j v) (a : ℂ) (w : B) :
@@ -70,7 +75,7 @@ theorem semiMap_injective (σ : ℂ ≃+* ℂ) (j : ∀ i, V i ≃+ W i) (hj : �
   | smul_tprod r f =>
     refine (congrArg _ (semiMap_tprod _ _ _ r f)).trans ((semiMap_tprod _ _ _ _ _).trans ?_)
     simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 end Tensor
 
@@ -102,7 +107,8 @@ theorem character_bc (σ : ℂ ≃+* ℂ) (τ : FDRep ℂ Γ) (γ : Γ) : (bc σ
 theorem simple_bc [Fintype Γ] (σ : ℂ ≃+* ℂ) {τ : FDRep ℂ Γ} (h : Simple τ) : Simple (bc σ τ) := by
   rw [FDRep.simple_iff_char_is_norm_one] at h ⊢
   simp only [character_bc]
-  rw [← map_natCast σ, ← h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_natCast σ, ← h, map_sum]
   simp only [map_mul]
 
 variable {K : Type} [Field K] [Fintype K] [DecidableEq K] {ι : Type} [Fintype ι] [DecidableEq ι]

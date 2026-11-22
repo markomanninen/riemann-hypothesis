@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.PropFTop
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.PropFTop
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,14 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.InFrameStabilizer
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.InFrameStabilizer
+
+@[expose] public section
 
 open Matrix
 
 namespace GlobalTheory.SgAlg.WittField
 
 variable {E : Type} [Field E] {σ : E →+* E} {n : ℕ} {J : Matrix (Fin n) (Fin n) E}
-
-theorem form_add_left (v v' w : Fin n → E) : form σ J (v + v') w = form σ J v w + form σ J v' w := by
-  simp [form, mulVec_add, dotProduct_add]
 
 theorem form_sub_left (v v' w : Fin n → E) : form σ J (v - v') w = form σ J v w - form σ J v' w := by
   simp [form, mulVec_sub, dotProduct_sub]
@@ -30,20 +31,22 @@ theorem herm_entry (hJ : cT σ J = J) (i j : Fin n) : σ (J j i) = J i j := by
 
 theorem form_conj (hσ : ∀ x, σ (σ x) = x) (hJ : cT σ J = J) (v w : Fin n → E) :
     form σ J w v = σ (form σ J v w) := by
-  simp only [form, dotProduct, mulVec, map_sum, map_mul, hσ, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [form, dotProduct, mulVec, map_sum, map_mul, hσ, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [show J j i = σ (J i j) from (herm_entry hJ j i).symm]
   ring
 
 theorem form_add_right (v w w' : Fin n → E) : form σ J v (w + w') = form σ J v w + form σ J v w' := by
-  simp only [form, Pi.add_apply, map_add]
+  simp only [form, Pi.add_apply, map_add (f := _)]
   rw [show (fun i => σ (w i) + σ (w' i)) = (fun i => σ (w i)) + (fun i => σ (w' i)) from rfl, add_dotProduct]
 
 theorem conj_mulVec (B : Matrix (Fin n) (Fin n) E) (w : Fin n → E) :
     (fun i => σ ((B *ᵥ w) i)) = (fun i => σ (w i)) ᵥ* cT σ B := by
   funext k
-  simp [mulVec, vecMul, dotProduct, cT, map_sum, map_mul, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [mulVec, vecMul, dotProduct, cT, map_sum, map_mul, mul_comm]
 
 theorem form_mulVec (A B : Matrix (Fin n) (Fin n) E) (v w : Fin n → E) :
     form σ J (A *ᵥ v) (B *ᵥ w) = (fun i => σ (w i)) ⬝ᵥ ((cT σ B * J * A) *ᵥ v) := by
@@ -228,8 +231,8 @@ theorem pairM_entry {a : ℕ} (X : Matrix (Fin n) (Fin a) E) (i j : Fin a) :
 
 end GlobalTheory.SgAlg.WittField
 
-open GlobalTheory.SgAlg Matrix in
 
+open GlobalTheory.SgAlg Matrix in
 theorem GlobalTheory.SgAlg.witt_free_field : ∀ {E : Type} [Field E] (σ : E →+* E), IsQA σ → ∀ {n a : ℕ}
     (J : Matrix (Fin n) (Fin n) E), IsHermU σ J → ∀ (X X' : Matrix (Fin n) (Fin a) E), Free X →
     Free X' → pairM σ J X X = pairM σ J X' X' → ∃ g, IsUn σ J g ∧ g * X = X' := by

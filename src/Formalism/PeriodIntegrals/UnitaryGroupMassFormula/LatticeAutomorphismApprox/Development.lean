@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.ScXuExists
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEquality.Commensurated
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FiniteAdelicComparison.MemLocFrom
+module
+
+public import Formalism.PeriodIntegrals.ScXuExists
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEquality.Commensurated
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FiniteAdelicComparison.MemLocFrom
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRatA
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRatA
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R.IntegerToRational
 
@@ -86,7 +90,7 @@ private lemma not_isMaximal_of_chZero (Q : Ideal (MvPolynomial σ ℤ)) (hQ : Ch
     rw [hfe] at hx
     exact hx
   have hinj : Function.Injective (algebraMap ℤ (MvPolynomial σ ℤ ⧸ Q)) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro m hm
     rw [← hfe, RingHom.comp_apply, Ideal.Quotient.eq_zero_iff_mem] at hm
     exact hQ m hm

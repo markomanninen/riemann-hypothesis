@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.GramCEqTranspose
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.GramCEqTranspose
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory
@@ -23,7 +28,7 @@ theorem card_smul_eOp_mem_Mall : ∀ {LL Ks : Type} [Field LL] [NumberField LL] 
     induction hy using Submodule.span_induction with
     | mem z hz => exact Submodule.subset_span (hMK g z hz)
     | zero => simp
-    | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+    | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
     | smul r a _ ha =>
         rw [← algebraMap_smul LL r a, LinearMap.map_smul, algebraMap_smul]
         exact Submodule.smul_mem _ r ha
@@ -49,7 +54,8 @@ theorem card_smul_eOp_mem_Mall : ∀ {LL Ks : Type} [Field LL] [NumberField LL] 
     exact Submodule.smul_mem _ r (hρspan g x hx.1)
   · have hcomm : ∀ p : G0, A.ρ p (A.eOp eC x) = A.eOp eC (A.ρ p x) := by
       intro p
-      rw [FormsL.eOp_apply, FormsL.eOp_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [FormsL.eOp_apply, FormsL.eOp_apply, map_sum]
       simp only [LinearMap.map_smul]
       refine Fintype.sum_equiv (MulAut.conj p).toEquiv _ _ fun g => ?_
       simp only [MulEquiv.toEquiv_eq_coe, MulEquiv.coe_toEquiv, MulAut.conj_apply]

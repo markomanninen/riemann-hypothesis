@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CellOpenLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CellOpenLe
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -12,10 +16,15 @@ variable {R : Type} [CommRing R]
 theorem exists_lowInv_mul_upperUni_of_leadingMinors :
     ∀ (n : ℕ) (N : Matrix (Fin n) (Fin n) R),
       (∀ (k : ℕ) (hk : k ≤ n), IsUnit (N.submatrix (Fin.castLE hk) (Fin.castLE hk)).det) →
-      ∃ L U : Matrix (Fin n) (Fin n) R, IsLowInv L ∧ (∀ i j, j < i → U i j = 0) ∧ (∀ i, U i i = 1) ∧ N = L * U
-  | 0, N, _ => ⟨1, 1, ⟨fun i => Fin.elim0 i, fun i => Fin.elim0 i⟩, fun i => Fin.elim0 i, fun i => Fin.elim0 i,
+      ∃ L U : Matrix (Fin n) (Fin n) R, IsLowInv L ∧ (∀ i j, j < i → U i j = 0) ∧ (∀ i, U i i = 1) ∧ N = L * U := by
+  intro n
+  induction n with
+  | zero =>
+    intro N _
+    exact ⟨1, 1, ⟨fun i => Fin.elim0 i, fun i => Fin.elim0 i⟩, fun i => Fin.elim0 i, fun i => Fin.elim0 i,
       by ext i; exact Fin.elim0 i⟩
-  | n + 1, N, hN => by
+  | succ n ih =>
+    intro N hN
     set P : Matrix (Fin n) (Fin n) R := N.submatrix Fin.castSucc Fin.castSucc with hP
     have hPm : ∀ (k : ℕ) (hk : k ≤ n), IsUnit (P.submatrix (Fin.castLE hk) (Fin.castLE hk)).det := by
       intro k hk
@@ -23,12 +32,12 @@ theorem exists_lowInv_mul_upperUni_of_leadingMinors :
           = N.submatrix (Fin.castLE (hk.trans (Nat.le_succ n))) (Fin.castLE (hk.trans (Nat.le_succ n))) := by
         ext i j; rfl
       rw [e]; exact hN k _
-    obtain ⟨L₀, U₀, ⟨hL₀z, hL₀d⟩, hU₀z, hU₀d, hPLU⟩ := exists_lowInv_mul_upperUni_of_leadingMinors n P hPm
+    obtain ⟨L₀, U₀, ⟨hL₀z, hL₀d⟩, hU₀z, hU₀d, hPLU⟩ := ih P hPm
     have hdL₀ : IsUnit L₀.det := by
-      rw [Matrix.det_of_lowerTriangular L₀ (fun i j h => hL₀z i j h)]
+      rw [Matrix.det_of_isLowerTriangular L₀ (fun i j h => hL₀z i j h)]
       exact Finset.prod_induction _ IsUnit (fun a b ha hb => ha.mul hb) isUnit_one (fun i _ => hL₀d i)
     have hdU₀ : IsUnit U₀.det := by
-      rw [Matrix.det_of_upperTriangular (fun i j h => hU₀z i j h)]
+      rw [Matrix.det_of_isUpperTriangular (M := U₀) (fun i j h => hU₀z i j h)]
       simp [hU₀d]
     set q : Fin n → R := fun i => N (Fin.castSucc i) (Fin.last n)
     set r : Fin n → R := fun j => N (Fin.last n) (Fin.castSucc j)
@@ -86,7 +95,7 @@ theorem exists_lowInv_mul_upperUni_of_leadingMinors :
       | cast i' =>
         induction j using Fin.lastCases with
         | last =>
-          simp only [L, U, Matrix.of_apply, Fin.lastCases_last, Fin.lastCases_castSucc, mul_one, zero_mul, add_zero]
+          simp only [L, U, Matrix.of_apply, Fin.lastCases_last, Fin.lastCases_castSucc, mul_one, add_zero]
           have := congrFun hq i'
           simpa [mulVec, dotProduct, q] using this.symm
         | cast j' =>
@@ -96,14 +105,14 @@ theorem exists_lowInv_mul_upperUni_of_leadingMinors :
     have hdet : IsUnit L.det := by
       have h1 : N.det = L.det * U.det := by rw [hNLU, Matrix.det_mul]
       have h2 : U.det = 1 := by
-        rw [Matrix.det_of_upperTriangular (fun i j h => hUz i j h)]; simp [hUd]
+        rw [Matrix.det_of_isUpperTriangular (M := U) (fun i j h => hUz i j h)]; simp [hUd]
       have h3 : N = N.submatrix (Fin.castLE (le_refl (n+1))) (Fin.castLE (le_refl (n+1))) := by
         ext i j; rfl
       have := hN (n+1) le_rfl
       rw [← h3, h1, h2, mul_one] at this
       exact this
     have hdu : IsUnit d := by
-      rw [Matrix.det_of_lowerTriangular L (fun i j h => hLz i j h), Fin.prod_univ_castSucc] at hdet
+      rw [Matrix.det_of_isLowerTriangular L (fun i j h => hLz i j h), Fin.prod_univ_castSucc] at hdet
       have := isUnit_of_mul_isUnit_right hdet
       simpa [hLdiag] using this
     refine ⟨L, U, ⟨hLz, fun i => ?_⟩, hUz, hUd, hNLU⟩
@@ -111,21 +120,5 @@ theorem exists_lowInv_mul_upperUni_of_leadingMinors :
     induction i using Fin.lastCases with
     | last => simpa using hdu
     | cast i' => simpa using hL₀d i'
-
-theorem exists_inCell_of_leadingMinors_isUnit {m : ℕ} (M : Matrix (Fin m) (Fin m) R) (w : Equiv.Perm (Fin m))
-    (h : ∀ (k : ℕ) (hk : k ≤ m), IsUnit ((M.submatrix id w).submatrix (Fin.castLE hk) (Fin.castLE hk)).det) :
-    ∃ a, InCell M w a := by
-  obtain ⟨L, U, hL, hUz, hUd, hLU⟩ := exists_lowInv_mul_upperUni_of_leadingMinors m (M.submatrix id w) h
-  refine ⟨fun p => U p.1.1 p.1.2, L, hL, ?_⟩
-  have hU : upMat (fun p : Above m => U p.1.1 p.1.2) = U := by
-    ext i j
-    unfold upMat
-    by_cases hij : i < j
-    · rw [dif_pos hij]
-    · rw [dif_neg hij]
-      by_cases e : i = j
-      · subst e; rw [if_pos rfl, hUd]
-      · rw [if_neg e, hUz i j (lt_of_le_of_ne (not_lt.1 hij) (Ne.symm e))]
-  rw [hU]; exact hLU
 
 end GlobalTheory.ShFam.Cell

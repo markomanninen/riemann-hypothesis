@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RayFieldTheta
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RayFieldTheta
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -42,7 +46,7 @@ theorem dvd_intNorm_sub_one (K E : Type) [Field K] [NumberField K] [Field E] [Nu
     rw [map_div₀, map_sub, hprod, map_one, map_natCast]
     rw [add_sub_cancel_left, mul_div_cancel_left₀ _ hnF]
   have hint : IsIntegral ℤ (((N : K) - 1) / n) := by
-    rw [← isIntegral_algebraMap_iff (algebraMap K F).injective, hy]
+    rw [← isIntegral_algebraMap_iff (B := F), hy]
     exact d.isIntegral_coe
   obtain ⟨y, hy'⟩ : ∃ y : 𝓞 K, (y : K) = ((N : K) - 1) / n := ⟨⟨_, hint⟩, rfl⟩
   refine ⟨y, ?_⟩

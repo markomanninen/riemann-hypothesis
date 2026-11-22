@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.UnramifiedTrace.TripMem
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnramifiedSameDiagonal.SameCommon
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.UnramifiedTrace.TripMem
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnramifiedSameDiagonal.SameCommon
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,9 +52,9 @@ def IsCompMv (T : Forms0 D u) (v : (D.mem u).A.vT) (c c1 : (D.mem u).C.cls 0) (w
     (hx : (((D.mem u).A.T : ℕ) : 𝓞 D.host.E) • (Γ.1.1 *ᵥ x.1) ∈ Lk T.atT 0 (Nat.zero_le _) v c),
     (D.fm u).fv 0 v c1 (T.lv0.pr v c1 x) = g (T.lv0.prk v c ⟨_, hx⟩)
 
+
 set_option maxHeartbeats 8000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem comp_of_moves (T : Forms0 D u) (v : (D.mem u).A.vT) (c : (D.mem u).C.cls 0)
     (g : Module.Dual ((D.mem u).A.Fv v) ((D.fm u).lk 0 v c))
     (γ : UJ (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _)))

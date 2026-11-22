@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.SpnRel
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.SpnRel
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,8 @@ private theorem mt_smul (r : ℂ) (M : Matrix J J ℂ) : UpperTheory.RealTr.mt V
 private theorem lf_mt (M : Matrix J J ℂ) (T : Module.End ℂ V) :
     lf J T * UpperTheory.RealTr.mt V M = UpperTheory.RealTr.mt V M * lf J T := by
   ext x j
-  simp [mt_ap, lf_ap, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [mt_ap, lf_ap, map_sum]
 
 private theorem mt_adj (M : Matrix J J ℂ) (x y : Ten J V) :
     ⟪UpperTheory.RealTr.mt V M x, y⟫_ℂ = ⟪x, UpperTheory.RealTr.mt V Mᴴ y⟫_ℂ := by

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
-import Formalism.LocalToGlobal.Columns.CoefModB
-import Formalism.LocalToGlobal.Columns.PolyFnLemmas
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TensorMapDescent
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
+public import Formalism.LocalToGlobal.Columns.CoefModB
+public import Formalism.LocalToGlobal.Columns.PolyFnLemmas
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TensorMapDescent
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,8 @@ theorem bcVV_span {K : Type} [Field K] (φ : K →+* ℂ) (lam : ι → DomWeigh
   rintro _ ⟨i, rfl⟩
   obtain ⟨F, hF, e⟩ := GlobalTheory.Proof.TensorMapDescent.bVVfun_desc φ lam i
   have : bVV ℂ lam i = bcVV φ lam ⟨F, hF⟩ := Subtype.ext ((bVV_coe ℂ lam i).trans e)
-  rw [this, ← (bVV K lam).sum_repr ⟨F, hF⟩, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [this, ← (bVV K lam).sum_repr ⟨F, hF⟩, map_sum]
   refine Submodule.sum_mem _ fun j _ => ?_
   rw [map_smulₛₗ]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
@@ -90,13 +95,14 @@ theorem continuous_actP {X : Type} [TopologicalSpace X] (lam : ι → DomWeight 
     intro x
     rw [key]
     conv_lhs => rw [P.as_sum]
-    simp only [map_sum, map_monomial]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_monomial]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [← smul_eq_mul, ← map_smul, smul_monomial, smul_eq_mul, mul_one]
     rfl
   simp only [actP, LinearMap.smul_apply, AlgHom.toLinearMap_apply, map_smul, smul_eq_mul, h2, detTw_eq]
-  refine Continuous.mul (continuous_finset_prod _ fun τ _ => (hg τ).matrix_det.zpow₀ _ fun x => Or.inl ?_)
-    (continuous_finset_sum _ fun m _ => (P.coeff m).continuous.mul continuous_const)
+  refine Continuous.mul (continuous_finsetProd _ fun τ _ => (hg τ).matrix_det.zpow₀ _ fun x => Or.inl ?_)
+    (continuous_finsetSum _ fun m _ => (P.coeff m).continuous.mul continuous_const)
   exact ((Matrix.isUnit_iff_isUnit_det _).1 (g x τ).isUnit).ne_zero
 
 def gramOf (B : ι → GL (Fin n) ℂ) : ι → Matrix (Fin n) (Fin n) ℂ :=
@@ -164,7 +170,7 @@ theorem continuous_HV {X : Type} [TopologicalSpace X] (g : X → ι → GL (Fin 
     funext x
     exact ((stdOrthonormalBasis ℂ (HV lam B)).sum_repr' _).symm
   rw [this]
-  exact continuous_finset_sum _ fun i _ => (continuous_actP lam g hg _ _).smul continuous_const
+  exact continuous_finsetSum _ fun i _ => (continuous_actP lam g hg _ _).smul continuous_const
 
 end Poly
 

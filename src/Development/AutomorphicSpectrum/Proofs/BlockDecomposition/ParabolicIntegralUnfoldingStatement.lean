@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ParabolicIntegralUnfolding
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SplitHomeoApply
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ParabolicIntegralUnfolding
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SplitHomeoApply
+
+@[expose] public section
+
 open MeasureTheory Topology
 open scoped ENNReal NNReal Matrix Pointwise
 set_option maxHeartbeats 1000000 in

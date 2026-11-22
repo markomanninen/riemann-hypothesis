@@ -1,8 +1,13 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowup
-import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupUniversalLift
-import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupChartPreimages
-import Development.ResolutionOfSingularities.Foundations.Blowup.ReesGrading
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowup
+public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupUniversalLift
+public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupChartPreimages
+public import Development.ResolutionOfSingularities.Foundations.Blowup.ReesGrading
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry
 
 noncomputable section
@@ -269,7 +274,7 @@ private theorem awayCoordGenEquivMvPolynomial_invFun_X_self (R : Type u) [CommRi
     (S : Finset σ) (s : σ) (hs : s ∈ S) :
     mvPolynomialToCoordBlowupChart R S s hs (MvPolynomial.X s)
       = Blowup.chartRingHom (coordIdeal R S) (coordIdealGen R S s hs) (MvPolynomial.X s) := by
-  rw [awayCoordGenEquivMvPolynomial_invFun_X, dif_neg]
+  rw [awayCoordGenEquivMvPolynomial_invFun_X, dite_eq_right]
   rintro ⟨-, h⟩
   exact h rfl
 
@@ -286,12 +291,12 @@ private theorem mvPolynomialToChart_coordBlowupSubst (R : Type u) [CommRing R] {
     · intro i
       show mvPolynomialToCoordBlowupChart R S s hs (coordBlowupSubst R S s (MvPolynomial.X i)) = _
       by_cases h : i ∈ S ∧ i ≠ s
-      · rw [coordBlowupSubst_X_of_mem R S s h.1 h.2, map_mul, awayCoordGenEquivMvPolynomial_invFun_X, dif_pos h, awayCoordGenEquivMvPolynomial_invFun_X_self]
+      · rw [coordBlowupSubst_X_of_mem R S s h.1 h.2, map_mul, awayCoordGenEquivMvPolynomial_invFun_X, dite_eq_left h, awayCoordGenEquivMvPolynomial_invFun_X_self]
         have hb := Blowup.chartRingHom_coe_eq_chartFraction_mul (coordIdeal R S) (coordIdealGen R S s hs)
           (coordIdealGen R S i h.1)
         rw [coe_coordIdealGen, coe_coordIdealGen] at hb
         exact hb.symm
-      · rw [coordBlowupSubst_X_of_not_mem_erase R S s h, awayCoordGenEquivMvPolynomial_invFun_X, dif_neg h]
+      · rw [coordBlowupSubst_X_of_not_mem_erase R S s h, awayCoordGenEquivMvPolynomial_invFun_X, dite_eq_right h]
   exact DFunLike.congr_fun key f
 
 private theorem chartToMvPolynomial_mvPolynomialToChart (R : Type u) [CommRing R] {σ : Type v} [DecidableEq σ]
@@ -305,7 +310,7 @@ private theorem chartToMvPolynomial_mvPolynomialToChart (R : Type u) [CommRing R
     · intro i
       show coordBlowupChartToMvPolynomial R S s hs (mvPolynomialToCoordBlowupChart R S s hs (MvPolynomial.X i)) = MvPolynomial.X i
       by_cases h : i ∈ S ∧ i ≠ s
-      · rw [awayCoordGenEquivMvPolynomial_invFun_X, dif_pos h]
+      · rw [awayCoordGenEquivMvPolynomial_invFun_X, dite_eq_left h]
         have hb := Blowup.chartRingHom_coe_eq_chartFraction_mul (coordIdeal R S) (coordIdealGen R S s hs)
           (coordIdealGen R S i h.1)
         rw [coe_coordIdealGen, coe_coordIdealGen] at hb
@@ -314,7 +319,7 @@ private theorem chartToMvPolynomial_mvPolynomialToChart (R : Type u) [CommRing R
           coordBlowupSubst_X_of_mem R S s h.1 h.2, coordBlowupSubst_X_self] at h2
         have hnzd := X_mem_nonZeroDivisors R s
         exact (mul_cancel_right_mem_nonZeroDivisors hnzd).mp h2.symm
-      · rw [awayCoordGenEquivMvPolynomial_invFun_X, dif_neg h, chartToMvPolynomial_chartRingHom, coordBlowupSubst_X_of_not_mem_erase R S s h]
+      · rw [awayCoordGenEquivMvPolynomial_invFun_X, dite_eq_right h, chartToMvPolynomial_chartRingHom, coordBlowupSubst_X_of_not_mem_erase R S s h]
   exact DFunLike.congr_fun key f
 
 private theorem mvPolynomialToChart_surjective (R : Type u) [CommRing R] {σ : Type v} [DecidableEq σ]
@@ -365,7 +370,7 @@ private theorem mvPolynomialToChart_surjective (R : Type u) [CommRing R] {σ : T
     exact hr.symm
   exact (mul_cancel_right_mem_nonZeroDivisors hnzd).mp h
 
-private theorem exists_ringEquiv_away_mvPolynomial (R : Type u) [CommRing R] {σ : Type v} [DecidableEq σ]
+theorem exists_ringEquiv_away_mvPolynomial (R : Type u) [CommRing R] {σ : Type v} [DecidableEq σ]
     (S : Finset σ) (s : σ) (hs : s ∈ S) :
     ∃ e : HomogeneousLocalization.Away (Blowup.reesGrading (coordIdeal R S))
         (Blowup.reesGenerator (coordIdeal R S) (coordIdealGen R S s hs)) ≃+* MvPolynomial σ R,

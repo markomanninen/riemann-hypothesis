@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.TranslateProduct
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.TranslateProduct
+
+@[expose] public section
 
 noncomputable section
 open Filter Topology
@@ -9,25 +13,17 @@ namespace IsogenySigmaQuotient
 
 variable (L : PeriodPair)
 
-open Classical in
 
-def ind (x : ℂ) : WithTop ℤ := if x ∈ L.lattice then 1 else 0
+open Classical in
+def ind (x : ℂ) : WithTop ℤ := by
+  classical
+  exact if x ∈ L.lattice then 1 else 0
 
 lemma ind_of_mem {x : ℂ} (h : x ∈ L.lattice) : ind L x = 1 := by
   simp [ind, h]
 
 lemma ind_of_notMem {x : ℂ} (h : x ∉ L.lattice) : ind L x = 0 := by
   simp [ind, h]
-
-lemma ind_neg (x : ℂ) : ind L (-x) = ind L x := by
-  by_cases hx : x ∈ L.lattice
-  · rw [ind_of_mem L hx, ind_of_mem L (L.lattice.neg_mem hx)]
-  · rw [ind_of_notMem L hx, ind_of_notMem L (fun h => hx (by simpa using L.lattice.neg_mem h))]
-
-lemma sg_analyticAt (hb : SgStarBasic) (a b z : ℂ) :
-    AnalyticAt ℂ (fun w : ℂ => sgStar L (a * w + b)) z := by
-  have hd := (hb L).1
-  exact (by fun_prop : Differentiable ℂ fun w : ℂ => sgStar L (a * w + b)).analyticAt z
 
 private lemma meromorphicOrderAt_eq_zero_of_analyticAt_ne_zero {g : ℂ → ℂ} {x : ℂ} (hg : AnalyticAt ℂ g x) (h : g x ≠ 0) :
     meromorphicOrderAt g x = 0 := by

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.GramWindow2
-import Formalism.ThetaLogCoordinates.BihomogeneousPairs.LetterChainEmbeddings.TieFPowMulFree
-import Formalism.PolynomialDimension.ChangeLatticeGoodRank
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.GramWindow2
+public import Formalism.ThetaLogCoordinates.BihomogeneousPairs.LetterChainEmbeddings.TieFPowMulFree
+public import Formalism.PolynomialDimension.ChangeLatticeGoodRank
+
+@[expose] public section
 
 noncomputable section
 

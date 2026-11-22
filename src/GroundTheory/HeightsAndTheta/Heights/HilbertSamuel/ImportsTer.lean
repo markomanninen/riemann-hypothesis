@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.IntConst
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.IntConst
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -50,7 +55,8 @@ theorem L2GramLattice.proof : L2GramLattice.Statement := by
     filter_upwards [hψ (fun i => (b.equivFun s i : ℝ)), (hmem s).coeFn_toLp] with z h1 h2
     have hs : w s = ∑ i, b.repr s i • w (b i) := by
       conv_lhs => rw [← b.sum_repr s]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [map_zsmul]
     rw [h1, h2, hs, Finset.sum_apply]
     simp [zsmul_eq_mul]
@@ -80,7 +86,8 @@ theorem L2GramLattice.proof : L2GramLattice.Statement := by
   have hL : imageLattice φ = Submodule.span ℤ (Set.range v) := by
     apply le_antisymm
     · rintro _ ⟨s, rfl⟩
-      rw [← b.sum_repr s, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← b.sum_repr s, map_sum]
       refine Submodule.sum_mem _ fun i _ => ?_
       rw [map_zsmul, hφb]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)

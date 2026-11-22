@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.OrderedCechToCatCochainsOneApplyValueAtSubset
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.AlgModBotCompactCasimirOfTypes
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.AlgModBotOfMemAdjoinCommuting
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableLaplacian
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableCartan
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.OrderedCechToCatCochainsOneApplyValueAtSubset
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.AlgModBotCompactCasimirOfTypes
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.AlgModBotOfMemAdjoinCommuting
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableLaplacian
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableCartan
+
+@[expose] public section
 
 open NumberField NumberField.mixedEmbedding Matrix MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm UpperTheory.V.Af.Fin
 open scoped TensorProduct
@@ -26,7 +30,7 @@ theorem UpperTheory.exists_basis_algMod_laplacian_of_types_centre :
   refine ⟨d, b, ?_⟩
   have hε2 : ∀ i, ε i * ε i = 1 := fun i => by rcases hε i with e | e <;> rw [e] <;> norm_num
   have hΩ : casimir b ε ∈ (isExpLieAlgebra K n).centerU := casimir_mem_center hε2 horth hsymm hinv
-  rw [laplacianU_eq_casimir_add b ε, map_add]
+  rw [laplacianU_eq_casimir_add b ε, map_add (f := _)]
   refine algMod_add S _ _ (Zc_comm_uAction (uAction_mem_Zc hΩ) _).eq (hC _ hΩ) ?_
   refine UpperTheory.algMod_bot_compact_casimir_of_types K n S hT (Fin d) (fun i => b i) (fun i => 1 - ε i) fun i => ?_
   rcases hε i with e | e

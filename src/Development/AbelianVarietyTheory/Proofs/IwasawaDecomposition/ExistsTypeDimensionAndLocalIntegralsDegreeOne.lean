@@ -1,14 +1,19 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.QLocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.HostPins
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsUnrM
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsNrm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAddHaarCompletionIntegralMatricesVolOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenIsCompactParahoricGLCompletionStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BlockUpperTriangularGLMulDetInvStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ParahoricTypeRCMulInvMemStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ParahoricCharacterMulOfTameStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.QLocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.HostPins
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsUnrM
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsNrm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAddHaarCompletionIntegralMatricesVolOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenIsCompactParahoricGLCompletionStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BlockUpperTriangularGLMulDetInvStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ParahoricTypeRCMulInvMemStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ParahoricCharacterMulOfTameStatement
+
+@[expose] public section
+
 open MeasureTheory Matrix NumberField IsDedekindDomain Formalism.BasicNotions Formalism.DoubleCosetMeasures Formalism.L2.Host Formalism.L2.DIV Formalism.L2.DIV.QLoc GlobalTheory.Mem.HD
 
 noncomputable section
@@ -67,11 +72,11 @@ def levD (p : GL (Fin (r + c)) F) : GL (Fin c) F :=
 
 theorem levA_val {p : GL (Fin (r + c)) F} (hp : bDA (p : Matrix (Fin (r + c)) (Fin (r + c)) F) = 0) :
     (levA p : Matrix (Fin r) (Fin r) F) = bAA (p : Matrix (Fin (r + c)) (Fin (r + c)) F) := by
-  rw [levA, dif_pos (detA_ne hp)]; rfl
+  rw [levA, dite_eq_left (detA_ne hp)]; rfl
 
 theorem levD_val {p : GL (Fin (r + c)) F} (hp : bDA (p : Matrix (Fin (r + c)) (Fin (r + c)) F) = 0) :
     (levD p : Matrix (Fin c) (Fin c) F) = bDD (p : Matrix (Fin (r + c)) (Fin (r + c)) F) := by
-  rw [levD, dif_pos (detD_ne hp)]; rfl
+  rw [levD, dite_eq_left (detD_ne hp)]; rfl
 
 theorem lev_mul {p q : GL (Fin (r + c)) F} (hp : bDA (p : Matrix (Fin (r + c)) (Fin (r + c)) F) = 0)
     (hq : bDA (q : Matrix (Fin (r + c)) (Fin (r + c)) F) = 0) :
@@ -170,7 +175,7 @@ theorem fvec_eq {p k : GL (Fin (r + c)) F} (hp : bDA (p : Matrix (Fin (r + c)) (
     (hk : k ∈ parJ O ϖ r c) :
     fvec O ϖ nrm δ ρ v₀ (p * k) = (chiP nrm δ p * lamJ δ k) • ρ (levA p, levD p) v₀ := by
   have h : p * k ∈ PJset O ϖ r c := ⟨p, hp, k, hk, rfl⟩
-  rw [fvec, dif_pos h]
+  rw [fvec, dite_eq_left h]
   have h2 := h.choose_spec.2.choose_spec.1
   have h3 := h.choose_spec.2.choose_spec.2
   exact cons hgrp hlam hfix h.choose_spec.1 hp h2 hk h3.symm

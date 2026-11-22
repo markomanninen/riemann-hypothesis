@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.UnlinkedIrreducibility.LUnlinkedIrrOfHeredity
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.ComplementarySeries.CuspPairIrr
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SegmentJacquetAll
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GeometricSplitting.Imports
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.UnlinkedIrreducibility.LUnlinkedIrrOfHeredity
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.ComplementarySeries.CuspPairIrr
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SegmentJacquetAll
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GeometricSplitting.Imports
+
+@[expose] public section
 
 noncomputable section
 

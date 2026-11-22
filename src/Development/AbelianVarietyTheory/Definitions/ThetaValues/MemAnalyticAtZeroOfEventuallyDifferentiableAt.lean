@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.LineDerivListEqIteratedFDeriv
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.LineDerivListEqIteratedFDeriv
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+
+@[expose] public section
 
 open Filter Topology
 
@@ -13,7 +17,7 @@ variable {σ R : Type*} [CommRing R] [IsAddTorsionFree R]
 
 theorem mvPowerSeries_eq_zero_of_pderiv_mem_span (S : Set (MvPowerSeries σ R))
     (h0 : ∀ F ∈ S, MvPowerSeries.constantCoeff F = 0)
-    (hd : ∀ F ∈ S, ∀ i, MvPowerSeries.pderiv R i F ∈ Ideal.span S) : ∀ F ∈ S, F = 0 := by
+    (hd : ∀ F ∈ S, ∀ i, MvPowerSeries.pderiv (R := R) i F ∈ Ideal.span S) : ∀ F ∈ S, F = 0 := by
   classical
   have key : ∀ n : ℕ, ∀ F ∈ Ideal.span S, ∀ m : σ →₀ ℕ, m.degree < n →
       MvPowerSeries.coeff m F = 0 := by
@@ -32,18 +36,18 @@ theorem mvPowerSeries_eq_zero_of_pderiv_mem_span (S : Set (MvPowerSeries σ R))
           rw [Finsupp.single_le_iff]; omega
         obtain ⟨m', rfl⟩ := exists_add_of_le hle
         have h1 := ih _ (hd F hF i) m' (by
-          rw [map_add, Finsupp.degree_single] at hm; omega)
+          rw [map_add (f := _), Finsupp.degree_single] at hm; omega)
         rw [MvPowerSeries.coeff_pderiv, add_comm m', mul_comm, ← Nat.cast_succ, ← nsmul_eq_mul,
-          smul_eq_zero_iff_right (Nat.succ_ne_zero _)] at h1
+          nsmul_eq_zero_iff_right (Nat.succ_ne_zero _)] at h1
         exact h1
       | zero => intro m _; simp
-      | add F G _ _ hF hG => intro m hm; rw [map_add, hF m hm, hG m hm, add_zero]
+      | add F G _ _ hF hG => intro m hm; rw [map_add (f := _), hF m hm, hG m hm, add_zero]
       | smul G F _ hF =>
         intro m hm
         rw [smul_eq_mul, MvPowerSeries.coeff_mul]
         refine Finset.sum_eq_zero fun p hp => ?_
         rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
-        rw [hF p.2 (by rw [← hp, map_add] at hm; omega), mul_zero]
+        rw [hF p.2 (by rw [← hp, map_add (f := _)] at hm; omega), mul_zero]
   intro F hF
   ext m
   rw [key _ F (Ideal.subset_span hF) m (Nat.lt_succ_self _), map_zero]
@@ -98,8 +102,8 @@ theorem coeff_taylorDir (f : W → ℂ) (m : σ →₀ ℕ) :
     MvPowerSeries.coeff m (taylorDir u f) = ((∏ i, (m i).factorial : ℕ) : ℂ)⁻¹ *
       ReciprocityTheory.ChartRestriction.G.I2.polyDeriv (MvPolynomial.monomial m 1) u f 0 := rfl
 
-omit [NormedAddCommGroup W] [NormedSpace ℂ W] in
 
+omit [NormedAddCommGroup W] [NormedSpace ℂ W] in
 theorem cast_prod_factorial_ne_zero (m : σ →₀ ℕ) : ((∏ i, (m i).factorial : ℕ) : ℂ) ≠ 0 :=
   Nat.cast_ne_zero.2 (Finset.prod_ne_zero_iff.2 fun i _ => (m i).factorial_ne_zero)
 
@@ -137,7 +141,7 @@ theorem taylorDir_congr (h : f =ᶠ[𝓝 0] g) : taylorDir u f = taylorDir u g :
 theorem taylorDir_add (hf : AnalyticAt ℂ f 0) (hg : AnalyticAt ℂ g 0) :
     taylorDir u (f + g) = taylorDir u f + taylorDir u g := by
   ext m
-  rw [map_add, coeff_taylorDir_eq_lineDerivList u (hf.add hg) (Multiset.coe_toList _),
+  rw [map_add (f := _), coeff_taylorDir_eq_lineDerivList u (hf.add hg) (Multiset.coe_toList _),
     coeff_taylorDir_eq_lineDerivList u hf (Multiset.coe_toList _),
     coeff_taylorDir_eq_lineDerivList u hg (Multiset.coe_toList _), ← mul_add,
     ← lineDerivList_add hf hg]
@@ -158,7 +162,7 @@ theorem analyticAt_fderiv_apply {x : W} (hf : AnalyticAt ℂ f x) (v : W) :
   ((ContinuousLinearMap.apply ℂ ℂ v).analyticAt _).comp hf.fderiv
 
 theorem taylorDir_fderiv (hf : AnalyticAt ℂ f 0) (i : σ) :
-    taylorDir u (fun z => fderiv ℂ f z (u i)) = MvPowerSeries.pderiv ℂ i (taylorDir u f) := by
+    taylorDir u (fun z => fderiv ℂ f z (u i)) = MvPowerSeries.pderiv (R := ℂ) i (taylorDir u f) := by
   classical
   have h1 : (fun z => fderiv ℂ f z (u i)) =ᶠ[𝓝 0] lineDerivList ℂ [u i] f := by
     filter_upwards [hf.eventually_analyticAt] with z hz
@@ -270,17 +274,14 @@ theorem taylorDir_eq_zero_iff (hu : Submodule.span ℂ (Set.range u) = ⊤)
   simp only [h1, ContinuousMultilinearMap.zero_apply, smul_zero, zero_add] at h2
   exact h2.unique hasSum_zero
 
-variable (W) in
 
+variable (W) in
 def analyticAtZero : Subalgebra ℂ (W → ℂ) where
   carrier := {f | AnalyticAt ℂ f 0}
   mul_mem' hf hg := hf.mul hg
   add_mem' hf hg := hf.add hg
   algebraMap_mem' _ := analyticAt_const
 
-omit [Fintype σ] in
-
-@[simp] theorem mem_analyticAtZero : f ∈ analyticAtZero W ↔ AnalyticAt ℂ f 0 := Iff.rfl
 
 noncomputable def taylorDirAlgHom : analyticAtZero W →ₐ[ℂ] MvPowerSeries σ ℂ where
   toFun f := taylorDir u f
@@ -345,8 +346,9 @@ theorem taylorDir_eq_iff (hu : Submodule.span ℂ (Set.range u) = ⊤)
 
 theorem taylorDir_fderiv_sum (hf : AnalyticAt ℂ f 0) (a : σ → ℂ) :
     taylorDir u (fun z => fderiv ℂ f z (∑ i, a i • u i)) =
-      ∑ i, a i • MvPowerSeries.pderiv ℂ i (taylorDir u f) := by
-  simp only [map_sum, map_smul]
+      ∑ i, a i • MvPowerSeries.pderiv (R := ℂ) i (taylorDir u f) := by
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul]
   rw [taylorDir_sum u _ (F := fun i z => a i • fderiv ℂ f z (u i))
     fun i _ => (analyticAt_fderiv_apply hf (u i)).const_smul (c := a i)]
   refine Finset.sum_congr rfl fun i _ => ?_
@@ -388,8 +390,6 @@ theorem taylor_add (hf : AnalyticAt ℂ f 0) (hg : AnalyticAt ℂ g 0) :
 
 @[simp] theorem taylor_zero : taylor (0 : (σ → ℂ) → ℂ) = 0 := taylorDir_zero _
 
-@[simp] theorem taylor_one : taylor (1 : (σ → ℂ) → ℂ) = 1 := taylorDir_one _
-
 theorem taylor_mul (hf : AnalyticAt ℂ f 0) (hg : AnalyticAt ℂ g 0) :
     taylor (f * g) = taylor f * taylor g := taylorDir_mul _ hf hg
 
@@ -398,7 +398,7 @@ theorem taylor_sum {κ : Type*} (s : Finset κ) {F : κ → (σ → ℂ) → ℂ
     taylor (fun z => ∑ k ∈ s, F k z) = ∑ k ∈ s, taylor (F k) := taylorDir_sum _ s hF
 
 theorem taylor_fderiv (hf : AnalyticAt ℂ f 0) (i : σ) :
-    taylor (fun z => fderiv ℂ f z (Pi.single i 1)) = MvPowerSeries.pderiv ℂ i (taylor f) :=
+    taylor (fun z => fderiv ℂ f z (Pi.single i 1)) = MvPowerSeries.pderiv (R := ℂ) i (taylor f) :=
   taylorDir_fderiv (fun i => (Pi.single i 1 : σ → ℂ)) hf i
 
 theorem taylor_clm (ℓ : (σ → ℂ) →L[ℂ] ℂ) :
@@ -420,11 +420,6 @@ theorem span_range_single_one :
 theorem taylor_eq_iff (hf : AnalyticAt ℂ f 0) (hg : AnalyticAt ℂ g 0) :
     taylor f = taylor g ↔ f =ᶠ[𝓝 0] g :=
   taylorDir_eq_iff _ span_range_single_one hf hg
-
-noncomputable def taylorAlgHom : analyticAtZero (σ → ℂ) →ₐ[ℂ] MvPowerSeries σ ℂ :=
-  taylorDirAlgHom fun i => (Pi.single i 1 : σ → ℂ)
-
-@[simp] theorem taylorAlgHom_apply (f : analyticAtZero (σ → ℂ)) : taylorAlgHom f = taylor f := rfl
 
 theorem taylor_eval_comp {κ : Type*} {φ : κ → (σ → ℂ) → ℂ} (hφ : ∀ k, AnalyticAt ℂ (φ k) 0)
     (P : MvPolynomial κ ℂ) :
@@ -460,29 +455,6 @@ theorem taylorDir_eq_taylor (u : σ → W) {F : W → ℂ} (hF : AnalyticAt ℂ 
 end Coord
 
 section Examples
-
-example : taylor (fun z : Fin 2 → ℂ => z 0 * z 1 + 3) =
-    MvPowerSeries.X 0 * MvPowerSeries.X 1 + MvPowerSeries.C 3 := by
-  have h := taylor_eval (MvPolynomial.X 0 * MvPolynomial.X 1 + MvPolynomial.C 3 :
-    MvPolynomial (Fin 2) ℂ)
-  simpa using h
-
-example : ReciprocityTheory.ChartRestriction.G.I2.polyDeriv (MvPolynomial.monomial (Finsupp.single 0 2) 1)
-    (fun i : Fin 1 => (Pi.single i 1 : Fin 1 → ℂ)) (fun z => z 0 ^ 2) 0 = 2 := by
-  have h := taylor_eval (MvPolynomial.X 0 ^ 2 : MvPolynomial (Fin 1) ℂ)
-  simp only [map_pow, MvPolynomial.eval_X] at h
-  rw [dirPolyDeriv_monomial_eq_coeff, ← taylor_eq_taylorDir, h, MvPolynomial.coeff_coe,
-    MvPolynomial.coeff_X_pow]
-  simp
-
-example : MvPowerSeries.pderiv ℂ 0 (taylor fun z : Fin 1 → ℂ => Complex.exp (z 0)) =
-    taylor fun z : Fin 1 → ℂ => Complex.exp (z 0) := by
-  have hd : ∀ z : Fin 1 → ℂ, HasFDerivAt (fun z : Fin 1 → ℂ => Complex.exp (z 0))
-      (Complex.exp (z 0) • ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : Fin 1 => ℂ) 0) z :=
-    fun z => (hasFDerivAt_apply 0 z).cexp
-  rw [← taylor_fderiv (SCV.analyticAt_iff_eventually_differentiableAt.2
-    (Eventually.of_forall fun z => (hd z).differentiableAt))]
-  simp [fun z => (hd z).fderiv]
 
 end Examples
 

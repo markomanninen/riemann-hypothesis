@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.PathWeight.FixedSymbolFactorIntegral
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PathWeight.FixedSymbolFactorIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,6 @@ section Asm
 variable {p n' r K : ℕ} [Fact p.Prime] [NeZero n'] [NeZero r] [NeZero K] {O : Type} [CommRing O] [IsDomain O]
     [IsDiscreteValuationRing O] [Algebra (WF p n') O] (X : Ctx p n' r K O)
 
-local notation "PP" => MvPolynomial (TV n' (r + K)) (KK O)
-
 theorem SyS_of_span (hW2 : GeneratorImageIsSymbol) (j : ℤ) {P : SegRing O r K} (hP : P ∈ Submodule.span O (PGen X.Fr j O K)) :
     MvPolynomial.map (algebraMap O (KK O)) (phSeg O K p X.Fr j P) ∈ X.SyS := by
   induction hP using Submodule.span_induction with
@@ -22,7 +24,7 @@ theorem SyS_of_span (hW2 : GeneratorImageIsSymbol) (j : ℤ) {P : SegRing O r K}
     obtain ⟨o, ho⟩ := hW2 p n' r K O X j x h
     exact SyS_of_Sy ho
   | zero => simp only [map_zero]; exact zero_mem _
-  | add x y _ _ hx hy => simp only [map_add]; exact add_mem hx hy
+  | add x y _ _ hx hy => simp only [map_add (f := _)]; exact add_mem hx hy
   | smul a x _ hx =>
     rw [map_smul, MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.map_C]
     exact SyS_mul (SyS_of_Sy (Sy_IT (IT_C a))) hx
@@ -39,7 +41,7 @@ theorem good_of_span (hW1 : GeneratorSpanInclusion) (hW2 : GeneratorImageIsSymbo
   | add x y _ _ hx hy =>
     obtain ⟨x', a1, a2⟩ := hx
     obtain ⟨y', b1, b2⟩ := hy
-    exact ⟨x' + y', by rw [a1, b1, mul_add], by simp only [map_add]; exact add_mem a2 b2⟩
+    exact ⟨x' + y', by rw [a1, b1, mul_add], by simp only [map_add (f := _)]; exact add_mem a2 b2⟩
   | smul a x _ hx =>
     obtain ⟨x', a1, a2⟩ := hx
     refine ⟨a • x', by rw [a1, mul_smul_comm], ?_⟩
@@ -89,7 +91,8 @@ theorem lemma4_of_remaining_statements (D : Formalism.BasicNotions.D7) (CLa CD C
       rw [← Finset.prod_mul_distrib]
       refine Finset.prod_congr rfl fun j hj => ?_
       rw [(hξ' i j (Finset.mem_range.1 hj)).1, map_mul, mul_comm]
-    rw [e1, map_mul, map_mul, hPhe, map_monomial, map_one, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, map_mul, map_mul, hPhe, map_monomial, map_one, map_sum]
     simp only [map_prod]
     rw [← hSg]
     ring
@@ -98,14 +101,5 @@ theorem lemma4_of_remaining_statements (D : Formalism.BasicNotions.D7) (CLa CD C
   · exact inWPow_zero_mul (inWPow_zero_mul (bc_inWj_monomial S.w mon) hSg0) hY0
   · intro m hm
     exact ho m (support_map_subset _ _ hm)
-
-theorem stmt_of_rests (D : Formalism.BasicNotions.D7) (CLa Ck Crk Cdeg CLa' CD Csz : ℝ)
-    (h : admitted D CLa Ck Crk Cdeg → RestModel ∧ RestDivM CLa' CD Csz ∧ GeneratorSpanInclusion ∧ GeneratorImageIsSymbol ∧ RestMon ∧ RestPh) :
-    Stmt D CLa Ck Crk Cdeg CLa' CD Csz := by
-  intro hA
-  obtain ⟨h1, h2, h3, h4, h5, h6⟩ := h hA
-  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, hE, _⟩ := hA
-  exact ⟨theta_kernel_expansion D, splitting_package_holds D, segment_statement_holds D, order_lemma_holds D,
-    divisibility_of_field_lemma D hE, lemma4_of_remaining_statements D CLa' CD Csz h1 h2 h3 h4 h5 h6⟩
 
 end Formalism.MainNotions.G.symbolGeneratorData

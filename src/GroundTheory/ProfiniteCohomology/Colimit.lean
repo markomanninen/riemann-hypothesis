@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.ColimitDefs
-import GroundTheory.ProfiniteCohomology.FilteredHomology
-import GroundTheory.ProfiniteCohomology.Factor
-import GroundTheory.ProfiniteCohomology.DiscreteModules.IsDiscreteRepIffForallExistsOpenNormalSubgroup
-import GroundTheory.TateCohomology.Annihilation
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.ColimitDefs
+public import GroundTheory.ProfiniteCohomology.FilteredHomology
+public import GroundTheory.ProfiniteCohomology.Factor
+public import GroundTheory.ProfiniteCohomology.DiscreteModules.IsDiscreteRepIffForallExistsOpenNormalSubgroup
+public import GroundTheory.TateCohomology.Annihilation
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -16,8 +21,8 @@ variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologic
 
 namespace OpenNormalSubgroup
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 theorem exists_le_of_finite {ι : Type*} [Finite ι] (V : ι → OpenNormalSubgroup G) :
     ∃ W : OpenNormalSubgroup G, ∀ i, W ≤ V i := by
   classical
@@ -105,13 +110,6 @@ theorem exists_transition_eq_zero (n : ℕ) (U : OpenNormalSubgroup G)
   obtain ⟨V, f, hf⟩ := exists_homologyMap_map_eq_zero_of_cocone (inflationCochainsCocone A) n
     (inflationCochainsCocone_surj A _) (inflationCochainsCocone_inj A n) (Opposite.op U) y hy
   exact ⟨V.unop, leOfHom f.unop, hf⟩
-
-noncomputable def isColimitInflationCocone (n : ℕ) : IsColimit (inflationCocone A n) :=
-  isColimitHomologyMapCocone (inflationCochainsCocone A) n (inflationCochainsCocone_surj A)
-    (inflationCochainsCocone_inj A)
-
-noncomputable def cohomologyIsoColimit (n : ℕ) : cohomology A n ≅ colimit (levelFunctor A n) :=
-  (isColimitInflationCocone A n).coconePointUniqueUpToIso (colimit.isColimit _)
 
 theorem exists_card_smul_eq_zero {n : ℕ} (hn : n ≠ 0) (x : cohomology A n) :
     ∃ U : OpenNormalSubgroup G, Nat.card (G ⧸ (U : Subgroup G)) • x = 0 := by

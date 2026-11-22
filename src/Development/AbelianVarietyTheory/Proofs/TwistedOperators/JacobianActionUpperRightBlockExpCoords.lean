@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContinuousExptPY
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasFDerivAtOfCompImmersion
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AbsDetUnitaryMulMul
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContinuousExptPY
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasFDerivAtOfCompImmersion
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AbsDetUnitaryMulMul
+
+@[expose] public section
 
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible GlobalTheory.PolarU Matrix MeasureTheory
 
@@ -122,7 +126,7 @@ theorem jacobian_action_p : ∀ (p q : ℕ) (g : Mat p q) (ψ : (Fin p → Fin q
     have h4 := jac_block _ _ U V h3
     rw [← of_jacMul] at h4
     have h5 := Matrix.of.injective h4
-    simp only [map_add] at h5
+    simp only [map_add (f := _)] at h5
     exact pow_two_pow_eq_neg_one_of_isPrimitiveRoot_two_pow_succ _ _ h5
   have hlin : (sP (pY (ψ B))).comp (P : (Fin p → Fin q → ℂ) →ₗ[ℝ] (Fin p → Fin q → ℂ)) =
       (jacMul Uᴴ V).comp (sP (pY B)) := LinearMap.ext hkey

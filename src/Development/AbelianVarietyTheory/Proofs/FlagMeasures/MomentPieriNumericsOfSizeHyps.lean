@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OnePlaceKF
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.DegVand
-import Formalism.LocalRingCardinality.DataTies
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OnePlaceKF
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.DegVand
+public import Formalism.LocalRingCardinality.DataTies
+
+@[expose] public section
 
 open BranchingSupport GlobalTheory.CellAmp GlobalTheory.Amp Formalism.BasicNotions Formalism.MainNotions.S Formalism.QuantumDeterminants Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
@@ -113,7 +117,7 @@ theorem lam_lt (D : D7) (τ : D.what₂.Tau) (a : Fin (2 * D.R.rS + D.R.k + 1)) 
     lamD D τ a = ((D.hc τ).v ⟨a.val, h⟩ : ℝ) := by
   show lamS D.R (D.hc τ) (Fin.cast (dimS_eq D.R) a) = _
   unfold lamS
-  rw [dif_pos (show (Fin.cast (dimS_eq D.R) a).val < D.R.k - 1 from h)]
+  rw [dite_eq_left (show (Fin.cast (dimS_eq D.R) a).val < D.R.k - 1 from h)]
   rfl
 
 theorem lam_ge (D : D7) (τ : D.what₂.Tau) (a : Fin (2 * D.R.rS + D.R.k + 1)) (h : ¬ a.val < D.R.k - 1)
@@ -121,15 +125,15 @@ theorem lam_ge (D : D7) (τ : D.what₂.Tau) (a : Fin (2 * D.R.rS + D.R.k + 1)) 
     lamD D τ a = -((D.hc τ).b ⟨a.val - (D.R.k - 1), h'⟩ : ℝ) := by
   show lamS D.R (D.hc τ) (Fin.cast (dimS_eq D.R) a) = _
   unfold lamS
-  rw [dif_neg (show ¬ (Fin.cast (dimS_eq D.R) a).val < D.R.k - 1 from h),
-    dif_pos (show (Fin.cast (dimS_eq D.R) a).val - (D.R.k - 1) < D.R.m from h')]
+  rw [dite_eq_right (show ¬ (Fin.cast (dimS_eq D.R) a).val < D.R.k - 1 from h),
+    dite_eq_left (show (Fin.cast (dimS_eq D.R) a).val - (D.R.k - 1) < D.R.m from h')]
   rfl
 
 theorem lam_v (D : D7) (τ : D.what₂.Tau) (a : Fin (2 * D.R.rS + D.R.k + 1)) (h : a.val < D.R.k - 1) :
     lamD D τ a = vOne D τ (a.val + 1) := by
   rw [lam_lt D τ a h]
   unfold vOne
-  rw [dif_pos (show 1 ≤ a.val + 1 ∧ a.val + 1 ≤ D.R.k - 1 by omega)]
+  rw [dite_eq_left (show 1 ≤ a.val + 1 ∧ a.val + 1 ≤ D.R.k - 1 by omega)]
   simp
 
 theorem lam_b (D : D7) (τ : D.what₂.Tau) (a : Fin (2 * D.R.rS + D.R.k + 1)) (j : ℕ) (hj : 1 ≤ j)
@@ -140,16 +144,16 @@ theorem lam_b (D : D7) (τ : D.what₂.Tau) (a : Fin (2 * D.R.rS + D.R.k + 1)) (
   · have h' : a.val - (D.R.k - 1) < D.R.m := by omega
     rw [lam_ge D τ a hge h']
     unfold bOne
-    rw [dif_pos (show 1 ≤ j ∧ j ≤ D.R.m from ⟨hj, hjm⟩)]
+    rw [dite_eq_left (show 1 ≤ j ∧ j ≤ D.R.m from ⟨hj, hjm⟩)]
     have e : (⟨a.val - (D.R.k - 1), h'⟩ : Fin D.R.m) = ⟨j - 1, by omega⟩ :=
       Fin.ext (show a.val - (D.R.k - 1) = j - 1 by omega)
     rw [e]
   · show lamS D.R (D.hc τ) (Fin.cast (dimS_eq D.R) a) = _
     unfold lamS bOne
-    rw [dif_neg (show ¬ (Fin.cast (dimS_eq D.R) a).val < D.R.k - 1 from hge),
-      dif_neg (show ¬ ((Fin.cast (dimS_eq D.R) a).val - (D.R.k - 1) < D.R.m) from
+    rw [dite_eq_right (show ¬ (Fin.cast (dimS_eq D.R) a).val < D.R.k - 1 from hge),
+      dite_eq_right (show ¬ ((Fin.cast (dimS_eq D.R) a).val - (D.R.k - 1) < D.R.m) from
         (by omega : ¬ (a.val - (D.R.k - 1) < D.R.m))),
-      dif_neg (show ¬ (1 ≤ j ∧ j ≤ D.R.m) by omega)]
+      dite_eq_right (show ¬ (1 ≤ j ∧ j ≤ D.R.m) by omega)]
     simp
 
 private theorem two_mul_rS_add_k_add_one_eq (R : Formalism.BasicNotions.Ranks) : 2 * R.rS + R.k + 1 = R.k + R.m - 1 := by
@@ -335,7 +339,7 @@ theorem num_of_size : ∀ (D : D7) (large₂ : SizeData₂ D) (C' Cl Cg cb Cu cT
   have hu0 : ((D.hcW w τ).u ⟨0, by omega⟩ : ℝ) ≤ large₂.sc.b ^ Cu := by
     have := hu1 w τ
     unfold uOne at this
-    rw [dif_pos (show 1 ≤ 1 ∧ 1 ≤ D.R.k by omega)] at this
+    rw [dite_eq_left (show 1 ≤ 1 ∧ 1 ≤ D.R.k by omega)] at this
     exact this
   have hC9 : ∀ i ∈ Finset.Icc 1 D.R.k, |U i| ≤ large₂.sc.b ^ max 2 Cu := by
     intro i hi

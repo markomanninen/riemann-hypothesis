@@ -1,5 +1,9 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MemSmulSpanIff
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MulMemPrimePower
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MemSmulSpanIff
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MulMemPrimePower
+
+@[expose] public section
 
 open NumberField Module
 
@@ -59,9 +63,11 @@ theorem exists_skew_unit (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (h
     rw [map_mul, conjO_conjO, mul_comm])
   have hone : (1 : 𝓞 K) ∉ extP K 𝔭 := by
     intro h1
-    have h3 := (idealPowerSpanBounds.mem_pow_iff (K := K) 𝔭 1 1).1 (by rwa [map_one, pow_one])
-    rw [pow_one] at h3
-    exact h𝔭.ne_top ((Ideal.eq_top_iff_one _).2 h3)
+    have hcomap : Ideal.comap (algebraMap (𝓞 F) (𝓞 K)) (extP K 𝔭) = 𝔭 :=
+      Ideal.comap_map_eq_self_of_faithfullyFlat 𝔭
+    have hone_mem : (1 : 𝓞 F) ∈ 𝔭 := by
+      rwa [← hcomap, Ideal.mem_comap, map_one]
+    exact h𝔭.ne_top ((Ideal.eq_top_iff_one _).2 hone_mem)
   have hn𝔭 : n ∉ 𝔭 := by
     intro hmem
     have h1 : d * conjO K d ∈ extP K 𝔭 ^ 1 := by
@@ -78,7 +84,7 @@ theorem exists_skew_unit (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (h
     intro h0
     apply hn𝔭
     have : algebraMap (𝓞 F) (𝓞 K) n = algebraMap (𝓞 F) (𝓞 K) 0 := by rw [hn, h0]; simp
-    rw [idealPowerSpanBounds.ι_inj this]
+    rw [RingOfIntegers.algebraMap.injective F K this]
     exact 𝔭.zero_mem
   have hdK : ((d : 𝓞 K) : K) ≠ 0 := by
     intro h0
@@ -109,7 +115,7 @@ theorem map_symF_sesqL (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF 
     obtain ⟨θ, hθ⟩ := exists_add_conj_eq hK hF (1 : 𝓞 F)
     have hθK : (θ : K) + star (θ : K) = 1 := by
       have := congrArg (algebraMap (𝓞 K) K) hθ
-      rw [map_add, map_one, map_one] at this
+      rw [map_add (f := _), map_one, map_one] at this
       exact this
     refine ⟨(θ : K) • t, fun x hx y hy => ?_, ?_⟩
     · have := (pK K 𝔭 k).smul_mem θ (ht' x hx y hy)
@@ -158,8 +164,7 @@ theorem one_mem_pK (𝔭 : Ideal (𝓞 F)) : (1 : K) ∈ pK K 𝔭 0 := by
   simpa using algebraMap_mem_pK (K := K) 𝔭 1
 
 theorem mul_mem_pK_zero {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {x y : K} (hx : x ∈ pK K 𝔭 0)
-    (hy : y ∈ pK K 𝔭 0) : x * y ∈ pK K 𝔭 0 :=
-by
+    (hy : y ∈ pK K 𝔭 0) : x * y ∈ pK K 𝔭 0 := by
   have := mul_mem_pK h𝔭 hx hy
   rwa [add_zero] at this
 
@@ -222,8 +227,8 @@ theorem relIndex_sesqL_eq_sq (hK : Formalism.HermitianLatticesTheory.IsCMUnram K
 
 theorem relIndex_sesqL (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F)
     {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hd : IsTotPosDef h) {A₀ : Submodule (𝓞 K) V}
-    (hA₀ : Submodule.IsLattice K A₀) (hA₀i : Formalism.HermitianLatticesTheory.IsIntegralLat h A₀) {B₀ : Submodule (𝓞 K) V}
-    (hB₀ : Submodule.IsLattice K B₀) (hB₀i : Formalism.HermitianLatticesTheory.IsIntegralLat h B₀) {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {k c : ℕ}
+    (hA₀ : Submodule.IsFullLattice K A₀) (hA₀i : Formalism.HermitianLatticesTheory.IsIntegralLat h A₀) {B₀ : Submodule (𝓞 K) V}
+    (hB₀ : Submodule.IsFullLattice K B₀) (hB₀i : Formalism.HermitianLatticesTheory.IsIntegralLat h B₀) {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {k c : ℕ}
     (hle : sesqL (locF 𝔭 B₀) 𝔭 (k + c) ≤ sesqL (locF 𝔭 A₀) 𝔭 k) :
     (sesqL (locF 𝔭 B₀) 𝔭 (k + c)).relIndex (sesqL (locF 𝔭 A₀) 𝔭 k) *
         Ideal.absNorm 𝔭 ^ (2 * (finrank K V * vd h (locF 𝔭 B₀) 𝔭)) =
@@ -280,8 +285,8 @@ theorem relIndex_sesqL (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF 
       (matL 𝔭 (k + c) f g).relIndex (matL 𝔭 k (fun _ _ => 1) (fun _ _ => 1)) := by
     rw [hSA, hSB, AddSubgroup.relIndex_comap, AddSubgroup.map_comap_eq_self_of_surjective hΦs]
   rw [← hidx] at H1
-  obtain ⟨hDa, hDa0, hDan⟩ := nO_gram hK hF hs hd hA₀ hA₀i h𝔭 a hA
-  obtain ⟨hDb, hDb0, hDbn⟩ := nO_gram hK hF hs hd hB₀ hB₀i h𝔭 b hB
+  obtain ⟨hDa, hDa0, hDan⟩ := nO_gram hK hF hs hd hA₀.toIsLattice hA₀i h𝔭 a hA
+  obtain ⟨hDb, hDb0, hDbn⟩ := nO_gram hK hF hs hd hB₀.toIsLattice hB₀i h𝔭 b hB
   have hnf : ∀ i j, nO 𝔭 (f i j) = nO 𝔭 (e i : K) * nO 𝔭 (e j : K) := fun i j => by
     rw [nO_mul h𝔭 (star_mem_pK hF h𝔭 (hem i)) (star_ne_zero.2 (heK i)) (hem j), nO_star hF h𝔭]
   have hng : nO 𝔭 (star (γ : K) * γ) = nO 𝔭 (γ : K) * nO 𝔭 (γ : K) := by
@@ -318,8 +323,8 @@ theorem relIndex_sesqL (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF 
 
 theorem relIndex_hermL (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F)
     {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hd : IsTotPosDef h) {A₀ : Submodule (𝓞 K) V}
-    (hA₀ : Submodule.IsLattice K A₀) (hA₀i : Formalism.HermitianLatticesTheory.IsIntegralLat h A₀) {B₀ : Submodule (𝓞 K) V}
-    (hB₀ : Submodule.IsLattice K B₀) (hB₀i : Formalism.HermitianLatticesTheory.IsIntegralLat h B₀) {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {k c : ℕ}
+    (hA₀ : Submodule.IsFullLattice K A₀) (hA₀i : Formalism.HermitianLatticesTheory.IsIntegralLat h A₀) {B₀ : Submodule (𝓞 K) V}
+    (hB₀ : Submodule.IsFullLattice K B₀) (hB₀i : Formalism.HermitianLatticesTheory.IsIntegralLat h B₀) {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {k c : ℕ}
     (hle : sesqL (locF 𝔭 B₀) 𝔭 (k + c) ≤ sesqL (locF 𝔭 A₀) 𝔭 k) :
     (hermL (locF 𝔭 B₀) 𝔭 (k + c)).relIndex (hermL (locF 𝔭 A₀) 𝔭 k) *
         Ideal.absNorm 𝔭 ^ (finrank K V * vd h (locF 𝔭 B₀) 𝔭) =

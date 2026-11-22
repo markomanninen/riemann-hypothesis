@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.PullIopOf
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.PullIopOf
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.BasicNotions Classical

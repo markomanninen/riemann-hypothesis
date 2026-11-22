@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableRisingS
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableRisingS
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CMVal GlobalTheory.IndefiniteRowSideFullHecke.DefiningCoordinates GlobalTheory.IndefiniteRowSideFullHecke.OmegaFactorization GlobalTheory.WeightTwoSum
 open scoped ContDiff nonZeroDivisors
 
@@ -31,9 +36,10 @@ theorem fderiv_eq_sum_wirt' (h : (Φ → ℂ) → ℂ) (y u : Φ → ℂ) :
     rw [Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.sum_ite_eq]
     simp [Complex.re_add_im]
   conv_lhs => rw [hu]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun τ _ => ?_
-  rw [map_add, map_smul, map_smul]
+  rw [map_add (f := _), map_smul, map_smul]
   simp only [wirt, Bool.false_eq_true, if_false, if_true, real_smul]
   set A := fderiv ℝ h y (Pi.single τ 1)
   set B := fderiv ℝ h y (Pi.single τ I)
@@ -179,8 +185,8 @@ theorem ExpSum.deriv {D : Set ℂ} {V : Set (Φ → ℂ)} (hU : IsOpen U) (hV : 
 
 end Deriv
 
-open Classical in
 
+open Classical in
 theorem differentiableOn_wirtWord_mul_exp_comp : ∀ (Φ I : Type) [Fintype Φ] [Fintype I] (U : Set (I → ℂ)) (V : Set (Φ → ℂ)) (D : Set ℂ) (G : ℂ → (Φ → ℂ) → ℂ) (t : (I → ℂ) → Φ → ℂ) (b l : (I → ℂ) → ℂ), IsOpen U → IsOpen V → Set.MapsTo t U V → ContDiffOn ℝ ∞ t U → ContDiffOn ℝ ∞ b U → ContDiffOn ℝ ∞ l U → (∀ σ ∈ D, ContDiffOn ℝ ∞ (G σ) V) → (∀ w : List (Φ × Bool), ∀ y ∈ V, DifferentiableOn ℂ (fun σ => wirtWord w (G σ) y) D) → ∀ w : List (I × Bool), ∀ z ∈ U, DifferentiableOn ℂ (fun σ => wirtWord w (fun z' => b z' * Complex.exp (-σ * l z') * G σ (t z')) z) D := by
   intro Φ I _ _ U V D G t b l hU hV hmaps ht hb hl hGs hGh w z hz
   have key : ∀ w : List (I × Bool), ∃ F, ExpSum U G t l F ∧ ∀ σ ∈ D,

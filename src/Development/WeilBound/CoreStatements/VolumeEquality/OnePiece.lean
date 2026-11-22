@@ -1,9 +1,13 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifEx2
-import Development.WeilBound.CoreStatements.VolumeEquality.OnePieceB
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericPointGenericFibreStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericOfSmoothSurjectiveStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StalkSurjectiveOpenImmersionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsResolutionGenericFibreStatement
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifEx2
+public import Development.WeilBound.CoreStatements.VolumeEquality.OnePieceB
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericPointGenericFibreStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericOfSmoothSurjectiveStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StalkSurjectiveOpenImmersionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsResolutionGenericFibreStatement
+
+@[expose] public section
 
 noncomputable section
 

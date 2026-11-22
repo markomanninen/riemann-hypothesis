@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.StdBasisFlagSubmoduleOfBlockTriangular
+module
+
+public import Formalism.LocalToGlobal.Columns.StdBasisFlagSubmoduleOfBlockTriangular
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -49,7 +53,7 @@ theorem reduction_frameEntry_of_extension {k₀ n c : ℕ} {rr : Sp E (n + c) �
     redP P (LocE.entB q k₀ c n c n (fun i => i + 1) (fun i => i + 1) rr.toLinearMap p p') = ocbM hbar a b := by
   rw [frameEntry_eq_coord_of_extension hg ha hb hpa hpb, ← ciEntry hred]
   unfold ocbM
-  rw [dif_pos ⟨ha, hb⟩]
+  rw [dite_eq_left ⟨ha, hb⟩]
 
 theorem frameEntry_auxiliary_superdiagonal {k₀ n c i : ℕ} (hi : i + 1 < c) (rr : Sp E (n + c) ≃ₗ[E] Sp E (n + c)) :
     LocE.entB q k₀ c n c n (fun i => i + 1) (fun i => i + 1) rr.toLinearMap (k₀ + i) (k₀ + i + 1) =
@@ -89,7 +93,7 @@ theorem frameEntry_last_auxiliary_zero {k₀ n c : ℕ} (hc : 1 ≤ c) (hkn : k�
   show Loc.atN (rr (Loc.inX E n c (Pi.single ⟨k₀, hkn⟩ 1))) (n + (c - 1)) * _ = 0
   rw [hg]
   unfold Loc.atN
-  rw [dif_pos (show n + (c - 1) < n + c by omega), ciInX_apply]
+  rw [dite_eq_left (show n + (c - 1) < n + c by omega), ciInX_apply]
   split_ifs with h
   · simp only at h
     omega

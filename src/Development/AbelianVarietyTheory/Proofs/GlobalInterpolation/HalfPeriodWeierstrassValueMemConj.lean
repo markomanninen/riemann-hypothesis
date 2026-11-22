@@ -1,18 +1,23 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.IsDiscriminantTwelfthRootOfIdealLattice
-import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
-import Development.AbelianVarietyTheory.Definitions.Foundations.LatticeIntegralCoordinates
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SignedLogMeans
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.EquidistributedConjugates
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.PeriodLatticeAgreement
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.JacobiThetaHalfCharacteristic
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.ThetaConstantWeber
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmThetaTaylorCoeffAlgebraicAndConjugate
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsVariableChangeEqLatticeCurve
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.DifferentiableAtDerivAtZero
-import Formalism.GL3MeanSquares.HookFormulaTorsion.FourFoldOrthogonalSum
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.IsDiscriminantTwelfthRootOfIdealLattice
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
+public import Development.AbelianVarietyTheory.Definitions.Foundations.LatticeIntegralCoordinates
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SignedLogMeans
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.EquidistributedConjugates
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.PeriodLatticeAgreement
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.JacobiThetaHalfCharacteristic
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.ThetaConstantWeber
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmThetaTaylorCoeffAlgebraicAndConjugate
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsVariableChangeEqLatticeCurve
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.DifferentiableAtDerivAtZero
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.FourFoldOrthogonalSum
+
+@[expose] public section
+
 open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric GlobalTheory.Glob.IntegralWittCoefficients GlobalTheory.IndefiniteRowSideFullHecke
 
 noncomputable section
@@ -81,9 +86,8 @@ theorem wpF_conj (Λ : AddSubgroup ℂ) (z : ℂ) :
       left_inv := fun w => by ext; simp
       right_inv := fun w => by ext; simp }
   unfold wpF
-  rw [map_add, Complex.conj_tsum, ← e.tsum_eq]
+  rw [map_add (f := _), Complex.conj_tsum, ← e.tsum_eq]
   simp [e, map_sub]
-  rfl
 
 theorem key_top {D : D7} {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (h : Formalism.MainNotions.StandardLatticesGL3.Crv D cc δ)
     (ρ : (⊤ : IntermediateField ℚ ℂ) →ₐ[ℚ] ℂ) {t t' : ℂ}
@@ -118,8 +122,8 @@ theorem halfPeriod_value : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) 
     (GlobalTheory.CurveLattice.lattice_of_curve D (GlobalTheory.InducedType.induced_type D).1 cc δ h).2.2.1
   have hself : lamConj M M.val (lamOf D cc δ) = lamOf D cc δ :=
     GlobalTheory.ThetaConj.lamConj_eq_self hlat
-      (by unfold Formalism.MainNotions.StandardLatticesGL3.cj Formalism.MainNotions.TaylorLogMetric.liftM; rw [dif_pos hg2]; rfl)
-      (by unfold Formalism.MainNotions.StandardLatticesGL3.cj Formalism.MainNotions.TaylorLogMetric.liftM; rw [dif_pos hg3]; rfl)
+      (by unfold Formalism.MainNotions.StandardLatticesGL3.cj Formalism.MainNotions.TaylorLogMetric.liftM; rw [dite_eq_left hg2]; rfl)
+      (by unfold Formalism.MainNotions.StandardLatticesGL3.cj Formalism.MainNotions.TaylorLogMetric.liftM; rw [dite_eq_left hg3]; rfl)
   have ht0 : Formalism.MainNotions.GL3Theta.IsTwoTorsionPointUnkilled D (lamOf D cc δ) (t M.val) := by
     have := ht M.val
     rw [hself] at this

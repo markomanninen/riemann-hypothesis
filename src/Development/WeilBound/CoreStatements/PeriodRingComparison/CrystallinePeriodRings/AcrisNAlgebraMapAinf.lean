@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.GammaEqDpow
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.GammaEqDpow
+
+@[expose] public section
 
 noncomputable section
 open GroundTheory.PAdicHodge

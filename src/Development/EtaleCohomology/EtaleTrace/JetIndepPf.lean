@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.LCoverCut
+module
+
+public import Development.EtaleCohomology.EtaleTrace.LCoverCut
+
+@[expose] public section
 
 noncomputable section
 open MvPolynomial
@@ -23,7 +27,8 @@ theorem jetIndep_pderiv {n : ℕ} (w : Fin n → K) (hw : LinearIndependent K (j
     (F : MvPolynomial (Fin n) k) (hF : F.IsHomogeneous m) (h0 : aeval w F = 0) (j : Fin n) :
     aeval w (pderiv j F) = 0 := by
   have e1 := congrArg (aeval w) hF.sum_X_mul_pderiv
-  simp only [map_sum, map_mul, aeval_X, map_nsmul, h0, smul_zero] at e1
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, aeval_X, map_nsmul, h0, smul_zero] at e1
   have e2 := jetIndep_chain w F
   rw [h0, Derivation.map_zero] at e2
   refine Fintype.linearIndependent_iff.1 hw (fun j => aeval w (pderiv j F)) ?_ j
@@ -37,15 +42,15 @@ theorem jetIndep_dvd {n p : ℕ} [CharP k p] (F : MvPolynomial (Fin n) k) (h : �
     (α : Fin n →₀ ℕ) (hα : α ∈ F.support) (i : Fin n) : p ∣ α i := by
   rcases Nat.eq_zero_or_pos (α i) with h0 | hpos
   · simp [h0]
-  have hc := congrArg (coeff (α - Finsupp.single i 1)) (h i)
-  rw [coeff_pderiv, coeff_zero] at hc
+  have hc := congrArg (AddMonoidAlgebra.coeff · (α - Finsupp.single i 1)) (h i)
+  rw [coeff_pderiv, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at hc
   have hα' : α - Finsupp.single i 1 + Finsupp.single i 1 = α := by
     ext l
     by_cases hl : i = l
     · subst hl; simp; omega
     · simp [hl]
   rw [hα'] at hc
-  have hne : coeff α F ≠ 0 := mem_support_iff.1 hα
+  have hne : AddMonoidAlgebra.coeff F α ≠ 0 := mem_support_iff.1 hα
   have h1 : (((α - Finsupp.single i 1 : Fin n →₀ ℕ) i : ℕ) : k) + 1 = 0 := (mul_eq_zero.1 hc).resolve_left hne
   have e : (α - Finsupp.single i 1 : Fin n →₀ ℕ) i + 1 = α i := by simp; omega
   rw [← CharP.cast_eq_zero_iff k p, ← e]
@@ -58,7 +63,7 @@ theorem jetIndep_root {n p : ℕ} [Fact p.Prime] [CharP k p] [PerfectRing k p]
   let q : (Fin n →₀ ℕ) → (Fin n →₀ ℕ) := fun α => Finsupp.mapRange (· / p) (Nat.zero_div p) α
   have hq : ∀ α ∈ F.support, p • q α = α := by
     intro α hα; ext i; simp [q, Nat.mul_div_cancel' (hd α hα i)]
-  refine ⟨∑ α ∈ F.support, monomial (q α) ((frobeniusEquiv k p).symm (coeff α F)), ?_, ?_⟩
+  refine ⟨∑ α ∈ F.support, monomial (q α) ((frobeniusEquiv k p).symm (AddMonoidAlgebra.coeff F α)), ?_, ?_⟩
   · apply IsHomogeneous.sum
     intro α hα
     apply isHomogeneous_monomial
@@ -98,7 +103,7 @@ theorem JetIndep_of : JetIndep := by
     have hG0 := ih (m / p) (Nat.div_lt_self hm hpp.one_lt) G hG (pow_eq_zero_iff hpp.ne_zero |>.1 h0)
     rw [hG0, zero_pow hpp.ne_zero]
   · ext α
-    rw [coeff_zero]
+    rw [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
     by_contra hc
     have hα0 : α = 0 := by
       ext i; simpa using jetIndep_dvd (p := 0) F hpd α (mem_support_iff.2 hc) i

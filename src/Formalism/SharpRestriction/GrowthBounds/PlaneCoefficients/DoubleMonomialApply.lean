@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.NoOpStep
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.NoOpStep
+
+@[expose] public section
 
 noncomputable section
 
@@ -555,7 +559,7 @@ theorem der_A_pl (a : Fin r) (rho : TL J nL r × Fin (r + K) → ℕ) (dPl dNo :
     · obtain ⟨mo', rfl⟩ := exists_add_single _ mo h0
       rw [pderiv_mon_succ, lev_A Fr p hk nL hx0 _ rho dPl dNo h, nsmul_eq_mul, levImg_monomial, levImg_monomial]
       by_cases hc : InLow Fr p hk nL rho mo' ∧ InBlock Fr p hk nL dPl dNo mo'
-      · rw [if_pos hc, if_pos hc, pl_euler, ← map_smul, ← map_smul, ← map_add]
+      · rw [if_pos hc, if_pos hc, pl_euler, ← map_smul, ← map_smul, ← map_add (f := _)]
         congr 1
         have e1 : mo' (aVar Fr hk nL x0 (Fin.castAdd K a)) + 1 =
             (rho (x0, Fin.castAdd K a) + 1) + lowP Fr p x0 * plMon Fr p hk nL mo' (x0, a) := by
@@ -570,7 +574,7 @@ theorem der_A_pl (a : Fin r) (rho : TL J nL r × Fin (r + K) → ℕ) (dPl dNo :
       · rw [if_neg hc, if_neg hc]
         simp
   | add F G hF hG =>
-    simp only [map_add, levImg_add, mul_add, smul_add, hF, hG]
+    simp only [map_add (f := _), levImg_add, mul_add, smul_add, hF, hG]
     abel
 
 include hx0 in
@@ -590,7 +594,7 @@ theorem der_A_no (b : Fin K) (rho : TL J nL r × Fin (r + K) → ℕ) (dPl dNo :
     · obtain ⟨mo', rfl⟩ := exists_add_single _ mo h0
       rw [pderiv_mon_succ, lev_A Fr p hk nL hx0 _ rho dPl dNo h, nsmul_eq_mul, levImg_monomial, levImg_monomial]
       by_cases hc : InLow Fr p hk nL rho mo' ∧ InBlock Fr p hk nL dPl dNo mo'
-      · rw [if_pos hc, if_pos hc, no_euler, ← map_smul, ← map_smul, ← map_add]
+      · rw [if_pos hc, if_pos hc, no_euler, ← map_smul, ← map_smul, ← map_add (f := _)]
         congr 1
         have e1 : mo' (aVar Fr hk nL x0 (Fin.natAdd r b)) + 1 =
             (rho (x0, Fin.natAdd r b) + 1) + lowP Fr p x0 * noMon Fr p hk nL mo' (x0, b) := by
@@ -605,7 +609,7 @@ theorem der_A_no (b : Fin K) (rho : TL J nL r × Fin (r + K) → ℕ) (dPl dNo :
       · rw [if_neg hc, if_neg hc, oneT_zero]
         simp
   | add F G hF hG =>
-    simp only [map_add, levImg_add, oneT_add, smul_add, hF, hG]
+    simp only [map_add (f := _), levImg_add, oneT_add, smul_add, hF, hG]
     abel
 
 include hx0 in
@@ -637,7 +641,7 @@ theorem der_B_pl (a : Fin r) (rho : TL J nL r × Fin (r + K) → ℕ) (dPl dNo :
       · rw [if_neg hc, if_neg hc]
         simp
   | add F G hF hG =>
-    simp only [map_add, levImg_add, smul_add, hF, hG]
+    simp only [map_add (f := _), levImg_add, smul_add, hF, hG]
 
 include hx0 in
 theorem der_B_no (b : Fin K) (rho : TL J nL r × Fin (r + K) → ℕ) (dPl dNo : TL J nL r → ℕ)
@@ -667,7 +671,7 @@ theorem der_B_no (b : Fin K) (rho : TL J nL r × Fin (r + K) → ℕ) (dPl dNo :
         ring
       · rw [if_neg hc, if_neg hc, oneT_zero, oneT_zero, smul_zero]
   | add F G hF hG =>
-    simp only [map_add, levImg_add, oneT_add, smul_add, hF, hG]
+    simp only [map_add (f := _), levImg_add, oneT_add, smul_add, hF, hG]
 
 end Der
 

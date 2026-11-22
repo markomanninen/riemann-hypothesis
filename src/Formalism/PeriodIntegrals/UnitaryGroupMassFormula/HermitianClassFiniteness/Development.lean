@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.InHHClassFin
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsEasy
+module
+
+public import Formalism.PeriodIntegrals.InHHClassFin
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsEasy
+
+@[expose] public section
 
 noncomputable section
 

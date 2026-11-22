@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qi13.aux1 :
     ∀ (K : Type) [inst : Field K]
@@ -5360,7 +5364,7 @@ private theorem UpperTheory.Reformulated.B.Qi13.key {l : ℕ} [Fact l.Prime] {K 
       rw [← map_natCast (algebraMap (ZMod l) k), ZMod.natCast_self, map_zero]
     have hc : c = n + l * d := by rw [← hd]; ring
     rw [← hn, hc]
-    simp only [map_add, map_mul, map_natCast, hl, zero_mul, add_zero]
+    simp only [map_add (f := _), map_mul, map_natCast, hl, zero_mul, add_zero]
   rw [Fintype.linearIndependent_iff] at h ⊢
   intro g hg
   by_contra hne
@@ -5369,6 +5373,7 @@ private theorem UpperTheory.Reformulated.B.Qi13.key {l : ℕ} [Fact l.Prime] {K 
   have hpos : 0 < ‖g m‖ := (norm_pos_iff.mpr hi₀).trans_le (hm i₀ (Finset.mem_univ _))
   have hgm : g m ≠ 0 := norm_pos_iff.mp hpos
   let c : ι → ℤ_[l] := fun i => ⟨g i / g m, by
+    rw [PadicInt.mem_subring_iff]
     rw [norm_div]
     exact (div_le_one hpos).mpr (hm i (Finset.mem_univ _))⟩
   have hsum : ∑ i, φ (c i) * x i = 0 := by
@@ -5377,13 +5382,14 @@ private theorem UpperTheory.Reformulated.B.Qi13.key {l : ℕ} [Fact l.Prime] {K 
       intro i
       change algebraMap ℚ_[l] K (g i / g m) * (x i : K) = _
       rw [smul_smul, Algebra.smul_def, div_eq_inv_mul]
-    rw [AddSubmonoidClass.coe_finset_sum]
+    rw [AddSubmonoidClass.coe_finsetSum]
     simp only [h1]
     rw [← Finset.smul_sum, hg, smul_zero]
     rfl
   have hred : ∑ i, PadicInt.toZMod (c i) • r (x i) = 0 := by
     have h2 := congrArg r hsum
-    rw [map_sum, map_zero] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h2
     rw [← h2]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, hφ, Algebra.smul_def]

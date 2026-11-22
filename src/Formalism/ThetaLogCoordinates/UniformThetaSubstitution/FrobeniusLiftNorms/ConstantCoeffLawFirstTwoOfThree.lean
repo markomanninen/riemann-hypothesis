@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FirstDeriv
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.LogarithmEquivalence
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FirstDeriv
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.LogarithmEquivalence
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,26 +18,26 @@ open Formalism.DworkPowerSeriesWeights (Integral mvExp)
 
 namespace GramFrameCompositionLinFacts
 
-open MvPowerSeries in
 
+open MvPowerSeries in
 theorem continuous_pderiv {R τ : Type} [CommRing R] [TopologicalSpace R] [IsTopologicalSemiring R]
     (e : τ) :
     let := WithPiTopology.instTopologicalSpace (σ := τ) (R := R)
-    Continuous (fun f : MvPowerSeries τ R => pderiv R e f) := by
+    Continuous (fun f : MvPowerSeries τ R => pderiv (R := R) e f) := by
   let := WithPiTopology.instTopologicalSpace (σ := τ) (R := R)
   refine continuous_pi fun n => ?_
-  have : (fun f : MvPowerSeries τ R => (pderiv R e f) n) =
+  have : (fun f : MvPowerSeries τ R => (pderiv (R := R) e f) n) =
       fun f => coeff (n + Finsupp.single e 1) f * ((n e : R) + 1) := by
     funext f
     exact coeff_pderiv f n
   rw [this]
   exact (WithPiTopology.continuous_coeff R _).mul continuous_const
 
-open MvPowerSeries in
 
+open MvPowerSeries in
 theorem pderiv_subst {R σ τ : Type} [CommRing R] [Fintype σ] {a : σ → MvPowerSeries τ R}
     (ha : HasSubst a) (e : τ) (H : MvPowerSeries σ R) :
-    pderiv R e (subst a H) = ∑ i, subst a (pderiv R i H) * pderiv R e (a i) := by
+    pderiv (R := R) e (subst a H) = ∑ i, subst a (pderiv (R := R) i H) * pderiv (R := R) e (a i) := by
   classical
   let : UniformSpace R := ⊥
   have : DiscreteUniformity R := ⟨rfl⟩
@@ -41,14 +45,14 @@ theorem pderiv_subst {R σ τ : Type} [CommRing R] [Fintype σ] {a : σ → MvPo
   let := WithPiTopology.instTopologicalSpace (σ := σ) (R := R)
   have := WithPiTopology.instIsTopologicalSemiring τ R
   have := WithPiTopology.instT2Space (σ := τ) (R := R)
-  have hc1 : Continuous fun H : MvPowerSeries σ R => pderiv R e (subst a H) :=
+  have hc1 : Continuous fun H : MvPowerSeries σ R => pderiv (R := R) e (subst a H) :=
     (continuous_pderiv e).comp (continuous_subst ha)
   have hc2 : Continuous fun H : MvPowerSeries σ R =>
-      ∑ i, subst a (pderiv R i H) * pderiv R e (a i) :=
+      ∑ i, subst a (pderiv (R := R) i H) * pderiv (R := R) e (a i) :=
     continuous_finsetSum _ fun i _ =>
       ((continuous_subst ha).comp (continuous_pderiv i)).mul continuous_const
-  have main : ∀ P : MvPolynomial σ R, pderiv R e (subst a (P : MvPowerSeries σ R)) =
-      ∑ i, subst a (pderiv R i (P : MvPowerSeries σ R)) * pderiv R e (a i) := by
+  have main : ∀ P : MvPolynomial σ R, pderiv (R := R) e (subst a (P : MvPowerSeries σ R)) =
+      ∑ i, subst a (pderiv (R := R) i (P : MvPowerSeries σ R)) * pderiv (R := R) e (a i) := by
     intro P
     induction P using MvPolynomial.induction_on with
     | C r =>
@@ -56,7 +60,7 @@ theorem pderiv_subst {R σ τ : Type} [CommRing R] [Fintype σ] {a : σ → MvPo
         rw [← coe_substAlgHom ha, map_zero]
       simp only [MvPolynomial.coe_C, subst_C, pderiv_C, h0, zero_mul, Finset.sum_const_zero]
     | add p q hp hq =>
-      simp only [MvPolynomial.coe_add, subst_add ha, map_add, add_mul, Finset.sum_add_distrib]
+      simp only [MvPolynomial.coe_add, subst_add ha, map_add (f := _), add_mul, Finset.sum_add_distrib]
       rw [hp, hq]
     | mul_X p j hp =>
       simp only [MvPolynomial.coe_mul, MvPolynomial.coe_X, subst_mul ha, subst_X ha,
@@ -116,25 +120,25 @@ theorem subst_identity_two_vars (H : MvPowerSeries (Fin 2) K) :
 
 theorem pderiv_subst2 {τ : Type} {u v : MvPowerSeries τ K} (h : HasSubst ![u, v]) (e : τ)
     (H : MvPowerSeries (Fin 2) K) :
-    pderiv K e (subst ![u, v] H) =
-      subst ![u, v] (pderiv K 0 H) * pderiv K e u + subst ![u, v] (pderiv K 1 H) * pderiv K e v := by
+    pderiv (R := K) e (subst ![u, v] H) =
+      subst ![u, v] (pderiv (R := K) 0 H) * pderiv (R := K) e u + subst ![u, v] (pderiv (R := K) 1 H) * pderiv (R := K) e v := by
   rw [pderiv_subst h, Fin.sum_univ_two]
   rfl
 
 theorem pderiv_psubst {τ : Type} {w : MvPowerSeries τ K} (hw : PowerSeries.HasSubst w) (e : τ)
     (f : PowerSeries K) :
-    pderiv K e (PowerSeries.subst w f) =
-      PowerSeries.subst w (PowerSeries.derivative K f) * pderiv K e w := by
+    pderiv (R := K) e (PowerSeries.subst w f) =
+      PowerSeries.subst w (PowerSeries.derivative (R := K) f) * pderiv (R := K) e w := by
   rw [PowerSeries.subst_def, pderiv_subst hw.const, Fintype.sum_unique]
   rfl
 
 theorem pderiv_single_self {τ : Type} (x : τ) (f : PowerSeries K) :
-    pderiv K x (at1 x f) = at1 x (PowerSeries.derivative K f) := by
+    pderiv (R := K) x (at1 x f) = at1 x (PowerSeries.derivative (R := K) f) := by
   unfold at1
   rw [pderiv_psubst (PowerSeries.HasSubst.X x), pderiv_X_self, mul_one]
 
 theorem pderiv_single_of_ne {τ : Type} {x e : τ} (h : x ≠ e) (f : PowerSeries K) :
-    pderiv K e (at1 x f) = 0 := by
+    pderiv (R := K) e (at1 x f) = 0 := by
   unfold at1
   rw [pderiv_psubst (PowerSeries.HasSubst.X x), pderiv_X_of_ne h, mul_zero]
 
@@ -148,8 +152,8 @@ theorem subst_zero_left {τ : Type} {G : MvPowerSeries (Fin 2) K} (hG : DivAB G)
 
 theorem subst_zero_pderiv {τ : Type} (G : MvPowerSeries (Fin 2) K)
     {w : MvPowerSeries τ K} (hw : constantCoeff w = 0) :
-    subst ![0, w] (pderiv K 0 G) = PowerSeries.subst w (fLin G) := by
-  have hd : (X 0 : MvPowerSeries (Fin 2) K) ∣ pderiv K 0 G - at1 1 (fLin G) := by
+    subst ![0, w] (pderiv (R := K) 0 G) = PowerSeries.subst w (fLin G) := by
+  have hd : (X 0 : MvPowerSeries (Fin 2) K) ∣ pderiv (R := K) 0 G - at1 1 (fLin G) := by
     refine X_dvd_iff.2 fun m hm => ?_
     have hm1 : m = Finsupp.single 1 (m 1) := by
       ext i
@@ -158,7 +162,7 @@ theorem subst_zero_pderiv {τ : Type} (G : MvPowerSeries (Fin 2) K)
       add_comm (Finsupp.single 0 1), ← hm1]
     simp
   obtain ⟨Q, hQ⟩ := hd
-  have e : pderiv K 0 G = at1 1 (fLin G) + X 0 * Q := by rw [← hQ]; ring
+  have e : pderiv (R := K) 0 G = at1 1 (fLin G) + X 0 * Q := by rw [← hQ]; ring
   have h := hs2 (map_zero _) hw
   rw [e, subst_add h, subst_mul h, subst_X h, subst_single_variable h]
   simp
@@ -170,7 +174,7 @@ theorem subst_swap2 {τ : Type} {u v : MvPowerSeries τ K} (h : HasSubst ![u, v]
   rfl
 
 theorem pderiv_swap2 (H : MvPowerSeries (Fin 2) K) :
-    pderiv K 1 (swap2 H) = swap2 (pderiv K 0 H) := by
+    pderiv (R := K) 1 (swap2 H) = swap2 (pderiv (R := K) 0 H) := by
   unfold swap2
   rw [pderiv_subst2 HasSubst.X_X, pderiv_X_self, pderiv_X_of_ne (by decide), mul_one, mul_zero,
     add_zero]
@@ -198,7 +202,7 @@ theorem integral_zero {τ : Type} : Integral (0 : MvPowerSeries τ K) := by
   simp
 
 theorem integral_pderiv {τ : Type} {f : MvPowerSeries τ K} (hf : Integral f) (e : τ) :
-    Integral (pderiv K e f) := by
+    Integral (pderiv (R := K) e f) := by
   intro n
   rw [coeff_pderiv, norm_mul]
   have h : ‖((n e : K) + 1)‖ ≤ 1 := by
@@ -208,19 +212,19 @@ theorem integral_pderiv {τ : Type} {f : MvPowerSeries τ K} (hf : Integral f) (
 theorem integral_lin [CharZero K] {τ κ : Type} [Finite τ] {D : MvPowerSeries τ K}
     (hD0 : constantCoeff D = 0) (hDi : Integral (mvExp D)) {b : τ → MvPowerSeries κ K}
     (hb0 : ∀ i, constantCoeff (b i) = 0) (hbi : ∀ i, Integral (b i)) (hbD : subst b D = 0)
-    (e : τ) : Integral (subst b (pderiv K e D)) := by
+    (e : τ) : Integral (subst b (pderiv (R := K) e D)) := by
   have hb := hasSubst_of_constantCoeff_zero hb0
-  have h1 : pderiv K e (mvExp D) = mvExp D * pderiv K e D := by
+  have h1 : pderiv (R := K) e (mvExp D) = mvExp D * pderiv (R := K) e D := by
     unfold mvExp
     rw [pderiv_psubst (PowerSeries.HasSubst.of_constantCoeff_zero hD0),
       PowerSeries.derivative_exp]
-  have h2 : subst b (pderiv K e D) = subst b (pderiv K e (mvExp D)) := by
+  have h2 : subst b (pderiv (R := K) e D) = subst b (pderiv (R := K) e (mvExp D)) := by
     rw [h1, subst_mul hb, LogarithmEquivalence.subst_mvExp' hb hD0, hbD, LogarithmEquivalence.mvExp_zero', one_mul]
   rw [h2]
   exact LogarithmEquivalence.integral_subst' hb0 hbi (integral_pderiv hDi e)
 
 theorem norm_coeff_dlgF {p : ℕ} (hp : p.Prime) (hnp : ‖(p : K)‖ = (p : ℝ)⁻¹) (N : ℕ) :
-    ‖PowerSeries.coeff N (PowerSeries.derivative K (lgF K p))‖ ≤ 1 := by
+    ‖PowerSeries.coeff N (PowerSeries.derivative (R := K) (lgF K p))‖ ≤ 1 := by
   have hp0 : (0 : ℝ) < p := by exact_mod_cast hp.pos
   have hpK : (p : K) ≠ 0 := by
     rw [← norm_pos_iff, hnp]
@@ -242,7 +246,7 @@ theorem norm_coeff_dlgF {p : ℕ} (hp : p.Prime) (hnp : ‖(p : K)‖ = (p : ℝ
   exact pow_le_one₀ (by positivity) (inv_le_one_of_one_le₀ (by exact_mod_cast hp.one_lt.le))
 
 theorem integral_single_log_derivative {τ : Type} {p : ℕ} (hp : p.Prime) (hnp : ‖(p : K)‖ = (p : ℝ)⁻¹) (x : τ) :
-    Integral (at1 x (PowerSeries.derivative K (lgF K p))) := by
+    Integral (at1 x (PowerSeries.derivative (R := K) (lgF K p))) := by
   classical
   intro n
   rw [coeff_single_variable_series]
@@ -251,7 +255,7 @@ theorem integral_single_log_derivative {τ : Type} {p : ℕ} (hp : p.Prime) (hnp
   · simp
 
 theorem constantCoeff_dlgF {p : ℕ} (hp : 2 ≤ p) :
-    PowerSeries.constantCoeff (PowerSeries.derivative K (lgF K p)) = 1 := by
+    PowerSeries.constantCoeff (PowerSeries.derivative (R := K) (lgF K p)) = 1 := by
   rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, PowerSeries.coeff_derivative]
   have := coeff_lgF_pow K hp 0
   simp only [pow_zero, inv_one] at this
@@ -298,14 +302,14 @@ theorem FirstDeriv_of (hL : LawSymm) : FirstDeriv := by
       · exact integral_X 1) hA 1
 
   set φ : MvPowerSeries (Fin 2) K :=
-    subst ![(X 0 : MvPowerSeries (Fin 2) K), 0, X 1] (pderiv K 1 (in3 F)) with hφ
-  have hφ' : φ = subst ![(X 0 : MvPowerSeries (Fin 2) K), 0] (pderiv K 1 F) := by
+    subst ![(X 0 : MvPowerSeries (Fin 2) K), 0, X 1] (pderiv (R := K) 1 (in3 F)) with hφ
+  have hφ' : φ = subst ![(X 0 : MvPowerSeries (Fin 2) K), 0] (pderiv (R := K) 1 F) := by
     rw [hφ]
     unfold in3
     rw [pderiv_subst2 HasSubst.X_X, pderiv_X_self, pderiv_X_of_ne (by decide), mul_zero, mul_one,
       zero_add, subst_subst2 he0 HasSubst.X_X, hx0, hx1]
-  have hC : subst ![(X 0 : MvPowerSeries (Fin 2) K), 0, X 1] (pderiv K 1 (d1 F G)) =
-      pderiv K 0 G * φ - at1 1 (fLin G) := by
+  have hC : subst ![(X 0 : MvPowerSeries (Fin 2) K), 0, X 1] (pderiv (R := K) 1 (d1 F G)) =
+      pderiv (R := K) 0 G * φ - at1 1 (fLin G) := by
     unfold d1
     rw [map_sub, map_sub, pderiv_subst2 hin, pderiv_subst2 HasSubst.X_X,
       pderiv_subst2 HasSubst.X_X, pderiv_X_self, pderiv_X_of_ne (show (2 : Fin 3) ≠ 1 by decide),
@@ -315,8 +319,8 @@ theorem FirstDeriv_of (hL : LawSymm) : FirstDeriv := by
       hx2, subst_identity_two_vars, subst_zero_pderiv G (hX 1)]
     rfl
   have hs0 : HasSubst ![(X 0 : MvPowerSeries (Fin 2) K), 0] := HasSubst.X_zero
-  have hlφ : at1 0 (PowerSeries.derivative K (lgF K p)) * φ = 1 := by
-    have h1 := congrArg (pderiv K 1) hFc
+  have hlφ : at1 0 (PowerSeries.derivative (R := K) (lgF K p)) * φ = 1 := by
+    have h1 := congrArg (pderiv (R := K) 1) hFc
     unfold cob at h1
     rw [map_sub, map_sub, map_zero, pderiv_single_self, pderiv_single_of_ne (by decide), sub_zero,
       pderiv_psubst (PowerSeries.HasSubst.of_constantCoeff_zero hF0), sub_eq_zero] at h1
@@ -327,9 +331,9 @@ theorem FirstDeriv_of (hL : LawSymm) : FirstDeriv := by
     change PowerSeries.subst (0 : MvPowerSeries (Fin 2) K) _ = 1
     rw [PowerSeries.subst_zero_eq_C_constantCoeff, constantCoeff_dlgF hp.two_le]
     simp
-  have hfin : pderiv K 0 G - at1 0 (PowerSeries.derivative K (lgF K p)) * at1 1 (fLin G) =
-      at1 0 (PowerSeries.derivative K (lgF K p)) * (pderiv K 0 G * φ - at1 1 (fLin G)) := by
-    linear_combination (-(pderiv K 0 G)) * hlφ
+  have hfin : pderiv (R := K) 0 G - at1 0 (PowerSeries.derivative (R := K) (lgF K p)) * at1 1 (fLin G) =
+      at1 0 (PowerSeries.derivative (R := K) (lgF K p)) * (pderiv (R := K) 0 G * φ - at1 1 (fLin G)) := by
+    linear_combination (-(pderiv (R := K) 0 G)) * hlφ
   rw [hfin, ← hC]
   exact LogarithmEquivalence.integral_mul' (integral_single_log_derivative hp hnp 0) hI
 
@@ -345,9 +349,9 @@ theorem CobLin_of (_hL : LawSymm) : CobLin := by
   have hx2 : subst ![(X 0 : MvPowerSeries (Fin 2) K), X 1, 0] (X 2 : MvPowerSeries (Fin 3) K) = 0 :=
     subst_X he 2
 
-  have term : ∀ w : MvPowerSeries (Fin 3) K, constantCoeff w = 0 → pderiv K 2 w = 0 →
+  have term : ∀ w : MvPowerSeries (Fin 3) K, constantCoeff w = 0 → pderiv (R := K) 2 w = 0 →
       subst ![(X 0 : MvPowerSeries (Fin 2) K), X 1, 0] (subst ![w, X 2] (swap2 G)) = 0 ∧
-      subst ![(X 0 : MvPowerSeries (Fin 2) K), X 1, 0] (pderiv K 2 (subst ![w, X 2] (swap2 G))) =
+      subst ![(X 0 : MvPowerSeries (Fin 2) K), X 1, 0] (pderiv (R := K) 2 (subst ![w, X 2] (swap2 G))) =
         PowerSeries.subst (subst ![(X 0 : MvPowerSeries (Fin 2) K), X 1, 0] w) (fLin G) := by
     intro w hw hdw
     have hs := hs2 hw (hX (2 : Fin 3))
@@ -358,7 +362,7 @@ theorem CobLin_of (_hL : LawSymm) : CobLin := by
     · rw [subst_subst2 he hs, hx2, subst_swap2 hs', subst_zero_left hG hw']
     · rw [pderiv_subst2 hs, hdw, pderiv_X_self, mul_zero, mul_one, zero_add, subst_subst2 he hs,
         hx2, pderiv_swap2, subst_swap2 hs', subst_zero_pderiv G hw']
-  have hdF : pderiv K 2 (in3 F) = 0 := by
+  have hdF : pderiv (R := K) 2 (in3 F) = 0 := by
     unfold in3
     rw [pderiv_subst2 HasSubst.X_X, pderiv_X_of_ne (by decide), pderiv_X_of_ne (by decide),
       mul_zero, mul_zero, add_zero]
@@ -380,7 +384,7 @@ theorem CobLin_of (_hL : LawSymm) : CobLin := by
     unfold in3
     rw [subst_subst2 he HasSubst.X_X, subst_X he, subst_X he]
     exact subst_identity_two_vars F
-  have hC : subst ![(X 0 : MvPowerSeries (Fin 2) K), X 1, 0] (pderiv K 2 (d1 F (swap2 G))) =
+  have hC : subst ![(X 0 : MvPowerSeries (Fin 2) K), X 1, 0] (pderiv (R := K) 2 (d1 F (swap2 G))) =
       cob F (fLin G) := by
     unfold d1 cob
     rw [map_sub, map_sub, subst_sub he, subst_sub he, b1, b2, b3, hE, subst_X he, subst_X he]
@@ -434,7 +438,7 @@ theorem StepI_of (h1 : LemmaOne) (hF : FirstDeriv) (hC : CobLin) : StepI := by
       have e : PowerSeries.coeff j (fLin G) - α * PowerSeries.coeff j (g0F K p) =
           PowerSeries.coeff j R := by
         rw [hf]
-        simp only [map_add, PowerSeries.coeff_C_mul, hl]
+        simp only [map_add (f := _), PowerSeries.coeff_C_mul, hl]
         ring
       rw [e]
       exact hR j
@@ -460,10 +464,10 @@ theorem StepI_of (h1 : LemmaOne) (hF : FirstDeriv) (hC : CobLin) : StepI := by
       simp
   refine ⟨α, hα, ?_⟩
   intro n
-  have e : coeff n (pderiv K 0 G -
-        C α * (at1 0 (PowerSeries.derivative K (lgF K p)) * at1 1 (g0F K p))) =
-      coeff n (pderiv K 0 G - at1 0 (PowerSeries.derivative K (lgF K p)) * at1 1 (fLin G)) +
-        PowerSeries.coeff (n 0) (PowerSeries.derivative K (lgF K p)) *
+  have e : coeff n (pderiv (R := K) 0 G -
+        C α * (at1 0 (PowerSeries.derivative (R := K) (lgF K p)) * at1 1 (g0F K p))) =
+      coeff n (pderiv (R := K) 0 G - at1 0 (PowerSeries.derivative (R := K) (lgF K p)) * at1 1 (fLin G)) +
+        PowerSeries.coeff (n 0) (PowerSeries.derivative (R := K) (lgF K p)) *
           (PowerSeries.coeff (n 1) (fLin G) - α * PowerSeries.coeff (n 1) (g0F K p)) := by
     rw [map_sub, map_sub, coeff_C_mul, coeff_product_single_variables (by decide) (by decide),
       coeff_product_single_variables (by decide) (by decide)]

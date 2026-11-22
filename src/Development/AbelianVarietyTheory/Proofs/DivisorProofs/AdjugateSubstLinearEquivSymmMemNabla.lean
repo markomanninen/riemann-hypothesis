@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BrPairFApply
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueIsFunForm
-import Formalism.SharpRestriction.Divisibility.PrimeDegreeVariant
-import Formalism.PieriBlockIdeals.StatementLA
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.FormulaAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumExactExponentsSmulMemLocalizedCoeffLattice
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StatementWithTransposeOfBranching
-import Formalism.LocalToGlobal.Divisibility.BrJoint
-import Formalism.LocalToGlobal.Columns.CoefficientsModP
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ReductionLemmaFirst
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSmulMemOfLeLocP
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BrPairFApply
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueIsFunForm
+public import Formalism.SharpRestriction.Divisibility.PrimeDegreeVariant
+public import Formalism.PieriBlockIdeals.StatementLA
+public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.FormulaAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumExactExponentsSmulMemLocalizedCoeffLattice
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StatementWithTransposeOfBranching
+public import Formalism.LocalToGlobal.Divisibility.BrJoint
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ReductionLemmaFirst
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSmulMemOfLeLocP
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.RowClaim GlobalTheory.TestLat GlobalTheory.SumSize
@@ -26,8 +30,12 @@ theorem funEquiv_symm_mem_nabAt_of_nabAtr : ∀ {E K ι : Type} [Field E] [Numbe
     Submodule.IsLattice E M → ∀ (v : VV K fun τ => (σ τ).dual),
     v ∈ nabAtr emb (fun τ => (σ τ).dual) M → (GlobalTheory.FunObj.funEquiv σ).symm v ∈ nabAt emb σ M := by
   intro E K ι _ _ _ _ _ emb n σ M hM v hv
-  have hA : ∀ τ, (tauLat emb τ M).FG := fun τ =>
-    (Formalism.L2.DIV.tauLatLattice E K ι n emb τ M hM).fg
+  have hA : ∀ τ, (tauLat emb τ M).FG := by
+    classical
+    intro τ
+    obtain ⟨S, hS⟩ := hM.fg
+    rw [Formalism.L2.DIV.du_tauLat_eq, ← hS, Formalism.L2.DIV.du_tl_span]
+    exact ⟨S.image (Formalism.L2.DIV.du_f (emb τ)), by rw [Finset.coe_image]⟩
   change ((GlobalTheory.FunObj.funEquiv σ).symm v).1 ∈ nabP σ (fun τ => tauLat emb τ M)
   simp only [nabP, transLat, Submodule.mem_iInf, Submodule.mem_comap]
   intro w B hB

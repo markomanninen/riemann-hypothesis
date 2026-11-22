@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.TensorProductTheorem.CuspidalRep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CuspidalTwists.Reduce
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.SiegelHeight
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.CuspidalRep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CuspidalTwists.Reduce
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.SiegelHeight
+
+@[expose] public section
 
 noncomputable section
 

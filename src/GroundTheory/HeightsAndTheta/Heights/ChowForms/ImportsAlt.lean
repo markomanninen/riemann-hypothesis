@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -16,13 +21,6 @@ def AffineChartTrdeg.Statement : Prop :=
         ((d : ℕ) : Cardinal)
 
 section Inhabitants
-
-theorem AffineChartTrdeg.hypotheses_inhabited :
-    IsProjPrime (⊥ : Ideal (MvPolynomial (Fin 1) ℚ)) ∧
-      ringKrullDim (MvPolynomial (Fin 1) ℚ ⧸ (⊥ : Ideal (MvPolynomial (Fin 1) ℚ))) =
-        ((0 + 1 : ℕ) : WithBot ℕ∞) ∧
-      (X 0 : MvPolynomial (Fin 1) ℚ) ∉ (⊥ : Ideal (MvPolynomial (Fin 1) ℚ)) :=
-  ⟨isProjPrime_point ℚ, ringKrullDim_quot_bot ℚ 1, by rw [Ideal.mem_bot]; exact X_ne_zero 0⟩
 
 end Inhabitants
 

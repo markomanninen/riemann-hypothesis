@@ -1,27 +1,33 @@
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsCoreLat
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.EisRegularAtOfEisPoleLE
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.WeilSiegelFormulaUnitary
-import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.SiegelWeilUnitaryConvergent
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqExistsIffDsExists
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticFormUnitaryPairAction
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNsmulIntMemLatO
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SymplOSmulHalf
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralIdempotentMulOfUnitTopBlockReductions
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHatMxHomLatIff
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatLConjIIffHform
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FrameMatrixWeilPairActionLeftInv
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergOperatorConjugateHalfVacuumEqSemichara
+module
+
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsCoreLat
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.EisRegularAtOfEisPoleLE
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.WeilSiegelFormulaUnitary
+public import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.SiegelWeilUnitaryConvergent
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqExistsIffDsExists
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticFormUnitaryPairAction
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNsmulIntMemLatO
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SymplOSmulHalf
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralIdempotentMulOfUnitTopBlockReductions
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHatMxHomLatIff
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatIffOfSelfDual
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatLConjIIffHform
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FrameMatrixWeilPairActionLeftInv
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergOperatorConjugateHalfVacuumEqSemichara
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.Grow
 open GlobalTheory.IndefiniteRowSideFullHecke.LevelPlusSubgroup (coefPlus Cols SizeRows)
@@ -137,15 +143,21 @@ theorem one_sub_unit {𝔪 : Ideal (𝓞 D.host.E)} {Z : Finset (Pl D.host.E)} (
     rw [Matrix.map_apply, Matrix.sub_apply, Matrix.sub_apply, map_sub, Matrix.of_apply, Matrix.one_apply,
       Matrix.one_apply, ← hsB]
     split_ifs <;> simp
-  have hI : IsIntM (1 - B) := by rw [e0]; exact GlobalTheory.HalfUnit.isIntM_map _
-  refine GlobalTheory.T.exists_integral_inverse_at_splitPlaces_of_units Z e he _ (GlobalTheory.HalfUnit.det_mem hI) fun PP hPP => GlobalTheory.HalfUnit.isUnit_res_det PP hI ?_
-  have hr : redM PP (1 - B) = 1 := by
-    rw [e0, GlobalTheory.HalfUnit.redM_map]
+  have hdet : (1 - B).det ∈ Formalism.L2.Herm.intAf D.host.F D.host.E := by
+    rw [e0, ← RingHom.mapMatrix_apply, ← RingHom.map_det]
+    exact ((1 - Matrix.of s).det).2
+  refine GlobalTheory.T.exists_integral_inverse_at_splitPlaces_of_units Z e he _ hdet fun PP hPP => ?_
+  have hm : (1 - Matrix.of s).map (resS D.host.F PP) = 1 := by
     ext i j
     rw [Matrix.map_apply, Matrix.sub_apply, map_sub, Matrix.of_apply, resS_idS (hZ PP hPP) (hs i j), sub_zero,
       Matrix.one_apply, Matrix.one_apply]
     split_ifs <;> simp
-  rw [hr, Matrix.det_one]
+  have hd : (⟨(1 - B).det, hdet⟩ : Formalism.L2.Herm.intAf D.host.F D.host.E) = (1 - Matrix.of s).det := by
+    apply Subtype.ext
+    change (1 - B).det = ((1 - Matrix.of s).det : EAf D)
+    rw [e0, ← RingHom.mapMatrix_apply, ← RingHom.map_det]
+    rfl
+  rw [hd, RingHom.map_det, RingHom.mapMatrix_apply, hm, Matrix.det_one]
   exact isUnit_one
 
 end GlobalTheory.UnitRead
@@ -171,7 +183,7 @@ theorem conj_sub_one {R : Type} [CommRing R] {n : ℕ} (f : R) (b b' G : Matrix 
   rw [Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_one, h, smul_sub]
 
 theorem read_gen {V : HSp D} {Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)}
-    (hlat : Submodule.IsLattice D.host.E Λ) {𝔪 : Ideal (𝓞 D.host.E)} {Z : Finset (Pl D.host.E)}
+    (hlat : Submodule.IsFullLattice D.host.E Λ) {𝔪 : Ideal (𝓞 D.host.E)} {Z : Finset (Pl D.host.E)}
     (hZ : ∀ PP ∈ Z, 𝔪 ≤ PP.asIdeal) {e : AE D} (he : IsIdemSum e Z) (g : GA D V)
     (a₁ a₂ : Mx D V.rank V.rank) (ha₁ : a₁ ∈ GlobalTheory.ChiGrid.hatMx (𝔪 • GlobalTheory.ChiGrid.homLat Λ Λ))
     (ha₂ : a₂ ∈ GlobalTheory.ChiGrid.hatMx (𝔪 • GlobalTheory.ChiGrid.homLat Λ Λ))
@@ -250,7 +262,7 @@ theorem GlobalTheory.UnitRead.unit_read : All fun {D} _ _ _ {G} W _ => ∀ i, i 
       toEAf D e • (((Lev.finE (G.V (.core i)) g)⁻¹).1 *ᵥ x) ∈ Formalism.L2.Herm.hatL (F := D.host.F) (G.Λ (.core i)) ∧
       toEAf D e • ((Lev.finE (G.V (.core i)) g).1 *ᵥ x - x) ∈ Formalism.L2.Herm.hatL (F := D.host.F) (G.modul • G.Λ (.core i)) := by
   intro D _ T L μ0 hL sc G W M hM i hi e he g a₁ ha₁ a₂ ha₂ heq x hx
-  have hlat : Submodule.IsLattice D.host.E (G.Λ (.core i)) := (G.sp.P_is i hi.le).sd.1
+  have hlat : Submodule.IsFullLattice D.host.E (G.Λ (.core i)) := GlobalTheory.AdIsom.selfDual_isFullLattice (G.sp.P_is i hi.le).sd
   have hZ : ∀ PP ∈ G.pl.W0, G.modul ≤ PP.asIdeal := by
     intro PP hPP
     classical

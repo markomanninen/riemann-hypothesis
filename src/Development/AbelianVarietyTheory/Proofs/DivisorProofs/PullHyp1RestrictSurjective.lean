@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry KaehlerDifferential ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.CechDR
 
@@ -36,7 +40,7 @@ theorem pullHyp1_restrict_surjective {R : Type} [CommRing R] {C : Type} [Categor
   have hκ : ∀ ⦃T T' T'' : C⦄ (φ : T ⟶ T') (ψ : T' ⟶ T''),
       D R _ (f.1 T T'' (φ ≫ ψ)) = p1 F ψ (D R _ (f.1 T T' φ)) + D R _ (f.1 T' T'' ψ) := by
     intro T T' T'' φ ψ
-    rw [Z1.comp f φ ψ, map_add, p1_D]
+    rw [Z1.comp f φ ψ, map_add (f := _), p1_D]
   let θ' : ∀ t, Ω[F.obj (G.obj t)⁄R] := fun t ↦ ω' t + D R _ (g t)
   have hθ' : ∀ ⦃t t' : C'⦄ (a : t ⟶ t'),
       D R _ (f.1 _ _ (G.map a)) = θ' t' - p1 F (G.map a) (θ' t) := by
@@ -46,7 +50,7 @@ theorem pullHyp1_restrict_surjective {R : Type} [CommRing R] {C : Type} [Categor
       (sub_eq_iff_eq_add.1 (hga a).symm)
     simp only [θ']
     rw [e1, e2]
-    simp only [map_add, map_sub, p1_D]
+    simp only [map_add (f := _), map_sub, p1_D]
     abel
   obtain ⟨θ, hθ⟩ := hc (fun T T' φ ↦ D R _ (f.1 T T' φ)) hκ θ' hθ'
   have hθ2 : ∀ ⦃T T' : C⦄ (φ : T ⟶ T'), D R _ (f.1 T T' φ) = θ T' - p1 F φ (θ T) := hθ
@@ -67,13 +71,13 @@ theorem pullHyp1_restrict_surjective {R : Type} [CommRing R] {C : Type} [Categor
   have hconn : ∀ ⦃T T' : C⦄ (φ : T ⟶ T'), ω T' = p1 F φ (ω T) + D R _ (f.1 T T' φ) := by
     intro T T' φ
     change θ T' + ψ.1 T' = p1 F φ (θ T + ψ.1 T) + D R _ (f.1 T T' φ)
-    rw [map_add, ← ψ.2 φ, hθ2 φ]; abel
+    rw [map_add (f := _), ← ψ.2 φ, hθ2 φ]; abel
   have hclosed : ∀ T, dOne R _ (ω T) = 0 := by
     intro T
     refine hs T _ fun t u ↦ ?_
     have e : p1 F u (ω T) = ω' t + D R _ (g t) - D R _ (f.1 _ _ u) := by
       rw [eq_sub_iff_add_eq, ← hconn u, hωG]
-    rw [pOm_dOne, e, map_sub, map_add, dOne_D, dOne_D]
+    rw [pOm_dOne, e, map_sub, map_add (f := _), dOne_D, dOne_D]
     have e3 : dOne R _ (ω' t) = 0 := cechDeRhamTotalCocyclesOne.closed c' t
     rw [e3]; simp
   let c : cechDeRhamTotalCocyclesOne F := ⟨(f.1, ω), mem_cechDeRhamTotalCocyclesOne_iff.2 ⟨f.2, hconn, hclosed⟩⟩

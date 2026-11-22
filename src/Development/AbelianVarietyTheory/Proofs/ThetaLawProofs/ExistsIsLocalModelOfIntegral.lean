@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.FundamentalDomains.KeyFormulaPowOfKeyFormula
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsLieBasisIffIsUnitDet
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.ExistsMulPullSec
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.MemNonzeroLocusOfPull
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.FundamentalDomains.KeyFormulaPowOfKeyFormula
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsLieBasisIffIsUnitDet
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.ExistsMulPullSec
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.MemNonzeroLocusOfPull
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -172,7 +176,7 @@ theorem exists_keyIn_pullback (hT : Out.SecTwistSt) {O R : Type} [CommRing O] [C
   have h := isGrpPullback_pullback P.A (spMap f)
   let φ : ((Over.pullback (spMap f)).obj P.A).left ⟶ P.A.left := pullback.fst P.A.hom (spMap f)
   change IsGrpPullback _ _ _ φ at h
-  have hL' := pull_isLB P.isLB φ
+  have hL' := LB.isLB_pull P.isLB φ
   have hw := (isGen_iff _).1 (idIso_isGen hL')
   let P' : Out.PolAV (Sp R) :=
     { A := (Over.pullback (spMap f)).obj P.A

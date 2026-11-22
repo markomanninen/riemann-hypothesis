@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.HasPres
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.ExistsPowUniformizerSmulEqZeroQuotientLattice
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.IsLocallyConstantTorsionPushOfContinuous
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.HasPres
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.ExistsPowUniformizerSmulEqZeroQuotientLattice
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.IsLocallyConstantTorsionPushOfContinuous
+
+@[expose] public section
 
 open Formalism Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations TensorProduct UpperTheory.KN
 
@@ -38,5 +42,5 @@ theorem _root_.UpperTheory.KN.exists_cocycle_torsion_of_hasPres :
       apply Subtype.ext
       simp only [Submodule.coe_add, hmul, hsub]
       abel
-    rw [hf, hf, hf, hsplit, map_add, hφ]
+    rw [hf, hf, hf, hsplit, map_add (f := _), hφ]
     exact add_comm _ _

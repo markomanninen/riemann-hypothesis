@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.MemMCoordIdealIffOfIsWeightedHomogeneous
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.Imports
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.MemMCoordIdealIffOfIsWeightedHomogeneous
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.Imports
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -384,7 +389,7 @@ theorem exists_chartMon_bound {E : Geo.HermLine ι} (hE : IsSmoothHerm E) {d : K
     simp only [w, mul_pow, Finset.prod_mul_distrib, norm_mul, norm_prod, norm_pow]
   have hmon1 : ‖∏ k, w ⟨k, c k⟩ ^ d k‖ ≤ 1 := by
     rw [norm_prod]
-    exact Finset.prod_le_one (fun _ _ ↦ norm_nonneg _) fun k _ ↦ by
+    exact Finset.prod_le_one₀ (fun _ _ ↦ norm_nonneg _) fun k _ ↦ by
       rw [norm_pow]
       exact pow_le_one₀ (norm_nonneg _) (hS_le w hw _)
   have hEw1 : 1 ≤ max M₀ 1 * E.h w := by

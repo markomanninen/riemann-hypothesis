@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
-import Lemmata.GeneralBFact.Imports
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
+public import Lemmata.GeneralBFact.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -114,7 +118,7 @@ theorem lead_unitary_diag {U : Matrix (Fin n) (Fin n) ℂ} (d : Fin n → ℂ) (
       ∑ J : {J : Finset (Fin n) // J.card = i},
         ((‖(U.submatrix (Fin.castLE hi) (J.1.orderEmbOfFin J.2)).det‖ ^ 2 : ℝ) : ℂ) * ∏ j ∈ J.1, d j := by
   unfold lead
-  rw [dif_pos hi]
+  rw [dite_eq_left hi]
   have hsub : (U * Matrix.diagonal d * Uᴴ).submatrix (Fin.castLE hi) (Fin.castLE hi) =
       (U.submatrix (Fin.castLE hi) id * Matrix.diagonal d) * (U.submatrix (Fin.castLE hi) id)ᴴ := by
     ext a b

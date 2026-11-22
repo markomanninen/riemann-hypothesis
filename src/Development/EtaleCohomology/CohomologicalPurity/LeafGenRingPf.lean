@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafClCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafClCut
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,7 @@ theorem approx {A B : Type} [CommRing A] [CommRing B] (φ : A →+* B) (I : Idea
     obtain ⟨c, hc, hxc⟩ := ihx
     obtain ⟨c', hc', hyc⟩ := ihy
     refine ⟨c + c', J.add_mem hc hc', ?_⟩
-    have : x + y - φ (c + c') = (x - φ c) + (y - φ c') := by rw [map_add]; ring
+    have : x + y - φ (c + c') = (x - φ c) + (y - φ c') := by rw [map_add (f := _)]; ring
     rw [this]; exact Ideal.add_mem _ hxc hyc
   | smul b x hx ih =>
     obtain ⟨c, hc, hxc⟩ := ih

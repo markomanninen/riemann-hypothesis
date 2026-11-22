@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.MacdonaldAlternant
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.MacdonaldAlternant
+
+@[expose] public section
 
 noncomputable section
 

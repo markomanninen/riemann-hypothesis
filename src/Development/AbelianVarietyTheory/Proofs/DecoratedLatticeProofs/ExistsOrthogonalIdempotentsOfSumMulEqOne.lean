@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,8 @@ theorem exists_orthogonal_idempotents_of_sum_mul_eq_one (F : Type) [Field F] [Nu
     intro w
     have h1 : ∑ i, (s i).1 w * (f i).1 w = 1 := by
       have := congrArg (infiniteComponent F w) h
-      rw [map_sum, map_one] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_one] at this
       exact this
     by_contra hc
     push_neg at hc
@@ -41,7 +46,8 @@ theorem exists_orthogonal_idempotents_of_sum_mul_eq_one (F : Type) [Field F] [Nu
     intro v
     have h1 : ∑ i, (s i).2 v * (f i).2 v = 1 := by
       have := congrArg (finiteComponent F v) h
-      rw [map_sum, map_one] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_one] at this
       exact this
     by_contra hc
     push_neg at hc

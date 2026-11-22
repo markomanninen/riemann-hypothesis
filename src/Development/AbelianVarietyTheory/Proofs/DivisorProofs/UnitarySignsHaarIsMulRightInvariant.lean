@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ModularCharacterEqOneOnExpHermitian
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ModularCharacterEqOneOnExpHermitian
+
+@[expose] public section
 
 namespace GlobalTheory
 

@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AdelstabL
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureConjugationInvariant
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureExists
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AdelstabL
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureConjugationInvariant
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureExists
+
+@[expose] public section
 
 open NumberField
 open scoped TensorProduct
@@ -26,7 +30,7 @@ theorem inclE_int_mem (c : 𝓞 E) :
 
 theorem vecIncl_add (x y : Fin n → E) :
     vecIncl (F := F) (x + y) = vecIncl (F := F) x + vecIncl (F := F) y := by
-  funext i; simp [vecIncl, map_add]
+  funext i; simp [vecIncl, map_add (f := _)]
 
 theorem vecIncl_zero : vecIncl (F := F) (0 : Fin n → E) = 0 := by
   funext i; simp [vecIncl]

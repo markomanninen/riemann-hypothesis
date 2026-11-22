@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
-import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.ComplexResidueRing
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ReducedFiniteTypeIffTestRing
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsFramedPointBaseChangeAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointBaseChangeUniqueReflIff
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameChangeCommBaseChange
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.FrameRingGlRing
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.EqZeroOfForallLTensorEqZero
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ChartCoverFOfSectionBaseChangeStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
+public import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.ComplexResidueRing
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ReducedFiniteTypeIffTestRing
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsFramedPointBaseChangeAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointBaseChangeUniqueReflIff
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameChangeCommBaseChange
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.FrameRingGlRing
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.EqZeroOfForallLTensorEqZero
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ChartCoverFOfSectionBaseChangeStatement
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -47,7 +51,8 @@ theorem exists_testRing_ext (p : TRing K) :
     rfl
   · have h1 : ∑ i, b i ⊗ₜ[K] v i = (0 : K' ⊗[K] p.R) := by
       have h2 := congrArg e hv
-      rw [map_zero, map_sum] at h2
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_zero, map_sum] at h2
       rw [← h2]
       refine Finset.sum_congr rfl fun i _ => ?_
       show _ = e (algebraMap K' q.R (b i) * e.symm ((1 : K') ⊗ₜ[K] v i))
@@ -55,7 +60,8 @@ theorem exists_testRing_ext (p : TRing K) :
         Algebra.TensorProduct.tmul_mul_tmul]
       simp
     have h3 := congrArg (fun w => TensorProduct.lid K p.R (lam.rTensor p.R w)) h1
-    simpa [map_sum] using h3
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum] using h3
 
 end Algebra
 
@@ -75,69 +81,7 @@ def Compat (S : Type) [CommRing S] [Algebra c.F S] [Algebra c'.F S] : Prop :=
 
 variable {c c'}
 
-theorem embK_inclF (τ : E →+* ℂ) (a : 𝓞 E) : inclF c c' hle (embK c τ a) = embK c' τ a :=
-  Subtype.ext rfl
-
-theorem sOf_res {S : Type} [CommRing S] [Algebra c.F S] [Algebra c'.F S] (h : Compat c c' hle S) :
-    sOf c' S = sOf c S := by
-  unfold sOf
-  congr 1
-  ext a
-  simp only [RingHom.comp_apply]
-  rw [← h]
-  rfl
-
-theorem isEigAt_res {S : Type} [CommRing S] [Algebra c.F S] [Algebra c'.F S] (h : Compat c c' hle S)
-    (τ : E →+* ℂ) (v : Sp (DualNumber S) ⟶ Xo.univ.t.G.left) :
-    IsEigAt (Xo := Xo) c' τ v ↔ IsEigAt (Xo := Xo) c τ v := by
-  have h' : ∀ a : c.F, algebraMap c'.F S (inclF c c' hle a) = algebraMap c.F S a := h
-  unfold IsEigAt
-  simp only [← embK_inclF hle τ, h']
-
-def ptRes {S : Type} [CommRing S] [Algebra c.F S] [Algebra c'.F S] (h : Compat c c' hle S)
-    (y : FrPt Xo c' S) : FrPt Xo c S where
-  x := y.x
-  x_over := y.x_over.trans (sOf_res hle h)
-  u := y.u
-  tan := y.tan
-  eig τ i := (isEigAt_res hle h τ _).1 (y.eig τ i)
-  basis τ w ht he := y.basis τ w ht ((isEigAt_res hle h τ w).2 he)
-  s := y.s
-  gen := y.gen
-
-def ptExt {S : Type} [CommRing S] [Algebra c.F S] [Algebra c'.F S] (h : Compat c c' hle S)
-    (y : FrPt Xo c S) : FrPt Xo c' S where
-  x := y.x
-  x_over := y.x_over.trans (sOf_res hle h).symm
-  u := y.u
-  tan := y.tan
-  eig τ i := (isEigAt_res hle h τ _).2 (y.eig τ i)
-  basis τ w ht he := y.basis τ w ht ((isEigAt_res hle h τ w).1 he)
-  s := y.s
-  gen := y.gen
-
 variable {r : ℕ}
-
-def unifExt (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (σ' : c'.F →+* ℂ) : Unf Xo c' σ' r :=
-  letI : Algebra c.F (CAt σ') := (σ'.comp (inclF c c' hle)).toAlgebra
-  { Comp := (U (σ'.comp (inclF c c' hle))).Comp
-    fin := (U (σ'.comp (inclF c c' hle))).fin
-    X := (U (σ'.comp (inclF c c' hle))).X
-    un := fun k x => ptExt hle (S := CAt σ') (fun _ => rfl) ((U (σ'.comp (inclF c c' hle))).un k x) }
-
-def IsSum {m : ℕ} (f' : Rul Xo c') (as : Fin m → c'.F) (fs : Fin m → Rul Xo c) : Prop :=
-  ∀ (S : Type) [CommRing S] [Algebra c.F S] [Algebra c'.F S] (h : Compat c c' hle S) (y : FrPt Xo c' S),
-    evR Xo c' f' y = ∑ i, algebraMap c'.F S (as i) * evR Xo c (fs i) (ptRes hle h y)
-
-def CuspSums (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) : Prop :=
-  ∀ (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ), ∀ f' ∈ cusp Xo c' (unifExt hle U) a n,
-    ∃ (m : ℕ) (as : Fin m → c'.F) (fs : Fin m → Rul Xo c), (∀ i, fs i ∈ cusp Xo c U a n) ∧ IsSum hle f' as fs
-
-def ActSums {G : Type} [Group G] (act : G → Rul Xo c →ₗ[c.F] Rul Xo c) (act' : G → Rul Xo c' →ₗ[c'.F] Rul Xo c') :
-    Prop :=
-  ∀ (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) (g : G) (m : ℕ) (as : Fin m → c'.F) (fs : Fin m → Rul Xo c) (f' : Rul Xo c'),
-    f' ∈ sec Xo c' a n → (∀ i, fs i ∈ sec Xo c a n) →
-    IsSum hle f' as fs → IsSum hle (act' g f') as (fun i => act g (fs i))
 
 end First
 
@@ -147,12 +91,12 @@ abbrev Natural (c : Coeff l) (f : Rul Xo c) : Prop :=
 abbrev FromT {S : Type} [CommRing S] [Algebra c.F S] (y : FrPt Xo c S) : Prop :=
   FromTest (K := c.F) (fun S _ _ => FrPt Xo c S) (fun φ y z => FrMap φ y z) y
 
-variable (Xo c) in
 
+variable (Xo c) in
 abbrev ValueWD : Prop := EvalWD (K := c.F) (fun S _ _ => FrPt Xo c S) (fun φ y z => FrMap φ y z)
 
-variable (Xo c) in
 
+variable (Xo c) in
 abbrev HasBC : Prop :=
   ∀ (S : Type) [CommRing S] [Algebra c.F S] (T : Type) [CommRing T] [Algebra c.F T] (φ : S →ₐ[c.F] T)
     (y : FrPt Xo c S), ∃ z : FrPt Xo c T, FrMap φ y z
@@ -168,11 +112,11 @@ theorem hasBC_of (hS : Out.SecBaseChangeSt) : HasBC Xo c :=
 theorem evR_spec {S : Type} [CommRing S] [Algebra c.F S] {y : FrPt Xo c S} (hy : FromT y) :
     ∃ (p : TRing c.F) (φ : p.R →ₐ[c.F] S) (y₀ : FrPt Xo c p.R), FrMap φ y₀ y ∧
       ∀ f : Rul Xo c, evR Xo c f y = φ (f p y₀) :=
-  ⟨_, _, _, hy.choose_spec.choose_spec.choose_spec, fun f => by unfold evR evalAt; rw [dif_pos hy]⟩
+  ⟨_, _, _, hy.choose_spec.choose_spec.choose_spec, fun f => by unfold evR evalAt; rw [dite_eq_left hy]⟩
 
 theorem evR_not {S : Type} [CommRing S] [Algebra c.F S] {y : FrPt Xo c S} (hy : ¬ FromT y) (f : Rul Xo c) :
     evR Xo c f y = 0 := by
-  unfold evR evalAt; rw [dif_neg hy]
+  unfold evR evalAt; rw [dite_eq_right hy]
 
 theorem evR_test {f : Rul Xo c} (hf : Natural c f) (p : TRing c.F) (y : FrPt Xo c p.R) : evR Xo c f y = f p y := by
   obtain ⟨q, φ, y₀, h, e⟩ := evR_spec (y := y) ⟨p, AlgHom.id _ _, y, GlobalTheory.Frames.frMapUniq_refl y⟩
@@ -285,16 +229,5 @@ theorem ruleUp_mem_sec (hWD : ValueWD Xo c) (hBC : HasBC Xo c) {a : (E →+* ℂ
     exact e3
 
 variable {r : ℕ}
-
-def ActSumsOn {G : Type} [Group G] (act : G → Rul Xo c →ₗ[c.F] Rul Xo c) (act' : G → Rul Xo c' →ₗ[c'.F] Rul Xo c')
-    (W : Submodule c.F (Rul Xo c)) (W' : Submodule c'.F (Rul Xo c')) : Prop :=
-  ∀ (g : G) (m : ℕ) (as : Fin m → c'.F) (fs : Fin m → Rul Xo c) (f' : Rul Xo c'),
-    f' ∈ W' → (∀ i, fs i ∈ W) → IsSum hle f' as fs → IsSum hle (act' g f') as (fun i => act g (fs i))
-
-def ExtendsOn {G : Type} [Group G] {W : Submodule c.F (Rul Xo c)} {W' : Submodule c'.F (Rul Xo c')}
-    (ρ : G →* Module.End c.F W) (ρ' : G →* Module.End c'.F W') : Prop :=
-  ∀ (g : G) (m : ℕ) (b : Fin m → c'.F) (f : Fin m → W) (f' : W'),
-    IsComb hle b (fun i => (f i : Rul Xo c)) (f' : Rul Xo c') →
-      IsComb hle b (fun i => (ρ g (f i) : Rul Xo c)) (ρ' g f' : Rul Xo c')
 
 end GlobalTheory.CoefChangeCompare

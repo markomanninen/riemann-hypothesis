@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.HeckeTheoremFE
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.HeckeTheoremFE
+
+@[expose] public section
 
 open NumberField InfinitePlace IsDedekindDomain MeasureTheory Complex Topology Filter Set
 open scoped NumberField.AdeleRing ComplexConjugate Real
@@ -97,8 +101,8 @@ theorem tendsto_mul_completedLFunction_one_sub_of_forall :
   rw [completedLFunction]
   ring
 
-omit hτ in
 
+omit hτ in
 theorem residue_one_sub_ne_zero :
     ((normOneClassMeasure K univ).toReal : ℂ) * ((π : ℂ) ^ nrComplexPlaces K)⁻¹ *
       (χ.discrNormConductor : ℂ) ^ ((1 - (τ : ℂ) * I) / 2) *

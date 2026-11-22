@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RealGaussianTraces.TraceAdd
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RealGaussianTraces.TraceAdd
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,9 +23,10 @@ theorem th_half (θ : Ainf F ⊗[F] E →+* ℂ) :
 theorem th_trPair (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) (θ : Ainf F ⊗[F] E →+* ℂ)
     (hc : ∀ z, θ (sigR (Ainf F) σ z) = star (θ z)) {n : ℕ} (S G : Matrix (Fin n) (Fin n) (Ainf F ⊗[F] E)) :
     θ (algebraMap (Ainf F) (Ainf F ⊗[F] E) (trPair (Ainf F) S G)) = (((S.map θ * G.map θ).trace.re : ℝ) : ℂ) := by
-  rw [trPair, map_mul, map_mul, th_half, trace_add σ hCM, map_add, hc]
+  rw [trPair, map_mul, map_mul, th_half, trace_add σ hCM, map_add (f := _), hc]
   have e : θ (∑ a, ∑ c, S a c * G c a) = (S.map θ * G.map θ).trace := by
-    simp [Matrix.trace, Matrix.mul_apply, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.trace, Matrix.mul_apply, map_sum, map_mul]
   rw [e, Complex.star_def, Complex.add_conj]
   push_cast
   ring
@@ -61,7 +66,8 @@ theorem map_isHerm (σ : E →ₐ[F] E) (θ : Ainf F ⊗[F] E →+* ℂ)
 theorem gramX_eq {m n : ℕ} (ε : Fin m → Bool) (x : Matrix (Fin m) (Fin n) ℂ) :
     gramX ε x = xᴴ * Matrix.diagonal (sgn ε) * x := by
   ext i j
-  simp only [gramX, Qp, Qb, evX, map_sub, map_sum, map_mul, MvPolynomial.eval_X, Matrix.mul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [gramX, Qp, Qb, evX, map_sub, map_sum, map_mul, MvPolynomial.eval_X, Matrix.mul_apply,
     Matrix.conjTranspose_apply, Matrix.diagonal_apply, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
     if_true, sgn]
   simp only [Finset.sum_filter, if_true, Bool.false_eq_true, if_false]

@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ValidForConstructedPointClassesEventuallyWorking
-import Formalism.SharpRestriction.DesignExistsOfChoices
-import Formalism.SharpRestriction.SmoothDesignExistence.DesignExistsDes
-import Formalism.SharpRestriction.PageFix
-import Formalism.SharpRestriction.Divisibility.SmallFirstModulusBelowScale
-import Formalism.SharpRestriction.GlobalSchurBounds.WeightVectorSmallSharesEight
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PageDutiesOfClassSeven
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ValidForConstructedPointClassesEventuallyWorking
+public import Formalism.SharpRestriction.DesignExistsOfChoices
+public import Formalism.SharpRestriction.SmoothDesignExistence.DesignExistsDes
+public import Formalism.SharpRestriction.PageFix
+public import Formalism.SharpRestriction.Divisibility.SmallFirstModulusBelowScale
+public import Formalism.SharpRestriction.GlobalSchurBounds.WeightVectorSmallSharesEight
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PageDutiesOfClassSeven
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Pk GlobalTheory.EX GlobalTheory.Fc
 
 namespace GlobalTheory.Fc

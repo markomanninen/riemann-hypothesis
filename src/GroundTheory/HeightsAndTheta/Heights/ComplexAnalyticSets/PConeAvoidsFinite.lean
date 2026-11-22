@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StConeAvoidsFinite
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StConeAvoidsFinite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.ComplexSets
@@ -8,8 +13,8 @@ open MvPolynomial
 
 noncomputable section
 
-attribute [local instance] MvPolynomial.gradedAlgebra in
 
+attribute [local instance] MvPolynomial.gradedAlgebra in
 theorem homogeneousComponent_mul_of_isHomogeneous_right {σ : Type*} (a g : MvPolynomial σ ℂ)
     {e : ℕ} (hg : g.IsHomogeneous e) (k : ℕ) :
     homogeneousComponent k (a * g) = if e ≤ k then homogeneousComponent (k - e) a * g else 0 := by
@@ -38,6 +43,7 @@ theorem ConeAvoidsFinite.proof : ConeAvoidsFinite.Statement := by
   let gen : Finset (MvPolynomial (Fin n) ℂ ⧸ J) := Finset.univ.image fun f : Fin n → Fin N =>
     Ideal.Quotient.mk J (monomial (Finsupp.equivFunOnFinite.symm fun i => (f i : ℕ)) 1)
   let M := Submodule.span (MvPolynomial (Fin d) ℂ) (gen : Set (MvPolynomial (Fin n) ℂ ⧸ J))
+  set_option synthInstance.maxHeartbeats 100000 in
   have hsmul : ∀ (s : MvPolynomial (Fin d) ℂ) (p : MvPolynomial (Fin n) ℂ),
       Ideal.Quotient.mk J p ∈ M → Ideal.Quotient.mk J (pullback A s * p) ∈ M := by
     intro s p hp
@@ -82,7 +88,7 @@ theorem ConeAvoidsFinite.proof : ConeAvoidsFinite.Statement := by
     have hdeg : s.degree = k := by
       have := hq (mem_support_iff.mp hs)
       rw [Finsupp.degree_eq_weight_one]; exact this
-    have hCs : monomial s (coeff s q) = pullback A (C (coeff s q)) * monomial s 1 := by
+    have hCs : monomial s (AddMonoidAlgebra.coeff q s) = pullback A (C (AddMonoidAlgebra.coeff q s)) * monomial s 1 := by
       simp [pullback, C_mul_monomial]
     rw [hCs]
     refine hsmul _ _ ?_
@@ -104,7 +110,8 @@ theorem ConeAvoidsFinite.proof : ConeAvoidsFinite.Statement := by
     obtain ⟨r, a, g, hag⟩ := Submodule.mem_span_set'.1 hmem
     have hm : monomial s (1 : ℂ) = homogeneousComponent k (∑ t, a t • (g t : MvPolynomial (Fin n) ℂ)) := by
       rw [hag, homogeneousComponent_eq_self (isHomogeneous_monomial _ hdeg)]
-    rw [hm, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hm, map_sum]
     exact hsum _ _ fun t _ => by rw [smul_eq_mul]; exact key _ _ (g t).2
   have htop : M = ⊤ := by
     rw [eq_top_iff]

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFockPolynomialIsoUnitaryPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFockPolynomialIsoUnitaryPair
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem ren_monomial (k : ι →₀ ℕ) (c : ℂ) :
   ring
 
 theorem coeff_ren (k : ι →₀ ℕ) (P : MvPolynomial ι ℂ) :
-    coeff (k.mapDomain σ) (ren σ s P) = (k.prod fun v n => s v ^ n) * coeff k P := by
+    AddMonoidAlgebra.coeff (ren σ s P) (k.mapDomain σ) = (k.prod fun v n => s v ^ n) * AddMonoidAlgebra.coeff P k := by
   classical
   induction P using MvPolynomial.induction_on' with
   | monomial m c =>
@@ -49,7 +53,7 @@ theorem coeff_ren (k : ι →₀ ℕ) (P : MvPolynomial ι ℂ) :
     · subst hm
       simp
     · rw [if_neg hm, if_neg (fun h => hm (Finsupp.mapDomain_injective σ.injective h)), mul_zero]
-  | add P Q hP hQ => rw [map_add, coeff_add, coeff_add, hP, hQ, mul_add]
+  | add P Q hP hQ => rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hP, hQ, mul_add]
 
 theorem isHomogeneous_ren {ι κ : Type} (f : ι → κ) (s : ι → ℂ) (d : ℕ) (P : MvPolynomial ι ℂ) (h : P.IsHomogeneous d) :
     (aeval (fun v => s v • (X (f v) : MvPolynomial κ ℂ)) P).IsHomogeneous d := by
@@ -80,8 +84,8 @@ theorem fockIp_ren (hs : ∀ v, s v * conj (s v) = 1) (P Q : MvPolynomial ι ℂ
   have hfwd : ∀ k : ι →₀ ℕ, (k.mapDomain σ).mapDomain σ.symm = k := by
     intro k
     rw [← Finsupp.mapDomain_comp, Equiv.symm_comp_self, Finsupp.mapDomain_id]
-  have hc : ∀ (R : MvPolynomial ι ℂ) (k' : κ →₀ ℕ), coeff k' (ren σ s R) =
-      ((k'.mapDomain σ.symm).prod fun v n => s v ^ n) * coeff (k'.mapDomain σ.symm) R := by
+  have hc : ∀ (R : MvPolynomial ι ℂ) (k' : κ →₀ ℕ), AddMonoidAlgebra.coeff (ren σ s R) k' =
+      ((k'.mapDomain σ.symm).prod fun v n => s v ^ n) * AddMonoidAlgebra.coeff R (k'.mapDomain σ.symm) := by
     intro R k'
     conv_lhs => rw [← hback k']
     exact coeff_ren σ s _ R
@@ -110,14 +114,14 @@ theorem fockIp_ren (hs : ∀ v, s v * conj (s v) = 1) (P Q : MvPolynomial ι ℂ
     have := hpc (k'.mapDomain σ.symm)
     calc _ = (((k'.mapDomain σ.symm).prod fun v n => s v ^ n) *
           conj ((k'.mapDomain σ.symm).prod fun v n => s v ^ n)) *
-          (coeff (k'.mapDomain σ.symm) P * conj (coeff (k'.mapDomain σ.symm) Q) *
+          (AddMonoidAlgebra.coeff P (k'.mapDomain σ.symm) * conj (AddMonoidAlgebra.coeff Q (k'.mapDomain σ.symm)) *
           (((k'.mapDomain σ.symm).prod fun _ e => e.factorial : ℕ) : ℂ)) := by ring
       _ = _ := by rw [this, one_mul]
 
 end General
 
-open GlobalTheory.Chain.RealIt.PolyIso in
 
+open GlobalTheory.Chain.RealIt.PolyIso in
 theorem exists_isPolyIso_graded_isometry : ∀ (p q r s a b : ℕ) (ε : Fin a → Bool) (ε' : Fin b → Bool) (e : Ix p q ≃ Fin a) (e' : Ix r s ≃ Fin b), SignCompat ε e → SignCompat ε' e' → ∃ κ : LPol b a ≃ₗ[ℂ] Pol p q r s, IsPolyIso ε ε' e e' κ ∧ Graded κ ∧ ∀ P Q, fockIp (κ P) (κ Q) = fockIp P Q := by
   intro p q r s a b ε ε' e e' h h'
   refine ⟨(kap ε e e').toLinearEquiv, ⟨fun Z P => fwd_locS h h' Z P, fun Z P => fwd_locT h h' Z P⟩, ?_, ?_⟩

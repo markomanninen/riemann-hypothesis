@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameOnOne
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEqMulOfResSNeOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBaseChangeFiniteAdeleRingEquiv
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFinitePlaceIdempotentBaseChangeAdeles
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeCharEqProdLocalComponentsApproximating
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIdeleExistsLocalApprox
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameOnOne
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEqMulOfResSNeOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBaseChangeFiniteAdeleRingEquiv
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFinitePlaceIdempotentBaseChangeAdeles
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeCharEqProdLocalComponentsApproximating
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIdeleExistsLocalApprox
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem val_lt_one_of_resS_eq_zero {F E : Type} [Field F] [NumberField F] [Field
   · rw [map_zero, map_zero]
     exact zero_lt_one
   · intro x y _ _ hx hy
-    rw [map_add]
+    rw [map_add (f := _)]
     exact v.map_add_lt hx hy
   · intro c x _ hx
     rw [smul_eq_mul, map_mul, map_mul]
@@ -92,7 +96,8 @@ theorem resS_idemSum {D : D7} {e : AE D} {P : Finset (Pl D.host.E)} (he : IsIdem
   refine ⟨ht ▸ (∑ Q, t Q).2, fun Q hQ => ?_⟩
   have e1 : (⟨toEAf D (∑ PP ∈ P, es PP), ht ▸ (∑ Q, t Q).2⟩ : Formalism.L2.Herm.intAf D.host.F D.host.E) = ∑ Q, t Q :=
     Subtype.ext ht
-  rw [e1, map_sum, Finset.sum_eq_single (⟨Q, hQ⟩ : P)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e1, map_sum, Finset.sum_eq_single (⟨Q, hQ⟩ : P)]
   · exact hr ⟨Q, hQ⟩
   · intro R _ hR
     exact resS_idem_eq_zero (hes R R.2) (fun h => hR (Subtype.ext h)) _
@@ -124,7 +129,7 @@ theorem loc_eq_of_tame {L : Type} [Field L] [NumberField L] (χ : Formalism.L2.H
       exact h
   rwa [map_mul, map_inv, mul_inv_eq_one] at h1
 
-theorem tameOn_of_tame : ∀ (D : D7) (c : (AE D)ˣ →* Circle) (χ : Formalism.L2.Host.HChar D.host.E) (e : AE D) (P : Finset (Pl D.host.E)) (cR : ∀ PP : Pl D.host.E, (kP PP)ˣ →* ℂˣ), ChrEq c χ → (∀ PP, χ.TameAt PP) → IsIdemSum e P → (∀ PP, PP ∉ P → (¬ ∃ PP' ∈ P, IsConjPl PP' PP) → χ.UnrAt PP) → (∀ PP ∈ P, IsRes χ PP (cR PP)) → TameOn c e P cR := by
+theorem tameOn_of_tame : ∀ (D : D7) (c : (AE D)ˣ →* Circle) (χ : Formalism.L2.Host.HChar D.host.E) (e : AE D) (P : Finset (Pl D.host.E)) (cR : ∀ PP : Pl D.host.E, (kP PP)ˣ →* ℂˣ), ChrEq c χ → (∀ PP, χ.TameAt PP) → IsIdemSum e P → (∀ PP, PP ∉ P → (¬ ∃ PP' ∈ P, Lev.IsConjPl (D := D) PP' PP) → χ.UnrAt PP) → (∀ PP ∈ P, IsRes χ PP (cR PP)) → TameOn c e P cR := by
   classical
   intro D c χ e P cR hc ht he hunr hres x hx1 hx2 hx3 hxe u hu
   obtain ⟨ι, h1, h2, h3⟩ := GlobalTheory.HostAdeleIso.exists_finiteAdele_equiv D
@@ -185,7 +190,7 @@ theorem tameOn_of_tame : ∀ (D : D7) (c : (AE D)ˣ →* Circle) (χ : Formalism
   refine (Finset.prod_subset Finset.subset_union_left fun Q _ hQ => ?_).symm.trans
     (Finset.prod_congr rfl fun Q hQ => ?_)
   · rw [Units.val_eq_one]
-    by_cases hcj : ∃ PP' ∈ P, IsConjPl PP' Q
+    by_cases hcj : ∃ PP' ∈ P, Lev.IsConjPl (D := D) PP' Q
     · obtain ⟨R, hR, hRQ⟩ := hcj
       have h5 := val_sub_lt_one Valued.v R ((G Q).comp (sigR (Af D.host.F) D.sp.cm.sig))
         (fun y hy => hGint Q _ (GlobalTheory.PlaceIdem.sig_mem D hy))

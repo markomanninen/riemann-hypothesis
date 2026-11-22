@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocCore
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocMore
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.WtTieOf
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocCore
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocMore
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.WtTieOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,8 @@ variable {D : D7} {X : Formalism.L2.Herm.Herm0 D} {u : D.what₂.Word} {w : D.wh
   {C : ColumnChain D.R D.what₂.Tau (D.hcW u)} {A : ColumnsAtT D.R C} {P : PeriodMap D.R C}
   {M : MemberForms D.what₂.LL D.what₂.embLL D.what₂.places D.what₂.Tau (D.hcW u) C A P}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 structure LocTiesR (Fo : FormsIn M (i + 1) hi) (Lc : LocIn X u w hg Lv i Fo.Ch) (e : D.what₂.LL →+* (D.gat u w hg).Kf) (β : Fo.Ch) :
     Prop where
   frRat : FrRatJ (Lc.t β) Lc.B
@@ -31,21 +35,21 @@ structure LocTiesR (Fo : FormsIn M (i + 1) hi) (Lc : LocIn X u w hg Lv i Fo.Ch) 
   chiRat : ChiRatAll (Fo.K β).lev D.what₂.embLL
   chRat : ∀ cl, ∃ r : D.what₂.LL, D.what₂.embLL r = ((Fo.tw β).ch ((Fo.K β).y cl) : ℂ)
 
-set_option maxHeartbeats 8000000 in
 
+set_option maxHeartbeats 8000000 in
 theorem locTies_of {T : ∀ u : D.what₂.Word, Forms0 D u} {Gt : GatTies D} {c : LatCmp D} (K : CmpTied D X T Gt c)
     (ht : Fl.t = D.R.t) (hF : FillTie Gt u w hg Fl) {Fo : FormsIn M (i + 1) hi} {Lc : LocIn X u w hg Lv i Fo.Ch} {β : Fo.Ch}
-    (H : LocTiesR hi Fo Lc (c.embW u w hg) β) : LocTies hi Fo Lc (Gt.gat_pos u w hg) (c.embW u w hg) β where
-  frRat := H.frRat
-  sameU := H.sameU
-  hypT := H.hypT
-  bad_p := H.bad_p
-  std := H.std
-  pos_emb := fun v s x => locJ_pos_emb hi (Lc.t β) Lc.B K v s x
-  wt := StepIn.wt_of (M := M) Gt w hg Lv ht hF i hi (stepInOf hi Fo Lc (Gt.gat_pos u w hg)) rfl β
-  psi := H.psi
-  chiRat := H.chiRat
-  chRat := H.chRat
+    (H : LocTiesR hi Fo Lc (c.embW u w hg) β) : LocTies hi Fo Lc (Gt.gat_pos u w hg) (c.embW u w hg) β :=
+  { frRat := H.frRat
+    sameU := H.sameU
+    hypT := H.hypT
+    bad_p := H.bad_p
+    std := H.std
+    pos_emb := fun v s x => locJ_pos_emb hi (Lc.t β) Lc.B K v s x
+    wt := StepIn.wt_of (M := M) Gt w hg Lv ht hF i hi (stepInOf hi Fo Lc (Gt.gat_pos u w hg)) rfl β
+    psi := H.psi
+    chiRat := H.chiRat
+    chRat := H.chRat }
 
 theorem core_of_R {T : ∀ u : D.what₂.Word, Forms0 D u} {Gt : GatTies D} {c : LatCmp D} (K : CmpTied D X T Gt c)
     (ht : Fl.t = D.R.t) (hF : FillTie Gt u w hg Fl) {Fo : FormsIn M (i + 1) hi} {Lc : LocIn X u w hg Lv i Fo.Ch} {β : Fo.Ch}

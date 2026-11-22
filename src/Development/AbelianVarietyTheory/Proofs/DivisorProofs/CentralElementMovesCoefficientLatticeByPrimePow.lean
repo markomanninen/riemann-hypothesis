@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceOfAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeLowerBlockVectorMultipleKernelTranslate
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AdelicIsometriesObj
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceOfAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeLowerBlockVectorMultipleKernelTranslate
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AdelicIsometriesObj
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option synthInstance.maxHeartbeats 400000
@@ -30,7 +34,7 @@ theorem inCoefLat_pow' (R : RealDat D A Ks) (i : Fin D.R.m) {β : GL (Fin (Vc D 
     ∃ m : ℕ, ∀ l, m ≤ l → ∀ h w, InCoefLat R i h w → InCoefLat R i (h * k) (((p : ℂ) ^ l) • w) := by
   obtain ⟨m₁, h₁⟩ := exists_pow_hat hβ.choose_spec.1 hk ha
   obtain ⟨m₂, h₂⟩ := exists_pow_hat hβ.choose_spec.1 (GlobalTheory.SplitLinear.suppAt_inv hk) ha
-  refine ⟨(m₁ + m₂) * GlobalTheory.NabScale.scaleExp (lamV D i), fun l hl h w hw => ?_⟩
+  refine ⟨(m₁ + m₂) * GlobalTheory.NabScale.scaleExp (Formalism.IndefR.FWT.lamV D i), fun l hl h w hw => ?_⟩
   obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hl
   obtain ⟨gramR, c0R, c0L, hT, P, hP, rfl⟩ := hw
   refine ⟨gramR, c0R, c0L, hT, ?_⟩
@@ -38,7 +42,7 @@ theorem inCoefLat_pow' (R : RealDat D A Ks) (i : Fin D.R.m) {β : GL (Fin (Vc D 
   have e2 := smul_mem_hLat hβ (k := k⁻¹) (by rw [inv_inv]; exact h₁ (m₁ + m₂) (Nat.le_add_right _ _)) (h * k)
   rw [mul_inv_cancel_right] at e2
   have e3 := Submodule.smul_mem _ ((p ^ d : ℕ) : 𝓞 D.what₂.LL)
-    (nabAtr_scale (labLL D) (lamV D i) _ (GlobalTheory.RepsCompare.isLattice_hLat _ _) e1 e2 P hP)
+    (nabAtr_scale (labLL D) (Formalism.IndefR.FWT.lamV D i) _ (by first | exact GlobalTheory.RepsCompare.isLattice_hLat _ _ | exact hLat_full _ _) e1 e2 P hP)
   refine ⟨_, e3, ?_⟩
   rw [Nat.cast_smul_eq_nsmul, map_nsmul, map_smulₛₗ, ← Nat.cast_smul_eq_nsmul ℂ, smul_smul]
   congr 1
@@ -52,7 +56,7 @@ theorem centLat : CentLat := by
   obtain ⟨β, Λ, hβ⟩ := GlobalTheory.AdIsomObj.frames_exist D (Vc D i) 1
   have ha : ∀ PP : Pl D.host.E, (N : 𝓞 D.host.E) ∉ PP.asIdeal →
       GlobalTheory.StdFrames.cpt PP (toEAf D (e + cA D e)) = 0 := fun PP hPP => by
-    rw [RingHom.map_add, RingHom.map_add, (cpt_sum he PP).2 fun h => hPP (hQ PP h), zero_add, GlobalTheory.StdFrames.toEAf_cA]
+    rw [RingHom.map_add (f := _), RingHom.map_add (f := _), (cpt_sum he PP).2 fun h => hPP (hQ PP h), zero_add, GlobalTheory.StdFrames.toEAf_cA]
     exact GlobalTheory.StdFrames.cpt_sg_eq_zero ((cpt_sum he _).2 fun h => hPP ((GlobalTheory.StdFrames.natCast_mem_cP PP N).1 (hQ _ h)))
   obtain ⟨m₁, h₁⟩ := inCoefLat_pow' R i hβ hsupp ha
   obtain ⟨m₂, h₂⟩ := inCoefLat_pow' R i hβ (GlobalTheory.SplitLinear.suppAt_inv hsupp) ha

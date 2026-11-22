@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRingHomPowPrimePow
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PfFacts
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRingHomPowPrimePow
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PfFacts
+
+@[expose] public section
 
 open TensorProduct CrystallineSemistableComparison.D
 open scoped LaurentPolynomial
@@ -40,10 +44,10 @@ theorem pf_tensor : ∀ (p : ℕ) [Fact p.Prime] (A : Type) [CommRing A] (B : Ty
   have hg' : ∀ x, g x = x ^ p := fun x => by rw [hg, pow_one]
   let f : B →+ K →+ B ⊗[A] K :=
     AddMonoidHom.mk' (fun b => AddMonoidHom.mk' (fun k => FB.symm b ⊗ₜ[A] FK.symm k)
-      (fun k k' => by rw [map_add, TensorProduct.tmul_add]))
+      (fun k k' => by rw [map_add (f := _), TensorProduct.tmul_add]))
       (fun b b' => by
         ext k
-        simp only [AddMonoidHom.mk'_apply, AddMonoidHom.add_apply, map_add, TensorProduct.add_tmul])
+        simp only [AddMonoidHom.mk'_apply, AddMonoidHom.add_apply, map_add (f := _), TensorProduct.add_tmul])
   have hf : ∀ (a : A) (b : B) (k : K), f (a • b) k = f b (a • k) := by
     intro a b k
     simp only [f, AddMonoidHom.mk'_apply]
@@ -56,7 +60,7 @@ theorem pf_tensor : ∀ (p : ℕ) [Fact p.Prime] (A : Type) [CommRing A] (B : Ty
       rw [hg', Algebra.TensorProduct.tmul_pow, TensorProduct.liftAddHom_tmul]
       simp only [f, AddMonoidHom.mk'_apply]
       rw [← hFB b, ← hFK k, RingEquiv.symm_apply_apply, RingEquiv.symm_apply_apply]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   have hgfun : (fun x : B ⊗[A] K => x ^ p) = g := funext fun x => (hg' x).symm
   refine ⟨hchar, ?_⟩
   rw [hgfun]
@@ -74,6 +78,6 @@ theorem pf_tensor : ∀ (p : ℕ) [Fact p.Prime] (A : Type) [CommRing A] (B : Ty
   | add x y hx hy =>
     obtain ⟨x', hx'⟩ := hx
     obtain ⟨y', hy'⟩ := hy
-    exact ⟨x' + y', by rw [map_add, hx', hy']⟩
+    exact ⟨x' + y', by rw [map_add (f := _), hx', hy']⟩
 
 end GlobalTheory.CompanionTheory.PerfectRing

@@ -1,5 +1,9 @@
-import GroundTheory.GlobalFields.Adele.Compact
-import Development.WeilBound.CoreStatements.EqualVolumeCompactOpens.DiagMulVecTmul
+module
+
+public import GroundTheory.GlobalFields.Adele.Compact
+public import Development.WeilBound.CoreStatements.EqualVolumeCompactOpens.DiagMulVecTmul
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,8 @@ theorem exists_dualBasis {Λ : Submodule (𝓞 E) (Fin N → E)} (h : IsLat Λ) 
       ext i
       simp [Finset.sum_apply, Pi.single_apply]
     conv_lhs => rw [hx, hgx]
-    rw [map_sum, Submodule.coe_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Submodule.coe_sum]
     refine Finset.sum_congr rfl (fun j _ => ?_)
     rw [hL, IsScalarTower.algebraMap_smul, map_smul]
     rfl
@@ -99,7 +104,8 @@ theorem coordR_neg (x : Fin N → R ⊗[F] E) : coordR l R (-x) = -coordR l R x 
   simp [coordR]
 
 theorem coordR_tmul (a : R) (x : Fin N → E) : coordR l R (fun i => a ⊗ₜ[F] x i) = l x • a := by
-  simp only [coordR, LinearMap.lTensor_tmul, TensorProduct.rid_tmul, ← Finset.sum_smul, LinearMap.comp_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coordR, LinearMap.lTensor_tmul, TensorProduct.rid_tmul, ← Finset.sum_smul, LinearMap.comp_apply,
     ← map_sum]
   congr 2
   exact Finset.univ_sum_single x
@@ -160,7 +166,7 @@ theorem map_coordR {S : Type} [CommRing S] [Algebra F S] (f : R →ₐ[F] S) (z 
           (fun i => Algebra.TensorProduct.map f (AlgHom.id F E) (v i)) := by
       funext i
       simp
-    rw [hz, coordR_add, coordR_add, map_add, hu, hv]
+    rw [hz, coordR_add, coordR_add, map_add (f := _), hu, hv]
 
 end coord
 
@@ -240,8 +246,7 @@ theorem hatCompactOpen : HatCompactOpen := by
   have hΦ : Continuous Φ := IsModuleTopology.continuous_of_linearMap Φ
   let Ψ : (Fin k → FiniteAdeleRing (𝓞 F) F) → (Fin N → Adf F E) := fun a => ∑ j, fun i => a j ⊗ₜ[F] y j i
   have hΨ : Continuous Ψ := by
-    apply continuous_finset_sum
-    intro j _
+    refine continuous_finsetSum _ fun j _ => ?_
     apply continuous_pi
     intro i
     have he : (fun a : Fin k → FiniteAdeleRing (𝓞 F) F => a j ⊗ₜ[F] y j i) =

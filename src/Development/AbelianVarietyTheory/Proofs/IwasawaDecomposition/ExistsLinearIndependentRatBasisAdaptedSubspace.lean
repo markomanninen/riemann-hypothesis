@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAdaptedFamily
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAdaptedFamily
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory

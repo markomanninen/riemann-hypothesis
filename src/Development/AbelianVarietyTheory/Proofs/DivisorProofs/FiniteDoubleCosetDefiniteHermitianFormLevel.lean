@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.TraceDefinitePairsEqAutomorphicTrace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormGroupToPadicPointsDegreeOneEqUnitaryPoints
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieMultLabelRank
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryCentralizerOfCommutePadicPointsSpliStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusExtensionModuleStructure
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TC
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BorelFiniteClassNumberCentraliserTorusStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolynomialZeroLocusCoordinatesStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ClassNumberFiniteHolds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.TraceDefinitePairsEqAutomorphicTrace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormGroupToPadicPointsDegreeOneEqUnitaryPoints
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieMultLabelRank
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryCentralizerOfCommutePadicPointsSpliStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusExtensionModuleStructure
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TC
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BorelFiniteClassNumberCentraliserTorusStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolynomialZeroLocusCoordinatesStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ClassNumberFiniteHolds
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount GlobalTheory.LKCx GlobalTheory.TorCls
 open scoped TensorProduct Classical
 
@@ -38,8 +43,8 @@ theorem finite_of_cover {H : Type} [Group H] (Γ K : Subgroup H) (S : Set H) (hS
   obtain ⟨γ, hγ, s, hs, k, hk, e⟩ := h q.out
   refine ⟨⟨s, hs⟩, ?_⟩
   change DoubleCoset.mk Γ K s = q
-  conv_rhs => rw [← DoubleCoset.out_eq' Γ K q]
-  exact (DoubleCoset.eq Γ K _ _).2 ⟨γ, hγ, k, hk, e⟩
+  conv_rhs => rw [← DoubleCoset.out_eq' q]
+  exact (@DoubleCoset.eq _ _ Γ K _ _).2 ⟨γ, hγ, k, hk, e⟩
 
 theorem cover_of_relIndex {A B : Type} [Group A] [Group B] (Γ : Subgroup (A × B)) (K₁ : Subgroup A)
     (K₂ K' : Subgroup B) (hK : K'.relIndex K₂ ≠ 0) (S : Set (A × B)) (hS : S.Finite)
@@ -164,7 +169,7 @@ theorem finite_doubleCoset : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p), G.a =
       ((L.K.toSubgroup.prod K' : Subgroup (G.GAf × Gr G 1)) : Set (G.GAf × Gr G 1))) := by
   intro p _ G _ L K' hK B
   obtain ⟨S, hS, hcov⟩ := cover_KHT ccf_holds G L B
-  obtain ⟨S', hS', hcov'⟩ := cover_of_relIndex B.emb.range L.K.toSubgroup _ K' hK.1 S hS hcov
+  obtain ⟨S', hS', hcov'⟩ := cover_of_relIndex B.emb.range L.K.toSubgroup _ K' hK.1.relIndex_ne_zero S hS hcov
   exact finite_of_cover _ _ S' hS' hcov'
 
 end GlobalTheory.DefClassFin

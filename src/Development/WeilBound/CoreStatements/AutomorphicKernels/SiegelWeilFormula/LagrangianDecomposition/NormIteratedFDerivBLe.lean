@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.NormAinApplyLe
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.NormAinApplyLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem norm_pder_le (h : SchwartzMap (κ' ⊕ κ'' → W) ℂ) (m : ℕ) (x : �
   rw [e, (Ain s).iteratedFDeriv_comp_right (h.smooth ⊤) x (by exact_mod_cast le_top)]
   refine (ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _).trans ?_
   have hp : ∏ _i : Fin m, ‖(Ain s : (κ' ⊕ κ'' → W) →L[ℝ] (κ' ⊕ κ'' → W))‖ ≤ 1 :=
-    Finset.prod_le_one (fun _ _ => norm_nonneg _) (fun _ _ => norm_Ain_le hs)
+    Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) (fun _ _ => norm_Ain_le hs)
   calc _ ≤ ‖iteratedFDeriv ℝ m h (Ain s x)‖ * 1 := mul_le_mul_of_nonneg_left hp (norm_nonneg _)
     _ = _ := mul_one _
 
@@ -77,7 +81,7 @@ theorem norm_iteratedFDeriv_B_le (β : (κ'' → W) → ℝ) (hβ : ContDiff ℝ
   rw [e, Complex.ofRealLI.norm_iteratedFDeriv_comp_left hβL.contDiffAt (by exact_mod_cast le_top),
     L.iteratedFDeriv_comp_right hβ x (by exact_mod_cast le_top)]
   refine (ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _).trans ?_
-  have hp : ∏ _j : Fin i, ‖L‖ ≤ 1 := Finset.prod_le_one (fun _ _ => norm_nonneg _) (fun _ _ => hL)
+  have hp : ∏ _j : Fin i, ‖L‖ ≤ 1 := Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) (fun _ _ => hL)
   calc _ ≤ ‖iteratedFDeriv ℝ i β (L x)‖ * 1 := mul_le_mul_of_nonneg_left hp (norm_nonneg _)
     _ = _ := mul_one _
 
@@ -125,10 +129,13 @@ theorem near_schwartz (h : SchwartzMap (κ' ⊕ κ'' → W) ℂ) (β : (κ'' →
         fun x => ∫ s in Ioc (0 : ℝ) 1,
           pder m (fun p : (κ' ⊕ κ'' → W) × ℝ => h (Ain p.2 p.1)) (x, s)
       from funext (hIF m)]
+    set_option synthInstance.maxSize 256 in
     exact differentiable_integral_Ioc_of_contDiff _ ((contDiff_pder m hc).of_le (by exact_mod_cast le_top))
   have hB : ContDiff ℝ ∞ (fun y : κ' ⊕ κ'' → W => (β (y ∘ Sum.inr) : ℂ)) := by
     have hL : ContDiff ℝ ∞ (fun y : κ' ⊕ κ'' → W => y ∘ Sum.inr) :=
-      contDiff_pi.2 fun j => contDiff_apply ℝ W (Sum.inr j)
+      contDiff_pi.2 fun j => by
+        simpa only [Function.comp_apply] using
+          (contDiff_apply ℝ (fun _ : κ' ⊕ κ'' => W) (Sum.inr j))
     exact Complex.ofRealCLM.contDiff.comp (hβ.comp hL)
   obtain ⟨R0, hR0⟩ := hβc.isCompact.isBounded.subset_closedBall 0
   have hR : 0 ≤ max R0 0 := le_max_right _ _

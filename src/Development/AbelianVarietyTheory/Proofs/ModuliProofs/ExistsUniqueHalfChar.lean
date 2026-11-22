@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ThetaUnifAVOfLaws
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueRealLinearOfEventuallyAddModDiscrete
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SemicharacterSqEqOneOfSymmetric
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemNonzeroLocusIffPowFn
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsHalfOfSqEqOne
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ThetaUnifAVOfLaws
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueRealLinearOfEventuallyAddModDiscrete
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SemicharacterSqEqOneOfSymmetric
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemNonzeroLocusIffPowFn
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsHalfOfSqEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,7 +93,8 @@ theorem isHolTo_fibre {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V] {S X
     induction hg using Subring.closure_induction with
     | mem x hx =>
       rcases hx with ⟨t, rfl⟩ | ⟨t, rfl⟩
-      · refine ((ha U₁ t).2.mono fun w hw => ⟨hw.1, (hiff w).1 hw.2⟩).congr fun w hw => ?_
+      · refine ((ha U₁ t).2.mono fun w (hw : w ∈ Set.univ ∩ {w | ⊤ ≤ c w ⁻¹ᵁ W}) =>
+          ⟨hw.1, (hiff w).1 hw.2⟩).congr fun w hw => ?_
         exact valAt'_appLE (c w) p U₁ W _ t hw.2
       · refine (differentiableOn_const (valAt' (𝟙 (Sp ℂ)) ⊤ t)).congr fun w hw => ?_
         exact (valAt'_appLE (c w) q ⊤ W _ t hw.2).trans (by rw [hq])

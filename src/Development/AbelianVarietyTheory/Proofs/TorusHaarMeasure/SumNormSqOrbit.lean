@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.SiegelSpaceAlgebraHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfE
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsCompactOfLeSumPnormSq
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.EventuallySplit
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.SiegelSpaceAlgebraHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfE
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsCompactOfLeSumPnormSq
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.EventuallySplit
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates MeasureTheory Topology
 open scoped ContDiff ENNReal Matrix
@@ -121,9 +125,9 @@ theorem exists_flat : LineBundleFirstBoundGlobalGeneration (E := E) → MahlerCo
         (fun x => (∑ k, ‖Xa.w k x‖ ^ 2) / ∑ i : Fin (nd X), ‖sf i.succ x‖ ^ 2) (C \ U) := by
       refine ContinuousOn.div ?_ ?_ fun x hx => (hpos x (hCd hx.1) hx.2).ne'
       · exact continuousOn_finsetSum _ fun k _ =>
-          (((hwsec k).1.continuousOn.mono fun x hx => hCd hx.1).norm.pow 2)
+          (((hwsec k).1.continuousOn.mono fun x (hx : x ∈ C \ U) => hCd hx.1).norm.pow 2)
       · exact continuousOn_finsetSum _ fun k _ =>
-          (((hsec k.succ).1.continuousOn.mono fun x hx => hCd hx.1).norm.pow 2)
+          (((hsec k.succ).1.continuousOn.mono fun x (hx : x ∈ C \ U) => hCd hx.1).norm.pow 2)
     obtain ⟨M, hM⟩ := (hCU.image_of_continuousOn hcont).bddAbove
     refine ⟨max M (|K| * (ε⁻¹ + 1)), fun x hx hxU' => ?_⟩
     rw [sum_pnorm_sq_eq, sum_pnorm_sq_eq, ← mul_assoc]

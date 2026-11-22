@@ -1,11 +1,15 @@
-import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.GrothendieckRingPolynomial.ProdList
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParabolicProductHasFiniteLengthGL
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
-import Mathlib
-import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.ZelevinskyClassification.ZelevinskySegments.SegDefs
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.SocleOfMultiplicityOne
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SegmentRepSplitIntertwiner
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.GlobalTheory.BernsteinZelevinskyFiniteness
+module
+
+public import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.GrothendieckRingPolynomial.ProdList
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParabolicProductHasFiniteLengthGL
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.ZelevinskyClassification.ZelevinskySegments.SegDefs
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.SocleOfMultiplicityOne
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SegmentRepSplitIntertwiner
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.GlobalTheory.BernsteinZelevinskyFiniteness
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,7 @@ theorem bil_single (x y : ι) : bil f (Finsupp.single x 1) (Finsupp.single y 1) 
 end Bil
 
 theorem mulR_eq_bil (a b : GrothGL k) :
-    mulR a b = bil (fun x y : IrrGL k => cl0 (prod₂ (IrrGL.rep x) (IrrGL.rep y))) a b := rfl
+    mulR a b = bil (fun x y : IrrGL (k := k) => cl0 (prod₂ (IrrGL.rep x) (IrrGL.rep y))) a b := rfl
 
 theorem mulR_zero_left (b : GrothGL k) : mulR 0 b = 0 :=
   (mulR_eq_bil _ _).trans (bil_zero_left _ b)
@@ -76,7 +80,7 @@ theorem mulR_add_right (a b b' : GrothGL k) : mulR a (b + b') = mulR a b + mulR 
   (mulR_eq_bil _ _).trans ((bil_add_right _ a b b').trans
     (congrArg₂ (· + ·) (mulR_eq_bil a b).symm (mulR_eq_bil a b').symm))
 
-theorem mulR_sg_sg (x y : IrrGL k) : mulR (sg x) (sg y) = cl0 (prod₂ (IrrGL.rep x) (IrrGL.rep y)) :=
+theorem mulR_sg_sg (x y : IrrGL (k := k)) : mulR (sg x) (sg y) = cl0 (prod₂ (IrrGL.rep x) (IrrGL.rep y)) :=
   (mulR_eq_bil _ _).trans (bil_single _ x y)
 
 section Cl0
@@ -100,7 +104,7 @@ theorem class_congr_equiv {π : Representation ℂ (GL (Fin N) k) V} {τ : Repre
   · rw [class_eq_finite_length_class π h, class_eq_finite_length_class τ (h.of_equiv φ), clsGL_congr φ]
   · have h' : ¬ HasFiniteLength τ := fun h' => h (h'.of_equiv φ.symm)
     unfold cl0
-    rw [dif_neg h, dif_neg h']
+    rw [dite_eq_right h, dite_eq_right h']
 
 theorem class_subsingleton [Subsingleton V] (π : Representation ℂ (GL (Fin N) k) V) : cl0 π = 0 := by
   rw [class_eq_finite_length_class π (GlobalTheory.ProdLength.hasFiniteLength_of_subsingleton π), clsGL]
@@ -330,8 +334,8 @@ theorem class_parabolic_product {V W : Type} [AddCommGroup V] [Module ℂ V] [Ad
 
 end Main
 
-variable (k) in
 
+variable (k) in
 theorem mulCls : MulCls k := by
   intro r t V W _ _ _ _ π₁ π₂ h₁ h₂ s₁ s₂
   exact ⟨GlobalTheory.ProdLength.prod₂_hasFiniteLength GlobalTheory.CompanionTheory.Published.bernsteinZelevinskyFiniteness k r t V W π₁ π₂

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentUpperFacts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentUpperFacts
+
+@[expose] public section
 
 noncomputable section
 

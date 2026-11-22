@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.LowerBoundFree
@@ -53,7 +58,7 @@ theorem norm_det_le_of_loewner {H A : Matrix n n ℂ} {c : ℝ} (hc : 0 < c)
     rw [e1] at p1
     rw [e2] at p2
     have hz : star v ⬝ᵥ (H *ᵥ v) = 0 := le_antisymm (neg_nonneg.mp p1) p2
-    have hw := (h₁.dotProduct_mulVec_zero_iff v).mp (by rw [e1, hz, neg_zero])
+    have hw := (h₁.dotProduct_mulVec_zero_iff).mp (by rw [e1, hz, neg_zero])
     rw [sub_mulVec, smul_mulVec, hAv, smul_zero, zero_sub, neg_eq_zero] at hw
     rw [exists_mulVec_eq_zero_iff.mp ⟨v, hv0, hw⟩, norm_zero]
     exact mul_nonneg (pow_nonneg hc.le _) hre
@@ -104,7 +109,7 @@ theorem norm_det_le_of_loewner {H A : Matrix n n ℂ} {c : ℝ} (hc : 0 < c)
       ring
     have hdM : ‖M.det‖ ≤ c ^ Fintype.card n := by
       rw [hM.det_eq_prod_eigenvalues, norm_prod]
-      refine (Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun i _ => ?_).trans_eq
+      refine (Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun i _ => ?_).trans_eq
         (by rw [Finset.prod_const, Finset.card_univ] : ∏ _i : n, c = c ^ Fintype.card n)
       have := hb i
       rwa [RCLike.norm_ofReal]

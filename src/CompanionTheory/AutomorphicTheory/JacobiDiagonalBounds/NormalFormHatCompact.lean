@@ -1,6 +1,10 @@
-import CompanionTheory.AutomorphicTheory.JacobiDiagonalBounds.NfTieHatSOf
-import CompanionTheory.AutomorphicTheory.DiscreteGroupWaves.NFCoreC
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GaugeConstructionHolds
+module
+
+public import CompanionTheory.AutomorphicTheory.JacobiDiagonalBounds.NfTieHatSOf
+public import CompanionTheory.AutomorphicTheory.DiscreteGroupWaves.NFCoreC
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GaugeConstructionHolds
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.NormalFormRelations
 

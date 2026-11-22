@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHBPts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockTwoDiagonalZeroSize
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AestronglyMeasurableGermIntegrand
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Block3MulBlocks
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHBPts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockTwoDiagonalZeroSize
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AestronglyMeasurableGermIntegrand
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Block3MulBlocks
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem cd_lhOf_entry {p : ℕ} (σ : Equiv.Perm (Fin p)) (a b : Fin p) :
   refine contDiff_const.mul ?_
   refine contDiff_const.add ?_
   split_ifs
-  · exact contDiff_apply ℝ ℂ _
+  · exact contDiff_apply ℝ (fun _ => ℂ) _
   · exact contDiff_const
 
 theorem cd_subS_lhOf {p : ℕ} (σ : Equiv.Perm (Fin p)) :

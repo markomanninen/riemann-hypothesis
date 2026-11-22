@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FramedDConst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanSchwartzGenuineUnitaryRepSignaturesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdelicRepExtendingArchimedeanSchwartzRepStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilOperatorUnitaryAdelicL2Statement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergRhoArchimedeanAdelicPureTensorStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergRhoSplitArchimedeanFiniteStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FramedDConst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanSchwartzGenuineUnitaryRepSignaturesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdelicRepExtendingArchimedeanSchwartzRepStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilOperatorUnitaryAdelicL2Statement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergRhoArchimedeanAdelicPureTensorStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergRhoSplitArchimedeanFiniteStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,8 +35,8 @@ theorem rho_zero' {R : Type} [CommRing R] [Invertible (2 : R)] {W : Type} [AddCo
     d.rho ψ w 0 = 0 := by
   funext x; simp [Darboux.rho, schr]
 
-open scoped Classical in
 
+open scoped Classical in
 theorem genRepD : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (α β κ : Type) [Fintype α]
     [DecidableEq α] [Fintype β] [DecidableEq β] [Fintype κ] (P Q R S : InfinitePlace F → ℕ) (ψ : AddChar (AF F) ℂ)
     (τ : ∀ w : InfinitePlace F, EmbOver E w) (JA : Matrix α α (AE F E)) (JB : Matrix β β (AE F E))
@@ -78,7 +82,7 @@ theorem genRepD : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberFi
       rw [e1, hω, hω]
       exact (hsplit g hg (ρ g f) (ρ g f₁) h ((hR g hg).1 u hu f f₁ hf₁)).symm
     | zero => rw [rho_zero', map_zero, rho_zero']
-    | add x y _ _ hx hy => rw [rho_add', map_add, map_add, hx, hy, rho_add']
+    | add x y _ _ hx hy => rw [rho_add', map_add (f := _), map_add (f := _), hx, hy, rho_add']
     | smul c x _ hx => rw [rho_smul', map_smul, map_smul, hx, rho_smul']
   · unfold schA at hφ
     induction hφ using Submodule.span_induction with
@@ -89,12 +93,16 @@ theorem genRepD : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberFi
       rw [e]
       exact hcont T f
     | zero => simp only [map_zero]; exact continuousOn_const
-    | add x y _ _ hx hy => simp only [map_add]; exact hx.add hy
+    | add x y _ _ hx hy => simp only [map_add (f := _)]; exact hx.add hy
     | smul c x _ hx => simp only [map_smul, smul_eq_mul]; exact continuousOn_const.mul hx
   · intro γ hγ Y hY T h hh l hl
     obtain ⟨L, hL⟩ := hl h hh
     show HasDerivAt (fun t : ℝ => l (ω₀ (γ (Multiplicative.ofAdd t)) (pureA F (Φ T) h))) _ 0
-    simp only [hω, hL]
+    have e : (fun t : ℝ => l (ω₀ (γ (Multiplicative.ofAdd t)) (pureA F (Φ T) h))) =
+        (fun t : ℝ => L (ρ (γ (Multiplicative.ofAdd t)) (Φ T))) := by
+      funext t
+      exact (congrArg l (hω (γ (Multiplicative.ofAdd t)) (Φ T) h)).trans (hL _)
+    rw [e, hL]
     exact hder γ hγ Y hY T L
 
 end GlobalTheory.GenRepD

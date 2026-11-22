@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.FockLatticeFiniteSpanning
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.FockLatticeFiniteSpanning
+
+@[expose] public section
 
 noncomputable section
 

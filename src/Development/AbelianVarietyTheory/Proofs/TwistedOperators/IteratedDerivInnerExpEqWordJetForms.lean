@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FunJetApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FunJetApply
+
+@[expose] public section
+
 open Matrix MeasureTheory Filter Topology Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec GlobalTheory.SphJet
 open scoped InnerProductSpace ComplexOrder Matrix.Norms.L2Operator
 
@@ -56,7 +61,8 @@ theorem deriv_comp_eventually {B : Type} [NormedAddCommGroup B] [NormedSpace ℂ
 theorem Rz_thM {B : Type} [NormedAddCommGroup B] [NormedSpace ℂ B] (ε : Fin n → Bool)
     (X : Matrix (Fin n) (Fin n) ℂ) (g : Matrix (Fin n) (Fin n) ℂ → B) (z : Matrix (Fin n) (Fin n) ℂ) :
     Rz (thM ε X) g z = ∑ p : Fin n × Fin n, X p.1 p.2 • Rz (thE ε p) g z := by
-  simp only [Rz, thM, Finset.mul_sum, map_sum, mul_smul_comm, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Rz, thM, Finset.mul_sum, map_sum, mul_smul_comm, map_smul]
 
 theorem iteratedDeriv_inner_exp : ∀ (V W : Type) [NormedAddCommGroup V] [InnerProductSpace ℂ V] [NormedAddCommGroup W] [InnerProductSpace ℂ W] (n : ℕ) (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ V) [CompleteSpace W] (j : W →ₗᵢ[ℂ] V) (f : Matrix (Fin n) (Fin n) ℂ → (W →L[ℂ] W)), AnalyticAt ℂ f 1 → (∀ l, funJet ε f l = modJet E j l) → ∀ (X : Matrix (Fin n) (Fin n) ℂ) (m : ℕ) (y x : W), iteratedDeriv m (fun t : ℝ => ⟪y, f (NormedSpace.exp ((t : ℂ) • thM ε X)) x⟫_ℂ) 0 = ⟪j y, (actM E X ^ m) (j x)⟫_ℂ := by
   intro V W _ _ _ _ n ε E _ j f hf hJ X m y x
@@ -79,7 +85,8 @@ theorem iteratedDeriv_inner_exp : ∀ (V W : Type) [NormedAddCommGroup V] [Inner
           fun t : ℝ => ∑ p : Fin n × Fin n,
             X p.1 p.2 * L (Rw ε (p :: l) f (NormedSpace.exp ((t : ℂ) • thM ε X))) := by
         funext t
-        rw [Rz_thM, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [Rz_thM, map_sum]
         simp only [map_smul, smul_eq_mul]
         rfl
       rw [e, iteratedDeriv_fun_sum (fun p _ =>
@@ -95,7 +102,8 @@ theorem iteratedDeriv_inner_exp : ∀ (V W : Type) [NormedAddCommGroup V] [Inner
       have e3 : ∀ v : V, actM E X v = ∑ p : Fin n × Fin n, X p.1 p.2 • E p.1 p.2 v := by
         intro v
         simp [actM, Fintype.sum_prod_type, LinearMap.sum_apply]
-      rw [e3, map_sum, inner_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [e3, map_sum, inner_sum]
       simp only [map_smul, inner_smul_right]
   simpa [hL, Rw, ew] using key m []
 

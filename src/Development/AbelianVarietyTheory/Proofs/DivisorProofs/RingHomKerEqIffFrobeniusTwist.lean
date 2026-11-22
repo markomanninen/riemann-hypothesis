@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResidueEqZeroIffV
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResidueEqZeroIffV
+
+@[expose] public section
 
 open Polynomial
 
@@ -7,7 +11,7 @@ namespace GlobalTheory.FrobOrbit
 
 theorem card_le_of_pow_eq_self {k : Type} [Field k] {n : ℕ} (hn : 1 < n) (Z : Finset k)
     (hZ : ∀ x ∈ Z, x ^ n = x) : Z.card ≤ n := by
-  have hd := FiniteField.X_pow_card_sub_X_natDegree_eq k hn
+  have hd := Polynomial.natDegree_X_pow_sub_X (R := k) hn
   have hne : (X ^ n - X : k[X]) ≠ 0 := by
     intro h0
     rw [h0, natDegree_zero] at hd

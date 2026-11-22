@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TensorProduct
 open UpperTheory.Gal.crystallineComparison
@@ -47,7 +51,6 @@ theorem UpperTheory.Gal.crystallineComparison.smoothClosed_of :
           R ⊗[O] Localization.Away (l : O)) := by
     intro s
     induction s with
-    | zero => exact ⟨0, by simp⟩
     | tmul r y =>
       obtain ⟨o, ho⟩ := away_closed O (l : O) hl y.1 y.2
       refine ⟨algebraMap O R o * r, ?_⟩
@@ -58,7 +61,7 @@ theorem UpperTheory.Gal.crystallineComparison.smoothClosed_of :
     | add x y hx hy =>
       obtain ⟨r1, h1⟩ := hx
       obtain ⟨r2, h2⟩ := hy
-      exact ⟨r1 + r2, by simp only [map_add, h1, h2]; rfl⟩
+      exact ⟨r1 + r2, by simp only [map_add (f := _), h1, h2]; rfl⟩
   obtain ⟨r, hr⟩ := key s
   refine ⟨r, ?_⟩
   rw [← e.commutes r, hr, hs]

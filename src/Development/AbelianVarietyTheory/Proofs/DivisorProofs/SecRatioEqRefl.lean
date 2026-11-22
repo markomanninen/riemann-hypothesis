@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalEnd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalEnd
+
+@[expose] public section
 
 noncomputable section
 

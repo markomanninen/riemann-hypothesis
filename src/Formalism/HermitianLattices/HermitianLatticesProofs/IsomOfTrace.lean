@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.HermitianLattices.DefsCS
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.DefsCS
+
+@[expose] public section
 
 open Module
 

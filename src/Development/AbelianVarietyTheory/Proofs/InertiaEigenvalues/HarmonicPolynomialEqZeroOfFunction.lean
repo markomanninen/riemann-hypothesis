@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TranslateMemCoefLatFn
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FsubMinorMinus
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockPolynomialActionOneMulAdjoint
-import Formalism.LocalToGlobal.Columns.FockNormSubstitutionBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TranslateMemCoefLatFn
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FsubMinorMinus
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockPolynomialActionOneMulAdjoint
+public import Formalism.LocalToGlobal.Columns.FockNormSubstitutionBound
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum IsDedekindDomain NumberField Matrix GlobalTheory.ExportSeries
 open Formalism.IndefR.Links (PolF)
@@ -58,7 +62,7 @@ theorem sub_minorPlus {D : D7} {m n : ℕ} (ε : D.what₂.Tau → Fin m → Boo
   have hsm : s ≤ m := by omega
   have hv : ∀ α β : Fin s, (varF τ β α : PolF D m n) =
       MvPolynomial.X (τ, Fin.castLE hsm β, Fin.castLE hsn α) := fun α β => by
-    rw [varF, dif_pos ⟨by omega, by omega⟩]; rfl
+    rw [varF, dite_eq_left ⟨by omega, by omega⟩]; rfl
   have hui := inv_tri (u τ) hu.1 _ (lo_tri hu.2)
   have key := det_subst (R := PolF D m n) (fun a b => MvPolynomial.X (τ, a, b)) (k τ) (u τ)⁻¹
     (Fin.castLE hsm) (Fin.castLE hsn) (Fin.castLE_injective _) (Fin.castLE_injective _)
@@ -69,11 +73,11 @@ theorem sub_minorPlus {D : D7} {m n : ℕ} (ε : D.what₂.Tau → Fin m → Boo
     (fun α b h => by
       have := hui _ _ h
       exact ⟨⟨b, by simp at this; omega⟩, rfl⟩)
-  rw [Matrix.det_of_upperTriangular (M := (k τ).submatrix _ _) (fun i j hij => by
+  rw [Matrix.det_of_isUpperTriangular (M := (k τ).submatrix _ _) (fun i j hij => by
       by_contra h
       have := (hk _ _ h).1 (by simp; omega)
       exact absurd hij (by simpa using this)),
-    Matrix.det_of_lowerTriangular (((u τ)⁻¹).submatrix _ _) (fun i j hij => by
+    Matrix.det_of_isLowerTriangular (((u τ)⁻¹).submatrix _ _) (fun i j hij => by
       by_contra h
       have := hui _ _ h
       exact absurd hij (by simpa using this)), ← Finset.prod_mul_distrib] at key
@@ -98,7 +102,7 @@ theorem sub_minorMinus {D : D7} {m n : ℕ} (ε : D.what₂.Tau → Fin m → Bo
   let f : Fin s → Fin n := fun α => ⟨n - s + α, by omega⟩
   have hv : ∀ α β : Fin s, (varF τ (p + β) (n - s + α) : PolF D m n) =
       MvPolynomial.X (τ, e β, f α) := fun α β => by
-    rw [varF, dif_pos ⟨by omega, by omega⟩]
+    rw [varF, dite_eq_left ⟨by omega, by omega⟩]
   let w : Fin m → ℤ := fun a => if (a : ℕ) < p then ((a : ℕ) : ℤ) else 2 * m - ((a : ℕ) : ℤ)
   have hw : Function.Injective w := fun a b h => by
     simp only [w] at h
@@ -121,11 +125,11 @@ theorem sub_minorMinus {D : D7} {m n : ℕ} (ε : D.what₂.Tau → Fin m → Bo
       have := lo_tri hu.2 _ _ h
       simp only [f] at this
       exact ⟨⟨b - (n - s), by omega⟩, Fin.ext (by simp only [f]; omega)⟩)
-  rw [Matrix.det_of_upperTriangular (M := ((k τ)⁻¹)ᵀ.submatrix _ _) (fun i j hij => by
+  rw [Matrix.det_of_isUpperTriangular (M := ((k τ)⁻¹)ᵀ.submatrix _ _) (fun i j hij => by
       by_contra h
       have := (hki _ _ h).2
       exact absurd hij (by simpa [e] using this)),
-    Matrix.det_of_upperTriangular (M := (u τ)ᵀ.submatrix _ _) (fun i j hij => by
+    Matrix.det_of_isUpperTriangular (M := (u τ)ᵀ.submatrix _ _) (fun i j hij => by
       by_contra h
       have := lo_tri hu.2 _ _ h
       exact absurd hij (by simpa [f] using this))] at key
@@ -225,14 +229,14 @@ theorem up_inv {n : ℕ} (M : GL (Fin n) ℂ) (h0 : ∀ (a b : Fin n), b < a →
 theorem aeval_varF_plus {D : D7} {m n : ℕ} (p : D.what₂.Tau → ℕ) (y : GLR D n) (τ : D.what₂.Tau) (i c : ℕ) (hi : i < p τ)
     (him : i < m) (hin : i < n) (hc : c < n) :
     MvPolynomial.aeval (fockPt p y) (varF τ i c : PolF D m n) = (y τ).val ⟨c, hc⟩ ⟨i, hin⟩ := by
-  rw [varF, dif_pos ⟨him, hc⟩, MvPolynomial.aeval_X]
+  rw [varF, dite_eq_left ⟨him, hc⟩, MvPolynomial.aeval_X]
   simp [fockPt, hi, hin]
 
 theorem aeval_varF_minus {D : D7} {m n : ℕ} (p : D.what₂.Tau → ℕ) (y : GLR D n) (τ : D.what₂.Tau) (j c : ℕ)
     (him : p τ + j < m) (hjn : j < n) (hc : c < n) :
     MvPolynomial.aeval (fockPt p y) (varF τ (p τ + j) c : PolF D m n) =
       ((y τ)⁻¹).val (Fin.rev ⟨j, hjn⟩) ⟨c, hc⟩ := by
-  rw [varF, dif_pos ⟨him, hc⟩, MvPolynomial.aeval_X]
+  rw [varF, dite_eq_left ⟨him, hc⟩, MvPolynomial.aeval_X]
   simp [fockPt, hjn]
 
 theorem val_plus {D : D7} {m n : ℕ} (p : D.what₂.Tau → ℕ) (y : GLR D n) (τ : D.what₂.Tau) (k : ℕ) (hk : k ≤ p τ) (hkm : k ≤ m)
@@ -244,7 +248,7 @@ theorem val_plus {D : D7} {m n : ℕ} (p : D.what₂.Tau → ℕ) (y : GLR D n) 
     ext α β
     simp only [AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, Matrix.submatrix_apply]
     exact aeval_varF_plus p y τ β α (by omega) (by omega) (by omega) (by omega)
-  rw [minorPlus, AlgHom.map_det, e, Matrix.det_of_upperTriangular (M := ((y τ).val).submatrix (Fin.castLE hkn) (Fin.castLE hkn))
+  rw [minorPlus, AlgHom.map_det, e, Matrix.det_of_isUpperTriangular (M := ((y τ).val).submatrix (Fin.castLE hkn) (Fin.castLE hkn))
     (fun i j hij => h0 _ _ (by simpa using hij))]
   exact Finset.prod_eq_one fun a _ => h1 _
 
@@ -269,7 +273,7 @@ theorem val_minus {D : D7} {m n : ℕ} (p : D.what₂.Tau → ℕ) (y : GLR D n)
       simp only [f, Fin.revPerm_apply, Fin.val_rev]
       omega)]
   have hN : N.det = 1 := by
-    rw [Matrix.det_of_lowerTriangular N (fun i j hij => h0 _ _ (by
+    rw [Matrix.det_of_isLowerTriangular N (fun i j hij => h0 _ _ (by
       have : i < j := by simpa using hij
       simp only [f, Fin.lt_def] at this ⊢
       omega))]
@@ -321,7 +325,7 @@ theorem exists_ul {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ) (hA : A.det ≠ 0)
     simp [v, not_lt.2 hab.le, hab.ne']
   have h1 : ∀ a, v a a = 1 := fun a => by simp [v]
   have hdet : v.det ≠ 0 := by
-    rw [Matrix.det_of_upperTriangular (M := v) (fun i j hij => h0 _ _ (by simpa using hij))]
+    rw [Matrix.det_of_isUpperTriangular (M := v) (fun i j hij => h0 _ _ (by simpa using hij))]
     simp [h1]
   have hL : ∀ i c : Fin n, i < c → (v * A) i c = 0 := fun i c hic => by
     have hv : ∀ j, v i j * A j c = (if h : i < j then r i ⟨j, h⟩ * A j c else 0) + (if i = j then A j c else 0) := fun j => by
@@ -333,8 +337,8 @@ theorem exists_ul {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ) (hA : A.det ≠ 0)
     simp only [Matrix.vecMul, dotProduct, T, Matrix.submatrix_apply, Pi.neg_apply] at e
     have e2 : (∑ x, if h : i < x then r i ⟨x, h⟩ * A x c else 0) = ∑ j : {j : Fin n // i < j}, r i j * A j c := by
       rw [← Finset.sum_subset (Finset.filter_subset (fun x => i < x) Finset.univ) (fun x _ hx => by
-        rw [dif_neg (by simpa using hx)]), Finset.sum_subtype (p := fun x => i < x) _ (fun x => by simp)]
-      exact Finset.sum_congr rfl fun j _ => dif_pos j.2
+        rw [dite_eq_right (by simpa using hx)]), Finset.sum_subtype (p := fun x => i < x) _ (fun x => by simp)]
+      exact Finset.sum_congr rfl fun j _ => dite_eq_left j.2
     rw [Matrix.mul_apply, Finset.sum_congr rfl fun j _ => hv j, Finset.sum_add_distrib, Finset.sum_ite_eq, e2, e]
     simp
   let V : GL (Fin n) ℂ := Matrix.GeneralLinearGroup.mkOfDetNeZero v hdet
@@ -354,18 +358,19 @@ theorem continuousAt_lsub {σ : Type} [Fintype σ] (M : ℂ → Matrix σ σ ℂ
     exact continuousAt_const
   | add p q hp hq =>
     intro ξ
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact (hp ξ).add (hq ξ)
   | mul_X p v hp =>
     intro ξ
     have e : ∀ t, ξ (FMul.lsub (M t) (p * MvPolynomial.X v)) =
         ∑ w, M t w v * (ξ ∘ₗ LinearMap.mulRight ℂ (MvPolynomial.X w)) (FMul.lsub (M t) p) := fun t => by
-      rw [map_mul, FMul.lsub_X, Finset.mul_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_mul, FMul.lsub_X, Finset.mul_sum, map_sum]
       refine Finset.sum_congr rfl fun w _ => ?_
       rw [mul_left_comm, ← MvPolynomial.smul_eq_C_mul, map_smul, smul_eq_mul]
       rfl
     simp only [e]
-    exact tendsto_finset_sum _ fun w _ => (hM w v).mul (hp _)
+    exact tendsto_finsetSum _ fun w _ => (hM w v).mul (hp _)
 
 theorem ev_det {ι : Type} [Fintype ι] [DecidableEq ι] (X Y : Matrix ι ι ℂ) (hY : Y.det ≠ 0) :
     ∀ᶠ t in nhdsWithin (0 : ℂ) {0}ᶜ, ((1 - t) • X + t • Y).det ≠ 0 := by
@@ -484,7 +489,7 @@ theorem orth_end {V G : Type} [AddCommGroup V] [Module ℂ V] [Group G] [Star G]
     | mem _ h => obtain ⟨g, rfl⟩ := h; exact hcmp g
     | zero => simp
     | add x y _ _ h1 h2 =>
-      rw [map_add, map_add, mul_add, mul_add, add_sub_add_comm, h1, h2, add_zero]
+      rw [map_add (f := _), map_add (f := _), mul_add, mul_add, add_sub_add_comm, h1, h2, add_zero]
     | smul c x _ h1 =>
       rw [map_smul, map_smul, smul_eq_mul, smul_eq_mul, mul_left_comm, mul_left_comm A, ← mul_sub, h1, mul_zero]
   have hstab : ∀ g, ∀ Q ∈ Submodule.span ℂ (Set.range fun g => T g Δ),
@@ -504,7 +509,7 @@ theorem orth_end {V G : Type} [AddCommGroup V] [Module ℂ V] [Group G] [Star G]
     induction hQ using Submodule.span_induction with
     | mem _ h => obtain ⟨g, rfl⟩ := h; beta_reduce; rw [hadj]; exact hz _
     | zero => simp
-    | add x y _ _ h1 h2 => rw [map_add, LinearMap.add_apply, h1, h2, add_zero]
+    | add x y _ _ h1 h2 => rw [map_add (f := _), LinearMap.add_apply, h1, h2, add_zero]
     | smul c x _ h1 => rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, h1, smul_zero]
   exact hpos _ (hall P hP)
 

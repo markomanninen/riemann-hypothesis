@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.DcLocal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.LocalLevelOutsideSigma
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.FinFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.DcLocal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.LocalLevelOutsideSigma
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.FinFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ private theorem det_places (x : UA L 2) (hx : x ∈ SUA L) (u : Plc L) : (mL u x
     congrArg Units.val (show Matrix.GeneralLinearGroup.det (x : GL (Fin 2) (Ad L)) = 1 from hx)
   rw [det_cLoc, h, map_one, map_one]
 
-private theorem mem_SUA_of_places (x : UA L 2) (hx : x ∈ finU L 2) (h : ∀ u : Plc L, (mL u x).det = 1) : x ∈ SUA L := by
+private theorem mem_SUA_of_places (x : UA L 2) (hx : x ∈ finU (E := L) (n := 2)) (h : ∀ u : Plc L, (mL u x).det = 1) : x ∈ SUA L := by
   show Matrix.GeneralLinearGroup.det (x : GL (Fin 2) (Ad L)) = 1
   apply Units.ext
   show ((x : GL (Fin 2) (Ad L)) : Matrix (Fin 2) (Fin 2) (Ad L)).det = 1
@@ -103,7 +107,7 @@ private theorem dc_eq_of_local {G M Gl V : Type} [Group G] [Group M] [Group Gl] 
     (fun u hu => ⟨Subgroup.mem_subgroupOf.2 (h₂ u hu), hcm u⟩) (fun h hh => h₁₂ (hJ₁ h hh)) _ hfin
   rw [hgj, k₁.2 ψ fun u hu => hψ u (h₁₂ hu), k₂.2 ψ hψ]
 
-private theorem sec_cLoc (w : Plc L) (h : IsSplitAt w) (x : UA L 2) (hx : x ∈ finU L 2) (u : Plc L) (hu : un u = un w) :
+private theorem sec_cLoc (w : Plc L) (h : IsSplitAt w) (x : UA L 2) (hx : x ∈ finU (E := L) (n := 2)) (u : Plc L) (hu : un u = un w) :
     cLoc u (secW 2 w (cLoc w x)) = cLoc u x := by
   obtain ⟨f1, -, -, -, -, -, f7, -⟩ := uaFacts L 2
   obtain ⟨a, ha, hau⟩ := f7 w x hx
@@ -116,10 +120,10 @@ private theorem sec_cLoc (w : Plc L) (h : IsSplitAt w) (x : UA L 2) (hx : x ∈ 
 private theorem loc_off (w : Plc L) (x : UA L 2) (hx : x ∈ locU 2 w) (u : Plc L) (hu : un u ≠ un w) : cLoc u x = 1 :=
   Subgroup.mem_iInf.1 (Subgroup.mem_iInf.1 (Subgroup.mem_inf.1 hx).2 u) hu
 
-private theorem sec_mem (w : Plc L) (h : IsSplitAt w) (x : UA L 2) (hx : x ∈ finU L 2 ⊓ SUA L) :
-    secW 2 w (cLoc w x) ∈ finU L 2 ⊓ SUA L := by
+private theorem sec_mem (w : Plc L) (h : IsSplitAt w) (x : UA L 2) (hx : x ∈ finU (E := L) (n := 2) ⊓ SUA L) :
+    secW 2 w (cLoc w x) ∈ finU (E := L) (n := 2) ⊓ SUA L := by
   have hl : secW 2 w (cLoc w x) ∈ locU 2 w := ((uaFacts L 2).1 w h).1 _
-  have hf : secW 2 w (cLoc w x) ∈ finU L 2 := (Subgroup.mem_inf.1 hl).1
+  have hf : secW 2 w (cLoc w x) ∈ finU (E := L) (n := 2) := (Subgroup.mem_inf.1 hl).1
   refine Subgroup.mem_inf.2 ⟨hf, mem_SUA_of_places _ hf fun u => ?_⟩
   by_cases hu : un u = un w
   · have := det_places x (Subgroup.mem_inf.1 hx).2 u
@@ -127,7 +131,7 @@ private theorem sec_mem (w : Plc L) (h : IsSplitAt w) (x : UA L 2) (hx : x ∈ f
   · rw [mL, loc_off w _ hl u hu]
     simp
 
-private theorem sec_comm (w : Plc L) (h : IsSplitAt w) (x : UA L 2) (hx : x ∈ finU L 2) (a : GL (Fin 2) (Kw w)) :
+private theorem sec_comm (w : Plc L) (h : IsSplitAt w) (x : UA L 2) (hx : x ∈ finU (E := L) (n := 2)) (a : GL (Fin 2) (Kw w)) :
     Commute (secW 2 w a) (x * (secW 2 w (cLoc w x))⁻¹) := by
   refine (uaFacts L 2).2.1 w _ (((uaFacts L 2).1 w h).1 a) _ fun u hu => ?_
   rw [map_mul, map_inv, sec_cLoc w h x hx u hu, mul_inv_cancel]
@@ -136,7 +140,7 @@ private theorem eD_congr {K : Type} [Field K] {Δ s s' : K} (a : s * s = Δ) (b 
   subst h; rfl
 
 private theorem iw_KGL (R : RingBr L) (w : Plc L) (Sp : R.Split w) (a : GL (Fin 2) (Kw w)) (ha : a ∈ (iw w).J 2) :
-    a ∈ GlobalTheory.LFun.KGL w 2 := by
+    a ∈ GlobalTheory.LFun.KGL w (n := 2) := by
   let g₀ : GL (Fin 2) (Kv (un w)) := Matrix.GeneralLinearGroup.map (Sp.i.symm : Kw w →+* Kv (un w)) a
   have e : Matrix.GeneralLinearGroup.map (Sp.i : Kv (un w) →+* Kw w) g₀ = a := by
     ext i j
@@ -151,7 +155,7 @@ private theorem sec_lev (R : RingBr L) (w : Plc L) (h : IsSplitAt w) (Sp : R.Spl
   have hc : cLoc w (secW 2 w a) = a := ((uaFacts L 2).1 w h).2.1 a
   have hK : secW 2 w a ∈ Kall L 2 := by
     refine Subgroup.mem_inf.2 ⟨(Subgroup.mem_inf.1 hl).1, Subgroup.mem_iInf.2 fun u => ?_⟩
-    show cLoc u (secW 2 w a) ∈ GlobalTheory.LFun.KGL u 2
+    show cLoc u (secW 2 w a) ∈ GlobalTheory.LFun.KGL u (n := 2)
     by_cases hu : un u = un w
     · exact (uaFacts L 2).2.2.2.2.2.2.2 w h _ (by rw [hc]; exact iw_KGL R w Sp a ha) u hu
     · rw [loc_off w _ hl u hu]
@@ -200,8 +204,8 @@ private theorem sLev0 {L : Type} [Field L] [NumberField L] [IsCMField L] (B : Br
     (y : DA B.Δ) (hy : A.dat.Off y) (hlev : ∀ g : SA B.Δ, (B.bS g : UA L 2) ∈ lev U S₁ iw → g ∈ A.lvS y)
     (V : Type) [AddCommGroup V] [Module ℂ V] (ψ : SA B.Δ → V) (hψ : ∀ u ∈ A.lvS y, ∀ g, ψ (g * u) = ψ g) (g : SA B.Δ)
     (d : Fin 2 → (Kw w)ˣ) (hg : (B.bS g : UA L 2) = secW 2 w (Sig.dg d)) :
-    dcF (((lev U S₁ iw).subgroupOf (finU L 2 ⊓ SUA L)).comap B.bS.toMonoidHom) g ψ = dcF (A.lvS y) g ψ :=
-  genL A y (finU L 2 ⊓ SUA L) B.bS (secW 2 w) (cLoc w) ((uaFacts L 2).1 w h).2.1 (sec_mem w h)
+    dcF (((lev U S₁ iw).subgroupOf (finU (E := L) (n := 2) ⊓ SUA L)).comap B.bS.toMonoidHom) g ψ = dcF (A.lvS y) g ψ :=
+  genL A y (finU (E := L) (n := 2) ⊓ SUA L) B.bS (secW 2 w) (cLoc w) ((uaFacts L 2).1 w h).2.1 (sec_mem w h)
     (fun x hx a _ => sec_comm w h x hx.1 a) ((iw w).J 2) (lev U S₁ iw)
     (fun _ hu => Subgroup.mem_iInf.1 (Subgroup.mem_iInf.1 hu.2 w) hwS₁)
     (lvS_loc B hB T S VL A hA hF w hwS h hiw y hy)

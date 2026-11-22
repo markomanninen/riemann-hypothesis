@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.BlockSubstitutionEmbedding
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.BlockSubstitutionEmbedding
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,8 @@ theorem caseN (t0 : Fin (r + 1 + 1)) (h0 : midOf t0 = none) (c : K) (b : Bool)
   · rintro ⟨a, t⟩
     rcases midOf_cases t with ⟨j, rfl⟩ | ⟨ht, -⟩
     · have hne : ∀ i : Fin r, midI r i ≠ t0 := fun i => midOf_none_ne h0 i
-      simp [th_X_mid, psiB_X, scCol_X, hne, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [th_X_mid, psiB_X, scCol_X, hne, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [psiB_C]
     · simp [th_X_none _ _ _ _ _ ht, psiB_X, scCol_X]
@@ -42,7 +47,7 @@ def thR (K : Type) [Field K] (r : ℕ) (ρ : MvPolynomial (Fin r × Fin r) K →
 
 theorem thR_coeff (ρ : MvPolynomial (Fin r × Fin r) K →ₐ[K] MvPolynomial (Fin r × Fin r) K) (b : Bool)
     (v : MvPolynomial (Fin (r + 1 + 1) × Fin (r + 1 + 1)) K) (u : Fin (r + 1 + 1) × Fin (r + 1 + 1) →₀ ℕ) :
-    coeff u (thR K r ρ b v) = blockEmb K b (ρ (coeff u (subY K r v))) := by
+    AddMonoidAlgebra.coeff (thR K r ρ b v) u = blockEmb K b (ρ (AddMonoidAlgebra.coeff (subY K r v) u)) := by
   simp only [thR, AlgHom.comp_apply, mAH_coeff]
 
 theorem caseM (ψ : MvPolynomial (Fin (r + 1 + 1) × Fin (r + 1 + 1)) K →ₐ[K] MvPolynomial (Fin (r + 1 + 1) × Fin (r + 1 + 1)) K)
@@ -65,7 +70,8 @@ theorem caseM (ψ : MvPolynomial (Fin (r + 1 + 1) × Fin (r + 1 + 1)) K →ₐ[K
     simp
   · rintro ⟨a, t⟩
     rcases midOf_cases t with ⟨j, rfl⟩ | ⟨ht, -⟩
-    · simp only [RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, th_X_mid, map_sum, map_mul]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        simp only [RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, th_X_mid, map_sum, map_mul]
       simp only [thR, AlgHom.comp_apply, mAH_subY_mid]
       rw [← hgen b a j]
       refine Finset.sum_congr rfl fun i _ => ?_
@@ -84,16 +90,17 @@ theorem lam_caseM (L : MvPolynomial (Bool × (Fin r × Fin r)) K →ₗ[K] K) (N
         ∑ i : Fin r, C (blockEmb K b (rowAct K l (X (i, j')))) * X (a, midI r i))
     (hnone : ∀ a t, midOf t = none → ψ (X (a, t)) = X (a, t))
     (v t : MvPolynomial (Fin (r + 1 + 1) × Fin (r + 1 + 1)) K)
-    (hv : ∀ u, coeff u (subY K r v) ∈ dualWeyl K r r α) (ht : ∀ u, coeff u (subY K r t) ∈ dualWeyl K r r α') :
+    (hv : ∀ u, AddMonoidAlgebra.coeff (subY K r v) u ∈ dualWeyl K r r α) (ht : ∀ u, AddMonoidAlgebra.coeff (subY K r t) u ∈ dualWeyl K r r α') :
     ψ (lamOf K r L (blockEmb K true v * blockEmb K false t)) =
       l.det ^ N • lamOf K r L (blockEmb K true v * blockEmb K false t) := by
   have hc : ∀ (h : MvPolynomial (Fin (r + 1 + 1) × Fin (r + 1 + 1)) (MvPolynomial (Bool × (Fin r × Fin r)) K))
-      (u : Fin (r + 1 + 1) × Fin (r + 1 + 1) →₀ ℕ), coeff u (lcoef L h) = L (coeff u h) := by
+      (u : Fin (r + 1 + 1) × Fin (r + 1 + 1) →₀ ℕ), AddMonoidAlgebra.coeff (lcoef L h) u = L (AddMonoidAlgebra.coeff h u) := by
     intro h u
     exact coeff_sum_monomial_linear L h u
   rw [lam_eq, lcoef_comm, map_mul, caseM ψ (rowAct K l) hgen hnone, caseM ψ (rowAct K l) hgen hnone]
   ext u
-  rw [coeff_smul, hc, hc, coeff_mul, coeff_mul, map_sum, map_sum, smul_eq_mul, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coeff_smul, hc, hc, coeff_mul, coeff_mul, map_sum, map_sum, smul_eq_mul, Finset.mul_sum]
   refine Finset.sum_congr rfl fun p _ => ?_
   rw [thR_coeff, thR_coeff, th_coeff, th_coeff]
   exact hInv l hl _ (hv p.1) _ (ht p.2)
@@ -101,7 +108,7 @@ theorem lam_caseM (L : MvPolynomial (Bool × (Fin r × Fin r)) K →ₗ[K] K) (N
 theorem lam_scaleM (L : MvPolynomial (Bool × (Fin r × Fin r)) K →ₗ[K] K) (N : ℕ) (α α' : Fin r → ℕ)
     (hInv : PhInv K r N α α' L) (j : Fin r) (c : K) (hc : c ≠ 0)
     (v t : MvPolynomial (Fin (r + 1 + 1) × Fin (r + 1 + 1)) K)
-    (hv : ∀ u, coeff u (subY K r v) ∈ dualWeyl K r r α) (ht : ∀ u, coeff u (subY K r t) ∈ dualWeyl K r r α') :
+    (hv : ∀ u, AddMonoidAlgebra.coeff (subY K r v) u ∈ dualWeyl K r r α) (ht : ∀ u, AddMonoidAlgebra.coeff (subY K r t) u ∈ dualWeyl K r r α') :
     scCol K (r + 1 + 1) (midI r j) c (lamOf K r L (blockEmb K true v * blockEmb K false t)) =
       c ^ N • lamOf K r L (blockEmb K true v * blockEmb K false t) := by
   classical
@@ -114,7 +121,8 @@ theorem lam_scaleM (L : MvPolynomial (Bool × (Fin r × Fin r)) K →ₗ[K] K) (
     exact key
   · intro b a j'
     refine Finset.sum_congr rfl fun i _ => ?_
-    simp only [scCol_X, midI_inj, rowAct, aeval_X, Matrix.diagonal_apply, blockEmb, map_mul, map_C, map_X,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [scCol_X, midI_inj, rowAct, aeval_X, Matrix.diagonal_apply, blockEmb, map_mul, map_C, map_X,
       ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true, map_sum, rename_C, rename_X]
     rw [Finset.sum_eq_single i (fun x _ hx => by simp [Ne.symm hx]) (by simp)]
     simp only [if_true, MvPolynomial.algebraMap_eq]
@@ -128,7 +136,7 @@ theorem rowAct_transv (l j : Fin r) (c : K) (i t : Fin r) :
     rowAct K (Matrix.transvection l j c) (X (i, t)) = X (i, t) + if i = l then C c * X (j, t) else 0 := by
   classical
   simp only [rowAct, aeval_X, Matrix.transvection, Matrix.add_apply, Matrix.one_apply]
-  simp only [map_add, add_mul, Finset.sum_add_distrib, apply_ite C, ite_mul, map_one, map_zero, one_mul, zero_mul,
+  simp only [map_add (f := _), add_mul, Finset.sum_add_distrib, apply_ite C, ite_mul, map_one, map_zero, one_mul, zero_mul,
     Finset.sum_ite_eq, Finset.mem_univ, if_true]
   congr 1
   by_cases h : i = l
@@ -145,7 +153,7 @@ theorem rowAct_transv (l j : Fin r) (c : K) (i t : Fin r) :
 theorem lam_addM (L : MvPolynomial (Bool × (Fin r × Fin r)) K →ₗ[K] K) (N : ℕ) (α α' : Fin r → ℕ)
     (hInv : PhInv K r N α α' L) (l j : Fin r) (hlj : l ≠ j) (c : K)
     (v t : MvPolynomial (Fin (r + 1 + 1) × Fin (r + 1 + 1)) K)
-    (hv : ∀ u, coeff u (subY K r v) ∈ dualWeyl K r r α) (ht : ∀ u, coeff u (subY K r t) ∈ dualWeyl K r r α') :
+    (hv : ∀ u, AddMonoidAlgebra.coeff (subY K r v) u ∈ dualWeyl K r r α) (ht : ∀ u, AddMonoidAlgebra.coeff (subY K r t) u ∈ dualWeyl K r r α') :
     colAdd K (midI r l) (midI r j) c (lamOf K r L (blockEmb K true v * blockEmb K false t)) =
       lamOf K r L (blockEmb K true v * blockEmb K false t) := by
   classical
@@ -161,7 +169,7 @@ theorem lam_addM (L : MvPolynomial (Bool × (Fin r × Fin r)) K →ₗ[K] K) (N 
         X (a, midI r i) + if i = j then C c * X (a, midI r l) else 0 := by
       intro i
       split_ifs <;> simp
-    simp only [e, map_add, map_mul, map_C, map_X, blockEmb, rename_X, rename_C, mul_add, add_mul,
+    simp only [e, map_add (f := _), map_mul, map_C, map_X, blockEmb, rename_X, rename_C, mul_add, add_mul,
       Finset.sum_add_distrib, apply_ite, map_zero, mul_ite, ite_mul, mul_zero, zero_mul,
       Finset.sum_ite_eq', Finset.mem_univ, if_true]
     have hs : ∀ (k : Fin r)

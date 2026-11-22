@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.WittSolve
 
@@ -15,7 +19,7 @@ lemma F_add (M : Matrix ι ι (WittVector p R)) (v w : ι → WittVector p R) :
     F M (v + w) = F M v + F M w := by
   have : (fun k => WittVector.frobenius ((v + w) k)) =
       (fun k => WittVector.frobenius (v k)) + (fun k => WittVector.frobenius (w k)) := by
-    funext k; simp [map_add]
+    funext k; simp [map_add (f := _)]
   simp only [F, this, Matrix.mulVec_add]; abel
 
 lemma F_zero (M : Matrix ι ι (WittVector p R)) : F M 0 = 0 := by

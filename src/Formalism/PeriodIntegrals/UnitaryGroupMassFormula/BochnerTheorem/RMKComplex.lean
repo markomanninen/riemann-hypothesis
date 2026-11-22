@@ -1,5 +1,8 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BochnerTheorem.StepGelfand
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,7 +72,7 @@ theorem exists_measure_of_positive (Λ : C(X, ℂ) →ₗ[ℂ] ℂ)
     { toFun := fun f => (Λ (ofR (e.symm f))).re
       map_add' := fun f g => by
         have h1 : e.symm (f + g) = e.symm f + e.symm g := by ext x; simp [e]
-        simp only [h1, ofR_add, map_add, Complex.add_re]
+        simp only [h1, ofR_add, map_add (f := _), Complex.add_re]
       map_smul' := fun c f => by
         have h1 : e.symm (c • f) = c • e.symm f := by ext x; simp [e]
         simp only [h1, ofR_smul, map_smul, smul_eq_mul, Complex.mul_re, Complex.ofReal_re,
@@ -94,7 +97,7 @@ theorem exists_measure_of_positive (Λ : C(X, ℂ) →ₗ[ℂ] ℂ)
       | exact ContinuousMap.integrable f
       | exact (integrableOn_univ).1 (f.continuous.continuousOn.integrableOn_compact isCompact_univ)
   conv_lhs => rw [eq_ofR_re_add_im f]
-  rw [map_add, map_smul, ofR_eq_re Λ hΛ, ofR_eq_re Λ hΛ (imC f), ← hint, ← hint, smul_eq_mul,
+  rw [map_add (f := _), map_smul, ofR_eq_re Λ hΛ, ofR_eq_re Λ hΛ (imC f), ← hint, ← hint, smul_eq_mul,
     ← integral_re_add_im hI]
   simp only [RCLike.re_to_complex, RCLike.im_to_complex, RCLike.I_to_complex]
   rw [mul_comm]

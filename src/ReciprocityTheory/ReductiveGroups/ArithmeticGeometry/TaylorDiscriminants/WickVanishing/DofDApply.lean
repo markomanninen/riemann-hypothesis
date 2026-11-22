@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -11,10 +15,10 @@ namespace ReciprocityTheory.ChartRestriction.G.TB.GE
 variable {k : Type} [CommRing k] {d : ℕ}
 
 def dofCoef (F : Fin d → PS k 2 d) (v : Fin d → k) (j : Fin d) : PS k 1 d :=
-  ∑ i : Fin d, C (v i) * ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), i) (F j))
+  ∑ i : Fin d, C (v i) * ev (n := 1) ![pt k d 0, 0] (pderiv ((1 : Fin 2), i) (F j))
 
 def dofD (F : Fin d → PS k 2 d) (v : Fin d → k) : Derivation k (PS k 1 d) (PS k 1 d) :=
-  ∑ j : Fin d, dofCoef F v j • pderiv k ((0 : Fin 1), j)
+  ∑ j : Fin d, dofCoef F v j • pderiv ((0 : Fin 1), j)
 
 theorem dofD_apply (F : Fin d → PS k 2 d) (v : Fin d → k) (f : PS k 1 d) :
     dofD F v f = Dof F v f := by
@@ -29,10 +33,7 @@ theorem dofD_apply (F : Fin d → PS k 2 d) (v : Fin d → k) (f : PS k 1 d) :
 
 theorem dof_add (F : Fin d → PS k 2 d) (v : Fin d → k) (f g : PS k 1 d) :
     Dof F v (f + g) = Dof F v f + Dof F v g := by
-  simp only [← dofD_apply, map_add]
-
-theorem dof_zero (F : Fin d → PS k 2 d) (v : Fin d → k) : Dof F v 0 = 0 := by
-  simp only [← dofD_apply, map_zero]
+  simp only [← dofD_apply, map_add (f := _)]
 
 theorem dof_mul (F : Fin d → PS k 2 d) (v : Fin d → k) (f g : PS k 1 d) :
     Dof F v (f * g) = f * Dof F v g + g * Dof F v f := by
@@ -49,6 +50,7 @@ theorem dof_C_mul (F : Fin d → PS k 2 d) (v : Fin d → k) (r : k) (f : PS k 1
 
 theorem dof_sum (F : Fin d → PS k 2 d) (v : Fin d → k) {α : Type} (s : Finset α) (f : α → PS k 1 d) :
     Dof F v (∑ a ∈ s, f a) = ∑ a ∈ s, Dof F v (f a) := by
-  simp only [← dofD_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← dofD_apply, map_sum]
 
 end ReciprocityTheory.ChartRestriction.G.TB.GE

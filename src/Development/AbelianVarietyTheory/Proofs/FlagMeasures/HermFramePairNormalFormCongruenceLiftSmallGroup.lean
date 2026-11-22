@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummaryStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairCommonUnipotentStabiliserSummary
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIntegerAddStarEqOneOfIsCMUnram
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummaryStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairCommonUnipotentStabiliserSummary
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIntegerAddStarEqOneOfIsCMUnram
+
+@[expose] public section
 
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt
 open scoped Pointwise ENNReal Classical nonZeroDivisors
@@ -138,7 +142,7 @@ theorem levi_isom (H : HermSpace K V) (p q : V →ₗ[K] V) (s : V ≃ₗ[K] V)
     have f6 := hqq0 x y
     have hexp : H.B (p x + u + q x) (p y + u' + q y) = H.B (p x) (p y) + H.B (p x) u' + H.B (p x) (q y) +
         H.B u (p y) + H.B u u' + H.B u (q y) + H.B (q x) (p y) + H.B (q x) u' + H.B (q x) (q y) := by
-      simp only [map_add, LinearMap.add_apply]
+      simp only [map_add (f := _), LinearMap.add_apply]
       ring
     calc H.B x y = H.B (p x + u + q x) (p y + u' + q y) := by rw [← hx, ← hy]
       _ = _ := by rw [hexp, f1, f2, f3, f4, f5, f6]; ring
@@ -168,7 +172,7 @@ theorem levi_isom (H : HermSpace K V) (p q : V →ₗ[K] V) (s : V ≃ₗ[K] V)
       H.B (p (s u)) (s (p y)) - H.B (p (s u)) (s u') + H.B (p (s u)) (p (s u')) - H.B (p (s u)) (q (s (q y))) +
       H.B (q (s (q x))) (s (p y)) + H.B (q (s (q x))) (s u') - H.B (q (s (q x))) (p (s u')) +
       H.B (q (s (q x))) (q (s (q y))) := by
-    simp only [map_add, map_sub, LinearMap.add_apply, LinearMap.sub_apply]
+    simp only [map_add (f := _), map_sub, LinearMap.add_apply, LinearMap.sub_apply]
     ring
   linear_combination hexp + e1 + e2 - e3 + e4 + e5 + e6 - e7 + e8 - e9 - e10 + e11 - e12 + e13 + e14 - e15 + e16 - hxy
 
@@ -188,7 +192,7 @@ theorem trans_isom (H : HermSpace K V) (h z : V) (T τ : K) (hT : T ≠ 0) (hT' 
   have hTi : star T⁻¹ = T⁻¹ := by rw [star_inv₀, hT']
   have hTT : T * T⁻¹ = 1 := mul_inv_cancel₀ hT
   rw [trans_apply, trans_apply]
-  simp only [map_add, map_sub, map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.sub_apply,
+  simp only [map_add (f := _), map_sub, map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.sub_apply,
     LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, star_mul', hTi, hh, hz, hzh, zz]
   simp only [← H.herm y h, ← H.herm y z]
   linear_combination (T⁻¹ * H.B x h * star (H.B y h)) * hτ - (T⁻¹ * H.B x h * star (H.B y h)) * hTT
@@ -253,7 +257,8 @@ theorem qI_apply (y : V) : qI N y = ∑ b ∈ Finset.univ.filter (fun b : Fin r 
   simp only [GlobalTheory.DegCnt.LiftS.qI, LinearMap.sum_apply, LinearMap.smulRight_apply, LinearMap.flip_apply]
 
 theorem adj (x y : V) : H.B (pI N x) y = H.B x (qI N y) := by
-  simp only [GlobalTheory.DegCnt.LiftS.pI_apply, GlobalTheory.DegCnt.LiftS.qI_apply, map_sum, LinearMap.sum_apply, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [GlobalTheory.DegCnt.LiftS.pI_apply, GlobalTheory.DegCnt.LiftS.qI_apply, map_sum, LinearMap.sum_apply, map_smul,
     LinearMap.smul_apply, LinearMap.map_smulₛₗ, starRingEnd_apply, H.herm, smul_eq_mul]
   exact Finset.sum_congr rfl (fun b _ => mul_comm _ _)
 
@@ -374,17 +379,20 @@ theorem p_II (h0 : II N.F N.F' ⊓ N.F.Xa N.j = ⊥) {y : V} (hy : y ∈ II N.F 
   exact (sub_eq_zero.1 hm).symm
 
 theorem qq (y : V) : qI N (qI N y) = qI N y := by
-  rw [qI_apply N y, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [qI_apply N y, map_sum]
   refine Finset.sum_congr rfl (fun b hb => ?_)
   rw [map_smul, q_i N b (Finset.mem_filter.1 hb).2]
 
 theorem pq (y : V) : pI N (qI N y) = 0 := by
-  rw [qI_apply N y, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [qI_apply N y, map_sum]
   refine Finset.sum_eq_zero (fun b hb => ?_)
   rw [map_smul, p_i N b (Finset.mem_filter.1 hb).2, smul_zero]
 
 theorem projectionOntoDualIsotropicSpan_orthogonal_anisotropic (y : V) : H.B (qI N y) N.F.z = 0 := by
-  rw [qI_apply, map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [qI_apply, map_sum, LinearMap.sum_apply]
   refine Finset.sum_eq_zero (fun b hb => ?_)
   rw [map_smul, LinearMap.smul_apply, symm0 H (N.normalForm_dual_orthogonal_last b (Finset.mem_filter.1 hb).2), smul_zero]
 
@@ -392,12 +400,12 @@ theorem II_le_uPerp {y : V} (hy : y ∈ II N.F N.F') : y ∈ uPerp N.F N.F' := b
   obtain ⟨h1, h2⟩ := Submodule.mem_inf.1 hy
   refine (mem_perp_iff H (N.F.X ⊔ N.F'.X) y).2 (fun x hx => ?_)
   obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hx
-  rw [map_add, orth_X N.F h1 ha, orth_X N.F' h2 hb, add_zero]
+  rw [map_add (f := _), orth_X N.F h1 ha, orth_X N.F' h2 hb, add_zero]
 
 theorem z_mem_uPerp : N.F.z ∈ uPerp N.F N.F' := by
   refine (mem_perp_iff H (N.F.X ⊔ N.F'.X) N.F.z).2 (fun x hx => ?_)
   obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hx
-  rw [map_add, symm0 H (hermFlag_isotropicPart_orthogonal_anisotropicVector N.F ha), symm0 H (hermForm_second_flag_X_z_eq_zero N hb), add_zero]
+  rw [map_add (f := _), symm0 H (hermFlag_isotropicPart_orthogonal_anisotropicVector N.F ha), symm0 H (hermForm_second_flag_X_z_eq_zero N hb), add_zero]
 
 theorem isotropicSpan_le_jointSpan_left : N.F.X ≤ V0 N.F N.F' :=
   le_sup_left.trans (le_sup_left : N.F.X ⊔ N.F'.X ≤ _)
@@ -542,7 +550,7 @@ theorem pair_ideal (𝔫 : Ideal (𝓞 K)) (hn : ∀ x ∈ 𝔫, ∃ y ∈ 𝔫,
     all_goals exact hc'e
   · rintro a b ⟨m1, hm1, e1⟩ ⟨m2, hm2, e2⟩
     refine ⟨m1 + m2, Ideal.add_mem _ hm1 hm2, ?_⟩
-    rw [map_add, ← e1, ← e2]
+    rw [map_add (f := _), ← e1, ← e2]
     simp
 
 theorem coef_mem (𝔫 : Ideal (𝓞 K)) (b : Fin r) (hb : N.j ≤ b.val) (γ : K)
@@ -679,8 +687,8 @@ theorem exists_lift [FiniteDimensional K V] (N : NF H r) (h0 : II N.F N.F' ⊓ N
     exact htr _ (hermForm_second_flag_X_z_eq_zero N hsuX) (orth_X N.F' hsuX (hIIX' d hdII))
   have hfz : f N.F.z = s N.F.z := by
     have e : s N.F.z = d + N.F.z := by rw [hd, sub_add_cancel]
-    have hps : pI N (s N.F.z) = d := by rw [e, map_add, p_II N h0 hdII, projectionOntoCommonIsotropicPart_anisotropicVector N, add_zero]
-    have hqs : qI N (s N.F.z) = 0 := by rw [e, map_add, q_X N (hIIX d hdII), projectionOntoDualIsotropicSpan_anisotropicVector N, add_zero]
+    have hps : pI N (s N.F.z) = d := by rw [e, map_add (f := _), p_II N h0 hdII, projectionOntoCommonIsotropicPart_anisotropicVector N, add_zero]
+    have hqs : qI N (s N.F.z) = 0 := by rw [e, map_add (f := _), q_X N (hIIX d hdII), projectionOntoDualIsotropicSpan_anisotropicVector N, add_zero]
     rw [hfa, levi_apply, projectionOntoCommonIsotropicPart_anisotropicVector N, projectionOntoDualIsotropicSpan_anisotropicVector N]
     simp only [sub_zero, map_zero, add_zero, zero_add, LinearEquiv.coe_coe]
     rw [hps, hqs, sub_zero]
@@ -741,7 +749,7 @@ theorem exists_lift [FiniteDimensional K V] (N : NF H r) (h0 : II N.F N.F' ⊓ N
     obtain ⟨w, hw, v, hv, rfl⟩ := Submodule.mem_sup.1 hy'
     obtain ⟨u, hu, i, hi, rfl⟩ := Submodule.mem_sup.1 hv
     have hq : qI N (w + (u + i)) = i := by
-      rw [map_add, map_add, q_Wt N hw, projectionOntoDualIsotropicSpan_frameSpan_eq_zero N hu, q_Ist N hi, zero_add, zero_add]
+      rw [map_add (f := _), map_add (f := _), q_Wt N hw, projectionOntoDualIsotropicSpan_frameSpan_eq_zero N hu, q_Ist N hi, zero_add, zero_add]
     rw [hq] at hy
     exact ⟨w, hw, u, hu, by rw [hy, add_zero]⟩
   have hFs : ∀ G : FlagD H r, G.InN (s : V →ₗ[K] V) → (∀ a : Fin r, G.e a.castSucc ∈ V0 N.F N.F') →
@@ -753,7 +761,7 @@ theorem exists_lift [FiniteDimensional K V] (N : NF H r) (h0 : II N.F N.F' ⊓ N
       exact hG.2.2.1 a
     · obtain ⟨w, hw, u, hu, rfl⟩ := hdec y (hGq y hy)
       have e : f (w + u) - (w + u) = (s (w + u) - (w + u)) - (s w - w) := by
-        rw [map_add, map_add, hfw w hw, hfV0 u hu]
+        rw [map_add (f := _), map_add (f := _), hfw w hw, hfV0 u hu]
         abel
       rw [e]
       exact sub_mem (hG.2.2.2 _ hy) (hGw w hw)

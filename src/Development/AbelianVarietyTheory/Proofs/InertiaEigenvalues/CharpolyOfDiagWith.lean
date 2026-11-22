@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.DiagonalQuotientEigen
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompletionLines
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InjectiveOfSpan
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffEqOfApply
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSubstInvariants
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvrComplete
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPrimitiveRootCoeffRingOfGood
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemXSmulOfProjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBasisAddPiSmul
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMatrixFrobenius
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.DiagonalQuotientEigen
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompletionLines
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InjectiveOfSpan
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffEqOfApply
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSubstInvariants
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvrComplete
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPrimitiveRootCoeffRingOfGood
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemXSmulOfProjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBasisAddPiSmul
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMatrixFrobenius
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,7 +83,7 @@ theorem exists_cc {O F : Type} [CommRing O] [Field F] [CharZero F] [Algebra O F]
   obtain ⟨w, hw⟩ := hu.exists_right_inv
   have hw' : algebraMap O F w = (1 + (l : F))⁻¹ := by
     have := congrArg (algebraMap O F) hw
-    rw [map_mul, map_add, map_one, map_natCast] at this
+    rw [map_mul, map_add (f := _), map_one, map_natCast] at this
     exact (eq_inv_of_mul_eq_one_right this)
   induction a using Int.induction_on with
   | zero => exact ⟨0, by simp [cc], by simp⟩
@@ -87,7 +91,7 @@ theorem exists_cc {O F : Type} [CommRing O] [Field F] [CharZero F] [Algebra O F]
     obtain ⟨c, hc, d, hd⟩ := ih
     refine ⟨(1 + l) * c - 1, ?_, d + c, ?_⟩
     · rw [map_sub, map_mul, hc]
-      simp only [cc, map_add, map_one, map_natCast]
+      simp only [cc, map_add (f := _), map_one, map_natCast]
       push_cast
       rw [zpow_add_one₀ h1]
       field_simp
@@ -97,7 +101,7 @@ theorem exists_cc {O F : Type} [CommRing O] [Field F] [CharZero F] [Algebra O F]
   | pred a ih =>
     obtain ⟨c, hc, d, hd⟩ := ih
     refine ⟨(c + 1) * w, ?_, d - (c + 1) * w, ?_⟩
-    · rw [map_mul, map_add, hc, hw']
+    · rw [map_mul, map_add (f := _), hc, hw']
       simp only [cc, map_one]
       push_cast
       rw [zpow_sub_one₀ h1]
@@ -188,7 +192,7 @@ def th : (Fin r → O⟦X⟧) →ₗ[O] W.DD T where
   map_add' c d := by
     rw [← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [Pi.add_apply, map_add, Pi.single_add, add_smul]
+    rw [Pi.add_apply, map_add (f := _), Pi.single_add, add_smul]
   map_smul' c d := by
     rw [RingHom.id_apply, Finset.smul_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
@@ -248,14 +252,16 @@ theorem mem_NΔl_iff (hr : ∀ a, (∃ b, J b = a) ↔ ∀ δ ∈ W.DelF, W.γ�
       rw [mul_comm, letE, mul_single, mul_one]
     have hc : ∀ k, ∃ c, J c = a k i := fun k => (hr _).2 fun δ hδ => by
       have h1 := hΔ δ hδ
-      rw [hxa, map_sum] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hxa, map_sum] at h1
       simp only [γD_smulA, γA_single, (hb _).2 δ hδ] at h1
       simpa using congrFun (congrFun (coord_unique W T b _ _ h1) k) i
     choose c hc using hc
     exact ⟨c, by rw [hxa, th_apply]; simp only [hc]⟩
   · rintro ⟨c, rfl⟩
     refine ⟨⟨th_mem_N W T J b i c, fun δ hδ => ?_⟩, th W T J b i c, th_mem_N W T J b i c, ?_⟩
-    · rw [th_apply, map_sum]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [th_apply, map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [γD_smulA, γA_single, (hb _).2 δ hδ, (hr _).1 ⟨_, rfl⟩ δ hδ]
     · change (letE i : LetA O n) • th W T J b i c = _
@@ -286,7 +292,7 @@ theorem γD_th {g : W.Gam} (hJ : QFrame W g J) (hb : ∀ k, (b k : W.DD T) ∈ W
   choose c₁ hc₁ using h2
   refine ⟨c₁, ?_⟩
   have : (X - ((PD.p : ℕ) : O⟦X⟧)) • c₁ = c' := funext fun k => (hc₁ k).symm
-  rw [this, map_add, hc']
+  rw [this, map_add (f := _), hc']
   abel
 
 theorem mem_qN_iff (Qu : W.EEˣ) (hQ : (Qu : W.EE) = algebraMap (LetA O n) W.EE (qΔ W)) (j : ℤ) (x : W.DD T) :
@@ -321,7 +327,8 @@ theorem exists_matrix (ζ : LL) {r' : ℕ} (e : ↥(W.N T) →+ (Fin r' → LL�
   have h1 : ∀ a : Fin r → LetA O n, e (∑ k, a k • b k) = M.mulVec fun k => W.lev i ζ (a k) := by
     intro a
     funext u
-    simp [M, map_sum, he, Matrix.mulVec, dotProduct, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [M, map_sum, he, Matrix.mulVec, dotProduct, mul_comm]
   refine ⟨M, fun hs => ?_, fun c => ?_⟩
   · have : Submodule.span LL⟦X⟧ (Set.range e) ≤ LinearMap.range M.mulVecLin := by
       rw [Submodule.span_le]
@@ -442,7 +449,7 @@ theorem exists_eta [CharZero LL] {g : W.Gam} (hJ : QFrame W g J) (ζ : LL) (hζ 
       change X * (J X * (w : O⟦X⟧)) = (1 + X) ^ PD.p - 1
       rw [hw, W.q₀_def]
   have h4 := congrArg (W.lev i ζ) h3
-  rw [map_mul, map_mul, map_sub, map_pow, map_add, map_one, hE, mul_pow, ← map_pow, hζ.pow_eq_one, map_one,
+  rw [map_mul, map_mul, map_sub, map_pow, map_add (f := _), map_one, hE, mul_pow, ← map_pow, hζ.pow_eq_one, map_one,
     one_mul, ← mul_geom_sum, hE'] at h4
   refine ⟨(hu1.mul hu2).unit * ((hu3.mul hu4).unit)⁻¹, ?_⟩
   rw [Units.val_mul, ← mul_assoc, Units.eq_mul_inv_iff_mul_eq, IsUnit.unit_spec, IsUnit.unit_spec]
@@ -609,7 +616,7 @@ theorem senPair [IsDomain O] [IsLocalRing O] [CharZero LL] (hinj : Function.Inje
     refine Multiset.map_congr rfl fun x _ => ?_
     obtain ⟨d, hd⟩ := hc' (0 - (x - w))
     have := congrArg (algebraMap O k) hd
-    rw [map_mul, hk0, zero_mul, map_add, map_intCast] at this
+    rw [map_mul, hk0, zero_mul, map_add (f := _), map_intCast] at this
     simp only [Function.comp]
     push_cast at this ⊢
     linear_combination -this
@@ -639,7 +646,8 @@ theorem finrank_lattice {G LL O V : Type} [Group G] [Field LL] [CommRing O] [IsD
     [IsPrincipalIdealRing O]
     [IsFractionRing O LL] [AddCommGroup V] [Module LL V] [Module O V] [IsScalarTower O LL V]
     {ρ : Representation LL G V} (L : Lattice (O := O) ρ) : Module.finrank O ↥L.T = Module.finrank LL V := by
-  have : L.T.IsLattice LL := ⟨L.fg, L.span⟩
-  rw [Module.finrank, Module.finrank, Submodule.IsLattice.rank' LL]
+  have : L.T.IsLattice LL := Submodule.IsLattice.of_fg LL L.fg
+  have : L.T.IsFullLattice LL := ⟨L.span⟩
+  exact Submodule.IsFullLattice.finrank_eq LL L.T
 
 end GlobalTheory.SenLines

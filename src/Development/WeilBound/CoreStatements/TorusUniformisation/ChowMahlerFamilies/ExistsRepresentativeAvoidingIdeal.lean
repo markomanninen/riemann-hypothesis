@@ -1,7 +1,11 @@
-import Mathlib
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsPowSubMemSpanOfIsUnitModOfIsAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsPowSubMemSpanOfIsUnitModOfIsAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+
+@[expose] public section
+
 open MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I2 GlobalTheory.CompanionTheory.Ar.Flat
 
 namespace PositivityTheory.Xgn.RepresentativeAvoidance
@@ -23,7 +27,7 @@ theorem comp_mul (u f : MvPolynomial σ R) (d n : M) (hf : IsWeightedHomogeneous
       rw [h1.weightedHomogeneousComponent_same, h2.weightedHomogeneousComponent_same]
     · rw [h1.weightedHomogeneousComponent_ne n hn,
         h2.weightedHomogeneousComponent_ne (n + d) (fun h => hn (add_right_cancel h)), zero_mul]
-  | add p q hp hq => rw [add_mul, map_add, map_add, hp, hq, add_mul]
+  | add p q hp hq => rw [add_mul, map_add (f := _), map_add (f := _), hp, hq, add_mul]
 
 theorem comp_mem_span (S : Set (MvPolynomial σ R))
     (hS : ∀ f ∈ S, ∃ d, IsWeightedHomogeneous w f d) (x : MvPolynomial σ R)
@@ -38,7 +42,7 @@ theorem comp_mem_span (S : Set (MvPolynomial σ R))
       rw [this]
       exact Ideal.mul_mem_left _ _ (Ideal.subset_span h)
     | zero => intro r n; simp
-    | add x y _ _ hx hy => intro r n; rw [mul_add, map_add]; exact add_mem (hx r n) (hy r n)
+    | add x y _ _ hx hy => intro r n; rw [mul_add, map_add (f := _)]; exact add_mem (hx r n) (hy r n)
     | smul a x _ hx => intro r n; rw [smul_eq_mul, ← mul_assoc]; exact hx _ n
   simpa using key 1 n
 

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CoeffSumMonomialLinear
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LSatLemmas
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CoeffSumMonomialLinear
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LSatLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem intCapP : IntCapP := by
     intro l j p
     induction p using MvPolynomial.induction_on
     next a => simp [colAddGen]
-    next p q hp hq => simp only [map_add, hp, hq]
+    next p q hp hq => simp only [map_add (f := _), hp, hq]
     next p x hp =>
       simp only [map_mul, hp, map_X]
       congr 1

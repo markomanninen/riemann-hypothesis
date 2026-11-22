@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardPairingDecay
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardPairingDecay
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 

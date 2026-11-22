@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.AdelicUnitaryHaarMeasure
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMulRightInvariantHaarAdelicUnitaryGroupHermiti
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ArchimedeanUnitaryGroupStabilisersUnimodular
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.AdelicUnitaryHaarMeasure
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMulRightInvariantHaarAdelicUnitaryGroupHermiti
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ArchimedeanUnitaryGroupStabilisersUnimodular
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Matrix Topology Filter Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicUnimod
 open GlobalTheory.IndefiniteRowSideFullHecke.AdelicUnitaryHaarMeasure
@@ -37,7 +41,7 @@ theorem exists_split_finiteAdele {κ : Type} [Finite κ] (a : κ → Af F) :
   let s : (∀ v : S, v.1.adicCompletion F) → Af F := fun y =>
     ⟨fun v => if h : v ∈ S then y ⟨v, h⟩ else 0, by
       filter_upwards [hS.compl_mem_cofinite] with v hv
-      rw [dif_neg hv]
+      rw [dite_eq_right hv]
       exact zero_mem _⟩
   have hs : ∀ y, p (s y) = y := fun y => funext fun v => dif_pos v.2
   have hs1 : ∀ v, s 1 v = if v ∈ S then 1 else 0 := fun v => by
@@ -84,7 +88,7 @@ theorem exists_split_tensor (σ : E →ₐ[F] E) {δ : E} (hδ : δ ≠ 0) (hσ�
   · induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [sigR]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   · simp [hpe, Algebra.TensorProduct.one_def]
   · have hy' : y ∈ RingHom.ker (Algebra.TensorProduct.map p (AlgHom.id F E)) := hy
     rw [Algebra.TensorProduct.rTensor_ker _ hp] at hy'

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsFrameVec
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsSandwichOfHodgeTateFreeStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SandwichPointOverFieldExtStatement
-import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.PRootsOfUnityValuation
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsFrameVec
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsSandwichOfHodgeTateFreeStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SandwichPointOverFieldExtStatement
+public import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.PRootsOfUnityValuation
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Filter Topology
 open Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.ChartRestriction.G.AR.Inst Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Rec
@@ -62,11 +67,12 @@ theorem vV_sub_one {p : ℕ} (hp : p.Prime) {ζ : V} (hζ : IsPrimitiveRoot ζ p
       (GroundTheory.Heights₂.Heights.RootsOfUnityValuation.one_sub_pow_associated hp hζ)
   rw [← vV_associated hass (pow_ne_zero _ h0), map_pow, vV_pow ((map_ne_zero_iff _ inj).2 h0)]
 
-variable (V K) in
 
+variable (V K) in
 def realVal : Valuation K NNReal :=
-  (valV V).map (WithZeroMulInt.toNNReal (e := 2) two_ne_zero)
-    (WithZeroMulInt.toNNReal_strictMono (by norm_num)).monotone
+  (valV V).map
+    { toMonoidWithZeroHom := WithZeroMulInt.toNNReal (e := 2) two_ne_zero
+      monotone' := (WithZeroMulInt.toNNReal_strictMono (by norm_num)).monotone }
 
 theorem realVal_le_one_iff {x : K} : realVal V K x ≤ 1 ↔ valV V x ≤ 1 := by
   have := (WithZeroMulInt.toNNReal_strictMono (e := 2) (by norm_num)).le_iff_le (a := valV V x) (b := 1)
@@ -76,10 +82,12 @@ theorem realVal_lt_one_iff {x : K} : realVal V K x < 1 ↔ valV V x < 1 := by
   have := (WithZeroMulInt.toNNReal_strictMono (e := 2) (by norm_num)).lt_iff_lt (a := valV V x) (b := 1)
   simpa [realVal] using this
 
-theorem realVal_integers : (realVal V K).Integers V where
-  hom_inj := IsFractionRing.injective V K
-  map_le_one x := realVal_le_one_iff.2 (valV_algebraMap_le_one x)
-  exists_of_le_one _ h := IsDiscreteValuationRing.exists_lift_of_le_one (realVal_le_one_iff.1 h)
+theorem realVal_integers : (realVal V K).Integers V := by
+  refine ⟨IsFractionRing.injective V K, ?_, ?_⟩
+  · intro x
+    exact (realVal_le_one_iff (V := V)).2 (valV_algebraMap_le_one x)
+  · intro x hx
+    exact IsDiscreteValuationRing.exists_lift_of_le_one ((realVal_le_one_iff (V := V)).1 hx)
 
 end Dvr
 
@@ -239,11 +247,11 @@ theorem lieEig_htDual : Top.Given → ∀ (E : Type) [Field E] [NumberField E] [
     have hp0 : NeZero (p : T.V) := ⟨Nat.cast_ne_zero.2 (Fact.out : p.Prime).ne_zero⟩
     have h3 := value_aeval hgen hκz ((Polynomial.cyclotomic p ℤ).comp (Polynomial.X + 1)) (by
       rw [Polynomial.aeval_comp]
-      simp only [map_add, Polynomial.aeval_X, map_one, sub_add_cancel]
+      simp only [map_add (f := _), Polynomial.aeval_X, map_one, sub_add_cancel]
       rw [aeval_cyclotomic]
       exact hζ.isRoot_cyclotomic (Fact.out : p.Prime).pos)
     rw [Polynomial.aeval_comp] at h3
-    simp only [map_add, Polynomial.aeval_X, map_one] at h3
+    simp only [map_add (f := _), Polynomial.aeval_X, map_one] at h3
     rw [aeval_cyclotomic] at h3
     exact Polynomial.isRoot_cyclotomic_iff.1 h3
 

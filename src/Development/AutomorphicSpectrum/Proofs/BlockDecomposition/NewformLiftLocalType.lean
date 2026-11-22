@@ -1,6 +1,10 @@
-import Mathlib
-import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeSum
+module
+
+public import Mathlib
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeSum
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PadicContinuousEvaluationExistsUniqueSubstNaturaStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PadicContinuousEvaluationExistsUniqueSubstNaturaStatement
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 open TensorProduct
 
@@ -30,7 +35,7 @@ theorem eval_coe {O σ A : Type} [CommRing O] [CommRing A] [Algebra O A]
   | C a =>
     rw [MvPolynomial.coe_C, MvPolynomial.aeval_C, ← ev.commutes a]
     rfl
-  | add p q hp hq => rw [MvPolynomial.coe_add, map_add, map_add, hp, hq]
+  | add p q hp hq => rw [MvPolynomial.coe_add, map_add (f := _), map_add (f := _), hp, hq]
   | mul_X p i hp => rw [MvPolynomial.coe_mul, MvPolynomial.coe_X, map_mul, map_mul, hp, hx,
       MvPolynomial.aeval_X]
 
@@ -119,7 +124,7 @@ theorem ker_tensor : ∀ (p : ℕ) (O A B σ τ : Type) [CommRing O] [CommRing A
     intro P
     induction P using MvPolynomial.induction_on' with
     | monomial γ c => exact hmono γ c
-    | add P Q hP hQ => rw [MvPolynomial.coe_add, map_add, map_add, hP, hQ, map_add, map_add]
+    | add P Q hP hQ => rw [MvPolynomial.coe_add, map_add (f := _), map_add (f := _), hP, hQ, map_add (f := _), map_add (f := _)]
 
   obtain ⟨N', hN'⟩ := hE.2 m
   set K := max N' N with hK
@@ -140,10 +145,10 @@ theorem ker_tensor : ∀ (p : ℕ) (O A B σ τ : Type) [CommRing O] [CommRing A
     rw [this, map_smul, Algebra.smul_def, Ideal.Quotient.algebraMap_eq,
       Ideal.Quotient.eq_zero_iff_mem.2 (Ideal.mem_span_singleton_self _), zero_mul]
   have hsplit : E f = E (P : MvPowerSeries (σ ⊕ τ) O) + E (f - (P : MvPowerSeries (σ ⊕ τ) O)) := by
-    rw [← map_add, add_sub_cancel]
+    rw [← map_add (f := _), add_sub_cancel]
   have hPval : Λ (E (P : MvPowerSeries (σ ⊕ τ) O)) = 0 := by
     have := congrArg Λ hsplit
-    rw [hf, map_zero, map_add, hzero, add_zero] at this
+    rw [hf, map_zero, map_add (f := _), hzero, add_zero] at this
     exact this.symm
   have hcoeff : coeff α f = coeff α (P : MvPowerSeries (σ ⊕ τ) O) := by
     have := hrest α (lt_of_lt_of_le hα (le_max_right _ _))

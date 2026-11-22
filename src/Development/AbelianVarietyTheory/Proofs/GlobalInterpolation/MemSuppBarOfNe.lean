@@ -1,30 +1,34 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TranslateMomentsAll
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AbsNormEqOfSplit
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NotDvdDifferent
-import Development.AutomorphicArithmetic.CyclotomicBounds.SmallFacts
-import Formalism.LocalToGlobal.Columns.BaseLemmas
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NormPadicEmbeddingLeOneOfMemInverseHalfDifferent
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AbsNormSpanInvol
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsNormSubEqOne
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PerLatticeFacts
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FiniteQuotDivLatMulLatHomAt
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PeriodLatticeHalfLatticeInclusionsSplitPrime
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AddSubgroupRepsExistenceCardSum
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsRepsSupOfFiniteQuot
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AlgebraicNumbersPadicPlacesFacts
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AbsNormSplitPlace
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LocPAAAndPrimesNe
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RatIntOfIsIntegral
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ContinuousToZModComp
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NegOneZpowRound
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MomentCompanion
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RelDetCompanion
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsPrimeUnder
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RelIndexPerDvd
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ApplyMemLocP
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RelIndexNeZeroOfSmul
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MomentsCosetSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TranslateMomentsAll
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AbsNormEqOfSplit
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NotDvdDifferent
+public import Development.AutomorphicArithmetic.CyclotomicBounds.SmallFacts
+public import Formalism.LocalToGlobal.Columns.BaseLemmas
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NormPadicEmbeddingLeOneOfMemInverseHalfDifferent
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AbsNormSpanInvol
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsNormSubEqOne
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PerLatticeFacts
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FiniteQuotDivLatMulLatHomAt
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PeriodLatticeHalfLatticeInclusionsSplitPrime
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AddSubgroupRepsExistenceCardSum
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsRepsSupOfFiniteQuot
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AlgebraicNumbersPadicPlacesFacts
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AbsNormSplitPlace
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LocPAAAndPrimesNe
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RatIntOfIsIntegral
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ContinuousToZModComp
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NegOneZpowRound
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MomentCompanion
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RelDetCompanion
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsPrimeUnder
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RelIndexPerDvd
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ApplyMemLocP
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RelIndexNeZeroOfSmul
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MomentsCosetSum
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -115,7 +119,8 @@ theorem assemble {p : ℕ} [Fact p.Prime] (lam : TaylorLogMetric.Qbar →+* ℂ_
       rw [norm_mul, hinv, norm_inv, hχ1, inv_one, mul_one]
       exact h2 x (hR x hx)
   · unfold jetSum
-    rw [hsum X.K _ (fun x hx y hy => by rw [h0 x hx y hy]; unfold Amb.jetK; rw [thInd_add A S N N' c x y hy]), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsum X.K _ (fun x hx y hy => by rw [h0 x hx y hy]; unfold Amb.jetK; rw [thInd_add A S N N' c x y hy]), map_sum]
     refine Finset.sum_congr rfl fun x hx => ?_
     have hj : ∀ j ∈ J, Ξ (x + j) = Ξ x := fun j hj => h1 x (hR x hx) j (hJ.1 j hj)
     rw [Finset.sum_congr rfl fun j hj' => by rw [hj j hj'], ← Finset.mul_sum]
@@ -130,7 +135,8 @@ theorem assemble {p : ℕ} [Fact p.Prime] (lam : TaylorLogMetric.Qbar →+* ℂ_
       exact this.choose_spec
     have e : A.σ₀ (∑ j ∈ J, A.jetK S N N' c (x + j) m) =
         (A.chiF a b N N')⁻¹ * ∑ j ∈ J, jetC A.cD (A.thInd S N N' c (x + j)) m := by
-      rw [map_sum, Finset.mul_sum]; exact Finset.sum_congr rfl hk
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.mul_sum]; exact Finset.sum_congr rfl hk
     have hq : ∑ j ∈ J, jetC A.cD (A.thInd S N N' c (x + j)) m ∈ TaylorLogMetric.Qbar := by
       have := mul_mem hχ (hlam (∑ j ∈ J, A.jetK S N N' c (x + j) m)).1
       rwa [e, mul_inv_cancel_left₀ hχ0] at this
@@ -219,7 +225,7 @@ theorem Ctx.sub (h : Ctx A a b S SG ϖ p g cA) : divs ϖ ⊆ S ∧ SG ⊆ S ∧ 
     exact hp.ne_one (by simpa using hg)
 
 theorem assemble_phi (h : Ctx A a b S SG ϖ p g cA) (hlam : ∀ k, A.σ₀ k ∈ TaylorLogMetric.Qbar ∧ TaylorLogMetric.lamC lam (A.σ₀ k) = ι k)
-    (hw : Induces ι w) (d : DecoSet X.E a (divs ϖ) SG₁) (d' : DecoSet X.E b (divs ϖ) SG₂)
+    (hw : Induces ι w) (d : DecoSet (E := X.E) (n := a) (ST := divs ϖ) (SG := SG₁)) (d' : DecoSet (E := X.E) (n := b) (ST := divs ϖ) (SG := SG₂))
     (hχ : A.chiF a b d.1.N d'.1.N ∈ TaylorLogMetric.Qbar) (hχ1 : ‖TaylorLogMetric.lamC lam (A.chiF a b d.1.N d'.1.N)‖ = 1)
     (Ξ₀ : HomE X.E a b → X.K) (hΞ : OffDatum cA (p * g) d.1.N d'.1.N SG w Ξ₀)
     (C : AddSubgroup (HomE X.E a b)) (hC : ∀ y ∈ C, y ∈ homAt S d.1.N d'.1.N ∧ y ∈ mulLat (p * g) (homAt SG d.1.N d'.1.N) ∧
@@ -246,7 +252,7 @@ theorem assemble_phi (h : Ctx A a b S SG ϖ p g cA) (hlam : ∀ k, A.σ₀ k ∈
       ((_root_.GlobalTheory.MomPlace.places X.K p A.σ₀ ι).2.1 w hw _ (hΞ x (hd x hx)).1)
 
 theorem type_bar (h : Ctx A a b S SG ϖ p g cA) (hlam : ∀ k, A.σ₀ k ∈ TaylorLogMetric.Qbar ∧ TaylorLogMetric.lamC lam (A.σ₀ k) = ι k)
-    (hw : Induces ι w) (d : DecoSet X.E a (divs ϖ) SG₁) (d' : DecoSet X.E b (divs ϖ) SG₂)
+    (hw : Induces ι w) (d : DecoSet (E := X.E) (n := a) (ST := divs ϖ) (SG := SG₁)) (d' : DecoSet (E := X.E) (n := b) (ST := divs ϖ) (SG := SG₂))
     (hχ : A.chiF a b d.1.N d'.1.N ∈ TaylorLogMetric.Qbar) (hχ1 : ‖TaylorLogMetric.lamC lam (A.chiF a b d.1.N d'.1.N)‖ = 1)
     (Ξ₀ : HomE X.E a b → X.K) (hΞ : OffDatum cA (p * g) d.1.N d'.1.N SG w Ξ₀)
     (hm : PtMom A a b lam ι un ((ϖ : X.E) / star (ϖ : X.E))) :
@@ -265,7 +271,7 @@ theorem type_bar (h : Ctx A a b S SG ϖ p g cA) (hlam : ∀ k, A.σ₀ k ∈ Tay
     simpa using this
 
 theorem type_p (h : Ctx A a b S SG ϖ p g cA) (hlam : ∀ k, A.σ₀ k ∈ TaylorLogMetric.Qbar ∧ TaylorLogMetric.lamC lam (A.σ₀ k) = ι k)
-    (hw : Induces ι w) (d : DecoSet X.E a (divs ϖ) SG₁) (d' : DecoSet X.E b (divs ϖ) SG₂) (hstd : StdAtT d.1)
+    (hw : Induces ι w) (d : DecoSet (E := X.E) (n := a) (ST := divs ϖ) (SG := SG₁)) (d' : DecoSet (E := X.E) (n := b) (ST := divs ϖ) (SG := SG₂)) (hstd : StdAtT d.1)
     (hχ : A.chiF a b d.1.N d'.1.N ∈ TaylorLogMetric.Qbar) (hχ1 : ‖TaylorLogMetric.lamC lam (A.chiF a b d.1.N d'.1.N)‖ = 1)
     (Ξ₀ : HomE X.E a b → X.K) (hΞ : OffDatum cA (p * g) d.1.N d'.1.N SG w Ξ₀)
     (hm : PtMom A a b lam ι un (star (ϖ : X.E) / (ϖ : X.E))) (hnorm : ∀ P ∈ divs ϖ, Ideal.absNorm P.asIdeal = p)
@@ -345,126 +351,6 @@ theorem norm_ratio_le {X : Fields} {p : ℕ} [Fact p.Prime] (ρ : X.E →+* ℂ_
     linear_combination (-‖ρ (star (ϖ : X.E))‖) * this
   rw [map_div₀, inv_div, norm_div, h3]
   exact mul_le_of_le_one_left hp.le (pow_le_one₀ (norm_nonneg _) h2)
-
-theorem jetMoments_of (hM : TranslateMomentsAll) (hE : MovesAll) (hL : LatticeFactsAll) : JetMoments := by
-  intro D hD H s cc δ B χ cD ⟨hs, _, hcc, hδ, hχ, hcD⟩ u _ hcop w ι hw
-  classical
-  obtain ⟨lam, hlam⟩ := (_root_.GlobalTheory.MomPlace.places D.X.K (D.Pr.T u) s.σ₀ ι).1
-  obtain ⟨⟨hTs, hTq⟩, -⟩ : (D.Pr.T u ∉ H.host.small ∧ D.Pr.T u ≠ H.host.q) ∧
-      ∀ i, D.Pr.g i ∉ H.host.small ∧ D.Pr.g i ≠ H.host.q :=
-    ⟨(_root_.GlobalTheory.AAUnitAway.locP_AA_and_primes_ne.2 D H s hD).1 u, (_root_.GlobalTheory.AAUnitAway.locP_AA_and_primes_ne.2 D H s hD).2⟩
-  have hT2 : D.Pr.T u ≠ 2 := UpperTheory.Small.ne_two H.host hTs
-  have hP := hD.primes
-  have hp := hP.T_prime u
-  have hn := hP.piT_norm u
-  obtain ⟨Ω, hΩ, hmom⟩ := hM H cc δ B χ hcc hδ hχ (D.Pr.T u) lam
-    (Or.inr ((_root_.GlobalTheory.MomT.SplitK.splitk H D.X s (D.Pr.piT u) _ hs (hP.piT_Kq u)).2 hp hT2 hn (hP.piT_cop u))) hcop
-  obtain ⟨M, _, hMe, hMs⟩ := hcD
-  have hcQ : ∀ τ, cD τ ∈ TaylorLogMetric.Qbar := by
-    intro τ
-    obtain ⟨x, hx, -⟩ := hMs τ
-    rw [← hx]
-    exact mem_algebraicClosure_iff.2
-      ((Algebra.IsAlgebraic.isAlgebraic (R := ℚ) x).algHom (algebraMap M ℂ).toRatAlgHom)
-  refine ⟨fun τ => TaylorLogMetric.lamC lam (cD (s.iT τ)) / Ω, fun τ => ?_, ?_⟩
-  · obtain ⟨x, hx, hx'⟩ := hMs (s.iT τ)
-    rw [norm_div, hΩ.1, div_one, ← hx]
-    exact GlobalTheory.EigenGenerator.norm_generator_eq_one H _ lam hTs hTq M hMe _ x hx'
-  intro sel S mu cst hsel hS hcq i b _ hb SG SG' d d' hd hd' Ξ₀ hΞ
-  have hev : ∀ j, Even (D.R.N j) := fun j => D.R.k_even.add ((D.R.t_odd.add_one).mul_left j)
-  have ha := hev i
-  have hb' : Even b := hb ▸ hev _
-  obtain ⟨hla, hsm⟩ := hL H D.X s cc δ B χ cD hD.fields hs hcc hδ hχ _ _ ha hb'
-  have hπ0 : D.Pr.piT u ≠ 0 := by
-    intro h0
-    rw [h0, zero_mul] at hn
-    exact hp.ne_zero (by exact_mod_cast hn.symm)
-  have hπ0' : D.X.conjO (D.Pr.piT u) ≠ 0 := by
-    intro h0
-    rw [h0, mul_zero] at hn
-    exact hp.ne_zero (by exact_mod_cast hn.symm)
-  obtain ⟨hfree, hrow⟩ := _root_.GlobalTheory.Proof.AbsNormSplitPlace.main D u sel S mu hD hsel (hS (Or.inr ⟨u, rfl⟩))
-    (fun k => hS (Or.inl (by fin_cases k <;> simp)))
-  have hUT : ∀ P : HeightOneSpectrum (𝓞 D.X.E), ((D.Pr.T u : ℕ) : 𝓞 D.X.E) ∈ P.asIdeal →
-      localization₂ P.asIdeal (ambOf s B χ cD).AA = localization₂ P.asIdeal (1 : Submodule (𝓞 D.X.E) D.X.E) :=
-    fun P h => _root_.GlobalTheory.AAUnitAway.locP_AA_and_primes_ne.1 H D.X s cc δ B χ cD P _ hp hTs hTq h hcop
-  have hmemS : ∀ P, P ∈ Sall sel mu u ↔ D.Pr.piT u ∈ P.asIdeal ∨ P ∈ rowSG D.Pr sel mu := by
-    intro P
-    unfold Sall
-    rw [Finset.mem_union, Primes.vT, mem_divs hπ0]
-  have hU : (ambOf s B χ cD).AAUnit (Sall sel mu u) := by
-    intro P hPS
-    rcases (hmemS P).1 hPS with h | h
-    · exact hUT P (hn ▸ Ideal.mul_mem_right _ _ h)
-    · have bad := _root_.GlobalTheory.ThetaMove.BadPrimes.bad_primes D.X D.Pr sel S mu u hD.fields hP hsel (hS (Or.inr ⟨u, rfl⟩))
-        (fun k => hS (Or.inl (by fin_cases k <;> simp))) P hPS
-      exact _root_.GlobalTheory.PeriodIdealUnit.locP_AA_eq_one D.X H s cc δ B χ cD P bad.2.1 bad.2.2.1 (hcq P h)
-  have hG : Nat.Coprime (∏ P : rowSG D.Pr sel mu, Formalism.L2.Col.qOf P.1) (D.Pr.T u) :=
-    Nat.Coprime.prod_left fun P _ => (Nat.coprime_primes (hrow P.1 P.2).1 hp).2 (hrow P.1 P.2).2.1
-  have hctx : Ctx (ambOf s B χ cD) (D.R.N i) b (Sall sel mu u) (rowSG D.Pr sel mu) (D.Pr.piT u) (D.Pr.T u)
-      ((∏ P : rowSG D.Pr sel mu, Formalism.L2.Col.qOf P.1) ^ cst.B) (cAof sel mu cst) :=
-    ⟨hD.fields, ⟨hla.1, hla.2.1, hfree, hU, hla.2.2.2.2⟩,
-      fun P h => hUT P (hn ▸ Ideal.mul_mem_left _ _ ((mem_divs hπ0' P).1 h)), hsm, hp, hn, hP.piT_cop u, hmemS,
-      fun P h => (hrow P h).2.2.1, hG.pow_left _, hG.pow_left _⟩
-  have hN : IsSdLat d.1.N := ⟨d.2.lat, d.2.uni⟩
-  have hN' : IsSdLat d'.1.N := ⟨d'.2.lat, d'.2.uni⟩
-  obtain ⟨c1, c1'⟩ := _root_.GlobalTheory.MomT.ChiUnit.chi_det_unit H D.X s χ _ lam (D.Pr.piT u) _ d.1.N hD.fields hs hχ hn hN
-    fun P h => hd ⟨P, (mem_divs hπ0 P).2 h⟩
-  obtain ⟨c2, c2'⟩ := _root_.GlobalTheory.MomT.ChiUnit.chi_det_unit H D.X s χ _ lam (D.Pr.piT u) _ d'.1.N hD.fields hs hχ hn hN'
-    fun P h => hd' ⟨P, (mem_divs hπ0 P).2 h⟩
-  have hF : (ambOf s B χ cD).chiF (D.R.N i) b d.1.N d'.1.N ∈ TaylorLogMetric.Qbar := mul_mem (zpow_mem c1 _) (zpow_mem c2 _)
-  have hF1 : ‖TaylorLogMetric.lamC lam ((ambOf s B χ cD).chiF (D.R.N i) b d.1.N d'.1.N)‖ = 1 := by
-    refine (congrArg norm (lamC_mul lam (zpow_mem c1 _) (zpow_mem c2 _))).trans ?_
-    rw [lamC_zpow lam c1, lamC_zpow lam c2, norm_mul, norm_zpow, norm_zpow, c1', c2', one_zpow, one_zpow, one_mul]
-  refine ⟨fun hseen => ?_, fun hseen => ?_⟩
-  · refine type_bar hctx hlam hw d d' hF hF1 Ξ₀ hΞ ?_
-    have := _root_.GlobalTheory.MomT.PtMoments.ptMom H D.X s cc δ B χ cD _ lam ι Ω (D.X.conjO (D.Pr.piT u)) (D.R.N i) b hD.fields hs hcc hT2 hcop
-      (fun k => (hlam k).2) hcQ (fun τ τ' => ?_) (by rw [conjO_conjO, mul_comm, hn])
-      (by rw [conjO_conjO]; exact (hP.piT_cop u).symm) (fun τ => (hw _).1 (hseen τ)) ha hb' hla hsm hmom
-    · have e : ((D.X.conjO (D.Pr.piT u) : 𝓞 D.X.E) : D.X.E) = star ((D.Pr.piT u : 𝓞 D.X.E) : D.X.E) := rfl
-      rwa [e, star_star] at this
-    · have e : ((D.X.conjO (D.Pr.piT u) : 𝓞 D.X.E) : D.X.E) = star ((D.Pr.piT u : 𝓞 D.X.E) : D.X.E) := rfl
-      rw [e, hD.fields.emb_star, hD.fields.emb_star, hP.piT_Kq u τ τ']
-  · have hsq : ∀ P ∈ divs (D.Pr.piT u), D.Pr.piT u ∉ P.asIdeal ^ 2 := by
-      intro P hPm h2
-      refine GlobalTheory.SplitUnram.natCast_notMem_sq D.X.E D.X.conjO (D.Pr.piT u) _ conjO_conjO hp hn (hP.piT_cop u) ?_
-        (hP.vT_norm u) P hPm (hn ▸ Ideal.mul_mem_right _ _ h2)
-      have h1 : (divs (D.Pr.piT u)).card = Module.finrank ℚ D.X.F := (hP.vT_card u).trans hD.fields.card_Tau
-      rw [h1, ← Module.finrank_mul_finrank ℚ D.X.F D.X.E, hD.fields.rankE, mul_comm]
-    obtain ⟨N'', hN'', hc⟩ := _root_.GlobalTheory.MomT.MomentCompanion.companion D.X b SG' (D.Pr.piT u) d' hD.fields hπ0 (hP.piT_cop u) hsq
-    have hval := _root_.GlobalTheory.MomT.ChiMove.chi_move H D.X s χ b SG' (D.Pr.piT u) d' N'' hD.fields hs hχ hπ0 (hP.piT_cop u) hsq hN'' hc
-    set k : D.X.K := ∏ τ, (D.X.emb τ (((D.Pr.piT u : 𝓞 D.X.E) : D.X.E) / star ((D.Pr.piT u : 𝓞 D.X.E) : D.X.E)))⁻¹ with hk
-    have hval' : χ (TaylorLogMetric.detId H (s.lat d'.1.N) (s.lat N'')) = s.σ₀ k := by
-      rw [hval, hk, map_prod]
-      exact Finset.prod_congr rfl fun τ _ => (map_inv₀ _ _).symm
-    have hk0 : k ≠ 0 := by
-      have h0 : ((D.Pr.piT u : 𝓞 D.X.E) : D.X.E) ≠ 0 := by exact_mod_cast hπ0
-      exact Finset.prod_ne_zero_iff.2 fun τ _ => inv_ne_zero ((map_ne_zero _).2 (div_ne_zero h0 (star_ne_zero.2 h0)))
-    have hkn : ‖ι k‖ ≤ (D.Pr.T u : ℝ) ^ D.X.f := by
-      rw [hk, map_prod, norm_prod]
-      refine (Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun τ _ => ?_).trans_eq
-        (Finset.prod_const (D.Pr.T u : ℝ))
-      rw [map_inv₀]
-      exact norm_ratio_le (ι.comp (D.X.emb τ)) hn
-    have hcard : (divs (D.Pr.piT u)).card = D.X.f := hP.vT_card u
-    have key := type_p hctx hlam hw d d' hd hF hF1 Ξ₀ hΞ
-      (_root_.GlobalTheory.MomT.PtMoments.ptMom H D.X s cc δ B χ cD _ lam ι Ω (D.Pr.piT u) (D.R.N i) b hD.fields hs hcc hT2 hcop
-        (fun k => (hlam k).2) hcQ (hP.piT_Kq u) hn (hP.piT_cop u) (fun τ => (hw _).1 (hseen τ)) ha hb' hla hsm hmom)
-      (hP.vT_norm u) N'' hN'' hc (s.σ₀ (k ^ (D.R.N i / 2))) (hlam _).1 ?_ ?_
-    · rw [hcard] at key
-      exact key
-    · rw [(hlam _).2, map_pow, norm_pow, ← pow_mul, Nat.div_two_mul_two_of_even ha, hcard, pow_mul]
-      exact pow_le_pow_left₀ (norm_nonneg _) hkn _
-    · intro R hR z
-      have hmv := _root_.GlobalTheory.MomT.Move.move H D.X s cc δ B χ cD _ b d.1.N d'.1.N N'' hD.fields hs (hE H cc δ B χ hcc hδ hχ) ha hb' hla
-        hN hN' hN'' R hR z
-      have hR0 : ((Real.sqrt (R.card : ℝ) : ℝ) : ℂ) ≠ 0 := by
-        obtain ⟨x, hx, -⟩ := hR.2.2 0 (zero_mem _)
-        have : (0 : ℝ) < R.card := by exact_mod_cast Finset.card_pos.2 ⟨x, hx⟩
-        exact_mod_cast (Real.sqrt_pos.2 this).ne'
-      have hσ : s.σ₀ k ≠ 0 := (map_ne_zero _).2 hk0
-      rw [hmv, hval', map_pow, zpow_neg, zpow_natCast]
-      field_simp
 
 end Main
 

@@ -1,11 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ReadsDeco
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryFiniteAdelicPointAsMatrixMemFlagIwahori
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTupleUnitaryFormsEquivPeriodRowForms
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SubOneMemMapOfEq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsOfStarEq
-import Formalism.LocalToGlobal.Columns.DetChrOf
-import Formalism.LocalToGlobal.NumberFieldFamilies.IdTransSM
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ReadsDeco
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryFiniteAdelicPointAsMatrixMemFlagIwahori
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTupleUnitaryFormsEquivPeriodRowForms
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SubOneMemMapOfEq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsOfStarEq
+public import Formalism.LocalToGlobal.Divisibility.Tuples
+public import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+public import Formalism.LocalToGlobal.NumberFieldFamilies.IdTransSM
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -155,7 +161,8 @@ theorem notMem_vGs : ∀ (X : Stages) (px : PreX X.B.toPre) (I : Col2.ColIn X.B 
     rwa [map_natCast] at h2
   have h2 : ((p : ℕ) : 𝓞 X.B.fields.E) ∈ P.asIdeal := by
     have h0 := Ideal.absNorm_mem P.asIdeal
-    rwa [show Ideal.absNorm P.asIdeal = p from hc] at h0
+    change Nat.card (𝓞 X.B.fields.E ⧸ P.asIdeal) = p at hc
+    rwa [Ideal.absNorm_eq_natCard, hc] at h0
   have h3 : IsCoprime ((p : ℕ) : 𝓞 X.B.fields.E) ((X.toD7.host.g k : ℕ) : 𝓞 X.B.fields.E) :=
     Nat.Coprime.cast ((Nat.coprime_primes hp (X.toD7.host.g_prime k)).2 (hne k))
   obtain ⟨a, b, hab⟩ := h3
@@ -198,7 +205,7 @@ theorem chr_inv_eq {X : Formalism.L2.Col.Fields} {Pr : Formalism.L2.Col.Primes X
     (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ} (mu : Tup X.F X.E X.K S)
     (hd : ∀ P ∈ Formalism.L2.Col.QE sel (mu : Formalism.L2.DIV.Chr X.F X.E X.K), P ∉ Pr.vGs)
     {a : ℕ} (e : a = R.N R.m - 1) (M : ∀ P : Pl X.E, GL (Fin a) (kP P)) (g : Formalism.L2.Col.G0 X.E Pr.vGs R.r)
-    (z : Formalism.L2.Col.GLG X.E (R.N R.m - 1) (Formalism.L2.Col.rowSG Pr sel mu))
+    (z : Formalism.L2.Col.GLG (E := X.E) (n := R.N R.m - 1) (SG := Formalism.L2.Col.rowSG Pr sel mu))
     (hz : ∀ w, z w = Units.map (Matrix.reindexAlgEquiv (kP w.1) (kP w.1) (finCongr e)).toMonoidHom (M w.1))
     (hu : z⁻¹ * Formalism.L2.Col.unipotentGroupBlockEmbedding Pr sel mu (Formalism.L2.Col.r_le_X' R) g ∈ ((Formalism.L2.Col.rowTyKK Ch sel mu).inv).grp)
     (σ : X.Kˣ →* ℂˣ) (χ : ℕ → ∀ P : Pl X.E, (kP P)ˣ →* ℂˣ) (ξ : ∀ P : Pl X.E, (kP P)ˣ →* ℂˣ)
@@ -221,7 +228,7 @@ theorem chr_inv_eq {X : Formalism.L2.Col.Fields} {Pr : Formalism.L2.Col.Primes X
     · rw [map_prod]
       refine Finset.prod_congr rfl fun s hs => ?_
       have hs' := Finset.mem_range.1 hs
-      rw [Formalism.L2.Col.chiAt, Formalism.L2.Col.extChi, dif_pos hs']
+      rw [Formalism.L2.Col.chiAt, Formalism.L2.Col.extChi, dite_eq_left hs']
       exact hχ w.1 hw ⟨s, hs'⟩ _
   · have e' := Formalism.L2.Col.LevFam.glue_of_not (Formalism.L2.Col.rowTyK (R := R) Ch)
       (Formalism.L2.Col.rowTyQ R (mu : Formalism.L2.DIV.Chr X.F X.E X.K) _) w hw
@@ -249,7 +256,7 @@ theorem chr_eq_ch : ∀ (X : Stages) (px : PreX X.B.toPre) (I : Col2.ColIn X.B p
     ∀ (t : TupU I U) (q : (levEnv X.toD7.sp.X' L.βX (L.datXt t)).Q)
       (hz : RowAd.ptE X (q : Bridge.Gf X.toD7.sp.X') ∈ Formalism.L2.Col.J0 X.toD7.sp.cm (X.B.R.N X.B.R.m - 1) ∅)
       (hu : (((Formalism.L2.Col.redG X.toD7.sp.cm (X.B.R.N X.B.R.m - 1) ∅ (Formalism.L2.Col.rowSG (X.B.primes px) I.sel t.1) ⟨_, hz⟩)⁻¹ :
-        Formalism.L2.Col.GLG X.B.fields.E (X.B.R.N X.B.R.m - 1) (Formalism.L2.Col.rowSG (X.B.primes px) I.sel t.1)) *
+        Formalism.L2.Col.GLG (E := X.B.fields.E) (n := X.B.R.N X.B.R.m - 1) (SG := Formalism.L2.Col.rowSG (X.B.primes px) I.sel t.1)) *
         Formalism.L2.Col.unipotentGroupBlockEmbedding (X.B.primes px) I.sel t.1 (Formalism.L2.Col.r_le_X' X.B.R)
           (eG.symm (rTup L.βX (L.datXt t) (Formalism.UG.bc (swapAE X.toD7) ((q : Bridge.Gf X.toD7.sp.X') : GL _ _))))) ∈ ((Formalism.L2.Col.rowTyKK I.Ch I.sel t.1).inv).grp),
       X.toD7.what₂.embLL (((Formalism.L2.Col.rowTyKK I.Ch I.sel t.1).inv.chr ⟨_, hu⟩ : X.B.fields.Kˣ) : X.B.fields.K) =

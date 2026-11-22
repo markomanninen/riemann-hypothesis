@@ -1,5 +1,9 @@
-import Formalism.GradedWeylDivisibility.StatementB
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LRowdivLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.StatementB
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LRowdivLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -31,7 +35,7 @@ theorem lgraded_rowGen_monomial {r n : ℕ} (a : Fin r) (m : Fin r × Fin n →�
   next v k m _ _ ih =>
     have hw : Finsupp.weight (lgraded_wa a) (Finsupp.single v k) = k * lgraded_wa a v := by
       simp [Finsupp.weight_apply, Finsupp.sum_single_index]
-    rw [add_comm, monomial_add_single, map_mul, ih, map_pow, lgraded_rowGen_X, map_add, map_mul,
+    rw [add_comm, monomial_add_single, map_mul, ih, map_pow, lgraded_rowGen_X, map_add (f := _), map_mul,
       map_pow, hw, mul_pow, ← pow_mul, pow_add, mul_comm (lgraded_wa a v) k]
     ring
 
@@ -42,7 +46,7 @@ theorem lgraded_euler_monomial {r n : ℕ} (a : Fin r) (m : Fin r × Fin n →�
 
 theorem lgraded_coeff_euler {r n : ℕ} (a : Fin r) (f : MvPolynomial (Fin r × Fin n) ℚ)
     (m : Fin r × Fin n →₀ ℕ) :
-    coeff m (rowDiv ℚ a a 1 f) = ((Finsupp.weight (lgraded_wa a) m : ℕ) : ℚ) * coeff m f := by
+    AddMonoidAlgebra.coeff (rowDiv ℚ a a 1 f) m = ((Finsupp.weight (lgraded_wa a) m : ℕ) : ℚ) * AddMonoidAlgebra.coeff f m := by
   induction f using MvPolynomial.induction_on'
   next m' c' =>
     rw [lgraded_euler_monomial, coeff_smul, coeff_monomial, smul_eq_mul]
@@ -51,8 +55,8 @@ theorem lgraded_coeff_euler {r n : ℕ} (a : Fin r) (f : MvPolynomial (Fin r × 
     · simp
   next p q hp hq =>
     have hpq : rowDiv ℚ a a 1 (p + q) = rowDiv ℚ a a 1 p + rowDiv ℚ a a 1 q := by
-      simp only [rowDiv, map_add, Polynomial.coeff_add]
-    rw [hpq, coeff_add, coeff_add, hp, hq, mul_add]
+      simp only [rowDiv, map_add (f := _), Polynomial.coeff_add]
+    rw [hpq, MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, mul_add]
 
 theorem lgraded_weight_rowW {r n : ℕ} (m : Fin r × Fin n →₀ ℕ) (a : Fin r) :
     Finsupp.weight (rowW r n) m a = Finsupp.weight (lgraded_wa a) m := by
@@ -66,8 +70,8 @@ theorem lgraded_weight_rowW {r n : ℕ} (m : Fin r × Fin n →₀ ℕ) (a : Fin
   · simp [h, Ne.symm h]
 
 private lemma exists_mem_coeff_eq_prod_weight_sub_mul_coeff {r n : ℕ} (M : Submodule ℚ (MvPolynomial (Fin r × Fin n) ℚ))
-    (hM : RowDivClosed M) (a : Fin r) (T : Finset ℕ) : ∀ g ∈ M, ∃ h ∈ M, ∀ m, coeff m h =
-      (∏ s ∈ T, (((Finsupp.weight (lgraded_wa a) m : ℕ) : ℚ) - (s : ℚ))) * coeff m g := by
+    (hM : RowDivClosed M) (a : Fin r) (T : Finset ℕ) : ∀ g ∈ M, ∃ h ∈ M, ∀ m, AddMonoidAlgebra.coeff h m =
+      (∏ s ∈ T, (((Finsupp.weight (lgraded_wa a) m : ℕ) : ℚ) - (s : ℚ))) * AddMonoidAlgebra.coeff g m := by
   classical
   induction T using Finset.induction_on
   next => intro g hg; exact ⟨g, hg, fun m => by simp⟩
@@ -112,8 +116,8 @@ theorem lgraded_sep {r n : ℕ} (M : Submodule ℚ (MvPolynomial (Fin r × Fin n
 
 theorem lgraded_multi {r n : ℕ} (M : Submodule ℚ (MvPolynomial (Fin r × Fin n) ℚ)) (hM : RowDivClosed M)
     (μ : Fin r → ℕ) (A : Finset (Fin r)) :
-    ∀ f ∈ M, ∃ h ∈ M, ∀ m, coeff m h =
-      if (∀ a ∈ A, Finsupp.weight (lgraded_wa a) m = μ a) then coeff m f else 0 := by
+    ∀ f ∈ M, ∃ h ∈ M, ∀ m, AddMonoidAlgebra.coeff h m =
+      if (∀ a ∈ A, Finsupp.weight (lgraded_wa a) m = μ a) then AddMonoidAlgebra.coeff f m else 0 := by
   classical
   induction A using Finset.induction_on
   next => intro f hf; exact ⟨f, hf, fun m => by simp⟩

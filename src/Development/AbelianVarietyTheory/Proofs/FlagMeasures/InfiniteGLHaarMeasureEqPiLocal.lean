@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SigmaFiniteOfRealSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SigmaFiniteOfRealSmul
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.FlagBase GlobalTheory.LeviIso
 open scoped ENNReal
@@ -80,9 +84,10 @@ theorem haarGL_eq_pi : ∀ (E : Type) [Field E] [NumberField E] (j : ℕ), haarG
   rw [pi_withDensity (ι := InfinitePlace E) volume F hF, ← volume_pi, haarGL]
   congr 1
   funext x
-  simp only [F, detNorm]
   rw [← ENNReal.ofReal_prod_of_nonneg fun w _ => by positivity]
   congr 1
+  unfold MatInf at x
+  unfold detNorm
   rw [← Finset.prod_inv_distrib, ← Finset.prod_pow]
 
 end GlobalTheory.HaarPi

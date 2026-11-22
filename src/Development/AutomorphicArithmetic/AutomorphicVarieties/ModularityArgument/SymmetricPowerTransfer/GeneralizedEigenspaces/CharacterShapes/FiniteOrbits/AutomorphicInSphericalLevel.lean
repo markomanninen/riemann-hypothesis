@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.Translate
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.ExpoMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.ProdEig
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.FinOrbSub
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.HomTrivialOnDetOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.DcBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.OutInvMulMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IndexNeZero
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.Translate
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.ExpoMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.ProdEig
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.FinOrbSub
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.HomTrivialOnDetOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.DcBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.OutInvMulMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IndexNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,9 +88,9 @@ private theorem val_lt_one (k : Type) [Field k] [ValuativeRel k] [TopologicalSpa
     exact uniformizer_lt_one.le
   exact lt_of_lt_of_le ht (pow_le_one' h1 2)
 
-private theorem sub_normal (L : Type) [Field L] [NumberField L] [IsCMField L] : (finU L 2 ⊓ SUA L).Normal := by
+private theorem sub_normal (L : Type) [Field L] [NumberField L] [IsCMField L] : (finU (E := L) (n := 2) ⊓ SUA L).Normal := by
   have h6 := (uaFacts L 2).2.2.2.2.2.1
-  have h1 : (finU L 2).Normal := ⟨fun n hn g => by
+  have h1 : (finU (E := L) (n := 2)).Normal := ⟨fun n hn g => by
     refine ((h6 _).1).2 fun τ => ?_
     rw [map_mul, map_mul, map_inv, ((h6 n).1).1 hn τ]
     simp⟩
@@ -96,7 +100,7 @@ private theorem sub_normal (L : Type) [Field L] [NumberField L] [IsCMField L] : 
   infer_instance
 
 private theorem off_on_comm {L : Type} [Field L] [NumberField L] [IsCMField L] (S : Finset (Plc L)) (x a : UA L 2)
-    (hx : x ∈ finU L 2) (hoff : OffS S x) (ha : OnS S a) : x * a = a * x := by
+    (hx : x ∈ finU (E := L) (n := 2)) (hoff : OffS S x) (ha : OnS S a) : x * a = a * x := by
   have h5 := (uaFacts L 2).2.2.2.2.1
   have h6 := (uaFacts L 2).2.2.2.2.2.1
   refine h5 _ _ (fun u => ?_) (fun τ => ?_)
@@ -156,7 +160,7 @@ end UpperTheory.V.Z.Sym.So
 
 namespace UpperTheory.V.Z.Sym.So
 private theorem inS_left {L : Type} [Field L] [NumberField L] [IsCMField L] (B : Bridge L) (hB : B.Ok) (j : ℕ) (e : InfinitePlace L → ℤ)
-    (U : Subgroup (UA L 2)) (φ : UA L 2 → Wt.VD (InfinitePlace L) j) (hφ : IsAF (repE j e) U φ) (x : UA L 2) (hxf : x ∈ finU L 2)
+    (U : Subgroup (UA L 2)) (φ : UA L 2 → Wt.VD (InfinitePlace L) j) (hφ : IsAF (repE j e) U φ) (x : UA L 2) (hxf : x ∈ finU (E := L) (n := 2))
     (ι : SU B.Δ →* SA B.Δ) (hι : ∀ γ v, mt ((ι γ : DA B.Δ).1 v) = (mt (γ : DX B.Δ)).map (lmap (cv v) B.Δ)) (γ : SU B.Δ) (g : SA B.Δ) :
     φ ((B.bS (ι γ * g) : UA L 2) * x) = Wt.cS (em B) j γ (φ ((B.bS g : UA L 2) * x)) := by
   obtain ⟨k, hk, hr, hτ⟩ := hB.finS γ (ι γ) (hι γ)
@@ -218,7 +222,7 @@ private theorem lev5 : ∀ w (h : IsSplitAt w) (n : ℕ) (ψ : Fin n → (Kw w)�
 set_option allowUnsafeReducibility true in
 attribute [local irreducible] cv Kv Ov DX KD RP SA Lsq
 
-private theorem lev2 : ∀ g : SA B.Δ, (g : DA B.Δ) ∈ A.dat.U2 ↔ (B.bS g : UA L 2) ∈ lev (Kall L 2) S VL :=
+private theorem lev2 : ∀ g : SA B.Δ, (g : DA B.Δ) ∈ A.dat.U2 ↔ (B.bS g : UA L 2) ∈ lev (Kall (L := L) 2) S VL :=
   (levG L B hB T S VL A hA hF).2.1
 
 private theorem lev4 : ∀ (g : SA B.Δ) d, A.IsElD g d ↔ OnS S (B.bS g : UA L 2) ∧
@@ -229,14 +233,14 @@ end
 
 private theorem op0 {L : Type} [Field L] [NumberField L] [IsCMField L] {B : Bridge L} (hB : B.Ok) (T : Spl B) (S : Finset (Plc L))
     (VL : ∀ w : Plc L, Lev (Kw w)) (A : SD B.Δ) (hA : A.Ok) (hF : Fit T S VL A) (a : ∀ w : Plc L, (Kw w)ˣ →* ℂˣ) (b : Chs (Lp L)) (hab : FitCh T S a b)
-    {V : Type} [AddCommGroup V] [Module ℂ V] (φ : UA L 2 → V) (hφ : ∀ u ∈ lev (Kall L 2) S VL, ∀ g, φ (g * u) = φ g)
+    {V : Type} [AddCommGroup V] [Module ℂ V] (φ : UA L 2 → V) (hφ : ∀ u ∈ lev (Kall (L := L) 2) S VL, ∀ g, φ (g * u) = φ g)
     (hE : ∀ w ∈ S, EigS φ w (VL w) (a w)) (t : Dat.Par (Lp L)) (x : UA L 2) (hCone : A.Cone t)
     (h1 : OnS S x) (h2 : ∀ w ∈ S, ∀ h, cLoc w x = Sig.dg fun i => iu T w h (SD.dS t (un w) i)) :
-    AlgebraTools.FinOrb (lev (Kall L 2) S VL) (lev (Kall L 2) S VL) x ∧
-    (∀ u ∈ lev (Kall L 2) S VL, ∃ c ∈ lev (Kall L 2) S VL, c * x = x * c ∧ u * c⁻¹ ∈ finU L 2 ⊓ SUA L ∧ c⁻¹ * u ∈ finU L 2 ⊓ SUA L) ∧
-    dcF (lev (Kall L 2) S VL) x φ = A.exS b t • φ := by
+    AlgebraTools.FinOrb (lev (Kall (L := L) 2) S VL) (lev (Kall (L := L) 2) S VL) x ∧
+    (∀ u ∈ lev (Kall (L := L) 2) S VL, ∃ c ∈ lev (Kall (L := L) 2) S VL, c * x = x * c ∧ u * c⁻¹ ∈ finU (E := L) (n := 2) ⊓ SUA L ∧ c⁻¹ * u ∈ finU (E := L) (n := 2) ⊓ SUA L) ∧
+    dcF (lev (Kall (L := L) 2) S VL) x φ = A.exS b t • φ := by
   classical
-  have hfull : Full (Kall L 2) S := ⟨le_rfl, fun _ _ => inf_le_right⟩
+  have hfull : Full (Kall (L := L) 2) S := ⟨le_rfl, fun _ _ => inf_le_right⟩
   have hd : ∃ d : ∀ w : Plc L, Fin 2 → (Kw w)ˣ, ∀ w h, d w = fun i => iu T w h (SD.dS t (un w) i) :=
     ⟨fun w => if h : IsSplitAt w then fun i => iu T w h (SD.dS t (un w) i) else 1, fun w h => dif_pos h⟩
   refine hd.elim fun d hd => ?_
@@ -267,16 +271,16 @@ private theorem op0 {L : Type} [Field L] [NumberField L] [IsCMField L] {B : Brid
 
 private theorem inS_op {L : Type} [Field L] [NumberField L] [IsCMField L] {B : Bridge L} (hB : B.Ok) (T : Spl B) (S : Finset (Plc L))
     (VL : ∀ w : Plc L, Lev (Kw w)) (A : SD B.Δ) (hA : A.Ok) (hF : Fit T S VL A) (a : ∀ w : Plc L, (Kw w)ˣ →* ℂˣ) (b : Chs (Lp L)) (hab : FitCh T S a b)
-    {V : Type} [AddCommGroup V] [Module ℂ V] (φ : UA L 2 → V) (hφ : ∀ u ∈ lev (Kall L 2) S VL, ∀ g, φ (g * u) = φ g)
+    {V : Type} [AddCommGroup V] [Module ℂ V] (φ : UA L 2 → V) (hφ : ∀ u ∈ lev (Kall (L := L) 2) S VL, ∀ g, φ (g * u) = φ g)
     (hE : ∀ w ∈ S, EigS φ w (VL w) (a w)) (t : Dat.Par (Lp L)) (g : SA B.Δ) (hCone : A.Cone t) (hEl : A.IsElD g (SD.dS t)) :
-    OnS S (B.bS g : UA L 2) ∧ AlgebraTools.FinOrb (lev (Kall L 2) S VL) (lev (Kall L 2) S VL) (B.bS g : UA L 2) ∧
-    (∀ u ∈ lev (Kall L 2) S VL, ∃ c ∈ lev (Kall L 2) S VL, c * (B.bS g : UA L 2) = (B.bS g : UA L 2) * c ∧ u * c⁻¹ ∈ finU L 2 ⊓ SUA L ∧ c⁻¹ * u ∈ finU L 2 ⊓ SUA L) ∧
-    dcF (lev (Kall L 2) S VL) (B.bS g : UA L 2) φ = A.exS b t • φ :=
+    OnS S (B.bS g : UA L 2) ∧ AlgebraTools.FinOrb (lev (Kall (L := L) 2) S VL) (lev (Kall (L := L) 2) S VL) (B.bS g : UA L 2) ∧
+    (∀ u ∈ lev (Kall (L := L) 2) S VL, ∃ c ∈ lev (Kall (L := L) 2) S VL, c * (B.bS g : UA L 2) = (B.bS g : UA L 2) * c ∧ u * c⁻¹ ∈ finU (E := L) (n := 2) ⊓ SUA L ∧ c⁻¹ * u ∈ finU (E := L) (n := 2) ⊓ SUA L) ∧
+    dcF (lev (Kall (L := L) 2) S VL) (B.bS g : UA L 2) φ = A.exS b t • φ :=
   have h := (lev4 hB T S VL A hA hF g _).1 hEl
   ⟨h.1, op0 hB T S VL A hA hF a b hab φ hφ hE t _ hCone h.1 h.2⟩
 
 private theorem inS_left' {L : Type} [Field L] [NumberField L] [IsCMField L] (B : Bridge L) (hB : B.Ok) (j : ℕ) (e : InfinitePlace L → ℤ)
-    (U : Subgroup (UA L 2)) (φ : UA L 2 → Wt.VD (InfinitePlace L) j) (hφ : IsAF (repE j e) U φ) (x : UA L 2) (hxf : x ∈ finU L 2)
+    (U : Subgroup (UA L 2)) (φ : UA L 2 → Wt.VD (InfinitePlace L) j) (hφ : IsAF (repE j e) U φ) (x : UA L 2) (hxf : x ∈ finU (E := L) (n := 2))
     (ι : SU B.Δ →* SA B.Δ) (hι : ∀ γ v, mt ((ι γ : DA B.Δ).1 v) = (mt (γ : DX B.Δ)).map (lmap (cv v) B.Δ))
     (W : Representation ℂ (SU B.Δ) (Wt.VD (InfinitePlace L) j)) (hW : W = Wt.cS (em B) j) (γ : SU B.Δ) (g : SA B.Δ) :
     φ ((B.bS (ι γ * g) : UA L 2) * x) = W γ (φ ((B.bS g : UA L 2) * x)) := by
@@ -285,12 +289,12 @@ private theorem inS_left' {L : Type} [Field L] [NumberField L] [IsCMField L] (B 
 
 private theorem inS_p {L : Type} [Field L] [NumberField L] [IsCMField L] {B : Bridge L} (hB : B.Ok) (T : Spl B) (S : Finset (Plc L))
     (VL : ∀ w : Plc L, Lev (Kw w)) (A : SD B.Δ) (hA : A.Ok) (hF : Fit T S VL A) (a : ∀ w : Plc L, (Kw w)ˣ →* ℂˣ) (b : Chs (Lp L)) (hab : FitCh T S a b)
-    {V : Type} [AddCommGroup V] [Module ℂ V] (φ : UA L 2 → V) (hφ : ∀ u ∈ lev (Kall L 2) S VL, ∀ g, φ (g * u) = φ g)
-    (hE : ∀ w ∈ S, EigS φ w (VL w) (a w)) (x : UA L 2) (hxf : x ∈ finU L 2) (hxo : OffS S x) (t : Dat.Par (Lp L)) (g : SA B.Δ) (c : ℂ)
+    {V : Type} [AddCommGroup V] [Module ℂ V] (φ : UA L 2 → V) (hφ : ∀ u ∈ lev (Kall (L := L) 2) S VL, ∀ g, φ (g * u) = φ g)
+    (hE : ∀ w ∈ S, EigS φ w (VL w) (a w)) (x : UA L 2) (hxf : x ∈ finU (E := L) (n := 2)) (hxo : OffS S x) (t : Dat.Par (Lp L)) (g : SA B.Δ) (c : ℂ)
     (hCone : A.Cone t) (hEl : A.IsElD g (SD.dS t)) (hc : c = A.exS b t) :
-    x * (B.bS g : UA L 2) = (B.bS g : UA L 2) * x ∧ AlgebraTools.FinOrb (lev (Kall L 2) S VL) (lev (Kall L 2) S VL) (B.bS g : UA L 2) ∧
-    (∀ u ∈ lev (Kall L 2) S VL, ∃ c ∈ lev (Kall L 2) S VL, c * (B.bS g : UA L 2) = (B.bS g : UA L 2) * c ∧ u * c⁻¹ ∈ finU L 2 ⊓ SUA L ∧ c⁻¹ * u ∈ finU L 2 ⊓ SUA L) ∧
-    dcF (lev (Kall L 2) S VL) (B.bS g : UA L 2) φ = c • φ := by
+    x * (B.bS g : UA L 2) = (B.bS g : UA L 2) * x ∧ AlgebraTools.FinOrb (lev (Kall (L := L) 2) S VL) (lev (Kall (L := L) 2) S VL) (B.bS g : UA L 2) ∧
+    (∀ u ∈ lev (Kall (L := L) 2) S VL, ∃ c ∈ lev (Kall (L := L) 2) S VL, c * (B.bS g : UA L 2) = (B.bS g : UA L 2) * c ∧ u * c⁻¹ ∈ finU (E := L) (n := 2) ⊓ SUA L ∧ c⁻¹ * u ∈ finU (E := L) (n := 2) ⊓ SUA L) ∧
+    dcF (lev (Kall (L := L) 2) S VL) (B.bS g : UA L 2) φ = c • φ := by
   subst hc
   have h := inS_op hB T S VL A hA hF a b hab φ hφ hE t g hCone hEl
   exact ⟨off_on_comm S x _ hxf hxo h.1, h.2⟩
@@ -298,12 +302,12 @@ private theorem inS_p {L : Type} [Field L] [NumberField L] [IsCMField L] {B : Br
 private theorem automorphic_in_spherical_level {L : Type} [Field L] [NumberField L] [IsCMField L] {B : Bridge L} (hB : B.Ok) (T : Spl B) (S : Finset (Plc L))
     (VL : ∀ w : Plc L, Lev (Kw w)) (A : SD B.Δ) (hA : A.Ok) (hF : Fit T S VL A) (j : ℕ) (e : InfinitePlace L → ℤ)
     (a : ∀ w : Plc L, (Kw w)ˣ →* ℂˣ) (b : Chs (Lp L)) (hab : FitCh T S a b)
-    (φ : UA L 2 → Wt.VD (InfinitePlace L) j) (hφ0 : φ ≠ 0) (hφ : IsAF (repE j e) (lev (Kall L 2) S VL) φ) (hE : ∀ w ∈ S, EigS φ w (VL w) (a w)) :
+    (φ : UA L 2 → Wt.VD (InfinitePlace L) j) (hφ0 : φ ≠ 0) (hφ : IsAF (repE j e) (lev (Kall (L := L) 2) S VL) φ) (hE : ∀ w ∈ S, EigS φ w (VL w) (a w)) :
     ∃ y : DA B.Δ, A.dat.Off y ∧ ∀ ch (C : Base (SU B.Δ) (SA B.Δ) (Wt.VD (InfinitePlace L) j)), A.dat.IsBS ch y C → C.W = Wt.cS (em B) j →
       ∃ ψ ∈ C.Forms, ψ ≠ 0 ∧ A.EigS C.U ψ b :=
   (So.translate L S VL hF.pl _ (repE j e) φ hφ hφ0).elim fun x hx => hx.2.2.elim fun s hs => (hB.conj x hx.1).elim fun y hy =>
     ⟨y, fun v hv => ((hF.sg v).1 hv).elim fun w hw => hw.2 ▸ hy.1 _ fun u hu => hx.2.1 w hw.1 u hu, fun ch C hC hW =>
-      (gen (H := ↥(SA B.Δ)) (G := ↥(UA L 2)) (finU L 2 ⊓ SUA L) (lev (Kall L 2) S VL) (sub_normal L) B.bS x C hC.ω
+      (gen (H := ↥(SA B.Δ)) (G := ↥(UA L 2)) (finU (E := L) (n := 2) ⊓ SUA L) (lev (Kall (L := L) 2) S VL) (sub_normal L) B.bS x C hC.ω
       (inS_cu A.dat _ x y hy.2 (lev2 hB T S VL A hA hF) ch C hC) φ hφ.level
       (fun γ g => inS_left' B hB j e _ φ hφ x hx.1 C.ι hC.ι _ hW γ g) ⟨s, hs.1⟩ hs.2
       (fun g c => ∃ t, A.Cone t ∧ A.IsElD g (SD.dS t) ∧ c = A.exS b t)

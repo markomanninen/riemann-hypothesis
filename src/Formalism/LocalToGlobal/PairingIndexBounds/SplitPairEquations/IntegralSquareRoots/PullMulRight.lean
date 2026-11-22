@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.PullIopOf
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.ReductionOf
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.PullIopOf
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.ReductionOf
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.BasicNotions Classical

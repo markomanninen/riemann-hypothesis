@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.CxCutPO
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.CxCutPO
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain Polynomial
 open scoped Matrix ComplexOrder InnerProductSpace

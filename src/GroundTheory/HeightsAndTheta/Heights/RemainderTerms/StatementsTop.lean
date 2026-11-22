@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -31,14 +36,14 @@ def OtherFactorFormula.Statement : Prop :=
                 (numStandardTable (rectangle r a) : ℚ) ^ (f - 2) *
                 symmetricGroupCharacter (rectangle r a)
                   ((k - 1) :: List.replicate (r * a - (k - 1)) 1) *
-                coeff (Finsupp.single (⟨k - 1, by omega⟩ : Fin (r + a)) 1) S
+                AddMonoidAlgebra.coeff S (Finsupp.single (⟨k - 1, by omega⟩ : Fin (r + a)) 1)
 
 def SchurSignCoefficient.Statement : Prop :=
   ∀ (N r k : ℕ) (hk1 : 1 ≤ k) (hkN : k ≤ N) (nu : Fin r → ℕ) (s : ℚ), (s = 1 ∨ s = -1) →
     Antitone nu → ∑ i, nu i = k →
     ∃ S : MvPolynomial (Fin N) ℚ,
       powerSumHom N S = aeval (fun i : Fin N => C s * X i) (schur (Fin N) nu) ∧
-      coeff (Finsupp.single (⟨k - 1, by omega⟩ : Fin N) 1) S =
+      AddMonoidAlgebra.coeff S (Finsupp.single (⟨k - 1, by omega⟩ : Fin N) 1) =
         s ^ k * if ∀ i : Fin r, (i : ℕ) ≠ 0 → nu i ≤ 1 then
           (-1 : ℚ) ^ ((Finset.univ.filter fun i : Fin r => (i : ℕ) ≠ 0 ∧ nu i = 1).card) / k
         else 0
@@ -54,20 +59,6 @@ def HookSumBound.Statement : Prop :=
     (∀ nu ∈ partitionsOf r k, |b nu| ≤ numStandardTable (fun i => a + nu i)) →
     ∑ nu ∈ (partitionsOf r k).filter (fun nu => ∀ i : Fin r, (i : ℕ) ≠ 0 → nu i ≤ 1), |b nu| ≤
       (Nat.choose (r * a + k) k : ℚ) * 2 ^ (k - 1) * numStandardTable (rectangle r a)
-
-def ShiftSumRule.Statement : Prop :=
-  ∀ r a : ℕ, 1 ≤ r → 1 ≤ a → ∀ Q : ℕ → Fin 1 → RootRing 1 (r + a),
-    IsPowerSumDecomposition 1 (r + a) (restPolynomial 1 r a .last) Q →
-      (a : ℚ) * flagIntegral 1 (r + a) (Q 1 0) =
-        ∑ k ∈ Finset.Icc 2 (r + a),
-          restTerm 1 (r + a) Q k 0 (smallPowerSum 1 r a .last (k - 1) 0)
-
-def LinearTermValue.Statement : Prop :=
-  ∀ r a : ℕ, 1 ≤ r → 1 ≤ a → ∀ Q : ℕ → Fin 1 → RootRing 1 (r + a),
-    IsPowerSumDecomposition 1 (r + a) (restPolynomial 1 r a .last) Q →
-      flagIntegral 1 (r + a) (Q 1 0) * numStandardTable (rectangle r a) =
-        fibreDegree 1 r a .last *
-          numStandardTable (fun i : Fin r => a + if (i : ℕ) = 0 then 1 else 0)
 
 end
 

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.SubMulAddEpM
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.W1sMem
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.SubMulAddEpM
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.W1sMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,11 +17,6 @@ section Comp
 variable {A X : Type} [CommRing A] [CommRing X] [Algebra A X] {g n a : ℕ}
 
 private theorem alg_eq (c : A) : algebraMap A (DD X g) c = DD.C (algebraMap A X c) := rfl
-
-private def aM (Z : Matrix (Fin n) (Fin n) (DD X g)) : Matrix (Fin n) (Fin n) X := Z.map DD.a
-
-private def epC (j : Fin g) (Z : Matrix (Fin n) (Fin n) (DD X g)) : Matrix (Fin n) (Fin n) X :=
-  Z.map fun d => d.ep j
 
 variable (P Q : Matrix (Fin n) (Fin n) (DD X g))
 

@@ -1,9 +1,13 @@
-import Formalism.LocalToGlobal.InertKernelTheory.DefsBeCob
-import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.Statement
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FlowTwoTorsionWp
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.ChordEquation
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalC
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KurComplete
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsBeCob
+public import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.Statement
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FlowTwoTorsionWp
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.ChordEquation
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalC
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KurComplete
+
+@[expose] public section
 
 open Filter Topology
 
@@ -82,7 +86,7 @@ theorem frob_periodic {K : Type*} [Field K] {p : ℕ} (hp : p.Prime) {x : K}
       obtain ⟨f, hf, h⟩ := (frobenius_periodic_add_and_mul hp h0 ihz ihw).1
       refine ⟨f, hf, ?_⟩
       show (Ideal.Quotient.mk I (⟨z, hz⟩ + ⟨w, hw⟩)) ^ p ^ f = Ideal.Quotient.mk I (⟨z, hz⟩ + ⟨w, hw⟩)
-      rw [map_add]
+      rw [map_add (f := _)]
       exact h
     | neg z hz ih =>
       obtain ⟨f, hf, h⟩ := ih
@@ -180,8 +184,8 @@ theorem div_mem_of_mem (hp : p.Prime) {r : K} (hr : r ∈ Subring.closure (mu K 
   rw [key]
   exact mul_mem (neg_mem (mem_W_of_mem hs)) (inv_one_sub_mem (mem_W_of_mem (pow_mem hr _)) hu1)
 
-omit [IsUltrametricDist K] in
 
+omit [IsUltrametricDist K] in
 theorem div_mem (hp : p.Prime) {w : K} (hw : w ∈ W K p) (h1 : ‖w‖ < 1) : w / p ∈ W K p := by
 
   have hw' : w ∈ closure ({y : K | ‖y‖ < 1} ∩ (Subring.closure (mu K p) : Set K)) :=

@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.SsetGroup
-import Mathlib.Analysis.CStarAlgebra.Matrix
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.SsetGroup
+public import Mathlib.Analysis.CStarAlgebra.Matrix
+
+@[expose] public section
 
 open MeasureTheory Matrix
 

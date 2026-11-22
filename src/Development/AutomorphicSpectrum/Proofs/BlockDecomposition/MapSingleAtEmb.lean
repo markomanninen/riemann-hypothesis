@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.IsStarRep
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.IsStarRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,7 +12,7 @@ open scoped Classical
 
 namespace GlobalTheory.CompanionTheory.FrameCasimir
 
-theorem sum_embeddings {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {N : Type} [AddCommMonoid N]
+theorem sum_embeddings {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {N : Type} [AddCommMonoid N]
     (f : (E →+* ℂ) → N) :
     ∑ τ, f τ = ∑ v : InfinitePlace E, (f v.embedding + f (ComplexEmbedding.conjugate v.embedding)) := by
   rw [← Finset.sum_fiberwise Finset.univ (fun τ : E →+* ℂ => InfinitePlace.mk τ) f]
@@ -39,7 +43,7 @@ theorem atEmb_embedding {E : Type} [Field E] (v : InfinitePlace E) (z : ℂ) :
   rw [if_pos (by rw [InfinitePlace.mk_embedding])]
   congr 1 <;> simp
 
-theorem map_single_atEmb {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ} {N : Type} [AddCommGroup N]
+theorem map_single_atEmb {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ} {N : Type} [AddCommGroup N]
     [Module ℂ N] [Module ℝ N] [IsScalarTower ℝ ℂ N] (φ : Lie E a →ₗ[ℝ] N) (τ : E →+* ℂ) (i j : Fin a) (z : ℂ) :
     φ (toL (Matrix.single i j (atEmb τ z))) =
       z • cx τ φ i j + starRingEnd ℂ z • cx (ComplexEmbedding.conjugate τ) φ i j := by
@@ -54,7 +58,7 @@ theorem map_single_atEmb {E : Type} [Field E] [NumberField E] [IsTotallyComplex 
   have hL : ∀ x, φ (toL (Matrix.single i j x)) = L x := fun _ => rfl
   have e : atEmb τ (-Complex.I) = -atEmb τ Complex.I := by
     rw [atEmb_eq]; simp
-  rw [hL, atEmb_eq, map_add, map_smul, map_smul]
+  rw [hL, atEmb_eq, map_add (f := _), map_smul, map_smul]
   simp only [cx, hL, atEmb_conj, map_one, Complex.conj_I, e, map_neg]
   have h1 := Complex.add_conj z
   have h2 := Complex.sub_conj z
@@ -114,11 +118,11 @@ theorem frameCas : FrameCas := by
   intro E _ _ _ a M _ _ _ _ φ
   set c : ℂ := (1 + Complex.I) / 2 with hc
   have hc0 : c * c + starRingEnd ℂ c * starRingEnd ℂ c = 0 := by
-    simp only [hc, map_div₀, map_add, map_one, Complex.conj_I, map_ofNat]
+    simp only [hc, map_div₀, map_add (f := _), map_one, Complex.conj_I, map_ofNat]
     ring_nf
     simp
   have hc1 : 2 * (c * starRingEnd ℂ c) = 1 := by
-    simp only [hc, map_div₀, map_add, map_one, Complex.conj_I, map_ofNat]
+    simp only [hc, map_div₀, map_add (f := _), map_one, Complex.conj_I, map_ofNat]
     ring_nf
     simp
     norm_num

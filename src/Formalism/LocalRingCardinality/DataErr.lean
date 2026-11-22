@@ -1,7 +1,11 @@
-import Formalism.LocalRingCardinality.DataDIVDefs
-import Formalism.LocalRingCardinality.DataLatDefs
-import Formalism.LocalRingCardinality.DataForced
-import Formalism.LocalRingCardinality.DataLevelD
+module
+
+public import Formalism.LocalRingCardinality.DataDIVDefs
+public import Formalism.LocalRingCardinality.DataLatDefs
+public import Formalism.LocalRingCardinality.DataForced
+public import Formalism.LocalRingCardinality.DataLevelD
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,15 +40,15 @@ structure ErrX (D : D7) where
 def tauLL (D : D7) (τ : D.what₂.Tau) (x : D.host.E) : D.what₂.LL :=
   D.embE (D.host.sigmaOf (D.eTau τ : D.R.GG) x)
 
-open scoped TensorProduct in
 
+open scoped TensorProduct in
 def PiGLevel (D : D7) (lev : LevelData D) (X : ErrX D) : Prop :=
   letI := D.host.cmStar
   ∀ u (i : Fin 2) (v : HeightOneSpectrum (𝓞 D.host.F)) (h : (D.host.g i : 𝓞 D.host.F) ∈ v.asIdeal),
     Valued.v (((lev u).splitG i v h) ((D.host.conj (X.piG i : D.host.E)) ⊗ₜ[D.host.F] (1 : v.adicCompletion D.host.F))).1 < 1
 
-open scoped TensorProduct in
 
+open scoped TensorProduct in
 def PiTLevel (D : D7) (lev : LevelData D) (X : ErrX D) : Prop :=
   letI := D.host.cmStar
   ∀ u (v : (D.mem u).A.vT) (z : intV D.host.E (X.vPl u v)),
@@ -52,12 +56,6 @@ def PiTLevel (D : D7) (lev : LevelData D) (X : ErrX D) : Prop :=
       ((X.piT u : 𝓞 D.host.E) : D.host.E) ⊗ₜ[D.host.F] (1 : (X.vPl u v).adicCompletion D.host.F) →
     ∀ y : (lev u).fM (X.vPl u v) (X.norm_mem_place_ideal u v), z • y = 0
 
-open scoped TensorProduct in
-
-theorem piT_mem_intV (D : D7) (X : ErrX D) (u : D.what₂.Word) (v : (D.mem u).A.vT) :
-    ((X.piT u : 𝓞 D.host.E) : D.host.E) ⊗ₜ[D.host.F] (1 : (X.vPl u v).adicCompletion D.host.F) ∈
-      intV D.host.E (X.vPl u v) :=
-  Subring.subset_closure (Or.inl ⟨⟨_, ⟨X.piT u, rfl⟩⟩, rfl⟩)
 
 def SeenDef (D : D7) (X : ErrX D) : Prop :=
   ∀ u (w : D.what₂.places.Pl), D.what₂.places.resChar w = (D.mem u).A.T →
@@ -93,8 +91,8 @@ def EatG {D : D7} (L : SizeData₂ D) (X : ErrX D) (c : ErrC) (i : Fin 2) (u : D
   FTypeG D j + vNN X i u j w +
     c.g * (D.R.f : ℝ) * (Nm D ^ 2 + (D.R.m : ℝ) ^ 2 * L.etaSz)
 
-open Classical in
 
+open Classical in
 def Wtau (D : D7) (u : D.what₂.Word) (τ : D.what₂.Tau) : ℕ :=
   (Finset.range (D.R.m + 1)).sup fun i => Finset.univ.sup fun a : Fin (D.R.N i) =>
     if a.1 = 0 ∧ τ ∈ topsOf D.host D.eTau then 0
@@ -106,8 +104,8 @@ def EatT (D : D7) (u : D.what₂.Word) (w : D.what₂.places.Pl) : ℝ :=
       ((topsOf D.host D.eTau).card : ℝ) * ((D.R.t : ℝ) + 1) * ((D.R.m : ℝ) + 1) / 4
   else 0
 
-open Classical in
 
+open Classical in
 def ctD (D : D7) (u : D.what₂.Word) (j : ℕ) (t : HH D) : ℝ :=
   nuAbs D u j (tauPl D (false, t)) -
     (if t ∈ D.host.TT then DV.nuRow D u j (tauPl D (false, t)) 0 - DV.nuRow D u j (tauPl D (false, t)) 1 else 0) +
@@ -122,20 +120,20 @@ def EatC {D : D7} (L : SizeData₂ D) (c : ErrC) (j p : ℕ) : ℝ :=
   c.dig * (D.R.f : ℝ) * Nm D ^ 2 * Real.logb p L.sc.a +
     (∑ τ : D.what₂.Tau, wj D j τ) / ((p : ℝ) ^ 2 - 1)
 
-open Classical in
 
+open Classical in
 def kindA (D : D7) (p : ℕ) : Finset (Bool × HH D) := Finset.univ.filter fun z => ¬ IsSg D p ∧ z.1 = false
 
-open Classical in
 
+open Classical in
 def kindBC (D : D7) (p : ℕ) : Finset (Bool × HH D) := Finset.univ.filter fun z => IsSg D p ∨ z.1 = true
 
-open Classical in
 
+open Classical in
 def topsBC (D : D7) (p : ℕ) : Finset (Bool × HH D) := (kindBC D p).filter fun z => IsTopPl D z
 
-open Classical in
 
+open Classical in
 def EatX {D : D7} (L : SizeData₂ D) (c : ErrC) (j p : ℕ) : ℝ :=
   if IsCs D p then
     ((D.R.k : ℝ) - 1) * (∑ z ∈ kindBC D p, wPl D j z) / (p : ℝ) ^ 3 +
@@ -154,8 +152,8 @@ def EatI {D : D7} (L : SizeData₂ D) (K : Consts) (c : ErrC) (j p : ℕ) : ℝ 
       K.dl2 * ((topsBC D p).card : ℝ) * Real.logb p (2 * L.sc.a) ^ 2) +
     EatX L c j p
 
-open Classical in
 
+open Classical in
 def Eval {D : D7} (L : SizeData₂ D) (X : ErrX D) (K : Consts) (c : ErrC) (u : D.what₂.Word) (j : ℕ)
     (w : D.what₂.places.Pl) : ℝ :=
   let p := D.what₂.places.resChar w
@@ -183,18 +181,10 @@ theorem Eval_above {D : D7} (L : SizeData₂ D) (X : ErrX D) (K : Consts) (c : E
   have h3 : ¬ ((IsResidueClassZero D (D.what₂.places.resChar w) ∨ IsSg D (D.what₂.places.resChar w)) ∧
       (D.what₂.places.resChar w : ℝ) ≤ L.sc.X'' D.R.n) := fun h => absurd h.2 (not_le.2 hX)
   unfold Eval
-  simp only [if_neg h0, if_neg h1, if_neg hT, if_neg h2, if_neg h3, padicValNat.eq_zero_of_not_dvd hG]
+  simp only [if_neg h0, if_neg h1, if_neg hT, if_neg h2, if_neg h3]
   simp
-
-def SizeData₂.withEval {D : D7} (L : SizeData₂ D) (X : ErrX D) (K : Consts) (c : ErrC)
-    (hs : ∀ u j w, w ∉ L.supp → Eval L X K c u j w = 0) : SizeData₂ D :=
-  { L with
-    E := fun u j w => Eval L X K c u j w
-    E_supp := hs }
-
-theorem SizeData₂.withEval_EDef {D : D7} (L : SizeData₂ D) (X : ErrX D) (K : Consts) (c : ErrC)
-    (hs : ∀ u j w, w ∉ L.supp → Eval L X K c u j w = 0) : (L.withEval X K c hs).EDef X K c :=
-  fun _ _ _ _ => rfl
+  rw [Nat.padicValNat_def]
+  exact multiplicity_eq_zero_of_not_dvd hG
 
 theorem SizeData₂.EDef.zeroAbove {D : D7} {L : SizeData₂ D} {X : ErrX D} {K : Consts} {c : ErrC} (h : L.EDef X K c)
     (u : D.what₂.Word) (j : ℕ) (hj : j ∈ SizeData₂.lifts D) (w : D.what₂.places.Pl)

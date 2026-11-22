@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.MapEta
-import Mathlib.Topology.Algebra.ClopenNhdofOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.MapEta
+public import Mathlib.Topology.Algebra.ClopenNhdofOne
+
+@[expose] public section
 
 open IsLocalRing Matrix Filter UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
@@ -25,7 +29,8 @@ theorem UpperTheory.V.Pa.eventually_locallyConstant_comp_tower_eq :
   have hW : (⋂ z ∈ Set.range ρ, V z) ∈ nhds (1 : G0.Γ) := (Filter.biInter_mem hfin).2 fun z _ => hV z
   obtain ⟨O, hOW, hOo, h1O⟩ := mem_nhds_iff.1 hW
   obtain ⟨H, hH⟩ := ProfiniteGrp.exist_openNormalSubgroup_sub_open_nhds_of_one hOo h1O
-  filter_upwards [Λ.p_lim H] with N hN g
+  refine (Λ.p_lim H).mono ?_
+  intro N hN g
   set a := (T.h N).p₀ (Λ.π0 N g)
   set b := Λ.h.p₀ (Λ.πo0 g)
   have hab : (a : G0.Γ) * (b : G0.Γ)⁻¹ ∈ (H : Set G0.Γ) := hN g.1

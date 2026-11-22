@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.TateCohomology.CupTate
-import GroundTheory.TateCohomology.DimensionShift
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.CupTate
+public import GroundTheory.TateCohomology.DimensionShift
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open CategoryTheory MonoidalCategory
@@ -53,14 +58,14 @@ end Unitors
 
 variable [Fintype G]
 
-variable (k G) in
 
+variable (k G) in
 noncomputable def tateOne : tateCohomology (𝟙_ (Rep.{u} k G)) 0 :=
   ((tateCohomologyZeroIso k G).app (𝟙_ (Rep.{u} k G))).inv.hom
     (Submodule.Quotient.mk ⟨(1 : k), fun _ => rfl⟩)
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem leftUnitor_tateCup_tateOne_zero (B : Rep.{u} k G) (b : tateCohomology B 0) :
     ((tateCohomologyFunctor 0).map (λ_ B).hom).hom
       (tateCup 0 0 (𝟙_ (Rep.{u} k G)) B 0 (zero_add 0) (tateOne k G) b) = b := by

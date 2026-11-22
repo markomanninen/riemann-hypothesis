@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.ResidueCharacters.RowDef
-import Development.AutomorphicArithmetic.ResidueCharacters.CyclotomicWeightExponentLe
-import Development.AutomorphicArithmetic.ResidueCharacters.NumSplit
-import Development.AutomorphicArithmetic.ResidueCharacters.NumCost
+module
+
+public import Development.AutomorphicArithmetic.ResidueCharacters.RowDef
+public import Development.AutomorphicArithmetic.ResidueCharacters.CyclotomicWeightExponentLe
+public import Development.AutomorphicArithmetic.ResidueCharacters.NumSplit
+public import Development.AutomorphicArithmetic.ResidueCharacters.NumCost
+
+@[expose] public section
 
 noncomputable section
 

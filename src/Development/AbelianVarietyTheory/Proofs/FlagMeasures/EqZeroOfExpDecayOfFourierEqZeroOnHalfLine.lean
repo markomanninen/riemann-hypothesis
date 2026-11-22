@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FderivIntegralApplyOfHolomorphicOfDominated
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegrableExpNegMulAbs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FderivIntegralApplyOfHolomorphicOfDominated
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegrableExpNegMulAbs
+
+@[expose] public section
 
 open MeasureTheory Filter Set
 open scoped Topology FourierTransform

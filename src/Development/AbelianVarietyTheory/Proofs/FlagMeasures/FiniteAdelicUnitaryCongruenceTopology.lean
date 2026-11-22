@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AdelstabL
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IntegralFiniteAdeleCompleteSeparated
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AdelstabL
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IntegralFiniteAdeleCompleteSeparated
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
+
+@[expose] public section
 
 open MeasureTheory Formalism.MainNotions.S NumberField
 open scoped InnerProductSpace
@@ -90,8 +94,8 @@ theorem isOpen_stab {Λ : Submodule S (n → A)} (ho : IsOpen (Λ : Set (n → A
     (hc : IsCompact (Λ : Set (n → A))) : IsOpen (Formalism.UG.stabGL Λ : Set (GL n A)) :=
   Subgroup.isOpen_mono (H₁ := cong Λ 1) (fun _ h => h.1) (isOpen_cong ho hc isUnit_one)
 
-omit [Fintype n] in
 
+omit [Fintype n] in
 theorem isCompact_cols {C : Set (n → A)} (hC : IsCompact C) (u : Aˣ) :
     IsCompact {m : Matrix n n A | ∀ j, (fun i => (u : A) * m i j) ∈ C} := by
   have hc : Continuous fun p : n → n → A => (Matrix.of fun i j => ((u⁻¹ : Aˣ) : A) * p j i) :=
@@ -248,6 +252,7 @@ theorem exists_nat_mem_nhds (W : Set (Af F)) (hW : W ∈ 𝓝 (0 : Af F)) : ∃ 
     exact ⟨a, ha, e.symm⟩
   obtain ⟨k, hk⟩ := exists_subset_nhds_of_isCompact' (V := T) hanti.directed_ge hT
     (fun k => (hT k).isClosed) (U := V) (by
+      apply mem_nhdsSet_iff_forall.2
       refine fun y hy => hV.mem_nhds ?_
       have := (GlobalTheory.AdLat.integral_finiteAdele_complete_separated F).1 y fun N hN =>
         hdvd N N (Nat.dvd_factorial hN le_rfl) y (Set.mem_iInter.1 hy N)

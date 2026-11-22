@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem exists_basis_of_surjective {R : Type} [CommRing R] [IsLocalRing R] {m₁
     apply Subtype.ext
     rw [hr, hfk k, map_zero, sub_zero]
   have hfg : ∀ p : (Fin m₂ → R) × LinearMap.ker f, f (s p.1 + (p.2 : Fin m₁ → R)) = p.1 :=
-    fun p => by rw [map_add, hs, hfk, add_zero]
+    fun p => by rw [map_add (f := _), hs, hfk, add_zero]
   let g : (Fin m₂ → R) × LinearMap.ker f →ₗ[R] (Fin m₁ → R) :=
     LinearMap.coprod s (LinearMap.ker f).subtype
   let h : (Fin m₁ → R) →ₗ[R] (Fin m₂ → R) × LinearMap.ker f := LinearMap.prod f r

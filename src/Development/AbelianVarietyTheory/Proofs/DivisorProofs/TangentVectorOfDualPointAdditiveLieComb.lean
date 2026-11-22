@@ -1,11 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsPolAVSectionInverseImage
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToricPeriodBlockIsSymm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffTopMonEqZero
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLieBasisOfHolUnif
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsPolAVSectionInverseImage
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToricPeriodBlockIsSymm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffTopMonEqZero
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLieBasisOfHolUnif
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LieModel
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
-open GlobalTheory GlobalTheory.LieHt GlobalTheory.Cartier GlobalTheory.ThetaOnto GlobalTheory.MBModel GlobalTheory.KeyCl GlobalTheory.Ex GlobalTheory.MBLow GlobalTheory.SecJet
+open GlobalTheory GlobalTheory.LieHt GlobalTheory.Cartier GlobalTheory.ThetaOnto GlobalTheory.KeyCl GlobalTheory.Ex GlobalTheory.MBLow GlobalTheory.SecJet
 open scoped CategoryTheory.Obj
 attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.MBLow.Cl Matrix
@@ -123,7 +129,7 @@ theorem valR_spMap_comp {A B : Type} [CommRing A] [CommRing B] {X : Scheme.{0}} 
     (U : X.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U) (f : Γ(X, U)) :
     valR (spMap φ ≫ x) U f = φ (TangentOrigin.evalPt x U h f) := by
   have h' : ⊤ ≤ (spMap φ ≫ x) ⁻¹ᵁ U := fun p _ => h (Set.mem_univ _)
-  rw [valR, dif_pos h']
+  rw [valR, dite_eq_left h']
   exact TangentOrigin.evalPt_spMap_comp φ x U h h' f
 
 end GlobalTheory.TanLinComb
@@ -176,7 +182,7 @@ theorem val_one (U : (TF (R := R) ℂ ⊗ G).left.Opens) (f : Γ((TF (R := R) �
     rw [comp_lift, Category.comp_id, MonObj.comp_one]
   rw [e, Over.comp_left]
   show valR (spMap (algebraMap ℂ (DualNumber ℂ)) ≫ x0 G) U f = _
-  rw [valR_spMap_comp _ _ U h0, valF, dif_pos h0, TrivSqZeroExt.algebraMap_eq_inl]
+  rw [valR_spMap_comp _ _ U h0, valF, dite_eq_left h0, TrivSqZeroExt.algebraMap_eq_inl]
   rfl
 
 theorem dg_one : Dg (1 : TP R (DualNumber ℂ) ⟶ G) (fun _ _ => 0) := by
@@ -259,12 +265,12 @@ theorem tf_hom : (TF (R := R) ℂ).hom = spMap (fC R) := by
   rw [spMap_comp']
 
 def dm (R : Type) [CommRing R] [IsDomain R] [Algebra (FractionRing R) ℂ] : TP R (DualNumber ℂ) ⟶ epsR R :=
-  Over.homMk (spMap (dualMap (fC R))) (by
+  Over.homMk (spMap (GlobalTheory.CompanionTheory.Ar.dualMap (fC R))) (by
     show spMap _ ≫ spMap _ = spMap _ ≫ (TF (R := R) ℂ).hom
     rw [tf_hom, spMap_comp', spMap_comp']
     congr 1
     refine RingHom.ext fun a => ?_
-    ext <;> simp [dualMap, TrivSqZeroExt.algebraMap_eq_inl])
+    ext <;> simp [GlobalTheory.CompanionTheory.Ar.dualMap, TrivSqZeroExt.algebraMap_eq_inl])
 
 variable {G : Over (Sp R)} [GrpObj G]
 
@@ -275,15 +281,15 @@ theorem comp_prod {T T' : Over (Sp R)} (h : T' ⟶ T) : ∀ {n : ℕ} (u : Fin n
     rw [List.ofFn_succ, List.prod_cons, List.ofFn_succ, List.prod_cons, MonObj.comp_mul, comp_prod h]
 
 theorem isT_of_tangent {v : epsR R ⟶ G} (hv : IsTangent v) {b : TP R (DualNumber ℂ) ⟶ G}
-    (hb : b.left = spMap (dualMap (fC R)) ≫ v.left) : IsT b := by
+    (hb : b.left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap (fC R)) ≫ v.left) : IsT b := by
   unfold IsT
   apply Over.OverMorphism.ext
   rw [Over.comp_left, hb, Hom.one_def, Over.comp_left, toUnit_left', tf_hom]
   show spMap _ ≫ spMap _ ≫ _ = _
   rw [← Category.assoc, spMap_comp']
-  have e : (Chart.fstD ℂ).toRingHom.comp (dualMap (fC R)) = (fC R).comp (TrivSqZeroExt.fstHom R R R).toRingHom := by
+  have e : (Chart.fstD ℂ).toRingHom.comp (GlobalTheory.CompanionTheory.Ar.dualMap (fC R)) = (fC R).comp (TrivSqZeroExt.fstHom R R R).toRingHom := by
     refine RingHom.ext fun a => ?_
-    simp [dualMap, Chart.fstD]
+    simp [GlobalTheory.CompanionTheory.Ar.dualMap, Chart.fstD]
   rw [e, ← spMap_comp', Category.assoc]
   unfold IsTangent at hv
   rw [hv]
@@ -296,22 +302,23 @@ variable {R : Type} [CommRing R] [IsDomain R] [Algebra (FractionRing R) ℂ]
 variable {G : Over (Sp R)} [GrpObj G]
 
 theorem dm_scale (c : R) {v u : epsR R ⟶ G} (hu : u.left = spMap (epsScaleR c) ≫ v.left) {b : TP R (DualNumber ℂ) ⟶ G}
-    (hb : b.left = spMap (dualMap (fC R)) ≫ v.left) : dm R ≫ u = mapP (Chart.scaleD (fC R c)) ≫ b := by
+    (hb : b.left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap (fC R)) ≫ v.left) : dm R ≫ u = mapP (Chart.scaleD (fC R c)) ≫ b := by
   apply Over.OverMorphism.ext
   rw [Over.comp_left, Over.comp_left, hu, hb]
   show spMap _ ≫ spMap _ ≫ _ = spMap _ ≫ spMap _ ≫ _
   rw [← Category.assoc, ← Category.assoc, spMap_comp', spMap_comp']
   congr 2
   refine RingHom.ext fun a => ?_
-  ext <;> simp [epsScaleR, dualMap, Chart.scaleD, smul_smul, _root_.mul_comm]
+  ext <;> simp [epsScaleR, GlobalTheory.CompanionTheory.Ar.dualMap, Chart.scaleD, smul_smul, _root_.mul_comm]
 
 end GlobalTheory.TanLinComb
 
 namespace GlobalTheory
 
-open GlobalTheory.TanLinComb in
 
-theorem isD_lieComb : ∀ (R : Type) [CommRing R] [IsDomain R] (D : DegPre R) [Algebra (FractionRing R) ℂ] (N : NumD ℂ) (ν : NumOf D ℂ N) (g : ℕ) (d : AB N.toNumB g) (n : ℕ) (c : Fin n → R) (v : Fin n → (epsR R ⟶ D.P.A)) (w : epsR R ⟶ D.P.A) (W : Fin n → Fin g → ℂ) (b : Fin n → (TE R ℂ ⟶ D.P.A)) (bw : TE R ℂ ⟶ D.P.A), (∀ j, IsTangent (v j)) → IsLieComb c v w → (∀ j, (b j).left = spMap (dualMap ((algebraMap (FractionRing R) ℂ).comp (algebraMap R (FractionRing R)))) ≫ (v j).left) → bw.left = spMap (dualMap ((algebraMap (FractionRing R) ℂ).comp (algebraMap R (FractionRing R)))) ≫ w.left → (∀ j, IsD ν d (W j) (b j)) → IsD ν d (∑ j, (algebraMap (FractionRing R) ℂ) (algebraMap R (FractionRing R) (c j)) • W j) bw := by
+open GlobalTheory.TanLinComb in
+theorem isD_lieComb : ∀ (R : Type) [CommRing R] [IsDomain R] (D : DegPre R) [Algebra (FractionRing R) ℂ] (N : NumD ℂ) (ν : NumOf D ℂ N) (g : ℕ) (d : AB N.toNumB g) (n : ℕ) (c : Fin n → R) (v : Fin n → (epsR R ⟶ D.P.A)) (w : epsR R ⟶ D.P.A) (W : Fin n → Fin g → ℂ) (b : Fin n → (TE R ℂ ⟶ D.P.A)) (bw : TE R ℂ ⟶ D.P.A), (∀ j, IsTangent (v j)) → IsLieComb c v w → (∀ j, (b j).left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap ((algebraMap (FractionRing R) ℂ).comp (algebraMap R (FractionRing R)))) ≫ (v j).left) → bw.left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap ((algebraMap (FractionRing R) ℂ).comp (algebraMap R (FractionRing R)))) ≫ w.left → (∀ j, IsD ν d (W j) (b j)) → IsD ν d (∑ j, (algebraMap (FractionRing R) ℂ) (algebraMap R (FractionRing R) (c j)) • W j) bw := by
+  open TanLinComb in
   intro R _ _ D _ N ν g d n c v w W b bw hv hc hb hbw hD
   have hx0 : ptB ν d 0 = x0 D.P.A := by
     have e1 : ν.eA (d.ex 0) = 1 := by
@@ -338,7 +345,8 @@ theorem isD_lieComb : ∀ (R : Type) [CommRing R] [IsDomain R] (D : DegPre R) [A
   rw [hx0] at h0 ⊢
   refine (key.2 U f h0).trans ?_
   congr 2
-  simp only [δW, Finset.sum_apply, Pi.smul_apply, map_sum, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [δW, Finset.sum_apply, Pi.smul_apply, map_sum, map_smul, smul_eq_mul]
   rfl
 
 end GlobalTheory

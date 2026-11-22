@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.FlagLevelCharacterEqPsiDivN
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.FlagLevelCharacterEqPsiDivN
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} (TR : TypedRed
 
 theorem resT_of_mem (v : TR.Pl) {z : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F} (hz : z ∈ IntAf X.B.I.F X.B.I.E) :
     resT TR v z = TR.res v ⟨z, hz⟩ := by
-  unfold resT; rw [dif_pos hz]
+  unfold resT; rw [dite_eq_left hz]
 
 theorem res_eq_zero_of_Z (v : TR.Pl) {z : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F} (hz : z ∈ IntAf X.B.I.F X.B.I.E)
     (hZ : ZMod' X.B.I X.B.g z) : TR.res v ⟨z, hz⟩ = 0 :=
@@ -135,7 +139,8 @@ theorem leviM_mul {x y : X.B.I.Gf} (hx : x ∈ X.B.I.Kset) (hy : y ∈ X.B.I.Kse
     apply Subtype.ext
     simp only [Subring.coe_add, AddSubmonoidClass.coe_finsetSum, Subring.coe_mul]
     ring
-  rw [e3, map_add, hD, zero_add, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e3, map_add (f := _), hD, zero_add, map_sum]
   simp only [map_mul]
 
 end LeviMul

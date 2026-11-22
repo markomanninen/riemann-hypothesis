@@ -1,6 +1,10 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.Clause1
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCorrectionU1.DjCurveA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExpFromBlocks
+module
+
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.Clause1
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCorrectionU1.DjCurveA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExpFromBlocks
+
+@[expose] public section
 
 open Matrix
 
@@ -48,7 +52,7 @@ theorem rx_JC : rx (Formalism.UG.Jpq p q) = Formalism.REAL.Jm (epq p q) := by
   simp only [rx, reindex_apply, submatrix_apply, Equiv.symm_apply_apply, Formalism.REAL.Jm, diagonal_apply,
     EmbeddingLike.apply_eq_iff_eq, epq]
   rcases a with a | a <;> rcases b with b | b <;>
-    simp [Formalism.UG.Jpq, fromBlocks, one_apply] <;> split_ifs <;> simp_all
+    simp [Formalism.UG.Jpq, fromBlocks, Matrix.one_apply] <;> split_ifs <;> simp_all
 
 theorem ixC_J : ixC (Formalism.REAL.Jm (epq p q)) = Formalism.UG.Jpq p q := by
   rw [← rx_JC, ixC_rx]
@@ -63,11 +67,7 @@ theorem rx_expC (X : Formalism.BasicNotions.TH.Mat p q) : rx (NormedSpace.exp X)
   (Formalism.FourierDecayAlt.P.WirtingerOperators.LeviExponential.exp_reindex finSumFinEquiv X).symm
 
 theorem Jm_sqC : Formalism.REAL.Jm (epq p q) * Formalism.REAL.Jm (epq p q) = 1 := by
-  ext i j; simp only [Formalism.REAL.Jm, diagonal_mul_diagonal, diagonal_apply, one_apply]
-  split_ifs <;> simp_all
-
-theorem Jm_ctC : (Formalism.REAL.Jm (epq p q))ᴴ = Formalism.REAL.Jm (epq p q) := by
-  ext i j; simp only [Formalism.REAL.Jm, diagonal_conjTranspose, diagonal_apply]
+  ext i j; simp only [Formalism.REAL.Jm, diagonal_mul_diagonal, diagonal_apply, Matrix.one_apply]
   split_ifs <;> simp_all
 
 end Reindex
@@ -95,7 +95,7 @@ theorem exists_liftC {g : Matrix (Fin (p + q)) (Fin (p + q)) ℂ} (hg : g ∈ Fo
     rw [← ixC_J, ← ixC_ct, ← ixC_mul, ← ixC_mul, hg']
   have hinv : (Formalism.UG.Jpq p q * (ixC g)ᴴ * Formalism.UG.Jpq p q) * ixC g = 1 := by
     rw [Matrix.mul_assoc, Matrix.mul_assoc, ← Matrix.mul_assoc (ixC g)ᴴ, h1, ← ixC_J, ← ixC_mul, Jm_sqC]
-    ext i j; simp [ixC, one_apply]
+    exact map_one (Matrix.reindexAlgEquiv ℂ ℂ finSumFinEquiv.symm)
   let u : GL (Formalism.BasicNotions.TH.Ix p q) ℂ :=
     ⟨ixC g, Formalism.UG.Jpq p q * (ixC g)ᴴ * Formalism.UG.Jpq p q, mul_eq_one_comm.1 hinv, hinv⟩
   have hu : u ∈ Formalism.UG.Upq p q := by
@@ -164,7 +164,7 @@ theorem sigC_eq {j : ℕ} {z : T.G} (hz : T.cov z = 1 ∧ T.sq z = -1) (hP : πU
     (x : T.G) : sigC πU j (rx (covC T x)) = ((((T.sq x : ℂˣ) : ℂ))⁻¹ ^ j) • πU.π x := by
   have hex : ∃ y : T.G, rx (covC T y) = rx (covC T x) := ⟨x, rfl⟩
   have hl : rx (covC T (liftC (T := T) (rx (covC T x)))) = rx (covC T x) := by
-    unfold liftC; rw [dif_pos hex]; exact hex.choose_spec
+    unfold liftC; rw [dite_eq_left hex]; exact hex.choose_spec
   have hc : T.cov (liftC (T := T) (rx (covC T x))) = T.cov x := Units.ext (rx_injC hl)
   unfold sigC
   rw [if_pos hex]
@@ -189,9 +189,8 @@ variable {p q : ℕ}
 def sgnC : Formalism.BasicNotions.TH.Ix p q → ℂ := Sum.elim (fun _ => 1) (fun _ => -1)
 
 theorem Jpq_diagC : Formalism.UG.Jpq p q = diagonal (sgnC (p := p) (q := q)) := by
-  ext a b
-  rcases a with a | a <;> rcases b with b | b <;> simp [Formalism.UG.Jpq, sgnC, fromBlocks, diagonal_apply, one_apply]
-    <;> split_ifs <;> simp_all
+  simpa only [Formalism.UG.Jpq, sgnC, ← Matrix.diagonal_neg, Matrix.diagonal_one] using
+    (Matrix.fromBlocks_diagonal (fun _ : Fin p => (1 : ℂ)) (fun _ : Fin q => (-1 : ℂ)))
 
 theorem sgn_neC {a b : Formalism.BasicNotions.TH.Ix p q} (h : ¬ Formalism.BasicNotions.TH.sameBlock a b) : sgnC b - sgnC a ≠ 0 := by
   rcases a with a | a <;> rcases b with b | b <;> simp_all [Formalism.BasicNotions.TH.sameBlock, sgnC] <;> norm_num
@@ -240,7 +239,7 @@ theorem exists_contLiftC {p q : ℕ} (T : GrpData p q) (A : Set (Matrix (Fin (p 
     have key : ixC (Formalism.REAL.Jm (epq p q) * g.1ᴴ * Formalism.REAL.Jm (epq p q)) *
         ((T.cov (xs g) : GL _ ℂ) : Formalism.BasicNotions.TH.Mat p q) = 1 := by
       rw [h1, ← ixC_mul, Matrix.mul_assoc, Matrix.mul_assoc, ← Matrix.mul_assoc g.1ᴴ, hg, Jm_sqC]
-      ext i j; simp [ixC, one_apply]
+      exact map_one (Matrix.reindexAlgEquiv ℂ ℂ finSumFinEquiv.symm)
     calc (((T.cov (xs g))⁻¹ : GL _ ℂ) : Formalism.BasicNotions.TH.Mat p q)
         = (ixC (Formalism.REAL.Jm (epq p q) * g.1ᴴ * Formalism.REAL.Jm (epq p q)) *
           ((T.cov (xs g) : GL _ ℂ) : Formalism.BasicNotions.TH.Mat p q)) * (((T.cov (xs g))⁻¹ : GL _ ℂ) : Formalism.BasicNotions.TH.Mat p q) := by
@@ -326,7 +325,7 @@ theorem harish_chandra_descent : Descend := by
     · refine ⟨1, ContinuousLinearMap.ext fun v => ?_⟩
       have h1 : v + πU.π z v ∈ S := by
         show πU.π z (v + πU.π z v) - (v + πU.π z v) = 0
-        rw [map_add, ← ContinuousLinearMap.mul_apply, ← map_mul, hzz, map_one]
+        rw [map_add (f := _), ← ContinuousLinearMap.mul_apply, ← map_mul, hzz, map_one]
         simp [add_comm]
       rw [h, Submodule.mem_bot] at h1
       simp [eq_neg_of_add_eq_zero_right h1]
@@ -391,7 +390,11 @@ theorem harish_chandra_descent : Descend := by
       obtain ⟨k, hk, rfl⟩ := hK' g hg
       rw [hσ]
       refine Submodule.smul_mem _ _ ?_
-      refine Submodule.span_induction (fun y hy => ?_) (by simp) (fun a b _ _ ha hb => by rw [map_add]; exact add_mem ha hb)
+      refine Submodule.span_induction (fun y hy => ?_) (by simp)
+        (fun a b _ _ ha hb => by
+          change (πU.π k) (a + b) ∈ _
+          rw [(πU.π k).map_add a b]
+          exact add_mem ha hb)
         (fun c a _ ha => by rw [map_smul]; exact Submodule.smul_mem _ _ ha) hv
       obtain ⟨⟨k', hk'⟩, rfl⟩ := hy
       refine Submodule.subset_span ⟨⟨k * k', ?_⟩, by simp⟩

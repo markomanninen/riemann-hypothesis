@@ -1,5 +1,9 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.ArchInt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsProdInfMulFinPart
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.ArchInt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsProdInfMulFinPart
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ theorem shell_ne_zero (χ : Kˣ →* ℂˣ) (ψ : AddChar K Circle) (hψ : Conti
       ∂multHaar K ≠ 0 := by
   have hχ' : Continuous (χ⁻¹ : Kˣ →* ℂˣ) := continuous_quasiChar_inv hχ
   have hr' : ¬ IsUnramifiedChar χ⁻¹ := by rwa [isUnramifiedChar_inv_iff]
-  obtain ⟨a, ha, k, hk⟩ := exists_localEpsilon_eq_monomial (χ := χ⁻¹) hψ hψ1 hχ'
+  obtain ⟨a, ha, k, hk⟩ := exists_localEpsilon_eq_monomial (χ := χ⁻¹) (ψ := ψ) hψ hψ1 hχ'
   have h0 := hk 0
   rw [localEpsilon_of_not_isUnramified_eq hr', quasiCharConductor_inv, inv_inv] at h0
   set m : ℤ := addCharConductor ψ - quasiCharConductor χ

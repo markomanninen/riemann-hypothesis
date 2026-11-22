@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.HaarDefs
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Formalism.PeriodIntegrals.HaarDefs
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset
 open scoped InnerProductSpace ContDiff
@@ -206,9 +210,5 @@ def unrealL (k r : ℕ) : EuclideanSpace ℝ (Fin (2 * r + k + 1) × Fin (2 * r 
     intro c x
     rw [unrealify_smul]
     exact Complex.coe_smul c _
-
-instance (S : Set (Mx k r)) (κ : ENNReal) : SFinite (haarLie S κ) := by
-  unfold haarLie
-  infer_instance
 
 end PI

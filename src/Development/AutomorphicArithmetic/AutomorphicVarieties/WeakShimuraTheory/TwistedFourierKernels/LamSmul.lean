@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.TwistedFourierKernels.IsTwistTwD
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.Expand
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.TwistedFourierKernels.IsTwistTwD
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.Expand
+
+@[expose] public section
 
 open IsLocalRing Polynomial UpperTheory.V UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Ws.H5
 
@@ -20,7 +24,7 @@ private theorem coeff_chi_smul {n : ℕ} {A G : Type} [CommRing A] [Group G] (D 
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, map_pow]
     ring
-  rw [hsum, Polynomial.finset_sum_coeff, Finset.sum_eq_single i]
+  rw [hsum, Polynomial.finsetSum_coeff, Finset.sum_eq_single i]
   · rw [Polynomial.coeff_C_mul_X_pow, if_pos rfl]
     ring
   · intro j hj hji

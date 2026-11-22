@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.UnipotentFrameFixers
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.UnipotentFrameFixers
+
+@[expose] public section
 
 noncomputable section
 
@@ -118,13 +122,13 @@ theorem det_swap {K : Type*} [Field K] (n : ℕ) :
 
 theorem leadMinorE_full (D : Formalism.BasicNotions.D7) (Z : MatZ D) : leadMinorE Z (D.R.rS + 1) = Z.det := by
   unfold leadMinorE
-  rw [dif_pos le_rfl]
+  rw [dite_eq_left le_rfl]
   congr 1
 
 theorem leadMinorE_r (D : Formalism.BasicNotions.D7) (Z : MatZ D) :
     leadMinorE Z D.R.rS = Z.adjugate (Fin.last D.R.rS) (Fin.last D.R.rS) := by
   unfold leadMinorE
-  rw [dif_pos (Nat.le_succ _), adjugate_last]
+  rw [dite_eq_left (Nat.le_succ _), adjugate_last]
   congr 1
 
 theorem detGa' (D : Formalism.BasicNotions.D7) (T T' : D.host.E) (Z : MatZ D) :
@@ -181,7 +185,8 @@ theorem mem_orth_of_span {ι : Type*} (v : ι → (VS D).V) (w : (VS D).V) (hw :
 
 theorem hT_sum {ι : Type*} [Fintype ι] (x : (VS D).V) (c : ι → D.host.E) (v : ι → (VS D).V) :
     (VS D).hT x (∑ i, c i • v i) = ∑ i, c i * (VS D).hT x (v i) := by
-  simp [map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul]
 
 theorem eq_zero_of_gram {ι : Type*} [Fintype ι] [DecidableEq ι] (v : ι → (VS D).V)
     (hM : (Matrix.of fun j i => (VS D).hT (v j) (v i)).det ≠ 0) {d : (VS D).V}
@@ -242,7 +247,7 @@ theorem rigid {ι : Type*} [Fintype ι] [DecidableEq ι] (v : ι → (VS D).V)
     rw [ha, hab j, hb, hc j, sub_self]
   have hw : a w = b w := sub_eq_zero.1 (eq_zero_of_gram (a ∘ v) hM' (hspan hd) h0)
   have hx : x = u + w := by simp [w]
-  rw [hx, map_add, map_add, hu, hw]
+  rw [hx, map_add (f := _), map_add (f := _), hu, hw]
 
 end Geo
 
@@ -259,7 +264,7 @@ theorem fix_X {n : (VS D).V ≃ₗ[D.host.E] (VS D).V} (he : ∀ a, n (F0.e a) =
   induction hx using Submodule.span_induction with
   | mem y hy => obtain ⟨a, rfl⟩ := hy; exact he a
   | zero => simp
-  | add a b _ _ ha hb => rw [map_add, ha, hb]
+  | add a b _ _ ha hb => rw [map_add (f := _), ha, hb]
   | smul c a _ ha => rw [map_smul, ha]
 
 theorem Xa_le_X (j : ℕ) : F0.Xa j ≤ F0.X := Submodule.span_mono (Set.image_subset_range _ _)
@@ -274,7 +279,7 @@ theorem fix_fvec {n : (VS D).V ≃ₗ[D.host.E] (VS D).V} (he : ∀ a, n (F0.e a
   | last => simp only [FlagG.fvec, Fin.snoc_last]; exact hz
   | cast j => simp only [FlagG.fvec, Fin.snoc_castSucc]; exact he j
 
-theorem moves_fvec {T' : D.host.E} {n : (VS D).V ≃ₗ[D.host.E] (VS D).V} {A B : LFlag (VS D) D.R.rS T'}
+theorem moves_fvec {T' : D.host.E} {n : (VS D).V ≃ₗ[D.host.E] (VS D).V} {A B : LFlag (D.sp.Y 0) D.R.rS T'}
     (h : Moves n A B) (i : Fin (D.R.rS + 1)) : n (A.fl.fvec i) = B.fl.fvec i := by
   induction i using Fin.lastCases with
   | last => simp only [FlagG.fvec, Fin.snoc_last]; exact h.2
@@ -343,16 +348,16 @@ theorem unipotent_fixer_refl (Λ : Submodule (𝓞 D.host.E) (VS D).V) : LinearE
   mem_unipotent_fixer_of (fun _ _ => rfl) (by rw [show ⇑(LinearEquiv.refl D.host.E (VS D).V) = id from rfl, Set.image_id])
     (fun w _ => by rw [LinearEquiv.refl_apply, sub_self]; exact Submodule.zero_mem _) (fun _ => rfl) rfl
 
-theorem nilradical_relation_refl {T' : D.host.E} (Λ : Submodule (𝓞 D.host.E) (VS D).V) (A : LFlag (VS D) D.R.rS T') :
+theorem nilradical_relation_refl {T' : D.host.E} (Λ : Submodule (𝓞 D.host.E) (VS D).V) (A : LFlag (D.sp.Y 0) D.R.rS T') :
     NilradicalFlagMoved F0 Λ A A := ⟨_, unipotent_fixer_refl Λ, fun _ => rfl, rfl⟩
 
-theorem lattice_flag_relation_symm {T' : D.host.E} {Λ : Submodule (𝓞 D.host.E) (VS D).V} {A B : LFlag (VS D) D.R.rS T'}
+theorem lattice_flag_relation_symm {T' : D.host.E} {Λ : Submodule (𝓞 D.host.E) (VS D).V} {A B : LFlag (D.sp.Y 0) D.R.rS T'}
     (h : NilradicalFlagMoved F0 Λ A B) : NilradicalFlagMoved F0 Λ B A := by
   obtain ⟨k, hk, he, hz⟩ := h
   exact ⟨k.symm, unipotent_fixer_symm hk, fun a => (LinearEquiv.symm_apply_eq _).2 (he a).symm,
     (LinearEquiv.symm_apply_eq _).2 hz.symm⟩
 
-theorem lattice_flag_relation_trans {T' : D.host.E} {Λ : Submodule (𝓞 D.host.E) (VS D).V} {A B C : LFlag (VS D) D.R.rS T'}
+theorem lattice_flag_relation_trans {T' : D.host.E} {Λ : Submodule (𝓞 D.host.E) (VS D).V} {A B C : LFlag (D.sp.Y 0) D.R.rS T'}
     (h1 : NilradicalFlagMoved F0 Λ A B) (h2 : NilradicalFlagMoved F0 Λ B C) : NilradicalFlagMoved F0 Λ A C := by
   obtain ⟨k, hk, he, hz⟩ := h1
   obtain ⟨l, hl, he', hz'⟩ := h2
@@ -365,8 +370,8 @@ section Main
 variable {D : D7} (Zd : LocDat D) {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
 
-variable (u u' F0 what₂) in
 
+variable (u u' F0 what₂) in
 theorem uniqC_holds : UniqC Zd u u' F0 what₂ := by
   intro γ Z hCtx F'₂ φ φ' hS F' F'' Λ₂ Λ₃ hP' hP'' hR2 hR3
   obtain ⟨n, hn, hmn, hnΛ⟩ := hR2
@@ -420,8 +425,8 @@ theorem uniqC_holds : UniqC Zd u u' F0 what₂ := by
     have hGa : (Matrix.of fun j i => (VS D).hT (v j) (v i)) =
         Ga (CntLocal.Tn u) ((Tu D u' : ℕ) : D.host.E) (Formalism.MainNotions.S.Zhat F0 F'₂.fl) := by
       ext j i
-      rw [ga_gram]
-      rfl
+      change (VS D).hT (v j) (v i) = _
+      exact (ga_gram D F0 F'₂.fl j i).symm
     have hGZ : GZ (CntLocal.Tn u) ((Tu D u' : ℕ) : D.host.E) Z ≠ 0 := by
       have := gz_atMat hZ (D.mem u).A.T (D.mem u').A.T
       intro h0

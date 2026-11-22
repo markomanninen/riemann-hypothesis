@@ -1,9 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltComplexPadicIsAlgClosedUnitBall
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ImportsAlt
-import GroundTheory.PAdicHodge.TiltField
-open Formalism.Per GlobalTheory.PSer
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltComplexPadicIsAlgClosedUnitBall
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ImportsAlt
+public import GroundTheory.PAdicHodge.TiltField
+
+@[expose] public section
+
+open Formalism.Per GlobalTheory.PSer GroundTheory.PAdicHodge
 open scoped Formalism.Per
 set_option maxHeartbeats 1000000 in
-theorem _root_.GlobalTheory.T.tilt_complexPadic_isAlgClosed_unitBall : ∀ (l : ℕ) [Fact l.Prime], IsAlgClosed (Tilt ℂ_[l] NormedField.valuation (GroundTheory.PAdicHodge.normInteger ℂ_[l]) GroundTheory.PAdicHodge.normInteger_integers l) ∧ ∃ ι : Fl l →+* (Tilt ℂ_[l] NormedField.valuation (GroundTheory.PAdicHodge.normInteger ℂ_[l]) GroundTheory.PAdicHodge.normInteger_integers l), (∀ x, GroundTheory.PAdicHodge.tiltSharp ℂ_[l] l (ι x) = sh x) ∧ (∀ z : (Tilt ℂ_[l] NormedField.valuation (GroundTheory.PAdicHodge.normInteger ℂ_[l]) GroundTheory.PAdicHodge.normInteger_integers l), ‖z‖ ≤ 1 → ∃ x, ι x = z) := by
-  first | exact @GlobalTheory.PSer.tilt_isAlgClosed_and_unitBall | exact GlobalTheory.PSer.tilt_isAlgClosed_and_unitBall | (intros; apply GlobalTheory.PSer.tilt_isAlgClosed_and_unitBall <;> assumption)
+theorem _root_.GlobalTheory.T.tilt_complexPadic_isAlgClosed_unitBall : ∀ (l : ℕ) [Fact l.Prime],
+    IsAlgClosed (FractionRing (PreTilt (normInteger ℂ_[l]) l)) ∧
+      ∃ ι : Fl l →+* FractionRing (PreTilt (normInteger ℂ_[l]) l),
+        (∀ x, tiltSharp ℂ_[l] l (ι x) = sh x) ∧
+        (∀ z : FractionRing (PreTilt (normInteger ℂ_[l]) l), ‖z‖ ≤ 1 → ∃ x, ι x = z) :=
+  GlobalTheory.PSer.tilt_isAlgClosed_and_unitBall

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PmatIsHermitian
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PmatIsHermitian
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ theorem dpb_sylv (f : W →ₗ[ℝ] V) (g : V →ₗ[ℝ] W) :
   classical
   let bV := Module.finBasis ℝ V
   let bW := Module.finBasis ℝ W
-  rw [← LinearMap.det_toMatrix bV, ← LinearMap.det_toMatrix bW, map_add, map_add,
+  rw [← LinearMap.det_toMatrix bV, ← LinearMap.det_toMatrix bW, map_add (f := _), map_add (f := _),
     LinearMap.toMatrix_comp bV bW bV, LinearMap.toMatrix_comp bW bV bW, LinearMap.toMatrix_one,
     LinearMap.toMatrix_one]
   exact Matrix.det_one_add_mul_comm _ _

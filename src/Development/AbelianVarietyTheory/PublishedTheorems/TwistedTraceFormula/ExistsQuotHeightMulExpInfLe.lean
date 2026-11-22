@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryAdelicHeightCosetLeNormInfPow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteVolumeAdelicUnitaryQuotient
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryAdelicHeightCosetLeNormInfPow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteVolumeAdelicUnitaryQuotient
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,7 +130,7 @@ theorem exists_quotHeight_mul_expInf_le (R : RealPoints θ V) (X : LieInf V) : �
   have hinv : ∀ t : ℝ, (expInf θ V (t • X : LieInf V))⁻¹ = expInf θ V ((-t) • X : LieInf V) := fun t =>
     inv_eq_of_mul_eq_one_right (by rw [← expInf_add_smul R, add_neg_cancel, expInf_zero_smul R])
   have hcont : Continuous fun t : ℝ => ((∏ τ, infHt θ V τ (expInf θ V (t • X : LieInf V)) : NNReal) : ℝ) := by
-    refine NNReal.continuous_coe.comp (continuous_finset_prod _ fun τ _ => ?_)
+    refine NNReal.continuous_coe.comp (continuous_finsetProd _ fun τ _ => ?_)
     simp only [infHt, hinv]
     exact continuous_const.max ((continuous_infNorm_expInf R X τ).max
       ((continuous_infNorm_expInf R X τ).comp continuous_neg))

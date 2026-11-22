@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TorsionOfVec
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TorsionOfVec
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Limits AlgebraicGeometry GroundTheory.PAdicHodge CrystallineSemistableComparison TensorProduct GlobalTheory.LogCris DividedPowers UpperTheory.Ru.crystallineComparison
 
@@ -30,13 +35,15 @@ private theorem rel_of_inv {F A C V T ι : Type*} [Field F] [CommRing A] [CommRi
       (c (Sum.elim (fun k => σA (a k)) (fun k => -(u ^ r * a k)) k) * Ring.inverse (c t) ^ r) = 0 := by
   have hL : TensorProduct.map act σ.toLinearMap (∑ k, toV (v k) ⊗ₜ[F] (c (a k) * Ring.inverse (c t) ^ r)) =
       ∑ k, toV (actT (v k)) ⊗ₜ[F] (c (σA (a k)) * σ (Ring.inverse (c t)) ^ r) := by
-    simp only [map_sum, TensorProduct.map_tmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, TensorProduct.map_tmul]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [hact]
     simp [hσ]
   rw [hL] at h
   have h1 := congrArg (LinearMap.lTensor V (LinearMap.mulLeft F (c u ^ r))) h
-  simp only [map_sum, LinearMap.lTensor_tmul, LinearMap.mulLeft_apply] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.lTensor_tmul, LinearMap.mulLeft_apply] at h1
   have hs := sig_inv c σ σA hσ t u ht hg r
   rw [Fintype.sum_sum_type]
   simp only [Sum.elim_inl, Sum.elim_inr]
@@ -58,7 +65,8 @@ private theorem ev_of_rel {A N T ι : Type*} [CommRing A] [AddCommGroup N] [Modu
     s • G (∑ k, a k • E (v k)) = (s * u) • ∑ k, a k • E (v k) := by
   have hsplit : ∑ k, (Sum.elim (fun k => σA (a k)) (fun k => -(u * a k)) k) • E (Sum.elim (fun k => actT (v k)) v k) =
       G (∑ k, a k • E (v k)) - u • ∑ k, a k • E (v k) := by
-    rw [Fintype.sum_sum_type, sub_eq_add_neg, Finset.smul_sum, ← Finset.sum_neg_distrib, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Fintype.sum_sum_type, sub_eq_add_neg, Finset.smul_sum, ← Finset.sum_neg_distrib, map_sum]
     simp only [Sum.elim_inl, Sum.elim_inr, neg_smul, mul_smul, map_smulₛₗ, hG]
   rw [hsplit, smul_sub, sub_eq_zero, ← mul_smul] at h
   exact h

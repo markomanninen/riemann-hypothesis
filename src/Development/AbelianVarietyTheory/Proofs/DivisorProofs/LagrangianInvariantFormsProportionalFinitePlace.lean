@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerOperatorHeisenbergInnerPreserving
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SchwartzBruhatLinearFunctional
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerOperatorHeisenbergInnerPreserving
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SchwartzBruhatLinearFunctional
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped Matrix GlobalTheory.VacAny
@@ -272,7 +276,7 @@ theorem proportional (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] 
       let f' : (Fin n → k) →ₗ[k] k :=
         { toFun := fun y => e (y, 0) ⬝ᵥ s a
           map_add' := fun y y' => by
-            rw [← add_dotProduct, ← map_add, Prod.mk_add_mk, add_zero]
+            rw [← add_dotProduct, ← map_add (f := _), Prod.mk_add_mk, add_zero]
           map_smul' := fun c y => by
             simp only [RingHom.id_apply, smul_eq_mul]
             rw [← smul_eq_mul, ← smul_dotProduct, ← map_smul, Prod.smul_mk, smul_zero] }
@@ -290,13 +294,13 @@ theorem proportional (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] 
       have h1 : Tinv Φ'.1 = schr ψ (0, b') (schr ψ (e (0, a), s a) (Tinv Φ.1)) := by
         funext x
         obtain ⟨⟨y, z⟩, rfl⟩ := e.surjective x
-        have hx : e (y, z) + e (0, a) = e (y, z + a) := by rw [← map_add]; simp
+        have hx : e (y, z) + e (0, a) = e (y, z + a) := by rw [← map_add (f := _)]; simp
         have hphase : -(β ⬝ᵥ y) + (e (y, z) ⬝ᵥ s a + ⅟(2 : k) * (e (0, a) ⬝ᵥ s a)) + -q (z + a) = -q z := by
-          have h1 : e (y, z) = e (y, 0) + e (0, z) := by rw [← map_add]; simp
-          have h2 : e (0, z + a) = e (0, z) + e (0, a) := by rw [← map_add]; simp
+          have h1 : e (y, z) = e (y, 0) + e (0, z) := by rw [← map_add (f := _)]; simp
+          have h2 : e (0, z + a) = e (0, z) + e (0, a) := by rw [← map_add (f := _)]; simp
           have h3 := hsym z a
           have h4 : ⅟(2 : k) + ⅟(2 : k) = 1 := invOf_two_add_invOf_two
-          simp only [q, hβ, h1, h2, map_add, add_dotProduct, dotProduct_add]
+          simp only [q, hβ, h1, h2, map_add (f := _), add_dotProduct, dotProduct_add]
           linear_combination (-⅟(2 : k)) * h3 - (e (0, z) ⬝ᵥ s a) * h4
         have e1 : Tinv Φ'.1 (e (y, z)) = ψ (-q z) * Φ.1 ((0, y, z) + (0, 0, a)) := by
           simp only [Tinv, LinearMap.coe_mk, AddHom.coe_mk, LinearEquiv.symm_apply_apply, hGe, hΦ]
@@ -336,7 +340,7 @@ theorem proportional (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] 
   refine ⟨c₁ / c₂, fun φ hφ => ?_⟩
   rw [hc₁ φ hφ, hc₂ φ hφ, ← mul_assoc, div_mul_cancel₀ c₁ hc2ne]
 
-theorem proportional_at_place : ∀ (F : Type) [Field F] [NumberField F] (v : Pl F) (ψv : AddChar (Fv F v) ℂ), Continuous ψv → ψv ≠ 1 →
+theorem proportional_at_place : ∀ (F : Type) [Field F] [NumberField F] (v : Pl (F := F)) (ψv : AddChar (Fv F v) ℂ), Continuous ψv → ψv ≠ 1 →
     ∀ (κ : Type) [Fintype κ] (Λ : Submodule (Fv F v) ((κ → Fv F v) × (κ → Fv F v))),
     (∀ a ∈ Λ, ∀ b ∈ Λ, a.1 ⬝ᵥ b.2 = b.1 ⬝ᵥ a.2) → Module.finrank (Fv F v) Λ = Fintype.card κ →
     ∀ l₁ l₂ : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ,

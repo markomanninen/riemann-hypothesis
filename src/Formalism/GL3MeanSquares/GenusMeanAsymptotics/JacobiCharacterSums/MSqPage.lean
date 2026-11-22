@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LandauZeroFreeBounds.Statement
+module
+
+public import Mathlib
+public import Formalism.LandauZeroFreeBounds.Statement
+
+@[expose] public section
 
 open Finset Classical
 

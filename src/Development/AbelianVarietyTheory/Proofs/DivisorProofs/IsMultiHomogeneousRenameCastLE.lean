@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PointHeight
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
-import ReciprocityTheory.SemistableReduction.SJCoreA
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousFirstCoords
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurePreservingPolarGaussianProbabilityComplexStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussianRadialLawProbabilityLogIntegrableMeanStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussianFirstCoordsMeasurePreservingStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockSphereProbZeroSetEqZeroStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointHeight
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+public import ReciprocityTheory.SemistableReduction.SJCoreA
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousFirstCoords
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurePreservingPolarGaussianProbabilityComplexStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussianRadialLawProbabilityLogIntegrableMeanStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussianFirstCoordsMeasurePreserving
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockSphereProbZeroSetEqZeroStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,14 +23,15 @@ theorem isProbabilityMeasure_gaussProb {n : ℕ} (hn : 0 < n) : IsProbabilityMea
   haveI := (GlobalTheory.T.gaussianRadialLawProbability_log_integrable_mean n hn).1
   haveI : IsProbabilityMeasure (sphereProb n) := isProbabilityMeasure_sphereProb hn
   rw [← hp.map_eq]
-  exact Measure.isProbabilityMeasure_map hp.measurable.aemeasurable
+  infer_instance
 
 theorem eval_blockScale {B n : ℕ} (a : Fin B → ℕ) (g : MvPolynomial (Fin B × Fin n) ℂ)
     (hm : IsMultiHomogeneous a g) (r : Fin B → ℂ) (x : Fin B × Fin n → ℂ) :
     eval (fun p => r p.1 * x p) g = (∏ b, r b ^ a b) * eval x g := by
   conv_lhs => rw [g.as_sum]
   conv_rhs => rw [g.as_sum]
-  rw [map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun s hs => ?_
   rw [eval_monomial, eval_monomial]
   have h1 : (s.prod fun p e => (r p.1 * x p) ^ e) =
@@ -79,7 +84,7 @@ theorem isMultiHomogeneous_rename_castLE {B N n : ℕ} (h : N ≤ n) (a : Fin B 
   rw [← Finset.sum_subset hsub ?_]
   · rw [Finset.sum_map]
     refine Finset.sum_congr rfl fun j _ => ?_
-    exact Finsupp.mapDomain_apply he t (b, j)
+    exact Finsupp.mapDomain_apply_of_injective he t (b, j)
   · intro j _ hj
     apply Finsupp.mapDomain_notin_range
     rintro ⟨q, hq⟩
@@ -173,7 +178,7 @@ theorem gauss_blockMean {B n : ℕ} (hn : 0 < n) (δ : ℕ) (g : MvPolynomial (F
     hA.comp_fst _
   have hRsum : Integrable (fun r : Fin B → Ioi (0:ℝ) => ∑ b, (δ : ℝ) * Real.log (r b : ℝ))
       (Measure.pi fun _ => radProb n) :=
-    integrable_finset_sum _ fun b _ => (hRi b).const_mul _
+    MeasureTheory.integrable_finsetSum _ fun b _ => (hRi b).const_mul _
   have hRi' : Integrable (fun q : (Fin B → UnitSphereC n) × (Fin B → Ioi (0:ℝ)) =>
       ∑ b, (δ : ℝ) * Real.log (q.2 b : ℝ))
       ((Measure.pi fun _ : Fin B => sphereProb n).prod (Measure.pi fun _ : Fin B => radProb n)) :=
@@ -184,7 +189,7 @@ theorem gauss_blockMean {B n : ℕ} (hn : 0 < n) (δ : ℕ) (g : MvPolynomial (F
     integral_congr_ae hae, integral_add hAi hRi',
     integral_fun_fst (fun z : Fin B → UnitSphereC n => Real.log ‖eval (blockPoint z) g‖),
     integral_fun_snd (fun r : Fin B → Ioi (0:ℝ) => ∑ b, (δ : ℝ) * Real.log (r b : ℝ)),
-    integral_finset_sum _ fun b _ => (hRi b).const_mul _]
+    MeasureTheory.integral_finsetSum _ fun b _ => (hRi b).const_mul _]
   simp only [probReal_univ, one_smul, integral_const_mul, hRint, Finset.sum_const,
     Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
   rw [blockSphereMean, blockSphereProb]
@@ -200,46 +205,5 @@ theorem radRatio_sub {N n : ℕ} (hN : 0 < N) (hn : 0 < n) :
   rw [e1, e2, radRatio_odd, radRatio_odd]
   simp only [Nat.add_sub_cancel]
   ring
-
-theorem blockSphereMean_incl (B N n δ : ℕ) (f : MvPolynomial (Fin B × Fin N) ℂ) (hN : 0 < N)
-    (hNn : N ≤ n) (hf : f ≠ 0) (hm : IsMultiHomogeneous (fun _ => δ) f) :
-    blockSphereMean B n (GlobalTheory.ChowHt.linSubst (Matrix.of fun (j : Fin N) (k : Fin n) =>
-        if (j : ℕ) = (k : ℕ) then (1 : ℂ) else 0) f) =
-      blockSphereMean B N f + (B : ℝ) * δ * ((harmonic (N - 1) : ℝ) - (harmonic (n - 1) : ℝ)) / 2 := by
-  have hn : 0 < n := lt_of_lt_of_le hN hNn
-  rw [linSubst_incl hNn]
-  set e : Fin B × Fin N → Fin B × Fin n := fun p => (p.1, Fin.castLE hNn p.2) with he
-  have heinj : Function.Injective e := by
-    intro p q hpq
-    simp only [he, Prod.mk.injEq] at hpq
-    exact Prod.ext hpq.1 (Fin.castLE_injective hNn hpq.2)
-  set g := rename e f with hgdef
-  have hg : g ≠ 0 := fun h0 => hf (rename_injective e heinj (by rw [← hgdef, h0, map_zero]))
-  have hgm : IsMultiHomogeneous (fun _ => δ) g := isMultiHomogeneous_rename_castLE hNn _ f hm
-  have hIn := (gauss_blockMean hn δ g hg hgm).2
-  have hIN := (gauss_blockMean hN δ f hf hm).2
-  haveI : IsProbabilityMeasure (gaussProb N) := isProbabilityMeasure_gaussProb hN
-  have hproj : MeasurePreserving (fun (x : Fin B → EuclideanSpace ℂ (Fin n)) b => firstCoords hNn (x b))
-      (Measure.pi fun _ => gaussProb n) (Measure.pi fun _ => gaussProb N) :=
-    measurePreserving_pi _ _ fun _ => GlobalTheory.T.gaussian_first_coords_measure_preserving N n hNn
-  have hev : ∀ x : Fin B → EuclideanSpace ℂ (Fin n),
-      eval (fun p => WithLp.ofLp (x p.1) p.2) g =
-        eval (fun p => WithLp.ofLp (firstCoords hNn (x p.1)) p.2) f := by
-    intro x
-    rw [hgdef, eval_rename]
-    rfl
-  have hmeas : Measurable fun y : Fin B → EuclideanSpace ℂ (Fin N) =>
-      Real.log ‖eval (fun p => WithLp.ofLp (y p.1) p.2) f‖ := by
-    refine Real.measurable_log.comp (Continuous.measurable ?_)
-    exact continuous_norm.comp ((continuous_eval f).comp (by fun_prop))
-  have hchange : ∫ x, Real.log ‖eval (fun p => WithLp.ofLp (x p.1) p.2) g‖
-        ∂(Measure.pi fun _ => gaussProb n) =
-      ∫ y, Real.log ‖eval (fun p => WithLp.ofLp (y p.1) p.2) f‖
-        ∂(Measure.pi fun _ => gaussProb N) := by
-    simp_rw [hev]
-    rw [← hproj.map_eq, integral_map hproj.measurable.aemeasurable hmeas.aestronglyMeasurable]
-  rw [hchange, hIN] at hIn
-  have hr := radRatio_sub hN hn
-  linear_combination hIn.symm + (B : ℝ) * δ * hr
 
 end GlobalTheory.SphereMeanDrop

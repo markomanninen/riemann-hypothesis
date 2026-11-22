@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PowIdeal
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.QuasicoherentSupSections
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RestrictPullbackIsoHomAppPullbackSections
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PowIdeal
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.QuasicoherentSupSections
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RestrictPullbackIsoHomAppPullbackSections
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -64,7 +68,8 @@ theorem exists_smulHom_eq_comp_idealSumMap [X.Over (Spec (.of A))] (F : X.Module
   rw [← GroundTheory.Arith.SchemeCoh.span_idealGen J] at ha
   obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun A).1 ha
   refine ⟨biproduct.lift fun k => GroundTheory.Arith.SchemeCoh.smulHom F (algebraMap A Γ(X, ⊤) (c k)), ?_⟩
-  rw [GroundTheory.Arith.SchemeCoh.idealSumMap, biproduct.lift_desc, ← hc, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [GroundTheory.Arith.SchemeCoh.idealSumMap, biproduct.lift_desc, ← hc, map_sum,
     GroundTheory.Arith.SchemeCoh.smulHom_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [smul_eq_mul, map_mul, GroundTheory.Arith.SchemeCoh.smulHom_comp_smulHom]

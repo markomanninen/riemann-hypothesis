@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.OrderedConst
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LeadingPrincipalMinorMulModConductorStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.OrderedConst
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LeadingPrincipalMinorMulModConductorStatement
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil ValuativeRel GlobalTheory.PsType Matrix
 
@@ -21,7 +25,7 @@ theorem ev_one_char (x : k) : ev (1 : kˣ →* ℂˣ) x = 1 := by
 
 theorem ev_at_one (χ : kˣ →* ℂˣ) : ev χ (1 : k) = 1 := by
   unfold ev
-  rw [dif_pos (by simp)]
+  rw [dite_eq_left (by simp)]
   have : Units.mk0 (1 : k) one_ne_zero = 1 := by ext; simp
   simp [this]
 
@@ -29,7 +33,7 @@ theorem ev_mul_of_val (χ : kˣ →* ℂˣ) {x y : k} (hx : valuation k x = 1) (
     ev χ (x * y) = ev χ x * ev χ y := by
   have hxy : valuation k (x * y) = 1 := by rw [map_mul, hx, hy, one_mul]
   unfold ev
-  rw [dif_pos hxy, dif_pos hx, dif_pos hy, ← Units.val_mul, ← map_mul]
+  rw [dite_eq_left hxy, dite_eq_left hx, dite_eq_left hy, ← Units.val_mul, ← map_mul]
   congr 3
   ext; simp
 
@@ -63,13 +67,13 @@ theorem prod_ev_nxt : ∀ (n : ℕ) (ψ : Fin n → kˣ →* ℂˣ) (x : k),
     have h1 : ∀ j : Fin n, nxt ψ j.succ = nxt (fun i => ψ i.succ) j := by
       intro j; unfold nxt
       by_cases h : (j : ℕ) + 1 < n
-      · rw [dif_pos (by simp [Fin.val_succ]; omega), dif_pos h]; congr 1
-      · rw [dif_neg (by simp [Fin.val_succ]; omega), dif_neg h]
+      · rw [dite_eq_left (by simp [Fin.val_succ]; omega), dite_eq_left h]; congr 1
+      · rw [dite_eq_right (by simp [Fin.val_succ]; omega), dite_eq_right h]
     have h2 : nxt ψ 0 = head (fun i : Fin n => ψ i.succ) := by
       unfold nxt head
       by_cases h : 0 < n
-      · rw [dif_pos (by simp; omega), dif_pos h]; congr 1
-      · rw [dif_neg (by simp; omega), dif_neg h]
+      · rw [dite_eq_left (by simp; omega), dite_eq_left h]; congr 1
+      · rw [dite_eq_right (by simp; omega), dite_eq_right h]
     simp_rw [h1]
     rw [prod_ev_nxt n, ← h2, ← ev_mul_char, div_mul_cancel]
     simp [head]
@@ -82,22 +86,38 @@ theorem natAdd_eq (j : Fin t) : Fin.natAdd r j = stdSum (rfl : r + t = r + t) (S
 theorem emb_ll (a : GL (Fin r) k) (b : GL (Fin t) k) (i j : Fin r) :
     (emb₂ k (stdSum (rfl : r + t = r + t)) (a, b)).val (Fin.castAdd t i) (Fin.castAdd t j) = a.val i j := by
   rw [castAdd_eq, castAdd_eq]
-  exact (congrFun (congrFun (val_emb₂ k (stdSum (rfl : r + t = r + t)) (a, b)) _) _).trans (by simp)
+  simpa only [Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_apply_apply,
+    Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂, Matrix.fromBlocks_apply₂₁,
+    Matrix.fromBlocks_apply₂₂, Matrix.zero_apply] using
+    congrFun (congrFun (val_emb₂ k (stdSum (rfl : r + t = r + t)) (a, b))
+      (stdSum (rfl : r + t = r + t) (Sum.inl i))) (stdSum (rfl : r + t = r + t) (Sum.inl j))
 
 theorem emb_lr (a : GL (Fin r) k) (b : GL (Fin t) k) (i : Fin r) (j : Fin t) :
     (emb₂ k (stdSum (rfl : r + t = r + t)) (a, b)).val (Fin.castAdd t i) (Fin.natAdd r j) = 0 := by
   rw [castAdd_eq, natAdd_eq]
-  exact (congrFun (congrFun (val_emb₂ k (stdSum (rfl : r + t = r + t)) (a, b)) _) _).trans (by simp)
+  simpa only [Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_apply_apply,
+    Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂, Matrix.fromBlocks_apply₂₁,
+    Matrix.fromBlocks_apply₂₂, Matrix.zero_apply] using
+    congrFun (congrFun (val_emb₂ k (stdSum (rfl : r + t = r + t)) (a, b))
+      (stdSum (rfl : r + t = r + t) (Sum.inl i))) (stdSum (rfl : r + t = r + t) (Sum.inr j))
 
 theorem emb_rl (a : GL (Fin r) k) (b : GL (Fin t) k) (i : Fin t) (j : Fin r) :
     (emb₂ k (stdSum (rfl : r + t = r + t)) (a, b)).val (Fin.natAdd r i) (Fin.castAdd t j) = 0 := by
   rw [castAdd_eq, natAdd_eq]
-  exact (congrFun (congrFun (val_emb₂ k (stdSum (rfl : r + t = r + t)) (a, b)) _) _).trans (by simp)
+  simpa only [Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_apply_apply,
+    Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂, Matrix.fromBlocks_apply₂₁,
+    Matrix.fromBlocks_apply₂₂, Matrix.zero_apply] using
+    congrFun (congrFun (val_emb₂ k (stdSum (rfl : r + t = r + t)) (a, b))
+      (stdSum (rfl : r + t = r + t) (Sum.inr i))) (stdSum (rfl : r + t = r + t) (Sum.inl j))
 
 theorem emb_rr (a : GL (Fin r) k) (b : GL (Fin t) k) (i j : Fin t) :
     (emb₂ k (stdSum (rfl : r + t = r + t)) (a, b)).val (Fin.natAdd r i) (Fin.natAdd r j) = b.val i j := by
   rw [natAdd_eq, natAdd_eq]
-  exact (congrFun (congrFun (val_emb₂ k (stdSum (rfl : r + t = r + t)) (a, b)) _) _).trans (by simp)
+  simpa only [Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_apply_apply,
+    Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂, Matrix.fromBlocks_apply₂₁,
+    Matrix.fromBlocks_apply₂₂, Matrix.zero_apply] using
+    congrFun (congrFun (val_emb₂ k (stdSum (rfl : r + t = r + t)) (a, b))
+      (stdSum (rfl : r + t = r + t) (Sum.inr i))) (stdSum (rfl : r + t = r + t) (Sum.inr j))
 
 def eqvL (i : Fin r) : {y : Fin r // y ≤ i} ≃ {x : Fin (r + t) // x ≤ Fin.castAdd t i} :=
   Equiv.ofBijective (fun y : {y : Fin r // y ≤ i} => (⟨Fin.castAdd t y.1, by
@@ -164,24 +184,24 @@ theorem nxt_natAdd (ψ : Fin (r + t) → kˣ →* ℂˣ) (j : Fin t) :
     nxt ψ (Fin.natAdd r j) = nxt (fun i => ψ (Fin.natAdd r i)) j := by
   unfold nxt
   by_cases h : (j : ℕ) + 1 < t
-  · rw [dif_pos (by simp; omega), dif_pos h]; congr 1
-  · rw [dif_neg (by simp; omega), dif_neg h]
+  · rw [dite_eq_left (by simp; omega), dite_eq_left h]; congr 1
+  · rw [dite_eq_right (by simp; omega), dite_eq_right h]
 
 theorem nxt_castAdd_castSucc {r : ℕ} (ψ : Fin (r + 1 + t) → kˣ →* ℂˣ) (i : Fin r) :
     nxt ψ (Fin.castAdd t i.castSucc) = nxt (fun i => ψ (Fin.castAdd t i)) i.castSucc := by
   unfold nxt
-  rw [dif_pos (by simp; omega), dif_pos (by simp)]
+  rw [dite_eq_left (by simp; omega), dite_eq_left (by simp)]
   congr 1
 
 theorem nxt_castAdd_last {r : ℕ} (ψ : Fin (r + 1 + t) → kˣ →* ℂˣ) :
     nxt ψ (Fin.castAdd t (Fin.last r)) = head (fun j : Fin t => ψ (Fin.natAdd (r + 1) j)) := by
   unfold nxt head
   by_cases h : 0 < t
-  · rw [dif_pos (by simp; omega), dif_pos h]; congr 1
-  · rw [dif_neg (by simp; omega), dif_neg h]
+  · rw [dite_eq_left (by simp; omega), dite_eq_left h]; congr 1
+  · rw [dite_eq_right (by simp; omega), dite_eq_right h]
 
 theorem nxt_last_one {r : ℕ} (φ : Fin (r + 1) → kˣ →* ℂˣ) : nxt φ (Fin.last r) = 1 := by
-  unfold nxt; rw [dif_neg (by simp)]
+  unfold nxt; rw [dite_eq_right (by simp)]
 
 theorem first_part : ∀ (r t : ℕ) (ψ : Fin (r + t) → kˣ →* ℂˣ) (a : GL (Fin r) k),
     (∏ i : Fin r, ev (ψ (Fin.castAdd t i) / nxt ψ (Fin.castAdd t i)) (minor a i)) *
@@ -197,8 +217,8 @@ theorem first_part : ∀ (r t : ℕ) (ψ : Fin (r + t) → kˣ →* ℂˣ) (a : 
 
 end GlobalTheory.PsType.BlockTheta
 
-open GlobalTheory.PsType.BlockTheta in
 
+open GlobalTheory.PsType.BlockTheta in
 theorem GlobalTheory.PsType.theta_emb₂_std : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (r t : ℕ) (ψ : Fin (r + t) → kˣ →* ℂˣ), Ordered ψ → ∀ a ∈ grp (fun i => ψ (Fin.castAdd t i)), ∀ b ∈ grp (fun i => ψ (Fin.natAdd r i)), theta ψ (emb₂ k (stdSum (rfl : r + t = r + t)) (a, b)) = theta (fun i => ψ (Fin.castAdd t i)) a * theta (fun i => ψ (Fin.natAdd r i)) b := by
   intro k _ _ _ _ r t ψ hord a ha b hb
   have hord₂ : Ordered (fun i => ψ (Fin.natAdd r i)) := by

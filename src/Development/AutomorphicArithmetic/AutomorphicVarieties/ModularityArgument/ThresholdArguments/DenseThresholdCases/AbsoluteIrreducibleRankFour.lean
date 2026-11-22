@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.NeTeichEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UnitaryHeckeData
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.NeTeichEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UnitaryHeckeData
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -25,7 +29,7 @@ private theorem neu_comm {L : Type} [Field L] [NumberField L] [IsCMField L] {n :
 private theorem ne_J {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ} {St : Type} [Fintype St] [DecidableEq St]
     {wt : St → Plc L} (hinj : Function.Injective fun u => (wt u).under (𝓞 (Lp L))) (j : ∀ u, GLw n (wt u) →* UA L n)
     (h1 : ∀ u g, j u g ∈ locU n (wt u)) (h2 : ∀ u g, cLoc (wt u) (j u g) = g) (h3 : ∀ u, ∀ x ∈ locU n (wt u), x = j u (cLoc (wt u) x)) :
-    ∃ J : GV n wt →* UA L n, (∀ u g, J (Pi.mulSingle u g) = j u g) ∧ (∀ g, J g ∈ GlobalTheory.UnitaryBC.finU L n) ∧
+    ∃ J : GV n wt →* UA L n, (∀ u g, J (Pi.mulSingle u g) = j u g) ∧ (∀ g, J g ∈ GlobalTheory.UnitaryBC.finU (E := L) (n := n)) ∧
       (∀ g u, cLoc (wt u) (J g) = g u) ∧
       (∀ g (v : Plc L), (∀ u, v.under (𝓞 (Lp L)) ≠ (wt u).under (𝓞 (Lp L))) → cLoc v (J g) = 1) ∧
       ∀ g k, (∀ u, cLoc (wt u) k = 1) → Commute k (J g) := by
@@ -84,7 +88,7 @@ private theorem ne_type {L Ω : Type} [Field L] [NumberField L] [IsCMField L] [F
     (hτ : ∀ u, IsCompAlong σ (locU n (wt u)) ((cLoc (wt u)).comp (locU n (wt u)).subtype) (τ u).ρ)
     (hwd : ∀ u rc, _root_.UpperTheory.Zero.LLC.IsRecT (ht u) rc → IsTypeWD (ht u) (χ u) (rc (algNorm (τ u))))
     (K : Subgroup (UA L n)) (hK : ∀ k ∈ K, ∀ u, cLoc (wt u) k = 1) (h0 : σ ⊓ fixd (RU L n) K ≠ ⊥) :
-    ∃ J : GV n wt →* UA L n, (∀ g, J g ∈ GlobalTheory.UnitaryBC.finU L n) ∧ (∀ g u, cLoc (wt u) (J g) = g u) ∧
+    ∃ J : GV n wt →* UA L n, (∀ g, J g ∈ GlobalTheory.UnitaryBC.finU (E := L) (n := n)) ∧ (∀ g u, cLoc (wt u) (J g) = g u) ∧
       (∀ g (v : Plc L), (∀ u, v.under (𝓞 (Lp L)) ≠ (wt u).under (𝓞 (Lp L))) → cLoc v (J g) = 1) ∧
       ∃ F : Fin m → UA L n → ℂ, F ≠ 0 ∧ (∀ i, F i ∈ σ ⊓ fixd (RU L n) K) ∧
         ∀ (k : KT n wt) i, ∑ a, τ₀ k i a • RU L n (J k) (F a) = F i := by
@@ -102,7 +106,8 @@ private theorem ne_type {L Ω : Type} [Field L] [NumberField L] [IsCMField L] [F
     rw [hJ]).2 hwd
   refine ⟨J, j1, j2, j3, fun i => F i, fun e => hF0 (funext fun i => Subtype.ext (congrFun e i)), fun i => (F i).2, fun k i => ?_⟩
   have := congrArg M.subtype (hF k i)
-  rw [map_sum] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum] at this
   exact this
 private theorem ne_teich_ex (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [IsLocalRing O]
     [IsAdicComplete (maximalIdeal O) O] [Finite (ResidueField O)] [CharP (ResidueField O) l] :
@@ -135,24 +140,24 @@ private theorem ne_cmp {l : ℕ} [Fact l.Prime] {L : Type} [Field L] [NumberFiel
     (h : ((l : ℕ) : 𝓞 (Lp L)) ∉ (w.under (𝓞 (Lp L))).asIdeal) (x : UA L n) :
     cmp n w ((away l L n).rangeRestrict x) = cLoc w x := by
   unfold CaseU.cmp
-  rw [dif_pos (ne_notMem h)]
+  rw [dite_eq_left (ne_notMem h)]
   rfl
 section
 variable {l : ℕ} [Fact l.Prime] {L Ω : Type} [Field L] [NumberField L] [IsCMField L] [Field Ω] [Algebra L Ω] [IsAlgClosure L Ω]
   {s : HidaSetting l L Ω} (n : ℕ) {V : s.Lev} (Q : QData V)
 private noncomputable def neK : Subgroup (UA L n) :=
-  GlobalTheory.UnitaryBC.finU L n ⊓
+  GlobalTheory.UnitaryBC.finU (E := L) (n := n) ⊓
     (⨅ (u : Plc L) (_ : u.under (𝓞 (Lp L)) ∉ V.S'), (KO (u.adicCompletion L) (Fin n)).comap (cLoc u)) ⊓
     (Kc _ n 1).comap (cLoc (s.w s.v0)) ⊓ (⨅ v : V.frame.Vl, (cLoc (s.w v.1)).ker) ⊓ (⨅ u : s.St, (cLoc (s.w u)).ker) ⊓
     ⨅ q : Q.Q, (cLoc (Q.wq q)).ker
 variable {n Q}
-private theorem mem_neK {k : UA L n} : k ∈ neK n Q ↔ k ∈ GlobalTheory.UnitaryBC.finU L n ∧
+private theorem mem_neK {k : UA L n} : k ∈ neK n Q ↔ k ∈ GlobalTheory.UnitaryBC.finU (E := L) (n := n) ∧
     (∀ u : Plc L, u.under (𝓞 (Lp L)) ∉ V.S' → cLoc u k ∈ KO (u.adicCompletion L) (Fin n)) ∧ cLoc (s.w s.v0) k ∈ Kc _ n 1 ∧
     (∀ v : V.frame.Vl, cLoc (s.w v.1) k = 1) ∧ (∀ u : s.St, cLoc (s.w u) k = 1) ∧ ∀ q : Q.Q, cLoc (Q.wq q) k = 1 := by
   simp only [neK, Subgroup.mem_inf, Subgroup.mem_iInf, Subgroup.mem_comap, MonoidHom.mem_ker, and_assoc]
-private theorem ne_dec (J : GV n (wt s) →* UA L n) (j1 : ∀ g, J g ∈ GlobalTheory.UnitaryBC.finU L n) (j2 : ∀ g u, cLoc (wt s u) (J g) = g u)
+private theorem ne_dec (J : GV n (wt s) →* UA L n) (j1 : ∀ g, J g ∈ GlobalTheory.UnitaryBC.finU (E := L) (n := n)) (j2 : ∀ g u, cLoc (wt s u) (J g) = g u)
     (j3 : ∀ g (v : Plc L), (∀ u, v.under (𝓞 (Lp L)) ≠ (wt s u).under (𝓞 (Lp L))) → cLoc v (J g) = 1)
-    (u : Ub n s) (hu : u ∈ UQ n Q) (x : UA L n) (hx : x ∈ GlobalTheory.UnitaryBC.finU L n) (h1 : (away l L n).rangeRestrict x = u)
+    (u : Ub n s) (hu : u ∈ UQ n Q) (x : UA L n) (hx : x ∈ GlobalTheory.UnitaryBC.finU (E := L) (n := n)) (h1 : (away l L n).rangeRestrict x = u)
     (h2 : ∀ v : V.frame.Vl, cLoc (s.w v.1) x = 1) : (J (toKT n s u))⁻¹ * x ∈ neK n Q := by
   have hw := (UpperTheory.under_chosen_place_and_isSplitAt_of_decomp_le l L Ω s).1
   have j4 : ∀ v : Plc L, v.under (𝓞 (Lp L)) ∉ s.St → cLoc v ((J (toKT n s u))⁻¹ * x) = cLoc v x := fun v hv => by
@@ -174,7 +179,7 @@ private theorem ne_dec (J : GV n (wt s) →* UA L n) (j1 : ∀ g, J g ∈ Global
     exact inv_mul_cancel _
   · rw [j4 _ fun h => Q.notS q (Or.inr (Or.inl h)), hc _ fun h => Q.notS q (Or.inl h)]
     exact Subgroup.mem_iInf.1 hu2 q
-private theorem ne_inf (ι : Qbar l ≃+* ℂ) (lam : Wt L l n) {x : UA L n} (hx : x ∈ GlobalTheory.UnitaryBC.finU L n) :
+private theorem ne_inf (ι : Qbar l ≃+* ℂ) (lam : Wt L l n) {x : UA L n} (hx : x ∈ GlobalTheory.UnitaryBC.finU (E := L) (n := n)) :
     infRep (V := V) ι lam x = 1 := by
   have h : ∀ τ, cEmb τ x = 1 := fun τ => by
     unfold cEmb
@@ -215,18 +220,19 @@ theorem UpperTheory.V.Hi.nonempty_unitary_hecke_parts :
     { carrier := {F | (∀ i, F i ∈ σ ⊓ fixd (RU L n) (neK n Q)) ∧
         ∀ (k : KT n (wt s)) i, ∑ a, τ₁ k i a • RU L n (J k) (F a) = F i}
       add_mem' := fun {a b} ha hb => ⟨fun i => add_mem (ha.1 i) (hb.1 i), fun k i => by
-        simp only [Pi.add_apply, map_add, smul_add, Finset.sum_add_distrib, ha.2, hb.2]⟩
+        simp only [Pi.add_apply, map_add (f := _), smul_add, Finset.sum_add_distrib, ha.2, hb.2]⟩
       zero_mem' := ⟨fun i => zero_mem _, fun k i => by simp⟩
       smul_mem' := fun z a ha => ⟨fun i => Submodule.smul_mem _ z (ha.1 i), fun k i => by
         simp only [Pi.smul_apply, map_smul, smul_comm _ z, ← Finset.smul_sum, ha.2]⟩ }
   obtain ⟨hfin, hbij⟩ := UpperTheory.placeEmbeddings_bijective_infinitePlaces l L Ω s V ι
-  have hcomm : ∀ x ∈ infU L n, ∀ k ∈ GlobalTheory.UnitaryBC.finU L n, ∀ ψ, RU L n k (RU L n x ψ) = RU L n x (RU L n k ψ) :=
+  have hcomm : ∀ x ∈ infU L n, ∀ k ∈ GlobalTheory.UnitaryBC.finU (E := L) (n := n), ∀ ψ, RU L n k (RU L n x ψ) = RU L n x (RU L n k ψ) :=
     fun x hx k hk ψ => by rw [GlobalTheory.DefU.RU_RU, GlobalTheory.DefU.RU_RU, GlobalTheory.DefU.fin_mul_inf hk hx]
   obtain ⟨Φ, hΦ0, hΦN, hΦ⟩ := UpperTheory.exists_tensor_dual_embedding_of_hasWeightAt L n hn _ _ hbij (fun x => lam x.res) σ hσ hwt m N
     ((Submodule.ne_bot_iff _).2 ⟨F₀, ⟨hF1, hF2⟩, hF0⟩) (fun F hF k => (hF.1 k).1) fun x hx F hF =>
       ⟨fun i => ⟨hσ.stable _ _ (hF.1 i).1, fun k hk => by rw [hcomm x hx k (mem_neK.1 hk).1, (hF.1 i).2 k hk]⟩, fun k i => by
         beta_reduce
-        rw [← hF.2 k i, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← hF.2 k i, map_sum]
         exact Finset.sum_congr rfl fun a _ => by rw [map_smul, hcomm x hx _ (j1 _)]⟩
   obtain ⟨f1, -, f3, f4, f5⟩ := formU l L Ω s n hn V Q c m τ₀ ι lam d e ξ he _ fun _ => rfl
   have f6 : ∀ i : Fin m, ∃ F : Ga l L n × GV n (fun v : V.frame.Vl => s.w v.1) → Fin d → ℂ, F ∈ (hset Q τ₀).X.AF ξ ∧
@@ -253,7 +259,8 @@ theorem UpperTheory.V.Hi.nonempty_unitary_hecke_parts :
       rw [hT, ← ((hΦN ℓ).1 a).2 _ hk, GlobalTheory.DefU.RU_RU, mul_inv_cancel_left]
       exact e3.symm
     refine (hT _).symm.trans ?_
-    rw [map_sub, map_sum, hT, hF, sub_eq_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum, hT, hF, sub_eq_zero]
     simp only [map_smul, e2]
     exact (hΦN ℓ).2 _ i
   have key : ∀ u : Ub n s, u ∈ UQ n Q → ∀ i g k,

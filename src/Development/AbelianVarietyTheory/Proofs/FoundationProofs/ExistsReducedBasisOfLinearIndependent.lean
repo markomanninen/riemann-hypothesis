@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReducedBases.ExistsRedOf
-import ReciprocityTheory.ReducedBases.PrefixProdGeOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.IntegralModuleBases.NormGsoSqLeTwoPowMulOfValEqAdd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBimultiplicativeOfSecondQuotConst
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReducedBases.ExistsRedOf
+public import ReciprocityTheory.ReducedBases.PrefixProdGeOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.IntegralModuleBases.NormGsoSqLeTwoPowMulOfValEqAdd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBimultiplicativeOfSecondQuotConst
+
+@[expose] public section
 
 noncomputable section
 
@@ -149,7 +153,7 @@ theorem exists_reduced_basis_matrix : ExistsBoundedBasis := by
         (e.repr α l : ℝ) - N * w l := by
       intro l
       have : e.repr (e.equivFun.symm w) l = w l := congrFun (e.equivFun.apply_symm_apply w) l
-      rw [map_add, map_smul, map_neg, Finsupp.add_apply, Finsupp.smul_apply, Finsupp.neg_apply, this]
+      rw [map_add (f := _), map_smul, map_neg, Finsupp.add_apply, Finsupp.smul_apply, Finsupp.neg_apply, this]
       push_cast [smul_eq_mul]; ring
     simp only [e1] at h
     linarith
@@ -162,7 +166,8 @@ theorem polar_equivFun (q : QuadraticMap ℤ X ℝ) (b : Basis (Fin d) ℤ X) (x
     ReciprocityTheory.ReducedBases.polar (Matrix.of fun i j => QuadraticMap.polar q (b i) (b j))
       (b.equivFun x) (b.equivFun y) = QuadraticMap.polar q x y := by
   conv_rhs => rw [← b.sum_repr x, ← b.sum_repr y, ← QuadraticMap.polarBilin_apply_apply]
-  simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply,
     QuadraticMap.polarBilin_apply_apply, ReciprocityTheory.ReducedBases.polar, toReal, dotProduct, mulVec, of_apply,
     mul_sum, Basis.equivFun_apply, zsmul_eq_mul]
   rw [sum_comm]
@@ -187,7 +192,7 @@ theorem exists_reduced_basis_of_posDef_gram (q : QuadraticMap ℤ X ℝ) (b : Ba
   · refine h2 N hN (b.equivFun α) (fun w => ?_) i
     have h := hα (b.equivFun.symm w)
     rw [← quadratic_equivFun q b, ← quadratic_equivFun q b] at h
-    simpa only [map_add, map_smul, LinearEquiv.apply_symm_apply] using h
+    simpa only [map_add (f := _), map_smul, LinearEquiv.apply_symm_apply] using h
 
 theorem exists_reduced_basis_pairing_coord [Module.Free ℤ X] [Module.Finite ℤ X]
     (hd : finrank ℤ X = d) (q : QuadraticMap ℤ X ℝ) (hq : (realExt q).PosDef) :

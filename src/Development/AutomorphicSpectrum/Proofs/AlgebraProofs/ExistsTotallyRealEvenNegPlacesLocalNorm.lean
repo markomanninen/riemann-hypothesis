@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FgInfRestrictScalarsOfIntegers
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FgInfRestrictScalarsOfIntegers
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.HT
 
@@ -49,11 +53,7 @@ theorem latIn_isLattice : ∀ (C : Type) [Field C] (v : Valuation C NNReal) (O :
       exact ⟨hy, y.2⟩
     · rintro ⟨h1, h2⟩
       exact ⟨⟨x, h2⟩, h1, rfl⟩
-  · rw [eq_top_iff]
-    intro u _
-    obtain ⟨c, hc, hcu⟩ := exists_smul_mem_of_mem_span_val hv L (hU u.2)
-    have h1 : c • u ∈ Submodule.span C (latIn L U : Set U) := Submodule.subset_span hcu
-    have h2 := Submodule.smul_mem _ c⁻¹ h1
-    rwa [smul_smul, inv_mul_cancel₀ hc, one_smul] at h2
-
+  · intro s hs hli
+    letI : IsFractionRing O C := hv.isFractionRing
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
 end GlobalTheory.CompanionTheory.Ar.HT

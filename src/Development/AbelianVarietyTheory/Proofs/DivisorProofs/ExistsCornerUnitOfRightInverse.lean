@@ -1,10 +1,15 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped Matrix
 
 namespace GlobalTheory
 
-open Polynomial in
 
+open Polynomial in
 theorem exists_corner_unit_of_right_inverse :
     ∀ {F R : Type} [Field F] [CommRing R] [Algebra F R] (e : R), e * e = e →
       (∀ ψ : Polynomial R, (∀ (Ω : Type) [Field Ω] (φ : R →+* Ω), φ e = 1 → ψ.map φ ≠ 0) →

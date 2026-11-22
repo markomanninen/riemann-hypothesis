@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.OffQOfSizeRows
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BesselFormsTrivialNeBot
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.OffQOfSizeRows
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BesselFormsTrivialNeBot
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,21 +57,13 @@ variable {D : D7} {V A : HSp D} {S : D.what₂.Tau → SPar} (M : DSModel V S) {
   (χ : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ → ℂ) {Wt : D.what₂.Tau → Type} [∀ τ, AddCommGroup (Wt τ)] [∀ τ, Module ℂ (Wt τ)]
   (π : ∀ τ, Matrix (Fin A.rank) (Fin A.rank) ℂ → Module.End ℂ (Wt τ))
 
-open Classical in
 
+open Classical in
 def SepBes (β : (∀ τ, Wt τ) → M.Vec → ℂ) : Prop :=
   ∀ τ x v, ∃ b ∈ GlobalTheory.RealBessel.besselForms (gramAt D V τ) (gramAt D A τ) (F τ) (e τ) (χ τ) (M.rep τ) (π τ) (M.sm τ),
     ∀ y u, β (Function.update x τ y) (Function.update v τ u) = b y u
 
 end Sep
-
-def SepLine : Prop := ∀ (D : D7) (V A : HSp D) (S : D.what₂.Tau → SPar) (M : DSModel V S) (r : ℕ)
-  (F : D.what₂.Tau → Matrix (Fin V.rank) (Fin A.rank) ℂ) (e : D.what₂.Tau → Matrix (Fin V.rank) (Fin r) ℂ) (z : D.what₂.Tau → Fin V.rank → ℂ)
-  (χ : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ → ℂ) (Wt : D.what₂.Tau → Type) [∀ τ, AddCommGroup (Wt τ)] [∀ τ, Module ℂ (Wt τ)]
-  [∀ τ, FiniteDimensional ℂ (Wt τ)] (π : ∀ τ, Matrix (Fin A.rank) (Fin A.rank) ℂ → Module.End ℂ (Wt τ)),
-  (∀ τ, GlobalTheory.RealBessel.IsFrame (gramAt D V τ) (gramAt D A τ) (F τ) (e τ) (z τ) ∧ GlobalTheory.RealBessel.IsGeneric (gramAt D V τ) (e τ) (z τ) (χ τ) ∧
-    GlobalTheory.RealBessel.IsContIrred (Formalism.QuantumDeterminants.UH (gramAt D A τ)) (π τ)) →
-  ∃ ℓ : (∀ τ, Wt τ) → M.Vec → ℂ, ∀ β, SepBes M F e χ π β → ∃ l : ℂ, ∀ x v, β x v = ℓ x v * l
 
 def TopFrame : Prop := All fun {D} _ _ _ {G} W _ => ∃ z : D.what₂.Tau → Fin (G.V (.grid D.R.m 0)).rank → ℂ, ∀ τ,
   GlobalTheory.RealBessel.IsFrame (gramAt D (G.V (.grid D.R.m 0)) τ) (gramAt D (G.V (.top 0)) τ)
@@ -86,10 +82,6 @@ def TopSep : Prop := All fun {D} _ _ _ {G} W M => ∀ (S : D.what₂.Tau → SPa
       SepBes MB (fun τ => (frameMat _ _ (G.rowDec 0 (by have := D.R.two_le_m; omega)).ι).map (tauE D τ))
         (fun τ => G.besTop.e.map (tauE D τ)) (fun τ u => besChar W.ψ G.besTop (atTau W.θ _ τ u)) π
         fun x v => Bplus W M (pairVec (coefPlus G W.θ) (e (PiTensorProduct.tprod ℂ x)) Ψ) (F' (PiTensorProduct.tprod ℂ v))
-
-def TopLine : Prop := All fun {D} _ _ _ {G} W M => ∀ (S : D.what₂.Tau → SPar) (MB : DSModel (G.V (.grid D.R.m 0)) S),
-  ∃ ℓ : Module.Dual ℂ (coefPlus G W.θ).W → SmT MB → ℂ, ∀ F' ∈ MultT W.θ MB ∅ 1, ∀ Ψ ∈ Cols G W.θ, ∃ l : ℂ,
-    ∀ ξ v, Bplus W M (pairVec (coefPlus G W.θ) ξ Ψ) (F' v) = ℓ ξ v * l
 
 def RowConv : Prop := Gap fun {D} _ {L} _ {G} W M => ∀ M₀ : DSModel (Yc D 0) (parB (Ptw D) 0), cart M₀ = W.cart (.grid 0 0) →
   ∀ t ∈ Rows L W.θ M₀, ∀ w ρ ξ, ∀ Ψ ∈ Cols G W.θ, ∀ Φ, FConv W M ρ ξ Ψ Φ (t w)

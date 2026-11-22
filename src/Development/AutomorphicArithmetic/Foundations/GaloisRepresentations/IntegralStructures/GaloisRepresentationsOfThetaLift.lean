@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.Development
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.WeightOneGeometricRealization
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.Development
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.WeightOneGeometricRealization
+
+@[expose] public section
 
 namespace UpperTheory.Gal.Int
 

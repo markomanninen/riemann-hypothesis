@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.TensFun
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CommPrj
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TensFun
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CommPrj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -83,7 +87,8 @@ private theorem hop_abs {G H : Type*} [Group G] [NormedAddCommGroup H] [InnerPro
     intro v
     rw [hfix]
     intro k hk
-    rw [hApply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hApply, map_sum]
     refine Finset.sum_equiv (MulAction.toPerm k) (fun c => ?_) (fun c _ => ?_)
     · simp only [Set.Finite.mem_toFinset, MulAction.toPerm_apply]
       refine ⟨hsm k hk c, fun h => ?_⟩
@@ -118,7 +123,7 @@ private theorem hop_abs {G H : Type*} [Group G] [NormedAddCommGroup H] [InnerPro
         simp
 
 theorem UpperTheory.ConvolutionTheory.Tf.hopBasic :
-    ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (w : Pl K) (J : Subgroup (GL (Fin n) (w.adicCompletion K))) (x : GL (Fin n) (w.adicCompletion K)),
+    ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (w : Pl K) (J : Subgroup (GL (Fin n) (w.adicCompletion K))) (x : GL (Fin n) (w.adicCompletion K)),
       IsOpen (J : Set (GL (Fin n) (w.adicCompletion K))) → IsCompact (J : Set (GL (Fin n) (w.adicCompletion K))) →
       {c : GL (Fin n) (w.adicCompletion K) ⧸ J | ∃ k ∈ J, c = QuotientGroup.mk (k * x)}.Finite ∧
       (∀ v, Hop μ w J x v ∈ fixL μ w J) ∧ Hop μ w J x ∘L prj (fixL μ w J) = Hop μ w J x ∧

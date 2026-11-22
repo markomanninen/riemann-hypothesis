@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomotopyInvarianceEtale
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomotopyInvarianceEtale
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.homotopy_invariance_etale_alt : GlobalTheory.EtC.C4 := by

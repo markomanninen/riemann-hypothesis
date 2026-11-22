@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem splitClosed_quad {F E : Type} [Field F] [CharZero F] [CommRing E] [Algeb
   have hs : Function.Surjective f := by
     rintro ⟨x, y⟩
     refine ⟨((x + y) / 2) ⊗ₜ 1 + ((x - y) / (2 * θ (b 1))) ⊗ₜ b 1, ?_⟩
-    rw [map_add, hf, hf, hb1, map_neg, map_one, map_one]
+    rw [map_add (f := _), hf, hf, hb1, map_neg, map_one, map_one]
     ext <;> simp <;> field_simp <;> ring
   have hi : Function.Injective f :=
     (LinearMap.injective_iff_surjective_of_finrank_eq_finrank (f := f.toLinearMap)
@@ -55,11 +59,10 @@ theorem splitClosed_quad {F E : Type} [Field F] [CharZero F] [CommRing E] [Algeb
   refine ⟨(Algebra.TensorProduct.comm F E Ω).trans
     ((AlgEquiv.ofBijective f ⟨hi, hs⟩).restrictScalars F), fun ω => (hf ω 1).trans (by simp), fun u => ?_⟩
   induction u with
-  | zero => simp
   | tmul a w =>
     change f (w ⊗ₜ σ a) = (f (w ⊗ₜ a)).swap
     rw [hf, hf, h.invol]; rfl
-  | add a w ha hw => rw [map_add, map_add, map_add, ha, hw, Prod.swap_add]
+  | add a w ha hw => rw [map_add (f := _), map_add (f := _), map_add (f := _), ha, hw, Prod.swap_add]
 
 def splitClosedPair (F Ω n : Type) [Field F] [Field Ω] [Algebra F Ω] :
     ((n → Ω) × (n → Ω)) ≃ₐ[F] (n → Ω × Ω) where
@@ -85,8 +88,7 @@ theorem splitClosed : SplitClosed := by
     intro p x i; rfl
   refine ⟨φ, fun ω => funext fun i => by rw [hφ, hg1, he'], fun u i => ?_⟩
   induction u with
-  | zero => simp
   | tmul p x => rw [tConj3, Algebra.TensorProduct.map_tmul, hφ, hφ, hg]; rfl
-  | add a w ha hw => rw [map_add, map_add, map_add, Pi.add_apply, Pi.add_apply, ha, hw, Prod.swap_add]
+  | add a w ha hw => rw [map_add (f := _), map_add (f := _), map_add (f := _), Pi.add_apply, Pi.add_apply, ha, hw, Prod.swap_add]
 
 end GlobalTheory.RegSS

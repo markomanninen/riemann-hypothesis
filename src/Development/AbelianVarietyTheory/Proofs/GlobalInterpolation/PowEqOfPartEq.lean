@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
-import Formalism.LocalToGlobal.GlobalTheory.IsResidueClassZero
-import Formalism.SharpRestriction.GrowthBounds.SmallOrderPrimes
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DisjointExceptional
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ThinScalesIffHostBound
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LogCondLeThree
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.AuxiliaryPrimeMemAvoidedPrimes
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Formalism.LocalToGlobal.GlobalTheory.IsResidueClassZero
+public import Formalism.SharpRestriction.GrowthBounds.SmallOrderPrimes
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DisjointExceptional
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ThinScalesIffHostBound
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LogCondLeThree
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.AuxiliaryPrimeMemAvoidedPrimes
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.L2.GlobalTheoryTheory GlobalTheory.EX NumberField
 
@@ -133,7 +137,7 @@ theorem tameDistinct_gen : ∀ (r g m : ℕ) [Fact g.Prime] (w : (ZMod g)ˣ), or
       rw [← Real.rpow_natCast, ← Real.rpow_mul (by positivity)]; norm_num
     rw [h5, ← pow_mul, mul_comm] at h4
     refine Or.inr ⟨1, le_rfl, hr, hl, ?_⟩
-    rw [pow_one, ← Nat.factorization_def _ hl, ← hv]
+    rw [pow_one, Nat.padicValNat_def, ← Nat.factorization_def _ hl, ← hv]
     exact_mod_cast h4
   · intro j
     exact ⟨w ^ (j.1 + 1), by rw [← pow_add, ← two_mul]⟩

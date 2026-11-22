@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.SquareIntegrableTempered.CasselmanNecTemp
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.SquareIntegrableTempered.CasselmanNecTemp
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,27 +13,27 @@ namespace Zls
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-variable (k) in
 
+variable (k) in
 def unif : 𝒪[k] := Classical.choose (IsDiscreteValuationRing.exists_irreducible 𝒪[k])
 
 theorem irreducible_unif : Irreducible (unif k) :=
   Classical.choose_spec (IsDiscreteValuationRing.exists_irreducible 𝒪[k])
 
-variable (k) in
 
+variable (k) in
 def unifU : kˣ :=
   Units.mk0 (algebraMap 𝒪[k] k (unif k))
     ((map_ne_zero_iff (algebraMap 𝒪[k] k) (IsFractionRing.injective 𝒪[k] k)).2 irreducible_unif.ne_zero)
 
-variable (k) in
 
+variable (k) in
 def Km (N m : ℕ) : Subgroup (GL (Fin N) k) :=
   ((Matrix.GeneralLinearGroup.map (n := Fin N) (Ideal.Quotient.mk (Ideal.span {unif k ^ m}))).ker).map
     (Matrix.GeneralLinearGroup.map (n := Fin N) (algebraMap 𝒪[k] k))
 
-variable (k) in
 
+variable (k) in
 def diagPow (N : ℕ) (lam : Fin N → ℤ) : GL (Fin N) k :=
   Units.map (Matrix.diagonalRingHom (Fin N) k).toMonoidHom (MulEquiv.piUnits.symm fun i => unifU k ^ lam i)
 
@@ -52,10 +56,10 @@ def UnitaryCentral {N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (π : Re
   ∀ (t : kˣ) (c : ℂ), (∀ v, π (Matrix.GeneralLinearGroup.scalar (Fin N) t) v = c • v) → ‖c‖ = 1
 
 def MaxExpStrict {N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V) : Prop :=
-  ∀ (x : Fin 2 → IrrGL k) (hd : ∑ a, (x a).1 = N), (∀ a, 0 < (x a).1) → Zc.jm x hd π ≠ 0 → Zl.ExpStrict x
+  ∀ (x : Fin 2 → IrrGL (k := k)) (hd : ∑ a, (x a).1 = N), (∀ a, 0 < (x a).1) → Zc.jm x hd π ≠ 0 → Zl.ExpStrict x
+
 
 variable (k) in
-
 def CasselmanSuffSq : Prop :=
   ∀ (N : ℕ) {V : Type} [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V),
     1 ≤ N → IsSmooth π → π.IsIrreducible → UnitaryCentral π → MaxExpStrict π → IsSqIntCoeff π

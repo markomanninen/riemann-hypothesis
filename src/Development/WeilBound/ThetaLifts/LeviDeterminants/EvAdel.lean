@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.ModelChangeOf
-import Development.WeilBound.ThetaLifts.LeviDeterminants.MapEqOfSmul
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.ModelChangeOf
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.MapEqOfSmul
+
+@[expose] public section
 
 noncomputable section
 

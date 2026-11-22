@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.LogarithmicNormBounds.HostUnl
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.Number
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.LogarithmicNormBounds.HostUnl
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.Number
+
+@[expose] public section
 
 attribute [-instance] UpperTheory.V.Pr.IsCD.toIsDomain UpperTheory.V.Pr.IsCD.toIsDiscreteValuationRing
 
@@ -137,7 +141,7 @@ private theorem algClosure (K Ω : Type) [Field K] [NumberField K] [Field Ω] [C
   ⟨IsAlgClosure.isAlgClosed ℚ, Algebra.IsAlgebraic.tower_top (K := ℚ) K⟩
 
 private theorem cont_pt (hd : HostData l e ψ o₁) (hF : IsHostFrame Ω c e ψ S A F) {g₁ : Gam Ω S} (hg : F.Marked g₁)
-    {r : Gam Ω S →* GG 3 (PadicAlgCl l)} (hr : F.IsCharZeroPt g₁ r) : Continuous (mats r) := by
+    {r : Gam Ω S →* GG (m := 3) (R := PadicAlgCl l)} (hr : F.IsCharZeroPt g₁ r) : Continuous (mats r) := by
   haveI : IsGalois ℚ Ω := IsAlgClosure.isGalois ℚ Ω
   haveI hcl := isClosed_NS Ω (S : Set Pl)
   haveI : CompactSpace (Gam Ω S) := inferInstance
@@ -163,7 +167,7 @@ private theorem trace_rz (hF : IsHostFrame Ω c e ψ S A F) (ι : Qbar l ≃+* �
   refine (h3 (F.Ψ (toGS Ω _ σ⁻¹))).trans ?_
   rw [h1, map_mul, map_inv, map_pow, Units.val_mul, Units.val_inv_eq_inv_val, Units.val_pow_eq_pow_val, h2,
     UpperTheory.V.Af.eis3]
-  simp only [map_add, map_mul, map_inv₀, map_pow, map_natCast, map_one, RingEquiv.symm_apply_apply, _root_.mul_inv_rev, inv_inv]
+  simp only [map_add (f := _), map_mul, map_inv₀, map_pow, map_natCast, map_one, RingEquiv.symm_apply_apply, _root_.mul_inv_rev, inv_inv]
   rw [mul_comm (_ ⁻¹) ((q : PadicAlgCl l) ^ e)]
   rfl
 
@@ -181,7 +185,7 @@ private theorem ker_lift (hK : IsQi K) (hF : IsHostFrame Ω c e ψ S A F) {g : G
   exact ⟨s, rfl⟩
 
 private theorem adm3 (hK : IsQi K) (hd : HostData l e ψ o₁) (hF : IsHostFrame Ω c e ψ S A F) {ι : Qbar l ≃+* ℂ}
-    {g₁ : Gam Ω S} (hg : F.Marked g₁) {r : Gam Ω S →* GG 3 (PadicAlgCl l)} (hr : F.IsCharZeroPt g₁ r) (hI : TypeI F.η r)
+    {g₁ : Gam Ω S} (hg : F.Marked g₁) {r : Gam Ω S →* GG (m := 3) (R := PadicAlgCl l)} (hr : F.IsCharZeroPt g₁ r) (hI : TypeI F.η r)
     {ρ : Formalism.ConjugateSelfDual.G K Ω →* GL (Fin 3) (Qbar l)}
     (hρ : ∀ s : Formalism.ConjugateSelfDual.G K Ω, (ρ s : Matrix (Fin 3) (Fin 3) (Qbar l)) = (r (toGS Ω _ (s.restrictScalars ℚ))).mat)
     (ha : UpperTheory.V.Af.IsAutCsd ι (UpperTheory.V.Af.tw ρ (cycBar K Ω l ^ (-1 : ℤ)))) : UpperTheory.V.Af.Adm3 ι e N ρ := by
@@ -203,7 +207,7 @@ private theorem adm3 (hK : IsQi K) (hd : HostData l e ψ o₁) (hF : IsHostFrame
 
 private theorem admissible_unitary_three_point (hP : UpperTheory.V.Af.HypothesesH) (hU : UpperTheory.V.Z.J.UnlEndLogNorm) [IsAlgClosure K Ω] (hK : IsQi K)
     (hd : HostData l e ψ o₁) (hF : IsHostFrame Ω c e ψ S A F) {ι : Qbar l ≃+* ℂ}
-    {g₁ : Gam Ω S} (hg : F.Marked g₁) {r : Gam Ω S →* GG 3 (PadicAlgCl l)} (hr : F.IsCharZeroPt g₁ r) (hI : TypeI F.η r)
+    {g₁ : Gam Ω S} (hg : F.Marked g₁) {r : Gam Ω S →* GG (m := 3) (R := PadicAlgCl l)} (hr : F.IsCharZeroPt g₁ r) (hI : TypeI F.η r)
     {ρ : Formalism.ConjugateSelfDual.G K Ω →* GL (Fin 3) (Qbar l)}
     (hρ : ∀ s : Formalism.ConjugateSelfDual.G K Ω, (ρ s : Matrix (Fin 3) (Fin 3) (Qbar l)) = (r (toGS Ω _ (s.restrictScalars ℚ))).mat)
     (ha : UpperTheory.V.Af.IsAutCsd ι (UpperTheory.V.Af.tw ρ (cycBar K Ω l ^ (-1 : ℤ)))) : UpperTheory.V.Z.J.Adm3U ι e N ρ :=
@@ -222,7 +226,7 @@ private theorem key (hP : UpperTheory.V.Af.HypothesesH) (hU : UpperTheory.V.Z.J.
     (ι : Qbar l ≃+* ℂ) {g₁ : Gam Ω S} (hg : F.Marked g₁) {p : ℕ} (hp : p.Prime) (h4 : p % 4 = 3) (h7 : 7 ≤ p)
     (hpl : ¬ p ∣ l * N) {B : ValuationSubring Ω} (hB : B.valuation (p : Ω) < 1) {σ : Formalism.ConjugateSelfDual.G ℚ Ω}
     (hσ : σ ∈ (eta4 Ω).ker) (hfr : IsFrob B (p ^ 2) σ) {I : Type} (s : Finset I)
-    (r : I → (Gam Ω S →* GG 3 (PadicAlgCl l))) (hr : ∀ i ∈ s, F.IsCharZeroPt g₁ (r i) ∧ TypeI F.η (r i))
+    (r : I → (Gam Ω S →* GG (m := 3) (R := PadicAlgCl l))) (hr : ∀ i ∈ s, F.IsCharZeroPt g₁ (r i) ∧ TypeI F.η (r i))
     (ha : ∀ i ∈ s, ∃ ρ : Formalism.ConjugateSelfDual.G K Ω →* GL (Fin 3) (Qbar l),
       (∀ t : Formalism.ConjugateSelfDual.G K Ω, (ρ t : Matrix (Fin 3) (Fin 3) (Qbar l)) = (r i (toGS Ω _ (t.restrictScalars ℚ))).mat) ∧
       UpperTheory.V.Af.IsAutCsd ι (UpperTheory.V.Af.tw ρ (cycBar K Ω l ^ (-1 : ℤ))))
@@ -326,51 +330,3 @@ private theorem final_bound (a b l N e p : ℕ) (hl : 3 ≤ l) (hN : 2 ≤ N) (h
     _ ≤ _ := mul_le_mul_of_nonneg_left h7 (by positivity)
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V UpperTheory.V.HV GlobalTheory.GalOfCusp UpperTheory.V.Th UpperTheory.V.Z.J
-
-theorem UpperTheory.V.Z.J.hostNumberUE :
-    Af.HypothesesH → UnlEndLogNorm → CongruenceNumberUnitaryThree → UnitaryThreeInertia.HostNumber := by
-  intro hP hU hNum K _ _ _ hK
-  obtain ⟨a, b, hN⟩ := hNum K hK.1
-  refine ⟨2 * a + 1 + b + 3, fun Ω _ _ _ l hl c N _ e ψ o₁ hd S A F hF ι g₁ hg => ?_⟩
-  classical
-  haveI : IsAlgClosed Ω := IsAlgClosure.isAlgClosed ℚ
-  obtain ⟨p, hp, h4, h7, hpl, hple⟩ := exists_p (l * N) (Nat.mul_pos hl.out.pos (NeZero.pos N))
-  obtain ⟨B, hB⟩ := (UpperTheory.V.Chr.placesQ Ω).1 p hp
-  obtain ⟨σ, hσ, hfr⟩ : ∃ σ : Formalism.ConjugateSelfDual.G ℚ Ω, σ ∈ (eta4 Ω).ker ∧ IsFrob B (p ^ 2) σ := by
-    letI : Algebra K Ω := (IsAlgClosed.lift : K →ₐ[ℚ] Ω).toRingHom.toAlgebra
-    haveI : IsScalarTower ℚ K Ω := IsScalarTower.of_algebraMap_eq' (Subsingleton.elim _ _)
-    haveI := algClosure K Ω
-    obtain ⟨w, hw, hpw⟩ := exists_w (K := K) hp hB
-    obtain ⟨τ, hτ⟩ := exists_isFrob hw
-    rw [normV_inert hK hp h4 w hpw] at hτ
-    exact ⟨τ.restrictScalars ℚ, (gaussian_field_range_eq_ker_quartic_char.2 Ω K hK).1 ▸ ⟨τ, rfl⟩, (isFrob_res B _ τ).2 hτ⟩
-  refine ⟨toGS Ω _ σ⁻¹, fun r hr hI hb => ?_, fun n r hr hi => ?_⟩
-  · obtain ⟨inst, tw, hρ⟩ := hb.aut
-    exact (key hP hU hK hN hd hF ι hg hp h4 h7 hpl hB hσ hfr (Finset.univ : Finset Unit) (fun _ => r) (fun _ _ => ⟨hr, hI⟩)
-      (fun _ _ => hρ) (fun _ _ _ _ _ => rfl)).1 () (Finset.mem_univ _)
-  · choose inst tw hρ using fun i => (hr i).2.2.aut
-    have hlog : Real.log l ≠ 0 := Real.log_ne_zero_of_pos_of_ne_one (by exact_mod_cast hl.out.pos)
-      (by exact_mod_cast hl.out.ne_one)
-    let j : Fin n → (K →+* Ω) := fun i => @algebraMap K Ω _ _ (inst i)
-    have hcard : Fintype.card (K →+* Ω) = 2 := (NumberField.Embeddings.card K Ω).trans hK.1
-    rw [Finset.sum_mul]
-    simp only [vl1, div_mul_cancel₀ _ hlog]
-    rw [← Finset.sum_fiberwise Finset.univ j]
-    refine le_trans (Finset.sum_le_card_nsmul _ _ (a * N.totient * ((N : ℝ) * (e + 1)) ^ b * Real.log p) fun f _ => ?_) ?_
-    · letI : Algebra K Ω := f.toAlgebra
-      haveI : IsScalarTower ℚ K Ω := IsScalarTower.of_algebraMap_eq' (Subsingleton.elim _ _)
-      refine (key hP hU hK hN hd hF ι hg hp h4 h7 hpl hB hσ hfr _ r (fun i _ => ⟨(hr i).1, (hr i).2.1⟩) (fun i hi => ?_)
-        (fun i _ i' _ => hi i i')).2
-      have e1 : inst i = f.toAlgebra := Algebra.algebra_ext _ _ fun x => DFunLike.congr_fun (Finset.mem_filter.1 hi).2 x
-      have h1 := hρ i
-      revert h1
-      generalize tw i = t
-      revert t
-      rw [e1]
-      exact fun _ h => h
-    · rw [Finset.card_univ, hcard, nsmul_eq_mul, Nat.cast_ofNat]
-      have h2 := hl.out.two_le
-      have h3 := hd.l_odd
-      obtain ⟨k, hk⟩ := hd.N_even
-      have h5 := NeZero.pos N
-      exact final_bound a b l N e p (by omega) (by omega) hd.e_pos hple

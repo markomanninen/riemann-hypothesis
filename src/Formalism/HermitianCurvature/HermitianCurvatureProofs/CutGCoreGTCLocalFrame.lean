@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_GCore_GTCLocalFrameC
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_GCore_GTCLocalFrameC
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 open scoped ContDiff
@@ -42,7 +46,9 @@ private theorem fnZ_apply_eq_snd (P : M.Par) (f : ℂ → ℂ)
     ((fnZ P f : MA.SmQ P.r P.TT) : MA.Qp P.r P.TT → ℂ) q = f q.1.2 := by
   have hmem : (fun q : MA.Qp P.r P.TT => f q.1.2) ∈ MA.smSub P.r P.TT := by
     show ContDiffOn ℝ _ (MA.ext _) (MA.Qset P.r P.TT)
-    refine (hf.comp contDiff_snd.contDiffOn (fun x hx => hx.2)).congr (fun x hx => ?_)
+    have hs : ContDiffOn ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun x : MA.E P.r => x.2) (MA.Qset P.r P.TT) :=
+      contDiff_snd.contDiffOn
+    refine (hf.comp hs (fun x hx => hx.2)).congr (fun x hx => ?_)
     simp [MA.ext, hx]
   simp only [fnZ, MA.toSm, dif_pos hmem]
 

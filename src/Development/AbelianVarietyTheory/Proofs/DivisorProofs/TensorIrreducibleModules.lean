@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurAndTensorSubmodule
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurAndTensorSubmodule
+
+@[expose] public section
+
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 
 noncomputable section
@@ -56,7 +61,7 @@ theorem atPl_local (w : ι) (y : ⨂[ℂ] i, V i) : ∃ s : Finset (V w), ∀ f 
     obtain ⟨s, hs⟩ := hx
     obtain ⟨t, ht⟩ := hy
     refine ⟨s ∪ t, fun f g h => ?_⟩
-    rw [map_add, map_add, hs f g (fun m hm => h m (Finset.mem_union_left _ hm)),
+    rw [map_add (f := _), map_add (f := _), hs f g (fun m hm => h m (Finset.mem_union_left _ hm)),
       ht f g (fun m hm => h m (Finset.mem_union_right _ hm))]
 
 theorem stable_all (w : ι) {Z : Type} (A : Z → Module.End ℂ (V w)) [Nontrivial (V w)]
@@ -126,7 +131,7 @@ theorem map_rankOne (ℓ : ∀ i, Module.Dual ℂ (V i)) (u : ∀ i, V i) (y : �
     congr 1
     simp only [LinearMap.smulRight_apply]
     exact MultilinearMap.map_smul_univ _ _ _
-  | add x y hx hy => rw [map_add, map_add, hx, hy, add_smul]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, add_smul]
 
 end Lin
 
@@ -232,7 +237,7 @@ theorem tensor_irr : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (R S : ℕ) (
   have hgl : ∀ i (Z : Mat R S), ∀ y ∈ N, atPl i ((M i).act Z) y ∈ N := by
     intro i Z y hy
     obtain ⟨X₁, h₁, X₂, h₂, rfl⟩ := upq_decomp Z
-    rw [map_add, map_smul, atPl_add, atPl_smul, LinearMap.add_apply, LinearMap.smul_apply]
+    rw [map_add (f := _), map_smul, atPl_add, atPl_smul, LinearMap.add_apply, LinearMap.smul_apply]
     exact N.add_mem (hN i X₁ h₁ y hy) (N.smul_mem _ (hN i X₂ h₂ y hy))
   intro w f y hy
   exact stable_all (V := fun i => (M i).V) w (fun Z => (M w).act Z) (hM w).1.2 (hM w).2 N (hgl w) f y hy

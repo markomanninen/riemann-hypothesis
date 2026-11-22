@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StSemilocRankFrac
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocFinite
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StRankFracDegree
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StSemilocChartRatio
-import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StSemilocRankFrac
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocFinite
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StRankFracDegree
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StSemilocChartRatio
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -24,7 +29,8 @@ theorem aeval_scale (y : (Σ k, ι k) → Ω) (c : K → Ω) {u : MRing ι} {a :
     aeval (fun p => y p * c p.1) u = aeval y u * ∏ k, c k ^ a k := by
   conv_lhs => rw [u.as_sum]
   conv_rhs => rw [u.as_sum]
-  rw [map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun m hm => ?_
   rw [aeval_monomial, aeval_monomial, mul_assoc]
   congr 1
@@ -49,7 +55,7 @@ theorem aeval_mem [Algebra ℚ Ω] (L : IntermediateField ℚ Ω) {y : (Σ k, ι
     rw [aeval_C, algebraMap_int_eq, eq_intCast]
     exact intCast_mem _ a
   | add f g hf hg =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hf hg
   | mul_X f p hf =>
     rw [map_mul, aeval_X]
@@ -83,8 +89,8 @@ end Eval
 
 end SemilocRankFrac
 
-open SemilocRankFrac in
 
+open SemilocRankFrac in
 theorem SemilocRankFrac.proof (hR : RankFracDegree.Statement) (hF : SemilocFinite.Statement)
     (hC : SemilocChartRatio.Statement) : SemilocRankFrac.Statement := by
   intro K _ ι _ K' _ ι' _ κ v P' n G s α W i' hv hP' _ hQ hs hsQ hW hi'

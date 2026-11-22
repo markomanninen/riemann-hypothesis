@@ -1,23 +1,27 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PositionOfIntro
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedVectorEqOfStandardData
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsTwIffCanonEq
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsSplittingCharacterSelf
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.FullTiedCBase
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.IntSplitOf
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.RecThm
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TieIwLevTieOf
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.CmpHyp0P
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.SelfDualAtColLevel
-import Formalism.LocalToGlobal.UnitaryNorms.CharGal
-import Formalism.LocalToGlobal.UnitaryNorms.DefsDatum
-import Formalism.LocalToGlobal.Divisibility.QLocTied
-import Formalism.LocalToGlobal.LatticeGeometry.GeoTiedP
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedWeilEq
-import Formalism.LocalToGlobal.JointCharacters.SameChr
-import Formalism.LocalToGlobal.GlobalTheory.LinkTiesOm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PositionOfIntro
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedVectorEqOfStandardData
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsTwIffCanonEq
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsSplittingCharacterSelf
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.FullTiedCBase
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.IntSplitOf
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.RecThm
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TieIwLevTieOf
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.CmpHyp0P
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.SelfDualAtColLevel
+public import Formalism.LocalToGlobal.UnitaryNorms.CharGal
+public import Formalism.LocalToGlobal.UnitaryNorms.DefsDatum
+public import Formalism.LocalToGlobal.Divisibility.QLocTied
+public import Formalism.LocalToGlobal.LatticeGeometry.GeoTiedP
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedWeilEq
+public import Formalism.LocalToGlobal.JointCharacters.SameChr
+public import Formalism.LocalToGlobal.GlobalTheory.LinkTiesOm
+
+@[expose] public section
 
 noncomputable section
 
@@ -141,13 +145,6 @@ structure ThT {w : ColW B f T} {Z : w.Lt} {Wt : Set B.places.Pl} {nch : NChoice 
   same : Formalism.L2.JoinChr.SameChr all.T chr
   std : Formalism.L2.Theta.IsStdChar (w.D Z) all.W.ψ (-1)
   io : th.TieIo
-
-def RetwistW (p : WP) (P P' : CP) : Prop :=
-  Pass KPx (positionOf P) fun K B f T => ∃ w : ColW B f T, p K B f T w ∧ ∀ (Z : w.Lt) (c : V4.Core K (w.st Z) f T), P K B f T w Z c →
-    DQ.TwAllAt (w.D Z) c.O.nch c.O.xd ∧ P' K B f T w Z c
-
-theorem GIs2.gIs {w : ColW B f T} {G : GJStage B w.C} (h : GIs2 K w G) : GIs K w G := fun W V S N =>
-  let ⟨a, b, ⟨t⟩⟩ := h W V S N; ⟨a, b, ⟨t.toColT⟩⟩
 
 end GlobalTheory.Mem.Top.Bl
 

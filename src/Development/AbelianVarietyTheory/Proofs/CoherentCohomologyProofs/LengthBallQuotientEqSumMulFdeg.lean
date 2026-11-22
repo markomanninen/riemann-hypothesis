@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CubeTotalComplexAcyclicOfSlicesInductionOnCard
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CubeTotalComplexAcyclicOfSlicesInductionOnCard
+
+@[expose] public section
+
 open TensorProduct
 
 namespace GlobalTheory.PointSupport
 
-open TensorProduct in
-open TensorProduct in
 
+open TensorProduct in
+open TensorProduct in
 theorem _root_.GlobalTheory.PointSupport.exists_algHom_ker_eq (K : Type) [Field K] [IsAlgClosed K] (R : Type)
     [CommRing R] [Algebra K R] [Algebra.FiniteType K R] (M : Ideal R) [M.IsMaximal] :
     ∃ χ : R →ₐ[K] K, RingHom.ker χ = M := by
@@ -20,9 +25,9 @@ theorem _root_.GlobalTheory.PointSupport.exists_algHom_ker_eq (K : Type) [Field 
   ext x
   simp [RingHom.mem_ker, Ideal.Quotient.eq_zero_iff_mem]
 
-open TensorProduct in
-open TensorProduct in
 
+open TensorProduct in
+open TensorProduct in
 theorem _root_.GlobalTheory.PointSupport.finiteLength_and_finrank_eq_length :
     ∀ (K : Type) [Field K] [IsAlgClosed K] (R : Type) [CommRing R] [Algebra K R]
       [Algebra.FiniteType K R] (χ₀ : R →ₐ[K] K) (O : Type) [CommRing O] [Algebra R O]

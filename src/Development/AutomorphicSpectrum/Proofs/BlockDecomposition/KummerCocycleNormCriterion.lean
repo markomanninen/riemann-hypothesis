@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalTateDuality.KummerCup
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalTateDuality.KummerCup
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

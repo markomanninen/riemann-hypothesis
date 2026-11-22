@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open MeasureTheory Formalism.BasicNotions.TH GlobalTheory.RealLift GlobalTheory.RealWeil
 
@@ -41,13 +46,13 @@ theorem sum_zero {P Q R S : ℕ} (c c' : Matrix (Ix P Q) (Ix R S) ℂ) (Y : Mat 
   have e1 : ∀ b, lineSign a b * (c * Yᵀ) a b * star (c' a b) =
       ∑ k, sgnD a * c a k * star (c' a b) * (sgnD b * Y b k) := by
     intro b
-    rw [lineSign_eq_mul, mul_apply, Finset.mul_sum, Finset.sum_mul]
+    rw [lineSign_eq_mul, Matrix.mul_apply, Finset.mul_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun k _ => ?_
     simp only [transpose_apply]; ring
   have e2 : ∀ b, lineSign a b * c a b * star ((c' * Yᵀ) a b) =
       ∑ k, sgnD a * c a b * star (c' a k) * (sgnD b * star (Y b k)) := by
     intro b
-    rw [lineSign_eq_mul, mul_apply, star_sum, Finset.mul_sum]
+    rw [lineSign_eq_mul, Matrix.mul_apply, star_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     simp only [transpose_apply, star_mul']; ring
   simp only [e1, e2]
@@ -65,7 +70,7 @@ theorem mem_sp_of_sympl {l : Type} [Fintype l] [DecidableEq l] (Z : Matrix (l �
   ext a b
   have h1 := h (Pi.single a 1) (Pi.single b 1)
   rw [sympl_eq_dot, sympl_eq_dot] at h1
-  simp [mulVec, dotProduct, Pi.single_apply, mul_apply] at h1 ⊢
+  simp [mulVec, dotProduct, Pi.single_apply, Matrix.mul_apply] at h1 ⊢
   linarith
 
 theorem exists_sp_rightAct : ∀ (ι l : Type) [Fintype ι] [DecidableEq ι] [Fintype l] [DecidableEq l] (P Q R S : ℕ)
@@ -123,7 +128,6 @@ theorem exists_sp_rightAct : ∀ (ι l : Type) [Fintype ι] [DecidableEq ι] [Fi
     refine h1.unique ?_
     convert h2 using 1
     funext n
-    simp only [Function.comp_def]
     rw [Matrix.smul_mulVec, hpow, ← φ.map_smul]
     congr 1; funext w
     simp [Matrix.transpose_smul, Matrix.mul_smul]

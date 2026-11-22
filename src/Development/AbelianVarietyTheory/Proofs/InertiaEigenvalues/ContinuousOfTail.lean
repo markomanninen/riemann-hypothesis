@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWeakTopologyWittTiltTensor
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZlTowerGen
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWeakTopologyWittTiltTensor
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZlTowerGen
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc TensorProduct GlobalTheory.NL Formalism.MainNotions.DeltaInvariantLattices GlobalTheory.WeakClosed
 open scoped Topology PowerSeries.WithPiTopology
 set_option synthInstance.maxHeartbeats 400000
@@ -15,7 +20,8 @@ theorem tailDecomp {O : Type} [CommRing O] {n : ℕ} (k : ℕ) (a : LetA O n) :
       (letπ : LetA O n) ^ k * (fun i => PowerSeries.mk fun m => PowerSeries.coeff (m + k) (a i)) := by
   funext i
   ext m
-  simp only [Pi.add_apply, Finset.sum_apply, Pi.mul_apply, Pi.pow_apply, letπ, map_add, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Pi.add_apply, Finset.sum_apply, Pi.mul_apply, Pi.pow_apply, letπ, map_add (f := _), map_sum,
     PowerSeries.coeff_C_mul_X_pow, PowerSeries.coeff_X_pow_mul', PowerSeries.coeff_mk,
     Finset.sum_ite_eq, Finset.mem_range]
   by_cases hk : m < k
@@ -39,7 +45,7 @@ theorem continuous_of_tail {O : Type} [CommRing O] [TopologicalSpace O] {n : ℕ
     (hmono j).comp (continuous_pi fun i =>
       (PowerSeries.WithPiTopology.continuous_coeff O j).comp (continuous_apply i))
   let S : LetA O n → M := fun a => ∑ j ∈ Finset.range k, (mono j a - mono j a₀)
-  have hS : Continuous S := continuous_finset_sum _ fun j _ => (hcont j).sub continuous_const
+  have hS : Continuous S := continuous_finsetSum _ fun j _ => (hcont j).sub continuous_const
   have hS0 : S a₀ = 0 := by simp [S]
   have hSV : ∀ᶠ a in 𝓝 a₀, S a ∈ V := by
     have := hS.continuousAt (x := a₀)
@@ -51,7 +57,8 @@ theorem continuous_of_tail {O : Type} [CommRing O] [TopologicalSpace O] {n : ℕ
   have hΦ : ∀ b, Φ b = (∑ j ∈ Finset.range k, mono j b) + Φ (letπ ^ k * tl b) := by
     intro b
     conv_lhs => rw [tailDecomp k b]
-    rw [map_add, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), map_sum]
   have : Φ a - Φ a₀ = S a + Φ (letπ ^ k * (tl a - tl a₀)) := by
     rw [hΦ a, hΦ a₀, mul_sub, map_sub]
     simp only [S, Finset.sum_sub_distrib]

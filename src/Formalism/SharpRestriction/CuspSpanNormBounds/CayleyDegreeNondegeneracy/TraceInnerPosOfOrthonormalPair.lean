@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.ShortVectorEveryPlace
-import Formalism.HermitianLattices.FinalMass
-import Formalism.FockGram.FockGramProofs.CovolGram
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.ShortVectorEveryPlace
+public import Formalism.HermitianLattices.FinalMass
+public import Formalism.FockGram.FockGramProofs.CovolGram
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,8 @@ theorem abs_det_trace_form_eq_discr (hK : IsCMUnram K) :
     simp only [Mq, A, Matrix.of_apply, Matrix.transpose_apply, LinearMap.toMatrix_apply,
       Algebra.traceMatrix_apply, Algebra.traceForm_apply]
     conv_lhs => rw [← B.sum_repr (star (B j))]
-    rw [Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_mul, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [smul_mul_assoc, LinearMap.map_smul, smul_eq_mul, hs]
   have hA : A * A = 1 := by
@@ -77,7 +82,8 @@ variable {K : Type} [Field K] [NumberField K] [StarRing K] {V : Type} [AddCommGr
 theorem inner_sum_orthonormal_pair (h : V →ₗ⋆[K] V →ₗ[K] K) (e : Fin 2 → V)
     (he : ∀ i j, h (e i) (e j) = if i = j then 1 else 0) (a c : Fin 2 → K) :
     h (∑ i, a i • e i) (∑ j, c j • e j) = ∑ i, star (a i) * c i := by
-  simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul,
     starRingEnd_apply, he]
   simp [Fin.sum_univ_two]
   ring
@@ -94,7 +100,8 @@ theorem conj_inner_self_nonneg (hK : IsCMUnram K) (h : V →ₗ⋆[K] V →ₗ[K
   obtain ⟨a, rfl⟩ := exists_coords_basis_fin_two e hli hsp x
   rw [inner_sum_orthonormal_pair h e he a a]
   refine ⟨∑ i, ‖σ (a i)‖ ^ 2, by positivity, ?_⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   push_cast
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul]
@@ -121,7 +128,8 @@ theorem trace_inner_pos_of_orthonormal_pair (hK : IsCMUnram K) (h : V →ₗ⋆[
       algebraMap ℚ ℂ (Algebra.trace ℚ K (∑ i, star (a i) * a i)) by simp, h1]
     push_cast
     refine Finset.sum_congr rfl fun σ _ => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul]
     have hst := hK.2.1 (σ : K →+* ℂ) (a j)
@@ -161,9 +169,11 @@ theorem covolume_trace_lattice (hK : IsCMUnram K) (h : V →ₗ⋆[K] V →ₗ[K
     apply le_antisymm
     · rintro w ⟨x, hx, rfl⟩
       obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun (𝓞 K)).1 hx
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Submodule.sum_mem _ fun i _ => ?_
-      rw [← (RingOfIntegers.basis K).sum_repr (c i), Finset.sum_smul, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← (RingOfIntegers.basis K).sum_repr (c i), Finset.sum_smul, map_sum]
       refine Submodule.sum_mem _ fun k _ => ?_
       rw [smul_assoc, map_zsmul]
       refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨(k, i), ?_⟩)
@@ -285,8 +295,10 @@ theorem short_vector_every_place (K : Type) [Field K] [NumberField K] [StarRing 
   have hpos : ∀ x : V, x ≠ 0 → 0 < Algebra.trace ℚ K (h x x) := fun x hx => trace_inner_pos_of_orthonormal_pair hK h e hli hsp he x hx
   obtain ⟨N, ι, hι, -, hlat⟩ := Formalism.HermitianLatticesTheory.final_traceReal K V h hsymm hpos
   have hLlat : Submodule.IsLattice K (Submodule.span (𝓞 K) (Set.range e)) :=
-    ⟨Submodule.fg_span (Set.finite_range e), by rw [Submodule.span_span_of_tower]; exact hsp⟩
-  obtain ⟨iL1, iL2⟩ := hlat _ hLlat
+    Submodule.IsLattice.of_fg _ (Submodule.fg_span (Set.finite_range e))
+  have hLfull : Submodule.IsFullLattice K (Submodule.span (𝓞 K) (Set.range e)) :=
+    { hLlat with span_eq_top := by rw [Submodule.span_span_of_tower, hsp] }
+  obtain ⟨iL1, iL2⟩ := hlat _ hLfull
   obtain ⟨familyMassRatio, familyMassSecondLine⟩ := hlat M hM.1
   have hcov := Formalism.HermitianLatticesTheory.final_genusCovol K V h hsymm hpos N ι hι _ M hLlat hM
   obtain ⟨hcL, hN⟩ := covolume_trace_lattice hK h e hli hsp he N ι hι

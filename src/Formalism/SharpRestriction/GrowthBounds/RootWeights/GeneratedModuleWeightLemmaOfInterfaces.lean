@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.SubstitutionPreservesOfGenerators
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.SubstitutionPreservesOfGenerators
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ theorem generated_submodule_stable (G : MvPolynomial (ι × Fin n) R) (g : MvPol
     exact Submodule.subset_span ⟨g * u, Submonoid.mul_mem _ (Submonoid.subset_closure hg) hu, rfl⟩
   | zero => simp
   | add y z _ _ hy hz =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ hy hz
   | smul c y _ hy =>
     rw [map_smul]
@@ -81,7 +85,7 @@ theorem generic_translate_weights_mem (hT : TransvectionExpansion) (hTo : TorusA
       exact hw w hwW
     | zero => simp
     | add y z _ _ hy hz =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ hy hz
     | smul c y _ hy =>
       rw [MvPolynomial.smul_eq_C_mul, map_mul, matrixSubst_C, RingHom.id_apply, ← MvPolynomial.smul_eq_C_mul]
@@ -107,7 +111,8 @@ theorem generic_translate_weights_mem (hT : TransvectionExpansion) (hTo : TorusA
     intro u
     apply good_of
     intro w hw
-    rw [MvPolynomial.as_sum w, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [MvPolynomial.as_sum w, map_sum]
     have hmono : ∀ m ∈ w.support, matrixSubst LL S φ (Matrix.diagonal fun a => ((u a : Kˣ) : K))
         (Matrix.diagonal fun a => (((u a)⁻¹ : Kˣ) : K)) (MvPolynomial.monomial m (w.coeff m)) =
         (((∏ a, u a ^ (wtS LL S m a) : Kˣ) : K)) • MvPolynomial.map φ (MvPolynomial.monomial m (w.coeff m)) := by
@@ -125,7 +130,8 @@ theorem generic_translate_weights_mem (hT : TransvectionExpansion) (hTo : TorusA
         rw [scalarExtension]
         exact Submodule.subset_span ⟨_, hGr R ι LL n S W hW2 w hw ν, rfl⟩) using 1
     unfold weightComponent
-    rw [map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.smul_sum]
     refine Finset.sum_congr ?_ fun m hm => ?_
     · ext m
       simp

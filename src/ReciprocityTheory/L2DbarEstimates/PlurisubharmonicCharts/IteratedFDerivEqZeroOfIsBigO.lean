@@ -1,6 +1,10 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.GROWCountStatement
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.HoloSmooth
-import Lemmata.CharacterDirections.Cdir
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.GROWCountStatement
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.HoloSmooth
+public import Lemmata.CharacterDirections.Cdir
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 
@@ -24,7 +28,7 @@ theorem isBigO_succ_of_fderiv_isBigO {n : ℕ} {F : Type*} [NormedAddCommGroup F
     (hO : fderiv ℂ f =O[𝓝 x] fun v => ‖v - x‖ ^ m) :
     f =O[𝓝 x] fun v => ‖v - x‖ ^ (m + 1) := by
   obtain ⟨c, hc0, hc⟩ := hO.exists_pos
-  rw [IsBigOWith] at hc
+  rw [isBigOWith_iff] at hc
   obtain ⟨ε, hε0, hε⟩ := Metric.eventually_nhds_iff_ball.1 (hc.and (hU.mem_nhds hx))
   rw [isBigO_iff]
   refine ⟨c, ?_⟩

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.QuadraticSplitting.QuadSplit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.InducedAutomorphicForms.IndTwo
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.InducedAutomorphicForms.IndSymp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.QuadraticSplitting.QuadSplit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.InducedAutomorphicForms.IndTwo
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.InducedAutomorphicForms.IndSymp
+
+@[expose] public section
 
 open UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Sd.S2 Matrix
 
@@ -33,8 +37,9 @@ private lemma Qmix {a b : kˣ} (h2 : (2 : k) ≠ 0) (A B : Matrix (Fin 2) (Fin 2
   have hb := b.ne_zero
   ext i j
   simp only [Matrix.mul_apply, Fintype.sum_sum_type, Fin.sum_univ_two, Fin.sum_univ_four]
+  delta mix
   fin_cases i <;> fin_cases j <;>
-    simp [Pm, Qm, mix] <;> field_simp <;> ring
+    simp [Pm, Qm] <;> field_simp <;> ring
 
 private lemma Qoff {a b : k} (h2 : (2 : k) ≠ 0) (ha : a ≠ 0) (hb : b ≠ 0) :
     Qm a b * Matrix.fromBlocks (0 : Matrix (Fin 2) (Fin 2) k) (Matrix.diagonal ![a ^ 2, b ^ 2]) (1 : Matrix (Fin 2) (Fin 2) k)
@@ -54,9 +59,10 @@ private lemma gram (a b : k) :
 
 private lemma adj_eq (Y : M4 k) : adj Y = -J4 k * Yᵀ * J4 k := by
   ext i j
-  simp only [Matrix.mul_apply, Fintype.sum_sum_type, Fin.sum_univ_two, Fin.sum_univ_four]
+  simp only [adj_apply, Matrix.mul_apply, Fin.sum_univ_four]
+  delta sgn
   fin_cases i <;> fin_cases j <;>
-    simp [J4, adj_apply, sgn, Fin.rev]
+    simp [J4, Fin.rev]
 
 private lemma JJ : -J4 k * J4 k = 1 := by
   ext i j
@@ -78,7 +84,7 @@ private lemma gsp {a b ν : k} (h2 : (2 : k) ≠ 0) (ha : a ≠ 0) (hb : b ≠ 0
         rw [hPY]; simp only [Matrix.transpose_mul, Matrix.mul_assoc]
       _ = _ := by rw [hX, Matrix.mul_smul, Matrix.smul_mul, hB, smul_comm]
   have h3 : Yᵀ * J4 k * Y = ν • J4 k := smul_right_injective _ hc h1
-  unfold IsGSp
+  change adj Y * Y = ν • (1 : M4 k)
   rw [adj_eq]
   calc _ = -J4 k * (Yᵀ * J4 k * Y) := by simp only [Matrix.mul_assoc]
     _ = _ := by rw [h3, Matrix.mul_smul, JJ]

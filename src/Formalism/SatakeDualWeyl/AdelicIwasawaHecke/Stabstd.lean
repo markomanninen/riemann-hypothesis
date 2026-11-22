@@ -1,4 +1,8 @@
-import Formalism.SatakeDualWeyl.Statement
+module
+
+public import Formalism.SatakeDualWeyl.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ variable {A R : Type} [CommRing A] [CommRing R] [Algebra R A] {n : Type} [Fintyp
 
 theorem mem_stdLat_iff' (x : n → A) :
     x ∈ stdLat (n := n) (A := A) R ↔ ∀ i, x i ∈ Set.range (algebraMap R A) := by
-  simp only [stdLat, Submodule.mem_pi, Set.mem_univ, true_implies, LinearMap.mem_range,
-    Algebra.linearMap_apply, Set.mem_range]
+  simp only [Formalism.UG.stdLat, Submodule.mem_pi, Set.mem_univ, true_implies,
+    LinearMap.mem_range, Algebra.linearMap_apply, Set.mem_range]
 
 theorem map_mulVec_mem_stdLat (M : Matrix n n R) (x : n → A)
     (hx : x ∈ stdLat (n := n) (A := A) R) :
@@ -23,9 +27,11 @@ theorem map_mulVec_mem_stdLat (M : Matrix n n R) (x : n → A)
   intro i
   refine ⟨(M *ᵥ y) i, ?_⟩
 
-  simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul]
 
-theorem entries_mem_of_mem_stabGL (h : GL n A) (hh : h ∈ stabGL (stdLat (n := n) (A := A) R))
+theorem entries_mem_of_mem_stabGL (h : GL n A)
+    (hh : h ∈ Formalism.UG.stabGL (stdLat (n := n) (A := A) R))
     (i j : n) : (h : Matrix n n A) i j ∈ Set.range (algebraMap R A) := by
   have hmem : (Pi.single j 1 : n → A) ∈ stdLat (n := n) (A := A) R := by
     rw [mem_stdLat_iff']
@@ -40,14 +46,15 @@ theorem entries_mem_of_mem_stabGL (h : GL n A) (hh : h ∈ stabGL (stdLat (n := 
 
 theorem coe_bc (φ : R →+* A) (u : GL n R) :
     ((bc (n := n) φ u : GL n A) : Matrix n n A) = (u : Matrix n n R).map φ := by
-  rfl
+  simp [bc, RingHom.mapMatrix_apply]
 
 theorem stabilizer_standard_lattice : Formalism.UG.StabStd := by
+  unfold Formalism.UG.StabStd
   intro A R _ _ _ n _ _ hinj
   ext g
   constructor
   · intro hg
-    have hg' : g⁻¹ ∈ stabGL (stdLat (n := n) (A := A) R) := inv_mem hg
+    have hg' : g⁻¹ ∈ Formalism.UG.stabGL (stdLat (n := n) (A := A) R) := inv_mem hg
     choose r hr using entries_mem_of_mem_stabGL (R := R) g hg
     choose r' hr' using entries_mem_of_mem_stabGL (R := R) g⁻¹ hg'
     let M : Matrix n n R := Matrix.of r

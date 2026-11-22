@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.AffineSplittingSpan.Transfer
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.AffineSplittingSpan.Transfer
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,8 @@ theorem mat_span (n r : ℕ) (α : Additive (Multiplicative (Matrix (Fin n) (Fin
       (Multiplicative.toAdd (Additive.toMul x) i j) : ℂ) := by
     have hx : x = e (Multiplicative.toAdd (Additive.toMul x)) := rfl
     conv_lhs => rw [hx, Matrix.matrix_eq_sum_single (Multiplicative.toAdd (Additive.toMul x))]
-    simp only [map_sum, Complex.ofReal_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Complex.ofReal_sum]
     rfl
   rw [lhs]
   simp only [Fintype.sum_prod_type]

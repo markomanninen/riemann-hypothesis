@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowsMeanC
-import Formalism.SharpRestriction.CuspSpanNormBounds.KappaEndpoints
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowsMeanC
+public import Formalism.SharpRestriction.CuspSpanNormBounds.KappaEndpoints
+
+@[expose] public section
 
 noncomputable section
 open scoped Classical
@@ -20,7 +24,7 @@ def frPerp (F : FlagD H r) : Submodule K V where
   add_mem' := by
     intro x y hx hy a
     simp only [Set.mem_setOf_eq] at hx hy ⊢
-    rw [map_add, hx a, hy a, add_zero]
+    rw [map_add (f := _), hx a, hy a, add_zero]
   zero_mem' := by
     intro a
     simp
@@ -39,7 +43,8 @@ theorem fr_indep (F : FlagD H r) : LinearIndependent K F.e := by
   intro c hc
   have hz : c (Fin.last r) = 0 := by
     have h : H.B (∑ a, c a • F.e a) (F.e (Fin.last r)) = 0 := by rw [hc, map_zero, LinearMap.zero_apply]
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply] at h
     rw [Fin.sum_univ_castSucc] at h
     simp only [F.zperp, F.zz, smul_eq_mul, mul_zero, Finset.sum_const_zero, zero_add] at h
     rcases mul_eq_zero.1 h with h | h
@@ -73,7 +78,8 @@ theorem range_frMap (F : FlagD H r) : LinearMap.range (frMap F) = ⊤ := by
   have hfx : ∀ x, f x = ∑ a, x a * c a := by
     intro x
     conv_lhs => rw [pi_eq_sum_univ x]
-    simp only [map_sum, map_smul, smul_eq_mul, hcdef]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul, hcdef]
   have hv : ∀ v, H.B v (∑ a, star (c a) • F.e a) = 0 := by
     intro v
     have h1 : f (frMap F v) = 0 := by
@@ -82,7 +88,8 @@ theorem range_frMap (F : FlagD H r) : LinearMap.range (frMap F) = ⊤ := by
       rw [hf] at this
       exact (Submodule.mem_bot K).1 this
     rw [hfx] at h1
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smulₛₗ, starRingEnd_apply, star_star, smul_eq_mul]
     rw [← h1]
     refine Finset.sum_congr rfl fun a _ => ?_

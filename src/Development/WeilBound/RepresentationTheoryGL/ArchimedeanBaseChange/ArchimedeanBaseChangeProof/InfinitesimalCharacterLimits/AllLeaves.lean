@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.TwistedSlicesSquareIntegrable
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.LeftInv
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.TwistedSlicesSquareIntegrable
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.LeftInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +24,8 @@ def NonPos (U : Submodule ℂ (Sm E N)) : Prop :=
 def CentIm (U : Submodule ℂ (Sm E N)) : Prop :=
   ∃ z : ℂ, z.re = 0 ∧ ∀ φ ∈ U, ∀ (t : ℝ) g, φ.1 (splitCentre E N t * g) = Complex.exp (z * t) * φ.1 g
 
-variable (E) in
 
+variable (E) in
 inductive Tr : ℕ → Type
   | leaf {N : ℕ} (V : Submodule ℂ (Sm E N)) (z : ℂ) : Tr N
   | node {r s : ℕ} (t₁ : Tr r) (t₂ : Tr s) : Tr (r + s)
@@ -88,9 +92,9 @@ def Sep4 : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (N : �
   ∀ K : Subgroup (GL (Fin N) (Af E)), IsOpen (K : Set (GL (Fin N) (Af E))) →
   ∃ Θ : ∀ M : ℕ, Set (Subgroup (GL (Fin M) (Af E))),
     (∀ M, (Θ M).Finite ∧ ∀ K' ∈ Θ M, IsOpen (K' : Set (GL (Fin M) (Af E)))) ∧
-    ∀ (U : Submodule ℂ (Sm E N)), 0 < N → IsStable U → (∀ φ ∈ U, IsAutForm φ) →
+    ∀ (U : Submodule ℂ (Sm E N)), 0 < N → _root_.GlobalTheory.CuspRep.IsStable U → (∀ φ ∈ U, IsAutForm φ) →
       (∃ S : Finset (Sm E N), (∀ φ ∈ S, TypeB K W φ) ∧ ↑S ⊆ (U : Set (Sm E N)) ∧
-        ∀ U' : Submodule ℂ (Sm E N), IsStable U' → ↑S ⊆ (U' : Set (Sm E N)) → U ≤ U') →
+        ∀ U' : Submodule ℂ (Sm E N), _root_.GlobalTheory.CuspRep.IsStable U' → ↑S ⊆ (U' : Set (Sm E N)) → U ≤ U') →
       NonPos U → CentIm U → (∀ τ : E →+* ℂ, ∃ m, HasInfCharGL U τ m ∧ m.Nodup) → U ≠ ⊥ →
       ∃ (t : Tr E N) (T : Sm E N →ₗ[ℂ] Sm E N), t.Good ∧
         t.AllLeaves (fun M V => 0 < M ∧ ∃ K' ∈ Θ M, ∃ W' ∈ Ω M, HasType K' W' V) ∧
@@ -124,13 +128,13 @@ def Tr.shift {E : Type} [Field E] [NumberField E] [IsCMField E] (z : ℂ) : {N :
   | _, .node t₁ t₂ => .node (t₁.shift z) (t₂.shift z)
 
 def TrStable : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (N : ℕ) (t : Tr E N),
-  (t.AllLeaves fun _ V => IsStable V) → IsStable t.space
+  (t.AllLeaves fun _ V => _root_.GlobalTheory.CuspRep.IsStable V) → IsStable t.space
 
 def TwShift : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (N : ℕ) (V : Submodule ℂ (Sm E N))
-  (t : Tr E N) (z : ℂ), IsStable V → Emb V (· ∈ t.space) → Emb (tw V z) (· ∈ (t.shift z).space)
+  (t : Tr E N) (z : ℂ), _root_.GlobalTheory.CuspRep.IsStable V → Emb V (· ∈ t.space) → Emb (tw V z) (· ∈ (t.shift z).space)
 
 def Graft : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r s : ℕ) (t₁ t₁' : Tr E r) (t₂ t₂' : Tr E s),
-  IsStable t₁.space → IsStable t₁'.space → IsStable t₂.space → IsStable t₂'.space →
+  _root_.GlobalTheory.CuspRep.IsStable t₁.space → _root_.GlobalTheory.CuspRep.IsStable t₁'.space → _root_.GlobalTheory.CuspRep.IsStable t₂.space → _root_.GlobalTheory.CuspRep.IsStable t₂'.space →
   Emb t₁.space (· ∈ t₁'.space) → Emb t₂.space (· ∈ t₂'.space) →
   Emb (Tr.node t₁ t₂).space (· ∈ (Tr.node t₁' t₂').space)
 

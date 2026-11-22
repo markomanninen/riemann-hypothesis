@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsDomainAndIsIntegrallyClosedLocalizationOfIsInv
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRingKrullDimQuotientMvPolynomialEqNat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsDomainAndIsIntegrallyClosedLocalizationOfIsInv
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRingKrullDimQuotientMvPolynomialEqNat
+
+@[expose] public section
 
 universe u v w
 
@@ -146,14 +150,14 @@ variable {G : Type v} [Group G] {X Y : Scheme.{u}}
 
 class OrbitsInAffineOpens (ρ : G →* Aut X) : Prop where
 
-  exists_isAffineOpen : ∀ x : X, ∃ U : X.Opens, IsAffineOpen U ∧ ∀ g, (ρ g).hom x ∈ U
+  exists_isAffineOpen : ∀ x : X, ∃ U : X.Opens, IsAffineOpen U ∧ ∀ g, (ρ g).asIso.hom x ∈ U
 
 namespace OrbitsInAffineOpens
 
 instance (priority := 900) of_finiteSubsetsInAffineOpens [Finite G] [FiniteSubsetsInAffineOpens X]
     (ρ : G →* Aut X) : OrbitsInAffineOpens ρ := ⟨fun x ↦ by
   obtain ⟨U, hU, h⟩ := FiniteSubsetsInAffineOpens.exists_isAffineOpen _
-    (Set.finite_range fun g ↦ (ρ g).hom x)
+    (Set.finite_range fun g ↦ (ρ g).asIso.hom x)
   exact ⟨U, hU, fun g ↦ h ⟨g, rfl⟩⟩⟩
 
 theorem of_isQProjOver [Finite G] {R : Type} [CommRing R] {X : Scheme.{0}}
@@ -162,39 +166,26 @@ theorem of_isQProjOver [Finite G] {R : Type} [CommRing R] {X : Scheme.{0}}
   have := FiniteSubsetsInAffineOpens.of_isQProjOver h
   infer_instance
 
-theorem of_locally_on_base [Finite G] (ρ : G →* Aut X) (f : X ⟶ Y) (hf : ∀ g, (ρ g).hom ≫ f = f)
+theorem of_locally_on_base [Finite G] (ρ : G →* Aut X) (f : X ⟶ Y) (hf : ∀ g, (ρ g).asIso.hom ≫ f = f)
     (h : ∀ y : Y, ∃ W : Y.Opens, y ∈ W ∧ FiniteSubsetsInAffineOpens (f ⁻¹ᵁ W)) :
     OrbitsInAffineOpens ρ := ⟨fun x ↦ by
   obtain ⟨W, hyW, hW⟩ := h (f x)
-  have horb : ∀ g, (ρ g).hom x ∈ f ⁻¹ᵁ W := fun g ↦ by
-    show f ((ρ g).hom x) ∈ W
+  have horb : ∀ g, (ρ g).asIso.hom x ∈ f ⁻¹ᵁ W := fun g ↦ by
+    show f ((ρ g).asIso.hom x) ∈ W
     rw [← Scheme.Hom.comp_apply, hf g]
     exact hyW
   obtain ⟨V, hV, hsV⟩ := FiniteSubsetsInAffineOpens.exists_isAffineOpen (X := (f ⁻¹ᵁ W).toScheme)
-    (Set.range fun g : G ↦ (⟨(ρ g).hom x, horb g⟩ : f ⁻¹ᵁ W)) (Set.finite_range _)
+    (Set.range fun g : G ↦ (⟨(ρ g).asIso.hom x, horb g⟩ : f ⁻¹ᵁ W)) (Set.finite_range _)
   refine ⟨(f ⁻¹ᵁ W).ι ''ᵁ V, hV.image_of_isOpenImmersion _, fun g ↦ ?_⟩
   exact ⟨_, hsV ⟨g, rfl⟩, rfl⟩⟩
 
-theorem of_equivariant (ρ : G →* Aut X) (τ : G →* Aut Y) [OrbitsInAffineOpens τ] (p : X ⟶ Y)
-    [IsAffineHom p] (hp : ∀ g, (ρ g).hom ≫ p = p ≫ (τ g).hom) : OrbitsInAffineOpens ρ := ⟨fun x ↦ by
-  obtain ⟨V, hV, hxV⟩ := exists_isAffineOpen (ρ := τ) (p x)
-  refine ⟨p ⁻¹ᵁ V, hV.preimage p, fun g ↦ ?_⟩
-  show p ((ρ g).hom x) ∈ V
-  rw [← Scheme.Hom.comp_apply, hp g, Scheme.Hom.comp_apply]
-  exact hxV g⟩
-
 theorem of_invariant (ρ : G →* Aut X) (p : X ⟶ Y) [IsAffineHom p]
-    (hp : ∀ g, (ρ g).hom ≫ p = p) : OrbitsInAffineOpens ρ := ⟨fun x ↦ by
+    (hp : ∀ g, (ρ g).asIso.hom ≫ p = p) : OrbitsInAffineOpens ρ := ⟨fun x ↦ by
   obtain ⟨V, hV, hxV, -⟩ := exists_isAffineOpen_mem_and_subset (TopologicalSpace.Opens.mem_top (p x))
   refine ⟨p ⁻¹ᵁ V, hV.preimage p, fun g ↦ ?_⟩
-  show p ((ρ g).hom x) ∈ V
+  show p ((ρ g).asIso.hom x) ∈ V
   rw [← Scheme.Hom.comp_apply, hp g]
   exact hxV⟩
-
-instance comp {H : Type w} [Group H] (ρ : G →* Aut X) [OrbitsInAffineOpens ρ] (φ : H →* G) :
-    OrbitsInAffineOpens (ρ.comp φ) := ⟨fun x ↦ by
-  obtain ⟨U, hU, h⟩ := exists_isAffineOpen (ρ := ρ) x
-  exact ⟨U, hU, fun g ↦ h (φ g)⟩⟩
 
 end OrbitsInAffineOpens
 
@@ -206,18 +197,18 @@ theorem IsAffineQuotient.orbitsInAffineOpens {ρ : G →* Aut X} {π : X ⟶ Y}
 variable {ρ : G →* Aut X}
 
 theorem aut_map_mul_apply (ρ : G →* Aut X) (g k : G) (x : X) :
-    (ρ (g * k)).hom x = (ρ g).hom ((ρ k).hom x) := by
-  rw [map_mul, Aut.Aut_mul_def]
-  exact Scheme.Hom.comp_apply (ρ k).hom (ρ g).hom x
+    (ρ (g * k)).asIso.hom x = (ρ g).asIso.hom ((ρ k).asIso.hom x) := by
+  rw [map_mul, Aut.mul_asIso]
+  exact Scheme.Hom.comp_apply (ρ k).asIso.hom (ρ g).asIso.hom x
 
-theorem aut_map_one_apply (ρ : G →* Aut X) (x : X) : (ρ 1).hom x = x := by
+theorem aut_map_one_apply (ρ : G →* Aut X) (x : X) : (ρ 1).asIso.hom x = x := by
   rw [map_one]
   rfl
 
 theorem IsInvariantSection.basicOpen_le {U : X.Opens} {s : Γ(X, U)}
-    (hs : IsInvariantSection ρ U s) (g : G) : X.basicOpen s ≤ (ρ g).hom ⁻¹ᵁ X.basicOpen s := by
+    (hs : IsInvariantSection ρ U s) (g : G) : X.basicOpen s ≤ (ρ g).asIso.hom ⁻¹ᵁ X.basicOpen s := by
   obtain ⟨h, hgs⟩ := hs g
-  have := Scheme.basicOpen_appLE (ρ g).hom U U h s
+  have := Scheme.basicOpen_appLE (ρ g).asIso.hom U U h s
   rw [hgs] at this
   exact this.le.trans inf_le_right
 
@@ -241,23 +232,23 @@ private theorem appLE_apply_congr' {f f' : X ⟶ X} (hff : f = f') (U : X.Opens)
   rfl
 
 theorem exists_isInvariantSection_mem_basicOpen_iff [Finite G] {U : X.Opens}
-    (hU : ∀ g, U ≤ (ρ g).hom ⁻¹ᵁ U) (s : Γ(X, U)) :
+    (hU : ∀ g, U ≤ (ρ g).asIso.hom ⁻¹ᵁ U) (s : Γ(X, U)) :
     ∃ t : Γ(X, U), IsInvariantSection ρ U t ∧
-      ∀ x, x ∈ X.basicOpen t ↔ ∀ g, (ρ g).hom x ∈ X.basicOpen s := by
+      ∀ x, x ∈ X.basicOpen t ↔ ∀ g, (ρ g).asIso.hom x ∈ X.basicOpen s := by
   classical
   have := Fintype.ofFinite G
-  refine ⟨∏ g : G, (ρ g).hom.appLE U U (hU g) s, fun k ↦ ⟨hU k, ?_⟩, fun x ↦ ?_⟩
+  refine ⟨∏ g : G, (ρ g).asIso.hom.appLE U U (hU g) s, fun k ↦ ⟨hU k, ?_⟩, fun x ↦ ?_⟩
   · rw [map_prod]
     refine (Finset.prod_congr rfl fun g _ ↦ ?_).trans (Fintype.prod_equiv (Equiv.mulRight k)
-      (fun g ↦ (ρ (g * k)).hom.appLE U U (hU (g * k)) s) _ (fun _ ↦ rfl))
-    have e := Scheme.Hom.appLE_comp_appLE (ρ k).hom (ρ g).hom U U U (hU g) (hU k)
+      (fun g ↦ (ρ (g * k)).asIso.hom.appLE U U (hU (g * k)) s) _ (fun _ ↦ rfl))
+    have e := Scheme.Hom.appLE_comp_appLE (ρ k).asIso.hom (ρ g).asIso.hom U U U (hU g) (hU k)
     have e' := congrArg (fun φ : Γ(X, U) ⟶ Γ(X, U) ↦ φ s) e
     simp only [CommRingCat.comp_apply] at e'
     rw [e']
-    exact appLE_apply_congr' (by rw [map_mul, Aut.Aut_mul_def]; rfl) _ _ _ _
+    exact appLE_apply_congr' (by rw [map_mul, Aut.mul_asIso]; rfl) _ _ _ _
   · rw [mem_basicOpen_prod_iff]
-    have key : ∀ g, x ∈ X.basicOpen ((ρ g).hom.appLE U U (hU g) s) ↔
-        x ∈ U ∧ (ρ g).hom x ∈ X.basicOpen s := fun g ↦ by
+    have key : ∀ g, x ∈ X.basicOpen ((ρ g).asIso.hom.appLE U U (hU g) s) ↔
+        x ∈ U ∧ (ρ g).asIso.hom x ∈ X.basicOpen s := fun g ↦ by
       rw [Scheme.basicOpen_appLE]
       exact Iff.rfl
     simp only [Finset.mem_univ, true_implies, key]
@@ -271,8 +262,8 @@ theorem exists_isInvariantSection_mem_basicOpen_iff [Finite G] {U : X.Opens}
 
 variable [Finite G]
 
-theorem exists_isInvariantSection_basicOpen_eq {U : X.Opens} (hU : ∀ g, U ≤ (ρ g).hom ⁻¹ᵁ U)
-    (s : Γ(X, U)) (hs : ∀ g, X.basicOpen s ≤ (ρ g).hom ⁻¹ᵁ X.basicOpen s) :
+theorem exists_isInvariantSection_basicOpen_eq {U : X.Opens} (hU : ∀ g, U ≤ (ρ g).asIso.hom ⁻¹ᵁ U)
+    (s : Γ(X, U)) (hs : ∀ g, X.basicOpen s ≤ (ρ g).asIso.hom ⁻¹ᵁ X.basicOpen s) :
     ∃ t : Γ(X, U), IsInvariantSection ρ U t ∧ X.basicOpen t = X.basicOpen s := by
   obtain ⟨t, ht, hmem⟩ := exists_isInvariantSection_mem_basicOpen_iff hU s
   refine ⟨t, ht, le_antisymm (fun x hx ↦ ?_) (fun x hx ↦ ?_)⟩
@@ -281,37 +272,37 @@ theorem exists_isInvariantSection_basicOpen_eq {U : X.Opens} (hU : ∀ g, U ≤ 
   · exact (hmem x).2 fun g ↦ hs g hx
 
 theorem exists_isInvariantSection_basicOpen_le {U : X.Opens} (hU : IsAffineOpen U)
-    (hst : ∀ g, U ≤ (ρ g).hom ⁻¹ᵁ U) {x : X} (hx : x ∈ U) (O : X.Opens)
-    (hO : ∀ g, (ρ g).hom x ∈ O) :
+    (hst : ∀ g, U ≤ (ρ g).asIso.hom ⁻¹ᵁ U) {x : X} (hx : x ∈ U) (O : X.Opens)
+    (hO : ∀ g, (ρ g).asIso.hom x ∈ O) :
     ∃ t : Γ(X, U), IsInvariantSection ρ U t ∧ x ∈ X.basicOpen t ∧ X.basicOpen t ≤ O := by
-  obtain ⟨f, hsf, hfO⟩ := exists_basicOpen_le_of_finite hU O (Set.finite_range fun g ↦ (ρ g).hom x)
+  obtain ⟨f, hsf, hfO⟩ := exists_basicOpen_le_of_finite hU O (Set.finite_range fun g ↦ (ρ g).asIso.hom x)
     (by rintro _ ⟨g, rfl⟩; exact hst g hx) (by rintro _ ⟨g, rfl⟩; exact hO g)
   obtain ⟨t, ht, hmem⟩ := exists_isInvariantSection_mem_basicOpen_iff hst f
   refine ⟨t, ht, (hmem x).2 fun g ↦ hsf ⟨g, rfl⟩, fun y hy ↦ hfO ?_⟩
   have := (hmem y).1 hy 1
   rwa [aut_map_one_apply] at this
 
-variable (ρ) in
 
+variable (ρ) in
 theorem exists_stable_isAffineOpen [OrbitsInAffineOpens ρ] (x : X) :
-    ∃ V : X.Opens, IsAffineOpen V ∧ (∀ g, V ≤ (ρ g).hom ⁻¹ᵁ V) ∧ x ∈ V := by
+    ∃ V : X.Opens, IsAffineOpen V ∧ (∀ g, V ≤ (ρ g).asIso.hom ⁻¹ᵁ V) ∧ x ∈ V := by
   obtain ⟨U, hU, hxU⟩ := OrbitsInAffineOpens.exists_isAffineOpen (ρ := ρ) x
-  let W : X.Opens := ⨅ g, (ρ g).hom ⁻¹ᵁ U
-  have hmemW : ∀ y, y ∈ W ↔ ∀ g, (ρ g).hom y ∈ U := fun y ↦ by
+  let W : X.Opens := ⨅ g, (ρ g).asIso.hom ⁻¹ᵁ U
+  have hmemW : ∀ y, y ∈ W ↔ ∀ g, (ρ g).asIso.hom y ∈ U := fun y ↦ by
     rw [← SetLike.mem_coe, TopologicalSpace.Opens.coe_iInf, Set.mem_iInter]
     exact Iff.rfl
   have hWU : W ≤ U := fun y hy ↦ by
     have := (hmemW y).1 hy 1
     rwa [aut_map_one_apply] at this
-  have hWst : ∀ k, W ≤ (ρ k).hom ⁻¹ᵁ W := fun k y hy ↦ by
-    show (ρ k).hom y ∈ W
+  have hWst : ∀ k, W ≤ (ρ k).asIso.hom ⁻¹ᵁ W := fun k y hy ↦ by
+    show (ρ k).asIso.hom y ∈ W
     rw [hmemW]
     intro g
     rw [← aut_map_mul_apply]
     exact (hmemW y).1 hy _
   have hxW : x ∈ W := (hmemW x).2 hxU
   obtain ⟨f, hsf, hfW⟩ := exists_basicOpen_le_of_finite hU W
-    (Set.finite_range fun g ↦ (ρ g).hom x)
+    (Set.finite_range fun g ↦ (ρ g).asIso.hom x)
     (by rintro _ ⟨g, rfl⟩; exact hxU g) (by rintro _ ⟨g, rfl⟩; exact hWst g hxW)
   have hf' : X.basicOpen (X.presheaf.map (homOfLE hWU).op f) = X.basicOpen f := by
     rw [Scheme.basicOpen_res]
@@ -324,7 +315,7 @@ theorem exists_stable_isAffineOpen [OrbitsInAffineOpens ρ] (x : X) :
   refine ⟨X.basicOpen t, ?_, fun k y hy ↦ ?_, ?_⟩
   · have hA := (hU.basicOpen f).basicOpen (X.presheaf.map (homOfLE hfW).op t)
     rwa [Scheme.basicOpen_res, inf_eq_right.2 htf] at hA
-  · show (ρ k).hom y ∈ X.basicOpen t
+  · show (ρ k).asIso.hom y ∈ X.basicOpen t
     rw [hmem]
     intro g
     rw [← aut_map_mul_apply]

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NfAllBrTenLe
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NfAllBrTenLe
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem tf_add_left (f f' g : MvPolynomial σ ℂ) :
     tf_eq_sum f g (f.support ∪ f'.support) Finset.subset_union_left,
     tf_eq_sum f' g (f.support ∪ f'.support) Finset.subset_union_right, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun m _ => ?_
-  rw [coeff_add]
+  rw [MvPolynomial.coeff_add]
   ring
 
 theorem tf_smul_left (c : ℂ) (f g : MvPolynomial σ ℂ) :
@@ -41,7 +45,7 @@ theorem tf_add_right (f g g' : MvPolynomial σ ℂ) :
   unfold Formalism.REAL.fockF
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun m _ => ?_
-  rw [coeff_add, star_add]
+  rw [MvPolynomial.coeff_add, star_add]
   ring
 
 theorem tf_smul_right (c : ℂ) (f g : MvPolynomial σ ℂ) :
@@ -77,7 +81,8 @@ theorem tf_quad {k : ℕ} (w : Fin k → MvPolynomial σ ℂ) (x : Fin k → ℂ
     star x ⬝ᵥ (Matrix.of fun i j => Formalism.REAL.fockF (w j) (w i)) *ᵥ x =
       Formalism.REAL.fockF (∑ j, x j • w j) (∑ i, x i • w i) := by
   rw [← tfB_apply]
-  simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, map_smulₛₗ, tfB_apply, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, map_smulₛₗ, tfB_apply, smul_eq_mul,
     dotProduct, mulVec, Matrix.of_apply, Pi.star_apply, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   simp only [starRingEnd_apply]
@@ -163,7 +168,8 @@ theorem blkFockLe : BlockFockBound := by
   have hP' : P = ∑ i, a i • Formalism.MainNotions.product_first_zeroth_parts.ten (f i) := by
     rw [← hsum]; exact Finset.sum_congr rfl fun i _ => by rw [hfeq i]
   have hblk : Formalism.MainNotions.product_first_zeroth_parts.blk (fun τ => F τ) P = ∑ i, a i • Formalism.MainNotions.product_first_zeroth_parts.ten (fun τ => F τ (f i τ)) := by
-    rw [hP', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hP', map_sum]
     exact Finset.sum_congr rfl fun i _ => by rw [map_smul, Formalism.MainNotions.product_first_zeroth_parts.blk_ten]
   set G : ι → Matrix (Fin k) (Fin k) ℂ := fun τ => Matrix.of fun i j => Formalism.REAL.fockF (f j τ) (f i τ) with hG
   set H : ι → Matrix (Fin k) (Fin k) ℂ := fun τ => Matrix.of fun i j => Formalism.REAL.fockF (F τ (f j τ)) (F τ (f i τ)) with hH

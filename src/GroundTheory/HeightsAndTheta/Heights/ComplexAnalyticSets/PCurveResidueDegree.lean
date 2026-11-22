@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCurveResidueDegree
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCurveResidueDegree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -49,7 +54,7 @@ theorem CurveResidueDegree.proof : CurveResidueDegree.Statement := by
     inferInstanceAs (Algebra.IsIntegral (curveLocalRing I q)
       ↥(integralClosure (curveLocalRing I q) (FractionRing (curveLocalRing I q))))
   have hmax : (P.asIdeal.comap (algebraMap (curveLocalRing I q) (curveNormalisation I q))).IsMaximal :=
-    Ideal.isMaximal_comap_of_isIntegral_of_isMaximal P.asIdeal
+    Ideal.isMaximal_under_of_isIntegral_of_isMaximal P.asIdeal
   have hmax' := Ideal.comap_isMaximal_of_surjective
     (Ideal.Quotient.mk (I.map (algebraMap (MvPolynomial (Fin n) ℂ)
       (Localization.AtPrime (RingHom.ker (eval q : MvPolynomial (Fin n) ℂ →+* ℂ))))))

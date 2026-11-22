@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetSNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockFirstActionMatrixUnitEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetSNeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockFirstActionMatrixUnitEq
+
+@[expose] public section
 
 open MvPolynomial Formalism.BasicNotions.TH GlobalTheory.CharPair
 
@@ -27,7 +31,7 @@ theorem wPolarize_aeval_mR (b b' : Fin Q) (G : Mdl P Q) :
       aeval (fun ab : Fin P × Fin Q => mR P Q R ab.1 ab.2) (∑ a, X (a, b') * pderiv (a, b) G) := by
   induction G using MvPolynomial.induction_on with
   | C r => simp
-  | add p q hp hq => simp only [map_add, mul_add, Finset.sum_add_distrib, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), mul_add, Finset.sum_add_distrib, hp, hq]
   | mul_X p n hp =>
     have key : ∑ c : Fin R, X (Sum.inr b', Sum.inl c) * pderiv (Sum.inr b, Sum.inl c) (mR P Q R n.1 n.2)
         = aeval (fun ab : Fin P × Fin Q => mR P Q R ab.1 ab.2)
@@ -50,7 +54,7 @@ theorem wPolarize_aeval_mR (b b' : Fin Q) (G : Mdl P Q) :
       intro A B
       simp only [pderiv_mul, mul_add, Finset.sum_add_distrib, Finset.sum_mul, Finset.mul_sum]
       congr 1 <;> refine Finset.sum_congr rfl fun _ _ => by ring
-    rw [map_mul, aeval_X, e1, hp, key, e2, map_add, map_mul, map_mul, aeval_X]
+    rw [map_mul, aeval_X, e1, hp, key, e2, map_add (f := _), map_mul, map_mul, aeval_X]
 
 theorem fockAct1_inr_inr_embR : ∀ (P Q R : ℕ) (h : P ≤ R) (k : ℕ) (b b' : Fin Q) (G : Mdl P Q),
     fockAct1 P Q R 0 (Eab (Sum.inr b) (Sum.inr b')) (embR P Q R h k G) =

@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WaveLocalBuiltPlaces
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbFormPos
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGWaveMain
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GramLocSetCApp
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFCstmt
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WaveLocalBuiltPlaces
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FormZeroEqSlotPairingOfLe
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGWaveMain
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GramLocSetCApp
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFCstmt
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBL
 
@@ -199,10 +203,10 @@ theorem hatB_uB_C (hPSC : StandardPairingDecay.PStdC) (hB : KB.IsLeadingFormSett
     rw [hatB_setC_C hPSC hB F hF v ε hε j hj w hw l h h' hh hh']
     have e1 : uB S p F v ε j hj w h = (((√(nnS S h) / bS S h : ℝ) : ℂ)) •
         KB.slv (p v).T (F v ε) j hj w (stdS S h) ((stdS_size S h).trans hh.2) := by
-      unfold uB; rw [dif_pos hh]
+      unfold uB; rw [dite_eq_left hh]
     have e2 : uB S p F v ε j hj w h' = (((√(nnS S h') / bS S h' : ℝ) : ℂ)) •
         KB.slv (p v).T (F v ε) j hj w (stdS S h') ((stdS_size S h').trans hh'.2) := by
-      unfold uB; rw [dif_pos hh']
+      unfold uB; rw [dite_eq_left hh']
     have hws := PBFV.waveG_nice ((p v).T.bs j) ε2 (sW S j l) w _ hs
     have ew : KB.waveG ((p v).T.bs j) (sW S j l) w ((((√(nnS S h) / bS S h : ℝ) : ℂ)) •
         KB.slv (p v).T (F v ε) j hj w (stdS S h) ((stdS_size S h).trans hh.2)) =
@@ -219,8 +223,8 @@ theorem hatB_uB_C (hPSC : StandardPairingDecay.PStdC) (hB : KB.IsLeadingFormSett
   · rw [hatB_setC_zero hB F v ε j w l h h' hsz hsz' hloc]
     have : uB S p F v ε j hj w h = 0 ∨ uB S p F v ε j hj w h' = 0 := by
       by_cases hh : D.IsLocPt h j
-      · right; unfold uB; rw [dif_neg (fun hh' => hloc ⟨hh, hh'⟩)]
-      · left; unfold uB; rw [dif_neg hh]
+      · right; unfold uB; rw [dite_eq_right (fun hh' => hloc ⟨hh, hh'⟩)]
+      · left; unfold uB; rw [dite_eq_right hh]
     rcases this with h0 | h0
     · rw [h0, PBG.waveG_zero, form_zero_l (p v) j hj w _ hx', mul_zero]
     · rw [h0, form_zero_r (p v) j hj w _ hwx, mul_zero]

@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SelmerOrderCounts.TwoLe
-import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SelmerOrderCounts.TwoLe
+public import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
+
+@[expose] public section
 
 open NumberField IsDedekindDomain UpperTheory.V UpperTheory.V.ZK UpperTheory.V.ZK.Ct
 
 section
 open NumberField.Units NumberField.Units.dirichletUnitTheorem NumberField.InfinitePlace
 
-open scoped Classical in
 
+open scoped Classical in
 private noncomputable def extS (F : Type) [Field F] [NumberField F] :
     logSpace F →ₗ[ℝ] (InfinitePlace F → ℝ) where
   toFun y w := if h : w = w₀ then -(∑ v, y v) / 2 else y ⟨w, h⟩ / 2
@@ -22,12 +26,12 @@ private noncomputable def extS (F : Type) [Field F] [NumberField F] :
     · simp only [h, dif_pos, Pi.smul_apply, smul_eq_mul, RingHom.id_apply, ← Finset.mul_sum]; ring
     · simp only [h, dif_neg, not_false_eq_true, Pi.smul_apply, smul_eq_mul, RingHom.id_apply]; ring
 
-private theorem mult_two {F : Type} [Field F] [IsTotallyComplex F] (w : InfinitePlace F) :
+private theorem mult_two {F : Type} [Field F] [_root_.NumberField.IsTotallyComplex F] (w : InfinitePlace F) :
     (mult w : ℝ) = 2 := by
   rw [show mult w = 2 from mult_isComplex ⟨w, IsTotallyComplex.isComplex w⟩]
   norm_num
 
-private theorem extS_log {F : Type} [Field F] [NumberField F] [IsTotallyComplex F] (u : (𝓞 F)ˣ)
+private theorem extS_log {F : Type} [Field F] [NumberField F] [_root_.NumberField.IsTotallyComplex F] (u : (𝓞 F)ˣ)
     (w : InfinitePlace F) :
     extS F (logEmbedding F (Additive.ofMul u)) w = Real.log (w ((u : 𝓞 F) : F)) := by
   classical
@@ -43,13 +47,13 @@ private theorem extS_log {F : Type} [Field F] [NumberField F] [IsTotallyComplex 
   · simp only [extS, LinearMap.coe_mk, AddHom.coe_mk, dif_neg h, logEmbedding_component, mult_two]
     ring
 
-private theorem sum_log {F : Type} [Field F] [NumberField F] [IsTotallyComplex F] (u : (𝓞 F)ˣ) :
+private theorem sum_log {F : Type} [Field F] [NumberField F] [_root_.NumberField.IsTotallyComplex F] (u : (𝓞 F)ˣ) :
     ∑ w : InfinitePlace F, Real.log (w ((u : 𝓞 F) : F)) = 0 := by
   have h := NumberField.Units.sum_mult_mul_log u
   simp only [mult_two, ← Finset.mul_sum, mul_eq_zero, two_ne_zero, false_or] at h
   exact h
 
-private theorem abs_le_of_bound {F : Type} [Field F] [NumberField F] [IsTotallyComplex F]
+private theorem abs_le_of_bound {F : Type} [Field F] [NumberField F] [_root_.NumberField.IsTotallyComplex F]
     (u : (𝓞 F)ˣ) (m r : ℝ) (h : ∀ w : InfinitePlace F, |Real.log (w ((u : 𝓞 F) : F)) + m| ≤ r) :
     |m| ≤ r := by
   have hN : (0 : ℝ) < Fintype.card (InfinitePlace F) := by exact_mod_cast Fintype.card_pos

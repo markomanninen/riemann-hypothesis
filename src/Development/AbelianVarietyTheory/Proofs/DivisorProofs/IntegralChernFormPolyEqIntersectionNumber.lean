@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsMetricFrOfIsMetricOn
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolAtlasTopFormIntegralFiniteAdditiveHomogeneous
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralChernFormPolynomialEqIntersectionNumberStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopDensityHermitianFormsEqZeroOffDegreeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsMetricFrOfIsMetricOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolAtlasTopFormIntegralFiniteAdditiveHomogeneous
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralChernFormPolynomialEqIntersectionNumberStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopDensityHermitianFormsEqZeroOffDegreeStatement
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MvPolynomial MeasureTheory Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.L2DbarEstimates (V)
@@ -18,7 +23,8 @@ theorem eq_homogeneousComponent {κ R : Type} [AddCommGroup R] (f : MvPolynomial
     (hf : ∀ d, d ≠ D → ∀ Q : MvPolynomial κ ℝ, Q.IsHomogeneous d → f Q = 0) (P : MvPolynomial κ ℝ) :
     f P = f (homogeneousComponent D P) := by
   conv_lhs => rw [← sum_homogeneousComponent P]
-  rw [map_sum, Finset.sum_eq_single D]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single D]
   · intro b _ hb
     exact hf b hb _ (homogeneousComponent_isHomogeneous b P)
   · intro hD
@@ -28,19 +34,21 @@ theorem eq_homogeneousComponent {κ R : Type} [AddCommGroup R] (f : MvPolynomial
 theorem interPoly_eq_zero {F : Type} [Field F] (Y : Var F) {κ : Type} (Δ : κ → Y.Dv) (d : ℕ) (hd : d ≠ Y.dim)
     (Q : MvPolynomial κ ℝ) (hQ : Q.IsHomogeneous d) : Y.interPoly Δ Q = 0 := by
   classical
-  rw [Q.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Q.as_sum, map_sum]
   refine Finset.sum_eq_zero fun m hm => ?_
   have hm' : m.degree = d := by
     have := hQ (mem_support_iff.mp hm)
     first
     | (rw [Finsupp.degree_eq_weight_one]; exact this)
     | exact this
-  rw [show monomial m (coeff m Q) = coeff m Q • basisMonomials κ ℝ m by
+  rw [show monomial m (AddMonoidAlgebra.coeff Q m) = AddMonoidAlgebra.coeff Q m • basisMonomials κ ℝ m by
     rw [coe_basisMonomials, smul_monomial, smul_eq_mul, mul_one]]
-  rw [map_smul, Var.interPoly, Module.Basis.constr_basis, dif_neg, smul_zero]
+  rw [map_smul, Var.interPoly, Module.Basis.constr_basis, dite_eq_right, smul_zero]
   rintro ⟨s, hs⟩
   apply hd
-  rw [← hm', ← hs, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hm', ← hs, map_sum]
   simp
 
 theorem integral_evalF_c1W_eq_interPoly : GlobalTheory.Published.ChernDegree → ∀ (F : Type) [Field F] (σ : F →+* ℂ) (X : Var F) (κ : Type) [Fintype κ] (Δ : κ → X.Dv) (L : κ → LB X.X) (r : ∀ a, (L a).ι → X.Fnˣ) (ψ : ∀ a, Weight X.str σ (L a)), (∀ a, Presents (Δ a) (L a) (r a) ∧ (ψ a).IsCInf) → ∀ P : MvPolynomial κ ℝ, (atlas X σ).integral (evalF (atlas X σ) (fun a => c1W (ψ a)) P) = X.interPoly Δ P := by
@@ -54,7 +62,7 @@ theorem integral_evalF_c1W_eq_interPoly : GlobalTheory.Published.ChernDegree →
       { toFun := fun Q => dens (evalF (atlas X σ) (fun a => c1W (ψ a)) Q x)
         map_zero' := by simp [evalF, LineForm.fld, dens]
         map_add' := fun Q Q' => by
-          simp only [evalF, LineForm.fld, map_add, Subalgebra.coe_add]
+          simp only [evalF, LineForm.fld, map_add (f := _), Subalgebra.coe_add]
           exact LineForm.TopInt.dens_add _ _ }
     refine eq_homogeneousComponent f X.dim (fun d hd Q hQ => ?_) P
     exact GlobalTheory.T.topDensity_hermitianForms_eq_zero_offDegree X.dim κ _ d Q hQ hd

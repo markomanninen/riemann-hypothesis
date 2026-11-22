@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE2
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE2
+
+@[expose] public section
 
 open Filter Topology
 

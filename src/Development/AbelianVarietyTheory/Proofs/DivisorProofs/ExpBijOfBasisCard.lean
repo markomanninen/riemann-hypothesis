@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBoxGenOfSection
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpandsFunctional
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SvalEqZero
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.HasBasisOfBasis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBoxGenOfSection
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpandsFunctional
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SvalEqZero
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.HasBasisOfBasis
+
+@[expose] public section
 
 noncomputable section
 

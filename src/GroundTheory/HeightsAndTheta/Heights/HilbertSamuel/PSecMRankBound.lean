@@ -1,12 +1,17 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSecMRankBound
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenericFibreVar
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenericFibreVar
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionLatticeFinite
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PDegLTGrowth
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyCN
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PGradedFinite
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSecMRankBound
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenericFibreVar
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenericFibreVar
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionLatticeFinite
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PDegLTGrowth
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyCN
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PGradedFinite
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -24,8 +29,8 @@ theorem finite_secM (y : (Σ k, ι k) → Ω) (d : K → ℕ) : Module.Finite �
   rw [← AddSubgroup.toIntSubmodule_toAddSubgroup (secM y d), ← Submodule.fg_iff_addSubgroup_fg] at h
   exact Module.Finite.iff_fg.mpr h
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem aeval_eq_zero_of_mem {y : (Σ k, ι k) → Ω} {g : MRing ι} (hg : g ∈ mCoordIdeal y) :
     aeval y g = 0 := by
   have hext : ((aeval fun _ : K => (1 : Ω)).restrictScalars ℤ).comp (mConeMap y) = aeval y :=

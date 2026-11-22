@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped Matrix TensorProduct
 open Matrix
@@ -15,7 +19,7 @@ theorem eq_of_prod_eq {T : Type} [Fintype T] (f g : T → NNReal) (hle : ∀ t, 
   by_contra hne
   have hpos : ∀ i ∈ Finset.univ, 0 < f i := fun i _ =>
     pos_iff_ne_zero.mpr ((Finset.prod_ne_zero_iff.mp h0) i (Finset.mem_univ i))
-  have hlt := Finset.prod_lt_prod hpos (fun i _ => hle i)
+  have hlt := Finset.prod_lt_prod₀ hpos (fun i _ => hle i)
     ⟨t, Finset.mem_univ t, lt_of_le_of_ne (hle t) hne⟩
   exact hlt.ne h
 

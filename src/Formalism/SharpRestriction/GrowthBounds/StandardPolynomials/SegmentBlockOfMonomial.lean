@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.DensitySumsAndDomination
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.DensitySumsAndDomination
+
+@[expose] public section
 
 noncomputable section
 

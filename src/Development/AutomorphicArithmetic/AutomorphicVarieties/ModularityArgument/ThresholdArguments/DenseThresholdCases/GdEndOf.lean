@@ -1,20 +1,23 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.GdEndOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.AutomorphyDescent.LocalConditionRankThreeEvenLevel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.PlDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.EndsRankThreeOfLocal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutEnd3AltAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.PrDesc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutEnd2
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutEnd3Alt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.AutomorphyDescent.AutNewformW
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.GdEndOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.AutomorphyDescent.LocalConditionRankThreeEvenLevel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.PlDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.EndsRankThreeOfLocal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutEnd3AltAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.PrDesc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutEnd2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutEnd3Alt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.AutomorphyDescent.AutNewformW
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
 
 section
-open private fix_iff from Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.GdEndOf
 attribute [-instance] UpperTheory.V.Pr.IsCD.toIsDiscreteValuationRing
 open NumberField IsLocalRing Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Aut UpperTheory.V.Pr UpperTheory.V
 open UpperTheory.V.Z.Win
@@ -79,16 +82,95 @@ theorem UpperTheory.V.Z.Win.Dn.gdEnd_of_frame_linkedEnd_downCsdK_descent (H : _r
   have h2' := _root_.UpperTheory.V.Z.Win.Dn.end2' (_root_.UpperTheory.V.Z.Win.Dn.autEnd2_alt H hPot hIne hQ hN hT hC D k ok hlM hB hLk ι ka hka haut2)
   have h1' := _root_.UpperTheory.V.Z.Win.Dn.autEnd3_alt hD k ok hlM hσ ι K
   have hk := D.η_ker
-  have hq := D.gd.quad
+  have hquad := D.gd.quad
   refine ⟨g₁, marks_of_link k ok hlM hsq hΨ, finEnd_of_finPt k ok hlM hsq hfin, ?_, h2'⟩
   have h0 := fun a b => h1' a b haut
   clear h1' h2' haut haut2
   generalize D.η = η₀ at h0 h3' hK3' hk ⊢
+  have fix_iff (f g : K →+* Ω) (s : Ω ≃ₐ[ℚ] Ω)
+      (h : ∀ x, s (f x) = f x) (x : K) : s (g x) = g x := by
+    by_cases hq : ∃ q : ℚ, (q : K) = x
+    · obtain ⟨q, rfl⟩ := hq
+      simp only [map_ratCast]
+    · have hli : LinearIndependent ℚ ![(1 : K), x] := by
+        rw [LinearIndependent.pair_iff]
+        intro a b hab
+        by_cases hb : b = 0
+        · subst hb
+          simp at hab
+          exact ⟨hab, rfl⟩
+        · exfalso
+          apply hq
+          refine ⟨-a / b, ?_⟩
+          rw [Rat.smul_def, Rat.smul_def, mul_one] at hab
+          have hb' : (b : K) ≠ 0 := by exact_mod_cast hb
+          push_cast
+          rw [div_eq_iff hb']
+          linear_combination -hab
+      have hspan := hli.span_eq_top_of_card_eq_finrank' (by simp [hquad])
+      have hmem : x * x ∈ Submodule.span ℚ (Set.range ![(1 : K), x]) := by
+        rw [hspan]
+        exact Submodule.mem_top
+      rw [Matrix.range_cons, Matrix.range_cons, Matrix.range_empty, Set.union_empty,
+        Set.singleton_union, Submodule.mem_span_pair] at hmem
+      obtain ⟨a, b, hab⟩ := hmem
+      rw [Rat.smul_def, Rat.smul_def, mul_one] at hab
+      have hg : g x * g x = a + b * g x := by
+        rw [← map_mul, ← hab, map_add (f := _), map_mul, map_ratCast, map_ratCast]
+      have hf : f x * f x = a + b * f x := by
+        rw [← map_mul, ← hab, map_add (f := _), map_mul, map_ratCast, map_ratCast]
+      have hprod : (g x - f x) * (g x - ((b : Ω) - f x)) = 0 := by
+        linear_combination hg - hf
+      rcases mul_eq_zero.mp hprod with h1 | h1
+      · rw [sub_eq_zero.mp h1, h x]
+      · have h2 : g x = f ((b : K) - x) := by
+          rw [sub_eq_zero.mp h1, map_sub, map_ratCast]
+        rw [h2, h]
   have hker : ∀ [Algebra K Ω], Base.galOf ℚ K Ω = η₀.ker := by
     rw [hk]
     intro a
     ext s
-    exact ⟨fun h => fix_iff hq a.algebraMap aK.algebraMap s h, fun h => fix_iff hq aK.algebraMap a.algebraMap s h⟩
+    have fixes_other_embedding (f g : K →+* Ω) (h : ∀ x, s (f x) = f x) (x : K) :
+        s (g x) = g x := by
+      by_cases hx : ∃ q : ℚ, (q : K) = x
+      · obtain ⟨q, rfl⟩ := hx
+        simp only [map_ratCast]
+      · have hli : LinearIndependent ℚ ![(1 : K), x] := by
+          rw [LinearIndependent.pair_iff]
+          intro u v huv
+          by_cases hv : v = 0
+          · subst hv
+            simp at huv
+            exact ⟨huv, rfl⟩
+          · exfalso
+            apply hx
+            refine ⟨-u / v, ?_⟩
+            rw [Rat.smul_def, Rat.smul_def, mul_one] at huv
+            have hv' : (v : K) ≠ 0 := by exact_mod_cast hv
+            push_cast
+            rw [div_eq_iff hv']
+            linear_combination -huv
+        have hspan := hli.span_eq_top_of_card_eq_finrank' (by simp [hquad])
+        have hmem : x * x ∈ Submodule.span ℚ (Set.range ![(1 : K), x]) := by
+          rw [hspan]
+          exact Submodule.mem_top
+        rw [Matrix.range_cons, Matrix.range_cons, Matrix.range_empty, Set.union_empty,
+          Set.singleton_union, Submodule.mem_span_pair] at hmem
+        obtain ⟨u, v, huv⟩ := hmem
+        rw [Rat.smul_def, Rat.smul_def, mul_one] at huv
+        have hg : g x * g x = u + v * g x := by
+          rw [← map_mul, ← huv, map_add (f := _), map_mul, map_ratCast, map_ratCast]
+        have hf : f x * f x = u + v * f x := by
+          rw [← map_mul, ← huv, map_add (f := _), map_mul, map_ratCast, map_ratCast]
+        have hprod : (g x - f x) * (g x - ((v : Ω) - f x)) = 0 := by
+          linear_combination hg - hf
+        rcases mul_eq_zero.mp hprod with h1 | h1
+        · rw [sub_eq_zero.mp h1, h x]
+        · have h2 : g x = f ((v : K) - x) := by
+            rw [sub_eq_zero.mp h1, map_sub, map_ratCast]
+          rw [h2, h]
+    exact ⟨fixes_other_embedding a.algebraMap aK.algebraMap,
+      fixes_other_embedding aK.algebraMap a.algebraMap⟩
   exact h0 hker fun A _ _ r hr hi _ _ _ ρ hρ => by
     haveI : IsAlgClosure K Ω := Th.Db.algClo K Ω
     have t := h3' A r hr K hker.symm ρ hρ

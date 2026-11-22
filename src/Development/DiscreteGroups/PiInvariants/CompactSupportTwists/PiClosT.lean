@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiClosU
+module
+
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiClosU
+
+@[expose] public section
 
 set_option linter.all false
 
@@ -29,8 +33,6 @@ def eH : GA E n ≃ₜ* H E n 0 where
   continuous_toFun := continuous_id.prodMk continuous_const
   continuous_invFun := continuous_fst
 
-theorem eH_symm_apply (x : H E n 0) : (eH (E := E) (n := n)).symm x = x.1 := rfl
-
 def muG (D : Dom E n 0) : Measure (GA E n) := D.μ.map (eH (E := E) (n := n)).symm
 
 theorem measurable_eH : Measurable (eH (E := E) (n := n)) := (eH (E := E) (n := n)).continuous.measurable
@@ -58,11 +60,11 @@ instance muG_haar (D : Dom E n 0) : (muG D).IsHaarMeasure := by
 instance muG_right (D : Dom E n 0) : (muG D).IsMulRightInvariant := by
   haveI := D.haar.2.1
   refine ⟨fun g => ?_⟩
-  rw [muG, Measure.map_map (continuous_mul_right g).measurable measurable_eH_symm]
+  rw [muG, Measure.map_map (continuous_mul_const g).measurable measurable_eH_symm]
   have e : (fun x => x * g) ∘ (eH (E := E) (n := n)).symm =
       (eH (E := E) (n := n)).symm ∘ fun x => x * eH g := funext fun x => by
     simp only [Function.comp_apply, map_mul, ContinuousMulEquiv.symm_apply_apply]
-  rw [e, ← Measure.map_map measurable_eH_symm (continuous_mul_right _).measurable, map_mul_right_eq_self]
+  rw [e, ← Measure.map_map measurable_eH_symm (continuous_mul_const _).measurable, map_mul_right_eq_self]
 
 def eR (δ : ratH E n 0) : (ratGL E n).range :=
   ⟨(δ : H E n 0).1, by
@@ -185,8 +187,11 @@ theorem exists_bound (hn : 1 ≤ n) (u : ℝ → ℂ) (hu : Continuous u) (hs : 
     exact hKs _
   have key : eLpNorm (Tf D u F) 2 D.ν ≤ eLpNorm (fun q => (Real.sqrt K.toReal : ℂ) • F q) 2
       (quotMeasure (latticeGL E n) (muG D)) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm two_ne_zero ENNReal.ofNat_ne_top,
-      eLpNorm_eq_lintegral_rpow_enorm two_ne_zero ENNReal.ofNat_ne_top]
+    have hm : AEStronglyMeasurable (fun q => (Real.sqrt K.toReal : ℂ) • F q)
+        (quotMeasure (latticeGL E n) (muG D)) := by
+      convert (Lp.aestronglyMeasurable F).const_smul (Real.sqrt K.toReal : ℂ) using 1
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top (aesm_Tf D u hu F),
+      eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top hm]
     simp only [ENNReal.toReal_ofNat]
     exact ENNReal.rpow_le_rpow hle (by norm_num)
   have key2 : eLpNorm (fun q => (Real.sqrt K.toReal : ℂ) • F q) 2 (quotMeasure (latticeGL E n) (muG D)) =
@@ -194,6 +199,6 @@ theorem exists_bound (hn : 1 ≤ n) (u : ℝ → ℂ) (hu : Continuous u) (hs : 
     change eLpNorm ((Real.sqrt K.toReal : ℂ) • (F : GlobalTheory.AutomorphicL2Unitary.Quot (latticeGL E n) → ℂ)) 2 _ = _
     rw [eLpNorm_const_smul, ← ofReal_norm_eq_enorm, Complex.norm_real, Real.norm_of_nonneg (Real.sqrt_nonneg _)]
   rw [key2] at key
-  refine ⟨⟨aesm_Tf D u hu F, key.trans_lt (ENNReal.mul_lt_top ENNReal.ofReal_lt_top (Lp.eLpNorm_lt_top F))⟩, key⟩
+  exact ⟨key.trans_lt (ENNReal.mul_lt_top ENNReal.ofReal_lt_top (Lp.eLpNorm_lt_top F)), key⟩
 
 end DiscreteGroups.T1.G

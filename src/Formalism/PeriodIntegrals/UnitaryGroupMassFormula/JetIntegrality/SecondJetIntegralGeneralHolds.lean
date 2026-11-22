@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.JetsPhW
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.CoeffSubstOfDegreeEqOne
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.ExpLow
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.FirstJetIntegralGeneralHolds
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.JetsPhW
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.CoeffSubstOfDegreeEqOne
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.ExpLow
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.FirstJetIntegralGeneralHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,17 +49,17 @@ private lemma coeff_be_low_degree {p : ℕ} [Fact p.Prime] {l ex : PowerSeries �
     rw [const_subst hB]; exact hl0
   have hS : MvPowerSeries.constantCoeff
       (PowerSeries.subst A l + PowerSeries.subst B l : MvPowerSeries (Fin 2) ℂ_[p]) = 0 := by
-    rw [map_add, hAl, hBl, add_zero]
+    rw [map_add (f := _), hAl, hBl, add_zero]
   have ea : add l ex A B = PowerSeries.subst (PowerSeries.subst A l + PowerSeries.subst B l) ex := rfl
   have hadd : MvPowerSeries.constantCoeff (add l ex A B) = 0 := by
     rw [ea, const_subst hS]; exact hlog.1
   have eb : be l ex ph A B = PowerSeries.subst (add l ex A B) ph - PowerSeries.subst A ph -
       PowerSeries.subst B ph := rfl
   refine ⟨?_, ?_, ?_⟩
-  · rw [eb, map_sub, map_sub, coeff_expX_subst hadd, coeff_expX_subst hA, coeff_expX_subst hB, ea, coeff_expX_subst hS, map_add,
+  · rw [eb, map_sub, map_sub, coeff_expX_subst hadd, coeff_expX_subst hA, coeff_expX_subst hB, ea, coeff_expX_subst hS, map_add (f := _),
       coeff_expX_subst hA, coeff_expX_subst hB, hB0]
     linear_combination (PowerSeries.coeff 1 ph * MvPowerSeries.coeff E0 A) * hle
-  · rw [eb, map_sub, map_sub, coeff_expY_subst hadd, coeff_expY_subst hA, coeff_expY_subst hB, ea, coeff_expY_subst hS, map_add,
+  · rw [eb, map_sub, map_sub, coeff_expY_subst hadd, coeff_expY_subst hA, coeff_expY_subst hB, ea, coeff_expY_subst hS, map_add (f := _),
       coeff_expY_subst hA, coeff_expY_subst hB, hA1]
     linear_combination (PowerSeries.coeff 1 ph * MvPowerSeries.coeff E1 B) * hle
   · rw [eb, map_sub, map_sub, coeff_expXY_subst hadd, coeff_expXY_subst hA, coeff_expXY_subst hB,

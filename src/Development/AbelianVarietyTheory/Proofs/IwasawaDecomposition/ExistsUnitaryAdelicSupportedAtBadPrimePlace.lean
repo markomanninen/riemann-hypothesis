@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsInvOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BcPrVEqOneOfAdAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NarrowJetMoments
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AfsplitA
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsInvOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BcPrVEqOneOfAdAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NarrowJetMoments
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AfsplitA
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC GlobalTheory.Mem.Col2.AdT Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
@@ -34,13 +39,13 @@ def dev {n : ℕ} (P : HeightOneSpectrum (𝓞 E)) (A : Matrix (Fin n) (Fin n) (
 theorem map_dev_self {n : ℕ} (P : HeightOneSpectrum (𝓞 E)) (A : Matrix (Fin n) (Fin n) (P.adicCompletion E)) :
     (1 + dev F P A).map (adAt F P) = A := by
   ext i j
-  simp only [dev, Matrix.map_apply, Matrix.add_apply, map_add, adAt_sng_self, Matrix.sub_apply, Matrix.one_apply]
+  simp only [dev, Matrix.map_apply, Matrix.add_apply, map_add (f := _), adAt_sng_self, Matrix.sub_apply, Matrix.one_apply]
   split_ifs <;> simp
 
 theorem map_dev_ne {n : ℕ} {P w : HeightOneSpectrum (𝓞 E)} (h : w ≠ P) (A : Matrix (Fin n) (Fin n) (P.adicCompletion E)) :
     (1 + dev F P A).map (adAt F w) = 1 := by
   ext i j
-  simp only [dev, Matrix.map_apply, Matrix.add_apply, map_add, adAt_sng_ne F h, Matrix.one_apply]
+  simp only [dev, Matrix.map_apply, Matrix.add_apply, map_add (f := _), adAt_sng_ne F h, Matrix.one_apply]
   split_ifs <;> simp
 
 variable {F}
@@ -51,7 +56,7 @@ theorem mat_ext {n : ℕ} {M N : Matrix (Fin n) (Fin n) (AfE F E)} (h : ∀ w, M
 
 variable [StarRing E] (hc : CMData F E)
 
-local notation "σ" => Formalism.UG.sigR (CMData.sig hc) (FiniteAdeleRing (𝓞 F) F)
+local notation "σ" => Formalism.UG.sigR hc.sig (FiniteAdeleRing (𝓞 F) F)
 
 theorem map_cT_dev {n : ℕ} {P w : HeightOneSpectrum (𝓞 E)} (h : conjPrime₂ w ≠ P) (A : Matrix (Fin n) (Fin n) (P.adicCompletion E)) :
     (cT σ (1 + dev F P A)).map (adAt F w) = 1 := by
@@ -60,7 +65,7 @@ theorem map_cT_dev {n : ℕ} {P w : HeightOneSpectrum (𝓞 E)} (h : conjPrime�
     rwa [adAt_sng_ne F h, map_zero, Valuation.zero_iff] at e
   refine Matrix.ext fun i j => ?_
   show adAt F w (σ ((1 + dev F P A) j i)) = _
-  simp only [dev, Matrix.map_apply, Matrix.add_apply, map_add, key, Matrix.one_apply]
+  simp only [dev, Matrix.map_apply, Matrix.add_apply, map_add (f := _), key, Matrix.one_apply]
   by_cases e : i = j
   · subst e; simp
   · simp [e, Ne.symm e]

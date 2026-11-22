@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.SerreP
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.Immersion
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.SerreP
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.Immersion
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -20,8 +25,8 @@ variable {A : Type u} [CommRing A] [IsNoetherianRing A] {n : ℕ} {X : Scheme.{u
   [X.Over (Spec (.of A))] (i : X ⟶ projectiveSpace A n) [IsClosedImmersion i]
   [i.IsOver (Spec (.of A))]
 
-omit [IsNoetherianRing A] [X.Over (Spec (.of A))] [i.IsOver (Spec (.of A))] in
 
+omit [IsNoetherianRing A] [X.Over (Spec (.of A))] [i.IsOver (Spec (.of A))] in
 theorem exists_generatingSections_twist (F : X.Modules) (hF : IsCoherent F) :
     ∃ q₀ : ℕ, ∀ q : ℕ, q₀ ≤ q → ∃ σ : (twist i F q).GeneratingSections, σ.IsFiniteType := by
   have := hF.1
@@ -36,18 +41,18 @@ variable [HasExt.{w'} (Sheaf (Opens.grothendieckTopology X.toTopCat) AddCommGrpC
 
 attribute [local instance] algebraOfOver
 
-include i in
 
+include i in
 theorem finite_H (F : X.Modules) (hF : IsCoherent F) (p : ℕ) :
     Module.Finite A (Sheaf.H.{w'} (modulesAb F) p) := by
-  have := hF.1
-  have := ProjSpace.finite_H.{w'} _ (isCoherent_pushforward i hF) p
+  letI := hF.1
+  letI := ProjSpace.finite_H.{w'} _ (isCoherent_pushforward i hF) p
   exact Module.Finite.equiv (HLinearEquivPushforward.{w'} i F p).symm
 
 theorem exists_subsingleton_H_twist (F : X.Modules) (hF : IsCoherent F) :
     ∃ q₀ : ℕ, ∀ q : ℕ, q₀ ≤ q → ∀ p : ℕ, 0 < p →
       Subsingleton (Sheaf.H.{w'} (modulesAb (twist i F q)) p) := by
-  have := hF.1
+  letI := hF.1
   obtain ⟨q₀, hq₀⟩ := ProjSpace.exists_subsingleton_H_twist.{w'} _ (isCoherent_pushforward i hF)
   refine ⟨q₀, fun q hq p hp => ?_⟩
   have h₁ := hq₀ q hq p hp

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,7 +31,8 @@ theorem frob_comb (p : ℕ) (hp : p ≠ 0) {σ : Type} (τ : B →+* B) (s : Q �
     (hs : ∀ b, s (algebraMap B Q b) = algebraMap B Q (τ b)) {ι : Type} [Fintype ι]
     (w : ι → B) (e : ι → MvPowerSeries σ Q) :
     frob p s (comb w e) = ∑ i, algebraMap B Q (τ (w i)) • frob p s (e i) := by
-  rw [comb, frob_eq_comp p hp, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [comb, frob_eq_comp p hp, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [← frob_eq_comp p hp, frob_smul p hp τ s hs]
 
@@ -37,14 +42,16 @@ theorem in_top_sum_smul {σ : Type} {ι : Type} [Fintype ι] (c : ι → B)
   intro α
   choose b _ hb using fun i => h i α
   refine ⟨∑ i, c i * b i, Submodule.mem_top, ?_⟩
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [coeff_smul, hb, map_mul]
 
 theorem comb_mulVec {σ : Type} {ι : Type} [Fintype ι] (M : Matrix ι ι B) (v : ι → B)
     (e : ι → MvPowerSeries σ Q) :
     comb (M.mulVec v) e = ∑ i, algebraMap B Q (v i) • comb (fun l => M l i) e := by
-  simp only [comb, Matrix.mulVec, dotProduct, map_sum, Finset.sum_smul, Finset.smul_sum, smul_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [comb, Matrix.mulVec, dotProduct, map_sum, Finset.sum_smul, Finset.smul_sum, smul_smul,
     ← map_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun l _ => ?_

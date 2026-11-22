@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.ZarLocalPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ZarLocalPf
+
+@[expose] public section
 
 noncomputable section
 open Polynomial IsLocalRing GlobalTheory.EtC

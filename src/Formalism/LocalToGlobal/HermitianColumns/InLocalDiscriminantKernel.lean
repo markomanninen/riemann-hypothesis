@@ -1,6 +1,10 @@
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.DataLevel
-import Formalism.LocalRingCardinality.DataLevelD
+module
+
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.DataLevel
+public import Formalism.LocalRingCardinality.DataLevelD
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,8 @@ def crdLat (S : HSpace E) (L : Submodule (𝓞 E) S.V) : Submodule (𝓞 E) (Fin
 theorem hT_crd (hc : CMData F E) (S : HSpace E) (x y : S.V) :
     S.hT x y = hform (hc.sig : E →+* E) S.gram (crd S x) (crd S y) := by
   conv_lhs => rw [← S.frame.sum_repr x, ← S.frame.sum_repr y]
-  simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
     starRingEnd_apply, Finset.mul_sum]
   unfold hform
   rw [Finset.sum_comm]
@@ -32,10 +37,6 @@ theorem hT_crd (hc : CMData F E) (S : HSpace E) (x y : S.V) :
 
 def UF (hc : CMData F E) (S : HSpace E) : Subgroup (GL (Fin S.rank) E) :=
   UJ (hc.sig : E →+* E) S.gram
-
-def Uv (hc : CMData F E) (S : HSpace E) (v : HeightOneSpectrum (𝓞 F)) :
-    Subgroup (GL (Fin S.rank) (E ⊗[F] v.adicCompletion F)) :=
-  UPts hc.sig S.gram (v.adicCompletion F)
 
 def UAf (hc : CMData F E) (S : HSpace E) : Subgroup (GL (Fin S.rank) (E ⊗[F] Af F)) :=
   UPts hc.sig S.gram (Af F)

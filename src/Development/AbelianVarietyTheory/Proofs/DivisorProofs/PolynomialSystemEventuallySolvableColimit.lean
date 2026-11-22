@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZModTorsorIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZModTorsorIff
+
+@[expose] public section
+
 open CategoryTheory Limits TensorProduct
 
 namespace GlobalTheory.TorsorColim

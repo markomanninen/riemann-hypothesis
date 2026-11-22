@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TrueColumnTupleTrivialEqOne
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StdLvPr
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PsiGTrue
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAfMemIntUIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsIntegralHalf
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCharOfTrace
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBaseChangeFiniteAdeleRingEquiv
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InertAtLeCongN
-import Formalism.LocalToGlobal.JointCharacters.LocEMulLocE
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TrueColumnTupleTrivialEqOne
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StdLvPr
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PsiGTrue
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAfMemIntUIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsIntegralHalf
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCharOfTrace
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBaseChangeFiniteAdeleRingEquiv
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InertAtLeCongN
+public import Formalism.LocalToGlobal.JointCharacters.LocEMulLocE
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem piBar_std (k : Fin 2) : ∃ y : 𝓞 B.host.K,
     rw [← B.fields_star] at h
     exact h
   have hi : IsIntegral ℤ (⟨_, hK⟩ : B.host.K) :=
-    (isIntegral_algebraMap_iff (algebraMap B.host.K B.host.E).injective).1 (B.fields.conjO (X.piG k)).2
+    (isIntegral_algebraMap_iff ).1 (B.fields.conjO (X.piG k)).2
   refine ⟨⟨_, hi⟩, rfl, ?_⟩
   have := (I.C.P.pb k).isPrime
   obtain ⟨⟨w, hwp, hwl⟩⟩ : Nonempty ((I.C.P.pb k).asIdeal.primesOver (𝓞 B.host.E)) := inferInstance
@@ -157,7 +161,7 @@ theorem finAf_localIdele {e : AfE F E} {P : HeightOneSpectrum (𝓞 E)} (he : e 
   refine (afIso F E).injective (FiniteAdeleRing.ext _ fun Q => ?_)
   have e1 : afIso F E (1 + e * ((k : E) ⊗ₜ[F] (1 : FiniteAdeleRing (𝓞 F) F) - 1)) Q =
       1 + afIso F E e Q * (algebraMap E (Q.adicCompletion E) (k : E) - 1) := by
-    rw [map_add, map_mul, map_sub, map_one, afIso_tmul_one]; rfl
+    rw [map_add (f := _), map_mul, map_sub, map_one, afIso_tmul_one]; rfl
   rw [e1, GlobalTheory.Mem.ReadTwist.afIso_finAf_apply]
   by_cases hQ : Q = P
   · subst hQ

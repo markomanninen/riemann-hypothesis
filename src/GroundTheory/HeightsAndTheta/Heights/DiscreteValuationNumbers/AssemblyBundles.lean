@@ -1,38 +1,43 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.OfSteps
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PNumericalSegre
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagBundlePullbackVanish
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagIndependence
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PPairNumberExpansionIndependence
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSymmetricSpanHsymm
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PPairCocycle
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSubQuotient
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PScalarQuotient
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsMore
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.WithBotLtNatCastOfAddOneLe
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IdealCycleSupportFinite
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PVNumCut
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PVertCutEff
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivisorIdealCycle
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Imports
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.DivCycleEqZeroOfFormNotMem
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.RelevantMinimalOfDivCycleNeZero
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ExistsMultiHomogNotMemOfIsRelevant
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.LiftFormNotMemBlowUpOf
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ExceptionalDeg
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsBis
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.CycEvalAddOfFinite
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.RatDiv
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.WithBotLtOfAddOneLe
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.LtNatCastOfAddOneLe
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagBundleCut
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagBundleLineBase
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PHsymmPairFlagIndependence
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTer
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PBlowUpModel
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.CycEvalCongrOnSupport
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PDivPushForward
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PContractRelDimLe
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.OfSteps
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PNumericalSegre
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagBundlePullbackVanish
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagIndependence
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PPairNumberExpansionIndependence
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSymmetricSpanHsymm
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PPairCocycle
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSubQuotient
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PScalarQuotient
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsMore
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.WithBotLtNatCastOfAddOneLe
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IdealCycleSupportFinite
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PVNumCut
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PVertCutEff
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivisorIdealCycle
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Imports
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.DivCycleEqZeroOfFormNotMem
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.RelevantMinimalOfDivCycleNeZero
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ExistsMultiHomogNotMemOfIsRelevant
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.LiftFormNotMemBlowUpOf
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ExceptionalDeg
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsBis
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.CycEvalAddOfFinite
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.RatDiv
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.WithBotLtOfAddOneLe
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.LtNatCastOfAddOneLe
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagBundleCut
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagBundleLineBase
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PHsymmPairFlagIndependence
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTer
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PBlowUpModel
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.CycEvalCongrOnSupport
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PDivPushForward
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PContractRelDimLe
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -139,40 +144,5 @@ theorem CommonFactorInduction.of_open (hrees : ReesAlgebraDim.Statement.{u})
     (BlowUpDecomposition.of_open hrees hst) hdrop
     (BlowUpReduction.of_open hrees hst hvert hdiv hhor hcomp) LeftSideAdditiveInDegree.full RightSideMultiplicativeInForm.full
     DivCycleMul.full
-
-theorem VerticalDivisorsCommute.of_open (hl : LeftTermSupport.Statement.{u})
-    (hr : RightTermSupport.Statement.{u}) (hring : LocalCoeffRing.Statement.{u})
-    (hrees : ReesAlgebraDim.Statement.{u}) (hst : BlowUpStrictTransform.Statement.{u})
-    (hdrop : BlowUpExcessDecreases.Statement.{u}) (hvert : BlowUpVerticalPush.Statement.{u})
-    (hdiv : BlowUpDivisorPush.Statement.{u}) (hhor : BlowUpHorizontalCorresp.Statement.{u})
-    (hcomp : HorizontalComponentModel.Statement.{u}) : VerticalDivisorsCommute.Statement.{u} :=
-  VerticalDivisorsCommute.of_steps (NoCommonComponentCase.of_open hl hr hring)
-    (CommonFactorInduction.of_open hrees hst hdrop hvert hdiv hhor hcomp)
-
-theorem HsymmPairFlagIndependence.of_open (hC2 : VerticalDivisorsCommute.Statement.{0})
-    (hclos : GenericProjClosureModel.Statement) (hseg : SegreClosureNumber.Statement) :
-    HsymmPairFlagIndependence.Statement :=
-  HsymmPairFlagIndependence.proof (PairNumberExpansionIndependence.proof hC2) hclos hseg
-
-theorem FlagIndependence.of_open (hC2 : VerticalDivisorsCommute.Statement.{0})
-    (hclos : GenericProjClosureModel.Statement) (hseg : SegreClosureNumber.Statement) :
-    FlagIndependence.Statement :=
-  FlagIndependence.proof (PairNumberExpansionIndependence.proof hC2)
-    (HsymmPairFlagIndependence.of_open hC2 hclos hseg) SymmetricSpanHsymm.full
-
-theorem PairCocycle.of_open (hC2 : VerticalDivisorsCommute.Statement.{0})
-    (hclos : GenericProjClosureModel.Statement) (hseg : SegreClosureNumber.Statement) :
-    PairCocycle.Statement :=
-  PairCocycle.proof (FlagIndependence.of_open hC2 hclos hseg) hC2 IntNumAddFirst.full
-
-theorem SubQuotient.of_open (hC2 : VerticalDivisorsCommute.Statement.{0})
-    (hclos : GenericProjClosureModel.Statement) (hseg : SegreClosureNumber.Statement) :
-    SubQuotient.Statement :=
-  SubQuotient.proof (FlagIndependence.of_open hC2 hclos hseg)
-
-theorem ScalarQuotient.of_open (hC2 : VerticalDivisorsCommute.Statement.{0})
-    (hclos : GenericProjClosureModel.Statement) (hseg : SegreClosureNumber.Statement) :
-    ScalarQuotient.Statement :=
-  ScalarQuotient.proof (FlagIndependence.of_open hC2 hclos hseg)
 
 end GroundTheory.Heights₂.Heights.NumbersDVR

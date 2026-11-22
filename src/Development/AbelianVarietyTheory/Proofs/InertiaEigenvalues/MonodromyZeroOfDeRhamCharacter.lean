@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.StepJumpDirect
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjPlMemPlacesOver
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCrysLatOfTrivial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.StepJumpDirect
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjPlMemPlacesOver
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCrysLatOfTrivial
+
+@[expose] public section
+
 open Formalism Formalism.MainNotions Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module GlobalTheory.Pass
 open Formalism.MainNotions.PairedCharacterCondition Polynomial
 open Classical
@@ -247,12 +252,12 @@ theorem inertial_chars : ∀ (D : D7) (P : Pend D), TypeLGC P → SumRepresentat
       obtain ⟨hm, hd, hc⟩ := (P.lz k).lab_spec τ
       rw [hl] at hm hd hc
       exact ⟨s v, hm.ne_zero, hc, hd.le, fun _ _ => rfl⟩
-    · exact ⟨1, one_ne_zero, by rw [coeff_one_zero]; exact one_ne_zero,
+    · exact ⟨1, one_ne_zero, by rw [AddMonoidAlgebra.coeff_one_zero]; exact one_ne_zero,
         by rw [natDegree_one]; exact Nat.zero_le _, fun x hx => absurd ⟨x, hx⟩ hne⟩
   have hr1 : 1 ≤ D.R.r := by have := D.R.two_le_m; unfold Ranks.r; omega
   have hN : Nat.card (GL (Fin D.R.r) (ZMod (D.host.g k))) ∣ D.what₂.restRowsFiniteGroupCard := by
     rw [D.nd.restN_card_levelGroup_eq]
-    exact (dvd_pow_self _ (by unfold Ranks.f Ranks.n; positivity)).trans
+    exact (dvd_pow_self _ (by have := D.R.two_le_m; have := D.R.m_le_f; unfold Ranks.f Ranks.n; omega)).trans
       (Finset.dvd_prod_of_mem _ (Finset.mem_univ k))
   have hcard : D.R.r + 2 ≤ D.R.nV + 1 := by
     have := D.R.rank_add_five_le; unfold Ranks.nV; unfold Ranks.r at *; omega

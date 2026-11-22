@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRules
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSheafSectionsExtAndGlue
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SheafComplexPairingTensorUniversalPropertyStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRules
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSheafSectionsExtAndGlue
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SheafComplexPairingTensorUniversalPropertyStatement
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 open scoped DirectSum TensorProduct
@@ -26,7 +30,7 @@ theorem tens_ind {I J : Cx R} {U : Scheme.{0}} {w : ℤ} (P : Tens I J U w → P
     induction z using TensorProduct.induction_on with
     | zero => simpa using h0
     | tmul a b => exact ht p a b
-    | add z z' hz hz' => simpa [map_add] using hadd _ _ hz hz'
+    | add z z' hz hz' => simpa [map_add (f := _)] using hadd _ _ hz hz'
   | add x y hx hy => exact hadd x y hx hy
 
 theorem lift_tof {I J K : Cx R} (μ : Pair I J K) (U : Scheme.{0}) {w : ℤ} (p : {p : ℤ × ℤ // p.1 + p.2 = w})
@@ -131,7 +135,7 @@ theorem lin_nat {I J I' J' K' : Cx R} (ν : Pair I' J' K') (f : I ⟶ I') (g : J
     Sec.res k ((ν.lift U w ∘ₗ tmap f g U w) x) = (ν.lift V w ∘ₗ tmap f g V w) (Tens.res k w x) := by
   induction x using tens_ind with
   | h0 => simp
-  | hadd x y hx hy => simp only [map_add]; exact congrArg₂ (· + ·) hx hy
+  | hadd x y hx hy => simp only [map_add (f := _)]; exact congrArg₂ (· + ·) hx hy
   | ht p a b =>
     simp only [LinearMap.comp_apply, res_tof, tmap_tof, lift_tof]
     rw [ν.nat, res_map, res_map]
@@ -171,7 +175,7 @@ theorem part1 {I J K : Cx R} (τ : Pair I J K) (hτ : τ.IsTensor) {I' J' K' : C
         · intro V x
           induction x using tens_ind with
           | h0 => simp
-          | hadd x y hx hy => simp only [map_add]; exact congrArg₂ (· + ·) hx hy
+          | hadd x y hx hy => simp only [map_add (f := _)]; exact congrArg₂ (· + ·) hx hy
           | ht p a b =>
             simp only [lift_tof]
             rw [hc, ν.leibniz, τ.leibniz, map_add', map_usmul, hc, hc, map_d f, map_d g] }
@@ -185,7 +189,7 @@ theorem part1 {I J K : Cx R} (τ : Pair I J K) (hτ : τ.IsTensor) {I' J' K' : C
   intro V x
   induction x using tens_ind with
   | h0 => simp
-  | hadd x y hx hy => simp only [map_add]; exact congrArg₂ (· + ·) hx hy
+  | hadd x y hx hy => simp only [map_add (f := _)]; exact congrArg₂ (· + ·) hx hy
   | ht p a b =>
     simp only [lift_tof]
     rw [hu', hc]

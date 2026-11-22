@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFShiftZeroIff
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FormalThetaSumShiftPeriodDiv
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsExtensionPullOver
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFShiftZeroIff
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FormalThetaSumShiftPeriodDiv
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsExtensionPullOver
+
+@[expose] public section
 
 noncomputable section
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
@@ -29,7 +33,7 @@ theorem valR_spMap_field (f : K →+* F) (x : Sp K ⟶ X) (U : X.Opens) (a : Γ(
     valR (spMap f ≫ x) U a = f (valR x U a) := by
   by_cases h : ⊤ ≤ x ⁻¹ᵁ U
   · exact valR_spMap_comp f x U h a
-  · rw [valR, valR, dif_neg h, dif_neg (mt (le_spMap_iff f x U).1 h), map_zero]
+  · rw [valR, valR, dite_eq_right h, dite_eq_right (mt (le_spMap_iff f x U).1 h), map_zero]
 
 theorem le_wchart {R : Type} [CommRing R] {L : LB Z} {q : Y ⟶ Z} {x : Sp R ⟶ Y} {j : L.ι}
     (h : ⊤ ≤ (x ≫ q) ⁻¹ᵁ L.U j) : ⊤ ≤ x ⁻¹ᵁ LB.wchart L (fun _ : Fin 1 => q) (fun _ => j) :=
@@ -175,11 +179,13 @@ theorem span_ext (hG : IsSemiAbelian G) (hL : L.IsLB) {m : ℕ} {V I : Type} (x 
   rw [ρ.sum_comp (fun a => c a.1 * algebraMap K F (r _ a.2) * algebraMap K F (φ (i _ a.2) v)), Fintype.sum_sigma,
     Finset.sum_mul]
   refine (congrArg (evalAt _ m _ (fib_snd _) j hj) e).trans ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [map_smul, smul_eq_mul]
   refine (congrArg (c b * ·) (hasVal_pullFib _ (hr b v) j hj)).trans ?_
-  simp only [map_sum, map_mul, ← _root_.mul_assoc, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, ← _root_.mul_assoc, Finset.mul_sum]
 
 end Ext
 

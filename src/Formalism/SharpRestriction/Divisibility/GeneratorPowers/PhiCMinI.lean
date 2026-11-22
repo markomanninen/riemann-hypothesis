@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCMinB
-import Mathlib
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCMinB
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,7 +22,8 @@ def etil (ν : Y →ₗ[ℤ] ℤ) (a : Y) : E :=
 theorem comp_int (ν : Y →ₗ[ℤ] ℤ) (σ : E →+* ℂ) (a : Y) :
     comp (Algebra.linearMap ℤ ℝ ∘ₗ ν) σ a = σ (etil ν a) := by
   unfold comp etil
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   simp [map_mul, map_intCast]
 
@@ -44,7 +49,7 @@ private theorem pos_lemma {cj : E → E} (hcj : ∀ (φ : E →+* ℂ) (z : E), 
   have hadd2 : ∀ a b b' : Y, (comp η σ a * conj (comp η σ (b + b'))).re =
       (comp η σ a * conj (comp η σ b)).re + (comp η σ a * conj (comp η σ b')).re := by
     intro a b b'
-    rw [comp_add, map_add, mul_add, Complex.add_re]
+    rw [comp_add, map_add (f := _), mul_add, Complex.add_re]
   let β : Y →ₗ[ℤ] Y →ₗ[ℤ] ℝ :=
     (AddMonoidHom.mk' (fun a => (AddMonoidHom.mk' (fun b => (comp η σ a * conj (comp η σ b)).re)
       (hadd2 a)).toIntLinearMap) (fun a a' => LinearMap.ext fun b => hadd1 a a' b)).toIntLinearMap
@@ -167,7 +172,7 @@ private theorem amgm_lemma_3 (w : (E →+* ℂ) → ℝ) (hw : ∀ σ, 0 ≤ w �
   have h : ∏ σ, w σ ^ ((1 : ℝ) / finrank ℚ E) ≤ ∑ σ, (1 : ℝ) / finrank ℚ E * w σ :=
     Real.geom_mean_le_arith_mean_weighted Finset.univ (fun _ => (1 : ℝ) / finrank ℚ E) w
       (fun _ _ => by positivity) hsum (fun σ _ => hw σ)
-  rw [Real.finset_prod_rpow _ _ (fun σ _ => hw σ), ← Finset.mul_sum] at h
+  rw [Real.finsetProd_rpow _ _ (fun σ _ => hw σ) _, ← Finset.mul_sum] at h
   calc (finrank ℚ E : ℝ) * (∏ σ, w σ) ^ ((1 : ℝ) / finrank ℚ E)
       ≤ (finrank ℚ E : ℝ) * ((1 : ℝ) / finrank ℚ E * ∑ σ, w σ) :=
         mul_le_mul_of_nonneg_left h hn.le
@@ -235,9 +240,10 @@ theorem lower_bound {cj : E → E} (hcj : ∀ (φ : E →+* ℂ) (z : E), φ (cj
       cj (etil ν (x i)) * etil ν (x' i)) := ⟨_, rfl⟩
   have htσ : ∀ σ : E →+* ℂ, σ t = ((2 * L σ : ℝ) : ℂ) := by
     intro σ
-    rw [ht, hL, Finset.mul_sum, Complex.ofReal_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ht, hL, Finset.mul_sum, Complex.ofReal_sum, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [map_add, map_mul, map_mul, hcj', hcj', hv, hv]
+    rw [map_add (f := _), map_mul, map_mul, hcj', hcj', hv, hv]
     apply Complex.ext <;>
       simp only [Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im, Complex.conj_re,
         Complex.conj_im, Complex.ofReal_re, Complex.ofReal_im] <;> ring

@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJGlobalDefs
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsDecay
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJGlobalDefs
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsDecay
+
+@[expose] public section
 
 open MeasureTheory Set Filter NumberField ComplexConjugate
 open scoped NumberField.AdeleRing InnerProductSpace ENNReal
@@ -16,26 +20,28 @@ open Reduction AutomorphicForm RightCosetSpace CuspidalSpectrum
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
-local notation "Γ₁" => rationalGLOne K n
+local notation "Γ₁" => rationalGLOne (K := K) (n := n)
 
-variable (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+variable (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
 theorem exists_ae_eq_const_of_forall_eq {c : Lp ℂ 2 (quotientMeasure Γ₁ μ)}
     (hc : ∀ g, rightRegularRep Γ₁ μ g c = c) :
     ∃ κ : ℂ, (c : RightCosetSpace Γ₁ → ℂ) =ᵐ[quotientMeasure Γ₁ μ] fun _ => κ := by
-  set C : normOneGL K n → ℂ := fun x => c (mk Γ₁ x) with hCdef
+  set C : normOneGL (K := K) (n := n) → ℂ := fun x => c (mk Γ₁ x) with hCdef
   have hCm : StronglyMeasurable C := stronglyMeasurable_lift Γ₁ μ c
-  have h1 : ∀ g : normOneGL K n, ∀ᵐ x ∂μ, C (x * g) = C x := by
+  have h1 : ∀ g : normOneGL (K := K) (n := n), ∀ᵐ x ∂μ, C (x * g) = C x := by
     intro g
     have h := coeFn_rightRegularRep Γ₁ μ g c
     rw [hc g] at h
-    have h2 := (quasiMeasurePreserving_mk Γ₁ μ).ae h
+    have h2 := QuasiMeasurePreserving.ae (quasiMeasurePreserving_mk Γ₁ μ) h
     filter_upwards [h2] with x hx
     rw [rightMul_mk] at hx
     exact hx.symm
-  have hset : MeasurableSet {p : normOneGL K n × normOneGL K n | C (p.1 * p.2) = C p.1} :=
+  have hset : MeasurableSet {p : normOneGL (K := K) (n := n) × normOneGL (K := K) (n := n) | C (p.1 * p.2) = C p.1} :=
     measurableSet_eq_fun (hCm.measurable.comp continuous_mul.measurable)
       (hCm.measurable.comp measurable_fst)
+  have : SFinite μ :=
+    @instSFiniteOfSigmaFinite _ _ μ (SigmaFinite.of_isFiniteMeasureOnCompacts μ)
   have h2 : ∀ᵐ x ∂μ, ∀ᵐ g ∂μ, C (x * g) = C x :=
     (Measure.ae_ae_comm hset).2 (ae_of_all _ h1)
   have : (ae μ).NeBot := ae_neBot.2 (NeZero.ne μ)
@@ -57,7 +63,7 @@ theorem eq_zero_of_ae_eq_const (hn : 2 ≤ n) {c : Lp ℂ 2 (quotientMeasure Γ�
     (hκ : (c : RightCosetSpace Γ₁ → ℂ) =ᵐ[quotientMeasure Γ₁ μ] fun _ => κ) : κ = 0 := by
   have h1 := (hc : IsCuspidalL2 μ c) 1 one_pos (by omega)
   have h2 := ae_ctFun_congr μ 1 hκ
-  have h3 : ∀ y, ctFun K n 1 (fun _ : RightCosetSpace Γ₁ => κ) y = κ := by
+  have h3 : ∀ y, ctFun (K := K) (n := n) 1 (fun _ : RightCosetSpace Γ₁ => κ) y = κ := by
     intro y
     simp only [ctFun]
     rw [setIntegral_const, measureReal_def, unipMeasure_unipFundamentalDomain]
@@ -68,7 +74,7 @@ theorem eq_zero_of_ae_eq_const (hn : 2 ≤ n) {c : Lp ℂ 2 (quotientMeasure Γ�
   exact hy1
 
 theorem memLp_cuspQuot_of_bounded {ψ : AdelicGLn.AdelicGL K n → ℂ} (hψc : Continuous ψ)
-    (hψl : IsLeftInvariant ψ) (hbd : ∃ C, ∀ g ∈ normOneGL K n, ‖ψ g‖ ≤ C) :
+    (hψl : IsLeftInvariant ψ) (hbd : ∃ C, ∀ g ∈ normOneGL (K := K) (n := n), ‖ψ g‖ ≤ C) :
     MemLp (cuspQuot hψl) 2 (quotientMeasure Γ₁ μ) := by
   have := Reduction.isFiniteMeasure_quotientMeasure (K := K) (n := n) μ
   obtain ⟨C, hC⟩ := hbd
@@ -78,7 +84,7 @@ theorem memLp_cuspQuot_of_bounded {ψ : AdelicGLn.AdelicGL K n → ℂ} (hψc : 
   exact hC y y.2
 
 theorem toLp_cuspQuot_mem_cuspidalL2 {ψ : AdelicGLn.AdelicGL K n → ℂ} (hψc : Continuous ψ)
-    (hψl : IsLeftInvariant ψ) (hψ : IsCuspidal ψ) (hbd : ∃ C, ∀ g ∈ normOneGL K n, ‖ψ g‖ ≤ C) :
+    (hψl : IsLeftInvariant ψ) (hψ : IsCuspidal ψ) (hbd : ∃ C, ∀ g ∈ normOneGL (K := K) (n := n), ‖ψ g‖ ≤ C) :
     (memLp_cuspQuot_of_bounded μ hψc hψl hbd).toLp _ ∈ cuspidalL2 μ := by
   intro r hr hrn
   filter_upwards [ae_ctFun_congr μ r (MemLp.coeFn_toLp (memLp_cuspQuot_of_bounded μ hψc hψl hbd))]
@@ -88,7 +94,7 @@ theorem toLp_cuspQuot_mem_cuspidalL2 {ψ : AdelicGLn.AdelicGL K n → ℂ} (hψc
 
 theorem setIntegral_fundamentalDomain_eq_zero (hn : 2 ≤ n) {ψ : AdelicGLn.AdelicGL K n → ℂ}
     (hψc : Continuous ψ) (hψl : IsLeftInvariant ψ) (hψ : IsCuspidal ψ)
-    (hbd : ∃ C, ∀ g ∈ normOneGL K n, ‖ψ g‖ ≤ C) :
+    (hbd : ∃ C, ∀ g ∈ normOneGL (K := K) (n := n), ‖ψ g‖ ≤ C) :
     ∫ g in fundamentalDomain Γ₁, ψ (g : AdelicGLn.AdelicGL K n) ∂μ = 0 := by
   have := Reduction.isFiniteMeasure_quotientMeasure (K := K) (n := n) μ
   have : CompleteSpace (cuspidalL2 μ) := (isClosed_cuspidalL2 μ).completeSpace_coe
@@ -114,7 +120,8 @@ theorem setIntegral_fundamentalDomain_eq_zero (hn : 2 ≤ n) {ψ : AdelicGLn.Ade
     have h1 := coeFn_rightRegularRep Γ₁ μ g (hone.toLp _)
     have h2 : (fun x => (hone.toLp _ : Lp ℂ 2 (quotientMeasure Γ₁ μ)) (rightMul Γ₁ g x))
         =ᵐ[quotientMeasure Γ₁ μ] fun _ => (1 : ℂ) :=
-      (measurePreserving_rightMul μ g).quasiMeasurePreserving.ae_eq (MemLp.coeFn_toLp hone)
+      QuasiMeasurePreserving.ae_eq_comp (measurePreserving_rightMul μ g).quasiMeasurePreserving
+        (MemLp.coeFn_toLp hone)
     exact h1.trans (h2.trans (MemLp.coeFn_toLp hone).symm)
 
   have hcomm := ((rightRegularRep Γ₁ μ).isInvariant_iff_commute_starProjection (cuspidalL2 μ)).1

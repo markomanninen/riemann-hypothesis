@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.RegOfBound
-import Development.AbelianVarietyTheory.Definitions.Foundations.EventuallyEqOfIsPreconnected
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.RegOfBound
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EventuallyEqOfIsPreconnected
+
+@[expose] public section
 
 noncomputable section
 
@@ -144,7 +148,7 @@ theorem strip (h1 : ∀ x, 1 ≤ h x) {g : ℂ → X → ℂ}
     · obtain ⟨S, hS, hR⟩ := hr s hst
       refine ⟨S ∩ Metric.ball s 1 ∩ rightOf t,
         inter_mem (inter_mem hS (Metric.ball_mem_nhds s one_pos)) (hRopen.mem_nhds hst), ?_⟩
-      exact regOn_congr (regOn_polynomial_mul_of_subset_ball (regOn_mono hR fun w hw => hw.1.1) s 1 (fun w hw => hw.1.2) p)
+      exact regOn_congr (regOn_polynomial_mul_of_subset_ball (S := S ∩ Metric.ball s 1 ∩ rightOf t) (regOn_mono hR fun w hw => hw.1.1) s 1 (fun w hw => hw.1.2) p)
         fun w hw x => hright w hw.2 x
     · have hs1 := hs.resolve_right hst
       obtain ⟨r, hr0, hmem⟩ := mem_iUnion₂.mp hs1

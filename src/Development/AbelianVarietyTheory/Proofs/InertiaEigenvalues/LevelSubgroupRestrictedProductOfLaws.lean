@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
-import Formalism.LocalToGlobal.Divisibility.DefGroupLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
+public import Formalism.LocalToGlobal.Divisibility.DefGroupLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,7 @@ theorem triv_gen {e : A} (he : e * e = e) (M M' : Matrix n n A) (h : M * M' = 1)
 
 theorem map_mix {B : Type} [CommRing B] (ψ : A →+* B) (e m d : A) :
     ψ (e * m + (1 - e) * d) = ψ e * ψ m + (1 - ψ e) * ψ d := by
-  simp only [map_add, map_mul, map_sub, map_one]
+  simp only [map_add (f := _), map_mul, map_sub, map_one]
 
 theorem map_one_apply {B : Type} [CommRing B] (ψ : A →+* B) (i j : n) :
     ψ ((1 : Matrix n n A) i j) = (1 : Matrix n n B) i j := by
@@ -138,7 +142,7 @@ theorem redFn_piece {β x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)} {φ : 
   apply Units.ext
   ext i j
   show resS F PP ((piece hφ y).1 i j) = resS F PP (y.1 i j)
-  rw [piece_apply, map_add, map_mul, map_mul, h, map_sub, h, map_one, sub_self, zero_mul, add_zero, one_mul]
+  rw [piece_apply, map_add (f := _), map_mul, map_mul, h, map_sub, h, map_one, sub_self, zero_mul, add_zero, one_mul]
 
 theorem redFn_piece_eq_one {β x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)} {φ : Formalism.L2.Herm.intAf F E}
     (he : (φ : E ⊗[F] Formalism.L2.Herm.Af F) * φ = φ) (hx : piece he x ∈ St β) (PP : Pl E) (h : resS F PP φ = 0) :
@@ -170,13 +174,13 @@ theorem phi_idem' (v : HeightOneSpectrum (𝓞 D.host.F)) :
     (phi D v : Formalism.IndefR.Lev.EAf D) * (phi D v : Formalism.IndefR.Lev.EAf D) = (phi D v : Formalism.IndefR.Lev.EAf D) :=
   congrArg Subtype.val (phi_idem v)
 
-theorem resS_phi_pos {PP : Pl D.host.E} {v : HeightOneSpectrum (𝓞 D.host.F)} (h : PP.under (𝓞 D.host.F) = v) :
+theorem resS_phi_pos {PP : Pl D.host.E} {v : HeightOneSpectrum (𝓞 D.host.F)} (h : (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP) = v) :
     resS D.host.F PP (phi D v) = 1 :=
-  resS_idemAd_pos PP (PP.under (𝓞 D.host.F)) rfl h
+  resS_idemAd_pos PP ((_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP)) rfl h
 
-theorem resS_phi_neg {PP : Pl D.host.E} {v : HeightOneSpectrum (𝓞 D.host.F)} (h : ¬ PP.under (𝓞 D.host.F) = v) :
+theorem resS_phi_neg {PP : Pl D.host.E} {v : HeightOneSpectrum (𝓞 D.host.F)} (h : ¬ (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP) = v) :
     resS D.host.F PP (phi D v) = 0 :=
-  resS_idemAd_neg PP (PP.under (𝓞 D.host.F)) rfl h
+  resS_idemAd_neg PP ((_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP)) rfl h
 
 def epsF (D : D7) (v : HeightOneSpectrum (𝓞 D.host.F)) : AF D.host.F := (exists_placeIdem (D := D) v).choose
 
@@ -323,7 +327,7 @@ variable {D : D7} {V : HSp D} {β : GL (Fin V.rank) (Formalism.IndefR.Lev.EAf D)
 
 theorem red_cases {x : GL (Fin V.rank) (Formalism.IndefR.Lev.EAf D)} (hS : x ∈ St β) (v : HeightOneSpectrum (𝓞 D.host.F))
     (PP : Pl D.host.E) : redFn β PP (piece (phi_idem' v) x) = redFn β PP x ∨ redFn β PP (piece (phi_idem' v) x) = 1 := by
-  by_cases h : PP.under (𝓞 D.host.F) = v
+  by_cases h : (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP) = v
   · exact Or.inl (redFn_piece (phi_idem v) _ hS PP (resS_phi_pos h))
   · exact Or.inr (redFn_piece_eq_one _ (piece_mem_St (phi_idem v) _ hS) PP (resS_phi_neg h))
 
@@ -372,7 +376,7 @@ theorem mem_of_cmp_mem (hH : L.P.H = ⊥) {g : GA D V} (hf : g ∈ GfC V) (h : �
       rw [piece_inv', piece_conj'] at this
       exact this
   have hr : ∀ PP : Pl D.host.E, redFn β PP (finE V g) =
-      redFn β PP (piece (phi_idem' (PP.under (𝓞 D.host.F))) (finE V g)) := fun PP =>
+      redFn β PP (piece (phi_idem' ((_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP))) (finE V g)) := fun PP =>
     (redFn_piece (phi_idem _) _ hS PP (resS_phi_pos rfl)).symm
   refine ⟨hf, mem_lev.2 ⟨mem_parLev.2 ⟨finE_mem_UA V g, hS, fun PP hP => ?_, fun PP hP => ?_⟩, ?_⟩⟩
   · rw [hr PP]

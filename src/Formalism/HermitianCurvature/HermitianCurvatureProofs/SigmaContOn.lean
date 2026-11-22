@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.BesselNonvanishingReduction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LUFactorOrbitBounds
+module
+
+public import Formalism.HermitianCurvature.BesselNonvanishingReduction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LUFactorOrbitBounds
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,8 +47,6 @@ def triv {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace �
   χ_int := D.χ_int
 
 theorem hpk_eq (k r : ℕ) : PI.UpqRep.Hpk k r = Formalism.QuantumDeterminants.Hpk k r := rfl
-
-theorem uh_eq (k r : ℕ) : PI.UpqRep.UH (PI.UpqRep.Hpk k r) = Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk k r) := rfl
 
 theorem sigma_contOn {k r : ℕ} {ε : Fin (2 * r + k + 1) → Bool} {lam : Fin (2 * r + k + 1) → ℝ}
     {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] {σ : Mx k r → (H →L[ℂ] H)}

@@ -1,5 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorsionTowersOfDivisibleGroup
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -46,7 +52,7 @@ variable {D D' : Type} [CommRing D] [Bialgebra R D] [CommRing D'] [Bialgebra R D
 
 def rho (φ : D →ₐc[R] D') : (cotExt R D).C →ₐ[R] (cotExt R D').C := TrivSqZeroExt.map (cotMap φ)
 
-theorem cotSnd_cotPt (a : D) : cotSnd R D (cotPt R D a) = dUnit R a := by
+theorem cotSnd_cotPt (a : D) : cotSnd R D (cotPt R D a) = dUnit (R := R) a := by
   simp [cotSnd, cotPt, TrivSqZeroExt.algebraMap_eq_inl, dUnit]
 
 theorem cotSnd_rho (φ : D →ₐc[R] D') (c : (cotExt R D).C) : cotSnd R D' (rho φ c) = cotMap φ (cotSnd R D c) :=
@@ -60,7 +66,7 @@ theorem rho_cotPt (φ : D →ₐc[R] D') (a : D) : rho φ (cotPt R D a) = cotPt 
 
 theorem cotVal_map {X : Over (Sp R)} (f : Z1 (O (dp0 R) (X.hom ≫ 𝟙 _))) (φ : D →ₐc[R] D') (y : Pt X D) :
     cotVal f (spOver (φ : D →ₐ[R] D') ≫ y) =
-      cotMap φ (cotVal f y) + dUnit R (fv f D D' (φ : D →ₐ[R] D') y) := by
+      cotMap φ (cotVal f y) + dUnit (R := R) (fv f D D' (φ : D →ₐ[R] D') y) := by
   let z : Pt X (cotExt R D).C := spOver (cotPt R D) ≫ y
   let z' : Pt X (cotExt R D').C := spOver (cotPt R D') ≫ spOver (φ : D →ₐ[R] D') ≫ y
   have e : spMap (rho φ : (cotExt R D).C →+* (cotExt R D').C) ≫ z.left = z'.left := by
@@ -78,7 +84,7 @@ theorem cotVal_map {X : Over (Sp R)} (f : Z1 (O (dp0 R) (X.hom ≫ 𝟙 _))) (φ
   have h0 : cotSnd R D' ((cotExt R D').i b) = 0 := rfl
   change cotSnd R D' ((cotExt R D').val z'.left z'.w f - _) =
     cotMap φ (cotSnd R D ((cotExt R D).val z.left z.w f - _)) + _
-  rw [← cotSnd_rho, ← cotSnd_cotPt, ← map_add, ← sub_zero (cotSnd R D' (_ + _)), ← h0, ← map_sub, hb, map_sub (rho φ)]
+  rw [← cotSnd_rho, ← cotSnd_cotPt, ← map_add (f := _), ← sub_zero (cotSnd R D' (_ + _)), ← h0, ← map_sub, hb, map_sub (rho φ)]
   congr 1
   linear_combination k
 

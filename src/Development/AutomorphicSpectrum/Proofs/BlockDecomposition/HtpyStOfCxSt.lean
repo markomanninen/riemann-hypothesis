@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -129,13 +133,15 @@ theorem homotopy (n : ℕ) (f : Cn (Cyl G) (n + 1)) :
     ((-1 : R) ^ ((i : ℕ) + (j : ℕ))) • P G (SimplexCategory.δ i ≫ SimplexCategory.σ j)
       ((lab (n + 3) (j + 1)).comp (Fin.succAboveOrderEmb i).toOrderHom) f
   have e1 : dn G n (hop G n f) = ∑ i, ∑ j, S i j := by
-    simp only [dn, hop, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, cof_P, Finset.smul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dn, hop, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, cof_P, Finset.smul_sum,
       smul_smul, S, pow_add]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ ↦ Finset.sum_congr rfl fun j _ ↦ ?_
     first | rfl | exact congrArg₂ (· • ·) (mul_comm _ _) rfl
   have e2 : hop G (n + 1) (dn (Cyl G) (n + 1) f) = ∑ j, ∑ i, T i j := by
-    simp only [dn, hop, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, P_cof, Finset.smul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dn, hop, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, P_cof, Finset.smul_sum,
       smul_smul, T, pow_add]
     rw [Finset.sum_comm]
   have h1 : ∀ i j, i ≤ j.castSucc → T i.castSucc j.succ = - S i j := by
@@ -301,8 +307,8 @@ end GlobalTheory.CompanionTheory.Hodge.Prism
 
 namespace GlobalTheory.CompanionTheory.Hodge
 
-open Prism in
 
+open Prism in
 theorem htpySt_of_cxSt : CxSt → HtpySt := by
   intro hC R _ C _ F D _ G m m' θ hθ
   have hx := fun (k : ℕ) (z : Cn F k) ↦

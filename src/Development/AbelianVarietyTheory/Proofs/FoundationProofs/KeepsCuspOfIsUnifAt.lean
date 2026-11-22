@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsIsDeepOfField
-import Development.AbelianVarietyTheory.Definitions.Divisors.MemLevEigenIffTransl
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsLocalRingTrivSqZeroExt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RightTranslationLiftEqLevelMoveUnitConst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MovedSectionReadingEqMovedFrameReading
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HostHalfRootAddConjEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelBlock
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSecRdUNeZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MulVecMemIdealLatHat
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MemCuspFormsOfMultipleRationalIsometryMove
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsIsDeepOfField
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MemLevEigenIffTransl
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsLocalRingTrivSqZeroExt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RightTranslationLiftEqLevelMoveUnitConst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MovedSectionReadingEqMovedFrameReading
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HostHalfRootAddConjEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelBlock
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSecRdUNeZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MulVecMemIdealLatHat
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MemCuspFormsOfMultipleRationalIsometryMove
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -54,9 +58,9 @@ variable {g : ℕ} {e : Fin g ≃ Σ τ : E →+* ℂ, Fin (Dw.mult τ)}
   {F : FamilyUnif Xo (σ.comp (IntermediateField.inclusion c.le).toRingHom) (fun j => relab c σ (e j).1)}
   {ik : U.Comp → Fin F.n} {φ : ∀ k, (F.Di (ik k)).La ≃ₗ[𝓞 E] (U.X k).Λ}
 
+
 open Limits MonoidalCategory CartesianMonoidalCategory MonObj in
 open scoped CategoryTheory.Obj in
-
 theorem exists_carries (hU : IsUnf U) (hP : HasPeriods φ)
     (hef : ∀ k a b, (((F.Di (ik k)).EF a b : ℤ) : ℚ) =
       Algebra.trace ℚ E (-(U.X k).ξ0 * herm (U.X k).Gm (φ k a : Fin r → E) (φ k b)))

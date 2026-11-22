@@ -1,11 +1,15 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.Imports
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContinuousMulMt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselNeZeroOfCyclicOrbit
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaContOn
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LowerSmoothStability.ExistsFinStableOfMemSSup
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.IsDSOfIsDG
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.Imports
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContinuousMulMt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselNeZeroOfCyclicOrbit
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaContOn
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LowerSmoothStability.ExistsFinStableOfMemSSup
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.IsDSOfIsDG
+
+@[expose] public section
 
 namespace GlobalTheory
 end GlobalTheory
@@ -83,7 +87,7 @@ theorem rep_basic_of_isDS : PI.KFinSmooth → ∀ (k r : ℕ) (ε : Fin (2 * r +
       refine Submodule.subset_span ⟨g * h, ?_, v₀, hv₀, (hmul g hg h hh v₀).symm⟩
       exact ofPI _ (Formalism.FourierDecayAlt.P.TranslationBesselVanishing.uh_mul (toPI g hg) (toPI h hh))
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul a x _ hx => rw [map_smul]; exact Submodule.smul_mem _ a hx
   · intro v hv
     unfold BranchingSupport.Rep.TK

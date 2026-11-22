@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HzUnit
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.OneSubIdemQMulSelf
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousIdempotentCutIsClosedScaledKernelStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitaryIdempotentCutMemFourierJacobiBesselGroupStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsCompactOpenLatticeStabilizerAtPlacesStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.InLatticeStabilizerAtPlacesIffPlaceSetProdStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HzUnit
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.OneSubIdemQMulSelf
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousIdempotentCutIsClosedScaledKernelStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitaryIdempotentCutMemFourierJacobiBesselGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsCompactOpenLatticeStabilizerAtPlacesStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.InLatticeStabilizerAtPlacesIffPlaceSetProdStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.FinPl
 open scoped TensorProduct
@@ -181,14 +186,19 @@ def splitHomeo (V : HSp D) (Q : Finset (Pl D)) : (grpAt V (· ∈ Q) × grpAt V 
 theorem grp_split : ∀ (D : D7) (V : HSp D) (Q : Finset (Pl D)), IsClosed (grpAt V (· ∈ Q) : Set (GA D V)) ∧ IsClosed (grpAt V (· ∉ Q) : Set (GA D V)) ∧ grpAt V (· ∈ Q) ≤ GfC V ∧ grpAt V (· ∉ Q) ≤ GfC V ∧ (∀ a ∈ grpAt V (· ∈ Q), ∀ b ∈ grpAt V (· ∉ Q), a * b = b * a) ∧ (∃ e : (grpAt V (· ∈ Q) × grpAt V (· ∉ Q)) ≃ₜ GfC V, ∀ p, (e p : GA D V) = p.1 * p.2) ∧ (∀ P P' : Pl D → Prop, (∀ p, P p → ¬ P' p) → grpAt V P ≤ grpOff V P') ∧ (∀ P : Pl D → Prop, GfC V ⊓ grpOff V P = grpAt V fun p => ¬ P p) ∧ (∀ (L : Lat V), IsSelfDualC V L → ∀ P : Pl D → Prop, (∃ K : Subgroup (GA D V), (∀ g, g ∈ K ↔ InK V L P g) ∧ IsCompact (K : Set (GA D V)) ∧ IsOpen ((K.subgroupOf (grpAt V P) : Subgroup _) : Set (grpAt V P))) ∧ ∀ κ, InK V L P κ ↔ ∃ a b, InK V L (fun p => P p ∧ p ∈ Q) a ∧ InK V L (fun p => P p ∧ p ∉ Q) b ∧ κ = a * b) ∧ ∀ (V₀ : HSp D) (ρ : ℕ) (d : HypDec V V₀ ρ), (∀ a ∈ grpAt V (· ∈ Q), ∀ b ∈ grpAt V (· ∉ Q), a * b ∈ jacGrp d → a ∈ jacGrp d ∧ b ∈ jacGrp d) ∧ ∀ (A L : HSp D) (o : OrthDec V₀ A L), ∀ a ∈ grpAt V (· ∈ Q), ∀ b ∈ grpAt V (· ∉ Q), a * b ∈ besGrp d o → a ∈ besGrp d o ∧ b ∈ besGrp d o := by
   intro D V Q
   refine ⟨isClosed_of_idem V _ _ (mem_idAt_Q_iff Q), isClosed_of_idem V _ _ (mem_idAt_Qc_iff Q), grpAt_le_GfC V _,
-    grpAt_le_GfC V _, fun a ha b hb => comm_Q V Q ha hb, ⟨splitHomeo V Q, fun _ => rfl⟩, grpAt_le_grpOff V,
-    GfC_inf_grpOff V, fun L hL P => ⟨GlobalTheory.T.exists_compactOpen_latticeStabilizerAtPlaces D V L hL P, GlobalTheory.T.inLatticeStabilizerAtPlaces_iff_placeSet_prod D V L P Q⟩, fun V₀ ρ d => ⟨?_, ?_⟩⟩
-  · intro a ha b hb h
-    exact ⟨cutG_left V Q ha hb ▸ (GlobalTheory.T.unitaryIdempotentCut_mem_fourierJacobi_besselGroup D V V₀ ρ d _ (idemQ_mul_self Q)).1 _ h,
-      cutG_right V Q ha hb ▸ (GlobalTheory.T.unitaryIdempotentCut_mem_fourierJacobi_besselGroup D V V₀ ρ d _ (one_sub_idemQ_mul_self Q)).1 _ h⟩
-  · intro A L o a ha b hb h
-    exact ⟨cutG_left V Q ha hb ▸ (GlobalTheory.T.unitaryIdempotentCut_mem_fourierJacobi_besselGroup D V V₀ ρ d _ (idemQ_mul_self Q)).2 A L o _ h,
-      cutG_right V Q ha hb ▸ (GlobalTheory.T.unitaryIdempotentCut_mem_fourierJacobi_besselGroup D V V₀ ρ d _ (one_sub_idemQ_mul_self Q)).2 A L o _ h⟩
+    grpAt_le_GfC V _, fun a ha b hb => comm_Q V Q ha hb, ?_⟩
+  refine ⟨⟨splitHomeo V Q, fun _ => rfl⟩, grpAt_le_grpOff V, GfC_inf_grpOff V, ?_, ?_⟩
+  · intro L hL P
+    exact ⟨GlobalTheory.T.exists_compactOpen_latticeStabilizerAtPlaces D V L hL P,
+      GlobalTheory.T.inLatticeStabilizerAtPlaces_iff_placeSet_prod D V L P Q⟩
+  · intro V₀ ρ d
+    constructor
+    · intro a ha b hb h
+      exact ⟨cutG_left V Q ha hb ▸ (GlobalTheory.T.unitaryIdempotentCut_mem_fourierJacobi_besselGroup D V V₀ ρ d _ (idemQ_mul_self Q)).1 _ h,
+        cutG_right V Q ha hb ▸ (GlobalTheory.T.unitaryIdempotentCut_mem_fourierJacobi_besselGroup D V V₀ ρ d _ (one_sub_idemQ_mul_self Q)).1 _ h⟩
+    · intro A L o a ha b hb h
+      exact ⟨cutG_left V Q ha hb ▸ (GlobalTheory.T.unitaryIdempotentCut_mem_fourierJacobi_besselGroup D V V₀ ρ d _ (idemQ_mul_self Q)).2 A L o _ h,
+        cutG_right V Q ha hb ▸ (GlobalTheory.T.unitaryIdempotentCut_mem_fourierJacobi_besselGroup D V V₀ ρ d _ (one_sub_idemQ_mul_self Q)).2 A L o _ h⟩
 
 end GlobalTheory.FinPl.SetCut
 

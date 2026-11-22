@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.CartanFactorisation.PolCountDef
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLActs
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLFrame
+module
+
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.PolCountDef
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLActs
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLFrame
+
+@[expose] public section
 
 noncomputable section
 

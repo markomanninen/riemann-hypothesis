@@ -1,23 +1,28 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupCoproduct
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialPrincipalization
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialCenter
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialGeometryHypotheses
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.CenterInvariant
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.LexOrderEncoding
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.LocallyMonomial
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceRelations
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.PrincipalizationCertificate
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.FunctorialPrincipalization
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupCoproduct
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialPrincipalization
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialCenter
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialGeometryHypotheses
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.CenterInvariant
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.LexOrderEncoding
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.LocallyMonomial
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceRelations
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.PrincipalizationCertificate
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.FunctorialPrincipalization
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry
@@ -52,30 +57,12 @@ theorem pullbackIndexSymm_val (T : MarkedIdealWithBoundary.{u}) (Y : Scheme.{u})
   rfl
 
 @[simp]
-theorem pullbackIndexSymm_pullbackIndex (T : MarkedIdealWithBoundary.{u}) (Y : Scheme.{u}) (k' : Type u) [Field k']
-    (q : Y ⟶ Spec (CommRingCat.of k')) (g : Y ⟶ T.scheme) (j : Fin T.boundary.length) :
-    pullbackIndexSymm T Y k' q g (pullbackIndex T Y k' q g j) = j := by
-  apply Fin.val_injective
-  rw [pullbackIndexSymm_val, pullbackIndex_val]
-
-@[simp]
 theorem pullbackIndex_pullbackIndexSymm (T : MarkedIdealWithBoundary.{u}) (Y : Scheme.{u}) (k' : Type u) [Field k']
     (q : Y ⟶ Spec (CommRingCat.of k')) (g : Y ⟶ T.scheme)
     (j : Fin (T.pullbackOverField Y k' q g).boundary.length) :
     pullbackIndex T Y k' q g (pullbackIndexSymm T Y k' q g j) = j := by
   apply Fin.val_injective
   rw [pullbackIndex_val, pullbackIndexSymm_val]
-
-def pullbackAlongIndex (T : MarkedIdealWithBoundary.{u}) (Y : Scheme.{u})
-    (q : Y ⟶ Spec (CommRingCat.of T.base)) (g : Y ⟶ T.scheme) :
-    Fin T.boundary.length → Fin (T.pullbackAlong Y q g).boundary.length :=
-  EmbeddedResolution.pullbackAlongIndex T Y q g
-
-@[simp]
-theorem pullbackAlongIndex_val (T : MarkedIdealWithBoundary.{u}) (Y : Scheme.{u})
-    (q : Y ⟶ Spec (CommRingCat.of T.base)) (g : Y ⟶ T.scheme) (j : Fin T.boundary.length) :
-    ((pullbackAlongIndex T Y q g j : Fin (T.pullbackAlong Y q g).boundary.length) : ℕ) = (j : ℕ) :=
-  EmbeddedResolution.pullbackAlongIndex_val T Y q g j
 
 structure IsComponentCompatiblePullback (T : MarkedIdealWithBoundary.{u}) (Y : Scheme.{u}) (k' : Type u) [Field k']
     (q : Y ⟶ Spec (CommRingCat.of k')) (g : Y ⟶ T.scheme) : Prop where
@@ -384,7 +371,28 @@ theorem minIndexCard_pullbackOverField_eq_zero_or_centerInvariant_le (hGeom : Mo
       sortedIndices B := by
     rw [← hBim]
     exact sortedIndices_image_pullbackIndex T Y k' q g B
-  rcases trichotomous_of (List.Lex (· < ·))
+  have htrich : ∀ (a b : List ℕ), List.Lex (· < ·) a b ∨ a = b ∨ List.Lex (· < ·) b a := by
+    intro a
+    induction a with
+    | nil =>
+      intro b
+      cases b with
+      | nil => exact Or.inr (Or.inl rfl)
+      | cons _ _ => exact Or.inl List.Lex.nil
+    | cons x xs ih =>
+      intro b
+      cases b with
+      | nil => exact Or.inr (Or.inr List.Lex.nil)
+      | cons y ys =>
+        rcases lt_trichotomy x y with h | h | h
+        · exact Or.inl (List.Lex.rel h)
+        · subst y
+          rcases ih ys with h | h | h
+          · exact Or.inl (List.Lex.cons h)
+          · exact Or.inr (Or.inl (congrArg (List.cons x) h))
+          · exact Or.inr (Or.inr (List.Lex.cons h))
+        · exact Or.inr (Or.inr (List.Lex.rel h))
+  rcases htrich
       (sortedIndices (lexMaxIndices T.ideal T.mult T.boundary))
       (sortedIndices (lexMaxIndices (T.pullbackOverField Y k' q g).ideal
         (T.pullbackOverField Y k' q g).mult (T.pullbackOverField Y k' q g).boundary)) with

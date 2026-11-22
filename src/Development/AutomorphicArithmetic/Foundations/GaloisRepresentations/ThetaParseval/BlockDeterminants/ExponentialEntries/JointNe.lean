@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.BlockDeterminants.ExponentialEntries.RightSub
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.BlockDeterminants.ExponentialEntries.RightSub
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+
+@[expose] public section
 
 open Formalism.BasicNotions UpperTheory.TP.RP
 

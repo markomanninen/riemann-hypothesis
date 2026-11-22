@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TwoWeightEqOneAddRoot
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.TrFormBaseChangeNondegenerate
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TwoWeightEqOneAddRoot
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.TrFormBaseChangeNondegenerate
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,11 +81,6 @@ def traceDual (H : Host E) : 𝓞 E →ₗ[𝓞 E] ConjDual H where
   map_add' x y := by ext; simp
   map_smul' a x := by ext; simp [trForm_mul_left]
 
-@[simp] theorem toDual_traceDual (H : Host E) (x : 𝓞 E) : toDual H (traceDual H x) = trForm H x := rfl
-
-theorem traceDual_apply (H : Host E) (x y : 𝓞 E) :
-    toDual H (traceDual H x) y = Algebra.trace ℤ (𝓞 E) (H.bar x * y) := rfl
-
 theorem traceDual_injective (H : Host E) : Function.Injective (traceDual H) :=
   fun _ _ h => trForm_injective H (congrArg (toDual H) h)
 
@@ -104,9 +103,6 @@ theorem finrank_eq_of_injective {M N : Type} [AddCommGroup M] [AddCommGroup N] [
     exact hx
   rw [e.finrank_eq]
   omega
-
-theorem ConjDual.finrank_eq_one (H : Host E) : finrank (𝓞 E) (ConjDual H) = 1 := by
-  rw [← finrank_eq_of_injective _ (traceDual_injective H) finrank_int.symm, finrank_self]
 
 abbrev HypLattice (H : Host E) : Type := 𝓞 E × ConjDual H
 
@@ -142,7 +138,7 @@ theorem hypForm_bijective (H : Host E) : Function.Bijective (hypForm H) := by
     refine ⟨(x, (toDual H).symm (φ ∘ₗ LinearMap.inl ℤ _ _)), LinearMap.ext fun v => ?_⟩
     have h := LinearMap.congr_fun hx (toDual H v.2)
     simp at h
-    simp [h, ← map_add]
+    simp [h, ← map_add (f := _)]
 
 abbrev BasisIndex (E : Type) [Field E] [NumberField E] : Type := Free.ChooseBasisIndex ℤ (𝓞 E)
 
@@ -257,7 +253,8 @@ theorem gram_mul_mulMatrix (H : Host E) (a : 𝓞 E) :
       (trForm H (RingOfIntegers.basis E i) (a * RingOfIntegers.basis E j) : ℤ) := by
     intro a i j
     conv_rhs => rw [← (RingOfIntegers.basis E).sum_repr (a * RingOfIntegers.basis E j)]
-    simp only [map_sum, map_zsmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul]
     simp [Matrix.mul_apply, gram, mulMatrix, Algebra.leftMulMatrix_eq_repr_mul, mul_comm]
   ext i j
   rw [← gram_transpose H, ← Matrix.transpose_mul, gram_transpose, Matrix.transpose_apply, h, h,
@@ -329,26 +326,6 @@ theorem trace_hypJ_comp : LinearMap.trace ℝ _ (hypJ H ∘ₗ A) = 0 := by
 
 end Action
 
-theorem hypJ_inl (H : Host E) (x : 𝓞 E) :
-    hypJ H (1 ⊗ₜ (x, 0)) = 1 ⊗ₜ (0, traceDual H x) := by
-  apply (hypRealBasis H).repr.injective
-  have h := LinearMap.toMatrix_mulVec_repr (hypRealBasis H) (hypRealBasis H) (hypJ H) (1 ⊗ₜ (x, 0))
-  apply DFunLike.coe_injective
-  rw [← h, toMatrix_hypJ]
-  have hx : ∀ y, trForm H x y =
-      ∑ j, trForm H y (RingOfIntegers.basis E j) * (RingOfIntegers.basis E).repr x j := by
-    intro y
-    rw [trForm_symm]
-    conv_lhs => rw [← (RingOfIntegers.basis E).sum_repr x]
-    simp only [map_sum, map_zsmul]
-    simp [mul_comm]
-  ext (i | i) <;>
-    simp [Matrix.mulVec, dotProduct, Fintype.sum_sum_type, hypRealBasis, hypBasis_repr_inl, hypBasis_repr_inr, gram, hx]
-
-theorem hypJ_inr (H : Host E) (x : 𝓞 E) :
-    hypJ H (1 ⊗ₜ (0, traceDual H x)) = -(1 ⊗ₜ (x, 0)) := by
-  rw [← hypJ_inl, hypJ_hypJ]
-
 @[reducible] def hypDatum (H : Host E) : Datum H where
   La := HypLattice H
   fin := inferInstance
@@ -366,41 +343,13 @@ theorem hypJ_inr (H : Host E) (x : 𝓞 E) :
     · rw [trace_of_smul H a A hA, ht, Complex.intCast_re]
     · rw [trace_hypJ_comp H a A hA, ht, Complex.intCast_im, mul_zero]⟩
 
-theorem hypDatum_La (H : Host E) : (hypDatum H).La = (𝓞 E × ConjDual H) := rfl
-
 @[simp] theorem hypDatum_p (H : Host E) : (hypDatum H).p = 1 := rfl
 
 @[simp] theorem hypDatum_q (H : Host E) : (hypDatum H).q = 1 := rfl
-
-theorem hypDatum_EF (H : Host E) (x y : 𝓞 E) (f g : ConjDual H) :
-    (hypDatum H).EF (x, f) (y, g) = toDual H f y - toDual H g x := rfl
 
 theorem hypDatum_smul (H : Host E) (a x : 𝓞 E) (f : ConjDual H) :
     (a • (x, f) : (hypDatum H).La) = (a * x, a • f) := rfl
 
 theorem hypDatum_EF_inl_inl (H : Host E) (x y : 𝓞 E) : (hypDatum H).EF (x, 0) (y, 0) = 0 := by simp
-
-theorem hypDatum_EF_inr_inr (H : Host E) (f g : ConjDual H) : (hypDatum H).EF (0, f) (0, g) = 0 := by simp
-
-theorem hypDatum_EF_inr_inl (H : Host E) (f : ConjDual H) (y : 𝓞 E) :
-    (hypDatum H).EF (0, f) (y, 0) = toDual H f y := by simp
-
-instance instNonemptyDatum (H : Host E) : Nonempty (Datum H) := ⟨hypDatum H⟩
-
-example (H : Host E) : finrank (𝓞 E) (hypDatum H).La = 2 := (hypDatum H).rank
-
-example (H : Host E) : (hypDatum H).EF (0, traceDual H 1) (1, 0) = finrank ℚ E := by
-  simp [trForm_one_one]
-
-example (H : Host E) (f : ConjDual H) (x : 𝓞 E) : toDual H (H.rt • f) x = -toDual H f (H.rt * x) := by simp
-
-example (H : Host E) (a : 𝓞 E) :
-    LinearMap.trace ℝ _ ((DistribSMul.toLinearMap ℤ (HypLattice H) a).baseChange ℝ) =
-      2 * (Algebra.trace ℤ (𝓞 E) a : ℤ) :=
-  trace_of_smul H a _ fun _ => rfl
-
-example : finrank ℤ (hypDatum host).La = 24 := by
-  change finrank ℤ (𝓞 E21 × ConjDual host) = 24
-  rw [finrank_prod, finrank_int, RingOfIntegers.rank, finrank_rat_E21_eq_twelve]
 
 end GlobalTheory.HostModel

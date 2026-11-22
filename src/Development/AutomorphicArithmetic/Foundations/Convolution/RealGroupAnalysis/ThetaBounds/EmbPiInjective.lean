@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
-import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
-import GroundTheory.AutomorphicForms.ReductionIdele
-import GroundTheory.AutomorphicForms.GL2.GJGlobalLattice
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
+public import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
+public import GroundTheory.AutomorphicForms.ReductionIdele
+public import GroundTheory.AutomorphicForms.GL2.GJGlobalLattice
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -82,7 +86,7 @@ private theorem mixed_le {S : Set (IdeleGroup F)} (hS : IsCompact S) :
       ‖mixedEmbedding F η‖ ≤ B * ‖homeomorphMixedSpace F
         ((((posIdele s hs * u : IdeleGroup F) : A F) * rt η).1)‖ := by
   have hc : Continuous fun u : IdeleGroup F => ∑ w : InfinitePlace F, ‖(((u⁻¹ : IdeleGroup F) : A F)).1 w‖ :=
-    continuous_finset_sum _ fun w _ => continuous_norm.comp
+    continuous_finsetSum _ fun w _ => continuous_norm.comp
       ((continuous_apply w).comp (continuous_fst.comp Units.continuous_coe_inv))
   obtain ⟨M, hM⟩ := hS.exists_bound_of_continuousOn hc.continuousOn
   set b := max M 1

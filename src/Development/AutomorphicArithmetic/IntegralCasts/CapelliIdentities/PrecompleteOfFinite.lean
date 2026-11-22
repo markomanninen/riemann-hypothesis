@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open TensorProduct in
 private theorem precomplete_of_finite {R : Type} [CommRing R] (I : Ideal R) [IsPrecomplete I R]
@@ -16,7 +20,7 @@ private theorem precomplete_of_finite {R : Type} [CommRing R] (I : Ideal R) [IsP
   | add x y hx hy =>
     obtain ⟨a, ha⟩ := hx
     obtain ⟨b, hb⟩ := hy
-    exact ⟨a + b, by rw [map_add, map_add, ha, hb]⟩
+    exact ⟨a + b, by rw [map_add (f := _), map_add (f := _), ha, hb]⟩
 
 open Polynomial in
 private theorem lift_idem {T : Type} [CommRing T] (I : Ideal T) [HenselianRing T I]
@@ -84,7 +88,7 @@ private theorem exists_scalar {Λ T : Type} [CommRing Λ] [CommRing T] [Algebra 
     refine ⟨c + d, ?_⟩
     have := J.add_mem hc hd
     convert this using 1
-    rw [map_add]; ring
+    rw [map_add (f := _)]; ring
   | mul x y _ _ hx hy =>
     obtain ⟨c, hc⟩ := hx
     obtain ⟨d, hd⟩ := hy

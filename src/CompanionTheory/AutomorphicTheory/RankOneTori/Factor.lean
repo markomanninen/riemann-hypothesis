@@ -1,4 +1,8 @@
-import CompanionTheory.AutomorphicTheory.RankOneTori.MatGroupOf
+module
+
+public import CompanionTheory.AutomorphicTheory.RankOneTori.MatGroupOf
+
+@[expose] public section
 
 open MeasureTheory Matrix Formalism.QuantumDeterminants Formalism.MainNotions.S Formalism.MainNotions.S.Pv.AmpDDPf Formalism.FourierDecayAlt
 open scoped ENNReal InnerProductSpace
@@ -26,7 +30,8 @@ theorem coef_expand (L : LocBessel k r) (P : L.Hs →L[ℂ] L.Wp) (Q : L.Wq →L
   rw [← Finset.sum_smul]
   congr 1
   conv_lhs => rw [← (stdOrthonormalBasis ℂ L.Wq).sum_repr' η]
-  simp only [map_sum, map_smul, inner_sum, inner_smul_right]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, inner_sum, inner_smul_right]
 
 theorem int_coefF (L : LocBessel k r) {μG : Measure (Mt k r)} (hμG : IsHaarOn (UH (Hpk k r)) μG) {d : ℝ} (hd : 0 < d)
     (hSch : ∀ v w v' w' : L.Hs,
@@ -101,8 +106,8 @@ theorem cell_factor (L : LocBessel k r) {a : ℝ} {w0 : L.Hs} (hw1 : ⟪w0, w0�
       hp.2.2.2.1) hp.2.2.1.1
     simp only [besselIntg]
     rw [hF _ hx, coef_expand]
-    simp only [ContinuousLinearMap.finset_sum_comp, ContinuousLinearMap.comp_finset_sum, Finset.smul_sum]
-    rfl
+    ext x
+    simp [Finset.smul_sum, he, he']
   rw [h1, lamP, lamQ, Finset.sum_mul_sum, Finset.sum_smul]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Finset.sum_smul]

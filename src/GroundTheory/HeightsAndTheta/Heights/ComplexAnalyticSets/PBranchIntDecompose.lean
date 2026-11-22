@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StBranchIntDecompose
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StBranchProperAtPoint
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StBranchChartInt
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartIntSumOffHyperplane
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StBranchIntDecompose
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StBranchProperAtPoint
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StBranchChartInt
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartIntSumOffHyperplane
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -29,7 +34,7 @@ theorem BranchIntDecompose.proof (hPr : IndefiniteRowSideFullHecke.ComplexSets.B
     (hGen n (d + 1) J hJ hdim).2.1
   have hAf : IsFiniteProjection J hex.choose := hex.choose_spec
   have hvar : varInt J (d + 1) f ψ = chartInt J hex.choose f ψ := by
-    rw [varInt, dif_pos hex]
+    rw [varInt, dite_eq_left hex]
   have hbr : ∀ b, Integrable (chartDens J hex.choose ((γ b).image.indicator f) ψ) ∧
       chartInt J hex.choose ((γ b).image.indicator f) ψ =
         ReciprocityTheory.AnForm.maInt (fun k => ψ k ∘ (γ b).toFun) (f ∘ (γ b).toFun)

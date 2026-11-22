@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WHyp
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WHyp
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 open scoped NNReal ENNReal Pointwise
 
@@ -28,7 +33,7 @@ theorem integral_comp_unit_mul {F E : Type} [NontriviallyNormedField F] [Nontriv
     rw [hme.integral_map]; rfl
   have habs : A.absK (s : A.K) = (distribHaarChar A.K s : ℝ) := by
     unfold Et.absK
-    rw [dif_pos s.isUnit]
+    rw [dite_eq_left s.isUnit]
     congr 2
     ext; rfl
   rw [hint, hmap, integral_smul_measure, habs]
@@ -40,7 +45,7 @@ theorem pt_scale_eq_rg_mS : ∀ (F E : Type) [NontriviallyNormedField F] [Nontri
   obtain ⟨a, u⟩ := p
   have hs0 : A.absK (s : A.K) ≠ 0 := by
     unfold Et.absK
-    rw [dif_pos s.isUnit]
+    rw [dite_eq_left s.isUnit]
     exact_mod_cast (distribHaarChar_pos).ne'
   have key := integral_comp_unit_mul A ν s
     (fun b' => Φ (a * (s : A.K), b') * A.psiK ψ (x * b' * (u * ((s⁻¹ : A.Kˣ) : A.K))))

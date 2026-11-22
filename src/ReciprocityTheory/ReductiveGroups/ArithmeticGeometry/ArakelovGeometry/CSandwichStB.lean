@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CSandwichStA
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CSandwichStA
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ variable {Ω : Type} [Field Ω] [CharZero Ω] {κ : Type} [Fintype κ] {D : ℕ}
 
 def traceMat {r δ : ℕ} (D N : ℕ) (g : Fin r → Fin δ → MvPolynomial (Fin (D + 1)) ℤ) :
     Matrix (Fin (δ * (Finset.Nat.antidiagonalTuple (D + 1) N).card)) (Fin r) ℤ :=
-  Matrix.of fun p j => coeff (Finsupp.equivFunOnFinite.symm (adtEnum D N (finProdFinEquiv.symm p).2))
-    (g j (finProdFinEquiv.symm p).1)
+  Matrix.of fun p j => AddMonoidAlgebra.coeff (g j (finProdFinEquiv.symm p).1)
+    (Finsupp.equivFunOnFinite.symm (adtEnum D N (finProdFinEquiv.symm p).2))
 
 theorem eval_map_int {σ : Type*} (w : σ → ℂ) (p : MvPolynomial σ ℤ) :
     eval w (map (Int.castRingHom ℂ) p) = aeval w p := by
@@ -26,25 +30,25 @@ theorem aeval_eq_sum_traceMat {S : Type*} [CommRing S] {r δ N : ℕ}
       ∏ t, y t ^ adtEnum D N i t := by
   classical
   have hentry : ∀ i, traceMat D N g (finProdFinEquiv (l, i)) j =
-      coeff (Finsupp.equivFunOnFinite.symm (adtEnum D N i)) (g j l) := by
+      AddMonoidAlgebra.coeff (g j l) (Finsupp.equivFunOnFinite.symm (adtEnum D N i)) := by
     intro i; simp only [traceMat, Matrix.of_apply, Equiv.symm_apply_apply]
   simp only [hentry]
-  have hR : ∑ i, ((coeff (Finsupp.equivFunOnFinite.symm (adtEnum D N i)) (g j l) : ℤ) : S) *
+  have hR : ∑ i, ((AddMonoidAlgebra.coeff (g j l) (Finsupp.equivFunOnFinite.symm (adtEnum D N i)) : ℤ) : S) *
         ∏ t, y t ^ adtEnum D N i t =
       ∑ a ∈ Finset.Nat.antidiagonalTuple (D + 1) N,
-        ((coeff (Finsupp.equivFunOnFinite.symm a) (g j l) : ℤ) : S) * ∏ t, y t ^ a t := by
+        ((AddMonoidAlgebra.coeff (g j l) (Finsupp.equivFunOnFinite.symm a) : ℤ) : S) * ∏ t, y t ^ a t := by
     rw [← Finset.sum_coe_sort (Finset.Nat.antidiagonalTuple (D + 1) N)]
     exact (Finset.Nat.antidiagonalTuple (D + 1) N).equivFin.symm.sum_comp
       (fun a : (Finset.Nat.antidiagonalTuple (D + 1) N) =>
-        ((coeff (Finsupp.equivFunOnFinite.symm (a : Fin (D + 1) → ℕ)) (g j l) : ℤ) : S) *
+        ((AddMonoidAlgebra.coeff (g j l) (Finsupp.equivFunOnFinite.symm (a : Fin (D + 1) → ℕ)) : ℤ) : S) *
           ∏ t, y t ^ (a : Fin (D + 1) → ℕ) t)
   rw [hR, MvPolynomial.aeval_def, MvPolynomial.eval₂_eq']
   let e : (Fin (D + 1) → ℕ) ↪ (Fin (D + 1) →₀ ℕ) :=
     ⟨Finsupp.equivFunOnFinite.symm, Finsupp.equivFunOnFinite.symm.injective⟩
   have hmap : ∑ a ∈ Finset.Nat.antidiagonalTuple (D + 1) N,
-        ((coeff (Finsupp.equivFunOnFinite.symm a) (g j l) : ℤ) : S) * ∏ t, y t ^ a t =
+        ((AddMonoidAlgebra.coeff (g j l) (Finsupp.equivFunOnFinite.symm a) : ℤ) : S) * ∏ t, y t ^ a t =
       ∑ d ∈ (Finset.Nat.antidiagonalTuple (D + 1) N).map e,
-        algebraMap ℤ S (coeff d (g j l)) * ∏ t, y t ^ d t := by
+        algebraMap ℤ S (AddMonoidAlgebra.coeff (g j l) d) * ∏ t, y t ^ d t := by
     rw [Finset.sum_map]
     refine Finset.sum_congr rfl fun a _ => ?_
     simp [e]
@@ -86,7 +90,8 @@ theorem traceMat_injective {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} (hfr :
         rw [Submodule.coe_smul, smul_mul_assoc]
       rw [h1]
       show secTraceHom x e hfr (n + k) (∑ j, u j • (⟨_, hmemN j l⟩ : sec ℤ x (n + k))) = 0
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [map_zsmul]
       have h3 : ∀ j, secTraceHom x e hfr (n + k) ⟨_, hmemN j l⟩ = aeval (x ∘ e) (g j l) :=
         fun j => (hgv j l).symm
@@ -205,7 +210,7 @@ theorem sum_monoNormSq_traceMat {r δ N : ℕ} (g : Fin r → Fin δ → MvPolyn
     exact (Finset.Nat.antidiagonalTuple (D + 1) N).equivFin.symm.sum_comp
       (fun a : (Finset.Nat.antidiagonalTuple (D + 1) N) => F (a : Fin (D + 1) → ℕ))
   let C : (Fin (D + 1) → ℕ) → ℂ := fun a =>
-    ∑ j, ((coeff (Finsupp.equivFunOnFinite.symm a) (g j l) : ℤ) : ℂ) * c j
+    ∑ j, ((AddMonoidAlgebra.coeff (g j l) (Finsupp.equivFunOnFinite.symm a) : ℤ) : ℂ) * c j
   have hentry' : ∀ i, ((traceMat D N g).map (Int.cast : ℤ → ℂ) *ᵥ c) (finProdFinEquiv (l, i)) =
       C (adtEnum D N i) := by
     intro i
@@ -216,10 +221,10 @@ theorem sum_monoNormSq_traceMat {r δ N : ℕ} (g : Fin r → Fin δ → MvPolyn
         Equiv.symm_apply_apply, C]
   have hj : ∀ (j : Fin r) (w : Fin (D + 1) → ℂ), eval w (map (Int.castRingHom ℂ) (g j l)) =
       ∑ a ∈ Finset.Nat.antidiagonalTuple (D + 1) N,
-        ((coeff (Finsupp.equivFunOnFinite.symm a) (g j l) : ℤ) : ℂ) * monoC a w := by
+        ((AddMonoidAlgebra.coeff (g j l) (Finsupp.equivFunOnFinite.symm a) : ℤ) : ℂ) * monoC a w := by
     intro j w
     rw [eval_map_int, aeval_eq_sum_traceMat g j l (hg j l) w,
-      ← reidx (fun a => ((coeff (Finsupp.equivFunOnFinite.symm a) (g j l) : ℤ) : ℂ) * monoC a w)]
+      ← reidx (fun a => ((AddMonoidAlgebra.coeff (g j l) (Finsupp.equivFunOnFinite.symm a) : ℤ) : ℂ) * monoC a w)]
     refine Finset.sum_congr rfl fun i _ => ?_
     simp only [traceMat, Matrix.of_apply, Equiv.symm_apply_apply, monoC]
   have hint : ∀ w, ∑ j, c j * eval w (map (Int.castRingHom ℂ) (g j l)) =

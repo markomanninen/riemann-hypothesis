@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -42,7 +46,7 @@ theorem trace_eq_add_of_shortExact (K : Type) [Field K]
     simp only [LinearMap.comp_apply, hc', hs']
   calc LinearMap.trace K V b
       = LinearMap.trace K V ((b ∘ₗ i) ∘ₗ r) + LinearMap.trace K V ((b ∘ₗ s) ∘ₗ p) := by
-        rw [← map_add, ← hdec]
+        rw [← map_add (f := _), ← hdec]
     _ = LinearMap.trace K U a + LinearMap.trace K W c := by
         rw [LinearMap.trace_comp_comm' r (b ∘ₗ i), LinearMap.trace_comp_comm' p (b ∘ₗ s), h1, h2]
 

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsConstAlongSingleton
-import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
-import Development.WeilBound.ThetaLifts.Reductions.SiegelPar
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StdParEqFlag
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeviDecompositionGradedIsotropicFlagStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsConstAlongSingleton
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelPar
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StdParEqFlag
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeviDecompositionGradedIsotropicFlagStatement
+
+@[expose] public section
 
 noncomputable section
 

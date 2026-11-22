@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
 
 open Finset Equiv
 
@@ -38,15 +42,20 @@ theorem qminor_sum {A : Type} [Ring A] [Algebra ℂ A] {n q p : ℕ} (E : Fin n 
     simp [sub_sub]
 
 theorem prod_mem {V : Type} [AddCommGroup V] [Module ℂ V] (P : Submodule ℂ V) :
-    ∀ l : List (Module.End ℂ V), (∀ T ∈ l, ∀ v ∈ P, T v ∈ P) → (∃ T ∈ l, ∀ v, T v ∈ P) → ∀ v, l.prod v ∈ P
-  | [], _, h, _ => by simp at h
-  | T :: l, h1, h2, v => by
+    ∀ l : List (Module.End ℂ V), (∀ T ∈ l, ∀ v ∈ P, T v ∈ P) → (∃ T ∈ l, ∀ v, T v ∈ P) → ∀ v, l.prod v ∈ P := by
+  intro l
+  induction l with
+  | nil =>
+    intro _ h _
+    simp at h
+  | cons T l ih =>
+    intro h1 h2 v
     rw [List.prod_cons, Module.End.mul_apply]
     obtain ⟨S, hS, hS'⟩ := h2
     rcases List.mem_cons.mp hS with rfl | hS
     · exact hS' _
     · exact h1 T List.mem_cons_self _
-        (prod_mem P l (fun T hT => h1 T (List.mem_cons_of_mem _ hT)) ⟨S, hS, hS'⟩ v)
+        (ih (fun T hT => h1 T (List.mem_cons_of_mem _ hT)) ⟨S, hS, hS'⟩ v)
 
 variable {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V]
 
@@ -73,7 +82,8 @@ theorem mem_pplus (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ 
 theorem stab_pplus (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ V) (hE : GlRel E) {c d : Fin n}
     (hc : ε c = false) (hd : ε d = false) : ∀ v ∈ pplus ε E, E c d v ∈ pplus ε E := by
   rintro _ ⟨w, rfl⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Submodule.sum_mem _ fun i _ => ?_
   obtain ⟨⟨a, b⟩, ha, hb⟩ := i
   dsimp only at ha hb ⊢

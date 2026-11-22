@@ -1,21 +1,25 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
-import Formalism.LocalToGlobal.IndefiniteReal.FWExist
-import Formalism.LocalRingCardinality.DataExtra
-import Formalism.LocalRingCardinality.DataTies
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.PairingNondegenerateHolds
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
-import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqBotOrTopOfTensor
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsReframeVStdOfPosDef
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TensorMapDescent
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SpanMapNabKDelK
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.AtPlaceIffEqAtTau
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsInfFamFamily
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.NegBaseElementImNegBaseEmbedding
-import Development.AbelianVarietyTheory.Counterexamples.RotationExamples.OneLeAPlLast
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Formalism.LocalToGlobal.IndefiniteReal.FWExist
+public import Formalism.LocalRingCardinality.DataExtra
+public import Formalism.LocalRingCardinality.DataTies
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.PairingNondegenerateHolds
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqBotOrTopOfTensor
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsReframeVStdOfPosDef
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TensorMapDescent
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SpanMapNabKDelK
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.AtPlaceIffEqAtTau
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsInfFamFamily
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.NegBaseElementImNegBaseEmbedding
+public import Development.AbelianVarietyTheory.Counterexamples.RotationExamples.OneLeAPlLast
+
+@[expose] public section
 
 open MvPolynomial Formalism.BasicNotions Formalism.L2.DIV
 open scoped Matrix ComplexOrder
@@ -113,7 +117,8 @@ variable [StarRing K] (hφ : ∀ x, φ (star x) = starRingEnd ℂ (φ x))
 include hφ
 
 theorem fockS_map {σ : Type} (f g : MvPolynomial σ K) : fockS (map φ f) (map φ g) = φ (fockS f g) := by
-  rw [fockS_eq_sum _ _ f.support (support_map_subset _ _), fockS, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [fockS_eq_sum _ _ f.support (support_map_subset _ _), fockS, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   simp [coeff_map, hφ]
 
@@ -154,7 +159,8 @@ theorem pairK_pos (lam : ι → DomWeight n) {G : ι → Matrix (Fin n) (Fin n) 
   have h2 : ∀ (P : VV ℂ lam →ₗ⋆[ℂ] VV ℂ lam →ₗ[ℂ] ℂ) (c : VVIdx lam → ℂ) (b : VVIdx lam → VV ℂ lam),
       P (∑ i, c i • b i) (∑ i, c i • b i) = star c ⬝ᵥ (Matrix.of fun i j => P (b i) (b j)) *ᵥ c := by
     intro P c b
-    simp only [dotProduct, Matrix.mulVec, Matrix.of_apply, map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, Matrix.mulVec, Matrix.of_apply, map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ,
       LinearMap.smul_apply, smul_eq_mul, Finset.mul_sum, Pi.star_apply, starRingEnd_apply, RingHom.id_apply]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -183,7 +189,7 @@ def toHilb : VV ℂ lam ≃ₗ[ℂ] Hilb lam hG := LinearEquiv.refl ℂ (VV ℂ 
     by_cases hx : (toHilb lam hG).symm x = 0
     · simp [hx]
     · exact (Complex.le_def.1 (pairK_pos lam hG _ hx).le).1
-  add_left x y z := by rw [map_add, map_add, LinearMap.add_apply]
+  add_left x y z := by rw [map_add (f := _), map_add (f := _), LinearMap.add_apply]
   smul_left x y r := by rw [map_smul, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul]
   definite x hx := by
     by_contra h
@@ -213,11 +219,11 @@ theorem rhoH_toHilb (g : ι → GL (Fin n) ℂ) (x : VV ℂ lam) :
 omit [Fintype ι] in
 theorem continuous_coeff_blockAct {X : Type} [TopologicalSpace X] (M : X → ι → Matrix (Fin n) (Fin n) ℂ)
     (hM : ∀ τ, Continuous fun x => M x τ) (F : MvPolynomial (ι × Fin n × Fin n) ℂ) :
-    ∀ m, Continuous fun x => coeff m (Formalism.GradedWeylDivisibility.blockAct ℂ (M x) F) := by
+    ∀ m, Continuous fun x => AddMonoidAlgebra.coeff (Formalism.GradedWeylDivisibility.blockAct ℂ (M x) F) m := by
   classical
   induction F using MvPolynomial.induction_on with
   | C a => intro m; simp only [algHom_C]; exact continuous_const
-  | add p q hp hq => intro m; simp only [map_add, coeff_add]; exact (hp m).add (hq m)
+  | add p q hp hq => intro m; simp only [map_add (f := _), MvPolynomial.coeff_add]; exact (hp m).add (hq m)
   | mul_X p v hp =>
     intro m
     simp only [map_mul, coeff_mul]
@@ -231,7 +237,7 @@ theorem continuous_rhoH {X : Type} [TopologicalSpace X] (A : X → ι → GL (Fi
   obtain ⟨v, rfl⟩ := (toHilb lam hG).surjective v
   let L : Hilb lam hG →ₗ[ℂ] ((ι × Fin n × Fin n →₀ ℕ) → ℂ) :=
     LinearMap.pi fun m => lcoeff ℂ m ∘ₗ (VV ℂ lam).subtype ∘ₗ (toHilb lam hG).symm.toLinearMap
-  have hL : ∀ y m, L (toHilb lam hG y) m = coeff m (y : Pol ℂ ι n) := fun _ _ => rfl
+  have hL : ∀ y m, L (toHilb lam hG y) m = AddMonoidAlgebra.coeff (y : Pol ℂ ι n) m := fun _ _ => rfl
   have hk : LinearMap.ker L = ⊥ := by
     rw [LinearMap.ker_eq_bot']
     intro y hy

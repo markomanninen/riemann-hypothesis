@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex TensorProduct GlobalTheory.EtC
 
 noncomputable section
@@ -71,7 +76,7 @@ theorem HC_X_bijective : ∀ (R : Type) [CommRing R] (F : Shv R) (n : ℤ), ∃ 
   · refine ⟨(ofFam (E := E.unop) g : Cochain ((chains R).obj E.unop) (res R F) n), funext fun k => ?_⟩
     change (chainsXIso R E.unop k).inv ≫ (ofFam g).v (-(k : ℤ)) (n - k) (by omega) = g k
     simp only [ofFam, Cochain.mk_v]
-    rw [dif_pos (by omega), blk_eq g k _ (by omega)]
+    rw [dite_eq_left (by omega), blk_eq g k _ (by omega)]
     erw [Iso.inv_hom_id_assoc]
 
 end GlobalTheory.EtC.HCTerms

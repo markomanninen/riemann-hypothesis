@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,7 +83,8 @@ theorem cas_tensor {K I J : Type} [Fintype K] [Fintype I] [DecidableEq I] [Finty
           ∑ i', ∑ j', c k j' (Function.update u i j i') •
             W (Function.update (Function.update u i j) i' j') x)) := by
     intro k u x
-    simp only [hc, map_add, map_sum, map_smul, add_assoc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hc, map_add (f := _), map_sum, map_smul, add_assoc]
   have hΨ' : ∀ u v, φ (W u (ι v)) = ⟪Ψ u, v⟫_ℂ := fun u v => (hΨ u v).symm
   have hΨe : ∀ k u v, φ (W u (e k (ι v))) = ⟪Ψ u, ρ k v⟫_ℂ := by
     intro k u v
@@ -87,12 +92,14 @@ theorem cas_tensor {K I J : Type} [Fintype K] [Fintype I] [DecidableEq I] [Finty
   have hcas : ∀ v, ∑ k, e k (e (σ k) (ι v)) = (c0 : ℂ) • ι v := by
     intro v
     have h := congrArg ι (LinearMap.congr_fun hc0 v)
-    simpa only [LinearMap.sum_apply, Module.End.mul_apply, map_sum, hι, LinearMap.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [LinearMap.sum_apply, Module.End.mul_apply, map_sum, hι, LinearMap.smul_apply,
       Module.End.one_apply, map_smul] using h
   have hA : ∀ u v, ∑ k, φ (W u (e k (e (σ k) (ι v)))) = (c0 : ℂ) * ⟪Ψ u, v⟫_ℂ := by
     intro u v
     calc ∑ k, φ (W u (e k (e (σ k) (ι v)))) = φ (W u (∑ k, e k (e (σ k) (ι v)))) := by
-          simp only [map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [map_sum]
       _ = (c0 : ℂ) * ⟪Ψ u, v⟫_ℂ := by rw [hcas, map_smul, map_smul, hΨ', smul_eq_mul]
   have hF : ∀ w, ∑ k, (⟪PositivityTheory.KReal.positionA (c (σ k)) Ψ w, ρ (σ k) (Ψ w)⟫_ℂ +
       ⟪PositivityTheory.KReal.positionA (c k) Ψ w, ρ k (Ψ w)⟫_ℂ +
@@ -100,7 +107,8 @@ theorem cas_tensor {K I J : Type} [Fintype K] [Fintype I] [DecidableEq I] [Finty
     intro w
     have h := hφ w (Ψ w)
     have h' := hA w (Ψ w)
-    simp only [map_sub, LinearMap.sum_apply, map_sum, Module.End.mul_apply, hk, map_add, map_smul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, LinearMap.sum_apply, map_sum, Module.End.mul_apply, hk, map_add (f := _), map_smul,
       smul_eq_mul, hΨ', hΨe, h3, Matrix.conjTranspose_apply, starRingEnd_apply, star_star,
       Finset.mul_sum, mul_add, Finset.sum_add_distrib] at h
     simp only [PositivityTheory.KReal.positionA, sum_inner, inner_smul_left, h3, Matrix.conjTranspose_apply,
@@ -149,7 +157,8 @@ theorem cas_tensor {K I J : Type} [Fintype K] [Fintype I] [DecidableEq I] [Finty
       ⟪Ψ (Function.update w s j), ρ k (Ψ w)⟫_ℂ) := by
     intro s w
     rw [hH]
-    simp only [map_sum, map_mul, Complex.conj_conj, inner_conj_symm, inner_smul_right, ← hadj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, Complex.conj_conj, inner_conj_symm, inner_smul_right, ← hadj]
   have hT2 : ∑ k, PositivityTheory.KReal.formT (PositivityTheory.KReal.positionA (c k) Ψ) (fun w => ρ k (Ψ w)) =
       ∑ w, ∑ s, ∑ k, ∑ j, starRingEnd ℂ (c k (w s) j) * ⟪Ψ (Function.update w s j), ρ k (Ψ w)⟫_ℂ := by
     simp only [PositivityTheory.KReal.formT, PositivityTheory.KReal.positionA, sum_inner, inner_smul_left]
@@ -160,7 +169,8 @@ theorem cas_tensor {K I J : Type} [Fintype K] [Fintype I] [DecidableEq I] [Finty
     rw [hT2, Finset.sum_comm]
     have e1 : ∑ w, ∑ s, H s w = starRingEnd ℂ (∑ w, ∑ s, ∑ k, ∑ j, starRingEnd ℂ (c k (w s) j) *
         ⟪Ψ (Function.update w s j), ρ k (Ψ w)⟫_ℂ) := by
-      simp only [hHc, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hHc, map_sum]
     rw [e1, Complex.conj_re]
   have hQle : ∑ s, ∑ w, (q s w).re ≤ 0 := by
     have e2 : ∑ s, ∑ w, (q s w).re = (Fintype.card I : ℝ) * (∑ s, ∑ w, H s w).re := by

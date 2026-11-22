@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.SplitProd
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.ExistsUpperProjectionInverseTranspose
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.SplitProd
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.ExistsUpperProjectionInverseTranspose
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -136,7 +140,7 @@ theorem pRam_low (hϖ : IsUnif ϖ) (y : Matrix (Fin a') (Fin a) k) : pRam a a' �
     if ∀ i j, valuation k (y i j) ≤ valuation k ((ϖ : k) ^ c) then 1 else 0 := by
   have e := low_X (k := k) y
   rw [pRam, bigZetaIntegral_eq, gdet_low, bigF_std hϖ (by
-    ext i j; rw [submatrix_apply, eA, id]; erw [e]; simp [one_apply, eq_comm])]
+    ext i j; rw [submatrix_apply, eA, id]; erw [e]; simp [Matrix.one_apply, eq_comm])]
   simp only [map_one, Units.val_one, apow_one, one_mul]
   refine if_congr ⟨fun h i j => ?_, fun h i j => ?_⟩ rfl rfl
   · have := h j (finSumFinEquiv (Sum.inr i))
@@ -144,7 +148,7 @@ theorem pRam_low (hϖ : IsUnif ϖ) (y : Matrix (Fin a') (Fin a) k) : pRam a a' �
     simpa using this
   · obtain ⟨j | j, rfl⟩ := finSumFinEquiv.surjective j
     · erw [e, show finSumFinEquiv (Sum.inl j) = eA a a' j from rfl, rad_e]
-      simp only [fromBlocks_apply₁₁, one_apply]; split_ifs <;> simp
+      simp only [fromBlocks_apply₁₁, Matrix.one_apply]; split_ifs <;> simp
     · erw [e, rad_AB]; simpa using h j i
 
 open Classical in
@@ -163,7 +167,7 @@ theorem pRam'_low (y : Matrix (Fin a') (Fin a) k) : pRam' a a' ν α (std ν ϖ 
   · obtain ⟨j | j, rfl⟩ := finSumFinEquiv.surjective j
     · erw [e, rad_BA]; simpa using h i j
     · erw [e, show finSumFinEquiv (Sum.inr j) = eB a a' j from rfl, rad_e]
-      simp only [fromBlocks_apply₂₂, one_apply]; split_ifs <;> simp
+      simp only [fromBlocks_apply₂₂, Matrix.one_apply]; split_ifs <;> simp
 
 theorem pRam_ne (hϖ : IsUnif ϖ) : pRam a a' ϖ ν β (std ν ϖ c (eA a a')) ≠ 0 := fun h => by
   have := congrFun h (low 0)

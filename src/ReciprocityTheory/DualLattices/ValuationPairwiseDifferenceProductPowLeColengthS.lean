@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.ColengthSqBlockVandermonde
+module
+
+public import ReciprocityTheory.DualLattices.ColengthSqBlockVandermonde
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem infinite_residueField [IsAlgClosed C] :
   have hr := congrArg (IsLocalRing.residue v.valuationSubring) hx
   have hpc := FiniteField.pow_card (IsLocalRing.residue v.valuationSubring ⟨α, hmem⟩)
   rw [← hq] at hpc
-  rw [map_pow, map_add, map_one, hpc] at hr
+  rw [map_pow, map_add (f := _), map_one, hpc] at hr
   have h10 : (1 : IsLocalRing.ResidueField v.valuationSubring) = 0 := by
     have := congrArg (· - IsLocalRing.residue v.valuationSubring ⟨α, hmem⟩) hr
     simpa using this.symm
@@ -87,7 +91,8 @@ theorem eval_det_gen {K : Type} [CommRing K] {ι σ : Type} [Fintype ι] [Decida
   rw [RingHom.map_det]
   congr 1
   ext i j
-  simp [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum]
 
 theorem exists_generic [IsAlgClosed C] {ι σ T : Type} [Fintype ι] [DecidableEq ι] [Fintype σ]
     [Fintype T] (Q : T → Matrix ι σ C) (hQ : ∀ t i r, v (Q t i r) ≤ 1)
@@ -130,7 +135,8 @@ theorem exists_generic [IsAlgClosed C] {ι σ T : Type} [Fintype ι] [DecidableE
       calc ∑ r, IsLocalRing.residue v.valuationSubring (QO t i r) *
             IsLocalRing.residue v.valuationSubring (dO r j)
           = IsLocalRing.residue v.valuationSubring (∑ r, QO t i r * dO r j) := by
-            simp [map_sum, map_mul]
+            set_option synthInstance.maxHeartbeats 100000 in
+              simp [map_sum, map_mul]
         _ = (1 : Matrix ι ι (IsLocalRing.ResidueField v.valuationSubring)) i j := by
             rw [hO]
             by_cases hij' : i = j
@@ -154,7 +160,8 @@ theorem exists_generic [IsAlgClosed C] {ι σ T : Type} [Fintype ι] [DecidableE
     rw [RingHom.map_det]
     congr 1
     ext i j
-    simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.mul_apply, Matrix.of_apply, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.mul_apply, Matrix.of_apply, map_sum,
       map_mul]
     rfl
   rw [hcoe]
@@ -167,7 +174,8 @@ theorem exists_generic [IsAlgClosed C] {ι σ T : Type} [Fintype ι] [DecidableE
   have hmat : (IsLocalRing.residue v.valuationSubring).mapMatrix (QO t * cO) =
       Matrix.of fun i j => ∑ r, Qk t i r * z (r, j) := by
     ext i j
-    simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.mul_apply, Matrix.of_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.mul_apply, Matrix.of_apply,
       map_sum, map_mul]
     refine Finset.sum_congr rfl fun r _ => ?_
     rw [← hy (r, j)]
@@ -204,8 +212,8 @@ theorem v_det_le_of_cols {ι : Type} [Fintype ι] [DecidableEq ι] (L : Lat v ι
 
 end DeterminantValuationBounds
 
-open DeterminantValuationBounds in
 
+open DeterminantValuationBounds in
 theorem valuation_pairwiseDifferenceProduct_pow_le_colength_sq (C : Type) [Field C] [IsAlgClosed C] (v : Valuation C NNReal) (n : ℕ)
     (a : Fin n → C) (s : ℕ) (M S : Lat v (Fin n × Fin s)) (Mτ : Fin n → Lat v (Fin s))
     (hM : IsLaStable a M) (hτ : ∀ τ, (Mτ τ).pts = projPts M.pts τ) (hS : S.pts = sumPts Mτ) :
@@ -313,7 +321,7 @@ theorem valuation_pairwiseDifferenceProduct_pow_le_colength_sq (C : Type) [Field
       simp [R, Matrix.mul_apply, Matrix.mulVec, dotProduct]
     show (Mτ τ).B⁻¹ * R τ * _ = 1
     rw [Matrix.mul_assoc, hRd, hB]
-  obtain ⟨c, hcint, hcdet⟩ := exists_generic Q (fun τ i y => hQint τ i y) hsec
+  obtain ⟨c, hcint, hcdet⟩ := DeterminantValuationBounds.exists_generic Q hQint hsec
   let X : Matrix (Fin n × Fin s) (Fin n × Fin s) C :=
     Matrix.of fun x y => a x.1 ^ (y.1 : ℕ) * (M.B * c) x y.2
   have hXcols : ∀ y, (fun x => X x y) ∈ M.pts := by
@@ -322,8 +330,8 @@ theorem valuation_pairwiseDifferenceProduct_pow_le_colength_sq (C : Type) [Field
       refine ⟨fun r => c r y.2, fun r => hcint r y.2, ?_⟩
       ext x
       simp [Matrix.mul_apply, Matrix.mulVec, dotProduct]
-    exact pow_stable hM y.1 hw
-  have hle : v X.det ≤ v M.B.det := v_det_le_of_cols M X hXcols
+    exact DeterminantValuationBounds.pow_stable hM y.1 hw
+  have hle : v X.det ≤ v M.B.det := DeterminantValuationBounds.v_det_le_of_cols M X hXcols
   let G : Fin n → Matrix (Fin s) (Fin s) C := fun τ => (Mτ τ).B * (Q τ * c)
   have hG : ∀ τ i j, (M.B * c) (τ, i) j = G τ i j := by
     intro τ i j

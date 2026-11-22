@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.InterlacingEquivariance
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SplitLastBlockActX
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.InterlacingEquivariance
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SplitLastBlockActX
+
+@[expose] public section
 
 open MvPolynomial NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.DIV Formalism.L2.Col GlobalTheory.IndefiniteRowSideFullHecke.InterlacingEquivariance GlobalTheory.BranchFormula
 
@@ -13,7 +17,7 @@ section Top
 variable {σ A : Type} [CommRing A] (w : σ → ℕ)
 
 def TopTerm (f : MvPolynomial σ A) (d : σ →₀ ℕ) (c : A) : Prop :=
-  coeff d f = c ∧ ∀ m ∈ f.support, m = d ∨ Finsupp.weight w m < Finsupp.weight w d
+  AddMonoidAlgebra.coeff f d = c ∧ ∀ m ∈ f.support, m = d ∨ Finsupp.weight w m < Finsupp.weight w d
 
 variable {w}
 
@@ -35,7 +39,7 @@ theorem TopTerm.mul {f g : MvPolynomial σ A} {d e : σ →₀ ℕ} {c c' : A} (
       have hy := hg.2 y (mem_support_iff.2 (right_ne_zero_of_mul h0))
       have hs : x + y = d + e := by simpa using hxy
       have hw := congrArg (Finsupp.weight w) hs
-      rw [map_add, map_add] at hw
+      rw [map_add (f := _), map_add (f := _)] at hw
       rcases hx with rfl | hx <;> rcases hy with rfl | hy
       · exact hne rfl
       all_goals omega
@@ -43,7 +47,7 @@ theorem TopTerm.mul {f g : MvPolynomial σ A} {d e : σ →₀ ℕ} {c c' : A} (
       exact absurd (by simp) h
   · intro m hm
     obtain ⟨x, hx, y, hy, rfl⟩ := Finset.mem_add.1 (support_mul f g hm)
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     rcases hf.2 x hx with rfl | hx <;> rcases hg.2 y hy with rfl | hy
     · exact Or.inl rfl
     all_goals right; omega
@@ -180,9 +184,9 @@ theorem coefLast_xi : ∀ (K : Type) [Field K] (N n : ℕ) (hN : N = n + 1) (lam
   have hsp : ∀ i : Fin n, _ := fun i : Fin n =>
     split_lp K hN (k := i.val + 1) i.2 (by have := i.2; omega) (by have := i.2; omega)
   simp only [hsp]
-  refine Eq.trans (congrArg (fun e => coeff e _) ?_) (key.trans ?_)
+  refine Eq.trans (congrArg (fun e => AddMonoidAlgebra.coeff _ e) ?_) (key.trans ?_)
   · ext ⟨u, s⟩
-    simp [Br.bExp, Finsupp.finset_sum_apply, Finsupp.single_apply]
+    simp [Br.bExp, Finsupp.finsetSum_apply, Finsupp.single_apply]
   · rw [Finset.prod_mul_distrib, prod_shift (lp K n) (lp_zero K) fun s => (Br.bBr hN lam sg s).toNat,
       ← Finset.prod_mul_distrib, extremal, Formalism.GradedWeylDivisibility.hw, map_prod]
     refine Finset.prod_congr rfl fun i _ => ?_

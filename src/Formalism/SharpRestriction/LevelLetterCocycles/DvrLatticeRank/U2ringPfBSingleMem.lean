@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.SecondPropositionRingAll
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.BlockProductRing
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.DvdOfCoeffSubstXPowNeZero
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfB
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.SecondPropositionRingAll
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.BlockProductRing
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.DvdOfCoeffSubstXPowNeZero
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfB
+
+@[expose] public section
 
 noncomputable section
 

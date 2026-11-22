@@ -1,6 +1,10 @@
-import Formalism.LocalRingCardinality.DataParams
-import Formalism.LocalRingCardinality.DataGatTies
-import Formalism.SharpRestriction.GrowthBounds.ObjPol
+module
+
+public import Formalism.LocalRingCardinality.DataParams
+public import Formalism.LocalRingCardinality.DataGatTies
+public import Formalism.SharpRestriction.GrowthBounds.ObjPol
+
+@[expose] public section
 
 open Formalism.MainNotions.G Formalism.FrobeniusOrbits
 
@@ -129,8 +133,8 @@ theorem columnWeight_spread_eq (u : D.what₂.Word) (τ : D.what₂.Tau) :
   have h1 := (D.fm u).lam_eq 0 (Nat.zero_le _) τ (lamLst D)
   have c0 : (lamFst D).1 < D.R.k := by simp only [lamFst]; omega
   have c1 : (lamLst D).1 < D.R.k := by simp only [lamLst]; omega
-  rw [dif_pos c0] at h0
-  rw [dif_pos c1] at h1
+  rw [dite_eq_left c0] at h0
+  rw [dite_eq_left c1] at h1
   simp only [hcToWeightQ, rhoVec, lamFst, lamLst] at h0 h1
   rw [D.hcW_first u τ (by omega)] at h0
   rw [D.hcW_last u τ (by omega)] at h1
@@ -147,11 +151,6 @@ theorem columnWeight_spread_eq (u : D.what₂.Word) (τ : D.what₂.Tau) :
   have := congrArg (fun q : ℚ => (q : ℝ)) hq
   push_cast at this ⊢
   linarith
-
-theorem columnWeight_spread_nonneg (u : D.what₂.Word) (τ : D.what₂.Tau) :
-    0 ≤ ((D.fm u).lam 0 τ).w (lamFst D) - ((D.fm u).lam 0 τ).w (lamLst D) := by
-  have := ((D.fm u).lam 0 τ).anti (show lamFst D ≤ lamLst D from Nat.zero_le _)
-  omega
 
 variable {L : SizeData₂ D}
 

@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SzRowAndImp
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SzRowEtaBounds
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SzRowEtaLeW
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RbSNumeric
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SzRowAndImp
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SzRowEtaBounds
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SzRowEtaLeW
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RbSNumeric
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.LevelStarExponents Formalism.MainNotions Formalism.MainNotions.Inhab GlobalTheory.EX NumberField
 

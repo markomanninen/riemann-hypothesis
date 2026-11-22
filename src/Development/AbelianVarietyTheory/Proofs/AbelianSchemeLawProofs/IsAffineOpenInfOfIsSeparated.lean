@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.MemRangeRTensorOfForallDual
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.MemRangeRTensorOfForallDual
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
@@ -19,7 +23,7 @@ theorem lid_rTensor_lTensor {R C A B : Type} [CommRing R] [AddCommGroup C] [Modu
   induction w using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem apply_lid_rTensor {R C B : Type} [CommRing R] [AddCommGroup C] [Module R C]
     [AddCommGroup B] [Module R B] (l : C →ₗ[R] R) (f : B →ₗ[R] R) (w : C ⊗[R] B) :
@@ -27,7 +31,7 @@ theorem apply_lid_rTensor {R C B : Type} [CommRing R] [AddCommGroup C] [Module R
   induction w using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [mul_comm]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 variable {S X Y Z : Scheme.{0}} {p : Z ⟶ X} {q : Z ⟶ Y} {iX : X ⟶ S} {iY : Y ⟶ S}
   (H : IsPullback p q iX iY) {I : Type} {V : I → Z.Opens} {φ : ∀ a b, Γ(Z, V a ⊓ V b)}
@@ -217,7 +221,7 @@ theorem kuenneth_injective :
   have hco : IsCocycle V φ := by
     intro a b d N ha hb hd
     have := congrArg (rs (le_inf (le_inf ha hb) hd)) (hφ a b d)
-    rw [map_add] at this
+    rw [map_add (f := _)] at this
     exact (congrArg₂ _ (rs_rs _ _ _) (rs_rs _ _ _)).symm.trans (this.trans (rs_rs _ _ _))
   let y : Spec (CommRingCat.of K) ⟶ Y.left := y₀.left
   have hy : y ≫ Y.hom = 𝟙 _ := Over.w y₀

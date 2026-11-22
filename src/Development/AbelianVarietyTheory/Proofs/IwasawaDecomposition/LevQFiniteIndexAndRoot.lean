@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PredMemGamRanks
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemParahoricOfTrivialReduction
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntAtNatCast
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PredMemGamRanks
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemParahoricOfTrivialReduction
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntAtNatCast
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.Col Formalism.L2.DIV GlobalTheory.CongLevel GlobalTheory.GO.ChRoot
 
@@ -81,7 +85,8 @@ theorem finiteIndex_of_cong {n c : ℕ} (hc : (c : E) ≠ 0) (H : Subgroup (GLin
     have e2 : ((c : E)⁻¹ • (b.1 x - a.1 x)) l =
         ∑ i, x i * ((c : E)⁻¹ * (b.1 (Pi.single i 1) l - a.1 (Pi.single i 1) l)) := by
       conv_lhs => rw [ex]
-      simp only [map_sum, map_smul, Pi.smul_apply, Pi.sub_apply, Finset.sum_apply, smul_eq_mul, ← Finset.sum_sub_distrib,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, Pi.smul_apply, Pi.sub_apply, Finset.sum_apply, smul_eq_mul, ← Finset.sum_sub_distrib,
         Finset.mul_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       ring
@@ -99,8 +104,8 @@ theorem natCast_smul_mem {N : ℕ} (L : Submodule (𝓞 E) (Sp E N)) (c : ℕ) {
   rw [Nat.cast_smul_eq_nsmul]
   exact nsmul_mem hx c
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem stab_of_cong {N q : ℕ} (hq : (q : E) ≠ 0) (L : Submodule (𝓞 E) (Sp E N)) (g : Sp E N ≃ₗ[E] Sp E N)
     (h1 : ∀ x ∈ L, (q : E)⁻¹ • (g x - x) ∈ L) (h2 : ∀ x ∈ L, (q : E)⁻¹ • (g⁻¹ x - x) ∈ L) : g ∈ stabL E N L := by
   have key : ∀ g : Sp E N ≃ₗ[E] Sp E N, (∀ x ∈ L, (q : E)⁻¹ • (g x - x) ∈ L) → ∀ x ∈ L, g x ∈ L := by
@@ -121,7 +126,7 @@ theorem conj_extE_cong {n c q j : ℕ} (hq : (q : E) ≠ 0) (ex : ℕ → ℕ) (
   convert h1 using 1
   have e : (h⁻¹ * extE c κ * h) x - x = h⁻¹ (Loc.inX E n c (κ (resX c (h x)) - resX c (h x))) := by
     show h⁻¹ (extE c κ (h x)) - x = _
-    rw [extE_apply, map_add, show h⁻¹ (h x) = x from LinearEquiv.symm_apply_apply _ x, add_sub_cancel_left]
+    rw [extE_apply, map_add (f := _), show h⁻¹ (h x) = x from LinearEquiv.symm_apply_apply _ x, add_sub_cancel_left]
   rw [e]
   simp only [map_smul, ← smul_sub, smul_smul]
   congr 1

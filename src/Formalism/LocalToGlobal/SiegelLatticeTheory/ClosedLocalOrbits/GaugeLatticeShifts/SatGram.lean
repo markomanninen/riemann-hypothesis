@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PoincareConstantEq
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.MassDataInst
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ClassCountIdx
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.GenericRatioOfBoundHolds
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ColPhaseCut
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NormCoreGamProdSum
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NormCorePsiNatEquiv
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramLoc
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PoincareConstantEq
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.MassDataInst
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ClassCountIdx
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.GenericRatioOfBoundHolds
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ColPhaseCut
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NormCoreGamProdSum
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NormCorePsiNatEquiv
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -200,7 +204,8 @@ theorem resV_joint : Function.Surjective
   apply Subtype.ext
   rw [rO_coe]
   show rV hR w (prV (E := X.B.I.E) w.1 (∑ v : gPl X, (1 : X.B.I.E) ⊗ₜ[X.B.I.F] afsplitI v.1 (o v : v.1.adicCompletion X.B.I.F))) = _
-  rw [map_sum, Finset.sum_eq_single w]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single w]
   · rw [afsplit_prV_tmul, afsplitI_self]; exact (rV_spec hR w).2.1 _
   · intro v _ hvw
     rw [afsplit_prV_tmul, afsplitI_ne v.1 w.1 (fun h => hvw (Subtype.ext h.symm)), TensorProduct.tmul_zero]
@@ -221,7 +226,7 @@ theorem psiEf_zero : X.psiEf 0 = 1 := X.psiEf_int 0 (zero_mem _)
 
 theorem psiLoc_add (v : HeightOneSpectrum (𝓞 X.B.I.F)) (a b : v.adicCompletion X.B.I.F) :
     psiLoc X v (a + b) = psiLoc X v a * psiLoc X v b := by
-  simp only [psiLoc, map_add, TensorProduct.tmul_add, mul_add, Formalism.L2.SG.HidaSetting.divN, X.psiEf_add]
+  simp only [psiLoc, map_add (f := _), TensorProduct.tmul_add, mul_add, Formalism.L2.SG.HidaSetting.divN, X.psiEf_add]
 
 theorem psiLoc_zero (v : HeightOneSpectrum (𝓞 X.B.I.F)) : psiLoc X v 0 = 1 := by
   simp only [psiLoc, map_zero, TensorProduct.tmul_zero, mul_zero, Formalism.L2.SG.HidaSetting.divN, psiEf_zero]
@@ -273,7 +278,7 @@ def psiV (v : gPl X) : AddChar (IsLocalRing.ResidueField ↥(v.1.adicCompletionI
     rw [this]; push_cast; exact psiLoc_zero v.1
   map_add_eq_mul' a b := by
     have := psiLoc_wd hU v (liftR v (a + b)) (liftR v a + liftR v b)
-      (by rw [liftR_spec, map_add, liftR_spec, liftR_spec])
+      (by rw [liftR_spec, map_add (f := _), liftR_spec, liftR_spec])
     rw [this]; push_cast; exact psiLoc_add v.1 _ _
 
 theorem psiV_apply (v : gPl X) (o : ↥(v.1.adicCompletionIntegers X.B.I.F)) :
@@ -301,7 +306,8 @@ def sumS (o : ∀ v : gPl X, v.1.adicCompletion X.B.I.F) : X.B.I.E ⊗[X.B.I.F] 
 theorem prV_sumS (o : ∀ v : gPl X, v.1.adicCompletion X.B.I.F) (w : gPl X) :
     prV (E := X.B.I.E) w.1 (sumS o) = prV (E := X.B.I.E) w.1 X.ew * ((1 : X.B.I.E) ⊗ₜ[X.B.I.F] o w) := by
   unfold sumS
-  rw [map_sum, Finset.sum_eq_single w]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single w]
   · rw [map_mul, afsplit_prV_tmul, afsplitI_self]
   · intro v _ hvw
     rw [map_mul, afsplit_prV_tmul, afsplitI_ne v.1 w.1 (fun h => hvw (Subtype.ext h.symm)),
@@ -394,8 +400,8 @@ theorem reduction_additive_char_ne_one (hP : PsiCond X) (v : (reductionTypedPlac
   rw [psiV_apply] at h2
   exact hne h2
 
-include hR hU hC in
 
+include hR hU hC in
 theorem typedRed_exists (hP : PsiCond X) : ∃ TR : TypedRed X, ∀ v, TR.psi0 v ≠ 1 :=
   ⟨reductionTypedPlaces hR hU hC, reduction_additive_char_ne_one hR hU hC hP⟩
 
@@ -408,8 +414,8 @@ open Formalism.L2.SG.Full Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef
 variable {D : D7} {X : HidaSetting D} (Y : Full X)
 
 theorem gt_mk {u' : D.what₂.Word}
-    {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} {F0 : LFlag (VS D) D.R.rS T}
-    {P : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) → Prop} (hG : GFun Λ F0 P) (x : Carrier P) :
+    {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} {F0 : LFlag (D.sp.Y 0) D.R.rS T}
+    {P : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E) → Prop} (hG : GFun Λ F0 P) (x : Carrier P) :
     TermDef.Gt Λ F0 P (TermDef.mk Λ F0 P x) = Gval F0 x.1 := by
   unfold TermDef.Gt TermDef.mk
   have h : Quot.mk (Rel Λ F0 P) (Quot.out (Quot.mk (Rel Λ F0 P) x)) = Quot.mk (Rel Λ F0 P) x := Quot.out_eq _
@@ -439,8 +445,8 @@ theorem corankPos_tO (u u' : D.what₂.Word) : (Y.tO u u').CorankPos := by
   have hGv : Gval (lf D (X.Fu u)) t.frame ≠ 0 := by
     rw [← gterm_G Y t]
     intro h; apply hG; show TermOp.Gt t = 0; unfold TermOp.Gt; rw [if_pos h]
-  exact Formalism.L2.SG.Closed.CorankPosG_holds D.host.E (VS D) D.R.rS D.R.k (Formalism.L2.SG.Corank.finrank_VS D) t.lam
-    hΛ.2.1.1 _ _ (lf D (X.Fu u)) t.frame t'.frame (t'.lin * t.lin⁻¹) hΛ.2.1.2.2.1 t.rep.2.2.2.2.1 hGv
+  exact pair_corank_pos D.host.E (VS D) D.R.rS D.R.k (Formalism.L2.SG.Corank.finrank_VS D) t.lam
+    hΛ.1.1 _ _ (lf D (X.Fu u)) t.frame t'.frame (t'.lin * t.lin⁻¹) hΛ.2.1.2.2.1 t.rep.2.2.2.2.1 hGv
 
 theorem idDegenerate_tO (u u' : D.what₂.Word) : (Y.tO u u').IdDegenerate := by
   intro t ht
@@ -506,8 +512,8 @@ variable {D : D7} {X : HidaSetting D} {u u' : D.what₂.Word}
   {what₂ rows' : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
   (TR : TypedRed X) (cs : ColSys X u what₂) (cs' : ColSys X u' rows') (FdN FdN' : Set X.B.I.Ginf)
 
-variable (F0 F0') in
 
+variable (F0 F0') in
 def LeftAct (S : Set (GTerm X u u' F0 F0' what₂ rows')) (A : {Λ // Λ ∈ what₂} → Set (Iof TR)) : Prop :=
   ∀ (q : {Λ // Λ ∈ what₂} × {Λ' // Λ' ∈ rows'}), ∀ b ∈ A q.1,
     ∃ (φ : GTerm X u u' F0 F0' what₂ rows' ≃ GTerm X u u' F0 F0' what₂ rows')
@@ -516,8 +522,8 @@ def LeftAct (S : Set (GTerm X u u' F0 F0' what₂ rows')) (A : {Λ // Λ ∈ wha
       (∀ t, t ∈ S → positionT t = q → iotaOf TR cs cs' (φ t) = b * iotaOf TR cs cs' t) ∧
       (∀ t, t ∈ S → positionT t = q → aT cs cs' FdN FdN' (φ t) = U (aT cs cs' FdN FdN' t))
 
-variable (F0 F0') in
 
+variable (F0 F0') in
 def RightAct (S : Set (GTerm X u u' F0 F0' what₂ rows')) (A' : {Λ' // Λ' ∈ rows'} → Set (Iof TR)) : Prop :=
   ∀ (q : {Λ // Λ ∈ what₂} × {Λ' // Λ' ∈ rows'}), ∀ b ∈ A' q.2,
     ∃ (φ : GTerm X u u' F0 F0' what₂ rows' ≃ GTerm X u u' F0 F0' what₂ rows')
@@ -645,8 +651,8 @@ theorem card_gPl_sub (hN : GCount X) (i : Fin 2) :
       left_inv := fun _ => rfl
       right_inv := fun _ => rfl }
 
-include hR hU hC in
 
+include hR hU hC in
 theorem card_prod (hN : GCount X) (TR : TypedRed X) :
     ∏ v, Fintype.card (TR.Fq v) =
       D.host.g 0 ^ Module.finrank ℚ X.B.I.F * D.host.g 1 ^ Module.finrank ℚ X.B.I.F := by
@@ -694,8 +700,8 @@ theorem card_prod (hN : GCount X) (TR : TypedRed X) :
   simp only [id] at hp2
   rw [hpi, card_pi_eq TR (reductionTypedPlaces hR hU hC), ← hpi, hp2, hcnt 0, hcnt 1]
 
-include hR hU hC in
 
+include hR hU hC in
 theorem typed_count (hN : GCount X) (TR : TypedRed X) (i : Fin 2) :
     Fintype.card {v : TR.Pl // Fintype.card (TR.Fq v) = D.host.g i} = Module.finrank ℚ X.B.I.F := by
   classical
@@ -708,8 +714,8 @@ theorem typed_count (hN : GCount X) (TR : TypedRed X) (i : Fin 2) :
   · exact h0.symm
   · exact h1.symm
 
-include hR hU hC in
 
+include hR hU hC in
 theorem tt_eq (hN : GCount X) (TR : TypedRed X) :
     ∏ v, (1 + 3 / (Fintype.card (TR.Fq v) : ℝ)) =
       (1 + 3 / (D.host.g 0 : ℝ)) ^ Module.finrank ℚ X.B.I.F * (1 + 3 / (D.host.g 1 : ℝ)) ^ Module.finrank ℚ X.B.I.F := by
@@ -800,8 +806,8 @@ theorem factor_eq (TR : TypedRed X) (v : TR.Pl) :
 
 variable (hR : RedExists X) (hU : GUnif X) (hC : GResCard X)
 
-include hR hU hC in
 
+include hR hU hC in
 theorem gamma_one_eq_pow_degree (hN : GCount X) (TR : TypedRed X) :
     Gam1 TR = gaZ D.R.k (D.host.g 0) ^ Module.finrank ℚ X.B.I.F * gaZ D.R.k (D.host.g 1) ^ Module.finrank ℚ X.B.I.F := by
   classical
@@ -824,7 +830,7 @@ theorem card_typ (hN : GCount X) (i : Fin 2) :
       Formalism.L2.SG.TypedSets.IsTyped X.B.I.F (D.host.g 0) (D.host.g 1) v := by
     intro v
     unfold Formalism.L2.SG.TypedSets.typSet
-    rw [dif_pos hfin, Set.Finite.mem_toFinset]
+    rw [dite_eq_left hfin, Set.Finite.mem_toFinset]
     rfl
   have hinj : ∀ a b : Fin 2, D.host.g a = D.host.g b → a = b := by
     intro a b h
@@ -874,8 +880,8 @@ theorem card_typ (hN : GCount X) (i : Fin 2) :
       left_inv := fun _ => rfl
       right_inv := fun _ => rfl }
 
-include hR hU hC in
 
+include hR hU hC in
 theorem gamma_one_eq_prod_typed_places (hN : GCount X) (TR : TypedRed X) :
     Gam1 TR = ∏ p : Formalism.L2.SG.TypedSets.TypP X.B.I.F (D.host.g 0) (D.host.g 1),
       (Formalism.L2.SG.TypedSets.glkC D.R.k (Formalism.L2.SG.TypedSets.gOf p) : ℝ) /
@@ -964,8 +970,8 @@ theorem gUnif_of (hS : SplitPrimeLoc) : GUnif X := by
   · rw [hval 0 hi, hone 1 (fun h1 => g_coprime_mem v hi h1), mul_one]
   · rw [hval 1 hi, hone 0 (fun h0 => g_coprime_mem v h0 hi), one_mul]
 
-variable (X) in
 
+variable (X) in
 theorem one_sub_ew : ZMod' X.B.I X.B.g (1 - X.ew - sigA X.B.I X.ew) := by
   set c := 1 - X.ew - sigA X.B.I X.ew with hc
   have hcI : c ∈ IntAf X.B.I.F X.B.I.E :=
@@ -1020,38 +1026,6 @@ theorem tt_eq' (hS : SplitPrimeLoc) (hRC : RedCore) (TR : TypedRed X) :
       (1 + 3 / (D.host.g 0 : ℝ)) ^ Module.finrank ℚ X.B.I.F * (1 + 3 / (D.host.g 1 : ℝ)) ^ Module.finrank ℚ X.B.I.F :=
   tt_eq (redExists_of hRC (gUnif_of hS)) (gUnif_of hS) (gResCard_of hS) (gCount_of hS) TR
 
-theorem gamma_one_typed_places_of_local (hS : SplitPrimeLoc) (hRC : RedCore) (TR : TypedRed X) :
-    Gam1 TR = ∏ p : Formalism.L2.SG.TypedSets.TypP X.B.I.F (D.host.g 0) (D.host.g 1),
-      (Formalism.L2.SG.TypedSets.glkC D.R.k (Formalism.L2.SG.TypedSets.gOf p) : ℝ) /
-        (Formalism.L2.SG.TypedSets.ukC D.R.k (Formalism.L2.SG.TypedSets.gOf p) : ℝ) :=
-  gamma_one_eq_prod_typed_places (redExists_of hRC (gUnif_of hS)) (gUnif_of hS) (gResCard_of hS) (gCount_of hS) TR
-
-def LeftActC : Prop :=
-  ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word),
-    ∀ S ∈ ({(Y.tO u u').genSet, (Y.tO u u').ngSet, (Y.tO u u').degSet} :
-      Set (Set (GTerm X u u' (X.Fu u) (X.Fu u') (Y.what₂ u) (Y.what₂ u')))),
-    LeftAct (X.Fu u) (X.Fu u') Y.TR (Y.cs u) (Y.cs u') (Y.FN u) (Y.FN u') S (Aset Y.TR (Y.cs u))
-
-def RightActC : Prop :=
-  ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word),
-    ∀ S ∈ ({(Y.tO u u').genSet, (Y.tO u u').ngSet, (Y.tO u u').degSet} :
-      Set (Set (GTerm X u u' (X.Fu u) (X.Fu u') (Y.what₂ u) (Y.what₂ u')))),
-    RightAct (X.Fu u) (X.Fu u') Y.TR (Y.cs u) (Y.cs u') (Y.FN u) (Y.FN u') S (Aset Y.TR (Y.cs u'))
-
-theorem satGramC_of (hL : LeftActC) (hR : RightActC) (D : D7) (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word) :
-    SatGram (X.Fu u) (X.Fu u') Y.TR (Y.cs u) (Y.cs u') (Y.FN u) (Y.FN u') (Y.tO u u').genSet
-        (Aset Y.TR (Y.cs u)) (Aset Y.TR (Y.cs u')) ∧
-      SatGram (X.Fu u) (X.Fu u') Y.TR (Y.cs u) (Y.cs u') (Y.FN u) (Y.FN u') (Y.tO u u').ngSet
-        (Aset Y.TR (Y.cs u)) (Aset Y.TR (Y.cs u')) ∧
-      SatGram (X.Fu u) (X.Fu u') Y.TR (Y.cs u) (Y.cs u') (Y.FN u) (Y.FN u') (Y.tO u u').degSet
-        (Aset Y.TR (Y.cs u)) (Aset Y.TR (Y.cs u')) :=
-  ⟨satGram_of Y.TR (Y.cs u) (Y.cs u') (Y.FN u) (Y.FN u') _ _ _ (hL D X Y u u' _ (by simp))
-      (hR D X Y u u' _ (by simp)),
-    satGram_of Y.TR (Y.cs u) (Y.cs u') (Y.FN u) (Y.FN u') _ _ _ (hL D X Y u u' _ (by simp))
-      (hR D X Y u u' _ (by simp)),
-    satGram_of Y.TR (Y.cs u) (Y.cs u') (Y.FN u) (Y.FN u') _ _ _ (hL D X Y u u' _ (by simp))
-      (hR D X Y u u' _ (by simp))⟩
-
 end Closed
 
 section Closed2
@@ -1061,8 +1035,6 @@ open Formalism.L2.SG.Full
 def LiftOntoC : Prop :=
   ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word),
     LiftOnto X u u' (X.Fu u) (X.Fu u') (Y.what₂ u) (Y.what₂ u')
-
-def PsiCondC : Prop := ∀ (D : D7) (X : HidaSetting D), PsiCond X
 
 end Closed2
 
@@ -1075,13 +1047,11 @@ alias typedRed_exists' := SatGram.typedRed_exists'
 alias corankPos_tO := SatGram.corankPos_tO
 alias idDegenerate_tO := SatGram.idDegenerate_tO
 alias satGram_of := SatGram.satGram_of
-alias satGramC_of := SatGram.satGramC_of
 alias typed_count := SatGram.typed_count
 alias typed_count' := SatGram.typed_count'
 alias tt_eq := SatGram.tt_eq
 alias tt_eq' := SatGram.tt_eq'
 alias gamma_one_eq_prod_typed_places := SatGram.gamma_one_eq_prod_typed_places
-alias gamma_one_typed_places_of_local := SatGram.gamma_one_typed_places_of_local
 alias gsplit_X := SatGram.gsplit_X
 alias one_sub_ew := SatGram.one_sub_ew
 

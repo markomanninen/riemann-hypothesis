@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ImportsFurther
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PChartRankAdjoin
-import GroundTheory.ArithmeticGeometry.ToricVarieties.Dimension
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ImportsFurther
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PChartRankAdjoin
+public import GroundTheory.ArithmeticGeometry.ToricVarieties.Dimension
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -67,8 +72,8 @@ theorem ringKrullDim_adjoin_eq_one {σ : Type} (w : σ → Φ') (s : Set Φ') (x
 
 end OneBlockPointDeg
 
-open OneBlockPointDeg in
 
+open OneBlockPointDeg in
 theorem OneBlockPointDeg.proof : OneBlockPointDeg.Statement := by
   classical
   intro Φ Φ' _ _ _ K _ ι _ k₀ hK w c hc hfin htr
@@ -87,8 +92,10 @@ theorem OneBlockPointDeg.proof : OneBlockPointDeg.Statement := by
       Polynomial.monomial i ⟨aeval r (homogeneousComponent i f), hmem _⟩
     have hP : Polynomial.aeval (w ⟨k₀, c k₀⟩) P = 0 := by
       have h0 := RingHom.mem_ker.mp hf
-      rw [← sum_homogeneousComponent f, map_sum] at h0
-      rw [← h0, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← sum_homogeneousComponent f, map_sum] at h0
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← h0, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [Polynomial.aeval_monomial, ← aeval_homog hK hc (homogeneousComponent_isHomogeneous i f)]
       rfl
@@ -96,7 +103,7 @@ theorem OneBlockPointDeg.proof : OneBlockPointDeg.Statement := by
     rw [RingHom.mem_ker, ← aeval_homog hK hc (homogeneousComponent_isHomogeneous n f)]
     by_cases hn : n < f.totalDegree + 1
     · have h1 := congrArg (fun q : Polynomial L => q.coeff n) hP0
-      simp only [P, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial, Finset.sum_ite_eq',
+      simp only [P, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial_apply, Finset.sum_ite_eq',
         Finset.mem_range, hn, if_true, Polynomial.coeff_zero] at h1
       rw [show aeval r (homogeneousComponent n f) = ((⟨_, hmem _⟩ : L) : Φ') from rfl, h1]
       simp

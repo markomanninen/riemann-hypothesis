@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SelfDualOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LatticeModelVacuumTranslateClassesIndependent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SelfDualOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LatticeModelVacuumTranslateClassesIndependent
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ def gam (σ : L →+* L) (ϖ : L) {r : ℕ} (e : Fin r → ℕ) : AddSubgroup (M
   add_mem' := by
     intro a b ha hb
     refine ⟨fun k j => ?_, fun k j => ?_⟩
-    · simp only [Matrix.add_apply, map_add, ha.1 k j, hb.1 k j]; ring
+    · simp only [Matrix.add_apply, map_add (f := _), ha.1 k j, hb.1 k j]; ring
     · exact (Valuation.map_add _ _ _).trans (max_le (ha.2 k j) (hb.2 k j))
   neg_mem' := by
     intro a ha
@@ -28,7 +32,7 @@ def gam0 (σ : L →+* L) (ϖ : L) {r : ℕ} (e : Fin r → ℕ) : AddSubgroup (
   add_mem' := by
     intro a b ha hb
     refine ⟨fun k j => ?_, fun k j => ?_⟩
-    · simp only [Matrix.add_apply, map_add, ha.1 k j, hb.1 k j]; ring
+    · simp only [Matrix.add_apply, map_add (f := _), ha.1 k j, hb.1 k j]; ring
     · exact (Valuation.map_add _ _ _).trans (max_le (ha.2 k j) (hb.2 k j))
   neg_mem' := by
     intro a ha

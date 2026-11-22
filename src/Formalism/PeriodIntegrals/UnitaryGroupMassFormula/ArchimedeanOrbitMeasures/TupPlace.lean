@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.Complexify
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.Complexify
+
+@[expose] public section
 
 noncomputable section
 

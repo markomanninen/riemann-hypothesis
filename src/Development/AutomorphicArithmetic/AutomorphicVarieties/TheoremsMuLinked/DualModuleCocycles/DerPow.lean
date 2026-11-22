@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.DualModuleCocycles.RepRSingle
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.DualModuleCocycles.RepRSingle
+
+@[expose] public section
+
 open Matrix IsLocalRing UpperTheory.V UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.Pa UpperTheory.V.Th UpperTheory.V.Th.Coc
 
 private theorem x_loc {O R : Type} [CommRing O] [IsLocalRing O] [CommRing R] [IsLocalRing R] [Algebra O R]
@@ -35,7 +40,7 @@ private theorem der_pow {O R X : Type} [CommRing O] [IsLocalRing O] [CommRing R]
         refine Submodule.add_mem _ (Submodule.smul_mem_smul h1 Submodule.mem_top) ?_
         rw [pow_succ', Submodule.mul_smul]
         exact Submodule.smul_mem_smul h3 h2
-    · rw [map_add, map_add]
+    · rw [map_add (f := _), map_add (f := _)]
       exact ⟨Ideal.add_mem _ hb.1 hc.1, Submodule.add_mem _ hb.2 hc.2⟩
 
 theorem UpperTheory.V.Th.Coc.lcDer :

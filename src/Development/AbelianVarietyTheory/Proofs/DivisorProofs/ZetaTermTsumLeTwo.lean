@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Real
 
 namespace GlobalTheory
@@ -26,7 +31,7 @@ theorem zetaTerm_tsum_le_two (i : ℕ) (hi : 2 ≤ i) :
 theorem volumeConstant_le (r : ℕ) (hr : 2 ≤ r) :
     √r * ∏ i ∈ Finset.Icc 2 r, (∑' n : ℕ, 1/((n:ℝ)+1)^i) ≤ 2^(r*(r-1)/2) * (2*π)^(r-1) * √r := by
   have hprod : ∏ i ∈ Finset.Icc 2 r, (∑' n : ℕ, 1/((n:ℝ)+1)^i) ≤ ∏ _i ∈ Finset.Icc 2 r, (2:ℝ) := by
-    apply Finset.prod_le_prod
+    apply Finset.prod_le_prod₀
     · intro i _; exact tsum_nonneg (fun n => by positivity)
     · intro i hi; exact zetaTerm_tsum_le_two i (Finset.mem_Icc.mp hi).1
   rw [Finset.prod_const, Nat.card_Icc] at hprod
@@ -47,8 +52,5 @@ theorem volumeConstant_le (r : ℕ) (hr : 2 ≤ r) :
         apply mul_le_mul_of_nonneg_left _ hsq
         nlinarith
     _ = 2^(r*(r-1)/2) * (2*π)^(r-1) * √r := by ring
-
-example : ∀ r : ℕ, 2 ≤ r → √r * ∏ i ∈ Finset.Icc 2 r, (∑' n : ℕ, 1/((n:ℝ)+1)^i) ≤ 2^(r*(r-1)/2) * (2*π)^(r-1) * √r :=
-  volumeConstant_le
 
 end GlobalTheory

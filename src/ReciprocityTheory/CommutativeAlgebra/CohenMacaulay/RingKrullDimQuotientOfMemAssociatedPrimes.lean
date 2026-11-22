@@ -1,16 +1,15 @@
-import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.Bridge
-import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.Unmixed
+module
+
+public import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.Bridge
+public import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.Unmixed
+
+@[expose] public section
 
 namespace ReciprocityTheory.CA
 
 open IsLocalRing RingTheory.Sequence Pointwise
 
 variable {R : Type*} [CommRing R] [IsLocalRing R]
-
-private theorem annihilator_self_eq_bot' : Module.annihilator R R = ⊥ := by
-  ext r
-  simp only [Module.mem_annihilator, Submodule.mem_bot]
-  exact ⟨fun h => by simpa using h 1, fun h m => by simp [h]⟩
 
 private theorem smul_top_eq_self' (I : Ideal R) : (I • (⊤ : Submodule R R)) = I := by
   exact Ideal.mul_top I
@@ -30,17 +29,6 @@ private theorem isSMulRegular_of_mem_nonZeroDivisors' {x : R} (reg : x ∈ nonZe
 private noncomputable def quotSMulTopEquivQuot' (x : R) :
     QuotSMulTop x R ≃ₗ[R] R ⧸ Ideal.span {x} :=
   Submodule.quotEquivOfEq _ _ (span_singleton_eq_smul_top' x)
-
-theorem IsCM.associatedPrimes_eq_minimalPrimes (h : IsCM R) :
-    associatedPrimes R R = minimalPrimes R := by
-  rw [(isCM_iff_isCMMod.mp h).associatedPrimes_eq_minimalPrimes, annihilator_self_eq_bot']
-
-theorem IsCM.quotient_span_singleton (h : IsCM R) {x : R} (hx : x ∈ maximalIdeal R)
-    (reg : x ∈ nonZeroDivisors R) [IsLocalRing (R ⧸ Ideal.span {x})] :
-    IsCM (R ⧸ Ideal.span {x}) := by
-  haveI : IsNoetherianRing R := h.1
-  exact (isCM_quotient_iff _).mpr ((isCMMod_congr (quotSMulTopEquivQuot' x)).mp
-    ((isCM_iff_isCMMod.mp h).quotSMulTop hx (isSMulRegular_of_mem_nonZeroDivisors' reg)))
 
 theorem isCM_of_quotient_span_singleton [IsNoetherianRing R] {x : R} (hx : x ∈ maximalIdeal R)
     (reg : x ∈ nonZeroDivisors R) [IsLocalRing (R ⧸ Ideal.span {x})]

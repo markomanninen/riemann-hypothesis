@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.IsCongIdealTwoTorsion
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.IsCongIdealTwoTorsion
+
+@[expose] public section
 
 open CompanionTheory.Rg.FlB
 
@@ -16,7 +20,7 @@ theorem exists_adjoint_herm : ∀ {L V : Type} [NontriviallyNormedField L] [AddC
   have hss := hs.1
   have hadd1 : ∀ x x' y, h (x + x') y = h x y + h x' y := by
     intro x x' y
-    rw [hsymm y (x + x'), hadd2, map_add, ← hsymm, ← hsymm]
+    rw [hsymm y (x + x'), hadd2, map_add (f := _), ← hsymm, ← hsymm]
   have hsmul1 : ∀ (a : L) x y, h (a • x) y = s a * h x y := by
     intro a x y
     rw [hsymm y (a • x), hsmul2, map_mul, ← hsymm]
@@ -46,7 +50,8 @@ theorem exists_adjoint_herm : ∀ {L V : Type} [NontriviallyNormedField L] [AddC
     rw [Fintype.linearIndependent_iff]
     intro c hc i
     have h0 : ψ (∑ j, s (c j) • b j) = 0 := by
-      rw [map_sum, ← hc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, ← hc]
       refine Finset.sum_congr rfl (fun j _ => ?_)
       rw [ψ_smul, hss]
     have h1 := ψ_inj _ h0
@@ -63,7 +68,8 @@ theorem exists_adjoint_herm : ∀ {L V : Type} [NontriviallyNormedField L] [AddC
       rw [hspan]; trivial
     obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun L).mp hf
     refine ⟨∑ j, s (c j) • b j, ?_⟩
-    rw [map_sum, ← hc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← hc]
     refine Finset.sum_congr rfl (fun j _ => ?_)
     rw [ψ_smul, hss]
   choose z hz using fun y => ψ_surj ((ψ y).comp g)
@@ -74,7 +80,7 @@ theorem exists_adjoint_herm : ∀ {L V : Type} [NontriviallyNormedField L] [AddC
   refine ⟨{ toFun := z, map_add' := ?_, map_smul' := ?_ }, ?_⟩
   · intro y y'
     apply ψ_inj'
-    rw [hz, map_add, map_add, hz, hz]
+    rw [hz, map_add (f := _), map_add (f := _), hz, hz]
     rfl
   · intro a y
     apply ψ_inj'

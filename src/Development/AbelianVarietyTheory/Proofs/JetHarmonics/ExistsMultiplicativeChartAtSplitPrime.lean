@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsFormalGroupAdd
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HeightOneOfSplit
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CpBinomialPowerSubOneSeriesIntegralityCompositio
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsIsoGmOfMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsFormalGroupAdd
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HeightOneOfSplit
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CpBinomialPowerSubOneSeriesIntegralityCompositio
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsIsoGmOfMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,7 @@ theorem map_mulN {R : Type} [CommRing R] (φ : R →+* k) (F : FormalGroup R) {U
     have h := law_two hU H (a := (C (n : k) * ℓ : k⟦X⟧)) (b := ℓ)
       (show constantCoeff (C (n : k) * ℓ) = 0 by rw [map_mul, hℓ, mul_zero]) hℓ
     have e : (C ((n + 1 : ℕ) : k) * ℓ : k⟦X⟧) = C (n : k) * ℓ + ℓ := by
-      rw [Nat.cast_succ, map_add, map_one]; ring
+      rw [Nat.cast_succ, map_add (f := _), map_one]; ring
     rw [e]
     refine Eq.trans ?_ h
     rw [← ih, hUℓ]
@@ -81,17 +85,17 @@ theorem deriv_of_mul {g : k⟦X⟧}
       PowerSeries.subst (MvPowerSeries.X 1 : MvPowerSeries (Fin 2) k) g +
       PowerSeries.subst (MvPowerSeries.X 0 : MvPowerSeries (Fin 2) k) g *
       PowerSeries.subst (MvPowerSeries.X 1 : MvPowerSeries (Fin 2) k) g) :
-    derivative k g = C (coeff 1 g) * (1 + g) := by
+    derivative g = C (coeff 1 g) * (1 + g) := by
   have HX : ∀ i, PowerSeries.HasSubst (MvPowerSeries.X i : MvPowerSeries (Fin 2) k) := fun i =>
     PowerSeries.HasSubst.of_constantCoeff_zero (MvPowerSeries.constantCoeff_X i)
   have HS : PowerSeries.HasSubst (MvPowerSeries.X 0 + MvPowerSeries.X 1 : MvPowerSeries (Fin 2) k) :=
     PowerSeries.HasSubst.of_constantCoeff_zero (by simp)
-  have h := congrArg (MvPowerSeries.pderiv k 1) H
-  simp only [map_add, Derivation.leibniz, smul_eq_mul, GlobalTheory.FormalCalc.pderiv_powerSeries_subst (HX _),
+  have h := congrArg (MvPowerSeries.pderiv (R := k) 1) H
+  simp only [map_add (f := _), Derivation.leibniz, smul_eq_mul, GlobalTheory.FormalCalc.pderiv_powerSeries_subst (HX _),
     GlobalTheory.FormalCalc.pderiv_powerSeries_subst HS] at h
-  have p0 : MvPowerSeries.pderiv k 1 (MvPowerSeries.X 0 : MvPowerSeries (Fin 2) k) = 0 := by
+  have p0 : MvPowerSeries.pderiv (R := k) 1 (MvPowerSeries.X 0 : MvPowerSeries (Fin 2) k) = 0 := by
     simp [MvPowerSeries.pderiv_X_of_ne]
-  have p1 : MvPowerSeries.pderiv k 1 (MvPowerSeries.X 1 : MvPowerSeries (Fin 2) k) = 1 := by simp
+  have p1 : MvPowerSeries.pderiv (R := k) 1 (MvPowerSeries.X 1 : MvPowerSeries (Fin 2) k) = 1 := by simp
   simp only [p0, p1, zero_add, mul_one, mul_zero, add_zero] at h
   have ha : MvPowerSeries.HasSubst (![(X : k⟦X⟧), 0] : Fin 2 → MvPowerSeries Unit k) :=
     hasSubst_two constantCoeff_X (map_zero _)
@@ -100,7 +104,7 @@ theorem deriv_of_mul {g : k⟦X⟧}
     MvPowerSeries.subst_mul ha, subst_psubst ha (MvPowerSeries.constantCoeff_X 0),
     subst_psubst ha (MvPowerSeries.constantCoeff_X 1), MvPowerSeries.subst_X ha, MvPowerSeries.subst_X ha] at h2
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, add_zero] at h2
-  have e : PowerSeries.subst (0 : MvPowerSeries Unit k) (derivative k g) = (C (coeff 1 g) : k⟦X⟧) := by
+  have e : PowerSeries.subst (0 : MvPowerSeries Unit k) (derivative g) = (C (coeff 1 g) : k⟦X⟧) := by
     rw [PowerSeries.subst_zero_eq_C_constantCoeff, MvPowerSeries.map_C, ← coeff_zero_eq_constantCoeff_apply,
       coeff_derivative]
     simp [PowerSeries.C]
@@ -109,30 +113,31 @@ theorem deriv_of_mul {g : k⟦X⟧}
   ring
 
 theorem subst_log_eq_X [IsAddTorsionFree k] {g L : k⟦X⟧} {γ ω : k} (hγ : γ * ω = 1) (hg : constantCoeff g = 0)
-    (hd : derivative k g = C γ * (1 + g)) (hL0 : constantCoeff L = 0) (hL : (1 + X) * derivative k L = 1) :
+    (hd : derivative g = C γ * (1 + g)) (hL0 : constantCoeff L = 0) (hL : (1 + X) * derivative L = 1) :
     PowerSeries.subst (C ω * L) g = (X : k⟦X⟧) := by
   have h0 : constantCoeff (C ω * L) = 0 := by rw [map_mul, hL0, mul_zero]
   have Hs := PowerSeries.HasSubst.of_constantCoeff_zero' h0
   have hh0 : constantCoeff (PowerSeries.subst (C ω * L) g : k⟦X⟧) = 0 :=
     PowerSeries.constantCoeff_subst_eq_zero h0 _ hg
-  have hD : derivative k (PowerSeries.subst (C ω * L) g : k⟦X⟧) =
-      C γ * (1 + PowerSeries.subst (C ω * L) g) * (C ω * derivative k L) := by
+  have hD : derivative (PowerSeries.subst (C ω * L) g : k⟦X⟧) =
+      C γ * (1 + PowerSeries.subst (C ω * L) g) * (C ω * derivative L) := by
     rw [PowerSeries.derivative_subst Hs, hd, PowerSeries.subst_mul Hs, PowerSeries.subst_add Hs,
       PowerSeries.subst_C, ← PowerSeries.coe_substAlgHom Hs, map_one, Derivation.leibniz, derivative_C]
     simp only [smul_eq_mul, mul_zero, add_zero]
     rfl
   generalize (PowerSeries.subst (C ω * L) g : k⟦X⟧) = h at hh0 hD
   have hC : (C γ : k⟦X⟧) * C ω = 1 := by rw [← map_mul, hγ, map_one]
-  set r := derivative k L with hr
-  have hr' := congrArg (derivative k) hL
-  rw [Derivation.leibniz, map_add, derivative_X, Derivation.map_one_eq_zero] at hr'
+  set r := derivative L with hr
+  have hr' := congrArg (derivative (R := k)) hL
+  rw [Derivation.leibniz, map_add (f := _), derivative_X, Derivation.map_one_eq_zero] at hr'
   simp only [smul_eq_mul] at hr'
   have hr0 : constantCoeff r = 1 := by simpa using congrArg constantCoeff hL
   have key : (1 + h) * r = 1 := by
+    let _ : HasUniqueDiv k := IsAddTorsionFree.hasUniqueDiv
     apply derivative.ext
-    · rw [Derivation.leibniz, map_add, Derivation.map_one_eq_zero, hD]
+    · rw [Derivation.leibniz, map_add (f := _), Derivation.map_one_eq_zero, hD]
       simp only [smul_eq_mul]
-      linear_combination (1 + h) * r * hr' - (1 + h) * derivative k r * hL + (1 + h) * r ^ 2 * hC
+      linear_combination (1 + h) * r * hr' - (1 + h) * derivative r * hL + (1 + h) * r ^ 2 * hC
     · simp [hh0, hr0]
   linear_combination (1 + X) * key - (1 + h) * hL
 
@@ -143,7 +148,7 @@ theorem exists_scale {R K : Type} [CommRing R] [Field K] [CharZero K] (φ : R �
       PowerSeries.subst (MvPowerSeries.X 1 : MvPowerSeries (Fin 2) K) U] : Fin 2 → MvPowerSeries (Fin 2) K)
       (MvPowerSeries.map φ F.toPowerSeries) =
       PowerSeries.subst (MvPowerSeries.X 0 + MvPowerSeries.X 1 : MvPowerSeries (Fin 2) K) U)
-    {f : R⟦X⟧} (hf : JetMomFound.IsIsoGm F f) (hL0 : constantCoeff L = 0) (hL : (1 + X) * derivative K L = 1) :
+    {f : R⟦X⟧} (hf : JetMomFound.IsIsoGm F f) (hL0 : constantCoeff L = 0) (hL : (1 + X) * derivative L = 1) :
     ∃ (ω : K) (e : R⟦X⟧), IsUnit (coeff 1 e) ∧ PowerSeries.subst (C ω * L) U = PowerSeries.map φ e := by
   obtain ⟨f0, f1, hf⟩ := hf
   have HX : ∀ i, PowerSeries.HasSubst (MvPowerSeries.X i : MvPowerSeries (Fin 2) R) := fun i =>
@@ -158,7 +163,7 @@ theorem exists_scale {R K : Type} [CommRing R] [Field K] [CharZero K] (φ : R �
     MvPowerSeries.subst_mul ha, MvPowerSeries.subst_X ha, MvPowerSeries.subst_X ha] at hf
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at hf
   have h1 := congrArg (MvPowerSeries.map φ) hf
-  rw [map_add, map_add, map_mul,
+  rw [map_add (f := _), map_add (f := _), map_mul,
     PowerSeries.map_subst (PowerSeries.HasSubst.of_constantCoeff_zero F.zero_constantCoeff),
     PowerSeries.map_subst (HX 0), PowerSeries.map_subst (HX 1), MvPowerSeries.map_X, MvPowerSeries.map_X] at h1
   set f' := PowerSeries.map φ f with hf'
@@ -213,8 +218,7 @@ theorem exists_mChart : ∀ (d q : ℕ) [Fact q.Prime] (M : Mdl q), d.Prime → 
     simp [Mdl.u]
   rw [← map_mulN (algebraMap 𝓞_ℂ_[q] ℂ_[q]) F hU hℓ hUℓ H q] at h1 h2
   obtain ⟨f, hf⟩ := GlobalTheory.ConvSer.HeightOneInt.htOneIsGm q F hfin ⟨h1, h2⟩
-  have hL0 : constantCoeff (logS : ℂ_[q]⟦X⟧) = 0 := by
-    rw [← coeff_zero_eq_constantCoeff_apply, logS, coeff_mk, if_pos rfl]
+  have hL0 : constantCoeff (logS : ℂ_[q]⟦X⟧) = 0 := by simp [logS]
   obtain ⟨ω, e, he1, he⟩ := exists_scale (algebraMap 𝓞_ℂ_[q] ℂ_[q]) F hU hℓ hUℓ H hf hL0
     (MulSeries.mulS_laws q).2.2.2.2.1
   have hO : ∀ x : 𝓞_ℂ_[q], ‖algebraMap 𝓞_ℂ_[q] ℂ_[q] x‖ ≤ 1 := fun x => by

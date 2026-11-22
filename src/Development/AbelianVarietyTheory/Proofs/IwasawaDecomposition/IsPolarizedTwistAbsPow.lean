@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CGTrue
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GaloisRepOfPolarizedCuspidal
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FillPreservesIdempotent
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeilDeligneParamMonodromyEqZeroIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPadicAlgClRingEquivComplexCompEqOfCountabl
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSubquotSmIndCongr
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeckeActsByScalarCommutative
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CGTrue
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GaloisRepOfPolarizedCuspidal
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FillPreservesIdempotent
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeilDeligneParamMonodromyEqZeroIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPadicAlgClRingEquivComplexCompEqOfCountabl
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSubquotSmIndCongr
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeckeActsByScalarCommutative
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem isSatVecGL_of_mem_iSup {V W I : Type} [AddCommGroup V] [Module ℂ V] [A
     {σ : Representation ℂ (GL (Fin n) (w.adicCompletion E)) V} {ρ : Representation ℂ (GL (Fin n) (w.adicCompletion E)) W}
     (hσ : σ.IsIrreducible) {B : Multiset ℂˣ} (h : HasSatGL w σ B) (f : I → V →ₗ[ℂ] W)
     (hf : ∀ i g v, f i (σ g v) = ρ g (f i v)) {x : W} (hx : x ∈ ⨆ i, LinearMap.range (f i))
-    (hK : x ∈ fixed ρ (KGL w n)) (h0 : x ≠ 0) : IsSatVecGL w ρ x B := by
+    (hK : x ∈ fixed ρ (KGL w (n := n))) (h0 : x ≠ 0) : IsSatVecGL w ρ x B := by
   classical
   have hc := Final.GLintComm E w n
   let τ : Representation ℂ (GL (Fin n) (w.adicCompletion E)) (I →₀ V) :=
@@ -41,16 +45,16 @@ theorem isSatVecGL_of_mem_iSup {V W I : Type} [AddCommGroup V] [Module ℂ V] [A
   have hpe : ∀ g m, p (τ g m) = ρ g (p m) := fun g m => by
     induction m using Finsupp.induction_linear with
     | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | single i v => rw [hτ, hp, hp, hf]
   obtain ⟨x₀, hx₀⟩ := h.exists_vec
-  have hfin : ∀ m, m ∈ HeckeScalar.finOrbit τ (KGL w n) := fun m => by
+  have hfin : ∀ m, m ∈ HeckeScalar.finOrbit τ (KGL w (n := n)) := fun m => by
     induction m using Finsupp.induction_linear with
     | zero => exact zero_mem _
     | add a b ha hb => exact add_mem ha hb
     | single i v =>
       obtain ⟨φ, rfl⟩ := HeckeScalar.orbitMap_surjective hσ hx₀.2.1 hx₀.1 v
-      refine (Set.Finite.image (fun ψ => Finsupp.single i (HeckeScalar.orbitMap σ (KGL w n) x₀ ψ))
+      refine (Set.Finite.image (fun ψ => Finsupp.single i (HeckeScalar.orbitMap σ (KGL w (n := n)) x₀ ψ))
         (HeckeScalar.mem_finOrbit hc φ)).subset ?_
       rintro _ ⟨k, rfl⟩
       exact ⟨_, ⟨k, rfl⟩, by simp only [hτ, HeckeScalar.orbitMap_permRep hx₀.2.1]⟩
@@ -61,7 +65,7 @@ theorem isSatVecGL_of_mem_iSup {V W I : Type} [AddCommGroup V] [Module ℂ V] [A
   rw [← e, ← map_heckeVec hc (Tj_mem_hecke hϖ j) p hpe, ← map_smul]
   congr 1
   ext i
-  have h1 : m' i ∈ fixed σ (KGL w n) := GlobalTheory.LGrp.mem_fixed.2 fun k hk =>
+  have h1 : m' i ∈ fixed σ (KGL w (n := n)) := GlobalTheory.LGrp.mem_fixed.2 fun k hk =>
     DFunLike.congr_fun (GlobalTheory.LGrp.mem_fixed.1 hm' k hk) i
   refine (map_heckeVec hc (Tj_mem_hecke hϖ j) (ρ := τ) (ρ' := σ) (Finsupp.lapply i) (fun _ _ => rfl) m').trans ?_
   change heckeVec σ _ _ (m' i) = satEig (qV E w) n B j • m' i
@@ -70,7 +74,7 @@ theorem isSatVecGL_of_mem_iSup {V W I : Type} [AddCommGroup V] [Module ℂ V] [A
     exact (SatCompare.heckeLin hc (Tj_mem_hecke hϖ j) σ).map_zero
   · exact (h.2 _ h1 h2).2.2.2 ϖ hϖ j hj
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 theorem hasSatGL_locRep {π : CuspSub E n} {σ : SmIrr (GL (Fin n) (w.adicCompletion E))} (hσ : π.IsLocComp w σ)
     {B : Multiset ℂˣ} (h : HasSatGL w σ.ρ B) : HasSatGL w (π.locRep w) B := by
@@ -107,34 +111,22 @@ theorem loc_of_isAbsPow {ν : HChar E} {s : ℝ} (hν : ν.IsAbsPow s) (w : Heig
     resCard_eq_normV, GlobalTheory.SmGL.SphCompletion.ord_completion]
   have h0 : Valued.v (x : w.adicCompletion E) ≠ 0 := by simp
   have e : Formalism.UG.ordV E w x = -WithZero.log (Valued.v (x : w.adicCompletion E)) := by
-    rw [Formalism.UG.ordV, dif_neg h0]
+    rw [Formalism.UG.ordV, dite_eq_right h0]
     conv_rhs => rw [← WithZero.coe_unzero h0]
     rfl
   rw [e, ← Complex.ofReal_cpow (by positivity), ← Real.rpow_intCast, ← Real.rpow_mul (by positivity),
     ← Complex.ofReal_neg, ← Complex.ofReal_natCast, ← Complex.ofReal_cpow (by positivity), ← Complex.ofReal_zpow,
     ← Real.rpow_intCast, ← Real.rpow_mul (by positivity)]
   congr 2
-  push_cast
-  ring
+  · simp [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
+  · push_cast
+    ring
 
-variable [IsTotallyComplex E] (hL : GlobalTheory.Published.LocalLanglandsGL) (hF : GlobalTheory.Published.AutomorphicFormsFiniteGL)
+variable [_root_.NumberField.IsTotallyComplex E] (hL : GlobalTheory.Published.LocalLanglandsGL) (hF : GlobalTheory.Published.AutomorphicFormsFiniteGL)
 
-include hF in
 
-theorem locPar_twist_absPow (π : CG E a) {ν : HChar E} {s : ℝ} (hν : ν.IsAbsPow s) (h : IsPlaceOver A w) :
-    locPar hL (π.twist ν) h = (locPar hL π h).lpTw s := by
-  induction π using Quotient.inductionOn with | _ π =>
-  obtain ⟨σ, hσ, -⟩ := LocEx.exists_isLocComp hF E a π w
-  obtain ⟨_, _, _, -, H⟩ := isRec_locRec hL h
-  refine (locPar_mk hL (hσ.twist ν) h).trans ?_
-  rw [show locPar hL (Quotient.mk _ π) h = _ from locPar_mk hL hσ h, ← H.nu_eq]
-  refine congrArg _ ((GlobalTheory.LocGL.IrrGL.tw_of σ.ρ σ.smooth σ.irred _ (isSmoothChar_loc ν w)).symm.trans ?_)
-  unfold GlobalTheory.LocGL.IrrGL.nu
-  congr 1
-  exact loc_of_isAbsPow hν w
 
 include hF in
-
 theorem exists_hasSat (π : CG E a) (h : IsPlaceOver A w) (hu : (locPar hL π h).unr) :
     ∃ B : Multiset ℂˣ, π.HasSat w B ∧ (locPar hL π h).frobEig = B.map fun b => ((b⁻¹ : ℂˣ) : ℂ) := by
   induction π using Quotient.inductionOn with | _ π =>
@@ -235,29 +227,6 @@ theorem isPolarized_twist_absPow {π : CuspSub E a} (h : π.IsCsd) (s : ℝ) :
   have h3 : Real.exp (s * t) = -1 := by exact_mod_cast e
   linarith [Real.exp_pos (s * t)]
 
-open Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.WeilDeligne in
-
-theorem exists_rep (hL : GlobalTheory.Published.LocalLanglandsGL) (hF : GlobalTheory.Published.AutomorphicFormsFiniteGL)
-    (hG : GlobalTheory.Published.GaloisRepOfPolarizedCuspidal) (Ω : Type) [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] {l : ℕ}
-    [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (ha : 1 ≤ a) (π : CG E a) (hc : π.IsCsd) (s : ℝ)
-    (hr : ∀ τ, (π.infChar τ).Nodup ∧ ∀ z ∈ π.infChar τ, ∃ m : ℤ, z + (s : ℂ) = (m : ℂ) + ((a : ℂ) - 1) / 2) :
-    ∃ r : G E Ω →* GL (Fin a) (Qbar l), Continuous (fun g => (r g : Matrix (Fin a) (Fin a) (Qbar l))) ∧
-      ∀ (w : HeightOneSpectrum (𝓞 E)) (hl : ((l : ℕ) : 𝓞 E) ∉ w.asIdeal) (A : ValuationSubring Ω) (h : IsPlaceOver A w),
-        wdOf h hl ι r = ((ParLaws.locPar hL π h).lpTw s).lpTw ((1 - (a : ℝ)) / 2) := by
-  have hν := GlobalTheory.HeckeGal.Model.absPow_isAbsPow E s
-  have hr' : (π.twist (GlobalTheory.HeckeGal.Model.absPow E s)).IsRegAlg := (GlobalTheory.CuspRep.CG.isRegAlg_iff _).2 fun τ => by
-    rw [((ParLaws.hasInfChar_infChar π τ).twist _).infChar_eq, (InfType.expo_of_infType E _).2.1 s hν τ]
-    refine ⟨(hr τ).1.map (add_left_injective _), fun z hz => ?_⟩
-    obtain ⟨y, hy, rfl⟩ := Multiset.mem_map.1 hz
-    exact (hr τ).2 y hy
-  induction π using Quotient.inductionOn with | _ π =>
-  obtain ⟨r, wt, HT, H⟩ := hG E Ω l ι a ha _ _ hr' (isPolarized_twist_absPow hc s)
-  refine ⟨r, Units.continuous_val.comp H.cont, fun w hl A h => ?_⟩
-  obtain ⟨σ, hσ, -⟩ := LocEx.exists_isLocComp hF E a (π.twist (GlobalTheory.HeckeGal.Model.absPow E s)) w
-  rw [H.wdOf_eq hl (ParLaws.isRec_locRec hL h) hσ]
-  exact congrArg (fun x : WD h => x.lpTw _)
-    ((ParLaws.locPar_mk hL hσ h).symm.trans (locPar_twist_absPow hL hF (CG.mk π) hν h))
-
 end Polar
 
 section Record
@@ -266,8 +235,8 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formal
 
 variable {R : Ranks} {H : Host R} {what₂ : Rows.Data R} {N : NData R H what₂} {A : NAut N} {l : ℕ} [Fact l.Prime]
 
-variable (N) in
 
+variable (N) in
 def FrobFam (ι : Qbar l ≃+* ℂ) (f : PlE H → ℂ[X]) : Prop :=
   ∃ F : Qbar l → G H.E N.Om → Qbar l, (∀ z, Continuous (F z)) ∧
     ∀ᶠ w in cofinite, ∀ (B : ValuationSubring N.Om) (σ : G H.E N.Om), IsPlaceOver (F := H.E) B w →
@@ -305,8 +274,8 @@ theorem FrobFam.eq_of_split (hC : GlobalTheory.Published.ChebotarevDegreeOne) {f
   obtain ⟨z, rfl⟩ := ι.surjective z
   rw [← a _ σ (N.plOm.2 w) hσ, ← a' _ σ (N.plOm.2 w) hσ, hF]
 
-variable (A ι) in
 
+variable (A ι) in
 def CuspFam : Prop := ∀ (a : ℕ), 1 ≤ a → ∀ π : A.CG a, A.csd π → ∀ s : ℝ, GlobalTheory.GalOfCusp.RegAlgShift A π s →
   FrobFam N ι fun w => galPol A (A.lpTw (A.locG π w) (s + (1 - (a : ℝ)) / 2))
 
@@ -360,36 +329,14 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formal
 variable {hL : GlobalTheory.Published.LocalLanglandsGL} (hF : GlobalTheory.Published.AutomorphicFormsFiniteGL) {D : D7} {T : WDTie D.nd D.naut}
   (C : CGTrue hL D T)
 
-include hF in
 
+include hF in
 theorem readsCusp : haveI := host_isCMField D.host; ReadsCusp D.naut fun a π => (C.e a π).1 := by
   have := host_isCMField D.host
   refine ⟨fun a _ => Subtype.val_injective.comp (C.e a).injective, fun a π _ => (C.e a π).2, fun a π w _ hu => ?_⟩
   rw [T.frobEig w _ hu, C.loc]
   exact exists_hasSat hL hF _ _ (by have e := (T.unr w _).1 hu; rwa [C.loc] at e)
 
-include hF C in
-
-theorem cuspFam (hG : GlobalTheory.Published.GaloisRepOfPolarizedCuspidal) {l : ℕ} [hp : Fact l.Prime] (ι : Qbar l ≃+* ℂ) :
-    CuspFam D.naut ι := by
-  intro a ha π hc s hs
-  have := host_isCMField D.host
-  obtain ⟨r, h1, h3⟩ := exists_rep hL hF hG D.nd.Om ι ha (C.e a π).1 ((C.csd a π).1 hc) s fun τ => by
-    have := hs τ
-    rwa [C.inf] at this
-  have hfin : ∀ᶠ w : PlE D.host in cofinite, ((l : ℕ) : 𝓞 D.host.E) ∉ w.asIdeal := by
-    have h0 : Ideal.span {((l : ℕ) : 𝓞 D.host.E)} ≠ 0 := by simpa using hp.out.ne_zero
-    exact ((Ideal.finite_factors h0).subset fun v hv => Ideal.dvd_span_singleton.2 hv).eventually_cofinite_notMem
-  refine ⟨fun z σ => (r σ : Matrix (Fin a) (Fin a) (Qbar l)).charpoly.eval z, fun z => ?_, ?_⟩
-  · simp only [Matrix.eval_charpoly]
-    exact (continuous_const.sub h1).matrix_det
-  · filter_upwards [hfin, D.naut.locG_unr_ae π] with w hl hu B σ hB hσ z
-    have hu' := (D.naut.unr_tw _ (s + (1 - (a : ℝ)) / 2)).2 hu
-    have e : T.e w (D.naut.lpTw (D.naut.locG π w) (s + (1 - (a : ℝ)) / 2)) = wdOf (D.nd.plOm.2 w) hl ι r := by
-      rw [← D.naut.lpTw_add, T.tw, T.tw, C.loc, h3]
-      rfl
-    rw [galPol, T.frobEig w _ hu', e, ← frobEig_wdOf hl ι h1 (e ▸ (T.unr w _).1 hu') hB hσ]
-    exact (eval_map_apply ι.toRingHom _).symm
 
 end True
 
@@ -398,26 +345,6 @@ end GlobalTheory.HeightCounting.Blocks
 namespace GlobalTheory.HeightCounting
 
 open Formalism.BasicNotions GlobalTheory.CuspRep Blocks
-
-theorem CGTrue.blocksUnique (hL : GlobalTheory.Published.LocalLanglandsGL) (hF : GlobalTheory.Published.AutomorphicFormsFiniteGL)
-    (hG : GlobalTheory.Published.GaloisRepOfPolarizedCuspidal) (hJ : GlobalTheory.Published.JacquetShalikaRigidity)
-    (hC : GlobalTheory.Published.ChebotarevDegreeOne) {D : D7} {T : GlobalTheory.RowTie.WDTie D.nd D.naut} (C : CGTrue hL D T) :
-    BlocksUnique D := by
-  intro Sig Sig' h _ _ e
-  have := host_isCMField D.host
-  haveI : Fact (Nat.Prime 2) := Nat.fact_prime_two
-  obtain ⟨ι⟩ := GlobalTheory.nonempty_padicAlgCl_ringEquiv_complex 2
-  have h1 := fun p hp => h p (List.mem_append_left Sig' hp)
-  have h2 := fun p hp => h p (List.mem_append_right Sig hp)
-  exact Multiset.coe_eq_coe.2 ((perm_of_split hC (GlobalTheory.RowPar.isobaricRigid_of_jacquetShalika hJ (readsCusp hF C))
-    (cuspFam hF C hG (l := 2) ι) (fun p hp => ⟨(h1 p hp).1, (h1 p hp).2.1⟩) (fun p hp => ⟨(h2 p hp).1, (h2 p hp).2.1⟩)
-    ⟨fun p hp => (h1 p hp).2.2.1, fun p hp => (h1 p hp).2.2.2⟩ ⟨fun p hp => (h2 p hp).2.2.1, fun p hp => (h2 p hp).2.2.2⟩
-    (Filter.Eventually.of_forall e)).map _)
-
-theorem blocksUnique_of_cgTrue : ∀ hL : GlobalTheory.Published.LocalLanglandsGL, GlobalTheory.Published.AutomorphicFormsFiniteGL →
-    GlobalTheory.Published.GaloisRepOfPolarizedCuspidal → GlobalTheory.Published.GlobalArtinReciprocity → GlobalTheory.Published.JacquetShalika →
-    GlobalTheory.Published.ChebotarevDegreeOne → ∀ (D : D7) (T : GlobalTheory.RowTie.WDTie D.nd D.naut), CGTrue hL D T → BlocksUnique D :=
-  fun hL hF hG _ hJ hC _ _ C => C.blocksUnique hL hF hG hJ.1 hC
 
 end GlobalTheory.HeightCounting
 

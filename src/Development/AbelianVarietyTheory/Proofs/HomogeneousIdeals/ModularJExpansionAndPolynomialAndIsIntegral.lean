@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsPolynomialModularJOfHasQExpansion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsPolynomialModularJOfHasQExpansion
+
+@[expose] public section
 
 open UpperHalfPlane ModularForm Complex Function Filter PowerSeries
-open scoped Topology MatrixGroups Manifold Real
+open scoped Topology MatrixGroups Manifold Real NumberField
+
+local notation "𝕢" => Periodic.qParam
 
 noncomputable section
 
 namespace GlobalTheory
-
-local notation "𝕢" => Function.Periodic.qParam
 
 def integralSeries : Subring ℂ⟦X⟧ where
   carrier := {ψ | ∀ k, IsIntegral ℤ (coeff k ψ)}
@@ -292,8 +296,8 @@ theorem isIntegral_modularJ_of_mul_mem {τ : ℍ} {α : ℂ} (hα : ∀ m : ℤ,
   · push_cast
     linear_combination (τ : ℂ) * hrs - hpq
 
-open NumberField in
 
+open NumberField in
 theorem isIntegral_modularJ_of_ringOfIntegers {K : Type*} [Field K] [NumberField K]
     (hK : Module.finrank ℚ K = 2) (ι : K →+* ℂ) {τ : ℍ}
     (h : ∀ α : 𝓞 K, ∀ x ∈ Submodule.span ℤ {(τ : ℂ), 1},
@@ -304,7 +308,7 @@ theorem isIntegral_modularJ_of_ringOfIntegers {K : Type*} [Field K] [NumberField
     have := finrank_le_one (R := ℤ) (1 : 𝓞 K) fun α ↦ by
       obtain ⟨m, hm⟩ := hc α
       exact ⟨m, by simp [hm]⟩
-    rw [RingOfIntegers.rank, hK] at this
+    rw [NumberField.RingOfIntegers.rank, hK] at this
     omega
   refine isIntegral_modularJ_of_mul_mem (fun m hm ↦ hα m ?_) (h α)
   ext
@@ -325,11 +329,6 @@ theorem isIntegral_modularJ_halfOneAddSqrtNeg (d : ℕ) (hd : d ≠ 0) :
   push_cast
   linear_combination ((√d : ℝ) : ℂ) ^ 2 * Complex.I_sq - h1
 
-theorem isIntegral_modularJ_of_sq_eq_neg {w : ℍ} {d : ℤ} (h : (2 * (w : ℂ) - 1) ^ 2 = -d) :
-    IsIntegral ℤ (modularJ w) :=
-  isIntegral_modularJ_of_quadratic (a := 4) (b := -4) (c := 1 + d) (by norm_num)
-    (by push_cast; linear_combination h)
-
 theorem exists_hasSum_modularJ_sub_inv : ∃ c : ℕ → ℤ, ∀ τ : ℍ,
     HasSum (fun n ↦ (c n : ℂ) * 𝕢 1 τ ^ n) (modularJ τ - (𝕢 1 τ)⁻¹) := by
   obtain ⟨J, hJ0, hJ⟩ := exists_hasQExpansion_modularJ
@@ -343,24 +342,5 @@ theorem exists_hasSum_modularJ_sub_inv : ∃ c : ℕ → ℤ, ∀ τ : ℍ,
       rw [mul_sub, mul_inv_cancel₀ (Periodic.qParam_ne_zero _)])
   exact ⟨fun n ↦ coeff n K, fun τ ↦ by simpa using h2 τ⟩
 
-open NumberField in
-
-theorem modularJ_expansion_and_polynomial_and_isIntegral :
-    (∃ c : ℕ → ℤ, ∀ τ : ℍ,
-      HasSum (fun n ↦ (c n : ℂ) * 𝕢 1 τ ^ n) (modularJ τ - (𝕢 1 τ)⁻¹)) ∧
-    (∀ (m : ℕ) (f : ℍ → ℂ), (∀ (γ : SL(2, ℤ)) (τ : ℍ), f (γ • τ) = f τ) → MDiff f →
-      (IsBoundedAtImInfty fun τ : ℍ ↦ 𝕢 1 τ ^ m * f τ) →
-      ∃ P : Polynomial ℂ, P.natDegree ≤ m ∧
-        (∀ i, P.coeff i ∈ AddSubgroup.closure
-          (Set.range fun k ↦ coeff k (qExpansion 1 fun τ ↦ 𝕢 1 τ ^ m * f τ))) ∧
-        ∀ τ, f τ = P.eval (modularJ τ)) ∧
-    (∀ (w : ℍ) (d : ℤ), (2 * (w : ℂ) - 1) ^ 2 = -d → IsIntegral ℤ (modularJ w)) ∧
-    (∀ (K : Type) [Field K] [NumberField K], Module.finrank ℚ K = 2 → ∀ (ι : K →+* ℂ) (τ : ℍ),
-      (∀ α : 𝓞 K, ∀ x ∈ Submodule.span ℤ {(τ : ℂ), 1},
-        ι α * x ∈ Submodule.span ℤ {(τ : ℂ), 1}) → IsIntegral ℤ (modularJ τ)) :=
-  ⟨exists_hasSum_modularJ_sub_inv,
-    fun _ _ h1 h2 h3 ↦ let ⟨P, a, _, b⟩ := exists_polynomial_modularJ h1 h2 h3; ⟨P, a, b⟩,
-    fun _ _ ↦ isIntegral_modularJ_of_sq_eq_neg,
-    fun _ _ _ hK ι _ ↦ isIntegral_modularJ_of_ringOfIntegers hK ι⟩
 
 end GlobalTheory

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,8 @@ theorem Pf_MapHyp_ambMap_smul (g : Ks ⊗[LL] D₁ →ₗ[Ks] Ks ⊗[LL] D₂) (
     rw [Pf_MapHyp_ambMap_coeff, h0, map_zero]
   apply HahnModule.ext
   funext k
-  rw [HahnModule.coeff_smul_right (y := ambMap g f) ((HahnModule.of Ks).symm f).isPWO_support hsupp,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [HahnModule.coeff_smul_right (y := ambMap g f) ((HahnModule.of Ks).symm f).isPWO_support hsupp,
     Pf_MapHyp_ambMap_coeff, HahnModule.coeff_smul, map_sum]
   refine Finset.sum_congr rfl fun ij _ => ?_
   rw [map_smul, Pf_MapHyp_ambMap_coeff]
@@ -36,7 +41,7 @@ theorem Pf_MapHyp_baseChange_tD (h : D₁ →ₗ[LL] D₂) (τ : Ks ≃ₐ[LL] K
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul x d => simp [tD, LinearMap.baseChange_tmul, TensorProduct.smul_tmul']
-  | add y y' hy hy' => simp only [map_add, smul_add, hy, hy']
+  | add y y' hy hy' => simp only [map_add (f := _), smul_add, hy, hy']
 
 theorem Pf_MapHyp_grd_ambMap (h : D₁ →ₗ[LL] D₂) (τ : Ks ≃ₐ[LL] Ks) (a : LLˣ) (f : Amb LL Ks D₁) :
     grd (D := D₂) τ a (ambMap (h.baseChange Ks) f) = ambMap (h.baseChange Ks) (grd (D := D₁) τ a f) := by
@@ -70,7 +75,7 @@ theorem memD_holds (W : LocWach PD LL O v n) (F : LatHom T₁.L T₂.L) (c : ZMo
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul w b => simp [actVB, AlgebraTensorModule.map_tmul, F.equiv]
-    | add y y' hy hy' => simp only [map_add, hy, hy']
+    | add y y' hy hy' => simp only [map_add (f := _), hy, hy']
   have hB : ∀ (c' : K₀) (y : T₁.V ⊗[Qp] B),
       AlgebraTensorModule.map F.f (LinearMap.id : B →ₗ[Qp] B)
           (mulVB (K₀ := K₀) (B := B) (V := T₁.V) (LL := LL) c' y) =
@@ -80,7 +85,7 @@ theorem memD_holds (W : LocWach PD LL O v n) (F : LatHom T₁.L T₂.L) (c : ZMo
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul w b => simp [mulVB, AlgebraTensorModule.map_tmul]
-    | add y y' hy hy' => simp only [map_add, hy, hy']
+    | add y y' hy hy' => simp only [map_add (f := _), hy, hy']
   simp only [DcrisL, Dcris, Submodule.mem_inf, Submodule.mem_iInf, LinearMap.mem_ker,
     LinearMap.sub_apply, LinearMap.id_apply, LinearMap.smul_apply, sub_eq_zero] at hx ⊢
   exact ⟨fun g => by rw [← hA, hx.1 g], fun c' => by rw [← hB, hx.2 c', map_smul]⟩

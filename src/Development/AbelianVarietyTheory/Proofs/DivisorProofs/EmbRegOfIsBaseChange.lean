@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.ArithmeticCylinders GlobalTheory.BadCount Module
 
 namespace GlobalTheory.BadCount

@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.FunDefs
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinPartIdemMulMemIff
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.FunDefs
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinPartIdemMulMemIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ theorem unitLiftSt : UnitLiftSt := by
     exact e
   have key : ∀ a b : Ev E v, (1 + sgE E v a) * (1 + sgE E v b) = 1 + sgE E v ((1 + a) * (1 + b) - 1) := fun a b => by
     have e : (1 + a) * (1 + b) - 1 = a + b + a * b := by ring
-    rw [e, map_add, map_add, ← hab]
+    rw [e, map_add (f := _), map_add (f := _), ← hab]
     ring
   refine ⟨⟨1 + sgE E v ((y : Ev E v) - 1), 1 + sgE E v (((y⁻¹ : (Ev E v)ˣ) : Ev E v) - 1), ?_, ?_⟩, ?_, ?_⟩
   · rw [key, show (1 : Ev E v) + ((y : Ev E v) - 1) = y by ring, show (1 : Ev E v) + (((y⁻¹ : (Ev E v)ˣ) : Ev E v) - 1) = _ by ring,
@@ -28,7 +32,7 @@ theorem unitLiftSt : UnitLiftSt := by
     rw [add_sub_cancel_left]
     exact at_sgE _
   · change compFin F E v (1 + sgE E v _) = _
-    rw [map_add, map_one, comp_sgE]
+    rw [map_add (f := _), map_one, comp_sgE]
     ring
 
 theorem pInvSt : PInvSt := by

@@ -1,4 +1,8 @@
-import Formalism.FormalDegreeBessel.StatementG
+module
+
+public import Formalism.FormalDegreeBessel.StatementG
+
+@[expose] public section
 
 open Matrix
 
@@ -70,7 +74,7 @@ lemma gn_Hpk_mulVec (k r : ℕ) (y : Fin (2 * r + k + 1) → ℂ) (i : Fin (2 * 
   have hi := i.isLt
   simp only [Matrix.mulVec, _root_.dotProduct]
   by_cases h : i.val < r ∨ r + k < i.val
-  · rw [dif_pos h, Finset.sum_eq_single (⟨2 * r + k - i.val, by omega⟩ : Fin (2 * r + k + 1))]
+  · rw [dite_eq_left h, Finset.sum_eq_single (⟨2 * r + k - i.val, by omega⟩ : Fin (2 * r + k + 1))]
     · have e : Hpk k r i ⟨2 * r + k - i.val, by omega⟩ = 1 := by
         simp only [Hpk, and_true]
         split_ifs <;> first | (simp; done) | omega | (simp only [Fin.ext_iff, Fin.val_mk, and_true, true_and, and_self] at *; omega)
@@ -83,7 +87,7 @@ lemma gn_Hpk_mulVec (k r : ℕ) (y : Fin (2 * r + k + 1) → ℂ) (i : Fin (2 * 
       rw [e, zero_mul]
     · intro hb
       exact absurd (Finset.mem_univ _) hb
-  · rw [dif_neg h, Finset.sum_eq_single i]
+  · rw [dite_eq_right h, Finset.sum_eq_single i]
     · have e : Hpk k r i i = if i.val = r + k then -1 else 1 := by
         simp only [Hpk, and_true]
         split_ifs <;> first | (simp; done) | omega | (simp only [Fin.ext_iff, Fin.val_mk, and_true, true_and, and_self] at *; omega)
@@ -100,7 +104,7 @@ lemma gn_Hpk_mulVec (k r : ℕ) (y : Fin (2 * r + k + 1) → ℂ) (i : Fin (2 * 
 
 lemma gn_Hpk_mulVec_lo (k r : ℕ) (y : Fin (2 * r + k + 1) → ℂ) (i : Fin (2 * r + k + 1))
     (hi : i.val < r) : (Hpk k r *ᵥ y) i = y ⟨2 * r + k - i.val, by omega⟩ := by
-  rw [gn_Hpk_mulVec, dif_pos (Or.inl hi)]
+  rw [gn_Hpk_mulVec, dite_eq_left (Or.inl hi)]
 
 lemma gn_herm_nonneg (k r : ℕ) (y : Fin (2 * r + k + 1) → ℂ)
     (h1 : ∀ a : Fin r, y (eI k r a) = y (esI k r a)) (h2 : y ⟨r + k, by omega⟩ = 0) :
@@ -259,7 +263,7 @@ lemma gn_sum_neg {ι : Type*} [Fintype ι] [DecidableEq ι] (lam : ι → ℝ)
             nlinarith
           · simp
         · refine ⟨j.val, Finset.mem_univ _, ?_⟩
-          rw [gnExt_mulVec, dif_pos j.property]
+          rw [gnExt_mulVec, dite_eq_left j.property]
           have := Complex.normSq_pos.mpr (show v ⟨j.val, j.property⟩ ≠ 0 from hj)
           have hl := j.property
           nlinarith
@@ -282,7 +286,7 @@ lemma gn_sum_pos {ι : Type*} [Fintype ι] [DecidableEq ι] (lam : ι → ℝ)
             nlinarith
           · simp
         · refine ⟨j.val, Finset.mem_univ _, ?_⟩
-          rw [gnExt_mulVec, dif_pos j.property]
+          rw [gnExt_mulVec, dite_eq_left j.property]
           have := Complex.normSq_pos.mpr (show v ⟨j.val, j.property⟩ ≠ 0 from hj)
           have hl := j.property
           nlinarith

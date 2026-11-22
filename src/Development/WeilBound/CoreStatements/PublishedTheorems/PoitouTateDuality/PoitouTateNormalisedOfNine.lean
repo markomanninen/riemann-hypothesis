@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.Bridge
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.MemDecompositionSubgroupIff
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsHypOfCmp
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalFiniteness.VanishAll
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsShaFinal
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.Bridge
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.MemDecompositionSubgroupIff
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsHypOfCmp
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalFiniteness.VanishAll
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsShaFinal
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Representation Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.Published PositivityTheory.PoitouTateConclusion
 

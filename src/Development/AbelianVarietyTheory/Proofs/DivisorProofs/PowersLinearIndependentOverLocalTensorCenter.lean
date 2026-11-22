@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntVZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralTensorPointsSharpStableRing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupActionRingHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntVZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralTensorPointsSharpStableRing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupActionRingHom
+
+@[expose] public section
+
 open Matrix NumberField IsDedekindDomain GlobalTheory.LKTrip GlobalTheory.LKMid GlobalTheory.OrbFinAf
 open scoped TensorProduct Classical
 
@@ -36,9 +41,9 @@ theorem pow_indep_tensor : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p) (γ : G.
     induction t using TensorProduct.induction_on with
     | zero => simp
     | add x y hx hy =>
-      rw [map_add, map_add, ← hx, ← hy, ← Finset.sum_add_distrib]
+      rw [map_add (f := _), map_add (f := _), ← hx, ← hy, ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun i _ => ?_
-      rw [Pi.add_apply, map_add, add_mul]
+      rw [Pi.add_apply, map_add (f := _), add_mul]
     | tmul q f =>
       rw [LinearMap.lTensor_tmul]
       have : ∀ i, e (q ⊗ₜ[ℚ] f) i = q ⊗ₜ[ℚ] f i := fun i => rfl

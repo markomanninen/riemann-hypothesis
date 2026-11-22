@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.GoodTopBot
-import Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.WeylDualWeylLatticesAgreeOfLowestAlcove
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.GoodTopBot
+public import Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.WeylDualWeylLatticesAgreeOfLowestAlcove
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility Formalism.BasicNotions GlobalTheory.Alc
 
@@ -40,7 +44,7 @@ theorem glRel_rowE (R : Type) [CommRing R] (r n : ℕ) : GlRel (rowE R r n) := b
   refine LinearMap.ext fun P => ?_
   induction P using MvPolynomial.induction_on with
   | C x => split_ifs <;> simp [rowE_C]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     obtain ⟨e, t⟩ := v
     have hX : (rowE R r n a b * rowE R r n c d - rowE R r n c d * rowE R r n a b) (X (e, t)) =
@@ -51,7 +55,7 @@ theorem glRel_rowE (R : Type) [CommRing R] (r n : ℕ) : GlRel (rowE R r n) := b
         (rowE R r n a b * rowE R r n c d - rowE R r n c d * rowE R r n a b) P * Q +
           P * (rowE R r n a b * rowE R r n c d - rowE R r n c d * rowE R r n a b) Q := by
       intro P Q
-      simp only [LinearMap.sub_apply, Module.End.mul_apply, rowE_mul, map_add]; ring
+      simp only [LinearMap.sub_apply, Module.End.mul_apply, rowE_mul, map_add (f := _)]; ring
     have hR : ∀ P Q, ((if b = c then rowE R r n a d else 0) - (if d = a then rowE R r n c b else 0)) (P * Q) =
         ((if b = c then rowE R r n a d else 0) - (if d = a then rowE R r n c b else 0)) P * Q +
           P * ((if b = c then rowE R r n a d else 0) - (if d = a then rowE R r n c b else 0)) Q := by
@@ -64,7 +68,7 @@ theorem rowE_eq_rowDiv (R : Type) [CommRing R] (r n : ℕ) (a b : Fin r) (P : Mv
   induction P using MvPolynomial.induction_on with
   | C x => simp [rowE_C, rowDiv, rowGen, Polynomial.algebraMap_apply, Polynomial.coeff_C]
   | add p q hp hq =>
-    simp only [rowDiv, map_add, Polynomial.coeff_add] at *
+    simp only [rowDiv, map_add (f := _), Polynomial.coeff_add] at *
     exact ⟨by rw [hp.1, hq.1], by rw [hp.2, hq.2]⟩
   | mul_X p v hp =>
     obtain ⟨e, t⟩ := v
@@ -84,7 +88,8 @@ theorem rowE_eq_rowDiv (R : Type) [CommRing R] (r n : ℕ) (a b : Fin r) (P : Mv
 theorem map_rowE {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) (r n : ℕ) (a b : Fin r)
     (f : MvPolynomial (Fin r × Fin n) R) :
     map φ (rowE R r n a b f) = rowE S r n a b (map φ f) := by
-  simp only [rowE_apply, map_sum, map_mul, map_X, pderiv_map]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [rowE_apply, map_sum, map_mul, map_X, pderiv_map]
 
 theorem map_rowE_pow {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) (r n k : ℕ) (a b : Fin r)
     (f : MvPolynomial (Fin r × Fin n) R) :
@@ -94,12 +99,14 @@ theorem map_rowE_pow {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) (r 
     simp only [pow_zero, Matrix.one_apply]
     split_ifs <;> simp
   | succ k ih =>
-    simp only [pow_succ, Matrix.mul_apply, LinearMap.sum_apply, Module.End.mul_apply, map_sum, ih, map_rowE]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [pow_succ, Matrix.mul_apply, LinearMap.sum_apply, Module.End.mul_apply, map_sum, ih, map_rowE]
 
 theorem map_gel {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) (r n k : ℕ)
     (f : MvPolynomial (Fin r × Fin n) R) :
     map φ (gel R r n k f) = gel S r n k (map φ f) := by
-  simp only [gel, Matrix.trace, Matrix.diag, LinearMap.sum_apply, map_sum, map_rowE_pow]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [gel, Matrix.trace, Matrix.diag, LinearMap.sum_apply, map_sum, map_rowE_pow]
 
 theorem rowOperators_main : ∀ (R : Type) [CommRing R] (r n : ℕ), GlRel (rowE R r n) ∧
     (∀ a b f, rowE R r n a b f = rowDiv R a b 1 f) ∧

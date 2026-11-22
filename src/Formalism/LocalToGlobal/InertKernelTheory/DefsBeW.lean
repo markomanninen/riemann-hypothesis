@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+
+@[expose] public section
 
 namespace Formalism.L2.KerInert
 

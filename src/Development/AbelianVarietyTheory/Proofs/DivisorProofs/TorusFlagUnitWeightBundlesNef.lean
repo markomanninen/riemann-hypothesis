@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqLastAddGaps
-import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
-import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen
-import Development.AbelianVarietyTheory.Definitions.Divisors.P22
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetLineTrivialOfToroidal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigFrameMatch
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagChartFramesEigenFramesLocalRing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagSpaceComponentSmoothProjectiveConnected
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqLastAddGaps
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetLineTrivialOfToroidal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigFrameMatch
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagChartFramesEigenFramesLocalRing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagSpaceComponentSmoothProjectiveConnected
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory Formalism.L2.Pj Formalism.BasicNotions
@@ -156,8 +160,8 @@ theorem frm_left {R R' : Type} [CommRing R] [CommRing R'] (φ : R →+* R') (k :
   have e' : spMap φ ≫ x = x' := by rw [← hx, ← hx', Category.assoc]
   exact congrArg (fun v => (tv v).left) (X.F.tanPull_vecAt k φ z hz hz' hx hx' e' σ (Fin.cast h i)).symm
 
-open Classical in
 
+open Classical in
 theorem exOf_unitWt (τ : Psi H) (a : ℤ) : AllWt.exOf Dw (NefWt.unitWt τ a) 0 =
     fun ix => ix.elim 0 fun p => if p.1 = τ.1 then a else if p.1 = conjEmb τ.1 then -a else 0 := by
   refine FlagMod.exOf_ext rfl (fun τ' i hi => ?_) (fun τ' i hi => ?_)
@@ -222,7 +226,7 @@ theorem isGenerated_pull {W : Scheme.{0}} (ι : W ⟶ X.YY) (g : W ⟶ gen Y) (h
       eq_inv_mul_iff_mul_eq.2 (Units.ext e)
     rw [e₁, mul_zpow, mul_zpow, inv_zpow', neg_neg, mul_left_comm, mul_assoc]
 
-theorem geometricallyConnected_comp (TF : TorFlag Xo c) (Z : Comp Xo c) (hF : FnAlgClosed Xo c) {U : (Xo.XF c).Opens}
+theorem geometricallyConnected_comp (TF : TorFlag Xo c) (Z : Comp Xo c) (hF : FnAlgClosed (Xo := Xo) (c := c)) {U : (Xo.XF c).Opens}
     (hU : (U : Set (Xo.XF c)) = Z.1) : GeometricallyConnected (U.ι ≫ toF Xo c) := by
   obtain ⟨B, j, hB, -⟩ := GenFibreComp.exists_vars E H Dw l Xo c c.F (RingHom.id c.F) TF.Y c.F (RingEquiv.refl _) hF
     (VarFlag.smooth_gen TF.smooth)
@@ -246,7 +250,7 @@ theorem geometricallyConnected_comp (TF : TorFlag Xo c) (Z : Comp Xo c) (hF : Fn
   exact ⟨fun K _ y _ _ _ hp => have := h.1 y _ _ hp; inferInstance⟩
 
 theorem isGenerated_unitWt (hT : Published.ToroidalCompactification) (TF : TorFlag Xo c) (Z : Comp Xo c)
-    (hF : FnAlgClosed Xo c) (τ : Psi H) (a : ℤ) : IsGenerated (L₀ TF.X Z (NefWt.unitWt τ a)) := by
+    (hF : FnAlgClosed (Xo := Xo) (c := c)) (τ : Psi H) (a : ℤ) : IsGenerated (L₀ TF.X Z (NefWt.unitWt τ a)) := by
   have hZ := TrivOrderTieCompare.isClopen_comp Z
   let U : (Xo.XF c).Opens := ⟨Z.1, hZ.isOpen⟩
   obtain ⟨-, s₀, -, -, -, -, h⟩ := DetLine.detLineTrivial_of_toroidal hT E H Dw l Xo c U hZ.isClosed
@@ -261,12 +265,5 @@ theorem isGenerated_unitWt (hT : Published.ToroidalCompactification) (TF : TorFl
   rw [hg, Scheme.Hom.comp_apply] at hy
   rw [compactOf, (genι TF.Y).isOpenEmbedding.isInducing.closure_eq_preimage_closure_image, Set.image_image]
   exact hy
-
-theorem isNef_unitWt : GlobalTheory.CovTop.Hypotheses₂ → GlobalTheory.Published.NefNumerics → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (TF : TorFlag Xo c) (Z : Comp Xo c), FnAlgClosed Xo c → ∀ τ : Psi H, letI := algebraΓOfHom (str₀ TF.X Z); IsNef c.F (L₀ TF.X Z (GlobalTheory.NefWt.unitWt τ 1)) ∧ IsNef c.F (L₀ TF.X Z (GlobalTheory.NefWt.unitWt τ (-1))) := by
-  intro hP _ E _ _ _ H Dw l Xo c TF Z hF τ
-  letI := algebraΓOfHom (str₀ TF.X Z)
-  have hp := (VarFlag.isVariety₀_flag E H Dw l Xo c TF Z hF).2.1
-  exact ⟨(isGenerated_unitWt hP.p1 TF Z hF τ 1).isNef_of_isProjOver hp,
-    (isGenerated_unitWt hP.p1 TF Z hF τ (-1)).isNef_of_isProjOver hp⟩
 
 end GlobalTheory.NefUnit

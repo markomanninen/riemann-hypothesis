@@ -1,7 +1,11 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafCompPf
-import Development.EtaleCohomology.EtaleSheaves.LSchClsPfYon
-import Development.EtaleCohomology.WeilConjectures.GlueOfSig
-import Development.EtaleCohomology.TateTwists.EtaleChainCochainEvalDifferentialFormulaHolds
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafCompPf
+public import Development.EtaleCohomology.EtaleSheaves.LSchClsPfYon
+public import Development.EtaleCohomology.WeilConjectures.GlueOfSig
+public import Development.EtaleCohomology.TateTwists.EtaleChainCochainEvalDifferentialFormulaHolds
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -112,12 +116,13 @@ theorem LeafCoprod_of : LateralTheory.E.E4.LeafCoprod := by
   intro _ q n i m Z hZ
   have : ∀ j, Finite (Ht q (sch.obj (Z j)) n i) := hZ
   refine Finite.of_injective (AddMonoidHom.pi fun j => pull (ZMod q) (sch.map (Sigma.ι Z j)) (tw q i) n) ?_
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   have hsum : ∑ j, (G (ZMod q)).map (prS (ZMod q) Z j) ≫ (chains (ZMod q)).map (sch.map (Sigma.ι Z j)) = 𝟙 _ := by
     have h1 : (G (ZMod q)).map (∑ j, prS (ZMod q) Z j ≫ (W (ZMod q)).map (sch.map (Sigma.ι Z j))) = 𝟙 _ := by
       rw [sum_prS, CategoryTheory.Functor.map_id]
-    rw [Functor.map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Functor.map_sum] at h1
     simp only [Functor.map_comp] at h1
     exact h1
   exact cls_inj (fun j => (chains (ZMod q)).map (sch.map (Sigma.ι Z j))) (fun j => (G (ZMod q)).map (prS (ZMod q) Z j))

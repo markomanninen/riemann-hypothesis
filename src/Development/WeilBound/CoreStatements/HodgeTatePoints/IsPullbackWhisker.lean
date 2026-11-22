@@ -1,24 +1,28 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.Comp1PointPowerExpand
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatLieBc
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModelStatement
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartJetTrD
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBMapPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdLB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import Development.WeilBound.CoreStatements.HodgeTatePoints.CdLocal
-import Development.WeilBound.CoreStatements.HodgeTatePoints.CdUniv
-import Development.WeilBound.CoreStatements.HodgeTatePoints.CbFrob
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCocharLieLieModel
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.GtPtsVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.TangentLinearity.FnOfComp
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsUniqueCharacterOfMul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullUUnitsCompatGeneric
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.NonzeroLocus
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdIso
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.GeneratorPullback.PullAlong
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.Comp1PointPowerExpand
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatLieBc
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModelStatement
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartJetTrD
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBMapPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdLB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.CdLocal
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.CdUniv
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.CbFrob
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCocharLieLieModel
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.GtPtsVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.TangentLinearity.FnOfComp
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsUniqueCharacterOfMul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullUUnitsCompatGeneric
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.NonzeroLocus
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdIso
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.GeneratorPullback.PullAlong
+
+@[expose] public section
 
 section
 
@@ -127,7 +131,8 @@ theorem basis_bc {n : ℕ} {tg : Fin n → (Sp (DualNumber S) ⟶ t.G.left)} (ht
   obtain ⟨hli', hsp'⟩ := hbs t.semi.smooth n (Module.Basis.mk hli hsp)
   simp only [Module.Basis.mk_apply] at hli' hsp'
   have htg' : (fun i => spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ tg i) = fun l => (M'.pt (j (b l))).left :=
-    funext fun l => by rw [hj, htg]
+    funext fun l => by
+      rw [hj, htg]
   obtain ⟨v, hv⟩ := M'.onto (Over.homMk w hw.1) hw.2
   have hvw : (M'.pt v).left = w := by rw [hv]; rfl
   let B := Module.Basis.mk hli' hsp'.ge
@@ -158,7 +163,20 @@ theorem sq_subst {κ κ' : Type} (m : ℕ) (φ : κ → MvPolynomial κ' S) (φ'
     (h : ∀ i, φ' i = MvPolynomial.map f (φ i)) :
     homAt (spMap f ≫ x) (jetSubstP m φ') ≫ cO f x κ m = cO f x κ' m ≫ homAt x (jetSubstP m φ) := by
   obtain rfl : φ' = _ := funext h
-  exact sq_of f x _ _ (jetCoef_substP f m φ)
+  apply sq_of f x
+  apply Ideal.Quotient.ringHom_ext
+  apply MvPolynomial.ringHom_ext
+  · intro r
+    have map_algebra (vars : Type) (s : S) :
+        jetCoef f vars m (algebraMap S (Jet S vars m) s) = algebraMap S₂ (Jet S₂ vars m) (f s) :=
+      RingHom.congr_fun (jetCoef_alg f vars m) s
+    simp only [RingHom.coe_comp, Function.comp_apply, AlgHom.coe_toRingHom]
+    rw [show Ideal.Quotient.mk (orig S κ ^ (m + 1)) (MvPolynomial.C r) =
+      algebraMap S (Jet S κ m) r from rfl, AlgHom.commutes, map_algebra, map_algebra, AlgHom.commutes]
+  · intro i
+    simp only [RingHom.coe_comp, Function.comp_apply, AlgHom.coe_toRingHom, substP_X, jetCoef_mk,
+      MvPolynomial.map_X, map_sub (MvPolynomial.map (σ := κ') f), MvPolynomial.map_C,
+      MvPolynomial.constantCoeff_map]
 
 variable {d : ℕ} (y : ∀ m, jOG x d m 1 ⟶ t.G)
 
@@ -171,8 +189,9 @@ theorem jpt_bc {n : ℕ} (m : ℕ) (i : Fin n) :
 theorem chart_bc {F : Fin d → MvPowerSeries (Fin 2 × Fin d) S} {act : 𝓞 E → Fin d → MvPowerSeries (Fin 1 × Fin d) S}
     {tg : Fin d → (Sp (DualNumber S) ⟶ t.G.left)} (h : IsChartG t x d F act tg (fun l j => if l = j then 1 else 0) y) :
     IsChartG t (spMap f ≫ x) d (fun i => MvPowerSeries.map f (F i)) (fun a i => MvPowerSeries.map f (act a i))
-      (fun l => spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ tg l) (fun l j => if l = j then 1 else 0) (yBC t f x y) where
-  zero m := by
+      (fun l => spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ tg l) (fun l j => if l = j then 1 else 0) (yBC t f x y) := by
+  refine { zero := ?_, trunc := ?_, law := ?_, act := ?_, tan := ?_, basis := ?_ }
+  · intro m
     let ρ : overAt (spMap f ≫ x) S₂ ⟶ overAt x S := Over.homMk (spMap f) (by
       change spMap _ ≫ spMap _ ≫ x = spMap _ ≫ spMap f ≫ x
       rw [spMap_alg_self, spMap_alg_self, Category.id_comp, Category.id_comp])
@@ -182,15 +201,15 @@ theorem chart_bc {F : Fin d → MvPowerSeries (Fin 2 × Fin d) S} {act : 𝓞 E 
       change spMap _ ≫ spMap _ = spMap _ ≫ spMap _
       rw [spMap_cp, spMap_cp, jetCoef_aug]
     rw [yBC, ← Category.assoc, e, Category.assoc, h.zero, MonObj.comp_one]
-  trunc m := by
+  · intro m
     rw [yBC, yBC, ← Category.assoc, sq_of f x _ _ (jetCoef_trunc f _ m).symm, Category.assoc, h.trunc]
-  law m := by
+  · intro m
     rw [jpt_bc, jpt_bc, ← MonObj.comp_mul, ← h.law, yBC, ← Category.assoc,
       sq_subst f x m (fun p : Fin 1 × Fin d => psTrunc m (F p.2)) _ (fun i => psTrunc_map f m _), Category.assoc]
-  act m a := by
+  · intro m a
     rw [yBC, Category.assoc, h.act, ← Category.assoc (homAt _ _),
       sq_subst f x m (fun p : Fin 1 × Fin d => psTrunc m (act a p.2)) _ (fun i => psTrunc_map f m _), Category.assoc]
-  tan l := by
+  · intro l
     have := comb_bc t f x (h.tan l)
     convert this using 2 with j j
     · change spMap _ ≫ spMap _ ≫ (y 1).left = spMap _ ≫ spMap _ ≫ (y 1).left
@@ -210,7 +229,8 @@ theorem chart_bc {F : Fin d → MvPowerSeries (Fin 2 × Fin d) S} {act : 𝓞 E 
         · ext <;> simp [GlobalTheory.CompanionTheory.Ar.dualMap]
         · simp
     · split_ifs <;> simp
-  basis v := ⟨v, fun j => by simp, fun a ha => funext fun j => by simpa using ha j⟩
+  · intro v
+    exact ⟨v, fun j => by simp, fun a ha => funext fun j => by simpa using ha j⟩
 
 end
 
@@ -324,9 +344,9 @@ theorem FrBC.frame (h : FrBC t f x y e e₂) (hg : ∀ m, (e₂ m).IsGen)
     {ad : 𝓞 E → MvPowerSeries (Fin 2 × Fin d) S} (hf : IsFrameG t x d y F act ph1 ph2 sy ad e) :
     IsFrameG t (spMap f ≫ x) d (yBC t f x y) (fun i => MvPowerSeries.map f (F i))
       (fun a i => MvPowerSeries.map f (act a i)) (MvPowerSeries.map f ph1) (MvPowerSeries.map f ph2)
-      (MvPowerSeries.map f sy) (fun a => MvPowerSeries.map f (ad a)) e₂ where
-  gen := hg
-  ph1 m := by
+      (MvPowerSeries.map f sy) (fun a => MvPowerSeries.map f (ad a)) e₂ := by
+  refine { gen := hg, ph1 := ?_, ph2 := ?_, sy := ?_, ad := ?_ }
+  · intro m
     obtain ⟨u, hu, hc⟩ := hf.ph1 m
     refine ⟨uBC f u, by rw [← coef_psJet, ← hu]; rfl,
       corr_of_val t.PP.isLB fun z J hJ => ?_⟩
@@ -337,7 +357,7 @@ theorem FrBC.frame (h : FrBC t f x y e e₂) (hg : ∀ m, (e₂ m).IsGen)
         h.pe _ _ _ _ (fun j => psIn_map f m _ _) (fun j => (MvPolynomial.map_X f _).symm) _ hJ,
         h.pe _ _ _ _ (fun j => (MvPolynomial.map_X f _).symm) (fun j => (MvPolynomial.map_X f _).symm) _ hJ,
         h.pe _ _ _ _ (fun j => (MvPolynomial.map_X f _).symm) (fun j => (MvPolynomial.map_X f _).symm) _ hJ]
-  ph2 m := by
+  · intro m
     obtain ⟨u, hu, hc⟩ := hf.ph2 m
     refine ⟨uBC f u, by rw [← coef_psJet, ← hu]; rfl,
       corr_of_val t.PP.isLB fun z J hJ => ?_⟩
@@ -348,14 +368,14 @@ theorem FrBC.frame (h : FrBC t f x y e e₂) (hg : ∀ m, (e₂ m).IsGen)
         h.pe _ _ _ _ (fun j => (MvPolynomial.map_X f _).symm) (fun j => psIn_map f m _ _) _ hJ,
         h.pe _ _ _ _ (fun j => (MvPolynomial.map_X f _).symm) (fun j => (MvPolynomial.map_X f _).symm) _ hJ,
         h.pe _ _ _ _ (fun j => (MvPolynomial.map_X f _).symm) (fun j => (MvPolynomial.map_X f _).symm) _ hJ]
-  sy m := by
+  · intro m
     obtain ⟨u, hu, hc⟩ := hf.sy m
     refine ⟨uBC f u, by rw [← coef_psJet, ← hu]; rfl,
       corr_of_val t.PP.isLB fun z J hJ => ?_⟩
     refine (h m _ _ z J hJ).trans ((val_corr hJ hc _).trans ?_)
     rw [val_scale t _ _ _ hJ, val_scale t _ _ _ hJ, uBC_inv, gm_unit_bc f x,
         h.pe _ _ _ _ (fun j => (MvPolynomial.map_X f _).symm) (fun j => (MvPolynomial.map_X f _).symm) _ hJ]
-  ad a := by
+  · intro a
     obtain ⟨wL, hw, hm⟩ := hf.ad a
     refine ⟨wL, hw, fun m => ?_⟩
     obtain ⟨u, hu, hc⟩ := hm m
@@ -387,10 +407,14 @@ end
 theorem germ_bc : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) [StarRing (𝓞 E)], (∀ a : 𝓞 E, star a = H.bar a) → ∀ (X0 : Scheme.{0}) (t : SAB H X0) (S S₂ : Type) [CommRing S] [CommRing S₂] (f : S →+* S₂) (x : Sp S ⟶ X0) (d : ℕ) (g : GermAt t x d), ∃ g₂ : GermAt t (spMap f ≫ x) d, IsMapOf f g.B g₂.B ∧ ∀ l, g₂.tg l = spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ g.tg l := by
   intro E _ _ _ H _ _ X0 t S S₂ _ _ f x d g
   obtain ⟨e₂, h1, h2⟩ := exists_frBC t f x g.x g.e g.frame.gen
-  exact ⟨⟨FBMap.mapFB f g.B, yBC t f x g.x, e₂, fun l => spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ g.tg l,
-    chart_bc t f x g.x g.chart, fun l => tan_bc t f x (g.tan l), basis_bc t f x g.tan g.basis,
-    h2.frame h1 g.frame, h2.trunc g.trunc, h2.axes g.axes⟩,
-    ⟨fun _ => rfl, fun _ _ => rfl, rfl, rfl, rfl, fun _ => rfl⟩, fun _ => rfl⟩
+  obtain ⟨B₂, hF, hact, hph1, hph2, hsy, had⟩ := fbMap_holds S S₂ f d (𝓞 E) g.B
+  refine ⟨⟨B₂, yBC t f x g.x, e₂, fun l => spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ g.tg l,
+    ?_, fun l => tan_bc t f x (g.tan l), basis_bc t f x g.tan g.basis,
+    ?_, h2.trunc g.trunc, h2.axes g.axes⟩, ⟨hF, hact, hph1, hph2, hsy, had⟩, fun _ => rfl⟩
+  · rw [funext hF, funext fun a => funext (hact a)]
+    exact chart_bc t f x g.x g.chart
+  · rw [funext hF, funext fun a => funext (hact a), hph1, hph2, hsy, funext had]
+    exact h2.frame h1 g.frame
 
 end PositivityTheory.HtPt.Ce
 
@@ -444,7 +468,8 @@ theorem pt_of_vec : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : 
       intro j
       rw [hX, map_mul, map_mul, map_pow, mul_pow, _root_.mul_assoc]
       rfl
-    rw [h2, Finset.sum_congr rfl fun j _ => this j, ← Finset.sum_mul, ← map_sum, hq, map_zero, zero_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, Finset.sum_congr rfl fun j _ => this j, ← Finset.sum_mul, ← map_sum, hq, map_zero, zero_mul]
   · obtain ⟨χ', a1, a2⟩ := exists_low hp χ h0
     rw [toFirst_eq, ← Category.assoc, homAt_comp, ← a2, ← homAt_comp, Category.assoc, x_trTo] at h
     obtain ⟨χ₀, -, hu⟩ := (PositivityTheory.HtPt.Cd.germ_univ E H hstar X0 t k x d g).2 Unit 1 1 (MonObj.comp_one _)
@@ -947,7 +972,7 @@ theorem coeff_cocycle (R : CommRingCat.{0}) (φ : torusRing ZU X ⟶ R) (y : Spe
   obtain ⟨c', h4⟩ := mem_span_of φ y δ ρ h0
   have h5 : twist u ((expand y).hom ρ - 1) = ((expand (prodPoint φ y ≫ a)).hom ρ - 1) +
       (const X R).hom ((value φ y).hom ρ - 1) := by
-    rw [map_sub, map_one, h1, expand, h3, h4, evA_map, ha, map_sub, map_add, map_mul, map_one]
+    rw [map_sub, map_one, h1, expand, h3, h4, evA_map, ha, map_sub, map_add (f := _), map_mul, map_one]
     have := congrArg (const X R).hom (evA_sq δ hδ R y)
     rw [map_mul, map_zero] at this
     linear_combination c * (const X R).hom c' * this
@@ -977,7 +1002,7 @@ theorem cobound :
         (isPullback_prod X Y).hom_ext (by rw [prodPoint_fst, Spec.map_preimage]) (by rw [prodPoint_snd])⟩
     obtain ⟨c, h3⟩ := hf0 R (prodPoint φ y ≫ a)
     obtain ⟨c', h4⟩ := mem_span_of φ y δ ρ h0
-    rw [map_mul, ← evA_comp, ← evA_comp, prodPoint_snd, map_add, map_add, map_one, map_one, key R φ y, ← value_eq,
+    rw [map_mul, ← evA_comp, ← evA_comp, prodPoint_snd, map_add (f := _), map_add (f := _), map_one, map_one, key R φ y, ← value_eq,
       h3, h4, ha]
     linear_combination (-c * c') * evA_sq δ hδ R y
   exact ⟨⟨1 + f, 1 - f, by linear_combination -hff, by linear_combination -hff⟩, fin⟩

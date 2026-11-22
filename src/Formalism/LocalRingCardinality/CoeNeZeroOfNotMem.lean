@@ -1,7 +1,11 @@
-import Formalism.LocalRingCardinality.DataKerI
-import Formalism.LocalRingCardinality.DataParamsT
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.LocalToGlobal.Columns.LocWLemmas
+module
+
+public import Formalism.LocalRingCardinality.DataKerI
+public import Formalism.LocalRingCardinality.DataParamsT
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalToGlobal.Columns.LocWLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ theorem nuRow_head (D : D7) (u : D.what₂.Word) (i : ℕ) (hi : i < D.R.m) (τ 
       (2 * (D.R.N i : ℚ) + D.R.t - 2 * r) / 2 : ℚ) : ℝ) := by
   have hw : 1 ≤ i + 1 ∧ i + 1 ≤ D.R.m := ⟨by omega, by omega⟩
   unfold DV.nuRow DV.srcPar DV.wSz
-  rw [dif_pos hr, dif_pos hw, ← D.hcW_e u τ]
+  rw [dite_eq_left hr, dite_eq_left hw, ← D.hcW_e u τ]
   simp only [Nat.add_sub_cancel, Ranks.N]
   push_cast
   ring
@@ -32,9 +36,9 @@ theorem nuRow_block (D : D7) (u : D.what₂.Word) (i : ℕ) (hi : i < D.R.m) (τ
   have hmod : (D.R.k + q * (D.R.t + 1) + s - D.R.k) % (D.R.t + 1) = s := by
     rw [h1, Nat.add_mul_mod_self_left, Nat.mod_eq_of_lt hs]
   unfold DV.nuRow DV.srcPar DV.wSz
-  rw [dif_neg hk, dif_pos hw, ← D.hcW_e u τ]
+  rw [dite_eq_right hk, dite_eq_left hw, ← D.hcW_e u τ]
   simp only [hdiv, hmod, Nat.add_sub_cancel, Ranks.N]
-  rw [dif_pos (by omega : q < D.R.m)]
+  rw [dite_eq_left (by omega : q < D.R.m)]
   push_cast
   ring
 
@@ -397,13 +401,13 @@ theorem lidx_latOf (w : HeightOneSpectrum (𝓞 K)) {ι : Type} [Fintype ι] [De
     rw [hfe, hγ]
     unfold famOf
     simp
-  have hlat : Submodule.IsLattice K (latOf (K := K) e) :=
-    { fg := Submodule.fg_span (Set.finite_range e)
+  have hlat : Submodule.IsFullLattice K (latOf (K := K) e) :=
+    { toIsLattice := Submodule.IsLattice.of_fg K (Submodule.fg_span (Set.finite_range e))
       span_eq_top := by
         rw [span_latOf]
-        have := (Pi.basisFun K ι).span_eq
         have he : (⇑(Pi.basisFun K ι)) = e := by funext i; simp [e]
-        rwa [he] at this }
+        rw [← he]
+        exact (Pi.basisFun K ι).span_eq }
   rw [← h1, ← h2, lidx_map w _ hinj,
     Formalism.L2.Col.bridge_lidx_det_holds K (ι → K) w (latOf (K := K) e) _ γ hlat rfl]
   congr 1
@@ -489,7 +493,8 @@ theorem li_of_semilinear {M : Type} [AddCommGroup M] [Module ℂ M] {σ : K →+
   intro g hg i
   have h1 : ∑ i, σ (g i) • e (v i) = 0 := by
     have := congrArg e hg
-    rw [map_sum, map_zero] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at this
     rw [← this]
     exact Finset.sum_congr rfl fun i _ => by rw [map_smulₛₗ]
   have := Fintype.linearIndependent_iff.1 h _ h1 i
@@ -507,18 +512,6 @@ section Herm
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K]
 variable {V : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
-
-def IsStarPl (w w' : HeightOneSpectrum (𝓞 K)) : Prop :=
-  ∀ x y : 𝓞 K, (y : K) = star (x : K) → (x ∈ w'.asIdeal ↔ y ∈ w.asIdeal)
-
-theorem IsStarPl.symm {w w' : HeightOneSpectrum (𝓞 K)} (h : IsStarPl w w') : IsStarPl w' w :=
-  fun x y hxy => (h y x (by rw [hxy, star_star])).symm
-
-theorem h_smul_left (h : V →ₗ⋆[K] V →ₗ[K] K) (t : 𝓞 K) (x y : V) : h (t • x) y = star (t : K) * h x y := by
-  rw [← algebraMap_smul K t x, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul]; rfl
-
-theorem h_smul_right (h : V →ₗ⋆[K] V →ₗ[K] K) (t : 𝓞 K) (x y : V) : h x (t • y) = (t : K) * h x y := by
-  rw [← algebraMap_smul K t y, map_smul, smul_eq_mul]
 
 theorem vAdd_inv (w : HeightOneSpectrum (𝓞 K)) (x : K) : vAdd w x⁻¹ = - vAdd w x := by
   unfold vAdd
@@ -542,26 +535,6 @@ namespace Formalism.BasicNotions.Idx
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory SkeletonIndexLemmas
 
-theorem jMt_inj (D : D7) (μ : D.what₂.Tup) (j : ℕ) : Function.Injective (D.what₂.jMt μ j) := by
-  have hli := (D.what₂.jMt_basis μ j (Module.Free.chooseBasis _ _)).1
-  have : Fintype (Module.Free.ChooseBasisIndex D.what₂.LL (D.what₂.MtL μ j)) := @Fintype.ofFinite _ hli.finite
-  exact inj_of_li D.what₂.embLL (D.what₂.jMt μ j) (Module.Free.chooseBasis _ _) hli
-
-def hSes (D : D7) (h : HermRat D) (μ : D.what₂.Tup) (j : ℕ) (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) :
-    D.what₂.MtL μ j →ₗ⋆[D.what₂.LL] D.what₂.MtL μ j →ₗ[D.what₂.LL] D.what₂.LL :=
-  LinearMap.mk₂'ₛₗ (starRingEnd D.what₂.LL) (RingHom.id D.what₂.LL) (hLL D μ j)
-    (fun x y z => D.what₂.embLL.injective (by
-      simp only [map_add, hLL_spec D h μ j h1 h2, inner_add_left]))
-    (fun c x y => D.what₂.embLL.injective (by
-      rw [smul_eq_mul, map_mul, hLL_spec D h μ j h1 h2, hLL_spec D h μ j h1 h2, LinearMap.map_smulₛₗ,
-        inner_smul_left]
-      exact congrArg (· * _) (D.starLL_cx c).symm))
-    (fun x y z => D.what₂.embLL.injective (by
-      simp only [map_add, hLL_spec D h μ j h1 h2, inner_add_right]))
-    (fun c x y => D.what₂.embLL.injective (by
-      rw [RingHom.id_apply, smul_eq_mul, map_mul, hLL_spec D h μ j h1 h2, hLL_spec D h μ j h1 h2,
-        LinearMap.map_smulₛₗ, inner_smul_right]))
-
 theorem factStepBz {D : D7} (X : DivX D) : FactStepBz X := by
   intro hθ μ j w h1 h2 n b b0 Z hb hb0 hli0 hsp0 hli hZ
   set θ := thetaL X μ j (hθ μ j h1 h2) with hθd
@@ -577,7 +550,8 @@ theorem factStepBz {D : D7} (X : DivX D) : FactStepBz X := by
     funext i
     apply jM_inj X j
     unfold famOf
-    rw [hs, hZ i, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hs, hZ i, map_sum]
     exact Finset.sum_congr rfl fun k _ => by rw [map_smulₛₗ, hs0]
   have hdZ : Z.det ≠ 0 := det_ne_zero_of_li _ Z (hcZ ▸ hc)
 

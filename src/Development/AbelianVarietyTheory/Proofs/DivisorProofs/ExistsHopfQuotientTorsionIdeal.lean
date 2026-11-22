@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRetractionMulP
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvEqOneOfForallPairing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsHopfIdealKerIdealOfBialgHom
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRetractionMulP
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvEqOneOfForallPairing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsHopfIdealKerIdealOfBialgHom
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -14,26 +18,28 @@ namespace GlobalTheory.PDiv
 theorem exists_hopf_quotient_torsionIdeal :
     ∀ (O : Type) [CommRing O] (B : Type) [CommRing B] [HopfAlgebra O B] [IsCocomm O B] (n : ℕ),
       ∃ (D : Type) (_ : CommRing D) (_ : HopfAlgebra O D) (_ : IsCocomm O D) (π : B →ₐc[O] D),
-        Function.Surjective π ∧ RingHom.ker π = torsionIdeal O B n := by
+        Function.Surjective π ∧ RingHom.ker π = torsionIdeal (R := O) (A := B) n := by
   intro O _ B _ _ _ n
-  haveI : (torsionIdeal O B n).IsHopfIdeal O :=
-    isHopfIdeal_kerIdeal_of_bialgHom O B B (mulBy O B n)
-  let π : B →ₐc[O] B ⧸ torsionIdeal O B n := Bialgebra.Quotient.mkBialgHom _
+  let I := torsionIdeal (R := O) (A := B) n
+  have : I.IsHopfIdeal O :=
+    isHopfIdeal_kerIdeal_of_bialgHom O B B (mulBy (R := O) (A := B) n)
+  let π : B →ₐc[O] B ⧸ I := Bialgebra.Quotient.mkBialgHom _
   have hπ : Function.Surjective π := Ideal.Quotient.mk_surjective
-  have cocomm : IsCocomm O (B ⧸ torsionIdeal O B n) :=
+  have cocomm : IsCocomm O (B ⧸ I) :=
     { comm_comp_comul := LinearMap.ext fun b => by
         obtain ⟨a, rfl⟩ := hπ b
         have h : ∀ t : B ⊗[O] B,
-            TensorProduct.comm O (B ⧸ torsionIdeal O B n) (B ⧸ torsionIdeal O B n) (TensorProduct.map (π : B →ₗ[O] B ⧸ torsionIdeal O B n) (π : B →ₗ[O] B ⧸ torsionIdeal O B n) t) =
-            TensorProduct.map (π : B →ₗ[O] B ⧸ torsionIdeal O B n) (π : B →ₗ[O] B ⧸ torsionIdeal O B n) (TensorProduct.comm O B B t) := by
+            TensorProduct.comm O (B ⧸ I) (B ⧸ I)
+                (TensorProduct.map (π : B →ₗ[O] B ⧸ I) (π : B →ₗ[O] B ⧸ I) t) =
+            TensorProduct.map (π : B →ₗ[O] B ⧸ I) (π : B →ₗ[O] B ⧸ I)
+              (TensorProduct.comm O B B t) := by
           intro t
           induction t with
-          | zero => simp
-          | add x y hx hy => simp only [map_add, hx, hy]
+          | add x y hx hy => simp only [map_add (f := _), hx, hy]
           | tmul x y => simp
-        change TensorProduct.comm O (B ⧸ torsionIdeal O B n) (B ⧸ torsionIdeal O B n) (comul (π a)) = comul (π a)
+        change TensorProduct.comm O (B ⧸ I) (B ⧸ I) (comul (π a)) = comul (π a)
         rw [← CoalgHomClass.map_comp_comul_apply π a, h, comm_comul] }
-  exact ⟨B ⧸ torsionIdeal O B n, inferInstance, inferInstance,
+  exact ⟨B ⧸ I, inferInstance, inferInstance,
     cocomm, π, hπ,
     Ideal.ext fun _ => Ideal.Quotient.eq_zero_iff_mem⟩
 

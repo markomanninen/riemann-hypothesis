@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.CotangentSurjective
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+
+@[expose] public section
 
 open ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Up GlobalTheory.CompanionTheory.Ar.GR
 open scoped Matrix
@@ -24,7 +28,7 @@ theorem sub_pull : ∀ (p : ℕ) (C : Type) [Field C] (R : Type) [CommRing R] [A
     · rw [← hM]
       exact ⟨f, hf.1.1, rfl⟩
     · have := hf.2 (j x) (j y)
-      simpa only [map_add] using this
+      simpa only [map_add (f := _)] using this
   | algebraMap r => exact Subalgebra.algebraMap_mem _ r
   | add f f' _ _ h h' => exact Subalgebra.add_mem _ h h'
   | mul f f' _ _ h h' => exact Subalgebra.mul_mem _ h h'

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFlatLocalRegularElement
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFlatLocalRegularElement
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -16,13 +21,13 @@ theorem lid_rTensor_subtype_mem_smul_top (I : Ideal A) (t : I ⊗[A] M) :
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul i m => simpa using Submodule.smul_mem_smul i.2 Submodule.mem_top
-  | add s t hs ht => rw [map_add, map_add]; exact add_mem hs ht
+  | add s t hs ht => rw [map_add (f := _), map_add (f := _)]; exact add_mem hs ht
 
 theorem exists_lid_rTensor_subtype_eq (I : Ideal A) {x : M} (hx : x ∈ I • (⊤ : Submodule A M)) :
     ∃ t : I ⊗[A] M, TensorProduct.lid A M (I.subtype.rTensor M t) = x := by
   refine Submodule.smul_induction_on hx (fun a ha m _ => ⟨⟨a, ha⟩ ⊗ₜ m, by simp⟩) ?_
   rintro x x' ⟨s, rfl⟩ ⟨s', rfl⟩
-  exact ⟨s + s', by rw [map_add, map_add]⟩
+  exact ⟨s + s', by rw [map_add (f := _), map_add (f := _)]⟩
 
 theorem mem_colon_smul_top_of_flat [Module.Flat A M] (J : Ideal A) (a : A) {v : M}
     (hv : a • v ∈ J • (⊤ : Submodule A M)) :
@@ -130,7 +135,8 @@ theorem smul_regular_mod_ideal (y : B)
   set P : Submodule B M := I.map (algebraMap A B) • ⊤
   have hle : (maximalIdeal A).map (algebraMap A B) ≤ Ideal.jacobson ⊥ :=
     (IsLocalRing.map_maximalIdeal_le _).trans (IsLocalRing.maximalIdeal_le_jacobson _)
-  have hK := Ideal.iInf_pow_smul_eq_bot_of_le_jacobson (M := M ⧸ P) _ hle
+  have hK := Ideal.iInf_pow_smul_eq_bot_of_le_jacobson (M := M ⧸ P) _
+    (by simpa only [Ideal.jacobson_bot] using hle)
   rw [mem_smul_top_iff_mem_map_smul_top (B := B), ← Submodule.Quotient.mk_eq_zero P]
   have hmem : Submodule.Quotient.mk (p := P) z ∈
       (⨅ i : ℕ, ((maximalIdeal A).map (algebraMap A B)) ^ i • (⊤ : Submodule B (M ⧸ P))) := by
@@ -187,7 +193,7 @@ theorem FlatLocalRegularElement.proof : FlatLocalRegularElement.Statement := by
         (Submodule.smul_mem_pointwise_smul m y ⊤ Submodule.mem_top)
     refine Function.Injective.of_comp (f := TensorProduct.lid A (QuotSMulTop y M)) ?_
     change Function.Injective μN
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro t ht
     have hπs : Function.Surjective π := Submodule.mkQ_surjective (y • (⊤ : Submodule B M))
     obtain ⟨s, rfl⟩ := LinearMap.lTensor_surjective I hπs t

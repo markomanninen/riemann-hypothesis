@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.AlmostGoodOf
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.AlmostGoodOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,9 +60,11 @@ theorem repr_mul {d : ℕ} (bs : Module.Basis (Fin d) F E) (v : HeightOneSpectru
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     rw [smul_mul_smul_comm, hbK, Algebra.TensorProduct.basis_apply, Algebra.TensorProduct.basis_apply,
       Algebra.TensorProduct.tmul_mul_tmul, one_mul]
-  rw [← bK.coord_apply, e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← bK.coord_apply, e, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_smul, bK.coord_apply, hbK, repr_one_tmul, smul_eq_mul]
 
@@ -70,12 +76,14 @@ theorem repr_sig (σ : E →ₐ[F] E) {d : ℕ} (bs : Module.Basis (Fin d) F E) 
   set bK := Algebra.TensorProduct.basis (Fv F v) bs with hbK
   have e : sigR (Fv F v) σ x = ∑ i, bK.repr x i • ((1 : Fv F v) ⊗ₜ[F] σ (bs i)) := by
     conv_lhs => rw [← bK.sum_repr x]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [hbK, Algebra.TensorProduct.basis_apply, TensorProduct.smul_tmul', smul_eq_mul, mul_one,
       TensorProduct.smul_tmul', smul_eq_mul, mul_one]
     simp [sigR]
-  rw [← bK.coord_apply, e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← bK.coord_apply, e, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, bK.coord_apply, hbK, repr_one_tmul, smul_eq_mul]
 
@@ -92,7 +100,7 @@ def ringOf {σ : E →ₐ[F] E} {d : ℕ} {bs : Module.Basis (Fin d) F E} {v : H
     exact one_int h k
   add_mem' := by
     intro x y hx hy k
-    rw [map_add, Finsupp.add_apply]
+    rw [map_add (f := _), Finsupp.add_apply]
     exact add_mem (hx k) (hy k)
   zero_mem' := by
     intro k

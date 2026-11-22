@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaLiftEisensteinLevelSubgroup
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TsumMeas
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockMatrixInjective
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PartialConstantTermBound
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaLiftEisensteinLevelSubgroup
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TsumMeas
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockMatrixInjective
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PartialConstantTermBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -138,8 +142,8 @@ def tEquiv (a b c d : Mx D p p)
     · exact cont_add ((cont_rmul _).comp continuous_fst) ((cont_rmul _).comp continuous_snd)
     · exact cont_add ((cont_rmul _).comp continuous_fst) ((cont_rmul _).comp continuous_snd)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem emb_conj (M : Maps D hn) (g : G D p) {a b c d : Mx D p p} (hg : mat g = blk4 a b c d)
     (z' : hermA D ρ) (x y x' y' : Mx D ρ p)
     (h1 : y' ⬝ a + x' ⬝ c = y) (h2 : y' ⬝ b + x' ⬝ d = x)

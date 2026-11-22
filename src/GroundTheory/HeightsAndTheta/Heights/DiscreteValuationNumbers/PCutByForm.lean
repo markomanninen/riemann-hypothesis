@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -15,9 +20,10 @@ theorem weightedHomogeneousComponent_mem_span_of_isMultiHomog {R : Type*} [CommR
     {t : MRing ι R} (ht : t ∈ Ideal.span {s}) (b : K → ℕ) :
     weightedHomogeneousComponent (blockWeight ι) b t ∈ Ideal.span {s} := by
   obtain ⟨a, rfl⟩ := Ideal.mem_span_singleton'.mp ht
-  rw [a.as_sum, Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [a.as_sum, Finset.sum_mul, map_sum]
   refine Ideal.sum_mem _ fun d _ => ?_
-  have hd : IsWeightedHomogeneous (blockWeight ι) (monomial d (coeff d a) * s)
+  have hd : IsWeightedHomogeneous (blockWeight ι) (monomial d (AddMonoidAlgebra.coeff a d) * s)
       (Finsupp.weight (blockWeight ι) d + c) :=
     (isWeightedHomogeneous_monomial _ d _ rfl).mul hs
   by_cases hb : b = Finsupp.weight (blockWeight ι) d + c
@@ -32,7 +38,7 @@ theorem isMultiHomogIdeal_sup_span_of_form {R : Type*} [CommRing R] {K : Type*} 
     {c : K → ℕ} (hs : IsMultiHomog s c) : IsMultiHomogIdeal (I ⊔ Ideal.span {s}) := by
   intro f hf b
   obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.mp hf
-  rw [map_add]
+  rw [map_add (f := _)]
   exact Ideal.add_mem _ (Ideal.mem_sup_left (hI y hy b))
     (Ideal.mem_sup_right (weightedHomogeneousComponent_mem_span_of_isMultiHomog hs hz b))
 

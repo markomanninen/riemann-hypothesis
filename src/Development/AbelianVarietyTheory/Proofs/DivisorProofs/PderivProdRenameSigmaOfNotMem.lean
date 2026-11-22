@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FramedDConst
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityReal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolEval
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FramedDConst
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityReal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolEval
+
+@[expose] public section
+
 open scoped TensorProduct Matrix Classical GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open NumberField MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.BasicNotions.TH GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.FockAlg GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.RealLift
 open GlobalTheory.HoweD
@@ -26,8 +31,8 @@ theorem polMapD_index_injective (W : Type) [Fintype W] (Λ : W → Type) :
   have key : ∀ (f : ∀ w, (Λ w →₀ ℕ)) (w : W) (l : Λ w),
       (∑ w, Finsupp.mapDomain (Sigma.mk w) (f w)) ⟨w, l⟩ = f w l := by
     intro f w l
-    rw [Finsupp.finset_sum_apply, Finset.sum_eq_single w]
-    · exact Finsupp.mapDomain_apply sigma_mk_injective _ _
+    rw [Finsupp.finsetSum_apply, Finset.sum_eq_single w]
+    · exact Finsupp.mapDomain_apply_of_injective sigma_mk_injective _ _
     · intro v _ hv
       apply Finsupp.mapDomain_notin_range
       rintro ⟨x, hx⟩

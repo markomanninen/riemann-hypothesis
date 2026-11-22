@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex
@@ -83,9 +87,9 @@ theorem chains_map {E E' : Spc} (f : E ⟶ E') (p : ℕ) :
 variable {E : Spc} {I : Cx R} {n : ℤ}
 
 theorem ev_def (α : Cochain ((chains R).obj E) I n) (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U) :
-    ev α p s h U x = Sec.map ((chainsXIso R E p).inv ≫ α.v _ _ h) (freeGen R _ U x) := rfl
+    _root_.GlobalTheory.EtC.ev (R := R) α p s h U x = Sec.map ((chainsXIso R E p).inv ≫ α.v _ _ h) (freeGen R _ U x) := rfl
 
-theorem ev_ext (α β : Cochain ((chains R).obj E) I n) (h : ∀ p s h U x, ev α p s h U x = ev β p s h U x) : α = β := by
+theorem ev_ext (α β : Cochain ((chains R).obj E) I n) (h : ∀ p s h U x, _root_.GlobalTheory.EtC.ev (R := R) α p s h U x = _root_.GlobalTheory.EtC.ev (R := R) β p s h U x) : α = β := by
   ext p s hs : 1
   by_cases hp : p ≤ 0
   · obtain ⟨k, rfl⟩ : ∃ k : ℕ, p = -(k : ℤ) := ⟨(-p).toNat, by omega⟩
@@ -95,7 +99,7 @@ theorem ev_ext (α β : Cochain ((chains R).obj E) I n) (h : ∀ p s h U x, ev �
 
 theorem ev_exists (a : ∀ (p : ℕ) (s : ℤ), -(p : ℤ) + n = s → ∀ U : Scheme.{0}, Sx E p U → Sec (I.X s) U)
     (ha : ∀ p s h (V U : Scheme.{0}) (g : V ⟶ U) (x : Sx E p U), Sec.res g (a p s h U x) = a p s h V (x.res g)) :
-    ∃ α : Cochain ((chains R).obj E) I n, ∀ p s h U x, ev α p s h U x = a p s h U x := by
+    ∃ α : Cochain ((chains R).obj E) I n, ∀ p s h U x, _root_.GlobalTheory.EtC.ev (R := R) α p s h U x = a p s h U x := by
   have key : ∀ (i j : ℤ) (hij : i + n = j), ∃ φ : ((chains R).obj E).X i ⟶ I.X j, ∀ (p : ℕ) (hp : i = -(p : ℤ)) U x,
       Sec.map ((chainsXIso R E p).inv ≫ eqToHom (congrArg ((chains R).obj E).X hp.symm) ≫ φ) (freeGen R _ U x) =
         a p j (hp ▸ hij) U x := by
@@ -115,27 +119,27 @@ theorem ev_exists (a : ∀ (p : ℕ) (s : ℤ), -(p : ℤ) + n = s → ∀ U : S
   exact this
 
 theorem ev_res (α : Cochain ((chains R).obj E) I n) (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) {V U : Scheme.{0}} (g : V ⟶ U)
-    (x : Sx E p U) : Sec.res g (ev α p s h U x) = ev α p s h V (x.res g) := by
+    (x : Sx E p U) : Sec.res g (_root_.GlobalTheory.EtC.ev (R := R) α p s h U x) = _root_.GlobalTheory.EtC.ev (R := R) α p s h V (x.res g) := by
   rw [ev_def, map_res, freeGen_res]
   rfl
 
 theorem ev_add (a b : Cochain ((chains R).obj E) I n) (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U) :
-    ev (a + b) p s h U x = ev a p s h U x + ev b p s h U x := by
-  simp [ev, Cochain.add_v]
+    _root_.GlobalTheory.EtC.ev (R := R) (a + b) p s h U x = _root_.GlobalTheory.EtC.ev (R := R) a p s h U x + _root_.GlobalTheory.EtC.ev (R := R) b p s h U x := by
+  simp [_root_.GlobalTheory.EtC.ev, Cochain.add_v]
 
 def evHom (I : Cx R) (n : ℤ) (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U) :
     Cochain ((chains R).obj E) I n →+ Sec (I.X s) U :=
-  AddMonoidHom.mk' (fun a => ev a p s h U x) (fun a b => ev_add a b p s h U x)
+  AddMonoidHom.mk' (fun a => _root_.GlobalTheory.EtC.ev (R := R) a p s h U x) (fun a b => ev_add a b p s h U x)
 
 theorem ev_zero (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U) :
-    ev (0 : Cochain ((chains R).obj E) I n) p s h U x = 0 := map_zero (evHom I n p s h U x)
+    _root_.GlobalTheory.EtC.ev (R := R) (0 : Cochain ((chains R).obj E) I n) p s h U x = 0 := map_zero (evHom I n p s h U x)
 
 theorem ev_zsmul (c : ℤ) (a : Cochain ((chains R).obj E) I n) (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0})
-    (x : Sx E p U) : ev (c • a) p s h U x = c • ev a p s h U x := map_zsmul (evHom I n p s h U x) c a
+    (x : Sx E p U) : _root_.GlobalTheory.EtC.ev (R := R) (c • a) p s h U x = c • _root_.GlobalTheory.EtC.ev (R := R) a p s h U x := map_zsmul (evHom I n p s h U x) c a
 
 theorem ev_pull {E' : Spc} (f : E' ⟶ E) (α : Cochain ((chains R).obj E) I n) (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s)
     (U : Scheme.{0}) (x : Sx E' p U) :
-    ev ((Cochain.ofHom ((chains R).map f)).comp α (zero_add n)) p s h U x = ev α p s h U (x.map f) := by
+    _root_.GlobalTheory.EtC.ev (R := R) ((Cochain.ofHom ((chains R).map f)).comp α (zero_add n)) p s h U x = _root_.GlobalTheory.EtC.ev (R := R) α p s h U (x.map f) := by
   rw [ev_def, ev_def, Cochain.zero_cochain_comp_v, Cochain.ofHom_v, ← Category.assoc, chains_map, Category.assoc]
   change Sec.map ((chainsXIso R E p).inv ≫ α.v _ _ h) (Sec.map ((free R).map _) (freeGen R _ U x)) = _
   rw [freeGen_map]
@@ -143,19 +147,20 @@ theorem ev_pull {E' : Spc} (f : E' ⟶ E) (α : Cochain ((chains R).obj E) I n) 
 
 theorem ev_δ_zero {m : ℤ} (hm : n + 1 = m) (α : Cochain ((chains R).obj E) I n) (U : Scheme.{0}) (s t : ℤ)
     (hs : -((0 : ℕ) : ℤ) + n = s) (ht : -((0 : ℕ) : ℤ) + m = t) (x : Sx E 0 U) :
-    ev (δ n m α) 0 t ht U x = Sec.map (I.d s t) (ev α 0 s hs U x) := by
+    _root_.GlobalTheory.EtC.ev (R := R) (δ n m α) 0 t ht U x = Sec.map (I.d s t) (_root_.GlobalTheory.EtC.ev (R := R) α 0 s hs U x) := by
   rw [ev_def, δ_v n m hm α _ t ht s 1 (by omega) (by simp),
     (isZero_chains E 1 one_pos).eq_of_tgt (((chains R).obj E).d _ 1) 0, zero_comp, smul_zero, add_zero]
   rfl
 
 theorem ev_δ_succ {m : ℤ} (hm : n + 1 = m) (α : Cochain ((chains R).obj E) I n) (U : Scheme.{0}) (p : ℕ) (s t : ℤ)
     (hs : -((p + 1 : ℕ) : ℤ) + n = s) (ht : -((p + 1 : ℕ) : ℤ) + m = t) (x : Sx E (p + 1) U) :
-    ev (δ n m α) (p + 1) t ht U x = Sec.map (I.d s t) (ev α (p + 1) s hs U x) +
-      m.negOnePow • ∑ i : Fin (p + 2), (-1 : ℤ) ^ (i : ℕ) • ev α p t (by omega) U (x.face i) := by
+    _root_.GlobalTheory.EtC.ev (R := R) (δ n m α) (p + 1) t ht U x = Sec.map (I.d s t) (_root_.GlobalTheory.EtC.ev (R := R) α (p + 1) s hs U x) +
+      m.negOnePow • ∑ i : Fin (p + 2), (-1 : ℤ) ^ (i : ℕ) • _root_.GlobalTheory.EtC.ev (R := R) α p t (by omega) U (x.face i) := by
   rw [ev_def, δ_v n m hm α _ t ht s (-(p : ℤ)) (by omega) (by omega), Preadditive.comp_add, Units.smul_def,
     Preadditive.comp_zsmul, ← Category.assoc _ (((chains R).obj E).d _ _), chains_d, Category.assoc, Preadditive.sum_comp]
   refine (map_add (mapHom _ _ (freeGen R _ U x)) _ _).trans ?_
-  rw [map_zsmul, map_sum, Units.smul_def]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_zsmul, map_sum, Units.smul_def]
   refine congrArg₂ (· + ·) rfl (congrArg _ (Finset.sum_congr rfl fun i _ => ?_))
   rw [Preadditive.zsmul_comp, map_zsmul]
   congr 1

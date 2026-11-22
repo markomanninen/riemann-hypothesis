@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.SobFrame
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.SobFrame
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,12 +31,11 @@ theorem eInf_add_eFin : eInf D + eFin D = 1 := by
 theorem cA_smul (c : AF D.host.F) (z : AE D) : cA D (c • z) = c • cA D z := by
 
   unfold cA sigR
-  refine TensorProduct.induction_on z ?_ ?_ ?_
-  · simp
-  · intro a b
-    simp [TensorProduct.smul_tmul', Algebra.TensorProduct.map_tmul]
-  · intro x y hx hy
-    rw [smul_add, map_add, map_add, hx, hy, smul_add]
+  induction z using TensorProduct.induction_on with
+  | zero => simp
+  | tmul a b => simp [TensorProduct.smul_tmul', Algebra.TensorProduct.map_tmul]
+  | add x y hx hy =>
+    rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
 
 theorem hO_smul_right (c : AF D.host.F) (x y : WO S T) : hO S T x (c • y) = c • hO S T x y := by
 
@@ -51,19 +54,6 @@ theorem symplOH_smul_left (c : AF D.host.F) (x y : WO S T) : symplOH S T (c • 
 
   simp only [symplOH, symplO, hO_smul_left, mul_smul_comm, map_smul, smul_eq_mul]
   ring
-
-theorem symplOH_snd (x y : WO S T) (hy : eInf D • y = y) : (symplOH S T x y).2 = 0 := by
-
-  rw [← hy, symplOH_smul_right]
-  simp only [eInf, pairA]
-  first
-  | exact zero_mul _
-  | simp
-
-theorem symplOH_fin_real (u y : WO S T) (hu : eFin D • u = u) (hy : eInf D • y = y) : symplOH S T u y = 0 := by
-
-  rw [← hu, ← hy, symplOH_smul_left, symplOH_smul_right, ← mul_assoc, mul_comm (eFin D) (eInf D), eInf_mul_eFin,
-    zero_mul]
 
 theorem symplOH_real_fin (y u : WO S T) (hy : eInf D • y = y) (hu : eFin D • u = u) : symplOH S T y u = 0 := by
 
@@ -86,10 +76,6 @@ theorem wo_fin_iff (w : WO S T) : w.map (infPart D) = 0 ↔ eFin D • w = w := 
   · intro h
     ext i j
     exact (infPart_eq_zero_iff_smul (w i j)).mpr (congrFun (congrFun h i) j)
-
-theorem eFin_smul_sub (w : WO S T) : w - eInf D • w = eFin D • w := by
-
-  rw [eq_sub_of_add_eq' (eInf_add_eFin (D := D)), sub_smul, one_smul]
 
 end Formalism.IndefR.Eqv
 

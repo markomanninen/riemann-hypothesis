@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrablePhiF
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrablePhiF
+
+@[expose] public section
 
 noncomputable section
 

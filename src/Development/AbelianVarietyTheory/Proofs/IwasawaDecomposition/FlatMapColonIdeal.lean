@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory
@@ -6,10 +11,8 @@ namespace GlobalTheory
 private lemma mem_colon_span_range_iff {B : Type*} [CommRing B] {P : Ideal B} {ι : Type*}
     (g : ι → B) (r : B) :
     r ∈ P.colon (Ideal.span (Set.range g) : Set B) ↔ ∀ i, r * g i ∈ P := by
-  rw [Submodule.mem_colon', SetLike.coe_subset_coe]
-  change Submodule.span B (Set.range g) ≤ _ ↔ _
-  rw [Submodule.span_le, Set.range_subset_iff]
-  simp [smul_eq_mul]
+  rw [Ideal.colon_span, Submodule.mem_colon]
+  simp only [Set.forall_mem_range, smul_eq_mul]
 
 theorem _root_.GlobalTheory.ideal_map_colon_eq_of_flat : ∀ {A R : Type} [CommRing A] [IsNoetherianRing A] [CommRing R]
     (φ : A →+* R), φ.Flat → ∀ I J : Ideal A, (I.colon J).map φ = (I.map φ).colon (J.map φ) := by
@@ -42,7 +45,8 @@ theorem _root_.GlobalTheory.ideal_map_colon_eq_of_flat : ∀ {A R : Type} [CommR
         (Fintype.linearCombination A fun p => c p.1 p.2)
     have hxf : x ∘ₗ f = 0 := by
       refine LinearMap.ext fun v => ?_
-      simp [f, x, Algebra.smul_def, Fintype.sum_prod_type, Fintype.linearCombination_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [f, x, Algebra.smul_def, Fintype.sum_prod_type, Fintype.linearCombination_apply,
         LinearMap.pi_apply, map_sum, Finset.sum_mul]
       rw [← sub_eq_add_neg, sub_eq_zero]
       refine Finset.sum_congr rfl fun i _ => ?_
@@ -62,7 +66,7 @@ theorem _root_.GlobalTheory.ideal_map_colon_eq_of_flat : ∀ {A R : Type} [CommR
       have hw : w = w.1 • ((1 : A), (0 : Fin n × Fin m → A)) + ((0 : A), w.2) := by
         ext <;> simp
       conv_lhs => rw [hw]
-      rw [map_add, map_smul]
+      rw [map_add (f := _), map_smul]
       congr 1
       exact LinearMap.pi_apply_eq_sum_univ (g ∘ₗ LinearMap.inr A A (Fin n × Fin m → A)) w.2
     have key : ∀ q, g (1, 0) q ∈
@@ -74,20 +78,21 @@ theorem _root_.GlobalTheory.ideal_map_colon_eq_of_flat : ∀ {A R : Type} [CommR
       have hw1 : w.1 = a i := by simp [hw, f, Fintype.linearCombination_apply]
       have hw2 : ∀ p, w.2 p ∈ Ideal.span (Set.range b) := by
         intro p
-        simp only [hw, f, LinearMap.prod_apply, Pi.prod, LinearMap.pi_apply, LinearMap.smul_apply,
+        simp only [hw, f, LinearMap.prod_apply, Function.prod, LinearMap.pi_apply, LinearMap.smul_apply,
           LinearMap.proj_apply, smul_eq_mul]
         exact Ideal.mul_mem_right _ _ (neg_mem (Ideal.subset_span ⟨p.2, rfl⟩))
       have h0 := DFunLike.congr_fun (hdec w) q
       rw [show g w = 0 from LinearMap.congr_fun hgf _] at h0
       simp only [Finsupp.coe_zero, Pi.zero_apply, Finsupp.coe_add, Pi.add_apply, Finsupp.coe_smul,
-        Pi.smul_apply, smul_eq_mul, Finsupp.finset_sum_apply] at h0
+        Pi.smul_apply, smul_eq_mul, Finsupp.finsetSum_apply] at h0
       have h1 : g (1, 0) q * a i = -∑ p, w.2 p * g (0, fun q => if p = q then 1 else 0) q := by
         rw [← hw1]
         linear_combination -h0
       rw [h1]
       exact neg_mem (Ideal.sum_mem _ fun p _ => Ideal.mul_mem_right _ _ (hw2 p))
     have hs' : s = x (1, 0) := by simp [x]
-    rw [hs', hxy, LinearMap.comp_apply, ← Finsupp.univ_sum_single (g (1, 0)), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hs', hxy, LinearMap.comp_apply, ← Finsupp.univ_sum_single (g (1, 0)), map_sum]
     refine Ideal.sum_mem _ fun q _ => ?_
     rw [← Finsupp.smul_single_one, map_smul, Algebra.smul_def, RingHom.algebraMap_toAlgebra]
     exact Ideal.mul_mem_right _ _ (Ideal.mem_map_of_mem φ (key q))

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsSegreComponent
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsChartDimBound
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsChartFiniteIrrel
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsSegreComponent
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsChartDimBound
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsChartFiniteIrrel
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets

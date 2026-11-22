@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsAdapted
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.NormalizedDegreeOrthogonalSumStatement
-import GroundTheory.HeightsAndTheta.Heights.Slopes.PCanonicalFiltration
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.DegreeTopEqArithDegree
-import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.PInteriorDichotomy
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ClearDenominatorsLattice
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsAdapted
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.NormalizedDegreeOrthogonalSumStatement
+public import GroundTheory.HeightsAndTheta.Heights.Slopes.PCanonicalFiltration
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.DegreeTopEqArithDegree
+public import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.PInteriorDichotomy
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ClearDenominatorsLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,8 +49,9 @@ theorem exists_integral_generator (E : Type) [Field E] [NumberField E] :
       exact Algebra.mem_top
     rw [Algebra.adjoin_singleton_eq_range_aeval] at ha
     obtain ⟨Q, hQ⟩ := ha
-    obtain ⟨b, hb⟩ := IsLocalization.integerNormalization_map_to_map (nonZeroDivisors ℤ) Q
-    refine ⟨b, IsLocalization.integerNormalization (nonZeroDivisors ℤ) Q, nonZeroDivisors.coe_ne_zero b, ?_⟩
+    obtain ⟨b, hbmem, hb⟩ := IsLocalization.integerNormalization_spec (nonZeroDivisors ℤ) Q
+    refine ⟨b, IsLocalization.integerNormalization (nonZeroDivisors ℤ) Q,
+      nonZeroDivisors.coe_ne_zero ⟨b, hbmem⟩, ?_⟩
     apply hinj
     have hQ' : aeval β Q = (a : E) := hQ
     rw [hcoe, ← aeval_map_algebraMap ℚ, hb, map_mul, map_intCast, zsmul_eq_mul, map_mul, map_intCast, hQ']
@@ -124,7 +129,7 @@ theorem iSup_eigSp_eq_top {E L V ι : Type} [Field E] [NumberField E] [Field L] 
   have hP : ∀ P : ℤ[X], (aeval (ρ θ) P) x = (aeval (σ s θ) P) • x := by
     intro P
     induction P using Polynomial.induction_on' with
-    | add p q hp hq => simp only [map_add, LinearMap.add_apply, hp, hq, add_smul]
+    | add p q hp hq => simp only [map_add (f := _), LinearMap.add_apply, hp, hq, add_smul]
     | monomial k a =>
       simp only [aeval_monomial, Module.End.mul_apply, hpow, eq_intCast, map_intCast]
       rw [Module.End.intCast_apply, mul_smul, Int.cast_smul_eq_zsmul]
@@ -187,7 +192,7 @@ theorem saturation_iSup_img (hcard : 2 * Fintype.card Ψ = Module.finrank ℚ E)
         exact A.Λ.add_mem (A.Λ.smul_mem _ hbx) (A.Λ.smul_mem _ hcy)
       have e : (⟨(b * c) • (x + y), h1⟩ : A.Λ) = c • ⟨b • x, hbx⟩ + b • ⟨c • y, hcy⟩ := Subtype.ext e0
       refine ⟨b * c, mul_ne_zero hb hc, h1, ?_⟩
-      rw [e, map_add, map_smul, map_smul]
+      rw [e, map_add (f := _), map_smul, map_smul]
       exact Submodule.add_mem _ (Submodule.smul_mem _ _ hfx) (Submodule.smul_mem _ _ hfy)
   rw [eq_top_iff]
   intro y _
@@ -198,98 +203,6 @@ theorem saturation_iSup_img (hcard : 2 * Fintype.card Ψ = Module.finrank ℚ E)
   rw [e, map_smul, hfx, smul_smul] at hf
   exact hf
 
-theorem sum_normDegree_img_le (hcard : 2 * Fintype.card Ψ = Module.finrank ℚ E) :
-    ∑ s, A.Bq.normDegree (A.img s) ≤ A.Bq.normDegree ⊤ := by
-  have hI := GlobalTheory.T.normalized_degree_orthogonal_sum L A.Bq (Ψ ⊕ Ψ) A.img (fun s s' h => by
-    rw [img_eq, img_eq]
-    exact A.orth s s' h)
-  have hr : A.Bq.rank (⨆ s, A.img s) = A.Bq.rank ⊤ := by
-    have := CanonicalFiltration.rank_saturation A.Bq (⨆ s, A.img s)
-    rw [A.saturation_iSup_img hcard] at this
-    exact this.symm
-  rw [← hI.1]
-  exact div_le_div_of_nonneg_right (CanonicalFiltration.degree_le_of_le_of_rank_eq A.Bq le_top hr)
-    (Nat.cast_nonneg _)
-
 end LinPt
-
-theorem abelianPart_height_linear :
-    ∀ C₀ : ℝ, 0 ≤ C₀ → ∃ C : ℝ, 0 ≤ C ∧ ∀ (E L Ψ : Type) [Field E] [NumberField E] [Field L] [NumberField L] [Fintype Ψ] (V : Type) [AddCommGroup V] [Module L V] [Module (𝓞 L) V] [IsScalarTower (𝓞 L) L V] (A : LinPt E L Ψ V) (lab lab' : Ψ → Ψ ⊕ Ψ) (m N : ℕ) (La : ℝ), 2 * Fintype.card Ψ = Module.finrank ℚ E → ((lab = Sum.inl ∧ lab' = Sum.inr) ∨ (lab = Sum.inr ∧ lab' = Sum.inl)) → 1 ≤ Fintype.card Ψ * m → 1 ≤ La → ((Fintype.card Ψ * N : ℕ) : ℝ) ≤ Real.exp La → Module.finrank (𝓞 L) A.Bq.carrier ≤ Fintype.card Ψ * N → (∀ τ, A.Bq.rank (A.img (lab τ)) ≤ m) → A.Bq.slopeMax ≤ ((C₀ * Real.log (2 + Module.finrank (𝓞 L) A.Bq.carrier + max (-A.Bq.normDegree ⊤) 0) : ℝ) : EReal) → (∀ τ, |A.Bq.normDegree (A.img (lab τ)) - A.Bq.normDegree (A.img (lab' τ))| ≤ C₀ * N * La) → ∑ τ, A.Bq.normDegree (A.img (lab τ)) ≤ C * (Fintype.card Ψ * m) * La := by
-  intro C₀ hC₀
-  obtain ⟨C, hC⟩ := LowerBound.InteriorDichotomy.proof C₀ 0 C₀ hC₀ le_rfl hC₀
-  refine ⟨max C 0, le_max_right _ _, ?_⟩
-  intro E L Ψ _ _ _ _ _ V _ _ _ _ A lab lab' m N La hcard hlab hfm hLa hexp hrank hm hslope hdd
-  set f : ℝ := (Fintype.card Ψ : ℝ) with hf
-  set h : ℝ := -A.Bq.normDegree ⊤ with hh
-  set n : ℝ := (Module.finrank (𝓞 L) A.Bq.carrier : ℝ) with hn
-  set g : ℝ := max ((Fintype.card Ψ * N : ℕ) : ℝ) 1 with hg
-  set x : ℝ := ∑ τ, A.Bq.normDegree (A.img (lab τ)) with hx
-  set y : ℝ := ∑ τ, A.Bq.normDegree (A.img (lab' τ)) with hy
-  have hLa0 : 0 < La := by linarith
-  have hf0 : 0 ≤ f := Nat.cast_nonneg _
-  have hm0 : (0 : ℝ) ≤ m := Nat.cast_nonneg _
-  have hg1 : 1 ≤ g := le_max_right _ _
-  have hfN : f * N ≤ g := by
-    have : ((Fintype.card Ψ * N : ℕ) : ℝ) ≤ g := le_max_left _ _
-    simpa [hf] using this
-  have hng : n ≤ g := by
-    have h1 : n ≤ ((Fintype.card Ψ * N : ℕ) : ℝ) := Nat.cast_le.2 hrank
-    exact h1.trans (le_max_left _ _)
-  have hfj : (1 : ℝ) ≤ f * m := by
-    have : ((1 : ℕ) : ℝ) ≤ ((Fintype.card Ψ * m : ℕ) : ℝ) := by exact_mod_cast hfm
-    simpa [hf] using this
-  have hgexp : g ≤ Real.exp La := max_le hexp (Real.one_le_exp hLa0.le)
-
-  set μ : ℝ := C₀ * Real.log (2 + n + max h 0) with hμ
-  have harg : 1 ≤ 2 + n + max h 0 := by
-    have h1 : (0 : ℝ) ≤ n := Nat.cast_nonneg _
-    have h2 := le_max_right h 0
-    linarith
-  have hμ0 : 0 ≤ μ := mul_nonneg hC₀ (Real.log_nonneg harg)
-  have hμg : μ ≤ C₀ * Real.log (2 + g + max h 0) :=
-    mul_le_mul_of_nonneg_left (Real.log_le_log (by linarith) (by linarith)) hC₀
-  have hxle : x ≤ f * m * μ := by
-    have h1 : ∀ τ, A.Bq.normDegree (A.img (lab τ)) ≤ m * μ := fun τ =>
-      (HermitianBundle.normDegree_le_rank_mul A.Bq _ μ hslope).trans
-        (mul_le_mul_of_nonneg_right (by exact_mod_cast hm τ) hμ0)
-    calc x ≤ ∑ _τ : Ψ, (m : ℝ) * μ := Finset.sum_le_sum fun τ _ => h1 τ
-      _ = f * m * μ := by rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, hf]; ring
-
-  have hsum : x + y ≤ -h := by
-    have h1 := A.sum_normDegree_img_le hcard
-    rw [Fintype.sum_sum_type] at h1
-    rw [hh, neg_neg]
-    rcases hlab with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-    · exact h1
-    · rw [hx, hy]; linarith
-  have hxy : x - y ≤ f * (C₀ * N * La) := by
-    have h1 : x - y ≤ ∑ _τ : Ψ, C₀ * N * La := by
-      rw [hx, hy, ← Finset.sum_sub_distrib]
-      exact Finset.sum_le_sum fun τ _ => (le_abs_self _).trans (hdd τ)
-    rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul] at h1
-    exact h1
-  have hfC : f * (C₀ * N * La) ≤ C₀ * g * La := by
-    have : C₀ * (f * N) * La ≤ C₀ * g * La :=
-      mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hfN hC₀) hLa0.le
-    calc f * (C₀ * N * La) = C₀ * (f * N) * La := by ring
-      _ ≤ _ := this
-  have hyp : LowerBound.InteriorDichotomy.Hyp C₀ 0 C₀ h (-x) g (f * m) La :=
-    { one_le_g := hg1
-      one_le_fj := hfj
-      g_le_exp := hgexp
-      one_le_La := hLa
-      lower := by
-        have h1 : f * m * μ ≤ f * m * (C₀ * Real.log (2 + g + max h 0)) :=
-          mul_le_mul_of_nonneg_left hμg (by linarith)
-        have h2 : f * m * (C₀ * Real.log (2 + g + max h 0) + 0 * La) =
-            f * m * (C₀ * Real.log (2 + g + max h 0)) := by ring
-        rw [h2]
-        linarith
-      upper := by linarith }
-  have hfin := hC h (-x) g (f * m) La hyp
-  have h1 : C * (f * m) * La ≤ max C 0 * (f * m) * La :=
-    mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right (le_max_left _ _) (by linarith)) hLa0.le
-  have h2 : x ≤ C * (f * m) * La := by linarith
-  exact h2.trans h1
 
 end GlobalTheory.CompanionTheory.Ar.Cusp

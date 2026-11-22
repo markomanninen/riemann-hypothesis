@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsImageHeightUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMultiHomogeneousRenameCastLE
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussianFirstCoordsMeasurePreserving
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsImageHeightUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMultiHomogeneousRenameCastLE
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussianFirstCoordsMeasurePreserving
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -90,7 +94,8 @@ theorem exists_unitary {N m : ℕ} (Q : Matrix (Fin N) (Fin m) ℂ)
     rw [← Complex.norm_conj]
     congr 1
     change starRingEnd ℂ (∑ a, b k a * x a) = _
-    simp only [PiLp.inner_apply, RCLike.inner_apply, map_sum, map_mul, x']
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [PiLp.inner_apply, RCLike.inner_apply, map_sum, map_mul, x']
     exact Finset.sum_congr rfl fun a _ => mul_comm _ _
   · ext j a
     rw [Matrix.mul_apply, Fintype.sum_eq_single (Fin.castLE hle j)]

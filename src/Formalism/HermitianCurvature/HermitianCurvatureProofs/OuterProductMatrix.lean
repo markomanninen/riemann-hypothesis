@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LinearFormRadicalRankOne
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LinearFormRadicalRankOne
+
+@[expose] public section
 
 open Matrix MeasureTheory Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 open scoped ComplexConjugate
@@ -185,12 +189,6 @@ theorem cont_uuQ (cy' : Fin (2 * ρ + k + 1) → ℂ) :
     Continuous (fun cm' : Fin (2 * ρ + k + 1) → Fin j → ℂ => uuQ (k := k) (ρ := ρ) cy' cm') := by
   refine continuous_pi fun a => ?_
   simp only [uuQ, Matrix.vecMul, dotProduct, Matrix.of_apply]
-  fun_prop
-
-theorem cont_uuQ' (cy' : Fin (2 * ρ + k + 1) → ℂ) :
-    Continuous (fun cm' : Fin (2 * ρ + k + 1) → Fin j → ℂ => uuQ' (k := k) (ρ := ρ) cy' cm') := by
-  refine continuous_pi fun a => ?_
-  simp only [uuQ', Matrix.mulVec, dotProduct, Matrix.mul_apply, Matrix.conjTranspose_apply, Matrix.of_apply]
   fun_prop
 
 theorem cont_dltQ (b : Bq k j ρ) :

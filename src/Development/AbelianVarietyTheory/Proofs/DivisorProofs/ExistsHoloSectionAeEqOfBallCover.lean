@@ -1,7 +1,12 @@
-import ReciprocityTheory.L2DbarEstimates.Imports
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSignHolds
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.L2ExtensionLogCanonical
-import Development.AbelianVarietyTheory.Definitions.Divisors.EtaleEmpty
+module
+
+public import ReciprocityTheory.L2DbarEstimates.Imports
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSignHolds
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.L2ExtensionLogCanonical
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EtaleEmpty
+
+@[expose] public section
+
 open MeasureTheory Filter Topology Metric ReciprocityTheory.L2DbarEstimates ReciprocityTheory.L2DbarEstimates.Y GlobalTheory.OTY GlobalTheory.Published.L2Extension
 open scoped ENNReal ContDiff
 
@@ -67,9 +72,10 @@ theorem exists_null (A : WeightedAtlas n Y ι La) (i : ι) (c : V n) (r : ℝ) (
     show (A.chart i).source.piecewise (A.chart i) (fun _ => (0 : V n)) y ∈ T
     rw [Set.piecewise_eq_of_mem _ _ _ hy]
     apply hET
-    simp only [Set.mem_setOf_eq, _root_.not_imp]
-    refine ⟨hb, ?_⟩
-    simpa [Function.comp, (A.chart i).left_inv hy] using hne
+    simp only [Set.mem_setOf_eq]
+    intro heq
+    apply hne
+    simpa [Function.comp, (A.chart i).left_inv hy] using heq hb
 
 theorem continuousOn_g (A : WeightedAtlas n Y ι La) (la : La) (i j : ι) :
     ContinuousOn (A.g la i j) ((A.chart i).source ∩ (A.chart j).source) := by
@@ -124,7 +130,8 @@ theorem main : ∀ (n : ℕ) (Y : Type) [TopologicalSpace Y] [T2Space Y] [Second
         A.g la (C.idx a) (C.idx b) y * u b (A.chart (C.idx b) y)) D :=
       ((hcu a).mono Set.inter_subset_left).sub
         (((continuousOn_g A la (C.idx a) (C.idx b)).mono
-          (fun z hz => ⟨hz.1.1, hz.2.1⟩)).mul ((hcu b).mono Set.inter_subset_right))
+          (show D ⊆ (A.chart (C.idx a)).source ∩ (A.chart (C.idx b)).source from
+            fun z hz => ⟨hz.1.1, hz.2.1⟩)).mul ((hcu b).mono Set.inter_subset_right))
     have hop := hcont.isOpen_inter_preimage ((hBo a).inter (hBo b)) (isOpen_compl_singleton (x := (0 : ℂ)))
     have hsub : D ∩ (fun y => u a (A.chart (C.idx a) y) -
         A.g la (C.idx a) (C.idx b) y * u b (A.chart (C.idx b) y)) ⁻¹' {0}ᶜ ⊆ ⋃ a, M a := by

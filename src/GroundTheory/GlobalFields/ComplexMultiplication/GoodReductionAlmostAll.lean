@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.PrimeLocalization
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.PrimeLocalization
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

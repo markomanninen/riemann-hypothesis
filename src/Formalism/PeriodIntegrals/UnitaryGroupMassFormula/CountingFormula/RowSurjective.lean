@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RowSurjOfGenus
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.UnimodularOneGenus
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RowSurjOfGenus
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.UnimodularOneGenus
+
+@[expose] public section
 
 namespace PI.UnitaryGroupMassFormula.CntFormula.RowsMassW
 

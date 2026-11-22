@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.ContinuousCochains
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.ContinuousCochains
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -18,11 +23,6 @@ noncomputable def cochainsMapLinear (f : A ⟶ B) (n : ℕ) :
     locallyConstantCochains A n →ₗ[k] locallyConstantCochains B n :=
   (f.hom.toLinearMap.compLeft (Fin n → G)).restrict fun _ hc => IsLocallyConstant.comp hc _
 
-omit [IsTopologicalGroup G] [IsDiscreteRep A] [IsDiscreteRep B] in
-@[simp]
-theorem cochainsMapLinear_apply (f : A ⟶ B) (n : ℕ) (c : locallyConstantCochains A n)
-    (x : Fin n → G) : (cochainsMapLinear f n c : (Fin n → G) → B) x = f.hom ((c : _ → A) x) :=
-  rfl
 
 noncomputable def cochainsMap (f : A ⟶ B) : cochainsComplex A ⟶ cochainsComplex B :=
   CochainComplex.ofHom (fun n => ModuleCat.ofHom (cochainsMapLinear f n)) fun n => by
@@ -33,11 +33,8 @@ noncomputable def cochainsMap (f : A ⟶ B) : cochainsComplex A ⟶ cochainsComp
     funext g
     change (inhomogeneousCochains.d B n).hom (fun x => f.hom (c.1 x)) g =
       f.hom ((inhomogeneousCochains.d A n).hom c.1 g)
-    simp [inhomogeneousCochains.d_hom_apply, Rep.hom_comm_apply, map_add, map_sum, map_smul]
-
-theorem cochainsMap_f_hom_apply (f : A ⟶ B) (n : ℕ) (c : locallyConstantCochains A n) :
-    ((cochainsMap f).f n).hom c = cochainsMapLinear f n c :=
-  rfl
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [inhomogeneousCochains.d_hom_apply, Rep.hom_comm_apply, map_add (f := _), map_sum, map_smul]
 
 @[simp]
 theorem cochainsMap_id : cochainsMap (𝟙 A) = 𝟙 (cochainsComplex A) := by
@@ -47,12 +44,6 @@ theorem cochainsMap_id : cochainsMap (𝟙 A) = 𝟙 (cochainsComplex A) := by
 @[simp]
 theorem cochainsMap_comp (f : A ⟶ B) (g : B ⟶ C) :
     cochainsMap (f ≫ g) = cochainsMap f ≫ cochainsMap g := by
-  ext n c : 3
-  rfl
-
-theorem cochainsMap_comp_cochainsComplexι (f : A ⟶ B) :
-    cochainsMap f ≫ cochainsComplexι B =
-      cochainsComplexι A ≫ groupCohomology.cochainsMap (MonoidHom.id G) f := by
   ext n c : 3
   rfl
 
@@ -96,31 +87,6 @@ section Functor
 
 variable (k G)
 
-@[simps]
-noncomputable def cochainsFunctor : DiscreteRep.{u} k G ⥤ CochainComplex (ModuleCat k) ℕ where
-  obj A := cochainsComplex A.obj
-  map f := cochainsMap f.hom
-  map_id _ := cochainsMap_id
-  map_comp f g := cochainsMap_comp f.hom g.hom
-
-noncomputable def cohomologyFunctor (n : ℕ) : DiscreteRep.{u} k G ⥤ ModuleCat k :=
-  cochainsFunctor k G ⋙ HomologicalComplex.homologyFunctor _ _ n
-
-theorem cohomologyFunctor_obj (n : ℕ) (A : DiscreteRep.{u} k G) :
-    (cohomologyFunctor k G n).obj A = cohomology A.obj n :=
-  rfl
-
-theorem cohomologyFunctor_map (n : ℕ) {A B : DiscreteRep.{u} k G} (f : A ⟶ B) :
-    (cohomologyFunctor k G n).map f = cohomologyMap f.hom n :=
-  rfl
-
-instance : (cochainsFunctor k G).Additive where
-  map_add {_ _ f g} := by
-    ext n c : 3
-    apply Subtype.ext
-    funext x
-    rfl
-
 end Functor
 
 section Comparison
@@ -129,17 +95,6 @@ variable (A : Rep.{u} k G) [IsDiscreteRep A]
 
 noncomputable def cohomologyToGroupCohomology (n : ℕ) : cohomology A n ⟶ groupCohomology A n :=
   HomologicalComplex.homologyMap (cochainsComplexι A) n
-
-theorem cohomologyMap_comp_cohomologyToGroupCohomology {B : Rep.{u} k G} [IsDiscreteRep B]
-    (f : A ⟶ B) (n : ℕ) :
-    cohomologyMap f n ≫ cohomologyToGroupCohomology B n =
-      cohomologyToGroupCohomology A n ≫ groupCohomology.map (MonoidHom.id G) f n := by
-  change HomologicalComplex.homologyMap (cochainsMap f) n ≫
-      HomologicalComplex.homologyMap (cochainsComplexι B) n =
-    HomologicalComplex.homologyMap (cochainsComplexι A) n ≫
-      HomologicalComplex.homologyMap (groupCohomology.cochainsMap (MonoidHom.id G) f) n
-  rw [← HomologicalComplex.homologyMap_comp, ← HomologicalComplex.homologyMap_comp,
-    cochainsMap_comp_cochainsComplexι]
 
 instance isIso_cochainsComplexι [DiscreteTopology G] : IsIso (cochainsComplexι A) := by
   have : ∀ n, IsIso ((cochainsComplexι A).f n) := fun n => by

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ConsCompSuccAboveZero
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ConsCompSuccAboveZero
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -51,6 +56,6 @@ theorem cechAcyclic_of_injective (I : TopCat.Sheaf AddCommGrpCat.{u} X) [Injecti
   let r := Injective.factorThru (𝟙 I) (toGermSheaf I)
   have hr : toGermSheaf I ≫ r = 𝟙 I := Injective.comp_factorThru _ _
   have hr' : toGerms I ≫ r.hom = 𝟙 I.obj := congrArg (fun f => f.hom) hr
-  exact CechAcyclic.of_retract U (toGerms I) r.hom hr' (cechAcyclic_discPresheaf U _)
+  exact CechAcyclic.of_retract (U := U) (toGerms I) r.hom hr' (cechAcyclic_discPresheaf U _)
 
 end GroundTheory.Arith.SchemeCoh

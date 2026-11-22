@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzFunctionalDependsOnValueAtZero
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrPApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzFunctionalDependsOnValueAtZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrPApply
+
+@[expose] public section
+
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.schwartz_functional_depends_on_value_at_zero : ∀ {Y : Type} [NormedAddCommGroup Y] [NormedSpace ℝ Y] [FiniteDimensional ℝ Y]
     (ℓ : SchwartzMap Y ℂ →L[ℂ] ℂ),

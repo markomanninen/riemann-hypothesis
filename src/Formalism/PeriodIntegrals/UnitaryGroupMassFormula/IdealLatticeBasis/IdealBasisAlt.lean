@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.IdealLattice
-import Formalism.PeriodIntegrals.AreaLat
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.IdealLattice
+public import Formalism.PeriodIntegrals.AreaLat
+
+@[expose] public section
 
 open NumberField
 

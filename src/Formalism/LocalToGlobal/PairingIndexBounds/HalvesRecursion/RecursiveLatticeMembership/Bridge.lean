@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.Statement
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.Statement
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.SysFMPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SysFMPf
+
+@[expose] public section
 
 namespace LateralTheory.E.SysFMPfAlg
 
@@ -57,8 +61,8 @@ theorem prime_of_filter {W : Type} [CommRing W] (hW : ProdACF W) (F : Set W) (hF
   refine ⟨⟨I, hI⟩, fun e he => ?_⟩
   rw [show (⟨I, hI⟩ : PrimeSpectrum W).asIdeal = I from rfl, key e he, not_not]
 
-open AlgebraicGeometry in
 
+open AlgebraicGeometry in
 theorem isClosed_basicOpen_idem {X : Scheme.{0}} {s : Γ(X, ⊤)} (hs : IsIdempotentElem s) :
     IsClosed (X.basicOpen s : Set X) := by
   have : (X.basicOpen s : Set X)ᶜ = (X.basicOpen (1 - s) : Set X) := by

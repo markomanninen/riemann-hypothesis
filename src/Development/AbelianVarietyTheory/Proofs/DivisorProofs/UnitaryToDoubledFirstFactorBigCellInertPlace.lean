@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinMapsOfForall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FromBlocksMem
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FromBlocksMem
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped TensorProduct Matrix
 
 noncomputable section
@@ -21,19 +26,19 @@ theorem cayley_skew {S : Type} [Ring S] (J P Q Mt Mc : S) (hK : P * J * Q = J) (
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem valued_two (v : Pl F) (h2 : (2 : 𝓞 F) ∉ v.asIdeal) : Valued.v (2 : Fv F v) = 1 := by
+theorem valued_two (v : Pl (F := F)) (h2 : (2 : 𝓞 F) ∉ v.asIdeal) : Valued.v (2 : Fv F v) = 1 := by
   have h := HeightOneSpectrum.valuedAdicCompletion_eq_valuation (K := F) v (2 : 𝓞 F)
   rw [HeightOneSpectrum.valuation_of_algebraMap, HeightOneSpectrum.intValuation_eq_one_iff.2 h2] at h
   convert h using 2
   simp only [map_ofNat]
 
-theorem half_mem (v : Pl F) (h2 : (2 : 𝓞 F) ∉ v.asIdeal) : evFin F v (⅟(2 : AF F)) ∈ v.adicCompletionIntegers F := by
+theorem half_mem (v : Pl (F := F)) (h2 : (2 : 𝓞 F) ∉ v.asIdeal) : evFin F v (⅟(2 : AF F)) ∈ v.adicCompletionIntegers F := by
   have e : evFin F v (⅟(2 : AF F)) = (2 : Fv F v)⁻¹ := by
     apply eq_inv_of_mul_eq_one_left
     rw [← map_ofNat (evFin F v) 2, ← map_mul, invOf_mul_self, map_one]
   rw [e, HeightOneSpectrum.mem_adicCompletionIntegers, map_inv₀, valued_two v h2, inv_one]
 
-theorem half_smul_mem {d : ℕ} (W : Spc F E d) (v : Pl F) (h2 : (2 : 𝓞 F) ∉ v.asIdeal) :
+theorem half_smul_mem {d : ℕ} (W : Spc F E d) (v : Pl (F := F)) (h2 : (2 : 𝓞 F) ∉ v.asIdeal) :
     ∀ z ∈ GlobalTheory.InertSph.latAt W v, (⅟(2 : AF F)) • z ∈ GlobalTheory.InertSph.latAt W v := by
   intro z hz
   unfold GlobalTheory.InertSph.latAt at hz ⊢
@@ -50,12 +55,12 @@ theorem half_smul_mem {d : ℕ} (W : Spc F E d) (v : Pl F) (h2 : (2 : 𝓞 F) �
   | add x y _ _ hx hy => rw [smul_add]; exact add_mem hx hy
   | neg x _ hx => rw [smul_neg]; exact neg_mem hx
 
-def Keeps {d : ℕ} (W : Spc F E d) (v : Pl F) (X : Matrix (Fin d) (Fin d) (AE F E)) : Prop :=
+def Keeps {d : ℕ} (W : Spc F E d) (v : Pl (F := F)) (X : Matrix (Fin d) (Fin d) (AE F E)) : Prop :=
   ∀ z ∈ GlobalTheory.InertSph.latAt W v, X *ᵥ z ∈ GlobalTheory.InertSph.latAt W v
 
 section Keeps
 
-variable {d : ℕ} {W : Spc F E d} {v : Pl F}
+variable {d : ℕ} {W : Spc F E d} {v : Pl (F := F)}
 
 theorem keeps_one : Keeps W v 1 := fun z hz => by rwa [one_mulVec]
 
@@ -88,7 +93,7 @@ end Keeps
 
 section Supp
 
-variable {n : Type} [Fintype n] {v : Pl F}
+variable {n : Type} [Fintype n] {v : Pl (F := F)}
 
 theorem at_zero : At (evFin F v) (0 : Matrix n n (AE F E)) := fun u _ => smul_zero u
 
@@ -115,7 +120,7 @@ end Supp
 
 section Group
 
-variable {σ : E →ₐ[F] E} {d : ℕ} {W : Spc F E d} {v : Pl F}
+variable {σ : E →ₐ[F] E} {d : ℕ} {W : Spc F E d} {v : Pl (F := F)}
 
 open GlobalTheory.InertDbl
 
@@ -156,7 +161,7 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 
 section Cell
 
-variable {σ : E →ₐ[F] E} {d : ℕ} {W : Spc F E d} {v : Pl F}
+variable {σ : E →ₐ[F] E} {d : ℕ} {W : Spc F E d} {v : Pl (F := F)}
 
 theorem fromRows_add_fromRows {m₁ m₂ n R : Type} [Add R] (A B : Matrix m₁ n R) (C D : Matrix m₂ n R) :
     Matrix.fromRows A C + Matrix.fromRows B D = Matrix.fromRows (A + B) (C + D) := by
@@ -173,7 +178,7 @@ theorem exists_nab (Z : Matrix (Fin d) (Fin d) (AE F E))
   have hU : (Matrix.fromBlocks (1 + Z) Z (-Z) (1 - Z))ᵀ * dbl (incM F W.J) *
       (Matrix.fromBlocks (1 + Z) Z (-Z) (1 - Z)).map (cA σ) = dbl (incM F W.J) := by
     rw [fromBlocks_transpose, dbl, fromBlocks_map, fromBlocks_multiply, fromBlocks_multiply]
-    simp only [transpose_add, transpose_sub, transpose_neg, transpose_one, hmap, map_add, map_sub, map_neg, map_one]
+    simp only [transpose_add, transpose_sub, transpose_neg, transpose_one, hmap, map_add (f := _), map_sub, map_neg, map_one]
     rw [hmap] at hZ
     simp only [Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add]
     congr 1 <;> rw [← sub_eq_zero] <;> convert hZ using 1 <;> noncomm_ring
@@ -244,7 +249,7 @@ end GlobalTheory.InertBigCell
 
 theorem GlobalTheory.InertBigCell.inlD_bigCell : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E)
     (a a' : ℕ) (G : Geo σ a a') (X : Chars F E) (om : Rep σ G.V G.W) (om' : Rep σ G.V' G.W), IsTriple B G X om om' →
-    ∀ (v : Pl F) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w →
+    ∀ (v : Pl (F := F)) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w →
     ∀ k ∈ GlobalTheory.InertSph.KAt σ G.W v,
     (∃ M : Matrix (Fin (a + a')) (Fin (a + a')) (AE F E), (1 + mat k) * M = 1 ∧ M * (1 + mat k) = 1 ∧
       ∀ z ∈ GlobalTheory.InertSph.latAt G.W v, M *ᵥ z ∈ GlobalTheory.InertSph.latAt G.W v) →

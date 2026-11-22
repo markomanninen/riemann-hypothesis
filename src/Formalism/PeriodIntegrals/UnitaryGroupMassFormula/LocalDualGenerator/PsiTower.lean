@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LocDualGen
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDualGenerator.FpDualUnram
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDualGenerator.DualAtLMulUnit
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LocDualGen
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDualGenerator.FpDualUnram
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDualGenerator.DualAtLMulUnit
+
+@[expose] public section
 
 noncomputable section
 

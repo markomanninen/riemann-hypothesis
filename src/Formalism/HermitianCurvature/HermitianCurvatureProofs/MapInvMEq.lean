@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PhiRegOf
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationContinuousOnInvertible
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PhiRegOf
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationContinuousOnInvertible
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,10 +45,6 @@ theorem gNpow_inCC (hNI : NormInv) (b : ℝ) (hb : b ≠ 0) :
 
 def invP (p : B.SS k r) : B.SS k r :=
   ((B2.invM p.1.1, B2.invM p.1.2), (B2.invM p.2.1, B2.invM p.2.2))
-
-theorem measurable_componentwiseInv : Measurable (invP (k := k) (r := r)) := by
-  have h := B2x1.invM_meas (k := k) (r := r)
-  exact (h.prodMap h).prodMap (h.prodMap h)
 
 theorem map_invM_eq {U : Set (B.Mat k r)} (hU : B2.IsClosedSubgroup U) {μ : Measure (Formalism.QuantumDeterminants.Mt k r)}
     (hμ : B.IsHaarOn U μ) : μ.map B2.invM = μ := Formalism.FourierDecayAlt.P.haar_measure_inversion k r U μ hU hμ
@@ -128,7 +128,11 @@ theorem la_fin (hNI : NormInv) {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProd
   calc ∫⁻ p, ‖B.gN (Matrix.of p.1.1 * Matrix.of p.1.2 * γ * (Matrix.of p.2.2)⁻¹ * (Matrix.of p.2.1)⁻¹) ^ (-b)‖ₑ
         ∂D.μSS = ∫⁻ p, G (invP p) ∂D.μSS := lintegral_congr_ae (hinv.mono fun p hp => hp.2.symm)
     _ = ∫⁻ p, G (invP p) ∂(D.μSS.map invP) := by rw [map_invP D]
-    _ ≤ ∫⁻ p, G (invP (invP p)) ∂D.μSS := lintegral_map_le (fun p => G (invP p)) invP
+    _ ≤ ∫⁻ p, G (invP (invP p)) ∂D.μSS := by
+      have hm := B2x1.invM_meas (k := k) (r := r)
+      have hinvP : Measurable (invP (k := k) (r := r)) :=
+        (hm.prodMap hm).prodMap (hm.prodMap hm)
+      exact lintegral_map_le (fun p => G (invP p)) hinvP.aemeasurable
     _ = ∫⁻ p, G p ∂D.μSS := lintegral_congr_ae (hinv.mono fun p hp => by show G (invP (invP p)) = G p; rw [hp.1])
     _ < ⊤ := h1
 

@@ -1,20 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.NonemptyTorusExtensionOfIsPowGrp
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsPowAct
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.LbIsoCubePow
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.LbIsoLinComb
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.RosatiAdjPow
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.PowDegDiagonalAction
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.PsiWeightZeroProduct
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.PowPullbackHomExt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExpandsPullOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExpPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdFam
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TWMain
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.QuadraticAlgebraValuation
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.NonemptyTorusExtensionOfIsPowGrp
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsPowAct
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.LbIsoCubePow
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.LbIsoLinComb
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.RosatiAdjPow
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.PowDegDiagonalAction
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.PsiWeightZeroProduct
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.PowPullbackHomExt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExpandsPullOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExpPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdFam
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TWMain
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.QuadraticAlgebraValuation
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.DVR
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -22,8 +27,8 @@ open scoped CategoryTheory.Obj
 
 namespace GlobalTheory
 
-open Geo.Tor in
 
+open Geo.Tor in
 theorem isSymmetric_of_symmetry_generator {S : Scheme.{0}} {G : Over S} [GrpObj G] [IsCommMonObj G] (L : RigLB G)
     (sy : LB.Gen (LB.LinComb L.L (K := Fin 2) ![(ι[G]).left, 𝟙 G.left] ![1, -1])) (hsy : sy.IsGen)
     (hr : LB.Gen.Corr L.L _ _ _ _ (LB.pullGen L.L _ _ sy (eSec G)) (LB.oneGen L.L)) : L.IsSymmetric := by

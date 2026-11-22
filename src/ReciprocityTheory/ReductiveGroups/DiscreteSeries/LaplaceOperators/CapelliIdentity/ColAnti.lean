@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.CapelliIdentity.BasicCycleRangeLastCastSucc
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.CapelliIdentity.BasicCycleRangeLastCastSucc
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,8 +50,8 @@ theorem capEntry_two (hE : GlRelR E) (i k j l : Fin n) (x : ℂ) :
   simp only [hs]
   exact add_smul_one_mul_sub_eq_neg_swap_of_commutator (E i j) (E k l) (E k j) (E i l) _ _ _ _ x h1 h2
 
-omit [Algebra ℂ 𝒰] in
 
+omit [Algebra ℂ 𝒰] in
 theorem prod_ofFn_split_adj {p : ℕ} (f : Fin (p + 1) → 𝒰) (j : Fin p) : ∃ P Q : 𝒰, ∀ g : Fin (p + 1) → 𝒰,
     (∀ m, m ≠ j.castSucc → m ≠ j.succ → g m = f m) →
       (List.ofFn g).prod = P * g j.castSucc * g j.succ * Q := by

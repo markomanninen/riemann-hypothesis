@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.GoodCoverEigenspaces.CoverOf
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GaloisActionWeightSpectralE1Apply
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HodgePullHodgePull
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.OmegaPullId
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.GoodCoverEigenspaces.CoverOf
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GaloisActionWeightSpectralE1Apply
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HodgePullHodgePull
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.OmegaPullId
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -94,9 +98,6 @@ def etEquiv {X Y : Scheme.{0}} {q : X ⟶ Sp ↥K.1} {q' : Y ⟶ Sp ↥K.1} (e :
   right_inv x := by
     change etPull he n (etPull (f := e.inv) _ n x) = x
     rw [etPull_comp, etPull_congr _ (Category.id_comp q) e.hom_inv_id, etPull_id]
-
-theorem etEquiv_apply {X Y : Scheme.{0}} {q : X ⟶ Sp ↥K.1} {q' : Y ⟶ Sp ↥K.1} (e : X ≅ Y) (he : e.hom ≫ q' = q)
-    (n : ℕ) (x : EtV q' n) : etEquiv e he n x = etPull he n x := rfl
 
 theorem etEquiv_symm_apply {X Y : Scheme.{0}} {q : X ⟶ Sp ↥K.1} {q' : Y ⟶ Sp ↥K.1} (e : X ≅ Y)
     (he : e.hom ≫ q' = q) (n : ℕ) (x : EtV q n) :

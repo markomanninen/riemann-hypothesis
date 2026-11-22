@@ -1,6 +1,10 @@
-import Mathlib
-import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
-import GroundTheory.GlobalFields.AnalyticClassNumber.DirichletHeckeCorrespondence
+module
+
+public import Mathlib
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
+public import GroundTheory.GlobalFields.AnalyticClassNumber.DirichletHeckeCorrespondence
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GroundTheory.Global GroundTheory.LocalField Ad3 Ad3.R
 open GroundTheory.Global.RationalSymbol (prime unitAt)
@@ -60,7 +64,7 @@ theorem toZModPow_eq_of_congr {N : ℕ} [NeZero N] (w : Pl) (x : Qv w) (u : ℤ_
     ring
   have h0 : ((N : ℕ) : ZMod (prime w ^ N.factorization (prime w))) = 0 :=
     (ZMod.natCast_eq_zero_iff _ _).2 (Nat.ordProj_dvd N (prime w))
-  rw [hz, map_add, map_mul, map_natCast, map_intCast, map_intCast, h0, zero_mul, add_zero]
+  rw [hz, map_add (f := _), map_mul, map_natCast, map_intCast, map_intCast, h0, zero_mul, add_zero]
 
 theorem heckeCharacter_ofFinite_mul {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (d : Afˣ) (n : ℤ)
     (h0 : ∀ v, ord (lf v d : Qv v) = 0)

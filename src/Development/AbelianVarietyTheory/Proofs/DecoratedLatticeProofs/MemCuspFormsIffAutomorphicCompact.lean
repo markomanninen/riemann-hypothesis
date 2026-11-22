@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PrinInf
-import Development.AbelianVarietyTheory.BlockTheory.SiegelEisenstein.SplitPrincipalSets
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsPlacesSingleton
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsFinCombSingleZero
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsBesPosOfBesselTied
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FinitePartMemFrameStabilizerIffLocalStabilizer
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ConjPlEqCP
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatticeReductionEqOneOfCompletionCongruence
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ReductionTrivialOfConjugatePlaceSelfDual
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqOfMapEq
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MulAntiOfUnitary
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsEtaTildeUnramified
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureExists
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PrinInf
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsPlacesSingleton
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsFinCombSingleZero
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsBesPosOfBesselTied
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FinitePartMemFrameStabilizerIffLocalStabilizer
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ConjPlEqCP
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatticeReductionEqOneOfCompletionCongruence
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ReductionTrivialOfConjugatePlaceSelfDual
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqOfMapEq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MulAntiOfUnitary
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsEtaTildeUnramified
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,16 +49,14 @@ theorem mem_latIn {V : HSp D} {L : Lat V} {x : V.V} : x ∈ latIn V L ↔ V.fram
 theorem hT_eq (V : HSp D) (x y : V.V) :
     V.hT x y = ∑ i, ∑ j, star (V.frame.equivFun x i) * V.gram i j * V.frame.equivFun y j := by
   conv_lhs => rw [← V.frame.sum_equivFun x, ← V.frame.sum_equivFun y]
-  simp only [map_sum, map_smulₛₗ, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, HSpace.gram,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, HSpace.gram,
     Finset.mul_sum, starRingEnd_apply, RingHom.id_apply]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
-theorem latIn_lat {V : HSp D} {L : Lat V} (h : IsSelfDualC V L) : Submodule.IsLattice D.host.E (latIn V L) where
-  fg := h.1.fg.map _
-  span_eq_top := by
-    have := congrArg (Submodule.map V.frame.equivFun.symm.toLinearMap) h.1.span_eq_top
-    rwa [Submodule.map_span, Submodule.map_top, LinearEquiv.range] at this
+theorem latIn_lat {V : HSp D} {L : Lat V} (h : IsSelfDualC V L) : Submodule.IsLattice D.host.E (latIn V L) :=
+  Submodule.IsLattice.of_fg D.host.E (h.1.fg.map _)
 
 theorem latIn_unimod {V : HSp D} {L : Lat V} (h : IsSelfDualC V L) : Formalism.HermitianLatticesTheory.IsUnimodular V.hT (latIn V L) := by
   ext y
@@ -83,25 +85,6 @@ variable {ψ : AddChar (AF D.host.F) ℂ} {A W : HSp D} {LA : Lat A} {LW : Lat W
   (sA sW : (D.host.E →+* ℂ) → ℕ × ℕ)
 
 end Transport
-
-def OwnLat (D : D7) : Prop :=
-  ∀ (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (A W : HSp D) (t : ℕ), IsInfFam θ → A.SigOK → A.IsPosDef → W.SigOK →
-    A.rank = W.rank + t → 1 ≤ W.rank → W.rank + 5 ≤ t →
-  ∀ (χA χW : (AE D)ˣ →* Circle) (om : WRep A W), IsWeilDatumO ψ A W χA χW om →
-  ∀ Z : Finset (IndefiniteRowSideFullHecke.SplitPrincipalSets.FinPlE D), IndefiniteRowSideFullHecke.SplitPrincipalSets.IsSplitSet Z →
-    (∀ v : FinPl D, (2 : 𝓞 D.host.F) ∈ v.asIdeal → Formalism.MainNotions.SchurIrreducible.IsSplit (E := D.host.E) v) →
-    LFun.UnrOff χW (IndefiniteRowSideFullHecke.SplitPrincipalSets.below Z : Set (FinPl D)) →
-  ∀ u : GA D A → ℂ, IsAutFunDef A u → (∀ k ∈ IndefiniteRowSideFullHecke.SplitPrincipalSets.prin A (frameLat A) Z, ∀ g, u (g * k) = u g) →
-  ∀ c : LFun.Fam D.host.E, IndefiniteRowSideFullHecke.SplitPrincipalSets.IsSmallFam (IndefiniteRowSideFullHecke.SplitPrincipalSets.below Z) W.rank c →
-    LFun.IsParamFun D.sp.cm.sig A.gram (frameLat A) (IndefiniteRowSideFullHecke.SplitPrincipalSets.below Z : Set (FinPl D)) u (c + LFun.segFam (LFun.val χW) t) →
-  ∀ (m : Measure (GA D A)) (mInf : Measure (GinfC A)), m.IsHaarMeasure → mInf.IsHaarMeasure →
-  ∀ (ν : Measure (WO A W)) (𝓕 : Set (WO A W)), IsCovolOne (ratL W A) ν 𝓕 →
-  ∀ sW : RealMat W, (∀ τ, IsCartanInv (gramAt D W τ) (sW τ)) →
-  ∀ Φ : WO A W → ℂ, IsFockVec ψ θ A W (fun _ => 1) sW Φ →
-    IsSphOff ψ A W (frameLat A) (frameLat W) (IndefiniteRowSideFullHecke.SplitPrincipalSets.below Z) Φ →
-    (∀ k ∈ IndefiniteRowSideFullHecke.SplitPrincipalSets.prin A (frameLat A) Z, om (k, 1) Φ = Φ) →
-    ∫ b : GinfC A, wcoef om ν 𝓕 Φ Φ b * rcoef m u u b ∂mInf ≠ 0 →
-    ∃ f, IsThetaFunO ψ A W f ∧ ∃ h, up om m f u h ≠ 0
 
 end GlobalTheory.Core.Rk.DownCompare
 

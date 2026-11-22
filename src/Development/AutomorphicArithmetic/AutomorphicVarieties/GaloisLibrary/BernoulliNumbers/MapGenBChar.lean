@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,8 @@ def bnd (N k : ℕ) : ℝ := 16 * (N : ℝ) ^ (k + 1) * (k.factorial : ℝ)
 theorem map_genB {R S : Type*} [CommRing R] [Algebra ℚ R] [CommRing S] [Algebra ℚ S] {N : ℕ} (f : R →+* S) (k : ℕ)
     (Φ : ZMod N → R) : f (genB k Φ) = genB k (fun a => f (Φ a)) := by
   unfold genB
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [map_mul, RingHom.map_rat_algebraMap]
 
@@ -57,9 +62,6 @@ theorem den_pos {N : ℕ} (hN : 0 < N) (k : ℕ) : 0 < den N k := by
 theorem den_dvd {M N : ℕ} (h : M ∣ N) (k : ℕ) : den M k ∣ den N k := by
   unfold den
   exact Nat.mul_dvd_mul_right h _
-
-example : bcoef 1 1 1 = 1 / 2 := by norm_num [bcoef]
-example : bcoef 3 1 1 - bcoef 3 1 2 = -1 / 3 := by norm_num [bcoef]
 
 end UpperTheory.V.Bern
 

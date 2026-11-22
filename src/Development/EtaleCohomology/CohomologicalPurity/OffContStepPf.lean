@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafOffContPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafOffContPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -137,11 +141,12 @@ theorem etale_complement_continuity_induction_of_five_lemma_inputs (hL : OffCont
   offContStep_of' hL offExcMV (hG hS hR)
 
 theorem dbl.inl_map {P' P : Arrow Spc} (φ : P' ⟶ P) : dbl.inl P' ≫ dbl.map φ = φ.right ≫ dbl.inl P :=
-  pushout.inl_desc _ _ _
+  pushout.inl_desc (f := P'.hom) (g := P'.hom) _ _ _
 
 theorem dbl.map_comp {P'' P' P : Arrow Spc} (φ : P'' ⟶ P') (ψ : P' ⟶ P) :
     dbl.map (φ ≫ ψ) = dbl.map φ ≫ dbl.map ψ := by
-  apply pushout.hom_ext
+  set_option synthInstance.maxHeartbeats 200000 in
+    apply pushout.hom_ext
   · change dbl.inl P'' ≫ dbl.map (φ ≫ ψ) = dbl.inl P'' ≫ dbl.map φ ≫ dbl.map ψ
     rw [dbl.inl_map, ← Category.assoc, dbl.inl_map, Category.assoc, dbl.inl_map, ← Category.assoc]; rfl
   · change dbl.inr P'' ≫ dbl.map (φ ≫ ψ) = dbl.inr P'' ≫ dbl.map φ ≫ dbl.map ψ
@@ -178,7 +183,7 @@ theorem pairFiveR_surj (bd : LeafBd) (q : ℕ) {J : Type} [SmallCategory J] [IsF
   obtain ⟨l, w, hw⟩ := (hS n).1 s
   refine ⟨IsFiltered.max k l, pull _ (F.map (IsFiltered.leftToMax k l).op).right (tw q i) n z +
     pull _ (F.map (IsFiltered.rightToMax k l).op).right (tw q i) n (Hs.fgt q _ n i w), ?_⟩
-  rw [map_add, ← GlobalTheory.EtC.pull_comp, ← GlobalTheory.EtC.pull_comp, ← Arrow.comp_right, ← Arrow.comp_right, hc, hc, ← Hs.fgt_pull, hw, hs,
+  rw [map_add (f := _), ← GlobalTheory.EtC.pull_comp, ← GlobalTheory.EtC.pull_comp, ← Arrow.comp_right, ← Arrow.comp_right, hc, hc, ← Hs.fgt_pull, hw, hs,
     add_sub_cancel]
 
 theorem pairFiveR_inj (bd : LeafBd) (q : ℕ) {J : Type} [SmallCategory J] [IsFiltered J] (F : Jᵒᵖ ⥤ Arrow Spc)

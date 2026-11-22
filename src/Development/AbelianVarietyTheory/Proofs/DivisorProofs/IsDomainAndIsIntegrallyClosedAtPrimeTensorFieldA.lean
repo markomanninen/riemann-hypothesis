@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
@@ -30,8 +35,8 @@ end GlobalTheory
 
 namespace GlobalTheory
 
-open Algebra.TensorProduct in
 
+open Algebra.TensorProduct in
 theorem exists_finset_mem_range_map_val {F A K : Type*} [Field F] [CommRing A] [Algebra F A]
     [Field K] [Algebra F K] (x : A ⊗[F] K) :
     ∃ T : Finset K, ∀ R : Subalgebra F K, (↑T : Set K) ⊆ (R : Set K) →
@@ -72,7 +77,7 @@ theorem isDomain_and_isIntegrallyClosed_atPrime_tensor_field
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul a k => simp [φ]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have hinj : Function.Injective φ := by
     rw [hφ]
     exact Module.Flat.lTensor_preserves_injective_linearMap _ Subtype.val_injective

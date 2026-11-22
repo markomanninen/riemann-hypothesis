@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
-import GroundTheory.AutomorphicForms.GL2.GJMatrixCoord
-import GroundTheory.AutomorphicForms.GL2.GJMatrixLocal
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixCoord
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixLocal
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.GJMatrix
 
@@ -12,16 +16,16 @@ noncomputable section
 
 variable (K : Type*) [Field K] [NumberField K] (n : ℕ)
 
-variable {K n} in
 
+variable {K n} in
 def matrixCoordEquiv {X : Type*} : Matrix (Fin n) (Fin n) X ≃ (Fin n × Fin n → X) where
   toFun := matrixCoord
   invFun z := Matrix.of fun i j ↦ z (i, j)
   left_inv _ := rfl
   right_inv _ := rfl
 
-variable {K n} in
 
+variable {K n} in
 def matrixCoordTEquiv {X : Type*} : Matrix (Fin n) (Fin n) X ≃ (Fin n × Fin n → X) where
   toFun := matrixCoordT
   invFun z := Matrix.of fun i j ↦ z (j, i)
@@ -38,7 +42,7 @@ section Perm
 variable {K} {ι : Type*} [Fintype ι]
 
 theorem comp_perm_mem_schwartzBruhatPi (σ : ι ≃ ι) {F : (ι → 𝔸[K]) → ℂ}
-    (hF : F ∈ schwartzBruhatPi K ι) : (fun z ↦ F (fun i ↦ z (σ i))) ∈ schwartzBruhatPi K ι := by
+    (hF : F ∈ schwartzBruhatPi (K := K) (ι := ι)) : (fun z ↦ F (fun i ↦ z (σ i))) ∈ schwartzBruhatPi (K := K) (ι := ι) := by
   induction hF using Submodule.span_induction with
   | mem G hG =>
     obtain ⟨φ, g, hg, rfl⟩ := hG
@@ -70,7 +74,7 @@ def adelicMatrixMeasure : Measure (Matrix (Fin n) (Fin n) 𝔸[K]) :=
   matrixMeasure (adeleMeasure K)
 
 def matrixSchwartzBruhat : Submodule ℂ (Matrix (Fin n) (Fin n) 𝔸[K] → ℂ) :=
-  (schwartzBruhatPi K (Fin n × Fin n)).comap
+  (schwartzBruhatPi (K := K) (ι := Fin n × Fin n)).comap
     (LinearMap.funLeft ℂ ℂ (matrixCoordEquiv (n := n) (X := 𝔸[K])).symm)
 
 variable {K n}
@@ -78,11 +82,11 @@ variable {K n}
 theorem mem_matrixSchwartzBruhat {Φ : Matrix (Fin n) (Fin n) 𝔸[K] → ℂ} :
     Φ ∈ matrixSchwartzBruhat K n ↔
       (fun z : Fin n × Fin n → 𝔸[K] ↦ Φ (Matrix.of fun i j ↦ z (i, j))) ∈
-        schwartzBruhatPi K (Fin n × Fin n) :=
+        schwartzBruhatPi (K := K) (ι := Fin n × Fin n) :=
   Iff.rfl
 
-variable (K) in
 
+variable (K) in
 def adelicMatrixFourier (Φ : Matrix (Fin n) (Fin n) 𝔸[K] → ℂ) (y : Matrix (Fin n) (Fin n) 𝔸[K]) :
     ℂ :=
   ∫ x, Φ x * (adelicChar K (trace (x * y)) : ℂ) ∂adelicMatrixMeasure K n

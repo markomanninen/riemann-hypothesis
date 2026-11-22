@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableRisingS
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemIntegersOfMemHatO
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteRingClassGroupOfConductorNeZero
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdicCompactDensity.ExistsNatLocal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableRisingS
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemIntegersOfMemHatO
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteRingClassGroupOfConductorNeZero
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdicCompactDensity.ExistsNatLocal
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ theorem sub_conj_eq {θ : E} (hθ : θ ∉ 𝔽) (x : E) : x - cc x = lam θ x *
   unfold lam; rw [div_mul_cancel₀ _ (sub_conj_ne hθ)]
 
 theorem lam_add (θ x x' : E) : lam θ (x + x') = lam θ x + lam θ x' := by
-  unfold lam; rw [map_add]; ring
+  unfold lam; rw [map_add (f := _)]; ring
 
 theorem lam_mul (θ : E) (a : 𝔽) (x : E) : lam θ ((a : E) * x) = a * lam θ x := by
   unfold lam; rw [map_mul, conj_coe]; ring

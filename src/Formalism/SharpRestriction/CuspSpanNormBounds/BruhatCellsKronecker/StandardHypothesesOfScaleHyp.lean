@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.OwnEvIntro
-import Formalism.SharpRestriction.CuspSpanNormBounds.SBridge
-import Formalism.SharpRestriction.CuspSpanNormBounds.PExtra
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.OwnEvIntro
+public import Formalism.SharpRestriction.CuspSpanNormBounds.SBridge
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PExtra
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,9 +44,9 @@ theorem std_lamD_cloud (D : D7) (τ : D.what₂.Tau) (s : Fin (2 * D.R.rS + D.R.
     lamD D τ s = vOne D τ (s.val + 1) := by
   have h2 : 1 ≤ s.val + 1 ∧ s.val + 1 ≤ D.R.k - 1 := ⟨by omega, by omega⟩
   unfold lamD lamSH lamS vOne
-  rw [dif_pos h2]
+  rw [dite_eq_left h2]
   simp only [Fin.val_cast]
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   rfl
 
 theorem std_lamD_node (D : D7) (τ : D.what₂.Tau) (s : Fin (2 * D.R.rS + D.R.k + 1)) (h : ¬ s.val < D.R.k - 1) :
@@ -52,16 +56,16 @@ theorem std_lamD_node (D : D7) (τ : D.what₂.Tau) (s : Fin (2 * D.R.rS + D.R.k
   have h3 : s.val - (D.R.k - 1) < D.R.m := by have := s.isLt; omega
   have h2 : 1 ≤ s.val - (D.R.k - 1) + 1 ∧ s.val - (D.R.k - 1) + 1 ≤ D.R.m := ⟨by omega, by omega⟩
   unfold lamD lamSH lamS bOne
-  rw [dif_pos h2]
+  rw [dite_eq_left h2]
   simp only [Fin.val_cast]
-  rw [dif_neg h, dif_pos h3]
+  rw [dite_eq_right h, dite_eq_left h3]
   rfl
 
 theorem std_uS (D : D7) (w : D.what₂.Word) (τ : D.what₂.Tau) (i : Fin D.R.k) :
     uS D w τ i = uOne D w τ (i.val + 1) := by
   have h2 : 1 ≤ i.val + 1 ∧ i.val + 1 ≤ D.R.k := ⟨by omega, by have := i.isLt; omega⟩
   unfold uOne
-  rw [dif_pos h2]
+  rw [dite_eq_left h2]
   rfl
 
 section Rec
@@ -108,7 +112,7 @@ theorem std_isHC (H : Cnt.Hyp0 D large₂ C' Cl Cg cb Cu cT CT C0) (τ : D.what�
   by_cases h : a.val < D.R.k - 1
   · rw [std_lamD_cloud D τ a h]
     unfold vOne
-    rw [dif_pos ⟨by omega, by omega⟩]
+    rw [dite_eq_left ⟨by omega, by omega⟩]
     obtain ⟨z, hz⟩ := (D.hc τ).v_int ⟨a.val + 1 - 1, by omega⟩
     refine ⟨z - (D.R.rS + t : ℕ), ?_⟩
     rw [hz]; push_cast; ring
@@ -117,7 +121,7 @@ theorem std_isHC (H : Cnt.Hyp0 D large₂ C' Cl Cg cb Cu cT CT C0) (τ : D.what�
     have hk := D.R.m_add_three_le_k
     have h3 : a.val - (D.R.k - 1) < D.R.m := by have := a.isLt; omega
     unfold bOne
-    rw [dif_pos ⟨by omega, by omega⟩]
+    rw [dite_eq_left ⟨by omega, by omega⟩]
     obtain ⟨z, hz⟩ := (D.hc τ).b_int ⟨a.val - (D.R.k - 1) + 1 - 1, by omega⟩
     refine ⟨-z - (D.R.rS + t : ℕ), ?_⟩
     rw [hz]; push_cast; ring
@@ -242,7 +246,7 @@ theorem vertex_difference_eq (D : D7) (τ : D.what₂.Tau) : vOne D τ 1 - vOne 
   have h := D.s.cloud_gap D.u₀ τ 0 (by omega)
   rw [D.hcW_v] at h
   unfold vOne
-  rw [dif_pos ⟨le_rfl, by omega⟩, dif_pos ⟨by omega, by omega⟩]
+  rw [dite_eq_left ⟨le_rfl, by omega⟩, dite_eq_left ⟨by omega, by omega⟩]
   exact_mod_cast h
 
 end Rec2

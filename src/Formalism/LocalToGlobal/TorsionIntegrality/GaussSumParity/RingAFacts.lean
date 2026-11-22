@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementK
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementK
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

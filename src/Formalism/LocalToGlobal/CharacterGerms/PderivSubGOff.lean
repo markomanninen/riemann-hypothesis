@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.CharacterGerms.BlockMembershipSelfConjCharts
-import Formalism.LocalToGlobal.CharacterGerms.RowTieMemCDeg
-import Formalism.LocalToGlobal.CharacterGerms.FinTwoNeOneSub
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.BlockMembershipSelfConjCharts
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieMemCDeg
+public import Formalism.LocalToGlobal.CharacterGerms.FinTwoNeOneSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem chain_aeval {σ τ : Type} [Fintype σ] (S : MvPolynomial σ C →ₐ[C]
   | C a =>
     simp [MvPolynomial.algHom_C, MvPolynomial.pderiv_C]
   | add p q hp hq =>
-    simp only [map_add, hp, hq, add_mul, Finset.sum_add_distrib]
+    simp only [map_add (f := _), hp, hq, add_mul, Finset.sum_add_distrib]
   | mul_X p i hp =>
     have key : ∀ y, S (pderiv y (p * X i)) = (if i = y then S p else 0) + S (X i) * S (pderiv y p) := by
       intro y
@@ -42,7 +46,8 @@ theorem pderiv_subG_off {p : MvPolynomial (Fin N × WVO fun o (_ : Fin 2) => IIs
   refine Finset.sum_eq_zero fun y _ => ?_
   have hX : pderiv ℓ (subG r tau gm plc (X y)) = 0 := by
     unfold subG
-    rw [MvPolynomial.aeval_X, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [MvPolynomial.aeval_X, map_sum]
     refine Finset.sum_eq_zero fun col _ => ?_
     rw [Derivation.leibniz, MvPolynomial.pderiv_C, smul_zero, add_zero, MvPolynomial.pderiv_X]
     have hne : (⟨tau y.2.1 y.2.2.2.1, y.2.2.2.2, plc (y.1, col)⟩ : Letter T r n) ≠ ℓ := by
@@ -70,7 +75,8 @@ private theorem pderiv_lam_subG_X_eq_ite (inj : Function.Injective fun x : Orb �
     pderiv (lam r tau plc (α0, col0)) (subG r tau gm plc (X y)) =
       if (eW r tau N y).1 = α0 then MvPolynomial.C (gm y.2.1 y.2.2.2.1 col0 y.2.2.1) else 0 := by
   unfold subG
-  rw [MvPolynomial.aeval_X, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [MvPolynomial.aeval_X, map_sum]
   have key : ∀ col : Fin 2, pderiv (lam r tau plc (α0, col0))
       (MvPolynomial.C (gm y.2.1 y.2.2.2.1 col y.2.2.1) *
         MvPolynomial.X (⟨tau y.2.1 y.2.2.2.1, y.2.2.2.2, plc (y.1, col)⟩ : Letter T r n)) =

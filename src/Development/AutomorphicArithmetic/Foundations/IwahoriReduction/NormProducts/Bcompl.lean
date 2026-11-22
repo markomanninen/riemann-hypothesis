@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.LUnH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitEvalEqKummerClassStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.LUnH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitEvalEqKummerClassStatement
+
+@[expose] public section
 
 open GlobalTheory.KZ GlobalTheory.K4 UpperTheory.Kd.K4 Polynomial
 open scoped Matrix MatrixGroups
@@ -97,7 +101,7 @@ private theorem memA (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] {x : ℕ → X.K
     (∑ k ∈ Finset.range n, (l : ℤ_[l]) ^ k • x k)
     (Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (hx k))
   refine ⟨f, hf, ?_⟩
-  rw [hy, map_add, e, map_smul]
+  rw [hy, map_add (f := _), e, map_smul]
   obtain ⟨z, hz⟩ := Submodule.Quotient.mk_surjective _ (AdicCompletion.eval (idl l) (X.Kl l) n y)
   rw [← hz, ← Submodule.Quotient.mk_smul, (Submodule.Quotient.mk_eq_zero _).2 ((memP _ n _).2 ⟨z, rfl⟩), add_zero]
 
@@ -112,7 +116,7 @@ private theorem bset_of_mem (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (N w : �
     obtain ⟨⟨c, hc, ec⟩, ix⟩ := hx
     obtain ⟨⟨d, hd, ed⟩, iy⟩ := hy
     refine ⟨⟨fun i => c i + d i, fun i => Submodule.add_mem _ (hc i) (hd i), fun u => ?_⟩,
-      fun γ hγ => by rw [map_add, ix γ hγ, iy γ hγ]⟩
+      fun γ hγ => by rw [map_add (f := _), ix γ hγ, iy γ hγ]⟩
     simp only [Pi.add_apply, ec, ed, smul_add, Finset.sum_add_distrib]
   | smul r x _ hx =>
     obtain ⟨⟨c, hc, ec⟩, ix⟩ := hx

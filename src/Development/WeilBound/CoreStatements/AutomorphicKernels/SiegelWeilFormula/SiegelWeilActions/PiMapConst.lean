@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.CtSplitOfParts
-import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.CtSplitOfParts
+public import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+
+@[expose] public section
 
 set_option linter.style.haveILetI false
 
@@ -120,11 +124,13 @@ theorem measN (n k : ℕ) (bs : Module.Basis (Fin n) F E) : ∃ κ : Measure ((F
       funext t
       simp [T2, mul_assoc]
     rw [this, ← Measure.map_map hm1 hm1, h1, Measure.map_smul, h1, smul_smul, sq]
+    exact hm1.aemeasurable
   rw [show ((μW.prod ν).map e).map sc = ((μW.prod ν).map e).map (sc : (Fin k → AE F E) × AF F → (Fin k → AE F E) × AF F) from rfl,
     Measure.map_map sc.measurable he.measurable, hcomm,
     ← Measure.map_map he.measurable (hT1.measurable.prodMap hT2.measurable),
     ← Measure.map_prod_map μW ν hT1.measurable hT2.measurable, hW, hA,
-    Measure.prod_smul_left, Measure.prod_smul_right, smul_smul, Measure.map_smul]
+    Measure.prod_smul_left, Measure.prod_smul_right, smul_smul, Measure.map_smul] <;>
+    try exact he.measurable.aemeasurable
   congr 1
   have hx : (0 : ℝ) ≤ ((GroundTheory.Global.IdeleGroup.ideleModule F r : ℝ))⁻¹ := inv_nonneg.mpr (le_of_lt (GroundTheory.Global.IdeleGroup.ideleModule F r).2)
   rw [ENNReal.ofReal_pow hx, ← pow_mul, ← pow_add]

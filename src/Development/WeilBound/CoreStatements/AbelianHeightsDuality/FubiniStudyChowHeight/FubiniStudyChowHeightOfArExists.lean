@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.FubiniStudyChowHeight
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.ChowFormHeightOfArch
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.IntegralOfLintegral
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.MahlerSectionStatementHolds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.FubiniStudyChowHeight
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.ChowFormHeightOfArch
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.IntegralOfLintegral
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.MahlerSectionStatementHolds
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -104,8 +108,8 @@ private theorem isFS_fsBasis_normOf {k : Type} [CommRing k] {Z : Scheme} (p : Z 
   rw [Weight.fsBasis_φ, dualNorm_normOf, Real.sq_sqrt (Finset.sum_nonneg fun _ _ => sq_nonneg _)]
   rfl
 
-open FubiniStudyChowHeightFormula₂.Fs GroundTheory.Heights₂.Heights in
 
+open FubiniStudyChowHeightFormula₂.Fs GroundTheory.Heights₂.Heights in
 theorem FubiniStudyChowHeightFormula₂.fubiniStudyChowHeight_of_arExists (hE : GlobalTheory.Published.ArExists) : GlobalTheory.Published.FubiniStudyChowHeight := by
   intro K _ _ N e δ Y _ i _ hvar A hA hc f hf
   let Lfs := HermLB.fs (PSpace.str (𝓞 K) N) (O1_isLB (𝓞 K) N) (coord (𝓞 K) N) (FubiniStudyChowHeightFormula₂.Fs.emb (𝓞 K) N).cover A hA hc
@@ -151,6 +155,3 @@ theorem FubiniStudyChowHeightFormula₂.fubiniStudyChowHeight_of_arExists (hE : 
 
 theorem FubiniStudyChowHeightFormula₂.fubiniStudyChowHeight_of (h : GlobalTheory.Published.ArCalc) : GlobalTheory.Published.FubiniStudyChowHeight :=
   FubiniStudyChowHeightFormula₂.fubiniStudyChowHeight_of_arExists h.arExists
-
-theorem FubiniStudyChowHeightFormula₂.fubiniStudyChowHeight_of_hypotheses (h : GlobalTheory.CovTop.Hypotheses2) : GlobalTheory.Published.FubiniStudyChowHeight :=
-  FubiniStudyChowHeightFormula₂.fubiniStudyChowHeight_of h.p4

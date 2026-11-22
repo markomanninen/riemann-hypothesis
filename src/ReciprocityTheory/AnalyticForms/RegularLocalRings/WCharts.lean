@@ -1,7 +1,11 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.WChartsA
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.WChartsB
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.WChartsC
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.WChartsD
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.WChartsA
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.WChartsB
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.WChartsC
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.WChartsD
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 

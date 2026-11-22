@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PolyBetween
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LocalValuationColumns
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasPhiExistsExtAndUnique
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QValPullbackMulRamificationCompleteDvr
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPelUnifPull
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PolyBetween
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LocalValuationColumns
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasPhiExistsExtAndUnique
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QValPullbackMulRamificationCompleteDvr
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPelUnifPull
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory NumberField IsLocalRing IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj ReciprocityTheory.PGsh
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.DVR ReciprocityTheory.ChartRestriction.G.DVR.QForm Formalism.MainNotions.ModuliIntegralCharts.H1
@@ -48,7 +52,7 @@ theorem exists_ringHom_of_vV {V V' : Type} [CommRing V] [IsDomain V] [IsDiscrete
       map_one' := hi (by rw [hg, map_one, map_one, map_one])
       map_mul' := fun a b => hi (by rw [map_mul, hg, hg, hg, map_mul, map_mul])
       map_zero' := hi (by rw [hg, map_zero, map_zero, map_zero])
-      map_add' := fun a b => hi (by rw [map_add, hg, hg, hg, map_add, map_add]) }
+      map_add' := fun a b => hi (by rw [map_add (f := _), hg, hg, hg, map_add (f := _), map_add (f := _)]) }
   refine ⟨g', RingHom.ext hg, fun ϖ ϖ' hϖ hϖ' => ?_⟩
   have key : ∀ {W : Type} [CommRing W] [IsDomain W] [IsDiscreteValuationRing W] {π : W}, Irreducible π →
       valV W (algebraMap W (FractionRing W) π) = WithZero.exp (-1 : ℤ) := fun {W} _ _ _ π hπ => by

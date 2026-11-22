@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.IntegralDeterminants.PlaceConjAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.IntegralDeterminants.PlaceHom
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.IntegralDeterminants.PlaceConjAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.IntegralDeterminants.PlaceHom
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual Formalism.BasicNotions Formalism.MainNotions.N GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.GalOfCusp UpperTheory.V.Af
 open scoped Classical nonZeroDivisors
@@ -158,7 +162,7 @@ theorem prodNorm : ProdNorm := by
       Finset.prod_congr rfl hon, Finset.prod_pow]
   have hnorm : (Algebra.norm ℤ α).natAbs = normV w ^ h := by
     rw [← Ideal.absNorm_span_singleton, hs, map_pow]
-    rfl
+    rw [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
   have hN : nu ι ((Algebra.norm ℤ α : ℤ) : ℂ) = nu ι (normV w : ℂ) ^ h := by
     rw [← nu_pow]
     rcases Int.natAbs_eq (Algebra.norm ℤ α) with he | he

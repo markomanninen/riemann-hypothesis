@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SndDualLiftAlgebraMap
-open GlobalTheory.BK PowerSeries Filter Topology
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SndDualLiftAlgebraMap
+
+@[expose] public section
+
+open _root_.GlobalTheory.BK PowerSeries Filter Topology
 
 noncomputable section
 
@@ -12,15 +17,16 @@ variable {A' B : Type} [CommRing A'] [CommRing B] {ι : A' →+* B} {s : A'}
 
 theorem sameJets_of_one (hreg : ∀ a b, ι s * a = ι s * b → a = b)
     (div : ∀ x, ∃ g h, x = ι g + ι s * h) (dvd : ∀ g h, ι g = ι s * h → s ∣ g) :
-    SameJets ι s where
-  div m x := by
+    SameJets ι s := by
+  refine ⟨?_, ?_⟩
+  · intro m x
     induction m with
     | zero => exact ⟨0, x, by simp⟩
     | succ m ih =>
       obtain ⟨g, h, rfl⟩ := ih
       obtain ⟨g', h', rfl⟩ := div h
-      exact ⟨g + s ^ m * g', h', by simp only [map_add, map_mul, map_pow]; ring⟩
-  dvd m := by
+      exact ⟨g + s ^ m * g', h', by simp only [map_add (f := _), map_mul, map_pow]; ring⟩
+  · intro m
     induction m with
     | zero => simp
     | succ m ih =>
@@ -134,17 +140,17 @@ def taylor : Polynomial K →ₐ[K] (AdjoinRoot P)⟦X⟧ :=
 theorem constantCoeff_taylor (g : Polynomial K) :
     constantCoeff (taylor P g) = AdjoinRoot.mk P g := by
   induction g using Polynomial.induction_on' with
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | monomial n a =>
     rw [← Polynomial.C_mul_X_pow_eq_monomial]
     simp [taylor, PowerSeries.algebraMap_apply]
 
 theorem derivative_taylor (g : Polynomial K) :
-    PowerSeries.derivative _ (taylor P g) = taylor P (Polynomial.derivative g) := by
-  have := ((PowerSeries.derivative (AdjoinRoot P)).restrictScalars K).map_aeval g
+    PowerSeries.derivative (taylor P g) = taylor P (Polynomial.derivative g) := by
+  have := ((PowerSeries.derivative (R := AdjoinRoot P)).restrictScalars K).map_aeval g
     (C (AdjoinRoot.root P) + X)
-  rw [Derivation.restrictScalars_apply, Derivation.restrictScalars_apply, map_add,
-    derivative_C, derivative_X, zero_add, smul_eq_mul, mul_one] at this
+  rw [Derivation.restrictScalars_apply, Derivation.restrictScalars_apply,
+    map_add (f := _), derivative_C, derivative_X, zero_add, smul_eq_mul, mul_one] at this
   exact this
 
 variable {P}
@@ -159,7 +165,7 @@ theorem associated_taylor (hP : P.Separable) : Associated (taylor P P) X := by
     rw [isUnit_iff_constantCoeff, h2]
     obtain ⟨a, b, hab⟩ := hP
     have := congrArg (AdjoinRoot.mk P) hab
-    rw [map_add, map_mul, map_mul, AdjoinRoot.mk_self, mul_zero, zero_add, map_one] at this
+    rw [map_add (f := _), map_mul, map_mul, AdjoinRoot.mk_self, mul_zero, zero_add, map_one] at this
     exact IsUnit.of_mul_eq_one _ ((mul_comm _ _).trans this)
   rw [hw]
   exact associated_mul_unit_left _ _ h3
@@ -179,7 +185,7 @@ theorem sameJets_taylor (hP : P.Separable) : SameJets (taylor P).toRingHom P := 
     rwa [X_dvd_iff, constantCoeff_taylor, AdjoinRoot.mk_eq_zero] at h1
 
 theorem pow_dvd_derivative {R : Type} [CommRing R] {m : ℕ} {x : R⟦X⟧} (h : X ^ (m + 1) ∣ x) :
-    X ^ m ∣ PowerSeries.derivative R x := by
+    X ^ m ∣ PowerSeries.derivative (R := R) x := by
   rw [X_pow_dvd_iff] at h ⊢
   intro n hn
   rw [coeff_derivative, h _ (by omega), zero_mul]
@@ -199,6 +205,7 @@ theorem coe_incl (g : Polynomial K) : (incl O K l g : K⟦X⟧) = g := by
   | monomial n a =>
     rw [← Polynomial.C_mul_X_pow_eq_monomial]
     simp [incl]
+    rfl
 
 theorem incl_E : (incl O K l).toRingHom (Polynomial.X ^ e + Polynomial.C (l : K)) = EIn l e _ := by
   refine Subtype.ext ((coe_incl O K l _).trans ?_)
@@ -208,7 +215,9 @@ theorem incl_E : (incl O K l).toRingHom (Polynomial.X ^ e + Polynomial.C (l : K)
 theorem derAl_incl (g : Polynomial K) :
     derAl O K l (incl O K l g) = incl O K l (Polynomial.derivative g) := by
   refine Subtype.ext ?_
-  rw [coe_derAl, coe_incl, coe_incl, PowerSeries.derivative_coe]
+  change PowerSeries.derivative (incl O K l g : K⟦X⟧) =
+    (incl O K l (Polynomial.derivative g) : K⟦X⟧)
+  rw [coe_incl, coe_incl, PowerSeries.derivative_coe]
 
 variable [NeZero e]
 
@@ -234,22 +243,54 @@ theorem sameJets_incl :
     split_ifs with hn
     · rfl
     · obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le' (not_lt.1 hn)
-      exact coeff_sub_E_mul_quotE l e (invL_A_le_Rpi l e x.2) m
+      obtain ⟨b, hb⟩ := (mem_invL_A_iff l).1 x.2
+      have htail (k : ℕ) : tail l e (x : K⟦X⟧) k =
+          coeff k (x : K⟦X⟧) - (l : K) * tail l e (x : K⟦X⟧) (k + e) := by
+        have hs : Summable fun j : ℕ => coeff (k + j * e) (x : K⟦X⟧) * (-(l : K)) ^ j := by
+          have hbound := (summable_geometric_of_lt_one (norm_nonneg _) (norm_l_lt_one (K := K) l)).mul_left b
+          refine hbound.of_norm_bounded fun j => ?_
+          rw [norm_mul, norm_pow, norm_neg]
+          exact mul_le_mul_of_nonneg_right (hb _) (by positivity)
+        rw [tail, hs.tsum_eq_zero_add, tail, ← tsum_mul_left, sub_eq_add_neg, ← tsum_neg]
+        congr 1
+        · simp
+        · refine tsum_congr fun j => ?_
+          rw [show k + (j + 1) * e = k + e + j * e by ring]
+          ring
+      rw [map_sub, coeff_E_mul, quotE, coeff_mk, coeff_mk, htail]
+      ring
   · set P : Polynomial K := Polynomial.X ^ e + Polynomial.C (l : K) with hP
     have hm : P.Monic := Polynomial.monic_X_pow_add_C _ (NeZero.ne e)
     have hd : P.degree = e := Polynomial.degree_X_pow_add_C (NeZero.pos e) _
-    have h1 : incl O K l (g %ₘ P) = EIn l e _ * (h - incl O K l (g /ₘ P)) := by
+    let q := h - incl O K l (g /ₘ P)
+    have h1 : incl O K l (g %ₘ P) = EIn l e _ * q := by
+      dsimp only [q]
       rw [← incl_E O K l e, mul_sub, ← hg, Polynomial.modByMonic_eq_sub_mul_div, map_sub, map_mul]
       rfl
-    have h2 : ((g %ₘ P : Polynomial K) : K⟦X⟧) =
-        E K l e * ((h - incl O K l (g /ₘ P) : invL l (A O K)) : K⟦X⟧) := by
+    have h2 : ((g %ₘ P : Polynomial K) : K⟦X⟧) = E K l e * (q : K⟦X⟧) := by
       rw [← coe_incl O K l, h1]; rfl
-    have h3 := eq_zero_of_E_mul l e (invL_A_le_Rpi l e (h - incl O K l (g /ₘ P)).2) fun n => by
-      rw [← h2, Polynomial.coeff_coe]
-      refine Polynomial.coeff_eq_zero_of_degree_lt
-        ((Polynomial.degree_modByMonic_lt g hm).trans_le ?_)
-      rw [hd]
-      exact_mod_cast Nat.le_add_left _ _
+    have h3 : (q : K⟦X⟧) = 0 := by
+      have hvanish (n : ℕ) : coeff n (q : K⟦X⟧) + (l : K) * coeff (n + e) (q : K⟦X⟧) = 0 := by
+        rw [← coeff_E_mul l e, ← h2, Polynomial.coeff_coe]
+        refine Polynomial.coeff_eq_zero_of_degree_lt
+          ((Polynomial.degree_modByMonic_lt g hm).trans_le ?_)
+        rw [hd]
+        exact_mod_cast Nat.le_add_left _ _
+      obtain ⟨b, hb⟩ := (mem_invL_A_iff l).1 q.2
+      ext n
+      have hiter (j : ℕ) : coeff n (q : K⟦X⟧) = coeff (n + j * e) (q : K⟦X⟧) * (-(l : K)) ^ j := by
+        induction j with
+        | zero => simp
+        | succ j ih =>
+          rw [ih, show n + (j + 1) * e = n + j * e + e by ring]
+          linear_combination (-(l : K)) ^ j * hvanish (n + j * e)
+      have hlim : Tendsto (fun j : ℕ => b * ‖(l : K)‖ ^ j) atTop (𝓝 0) := by
+        simpa only [mul_zero] using
+          (tendsto_pow_atTop_nhds_zero_of_lt_one (norm_nonneg _) (norm_l_lt_one (K := K) l)).const_mul b
+      have hzero : ‖coeff n (q : K⟦X⟧)‖ ≤ 0 := ge_of_tendsto' hlim fun j => by
+        rw [hiter j, norm_mul, norm_pow, norm_neg]
+        exact mul_le_mul_of_nonneg_right (hb _) (by positivity)
+      simpa using norm_le_zero_iff.1 hzero
     rw [h3, mul_zero, Polynomial.coe_eq_zero_iff] at h2
     exact (Polynomial.modByMonic_eq_zero_iff_dvd hm).1 h2
 
@@ -264,7 +305,7 @@ theorem toAhat_bijective : Function.Bijective (toAhat O K l e) :=
   theta_bijective _ (sameJets_incl O K l e) _ (associated_taylor (separable_E K l e))
 
 theorem toAhat_derivative (x : (AdjoinRoot (Polynomial.X ^ e + Polynomial.C (l : K)))⟦X⟧) :
-    toAhat O K l e (PowerSeries.derivative _ x) = dHat O K l e (toAhat O K l e x) := by
+    toAhat O K l e (PowerSeries.derivative x) = dHat O K l e (toAhat O K l e x) := by
   refine AdicCompletion.ext_evalₐ fun m => ?_
   have H := sameJets_taylor (separable_E K l e)
   have hX := associated_taylor (separable_E K l e)
@@ -274,7 +315,7 @@ theorem toAhat_derivative (x : (AdjoinRoot (Polynomial.X ^ e + Polynomial.C (l :
   refine Eq.trans ?_ h2.symm
   have h3 := pow_dvd_derivative ((hX.pow_pow (n := m + 1)).symm.dvd.trans h1)
   rw [map_sub] at h3
-  have h4 := evalₐ_theta (incl_E O K l e) H (m := m) (x := PowerSeries.derivative _ x)
+  have h4 := evalₐ_theta (incl_E O K l e) H (m := m) (x := PowerSeries.derivative x)
     (g := Polynomial.derivative g) ((hX.pow_pow (n := m)).dvd.trans
       (by convert h3 using 2; exact (derivative_taylor _ g).symm))
   exact h4.trans (congrArg _ (derAl_incl O K l g).symm)

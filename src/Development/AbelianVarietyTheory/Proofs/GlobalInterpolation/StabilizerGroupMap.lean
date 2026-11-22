@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.ColumnStabiliser
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.TrivialColumnStabiliser
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.ColumnStabiliser
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.TrivialColumnStabiliser
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,11 +35,6 @@ theorem stabGroup_eq_map (D : D7) (Lv : LevelData D) (u : D.what₂.Word)
       (GlobalTheory.IndefiniteRowSideFullHecke.ColumnStabiliser.colStab D Lv u y).map
         (bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F))) :=
   (GlobalTheory.IndefiniteRowSideFullHecke.ColumnStabiliser.map_colStab D Lv u y).symm
-
-def stabEquiv (D : D7) (Lv : LevelData D) (u : D.what₂.Word) (y : GlobalTheory.IndefiniteRowSideFullHecke.TrivialColumnStabiliser.GAf D) :
-    GlobalTheory.IndefiniteRowSideFullHecke.ColumnStabiliser.colStab D Lv u y ≃* GlobalTheory.IndefiniteRowSideFullHecke.TrivialColumnStabiliser.stabGroup D Lv u y :=
-  ((GlobalTheory.IndefiniteRowSideFullHecke.ColumnStabiliser.colStab D Lv u y).equivMapOfInjective _ (bc_inclE_injective D)).trans
-    (MulEquiv.subgroupCongr (stabGroup_eq_map D Lv u y).symm)
 
 theorem stabGroup_eq_bot_iff (D : D7) (Lv : LevelData D) (u : D.what₂.Word)
     (y : GlobalTheory.IndefiniteRowSideFullHecke.TrivialColumnStabiliser.GAf D) :

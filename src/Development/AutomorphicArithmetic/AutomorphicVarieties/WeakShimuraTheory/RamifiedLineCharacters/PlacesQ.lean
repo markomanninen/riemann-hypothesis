@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RamifiedLineCharacters.SplitPrimes
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GalEmbTop
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RamifiedLineCharacters.SplitPrimes
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GalEmbTop
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -18,6 +22,7 @@ private theorem ex_place (K : Type) [Field K] [NumberField K] {w : ℕ} (hw : w.
       exact Ideal.zero_mem _)
   have hmem : (w : 𝓞 K) ∈ Q := by
     have hc : (w : ℤ) ∈ Q.comap (algebraMap ℤ (𝓞 K)) := by
+      change (w : ℤ) ∈ Ideal.under ℤ Q
       rw [hQ]
       exact Ideal.mem_span_singleton_self _
     simpa using hc

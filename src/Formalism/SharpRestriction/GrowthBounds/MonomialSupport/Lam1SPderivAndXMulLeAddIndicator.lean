@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialSupport.SupportSubNuSet
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialSupport.SupportSubNuSet
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,7 +85,8 @@ theorem noOpStep : NoOpStep := by
       by_contra hne
       exact absurd ((hV.2 w (κ i 0 + inN Dt.nL x0 i.1 i.2.val)).1 hwb _ hne) (not_le.mpr hlt)
     obtain ⟨Sw, hSw⟩ := joint_dec (normE p K Dt) (eeN D K Dt) hee hcomm hdec w
-    rw [hSw (insert (fun i => ka' i.1 i.2.val) Sw) (Finset.subset_insert _ _), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hSw (insert (fun i => ka' i.1 i.2.val) Sw) (Finset.subset_insert _ _), map_sum]
     refine Finset.sum_eq_zero (fun κ' _ => ?_)
     by_cases hk : κ' = fun i => ka' i.1 i.2.val
     · subst hk
@@ -103,7 +108,8 @@ theorem noOpStep : NoOpStep := by
     simp only [coeff_oneT]
     by_cases hmo : mo ∈ G.support
     · conv_lhs => rw [hSy (G.coeff mo) _ (Finset.subset_biUnion_of_mem (fun mo => Sy (G.coeff mo)) hmo)]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [Module.End.mul_apply]
     · simp only [MvPolynomial.mem_support_iff, not_not] at hmo
       simp [hmo]

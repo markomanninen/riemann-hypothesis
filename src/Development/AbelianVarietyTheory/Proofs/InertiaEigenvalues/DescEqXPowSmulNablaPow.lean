@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIterateDerivative
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIterateDerivative
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal Matrix
 
 namespace GlobalTheory.DescFalling
@@ -12,7 +17,7 @@ theorem desc_eq_X_pow_smul_nabla_pow {O K : Type} [CommRing O] [NormedField K] [
     have h := C.leibniz (fun _ => X) w
     have e1 : ∀ u : Vec K a ι, ((fun _ => (X : K⟦X⟧)) : ZMod a → K⟦X⟧) • u = (X : K⟦X⟧) • u :=
       fun u => rfl
-    have e2 : ((fun _ => PowerSeries.derivative K (X : K⟦X⟧)) : ZMod a → K⟦X⟧) • w = w := by
+    have e2 : ((fun _ => PowerSeries.derivative (R := K) (X : K⟦X⟧)) : ZMod a → K⟦X⟧) • w = w := by
       simp only [PowerSeries.derivative_X]
       exact one_smul _ w
     rw [e1, e1, e2] at h
@@ -24,7 +29,7 @@ theorem desc_eq_X_pow_smul_nabla_pow {O K : Type} [CommRing O] [NormedField K] [
     | zero => intro w; simp
     | succ j ih =>
       intro w
-      rw [pow_succ', Module.End.mul_apply, ih, map_add, hX, map_nsmul, pow_succ' C.nabla (j + 1),
+      rw [pow_succ', Module.End.mul_apply, ih, map_add (f := _), hX, map_nsmul, pow_succ' C.nabla (j + 1),
         Module.End.mul_apply, pow_succ' C.nabla j, Module.End.mul_apply, succ_nsmul]
       abel
   induction k generalizing v with

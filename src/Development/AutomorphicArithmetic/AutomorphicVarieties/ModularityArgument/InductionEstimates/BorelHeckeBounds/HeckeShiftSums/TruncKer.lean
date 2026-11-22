@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.SumShift
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.MainBd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.LamRep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.OmBdReal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.OmMeas
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.NormLeOfSq
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.HsOfKer
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.QhtBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.PolyBdAll
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.SumShift
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.MainBd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.LamRep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.OmBdReal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.OmMeas
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.NormLeOfSq
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.HsOfKer
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.QhtBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.PolyBdAll
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -37,8 +41,12 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.truncKer :
   haveI : SecondCountableTopology (RightCosetSpace (Gam K (2 + 2))) :=
     (isOpenQuotientMap_mk (Gam K (2 + 2))).isQuotientMap.secondCountableTopology
       (isOpenQuotientMap_mk (Gam K (2 + 2))).isOpenMap
-  haveI : MeasurableSpace.CountablyGenerated (RightCosetSpace (Gam K (2 + 2))) := BorelSpace.countablyGenerated
-  haveI : IsSeparable (quotientMeasure (Gam K (2 + 2)) μ) := isSeparable_of_sigmaFinite _
+  haveI : MeasurableSpace.CountablyGenerated (RightCosetSpace (Gam K (2 + 2))) := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact BorelSpace.countablyGenerated
+  haveI : IsSeparable (quotientMeasure (Gam K (2 + 2)) μ) := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact isSeparable_of_sigmaFinite _
   haveI : SecondCountableTopology (Lp ℂ 2 (quotientMeasure (Gam K (2 + 2)) μ)) := Lp.SecondCountableTopology
   haveI : TopologicalSpace.SeparableSpace (Lp ℂ 2 (quotientMeasure (Gam K (2 + 2)) μ)) :=
     TopologicalSpace.SecondCountableTopology.to_separableSpace

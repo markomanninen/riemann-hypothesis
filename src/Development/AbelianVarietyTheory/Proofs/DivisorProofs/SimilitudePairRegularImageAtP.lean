@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.Brauer.TensorSimple
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+module
+
+public import Mathlib
+public import GroundTheory.Brauer.TensorSimple
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,8 +37,9 @@ theorem charpoly_rho_eq_map_pol (G : HTGroup p) (P : Pair G) (w : Fin G.m) :
     have := linearIndependent_pow (K := G.F) γ
     rw [hdeg] at this
     exact this
-  have hT : LinearIndependent (G.Fw w) (fun i : Fin G.n => (1 : G.Fw w) ⊗ₜ[G.F] (γ ^ (i : ℕ))) :=
-    Module.Flat.linearIndependent_one_tmul hli
+  have hT : LinearIndependent (G.Fw w) (fun i : Fin G.n => (1 : G.Fw w) ⊗ₜ[G.F] (γ ^ (i : ℕ))) := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact Module.Flat.linearIndependent_one_tmul hli
   have hM : LinearIndependent (G.Fw w) (fun i : Fin G.n => (G.rho w γ) ^ (i : ℕ)) := by
     have := hT.map' L.toLinearMap (LinearMap.ker_eq_bot.2 hinj)
     have e : (fun i : Fin G.n => (G.rho w γ) ^ (i : ℕ)) =

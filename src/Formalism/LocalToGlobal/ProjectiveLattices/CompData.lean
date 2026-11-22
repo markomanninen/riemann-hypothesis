@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.IsGenFrGenFr
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsGenFrGenFr
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,10 +23,6 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : D
   {Xo : Moduli Dw l} {c : Coeff l}
 
 abbrev AC (Z : Comp Xo c) : Type := AddMonoidAlgebra (Om Z) (WTZ E)
-
-example (Z : Comp Xo c) : Algebra (𝓞 c.F) (AC Z) := inferInstance
-
-example (Z : Comp Xo c) : IsScalarTower (𝓞 c.F) c.F (AC Z) := inferInstance
 
 instance towKAC (Z : Comp Xo c) : IsScalarTower c.F (Om Z) (AC Z) := inferInstance
 

@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaParabolic.InvMulSelfMatrixDoubled
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaParabolic.InvMulSelfMatrixDoubled
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,25 +17,25 @@ namespace PositivityTheory.SiegelWeilFormula.Tpar
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
   {κ : Type} [Fintype κ] {m n : ℕ} {A : Spc F E m} {Y : Spc F E n} {ψ : AddChar (AF F) ℂ}
-  {dd : Darboux (symp (R := AF F) (cA σ) (-1) (incM F A.J) (dbl (incM F Y.J))) κ} {χ : Chr F E}
+  {dd : Darboux (symp (R := AF F) (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (-1) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) A.J) (dbl ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) Y.J))) κ} {χ : Chr F E}
   {om : G2 σ Y →* Module.End ℂ ((κ → AF F) → ℂ)} {S : UA σ A.J →* Module.End ℂ ((κ → AF F) → ℂ)}
   {l : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ}
 
 theorem rho_rho (a b : Matrix (Fin m) (Fin n ⊕ Fin n) (AE F E)) (φ : (κ → AF F) → ℂ) :
     dd.rho ψ a (dd.rho ψ b φ) =
-      ψ (⅟(2 : AF F) * symp (R := AF F) (cA σ) (-1) (incM F A.J) (dbl (incM F Y.J)) a b) • dd.rho ψ (a + b) φ := by
+      ψ (⅟(2 : AF F) * symp (R := AF F) (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (-1) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) A.J) (dbl ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) Y.J)) a b) • dd.rho ψ (a + b) φ := by
   rw [dd.form]
   funext x
-  simp only [Darboux.rho, schr, map_add, Pi.smul_apply, smul_eq_mul, ← mul_assoc, ← AddChar.map_add_eq_mul,
+  simp only [Darboux.rho, schr, map_add (f := _), Pi.smul_apply, smul_eq_mul, ← mul_assoc, ← AddChar.map_add_eq_mul,
     Prod.fst_add, Prod.snd_add, add_assoc, add_dotProduct, dotProduct_add]
   congr 2
   linear_combination (-((dd.e a).1 ⬝ᵥ (dd.e b).2)) * invOf_mul_self (2 : AF F)
 
-theorem l_shift (h : IsDbl (σ := σ) (A := A) (Y := Y) (κ := κ) ψ dd χ om S l) (hψ : IsStd ψ)
+theorem l_shift (h : IsDbl (σ := σ) (A := A) (Y := Y) (κ := κ) ψ dd χ om S l) (hψ : (_root_.Continuous ψ ∧ (∀ x : F, ψ (algebraMap F (AF F) x) = 1) ∧ ∀ a : (AF F), _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.evI (F := F)) a → ψ a = _root_.Complex.exp (-(2 * _root_.Real.pi * _root_.Complex.I) * (_root_.Algebra.trace ℝ (_root_.NumberField.mixedEmbedding.mixedSpace F) ((_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.evI (F := F)) a) : ℝ))))
     (Z : Matrix (Fin m) (Fin n) (AE F E)) (w : Matrix (Fin m) (Fin n ⊕ Fin n) (AE F E)) {Φ : (κ → AF F) → ℂ}
     (hΦ : Φ ∈ schA F κ) :
     l (dd.rho ψ (Z * (diagCols (Fin n) : Matrix (Fin n ⊕ Fin n) (Fin n) (AE F E))ᵀ + w) Φ) =
-      ψ (-(⅟(2 : AF F) * symp (R := AF F) (cA σ) (-1) (incM F A.J) (dbl (incM F Y.J))
+      ψ (-(⅟(2 : AF F) * symp (R := AF F) (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (-1) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) A.J) (dbl ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) Y.J))
         (Z * (diagCols (Fin n) : Matrix (Fin n ⊕ Fin n) (Fin n) (AE F E))ᵀ) w)) * l (dd.rho ψ w Φ) := by
   have e1 := congrArg l (rho_rho (dd := dd) (ψ := ψ) (Z * (diagCols (Fin n) : Matrix (Fin n ⊕ Fin n) (Fin n) (AE F E))ᵀ) w Φ)
   have mem : dd.rho ψ w Φ ∈ schA F κ := GlobalTheory.HeisSchA.schr_mem_schA ψ hψ _ Φ hΦ
@@ -42,12 +46,14 @@ theorem l_shift (h : IsDbl (σ := σ) (A := A) (Y := Y) (κ := κ) ψ dd χ om S
 theorem l_rho_om (h : IsDbl (σ := σ) (A := A) (Y := Y) (κ := κ) ψ dd χ om S l) (x : G2 σ Y)
     (u : Matrix (Fin m) (Fin n ⊕ Fin n) (AE F E)) {Φ : (κ → AF F) → ℂ} (hΦ : Φ ∈ schA F κ) :
     l (dd.rho ψ u (om x Φ)) = l (om x (dd.rho ψ (u * (mat2 x⁻¹)ᵀ) Φ)) := by
-  rw [h.weil.2.1.impl x _ Φ hΦ]
-  congr 3
+  apply congrArg l
+  convert (h.weil.2.1.impl x (u * (mat2 x⁻¹)ᵀ) Φ hΦ).symm using 1
+  congr 2
   simp only [actB]
   rw [Matrix.mul_assoc, ← Matrix.transpose_mul]
   change u = u * (mat2 x * mat2 x⁻¹)ᵀ
   rw [show mat2 x * mat2 x⁻¹ = 1 from Units.mul_inv x.1, Matrix.transpose_one, Matrix.mul_one]
+  all_goals rfl
 
 theorem l_om_par (h : IsDbl (σ := σ) (A := A) (Y := Y) (κ := κ) ψ dd χ om S l) {x : G2 σ Y}
     {t : GL (Fin n) (AE F E)} (hx : IsPar x t) {φ : (κ → AF F) → ℂ} (hφ : φ ∈ schA F κ) :
@@ -55,7 +61,7 @@ theorem l_om_par (h : IsDbl (σ := σ) (A := A) (Y := Y) (κ := κ) ψ dd χ om 
       (((absE F E (Matrix.GeneralLinearGroup.det t) : ℝ) ^ ((m : ℝ) / 2) : ℝ) : ℂ) * l φ := by
   rw [h.weil.2.2 l h.adm h.kill x t hx φ hφ, modu_norm, Fintype.card_fin]
 
-theorem l_rho_S (h : IsDbl (σ := σ) (A := A) (Y := Y) (κ := κ) ψ dd χ om S l) (hψ : IsStd ψ) (g : UA σ A.J)
+theorem l_rho_S (h : IsDbl (σ := σ) (A := A) (Y := Y) (κ := κ) ψ dd χ om S l) (hψ : (_root_.Continuous ψ ∧ (∀ x : F, ψ (algebraMap F (AF F) x) = 1) ∧ ∀ a : (AF F), _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.evI (F := F)) a → ψ a = _root_.Complex.exp (-(2 * _root_.Real.pi * _root_.Complex.I) * (_root_.Algebra.trace ℝ (_root_.NumberField.mixedEmbedding.mixedSpace F) ((_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.evI (F := F)) a) : ℝ)))) (g : UA σ A.J)
     (u : Matrix (Fin m) (Fin n ⊕ Fin n) (AE F E)) {Φ : (κ → AF F) → ℂ} (hΦ : Φ ∈ schA F κ) :
     l (dd.rho ψ u (S g Φ)) = l (dd.rho ψ (mat g⁻¹ * u) Φ) := by
   have e : S g (dd.rho ψ (mat g⁻¹ * u) Φ) = dd.rho ψ (mat g * (mat g⁻¹ * u)) (S g Φ) := h.lin.impl g _ Φ hΦ
@@ -63,15 +69,16 @@ theorem l_rho_S (h : IsDbl (σ := σ) (A := A) (Y := Y) (κ := κ) ψ dd χ om S
   have mem : dd.rho ψ (mat g⁻¹ * u) Φ ∈ schA F κ := GlobalTheory.HeisSchA.schr_mem_schA ψ hψ _ Φ hΦ
   rw [← e, h.fix g _ mem]
 
-theorem psi_rat (h : IsDbl (σ := σ) (A := A) (Y := Y) (κ := κ) ψ dd χ om S l) (hψ : IsStd ψ)
+theorem psi_rat (h : IsDbl (σ := σ) (A := A) (Y := Y) (κ := κ) ψ dd χ om S l) (hψ : (_root_.Continuous ψ ∧ (∀ x : F, ψ (algebraMap F (AF F) x) = 1) ∧ ∀ a : (AF F), _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.evI (F := F)) a → ψ a = _root_.Complex.exp (-(2 * _root_.Real.pi * _root_.Complex.I) * (_root_.Algebra.trace ℝ (_root_.NumberField.mixedEmbedding.mixedSpace F) ((_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.evI (F := F)) a) : ℝ))))
     (a c : Matrix (Fin m) (Fin n ⊕ Fin n) E) :
-    ψ (-(⅟(2 : AF F) * symp (R := AF F) (cA σ) (-1) (incM F A.J) (dbl (incM F Y.J)) (incM F a) (incM F c))) = 1 := by
+    ψ (-(⅟(2 : AF F) * symp (R := AF F) (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (-1) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) A.J) (dbl ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) Y.J)) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) a) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) c))) = 1 := by
   obtain ⟨y, z, hyz⟩ := h.rat a
   obtain ⟨y', z', hyz'⟩ := h.rat c
   have h2 : ⅟(2 : AF F) = algebraMap F (AF F) (1 / 2) := invOf_eq_right_inv (by
     rw [← map_ofNat (algebraMap F (AF F)) 2, ← map_mul, mul_one_div_cancel two_ne_zero, map_one])
   have hd : ∀ u v : κ → F, (fun i => algebraMap F (AF F) (u i)) ⬝ᵥ (fun i => algebraMap F (AF F) (v i)) =
       algebraMap F (AF F) (u ⬝ᵥ v) := fun u v => by simp [dotProduct]
+  unfold incM at hyz hyz'
   rw [dd.form, hyz, hyz']
   simp only [hd, h2, ← map_sub, ← map_mul, ← map_neg]
   exact hψ.2.1 _

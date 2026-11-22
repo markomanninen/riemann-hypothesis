@@ -1,4 +1,8 @@
-import Formalism.SubspaceCounting.GoodOrbitIntervalTileCondition
+module
+
+public import Formalism.SubspaceCounting.GoodOrbitIntervalTileCondition
+
+@[expose] public section
 
 namespace Formalism.G0
 

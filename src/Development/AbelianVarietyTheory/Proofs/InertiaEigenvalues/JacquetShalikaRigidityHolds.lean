@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnrOutside
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsUnitaryTwistAbsPow
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalRankinSelbergLogarithmFormulaStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RankinSelbergPartialLTendstoNeZeroAtOneStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RankinSelbergPartialLPoleAtOneConjStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RsTerm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnrOutside
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsUnitaryTwistAbsPow
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalRankinSelbergLogarithmFormulaStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RankinSelbergPartialLTendstoNeZeroAtOneStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RankinSelbergPartialLPoleAtOneConjStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RsTerm
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ open NumberField IsDedekindDomain Filter Topology GlobalTheory.CuspRep GlobalThe
 namespace GlobalTheory.JSW.Rigid
 
 section lemmas
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem hasProd_exp_logRS {a b : ℕ} {σ : CG E a} {σ' : CG E b} (hσ : σ.IsUnitary) (hσ' : σ'.IsUnitary)
     {T : Finset (HeightOneSpectrum (𝓞 E))} (hT : UnrOutside T σ) (hT' : UnrOutside T σ') {x : ℝ} (hx : 1 < x) :
@@ -35,7 +39,7 @@ theorem rsTerm_shift {a b : ℕ} (σ : CG E a) (σ' : CG E b) (y d : ℝ) (w : H
   rw [rsTerm, rsTerm, e]
   ring
 
-theorem norm_logRS_add_le : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a b : ℕ) (σ : CG E a) (σ' : CG E b), σ.IsUnitary → σ'.IsUnitary → ∀ T : Finset (HeightOneSpectrum (𝓞 E)), UnrOutside T σ → UnrOutside T σ' → ∀ δ : ℝ, 0 < δ → ∃ C : ℝ, ∀ x : ℝ, 1 < x → ‖logRS T σ σ' (x + δ)‖ ≤ C := by
+theorem norm_logRS_add_le : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a b : ℕ) (σ : CG E a) (σ' : CG E b), σ.IsUnitary → σ'.IsUnitary → ∀ T : Finset (HeightOneSpectrum (𝓞 E)), UnrOutside T σ → UnrOutside T σ' → ∀ δ : ℝ, 0 < δ → ∃ C : ℝ, ∀ x : ℝ, 1 < x → ‖logRS T σ σ' (x + δ)‖ ≤ C := by
   intro E _ _ _ a b σ σ' hσ hσ' T hT hT' δ hδ
   have hs := fun y (hy : 1 < y) => (GlobalTheory.T.localRankinSelberg_logarithm_formula.2 E a b σ σ' hσ hσ' T hT hT' y hy).1
   refine ⟨∑' p : {w : HeightOneSpectrum (𝓞 E) // w ∉ T} × ℕ, ‖rsTerm σ σ' (1 + δ) p.1.1 p.2‖, fun x hx => ?_⟩
@@ -59,7 +63,7 @@ theorem norm_logRS_add_le : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyC
         mul_le_mul_of_nonneg_left hn (norm_nonneg _)
     _ = _ := mul_one _
 
-theorem abs_re_logRS_bdd : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a b : ℕ) (σ : CG E a) (σ' : CG E b), 1 ≤ a → 1 ≤ b → σ.IsUnitary → σ'.IsUnitary → (⟨a, σ⟩ : Σ a, CG E a) ≠ ⟨b, σ'⟩ → ∀ T : Finset (HeightOneSpectrum (𝓞 E)), UnrOutside T σ → UnrOutside T σ' → ∃ C : ℝ, ∀ᶠ x in 𝓝[>] (1 : ℝ), |(logRS T σ σ' x).re| ≤ C := by
+theorem abs_re_logRS_bdd : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a b : ℕ) (σ : CG E a) (σ' : CG E b), 1 ≤ a → 1 ≤ b → σ.IsUnitary → σ'.IsUnitary → (⟨a, σ⟩ : Σ a, CG E a) ≠ ⟨b, σ'⟩ → ∀ T : Finset (HeightOneSpectrum (𝓞 E)), UnrOutside T σ → UnrOutside T σ' → ∃ C : ℝ, ∀ᶠ x in 𝓝[>] (1 : ℝ), |(logRS T σ σ' x).re| ≤ C := by
   intro E _ _ _ a b σ σ' ha hb hσ hσ' hne T hT hT'
   obtain ⟨z, hz, hlim⟩ := GlobalTheory.T.rankinSelberg_partialL_tendsto_ne_zero_at_one E a b σ σ' ha hb hσ hσ' hne T hT hT'
   have hx1 : ∀ᶠ x in 𝓝[>] (1 : ℝ), 1 < x := self_mem_nhdsWithin
@@ -75,7 +79,7 @@ theorem abs_re_logRS_bdd : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyCo
   · linarith [hx.1, neg_abs_le (Real.log ‖z‖)]
   · linarith [hx.2, le_abs_self (Real.log ‖z‖)]
 
-theorem tendsto_re_logRS_self : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (π : CG E a), 1 ≤ a → π.IsUnitary → ∀ T : Finset (HeightOneSpectrum (𝓞 E)), UnrOutside T π → Tendsto (fun x : ℝ => (logRS T π π x).re) (𝓝[>] 1) atTop := by
+theorem tendsto_re_logRS_self : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (π : CG E a), 1 ≤ a → π.IsUnitary → ∀ T : Finset (HeightOneSpectrum (𝓞 E)), UnrOutside T π → Tendsto (fun x : ℝ => (logRS T π π x).re) (𝓝[>] 1) atTop := by
   intro E _ _ _ a π ha hπ T hT
   obtain ⟨L, hL, -, c, hc, hlim⟩ := GlobalTheory.T.rankinSelberg_partialL_pole_at_one_conj E a π ha hπ T hT
   have hx1 : ∀ᶠ x in 𝓝[>] (1 : ℝ), 1 < x := self_mem_nhdsWithin
@@ -98,7 +102,7 @@ theorem tendsto_re_logRS_self : ∀ (E : Type) [Field E] [NumberField E] [IsTota
   exact (Real.tendsto_log_atTop.comp hLtop).congr' (hx1.mono fun x hx => (he x hx).symm)
 end lemmas
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem exists_equiv_of_map_eq {ι κ α : Type} [Fintype ι] [Fintype κ] (f : ι → α) (g : κ → α)
     (h : (Finset.univ.val.map f : Multiset α) = Finset.univ.val.map g) : ∃ s : ι ≃ κ, ∀ i, f i = g (s i) := by
@@ -231,7 +235,7 @@ theorem sum_map_pow_twist (s : ℝ) (w : HeightOneSpectrum (𝓞 E)) (A : Multis
 theorem hasSat_sat {a : ℕ} {σ : CG E a} {T : Finset (HeightOneSpectrum (𝓞 E))} (h : UnrOutside T σ)
     {w : HeightOneSpectrum (𝓞 E)} (hw : w ∉ T) : σ.HasSat w (sat σ w) := by
   unfold sat
-  rw [dif_pos (h w hw)]
+  rw [dite_eq_left (h w hw)]
   exact (h w hw).choose_spec
 
 theorem unrOutside_of_twist {a : ℕ} {σ σ₀ : CG E a} {s : ℝ} (he : σ = σ₀.twist (absPow E s))
@@ -245,8 +249,8 @@ theorem unrOutside_of_twist {a : ℕ} {σ σ₀ : CG E a} {s : ℝ} (he : σ = �
 
 end GlobalTheory.JSW.Rigid
 
-open GlobalTheory.JSW.Rigid in
 
+open GlobalTheory.JSW.Rigid in
 theorem GlobalTheory.JSW.jacquetShalikaRigidity_holds : GlobalTheory.Published.JacquetShalikaRigidity := by
   intro E _ _ _ ι κ _ _ m m' π π' hm hm' hw
   classical
@@ -291,12 +295,14 @@ theorem GlobalTheory.JSW.jacquetShalikaRigidity_holds : GlobalTheory.Published.J
     have e1' : ∀ j, B' j = (sat (π0' j) w).map (· * (absPow E (t' j)).val w) := fun j =>
       (hB' j).unique (by rw [he0' j]; exact ((hasSat_sat (hT0' j) hw).twist_absPow (t' j)).1)
     have hL : (M.map (f w r)).sum = ((∑ i, B i).map fun α : ℂˣ => (α : ℂ) ^ (r + 1)).sum := by
-      rw [hpw, map_sum, hM, Multiset.map_map, ← Finset.sum_eq_multiset_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hpw, map_sum, hM, Multiset.map_map, ← Finset.sum_eq_multiset_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [← hpw, e1 i, sum_map_pow_twist]
       rfl
     have hR : (M'.map (f w r)).sum = ((∑ j, B' j).map fun α : ℂˣ => (α : ℂ) ^ (r + 1)).sum := by
-      rw [hpw, map_sum, hM', Multiset.map_map, ← Finset.sum_eq_multiset_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hpw, map_sum, hM', Multiset.map_map, ← Finset.sum_eq_multiset_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [← hpw, e1' j, sum_map_pow_twist]
       rfl

@@ -1,21 +1,25 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousAdeleNorm
-import Development.AbelianVarietyTheory.BlockTheory.AdelicCMFields.UnitaryHeckeCharacterIdele
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BorelCasselman
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommGroupDivEqMulDivMulInvDiv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjQuotNsUnitsEqOneStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmExtensionIdeleConjIdeleMapMaxRealSubfieldStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmExtensionIdeleConjMemFiniteUnitIdelesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowEqOneOfPrincipalUnitIdeleNormOneStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsOpenSubgroupAdicUnitsNoRootsOfUnityStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemFiniteUnitIdelesOfMapMaxRealSubfieldStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuadraticHeckeCharCMEqIdeleInfiniteSignFiniteTriStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeCharCMEtaLocalEqNegOnePowValInertStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsOtherSplitPlaceWithDistinctRealPlace
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnitaryCharOfOpenSubgroupAndHom
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitOpenAndCongrOpen
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdeleCharacterTrivialOnLocalUnits
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousAdeleNorm
+public import Development.AbelianVarietyTheory.BlockTheory.AdelicCMFields.UnitaryHeckeCharacterIdele
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BorelCasselman
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommGroupDivEqMulDivMulInvDiv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjQuotNsUnitsEqOneStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmExtensionIdeleConjIdeleMapMaxRealSubfieldStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmExtensionIdeleConjMemFiniteUnitIdelesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowEqOneOfPrincipalUnitIdeleNormOneStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsOpenSubgroupAdicUnitsNoRootsOfUnityStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemFiniteUnitIdelesOfMapMaxRealSubfieldStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuadraticHeckeCharCMEqIdeleInfiniteSignFiniteTriStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeCharCMEtaLocalEqNegOnePowValInertStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsOtherSplitPlaceWithDistinctRealPlace
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnitaryCharOfOpenSubgroupAndHom
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitOpenAndCongrOpen
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdeleCharacterTrivialOnLocalUnits
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.UnitaryBC Formalism.L2.Host
 
@@ -52,7 +56,10 @@ private theorem exists_split_avoid (S : Set (HeightOneSpectrum (𝓞 E))) (hS : 
   obtain ⟨Q, hQmax, hQ⟩ := Ideal.exists_ideal_over_maximal_of_isIntegral (S := 𝓞 E)
     (Ideal.span {(p : ℤ)}) (by rw [(RingHom.injective_iff_ker_eq_bot _).mp hinj]; exact bot_le)
   have hpQ : (p : 𝓞 E) ∈ Q := by
-    have : (p : ℤ) ∈ Q.comap (algebraMap ℤ (𝓞 E)) := hQ ▸ Ideal.subset_span rfl
+    have : (p : ℤ) ∈ Q.comap (algebraMap ℤ (𝓞 E)) := by
+      change (p : ℤ) ∈ Ideal.under ℤ Q
+      rw [hQ]
+      exact Ideal.subset_span rfl
     simpa using this
   have hp0 : (p : 𝓞 E) ≠ 0 := by exact_mod_cast hp.ne_zero
   let w₁ : HeightOneSpectrum (𝓞 E) := ⟨Q, hQmax.isPrime, fun h => hp0 (by rw [h] at hpQ; simpa using hpQ)⟩
@@ -116,8 +123,9 @@ private noncomputable def dirAt (w : InfinitePlace E) : Ideles E →* ℂˣ :=
 private noncomputable def psi (e : InfinitePlace E → ℤ) : Ideles E →* ℂˣ := ∏ w, dirAt w ^ e w
 
 private theorem psi_apply (e : InfinitePlace E → ℤ) (x : Ideles E) : psi e x = ∏ w, dirAt w x ^ e w := by
-  rw [psi, MonoidHom.finset_prod_apply]
-  rfl
+  letI : IsOneApply (Ideles E →* ℂˣ) := ⟨fun _ => rfl⟩
+  letI : IsMulApply (Ideles E →* ℂˣ) := ⟨fun _ _ _ => rfl⟩
+  simp only [psi, prod_apply, MonoidHom.zpow_apply]
 
 private theorem continuous_dirAt (w : InfinitePlace E) : Continuous (dirAt (E := E) w) := by
   refine GlobalTheory.ConsEta.continuous_unitDir.comp ((Continuous.units_map _ ?_).comp (Continuous.units_map _ ?_))
@@ -127,7 +135,7 @@ private theorem continuous_dirAt (w : InfinitePlace E) : Continuous (dirAt (E :=
 private theorem continuous_psi (e : InfinitePlace E → ℤ) : Continuous (psi e) := by
   have : ⇑(psi e) = fun x => ∏ w, dirAt w x ^ e w := funext (psi_apply e)
   rw [this]
-  exact continuous_finset_prod _ fun w _ => (continuous_dirAt w).zpow _
+  exact continuous_finsetProd _ fun w _ => (continuous_dirAt w).zpow _
 
 private theorem norm_psi (e : InfinitePlace E → ℤ) (x : Ideles E) : ‖((psi e x : ℂˣ) : ℂ)‖ = 1 := by
   rw [psi_apply, Units.coe_prod, norm_prod]
@@ -150,7 +158,9 @@ private theorem psi_off (e : InfinitePlace E → ℤ) (w₀ : HeightOneSpectrum 
 private theorem psi_ideleMap (e : InfinitePlace E → ℤ) (he : ∀ v, Odd (e v))
     (b : Ideles (maximalRealSubfield E)) :
     psi e (ideleMap (maximalRealSubfield E) E b) = infSign E (ideleMap (maximalRealSubfield E) E b) := by
-  rw [psi_apply, infSign, MonoidHom.finset_prod_apply]
+  letI : IsOneApply (Ideles E →* ℂˣ) := ⟨fun _ => rfl⟩
+  letI : IsMulApply (Ideles E →* ℂˣ) := ⟨fun _ _ _ => rfl⟩
+  rw [psi_apply, infSign, prod_apply]
   refine Finset.prod_congr rfl fun w _ => ?_
   have hv := IsTotallyReal.isReal (w.comap (algebraMap (maximalRealSubfield E) E))
   have hs : dirAt w (ideleMap (maximalRealSubfield E) E b) = Units.map (Int.castRingHom ℂ).toMonoidHom
@@ -202,7 +212,9 @@ private theorem quadChar_finPart (hU : GlobalTheory.BCT.Unr E) (b : Ideles (maxi
 
 private theorem infSign_finPart (b : Ideles (maximalRealSubfield E)) :
     infSign E (ideleMap (maximalRealSubfield E) E (GlobalTheory.Mem.Chr.finPartI _ b)) = 1 := by
-  rw [infSign, MonoidHom.finset_prod_apply]
+  letI : IsOneApply (Ideles E →* ℂˣ) := ⟨fun _ => rfl⟩
+  letI : IsMulApply (Ideles E →* ℂˣ) := ⟨fun _ _ _ => rfl⟩
+  rw [infSign, prod_apply]
   refine Finset.prod_eq_one fun w _ => ?_
   have : Units.map (GlobalTheory.IdeleNormChar.infEval w)
       (ideleMap (maximalRealSubfield E) E (GlobalTheory.Mem.Chr.finPartI _ b)) = 1 := by

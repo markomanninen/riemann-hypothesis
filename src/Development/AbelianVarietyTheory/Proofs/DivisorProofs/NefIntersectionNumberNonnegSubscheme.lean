@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SemiposAtOfPositive
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemConeOfMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormsOfInduces
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SemiposAtOfPositive
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemConeOfMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormsOfInduces
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj Formalism.BasicNotions.TH Formalism.L2.Theta ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.AllWt GlobalTheory.CompHt GlobalTheory.CovTop GlobalTheory.CovHt GlobalTheory.Mean4 GlobalTheory.Mean4O
 open scoped ENNReal Classical
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory GlobalTheory.ArInt GlobalTheory.ProjVar GlobalTheory.TrueGeo GlobalTheory.ShFam.Pad GlobalTheory.VertForm GlobalTheory.CoverNorm
@@ -21,7 +26,7 @@ theorem lbIso_pull_comp {X Y Z : Scheme.{0}} {L : LB X} (hL : L.IsLB) (a : Y ⟶
 
 theorem isProjOver_fibre {k : Type} [CommRing k] [Module.Finite ℤ k] {X : Scheme.{0}} {p : X ⟶ Sp k}
     (hp : IsProjOver p) (l : ℕ) [Fact l.Prime] {Z : Scheme.{0}} (i : Z ⟶ X) [IsClosedImmersion i]
-    [Algebra (ZMod l) Γ(Z, ⊤)] : IsProjOver (strHom (ZMod l) Z) := by
+    [Algebra (ZMod l) Γ(Z, ⊤)] : IsProjOver (strHom (ZMod l) (X := Z)) := by
   obtain ⟨N, e, he, -⟩ := hp
   have hb : IsFinite (spMap (Int.castRingHom k)) := by
     rw [spMap, IsFinite.SpecMap_iff]
@@ -59,15 +64,5 @@ theorem isNef_pull_of_nefOver {k : Type} [CommRing k] {X : Scheme.{0}} {p : X �
     (fun j => by fin_cases j; exact LB.isLB_pull hLi c) fun j => ?_)
   fin_cases j
   exact lbIso_pull_comp L.isLB i c
-
-theorem interNum_nonneg_of_nefOver : Hypotheses2 → ∀ (k : Type) [CommRing k] (X : Scheme.{0}) [IsIntegral X]
-    (p : X ⟶ Sp k) (D : ℕ), IsArithVar p D → ∀ (l : ℕ) [Fact l.Prime] (Z : Scheme.{0}) (i : Z ⟶ X)
-    [IsClosedImmersion i] [IsIntegral Z] [Algebra (ZMod l) Γ(Z, ⊤)], topologicalKrullDim Z = D →
-    ∀ N : Fin D → HermLB p, (∀ j, NefOver (N j) l) →
-      0 ≤ interNum (ZMod l) (structureModule Z) (fun j => (N j).B.pull i) := by
-  intro hP k _ X _ p D hX l _ Z i _ _ _ hZ N hN
-  haveI := hX.finite
-  exact hP.q7.1.interNum_nonneg (isProjOver_fibre hX.isProjOver l i) hZ
-    fun j => isNef_pull_of_nefOver l i (N j) (hN j)
 
 end GlobalTheory.FibreNef

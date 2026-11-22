@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsMChart
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsMChart
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -37,8 +42,8 @@ theorem MChartDehomog.proof : MChartDehomog.Statement := by
     simp only [φ, RingHom.comp_apply]
     rw [← MvPolynomial.algebraMap_eq, ← Ideal.Quotient.mkₐ_eq_mk F, AlgHom.commutes,
       ← IsScalarTower.algebraMap_apply]
-  have hmono : ∀ e ∈ f.support, chartMap P u (monomial e (coeff e f)) * ∏ k, w k ^ b k =
-      φ (monomial e (coeff e f)) := by
+  have hmono : ∀ e ∈ f.support, chartMap P u (monomial e (AddMonoidAlgebra.coeff f e)) * ∏ k, w k ^ b k =
+      φ (monomial e (AddMonoidAlgebra.coeff f e)) := by
     intro e he
     have hwe : Finsupp.weight (blockWeight ι) e = b := hf (mem_support_iff.mp he)
     rw [← hwe, prod_pow_blockWeight, chartMap, aeval_monomial, mul_assoc, ← Finsupp.prod_mul,
@@ -51,7 +56,8 @@ theorem MChartDehomog.proof : MChartDehomog.Statement := by
   rw [hD, eq_div_iff (Finset.prod_ne_zero_iff.mpr fun k _ => pow_ne_zero _ (hw k))]
   conv_lhs => rw [f.as_sum]
   conv_rhs => rw [f.as_sum]
-  rw [map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.sum_mul]
   exact Finset.sum_congr rfl hmono
 
 end

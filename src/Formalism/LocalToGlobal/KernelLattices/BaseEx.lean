@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.LateralTheory
-import Formalism.PeriodIntegrals.KerIso
-import Formalism.PeriodIntegrals.SelfDualOfDiff
-import Formalism.PeriodIntegrals.KerLat
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+public import Formalism.PeriodIntegrals.KerIso
+public import Formalism.PeriodIntegrals.SelfDualOfDiff
+public import Formalism.PeriodIntegrals.KerLat
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate Pointwise
@@ -52,17 +56,8 @@ def MMSelfDual : Prop := PI.KerIso.SelfDualI D.host.K D.host.conj D.host.AA0
 
 def SplitKSplits : Prop := ∀ p : ℕ, p.Prime → SplitK D p → PI.KerIso.SplitsAt D.host.K D.host.conj p
 
-def GammaZeroExists : Prop :=
-  ∃ (γ₀ : IsoK D) (gC : (Fin 4 × D.what₂.Tau → ℂ) ≃ₗ[ℂ] (Fin 4 × D.what₂.Tau → ℂ)),
-    ∀ x : Fin 4 → D.host.E, gC (fun w => TaylorLogMetric.embT D w.2 (x w.1)) = fun w => D.host.φ₀ ((γ₀.g x w : D.host.K) : D.host.E)
-
-def GammaPExists : Prop := ∀ p : ℕ, p.Prime → SplitK D p → ∃ γ : IsoK D, γ.AtP p
-
 def PeriodExists : Prop :=
   ∀ (cc : Ideal (𝓞 D.host.K)) (δ : ℂ), cc ≠ ⊥ → δ ≠ 0 → ∃ L : PeriodPair, L.lattice.toAddSubgroup = TaylorLogMetric.lamOf D cc δ
-
-def TZeroExists : Prop :=
-  ∀ (cc : Ideal (𝓞 D.host.K)) (δ : ℂ), cc ≠ ⊥ → δ ≠ 0 → ∃ t : ℂ, GL3Theta.IsTwoTorsionPointUnkilled D (TaylorLogMetric.lamOf D cc δ) t
 
 end HostFacts
 

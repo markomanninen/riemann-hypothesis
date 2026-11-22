@@ -1,13 +1,17 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SExpDefs
-import GroundTheory.AutomorphicForms.GL2.GodementSectionFactor
-import GroundTheory.GlobalFields.TateThesis.RootNumberLocalPlace
-import GroundTheory.LocalFields.LocalZetaGauss
-import GroundTheory.LocalFields.LocalZeta
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.ArchInt
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.UnitaryTransvectionZeroSecondMemClosure
-import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
-import GroundTheory.GlobalFields.TateThesis.FiniteOrderParams
-import GroundTheory.GlobalFields.WeilGroups.QuasiCharacterDecomposition
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SExpDefs
+public import GroundTheory.AutomorphicForms.GL2.GodementSectionFactor
+public import GroundTheory.GlobalFields.TateThesis.RootNumberLocalPlace
+public import GroundTheory.LocalFields.LocalZetaGauss
+public import GroundTheory.LocalFields.LocalZeta
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.ArchInt
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.UnitaryTransvectionZeroSecondMemClosure
+public import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
+public import GroundTheory.GlobalFields.TateThesis.FiniteOrderParams
+public import GroundTheory.GlobalFields.WeilGroups.QuasiCharacterDecomposition
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,8 @@ variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F]
 
 open GroundTheory.Automorphic.GodementSection
 
-open Classical in
 
+open Classical in
 def finK (c : HeightOneSpectrum (𝓞 F) → ℕ) (yf : (Af F)ˣ) (ξ : F) (b : (Af F)ˣ) : ℂ :=
   if (∀ w, Valued.v (pLoc F w ((b : Af F) * (yf : Af F))) ≤ WithZero.exp (-(c w : ℤ))) ∧
       (∀ w, Valued.v (pLoc F w (((b⁻¹ : (Af F)ˣ) : Af F) * algebraMap F (Af F) ξ)) ≤
@@ -52,8 +56,8 @@ def xiF (ξ : Fˣ) : (Af F)ˣ := Units.map (algebraMap F (Af F)).toMonoidHom ξ
 
 def ordAt (b : (Af F)ˣ) (v : HeightOneSpectrum (𝓞 F)) : ℤ := ord (pLoc F v (b : Af F))
 
-open Classical in
 
+open Classical in
 def locF (ω : HChar F) (c : HeightOneSpectrum (𝓞 F) → ℕ) (yf : (Af F)ˣ) (ξ : F) (v : HeightOneSpectrum (𝓞 F))
     (a : (v.adicCompletion F)ˣ) : ℂ :=
   (if Valued.v ((a : v.adicCompletion F) * pLoc F v (yf : Af F)) ≤ WithZero.exp (-(c v : ℤ)) ∧

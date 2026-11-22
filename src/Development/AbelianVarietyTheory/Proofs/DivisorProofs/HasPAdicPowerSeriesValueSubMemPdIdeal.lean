@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
 set_option autoImplicit false
@@ -131,7 +136,7 @@ theorem sum_eq_map_mem {Q : Type} [CommRing Q] [Algebra B Q] {ι : Type} (s : Fi
   | insert i s hi ih =>
     obtain ⟨y, hy, e⟩ := h i (Finset.mem_insert_self i s)
     obtain ⟨y', hy', e'⟩ := ih (fun k hk => h k (Finset.mem_insert_of_mem hk))
-    exact ⟨y + y', J.add_mem hy hy', by rw [Finset.sum_insert hi, e, e', map_add]⟩
+    exact ⟨y + y', J.add_mem hy hy', by rw [Finset.sum_insert hi, e, e', map_add (f := _)]⟩
 
 variable [Fintype σ] {Q : Type} [CommRing Q] [Algebra B Q]
 
@@ -145,8 +150,10 @@ theorem monomial_val_sub (p : ℕ) (hp : p.Prime)
   obtain ⟨b, hb, e⟩ := prod_pow_sub_prod_pow p hp hu J hJ z z' hz α Finset.univ
   refine ⟨∑ i, b i * c i, J.sum_mem (fun i _ => J.mul_mem_right _ (hb i)), ?_⟩
   have e' := congrArg (algebraMap B Q) e
-  simp only [map_sub, map_prod, map_pow, map_sum, map_mul, map_natCast] at e'
-  rw [← mul_sub, e', Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_prod, map_pow, map_sum, map_mul, map_natCast] at e'
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← mul_sub, e', Finset.mul_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, ← hc i]
   ring
@@ -158,7 +165,8 @@ theorem eval_sub_eval (p : ℕ) (hp : p.Prime)
     (hP : ∀ (α : σ →₀ ℕ) i, ∃ c : B, (α i : Q) * P.coeff α = algebraMap B Q c) :
     ∃ b ∈ J, MvPolynomial.eval (fun i => algebraMap B Q (z i)) P -
       MvPolynomial.eval (fun i => algebraMap B Q (z' i)) P = algebraMap B Q b := by
-  rw [P.as_sum, map_sum, map_sum, ← Finset.sum_sub_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [P.as_sum, map_sum, map_sum, ← Finset.sum_sub_distrib]
   apply sum_eq_map_mem
   intro v _
   rw [MvPolynomial.eval_monomial, MvPolynomial.eval_monomial,
@@ -190,7 +198,7 @@ theorem hasVal_sub_mem : ∀ (p : ℕ) [Fact p.Prime] (B O Q : Type) [CommRing B
     · exact ⟨0, by simp⟩
   obtain ⟨b, hb, e⟩ := eval_sub_eval p hp hF.unit_coprime J hJ z z' hzz _ hP
   refine ⟨b, hb, b1 - b2, ?_⟩
-  simp only [map_add, map_mul, map_sub, map_pow, map_natCast] at e1 e2 ⊢
+  simp only [map_add (f := _), map_mul, map_sub, map_pow, map_natCast] at e1 e2 ⊢
   linear_combination e1 - e2 + e
 
 end GlobalTheory.HasValCong

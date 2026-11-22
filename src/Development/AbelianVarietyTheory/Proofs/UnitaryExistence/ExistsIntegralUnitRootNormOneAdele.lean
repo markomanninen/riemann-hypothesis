@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicCompletionFractionalIdealProperties
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicCompletionFractionalIdealProperties
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.AdLat
 open scoped TensorProduct Topology Matrix
@@ -10,77 +14,13 @@ namespace GlobalTheory.AdLat.UnitRoot
 section quad
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem eq_one_or (c : E ≃ₐ[F] E) (h2 : Module.finrank F E = 2) (hc : c ≠ 1)
-    (f : E ≃ₐ[F] E) : f = 1 ∨ f = c := by
-  classical
-  haveI : FiniteDimensional F E := Module.finite_of_finrank_eq_succ h2
-  have hcard : Fintype.card (E ≃ₐ[F] E) ≤ 2 := by
-    rw [← h2]; exact AlgEquiv.card_le
-  by_contra h
-  push Not at h
-  have : 2 < Fintype.card (E ≃ₐ[F] E) :=
-    Fintype.two_lt_card_iff.2 ⟨f, 1, c, h.1, h.2, hc.symm⟩
-  omega
-
-theorem invol (c : E ≃ₐ[F] E) (h2 : Module.finrank F E = 2) (hc : c ≠ 1) (x : E) :
-    c (c x) = x := by
-  rcases eq_one_or c h2 hc (c * c) with h | h
-  · exact congrArg (fun g : E ≃ₐ[F] E => g x) h
-  · exact absurd (mul_left_cancel (a := c) (h.trans (mul_one c).symm)) hc
-
-theorem fixed_integral (c : E ≃ₐ[F] E) (h2 : Module.finrank F E = 2) (hc : c ≠ 1) (x : E)
-    (hx : IsIntegral ℤ x) (hfix : c x = x) :
-    ∃ y ∈ (algebraMap (𝓞 F) F).range, algebraMap F E y = x := by
-  haveI : FiniteDimensional F E := Module.finite_of_finrank_eq_succ h2
-  haveI : Algebra.IsQuadraticExtension F E := ⟨h2⟩
-  haveI : IsGalois F E := inferInstance
-  obtain ⟨y, rfl⟩ := (IsGalois.mem_range_algebraMap_iff_fixed (F := F) x).2 (fun f => by
-    rcases eq_one_or c h2 hc f with rfl | rfl
-    · rfl
-    · exact hfix)
-  exact ⟨y, ⟨⟨y, (isIntegral_algebraMap_iff (algebraMap F E).injective).1 hx⟩, rfl⟩, rfl⟩
-
 end quad
 
 section inst
 variable (F : Type) [Field F] [NumberField F]
 
-abbrev IntAd : Type := ∀ v : HeightOneSpectrum (𝓞 F), v.adicCompletionIntegers F
-
-noncomputable def incl : IntAd F →+* FiniteAdeleRing (𝓞 F) F where
-  toFun a := ⟨fun v => a v, Filter.Eventually.of_forall fun v => (a v).2⟩
-  map_one' := rfl
-  map_mul' _ _ := rfl
-  map_zero' := rfl
-  map_add' _ _ := rfl
-
-theorem incl_apply (a : IntAd F) (v) : incl F a v = a v := rfl
-
-theorem incl_injective : Function.Injective (incl F) := fun a b h =>
-  funext fun v => Subtype.ext (by rw [← incl_apply, ← incl_apply, h])
-
-theorem exists_incl {a : FiniteAdeleRing (𝓞 F) F} (ha : ∀ v, a v ∈ v.adicCompletionIntegers F) :
-    ∃ b, incl F b = a := ⟨fun v => ⟨a v, ha v⟩, rfl⟩
-
-noncomputable def primeAt (v : HeightOneSpectrum (𝓞 F)) : Ideal (IntAd F) :=
-  (IsLocalRing.maximalIdeal (v.adicCompletionIntegers F)).comap
-    (Pi.evalRingHom (fun v : HeightOneSpectrum (𝓞 F) => v.adicCompletionIntegers F) v)
-
 variable (E : Type) [Field E] [NumberField E] [Algebra F E]
 
-noncomputable def hatRing : Subring (RA F E) where
-  toAddSubgroup := hat1 F (Set.range (algebraMap (𝓞 E) E))
-  one_mem' := one_tmul_mem_adelicCompletionOfElementSet F ⟨1, map_one _⟩
-  mul_mem' hx hy := mul_mem_adelicCompletionOfElementSet_of_mul_mem F (by
-    rintro _ ⟨a, rfl⟩ _ ⟨b, rfl⟩; exact ⟨a * b, map_mul _ _ _⟩) hx hy
-
-open NumberField IsDedekindDomain in
-open scoped TensorProduct Topology Matrix in
-variable (F : Type) [Field F] [NumberField F] in
-variable (E : Type) [Field E] [NumberField E] [Algebra F E] in
-theorem _root_.GlobalTheory.AdLat.UnitRoot.mem_hatRing (z : _root_.GlobalTheory.AdLat.RA F E) :
-    z ∈ _root_.GlobalTheory.AdLat.UnitRoot.hatRing F E ↔
-      z ∈ _root_.GlobalTheory.AdLat.hat1 F (Set.range (algebraMap (𝓞 E) E)) := Iff.rfl
 
 variable {F E}
 
@@ -93,92 +33,6 @@ theorem _root_.GlobalTheory.AdLat.UnitRoot.conj_mem (c : E ≃ₐ[F] E) :
     ∀ x ∈ Set.range (algebraMap (𝓞 E) E), c x ∈ Set.range (algebraMap (𝓞 E) E) := by
   rintro _ ⟨a, rfl⟩
   exact ⟨⟨c (a : E), a.2.map c.toAlgHom.toRingHom.toIntAlgHom⟩, rfl⟩
-
-theorem tmul_fixed (c : E ≃ₐ[F] E) (h2 : Module.finrank F E = 2) (hc : c ≠ 1)
-    {a : FiniteAdeleRing (𝓞 F) F} (ha : ∀ v, a v ∈ v.adicCompletionIntegers F) {x : E}
-    (hx : x ∈ Set.range (algebraMap (𝓞 E) E)) (hfix : c x = x) :
-    ∃ b, (a ⊗ₜ[F] x : RA F E) = incl F b ⊗ₜ[F] 1 := by
-  obtain ⟨x, rfl⟩ := hx
-  obtain ⟨y, hy, hyx⟩ := fixed_integral c h2 hc _ (RingOfIntegers.isIntegral_coe x) hfix
-  obtain ⟨b, hb⟩ := exists_incl F (a := algebraMap F _ y * a)
-    (fun v => adele_mul_integral F ((mem_range_iff_adele_integral F y).1 hy v) (ha v))
-  refine ⟨b, ?_⟩
-  rw [hb, ← Algebra.smul_def, TensorProduct.smul_tmul, ← Algebra.algebraMap_eq_smul_one, hyx]
-
-theorem sg_tmul (c : E ≃ₐ[F] E) (a : FiniteAdeleRing (𝓞 F) F) (x : E) :
-    sg (FiniteAdeleRing (𝓞 F) F) c (a ⊗ₜ[F] x) = a ⊗ₜ[F] c x := rfl
-
-theorem sg_sg (c : E ≃ₐ[F] E) (h2 : Module.finrank F E = 2) (hc : c ≠ 1) (z : RA F E) :
-    sg (FiniteAdeleRing (𝓞 F) F) c (sg (FiniteAdeleRing (𝓞 F) F) c z) = z := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
-  | tmul a x => rw [sg_tmul, sg_tmul, invol c h2 hc]
-  | add y z h1 h2 => rw [map_add, map_add, h1, h2]
-
-theorem trace_mem (c : E ≃ₐ[F] E) (h2 : Module.finrank F E = 2) (hc : c ≠ 1) {z : RA F E}
-    (hz : z ∈ hat1 F (Set.range (algebraMap (𝓞 E) E))) :
-    ∃ b, z + sg (FiniteAdeleRing (𝓞 F) F) c z = incl F b ⊗ₜ[F] 1 := by
-  induction hz using AddSubgroup.closure_induction with
-  | mem x hx =>
-    obtain ⟨a, ha, x, hx, rfl⟩ := hx
-    rw [sg_tmul, ← TensorProduct.tmul_add]
-    refine tmul_fixed c h2 hc ha ?_ (by rw [map_add, invol c h2 hc, add_comm])
-    obtain ⟨s, hs⟩ := conj_mem c x hx
-    obtain ⟨t, rfl⟩ := hx
-    exact ⟨t + s, by rw [map_add, hs]⟩
-  | zero => exact ⟨0, by simp⟩
-  | add y z _ _ h1 h2 =>
-    obtain ⟨a, ha⟩ := h1
-    obtain ⟨b, hb⟩ := h2
-    exact ⟨a + b, by rw [map_add, map_add, TensorProduct.add_tmul, ← ha, ← hb]; ring⟩
-  | neg y _ h1 =>
-    obtain ⟨a, ha⟩ := h1
-    exact ⟨-a, by rw [map_neg, map_neg, TensorProduct.neg_tmul, ← ha]; ring⟩
-
-theorem norm_mem (c : E ≃ₐ[F] E) (h2 : Module.finrank F E = 2) (hc : c ≠ 1) {z : RA F E}
-    (hz : z ∈ hat1 F (Set.range (algebraMap (𝓞 E) E))) :
-    ∃ b, z * sg (FiniteAdeleRing (𝓞 F) F) c z = incl F b ⊗ₜ[F] 1 := by
-  induction hz using AddSubgroup.closure_induction with
-  | mem x hx =>
-    obtain ⟨a, ha, x, hx, rfl⟩ := hx
-    rw [sg_tmul, Algebra.TensorProduct.tmul_mul_tmul]
-    refine tmul_fixed c h2 hc (fun v => adele_mul_integral F (ha v) (ha v)) ?_
-      (by rw [map_mul, invol c h2 hc, mul_comm])
-    obtain ⟨s, hs⟩ := conj_mem c x hx
-    obtain ⟨t, rfl⟩ := hx
-    exact ⟨t * s, by rw [map_mul, hs]⟩
-  | zero => exact ⟨0, by simp⟩
-  | add y z hy hz h1 h3 =>
-    obtain ⟨a, ha⟩ := h1
-    obtain ⟨b, hb⟩ := h3
-    obtain ⟨d, hd⟩ := trace_mem c h2 hc ((hatRing F E).mul_mem hy
-      (galoisAut_mem_adelicCompletionOfElementSet F c (conj_mem c) hz))
-    rw [map_mul, sg_sg c h2 hc] at hd
-    exact ⟨a + b + d, by
-      rw [map_add, map_add, map_add, TensorProduct.add_tmul, TensorProduct.add_tmul,
-        ← ha, ← hb, ← hd]; ring⟩
-  | neg y _ h1 =>
-    obtain ⟨a, ha⟩ := h1
-    exact ⟨a, by rw [map_neg, ← ha]; ring⟩
-
-variable (F E) in
-
-noncomputable def adIn : IntAd F →+* hatRing F E :=
-  ((Algebra.TensorProduct.includeLeftRingHom :
-    FiniteAdeleRing (𝓞 F) F →+* RA F E).comp (incl F)).codRestrict (hatRing F E)
-    fun a => (mem_hatRing F E _).2 (tmul_mem_adelicCompletion_of_integral F (a := incl F a) (x := 1)
-      (fun v => (a v).2) ⟨1, map_one _⟩)
-
-noncomputable def conjHat (c : E ≃ₐ[F] E) : hatRing F E →+* hatRing F E :=
-  ((sg (FiniteAdeleRing (𝓞 F) F) c : RA F E →+* RA F E).comp (hatRing F E).subtype).codRestrict _
-    fun z => galoisAut_mem_adelicCompletionOfElementSet F c (conj_mem c) z.2
-
-variable (F E) in
-
-noncomputable def intIn : 𝓞 E →+* hatRing F E :=
-  ((Algebra.TensorProduct.includeRight (R := F) (A := FiniteAdeleRing (𝓞 F) F) (B := E) :
-    E →+* RA F E).comp (algebraMap (𝓞 E) E)).codRestrict _
-    fun a => one_tmul_mem_adelicCompletionOfElementSet F ⟨a, rfl⟩
 
 end inst
 
@@ -226,7 +80,7 @@ private lemma sg_sg_of_quadratic {F E : Type} [Field F] [NumberField F] [Field E
     simp only [_root_.GlobalTheory.AdLat.sg, Algebra.TensorProduct.map_tmul, AlgHom.id_apply,
       AlgEquiv.coe_algHom]
     rw [← AlgEquiv.mul_apply, hcc, AlgEquiv.one_apply]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 open NumberField IsDedekindDomain in
 open scoped TensorProduct Topology Matrix in
@@ -299,7 +153,7 @@ private lemma exists_add_sg_eq_tmul_one_of_mem_closure {F E : Type} [Field F] [N
     obtain ⟨a, ha, x, hx, rfl⟩ := hz
     have hcc := mul_self_eq_one_of_quadratic c h2 hc
     have hfix : c (x + c x) = x + c x := by
-      rw [map_add, ← AlgEquiv.mul_apply, hcc, AlgEquiv.one_apply, add_comm]
+      rw [map_add (f := _), ← AlgEquiv.mul_apply, hcc, AlgEquiv.one_apply, add_comm]
     obtain ⟨y, rfl⟩ := hx
     obtain ⟨w, hw⟩ := _root_.GlobalTheory.AdLat.UnitRoot.conj_mem c _ ⟨y, rfl⟩
     obtain ⟨f, hf⟩ := exists_integer_of_fixed_integral c h2 hc _ hfix ⟨y + w, by simp [hw]⟩
@@ -312,7 +166,7 @@ private lemma exists_add_sg_eq_tmul_one_of_mem_closure {F E : Type} [Field F] [N
   | add x y _ _ hx hy =>
     obtain ⟨n, hn, e⟩ := hx
     obtain ⟨m, hm, e'⟩ := hy
-    exact ⟨n + m, hadd _ _ hn hm, by rw [map_add, TensorProduct.add_tmul, ← e, ← e']; abel⟩
+    exact ⟨n + m, hadd _ _ hn hm, by rw [map_add (f := _), TensorProduct.add_tmul, ← e, ← e']; abel⟩
   | neg x _ hx =>
     obtain ⟨n, hn, e⟩ := hx
     exact ⟨-n, hneg _ hn, by rw [map_neg, TensorProduct.neg_tmul, ← e]; abel⟩
@@ -354,13 +208,13 @@ private lemma exists_norm_sum_tmul_eq_tmul_one {F E : Type} [Field F] [NumberFie
         (algebraMap F _ (f : F) * (a k * a k)) ⊗ₜ[F] (1 : E) := by
       rw [Algebra.TensorProduct.tmul_mul_tmul, ← hf, Algebra.algebraMap_eq_smul_one,
         TensorProduct.tmul_smul, TensorProduct.smul_tmul', Algebra.smul_def]
-    rw [Finset.sum_insert hk, map_add, TensorProduct.add_tmul, TensorProduct.add_tmul, ← e, ← e',
+    rw [Finset.sum_insert hk, map_add (f := _), TensorProduct.add_tmul, TensorProduct.add_tmul, ← e, ← e',
       map_mul, sg_sg_of_quadratic c h2 hc, hσ]
     linear_combination hN
 
+
 open NumberField IsDedekindDomain in
 open scoped TensorProduct Topology Matrix in
-
 theorem _root_.GlobalTheory.AdLat.exists_integral_unit_root : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (c : E ≃ₐ[F] E), Module.finrank F E = 2 → c ≠ 1 → (∀ P : Ideal (𝓞 E), P.IsMaximal → ∃ t s : 𝓞 E, (s : E) = c (t : E) ∧ t - s ∉ P) → ∀ u ∈ _root_.GlobalTheory.AdLat.hat1 F (Set.range (algebraMap (𝓞 E) E)), u * _root_.GlobalTheory.AdLat.sg (FiniteAdeleRing (𝓞 F) F) c u = 1 → ∃ x ∈ _root_.GlobalTheory.AdLat.hat1 F (Set.range (algebraMap (𝓞 E) E)), (∃ y ∈ _root_.GlobalTheory.AdLat.hat1 F (Set.range (algebraMap (𝓞 E) E)), x * y = 1) ∧ x = u * _root_.GlobalTheory.AdLat.sg (FiniteAdeleRing (𝓞 F) F) c x := by
   intro F E _ _ _ _ _ c h2 hc hP u hu hnorm
   classical
@@ -392,7 +246,7 @@ theorem _root_.GlobalTheory.AdLat.exists_integral_unit_root : ∀ (F E : Type) [
     rw [hρ, hσ, hρ, hCX, ← AlgEquiv.mul_apply, hcc, AlgEquiv.one_apply]
   let m : Option (Fin n) → _root_.GlobalTheory.AdLat.RA F E := fun i => ρ (X i) + u * ρ (CX i)
   have hum : ∀ i, u * σ (m i) = m i := fun i => by
-    simp only [m, map_add, map_mul, hσX, hσCX]
+    simp only [m, map_add (f := _), map_mul, hσX, hσCX]
     linear_combination ρ (X i) * hnorm
   let H := _root_.GlobalTheory.AdLat.hat1 F (Set.range (algebraMap (𝓞 E) E))
   have hρmem : ∀ x, ρ x ∈ H := fun x => _root_.GlobalTheory.AdLat.one_tmul_mem_adelicCompletionOfElementSet F ⟨x, rfl⟩
@@ -430,11 +284,13 @@ theorem _root_.GlobalTheory.AdLat.exists_integral_unit_root : ∀ (F E : Type) [
     push_neg at hcon
     choose cy hcy using fun j => _root_.GlobalTheory.AdLat.UnitRoot.conj_mem c _ ⟨Y j, rfl⟩
     have h1 : ∑ i, ρ (Y i) * m i = 1 := by
-      simp only [m, mul_add, Finset.sum_add_distrib, mul_left_comm _ u, ← Finset.mul_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [m, mul_add, Finset.sum_add_distrib, mul_left_comm _ u, ← Finset.mul_sum,
         ← map_mul, ← map_sum, hXY, hCXY, map_one, map_zero, mul_zero, add_zero]
     have h1' : ∑ j, ρ (cy j) * σ (m j) = 1 := by
       have := congrArg σ h1
-      rw [map_sum, map_one] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_one] at this
       rw [← this]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_mul, hρ (Y j), hσ, ← hcy]
@@ -516,7 +372,8 @@ theorem _root_.GlobalTheory.AdLat.exists_integral_unit_root : ∀ (F E : Type) [
     have hevv : ∀ a : FiniteAdeleRing (𝓞 F) F, ev v a = a v := fun _ => rfl
     have hev : ∀ q, e q v = if ij v = q then 1 else 0 := fun _ => rfl
     have hdv : d v = (p (ij v).1 (ij v).2 v)⁻¹ := rfl
-    simp only [map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul]
     simp only [hevv, hev, hdv, ite_mul, one_mul, zero_mul, mul_ite, mul_one,
       mul_zero, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true]
     exact inv_mul_cancel₀ (hne v)
@@ -536,8 +393,9 @@ theorem _root_.GlobalTheory.AdLat.exists_integral_unit_root : ∀ (F E : Type) [
         Algebra.TensorProduct.tmul_mul_tmul, Algebra.TensorProduct.tmul_mul_tmul, mul_one, mul_one]
     simp only [hterm, ← TensorProduct.sum_tmul, Algebra.TensorProduct.tmul_mul_tmul, mul_one, hsum1]
     rfl
-  · rw [map_sum, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun q _ => ?_
-    rw [map_mul, hσ, map_one, mul_left_comm, hum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum, Finset.mul_sum]
+      refine Finset.sum_congr rfl fun q _ => ?_
+      rw [map_mul, hσ, map_one, mul_left_comm, hum]
 
 end GlobalTheory.AdLat

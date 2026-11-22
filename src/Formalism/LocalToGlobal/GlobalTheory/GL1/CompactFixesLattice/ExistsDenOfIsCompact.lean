@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL1.CompactFixesLattice.MemClosureOfMemSS
-import Formalism.LocalToGlobal.GlobalTheory.GL1.CompactFixesLattice.Imports
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL1.CompactFixesLattice.MemClosureOfMemSS
+public import Formalism.LocalToGlobal.GlobalTheory.GL1.CompactFixesLattice.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,14 +23,6 @@ private theorem exists_basis_mem_intOE :
   rw [Module.Basis.isUnitSMul_apply, Int.cast_smul_eq_zsmul F]
   exact ⟨⟨_, (mem_integralClosure_iff ℤ E).mpr (hy _ (Finset.mem_image_of_mem c (Finset.mem_univ i)))⟩, rfl⟩
 
-theorem exists_sub_mem (x : AE F E) : ∃ e : E, x - inclE (F := F) (AF F) e ∈ SS F E := by
-  obtain ⟨n, b, hb⟩ := exists_basis_mem_intOE (F := F) (E := E)
-  choose u hu using fun i => exists_sub_mem_intAd (F := F) (coord b i x)
-  refine ⟨∑ i, u i • b i, mem_SS_of_coord b hb _ fun i => ?_⟩
-  have h1 : inclE (F := F) (AF F) (∑ j, u j • b j) = (∑ j, u j • b j) ⊗ₜ[F] (1 : AF F) := rfl
-  rw [map_sub, h1, coord_tmul, b.repr_sum_self, ← Algebra.algebraMap_eq_smul_one]
-  exact hu i
-
 private theorem exists_int_ne_zero_mul_repr_mem_range {n : ℕ} (b : Module.Basis (Fin n) F E) :
     ∃ y : ℤ, y ≠ 0 ∧ ∀ e ∈ intOE E, ∀ i, (y : F) * b.repr e i ∈ (algebraMap (𝓞 F) F).range := by
   classical
@@ -38,10 +34,12 @@ private theorem exists_int_ne_zero_mul_repr_mem_range {n : ℕ} (b : Module.Basi
   rintro _ ⟨z, rfl⟩ i
   have hz : algebraMap (𝓞 E) E z = ∑ j, g.repr z j • algebraMap (𝓞 E) E (g j) := by
     conv_lhs => rw [← g.sum_repr z]
-    simp only [map_sum, map_zsmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul]
   have key : (y : F) * b.repr (algebraMap (𝓞 E) E z) i
       = ∑ j, g.repr z j • ((y : F) * b.repr (algebraMap (𝓞 E) E (g j)) i) := by
-    rw [hz, map_sum, Finsupp.finset_sum_apply, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hz, map_sum, Finsupp.finsetSum_apply, Finset.mul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_zsmul, Finsupp.smul_apply, mul_smul_comm]
   rw [key]

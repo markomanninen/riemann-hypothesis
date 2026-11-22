@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.CnNOOfNormal
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.CnNOOfNormal
+
+@[expose] public section
 
 namespace Formalism.MainNotions.G.ExtremalProjector
 

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajorantConjugateTransfer
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajorantConjugateTransfer
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -106,7 +110,7 @@ theorem Hf_add_left (x : Frame X.Ψ r) (u u' w : Fin r → ℂ) :
 theorem Hf_add_right (x : Frame X.Ψ r) (u w w' : Fin r → ℂ) :
     X.Hf x τ u (w + w') = X.Hf x τ u w + X.Hf x τ u w' := by
   unfold Data.Hf hermC
-  simp only [Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 private lemma hermC_sum_left_lemma {ι : Type} [Fintype ι] (σ : E →+* ℂ)
     (G : Matrix (Fin r) (Fin r) E) (u : ι → ℂ) (v : ι → Fin r → ℂ) (y : Fin r → ℂ) :
@@ -128,7 +132,7 @@ private lemma hermC_sum_right_lemma_2 {ι : Type} [Fintype ι] (σ : E →+* ℂ
   let g : (Fin r → ℂ) →ₗ⋆[ℂ] ℂ :=
     { toFun := fun y => hermC σ G x y
       map_add' := fun y y' => by
-        simp only [hermC, Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+        simp only [hermC, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
       map_smul' := fun c y => by
         simp only [hermC, Pi.smul_apply, smul_eq_mul, map_mul, Finset.mul_sum]
         exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by ring }
@@ -162,7 +166,8 @@ private lemma hermC_ppos_lemma_5 (x : Frame X.Ψ r) (u w : Fin r → ℂ) :
     exact h
   unfold Data.ppos
   rw [hermC_sum_left_lemma, hermC_sum_right_lemma_2]
-  simp only [map_sum, map_mul, hM, hermC_conj τ.1 X.Gm_herm, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, hM, hermC_conj τ.1 X.Gm_herm, Finset.sum_mul]
   conv_lhs => rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by ring
 

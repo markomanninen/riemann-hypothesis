@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.MatchSmulAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.ContractB
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.StrictNormal
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.BallSub
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.MatchSmulAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.ContractB
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.StrictNormal
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.BallSub
+
+@[expose] public section
 
 noncomputable section
 

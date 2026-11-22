@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.PeriodIntegrals.RhsWLim
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.VolumeLieE
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.MBaseMem
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.TBallMeas
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.HaarUniq
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.ChartLim
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.RhsWLim
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.VolumeLieE
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.MBaseMem
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.TBallMeas
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.HaarUniq
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.ChartLim
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,10 +99,10 @@ theorem exp_dV (t : ℝ) : NormedSpace.exp ((t : ℂ) • diagonal (dV k r)) = d
   rw [← Matrix.diagonal_smul, Matrix.exp_diagonal, Pi.exp_def]
   congr 1
   funext i
-  simp only [Pi.smul_apply, dV, smul_eq_mul]
+  simp only [Pi.smul_apply, dV]
   split_ifs
-  · rw [Complex.exp_eq_exp_ℂ]
-  · rw [mul_zero, NormedSpace.exp_zero]
+  · rw [Complex.exp_eq_exp_ℂ, smul_eq_mul]
+  · simp
 
 theorem unit_exp (t : ℝ) : star (Complex.exp (t * Complex.I)) * Complex.exp (t * Complex.I) = 1 := by
   rw [Complex.star_def, ← Complex.exp_conj, ← Complex.exp_add]
@@ -127,6 +131,7 @@ theorem haarOn_smul (S : Set (Mat k r)) (ν : Measure (Mt k r)) (c : ℝ≥0) (h
     simpa [hc] using h1
   · rw [Measure.smul_apply, h.2.2.1, smul_zero]
   · rw [Measure.map_smul, h.2.2.2 s hs]
+    exact (HU.lmulM_cont s).measurable.aemeasurable
 
 theorem tBall_mass (ν : Measure (Mt k r)) (h : IsHaarOn (UWb k r) ν) (m : Mat k r) (hm : m ∈ UWb k r) (ρ : ℝ) :
     ν (tBall k r m ρ) = ν (bBall k r ρ) := by
@@ -138,8 +143,8 @@ theorem tBall_mass (ν : Measure (Mt k r)) (h : IsHaarOn (UWb k r) ν) (m : Mat 
 
 end GE
 
-open GE in
 
+open GE in
 theorem gaugeExists_of (hH : HaarDens) (hL : ChartLim) : GaugeExists := by
   intro k r hk
   obtain ⟨νh, hνh, δ, hδc, hδ0, hδt, ε, hε, hball⟩ := hH k r hk

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataCoeff
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataCoeff
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,17 +1,21 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GenericSectionOfAxioms
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtArith
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.Imports
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.UniformizerOfResidueIndep
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GoodPrimesProperties
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NormFactorizationClause
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ComponentFormProperties
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.IntNsg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HFour
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HeightMinMaxFormula
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HSix
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.SumLogHeightUpperBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HSeven
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NlNonnegFin
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GenericSectionOfAxioms
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtArith
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.Imports
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.UniformizerOfResidueIndep
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GoodPrimesProperties
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NormFactorizationClause
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ComponentFormProperties
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.IntNsg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HFour
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HeightMinMaxFormula
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HSix
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.SumLogHeightUpperBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HSeven
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NlNonnegFin
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -28,8 +32,8 @@ namespace Data
 
 variable (d : Data K ι Ω WT A)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem heights (hd : d.AxH 𝒜) (h : d.S1) (hH1 : d.FinitePlaceHyp) (hF1d : d.TrivialPlaceHyp) (hLAM : d.HtLAM)
     (hSup : d.HtSup) (hI2et : d.HeightIntegralEstimateTrivialPlace) (hI2be : d.HeightIntegralBoundEstimate) :
     Formalism.MainNotions.Gaps.HeightData.HtConcl (d.htOf hd h) := by
@@ -38,8 +42,87 @@ theorem heights (hd : d.AxH 𝒜) (h : d.S1) (hH1 : d.FinitePlaceHyp) (hF1d : d.
   have hUP := d.sum_logHeight_upper_bound hd h hLAM F hF
   have hb1 := d.HeightMinMaxFormula hd h hI2be x hx F hF
   obtain ⟨haL, hade0, hade, haG10, haG1, haF0, haF, haG20, haG2⟩ := d.h_six hd h hF1d x hx ta' hta'
-  have h7 := d.h_seven hd h hH1 hF1d hSup hI2be x hx ta' hta'
-  have hdi := d.disc hd h hI2et hI2be ta' hta'
+  have h7 :
+      let lr := Real.log (d.N + 1 : ℕ) + 1 / 2
+      let HL := d.Hgt h d.wL (d.wx x)
+      let Hde := d.Hgt h (d.n1 • d.wde) d.et / d.n1
+      let ade := (d.aG h (d.n1 • d.wde) d.et : ℝ) / d.n1
+      let aG1 := (d.aG h ((2 : ℕ) • d.G1) d.ta1 : ℝ) / 2
+      let X8 := d.HgtMM h (d.wx x) + d.del * ((∑ᶠ la, d.nu la * logNorm la) /
+        (Module.finrank ℚ K : ℝ) + d.tableLineDegreeFive * d.DF + d.cc * d.tableLineDegreeTwo) + d.D * d.cc * d.g0 * ade * lr
+      let Y := d.del * d.PI4 * d.D * d.wsize d.wL + d.D * aG1 * lr
+      HL ≤ X8 + d.cc * d.g0 * Hde ∧ Hde ≤ HL + Y ∧
+        d.Hgt h d.wF ta' ≤ (d.D + 4) * HL + d.del * d.PI4 * d.D * d.wsize d.wL +
+          d.D * d.aG h d.G2 d.ta2 * lr := by
+    dsimp only
+    have hf : ∀ c, d.wx x c ∈ 𝒜 c d.wL ∧ d.wx x c ≠ 0 := fun c => ⟨d.wx_mem hd x c, hx c⟩
+    have hK : (0 : ℝ) < Module.finrank ℚ K := by exact_mod_cast Module.finrank_pos
+    have hi : (0 : ℝ) < d.i := by exact_mod_cast hd.i_ge
+    have hg : (0 : ℝ) < d.g0 := by exact_mod_cast hd.g_zero_ge_ask_sum
+    have hn1 : ((d.n1 : ℕ) : ℝ) = (d.i : ℝ) * d.g0 := by simp [Data.n1]
+    have hn1pos : (0 : ℝ) < d.n1 := by rw [hn1]; positivity
+    have hdel : (0 : ℝ) ≤ d.del := Nat.cast_nonneg _
+    have hla := d.la_part hd h hH1 (d.wx x) hf
+    have hsg := d.sg_part hd h hI2be (d.wx x) hf
+    have h0 := d.logHeight_section_bound hd h hF1d (d.wx x) hf
+    obtain ⟨-, -, hind3, hind4⟩ := d.h_ind hd h hI2be
+    have hta1 : ∀ c, d.ta1 c ∈ 𝒜 c ((2 : ℕ) • d.G1) ∧ d.ta1 c ≠ 0 :=
+      fun c => ⟨hd.firstSectionMem c, hd.firstSectionNeZero c⟩
+    have hta2 : ∀ c, d.ta2 c ∈ 𝒜 c d.G2 ∧ d.ta2 c ≠ 0 := fun c => ⟨hd.secondSectionMem c, hd.secondSectionNeZero c⟩
+    have hbdd1 := fun sg => hd.bdd sg _ d.ta1 (Or.inr (Or.inr (Or.inr (Or.inl ⟨rfl, rfl⟩))))
+    have hbdd2 := fun sg => hd.bdd sg _ d.ta2 (Or.inr (Or.inr (Or.inr (Or.inr ⟨rfl, rfl⟩))))
+    have hint1 := fun c sg => (d.int_Nsg hd h hI2be c sg).1 ((2 : ℕ) • d.G1) (d.ta1 c) (by simp)
+      (hd.firstSectionMem c) (hd.firstSectionNeZero c)
+    have hint2 := fun c sg => (d.int_Nsg hd h hI2be c sg).1 d.G2 (d.ta2 c) (by simp)
+      (hd.secondSectionMem c) (hd.secondSectionNeZero c)
+    have h41 := (d.h_four hd h _ d.ta1 hta1 hd.ordDoubleFirstSection_nonneg hbdd1 hint1).1
+    have h42 := (d.h_four hd h _ d.ta2 hta2 hd.ordSecondSectionNonneg hbdd2 hint2).1
+    obtain ⟨-, -, hsup1, hsup2⟩ := hSup
+    have m1 := mul_le_mul_of_nonneg_left hsup1 hdel
+    have m2 := mul_le_mul_of_nonneg_left hsup2 hdel
+    refine ⟨?_, ?_, ?_⟩
+    · have e1 : d.Hgt h d.wL (d.wx x) = (∑ᶠ la, d.NlaG h d.wL (d.wx x) la * logNorm la) /
+          (Module.finrank ℚ K : ℝ) + meanK (d.Nsg d.wL (d.wx x)) + d.h0f h d.wL (d.wx x) := rfl
+      have e2 : d.HgtMM h (d.wx x) = (∑ᶠ la, d.NlaMM h (d.wx x) la * logNorm la) /
+          (Module.finrank ℚ K : ℝ) + meanK (d.NsgMM (d.wx x)) + d.mahlerMeasureHeight h (d.wx x) := rfl
+      have e3 : d.Hgt h (d.n1 • d.wde) d.et = (∑ᶠ la, d.NlaG h (d.n1 • d.wde) d.et la * logNorm la) /
+          (Module.finrank ℚ K : ℝ) + meanK (d.Nsg (d.n1 • d.wde) d.et) + d.h0f h (d.n1 • d.wde) d.et := rfl
+      have hla' := div_le_div_of_nonneg_right hla hK.le
+      rw [add_div, add_div, mul_div_assoc, mul_div_assoc] at hla'
+      have eH : d.cc * d.g0 * (d.Hgt h (d.n1 • d.wde) d.et / d.n1) =
+          d.cc / d.i * d.Hgt h (d.n1 • d.wde) d.et := by
+        rw [hn1]; field_simp
+      have eA : d.D * d.cc * d.g0 * ((d.aG h (d.n1 • d.wde) d.et : ℝ) / d.n1) *
+          (Real.log (d.N + 1 : ℕ) + 1 / 2) =
+          d.D * (Real.log (d.N + 1 : ℕ) + 1 / 2) * (d.cc / d.i) * (d.aG h (d.n1 • d.wde) d.et : ℝ) := by
+        rw [hn1]; field_simp
+      rw [e1, e2, eH, eA, e3]
+      nlinarith [hla', hsg, h0]
+    · have hd3 := hind3 x hx
+      have eq : d.Hgt h (d.n1 • d.wde) d.et / d.n1 =
+          d.Hgt h d.wL (d.wx x) - d.Hgt h ((2 : ℕ) • d.G1) d.ta1 / 2 := by
+        rw [div_eq_iff hn1pos.ne']
+        linarith
+      rw [eq]
+      linarith [h41, m1]
+    · have hd4 := hind4 x ta' hx hta'
+      linarith [h42, m2]
+  have hdi :
+      let lr := Real.log (d.N + 1 : ℕ) + 1 / 2
+      (∀ la c, (d.PlOver la c).Finite) ∧ (∀ la, (d.htOf hd h).Ila la ≠ ⊤) ∧
+      (Function.support (d.IL h hd.sel hd.a4.choose)).Finite ∧
+      2 * ((∑ᶠ la, d.IL h hd.sel hd.a4.choose la * logNorm la) / (Module.finrank ℚ K : ℝ)) ≤
+        d.del * Real.log d.del +
+          2 * ∑ k, meanK (fun sg => Real.log (d.supN sg d.wF (d.thp (hd.sel k)))) +
+          2 * d.D * d.aG h d.wF ta' * lr + 2 * d.Hgt h d.wF ta' ∧
+      (∀ la, 0 ≤ d.Nl h la) ∧ (Function.support (d.Nl h)).Finite ∧
+      ((∑ᶠ la, d.Nl h la * logNorm la) / (Module.finrank ℚ K : ℝ)) / d.i ≤
+        d.g0 * (d.Hgt h (d.n1 • d.wde) d.et / d.n1 + d.D * ((d.aG h (d.n1 • d.wde) d.et : ℝ) / d.n1) * lr) +
+          d.del * d.Pet := by
+    intro lr
+    obtain ⟨h1, h2, h3, h4⟩ := d.disc_one hd h hI2et hI2be ta' hta'
+    obtain ⟨h5, h6⟩ := d.nl_nonneg_fin hd h
+    exact ⟨h1, h2, h3, h4, h5, h6, d.disc_two hd h hI2et hI2be⟩
   dsimp only at h7 hdi
   obtain ⟨h7a, h7b, h7c⟩ := h7
   obtain ⟨hplf, hIla, hIf, hdi1, hN0, hNf, hdn⟩ := hdi
@@ -129,7 +212,8 @@ theorem heights (hd : d.AxH 𝒜) (h : d.S1) (hH1 : d.FinitePlaceHyp) (hF1d : d.
       (∑ᶠ la, d.Nl h la * logNorm la) * (Module.finrank ℚ K : ℝ)⁻¹ := by
     rw [tsum_eq_finsum hsN', ← finsum_mul' _ _ hsN]
   refine ⟨hIla, ?_, ?_, fun _ => ⟨?_, ?_⟩⟩
-  · rw [eI]; exact summable_of_finite_support hsI'
+  · rw [eI]; classical
+    exact summable_of_ne_finset_zero (s := hsI'.toFinset) (by intro a ha; by_contra hn; apply ha; exact hsI'.mem_toFinset.mpr hn)
   · rw [eI]
     show 2 * ∑' la : IsDedekindDomain.HeightOneSpectrum (𝓞 K),
         d.IL h hd.sel hd.a4.choose la * logNorm la * (Module.finrank ℚ K : ℝ)⁻¹ ≤
@@ -142,7 +226,8 @@ theorem heights (hd : d.AxH 𝒜) (h : d.S1) (hH1 : d.FinitePlaceHyp) (hF1d : d.
     unfold Data.PHc Data.PH
     rw [← div_eq_mul_inv]
     linarith
-  · rw [eNf]; exact summable_of_finite_support hsN'
+  · rw [eNf]; classical
+    exact summable_of_ne_finset_zero (s := hsN'.toFinset) (by intro a ha; by_contra hn; apply ha; exact hsN'.mem_toFinset.mpr hn)
   · rw [eNf]
     show (∑' la : IsDedekindDomain.HeightOneSpectrum (𝓞 K),
         d.Nl h la * logNorm la * (Module.finrank ℚ K : ℝ)⁻¹) / (d.i : ℝ) ≤

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+
+@[expose] public section
 
 open GlobalTheory.PRep
 

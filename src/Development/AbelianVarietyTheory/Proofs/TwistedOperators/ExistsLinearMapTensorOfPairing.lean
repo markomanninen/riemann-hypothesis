@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+
+@[expose] public section
+
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible GlobalTheory.FockAlg
 
 namespace GlobalTheory.PairingTensor
@@ -104,13 +109,14 @@ theorem exists_linearMap_tensor :
     have := congrArg (fun v : E.map i₁ => (v : H₁))
       (e.sum_repr' ⟨i₁ (φ y P), Submodule.mem_map_of_mem (hmem y)⟩)
     simp only [Submodule.coe_sum, Submodule.coe_smul, Submodule.coe_inner] at this
-    rw [← this, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← this, map_sum, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [contrR_tmul, map_smul, ha, hm, ← hφψ]
   choose g hg using ex
   let f : V →ₗ[ℂ] TensorProduct ℂ A B :=
     { toFun := g
-      map_add' := fun P Q => sepR _ _ fun y => by rw [map_add, hg, hg, hg, map_add]
+      map_add' := fun P Q => sepR _ _ fun y => by rw [map_add (f := _), hg, hg, hg, map_add (f := _)]
       map_smul' := fun s P => sepR _ _ fun y => by
         rw [map_smul, hg, hg, map_smul, RingHom.id_apply] }
   have hf : ∀ P y, contrR (m y) (f P) = φ y P := hg

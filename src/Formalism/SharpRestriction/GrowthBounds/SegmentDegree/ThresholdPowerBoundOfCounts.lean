@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ReflectionMemGlevCastSucc
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ReflectionMemGlevCastSucc
+
+@[expose] public section
 
 noncomputable section
 

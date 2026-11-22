@@ -1,13 +1,18 @@
-import Mathlib
-import Formalism.SharpRestriction.AbelianModels.AbelianLocalSystemsExist
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasisBaseChange
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DetCondIffHasMultiplicities
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LeftEqIffLieVecSmul
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsTorusAndQuotientHom
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsAddEquivOfSplitTorusIso
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasisBaseChange
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DetCondIffHasMultiplicities
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LeftEqIffLieVecSmul
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsTorusAndQuotientHom
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsAddEquivOfSplitTorusIso
+
+@[expose] public section
 
 noncomputable section
 
@@ -217,13 +222,13 @@ theorem subsingleton_of_scalar {X k : Type} [AddCommGroup X] [Module.Free ℤ X]
     rw [Polynomial.aeval_map_algebraMap, Polynomial.aeval_def, hp0, Polynomial.eval_map] at e
     exact (smul_eq_zero.1 e.symm).resolve_right hv.2
   have hUv : ψ U v = ((l : ℂ) * z + n) • v := by
-    rw [hUB, map_add, map_mul, map_natCast, map_intCast, LinearMap.add_apply, Module.End.mul_apply, hv.apply_eq_smul,
+    rw [hUB, map_add (f := _), map_mul, map_natCast, map_intCast, LinearMap.add_apply, Module.End.mul_apply, hv.apply_eq_smul,
       Module.End.natCast_apply, Module.End.intCast_apply, add_smul, mul_smul, Nat.cast_smul_eq_nsmul,
       Int.cast_smul_eq_zsmul]
   set y : ℂ := (l : ℂ) * z + n with hy
   have hy2 : y * y + m = y := by
     have e := congrArg (fun M => ψ M v) hU
-    simp only [map_add, map_mul, map_natCast, LinearMap.add_apply, Module.End.mul_apply, hUv, map_smul,
+    simp only [map_add (f := _), map_mul, map_natCast, LinearMap.add_apply, Module.End.mul_apply, hUv, map_smul,
       Module.End.natCast_apply] at e
     rw [smul_smul, ← Nat.cast_smul_eq_nsmul ℂ, ← add_smul] at e
     exact smul_left_injective ℂ hv.2 e
@@ -253,7 +258,7 @@ theorem subsingleton_of_scalar {X k : Type} [AddCommGroup X] [Module.Free ℤ X]
       rw [eq_div_iff (pow_ne_zero 2 hl0), ← h2, h3]; ring
     rw [← Complex.ofReal_pow, this]
     simp [neg_div]
-  rw [hq, isIntegral_algebraMap_iff (algebraMap ℚ ℂ).injective] at hint2
+  rw [hq, isIntegral_algebraMap_iff ] at hint2
   obtain ⟨t, ht⟩ := IsIntegrallyClosed.isIntegral_iff.1 hint2
   have hl0' : (l : ℚ) ≠ 0 := by exact_mod_cast hl0
   have ht' : (d : ℤ) = (l : ℤ) * l * (-t) := by
@@ -335,25 +340,39 @@ theorem isProper_of_actsBy {k : Type} [Field k] {G : Over (Sp k)} [GrpObj G] (T 
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
 
+
 theorem actsBy_of_detCond {k : Type} [Field k] [CharZero k] [IsAlgClosed k] {S : Scheme.{0}} {G : Over S} [GrpObj G]
     [IsCommMonObj G] (D : Datum H) (hq : D.q = 0) (a : OAct (𝓞 E) G) (t : Sp k ⟶ S) (ρ c : k) (hc : 2 * c = 1 + ρ)
     (h : DetCond D a t ρ) : ActsBy G (a.act H.w0) t c := by
   classical
   obtain ⟨_, hs⟩ := DetCompare.exists_splitting (E := E) (k := k)
   have key : ∀ z : TanMod.TanSp t G, TanMod.TanSp.act t a H.w0 z = c • z := fun z => by
-    rw [← EigenSplit.sum_proj hs (TanMod.TanSp.act t a) z, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← EigenSplit.sum_proj hs (TanMod.TanSp.act t a) z, map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun τ _ => ?_
     have hz := EigenSplit.proj_mem hs (TanMod.TanSp.act t a) τ z
     by_cases hτ : τ H.rt = ρ
     · rw [EigenSplit.mem_eigenSub.1 hz]
       congr 1
       have e := congrArg τ H.two_weight_eq_one_add_root
-      rw [map_mul, map_add, map_one, map_ofNat, hτ, ← hc] at e
+      rw [map_mul, map_add (f := _), map_one, map_ofNat, hτ, ← hc] at e
       exact mul_left_cancel₀ two_ne_zero e
-    · obtain ⟨_, h0⟩ := (DetCompare.hasEigenDim_iff a t τ _).1 ((DetCompare.lieMult_iff a t τ _).1 ((h τ).2 hτ))
-      rw [hq, Submodule.finrank_eq_zero] at h0
-      rw [h0, Submodule.mem_bot] at hz
-      rw [hz, map_zero, smul_zero]
+    · open IndefiniteRowSideFullHecke.LieCharpolyRootPairs in
+      have hzero : EigenSplit.proj hs (TanMod.TanSp.act t a) τ z = 0 := by
+        have hd := (DetCompare.lieMult_iff a t τ _).1 ((h τ).2 hτ)
+        rw [hq] at hd
+        obtain ⟨v, _, _, _, hsurj⟩ := hd
+        let p := EigenSplit.proj hs (TanMod.TanSp.act t a) τ z
+        let w : Lie G t := ⟨p.pt, Over.OverMorphism.ext (TanMod.unit_of_smT_zero t _ p.tan)⟩
+        have hw : w ∈ eigenspace a t τ := by
+          intro b
+          apply Subtype.ext
+          exact congrArg TanMod.TanSp.pt ((EigenSplit.mem_eigenSub.1 hz) b)
+        obtain ⟨c, _, hc⟩ := hsurj hw
+        have hc' : w = 1 := by simpa [comb] using hc.symm
+        apply TanMod.TanSp.ext
+        exact congrArg (fun x : Lie G t => x.val) hc'
+      rw [hzero, map_zero, smul_zero]
   intro v hv h0
   have h1 : (1 : Over.mk t ⟶ G).left = t ≫ η[G].left := by
     rw [Hom.one_def, Over.comp_left, Over.toUnit_left]; rfl
@@ -493,7 +512,7 @@ theorem abLocus_eq_univ (hq : D.q = 0) (V : ValuationSubring c.F) (Y : Model Xo 
   have hdet := (Y.oF.geom L y (ga.hom.comp inc) (by
     rw [pullback.condition, ← Category.assoc, ← hga, ← sp_comp]; rfl)).1
   have h₁ := actsBy_of_detCond D hq _ y _ (ga.hom z)
-    (by rw [← map_ofNat ga.hom 2, ← map_mul, hz2, map_add, map_one]; rfl) hdet
+    (by rw [← map_ofNat ga.hom 2, ← map_mul, hz2, map_add (f := _), map_one]; rfl) hdet
   have h₂ : ActsBy Y.t.G (Y.t.act.act H.w0) (spMap i ≫ χ) (i (b.hom ⟨z, hzV⟩)) := by
     rw [hiy, show i (b.hom ⟨z, hzV⟩) = ga.hom z from RingHom.congr_fun hbga ⟨z, hzV⟩]
     exact (actsBy_pull Y.m.cart (Y.m.act H.w0) y _).1 h₁
@@ -506,3 +525,4 @@ theorem abLocus_eq_univ (hq : D.q = 0) (V : ValuationSubring c.F) (Y : Model Xo 
 end Spread
 
 end GlobalTheory.DefiniteAbelian
+

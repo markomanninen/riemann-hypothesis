@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 universe u v w
 
@@ -84,7 +88,7 @@ theorem goal1 :
     have h2 := mulBd hC zero_le_one (X a - Y a) _ (hXY a (Finset.mem_insert_self a t))
       (prodInt Y t (fun i hi => hY i (Finset.mem_insert_of_mem hi)))
     intro d
-    rw [map_add]
+    rw [map_add (f := _)]
     refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ?_ ?_)
     · have := h1 d; rwa [one_mul] at this
     · have := h2 d; rwa [mul_one] at this

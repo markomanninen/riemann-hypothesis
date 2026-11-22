@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible UpperTheory.V.Lit UpperTheory.V.Lit.Bor
 open scoped TensorProduct
@@ -35,7 +39,8 @@ private theorem avg_abs {K V : Type} [Group K] [AddCommGroup V] [Module ℂ V] (
       ∀ u : K, ρ u (avg N v) = avg N v := by
     intro N _ _ v hv u
     letI : Fintype (K ⧸ N) := Subgroup.fintypeQuotientOfFiniteIndex
-    rw [hform N v, map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hform N v, map_smul, map_sum]
     congr 1
     have hq : ∀ q : K ⧸ N, ρ u (ρ q.out v) = ρ ((u • q).out) v := by
       intro q
@@ -80,7 +85,8 @@ private theorem avg_abs {K V : Type} [Group K] [AddCommGroup V] [Module ℂ V] (
       (∀ u, Commute T (ρ u)) → ∀ v, T (avg N v) = avg N (T v) := by
     intro N _ T hT v
     letI : Fintype (K ⧸ N) := Subgroup.fintypeQuotientOfFiniteIndex
-    rw [hform N v, hform N (T v), map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hform N v, hform N (T v), map_smul, map_sum]
     congr 1
     refine Finset.sum_congr rfl fun q _ => ?_
     rw [← Module.End.mul_apply, (hT q.out).eq, Module.End.mul_apply]
@@ -106,8 +112,8 @@ private theorem avg_abs {K V : Type} [Group K] [AddCommGroup V] [Module ℂ V] (
       obtain ⟨a1, b1⟩ := h1 N' hN' hN'f (hle.trans inf_le_left)
       obtain ⟨a2, b2⟩ := h2 N' hN' hN'f (hle.trans inf_le_right)
       refine ⟨fun n hn => ?_, ?_⟩
-      · rw [map_add, a1 n hn, a2 n hn]
-      · rw [map_add, b1, b2, add_zero]
+      · rw [map_add (f := _), a1 n hn, a2 n hn]
+      · rw [map_add (f := _), b1, b2, add_zero]
     | smul c x _ hx =>
       obtain ⟨N1, h1n, h1f, h1⟩ := hx
       refine ⟨N1, h1n, h1f, fun N' hN' hN'f hle => ?_⟩
@@ -141,8 +147,8 @@ private theorem avg_abs {K V : Type} [Group K] [AddCommGroup V] [Module ℂ V] (
         have hv : ∀ n ∈ Nv v ⊓ Nv w, ρ n v = v := fun n hn => hNvfix v n hn.1
         have hw : ∀ n ∈ Nv v ⊓ Nv w, ρ n w = w := fun n hn => hNvfix w n hn.2
         have hvw : ∀ n ∈ Nv v ⊓ Nv w, ρ n (v + w) = v + w := fun n hn => by
-          rw [map_add, hv n hn, hw n hn]
-        rw [← hagree _ _ hvw, ← hagree _ _ hv, ← hagree _ _ hw, map_add]
+          rw [map_add (f := _), hv n hn, hw n hn]
+        rw [← hagree _ _ hvw, ← hagree _ _ hv, ← hagree _ _ hw, map_add (f := _)]
       map_smul' := fun c v => by
         haveI := hNv v; haveI := hNvf v
         have hcv : ∀ n ∈ Nv v, ρ n (c • v) = c • v := fun n hn => by

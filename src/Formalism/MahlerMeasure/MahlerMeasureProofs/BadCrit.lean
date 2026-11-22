@@ -1,4 +1,8 @@
-import Formalism.MahlerMeasure.StatementT
+module
+
+public import Formalism.MahlerMeasure.StatementT
+
+@[expose] public section
 
 namespace Formalism.GM
 
@@ -95,7 +99,8 @@ theorem badCrit_goodCount_bdd (be : Vs →ₗ[ℚ_[p]] Vs →ₗ[ℚ_[p]] ℚ_[p
     rw [Fintype.linearIndependent_iff]
     intro g hg i
     have h1 := congrArg (fun v : L => be (v : Vs) (y i)) hg
-    simp only [Submodule.coe_sum, Submodule.coe_smul, map_sum, LinearMap.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Submodule.coe_sum, Submodule.coe_smul, map_sum, LinearMap.sum_apply,
       Submodule.coe_zero, map_zero, LinearMap.zero_apply] at h1
     simp only [badCrit_be_smul_left, hxy, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h1
     have hp : (p : ℚ_[p]) ^ D ≠ 0 := zpow_ne_zero _ (by exact_mod_cast (Fact.out : p.Prime).ne_zero)
@@ -131,7 +136,8 @@ theorem badCrit_pairs (be : Vs →ₗ[ℚ_[p]] Vs →ₗ[ℚ_[p]] ℚ_[p]) (L L�
       have := congrArg Subtype.val (bL.sum_repr ⟨w, hw⟩)
       rw [Submodule.coe_sum] at this
       simpa using this.symm
-    rw [hw', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hw', map_sum]
     calc ‖∑ b, be (u a) ((bL.repr ⟨w, hw⟩ b) • (bL b : Vs))‖
         ≤ ∑ b, ‖be (u a) ((bL.repr ⟨w, hw⟩ b) • (bL b : Vs))‖ := norm_sum_le _ _
       _ ≤ ∑ b, ‖be (u a) (bL b)‖ := by
@@ -161,7 +167,7 @@ theorem badCrit_pairs (be : Vs →ₗ[ℚ_[p]] Vs →ₗ[ℚ_[p]] ℚ_[p]) (L L�
     { toFun := g
       map_add' := fun w w' => by
         funext a; apply PadicInt.ext
-        rw [Pi.add_apply, PadicInt.coe_add, hg, hg, hg, Submodule.coe_add, map_add, mul_add]
+        rw [Pi.add_apply, PadicInt.coe_add, hg, hg, hg, Submodule.coe_add, map_add (f := _), mul_add]
       map_smul' := fun c w => by
         funext a; apply PadicInt.ext
         rw [Pi.smul_apply, RingHom.id_apply, smul_eq_mul, PadicInt.coe_mul, hg, hg,
@@ -193,7 +199,8 @@ theorem badCrit_pairs (be : Vs →ₗ[ℚ_[p]] Vs →ₗ[ℚ_[p]] ℚ_[p]) (L L�
     obtain ⟨u', hu', hn⟩ := hprim uu uu.2 hprim'
     refine ⟨G ⟨u', hu'⟩, LinearMap.mem_range_self _ _, ?_⟩
     have hq : ((l (G ⟨u', hu'⟩) : ℤ_[p]) : ℚ_[p]) = (p : ℚ_[p]) ^ ((E : ℤ) - D) * be uu u' := by
-      rw [hl, PadicInt.coe_sum, huu, map_sum, LinearMap.sum_apply, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hl, PadicInt.coe_sum, huu, map_sum, LinearMap.sum_apply, Finset.mul_sum]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [PadicInt.coe_mul, hG, badCrit_be_smul_left]; ring
     rw [PadicInt.norm_def, hq, norm_mul, hnp]

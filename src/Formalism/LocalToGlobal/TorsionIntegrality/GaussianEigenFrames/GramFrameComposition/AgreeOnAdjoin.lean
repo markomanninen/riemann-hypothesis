@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementE
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementE
+
+@[expose] public section
 
 noncomputable section
 open NumberField
@@ -28,7 +32,7 @@ theorem agree_on_adjoin {E L : Type*} [Field E] [CharZero E] [Field L] (ψ₁ ψ
     rw [hx, h]
   | algebraMap q =>
     rw [eq_ratCast, map_ratCast, map_ratCast]
-  | add x y _ _ hx hy => rw [map_add, map_add, hx, hy]
+  | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   | inv x _ hx => rw [map_inv₀, map_inv₀, hx]
   | mul x y _ _ hx hy => rw [map_mul, map_mul, hx, hy]
 
@@ -46,7 +50,7 @@ theorem SepPairs_of (hE : EmbSep) (hI : InertiaRam) : SepPairs := by
   let K : IntermediateField ℚ E := IntermediateField.adjoin ℚ ({δ} : Set E)
   have hδK : δ ∈ K := IntermediateField.mem_adjoin_simple_self ℚ δ
   have hδK' : IsIntegral ℤ (⟨δ, hδK⟩ : K) := by
-    rw [← isIntegral_algebraMap_iff (B := E) (algebraMap K E).injective]
+    rw [← isIntegral_algebraMap_iff (B := E) ]
     exact hδint
   let π : 𝓞 K := ⟨⟨δ, hδK⟩, hδK'⟩
   have hπ : algebraMap K E (π : K) = δ := rfl

@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementA
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.Several
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.FacShapeZero
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementA
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.Several
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.FacShapeZero
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -41,7 +45,8 @@ theorem cc_logForm {m : Type} [Fintype m] {l : PowerSeries K} (hl0 : PowerSeries
     (c : m → K) :
     MvPowerSeries.constantCoeff (∑ j, MvPowerSeries.C (c j) *
       PowerSeries.subst (MvPowerSeries.X j : MvPowerSeries m K) l : MvPowerSeries m K) = 0 := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_eq_zero fun j _ => by
     rw [map_mul, PowerSeries.constantCoeff_subst_eq_zero (MvPowerSeries.constantCoeff_X j) l hl0,
       mul_zero]
@@ -60,7 +65,8 @@ theorem toZ_flin {m : Type} [Fintype m] {l linv : PowerSeries K}
   have e : toZ linv (∑ j, MvPowerSeries.C (c j) *
       PowerSeries.subst (MvPowerSeries.X j : MvPowerSeries m K) l : MvPowerSeries m K) =
       ∑ x, MvPowerSeries.C (c x) * MvPowerSeries.X x := by
-    rw [← Formalism.L2.Th1.G.toZHom_apply hv0, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Formalism.L2.Th1.G.toZHom_apply hv0, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, MvPowerSeries.c_eq_algebraMap, AlgHom.commutes, Formalism.L2.Th1.G.toZHom_apply,
       Formalism.L2.Th1.G.toZ_subst_X hv0, hlv,

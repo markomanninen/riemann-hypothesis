@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.GrAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmaDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.GrAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmaDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
+
+@[expose] public section
+
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.CA UpperTheory.V.Pa Polynomial
 open scoped TensorProduct
 
@@ -22,7 +27,8 @@ private theorem gdet_eq_ofRep {n : ℕ} {A G E S : Type} [CommRing A] [Group G] 
   have hD : ∀ w : T ⊗[A] E, DE.D T w = (ψ w).det := by
     intro w
     obtain ⟨k, t, z, rfl⟩ := TensorProduct.exists_sum_tmul_eq w
-    rw [d_gma_det DE ep hch he h1 S φ hφ T t z, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [d_gma_det DE ep hch he h1 S φ hφ T t z, map_sum]
     simp only [hψ]
   have h2 : D.D T y = DE.D T (Algebra.TensorProduct.map (AlgHom.id T T) ι (toT A G T y)) := by
     have h3 : D.D T y = D.toDet.D T (toT A G T y) := (congrArg (D.D T) (ofT_toT (A := A) y)).symm
@@ -34,7 +40,7 @@ private theorem gdet_eq_ofRep {n : ℕ} {A G E S : Type} [CommRing A] [Group G] 
   congr 1
   induction y using MonoidAlgebra.induction_linear with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | single g s =>
     rw [toT_single, Algebra.TensorProduct.map_tmul, hψ, ← hvr]
     simp [GDet.repAlg]

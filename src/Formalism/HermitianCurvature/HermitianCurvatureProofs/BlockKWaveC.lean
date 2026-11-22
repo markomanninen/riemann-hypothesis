@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GNPsdC
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GNPsdC
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBL
 

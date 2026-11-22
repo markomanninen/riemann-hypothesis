@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.HasStepCharts
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SelM
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockMetricExplicitMatrixFormStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogBlockMetricOffBoundaryStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsPermOfRange
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockMetricRowEchelonLocalStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HasStepCharts
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SelM
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockMetricExplicitMatrixFormStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogBlockMetricOffBoundaryStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsPermOfRange
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockMetricRowEchelonLocalStatement
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GlobalTheory.CompanionTheory.Ar.PB.StepW GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
 
@@ -37,7 +42,7 @@ theorem stepGap_eq_of_base_block : ∀ (K : Type) [Fintype K] (ι : K → Type) 
           · exfalso
             apply h0
             unfold GlobalTheory.CompanionTheory.Ar.PB.FlagModel.dy
-            rw [dif_neg hb, if_neg hk]
+            rw [dite_eq_right hb, if_neg hk]
       simp only [hcoord]
   have hh : Real.log ((BM.hom p).h z) = Real.log ((BM.hom p).h z') := by
     cases hp : M.blk p with

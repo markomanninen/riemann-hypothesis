@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.NewtonLow
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.NewtonLow
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,8 @@ def zz (q : W → ℕ) (α : W → A → ℂ) (β : W → B → ℂ) (s : ℂ) (
 
 theorem lterm_eq (q : W → ℕ) (α : W → A → ℂ) (β : W → B → ℂ) (s : ℂ) (p : W × ℕ) :
     lterm q α β s p = ∑ a, ∑ b, zz q α β s p.1 a b ^ (p.2 + 1) / ((p.2 : ℂ) + 1) := by
-  rw [lterm, map_sum, Finset.sum_mul_sum, Finset.sum_mul, Finset.sum_div]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [lterm, map_sum, Finset.sum_mul_sum, Finset.sum_mul, Finset.sum_div]
   refine Finset.sum_congr rfl fun (a : A) _ => ?_
   rw [Finset.sum_mul, Finset.sum_div]
   refine Finset.sum_congr rfl fun (b : B) _ => ?_

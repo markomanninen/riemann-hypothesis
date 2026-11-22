@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsSchemeOfThickenings
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreimageUpOpen
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGlueToLocallyDirectedColimitOfBasisStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsClosedImmersionSurjectivePreimageStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyDirectedOfBasisStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenImmersionSpecMapOfThickeningStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullbackConeFstSndRingNilpotentStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResSurjectiveNilpotentKerStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGoodMemStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FerrandPushoutGoodBasicOpenStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocalizationAwayFibStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AppEqOfFactorStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsSchemeOfThickenings
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreimageUpOpen
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGlueToLocallyDirectedColimitOfBasisStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsClosedImmersionSurjectivePreimageStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyDirectedOfBasisStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenImmersionSpecMapOfThickeningStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullbackConeFstSndRingNilpotentStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResSurjectiveNilpotentKerStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGoodMemStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FerrandPushoutGoodBasicOpenStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocalizationAwayFibStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AppEqOfFactorStatement
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry Opposite
 
 noncomputable section
@@ -45,8 +50,8 @@ theorem mem_upOpen_iff {Y₀ Y₁ : Scheme.{0}} (i : Y₀ ⟶ Y₁) [IsClosedImm
     (U : Y₀.Opens) (x : Y₀) : i x ∈ upOpen i U ↔ x ∈ U :=
   SetLike.ext_iff.mp (preimage_upOpen i U) x
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem exists_pushout_data : ∀ (Y₀ Y₁ Y₂ : Scheme.{0}) (i₁ : Y₀ ⟶ Y₁) (i₂ : Y₀ ⟶ Y₂), IsClosedImmersion i₁ → IsClosedImmersion i₂ → Surjective i₁ → Surjective i₂ → (∀ U : Y₁.Opens, IsAffineOpen U → IsNilpotent (RingHom.ker (i₁.app U).hom)) → (∀ U : Y₂.Opens, IsAffineOpen U → IsNilpotent (RingHom.ker (i₂.app U).hom)) → ∃ (Y : Scheme.{0}) (j₁ : Y₁ ⟶ Y) (j₂ : Y₂ ⟶ Y) (hw : i₁ ≫ j₁ = i₂ ≫ j₂), IsClosedImmersion j₁ ∧ IsClosedImmersion j₂ ∧ Surjective j₁ ∧ Surjective j₂ ∧ ∃ 𝒱 : Set Y.Opens, TopologicalSpace.Opens.IsBasis 𝒱 ∧ ∀ V ∈ 𝒱, IsPullback (j₁.app V) (j₂.app V) (i₁.appLE (j₁ ⁻¹ᵁ V) ((i₁ ≫ j₁) ⁻¹ᵁ V) le_rfl) (i₂.appLE (j₂ ⁻¹ᵁ V) ((i₁ ≫ j₁) ⁻¹ᵁ V) (by rw [hw]; exact le_rfl)) := by
   intro Y₀ Y₁ Y₂ i₁ i₂ hc₁ hc₂ hs₁ hs₂ hn₁ hn₂
   haveI := hc₁; haveI := hc₂; haveI := hs₁; haveI := hs₂

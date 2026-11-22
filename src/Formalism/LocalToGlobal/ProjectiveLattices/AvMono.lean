@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -132,7 +136,7 @@ theorem exists_adjoin_eq_top [Module.Finite A B] [Finite (ResidueField A)]
   · refine ⟨α0 + π, adjoin_eq_top_of_gen hinj (α0 + π) ?_ P ?_⟩
     · have hr : residue B π = 0 :=
         (IsLocalRing.residue_eq_zero_iff _).mpr (hmax ▸ Ideal.mem_span_singleton_self π)
-      rw [map_add, hr, add_zero]; exact hγ
+      rw [map_add (f := _), hr, add_zero]; exact hγ
     · obtain ⟨t, ht⟩ := Ideal.mem_span_singleton'.mp h2
       obtain ⟨k, hk⟩ := Polynomial.binomExpansion (P.map (algebraMap A B)) α0 π
       have e : aeval (α0 + π) P = π * (aeval α0 (derivative P) + π * (t + k)) := by

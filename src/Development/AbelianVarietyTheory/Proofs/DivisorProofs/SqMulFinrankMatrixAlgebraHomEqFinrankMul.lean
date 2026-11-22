@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QActMSubAlgebraMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QActMSubAlgebraMap
+
+@[expose] public section
+
 open scoped TensorProduct
 
 noncomputable section
@@ -23,7 +28,8 @@ theorem unit_mul (i j l p : Fin (n+1)) (x : X) :
 
 theorem recon (x : X) : ∑ i, ρ (single i 0 1) (ρ (single 0 i 1) x) = x := by
   simp only [unit_mul, if_true]
-  rw [← LinearMap.sum_apply, ← map_sum, sum_single_one, map_one, Module.End.one_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← LinearMap.sum_apply, ← map_sum, sum_single_one, map_one, Module.End.one_apply]
 
 abbrev corner : Submodule k X := LinearMap.range (ρ (single 0 0 1))
 
@@ -56,7 +62,8 @@ def piEquiv : X ≃ₗ[k] (Fin (n+1) → corner ρ) :=
     (∑ i, ρ (single i 0 1) ∘ₗ (corner ρ).subtype ∘ₗ LinearMap.proj i)
     (by
       refine LinearMap.ext fun v => funext fun j => ?_
-      simp only [LinearMap.comp_apply, LinearMap.pi_apply, LinearMap.sum_apply, map_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [LinearMap.comp_apply, LinearMap.pi_apply, LinearMap.sum_apply, map_sum,
         Submodule.subtype_apply, LinearMap.proj_apply, cut_unit, Finset.sum_ite_eq, Finset.mem_univ,
         if_true, cut_corner, LinearMap.id_apply])
     (by
@@ -101,7 +108,8 @@ theorem ext_apply (S : corner ρX →ₗ[k] corner ρY) (x : X) :
 
 theorem ext_unit (S : corner ρX →ₗ[k] corner ρY) (l p : Fin (n+1)) (x : X) :
     ext ρX ρY S (ρX (single l p 1) x) = ρY (single l p 1) (ext ρX ρY S x) := by
-  rw [ext_apply, ext_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ext_apply, ext_apply, map_sum]
   simp only [cut_unit, unit_mul]
   rw [Finset.sum_ite_eq]
   simp only [Finset.mem_univ, if_true]
@@ -118,7 +126,8 @@ theorem ext_mem (S : corner ρX →ₗ[k] corner ρY) :
     conv_lhs => rw [matrix_eq_sum_single a]
     simp only [smul_single, smul_eq_mul, mul_one]
   rw [ha]
-  simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, ext_unit]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, ext_unit]
 
 theorem restr_bij : Function.Bijective (restr ρX ρY) := by
   constructor
@@ -128,7 +137,8 @@ theorem restr_bij : Function.Bijective (restr ρX ρY) := by
     have h0 : ∀ i, (T : X →ₗ[k] Y) (ρX (single 0 i 1) x) = 0 := fun i => by
       exact (congrArg Subtype.val (LinearMap.congr_fun hT ⟨_, unit_mem_corner ρX i x⟩) :)
     change (T : X →ₗ[k] Y) x = 0
-    rw [← recon ρX x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← recon ρX x, map_sum]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [comm ρX ρY T.2, h0, map_zero]
   · intro S

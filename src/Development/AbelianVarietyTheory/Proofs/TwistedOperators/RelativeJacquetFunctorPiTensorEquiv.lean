@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmRep
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RelativeJacquetPiExteriorTensorEquivNormalized
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmRep
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RelativeJacquetPiExteriorTensorEquivNormalized
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL
 open GlobalTheory.JacPiTensor (qlift mk_qlift descend descend_mk)
@@ -32,7 +36,7 @@ theorem piTensor_mulSingle (a : α) (g : GL (m a) k) (x : ∀ j, X j) :
     simp
   · simp [h]
 
-def qf : MultilinearMap ℂ X (Jacquet (piTensor ρ) (relUnip k e')) :=
+def qf : (∀ a, X a) →ₘₗ[ℂ] Jacquet (piTensor ρ) (relUnip k e') :=
   (twKer (piTensor ρ) (relUnip k e') 1).mkQ.compMultilinearMap (PiTensorProduct.tprod ℂ)
 
 theorem qf_update (v : ∀ a, X a) (i : α) (w : X i)
@@ -137,12 +141,12 @@ def jacEquiv : Jacquet (piTensor ρ) (relUnip k e') ≃ₗ[ℂ] ⨂[ℂ] a, Jacq
         Submodule.mkQ_apply])
 
 theorem relJac_piTensor :
-    Nonempty ((relJac e' (piTensor ρ)).Equiv (piTensor fun a => jac (e' a) (ρ a))) := by
+    Nonempty ((relJac e' (piTensor ρ)).Equiv (piTensor fun a => GlobalTheory.SmGL.jac (e' a) (ρ a))) := by
   refine ⟨Representation.Equiv.mk (jacEquiv e' ρ) fun g => ?_⟩
   refine Submodule.linearMap_qext _ (PiTensorProduct.ext (MultilinearMap.ext fun x => ?_))
   simp only [LinearMap.compMultilinearMap_apply, LinearMap.comp_apply, Submodule.mkQ_apply,
     LinearEquiv.coe_coe, jacEquiv, LinearEquiv.ofLinear_apply, relJac_mk, piTensor_tprod, relEmb_apply,
-    map_smul, fwd_mk_tprod', jac_mk, MultilinearMap.map_smul_univ, relDeltaHalf_apply]
+    map_smul, fwd_mk_tprod', jac_mk, MultilinearMap.map_smul_univ, RingHom.id_apply, relDeltaHalf_apply]
   congr 1
   rw [← Finset.prod_inv_distrib, Units.coe_prod]
 
@@ -154,7 +158,7 @@ theorem relJac_piTensor_equiv : ∀ (k : Type) [Field k] [ValuativeRel k] [Topol
     (c : α → β → Type) [∀ i j, Fintype (c i j)] [∀ i j, DecidableEq (c i j)]
     (f : ∀ i, (Σ j, c i j) ≃ m i) (X : α → Type) [∀ i, AddCommGroup (X i)] [∀ i, Module ℂ (X i)]
     (ρ : ∀ i, Representation ℂ (GL (m i) k) (X i)),
-    Nonempty ((relJac f (piTensor ρ)).Equiv (piTensor fun i => jac (f i) (ρ i))) := by
+    Nonempty ((relJac f (piTensor ρ)).Equiv (piTensor fun i => GlobalTheory.SmGL.jac (f i) (ρ i))) := by
   intro k _ _ _ _ α β _ _ _ m _ _ c _ _ f X _ _ ρ
   classical
   exact relJac_piTensor f ρ

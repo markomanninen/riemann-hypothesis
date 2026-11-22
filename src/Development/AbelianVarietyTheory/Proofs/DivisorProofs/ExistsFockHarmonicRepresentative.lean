@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FischerDecompositionFockNoncompactParts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumLineMatrixKroneckerRightFactor
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockHarmonicsGradedCompactStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FischerDecompositionFockNoncompactParts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumLineMatrixKroneckerRightFactor
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockHarmonicsGradedCompactStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,6 +61,6 @@ theorem exists_harm2_rep : ∀ (P Q R S : ℕ) (W : Type) [AddCommGroup W] [Modu
   obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hf
   refine ⟨y, ?_, ?_⟩
   · rw [← HarmStable.coe_fockHarmonicsSecondMemberSubmodule]; exact hy
-  · rw [map_add, LinearMap.mem_ker.1 hz, add_zero]
+  · rw [map_add (f := _), LinearMap.mem_ker.1 hz, add_zero]
 
 end GlobalTheory.FockAlg.HarmLift

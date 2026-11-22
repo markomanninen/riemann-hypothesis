@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.ProfCoh
 
@@ -64,29 +68,6 @@ lemma mk_mem_kummerGroup {a : Kˣ} :
     exact mul_mem hb (unitsPow_le_unitsPowIn K n L (mem_unitsPow.mpr ⟨c, rfl⟩))
   · intro ha
     exact ⟨a, ha, rfl⟩
-
-noncomputable def toKummerGroup : unitsPowIn K n L →* kummerGroup K n L :=
-  ((QuotientGroup.mk' (unitsPow K n)).comp (unitsPowIn K n L).subtype).codRestrict _
-    (fun a => Subgroup.mem_map_of_mem _ a.2)
-
-lemma toKummerGroup_surjective : Function.Surjective (toKummerGroup K n L) := by
-  rintro ⟨x, a, ha, rfl⟩
-  exact ⟨⟨a, ha⟩, rfl⟩
-
-lemma ker_toKummerGroup :
-    (toKummerGroup K n L).ker = (unitsPow K n).subgroupOf (unitsPowIn K n L) := by
-  ext a
-  rw [MonoidHom.mem_ker, Subgroup.mem_subgroupOf, ← QuotientGroup.eq_one_iff (N := unitsPow K n)]
-  constructor
-  · intro h
-    exact congrArg Subtype.val h
-  · intro h
-    exact Subtype.ext h
-
-noncomputable def kummerGroupEquiv :
-    (unitsPowIn K n L ⧸ (unitsPow K n).subgroupOf (unitsPowIn K n L)) ≃* kummerGroup K n L :=
-  (QuotientGroup.quotientMulEquivOfEq (ker_toKummerGroup K n L).symm).trans
-    (QuotientGroup.quotientKerEquivOfSurjective _ (toKummerGroup_surjective K n L))
 
 end Defs
 
@@ -249,9 +230,6 @@ noncomputable def kummerPairingRight : kummerGroup K n L →* (Gal(L/K) →* roo
 
 @[simp] lemma kummerPairingLeft_apply (σ : Gal(L/K)) (x : kummerGroup K n L) :
     kummerPairingLeft K n L σ x = kummerPairing K n L σ x := rfl
-
-@[simp] lemma kummerPairingRight_apply (x : kummerGroup K n L) (σ : Gal(L/K)) :
-    kummerPairingRight K n L x σ = kummerPairing K n L σ x := rfl
 
 end Pairing
 

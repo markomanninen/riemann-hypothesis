@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.UnitarySchrodingerLemmas.UnramifiedSchwartzDensity.SchCut
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdeleHaarMapEqScaledVolumeStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.UnitarySchrodingerLemmas.UnramifiedSchwartzDensity.SchCut
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdeleHaarMapEqScaledVolumeStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,14 +46,14 @@ theorem coordInf : PositivityTheory.PfSWUS.SchInf.CoordInf := by
     intro X Y
     funext t
     change eh (Hs (X _ _ + Y _ _) _) _ = eh (Hs (X _ _) _) _ + eh (Hs (Y _ _) _) _
-    simp only [hHs, heh, map_add, Finsupp.add_apply, Pi.add_apply]
+    simp only [hHs, heh, map_add (f := _), Finsupp.add_apply, Pi.add_apply]
   let eV : (Fin n → Fin M → Ainf F ⊗[F] E) ≃+ (Fin (Fintype.card I) → ℝ) :=
     { eH.toEquiv with map_add' := hadd }
   have hV : ∀ X, eV X = eH X := fun _ => rfl
   have hVs : ∀ y, eV.symm y = eH.symm y := fun _ => rfl
   have hc : Continuous fun p : (Fin n → Fin M → Ainf F ⊗[F] E) × Matrix (Fin n) (Fin n) (Ainf F ⊗[F] E) =>
       rmul (Ainf F) p.1 p.2 := by
-    refine continuous_pi fun a => continuous_pi fun i => continuous_finset_sum _ fun c _ => ?_
+    refine continuous_pi fun a => continuous_pi fun i => continuous_finsetSum _ fun c _ => ?_
     have h1 : Continuous fun p : (Fin n → Fin M → Ainf F ⊗[F] E) ×
         Matrix (Fin n) (Fin n) (Ainf F ⊗[F] E) => p.1 c i :=
       (continuous_apply i).comp ((continuous_apply c).comp continuous_fst)
@@ -61,7 +65,7 @@ theorem coordInf : PositivityTheory.PfSWUS.SchInf.CoordInf := by
     simp [rmul, add_mul, Finset.sum_add_distrib]
   let L0 : Matrix (Fin n) (Fin n) (Ainf F ⊗[F] E) → (Fin (Fintype.card I) → ℝ) →+ (Fin (Fintype.card I) → ℝ) :=
     fun g => AddMonoidHom.mk' (fun y => eV (rmul (Ainf F) (eV.symm y) g)) fun y z => by
-      rw [map_add, hrad, map_add]
+      rw [map_add (f := _), hrad, map_add (f := _)]
   have hL0 : ∀ g, Continuous (L0 g) := fun g =>
     eH.continuous.comp (hc.comp (eH.symm.continuous.prodMk continuous_const))
   let L : Matrix (Fin n) (Fin n) (Ainf F ⊗[F] E) → (Fin (Fintype.card I) → ℝ) →L[ℝ] (Fin (Fintype.card I) → ℝ) :=

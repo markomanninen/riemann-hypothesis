@@ -1,5 +1,9 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.LineHigh
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.LineHigh
+
+@[expose] public section
 
 noncomputable section
 open Polynomial GlobalTheory.EtC

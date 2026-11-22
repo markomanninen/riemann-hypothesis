@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.TwoChartSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.TwoChartSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj MvPowerSeries
 open ReciprocityTheory.ChartRestriction.G.Chart ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.TB ReciprocityTheory.ChartRestriction.G.TB.WickVanishing
-open ReciprocityTheory.ChartRestriction.G.Geo.Tor (gm gm_val val val_of Good cubV val₂ IsCub isCub_cubV exists_chart psum_hom preHom)
+open ReciprocityTheory.ChartRestriction.G.Geo.Tor (gm gm_val val val_of Good cubV val₂ IsCub exists_chart psum_hom preHom val_cub val_corr val_one val_mul)
 open ReciprocityTheory.ChartRestriction.G.Out (rosatiφ rosatiε zero2)
 attribute [local instance] Over.cartesianMonoidalCategory
 namespace GlobalTheory.JetSer.FBOf
@@ -14,7 +18,7 @@ theorem gm_eq_germ_fnVal {A : Type} [CommRing A] {X : Scheme.{0}} (r : Spec (Com
     (h : ⊤ ≤ r ⁻¹ᵁ U) (a : Γ(X, U)ˣ) (z : Spec (CommRingCat.of A)) :
     (gm r z U a).val = ((Spec (CommRingCat.of A)).presheaf.germ ⊤ z trivial).hom
       ((Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom (fnVal r U a.val)) := by
-  rw [gm_val r z U (h trivial), fnVal, dif_pos h]
+  rw [gm_val r z U (h trivial), fnVal, dite_eq_left h]
   have e : ∀ b, (Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom ((Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom b) = b :=
     fun b => congrArg (fun q => q.hom b) (Scheme.ΓSpecIso (CommRingCat.of A)).hom_inv_id
   rw [e]
@@ -31,10 +35,10 @@ theorem exists_good_const {X Z : Scheme.{0}} (L : LB X) (hL : L.IsLB) (j : L.ι)
     ∃ J, Good L z J ∧ ∀ ψ : Z ⟶ X, ψ z ∈ L.U j → J ψ = j := by
   classical
   choose I hI using fun χ : Z ⟶ X => exists_chart hL (χ z)
-  refine ⟨fun ψ => if ψ z ∈ L.U j then j else I ψ, fun ψ => ?_, fun ψ h => if_pos h⟩
+  refine ⟨fun ψ => if ψ z ∈ L.U j then j else I ψ, fun ψ => ?_, fun ψ h => ite_eq_left h⟩
   by_cases h : ψ z ∈ L.U j
-  · simpa only [if_pos h] using h
-  · simpa only [if_neg h] using hI ψ
+  · simpa only [ite_eq_left h] using h
+  · simpa only [ite_eq_right h] using hI ψ
 
 theorem val_const {X Y Z : Scheme.{0}} {L : LB X} {j : L.ι} {z : Z} {J : (Z ⟶ X) → L.ι}
     (hJ : ∀ ψ : Z ⟶ X, ψ z ∈ L.U j → J ψ = j) {K : Type} [Fintype K] {φ : K → (Y ⟶ X)} {ε : K → ℤ}
@@ -152,24 +156,56 @@ theorem fbOf : JetAlgSt → RepSt → LawSt → MapSt → ActSt → SerSt → Se
   choose ad had using exad
   have K := series_ext hJet hRep Lr c act u x hx j Gl.F hF A.act hA ph hph ad had
   have Ro := hRos _ G s2 s3 Lr c O act u hu
+  have hCub {T : Over (Spec (CommRingCat.of R))} {z : T.left} {J : (T.left ⟶ G.left) → Lr.L.ι}
+      (hJ : Good Lr.L z J) : IsCub (cubV c z J) := by
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · intro x y
+      have e := val_corr hJ (c.face 0) (lift x y).left
+      rw [val_one] at e
+      refine Eq.trans ?_ e
+      refine Eq.trans ?_ (val_cub c (lift x y) hJ (pzero G _) (x2 G 0) (x2 G 1)).symm
+      congr 1 <;> simp [x2, pzero, Hom.one_def]
+    · intro x y w
+      have e := (val_corr hJ c.cubeSymmetric_swap_first (lift x (lift y w)).left).trans
+        (val_cub c (lift x (lift y w)) hJ _ _ _)
+      refine e.trans ?_
+      congr 1 <;> simp [x3]
+    · intro x y w
+      have e := (val_corr hJ c.cubeSymmetric_swap_last (lift x (lift y w)).left).trans
+        (val_cub c (lift x (lift y w)) hJ _ _ _)
+      refine e.trans ?_
+      congr 1 <;> simp [x3]
+    · intro x x' x'' y
+      have e := val_corr hJ c.cocycle (lift x (lift x' (lift x'' y))).left
+      have e' := ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_cub c _ hJ _ _ _) (val_cub c _ hJ _ _ _))).symm.trans
+        (e.trans ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_cub c _ hJ _ _ _) (val_cub c _ hJ _ _ _))))
+      have a₀ : lift x (lift x' (lift x'' y)) ≫ x4 G 0 = x := by simp [x4]
+      have a₁ : lift x (lift x' (lift x'' y)) ≫ x4 G 1 = x' := by simp [x4]
+      have a₂ : lift x (lift x' (lift x'' y)) ≫ x4 G 2 = x'' := by simp [x4]
+      have a₃ : lift x (lift x' (lift x'' y)) ≫ x4 G 3 = y := by simp [x4]
+      have b₀ : lift x (lift x' (lift x'' y)) ≫ padd G (x4 G 0) (x4 G 1) = x * x' :=
+        (MonObj.comp_mul _ _ _).trans (by rw [a₀, a₁])
+      have b₁ : lift x (lift x' (lift x'' y)) ≫ padd G (x4 G 1) (x4 G 2) = x' * x'' :=
+        (MonObj.comp_mul _ _ _).trans (by rw [a₁, a₂])
+      rwa [b₀, b₁, a₀, a₁, a₂, a₃] at e'
   have gA : ∀ {n} {a b : Pt R n d}, GP a → GP b → GP (addOf Gl.F a b) := fun ha hb => gp_addOf _ Gl.const _ _ ha hb
   have gC : ∀ {n} (o) {a : Pt R n d}, GP a → GP (comp1 (A.act o) a) := fun o _ ha => gp_comp1 _ _ (A.const o) ha
   have g0 : ∀ {n}, GP (0 : Pt R n d) := gp_zero₂
   have gp : ∀ {n} (i : Fin n), GP (pt R d i) := fun i => gp_pt i
   have face : ∀ {n} (a b : Pt R n d), GP a → GP b → ev ![0, a, b] ph = 1 := fun a b ha hb =>
     K _ _ _ fun T z J hJ Φ y y0 ya yc p q => by
-      rw [p _ _ _ g0 ha hb, y0, (isCub_cubV c hJ).face, map_one, Units.val_one]
+      rw [p _ _ _ g0 ha hb, y0, (hCub hJ).face, map_one, Units.val_one]
   have s01 : ∀ {n} (a b e : Pt R n d), GP a → GP b → GP e → ev ![a, b, e] ph = ev ![b, a, e] ph := fun a b e ha hb he =>
     K _ _ _ fun T z J hJ Φ y y0 ya yc p q => by
-      rw [p _ _ _ ha hb he, p _ _ _ hb ha he, (isCub_cubV c hJ).s01]
+      rw [p _ _ _ ha hb he, p _ _ _ hb ha he, (hCub hJ).s01]
   have s12 : ∀ {n} (a b e : Pt R n d), GP a → GP b → GP e → ev ![a, b, e] ph = ev ![a, e, b] ph := fun a b e ha hb he =>
     K _ _ _ fun T z J hJ Φ y y0 ya yc p q => by
-      rw [p _ _ _ ha hb he, p _ _ _ ha he hb, (isCub_cubV c hJ).s12]
+      rw [p _ _ _ ha hb he, p _ _ _ ha he hb, (hCub hJ).s12]
   have coc : ∀ {n} (a b e f : Pt R n d), GP a → GP b → GP e → GP f →
       ev ![a, b, f] ph * ev ![addOf Gl.F a b, e, f] ph = ev ![b, e, f] ph * ev ![a, addOf Gl.F b e, f] ph :=
     fun a b e f ha hb he hf => K _ _ _ fun T z J hJ Φ y y0 ya yc p q => by
       rw [map_mul, map_mul, p _ _ _ ha hb hf, p _ _ _ (gA ha hb) he hf, p _ _ _ hb he hf, p _ _ _ ha (gA hb he) hf,
-        ya _ _ ha hb, ya _ _ hb he, ← Units.val_mul, ← Units.val_mul, _root_.mul_comm, (isCub_cubV c hJ).coc,
+        ya _ _ ha hb, ya _ _ hb he, ← Units.val_mul, ← Units.val_mul, _root_.mul_comm, (hCub hJ).coc,
         _root_.mul_comm]
   have cpt : ∀ {n} (a b e f : Pt R n d), GP a → GP b → GP e → GP f →
       ev ![a, b, e] ph * ev ![a, b, f] ph * ev ![addOf Gl.F a b, e, f] ph =
@@ -177,7 +213,7 @@ theorem fbOf : JetAlgSt → RepSt → LawSt → MapSt → ActSt → SerSt → Se
     fun a b e f ha hb he hf => K _ _ _ fun T z J hJ Φ y y0 ya yc p q => by
       rw [map_mul, map_mul, map_mul, map_mul, p _ _ _ ha hb he, p _ _ _ ha hb hf, p _ _ _ (gA ha hb) he hf,
         p _ _ _ ha he hf, p _ _ _ hb he hf, p _ _ _ ha hb (gA he hf), ya _ _ ha hb, ya _ _ he hf]
-      have := congrArg Units.val ((isCub_cubV c hJ).compat (y a) (y b) (y e) (y f))
+      have := congrArg Units.val ((hCub hJ).compat (y a) (y b) (y e) (y f))
       simp only [Units.val_mul] at this
       linear_combination this
   have inv3 : ∀ {U : Type} [CommGroup U] {a b e s t : U}, a * s = t * (b * e) → t * a⁻¹ = b⁻¹ * e⁻¹ * s := by
@@ -231,7 +267,7 @@ theorem fbOf : JetAlgSt → RepSt → LawSt → MapSt → ActSt → SerSt → Se
       have h := (Ro T z J hJ).1 o 1 1 (y b)
       have := act.hom o
       beta_reduce at h
-      rw [_root_.mul_one, MonObj.one_comp, (isCub_cubV c hJ).face, (isCub_cubV c hJ).face, _root_.mul_one,
+      rw [_root_.mul_one, MonObj.one_comp, (hCub hJ).face, (hCub hJ).face, _root_.mul_one,
         _root_.one_mul] at h
       exact congrArg (fun t => t⁻¹.val) (left_eq_mul.1 h)
   have x1 : ∀ {n} (o) (b : Pt R n d), GP b → ev ![b, 0] (ad o) = 1 :=
@@ -240,7 +276,7 @@ theorem fbOf : JetAlgSt → RepSt → LawSt → MapSt → ActSt → SerSt → Se
       have h := (Ro T z J hJ).2.1 o (y b) 1 1
       have := act.hom (star o)
       beta_reduce at h
-      rw [_root_.mul_one, MonObj.one_comp, (isCub_cubV c hJ).face₂, (isCub_cubV c hJ).face₂, _root_.mul_one,
+      rw [_root_.mul_one, MonObj.one_comp, (hCub hJ).face₂, (hCub hJ).face₂, _root_.mul_one,
         _root_.one_mul] at h
       exact congrArg (fun t => t⁻¹.val) (left_eq_mul.1 h)
   have f0 : ev (n := 2) ![0, pt R d 0, pt R d 1] ph = 1 := face _ _ (gp 0) (gp 1)

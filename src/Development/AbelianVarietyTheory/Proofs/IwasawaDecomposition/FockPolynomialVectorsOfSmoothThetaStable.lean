@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.TwoSplitIdem
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PureTensorLIntertwine
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.TwoSplitIdem
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PureTensorLIntertwine
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.TraceDual
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.TraceDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ theorem psiF_eq_one {c : Fv F v} (hc : c ∈ v.adicCompletionIntegers F) (k : �
 
 theorem psiF_add (c : Fv F v) (k : ℕ) (a b : Fv F v ⊗[F] E) :
     psiF ψv ϖ c k (a + b) = psiF ψv ϖ c k a * psiF ψv ϖ c k b := by
-  simp only [psiF, map_add, mul_add, hG.psi_add]
+  simp only [psiF, map_add (f := _), mul_add, hG.psi_add]
 
 def psiLev {c : Fv F v} (hc : c ∈ v.adicCompletionIntegers F) (k : ℕ) : AddChar (S ⧸ lev hG.pS k) ℂ where
   toFun x := Quotient.liftOn' x (fun a : S => psiF ψv ϖ c k (a : Fv F v ⊗[F] E)) (fun a b hab => by

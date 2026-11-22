@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix Polynomial
 open scoped BigOperators
@@ -51,7 +55,7 @@ theorem mem_span_pow_range_of_mem_adjoin {K T : Type} [Field K] [CommRing T] [Al
       · rw [DirectSum.decompose_of_mem_ne 𝒜 hyj hjk]
         exact Submodule.zero_mem _
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+    | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
     | smul c a _ ha => rw [map_smul]; exact Submodule.smul_mem _ c ha
   have h3 : t ∈ Submodule.span K (Submonoid.closure (Set.range x) : Set T) := by
     rw [← Algebra.adjoin_eq_span]; exact ht

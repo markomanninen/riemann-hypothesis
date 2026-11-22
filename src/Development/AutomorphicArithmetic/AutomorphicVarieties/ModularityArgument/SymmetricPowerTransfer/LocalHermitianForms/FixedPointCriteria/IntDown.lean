@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.CintIdx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.IrreducibleParity.MemCOfInt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.LatCls
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.CintIdx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.IrreducibleParity.MemCOfInt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.LatCls
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,20 +14,20 @@ open QuadraticAlgebra Matrix UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc
 
 variable {O K : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Field K] [Algebra O K] {Δ τ : K}
 
-variable (O) in
 
+variable (O) in
 structure Gen1 (x : Etau K τ) : Prop where
   tr : QuadraticAlgebra.trace x ∈ (algebraMap O K).range
   nm : QuadraticAlgebra.norm x ∈ (algebraMap O K).range
   disc : ∃ u : Oˣ, algebraMap O K u = x.im ^ 2 * (τ ^ 2 - 4)
 
 theorem sq_int (L : IsLoc O Δ) (x : K) (a : O) (h : x ^ 2 = algebraMap O K a) : ∃ b : O, algebraMap O K b = x := by
-  haveI := L.frac
+  have := L.frac
   exact IsIntegrallyClosed.algebraMap_eq_of_integral (IsIntegral.of_pow (n := 2) (by norm_num) (h ▸ isIntegral_algebraMap))
 
 theorem int_down (L : IsLoc O Δ) (a : K) (h : IsIntegral O (algebraMap K (Etau K τ) a)) : ∃ b : O, algebraMap O K b = a := by
-  haveI := L.frac
-  exact IsIntegrallyClosed.algebraMap_eq_of_integral ((isIntegral_algebraMap_iff (algebraMap K (Etau K τ)).injective).1 h)
+  have := L.frac
+  exact IsIntegrallyClosed.algebraMap_eq_of_integral (isIntegral_algebraMap_iff.1 h)
 
 omit [IsDomain O] [IsDiscreteValuationRing O] in
 theorem Gen1.int {x : Etau K τ} (h : Gen1 O x) : IsIntegral O x := by
@@ -61,7 +65,7 @@ theorem Gen1.int_iff (L : IsLoc O Δ) {x : Etau K τ} (h : Gen1 O x) (y : Etau K
 
 theorem Gen1.princ (L : IsLoc O Δ) (hτ : τ ^ 2 - 4 ≠ 0) {x : Etau K τ} (h : Gen1 O x) {S : Set (Etau K τ)} (hS : IsLat O τ S) (hx : ∀ w ∈ S, x * w ∈ S) :
     ∃ u : (Etau K τ)ˣ, ∀ w, w ∈ S ↔ IsIntegral O (((u⁻¹ : (Etau K τ)ˣ) : Etau K τ) * w) := by
-  haveI := L.frac
+  have := L.frac
   obtain ⟨y, x', h0, ⟨t, ht⟩, ⟨n, hn⟩, rfl⟩ := latCls O K Δ τ L hτ S hS
   have hi : IsIntegral O x' := isIntegral_of_trace_norm t n ht.symm hn.symm
   obtain ⟨_, hw, e⟩ := hx _ ⟨1, Submodule.subset_span (by simp), rfl⟩
@@ -77,28 +81,41 @@ theorem Gen1.princ (L : IsLoc O Δ) (hτ : τ ^ 2 - 4 ≠ 0) {x : Etau K τ} (h 
   · obtain ⟨a, b, e⟩ := (h.int_iff L _).1 hw
     refine ⟨_, Submodule.mem_span_pair.2 ⟨a + b * p, b * q, rfl⟩, ?_⟩
     have : (a + b * p) • (1 : Etau K τ) + (b * q) • x' = ((y⁻¹ : (Etau K τ)ˣ) : Etau K τ) * w := by
-      rw [e, ← e']; simp only [Algebra.smul_def, map_add, map_mul]; ring
+      rw [e, ← e']; simp only [Algebra.smul_def, map_add (f := _), map_mul]; ring
     change (y : Etau K τ) * _ = w
     rw [this, Units.mul_inv_cancel_left]
 
 theorem Gen1.cint (L : IsLoc O Δ) {x : Etau K τ} (h : Gen1 O x) {c : (Etau K τ)ˣ} (hc : c ∈ Cint O τ) :
-    ∃ (s : Kˣ) (u : (Etau K τ)ˣ), IsIntegral O (u : Etau K τ) ∧ IsIntegral O ((u⁻¹ : (Etau K τ)ˣ) : Etau K τ) ∧ c = PS.sc τ s * u := by
-  haveI := L.frac
+    ∃ (s : Kˣ) (u : (Etau K τ)ˣ), IsIntegral O (u : Etau K τ) ∧ IsIntegral O ((u⁻¹ : (Etau K τ)ˣ) : Etau K τ) ∧ c = PS.sc (τ := τ) s * u := by
+  have := L.frac
   have h0 := h.im_ne
   have key : ∀ (s : K) (a b : O), (IsUnit a ∨ IsUnit b) → (c : Etau K τ) = algebraMap K _ s * (algebraMap O _ a + algebraMap O _ b * x) →
-      ∃ (s : Kˣ) (u : (Etau K τ)ˣ), IsIntegral O (u : Etau K τ) ∧ IsIntegral O ((u⁻¹ : (Etau K τ)ˣ) : Etau K τ) ∧ c = PS.sc τ s * u := by
+      ∃ (s : Kˣ) (u : (Etau K τ)ˣ), IsIntegral O (u : Etau K τ) ∧ IsIntegral O ((u⁻¹ : (Etau K τ)ˣ) : Etau K τ) ∧ c = PS.sc (τ := τ) s * u := by
     intro s a b hab e
     have hs : s ≠ 0 := fun h => c.ne_zero (by rw [e, h]; simp)
-    let u : (Etau K τ)ˣ := (PS.sc τ (Units.mk0 s hs))⁻¹ * c
+    let u : (Etau K τ)ˣ := (PS.sc (τ := τ) (Units.mk0 s hs))⁻¹ * c
     have hu : (u : Etau K τ) = algebraMap O _ a + algebraMap O _ b * x := by
-      rw [Units.val_mul, e]; exact Units.inv_mul_cancel_left (PS.sc τ (Units.mk0 s hs)) _
-    have huc : u ∈ Cint O τ := mul_mem (inv_mem (PS.sc_mem _)) hc
+      rw [Units.val_mul, e]; exact Units.inv_mul_cancel_left (PS.sc (τ := τ) (Units.mk0 s hs)) _
+    have hstar (r : K) : star (algebraMap K (Etau K τ) r) = algebraMap K (Etau K τ) r := by
+      ext <;> simp
+    have hquo (r : Kˣ) : quo (PS.sc (τ := τ) r) = 1 := by
+      rw [quo, ← map_inv]
+      change algebraMap K (Etau K τ) (r : K) * star (algebraMap K (Etau K τ) (↑r⁻¹ : K)) = 1
+      rw [hstar, ← map_mul, Units.mul_inv, map_one]
+    have hsc : PS.sc (τ := τ) (Units.mk0 s hs) ∈ Cint O τ := by
+      constructor
+      · rw [hquo]
+        exact isIntegral_one
+      · rw [← map_inv, hquo]
+        exact isIntegral_one
+    have huc : u ∈ Cint O τ := mul_mem (inv_mem hsc) hc
     have h1 : IsIntegral O (((u⁻¹ : (Etau K τ)ˣ) : Etau K τ) * star (u : Etau K τ)) := by simpa [quo] using huc.2
     obtain ⟨d, hd⟩ := h.disc
     have hxx : (x - star x) ^ 2 = algebraMap O _ (d : O) := by
       rw [algebraMap_etau (O := O), hd]; ext <;> simp [sq] <;> ring
     have hsu : star (u : Etau K τ) = algebraMap O _ a + algebraMap O _ b * star x := by
-      rw [hu, algebraMap_etau a, algebraMap_etau b]; ext <;> simp <;> ring
+      rw [hu, algebraMap_etau a, algebraMap_etau b]
+      ext <;> simp
     have hui := u.inv_mul
     set i := ((u⁻¹ : (Etau K τ)ˣ) : Etau K τ)
     have hdi : algebraMap O (Etau K τ) (d : O) * algebraMap O _ ((d⁻¹ : Oˣ) : O) = 1 := by rw [← map_mul, Units.mul_inv, map_one]
@@ -128,8 +145,8 @@ theorem Gen1.cint (L : IsLoc O Δ) {x : Etau K τ} (h : Gen1 O x) {c : (Etau K �
     refine key α 1 r (.inl isUnit_one) ?_
     rw [e, algebraMap_etau r, hr, map_one, mul_add, mul_one, ← mul_assoc, ← map_mul, inv_div, mul_div_cancel₀ _ hα]
 
-variable (O τ) in
 
+variable (O τ) in
 def Mx : Set (Etau K τ) := {w | IsIntegral O w}
 
 omit [IsDomain O] [IsDiscreteValuationRing O] in
@@ -140,7 +157,7 @@ theorem ml_Mx {u : (Etau K τ)ˣ} (h : IsIntegral O (u : Etau K τ)) (h' : IsInt
 
 theorem Gen1.span (L : IsLoc O Δ) {x : Etau K τ} (h : Gen1 O x) : Mx O τ = (Submodule.span O {1, x} : Submodule O (Etau K τ)) := by
   ext w
-  rw [SetLike.mem_coe, Submodule.mem_span_pair, Mx, Set.mem_setOf_eq, h.int_iff L]
+  rw [SetLike.mem_coe, Submodule.mem_span_pair, Mx, Set.mem_ofPred_eq, h.int_iff L]
   simp only [Algebra.smul_def, mul_one, eq_comm]
 
 theorem Gen1.lat (L : IsLoc O Δ) {x : Etau K τ} (h : Gen1 O x) : IsLat O τ (Mx O τ) := by

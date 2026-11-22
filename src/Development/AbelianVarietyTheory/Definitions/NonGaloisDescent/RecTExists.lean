@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Langlands
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroTypeInertia
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Langlands
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroTypeInertia
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,13 +20,13 @@ section Classes
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-def GoodCusp (y : IrrGL k) : Prop :=
+def GoodCusp (y : IrrGL (k := k)) : Prop :=
   y.1 = 1 ∨ ((∃ (g : ℕ) (_ : Fact g.Prime) (i : ℚ_[g] ≃+* k), Continuous i) ∧
-    ∃ (y₀ : IrrGL k) (χ : kˣ →* ℂˣ) (hχ : IsSmoothChar χ), fixed y₀.rep (KOne k (Fin y₀.1)) ≠ ⊥ ∧ y = y₀.tw χ hχ)
+    ∃ (y₀ : IrrGL (k := k)) (χ : kˣ →* ℂˣ) (hχ : IsSmoothChar χ), fixed y₀.rep (KOne k (Fin y₀.1)) ≠ ⊥ ∧ y = y₀.tw χ hχ)
 
-def Good (x : IrrGL k) : Prop := ∃ s, HasSupport x.rep s ∧ ∀ y ∈ s, GoodCusp y
+def Good (x : IrrGL (k := k)) : Prop := ∃ s, HasSupport x.rep s ∧ ∀ y ∈ s, GoodCusp y
 
-def Toral (x : IrrGL k) : Prop := ∃ s, HasSupport x.rep s ∧ ∀ y ∈ s, y.1 = 1
+def Toral (x : IrrGL (k := k)) : Prop := ∃ s, HasSupport x.rep s ∧ ∀ y ∈ s, y.1 = 1
 
 end Classes
 
@@ -30,8 +34,7 @@ variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAl
   {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} {h : IsPlaceOver A w}
 
 variable (h) in
-
-def TypeLaw (rc : IrrGL (w.adicCompletion E) → WD h) : Prop :=
+def TypeLaw (rc : IrrGL (k := w.adicCompletion E) → WD h) : Prop :=
   ∀ (E' : Type) [Field E'] [NumberField E'] [Algebra E E'] [Algebra E' Ω] [IsScalarTower E E' Ω] [IsAlgClosure E' Ω]
     (g : ℕ) [Fact g.Prime] (w' : HeightOneSpectrum (𝓞 E')) (h' : IsPlaceOver A w'),
     ∀ (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i →
@@ -52,17 +55,17 @@ def TypeLaw (rc : IrrGL (w.adicCompletion E) → WD h) : Prop :=
           ∏ j ∈ Finset.range n, (X - C ((θ (z ^ g ^ j) : ℂˣ) : ℂ))
 
 structure LawsT (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a)
-    (rc : IrrGL (w.adicCompletion E) → WD h) : Prop where
+    (rc : IrrGL (k := w.adicCompletion E) → WD h) : Prop where
   dim : ∀ x, (rc x).lpDim = x.1
   one : ∀ χ hχ, rc (.ofChar χ hχ) = WD.lpOfChar h (χ.comp a) (ha.smooth hχ)
-  langlands : ∀ (l : List (Segment (w.adicCompletion E))) (x : IrrGL (w.adicCompletion E)),
+  langlands : ∀ (l : List (Segment (w.adicCompletion E))) (x : IrrGL (k := w.adicCompletion E)),
     IsL (l : Multiset (Segment (w.adicCompletion E))) x.rep → rc x = segSum rc l
   cusp : ∀ x, x.IsCusp → IsIrrWD (rc x)
   nu : ∀ x (s : ℝ), rc (x.nu s) = (rc x).lpTw s
-  absCentral : ∀ (x : IrrGL (w.adicCompletion E)) ω, HasCentralChar x.rep ω →
+  absCentral : ∀ (x : IrrGL (k := w.adicCompletion E)) ω, HasCentralChar x.rep ω →
     ∀ σ, ‖((rc x).eig σ).prod‖ = ‖(ω (a σ) : ℂ)‖
   twist : ∀ x χ hχ, Good x → rc (x.tw χ hχ) = (rc x).lpChar (rc (.ofChar χ hχ))
-  central : ∀ (x : IrrGL (w.adicCompletion E)) ω, Good x → HasCentralChar x.rep ω →
+  central : ∀ (x : IrrGL (k := w.adicCompletion E)) ω, Good x → HasCentralChar x.rep ω →
     ∀ σ, ((rc x).eig σ).prod = (ω (a σ) : ℂ)
   dual : ∀ (n : ℕ) (π π' : IrrRep (GL (Fin n) (w.adicCompletion E))), Good (cls π) →
     Nonempty (π'.ρ.Equiv (contra π.ρ)) → rc (cls π') = (rc (cls π)).lpDual
@@ -70,18 +73,6 @@ structure LawsT (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a)
   depth : ∀ x, Good x → fixed x.rep (KOne (w.adicCompletion E) (Fin x.1)) ≠ ⊥ → IsTameWD (rc x)
   type : TypeLaw h rc
 
-variable (h) in
-
-def IsRecT (rc : IrrGL (w.adicCompletion E) → WD h) : Prop := ∃ a ha, LawsT (h := h) a ha rc
-
-def RecTExists : Prop :=
-  ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w), ∃ rc, IsRecT h rc
-
-def RecTUnique : Prop :=
-  ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (rc rc' : IrrGL (w.adicCompletion E) → WD h),
-    IsRecT h rc → IsRecT h rc' → ∀ x, Good x → rc x = rc' x
 
 end GlobalTheory.RecT
 

@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.CartanPos
-import Development.WeilBound.ThetaLifts.LeviDeterminants.ExistsGaussBox
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.CartanPos
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.ExistsGaussBox
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,7 @@ theorem omega_co (M : Model σ X W) (u u') : omega σ X W u u' = lOf M u' (aOf M
 
 theorem lin_glue {κ κ₀ κ₁ : Type} [Fintype κ] [Fintype κ₀] [Fintype κ₁] (ε : κ ≃ κ₀ ⊕ κ₁) (q a : κ₀ → mixedEmbedding.mixedSpace F)
     (c y : κ₁ → mixedEmbedding.mixedSpace F) : linForm (glue ε q c) (glue ε a y) = linForm q a + linForm c y := by
-  rw [linForm_apply, linForm_apply, linForm_apply, ← map_add]
+  rw [linForm_apply, linForm_apply, linForm_apply, ← map_add (f := _)]
   exact congrArg _ (glue_dot ε a q y c)
 
 theorem lin_zero {κ : Type} [Fintype κ] : linForm (0 : κ → mixedEmbedding.mixedSpace F) = 0 := by
@@ -71,7 +75,8 @@ theorem map_pure (w : InfinitePlace F) (a : Fin n → AE F E) (b : Fin d → E) 
     (Matrix.vecMulVec a (incV F b)).map (piInf (B.emb w)) =
       Matrix.vecMulVec (fun i => piInf (B.emb w) (a i)) fun i => (B.emb w).1 (b i) := by
   ext i j
-  simp only [Matrix.map_apply, Matrix.vecMulVec_apply, map_mul, incV, GlobalTheory.CompanionTheory.Ar.RT.Lie.piInf_inclR]
+  simp only [Matrix.map_apply, Matrix.vecMulVec_apply, map_mul, incV]
+  simp [piInf, inclR, compInf, infEmb]
 
 theorem at_pure {a : Fin n → AE F E} (ha : At (evI F) a) (b : Fin d → AE F E) : At (evI F) (Matrix.vecMulVec a b) := fun t ht => by
   rw [← Matrix.smul_vecMulVec, ha t ht, Matrix.zero_vecMulVec]
@@ -100,7 +105,7 @@ theorem decomp (hW : W.IsSkew σ B r' s') (hH : H.IsAdapted σ B W W₁ i₀ i�
 theorem rel_iota (hH : H.IsAdapted σ B W W₁ i₀ i₁) {e} {z z' : Matrix (Fin n) (Fin d₁) (AE F E)} (h : Rel B X W₁ e z z') :
     Rel B X W e (z * (incM F H.ι)ᵀ) (z' * (incM F H.ι)ᵀ) := fun w => by
   have h1 : ((incM F H.ι)ᵀ).map (piInf (B.emb w)) = (H.ι.map (B.emb w).1)ᵀ := by
-    ext i j; exact GlobalTheory.CompanionTheory.Ar.RT.Lie.piInf_inclR _ _
+    ext i j; simp [incM, piInf, inclR, compInf, infEmb]
   have h2 := congrArg Matrix.transpose (hH.cartan w).1
   rw [Matrix.transpose_mul, Matrix.transpose_mul] at h2
   rw [Matrix.map_mul, Matrix.map_mul, h1, h w, Matrix.smul_mul]
@@ -292,7 +297,7 @@ theorem exists_lift (hB : B.IsGood σ) (hX : X.IsHerm σ B r s) (hW : W.IsSkew �
   have hs : ∀ t t', linForm (q t') t = linForm (q t) t' := fun t t' => sym (hr t) (hr t') (hp t) (hp t') (hq' t) (hq' t')
   let Q : (κ₀ → mixedEmbedding.mixedSpace F) →ₗ[ℝ] (κ₀ → mixedEmbedding.mixedSpace F) →ₗ[ℝ] ℝ :=
     LinearMap.mk₂ ℝ (fun t t' => linForm (q t') t) (fun _ _ _ => map_add _ _ _) (fun _ _ _ => map_smul _ _ _)
-      (fun t _ _ => by rw [hs, map_add, hs _ t, hs _ t]) fun c t _ => by rw [hs, map_smul, hs _ t]
+      (fun t _ _ => by rw [hs, map_add (f := _), hs _ t, hs _ t]) fun c t _ => by rw [hs, map_smul, hs _ t]
   have hy : H.y ≠ 0 := fun h0 => by simpa [h0, form, dotProduct, Matrix.mulVec] using hH.xy
   obtain ⟨f, f0, f1, f2⟩ := exists_gauss_box ε Q hs (fun t ht => by
     obtain ⟨p, h1, h2⟩ := omega_pure hB hX hW (b t) hy (hr t)

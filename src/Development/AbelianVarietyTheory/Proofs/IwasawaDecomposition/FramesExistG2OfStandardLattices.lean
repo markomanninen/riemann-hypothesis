@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.FrameExistence.NormalFrameClauses
-import Formalism.LocalToGlobal.IndefiniteReal.LinksLemmas
-import Formalism.LocalToGlobal.IndefiniteReal.FrameExistence.FramesExistOfDiagonalTypePlaces
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDecompChainSpaceDefiniteAddNormalFrame
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsAuxiliaryHyperbolicVectors
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CompletelySplitPrimeHostPlaceProperties
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEqMulOfResSNeOne
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.FrameExistence.NormalFrameClauses
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksLemmas
+public import Formalism.LocalToGlobal.IndefiniteReal.FrameExistence.FramesExistOfDiagonalTypePlaces
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDecompChainSpaceDefiniteAddNormalFrame
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsAuxiliaryHyperbolicVectors
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CompletelySplitPrimeHostPlaceProperties
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEqMulOfResSNeOne
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
@@ -27,15 +31,6 @@ def normalFrameVectorSequences (D : D7) : ∀ j : ℕ, (ℕ → (D.sp.Y j).V) ×
         Classical.choose (Classical.choose_spec (GlobalTheory.StandardGramVectors.exists_auxiliaryHyperbolicVectors D (j + 1) h)),
         Classical.choose (Classical.choose_spec (Classical.choose_spec (GlobalTheory.StandardGramVectors.exists_auxiliaryHyperbolicVectors D (j + 1) h))))
     else (0, 0, 0)
-
-theorem normal_frame_level_conditions_at (j : ℕ) (hj : j < D.R.m) : IsAuxiliaryHeckeCharacter D j (normalFrameVectorSequences D j).1 (normalFrameVectorSequences D j).2.1 (normalFrameVectorSequences D j).2.2 := by
-  cases j with
-  | zero => exact isAuxiliaryHyperbolicPart_initialChainSpace
-  | succ j =>
-    simp only [normalFrameVectorSequences, dif_pos hj]
-    exact Classical.choose_spec (Classical.choose_spec (Classical.choose_spec (GlobalTheory.StandardGramVectors.exists_auxiliaryHyperbolicVectors D (j + 1) hj)))
-
-def gam (D : D7) (j : ℕ) : GL (Fin (D.sp.X j).rank) (Ef D) := Classical.choose (exists_base (D.sp.X j))
 
 theorem crdLat_eq_l0X (V : HSp D) : Formalism.L2.Herm.crdLat V V.L0 = l0X V := by
   ext x
@@ -251,12 +246,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.ChainMatrices GlobalTheory.StdFrame
 
 variable {D : D7}
 
-def eC (D : D7) (j i : ℕ) : Fin (D.sp.Y j).rank → D.host.E := ⇑((D.sp.Y j).frame.repr ((normalFrameVectorSequences D j).1 i))
-
-def evC (D : D7) (j i : ℕ) : Fin (D.sp.Y j).rank → D.host.E := ⇑((D.sp.Y j).frame.repr ((normalFrameVectorSequences D j).2.1 i))
-
-def zC (D : D7) (j : ℕ) : Fin (D.sp.Y j).rank → D.host.E := ⇑((D.sp.Y j).frame.repr (normalFrameVectorSequences D j).2.2)
-
 theorem even_iff_odd_c {j : ℕ} (hj : j < D.R.m) : Even j ↔ (D.R.m - 1 - j) % 2 = 1 := by
   obtain ⟨a, ha⟩ := D.R.m_even
   rw [Nat.even_iff]
@@ -284,32 +273,6 @@ theorem hT_swap {j : ℕ} (x y : (D.sp.Y j).V) {c : D.host.E} (h : (D.sp.Y j).hT
     (D.sp.Y j).hT x y = c := by
   rw [← (D.sp.Y j).herm.eq y x, h]
   exact hc
-
-theorem normal_frame_level_conditions_C : IsAdaptedVectorSystem (eC D) (evC D) (zC D) := by
-  intro j hj
-  obtain ⟨hA, hB, hC⟩ := normal_frame_level_conditions_at j hj
-  have hpar := even_iff_odd_c hj
-  simp only [nAux] at hA hB hC
-  simp only [eC, evC, zC, Seed.Frm.vecY_repr]
-  refine ⟨fun i hi l hl => ⟨?_, ?_, ?_⟩, fun hc => ?_, fun x i' hi' => ?_⟩
-  · refine hT_swap _ _ (hA i hi l hl).2.2 ?_
-    split_ifs <;> simp
-  · exact (hA l hl i hi).1
-  · exact (hA l hl i hi).2.1
-  · obtain ⟨h1, -, h3⟩ := hC (hpar.2 hc)
-    exact ⟨h1, fun i hi => ⟨(h3 i hi).1, (h3 i hi).2⟩⟩
-  · unfold adaptedVector
-    split_ifs with h1 h2
-    · simp only [eC, Seed.Frm.vecY_repr]
-      exact (hB _ h1 x).1
-    · simp only [zC, Seed.Frm.vecY_repr]
-      exact (hC (hpar.2 h2.1)).2.1 x
-    · simp only [evC, Seed.Frm.vecY_repr]
-      refine (hB _ ?_ x).2
-      by_cases hc : (D.R.m - 1 - j) % 2 = 1
-      · have : i' ≠ (D.R.m - 1 - j) / 2 := fun h => h2 ⟨hc, h⟩
-        omega
-      · omega
 
 end GlobalTheory.NormalFramesLevels
 

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.PotentialsBoundedRegSettingEqReference
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.BoundedStatements
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.PotentialsBoundedRegSettingEqReference
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.BoundedStatements
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
 open GroundTheory.Heights₂.Heights.LowerBoundFree GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp
@@ -105,9 +110,6 @@ theorem cx_add (v w : Fin 2 → ℤ) : cx (v + w) = cx v + cx w := by
   apply Complex.ext <;> simp [cx]
 
 theorem cx_smul (a : ℤ) (v : Fin 2 → ℤ) : cx (a • v) = (a : ℂ) * cx v := by
-  apply Complex.ext <;> simp [cx]
-
-theorem cx_zero : cx 0 = 0 := by
   apply Complex.ext <;> simp [cx]
 
 theorem normSq_cx (v : Fin 2 → ℤ) : Complex.normSq (cx v) = (v 0 : ℝ) ^ 2 + (v 1 : ℝ) ^ 2 := by
@@ -226,7 +228,7 @@ theorem scaledCusp_Nz [Nonempty Ψ] (D : ComponentData II Ψ K J Ω E) {I : Subm
       simp only [hg, Finset.prod_const, Finset.card_univ, mul_pow, ← pow_mul]
       ring
   obtain ⟨c, hc, h⟩ := key _ _ hex.choose_spec.choose_spec
-  exact ⟨c, hc, fun l hl z => by rw [CuspData.Nz, dif_pos hex]; exact h l hl z⟩
+  exact ⟨c, hc, fun l hl z => by rw [CuspData.Nz, dite_eq_left hex]; exact h l hl z⟩
 
 theorem exists_iso_line : ∃ I : Submodule ℤ (Fin 2 → ℤ), I ≠ ⊥ ∧ IsSaturated I ∧ IsIsoSub sympForm I := by
   refine ⟨LinearMap.ker (sympForm ![1, 0]), ?_, ?_, ?_⟩

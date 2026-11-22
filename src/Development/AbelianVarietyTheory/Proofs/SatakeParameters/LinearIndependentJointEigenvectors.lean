@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.JointEigenvectorsIndependentSatakeParameters
 
@@ -24,7 +28,8 @@ theorem linearIndependent_jointEigenvectors {J V : Type} [AddCommGroup V] [Modul
       obtain ⟨j, hj⟩ := Function.ne_iff.mp hne
       have e2 : ∑ i ∈ s, (g i * (i : J → ℂ) j) • v i = -((g a * (a : J → ℂ) j) • v a) := by
         have := congrArg (T j) e1
-        simpa [map_sum, map_smul, hT, smul_smul] using this
+        set_option synthInstance.maxHeartbeats 100000 in
+          simpa [map_sum, map_smul, hT, smul_smul] using this
       have e3 : ∑ i ∈ s, ((a : J → ℂ) j * g i) • v i = -(((a : J → ℂ) j * g a) • v a) := by
         have := congrArg (fun x => (a : J → ℂ) j • x) e1
         simpa [Finset.smul_sum, smul_smul] using this

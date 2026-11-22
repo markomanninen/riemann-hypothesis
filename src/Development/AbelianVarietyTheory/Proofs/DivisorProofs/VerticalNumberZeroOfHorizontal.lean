@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTotalBiChains
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AwOCommDStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DTCompDTStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BisimplicialOperatorChainsAcyclicPositiveDegreeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTotalBiChains
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AwOCommDStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DTCompDTStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BisimplicialOperatorChainsAcyclicPositiveDegreeStatement
+
+@[expose] public section
 
 open CategoryTheory Limits Opposite AlgebraicTopology GlobalTheory.EZ Finset
 

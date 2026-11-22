@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.HermitianForms.PsiZeroNontrivialCharacter
+module
+
+public import Formalism.LocalToGlobal.HermitianForms.PsiZeroNontrivialCharacter
+
+@[expose] public section
 
 noncomputable section
 

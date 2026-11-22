@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PairingDivisors.StatementA
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
+module
+
+public import Mathlib
+public import Formalism.PairingDivisors.StatementA
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.CMVal
 
@@ -8,8 +12,8 @@ namespace GlobalTheory.CMVal.TermUnit
 
 variable {E : Type} [Field E] [NumberField E] {I : Type} [Fintype I]
 
-omit [NumberField E] [Fintype I] in
 
+omit [NumberField E] [Fintype I] in
 theorem bijective_mk {φ : I → E →+* ℂ} (h : IsCMType φ) :
     Function.Bijective (fun i => InfinitePlace.mk (φ i)) := by
   constructor

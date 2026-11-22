@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsZCombLimit
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PThmAExpand
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PGenericFibreDim
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRat
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsZCombLimit
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PThmAExpand
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PGenericFibreDim
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRat
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -108,11 +113,13 @@ theorem eq_famExt_of_position (Q : HermLine ι → Prop) (e : Fin 2 → HermLine
       congrArg (Function.update (fun j => if j ∈ T then w else (Pi.single (t j) 1 : Fin 2 → ℝ)) a) hw,
       MultilinearMap.map_update_add, MultilinearMap.map_update_smul, MultilinearMap.map_update_smul, hV0, hV1,
       smul_eq_mul, smul_eq_mul]
+    rfl
 
 theorem famExt_const_smul (e : Fin 2 → HermLine ι) (c : ℝ) (w : Fin 2 → ℝ) :
     famExt J P n e (fun _ => c • w) = c ^ n * famExt J P n e (fun _ => w) := by
   rw [show (fun _ : Fin n => c • w) = fun i => (fun _ : Fin n => c) i • (fun _ : Fin n => w) i from rfl,
     MultilinearMap.map_smul_univ, smul_eq_mul, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
+  rfl
 
 theorem exists_delta (e : Fin 2 → HermLine ι) (k : ℕ) (ε : ℝ) (hε : 0 < ε) :
     ∃ δ : ℝ, 0 < δ ∧ ∀ t : ℝ, |t| < δ →
@@ -159,8 +166,8 @@ theorem famExt_div (e : Fin 2 → HermLine ι) (k p q : ℕ) (hq : 0 < q) :
 
 end ZCombLimit
 
-open GroundTheory.Heights₂.Heights.NumbersDVR in
 
+open GroundTheory.Heights₂.Heights.NumbersDVR in
 theorem ZCombLimit.genericFibre {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} [∀ k, Fintype (ι k)]
     {P : Ideal (ReciprocityTheory.ChartRestriction.G.Geo.MRing ι)} {d : ℕ} (hP : IsArithVar P (d + 1)) :
     GroundTheory.Heights₂.Heights.NumbersDVR.IsMultiProjPrime (P.map (MvPolynomial.map (Int.castRingHom ℚ))) ∧

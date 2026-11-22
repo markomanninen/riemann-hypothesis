@@ -1,4 +1,8 @@
-import Formalism.FormalGroupWitt.SubstInjectiveV
+module
+
+public import Formalism.FormalGroupWitt.SubstInjectiveV
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,8 @@ lemma coeff_split {ι : Type v} [Fintype ι] {τ : Type w} (p q : ℕ) (hq : q �
         ∑ k, M j k • MvPowerSeries.expand q hq (MvPowerSeries.map σ (f k))) +
       (p : K)⁻¹ * ∑ k, M j k *
         MvPowerSeries.coeff n (MvPowerSeries.expand q hq (MvPowerSeries.map σ (f k))) := by
-  simp only [map_sub, map_smul, map_sum, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_smul, map_sum, smul_eq_mul]
   ring
 
 theorem main : Formalism.FG.CoeffBoundV.{u, v, w} := by

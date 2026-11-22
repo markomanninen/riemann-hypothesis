@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ComparisonZeroEmbedding
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.YvRatOfValRat
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ComparisonZeroEmbedding
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.YvRatOfValRat
+
+@[expose] public section
 
 open Formalism.MainNotions.G Formalism.BasicNotions NumberField
 

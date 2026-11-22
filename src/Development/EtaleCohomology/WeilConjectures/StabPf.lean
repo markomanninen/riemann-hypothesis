@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.WeilConjectures.ContinCut
+module
+
+public import Development.EtaleCohomology.WeilConjectures.ContinCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.Et
@@ -24,11 +28,5 @@ theorem galMap_proj (σ : Ω ≃ₐ[K] Ω) (hσ : σ ∈ L.fixingSubgroup) : gal
     exact (mem_fixingSubgroup_iff _).1 hσ x x.2
 
 end Proj
-
-def Desc : Prop := Base → ∀ (l : ℕ) [Fact l.Prime] (K : Type) [Field K], (l : K) ≠ 0 →
-  ∀ {X : Scheme.{0}} (p : X ⟶ Sp K), IsProper p → ∀ (n : ℤ) (k : ℕ)
-    (y : HtL l k (sch.obj (geom (AlgebraicClosure K) p)) n 0),
-    ∃ (L : IntermediateField K (AlgebraicClosure K)) (_ : FiniteDimensional K L)
-      (z : HtL l k (sch.obj (geom L p)) n 0), pull _ (sch.map (proj L p)) _ n z = y
 
 end LateralTheory.EWeil.StabPf

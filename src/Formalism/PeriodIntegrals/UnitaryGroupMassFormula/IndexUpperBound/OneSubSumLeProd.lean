@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.IndexUBound
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.IndexUBound
+
+@[expose] public section
 
 namespace PI.UnitaryGroupMassFormula.IndexUBound
 
@@ -15,7 +19,7 @@ theorem one_sub_sum_le_prod {ι : Type*} [DecidableEq ι] (s : Finset ι) (P b :
     have hm : ∀ i ∈ s, i ∈ insert a s := fun i hi => Finset.mem_insert_of_mem hi
     have hQ0 : 0 ≤ ∏ i ∈ s, P i := Finset.prod_nonneg fun i hi => hP0 i (hm i hi)
     have hQ1 : ∏ i ∈ s, P i ≤ 1 :=
-      Finset.prod_le_one (fun i hi => hP0 i (hm i hi)) (fun i hi => hP1 i (hm i hi))
+      Finset.prod_le_one₀ (fun i hi => hP0 i (hm i hi)) (fun i hi => hP1 i (hm i hi))
     have h := ih (fun i hi => hP0 i (hm i hi)) (fun i hi => hP1 i (hm i hi))
       (fun i hi => hb i (hm i hi)) (fun i hi => hPb i (hm i hi))
     have ha1 := hP1 a (Finset.mem_insert_self a s)
@@ -49,7 +53,7 @@ theorem inner_bounds (g : ℝ) (hg : 2 ≤ g) (r : ℕ) :
   have hpow1 : ∀ i : ℕ, x ^ i ≤ 1 := fun i => pow_le_one₀ hx0.le hx1
   have hf0 : ∀ i ∈ Ico 1 r, 0 ≤ 1 - x ^ i := fun i _ => sub_nonneg.2 (hpow1 i)
   have hf1 : ∀ i ∈ Ico 1 r, 1 - x ^ i ≤ 1 := fun i _ => by linarith [hpow0 i]
-  refine ⟨Finset.prod_nonneg hf0, Finset.prod_le_one hf0 hf1, ?_⟩
+  refine ⟨Finset.prod_nonneg hf0, Finset.prod_le_one₀ hf0 hf1, ?_⟩
   have hS : (∑ i ∈ Ico 1 r, x ^ i) * (g - 1) ≤ 1 := by
     rcases Nat.eq_zero_or_pos r with rfl | hr
     · simp

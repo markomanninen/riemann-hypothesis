@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinMapsOfForall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FromBlocksMem
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IdeleCharacterFinitePlaceComponentEqOfInert
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FromBlocksMem
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IdeleCharacterFinitePlaceComponentEqOfInert
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped TensorProduct Matrix
 
 noncomputable section
@@ -15,7 +20,7 @@ open GlobalTheory.LFun GlobalTheory.Doubling
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem at_det_sub_one {n : ℕ} (v : Pl F) (t : GL (Fin n) (AE F E))
+theorem at_det_sub_one {n : ℕ} (v : Pl (F := F)) (t : GL (Fin n) (AE F E))
     (ht : At (evFin F v) ((t : Matrix (Fin n) (Fin n) (AE F E)) - 1)) :
     At (evFin F v) (((Matrix.GeneralLinearGroup.det t : (AE F E)ˣ) : AE F E) - 1) := by
   intro u hu
@@ -39,7 +44,7 @@ theorem at_det_sub_one {n : ℕ} (v : Pl F) (t : GL (Fin n) (AE F E))
   rw [Algebra.smul_def, Matrix.GeneralLinearGroup.val_det_apply]
   exact this
 
-theorem compFin_algebraMap (u : Pl F) (a : AF F) :
+theorem compFin_algebraMap (u : Pl (F := F)) (a : AF F) :
     compFin F E u (algebraMap (AF F) (AE F E) a) = algebraMap (Fv F u) (Fv F u ⊗[F] E) (evFin F u a) := by
   simp [compFin, Algebra.TensorProduct.algebraMap_apply]
 
@@ -47,17 +52,17 @@ theorem compInf_algebraMap (w : InfinitePlace F) (a : AF F) :
     compInf F E w (algebraMap (AF F) (AE F E) a) = algebraMap w.Completion (w.Completion ⊗[F] E) (evInf F w a) := by
   simp [compInf, Algebra.TensorProduct.algebraMap_apply]
 
-theorem evFin_inFin_self (v : Pl F) (x : Fv F v) : evFin F v (inFin v x) = x :=
+theorem evFin_inFin_self (v : Pl (F := F)) (x : Fv F v) : evFin F v (inFin v x) = x :=
   evalV_singleFin_self v x
 
-theorem evFin_inFin_ne {u v : Pl F} (h : u ≠ v) (x : Fv F v) : evFin F u (inFin v x) = 0 :=
+theorem evFin_inFin_ne {u v : Pl (F := F)} (h : u ≠ v) (x : Fv F v) : evFin F u (inFin v x) = 0 :=
   evalV_singleFin_ne h x
 
-theorem evInf_inFin (w : InfinitePlace F) (v : Pl F) (x : Fv F v) : evInf F w (inFin v x) = 0 := by
+theorem evInf_inFin (w : InfinitePlace F) (v : Pl (F := F)) (x : Fv F v) : evInf F w (inFin v x) = 0 := by
   show GlobalTheory.AutFunCompare.evW w 0 = 0
   exact map_zero _
 
-theorem at_inFin_one (v : Pl F) : At (evFin F v) (inFin v (1 : Fv F v)) := by
+theorem at_inFin_one (v : Pl (F := F)) : At (evFin F v) (inFin v (1 : Fv F v)) := by
   intro u hu
   rw [smul_eq_mul]
   refine Prod.ext (mul_zero _) (af_ext fun u' => ?_)
@@ -68,7 +73,7 @@ theorem at_inFin_one (v : Pl F) : At (evFin F v) (inFin v (1 : Fv F v)) := by
     exact mul_eq_zero_of_left hu _
   · rw [evalV_singleFin_ne e, mul_zero]
 
-theorem eq_ideleAt {v : Pl F} {z : (AE F E)ˣ} (hz : At (evFin F v) ((z : AE F E) - 1)) :
+theorem eq_ideleAt {v : Pl (F := F)} {z : (AE F E)ˣ} (hz : At (evFin F v) ((z : AE F E) - 1)) :
     z = ideleAt F E v (unitFin F E v z) := by
   set e : AF F := inFin v 1
   have key := hz (1 - e) (by rw [map_sub, map_one, evFin_inFin_self, sub_self])
@@ -92,7 +97,7 @@ theorem eq_ideleAt {v : Pl F} {z : (AE F E)ˣ} (hz : At (evFin F v) ((z : AE F E
 
 section Lat
 
-variable {v : Pl F} {w : HeightOneSpectrum (𝓞 E)} (h : w.under (𝓞 F) = v)
+variable {v : Pl (F := F)} {w : HeightOneSpectrum (𝓞 E)} (h : w.under (𝓞 F) = v)
 
 def piW' : AE F E →+* w.adicCompletion E := (toCompl h).comp (compFin F E v)
 
@@ -175,7 +180,7 @@ theorem valued_eq_one_of_isUnit {c : Formalism.UG.Ov E w} (hc : IsUnit c) : Valu
   calc (1 : _) = _ := h3.symm
     _ ≤ Valued.v (c : w.adicCompletion E) := mul_le_of_le_one_right' h2
 
-theorem valued_det_eq_one (hw : Formalism.UG.IsInertAt F E v w) {d : ℕ} (W : Spc F E d) (hL : W.L.IsLattice E)
+theorem valued_det_eq_one (hw : Formalism.UG.IsInertAt F E v w) {d : ℕ} (W : Spc F E d) (hL : W.L.IsFullLattice E)
     (t : GL (Fin d) (AE F E))
     (ht : ∀ z ∈ GlobalTheory.InertSph.latAt W v, (t : Matrix (Fin d) (Fin d) (AE F E)) *ᵥ z ∈ GlobalTheory.InertSph.latAt W v ∧
       ((t⁻¹ : GL (Fin d) (AE F E)) : Matrix (Fin d) (Fin d) (AE F E)) *ᵥ z ∈ GlobalTheory.InertSph.latAt W v) :
@@ -189,7 +194,8 @@ theorem valued_det_eq_one (hw : Formalism.UG.IsInertAt F E v w) {d : ℕ} (W : S
     refine ⟨fun hz => hT1 ▸ mulVec_mem_latAt h W _ (fun z hz => (ht z hz).1) z hz, fun hz => ?_⟩
     have := mulVec_mem_latAt h W _ (fun z hz => (ht z hz).2) _ hz
     rwa [← hT2, Matrix.mulVec_mulVec, ← Units.val_mul, inv_mul_cancel, Units.val_one, Matrix.one_mulVec] at this
-  obtain ⟨a, ha⟩ := InertChart.exists_isFrameAt hw hL.fg hL.span_eq_top
+  obtain ⟨a, ha⟩ := InertChart.exists_isFrameAt hw hL.fg
+    (Submodule.IsFullLattice.span_eq_top (self := hL))
   obtain ⟨m, hm⟩ := ((InertChart.isFrameAt_mul ha (one_mem _)).2 T).1 hstab
   have hdet : Matrix.GeneralLinearGroup.det (a⁻¹ * T * a) = Matrix.GeneralLinearGroup.det T := by
     rw [map_mul, map_mul, map_inv, mul_comm _ (Matrix.GeneralLinearGroup.det a), ← mul_assoc, mul_inv_cancel, one_mul]
@@ -210,7 +216,7 @@ end GlobalTheory.InertDetChr
 
 theorem GlobalTheory.InertDetChr.alpha_det_eq_one : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E)
     (a a' : ℕ) (G : Geo σ a a') (X : Chars F E) (om : Rep σ G.V G.W) (om' : Rep σ G.V' G.W), IsTriple B G X om om' →
-    ∀ (v : Pl F) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w → v ∉ X.T →
+    ∀ (v : Pl (F := F)) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w → v ∉ X.T →
     ∀ t : GL (Fin (a + a')) (AE F E), (At (evFin F v) ((t : Matrix (Fin (a + a')) (Fin (a + a')) (AE F E)) - 1) ∧
       ∀ z ∈ GlobalTheory.InertSph.latAt G.W v, (t : Matrix (Fin (a + a')) (Fin (a + a')) (AE F E)) *ᵥ z ∈ GlobalTheory.InertSph.latAt G.W v ∧
         ((t⁻¹ : GL (Fin (a + a')) (AE F E)) : Matrix (Fin (a + a')) (Fin (a + a')) (AE F E)) *ᵥ z ∈ GlobalTheory.InertSph.latAt G.W v) →
@@ -221,7 +227,7 @@ theorem GlobalTheory.InertDetChr.alpha_det_eq_one : ∀ (F E : Type) [Field F] [
   have e1 := GlobalTheory.InertDetChr.eq_ideleAt (GlobalTheory.InertDetChr.at_det_sub_one v t ht1)
   rw [e1, GlobalTheory.LFun.ideleAt_eq_locIdele_of_isInertAt h hw]
   have hunr : GlobalTheory.LFun.UnrAt X.α w := hTr.chars.unrα w (by
-    show ¬ (w.under (𝓞 F) ∈ (X.T : Set (Pl F)))
+    show ¬ (w.under (𝓞 F) ∈ (X.T : Set (Pl (F := F))))
     rw [h]; exact_mod_cast hvT)
   have hv1 := GlobalTheory.InertDetChr.valued_det_eq_one h hw G.W hTr.geo.hW.lat t ht2
   set y : (w.adicCompletion E)ˣ :=

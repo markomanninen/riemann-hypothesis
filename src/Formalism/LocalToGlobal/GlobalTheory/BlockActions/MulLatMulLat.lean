@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.FixOrthogonalVector
-import Formalism.LocalToGlobal.HermitianForms.TiedSym
-import Formalism.LocalToGlobal.HermitianForms.TiedBrUnit
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ExtendOneMulVecSingleLast
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ArchimedeanSignatureMatchingOfTrivialBranchingSymm
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.FixOrthogonalVector
+public import Formalism.LocalToGlobal.HermitianForms.TiedSym
+public import Formalism.LocalToGlobal.HermitianForms.TiedBrUnit
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ExtendOneMulVecSingleLast
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ArchimedeanSignatureMatchingOfTrivialBranchingSymm
+
+@[expose] public section
 
 noncomputable section
 

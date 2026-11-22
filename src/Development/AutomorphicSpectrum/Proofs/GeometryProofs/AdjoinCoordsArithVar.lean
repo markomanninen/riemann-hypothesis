@@ -1,21 +1,25 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSncModel
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ValRPullbackTwistingSheafTransition
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsReducedAlgebraOfSmoothOfIsNoetherianRing
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ZarhinBundleKernelFirstCoordEquations
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SncChartPoint
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ProjectivePointImageReducedStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StandardSmoothBasicOpenStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LiftGenericPointOverIsoOpenStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ProjectivePointCoordsExistStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegularValuesInAdjoinedFieldStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SegreProductAffineChartStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SncChartOfSmoothCoordsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsStandardSmoothLocalizationStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StandardSmoothChartOfNonzeroStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HomogeneousFormNonvanishingPointStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSncModel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ValRPullbackTwistingSheafTransition
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsReducedAlgebraOfSmoothOfIsNoetherianRing
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ZarhinBundleKernelFirstCoordEquations
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SncChartPoint
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ProjectivePointImageReducedStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StandardSmoothBasicOpenStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LiftGenericPointOverIsoOpenStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ProjectivePointCoordsExistStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegularValuesInAdjoinedFieldStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SegreProductAffineChartStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SncChartOfSmoothCoordsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsStandardSmoothLocalizationStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StandardSmoothChartOfNonzeroStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HomogeneousFormNonvanishingPointStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,7 +82,58 @@ theorem form_section {N : ℕ} {Z : Scheme.{0}} (u : Z ⟶ PSpace ℚ N) (η : S
   · have ha : x a ≠ 0 := ne_zero_of_le hu hW hi
     have h : ⊤ ≤ point ℚ x hx ⁻¹ᵁ chart ℚ N a := (le_point_preimage_iff a).2 ha
     rw [valR_appLE η u hi hW, hu, formOn_eq_aeval, valR_eq _ _ h]
-    exact (valMap_eval₂Hom point_str h _ G).trans (by simp only [valR_point_ratio ha])
+    apply (valMap_eval₂Hom point_str h _ G).trans
+    have heq : (fun k => valR (point ℚ x hx) (chart ℚ N a)
+        (ratioOn (chart ℚ N a) a le_rfl k)) = (fun k => x k / x a) := by
+      funext k
+      change valR (point ℚ x hx) (chart ℚ N a) (ratio ℚ N a k) = x k / x a
+      have hu : IsUnit ((aeval x).toRingHom (X a : MvPolynomial (Fin (N + 1)) ℚ)) := by simpa using ha
+      have hpre : ⊤ ≤ Proj.awayι (grading ℚ N) (X a) (X_mem ℚ N a) Nat.one_pos ⁻¹ᵁ chart ℚ N a := by
+        have e1 := Scheme.Hom.preimage_opensRange
+          (Proj.awayι (grading ℚ N) (X a) (X_mem ℚ N a) Nat.one_pos)
+        rw [Proj.opensRange_awayι] at e1
+        exact e1.ge
+      have hmem : (X k : MvPolynomial (Fin (N + 1)) ℚ) ∈ grading ℚ N (1 • 1) := by
+        simpa using X_mem ℚ N k
+      have hA : ratio ℚ N a k = (Proj.awayToSection (grading ℚ N) (X a)).hom
+          (HomogeneousLocalization.Away.mk (grading ℚ N) (X_mem ℚ N a) 1 (X k) hmem) := by
+        rw [ProjFrac.awayToSection_mk]
+        exact ProjFrac.frac_eq (by ring)
+      have key : Proj.awayToSection (grading ℚ N) (X a) ≫
+          (Proj.awayι (grading ℚ N) (X a) (X_mem ℚ N a) Nat.one_pos).appLE (chart ℚ N a) ⊤ hpre =
+          (Scheme.ΓSpecIso _).inv := by
+        set A := Proj.awayι (grading ℚ N) (X a) (X_mem ℚ N a) Nat.one_pos
+        set e := Proj.basicOpenIsoSpec (grading ℚ N) (X a) (X_mem ℚ N a) Nat.one_pos
+        have : IsIso (Proj.awayToSection (grading ℚ N) (X a)) :=
+          (Proj.basicOpenIsoAway (grading ℚ N) (X a) (X_mem ℚ N a) Nat.one_pos).isIso_hom
+        have hι : e.hom ≫ A = (chart ℚ N a).ι := by
+          exact Iso.hom_inv_id_assoc e _
+        have gen : ∀ (g : (chart ℚ N a).toScheme ⟶ Proj (grading ℚ N)) (_ : e.hom ≫ A = g)
+            (hle : ⊤ ≤ g ⁻¹ᵁ chart ℚ N a),
+            g.appLE (chart ℚ N a) ⊤ hle = A.appLE (chart ℚ N a) ⊤ hpre ≫ e.hom.appLE ⊤ ⊤ le_rfl := by
+          rintro g rfl hle
+          exact (Scheme.Hom.appLE_comp_appLE e.hom A (chart ℚ N a) ⊤ ⊤ hpre _).symm
+        have h1 := gen _ hι (chart ℚ N a).ι_preimage_self.ge
+        have F1 : e.hom.appLE ⊤ ⊤ le_rfl = (Scheme.ΓSpecIso _).hom ≫
+            Proj.awayToSection (grading ℚ N) (X a) ≫ (chart ℚ N a).topIso.inv := by
+          rw [← Proj.basicOpenToSpec_app_top]
+          rfl
+        have F2 : (chart ℚ N a).ι.appLE (chart ℚ N a) ⊤ (chart ℚ N a).ι_preimage_self.ge =
+            (chart ℚ N a).topIso.inv := by
+          rw [Scheme.Opens.ι_appLE]
+          rfl
+        rw [F2, F1] at h1
+        have h3 : A.appLE (chart ℚ N a) ⊤ hpre ≫ (Scheme.ΓSpecIso _).hom ≫
+            Proj.awayToSection (grading ℚ N) (X a) = 𝟙 _ := by
+          rw [← cancel_mono (chart ℚ N a).topIso.inv, Category.id_comp, Category.assoc, Category.assoc]
+          exact h1.symm
+        rw [← cancel_mono ((Scheme.ΓSpecIso _).hom ≫ Proj.awayToSection (grading ℚ N) (X a)),
+          Category.assoc, h3, Category.comp_id, Iso.inv_hom_id_assoc]
+      rw [point, ProjPoint.ofHom_eq_awayι _ _ _ Nat.one_pos (X_mem ℚ N a) hu,
+        ← valR_appLE _ _ hpre (le_preimage_top _), hA, ← CommRingCat.comp_apply, key, valR_specMap]
+      apply eq_div_of_mul_eq ha
+      simpa using ProjPoint.awayLift_mk_mul (grading ℚ N) ((aeval x).toRingHom) hu (X_mem ℚ N a) 1 (X k) hmem
+    rw [heq]
   · rw [Scheme.basicOpen_appLE, basicOpen_formOn]
     refine le_antisymm (le_inf inf_le_left (inf_le_right.trans (u.preimage_mono inf_le_right)))
       (le_inf inf_le_left ?_)
@@ -146,7 +201,55 @@ theorem snc_of_res (hR : ResKStatement) (N e d : ℕ) (x : Fin (N + 1) → Ω) (
   · have hW : ⊤ ≤ ζ ⁻¹ᵁ ((j ≫ pullback.snd _ _) ⁻¹ᵁ chart ℚ r l) := le_preimage_chart (by simpa using hp₂) hl
     have := val_mem_field p.toImage f U ζ hζ hζU hW₀ h₀ _ hA₀ _ hW
       (pullRatio (j ≫ pullback.snd _ _) _ l le_rfl i)
-    rwa [valR_pullRatio (by simpa using hp₂) hW] at this
+    have hratio : valR (point ℚ x' hx') (chart ℚ r l) (ratio ℚ r l i) = x' i / x' l := by
+      have hu : IsUnit ((aeval x').toRingHom (X l : MvPolynomial (Fin (r + 1)) ℚ)) := by simpa using hl
+      have hpre : ⊤ ≤ Proj.awayι (grading ℚ r) (X l) (X_mem ℚ r l) Nat.one_pos ⁻¹ᵁ chart ℚ r l := by
+        have e1 := Scheme.Hom.preimage_opensRange
+          (Proj.awayι (grading ℚ r) (X l) (X_mem ℚ r l) Nat.one_pos)
+        rw [Proj.opensRange_awayι] at e1
+        exact e1.ge
+      have hmem : (X i : MvPolynomial (Fin (r + 1)) ℚ) ∈ grading ℚ r (1 • 1) := by
+        simpa using X_mem ℚ r i
+      have hA : ratio ℚ r l i = (Proj.awayToSection (grading ℚ r) (X l)).hom
+          (HomogeneousLocalization.Away.mk (grading ℚ r) (X_mem ℚ r l) 1 (X i) hmem) := by
+        rw [ProjFrac.awayToSection_mk]
+        exact ProjFrac.frac_eq (by ring)
+      have key : Proj.awayToSection (grading ℚ r) (X l) ≫
+          (Proj.awayι (grading ℚ r) (X l) (X_mem ℚ r l) Nat.one_pos).appLE (chart ℚ r l) ⊤ hpre =
+          (Scheme.ΓSpecIso _).inv := by
+        set A := Proj.awayι (grading ℚ r) (X l) (X_mem ℚ r l) Nat.one_pos
+        set e := Proj.basicOpenIsoSpec (grading ℚ r) (X l) (X_mem ℚ r l) Nat.one_pos
+        have : IsIso (Proj.awayToSection (grading ℚ r) (X l)) :=
+          (Proj.basicOpenIsoAway (grading ℚ r) (X l) (X_mem ℚ r l) Nat.one_pos).isIso_hom
+        have hι : e.hom ≫ A = (chart ℚ r l).ι := by
+          exact Iso.hom_inv_id_assoc e _
+        have gen : ∀ (g : (chart ℚ r l).toScheme ⟶ Proj (grading ℚ r)) (_ : e.hom ≫ A = g)
+            (hle : ⊤ ≤ g ⁻¹ᵁ chart ℚ r l),
+            g.appLE (chart ℚ r l) ⊤ hle = A.appLE (chart ℚ r l) ⊤ hpre ≫ e.hom.appLE ⊤ ⊤ le_rfl := by
+          rintro g rfl hle
+          exact (Scheme.Hom.appLE_comp_appLE e.hom A (chart ℚ r l) ⊤ ⊤ hpre _).symm
+        have h1 := gen _ hι (chart ℚ r l).ι_preimage_self.ge
+        have F1 : e.hom.appLE ⊤ ⊤ le_rfl = (Scheme.ΓSpecIso _).hom ≫
+            Proj.awayToSection (grading ℚ r) (X l) ≫ (chart ℚ r l).topIso.inv := by
+          rw [← Proj.basicOpenToSpec_app_top]
+          rfl
+        have F2 : (chart ℚ r l).ι.appLE (chart ℚ r l) ⊤ (chart ℚ r l).ι_preimage_self.ge =
+            (chart ℚ r l).topIso.inv := by
+          rw [Scheme.Opens.ι_appLE]
+          rfl
+        rw [F2, F1] at h1
+        have h3 : A.appLE (chart ℚ r l) ⊤ hpre ≫ (Scheme.ΓSpecIso _).hom ≫
+            Proj.awayToSection (grading ℚ r) (X l) = 𝟙 _ := by
+          rw [← cancel_mono (chart ℚ r l).topIso.inv, Category.id_comp, Category.assoc, Category.assoc]
+          exact h1.symm
+        rw [← cancel_mono ((Scheme.ΓSpecIso _).hom ≫ Proj.awayToSection (grading ℚ r) (X l)),
+          Category.assoc, h3, Category.comp_id, Iso.inv_hom_id_assoc]
+      rw [point, ProjPoint.ofHom_eq_awayι _ _ _ Nat.one_pos (X_mem ℚ r l) hu,
+        ← valR_appLE _ _ hpre (le_preimage_top _), hA, ← CommRingCat.comp_apply, key, valR_specMap]
+      apply eq_div_of_mul_eq hl
+      simpa using ProjPoint.awayLift_mk_mul (grading ℚ r) ((aeval x').toRingHom) hu (X_mem ℚ r l) 1 (X i) hmem
+    rw [pullRatio, valR_appLE ζ (j ≫ pullback.snd _ _) le_rfl hW, hp₂, hratio] at this
+    exact this
   · obtain ⟨hWa, hW, hAW⟩ := prod_chart j ζ x hx x' hx' hp₁ hp₂ a l ha hl
     obtain ⟨σ, hσ, hb⟩ := form_section (j ≫ pullback.fst _ _) ζ x hx (by simpa using hp₁) hW inf_le_left hG
     rw [← hσ]

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.AdelicCompactOpens.UniROfUniRT
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightDualUniqueness.SelfInjective
+module
+
+public import Formalism.LocalToGlobal.AdelicCompactOpens.UniROfUniRT
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightDualUniqueness.SelfInjective
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.Aut Formalism.L2.NG
 

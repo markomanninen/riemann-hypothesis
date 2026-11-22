@@ -1,6 +1,10 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.DzTame
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.DzTame
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+
+@[expose] public section
 
 noncomputable section
 

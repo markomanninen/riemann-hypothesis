@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.ASmooth
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.IsNormAlong
-import GroundTheory.AutomorphicForms.SatakeNormalized
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ASmooth
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.IsNormAlong
+public import GroundTheory.AutomorphicForms.SatakeNormalized
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ section One
 
 variable {K : Type} [Field K] [NumberField K] {n : ℕ}
 
-open Classical in
 
+open Classical in
 def conv (ν : Measure (archGroup K n)) (β γ : TI K n) : TI K n :=
   if h : ∃ δ : TI K n, ∀ g, δ g = ∫ x, β x * γ (x⁻¹ * g) ∂ν then h.choose else 0
 
@@ -35,7 +39,7 @@ def IsSph (w : Pl K) (p : MvPolynomial (Fin n) ℂ) (h : GL (Fin n) (w.adicCompl
     (m : Measure (GL (Fin n) (w.adicCompletion K))) (_ : m.IsHaarMeasure),
     m (GLnLocal.integralGL (w.adicCompletion K) n) = 1 ∧ ∃ H : SphericalHecke m (F := w.adicCompletion K) (n := n),
       (∀ x, (H : HeckeAlgebra m) x = h x) ∧
-        satakeTransform m H = polyEmb n (aeval (fun i : Fin n => esymm (Fin n) ℂ (i + 1)) p)
+        satakeTransform m H = polyEmb (n := n) (aeval (fun i : Fin n => esymm (Fin n) ℂ (i + 1)) p)
 
 def iwCoset (w : Pl K) (ν : Fin n → ℤ) : Set (GL (Fin n) (w.adicCompletion K)) :=
   {g | ∃ a ∈ GLnLocal.iwahori (w.adicCompletion K) n, ∃ b ∈ GLnLocal.iwahori (w.adicCompletion K) n,
@@ -49,7 +53,7 @@ def levF (lev : ∀ v : Pl K, Subgroup (GL (Fin n) (v.adicCompletion K))) : Subg
   inv_mem' {a} ha v := by
     rw [map_inv, finAt_inv]; exact inv_mem (ha v)
 
-def sphOp (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (w : Pl K) (h : GL (Fin n) (w.adicCompletion K) → ℂ) : LL μ →L[ℂ] LL μ :=
+def sphOp (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (w : Pl K) (h : GL (Fin n) (w.adicCompletion K) → ℂ) : LL μ →L[ℂ] LL μ :=
   ∑ᶠ c : GL (Fin n) (w.adicCompletion K) ⧸ GLnLocal.integralGL (w.adicCompletion K) n, h c.out • rhoL μ w c.out
 
 def Good (ν : Fin n → ℤ) : Prop :=
@@ -67,8 +71,8 @@ def cmp {v : Pl F} (w : PlacesOver E v) : GL (Fin n) (CompletionsOver E v) →* 
 def prodFn {v : Pl F} (h : ∀ w : PlacesOver E v, GL (Fin n) (w.1.adicCompletion E) → ℂ) (g : GL (Fin n) (CompletionsOver E v)) : ℂ :=
   ∏ᶠ w, h w (cmp w g)
 
-open Classical in
 
+open Classical in
 def iwFn {q : Pl F} (w₀ : PlacesOver E q) (ν : Fin n → ℤ) : GL (Fin n) (CompletionsOver E q) → ℂ :=
   prodFn fun w => (iwCoset w.1 (if w = w₀ then ν else 0)).indicator 1
 
@@ -92,12 +96,12 @@ def MatchAt (σ : E ≃ₐ[F] E) (v : Pl F) (c : ℂ) (φ : GL (Fin n) (Completi
     mE.IsHaarMeasure → mF.IsHaarMeasure → mE (unitSet E n v) = 1 → mF (GLnLocal.integralGL (v.adicCompletion F) n) = 1 →
     Match (incFin E v) (galFin σ v) (Module.finrank F E) mE mF c φ f
 
-variable (E) in
 
+variable (E) in
 def Unr (v : Pl F) : Prop := ∀ w : PlacesOver E v, Algebra.IsUnramifiedAt (𝓞 F) w.1.asIdeal
 
-variable (E) in
 
+variable (E) in
 def Split (v : Pl F) : Prop := ∀ w : PlacesOver E v, Function.Surjective (completionMap v w.1)
 
 structure Loc (σ : E ≃ₐ[F] E) (n : ℕ) (q : Pl F) (w₀ : PlacesOver E q) where
@@ -120,7 +124,7 @@ structure Loc (σ : E ≃ₐ[F] E) (n : ℕ) (q : Pl F) (w₀ : PlacesOver E q) 
     f v = (GLnLocal.integralGL (v.adicCompletion F) n : Set _).indicator 1 ∧ (UE v : Set _) = unitSet E n v ∧
     UF v = GLnLocal.integralGL (v.adicCompletion F) n
 
-variable {μE : Measure (normOneGL E n)} [μE.IsHaarMeasure] {μF : Measure (normOneGL F n)} [μF.IsHaarMeasure] {θ : Twist μE} {l : ℕ}
+variable {μE : Measure (normOneGL (K := E) (n := n))} [μE.IsHaarMeasure] {μF : Measure (normOneGL (K := F) (n := n))} [μF.IsHaarMeasure] {θ : Twist μE} {l : ℕ}
   {σ : E ≃ₐ[F] E} {q : Pl F} {w₀ : PlacesOver E q}
 
 def IsSideE (L : Loc σ n q w₀) (νE : Measure (archGroup E n)) (aE : TI E n) (ν : Fin n → ℤ) (𝔢 : Side θ l) : Prop :=
@@ -133,7 +137,7 @@ def IsSideF (L : Loc σ n q w₀) (νF : Measure (archGroup F n)) (aF : TI F n) 
 
 end Two
 
-def AmpFn {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+def AmpFn {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
     (ν : Measure (archGroup K n)) [ν.IsHaarMeasure] (a : TI K n) : Prop :=
   SmoothT a ∧ LeftFin a ∧ 0 ≤ Oinf μ ν a ∧ ‖Oinf μ ν a‖ ≤ 1
 
@@ -162,9 +166,9 @@ def LocQ : Prop :=
     ∃ c : ℝ, 0 < c ∧ ∀ (w₀ : PlacesOver E q) (ν : Fin n → ℤ), MatchAt σ q c (iwFn w₀ ν) ((iwCoset q ν).indicator 1)
 
 def GM : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [IsTotallyComplex F]
-    [IsTotallyComplex E] (σ : E ≃ₐ[F] E), (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime → ∀ n : ℕ, 0 < n →
-    ∀ (μE : Measure (normOneGL E n)) [μE.IsHaarMeasure] (μF : Measure (normOneGL F n)) [μF.IsHaarMeasure] (θ : Twist μE),
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [_root_.NumberField.IsTotallyComplex F]
+    [_root_.NumberField.IsTotallyComplex E] (σ : E ≃ₐ[F] E), (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime → ∀ n : ℕ, 0 < n →
+    ∀ (μE : Measure (normOneGL (K := E) (n := n))) [μE.IsHaarMeasure] (μF : Measure (normOneGL (K := F) (n := n))) [μF.IsHaarMeasure] (θ : Twist μE),
       IsGalTwist σ θ → ∀ (q : Pl F) (w₀ : PlacesOver E q), Split E q →
     ∀ (νE : Measure (archGroup E n)) [νE.IsHaarMeasure] (νF : Measure (archGroup F n)) [νF.IsHaarMeasure] (aE : TI E n) (aF : TI F n)
       (ci : ℝ), 0 < ci → AmpFn μE νE aE → AmpFn μF νF aF → ArchPair σ νE νF aE aF ci →

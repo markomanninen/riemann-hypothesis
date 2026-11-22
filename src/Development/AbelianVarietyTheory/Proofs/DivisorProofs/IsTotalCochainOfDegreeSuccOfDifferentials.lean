@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
+
+@[expose] public section
+
 open GlobalTheory GlobalTheory.DI
 
 namespace GlobalTheory.DI

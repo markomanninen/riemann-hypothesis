@@ -1,9 +1,12 @@
-import Mathlib
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassLandA
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.DifferentIdealEqTop
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassLandD
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.GramEqConjTransposeMul
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassLandLA
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassLandA
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.DifferentIdealEqTop
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.GramEqConjTransposeMul
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassLandSt
+
+@[expose] public section
 
 open NumberField Module
 
@@ -14,7 +17,5 @@ namespace Formalism.HermitianLattices.Ext.L3
 theorem hermRepUnram [Fact HermRepUnram] : HermRepUnram := Fact.out
 
 theorem orthBasisPos : OrthBasisPos := orthBasisPos_holds
-
-theorem landherrUnram [Fact LandherrUnram] : LandherrUnram := Fact.out
 
 end Formalism.HermitianLattices.Ext.L3

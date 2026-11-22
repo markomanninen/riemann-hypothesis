@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PBlocksFgC
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PBlocksFgC
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,12 +54,12 @@ theorem rt_yp_eq {a : ℕ} (k : Kinf E a) (g : GL (Fin a) (Af E)) (φ : Sm E a) 
     rt E a (BlockDerivatives.yp k g) φ = act (.cpt k) (act (.fin g) φ) := by
   rw [act_cpt_eq, act_fin_eq, rt_yp_rt, mul_one, one_mul]
 
-theorem rt_yp_mem {a : ℕ} {U : Submodule ℂ (Sm E a)} (hU : IsStable U) (k : Kinf E a) (g : GL (Fin a) (Af E))
+theorem rt_yp_mem {a : ℕ} {U : Submodule ℂ (Sm E a)} (hU : _root_.GlobalTheory.CuspRep.IsStable U) (k : Kinf E a) (g : GL (Fin a) (Af E))
     {φ : Sm E a} (hφ : φ ∈ U) : rt E a (BlockDerivatives.yp k g) φ ∈ U := by
   rw [rt_yp_eq]
   exact hU _ _ (hU _ _ hφ)
 
-theorem T_rt_yp {a : ℕ} {U : Submodule ℂ (Sm E a)} (hU : IsStable U) {T : Sm E a →ₗ[ℂ] Sm E a}
+theorem T_rt_yp {a : ℕ} {U : Submodule ℂ (Sm E a)} (hU : _root_.GlobalTheory.CuspRep.IsStable U) {T : Sm E a →ₗ[ℂ] Sm E a}
     (hT : ∀ o, ∀ φ ∈ U, T (act o φ) = act o (T φ)) (k : Kinf E a) (g : GL (Fin a) (Af E)) {φ : Sm E a}
     (hφ : φ ∈ U) : T (rt E a (BlockDerivatives.yp k g) φ) = rt E a (BlockDerivatives.yp k g) (T φ) := by
   rw [rt_yp_eq, rt_yp_eq, hT _ _ (hU _ _ hφ), hT _ _ hφ]
@@ -65,7 +69,7 @@ def Mleft (U : Submodule ℂ (Sm E (r + s))) (T : Sm E (r + s) →ₗ[ℂ] Sm E 
   carrier := {ψ | ψ ∈ U ∧ ∀ (k : Kinf E (r + s)) (g : GL (Fin (r + s)) (Af E)) (m₂ : GA E s),
     sl0 m₂ (T (rt E (r + s) (BlockDerivatives.yp k g) ψ)) ∈ W}
   add_mem' := fun {a b} ha hb => ⟨U.add_mem ha.1 hb.1, fun k g m₂ => by
-    rw [map_add, map_add, map_add]; exact W.add_mem (ha.2 k g m₂) (hb.2 k g m₂)⟩
+    rw [map_add (f := _), map_add (f := _), map_add (f := _)]; exact W.add_mem (ha.2 k g m₂) (hb.2 k g m₂)⟩
   zero_mem' := ⟨U.zero_mem, fun k g m₂ => by rw [map_zero, map_zero, map_zero]; exact W.zero_mem⟩
   smul_mem' := fun c a ha => ⟨U.smul_mem c ha.1, fun k g m₂ => by
     rw [map_smul, map_smul, map_smul]; exact W.smul_mem c (ha.2 k g m₂)⟩
@@ -75,14 +79,14 @@ def Mright (U : Submodule ℂ (Sm E (r + s))) (T : Sm E (r + s) →ₗ[ℂ] Sm E
   carrier := {ψ | ψ ∈ U ∧ ∀ (k : Kinf E (r + s)) (g : GL (Fin (r + s)) (Af E)) (m₁ : GA E r),
     sl1 m₁ (T (rt E (r + s) (BlockDerivatives.yp k g) ψ)) ∈ W}
   add_mem' := fun {a b} ha hb => ⟨U.add_mem ha.1 hb.1, fun k g m₁ => by
-    rw [map_add, map_add, map_add]; exact W.add_mem (ha.2 k g m₁) (hb.2 k g m₁)⟩
+    rw [map_add (f := _), map_add (f := _), map_add (f := _)]; exact W.add_mem (ha.2 k g m₁) (hb.2 k g m₁)⟩
   zero_mem' := ⟨U.zero_mem, fun k g m₁ => by rw [map_zero, map_zero, map_zero]; exact W.zero_mem⟩
   smul_mem' := fun c a ha => ⟨U.smul_mem c ha.1, fun k g m₁ => by
     rw [map_smul, map_smul, map_smul]; exact W.smul_mem c (ha.2 k g m₁)⟩
 
 theorem Mleft_stable {U : Submodule ℂ (Sm E (r + s))} (hU : IsAutSt U) {c : ℂ}
     {T : Sm E (r + s) →ₗ[ℂ] Sm E (r + s)} (hT : IsSliceMap U c T) (hexp : HExp U T) (W : Submodule ℂ (Sm E r))
-    (hW : IsStable W) : IsStable (Mleft U T W) := by
+    (hW : _root_.GlobalTheory.CuspRep.IsStable W) : _root_.GlobalTheory.CuspRep.IsStable (Mleft U T W) := by
   rintro o ψ ⟨hψU, hψ⟩
   cases o with
   | fin h =>
@@ -110,7 +114,7 @@ theorem Mleft_stable {U : Submodule ℂ (Sm E (r + s))} (hU : IsAutSt U) {c : �
       obtain ⟨m, rfl⟩ := lsF_one _ ℓ hℓ
       exact hP m
     have hbW : ∀ i, b i ∈ W := fun i => (Submodule.span_le.2 hsub) (hb i)
-    rw [lie_split, map_add]
+    rw [lie_split, map_add (f := _)]
     refine W.add_mem (key_left W hW (T ψ') (hT.unipInv ψ' hψ'U) hP b q hbW he _ (par_low X') m₂) ?_
     have e3 := hT.equiv (.lie (toL (skw X'))) _ hψ'U
     change T (lie E (r + s) (toL (skw X')) ψ') = lie E (r + s) (toL (skw X')) (T ψ') at e3
@@ -126,7 +130,7 @@ theorem Mleft_stable {U : Submodule ℂ (Sm E (r + s))} (hU : IsAutSt U) {c : �
 
 theorem Mright_stable {U : Submodule ℂ (Sm E (r + s))} (hU : IsAutSt U) {c : ℂ}
     {T : Sm E (r + s) →ₗ[ℂ] Sm E (r + s)} (hT : IsSliceMap U c T) (hexp : HExp U T) (W : Submodule ℂ (Sm E s))
-    (hW : IsStable W) : IsStable (Mright U T W) := by
+    (hW : _root_.GlobalTheory.CuspRep.IsStable W) : _root_.GlobalTheory.CuspRep.IsStable (Mright U T W) := by
   rintro o ψ ⟨hψU, hψ⟩
   cases o with
   | fin h =>
@@ -154,7 +158,7 @@ theorem Mright_stable {U : Submodule ℂ (Sm E (r + s))} (hU : IsAutSt U) {c : �
       obtain ⟨m, hm⟩ := rsF_one _ _ (hq i)
       rw [hm]
       exact hP m
-    rw [lie_split, map_add]
+    rw [lie_split, map_add (f := _)]
     refine W.add_mem (key_right W hW (T ψ') (hT.unipInv ψ' hψ'U) hP b q hqW he _ (par_low X') m₁) ?_
     have e3 := hT.equiv (.lie (toL (skw X'))) _ hψ'U
     change T (lie E (r + s) (toL (skw X')) ψ') = lie E (r + s) (toL (skw X')) (T ψ') at e3

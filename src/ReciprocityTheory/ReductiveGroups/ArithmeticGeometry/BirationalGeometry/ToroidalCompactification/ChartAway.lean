@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TanLoc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RankLie
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TanLoc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RankLie
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,8 +21,8 @@ variable {S : Type} [CommRing S] (G : Over (Spec (CommRingCat.of S))) [GrpObj G]
 abbrev Gs (s : S) : Over (Spec (CommRingCat.of (Localization.Away s))) :=
   (Over.pullback (fB S (Localization.Away s))).obj G
 
-set_option backward.isDefEq.respectTransparency.types false in
 
+set_option backward.isDefEq.respectTransparency.types false in
 theorem chart_away (U : G.left.Opens) (hU : IsAffineOpen U) (s : S)
     (hs : ∀ x : Spec (CommRingCat.of S), s ∉ x.asIdeal → (η[G]).left x ∈ U) : Nonempty (Chart (Gs G s)) := by
   have hP := ReciprocityTheory.ChartRestriction.G.Geo.Tor.isGrpPullback_pullback G (fB S (Localization.Away s))
@@ -31,7 +35,7 @@ theorem chart_away (U : G.left.Opens) (hU : IsAffineOpen U) (s : S)
     change (1 : Over.mk (𝟙 (Spec (CommRingCat.of (Localization.Away s)))) ⟶ Gs G s).left ≫
       pullback.fst G.hom (fB S (Localization.Away s)) = _ at h1
     rw [one_left'] at h1
-    simpa using h1
+    simp
   have hs' : ∀ y : Spec (CommRingCat.of (Localization.Away s)),
       s ∉ ((fB S (Localization.Away s)).base y).asIdeal := by
     intro y hy
@@ -39,9 +43,10 @@ theorem chart_away (U : G.left.Opens) (hU : IsAffineOpen U) (s : S)
       IsLocalization.Away.algebraMap_isUnit s
     have hmem : algebraMap S (Localization.Away s) s ∈ y.asIdeal := hy
     exact y.isPrime.ne_top (Ideal.eq_top_of_isUnit_mem _ hmem hu)
-  haveI hf : IsAffineHom (fB S (Localization.Away s)) := inferInstance
-  haveI : IsAffineHom (pullback.fst G.hom (fB S (Localization.Away s))) :=
-    MorphismProperty.pullback_fst (P := @IsAffineHom) _ _ hf
+  have hf : IsAffineHom (fB S (Localization.Away s)) := inferInstance
+  have : IsAffineHom (pullback.fst G.hom (fB S (Localization.Away s))) :=
+    isAffineHom_isStableUnderBaseChange.of_isPullback
+      (IsPullback.of_hasPullback G.hom (fB S (Localization.Away s))).flip hf
   refine ⟨⟨pullback.fst G.hom (fB S (Localization.Away s)) ⁻¹ᵁ U, hU.preimage _, ?_⟩⟩
   intro y _
   have hk : (pullback.fst G.hom (fB S (Localization.Away s))).base ((η[Gs G s]).left.base y) =

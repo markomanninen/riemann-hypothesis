@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField
 
@@ -13,28 +17,26 @@ variable {m : ℕ} [NeZero m] (p : ℕ) [hp : Fact p.Prime] (K : Type*) [Field K
 
 variable (P : Ideal (𝓞 K)) [P.IsPrime] [P.LiesOver (Ideal.span {(p : ℤ)})]
 
-omit [P.IsPrime] in
-include hp in
 
+include hp in
 theorem ne_bot_of_liesOver : P ≠ ⊥ :=
   Ideal.ne_bot_of_liesOver_of_ne_bot (p := Ideal.span {(p : ℤ)})
     (by simpa using hp.out.ne_zero) P
 
-omit [P.IsPrime] in
-include hp in
 
+include hp in
 theorem finite_quotient : Finite (𝓞 K ⧸ P) :=
   have : NeZero P := ⟨ne_bot_of_liesOver p K P⟩
   Ring.HasFiniteQuotients.finiteQuotient (NeZero.ne P)
 
-omit hp [NumberField K] [P.IsPrime] in
 
+omit hp [NumberField K] [P.IsPrime] in
 theorem card_quotient_under : Nat.card (ℤ ⧸ P.under ℤ) = p := by
   rw [← Ideal.LiesOver.over (P := P) (p := Ideal.span {(p : ℤ)}),
     Nat.card_congr (Int.quotientSpanNatEquivZMod p).toEquiv, Nat.card_zmod]
 
-omit [NeZero m] hp [NumberField K] [IsCyclotomicExtension {m} ℚ K] [P.IsPrime] in
 
+omit [NeZero m] hp [NumberField K] [IsCyclotomicExtension {m} ℚ K] [P.IsPrime] in
 theorem natCast_notMem_of_not_dvd (hm : ¬ p ∣ m) : ((m : ℕ) : 𝓞 K) ∉ P := by
   intro h
   have : ((m : ℤ)) ∈ P.under ℤ := by
@@ -52,8 +54,8 @@ theorem eq_of_forall_pow_eq_one {σ τ : Gal(K/ℚ)}
   rw [Units.ext_iff]
   exact ZMod.val_injective _ (hζ.pow_inj (ZMod.val_lt _) (ZMod.val_lt _) h₁.symm)
 
-omit hp [IsCyclotomicExtension {m} ℚ K] [P.IsPrime] in
 
+omit hp [IsCyclotomicExtension {m} ℚ K] [P.IsPrime] in
 theorem IsArithFrobAt.apply_of_pow_eq_one (hm : ¬ p ∣ m) {σ : Gal(K/ℚ)}
     (hσ : IsArithFrobAt ℤ σ P) {x : K} (hx : x ^ m = 1) : σ x = x ^ p := by
   have hxi : IsIntegral ℤ x := by

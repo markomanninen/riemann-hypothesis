@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PBlocksAsmC
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PBlocksLag
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PBlocksAsmC
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PBlocksLag
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,9 +16,9 @@ namespace PositivityTheory.Rg.BcB.SpectralAccumulation.Cz
 def FgSl : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r s : ℕ) (U : Submodule ℂ (Sm E (r + s)))
   (c : ℂ) (T : Sm E (r + s) →ₗ[ℂ] Sm E (r + s)), IsAutSt U → IsSliceMap U c T → FinGen U →
   (∃ S₁ : Finset (Sm E r), (↑S₁ : Set (Sm E r)) ⊆ LS U T ∧
-    ∀ W : Submodule ℂ (Sm E r), IsStable W → (↑S₁ : Set (Sm E r)) ⊆ W → LS U T ≤ W) ∧
+    ∀ W : Submodule ℂ (Sm E r), _root_.GlobalTheory.CuspRep.IsStable W → (↑S₁ : Set (Sm E r)) ⊆ W → LS U T ≤ W) ∧
   (∃ S₂ : Finset (Sm E s), (↑S₂ : Set (Sm E s)) ⊆ RS U T ∧
-    ∀ W : Submodule ℂ (Sm E s), IsStable W → (↑S₂ : Set (Sm E s)) ⊆ W → RS U T ≤ W)
+    ∀ W : Submodule ℂ (Sm E s), _root_.GlobalTheory.CuspRep.IsStable W → (↑S₂ : Set (Sm E s)) ⊆ W → RS U T ≤ W)
 
 theorem blocks_of (hfg : FgSl) : Blocks := by
   intro E _ _ _ r s τ hr hs U hH hSI c T hT hpE

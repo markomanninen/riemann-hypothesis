@@ -1,10 +1,14 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSPJFMem
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocToolsTheta
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAdjComm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAdjCont
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLJCommC
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaCompactSupport
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SlicesFiniteRegularityBuilt
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSPJFMem
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocToolsTheta
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAdjComm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAdjCont
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLJCommC
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaCompactSupport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SlicesFiniteRegularityBuilt
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 
@@ -88,7 +92,7 @@ theorem spectral_pairing_operator : RDSPOp := by
   intro k r Wp Wq _ _ _ _ _ _ D Θ hS hC F hF hFc hFO
   have hOP : tsupport F ⊆ B.GPos D := fun g hg => ⟨(hFO hg).1, (hFO hg).2.2⟩
   have hsuppF : B.SuppIn (B.GPos D) F :=
-    (closure_mono (fun g hg => hg.2)).trans ((closure_minimal subset_closure (isClosed_tsupport F)).trans hOP)
+    (closure_mono (by exact fun g hg => hg.2)).trans ((closure_minimal subset_closure (isClosed_tsupport F)).trans hOP)
   have hA1t : tsupport (B.opApply Θ F) ⊆ tsupport F := rdsp_tsupport_sub (rdsp_opApply_vanishP Θ F)
   have hB1t : tsupport (B.opAdj Θ F) ⊆ tsupport F := rdsp_tsupport_sub (rdsp_opAdj_vanishP Θ F)
   have hA1s : B.CkOn ⊤ (B.GV k r) (B.opApply Θ F) := by

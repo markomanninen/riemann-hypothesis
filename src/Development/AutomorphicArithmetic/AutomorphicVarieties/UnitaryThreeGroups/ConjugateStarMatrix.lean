@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+
+@[expose] public section
 
 open Matrix UpperTheory.V.U3
 
-private theorem conjugate_star_matrix {G R : Type} [Group G] [CommRing R] (r : G →* GG 3 R) (c g : G)
+private theorem conjugate_star_matrix {G R : Type} [Group G] [CommRing R] (r : G →* GG (m := 3) (R := R)) (c g : G)
     (hc : (r c).right = -1) (hg : (r g).right = 1) (hm : (r c).mat = 1) :
-    (r (gstar c g)).mat = Jmat R 3 * (r g).matᵀ * Jmat R 3 := by
+    (r (gstar c g)).mat = Jmat (R := R) 3 * (r g).matᵀ * Jmat (R := R) 3 := by
   have hc' : r c = SemidirectProduct.mk 1 (-1) := by
     apply SemidirectProduct.ext
     · exact Units.ext (by simpa [GG.mat] using hm)
@@ -18,10 +22,10 @@ private theorem conjugate_star_matrix {G R : Type} [Group G] [CommRing R] (r : G
     sgnAct_neg_one, theta_inv_val]
 
 theorem UpperTheory.V.U3.zmat_diag :
-    ∀ {G R : Type} [Group G] [CommRing R] (r : G →* GG 3 R) (c g₁ : G), IsUnit (2 : R) → (r c).right = -1 → (r g₁).right = 1 → Normalised c g₁ r →
+    ∀ {G R : Type} [Group G] [CommRing R] (r : G →* GG (m := 3) (R := R)) (c g₁ : G), IsUnit (2 : R) → (r c).right = -1 → (r g₁).right = 1 → Normalised c g₁ r →
     zmat c g₁ r = Matrix.diagonal ![zeta c g₁ r, 0, -zeta c g₁ r] := by
   intro G R _ _ r c g₁ _ hc hg hN
-  have hJ : ∀ (M : Matrix (Fin 3) (Fin 3) R) (i j : Fin 3), (Jmat R 3 * Mᵀ * Jmat R 3) i j = M j.rev i.rev := by
+  have hJ : ∀ (M : Matrix (Fin 3) (Fin 3) R) (i j : Fin 3), (Jmat (R := R) 3 * Mᵀ * Jmat (R := R) 3) i j = M j.rev i.rev := by
     intro M i j
     simp only [Matrix.mul_apply, Jmat, Matrix.transpose_apply, ite_mul, mul_ite, one_mul, zero_mul, mul_zero,
       Finset.sum_ite_eq', Finset.sum_ite_eq, Finset.mem_univ, if_true]

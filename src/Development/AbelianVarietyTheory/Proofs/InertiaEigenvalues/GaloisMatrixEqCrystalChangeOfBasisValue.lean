@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBreuilKisinModuleBasisOfFCrystal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBreuilKisinModuleBasisOfFCrystal
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 
@@ -38,11 +43,11 @@ theorem exists_coord (h : SemiBC u) (π : R →+* S) (hπ : Function.Injective �
     (hJ : ∀ (b : B) y, J (b • y) = π (i b) • J y) (h0 : ∀ x, ∃ c : ι → R, (fun k => π (c k)) = J (u x)) :
     ∃ κ : N →+ (ι → R), ∀ y, (fun k => π (κ y k)) = J y := by
   have key : ∀ y, ∃ c : ι → R, (fun k => π (c k)) = J y := induction_bc h _ h0
-    (fun y z ⟨c, hc⟩ ⟨d, hd⟩ => ⟨c + d, by rw [map_add, ← hc, ← hd]; exact funext fun k => map_add π _ _⟩)
+    (fun y z ⟨c, hc⟩ ⟨d, hd⟩ => ⟨c + d, by rw [map_add (f := _), ← hc, ← hd]; exact funext fun k => map_add π _ _⟩)
     (fun b y ⟨c, hc⟩ => ⟨i b • c, by rw [hJ, ← hc]; exact funext fun k => map_mul π _ _⟩)
   choose κ hκ using key
   refine ⟨AddMonoidHom.mk' κ fun y z => funext fun k => hπ ?_, hκ⟩
-  rw [Pi.add_apply, map_add, congrFun (hκ _) k, congrFun (hκ _) k, congrFun (hκ _) k, map_add, Pi.add_apply]
+  rw [Pi.add_apply, map_add (f := _), congrFun (hκ _) k, congrFun (hκ _) k, congrFun (hκ _) k, map_add (f := _), Pi.add_apply]
 
 theorem exists_ext (h : SemiBC u) (π : R →+* S) (i : A → R) (ψ : B →+* S) (hi : ∀ a, π (i a) = ψ (f a))
     (κ : M →+ (ι → R)) (hκ : ∀ (a : A) x, κ (a • x) = i a • κ x) :
@@ -52,7 +57,7 @@ theorem exists_ext (h : SemiBC u) (π : R →+* S) (i : A → R) (ψ : B →+* S
   letI : Module B (ι → S) := Module.compHom _ ψ
   obtain ⟨w, hw, -⟩ := h (ι → S)
     { toFun := fun x k => π (κ x k)
-      map_add' := fun x y => funext fun k => by rw [map_add, Pi.add_apply, map_add]; rfl
+      map_add' := fun x y => funext fun k => by rw [map_add (f := _), Pi.add_apply, map_add (f := _)]; rfl
       map_smul' := fun a x => funext fun k => by
         rw [hκ, Pi.smul_apply, smul_eq_mul, map_mul, hi]; rfl }
   have hs : ∀ (b : B) y, w (b • y) = ψ b • w y := fun b y => w.map_smul b y
@@ -62,7 +67,7 @@ theorem exists_ext (h : SemiBC u) (π : R →+* S) (i : A → R) (ψ : B →+* S
     funext k
     change π (κ (U x) k) = π r * π (κ x k)
     rw [h2, Pi.smul_apply, smul_eq_mul, map_mul]
-  · simp only [map_add, smul_add, hy, hz]
+  · simp only [map_add (f := _), smul_add, hy, hz]
   · rw [U'.map_smul, hs, hs, hy, smul_comm]
 
 end Algebra
@@ -89,17 +94,19 @@ theorem isLMat_of_single (I : Ident t ϖ P T) (s : GQ l) (g : G) (γ : ι → ι
   have h1 : inclL t ϖ P c = ∑ j, inclO l O (c j) • phiW t ϖ P (Pi.single j 1) := by
     funext i
     simp [inclL_apply, phiW_apply, Matrix.mulVec, dotProduct, Pi.single_apply, apply_ite (frobOW l O), mul_comm]
-  rw [h1, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, map_sum]
   simp only [I.act_smul, I.act_phiW, h, galOW_inclO]
   simp only [phiW_apply, frobOW_inclO, inclL_apply]
   funext i
-  simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Matrix.mulVec, dotProduct, Matrix.of_apply, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Matrix.mulVec, dotProduct, Matrix.of_apply, map_sum,
     map_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
 
-omit [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsUltrametricDist K] [IsUnitBall O K] in
 
+omit [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsUltrametricDist K] [IsUnitBall O K] in
 theorem kappa_act (T : LocLat G ℚ_[l] K O) (s : GQ l) (g : G) :
     letI := zlLat T
     ∀ y : WCb l ⊗[ℤ_[l]] ↥T.L.T, kappa T (TensorProduct.map (galW l s).toLinearMap (actZ T g) y) =
@@ -109,7 +116,7 @@ theorem kappa_act (T : LocLat G ℚ_[l] K O) (s : GQ l) (g : G) :
   induction y using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul v x => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem value_eq {l : ℕ} {R₀ O R S ι Q : Type} [CommRing R₀] [CommRing O] [CommRing R] [CommRing S] [Algebra O R]
     [Algebra O S] [Fintype ι] [DecidableEq ι] [Fintype Q] (E : FCrys l R₀) {P₀ P₁ PP Cr : Obj l R₀}
@@ -132,7 +139,8 @@ theorem value_eq {l : ℕ} {R₀ O R S ι Q : Type} [CommRing R₀] [CommRing O]
   have h2 := congrArg (E.tr ev) (hy j)
   rw [← E.tr_comp, h₁, E.tr_comp, E.tr_comp] at h2
   rw [h2]
-  simp only [map_sum, LinearMap.map_smulₛₗ, ← FHom.u_tr, hws, hwo',
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.map_smulₛₗ, ← FHom.u_tr, hws, hwo',
     Finset.sum_apply, Pi.smul_apply, hwb]
   rw [Finset.sum_eq_single i (fun k _ hk => by simp [Ne.symm hk]) (by simp)]
   refine Finset.sum_congr rfl fun q _ => ?_

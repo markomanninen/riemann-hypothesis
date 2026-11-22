@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsUnfoldingTorus
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsTorusIntegral
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PArchLatticeDiscrete
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PVecAtNeZero
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsUnfoldingTorus
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsTorusIntegral
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PArchLatticeDiscrete
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PVecAtNeZero
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -12,12 +16,12 @@ open scoped ENNReal ComplexOrder
 noncomputable section
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-omit [NumberField F] [NumberField E] [IsTotallyReal F] [IsTotallyComplex E] [Fintype ι]
-  [DecidableEq ι] in
 
+omit [NumberField F] [NumberField E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] [Fintype ι]
+  [DecidableEq ι] in
 theorem two_le_finrank_of_isotropic [FiniteDimensional E W] (h : HermitianForm F E W) {x₀ : W}
     (hne : x₀ ≠ 0) (hiso : h.toSesq x₀ x₀ = 0) : 2 ≤ finrank E W := by
   by_contra hlt
@@ -31,8 +35,8 @@ theorem two_le_finrank_of_isotropic [FiniteDimensional E W] (h : HermitianForm F
   obtain ⟨c, rfl⟩ := hspan y
   rw [LinearMap.zero_apply, map_smul, hiso, smul_zero]
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem re_form_smul (P : Matrix ι ι ℂ) (b : ℂ) (y : ι → ℂ) :
     (star (b • y) ⬝ᵥ (P *ᵥ (b • y))).re = (star y ⬝ᵥ (P *ᵥ y)).re * ‖b‖ ^ 2 := by
   have hb : star b * b = ((‖b‖ ^ 2 : ℝ) : ℂ) := by

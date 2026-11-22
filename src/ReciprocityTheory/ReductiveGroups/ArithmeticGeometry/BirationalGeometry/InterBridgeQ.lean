@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeO
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeP
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterPC
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeO
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeP
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterPC
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,8 @@ theorem exists_homog_of_cone {n : ℕ} {c : MvPolynomial (Fin n) ℂ} (hc : c �
   have hscale : ∀ (m : ℕ) (t : ℂ) (v : Fin n → ℂ),
       eval (fun i => t * v i) (homogeneousComponent m c) = t ^ m * eval v (homogeneousComponent m c) := by
     intro m t v
-    rw [homogeneousComponent_apply, map_sum, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [homogeneousComponent_apply, map_sum, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun d hd => ?_
     rw [Finset.mem_filter] at hd
     have hdeg : ∑ i ∈ d.support, d i = m := by
@@ -83,8 +88,9 @@ theorem exists_homog_of_cone {n : ℕ} {c : MvPolynomial (Fin n) ℂ} (hc : c �
     have hQ : ∀ t : ℂ, t ≠ 0 → Q.eval t = 0 := by
       intro t ht
       have h0 := hcT _ (hT v hv t ht)
-      rw [← sum_homogeneousComponent c, map_sum] at h0
-      simp only [Q, Polynomial.eval_finset_sum, Polynomial.eval_mul, Polynomial.eval_C,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← sum_homogeneousComponent c, map_sum] at h0
+      simp only [Q, Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_C,
         Polynomial.eval_pow, Polynomial.eval_X]
       rw [← h0]
       exact Finset.sum_congr rfl fun k _ => by rw [hscale]; ring
@@ -95,8 +101,8 @@ theorem exists_homog_of_cone {n : ℕ} {c : MvPolynomial (Fin n) ℂ} (hc : c �
         exact hQ t ht
       · exact (Set.finite_singleton (0 : ℂ)).infinite_compl
     by_cases hm : m ≤ c.totalDegree
-    · have h1 := congrArg (fun p => Polynomial.coeff p m) hQ0
-      simpa [Q, Polynomial.finset_sum_coeff, Polynomial.coeff_C_mul_X_pow,
+    · have h1 := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p m) hQ0
+      simpa [Q, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow,
         (by omega : m < c.totalDegree + 1)] using h1
     · rw [homogeneousComponent_eq_zero m c (by omega), map_zero]
   obtain ⟨m, -, hm⟩ : ∃ m ∈ Finset.range (c.totalDegree + 1), homogeneousComponent m c ≠ 0 := by
@@ -121,9 +127,18 @@ theorem normPoly_of (hM : PCMinContractStatement) : NormPolyStatement := by
     obtain ⟨k, -, hk⟩ := (Ideal.IsPrime.prod_mem_iff (hp := hPp)).mp h'
     exact hi k (hPp.mem_of_pow_mem _ hk)
   have hf'P : f' ∉ P := fun h' => (hPp.mem_or_mem h').elim hfP hgP
+  have hweight (β : (Σ k, ι k) →₀ ℕ) (k : K) :
+      Finsupp.weight (blkW ι) β k = ∑ j, β ⟨k, j⟩ := by
+    rw [Finsupp.weight_apply, Finsupp.sum_fintype _ _ (by simp), Finset.sum_apply, Fintype.sum_sigma]
+    simp [blkW, Pi.single_apply]
   have hf'h : IsWeightedHomogeneous (blkW ι) (map (Int.castRingHom ℂ) f') (fun _ => d) := by
-    have h1 : IsWeightedHomogeneous (blkW ι) (map (Int.castRingHom ℂ) f) a :=
-      isWeightedHomogeneous_map_of_isMultiHomog hf
+    have h1 : IsWeightedHomogeneous (blkW ι) (map (Int.castRingHom ℂ) f) a := by
+      intro β hβ
+      rw [coeff_map] at hβ
+      have hmem : β ∈ f.support := mem_support_iff.mpr (fun h0 => hβ (by simp [h0]))
+      funext k
+      rw [hweight]
+      exact hf β hmem k
     have h2 : IsWeightedHomogeneous (blkW ι) (map (Int.castRingHom ℂ) g)
         (∑ k, (d - a k) • blkW ι ⟨k, i k⟩) := by
       rw [hgdef, map_prod]
@@ -135,11 +150,31 @@ theorem normPoly_of (hM : PCMinContractStatement) : NormPolyStatement := by
       have hle : a k' ≤ d := Finset.single_le_sum (fun k _ => Nat.zero_le (a k))
         (Finset.mem_univ k')
       simp only [Pi.add_apply, Finset.sum_apply, Pi.smul_apply, blkW, Pi.single_apply,
-        smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+        smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
       omega
     rw [hf'def, map_mul, ← hw]
     exact h1.mul h2
-  obtain ⟨F, -, hF⟩ := diag_of_homog d hf'h
+  let p := map (Int.castRingHom ℂ) f'
+  have hmonomial (β : (Σ k, ι k) →₀ ℕ) :
+      ∃ G : MvPolynomial ((k : K) → ι k) ℂ, β ∈ p.support →
+        ∀ z : (Σ k, ι k) → ℂ, ∏ q, z q ^ β q = eval (segre z) G := by
+    by_cases hβ : β ∈ p.support
+    · have hw := hf'h (mem_support_iff.mp hβ)
+      obtain ⟨G, -, hG⟩ := diag_prod d (fun q => β q) (fun k => by
+        rw [← hweight]
+        exact congrFun hw k)
+      exact ⟨G, fun _ => hG⟩
+    · exact ⟨0, fun h => (hβ h).elim⟩
+  choose G hG using hmonomial
+  let F : MvPolynomial ((k : K) → ι k) ℂ :=
+    ∑ β ∈ p.support, C (AddMonoidAlgebra.coeff p β) * G β
+  have hF : ∀ z, eval z (map (Int.castRingHom ℂ) f') = eval (segre z) F := by
+    intro z
+    change eval z p = eval (segre z) F
+    dsimp only [F]
+    rw [eval_eq', map_sum]
+    refine Finset.sum_congr rfl fun β hβ => ?_
+    rw [eval_mul, eval_C, hG β hβ z]
   obtain ⟨n, c, hcn, hrelF⟩ := exists_monic_rel Ψ P hPh hΨ F
   have hex : ∃ k, c k ≠ 0 := ⟨n, by rw [hcn]; exact one_ne_zero⟩
   set k0 := Nat.find hex with hk0def
@@ -149,18 +184,33 @@ theorem normPoly_of (hM : PCMinContractStatement) : NormPolyStatement := by
     exact Nat.find_min hex hj h
   have hk0n : k0 ≤ n := Nat.find_min' hex (by rw [hcn]; exact one_ne_zero)
   set S := (Finset.range (n + 1)).filter (fun j => k0 ≤ j) with hSdef
+  let ψ (j : Fin (e + 1)) : MRingOver ℂ ι :=
+    ∑ l : (k : K) → ι k, C (Ψ (fun l' => if l = l' then 1 else 0) j) * ∏ k, X ⟨k, l k⟩
+  have hψ (z : (Σ k, ι k) → ℂ) : (fun j => eval z (ψ j)) = Ψ (segre z) := by
+    have hs : segre z = ∑ l : (k : K) → ι k, segre z l •
+        (fun l' => if l = l' then (1 : ℂ) else 0) := by
+      funext l'
+      simp [Finset.sum_apply]
+    funext j
+    dsimp only [ψ]
+    simp only [map_sum, map_mul, eval_C, map_prod, eval_X]
+    conv_rhs => rw [hs]
+    rw [map_sum, Finset.sum_apply]
+    refine Finset.sum_congr rfl fun l _ => ?_
+    change _ * segre z l = _
+    rw [map_smul, Pi.smul_apply, smul_eq_mul, mul_comm]
   set H : MRingOver ℂ ι := ∑ j ∈ S,
-    bind₁ (psiPoly Ψ) (c j) * (map (Int.castRingHom ℂ) f') ^ (j - k0) with hHdef
+    bind₁ ψ (c j) * (map (Int.castRingHom ℂ) f') ^ (j - k0) with hHdef
   have hbind : ∀ (z : (Σ k, ι k) → ℂ) (q : MvPolynomial (Fin (e + 1)) ℂ),
-      eval z (bind₁ (psiPoly Ψ) q) = eval (Ψ (segre z)) q := by
+      eval z (bind₁ ψ q) = eval (Ψ (segre z)) q := by
     intro z q
-    induction q using MvPolynomial.induction_on with
-    | C a => simp
-    | add p q hp hq => rw [map_add, map_add, hp, hq, map_add]
-    | mul_X p j hp => rw [map_mul, map_mul, hp, bind₁_X_right, eval_psiPoly, map_mul, eval_X]
+    rw [eval, eval₂Hom_bind₁]
+    change eval (fun j => eval z (ψ j)) q = eval (Ψ (segre z)) q
+    rw [hψ]
   have hevalH : ∀ z, eval z H = ∑ j ∈ S, eval (Ψ (segre z)) (c j) * eval (segre z) F ^ (j - k0) := by
     intro z
-    rw [hHdef, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hHdef, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, map_pow, hbind, hF]
   have hmul : ∀ z ∈ mcPts P, eval z (map (Int.castRingHom ℂ) (f' ^ k0)) * eval z H = 0 := by

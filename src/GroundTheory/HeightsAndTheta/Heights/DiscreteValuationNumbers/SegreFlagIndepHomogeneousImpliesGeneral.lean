@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.SameGenericSymm
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.SameGenericSymm
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -50,7 +55,7 @@ def polyNumHom {r : ℕ} (deg : Fin r → K → ℤ) : MvPolynomial (Fin r) ℤ 
       polyNum_eq_of_subset I V n deg P (P.support ∪ Q.support) Finset.subset_union_left,
       polyNum_eq_of_subset I V n deg Q (P.support ∪ Q.support) Finset.subset_union_right,
       ← Finset.sum_add_distrib]
-    simp only [coeff_add, add_mul]
+    simp only [MvPolynomial.coeff_add, add_mul]
 
 theorem polyNumHom_apply {r : ℕ} (deg : Fin r → K → ℤ) (Q : MvPolynomial (Fin r) ℤ) :
     polyNumHom I V n deg Q = polyNum I V n deg Q := rfl
@@ -79,7 +84,7 @@ theorem monoList_append {N r : ℕ} (d : Fin N → K → ℤ) (Y : Fin r → K �
     funext s
     have h1 : (Fin.castLE (Nat.le_add_right N r) s) = Fin.castAdd r s := rfl
     simp only [id, h1, Finsupp.add_apply,
-      Finsupp.mapDomain_apply (Fin.castAdd_injective N r), Fin.append_left]
+      Finsupp.mapDomain_apply_of_injective (Fin.castAdd_injective N r), Fin.append_left]
     rw [Finsupp.mapDomain_of_notMem_range, add_zero]
     rintro ⟨j, hj⟩
     have := congrArg Fin.val hj
@@ -88,7 +93,7 @@ theorem monoList_append {N r : ℕ} (d : Fin N → K → ℤ) (Y : Fin r → K �
   · congr 1
     funext s
     simp only [id, Finsupp.add_apply,
-      Finsupp.mapDomain_apply (Fin.natAdd_injective r N), Fin.append_right]
+      Finsupp.mapDomain_apply_of_injective (Fin.natAdd_injective r N), Fin.append_right]
     rw [Finsupp.mapDomain_of_notMem_range, zero_add]
     rintro ⟨j, hj⟩
     have := congrArg Fin.val hj
@@ -125,7 +130,8 @@ theorem polyNum_mul_monomial {N r : ℕ} (d : Fin N → K → ℤ) (Y : Fin r �
     polyNum I V e (Fin.append d Y) (rename (Fin.castAdd r) A * rename (Fin.natAdd N) (monomial ν 1)) =
       ∑ α ∈ A.support, A.coeff α * listNum I V e (monoList d α ++ monoList Y ν) := by
   conv_lhs => rw [as_sum A]
-  rw [map_sum, Finset.sum_mul, ← polyNumHom_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul, ← polyNumHom_apply, map_sum]
   refine Finset.sum_congr rfl fun α _ => ?_
   rw [rename_monomial, rename_monomial, monomial_mul, polyNumHom_apply, polyNum_monomial,
     monoList_append, mul_one]
@@ -136,7 +142,8 @@ theorem polyNum_mul_eq_sum {N r : ℕ} (d : Fin N → K → ℤ) (Y : Fin r → 
       ∑ ν ∈ R.support, R.coeff ν *
         polyNum I V e (Fin.append d Y) (rename (Fin.castAdd r) A * rename (Fin.natAdd N) (monomial ν 1)) := by
   conv_lhs => rw [as_sum R]
-  rw [map_sum, Finset.mul_sum, ← polyNumHom_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.mul_sum, ← polyNumHom_apply, map_sum]
   refine Finset.sum_congr rfl fun ν _ => ?_
   have : monomial ν (R.coeff ν) = R.coeff ν • monomial ν (1 : ℤ) := by
     rw [smul_monomial, smul_eq_mul, mul_one]
@@ -177,7 +184,8 @@ theorem segreFlagIndep_homogeneous_implies_general (h : IndefiniteRowSideFullHec
           (rename (Fin.castAdd r) (homogeneousComponent c G) * rename (Fin.natAdd N) R) := by
     intro d
     conv_lhs => rw [← sum_homogeneousComponent G]
-    rw [map_sum, Finset.sum_mul, ← polyNumHom_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_mul, ← polyNumHom_apply, map_sum]
     rfl
   rw [hsplit, hsplit]
   refine Finset.sum_congr rfl fun c _ => ?_
@@ -207,7 +215,7 @@ theorem segreFlagIndep_homogeneous_implies_general (h : IndefiniteRowSideFullHec
       have hdeg : α.degree = c := by
         have := hGc (mem_support_iff.mp hα)
         rwa [Finsupp.degree_eq_weight_one]
-      rw [listNum, dif_neg, mul_zero]
+      rw [listNum, dite_eq_right, mul_zero]
       rw [List.length_append, length_monoList, hdeg]
       exact hce
     rw [hzero, hzero]

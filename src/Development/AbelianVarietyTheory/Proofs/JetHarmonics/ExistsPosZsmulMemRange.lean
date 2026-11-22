@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+
+@[expose] public section
 
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB
 
@@ -14,7 +18,7 @@ theorem quad_add_zsmul (hs : ∀ x y, Bf x y = Bf y x) (hQ : ∀ x, 2 * Q x = Bf
   have h2 := hQ y
   have h3 := hQ w
   have h4 := hs w y
-  simp only [map_add, map_zsmul, AddMonoidHom.add_apply, AddMonoidHom.smul_apply, smul_eq_mul] at h1
+  simp only [map_add (f := _), map_zsmul, AddMonoidHom.add_apply, AddMonoidHom.smul_apply, smul_eq_mul] at h1
   have h5 : 2 * Q (y + t • w) = 2 * (Q y + t * Bf y w + t ^ 2 * Q w) := by
     linear_combination h1 - h2 + t * h4 - t ^ 2 * h3
   exact mul_left_cancel₀ two_ne_zero h5
@@ -140,7 +144,8 @@ theorem exists_coset_minimiser :
     have hyφ : φ y = ∑ j, b.repr y j • φ (b j) := by
       calc φ y = φ (∑ j, b.repr y j • b j) := by rw [b.sum_repr]
         _ = ∑ j, b.repr y j • φ (b j) := by rw [map_sum]; simp only [map_zsmul]
-    rw [smul_add, ← hy, hyφ, hχ0, map_sum, Finset.smul_sum, ← Finset.sum_add_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [smul_add, ← hy, hyφ, hχ0, map_sum, Finset.smul_sum, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_zsmul, smul_smul, add_smul]
   have hsc : ∀ z : X, Q (N • z) = N ^ 2 * Q z := by
@@ -175,7 +180,7 @@ theorem exists_coset_minimiser :
     nlinarith
   · intro q z
     have hz := hmin (χ + z)
-    rw [map_add, ← add_assoc] at hz
+    rw [map_add (f := _), ← add_assoc] at hz
     have e1 := quad_add_zsmul hs hQ (x + φ χ) (φ z) 1
     have e2 := quad_add_zsmul hs hQ (x + φ χ) (φ z) q
     rw [one_smul] at e1

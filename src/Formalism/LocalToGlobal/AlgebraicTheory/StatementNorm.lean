@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.AlgebraicTheory.StatementC
+module
+
+public import Formalism.LocalToGlobal.AlgebraicTheory.StatementC
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

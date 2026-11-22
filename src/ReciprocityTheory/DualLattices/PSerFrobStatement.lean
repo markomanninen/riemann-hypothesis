@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.TowerZeroSurjective
+module
+
+public import ReciprocityTheory.DualLattices.TowerZeroSurjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ def nsmulF {S : Type} [CommRing S] [Algebra R₀ S] (F : Fin g → MvPowerSeries
 
 def PSerFrobStatement (p : ℕ) [Fact p.Prime] (K : LAlg R₀) (ch : FormalChartAtZero B K g) : Prop :=
   ∀ N : ℕ, ∃ G : Fin g → MvPolynomial (Fin g) R₀,
-    (∀ k m, (∃ i, ¬ p ∣ m i) → ∃ r : R₀, MvPolynomial.coeff m (G k) = p * r) ∧
+    (∀ k m, (∃ i, ¬ p ∣ m i) → ∃ r : R₀, AddMonoidAlgebra.coeff (G k) m = p * r) ∧
     ∀ (S : Type) [CommRing S] [Algebra R₀ S] (a : Fin g → S), (∀ i, a i ^ N = 0) →
       nsmulF ch.F a p = fun k => MvPolynomial.aeval a (G k)
 

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensSmooth
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.JUnique
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.LactGen
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.LactLaws
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensSmoothAlt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensSmooth
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.JUnique
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.LactGen
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.LactLaws
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensSmoothAlt
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -83,7 +87,7 @@ theorem UpperTheory.ConvolutionTheory.L1.lactTens :
       intro a b ha hb φ β hs ht
       obtain ⟨-, -, -, hp, -⟩ := UpperTheory.ConvolutionTheory.L1.lactLaws E n β (sm φ β hs ht)
       obtain ⟨-, -, -, hp', -⟩ := UpperTheory.ConvolutionTheory.L1.lactLaws F n (φ k) (hs k)
-      rw [map_add, map_add, hp, hp']
+      rw [map_add (f := _), map_add (f := _), hp, hp']
       simpa using tens_lin (D := D) 1 1 (ha φ β hs ht) (hb φ β hs ht)
     have hmul : ∀ a b : HarishChandra.U n,
         (∀ (φ : Fin (m + 1) → TI F n) (β : TI E n), (∀ i, SmoothT (φ i)) → IsTens D φ β →

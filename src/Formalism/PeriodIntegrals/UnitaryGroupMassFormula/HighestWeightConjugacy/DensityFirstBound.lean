@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightConjugacy.CayMulConjTranspose
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightConjugacy.DensitySecondBound
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightConjugacy.CayMulConjTranspose
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightConjugacy.DensitySecondBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ theorem det_one_add_skewL (b : Matrix (Fin n) (Fin n) L) : (1 + skewL b).det ≠
   intro h0
   let w0 : InfinitePlace L := Classical.arbitrary _
   apply det_one_add_ne_zero (skewOf_skew (zOf b) w0)
-  rw [← map_skewL, ← map_one w0.embedding.mapMatrix, ← map_add, det_mapMatrix, h0, map_zero]
+  rw [← map_skewL, ← map_one w0.embedding.mapMatrix, ← map_add (f := _), det_mapMatrix, h0, map_zero]
 
 theorem det_one_sub_skewL (b : Matrix (Fin n) (Fin n) L) : (1 - skewL b).det ≠ 0 := by
   intro h0
@@ -47,7 +51,7 @@ theorem det_one_sub_skewL (b : Matrix (Fin n) (Fin n) L) : (1 - skewL b).det ≠
 theorem map_cay (b : Matrix (Fin n) (Fin n) L) (w : InfinitePlace L) :
     w.embedding.mapMatrix (cay (skewL b)) = cay (skewOf (zOf b) w) := by
   unfold cay
-  rw [map_mul, mapMatrix_inv _ _ (det_one_add_skewL b), map_sub, map_add, map_one, map_skewL]
+  rw [map_mul, mapMatrix_inv _ _ (det_one_add_skewL b), map_sub, map_add (f := _), map_one, map_skewL]
 
 theorem map_conjT (f : L →+* ℂ) (M : Matrix (Fin n) (Fin n) L) :
     f.mapMatrix (conjT (IsCMField.complexConj L : L →+* L) M) = (f.mapMatrix M)ᴴ := by

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -26,21 +30,6 @@ theorem measurableSingletonClass_cyclicTwo : MeasurableSingletonClass C2 :=
   ⟨fun _ => MeasurableSpace.measurableSet_top⟩
 
 attribute [local instance] measurableSingletonClass_cyclicTwo
-
-abbrev topSubgroupCyclicTwo : Subgroup C2 := ⊤
-
-instance : MeasurableMul topSubgroupCyclicTwo :=
-  ⟨fun _ => measurable_of_countable _, fun _ => measurable_of_countable _⟩
-
-instance : (Measure.count : Measure topSubgroupCyclicTwo).IsMulLeftInvariant :=
-  ⟨fun g => by
-    ext s hs
-    rw [Measure.map_apply (measurable_of_countable _) hs]
-    have he : (fun x : topSubgroupCyclicTwo => g * x) ⁻¹' s = (fun x => g⁻¹ * x) '' s := by
-      ext x
-      simp
-    rw [he, Measure.count_apply ((Set.to_countable _).measurableSet), Measure.count_apply hs]
-    exact congrArg _ ((mul_right_injective (g⁻¹ : topSubgroupCyclicTwo)).injOn.encard_image)⟩
 
 end Inhabitants
 

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.HodgeTrAt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.CrystallinePeriodsOfSmooth
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.SplitsSelfOfIso
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.HodgeTrAt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.CrystallinePeriodsOfSmooth
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.SplitsSelfOfIso
+
+@[expose] public section
 
 noncomputable section
 

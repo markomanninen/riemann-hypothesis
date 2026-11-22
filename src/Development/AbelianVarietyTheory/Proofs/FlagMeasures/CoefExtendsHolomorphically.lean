@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
-import Formalism.RealPlaceAnalysis.FinalF
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactHaarRightInvariantInst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
+public import Formalism.RealPlaceAnalysis.FinalF
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactHaarRightInvariantInst
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec GlobalTheory.DSId
 open scoped InnerProductSpace ComplexOrder
@@ -30,18 +34,6 @@ lemma Hol.mul {a b : KG ε → ℂ} (ha : Hol ε a) (hb : Hol ε b) : Hol ε (fu
   obtain ⟨G, hG, hGb⟩ := hb
   refine ⟨fun y => F y * G y, hF.mul hG, fun k => ?_⟩
   simp only [hFa, hGb]
-
-lemma Hol.sum {ι : Type} (s : Finset ι) {a : ι → KG ε → ℂ} (ha : ∀ i, Hol ε (a i)) :
-    Hol ε (fun k => ∑ i ∈ s, a i k) := by
-  choose F hF hFa using ha
-  refine ⟨fun y => ∑ i ∈ s, F i y, ?_, fun k => ?_⟩
-  · have hs := DifferentiableOn.sum (𝕜 := ℂ) (u := s) (fun i _ => hF i)
-    have e : (fun y => ∑ i ∈ s, F i y) = ∑ i ∈ s, F i := by
-      funext y
-      rw [Finset.sum_apply]
-    rw [e]
-    exact hs
-  simp only [hFa]
 
 lemma Hol.entry (i j : Fin n) : Hol ε (fun k => toMK k i j) := by
   refine ⟨fun y => y i j, ?_, fun k => rfl⟩

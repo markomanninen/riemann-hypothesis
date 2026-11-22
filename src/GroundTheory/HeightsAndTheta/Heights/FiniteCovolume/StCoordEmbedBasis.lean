@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -18,7 +22,7 @@ omit [Fintype ι] in
 theorem coordEmbed_apply (y : ι → E) (w : InfinitePlace E) (i : ι) :
     coordEmbed E ι y w i = w.embedding (y i) := rfl
 
-def CoordEmbedBasis.Statement [IsTotallyComplex E] : Prop :=
+def CoordEmbedBasis.Statement [_root_.NumberField.IsTotallyComplex E] : Prop :=
   LinearIndependent ℝ (fun k => coordEmbed E ι (Pi.basis (fun _ : ι => integralBasis E) k)) ∧
     finrank ℝ (InfinitePlace E → ι → ℂ) = finrank ℚ (ι → E)
 

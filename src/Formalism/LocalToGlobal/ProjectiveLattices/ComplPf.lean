@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.ComplSt
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.CompletionDVR
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.ComplSt
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.CompletionDVR
+
+@[expose] public section
 
 namespace Formalism.L2.Pj
 

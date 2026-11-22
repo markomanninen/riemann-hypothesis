@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.NotAllMatchRankZero
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DegenerationWeilPairingPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaConstantTermRepresentativeDependence
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.NormRepGeneratorsAndThetaSeriesTermStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DegenerationDataTorsionStructureAlgClosed
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HomTransportStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SymmPairingEqOneOfOddOfDiag
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsBasisUniqueMinPairSums
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FourierExtractionTsumClass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.NotAllMatchRankZero
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DegenerationWeilPairingPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaConstantTermRepresentativeDependence
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.NormRepGeneratorsAndThetaSeriesTermStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DegenerationDataTorsionStructureAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HomTransportStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SymmPairingEqOneOfOddOfDiag
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsBasisUniqueMinPairSums
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FourierExtractionTsumClass
+
+@[expose] public section
 
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Ex
 open scoped BigOperators
@@ -28,8 +32,6 @@ def toHom : NumD.Hom (RingHom.id O) N N' where
   e := J.e
   c_eq := J.c_eq
   ψ_eq := J.ψ_eq
-
-theorem rel_iff (g : N.Gt) (g' : N'.Gt) : (toHom J).Rel g g' ↔ J.Rel g g' := Iff.rfl
 
 def TR {k : ℕ} (p : N.QT k) (p' : N'.QT k) : Prop :=
   p'.1.1.toAdd = J.e p.1.1.toAdd ∧ J.Rel p.1.2 p'.1.2
@@ -59,7 +61,7 @@ theorem tr_mul {k : ℕ} {p q : N.QT k} {a b : N'.QT k} (ha : TR J p a) (hb : TR
     TR J (p * q) (a * b) := by
   refine ⟨?_, rel_mul J ha.2 hb.2⟩
   change a.1.1.toAdd + b.1.1.toAdd = J.e (p.1.1.toAdd + q.1.1.toAdd)
-  rw [map_add, ha.1, hb.1]
+  rw [map_add (f := _), ha.1, hb.1]
 
 theorem tr_wp {k : ℕ} {p q : N.QT k} {a b : N'.QT k} (ha : TR J p a) (hb : TR J q b) :
     N'.wp a b = N.wp p q :=

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.CA ReciprocityTheory.CA
 
@@ -57,7 +61,7 @@ theorem UpperTheory.V.CA.cl_quot :
       induction n with
       | zero => simp [hy0]
       | succ n ih =>
-        rw [Finset.sum_range_succ, ← add_assoc, map_add, ih, hdp]
+        rw [Finset.sum_range_succ, ← add_assoc, map_add (f := _), ih, hdp]
         ring
     have hcauchy : ∀ {m n : ℕ}, m ≤ n →
         (y0 + ∑ k ∈ Finset.range m, d k) ≡ (y0 + ∑ k ∈ Finset.range n, d k)

@@ -1,5 +1,9 @@
-import ReciprocityTheory.SemistableReduction.MeasurePreservingSphereMap
-import ReciprocityTheory.SemistableReduction.LogNormEvalZeroLeCircleAverage
+module
+
+public import ReciprocityTheory.SemistableReduction.MeasurePreservingSphereMap
+public import ReciprocityTheory.SemistableReduction.LogNormEvalZeroLeCircleAverage
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,7 +99,7 @@ theorem sj_holds (hLin : SphereLinLogStatement) : SJStatement := by
       rw [hq0]; exact mul_ne_zero (pow_ne_zero _ hz) hfu
     have hJ := log_norm_eval_zero_le_circleAverage q hne
     have hci : CircleIntegrable (fun ζ => Real.log ‖q.eval ζ‖) 0 1 :=
-      circleIntegrable_log_norm_meromorphicOn
+      MeromorphicOn.circleIntegrable_log_norm
         (fun x _ => (q.differentiable.analyticAt x).meromorphicAt)
     have hii : IntervalIntegrable (fun θ => L (rotS hu θ z)) MeasureTheory.volume 0 (2 * π) := by
       have := hci

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrismHomMapIdealEqStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrismHomMapIdealEqStatement
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
 
@@ -80,8 +85,8 @@ theorem norm_toDisc_hf_le {K : FinExt l} (bk : BK K) (B : Obj l ↥(OL K)) (f g 
   have hE : ‖am (BK.hf f bk.E)‖ ≤ ρ := by
     obtain ⟨q, hq⟩ := E_eq bk
     have e1 : BK.hf f bk.E = u ^ bk.Ep.natDegree + (l : B.A) ^ 1 * u ^ 0 * BK.hf f q := by
-      rw [hq, map_add, map_pow, map_mul, map_natCast, hu]; ring
-    rw [e1, map_add, map_mul]
+      rw [hq, map_add (f := _), map_pow, map_mul, map_natCast, hu]; ring
+    rw [e1, map_add (f := _), map_mul]
     refine (um _ _).trans (max_le ?_ ?_)
     · have := gauge_mono_le (l := l) u ρ 0 bk.Ep.natDegree hρ
         (by simpa using pow_le_of_le_one hρ.le hρ1 bk.deg_pos.ne')
@@ -103,7 +108,7 @@ theorem norm_toDisc_hf_le {K : FinExt l} (bk : BK K) (B : Obj l ↥(OL K)) (f g 
   obtain ⟨c, hc⟩ := hmem
   have e2 : BK.hf g X = u + BK.hf f bk.E * c := by rw [← hc, hu]; ring
   show ‖ofPre l u ρ (am (BK.hf g X))‖ ≤ ρ
-  rw [norm_ofPre, ← norm_preDisc, e2, map_add, map_mul]
+  rw [norm_ofPre, ← norm_preDisc, e2, map_add (f := _), map_mul]
   refine (um _ _).trans (max_le hX ?_)
   refine (norm_mul_le _ _).trans ?_
   calc _ ≤ (ρ : ℝ) * 1 := mul_le_mul hE (norm_algebraMap_le _) (norm_nonneg _) hρ.le
@@ -111,7 +116,7 @@ theorem norm_toDisc_hf_le {K : FinExt l} (bk : BK K) (B : Obj l ↥(OL K)) (f g 
 
 theorem disc_map_exists : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K), ∀ (B : Obj l ↥(OL K))
     (f g : Hom bk.prism B) (ρ : ℝ≥0), bk.ρ₀ ≤ ρ → ρ ≤ 1 →
-    ∃ F : bk.DS ρ →+* Disc l (BK.hf f X) ρ, IsDiscMap (BK.hf g) F := by
+    ∃ F : bk.DS ρ →+* Disc l (BK.hf f X) ρ, IsDiscMap (l := _) (u := _) (ρ := _) (BK.hf g) F := by
   intro l _ K bk B f g ρ h0 h1
   exact ⟨Disc.map (BK.hf g) (norm_toDisc_hf_le bk B f g ρ h0 h1), isDiscMap_map _ _⟩
 

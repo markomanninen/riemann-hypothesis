@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleCocycleNegCharPowerMemCoboundariesStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TrivialLineAdmissibleCocyclesNotIndependentStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvrComplete
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleCocycleNegCharPowerMemCoboundariesStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TrivialLineAdmissibleCocyclesNotIndependentStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvrComplete
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.TopSteps.CharBound
@@ -39,7 +43,7 @@ theorem exists_ext {k G : Type} [Field k] [Group G] (A : Ob k G) (z : G → Fin 
     have := e.injective hx
     simp at this
   · rw [← he']
-    simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, ← map_add]
+    simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, ← map_add (f := _)]
     simp
 
 theorem exists_resEquiv {O k : Type} [CommRing O] [Field k] [Algebra O k] {c : O}
@@ -64,7 +68,7 @@ theorem exists_ext_Ea {M : Type} [AddCommGroup M] [Module O M] (W : Representati
       ∀ σ x, e (twistRep (Ea W χ hc z) χ⁻¹ σ x) = E.ρ σ (e x) := by
   obtain ⟨r, hr⟩ := exists_resEquiv hs hk
   obtain ⟨E, e, hE, he⟩ := exists_ext A (fun g => q ((z : G → M ⊗[O] X) g)) (by simp [cocycle_one])
-    (fun g h => by rw [cocycle_mul z g h, map_add, hq])
+    (fun g h => by rw [cocycle_mul z g h, map_add (f := _), hq])
   refine ⟨E, (q.prodCongr r).trans (e.restrictScalars O), hE, ?_⟩
   rintro σ ⟨m, y⟩
   obtain ⟨y, rfl⟩ := Ideal.Quotient.mk_surjective y
@@ -73,7 +77,7 @@ theorem exists_ext_Ea {M : Type} [AddCommGroup M] [Module O M] (W : Representati
     rw [Ea, twistRep_apply, twistRep_apply, smul_smul, extRep_apply]
     simp
   rw [this]
-  simp only [LinearEquiv.trans_apply, LinearEquiv.prodCongr_apply, LinearEquiv.restrictScalars_apply, map_add,
+  simp only [LinearEquiv.trans_apply, LinearEquiv.prodCongr_apply, LinearEquiv.restrictScalars_apply, map_add (f := _),
     map_smul, hq, hr]
   rw [← he, algebraMap_smul]
 
@@ -87,10 +91,12 @@ theorem linearIndependent_of_indepMod {N : Type} [AddCommGroup N] [Module O N] (
   choose x hx using fun a => hs (y a)
   rw [← hx, hk]
   refine h x ?_ a
-  simp only [← map_smul, ← map_sum] at hy
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← map_smul, ← map_sum] at hy
   obtain ⟨b, hb⟩ := (Submodule.Quotient.mk_eq_zero _).mp hy
   have e1 : ∑ a, x a • (Submodule.Quotient.mk (z a) : H1 π ⊤) = Submodule.mkQ _ (∑ a, x a • z a) := by
-    rw [map_sum]; rfl
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]; rfl
   rw [e1]
   refine (Submodule.Quotient.mk_eq_zero _).mpr ⟨q.symm b, Submodule.mem_top, ?_⟩
   funext g

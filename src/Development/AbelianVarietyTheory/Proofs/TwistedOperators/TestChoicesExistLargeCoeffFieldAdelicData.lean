@@ -1,11 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.TwistPlacesOffPrimeQZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HoldsUIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsBare
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CopyLIntegral
-import Development.AbelianVarietyTheory.Definitions.Divisors.Hypotheses2
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NonzeroPlacesOverPrimesLifts
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TwistedDataOffBaseLevel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.TwistPlacesOffPrimeQZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HoldsUIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsBare
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CopyLIntegral
+public import Development.AbelianVarietyTheory.Definitions.Divisors.Params
+public import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.SiegelWeilUnitaryConvergent
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NonzeroPlacesOverPrimesLifts
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TwistedDataOffBaseLevel
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH NumberField IsDedekindDomain Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Mem GlobalTheory.Mem.Top GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.Col2 GlobalTheory.Mem.R3
@@ -26,16 +33,16 @@ theorem GlobalTheory.RowEx.dat_choice_exists : GlobalTheory.RowEx.ExField → �
   · intro P f _ _ Ξ z hz
     by_cases h : Ξ.Finite
     · dsimp only at hz
-      rw [dif_pos h] at hz
+      rw [dite_eq_left h] at hz
       exact (Classical.choose_spec (hF P f Ξ h)).1 z hz
     · dsimp only at hz
-      rw [dif_neg h] at hz
+      rw [dite_eq_right h] at hz
       simp at hz
   · intro B f T _ hH _ _ w Z hX Wt z L hL hS
     obtain ⟨hq, hC, hfin, hmem⟩ := GlobalTheory.RowEx.twisted_data_off_base_level B f T w Z hX Wt z
     have hS2 := hH.2
     dsimp only at hS2
-    rw [dif_pos hfin] at hS2
+    rw [dite_eq_left hfin] at hS2
     rw [hL]
     exact (Classical.choose_spec (hF B.toPre f (T.set f) hfin)).2 (w.st Z) f rfl HEq.rfl L hL _ _ _ _ _ _ _ hS hC hq
       (fun t => ⟨_, hmem t, HEq.rfl⟩) (fun y hy => hS2 y hy)

@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SameFns
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NormalFormActualOperatorsAlgebraicHypothesesStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.RadialPairConstantsPointwiseAdjointBounded
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DoubleCosetOfZetaEq
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ProjRaisingProjEqSmul
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.VanishAbstract
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PairAtTAdjCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentLevelZeroEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SameFns
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NormalFormActualOperatorsAlgebraicHypothesesStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.RadialPairConstantsPointwiseAdjointBounded
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DoubleCosetOfZetaEq
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ProjRaisingProjEqSmul
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.VanishAbstract
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsFderivChiBound
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormalFormOrderZeroOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentLevelZeroEqOne
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.R Formalism.FourierDecayAlt.Wd Formalism.FourierDecayAlt.Fr Formalism.REAL Formalism.QuantumDeterminants MeasureTheory GlobalTheory.HatNF
 open scoped ComplexConjugate InnerProductSpace ContDiff
@@ -61,7 +66,7 @@ def adjSub {μ : Measure (Mt k r)} (hμ : B.IsHaarOn (Q.Glev k r (Fin.last r)) �
     have h2 := pairAt_add_smul_left μ ((star a).1 Ψ) ((star b).1 Ψ) Φ c 1 (int_right hμ hc hKc hKG _ _ hΦ)
       (int_right hμ hc hKc hKG _ _ hΦ)
     simp only [one_smul, one_mul] at h1 h2
-    rw [h1, pairAt_swap μ _ Φ, h2, map_add, ← pairAt_swap, ← pairAt_swap]
+    rw [h1, pairAt_swap μ _ Φ, h2, map_add (f := _), ← pairAt_swap, ← pairAt_swap]
     exact congrArg₂ _ ha hb
   smul_mem' := by
     intro s b hb

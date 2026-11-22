@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StBranchInComponent
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRiemannExtensionAnalytic
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StBranchInComponent
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRiemannExtensionAnalytic
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -15,7 +20,7 @@ theorem differentiable_eval {n : ℕ} (g : MvPolynomial (Fin n) ℂ) :
     Differentiable ℂ (fun x : Fin n → ℂ => eval x g) := by
   induction g using MvPolynomial.induction_on with
   | C a => simp only [eval_C]; exact differentiable_const a
-  | add p q hp hq => simp only [map_add]; exact hp.add hq
+  | add p q hp hq => simp only [map_add (f := _)]; exact hp.add hq
   | mul_X p i hp => simp only [map_mul, eval_X]; exact hp.mul (differentiable_apply i)
 
 theorem exists_open_prod_ne_zero {k : ℕ} {U : Set (Fin k → ℂ)} (hU : IsOpen U) (hUc : IsPreconnected U)

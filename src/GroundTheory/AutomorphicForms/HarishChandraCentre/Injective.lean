@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HarishChandraCentre.Projection
-import GroundTheory.AutomorphicForms.HarishChandraCentre.Fischer
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.Projection
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.Fischer
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.HarishChandra
 
@@ -19,7 +23,8 @@ theorem exists_adjoint (u : U n) :
   | hι X =>
     refine ⟨∑ a : Fin n × Fin n, star (X a.1 a.2) • e (a.2, a.1), fun f g => ?_⟩
     rw [ι_eq_sum_e]
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, fischer_sum_left,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, fischer_sum_left,
       fischer_sum_right, fischer_smul_left, fischer_smul_right, star_star]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [show e a = e (a.1, a.2) from rfl, rho_zero_e, rho_zero_e, fischer_rowOp]
@@ -32,7 +37,7 @@ theorem exists_adjoint (u : U n) :
     obtain ⟨a', ha'⟩ := ha
     obtain ⟨b', hb'⟩ := hb
     refine ⟨a' + b', fun f g => ?_⟩
-    rw [map_add, LinearMap.add_apply, fischer_add_left, ha', hb', map_add, LinearMap.add_apply,
+    rw [map_add (f := _), LinearMap.add_apply, fischer_add_left, ha', hb', map_add (f := _), LinearMap.add_apply,
       fischer_add_right]
 
 theorem eq_zero_of_mem_center_of_hcProjLin_eq_zero {z : U n}

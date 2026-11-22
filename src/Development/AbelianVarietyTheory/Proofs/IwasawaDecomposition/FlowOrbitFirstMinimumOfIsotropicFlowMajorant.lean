@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OrbitThickSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajorantConjugateTransfer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.QuadraticCoefficientForms
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowMatMulVec
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianTraceFormVanishing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IntegerApproximationCountHolds
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.EventuallyComparable
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsIntMulIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OrbitThickSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajorantConjugateTransfer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.QuadraticCoefficientForms
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowMatMulVec
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianTraceFormVanishing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IntegerApproximationCountHolds
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.EventuallyComparable
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsIntMulIntegral
+
+@[expose] public section
 
 open NumberField Complex ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.CuspFrom
 open scoped ComplexConjugate
@@ -21,7 +25,7 @@ theorem min_le_sum {ι : Type} [Fintype ι] [Nonempty ι] (a : ι → ℝ) (ha :
   · exact (min_le_left _ _).trans h1
   refine (min_le_right _ _).trans (h.trans ?_)
   have h0 : 0 ≤ ∑ i, a i := Finset.sum_nonneg fun i _ => ha i
-  calc ∏ i, a i ≤ ∏ _i : ι, ∑ j, a j := Finset.prod_le_prod (fun i _ => ha i) fun i _ =>
+  calc ∏ i, a i ≤ ∏ _i : ι, ∑ j, a j := Finset.prod_le_prod₀ (fun i _ => ha i) fun i _ =>
         Finset.single_le_sum (fun j _ => ha j) (Finset.mem_univ i)
     _ = (∑ j, a j) ^ Fintype.card ι := by simp
     _ ≤ ∑ j, a j := pow_le_of_le_one h0 h1 Fintype.card_ne_zero
@@ -112,7 +116,7 @@ theorem prod_lower_of_ne {y : Frame X.Ψ r}
   have h2 : 0 ≤ ∏ τ, X.c τ ^ 2 := Finset.prod_nonneg fun τ _ => sq_nonneg _
   refine (le_mul_of_one_le_right h2 h1).trans ?_
   rw [← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
-  refine Finset.prod_le_prod (fun τ _ => by positivity) fun τ _ => ?_
+  refine Finset.prod_le_prod₀ (fun τ _ => by positivity) fun τ _ => ?_
   rw [map_mul, norm_mul, mul_pow, emb_herm]
   have := mul_le_mul_of_nonneg_left (hcs τ (Data.emb τ.1 v) (Data.emb τ.1 ξ))
     (show 0 ≤ X.c τ ^ 2 * ‖τ.1 (X.den : E)‖ ^ 2 by positivity)

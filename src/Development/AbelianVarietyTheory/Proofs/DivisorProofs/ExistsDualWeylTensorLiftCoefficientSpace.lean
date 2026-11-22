@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LamGApply
-import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VariableMatrixDetPolyPowMulMemDualWeylStatement
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LamGApply
+public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VariableMatrixDetPolyPowMulMemDualWeylStatement
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -64,13 +68,16 @@ theorem linInd_map {F K σ ι : Type} [Field F] [Field K] (e : F →+* K) {v : �
   intro j
   have key : ∑ i ∈ s, (B.repr (c i) j) • v i = 0 := by
     ext m
-    have h1 := congrArg (coeff m) hsum
-    simp only [coeff_sum, coeff_smul, coeff_map, smul_eq_mul, coeff_zero] at h1 ⊢
+    have h1 := congrArg (AddMonoidAlgebra.coeff · m) hsum
+    simp only [coeff_sum, coeff_smul, coeff_map, smul_eq_mul] at h1 ⊢
+    change ∑ x ∈ s, c x * e ((v x).coeff m) = 0 at h1
+    change ∑ x ∈ s, (B.repr (c x)) j * (v x).coeff m = 0
     have h2 := congrArg (fun x => B.repr x j) h1
-    simp only [map_sum, map_zero, Finsupp.finset_sum_apply, Finsupp.coe_zero, Pi.zero_apply] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zero, Finsupp.finsetSum_apply, Finsupp.coe_zero, Pi.zero_apply] at h2
     rw [← h2]
     refine Finset.sum_congr rfl fun i _ => ?_
-    have h3 : c i * e (coeff m (v i)) = coeff m (v i) • c i := by
+    have h3 : c i * e (AddMonoidAlgebra.coeff (v i) m) = AddMonoidAlgebra.coeff (v i) m • c i := by
       rw [Algebra.smul_def, mul_comm]; rfl
     rw [h3, map_smul, Finsupp.smul_apply, smul_eq_mul, mul_comm]
   have := hv s (fun i => B.repr (c i) j) key i hi
@@ -135,18 +142,21 @@ theorem exists_phi (K C : Type) [Field K] [Field C] (e0 : K →+* C) (ι : Type)
     have hv' : v = ∑ i : VVIdx lam, (∏ τ, a τ (i τ)) • bVV K lam i := by
       apply Subtype.ext
       rw [hv]
-      simp only [Submodule.coe_sum, Submodule.coe_smul, bVV_coe, bVVfun, ten, ← ha, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Submodule.coe_sum, Submodule.coe_smul, bVV_coe, bVVfun, ten, ← ha, map_sum, map_smul]
       rw [Finset.prod_univ_sum]
       simp only [Finset.prod_smul]
       refine Finset.sum_congr ?_ fun _ _ => rfl
       ext i; simp
     refine ⟨fun τ => ∑ j, e0 (a τ j) • u τ j, fun τ => ?_, ?_⟩
-    · simp only [Submodule.coe_sum, Submodule.coe_smul, u, liftPol, ← ha, map_sum, Finset.mul_sum, smul_eq_C_mul, map_mul, map_C]
-      refine Finset.sum_congr rfl fun j _ => by ring
-    · rw [MultilinearMap.map_sum, hv', map_sum]
-      simp only [LinearMap.map_smulₛₗ, semiConstr_basis, MultilinearMap.map_smul_univ, map_prod]
-      refine Finset.sum_congr ?_ fun _ _ => rfl
-      ext i; simp
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [Submodule.coe_sum, Submodule.coe_smul, u, liftPol, ← ha, map_sum, Finset.mul_sum, smul_eq_C_mul, map_mul, map_C]
+        refine Finset.sum_congr rfl fun j _ => by ring
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [MultilinearMap.map_sum, hv', map_sum]
+        simp only [LinearMap.map_smulₛₗ, semiConstr_basis, MultilinearMap.map_smul_univ, map_prod]
+        refine Finset.sum_congr ?_ fun _ _ => rfl
+        ext i; simp
   · simp only [semiConstr_basis]
     refine LinearIndependent.of_comp (mulMap C n lamW) ?_
     have h1 := linInd_map e0 (bVVfun_spec K lam).1

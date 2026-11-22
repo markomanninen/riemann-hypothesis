@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ArtinMapAbelianUnique
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsEqOfNatCastMulMem
-import GroundTheory.GlobalFields.ComplexMultiplication.MainTheorem
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ArtinMapAbelianUnique
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsEqOfNatCastMulMem
+public import GroundTheory.GlobalFields.ComplexMultiplication.MainTheorem
+
+@[expose] public section
+
 open NumberField
 open scoped nonZeroDivisors
 open scoped GlobalTheory.Idele

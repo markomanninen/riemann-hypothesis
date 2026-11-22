@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.EveryPointSatisfiesFrameCondition
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.EveryPointSatisfiesFrameCondition
+
+@[expose] public section
 
 open IsLocalRing Matrix Polynomial UpperTheory.V.W
 
@@ -21,7 +25,7 @@ private theorem aeval_mapM {n : ℕ} {A K : Type} [CommRing A] [CommRing K] (f :
     (M : Matrix (Fin n) (Fin n) A) (q : A[X]) :
     f.mapMatrix (aeval M q) = aeval (f.mapMatrix M) (q.map f) := by
   induction q using Polynomial.induction_on' with
-  | add p q hp hq => simp only [map_add, Polynomial.map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), Polynomial.map_add (f := _), hp, hq]
   | monomial k a =>
     simp only [Polynomial.aeval_monomial, Polynomial.map_monomial, map_mul, map_pow]
     congr 1
@@ -31,7 +35,7 @@ private theorem aeval_mapM {n : ℕ} {A K : Type} [CommRing A] [CommRing K] (f :
 private theorem aeval_inter {n : ℕ} {K : Type} [CommRing K] (M N Y : Matrix (Fin n) (Fin n) K)
     (h : N * Y = Y * M) (q : K[X]) : aeval N q * Y = Y * aeval M q := by
   induction q using Polynomial.induction_on' with
-  | add p q hp hq => simp only [map_add, add_mul, mul_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), add_mul, mul_add, hp, hq]
   | monomial k a =>
     simp only [Polynomial.aeval_monomial]
     have hpow : N ^ k * Y = Y * M ^ k := by

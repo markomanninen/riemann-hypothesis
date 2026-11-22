@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TameParahoricRepSplitsAsProduct
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TameParahoricRepSplitsAsProduct
+
+@[expose] public section
+
 open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi UpperTheory.V.AlgebraTools GlobalTheory.PRep
 
 private theorem tamePair_aeval_comm {K A : Type} [CommRing K] [Ring A] [Algebra K A]
@@ -11,7 +16,7 @@ private theorem tamePair_aeval_comm {K A : Type} [CommRing K] [Ring A] [Algebra 
     | zero => simp
     | succ k ih => rw [pow_succ, ← mul_assoc, ih, mul_assoc, h, pow_succ, mul_assoc]
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, map_add, mul_add, add_mul, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), mul_add, add_mul, hp, hq]
   | monomial k a =>
     rw [Polynomial.aeval_monomial, Polynomial.aeval_monomial, ← Algebra.smul_def,
       ← Algebra.smul_def, mul_smul_comm, smul_mul_assoc, hp]
@@ -69,7 +74,7 @@ private theorem tamePair_nil {K A : Type} [Field K] [Ring A] [Algebra K A]
   set g : Polynomial K := (q : Polynomial K) * Polynomial.X + Polynomial.X ^ 2 * r with hg
   have h1 : P * X = Polynomial.aeval X g * P := by
     have := congrArg (Polynomial.aeval X) hr
-    rw [map_pow, map_add, map_one, Polynomial.aeval_X, add_assoc, map_add, map_one, ← hg] at this
+    rw [map_pow, map_add (f := _), map_one, Polynomial.aeval_X, add_assoc, map_add (f := _), map_one, ← hg] at this
     rw [this, mul_add, add_mul, mul_one, one_mul] at h
     exact add_left_cancel h
   have h2 : ∀ p : Polynomial K, P * Polynomial.aeval X p * Q = Polynomial.aeval X (p.comp g) := by
@@ -82,7 +87,7 @@ private theorem tamePair_nil {K A : Type} [Field K] [Ring A] [Algebra K A]
     intro p
     rw [hψ, h2, map_sub, map_mul, map_natCast, Nat.cast_smul_eq_nsmul, nsmul_eq_mul]
   have hψi : Function.Injective ψ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro Y hY
     apply hinj
     rw [hψ, sub_eq_zero] at hY

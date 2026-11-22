@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.SatakeNormalized
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.SatakeNormalized
+
+@[expose] public section
 
 noncomputable section
 

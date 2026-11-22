@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RationalSchwartzBruhatAlgebraIntegralLinearStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsExOfPow
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndexStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RationalSchwartzBruhatAlgebraIntegralLinearStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsExOfPow
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndexStatement
+
+@[expose] public section
 
 open Matrix Complex NumberField MeasureTheory GlobalTheory GlobalTheory.SW GlobalTheory.ThFr ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD
 open scoped ComplexConjugate ComplexOrder Real Classical
@@ -114,7 +118,7 @@ variable {G α : Type} [AddCommGroup G]
 theorem finite_image_of_fg {A : AddSubgroup G} (hA : A.FG) (f : G → α) {N : ℕ} (hN : 0 < N)
     (hf : ∀ a ∈ A, ∀ b ∈ A, f (a + N • b) = f a) : (f '' A).Finite := by
   classical
-  obtain ⟨S, hS⟩ := hA
+  obtain ⟨S, hS⟩ := AddSubgroup.isAddFG_iff.mp hA
   have hspan : ∀ x, x ∈ A ↔ x ∈ Submodule.span ℤ (S : Set G) := fun x => by
     rw [← hS, ← Submodule.span_int_eq_addSubgroupClosure, Submodule.mem_toAddSubgroup]
   have hmemS : ∀ d : S → ℤ, (∑ s : S, d s • (s : G)) ∈ A := fun d =>
@@ -241,8 +245,8 @@ theorem epsW_mul_conj (w : E) (y : Matrix (Fin n) (Fin r) E) :
     simp only [map_mul, Complex.conj_ofReal, Complex.conj_I, map_ratCast]; ring
   rw [this, add_neg_cancel, Complex.exp_zero]
 
-variable (X) in
 
+variable (X) in
 def Good (w : E) (A : AddSubgroup (Matrix (Fin n) (Fin r) E)) : Prop :=
   A.FG ∧ (∀ y, y ∈ A ↔ ∀ y' ∈ A, ∃ k : ℤ, ∑ i, EF X (y i) (y' i) = k) ∧
     ∀ y ∈ A, epsW X w y ^ 2 = 1 ∧ ∀ y' ∈ A, epsW X w (y + y') =
@@ -294,7 +298,7 @@ theorem Good.vac (hs : IsSympl X bas) (hA : Good X w A) : ∃ v : TF n g, IsVac 
     intro p hp p' hp'
     obtain ⟨y, hy, rfl⟩ := AddSubgroup.mem_map.1 hp
     obtain ⟨y', hy', rfl⟩ := AddSubgroup.mem_map.1 hp'
-    rw [← map_add, hee, hee, hee, (hA.2.2 y hy).2 y' hy', om_crdHom hs]
+    rw [← map_add (f := _), hee, hee, hee, (hA.2.2 y hy).2 y' hy', om_crdHom hs]
     congr 2
     push_cast; ring
   have hord : ∃ m : ℕ, 0 < m ∧ ∀ p ∈ A.map (crdHom hs), epsW X w (e.symm (m • p)) = 1 := by

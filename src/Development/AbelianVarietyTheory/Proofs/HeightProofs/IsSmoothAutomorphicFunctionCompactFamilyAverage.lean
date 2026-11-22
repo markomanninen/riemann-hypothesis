@@ -1,12 +1,17 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DifferentiableOneP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAutomorphicFunctionTranslateAtRealPlace
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RderMemAutFormsCuspForms
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GrowthSizeRWordNeTopOfLe
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CompactAverageSmoothFamilyClosedUnderDerivativesStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DifferentiableOneP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAutomorphicFunctionTranslateAtRealPlace
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RderMemAutFormsCuspForms
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GrowthSizeRWordNeTopOfLe
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CompactAverageSmoothFamilyClosedUnderDerivativesStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta MeasureTheory Matrix
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -44,7 +49,7 @@ theorem continuous_infMat_atTau_inv (hθ : IsInfFam θ) (hκ : Continuous κ)
 theorem continuous_normInf_atTau (hθ : IsInfFam θ) (hκ : Continuous κ)
     (hU : ∀ k, κ k ∈ Formalism.QuantumDeterminants.UH (gramAt D V τ)) : Continuous fun k => normInf θ V (atTau θ V τ (κ k)) := by
   unfold normInf
-  refine continuous_finset_sum _ fun τ' _ => continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => ?_
+  refine continuous_finsetSum _ fun τ' _ => continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => ?_
   exact (((continuous_infMat_atTau hθ hκ hU τ').matrix_elem i j).norm).add
     (((continuous_infMat_atTau_inv hθ hκ hU τ').matrix_elem i j).norm)
 
@@ -54,8 +59,8 @@ theorem continuous_adAt_atTau (hθ : IsInfFam θ) (hκ : Continuous κ)
   ((continuous_infMat_atTau_inv hθ hκ hU τ').matrix_mul continuous_const).matrix_mul
     (continuous_infMat_atTau hθ hκ hU τ')
 
-variable (θ V τ κ) in
 
+variable (θ V τ κ) in
 def famSpan (𝒟 : Set (GA D V → ℂ)) : Submodule ℂ (K → GA D V → ℂ) :=
   Submodule.span ℂ {F | ∃ c : K → ℂ, Continuous c ∧ ∃ ψ ∈ 𝒟, F = fun k x => c k * ψ (x * atTau θ V τ (κ k))}
 
@@ -157,8 +162,8 @@ theorem famSpan_Rder : ∀ F ∈ famSpan θ V τ κ 𝒟, ∀ τ', ∀ X ∈ lie
 
 end Der
 
-variable (θ V) in
 
+variable (θ V) in
 def growN (N : ℕ) : Set (GA D V → ℂ) :=
   {ψ | IsAutFunSm θ V ψ ∧ ∀ l : List (D.what₂.Tau × Matrix (Fin V.rank) (Fin V.rank) ℂ), (∀ p ∈ l, p.2 ∈ lieAt V p.1) →
     ∀ x, ∃ C, ∀ g ∈ GinfC V, ‖l.foldr (fun p f => Rder θ V p.1 p.2 f) ψ (x * g)‖ ≤ C * normInf θ V g ^ N}

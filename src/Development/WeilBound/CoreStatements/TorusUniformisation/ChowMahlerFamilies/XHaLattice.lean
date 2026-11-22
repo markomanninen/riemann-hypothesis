@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsUniformDenominator
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XTestptExists
-import GroundTheory.ArithmeticGeometry.ToricVarieties.KrullDomain
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsUniformDenominator
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XTestptExists
+public import GroundTheory.ArithmeticGeometry.ToricVarieties.KrullDomain
+
+@[expose] public section
+
 open GlobalTheory.CompanionTheory.Ar.Num
 
 namespace PositivityTheory.Xgn.A_ha_lattice
@@ -21,7 +26,7 @@ theorem dvr_of_height_one {A S : Type} [CommRing A] [IsDomain A] [IsNoetherianRi
     exact absurd hd (by decide)
   have hk : Ring.KrullDimLE 1 S := Ring.krullDimLE_iff.2 (by rw [hd]; rfl)
   have key : IsDiscreteValuationRing S ↔ IsIntegrallyClosed S ∧ ∃! P : Ideal S, P ≠ ⊥ ∧ P.IsPrime :=
-    (IsDiscreteValuationRing.TFAE S hf).out 0 3
+    (IsDiscreteValuationRing.TFAE S hf).out 1 4
   refine key.2 ⟨hI, IsLocalRing.maximalIdeal S,
     ⟨IsLocalRing.isField_iff_maximalIdeal_eq.not.1 hf, inferInstance⟩, ?_⟩
   rintro P ⟨hP0, hP⟩
@@ -69,7 +74,8 @@ theorem exists_ext {Ω C : Type} [Field Ω] [Field C] [Algebra Ω C] {ι : Type}
   classical
   refine ⟨Fintype.linearCombination C fun i => algebraMap Ω C (ψ (Pi.single i 1)), fun e => ?_⟩
   conv_rhs => rw [pi_eq_sum_univ' e]
-  simp [Fintype.linearCombination_apply, bcMap, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Fintype.linearCombination_apply, bcMap, map_sum]
 
 end PositivityTheory.Xgn.A_ha_lattice
 
@@ -90,7 +96,7 @@ theorem PositivityTheory.Xgn.t_ha_lattice : ∀ {o Ω : Type} [CommRing o] [Fiel
         rw [map_smul, smul_eq_mul, hΦ]
         exact RC.mul_mem hc (hT.2.2.2 _ (hψ e he))
       | zero => simp
-      | add x y _ _ hx hy => rw [map_add]; exact RC.add_mem hx hy
+      | add x y _ _ hx hy => rw [map_add (f := _)]; exact RC.add_mem hx hy
       | neg x _ hx => rw [map_neg]; exact RC.neg_mem hx
     rw [← hΦ]
     exact key _ (h C RC hT)

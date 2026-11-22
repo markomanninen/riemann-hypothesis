@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsLocalOrbitChart
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PLevelSetLocalInj
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsAnalyticLogResolution
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsLocalOrbitChart
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PLevelSetLocalInj
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsAnalyticLogResolution
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ theorem exists_injective_linear {W : Type} [AddCommGroup W] [Module ℂ W] [Fini
   let e : W ≃ₗ[ℂ] (Fin (Module.finrank ℂ W) → ℂ) := LinearEquiv.ofFinrankEq _ _ (by simp)
   let s : Fin (Module.finrank ℂ W) → Fin n := Fin.castLE h
   have hs : Function.Injective s := Fin.castLE_injective h
-  refine ⟨(Function.ExtendByZero.linearMap ℂ s).comp e.toLinearMap, fun a b hab => e.injective ?_⟩
+  refine ⟨(Function.ExtendByZero.linearMap ℂ ℂ s).comp e.toLinearMap, fun a b hab => e.injective ?_⟩
   funext i
   have := congrFun hab (s i)
   change Function.extend s (e a) 0 (s i) = Function.extend s (e b) 0 (s i) at this

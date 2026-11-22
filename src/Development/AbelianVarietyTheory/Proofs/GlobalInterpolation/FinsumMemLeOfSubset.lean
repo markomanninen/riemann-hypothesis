@@ -1,26 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LogDerivLFunctionStrip
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ImportsMore
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LogDerivLFunctionStrip
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ImportsMore
+
+@[expose] public section
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology
 
 namespace GlobalTheory.ZeroWindow
-
-theorem finsum_mem_le_of_subset {S T : Set ℂ} (hT : T.Finite) (h : S ⊆ T) (f : ℂ → ℝ)
-    (hf : ∀ x, 0 ≤ f x) : ∑ᶠ x ∈ S, f x ≤ ∑ᶠ x ∈ T, f x := by
-  rw [finsum_mem_eq_finite_toFinset_sum f hT, finsum_mem_eq_finite_toFinset_sum f (hT.subset h)]
-  refine Finset.sum_le_sum_of_subset_of_nonneg ?_ fun i _ _ => hf i
-  intro x hx
-  simp only [Set.Finite.mem_toFinset] at hx ⊢
-  exact h hx
-
-theorem norm_sub_le {ρ : ℂ} {t : ℝ} (h0 : 0 < ρ.re) (h1 : ρ.re < 1) (h2 : |ρ.im - t| ≤ 1) :
-    ‖ρ - (2 + t * I)‖ ≤ 7 / 2 := by
-  refine (Complex.norm_le_abs_re_add_abs_im _).trans ?_
-  have a : (ρ - (2 + t * I)).re = ρ.re - 2 := by simp
-  have b : (ρ - (2 + t * I)).im = ρ.im - t := by simp
-  rw [a, b]
-  have : |ρ.re - 2| ≤ 2 := by rw [abs_le]; constructor <;> linarith
-  linarith
 
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology in
 private lemma norm_sub_two_add_le_of_mem_strip {ρ : ℂ} {t : ℝ} (h0 : 0 < ρ.re) (h1 : ρ.re < 1)
@@ -38,8 +26,8 @@ private lemma finsum_mem_le_of_subset_of_nonneg {S D : Set ℂ} (f : ℂ → ℝ
   rw [finsum_mem_eq_finite_toFinset_sum f (hD.subset hSD), finsum_mem_eq_finite_toFinset_sum f hD]
   exact Finset.sum_le_sum_of_subset_of_nonneg (by simpa using hSD) (fun x _ _ => hf x)
 
-open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology in
 
+open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology in
 theorem _root_.GlobalTheory.ZeroWindow.count_zeros_window : ∃ C : ℝ, 0 < C ∧ ∀ (N : ℕ) [NeZero N]
     (χ : DirichletCharacter ℂ N), χ.IsPrimitive → ∀ t : ℝ,
     {ρ : ℂ | 0 < ρ.re ∧ ρ.re < 1 ∧ |ρ.im - t| ≤ 1 ∧ LFunction χ ρ = 0}.Finite ∧

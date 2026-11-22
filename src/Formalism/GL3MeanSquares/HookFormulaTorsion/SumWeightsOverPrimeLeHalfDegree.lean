@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GL3MeanSquares.RankMulPowThreeHalvesLeFourthPower
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.RankMulPowThreeHalvesLeFourthPower
+
+@[expose] public section
 
 namespace Formalism.HermitianLattices.GenusMassVolumes
 

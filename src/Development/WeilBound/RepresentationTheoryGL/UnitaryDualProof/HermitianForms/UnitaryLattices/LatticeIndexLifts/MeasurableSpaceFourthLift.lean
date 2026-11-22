@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.LatticeIndexLifts.MeasurableSpaceThirdLift
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.LatticeIndexLifts.MeasurableSpaceThirdLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,8 +76,8 @@ private theorem addHaar_singleton_zero_eq_zero {m : ℕ} {ψ : AddChar k Circle}
   · exact h
   · exact absurd h hfin
 
-include hψ hψ1 hS hA₀ hBp hBc hBg hD hCp hCc hC hCB hν in
 
+include hψ hψ1 hS hA₀ hBp hBc hBg hD hCp hCc hC hCB hν in
 theorem lift_form : ∃ I : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ, Psd I ∧ (∀ x v w, I (col x v) (col x w) = I v w) ∧
       (∀ g v w, I (gl g v) (gl g w) = ((nabs k (Matrix.GeneralLinearGroup.det g) ^ s : ℝ) : ℂ) * I v w) ∧
       (∀ v, (I v v).re ≤ (B v v).re) ∧ IsD ψ col A₀ I C ∧ IsA col I 0 ∧
@@ -84,13 +88,13 @@ theorem lift_form : ∃ I : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ, Psd I ∧ (∀ x
   let I : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ := LinearMap.mk₂'ₛₗ (RingHom.id ℂ) (starRingEnd ℂ)
     (fun v w => ∫ ξ, Df gl s C ξ v w ∂ν)
     (fun v₁ v₂ w => by
-      simp only [map_add, LinearMap.add_apply]
+      simp only [map_add (f := _), LinearMap.add_apply]
       exact integral_add (hint _ _) (hint _ _))
     (fun c v w => by
       simp only [map_smul, LinearMap.smul_apply, smul_eq_mul, RingHom.id_apply]
       exact integral_const_mul c _)
     (fun v w₁ w₂ => by
-      simp only [map_add]
+      simp only [map_add (f := _)]
       exact integral_add (hint _ _) (hint _ _))
     (fun c v w => by
       simp only [LinearMap.map_smulₛₗ, smul_eq_mul]
@@ -144,7 +148,9 @@ theorem lift_form : ∃ I : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ, Psd I ∧ (∀ x
     rw [Df_xz hC'] at hloc
     have hU : (fun η => xz m + η) ⁻¹' {ξ | Df gl s C ξ v w = C v w} ∈ 𝓝 (0 : Fin (m + 1) → k) := by
       have ht : Tendsto (fun η : Fin (m + 1) → k => xz m + η) (𝓝 0) (𝓝 (xz m)) := by
-        have := (continuous_add_left (xz m)).tendsto (0 : Fin (m + 1) → k)
+        have hc : Continuous (fun η : Fin (m + 1) → k => xz m + η) :=
+          continuous_const.add continuous_id
+        have := hc.tendsto (0 : Fin (m + 1) → k)
         simpa using this
       exact ht hloc
     obtain ⟨A₂, hA₂, hsub⟩ := lat_shrink ψ hψ hψ1 hU

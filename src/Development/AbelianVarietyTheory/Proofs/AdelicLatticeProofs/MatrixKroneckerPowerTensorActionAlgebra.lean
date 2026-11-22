@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
@@ -60,6 +65,7 @@ theorem tpow_act_algebra : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (R : Ty
     simp only [act_apply_alg, Pi.smul_apply, smul_eq_mul, Finset.mul_sum, mul_assoc]
   · intro R' _ φ y
     funext k
-    simp only [act_apply_alg, map_sum, map_mul, map_prod, Matrix.map_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [act_apply_alg, map_sum, map_mul, map_prod, Matrix.map_apply]
 
 end GlobalTheory.ClassFin

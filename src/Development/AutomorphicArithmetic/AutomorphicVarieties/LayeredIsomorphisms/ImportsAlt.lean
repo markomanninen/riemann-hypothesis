@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.GaloisCohomology.GaloisCohomologyProofs.LdataNonempty
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.SecondBound
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.Klen
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.Kexp
+module
+
+public import Mathlib
+public import Formalism.GaloisCohomology.GaloisCohomologyProofs.LdataNonempty
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.SecondBound
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.Klen
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.Kexp
+
+@[expose] public section
 
 open NumberField Formalism.GaloisCohomology UpperTheory.Top UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Win
 

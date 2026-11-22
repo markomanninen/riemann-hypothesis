@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsIntegralDetSubOne
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsHermCoordOfDatum
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FinrankEqOfInjectiveOfSpan
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsIntegralDetSubOne
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsHermCoordOfDatum
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FinrankEqOfInjectiveOfSpan
+
+@[expose] public section
 
 open NumberField Matrix
 open scoped nonZeroDivisors
@@ -89,7 +93,7 @@ theorem det_interp {E : Type} [Field E] [NumberField E] {r : ℕ} (n : ℕ) (hn 
     rw [this, h]
     ring
   have hy' : IsIntegral ℤ ((d - 1) / n) := by
-    rw [← isIntegral_algebraMap_iff hinj, map_div₀, map_sub, map_one, map_natCast, hd',
+    rw [← isIntegral_algebraMap_iff (B := K), map_div₀, map_sub, map_one, map_natCast, hd',
       add_sub_cancel_left, mul_div_cancel_left₀ _ hn']
     exact hy
   obtain ⟨z, hz⟩ : ∃ z : 𝓞 E, (z : E) = (d - 1) / n := ⟨⟨_, hy'⟩, rfl⟩
@@ -103,7 +107,7 @@ theorem det_interp {E : Type} [Field E] [NumberField E] {r : ℕ} (n : ℕ) (hn 
 theorem norm_one_add {E : Type} [Field E] [NumberField E] (n : ℕ) (y : 𝓞 E) :
     ((Algebra.norm ℤ (1 + n * y : 𝓞 E) : ℤ) : ZMod n) = 1 := by
   classical
-  rw [Algebra.norm_eq_matrix_det (RingOfIntegers.basis E), map_add, map_one, ← nsmul_eq_mul,
+  rw [Algebra.norm_eq_matrix_det (RingOfIntegers.basis E), map_add (f := _), map_one, ← nsmul_eq_mul,
     map_nsmul, ← eq_intCast (Int.castRingHom (ZMod n)), RingHom.map_det, map_add, map_one,
     map_nsmul]
   have : n • (Int.castRingHom (ZMod n)).mapMatrix
@@ -144,9 +148,9 @@ variable {E : Type} [Field E] [NumberField E] {L : Type} [AddCommGroup L] [Modul
 
 theorem isLocalizedModule_int (φ : L →ₗ[𝓞 E] (Fin r → E)) (hf : Function.Injective φ)
     (hspan : Submodule.span E (Set.range φ) = ⊤) :
-    IsLocalizedModule ℤ⁰ (φ.restrictScalars ℤ) where
-  map_units s := (isLocalizedModule_id ℤ⁰ (Fin r → E) ℚ).map_units s
-  surj v := by
+    IsLocalizedModule ℤ⁰ (φ.restrictScalars ℤ) := by
+  refine ⟨(isLocalizedModule_id ℤ⁰ (Fin r → E) ℚ).map_units, ?_, ?_⟩
+  · intro v
     have hv : v ∈ Submodule.span E (Set.range φ) := by rw [hspan]; trivial
     obtain ⟨⟨t, n, hn, rfl⟩, ht⟩ := multiple_mem_span_of_mem_localization_span
       (Algebra.algebraMapSubmonoid (𝓞 E) ℤ⁰) E _ v hv
@@ -155,7 +159,8 @@ theorem isLocalizedModule_int (φ : L →ₗ[𝓞 E] (Fin r → E)) (hf : Functi
     refine ⟨(m, ⟨n, hn⟩), ?_⟩
     change n • v = φ m
     rw [hm, Submonoid.smul_def, algebraMap_smul]
-  exists_of_eq h := ⟨1, by rw [hf h]⟩
+  · intro x y h
+    exact ⟨1, by rw [hf h]⟩
 
 theorem isBaseChange (φ : L →ₗ[𝓞 E] (Fin r → E)) (hf : Function.Injective φ)
     (hspan : Submodule.span E (Set.range φ) = ⊤) : IsBaseChange E φ := by
@@ -283,14 +288,14 @@ theorem det_interp_datum {E : Type} [Field E] [NumberField E] [IsCMField E] {H :
   have hdet1 := CongruenceDet.det_eq_one E _ M Gm (LinearMap.range φ) γ hdet hfg hspan hM hU (by
     rintro _ ⟨x, rfl⟩
     obtain ⟨e, he⟩ := hlev x
-    exact ⟨φ e, ⟨e, rfl⟩, by rw [hγ, he, map_add, map_nsmul]⟩)
+    exact ⟨φ e, ⟨e, rfl⟩, by rw [hγ, he, map_add (f := _), map_nsmul]⟩)
   obtain ⟨he0, t, ht⟩ := cmUnit_pow_four_idempotent_mod_eight H
   obtain ⟨y, hy⟩ := det_interp 8 (by norm_num) _ t he0 ht (LinearMap.range φ) γ hfg hspan
     (fun v hv => (hU.2 v).1 hv) hdet1
   have h := det_eq_norm b φ hinj hspan T
     (((H.w0 ^ 4 : 𝓞 E) : E) • (γ : Matrix _ _ E) + (1 - ((H.w0 ^ 4 : 𝓞 E) : E)) • 1) (by
       intro x
-      rw [hT, map_add, map_sub, hsm, hsm, Matrix.add_mulVec, Matrix.smul_mulVec,
+      rw [hT, map_add (f := _), map_sub, hsm, hsm, Matrix.add_mulVec, Matrix.smul_mulVec,
         Matrix.smul_mulVec, hγ, Matrix.one_mulVec, sub_smul, one_smul])
   rw [hy, ← Algebra.coe_norm_int] at h
   rw [Int.cast_injective h]
@@ -316,7 +321,7 @@ theorem blocks_det_mod_eight : ∀ (E : Type) [Field E] [NumberField E] [IsCMFie
     obtain ⟨c, rfl⟩ := bas.surjective x
     induction c using Pi.single_induction with
     | zero => cases u <;> simp
-    | add a b ha hb => rw [map_add, smul_add, map_add, map_add, Pi.add_apply, ha, hb]; cases u <;> simp
+    | add a b ha hb => rw [map_add (f := _), smul_add, map_add (f := _), map_add (f := _), Pi.add_apply, ha, hb]; cases u <;> simp
     | single v n =>
       have : (Pi.single v n : Fin g ⊕ Fin g → ℤ) = n • Pi.single v 1 := by
         rw [← Pi.single_smul, smul_eq_mul, mul_one]
@@ -324,7 +329,7 @@ theorem blocks_det_mod_eight : ∀ (E : Type) [Field E] [NumberField E] [IsCMFie
       cases v with
       | inl k =>
         obtain ⟨e, h⟩ := hl k
-        rw [h, map_add, h8, add_zero]
+        rw [h, map_add (f := _), h8, add_zero]
         cases u <;> simp [hπb]
       | inr k =>
         obtain ⟨e, h⟩ := hr k
@@ -344,7 +349,7 @@ theorem blocks_det_mod_eight : ∀ (E : Type) [Field E] [NumberField E] [IsCMFie
     · apply (ZMod.intCast_zmod_eq_zero_iff_dvd _ 8).mp
       obtain ⟨e, h⟩ := hl j
       have h1 := he (gam (bas (Pi.single (Sum.inl j) 1))) (Sum.inr i)
-      rw [← map_smul, h, map_add, map_nsmul, map_add, h8, add_zero] at h1
+      rw [← map_smul, h, map_add (f := _), map_nsmul, map_add (f := _), h8, add_zero] at h1
       rw [hN']
       exact h1
   · let b : Module.Basis (Fin g ⊕ Fin g) ℤ D.La := (Pi.basisFun ℤ _).map bas
@@ -366,12 +371,12 @@ theorem blocks_det_mod_eight : ∀ (E : Type) [Field E] [NumberField E] [IsCMFie
             (LinearMap.toMatrix b b (T.restrictScalars ℤ)) (Sum.inl i) (Sum.inr j)) 0 1 := by
       ext u v
       rcases u with i | i <;> rcases v with j | j
-      · rw [hent, hT, map_add, map_sub, Pi.add_apply, Pi.sub_apply, he, he]
+      · rw [hent, hT, map_add (f := _), map_sub, Pi.add_apply, Pi.sub_apply, he, he]
         simp [Matrix.toBlocks₁₁, hN']
       · rfl
-      · rw [hent, hT, map_add, map_sub, Pi.add_apply, Pi.sub_apply, he, he]
+      · rw [hent, hT, map_add (f := _), map_sub, Pi.add_apply, Pi.sub_apply, he, he]
         simp [hπb]
-      · rw [hent, hT, map_add, map_sub, Pi.add_apply, Pi.sub_apply, he, he]
+      · rw [hent, hT, map_add (f := _), map_sub, Pi.add_apply, Pi.sub_apply, he, he]
         simp [hπb, Matrix.one_apply]
     rw [hblk, Matrix.det_fromBlocks_zero₂₁, det_one, mul_one]
 

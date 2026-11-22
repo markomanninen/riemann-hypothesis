@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.MemSmulLat
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.MemSmulLat
+
+@[expose] public section
 
 noncomputable section
 open Classical Polynomial

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffDeRhamPlusActionMulOne
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.InclLEisensteinPowPhiInvEqSingle
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.CrisComparisonTransferBasisCoordinates
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.ITotEisensteinPowEqIDEisensteinHatPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffDeRhamPlusActionMulOne
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.InclLEisensteinPowPhiInvEqSingle
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.CrisComparisonTransferBasisCoordinates
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.ITotEisensteinPowEqIDEisensteinHatPow
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 set_option maxHeartbeats 400000
@@ -14,7 +19,8 @@ private theorem tensor_inclusion_smul_sum {l : ℕ} [Fact l.Prime] {O K : Type} 
     {R R' : Type} [CommRing R] [CommRing R'] [Algebra O R] [Algebra O R']
     (f : R →ₐ[O] R') (T : LocLat G ℚ_[l] K O) (s : R) {κ : Type} [Fintype κ] (r : κ → R) (x : κ → ↥T.L.T) :
     TWincl f T (∑ k, (s * r k) ⊗ₜ[O] x k) = f s • TWincl f T (∑ k, r k ⊗ₜ[O] x k) := by
-  rw [map_sum, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   simp [TWincl, TensorProduct.smul_tmul']
 
@@ -25,7 +31,8 @@ private theorem ennreal_volume_ratio_step_cancel {R W ι : Type} [CommRing R] [A
     ∑ j, act (y j) (v j) = ∑ k, act (z k) (w k) := by
   obtain ⟨u, rfl⟩ := hu
   have h2 := congrArg (act ((u⁻¹ : Rˣ) : R)) h
-  simp only [map_sum, hy, hz, ← hmul, ← mul_assoc, Units.inv_mul, one_mul] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, hy, hz, ← hmul, ← mul_assoc, Units.inv_mul, one_mul] at h2
   exact h2
 
 private theorem tame_lattice_inclusion (l : ℕ) [Fact l.Prime] (a e : ℕ) [NeZero a] [NeZero e] (O K : Type) [CommRing O]
@@ -41,7 +48,7 @@ private theorem tame_lattice_inclusion (l : ℕ) [Fact l.Prime] (a e : ℕ) [NeZ
       rw [inclL_apply, inclL_apply, ← Matrix.mulVec_smul]
       congr 1
       funext j
-      simp only [map_mul, Pi.smul_apply, smul_eq_mul]
+      simp
     rw [h2, hI]
     funext j
     change inclO l O u * _ = inclO l O s * inclO l O ((Pi.single i u : ι → OA l O) j)

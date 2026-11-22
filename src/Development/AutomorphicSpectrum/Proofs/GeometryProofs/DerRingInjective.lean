@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.HasValues
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.HasValues
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem augPart_of_mem (f : RingHom.ker ε) : augPart ε f.1 = f := by
 
 theorem augPart_add (f g : B) : augPart ε (f + g) = augPart ε f + augPart ε g := by
   apply Subtype.ext
-  simp only [Submodule.coe_add, augPart_coe, map_add]
+  simp only [Submodule.coe_add, augPart_coe, map_add (f := _)]
   abel
 
 theorem augPart_smul (r : R) (f : B) : (RingHom.ker ε).toCotangent (augPart ε (r • f)) =
@@ -51,7 +55,7 @@ theorem augPart_mul (f g : B) : (RingHom.ker ε).toCotangent (augPart ε (f * g)
   have h0 : (RingHom.ker ε).toCotangent ⟨(augPart ε f : B) * (augPart ε g : B), hab⟩ = 0 := by
     rw [Ideal.toCotangent_eq_zero, pow_two]
     exact Ideal.mul_mem_mul (augPart ε f).2 (augPart ε g).2
-  rw [hdec, map_add, map_add, h0, zero_add, map_smul, map_smul, algebraMap_smul, algebraMap_smul]
+  rw [hdec, map_add (f := _), map_add (f := _), h0, zero_add, map_smul, map_smul, algebraMap_smul, algebraMap_smul]
 
 variable {V : Type} [AddCommGroup V] [Module R V] [Module Rᵐᵒᵖ V] [IsCentralScalar R V]
 
@@ -59,7 +63,7 @@ def derRing (ψ : (RingHom.ker ε).Cotangent →ₗ[R] V) : B →ₐ[R] TrivSqZe
   AlgHom.ofLinearMap
     { toFun := fun f => TrivSqZeroExt.inl (ε f) + TrivSqZeroExt.inr (ψ ((RingHom.ker ε).toCotangent (augPart ε f)))
       map_add' := fun f g => by
-        rw [augPart_add, map_add, map_add, map_add]
+        rw [augPart_add, map_add (f := _), map_add (f := _), map_add (f := _)]
         ext <;> simp <;> abel
       map_smul' := fun r f => by
         rw [augPart_smul, map_smul]
@@ -71,7 +75,7 @@ def derRing (ψ : (RingHom.ker ε).Cotangent →ₗ[R] V) : B →ₐ[R] TrivSqZe
       simp [this])
     (fun f g => by
       simp only [LinearMap.coe_mk, AddHom.coe_mk]
-      rw [augPart_mul, map_add, map_smul, map_smul]
+      rw [augPart_mul, map_add (f := _), map_smul, map_smul]
       ext <;> simp [add_comm])
 
 theorem derRing_apply (ψ : (RingHom.ker ε).Cotangent →ₗ[R] V) (f : B) : derRing ε ψ f =

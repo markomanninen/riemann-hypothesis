@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.Root
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.Root
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,7 +86,7 @@ theorem isoW_gen {a : ℕ} (Y : TupV (E := E) v n a) (z : Fin a) (γ : Fv F v)
   have h1 : hR (Fv F v) σ J w0 y = 1 + (-g) * b := by
     rw [hy, hAddR, hSmulR, hw0X, if_pos rfl]
   have h2 : hR (Fv F v) σ J y w0 = 1 + (-g) * b := by
-    rw [← hconj, h1, map_add, map_one, map_mul, map_neg, hg, hsc, hconj]
+    rw [← hconj, h1, map_add (f := _), map_one, map_mul, map_neg, hg, hsc, hconj]
   have h3 : hR (Fv F v) σ J y y = (-g) * (1 + (-g) * b) := by
     rw [hy, hAddR, hSmulR, ← hy, hyX, h2, zero_add]
 
@@ -117,7 +121,7 @@ theorem isoW_gen {a : ℕ} (Y : TupV (E := E) v n a) (z : Fin a) (γ : Fv F v)
   have keyE : sc (E := E) v β + (1 - g * sc (E := E) v β) * sc (E := E) v s -
       g * (1 - g * sc (E := E) v β) * sc (E := E) v ν * sc (E := E) v s ^ 2 = 0 := by
     rw [← key, hg]
-    simp only [PI.OmLocU.NormOneUnitFixedPoints.sc_eq, map_add, map_sub, map_mul, map_one, map_pow]
+    simp only [PI.OmLocU.NormOneUnitFixedPoints.sc_eq, map_add (f := _), map_sub, map_mul, map_one, map_pow]
   have hww : hR (Fv F v) σ J w w = 0 := by
     rw [E0, h1, h2, h3, hσt, hbβ, ht]
     linear_combination keyE + ((1 - g * sc (E := E) v β) * sc (E := E) v s) * hθ -

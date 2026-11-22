@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.ThmBInHecke
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsPrimeIdemOfComp
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.ThmBInHecke
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsPrimeIdemOfComp
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,8 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 
 namespace EulerTie
 
-variable (F E) in
 
+variable (F E) in
 def finComp : AE F E →+* FiniteAdeleRing (𝓞 E) E := (toFinAd F E).comp (finPart F E)
 
 omit [NumberField E] in
@@ -24,7 +28,7 @@ theorem parts_extZero (y : Af F ⊗[F] E) :
   induction y using TensorProduct.induction_on with
   | zero => simp only [map_zero, and_self]
   | tmul a x => exact ⟨TensorProduct.zero_tmul _ _, rfl⟩
-  | add a b ha hb => simp only [map_add, ha.1, ha.2, hb.1, hb.2, add_zero, and_self]
+  | add a b ha hb => simp only [map_add (f := _), ha.1, ha.2, hb.1, hb.2, add_zero, and_self]
 
 theorem comp_finComp : Comp (finComp F E) := by
   let c := (Algebra.TensorProduct.comm F E (Af F)).toRingEquiv
@@ -59,18 +63,18 @@ theorem parts_locIdele (P : HeightOneSpectrum (𝓞 E)) (u : (P.adicCompletion E
       extZero F E ((finAdEquiv F E).symm (GlobalTheory.CMVal.single P u : FiniteAdeleRing (𝓞 E) E)) := rfl
   rw [e]
   constructor
-  · rw [RingHom.map_add, RingHom.map_sub, RingHom.map_one, (parts_extZero _).1, (parts_extZero _).1, sub_zero, add_zero]
+  · rw [RingHom.map_add (f := _), RingHom.map_sub, RingHom.map_one, (parts_extZero _).1, (parts_extZero _).1, sub_zero, add_zero]
   · change toFinAd F E (finPart F E _) = _
-    rw [RingHom.map_add, RingHom.map_sub, RingHom.map_one, (parts_extZero _).2, (parts_extZero _).2, sub_self, zero_add]
+    rw [RingHom.map_add (f := _), RingHom.map_sub, RingHom.map_one, (parts_extZero _).2, (parts_extZero _).2, sub_self, zero_add]
     exact (finAdEquiv F E).apply_symm_apply _
 
 theorem comp_glue {P : HeightOneSpectrum (𝓞 E)} {e : AE F E} (he : IsDelta (finComp F E) P e) (a : AE F E) :
     infPart F E (e * a + (1 - e)) = 1 ∧ finComp F E (e * a + (1 - e)) P = finComp F E a P ∧
       ∀ Q, Q ≠ P → finComp F E (e * a + (1 - e)) Q = 1 := by
   have h : ∀ Q, finComp F E (e * a + (1 - e)) Q = finComp F E e Q * finComp F E a Q + (1 - finComp F E e Q) :=
-    fun Q => by rw [RingHom.map_add, RingHom.map_mul, RingHom.map_sub, RingHom.map_one]; rfl
+    fun Q => by rw [RingHom.map_add (f := _), RingHom.map_mul, RingHom.map_sub, RingHom.map_one]; rfl
   refine ⟨?_, ?_, fun Q hQ => ?_⟩
-  · rw [RingHom.map_add, RingHom.map_mul, RingHom.map_sub, RingHom.map_one, he.1, zero_mul, sub_zero, zero_add]
+  · rw [RingHom.map_add (f := _), RingHom.map_mul, RingHom.map_sub, RingHom.map_one, he.1, zero_mul, sub_zero, zero_add]
   · rw [h, he.2.1, one_mul, sub_self, add_zero]
   · rw [h, he.2.2 Q hQ, zero_mul, sub_zero, zero_add]
 
@@ -179,7 +183,7 @@ theorem chiAt_eq_val (hσ : IsCMExt F E σ) {χ : (AE F E)ˣ →* Circle} {P : H
     chiAt σ χ P = (val χ P : ℂ) := by
   have hc : IsUnramAt σ χ P ∧ ∃ x, IsUnifIdele σ P x := ⟨(isUnramAt_iff_unrAt hσ χ P).2 h, exists_isUnifIdele hσ P⟩
   obtain ⟨u, hu, e⟩ := exists_of_isUnifIdele hc.2.choose_spec
-  rw [chiAt, dif_pos hc, e, ← h.locChar_eq_val hu]
+  rw [chiAt, dite_eq_left hc, e, ← h.locChar_eq_val hu]
   rfl
 
 theorem chiAt_eq_zero (hσ : IsCMExt F E σ) {χ : (AE F E)ˣ →* Circle} {P : HeightOneSpectrum (𝓞 E)}

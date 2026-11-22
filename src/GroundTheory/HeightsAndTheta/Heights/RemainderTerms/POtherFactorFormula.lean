@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PSameFactorFormula
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PowerSums
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.JacobiTrudi
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PSameFactorFormula
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PowerSums
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.JacobiTrudi
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -34,7 +39,7 @@ end
 
 end Top
 
-open Top MvPolynomial Finset
+open _root_.GroundTheory.Heights₂.Heights.RestTerms.Top MvPolynomial Finset
 
 noncomputable section
 
@@ -69,7 +74,7 @@ theorem OtherFactorFormula.proof (hA : LemmaA.Statement) (hB : LemmaB.Statement)
         Finset.card_univ, Fintype.card_fin, smul_eq_mul]
       congr 1
     rw [h2]
-    simp only [hqdef, if_true]
+    simp only [hqdef, ite_true]
     obtain ⟨f', rfl⟩ : ∃ f', f = f' + 2 := ⟨f - 2, by omega⟩
     simp only [Nat.add_sub_cancel, show f' + 2 - 1 = f' + 1 by omega]
     rw [add_mul, one_mul]
@@ -79,7 +84,7 @@ theorem OtherFactorFormula.proof (hA : LemmaA.Statement) (hB : LemmaB.Statement)
   have hres := restrict_gmfOut f r a c κ q (f * (r * a) + 1) τ
     (fun σ hσ => by simp only [hqdef]; split_ifs <;> omega) (by rw [hsum]; exact hle)
   have hmτ : mstar f r a q (f * (r * a) + 1) τ τ = r * a + k := by
-    simp only [mstar, if_true, hsum]
+    simp only [mstar, ite_true, hsum]
     obtain ⟨f', rfl⟩ : ∃ f', f = f' + 2 := ⟨f - 2, by omega⟩
     simp only [show f' + 2 - 1 = f' + 1 by omega]
     have h3 : r * a ≤ (f' + 1) * (r * a) := Nat.le_mul_of_pos_left _ (by omega)
@@ -89,7 +94,7 @@ theorem OtherFactorFormula.proof (hA : LemmaA.Statement) (hB : LemmaB.Statement)
       if σ = τ then r * a + k else if σ = τ' then r * a - (k - 1) else r * a := by
     funext σ
     by_cases hσ : σ = τ
-    · subst hσ; rw [hmτ, if_pos rfl]
+    · subst hσ; rw [hmτ, ite_eq_left rfl]
     · by_cases hσ' : σ = τ'
       · subst hσ'; simp [mstar, hσ, hqdef]
       · simp [mstar, hσ, hσ', hqdef]
@@ -102,8 +107,8 @@ theorem OtherFactorFormula.proof (hA : LemmaA.Statement) (hB : LemmaB.Statement)
       (χR * κ) * ((numStandardTable (rectangle r a) : ℚ) * κ) ^ (f - 2) := by
     rw [← Finset.mul_prod_erase _ _ hτ'mem]
     congr 1
-    · simp only [hqdef, if_true]
-      rw [blockCoeff, if_neg (by omega)]
+    · simp only [hqdef, ite_true]
+      rw [blockCoeff, ite_eq_right (by omega)]
     · rw [Finset.prod_congr rfl fun σ hσ => by
         rw [show q σ = 0 by simp [hqdef, Finset.ne_of_mem_erase hσ], Nat.sub_zero,
           blockCoeff_rect_eq hCI r a hra]]
@@ -118,11 +123,11 @@ theorem OtherFactorFormula.proof (hA : LemmaA.Statement) (hB : LemmaB.Statement)
         (r * a + k).factorial * ((r * a - (k - 1)).factorial * (r * a).factorial ^ (f - 2)) := by
       rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ τ), hmτ, ← Finset.mul_prod_erase _ _ hτ'mem]
       congr 2
-      · simp only [hms, if_neg hττ', if_true]
+      · simp only [hms, ite_eq_right hττ', ite_true]
       · rw [Finset.prod_congr rfl (fun σ hσ =>
           show (mstar f r a q (f * (r * a) + 1) τ σ).factorial = (r * a).factorial by
-            simp only [hms, if_neg (Finset.ne_of_mem_erase hσ),
-              if_neg (Finset.ne_of_mem_erase (Finset.mem_of_mem_erase hσ))]), Finset.prod_const,
+            simp only [hms, ite_eq_right (Finset.ne_of_mem_erase hσ),
+              ite_eq_right (Finset.ne_of_mem_erase (Finset.mem_of_mem_erase hσ))]), Finset.prod_const,
           Finset.card_erase_of_mem hτ'mem, Finset.card_erase_of_mem (Finset.mem_univ τ),
           Finset.card_univ, Fintype.card_fin]
         congr 1
@@ -143,19 +148,20 @@ theorem OtherFactorFormula.proof (hA : LemmaA.Statement) (hB : LemmaB.Statement)
         aeval (fun i : Fin (r + a) => C c.sign * X i) (schur (Fin (r + a)) nu) = T := by
     rw [hT]
     refine Finset.sum_congr rfl fun nu hnu => ?_
-    rw [blockCoeff, if_pos rfl, if_neg (by omega)]
+    rw [blockCoeff, ite_eq_left rfl, ite_eq_right (by omega)]
     have hs := sum_of_mem_partitionsOf hnu
     have hanti := antitone_of_mem_partitionsOf hnu
     have h := hCI r (fun i => a + nu i) (fun i j hij => Nat.add_le_add_left (hanti hij) a)
     have hs2 : ∑ i, (a + nu i) = r * a + k := by
       rw [Finset.sum_add_distrib, hs]
-      simp [Finset.sum_const, Finset.card_univ, Fintype.card_fin, mul_comm]
+      simp [Finset.sum_const, Finset.card_univ, Fintype.card_fin]
     rw [hs2] at h
     rw [h]
   rw [hTeq, hprod] at hres
   have hTsym : T.IsSymmetric := by
     intro e
-    rw [hT, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hT, map_sum]
     refine Finset.sum_congr rfl fun nu _ => ?_
     rw [map_mul, rename_C, isSymmetric_aeval_smul_X _ (Schur.schur_isSymmetric _) e]
   set K : ℚ := (Nat.multinomial Finset.univ (mstar f r a q (f * (r * a) + 1) τ) : ℚ) *
@@ -173,7 +179,7 @@ theorem OtherFactorFormula.proof (hA : LemmaA.Statement) (hB : LemmaB.Statement)
       rw [hPS, hK, hχ, map_zero]
       simp
     refine ⟨S, hS, ?_⟩
-    rw [restTerm, hI, hS'0, coeff_zero, hχ]
+    rw [restTerm, hI, hS'0, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, hχ]
     ring
   · have hK0 : K ≠ 0 := by
       rw [hK]

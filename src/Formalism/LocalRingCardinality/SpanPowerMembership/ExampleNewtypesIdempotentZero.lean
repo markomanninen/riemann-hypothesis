@@ -1,8 +1,12 @@
-import Formalism.LocalRingCardinality.DataJet
-import Formalism.LocalRingCardinality.SpanPowerMembership.PlacesOverNcardOfSplitInj
-import Formalism.CyclotomicNorms.NonsquarefreeBounds.NonsquarefreeMonicBoundHolds
-import Formalism.LocalRingCardinality.SpanPowerMembership.UnitsPowSurjective
-import Formalism.LocalRingCardinality.SpanPowerMembership.ExistsTameGen
+module
+
+public import Formalism.LocalRingCardinality.DataJet
+public import Formalism.LocalRingCardinality.SpanPowerMembership.PlacesOverNcardOfSplitInj
+public import Formalism.CyclotomicNorms.NonsquarefreeBounds.NonsquarefreeMonicBoundHolds
+public import Formalism.LocalRingCardinality.SpanPowerMembership.UnitsPowSurjective
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExistsTameGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,18 +99,8 @@ theorem galK_comm {R : Ranks} (H : Host R) (σ τ : H.E ≃ₐ[H.K] H.E) : σ * 
   ext x
   exact AlgEquiv.congr_fun h x
 
-theorem central_of_support {G : Type} [Group G] (z : MonoidAlgebra ℂ G)
-    (h : ∀ g, g ≠ 1 → z.coeff g = 0) : z ∈ Subalgebra.center ℂ (MonoidAlgebra ℂ G) := by
-  have : z = algebraMap ℂ (MonoidAlgebra ℂ G) (z.coeff 1) := by
-    ext g
-    by_cases hg : g = 1
-    · subst hg; simp
-    · rw [h g hg]; simp [Finsupp.single_eq_of_ne hg]
-  rw [this]
-  exact Subalgebra.algebraMap_mem _ _
 
 set_option synthInstance.maxHeartbeats 400000 in
-
 def toyNtypes (ht : THyp H) (htm : TameHyp H)
     (teichC : ∀ k, Fb (H.g k) (H.g_prime k) →* ℂ)
     (teichC_inj : ∀ k, ∀ x y : Fb (H.g k) (H.g_prime k), x ≠ 0 → y ≠ 0 →
@@ -179,7 +173,11 @@ theorem exampleNewtypes_idempotent_zero (ht htm teichC teichC_inj iota iota_inj)
   have : Fact (H.g 0).Prime := ⟨H.g_prime 0⟩
   refine finsum_eq_zero_of_forall_eq_zero fun a => ?_
   split_ifs with hg
-  · have hf : 0 < R.f := by unfold Ranks.f Ranks.n; positivity
+  · have hf : 0 < R.f := by
+      have := R.m_le_f
+      have := R.two_le_m
+      unfold Ranks.f Ranks.n
+      omega
     refine Finset.prod_eq_zero (Finset.mem_univ ⟨0, (⟨0, hf⟩ : Fin R.f)⟩) ?_
     show (trivialSeriesIdempotent _ _ _).coeff _ = 0
     unfold trivialSeriesIdempotent
@@ -217,8 +215,8 @@ section Theta
 variable {R : Ranks} (H : Host R) {what₂ : Rows.Data R} [NumberField what₂.LL] [StarRing what₂.LL]
   (LL0 : IntermediateField ℚ what₂.LL) (h : NHyp H what₂)
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def nthToy : NTh R H what₂ LL0 (ndToy H what₂ h) (ntwToy H LL0 h) (nexpToy H LL0 h) where
   iC := fun i => i.elim
   iC_int := fun i => i.elim

@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.XcNotMemOfIsRelevant
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerFurther
-import GroundTheory.HeightsAndTheta.Heights.Intersections.TwoMemFunFieldSpecZ
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerTer
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerMore
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerTail
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.XcNotMemOfIsRelevant
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerFurther
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.TwoMemFunFieldSpecZ
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerTer
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerMore
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerTail
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter

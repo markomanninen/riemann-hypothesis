@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
@@ -83,16 +87,16 @@ theorem ap_compat (s : LB.Sec H) (i j : H.ι) {W : P.Opens} (h₁ : W ≤ p ⁻�
   have e' := congrArg (ap p h) e
   simpa only [ap_rs, map_mul] using e'
 
-theorem isLB_box (hH : H.IsLB) (hK : K.IsLB) : (box p q H K).IsLB where
-  cover := by
-    refine top_le_iff.1 fun y _ => ?_
+theorem isLB_box (hH : H.IsLB) (hK : K.IsLB) : (box p q H K).IsLB := by
+  refine ⟨?_, ?_, ?_⟩
+  · refine top_le_iff.1 fun y _ => ?_
     obtain ⟨i, hi⟩ := TopologicalSpace.Opens.mem_iSup.1 (show p y ∈ ⨆ i, H.U i by rw [hH.cover]; trivial)
     obtain ⟨j, hj⟩ := TopologicalSpace.Opens.mem_iSup.1 (show q y ∈ ⨆ i, K.U i by rw [hK.cover]; trivial)
     exact TopologicalSpace.Opens.mem_iSup.2 ⟨(i, j), hi, hj⟩
-  g_self := fun a => by
+  · intro a
     refine Units.ext ((rs_mul p q _ _ _ _ _).trans ?_)
     rw [ap_g_self p hH, ap_g_self q hK, _root_.mul_one, Units.val_one]
-  cocycle := fun a b c => by
+  · intro a b c
     refine Units.ext ((congrArg₂ (· * ·) (rs_mul p q _ _ _ _ _) (rs_mul p q _ _ _ _ _)).trans
       (Eq.trans ?_ (rs_mul p q _ _ _ _ _).symm))
     exact (mul_mul_mul_comm _ _ _ _).trans
@@ -179,7 +183,7 @@ theorem isProjBy_of_isPullback {f : X ⟶ Spec (CommRingCat.of R)} {g : Y ⟶ Sp
       change ap p l₁ _ ∈ _
       induction F using MvPolynomial.induction_on with
       | C c => exact ⟨MvPolynomial.C c, by rw [MvPolynomial.eval₂Hom_C, MvPolynomial.eval₂Hom_C, ap_cst]⟩
-      | add F G hF hG => rw [map_add, map_add]; exact Subring.add_mem _ hF hG
+      | add F G hF hG => rw [map_add (f := _), map_add (f := _)]; exact Subring.add_mem _ hF hG
       | mul_X F i hF =>
         rw [map_mul, map_mul]
         refine Subring.mul_mem _ hF ⟨MvPolynomial.X (e.symm (i, (e a).2)), ?_⟩
@@ -189,7 +193,7 @@ theorem isProjBy_of_isPullback {f : X ⟶ Spec (CommRingCat.of R)} {g : Y ⟶ Sp
       induction F using MvPolynomial.induction_on with
       | C c => exact ⟨MvPolynomial.C c, by
           rw [MvPolynomial.eval₂Hom_C, MvPolynomial.eval₂Hom_C, ap_cst, sq.w]⟩
-      | add F G hF hG => rw [map_add, map_add]; exact Subring.add_mem _ hF hG
+      | add F G hF hG => rw [map_add (f := _), map_add (f := _)]; exact Subring.add_mem _ hF hG
       | mul_X F i hF =>
         rw [map_mul, map_mul]
         refine Subring.mul_mem _ hF ⟨MvPolynomial.X (e.symm ((e a).1, i)), ?_⟩

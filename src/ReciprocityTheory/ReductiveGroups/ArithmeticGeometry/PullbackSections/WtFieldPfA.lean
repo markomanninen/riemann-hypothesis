@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.BcField
-import Formalism.LocalToGlobal.ProjectiveLattices.FrameProofs
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.BcField
+public import Formalism.LocalToGlobal.ProjectiveLattices.FrameProofs
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,8 +69,8 @@ end TRingF
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
 
-variable (Xo : Moduli Dw l) in
 
+variable (Xo : Moduli Dw l) in
 def TanAddSt : Prop :=
   ∀ (S : Type) [CommRing S] (x : Sp S ⟶ Xo.X) (w : Sp (DualNumber S) ⟶ Xo.univ.t.G.left), IsTanAt x w →
     ∀ (a b : S) (u₁ u₂ : tEps x ⟶ Xo.univ.t.G), u₁.left = spMap (epsMul a) ≫ w →

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct Polynomial
 
 namespace GlobalTheory
@@ -39,7 +44,7 @@ theorem exists_numberField_point_ne_zero :
     | algebraMap n =>
       have : f (algebraMap ℤ A n) = algebraMap ℚ F (n : ℚ) := by simp [f]
       rw [this]; exact B.algebraMap_mem _
-    | add x y _ _ hx hy => rw [map_add]; exact B.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact B.add_mem hx hy
     | mul x y _ _ hx hy => rw [map_mul]; exact B.mul_mem hx hy
   have hinv : (f a)⁻¹ ∈ B := Algebra.subset_adjoin (Set.mem_insert _ _)
   haveI hBft : Algebra.FiniteType ℚ B := by

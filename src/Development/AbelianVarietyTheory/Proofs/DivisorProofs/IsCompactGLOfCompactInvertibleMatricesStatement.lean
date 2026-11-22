@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCompactGLOfCompactInvertibleMatrices
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SuperDiagEqSdM
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCompactGLOfCompactInvertibleMatrices
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SuperDiagEqSdM
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CuspRep Matrix MeasureTheory GlobalTheory.WhitBump
 open scoped ContDiff
 set_option maxHeartbeats 1000000 in

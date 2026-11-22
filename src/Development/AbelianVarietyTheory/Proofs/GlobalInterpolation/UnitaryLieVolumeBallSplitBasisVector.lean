@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataCD
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.PerpendicularEmbedding
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ContinuousMatrixEntryAbsSum
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.HaarUpqEqOfOmegaDensity
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataCD
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.PerpendicularEmbedding
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ContinuousMatrixEntryAbsSum
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.HaarUpqEqOfOmegaDensity
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Topology Formalism.BasicNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.IndefiniteRowSideFullHecke.PerpendicularEmbedding GlobalTheory.CompactDualQuot
 open scoped ENNReal NNReal
@@ -57,7 +61,8 @@ theorem mp_colrow {ι : Type} [Fintype ι] (s : ι → ℂ) (hs : ∀ i, ‖s i�
   have hsc : MeasurePreserving (fun z : ι → ℂ => (-2 : ℝ) • z)
       (((2 : ℝ≥0∞) ^ n * 2 ^ n) • volume) volume := by
     refine ⟨measurable_const_smul _, ?_⟩
-    rw [Measure.map_smul, Measure.map_addHaar_smul _ (by norm_num), smul_smul]
+    rw [Measure.map_smul _ (measurable_const_smul _).aemeasurable,
+      Measure.map_addHaar_smul _ (by norm_num), smul_smul]
     have hf : Module.finrank ℝ (ι → ℂ) = n * 2 := by
       simp [Module.finrank_pi_fintype, hn]
     have h1 : ENNReal.ofReal |((-2 : ℝ) ^ Module.finrank ℝ (ι → ℂ))⁻¹| = ((2 : ℝ≥0∞) ^ n * 2 ^ n)⁻¹ := by
@@ -175,7 +180,7 @@ theorem row_eq (e : Option (Fin P' ⊕ Fin Q') ≃ (Fin P ⊕ Fin Q)) (X : lieU 
 
 theorem coord_injective (e : Option (Fin P' ⊕ Fin Q') ≃ (Fin P ⊕ Fin Q)) (he : SignCompat e) :
     Function.Injective (coord e he) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro X h
   have h1 : (X.val (e none) (e none)).im = 0 := congrArg (fun t => t.1.1) h
   have h2 : ∀ a, X.val (e (some a)) (e none) = 0 := fun a => congrArg (fun t => t.1.2 a) h

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.CMFieldLemmas
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.CMFieldLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,14 +35,14 @@ theorem sum_bern_card (δ : ℝ) (f : ℕ → ℝ) :
 theorem sum_bern (δ : ℝ) : ∑ T : Finset α, bern δ T = 1 := by
   have h := sum_bern_card (α := α) δ (fun _ => 1)
   simp only [mul_one] at h
-  rw [h, ← Polynomial.eval_finset_sum, bernsteinPolynomial.sum, Polynomial.eval_one]
+  rw [h, ← Polynomial.eval_finsetSum, bernsteinPolynomial.sum, Polynomial.eval_one]
 
 theorem sum_bern_var (δ : ℝ) :
     ∑ T : Finset α, bern δ T * (((Fintype.card α : ℕ) : ℝ) * δ - T.card) ^ 2 =
       (Fintype.card α : ℝ) * δ * (1 - δ) := by
   rw [sum_bern_card δ (fun ν => (((Fintype.card α : ℕ) : ℝ) * δ - ν) ^ 2)]
   have h := congrArg (Polynomial.eval δ) (bernsteinPolynomial.variance ℝ (Fintype.card α))
-  simp only [Polynomial.eval_finset_sum, Polynomial.eval_mul, Polynomial.eval_pow,
+  simp only [Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_pow,
     Polynomial.eval_sub, Polynomial.eval_smul, Polynomial.eval_X, Polynomial.eval_natCast,
     nsmul_eq_mul, Polynomial.eval_one] at h
   rw [← h]

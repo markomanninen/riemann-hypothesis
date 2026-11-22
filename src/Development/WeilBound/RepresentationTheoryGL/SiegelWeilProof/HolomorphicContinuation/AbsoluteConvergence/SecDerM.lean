@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.SecDerMD
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.ContinuousGramX
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.DerivativeVacuumDilations
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.SecDerMD
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.ContinuousGramX
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.DerivativeVacuumDilations
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,7 +73,7 @@ private theorem continuous_evX_gs_exp_trace_mulR_aE (ε : Fin m → Bool) (c t :
   have hm : Continuous fun y : Fin m → Fin n → ℂ => mulR (aE H σ) y := by
     unfold mulR
     refine continuous_pi fun a => continuous_pi fun j => ?_
-    exact continuous_finset_sum _ fun i _ =>
+    exact continuous_finsetSum _ fun i _ =>
       (((continuous_apply i).comp (continuous_apply a) :
         Continuous fun y : Fin m → Fin n → ℂ => y a i)).mul continuous_const
   refine (((continuous_evX P).comp hm).mul ((continuous_gs c).comp hm)).mul ?_
@@ -128,7 +132,7 @@ theorem evX_DM (ε : Fin m → Bool) (c : ℝ) (H : Matrix (Fin n) (Fin n) ℂ) 
   have h : DM ε c H R = C ((m : ℂ) * H.trace) * R + DMp ε c H R := by
     simp only [DM, DMp]
     ring
-  rw [h, evX_eq, evX_eq, evX_eq, map_add, map_mul, eval_C]
+  rw [h, evX_eq, evX_eq, evX_eq, map_add (f := _), map_mul, eval_C]
 
 end PositivityTheory.Rg.Sw.AbsSt.SDM
 

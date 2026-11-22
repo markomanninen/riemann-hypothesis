@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodModModT
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsIsParamFunOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodModModT
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsIsParamFunOne
+
+@[expose] public section
 
 open NumberField MeasureTheory IsDedekindDomain UniqueFactorizationMonoid
 open scoped Classical Pointwise

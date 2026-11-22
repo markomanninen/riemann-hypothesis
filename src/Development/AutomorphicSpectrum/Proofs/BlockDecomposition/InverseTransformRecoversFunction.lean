@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.StripEntire
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GaussTubeOfTubeGood
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExponentialFourierIntegralBoundStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FourierInversionProdStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.StripEntire
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GaussTubeOfTubeGood
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExponentialFourierIntegralBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FourierInversionProdStatement
+
+@[expose] public section
 
 noncomputable section
 

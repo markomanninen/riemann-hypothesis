@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsMultiDegreePositive
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSegrePrime
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSegreHilb
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSegreDimGe
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PDegreePositive
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Assembly
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsMultiDegreePositive
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSegrePrime
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSegreHilb
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSegreDimGe
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PDegreePositive
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Assembly
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -45,7 +50,8 @@ theorem pos_of_isEmpty {F : Type} [Field F] {K : Type} [Fintype K] [DecidableEq 
     0 < intNum F q (fun _ : Fin e => fun _ : K => (1 : ℤ)) := by
   have hle := (ringKrullDim_quotient_le q).trans_eq
     (MvPolynomial.ringKrullDim_of_isNoetherianRing (R := F) (ι := Σ k, ι k))
-  rw [hd, ringKrullDim_eq_zero_of_field, zero_add, Nat.card_of_isEmpty, Fintype.card_eq_zero,
+  rw [hd, ringKrullDim_eq_zero_of_field, zero_add, ENat.card_eq_coe_natCard,
+    Nat.card_of_isEmpty, Fintype.card_eq_zero,
     add_zero] at hle
   have he : e = 0 := by exact_mod_cast (nonpos_iff_eq_zero.mp (by exact_mod_cast hle) : (e : ℕ∞) = 0)
   subst he
@@ -84,7 +90,7 @@ theorem MultiDegreePositive.proof (hPrime : SegrePrime.Statement) (hHilb : Segre
   have hle := (ringKrullDim_quotient_le (segrePrime F q)).trans_eq
     (MvPolynomial.ringKrullDim_of_isNoetherianRing (R := F)
       (ι := Σ _ : Unit, ∀ k, ι k))
-  rw [ringKrullDim_eq_zero_of_field, zero_add] at hle
+  rw [ringKrullDim_eq_zero_of_field, zero_add, ENat.card_eq_coe_natCard] at hle
 
   obtain ⟨D, hD, heD⟩ : ∃ D : ℕ, ringKrullDim (MRing (fun _ : Unit => ∀ k, ι k) F ⧸
       segrePrime F q) = ((D + 1 : ℕ) : WithBot ℕ∞) ∧ e ≤ D := by

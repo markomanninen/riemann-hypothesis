@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsProperToroidalModelStructureMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsProperToroidalModelStructureMap
+
+@[expose] public section
 
 open IsLocalRing GlobalTheory.Toroidal
 
@@ -10,8 +14,8 @@ section Etale
 variable {O S : Type} [CommRing O] [IsLocalRing O] [IsNoetherianRing O] [CommRing S] [IsLocalRing S]
   [IsNoetherianRing S] [Algebra O S]
 
-omit [IsNoetherianRing O] in
 
+omit [IsNoetherianRing O] in
 theorem finite_quotient (hm : (maximalIdeal O).map (algebraMap O S) = maximalIdeal S)
     [Module.Finite O (S ⧸ maximalIdeal S)] (n : ℕ) :
     Module.Finite O (S ⧸ (maximalIdeal O ^ (n + 1)).map (algebraMap O S)) := by
@@ -24,8 +28,8 @@ theorem finite_quotient (hm : (maximalIdeal O).map (algebraMap O S) = maximalIde
   have hx' : x ∈ maximalIdeal S := Ideal.Quotient.eq_zero_iff_mem.1 hx
   exact mem_nilradical.2 ⟨n + 1, by rw [← map_pow, Ideal.Quotient.eq_zero_iff_mem]; exact Ideal.pow_mem_pow hx' _⟩
 
-omit [IsNoetherianRing O] in
 
+omit [IsNoetherianRing O] in
 theorem formallyUnramified_quotient (hm : (maximalIdeal O).map (algebraMap O S) = maximalIdeal S)
     [Module.Finite O (S ⧸ maximalIdeal S)] [Algebra.FormallyUnramified O (S ⧸ maximalIdeal S)] (n : ℕ) :
     Algebra.FormallyUnramified O (S ⧸ (maximalIdeal O ^ (n + 1)).map (algebraMap O S)) := by
@@ -42,7 +46,7 @@ theorem formallyUnramified_quotient (hm : (maximalIdeal O).map (algebraMap O S) 
   have H : (maximalIdeal O).map (algebraMap O (S ⧸ J)) = maximalIdeal (S ⧸ J) := by
     rw [← hmap, ← hm, Ideal.map_map]; rfl
   have : IsLocalHom (algebraMap O (S ⧸ J)) :=
-    ((local_hom_TFAE (algebraMap O (S ⧸ J))).out 2 0 rfl rfl).mp H.le
+    ((local_hom_tfae (algebraMap O (S ⧸ J))).out 3 1 rfl rfl).mp H.le
   let g : (S ⧸ maximalIdeal S) →ₐ[O] ResidueField (S ⧸ J) :=
     Ideal.Quotient.liftₐ _ ((IsScalarTower.toAlgHom O (S ⧸ J) (ResidueField (S ⧸ J))).comp (Ideal.Quotient.mkₐ O J))
       fun a ha => by
@@ -203,7 +207,7 @@ theorem exists_extension : ∀ (O R' E Ω : Type) [CommRing O] [IsLocalRing O] [
     ∃ b : R' →+* E, b.comp φ' = ψ ∧ v.comp b = u' := by
   intro O R' E Ω _ _ _ _ _ _ _ _ _ φ' ψ u' v het hun hE hψ _ hv hc hr
   obtain ⟨b, h1, h2⟩ := exists_extension_of_surjective het hun (maximalIdeal E) ψ
-    (((local_hom_TFAE ψ).out 0 2 rfl rfl).mp hψ) v.rangeRestrict v.rangeRestrict_surjective
+    (((local_hom_tfae ψ).out 1 3 rfl rfl).mp hψ) v.rangeRestrict v.rangeRestrict_surjective
     (v.ker_rangeRestrict.trans hv) (u'.codRestrict v.range hr)
     (RingHom.ext fun x => Subtype.ext (RingHom.congr_fun hc x).symm)
   exact ⟨b, h1, RingHom.ext fun x => congrArg Subtype.val (RingHom.congr_fun h2 x)⟩

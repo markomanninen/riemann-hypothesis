@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RegConst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FstIsFinFFrames
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinFSndFrames
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockPolynomialVectorMaximalCompactMovedBases
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RegConst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FstIsFinFFrames
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinFSndFrames
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockPolynomialVectorMaximalCompactMovedBases
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,7 +94,8 @@ theorem coef_mul {m n : ℕ} {s B₁ B₂ : Matrix (Fin n) (Fin n) ℂ} {s' C₁
   have e3 : ∑ b : Fin m × Fin n, ((C₂⁻¹ * C₁) w.1 b.1 * (C₁⁻¹ * C₂) b.1 v.1) * ((B₂⁻¹ * B₁) v.2 b.2 * (B₁⁻¹ * B₂) b.2 w.2) =
       ((C₂⁻¹ * C₁) * (C₁⁻¹ * C₂)) w.1 v.1 * ((B₂⁻¹ * B₁) * (B₁⁻¹ * B₂)) v.2 w.2 := by
     rw [Matrix.mul_apply (M := C₂⁻¹ * C₁), Matrix.mul_apply (M := B₂⁻¹ * B₁), Finset.sum_mul_sum, Fintype.sum_prod_type]
-  rw [← map_sum, e3, eC, eB]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, e3, eC, eB]
   obtain ⟨v1, v2⟩ := v
   obtain ⟨w1, w2⟩ := w
   by_cases a1 : w1 = v1 <;> by_cases a2 : v2 = w2 <;> simp [Matrix.one_apply, a1, a2, @eq_comm _ w2 v2]
@@ -101,12 +106,13 @@ def sub {ι κ : Type} [Fintype κ] (c : ι → κ → κ → ℂ) : MvPolynomia
 theorem sub_comp {ι κ : Type} [Fintype κ] [DecidableEq κ] (c c' : ι → κ → κ → ℂ)
     (h : ∀ τ v w, ∑ b, c τ v b * c' τ b w = if w = v then 1 else 0) : (sub c').comp (sub c) = AlgHom.id ℂ _ := by
   refine MvPolynomial.algHom_ext fun p => ?_
-  simp only [sub, AlgHom.comp_apply, MvPolynomial.aeval_X, map_sum, map_smul, Finset.smul_sum, smul_smul, AlgHom.id_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [sub, AlgHom.comp_apply, MvPolynomial.aeval_X, map_sum, map_smul, Finset.smul_sum, smul_smul, AlgHom.id_apply]
   rw [Finset.sum_comm]
   simp only [← Finset.sum_smul, h, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
 
-open GlobalTheory.FockSubst GlobalTheory.FockCompare GlobalTheory.OrientedHeis in
 
+open GlobalTheory.FockSubst GlobalTheory.FockCompare GlobalTheory.OrientedHeis in
 theorem exists_change {D : D7} {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} (S T : HSp D) (hψ : IsStdChar D ψ (-1))
     (hθ : IsInfFam θ) (sS B₁ B₂ : D.what₂.Tau → Matrix (Fin S.rank) (Fin S.rank) ℂ)
     (sT C₁ C₂ : D.what₂.Tau → Matrix (Fin T.rank) (Fin T.rank) ℂ)
@@ -233,21 +239,6 @@ theorem dict_frames {D : D7} {T : Type} {A A' WW : HSp D} (X : Tri T A A' WW) (�
   · unfold fockF GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle.Tri.ker'
     rw [e2, ← hW, hσ' _ f2.1]
     try rfl
-
-theorem top_dictionary : GlobalTheory.FunPr.Hypotheses₂ →
-  GBig fun {D} T _ _ G _ _ _ _ => ∀ (W : G.Weil) (i j : Fin D.R.m) (X : TriG G i j), TopGrid W i j X → IsStageC W i j (pp D j) (qq D j) X →
-    ∀ (A : Fr (G.V (.grid (i + 1) (j + 1)))) (A₁ : Fr (G.V (.grid i j))) (AV : Fr (G.V (.grid i (j + 1)))) (AV₁ : Fr (G.V (.grid (i + 1) j))), IsGridFr W _ A → IsGridFr W _ A₁ → IsGridFr W _ AV → IsGridFr W _ AV₁ →
-    ∃ (σ : PolF D (GlobalTheory.Doubling.hsum (G.V (.grid i (j + 1))) (G.V (.grid (i + 1) j))).rank (G.V (.grid (i + 1) (j + 1))).rank ≃ₗ[ℂ] PolF D (GlobalTheory.Doubling.hsum (G.V (.grid i (j + 1))) (G.V (.grid (i + 1) j))).rank (G.V (.grid (i + 1) (j + 1))).rank)
-      (σ' : PolF D (GlobalTheory.Doubling.hsum (G.V (.grid i (j + 1))) (G.V (.grid (i + 1) j))).rank (G.V (.grid i j)).rank ≃ₗ[ℂ] PolF D (GlobalTheory.Doubling.hsum (G.V (.grid i (j + 1))) (G.V (.grid (i + 1) j))).rank (G.V (.grid i j)).rank), ∀ t : T,
-      IsFinF W.ψ W.θ true A (frSum AV AV₁) (X.f t) ∧ IsFinF W.ψ W.θ false A₁ (frSum AV AV₁) (X.f' t) ∧
-      (∀ P g h, X.ker W.ψ W.θ t P h g = thetaKO (X.ω t) g h (fockF W.ψ W.θ true A (frSum AV AV₁) (X.f t) (σ P))) ∧
-      ∀ P g h, X.ker' W.ψ W.θ t P h g = thetaKO (X.ω' t) g h (fockF W.ψ W.θ false A₁ (frSum AV AV₁) (X.f' t) (σ' P)) := by
-  intro _
-  refine ⟨0, fun ε CF _ => ⟨0, 0, fun C _ D large₂ _ _ _ T Lc μ₀ _ G => ?_⟩⟩
-  intro W i j X hG hX A A₁ AV AV₁ hA hA₁ hAV hAV₁
-  exact dict_frames X _ _ _ _ _ _ hX.2.2.2.2.2.2.2 A A₁ (frSum AV AV₁)
-    (hG.2.2.2.1.trans (funext fun τ => (hA τ).2.symm)) (hG.2.2.2.2.1.trans (funext fun τ => (hA₁ τ).2.symm))
-    (hG.2.2.2.2.2 AV AV₁ hAV hAV₁)
 
 end GlobalTheory.TopDict
 

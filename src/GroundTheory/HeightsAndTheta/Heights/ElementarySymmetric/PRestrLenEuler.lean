@@ -1,13 +1,18 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StRestrLenEuler
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSurjectiveClosed
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSnapperHyperplane
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSnapperQuotAdd
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PCechExact
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PIdealTwistFamily
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTildeVanish
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.AssemblyBase
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.LengthQuotientEqLengthH0
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StRestrLenEuler
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSurjectiveClosed
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSnapperHyperplane
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSnapperQuotAdd
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PCechExact
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PIdealTwistFamily
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTildeVanish
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.AssemblyBase
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.LengthQuotientEqLengthH0
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -48,8 +53,8 @@ def incl (F₁ F₂ : SubSystem k x Ω) (h21 : ∀ I, F₂.sub I ≤ F₁.sub I)
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem quotH_subsingleton (F₁ F₂ : SubSystem k x Ω) (h21 : ∀ I, F₂.sub I ≤ F₁.sub I) (i : ℕ)
     (h1 : Subsingleton (F₁.H i)) (h2 : Subsingleton (F₂.H (i + 1))) :
     Subsingleton (SubSystem.quotH F₁ F₂ i) := by
@@ -89,8 +94,8 @@ theorem quotH_subsingleton (F₁ F₂ : SubSystem k x Ω) (h21 : ∀ I, F₂.sub
 
 end RestrLenEuler
 
-open RestrLenEuler in
 
+open RestrLenEuler in
 theorem RestrLenEuler.proof : RestrLenEuler.Statement.{u, w} := by
   intro k _ Ω _ _ N x qq hqq _ t L n
   set Ls : Fin t → SubSystem k x Ω := fun j => (L j).toSubSystem with hLs

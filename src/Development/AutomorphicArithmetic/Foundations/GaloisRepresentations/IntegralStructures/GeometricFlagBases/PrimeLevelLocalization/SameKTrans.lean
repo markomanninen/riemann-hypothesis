@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.PrimeProj
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Plc
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.PrimeProj
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Plc
+
+@[expose] public section
 
 noncomputable section
 
@@ -163,15 +167,18 @@ theorem master (h : All) {E : Type} [Field E] [NumberField E] [IsCMField E] {l :
     · obtain ⟨m, hm⟩ := hM2 w σ' i hi
       exact ⟨⟨(m, (idx m : ℂ) * (satEig (Ideal.absNorm w.asIdeal) a B i * c ^ i)), Or.inr ⟨w, σ', i, B, hfr, hq, hst, hm, hB, rfl⟩, Or.inr ⟨w, σ', i, hw, hc, hm⟩⟩, hm, by
         simp only [θ, g, ϑ, c, map_mul, map_natCast]⟩
-    · have hq0 : 0 < normV w := Nat.pos_of_ne_zero (by
-        show Ideal.absNorm w.asIdeal ≠ 0
+    · have hnorm : normV w = Ideal.absNorm w.asIdeal := by
+        simp [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
+      have hq0 : 0 < normV w := Nat.pos_of_ne_zero (by
+        rw [hnorm]
         rw [Ne, Ideal.absNorm_eq_zero_iff]; exact w.ne_bot)
       obtain ⟨e0, e1⟩ := h.roots (normV w) a hq0 B (h.card E a U w B hB) 1 c (fun i => ι (ϑ i)) fun i _ => by
-        simp only [ϑ, RingEquiv.apply_symm_apply, one_mul]; rfl
+        simp only [ϑ, RingEquiv.apply_symm_apply, one_mul, hnorm]
       refine ⟨fun h0 => ?_, ?_⟩
       · rw [h0, map_zero] at e0; exact zero_ne_one e0
       · rw [e0, ← e1]
-        simp [crystallineComparison.heckePol, Polynomial.map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp [crystallineComparison.heckePol, Polynomial.map_sum]
   refine ⟨{ p := p, D := S.D, G := S.G, L := S.L, sc := hsc, e := RingEquiv.refl E, n_eq := rfl, N := N, J := J, g := g, θ := θ,
             κ := V.κ, m := mOf x V.W V.jz, alg := V.kap.alg, lam := V.lam, anti := hanti, f := f, fn := hf,
             spec := by simpa only [θ, RingEquiv.apply_symm_apply] using hsp, cong := ?_ }, fun v hv => ?_, fun w hw B hB => ?_⟩

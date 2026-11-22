@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WBMemLatS
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LatSFiniteSpan
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdicSumExists
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TchNeMulOfPowEq
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WBMemLatS
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LatSFiniteSpan
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdicSumExists
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TchNeMulOfPowEq
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt
+
+@[expose] public section
+
 noncomputable section
 open NumberField IsDedekindDomain Neutral.B1 Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2.Host Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations
 open GlobalTheory.HeckeGal GlobalTheory.Pst GlobalTheory.TripleGal GlobalTheory.CompanionTheory.LTHodge GlobalTheory.CompanionTheory.LTPer
@@ -38,7 +43,7 @@ theorem keyL : ∀ {l : ℕ} [Fact l.Prime] (b : Formalism.Per6.BdRp l) (k : ℕ
         AdicCompletion.evalₐ_of]
     have h1 : b' - c' ∈ RingHom.ker (AdicCompletion.evalₐ I k).toRingHom := by
       rw [RingHom.mem_ker]
-      simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, map_sub]
+      simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, RingHom.map_sub]
       rw [e, ha0, sub_self]
     rw [GroundTheory.PAdicHodge.ker_adicCompletion_evalₐ hfg k] at h1
     rw [hm, h']
@@ -146,7 +151,8 @@ theorem mem_FB_of_near {l : ℕ} [Fact l.Prime] (S : Subring (Formalism.Per6.BdR
     intro s hs
     obtain ⟨a, rfl⟩ := hS s hs
     refine ⟨∑ t ∈ T, (l : Wl l) ^ (c - cf t) * af t * a t, ?_⟩
-    rw [map_sum, Finset.mul_sum, ← Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.mul_sum, ← Finset.sum_sub_distrib]
     refine Ideal.sum_mem _ fun t ht => ?_
     have e : (l : Formalism.Per6.BdRp l) ^ c * (t * wB l (a t)) -
         wB l ((l : Wl l) ^ (c - cf t) * af t * a t) =

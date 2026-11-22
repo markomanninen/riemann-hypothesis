@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
+
+@[expose] public section
 
 namespace UpperTheory.V.Pr
 
@@ -39,7 +43,7 @@ private lemma exists_weight {ι : Type} [Finite ι] (x : ι → κˣ) (hx : ∀ 
   let φ := FractionRing.algEquiv ℤ ℚ
   refine ⟨AddMonoidHom.mk' (fun m => φ (f (LocalizedModule.mk m 1))) ?_, fun i => ?_⟩
   · intro a b
-    rw [← map_add, ← map_add]
+    rw [← map_add (f := _), ← map_add (f := _)]
     congr 2
     rw [LocalizedModule.mk_add_mk, one_smul, one_smul, mul_one]
   · intro h
@@ -298,7 +302,7 @@ private lemma weights {n : ℕ} (α : Fin n → κˣ) (h : FreeRatios α) :
       exact h1)
   refine ⟨fun u => w (Additive.ofMul u), fun a b => ?_, fun i j hij => ?_⟩
   · show w (Additive.ofMul (a * b)) = w (Additive.ofMul a) + w (Additive.ofMul b)
-    rw [ofMul_mul, map_add]
+    rw [ofMul_mul, map_add (f := _)]
   · intro he
     have he' : w (Additive.ofMul (α i)) = w (Additive.ofMul (α j)) := he
     apply hw ⟨(i, j), hij⟩

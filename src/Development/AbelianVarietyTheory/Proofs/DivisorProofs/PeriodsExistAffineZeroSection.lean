@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsPeriodHom
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.FamUnif
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPeriodCohomologyClassOfRichBasedStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPointHol
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsPeriodHom
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.FamUnif
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPeriodCohomologyClassOfRichBasedStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPointHol
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -112,8 +116,8 @@ def rmax : Real (Kmax u) s σ where
 
 variable {u} {K : Charts F} {r : Real K s σ}
 
-omit [IsSeparated s] in
 
+omit [IsSeparated s] in
 def toMax (hr : r.IsFor u) : K.Obj ⥤ (Kmax u).Obj where
   obj T :=
     { k := ⟨K.W T.k, K.base T.k, r.x T.k, hr T.k⟩
@@ -129,8 +133,8 @@ def toMax (hr : r.IsFor u) : K.Obj ⥤ (Kmax u).Obj where
       mem := Charts.Hom.mem f
       close := Charts.Hom.close f }
 
-omit [IsSeparated s] in
 
+omit [IsSeparated s] in
 def toMaxCoef (hr : r.IsFor u) : CoefMap (RingHom.id (Hol F.V)) (Kmax u).Oc K.Oc where
   G := toMax hr
   α T := RingHom.id T.C
@@ -146,14 +150,14 @@ def toMaxTrans (hr : r.IsFor u) : r.coef.G ⟶ ((rmax u).coef.comp (toMaxCoef hr
       pt := ((congrArg (· ≫ _) (Cris.spMap_id (T.C ⧸ T.J))).trans (Category.id_comp _)).trans
         (congrArg (spMap ((Ideal.Quotient.mk T.J).comp T.ρ) ≫ ·)
           (pt_unique u K T.k _ _ (hr T.k) ((toMax hr).obj T).k.2.2.choose_spec)) }
-  naturality _ _ _ := Thick.hom_ext fun _ ↦ rfl
+  naturality _ _ _ := Thick.Hom.ext' (AlgHom.ext fun _ ↦ rfl)
 
 end GlobalTheory.AnPer.PerExist
 
 namespace GlobalTheory.AnPer
 
-open PerExist in
 
+open PerExist in
 theorem periods_exist : PExist := by
   intro I _ g Λ _ F B _ X s _ σ u hu c
   obtain ⟨per, hper⟩ := GlobalTheory.T.exists_period_cohomologyClass_of_rich_based (Kmax u) (rich u) (based u hu) ((rmax u).coef.pull1 c)

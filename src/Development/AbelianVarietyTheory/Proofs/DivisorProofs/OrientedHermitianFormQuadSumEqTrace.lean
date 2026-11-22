@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.UnitaryConjugation
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.UnitaryConjugation
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,7 +95,8 @@ theorem gram_det_ne (V : HSp D) : V.gram.det ≠ 0 := by
   have hx : ∀ y, V.hT y (∑ j, v j • V.frame j) = 0 := by
     intro y
     rw [← V.frame.sum_repr y]
-    simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, RingHom.id_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, RingHom.id_apply, smul_eq_mul]
     simp only [Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_eq_zero fun i _ => ?_
@@ -153,7 +158,8 @@ theorem trace_second (hc : ∀ z, c (c z) = z) (ξ : A) (hξ : c ξ = -ξ) (g : 
   have e2 : (-pi) * (-(Z' * pᵀ))ᵀ * g * (-(Z.map c * p)) = -((pi * p) * (Z'ᵀ * g * Z.map c * p)) := by
     simp only [transpose_neg, transpose_mul, transpose_transpose, Matrix.neg_mul, Matrix.mul_neg, neg_neg, Matrix.mul_assoc]
   have ct : ∀ {k : ℕ} (M : Matrix (Fin k) (Fin k) A), c M.trace = (M.map c).trace := fun M => by
-    simp [Matrix.trace, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.trace, map_sum]
   rw [e2, hpi, Matrix.one_mul, trace_neg, mul_neg, map_neg, map_mul, hξ, ct, Matrix.map_mul, Matrix.map_mul,
     Matrix.map_mul, transpose_map, cc, hg', hp', neg_mul, neg_neg]
   congr 1
@@ -207,7 +213,7 @@ theorem symp_eq (t : T) (e : Num G i j) (Γ : Geo G i j) (hW₁ : Γ.V'.J = (-1 
   unfold symp symplO
   rw [hA, hB1, hB2]
   conv_rhs => arg 2; rw [← GlobalTheory.DualPairCheck.trace_cA]
-  rw [← map_add]
+  rw [← map_add (f := _)]
   congr 1
   have h1 := trace_first (cA D) ((spW₁ G i j).gram.map (incA D)) (((spW₁ G i j).gram⁻¹).map (incA D))
     ((spV G i j).gram.map (incA D)) (gram_conj_transpose _) (inv_mul_gram _) (colV e x) (colV e x')

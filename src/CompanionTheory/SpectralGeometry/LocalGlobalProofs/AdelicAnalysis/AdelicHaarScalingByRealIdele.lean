@@ -1,5 +1,10 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountable
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountable
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 
@@ -32,7 +37,7 @@ theorem map_eq_smul_of_scale {V W G : Type*}
         (measurable_const_smul t) measurable_id
       rw [show (ν.prod ρ).map ψ = (ν.map fun v => t • v).prod (ρ.map id) from this.symm,
         Measure.map_addHaar_smul ν ht, Measure.map_id, Measure.prod_smul_left]
-    rw [hc, Measure.map_smul, h1, smul_comm]
+    rw [hc, Measure.map_smul c hψ.aemeasurable, h1, smul_comm]
   have hφ : φ = Φ.symm ∘ ψ ∘ Φ := by
     funext x
     apply Φ.injective
@@ -43,7 +48,7 @@ theorem map_eq_smul_of_scale {V W G : Type*}
     simp
   calc μ.map φ = ((μ.map Φ).map ψ).map Φ.symm := by
         rw [Measure.map_map hΦs hψ, Measure.map_map (hΦs.comp hψ) hΦ, hφ]; rfl
-    _ = k • μ := by rw [hπ, Measure.map_smul, hμ]
+    _ = k • μ := by rw [hπ, Measure.map_smul k hΦs.aemeasurable, hμ]
 
 section Adelic
 

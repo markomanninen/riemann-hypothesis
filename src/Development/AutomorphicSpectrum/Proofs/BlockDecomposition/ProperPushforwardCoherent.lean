@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PowIdeal
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.RelSerreSections
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.QcqsPushforward
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PowIdeal
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.RelSerreSections
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.QcqsPushforward
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -44,7 +48,7 @@ def zerothCohomologyToSections {X Z : Scheme.{0}} (φ : Z ⟶ X) {V : X.Opens} (
       (Sheaf.H.equiv₀ (modulesAb (M.restrict (φ ⁻¹ᵁ V).ι)) isTerminalTop x :
         Γ(M, (φ ⁻¹ᵁ V).ι ''ᵁ ⊤))
     map_add' := fun x y => by
-      rw [map_add]
+      rw [map_add (f := _)]
       exact map_add _ _ _
     map_smul' := fun b x => by
       rw [H.smul_def, ← Sheaf.H.equiv₀_naturality]

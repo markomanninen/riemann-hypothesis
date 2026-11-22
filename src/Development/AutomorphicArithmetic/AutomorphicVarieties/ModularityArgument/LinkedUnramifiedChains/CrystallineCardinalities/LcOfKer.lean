@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.CjFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.AdicContinuousSumThree
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.OkFin
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.CjFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.AdicContinuousSumThree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.OkFin
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr UpperTheory.V.Z.J
 
@@ -8,7 +12,7 @@ private theorem lc_of_ker {D N : Type} [Group D] [TopologicalSpace D] [IsTopolog
     (τ : Representation ℤ D N) (h : IsOpen (τ.ker : Set D)) : IsLocallyConstant fun s => τ s := by
   rw [IsLocallyConstant.iff_exists_open]
   intro s
-  refine ⟨(fun y => s⁻¹ * y) ⁻¹' (τ.ker : Set D), h.preimage (continuous_mul_left s⁻¹), ?_, ?_⟩
+  refine ⟨(fun y => s⁻¹ * y) ⁻¹' (τ.ker : Set D), h.preimage (continuous_const_mul s⁻¹), ?_, ?_⟩
   · show s⁻¹ * s ∈ τ.ker
     rw [inv_mul_cancel]
     exact one_mem _
@@ -34,7 +38,7 @@ private theorem cnt {D N : Type} [Group D] [TopologicalSpace D] [IsTopologicalGr
       map_add' := by
         intro p q
         funext s
-        simp only [Prod.fst_add, Prod.snd_add, AddSubgroup.coe_add, Pi.add_apply, map_add]
+        simp only [Prod.fst_add, Prod.snd_add, AddSubgroup.coe_add, Pi.add_apply, map_add (f := _)]
         abel }
   have hψ : ∀ p : ↥A × N, ∀ s, ψ p s = e ((p.1 : D → N) s) + (σ s p.2 - p.2) := fun p s => rfl
   have hlc : ∀ Y : N, IsLocallyConstant fun s => σ s Y := by
@@ -59,7 +63,7 @@ private theorem cnt {D N : Type} [Group D] [TopologicalSpace D] [IsTopologicalGr
     · intro s t
       simp only [hψ]
       rw [ha.2 s t]
-      simp only [map_add, map_sub, he, map_mul, Module.End.mul_apply]
+      simp only [map_add (f := _), map_sub, he, map_mul, Module.End.mul_apply]
       abel
   · intro Y
     exact ⟨(0, Y), funext fun s => by simp [hψ]⟩
@@ -150,7 +154,7 @@ theorem UpperTheory.V.Z.J.zvCnt :
         refine ⟨ha1.add hb1, ?_, ?_, ?_⟩
         · intro s s'
           simp only [Pi.add_apply]
-          rw [ha2, hb2, ← hρc, ← hρc, ← hρc, map_add]
+          rw [ha2, hb2, ← hρc, ← hρc, ← hρc, map_add (f := _)]
           abel
         · intro s i j hij
           simp only [Pi.add_apply, Matrix.add_apply, ha3 s i j hij, hb3 s i j hij, add_zero]

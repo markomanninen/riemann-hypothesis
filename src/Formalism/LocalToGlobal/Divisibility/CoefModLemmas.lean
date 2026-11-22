@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Divisibility.CoefMod
+module
+
+public import Formalism.LocalToGlobal.Divisibility.CoefMod
+
+@[expose] public section
 
 open MvPolynomial NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder
@@ -76,7 +80,7 @@ def PairPos : Prop :=
     (Matrix.of fun i j : VVIdx lam => φ (pairK lam G (bVV K lam i) (bVV K lam j))).PosDef
 
 def BasisAtEx : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (M : Submodule (𝓞 K) (Fin n → K)), Submodule.IsLattice K M →
+  ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (M : Submodule (𝓞 K) (Fin n → K)), Submodule.IsFullLattice K M →
     ∀ w : HeightOneSpectrum (𝓞 K), ∃ B : GL (Fin n) K, IsBasisAt w M B
 
 def NabIndep : Prop :=
@@ -101,29 +105,22 @@ def NabDelFree : Prop :=
 
 def NabDelLoc : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] (ι : Type) [Fintype ι] (n : ℕ) (lam : ι → DomWeight n)
-    (M : ι → Submodule (𝓞 K) (Fin n → K)), (∀ τ, Submodule.IsLattice K (M τ)) →
+    (M : ι → Submodule (𝓞 K) (Fin n → K)), (∀ τ, Submodule.IsFullLattice K (M τ)) →
     ∀ (w : HeightOneSpectrum (𝓞 K)) (B : ι → GL (Fin n) K), (∀ τ, IsBasisAt w (M τ) (B τ)) →
       Formalism.HermitianLatticesTheory.localization₂ w.asIdeal (nabP lam M) =
         (Formalism.HermitianLatticesTheory.localization₂ w.asIdeal (nabStd K lam)).map ((actP lam B).restrictScalars (𝓞 K)) ∧
       Formalism.HermitianLatticesTheory.localization₂ w.asIdeal (delP lam M) =
         (Formalism.HermitianLatticesTheory.localization₂ w.asIdeal (delStd K lam)).map ((actP lam B).restrictScalars (𝓞 K))
 
-def NabRoundFree : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (ι : Type) [Fintype ι] (m : ℕ) (lam : ι → DomWeight (m + 1))
-    (B : ι → GL (Fin (m + 1)) K),
-    nabP lam (fun τ => dualFr (colLat (B τ))) =
-      Formalism.GradedWeylDivisibility.tensorLat (𝓞 K) K fun τ =>
-        Formalism.GradedWeylDivisibility.nablaLTw (𝓞 K) K m (lam τ).w (B τ : Matrix (Fin (m + 1)) (Fin (m + 1)) K)
-
 def NabLeVV : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] (ι : Type) [Fintype ι] (n : ℕ) (lam : ι → DomWeight n)
-    (M : ι → Submodule (𝓞 K) (Fin n → K)), (∀ τ, Submodule.IsLattice K (M τ)) →
+    (M : ι → Submodule (𝓞 K) (Fin n → K)), (∀ τ, Submodule.IsFullLattice K (M τ)) →
     ∀ F ∈ nabP lam M, F ∈ VV K lam
 
 def NabDelLattice : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] (ι : Type) [Fintype ι] (n : ℕ) (lam : ι → DomWeight n)
-    (M : ι → Submodule (𝓞 K) (Fin n → K)), (∀ τ, Submodule.IsLattice K (M τ)) →
-    Submodule.IsLattice K (nabK lam M) ∧ Submodule.IsLattice K (delK lam M)
+    (M : ι → Submodule (𝓞 K) (Fin n → K)), (∀ τ, Submodule.IsFullLattice K (M τ)) →
+    Submodule.IsFullLattice K (nabK lam M) ∧ Submodule.IsFullLattice K (delK lam M)
 
 def DelLeNab : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] (ι : Type) [Fintype ι] (n : ℕ) (lam : ι → DomWeight n)
@@ -135,31 +132,26 @@ def NabDelEquiv : Prop :=
     nabP lam (fun τ => gLat (g τ) (M τ)) = (nabP lam M).map ((actP lam g).restrictScalars (𝓞 K)) ∧
     delP lam (fun τ => gLat (g τ) (M τ)) = (delP lam M).map ((actP lam g).restrictScalars (𝓞 K))
 
-def NabDelStable : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (ι : Type) [Fintype ι] (n : ℕ) (lam : ι → DomWeight n)
-    (M : ι → Submodule (𝓞 K) (Fin n → K)) (g : ι → GL (Fin n) K), (∀ τ, gLat (g τ) (M τ) = M τ) →
-    (∀ x ∈ nabK lam M, rhoK lam g x ∈ nabK lam M) ∧ (∀ x ∈ delK lam M, rhoK lam g x ∈ delK lam M)
-
 def NabDelDual : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (ι : Type) [Fintype ι] (n : ℕ) (lam : ι → DomWeight n)
     (G : ι → Matrix (Fin n) (Fin n) K) (M : ι → Submodule (𝓞 K) (Fin n → K)),
-    (∀ τ, (G τ)ᴴ = G τ) → (∀ τ, IsUnit (G τ).det) → (∀ τ, Submodule.IsLattice K (M τ)) →
+    (∀ τ, (G τ)ᴴ = G τ) → (∀ τ, IsUnit (G τ).det) → (∀ τ, Submodule.IsFullLattice K (M τ)) →
     Formalism.HermitianLatticesTheory.dual (pairK lam G) (nabK lam M) = delK lam (fun τ => hdualFr (G τ) (M τ)) ∧
     Formalism.HermitianLatticesTheory.dual (pairK lam G) (delK lam M) = nabK lam (fun τ => hdualFr (G τ) (M τ))
 
 def DualFrHdual : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (n : ℕ) (G : Matrix (Fin n) (Fin n) K)
-    (M : Submodule (𝓞 K) (Fin n → K)), Gᴴ = G → IsUnit G.det → Submodule.IsLattice K M →
+    (M : Submodule (𝓞 K) (Fin n → K)), Gᴴ = G → IsUnit G.det → Submodule.IsFullLattice K M →
     hdualFr (G⁻¹)ᵀ (dualFr M) = dualFr (hdualFr G M)
 
 def DualFrLattice : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (n : ℕ) (G : Matrix (Fin n) (Fin n) K)
-    (M : Submodule (𝓞 K) (Fin n → K)), IsUnit G.det → Submodule.IsLattice K M →
-    Submodule.IsLattice K (dualFr M) ∧ Submodule.IsLattice K (hdualFr G M)
+    (M : Submodule (𝓞 K) (Fin n → K)), IsUnit G.det → Submodule.IsFullLattice K M →
+    Submodule.IsFullLattice K (dualFr M) ∧ Submodule.IsFullLattice K (hdualFr G M)
 
 def TauLatLattice : Prop :=
   ∀ (E K : Type) [Field E] [NumberField E] [Field K] [NumberField K] (ι : Type) (n : ℕ) (emb : ι → E →+* K) (τ : ι)
-    (L : Submodule (𝓞 E) (Fin n → E)), Submodule.IsLattice E L → Submodule.IsLattice K (tauLat emb τ L)
+    (L : Submodule (𝓞 E) (Fin n → E)), Submodule.IsFullLattice E L → Submodule.IsFullLattice K (tauLat emb τ L)
 
 def TauLatG : Prop :=
   ∀ (E K : Type) [Field E] [NumberField E] [Field K] [NumberField K] (ι : Type) (n : ℕ) (emb : ι → E →+* K) (τ : ι)
@@ -170,15 +162,9 @@ def TauLatG : Prop :=
 def TauLatDual : Prop :=
   ∀ (E K : Type) [Field E] [NumberField E] [Field K] [NumberField K] [StarRing K] (ι : Type) (n : ℕ)
     (emb : ι → E →+* K) (cE : E →+* E) (τ : ι), (∀ x, star (emb τ x) = emb τ (cE x)) →
-    ∀ (J : Matrix (Fin n) (Fin n) E) (L L' : Submodule (𝓞 E) (Fin n → E)), IsUnit J.det → Submodule.IsLattice E L →
+    ∀ (J : Matrix (Fin n) (Fin n) E) (L L' : Submodule (𝓞 E) (Fin n → E)), IsUnit J.det → Submodule.IsFullLattice E L →
       (∀ y, y ∈ L' ↔ ∀ x ∈ L, Formalism.UG.hform cE J x y ∈ (algebraMap (𝓞 E) E).range) →
       hdualFr (gramK emb J τ) (tauLat emb τ L) = tauLat emb τ L'
-
-def GramHerm : Prop :=
-  ∀ (E K : Type) [Field E] [Field K] [StarRing K] (ι : Type) (n : ℕ)
-    (emb : ι → E →+* K) (cE : E →+* E) (τ : ι), (∀ x, star (emb τ x) = emb τ (cE x)) →
-    ∀ J : Matrix (Fin n) (Fin n) E, Formalism.UG.IsHerm cE J →
-      (gramK emb J τ)ᴴ = gramK emb J τ ∧ (gramKd emb J τ)ᴴ = gramKd emb J τ
 
 def UJUnitary : Prop :=
   ∀ (E K : Type) [Field E] [Field K] [StarRing K] (ι : Type) (n : ℕ)
@@ -190,28 +176,13 @@ def UJUnitary : Prop :=
         ((invTrK (embGL emb γ) τ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K)ᴴ * gramKd emb J τ *
           ((invTrK (embGL emb γ) τ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K) = gramKd emb J τ)
 
-def RoundGL : Prop :=
-  ∀ (E K : Type) [Field E] [Field K] (ι : Type) (n : ℕ) (emb : ι → E →+* K) (cE : E →+* E)
-    (Jg γ : GL (Fin n) E), γ ∈ Formalism.UG.UJ cE (Jg : Matrix (Fin n) (Fin n) E) →
-    invTrK (embGL emb γ) =
-      invTrK (embGL emb Jg⁻¹) * embGL (fun τ => (emb τ).comp cE) γ * (invTrK (embGL emb Jg⁻¹))⁻¹
-
 def RoundLat : Prop :=
   ∀ (E K : Type) [Field E] [NumberField E] [Field K] [NumberField K] (ι : Type) (n : ℕ)
     (emb : ι → E →+* K) (cE : E →+* E) (τ : ι), (∀ x, cE (cE x) = x) →
-    ∀ (Jg : GL (Fin n) E) (L L' : Submodule (𝓞 E) (Fin n → E)), Submodule.IsLattice E L →
+    ∀ (Jg : GL (Fin n) E) (L L' : Submodule (𝓞 E) (Fin n → E)), Submodule.IsFullLattice E L →
       Formalism.UG.IsHerm cE (Jg : Matrix (Fin n) (Fin n) E) →
       (∀ y, y ∈ L' ↔ ∀ x ∈ L, Formalism.UG.hform cE (Jg : Matrix (Fin n) (Fin n) E) x y ∈ (algebraMap (𝓞 E) E).range) →
       dualFr (tauLat emb τ L) = gLat (invTrK (embGL emb Jg⁻¹) τ) (tauLat (fun τ => (emb τ).comp cE) τ L')
-
-def RoundGram : Prop :=
-  ∀ (E K : Type) [Field E] [Field K] [StarRing K] (ι : Type) (n : ℕ)
-    (emb : ι → E →+* K) (cE : E →+* E) (τ : ι), (∀ x, star (emb τ x) = emb τ (cE x)) →
-    ∀ Jg : GL (Fin n) E, Formalism.UG.IsHerm cE (Jg : Matrix (Fin n) (Fin n) E) →
-      ((invTrK (embGL emb Jg⁻¹) τ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K)ᴴ *
-          gramKd emb (Jg : Matrix (Fin n) (Fin n) E) τ *
-          ((invTrK (embGL emb Jg⁻¹) τ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K) =
-        gramK (fun τ => (emb τ).comp cE) (Jg : Matrix (Fin n) (Fin n) E) τ
 
 theorem fockSHerm : FockSHerm := by
   classical
@@ -291,16 +262,6 @@ theorem conjTranspose_transpose' {K : Type} [Field K] [StarRing K] {n : ℕ} (A 
   ext i j
   simp [Matrix.conjTranspose_apply]
 
-theorem gramHerm : GramHerm := by
-  intro E K _ _ _ ι n emb cE τ h J hJ
-  have h1 : (gramK emb J τ)ᴴ = gramK emb J τ := by
-    unfold gramK
-    rw [map_conjTranspose_eq (emb τ) cE h, hJ]
-  refine ⟨h1, ?_⟩
-  unfold gramKd
-  unfold gramK at h1
-  rw [conjTranspose_transpose', Matrix.conjTranspose_nonsing_inv, h1]
-
 theorem uJUnitary : UJUnitary := by
   intro E K _ _ _ ι n emb cE τ h J γ hγ
   have hγ' : Formalism.UG.cT cE (γ : Matrix (Fin n) (Fin n) E) * J * (γ : Matrix (Fin n) (Fin n) E) = J := hγ
@@ -326,11 +287,13 @@ theorem tauLatG : TauLatG := by
   · rintro ⟨_, ⟨x, hx, rfl⟩, rfl⟩
     refine ⟨_, ⟨x, hx, rfl⟩, ?_⟩
     funext a
-    simp [embGL_coe, Matrix.mulVec, dotProduct, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [embGL_coe, Matrix.mulVec, dotProduct, map_sum]
   · rintro ⟨_, ⟨x, hx, rfl⟩, rfl⟩
     refine ⟨_, ⟨x, hx, rfl⟩, ?_⟩
     funext a
-    simp [embGL_coe, Matrix.mulVec, dotProduct, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [embGL_coe, Matrix.mulVec, dotProduct, map_sum]
 
 section Adj
 
@@ -357,7 +320,7 @@ theorem fockL_pderiv_X {σ : Type} [DecidableEq σ] (v : σ) (f g : MvPolynomial
       unfold mfact
       rw [Formalism.REAL.prod_factorial_support_sub_single u v hv, star_mul', star_natCast]
       push_cast; ring
-  | add p q hp hq => rw [map_add, map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, hp, hq]
 
 theorem fockL_X_pderiv {σ : Type} [DecidableEq σ] (v : σ) (f g : MvPolynomial σ K) :
     fockL (X v * f) g = fockL f (pderiv v g) := by
@@ -383,18 +346,19 @@ theorem constantCoeff_blockAct (U : ι → Matrix (Fin n) (Fin n) K) (g : Pol K 
     · intro i; simp [blockAct_X]
   exact congrArg (fun φ : Pol K ι n →+* K => φ g) this
 
-omit [StarRing K] in
 
+omit [StarRing K] in
 theorem pderiv_blockAct [DecidableEq ι] (V : ι → Matrix (Fin n) (Fin n) K) (s : ι) (a t : Fin n) (g : Pol K ι n) :
     pderiv (s, (a, t)) (Formalism.GradedWeylDivisibility.blockAct K V g) =
       ∑ b : Fin n, C (V s b a) * Formalism.GradedWeylDivisibility.blockAct K V (pderiv (s, (b, t)) g) := by
   induction g using MvPolynomial.induction_on with
   | C c => simp
-  | add p q hp hq => simp only [map_add, hp, hq, mul_add, Finset.sum_add_distrib]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq, mul_add, Finset.sum_add_distrib]
   | mul_X p k hp =>
     have hX : pderiv (s, (a, t)) (Formalism.GradedWeylDivisibility.blockAct K V (X k)) =
         if k.1 = s ∧ k.2.2 = t then C (V s k.2.1 a) else 0 := by
-      rw [blockAct_X, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [blockAct_X, map_sum]
       by_cases hk : k.1 = s ∧ k.2.2 = t
       · obtain ⟨h1, h2⟩ := hk
         subst h1; subst h2
@@ -414,7 +378,7 @@ theorem pderiv_blockAct [DecidableEq ι] (V : ι → Matrix (Fin n) (Fin n) K) (
             by simpa using congrArg (fun z : ι × Fin n × Fin n => z.2.2) h⟩)]
         simp
     rw [map_mul, Derivation.leibniz, hX, hp, smul_eq_mul, smul_eq_mul]
-    simp_rw [Derivation.leibniz, smul_eq_mul, map_add, map_mul, mul_add, Finset.sum_add_distrib]
+    simp_rw [Derivation.leibniz, smul_eq_mul, map_add (f := _), map_mul, mul_add, Finset.sum_add_distrib]
     congr 1
     · by_cases hk : k.1 = s ∧ k.2.2 = t
       · obtain ⟨h1, h2⟩ := hk
@@ -444,16 +408,18 @@ theorem fockL_blockAct_adj (U : ι → Matrix (Fin n) (Fin n) K) (F F' : Pol K �
   classical
   induction F using MvPolynomial.induction_on generalizing F' with
   | C a => rw [algHom_C, algebraMap_eq, fockL_C_left, fockL_C_left, constantCoeff_blockAct]
-  | add p q hp hq => rw [map_add, map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, hp, hq]
   | mul_X p v hp =>
     have e1 : Formalism.GradedWeylDivisibility.blockAct K U (p * X v) =
         ∑ b : Fin n, U v.1 v.2.1 b • (X (v.1, (b, v.2.2)) * Formalism.GradedWeylDivisibility.blockAct K U p) := by
       rw [map_mul, blockAct_X, Finset.mul_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [smul_eq_C_mul]; ring
-    rw [e1, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, map_sum, LinearMap.sum_apply]
     simp_rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, fockL_X_pderiv, hp]
-    rw [mul_comm p, fockL_X_pderiv, show v = (v.1, (v.2.1, v.2.2)) from rfl, pderiv_blockAct, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [mul_comm p, fockL_X_pderiv, show v = (v.1, (v.2.1, v.2.2)) from rfl, pderiv_blockAct, map_sum]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [← smul_eq_C_mul, map_smul, Matrix.conjTranspose_apply, starRingEnd_apply]
 
@@ -640,7 +606,8 @@ theorem fockSQ : FockSQ := by
   intro K _ _ _ σ f g
   have hinj : Function.Injective (algebraMap ℚ K) := (algebraMap ℚ K).injective
   unfold fockS Formalism.GradedWeylDivisibility.fockQ mfact
-  rw [support_map_of_injective _ hinj, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [support_map_of_injective _ hinj, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   simp only [coeff_map, map_mul, map_natCast, eq_ratCast, star_ratCast]
 
@@ -668,69 +635,7 @@ section Checks
 
 variable {K : Type} [Field K]
 
-def lamVec : DomWeight 2 where
-  w := ![1, 0]
-  anti := by
-    intro i j hij
-    fin_cases i <;> fin_cases j <;> simp_all
-
-def vecP (v : Fin 2 → K) : Pol K Unit 2 := ∑ a : Fin 2, C (v a) * X ((), (a, 0))
-
-theorem lamVec_detShift : lamVec.detShift = 0 := by
-  simp [DomWeight.detShift, lamVec]
-
-theorem lamVec_natW : lamVec.natW = ![1, 0] := by
-  funext i
-  fin_cases i <;> simp only [DomWeight.natW, lamVec_detShift] <;> simp [lamVec]
-
-theorem extremal_lamVec : extremal K 2 lamVec = X (0, 0) := by
-  unfold extremal Formalism.GradedWeylDivisibility.hw
-  rw [lamVec_natW, Fin.prod_univ_two]
-  simp [Formalism.GradedWeylDivisibility.nuNext, Formalism.GradedWeylDivisibility.lpMinor]
-
 variable [StarRing K]
-
-theorem fockL_X_X {σ : Type} [DecidableEq σ] (i j : σ) :
-    fockL (X i : MvPolynomial σ K) (X j) = if i = j then 1 else 0 := by
-  have h := fockL_X_pderiv (K := K) i 1 (X j)
-  rw [mul_one] at h
-  rw [h, ← C_1, fockL_C_left, pderiv_X]
-  by_cases hij : i = j
-  · subst hij; simp
-  · simp [hij, Ne.symm hij]
-
-theorem pairP_vecP (G : Unit → Matrix (Fin 2) (Fin 2) K) (v w : Fin 2 → K) :
-    pairP (fun _ => lamVec) G (vecP v) (vecP w) = star v ⬝ᵥ (G () *ᵥ w) := by
-  have h1 : gramTw (fun _ : Unit => lamVec) G = 1 := by simp [gramTw, lamVec_detShift]
-  have h2 : extNorm K (fun _ : Unit => lamVec) = 1 := by
-    simp only [extNorm, Finset.univ_unique, Finset.prod_singleton, extremal_lamVec]
-    rw [← fockL_apply, fockL_X_X, if_pos rfl]
-  rw [pairP_apply, h1, h2]
-  simp only [vecP, blockAct_X, Fin.sum_univ_two, Matrix.transpose_apply,
-    ← smul_eq_C_mul, map_add, map_smul, LinearMap.map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, fockL_X_X,
-    smul_add, smul_smul]
-  simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
-  simp only [starRingEnd_apply]
-  ring
-
-def lamChar (e : ℤ) : DomWeight 1 where
-  w := fun _ => e
-  anti := fun _ _ _ => le_rfl
-
-theorem pairP_char (e : ℤ) (G : Unit → Matrix (Fin 1) (Fin 1) K) :
-    pairP (fun _ => lamChar e) G (1 : Pol K Unit 1) 1 = G () 0 0 ^ e := by
-  have h0 : (lamChar e).natW = fun _ => 0 := by
-    funext i
-    simp [DomWeight.natW, DomWeight.detShift, lamChar]
-  have h2 : extNorm K (fun _ : Unit => lamChar e) = 1 := by
-    simp only [extNorm, Finset.univ_unique, Finset.prod_singleton, extremal, Formalism.GradedWeylDivisibility.hw, h0]
-    simp only [Formalism.GradedWeylDivisibility.nuNext]
-    simp only [Nat.sub_self, dite_eq_ite, ite_self, pow_zero]
-    rw [← fockL_apply, ← C_1, fockL_C_left]
-    simp
-  have hb : Formalism.GradedWeylDivisibility.blockAct K (fun τ => (G τ)ᵀ) (1 : Pol K Unit 1) = 1 := map_one _
-  rw [pairP_apply, h2, hb, ← C_1, fockL_C_left]
-  simp [gramTw, lamChar, DomWeight.detShift]
 
 end Checks
 

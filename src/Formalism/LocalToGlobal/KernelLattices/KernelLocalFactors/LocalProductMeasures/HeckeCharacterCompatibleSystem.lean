@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.MuProd
-import Formalism.LocalToGlobal.UnitaryNorms.CharProd
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.MuProd
+public import Formalism.LocalToGlobal.UnitaryNorms.CharProd
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 ReciprocityTheory.Neutral.Bridge.HCFR
 

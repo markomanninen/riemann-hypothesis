@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.XApply
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.XApply
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -21,7 +25,7 @@ private theorem four_qdet {V : Type} [AddCommGroup V] [Module ℂ V] (X : Fin 2 
   have r2 : X 0 1 (X 1 0 w) - X 1 0 (X 0 1 w) = X 0 0 w - X 1 1 w := by
     simpa using LinearMap.congr_fun (hX 0 1 1 0) w
   rw [qdet_fin_two]
-  simp only [LinearMap.sub_apply, Module.End.mul_apply, LinearMap.add_apply, Module.algebraMap_end_apply, map_add,
+  simp only [LinearMap.sub_apply, Module.End.mul_apply, LinearMap.add_apply, Module.algebraMap_end_apply, map_add (f := _),
     map_sub, map_smul]
   linear_combination (norm := module) (2 : ℂ) • r1 + (2 : ℂ) • r2
 
@@ -55,8 +59,8 @@ theorem UpperTheory.ConvolutionTheory.R2.Fo.capAbs :
   have hZ : ∀ v ∈ V₀, ∀ s ∈ S₀, (P 0 0 + P 1 1) (Λ v s) = Λ ((E 0 0 + E 1 1) v) s := fun v hv s hs => by
     have h1 : a 0 0 s + a 1 1 s = -h s := by simpa using LinearMap.congr_fun hz s
     have h2 : Λ v (a 0 0 s) + Λ v (a 1 1 s) = Λ ((E 0 0 - E 1 1) v) s := by
-      rw [← map_add, h1, map_neg, hhΛ v hv s hs, neg_neg]
-    simp only [LinearMap.add_apply, hPΛ _ _ v hv s hs, if_true, map_add]
+      rw [← map_add (f := _), h1, map_neg, hhΛ v hv s hs, neg_neg]
+    simp only [LinearMap.add_apply, hPΛ _ _ v hv s hs, if_true, map_add (f := _)]
     simp only [LinearMap.sub_apply, map_sub] at h2
     linear_combination (norm := module) h2
   have hHP : ∀ v ∈ V₀, ∀ s ∈ S₀, (P 0 0 - P 1 1) (Λ v s) = Λ v ((a 0 0 - a 1 1) s) := fun v hv s hs => by
@@ -77,12 +81,12 @@ theorem UpperTheory.ConvolutionTheory.R2.Fo.capAbs :
       simp only [two_mul, LinearMap.add_apply, Module.End.mul_apply] at this
       rw [two_smul, two_smul]
       exact this
-    rw [hHP v hv s hs, hHP v hv _ (hA s hs), p10, p01, p01', p10', ← map_add, ← map_smul, ← map_add, hb', map_add, map_smul,
+    rw [hHP v hv s hs, hHP v hv _ (hA s hs), p10, p01, p01', p10', ← map_add (f := _), ← map_smul, ← map_add (f := _), hb', map_add (f := _), map_smul,
       map_add, hef v hv s hs, hfe v hv s hs, hhΛ v hv _ (hhS s hs), hhΛ _ (hHV v hv) s hs, neg_neg,
       map_add, map_smul, map_add, LinearMap.add_apply, LinearMap.smul_apply, LinearMap.add_apply, add_comm (Λ (E 1 0 _) s)]
   have key : (4 : ℂ) • Formalism.REAL.qdet P u (Λ v s) = (4 : ℂ) • Λ (Formalism.REAL.qdet E u v) s := by
     have k2 : (4 : ℂ) • Λ (Formalism.REAL.qdet E u v) s = Λ ((4 : ℂ) • Formalism.REAL.qdet E u v) s := by
       rw [map_smul, LinearMap.smul_apply]
     rw [k2, four_qdet P hP u, four_qdet E hE u v, hBr, hZ v hv s hs, hZ _ (hZV v hv) s hs]
-    simp only [map_add, map_sub, map_smul, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply]
+    simp only [map_add (f := _), map_sub, map_smul, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply]
   exact smul_right_injective T (by norm_num : (4 : ℂ) ≠ 0) key

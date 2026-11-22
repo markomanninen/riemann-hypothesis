@@ -1,1 +1,5 @@
-import Formalism.AdmissibleDesigns.InvariantsEqBotIff
+module
+
+public import Formalism.AdmissibleDesigns.InvariantsEqBotIff
+
+@[expose] public section

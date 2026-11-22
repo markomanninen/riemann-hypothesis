@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Complex Matrix Filter Topology
 open scoped BigOperators Real
@@ -186,7 +190,7 @@ theorem automorphyFactor_exp_linear_of_cube :
     apply clm_eq_of_cexp_eq
     intro z
     have e := hαc m l z
-    rw [add_comm m l, hexp (l + m), hexp m, hexp l, ha, map_add, Complex.exp_add] at e
+    rw [add_comm m l, hexp (l + m), hexp m, hexp l, ha, map_add (f := _), Complex.exp_add] at e
     rw [ContinuousLinearMap.add_apply, Complex.exp_add]
     have h1 : α l 0 * α m 0 * cexp (B₀ l m) ≠ 0 :=
       mul_ne_zero (mul_ne_zero (hα0 _ _) (hα0 _ _)) (Complex.exp_ne_zero _)

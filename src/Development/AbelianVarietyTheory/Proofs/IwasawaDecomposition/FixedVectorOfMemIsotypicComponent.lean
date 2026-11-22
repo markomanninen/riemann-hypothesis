@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.GaloisLevelStructure.DefsAut
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GaloisLevelStructure.DefsAut
+
+@[expose] public section
+
 open Formalism.L2 Formalism.AUTREP ReciprocityTheory.Aut NumberField
 
 namespace GlobalTheory.IsoFix
@@ -61,7 +66,7 @@ theorem fixed_of_mem_finset_sum (ρ : Representation ℂ (GQ L n) W) (S : Submod
       have hyfix : ∀ κ ∈ K, NG.rt L n κ y = y := by
         intro κ hκ
         have e := hfix κ hκ
-        rw [map_add] at e
+        rw [map_add (f := _)] at e
         have hd : NG.rt L n κ y - y ∈ a ⊓ ⨆ i ∈ s, i := by
           refine ⟨Submodule.sub_mem _ (haF.1.1.stable κ y hy) hy, ?_⟩
           have h4 : NG.rt L n κ y - y = z - NG.rt L n κ z := by

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,7 +87,8 @@ theorem dvd_of_tensor {V F A : Type} [CommRing V] [IsDomain V] [IsDiscreteValuat
   let b' : Fin n → R := fun i => ⟨b i, (hb i).le⟩
   have hR : a ⊗ₜ[V] (1 : R) = ∑ i, c i ⊗ₜ[V] b' i := by
     apply Module.Flat.lTensor_preserves_injective_linearMap (M := A) incl hincl
-    simp only [map_sum, LinearMap.lTensor_tmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.lTensor_tmul]
     exact h
   have hmu1 : mu 1 = 1 := by
     show lam (Ideal.Quotient.mk mI 1) = 1
@@ -94,7 +99,8 @@ theorem dvd_of_tensor {V F A : Type} [CommRing V] [IsDomain V] [IsDiscreteValuat
     rw [Ideal.Quotient.eq_zero_iff_mem.mpr (hb i), map_zero]
   have hk : a ⊗ₜ[V] (1 : V ⧸ (Ideal.span {ϖ} : Ideal V)) = 0 := by
     have e := congrArg (LinearMap.lTensor A mu) hR
-    simp only [map_sum, LinearMap.lTensor_tmul, hmu1, hmub, TensorProduct.tmul_zero,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.lTensor_tmul, hmu1, hmub, TensorProduct.tmul_zero,
       Finset.sum_const_zero] at e
     exact e
   have hq : (Submodule.Quotient.mk a : A ⧸ (Ideal.span {ϖ} : Ideal V) • (⊤ : Submodule V A)) = 0 := by
@@ -134,7 +140,7 @@ private lemma germ_app_app_eq_germ_app_comp {A B C : Scheme.{0}} (r : A ⟶ B) (
 theorem gs_appLE {Y : Scheme.{0}} (q : Y ⟶ X) (U : X.Opens) (W : Y.Opens) (e : W ≤ q ⁻¹ᵁ U) (r : Z ⟶ Y) (z : Z)
     (hz : r z ∈ W) (f : Γ(X, U)) : gs r z W ((q.appLE U W e).hom f) = gs (r ≫ q) z U f := by
   unfold gs
-  rw [dif_pos hz, dif_pos (show (r ≫ q) z ∈ U from e hz)]
+  rw [dite_eq_left hz, dite_eq_left (show (r ≫ q) z ∈ U from e hz)]
   simp only [Scheme.Hom.appLE, CommRingCat.hom_comp, RingHom.comp_apply]
   exact (germ_app_presheaf_map_eq_germ_app r z e hz _).trans (germ_app_app_eq_germ_app_comp r q z U (e hz) f)
 
@@ -148,7 +154,7 @@ theorem gs_constFn (p : X ⟶ Sp V) (W : X.Opens) (r : Z ⟶ X) (z : Z) (hz : r 
 theorem gs_stalkMap (r : Z ⟶ X) (z : Z) (U : X.Opens) (h : r z ∈ U) (f : Γ(X, U)) :
     gs r z U f = (r.stalkMap z).hom (gs (𝟙 X) (r z) U f) := by
   unfold gs
-  rw [dif_pos h, dif_pos (show (𝟙 X : X ⟶ X) (r z) ∈ U from h)]
+  rw [dite_eq_left h, dite_eq_left (show (𝟙 X : X ⟶ X) (r z) ∈ U from h)]
   rw [← Scheme.Hom.germ_stalkMap_apply]
   first
   | rfl
@@ -189,7 +195,7 @@ theorem cst_regular [IsDomain V] (p : X ⟶ Sp V) [Flat p] (x : X) {a : V} (ha :
       ((Scheme.ΓSpecIso (CommRingCat.of V)).inv.hom b)) =
       gs p x ⊤ ((Scheme.ΓSpecIso (CommRingCat.of V)).inv.hom b)
     unfold gs
-    rw [dif_pos (show p x ∈ (⊤ : (Sp V).Opens) from trivial)]
+    rw [dite_eq_left (show p x ∈ (⊤ : (Sp V).Opens) from trivial)]
     exact Scheme.Hom.germ_stalkMap_apply p ⊤ x trivial _
   letI : Algebra V (X.presheaf.stalk x) := φ.toAlgebra
   haveI : Module.Flat V (X.presheaf.stalk x) := hφ
@@ -207,7 +213,7 @@ theorem exists_div [IsDomain V] (p : X ⟶ Sp V) [Flat p] {a : V} (ha : a ≠ 0)
       gs (𝟙 X) x U s = (X.presheaf.germ U x hx).hom s := by
     intro U x hx s
     unfold gs
-    rw [dif_pos (show (𝟙 X : X ⟶ X) x ∈ U from hx)]
+    rw [dite_eq_left (show (𝟙 X : X ⟶ X) x ∈ U from hx)]
     rfl
   have hcst : ∀ {U : X.Opens} (x : X) (hx : x ∈ U),
       (X.presheaf.germ U x hx).hom (constFn p U a) = cst p x a := by
@@ -281,7 +287,7 @@ private theorem presheaf_map_constFn' (p : X ⟶ Sp V) {A B : X.Opens} (i : B �
       gs (𝟙 X) y U s = (X.presheaf.germ U y hx).hom s := by
     intro U hx s
     unfold gs
-    rw [dif_pos (show (𝟙 X : X ⟶ X) y ∈ U from hx)]
+    rw [dite_eq_left (show (𝟙 X : X ⟶ X) y ∈ U from hx)]
     rfl
   have hcst : ∀ {U : X.Opens} (hx : y ∈ U), (X.presheaf.germ U y hx).hom (constFn p U a) = cst p y a := by
     intro U hx
@@ -300,7 +306,7 @@ private theorem constFn_mul_left_cancel_of_flat [IsDomain V] (p : X ⟶ Sp V) [F
   apply cst_regular p x ha
   have hgs : gs (𝟙 X) x U (constFn p U a) = (X.presheaf.germ U x hx).hom (constFn p U a) := by
     unfold gs
-    rw [dif_pos (show (𝟙 X : X ⟶ X) x ∈ U from hx)]
+    rw [dite_eq_left (show (𝟙 X : X ⟶ X) x ∈ U from hx)]
     rfl
   have hcst : (X.presheaf.germ U x hx).hom (constFn p U a) = cst p x a := by
     rw [← hgs, gs_constFn p U (𝟙 X) x hx a, Category.id_comp]

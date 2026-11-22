@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.RigFrame
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CmTypeLetterFrameColumnDictionary
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.TriangularFrameMovesPeriodBlockTriangular
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.EqOfImHermFormEq
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameMulTriangularOrthonormal
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.MemIffConjugateNotMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.RigFrame
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CmTypeLetterFrameColumnDictionary
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.TriangularFrameMovesPeriodBlockTriangular
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.EqOfImHermFormEq
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameMulTriangularOrthonormal
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.MemIffConjugateNotMem
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj Formalism.L2.PjFree
 open AlgebraicGeometry CategoryTheory Limits ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.Frames GlobalTheory.FrameUnif GlobalTheory.FrameNorm
@@ -15,7 +19,8 @@ namespace GlobalTheory.FrameSign
 private theorem hermC_emb_eq_map_herm' {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (τ : E →+* ℂ)
     (Gm : Matrix (Fin r) (Fin r) E) (v w : Fin r → E) :
     hermC τ Gm (Data.emb τ v) (Data.emb τ w) = τ (herm Gm v w) := by
-  simp only [hermC, herm, Data.emb, cc, map_sum, map_mul, IsCMField.complexEmbedding_complexConj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hermC, herm, Data.emb, cc, map_sum, map_mul, IsCMField.complexEmbedding_complexConj]
 
 private theorem re_emb' {E : Type} [Field E] [NumberField E] [IsCMField E] (τ : E →+* ℂ) (ξ : E)
     (hξ : cc ξ = -ξ) : (τ ξ).re = 0 := by
@@ -126,7 +131,7 @@ theorem im_neg_of_isPeriod : ∀ (E : Type) [Field E] [NumberField E] [IsCMField
       have hk2 : (idx k).2 = ⟨X.p0 + (e k).2, hi⟩ :=
         Fin.ext (show ((idx k).2 : ℕ) = X.p0 + (e k).2 by rw [hp0]; exact h3)
       have hnot : ¬ (((idx k).2 : ℕ) < Dw.q) := by rw [h3]; omega
-      rw [dif_pos h1, dif_pos hi, if_neg hnot, hk1, hk2]
+      rw [dite_eq_left h1, dite_eq_left hi, if_neg hnot, hk1, hk2]
     · have hc : conjEmb (relab c σ (e k).1) ∈ X.Ψ := by
         have h5 := (idx k).1.2
         rw [h2] at h5
@@ -136,7 +141,7 @@ theorem im_neg_of_isPeriod : ∀ (E : Type) [Field E] [NumberField E] [IsCMField
       have hk2 : (idx k).2 = ⟨X.p0 - 1 - (e k).2, hj⟩ :=
         Fin.ext (show ((idx k).2 : ℕ) = X.p0 - 1 - (e k).2 by rw [hp0]; exact h3)
       have hlt : ((idx k).2 : ℕ) < Dw.q := by rw [h3]; omega
-      rw [dif_neg h1, dif_pos hc, dif_pos hj, if_pos hlt, hk1, hk2]
+      rw [dite_eq_right h1, dite_eq_left hc, dite_eq_left hj, if_pos hlt, hk1, hk2]
 
   obtain ⟨x₀, b, hb, hon, rfl⟩ :=
     (GlobalTheory.UnitFrames.frame_mul_triangular_orthonormal E r X.p0 X.Ψ X.Gm X.Gm_herm).1 x hx

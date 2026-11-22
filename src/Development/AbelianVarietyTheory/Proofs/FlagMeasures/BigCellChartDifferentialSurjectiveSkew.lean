@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.Dchart
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LieAlgebraBesselModelMiddleUnitaryEntriesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LieEntriesUnipotentBesselNCharacterizationStatement
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.Dchart
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LieAlgebraBesselModelMiddleUnitaryEntriesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LieEntriesUnipotentBesselNCharacterizationStatement
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Topology Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf GlobalTheory.Amp GlobalTheory.CellDens
 open scoped InnerProductSpace ENNReal
@@ -112,10 +116,10 @@ theorem dchart_onto : ∀ (k r : ℕ) (Z : Mat k r), Zᴴ * Hpk k r + Hpk k r * 
   · subst hij
     simp only [lt_irrefl, if_false, if_true, neg_zero, zero_add, add_zero, and_self]
     by_cases c : i.val < r
-    · rw [dif_pos c, if_neg (by omega), add_zero]; rfl
-    · rw [dif_neg c]
+    · rw [dite_eq_left c, if_neg (by omega), add_zero]; rfl
+    · rw [dite_eq_right c]
       by_cases c' : r + k < i.val
-      · rw [dif_pos c', if_neg (by omega), add_zero]
+      · rw [dite_eq_left c', if_neg (by omega), add_zero]
         have e : eI k r ⟨2 * r + k - i.val, by omega⟩ = sig k r i :=
           Fin.ext (by rw [sig_hi k r i c']; rfl)
         rw [e]
@@ -124,7 +128,7 @@ theorem dchart_onto : ∀ (k r : ℕ) (Z : Mat k r), Zᴴ * Hpk k r + Hpk k r * 
         have hs : sgn k r i = 1 := by unfold sgn; rw [if_neg (by omega)]
         rw [hs] at this
         linear_combination -this
-      · rw [dif_neg c', if_pos (by omega), zero_add]
+      · rw [dite_eq_right c', if_pos (by omega), zero_add]
   · rw [if_neg hij, add_zero]
     have hij' : i.val ≠ j.val := fun h => hij (Fin.ext h)
     have l1 : lev k r i = if i.val < r then i.val else if i.val ≤ r + k then r else i.val - k := rfl

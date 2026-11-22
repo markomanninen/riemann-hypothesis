@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusSubOneWittTensorLatticeSurjectiveFixedStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUniqueCocycleStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsGammaLayerPadicCoordinatesStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWeakTopologyWittTiltTensorStatement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusSubOneWittTensorLatticeSurjectiveFixedStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUniqueCocycleStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsGammaLayerPadicCoordinatesStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWeakTopologyWittTiltTensorStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct GlobalTheory.HWL
 
 namespace GlobalTheory.HerrClassMaps
@@ -71,7 +76,7 @@ theorem existsUnique_fits (L : Formalism.WeaklyAdmissibleFiltrations.Lattice (O 
     refine ⟨⟨continuous_subtype_val.comp dc, fun g h => ?_⟩, fun g _ => (d g).2⟩
     have : d (g * h) = d g + ⟨ρ g (d h), L.stable g _ (d h).2⟩ := by
       apply jemb.injective
-      rw [map_add, ← ja, hd, hd, hd]
+      rw [map_add (f := _), ← ja, hd, hd, hd]
       exact ccoc g h
     exact congrArg Subtype.val this
   refine ⟨⟨_, dmem⟩, fits_iff.2 fun g => ⟨fun h => (hd g).trans (c1 g h), fun h => (hd g).trans (c2 g h)⟩, ?_⟩
@@ -80,7 +85,7 @@ theorem existsUnique_fits (L : Formalism.WeaklyAdmissibleFiltrations.Lattice (O 
   have := cu (fun g => j ⟨_, mem_T e g⟩) ⟨jemb.continuous.comp (Continuous.subtype_mk e.2.1.1 _),
     fun g => ⟨_, rfl⟩, fun g h => by
       change j _ = j _ + a g (j _)
-      rw [ja, ← map_add]
+      rw [ja, ← map_add (f := _)]
       congr 1
       exact Subtype.ext (e.2.1.2 g h), fun g h => (he g).1 h, fun g h => (he g).2 h⟩
   apply Subtype.ext
@@ -107,16 +112,16 @@ theorem exists_class (L : Formalism.WeaklyAdmissibleFiltrations.Lattice (O := O)
       add_mem' := by
         rintro u w ⟨hu, hu'⟩ ⟨hw, hw'⟩
         rw [fits_iff] at hu' hw'
-        refine ⟨by simp only [Prod.snd_add, Prod.fst_add, map_add, ← hu, ← hw]; abel, fits_iff.2 fun g => ?_⟩
+        refine ⟨by simp only [Prod.snd_add, Prod.fst_add, map_add (f := _), ← hu, ← hw]; abel, fits_iff.2 fun g => ?_⟩
         have : (⟨_, mem_T (u + w).2.2 g⟩ : ↥L.T) = ⟨_, mem_T u.2.2 g⟩ + ⟨_, mem_T w.2.2 g⟩ := rfl
-        rw [this, map_add]
+        rw [this, map_add (f := _)]
         constructor
         · intro h
           rw [(hu' g).1 h, (hw' g).1 h]
-          simp only [Prod.snd_add, Prod.fst_add, map_add]; abel
+          simp only [Prod.snd_add, Prod.fst_add, map_add (f := _)]; abel
         · intro h
           rw [(hu' g).2 h, (hw' g).2 h]
-          simp only [Prod.snd_add, Prod.fst_add, map_add]; abel
+          simp only [Prod.snd_add, Prod.fst_add, map_add (f := _)]; abel
       smul_mem' := by
         rintro r u ⟨hu, hu'⟩
         rw [fits_iff] at hu'
@@ -180,7 +185,7 @@ theorem TWact_one (f : R →ₐ[O] R) (hf : ∀ r, f r = r) (T : LocLat G Qp LL 
     TWact f T 1 x = x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul r t =>
     have : T.actT 1 t = t := Subtype.ext (by simp [LocLat.actT])
     simp [TWact, hf, this]
@@ -189,7 +194,7 @@ theorem TWact_mul (f f₁ f₂ : R →ₐ[O] R) (hf : ∀ r, f r = f₁ (f₂ r)
     (x : TW R T) : TWact f T (g * h) x = TWact f₁ T g (TWact f₂ T h x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul r t =>
     have : T.actT (g * h) t = T.actT g (T.actT h t) :=
       Subtype.ext (show T.ρ (g * h) t = T.ρ g (T.ρ h t) by simp)
@@ -199,7 +204,7 @@ theorem TWmap_act (φ f : R →ₐ[O] R) (hf : ∀ r, φ (f r) = f (φ r)) (T : 
     (x : TW R T) : TWmap φ T (TWact f T g x) = TWact f T g (TWmap φ T x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul r t => simp [TWact, TWmap, hf]
 
 theorem TWact_one_tmul (f : R →ₐ[O] R) (T : LocLat G Qp LL O) (g : G) (t : ↥T.L.T) :
@@ -213,14 +218,14 @@ theorem fixed_one {O M : Type} [CommRing O] [AddCommGroup M] [Module O M] (φ a 
     (h : ∀ x, φ (a x) = a (φ x)) (b y : M) (hb : φ b - b = y) (hy : a y = y) :
     φ (a b - b) = a b - b := by
   have : φ b = y + b := by rw [← hb]; abel
-  rw [map_sub, h, this, map_add, hy]; abel
+  rw [map_sub, h, this, map_add (f := _), hy]; abel
 
 theorem fixed_two {O M : Type} [CommRing O] [AddCommGroup M] [Module O M] (φ a : M →ₗ[O] M)
     (h : ∀ x, φ (a x) = a (φ x)) (b y z : M) (hb : φ b - b = y) (hy : a y - y = φ z - z) :
     φ (z - (a b - b)) = z - (a b - b) := by
   have h1 : φ b = y + b := by rw [← hb]; abel
   have h2 : φ z = a y - y + z := by rw [hy]; abel
-  rw [map_sub, map_sub, h, h1, h2, map_add]; abel
+  rw [map_sub, map_sub, h, h1, h2, map_add (f := _)]; abel
 
 theorem herr_eq {O D : Type} [CommRing O] [AddCommGroup D] [Module O D] {γ φ : D →ₗ[O] D} {p : D × D}
     (h : p ∈ herrCocycles γ φ) : γ p.1 - p.1 = φ p.2 - p.2 := by
@@ -382,7 +387,7 @@ theorem map_id_comm {Z O W : Type} [CommRing Z] [CommRing O] [CommRing W] [Algeb
     Algebra.TensorProduct.map (AlgHom.id O O) f' (Algebra.TensorProduct.map (AlgHom.id O O) g' x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a w => simp [h]
 
 theorem map_id_comp {Z O W : Type} [CommRing Z] [CommRing O] [CommRing W] [Algebra Z O]
@@ -391,7 +396,7 @@ theorem map_id_comp {Z O W : Type} [CommRing Z] [CommRing O] [CommRing W] [Algeb
     Algebra.TensorProduct.map (AlgHom.id O O) f' (Algebra.TensorProduct.map (AlgHom.id O O) g' x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a w => simp [h]
 
 theorem map_id_id {Z O W : Type} [CommRing Z] [CommRing O] [CommRing W] [Algebra Z O]
@@ -399,7 +404,7 @@ theorem map_id_id {Z O W : Type} [CommRing Z] [CommRing O] [CommRing W] [Algebra
     Algebra.TensorProduct.map (AlgHom.id O O) f x = x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a w => simp [h]
 
 section Concrete

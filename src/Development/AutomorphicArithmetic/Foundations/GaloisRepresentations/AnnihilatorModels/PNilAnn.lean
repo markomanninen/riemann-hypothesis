@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.DinvExact
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.DinvExact
+
+@[expose] public section
 
 open TensorProduct Module
 open UpperTheory.Gal.crystallineComparison
@@ -54,7 +58,8 @@ theorem UpperTheory.Gal.crystallineComparison.nilAnn_of :
     ∑ j ∈ Finset.range (n + 1), c j • AlgebraTensorModule.map (T j - θ j • 1) (ψ ^ (n - j))
   have hQ : Polynomial.aeval (onPer ψ L V) (heckePol q n θ) = P - E := by
     rw [← Finset.sum_sub_distrib]
-    simp only [heckePol, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [heckePol, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     apply TensorProduct.AlgebraTensorModule.ext
     intro v b

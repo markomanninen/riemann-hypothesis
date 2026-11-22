@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.PeriodIntegrals.FockRBlock
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.OkSmulRight
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.FilterConcatWLength
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.MultidegSingle
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.NotMemVarsEmbS
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.StepMonoFactor
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.FockRBlock
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.OkSmulRight
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.FilterConcatWLength
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.MultidegSingle
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.NotMemVarsEmbS
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.StepMonoFactor
+
+@[expose] public section
 
 theorem adjointTensorOfSingle_valid : PI.TenOp :=
   PI.TOW.tenOp_of_steps PI.TOW.DegW.stepDeg

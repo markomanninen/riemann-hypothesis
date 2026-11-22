@@ -1,24 +1,28 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.HeckeLAdicCharacterDeRham
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.DeRhamJacobian.IsdRJ
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasPeriods
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EvalMod
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.MaximalIdealEqSpanT
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateIterateLimitCongruenceStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateScaledIterateTendsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateSeriesCommuteLinearStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateCommutingSeriesUniqueStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateIterateEventuallyZeroStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateTorsionApproximationStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateLimitKernelZeroStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemFBOfNear
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TeichmullerNearPowerExistsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateSeriesDeRhamPeriodStatement
-import Development.WeilBound.CoreStatements.HeckeCharacterDeRham.DeRhamHeckeResults.LAdicHeckeDeRham.LAdicHeckeFields.Reduce
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateNormCyclotomicStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateEndomorphismSeriesExistsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CharacterValuesIntegralStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformizerPropertiesResidueStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.HeckeLAdicCharacterDeRham
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.DeRhamJacobian.IsdRJ
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasPeriods
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EvalMod
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.MaximalIdealEqSpanT
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateIterateLimitCongruenceStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateScaledIterateTendsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateSeriesCommuteLinearStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateCommutingSeriesUniqueStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateIterateEventuallyZeroStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateTorsionApproximationStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateLimitKernelZeroStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemFBOfNear
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TeichmullerNearPowerExistsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateSeriesDeRhamPeriodStatement
+public import Development.WeilBound.CoreStatements.HeckeCharacterDeRham.DeRhamHeckeResults.LAdicHeckeDeRham.LAdicHeckeFields.Reduce
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateNormCyclotomicStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LubinTateEndomorphismSeriesExistsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CharacterValuesIntegralStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformizerPropertiesResidueStatement
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain Neutral.B1 Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2.Host Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations
@@ -206,7 +210,7 @@ theorem pre_period (HT : TiltLeaf) (K : FinExt l) (χ : ↥(GK K) →* (↥K.1)�
       · intro n
         have h := hD.2.2.2.1 n
         have h2 := congrArg (UniformSpace.Completion.coeRingHom : Om l →+* ℂ_[l]) h
-        rw [map_add, map_mul, map_pow] at h2
+        rw [map_add (f := _), map_mul, map_pow] at h2
         have e : thB l ϖ = (((π : ↥K.1) : Om l) : ℂ_[l]) := by
           rw [← hϖe, thB_rB, hμ]; rfl
         rw [e]

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.TateTheta
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.TateTheta
+
+@[expose] public section
 
 open NumberField NumberField.mixedEmbedding IsDedekindDomain IsDedekindDomain.HeightOneSpectrum
   MeasureTheory Filter Topology
@@ -59,7 +63,7 @@ theorem normAtPlace_le_norm' (v : InfinitePlace K) (z : mixedSpace K) : normAtPl
 theorem mixedEmbedding_norm_le_norm_pow (z : mixedSpace K) :
     mixedEmbedding.norm z ≤ ‖z‖ ^ Module.finrank ℚ K := by
   rw [mixedEmbedding.norm_apply, ← InfinitePlace.sum_mult_eq, ← Finset.prod_pow_eq_pow_sum]
-  exact Finset.prod_le_prod (fun v _ ↦ pow_nonneg (normAtPlace_nonneg _ _) _)
+  exact Finset.prod_le_prod₀ (fun v _ ↦ pow_nonneg (normAtPlace_nonneg _ _) _)
     fun v _ ↦ pow_le_pow_left₀ (normAtPlace_nonneg _ _) (normAtPlace_le_norm' v z) _
 
 theorem norm_mul_le_of_normAtPlace_le_one {e : mixedSpace K} (he : ∀ v, normAtPlace v e ≤ 1)

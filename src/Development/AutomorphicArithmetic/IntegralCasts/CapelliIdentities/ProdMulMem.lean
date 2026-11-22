@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace UpperTheory.Reformulated.B.S3
 
@@ -10,8 +14,8 @@ private theorem prod_mul_mem {k : Type} [Field k] {n : ℕ} (W : Submodule k (Fi
   | insert a s ha ih =>
     have h := W.sub_mem (hW _ ih) (W.smul_mem (d a) ih)
     convert h using 1
-    funext j
-    simp only [Finset.prod_insert ha, Pi.sub_apply, Pi.smul_apply, Matrix.mulVec_diagonal, smul_eq_mul]
+    ext j
+    simp [Matrix.mulVec_diagonal, Finset.prod_insert ha, smul_eq_mul]
     ring
 
 theorem single_mem {k : Type} [Field k] {n : ℕ} (W : Submodule k (Fin n → k)) (d : Fin n → k) (hd : Function.Injective d)

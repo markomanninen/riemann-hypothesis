@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.HeisOpHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SesquilinearRowSplitting.SecondDualReduction
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.HeisOpHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SesquilinearRowSplitting.SecondDualReduction
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,10 +34,6 @@ theorem psiF_eq (e f : Fin r → S.V) (U U' : Matrix (Fin r) (Fin r) E) (v : S.V
   rw [psiF_apply, wv]
   simp only [smul_sub, Finset.sum_sub_distrib]
   abel
-
-theorem psiF_one (e f : Fin r → S.V) (v : S.V) : psiF e f 1 1 v = v := by
-  rw [psiF_apply]
-  simp [Matrix.one_apply]
 
 section Pair
 
@@ -84,11 +84,13 @@ theorem gram (U U' : Matrix (Fin r) (Fin r) E) (hUU : ∀ a b, ∑ c, star (U c 
   have pairR : ∀ (u : S.V) (s : Fin r → E) (t : Matrix (Fin r) (Fin r) E) (g : Fin r → S.V),
       S.hT u (∑ a, s a • ∑ c, t c a • g c) = ∑ a, s a * ∑ c, t c a * S.hT u (g c) := by
     intro u s t g
-    simp [map_sum, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, smul_eq_mul]
   have pairL : ∀ (u : S.V) (s : Fin r → E) (t : Matrix (Fin r) (Fin r) E) (g : Fin r → S.V),
       S.hT (∑ a, s a • ∑ c, t c a • g c) u = ∑ a, star (s a) * ∑ c, star (t c a) * S.hT (g c) u := by
     intro u s t g
-    simp [map_sum, LinearMap.sum_apply, smul_eq_mul, starRingEnd_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, LinearMap.sum_apply, smul_eq_mul, starRingEnd_apply]
   have hwe : ∀ (v : S.V) (c : Fin r), S.hT (wv e f v) (e c) = 0 := fun v c => by
     rw [← hsym, e_w e f hee hef c v, star_zero]
   have hwf : ∀ (v : S.V) (c : Fin r), S.hT (wv e f v) (f c) = 0 := fun v c => by
@@ -101,7 +103,7 @@ theorem gram (U U' : Matrix (Fin r) (Fin r) E) (hUU : ∀ a b, ∑ c, star (U c 
       ∑ a, star (S.hT (e a) x) * S.hT (f a) y :=
     algδ _ _ (fun c a => star (U' c a)) U hUU'
   rw [psiF_eq, psiF_eq]
-  simp only [map_add, LinearMap.add_apply]
+  simp only [map_add (f := _), LinearMap.add_apply]
   simp only [pairL]
   simp only [pairR]
   simp only [hwe, hwf, e_w e f hee hef, f_w e f hff hef, hee, hff, hef, hfe', mul_zero, zero_mul,
@@ -160,7 +162,7 @@ theorem gmap_of_isom (Λ : Submodule (𝓞 E) S.V) (hU : Formalism.HermitianLatt
     rwa [← hn y (n.symm v), LinearEquiv.apply_symm_apply]
 
 theorem inj_of_isom (g : S.V →ₗ[E] S.V) (hg : ∀ x y, S.hT (g x) (g y) = S.hT x y) : Function.Injective g := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   apply S.nondeg.1 x
   intro y

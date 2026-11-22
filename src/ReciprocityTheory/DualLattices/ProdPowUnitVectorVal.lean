@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.LiftMonomialDeterminantStatementHolds
+module
+
+public import ReciprocityTheory.DualLattices.LiftMonomialDeterminantStatementHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,14 +39,6 @@ theorem prod_pow_unitVector_val {M : Type} [CommMonoid M] (f : Ix g → M) (l : 
   rw [Finset.prod_eq_single l (fun j _ hj => by rw [if_neg hj, pow_zero]) (by simp), if_pos rfl,
     pow_one]
 
-theorem unitVector_injective : Function.Injective (e1 (p := p) (g := g)) := by
-  intro l l' h
-  have h1 := congrFun h l
-  simp only [e1, Pi.single_eq_same] at h1
-  by_contra hne
-  rw [Pi.single_eq_of_ne hne] at h1
-  exact one_ne_zero h1
-
 theorem liftScalePow_unitVector (D : Lifts H U X) (l : Ix g) : epow D (e1 (p := p) l) = D.ε l := by
   exact prod_pow_unitVector_val D.ε l
 
@@ -74,7 +70,8 @@ theorem linX_xp (hv : v.Integers R) (hp1 : v (algebraMap R C (p : R)) < 1) (D : 
     have h2 := congrFun (MuR_mulVec_bR hv hp1 D j) y
     simp only [Matrix.mulVec, dotProduct, hvec] at h2
     have h3 := congrArg (algebraMap R C) h2
-    rw [map_sum, map_pow, uR_spec] at h3
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_pow, uR_spec] at h3
     simp only [map_mul] at h3
     rw [xL, mul_pow, ← h3, Finset.mul_sum]
     refine Finset.sum_congr rfl fun α _ => ?_
@@ -94,7 +91,8 @@ def psi (a : O) (y : Nb p g) : Nb p g := ((H.ρ a).map PadicInt.toZMod) *ᵥ y
 theorem red_mulVec (M : Matrix (Ix g) (Ix g) ℤ_[p]) (t : TT p g) :
     red p g (M *ᵥ t) = (M.map PadicInt.toZMod) *ᵥ red p g t := by
   funext i
-  simp [red, Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [red, Matrix.mulVec, dotProduct, map_sum, map_mul]
 
 theorem red_surj (y : Nb p g) : ∃ t : TT p g, red p g t = y := by
   exact ⟨fun i => ((y i).val : ℤ_[p]), funext fun i => by simp [red]⟩

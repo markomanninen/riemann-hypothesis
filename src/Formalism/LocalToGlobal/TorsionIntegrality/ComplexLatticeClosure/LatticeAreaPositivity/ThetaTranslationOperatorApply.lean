@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.ComplexLatticeClosure.ExistsTwoTorsionOffKernels
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.QuasiPeriodConstUnique
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.ComplexLatticeClosure.ExistsTwoTorsionOffKernels
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.QuasiPeriodConstUnique
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ open Formalism.L2.GlobalTheoryTheory Formalism.MainNotions
 theorem im_pair (a b : ℂ) (m n p q : ℤ) :
     ((starRingEnd ℂ) ((m : ℂ) * a + (n : ℂ) * b) * ((p : ℂ) * a + (q : ℂ) * b)).im
       = ((m * q - n * p : ℤ) : ℝ) * ((starRingEnd ℂ) a * b).im := by
-  simp only [map_add, map_mul, map_intCast, Complex.mul_im, Complex.add_re,
+  simp only [map_add (f := _), map_mul, map_intCast, Complex.mul_im, Complex.add_re,
     Complex.add_im, Complex.mul_re, Complex.conj_re, Complex.conj_im, Complex.intCast_re,
     Complex.intCast_im]
   push_cast
@@ -36,11 +40,6 @@ theorem area_eq_holds : AreaEq := by
     exact_mod_cast this
   unfold F.area
   nlinarith [abs_nonneg ((starRingEnd ℂ) L.ω₁ * L.ω₂).im]
-
-theorem area_pos_lattice_holds : AreaPosLat := by
-  rintro Λ ⟨L, rfl⟩
-  rw [area_eq_holds L]
-  exact F.areaPos L
 
 theorem koszul_homology_eq (L : PeriodPair) (z w : ℂ) : H1 L.lattice.toAddSubgroup z w = F.herm L z w := by
   unfold H1 F.herm

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermAttractorConstant.LeadMinorEMulUpper
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermAttractorConstant.LeadMinorEMulUpper
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ theorem sum_mem_X (F : FlagG S r T) (c : Fin r → E) :
 
 theorem coefX_sum (F : FlagG S r T) (c : Fin r → E) (i : Fin r) : F.coefX (∑ j, c j • F.e j) i = c i := by
   unfold FlagG.coefX
-  rw [dif_pos (sum_mem_X F c)]
+  rw [dite_eq_left (sum_mem_X F c)]
   rw [F.e_indep.repr_eq (l := Finsupp.equivFunOnFinite.symm c) (x := ⟨_, sum_mem_X F c⟩)
     (by simp [Finsupp.linearCombination_apply, Finsupp.sum_fintype])]
   simp
@@ -51,11 +55,12 @@ theorem coefX_transport (F₁ : FlagG S r T) (F₂ : FlagG S r T') (g : S.V ≃�
       have : v = ∑ j, c j • F₁.e j := by
         apply g.injective
         rw [← hc]
-        simp [he, map_sum, map_smul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp [he, map_sum, map_smul]
       rw [this]
       exact sum_mem_X F₁ c
     unfold FlagG.coefX
-    rw [dif_neg hgv, dif_neg hv]
+    rw [dite_eq_right hgv, dite_eq_right hv]
 
 theorem ell_transport (F₁ : FlagG S r T) (F₂ : FlagG S r T') (g : S.V ≃ₗ[E] S.V)
     (hf : ∀ a, F₂.fvec a = g (F₁.fvec a)) (Y : S.V →ₗ[E] S.V) : F₂.ell (cg g Y) = F₁.ell Y := by
@@ -127,7 +132,7 @@ theorem z_mem_perp (F : FlagG S r T) : F.z ∈ perpS S F.X := by
     obtain ⟨i, rfl⟩ := hy
     exact F.z_orth i
   | zero => simp
-  | add y y' _ _ h1 h2 => rw [map_add, LinearMap.add_apply, h1, h2, add_zero]
+  | add y y' _ _ h1 h2 => rw [map_add (f := _), LinearMap.add_apply, h1, h2, add_zero]
   | smul c y _ h => rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, h, smul_zero]
 
 theorem X_le_Xa_r (F : FlagG S r T) : F.X ≤ F.Xa r := by

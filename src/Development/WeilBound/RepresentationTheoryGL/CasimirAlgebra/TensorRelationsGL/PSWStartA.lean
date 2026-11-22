@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,9 +48,9 @@ theorem mono_cont (hK : IsKD bar κ) {m : ℕ} (lab : Fin m → ι) (c : ι → 
     fun τ => continuous_pi fun i => continuous_pi fun j => hK.cont τ i j
   unfold mono
   refine Continuous.mul ?_ ?_
-  · refine continuous_finset_prod _ fun τ _ => ?_
+  · refine continuous_finsetProd _ fun τ _ => ?_
     exact ((hent τ).matrix_det).zpow₀ (c τ) fun k => Or.inl (det_ne hK τ k)
-  · exact continuous_finset_prod _ fun p _ => hK.cont (lab p) (I p) (K p)
+  · exact continuous_finsetProd _ fun p _ => hK.cont (lab p) (I p) (K p)
 
 theorem one_mem_Mono (H : Set ι) : (1 : Γ → ℂ) ∈ Mono κ H := by
   refine ⟨0, Fin.elim0, 0, Fin.elim0, Fin.elim0, fun p => p.elim0, ?_⟩

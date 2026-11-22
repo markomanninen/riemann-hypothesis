@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsValuationSubringAlgClosedNotIsUnitStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsValuationSubringAlgClosedNotIsUnitStatement
+
+@[expose] public section
 
 open scoped NNReal
 open Polynomial
@@ -67,7 +71,8 @@ theorem bounded_powers_or_exists_valuationSubring_dvd :
           q.coeff i * (u ^ M) ^ i * x ^ (q.natDegree - i)) = 0 := by
       have h1 : algebraMap R T x ^ q.natDegree * aeval t q = 0 := by rw [hq0, mul_zero]
       rw [aeval_eq_sum_range, Finset.mul_sum] at h1
-      rw [map_sum, ← h1]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, ← h1]
       refine Finset.sum_congr rfl fun i hi => ?_
       have hi' : i ≤ q.natDegree := Nat.lt_succ_iff.1 (Finset.mem_range.1 hi)
       obtain ⟨e, he⟩ := Nat.exists_eq_add_of_le hi'

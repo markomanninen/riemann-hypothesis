@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GaussManinPeriods
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.Definitions.Divisors.AnalyticChartsRealizationCompPointEq
-import Development.AbelianVarietyTheory.Definitions.Divisors.FstTszeSec
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsPeriodHom
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DpExpEqSumRangeOfVanish
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedPowerFiltration
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GaussManinPeriods
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AnalyticChartsRealizationCompPointEq
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FstTszeSec
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsPeriodHom
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DpExpEqSumRangeOfVanish
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedPowerFiltration
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,6 +22,18 @@ attribute [local instance] Over.cartesianMonoidalCategory
 namespace GlobalTheory.AnPer.LieVal
 
 open GlobalTheory.CatCoh
+
+private theorem thickHomExt {R : Type} [CommRing R] {I : Ideal R} {X : Scheme.{0}}
+    {pd : DividedPowers I} {s : X ⟶ Sp R} {T T' : Thick pd s} {f g : T ⟶ T'}
+    (h : ∀ b, f.φ b = g.φ b) : f = g := by
+  have hφ : f.φ = g.φ := AlgHom.ext h
+  rcases f with ⟨φ, φ₀, comm, dp, pt⟩
+  rcases g with ⟨ψ, ψ₀, comm', dp', pt'⟩
+  obtain rfl : φ = ψ := hφ
+  obtain rfl : φ₀ = ψ₀ := RingHom.ext fun c ↦ by
+    obtain ⟨b, rfl⟩ := T.surj c
+    rw [comm, comm']
+  rfl
 
 theorem main : ∀ {A : Over (Sp ℂ)} {I : Type} [Fintype I] {g : ℕ} {Λ : Type} [AddCommGroup Λ] {F : Fam I g Λ} (K : Charts F) (r : Real K (A.hom ≫ 𝟙 _) (algebraMap ℂ (Hol F.V))) (k : K.K) (p : Tot I g), p ∈ K.W k → ∀ (w : Fin g → ℂ) (ρ : Hol (K.W k) →ₐ[ℂ] DualNumber ℂ), (∀ h, (ρ h).fst = h.fn p ∧ (ρ h).snd = fderiv ℂ h.fn p (0, w)) → ∀ (v : epsR ℂ ⟶ A), v.left = spMap ρ.toRingHom ≫ r.x k → ∀ (f : Form (A.hom ≫ 𝟙 _)) (per : Λ →+ Hol F.V) (q : GlobalTheory.CatCoh.C0 K.Oc), GlobalTheory.CatCoh.d0 K.Oc q = (r.coef.pullbackOneCocycle f.1).1 - (K.perZ per).1 → tanVal v f = fderiv ℂ (Hol.fn (W := K.W k) (q (K.triv k))) p (0, w) := by
   intro A I _ g Λ _ F K r k p hp w ρ hρ v hv f per q hq
@@ -32,7 +48,8 @@ theorem main : ∀ {A : Over (Sp ℂ)} {I : Type} [Fintype I] {g : ℕ} {Λ : Ty
       · simp [Prod.fst_sum]
       · simp only [Prod.snd_sum, Prod.smul_snd]
         exact pi_eq_sum_univ' w
-    rw [this, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [this, map_sum]
     refine Finset.sum_congr rfl fun a _ ↦ ?_
     rw [map_smul, smul_eq_mul, mul_comm]
     exact congrArg (· * w a) (Hol.fn_der _ h hp).symm
@@ -93,10 +110,10 @@ theorem main : ∀ {A : Over (Sp ℂ)} {I : Type} [Fintype I] {g : ℕ} {Λ : Ty
   obtain ⟨a', ha'⟩ := mkHom ℂ (Hol.ev p hp) _ (E.red_w (pt_w v)) (by
     rw [hv, ← Category.assoc, ← Cris.spMap_comp, hfst])
   obtain ⟨b', hb'⟩ := mkHom (DualNumber ℂ) ρ v.left (pt_w v) hv
-  have e1 : r.functor.map a = a' ≫ E.secHom (E.red_w (pt_w v)) E.i E.π_i ≫ Φ := Thick.hom_ext fun c ↦ by
+  have e1 : r.functor.map a = a' ≫ E.secHom (E.red_w (pt_w v)) E.i E.π_i ≫ Φ := thickHomExt fun c ↦ by
     change e (Charts.sh (K.le_refl k) c) = TrivSqZeroExt.inl (a'.φ c)
     exact (congrArg e (Charts.sh_refl _ c)).trans (congrArg TrivSqZeroExt.inl (ha' c).symm)
-  have e2 : r.functor.map b = b' ≫ E.idHom (pt_w v) ≫ Φ := Thick.hom_ext fun c ↦ (hb' c).symm
+  have e2 : r.functor.map b = b' ≫ E.idHom (pt_w v) ≫ Φ := thickHomExt fun c ↦ (hb' c).symm
   have z1 : ev f.1 a' = 0 := f.2 a' rfl rfl
   have z2 : ev f.1 b' = 0 := f.2 b' rfl rfl
   have g1 : ev f.1 (r.functor.map a) = Φ.φ (ev f.1 (E.secHom (E.red_w (pt_w v)) E.i E.π_i)) + ev f.1 Φ := by

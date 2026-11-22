@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,6 +79,6 @@ theorem phi_commute (y : Matrix (Fin n) (Fin n) K) (hy : Commute y γ) (x : Poly
     have h : Commute y (val p K n γ b) :=
       Algebra.commute_of_mem_adjoin_singleton_of_commute ((mem_polySub p K n γ).1 b.2) hy
     exact h.map (inclK p K r).mapMatrix
-  | add a b ha hb => rw [map_add]; exact ha.add_right hb
+  | add a b ha hb => rw [map_add (f := _)]; exact ha.add_right hb
 
 end GlobalTheory.PolyTensor

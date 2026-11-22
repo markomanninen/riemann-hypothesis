@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.PushforwardPreservesSelmerCocycles
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.PushforwardPreservesSelmerCocycles
+
+@[expose] public section
 
 open ReciprocityTheory.Gal UpperTheory.V.Pa UpperTheory.V.Pa.B2
 
@@ -23,7 +27,7 @@ private theorem coboundary_mem_cocycles_local [IsTopologicalGroup Γ] (D : Dat A
     exact (h3.sub (hx.comp continuous_mul)).add (hx.comp continuous_fst)
   · intro g h k
     rw [hc, hc, hc, hc]
-    simp only [map_sub, map_add, map_mul, Module.End.mul_apply, mul_assoc]
+    simp only [map_sub, map_add (f := _), map_mul, Module.End.mul_apply, mul_assoc]
     abel
   · have hF : Continuous fun g : P.G w => D.π w (x (P.φ w g)) :=
       (continuous_of_discreteTopology (f := D.π w)).comp (hx.comp (P.cont w))
@@ -39,7 +43,7 @@ private theorem coboundary_mem_cocycles_local [IsTopologicalGroup Γ] (D : Dat A
       rw [← hyg]
       abel
     rw [hc, d1_apply, e, ← (P.φ w).map_mul g h]
-    simp only [map_sub, map_add, D.equiv]
+    simp only [map_sub, map_add (f := _), D.equiv]
     abel
 
 private theorem coboundary_lift_local_conditions {D D'' : Dat A P} (g : D.Hom D'') (hs : Function.Surjective g.f)
@@ -60,9 +64,9 @@ private theorem coboundary_lift_local_conditions {D D'' : Dat A P} (g : D.Hom D'
     · obtain ⟨a, c⟩ := st
       show g.f (d1 D.M.ρ (fun t => s (x'' t)) (a, c)) = q.1 (a, c)
       rw [h1, d1_apply, d1_apply]
-      simp only [map_sub, map_add, g.equiv, hs']
+      simp only [map_sub, map_add (f := _), g.equiv, hs']
     · show g.fq w (D.π w (s (x'' (P.φ w h))) + y w h) = q.2 w h
-      rw [map_add, g.comm, hs', hy w h]
+      rw [map_add (f := _), g.comm, hs', hy w h]
       simp
 
 private theorem cocycle_descends_short_exact {D' D D'' : Dat A P} (f : D'.Hom D) (g : D.Hom D'') (h : Dat.SES f g)
@@ -83,7 +87,7 @@ private theorem cocycle_descends_short_exact {D' D D'' : Dat A P} (f : D'.Hom D)
   · intro u v k
     apply h.inj
     rw [map_zero]
-    simp only [map_sub, map_add, f.equiv, ha]
+    simp only [map_sub, map_add (f := _), f.equiv, ha]
     exact hpcoc u v k
   · have ec : c w = fun t => Function.invFun (f.fq w) (p.2 w t) := funext fun t =>
       h.injq w (by rw [hc]; exact (Function.invFun_eq ⟨c w t, hc w t⟩).symm)
@@ -93,7 +97,7 @@ private theorem cocycle_descends_short_exact {D' D D'' : Dat A P} (f : D'.Hom D)
   · intro u v
     apply h.injq w
     rw [f.comm, ha, (hpw w).2 u v, d1_apply, d1_apply]
-    simp only [map_sub, map_add, f.equivq, hc]
+    simp only [map_sub, map_add (f := _), f.equivq, hc]
 
 end SlopeTestRemainingChoices
 

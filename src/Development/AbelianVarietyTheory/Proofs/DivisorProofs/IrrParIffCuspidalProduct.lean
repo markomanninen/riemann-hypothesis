@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.BlockProductIsomorphism
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.BlockEmbeddingFactors
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.BlockProductIsomorphism
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.BlockEmbeddingFactors
+
+@[expose] public section
 
 noncomputable section
 

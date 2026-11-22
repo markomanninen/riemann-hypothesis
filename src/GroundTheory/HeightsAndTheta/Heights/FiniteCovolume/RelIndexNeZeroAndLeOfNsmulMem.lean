@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsAdelicLattices
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.IsIntegralVecCoordsOfMemAdelicLatticeOne
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsAdelicLattices
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.IsIntegralVecCoordsOfMemAdelicLatticeOne
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -41,8 +45,8 @@ variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [De
 
 section Coordinates
 
-variable (F) in
 
+variable (F) in
 def coordEquiv (v : Basis ι E W) : W ≃+ (ι → F ⊗[F] E) :=
   v.equivFun.toAddEquiv.trans
     (AddEquiv.piCongrRight fun _ => (Algebra.TensorProduct.lid F E).symm.toAddEquiv)
@@ -93,10 +97,11 @@ theorem mulVec_coordEquiv (γ : h.unitaryGroup) (y : W) :
   rw [coordEquiv_apply, Algebra.TensorProduct.lid_tmul, one_smul,
     show v.repr ((γ : W ≃ₗ[E] W) y) = v.repr (((γ : W ≃ₗ[E] W) : W →ₗ[E] W) y) from rfl,
     ← LinearMap.toMatrix_mulVec_repr v v, ← hM]
-  simp only [mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply, coordEquiv_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply, coordEquiv_apply,
     Algebra.TensorProduct.lid_tmul, one_smul]
 
-variable [IsTotallyReal F] [IsTotallyComplex E]
+variable [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 
 theorem adeleSplit_snd_hermitianDiagonal (γ : h.unitaryGroup) :
     (adeleSplit h v (hermitianDiagonal h v γ)).2 =
@@ -105,7 +110,12 @@ theorem adeleSplit_snd_hermitianDiagonal (γ : h.unitaryGroup) :
   funext p
   simp [adeleSplit, unitaryCongr_apply, hermitianDiagonal, unitaryDiagonal, finDiag,
     unitaryCoords_unitaryMap, adeleRingEquivProd]
-  erw [unitaryCongr_apply, unitaryCoords_unitaryMap, unitaryCoords_unitaryMap]
+  have hprod (x : unitaryPoints F E (gram h.toSesq v)
+      (InfiniteAdeleRing F × FiniteAdeleRing (𝓞 F) F)) :
+      (unitaryProdEquiv F (gram h.toSesq v) _ _ (isUnit_det_gram h v) x).2 =
+        unitaryMap F E _ (AlgHom.snd F _ _) x := rfl
+  rw [hprod]
+  simp only [unitaryCoords_unitaryMap, Function.comp_apply]
   rfl
 
 end Equivariance
@@ -117,7 +127,7 @@ variable {κ : Type*} [Fintype κ] [DecidableEq κ] (b : Basis κ F E) (h : Herm
 
 def dictLattice (d : ℤ) (g : unitaryPoints F E (gram h.toSesq v) (FinAdele F)) : AddSubgroup W :=
   (coreLattice b (gram h.toSesq v) g).comap
-    ((coordEquiv F v : W →+ (ι → F ⊗[F] E)).comp (DistribMulAction.toAddMonoidHom W ((d : E)⁻¹)))
+    ((coordEquiv F v : W →+ (ι → F ⊗[F] E)).comp (DistribSMul.toAddMonoidHom W ((d : E)⁻¹)))
 
 variable {b h v}
 
@@ -129,7 +139,7 @@ theorem dictLattice_eq_iff {d : ℤ} (hd : d ≠ 0) {g g' : unitaryPoints F E (g
     dictLattice b h v d g = dictLattice b h v d g' ↔ g⁻¹ * g' ∈ coreStabilizer b (gram h.toSesq v) := by
   rw [← coreLattice_eq_iff b]
   have hsurj : Function.Surjective ((coordEquiv F v : W →+ (ι → F ⊗[F] E)).comp
-      (DistribMulAction.toAddMonoidHom W ((d : E)⁻¹))) := by
+      (DistribSMul.toAddMonoidHom W ((d : E)⁻¹))) := by
     intro X
     refine ⟨(d : E) • (coordEquiv F v).symm X, ?_⟩
     show coordEquiv F v ((d : E)⁻¹ • ((d : E) • (coordEquiv F v).symm X)) = X
@@ -140,7 +150,7 @@ theorem mem_smul_addSubgroup_iff (γ : h.unitaryGroup) (S : AddSubgroup W) (x : 
     x ∈ γ • S ↔ γ⁻¹ • x ∈ S := by
   exact AddSubgroup.mem_pointwise_smul_iff_inv_smul_mem
 
-variable [IsTotallyReal F] [IsTotallyComplex E]
+variable [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 
 theorem dictLattice_diagonal_mul (d : ℤ) (γ : h.unitaryGroup)
     (g : unitaryPoints F E (gram h.toSesq v) (FinAdele F)) :

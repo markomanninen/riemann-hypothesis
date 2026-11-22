@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -40,7 +44,7 @@ theorem constantCoeff_ev_eq {n m : ℕ} {a : Fin m → Pt R n d} (ha : ∀ j i, 
   have e : f = (f - C (constantCoeff f)) + C (constantCoeff f) := by ring
   have h0 : constantCoeff (ev a (f - C (constantCoeff f))) = 0 :=
     constantCoeff_subst_eq_zero (hasSubst_points ha) (fun p => ha p.1 p.2) (by simp)
-  conv_lhs => rw [e, ev_plus ha, map_add, h0]
+  conv_lhs => rw [e, ev_plus ha, map_add (f := _), h0]
   simp [ev]
 
 theorem map_ev_eq {k : Type} [CommRing k] (φ : R →+* k) {n m : ℕ} {a : Fin m → Pt R n d}
@@ -223,7 +227,7 @@ theorem powerSeriesExpIntegral_canonGauge_additive_second (hh : B.IsCanonGauge k
     rw [← constantCoeff_ev_eq (cz3 (x := (0 : Pt R 2 d)) (fun _ => by simp) (constantCoeff_point 0)
       (constantCoeff_point 1)), B.cocycleRight_zero_fst, map_one]
   have key := expIntegral_ev (cz3 (B.A.const b) (B.A.const c) (B.A.const c')) w1 (by
-    rw [map_sub, map_add, constantCoeff_ev_eq (cz2 (p0 0) (p0 1)), constantCoeff_ev_eq (cz2 (p0 0) (p0 2)),
+    rw [map_sub, map_add (f := _), constantCoeff_ev_eq (cz2 (p0 0) (p0 1)), constantCoeff_ev_eq (cz2 (p0 0) (p0 2)),
       constantCoeff_ev_eq (cz2 (p0 0) c0), h0]
     simp) hh.ph2
   have e : (fun j i => FB.toK k ((![B.A.act b, B.A.act c, B.A.act c'] : Fin 3 → Pt R 1 d) j i)) =

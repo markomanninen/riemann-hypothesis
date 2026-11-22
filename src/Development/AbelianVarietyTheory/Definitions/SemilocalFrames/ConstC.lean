@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.NonGenericAndKTwoTheorems
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocJEq
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GoodLoc
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NonGenericAndKTwoTheorems
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocJEq
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GoodLoc
+
+@[expose] public section
 
 noncomputable section
 open scoped Classical ENNReal Pointwise

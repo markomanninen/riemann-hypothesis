@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJFEInducedLevi
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJFEInducedLevi
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,8 @@ variable {F : Type*} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchi
   [MeasurableSpace F] [BorelSpace F] {n : ℕ} {α : Type*} [LinearOrder α] {β : Fin n → α}
   {W : Type*} [AddCommGroup W] [Module ℂ W] {σ : Representation ℂ (levi F n β) W}
 
-variable (β) in
 
+variable (β) in
 def leviMeasure (ψ : AddChar F Circle) : Measure (levi F n β) :=
   haarLevi β (leviCoordMeasure β ψ)
 
@@ -23,8 +27,8 @@ instance (ψ : AddChar F Circle) : (leviMeasure β ψ).IsHaarMeasure := by
   unfold leviMeasure
   infer_instance
 
-omit [MeasurableSpace F] [BorelSpace F] in
 
+omit [MeasurableSpace F] [BorelSpace F] in
 theorem continuous_inducedChar : Continuous (inducedChar (F := F) β) := by
   have h3 : Continuous (leviAbsDetShift (F := F) β) := by
     refine continuous_monoidHom_of_eq_one _

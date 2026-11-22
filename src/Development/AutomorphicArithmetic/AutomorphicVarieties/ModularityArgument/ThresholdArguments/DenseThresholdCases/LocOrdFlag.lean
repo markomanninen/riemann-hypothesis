@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OrdFlag
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LocCharDR
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OrdFlag
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LocCharDR
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -81,15 +85,14 @@ private theorem core (hB : DeRhamPotSemistable) {n : ℕ} (r : ↥(Dec (F := F) 
 omit [IsAlgClosure F Ω] in
 private theorem ordChar_inv {a : ↥(Weil h) →* (w.adicCompletion F)ˣ} {ω : (w.adicCompletion F)ˣ →* ℂˣ}
     {hh : (F →+* Qbar l) → ℤ} {ψ : ↥(Dec (F := F) A) →* (Qbar l)ˣ} (H : OrdChar ι a ω hh ψ) :
-    OrdChar ι a ω⁻¹ (-hh) ψ⁻¹ where
-  smooth := by
-    have := H.smooth
-    unfold GlobalTheory.SmGL.IsSmoothChar at this ⊢
-    convert this using 1
+    OrdChar ι a ω⁻¹ (-hh) ψ⁻¹ := by
+  refine ⟨?_, H.cont.inv, ?_⟩
+  · have hsmooth := H.smooth
+    unfold GlobalTheory.SmGL.IsSmoothChar at hsmooth ⊢
+    convert hsmooth using 1
     ext x
     simp
-  cont := H.cont.inv
-  val := fun s g hg hs => by
+  · intro s g hg hs
     have := H.val s g hg hs
     simp only [MonoidHom.comp_apply, Units.coeHom_apply, MonoidHom.inv_apply, Units.val_inv_eq_inv_val] at this ⊢
     rw [this, mul_inv, map_inv₀]

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsDenominatorPrimesPrescribed
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsDenominatorPrimesPrescribed
+
+@[expose] public section
+
 open NumberField GroundTheory.Heights₂.Heights
 open scoped nonZeroDivisors
 

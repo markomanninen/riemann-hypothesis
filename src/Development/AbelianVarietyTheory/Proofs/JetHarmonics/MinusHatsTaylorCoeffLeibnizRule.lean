@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SameFns
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SameFns
+
+@[expose] public section
 
 namespace GlobalTheory.HatNF.TaylorMinus
 

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LamXEquivariant
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFrameOfHasSignature
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianSpacesSameSignatureIsometricStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFiniteAdelicPointLatticeEqSelfDualStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LamXEquivariant
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFrameOfHasSignature
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianSpacesSameSignatureIsometricStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFiniteAdelicPointLatticeEqSelfDualStatement
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.GaussMean GlobalTheory.AutInhab
 
@@ -62,10 +66,7 @@ theorem exists_point (I : AutInst) (ε : Fin I.n → Bool) (γ : GL (Fin I.n) I.
   let Λ : Submodule (𝓞 I.E) (Fin I.n → I.E) := (intLat I.E I.n).map (G.mulVecLin.restrictScalars (𝓞 I.E))
   have hΛ : ∀ z, G *ᵥ z ∈ Λ ↔ z ∈ intLat I.E I.n := fun z =>
     ⟨fun ⟨w, hw, e⟩ => (hinj e : w = z) ▸ hw, fun hz => ⟨z, hz, rfl⟩⟩
-  obtain ⟨xf, hxf⟩ := GlobalTheory.T.exists_finiteAdelicPoint_lattice_eq_selfDual I Λ ⟨(intLat_fg _).map _, by
-      have : (Λ : Set (Fin I.n → I.E)) = G.mulVecLin '' (intLat I.E I.n : Set (Fin I.n → I.E)) := rfl
-      rw [this, ← Submodule.map_span, intLat_span, Submodule.map_top, LinearMap.range_eq_top]
-      exact hsur⟩ (by
+  obtain ⟨xf, hxf⟩ := GlobalTheory.T.exists_finiteAdelicPoint_lattice_eq_selfDual I Λ (Submodule.IsLattice.of_fg I.E ((intLat_fg _).map _)) (by
       intro x
       obtain ⟨x, rfl⟩ := hsur x
       rw [hΛ, intLat_dual ε]
@@ -93,8 +94,8 @@ theorem exists_isPerpInst : ∀ (I : AutInst) (P Q : ℕ), HasSig I P Q → 3 �
     obtain ⟨k, hk⟩ := Finset.card_pos.1 this
     exact ⟨k, (Finset.mem_filter.1 hk).2⟩
   obtain ⟨γ, hγ⟩ := GlobalTheory.T.hermitian_spaces_same_signature_isometric I.E I.cm.cmUnram I.n I.J (signMat I.E ε) I.J_herm (signMat_isHerm ε)
-    I.J_det (signMat_det ε) ⟨I.L, ⟨I.L_fg, I.L_span⟩, fun x => by simpa only [hform_eq] using I.L_dual x⟩
-    ⟨intLat I.E I.n, ⟨intLat_fg _, intLat_span _⟩, fun x => by simpa only [hform_eq] using intLat_dual ε x⟩
+    I.J_det (signMat_det ε) ⟨I.L, Submodule.IsLattice.of_fg I.E I.L_fg, fun x => by simpa only [hform_eq] using I.L_dual x⟩
+    ⟨intLat I.E I.n, Submodule.IsLattice.of_fg I.E (intLat_fg _), fun x => by simpa only [hform_eq] using intLat_dual ε x⟩
     (fun φ => ⟨P, Q, hasSignature_all I h φ, by
       rw [signMat_map, ← hP, ← hQ]
       exact hasSignature_of_frame (P := 1) isUnit_one (by simp)⟩)

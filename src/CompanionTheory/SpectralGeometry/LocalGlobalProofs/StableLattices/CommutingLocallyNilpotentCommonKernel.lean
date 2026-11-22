@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HasCharSub
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HasCharSub
+
+@[expose] public section
 
 open CompanionTheory.RgExh CompanionTheory.RgExh.Dec CompanionTheory.RgExh.Dec.J Formalism.REAL ReciprocityTheory.ChartRestriction.DS GlobalTheory.SmGL GlobalTheory.CompanionTheory.RgTransport
 
@@ -63,7 +67,8 @@ theorem exists_joint_kernel_polynomial_family :
   have heval : ∀ Z : ℂ, p.eval Z = φ (D Z w) := by
     intro Z
     rw [hD Z]
-    simp only [p, Polynomial.eval_finset_sum, Polynomial.eval_mul, Polynomial.eval_C,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [p, Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_C,
       Polynomial.eval_pow, Polynomial.eval_X, LinearMap.sum_apply, LinearMap.smul_apply,
       map_sum, map_smul, smul_eq_mul]
     exact Finset.sum_congr rfl fun _ _ => mul_comm _ _

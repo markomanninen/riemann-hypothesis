@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Num.SpanExact
 
@@ -80,11 +84,13 @@ theorem local_step (R R₁ : Subalgebra o Ω) (hR : R ≤ R₁) (q : E →ₗ[Ω
       refine ⟨M, AddSubgroup.subset_closure ⟨a, ha, f ^ M • (f ^ N • e - σ (q e)), ⟨?_, ?_⟩, ?_⟩⟩
       · rw [smul_sub]
         refine sub_mem (hL _ (R.pow_mem hf _) _ (hL _ (R.pow_mem hf _) _ he)) ?_
-        rw [hce, map_sum, Finset.smul_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hce, map_sum, Finset.smul_sum]
         refine sum_mem fun j _ => ?_
         rw [map_smul, smul_smul, hσ]
         exact hL _ (hp' j) _ (ht j)
-      · rw [map_smul, map_sub, map_smul, hce, map_sum, map_sum, Finset.smul_sum]
+      · set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_smul, map_sub, map_smul, hce, map_sum, map_sum, Finset.smul_sum]
         simp only [map_smul, hσ, hqt]
         rw [← Finset.sum_sub_distrib, Finset.sum_eq_zero, smul_zero]
         intro j _
@@ -99,7 +105,7 @@ theorem local_step (R R₁ : Subalgebra o Ω) (hR : R ≤ R₁) (q : E →ₗ[Ω
       have h2 := hup _ _ m hk
       rw [add_comm] at h2
       convert add_mem (hup _ _ k hm) h2 using 1
-      simp only [map_add]
+      simp only [map_add (f := _)]
       module
     | neg x _ hx =>
       obtain ⟨m, hm⟩ := hx

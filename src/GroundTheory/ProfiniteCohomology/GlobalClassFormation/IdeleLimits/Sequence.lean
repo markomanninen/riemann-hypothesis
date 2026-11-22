@@ -1,23 +1,24 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.SmulOfEqOfMemFixingSubgroup
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.SmulOfEqOfMemFixingSubgroup
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open NumberField IntermediateField GroundTheory.Global FiniteSubfield
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
 
 namespace IdeleLimit
 
+local notation "ℚ̄" => AlgebraicClosure ℚ
+
 def unitsIncl (F : FiniteSubfield) : F.1ˣ →* ℚ̄ˣ :=
   Units.map F.1.val.toRingHom.toMonoidHom
-
-@[simp]
-theorem coe_unitsIncl (F : FiniteSubfield) (u : F.1ˣ) : ((unitsIncl F u : ℚ̄ˣ) : ℚ̄) = ((u : F.1) : ℚ̄) :=
-  rfl
 
 theorem unitsIncl_injective (F : FiniteSubfield) : Function.Injective (unitsIncl F) :=
   fun _ _ h => Units.ext (Subtype.ext (congrArg (fun a : ℚ̄ˣ => (a : ℚ̄)) h))

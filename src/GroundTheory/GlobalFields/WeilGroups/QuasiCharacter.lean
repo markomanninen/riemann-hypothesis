@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.HeckeChar
-import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms
-import GroundTheory.GlobalFields.IdeleGroups.NormOneCompact
-import GroundTheory.GlobalFields.TateThesis.IdeleMeasureNormOne
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.HeckeChar
+public import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms
+public import GroundTheory.GlobalFields.IdeleGroups.NormOneCompact
+public import GroundTheory.GlobalFields.TateThesis.IdeleMeasureNormOne
+
+@[expose] public section
 
 open Topology NumberField
 open scoped NumberField.AdeleRing
@@ -26,10 +30,6 @@ def circleToUnits : Circle →ₜ* ℂˣ where
     change ((z : ℂ))⁻¹ = ((Circle.toUnits z)⁻¹ : ℂˣ).val
     rw [Units.val_inv_eq_inv_val]
     rfl⟩
-
-@[simp]
-theorem coe_circleToUnits (z : Circle) : ((circleToUnits z : ℂˣ) : ℂ) = z :=
-  rfl
 
 def ofUnitary : HeckeCharacter K →* QuasiCharacter K where
   toFun χ := circleToUnits.comp χ

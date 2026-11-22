@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsPowPrincipal
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsPowPrincipal
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 
 namespace GlobalTheory.CompanionTheory.Ar.Flat

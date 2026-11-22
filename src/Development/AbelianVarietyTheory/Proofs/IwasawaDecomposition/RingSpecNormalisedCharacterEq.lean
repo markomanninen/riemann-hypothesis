@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StrictHenselianAcyclic
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SignAtBasePlaceEqEmbedding
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NoFormsOff
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PlaceModelImp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StrictHenselianAcyclic
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SignAtBasePlaceEqEmbedding
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NoFormsOff
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PlaceModelImp
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,16 +27,11 @@ structure CopyAll (D D' : D7) (ι : D.what₂.LL →+* D'.what₂.LL) (e : ↥D'
   qs : HEq D.ntw.qs D'.ntw.qs
   pl : HEq D.naut.plGw D'.naut.plGw
 
-theorem CopyAll.refl (D : D7) : CopyAll D D (RingHom.id _) (RingEquiv.refl _) :=
-  ⟨CopyTw.refl D, .rfl, .rfl, .rfl, .rfl, .rfl, .rfl⟩
-
 structure SameFrame {D D' : D7} (cf : CharFrame D) (cf' : CharFrame D') : Prop where
   mu0 : HEq cf.mu0 cf'.mu0
   eta : HEq cf.eta cf'.eta
   del : HEq cf.del cf'.del
   del' : HEq cf.del' cf'.del'
-
-theorem SameFrame.refl {D : D7} (cf : CharFrame D) : SameFrame cf cf := ⟨.rfl, .rfl, .rfl, .rfl⟩
 
 structure RingPart (D : D7) (cf : CharFrame D) (low : Finset ℕ) where
   twF : TwFrameC D
@@ -70,34 +69,33 @@ def RowEig (D : D7) (S : RatDat D.ntw) (eig : ℕ → D.what₂.FT → ℕ → P
       algebraMap (D.ntw.O i) (FractionRing (D.ntw.O i)) (c i (D.ntw.side i s) P) ^ k *
         (show FractionRing (D.ntw.O i) from readLL0 S i (D.ntw.side i s) (eig (D.ntw.jS i s) (rowS i s) k P))
 
-set_option hygiene false in
 
-scoped macro "copy_cases " h:ident D:ident D':ident : tactic => `(tactic| (
-  obtain ⟨⟨⟨⟨a1, a2, a3, nOm, ninstOm, nalgOm, nplOm, nPlG⟩, ⟨xcc, xTw, xl, fixedFieldTransport_baseIntegerRing_heq, fixedFieldTransport_baseIntegerCommRing_heq, fixedFieldTransport_baseIntegerAlgebra_heq, fixedFieldTransport_baseIntegerTopology_heq, xO, xcrO, xalgO, xOk, xcrOk, xalgOk, xzk, xpD, xchi1, xSig, xfinSig, xjS, xside, xrhoS, fixedFieldTransport_initialPlaceSet_heq, xhEig, xLam, xsideL, xRCG, xgrpRCG, xfinRCG, xart, xth⟩,
-    ⟨yFm, yacgFm, ymodFmK, ymodFmO, yactG, yU, ypsiU, yeAlg, yDat, yth, ylev, ythPsi, yMtV, yacgMt, ymodMtK, ymodMtO, yMtLat, ythP, yhkF⟩, hbr, hav⟩, hsp, hTau, heTau, hhc, hembLL, hLL0, hemb0, hemb0b, hinW1, xdelta, xB, xacgB, xmodB, xTheta, xhk, yBsup, yembB, ythU, ydelU⟩,
-    xjL, xs2, xlamG, xXv, xqs, hpl⟩ := $h
-  have nfin : HEq (NData.finPlG (D7.nd $D)) (NData.finPlG (D7.nd $D')) :=
-    Subsingleton.helim (congrArg (fun P : Fin 2 → Type => ∀ k, Fintype (P k)) (eq_of_heq nPlG)) _ _
-  cases $D:ident; cases $D':ident
-  dsimp only at a1 a2 a3
-  subst a1; subst a2; subst a3
-  rename NData _ _ _ => n1; cases n1; rename NData _ _ _ => n2; cases n2
-  dsimp only at nOm ninstOm nalgOm nplOm nPlG nfin
-  subst nOm; subst ninstOm; subst nalgOm; subst nplOm; subst nPlG; subst nfin
-  rename NTw _ _ _ _ _ => n1; cases n1; rename NTw _ _ _ _ _ => n2; cases n2
-  dsimp only at xcc xTw xl fixedFieldTransport_baseIntegerRing_heq fixedFieldTransport_baseIntegerCommRing_heq fixedFieldTransport_baseIntegerAlgebra_heq fixedFieldTransport_baseIntegerTopology_heq xO xcrO xalgO xOk xcrOk xalgOk xzk xpD xchi1 xSig xfinSig xjS xside xrhoS fixedFieldTransport_initialPlaceSet_heq xhEig xLam xsideL xRCG xgrpRCG xfinRCG xart xth xdelta xB xacgB xmodB xTheta xhk xjL xs2 xlamG xXv xqs
-  subst xcc; subst xTw; subst xl; subst fixedFieldTransport_baseIntegerRing_heq; subst fixedFieldTransport_baseIntegerCommRing_heq; subst fixedFieldTransport_baseIntegerAlgebra_heq; subst fixedFieldTransport_baseIntegerTopology_heq; subst xO; subst xcrO; subst xalgO; subst xOk; subst xcrOk; subst xalgOk; subst xzk; subst xpD; subst xchi1; subst xSig; subst xfinSig; subst xjS; subst xside; subst xrhoS; subst fixedFieldTransport_initialPlaceSet_heq; subst xhEig; subst xLam; subst xsideL; subst xRCG; subst xgrpRCG; subst xfinRCG; subst xart; subst xth; subst xdelta; subst xB; subst xacgB; subst xmodB; subst xTheta; subst xhk; subst xjL; subst xs2; subst xlamG; subst xXv; subst xqs
-  rename NExp _ _ _ _ _ _ => n1; cases n1; rename NExp _ _ _ _ _ _ => n2; cases n2
-  dsimp only at yFm yacgFm ymodFmK ymodFmO yactG yU ypsiU yeAlg yDat yth ylev ythPsi yMtV yacgMt ymodMtK ymodMtO yMtLat ythP yhkF yBsup yembB ythU ydelU
-  subst yFm; subst yacgFm; subst ymodFmK; subst ymodFmO; subst yactG; subst yU; subst ypsiU; subst yeAlg; subst yDat; subst yth; subst ylev; subst ythPsi; subst yMtV; subst yacgMt; subst ymodMtK; subst ymodMtO; subst yMtLat; subst ythP; subst yhkF; subst yBsup; subst yembB; subst ythU; subst ydelU))
 
 set_option maxHeartbeats 4000000 in
 set_option maxRecDepth 100000 in
-
 theorem sigSpan_copy {D D' : D7} {ι : D.what₂.LL →+* D'.what₂.LL} {e : ↥D'.LL0 ≃+* ↥D.LL0} (h : CopyAll D D' ι e)
     (hs : D.ntw.SigSpan) : D'.ntw.SigSpan := by
-  copy_cases h D D'
-  exact hs
+  have transfer {D D' : D7} {N : NData D.R D.host D.what₂} {N' : NData D'.R D'.host D'.what₂}
+      {X : NTw D.R D.host D.what₂ D.LL0 N} {X' : NTw D'.R D'.host D'.what₂ D'.LL0 N'}
+      (g : GlobalTheory.TwistChoice.SameGalois N N')
+      (t : GlobalTheory.TwistChoice.TwistDataAgreeAcrossCoefficients X X')
+      (b : HEq X.B X'.B) (ab : HEq X.acgB X'.acgB)
+      (mb : HEq X.modB X'.modB) (hk : HEq X.hk X'.hk)
+      (s : X.SigSpan) : X'.SigSpan := by
+    obtain ⟨a1, a2, a3, nOm, ninstOm, nalgOm, nplOm, nPlG⟩ := g
+    obtain ⟨xcc, xTw, xl, xO0, xcrO0, xalgO0, xtopO0, xO, xcrO, xalgO, xOk, xcrOk, xalgOk, xzk, xpD, xchi1, xSig, xfinSig, xjS, xside, xrhoS, xS0, xhEig, xLam, xsideL, xRCG, xgrpRCG, xfinRCG, xart, xth⟩ := t
+    cases D; cases D'
+    dsimp only at a1 a2 a3
+    subst a1; subst a2; subst a3
+    cases N; cases N'
+    dsimp only at nOm ninstOm nalgOm nplOm nPlG
+    subst nOm; subst ninstOm; subst nalgOm; subst nplOm; subst nPlG
+    cases X; cases X'
+    dsimp only at xcc xTw xl xO0 xcrO0 xalgO0 xtopO0 xO xcrO xalgO xOk xcrOk xalgOk xzk xpD xchi1 xSig xfinSig xjS xside xrhoS xS0 xhEig xLam xsideL xRCG xgrpRCG xfinRCG xart xth b ab mb hk
+    subst xcc; subst xTw; subst xl; subst xO0; subst xcrO0; subst xalgO0; subst xtopO0; subst xO; subst xcrO; subst xalgO; subst xOk; subst xcrOk; subst xalgOk; subst xzk; subst xpD; subst xchi1; subst xSig; subst xfinSig; subst xjS; subst xside; subst xrhoS; subst xS0; subst xhEig; subst xLam; subst xsideL; subst xRCG; subst xgrpRCG; subst xfinRCG; subst xart; subst xth
+    subst b; subst ab; subst mb; subst hk
+    exact s
+  exact transfer h.cp.gal h.cp.set h.cp.B h.cp.acgB h.cp.modB h.cp.hk hs
 
 end GlobalTheory.HeightCounting.SideCopy
 

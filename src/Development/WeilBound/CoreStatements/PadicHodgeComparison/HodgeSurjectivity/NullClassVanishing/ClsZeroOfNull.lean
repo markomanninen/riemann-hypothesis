@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.TowerRallisLemma
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.TotPairing
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.TowerRallisLemma
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.TotPairing
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -51,13 +55,17 @@ section Null
 variable {R : Type} [CommRing R] {C : Type u} [Category.{v} C] {F : C ⥤ ModuleCat.{w} R}
 
 theorem cls_zero_of_null {Q : ObjectProperty C} : ∀ (n : ℕ) (z : Cn F n) (hz : d F n z = 0),
-    RelNull F Q n z → (cx F).cls z hz = 0
-  | 0, z, hz, h => by
-    have h0 : z = 0 := h
-    exact ((CrystallineSemistableComparison.P.cls_surj (cx F) 0).2.1 z hz).2 (by rw [h0]; exact zero_mem _)
-  | n + 1, z, hz, h => by
-    obtain ⟨b, -, hb⟩ := h
-    exact ((CrystallineSemistableComparison.P.cls_surj (cx F) (n + 1)).2.1 z hz).2 (LinearMap.mem_range.2 ⟨b, hb⟩)
+    RelNull F Q n z → (cx F).cls z hz = 0 := by
+  intro n z hz h
+  apply ((CrystallineSemistableComparison.P.cls_surj (cx F) n).2.1 z hz).2
+  cases n with
+  | zero =>
+    rw [show z = 0 from h]
+    exact zero_mem _
+  | succ n =>
+    change (∃ b ∈ relS F Q n, d F n b = z) at h
+    obtain ⟨b, _, hb⟩ := h
+    exact (Cx.mem_B_succ (C := cx F)).2 ⟨b, hb⟩
 
 theorem null_succ {Q : ObjectProperty C} {M K : ℕ} (e : M = K + 1) (x : Cn F M) (x' : Cn F (K + 1))
     (hx : HEq x x') (h : RelNull F Q M x) : ∃ b ∈ relS F Q K, d F K b = x' := by
@@ -212,7 +220,7 @@ theorem main (hS : SiteLaws) (hL : RelLift) (hI : RelInj) (hK : RelKill) (K : Ty
           (by omega) r ((grOk (smFun Y (π ≫ q)) (rfl : a₀ + a' = a₀ + a')).pair.cupC rfl w₀ (pullC π rfl a' n' z)))
         (cupC_heq _ (by omega) _ _ _ _) hk
       refine ⟨b₁ + b₂, add_mem hb₁r hb₂r, ?_⟩
-      rw [map_add, hb₁, hb₂]
+      rw [map_add (f := _), hb₁, hb₂]
       have ea := cupC_assoc (grOk (smFun Y (π ≫ q)) (rfl : 1 + a₀ = 1 + a₀))
         (grOk (smFun Y (π ≫ q)) hA) (grOk (smFun Y (π ≫ q)) (rfl : a₀ + a' = a₀ + a'))
         (grOk (smFun Y (π ≫ q)) (rfl : 1 + (a₀ + a') = 1 + (a₀ + a'))) hn hN (rfl : n₀ + n' = n₀ + n') (by omega)
@@ -220,7 +228,7 @@ theorem main (hS : SiteLaws) (hL : RelLift) (hI : RelInj) (hK : RelKill) (K : Ty
       show _ + _ = cupC (π ≫ q) hA hN (pullC π rfl (1 + a₀) (m + 1) c₀) (pullC π rfl a' n' z)
       conv_rhs => rw [show pullC π rfl (1 + a₀) (m + 1) c₀ =
         (pullC π rfl (1 + a₀) (m + 1) c₀ - cupC (π ≫ q) rfl hn r w₀) + cupC (π ≫ q) rfl hn r w₀ by abel]
-      rw [map_add, LinearMap.add_apply]
+      rw [map_add (f := _), LinearMap.add_apply]
       exact congrArg₂ (· + ·) rfl ea.symm
 
 end Main2

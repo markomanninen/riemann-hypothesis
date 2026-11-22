@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
+
 open Formalism.REAL
 
 namespace GlobalTheory
@@ -18,7 +23,8 @@ theorem _root_.GlobalTheory.lastComatrixRow_inverts_dual : ∀ (V : Type) [Norme
         intro l; split_ifs <;> simp
       simp only [_root_.Formalism.REAL.shiftedGenerator_eq_ite_smul_add, LinearMap.add_apply, Finset.sum_add_distrib, hOm, ite_smul, zero_smul, hite, Finset.sum_ite_eq, Finset.mem_univ, if_true]
     rw [LinearMap.sum_apply]
-    simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, WithLp.linearEquiv_apply, LinearMap.proj_apply, hproj, WithLp.ofLp_add, WithLp.ofLp_smul, Pi.add_apply, Pi.smul_apply, hT, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, WithLp.linearEquiv_apply, LinearMap.proj_apply, hproj, WithLp.ofLp_add, WithLp.ofLp_smul, Pi.add_apply, Pi.smul_apply, hT, map_sum]
     rw [Finset.sum_comm]
     simp only [← Module.End.mul_apply, ← LinearMap.sum_apply]
     have hite : ∀ l, (if Fin.last n = l then _root_.Formalism.REAL.qdet E u else 0) (x l) = if Fin.last n = l then _root_.Formalism.REAL.qdet E u (x l) else 0 := by

@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+module
+
+public import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,7 +87,7 @@ private theorem measurePreserving_sphereProb_of_toSphere {n : ℕ} {f : UnitSphe
     MeasurePreserving f (sphereProb n) (sphereProb n) := by
   refine ⟨hf.measurable, ?_⟩
   simp only [sphereProb, ProbabilityTheory.cond, Measure.restrict_univ]
-  rw [Measure.map_smul, hf.map_eq]
+  rw [Measure.map_smul _ hf.aemeasurable, hf.map_eq]
 
 theorem measurePreserving_sphereRot {n : ℕ} (u : Fin n → Circle) :
     MeasurePreserving (sphereRot u) (sphereProb n) (sphereProb n) :=

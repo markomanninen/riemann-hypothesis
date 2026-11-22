@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegralityAtPrimeLattices.Development
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegralityAtPrimeLattices.Development
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem valSc_sum (T : Forms0 D u) (w : D.what₂.places.Pl) (c : (D.mem u).C.cl
     obtain ⟨P, hP, hPe⟩ := hh i (Finset.mem_insert_self _ _) B hB
     obtain ⟨Q, hQ, hQe⟩ := ih (fun j hj => hh j (Finset.mem_insert_of_mem hj)) B hB
     refine ⟨P + Q, AddSubgroup.add_mem _ hP hQ, fun z => ?_⟩
-    rw [Pi.add_apply, hPe z, hQe z, map_add, Pi.add_apply]
+    rw [Pi.add_apply, hPe z, hQe z, map_add (f := _), Pi.add_apply]
 
 theorem valBc_sum (T : Forms0 D u) (w : D.what₂.places.Pl) (v : (D.mem u).A.vT) (c : (D.mem u).C.cls 0) {ι : Type}
     (s : Finset ι) (h : ι → (D.mem u).C.Y 0 → ℂ) (hh : ∀ i ∈ s, ValBc T w v c (h i)) :
@@ -64,7 +68,7 @@ theorem valBc_sum (T : Forms0 D u) (w : D.what₂.places.Pl) (v : (D.mem u).A.vT
     obtain ⟨P, hP, hPe⟩ := hh i (Finset.mem_insert_self _ _) B B' hB hB'
     obtain ⟨Q, hQ, hQe⟩ := ih (fun j hj => hh j (Finset.mem_insert_of_mem hj)) B B' hB hB'
     refine ⟨P + Q, AddSubgroup.add_mem _ hP hQ, fun z => ?_⟩
-    rw [Pi.add_apply, hPe z, hQe z, map_add, Pi.add_apply]
+    rw [Pi.add_apply, hPe z, hQe z, map_add (f := _), Pi.add_apply]
 
 theorem uop_apply (v : (D.mem u).A.vT) (φ : Fn D u 0) (c : (D.mem u).C.cls 0) :
     Uop D u 0 v φ c = ∑ x ∈ Finset.univ.filter (fun x : (D.fm u).lv 0 v c => (D.fm u).fv 0 v c x = 1),

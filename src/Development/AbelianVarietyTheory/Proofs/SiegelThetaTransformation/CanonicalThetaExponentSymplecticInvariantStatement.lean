@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CanonicalThetaExponentSymplecticInvariant
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IMemSiegel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CanonicalThetaExponentSymplecticInvariant
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IMemSiegel
+
+@[expose] public section
+
 open Matrix Complex GlobalTheory.SW
 open scoped ComplexConjugate Real
 set_option maxHeartbeats 1000000 in

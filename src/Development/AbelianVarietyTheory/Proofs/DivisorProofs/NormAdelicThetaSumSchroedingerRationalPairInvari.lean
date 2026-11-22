@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemRatPairIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemRatVecIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemRatPairIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemRatVecIff
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta
 open IsDedekindDomain NumberField MeasureTheory
@@ -47,7 +51,7 @@ theorem thetaSum_schr_rat_add {F : Type} [Field F] [NumberField F] [Invertible (
   have h1 := hψ (ξ ⬝ᵥ b + 1 / 2 * (a ⬝ᵥ b))
   conv_rhs => rw [← mul_one (ψ _), ← h1, ← AddChar.map_add_eq_mul]
   congr 1
-  rw [map_add, map_mul, ← invOf_two_eq', ← e3, ← e3]
+  rw [map_add (f := _), map_mul, ← invOf_two_eq', ← e3, ← e3]
   simp only [add_dotProduct, dotProduct_add]
   have t : ∀ z : AF F, ⅟(2 : AF F) * z + ⅟(2 : AF F) * z = z := fun z => by
     rw [← add_mul, invOf_two_add_invOf_two, one_mul]

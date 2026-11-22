@@ -1,8 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.LocalDefs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ResAlgSplitTwo
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FixedNondeg
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnramifiedQuotientCardStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.LocalDefs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ResAlgSplitTwo
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FixedNondeg
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnramifiedQuotientCardStatement
+
+@[expose] public section
+
 open PositivityTheory.PfSWUS.Loc GlobalTheory.CompanionTheory.UnrDens GlobalTheory.CompanionTheory.SiegLoc Filter Topology
 
 noncomputable section
@@ -194,7 +199,7 @@ theorem ct_transvection (i j : ι) (s : R) :
     ct σ (Matrix.transvection j i s) = Matrix.transvection i j (σ s) := by
   unfold ct Matrix.transvection
   ext a b
-  simp only [Matrix.transpose_apply, Matrix.map_apply, Matrix.add_apply, map_add,
+  simp only [Matrix.transpose_apply, Matrix.map_apply, Matrix.add_apply, map_add (f := _),
     Matrix.one_apply, Matrix.single_apply]
   by_cases hab : a = b
   · subst hab

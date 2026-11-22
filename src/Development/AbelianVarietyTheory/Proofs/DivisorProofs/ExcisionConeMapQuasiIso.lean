@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsExcisionNbhdSelf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AwayMapCompAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ShortExactMappingConeResolutionHomotopyEquiv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNaturalHomotopyEquivChainsConstantPresheaf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeEtaleSheafExcisionShortExactStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsExcisionNbhdSelf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AwayMapCompAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ShortExactMappingConeResolutionHomotopyEquiv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNaturalHomotopyEquivChainsConstantPresheaf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeEtaleSheafExcisionShortExactStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex GlobalTheory.EtC
 
 noncomputable section
@@ -96,7 +101,7 @@ theorem mono_free_away (R : Type) [CommRing R] (A : Type) [CommRing A] (f : A) :
         (mono_iff_injective _).1 inferInstance
       rw [ModuleCat.mono_iff_injective]
       change Function.Injective (Finsupp.mapDomain _)
-      exact Finsupp.mapDomain_injective (fun x y hxy => ULift.ext _ _ (hinj (congrArg ULift.down hxy)))
+      exact Finsupp.mapDomain_injective (fun x y hxy => ULift.ext (hinj (congrArg ULift.down hxy)))
     exact NatTrans.mono_of_mono_app _
   change Mono ((presheafToSheaf _ _).map ((freeP R).map _))
   infer_instance

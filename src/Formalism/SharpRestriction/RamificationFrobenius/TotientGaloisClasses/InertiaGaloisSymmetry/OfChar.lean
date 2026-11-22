@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ArtinMapSecondEqJacobiSym
+module
+
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ArtinMapSecondEqJacobiSym
+
+@[expose] public section
 
 open NumberField IntermediateField
 
@@ -137,11 +141,6 @@ def toHostRaw : HostRaw φ where
   art_h := D.art_h
   art_d := D.art_d
   art_q := D.art_q
-
-theorem toHostRaw_q : D.toHostRaw.q = D.q := rfl
-theorem toHostRaw_d : D.toHostRaw.d = D.d := rfl
-theorem toHostRaw_QS : D.toHostRaw.QS = D.QS := rfl
-theorem toHostRaw_art : D.toHostRaw.art = D.art := rfl
 
 theorem exists_sqq (h : D.toHostRaw.PsQ) : ∃ s : D.toHostRaw.E, s ^ 2 = -(D.toHostRaw.q : D.toHostRaw.E) ∧
     ∀ σ : D.toHostRaw.E ≃ₐ[ℚ] D.toHostRaw.E, σ s = ((((D.toHostRaw.gal σ).1.1 : ℤˣ) : ℤ) : D.toHostRaw.E) * s :=

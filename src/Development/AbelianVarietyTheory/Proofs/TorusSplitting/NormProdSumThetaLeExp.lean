@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.I2
 
@@ -10,7 +14,7 @@ theorem norm_prod_sum_mul_le_pow {N M : ℕ} (c z : Fin N → Fin M → ℂ) {C 
     ‖∏ k, ∑ t, c k t * z k t‖ ≤ (M * (C * B)) ^ N := by
   rw [norm_prod]
   calc ∏ k, ‖∑ t, c k t * z k t‖ ≤ ∏ _k : Fin N, (M * (C * B) : ℝ) := by
-        refine Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun k _ => ?_
+        refine Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun k _ => ?_
         calc ‖∑ t, c k t * z k t‖ ≤ ∑ t, ‖c k t * z k t‖ := norm_sum_le _ _
           _ ≤ ∑ _t : Fin M, C * B := Finset.sum_le_sum fun t _ => by
               rw [norm_mul]

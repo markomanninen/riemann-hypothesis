@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ArakelovCycleHeights.QpSndStr
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ResidueDegreeOfIsClosedImmersion
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ArFormExists
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPullHermPullLine
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ArakelovCycleHeights.QpSndStr
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ResidueDegreeOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ArFormExists
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPullHermPullLine
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -83,9 +87,9 @@ theorem prod_zpow_single {G : Type*} [CommGroup G] (f : Fin (m + 1) → G) (p q 
     ∏ k, f k ^ ((Pi.single p 1 + t • Pi.single q 1 : Fin (m + 1) → ℤ) k) = f p * f q ^ t := by
   simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, zpow_add, Finset.prod_mul_distrib]
   congr 1
-  · rw [Finset.prod_eq_single p (fun k _ hk => by simp [Pi.single_apply, hk]) (by simp)]
+  · rw [Finset.prod_eq_single p (fun k _ hk => by simp [hk]) (by simp)]
     simp
-  · rw [Finset.prod_eq_single q (fun k _ hk => by simp [Pi.single_apply, hk]) (by simp)]
+  · rw [Finset.prod_eq_single q (fun k _ hk => by simp [hk]) (by simp)]
     simp
 
 variable {B : LB (MP ℤ m n)} {b : Fin m} {t : ℤ}

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.DictInf
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.DictInf
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 
@@ -33,11 +37,16 @@ theorem ext_algebraMap [IsTotallyReal F] (w : InfinitePlace E) (a : (w.comap (al
   have c1 : Continuous fun a : (w.comap (algebraMap F E)).Completion =>
       InfinitePlace.Completion.extensionEmbedding w (algebraMap _ w.Completion a) :=
     (InfinitePlace.Completion.isometry_extensionEmbedding w).continuous.comp
-      (NumberField.LiesOver.continuous_completionMap (v := w.comap (algebraMap F E)) (w := w))
+      (continuous_algebraMap _ _)
   have c2 := (InfinitePlace.Completion.isometry_extensionEmbedding (w.comap (algebraMap F E))).continuous
   refine congrFun ((InfinitePlace.Completion.denseRange_coe (w.comap (algebraMap F E))).equalizer c1 c2
     (funext fun x => ?_)) a
   obtain ⟨k, rfl⟩ := (WithAbs.equiv (w.comap (algebraMap F E)).1).symm.surjective x
+  simp only [Function.comp_apply]
+  have hk : ((WithAbs.equiv (w.comap (algebraMap F E)).1).symm k : (w.comap (algebraMap F E)).Completion) = algebraMap F (w.comap (algebraMap F E)).Completion k := by
+    rw [InfinitePlace.Completion.algebraMap_apply]
+    rfl
+  rw [hk]
   change InfinitePlace.Completion.extensionEmbedding w (algebraMap _ w.Completion
       (algebraMap F (w.comap (algebraMap F E)).Completion k)) =
     InfinitePlace.Completion.extensionEmbedding (w.comap (algebraMap F E))
@@ -45,10 +54,12 @@ theorem ext_algebraMap [IsTotallyReal F] (w : InfinitePlace E) (a : (w.comap (al
   rw [← IsScalarTower.algebraMap_apply, IsScalarTower.algebraMap_apply F E]
   have e1 : InfinitePlace.Completion.extensionEmbedding w (algebraMap E w.Completion (algebraMap F E k)) =
       w.embedding (algebraMap F E k) :=
-    InfinitePlace.Completion.extensionEmbedding_coe w ((WithAbs.equiv w.1).symm (algebraMap F E k))
+    by simpa [InfinitePlace.Completion.algebraMap_apply] using
+      InfinitePlace.Completion.extensionEmbedding_coe w ((WithAbs.equiv w.1).symm (algebraMap F E k))
   have e2 : InfinitePlace.Completion.extensionEmbedding (w.comap (algebraMap F E))
       (algebraMap F (w.comap (algebraMap F E)).Completion k) = (w.comap (algebraMap F E)).embedding k :=
-    InfinitePlace.Completion.extensionEmbedding_coe _ ((WithAbs.equiv (w.comap (algebraMap F E)).1).symm k)
+    by simpa [InfinitePlace.Completion.algebraMap_apply] using
+      InfinitePlace.Completion.extensionEmbedding_coe _ ((WithAbs.equiv (w.comap (algebraMap F E)).1).symm k)
   rw [e1, e2]
   exact RingHom.congr_fun (embedding_comp w) k
 
@@ -56,7 +67,7 @@ theorem phi_eqv [IsTotallyReal F] (w : InfinitePlace E) (z : AE F E) :
     (adStd E).φ w (eqv F E z) = piInf (embOf w) z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a x =>
     have e : eqv F E (a ⊗ₜ x) = algebraMap E 𝔸[E] x * GroundTheory.Global.AdeleBaseChange.adeleMap F E a :=
       GroundTheory.BlockD.ThmBHecke.adeleEquiv_tmul a x
@@ -65,13 +76,15 @@ theorem phi_eqv [IsTotallyReal F] (w : InfinitePlace E) (z : AE F E) :
       InfinitePlace.Completion.extensionEmbedding (w.comap (algebraMap F E)) (a.1 (w.comap (algebraMap F E))) * w.embedding x
     rw [ext_algebraMap, mul_comm]
     congr 1
+    change InfinitePlace.Completion.extensionEmbedding w ((algebraMap E 𝔸[E] x).1 w) = w.embedding x
+    rw [AdeleRing.algebraMap_fst_apply]
     exact InfinitePlace.Completion.extensionEmbedding_coe w ((WithAbs.equiv w.1).symm x)
 
 theorem piInf_cA [IsTotallyReal F] {σ : E →ₐ[F] E} (h : IsCMExt F E σ) {w : InfinitePlace F} (τ : EmbOver E w)
     (z : AE F E) : piInf τ (cA σ z) = starRingEnd ℂ (piInf τ z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a x =>
     change InfinitePlace.Completion.extensionEmbedding w (a.1 w) * τ.1 (σ x) =
       starRingEnd ℂ (InfinitePlace.Completion.extensionEmbedding w (a.1 w) * τ.1 x)

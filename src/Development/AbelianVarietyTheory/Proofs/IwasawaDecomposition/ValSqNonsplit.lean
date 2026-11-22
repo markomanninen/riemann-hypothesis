@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntValuationEqOfMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnramifiedHeckeCharIdeleValueUniformiser
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntValuationEqOfMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnramifiedHeckeCharIdeleValueUniformiser
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,8 +80,8 @@ theorem cpow_sqrt (q r t : ℕ) :
   rw [e, ← Complex.ofReal_natCast, ← Complex.ofReal_cpow h0, Real.rpow_mul h0, Real.rpow_intCast, Real.sqrt_eq_rpow,
     Complex.ofReal_zpow]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem psiL_gal {D : D7} {cf : CharFrame D} {C : NChoice D} {tp : TupTied D cf C} (T : NCharTied D cf C tp)
     (nct : NChTie D C) (hψ : PsiChoiceCompatible D cf C tp) (a : D.nd.Loc) (H1 : NC.HC D.host.E)
     (hH : ∀ (j : Fin D.R.m), j.1 + 1 = D.nd.j a → ∀ x, H1.χ x = (cf.mu0 j * cf.delAt (D.nd.l a) * cf.eta⁻¹).1 x)
@@ -119,7 +123,9 @@ theorem psiL_gal {D : D7} {cf : CharFrame D} {C : NChoice D} {tp : TupTied D cf 
     obtain ⟨σ, hσ⟩ := NC.frob_exists D v
     obtain ⟨hu1, hval⟩ := of_at _ H1 (hH j hj) hα
     have hup : (tp.psi (D.nd.w a)).UnrAt v := (hP.ram v).2 (by rw [← nct.Q_eq a]; exact v4)
-    have k := hone v ⟨hs, v2, v3, v4⟩ v2 (fun x hx => by rw [HChar.loc_mul, hu1 x hx, hup x hx, one_mul])
+    have k := hone v ⟨hs, v2, v3, v4⟩ v2 (fun x hx => by
+        change (cf.mu0 j * cf.delAt (D.nd.l a) * cf.eta⁻¹).loc v x * (tp.psi (D.nd.w a)).loc v x = 1
+        rw [hu1 x hx, hup x hx, one_mul])
       _ σ (D.nd.plOm.2 v) hσ
     have tw := D.ntw.twO_emb a x1 _ (hσ1 σ hσ)
     have hc : (D.nd.chi a 1 σ : D.nd.O a) =
@@ -196,7 +202,9 @@ theorem muC_link {D : D7} {cf : CharFrame D} {C : NChoice D} {tp : TupTied D cf 
   have htup : tp.tup (D.nd.mu i) j = cf.mu0 j * cf.delAt (D.nd.l i) * tp.psi (D.nd.w i) := by
     rw [TupTied.tup, D.nd.mu_w, tp.xi_tw, D.nd.w_l, ← mul_assoc]
   obtain ⟨hu, hv⟩ := of_at (tp.tup (D.nd.mu i) j) _ (fun x => by
-    rw [htup, NC.HC.mul_χ, NC.HC.mul_χ, MonoidHom.mul_apply, MonoidHom.mul_apply, ← hj, h1, h2, h3, D.ntw.twOf_l]
+    rw [htup]
+    change ((K.mu0 (D.nd.j i)).χ x * (K.del (D.ntw.twOf i)).χ x) * (K.psi i).χ x = _
+    rw [← hj, h1, h2, h3, D.ntw.twOf_l]
     rfl) ha
   rw [T.frob _ w (by rw [e]; exact hu), e, Units.val_inv_eq_inv_val, hv]
 
@@ -209,8 +217,8 @@ theorem psiL_gal' {D : D7} {cf : CharFrame D} {C : NChoice D} {tp : TupTied D cf
       (K.firstHeckeCharacter s j) (-(D.R.r : ℤ))) (a : D.nd.Loc) :
     IsGalOf D a Set.univ (D.ntw.psiL a) (tp.psi (D.nd.w a)) 0 :=
   psiL_gal T nct hψ a _ (fun j hj x => by
-    rw [NC.NChiData.firstHeckeCharacter, NC.HC.mul_χ, NC.HC.mul_χ, NC.HC.inv_χ, MonoidHom.mul_apply, MonoidHom.mul_apply,
-      MonoidHom.inv_apply, ← hj, h1, h2, h0, D.ntw.twOf_l]
+    change ((K.mu0 (D.nd.j a)).χ x * (K.del (D.ntw.twOf a)).χ x) * (K.etaT.χ x)⁻¹ = _
+    rw [← hj, h1, h2, h0, D.ntw.twOf_l]
     rfl) (hr _ _ _ (D.nd.j_range a).1 (D.nd.j_range a).2)
 
 end GlobalTheory.HeightCounting.FitTw

@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DsExistsOfDiscreteSeriesExists
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasLab
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaMapHilbertModelEqConcreteThetaMapFamilyThreStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftLevelFormOrthogonalKilledByThetaMapStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftCuspFormSpaceThetaMapEqDataStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftMatrixComputesLiftRational
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpanRangeMulVec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DsExistsOfDiscreteSeriesExists
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasLab
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaMapHilbertModelEqConcreteThetaMapFamilyThreStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftLevelFormOrthogonalKilledByThetaMapStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftCuspFormSpaceThetaMapEqDataStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftMatrixComputesLiftRational
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpanRangeMulVec
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -26,7 +31,8 @@ variable {K : Type} [Field K] {σ : K →+* ℂ}
 theorem semi_expand {W : Type} [AddCommGroup W] [Module ℂ W] {m : ℕ} (f : (Fin m → K) →ₛₗ[σ] W) (v : Fin m → K) :
     f v = ∑ l, σ (v l) • f (Pi.single l 1) := by
   conv_lhs => rw [← Finset.univ_sum_single v]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [← map_smulₛₗ]
   congr 1
@@ -98,7 +104,8 @@ theorem orth_ker_eq_span [NumberField K] [StarRing K] {V W : Type} [NormedAddCom
       exact Submodule.sum_mem _ fun l _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨l, rfl⟩)
     obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun ℂ).1 (hsub hy)
     have hc : (Θ.map σ) *ᵥ c = 0 := by
-      rw [map_sum] at h0
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at h0
       simp only [map_smul, hθ, hPZ] at h0
       have e : ∀ k, jW (Θ *ᵥ Pi.single k 1) = ∑ l, σ (Θ l k) • jW (Pi.single l 1) := fun k => by
         rw [semi_expand jW]
@@ -121,7 +128,7 @@ theorem orth_ker_eq_span [NumberField K] [StarRing K] {V W : Type} [NormedAddCom
     obtain ⟨a, ha, b, hb, rfl⟩ := htop y
     have hb0 : θ b = 0 := hRk hb
     have ha0 : θ a = 0 := by
-      rw [LinearMap.mem_ker, map_add, hb0, add_zero] at hy; exact hy
+      rw [LinearMap.mem_ker, map_add (f := _), hb0, add_zero] at hy; exact hy
     rw [hinj a ha ha0, zero_add]; exact hb
   rw [hker]
   refine le_antisymm (fun y hy => ?_) hUR
@@ -134,11 +141,54 @@ theorem orth_ker_eq_span [NumberField K] [StarRing K] {V W : Type} [NormedAddCom
     exact (Submodule.mem_bot ℂ).1 h
   rw [hb0, add_zero]; exact ha
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem orth_ker_thetaP : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 I0 T : Type) (A3 : FamIn3 D.what₂.LL G Pl0 I0 (List ℕ) T D.R.m) (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat3 D A3 Ks) (F : Face3 D A3) (cG : G0 R.Pg D.R.r ≃* G0g D.nd) (X0 : BaseLevelRowSide D) (Y : Read (A3 := A3) R.toRealDat F.lv2 X0) (Z : ReadL R F X0 Y), Pins R F cG → Holds R F → ∀ (i : Fin D.R.m) (t : T), (LinearMap.ker (D.what₂.thetaP (Y.tup t) ((i : ℕ) + 1)))ᗮ = Submodule.span ℂ (Set.range fun a => D.what₂.jMt (Y.tup t) ((i : ℕ) + 1) (Y.eMt i t (lZ0 D A3.A F.P0 F.ψ0 (A3.fam3.toSub2 (zsOf R F)) i t *ᵥ a))) := by
   intro D G _ _ Pl0 I0 T A3 Ks _ _ _ R F cG X0 Y Z hP hH i t
-  have hR := complex_data_conditions_base_level_of_primitive_links hH.ok hH.sep hP.char hH.prim
+  have hR : ComplexDataConditionsBaseLevel A3 F.P0 F.ψ0 F.P1 F.ψ1 F.Dc F.Sp F.Zsc (R.toCx3 F) 1 (U2.eigensystemChoice A3 (R.toCx3 F) F.P0 F.ψ0 F.P1 F.ψ1 hH.prim.hecke.2.choose) hH.prim.hecke.1.choose hH.prim.hecke.2.choose (R.gEx F) (R.gWx F) := by
+    have hUnitary := U2.unitary_two_package A3 (R.toCx3 F) 1 F.P0 F.ψ0 F.P1 F.ψ1 F.Dc F.Sp F.Zsc hH.prim.hecke.2.choose (R.gWx F) hH.ok
+      (RealDat3.kFormR_of hP.char.base.models) (RealDat3.kFormL_of hP.char.base.models) (RealDat3.jIsoR_of hP.char.base.models)
+      (RealDat3.jIsoL_of hP.char.base.models) hH.prim.rowTest hH.prim.liftTest hH.prim.heckeL hH.prim.hecke.2.choose_spec hH.prim.gUnit.2 hH.prim.gEquiv.2 hH.prim.levW
+      hH.prim.sumW (hH.prim.liftOnto _ hH.prim.hecke.2.choose_spec)
+    exact {
+      kFormR := RealDat3.kFormR_of hP.char.base.models
+      kFormL := RealDat3.kFormL_of hP.char.base.models
+      jIsoR := RealDat3.jIsoR_of hP.char.base.models
+      jIsoL := RealDat3.jIsoL_of hP.char.base.models
+      npTie := ⟨rfl, rfl⟩
+      ok := hH.ok
+      sep := hH.sep
+      heckeR := hH.prim.heckeR
+      heckeL := hH.prim.heckeL
+      thetaR := hH.prim.hecke.1.choose_spec
+      thetaL := hH.prim.hecke.2.choose_spec
+      gUnit := hH.prim.gUnit.1
+      gEquiv := hH.prim.gEquiv.1
+      lev0 := hH.prim.levE.1
+      lev1 := hH.prim.levE.2
+      h2P := hH.prim.h2P
+      gUnitL := hH.prim.gUnit.2
+      gEquivL := hH.prim.gEquiv.2
+      lower_level_lift_type := hH.prim.levW
+      inBlock := hH.prim.block
+      rowTest := hH.prim.rowTest
+      liftTest := hH.prim.liftTest
+      pos := hH.prim.pos
+      h0 := RealDat3.height_change_of_D0 hP.char.tup
+      h4pos := ⟨fun _ => hH.prim.posScal.1, hH.prim.posScal.2, RealDat.nP_pos⟩
+      thmBop := RealDat3.thmBop_of hH.prim.thmB
+      partsE := hH.prim.sumE
+      kForm := RealDat3.kForm_of hH.prim.unif false
+      mLat := hH.prim.mLat
+      ewNorm := RealDat3.ewNorm false
+      thmAop := RealDat3.thmAop_of hP.char.phase hH.prim.thmA false
+      partsW := hH.prim.sumW
+      base_lift_test := hH.prim.liftTestB
+      galD := hH.prim.scalConj
+      dimParts := hH.prim.dimParts
+      eig0 := hUnitary.1
+      typ0 := hUnitary.2
+    }
   have hOk := hH.ok.ok2
   have hT := GlobalTheory.T.liftCuspFormSpace_thetaMap_eq_data D G Pl0 I0 T A3 Ks R F cG X0 Y Z hP hH
   have hp : Formalism.DivisionValues.IsOrthProj (lH D A3.A F.P0 F.ψ0 i t) (lZ0 D A3.A F.P0 F.ψ0 (A3.fam3.toSub2 (zsOf R F)) i t)

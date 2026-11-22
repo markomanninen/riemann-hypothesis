@@ -1,4 +1,8 @@
-import Formalism.LandauZeroFreeBounds.NoZeroComplexOf
+module
+
+public import Formalism.LandauZeroFreeBounds.NoZeroComplexOf
+
+@[expose] public section
 
 open Complex LSeries ArithmeticFunction DirichletCharacter
 open scoped LSeries.notation

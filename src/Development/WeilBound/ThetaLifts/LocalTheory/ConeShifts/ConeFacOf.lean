@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.VacShiftOf
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.PresOfHat
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.VacShiftOf
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.PresOfHat
+
+@[expose] public section
 
 noncomputable section
 

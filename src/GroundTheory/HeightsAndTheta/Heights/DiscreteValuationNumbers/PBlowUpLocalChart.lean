@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpOrderLe
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpOrderLe
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -104,8 +109,8 @@ theorem liftForm_mul_newVar_sub_mem (P : Ideal (MRing ι R)) (u : J → MRing ι
 
 end BlowUp
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem BlowUpLocalChart.proof : BlowUpLocalChart.Statement.{u} := by
   intro R _ _ K _ ι _ J _ P hP u G' y hy hG' hrel x hx hG G₀ _ hG₀ W₀ _ hW₀
   have : P.IsPrime := hP
@@ -118,7 +123,7 @@ theorem BlowUpLocalChart.proof : BlowUpLocalChart.Statement.{u} := by
       (fun p hp => Ideal.Quotient.eq_zero_iff_mem.mpr ((liftForm_mem_blowUpOf_iff P u p).mpr hp))
   have hg : ∀ p, g (Ideal.Quotient.mk P p) = Ideal.Quotient.mk (blowUpOf P u) (liftForm p) := fun p => rfl
   have hg_inj : Function.Injective g := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     obtain ⟨p, rfl⟩ := Ideal.Quotient.mk_surjective a
     rw [hg, Ideal.Quotient.eq_zero_iff_mem, liftForm_mem_blowUpOf_iff] at ha
@@ -147,7 +152,7 @@ theorem BlowUpLocalChart.proof : BlowUpLocalChart.Statement.{u} := by
   let ιA := (algebraMap (MRing (extIdx ι J) R ⧸ (blowUpOf P u)) (Localization.AtPrime W₀)).comp g
   have hιA : Function.Injective ιA := hB_inj.comp hg_inj
   have hF_inj : Function.Injective F := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro z hz
     obtain ⟨⟨a, s⟩, rfl⟩ := IsLocalization.mk'_surjective G₀.primeCompl z
     have h2 := congrArg F (IsLocalization.mk'_spec (Localization.AtPrime G₀) a s)
@@ -212,11 +217,12 @@ theorem BlowUpLocalChart.proof : BlowUpLocalChart.Statement.{u} := by
       obtain ⟨l₁, hl₁, b₁, e₁⟩ := hx
       obtain ⟨l₂, hl₂, b₂, e₂⟩ := hy
       refine ⟨l₁ * l₂, mul_ne_zero hl₁ hl₂, l₂ * b₁ + l₁ * b₂, ?_⟩
-      rw [map_mul, map_add, map_mul, map_mul, ← e₁, ← e₂]
+      rw [map_mul, ιA.map_add, map_mul, map_mul, ← e₁, ← e₂]
       ring
     | neg x _ hx =>
       obtain ⟨l, hl, b, e₁⟩ := hx
-      exact ⟨l, hl, -b, by rw [map_neg, ← e₁]; ring⟩
+      set_option synthInstance.maxHeartbeats 200000 in
+        exact ⟨l, hl, -b, by rw [map_neg ιA, ← e₁]; ring⟩
     | mul x y _ _ hx hy =>
       obtain ⟨l₁, hl₁, b₁, e₁⟩ := hx
       obtain ⟨l₂, hl₂, b₂, e₂⟩ := hy
@@ -232,7 +238,7 @@ theorem BlowUpLocalChart.proof : BlowUpLocalChart.Statement.{u} := by
       obtain ⟨l₁, hl₁, q₁, e₁⟩ := h₁
       obtain ⟨l₂, hl₂, q₂, e₂⟩ := h₂
       refine ⟨l₁ * l₂, mul_ne_zero hl₁ hl₂, Polynomial.C l₂ * q₁ + Polynomial.C l₁ * q₂, ?_⟩
-      rw [Polynomial.map_add, Polynomial.map_add, Polynomial.map_mul, Polynomial.map_mul, Polynomial.map_C,
+      rw [Polynomial.map_add (f := _), Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_mul, Polynomial.map_C,
         Polynomial.map_C, ← e₁, ← e₂, map_mul, Polynomial.C_mul]
       ring
     | monomial n c =>
@@ -244,7 +250,7 @@ theorem BlowUpLocalChart.proof : BlowUpLocalChart.Statement.{u} := by
   have hu_nzd : Ideal.Quotient.mk P (u j) ∈ nonZeroDivisors (MRing ι R ⧸ P) :=
     mem_nonZeroDivisors_of_ne_zero (fun h => huj (Ideal.Quotient.eq_zero_iff_mem.mp h))
   have hinj : Function.Injective (Polynomial.eval₂RingHom C.subtype w) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro p hp
     obtain ⟨l, hl, q, e₁⟩ := hpoly p
     have h1 : (q.map ιA).eval w = 0 := by
@@ -279,7 +285,7 @@ theorem BlowUpLocalChart.proof : BlowUpLocalChart.Statement.{u} := by
     | add p q hp hq =>
       obtain ⟨a, ha⟩ := hp
       obtain ⟨b, hb⟩ := hq
-      exact ⟨a + b, by rw [map_add, ha, hb, map_add, map_add]⟩
+      exact ⟨a + b, by rw [φ.map_add, ha, hb, (Ideal.Quotient.mk _).map_add, (algebraMap _ _).map_add]⟩
     | mul_X p v hp =>
       obtain ⟨a, ha⟩ := hp
       rcases v with ⟨_ | k, i⟩

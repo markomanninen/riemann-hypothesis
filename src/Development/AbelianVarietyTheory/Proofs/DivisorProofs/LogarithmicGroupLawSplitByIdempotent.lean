@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResidueEqZeroIffV
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntInv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResidueEqZeroIffV
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntInv
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -31,7 +35,8 @@ theorem lin_int {m n : ℕ} {N : Matrix (Fin m) (Fin n) C} (h : ∀ a b, IsIntV 
 
 theorem lin_coeff {m n : ℕ} (N : Matrix (Fin m) (Fin n) C) (a : Fin m) (i : Fin n) :
     coeff (Finsupp.single i 1) (lin N a) = N a i := by
-  simp [lin, map_sum, pt_coeff_single_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [lin, map_sum, pt_coeff_single_X]
 
 theorem const_comb {σ ι : Type} [Fintype ι] (c : ι → C) {f : ι → MvPowerSeries σ C}
     (hf : ∀ i, constantCoeff (f i) = 0) : constantCoeff (∑ i, c i • f i) = 0 := by
@@ -55,7 +60,8 @@ theorem subst_lin {σ : Type} {m n : ℕ} {s : Fin n → MvPowerSeries σ C} (hs
 theorem coeff_comb_lg {d m n : ℕ} (G : LogFGL v d) (N : Matrix (Fin m) (Fin d) C)
     (L : Matrix (Fin d) (Fin n) C) (a : Fin m) (i : Fin n) :
     coeff (Finsupp.single i 1) (∑ e, N a e • (subst (lin L) (G.lg e) : MvPowerSeries (Fin n) C)) = (N * L) a i := by
-  simp [map_sum, pt_coeff_single_subst (lin_hs L) (lin_const L) (G.lg_const _), G.lg_lin, lin_coeff,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, pt_coeff_single_subst (lin_hs L) (lin_const L) (G.lg_const _), G.lg_lin, lin_coeff,
     Matrix.mul_apply]
 
 theorem lg_add {σ : Type} [Finite σ] {d : ℕ} (G : LogFGL v d) {x y : Fin d → MvPowerSeries σ C}
@@ -127,7 +133,7 @@ theorem exists_retraction [CharZero C] {d d' : ℕ} (G : LogFGL v d) {I : Matrix
     rw [hΘ, lg_add G x0 y0, hx, hy, lg_hom hφ.1 (hφ.2.2 a) (lin_hs M), lg_hom hψ.1 (hψ.2.2 a) (lin_hs N)]
   have Θ1 : ∀ a b, coeff (Finsupp.single b 1) (Θ a) = if a = b then 1 else 0 := fun a b => by
     have h := congrArg (coeff (Finsupp.single b 1)) (hlg a)
-    rw [map_add, coeff_comb_lg, coeff_comb_lg, ← Matrix.add_apply, hsq, Matrix.one_apply,
+    rw [map_add (f := _), coeff_comb_lg, coeff_comb_lg, ← Matrix.add_apply, hsq, Matrix.one_apply,
       pt_coeff_single_subst Θs Θ0 (G.lg_const a)] at h
     simpa [G.lg_lin] using h
   obtain ⟨Ψ, Ψi, Ψ0, hΨ, -⟩ := GlobalTheory.IntInv.exists_int_inv C v d Θ (add_int G x0 y0 xi yi) Θ0 Θ1

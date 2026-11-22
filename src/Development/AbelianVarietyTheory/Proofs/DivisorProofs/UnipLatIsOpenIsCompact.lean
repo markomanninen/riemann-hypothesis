@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
-import Formalism.SatakeDualWeyl.StatementE
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemGUIffAdjJ
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
+public import Formalism.SatakeDualWeyl.StatementE
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemGUIffAdjJ
+
+@[expose] public section
+
 open GlobalTheory.LGrp GlobalTheory.BorelUMod Formalism.UG
 
 namespace GlobalTheory.BorelUMod
@@ -45,20 +50,5 @@ theorem isCompact_vball [CompleteSpace L] {ϖ : L} {σ : L →+* L} {q : ℕ} (h
         refine ne_of_eq_of_ne hcard (pow_ne_zero _ (by omega)))⟩
   rw [ball_eq_image hϖ]
   exact (isCompact_iff_compactSpace.2 hp).image (continuous_const.mul continuous_id)
-
-theorem continuous_adjJ {σ : L →+* L} (hσ : Continuous σ) (n : ℕ) :
-    Continuous (adjJ σ : Matrix (Fin n) (Fin n) L → Matrix (Fin n) (Fin n) L) :=
-  continuous_matrix fun i j => hσ.comp (continuous_id.matrix_elem j.rev i.rev)
-
-theorem isInducing_GU_val {σ : L →+* L} (hσ : Continuous σ) (n : ℕ) :
-    Topology.IsInducing fun g : GU σ n => (g.1.val : Matrix (Fin n) (Fin n) L) := by
-  have h1 : Topology.IsInducing fun g : GU σ n => Units.embedProduct _ g.1 :=
-    Units.isEmbedding_embedProduct.isInducing.comp Topology.IsInducing.subtypeVal
-  refine Topology.IsInducing.of_comp (g := fun A : Matrix (Fin n) (Fin n) L => (A, MulOpposite.op (adjJ σ A)))
-    (Units.continuous_val.comp continuous_subtype_val)
-    (continuous_id.prodMk (MulOpposite.continuous_op.comp (continuous_adjJ hσ n))) ?_
-  convert h1 using 1
-  funext g
-  simp only [Function.comp_apply, Units.embedProduct_apply, (mem_GU_iff_adjJ σ _).1 g.2]
 
 end GlobalTheory.BorelUMod

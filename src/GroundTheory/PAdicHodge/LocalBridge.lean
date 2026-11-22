@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.LocalFields.Examples
-import GroundTheory.LocalFields.Interface
-import GroundTheory.LocalFields.Uniqueness
-import GroundTheory.LocalFields.FiniteExtension
-import GroundTheory.LocalFields.DifferentGalois
-import GroundTheory.LocalFields.UpperNumbering
-import GroundTheory.PAdicHodge.PerfectoidField
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.Examples
+public import GroundTheory.LocalFields.Interface
+public import GroundTheory.LocalFields.Uniqueness
+public import GroundTheory.LocalFields.FiniteExtension
+public import GroundTheory.LocalFields.DifferentGalois
+public import GroundTheory.LocalFields.UpperNumbering
+public import GroundTheory.PAdicHodge.PerfectoidField
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -100,7 +105,7 @@ instance isNonarchimedeanLocalField_tower (K : IntermediateField ℚ_[p] (PadicA
 
 instance valuativeExtension_padic (K : IntermediateField ℚ_[p] (PadicAlgCl p)) :
     ValuativeExtension ℚ_[p] K := by
-  refine ⟨fun a b => ?_⟩
+  refine ⟨fun {a b} => ?_⟩
   rw [subfield_vle_iff_norm_le, subfield_norm_def, subfield_norm_def,
     IntermediateField.coe_algebraMap_apply, IntermediateField.coe_algebraMap_apply]
   have ha : ‖algebraMap ℚ_[p] (PadicAlgCl p) a‖ = ‖a‖ := PadicAlgCl.norm_extends p a
@@ -111,7 +116,7 @@ instance valuativeExtension_padic (K : IntermediateField ℚ_[p] (PadicAlgCl p))
 instance valuativeExtension_intermediateField {F : Type*} [Field F] [Algebra F (PadicAlgCl p)]
     (E : IntermediateField F (PadicAlgCl p)) (L : IntermediateField E (PadicAlgCl p)) :
     ValuativeExtension E L :=
-  ⟨fun a b => by rw [subfield_vle_iff_norm_le, subfield_vle_iff_norm_le]; rfl⟩
+  ⟨fun {_ _} => by rw [subfield_vle_iff_norm_le, subfield_vle_iff_norm_le]; rfl⟩
 
 section Unique
 
@@ -124,20 +129,17 @@ section Inclusion
 variable {K L : IntermediateField ℚ_[p] (PadicAlgCl p)} (h : K ≤ L)
 
 theorem valuativeExtension_inclusion :
-    letI := (IntermediateField.inclusion h).toRingHom.toAlgebra
-    ValuativeExtension K L := by
+    (letI := (IntermediateField.inclusion h).toRingHom.toAlgebra; ValuativeExtension K L) := by
   let := (IntermediateField.inclusion h).toRingHom.toAlgebra
-  exact ⟨fun a b => by rw [subfield_vle_iff_norm_le, subfield_vle_iff_norm_le]; rfl⟩
+  exact ⟨fun {_ _} => by rw [subfield_vle_iff_norm_le, subfield_vle_iff_norm_le]; rfl⟩
 
 theorem isScalarTower_inclusion :
-    letI := (IntermediateField.inclusion h).toRingHom.toAlgebra
-    IsScalarTower ℚ_[p] K L := by
+    (letI := (IntermediateField.inclusion h).toRingHom.toAlgebra; IsScalarTower ℚ_[p] K L) := by
   let := (IntermediateField.inclusion h).toRingHom.toAlgebra
   exact IsScalarTower.of_algebraMap_eq fun _ => rfl
 
 theorem finiteDimensional_inclusion [FiniteDimensional ℚ_[p] L] :
-    letI := (IntermediateField.inclusion h).toRingHom.toAlgebra
-    FiniteDimensional K L := by
+    (letI := (IntermediateField.inclusion h).toRingHom.toAlgebra; FiniteDimensional K L) := by
   let := (IntermediateField.inclusion h).toRingHom.toAlgebra
   have := isScalarTower_inclusion h
   exact Module.Finite.of_restrictScalars_finite ℚ_[p] K L
@@ -149,46 +151,12 @@ section Galois
 variable (K : IntermediateField ℚ_[p] (PadicAlgCl p)) (L : IntermediateField K (PadicAlgCl p))
   [Normal K L]
 
-theorem restrictNormalHom_surjective :
-    Function.Surjective (AlgEquiv.restrictNormalHom L : Gal(PadicAlgCl p/K) →* Gal(L/K)) :=
-  AlgEquiv.restrictNormalHom_surjective _
-
-theorem ker_restrictNormalHom :
-    (AlgEquiv.restrictNormalHom L : Gal(PadicAlgCl p/K) →* Gal(L/K)).ker = L.fixingSubgroup :=
-  L.restrictNormalHom_ker
-
-instance fixingSubgroup_normal : L.fixingSubgroup.Normal := by
-  rw [← ker_restrictNormalHom K L]
-  exact MonoidHom.normal_ker _
-
-def galQuotientEquiv : Gal(PadicAlgCl p/K) ⧸ L.fixingSubgroup ≃* Gal(L/K) :=
-  QuotientGroup.liftEquiv _ (restrictNormalHom_surjective K L) L.restrictNormalHom_ker.symm
-
 end Galois
 
 section Examples
 
 variable (K : IntermediateField ℚ_[p] (PadicAlgCl p)) [FiniteDimensional ℚ_[p] K]
   (L : IntermediateField K (PadicAlgCl p)) [FiniteDimensional K L]
-
-example : IsNonarchimedeanLocalField K := inferInstance
-example : ValuativeExtension ℚ_[p] K := inferInstance
-example : IsNonarchimedeanLocalField L := inferInstance
-example : ValuativeExtension K L := inferInstance
-example : Algebra 𝒪[K] 𝒪[L] := inferInstance
-example : Algebra.IsSeparable K L := inferInstance
-example : Normal K (PadicAlgCl p) := inferInstance
-example (i : ℤ) : Subgroup Gal(L/K) := GroundTheory.LocalField.lowerRamificationGroup K L i
-example : ℕ := GroundTheory.LocalField.differentExponent K L
-example : differentIdeal 𝒪[K] 𝒪[L] = 𝓂[L] ^ GroundTheory.LocalField.differentExponent K L :=
-  GroundTheory.LocalField.differentIdeal_eq_maximalIdeal_pow K L
-example [IsGalois K L] (v : ℝ) : Subgroup Gal(L/K) := GroundTheory.LocalField.upperRamificationGroup K L v
-example {K' L' : IntermediateField ℚ_[p] (PadicAlgCl p)} (h : K' ≤ L') [FiniteDimensional ℚ_[p] K']
-    [FiniteDimensional ℚ_[p] L'] : ℕ :=
-  letI := (IntermediateField.inclusion h).toRingHom.toAlgebra
-  haveI := valuativeExtension_inclusion h
-  haveI := finiteDimensional_inclusion h
-  GroundTheory.LocalField.differentExponent K' L'
 
 end Examples
 

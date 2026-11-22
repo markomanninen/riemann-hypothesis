@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsSideFurther
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsSideFurther
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -132,7 +137,7 @@ theorem SectionMapInj.full : SectionMapInj.Statement := by
     rw [MvPolynomial.as_sum (g f), Finset.sum_smul]
     refine Submodule.sum_mem _ fun μ _ => ?_
     set a : K → ℕ := fun k => ∑ i, μ ⟨k, i⟩ with ha
-    have hhom : IsMultiHomog (monomial μ (coeff μ (g f)) : MRingOver S ι) a := fun m hm k => by
+    have hhom : IsMultiHomog (monomial μ (AddMonoidAlgebra.coeff (g f) μ) : MRingOver S ι) a := fun m hm k => by
       rw [Finset.mem_singleton.mp (MvPolynomial.support_monomial_subset hm)]
     have hmem := hM.2 a d _ f hhom hfd
     by_cases he : (d + fun k => (a k : ℤ)) = c
@@ -149,7 +154,7 @@ theorem SectionMapInj.full : SectionMapInj.Statement := by
         push_cast at h5
         have h6 : ((Fintype.card (ι k) * N + 1 : ℕ) : ℤ) ≤ (a k : ℤ) := by push_cast; linarith
         exact_mod_cast h6
-      obtain ⟨ch, q, hq⟩ := SectionMapInj.exists_chart_dvd (S := S) N μ (coeff μ (g f)) hdeg
+      obtain ⟨ch, q, hq⟩ := SectionMapInj.exists_chart_dvd (S := S) N μ (AddMonoidAlgebra.coeff (g f) μ) hdeg
       rw [hq, mul_comm, mul_smul, hfN ch, smul_zero]
       exact Submodule.zero_mem _
     · exact (le_iSup₂ (f := fun (e : K → ℤ) (_ : e ≠ c) => 𝓜 e) _ he) hmem

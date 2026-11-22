@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.FinLocalCutAt
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.LiePush
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfUnifOfSubsingleton
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TraceFormTwistIsoOfPullback
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.MemNonzeroLocusOfUnit
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsNeZeroIff
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsPrimitiveRootArcRoot
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueConstantTangentVectorsAlongArcStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.LieImgIffIsLieCombStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsConstantEigenbasisTangentArcStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ConstantArcEigenbasisFlatBaseChangeStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.DegenerationDataBaseChangesExistPidStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TangentVectorsThetaSectionArcWitnessBaseChangeStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ConstantEigenbasisIndependentOfWitnessStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.FinLocalCutAt
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.LiePush
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfUnifOfSubsingleton
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TraceFormTwistIsoOfPullback
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.MemNonzeroLocusOfUnit
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsNeZeroIff
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsPrimitiveRootArcRoot
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueConstantTangentVectorsAlongArcStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.LieImgIffIsLieCombStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsConstantEigenbasisTangentArcStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ConstantArcEigenbasisFlatBaseChangeStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.DegenerationDataBaseChangesExistPidStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TangentVectorsThetaSectionArcWitnessBaseChangeStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ConstantEigenbasisIndependentOfWitnessStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,10 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 namespace GlobalTheory.IntModelExists
 
 theorem dualMap_id (R : Type) [CommRing R] : dualMap (RingHom.id R) = RingHom.id _ :=
-  RingHom.ext fun x => by ext <;> simp [dualMap]
+  by
+    apply RingHom.ext
+    intro x
+    ext <;> simp [dualMap]
 
 theorem maps_self {X Y : Scheme.{0}} {L : LB X} {F : X ⟶ X} (hF : F = 𝟙 X) {w : LB.Iso L (L.pull F)}
     (hw : w = isoPullId (idIso L) hF) {h : Y ⟶ Y} (hh : h = 𝟙 Y) {K I : Type} [Fintype K] (φ : I → K → (Y ⟶ X))
@@ -36,11 +43,32 @@ theorem maps_self {X Y : Scheme.{0}} {L : LB X} {F : X ⟶ X} (hF : F = 𝟙 X) 
   exact ⟨hψ, (maps_iff _ _ (φ i') ε (t i') (t i') (𝟙 Y) _ (Out.GeneratorPullback.pullAlong_le L F _ _ _ hψ) (fun _ => rfl)).2
     (NoTorus.pmaps_id hF _ _ (ht i'))⟩
 
-open scoped CategoryTheory.Obj in
 
+open scoped CategoryTheory.Obj in
 theorem exists_self {R : Type} [CommRing R] [IsDomain R] (D : Out.DegPre R) (h : ∀ χ, PsiUnitOn D χ Set.univ) :
     ∃ p : Out.IsPullDeg (RingHom.id R) D D, (∀ q : D.P.A.left ⟶ D.P.A.left, q ≫ prj p = prj p ≫ q) ∧
       (∀ y, p.xe y = y) ∧ ∀ ν, LetBC p ν ν := by
+  have hgen {F : D.P.A.left ⟶ D.P.A.left} (hF : F = 𝟙 _) : PGen (isoPullId (Geo.Tor.idIso D.P.L) hF) := by
+    subst F
+    intro Y f y j j' k k' hj hj' hk hk'
+    have hgw : ∀ a b, f y ∈ D.P.L.U a → f y ∈ D.P.L.U b →
+        gw (isoPullId (Geo.Tor.idIso D.P.L) rfl) f y a b =
+          gm f y _ (D.P.L.g a b) := by
+      intro a b ha hb
+      have hm : f y ∈ (D.P.L.pull (𝟙 _)).U (fun _ => a) ⊓ D.P.L.U b := ⟨mem_pull.2 ha, hb⟩
+      exact gm_res f y _ hm _
+    rw [hgw j k hj hk, hgw j' k' hj' hk', Category.comp_id]
+    have hV : f y ∈ (D.P.L.U j ⊓ D.P.L.U k) ⊓ (D.P.L.U j' ⊓ D.P.L.U k') := ⟨⟨hj, hk⟩, ⟨hj', hk'⟩⟩
+    have hw' : res (inf_le_left : (D.P.L.U j ⊓ D.P.L.U k) ⊓ (D.P.L.U j' ⊓ D.P.L.U k') ≤ D.P.L.U j ⊓ D.P.L.U k) (D.P.L.g j k) =
+      res (le_inf (inf_le_left.trans inf_le_left) (inf_le_right.trans inf_le_left) :
+        (D.P.L.U j ⊓ D.P.L.U k) ⊓ (D.P.L.U j' ⊓ D.P.L.U k') ≤ D.P.L.U j ⊓ D.P.L.U j') (D.P.L.g j j') *
+      (res (le_inf (inf_le_left.trans inf_le_right) (inf_le_right.trans inf_le_right) :
+        (D.P.L.U j ⊓ D.P.L.U k) ⊓ (D.P.L.U j' ⊓ D.P.L.U k') ≤ D.P.L.U k ⊓ D.P.L.U k') (D.P.L.g k k'))⁻¹ *
+      res (inf_le_right : (D.P.L.U j ⊓ D.P.L.U k) ⊓ (D.P.L.U j' ⊓ D.P.L.U k') ≤ D.P.L.U j' ⊓ D.P.L.U k') (D.P.L.g j' k') :=
+      (idIso_isGen D.P.isLB) (j, k) (j', k')
+    have key := congrArg (gm f y ((D.P.L.U j ⊓ D.P.L.U k) ⊓ (D.P.L.U j' ⊓ D.P.L.U k'))) hw'
+    simp only [map_mul, map_inv, gm_res f y _ hV] at key
+    exact key
   have : IsMonHom (Iso.refl D.P.A).hom := inferInstanceAs (IsMonHom (𝟙 D.P.A))
   have gp : IsGrpPullback D.P.A D.P.A (Out.specOf (RingHom.id R)) (Iso.refl D.P.A).hom.left :=
     (isGrpPullback_of_iso (Iso.refl D.P.A)).congr (specOf_id R).symm rfl
@@ -48,7 +76,7 @@ theorem exists_self {R : Type} [CommRing R] [IsDomain R] (D : Out.DegPre R) (h :
   have hF' : e.hom.left ≫ pullback.fst D.P.A.hom (Out.specOf (RingHom.id R)) = 𝟙 _ := hF
   obtain ⟨ψW⟩ := GlobalTheory.ArcPull.nonempty_psiOn_top D h
   obtain ⟨p, h₁, h₂, h₃⟩ := UnifUniq.exists_isPullDeg_id D D ⊤ trivial ψW e me
-    (isoPullId (idIso D.P.L) hF') ((isGen_iff _).2 (isoPullId_pgen (idIso_isGen D.P.isLB) hF'))
+    (isoPullId (idIso D.P.L) hF') ((isGen_iff _).2 (hgen hF'))
     ((congrArg (_ ≫ ·) hF').trans (Category.comp_id _))
     (NoTorus.pmaps_id hF' (K := PUnit) (fun _ => eSec D.P.A) (fun _ => 1) D.rig_gen) (AddEquiv.refl _)
     (fun x => (congrArg (_ ≫ ·) hF').trans (Category.comp_id _))
@@ -137,7 +165,51 @@ theorem exists_arcBasis_baseChange (hL : Out.Laws) (hL₂ : Out.Laws2) (hU : Out
   have hfl : ((PowerSeries.map f).comp (PowerSeries.C (R := A))).Flat := by
     refine flat_of_injective _ fun x y hxy => hf (PowerSeries.C_injective ?_)
     simpa using hxy
-  obtain ⟨u, hu, hb⟩ := GlobalTheory.T.constant_arc_eigenbasis_flat_baseChange hL.globalFns E H Dw l Xo c O β Y A b a χ W ρ e h (PowerSeries A')
+  open Matrix GlobalTheory.BasisUniv in
+  have arcBasis_baseChange : Out.GlobalFnsSt → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (O : Type) [CommRing O] (β : O →+* c.F) (Y : Model Xo c β) (A : Type) [CommRing A] [IsDomain A] [IsLocalRing A] [IsNoetherianRing A] (b : O →+* A) (a : ArcIn Dw l β A b) (χ : Sp (PowerSeries A) ⟶ Y.X) (W : Wit Y a χ) (ρ : (E →+* ℂ) → (𝓞 E →+* A)) (e : ∀ τ : E →+* ℂ, Fin (Dw.mult τ) → Out.GtPt a.D₀ (epsR A)), ArcBasis W ρ e → ∀ (S : Type) [CommRing S] (ι : PowerSeries A →+* S), (ι.comp (PowerSeries.C (R := A))).Flat → ∀ (t' : SAB H (Sp S)) (m2 : SABMap t' W.t (spMap ι)), ∃ u : ∀ τ : E →+* ℂ, Fin (Dw.mult τ) → (epsR S ⟶ t'.G), (∀ τ k, ∃ v, LieImg W (e τ k) v ∧ (u τ k).left ≫ m2.φ = spMap (Formalism.L2.Pj.dualMap ι) ≫ v.left) ∧ ∀ τ, (∀ k, IsTangent (u τ k) ∧ ∀ x : 𝓞 E, (u τ k ≫ t'.act.act x).left = spMap (epsScaleR (ι (PowerSeries.C (R := A) (ρ τ x)))) ≫ (u τ k).left) ∧ ∀ w : epsR S ⟶ t'.G, IsTangent w → (∀ x : 𝓞 E, (w ≫ t'.act.act x).left = spMap (epsScaleR (ι (PowerSeries.C (R := A) (ρ τ x)))) ≫ w.left) → ∃! cf : Fin (Dw.mult τ) → S, IsLieComb cf (u τ) w := by
+    intro hG E _ _ _ H Dw l Xo c O _ β Y A _ _ _ _ b a χ W ρ e hB S _ ι hflat t' m2
+    obtain ⟨v₀, hv₀, hB⟩ := hB
+    obtain ⟨g, e₁, v, M, hev, hv, hcomb, hM⟩ := GlobalTheory.T.exists_constantLieBasis_arcGroup hG E H Dw l Xo c O β Y A b a χ W
+    have hsm : Smooth W.t.G.hom := W.t.semi.smooth
+    have hmon : ∀ x, IsMonHom (W.t.act.act x) := W.t.act.hom
+    have hmon' : ∀ x, IsMonHom (t'.act.act x) := t'.act.hom
+    obtain ⟨n, y, hy⟩ := Chart.univChartLoc W.t.G
+    obtain ⟨n', y', hy'⟩ := exists_chart_of_pullback ι m2.cart
+  
+    have hU : ∀ τ k, ∃ U : Fin g → A, IsLieComb (fun j => PowerSeries.C (R := A) (U j)) v (v₀ τ k) := fun τ k => by
+      have ht : GtTanR (e τ k) :=
+        ((GlobalTheory.T.exists_unique_constant_tangent_vectors_along_arc hG E H Dw l Xo c O β Y A b a χ W (e τ k)).2 _ (hv₀ τ k)).2 ((hB τ).1 k).1
+      obtain ⟨U, hU, -⟩ := hcomb _ ht
+      exact ⟨U, (GlobalTheory.T.lieImg_iff_isLieComb_of_gtComb hG E H Dw l Xo c O β Y A b a χ W g U e₁ (e τ k) v _ (fun i => (hev i).2) hU).1 (hv₀ τ k)⟩
+    choose U hU using hU
+    choose u hu using fun τ k => exists_lift ι m2.cart (v₀ τ k)
+    choose v' hv' using fun j => exists_lift ι m2.cart (v j)
+    have hb' : IsLieBasis v' := Chart.isLieBasis_baseChange ι m2.cart hv hv'
+    have hU' : ∀ τ k, IsLieComb (fun j => (ι.comp (PowerSeries.C (R := A))) (U τ k j)) v' (u τ k) := fun τ k =>
+      Chart.comb_baseChange ι m2.cart (hU τ k) hv' (hu τ k)
+    have hM' : ∀ x i, IsLieComb ((M x).map (ι.comp (PowerSeries.C (R := A))) i) v' (v' i ≫ t'.act.act x) := fun x i =>
+      Chart.comb_baseChange ι m2.cart (hM x i) hv' (by
+        rw [Over.comp_left, Category.assoc, m2.act, ← Category.assoc, hv', Category.assoc, Over.comp_left])
+    have hMR : ∀ x i, IsLieComb ((M x).map (PowerSeries.C (R := A)) i) v (v i ≫ W.t.act.act x) := hM
+    have hUe : ∀ τ k x, U τ k ᵥ* M x = ρ τ x • U τ k := fun τ k x => by
+      have := (eig_iff hy hv _ (hMR x) (hU τ k) _).1 (((hB τ).1 k).2 x)
+      funext j
+      have := congrArg (PowerSeries.constantCoeff (R := A)) (congrFun this j)
+      simpa [Matrix.vecMul, dotProduct] using this
+    refine ⟨u, fun τ k => ⟨v₀ τ k, hv₀ τ k, hu τ k⟩, fun τ => ⟨fun k => ⟨isTangent_of_comb hy' hb'.1 (hU' τ k), fun x => ?_⟩,
+      fun w hw hwe => ?_⟩⟩
+    · refine (eig_iff hy' hb' _ (hM' x) (hU' τ k) _).2 ?_
+      funext j
+      have := congrArg (ι.comp (PowerSeries.C (R := A))) (congrFun (hUe τ k x) j)
+      simpa [Matrix.vecMul, dotProduct] using this
+    · obtain ⟨z, hz, -⟩ := hb'.2 w hw
+      simp only [comb_iff hy' hb' (hU' τ) hz]
+      refine eig_powerSeries M (fun x => ρ τ x) (U τ) (hUe τ) (fun s hs => ?_) _ hflat z
+        (fun x => (eig_iff hy' hb' _ (hM' x) hz _).1 (hwe x))
+      have hc : IsLieComb s v (Chart.prodPts s v) := (Chart.isLieComb_iff _ _ _).2 rfl
+      have := (hB τ).2 _ (isTangent_of_comb hy hv.1 hc) (fun x => (eig_iff hy hv _ (hMR x) hc _).2 (hs x))
+      simpa only [comb_iff hy hv (hU τ) hc] using this
+  obtain ⟨u, hu, hb⟩ := arcBasis_baseChange hL.globalFns E H Dw l Xo c O β Y A b a χ W ρ e h (PowerSeries A')
     (PowerSeries.map f) hfl W'.t m
   refine ⟨W', e', he', u, fun τ k => ?_, fun τ => ?_⟩
   · obtain ⟨v, hv, huv⟩ := hu τ k

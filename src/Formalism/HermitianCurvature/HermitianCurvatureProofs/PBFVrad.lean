@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVnice
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVstep
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellZetaMinors
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainRecursionFromSingleDescent
+module
+
+public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVnice
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVstep
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellZetaMinors
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainRecursionFromSingleDescent
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate
@@ -117,9 +121,11 @@ theorem liftZero_succ_eq_map (M : M2 A) : (lift0 M : M2 (SlopeTestRemainingChoic
 
 theorem ins_succ (a : Fin n) (M : M2 (SlopeTestRemainingChoices (Fin n) A)) : ins a.succ (M.map liftM) = liftM (ins a M) := by
   simp only [ins]
-  rw [← liftRingHom_apply_eq_liftM, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← liftRingHom_apply_eq_liftM, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul, liftRingHom_apply_eq_liftM, liftRingHom_apply_eq_liftM, eU_succ, Matrix.map_apply]
 
@@ -241,26 +247,32 @@ theorem uInv_cons {X : Type} [AddCommGroup X] [Module ℂ X] (s : ℂ) (l : C.Le
         (if l.1 then s else conj s) • KB.uInv s w (fun e' => x (Fin.cons 0 e')) (fun a => e a.succ) := rfl
 
 theorem act_UUiw (s : ℂ) : ∀ (w : List C.Letter) (Φ : Ix (Fin w.length) → RadSp k r z z' π π'),
-    act (UUiw s (D.positionted w)) Φ = KB.uInv s w Φ
-  | [], Φ => by
+    act (UUiw s (D.positionted w)) Φ = KB.uInv s w Φ := by
+  intro w
+  induction w with
+  | nil =>
+    intro Φ
     funext a
     show act 1 Φ a = Φ a
     simp only [act, Matrix.one_apply]
-    rw [Finset.sum_eq_single a (fun b _ hb => by rw [if_neg (Ne.symm hb)]; rfl) (fun h => absurd (Finset.mem_univ a) h)]
+    rw [Finset.sum_eq_single a (fun b _ hb => by rw [ite_eq_right (Ne.symm hb)]; rfl)
+      (fun h => absurd (Finset.mem_univ a) h)]
     simp
-  | l :: w, Φ => by
+    exact pr_one_fst_apply (Φ a)
+  | cons l w ih =>
+    intro Φ
     funext z0
     obtain ⟨i, e, rfl⟩ : ∃ i e, z0 = (Fin.cons i e : Ix (Fin (w.length + 1))) :=
       ⟨z0 0, Fin.tail z0, (Fin.cons_self_tail z0).symm⟩
     rw [positioned_cons]
     simp only [UUiw]
     rw [UUiw_succ, act_mul, act_insert_numeric_matrix_zero]
-    simp only [act_liftM, act_UUiw s w]
+    simp only [act_liftM, ih]
     rw [uInv_cons, Fin.sum_univ_two]
     simp only [Fin.cons_zero, Fin.cons_succ]
     fin_cases i
     · simp [Uinv, pr_one_fst_apply, pr_zero_fst_apply]
-    · simp [Uinv, pr_one_fst_apply, pr_alg_fst_apply]
+    · simp [Uinv, pr_one_fst_apply]
       rw [add_comm]
 
 end ActU
@@ -273,7 +285,7 @@ theorem uInv_map {X Y : Type} [AddCommGroup X] [Module ℂ X] [AddCommGroup Y] [
     unfold KB.uInv
     split_ifs
     · exact uInv_map T s w _ _
-    · rw [map_add, map_smul, uInv_map T s w, uInv_map T s w]
-    · rw [map_add, map_smul, uInv_map T s w, uInv_map T s w]
+    · rw [map_add (f := _), map_smul, uInv_map T s w, uInv_map T s w]
+    · rw [map_add (f := _), map_smul, uInv_map T s w, uInv_map T s w]
 
 end Formalism.FourierDecayAlt.P.PBFV

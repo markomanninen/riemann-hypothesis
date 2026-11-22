@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ShiftOf
-import GroundTheory.AutomorphicForms.GL2.InnerProductParamHolo
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ShiftOf
+public import GroundTheory.AutomorphicForms.GL2.InnerProductParamHolo
+
+@[expose] public section
 
 open MeasureTheory Set Filter Topology Metric
 open scoped ContDiff
@@ -103,7 +107,7 @@ theorem UpperTheory.V.Z.Inf.testEx :
   haveI : Measure.IsAddHaarMeasure (volume : Measure (GlobalTheory.CuspRep.Lie K n)) := Measure.pi.isAddHaarMeasure _
   refine UpperTheory.V.Z.Inf.testEx_gen volume GlobalTheory.CuspRep.isOpen_invSet hf (A := UpperTheory.V.Z.Inf.nrm) ?_ ?_ hx₀ h0
   · unfold UpperTheory.V.Z.Inf.nrm
-    refine continuous_finset_prod _ fun w _ => Continuous.pow (Continuous.norm ?_) 2
+    refine continuous_finsetProd _ fun w _ => Continuous.pow (Continuous.norm ?_) 2
     exact (continuous_apply w).comp (Continuous.matrix_det continuous_id)
   · intro x hx
     have hu : IsUnit (Matrix.of x).det := (Matrix.isUnit_iff_isUnit_det _).1 hx

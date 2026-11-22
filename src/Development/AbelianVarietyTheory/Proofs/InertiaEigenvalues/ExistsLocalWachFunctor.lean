@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormCoeAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemFilPIffEvPt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBinomial
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TeichPow
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanRangeMap
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ResEqOneIff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUniqueFits
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChiGamPowNeOne
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormCoeAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemFilPIffEvPt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBinomial
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TeichPow
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanRangeMap
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ResEqOneIff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUniqueFits
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChiGamPowNeOne
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct GlobalTheory.HWL
 namespace GlobalTheory.HWL.Assembly

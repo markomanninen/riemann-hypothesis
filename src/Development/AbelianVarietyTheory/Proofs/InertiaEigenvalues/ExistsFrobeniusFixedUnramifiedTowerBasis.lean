@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FiltrationZeroMembership
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnitDetResMat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FiltrationZeroMembership
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnitDetResMat
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations GlobalTheory.Pst GlobalTheory.PMon GlobalTheory.PMon.ResR TensorProduct
 open scoped Formalism.Per
 
@@ -71,16 +76,14 @@ theorem exists_tower_basis (E : IntermediateField F K) {r : ℕ} (bω : Module.B
   · have h1 : LinearIndependent F (f ∘ bt) := bt.linearIndependent.map' f (LinearMap.ker_eq_bot.mpr hf)
     have h2 := h1.comp (Equiv.prodComm n (Fin r)) (Equiv.injective _)
     convert h2 using 1
-    funext jk
-    simp only [Function.comp_apply, Equiv.prodComm_apply, Prod.fst_swap, Prod.snd_swap, bt, Module.Basis.smulTower_apply, f]
-    rfl
+    ext jk
+    simp [bt, f, Module.Basis.smulTower_apply, ← algebraMap_smul K]
   · have hli : LinearIndependent F (fun jk : n × Fin r => ((bω jk.2 : E) : K) • (b jk.1 : M)) := by
       have h1 : LinearIndependent F (f ∘ bt) := bt.linearIndependent.map' f (LinearMap.ker_eq_bot.mpr hf)
       have h2 := h1.comp (Equiv.prodComm n (Fin r)) (Equiv.injective _)
       convert h2 using 1
-      funext jk
-      simp only [Function.comp_apply, Equiv.prodComm_apply, Prod.fst_swap, Prod.snd_swap, bt, Module.Basis.smulTower_apply, f]
-      rfl
+      ext jk
+      simp [bt, f, Module.Basis.smulTower_apply, ← algebraMap_smul K]
     apply Submodule.eq_of_le_of_finrank_eq
     · rw [Submodule.span_le]
       rintro _ ⟨jk, rfl⟩
@@ -100,7 +103,7 @@ def frFixed (l : ℕ) [Fact l.Prime] (r : ℕ) : IntermediateField ℚ_[l] ↥(M
   add_mem' := by
     intro a b ha hb
     simp only [Set.mem_setOf_eq] at *
-    rw [map_add, ha, hb]
+    rw [map_add (f := _), ha, hb]
   algebraMap_mem' := fun q => by
     show (frobUr l ^ r) (algebraMap ℚ_[l] ↥(MaximalUnramifiedExtension l) q) = _
     exact AlgHom.commutes _ q
@@ -113,8 +116,8 @@ end GlobalTheory.FrobeniusFixedBasis
 
 namespace GlobalTheory
 
-open GlobalTheory.FrobeniusFixedBasis in
 
+open GlobalTheory.FrobeniusFixedBasis in
 theorem exists_frFixed_tower_basis : ∀ (l : ℕ) [Fact l.Prime] (r : ℕ) (ω : Fin r → ↥(MaximalUnramifiedExtension l)), (∀ k, fr l r (ω k) = ω k) →
     LinearIndependent ℚ_[l] ω → (∀ c : ↥(MaximalUnramifiedExtension l), fr l r c = c → ∃ a : Fin r → ℚ_[l], c = ∑ k, a k • ω k) →
     ∀ (M : Type) [AddCommGroup M] [Module ↥(MaximalUnramifiedExtension l) M] [Module ℚ_[l] M] [IsScalarTower ℚ_[l] ↥(MaximalUnramifiedExtension l) M] (n : Type)

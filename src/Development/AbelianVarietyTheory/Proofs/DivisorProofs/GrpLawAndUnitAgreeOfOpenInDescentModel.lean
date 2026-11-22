@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef
@@ -123,7 +128,7 @@ theorem mul_agree {S₁ S₂ : Scheme.{0}} (s₁ : S₁ ⟶ Sp σ.R) (s₂ : S�
     have := hT.w =≫ pullback.fst E.p s₂
     simp only [Category.assoc] at this
     rw [pullback.lift_fst, pullback.lift_fst] at this
-    exact this
+    simpa only [Category.assoc] using this
   have eT₂ : π ≫ ya' ≫ H₂.hom = ρ ≫ H₂.hom := by
     have := hT.w =≫ pullback.snd E.p s₂
     simp only [Category.assoc] at this
@@ -236,8 +241,8 @@ theorem one_agree {S₁ S₂ : Scheme.{0}} (s₁ : S₁ ⟶ Sp σ.R) (s₂ : S�
 
 end GlobalTheory.Desc.UAgree
 
-open GlobalTheory.Desc.UAgree in
 
+open GlobalTheory.Desc.UAgree in
 theorem GlobalTheory.Desc.mulAgree_oneAgree_of_openIn : ∀ (σ : Setup) (E : Emb σ) (S₁ S₂ : Scheme.{0}) (s₁ : S₁ ⟶ Sp σ.R) (s₂ : S₂ ⟶ Sp σ.R) (H₁ : Over S₁) [GrpObj H₁] (H₂ : Over S₂) [GrpObj H₂] (h₁ : H₁.left ⟶ E.P) (h₂ : H₂.left ⟶ E.P), Flat s₁ → Flat s₂ → Flat H₁.hom → Flat H₂.hom → OpenIn h₁ H₁.hom E.p s₁ → OpenIn h₂ H₂.hom E.p s₂ → MulAgree H₁ σ.A h₁ E.ιA → MulAgree H₂ σ.A h₂ E.ιA → MulAgree H₁ H₂ h₁ h₂ ∧ OneAgree s₁ s₂ H₁ H₂ h₁ h₂ := by
   intro σ E S₁ S₂ s₁ s₂ H₁ _ H₂ _ h₁ h₂ fs₁ fs₂ fH₁ fH₂ o₁ o₂ m₁ m₂
   haveI := fs₁; haveI := fs₂; haveI := fH₁; haveI := fH₂

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.EtaleBaseChangeFractionFieldIndEtaleOverPolynomi
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.EtaleBaseChangeFractionFieldIndEtaleOverPolynomi
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC
@@ -13,7 +17,7 @@ theorem spS_of_integral_injective {C D : CommRingCat.{0}} (g : C ⟶ D) (hi : g.
   have : Algebra.IsIntegral C D := ⟨hi⟩
   have hk : RingHom.ker (algebraMap C D) ≤ r := by
     rw [(RingHom.injective_iff_ker_eq_bot (algebraMap C D)).1 hj]; exact bot_le
-  obtain ⟨Q, -, hQ, hQc⟩ := Ideal.exists_ideal_over_prime_of_isIntegral r ⊥ (by rw [← RingHom.ker_eq_comap_bot (algebraMap C D)]; exact hk)
+  obtain ⟨Q, -, hQ, hQc⟩ := Ideal.exists_ideal_over_prime_of_isIntegral r ⊥ (by rw [Ideal.under_def C (B := D), ← RingHom.ker_eq_comap_bot (algebraMap C D)]; exact hk)
   exact ⟨Q, hQ, hQc⟩
 
 theorem SpS.comp {C D E : CommRingCat.{0}} {f : C ⟶ D} {g : D ⟶ E} (hf : SpS f) (hg : SpS g) : SpS (f ≫ g) := by
@@ -46,7 +50,7 @@ theorem ULA_of (hS : Stalk) (hP : AlgResProps) (hE : AICExt) (hD : DomCover) (hL
     have ho : AlgRes o := p6 D (Localization.AtPrime r) r.primeCompl
     refine ⟨CommRingCat.of (Localization.AtPrime r), o, IsLocalRing.maximalIdeal _,
       hL D (Localization.AtPrime r) r.primeCompl, inferInstance,
-      IsLocalization.AtPrime.comap_maximalIdeal _ r, ?_⟩
+      IsLocalization.AtPrime.under_maximalIdeal _ r, ?_⟩
     haveI : IsDomain (CommRingCat.of (Localization.AtPrime r)) := hdom
     haveI : IsLocalRing (CommRingCat.of (Localization.AtPrime r)) :=
       inferInstanceAs (IsLocalRing (Localization.AtPrime r))

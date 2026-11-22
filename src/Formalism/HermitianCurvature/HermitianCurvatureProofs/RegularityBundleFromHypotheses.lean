@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AeSS
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AeSS
+
+@[expose] public section
 
 noncomputable section
 

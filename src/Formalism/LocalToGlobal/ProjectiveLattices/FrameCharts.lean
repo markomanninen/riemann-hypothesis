@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.UnitIndepOfCharts
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnitIndepOfCharts
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -116,8 +120,10 @@ theorem spMap_algHom_comp {K : Type} [Field K] {S T U : Type} [CommRing S] [Alge
 
 theorem dualMap_comp {S T U : Type} [CommRing S] [CommRing T] [CommRing U] (φ : S →+* T) (ψ : T →+* U) :
     dualMap (ψ.comp φ) = (dualMap ψ).comp (dualMap φ) :=
-  RingHom.ext fun x => by
-    ext <;> simp [dualMap]
+  by
+    apply RingHom.ext
+    intro x
+    apply TrivSqZeroExt.ext <;> simp [dualMap]
 
 theorem spMap_dual_comp {K : Type} [Field K] {S T U : Type} [CommRing S] [Algebra K S] [CommRing T] [Algebra K T]
     [CommRing U] [Algebra K U] (φ : S →ₐ[K] T) (ψ : T →ₐ[K] U) :
@@ -246,13 +252,17 @@ theorem spMap_comp_ring {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (f
 
 theorem dualMap_alg {S T : Type} [CommRing S] [CommRing T] (φ : S →+* T) :
     (dualMap φ).comp (algebraMap S (DualNumber S)) = (algebraMap T (DualNumber T)).comp φ :=
-  RingHom.ext fun a => by
-    ext <;> simp [dualMap, TrivSqZeroExt.algebraMap_eq_inl]
+  by
+    apply RingHom.ext
+    intro a
+    apply TrivSqZeroExt.ext <;> simp [dualMap, TrivSqZeroExt.algebraMap_eq_inl]
 
 theorem dualMap_eps {S T : Type} [CommRing S] [CommRing T] (φ : S →+* T) (a : S) :
     (dualMap φ).comp (epsMul a) = (epsMul (φ a)).comp (dualMap φ) :=
-  RingHom.ext fun x => by
-    ext <;> simp [dualMap, epsMul, mul_comm]
+  by
+    apply RingHom.ext
+    intro x
+    apply TrivSqZeroExt.ext <;> simp [dualMap, epsMul, mul_comm]
 
 theorem isCombAt_pull {S T : Type} [CommRing S] [CommRing T] (φ : S →+* T) {x : Sp S ⟶ Xo.X}
     {x' : Sp T ⟶ Xo.X} (hx : x' = spMap φ ≫ x) {m : ℕ} {v : Fin m → (Sp (DualNumber S) ⟶ Xo.univ.t.G.left)}

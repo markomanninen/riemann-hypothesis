@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory
@@ -18,7 +23,7 @@ theorem linearIndependent_real_map_of_fieldEmb {E : Type} [Field E] {r n : ℕ} 
     | tmul a M =>
       rw [TensorProduct.smul_tmul', smul_eq_mul]
       simp only [j, matrixEquivTensor_apply_symm, mul_smul]
-    | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, smul_add]
+    | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
   have h2 : LinearIndependent ℂ (j.toRingEquiv.toAddEquiv.toAddMonoidHom ∘
       fun i => (1 : ℂ) ⊗ₜ[E] e i) :=
     h1.map_of_injective_injective id _ (fun _ h => h)

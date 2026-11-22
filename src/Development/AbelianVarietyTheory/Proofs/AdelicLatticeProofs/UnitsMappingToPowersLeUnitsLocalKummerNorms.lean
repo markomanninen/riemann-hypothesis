@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.MemPowSub
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.MemPowSub
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Polynomial GlobalTheory.QNorm GlobalTheory.CNorm
 open scoped WithZero TensorProduct
@@ -15,7 +19,8 @@ theorem norm_map_of_basis {F L A B ι : Type} [CommRing F] [CommRing L] [CommRin
     intro x i
     have h1 : ψ x = ∑ j, φ (b.repr x j) • b' j := by
       conv_lhs => rw [← b.sum_repr x]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [Algebra.smul_def, Algebra.smul_def, map_mul, hψ, hb]
     rw [h1, b'.repr_sum_self]
@@ -30,7 +35,7 @@ theorem exists_basis_pow_root {L : Type} [Field L] {p : ℕ} (hp : 0 < p) (a : L
       ∀ i, b i = AdjoinRoot.root (X ^ p - C a : L[X]) ^ (i : ℕ) := by
   have hne : (X ^ p - C a : L[X]) ≠ 0 := X_pow_sub_C_ne_zero hp a
   have hd : (AdjoinRoot.powerBasis hne).dim = p := by
-    rw [AdjoinRoot.powerBasis_dim, natDegree_X_pow_sub_C]
+    rw [AdjoinRoot.powerBasis_dim, natDegree_X_pow_sub_C _]
   refine ⟨(AdjoinRoot.powerBasis hne).basis.reindex (finCongr hd), fun i => ?_⟩
   rw [Module.Basis.reindex_apply, PowerBasis.basis_eq_pow, AdjoinRoot.powerBasis_gen]
   simp

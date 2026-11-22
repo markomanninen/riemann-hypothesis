@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MassGenusRestrictedProduct
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MassGenusRestrictedProduct
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+
+@[expose] public section
+
 open GlobalTheory.HL
 open scoped ENNReal Classical
 set_option maxHeartbeats 1000000 in

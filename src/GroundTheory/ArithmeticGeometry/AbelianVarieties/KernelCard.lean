@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.DivisionPoints
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.DivisionPoints
+
+@[expose] public section
 
 namespace GroundTheory.Arith.Abelian
 
@@ -26,7 +30,7 @@ theorem exists_equation_of_Ψ₂Sq_ne_zero [IsSepClosed F] {x : F} (hx : W.Ψ₂
     have hD0 : b ^ 2 + 4 * c ≠ 0 := hD ▸ hx
     refine ⟨C (-4 * (b ^ 2 + 4 * c)⁻¹), C (b ^ 2 + 4 * c)⁻¹ * (C 2 * X + C b), ?_⟩
     have e : (C 2 * X + C b) ^ 2 - 4 * q = C (b ^ 2 + 4 * c) := by
-      simp only [q, map_add, map_pow, map_mul, map_ofNat]; ring
+      simp only [q, map_add (f := _), map_pow, map_mul, map_ofNat]; ring
     calc C (-4 * (b ^ 2 + 4 * c)⁻¹) * q + C (b ^ 2 + 4 * c)⁻¹ * (C 2 * X + C b) * (C 2 * X + C b)
         = C (b ^ 2 + 4 * c)⁻¹ * ((C 2 * X + C b) ^ 2 - 4 * q) := by
           simp only [map_mul, map_neg, map_ofNat]; ring
@@ -99,10 +103,10 @@ theorem isCoprime_Φ_ΨSq (n : ℤ) : IsCoprime (W.Φ n) (W.ΨSq n) := by
   rw [e1, hw] at hphi
   have hprod : psiAt W' a y (n + 1) * psiAt W' a y (n - 1) = 0 := by linear_combination hphi
   rcases mul_eq_zero.mp hprod with hp | hp
-  · have := (zsmul_eq_zero_iff W' h (n + 1)).mpr ((psiAt_eq_zero_iff W' h _).mp hp)
+  · have := (zsmul_eq_zero_iff W' h (n + 1)).mpr ((psiAt_eq_zero_iff W' h (n + 1)).mp hp)
     rw [add_zsmul, one_zsmul, hn0, zero_add] at this
     exact Point.some_ne_zero h this
-  · have := (zsmul_eq_zero_iff W' h (n - 1)).mpr ((psiAt_eq_zero_iff W' h _).mp hp)
+  · have := (zsmul_eq_zero_iff W' h (n - 1)).mpr ((psiAt_eq_zero_iff W' h (n - 1)).mp hp)
     rw [sub_zsmul, one_zsmul, hn0, zero_add, neg_eq_zero] at this
     exact Point.some_ne_zero h this
 
@@ -126,19 +130,19 @@ theorem Ψ₂Sq_ne_zero : W.Ψ₂Sq ≠ 0 := by
   intro h
   have h3 : (4 : F) = 0 := by rw [← W.coeff_Ψ₂Sq, h, coeff_zero]
   have h2 : W.b₂ = 0 := by
-    have := congrArg (coeff · 2) h
+    have := congrArg (fun p : F[X] => p.coeff 2) h
     simp only [Ψ₂Sq, coeff_add, coeff_C_mul, coeff_X_pow, coeff_X, coeff_C, coeff_zero] at this
     simpa using this
   have h0 : W.b₆ = 0 := by
-    have := congrArg (coeff · 0) h
+    have := congrArg (fun p : F[X] => p.coeff 0) h
     simp only [Ψ₂Sq, coeff_add, coeff_C_mul, coeff_X_pow, coeff_X, coeff_C, coeff_zero] at this
     simpa using this
   have hΔ : W.Δ = 0 := by
     rw [Δ, h2, h0]; linear_combination (-2 * W.b₄ ^ 3) * h3
   exact W.isUnit_Δ.ne_zero hΔ
 
-omit [W.IsElliptic] in
 
+omit [W.IsElliptic] in
 private theorem wronskian_coeff {n : ℤ} (hn : (n : F) ≠ 0) (h2 : 2 ≤ n.natAbs) :
     (derivative (W.Φ n) * W.ΨSq n - W.Φ n * derivative (W.ΨSq n)).coeff
       ((n.natAbs ^ 2 - 1) + (n.natAbs ^ 2 - 1)) = (n : F) ^ 2 := by
@@ -160,16 +164,6 @@ private theorem wronskian_coeff {n : ℤ} (hn : (n : F) ≠ 0) (h2 : 2 ≤ n.nat
     rw [Nat.cast_sub (by omega : 1 ≤ m)]; push_cast; ring
   rw [this]
   ring
-
-theorem exists_zsmul_ne_zero [IsSepClosed F] [DecidableEq F] {n : ℤ} (hn : n ≠ 0) :
-    ∃ P : W.toAffine.Point, n • P ≠ 0 := by
-  have := infinite_of_isSepClosed F
-  have hprod : W.ΨSq n * W.Ψ₂Sq ≠ 0 := mul_ne_zero (ΨSq_ne_zero_of_ne_zero W hn) (Ψ₂Sq_ne_zero W)
-  obtain ⟨x, hx⟩ := Infinite.exists_notMem_finset (W.ΨSq n * W.Ψ₂Sq).roots.toFinset
-  rw [Multiset.mem_toFinset, mem_roots hprod, IsRoot, eval_mul, mul_eq_zero, not_or] at hx
-  obtain ⟨y, hy⟩ := exists_equation_of_Ψ₂Sq_ne_zero W hx.2
-  have h : W.toAffine.Nonsingular x y := equation_iff_nonsingular.mp hy
-  exact ⟨.some x y h, fun h0 => hx.1 ((zsmul_eq_zero_iff W h n).mp h0)⟩
 
 end Count
 
@@ -339,8 +333,8 @@ theorem card_zsmul_eq_zero {n : ℤ} (hn : (n : F) ≠ 0) :
       left_inv := fun P => Subtype.ext (add_sub_cancel_right _ _)
       right_inv := fun Q => Subtype.ext (sub_add_cancel _ _) }
 
-omit [IsSepClosed F] [W.IsElliptic] in
 
+omit [IsSepClosed F] [W.IsElliptic] in
 theorem zsmul_eq_zero_iff_ΨSq (n : ℤ) (P : W.toAffine.Point) :
     n • P = 0 ↔ P = 0 ∨ ∃ (x y : F) (h : W.toAffine.Nonsingular x y),
       P = .some x y h ∧ (W.ΨSq n).eval x = 0 := by
@@ -353,12 +347,6 @@ theorem zsmul_eq_zero_iff_ΨSq (n : ℤ) (P : W.toAffine.Point) :
     · rintro (h0 | ⟨x', y', h', he, hx⟩)
       · exact absurd h0 (Point.some_ne_zero h)
       · rw [Point.some.injEq] at he; rw [he.1]; exact hx
-
-theorem card_ΨSq_eq_zero {n : ℤ} (hn : (n : F) ≠ 0) :
-    Nat.card {P : W.toAffine.Point // P = 0 ∨ ∃ (x y : F) (h : W.toAffine.Nonsingular x y),
-      P = .some x y h ∧ (W.ΨSq n).eval x = 0} = n.natAbs ^ 2 := by
-  rw [← card_zsmul_eq_zero W hn]
-  exact Nat.card_congr (Equiv.subtypeEquivRight fun P => (zsmul_eq_zero_iff_ΨSq W n P).symm)
 
 end Kernel
 

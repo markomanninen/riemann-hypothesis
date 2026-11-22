@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.RightOfFd
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.RightOfFd
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.ConjugateSubgroup.conj_sub :
     ∀ {G : Type} [inst : Group G] [inst_1 : TopologicalSpace G] [IsTopologicalGroup G]

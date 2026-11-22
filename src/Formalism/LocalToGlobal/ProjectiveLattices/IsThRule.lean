@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.IsCombAt
-import Formalism.LocalToGlobal.ProjectiveLattices.RowDeg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaVV
-import Mathlib.RingTheory.RingHom.FaithfullyFlat
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsCombAt
+public import Formalism.LocalToGlobal.ProjectiveLattices.RowDeg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaVV
+public import Mathlib.RingTheory.RingHom.FaithfullyFlat
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -39,16 +43,6 @@ def IsVtOver (N : ℕ) {T : Over X} (ok : (T ⟶ A) → Prop) (s : LB.Sec (LPow 
     LB.Gen.Corr L.L _ _ _ _ α (LB.pullGen L.L _ _ α₀ (snd T A).left) ∧
     IsTwistPull A L.L (mulT A T N) (snd T A ^ N) (lift_snd _ _) ((N : ℤ) ^ 2) 1 α s s₁ ∧
     SymLift A L.L ((N : ℤ) ^ 2) (N ^ 2) t' U ∧ IsActOf A L.L ((N : ℤ) ^ 2) U s₁ F
-
-def IsTFrame (N : ℕ) {T : Over X} (t' : T ⟶ A)
-    (e : LB.Gen (LB.LinComb L.L (Y := T.left) (K := Fin 1) (fun _ => (t' ^ N).left) (fun _ => 1))) : Prop :=
-  e.IsGen ∧ ∃ (α₀ : LB.Gen (LB.LinComb L.L (K := Fin 2) ![𝟙 A.left, (mulA A N).left] ![(N : ℤ) ^ 2, -1]))
-    (U : ThetaGrp A L.L ((N : ℤ) ^ 2) T)
-    (τ : LB.Gen (LB.LinComb L.L (Y := T.left) (K := Fin 1) (fun _ => U.pt.left) (fun _ => (N : ℤ) ^ 2))),
-    α₀.IsGen ∧ IsNormMul A L.L L.rig N α₀ ∧ SymLift A L.L ((N : ℤ) ^ 2) (N ^ 2) t' U ∧
-    LB.Gen.Corr L.L _ _ _ _ τ (LB.mulGen L.L _ _ _ _ (LB.pullGen L.L _ _ α₀ t'.left) e) ∧
-    LB.Gen.Corr L.L _ _ _ _ (LB.mulGen L.L _ _ _ _ (LB.pullGen L.L _ _ U.φ (ptSecT A 1).left) τ)
-      (rigT A L.L L.rig T ((N : ℤ) ^ 2))
 
 end Vt
 

@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.EtaleCohomology.EtaleSheaves.EtaleChapterEThree
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.EtaleCohomology.EtaleSheaves.EtaleChapterEThree
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC
@@ -50,11 +54,6 @@ theorem RE.of_comp_right {q : ℕ} {i : ℤ} {A B C : CommRingCat.{0}} {f : A �
     funext x; rw [Spec.map_comp, Functor.map_comp, pull_comp]; rfl
   have := hfg n
   rw [h] at this; exact (Function.Bijective.of_comp_iff' (hg n) _).1 this
-
-theorem RE.id (q : ℕ) (i : ℤ) (A : CommRingCat.{0}) : RE q i (𝟙 A) := fun n => by
-  have h : ⇑(pull _ (sch.map (Spec.map (𝟙 A))) (tw q i) n) = _root_.id := by
-    funext x; rw [Spec.map_id, CategoryTheory.Functor.map_id, pull_id]; rfl
-  rw [h]; exact Function.bijective_id
 
 theorem RE.of_isIso (q : ℕ) (i : ℤ) {A B : CommRingCat.{0}} (f : A ⟶ B) [IsIso f] : RE q i f := fun n => by
   have h1 : ∀ x, pull _ (sch.map (Spec.map (inv f))) (tw q i) n (pull _ (sch.map (Spec.map f)) (tw q i) n x) = x := fun x => by

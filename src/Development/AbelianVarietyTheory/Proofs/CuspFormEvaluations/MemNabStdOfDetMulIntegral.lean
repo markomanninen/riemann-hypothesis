@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.LetAct
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.LetAct
+
+@[expose] public section
 
 open NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.BasicNotions Formalism.L2.DIV GlobalTheory.FrameRead
 open scoped Classical
@@ -30,13 +34,14 @@ theorem mem_valuationSubring_of_indep {K σ ι : Type} [Field K] [Fintype ι] (A
     ext m
     have e1 : (∑ k, IsLocalRing.residue A (a k) • map (Int.castRingHom (IsLocalRing.ResidueField A)) (q k)).coeff m
         = IsLocalRing.residue A (∑ k, a k * (((q k).coeff m : ℤ) : A)) := by
-      simp [coeff_sum, coeff_map]
-    rw [e1, coeff_zero, IsLocalRing.residue_eq_zero_iff, A.valuation_lt_one_iff]
+      simp [coeff_map]
+    rw [e1, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, IsLocalRing.residue_eq_zero_iff, A.valuation_lt_one_iff]
     have e2 : ((∑ k, a k * (((q k).coeff m : ℤ) : A) : A) : K)
         = (∑ i, c i • map (Int.castRingHom K) (q i)).coeff m / c j := by
       rw [coeff_sum, Finset.sum_div]
       change A.subtype _ = _
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_mul, map_intCast, coeff_smul, coeff_map]
       simp only [a, ValuationSubring.coe_subtype, smul_eq_mul, eq_intCast]

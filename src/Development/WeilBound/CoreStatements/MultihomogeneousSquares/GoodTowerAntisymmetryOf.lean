@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.MultihomogeneousSquares.ChooseTwoAdd
-import Development.WeilBound.CoreStatements.MultihomogeneousSquares.SqOf
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.AntisymmetryStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.AgreementPositiveStatement
+module
+
+public import Development.WeilBound.CoreStatements.MultihomogeneousSquares.ChooseTwoAdd
+public import Development.WeilBound.CoreStatements.MultihomogeneousSquares.SqOf
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.AntisymmetryStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.AgreementPositiveStatement
+
+@[expose] public section
 
 noncomputable section
 

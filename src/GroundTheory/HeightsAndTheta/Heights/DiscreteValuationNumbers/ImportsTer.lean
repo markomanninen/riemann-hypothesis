@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.LocCycle
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDimStrictDrop
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.LocCycle
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDimStrictDrop
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -31,13 +36,13 @@ theorem LocalCoefficient.proof (h₁ : LeftTermSupport.Statement.{u})
     intro J W hW
     unfold idealCycle locCycle
     by_cases hm : W ∈ J.minimalPrimes
-    · rw [dif_pos ⟨hm, hW⟩, dif_pos hm]
+    · rw [dite_eq_left ⟨hm, hW⟩, dite_eq_left hm]
       rfl
-    · rw [dif_neg fun h => hm h.1, dif_neg hm]
+    · rw [dite_eq_right fun h => hm h.1, dite_eq_right hm]
   have hzero : ∀ J : Ideal (MRing ι O), ¬ J ≤ U → locCycle J U = 0 := by
     intro J hJ
     unfold locCycle
-    rw [dif_neg fun h => hJ h.1.2]
+    rw [dite_eq_right fun h => hJ h.1.2]
   have hL : ∀ G, ratDiv P f g G * divCycle G s U =
       (locCycle (P ⊔ Ideal.span {f}) G - locCycle (P ⊔ Ideal.span {g}) G) *
         locCycle (G ⊔ Ideal.span {s}) U := by

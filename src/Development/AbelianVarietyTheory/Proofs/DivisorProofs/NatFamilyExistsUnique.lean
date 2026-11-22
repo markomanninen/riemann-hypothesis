@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct WithConv
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Sp spMap epsR IsTangent IsGrpPullback)
 open ReciprocityTheory.ChartRestriction.G.Semi (IsAbelianScheme LB RigLB CubicalStr Theta thφ thε thK x3)
@@ -17,7 +22,7 @@ abbrev locAlg (R : Type) [CommRing R] {D : Type} [CommRing D] [Algebra R D] (s :
 
 theorem sm_loc_of_mem {R : Type} [CommRing R] {X : Over (Sp R)} {K : Type} (W : K → X.left.Opens)
     (hW : ⨆ i, W i = ⊤) {D : Type} [CommRing D] [Algebra R D] (x : Pt X D) (P : PrimeSpectrum D) :
-    ∃ s : D, s ∉ P.asIdeal ∧ Sm W (spOver (locAlg R s) ≫ x) := by
+    ∃ s : D, s ∉ P.asIdeal ∧ Sm W (D := Localization.Away s) (spOver (locAlg R s) ≫ x) := by
   have h1 : x.left.base P ∈ (⨆ i, W i) := by rw [hW]; trivial
   obtain ⟨i, hi⟩ := (TopologicalSpace.Opens.mem_iSup).mp h1
   obtain ⟨V, ⟨s, rfl⟩, hPV, hVU⟩ :=
@@ -66,9 +71,17 @@ end GlobalTheory.PtExt
 
 namespace GlobalTheory.PtExt
 
-theorem natFamily_existsUnique : ∀ (R : Type) [CommRing R] (X : Over (Sp R)) (K : Type) (W : K → X.left.Opens), ⨆ i, W i = ⊤ → ∀ (D : Type) [CommRing D] [Algebra R D] (x : Pt X D) (τ : ∀ (E : Type) [CommRing E] [Algebra R E], (D →ₐ[R] E) → E), (∀ (E : Type) [CommRing E] [Algebra R E] (E' : Type) [CommRing E'] [Algebra R E'] (ψ : D →ₐ[R] E) (θ : E →ₐ[R] E'), Sm W (spOver ψ ≫ x) → τ E' (θ.comp ψ) = θ (τ E ψ)) → ∃! d : D, ∀ (E : Type) [CommRing E] [Algebra R E] (ψ : D →ₐ[R] E), Sm W (spOver ψ ≫ x) → τ E ψ = ψ d := by
+theorem natFamily_existsUnique :
+    ∀ (R : Type) [CommRing R] (X : Over (Sp R)) (K : Type) (W : K → X.left.Opens),
+    ⨆ i, W i = ⊤ → ∀ (D : Type) [CommRing D] [Algebra R D] (x : Pt X D)
+      (τ : ∀ (E : Type) [CommRing E] [Algebra R E], (D →ₐ[R] E) → E),
+    (∀ (E : Type) [CommRing E] [Algebra R E] (E' : Type) [CommRing E'] [Algebra R E']
+      (ψ : D →ₐ[R] E) (θ : E →ₐ[R] E'),
+      Sm W (D := E) (spOver ψ ≫ x) → τ E' (θ.comp ψ) = θ (τ E ψ)) →
+    ∃! d : D, ∀ (E : Type) [CommRing E] [Algebra R E] (ψ : D →ₐ[R] E),
+      Sm W (D := E) (spOver ψ ≫ x) → τ E ψ = ψ d := by
   intro R _ X K W hW D _ _ x τ hτ
-  let S : Set D := {s | Sm W (spOver (locAlg R s) ≫ x)}
+  let S : Set D := {s | Sm W (D := Localization.Away s) (spOver (locAlg R s) ≫ x)}
   have key : ∀ (s : D), s ∈ S → ∀ (E : Type) [CommRing E] [Algebra R E] (ψ : D →ₐ[R] E)
       (θ : Localization.Away s →ₐ[R] E), θ.comp (locAlg R s) = ψ → θ (τ _ (locAlg R s)) = τ E ψ := by
     intro s hs E _ _ ψ θ h
@@ -84,7 +97,7 @@ theorem natFamily_existsUnique : ∀ (R : Type) [CommRing R] (X : Over (Sp R)) (
     have e2 := key b b.2 _ _ (awL R (a : D) b) (awL_comp R _ _)
     exact e1.trans e2.symm)
   refine ⟨d, fun E _ _ ψ hψ ↦ ?_, fun d' hd' ↦ hu d' fun a ↦ (hd' _ (locAlg R a.1) a.2).symm⟩
-  have spanE : Ideal.span (ψ '' S) = ⊤ := by
+  have spanE : Ideal.span ((ψ : D →+* E) '' S) = ⊤ := by
     rw [← Ideal.map_span, span, Ideal.map_top]
   apply Localization.algebraMap_injective_of_span_eq_top _ spanE
   funext ⟨t, s, hs, ht⟩
@@ -92,7 +105,7 @@ theorem natFamily_existsUnique : ∀ (R : Type) [CommRing R] (X : Over (Sp R)) (
   let θ : E →ₐ[R] Localization.Away (ψ s) := locAlg R (ψ s)
   let θ' : Localization.Away s →ₐ[R] Localization.Away (ψ s) := Localization.awayMapₐ ψ s
   have hc : θ'.comp (locAlg R s) = θ.comp ψ := AlgHom.ext fun z ↦ by
-    simp [θ', θ, Localization.awayMapₐ, IsLocalization.Away.mapₐ, IsLocalization.Away.map, IsLocalization.map_eq]
+    simp [θ', θ, IsLocalization.Away.mapₐ, IsLocalization.Away.map, IsLocalization.map_eq]
   change θ (τ E ψ) = θ (ψ d)
   have e : τ _ (locAlg R s) = algebraMap D _ d := (hd ⟨s, hs⟩).symm
   rw [← hτ E _ ψ θ hψ, ← hc, ← key s hs _ _ θ' rfl, e]

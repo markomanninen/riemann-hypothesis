@@ -1,5 +1,9 @@
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularSmooth
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FiniteEtaleClopen.ClopenExtAlt
+module
+
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularSmooth
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FiniteEtaleClopen.ClopenExtAlt
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry NumberField IsDedekindDomain
 open GlobalTheory.GalV (HTower)

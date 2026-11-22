@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.ArcLineFunctions.FunDef
-import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.QatOfBridge
-import Formalism.LocalToGlobal.ProjectiveLattices.XcLat
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidArc
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.ArcLineFunctions.FunDef
+public import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.QatOfBridge
+public import Formalism.LocalToGlobal.ProjectiveLattices.XcLat
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidArc
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,10 +37,5 @@ structure ArcDatumAt (T : Core D) (j : ℕ) (K₁ : Type) [Field K₁] [Algebra 
   isArc3 : IsArcPt3At Y (a.restrict (T.Q.c.V Wp).subtype) χ W yF th
   μ : ArcLt (T.Q.Dw j) →₀ ℕ
   jj : ℤ
-
-theorem ArcDatumAt.isArc {T : Core D} {j : ℕ} {K₁ : Type} [Field K₁] [Algebra T.Q.c.F K₁]
-    [Algebra T.Q.c.F (ArcS (T.Q.Dw j) K₁)] (d : ArcDatumAt T j K₁) :
-    IsArcPt d.Y (d.a.restrict (T.Q.c.V d.Wp).subtype) d.χ d.W d.e d.yF :=
-  ⟨d.arcDatum_isArc_point_basis, d.th, d.isArc3⟩
 
 end Formalism.L2.Pj.QAt

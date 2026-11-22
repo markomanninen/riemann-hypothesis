@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBasisOnZetaPowMulQPow
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsDlog
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDlogCoef
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TowerLevelEmbeddingInjectiveRangeAdjoinRootsStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIntPrimeDivRootOfUnitySubOnePowStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EvalSeriesAndDerivUniqueOfCoefficientsStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EvalSeriesCongIffCoeffAndIsUnitStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EvOfFintype
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsAlgZpOfPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBasisOnZetaPowMulQPow
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsDlog
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDlogCoef
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TowerLevelEmbeddingInjectiveRangeAdjoinRootsStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIntPrimeDivRootOfUnitySubOnePowStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EvalSeriesAndDerivUniqueOfCoefficientsStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EvalSeriesCongIffCoeffAndIsUnitStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EvOfFintype
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsAlgZpOfPow
+
+@[expose] public section
+
 open scoped MatrixGroups
 open GlobalTheory.KZ GlobalTheory.Glue GlobalTheory.K5 GlobalTheory.KummerEisensteinGalois
 
@@ -23,6 +28,7 @@ section Coef
 
 open Polynomial GlobalTheory.K5.DlogCoef GlobalTheory.K5.DlogUniq
 
+set_option synthInstance.maxHeartbeats 100000 in
 theorem deriv_sum' {n N M : ℕ} (J : Ideal (On p n)) (D : Derivation (O0 p) (On p n) (On p n ⧸ J))
     (cx cy : On p n) (hx : D (xn p n) = Ideal.Quotient.mk J (cx * xn p n))
     (hy : D (yn p n) = Ideal.Quotient.mk J (cy * yn p n)) (a : Fin N → Fin M → O0 p) :
@@ -31,13 +37,15 @@ theorem deriv_sum' {n N M : ℕ} (J : Ideal (On p n)) (D : Derivation (O0 p) (On
       Ideal.Quotient.mk J (∑ i : Fin N, ∑ j : Fin M,
         ((i : ℕ) * cx + (j : ℕ) * cy) * algebraMap (O0 p) (On p n) (a i j) * xn p n ^ (i : ℕ) *
           yn p n ^ (j : ℕ)) := by
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [Derivation.leibniz, Derivation.leibniz, Derivation.map_algebraMap, deriv_pow J D _ _ hx,
     deriv_pow J D _ _ hy, smul_zero, add_zero, smul_mk, smul_mk, smul_mk, ← map_add]
   congr 1
   ring
 
+set_option synthInstance.maxHeartbeats 100000 in
 theorem coef {N M : ℕ} (m : ℕ) (a : Fin N → Fin M → O0 p) (w α β : On p (m + 1))
     (hsum : w = ∑ i : Fin N, ∑ j : Fin M,
       algebraMap (O0 p) (On p (m + 1)) (a i j) * xn p (m + 1) ^ (i : ℕ) * yn p (m + 1) ^ (j : ℕ))
@@ -65,8 +73,8 @@ theorem coef {N M : ℕ} (m : ℕ) (a : Fin N → Fin M → O0 p) (w α β : On 
     rw [← hsum] at hDw
     simp only [mul_zero, zero_add, mul_one] at hDw
     have e2 := congrArg D.liftKaehlerDifferential h
-    simp only [map_add, map_smul, Derivation.liftKaehlerDifferential_comp_D] at e2
-    rw [hDw, hx', hy', smul_mk, smul_mk, smul_mk, ← map_add, Ideal.Quotient.eq] at e2
+    simp only [map_add (f := _), map_smul, Derivation.liftKaehlerDifferential_comp_D] at e2
+    rw [hDw, hx', hy', smul_mk, smul_mk, smul_mk, ← map_add (f := _), Ideal.Quotient.eq] at e2
     refine (Ideal.unit_mul_mem_iff_mem _ hxy).1 ?_
     convert (Ideal.neg_mem_iff _).2 e2 using 1
     ring
@@ -86,8 +94,8 @@ theorem coef {N M : ℕ} (m : ℕ) (a : Fin N → Fin M → O0 p) (w α β : On 
     rw [← hsum] at hDw
     simp only [mul_zero, mul_one, add_zero] at hDw
     have e2 := congrArg D.liftKaehlerDifferential h
-    simp only [map_add, map_smul, Derivation.liftKaehlerDifferential_comp_D] at e2
-    rw [hDw, hx', hy', smul_mk, smul_mk, smul_mk, ← map_add, Ideal.Quotient.eq] at e2
+    simp only [map_add (f := _), map_smul, Derivation.liftKaehlerDifferential_comp_D] at e2
+    rw [hDw, hx', hy', smul_mk, smul_mk, smul_mk, ← map_add (f := _), Ideal.Quotient.eq] at e2
     have e3 : (xn p (m + 1) * yn p (m + 1)) * (w * β - ∑ i : Fin N,
         ∑ j : Fin M, ((i : ℕ) : On p (m + 1)) * algebraMap (O0 p) (On p (m + 1)) (a i j) *
           xn p (m + 1) ^ (i : ℕ) * yn p (m + 1) ^ (j : ℕ)) ∈
@@ -100,14 +108,14 @@ theorem coef {N M : ℕ} (m : ℕ) (a : Fin N → Fin M → O0 p) (w α β : On 
 
 end Coef
 
-theorem emb_int (L : ℕ) (ι : On p L →ₐ[O0 p] Ω) (z : On p L) : IsInt p (ι z) := by
+theorem emb_int (L : ℕ) (ι : On p L →ₐ[O0 p] Ω) (z : On p L) : IsInt (p := p) (ι z) := by
   obtain ⟨b, -⟩ := GlobalTheory.K5.OnFree.on_free p L
   haveI : Module.Finite (O0 p) (On p L) := Module.Finite.of_basis b
   haveI : Algebra.IsIntegral (O0 p) (On p L) := Algebra.IsIntegral.of_finite _ _
   exact IsIntegral.map ι (Algebra.IsIntegral.isIntegral z)
 
 theorem isUnit_of_inv {L : ℕ} (ι : On p L →ₐ[O0 p] Ω) (hι : Function.Injective ι) (w : On p L) (h0 : ι w ≠ 0)
-    (hi : IsInt p (ι w)⁻¹) : IsUnit w := by
+    (hi : IsInt (p := p) (ι w)⁻¹) : IsUnit w := by
   letI : Algebra (On p L) Ω := ι.toRingHom.toAlgebra
   haveI : IsScalarTower (O0 p) (On p L) Ω := IsScalarTower.of_algebraMap_eq fun x => (ι.commutes x).symm
   have hi' : IsIntegral (On p L) (ι w)⁻¹ := IsIntegral.tower_top hi
@@ -182,9 +190,9 @@ theorem ev_cyc (T : GlobalTheory.K5.Tower p Ω) (L : ℕ) (ψ : O0 p →+* Ω) (
         have := Polynomial.natDegree_modByMonic_lt f hm (by
           intro h
           have := congrArg Polynomial.natDegree h
-          rw [Polynomial.natDegree_X_pow_sub_C, Polynomial.natDegree_one] at this
+          rw [Polynomial.natDegree_X_pow_sub_C _, Polynomial.natDegree_one] at this
           exact hN.ne' this)
-        rwa [Polynomial.natDegree_X_pow_sub_C] at this
+        rwa [Polynomial.natDegree_X_pow_sub_C _] at this
       refine ⟨fun m => (f %ₘ (Polynomial.X ^ (p ^ L) - Polynomial.C 1)).coeff m, ?_, fun h => absurd h hr⟩
       have e : Polynomial.aeval (T.ζ L) (f %ₘ (Polynomial.X ^ (p ^ L) - Polynomial.C 1)) = Polynomial.aeval (T.ζ L) f := by
         conv_rhs => rw [← Polynomial.modByMonic_add_div f (Polynomial.X ^ (p ^ L) - Polynomial.C 1)]
@@ -272,8 +280,8 @@ theorem rep {T : GlobalTheory.K5.Tower p Ω} {L : ℕ} {ψ : O0 p →+* Ω} (hψ
     rw [ha]
     ring
 
-theorem cong_sum {L : ℕ} (S : Finset ℤ) (v : ℤ → ℤ) (e : ℤ → Ω) (he : ∀ k, IsInt p (e k)) (hv : ∀ k, (p : ℤ) ^ L ∣ v k) :
-    Cong p L (∑ k ∈ S, (v k : Ω) * e k) 0 := by
+theorem cong_sum {L : ℕ} (S : Finset ℤ) (v : ℤ → ℤ) (e : ℤ → Ω) (he : ∀ k, IsInt (p := p) (e k)) (hv : ∀ k, (p : ℤ) ^ L ∣ v k) :
+    Cong (p := p) L (∑ k ∈ S, (v k : Ω) * e k) 0 := by
   choose c hc using hv
   refine ⟨∑ k ∈ S, (c k : Ω) * e k, IsIntegral.sum _ fun k _ => IsIntegral.mul (Basic.isInt_intCast _) (he k), ?_⟩
   rw [sub_zero, Finset.mul_sum]
@@ -288,7 +296,7 @@ theorem cong_val (hc : IsClo p Ω) {T : GlobalTheory.K5.Tower p Ω} {L : ℕ} {�
     (hE : ∀ r, ∑ k ∈ S r, ((k * θ k r : ℤ) : Ω) * T.ζ L ^ (g * k) = -∑ᶠ i : ℤ, cE i * cU (r - i))
     (hx : Ev ψ cU x x') (hz : Ev ψ cE z z')
     (hy : Ev ψ (fun r => ∑ k ∈ S r, (v k r : Ω) * (θ k r : Ω) * T.ζ L ^ (g * k)) y y') :
-    Cong p L (y + A * (z * x)) 0 := by
+    Cong (p := p) L (y + A * (z * x)) 0 := by
   have hN : 0 < p ^ L := pow_pos hp.out.pos L
   have hζ : T.ζ L ^ p ^ L = 1 := (T.prim L).pow_eq_one
   obtain ⟨R1, R2⟩ := EvRing.ev_ring p Ω hc T L ψ hψ
@@ -323,9 +331,9 @@ theorem local_coords : ∀ (p : ℕ) [Fact p.Prime] (Ωl : Type) [Field Ωl] [Al
   (∀ r : ℤ, cU r = ∑ᶠ k : ℤ, (θ k r : Ωl) * T.ζ L ^ (g * k)) →
   (∀ r : ℤ, ∑ᶠ k : ℤ, ((k * θ k r : ℤ) : Ωl) * T.ζ L ^ (g * k) = -∑ᶠ i : ℤ, cE i * cU (r - i)) →
   (∀ r : ℤ, r < 0 → cE r = 0) → (∀ r : ℤ, cE r ∈ Subring.closure {T.ζ L}) →
-  Ev ψ cU x x' → x ≠ 0 → IsInt p x⁻¹ →
+  Ev ψ cU x x' → x ≠ 0 → IsInt (p := p) x⁻¹ →
   ∃ (w : (On p L)ˣ) (α β : On p L) (z z' : Ωl), IsDlog p L (w : On p L) α β ∧ ι w = x ∧ Ev ψ cE z z' ∧
-    Cong p L (ι α) (-(A₁ : Ωl) * z) ∧ Cong p L ((p : Ωl) * ι β) (-(p : Ωl) * (g : Ωl) * z) := by
+    Cong (p := p) L (ι α) (-(A₁ : Ωl) * z) ∧ Cong (p := p) L ((p : Ωl) * ι β) (-(p : Ωl) * (g : Ωl) * z) := by
   intro p hp Ω _ _ hc T L ψ ι hL hψ hι A₁ g θ cU cE x x' hB ⟨r0, h0⟩ hdiv hU hE hE0 hEm hx hx0 hxi
   obtain ⟨m, rfl⟩ : ∃ m, L = m + 1 := ⟨L - 1, by omega⟩
   choose B hB using hB
@@ -360,7 +368,8 @@ theorem local_coords : ∀ (p : ℕ) [Fact p.Prime] (Ωl : Type) [Field Ωl] [Al
     algebraMap (O0 p) (On p (m + 1)) (a i j) * xn p (m + 1) ^ (i : ℕ) * yn p (m + 1) ^ (j : ℕ) with hw0
   have hw : ι w0 = x := by
     rw [hxe, hw0]
-    simp only [map_sum, map_mul, map_pow, AlgHom.commutes, hι.1, hι.2, Int.cast_one, one_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_pow, AlgHom.commutes, hι.1, hι.2, Int.cast_one, one_mul]
   obtain ⟨w, hwu⟩ := isUnit_of_inv ι (GlobalTheory.T.towerLevelEmbedding_injective_range_adjoinRoots p Ω hc T (m + 1) hL ι hι).1 w0 (hw ▸ hx0) (hw ▸ hxi)
   obtain ⟨α, β, hd⟩ := GlobalTheory.K5.exists_isDlog p (m + 1) w
   obtain ⟨d1, d2⟩ := coef m a w α β (hwu.trans hw0) hd
@@ -368,7 +377,8 @@ theorem local_coords : ∀ (p : ℕ) [Fact p.Prime] (Ωl : Type) [Field Ωl] [Al
   obtain ⟨f2, d2⟩ := Ideal.mem_span_singleton'.1 d2
   replace d1 := congrArg ι d1
   replace d2 := congrArg ι d2
-  simp only [map_sum, map_mul, map_pow, map_sub, map_natCast, map_one, AlgHom.commutes, hι.1, hι.2, hwu, hw, zeta_one] at d1 d2
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_pow, map_sub, map_natCast, map_one, AlgHom.commutes, hι.1, hι.2, hwu, hw, zeta_one] at d1 d2
   simp only [Int.cast_natCast] at k1 k2
   have hinv : x * x⁻¹ = 1 := mul_inv_cancel₀ hx0
   refine ⟨w, α, β, z, z', hd, hwu ▸ hw, hz, ⟨(ι f1 + c1) * x⁻¹,
@@ -378,7 +388,7 @@ theorem local_coords : ∀ (p : ℕ) [Fact p.Prime] (Ωl : Type) [Field Ωl] [Al
     have hpd := GlobalTheory.T.isInt_prime_div_rootOfUnity_sub_one_pow p Ω T 1 1 le_rfl (Nat.totient_pos.2 (pow_pos hp.out.pos _))
     rw [pow_one, div_eq_mul_inv] at hpd
     have hinv2 : (T.ζ 1 - 1) * (T.ζ 1 - 1)⁻¹ = 1 := mul_inv_cancel₀ hζ1
-    have hpi : IsInt p (p : Ω) := by simpa using Basic.isInt_intCast (p := p) (Ω := Ω) (p : ℤ)
+    have hpi : IsInt (p := p) (p : Ω) := by simpa using Basic.isInt_intCast (p := p) (Ω := Ω) (p : ℤ)
     refine ⟨(ι f2 * ((p : Ω) * (T.ζ 1 - 1)⁻¹) + p * c2) * x⁻¹,
       IsIntegral.mul (IsIntegral.add (IsIntegral.mul (emb_int _ ι _) hpd) (IsIntegral.mul hpi hc2)) hxi, ?_⟩
     generalize (∑ i : Fin (p ^ (m + 1)), ∑ j : Fin (p ^ (m + 1)),

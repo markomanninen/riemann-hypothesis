@@ -1,4 +1,9 @@
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.CountData
+module
+
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.CountData
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology GlobalTheory.CompanionTheory.SW.Core
 open scoped ENNReal NNReal MatrixGroups
 
@@ -125,16 +130,16 @@ theorem term_D (B : Matrix ι ι F) (ρ : InfinitePlace F → (F →+* ℝ)) (P 
   have h1 : (algebraMap F (A F) a • gf *ᵥ fun j => algebraMap F (A F) (x j)) =
       gf *ᵥ fun j => algebraMap F (A F) ((a • x) j) := by
     rw [← Matrix.mulVec_smul]
-    congr 1
-    funext j
-    simp
+    ext j
+    simp [Matrix.mulVec, dotProduct, Pi.smul_apply, smul_eq_mul, Finset.mul_sum,
+      mul_assoc, mul_left_comm, mul_comm]
   have h2 : (fun w => ρ w a • gi w *ᵥ fun j => ρ w (x j)) =
       fun w => gi w *ᵥ fun j => ρ w ((a • x) j) := by
     funext w
     rw [← Matrix.mulVec_smul]
-    congr 1
-    funext j
-    simp
+    ext j
+    simp [Matrix.mulVec, dotProduct, Pi.smul_apply, smul_eq_mul, Finset.mul_sum,
+      mul_assoc, mul_left_comm, mul_comm]
   rw [h1, h2]
   simp
 

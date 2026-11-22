@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CompTie
-import Formalism.LocalToGlobal.ProjectiveLattices.ValSetAlgSubset
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompTie
+public import Formalism.LocalToGlobal.ProjectiveLattices.ValSetAlgSubset
+
+@[expose] public section
 
 noncomputable section
 

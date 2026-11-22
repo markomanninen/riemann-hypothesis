@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.TwistedKernels.ExPhiPlusOnto
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaAEqOfUnip
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.TwistedKernels.ExPhiPlusOnto
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaAEqOfUnip
+
+@[expose] public section
 
 noncomputable section
 

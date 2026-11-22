@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatIntegrableAaVacOfConductor
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMemValuationEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteCoefficientBound
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinearCombinationLogBoundRealInequality
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
-import Formalism.LocalToGlobal.ProjectiveLattices.HalfOneAddSqrtNegIsIntegral
-import Formalism.LocalToGlobal.ProjectiveLattices.HostInt
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryLatticeSelfDualTraceForm
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.ModelLatIn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatIntegrableAaVacOfConductor
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMemValuationEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteCoefficientBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinearCombinationLogBoundRealInequality
+public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
+public import Formalism.LocalToGlobal.ProjectiveLattices.HalfOneAddSqrtNegIsIntegral
+public import Formalism.LocalToGlobal.ProjectiveLattices.HostInt
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryLatticeSelfDualTraceForm
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.ModelLatIn
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,7 +121,7 @@ theorem norm_sqrt_prod {ι : Type} (P : Finset ι) (q : ι → ℕ) (hq : ∀ i 
       rw [← norm_pow, ← map_pow, hs i hi, map_natCast, Complex.norm_natCast]
     rw [← h1, Real.sqrt_sq (norm_nonneg _)]
   rw [map_prod, norm_prod, Real.exp_sum]
-  refine Finset.prod_le_prod (fun i _ => norm_nonneg _) fun i hi => ?_
+  refine Finset.prod_le_prod₀ (fun i _ => norm_nonneg _) fun i hi => ?_
   have hq1 : (1 : ℝ) ≤ q i := by exact_mod_cast Nat.one_le_iff_ne_zero.2 (hq i hi)
   have hpos : 0 < Real.sqrt (q i) := Real.sqrt_pos.2 (by linarith)
   rw [map_zpow₀, norm_zpow, hn i hi]
@@ -325,8 +329,8 @@ theorem log_discr_le {large₂ : SizeData₂ D} {F : Face D A} (s : HidaSetting 
   rw [e, div_le_iff₀ (by positivity)] at h1
   nlinarith
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem core {large₂ : SizeData₂ D} {F : Face D A} (s : HidaSetting large₂ R F) (ch : Choice R) (hF : ch.FieldOK) {C : ℝ} (hC : 2 ≤ C) :
     FinScalAt ch C large₂.sc.b ∧ InfScalAt ch C large₂.sc.b := by
   classical
@@ -439,12 +443,5 @@ theorem core {large₂ : SizeData₂ D} {F : Face D A} (s : HidaSetting large₂
     linarith
 
 end Core
-
-theorem finScal_infScal : GlobalTheory.FunPr.Hypotheses₂ → FinScalK ∧ InfScalK := by
-  intro _
-  refine ⟨⟨0, fun CF _ => ⟨2, fun ε C hC => ⟨0, fun D large₂ _ _ Γ _ _ Pl0 T A Ks _ _ _ R F s ch _ _ hF => ?_⟩⟩⟩,
-    ⟨0, fun CF _ => ⟨2, fun ε C hC => ⟨0, fun D large₂ _ _ Γ _ _ Pl0 T A Ks _ _ _ R F s ch _ _ hF => ?_⟩⟩⟩⟩
-  · exact (core s ch hF hC).1
-  · exact (core s ch hF hC).2
 
 end GlobalTheory.ScalAA

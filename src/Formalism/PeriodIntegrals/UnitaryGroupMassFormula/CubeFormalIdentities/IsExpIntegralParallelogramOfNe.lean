@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.FglGram
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CubeFormalIdentities.CoeffPowMulPowEqZero
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.FglGram
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CubeFormalIdentities.CoeffPowMulPowEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -110,7 +114,7 @@ include hl in
 theorem cc_lg_add (a b : MvPowerSeries σ ℂ_[p]) (ha : constantCoeff a = 0) (hb : constantCoeff b = 0) :
     constantCoeff (lg l a + lg l b) = 0 := by
   simp only [PI.FglGram.lg]
-  rw [map_add, constantCoeff_subst_of_zero_lemma_2 ha, constantCoeff_subst_of_zero_lemma_2 hb, hl, add_zero]
+  rw [map_add (f := _), constantCoeff_subst_of_zero_lemma_2 ha, constantCoeff_subst_of_zero_lemma_2 hb, hl, add_zero]
 
 include hl in
 theorem cc_lg_sub (a b : MvPowerSeries σ ℂ_[p]) (ha : constantCoeff a = 0) (hb : constantCoeff b = 0) :
@@ -131,7 +135,7 @@ theorem rename_phAt_add (e : σ ↪ τ) (a b : MvPowerSeries σ ℂ_[p]) (ha : c
   rw [rename_psubst e hF]
   congr 1
   simp only [PI.FglGram.add, PI.FglGram.pt]
-  rw [rename_psubst e hsum, map_add]
+  rw [rename_psubst e hsum, map_add (f := _)]
   simp only [PI.FglGram.lg]
   rw [rename_psubst e ha, rename_psubst e hb]
 
@@ -163,8 +167,8 @@ theorem rename_phAt_X (e : σ ↪ τ) (i : σ) :
   simp only [PI.FglGram.phAt]
   rw [rename_psubst e h0, h1]
 
-include hex hl in
 
+include hex hl in
 theorem isExpIntegral_parallelogram_of_ne (i j : Fin 3) (hij : i ≠ j)
     (hE1 : Simeq (phAt ph (add l ex (Xv 0) (Xv 1)) + phAt ph (sub l ex (Xv 0) (Xv 1)) :
         MvPowerSeries (Fin 2) ℂ_[p]) (2 * phAt ph (Xv 0) + 2 * phAt ph (Xv 1))) :
@@ -192,7 +196,7 @@ theorem isExpIntegral_parallelogram_of_ne (i j : Fin 3) (hij : i ≠ j)
   have q1 : rename e (PI.FglGram.phAt ph (PI.FglGram.Xv (p := p) (1 : Fin 2))) = PI.FglGram.phAt ph (PI.FglGram.Xv j) :=
     rename_phAt_X ph e 1
   have h2 := good_rename e ((simeq_iff_good _ _).1 hE1)
-  simp only [map_sub, map_add, map_mul, map_ofNat, qa, qs, q0, q1] at h2
+  simp only [map_sub, map_add (f := _), map_mul, map_ofNat, qa, qs, q0, q1] at h2
   exact h2
 
 end

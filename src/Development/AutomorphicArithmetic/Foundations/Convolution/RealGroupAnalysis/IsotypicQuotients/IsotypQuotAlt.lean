@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.Isotyp
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.IsotypQuot
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.Isotyp
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.IsotypQuot
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global
@@ -54,18 +58,18 @@ theorem UpperTheory.ConvolutionTheory.R2.Pp.isotypQuot :
     by_contra hn
     refine hjM (le_sup_right.trans (hM.2 ⟨fun g x hx => ?_, hn⟩ le_sup_left))
     obtain ⟨m, hm, _, ⟨z, rfl⟩, rfl⟩ := Submodule.mem_sup.1 hx
-    rw [map_add, ← hj']
+    rw [map_add (f := _), ← hj']
     exact Submodule.add_mem_sup (hM.1.1 g m hm) ⟨_, rfl⟩
   have hu0 : u₀ ≠ 0 := fun e => hu₀ (by rw [e, map_zero])
   have s1 : (M ⊔ LinearMap.range j).comap i = ⊤ := (irr' _ fun g u hu => by
       obtain ⟨m, hm, _, ⟨z, rfl⟩, e⟩ := Submodule.mem_sup.1 hu
-      rw [Submodule.mem_comap, hρ, ← e, map_add, ← hj']
+      rw [Submodule.mem_comap, hρ, ← e, map_add (f := _), ← hj']
       exact Submodule.add_mem_sup (hM.1.1 g m hm) ⟨_, rfl⟩).resolve_left fun e => hu0 (by
       have : u₀ ∈ (M ⊔ LinearMap.range j).comap i := big
       rwa [e, Submodule.mem_bot] at this)
   have s2 : (M ⊔ LinearMap.range i).comap j = ⊤ := (irr _ fun g u hu => by
       obtain ⟨m, hm, _, ⟨z, rfl⟩, e⟩ := Submodule.mem_sup.1 hu
-      rw [Submodule.mem_comap, hj', ← e, map_add, ← hρ]
+      rw [Submodule.mem_comap, hj', ← e, map_add (f := _), ← hρ]
       exact Submodule.add_mem_sup (hM.1.1 g m hm) ⟨_, rfl⟩).resolve_left fun e => by
       obtain ⟨m, hm, _, ⟨z, rfl⟩, e'⟩ := Submodule.mem_sup.1 big
       have hz : z ∈ (M ⊔ LinearMap.range i).comap j := by

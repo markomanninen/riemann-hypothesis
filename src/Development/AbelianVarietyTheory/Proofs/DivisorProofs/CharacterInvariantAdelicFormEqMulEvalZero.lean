@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormIteratedFDerivRemCompLe
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzVanishingDecomposition
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceFormMapSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEqMulApplyZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactOpenSeparating
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormIteratedFDerivRemCompLe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzVanishingDecomposition
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceFormMapSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEqMulApplyZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactOpenSeparating
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped Matrix TensorProduct
 
@@ -31,7 +36,8 @@ theorem arch (V : Type) [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimens
     ext x
     rw [hsum x, SchwartzMap.sum_apply]
   have : T (f - f 0 • f₀) = 0 := by
-    rw [e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum]
     exact Finset.sum_eq_zero fun i _ => GlobalTheory.CharFormDeriv.charForm_kills_linear_mul V T hT (L i) (h i) (g i) (hg i)
   rw [map_sub, map_smul, sub_eq_zero] at this
   rw [this, smul_eq_mul, mul_comm]
@@ -50,22 +56,26 @@ theorem pairA_zero_add (a b : Af F) : pairA F 0 (a + b) = pairA F 0 a + pairA F 
 theorem dot_pairA_fin {κ : Type} [Fintype κ] (x : κ → AF F) (y : κ → Af F) :
     (x ⬝ᵥ fun i => pairA F 0 (y i)) = pairA F 0 ((fun i => (x i).2) ⬝ᵥ y) := by
   have h1 : (RingHom.fst (Ainf F) (Af F)) (x ⬝ᵥ fun i => pairA F 0 (y i)) = 0 := by
-    simp only [dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, map_sum, map_mul]
     exact Finset.sum_eq_zero fun i _ => by
       show (RingHom.fst (Ainf F) (Af F)) (x i) * 0 = 0
       exact mul_zero _
   have h2 : (RingHom.snd (Ainf F) (Af F)) (x ⬝ᵥ fun i => pairA F 0 (y i)) = (fun i => (x i).2) ⬝ᵥ y := by
-    simp only [dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, map_sum, map_mul]
     rfl
   exact Prod.ext h1 h2
 
 theorem dot_pairA_inf {κ : Type} [Fintype κ] (x : κ → AF F) (y : κ → Ainf F) :
     (x ⬝ᵥ fun i => pairA F (y i) 0) = pairA F (∑ i, (x i).1 * y i) 0 := by
   have h1 : (RingHom.fst (Ainf F) (Af F)) (x ⬝ᵥ fun i => pairA F (y i) 0) = ∑ i, (x i).1 * y i := by
-    simp only [dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, map_sum, map_mul]
     rfl
   have h2 : (RingHom.snd (Ainf F) (Af F)) (x ⬝ᵥ fun i => pairA F (y i) 0) = 0 := by
-    simp only [dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, map_sum, map_mul]
     exact Finset.sum_eq_zero fun i _ => by
       show (RingHom.snd (Ainf F) (Af F)) (x i) * 0 = 0
       exact mul_zero _
@@ -101,7 +111,8 @@ theorem psi_dot_inf {F : Type} [Field F] [NumberField F] {ψ : AddChar (AF F) �
   rw [dot_pairA_inf, hψ.2.2 _ hat]
   show Complex.exp (_ * ((Algebra.trace ℝ (mixedEmbedding.mixedSpace F)
     (InfiniteAdeleRing.ringEquiv_mixedSpace F (∑ i, (x i).1 * (InfiniteAdeleRing.ringEquiv_mixedSpace F).symm (Y i))) : ℝ) : ℂ)) = _
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   simp only [map_mul, RingEquiv.apply_symm_apply]
   congr 1
   push_cast
@@ -124,25 +135,22 @@ theorem main : ∀ (F : Type) [Field F] [NumberField F] (ψ : AddChar (AF F) ℂ
         (pureA F f g) (mem_schA f hg)]
       congr 1
       funext x
-      simp only [pureA, hff', psi_dot_inf hψ, hY]
-      ring)
+      simp only [pureA, hff', psi_dot_inf hψ, hY, mul_assoc])
     exact ⟨α, fun f => (hT f).trans (hα f)⟩
 
   obtain ⟨f₀, hf₀⟩ := exists_schwartz_one (κ → mixedEmbedding.mixedSpace F)
   let a : ((κ → Af F) → ℂ) →ₗ[ℂ] ℂ :=
     { toFun := fun g => l (pureA F f₀ g)
       map_add' := fun g g' => by
-        rw [← map_add]
+        rw [← map_add (f := _)]
         congr 1
         funext x
-        simp only [pureA, Pi.add_apply]
-        ring
+        simp [pureA, mul_add]
       map_smul' := fun s g => by
         rw [RingHom.id_apply, ← map_smul]
         congr 1
         funext x
-        simp only [pureA, Pi.smul_apply, smul_eq_mul]
-        ring }
+        simp [pureA, mul_comm, mul_assoc] }
   obtain ⟨c, hc⟩ := GlobalTheory.CharForm.exists_eq_mul_apply_zero (κ → Af F) {χ | ∃ y : κ → Af F, χ = fun x => ψ (pairA F 0 (x ⬝ᵥ y))}
     (by
       intro N hN
@@ -159,8 +167,7 @@ theorem main : ∀ (F : Type) [Field F] [NumberField F] (ψ : AddChar (AF F) ℂ
       rw [← hinv (fun i => pairA F 0 (y i)) (pureA F f₀ g) (mem_schA f₀ hg)]
       congr 1
       funext x
-      simp only [pureA, dot_pairA_fin]
-      ring)
+      simp [pureA, dot_pairA_fin, mul_left_comm])
   refine ⟨c, fun φ hφ => ?_⟩
   induction hφ using Submodule.span_induction with
   | mem Φ hΦ =>
@@ -174,9 +181,7 @@ theorem main : ∀ (F : Type) [Field F] [NumberField F] (ψ : AddChar (AF F) ℂ
     rw [hα f, hαc, pureA_zero]
     ring
   | zero => simp
-  | add φ φ' _ _ h h' => rw [map_add, h, h', Pi.add_apply, mul_add]
+  | add φ φ' _ _ h h' => rw [map_add (f := _), h, h', Pi.add_apply, mul_add]
   | smul s φ _ h => rw [map_smul, h, Pi.smul_apply, smul_eq_mul, smul_eq_mul]; ring
 
 end GlobalTheory.CharInvForm
-
-example : ∀ (F : Type) [Field F] [NumberField F] (ψ : AddChar (AF F) ℂ), IsStd ψ → ∀ (κ : Type) [Fintype κ] (l : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ), l ∈ (adeleClass F).adm κ → (∀ (y : κ → AF F), ∀ φ ∈ schA F κ, l (fun x => ψ (x ⬝ᵥ y) * φ x) = l φ) → ∃ c : ℂ, ∀ φ ∈ schA F κ, l φ = c * φ 0 := GlobalTheory.CharInvForm.main

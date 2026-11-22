@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FockTheta.UnitBracket
-import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
-import Formalism.LocalToGlobal.IndefiniteReal.AutomorphicFormsHyp
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FockTheta.UnitBracket
+public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
+public import Formalism.LocalToGlobal.IndefiniteReal.AutomorphicFormsHyp
+
+@[expose] public section
 
 noncomputable section
 

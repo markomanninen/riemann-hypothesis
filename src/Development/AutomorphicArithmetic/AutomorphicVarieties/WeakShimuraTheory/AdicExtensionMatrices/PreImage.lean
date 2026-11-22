@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.AdicContMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.AdicContMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+
+@[expose] public section
 
 open IsLocalRing Polynomial UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -29,7 +33,7 @@ private theorem pre_of_surj {O Γ : Type} [CommRing O] [Group Γ] [TopologicalSp
     rw [← hm]; exact Ideal.le_comap_map
   have hc : (algebraMap B' Y.A).comp (p : Y.B →+* B') = algebraMap Y.B Y.A := RingHom.ext hj
   have hr : (res Λ B' : B' →+* ResidueField Λ).comp (p : Y.B →+* B') =
-      (res Λ Y.B : Y.B →+* ResidueField Λ) := RingHom.ext fun b => res_map p b
+      (res Λ Y.B : Y.B →+* ResidueField Λ) := RingHom.ext fun b => res_map (O := Λ) (R := Y.B) p b
   haveI := Y.ft
   refine ⟨{ A := Y.A, B := B', ft := Algebra.FiniteType.of_restrictScalars_finiteType Y.B _ _
             P := Y.P, pair := Y.pair, cont := ?_, gen := adjoin_top_of_tower Y.gen
@@ -38,7 +42,7 @@ private theorem pre_of_surj {O Γ : Type} [CommRing O] [Group Γ] [TopologicalSp
             ψ := fun v i s => p (Y.ψ v i s)
             ψ_map := fun v i s hs => (hj _).trans (Y.ψ_map v i s hs)
             ψ_cont := fun v i => adicCont_map (p : Y.B →+* B') hle (Y.ψ_cont v i)
-            ψ_red := fun v i s hs => (res_map p _).trans (Y.ψ_red v i s hs)
+            ψ_red := fun v i s hs => (res_map (O := Λ) (R := Y.B) p _).trans (Y.ψ_red v i s hs)
             genB := fun R _ _ _ f f' h1 h2 => ?_
             univ := Y.univ }, hi⟩
   · rw [← hm, Ideal.map_map, hc]

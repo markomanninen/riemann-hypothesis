@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.LowerEntriesZeroOfCommutingTriangular
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.InverseWeylLiftEqPair
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.OddDiag
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.BndOps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.HomBasic
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.LowerEntriesZeroOfCommutingTriangular
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.InverseWeylLiftEqPair
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.OddDiag
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.BndOps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.HomBasic
+
+@[expose] public section
+
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
 noncomputable section
@@ -232,13 +237,13 @@ private theorem inverse_weyl_lift_mem_square_zero (v) : k.wi1 R v ∈ SM R k.g n
   mul_mem (C_SM (x.wiX R v)) (add_mem (one_mem _) (epM_SM _))
 
 private theorem aM_ρ1 (γ) : aM (k.ρ1 R γ) = x.ρX R γ := by
-  rw [Kap.ρ1, map_mul, map_add, map_one, aM_epM, add_zero, one_mul]; rfl
+  rw [Kap.ρ1, map_mul, map_add (f := _), map_one, aM_epM, add_zero, one_mul]; rfl
 
 private theorem constant_part_weyl_lift (v) : aM (k.w1 R v) = x.wX R v := by
   rw [Kap.w1, map_mul, map_sub, map_one, aM_epM, sub_zero, one_mul]; rfl
 
 private theorem constant_part_inverse_weyl_lift (v) : aM (k.wi1 R v) = x.wiX R v := by
-  rw [Kap.wi1, map_mul, map_add, map_one, aM_epM, add_zero, mul_one]; rfl
+  rw [Kap.wi1, map_mul, map_add (f := _), map_one, aM_epM, add_zero, mul_one]; rfl
 
 private def EY (v : F.Vl) : Matrix (Fin n) (Fin n) (DD R k.g) := DD.epM fun j => (k.Y j v).map (algebraMap x.A R)
 
@@ -255,7 +260,7 @@ private theorem weyl_correction_mem_second_order (v) {Q : Fin k.g → Matrix (Fi
   second_order_mul_first_order_mem (twoSubspaceIntersection (sub_mem one_mem_first_order (weyl_correction_mem_first_order k R v)) (second_order_matrix_mem hQ)) (add_mem one_mem_first_order (weyl_correction_mem_first_order k R v))
 
 private theorem pM_corr (v) (Q : Fin k.g → Matrix (Fin n) (Fin n) R) (i) : pM i (corr k R v Q) = Q i := by
-  rw [corr, EY, pM_conj i (sub_mem (one_mem _) (epM_SM _)) (add_mem (one_mem _) (epM_SM _)), map_sub, map_add, aM_epM, second_order_part_of_matrix]
+  rw [corr, EY, pM_conj i (sub_mem (one_mem _) (epM_SM _)) (add_mem (one_mem _) (epM_SM _)), map_sub, map_add (f := _), aM_epM, second_order_part_of_matrix]
   simp
 
 private theorem corr_conj (v) (Q : Fin k.g → Matrix (Fin n) (Fin n) R) :
@@ -298,7 +303,7 @@ theorem UpperTheory.V.Pa.lift1 :
     rw [Ideal.Quotient.eq, Ideal.span_singleton_eq_top.2 hu, Ideal.top_pow]
     trivial
   · refine eq_of (hS _) (add_mem (hS _) (mul_mem (mul_mem (ρ1_SM k _ _) (hS _)) (ρ1_SM k _ _))) ?_ fun j => ?_
-    · rw [map_add, map_mul, map_mul, aM_ρ1, aM_ρ1, ha, ha, ha]
+    · rw [map_add (f := _), map_mul, map_mul, aM_ρ1, aM_ρ1, ha, ha, ha]
       exact z3 γ δ
     · rw [smul_add, smul_conj, hE, hE, hE]
       exact (hΨ j).2.2.1 γ δ

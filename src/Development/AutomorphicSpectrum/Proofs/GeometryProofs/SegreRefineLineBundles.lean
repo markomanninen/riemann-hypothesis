@@ -1,12 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenWeil
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsGenOfIsVBOne
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsVBOneOfChartGenerators
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoherentLatticeChartSpanStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.JoinCoordsCoordTieStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenWeil
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsGenOfIsVBOne
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsVBOneOfChartGenerators
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoherentLatticeChartSpanStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.JoinCoordsCoordTieStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
 
@@ -78,16 +83,13 @@ theorem inChart_equiv_iff {κ κ₂ : Type} {x : κ → Ω} (e : κ₂ ≃ κ) (
   ⟨fun h => ⟨h.1, fun c' => by simpa using h.2 (e.symm c')⟩, fun h => ⟨h.1, fun c' => h.2 _⟩⟩
 
 theorem coordTie_equiv {o : Type} [CommRing o] [Algebra o Ω] {κ κ₂ : Type} {x : κ → Ω} (e : κ₂ ≃ κ)
-    (h : CoordTie o ξ x) : CoordTie o ξ (fun c => x (e c)) where
-  gen := h.gen
-  cover p := by
-    obtain ⟨c, hc⟩ := h.cover p
+    (h : CoordTie o ξ x) : CoordTie o ξ (fun c => x (e c)) := by
+  refine ⟨h.gen, fun p => ?_, fun c hc => ?_, fun c hc a => ?_⟩
+  · obtain ⟨c, hc⟩ := h.cover p
     exact ⟨e.symm c, (inChart_equiv_iff e _ p).2 (by simpa using hc)⟩
-  affine c hc := by
-    obtain ⟨U, hU, hq⟩ := h.affine (e c) hc
+  · obtain ⟨U, hU, hq⟩ := h.affine (e c) hc
     exact ⟨U, hU, fun q => (hq q).trans (exists_congr fun _ => (inChart_equiv_iff e c _).symm)⟩
-  ring c hc a := by
-    have hr : (Set.range fun j => x (e j) / x (e c)) = Set.range fun j => x j / x (e c) :=
+  · have hr : (Set.range fun j => x (e j) / x (e c)) = Set.range fun j => x j / x (e c) :=
       e.surjective.range_comp fun j => x j / x (e c)
     show a ∈ Algebra.adjoin o (Set.range fun j => x (e j) / x (e c)) ↔ _
     rw [hr, h.ring (e c) hc a]

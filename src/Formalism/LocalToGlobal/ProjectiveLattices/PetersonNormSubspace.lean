@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.IsCombAt
-import Formalism.LocalToGlobal.ProjectiveLattices.EquivariantFiniteGroup
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsCombAt
+public import Formalism.LocalToGlobal.ProjectiveLattices.EquivariantFiniteGroup
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,8 +35,8 @@ def gxSnd {S : Type} [CommRing S] (x : Sp S ⟶ Xo.X) : Gx x ⟶ Sp S :=
 
 def toC {K : Type} [Field K] {σ : K →+* ℂ} (z : CAt σ) : ℂ := z
 
-open Classical in
 
+open Classical in
 def rdU (U : Unf Xo c σ r) : Rul Xo c →ₛₗ[σ] FDSec U.X where
   toFun f := fun k x => if h : x ∈ (U.X k).dom then toC (evR Xo c f (U.un k ⟨x, h⟩)) else 0
   map_add' f g := by
@@ -55,15 +59,15 @@ def relab (c : Coeff l) (σ : c.F →+* ℂ) (τ : E →+* ℂ) : E →+* ℂ :=
 def GoodEmb (c : Coeff l) (σ : c.F →+* ℂ) : Prop :=
   (σ.comp (IntermediateField.inclusion c.le).toRingHom) (baseKA l).ρ = H.rt0
 
-open Classical in
 
+open Classical in
 def laU (U : Unf Xo c σ r) (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) (k : U.Comp) : Wt (U.X k).Ψ r :=
   fun τ j => if (U.X k).p0 ≤ (j : ℕ) then
       (a (Function.invFun (relab c σ) τ.1, (j : ℕ) - (U.X k).p0) : ℤ) + ((n / 2 : ℕ) : ℤ)
     else -(a (Function.invFun (relab c σ) (conjEmb τ.1), (U.X k).p0 - 1 - (j : ℕ)) : ℤ) - ((n / 2 : ℕ) : ℤ)
 
-open Classical in
 
+open Classical in
 def perFr (X : Data E r) (x : Frame X.Ψ r) (v : Fin r → E) (τ : E →+* ℂ) (i : ℕ) : ℂ :=
   if h : τ ∈ X.Ψ then
     (if hi : X.p0 + i < r then ((mat x ⟨τ, h⟩)⁻¹.mulVec (Data.emb τ v)) ⟨X.p0 + i, hi⟩ else 0)
@@ -113,13 +117,5 @@ def IsUnf (U : Unf Xo c σ r) : Prop :=
             MeasureTheory.IsAddFundamentalDomain Pm.range Fd MeasureTheory.volume ∧
             (∫ z in Fd, ‖θ z‖ ^ 2 * Real.exp (-Real.pi * (hermForm Hm z z).re)) /
               (MeasureTheory.volume Fd).toReal = 1)
-
-def supNU (U : Unf Xo c σ r) (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) (f : Rul Xo c) : ℝ :=
-  dmet n (Module.finrank ℚ E / 2) r * supN U.X (laU U a n) (rdU U f)
-
-def petersonNormSubspace {D : D7} (U : Unf Xo c σ r) (Cs : Submodule c.F (Rul Xo c)) (n : ℕ) (V : HSp D)
-    (dict : GA D V → Σ k, Frame (U.X k).Ψ r) (mu : GA D V → ℂ)
-    (h : JMemL2 V σ ((rdU U).comp Cs.subtype) dict mu) (f : Cs) : ℝ :=
-  dmet n (Module.finrank ℚ E / 2) r * l2NormAlt V σ ((rdU U).comp Cs.subtype) dict mu h f
 
 end Formalism.L2.Pj

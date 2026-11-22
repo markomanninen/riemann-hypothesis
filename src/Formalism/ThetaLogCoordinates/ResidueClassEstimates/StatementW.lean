@@ -1,5 +1,9 @@
-import Formalism.ThetaLogCoordinates.ResidueClassEstimates.StatementT
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.StatementP
+module
+
+public import Formalism.ThetaLogCoordinates.ResidueClassEstimates.StatementT
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.StatementP
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,5 @@ namespace Formalism.InvariantFactorPaths.BranchingDimensions
 
 def WeylGT : Prop :=
   BranchDim → ∀ (n : ℕ) (μ : Fin n → ℤ), Antitone μ → weylDim n (extW μ) = (Formalism.InvariantFactorPaths.GelfandTsetlinBases.dGT n μ : ℝ)
-
-def PieriOfBranch : Prop := BranchDim → PieriDim
 
 end Formalism.InvariantFactorPaths.BranchingDimensions

@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.SubquotientSupport.TypeConj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TTypeConj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PolarizedLinkage.ExtraV
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LanglandsQuotient
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.SubquotientSupport.TypeConj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TTypeConj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PolarizedLinkage.ExtraV
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LanglandsQuotient
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -32,7 +36,8 @@ private def Cj.pull {γ : ℂ ≃+* ℂ} {π : Representation ℂ G V} {π' : Re
   ⟨{ carrier := {v | f v ∈ S.toSubmodule}
      add_mem' := fun {a b} ha hb => by
        show f (a + b) ∈ S.toSubmodule
-       rw [map_add]; exact add_mem ha hb
+       rw [map_add f]
+       exact add_mem ha hb
      zero_mem' := by
        show f 0 ∈ S.toSubmodule
        rw [map_zero]; exact zero_mem _
@@ -60,7 +65,7 @@ private theorem cosocle_conj {γ : ℂ ≃+* ℂ} {π : Representation ℂ G V} 
   obtain ⟨-, p, hp, hS⟩ := h
   let q : π'.IntertwiningMap σ' :=
     { toFun := fun v => f (p (F.symm v))
-      map_add' := fun a b => by simp only [map_add]
+      map_add' := fun a b => by simp only [map_add (f := _)]
       map_smul' := fun c a => by rw [hF.symm.1, map_smul, hf.1]; simp
       isIntertwining' := fun g => LinearMap.ext fun v => by
         show f (p (F.symm (π' g v))) = σ' g (f (p (F.symm v)))
@@ -281,7 +286,7 @@ private theorem sumList_chars : ∀ (n : ℕ) (ξ : Fin n → Weil h →* ℂˣ)
     · refine Fin.cases ?_ (fun j => ?_) i <;> simp [SatakeLaw.consEquiv]
     · refine Fin.cases ?_ (fun j => ?_) i <;> simp [SatakeLaw.consEquiv]
 private theorem rc_cosocle {a : Weil h →* (w.adicCompletion E)ˣ} {ha : IsLocalArtin h a} {ε : EpsFamily A}
-    {rc : IrrGL (w.adicCompletion E) → WD h} (hrc : _root_.UpperTheory.Zero.LLC.IsRecT h rc) (H : UpperTheory.V.Z.Win.LawsV a ha ε rc)
+    {rc : IrrGL (k := w.adicCompletion E) → WD h} (hrc : _root_.UpperTheory.Zero.LLC.IsRecT h rc) (H : UpperTheory.V.Z.Win.LawsV a ha ε rc)
     (ω : Fin n → (w.adicCompletion E)ˣ →* ℂˣ) (hω : ∀ i, IsSmoothChar (ω i))
     (ho : ∀ i j, i < j → ω j ≠ ω i * absPow _ 1) (π : IrrRep (GL (Fin n) (w.adicCompletion E)))
     (hπ : IsCosocle π.ρ (prodIrr _ (sum_deg ω hω))) :
@@ -300,7 +305,7 @@ private theorem type_conj (γ : ℂ ≃+* ℂ) (b : WDRep h (Fin n → ℂ)) (B 
       map_add' := fun u v => funext fun i => by
         have : (fun j => γ.symm ((u + v) j)) = (fun j => γ.symm (u j)) + fun j => γ.symm (v j) :=
           funext fun j => map_add _ _ _
-        rw [this, LinearEquiv.map_add]
+        rw [this, LinearEquiv.map_add (e := _)]
         exact map_add γ _ _
       map_smul' := fun c v => funext fun i => by
         have : (fun j => γ.symm ((c • v) j)) = γ.symm c • fun j => γ.symm (v j) := funext fun j => map_mul _ _ _

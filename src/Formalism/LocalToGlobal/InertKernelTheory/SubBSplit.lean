@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.InertKernelTheory.DelPolOfTies
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.DelPolOfTies
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,23 +41,23 @@ variable {p : ℕ} [Fact p.Prime] {X : Sys p} {D : D7}
 def FrInv (fd : Formalism.L2.PairingIndexBounds.F.FData X D) : Prop :=
   ∀ j (La : X.Lt j) (v : X.Pl), IsUnit (fd.frM j La v).det
 
-open Classical in
 
+open Classical in
 def frGL (fd : Formalism.L2.PairingIndexBounds.F.FData X D) (j : ℕ) (La : X.Lt j) (v : X.Pl) : GL (Fin ((X.Pj j).m + 1)) (X.G.P.Qq v) :=
   if h : IsUnit (fd.frM j La v).det then Matrix.nonsingInvUnit _ h else 1
 
 def BOf (fd : Formalism.L2.PairingIndexBounds.F.FData X D) (j : ℕ) (La : X.Lt j) : ∀ v : X.Pl, GL (Fin ((X.Pj j).m + 1)) (X.G.P.Qq v) :=
   fun v => (frGL fd j La v)⁻¹
 
-variable (X) in
 
+variable (X) in
 def glInv : (j : ℕ) → (∀ v : X.Pl, GL (Fin ((X.Fl.Pj j).m + 1)) (X.G.P.Qq v)) →
     ∀ v : Fin (X.Fl.Pj j).nV, GL (Fin ((X.Fl.Pj j).m + 1)) ((X.Fl.Pj j).Qq v)
   | 0, B => B
   | _ + 1, B => B
 
-open Classical in
 
+open Classical in
 def VOf (Kc : Type) [Field Kc] [Algebra (K0 p) Kc] [Algebra X.G.Kf Kc] (fd : Formalism.L2.PairingIndexBounds.F.FData X D) (c : Kc) (j : ℕ)
     (La' : X.Lt (j + 1)) (x y : X.ZA j) : Kc :=
   if (⟨y.1, y.2.1⟩ : Σ v : X.Pl, Fin (X.G.P.n' v)) = ⟨x.1, x.2.1⟩ ∧ y.2.2.1 = x.2.2.1 then
@@ -89,15 +93,6 @@ def MoveH {p : ℕ} [Fact p.Prime] {X : Sys p} (Y : Pend X) (u : D.what₂.Word)
     (X.Pj j).natAct (A j La) (Gm j La x) = cmp j x La.1 La.2 ∧ Formalism.L2.G.Pend.GoodG X Y.Kc j (Gm j La x) ∧
       Formalism.L2.G.Pend.OddDeg X j (Gm j La x)
 
-def TieOpH {p : ℕ} [Fact p.Prime] {X : Sys p} {Y : Pend X} (t : KerEntTied ex) (u : D.what₂.Word) (μ : D.what₂.Tup)
-    (cls : ∀ j, X.Lv.comp j → (X.Pj j).Tup → (D.chTw u μ).cls j)
-    (Gm : ∀ j, X.Lt j → ((ex.tw.fm u μ).lat j).V → (X.Pj j).Xsp) {ι : ℂ →+* Y.Kc} (j : ℕ)
-    (e : GL3Theta.Idx D (D.R.N j) (D.R.N (j + 1)) → X.ZA j)
-    (Φ₀ : MvPolynomial (GL3Theta.FrV D (D.R.N (j + 1))) ℂ →ₛₗ[ι] XspC (X.Pj (j + 1)) Y.Kc) : Prop :=
-  ∀ La ∈ Y.Rep j, ∀ (x : ((ex.tw.fm u μ).lat j).V) Q, SharpQ t ex.tw u μ j x Q →
-    Formalism.L2.G.Pend.polDel X Y.Kc j (Gm j La x) =
-      trDY X Y.Kc j D e Φ₀ (polDY D (t.O u μ).dgen (Q (cls j La.1 La.2)) (N' := D.R.N (j + 1)))
-
 def TieSerH {p : ℕ} [Fact p.Prime] {X : Sys p} (Y : Pend X) (t : KerEntTied ex) (u : D.what₂.Word) (μ : D.what₂.Tup)
     (cls : ∀ j, X.Lv.comp j → (X.Pj j).Tup → (D.chTw u μ).cls j)
     (κ : ∀ j, X.Lv.comp (j + 1) → (X.Pj (j + 1)).Tup → (D.chTw u μ).cls (j + 1)) (ι : ℂ →+* Y.Kc)
@@ -125,8 +120,8 @@ def DelYEqH {p : ℕ} [Fact p.Prime] {X : Sys p} (Y : Pend X) (V : ∀ j, X.Lt (
     Prop :=
   ∀ (c' : X.Lv.comp (j + 1)) (L' : (X.Pj (j + 1)).Tup), (X.Pj (j + 1)).IsLatTup L' →
     ∀ G : (X.Pj j).Xsp, Formalism.L2.G.Pend.GoodG X Y.Kc j G → Formalism.L2.G.Pend.OddDeg X j G → ∀ n : X.ZA j →₀ ℕ,
-      MvPolynomial.coeff n (trSub X Y.Kc j (V j (c', L')) (Formalism.L2.G.Pend.polDel X Y.Kc j G)) =
-        τ j c' L' (MvPolynomial.coeff n (Formalism.L2.G.Pend.polDel X Y.Kc j G))
+      AddMonoidAlgebra.coeff (trSub X Y.Kc j (V j (c', L')) (Formalism.L2.G.Pend.polDel X Y.Kc j G)) n =
+        τ j c' L' (AddMonoidAlgebra.coeff (Formalism.L2.G.Pend.polDel X Y.Kc j G) n)
 
 def phiH {p : ℕ} [Fact p.Prime] {X : Sys p} {Kc : Type} [Field Kc] [Algebra X.G.Kf Kc] (D : D7) {ι : ℂ →+* Kc}
     (Φ₀ : ∀ j, MvPolynomial (GL3Theta.FrV D (D.R.N (j + 1))) ℂ →ₛₗ[ι] XspC (X.Pj (j + 1)) Kc)
@@ -134,57 +129,5 @@ def phiH {p : ℕ} [Fact p.Prime] {X : Sys p} {Kc : Type} [Field Kc] [Algebra X.
     (sc : ∀ j, X.Lv.comp (j + 1) → (X.Pj (j + 1)).Tup → Kc) :
     ∀ j, X.Lv.comp (j + 1) → (X.Pj (j + 1)).Tup → MvPolynomial (GL3Theta.FrV D (D.R.N (j + 1))) ℂ → XspC (X.Pj (j + 1)) Kc :=
   fun j c' L' P => sc j c' L' • τ j c' L' (Φ₀ j P)
-
-def serG {p : ℕ} [Fact p.Prime] {X : Sys p} {D : D7} (fd : Formalism.L2.PairingIndexBounds.F.FData X D)
-    {cc : Ideal (NumberField.RingOfIntegers D.host.K)} {δ : ℂ} (B : Base D cc δ) (χ : TaylorLogMetric.IdE D → ℂ) (lam : TaylorLogMetric.Qbar →+* ℂ_[p])
-    (SS : Finset (IsDedekindDomain.HeightOneSpectrum (NumberField.RingOfIntegers D.host.E))) (cl : ℕ)
-    (Ξ₀ : ∀ j, X.Lt j → X.Lt (j + 1) → Formalism.L2.Col.HomE D.host.E ((X.Pj j).m + 1) ((X.Pj (j + 1)).m + 1) → ℂ)
-    (muT : ℕ → (TensorProduct D.host.F D.host.E
-      (IsDedekindDomain.FiniteAdeleRing (NumberField.RingOfIntegers D.host.F) D.host.F))ˣ → ℂ)
-    (j : ℕ) (La : X.Lt j) (La' : X.Lt (j + 1)) :
-    MvPowerSeries (D.what₂.Tau × Fin ((X.Pj (j + 1)).m + 1) × Fin ((X.Pj j).m + 1)) ℂ_[p] :=
-  ((p : ℂ_[p]) ^ (∑ v : X.Pl, X.vm v (j + 1) * (Formalism.L2.G.Pend.len X v (j + 1) La'.2 - Formalism.L2.G.Pend.len X v j La.2))) •
-  Formalism.L2.PairingIndexBounds.F.serP lam fun z =>
-    (muT (j + 1) (fd.dt (j + 1) La') * (muT (j + 1) (fd.dt j La))⁻¹ *
-      (Base.chiFac χ _ _ (fd.kerN j La) (fd.kerN (j + 1) La'))⁻¹ *
-      χ (TaylorLogMetric.detId D (StandardLatticesGL3.stdL D _) (fd.kerN j La)) ^ (-(((j * (X.t + 1) / 2 : ℕ) : ℤ))) *
-      χ (TaylorLogMetric.detId D (StandardLatticesGL3.stdL D _) (fd.kerN (j + 1) La')) ^ ((((j + 1) * (X.t + 1) / 2 : ℕ) : ℤ))) *
-    Formalism.L2.PairingIndexBounds.F.kerTh B χ SS cl (fd.kerN j La) (fd.kerN (j + 1) La')
-      (Formalism.L2.PairingIndexBounds.F.movD (Ξ₀ j La La') (fd.trG j La) (fd.trG (j + 1) La')) z
-
-def DelPolH : Prop :=
-  ∀ (D : D7) (L : SizeData₂ D) (hT : GatTies D) (Gi : G.Inst D L) (Gl : G.LatInst D) (Kc0 : G.Consts) (Dx : DivX D)
-    (cX : ExtraC) (ex : Extra D L hT Gi Gl Kc0 Dx cX) (t : KerEntTied ex) (u : D.what₂.Word) (μ : D.what₂.Tup)
-    (p : ℕ) [Fact p.Prime] (X : Sys p) [IsFractionRing X.G.O X.G.Kf] (E : Formalism.L2.G.Pend.CEmbC X.G)
-    (hfin : ∀ j c, (X.Lv.lev j c).FinClasses) (hst : Formalism.L2.G.Pend.FinStab X.Lv) (g : GL3Theta.G1 p)
-    (hLT : Formalism.L2.G.Pend.LTIso g) (pos : (Σ v : X.Pl, Fin (X.G.P.n' v)) ≃ D.what₂.Tau) (fd : Formalism.L2.PairingIndexBounds.F.FData X D)
-    (cc : Ideal (NumberField.RingOfIntegers D.host.K)) (δ : ℂ) (B : Base D cc δ) (χ : TaylorLogMetric.IdE D → ℂ)
-    (lamK : TaylorLogMetric.Qbar →+* ℂ_[p]) (SS : Finset (IsDedekindDomain.HeightOneSpectrum (NumberField.RingOfIntegers D.host.E)))
-    (cl : ℕ) (Ξ₀ : ∀ j, X.Lt j → X.Lt (j + 1) → Formalism.L2.Col.HomE D.host.E ((X.Pj j).m + 1) ((X.Pj (j + 1)).m + 1) → ℂ)
-    (muT : ℕ → (TensorProduct D.host.F D.host.E
-      (IsDedekindDomain.FiniteAdeleRing (NumberField.RingOfIntegers D.host.F) D.host.F))ˣ → ℂ),
-    letI := Formalism.L2.G.Pend.wittFractionAlgebraCp p
-    letI := Formalism.L2.G.Pend.algKfC E.toCEmb
-    FrInv fd →
-    Formalism.L2.G.Pend.StabGeo X ℂ_[p] hfin (Formalism.L2.G.Pend.thFOf X pos
-      (Formalism.L2.PairingIndexBounds.F.FrecG E.toCEmb pos fd B χ lamK SS cl Ξ₀ muT (Formalism.L2.PairingIndexBounds.F.ltC g hLT))) →
-    Formalism.L2.G.Pend.KapStab X ℂ_[p] →
-    let Y := pendG X E hfin hst hLT D pos fd B χ lamK SS cl Ξ₀ muT
-    ∀ (σ : D.what₂.LL →+* X.G.Kf) (cls : ∀ j, X.Lv.comp j → (X.Pj j).Tup → (D.chTw u μ).cls j)
-      (cmp : ∀ j, ((ex.tw.fm u μ).lat j).V →ₛₗ[σ] X.Fm j)
-      (κ : ∀ j, X.Lv.comp (j + 1) → (X.Pj (j + 1)).Tup → (D.chTw u μ).cls (j + 1)) (ι : ℂ →+* Y.Kc)
-      (Φ₀ : ∀ j, MvPolynomial (GL3Theta.FrV D (D.R.N (j + 1))) ℂ →ₛₗ[ι] XspC (X.Pj (j + 1)) Y.Kc)
-      (τ : ∀ j, X.Lv.comp (j + 1) → (X.Pj (j + 1)).Tup → XspC (X.Pj (j + 1)) Y.Kc →ₗ[Y.Kc] XspC (X.Pj (j + 1)) Y.Kc)
-      (sc : ∀ j, X.Lv.comp (j + 1) → (X.Pj (j + 1)).Tup → Y.Kc) (sH : ∀ j, X.Lt j → X.Lt (j + 1) → Y.Kc)
-      (Gm : ∀ j, X.Lt j → ((ex.tw.fm u μ).lat j).V → (X.Pj j).Xsp) (j : ℕ) (cK : Y.Kc) (hN : RankTie X D j),
-      MoveH Y u μ cmp (fun j La => glInv X j (BOf fd j La)) Gm j →
-      TieOpH (Y := Y) t u μ cls Gm j (eIdx X D pos j hN) (Φ₀ j) →
-      KernelEntryDegreeCondition (Y := Y) t u μ cls j (eIdx X D pos j hN) →
-      TieSerH Y t u μ cls κ ι
-        (fun j La La' => resV (Formalism.L2.G.Pend.kapOf X pos j) (serG fd B χ lamK SS cl Ξ₀ muT j La La')) sH j
-        (eIdx X D pos j hN) →
-      TieChiH Y t u μ cls κ ι sc sH (fun j La => Formalism.L2.G.Pend.cA X Y.Kc j (BOf fd j La)) j cK →
-      DelYEqH Y (fun j La' => VOf Y.Kc fd (Formalism.L2.PairingIndexBounds.F.ltC g hLT) j La') τ j →
-        DelPolAt (Y := Y) t u μ cls cmp κ (phiH D Φ₀ τ sc) (srOf Y) j cK
 
 end Formalism.L2.KerInert.SecondKernelHermitian

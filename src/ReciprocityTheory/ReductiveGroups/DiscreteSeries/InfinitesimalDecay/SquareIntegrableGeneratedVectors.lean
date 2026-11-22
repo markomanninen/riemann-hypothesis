@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.InfinitesimalDecay.ProjectionSquareIntegrable
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.InfinitesimalDecay.PsiForPosGelfand
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.InfinitesimalDecay.ProjectionSquareIntegrable
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.InfinitesimalDecay.PsiForPosGelfand
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,7 +24,7 @@ def PmProp (ε : Fin n → Bool) (m : ℕ) {lam : Fin n → ℝ} (T : S7.KType �
           C * NE (smE ε (rreg ε)) (m * (n - 1)) x * NE (smE ε (rreg ε)) (m * (n - 1)) y
 
 theorem one_le_q_zero {ε : Fin n → Bool} (hp : 1 ≤ pOf ε) (hq : 1 ≤ qOf ε) : 1 ≤ S7.q0 ε := by
-  unfold S7.q0; exact le_min hp hq
+  exact le_min hp hq
 
 theorem square_integrable_generated_vectors {ε : Fin n → Bool} {lam : Fin n → ℝ} {T : S7.KType ε (lowK ε lam)}
     {Ψ : Matrix (Fin n) (Fin n) ℂ → (T.V →L[ℂ] T.V)} {v₀ : T.V} (hlam : S7.IsHCParam lam) {h : ℝ}
@@ -31,14 +35,12 @@ theorem square_integrable_generated_vectors {ε : Fin n → Bool} {lam : Fin n �
         inner ℂ ((w : smD ε (rreg ε)) : L2 ε) (rreg ε (Formalism.MainNotions.S.umat g) ((v : smD ε (rreg ε)) : L2 ε))) 2
         (Formalism.REAL.muG ε) := by
   obtain ⟨Ψ', h1, h2, h3, h4, -, h6, -, -⟩ := S7.psiAll (n := n) ε lam h T hlam hgap hq
-  have hmax := hth
-  unfold thrStar at hmax
-  rw [max_lt_iff] at hmax
+  obtain ⟨hgap_std, hgap_weighted⟩ := swA_thr hth
   have hsq : (0 : ℝ) ≤ Real.sqrt (2 * (S7.q0 ε : ℝ)) := Real.sqrt_nonneg _
   have hnq : (0 : ℝ) ≤ (n : ℝ) * S7.q0 ε := by positivity
-  have hL2 : 8 * (n : ℝ) * S7.q0 ε < h := by nlinarith [hmax.2]
-  have hw2 : 8 * (n : ℝ) * S7.q0 ε + 4 * 2 * Real.sqrt (2 * S7.q0 ε) < h := by nlinarith [hmax.2]
-  have hstd : StdGap ε lam := ⟨hlam.1, h, hgap, hmax.1⟩
+  have hL2 : 8 * (n : ℝ) * S7.q0 ε < h := by nlinarith
+  have hw2 : 8 * (n : ℝ) * S7.q0 ε + 4 * 2 * Real.sqrt (2 * S7.q0 ε) < h := by nlinarith
+  have hstd : StdGap ε lam := ⟨hlam.1, h, hgap, hgap_std⟩
   have hP' : IsPsiFor ε lam T Ψ' := ⟨h1, h2, h3, h4, fun μ hμ => (h6 μ hμ).2.1 hL2⟩
   have heq : ∀ g ∈ UJset ε, Ψ' g = Ψ g := puniq_psi_eq hstd hP hP' hv₀
   refine weighted_datum hstd hP hv₀ (fun μ hμ => ?_)
@@ -56,8 +58,7 @@ theorem standard_gap_data {ε : Fin n → Bool} {lam : Fin n → ℝ} {T : S7.KT
           inner ℂ ((w : smD ε (rreg ε)) : L2 ε) (rreg ε (Formalism.MainNotions.S.umat g) ((v : smD ε (rreg ε)) : L2 ε))) 2
           (Formalism.REAL.muG ε)) ∧
       HasGelfandChar (smE ε (rreg ε)) lam (genSub (smE ε (rreg ε)) (datumV ε Ψ v₀)) := by
-  have hT1 : (n : ℝ) * (pOf ε : ℝ) * (qOf ε : ℝ) + 1 ≤ thrStar ε := le_max_left _ _
-  have hstd : StdGap ε lam := ⟨hlam.1, h, hgap, by linarith⟩
+  have hstd : StdGap ε lam := ⟨hlam.1, h, hgap, (swA_thr hth).1⟩
   obtain ⟨hpos, hGel⟩ := psiFor_pos_gelfand hlam hgap hth hq hP
   exact ⟨hstd, hpos, square_integrable_generated_vectors hlam hgap hth hq hP hv₀, hasGelfandChar_sigLam hstd hP hv₀ hGel⟩
 
@@ -69,7 +70,8 @@ theorem tensor_inner_single_coef {ε : Fin n → Bool} {H : Type*} [NormedAddCom
       (if ε a then (1 : ℂ) else -1) * (g a b * inner ℂ (y : H) (σ g (x : H))) := by
   rw [Finset.sum_eq_single a (fun c _ hc => by simp [Pi.single_eq_of_ne hc]) (by simp)]
   congr 1
-  simp only [Pi.single_eq_same, tensGrp, cond_false, inner_sum, inner_smul_right]
+  delta tensGrp
+  simp only [Pi.single_eq_same, Bool.cond_false, inner_sum, inner_smul_right]
   rw [Finset.sum_eq_single b (fun d _ hd => by simp [Pi.single_eq_of_ne hd]) (by simp)]
   simp
 
@@ -82,7 +84,9 @@ theorem tensor_inner_sum_eq {ε : Fin n → Bool} {H : Type*} [NormedAddCommGrou
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [← Finset.mul_sum]
   congr 1
-  simp only [tensGrp, Finset.sum_apply, Submodule.coe_sum, map_sum, Finset.smul_sum, inner_sum]
+  delta tensGrp
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_apply, Submodule.coe_sum, map_sum, Finset.smul_sum, inner_sum]
   rw [Finset.sum_comm]
 
 theorem pmProp_zero {ε : Fin n → Bool} {lam : Fin n → ℝ} (T : S7.KType ε (lowK ε lam))
@@ -225,7 +229,8 @@ theorem pmProp_succ_of_gap {ε : Fin n → Bool} (hp : 1 ≤ pOf ε) (hq : 1 ≤
           (datumV_kStable hP v₀) hW hG s (ReciprocityTheory.ChartRestriction.DS.cns_sing false hlam hs) _ ((hPG s).1 _ hfx)
           (hPz s _ hfx)
       rw [h0]
-      simp [tensGrp]
+      delta tensGrp
+      simp
   choose Cs hCs using hterm
   refine ⟨∑ s, Cs s, fun x hx y hy g hg idx => ?_⟩
   have hfx := single_mem_tensSub (idx 0).2 hx

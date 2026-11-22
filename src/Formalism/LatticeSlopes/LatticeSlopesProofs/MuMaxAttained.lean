@@ -1,5 +1,9 @@
-import Formalism.LatticeSlopes.CovolAntiSameRank
-import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
+module
+
+public import Formalism.LatticeSlopes.CovolAntiSameRank
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
+
+@[expose] public section
 
 open Module
 

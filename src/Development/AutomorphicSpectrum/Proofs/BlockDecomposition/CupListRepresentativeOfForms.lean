@@ -1,8 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.LocDefs
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.GlobSerreSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RepUnique
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.TotPairing
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.LocDefs
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.GlobSerreSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RepUnique
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.TotPairing
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 set_option autoImplicit false
 set_option linter.unusedVariables false
@@ -47,7 +52,7 @@ def IsBd (Fil : ℤ → IdF A) : ∀ m : ℕ, CH.Cn (CH.modF A) m → Prop
 theorem bil {R M N P : Type*} [CommRing R] [AddCommGroup M] [AddCommGroup N] [AddCommGroup P] [Module R M] [Module R N]
     [Module R P] (μ : M →ₗ[R] N →ₗ[R] P) (L B g : M) (l b t : N) (B' x y : P) :
     μ L l - B' - (x + y) = μ (L - B - g) l + (μ g l - x) + (μ B b - B') + (μ B t - y) + μ B (l - (b + t)) := by
-  simp only [map_sub, map_add, LinearMap.sub_apply]
+  simp only [map_sub, map_add (f := _), LinearMap.sub_apply]
   abel
 
 end Filt
@@ -253,21 +258,23 @@ theorem near (hF : IsFil Φ Fil) (hc : E.GrConst Fil) : ∀ (m : ℕ) (ℓ : Fin
       have := add_mem (FC_anti hF (r := ((1 : ℕ) : ℤ)) (by simp) hfe) (add_mem hb ht)
       rwa [sub_add_cancel] at this
     have hdb : CH.d (CH.modF Φ.A) 1 b ∈ FC (Fil ((1 + 1 : ℕ) : ℤ)) (1 + 1) := by
-      rw [hb_def, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hb_def, map_sum]
       exact sum_mem fun i _ => d_fc_mem E σ hF hc ![i] _
     have hdl : CH.d (CH.modF Φ.A) 1 l ∈ FC (Fil ((1 + 1 : ℕ) : ℤ)) (1 + 1) := by
       have e : l = (l - (b + t)) + (b + t) := by abel
-      rw [e, map_add, map_add, ht_def, CH.d_d, add_zero]
+      rw [e, map_add (f := _), map_add (f := _), ht_def, CH.d_d, add_zero]
       exact add_mem (d_mem hfe) hdb
     have hB : B ∈ FC (Fil (m : ℤ)) m := sum_mem fun I _ => fc_mem E σ hF I _
     have hdB : CH.d (CH.modF Φ.A) m B ∈ FC (Fil ((m + 1 : ℕ) : ℤ)) (m + 1) := by
-      rw [hB_def, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hB_def, map_sum]
       exact sum_mem fun I _ => d_fc_mem E σ hF hc I _
     obtain ⟨H₁, hH₁, hc₁⟩ := bd_cup hF m g hg l hl hdl
     obtain ⟨H₂, hH₂, hc₂⟩ := b_cup_dh hF m B hB hdB (h (Fin.last m)) (hh _)
     refine ⟨CH.d (CH.modF Φ.A) m (H₁ + H₂), ⟨H₁ + H₂, add_mem hH₁ hH₂, rfl⟩, ?_⟩
     have hcup : cupListC Φ.A ℓ = (CH.mulP Φ.A).cupC (rfl : m + 1 = m + 1) L l := rfl
-    rw [hcup, map_add, bil _ L B g l b t]
+    rw [hcup, map_add (f := _), bil _ L B g l b t]
     refine add_mem (add_mem (add_mem (add_mem ?_ hc₁) ?_) hc₂) ?_
     · exact cup_mem hF rfl hr hl
     · have e : (CH.mulP Φ.A).cupC (rfl : m + 1 = m + 1) B b -
@@ -287,7 +294,8 @@ theorem near (hF : IsFil Φ Fil) (hc : E.GrConst Fil) : ∀ (m : ℕ) (ℓ : Fin
               (fc E σ ![i] (c (Fin.last m) i)) := by
           rw [hB_def, LinearMap.map_sum₂]
           refine Finset.sum_congr rfl fun I _ => ?_
-          rw [hb_def, map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [hb_def, map_sum]
         rw [e1, e2, ← Finset.sum_sub_distrib]
         refine Finset.sum_congr rfl fun I _ => ?_
         rw [← Finset.sum_sub_distrib]

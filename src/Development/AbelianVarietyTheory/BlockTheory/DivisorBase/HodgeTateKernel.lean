@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HodgeTateLatticePointFinrankTateModule
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HodgeTateLatticePointFinrankTateModule
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -58,37 +62,9 @@ def LevelReduction : Prop :=
         (unitOf (w ≫ χ) : DualNumber R) =
           TrivSqZeroExt.inl 1 + TrivSqZeroExt.inr (algebraMap O R ((alLeft P t).1 x))
 
-omit [Algebra ℤ_[p] O] in
-
-def RestrictionOnto : Prop := Function.Surjective P.weilChar
-
-def CokernelBound : Prop := ∀ f : omega P.Gt, (p : O) ^ 2 • f ∈ LinearMap.range P.al
 
 variable [Algebra ℤ_[p] C] [IsScalarTower ℤ_[p] O C]
 
-def KernelShape : Prop :=
-  Module.finrank C P.W = P.A.g ∧
-    (∀ (a : Λ), ∀ x ∈ P.W, P.actV a x ∈ P.W) ∧
-    P.tateTorus.baseChange C ≤ P.W ∧
-    P.W ≤ P.tateGt.baseChange C ∧
-    (∀ x : P.V, x ∈ P.W ↔ ∀ y ∈ P.W, P.pairV x y = 0) ∧
-    (∀ τ : Λ →+* O, Module.finrank C (P.eigW τ) = AvDefs.rTau P.Gt P.oGt τ) ∧
-    P.W = Submodule.span C (Set.range P.bLie)
-
-example (a : Λ) (x : P.V) (hx : x ∈ P.W) : P.actV a x ∈ P.W := by
-  change P.alC _ = 0
-  rw [P.isEquivariant_alC a x, show P.alC x = 0 from hx, map_zero]
-
-example (t : P.T) : alLeft P t = 0 ↔ P.al₀ t = 0 := by
-  simp [alLeft]
-
 end AtPoint
-
-def HodgeTateKernelAtPoint : Prop :=
-  ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C ℝ≥0)
-    (O : Type) [CommRing O] [Algebra O C] [Fact ¬IsUnit (p : O)]
-    [IsAdicComplete (Ideal.span {(p : O)}) O] [Algebra ℤ_[p] O] [Algebra ℤ_[p] C]
-    [IsScalarTower ℤ_[p] O C] (Λ : Type) [CommRing Λ] [StarRing Λ] (P : Point p v O Λ),
-    LevelReduction P ∧ RestrictionOnto P ∧ CokernelBound P ∧ KernelShape P
 
 end GlobalTheory.IndefiniteRowSideFullHecke.HodgeTateKernel

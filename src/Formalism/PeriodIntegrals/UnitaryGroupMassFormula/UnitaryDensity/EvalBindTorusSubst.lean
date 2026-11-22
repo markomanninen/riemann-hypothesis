@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryDensity.GramStep
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryDensity.GramStep
+
+@[expose] public section
 
 open Matrix MvPolynomial
 open scoped ComplexOrder

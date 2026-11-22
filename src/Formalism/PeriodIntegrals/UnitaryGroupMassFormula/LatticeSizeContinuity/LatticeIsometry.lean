@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeSizeContinuity.LatSizeContOfSteps
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeSizeContinuity.LatSizeContOfSteps
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,8 +40,9 @@ end LatIs
 
 theorem lattice_isometry : LatIs := by
   intro I x
-  have hL := Formalism.UG.P.global_lattice_isLattice_holds I.F I.E (Fin I.n) I.L (Module.Finite.iff_fg.2 I.L_fg)
+  have hL := Formalism.UG.P.csGlob_lattice (F := I.F) I.L (Module.Finite.iff_fg.2 I.L_fg)
     I.L_span (x.2 : GL (Fin I.n) (I.E ⊗[I.F] Formalism.MainNotions.S.Af I.F))
-  exact ⟨_, hL.fg, hL.span_eq_top, LatIs.latSet_eq I x⟩
+  letI : Submodule.IsFullLattice I.E _ := hL
+  exact ⟨_, hL.fg, Submodule.IsFullLattice.span_eq_top, LatIs.latSet_eq I x⟩
 
 end PI.UnitaryGroupMassFormula.LSC

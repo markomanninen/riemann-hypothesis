@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarRight
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarInv
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarHaarA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarRight
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarInv
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarHaarA
+
+@[expose] public section
 
 noncomputable section
 

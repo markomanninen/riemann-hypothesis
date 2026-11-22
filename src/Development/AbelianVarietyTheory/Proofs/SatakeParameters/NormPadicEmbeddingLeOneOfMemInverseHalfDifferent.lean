@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.OffSmall
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.ShapeDegreeParity
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.TeichmullerFactorisation
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TauPlBijective
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
-import Formalism.LocalToGlobal.ProjectiveLattices.HostRank
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.OffSmall
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalRingCardinality.DataKerI
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+public import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TauPlBijective
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
+public import Formalism.LocalToGlobal.ProjectiveLattices.HostRank
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +34,7 @@ def primeOf {E : Type} [Field E] {l : ℕ} [Fact l.Prime] (ρ : E →+* ℂ_[l])
   add_mem' := by
     intro a b ha hb
     simp only [Set.mem_setOf_eq] at ha hb ⊢
-    rw [RingOfIntegers.coe_eq_algebraMap, map_add, map_add]
+    rw [RingOfIntegers.coe_eq_algebraMap, map_add (f := _), map_add (f := _)]
     exact (IsUltrametricDist.norm_add_le_max _ _).trans_lt (max_lt ha hb)
   zero_mem' := by simp
   smul_mem' := by
@@ -113,7 +118,7 @@ def lamM (lam : Qbar →+* ℂ_[l]) : M →+* ℂ_[l] :=
 
 theorem lamM_apply (lam : Qbar →+* ℂ_[l]) (s : M) : lamM M lam s = lamC lam (s : ℂ) := by
   unfold lamC
-  rw [dif_pos (mem_Qbar M s)]
+  rw [dite_eq_left (mem_Qbar M s)]
   rfl
 
 variable (hM : ∀ τ x, embT D τ x ∈ M)
@@ -122,7 +127,7 @@ def embM (τ : D.what₂.Tau) : D.host.E →+* M := (embT D τ).codRestrict M (h
 
 theorem liftM_eq (τ : D.what₂.Tau) (x : D.host.E) : TaylorLogMetric.liftM M (embT D τ x) = embM D M hM τ x := by
   unfold TaylorLogMetric.liftM
-  rw [dif_pos (hM τ x)]
+  rw [dite_eq_left (hM τ x)]
   rfl
 
 theorem lamM_embM (lam : Qbar →+* ℂ_[l]) (τ : D.what₂.Tau) (x : D.host.E) :
@@ -141,7 +146,7 @@ theorem mul_mem_mmM (x : 𝓞 D.host.E) {v : D.what₂.Tau → M} (hv : v ∈ mm
     rw [liftM_eq D M hM, liftM_eq D M hM, Algebra.smul_def, map_mul]
   | zero =>
     convert (mmM D M).zero_mem using 1
-    funext τ
+    ext τ
     simp
   | add v w _ _ hv hw =>
     convert (mmM D M).add_mem hv hw using 1
@@ -163,7 +168,7 @@ theorem norm_coord_le (lam : Qbar →+* ℂ_[l]) (h2 : l ∉ D.host.small) (hq :
     exact norm_padicEmbedding_le_one_of_mem_inverseHalfDifferent D h2 hq _ ha
   | zero => simp
   | add v w _ _ hv hw =>
-    rw [Pi.add_apply, map_add]
+    rw [Pi.add_apply, map_add (f := _)]
     exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hv hw)
   | smul c v _ hv =>
     rw [Pi.smul_apply, Algebra.smul_def, map_mul, norm_mul]
@@ -197,8 +202,8 @@ theorem exists_vanishing (lam : Qbar →+* ℂ_[l]) (h2 : l ∉ D.host.small) (h
 
 end GlobalTheory.EigenGenerator
 
-open GlobalTheory.EigenGenerator in
 
+open GlobalTheory.EigenGenerator in
 theorem GlobalTheory.EigenGenerator.norm_generator_eq_one : ∀ (D : D7) (l : ℕ) [Fact l.Prime] (lam : Qbar →+* ℂ_[l]), l ∉ D.host.small → l ≠ D.host.q → ∀ (M : IntermediateField ℚ ℂ) [NumberField M], (∀ τ x, embT D τ x ∈ M) → ∀ (τ : D.what₂.Tau) (s : M), ellT D M τ = Submodule.span (𝓞 M) {s} → ‖lamC lam (s : ℂ)‖ = 1 := by
   intro D l _ lam h2 hq M _ hM τ s hs
   rw [← lamM_apply]

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsQuadOfPlane
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOscillatorActionUnitaryGroupHermitian
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOscillatorActionOfGaussianPairings
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergSmoothOfWeakDerivativeClosedSet
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.PolarConjTranspose
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CommuteGelfandInvariantMatrixUnitsOfGlRel
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasDerivAtOscillatorIntegralSymplecticPathStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsQuadOfPlane
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOscillatorActionUnitaryGroupHermitian
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOscillatorActionOfGaussianPairings
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergSmoothOfWeakDerivativeClosedSet
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.PolarConjTranspose
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CommuteGelfandInvariantMatrixUnitsOfGlRel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasDerivAtOscillatorIntegralSymplecticPathStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -123,7 +127,7 @@ theorem differentiableAt_det {M : ℝ → ι → ι → ℂ} (hM : Differentiabl
     DifferentiableAt ℝ (fun t => (Matrix.of (M t)).det) 0 := by
   simp only [Matrix.det_apply', Matrix.of_apply]
   refine DifferentiableAt.fun_sum fun σ _ => DifferentiableAt.const_mul ?_ _
-  exact DifferentiableAt.fun_finset_prod fun i _ => differentiableAt_pi.1 (differentiableAt_pi.1 hM _) _
+  exact DifferentiableAt.fun_finsetProd fun i _ => differentiableAt_pi.1 (differentiableAt_pi.1 hM _) _
 
 def sand (A A' : Matrix ι ι ℂ) : (ι → ι → ℂ) →L[ℝ] (ι → ι → ℂ) :=
   LinearMap.toContinuousLinearMap
@@ -211,7 +215,13 @@ theorem exists_osc_bound_deriv : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (
     calc _ = (u.1 * (u⁻¹).1)ᴴ * X * (u.1 * (u⁻¹).1) := by simp only [mul_assoc, conjTranspose_mul]
       _ = X := by simp
   let E₀ : (ι → ℂ) ≃L[ℝ] (ι → ℂ) := ContinuousLinearEquiv.equivOfInverse (mvL (u⁻¹).1) (mvL u.1)
-    (fun v => by simp) fun v => by simp
+    (fun v => by
+      change u.1 *ᵥ ((u⁻¹).1 *ᵥ v) = v
+      rw [mulVec_mulVec]
+      simp) fun v => by
+      change (u⁻¹).1 *ᵥ (u.1 *ᵥ v) = v
+      rw [mulVec_mulVec]
+      simp
   let E : EuclideanSpace ℂ ι ≃L[ℝ] (ι → ℂ) := (crd ι).trans E₀
   have hE : ∀ v, E v = (u⁻¹).1 *ᵥ crd ι v := fun _ => rfl
   have hJ := cplx_cplx s hs1 hs2

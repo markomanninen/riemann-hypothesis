@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistSplitCech
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistSplitCech
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -17,8 +22,8 @@ variable {S : Type u} [CommRing S] {Ω : Type w} [Field Ω] [Algebra S Ω] {N : 
   {G B : SubSystem S x Ω} (hG : ∀ I, M₀.tilde 0 I = G.sub I)
   (hB : ∀ I, Submodule.span (chartRing S x I) (Set.range η) = B.sub I)
 
-include hG hB in
 
+include hG hB in
 theorem twist_retract (i : ℕ) :
     ∃ (ι : ((G.twist (B.pow n)).twist (twistSys S x c)).H i →+ cohom (twGraded η M₀) i c)
       (π : cohom (twGraded η M₀) i c →+ ((G.twist (B.pow n)).twist (twistSys S x c)).H i),
@@ -52,16 +57,17 @@ theorem twist_retract (i : ℕ) :
         LinearMap.mem_ker.mpr (hker' _ _ (LinearMap.mem_ker.mp (Submodule.mem_inf.mp y.2).1))⟩
       map_zero' := Subtype.ext (funext fun K => Subtype.ext (gm_zero η M₀ n c i K))
       map_add' := fun a b => Subtype.ext (funext fun K => Subtype.ext (gm_add η M₀ n c i a.1 b.1 K)) }
-  refine quot_retract _ _ f g ?_ ?_ ?_
-  · intro z hz
-    exact F_bdry η M₀ n c hG hB i z.1 hz
-  · intro y hy
-    exact G_bdry η M₀ n c hG hB i y.1 (Submodule.mem_inf.mp y.2).2 hy
-  · intro z
-    apply Subtype.ext
-    funext K
-    apply Subtype.ext
-    exact gm_Fmap η M₀ n c hG hB i z.1 K
+  set_option synthInstance.maxHeartbeats 200000 in
+    refine quot_retract _ _ f g ?_ ?_ ?_
+    · intro z hz
+      exact F_bdry η M₀ n c hG hB i z.1 hz
+    · intro y hy
+      exact G_bdry η M₀ n c hG hB i y.1 (Submodule.mem_inf.mp y.2).2 hy
+    · intro z
+      apply Subtype.ext
+      funext K
+      apply Subtype.ext
+      exact gm_Fmap η M₀ n c hG hB i z.1 K
 
 end Retract
 

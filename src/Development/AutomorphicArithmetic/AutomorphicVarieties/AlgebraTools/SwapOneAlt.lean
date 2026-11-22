@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.EqOneOfStrictMono
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkInd
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.EqOneOfStrictMono
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkInd
+
+@[expose] public section
 
 open MvPolynomial Equiv UpperTheory.V.AlgebraTools.Hk
 
@@ -44,7 +48,7 @@ private theorem swap_one {R : Type} [CommRing R] {n : ℕ} {q : R} {H : Type} [R
 
 theorem UpperTheory.V.AlgebraTools.hkOne :
     ∀ (R : Type) [CommRing R] (n : ℕ) (q : R) (H : Type) [Ring H] [Algebra R H] (b : Bern n q H),
-      (∀ w, b.T w * b.one = q ^ invN w • b.one) ∧ b.one * b.one = poin n q • b.one := by
+      (∀ w, b.T w * b.one = q ^ invN w • b.one) ∧ b.one * b.one = poin (n := n) q • b.one := by
   intro R _ n q H _ _ b
   have hinv := UpperTheory.V.AlgebraTools.hkInv n
   have p1 : ∀ w, b.T w * b.one = q ^ invN w • b.one := by

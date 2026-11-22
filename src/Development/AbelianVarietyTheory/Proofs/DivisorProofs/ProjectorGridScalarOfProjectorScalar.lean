@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NablaSchur
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NablaSchur
+
+@[expose] public section
 
 open GlobalTheory.LeviCut
 
@@ -250,8 +254,8 @@ end GlobalTheory.LeviCut.GridScalarProof
 
 namespace GlobalTheory.LeviCut
 
-open GridScalarProof in
 
+open GridScalarProof in
 theorem gridScalar_of_stepScalar : StepScalar → GridScalar := by
   intro hS V _ _ a b K e lam v φ T he hD hv hij hT
   have hT' : T ∈ vanSub (a + b) e lam (Finset.range a) := hT

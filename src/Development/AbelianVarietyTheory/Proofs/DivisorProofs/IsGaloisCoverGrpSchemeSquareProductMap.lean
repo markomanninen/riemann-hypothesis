@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompEqOneOfTransl
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompEqOneOfTransl
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT
 
@@ -43,8 +48,8 @@ theorem grpSchemeSquareProductMap_eq_pullback_map {A A' : Over S} [GrpObj A] [Is
 
 end GlobalTheory.UPel.HT.Hecke.ProdGalois
 
-open GlobalTheory.UPel.HT.Hecke.ProdGalois in
 
+open GlobalTheory.UPel.HT.Hecke.ProdGalois in
 theorem GlobalTheory.UPel.HT.Hecke.isGaloisCover_grpSchemeSquareProductMap : ∀ (S : Scheme.{0}) (A A' : Over S) [GrpObj A] [IsCommMonObj A] [GrpObj A'] [IsCommMonObj A'] (G : Subgroup (𝟙_ (Over S) ⟶ A)) (ψ : A ⟶ A'), IsMonHom ψ → GlobalTheory.ZM.IsGaloisCover G (fun h => (GlobalTheory.UPel.HT.Hecke.transl h.1).left) ψ.left → GlobalTheory.ZM.IsGaloisCover (G × G) (fun h => (GlobalTheory.UPel.HT.Hecke.transl (lift h.1.1 h.2.1 : 𝟙_ (Over S) ⟶ G2 A)).left) (GlobalTheory.UPel.HT.Hecke.sq2 ψ) := by
   intro S A A' _ _ _ _ G ψ _ hψ
   have := hψ.finite
@@ -80,13 +85,13 @@ theorem GlobalTheory.UPel.HT.Hecke.isGaloisCover_grpSchemeSquareProductMap : ∀
     · rw [Category.assoc, grpSchemeSquareProductMap_comp_fst, reassoc_of% transl_lift_fst_left, hψ.inv a.1]
     · rw [Category.assoc, grpSchemeSquareProductMap_comp_snd, reassoc_of% transl_lift_snd_left, hψ.inv a.2]
   · rw [grpSchemeSquareProductMap_eq_pullback_map]
-    exact MorphismProperty.pullback_map (P := @IsFinite) hfin hfin (Over.w ψ).symm (Over.w ψ).symm
+    exact MorphismProperty.pullbackMap (P := @IsFinite) hfin hfin (Over.w ψ).symm (Over.w ψ).symm
   · rw [grpSchemeSquareProductMap_eq_pullback_map]
     haveI : MorphismProperty.IsStableUnderComposition @Etale.{0} := ⟨fun _ _ _ _ ↦ inferInstance⟩
-    exact MorphismProperty.pullback_map (P := @Etale) het het (Over.w ψ).symm (Over.w ψ).symm
+    exact MorphismProperty.pullbackMap (P := @Etale) het het (Over.w ψ).symm (Over.w ψ).symm
   · rw [grpSchemeSquareProductMap_eq_pullback_map]
     haveI : MorphismProperty.IsStableUnderComposition @Surjective.{0} := ⟨fun _ _ _ _ ↦ inferInstance⟩
-    exact MorphismProperty.pullback_map (P := @Surjective) hon hon (Over.w ψ).symm (Over.w ψ).symm
+    exact MorphismProperty.pullbackMap (P := @Surjective) hon hon (Over.w ψ).symm (Over.w ψ).symm
   · intro K _ _ y y' e
     have e₁ : (y ≫ (fst A A).left) ≫ ψ.left = (y' ≫ (fst A A).left) ≫ ψ.left := by
       rw [Category.assoc, Category.assoc, ← grpSchemeSquareProductMap_comp_fst, reassoc_of% e]

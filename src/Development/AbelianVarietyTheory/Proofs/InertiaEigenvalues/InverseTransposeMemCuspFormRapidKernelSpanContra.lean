@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemContraIff
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
-import Development.AbelianVarietyTheory.Definitions.Divisors.MeasurableCompInfGL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemContraIff
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MeasurableCompInfGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ open NumberField Matrix MeasureTheory GlobalTheory.CuspRep GroundTheory.Global G
 
 namespace GlobalTheory.JSW
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem invT_invT_gl {R : Type} [CommRing R] (g : GL (Fin a) R) : invT a R (invT a R g) = g := by
   apply Units.ext
@@ -48,7 +52,7 @@ theorem height_invT (y : GL (Fin a) (Cinf E)) : height (invT a (Cinf E) y) = hei
 theorem isRapidInf_invT {X : Type} [MeasurableSpace X] {ν : Measure X} {k : X → ℂ} {γ : X → GL (Fin a) (Cinf E)}
     (hk : IsRapidInf ν k γ) : IsRapidInf ν k (fun x => invT a (Cinf E) (γ x)) := by
   refine ⟨hk.1, ?_, fun N => ?_⟩
-  · refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => measurable_pi_lambda _ fun w => ?_
+  · refine Measurable.of_eval fun i => Measurable.of_eval fun j => Measurable.of_eval fun w => ?_
     set p : GL (Fin a) (Cinf E) →* GL (Fin a) ℂ :=
       Matrix.GeneralLinearGroup.map (Pi.evalRingHom (fun _ : InfinitePlace E => ℂ) w)
     have e : (fun x => ((invT a (Cinf E) (γ x) : GL (Fin a) (Cinf E)) : Matrix (Fin a) (Fin a) (Cinf E)) i j w) =
@@ -101,11 +105,7 @@ theorem comp_invT_mem_mspanR (π : CuspSub E a) (F : GA E a → ℂ) (hF : F ∈
   rw [← rspan_eq_mspanR] at hF ⊢
   exact (memT F).1 (hle hF)
 
-example (π : CuspSub E a) {φ : Sm E a} (hφ : φ ∈ π.V) :
-    (fun g => φ.1 (invT a (Ad E) g)) ∈ mspanR π.contra ∧ mspanR π.contra ≠ ⊥ :=
-  ⟨comp_invT_mem_mspanR π φ.1 (rspan_eq_mspanR π ▸ mem_rspan hφ), rspan_eq_mspanR π.contra ▸ rspan_ne_bot _⟩
-
-theorem invT_mem_mspanR_contra : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (π : CuspSub E a)
+theorem invT_mem_mspanR_contra : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (π : CuspSub E a)
     (F : GA E a → ℂ), F ∈ GlobalTheory.JSW.mspanR π → (fun g => F (invT a (Ad E) g)) ∈ GlobalTheory.JSW.mspanR π.contra :=
   fun _ _ _ _ _ π F hF => comp_invT_mem_mspanR π F hF
 

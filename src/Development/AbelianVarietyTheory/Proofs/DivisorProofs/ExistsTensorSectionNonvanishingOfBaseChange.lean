@@ -1,18 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAffineOpenPreimageOfIsPullback
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NefIsPsEffAndBigTensNef
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RelAmpleExternalTensorPowerGroupPower
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsSecNonzeroLocusEqOfLbIso
-import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen
-import Development.AbelianVarietyTheory.Definitions.Divisors.P22
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsLogCanonicalMultipleCanonical
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FlatBCSec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNormalProjectiveModel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAffineOpenPreimageOfIsPullback
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NefIsPsEffAndBigTensNef
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RelAmpleExternalTensorPowerGroupPower
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsSecNonzeroLocusEqOfLbIso
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsLogCanonicalMultipleCanonical
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FlatBCSec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNormalProjectiveModel
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory Formalism.L2.Pj Formalism.BasicNotions
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -29,8 +34,8 @@ namespace GlobalTheory.FieldDescent
 
 open scoped TensorProduct
 
-open ReciprocityTheory.ChartRestriction.G.DVR.FlatBC in
 
+open ReciprocityTheory.ChartRestriction.G.DVR.FlatBC in
 theorem exists_sec_of_pull {F E : Type} [Field F] [Field E] [Algebra F E] {Y X : Scheme.{0}}
     {p : Y ⟶ Sp F} {q : X ⟶ Sp E} {π : X ⟶ Y} (H : IsPullback π q p (spMap (algebraMap F E)))
     [CompactSpace Y] [Y.IsSeparated] {N : LB Y} (hN : N.IsLB) (σ : (N.pull π).Sec) (x : X)
@@ -43,7 +48,7 @@ theorem exists_sec_of_pull {F E : Type} [Field F] [Field E] [Algebra F E] {Y X :
     { toFun := fun f ab => dfun N V c hVc f ab.1 ab.2
       map_add' := fun f g => by
         funext ab
-        simp only [dfun, Pi.add_apply, map_add, mul_add]
+        simp only [dfun, Pi.add_apply, map_add (f := _), mul_add]
         abel
       map_smul' := fun r f => by
         funext ab
@@ -102,7 +107,7 @@ theorem exists_sec_of_pull {F E : Type} [Field F] [Field E] [Algebra F E] {Y X :
     | tmul m a =>
       simp only [LinearMap.rTensor_tmul, e₁, e₂, TensorProduct.equivFinsuppOfBasisRight_apply_tmul,
         Finsupp.mapRange_apply, map_smul]
-    | add u v hu hv => simp only [map_add, Finsupp.add_apply, hu, hv]
+    | add u v hu hv => simp only [map_add (f := _), Finsupp.add_apply, hu, hv]
   have hβ : ∀ β, dfun N V c hVc (e₁ t β) = 0 := fun β =>
     (hδ _).1 (by rw [← nat, ht, map_zero, Finsupp.zero_apply])
   choose θ hθ using fun β => exists_glue N V c hVc hN hcov (e₁ t β) (hβ β)
@@ -119,9 +124,11 @@ theorem exists_sec_of_pull {F E : Type} [Field F] [Field E] [Algebra F E] {Y X :
   have hm : m' j = (e₁ t).sum fun β m => (π.appLE (V j) (π ⁻¹ᵁ V j ⊓ q ⁻¹ᵁ ⊤) inf_le_left).hom (m j) *
       algX q (π ⁻¹ᵁ V j ⊓ q ⁻¹ᵁ ⊤) (b β) := by
     have h1 := hpt j
-    rw [hexp, piLeft_apply_eq, Finsupp.sum, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hexp, piLeft_apply_eq, Finsupp.sum, map_sum] at h1
     simp only [LinearMap.rTensor_tmul, LinearMap.proj_apply] at h1
-    rw [← RingEquiv.apply_symm_apply (eTens p q π H (V j) (hVa j)) (m' j), ← h1, map_sum, Finsupp.sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← RingEquiv.apply_symm_apply (eTens p q π H (V j) (hVa j)) (m' j), ← h1, map_sum, Finsupp.sum]
     refine Finset.sum_congr rfl fun β _ => ?_
     rw [eTens_tmul]
   have key : ∀ β, ReciprocityTheory.ChartRestriction.G.Geo.Tor.gs (𝟙 X) x _
@@ -133,7 +140,8 @@ theorem exists_sec_of_pull {F E : Type} [Field F] [Field E] [Algebra F E] {Y X :
       ← mem_nonzeroLocus_iff_pull (θ β) π x (hVc j hj)]
     exact hcon (θ β)
   have hmem : ReciprocityTheory.ChartRestriction.G.Geo.Tor.gs (𝟙 X) x _ (m' j) ∈ IsLocalRing.maximalIdeal (X.presheaf.stalk x) := by
-    rw [hm, Finsupp.sum, ReciprocityTheory.ChartRestriction.G.Geo.Tor.gs_eq (𝟙 X) x _ hxj, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hm, Finsupp.sum, ReciprocityTheory.ChartRestriction.G.Geo.Tor.gs_eq (𝟙 X) x _ hxj, map_sum, map_sum]
     refine Ideal.sum_mem _ fun β _ => ?_
     rw [map_mul, map_mul, ← ReciprocityTheory.ChartRestriction.G.Geo.Tor.gs_eq (𝟙 X) x _ hxj]
     exact Ideal.mul_mem_right _ _ (key β)
@@ -149,7 +157,7 @@ theorem exists_sec_tens_of_baseChange : ∀ (k E : Type) [Field k] [Field E] [Al
   have hT := isLB_tens (LB.isLB_pull hL π) (LB.isLB_pull hM π)
   have iso : LBIso ((tens L M).pull π) (tens (L.pull π) (M.pull π)) := by
     refine (cls_eq_iff hNp hT).1 ?_
-    rw [cls_pull hN π hNp, cls_tens hL hM hN, map_add, cls_tens (LB.isLB_pull hL π) (LB.isLB_pull hM π) hT,
+    rw [cls_pull hN π hNp, cls_tens hL hM hN, map_add (f := _), cls_tens (LB.isLB_pull hL π) (LB.isLB_pull hM π) hT,
       cls_pull hL π, cls_pull hM π]
   obtain ⟨s₂, hs₂⟩ := exists_sec_nonzeroLocus_eq_of_lbIso hNp hT iso s
   exact exists_sec_of_pull H hN s₂ x (hs₂ ▸ hs)

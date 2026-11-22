@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AzumayaBaseChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOneTmulEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AzumayaBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOneTmulEq
+
+@[expose] public section
+
 open IsLocalRing
 open scoped TensorProduct
 
@@ -35,7 +40,7 @@ theorem isSimpleRing_of_isAzumaya (k B : Type) [Field k] [Ring B] [Algebra k B]
       rw [AlgHom.mulLeftRight_apply]
       exact I.mul_mem_right _ _ (I.mul_mem_left _ _ hzI)
     | add x y hx hy =>
-      rw [map_add, LinearMap.add_apply]
+      rw [map_add (f := _), LinearMap.add_apply]
       exact I.add_mem hx hy
   rw [← TwoSidedIdeal.one_mem_iff, ← hf, ← ht]
   exact key t
@@ -80,7 +85,8 @@ theorem exists_rankOne_idempotent (k B : Type) [Field k] [Finite k] [Ring B] [Al
     simp only [E, Matrix.single_mul_mul_single, one_mul, mul_one, Matrix.smul_single, ← hc]
     rw [Algebra.algebraMap_eq_smul_one]
   · apply e.injective
-    simp [E, map_sum, Matrix.single_mul_single_same, Matrix.sum_single_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [E, map_sum, Matrix.single_mul_single_same, Matrix.sum_single_one]
 
 end GlobalTheory.AzumayaResidue
 
@@ -130,6 +136,7 @@ theorem exists_residue_idempotent : ∀ (A : Type) [CommRing A] [IsLocalRing A] 
     refine ⟨c, hker _ ?_⟩
     rw [map_sub, map_mul, map_mul, hc, map_smul, ← ResidueField.algebraMap_eq,
       algebraMap_smul, sub_self]
-  · simp only [map_sub, map_sum, map_mul, map_one, ha, hb, hsum, sub_self]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [map_sub, map_sum, map_mul, map_one, ha, hb, hsum, sub_self]
 
 end GlobalTheory.AzumayaResidue

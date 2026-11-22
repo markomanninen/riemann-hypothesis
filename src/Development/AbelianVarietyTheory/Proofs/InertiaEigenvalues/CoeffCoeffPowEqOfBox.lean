@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffOfW
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffOfW
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Filter GlobalTheory.CrysPrism
 open scoped Formalism.Per
@@ -14,7 +18,8 @@ theorem coeff_coeff_pow_eq_of_box :
   induction m generalizing i n with
   | zero => simp
   | succ k ih =>
-    rw [pow_succ, pow_succ, PowerSeries.coeff_mul, PowerSeries.coeff_mul, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [pow_succ, pow_succ, PowerSeries.coeff_mul, PowerSeries.coeff_mul, map_sum, map_sum]
     refine Finset.sum_congr rfl ?_
     rintro ⟨p, q⟩ hpq
     rw [Finset.HasAntidiagonal.mem_antidiagonal] at hpq

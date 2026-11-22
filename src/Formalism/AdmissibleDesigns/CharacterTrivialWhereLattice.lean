@@ -1,4 +1,8 @@
-import Formalism.AdmissibleDesigns.InertiaActsTrivially
+module
+
+public import Formalism.AdmissibleDesigns.InertiaActsTrivially
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -8,7 +12,7 @@ open Finset Classical Formalism.BasicNotions
 
 namespace Formalism.MainNotions.N.K.QS
 
-open Formalism.NG Formalism.RepresentationBoundsCohomology.BR Formalism.RepresentationBoundsCohomology.TorsionBoundCyclotomic Formalism.RepresentationBoundsCohomology.JL Formalism.RepresentationBoundsCohomology.JT Formalism.RepresentationBoundsCohomology.JS Formalism.RepresentationBoundsCohomology.SplitClassesAll Formalism.RepresentationBoundsCohomology.LocallyConstantCohomology Formalism.RepresentationBoundsCohomology.FIN
+open Formalism.NG Formalism.RepresentationBoundsCohomology.BR Formalism.RepresentationBoundsCohomology.TorsionBoundCyclotomic Formalism.RepresentationBoundsCohomology.JL Formalism.RepresentationBoundsCohomology.JT Formalism.RepresentationBoundsCohomology.SplitClassesAll Formalism.RepresentationBoundsCohomology.LocallyConstantCohomology Formalism.RepresentationBoundsCohomology.FIN
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.RepresentationBoundsCohomology.LOC Formalism.MainNotions Formalism.MainNotions.N Formalism.MainNotions.N.K
 open Formalism.RepresentationBoundsCohomology.ringDataObjects (RingData RingDef)
 
@@ -199,8 +203,8 @@ variable {D : D7} (i : D.nd.Loc) (dc : TruncatedSeriesCountingIdentities.Decl D 
   [∀ k, SMulCommClass Dd.R' (D.nd.O i) (blockRestrictedRepresentationType (RepresentationBoundsCohomology.blk D.R) Dd.ρk k)]
   [∀ k, IsScalarTower Dd.T' Dd.R' (blockRestrictedRepresentationType (RepresentationBoundsCohomology.blk D.R) Dd.ρk k)]
 
-variable {i r ρ π Dd} in
 
+variable {i r ρ π Dd} in
 theorem rblk (hE : Ev r π Dd) (hN : RepresentationBoundsCohomology.NormAt D.nd r ρ π) (c' : Fin D.R.t) (g : GE D.nd) :
     Dd.ρπ (Dd.r g) (Fin.natAdd D.R.r c') (Fin.natAdd D.R.r c') =
       ((D.nd.chi i ((c' : ℕ) + 1) g : (D.nd.O i)ˣ) : D.nd.O i) := by
@@ -215,8 +219,8 @@ theorem rblk (hE : Ev r π Dd) (hN : RepresentationBoundsCohomology.NormAt D.nd 
   rw [h1]
   exact congrArg _ (hN.2.1 g c')
 
-variable {i r ρ π Dd} in
 
+variable {i r ρ π Dd} in
 theorem r_act (hE : Ev r π Dd) (hN : RepresentationBoundsCohomology.NormAt D.nd r ρ π) (c' : Fin D.R.t) (g : GE D.nd)
     (m : blockRestrictedRepresentationType (RepresentationBoundsCohomology.blk D.R) Dd.ρk c'.succ) :
     Dd.r g • m = ((D.nd.chi i ((c' : ℕ) + 1) g : (D.nd.O i)ˣ) : D.nd.O i) • m := by
@@ -279,7 +283,7 @@ theorem locQ (hE : Ev r π Dd) (hN : RepresentationBoundsCohomology.NormAt D.nd 
       hQP _ hq _ hg'
     have hn : D.nd.chi i 1 (g : GE D.nd) = D.nd.chi i 1 (γQ i dc w : GE D.nd) ^ nQ i dc w g := by
       unfold nQ
-      rw [dif_pos hex]
+      rw [dite_eq_left hex]
       exact Nat.find_spec hex
     refine ⟨?_, ?_⟩
     · apply Subtype.ext
@@ -346,8 +350,6 @@ theorem locClause (hE : Ev r π Dd) (hN : RepresentationBoundsCohomology.NormAt 
     (hdec : TruncatedSeriesCountingIdentities.SemisimpleDecomposition i r ρ π) (hG5 : TruncatedSeriesCountingIdentities.admG5 i r) (h5x : TruncatedSeriesCountingIdentities.TameGeneratorConditions i) (hQP : QPow i) (c' : Fin D.R.t)
     (hS : LocS i Dd c'.succ) : LocClause i dc Dd c'.succ :=
   ⟨locQ i dc r ρ π Dd hE hN hG5 h5x hQP c', inertia_triviality_clause i r ρ π Dd hE hG4 hdec, hS⟩
-
-theorem c1_eq : (c1 (D := D)) = Fin.succ (⟨0, RepresentationBoundsCohomology.one_le_letterBlockLength D.R⟩ : Fin D.R.t) := Fin.ext rfl
 
 end Assemble
 
@@ -489,7 +491,8 @@ theorem locS_g (hE : Ev r π Dd) (hN : RepresentationBoundsCohomology.NormAt D.n
     refine (congrArg (· * _) ?_).trans (zero_mul _)
     rw [← h0, Matrix.map_mul]
     congr 1
-    · rw [AddSubmonoidClass.coe_finsetSum, Finset.sum_apply, hF, map_sum]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [AddSubmonoidClass.coe_finsetSum, Finset.sum_apply, hF, map_sum]
       refine Finset.sum_congr rfl (fun k _ => ?_)
       rw [hE.smul_eval, SubmonoidClass.coe_pow, Pi.pow_apply, hE.r_eval, Polynomial.coeff_map, hsm, hF, ← map_pow]
       rfl
@@ -511,7 +514,8 @@ theorem locS_g (hE : Ev r π Dd) (hN : RepresentationBoundsCohomology.NormAt D.n
     have hu : IsUnit (∑ k ∈ Finset.range (Pp.natDegree + 1), ((Pp.coeff k : D.nd.T i) : D.nd.X i → D.nd.O i) π *
         ((D.nd.chi i 1 (D.nd.gam0 i v.1) : (D.nd.O i)ˣ) : D.nd.O i) ^ k) := by
       have h := hPu.map (evT D.nd i π)
-      rw [Polynomial.eval_eq_sum_range, map_sum] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Polynomial.eval_eq_sum_range, map_sum] at h
       simpa [evT, chi1] using h
     obtain ⟨u, hu'⟩ := hu
     calc m = ((u⁻¹ : (D.nd.O i)ˣ) : D.nd.O i) • ((u : D.nd.O i) • m) := by
@@ -535,26 +539,6 @@ theorem locS (hE : Ev r π Dd) (hN : RepresentationBoundsCohomology.NormAt D.nd 
   · exact locS_g i r ρ π Dd hE hN hG5 h5x c' v hv g hg
   · exact locS_pde i r ρ π Dd hE hN hG5 h5x c' v hv g hg
 
-theorem Fall_succ (F0 : ∀ w, Submodule (D.nd.O i) (H1z (resU i dc Dd 0 w))) (c' : Fin D.R.t) :
-    Fall i dc Dd F0 c'.succ = Fpos i dc Dd c'.succ := rfl
-
-theorem Fall_zero (F0 : ∀ w, Submodule (D.nd.O i) (H1z (resU i dc Dd 0 w))) :
-    Fall i dc Dd F0 0 = F0 := rfl
-
-theorem qsAll (hD : RingDef (D.nd.O i) (D.nd.T i) (RepresentationBoundsCohomology.repX D.nd r) π (chiU D.nd i 1) (epsU D.nd i) g0 eB e₁ s Dd)
-    (hN : RepresentationBoundsCohomology.NormAt D.nd r ρ π) (hAdm : LargeLevelLemmas.admitted i r ρ π) (hQP : QPow i) :
-    InertiaActsTrivially i Dd ∧ (∀ c : Fin (D.R.t + 1), c ≠ 0 → LocClause i dc Dd c) ∧ LocClause i dc Dd (c1 (D := D)) ∧
-      CoverClause i dc Dd ∧ NoFixedVectorOffZ i Dd := by
-  obtain ⟨-, -, -, -, -, -, -, hG4, -, hG5, h5x, hG6, -, -, -, -, hdec, -⟩ := hAdm
-  have hE := ev_of hD
-  have hloc : ∀ c : Fin (D.R.t + 1), c ≠ 0 → LocClause i dc Dd c := by
-    intro c hc
-    obtain ⟨c', rfl⟩ := Fin.exists_succ_eq.2 hc
-    exact locClause i dc r ρ π Dd hE hN hG4 hdec hG5 h5x hQP c' (locS i r ρ π Dd hE hN hG5 h5x c')
-  refine ⟨inertia_triviality_clause i r ρ π Dd hE hG4 hdec, hloc, hloc _ ?_, coverClause i dc Dd, no_fixed_vector_off_z i r π Dd hE hG6⟩
-  rw [c1_eq]
-  exact Fin.succ_ne_zero _
-
 end Final
 
 section Shape
@@ -572,11 +556,8 @@ theorem idx_not_qs {v : HeightOneSpectrum (𝓞 D.host.E)} (hv : v ∈ plSet i d
 theorem row_mem_pl {v : HeightOneSpectrum (𝓞 D.host.E)} (hv : v ∈ dc.row) : v ∈ plSet i dc :=
   Finset.mem_union_left _ (Finset.mem_union_left _ hv)
 
-theorem col_mem_pl {v : HeightOneSpectrum (𝓞 D.host.E)} (hv : v ∈ dc.col) : v ∈ plSet i dc :=
-  Finset.mem_union_left _ (Finset.mem_union_right _ hv)
 
 set_option maxHeartbeats 1000000 in
-
 theorem Fpos_row (c : Fin (D.R.t + 1)) {w : ℕ} (hw : w ∈ rowsN i dc) :
     Fpos i dc Dd c w = if (c : ℕ) = 1 then lcH1 (resU i dc Dd c w) ⊓
         unrH1 (resU i dc Dd c w) ((Ine (F := D.host.E) (Aw i dc w)).subgroupOf (decs D.host.E (Aw i dc) w))
@@ -587,26 +568,6 @@ theorem Fpos_row (c : Fin (D.R.t + 1)) {w : ℕ} (hw : w ∈ rowsN i dc) :
   unfold Fpos
   simp only [if_neg hq, if_pos hw]
 
-set_option maxHeartbeats 1000000 in
-
-theorem Fpos_col (c : Fin (D.R.t + 1)) (l : Col i dc) :
-    Fpos i dc Dd c (colIdx i dc l) =
-      if (c : ℕ) = 1 then unrH1 (resU i dc Dd c (colIdx i dc l)) (I i dc (colIdx i dc l)) else ⊥ := by
-  have hpl := col_mem_pl i dc l.2
-  have hl := (dc.cover l.1).1 (Or.inr l.2)
-  have hr : colIdx i dc l ∉ rowsN i dc := by
-    intro h
-    obtain ⟨u, hu, he⟩ := Finset.mem_image.1 h
-    have huv := idx_inj i dc (row_mem_pl i dc hu) hpl he
-    exact Finset.disjoint_left.1 dc.disj hu (huv ▸ l.2)
-  have hq : colIdx i dc l ∉ qsN i dc := idx_not_qs i dc hpl hl
-  unfold Fpos
-  simp only [if_neg hq, if_neg hr]
-
-theorem Fpos_qs (c : Fin (D.R.t + 1)) {w : ℕ} (hw : w ∈ qsN i dc) :
-    Fpos i dc Dd c w = unrH1 (resU i dc Dd c w) (I i dc w) := by
-  unfold Fpos
-  rw [if_pos hw]
 
 end Shape
 

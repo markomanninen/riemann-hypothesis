@@ -1,12 +1,17 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockImageGenDeg
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenericFibreVar
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenFibreHomog
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockImageHilb
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHeightsirationalHilb
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPolySandwich
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockImageGenDeg
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenericFibreVar
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenFibreHomog
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockImageHilb
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHeightsirationalHilb
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPolySandwich
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -60,7 +65,7 @@ theorem eval_lineRestr {K : Type*} [DecidableEq K] (p : MvPolynomial K ℚ) (k�
     (lineRestr p k₀ m).eval t = MvPolynomial.eval (fun k => if k = k₀ then t else m k) p := by
   induction p using MvPolynomial.induction_on with
   | C a => simp [lineRestr]
-  | add p q hp hq => simp only [lineRestr, map_add, Polynomial.eval_add] at *; rw [hp, hq]
+  | add p q hp hq => simp only [lineRestr, map_add (f := _), Polynomial.eval_add] at *; rw [hp, hq]
   | mul_X p k hp =>
     simp only [lineRestr, map_mul, Polynomial.eval_mul] at *
     rw [hp]
@@ -70,7 +75,8 @@ theorem natDegree_lineRestr_le {K : Type*} [DecidableEq K] (p : MvPolynomial K �
     (lineRestr p k₀ m).natDegree ≤ p.totalDegree := by
   rw [lineRestr]
   conv_lhs => rw [p.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Polynomial.natDegree_sum_le_of_forall_le _ _ fun s hs => ?_
   rw [MvPolynomial.aeval_monomial, Polynomial.algebraMap_eq]
   refine (Polynomial.natDegree_C_mul_le _ _).trans ?_
@@ -87,16 +93,16 @@ theorem eventualValue_eq {K : Type*} (f : (K → ℤ) → ℤ) (e : ℚ) (h : �
     obtain ⟨m, hm⟩ := h.exists
     exact ⟨f m, h.mono fun m' hm' => by exact_mod_cast hm'.trans hm.symm⟩
   unfold eventualValue
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   obtain ⟨m, hm1, hm2⟩ := (hex.choose_spec.and h).exists
   rw [← hm1]
   exact hm2
 
 end BlockImageGenDeg
 
+
 open GroundTheory.Heights₂.Heights.NumbersDVR (hilbFn mixedDiff eventualValue) in
 open BlockImageGenDeg in
-
 theorem BlockImageGenDeg.proof (hMHP : MultigradedHilbertPolynomial.Statement.{0})
     (hGFV : GenericFibreVar.Statement) (hHEP : GroundTheory.Heights₂.Heights.FieldNumbers.HilbEventuallyPoly.Statement.{0})
     (hHom : GenFibreHomog.Statement) (hImg : BlockImageHilb.Statement) (hBir : BlockBirationalHilbert.Statement)

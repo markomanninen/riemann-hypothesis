@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePOAct
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePPTSelf
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePOAct
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePPTSelf
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,22 +22,38 @@ theorem linAct_smul (φ : Pt C 1 dd) (c : C) (w : Fin dd → C) : linAct φ (c �
   simp only [linAct, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
   exact Finset.sum_congr rfl fun j _ => by ring
 
-theorem cc_dh (Y : FBChart C V O dd) (i : Fin dd) : constantCoeff (pderiv C ((1 : Fin 2), i) Y.h) = 0 := by
-  have hZ : Z0 (![0, pt C dd 0] : Fin 2 → Pt C 1 dd) := constant_zero_zero_point (pt C dd 0) (coordinate_point_constantCoeff 0)
-  have h0 := congrArg (pderiv C ((0 : Fin 1), i)) Y.gauge.ax0
-  rw [pderiv_eval_pair hZ, map_zero] at h0
-  rw [Finset.sum_eq_zero (fun j _ => by
-      rw [show ((![0, pt C dd 0] : Fin 2 → Pt C 1 dd) 0 j) = 0 from rfl, map_zero, mul_zero]), zero_add] at h0
-  rw [show (∑ j, ev (n := 1) ![0, pt C dd 0] (pderiv C ((1 : Fin 2), j) Y.h) *
-      pderiv C ((0 : Fin 1), i) ((![0, pt C dd 0] : Fin 2 → Pt C 1 dd) 1 j)) =
-      ∑ j, ev (n := 1) ![0, pt C dd 0] (pderiv C ((1 : Fin 2), j) Y.h) * pderiv C ((0 : Fin 1), i) (pt C dd 0 j) from rfl,
-    sum_d_pt_self] at h0
-  have h1 := congrArg constantCoeff h0
-  rwa [constantCoeff_ev hZ, map_zero] at h1
+theorem cc_dh (Y : FBChart C V O dd) (i : Fin dd) : constantCoeff (pderiv ((1 : Fin 2), i) Y.h) = 0 := by
+  let a : Fin 2 → Pt C 1 dd := ![0, pt C dd 0]
+  have hZ : Z0 a := constant_zero_zero_point (pt C dd 0) (coordinate_point_constantCoeff 0)
+  have hchain : pderiv ((0 : Fin 1), i) (ev a Y.h) =
+      ∑ p : Fin 2 × Fin dd, ev a (pderiv p Y.h) * pderiv ((0 : Fin 1), i) (a p.1 p.2) := by
+    unfold ev
+    exact Formalism.G.LogCR.pderiv_subst (a := fun p : Fin 2 × Fin dd => a p.1 p.2)
+      (fun p => hZ p.1 p.2) Y.h ((0 : Fin 1), i)
+  have hderiv : pderiv ((0 : Fin 1), i) (ev a Y.h) = ev a (pderiv ((1 : Fin 2), i) Y.h) := by
+    rw [hchain, Finset.sum_eq_single ((1 : Fin 2), i)]
+    · change _ * pderiv ((0 : Fin 1), i) (X ((0 : Fin 1), i)) = _
+      rw [pderiv_X_self, mul_one]
+    · rintro ⟨k, j⟩ _ hne
+      fin_cases k
+      · change _ * pderiv ((0 : Fin 1), i) (0 : PS C 1 dd) = 0
+        rw [map_zero, mul_zero]
+      · have hji : j ≠ i := by
+          intro h
+          subst j
+          exact hne rfl
+        change _ * pderiv ((0 : Fin 1), i) (X ((0 : Fin 1), j)) = 0
+        rw [pderiv_X_of_ne (by simpa using hji), mul_zero]
+    · simp
+  have h0 := congrArg (pderiv ((0 : Fin 1), i)) Y.gauge.ax0
+  change pderiv ((0 : Fin 1), i) (ev a Y.h) = _ at h0
+  rw [hderiv, map_zero] at h0
+  simpa only [constantCoeff_ev hZ, map_zero] using congrArg constantCoeff h0
 
 theorem cc_sgP (Y : FBChart C V O dd) (w : Fin dd → C) : constantCoeff (Y.sgP w) = 0 := by
   unfold FBChart.sgP
-  simp only [map_neg, map_sum, map_mul, constantCoeff_ev constant_zero_first_zero, cc_dh, mul_zero, Finset.sum_const_zero, neg_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_neg, map_sum, map_mul, constantCoeff_ev constant_zero_first_zero, cc_dh, mul_zero, Finset.sum_const_zero, neg_zero]
 
 def actCv (Y : FBChart C V O dd) (β : O) (γ : Fin dd → PowerSeries C) : Fin dd → PowerSeries C :=
   fun j => alongCv γ (un1 (Y.B.A.act β j))
@@ -75,7 +95,8 @@ theorem actCv_lg (i : Fin dd) :
   have e : alongCv γ (∑ j, MvPowerSeries.C (linM (Y.B.A.act β) i j) * un1 (Y.lg j)) =
       ∑ j, alongCv γ (MvPowerSeries.C (linM (Y.B.A.act β) i j) * un1 (Y.lg j)) := by
     unfold alongCv
-    rw [← coe_substAlgHom hSγ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← coe_substAlgHom hSγ, map_sum]
   rw [e]
   exact Finset.sum_congr rfl fun j _ => along_Cmul hγ _ _
 
@@ -129,7 +150,8 @@ theorem oActSelf_holds : OActSelfSt := by
     intro δ hδ f
     have hS := hasSubst_of_constantCoeff_zero fun z => (hδ z).1
     unfold alongCv
-    rw [← MvPowerSeries.coe_substAlgHom hS, map_sum, MvPowerSeries.coe_substAlgHom hS]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← MvPowerSeries.coe_substAlgHom hS, map_sum, MvPowerSeries.coe_substAlgHom hS]
     exact Finset.sum_congr rfl fun c _ => along δ hδ c (f c)
 
   have he_col : ∀ (q : I0) (col : Fin 2), linAct (Y.B.A.act (star β)) (fun i => (Y.rawSelf p).u (1 - g) q (col, i)) =
@@ -155,13 +177,15 @@ theorem oActSelf_holds : OActSelfSt := by
     refine ⟨?_, fun n => ?_⟩
     · rw [hlam'def]
       simp only
-      rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, map_add, PowerSeries.coeff_smul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, map_add (f := _), PowerSeries.coeff_smul,
         PowerSeries.coeff_zero_eq_constantCoeff_apply, (hlam q).1, map_sum]
       simp only [PowerSeries.coeff_zero_eq_constantCoeff_apply, hΔ0, Finset.sum_const_zero, smul_eq_mul, mul_zero,
         add_zero]
     · rw [hlam'def]
       simp only
-      rw [map_add, PowerSeries.coeff_smul, smul_eq_mul, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_add (f := _), PowerSeries.coeff_smul, smul_eq_mul, map_sum]
       exact ((p.em_int _ α).mul_int ((hlam q).2 n)).add (VF.Ge.sum fun col _ => hΔi q col n)
   refine ⟨γ', lam', hγ'cv, hlam'cv, fun z => ?_, fun q => ?_⟩
   ·

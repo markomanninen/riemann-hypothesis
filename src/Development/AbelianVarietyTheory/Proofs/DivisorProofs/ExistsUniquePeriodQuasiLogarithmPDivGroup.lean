@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedInOfQuasiLogarithm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueHasPAdicPowerSeriesValueOfDiffCoeffs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasPAdicPowerSeriesValueAddSmulMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasPAdicPowerSeriesValueMapOfContinuousEvaluatio
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasPAdicPowerSeriesValueSubMemPdIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PadicContinuousEvaluationExistsUniqueSubstNatura
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffNmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PAdicEvaluationSubstCompatibleThickening
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NmulSucc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupFormalChartEvNatMultipleEqConvPowerStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedInOfQuasiLogarithm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueHasPAdicPowerSeriesValueOfDiffCoeffs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasPAdicPowerSeriesValueAddSmulMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasPAdicPowerSeriesValueMapOfContinuousEvaluatio
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasPAdicPowerSeriesValueSubMemPdIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PadicContinuousEvaluationExistsUniqueSubstNatura
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffNmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PAdicEvaluationSubstCompatibleThickening
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NmulSucc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupFormalChartEvNatMultipleEqConvPowerStatement
+
+@[expose] public section
 
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
@@ -23,7 +27,7 @@ set_option autoImplicit false in
 open MvPowerSeries in
 private lemma dIn_univ_of_forall_pderiv_integral {B Q : Type} [CommRing B] [CommRing Q]
     [Algebra B Q] {d : ℕ} (f : MvPowerSeries (Fin d) Q)
-    (h : ∀ i, ∃ s : MvPowerSeries (Fin d) B, map (algebraMap B Q) s = pderiv Q i f) :
+    (h : ∀ i, ∃ s : MvPowerSeries (Fin d) B, map (algebraMap B Q) s = pderiv (R := Q) i f) :
     _root_.GlobalTheory.QLog.DIn (⊤ : Ideal B) f := by
   intro α i
   obtain ⟨s, hs⟩ := h i
@@ -44,9 +48,9 @@ private lemma subst_pderiv_inr_cob1_eq_sum_sub_C {R : Type} [CommRing R] {d : �
     (hadd : ∀ k, subst (Sum.elim (X : Fin d → MvPowerSeries (Fin d) R) (0 : Fin d → MvPowerSeries (Fin d) R)) (μ k) = X k)
     (f : MvPowerSeries (Fin d) R) (j : Fin d) :
     subst (Sum.elim (X : Fin d → MvPowerSeries (Fin d) R) (0 : Fin d → MvPowerSeries (Fin d) R))
-        (pderiv R (Sum.inr j) (_root_.GlobalTheory.Katz.cob1 μ f)) =
-      ∑ k, pderiv R k f * subst (Sum.elim (X : Fin d → MvPowerSeries (Fin d) R) (0 : Fin d → MvPowerSeries (Fin d) R))
-        (pderiv R (Sum.inr j) (μ k)) - C (constantCoeff (pderiv R j f)) := by
+        (pderiv (R := R) (Sum.inr j) (_root_.GlobalTheory.Katz.cob1 μ f)) =
+      ∑ k, pderiv (R := R) k f * subst (Sum.elim (X : Fin d → MvPowerSeries (Fin d) R) (0 : Fin d → MvPowerSeries (Fin d) R))
+        (pderiv (R := R) (Sum.inr j) (μ k)) - C (constantCoeff (pderiv (R := R) j f)) := by
   have hE : HasSubst (Sum.elim (X : Fin d → MvPowerSeries (Fin d) R) (0 : Fin d → MvPowerSeries (Fin d) R)) :=
     hasSubst_of_constantCoeff_zero (by rintro (i | i) <;> simp)
   have hM : HasSubst μ := hasSubst_of_constantCoeff_zero hμ
@@ -63,7 +67,8 @@ private lemma subst_pderiv_inr_cob1_eq_sum_sub_C {R : Type} [CommRing R] {d : �
       Fin d ⊕ Fin d → MvPowerSeries (Fin d ⊕ Fin d) R) (Sum.inr x)) = if x = j then 1 else 0 := fun x => by simp [Pi.single_apply]
   simp only [pderiv_X, hs1, hs2]
   rw [← coe_substAlgHom hE]
-  simp only [map_sub, map_sum, map_mul, map_zero, mul_zero, Finset.sum_const_zero, sub_zero,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, map_mul, map_zero, mul_zero, Finset.sum_const_zero, sub_zero,
     apply_ite, map_one, mul_ite, mul_one, Finset.sum_ite_eq, Finset.sum_ite_eq',
     Finset.mem_univ, if_true]
   simp only [coe_substAlgHom]
@@ -88,7 +93,7 @@ private lemma exists_integral_pderiv_of_integral_cob1_lin {B Q : Type} [CommRing
     (s : MvPowerSeries (Fin d ⊕ Fin d) B)
     (hs : map (algebraMap B Q) s =
       _root_.GlobalTheory.Katz.cob1 (_root_.GlobalTheory.QLog.up Q μ) f) (i : Fin d) :
-    ∃ g, map (algebraMap B Q) g = pderiv Q i f := by
+    ∃ g, map (algebraMap B Q) g = pderiv (R := Q) i f := by
   classical
   choose b hb using hlin
   set EB := Sum.elim (X : Fin d → MvPowerSeries (Fin d) B) (0 : Fin d → MvPowerSeries (Fin d) B)
@@ -97,51 +102,52 @@ private lemma exists_integral_pderiv_of_integral_cob1_lin {B Q : Type} [CommRing
   have hEmap : (fun x => map (algebraMap B Q) (EB x)) = EQ := by
     funext x; rcases x with x | x <;> simp [EB, EQ]
   have hpm : ∀ {σ : Type} (g : MvPowerSeries σ B) (k : σ),
-      pderiv Q k (map (algebraMap B Q) g) = map (algebraMap B Q) (pderiv B k g) := by
+      pderiv (R := Q) k (map (algebraMap B Q) g) = map (algebraMap B Q) (pderiv (R := B) k g) := by
     intro σ g k; ext n; simp [coeff_pderiv]
   have hsm : ∀ g : MvPowerSeries (Fin d ⊕ Fin d) B,
       subst EQ (map (algebraMap B Q) g) = map (algebraMap B Q) (subst EB g) := by
     intro g; rw [map_subst hEB, hEmap]
   let M : Matrix (Fin d) (Fin d) (MvPowerSeries (Fin d) B) :=
-    fun k j => subst EB (pderiv B (Sum.inr j) (μ k))
-  let w : Fin d → MvPowerSeries (Fin d) B := fun j => subst EB (pderiv B (Sum.inr j) s) + C (b j)
+    fun k j => subst EB (pderiv (R := B) (Sum.inr j) (μ k))
+  let w : Fin d → MvPowerSeries (Fin d) B := fun j => subst EB (pderiv (R := B) (Sum.inr j) s) + C (b j)
   have hμQ : ∀ k, constantCoeff (_root_.GlobalTheory.QLog.up Q μ k) = 0 := by
     intro k; simp [_root_.GlobalTheory.QLog.up, hμ k]
   have haddQ : ∀ k, subst EQ (_root_.GlobalTheory.QLog.up Q μ k) = X k := by
     intro k; simp only [_root_.GlobalTheory.QLog.up]; rw [hsm, hadd]; simp
-  have hrow : ∀ j, ∑ k, pderiv Q k f * map (algebraMap B Q) (M k j) = map (algebraMap B Q) (w j) := by
+  have hrow : ∀ j, ∑ k, pderiv (R := Q) k f * map (algebraMap B Q) (M k j) = map (algebraMap B Q) (w j) := by
     intro j
     have h := subst_pderiv_inr_cob1_eq_sum_sub_C hμQ haddQ f j
     rw [← hs, hpm, hsm] at h
-    have hc : (C (constantCoeff (pderiv Q j f)) : MvPowerSeries (Fin d) Q) =
+    have hc : (C (constantCoeff (pderiv (R := Q) j f)) : MvPowerSeries (Fin d) Q) =
         map (algebraMap B Q) (C (b j) : MvPowerSeries (Fin d) B) := by
-      have hcc : constantCoeff (pderiv Q j f) = algebraMap B Q (b j) := by
+      have hcc : constantCoeff (pderiv (R := Q) j f) = algebraMap B Q (b j) := by
         rw [← hb j, ← coeff_zero_eq_constantCoeff_apply, coeff_pderiv]
         simp [_root_.GlobalTheory.Katz.lin]
       rw [hcc, map_C]
-    simp only [M, w, map_add, ← hsm, ← hpm]
+    simp only [M, w, map_add (f := _), ← hsm, ← hpm]
     simp only [_root_.GlobalTheory.QLog.up] at h
     rw [← hc, hpm s, hsm, h, sub_add_cancel]
   have hdet : IsUnit M.det := by
     rw [isUnit_iff_constantCoeff, RingHom.map_det]
     have : (constantCoeff).mapMatrix M = 1 := by
       ext k j
-      show constantCoeff (subst EB (pderiv B (Sum.inr j) (μ k))) = (1 : Matrix (Fin d) (Fin d) B) k j
+      show constantCoeff (subst EB (pderiv (R := B) (Sum.inr j) (μ k))) = (1 : Matrix (Fin d) (Fin d) B) k j
       rw [Matrix.one_apply, ← coeff_zero_eq_constantCoeff_apply,
         show EB = Sum.elim (fun i => X i) (fun _ => 0) from rfl,
-        (_root_.GlobalTheory.coeff_subst_restrict_sum (pderiv B (Sum.inr j) (μ k))).1 0]
+        (_root_.GlobalTheory.coeff_subst_restrict_sum (pderiv (R := B) (Sum.inr j) (μ k))).1 0]
       simp [coeff_pderiv, hδ]
     rw [this, Matrix.det_one]
     exact isUnit_one
   have hMN := Matrix.mul_nonsing_inv M hdet
   refine ⟨∑ j, w j * M⁻¹ j i, ?_⟩
   calc map (algebraMap B Q) (∑ j, w j * M⁻¹ j i)
-      = ∑ j, (∑ k, pderiv Q k f * map (algebraMap B Q) (M k j)) *
+      = ∑ j, (∑ k, pderiv (R := Q) k f * map (algebraMap B Q) (M k j)) *
           map (algebraMap B Q) (M⁻¹ j i) := by simp [map_sum, hrow]
-    _ = ∑ k, pderiv Q k f * map (algebraMap B Q) ((M * M⁻¹) k i) := by
-        simp only [Matrix.mul_apply, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum, mul_assoc]
+    _ = ∑ k, pderiv (R := Q) k f * map (algebraMap B Q) ((M * M⁻¹) k i) := by
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Matrix.mul_apply, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum, mul_assoc]
         exact Finset.sum_comm
-    _ = pderiv Q i f := by
+    _ = pderiv (R := Q) i f := by
         rw [hMN]; simp [Matrix.one_apply]
 
 set_option autoImplicit false in
@@ -272,9 +278,9 @@ private lemma theta_eval_eq_tate_pt_ev_of_isEval {p : ℕ} {O B : Type} [CommRin
   exact ((_root_.GlobalTheory.CEval.continuous_eval p B B (Fin d) z hz).2 E hE).2.2
     O O θ θ _ (fun b => by simp) hE' s
 
+
 set_option autoImplicit false in
 open MvPowerSeries in
-
 theorem _root_.GlobalTheory.PeriodExists.main : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (O : Type) [CommRing O] [Algebra O C] [Fact ¬IsUnit (p : O)] [IsAdicComplete (Ideal.span {(p : O)}) O] [IsDomain O], v.Integers O → ∀ (ε : PreTilt O p) (hε : _root_.GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta.IsPrimitiveSystem ε), ∀ F : _root_.GlobalTheory.QLog.BFrame ε, ∀ (G : _root_.GlobalTheory.PDivGroup p O) (d : ℕ) (c : _root_.GlobalTheory.QLog.Chart G d) (μ' : Fin d → MvPowerSeries (Fin d ⊕ Fin d) F.B), _root_.GlobalTheory.QLog.IsLift F.θ μ' → (∀ i, map F.θ (μ' i) = c.μ i) → ∀ (f : MvPowerSeries (Fin d) F.Q) (t : G.Tate), _root_.GlobalTheory.QLog.QL μ' ⊤ f → ∃! y : F.B, c.HasPeriod F.θ t f y := by
   intro p _ C _ _ _ v O _ _ _ _ _ hv ε hε F G d c μ' hlift hmap f t hf
   have hex : ∃ y, c.HasPeriod F.θ t f y := by
@@ -372,7 +378,7 @@ theorem _root_.GlobalTheory.PeriodExists.main : ∀ (p : ℕ) [Fact p.Prime] (C 
           refine ⟨0, fun N' _ => ⟨0, ?_⟩⟩
           simp only [Pi.zero_apply, map_zero, mul_zero, zero_sub, neg_eq_zero]
           rw [show (fun _ : Fin d => (0 : F.Q)) = 0 from rfl, MvPolynomial.eval_zero]
-          show MvPolynomial.coeff 0 _ = 0
+          show AddMonoidAlgebra.coeff _ 0 = 0
           rw [coeff_trunc']
           simp [hf0]
         obtain ⟨b, hb⟩ := hdiff 0 z 0 q 0 hz h0 hq hv0
@@ -382,7 +388,7 @@ theorem _root_.GlobalTheory.PeriodExists.main : ∀ (p : ℕ) [Fact p.Prime] (C 
         obtain ⟨z', hz', q', hq', b, hb⟩ := hdesc n z q hz hq
         obtain ⟨b', hb'⟩ := ih z' q' hz' hq'
         refine ⟨(p : F.B) ^ n * b + b', ?_⟩
-        rw [map_add, map_mul, map_pow, map_natCast, ← hb, ← hb']
+        rw [map_add (f := _), map_mul, map_pow, map_natCast, ← hb, ← hb']
         ring
     have hlift_ex : ∀ n, ∃ z, IsLift n z := fun n =>
       ⟨fun i => (hF.surj (t.pt n (c.x n i))).choose,
@@ -398,7 +404,7 @@ theorem _root_.GlobalTheory.PeriodExists.main : ∀ (p : ℕ) [Fact p.Prime] (C 
       obtain ⟨z', hz', q', hq', b, hb⟩ := hdesc n (z (n + 1)) (q (n + 1)) (hz _) (hq _)
       obtain ⟨b', hb'⟩ := hdiff n z' (z n) q' (q n) hz' (hz n) hq' (hq n)
       refine ⟨b + b', hF.inj ?_⟩
-      rw [map_sub, ← hr, ← hr, map_mul, map_pow, map_natCast, map_add, ← hb, ← hb']
+      rw [map_sub, ← hr, ← hr, map_mul, map_pow, map_natCast, map_add (f := _), ← hb, ← hb']
       ring
     have hcauchy : ∀ {m n : ℕ}, m ≤ n → r m ≡ r n
         [SMOD (Ideal.span {(p : F.B)} ^ m • ⊤ : Submodule F.B F.B)] := by
@@ -426,7 +432,7 @@ theorem _root_.GlobalTheory.PeriodExists.main : ∀ (p : ℕ) [Fact p.Prime] (C 
     have hqw' : qw = q n + algebraMap F.B F.Q e := by
       rw [← he]; ring
     rw [hqw', mul_add, hr n, hrn]
-    simp only [map_add, map_mul, map_pow, map_natCast]
+    simp only [map_add (f := _), map_mul, map_pow, map_natCast]
     ring
   obtain ⟨y, hy⟩ := hex
   exact ⟨y, hy, fun y' hy' =>

@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.InstLCSL
-import GroundTheory.AutomorphicForms.ReductionSiegel
-import GroundTheory.AutomorphicForms.NormDetDiagUnitsPosRealToUnits
-import GroundTheory.AutomorphicForms.ReductionLocalVolume
-import GroundTheory.GlobalFields.Adele.Discrete
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.InstLCSL
+public import GroundTheory.AutomorphicForms.ReductionSiegel
+public import GroundTheory.AutomorphicForms.NormDetDiagUnitsPosRealToUnits
+public import GroundTheory.AutomorphicForms.ReductionLocalVolume
+public import GroundTheory.GlobalFields.Adele.Discrete
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,8 +38,8 @@ theorem exists_bound_omega {ω : Set (AdelicGLn.AdelicGL L N)} (hω : IsCompact 
     exact continuous_norm.comp ((continuous_apply j).comp ((continuous_apply i).comp h2))
   let F : AdelicGLn.AdelicGL L N → ℝ := fun b => ∑ w, ∑ i, ∑ j, (e w i j b + e w i j b⁻¹)
   have hF : Continuous F := by
-    refine continuous_finset_sum _ fun w _ => continuous_finset_sum _ fun i _ =>
-      continuous_finset_sum _ fun j _ => ?_
+    refine continuous_finsetSum _ fun w _ => continuous_finsetSum _ fun i _ =>
+      continuous_finsetSum _ fun j _ => ?_
     exact (hc w i j).add ((hc w i j).comp continuous_inv)
   obtain ⟨M, hM⟩ := (hω.image hF).bddAbove
   refine ⟨max M 0, le_max_right _ _, fun b hb w i j => ?_⟩

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -62,7 +66,7 @@ theorem val_sub_pull {R R' : Type} [CommRing R] [CommRing R'] {σ : R →+* R'} 
   have key : ∀ (A B C : E.C) (x y u v w k l : E'.C) (N : E.C), x + y = ρ A + w → l + k = ρ N + w → N = C + B →
       k = v + u → y - u - v = ρ (A - B - C) + l - x := fun A B C x y u v w k l N h1 h2 h3 h4 ↦ by
     subst h3 h4
-    rw [map_add] at h2
+    rw [map_add (f := _)] at h2
     rw [map_sub, map_sub]
     linear_combination h1 - h2
   exact ⟨ev f b, key _ _ _ _ _ _ _ _ _ _ _ k1 k2 k3 k4⟩
@@ -72,32 +76,41 @@ attribute [local instance] cotOp cotCentral cotTower
 def cotRingHom {R R' : Type} [CommRing R] [CommRing R'] {σ : R →+* R'} {D D' : Type} [CommRing D] [Bialgebra R D]
     [CommRing D'] [Bialgebra R' D'] (s : SemiBialgHom σ D D') :
     TrivSqZeroExt R (Cot R D) →+* TrivSqZeroExt R' (Cot R' D') where
-  toFun c := TrivSqZeroExt.inl (σ c.fst) + TrivSqZeroExt.inr (s.cot c.snd)
+  toFun c := TrivSqZeroExt.inl (σ c.fst) + TrivSqZeroExt.inr ((SemiBialgHom.cot s) c.snd)
   map_one' := by ext <;> simp
   map_zero' := by ext <;> simp
   map_add' a b := by ext <;> simp
   map_mul' a b := by ext <;> simp [map_smulₛₗ]
 
-theorem cotVal_pull : ∀ (R R' : Type) [CommRing R] [CommRing R'] (σ : R →+* R') (X : Over (Sp R)) (X' : Over (Sp R')) (φ : X'.left ⟶ X.left) (m : IsMor (dp0 R) (X.hom ≫ 𝟙 _) (dp0 R') (X'.hom ≫ 𝟙 _) σ φ) (D D' : Type) [CommRing D] [Bialgebra R D] [CommRing D'] [Bialgebra R' D'] (s : SemiBialgHom σ D D') (y : Pt X D) (y' : Pt X' D') (a : trivAt y ⟶ m.obj (trivAt y')) (f : Z1 (O (dp0 R) (X.hom ≫ 𝟙 _))), (∀ r, a.φ r = s r) → cotVal (m.coef.pullbackOneCocycle f) y' = s.cot (cotVal f y) + dUnit R' (show D' from ev f a) := by
-  intro R R' _ _ σ X X' φ m D D' _ _ _ _ s y y' a f ha
+set_option backward.isDefEq.respectTransparency false in
+theorem cotVal_pull (R R' : Type) [CommRing R] [CommRing R'] (σ : R →+* R')
+    (X : Over (Sp R)) (X' : Over (Sp R')) (φ : X'.left ⟶ X.left)
+    (m : IsMor (dp0 R) (X.hom ≫ 𝟙 _) (dp0 R') (X'.hom ≫ 𝟙 _) σ φ)
+    (D D' : Type) [CommRing D] [Bialgebra R D] [CommRing D'] [Bialgebra R' D']
+    (s : SemiBialgHom σ D D') (y : Pt X D) (y' : Pt X' D')
+    (a : trivAt y ⟶ m.obj (trivAt y')) (f : Z1 (O (dp0 R) (X.hom ≫ 𝟙 _)))
+    (ha : ∀ r : D, (a.φ r : D') = s r) :
+    cotVal (m.coef.pullbackOneCocycle f) y' =
+      (SemiBialgHom.cot s) (cotVal f y) + dUnit (R := R') (A := D') (ev f a) := by
   have hf : ∀ c, (cotRingHom s c).fst = σ c.fst := fun c ↦ add_zero _
-  have hs : ∀ c, (cotRingHom s c).snd = s.cot c.snd := fun c ↦ zero_add _
+  have hs : ∀ c, (cotRingHom s c).snd = (SemiBialgHom.cot s) c.snd := fun c ↦ zero_add _
   have pf : ∀ c : D, TrivSqZeroExt.fst (cotPt R D c) = Coalgebra.counit c := fun c ↦ add_zero _
-  have ps : ∀ c : D, TrivSqZeroExt.snd (cotPt R D c) = dUnit R c := fun c ↦ zero_add _
+  have ps : ∀ c : D, TrivSqZeroExt.snd (cotPt R D c) = dUnit (R := R) c := fun c ↦ zero_add _
   have pf' : ∀ c : D', TrivSqZeroExt.fst (cotPt R' D' c) = Coalgebra.counit c := fun c ↦ add_zero _
-  have ps' : ∀ c : D', TrivSqZeroExt.snd (cotPt R' D' c) = dUnit R' c := fun c ↦ zero_add _
+  have ps' : ∀ c : D', TrivSqZeroExt.snd (cotPt R' D' c) = dUnit (R := R') c := fun c ↦ zero_add _
   obtain ⟨b, hb⟩ := val_sub_pull m (cotExt R D) (cotExt R' D') (cotRingHom s) σ
     (fun r ↦ TrivSqZeroExt.ext (hf _) ((hs _).trans (map_zero _))) (fun _ ↦ rfl) (fun c ↦ (hf c).symm)
     (fun r ↦ TrivSqZeroExt.ext (hf _) ((hs _).trans (map_zero _))) a
     (spOver (cotPt R D) ≫ y).left (Pt.w _) (spOver (cotPt R' D') ≫ y').left (Pt.w _)
     (trivMap (cotPt R D) y) (trivMap (cotPt R' D') y') (fun c ↦ by
-      change cotRingHom s (cotPt R D c) = cotPt R' D' (a.φ c)
-      rw [ha]
+      change cotRingHom s (cotPt R D c) = cotPt R' D' (a.φ c : D')
+      have h := congrArg (fun u : D' ↦ cotPt R' D' u) (ha (show D from c))
+      refine Eq.trans ?_ h.symm
       ext
       · rw [hf, pf, pf', s.counit_map]
       · rw [hs, ps, ps', s.cot_d]) f
   refine (congrArg (cotSnd R' D') hb).trans ?_
-  rw [map_sub, map_add]
+  rw [map_sub, map_add (f := _)]
   refine (sub_zero _).trans ?_
   exact congrArg₂ (· + ·) (hs _) (ps' _)
 

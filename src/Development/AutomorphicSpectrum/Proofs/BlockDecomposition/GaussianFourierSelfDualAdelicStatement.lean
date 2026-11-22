@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GaussianFourierSelfDualAdelic
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GaussianFourierSelfDualAdelic
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix
 open scoped ENNReal NNReal
 set_option maxHeartbeats 1000000 in

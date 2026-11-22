@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.NormMapRestrictionCompatible
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.NormMapRestrictionCompatible
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory AlgebraicGeometry
 attribute [local instance] Over.cartesianMonoidalCategory
 set_option maxHeartbeats 1000000 in

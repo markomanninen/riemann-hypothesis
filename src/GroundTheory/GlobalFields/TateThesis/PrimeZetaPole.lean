@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.DegreeOnePrimes
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.DegreeOnePrimes
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -197,7 +201,7 @@ theorem sum_rpow_neg_le_exp_tsum (T : Finset (Ideal (𝓞 K))) {s : ℝ} (hs : 1
     _ = ∏ p : P, ∑ k ∈ Finset.range M, x p.1 ^ k :=
         (Finset.prod_univ_sum (fun _ : P => Finset.range M) (fun p k => x p.1 ^ k)).symm
     _ ≤ ∏ p : P, Real.exp (x p.1 + 2 * x p.1 ^ 2) :=
-        Finset.prod_le_prod (fun _ _ => Finset.sum_nonneg fun _ _ => pow_nonneg (hx0 _) _)
+        Finset.prod_le_prod₀ (fun _ _ => Finset.sum_nonneg fun _ _ => pow_nonneg (hx0 _) _)
           (fun p _ => geom_sum_le_exp (hx0 _) (hxhalf p) M)
     _ = Real.exp (∑ p : P, (x p.1 + 2 * x p.1 ^ 2)) :=
         (Real.exp_sum Finset.univ fun p : P => x p.1 + 2 * x p.1 ^ 2).symm
@@ -291,15 +295,15 @@ theorem abs_log_dedekindZetaReal_sub_tsum_le {s : ℝ} (hs : 1 < s)
     refine (hxs.sub hx2s).tsum_le_of_sum_le fun F => ?_
     rw [Real.le_log_iff_exp_le hζpos, Real.exp_sum]
     calc ∏ w ∈ F, Real.exp (x w - x w ^ 2) ≤ ∏ w ∈ F, (1 + x w) :=
-          Finset.prod_le_prod (fun _ _ => (Real.exp_pos _).le)
+          Finset.prod_le_prod₀ (fun _ _ => (Real.exp_pos _).le)
             (fun w _ => exp_sub_sq_le_one_add (hx0 w) (rpow_neg_absNorm_le_half w.prime hs.le))
       _ = _ := prod_one_add_rpow_neg_eq_sum F s
       _ ≤ _ := sum_rpow_neg_le_dedekindZetaReal _ hζ
   rw [abs_le]
   constructor <;> linarith
 
-variable (K) in
 
+variable (K) in
 theorem eventually_summable_dedekindZetaTerm :
     ∀ᶠ s in 𝓝[>] (1 : ℝ), Summable (dedekindZetaTerm K s) := by
   have h := (tendsto_sub_one_mul_dedekindZetaReal K).eventually
@@ -315,8 +319,8 @@ theorem primeIdealZetaSum_univ (s : ℝ) :
   rw [Set.primeIdealZetaSum_def]
   exact tsum_univ (f := fun w : HeightOneSpectrum (𝓞 K) => (absNorm w.asIdeal : ℝ) ^ (-s))
 
-variable (K) in
 
+variable (K) in
 theorem exists_abs_primeIdealZetaSum_add_log_le :
     ∃ C : ℝ, ∀ᶠ s in 𝓝[>] (1 : ℝ),
       |(univ : Set (HeightOneSpectrum (𝓞 K))).primeIdealZetaSum s + Real.log (s - 1)| ≤ C := by
@@ -331,7 +335,7 @@ theorem exists_abs_primeIdealZetaSum_add_log_le :
     rw [Real.dist_eq] at hs
     exact hs.le
   refine ⟨2 * Y + |Real.log R| + 1, ?_⟩
-  filter_upwards [hnear, eventually_summable_dedekindZetaTerm K, self_mem_nhdsWithin]
+  filter_upwards [hnear, eventually_summable_dedekindZetaTerm (K := K), self_mem_nhdsWithin]
     with s hs hζ hs1
   have hs1' : 1 < s := hs1
   have hζpos : 0 < dedekindZetaReal K s :=
@@ -347,12 +351,12 @@ theorem exists_abs_primeIdealZetaSum_add_log_le :
   have h2 := neg_abs_le (Real.log R)
   constructor <;> linarith [hs.1, hs.2, hcmp.1, hcmp.2]
 
-variable (K) in
 
+variable (K) in
 theorem tendsto_primeIdealZetaSum_univ_atTop :
     Tendsto (fun s => (univ : Set (HeightOneSpectrum (𝓞 K))).primeIdealZetaSum s)
       (𝓝[>] 1) atTop := by
-  obtain ⟨C, hC⟩ := exists_abs_primeIdealZetaSum_add_log_le K
+  obtain ⟨C, hC⟩ := exists_abs_primeIdealZetaSum_add_log_le (K := K)
   have h1 : Tendsto (fun s : ℝ => s - 1) (𝓝[>] 1) (𝓝[>] 0) := by
     refine tendsto_nhdsWithin_iff.mpr
       ⟨?_, eventually_nhdsWithin_of_forall fun s (hs : 1 < s) => show 0 < s - 1 by linarith⟩

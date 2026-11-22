@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InvariantImageOpenClosedLocalSectionsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JacquetRallisOrbitalIntegralsInvariantLocallyConStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InvariantImageOpenClosedLocalSectionsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JacquetRallisOrbitalIntegralsInvariantLocallyConStatement
+
+@[expose] public section
 
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology Polynomial
 
@@ -83,7 +87,7 @@ theorem finite_not_separable_add_C {F : Type} [Field F] [CharZero F] (P : F[X]) 
     obtain ⟨α, h1, h2⟩ := ht
     refine ⟨α, ?_, ?_⟩
     · rw [mem_rootSet]; exact ⟨hd, h2⟩
-    · simp only [map_add, aeval_C] at h1
+    · simp only [map_add (f := _), aeval_C] at h1
       linear_combination -h1
 
 theorem frequently_of_curve {Y F : Type} [TopologicalSpace Y] [NontriviallyNormedField F] (γ : F → Y)

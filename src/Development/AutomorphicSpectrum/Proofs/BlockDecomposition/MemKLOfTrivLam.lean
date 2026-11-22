@@ -1,12 +1,16 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.LeftZeroDuality.H1StructureDimLe
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsFiniteClosedSubschemeRepresentsKernelAmple
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AbelianVarietyTorsionFiniteEndomorphismDivisible
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftLeftFst
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsProjBySmoothIsProperGeometricallyIntegral
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfIsGrpPullback
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.LeftZeroDuality.H1StructureDimLe
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsFiniteClosedSubschemeRepresentsKernelAmple
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AbelianVarietyTorsionFiniteEndomorphismDivisible
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftLeftFst
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsProjBySmoothIsProperGeometricallyIntegral
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfIsGrpPullback
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -67,7 +71,17 @@ theorem kFinite : KFinite := by
   intro S A _ hA L hL hamp k _ _ t
   let B : Over (Sp k) := (Over.pullback t).obj A
   have gp : IsGrpPullback B A t (pullback.fst A.hom t) := isGrpPullback_pullback A t
-  have hB : IsAbelianScheme B := PolPull.isAbelianScheme_of_isGrpPullback hA gp
+  have hB : IsAbelianScheme B := by
+    have := hA.comm
+    have hc : IsCommMonObj B := by
+      rw [isCommMonObj_iff_isMulCommutative]
+      intro T
+      refine ⟨⟨fun x y => Over.OverMorphism.ext (gp.1.hom_ext ?_ (by rw [Over.w, Over.w]))⟩⟩
+      rw [← gp.2 T x y (pushPt gp.1.w x) (pushPt gp.1.w y) rfl rfl,
+        ← gp.2 T y x (pushPt gp.1.w y) (pushPt gp.1.w x) rfl rfl, _root_.mul_comm]
+    exact ⟨hc, MorphismProperty.of_isPullback (P := @Smooth) gp.1 hA.smooth,
+      MorphismProperty.of_isPullback (P := @IsProper) gp.1 hA.proper,
+      MorphismProperty.of_isPullback (P := @GeometricallyConnected) gp.1 hA.geomConnected⟩
   have := hA.proper
   have hM : (L.pull (pullback.fst A.hom t)).IsLB := pull_isLB hL _
   have hAmp : Out.RelAmple B (L.pull (pullback.fst A.hom t)) :=

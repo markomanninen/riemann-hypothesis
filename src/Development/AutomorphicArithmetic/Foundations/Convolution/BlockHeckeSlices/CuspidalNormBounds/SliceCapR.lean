@@ -1,24 +1,28 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CapRDefs
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CuspUmg
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.GoodSmul
-import Development.AutomorphicArithmetic.WhittakerHecke.IntegrableMulConjOfModerateGrowthOfCuspidal
-import Development.AutomorphicArithmetic.WhittakerHecke.IntegralQuotientDerivativeOneParameterEqZero
-import Development.AutomorphicArithmetic.WhittakerHecke.OneParameterSubgroupNormOne
-import Development.AutomorphicArithmetic.WhittakerHecke.FunctionalVanishesInvariant
-import Development.AutomorphicArithmetic.WhittakerHecke.ConstantTermLeviRestrictionModerateGrowth
-import Development.AutomorphicArithmetic.WhittakerHecke.FunctionalQdetEqAevalShiftedPolynomial
-import Development.AutomorphicArithmetic.WhittakerHecke.IntegrableTranslateMulConjAndInnerSelfNeZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.QuantumDetAdjointForm
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LieOneLMemZalg
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TransposeMulIncl
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RingEquivPlaceCorrespondencePlaceUnder
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CapRDefs
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CuspUmg
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.GoodSmul
+public import Development.AutomorphicArithmetic.WhittakerHecke.IntegrableMulConjOfModerateGrowthOfCuspidal
+public import Development.AutomorphicArithmetic.WhittakerHecke.IntegralQuotientDerivativeOneParameterEqZero
+public import Development.AutomorphicArithmetic.WhittakerHecke.OneParameterSubgroupNormOne
+public import Development.AutomorphicArithmetic.WhittakerHecke.FunctionalVanishesInvariant
+public import Development.AutomorphicArithmetic.WhittakerHecke.ConstantTermLeviRestrictionModerateGrowth
+public import Development.AutomorphicArithmetic.WhittakerHecke.FunctionalQdetEqAevalShiftedPolynomial
+public import Development.AutomorphicArithmetic.WhittakerHecke.IntegrableTranslateMulConjAndInnerSelfNeZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.QuantumDetAdjointForm
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LieOneLMemZalg
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TransposeMulIncl
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RingEquivPlaceCorrespondencePlaceUnder
+
+@[expose] public section
 
 open MeasureTheory NumberField GlobalTheory.CuspRep GlobalTheory.CompanionTheory.CTFin
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace UpperTheory.ConvolutionTheory.BW UpperTheory.V.Cm
 
 section
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {r : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {r : ℕ}
 
 private theorem tr_one (τ : E →+* ℂ) : ∑ σ : E →+* ℂ, coord σ (atEmb τ 1) = 2 := by
   classical
@@ -84,19 +88,19 @@ private theorem exists_form (hr : 0 < r) {Φ ψ : Sm E r} (hΦ : Umg Φ) (hψ : 
   refine ⟨LinearMap.mk₂'ₛₗ (RingHom.id ℂ) (starRingEnd ℂ) (fun a a' => pr (uC E r a Φ).1 (uC E r a' ψ).1)
     (fun a b a' => ?_) (fun c a a' => ?_) (fun a a' b' => ?_) (fun c a a' => ?_), fun _ _ => rfl⟩
   · refine Eq.trans ?_ (integral_add (hi a a') (hi b a'))
-    simp only [pr, onQ, map_add, LinearMap.add_apply, Submodule.coe_add, Pi.add_apply, add_mul]
+    simp only [pr, onQ, map_add (f := _), LinearMap.add_apply, Submodule.coe_add, Pi.add_apply, add_mul]
   · refine Eq.trans ?_ (integral_const_mul c _)
     simp only [pr, onQ, map_smul, LinearMap.smul_apply, Submodule.coe_smul, Pi.smul_apply, smul_eq_mul, mul_assoc]
   · refine Eq.trans ?_ (integral_add (hi a a') (hi a b'))
-    simp only [pr, onQ, map_add, LinearMap.add_apply, Submodule.coe_add, Pi.add_apply, mul_add]
+    simp only [pr, onQ, map_add (f := _), LinearMap.add_apply, Submodule.coe_add, Pi.add_apply, mul_add]
   · refine Eq.trans ?_ (integral_const_mul (starRingEnd ℂ c) _)
     simp only [pr, onQ, map_smul, LinearMap.smul_apply, Submodule.coe_smul, Pi.smul_apply, smul_eq_mul, map_mul, mul_left_comm]
 
-variable (E r) in
 
+variable (E r) in
 private noncomputable def zL : Lie E r := ((r * Module.finrank ℚ E : ℕ) : ℝ)⁻¹ • oneL E r
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 private theorem coord_zL (τ : E →+* ℂ) (i k : Fin r) :
     coord τ (zL E r i k) = if i = k then ((r * Module.finrank ℚ E : ℕ) : ℂ)⁻¹ else 0 := by
   have : zL E r i k = ((r * Module.finrank ℚ E : ℕ) : ℝ)⁻¹ • (1 : Matrix (Fin r) (Fin r) (Cinf E)) i k := rfl
@@ -147,16 +151,16 @@ private theorem gz_eq (hr : 0 < r) (τ : E →+* ℂ) (i k : Fin r) : ∃ X Y : 
     toL (Matrix.single i k (atEmb τ Complex.I)), ?_, ?_, ?_, ?_⟩
   · simp only [Pi.sub_apply, map_sub, Finset.sum_sub_distrib, hs, tr_one]
     split_ifs
-    · simp only [Pi.add_apply, map_add, Finset.sum_add_distrib, tr_zL hr]; norm_num
+    · simp only [Pi.add_apply, map_add (f := _), Finset.sum_add_distrib, tr_zL hr]; norm_num
     · simp
   · rw [hs, tr_I, ite_self]
   · rw [gz, genC, UpperTheory.V.AlgRepEndIrreducible.eL, map_sub]
     split_ifs
-    · rw [map_add]; module
+    · rw [map_add (f := _)]; module
     · simp
   · rw [gz, genC, UpperTheory.V.AlgRepEndIrreducible.eL, map_sub, atEmb_conj, atEmb_conj, map_one, Complex.conj_I, e, map_neg]
     split_ifs
-    · rw [map_add]; module
+    · rw [map_add (f := _)]; module
     · simp
 
 private theorem glRel_gz (τ : E →+* ℂ) : Formalism.REAL.GlRel (gz (r := r) τ) := by
@@ -210,7 +214,7 @@ private theorem adj {S : Set (Pl E)} (b : Blo S r) (τ : E →+* ℂ) (c : ℂ) 
       obtain ⟨X, Y, hX, hY, e1, e2⟩ := gz_eq b.pos τ i k
       change B (gz τ i k * a) a' = -B a (gz (ComplexEmbedding.conjugate τ) i k * a')
       rw [e1, e2]
-      simp only [smul_mul_assoc, sub_mul, add_mul, map_smul, map_sub, map_add, LinearMap.map_smulₛₗ, LinearMap.smul_apply,
+      simp only [smul_mul_assoc, sub_mul, add_mul, map_smul, map_sub, map_add (f := _), LinearMap.map_smulₛₗ, LinearMap.smul_apply,
         LinearMap.sub_apply, hreal X hX, hreal Y hY, smul_eq_mul, Complex.conj_I, map_div₀, map_one, Complex.conj_ofNat]
       ring) c a 1
   rw [← UpperTheory.V.Fb.map_qdet, ← UpperTheory.V.Fb.map_qdet, hB, hB, map_one] at h
@@ -292,7 +296,7 @@ private theorem embGL_eq {R : Type} [CommRing R] (r s : ℕ) (g : GL (Fin r) R) 
 end
 
 theorem UpperTheory.ConvolutionTheory.BW.sliceCapR :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.SliceCapR E := by
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.SliceCapR E := by
   intro E _ _ _ S r s b t φ τ u hφ
   funext m
   obtain ⟨F, hF, -, -, hu⟩ := ctOps E r s φ hφ
@@ -308,18 +312,20 @@ theorem UpperTheory.ConvolutionTheory.BW.sliceCapR :
     rw [UpperTheory.V.Fb.map_qdet]; simp only [uC_genC]; rfl
   have e2 : j1 E r s = uC E (r + s) (((r * Module.finrank ℚ E : ℕ) : ℂ)⁻¹ •
       ∑ τ : E →+* ℂ, ∑ i : Fin r, genC τ (Fin.castAdd s i) (Fin.castAdd s i)) := by
-    simp only [map_smul, map_sum, uC_genC]; rfl
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_smul, map_sum, uC_genC]; rfl
   have h1 : ρ (capR r s τ u F) = cap τ u (ρ F) := by
     have := GlobalTheory.GLSlice.aeval_qdet_slice (Fin.castAddEmb s) (lev (Ad E) r s (zt E r t, m)) F τ (u + ((r : ℂ) - 1) / 2) Polynomial.X
     simp only [Polynomial.aeval_X] at this
     exact this.symm
   have h2 : ∀ G, ρ (j1 E r s G) = j0 E r (ρ G) := fun G => by
-    simp only [j1, j0, LinearMap.smul_apply, LinearMap.sum_apply, map_smul, map_sum, ρ, GlobalTheory.GLSlice.Eop_slice,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [j1, j0, LinearMap.smul_apply, LinearMap.sum_apply, map_smul, map_sum, ρ, GlobalTheory.GLSlice.Eop_slice,
       Fin.castAddEmb_apply]
   have h3 : ∀ (P : Polynomial ℂ) G, ρ (Polynomial.aeval (j1 E r s) P G) = Polynomial.aeval (j0 E r) P (ρ G) := fun P => by
     induction P using Polynomial.induction_on with
     | C a => intro G; simp
-    | add p q hp hq => intro G; simp only [map_add, LinearMap.add_apply, hp, hq]
+    | add p q hp hq => intro G; simp only [map_add (f := _), LinearMap.add_apply, hp, hq]
     | monomial n a h =>
       intro G
       simp only [pow_succ, ← mul_assoc, map_mul _ _ Polynomial.X, Polynomial.aeval_X, Module.End.mul_apply, h, h2]

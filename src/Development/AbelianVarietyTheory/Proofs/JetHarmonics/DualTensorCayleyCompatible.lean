@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Formalism.RealPlaceAnalysis.StatementE
-import Formalism.RealPlaceAnalysis.StatementKT
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DualTensorCapelliIntertwine
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Formalism.RealPlaceAnalysis.StatementE
+public import Formalism.RealPlaceAnalysis.StatementKT
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DualTensorCapelliIntertwine
+
+@[expose] public section
+
 open BranchingSupport Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
 
@@ -86,7 +91,8 @@ theorem alg {N : Fin n → Type} [∀ s, AddCommGroup (N s)] [∀ s, Module ℂ 
       rw [this, hAB, Matrix.one_apply]
       simp [eq_comm]
     simp only [dualTens]
-    rw [e1, e1 s y d, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, e1 s y d, map_sum]
     simp_rw [hI, hz, smul_sub, Finset.sum_sub_distrib, smul_smul, ← Finset.sum_smul, hd, map_smul]
     by_cases h : d = b <;> simp [h]
   have c3 : ∀ x, ∑ s, io' s (pr' s x) = x := by
@@ -110,7 +116,8 @@ theorem alg {N : Fin n → Type} [∀ s, AddCommGroup (N s)] [∀ s, Module ℂ 
   refine ⟨io', pr', c1, ?_, c3, c4, c5, e1, e2⟩
   intro s a b x
   conv_lhs => rw [← c3 x]
-  rw [dualTens_sum, map_sum, Finset.sum_eq_single s]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [dualTens_sum, map_sum, Finset.sum_eq_single s]
   · rw [← c1, c4]
   · intro t _ ht
     rw [← c1, c5 s t (Ne.symm ht)]

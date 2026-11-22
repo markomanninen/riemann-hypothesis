@@ -1,18 +1,23 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.OrbitPlaces
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BTLeFiveQuarters
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NotMemTopPlaces
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WPlPos
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExcessMemIcc
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SumRangeSplit
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TwoWLeFirstRow
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NuDCardLeASq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RankTwoLogbFiveSqLe
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XLeA
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ScaleOneLtA
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AlLeParams
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CapLe
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.OrbitPlaces
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BTLeFiveQuarters
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NotMemTopPlaces
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WPlPos
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExcessMemIcc
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SumRangeSplit
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TwoWLeFirstRow
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NuDCardLeASq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RankTwoLogbFiveSqLe
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XLeA
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ScaleOneLtA
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AlLeParams
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CapLe
+
+@[expose] public section
+
 open Formalism.MainNotions Formalism.BasicNotions Formalism.MainNotions.G Classical
 
 namespace GlobalTheory.ShapeRows

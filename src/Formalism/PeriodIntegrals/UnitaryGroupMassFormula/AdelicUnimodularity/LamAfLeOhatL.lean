@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnimodularity.ExistsNatSmulMem
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnimodularity.ExistsNatSmulMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,14 +13,12 @@ open scoped TensorProduct
 
 variable {F : Type} [Field F] [NumberField F] {E : Type} [Field E] [NumberField E] [Algebra F E] {n : ℕ}
 
-local notation "Af" => FiniteAdeleRing (𝓞 F) F
+def ohatL (L : Submodule (𝓞 E) (Fin n → E)) : AddSubgroup (Fin n → E ⊗[F] Af F) :=
+  AddSubgroup.closure {y | ∃ c ∈ Ohat F, ∃ l ∈ L, y = ((1 : E) ⊗ₜ[F] c) • fun i => Formalism.UG.inclE (F := F) (Af F) (l i)}
 
-def ohatL (L : Submodule (𝓞 E) (Fin n → E)) : AddSubgroup (Fin n → E ⊗[F] Af) :=
-  AddSubgroup.closure {y | ∃ c ∈ Ohat F, ∃ l ∈ L, y = ((1 : E) ⊗ₜ[F] c) • fun i => Formalism.UG.inclE (F := F) Af (l i)}
-
-theorem smul_ohatL (L : Submodule (𝓞 E) (Fin n → E)) {a : E ⊗[F] Af} (ha : a ∈ IntAf F E) :
+theorem smul_ohatL (L : Submodule (𝓞 E) (Fin n → E)) {a : E ⊗[F] Af F} (ha : a ∈ IntAf F E) :
     ∀ y ∈ ohatL (F := F) L, a • y ∈ ohatL (F := F) L := by
-  let T : Subring (E ⊗[F] Af) :=
+  let T : Subring (E ⊗[F] Af F) :=
     { carrier := {a | ∀ y ∈ ohatL (F := F) L, a • y ∈ ohatL (F := F) L}
       mul_mem' := fun {a c} ha hc y hy => by rw [mul_smul]; exact ha _ (hc y hy)
       one_mem' := fun y hy => by rw [one_smul]; exact hy
@@ -35,8 +37,8 @@ theorem smul_ohatL (L : Submodule (𝓞 E) (Fin n → E)) {a : E ⊗[F] Af} (ha 
         apply AddSubgroup.subset_closure
         refine ⟨c, hc, o • l, L.smul_mem o hl, ?_⟩
         funext i
-        show (algebraMap (𝓞 E) E o ⊗ₜ[F] (1 : Af)) * (((1 : E) ⊗ₜ[F] c) * ((l i) ⊗ₜ[F] (1 : Af))) =
-          ((1 : E) ⊗ₜ[F] c) * (((o • l) i) ⊗ₜ[F] (1 : Af))
+        show (algebraMap (𝓞 E) E o ⊗ₜ[F] (1 : Af F)) * (((1 : E) ⊗ₜ[F] c) * ((l i) ⊗ₜ[F] (1 : Af F))) =
+          ((1 : E) ⊗ₜ[F] c) * (((o • l) i) ⊗ₜ[F] (1 : Af F))
         rw [Algebra.TensorProduct.tmul_mul_tmul, Algebra.TensorProduct.tmul_mul_tmul,
           Algebra.TensorProduct.tmul_mul_tmul, Pi.smul_apply, Algebra.smul_def]
         simp only [one_mul, mul_one]
@@ -56,7 +58,7 @@ theorem smul_ohatL (L : Submodule (𝓞 E) (Fin n → E)) {a : E ⊗[F] Af} (ha 
       | neg u _ hu => rw [smul_neg]; exact neg_mem hu
   exact hle ha
 
-theorem lamAf_le_ohatL (L : Submodule (𝓞 E) (Fin n → E)) {y : Fin n → E ⊗[F] Af}
+theorem lamAf_le_ohatL (L : Submodule (𝓞 E) (Fin n → E)) {y : Fin n → E ⊗[F] Af F}
     (hy : y ∈ lamAf (F := F) L) : y ∈ ohatL (F := F) L := by
   induction hy using Submodule.span_induction with
   | mem x hx =>
@@ -70,12 +72,12 @@ theorem lamAf_le_ohatL (L : Submodule (𝓞 E) (Fin n → E)) {y : Fin n → E �
 
 variable {ι : Type} [Fintype ι] [DecidableEq ι]
 
-theorem intC_zero {b : Module.Basis ι F E} : IntC b (0 : E ⊗[F] Af) := by
+theorem intC_zero {b : Module.Basis ι F E} : IntC b (0 : E ⊗[F] Af F) := by
   intro k
   simp only [map_zero, Pi.zero_apply]
   exact ohat_zero
 
-theorem intC_neg {b : Module.Basis ι F E} {x : E ⊗[F] Af} (hx : IntC b x) : IntC b (-x) := by
+theorem intC_neg {b : Module.Basis ι F E} {x : E ⊗[F] Af F} (hx : IntC b x) : IntC b (-x) := by
   intro k
   simp only [map_neg, Pi.neg_apply]
   exact ohat_neg (hx k)
@@ -101,7 +103,7 @@ theorem exists_upper (b : Module.Basis ι F E) (L : Submodule (𝓞 E) (Fin n �
       have h1 := hx j k
       have h2 := hz j k
       unfold IntF at h1 h2 ⊢
-      rw [Pi.add_apply, map_add, Finsupp.add_apply, mul_add, map_add]
+      rw [Pi.add_apply, map_add (f := _), Finsupp.add_apply, mul_add, map_add (f := _)]
       exact ohat_add h1 h2
     | smul a x _ hx =>
       intro j k
@@ -118,7 +120,7 @@ theorem exists_upper (b : Module.Basis ι F E) (L : Submodule (𝓞 E) (Fin n �
     obtain ⟨c, hc, l, hl, rfl⟩ := hz
     intro k
     rw [map_nsmul, Pi.smul_apply]
-    have ew : ((((1 : E) ⊗ₜ[F] c) • fun i => Formalism.UG.inclE (F := F) Af (l i)) j) =
+    have ew : ((((1 : E) ⊗ₜ[F] c) • fun i => Formalism.UG.inclE (F := F) (Af F) (l i)) j) =
         (l j) ⊗ₜ[F] c := by
       simp [Formalism.UG.inclE, Algebra.TensorProduct.tmul_mul_tmul]
     rw [ew]

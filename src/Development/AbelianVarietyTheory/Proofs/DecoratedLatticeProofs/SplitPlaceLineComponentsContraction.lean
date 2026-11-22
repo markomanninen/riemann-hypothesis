@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AddCharDotProductTrivialOnTsupportNhds
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceBaseVacuumDatumExistsUniqueStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselFourierJacobiDoubleUnfoldingBilinear
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselFourierJacobiUnfoldingHeisenbergExchange
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceHeisenbergActionLineModulationTranslatStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceStdCharContinuousNontrivial
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.OfTensColMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AddCharDotProductTrivialOnTsupportNhds
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceBaseVacuumDatumExistsUniqueStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselFourierJacobiDoubleUnfoldingBilinear
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselFourierJacobiUnfoldingHeisenbergExchange
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceHeisenbergActionLineModulationTranslatStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceStdCharContinuousNontrivial
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.OfTensColMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,7 +66,7 @@ theorem contraction_all : ∀ D : D7, GlobalTheory.FinPl.Contraction D := by
   have hA_add : ∀ a₀ a₁, A (a₀ + a₁) = A a₀ + A a₁ := by
     intro a₀ a₁
     show T₁ _ = T₁ _ + T₁ _
-    rw [← map_add]; congr 1; funext x
+    rw [← map_add (f := _)]; congr 1; funext x
     simp only [extFun, tensCol, Pi.add_apply]
     split_ifs <;> ring
   have hA_smul : ∀ (c : ℂ) a₀, A (c • a₀) = c • A a₀ := by
@@ -74,7 +78,7 @@ theorem contraction_all : ∀ D : D7, GlobalTheory.FinPl.Contraction D := by
   have hB_add : ∀ b₀ b₁, Bb (b₀ + b₁) = Bb b₀ + Bb b₁ := by
     intro b₀ b₁
     show T₂ _ = T₂ _ + T₂ _
-    rw [← map_add]; congr 1; funext x
+    rw [← map_add (f := _)]; congr 1; funext x
     simp only [extFun, tensRow, Pi.add_apply]
     split_ifs <;> ring
   have hB_smul : ∀ (c : ℂ) b₀, Bb (c • b₀) = c • Bb b₀ := by

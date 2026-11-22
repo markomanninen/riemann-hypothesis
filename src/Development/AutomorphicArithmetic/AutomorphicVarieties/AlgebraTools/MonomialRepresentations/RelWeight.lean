@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial Matrix
 
@@ -96,6 +100,7 @@ theorem UpperTheory.V.AlgebraTools.relWeight :
     have h3 : ∑ i, m i • q i = 0 := by
       rw [← hm0]
       conv_rhs => rw [hsum]
-      simp only [q, map_sum, LinearMap.map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [q, map_sum, LinearMap.map_smul]
     calc ∑ i, m i * f (q i) = f (∑ i, m i • q i) := by simp [map_sum]
       _ = 0 := by rw [h3, map_zero]

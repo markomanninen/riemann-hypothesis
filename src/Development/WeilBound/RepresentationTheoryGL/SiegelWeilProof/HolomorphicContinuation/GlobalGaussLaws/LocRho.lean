@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LocRhoI
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LocRhoI
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,7 @@ theorem lIrho : LIrho := by
       L k (fP (cLoc l τ) (a • P + Q)) = a • L k (fP (cLoc l τ) P) + L k (fP (cLoc l τ) Q) := by
     intro k hk a P Q
     apply tensor_gaussian_vacuum_injective hC.hθ hC.hfr l
-    rw [tens_add_smul, ← hL k _ hΨ0m, ← hL k _ hΨ0m, ← hL k _ hΨ0m, hlin, map_add, map_smul]
+    rw [tens_add_smul, ← hL k _ hΨ0m, ← hL k _ hΨ0m, ← hL k _ hΨ0m, hlin, map_add (f := _), map_smul]
     rfl
   let ρ0 : GR n → PX V.rank n → PX V.rank n := fun k P => if hk : InK (mR k) then (hexist k hk P).choose else P
   have hρ0 : ∀ (k : GR n) (hk : InK (mR k)) P, L k (fP (cLoc l τ) P) = fP (cLoc l τ) (ρ0 k P) := by
@@ -118,7 +122,7 @@ theorem lIrho : LIrho := by
       refine Submodule.subset_span ⟨κ * k', (K D n).mul_mem hκ hk', ?_⟩
       rw [map_mul, Module.End.mul_apply]
     | zero => rw [map_zero]; exact S.zero_mem
-    | add x y _ _ hx hy => rw [map_add]; exact S.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact S.add_mem hx hy
     | smul a x _ hx => rw [map_smul]; exact S.smul_mem a hx
   let W : Submodule ℂ (PX V.rank n) := S.comap jL
   refine ⟨W, ?_, ?_, ?_, ?_⟩

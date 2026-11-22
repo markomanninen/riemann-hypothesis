@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StVarWirtinger
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDiscriminantSheetCover
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetComass
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetAreaCompare
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetImageAreaSet
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PNullSmaller
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PBadSetSmaller
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StVarWirtinger
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDiscriminantSheetCover
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetComass
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetAreaCompare
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetImageAreaSet
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PNullSmaller
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PBadSetSmaller
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -42,8 +47,8 @@ theorem maDens_euclPot_comp {n D : ℕ} (s : (Fin D → ℂ) → Fin n → ℂ) 
 
 end VarWirtinger
 
-open VarWirtinger in
 
+open VarWirtinger in
 theorem VarWirtinger.proof (hDSC : DiscriminantSheetCover.Statement) (hMF : MassFinite.Statement) :
     VarWirtinger.Statement := by
   classical
@@ -95,7 +100,7 @@ theorem VarWirtinger.proof (hDSC : DiscriminantSheetCover.Statement) (hMF : Mass
     rw [hfibeq, finsum_mem_range hinj, finsum_eq_sum_of_fintype]
     refine Finset.sum_congr rfl fun j _ => ?_
     have h : ∃ s', IsSheetAt J A (s k j y) s' := ⟨_, hsh j⟩
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     have hxf : s k j y ∈ fibre J A y := hfibeq ▸ ⟨j, rfl⟩
     rw [hterm _ _ hxf h]
     have heq := SheetSumMeasurable.sheet_eventuallyEq (hsh j) h.choose_spec
@@ -162,7 +167,7 @@ theorem VarWirtinger.proof (hDSC : DiscriminantSheetCover.Statement) (hMF : Mass
       · rw [Set.indicator_of_notMem (show y ∉ E k j from fun h => hB h.2),
           Set.indicator_of_notMem (show s k j y ∉ (fun x => WithLp.toLp 2 x) ⁻¹' B from hB), zero_mul,
           ENNReal.ofReal_zero]
-    rw [setLIntegral_congr_fun (hUD k).2.1 h1, lintegral_finset_sum _ (fun j _ =>
+    rw [setLIntegral_congr_fun (hUD k).2.1 h1, MeasureTheory.lintegral_finsetSum _ (fun j _ =>
       (((SheetAreaCompare.measurable_sheetJac (s k j)).ennreal_ofReal.const_mul (ENNReal.ofReal κ)).indicator
         (hEm k j))), Finset.mul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_

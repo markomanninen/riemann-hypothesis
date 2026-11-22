@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HilbertKodairaSpencer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAHOfIsFactorAH
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HilbertKodairaSpencer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAHOfIsFactorAH
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -79,7 +83,7 @@ theorem exists_linear_of_char {g : ℕ} (Λ : Submodule ℤ (Fin g → ℂ)) [Di
         simp only [Set.mem_setOf_eq] at hl hm ⊢
         rw [hmul, hl, hm, ← Complex.exp_add]
         congr 1
-        simp only [Submodule.coe_add, map_add]
+        simp only [Submodule.coe_add, map_add (f := _)]
         push_cast; ring
       zero_mem' := by
         simp only [Set.mem_setOf_eq, ZeroMemClass.coe_zero, map_zero]
@@ -129,7 +133,7 @@ theorem exists_shift_of_semichar : ∀ (g : ℕ) (Λ Λ₁ : Submodule ℤ (Fin 
   have hmul : ∀ l m, ρ (l + m) = ρ l * ρ m := by
     intro l m
     simp only [ρ]
-    rw [map_add, hc, hc₁]
+    rw [map_add (f := _), hc, hc₁]
     simp only [Submodule.coe_inclusion]
     have e1 := hne (Submodule.inclusion h l)
     have e2 := hne (Submodule.inclusion h m)

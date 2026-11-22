@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HomValueCongruentIntModPrime
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsIsUnitSubOfRingHomNe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HomValueCongruentIntModPrime
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsIsUnitSubOfRingHomNe
+
+@[expose] public section
 
 namespace GlobalTheory
 

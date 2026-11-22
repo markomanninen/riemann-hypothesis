@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerFlagSplitting.SubFlag
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerFlagSplitting.SubFlag
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+
+@[expose] public section
 
 open Matrix Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.C2 Formalism.QuantumDeterminants.GBasic
 

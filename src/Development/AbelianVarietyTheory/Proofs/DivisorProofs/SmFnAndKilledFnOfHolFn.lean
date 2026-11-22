@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ChainRuleSmooth.ExpIntertwine
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ChainRuleSmooth.ExpIntertwine
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.L2.Pj Formalism.IndefR.FWT Formalism.IndefR GlobalTheory.HolDict
 open scoped TensorProduct InnerProductSpace ContDiff
@@ -217,7 +221,7 @@ theorem smooth_of_holFn {Hm : ι → Mt n} {q : ι → ℕ} {x₀ : ι → Mt n}
     by_cases hσ : σ = τs i
     · subst hσ
       simp only [Pi.mulSingle_eq_same]
-      exact (contDiff_exp_entry (Xs i) a b).comp (contDiff_apply ℝ ℝ i)
+      exact (contDiff_exp_entry (Xs i) a b).comp (contDiff_apply ℝ (fun _ => ℝ) i)
     · simp only [Pi.mulSingle_eq_of_ne hσ]
       exact contDiff_const
   have h2 : SmE (fun t : Fin k → ℝ => u * (List.ofFn fun i => (Pi.mulSingle (τs i) (NormedSpace.exp (t i • Xs i)) : ι → Mt n)).prod) :=
@@ -329,7 +333,7 @@ theorem derC_eq {Hm : ι → Mt n} {q : ι → ℕ} {x₀ : ι → Mt n}
   have e1 := der_eq h hP hfP τ l1 hu
   have e2 := der_eq h hP hfP τ l2 hu
   unfold derC
-  rw [e1, e2, ← smul_eq_mul, ← map_smul, ← map_add, ← map_smul, ← map_add]
+  rw [e1, e2, ← smul_eq_mul, ← map_smul, ← map_add (f := _), ← map_smul, ← map_add (f := _)]
   congr 2
   rw [smul_smul, show Complex.I * (1 / (2 * Complex.I)) = 1 / 2 by field_simp, ← smul_add,
     show Z + conjH (Hm τ) Z + (Z - conjH (Hm τ) Z) = (2 : ℂ) • Z by rw [two_smul]; abel, smul_smul]

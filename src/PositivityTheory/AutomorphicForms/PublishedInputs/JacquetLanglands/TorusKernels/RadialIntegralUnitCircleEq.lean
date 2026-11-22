@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.ComplexMinusRealLineMeasureCoordinates
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.ComplexMinusRealLineMeasureCoordinates
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem radial_integral_unit_circle_eq (n : ℕ) (K ζ : ℂ) (hζ : ‖ζ‖ = 
   have hcont : ContinuousOn (fun x : ℝ => K * (4 * (x : ℂ) * (1 - (x : ℂ) ^ 2) ^ n / (1 - ζ * (x : ℂ) ^ 2) ^ (n + 2)))
       (Set.uIcc 0 1) := by
     apply ContinuousOn.mul continuousOn_const
-    apply ContinuousOn.div (by fun_prop) (by fun_prop)
+    apply ContinuousOn.div₀ (by fun_prop) (by fun_prop)
     intro x _
     exact pow_ne_zero _ (hne x)
   rw [intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv (hcont.intervalIntegrable)]

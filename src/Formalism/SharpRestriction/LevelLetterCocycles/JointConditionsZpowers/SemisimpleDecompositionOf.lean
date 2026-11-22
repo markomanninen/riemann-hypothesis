@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.BaseLin
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.GaloisConditionFiveExtraOf
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CoefficientCompatibilityOf
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.ResidualIrreducibleOfTheorem
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.BaseLin
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.GaloisConditionFiveExtraOf
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CoefficientCompatibilityOf
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.ResidualIrreducibleOfTheorem
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,13 @@ theorem isClosed_det_eq {Γ A : Type} [TopologicalSpace Γ] [CommRing A] [Topolo
       (Matrix.scalar (Fin r) c - N' g).det * ∏ j ∈ s, (c - χ j g)} := by
   refine isClosed_eq ?_ ?_
   · exact (continuous_const.sub hM).matrix_det
-  · exact (continuous_const.sub hN).matrix_det.mul
-      (continuous_finset_prod _ fun j _ => continuous_const.sub (hχ j))
+  · apply (continuous_const.sub hN).matrix_det.mul
+    classical
+    induction s using Finset.induction_on with
+    | empty => simp only [Finset.prod_empty]; exact continuous_const
+    | @insert a s ha ih =>
+      simp only [Finset.prod_insert ha]
+      exact (continuous_const.sub (hχ a)).mul ih
 
 theorem infinite_O (D : D7) (i : D.nd.Loc) : Infinite (D.nd.O i) := by
   by_contra h

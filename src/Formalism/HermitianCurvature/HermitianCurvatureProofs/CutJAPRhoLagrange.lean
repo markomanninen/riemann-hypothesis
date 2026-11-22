@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoEigOrth
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoEigOrth
+
+@[expose] public section
 
 open Matrix Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q
 
@@ -19,7 +23,7 @@ theorem aeval_eig {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] (C : E 
     | succ n ih =>
       rw [pow_succ', ContinuousLinearMap.mul_apply, ih, map_smul, hv, smul_smul, pow_succ]
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => simp only [map_add, ContinuousLinearMap.add_apply, hp, hq, Polynomial.eval_add, add_smul]
+  | add p q hp hq => simp only [map_add (f := _), ContinuousLinearMap.add_apply, hp, hq, Polynomial.eval_add, add_smul]
   | monomial n a =>
     rw [Polynomial.aeval_monomial, Polynomial.eval_monomial, ContinuousLinearMap.mul_apply, hpow,
       Algebra.algebraMap_eq_smul_one, ContinuousLinearMap.smul_apply, ContinuousLinearMap.one_apply, smul_smul]
@@ -138,6 +142,6 @@ theorem lagrange_annihilation : Lagrange := by
       exact ((Submodule.starProjection_apply_eq_zero_iff _).mpr (hOrth σ hb x hx)).symm
   · simp only [map_zero]
   · intro x y hx hy
-    rw [map_add, map_add, hx, hy]
+    rw [map_add (f := _), map_add (f := _), hx, hy]
 
 end Formalism.FourierDecayAlt.P.CutMP.JA.PRhoCut

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapMaximalIdealEqOrigin
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodIffEtaleAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapTmulOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapMaximalIdealEqOrigin
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodIffEtaleAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapTmulOne
+
+@[expose] public section
 
 open IsLocalRing Polynomial
 open scoped TensorProduct
@@ -76,7 +80,7 @@ theorem etale_closure_of_field : (∀ (S S₁ K K₁ : Type) [CommRing S] [IsDom
     exact isUnit_of_map_unit (Localization.localRingHom (P₁.comap φ) P₁ φ rfl) _ hu
   have hSS₁ : Function.Injective
       (algebraMap (Localization.AtPrime (P₁.comap φ)) (Localization.AtPrime P₁)) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     by_contra hx0'
     obtain ⟨n, hn⟩ := IsDiscreteValuationRing.associated_pow_irreducible hx0' hπ

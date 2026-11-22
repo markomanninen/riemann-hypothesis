@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetOff
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LatticePointCountScalingStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ArchimedeanFundamentalDomainIntegersStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ScalingMeasureProductArchimedeanStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdelesLocalRingTotallyReal
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetOff
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LatticePointCountScalingStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ArchimedeanFundamentalDomainIntegersStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ScalingMeasureProductArchimedeanStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdelesLocalRingTotallyReal
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology Filter GlobalTheory.CompanionTheory.Equi
 open scoped Classical
 
@@ -55,7 +60,7 @@ theorem tile_pi (H : AddSubgroup O) (j : O →+ A) (hj : Function.Injective j) (
       refine hau i _ ?_
       have h4 := h3 i (Set.mem_univ i)
       have h5 : y i - j (rep (c i) + l i) = (y - (fun i => j (rep (c i))) - p₂) i := by
-        simp only [Pi.sub_apply, map_add, hlj]; abel
+        simp only [Pi.sub_apply, map_add (f := _), hlj]; abel
       show y i - j (rep (c i) + l i) ∈ D₀
       rw [h5]; exact h4
     have hc : ∀ i, q (a i) = c i := fun i => by
@@ -74,12 +79,10 @@ def scal {R : Type} (ι : Type) [CommRing R] (t : R) : (ι → R) →+ (ι → R
   map_zero' := by funext i; simp
   map_add' x y := by funext i; simp [mul_add]
 
-@[simp] theorem scal_apply {R ι : Type} [CommRing R] (t : R) (y : ι → R) (i : ι) : scal ι t y i = t * y i := rfl
-
 end GlobalTheory.CompanionTheory.Equi.LatSum
 
-open GlobalTheory.CompanionTheory.Equi.LatSum in
 
+open GlobalTheory.CompanionTheory.Equi.LatSum in
 theorem GlobalTheory.CompanionTheory.Equi.lat_sum : ∀ (F : Type) [Field F] [NumberField F], IsTotallyReal F → ∀ θ : ℝ →+* Ainf F, Continuous θ → ∀ li : Measure (Ainf F), IsStdInf li → ∀ (ι : Type) [Fintype ι] (I : Ideal (𝓞 F)), I ≠ ⊥ → ∀ (x0 : ι → F) (φ : (ι → Ainf F) → ℝ), Continuous φ → HasCompactSupport φ → (∀ ε : ℝ, 0 < ε → Summable fun x : latCoset I x0 => φ (fun i => θ ε * algebraMap F (Ainf F) (x.1 i))) ∧ Tendsto (fun ε : ℝ => ε ^ (Module.finrank ℚ F * Fintype.card ι) * ∑' x : latCoset I x0, φ (fun i => θ ε * algebraMap F (Ainf F) (x.1 i))) (𝓝[>] 0) (𝓝 (((Ideal.absNorm I : ℝ) ^ Fintype.card ι)⁻¹ * ∫ y, φ y ∂(Measure.pi fun _ => li))) := by
   intro F _ _ hF θ hθ li hli ι _ I hI x0 φ hφ hφs
   haveI : BorelSpace (Ainf F) := ⟨rfl⟩
@@ -173,7 +176,7 @@ theorem GlobalTheory.CompanionTheory.Equi.lat_sum : ∀ (F : Type) [Field F] [Nu
     congr 1
     funext i
     show _ = θ ε * (algebraMap F (Ainf F) (x0 i) + algebraMap F (Ainf F) (x.1 i - x0 i))
-    rw [← map_add, add_sub_cancel]
+    rw [← map_add (f := _), add_sub_cancel]
   constructor
   · intro ε hε
     have h1 := (e.summable_iff (f := fun l : Λ => φ (T ε ((fun i => algebraMap F (Ainf F) (x0 i)) + l)))).2 (key.1 ε hε)

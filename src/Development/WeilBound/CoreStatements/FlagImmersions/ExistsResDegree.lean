@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.MetricsProjectionFormulaNef
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogResolutionFunctorialHolomorphicStatement
-import Development.WeilBound.CoreStatements.FlagImmersions.BirationalOfClosure
-import Development.WeilBound.CoreStatements.FlagImmersions.InteriorUnionEmpty
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.MetricsProjectionFormulaNef
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogResolutionFunctorialHolomorphicStatement
+public import Development.WeilBound.CoreStatements.FlagImmersions.BirationalOfClosure
+public import Development.WeilBound.CoreStatements.FlagImmersions.InteriorUnionEmpty
+
+@[expose] public section
 
 noncomputable section
 
@@ -217,7 +221,7 @@ theorem exists_res_degree (hRes : ResExistsStatement) {K₀ K : Type} [Fintype K
         exact analyticOnNhd_const
       · rename_i p q hp hq
         intro j
-        simp only [map_add]
+        simp only [map_add (f := _)]
         exact (hp j).add (hq j)
       · rename_i p i hp
         intro j

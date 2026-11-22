@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroInertia
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GreenRegularCharacters
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroInertia
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GreenRegularCharacters
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ def DepthZeroTypeInertia : Prop :=
     [Algebra E' Ω] [IsScalarTower E E' Ω] [IsAlgClosure E Ω] [IsAlgClosure E' Ω] (g : ℕ) [Fact g.Prime]
     (A : ValuationSubring Ω) (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w)
     (w' : HeightOneSpectrum (𝓞 E')) (h' : IsPlaceOver A w')
-    (rc : IrrGL (w.adicCompletion E) → WD h), IsRec h rc →
+    (rc : IrrGL (k := w.adicCompletion E) → WD h), IsRec h rc →
     ∀ (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i →
     ∀ n : ℕ, 0 < n → ((g : ℕ) : 𝓞 E') ∉ w'.asIdeal ^ 2 → normV w' = g ^ n →
     ∀ a' : Weil h' →* (w'.adicCompletion E')ˣ, IsLocalArtin h' a' →

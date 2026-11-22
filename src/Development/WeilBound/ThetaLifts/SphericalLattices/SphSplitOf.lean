@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.SplitLoc
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.SplitLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,32 +23,6 @@ theorem intInd_eq (v : Pl F) {a b : ℕ} : (SplitDict.intInd v : Matrix (Fin a) 
   congr 1
   ext Z
   exact forall₂_congr fun i j => (GlobalTheory.WeylFour.IndOSelf.mem_int_iff _).symm
-
-theorem irrAt_of (hS : SurjSt) (hI : IrrSt) {om : Rep σ X W} {v : Pl F}
-    {ι : ((Fin n × Fin d → Fv F v) → ℂ) →ₗ[ℂ] (Matrix (Fin n) (Fin d) (Fv F v) → ℂ)} {ν α : (Fv F v)ˣ →* ℂˣ} (hnd : n ≤ d)
-    (hb : Set.BijOn ι (SB (Fin n × Fin d → Fv F v) : Set _) (SB (Matrix (Fin n) (Fin d) (Fv F v)) : Set _))
-    (hD : IsDict om v ι ν α) (hν : USm ν) (hα : USm α) (h1 : ν ≠ 1) : IrrAt om v := by
-  rintro N ⟨hAN, hNS, hst⟩
-  rcases hI _ n d ν α hnd hν hα (N.map ι) ((aug_le_map hb hD).trans (Submodule.map_mono hAN)) (by
-      rintro h₀ _ ⟨ψ, hψ, rfl⟩ -
-      obtain ⟨h, hh, hr⟩ := hD.rightOnto h₀
-      obtain ⟨ψ₁, h₁, ha, e⟩ := hr ψ (hNS hψ)
-      exact ⟨ψ₁, hst h hh ψ hψ ψ₁ h₁ ha, e⟩) with h | h
-  · right
-    refine le_antisymm hNS fun φ hφ => ?_
-    obtain ⟨φ₀, h₀, hf, ha⟩ := exists_full hS hb hD hν h1 hφ
-    obtain ⟨χ, hχ, e⟩ := h _ hf
-    have e' : χ = φ₀ := hb.2.1 (hNS hχ) h₀ e
-    have := add_mem (hAN ha) (e' ▸ hχ)
-    rwa [sub_add_cancel] at this
-  · left
-    refine le_antisymm (fun φ hφ => ?_) hAN
-    obtain ⟨φ₀, h₀, hf, ha⟩ := exists_full hS hb hD hν h1 (hNS hφ)
-    have hN0 : φ₀ ∈ N := by
-      have := sub_mem hφ (hAN ha)
-      rwa [sub_sub_cancel] at this
-    have := add_mem ha (mem_augAt hb hD h₀ (h _ ⟨φ₀, hN0, rfl⟩ hf))
-    rwa [sub_add_cancel] at this
 
 theorem sphAt_of (hL : LatSt) {M : Model σ X W} {ψ : AddChar (AF F) ℂ} {om : Rep σ X W} {v : Pl F}
     {ι : ((Fin n × Fin d → Fv F v) → ℂ) →ₗ[ℂ] (Matrix (Fin n) (Fin d) (Fv F v) → ℂ)} {α : (Fv F v)ˣ →* ℂˣ}
@@ -89,7 +67,7 @@ theorem sphAt_of (hL : LatSt) {M : Model σ X W} {ψ : AddChar (AF F) ℂ} {om :
     | add x y _ _ hx hy =>
       obtain ⟨z, hz, hzS, e⟩ := hx
       obtain ⟨z', hz', hzS', e'⟩ := hy
-      exact ⟨z + z', add_mem hz hz', add_mem hzS hzS', by rw [map_add, e, e']⟩
+      exact ⟨z + z', add_mem hz hz', add_mem hzS hzS', by rw [map_add (f := _), e, e']⟩
     | smul a x _ hx =>
       obtain ⟨z, hz, hzS, e⟩ := hx
       exact ⟨a • z, Submodule.smul_mem _ a hz, Submodule.smul_mem _ a hzS, by rw [map_smul, e]⟩
@@ -114,7 +92,7 @@ theorem sphAt_of (hL : LatSt) {M : Model σ X W} {ψ : AddChar (AF F) ℂ} {om :
     | add x y _ _ hx hy =>
       obtain ⟨z, hz, hzS, e⟩ := hx
       obtain ⟨z', hz', hzS', e'⟩ := hy
-      exact ⟨z + z', add_mem hz hz', add_mem hzS hzS', by rw [map_add, e, e']⟩
+      exact ⟨z + z', add_mem hz hz', add_mem hzS hzS', by rw [map_add (f := _), e, e']⟩
     | smul a x _ hx =>
       obtain ⟨z, hz, hzS, e⟩ := hx
       exact ⟨a • z, Submodule.smul_mem _ a hz, Submodule.smul_mem _ a hzS, by rw [map_smul, e]⟩
@@ -128,7 +106,8 @@ theorem sphAt_of (hL : LatSt) {M : Model σ X W} {ψ : AddChar (AF F) ℂ} {om :
     set φ' := ∑ i, ω (x i, 1) φ with hφ'
     have hφ'S : φ' ∈ SB _ := sum_mem fun i _ => (hxr i φ hφ).1
     have hφ'ι : ι φ' = fun Y => ∑ i, ι φ (((g i)⁻¹).val * Y) := by
-      rw [hφ', map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hφ', map_sum]
       funext Y
       rw [Finset.sum_apply]
       exact Finset.sum_congr rfl fun i _ => congrFun (hterm i) Y
@@ -161,7 +140,8 @@ theorem sphAt_of (hL : LatSt) {M : Model σ X W} {ψ : AddChar (AF F) ℂ} {om :
     set φ' := ∑ i, ((α (gdet (h i)) : ℂ))⁻¹ • ω (1, y i) φ with hφ'
     have hφ'S : φ' ∈ SB _ := sum_mem fun i _ => Submodule.smul_mem _ _ (hyr i φ hφ).1
     have hφ'ι : ι φ' = fun Y => ∑ i, ι φ (Y * (h i).val) := by
-      rw [hφ', map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hφ', map_sum]
       funext Y
       rw [Finset.sum_apply]
       exact Finset.sum_congr rfl fun i _ => congrFun (hterm i φ hφ) Y
@@ -172,55 +152,11 @@ theorem sphAt_of (hL : LatSt) {M : Model σ X W} {ψ : AddChar (AF F) ℂ} {om :
     rw [hz', hφ'] at hc
     exact ⟨m, y, fun i => ((α (gdet (h i)) : ℂ))⁻¹, c, fun i => ⟨hy i, hfix i⟩, hc⟩
 
-theorem pair_case (hB : GlobalTheory.Published.BernsteinUnitaryProductIrreducible) (hL : LatSt) {B : Base F E} (hBg : B.IsGood σ)
-    {r s r' s' : ℕ} (hX : X.IsHerm σ B r s) (hW : W.IsSkew σ B r' s') {M : Model σ X W} (hM : M.IsGood B.ψ)
-    {χX χW : Chr F E} {om : Rep σ X W} (hom : M.IsWeil B.ψ χX χW om) (hHX : IsHecke F E χX) (hHW : IsHecke F E χW)
-    (hnd : n ≤ d) (v : Pl F) (t : E →ₐ[F] Fv F v) : SphAt M B.ψ om v ∨ IrrAt om v := by
-  obtain ⟨⟨ι₀, hι₀⟩, s1, s2, k⟩ := dictionary_extended F E σ n d B X W M om χX χW hBg ⟨_, _, hX⟩ ⟨_, _, hW⟩ hom v t
-  have hu := (section_statement F E σ hBg.cm v t).2
-  by_cases h1 : chrW χW t = 1
-  · left
-    have := hX.lat
-    have := hW.lat
-    obtain ⟨b, hb⟩ := exists_isSplitBasis t X.L hBg.cm
-    obtain ⟨c, hc⟩ := exists_isSplitBasis t W.L hBg.cm
-    obtain ⟨δ, hδ⟩ := SplitDict.exists_cond hBg.std v
-    obtain ⟨ι, hι, hv, hg, hh⟩ := SplitDict.model_Bar hBg hX hW (hM.vac v) hom hb hc hδ (b' := δ • b) rfl
-    rw [h1] at hg hh
-    refine sphAt_of (α := chrW χX t) hL hι.bij (hM.vac v).1 hv (fun g₀ => ?_) (fun h₀ => ?_)
-    · obtain ⟨g, hg', e⟩ := s1 ((δ • b) * g₀ * (δ • b)⁻¹)
-      refine ⟨g, hg', ?_⟩
-      have := hg g hg'
-      rwa [show SplitDict.inB t (δ • b) g = g₀ by
-        rw [SplitDict.inB, show Matrix.GeneralLinearGroup.map (piW t) g.1 = (δ • b) * g₀ * (δ • b)⁻¹ from Units.ext e]
-        group] at this
-    · obtain ⟨h, hh', e⟩ := s2 (c * h₀ * c⁻¹)
-      refine ⟨h, hh', ?_⟩
-      have := hh h hh'
-      rwa [show SplitDict.inB t c h = h₀ by
-        rw [SplitDict.inB, show Matrix.GeneralLinearGroup.map (piW t) h.1 = c * h₀ * c⁻¹ from Units.ext e]
-        group] at this
-  · right
-    refine irrAt_of surjectivity_statement (irrSt_of hB) hnd hι₀.bij ⟨fun g hg => ⟨_, (k ι₀ hι₀).1 g hg
-      (Matrix.GeneralLinearGroup.map (piW t) g.1) rfl⟩, fun g₀ => ?_, fun g hg => ⟨_, (k ι₀ hι₀).2 g hg
-        (Matrix.GeneralLinearGroup.map (piW t) g.1) rfl⟩, fun g₀ => ?_⟩ (hu χW hHW) (hu χX hHX) h1
-    · obtain ⟨g, hg, e⟩ := s1 g₀
-      exact ⟨g, hg, (k ι₀ hι₀).1 g hg g₀ e⟩
-    · obtain ⟨g, hg, e⟩ := s2 g₀
-      exact ⟨g, hg, (k ι₀ hι₀).2 g hg g₀ e⟩
-
 end PositivityTheory.Sph.SplitPl
 
 namespace PositivityTheory.Sph
 
 open NumberField IsDedekindDomain Topology GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes PositivityTheory.ThK
-
-theorem sphSplit_of (hB : GlobalTheory.Published.BernsteinUnitaryProductIrreducible) (hL : LatSt) : SphSplit := by
-  intro F E _ _ _ _ _ σ B a a' G X om om' hT v ⟨t⟩
-  exact ⟨SplitPl.pair_case hB hL hT.base hT.geo.hV hT.geo.hW hT.geo.hM hT.weil hT.chars.heckeβ
-      (PositivityTheory.KCo.isHecke_div hT.chars.heckeβ hT.chars.heckeα) (Nat.le_add_right a a') v t,
-    SplitPl.pair_case hB hL hT.base hT.geo.hV' hT.geo.hW hT.geo.hM' hT.weil' hT.chars.heckeα
-      (PositivityTheory.KCo.isHecke_div hT.chars.heckeα hT.chars.heckeβ) (Nat.le_add_left a' a) v t⟩
 
 end PositivityTheory.Sph
 

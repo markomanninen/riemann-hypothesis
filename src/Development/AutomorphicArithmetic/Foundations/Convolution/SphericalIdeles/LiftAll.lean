@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.Cbcc
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.Cbcc
+
+@[expose] public section
 
 theorem UpperTheory.ConvolutionTheory.Sph.gm : UpperTheory.ConvolutionTheory.GM.GM := UpperTheory.ConvolutionTheory.GM.gm_of_bcfl PositivityTheory.Rg.Tf.Loc.bcflUnit
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.UnitaryExtremality.SatPowNonvan
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.UnitaryExtremality.SatPowNonvan
+
+@[expose] public section
 
 noncomputable section
 
@@ -355,7 +359,7 @@ variable {L : Type} [Field L] [Valued L (WithZero (Multiplicative ℤ))] {n : �
 theorem v_eq_exp' {x : L} (hx : x ≠ 0) : Valued.v x = WithZero.exp (-ordL x) := by
   have h0 : Valued.v x ≠ 0 := by simpa using hx
   unfold ordL
-  rw [dif_neg h0, neg_neg]
+  rw [dite_eq_right h0, neg_neg]
   conv_lhs => rw [← WithZero.coe_unzero h0]
   rfl
 

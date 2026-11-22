@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.IsChart
-import Development.EtaleCohomology.EtaleSheaves.H0TwistOverClosedField
-import Development.EtaleCohomology.EtaleSheaves.ProperLineCovers.CoverPf
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.IsChart
+public import Development.EtaleCohomology.EtaleSheaves.H0TwistOverClosedField
+public import Development.EtaleCohomology.EtaleSheaves.ProperLineCovers.CoverPf
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC GroundTheory.FunctionField UpperTheory.Et.Sel LateralTheory.E.E4
 open scoped TensorProduct

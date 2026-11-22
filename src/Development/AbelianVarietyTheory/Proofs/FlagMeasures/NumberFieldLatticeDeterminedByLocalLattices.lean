@@ -1,11 +1,16 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GFrames
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsIntegralOfQuad
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ImportsSide
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GFrames
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsIntegralOfQuad
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ImportsSide
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL NumberField IsDedekindDomain
 open scoped Pointwise ENNReal Classical
 
@@ -63,10 +68,12 @@ theorem exists_coeffs (Λ : Submodule (𝓞 E) (Fin n → E))
     rw [hb'' i]
     ring
   have h2 := congrArg φ h1
-  rw [map_smul, map_sum] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_smul, map_sum] at h2
   simp only [map_smul, smul_eq_mul] at h2
   have h3 := congrArg (fun t : 𝓞 E => (t : E)) h2
-  simp only [map_mul, map_sum] at h3
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_mul, map_sum] at h3
   have hBD : algebraMap (𝓞 E) E (B : 𝓞 E) * algebraMap (𝓞 E) E D ≠ 0 := mul_ne_zero hBE hDE
   apply mul_left_cancel₀ hBD
   refine Eq.trans ?_ h3.symm
@@ -149,7 +156,8 @@ theorem functional_integral (p : HeightOneSpectrum (𝓞 F)) (Λ : Submodule (�
     obtain ⟨y, hy, rfl⟩ := hx
     obtain ⟨o, ho⟩ := hc y hy
     have : ∑ k, (A.loc p).ιE (c k) * A.bc p y k = (A.loc p).ιE (o : E) := by
-      rw [ho, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [ho, map_sum]
       simp [Places.bc]
     rw [this]
     exact int_mem A p o
@@ -166,16 +174,17 @@ theorem functional_integral (p : HeightOneSpectrum (𝓞 F)) (Λ : Submodule (�
     rw [this]
     exact mul_mem o.2 ha
 
-theorem mem_of_forall_lat (Λ : Submodule (𝓞 E) (Fin n → E)) (h : Submodule.IsLattice E Λ)
+theorem mem_of_forall_lat (Λ : Submodule (𝓞 E) (Fin n → E)) (h : Submodule.IsFullLattice E Λ)
     (x : Fin n → E) (hx : ∀ p, A.bc p x ∈ A.lat p Λ) : x ∈ Λ := by
-  obtain ⟨m, g, φ, hφ⟩ := exists_dual_basis Λ h
+  obtain ⟨m, g, φ, hφ⟩ := exists_dual_basis Λ h.toIsLattice
   choose c hc using fun i => exists_coeffs Λ h.span_eq_top (φ i)
   have hint : ∀ i, ∃ o : 𝓞 E, (o : E) = ∑ k, c i k * x k := by
     intro i
     refine ((PlacesInt.integers_local A).1 _).1 fun p => ?_
     have := functional_integral A p Λ (c i)
       (fun y hy => ⟨φ i ⟨y, hy⟩, (hc i ⟨y, hy⟩).symm⟩) _ (hx p)
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simpa [Places.bc] using this
   choose o ho using hint
   obtain ⟨D, hD, hDx⟩ := exists_smul_mem Λ h.span_eq_top x
@@ -207,7 +216,7 @@ theorem mem_of_forall_lat (Λ : Submodule (𝓞 E) (Fin n → E)) (h : Submodule
 
 end Local
 
-theorem lattice_local : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {sig : E →ₐ[F] E} (A : Places F E sig), ∀ (n : ℕ) (Λ : Submodule (𝓞 E) (Fin n → E)), Submodule.IsLattice E Λ → (∀ x, x ∈ Λ ↔ ∀ p, A.bc p x ∈ A.lat p Λ) ∧ (∀ p, IsLat (A.L p) (A.lat p Λ)) ∧ {p | A.lat p Λ ≠ Submodule.span (A.L p).O (Set.range fun i => (Pi.single i 1 : Fin n → (A.loc p).Ep))}.Finite := by
+theorem lattice_local : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {sig : E →ₐ[F] E} (A : Places F E sig), ∀ (n : ℕ) (Λ : Submodule (𝓞 E) (Fin n → E)), Submodule.IsFullLattice E Λ → (∀ x, x ∈ Λ ↔ ∀ p, A.bc p x ∈ A.lat p Λ) ∧ (∀ p, IsLat (A.L p) (A.lat p Λ)) ∧ {p | A.lat p Λ ≠ Submodule.span (A.L p).O (Set.range fun i => (Pi.single i 1 : Fin n → (A.loc p).Ep))}.Finite := by
   intro F E _ _ _ _ _ sig A n Λ h
   obtain ⟨D, hD, hm⟩ := exists_common Λ h.span_eq_top
   have hDE : (D : E) ≠ 0 := by simpa using hD
@@ -225,16 +234,14 @@ theorem lattice_local : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [Nu
     fun p => ⟨?_, ?_⟩, ?_⟩
   · rw [← hS, lat_span]
     exact Submodule.fg_span (S.finite_toSet.image _)
-  · rw [eq_top_iff]
-    intro v _
-    have hv : v = ∑ i, v i • (Pi.single i 1 : Fin n → (A.loc p).Ep) := by
-      ext j
-      simp [Pi.single_apply]
-    rw [hv]
-    refine Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ ?_
+  · apply top_unique
+    rw [← (Pi.basisFun (A.loc p).Ep (Fin n)).span_eq]
+    apply Submodule.span_le.2
+    rintro _ ⟨i, rfl⟩
+    rw [Pi.basisFun_apply]
     rw [hsingle p i]
     exact Submodule.smul_mem _ _ (Submodule.subset_span
-      (Submodule.subset_span ⟨_, hm i, rfl⟩))
+      (show A.bc p (D • Pi.single i 1) ∈ A.lat p Λ from Submodule.subset_span ⟨_, hm i, rfl⟩))
   · have hfin := (PlacesInt.integers_local A).2.1
     have h1 : (⋃ s ∈ (S : Set (Fin n → E)), ⋃ i, {p | (A.loc p).ιE (s i) ∉ (A.L p).O}).Finite :=
       S.finite_toSet.biUnion fun s _ => Set.finite_iUnion fun i => hfin (s i)

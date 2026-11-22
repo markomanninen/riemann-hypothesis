@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthLocalizedModuleEqZeroOfNotAnnihilatorLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthLocalizedModuleEqZeroOfNotAnnihilatorLe
+
+@[expose] public section
 
 open Submodule
 
@@ -52,7 +56,7 @@ theorem finiteLength_projection_quotient :
     intro v
     have hv : v ∈ G ⊔ B := hsup ▸ Submodule.mem_top
     obtain ⟨g, hg, b, hb, rfl⟩ := Submodule.mem_sup.mp hv
-    rw [map_add, hπfix g hg, hπzero b hb, add_zero, add_sub_cancel_left]
+    rw [map_add (f := _), hπfix g hg, hπzero b hb, add_zero, add_sub_cancel_left]
     exact hb
   have hmap : up = L.map π := by
     ext x
@@ -62,7 +66,7 @@ theorem finiteLength_projection_quotient :
       refine ⟨l, hl, ?_⟩
       have h1 : π (l + b) = l + b := hπfix _ hxG
       have h2 : π b = 0 := hπzero b hb
-      rw [map_add, h2, add_zero] at h1
+      rw [map_add (f := _), h2, add_zero] at h1
       exact h1
     · rintro ⟨l, hl, rfl⟩
       refine ⟨hπG' l, ?_⟩

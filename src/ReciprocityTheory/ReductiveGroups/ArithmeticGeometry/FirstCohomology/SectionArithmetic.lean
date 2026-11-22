@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -13,7 +17,7 @@ variable {X Y Z : Scheme.{0}}
 
 def secAdd {M : LB Y} (s t : LB.Sec M) : LB.Sec M where
   f i := s.f i + t.f i
-  compat i j := by rw [map_add, map_add, s.compat, t.compat, mul_add]
+  compat i j := by rw [map_add (f := _), map_add (f := _), s.compat, t.compat, mul_add]
 
 def secZero (M : LB Y) : LB.Sec M where
   f _ := 0

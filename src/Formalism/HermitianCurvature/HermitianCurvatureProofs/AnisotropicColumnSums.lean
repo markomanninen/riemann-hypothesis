@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.FrameMinor
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorRepresentations
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
+module
+
+public import Formalism.HermitianCurvature.FrameMinor
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorRepresentations
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ContDiff
@@ -101,9 +105,9 @@ theorem herm_bcol_eq_ite {x : Fin (2 * r + k + 1) → ℂ} {Bs : Fin k → Fin (
     herm (Hpk k r) (bcol k r x Bs j) x = if j.val < k then 0 else herm (Hpk k r) x x := by
   unfold bcol
   by_cases h : j.val < k
-  · rw [dif_pos h, if_pos h]
+  · rw [dite_eq_left h, if_pos h]
     exact hB.2.2 _ x (List.mem_singleton_self x)
-  · rw [dif_neg h, if_neg h]
+  · rw [dite_eq_right h, if_neg h]
 
 private theorem herm_eq_star_herm_swap (v w : Fin (2 * r + k + 1) → ℂ) :
     herm (Hpk k r) v w = star (herm (Hpk k r) w v) := by
@@ -126,22 +130,22 @@ theorem gram {x : Fin (2 * r + k + 1) → ℂ} {Bs : Fin k → Fin (2 * r + k + 
     omega
   unfold bcol nrm
   by_cases h1 : j.val < k <;> by_cases h2 : j'.val < k
-  · rw [dif_pos h2, dif_pos h1, if_pos h1, mul_one, hBo]
+  · rw [dite_eq_left h2, dite_eq_left h1, if_pos h1, mul_one, hBo]
     by_cases hjj : j = j'
     · subst hjj
       simp
     · have hne : ¬ j'.val = j.val := fun h => hjj (Fin.ext h.symm)
       simp [hjj, hne]
-  · rw [dif_neg h2, dif_pos h1, if_pos h1, mul_one, hx0', if_neg]
+  · rw [dite_eq_right h2, dite_eq_left h1, if_pos h1, mul_one, hx0', if_neg]
     rintro rfl
     exact h2 h1
-  · rw [dif_pos h2, dif_neg h1, if_neg h1, hx0, zero_mul, if_neg]
+  · rw [dite_eq_left h2, dite_eq_right h1, if_neg h1, hx0, zero_mul, if_neg]
     rintro rfl
     exact h1 h2
   · have hjj : j = j' := by
       ext
       omega
-    rw [dif_neg h2, dif_neg h1, if_neg h1, if_pos hjj, mul_inv_cancel₀ hxx]
+    rw [dite_eq_right h2, dite_eq_right h1, if_neg h1, if_pos hjj, mul_inv_cancel₀ hxx]
 
 end AnisotropicColumnSums
 

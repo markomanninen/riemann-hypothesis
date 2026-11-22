@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensFactor
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ArchBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GlueBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.EigBasic
-import Development.AutomorphicArithmetic.AdelicQuotients.AdeleGaloisActionBaseChangeCompat
-import Development.AutomorphicArithmetic.AdelicQuotients.CentralSectionBaseChange
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.CharacterColumnKernelsOfBlockChiCOfBlockChiOne
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.TwUnitary
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensFactor
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ArchBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GlueBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.EigBasic
+public import Development.AutomorphicArithmetic.AdelicQuotients.AdeleGaloisActionBaseChangeCompat
+public import Development.AutomorphicArithmetic.AdelicQuotients.CentralSectionBaseChange
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.CharacterColumnKernelsOfBlockChiCOfBlockChiOne
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.TwUnitary
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,8 +45,8 @@ private theorem gal_module [IsGalois F E] (σ : E ≃ₐ[F] E) (hσ : ∀ τ, τ
   · exact (UpperTheory.ConvolutionTheory.G.character_column_kernels_of_block_chi_c_of_block_chi_one F E σ hσ n hn).2.2 g
 
 private theorem e_proj [IsGalois F E] {σ : E ≃ₐ[F] E} (hσ : ∀ τ, τ ∈ Subgroup.zpowers σ) {n : ℕ}
-    {μ : Measure (normOneGL E n)} [μ.IsHaarMeasure] {θ : Twist μ} (hθ : IsGalTwist σ θ)
-    {g g' : AdelicGLn.AdelicGL E n} (hg : mapGL n (galAd σ) g = g') {x y : normOneGL E n}
+    {μ : Measure (normOneGL (K := E) (n := n))} [μ.IsHaarMeasure] {θ : Twist μ} (hθ : IsGalTwist σ θ)
+    {g g' : AdelicGLn.AdelicGL E n} (hg : mapGL n (galAd σ) g = g') {x y : normOneGL (K := E) (n := n)}
     (hx : (x : AdelicGLn.AdelicGL E n) = g * (centralSection E n (detModule E n g))⁻¹)
     (hy : (y : AdelicGLn.AdelicGL E n) = g' * (centralSection E n (detModule E n g'))⁻¹) :
     θ.e x = y := by
@@ -50,13 +54,13 @@ private theorem e_proj [IsGalois F E] {σ : E ≃ₐ[F] E} (hσ : ∀ τ, τ ∈
   rw [hθ, hx, hy, map_mul, map_inv, gal_central, hg, ← hg, gal_module σ hσ]
 
 private theorem e_archP [IsGalois F E] {σ : E ≃ₐ[F] E} (hσ : ∀ τ, τ ∈ Subgroup.zpowers σ) {n : ℕ}
-    {μ : Measure (normOneGL E n)} [μ.IsHaarMeasure] {θ : Twist μ} (hθ : IsGalTwist σ θ)
+    {μ : Measure (normOneGL (K := E) (n := n))} [μ.IsHaarMeasure] {θ : Twist μ} (hθ : IsGalTwist σ θ)
     {a a' : archGroup E n} (h : mapGL n (galAd σ) (infEmb E n a) = infEmb E n a') :
     θ.e (archP E n a) = archP E n a' :=
   e_proj hσ hθ h rfl rfl
 
 private theorem e_finProj [IsGalois F E] {σ : E ≃ₐ[F] E} (hσ : ∀ τ, τ ∈ Subgroup.zpowers σ) {n : ℕ}
-    {μ : Measure (normOneGL E n)} [μ.IsHaarMeasure] {θ : Twist μ} (hθ : IsGalTwist σ θ)
+    {μ : Measure (normOneGL (K := E) (n := n))} [μ.IsHaarMeasure] {θ : Twist μ} (hθ : IsGalTwist σ θ)
     {u u' : AdelicGLn.FiniteAdelicGL E n} (h : mapGL n (galAd σ) (finEmb E n u) = finEmb E n u') :
     θ.e (MultiplicityOne.finProj E n u) = MultiplicityOne.finProj E n u' :=
   e_proj hσ hθ h rfl rfl
@@ -84,6 +88,7 @@ private theorem pE_of_snd {n : ℕ} {g : AdelicGLn.AdelicGL E n} (h : (AdelicGLn
   by_cases hab : a = b
   · subst hab; simp
   · simp [Matrix.one_apply_ne hab]
+    rfl
 
 private theorem pE_infEmb {n : ℕ} (a : archGroup E n) (v : Pl F) : UpperTheory.ConvolutionTheory.T4.pE E n v (infEmb E n a) = 1 :=
   pE_of_snd (congrArg Prod.snd (prodEquiv_infEmb a)) v
@@ -118,10 +123,10 @@ private theorem gal_position {σ : E ≃ₐ[F] E} {m n : ℕ} (D : InfD σ m) {s
   · rw [hc.2.1, pE_infEmb, pE_infEmb, map_one]
 
 private theorem clause1 [IsGalois F E] {σ : E ≃ₐ[F] E} (hσ : ∀ τ, τ ∈ Subgroup.zpowers σ) {m n : ℕ}
-    {μ : Measure (normOneGL E n)} [μ.IsHaarMeasure] {θ : Twist μ} (hθ : IsGalTwist σ θ) (D : InfD σ m)
+    {μ : Measure (normOneGL (K := E) (n := n))} [μ.IsHaarMeasure] {θ : Twist μ} (hθ : IsGalTwist σ θ) (D : InfD σ m)
     {s : Fin (m + 1) → archGroup F n →* archGroup E n} (hs : IsBlockElement D n s) (i : Fin (m + 1)) (g : archGroup F n)
-    (v : LL μ) : θ.U (rightRegularRep (rationalGLOne E n) μ (archP E n (s (i + 1) g)) v) =
-      rightRegularRep (rationalGLOne E n) μ (archP E n (s i g)) (θ.U v) := by
+    (v : LL μ) : θ.U (rightRegularRep (rationalGLOne (K := E) (n := n)) μ (archP E n (s (i + 1) g)) v) =
+      rightRegularRep (rationalGLOne (K := E) (n := n)) μ (archP E n (s i g)) (θ.U v) := by
   rw [(UpperTheory.ConvolutionTheory.Dp.twUnitary E n μ θ).2.2, e_archP hσ hθ (gal_position D hs i g)]
 
 private theorem cmp_pE {n : ℕ} (p : Pl F) (u : PlacesOver E p) (g : AdelicGLn.AdelicGL E n) :
@@ -190,14 +195,14 @@ private theorem gal_place {σ : E ≃ₐ[F] E} {m n : ℕ} (p : Pl F) (D : Split
     · rw [pE_local_ne hv, pE_local_ne hv, map_one]
 
 private theorem clause2 [IsGalois F E] {σ : E ≃ₐ[F] E} (hσ : ∀ τ, τ ∈ Subgroup.zpowers σ) {m n : ℕ}
-    {μ : Measure (normOneGL E n)} [μ.IsHaarMeasure] {θ : Twist μ} (hθ : IsGalTwist σ θ) (p : Pl F)
+    {μ : Measure (normOneGL (K := E) (n := n))} [μ.IsHaarMeasure] {θ : Twist μ} (hθ : IsGalTwist σ θ) (p : Pl F)
     (D : Split (incFin E p) (galFin σ p) m) (w : Fin (m + 1) ≃ PlacesOver E p)
     (hw : ∀ (b : CompletionsOver E p) i, completionMap p (w i).1 (D.e b i) = b (w i)) (i : Fin (m + 1))
     (g : GL (Fin n) (p.adicCompletion F)) (v : LL μ) :
     θ.U (rhoL μ (w (i + 1)).1 (mapGL n (completionMap p (w (i + 1)).1) g) v) =
       rhoL μ (w i).1 (mapGL n (completionMap p (w i).1) g) (θ.U v) := by
-  change θ.U (rightRegularRep (rationalGLOne E n) μ (MultiplicityOne.finProj E n _) v) =
-    rightRegularRep (rationalGLOne E n) μ (MultiplicityOne.finProj E n _) (θ.U v)
+  change θ.U (rightRegularRep (rationalGLOne (K := E) (n := n)) μ (MultiplicityOne.finProj E n _) v) =
+    rightRegularRep (rationalGLOne (K := E) (n := n)) μ (MultiplicityOne.finProj E n _) (θ.U v)
   rw [(UpperTheory.ConvolutionTheory.Dp.twUnitary E n μ θ).2.2, e_finProj hσ hθ (gal_place p D w hw i g)]
 
 open scoped TensorProduct in
@@ -210,7 +215,7 @@ private theorem galOf_mul {A B : Type*} [CommRing A] [Algebra F A] [CommRing B] 
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a c => simp
-    | add a c ha hc => simp only [map_add, ha, hc]
+    | add a c ha hc => simp only [map_add (f := _), ha, hc]
   simp [galOf, h]
 
 open scoped TensorProduct in
@@ -221,7 +226,7 @@ private theorem galOf_one {A B : Type*} [CommRing A] [Algebra F A] [CommRing B] 
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a c => simp
-    | add a c ha hc => simp only [map_add, ha, hc]
+    | add a c ha hc => simp only [map_add (f := _), ha, hc]
   simp [galOf, h]
 
 private theorem mapGL_iter (σ : E ≃ₐ[F] E) (v : Pl F) {n : ℕ} (k : ℕ) (Y : GL (Fin n) (CompletionsOver E v)) :
@@ -304,7 +309,7 @@ private theorem pt_local {n : ℕ} {v : Pl F} (u : PlacesOver E v) (y : GL (Fin 
 
 section Types
 variable {σ : E ≃ₐ[F] E} {n : ℕ} {q : Pl F} {w₀ : PlacesOver E q}
-variable (μ : Measure (normOneGL E n)) [μ.IsHaarMeasure]
+variable (μ : Measure (normOneGL (K := E) (n := n))) [μ.IsHaarMeasure]
 
 private theorem rhoF_mul (h h' : AdelicGLn.FiniteAdelicGL E n) (f : LL μ) :
     rhoF μ (h * h') f = rhoF μ h (rhoF μ h' f) := by
@@ -414,7 +419,7 @@ private theorem commute_of_stable {H : Type*} [NormedAddCommGroup H] [InnerProdu
   rw [e, ← U.apply_symm_apply w, U.inner_map_map]
   exact a3 v _ (h2 w ((hm _).1 hw))
 
-private theorem clause3 [IsGalois F E] (μ : Measure (normOneGL E n)) [μ.IsHaarMeasure]
+private theorem clause3 [IsGalois F E] (μ : Measure (normOneGL (K := E) (n := n))) [μ.IsHaarMeasure]
     (hσ : ∀ τ, τ ∈ Subgroup.zpowers σ) {θ : Twist μ} (hθ : IsGalTwist σ θ) (T : Ty σ n q w₀) (P : Set (Pl F)) :
     Commute θ.U (prj (⨅ (w : Pl E) (_ : w.under (𝓞 F) ∉ P), eigL μ w (T.J w) (T.χ w))) := by
   obtain ⟨U, hU, -, -⟩ := UpperTheory.ConvolutionTheory.C.twistUnitary E n μ θ
@@ -433,8 +438,8 @@ private theorem clause3 [IsGalois F E] (μ : Measure (normOneGL E n)) [μ.IsHaar
       (UpperTheory.ConvolutionTheory.L1.eigBasic E n μ w (T.J w) (T.χ w) (T.co w) (T.chr w)).1
   have hint : ∀ x x' : AdelicGLn.FiniteAdelicGL E n, mapGL n (galAd σ) (finEmb E n x) = finEmb E n x' →
       ∀ f, θ.U (rhoF μ x f) = rhoF μ x' (θ.U f) := fun x x' h f => by
-    change θ.U (rightRegularRep (rationalGLOne E n) μ (MultiplicityOne.finProj E n x) f) =
-      rightRegularRep (rationalGLOne E n) μ (MultiplicityOne.finProj E n x') (θ.U f)
+    change θ.U (rightRegularRep (rationalGLOne (K := E) (n := n)) μ (MultiplicityOne.finProj E n x) f) =
+      rightRegularRep (rationalGLOne (K := E) (n := n)) μ (MultiplicityOne.finProj E n x') (θ.U f)
     rw [(UpperTheory.ConvolutionTheory.Dp.twUnitary E n μ θ).2.2, e_finProj hσ hθ h]
   have hfw : ∀ f ∈ (⨅ (w : Pl E) (_ : w.under (𝓞 F) ∉ P), eigL μ w (T.J w) (T.χ w)), U f ∈
       (⨅ (w : Pl E) (_ : w.under (𝓞 F) ∉ P), eigL μ w (T.J w) (T.χ w)) := by

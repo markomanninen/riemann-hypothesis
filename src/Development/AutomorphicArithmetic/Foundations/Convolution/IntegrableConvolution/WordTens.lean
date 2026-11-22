@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ThickFrames
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.LactTens
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.LactCv
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.PositionOf
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensSmoothAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.CvPowers
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.CvBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.JUnique
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ArchBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.LactLaws
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ThickFrames
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.LactTens
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.LactCv
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.PositionOf
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensSmoothAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.CvPowers
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.CvBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.JUnique
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ArchBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.LactLaws
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,10 +33,10 @@ private theorem conv_apply (ν : Measure (archGroup K n)) [ν.IsHaarMeasure] (β
     γ.continuous γ.hasCompactSupport
   have hex : ∃ δ : TI K n, ∀ g, δ g = ∫ x, β x * γ (x⁻¹ * g) ∂ν := ⟨⟨⟨cv ν β γ, hb.1⟩, hb.2.1⟩, fun _ => rfl⟩
   unfold GM.conv
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hex.choose_spec g
 
-variable [IsTotallyComplex K]
+variable [_root_.NumberField.IsTotallyComplex K]
 
 private theorem lact_step (ν : Measure (archGroup K n)) [ν.IsHaarMeasure] (α β γ : TI K n) (hα : SmoothT α)
     (hβ : SmoothT β) (h : ∀ g, γ g = cv ν α β g) (y z : UC K n) (hz : z ∈ Subalgebra.center ℂ (UC K n))
@@ -119,7 +123,7 @@ private theorem conv_tens (hm : νE = Measure.map (glueA D n) (Measure.pi fun _ 
       fun_prop
     exact this.aestronglyMeasurable
 
-variable [IsTotallyComplex F] [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex F] [_root_.NumberField.IsTotallyComplex E]
 
 private theorem a_smooth (hs : ArchSlot D νE νF b a aE aF) : SmoothT a := by
   have hc : Continuous fun x : archGroup F n => conj (b x⁻¹) := by

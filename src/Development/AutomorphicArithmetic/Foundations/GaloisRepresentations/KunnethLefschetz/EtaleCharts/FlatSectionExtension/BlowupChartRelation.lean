@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FlatSectionExtension.ChartRange
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FlatSectionExtension.ChartRange
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC CrystallineSemistableComparison CrystallineSemistableComparison.Onto UpperTheory.Gal.KunnethLefschetz.G.PX
 
@@ -82,7 +86,8 @@ theorem UpperTheory.Gal.KunnethLefschetz.G.PX.gvNzd :
     rwa [f_sec, f_sec] at this
   funext m
   have hm : Tl * uV B β l y h₂ m = Tk * (G.map a).mulVec (uV B α k y h₁) m := by
-    rw [← hβ, hG m, map_sum, Matrix.mulVec, dotProduct, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hβ, hG m, map_sum, Matrix.mulVec, dotProduct, Finset.mul_sum]
     refine Finset.sum_congr rfl fun n _ => ?_
     rw [map_mul, hα, Matrix.map_apply]
     ring

@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLocalizedModuleSubtype
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummaryStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLocalizedModuleSubtype
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummaryStatement
+
+@[expose] public section
+
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt
 open scoped Pointwise ENNReal Classical
 
@@ -135,8 +140,8 @@ theorem iota_swap {F F' : FlagD H r} {Λ : Submodule (𝓞 K) V} {g : ℕ} {y' y
   obtain ⟨h1, h2, l', hl', m, hm, h3, h4⟩ := h
   refine ⟨h2, h1, _, Λ.add_mem hl' (gsmul_mem g hm), -m, Λ.neg_mem hm, h4, by simpa using h3⟩
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem isAdm_symm {F F' : FlagD H r} {Λ : Submodule (𝓞 K) V} {g : 𝓞 K}
     (hl : ∀ a, lead F Λ a = lead F' Λ a) (h : IsAdm F F' Λ g) : IsAdm F' F Λ g := by
   have step : ∀ a : Fin (r + 1),
@@ -214,8 +219,8 @@ theorem form_lift (F F' : FlagD H r) {y₁ y₂ l₁ l₂ : V} (h₁ : ∀ v ∈
   simp only [map_sub, LinearMap.sub_apply] at a b c
   linear_combination a + b - c
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem iota_form {F F' : FlagD H r} {Λ : Submodule (𝓞 K) V} {g : ℕ} (hU : IsUnimod H Λ) {p q : V × V}
     (hp : p ∈ iotaGraph F F' Λ (g : 𝓞 K)) (hq : q ∈ iotaGraph F F' Λ (g : 𝓞 K)) :
     ∃ t : 𝓞 K, H.B p.1 q.1 - H.B p.2 q.2 = algebraMap (𝓞 K) K ((g : 𝓞 K) * t) := by
@@ -229,7 +234,7 @@ theorem iota_form {F F' : FlagD H r} {Λ : Submodule (𝓞 K) V} {g : ℕ} (hU :
   rw [map_mul, map_natCast, map_sub, map_neg]
   change _ = (g : K) * (-(a : K) - (b : K))
   rw [ha, hb]
-  simp only [map_add, LinearMap.add_apply, map_smul, LinearMap.smul_apply, LinearMap.map_smulₛₗ, map_natCast,
+  simp only [map_add (f := _), LinearMap.add_apply, map_smul, LinearMap.smul_apply, LinearMap.map_smulₛₗ, map_natCast,
     smul_eq_mul]
   ring
 
@@ -276,20 +281,23 @@ theorem iota_total [FiniteDimensional K V] {F F' : FlagD H r} {Λ : Submodule (�
         rw [← algebraMap_smul K a, map_smul, LinearMap.smul_apply, smul_eq_mul]
         ring }
   obtain ⟨m, hm, hφ⟩ := GlobalTheory.UnimodQuot.exists_lattice_rep H hU S φ
+  have hΛ := (isLatMod_top_bot_iff Λ).1 hU.1
+  have hfull : Submodule.IsFullLattice K Λ :=
+    { toIsLattice := Submodule.IsLattice.of_fg K hΛ.1, span_eq_top := hΛ.2 }
   have hw : ∀ a : Fin (r + 1), H.B (F.e a) (l' + (g : K) • (-m)) = 0 := by
     intro a
     have haS : F.e a ∈ S := by
       refine Fin.lastCases ?_ (fun b => ?_) a
       · exact Submodule.mem_sup_right (Submodule.mem_span_singleton_self _)
       · exact Submodule.mem_sup_left (e_mem_Xa F b b.2)
-    obtain ⟨s, hs⟩ := GlobalTheory.UnimodQuot.exists_smul_mem ((isLatMod_top_bot_iff Λ).1 hU.1) (F.e a)
+    obtain ⟨s, hs⟩ := GlobalTheory.UnimodQuot.exists_smul_mem (K := K) hfull (F.e a)
     have hs0 : algebraMap (𝓞 K) K s ≠ 0 := IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors s.2
     have hs' : algebraMap (𝓞 K) K s • F.e a ∈ Λ := by rw [algebraMap_smul]; exact hs
     have e : H.B (algebraMap (𝓞 K) K s • F.e a) m = (g : K)⁻¹ * H.B (algebraMap (𝓞 K) K s • F.e a) l' :=
       hφ ⟨_, hs', S.smul_mem _ haS⟩
     rw [eq_inv_mul_iff_mul_eq₀ hg0] at e
     apply mul_left_cancel₀ hs0
-    simp only [map_add, map_neg, map_smul, LinearMap.smul_apply, LinearMap.map_smulₛₗ, map_natCast,
+    simp only [map_add (f := _), map_neg, map_smul, LinearMap.smul_apply, LinearMap.map_smulₛₗ, map_natCast,
       smul_eq_mul] at e ⊢
     linear_combination -e
   obtain ⟨x, hx, hxw⟩ := hlift _ hw

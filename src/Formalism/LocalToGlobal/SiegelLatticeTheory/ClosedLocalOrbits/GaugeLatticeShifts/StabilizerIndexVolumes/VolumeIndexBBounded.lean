@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.PairVal
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.VolumeIndexFiniteNonzero
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.StClosed
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.AtNormRep
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.DiagMulOfBt
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.VolumeIndexAStable
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.VolumeIndexBStable
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.NatSmulMem
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.PairVal
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.VolumeIndexFiniteNonzero
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.StClosed
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.AtNormRep
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.DiagMulOfBt
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.VolumeIndexAStable
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.VolumeIndexBStable
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.NatSmulMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,8 @@ def Pres (Λ : Submodule (𝓞 E) S.V) (f : Fin n → S.V) (g : Matrix (Fin n) (
 theorem comp_sum (f : Fin n → S.V) (s : S.V ≃ₗ[E] S.V) (uu : Matrix (Fin n) (Fin n) E)
     (hu : ∀ b, s (f b) = ∑ c, uu c b • f c) (y : Fin n → E) :
     ∑ c, (uu *ᵥ y) c • f c = s (∑ b, y b • f b) := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [LinearEquiv.map_smul, hu, Finset.smul_sum, smul_smul, Matrix.mulVec, dotProduct,
     Finset.sum_smul]
   rw [Finset.sum_comm]
@@ -71,7 +76,7 @@ theorem volume_index_b_bounded (D : D7) (u u' : D.what₂.Word)
   have hT : ((Tu D u : ℕ) : D.host.E) ≠ 0 := by
     have := hyps.2.2.2.1.1.pos
     exact_mod_cast this.ne'
-  have hlat : Submodule.IsLattice D.host.E t.lam := (hyps.2.2.2.2.2.1 t.lam t.mem).1.1
+  have hlat : Submodule.IsFullLattice D.host.E t.lam := (hyps.2.2.2.2.2.1 t.lam t.mem).1.1
   have hf := frame_indep F0 hT
   have hLi : L⁻¹ * L = 1 := nonsing_inv_mul _ (by rw [lo_det hL]; exact isUnit_one)
   have hLL : L * L⁻¹ = 1 := mul_nonsing_inv _ (by rw [lo_det hL]; exact isUnit_one)
@@ -121,7 +126,7 @@ theorem volume_index_b_bounded (D : D7) (u u' : D.what₂.Word)
         _ = 1 := by rw [hg, Matrix.mul_one, hLi]
 
   obtain ⟨φ, hφ⟩ := coord_exists hf
-  obtain ⟨m1, hm1, hb1⟩ := lat_fun_bdd t.lam hlat φ
+  obtain ⟨m1, hm1, hb1⟩ := lat_fun_bdd t.lam hlat.toIsLattice φ
   have hmc : ∀ c, ∃ m : ℕ, m ≠ 0 ∧ (m : D.host.E) • F0.fvec c ∈ t.lam := fun c => lat_smul_mem t.lam hlat _
   choose mc hmc0 hmcL using hmc
   set m2 : ℕ := ∏ c, mc c with hm2
@@ -133,7 +138,8 @@ theorem volume_index_b_bounded (D : D7) (u u' : D.what₂.Word)
     rw [this]; exact nat_smul_mem _ _ (hmcL c)
   have hcoord : ∀ y : Fin (D.R.rS + 1) → D.host.E, ∀ i, φ i (∑ c, y c • F0.fvec c) = y i := by
     intro y i
-    simp [map_sum, hφ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, hφ]
   obtain ⟨mL, hmL, hbL⟩ := den_mat L
   obtain ⟨mL', hmL', hbL'⟩ := den_mat L⁻¹
   refine ⟨mL' * (m1 * m2) * mL, by positivity, ?_⟩

@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.GrAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ThetaDiag
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.VrRange
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.VrReduction
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UnitsBasic
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.GrAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ThetaDiag
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.VrRange
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.VrReduction
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UnitsBasic
+
+@[expose] public section
+
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.CA UpperTheory.V.Pa Polynomial
 open scoped TensorProduct
 
@@ -18,7 +23,7 @@ private theorem od_alg (b : B) : (algebraMap B Φ.Ext b).od = 0 := by
 
 private theorem mem_one_iff (z : Φ.Ext) : z ∈ (1 : Submodule B Φ.Ext) ↔ z.od = 0 := by
   rw [Submodule.mem_one]
-  refine ⟨?_, fun h => ⟨z.ev, OddForm.Ext.ext (ev_alg Φ _) (by rw [od_alg, h])⟩⟩
+  refine ⟨?_, fun h => ⟨z.ev, OddForm.ext (ev_alg Φ _) (by rw [od_alg, h])⟩⟩
   rintro ⟨b, rfl⟩
   exact od_alg Φ b
 
@@ -34,9 +39,13 @@ private theorem mem_oddPart (z : Φ.Ext) : z ∈ oddPart Φ ↔ z.ev = 0 := Iff.
 
 private theorem compl_oddPart : _root_.IsCompl (1 : Submodule B Φ.Ext) (oddPart Φ) := by
   refine ⟨Submodule.disjoint_def.2 fun z h1 h2 => ?_, codisjoint_iff.2 (eq_top_iff.2 fun z _ => ?_)⟩
-  · exact OddForm.Ext.ext ((mem_oddPart Φ z).1 h2) ((mem_one_iff Φ z).1 h1)
+  · exact OddForm.ext ((mem_oddPart Φ z).1 h2) ((mem_one_iff Φ z).1 h1)
   · refine Submodule.mem_sup.2 ⟨Φ.el z.ev 0, (mem_one_iff Φ _).2 rfl, Φ.el 0 z.od, rfl, ?_⟩
-    ext <;> simp
+    apply OddForm.ext
+    · change z.ev + 0 = z.ev
+      simp
+    · change 0 + z.od = z.od
+      simp
 
 end aux
 
@@ -98,7 +107,7 @@ theorem UpperTheory.V.Pa.gr_E :
             red := fun y i j b h => ?_ }⟩
   · rw [← ev_alg (U.oddForm p q) b, h, ev_alg]
   · rw [mem_oddPart] at hy hz
-    refine ⟨(U.oddForm p q).be y.od z.od, hle' (Ideal.subset_span ⟨_, _, rfl⟩), OddForm.Ext.ext ?_ ?_⟩
+    refine ⟨(U.oddForm p q).be y.od z.od, hle' (Ideal.subset_span ⟨_, _, rfl⟩), OddForm.ext ?_ ?_⟩
     · rw [ev_alg, OddForm.ev_mul, hy, zero_mul, zero_add]
     · rw [od_alg, OddForm.od_mul, hy, hz, zero_smul, zero_smul, add_zero]
   · rw [hφe, hrange]

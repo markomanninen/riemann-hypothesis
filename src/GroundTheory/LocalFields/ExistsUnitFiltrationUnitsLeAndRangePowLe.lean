@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.LocalFields.UnitsBasic
-import GroundTheory.LocalFields.UnitsPowers
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.UnitsBasic
+public import GroundTheory.LocalFields.UnitsPowers
+
+@[expose] public section
 
 namespace GroundTheory.LocalField
 

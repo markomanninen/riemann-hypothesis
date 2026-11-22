@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnramifiedHeckeCharHalfExponentRestrictQua
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitOpenAndCongrOpen
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteIndexUnitIdlSup
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnramifiedHeckeCharHalfExponentRestrictQua
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitOpenAndCongrOpen
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteIndexUnitIdlSup
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
+
+@[expose] public section
 
 namespace GlobalTheory.EtaConjExist
 
@@ -63,7 +67,7 @@ theorem exists_classChar (c : HeightOneSpectrum (𝓞 L) → ℂˣ) (h : ∀ k :
     rw [show Valued.v ((atFin v (unif v) : (v.adicCompletion L)ˣ) : v.adicCompletion L) = _ from unif_spec v,
       WithZero.log_exp, neg_neg, zpow_one]
 
-theorem finprod_sqrt [IsTotallyComplex L] {I : Type} [Fintype I] (φ : I → L →+* ℂ)
+theorem finprod_sqrt [_root_.NumberField.IsTotallyComplex L] {I : Type} [Fintype I] (φ : I → L →+* ℂ)
     (hφ : Function.Bijective fun i => InfinitePlace.mk (φ i)) (k : Lˣ) :
     (∏ᶠ v : HeightOneSpectrum (𝓞 L), ((Real.sqrt (Ideal.absNorm v.asIdeal : ℕ))⁻¹ : ℝ) ^ ordF v k) *
       ∏ i, ‖φ i (k : L)‖ = 1 := by
@@ -81,7 +85,6 @@ theorem finprod_sqrt [IsTotallyComplex L] {I : Type} [Fintype I] (φ : I → L �
       WithZeroMulInt.toNNReal_neg_apply _ h0, ordF, neg_neg]
     push_cast
     congr 1
-    exact WithZero.toAdd_unzero_eq_log h0
   have h4 : (Function.mulSupport fun v : HeightOneSpectrum (𝓞 L) =>
       ((Real.sqrt (Ideal.absNorm v.asIdeal : ℕ))⁻¹ : ℝ) ^ ordF v k).Finite :=
     (GlobalTheory.HeckeProduct.finite_ordF k).subset fun v hv h0 => hv (by simp only [h0, zpow_zero])
@@ -91,7 +94,7 @@ theorem finprod_sqrt [IsTotallyComplex L] {I : Type} [Fintype I] (φ : I → L �
   have : (0 : ℝ) ≤ -1 := h ▸ mul_nonneg (finprod_nonneg fun v => by positivity) (by positivity)
   linarith
 
-theorem finprod_alg [IsTotallyComplex L] {I : Type} [Fintype I] (φ : I → L →+* ℂ)
+theorem finprod_alg [_root_.NumberField.IsTotallyComplex L] {I : Type} [Fintype I] (φ : I → L →+* ℂ)
     (hφ : Function.Bijective fun i => InfinitePlace.mk (φ i)) (χ : HChar L) (hu : ∀ v, χ.UnrAt v)
     (hi : χ.HasInf φ fun _ => 1) (w : HeightOneSpectrum (𝓞 L) → ℂˣ)
     (hw : ∀ v, (w v : ℂ) = χ.val v * (((Real.sqrt (Ideal.absNorm v.asIdeal : ℕ))⁻¹ : ℝ) : ℂ)) (k : Lˣ) :
@@ -195,11 +198,16 @@ theorem exists_conj {D : D7} (η : (AE D)ˣ →* Circle) (χ : Formalism.L2.Host
   obtain ⟨c, hc'⟩ := GlobalTheory.CharTransport.exists_chrEq D (χ * ξ) fun x => by
     change ‖((χ.1 x * ξ.1 x : ℂˣ) : ℂ)‖ = 1
     rw [Units.val_mul, norm_mul, hχ.unitary x, x1 x, one_mul]
+  have hcard (P : HeightOneSpectrum (𝓞 D.host.E)) : Nat.card (kP P) = Ideal.absNorm P.asIdeal := by
+    rw [Ideal.absNorm_apply, Submodule.cardQuot_apply]
   refine ⟨c, hc'.1, unram_of_chrEq hc' fun P x hx => ?_, fun P e he x hx => ⟨y P, ?_, ?_⟩⟩
-  · rw [Formalism.L2.Host.HChar.loc_mul, hχ.unr P x hx, x2 P x hx, one_mul]
+  · change χ.loc P x * ξ.loc P x = 1
+    rw [hχ.unr P x hx, x2 P x hx, one_mul]
   · rw [hc.2 P e he _ x hx]
+    rw [hcard]
     exact hy P
-  · have h1 : ((c x : Circle) : ℂ) = ((χ.val P * ξ.val P : ℂˣ) : ℂ) := hc'.2 P e he _ x hx
+  · rw [hcard]
+    have h1 : ((c x : Circle) : ℂ) = ((χ.val P * ξ.val P : ℂˣ) : ℂ) := hc'.2 P e he _ x hx
     rw [h1, x3, Units.val_mul, mul_right_comm, Units.val_div_eq_div_val]
     have h2 := hy P
     refine Eq.trans ?_ (congrArg (· * (σ (y P) / D.what₂.embLL (y P))) h2)

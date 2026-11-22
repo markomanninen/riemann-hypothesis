@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.StatementA
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.StatementA
+
+@[expose] public section
 
 noncomputable section
 
@@ -176,12 +180,6 @@ theorem path_finite {n N : ℕ} {isVec : ℕ → Bool} {B : ℕ → ℕ} {μ : �
 end Paths
 
 namespace Paths
-
-def chg {n : ℕ} (μ : ℕ → Fin n → ℤ) (c : ℤ) (N : ℕ) (i : ℕ) : Prop :=
-  colHeight (μ (i + 1)) c ≠ colHeight (μ i) c ∨ N ≤ i
-
-instance {n : ℕ} (μ : ℕ → Fin n → ℤ) (c : ℤ) (N : ℕ) : DecidablePred (chg μ c N) := fun i => by
-  unfold chg; infer_instance
 
 end Paths
 

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementG
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementP
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementG
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementP
+
+@[expose] public section
 
 open PowerSeries
 
@@ -12,7 +16,7 @@ namespace Formalism.L2.Th1.A
 def WpCleared : Prop :=
   ∀ (K : Type u) [Field K] [CharZero K] (W : WeierstrassCurve K),
     constantCoeff (wpReg W) = 0 ∧ (∀ n : ℕ, Odd n → coeff n (wpReg W) = 0) ∧
-    (-2 + X ^ 3 * derivative K (wpReg W)) ^ 2 =
+    (-2 + X ^ 3 * derivative (wpReg W)) ^ 2 =
       4 * (1 + X ^ 2 * wpReg W) ^ 3 - C (g₂ W) * X ^ 4 * (1 + X ^ 2 * wpReg W) - C (g₃ W) * X ^ 6
 
 def WpInU : Prop :=
@@ -54,9 +58,5 @@ def CoeffMem : Prop :=
     ((∃ h ∈ S, 2 * h = 1) → ∀ n, coeff n (halfSer W) ∈ S) ∧
     (∀ xP ∈ S, ∀ n, coeff n (tS W xP) ∈ S) ∧
     (∀ xP ∈ S, ∀ yP ∈ S, ∀ n, coeff n (xPlus W xP yP) ∈ S ∧ coeff n (yPlus W xP yP) ∈ S)
-
-def LogCoeff : Prop :=
-  ∀ (K : Type u) [Field K] [CharZero K] (W : WeierstrassCurve K) (n : ℕ),
-    ((n + 1 : ℕ) : K) * coeff (n + 1) (logSer W) = coeff n (om W)
 
 end Formalism.L2.Th1.A

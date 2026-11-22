@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -39,5 +43,5 @@ theorem UpperTheory.V.Fr.pr_open :
     exact (hmat.isOpen_fiber 1).inter hF.del_open
   refine ⟨hr, Subgroup.isOpen_mono (fun s hs => ?_) hr, hmat⟩
   have hs' : (B.bar O).r s = 1 := hs
-  show GG.ad n _ ((B.bar O).r s) = 1
+  show GG.ad n (ResidueField O) ((B.bar O).r s) = 1
   rw [hs', map_one]

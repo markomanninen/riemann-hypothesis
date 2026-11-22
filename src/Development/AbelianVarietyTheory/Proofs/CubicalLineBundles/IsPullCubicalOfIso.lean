@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.IsDiffOf
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AbelianSchemeCubicalBundleExistsAndMaps
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.NonemptyCubicalPull
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.IsDiffOf
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AbelianSchemeCubicalBundleExistsAndMaps
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.NonemptyCubicalPull
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
@@ -28,8 +32,8 @@ end Charts
 variable {S S' : Scheme.{0}} {G : Over S} [GrpObj G] [IsCommMonObj G] {G' : Over S'} [GrpObj G'] [IsCommMonObj G']
   {f : S' ⟶ S} {F : G'.left ⟶ G.left}
 
-omit [IsCommMonObj G] [IsCommMonObj G'] in
 
+omit [IsCommMonObj G] [IsCommMonObj G'] in
 theorem exists_rigidified (he : eSec G' ≫ F = f ≫ eSec G) (L : RigLB G) (L' : RigLB G')
     (h : LBIso L'.L (L.L.pull F)) : ∃ w : LB.Iso L'.L (L.L.pull F), PGen w ∧
       PMaps w (K := PUnit) (fun _ => eSec G') (fun _ => eSec G) (fun _ => 1) L'.rig L.rig f := by
@@ -70,7 +74,12 @@ theorem val_origin (gp : IsGrpPullback G' G f F) {L : RigLB G} {L' : RigLB G'} (
   rw [q, map_one] at e
   have p := prod_cub (1 : T ⟶ G') 1 1 (fun q => gw w q y (J (q ≫ F)) (J' q))
   rw [_root_.mul_one, _root_.mul_one] at p
-  have e' := ((isCub_cubV c (T := Over.mk (T.hom ≫ f)) hJ).face 1 1).symm.trans
+  have face : cubV c (T := Over.mk (T.hom ≫ f)) y J 1 1 1 = 1 := by
+    have e := val_corr hJ (c.face 0) (lift (1 : Over.mk (T.hom ≫ f) ⟶ G) 1).left
+    rw [val_one] at e
+    refine (Eq.trans ?_ (val_cub c (lift (1 : Over.mk (T.hom ≫ f) ⟶ G) 1) hJ (pzero G _) (x2 G 0) (x2 G 1)).symm).trans e
+    congr 1 <;> simp [x2, pzero, Hom.one_def]
+  have e' := face.symm.trans
     (e.trans (congrArg₂ (· * ·) p rfl))
   have alg : ∀ {U : Type} [CommGroup U] (a v : U), 1 = a * a⁻¹ * a⁻¹ * a⁻¹ * a * a * a * a⁻¹ * v → v = 1 :=
     fun a v h => by simpa using h.symm
@@ -82,9 +91,15 @@ theorem pmaps_cube (hG : Out.GlobalFnsSt) (hA : IsAbelianScheme G') (gp : IsGrpP
   have hψ : ∀ I : thK, thφ G' (x3 G') I ≫ F = (cubeMapOf gp).F3 ≫ thφ G (x3 G) I :=
     fun I => (cubeMapOf gp).psum_comm I.down
   obtain ⟨t, ht, H⟩ := GlobalTheory.DegPull.exists_pmaps hw L.isLB L'.isLB (ε := thε) (cubeMapOf gp).F3 hψ c.t c.isGen
+  have face (y : (𝟙_ (Over S')).left) (J') (hJ' : Good L'.L y J') :
+      cubV c' y J' (1 : 𝟙_ (Over S') ⟶ G') 1 1 = 1 := by
+    have e := val_corr hJ' (c'.face 0) (lift (1 : 𝟙_ (Over S') ⟶ G') 1).left
+    rw [val_one] at e
+    refine (Eq.trans ?_ (val_cub c' (lift (1 : 𝟙_ (Over S') ⟶ G') 1) hJ' (pzero G' _) (x2 G' 0) (x2 G' 1)).symm).trans e
+    congr 1 <;> simp [x2, pzero, Hom.one_def]
   have key := gen_unique L'.isLB (φ := thφ G' (x3 G')) (ε := thε) (G3 G').hom
     (lift (1 : 𝟙_ (Over S') ⟶ G') (lift 1 1)).left (Over.w _) (GlobalTheory.UU.surjective_cube hG hA) ht c'.isGen
-    (fun y J' hJ' => (val_origin gp c H (𝟙_ (Over S')) y J' hJ').trans ((isCub_cubV c' hJ').face 1 1).symm)
+    (fun y J' hJ' => (val_origin gp c H (𝟙_ (Over S')) y J' hJ').trans (face y J' hJ').symm)
   intro Z r z p q hp hq
   have e := (chart_of_val L'.isLB (φ := thφ G' (x3 G')) (ε := thε) ht c'.isGen r z 1
     (fun J hJ => (key Z r z J hJ).trans (_root_.one_mul _).symm) q (Set.mem_iInter.2 hq)).trans (_root_.one_mul _)

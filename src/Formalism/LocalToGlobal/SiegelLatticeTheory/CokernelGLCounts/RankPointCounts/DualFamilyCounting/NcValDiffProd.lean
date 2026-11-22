@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DiffProd
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DiffProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ lemma intValuation_le_of_mem_different (v : HeightOneSpectrum (𝓞 F)) {x : �
 lemma exists_mem_different_intValuation_eq (v : HeightOneSpectrum (𝓞 F)) :
     ∃ x ∈ differentIdeal ℤ (𝓞 F), v.intValuation x = exp (-(mDiff F v : ℤ)) := by
   have hnot := not_pow_succ_mDiff_dvd v
-  rw [Ideal.dvd_iff_le, SetLike.not_le_iff_exists] at hnot
+  rw [Ideal.dvd_iff_le, IsConcreteLE.not_le_iff_exists] at hnot
   obtain ⟨x, hxD, hxv⟩ := hnot
   refine ⟨x, hxD, le_antisymm (intValuation_le_of_mem_different v hxD) ?_⟩
   have h1 : ¬ v.intValuation x ≤ WithZero.exp (-((mDiff F v + 1 : ℕ) : ℤ)) := by
@@ -56,7 +60,7 @@ lemma exists_mem_different_intValuation_eq (v : HeightOneSpectrum (𝓞 F)) :
     intro h0
     apply h1
     rw [h0]
-    exact zero_le'
+    exact zero_le
   rw [← WithZero.exp_log hx0] at h1 ⊢
   rw [WithZero.exp_le_exp] at h1 ⊢
   push_cast at h1
@@ -80,7 +84,7 @@ lemma valued_dV (v : HeightOneSpectrum (𝓞 F)) : Valued.v (dV v) = exp (-(mDif
       exact intValuation_le_of_mem_different v hy
   have hd : IsDiffVal v (dV v) := by
     unfold dV
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     exact hex.choose_spec
   obtain ⟨-, hle, y, hyD, hyv⟩ := hd
   apply le_antisymm
@@ -95,7 +99,7 @@ lemma absV_of_valued_eq (v : HeightOneSpectrum (𝓞 F)) (x : Fv F v) (n : ℤ) 
     rw [h]
     exact WithZero.exp_ne_zero
   unfold absV
-  rw [dif_neg hx]
+  rw [dite_eq_right hx]
   congr 1
   have hu : WithZero.unzero hx = Multiplicative.ofAdd n := by
     apply WithZero.coe_injective
@@ -108,13 +112,13 @@ lemma absV_dV (v : HeightOneSpectrum (𝓞 F)) :
   rw [absV_of_valued_eq v _ _ (valued_dV v), IsDedekindDomain.HeightOneSpectrum.maxPowDividing, map_pow,
     zpow_neg, zpow_natCast, Nat.cast_pow]
 
-variable (F) in
 
+variable (F) in
 theorem hasProd_absV_dV :
     HasProd (fun v : HeightOneSpectrum (𝓞 F) => absV v (dV v)) (|(discr F : ℝ)|⁻¹) := by
   have hD := differentIdeal_ne_zero' F
   have hfin : (Function.mulSupport fun v : HeightOneSpectrum (𝓞 F) =>
-      v.maxPowDividing (differentIdeal ℤ (𝓞 F))).Finite := Ideal.finite_mulSupport hD
+      v.maxPowDividing (differentIdeal ℤ (𝓞 F))).Finite := Ideal.hasFiniteMulSupport hD
   have hfac : ∏ v ∈ hfin.toFinset, v.maxPowDividing (differentIdeal ℤ (𝓞 F)) = differentIdeal ℤ (𝓞 F) := by
     rw [← finprod_eq_prod_of_mulSupport_subset _ (fun v hv => hfin.mem_toFinset.mpr hv)]
     exact Ideal.finprod_heightOneSpectrum_factorization hD

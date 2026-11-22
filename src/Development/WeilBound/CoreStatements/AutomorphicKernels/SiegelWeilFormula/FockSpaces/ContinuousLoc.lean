@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.CompFinFinOne
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FockSpaces.VolumeIsAddHaar
-import Development.WeilBound.ThetaLifts.SmallCones.IdeleTop
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.CompFinFinOne
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FockSpaces.VolumeIsAddHaar
+public import Development.WeilBound.ThetaLifts.SmallCones.IdeleTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,7 +80,7 @@ theorem intFact : IntFact := by
   haveI : LocallyCompactSpace (cmpW d w) := hcl.isClosedEmbedding_subtypeVal.locallyCompactSpace
   haveI : SecondCountableTopology (cmpW d w) :=
     TopologicalSpace.Subtype.secondCountableTopology ((cmpW d w : AddSubgroup (Mx F E d.m d.n)) : Set (Mx F E d.m d.n))
-  haveI : BorelSpace (cmpW d w) := Subtype.borelSpace ((cmpW d w : AddSubgroup (Mx F E d.m d.n)) : Set (Mx F E d.m d.n))
+  haveI : BorelSpace (cmpW d w) := Subtype.borelSpace (fun x' => x' ∈ ((cmpW d w : AddSubgroup (Mx F E d.m d.n)) : Set (Mx F E d.m d.n)))
   haveI := volume_isAddHaar d.m d.n
   obtain ⟨s, hsc, hs1, hs2, hsa, -⟩ := Place.exists_sec d.cm d.B.emb
   set fr : Matrix (Fin d.m) (Fin d.m) ℂ := (R.fr w).1 with hfr

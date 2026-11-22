@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBilinCyclic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBilinCyclic
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,7 +75,7 @@ theorem aflipG_conj {n : ℕ} (x : GL (Fin n) F) : ∃ p : GL (Fin n) F, aflipG 
 
 theorem toG_coe' {n : ℕ} (x : GL (Fin n) F) : toG (x : Matrix (Fin n) (Fin n) F) = x := by
   unfold toG
-  rw [dif_pos x.isUnit]
+  rw [dite_eq_left x.isUnit]
   exact Units.ext (IsUnit.unit_spec _)
 
 theorem cl_conj {n : ℕ} {α : GL (Fin n) F → ℂ} (hα : IsCl α) (p x : GL (Fin n) F) :
@@ -90,7 +94,7 @@ theorem class_aflip {n : ℕ} {α : GL (Fin n) F → ℂ} (hα : IsCl α) (M : M
       rintro ⟨x, hx⟩
       exact h ⟨aflipG x, by rw [aflipG_coe, hx, aflip_aflip]⟩
     unfold toG
-    rw [dif_neg h, dif_neg h']
+    rw [dite_eq_right h, dite_eq_right h']
 
 theorem inPar_aflip {a b : ℕ} (y : GL (Fin (a + b)) F) : InPar b (aflipG y) ↔ InPar a y := by
   constructor
@@ -107,7 +111,7 @@ theorem tl_aflip {a b : ℕ} (M : Matrix (Fin (a + b)) (Fin (a + b)) F) : tl b (
   have hj := j.2
   rw [aflip_apply]
   unfold tl br ent
-  rw [dif_pos (by omega), dif_pos (by simp only [Fin.val_rev]; omega), aflip_apply]
+  rw [dite_eq_left (by omega), dite_eq_left (by simp only [Fin.val_rev]; omega), aflip_apply]
   congr 1 <;> apply Fin.ext <;> simp only [Fin.val_rev] <;> omega
 
 theorem br_aflip {a b : ℕ} (M : Matrix (Fin (a + b)) (Fin (a + b)) F) : br b a (aflip M) = aflip (tl a M) := by
@@ -116,34 +120,10 @@ theorem br_aflip {a b : ℕ} (M : Matrix (Fin (a + b)) (Fin (a + b)) F) : br b a
   have hj := j.2
   rw [aflip_apply]
   unfold tl br ent
-  rw [dif_pos (by omega), dif_pos (by simp only [Fin.val_rev]; omega), aflip_apply]
+  rw [dite_eq_left (by omega), dite_eq_left (by simp only [Fin.val_rev]; omega), aflip_apply]
   congr 1 <;> apply Fin.ext <;> simp only [Fin.val_rev] <;> omega
 
 theorem gal_id (n : ℕ) (y : GL (Fin n) F) : gal (RingHom.id F) n y = y := by
   ext i j; simp [gal]
-
-theorem main : ∀ (F : Type) [Field F] [Finite F], ∀ (a b n : ℕ) (α : GL (Fin a) F → ℂ) (β : GL (Fin b) F → ℂ),
-    IsCl α → IsCl β → n = a + b → hc a b α β n = hc b a β α n := by
-  intro F _ _ a b n α β hα hβ hn
-  subst hn
-  funext x
-  obtain ⟨p, hp⟩ := aflipG_conj x
-  unfold hc hcTw
-  simp only [gal_id]
-  congr 1
-  · congr 2
-    exact Nat.card_congr ((aflipE (a + b)).subtypeEquiv fun y => (inPar_aflip y).symm)
-  · symm
-    rw [← finsum_comp_equiv (((aflipE (a + b)).trans (Equiv.mulRight p)).trans (Equiv.inv _))]
-    symm
-    congr 1
-    funext y
-    have h1 : (((aflipE (a + b)).trans (Equiv.mulRight p)).trans (Equiv.inv _)) y = (aflipG y * p)⁻¹ := rfl
-    have h2 : ((aflipG y * p)⁻¹)⁻¹ * x * (aflipG y * p)⁻¹ = aflipG (y⁻¹ * x * y) := by
-      rw [aflipG_mul, aflipG_mul, aflipG_inv, hp]; group
-    rw [h1, h2]
-    unfold tlG brG
-    rw [aflipG_coe, tl_aflip, br_aflip]
-    simp only [inPar_aflip, class_aflip hα, class_aflip hβ, mul_comm (β _)]
 
 end GlobalTheory.HCCommF

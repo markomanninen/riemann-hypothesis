@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLocModelIsPrimeOf
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotDominatesTopPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DvrPlaceCentreOnBaseOfEtaleTowerOverNormalLocalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DvrPlaceOrdEqAlongEtaleTowerStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OrderDifferentialFormEtTowerStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormOrderWedgeEqOfEtaleTowerHeightOnePrimeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFreeGenTopFormEtaleTowerTranscendenceBasisStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLocModelIsPrimeOf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotDominatesTopPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DvrPlaceCentreOnBaseOfEtaleTowerOverNormalLocalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DvrPlaceOrdEqAlongEtaleTowerStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OrderDifferentialFormEtTowerStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormOrderWedgeEqOfEtaleTowerHeightOnePrimeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFreeGenTopFormEtaleTowerTranscendenceBasisStatement
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.TopForm GlobalTheory.Discrepancy GlobalTheory.FieldPair
@@ -37,12 +42,12 @@ theorem effAt_etTower : ∀ {K L : Type} [Field K] [Field L] (cK : ℂ →+* K) 
     exact one_ne_zero (hC.1 (a₁ := 1) (a₂ := 0) (by simp [h]))
   · rw [Finsupp.add_apply]
     have h1 : Finsupp.mapDomain (fun g : R => (ι g : L)) φ 0 = 0 := by
-      have e := Finsupp.mapDomain_apply hi φ 0
+      have e := Finsupp.mapDomain_apply_of_injective hi φ 0
       simp only [map_zero, ZeroMemClass.coe_zero] at e
       rw [e]
       exact Finsupp.notMem_support_iff.1 fun h => hφ 0 h rfl
     have h2 : Finsupp.mapDomain (fun g : T => (g : L)) θ 0 = 0 := by
-      have e := Finsupp.mapDomain_apply Subtype.val_injective θ 0
+      have e := Finsupp.mapDomain_apply_of_injective Subtype.val_injective θ 0
       simp only [ZeroMemClass.coe_zero] at e
       rw [e]
       exact Finsupp.notMem_support_iff.1 fun h => (hθ 0 h).1 rfl
@@ -57,9 +62,11 @@ theorem effAt_etTower : ∀ {K L : Type} [Field K] [Field L] (cK : ℂ →+* K) 
       refine Finset.sum_nonneg fun g hg => mul_nonneg (hθ g hg).2 ?_
       exact_mod_cast (P.ord_nonneg_iff (hθ g hg).1).2 (hP.1 _ g.2)
     rw [hq] at hθ'
-    rw [Place.disc, map_add]
+    rw [Place.disc, map_add (f := _)]
     rcases GlobalTheory.T.dvrPlace_centre_on_base_of_etaleTowerOverNormalLocal cK cL r R T ι ψ τ P hT hP with h0 | ⟨P0, hP0, h0⟩
-    · rw [GlobalTheory.T.order_differential_form_et_tower cK cL n r R T ι ψ τ x P hT hx hP h0, hq, hq]
+    · have ho := GlobalTheory.T.order_differential_form_et_tower cK cL n r R T ι ψ τ x P hT hx hP h0
+      change P.formOrd (dForm cL (Fin.append (fun i => (τ i : L)) (fun i => (ι (x i) : L)))) = 0 at ho
+      rw [ho, hq, hq]
       have : (φ.sum fun g t => t * (P.ord (ι g : L) : ℚ)) = 0 :=
         Finset.sum_eq_zero fun g hg => by dsimp only; rw [h0 g (hφ g hg)]; simp
       rw [this]
@@ -68,7 +75,9 @@ theorem effAt_etTower : ∀ {K L : Type} [Field K] [Field L] (cK : ℂ →+* K) 
     · have h1 := GlobalTheory.T.dvrPlace_ord_eq_along_etaleTower cK cL r R T ι ψ τ P P0 hT hP hP0 h0
       have hd := hE.2.2 P0 hP0
       rw [Place.disc, hq] at hd
-      rw [GlobalTheory.T.formOrder_wedge_eq_of_etaleTower_heightOnePrime cK cL n r R T ι ψ τ x P P0 hT hx hP hP0 h1, hq, hq]
+      have ho := GlobalTheory.T.formOrder_wedge_eq_of_etaleTower_heightOnePrime cK cL n r R T ι ψ τ x P P0 hT hx hP hP0 h1
+      change P.formOrd (dForm cL (Fin.append (fun i => (τ i : L)) (fun i => (ι (x i) : L)))) = P0.formOrd (dForm cK (fun i => (x i : K))) at ho
+      rw [ho, hq, hq]
       have : (φ.sum fun g t => t * (P.ord (ι g : L) : ℚ)) =
           φ.sum fun g t => t * (P0.ord (g : K) : ℚ) :=
         Finset.sum_congr rfl fun g hg => by dsimp only; rw [h1 g (hφ g hg)]

@@ -1,13 +1,17 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.GrothendieckRingPolynomial.SingleEqSmulSingle
-import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.BernsteinZelevinsky.TopAdm
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LanglandsClassificationOrderFreeEquivStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrderedFormsInterleaveSumStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ContragredientProductIrreducibleImports
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.GlobalTheory.BernsteinZelevinskyFiniteness
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.WordOccursOfSubquotientImports
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LanglandsInjectiveOfSocleStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductIrreducibleFiniteLengthStatement
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.GrothendieckRingPolynomial.SingleEqSmulSingle
+public import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.BernsteinZelevinsky.TopAdm
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LanglandsClassificationOrderFreeEquivStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrderedFormsInterleaveSumStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ContragredientProductIrreducibleImports
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.GlobalTheory.BernsteinZelevinskyFiniteness
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.WordOccursOfSubquotientImports
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LanglandsInjectiveOfSocleStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductIrreducibleFiniteLengthStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,11 +25,11 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 
 namespace PhiLAux
 
-theorem exists_lseg (hs : LSegExists k) : ∃ Lseg : Segment k → IrrGL k, ∀ Δ, IsLSeg Δ (Lseg Δ).rep := by
+theorem exists_lseg (hs : LSegExists k) : ∃ Lseg : Segment k → IrrGL (k := k), ∀ Δ, IsLSeg Δ (Lseg Δ).rep := by
   choose π hπ using hs
   exact ⟨fun Δ => ⟨Δ.deg, (π Δ).cl⟩, fun Δ => (hπ Δ).of_equiv (equivRep (π Δ))⟩
 
-theorem lfactors_sum {𝔪 : Multiset (Segment k)} {h : ℕ} {x : Fin h → IrrGL k} (hx : LFactors 𝔪 x) :
+theorem lfactors_sum {𝔪 : Multiset (Segment k)} {h : ℕ} {x : Fin h → IrrGL (k := k)} (hx : LFactors 𝔪 x) :
     ∑ a, (x a).1 = (𝔪.map Segment.deg).sum := by
   obtain ⟨Δ, ⟨hΔ, -⟩, hxΔ⟩ := hx
   rw [← hΔ, Multiset.map_map, ← Finset.sum_eq_multiset_sum]
@@ -36,7 +40,7 @@ theorem isL_deg {𝔪 : Multiset (Segment k)} {N : ℕ} {V : Type} [AddCommGroup
   obtain ⟨_, x, hd, hx, -⟩ := h
   rw [← hd, lfactors_sum hx]
 
-theorem isL_cls_unique (hf : LOrderFree k) {𝔪 : Multiset (Segment k)} {x y : IrrGL k} (hx : IsL 𝔪 x.rep)
+theorem isL_cls_unique (hf : LOrderFree k) {𝔪 : Multiset (Segment k)} {x y : IrrGL (k := k)} (hx : IsL 𝔪 x.rep)
     (hy : IsL 𝔪 y.rep) : x = y := by
   obtain ⟨n, a⟩ := x
   obtain ⟨m, b⟩ := y
@@ -51,20 +55,20 @@ theorem exists_orderedForm (𝔪 : Multiset (Segment k)) : ∃ (h : ℕ) (Δ : F
 theorem class_apply_same_degree {N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V)
     (hl : HasFiniteLength π) (c : IrrCl (GL (Fin N) k)) : cl0 π ⟨N, c⟩ = ((jhMult c.rep.ρ π).toNat : ℤ) := by
   unfold cl0
-  rw [dif_pos hl]
+  rw [dite_eq_left hl]
   exact (clsGL_apply π hl c).trans (cls_apply π hl c)
 
-omit [ValuativeRel k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [IsNonarchimedeanLocalField k] in
 theorem class_apply_other_degree {N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V)
-    (y : IrrGL k) (hy : y.1 ≠ N) : cl0 π y = 0 := by
+    (y : IrrGL (k := k)) (hy : y.1 ≠ N) : cl0 π y = 0 := by
   unfold cl0
   split_ifs with hl
   · rw [clsGL]
     exact Finsupp.mapDomain_of_notMem_range _ _ (by rintro ⟨c, rfl⟩; exact hy rfl)
   · rfl
 
-theorem class_product_irreducible_apply {h : ℕ} (x : Fin h → IrrGL k) (y : IrrGL k) (hd : ∑ a, (x a).1 = y.1) :
+theorem class_product_irreducible_apply {h : ℕ} (x : Fin h → IrrGL (k := k)) (y : IrrGL (k := k)) (hd : ∑ a, (x a).1 = y.1) :
     cl0 (prodIrr x (N := ∑ a, (x a).1) rfl) y = ((jhMult y.rep (prodIrr x hd)).toNat : ℤ) := by
   obtain ⟨n, c⟩ := y
   dsimp only at hd
@@ -96,7 +100,7 @@ theorem prod_map_toMultiset {M : Type*} [CommMonoid M] {α : Type*} (g : α → 
   refine Finsupp.induction s ?_ ?_
   · simp
   · intro a n f _ _ ih
-    rw [map_add, Multiset.map_add, Multiset.prod_add, ih,
+    rw [map_add (f := _), Multiset.map_add (f := _), Multiset.prod_add, ih,
       Finsupp.prod_add_index' (fun _ => pow_zero _) (fun _ _ _ => pow_add _ _ _),
       Finsupp.toMultiset_single, Multiset.map_nsmul, Multiset.prod_nsmul, Multiset.map_singleton,
       Multiset.prod_singleton]
@@ -105,13 +109,13 @@ theorem prod_map_toMultiset {M : Type*} [CommMonoid M] {α : Type*} (g : α → 
 
 variable [Fact (Assoc k)] [Fact (Comm k)] [Fact (One k)]
 
-theorem toR_foldr (l : List (IrrGL k)) :
+theorem toR_foldr (l : List (IrrGL (k := k))) :
     toR (l.foldr (fun y a => mulR (sg y) a) (GrothGL.unit k)) = (l.map fun y => toR (sg y)).prod := by
   induction l with
   | nil => simp [toR_unit]
   | cons y l ih => rw [List.foldr_cons, toR_mulR, ih, List.map_cons, List.prod_cons]
 
-theorem ring_class_product_irreducible (hPL : ProdList k) {h N : ℕ} (x : Fin h → IrrGL k) (hd : ∑ a, (x a).1 = N) :
+theorem ring_class_product_irreducible (hPL : ProdList k) {h N : ℕ} (x : Fin h → IrrGL (k := k)) (hd : ∑ a, (x a).1 = N) :
     toR (cl0 (prodIrr x hd)) = ∏ a, toR (sg (x a)) := by
   rw [hPL h N x hd, toR_foldr, List.map_ofFn, List.prod_ofFn]
   rfl
@@ -121,8 +125,8 @@ end PhiLAux
 variable [Fact (Assoc k)] [Fact (Comm k)] [Fact (One k)]
 
 theorem phiL_main (hk : Steps k) (h2 : UniTri) :
-    ∃ Lseg : Segment k → IrrGL k, (∀ Δ, IsLSeg Δ (Lseg Δ).rep) ∧ Function.Bijective (phiOf Lseg) ∧
-      (∀ (𝔫 : Multiset (Segment k)) (x : IrrGL k), IsL 𝔫 x.rep →
+    ∃ Lseg : Segment k → IrrGL (k := k), (∀ Δ, IsLSeg Δ (Lseg Δ).rep) ∧ Function.Bijective (phiOf Lseg) ∧
+      (∀ (𝔫 : Multiset (Segment k)) (x : IrrGL (k := k)), IsL 𝔫 x.rep →
         ∃ p : MvPolynomial (Segment k) ℤ, phiOf Lseg p = toR (sg x) ∧
           ∀ s ∈ p.support, msupp (Finsupp.toMultiset s) = msupp 𝔫) ∧
       ∀ (h N : ℕ) (Γ : Fin h → Segment k) (hd : ∑ a, (Lseg (Γ a)).1 = N),
@@ -136,10 +140,10 @@ theorem phiL_main (hk : Steps k) (h2 : UniTri) :
     refine ⟨fun 𝔪 𝔫 e => hInj 𝔪 𝔫 (Lm 𝔪) (hLm 𝔪) (by rw [e]; exact hLm 𝔫), fun x => ?_⟩
     obtain ⟨𝔪, h𝔪⟩ := c.exh x
     exact ⟨𝔪, PhiLAux.isL_cls_unique c.free (hLm 𝔪) h𝔪⟩
-  let L : Multiset (Segment k) ≃ IrrGL k := Equiv.ofBijective Lm hLbij
+  let L : Multiset (Segment k) ≃ IrrGL (k := k) := Equiv.ofBijective Lm hLbij
   choose hO Δo hΔo using PhiLAux.exists_orderedForm (k := k)
   have hLF : ∀ 𝔪, LFactors 𝔪 (fun a => Lseg (Δo 𝔪 a)) := fun 𝔪 => ⟨Δo 𝔪, hΔo 𝔪, fun _ => hLseg _⟩
-  let f : Multiset (Segment k) → IrrGL k →₀ ℤ := fun 𝔪 =>
+  let f : Multiset (Segment k) → IrrGL (k := k) →₀ ℤ := fun 𝔪 =>
     cl0 (prodIrr (fun a => Lseg (Δo 𝔪 a)) (N := ∑ a, (Lseg (Δo 𝔪 a)).1) rfl)
   have hf1 : ∀ 𝔪, f 𝔪 (L 𝔪) = 1 := by
     intro 𝔪
@@ -188,7 +192,7 @@ theorem phiL_main (hk : Steps k) (h2 : UniTri) :
         show toR (Finsupp.linearCombination ℤ f (Finsupp.domCongr e (Finsupp.single s a))) = _
         rw [Finsupp.domCongr_apply, Finsupp.equivMapDomain_single, Finsupp.linearCombination_single, map_zsmul]
       rw [h1, hmono, phiOf, MvPolynomial.coe_eval₂Hom, MvPolynomial.eval₂_monomial, eq_intCast, ← zsmul_eq_mul]
-    · rw [map_add, map_add, hp, hq]
+    · rw [map_add (f := _), map_add (f := _), hp, hq]
   have hphiG : ⇑(phiOf Lseg) = ⇑G := funext hG
   refine ⟨Lseg, hLseg, hphiG ▸ hGbij, fun 𝔫 x hx => ?_, hprod⟩
   obtain ⟨a, ha, hLa⟩ := hinv 𝔫

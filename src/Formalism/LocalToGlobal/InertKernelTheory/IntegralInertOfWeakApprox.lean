@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.InertKernelTheory.IntegralInertOfWeakApproxTheta
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.AlgKleinPf
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.IntegralInertOfWeakApproxTheta
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.AlgKleinPf
+
+@[expose] public section
 
 namespace Formalism.L2.KerInert
 
@@ -12,8 +16,5 @@ theorem integral_inert_of_weakApprox (h : WeakApproxAndOrthonormalBases) : IntIn
     (thFourInt_of (oneCopyLoc_of_isom h.2.2 AlgP.zero_value_algebraic) (locInv_of unit_substitution_local) four_products_from_one
       (MMOnb.globONB_of h.2.1) AlgP.zero_value_algebraic)
 
-variable [Fact _root_.Formalism.L2.Th1.CM.CM2] in
-theorem jets_inert_of_weakApprox (h : WeakApproxAndOrthonormalBases) (hJ : PhiJetInt) : JetsInert :=
-  jetsInert_of_int (integral_inert_of_weakApprox h) (orthBasisExists_of (MMOnb.globONB_of h.2.1) (weakApprox_of h.1)) hJ
 
 end Formalism.L2.KerInert

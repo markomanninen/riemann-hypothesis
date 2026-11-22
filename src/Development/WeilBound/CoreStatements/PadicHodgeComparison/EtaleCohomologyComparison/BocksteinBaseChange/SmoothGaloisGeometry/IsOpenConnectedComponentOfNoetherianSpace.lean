@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.EtProps
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.EtProps
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem isOpen_connectedComponent_of_noetherianSpace {X : Type*} [TopologicalSpa
       rwa [← connectedComponent_eq hy] at h1
   have hc : IsClosed (connectedComponent x)ᶜ := by
     rw [h]
-    exact (hfin.subset fun Z hZ ↦ hZ.1).isClosed_biUnion fun Z hZ ↦ isClosed_of_mem_irreducibleComponents Z hZ.1
+    exact (hfin.subset (by exact fun Z hZ ↦ hZ.1)).isClosed_biUnion fun Z hZ ↦ isClosed_of_mem_irreducibleComponents Z hZ.1
   exact isClosed_compl_iff.mp hc
 
 theorem finite_connectedComponents_of_noetherianSpace (X : Type*) [TopologicalSpace X] [NoetherianSpace X] :

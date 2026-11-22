@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.CotangentSurjective
+module
+
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+
+@[expose] public section
 
 noncomputable section
 

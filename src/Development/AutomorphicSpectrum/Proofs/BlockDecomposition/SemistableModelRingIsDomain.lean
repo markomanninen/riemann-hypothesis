@@ -1,9 +1,13 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.SemistableLocal
 
-open MvPolynomial in
 
+open MvPolynomial in
 theorem irreducible_prod_X_sub_C (O : Type) [CommRing O] [IsDomain O]
     [IsDiscreteValuationRing O] (ϖ : O) (hϖ : Irreducible ϖ) (m' r : ℕ) (hr : 1 ≤ r) :
     Irreducible ((∏ i ∈ Finset.univ.filter (fun i : Fin (m' + 1) => (i : ℕ) < r), X i) - C ϖ :

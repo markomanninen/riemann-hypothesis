@@ -1,6 +1,17 @@
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.LatDefs
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.MulEarlyModP
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.DischargeHeightBound
+module
+
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.LatDefs
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.GramBoundOfRestrictionOfProj
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.HighestVectorProjection
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementC
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.InitPartZeroXMul
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.DerivativeKeepsSpaceHolds
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.OmegaInjectiveHolds
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.FiltrationBotHolds
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.ResInto
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.DischargeHeightBound
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.L4
 
@@ -133,7 +144,7 @@ theorem dW_y (LL : Letters (K + 1)) (hv : LL.vec (Fin.last K) = true) {q : ℕ} 
   · have hP := hh.1
     simp only [Pol, MvPolynomial.mem_restrictSupport_iff] at hP ⊢
     intro m hm
-    have hm' : coeff m (pderiv (Fin.last K, a) h) ≠ 0 := mem_support_iff.1 hm
+    have hm' : AddMonoidAlgebra.coeff (pderiv (Fin.last K, a) h) m ≠ 0 := mem_support_iff.1 hm
     rw [coeff_pderiv] at hm'
     have hs : m + Finsupp.single (Fin.last K, a) 1 ∈ h.support := mem_support_iff.2 (left_ne_zero_of_mul hm')
     exact multiDeg_setLast_pred_of_add_single LL o a m (hP hs)
@@ -204,8 +215,8 @@ private theorem pderiv_last_eq_zero_of_mem_pol_setLast_zero (LL : Letters (K + 1
     (hP : y ∈ Pol p r (setLast LL 0)) : pderiv (Fin.last K, d) y = 0 := by
   rw [Pol, MvPolynomial.mem_restrictSupport_iff] at hP
   ext m
-  rw [coeff_pderiv, coeff_zero]
-  have h0 : coeff (m + Finsupp.single (Fin.last K, d) 1) y = 0 := by
+  rw [coeff_pderiv]
+  have h0 : AddMonoidAlgebra.coeff y (m + Finsupp.single (Fin.last K, d) 1) = 0 := by
     by_contra hne
     have hm := hP (mem_support_iff.2 hne) (Fin.last K)
     have hle : (m + Finsupp.single (Fin.last K, d) 1 : Fin (K + 1) × Fin r →₀ ℕ) (Fin.last K, d) ≤
@@ -215,7 +226,7 @@ private theorem pderiv_last_eq_zero_of_mem_pol_setLast_zero (LL : Letters (K + 1
         (fun _ _ => Nat.zero_le _) (Finset.mem_univ d)
     rw [hm] at hle
     simp [setLast] at hle
-  rw [h0, zero_mul]
+  simp [h0, AddMonoidAlgebra.coeff]
 
 private theorem mem_yCond_succ_of_mem_pol_setLast_zero (LL : Letters (K + 1)) (hv : LL.vec (Fin.last K) = true) (Mt : WithTop ℤ)
     (y : MvPolynomial (Fin (K + 1) × Fin r) ℚ_[p]) (hy : y ∈ YCond p LL K Mt)
@@ -281,7 +292,7 @@ theorem compL_deg (LL : Letters (K + 1)) (o o' : ℕ) (x : MvPolynomial (Fin (K 
     (hx : x ∈ Pol p r (setLast LL o')) :
     compL ℚ_[p] (fun m : Fin (K + 1) × Fin r →₀ ℕ => ∑ a, m (Fin.last K, a) = o) x = if o' = o then x else 0 := by
   ext m
-  change MvPolynomial.coeff m (compP _ x) = _
+  change AddMonoidAlgebra.coeff (compP _ x) m = _
   rw [coeff_compP]
   by_cases hm : m ∈ x.support
   · have hmd : MultiDeg (setLast LL o') m := ((MvPolynomial.mem_restrictSupport_iff ℚ_[p]).1 hx) hm
@@ -293,7 +304,7 @@ theorem compL_deg (LL : Letters (K + 1)) (o o' : ℕ) (x : MvPolynomial (Fin (K 
     · exact absurd (hs.symm.trans h1) h2
     · exact absurd (hs.trans h2) h1
     · simp
-  · have h0 : MvPolynomial.coeff m x = 0 := by
+  · have h0 : AddMonoidAlgebra.coeff x m = 0 := by
       by_contra hne
       exact hm (MvPolynomial.mem_support_iff.2 hne)
     split_ifs <;> simp [h0]
@@ -318,7 +329,7 @@ theorem restrictedLattice_exists_lift (LL : Letters (K + 1)) {q : ℕ} (J : Fin 
           = initPart (Fin.last K, ρ) 0
             (compL ℚ_[p] (fun m : Fin (K + 1) × Fin r →₀ ℕ => ∑ a, m (Fin.last K, a) = o) h') := by
         ext m
-        change MvPolynomial.coeff m (compP _ _) = MvPolynomial.coeff m (initPart _ _ (compP _ _))
+        change AddMonoidAlgebra.coeff (compP _ _) m = AddMonoidAlgebra.coeff (initPart _ _ (compP _ _)) m
         rw [coeff_compP, coeff_initPart, coeff_initPart, coeff_compP]
         split_ifs <;> rfl
       change ∃ h ∈ Y p (setLast LL o) J M, h ∈ IntPol p (Fin (K + 1) × Fin r) ∧
@@ -333,7 +344,7 @@ theorem restrictedLattice_exists_lift (LL : Letters (K + 1)) {q : ℕ} (J : Fin 
       rw [map_zero]
       exact (resL p (Fin.last K, ρ) 0).map_zero
     · rintro x y ⟨h1, hY1, hI1, e1⟩ ⟨h2, hY2, hI2, e2⟩
-      exact ⟨h1 + h2, add_mem hY1 hY2, add_mem hI1 hI2, by rw [initPart_add, e1, e2, map_add]⟩
+      exact ⟨h1 + h2, add_mem hY1 hY2, add_mem hI1 hI2, by rw [initPart_add, e1, e2, map_add (f := _)]⟩
   obtain ⟨h, hY, hI, he⟩ := hP z hz
   refine ⟨h, hY, hI, ?_⟩
   rw [he, compL_deg LL o o z hzP, if_pos rfl]

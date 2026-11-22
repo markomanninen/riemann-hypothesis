@@ -1,4 +1,8 @@
-import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.ConvolutionNonnegOfDivisors
+module
+
+public import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.ConvolutionNonnegOfDivisors
+
+@[expose] public section
 
 open Complex ArithmeticFunction
 open scoped ComplexOrder LSeries.notation

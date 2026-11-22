@@ -1,8 +1,12 @@
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
+module
+
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
+
+@[expose] public section
 
 open Topology Filter
 
@@ -156,7 +160,7 @@ lemma bounded [IsDomain O] [IsDiscreteValuationRing O] [IsModuleTopology ℚ_[l]
     show (l : LL) ^ i * algebraMap O LL ((l : O) ^ (j - i) * p) = (l : LL) ^ j * algebraMap O LL p
     rw [map_mul, map_pow, map_natCast, ← mul_assoc, ← pow_add, Nat.add_sub_cancel' hij]
   obtain ⟨J, hJ⟩ := hK.elim_directed_family_closed (fun j => powImage l LL O j)
-    (fun j => isClosed_powImage ho j) hempty hanti.directed_ge
+    (fun j => isClosed_powImage ho j) (Set.disjoint_iff_inter_eq_empty.mpr hempty) hanti.directed_ge
   refine ⟨J, ?_⟩
   rintro x ⟨p, rfl⟩
   by_cases hx1 : ‖e (algebraMap O LL p)‖ ≤ 1
@@ -201,9 +205,7 @@ lemma bounded [IsDomain O] [IsDiscreteValuationRing O] [IsModuleTopology ℚ_[l]
         nlinarith
     have hyJ : (l : LL) ^ j * algebraMap O LL p ∈ powImage l LL O J :=
       hanti hJj (show _ ∈ powImage l LL O j from ⟨_, ⟨p, rfl⟩, rfl⟩)
-    have hmem : (l : LL) ^ j * algebraMap O LL p ∈ K ∩ powImage l LL O J := ⟨hyK, hyJ⟩
-    rw [hJ] at hmem
-    exact hmem
+    exact Set.disjoint_left.mp hJ hyK hyJ
 
 lemma integral_of_bounded [IsModuleTopology ℚ_[l] LL] [IsTopologicalRing LL]
     (ho : IsOpen (Set.range (algebraMap O LL)))
@@ -227,7 +229,8 @@ lemma integral_of_bounded [IsModuleTopology ℚ_[l] LL] [IsTopologicalRing LL]
     let z : Fin d → ℤ_[l] := fun i => ⟨(l : ℚ_[l]) ^ n * e y i, hcoord i⟩
     have hy' : y = ∑ i, z i • v i := by
       apply e.injective
-      simp only [hsmul, v, map_sum, map_smul, LinearEquiv.apply_symm_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hsmul, v, map_sum, map_smul, LinearEquiv.apply_symm_apply]
       ext j
       simp [z, Finset.sum_apply, Pi.single_apply, smul_smul]
       rw [mul_comm ((l : ℚ_[l]) ^ n) (e y j), mul_inv_cancel_right₀ (pow_ne_zero _ hl0)]

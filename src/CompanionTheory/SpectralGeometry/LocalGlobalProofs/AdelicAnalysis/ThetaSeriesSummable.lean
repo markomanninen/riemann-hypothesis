@@ -1,8 +1,13 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.CountData
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleTopologyStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SummableGaussianCoset
-import ReciprocityTheory.ThetaSummability.TailSumEstimates.LatSumPi
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.CountData
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleTopologyStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SummableGaussianCoset
+public import ReciprocityTheory.ThetaSummability.TailSumEstimates.LatSumPi
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology GlobalTheory.CompanionTheory.SW.Core
 open scoped ENNReal NNReal MatrixGroups
 
@@ -10,8 +15,8 @@ noncomputable section
 
 namespace GlobalTheory.CompanionTheory.SW.ThetaSum
 
-open scoped Classical in
 
+open scoped Classical in
 theorem norm_mixed_sq_le (F : Type) [Field F] [NumberField F] (y : F) :
     ‖mixedEmbedding F y‖ ^ 2 ≤ ∑ w : InfinitePlace F, (w y) ^ 2 := by
   rw [mixedEmbedding.norm_eq_sup'_normAtPlace]

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddCharConductorAndHaarIntegersExist
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasNormGroups
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChevalleyUnits
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddCharConductorAndHaarIntegersExist
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasNormGroups
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChevalleyUnits
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ValuativeRel Matrix MeasureTheory TensorProduct Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.Whittaker GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocDict
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -126,13 +131,13 @@ theorem GlobalTheory.whittaker_torus_twKer_rootBound : ∀ (k : Type) [Field k] 
     obtain ⟨r₂, h₂⟩ := hy
     rcases le_total (valuation k (r₁ : k)) (valuation k (r₂ : k)) with h12 | h21
     · refine ⟨r₁, fun t ht => ?_⟩
-      rw [map_add, map_add] at ht
+      rw [map_add (f := _), map_add (f := _)] at ht
       by_cases h0 : l (ρ (diagT k (Fin n) t) x) = 0
       · rw [h0, zero_add] at ht
         exact h12.trans (h₂ t ht)
       · exact h₁ t h0
     · refine ⟨r₂, fun t ht => ?_⟩
-      rw [map_add, map_add] at ht
+      rw [map_add (f := _), map_add (f := _)] at ht
       by_cases h0 : l (ρ (diagT k (Fin n) t) y) = 0
       · rw [h0, add_zero] at ht
         exact h21.trans (h₁ t ht)

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.AdmissibleOfCrystalline
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.HkOfPush
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.LocTied6
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.AdmissibleOfCrystalline
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.HkOfPush
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.LocTied6
+
+@[expose] public section
 
 noncomputable section
 

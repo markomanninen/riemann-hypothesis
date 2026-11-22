@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
-import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CardLeOfDiag
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CardLeOfDiag
+
+@[expose] public section
+
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -23,7 +28,7 @@ theorem re_pos {E : Type} [Field E] [NumberField E] [StarRing E] {S : Formalism.
     induction hy using Submodule.span_induction with
     | mem y hy => obtain ⟨a, rfl⟩ := hy; exact hw a
     | zero => simp
-    | add a b _ _ ha hb => rw [map_add, LinearMap.add_apply, ha, hb, add_zero]
+    | add a b _ _ ha hb => rw [map_add (f := _), LinearMap.add_apply, ha, hb, add_zero]
     | smul c a _ ha => rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, ha, smul_zero]
   have hXz : ∀ y ∈ F.X, S.hT y F.z = 0 := hspan _ F.z_orth
   have hXX : ∀ y ∈ F.X, ∀ y' ∈ F.X, S.hT y y' = 0 := fun y hy y' hy' =>
@@ -37,7 +42,7 @@ theorem re_pos {E : Type} [Field E] [NumberField E] [StarRing E] {S : Formalism.
     obtain ⟨ξ, hξ, w, hw, hsum⟩ := Submodule.mem_sup.1 h
     obtain ⟨a, rfl⟩ := Submodule.mem_span_singleton.1 hw
     have h1 := hx' _ hzP
-    rw [← hsum, map_add, map_smul, hsym _ _ (hXz _ hξ), F.z_norm, zero_add, smul_eq_mul, mul_eq_zero,
+    rw [← hsum, map_add (f := _), map_smul, hsym _ _ (hXz _ hξ), F.z_norm, zero_add, smul_eq_mul, mul_eq_zero,
       neg_eq_zero] at h1
     rcases h1 with h1 | h1
     · apply hxX
@@ -63,14 +68,14 @@ theorem re_pos {E : Type} [Field E] [NumberField E] [StarRing E] {S : Formalism.
     obtain ⟨a, rfl⟩ := Submodule.mem_span_singleton.1 hw
     have e : S.hT (ξ + a • F.z + c • x) (ξ + a • F.z + c • x) =
         (star a * a) * (-(T : E)) + (star c * c) * S.hT x x := by
-      simp only [map_add, LinearMap.add_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul,
+      simp only [map_add (f := _), LinearMap.add_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul,
         smul_eq_mul, hXX _ hξ _ hξ, hXz _ hξ, hsym _ _ (hXz _ hξ), hx' _ (hXP _ hξ),
         hsym _ _ (hx' _ (hXP _ hξ)), hx' _ hzP, hsym _ _ (hx' _ hzP), F.z_norm,
         starRingEnd_apply]
       ring
     have n : ∀ b : E, τ (star b * b) = (Complex.normSq (τ b) : ℂ) := fun b => by
       rw [map_mul, hA.cm, Complex.normSq_eq_conj_mul_self]
-    rw [e, map_add, map_mul τ (star a * a), map_mul τ (star c * c), n, n, Complex.add_re,
+    rw [e, map_add (f := _), map_mul τ (star a * a), map_mul τ (star c * c), n, n, Complex.add_re,
       Complex.re_ofReal_mul, Complex.re_ofReal_mul, map_neg, map_natCast, Complex.neg_re, Complex.natCast_re]
     have h1 := Complex.normSq_nonneg (τ a)
     have h2 := Complex.normSq_nonneg (τ c)

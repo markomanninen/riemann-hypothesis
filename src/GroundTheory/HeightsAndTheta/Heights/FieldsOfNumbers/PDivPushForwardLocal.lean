@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDivCycleMinimal
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsConeLocalLength
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDegZeroLocalRing
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsSemilocalFiniteRank
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsSemilocalLength
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KrullDimQuotientEqOneIffEqBot
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDivCycleMinimal
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsConeLocalLength
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDegZeroLocalRing
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsSemilocalFiniteRank
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsSemilocalLength
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KrullDimQuotientEqOneIffEqBot
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -64,7 +69,7 @@ theorem DivPushForwardLocal.proof (h1 : DivCycleMinimal.Statement.{u})
     have hdc : divCycle (contractPrime j P') a W =
         ((multAt (contractPrime j P' ⊔ Ideal.span {a}) W).toNat : ℤ) := by
       unfold divCycle
-      rw [dif_pos ⟨hmin, hW.relevant⟩]
+      rw [dite_eq_left ⟨hmin, hW.relevant⟩]
     rw [hMN, hdc]
     rw [hN, hrk, ← hcone] at key
     obtain ⟨m, hm⟩ := ENat.ne_top_iff_exists.mp hfinm
@@ -75,7 +80,7 @@ theorem DivPushForwardLocal.proof (h1 : DivCycleMinimal.Statement.{u})
     rfl
   · have hR : divCycle (contractPrime j P') a W = 0 := by
       unfold divCycle
-      rw [dif_neg]
+      rw [dite_eq_right]
       rintro ⟨h, -⟩
       exact hPW h.1.2
     rw [hR, mul_zero]

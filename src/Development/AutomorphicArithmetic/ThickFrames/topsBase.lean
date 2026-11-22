@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.ThickFrames.MarkedLow
-import Formalism.LocalToGlobal.GlobalTheory.IsResidueClassZero
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ExplicitFormulaErrorOfHostConditions
-import Development.AutomorphicArithmetic.ThickFrames.topsFrame
+module
+
+public import Development.AutomorphicArithmetic.ThickFrames.MarkedLow
+public import Formalism.LocalToGlobal.GlobalTheory.IsResidueClassZero
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ExplicitFormulaErrorOfHostConditions
+public import Development.AutomorphicArithmetic.ThickFrames.topsFrame
+
+@[expose] public section
 
 open Finset UpperTheory.BernoulliSumsFrobeniusOrbits Formalism.G0
 open Formalism.BasicNotions Formalism.MainNotions Formalism.L2.GlobalTheoryTheory Classical
@@ -90,14 +94,20 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.topsBase :
             ∑ p ∈ (Finset.range ⌈B.sc.X'⌉₊).filter (fun p => p.Prime ∧ B.IsResidueClassZero p ∧ B.sc.x ^ (B.sc.eps / 4) ≤ (addOrderOf (h p) : ℝ)),
               Real.log p / p := by
   intro eps Co he he' hCo
-  obtain ⟨Cb, x₀, hCb, hmain⟩ := topsFrame eps Co (2 * (620 * Co / eps + 1)) he
+  have hgroup := topsGroup eps Co (2 * (620 * Co / eps + 1)) he
+  obtain ⟨Cb, x₀, hCb, hmain⟩ := hgroup
   refine ⟨Cb, max x₀ 16, hCb, ?_⟩
   intro B h hBe hx hn1 hn2 ho hk hp
   have hx16 : 16 ≤ B.sc.x := le_trans (le_max_right _ _) hx
   have hxx : x₀ ≤ B.sc.x := le_trans (le_max_left _ _) hx
   have hL := ltwo_le' B he he' hCo hx16 hk hp
-  obtain ⟨TT, h1, h2, h3, h4⟩ := hmain B.sc.x hxx B.R.toFrame B.Ltwo
-    (by simpa [hE, Ranks.n] using hn1) (by simpa [hE, Ranks.n] using hn2) ho hL Arith.bsH
+  have hcard : (Fintype.card B.R.toFrame.A : ℝ) = B.R.n := by
+    rw [← Nat.card_eq_fintype_card, Formalism.HC.Frame.natCard_A, Ranks.n]
+  have hidx : (B.R.toFrame.A0.index : ℝ) = B.R.toFrame.o := by
+    rw [Formalism.HC.Frame.index_A0_eq_o]
+  obtain ⟨TT, h1, h2, h3, h4⟩ := hmain B.sc.x hxx B.R.toFrame.A B.R.toFrame.A0 B.Ltwo
+    (by simpa only [hE, hcard] using hn1) (by simpa only [hE, hcard] using hn2)
+    (by rwa [hidx]) hL Arith.bsH
     (fun a b => bsH_orb' a b)
     ((Finset.range ⌈B.sc.X'⌉₊).filter
       (fun p => p.Prime ∧ B.IsResidueClassZero p ∧ B.sc.x ^ (B.sc.eps / 4) ≤ (addOrderOf (h p) : ℝ)))
@@ -111,11 +121,9 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.topsBase :
   have e1 : G.KG B.sc = KE eps := by simp [G.KG, KE, G.hG, hE, hBe]
   have e2 : G.rG B.sc = rE eps := by simp [G.rG, rE, e1]
   have e3 : G.hG B.sc = hE eps := by simp [G.hG, hE, hBe]
-  refine ⟨TT, ?_, ?_, h3, ?_⟩
-  · rw [← hd]
-    exact h1
-  · rw [← hd]
-    exact h2
+  refine ⟨TT, by simpa only [hd, hcard] using h1, by simpa only [hd, hcard] using h2, ?_, ?_⟩
+  · intro γ
+    simpa only [Formalism.HC.Frame.lam, hidx] using h3 γ
   · refine le_trans (le_of_eq ?_) (h4.trans (le_of_eq ?_))
     · apply Finset.sum_congr rfl
       intro p hpP
@@ -125,7 +133,8 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.topsBase :
         simp [Arith.Loc.stepP, Arith.Base.IsSg, hC0]
       rw [hst]
       have hS : ∀ t, Arith.Loc.Good { B with TT := TT } (h p) (Arith.bsH (h p) t) ↔
-          G.IsGoodOrbit (addOrderOf (h p)) {i | Arith.bsH (h p) t + (i : ℕ) • h p ∈ TT} B.Ltwo (KE eps)
+          G.IsGoodOrbit (addOrderOf (h p)) (Finset.univ.filter
+            (fun i : Fin (addOrderOf (h p)) => Arith.bsH (h p) t + (i : ℕ) • h p ∈ TT)) B.Ltwo (KE eps)
             (rE eps) (dE eps B.sc.x) (hE eps) B.sc.x := by
         intro t
         simp only [Arith.Loc.Good, Arith.Loc.topsPos]
@@ -135,5 +144,5 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.topsBase :
       rw [← Set.ncard_coe_finset, Finset.coe_filter]
       congr 1
       ext t
-      simp only [Set.mem_setOf_eq, hS t]
-    · rw [hd, Ranks.n]
+      simp only [Set.mem_ofPred_eq, hS t]
+    · rw [hd, hcard]

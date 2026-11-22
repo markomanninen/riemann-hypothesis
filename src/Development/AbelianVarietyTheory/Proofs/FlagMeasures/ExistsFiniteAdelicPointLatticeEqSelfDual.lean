@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryMassLatticeEqGenusMass
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIsometryOfUnimodularLatticesAtPlace
-import Formalism.HermitianLattices.HermitianLatticesProofs.LocDual
-import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryMassLatticeEqGenusMass
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIsometryOfUnimodularLatticesAtPlace
+public import Formalism.HermitianLattices.HermitianLatticesProofs.LocDual
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
 
@@ -23,7 +28,32 @@ theorem mem_genus {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGr
     have a := (locDual (𝓞 K) K V h hs hstar M hM).1 P hP
     have b := a.2.trans a.1.symm
     rwa [hdM] at b
-  exact ⟨hL', fun P hP => GlobalTheory.Mass.UnimodLoc.exists_isom_of_isUnimodularAt K V h hK hs hn L L' hL hL' P hP
+  have full : ∀ M : Submodule (𝓞 K) V, Submodule.IsLattice K M → dual h M = M →
+      Submodule.IsFullLattice K M := by
+    intro M hM hdM
+    classical
+    let b := Module.finBasis K V
+    let B : Submodule (𝓞 K) V := Submodule.span (𝓞 K) (Set.range b)
+    let N := M ⊔ B
+    have hNfg : N.FG := hM.fg.sup (Submodule.fg_span (Set.finite_range b))
+    have hNspan : Submodule.span K (N : Set V) = ⊤ := by
+      apply eq_top_iff.mpr
+      rw [← b.span_eq]
+      apply Submodule.span_mono
+      rintro x ⟨i, rfl⟩
+      exact (show B ≤ N from le_sup_right) (Submodule.subset_span ⟨i, rfl⟩)
+    have hN : Submodule.IsFullLattice K N :=
+      { toIsLattice := Submodule.IsLattice.of_fg K hNfg, span_eq_top := hNspan }
+    have hNd := (dualLattice (𝓞 K) K V h hs hn hstar N hN).1
+    have hle : dual h N ≤ M := by
+      rw [← hdM]
+      exact (dualBasic (𝓞 K) K V h hs hstar).1 M N le_sup_left
+    letI : Submodule.IsFullLattice K (dual h N) := hNd
+    letI : Submodule.IsLattice K M := hM
+    exact Submodule.IsFullLattice.of_le K hle
+  have hLf := full L hL hd
+  have hL'f := full L' hL' hd'
+  exact ⟨hL'f, fun P hP => GlobalTheory.Mass.UnimodLoc.exists_isom_of_isUnimodularAt K V h hK hs hn L L' hLf hL'f P hP
     (key L hL.fg hd P hP.isPrime) (key L' hL'.fg hd' P hP.isPrime)⟩
 
 theorem lamX_eq_globLat (I : AutInst) (xf : I.Gf) : lamX I (1, xf) = globLat xf.1 I.L := by
@@ -57,7 +87,7 @@ theorem exists_lamX_eq : ∀ (I : AutInst) (Λ : Submodule (𝓞 I.E) (Fin I.n �
     rw [dualBasic_mem_dual, hM x]
     simp only [hap, Submodule.mem_one, RingHom.mem_range]
   obtain ⟨g, hg, e⟩ := GlobalTheory.Mass.Genus.exists_globLat_eq (J := I.J) hs hfix (Module.Finite.iff_fg.2 I.L_fg)
-    I.L_span Λ (mem_genus h I.cm.cmUnram hsym hn ⟨I.L_fg, I.L_span⟩ hΛ (hdual _ I.L_dual) (hdual _ hd))
+    I.L_span Λ (mem_genus h I.cm.cmUnram hsym hn (Submodule.IsLattice.of_fg I.E I.L_fg) hΛ (hdual _ I.L_dual) (hdual _ hd))
   exact ⟨⟨g, hg⟩, (lamX_eq_globLat I _).trans e⟩
 
 end GlobalTheory.SelfDualPoint

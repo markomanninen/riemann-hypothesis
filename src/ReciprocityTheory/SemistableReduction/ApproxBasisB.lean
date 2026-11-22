@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.ApproxBasisA
+module
+
+public import ReciprocityTheory.SemistableReduction.ApproxBasisA
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ theorem approxB_h_smul_left {K : Type} [Field K] [NumberField K] {r : ℕ} (S : 
 private theorem hermForm_h_add_left {K : Type} [Field K] [NumberField K] {r : ℕ}
     (S : HermForm K r) (x y z : Fin r → K) : S.h (x + y) z = S.h x z + S.h y z := by
   unfold ReciprocityTheory.MultiplicativeHeights.HermForm.h
-  simp only [Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem approxB_h_sum_left {K : Type} [Field K] [NumberField K] {r : ℕ} (S : HermForm K r)
     {α : Type*} (s : Finset α) (y : Fin r → K) (f : α → Fin r → K) :
@@ -128,7 +132,8 @@ theorem approxB_split {K : Type} [Field K] [NumberField K] {r p : ℕ} (hp : p �
     have hcz : ∀ k, f (((Matrix.of Mz).adjugate *ᵥ bz) k) = coef x k := by
       intro k
       rw [show coef x = M.adjugate *ᵥ bv x from rfl, ← hMmap, ← RingHom.map_adjugate]
-      simp only [mulVec, dotProduct, RingHom.mapMatrix_apply, Matrix.map_apply, map_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [mulVec, dotProduct, RingHom.mapMatrix_apply, Matrix.map_apply, map_sum,
         map_mul, hbz]
     have hT : T x = (Matrix.of Mz).det • x -
         ∑ k', ((Matrix.of Mz).adjugate *ᵥ bz) k' • l k'.1 := by

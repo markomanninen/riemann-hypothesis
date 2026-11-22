@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RankMaximalOfNondegenerateOfUnitSeriesIntegral
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RankMaximalOfNondegenerateOfUnitSeriesIntegral
+
+@[expose] public section
 
 set_option autoImplicit false
 

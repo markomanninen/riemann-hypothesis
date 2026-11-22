@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.PrismaticDieudonnePerfdIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BialgebraPullbackTwoConvMulSymmetricCocycleStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPullbackMulPOfPTorsionInvariantStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoboundaryTranslationInvariantPTorsionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemSymmetricCocyclesOfPullbackMulPStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsExtensionAdditiveFnPDivGroupStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivCocycleMemRangeCobOfPullbackMulPStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdditiveFunctionCartierDualTangentBijectiveStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OmegaBaseChangeBijectiveOfPEqZeroStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdditiveFunctionsFlatBaseChangeBijectiveStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimitiveSemilinearLiftBaseChangeBijectiveStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PrismaticDieudonnePerfdIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BialgebraPullbackTwoConvMulSymmetricCocycleStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPullbackMulPOfPTorsionInvariantStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoboundaryTranslationInvariantPTorsionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemSymmetricCocyclesOfPullbackMulPStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsExtensionAdditiveFnPDivGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivCocycleMemRangeCobOfPullbackMulPStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdditiveFunctionCartierDualTangentBijectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OmegaBaseChangeBijectiveOfPEqZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdditiveFunctionsFlatBaseChangeBijectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimitiveSemilinearLiftBaseChangeBijectiveStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -50,18 +54,12 @@ theorem vecExtMap_add (f g : G ⟶ H) : vecExtMap (f + g) = vecExtMap f + vecExt
     rw [← (c.2 n).2]
     generalize c.1 (n + 1) = t
     induction t with
-    | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul x y => simp [res_app]⟩
   change Submodule.Quotient.mk (cocyclesMap (f + g) c) =
     Submodule.Quotient.mk (cocyclesMap f c + cocyclesMap g c)
   refine (Submodule.Quotient.eq _).2 ⟨B, Subtype.ext (funext fun n => ?_)⟩
   exact eq_sub_iff_add_eq'.2 (T.bialgebraPullbackTwo_convMul_symmetricCocycle (f.app n) (g.app n) (c.1 n) (c.2 n).1).symm
-
-theorem vecExtMap_id : vecExtMap (𝟙 G) = LinearMap.id :=
-  LinearMap.ext fun x => by
-    obtain ⟨c, rfl⟩ := Submodule.Quotient.mk_surjective _ x
-    exact congrArg Submodule.Quotient.mk (Subtype.ext (funext fun _ => pullTwo_id _))
 
 theorem SemiHom.ofHom_vecExt (f : G ⟶ H) (x : H.VecExt) :
     (SemiHom.ofHom f).vecExt x = vecExtMap f x := by
@@ -98,7 +96,8 @@ theorem cobOne_eq_zero_of_connecting {x : G.VecExt} {b : G.A 1} (h : (∃ (c : G
       G.cob B = cocyclesMap ((p : ℤ_[p]) • 𝟙 G) c ∧ Coalgebra.counit (R := R) b = 0 ∧ B.1 1 = b)) :
     cobOne R _ b = 0 := by
   obtain ⟨c, B, -, h1, h2, rfl⟩ := h
-  have hm : ∀ a : G.A 1, mulBy R _ p a = algebraMap R _ (counit a) := G.resOne_mulBy 0
+  have hm (a : G.A 1) : mulBy R _ p a = algebraMap R _ (counit a) := by
+    simpa only [pow_one] using G.mulBy_pow_self 1 a
   have h3 : cobOne R _ (B.1 1) = pullbackTwo (mulBy R (G.A 1) p) (c.1 1) :=
     (congrArg (fun c : G.cocycles => c.1 1) h1).trans (G.cocyclesMap_natCast_val c 1)
   have h4 : (mulBy R (G.A 1) p).comp (mulBy R (G.A 1) p) = mulBy R (G.A 1) p :=
@@ -145,7 +144,7 @@ def extChar (hp : (p : R) = 0) : G.VecExt →ₗ[R] LinearMap.ker (cobOne R (G.A
   map_add' x y := Subtype.ext (connecting_unique hp (G.exists_connecting hp _).choose_spec (by
     obtain ⟨c, B, h0, h1, h2, h3⟩ := (G.exists_connecting hp x).choose_spec
     obtain ⟨c', B', h0', h1', h2', h3'⟩ := (G.exists_connecting hp y).choose_spec
-    refine ⟨c + c', B + B', by rw [← h0, ← h0']; rfl, by rw [map_add, map_add, h1, h1'], ?_,
+    refine ⟨c + c', B + B', by rw [← h0, ← h0']; rfl, by rw [map_add (f := _), map_add (f := _), h1, h1'], ?_,
       congrArg₂ (· + ·) h3 h3'⟩
     exact (map_add _ _ _).trans (by rw [h2, h2', add_zero])))
   map_smul' r x := Subtype.ext (connecting_unique hp (G.exists_connecting hp _).choose_spec (by
@@ -184,8 +183,7 @@ theorem SemiHom.connecting {σ : R →+* R'} {G' : PDivGroup p R'} (s : SemiHom 
   rw [SemiHom.cocycles_val, cocyclesMap_natCast_val, cocyclesMap_natCast_val, SemiHom.cocycles_val]
   generalize c.1 n = t
   induction t with
-  | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul x y => simp [SemiBialgHom.map_mulBy]
 
 theorem SemiHom.extChar_vecExt {σ : R →+* R'} {G' : PDivGroup p R'} (s : SemiHom σ G' G)
@@ -198,9 +196,9 @@ theorem extChar_vecExtMap (hp : (p : R) = 0) (f : G ⟶ H) (x : H.VecExt) :
   rw [← SemiHom.ofHom_vecExt, SemiHom.extChar_vecExt _ hp]
   rfl
 
+
 omit [Fact p.Prime] in
 variable (G) in
-
 theorem primLie_bijective (hp : (p : R) = 0) : Function.Bijective G.primLie :=
   (LinearEquiv.ofBijective _ (G.dual.omegaLevel_one_bijective hp)).dualMap.bijective.comp T.additiveFunctionCartierDualTangent_bijective
 
@@ -213,8 +211,8 @@ theorem primLie_naturality (f : G ⟶ H) (b : LinearMap.ker (cobOne R (H.A 1)))
       H.primLie_apply b _ (CartierDual.map (f.app 1) φ) (by rw [omegaMap_val, ← hφ]; exact cotMap_d _ _), h]
     rfl
 
-omit [Fact p.Prime] in
 
+omit [Fact p.Prime] in
 theorem SemiHom.primLie_prim {σ : R →+* R'} {G' : PDivGroup p R'} (s : SemiHom σ G' G)
     (t : SemiHom σ G'.dual G.dual)
     (h : ∀ (φ : CartierDual R (G.A 1)) (a : G.A 1),
@@ -226,8 +224,8 @@ theorem SemiHom.primLie_prim {σ : R →+* R'} {G' : PDivGroup p R'} (s : SemiHo
     (by rw [SemiHom.omega_val, ← hφ]; exact SemiBialgHom.cot_d _ _)]
   exact h φ b.1
 
-variable (G) in
 
+variable (G) in
 theorem primLie_toBase [Algebra R R'] (b : LinearMap.ker (cobOne R (G.A 1))) (w : G.dual.omega) :
     (G.baseChange R').primLie (((G.toBase R').app 1).prim b)
       (omegaMap _ _ (PerfdLat.dualBaseChange R' G).hom ((G.dual.toBase R').omega w)) =
@@ -239,23 +237,23 @@ theorem primLie_toBase [Algebra R R'] (b : LinearMap.ker (cobOne R (G.A 1))) (w 
   refine (CartierDual.baseChange_tmul_tmul R' 1 1 φ a).trans ?_
   rw [mul_one, Algebra.algebraMap_eq_smul_one]
 
-variable (G) in
 
+variable (G) in
 def rigToLie (hp : (p : R) = 0) : G.RigExt →ₗ[R] G.dual.Lie :=
   G.primLie ∘ₗ G.extChar hp ∘ₗ G.rigToExt
 
-variable (G) in
 
+variable (G) in
 theorem rigToLie_apply (hp : (p : R) = 0) (x : G.RigExt) :
     G.rigToLie hp x = G.primLie (G.extChar hp (G.rigToExt x)) := rfl
 
-variable (G) in
 
+variable (G) in
 theorem rigToLie_surjective (hp : (p : R) = 0) : Function.Surjective (G.rigToLie hp) :=
   (G.primLie_bijective hp).2.comp ((G.extChar_bijective hp).2.comp G.rigToExt_surjective)
 
-variable (G) in
 
+variable (G) in
 theorem exact_rigOfOmega_rigToLie (hp : (p : R) = 0) :
     Function.Exact G.rigOfOmega (G.rigToLie hp) := fun x => by
   rw [← G.exact_rigOfOmega_rigToExt x, rigToLie_apply,
@@ -270,8 +268,8 @@ section BaseChange
 
 variable (G R') [Algebra R R']
 
-omit [Fact p.Prime] in
 
+omit [Fact p.Prime] in
 theorem liftSemi_prim_bijective (hp : (p : R) = 0)
     (h : Module.Flat R R' ∨ Module.Projective R G.dual.omega) :
     Function.Bijective (liftSemi ((G.toBase R').app 1).prim) := by
@@ -288,8 +286,7 @@ theorem liftSemi_vecExt_bijective (hp : (p : R) = 0)
       liftSemi ((G.toBase R').app 1).prim ∘ (G.extCharEquiv hp).baseChange R R' _ _ :=
     funext fun x => by
       induction x with
-      | zero => simp
-      | add x y hx hy => simpa only [Function.comp_apply, map_add] using congrArg₂ (· + ·) hx hy
+      | add x y hx hy => simpa only [Function.comp_apply, map_add (f := _)] using congrArg₂ (· + ·) hx hy
       | tmul r x =>
         simp only [Function.comp_apply, liftSemi_tmul, map_smul, LinearEquiv.baseChange_tmul,
           SemiHom.extChar_vecExt _ hp]
@@ -306,14 +303,12 @@ theorem liftSemi_rig_bijective (hp : (p : R) = 0)
   have s1 : ∀ y, liftSemi (G.toBase R').rig (G.rigOfOmega.lTensor R' y) =
       (G.baseChange R').rigOfOmega (liftSemi (G.toBase R').omega y) := fun y => by
     induction y with
-    | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul r x => simp [SemiHom.rig_rigOfOmega]
   have s2 : ∀ y, (G.baseChange R').rigToExt (liftSemi (G.toBase R').rig y) =
       liftSemi (G.toBase R').vecExt (G.rigToExt.lTensor R' y) := fun y => by
     induction y with
-    | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul r x => simp [SemiHom.rigToExt_rig]
   refine ⟨(injective_iff_map_eq_zero _).2 fun x hx => ?_, fun z => ?_⟩
   · have k := s2 x

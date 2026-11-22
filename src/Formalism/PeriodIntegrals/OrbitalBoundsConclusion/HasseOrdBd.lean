@@ -1,8 +1,12 @@
-import Formalism.PeriodIntegrals.HasseOrdBd
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HasseOrderBound.Development
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HasseOrderBound.CompositionalInverseSymm
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HasseOrderBound.OrthogonalSplitPolarizationVanishes
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HasseOrderBound.AddPreservesExpCongruence
+module
+
+public import Formalism.PeriodIntegrals.HasseOrdBd
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HasseOrderBound.Development
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HasseOrderBound.CompositionalInverseSymm
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HasseOrderBound.OrthogonalSplitPolarizationVanishes
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HasseOrderBound.AddPreservesExpCongruence
+
+@[expose] public section
 
 theorem hasse_order_bound : PI.HasseOrdBd :=
   PI.HasseOrdBdW.hasseOrdBd_of PI.HasseOrdBdW.compositionalInverseSymm PI.HasseOrdBdW.orthogonalSplitPolarizationVanishes PI.HasseOrdBdW.addPreservesExpCongruence

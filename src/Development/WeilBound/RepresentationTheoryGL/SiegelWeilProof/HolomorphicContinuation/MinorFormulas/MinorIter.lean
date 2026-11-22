@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MinorFormulas.MinorCore
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MinorFormulas.MinorCore
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem opE_det_pow_mul (α : R) (p q : Fin ρ) (k : ℕ) (g : Pm R ρ) :
     opE α p q ((Xm R ρ).det ^ k * g) = (Xm R ρ).det ^ k * opE (α + k) p q g := by
   simp only [opE, LinearMap.add_apply, LinearMap.mulLeft_apply, Derivation.coeFn_coe]
   rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul, del_det_pow]
-  simp only [map_add, map_natCast]
+  simp only [map_add (f := _), map_natCast]
   ring
 
 theorem foldr_det_pow (α : R) (k : ℕ) (σ : Equiv.Perm (Fin ρ)) (L : List (Fin ρ)) (g : Pm R ρ) :
@@ -69,7 +73,7 @@ theorem iter : Iter := by
     have h1 : (C r : Pm R ρ) = C r * 1 := (mul_one _).symm
     rw [hc, mul_comm, detE_det_pow_mul, h1, detE_C_mul, core]
     rw [Finset.prod_range_succ, hc]
-    simp only [map_prod, map_sub, map_add, map_natCast]
+    simp only [map_prod, map_sub, map_add (f := _), map_natCast]
     ring
 
 end PositivityTheory.Rg.Sw.SP.Mi

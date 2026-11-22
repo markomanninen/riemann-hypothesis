@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCMinB
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCMinB
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,7 +23,8 @@ theorem bs_apply (b : Basis ι ℤ Y) (a : ι) (y : Y) : bs b a y = (b.repr y a 
 theorem gram_expand (b : Basis ι ℤ Y) (β : Y →ₗ[ℤ] Y →ₗ[ℤ] ℝ) (v w : Y) :
     ∑ a, ∑ c, β (b a) (b c) * (bs b a v * bs b c w) = β v w := by
   conv_rhs => rw [← b.sum_repr v, ← b.sum_repr w]
-  simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, bs_apply, zsmul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, bs_apply, zsmul_eq_mul,
     Finset.mul_sum]
   conv_rhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun c _ => ?_
@@ -52,7 +57,8 @@ theorem repro_sigma (b : Basis ι ℤ Y) (β : SymB cj Y) (σ : E →+* ℂ) (y 
   have e2 : ∀ c, conj (comp (bs b c) σ z) =
       ∑ j, (bs b c (RingOfIntegers.basis E j • z) : ℂ) * conj (σ (ed E j)) := by
     intro c
-    simp [comp, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [comp, map_sum]
   have expand : ∑ a, ∑ c, ((B (b a) (b c) : ℝ) : ℂ) *
       (comp (bs b a) σ y * conj (comp (bs b c) σ z)) =
       ∑ j, conj (σ (ed E j)) * ∑ i, (B (RingOfIntegers.basis E i • y) (RingOfIntegers.basis E j • z) : ℂ) *
@@ -74,7 +80,8 @@ theorem repro_sigma (b : Basis ι ℤ Y) (β : SymB cj Y) (σ : E →+* ℂ) (y 
   simp only [if_true, integralBasis_apply] at ho
   have : ∑ j, conj (σ (ed E j)) * star (σ (RingOfIntegers.basis E j : E)) = 1 := by
     have := congrArg conj ho
-    simpa [map_sum, map_mul] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, map_mul] using this
   rw [this, one_mul]
 
 theorem fock_reproducing_formula (b : Basis ι ℤ Y) (β : SymB cj Y) (y z : Y) :
@@ -124,7 +131,8 @@ theorem l_expand (b : Basis ι ℤ Y) (l : SymB cj Y →ₗ[ℝ] ℝ) (β : SymB
     simp_rw [div_mul_eq_mul_div, ← Finset.sum_div, this]
     ring
   conv_lhs => rw [hsum]
-  simp only [map_sum, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, smul_eq_mul]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun c _ => ?_
   ring
 

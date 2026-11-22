@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.BrgStdR
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemClosureUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.BrgStdR
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemClosureUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,8 +42,8 @@ theorem bot_or_top (U : Submodule ℂ c.W) (hU : ∀ γ ∈ GQ V, ∀ w ∈ U, c
   rw [map_mul, hc.1 k hk, mul_one]
   exact H
 
-omit hc in
 
+omit hc in
 theorem exists_ratMat (γ : GQ V) : ∃ γE, Bridge.IsRatMat V γ γE := by
   obtain ⟨γ, ⟨g, -, hg⟩⟩ := γ
   exact ⟨g, hg.symm⟩

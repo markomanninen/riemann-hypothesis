@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGenericNoetherNormalisation
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NoetherNormalizationChart
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PseudoDivision
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGenericNoetherNormalisation
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NoetherNormalizationChart
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PseudoDivision
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.GenericNoetherNormalisationCapelliIdentities.proof.{u} :
     GroundTheory.Heights₂.Heights.GenericNoetherNormalisation.Statement.{u} := by
@@ -31,7 +35,7 @@ theorem UpperTheory.Reformulated.B.GenericNoetherNormalisationCapelliIdentities.
   obtain ⟨k, s, r, hk, hr⟩ := UpperTheory.pseudo_division (MvPolynomial (Fin n) A) (e f) p hg
   have h1 : a ^ k • π p = π r := by
     have := congrArg π hk
-    rw [map_add, map_mul π (e f), hπf, zero_mul, zero_add, hlc, map_mul, ← hz, ← map_pow,
+    rw [map_add (f := _), map_mul π (e f), hπf, zero_mul, zero_add, hlc, map_mul, ← hz, ← map_pow,
       MvPolynomial.aeval_C, ← Algebra.smul_def] at this
     exact this
   have h2 : r = ∑ j ∈ Finset.range N, Polynomial.C (r.coeff j) * Polynomial.X ^ j := by
@@ -41,9 +45,11 @@ theorem UpperTheory.Reformulated.B.GenericNoetherNormalisationCapelliIdentities.
     · simpa only [Polynomial.C_mul_X_pow_eq_monomial] using
         Polynomial.as_sum_range' r N ((Polynomial.natDegree_lt_iff_degree_lt hr0).mpr hr)
   refine ⟨k, fun t ↦ ∑ j ∈ Finset.range N with π Polynomial.X ^ j = t, r.coeff j, ?_⟩
-  rw [h1, h2, map_sum, ← Finset.sum_fiberwise_of_maps_to (g := fun j ↦ π Polynomial.X ^ j)
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, h2, map_sum, ← Finset.sum_fiberwise_of_maps_to (g := fun j ↦ π Polynomial.X ^ j)
     (fun j hj ↦ Finset.mem_image_of_mem _ hj), ← h2]
   refine Finset.sum_congr rfl fun t _ ↦ ?_
-  rw [map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun j hj ↦ ?_
   rw [map_mul, map_pow, hz, (Finset.mem_filter.mp hj).2]

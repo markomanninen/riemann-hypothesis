@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.TriDens
-import Formalism.LocalRingCardinality.DataCD
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.OmegaA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.TriDens
+public import Formalism.LocalRingCardinality.DataCD
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.OmegaA
+
+@[expose] public section
 
 noncomputable section
 
@@ -145,7 +149,8 @@ private lemma prod_map_lemma (c : ENNReal) :
         Complex.I • (ab.2 : Matrix (Fin N ⊕ Fin 0) (Fin N ⊕ Fin 0) ℂ))) := by
     rw [← complexifyLieEquiv_coe]
     exact complexifyLieEquiv.continuous.measurable
-  rw [Measure.prod_smul_left, Measure.prod_smul_right, smul_smul, Measure.map_smul,
+  rw [Measure.prod_smul_left, Measure.prod_smul_right, smul_smul,
+    Measure.map_smul (c * c) hp.aemeasurable,
     Measure.map_prod_map _ _ hm hm, Measure.map_map hp (hm.prodMap hm)]
   congr 2
 

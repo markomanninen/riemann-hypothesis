@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ArtSch
-import GroundTheory.PAdicHodge.PerfectoidField
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ArtSch
+public import GroundTheory.PAdicHodge.PerfectoidField
+
+@[expose] public section
 
 namespace PI.ASDivW
 
@@ -89,7 +93,7 @@ private theorem complete_of_eq {K : Type*} [NormedField K] [IsUltrametricDist K]
   exact GroundTheory.PAdicHodge.isAdicComplete_span_singleton ha
 
 private theorem norm_eq_val (l : ℕ) [Fact l.Prime] (x : PadicComplex l) : ‖x‖ = (((PadicComplex.valued l).v x : NNReal) : ℝ) := by
-  rw [PadicComplex.norm_eq_norm, Valuation.norm_def, PadicComplex.RankOne.hom_eq_embedding, Valuation.embedding_restrict]
+  rw [PadicComplex.norm_eq_norm, Valuation.norm_def, (show Valuation.RankLeOne.hom' Valued.v = MonoidWithZeroHom.ValueGroup₀.embedding from rfl), Valuation.embedding_restrict]
 
 private theorem complete_OC (l : ℕ) [Fact l.Prime] : IsAdicComplete (Ideal.span {((l : ℕ) : OC l)}) (OC l) := by
   refine complete_of_eq (PadicComplexInt l).toSubring ?_ ((l : ℕ) : OC l) ?_

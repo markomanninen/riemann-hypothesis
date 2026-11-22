@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.HaarUniqInf
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.HaarUniqInf
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,10 +48,17 @@ theorem muH_preimage (μ : Measure (Hsub (Ainf X.B.I.F) X.B.I.cm.sig X.B.I.J (fr
     (S : Set (Hsub (Ainf X.B.I.F) X.B.I.cm.sig X.B.I.J (frameOf X u'))) (hS : MeasurableSet S) :
     μ ((fun h => h0 * h) ⁻¹' S) = μ S := by
   have hm : μ.map (fun h => h0 * h) = μ := map_mul_left_eq_self μ h0
-  have ha : AEMeasurable (fun h => h0 * h) μ := by
-    by_contra hc
-    rw [Measure.map_of_not_aemeasurable hc] at hm
-    exact hne hm.symm
+  haveI : IsModuleTopology (Ainf X.B.I.F) (Ainf X.B.I.F ⊗[X.B.I.F] X.B.I.E) := ⟨rfl⟩
+  haveI : IsTopologicalRing (Ainf X.B.I.F ⊗[X.B.I.F] X.B.I.E) :=
+    IsModuleTopology.isTopologicalRing (Ainf X.B.I.F) _
+  haveI : IsTopologicalGroup (GI X) := by
+    have h {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
+        (S : Subgroup G) : IsTopologicalGroup S := inferInstance
+    exact h (HR (Ainf X.B.I.F) X.B.I.cm.sig X.B.I.J)
+  haveI : BorelSpace (GI X) := ⟨rfl⟩
+  haveI : BorelSpace (Hsub (Ainf X.B.I.F) X.B.I.cm.sig X.B.I.J (frameOf X u')) := inferInstance
+  have ha : AEMeasurable (fun h => h0 * h) μ :=
+    (measurable_const_mul h0).aemeasurable
   rw [← Measure.map_apply_of_aemeasurable ha hS, hm]
 
 end PI.AprimeInfW

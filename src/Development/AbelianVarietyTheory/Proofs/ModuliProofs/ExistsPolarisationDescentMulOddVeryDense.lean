@@ -1,14 +1,18 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasisBaseChange
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsBasicOpenKTrivOfFibre
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsDescended
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasisBaseChange
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsBasicOpenKTrivOfFibre
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsDescended
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,8 +78,8 @@ theorem kTriv_of_locally {S : Scheme.{0}} {A : Over S} [GrpObj A] {L : LB A.left
   obtain ⟨S', f, h₁, h₂, ⟨s, hs⟩, hK⟩ := H (t p)
   have : IsAffine (pullback t f) := isAffine_of_isAffineHom (pullback.fst t f)
   let g := (pullback t f).isoSpec.inv ≫ pullback.fst t f
-  have e := comp_eq_one_of_kTriv_pull (isGrpPullback_pullback A f) hL (pull_isLB hL _)
-    (PolBaseChange.lbIso_refl (pull_isLB hL _)) hK t x hx g ((pullback t f).isoSpec.inv ≫ pullback.snd t f)
+  have e := comp_eq_one_of_kTriv_pull (isGrpPullback_pullback A f) hL (LB.isLB_pull hL _)
+    (PolBaseChange.lbIso_refl (LB.isLB_pull hL _)) hK t x hx g ((pullback t f).isoSpec.inv ≫ pullback.snd t f)
     (by rw [Category.assoc, Category.assoc, pullback.condition])
   have e' : pullback.fst t f ≫ x.left = pullback.fst t f ≫ (1 : Over.mk t ⟶ A).left := by
     rw [← cancel_epi (pullback t f).isoSpec.inv, ← Category.assoc, ← Category.assoc]
@@ -117,7 +121,7 @@ theorem exists_polarisation_of_veryDense : Out.Laws → Out.Laws2 → ∀ (R : T
     (fun h => hs.ne_top ((Ideal.eq_top_iff_one _).2 h))
   obtain ⟨K, _, _, x, Pl, φ, hker, hφ, hw⟩ := hfib p hp
   obtain ⟨f, hf, H⟩ := GlobalTheory.KTrivSpread.exists_kTriv_of_isUnit R A L K x Pl.A φ hA hL hLa hφ
-    (kTriv_of_lbIso Pl.isLB (pull_isLB hL _) (hiso K x Pl φ hφ hw) Pl.ktriv)
+    (kTriv_of_lbIso Pl.isLB (LB.isLB_pull hL _) (hiso K x Pl φ hφ hw) Pl.ktriv)
   have hfs : f ∉ (s : PrimeSpectrum R).asIdeal := fun h => hf (by
     have := hle h
     rwa [← hker, RingHom.mem_ker] at this)

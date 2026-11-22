@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerFlagSplitting.SubFlag
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerFlagSplitting.SubFlag
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+
+@[expose] public section
 
 open Matrix Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.C2 Formalism.QuantumDeterminants.GBasic
 
@@ -152,11 +156,6 @@ lemma herm_add_right {m : ℕ} (H : Matrix (Fin m) (Fin m) ℂ) (v a b : Fin m �
     herm H v (a + b) = herm H v a + herm H v b := by
   unfold herm
   rw [star_add, add_dotProduct]
-
-lemma herm_sub_left {m : ℕ} (H : Matrix (Fin m) (Fin m) ℂ) (a b w : Fin m → ℂ) :
-    herm H (a - b) w = herm H a w - herm H b w := by
-  unfold herm
-  rw [Matrix.mulVec_sub, dotProduct_sub]
 
 lemma herm_inv {m : ℕ} {H g : Matrix (Fin m) (Fin m) ℂ} (hg : gᴴ * H * g = H) (v w : Fin m → ℂ) :
     herm H (g *ᵥ v) (g *ᵥ w) = herm H v w := by
@@ -340,7 +339,7 @@ theorem unipotent_nilpotent_radical : UnipN := by
   have hzp : perpX k r z := fun i hi => hz i (Or.inr hi)
   have row_out : ∀ i j, (i.val < r ∨ r + k < i.val) → (u * m) i j = m i j := by
     intro i j hi
-    rw [mul_apply, Finset.sum_eq_single i]
+    rw [Matrix.mul_apply, Finset.sum_eq_single i]
     · rw [hb.2 i i hi, if_pos rfl, one_mul]
     · intro l _ hl; rw [hb.2 i l hi, if_neg (Ne.symm hl), zero_mul]
     · intro h; exact absurd (Finset.mem_univ _) h
@@ -350,7 +349,7 @@ theorem unipotent_nilpotent_radical : UnipN := by
     by_cases hi : i.val < r ∨ r + k < i.val
     · rw [row_out i j hi]; exact hmc i j (by omega) (Or.inl hij)
     · have hne : i ≠ j := by intro h; subst h; omega
-      rw [if_neg hne, mul_apply]
+      rw [if_neg hne, Matrix.mul_apply]
       refine Finset.sum_eq_zero (fun l _ => ?_)
       by_cases hl : l.val < r ∨ r + k < l.val
       · rw [hb.1 i l hl, if_neg (by intro h; subst h; omega), zero_mul]

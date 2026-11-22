@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HilbertSchmidt
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HilbertSchmidt
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -12,8 +16,8 @@ variable {𝕜 : Type*} [RCLike 𝕜]
   {H : Type*} [NormedAddCommGroup H] [InnerProductSpace 𝕜 H] [CompleteSpace H]
   {K : Type*} [NormedAddCommGroup K] [InnerProductSpace 𝕜 K] [CompleteSpace K]
 
-omit [CompleteSpace H] [CompleteSpace K] in
 
+omit [CompleteSpace H] [CompleteSpace K] in
 theorem isCompactOperator_innerSL_smulRight (e : H) (y : K) :
     IsCompactOperator ((innerSL 𝕜 e).smulRight y) := by
   refine ⟨(fun c : 𝕜 => c • y) '' Metric.closedBall 0 ‖e‖,
@@ -51,14 +55,15 @@ theorem sub_hsTruncation_apply_basis {ι : Type*} [DecidableEq ι] (b : HilbertB
     innerSL_apply_apply, hb, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq']
   split_ifs <;> simp
 
-omit [CompleteSpace K] in
 
+omit [CompleteSpace K] in
 theorem hsNormSq_sub_hsTruncation (T : H →L[𝕜] K) (F : Finset (exists_hilbertBasis 𝕜 H).choose) :
-    hsNormSq (T - hsTruncation (stdHilbertBasis 𝕜 H) T F) =
-      ∑' i : {i // i ∉ F}, ‖T (stdHilbertBasis 𝕜 H i)‖ₑ ^ 2 := by
+    hsNormSq (T - hsTruncation (stdHilbertBasis (𝕜 := 𝕜) (H := H)) T F) =
+      ∑' i : {i // i ∉ F}, ‖T (stdHilbertBasis (𝕜 := 𝕜) (H := H) i)‖ₑ ^ 2 := by
   classical
   rw [hsNormSq]
-  refine Eq.trans ?_ (tsum_subtype ({i | i ∉ F} : Set _) (fun i => ‖T (stdHilbertBasis 𝕜 H i)‖ₑ ^ 2)).symm
+  refine Eq.trans ?_ (tsum_subtype {i | i ∉ F}
+    (fun i => ‖T (stdHilbertBasis (𝕜 := 𝕜) (H := H) i)‖ₑ ^ 2)).symm
   refine tsum_congr fun j => ?_
   rw [sub_hsTruncation_apply_basis]
   by_cases hj : j ∈ F
@@ -67,7 +72,7 @@ theorem hsNormSq_sub_hsTruncation (T : H →L[𝕜] K) (F : Finset (exists_hilbe
 
 theorem IsHilbertSchmidt.isCompactOperator {T : H →L[𝕜] K} (hT : IsHilbertSchmidt T) :
     IsCompactOperator T := by
-  set b := stdHilbertBasis 𝕜 H
+  set b := stdHilbertBasis (𝕜 := 𝕜) (H := H)
   have htail : Tendsto (fun F : Finset (exists_hilbertBasis 𝕜 H).choose =>
       hsNormSq (T - hsTruncation b T F)) atTop (𝓝 0) := by
     simp only [b, hsNormSq_sub_hsTruncation]
@@ -75,7 +80,7 @@ theorem IsHilbertSchmidt.isCompactOperator {T : H →L[𝕜] K} (hT : IsHilbertS
   have hHS : ∀ F, IsHilbertSchmidt (T - hsTruncation b T F) := fun F => by
     refine lt_of_le_of_lt ?_ hT
     rw [hsNormSq_sub_hsTruncation, hsNormSq]
-    exact ENNReal.tsum_comp_le_tsum_of_injective Subtype.val_injective _
+    exact tsum_comp_le_tsum_of_injective Subtype.val_injective (fun i => ‖T (b i)‖ₑ ^ 2)
   have hnorm : Tendsto (fun F => hsNorm (T - hsTruncation b T F)) atTop (𝓝 0) := by
     have h1 := (ENNReal.tendsto_toReal ENNReal.zero_ne_top).comp htail
     have h2 := (Real.continuous_sqrt.tendsto _).comp h1

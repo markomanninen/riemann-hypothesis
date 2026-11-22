@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CubWeilOfInjective
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.AlphaPMultiplicativeCharacterEqOneStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CubWeilOfInjective
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.AlphaPMultiplicativeCharacterEqOneStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -115,7 +120,7 @@ theorem le_gaussNormOf_mul (hna : IsNonarchimedean w) {f g : MvPolynomial ι R} 
     rw [coeff_mul]
     have hk : (i, j) ∈ Finset.HasAntidiagonal.antidiagonal (i + j) :=
       Finset.HasAntidiagonal.mem_antidiagonal.mpr rfl
-    rw [hna.apply_sum_eq_of_lt (fun a => (w.map_neg a).symm) hk ?_, map_mul, hi', hj']
+    rw [hna.apply_sum_eq_of_lt _ (fun a => w.map_neg a) hk ?_, map_mul, hi', hj']
     intro p hp hne
     rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
     rw [map_mul, map_mul, hi', hj']
@@ -216,8 +221,6 @@ theorem log_gaussNorm_support_finite {ι : Type*} {f : MvPolynomial ι K} (hf : 
   rw [h1, Real.log_one]
 
 end NumberField
-
-theorem gaussLemma : GaussLemma.Statement := fun _K _ _ v _ι f g => gaussNorm_mul v f g
 
 end
 

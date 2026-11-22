@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RevPosRevPos
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExtremalVectorAnnihilated
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RevPosRevPos
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExtremalVectorAnnihilated
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.FWT Formalism.L2.Pj
 open MeasureTheory IsDedekindDomain NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Ker GlobalTheory.AdSpan
@@ -80,18 +85,98 @@ end GlobalTheory.ExtFock
 
 namespace GlobalTheory.ExtFock
 
-set_option maxHeartbeats 4000000 in
 
+open GlobalTheory.HolRead.ExtKill in
+set_option maxHeartbeats 4000000 in
 theorem ext_values : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T0 : Type) (A : Formalism.L2.DIV.FamIn D.what₂.LL G Pl0 T0 D.R.m) (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks), R.IsModels → R.IsThP → ∀ (i : Fin D.R.m) (t : T0) (u : ∀ ρ, lowT (R.MW i (sg0 D A)) ρ) (w : (R.cV i).W) (p : ℕ), (∀ τ, ((Wc D i).sig (tauE D τ)).1 = p) → p ≤ (Wc D i).rank → IsExtVec (R.MW i (sg0 D A)) (fun ρ => u ρ) → ∀ T ∈ R.Wall i (sg0 D A), LowKilled R.θ (Wc D i) (revB p (onb (R.MW i (sg0 D A)))) (T fun ρ => u ρ) ∧ ∀ (ρ : D.what₂.Tau) (s : Fin (Wc D i).rank → ℝ), ∃ l : ℂ, R.ωP i t (1, torAt R.θ (Wc D i) (revB p (onb (R.MW i (sg0 D A)))) ρ s) (R.ptP i t (R.ioP i (PiTensorProduct.tprod ℂ u) w)) = l • R.ptP i t (R.ioP i (PiTensorProduct.tprod ℂ u) w) ∧ ∀ g, T (fun ρ => u ρ) (g * torAt R.θ (Wc D i) (revB p (onb (R.MW i (sg0 D A)))) ρ s) = l * T (fun ρ => u ρ) g := by
   intro D G _ _ Pl0 T0 A Ks _ _ _ R hM hP i t u w p hp hpn hext T hT
   have hTm := (GlobalTheory.MultMem.mem_mult_iff _ _ _ _ _ _ _ _).1 hT
-  have hθ : IsInfFam R.θ := hM.inf
   have hεd : ∀ ρ, (R.MW i (sg0 D A)).ε ρ = fun a : Fin (Wc D i).rank => decide ((a : ℕ) < p) := by
     intro ρ; funext a; rw [hM.order i ρ a, hp ρ]
   have hε : ∀ ρ (a : Fin (Wc D i).rank), (R.MW i (sg0 D A)).ε ρ a = if (a : ℕ) < p then true else !true := by
     intro ρ a; rw [hεd ρ]; by_cases h : (a : ℕ) < p <;> simp [h]
-  have KW := fun ρ => GlobalTheory.HolRead.ExtKill.kill_and_weight D R.θ (Wc D i) _ (R.MW i (sg0 D A)) _ _ T hθ hTm
-    (fun ρ => (u ρ : (R.MW i (sg0 D A)).sm ρ)) hext ρ p true (hε ρ)
+  let V := Wc D i
+  let M := R.MW i (sg0 D A)
+  let v : M.Vec := fun ρ => u ρ
+  have KW (ρ : D.what₂.Tau) :
+      (∀ a b, GlobalTheory.HolRead.KillPair (M.ε ρ) a b →
+        RderC R.θ V ρ ((M.fr ρ)⁻¹ * Matrix.single a b 1 * M.fr ρ) (T v) = 0) ∧
+      ∀ (s : Fin V.rank → ℝ) (g : GA D V),
+        T v (g * atTau R.θ V ρ ((M.fr ρ)⁻¹ *
+          Matrix.diagonal (fun a => Complex.exp ((s a : ℂ) * Complex.I)) * M.fr ρ)) =
+        Complex.exp (((∑ a, extWt M ρ a * s a : ℝ) : ℂ) * Complex.I) * T v g := by
+    have hFrame := M.fr_unit ρ
+    have hGram := M.fr_gram ρ
+    obtain ⟨-, hlow, hwt⟩ := hext ρ
+    have hlow' : (v ρ : M.H ρ) ∈ Formalism.MainNotions.S.lowKSub (M.ε ρ) (M.lam ρ) (M.σ ρ) := hlow
+    refine ⟨fun a b hab => ?_, fun s g => ?_⟩
+    · have hs := GlobalTheory.HolRead.MultDer.smoothVec_of_mem M ρ (v ρ).2
+      have hd (X : Matrix (Fin V.rank) (Fin V.rank) ℂ) (hX : X ∈ lieAt V ρ) :
+          ∃ z : M.sm ρ, (z : M.H ρ) = dRep (M.rep ρ) X (v ρ : M.H ρ) ∧
+            Rder R.θ V ρ X (T v) = T (Function.update v ρ z) := by
+        have hH := GlobalTheory.SmoothAutCheck.gramAt_herm V ρ
+        have hU := GlobalTheory.SmoothAutCheck.gramAt_unit V ρ
+        have hRep := (GlobalTheory.HolDict.ModelRep.model_rep D V _ M ρ).2.1
+        obtain ⟨hOrbit, -, hDeriv⟩ :=
+          GlobalTheory.T.smoothVectors_unitaryRep_stable_conj_skewAdjoint _ _ _ _ hH hU hRep _ hs
+        refine ⟨⟨_, Submodule.subset_span (hDeriv X hX).1⟩, rfl, ?_⟩
+        funext x
+        obtain ⟨ℓ, hℓ, hℓT⟩ := hTm.cont ρ v x
+        have hDerivAt :=
+          GlobalTheory.T.hasDerivAt_sobolevContinuous_orbit _ _ _ _ hH hU hRep _ hs ℓ hℓ X hX
+        rw [← hℓT]
+        have e : (fun t : ℝ => T v (x * oneP R.θ V ρ X t)) =
+            fun t : ℝ => ℓ (M.rep ρ (NormedSpace.exp (t • X)) (v ρ : M.H ρ)) := by
+          funext t
+          have hg := GlobalTheory.SmoothAutCheck.exp_mem_UH hU hX t
+          let z : M.sm ρ := ⟨_, Submodule.subset_span (hOrbit _ hg)⟩
+          have hEquiv := congrFun (hTm.equiv ρ _ hg v z rfl) x
+          exact ((hℓT z).trans hEquiv).symm
+        show deriv (fun t : ℝ => T v (x * oneP R.θ V ρ X t)) 0 = _
+        rw [e]
+        exact hDerivAt.deriv
+      have hs' := smoothVec_conj (σ := M.σ ρ) hFrame hGram hs
+      set Z := (M.fr ρ)⁻¹ * Matrix.single a b 1 * M.fr ρ with hZ
+      obtain ⟨hX, hY⟩ := GlobalTheory.SmoothAutCheck.parts_mem V ρ Z
+      have hXY := GlobalTheory.SmoothAutCheck.parts_sum V ρ Z
+      unfold RderC
+      generalize (1 / 2 : ℂ) • (Z + conjAt V ρ Z) = X at hX hXY ⊢
+      generalize (1 / (2 * Complex.I)) • (Z - conjAt V ρ Z) = Y at hY hXY ⊢
+      obtain ⟨z, hz, ez⟩ := hd X hX
+      obtain ⟨z', hz', ez'⟩ := hd Y hY
+      have hX' := lie_conj hFrame hGram hX
+      have hY' := lie_conj hFrame hGram hY
+      have hE : M.fr ρ * X * (M.fr ρ)⁻¹ + Complex.I • (M.fr ρ * Y * (M.fr ρ)⁻¹) =
+          Matrix.single a b 1 := by
+        rw [← conj_cancel hFrame (Matrix.single a b 1), ← hZ, ← hXY]
+        simp only [Matrix.mul_add, Matrix.add_mul, Matrix.mul_smul, Matrix.smul_mul]
+      have key : dRep (M.σ ρ) (M.fr ρ * X * (M.fr ρ)⁻¹) (v ρ : M.H ρ) +
+          Complex.I • dRep (M.σ ρ) (M.fr ρ * Y * (M.fr ρ)⁻¹) (v ρ : M.H ρ) = 0 := by
+        rcases hab with h | h | h
+        · exact GlobalTheory.T.extremal_lowestKType_killed_compact_roots _ _ _ _ _
+            (M.ds ρ).2.2.1 _ hlow' hs' hwt a b (Or.inl h) _ hX' _ hY' hE
+        · exact GlobalTheory.T.extremal_lowestKType_killed_compact_roots _ _ _ _ _
+            (M.ds ρ).2.2.1 _ hlow' hs' hwt a b (Or.inr h) _ hX' _ hY' hE
+        · exact GlobalTheory.T.lowestKType_killed_by_negative_noncompact_roots _ _ _ _ _ p true
+            (hε ρ) (M.enum ρ).1 (M.ds ρ) _ hlow' hs' a b h.1 h.2 _ hX' _ hY' hE
+      have h0 : z + Complex.I • z' = 0 := by
+        apply Subtype.ext
+        show (z : M.H ρ) + Complex.I • (z' : M.H ρ) = 0
+        rw [hz, hz', ← key, ← dRep_conj hFrame, ← dRep_conj hFrame]
+        rfl
+      have hSmul : T (Function.update v ρ (Complex.I • z')) =
+          Complex.I • T (Function.update v ρ z') := by
+        simpa only [RingHom.id_apply] using T.map_update_smul v ρ Complex.I z'
+      rw [ez, ez', ← hSmul, ← T.map_update_add v ρ z (Complex.I • z'), h0, T.map_update_zero]
+    · have hK := Formalism.IndefR.FWT.diag_mem (ε := M.ε ρ) s
+      have hg := GlobalTheory.HolDict.ModelRep.conj_mem_inv hFrame hGram (kset_uj hK)
+      have h := hTm.equiv ρ _ hg v
+        (Complex.exp (((∑ a, extWt M ρ a * s a : ℝ) : ℂ) * Complex.I) • v ρ) (by
+          unfold DSModel.rep
+          rw [conj_cancel hFrame, hwt s hK]
+          rfl)
+      rw [T.map_update_smul, Function.update_eq_self] at h
+      exact (congrFun h g).symm
   have hπ : ∀ a : Fin (Wc D i).rank, revPos p (revPos p a) = a := revPos_revPos p
   have hinv : ∀ ρ, ((onb (R.MW i (sg0 D A)) ρ))⁻¹ = (R.MW i (sg0 D A)).fr ρ := fun ρ =>
     Matrix.nonsing_inv_nonsing_inv _ ((Matrix.isUnit_iff_isUnit_det _).1 ((R.MW i (sg0 D A)).fr_unit ρ))

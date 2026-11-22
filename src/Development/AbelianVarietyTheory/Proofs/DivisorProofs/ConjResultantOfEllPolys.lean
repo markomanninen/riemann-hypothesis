@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -14,7 +19,7 @@ theorem prod_product_mul (A B : Multiset ℂ) (f g : ℂ → ℂ) :
   induction A using Multiset.induction_on with
   | empty => simp
   | cons a A ih =>
-    rw [Multiset.cons_product, Multiset.map_add, Multiset.prod_add, ih, Multiset.map_map]
+    rw [Multiset.cons_product, Multiset.map_add (f := _), Multiset.prod_add, ih, Multiset.map_map]
     simp only [Function.comp_def, Multiset.prod_map_mul, Multiset.map_const', Multiset.prod_replicate,
       Multiset.map_cons, Multiset.prod_cons, Multiset.card_cons, mul_pow, pow_succ]
     ring

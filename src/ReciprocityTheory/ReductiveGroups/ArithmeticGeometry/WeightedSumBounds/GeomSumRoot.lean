@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.CardToMultisetEqDegree
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.CardToMultisetEqDegree
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.Sh.PTb
 
@@ -48,7 +52,8 @@ theorem exists_average (G : LogFGL v d) {p : ℕ} (hp : p.Prime) {ζ : C}
   have hlgε : ∀ c m, PowerSeries.coeff m (G.lgCurve ε c) =
       if p ∣ m then (p : C) * PowerSeries.coeff m (G.lgCurve ga c) else 0 := by
     intro c m
-    rw [hεdef, lgCurve_sumF G g hg c, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hεdef, lgCurve_sumF G g hg c, map_sum]
     simp only [hgdef, lgCurve_rescale G _ h0, PowerSeries.coeff_rescale]
     rw [← Finset.sum_mul, hsum m]
     split_ifs <;> simp

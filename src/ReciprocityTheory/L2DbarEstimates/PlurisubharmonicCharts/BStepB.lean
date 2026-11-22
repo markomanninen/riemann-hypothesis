@@ -1,6 +1,10 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.BStepA
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.TsupportDbSubset
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.CommFderivApply
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.BStepA
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.TsupportDbSubset
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.CommFderivApply
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 

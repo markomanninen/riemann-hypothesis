@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -41,7 +45,7 @@ theorem fg_localizationAway_span_finset
       obtain ⟨m2, z2, hz2, h2⟩ := hy
       refine ⟨m1 + m2, g ^ m2 • z1 + g ^ m1 • z2,
         add_mem (smul_mem _ _ hz1) (smul_mem _ _ hz2), ?_⟩
-      rw [map_add, hA, hA, h1, h2, map_pow, map_pow]
+      rw [map_add (f := _), hA, hA, h1, h2, map_pow, map_pow]
       ring
     | smul r' x _ hx =>
       obtain ⟨m, z, hz, h⟩ := hx

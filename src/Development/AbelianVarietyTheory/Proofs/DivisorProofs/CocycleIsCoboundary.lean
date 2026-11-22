@@ -1,8 +1,13 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsCharZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsCharZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct WithConv
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Sp spMap epsR IsTangent IsGrpPullback)
 open ReciprocityTheory.ChartRestriction.G.Semi (IsAbelianScheme LB RigLB CubicalStr Theta thφ thε thK x3)
@@ -43,7 +48,7 @@ theorem cocycle_is_coboundary : ∀ (D D' : Type) [CommRing D] [CommRing D'] [Al
     | tmul x b =>
       simp [i1, i2, i3, amitsur_d0_apply, Algebra.TensorProduct.tmul_mul_tmul, TensorProduct.tmul_sub]
     | add x y hx hy =>
-      rw [map_add, map_add, map_add, ← hx, ← hy]; abel
+      rw [map_add (f := _), map_add (f := _), map_add (f := _), ← hx, ← hy]; abel
   have k2 : ∀ x : D' ⊗[D] D',
       Algebra.TensorProduct.lift i2 i3 (fun _ _ ↦ Commute.all _ _) x = (1 : D') ⊗ₜ[D] x := by
     intro x
@@ -52,7 +57,7 @@ theorem cocycle_is_coboundary : ∀ (D D' : Type) [CommRing D] [CommRing D'] [Al
     | tmul x b =>
       simp [i2, i3, Algebra.TensorProduct.tmul_mul_tmul]
     | add x y hx hy =>
-      rw [map_add, hx, hy, TensorProduct.tmul_add]
+      rw [map_add (f := _), hx, hy, TensorProduct.tmul_add]
   have key : (1 : D') ⊗ₜ[D] c = LinearMap.lTensor D' (d0 D D') c := by
     rw [← k1, ← k2, h]; abel
   let q := (LinearMap.range (d0 D D')).mkQ

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsCan
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HkRelFrOfTransportIff
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUniqueTangentLift
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.BijectiveRestrictPointsOfEtaleOfHenselian
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsCan
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HkRelFrOfTransportIff
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUniqueTangentLift
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.BijectiveRestrictPointsOfEtaleOfHenselian
+
+@[expose] public section
 
 set_option autoImplicit false
 

@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveStructureSheafDegTwoVanish
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianUnobstructed
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveStructureSheafDegTwoVanish
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianUnobstructed
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential MonoidalCategory CartesianMonoidalCategory MonObj
 open scoped TensorProduct
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.LiftSys GlobalTheory.Obs
@@ -19,7 +24,7 @@ theorem sig_natural : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀] (I : Idea
       rw [hσ r b]
       simp only [extHom, Algebra.TensorProduct.map_tmul, AlgHom.id_apply]
       rw [← hρ b, hσ' r (ρ b), map_smul]
-    | add x z hx hz => simp only [map_add, hx, hz]
+    | add x z hx hz => simp only [map_add (f := _), hx, hz]
   · have key : ∀ y : R₁ ⊗[R₀] B₀,
         Algebra.TensorProduct.map α.q (AlgHom.id R₀ B₀') (extHom R₁ φ y) =
           Algebra.TensorProduct.map (AlgHom.id R₀ R₀) φ (Algebra.TensorProduct.map α.q (AlgHom.id R₀ B₀) y) := by
@@ -27,7 +32,7 @@ theorem sig_natural : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀] (I : Idea
       induction y using TensorProduct.induction_on with
       | zero => simp
       | tmul r b₀ => simp [extHom]
-      | add x z hx hz => simp only [map_add, hx, hz]
+      | add x z hx hz => simp only [map_add (f := _), hx, hz]
     unfold Aug.KerQ at hy ⊢
     rw [key, hy, map_zero]
 

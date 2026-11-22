@@ -1,5 +1,9 @@
-import Formalism.GaussValuationBounds.Statement
-import Formalism.WindowSums.PowerSeriesRelationList
+module
+
+public import Formalism.GaussValuationBounds.Statement
+public import Formalism.WindowSums.PowerSeriesRelationList
+
+@[expose] public section
 
 namespace Formalism.NOK
 

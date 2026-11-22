@@ -1,19 +1,23 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ThetaQuasiPeriods.Transl
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EqZeroOfSemicharacterMultiplier
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsUnitOfLagrangian
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsUniquePointOfRingHom
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsTestFunctionsSubsetOfMemNhds
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsEtaleCoordsVanishing
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.LevelThreeSeparatesPoints
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.FderivEqZeroOfAffine
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.PolarisedTorusAlgebraicOfParts
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ThetaQuasiPeriods.Transl
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EqZeroOfSemicharacterMultiplier
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsUnitOfLagrangian
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsUniquePointOfRingHom
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsTestFunctionsSubsetOfMemNhds
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsEtaleCoordsVanishing
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.LevelThreeSeparatesPoints
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.FderivEqZeroOfAffine
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.PolarisedTorusAlgebraicOfParts
+
+@[expose] public section
 
 noncomputable section
 
@@ -106,7 +110,7 @@ def reparam (ψ : (Fin g → ℂ) ≃ₗ[ℂ] (Fin g → ℂ)) (q : (Fin g → �
     (Λ : Submodule ℤ (Fin g → ℂ)) (hd : DiscreteTopology Λ) (hf : Submodule.span ℝ (Λ : Set (Fin g → ℂ)) = ⊤)
     (hΛ : ∀ z, ψ z ∈ u.Λ ↔ z ∈ Λ) : HolUnif A L g where
   ex z := u.ex (ψ z)
-  ex_add z w := by rw [map_add, u.ex_add]
+  ex_add z w := by rw [map_add (f := _), u.ex_add]
   ex_onto := u.ex_onto.comp ψ.surjective
   Λ := Λ
   ker z := (u.ker _).trans (hΛ z)
@@ -316,7 +320,7 @@ theorem torus_algebraic_of_siegel :
   have h2 := autFactor_mul_exp hY hYτ (n l) (m l) (φ.symm z) (φ.symm l) (hmn l)
   change u.fr i (φ.symm z) * cexp (-SiegelNormalForm.quad (Y.map (↑)) 0 (φ.symm z)) =
     _ * (u.fr i (φ.symm (z + l)) * cexp (-SiegelNormalForm.quad (Y.map (↑)) 0 (φ.symm (z + l))))
-  rw [hform', hform', map_add, h1]
+  rw [hform', hform', map_add (f := _), h1]
   linear_combination u.fr i (φ.symm z + φ.symm l) * h2
 
 end GlobalTheory.TorusTransfer

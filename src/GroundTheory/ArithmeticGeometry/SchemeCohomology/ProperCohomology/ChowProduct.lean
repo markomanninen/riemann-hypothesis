@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.TwistingSheaf
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.TwistingSheafCore
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.TwistingSheaf
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.TwistingSheafCore
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -25,7 +30,7 @@ lemma bijective_algebraMap_gradeZero (n : ℕ) :
       MvPolynomial.algebraMap_eq] at h'
     exact MvPolynomial.C_injective _ _ h'
   · rintro ⟨p, hp⟩
-    refine ⟨coeff 0 p, Subtype.ext ?_⟩
+    refine ⟨AddMonoidAlgebra.coeff p 0, Subtype.ext ?_⟩
     rw [SetLike.GradeZero.coe_algebraMap, MvPolynomial.algebraMap_eq]
     by_cases h0 : p = 0
     · subst h0
@@ -67,7 +72,6 @@ def pr : (k : ℕ) → (n : Fin (k + 1) → ℕ) → (i : Fin (k + 1)) →
       (pullback.fst (toSpecBase A (n 0)) (mpStr A k (Fin.tail n)))
       (fun j => pullback.snd (toSpecBase A (n 0)) (mpStr A k (Fin.tail n)) ≫ pr k (Fin.tail n) j) i
 
-@[reassoc]
 lemma pr_toSpecBase : (k : ℕ) → (n : Fin (k + 1) → ℕ) → (i : Fin (k + 1)) →
     pr A k n i ≫ toSpecBase A (n i) = mpStr A k n
   | 0, n, i => by
@@ -85,9 +89,6 @@ lemma pr_toSpecBase : (k : ℕ) → (n : Fin (k + 1) → ℕ) → (i : Fin (k + 
 variable {A}
 
 @[simp] lemma pr_zero_zero (n : Fin 1 → ℕ) : pr A 0 n 0 = 𝟙 _ := rfl
-
-@[simp] lemma pr_succ_zero (k : ℕ) (n : Fin (k + 2) → ℕ) :
-    pr A (k + 1) n 0 = pullback.fst (toSpecBase A (n 0)) (mpStr A k (Fin.tail n)) := rfl
 
 @[simp] lemma pr_succ_succ (k : ℕ) (n : Fin (k + 2) → ℕ) (j : Fin (k + 1)) :
     pr A (k + 1) n j.succ =
@@ -108,13 +109,11 @@ def lift (k : ℕ) (n : Fin (k + 1) → ℕ) {T : Scheme.{u}} (t : T ⟶ Spec (.
     T ⟶ MP A k n :=
   (liftAux k n t a ha).1
 
-@[reassoc (attr := simp)]
 lemma lift_mpStr (k : ℕ) (n : Fin (k + 1) → ℕ) {T : Scheme.{u}} (t : T ⟶ Spec (.of A))
     (a : ∀ i, T ⟶ projectiveSpace A (n i)) (ha : ∀ i, a i ≫ toSpecBase A (n i) = t) :
     lift k n t a ha ≫ mpStr A k n = t :=
   (liftAux k n t a ha).2
 
-@[reassoc (attr := simp)]
 lemma lift_pr : (k : ℕ) → (n : Fin (k + 1) → ℕ) → {T : Scheme.{u}} → (t : T ⟶ Spec (.of A)) →
     (a : ∀ i, T ⟶ projectiveSpace A (n i)) → (ha : ∀ i, a i ≫ toSpecBase A (n i) = t) →
     (i : Fin (k + 1)) → lift k n t a ha ≫ pr A k n i = a i
@@ -132,18 +131,19 @@ lemma lift_pr : (k : ℕ) → (n : Fin (k + 1) → ℕ) → {T : Scheme.{u}} →
       exact lift_pr k (Fin.tail n) t _ _ j
 
 lemma hom_ext : (k : ℕ) → (n : Fin (k + 1) → ℕ) → {T : Scheme.{u}} → (f g : T ⟶ MP A k n) →
-    (∀ i, f ≫ pr A k n i = g ≫ pr A k n i) → f = g
-  | 0, n, _, f, g, h => by
-    have := h 0
-    rw [pr_zero_zero] at this
-    exact (Category.comp_id f).symm.trans (this.trans (Category.comp_id g))
-  | k + 1, n, _, f, g, h => by
+    (∀ i, f ≫ pr A k n i = g ≫ pr A k n i) → f = g := by
+  intro k
+  induction k with
+  | zero =>
+    intro n T f g h
+    have h₀ : f ≫ 𝟙 (MP A 0 n) = g ≫ 𝟙 (MP A 0 n) := h 0
+    exact (Category.comp_id f).symm.trans (h₀.trans (Category.comp_id g))
+  | succ k ih =>
+    intro n T f g h
     apply pullback.hom_ext
     · exact h 0
-    · refine hom_ext k (Fin.tail n) _ _ fun j => ?_
-      have := h j.succ
-      rw [pr_succ_succ] at this
-      exact (Category.assoc _ _ _).trans (this.trans (Category.assoc _ _ _).symm)
+    · refine ih (Fin.tail n) _ _ fun j => ?_
+      exact (Category.assoc _ _ _).trans ((h j.succ).trans (Category.assoc _ _ _).symm)
 
 end ProjSpace
 

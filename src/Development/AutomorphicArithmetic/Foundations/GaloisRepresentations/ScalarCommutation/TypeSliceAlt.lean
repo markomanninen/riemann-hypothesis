@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.TypeSlice
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DisintegrationDensityExists
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIrrRepQuotientOfFiniteGen
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCuspidalOfIsSupercuspidal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspidalCompactCharacterVanishing
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.TypeSlice
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DisintegrationDensityExists
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIrrRepQuotientOfFiniteGen
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCuspidalOfIsSupercuspidal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspidalCompactCharacterVanishing
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -68,7 +72,7 @@ private def transl (e : G → ℂ) : Subrepresentation (lreg G) :=
       simp only [map_mul, Module.End.mul_apply]
     | zero => simp
     | add x y _ _ hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ hx hy
     | smul c x _ hx =>
       rw [map_smul]
@@ -112,7 +116,7 @@ private theorem transl_smooth {e : G → ℂ} (K : Subgroup G) (hK : IsOpen (K :
     | add x y _ _ hx hy =>
       refine Filter.mem_of_superset (Filter.inter_mem hx hy) fun g hg => ?_
       show lreg G g (x + y) = x + y
-      rw [map_add, hg.1, hg.2]
+      rw [map_add (f := _), hg.1, hg.2]
     | smul c x _ hx =>
       refine Filter.mem_of_superset hx fun g hg => ?_
       show lreg G g (c • x) = c • x
@@ -229,7 +233,50 @@ private theorem core (μ : Measure A) (U : A → G)
     obtain ⟨⟨F, hF⟩, rfl⟩ := Submodule.Quotient.mk_surjective _ x
     exact hall F hF
   haveI : Nontrivial (S.toSubmodule ⧸ T.toSubmodule.comap S.toSubmodule.subtype) := ⟨⟨w, 0, hw⟩⟩
-  obtain ⟨σ, p, hp, hpi⟩ := GlobalTheory.DZero.exists_irrRep_quotient_of_finite_gen G _ (subQuot S T) hQs inferInstance {w} hgen
+  have exists_quot : ∀ (G V : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [AddCommGroup V] [Module ℂ V] (π : Representation ℂ G V), GlobalTheory.PRep.IsSmooth π → Nontrivial V → ∀ s : Finset V, Submodule.span ℂ (Set.range fun p : G × s => π p.1 (p.2 : V)) = ⊤ → ∃ (σ : IrrRep G) (p : V →ₗ[ℂ] σ.V), Function.Surjective p ∧ ∀ g v, p (π g v) = σ.ρ g (p v) := by
+    intro G V _ _ _ _ _ π hπ hV s hs
+    classical
+  
+    have htop : ∀ N : Submodule ℂ V, (∀ (g : G), ∀ v ∈ N, π g v ∈ N) →
+        Submodule.span ℂ ((s : Set V)) ≤ N → N = ⊤ := by
+      intro N hN hsN
+      rw [eq_top_iff, ← hs, Submodule.span_le]
+      rintro _ ⟨⟨g, v⟩, rfl⟩
+      exact hN g _ (hsN (Submodule.subset_span v.2))
+    let S : Set (Submodule ℂ V) := {N | (∀ (g : G), ∀ v ∈ N, π g v ∈ N) ∧ N ≠ ⊤}
+    have hbot : (⊥ : Submodule ℂ V) ∈ S := ⟨fun g v hv => by
+      rw [Submodule.mem_bot] at hv ⊢; rw [hv, map_zero], bot_ne_top⟩
+    have hcomp := Submodule.finset_span_isCompactElement (R := ℂ) s
+    obtain ⟨N, -, hmax⟩ := zorn_le_nonempty₀ S (fun c hcS hc y hy => by
+      have hne : c.Nonempty := ⟨y, hy⟩
+      have hd : DirectedOn (· ≤ ·) c := hc.directedOn
+      refine ⟨sSup c, ⟨fun g v hv => ?_, fun htop' => ?_⟩, fun z hz => le_sSup hz⟩
+      · obtain ⟨M, hM, hvM⟩ := (Submodule.mem_sSup_of_directed hne hd).1 hv
+        exact le_sSup hM ((hcS hM).1 g v hvM)
+      · obtain ⟨M, hM, hsM⟩ := (isCompactElement_iff_le_of_directed_sSup_le _).1 hcomp c hne hd
+          (by rw [htop']; exact le_top)
+        exact (hcS hM).2 (htop M (hcS hM).1 hsM)) ⊥ hbot
+    obtain ⟨hNst, hNtop⟩ := hmax.prop
+    let T : Subrepresentation π := ⟨N, fun g v hv => hNst g v hv⟩
+    have hT : IsCoatom T := by
+      refine ⟨fun h => hNtop (congrArg Subrepresentation.toSubmodule h), fun T' hT' => ?_⟩
+      by_contra hne
+      have hmem : T'.toSubmodule ∈ S := ⟨fun g v hv => T'.apply_mem_toSubmodule g hv,
+        fun h => hne (Subrepresentation.toSubmodule_injective h)⟩
+      have heq : T'.toSubmodule = N := le_antisymm (hmax.2 hmem hT'.le) hT'.le
+      exact hT'.ne (Subrepresentation.toSubmodule_injective heq.symm)
+    have hi := isIrreducible_subQuot hT.covBy_top
+    let q : (⊤ : Subrepresentation π).toRepresentation.IntertwiningMap (subQuot ⊤ T) :=
+      ⟨Submodule.mkQ _, fun _ => rfl⟩
+    have hsm : IsSmooth (subQuot ⊤ T) :=
+      IsSubquotient.isSmooth ⟨⊤, q, Submodule.Quotient.mk_surjective _⟩ hπ
+    let σ : IrrRep G := ⟨_, subQuot ⊤ T, hsm, hi⟩
+    let p : V →ₗ[ℂ] σ.V := (Submodule.mkQ _) ∘ₗ LinearMap.codRestrict (⊤ : Subrepresentation π).toSubmodule
+      LinearMap.id (fun _ => trivial)
+    refine ⟨σ, p, fun w => ?_, fun g v => rfl⟩
+    obtain ⟨⟨v, -⟩, rfl⟩ := Submodule.Quotient.mk_surjective _ w
+    exact ⟨v, rfl⟩
+  obtain ⟨σ, p, hp, hpi⟩ := exists_quot G _ (subQuot S T) hQs inferInstance {w} hgen
   refine ⟨σ, p w, ?_, ?_, ?_⟩
   · intro h0
     have hker : Submodule.span ℂ (Set.range fun p : G × ({w} : Finset _) => subQuot S T p.1 (p.2 : _)) ≤ LinearMap.ker p := by
@@ -283,7 +330,7 @@ private theorem core (μ : Measure A) (U : A → G)
     have hΘ : (Θ : G → ℂ) ∈ T.toSubmodule := by
       refine ⟨Θ.2, fun x => ?_⟩
       simp only [hval]
-      rw [integral_finset_sum]
+      rw [integral_finsetSum]
       · refine Finset.sum_eq_zero fun q _ => ?_
         rw [integral_const_mul]
         have := hfZ x q.out
@@ -300,13 +347,16 @@ private theorem core (μ : Measure A) (U : A → G)
       have : (Submodule.Quotient.mk Θ : S.toSubmodule ⧸ T.toSubmodule.comap S.toSubmodule.subtype) =
           ∑ q ∈ Sf, f q.out • subQuot S T q.out w := by
         simp only [Θ]
-        rw [← Submodule.mkQ_apply, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← Submodule.mkQ_apply, map_sum]
         rfl
-      rw [this, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [this, map_sum]
       refine Finset.sum_congr rfl fun q _ => ?_
       rw [map_smul, hpi]
     have := congrArg l (hexp.symm.trans hz)
-    simpa only [map_sum, map_smul, smul_eq_mul, map_zero] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [map_sum, map_smul, smul_eq_mul, map_zero] using this
 
 end Core2
 

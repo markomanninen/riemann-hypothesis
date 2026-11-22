@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.EqZeroOfForallExistsLsumETwoPi
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolomorphicHomDetermined
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.EqZeroOfForallExistsLsumETwoPi
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolomorphicHomDetermined
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
+
+@[expose] public section
 
 noncomputable section
 
@@ -182,11 +186,5 @@ theorem exists_sumsAt_halfCurve {T : ℝ} {yT : Sp (halfRing T) ⟶ Z} {y : Sp c
   have e := valR_spMap (ι.comp (algebraMap ℂ⟦X⟧ ℂ⸨X⸩)) χ U hU f
   rw [hχ, valR_spMap _ y U hyU] at e
   exact e.symm
-
-def laurentToFraction : ℂ⸨X⸩ ≃ₐ[ℂ⟦X⟧] FractionRing ℂ⟦X⟧ :=
-  (FractionRing.algEquiv ℂ⟦X⟧ ℂ⸨X⸩).symm
-
-def convToFraction : convLaurent →+* FractionRing ℂ⟦X⟧ :=
-  (laurentToFraction : ℂ⸨X⸩ →+* FractionRing ℂ⟦X⟧).comp (algebraMap convLaurent ℂ⸨X⸩)
 
 end GlobalTheory.Conv

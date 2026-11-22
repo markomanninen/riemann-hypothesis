@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasLenOfLatLen
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryLeviNormalizesUnipotentRadical
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasLenOfLatLen
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryLeviNormalizesUnipotentRadical
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,7 +104,7 @@ theorem sphTrans (hL : LeviExists) : SphTrans := by
   unfold chiDeltaU
   rw [Fin.prod_univ_succ]
   congr 1
-  · rw [dif_pos (by simp)]
+  · rw [dite_eq_left (by simp)]
     have e0 : (⟨(0 : Fin (r + 1)).val, by simp⟩ : Fin (N + 2)) = 0 := rfl
     rw [e0]
     show α 0 ^ ordL (mat (mb * v) 0 0) * (q : ℂ) ^ (-ordL (mat (mb * v) 0 0) * (((N + 2 : ℕ) : ℤ) - 1 - 2 * ((0 : ℕ) : ℤ))) = _
@@ -110,7 +114,7 @@ theorem sphTrans (hL : LeviExists) : SphTrans := by
     ring
   · refine Finset.prod_congr rfl fun i _ => ?_
     have hiN : i.val < N := by have := i.2; omega
-    rw [dif_pos (by simp; omega), dif_pos hiN]
+    rw [dite_eq_left (by simp; omega), dite_eq_left hiN]
     have ei : (⟨(Fin.succ i).val, by simp; omega⟩ : Fin (N + 2)) = mid ⟨i.val, hiN⟩ := by
       ext; simp
     rw [ei]

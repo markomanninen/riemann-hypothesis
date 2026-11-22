@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtDefs
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraicIndependentResidueOfIsUnit
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtDefs
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraicIndependentResidueOfIsUnit
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -45,12 +49,12 @@ theorem exists_rename_notMem {K : Type} [Field K] {σ : Type} (p : Ideal (MvPoly
       have hd0 : d = 0 := by
         ext i
         by_contra hi
-        have hiv : i ∈ g.vars := (MvPolynomial.mem_vars i).mpr ⟨d, hd, Finsupp.mem_support_iff.mpr hi⟩
+        have hiv : i ∈ g.vars := (MvPolynomial.mem_vars_iff_mem_support i).mpr ⟨d, hd, Finsupp.mem_support_iff.mpr hi⟩
         rw [hemp] at hiv
         simp at hiv
       simp [hd0]
     rw [MvPolynomial.totalDegree_eq_zero_iff_eq_C] at htd
-    have ha : MvPolynomial.coeff 0 g ≠ 0 := by
+    have ha : AddMonoidAlgebra.coeff g 0 ≠ 0 := by
       intro ha0
       apply hg0
       rw [htd, ha0, map_zero]
@@ -136,7 +140,7 @@ theorem w_eq_scalarRatio_smul (hd : d.AxH 𝒜) (c : ι) (j : Fin (d.N + 1)) :
     have h2 := congrArg Subtype.val ha
     simpa using h2.symm
   unfold ratio
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hex.choose_spec
 
 theorem exists_integral_base (hd : d.AxH 𝒜) (c : ι) (v : AddValuation (Ω c) (WithTop ℤ)) :
@@ -148,7 +152,7 @@ theorem exists_integral_base (hd : d.AxH 𝒜) (c : ι) (v : AddValuation (Ω c)
     intro f g a hg hfa
     have hex : ∃ b : Ω c, f = b • g := ⟨a, hfa⟩
     unfold ratio
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     by_contra hne
     apply hg
     have h0 : (hex.choose - a) • g = 0 := by rw [sub_smul, ← hex.choose_spec, ← hfa, sub_self]
@@ -219,7 +223,7 @@ theorem genericHomAt_relation (hd : d.AxH 𝒜) (c : ι) (j0 : Fin (d.N + 1)) (h
     intro f g a hg hfa
     have hex : ∃ b : Ω c, f = b • g := ⟨a, hfa⟩
     unfold ratio
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     by_contra hne
     apply hg
     have h0 : (hex.choose - a) • g = 0 := by rw [sub_smul, ← hex.choose_spec, ← hfa, sub_self]
@@ -256,7 +260,8 @@ theorem genericHomAt_relation (hd : d.AxH 𝒜) (c : ι) (j0 : Fin (d.N + 1)) (h
       MvPolynomial.algebraMap_eq]
   have hTjc : T (d.jc c) = -∑ k, T ((d.jc c).succAbove k) * algebraMap (Ω c) (OmS (Ω c) d.D d.N) (d.x c k) := by
     rw [hTX, Fin.succAbove_cases_eq_insertNth, Fin.insertNth_apply_same]
-    simp only [map_neg, map_sum, map_mul, hCr]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_neg, map_sum, map_mul, hCr]
     congr 1
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [hTX, Fin.succAbove_cases_eq_insertNth, Fin.insertNth_apply_succAbove]

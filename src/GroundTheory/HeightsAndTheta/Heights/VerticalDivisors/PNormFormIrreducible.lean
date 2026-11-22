@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsChowNorm
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsChowNorm
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -39,7 +44,7 @@ def polyTensorEquiv (R A : Type*) [CommRing R] [CommRing A] [Algebra R A] (n : �
       rw [smul_tmul', smul_eq_mul, polyTensorAlgEquiv_tmul, polyTensorAlgEquiv_tmul, RingHom.id_apply,
         Algebra.smul_def q, MvPolynomial.algebraMap_def, map_mul, mul_smul_comm]
     | add s t hs ht =>
-      rw [smul_add, map_add, map_add, hs, ht, smul_add]
+      rw [smul_add, map_add (f := _), map_add (f := _), hs, ht, smul_add]
 
 def polyBasis {ι : Type*} (b : Module.Basis ι R A) (n : ℕ) :
     Module.Basis ι (MvPolynomial (Fin n) R) (MvPolynomial (Fin n) A) :=
@@ -73,11 +78,13 @@ theorem normForm_eq_det {R A : Type*} [CommRing R] [CommRing A] [Algebra R A] {n
           = ∑ j, ∑ i', (X j : MvPolynomial (Fin n) A) * C (M j i' k • b i') := by
             rw [Finset.sum_mul]
             refine Finset.sum_congr rfl fun j _ => ?_
-            rw [mul_assoc, ← C_mul, hM j k, map_sum, Finset.mul_sum]
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [mul_assoc, ← C_mul, hM j k, map_sum, Finset.mul_sum]
         _ = ∑ i', ∑ j, (X j : MvPolynomial (Fin n) A) * C (M j i' k • b i') := Finset.sum_comm
         _ = ∑ i', (∑ j, (X j : MvPolynomial (Fin n) R) * C (M j i' k)) • bP i' := by
             refine Finset.sum_congr rfl fun i' _ => ?_
-            rw [polyBasis_apply, key, map_sum, Finset.sum_mul]
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [polyBasis_apply, key, map_sum, Finset.sum_mul]
             refine Finset.sum_congr rfl fun j _ => ?_
             rw [map_mul, map_X, map_C, Algebra.smul_def, C_mul, mul_assoc]
     rw [hsum, bP.repr_sum_self, Matrix.sum_apply]
@@ -118,7 +125,8 @@ theorem normForm_map_eq_prod [FiniteDimensional E L] [Algebra.IsSeparable E L] [
       simp only [Algebra.leftMulMatrix_eq_repr_mul]
       exact (b.sum_repr (z * b k)).symm
     have h2 := congrArg (e j) h1
-    rw [map_mul, map_sum] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_mul, map_sum] at h2
     simp only [hPij, Algebra.smul_def, map_mul, AlgHom.commutes] at h2 ⊢
     rw [← h2, mul_comm]
   rw [normForm_eq_det b, RingHom.map_det]
@@ -129,11 +137,13 @@ theorem normForm_map_eq_prod [FiniteDimensional E L] [Algebra.IsSeparable E L] [
   have hconj : Λᵀ * P.map C = P.map C * diagonal D := by
     refine Matrix.ext fun k j => ?_
     rw [mul_diagonal, Matrix.mul_apply]
-    simp only [hΛ, transpose_apply, RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hΛ, transpose_apply, RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.sum_apply,
       Matrix.smul_apply, smul_eq_mul, map_sum, map_mul, map_X, map_C, D, embForm]
     calc ∑ i, (∑ l, X l * C (algebraMap E K (Algebra.leftMulMatrix b (x l) i k))) * C (P i j)
         = ∑ l, X l * C (∑ i, algebraMap E K (Algebra.leftMulMatrix b (x l) i k) * P i j) := by
-          simp only [Finset.sum_mul, map_sum, Finset.mul_sum, map_mul, mul_assoc]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [Finset.sum_mul, map_sum, Finset.mul_sum, map_mul, mul_assoc]
           exact Finset.sum_comm
       _ = C (P k j) * ∑ l, X l * C (e j (x l)) := by
           simp only [hkey, Finset.mul_sum, map_mul]
@@ -189,7 +199,8 @@ theorem totalDegree_embForm_le (σ : L →ₐ[E] K) (x : Fin n → L) : (embForm
 
 theorem eval_embForm_alt (σ : L →ₐ[E] K) (ht : ∑ j, algebraMap E L (t j) * x j = 1) :
     eval (fun j => algebraMap E K (t j)) (embForm σ x) = 1 := by
-  rw [eval_embForm, ← map_one σ, ← ht, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [eval_embForm, ← map_one σ, ← ht, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul, AlgHom.commutes]
 
@@ -265,7 +276,7 @@ theorem isUnit_of_map_isUnit {p : MvPolynomial (Fin n) E} (h : IsUnit (p.map (al
     IsUnit p := by
   obtain ⟨r, hr, hpr⟩ := isUnit_iff_eq_C_of_isReduced.mp h
   have hc : ∀ m, m ≠ 0 → p.coeff m = 0 := fun m hm => by
-    have := congrArg (coeff m) hpr
+    have := congrArg (AddMonoidAlgebra.coeff · m) hpr
     rw [coeff_map, coeff_C, if_neg (Ne.symm hm)] at this
     exact (algebraMap E K).injective (by rw [this, map_zero])
   have hp : p = C (p.coeff 0) := by
@@ -276,7 +287,7 @@ theorem isUnit_of_map_isUnit {p : MvPolynomial (Fin n) E} (h : IsUnit (p.map (al
     · exact hc m (Ne.symm h0)
   have h0 : p.coeff 0 ≠ 0 := by
     intro h0
-    have := congrArg (coeff 0) hpr
+    have := congrArg (AddMonoidAlgebra.coeff · 0) hpr
     rw [coeff_map, h0, map_zero, coeff_C, if_pos rfl] at this
     exact hr.ne_zero this.symm
   rw [hp]
@@ -286,8 +297,8 @@ end Forms
 
 end NormFormIrreducible
 
-open NormFormIrreducible in
 
+open NormFormIrreducible in
 theorem NormFormIrreducible.proof : NormFormIrreducible.Statement := by
   intro E L _ _ _ _ _ _ n x t hgen ht
   let _ : Field L := (isField_of_isIntegral_of_isField' (R := E) (Field.toIsField E)).toField
@@ -295,7 +306,11 @@ theorem NormFormIrreducible.proof : NormFormIrreducible.Statement := by
   let K := AlgebraicClosure E
   have hprod := normForm_map_eq_prod (E := E) (L := L) (K := K) x
   have hirr : ∀ σ : L →ₐ[E] K, Irreducible (embForm σ x) := fun σ => irreducible_embForm σ ht
-  let σ₀ : L →ₐ[E] K := IsAlgClosed.lift
+  let σ₀ : L →ₐ[E] K := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine irreducible_iff.mpr ⟨fun hu => ?_, fun F G hFG => ?_⟩
   · have := hu.map (MvPolynomial.map (algebraMap E K))
     rw [hprod] at this

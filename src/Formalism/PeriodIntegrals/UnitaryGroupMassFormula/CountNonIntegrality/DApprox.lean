@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.LGDefs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.TraceOfKer
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.DSurjDef
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.LGDefs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.TraceOfKer
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.DSurjDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,7 +89,8 @@ theorem approx_core {K : Type} [Field K] [NumberField K] {ℓ : ℕ} [Fact ℓ.P
     have hc0 : ∀ j, BA.repr γ j = 0 := by
       intro j
       have h := hγ j
-      rw [← hexp, Finset.sum_mul, map_sum] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hexp, Finset.sum_mul, map_sum] at h
       simpa only [smul_mul_assoc, map_smul, hBA, htb, smul_eq_mul, mul_ite, mul_one, mul_zero,
         Finset.sum_ite_eq, Finset.mem_univ, if_true] using h
     rw [← hexp]
@@ -99,7 +104,8 @@ theorem approx_core {K : Type} [Field K] [NumberField K] {ℓ : ℕ} [Fact ℓ.P
       apply Bb.ext
       intro j
       rw [hBb, LinearMap.comp_apply, LinearMap.mulLeft_apply]
-      simp only [β, Finset.sum_mul, map_sum, smul_mul_assoc, map_smul, htb, smul_eq_mul, mul_ite, mul_one,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [β, Finset.sum_mul, map_sum, smul_mul_assoc, map_smul, htb, smul_eq_mul, mul_ite, mul_one,
         mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
     intro x
     exact congrArg (fun L => L x) hL
@@ -140,16 +146,19 @@ theorem approx_core {K : Type} [Field K] [NumberField K] {ℓ : ℕ} [Fact ℓ.P
   refine ⟨t, ?_, -(∑ i, algebraMap ℚ_[ℓ] Fp (e i : ℚ_[ℓ]) * ((ℓ : Fp) ^ N i * ι (bd i))), ?_, ?_⟩
   · have htj : ∀ j, Algebra.trace ℚ K (t * b j) = (n j : ℚ) := by
       intro j
-      simp only [t, Finset.sum_mul, map_sum, smul_mul_assoc, map_smul, hdb, smul_eq_mul, mul_ite, mul_one,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [t, Finset.sum_mul, map_sum, smul_mul_assoc, map_smul, hdb, smul_eq_mul, mul_ite, mul_one,
         mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
     intro a
     have ha : (a : K) = ∑ j, ((RingOfIntegers.basis K).repr a j) • b j := by
       have h := congrArg (algebraMap (𝓞 K) K) ((RingOfIntegers.basis K).sum_repr a)
-      rw [map_sum] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at h
       simp only [map_zsmul, ← NumberField.integralBasis_apply] at h
       exact h.symm
     refine ⟨∑ j, (RingOfIntegers.basis K).repr a j * (n j : ℤ), ?_⟩
-    rw [ha, Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ha, Finset.mul_sum, map_sum]
     push_cast
     refine Finset.sum_congr rfl (fun j _ => ?_)
     rw [mul_smul_comm, map_zsmul, htj, zsmul_eq_mul]
@@ -157,7 +166,8 @@ theorem approx_core {K : Type} [Field K] [NumberField K] {ℓ : ℕ} [Fact ℓ.P
       Subring.mul_mem _ (zp_memK hc (e i)) ((Valuation.mem_integer_iff _ _).2 (hN i).le))
   · have hz' : z = ∑ i, algebraMap ℚ_[ℓ] Fp (w i : ℚ_[ℓ]) * ι (bd i) := by
       rw [← hπβ]
-      simp only [β, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [β, map_sum]
       refine Finset.sum_congr rfl (fun i _ => ?_)
       rw [map_smul, hπ1, Algebra.smul_def]
     have hw : ∀ i, algebraMap ℚ_[ℓ] Fp (w i : ℚ_[ℓ]) =
@@ -168,7 +178,8 @@ theorem approx_core {K : Type} [Field K] [NumberField K] {ℓ : ℕ} [Fact ℓ.P
         map_natCast, map_sub] at h
       linear_combination -h
     have hιt : ι t = ∑ i, (n i : Fp) * ι (bd i) := by
-      simp only [t, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [t, map_sum]
       refine Finset.sum_congr rfl (fun i _ => ?_)
       rw [Rat.smul_def, map_mul, map_ratCast, Rat.cast_natCast]
     rw [hιt, hz']

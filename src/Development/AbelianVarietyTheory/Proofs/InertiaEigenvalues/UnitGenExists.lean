@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.SecondComparisonInCoordinates
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitVectorOfUnitFor
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.SecondComparisonInCoordinates
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitVectorOfUnitFor
+
+@[expose] public section
 
 noncomputable section
 

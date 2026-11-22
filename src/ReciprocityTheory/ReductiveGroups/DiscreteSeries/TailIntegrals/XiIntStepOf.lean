@@ -1,9 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.XiRNonneg
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.HermitianLiftIdentities
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.XiRNonneg
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.HermitianLiftIdentities
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.DS.Xi
-
-theorem iw : IW := iwB
 
 theorem det_of (hB2 : InductiveHeisenbergInputs) : DET := detH hB2
 

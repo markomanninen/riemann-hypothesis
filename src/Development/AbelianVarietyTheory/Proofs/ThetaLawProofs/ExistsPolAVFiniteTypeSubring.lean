@@ -1,21 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.KaRuleK
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.IsPluriharmonicSiegel
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.OneEqSpTranslZero
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsRefinementOfIsLimit
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsFiniteTypeSubringAdjoin
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsProjectiveAbelianModel
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.RelAmpleSubring
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsFinsetKTrivOfSubring
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.RigidifiedSymDescendToSubring
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PolPull
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.KaRuleK
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.IsPluriharmonicSiegel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.OneEqSpTranslZero
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsRefinementOfIsLimit
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsFiniteTypeSubringAdjoin
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsProjectiveAbelianModel
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.RelAmpleSubring
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsFinsetKTrivOfSubring
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.RigidifiedSymDescendToSubring
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PolPull
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ theorem exists_model_of_le {S : Type} [CommRing S] {R R' : Subring S} (h : R ≤
 
 private theorem lbIso_pull_comp_theta_law {X Y Z : Scheme.{0}} {L : LB Z} (hL : L.IsLB) (φ₁ : X ⟶ Y) (π : Y ⟶ Z) :
     LBIso (L.pull (φ₁ ≫ π)) ((L.pull π).pull φ₁) := by
-  refine LBLimit.lbIso_of_refinement _ _ (pull_isLB hL _) (fun a _ => a ⟨⟩ ⟨⟩) ?_ ?_
+  refine LBLimit.lbIso_of_refinement _ _ (LB.isLB_pull hL _) (fun a _ => a ⟨⟩ ⟨⟩) ?_ ?_
   · intro a y hy
     have h1 := (mem_pull (L := L.pull π)).1 hy
     have h2 := (mem_pull (L := L)).1 h1
@@ -73,7 +77,7 @@ theorem lbIso_pull_pull_of_comp {X Y Z : Scheme.{0}} {M : LB X} {L : LB Z} (hM :
     {φ : X ⟶ Z} {φ₁ : X ⟶ Y} {π : Y ⟶ Z} (e : φ₁ ≫ π = φ) (H : LBIso M (L.pull φ)) :
     LBIso M ((L.pull π).pull φ₁) := by
   subst e
-  exact LBIso.trans hM (pull_isLB hL _) (pull_isLB (pull_isLB hL _) _) H (lbIso_pull_comp_theta_law hL φ₁ π)
+  exact LBIso.trans hM (LB.isLB_pull hL _) (LB.isLB_pull (LB.isLB_pull hL _) _) H (lbIso_pull_comp_theta_law hL φ₁ π)
 
 private theorem exists_intermediate_abelian_model_factorization {S : Type} [CommRing S] {g : ℕ} {R R' : Subring S} (h : R ≤ R') (A : Over (Sp S))
     [GrpObj A] (A₀ : Over (Sp R)) [GrpObj A₀] (φ : A.left ⟶ A₀.left) (H : IsGrpPullback A A₀ (spMap R.subtype) φ)
@@ -106,14 +110,14 @@ theorem exists_polAV_finiteType_subring :
   obtain ⟨A₂, _, φ₂, π₂, e₂, Hπ₂, H₂, hab₂, hpr₂, hsm₂⟩ := exists_intermediate_abelian_model_factorization hle₂ P.A A₁ φ₁ H₁ hab₁ hpr₁ hsm₁
   have ha₂ := hF₂ R₂ hle₂ hsub₂.1 A₂ π₂ Hπ₂
   have hrs₂ := hF₃ R₂ hle₂ hsub₂.2 A₂ π₂ Hπ₂
-  have hL₂ := pull_isLB hL₁ π₂
+  have hL₂ := LB.isLB_pull hL₁ π₂
   have hiso₂ := lbIso_pull_pull_of_comp P.isLB hL₁ e₂ hiso₁
   have : IsNoetherianRing R₂ := Algebra.FiniteType.isNoetherianRing ℤ R₂
   obtain ⟨F₄, hF₄⟩ := exists_finset_kTriv_of_subring S R₂ P A₂ φ₂ (L₁.pull π₂) hab₂ hL₂ ha₂ H₂ hiso₂
   obtain ⟨R₃, hle₃, hsub₃, hR₃⟩ := exists_finiteType_subring_adjoin S R₂ F₄ hR₂
   obtain ⟨A₃, _, φ₃, π₃, e₃, Hπ₃, H₃, hab₃, hpr₃, hsm₃⟩ := exists_intermediate_abelian_model_factorization hle₃ P.A A₂ φ₂ H₂ hab₂ hpr₂ hsm₂
   have hk₃ := hF₄ R₃ hle₃ hsub₃ A₃ π₃ Hπ₃
-  have hL₃ := pull_isLB hL₂ π₃
+  have hL₃ := LB.isLB_pull hL₂ π₃
   have hpol := pol_pull _ _ A₂ A₃ _ π₃ _ _ hL₂ hL₃ hab₂ Hπ₃ (PolBaseChange.lbIso_refl hL₃)
   have hiso₃ := lbIso_pull_pull_of_comp P.isLB hL₂ e₃ hiso₂
   refine ⟨R₃,

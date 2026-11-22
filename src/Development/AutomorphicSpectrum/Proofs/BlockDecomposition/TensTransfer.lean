@@ -1,8 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LocalisationLadders.CriterionTruncation
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.Coords
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiltrationCriticalComparisonMapStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LocalisationLadders.CriterionTruncation
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.Coords
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiltrationCriticalComparisonMapStatement
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 
@@ -50,7 +55,7 @@ theorem five_add {A₁ : Type w₁} {A₂ : Type w₂} {A₃ : Type w₃} {A₄ 
     obtain ⟨y', hy'⟩ := (eL₃ _).1 h2
     obtain ⟨y, rfl⟩ := b₂.2 y'
     refine ⟨q + u₂ y, ?_⟩
-    rw [map_add, c₂, hy']
+    rw [map_add (f := _), c₂, hy']
     abel
 
 variable {R : Type} [CommRing R] {ι : Type} [Fintype ι] [DecidableEq ι] {N : ι → Type}
@@ -62,7 +67,7 @@ theorem tens_ext {M : ι → Type w} [∀ i, AddCommGroup (M i)] [∀ i, Module 
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul n x => exact H i n x
-  | add x y hx hy => rw [Pi.single_add, map_add, map_add, hx, hy]
+  | add x y hx hy => rw [Pi.single_add, map_add (f := _), map_add (f := _), hx, hy]
 
 def piT {M : ι → Type w} {M' : ι → Type w'} [∀ i, AddCommGroup (M i)] [∀ i, Module R (M i)]
     [∀ i, AddCommGroup (M' i)] [∀ i, Module R (M' i)] (u : ∀ i, M i →ₗ[R] M' i) :
@@ -165,7 +170,7 @@ theorem tens_five [∀ i, Module.Flat R (N i)]
   let g₃ : (∀ i, N i ⊗[R] M₃ i) →+ L₃ := ∑ i, (F i).comp (Pi.evalAddMonoidHom _ i)
   have hg₃ : ∀ i n x, g₃ (Pi.single i (n ⊗ₜ x)) = f₃ i n x := by
     intro i n x
-    simp only [g₃, AddMonoidHom.finset_sum_apply, AddMonoidHom.comp_apply, Pi.evalAddMonoidHom_apply]
+    simp only [g₃, AddMonoidHom.finsetSum_apply, AddMonoidHom.comp_apply, Pi.evalAddMonoidHom_apply]
     rw [Finset.sum_eq_single i]
     · simp [hF]
     · intro k _ hk

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PlaneCoeffOneTTens
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ValuationOneEqZero
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PlaneCoeffOneTTens
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ValuationOneEqZero
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.GramCoord
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.GramCoord
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,8 @@ theorem nearT_iff (hcm : IsCMExt F E σ) (hJ : ∀ i j, σ (J j i) = J i j) (hSD
       rw [gram_coord σ J v Λ hcm hJ hSD he he1]
       refine Finset.sum_congr rfl fun p _ => ?_
       rw [cf_coe, Orb.hR_conj σ J v hcm hJ]
-    rw [e1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, map_sum]
     refine Finset.sum_congr rfl fun p _ => ?_
     rw [map_mul, hconj, phi_apply, phi_apply]
   constructor

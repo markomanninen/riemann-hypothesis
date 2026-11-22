@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitsBasic
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitsBasic
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.GalV GlobalTheory.HodgeCoh TensorProduct UpperTheory.Gal.G3
 open UpperTheory.Gal.Int.Geo (FEt Cover gen piece IsHEig)
@@ -15,4 +19,4 @@ theorem UpperTheory.Gal.G3.pExtTr :
     simp only [LinearMap.baseChange_tmul]
     rw [h W r c hc J σ hσ hs y, TensorProduct.tmul_sum]
   | add x y hx hy =>
-    simp only [map_add, hx, hy, ← Finset.sum_add_distrib]
+    simp only [map_add (f := _), hx, hy, ← Finset.sum_add_distrib]

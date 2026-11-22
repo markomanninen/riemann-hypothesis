@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.IsCMUnram
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.IsCMUnram
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,9 +50,6 @@ attribute [instance] HSpace.acg HSpace.modE HSpace.modO HSpace.tower HSpace.fd
 namespace HSpace
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E]
-
-def gram (S : HSpace E) : Matrix (Fin S.rank) (Fin S.rank) E :=
-  fun i j => S.hT (S.frame i) (S.frame j)
 
 end HSpace
 

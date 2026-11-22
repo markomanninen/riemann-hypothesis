@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.HeckeSp
-import Formalism.LocalToGlobal.Columns.AbelianHostFieldConditions
-import Formalism.LocalToGlobal.UnitaryNorms.CharUniq
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqIffConjPl
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.HeckeSp
+public import Formalism.LocalToGlobal.Columns.AbelianHostFieldConditions
+public import Formalism.LocalToGlobal.UnitaryNorms.CharUniq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqIffConjPl
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.HermitianLatticesTheory Formalism.L2.Col Formalism.L2.Host
 
@@ -43,8 +47,8 @@ theorem mem_above_iff (hF : ∀ x : F, star (algebraMap F E x) = algebraMap F E 
     have e : y = cO E x := RingOfIntegers.ext hxy
     rw [e, mem_conjP, cO_cO]
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem valuation_up (Q : HeightOneSpectrum (𝓞 E))
     (h : ¬ (Q.asIdeal.comap (algebraMap (𝓞 F) (𝓞 E))).map (algebraMap (𝓞 F) (𝓞 E)) ≤ Q.asIdeal ^ 2) (x : F) :
     Q.valuation E (algebraMap F E x) = (Q.under (𝓞 F)).valuation F x := by
@@ -52,7 +56,8 @@ theorem valuation_up (Q : HeightOneSpectrum (𝓞 E))
   have he : Ideal.ramificationIdx' (Q.under (𝓞 F)).asIdeal Q.asIdeal = 1 := by
     by_contra hne
     exact h ((Ideal.ramificationIdx'_ne_one_iff Ideal.map_comap_le).1 hne)
-  rw [← HeightOneSpectrum.valuation_liesOver E (Q.under (𝓞 F)) Q, he, pow_one]
+  rw [← HeightOneSpectrum.valuation_liesOver E (Q.under (𝓞 F)) Q,
+    ← Ideal.ramificationIdx'_eq_ramificationIdx _ _ (Q.under (𝓞 F)).ne_bot, he, pow_one]
 
 end General
 
@@ -64,7 +69,7 @@ theorem mem_divs_of_mem {A : Type} [CommRing A] [IsDedekindDomain A] {a : A} (ha
     refine h1.subset fun Q hQ => ?_
     exact Ideal.dvd_span_singleton.2 hQ
   unfold divs
-  rw [dif_pos hfin, Set.Finite.mem_toFinset]
+  rw [dite_eq_left hfin, Set.Finite.mem_toFinset]
   exact h
 
 theorem g_notMem {X : Fields} {Pr : Primes X} (h : Pr.Ok) (P : HeightOneSpectrum (𝓞 X.E)) (h1 : P ∉ Pr.vGs)

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StRegSectionParts
-import ReciprocityTheory.AnalyticForms.PotentialTheory.SNCAtlas
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StRegSectionParts
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.SNCAtlas
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit

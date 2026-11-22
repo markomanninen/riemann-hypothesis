@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RosVec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TransportedGeneratorUniqueGlobalFunctionsBaseStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RosVec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TransportedGeneratorUniqueGlobalFunctionsBaseStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -99,7 +104,7 @@ theorem formEq_sig (T : Tens D D' W) (A A' : Matrix (Fin r) (Fin r) ℤ) :
   have hF1 : ∀ x, F (Finsupp.single x 1) = H x := fun x => by
     simp only [F, Finsupp.liftAddHom_apply_single, zmultiplesHom_apply, one_zsmul]
   have hlam : ∀ u v, F (lam u v) = ∑ s : Fin 4, Oε s • H (lamV u v s) := fun u v => by
-    simp only [lam, map_add, map_sub, hF1, Fin.sum_univ_four]
+    simp only [lam, map_add (f := _), map_sub, hF1, Fin.sum_univ_four]
     simp [Oε, lamV]
     abel
   have hR : Additive.ofMul (∏ v : (sig W A A').support, h (vecHom T v.1).left ^ sig W A A' v.1) =
@@ -111,7 +116,8 @@ theorem formEq_sig (T : Tens D D' W) (A A' : Matrix (Fin r) (Fin r) ℤ) :
     rfl
   apply Additive.ofMul.injective
   rw [hR]
-  simp only [ofMul_prod, ofMul_zpow, sig, map_sum, map_zsmul, hlam]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ofMul_prod, ofMul_zpow, sig, map_sum, map_zsmul, hlam]
   rw [Fintype.sum_prod_type]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [Fintype.sum_prod_type, Fintype.sum_prod_type]

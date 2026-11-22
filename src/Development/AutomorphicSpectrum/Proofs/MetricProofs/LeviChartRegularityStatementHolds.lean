@@ -1,14 +1,18 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StNbarLeviChartReg
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PNbarLeviChartReg
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PRefChartDisc
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PProjHoloLocal
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PProjSmoothAlong
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHermExtend
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHoloInjDerivInj
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PChartVelLift
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PInjectiveHolomorphicInverse
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalOrbitChart
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StNbarLeviChartReg
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PNbarLeviChartReg
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PRefChartDisc
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PProjHoloLocal
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PProjSmoothAlong
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHermExtend
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHoloInjDerivInj
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PChartVelLift
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PInjectiveHolomorphicInverse
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalOrbitChart
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 
@@ -45,7 +49,7 @@ def tanIdeal {σ : Type} [Fintype σ] (w v : σ → ℂ) : Ideal (MvPolynomial �
   add_mem' := by
     rintro a b ⟨ha0, ha1⟩ ⟨hb0, hb1⟩
     refine ⟨by simp [ha0, hb0], ?_⟩
-    simp only [map_add, add_mul, Finset.sum_add_distrib, ha1, hb1, add_zero]
+    simp only [map_add (f := _), add_mul, Finset.sum_add_distrib, ha1, hb1, add_zero]
   zero_mem' := by simp
   smul_mem' := by
     rintro g h ⟨h0, h1⟩
@@ -363,8 +367,8 @@ theorem coneTangent_disc {II : IntersectionSystem} {Ψ : Type} [Fintype Ψ] {K :
   · filter_upwards [hev a] with s hs
     exact hΦmem _ hs
 
-open NbarLeviChartReg in
 
+open NbarLeviChartReg in
 theorem nbarLeviChartReg : NbarLeviChartReg.Statement := by
   have hProj : ProjChartHolo.Statement := projChartHolo
   have hRef : RefChartDisc.Statement := RefChartDisc.proof hProj

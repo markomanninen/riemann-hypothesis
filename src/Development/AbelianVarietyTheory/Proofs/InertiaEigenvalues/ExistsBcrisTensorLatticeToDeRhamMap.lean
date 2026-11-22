@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 
@@ -30,7 +34,7 @@ def gb (o : ↥(OL LL)) : Per.Bcris l →+ (↥T.L.T →+ T.V ⊗[ℚ_[l]] Pl.R.
   AddMonoidHom.mk' (fun b => gx Td T o b)
     (fun b c => by
       ext x
-      simp only [gx, AddMonoidHom.mk'_apply, AddMonoidHom.add_apply, map_add, TensorProduct.tmul_add])
+      simp only [gx, AddMonoidHom.mk'_apply, AddMonoidHom.add_apply, map_add (f := _), TensorProduct.tmul_add])
 
 def g : ↥(OL LL) →+ Per.Bcris l →+ (↥T.L.T →+ T.V ⊗[ℚ_[l]] Pl.R.BdR) :=
   AddMonoidHom.mk' (fun o => gb Td T o)
@@ -62,8 +66,8 @@ theorem mul_smul_lat (o o' : ↥(OL LL)) (x : ↥T.L.T) :
   rw [coe_smul_lat, smul_smul, Subalgebra.coe_mul, mul_comm]
 
 theorem crisTensorDRLiftFromCoeffBcris_smul_comm (o : ↥(OL LL)) :
-    (f1 Td T).comp (DistribMulAction.toAddMonoidHom (OB l ↥(OL LL)) o) =
-      (AddMonoidHom.compHom' (DistribMulAction.toAddMonoidHom (↥T.L.T) o)).comp (f1 Td T) := by
+    (f1 Td T).comp (DistribSMul.toAddMonoidHom (OB l ↥(OL LL)) o) =
+      (AddMonoidHom.compHom' (DistribSMul.toAddMonoidHom (↥T.L.T) o)).comp (f1 Td T) := by
   refine AddMonoidHom.ext fun u => ?_
   induction u using TensorProduct.induction_on with
   | zero => exact (map_zero _).trans (map_zero _).symm

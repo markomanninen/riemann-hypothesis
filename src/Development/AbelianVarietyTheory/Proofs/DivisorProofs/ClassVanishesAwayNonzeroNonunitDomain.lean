@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AwayHomCompAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyTwistedFilteredColimitContinuityStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AwayHomCompAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyTwistedFilteredColimitContinuityStatement
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC GlobalTheory.AffineCurveNbhd
@@ -40,8 +44,8 @@ theorem away_ext {a : B} {R : Type} [CommRing R] {f g : Localization.Away a →+
     (h : f.comp (algebraMap B _) = g.comp (algebraMap B _)) : f = g :=
   IsLocalization.ringHom_ext (Submonoid.powers a) h
 
-variable (B) in
 
+variable (B) in
 def diag : Idx B ⥤ CommRingCat.{0} where
   obj a := CommRingCat.of (Localization.Away a.val)
   map {a b} h := CommRingCat.ofHom (tr (leOfHom h : a.val ∣ b.val))
@@ -62,8 +66,8 @@ theorem toFrac_comp (a : Idx B) : (toFrac a).comp (algebraMap B _) = algebraMap 
   IsLocalization.Away.lift_comp a.val
     (IsLocalization.map_units (FractionRing B) (⟨a.val, mem_nonZeroDivisors_of_ne_zero a.ne⟩ : nonZeroDivisors B))
 
-variable (B) in
 
+variable (B) in
 def cocone : Cocone (diag B) where
   pt := CommRingCat.of (FractionRing B)
   ι :=
@@ -84,8 +88,8 @@ theorem desc_unit (s : Cocone (diag B)) (y : nonZeroDivisors B) :
   rw [← RingHom.comp_apply (tr _), tr_comp]
   exact (IsLocalization.Away.algebraMap_isUnit (S := Localization.Away y.1) y.1).map (s.ι.app b).hom
 
-variable (B) in
 
+variable (B) in
 def isColim : IsColimit (cocone B) where
   desc s := CommRingCat.ofHom (IsLocalization.lift (M := nonZeroDivisors B) (S := FractionRing B) (desc_unit s))
   fac s a := by

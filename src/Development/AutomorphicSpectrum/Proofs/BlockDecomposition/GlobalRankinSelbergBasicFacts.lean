@@ -1,5 +1,9 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrdUniformizerEqOne
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrdUniformizerEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,18 +33,37 @@ theorem valued_algebraMap (z : K) :
 end Gen
 
 theorem pOf_prime (v : Pl) : (pOf v).Prime := by
-  rw [GlobalTheory.CompanionTheory.HalfIntegral.pOf_eq_prime]
+  have pOf_eq_prime (u : Pl) : pOf u = RationalSymbol.prime u := by
+    show Ideal.absNorm u.asIdeal = RationalSymbol.prime u
+    rw [DirichletHecke.asIdeal_eq_span, Ideal.absNorm_span_singleton]
+    have h : ((RationalSymbol.prime u : ℕ) : 𝓞 ℚ) =
+        algebraMap ℤ (𝓞 ℚ) ((RationalSymbol.prime u : ℕ) : ℤ) := by simp
+    rw [h, Algebra.norm_algebraMap, NumberField.RingOfIntegers.rank, Module.finrank_self]
+    simp
+  rw [pOf_eq_prime]
   exact Fact.out
 
 theorem coe_uniformizer (v : Pl) :
     ((DirichletHecke.uniformizer v : (Qv v)ˣ) : Qv v) = ((pOf v : ℕ) : Qv v) := by
-  rw [GlobalTheory.CompanionTheory.HalfIntegral.pOf_eq_prime, DirichletHecke.uniformizer, IdeleGroup.coe_finiteProj_diagonal,
+  have pOf_eq_prime (u : Pl) : pOf u = RationalSymbol.prime u := by
+    show Ideal.absNorm u.asIdeal = RationalSymbol.prime u
+    rw [DirichletHecke.asIdeal_eq_span, Ideal.absNorm_span_singleton]
+    have h : ((RationalSymbol.prime u : ℕ) : 𝓞 ℚ) =
+        algebraMap ℤ (𝓞 ℚ) ((RationalSymbol.prime u : ℕ) : ℤ) := by simp
+    rw [h, Algebra.norm_algebraMap, NumberField.RingOfIntegers.rank, Module.finrank_self]
+    simp
+  rw [pOf_eq_prime, DirichletHecke.uniformizer, IdeleGroup.coe_finiteProj_diagonal,
     RationalSymbol.coe_primeRat]
   rw [coe_eq_algebraMap, map_natCast]
 
 theorem ord_pOf (v : Pl) : ord ((pOf v : ℕ) : Qv v) = 1 := by
   rw [← coe_uniformizer]
-  exact GlobalTheory.CompanionTheory.HalfIntegral.ord_uniformizer_eq_one v
+  have h1 : Valued.v ((DirichletHecke.uniformizer v : (Qv v)ˣ) : Qv v) = WithZero.exp (-1) :=
+    DirichletHecke.valued_uniformizer v
+  have h2 := GroundTheory.Global.valued_eq_exp_neg_ord (K := ℚ) (v := v)
+    (x := ((DirichletHecke.uniformizer v : (Qv v)ˣ) : Qv v)) (Units.ne_zero _)
+  have h3 := WithZero.exp_injective (h2.symm.trans h1)
+  omega
 
 theorem residueCard_Qv (v : Pl) : residueCard (Qv v) = pOf v :=
   residueCard_adicCompletion
@@ -60,16 +83,37 @@ theorem isUnit1_localChar (c : HeckeCharacter ℚ) (v : Pl) : IsUnit1 (localChar
     rw [GroundTheory.Automorphic.GodementSection.coe_localChar]; exact Circle.norm_coe _⟩
 
 theorem pOf_injective : Function.Injective pOf := by
+  have pOf_eq_prime (u : Pl) : pOf u = RationalSymbol.prime u := by
+    show Ideal.absNorm u.asIdeal = RationalSymbol.prime u
+    rw [DirichletHecke.asIdeal_eq_span, Ideal.absNorm_span_singleton]
+    have h : ((RationalSymbol.prime u : ℕ) : 𝓞 ℚ) =
+        algebraMap ℤ (𝓞 ℚ) ((RationalSymbol.prime u : ℕ) : ℤ) := by simp
+    rw [h, Algebra.norm_algebraMap, NumberField.RingOfIntegers.rank, Module.finrank_self]
+    simp
   intro v w h
-  rw [GlobalTheory.CompanionTheory.HalfIntegral.pOf_eq_prime, GlobalTheory.CompanionTheory.HalfIntegral.pOf_eq_prime] at h
+  rw [pOf_eq_prime, pOf_eq_prime] at h
   exact HeightOneSpectrum.ext (by rw [DirichletHecke.asIdeal_eq_span v, DirichletHecke.asIdeal_eq_span w, h])
 
 theorem pOf_surjective (p : ℕ) (hp : p.Prime) : ∃ v, pOf v = p :=
   ⟨RationalSymbol.placeOf ⟨p, hp⟩, by
-    rw [GlobalTheory.CompanionTheory.HalfIntegral.pOf_eq_prime]; exact RationalSymbol.prime_placeOf ⟨p, hp⟩⟩
+    have pOf_eq_prime (u : Pl) : pOf u = RationalSymbol.prime u := by
+      show Ideal.absNorm u.asIdeal = RationalSymbol.prime u
+      rw [DirichletHecke.asIdeal_eq_span, Ideal.absNorm_span_singleton]
+      have h : ((RationalSymbol.prime u : ℕ) : 𝓞 ℚ) =
+          algebraMap ℤ (𝓞 ℚ) ((RationalSymbol.prime u : ℕ) : ℤ) := by simp
+      rw [h, Algebra.norm_algebraMap, NumberField.RingOfIntegers.rank, Module.finrank_self]
+      simp
+    rw [pOf_eq_prime]; exact RationalSymbol.prime_placeOf ⟨p, hp⟩⟩
 
 theorem natCast_mem_asIdeal (v : Pl) (n : ℕ) : (n : 𝓞 ℚ) ∈ v.asIdeal ↔ pOf v ∣ n := by
-  rw [DirichletHecke.asIdeal_eq_span, Ideal.mem_span_singleton, GlobalTheory.CompanionTheory.HalfIntegral.pOf_eq_prime,
+  have pOf_eq_prime (u : Pl) : pOf u = RationalSymbol.prime u := by
+    show Ideal.absNorm u.asIdeal = RationalSymbol.prime u
+    rw [DirichletHecke.asIdeal_eq_span, Ideal.absNorm_span_singleton]
+    have h : ((RationalSymbol.prime u : ℕ) : 𝓞 ℚ) =
+        algebraMap ℤ (𝓞 ℚ) ((RationalSymbol.prime u : ℕ) : ℤ) := by simp
+    rw [h, Algebra.norm_algebraMap, NumberField.RingOfIntegers.rank, Module.finrank_self]
+    simp
+  rw [DirichletHecke.asIdeal_eq_span, Ideal.mem_span_singleton, pOf_eq_prime,
     ← map_dvd_iff (Rat.IsIntegralClosure.intEquiv (𝓞 ℚ)), map_natCast, map_natCast, Int.natCast_dvd_natCast]
 
 theorem ord_natCast_of_not_dvd (v : Pl) {m : ℕ} (h : ¬ pOf v ∣ m) : ord ((m : ℕ) : Qv v) = 0 := by

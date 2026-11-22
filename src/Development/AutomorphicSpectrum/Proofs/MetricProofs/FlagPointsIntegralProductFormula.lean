@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.MetricsProjectionFormulaNef
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.MoriwakiSt
-import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPushDown
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NotLtLtOfMemMinimalPrimes
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagDegreePolynomialEvalStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.MetricsProjectionFormulaNef
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.MoriwakiSt
+public import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPushDown
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NotLtLtOfMemMinimalPrimes
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagDegreePolynomialEvalStatement
+
+@[expose] public section
+
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I4
 
 noncomputable section
@@ -28,7 +33,7 @@ theorem exists_perm_of_word_eq {n : ℕ} (v w : Fin n → σ)
   have count : ∀ (u : Fin n → σ) (s : σ),
       (∑ j, Finsupp.single (u j) 1 : σ →₀ ℕ) s = Fintype.card {j // u j = s} := by
     intro u s
-    rw [Finsupp.finset_sum_apply, Fintype.card_subtype, Finset.card_filter]
+    rw [Finsupp.finsetSum_apply, Fintype.card_subtype, Finset.card_filter]
     exact Finset.sum_congr rfl fun j _ => by simp [Finsupp.single_apply]
   have hc : ∀ s, Fintype.card {j // v j = s} = Fintype.card {j // w j = s} := fun s => by
     rw [← count, ← count, h]
@@ -41,7 +46,7 @@ theorem eq_of_formPoly_eq {n : ℕ} {a b : (Fin n → σ) → ℝ}
   set m : σ →₀ ℕ := ∑ j, Finsupp.single (w₀ j) 1 with hm
   set T := Finset.univ.filter fun w : Fin n → σ => (∑ j, Finsupp.single (w j) 1 : σ →₀ ℕ) = m with hT
   have hco : ∀ c : (Fin n → σ) → ℝ, (∀ (π : Equiv.Perm (Fin n)) w, c (w ∘ π) = c w) →
-      coeff m (PB.formPoly n c) = (T.card : ℝ) * c w₀ := by
+      AddMonoidAlgebra.coeff (PB.formPoly n c) m = (T.card : ℝ) * c w₀ := by
     intro c hc
     simp only [PB.formPoly, coeff_sum, coeff_C_mul, prod_X_word, coeff_monomial, mul_ite, mul_one, mul_zero]
     rw [← Finset.sum_filter, ← nsmul_eq_mul]
@@ -51,13 +56,14 @@ theorem eq_of_formPoly_eq {n : ℕ} {a b : (Fin n → σ) → ℝ}
     exact hc π w₀
   have hpos : (T.card : ℝ) ≠ 0 :=
     Nat.cast_ne_zero.2 (Finset.card_ne_zero.2 ⟨w₀, Finset.mem_filter.2 ⟨Finset.mem_univ _, rfl⟩⟩)
-  have := congrArg (coeff m) h
+  have := congrArg (AddMonoidAlgebra.coeff · m) h
   rw [hco a ha, hco b hb] at this
   exact mul_left_cancel₀ hpos this
 
 theorem eval_formPoly {n : ℕ} (a : (Fin n → σ) → ℝ) (l : σ → ℝ) :
     eval l (PB.formPoly n a) = ∑ w, a w * ∏ j, l (w j) := by
-  simp [PB.formPoly, map_sum, map_prod]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [PB.formPoly, map_sum, map_prod]
 
 end Words
 
@@ -77,11 +83,11 @@ theorem mapDomain_permExp (u : Ψ → Equiv.Perm (Fin N)) :
     Finsupp.mapDomain (weylAct Ψ N u) (Top.permExp u) = rhoMono Ψ N := by
   ext ⟨τ, i⟩
   have h : ((τ, i) : Ψ × Fin N) = weylAct Ψ N u (τ, (u τ)⁻¹ i) := by simp [weylAct]
-  rw [h, Finsupp.mapDomain_apply (weylAct_injective u)]
+  rw [h, Finsupp.mapDomain_apply_of_injective (weylAct_injective u)]
   simp [Top.permExp, rhoMono, weylAct]
 
 theorem flagInt_eq_sum (P : RootPoly Ψ N) :
-    flagInt Ψ N P = ∑ u, weylSign Ψ N u * coeff (Top.permExp u) P := by
+    flagInt Ψ N P = ∑ u, weylSign Ψ N u * AddMonoidAlgebra.coeff P (Top.permExp u) := by
   unfold flagInt GroundTheory.Heights₂.Heights.LowerBoundFree.antisym
   rw [coeff_sum]
   refine Finset.sum_congr rfl fun u _ => ?_

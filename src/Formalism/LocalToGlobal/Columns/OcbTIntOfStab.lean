@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.FirstUnfoldingEqZeroOfNotIntegral
+module
+
+public import Formalism.LocalToGlobal.Columns.FirstUnfoldingEqZeroOfNotIntegral
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 

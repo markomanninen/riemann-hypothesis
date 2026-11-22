@@ -1,14 +1,19 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.IsTheta
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.LocCFTAll
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.Classical
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.PlaceBetween
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsNondegenerateRightInvariantFormOfCompactQu
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.UnitaryAdelicGroupTopology
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsCompactFundamentalSetUnitary
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsEquivariantProjectionsOfSumIrreducible
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.EventuallyMemHeckeLevelAndIwahoriCongruence
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MemISupAutomorphicRepsOfInvariantForm
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.IsTheta
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.LocCFTAll
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.Classical
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.PlaceBetween
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsNondegenerateRightInvariantFormOfCompactQu
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.UnitaryAdelicGroupTopology
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsCompactFundamentalSetUnitary
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsEquivariantProjectionsOfSumIrreducible
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.EventuallyMemHeckeLevelAndIwahoriCongruence
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MemISupAutomorphicRepsOfInvariantForm
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel IsLocalRing GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.UnitaryBC UpperTheory.V UpperTheory.V.Hi UpperTheory.V.Hi.CaseU
 open UpperTheory.V.W (Plc Lp HidaSetting Vl Resid LamObj UniversalOrdinaryDeterminantRing Pair)
 open UpperTheory.V.HV (Coef)
@@ -88,32 +93,36 @@ private theorem core {E : Type} [Field E] [NumberField E] [IsCMField E] {n m : �
     have e : ∑ j, a u i j • autRep E n (k u) (Φ j ℓ) = Φ i ℓ := by
       apply Subtype.ext
       have := congrArg (fun y => tf y ℓ) (hF u i)
-      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hT] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hT] at this
       rw [Submodule.coe_sum]
       exact this
     have e2 := congrArg (fun y => (P t y).1) e
-    simp only [map_sum, map_smul, hPe, Submodule.coe_sum] at e2
-    simp only [map_sub, map_sum, map_smul, LinearMap.sub_apply, LinearMap.sum_apply, LinearMap.smul_apply, hT, hG]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, hPe, Submodule.coe_sum] at e2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_smul, LinearMap.sub_apply, LinearMap.sum_apply, LinearMap.smul_apply, hT, hG]
     exact sub_eq_zero.2 e2
   · rw [Finset.sum_apply]
     refine sub_eq_zero.1 (hinj _ (sub_mem (Submodule.sum_mem _ fun t _ => hGA t i) (hFA i)) fun ℓ => ?_)
     have e := congrArg Subtype.val (hPs (Φ i ℓ) (Submodule.mem_iSup_of_mem i ⟨ℓ, rfl⟩))
     rw [Submodule.coe_sum] at e
-    simp only [map_sub, map_sum, LinearMap.sub_apply, LinearMap.sum_apply, hG]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, LinearMap.sub_apply, LinearMap.sum_apply, hG]
     exact sub_eq_zero.2 e
 
 private theorem core2 {E : Type} [Field E] [NumberField E] [IsCMField E] {n m d : ℕ} {Γ Ga Gp D : Type} [Group Γ] [Group Ga]
     [Group Gp] [AddCommGroup D] [Module ℂ D] [FiniteDimensional ℂ D] (X : Frame Γ Ga Gp) (ξ : Gp →* GL (Fin d) ℂ)
     (τ : X.Ub →* GL (Fin m) ℂ) (U₀ U : Subgroup X.Ub) (I : Subgroup Gp) (J : UA E n →* Ga × Gp)
     (tf : (Ga × Gp → Fin d → ℂ) →ₗ[ℂ] D →ₗ[ℂ] (UA E n → ℂ)) (r : UA E n → D → D)
-    (hJinf : ∀ x ∈ infU E n, J x = 1) (hRfin : ∀ k ∈ finU E n, ∀ ℓ, r k ℓ = ℓ)
+    (hJinf : ∀ x ∈ infU E n, J x = 1) (hRfin : ∀ k ∈ finU (E := E) (n := n), ∀ ℓ, r k ℓ = ℓ)
     (hinj : ∀ F ∈ X.AF ξ, (∀ ℓ, tf F ℓ = 0) → F = 0)
-    (haut : ∀ F ∈ X.AF ξ, IsOpen {k : finU E n | ∀ g, F (g * J k) = F g} → ∀ ℓ, IsAutFormU (tf F ℓ))
+    (haut : ∀ F ∈ X.AF ξ, IsOpen {k : finU (E := E) (n := n) | ∀ g, F (g * J k) = F g} → ∀ ℓ, IsAutFormU (tf F ℓ))
     (htr : ∀ F ℓ x, RU E n x (tf F ℓ) = tf (fun g => F (g * J x)) (r x ℓ))
-    (hsurj : Function.Surjective fun k : finU E n => J k)
+    (hsurj : Function.Surjective fun k : finU (E := E) (n := n) => J k)
     (hsur : ∀ Φ : D →ₗ[ℂ] (UA E n → ℂ), (∀ ℓ, IsAutFormU (Φ ℓ)) → (∀ ℓ, ∀ x ∈ infU E n, RU E n x (Φ ℓ) = Φ (r x ℓ)) →
       ∃ F ∈ X.AF ξ, ∀ ℓ, tf F ℓ = Φ ℓ)
-    (hev : ∀ᶠ k : finU E n in nhds 1, (∃ u ∈ U, (u : Ga) = (J k).1 ∧ τ u = 1) ∧ (J k).2 ∈ I)
+    (hev : ∀ᶠ k : finU (E := E) (n := n) in nhds 1, (∃ u ∈ U, (u : Ga) = (J k).1 ∧ τ u = 1) ∧ (J k).2 ∈ I)
     (F : Fin m → X.Fn ℂ d) (hF : F ∈ Submodule.pi Set.univ (fun _ => X.AF ξ) ⊓ fixd (X.raF d τ) U₀)
     (hK : F ∈ fixd (X.raF d τ) U) (hb : F ∈ fixd (X.rpF ℂ d m) I) :
     F ∈ ⨆ σ : {σ : Submodule ℂ (UA E n → ℂ) // IsAutRepU σ},
@@ -124,8 +133,8 @@ private theorem core2 {E : Type} [Field E] [NumberField E] [IsCMField E] {n m d 
     rw [Finset.sum_apply, Finset.sum_apply]
     rfl
   have hFA : ∀ i, F i ∈ X.AF ξ := fun i => hF.1 i trivial
-  have hopen : ∀ i, IsOpen {k : finU E n | ∀ g, F i (g * J k) = F i g} := fun i => by
-    let S : Subgroup (finU E n) :=
+  have hopen : ∀ i, IsOpen {k : finU (E := E) (n := n) | ∀ g, F i (g * J k) = F i g} := fun i => by
+    let S : Subgroup (finU (E := E) (n := n)) :=
       { carrier := {k | ∀ g, F i (g * J k) = F i g}
         one_mem' := fun g => by rw [OneMemClass.coe_one, map_one, mul_one]
         mul_mem' := fun {x y} hx hy g => by rw [Subgroup.coe_mul, map_mul, ← mul_assoc, hy, hx]
@@ -177,7 +186,7 @@ theorem UpperTheory.V.Hi.decompU :
   let tf : (Ga l L n × GV n (fun v : V.frame.Vl => s.w v.1) → Fin d → ℂ) →ₗ[ℂ]
       Module.Dual ℂ (⨂[ℂ] e : Emb l (fun v : V.frame.Vl => s.w v.1), nablaSq ℂ n (lam e.res)) →ₗ[ℂ] (UA L n → ℂ) :=
     LinearMap.mk₂ ℂ (toForm ι e)
-      (fun F F' ℓ => funext fun g => by simp only [toForm, Pi.add_apply, map_add])
+      (fun F F' ℓ => funext fun g => by simp only [toForm, Pi.add_apply, map_add (f := _)])
       (fun a F ℓ => funext fun g => by simp only [toForm, Pi.smul_apply, map_smul])
       (fun F ℓ ℓ' => funext fun g => by simp only [toForm, Pi.add_apply, LinearMap.add_apply])
       (fun a F ℓ => funext fun g => by simp only [toForm, Pi.smul_apply, LinearMap.smul_apply])
@@ -187,7 +196,7 @@ theorem UpperTheory.V.Hi.decompU :
       change Matrix.GeneralLinearGroup.map (pLoc L w) (Matrix.GeneralLinearGroup.map (pFin L) x.1) = 1
       rw [h2, map_one]
     exact Prod.ext (Subtype.ext (funext fun w => h1 _)) (funext fun v => h1 _)
-  have hRfin : ∀ k ∈ finU L n, infRep (V := V) ι lam k = 1 := fun k hk => by
+  have hRfin : ∀ k ∈ finU (E := L) (n := n), infRep (V := V) ι lam k = 1 := fun k hk => by
     have h1 : ∀ τ, cEmb τ k = 1 := fun τ => by
       change Matrix.GeneralLinearGroup.map (coord τ) (cInf k) = 1
       rw [MonoidHom.mem_ker.1 hk, map_one]
@@ -200,7 +209,7 @@ theorem UpperTheory.V.Hi.decompU :
     rw [MonoidHom.comp_apply, h2, map_one]
   refine core2 (hset Q τ₀).X ξ ((hset Q τ₀).τC ι) (hset Q τ₀).UQ ((hset Q τ₀).lev K) ((hset Q τ₀).X.I.I1 b) J tf
     (fun x ℓ => ℓ ∘ₗ infRep ι lam x⁻¹) hJinf (fun k hk ℓ => ?_) hinj haut htr hsurj hsur ?_ F hF hK hb
-  · rw [hRfin _ ((finU L n).inv_mem hk)]
+  · rw [hRfin _ ((finU (E := L) (n := n)).inv_mem hk)]
     rfl
   · filter_upwards [UpperTheory.eventually_mem_heckeLevel_and_iwahoriCongruence l L Ω s n hn V Q c m τ₀ hτ K b] with k ⟨⟨u, hu, huk, hu1⟩, hk⟩
     refine ⟨⟨u, hu, huk, ?_⟩, hk⟩

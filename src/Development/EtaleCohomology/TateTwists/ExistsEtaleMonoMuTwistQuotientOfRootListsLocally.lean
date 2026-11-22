@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.ExistsEtaleMonoMuTwistQuotientOfLocalCriterionAn
+module
+
+public import Development.EtaleCohomology.TateTwists.ExistsEtaleMonoMuTwistQuotientOfLocalCriterionAn
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 namespace LateralTheory.EtaleFoundations
@@ -21,7 +25,7 @@ theorem mu_root_relation_submodule_etale_locally_zero_of_root_lists (h : MuRootL
     have h1 : ((twF q 1).map g.appTop).hom a = 0 := hSa V g hg.1
     have h2 : ((twF q 1).map g.appTop).hom b = 0 := hTb V g hg.2
     show ((twF q 1).map g.appTop).hom (a + b) = 0
-    rw [map_add, h1, h2, add_zero]
+    rw [map_add (f := _), h1, h2, add_zero]
   | smul c a _ ha =>
     obtain ⟨S, hS, hSa⟩ := ha
     exact ⟨S, hS, fun V g hg => by

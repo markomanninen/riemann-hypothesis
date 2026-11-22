@@ -1,9 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapPairDetCovec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecValAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCdvrMkLeContinuum
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EtaleCompletionOfDimOneNormal
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RangeAlgebraMapEqIInfDiscreteValuationSubring
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapPairDetCovec
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCdvrMkLeContinuum
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EtaleCompletionOfDimOneNormal
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RangeAlgebraMapEqIInfDiscreteValuationSubring
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,6 +23,7 @@ namespace GlobalTheory.HeightOneCompletion
 
 open IsLocalRing
 
+
 set_option autoImplicit false in
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry in
 open NumberField IsDedekindDomain in
@@ -29,7 +33,6 @@ attribute [local instance] _root_.GlobalTheory.CompHt.algPadicInt _root_.GlobalT
   _root_.GlobalTheory.CompHt.towerPadic _root_.GlobalTheory.CompHt.factPadic
   _root_.GlobalTheory.PadicComplexHost.isAdicComplete in
 open IsLocalRing in
-
 theorem _root_.GlobalTheory.HeightOneCompletion.exists_cdvr_of_height_eq_one :
     ∀ (A : Type) [CommRing A] [IsDomain A] [IsIntegrallyClosed A] [IsNoetherianRing A] [CharZero A]
       (𝔭 : PrimeSpectrum A), 𝔭.asIdeal.height = 1 →

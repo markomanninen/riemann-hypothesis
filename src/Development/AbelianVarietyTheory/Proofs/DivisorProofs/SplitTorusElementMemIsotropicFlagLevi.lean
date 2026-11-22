@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableIffMemL2
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableIffMemL2
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,8 +36,8 @@ theorem prodTens_ext {F E A B : Type} [Field F] [Field E] [Algebra F E] [CommRin
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin n) (Fin n) E} {r : ℕ}
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem adele_ext {z z' : AF F ⊗[F] E} (a : ∀ w, compInf F E w z = compInf F E w z')
     (b : (Algebra.TensorProduct.map (sndA F) (AlgHom.id F E)).toRingHom z =
       (Algebra.TensorProduct.map (sndA F) (AlgHom.id F E)).toRingHom z') : z = z' := by
@@ -90,7 +94,8 @@ theorem exists_diagonal (h : IsCMExt F E σ) {a : GAd σ J} (ha : a ∈ infPts �
         ← InfinitePlace.Completion.ringEquivRealOfIsReal_apply (hR w), RingEquiv.apply_symm_apply]
     have hij := congrFun (congrFun (hs w τ) i) j
     rw [Matrix.mul_apply, Matrix.mul_diagonal] at hij
-    simp only [map_sum, map_mul, Matrix.map_apply, hZ, hc, ← harch]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, Matrix.map_apply, hZ, hc, ← harch]
     simpa only [Matrix.map_apply] using hij
   · have hfin : ∀ k l, (Algebra.TensorProduct.map (sndA F) (AlgHom.id F E)).toRingHom ((matHom _ σ J a).1 k l) =
         (1 : Matrix (Fin n) (Fin n) (Af F ⊗[F] E)) k l := fun k l =>
@@ -100,7 +105,8 @@ theorem exists_diagonal (h : IsCMExt F E σ) {a : GAd σ J} (ha : a ∈ infPts �
         ((pairA F (c j) 1 : AF F) ⊗ₜ[F] (1 : E)) = 1 := by
       rw [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, Algebra.TensorProduct.map_tmul]
       rfl
-    simp only [map_sum, map_mul, hfin, hδ, Matrix.one_apply, ite_mul, one_mul, zero_mul, mul_one,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, hfin, hδ, Matrix.one_apply, ite_mul, one_mul, zero_mul, mul_one,
       Finset.sum_ite_eq, Finset.mem_univ, if_true]
 
 theorem mem_parFlag (h : IsCMExt F E σ) {a : GAd σ J} (ha : a ∈ infPts σ J) (Z : Matrix (Fin n) (Fin r) E)

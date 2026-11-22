@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGDefs
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGBasic
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGDefs
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGBasic
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical UpperHalfPlane Pointwise
@@ -26,7 +30,8 @@ theorem exists_of_ratRoot {Ω M : Type*} [Field Ω] [IsAlgClosed Ω] [Field M] (
 theorem exists_e_eq {d l : ℕ} [Fact l.Prime] (e : Om d →+* PadicAlgCl l)
     (r : PadicAlgCl l →+* PadicAlgCl l) (x : Om d) : ∃ y : Om d, e y = r (e x) := by
   obtain ⟨p, hp, hpx⟩ := Om_isAlgebraic d x
-  have : IsAlgClosed (Om d) := (inferInstance : IsAlgClosure (KQ d) (Om d)).isAlgClosed
+  have : IsAlgClosed (Om d) :=
+    (IsAlgClosed.algebraicClosure_eq_bot_iff (Om d) ℂ).mp (algebraicClosure.algebraicClosure_eq_bot (KQ d) ℂ)
   let f₀ : ℚ →+* Om d := algebraMap ℚ (Om d)
   have h0 : p.eval₂ f₀ x = 0 := by
     apply (algebraMap (Om d) ℂ).injective
@@ -102,7 +107,7 @@ theorem locLift {d l : ℕ} [Fact l.Prime] (ι : ℂ ≃+* ℂ_[l]) (e : Om d �
       left_inv := fun x => hinj (by rw [hg2, hg1, AlgEquiv.symm_apply_apply])
       right_inv := fun x => hinj (by rw [hg1, hg2, AlgEquiv.apply_symm_apply])
       map_mul' := fun x y => hinj (by rw [hg1, map_mul, map_mul, map_mul, hg1, hg1])
-      map_add' := fun x y => hinj (by rw [hg1, map_add, map_add, map_add, hg1, hg1])
+      map_add' := fun x y => hinj (by rw [hg1, map_add (f := _), map_add (f := _), map_add (f := _), hg1, hg1])
       commutes' := fun k => hinj (by rw [hg1, fix_KQ]) }
   have hσ : ∀ x, e (σ x) = ρ (e x) := hg1
   have hn : ∀ x : Om d, ‖ι (x : ℂ)‖ = ‖e x‖ := fun x => by

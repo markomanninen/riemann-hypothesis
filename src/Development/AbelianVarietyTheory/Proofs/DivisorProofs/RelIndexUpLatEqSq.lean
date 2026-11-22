@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
-import Formalism.SatakeDualWeyl.StatementE
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemGUIffAdjJ
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
+public import Formalism.SatakeDualWeyl.StatementE
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemGUIffAdjJ
+
+@[expose] public section
 
 open GlobalTheory.LGrp GlobalTheory.BorelUMod Formalism.UG
 
@@ -25,7 +29,7 @@ def skewPair (σ : L →+* L) (θ d : L) :
 
 theorem skewPair_injective (σ : L →+* L) (θ : L) {d : L} (hd : d ≠ 0) :
     Function.Injective (skewPair (n := n) σ θ d) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro X hX
   have h1 : X - θ • (X + adjJ σ X) = 0 := congrArg Prod.fst hX
   have h2 : d • (X + adjJ σ X) = 0 := congrArg Prod.snd hX

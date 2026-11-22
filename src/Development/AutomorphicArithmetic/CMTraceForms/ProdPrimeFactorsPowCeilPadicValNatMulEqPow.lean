@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.prod_primeFactors_pow_ceil_padicValNat_mul_eq_pow :
     ∀ (Q T a b : ℕ), Q ≠ 0 → ∏ p ∈ Q.primeFactors.filter Nat.Prime,
@@ -10,11 +14,11 @@ theorem UpperTheory.prod_primeFactors_pow_ceil_padicValNat_mul_eq_pow :
   have hf : Q.primeFactors.filter Nat.Prime = Q.primeFactors :=
     Finset.filter_true_of_mem fun p hp => Nat.prime_of_mem_primeFactors hp
   have hQ' : ∏ p ∈ Q.primeFactors, p ^ (Q.factorization p) = Q := by
-    have := Nat.factorization_prod_pow_eq_self hQ
-    rwa [Finsupp.prod, Nat.support_factorization] at this
+    simpa only [Finsupp.prod, Nat.support_factorization] using Nat.prod_factorization_pow_eq_self hQ
   rw [hf]
   conv_rhs => rw [← hQ', ← Finset.prod_pow]
   refine Finset.prod_congr rfl fun p hp => ?_
-  rw [hc, hc, ← pow_mul, Nat.factorization_def Q (Nat.prime_of_mem_primeFactors hp)]
+  rw [hc, hc, ← pow_mul, Nat.factorization_def Q (Nat.prime_of_mem_primeFactors hp),
+    Nat.padicValNat_def]
   congr 1
   ring

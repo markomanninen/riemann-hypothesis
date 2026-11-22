@@ -1,14 +1,19 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.RemoveIsoBlowups
-import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.AffineSpaceCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineResolutionRule
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.EmbeddedResolutionRule
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.FunctorialPrincipalization
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedStrictTransform
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.RemoveIsoBlowups
+public import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.AffineSpaceCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineResolutionRule
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.EmbeddedResolutionRule
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.FunctorialPrincipalization
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedStrictTransform
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry TopologicalSpace Opposite
@@ -35,12 +40,6 @@ namespace EmbeddedBlowupSequence
 
 variable {k : Type u} [Field k] [CharZero k] {Y : Scheme.{u}} [AlgebraicGeometry.IsAffine Y]
   {pY : Y ⟶ Spec (CommRingCat.of k)} [AlgebraicGeometry.LocallyOfFiniteType pY]
-
-instance instIsAffineAmbient (T : EmbeddedBlowupSequence k Y pY) :
-    AlgebraicGeometry.IsAffine T.ambient := T.isAffine_ambient
-
-instance instSmoothAmbientStruct (T : EmbeddedBlowupSequence k Y pY) :
-    AlgebraicGeometry.Smooth T.ambientStruct := T.smooth_ambientStruct
 
 instance instLocallyOfFiniteTypeAmbientStruct (T : EmbeddedBlowupSequence k Y pY) :
     AlgebraicGeometry.LocallyOfFiniteType T.ambientStruct :=
@@ -287,8 +286,6 @@ theorem totalSpaceZeroIso_spec :
 def totalTower : ℕᵒᵖ ⥤ Scheme.{u} :=
   (Functor.ofSequence (fun i => (T.totalTransition i).op)).leftOp
 
-theorem totalTower_obj (i : ℕ) : T.totalTower.obj (Opposite.op i) = T.totalSpace i := rfl
-
 theorem totalTower_map_succ (i : ℕ) :
     T.totalTower.map (homOfLE (Nat.le_succ i)).op = T.totalTransition i := by
   show ((Functor.ofSequence (fun j => (T.totalTransition j).op)).map
@@ -308,10 +305,6 @@ def inducedBlowups (h : T.TransitionsAreBlowups) : SequenceOfBlowups Y where
 
 @[simp] theorem inducedBlowups_length (h : T.TransitionsAreBlowups) : (T.inducedBlowups h).length = T.length := rfl
 
-@[simp] theorem inducedBlowups_tower (h : T.TransitionsAreBlowups) : (T.inducedBlowups h).tower = T.totalTower := rfl
-
-theorem inducedBlowups_isoObjZero (h : T.TransitionsAreBlowups) : (T.inducedBlowups h).isoZero = T.totalSpaceZeroIso := rfl
-
 @[simp] theorem inducedBlowups_center (h : T.TransitionsAreBlowups) (i : ℕ) :
     (T.inducedBlowups h).center i = T.totalCenter i := rfl
 
@@ -319,12 +312,12 @@ def inducedBlowupsWithoutIso (h : T.TransitionsAreBlowups) : SequenceOfBlowups Y
 
 end EmbeddedBlowupSequence
 
-private theorem locallyOfFiniteType_affineSpaceIndexedByToSpec_ulift (k : Type u) [Field k] (n : ℕ) :
+theorem locallyOfFiniteType_affineSpaceIndexedByToSpec_ulift (k : Type u) [Field k] (n : ℕ) :
     AlgebraicGeometry.LocallyOfFiniteType (affineSpaceIndexedByToSpec k (ULift.{u} (Fin n))) := by
   unfold affineSpaceIndexedByToSpec
   infer_instance
 
-private theorem quasiCompact_affineSpaceIndexedByToSpec_ulift (k : Type u) [Field k] (n : ℕ) :
+theorem quasiCompact_affineSpaceIndexedByToSpec_ulift (k : Type u) [Field k] (n : ℕ) :
     AlgebraicGeometry.QuasiCompact (affineSpaceIndexedByToSpec k (ULift.{u} (Fin n))) := by
   unfold affineSpaceIndexedByToSpec
   infer_instance
@@ -346,20 +339,8 @@ def toEmbeddedBlowupSequence (S : AffineSpacePrincipalizationData k Y pY) : Embe
   emb_comp := S.emb_comp
   ambientSeq := S.ambientBlowups
 
-theorem toEmbeddedBlowupSequence_ambient (S : AffineSpacePrincipalizationData k Y pY) :
-    S.toEmbeddedBlowupSequence.ambient = S.ambient := rfl
-
-theorem toEmbeddedBlowupSequence_emb (S : AffineSpacePrincipalizationData k Y pY) :
-    S.toEmbeddedBlowupSequence.emb = S.emb := rfl
-
-theorem embeddedAmbientBlowups_eq (S : AffineSpacePrincipalizationData k Y pY) :
-    S.toEmbeddedBlowupSequence.ambientSeq = S.ambientBlowups := rfl
-
 theorem toEmbeddedBlowupSequence_schemeAt (S : AffineSpacePrincipalizationData k Y pY) (i : ℕ) :
     S.toEmbeddedBlowupSequence.schemeAt i = S.ambientLevel i := rfl
-
-theorem toEmbeddedBlowupSequence_strictTransformIdeal (S : AffineSpacePrincipalizationData k Y pY) (i : ℕ) :
-    S.toEmbeddedBlowupSequence.strictTransformIdeal i = S.strictTransformIdeal i := rfl
 
 theorem toEmbeddedBlowupSequence_transitionsAreBlowups_iff (S : AffineSpacePrincipalizationData k Y pY) :
     S.toEmbeddedBlowupSequence.TransitionsAreBlowups ↔ S.TransitionsAreBlowups := Iff.rfl
@@ -393,12 +374,6 @@ def toEmbeddedBlowupSequence (D : EmbeddingDatum k Y pY) (A : PrincipalizationAl
   ambientSeq :=
     (A k D.ambient D.ambientStruct (Scheme.Hom.ker D.emb) D.nonzeroOnComponents_ker
       ([] : List D.ambient.IdealSheafData) D.sncEmpty).toSequenceOfBlowups
-
-theorem toEmbeddedBlowupSequence_ambient (D : EmbeddingDatum k Y pY) (A : PrincipalizationAlgorithm.{u}) :
-    (D.toEmbeddedBlowupSequence A).ambient = D.ambient := rfl
-
-theorem toEmbeddedBlowupSequence_emb (D : EmbeddingDatum k Y pY) (A : PrincipalizationAlgorithm.{u}) :
-    (D.toEmbeddedBlowupSequence A).emb = D.emb := rfl
 
 theorem ambientBlowups_eq_toSequenceOfBlowups (D : EmbeddingDatum k Y pY) (A : PrincipalizationAlgorithm.{u}) :
     (D.toEmbeddedBlowupSequence A).ambientSeq =

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagLevelCharacterEqPsiDivN
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagLevelCharacterEqPsiDivN
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.DIV GlobalTheory.FlagBasis
 open scoped TensorProduct
 
@@ -96,21 +101,21 @@ theorem flagVec_cases {V : Type} [AddCommGroup V] {ρ k : ℕ} (e0 f0 : Fin ρ �
   by_cases h1 : j < ρ
   · refine Or.inl ⟨⟨j, h1⟩, rfl, ?_, ?_⟩
     · unfold dualIdx; rw [if_pos h1]
-    · unfold flagVec; rw [dif_pos h1]
+    · unfold flagVec; rw [dite_eq_left h1]
   by_cases h2 : j - ρ < k
   · refine Or.inr (Or.inl ⟨⟨j - ρ, h2⟩, ?_, ?_, ?_⟩)
     · show j = ρ + (j - ρ); omega
     · show dualIdx ρ k j = ρ + (k - (j - ρ + 1)); unfold dualIdx; split_ifs <;> omega
-    · unfold flagVec; rw [dif_neg h1, dif_pos h2]
+    · unfold flagVec; rw [dite_eq_right h1, dite_eq_left h2]
   by_cases h3 : j = ρ + k
   · refine Or.inr (Or.inr (Or.inl ⟨h3, ?_, ?_⟩))
     · unfold dualIdx; split_ifs <;> omega
-    · unfold flagVec; rw [dif_neg h1, dif_neg h2, if_pos h3]
+    · unfold flagVec; rw [dite_eq_right h1, dite_eq_right h2, if_pos h3]
   have h4 : 2 * ρ + k - j < ρ := by omega
   refine Or.inr (Or.inr (Or.inr ⟨⟨2 * ρ + k - j, h4⟩, ?_, ?_, ?_⟩))
   · show j = 2 * ρ + k - (2 * ρ + k - j); omega
   · show dualIdx ρ k j = 2 * ρ + k - j; unfold dualIdx; split_ifs <;> omega
-  · unfold flagVec; rw [dif_neg h1, dif_neg h2, if_neg h3, dif_pos h4]
+  · unfold flagVec; rw [dite_eq_right h1, dite_eq_right h2, if_neg h3, dite_eq_left h4]
 
 section
 variable {R : Type} [CommRing R] {n ρ k : ℕ} {i j : Fin n}

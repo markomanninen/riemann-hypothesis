@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.HermitianGenusExtension.SemilocalHermitianLattices.ExistsNormOneOfPair
-import Formalism.PeriodIntegrals.HermitianGenusExtension.SemilocalHermitianLattices.ExistsSqAbsNormOfInert
-import Formalism.HermitianLattices.HermitianLatticesProofs.LocDual
+module
+
+public import Formalism.PeriodIntegrals.HermitianGenusExtension.SemilocalHermitianLattices.ExistsNormOneOfPair
+public import Formalism.PeriodIntegrals.HermitianGenusExtension.SemilocalHermitianLattices.ExistsSqAbsNormOfInert
+public import Formalism.HermitianLattices.HermitianLatticesProofs.LocDual
+
+@[expose] public section
 
 open NumberField
 

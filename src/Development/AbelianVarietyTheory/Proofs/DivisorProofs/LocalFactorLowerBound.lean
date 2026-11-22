@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TamagawaSpecialUnitary
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsMulMulConjTransposeEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TamagawaSpecialUnitary
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsMulMulConjTransposeEqOne
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.SUVol
 open Matrix
 
@@ -122,8 +127,8 @@ theorem prod_le_locFactor_of_isPrime (E : Type) [Field E] [NumberField E] [IsCMF
     refine exists_star_ne_of_not_surjective f (fun x => ?_) (fun x => ?_) (fun hsurj => ?_)
     · obtain ⟨y, rfl⟩ := Ideal.Quotient.mk_surjective x
       obtain ⟨a, ha⟩ := (IsCMField.ringOfIntegersComplexConj_eq_self_iff E (y + c y)).1
-        (by change c _ = _; rw [map_add, hcc, add_comm])
-      exact ⟨Ideal.Quotient.mk _ a, by rw [hf, ha, hstar, map_add]⟩
+        (by change c _ = _; rw [map_add (f := _), hcc, add_comm])
+      exact ⟨Ideal.Quotient.mk _ a, by rw [hf, ha, hstar, map_add (f := _)]⟩
     · obtain ⟨y, rfl⟩ := Ideal.Quotient.mk_surjective x
       obtain ⟨a, ha⟩ := (IsCMField.ringOfIntegersComplexConj_eq_self_iff E (y * c y)).1
         (by change c _ = _; rw [map_mul, hcc, mul_comm])
@@ -143,7 +148,7 @@ theorem prod_le_locFactor_of_isPrime (E : Type) [Field E] [NumberField E] [IsCMF
   rw [le_div_iff₀ (by positivity)]
   refine le_of_le_of_eq ?_ h'.symm
   rw [mul_comm]
-  refine mul_le_mul_of_nonneg_left (Finset.prod_le_prod (fun i _ => ?_) (fun i _ => ?_))
+  refine mul_le_mul_of_nonneg_left (Finset.prod_le_prod₀ (fun i _ => ?_) (fun i _ => ?_))
     (by positivity)
   · exact sub_nonneg.2 (inv_le_one_of_one_le₀ (one_le_pow₀ hq1))
   · have hp : (0 : ℝ) ≤ ((q : ℝ) ^ i)⁻¹ := by positivity

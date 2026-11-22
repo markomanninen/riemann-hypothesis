@@ -1,12 +1,21 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.ChainRows
-import Development.AutomorphicSpectrum.Definitions.NonGaloisLines.TopLine
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.GoodOAdicCompleteCompactBasisStatement
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.LatticeOpenCompactNhdsBasisStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsAdicCompleteSpanAlgebraMapOfFreeFinite
-import ReciprocityTheory.ClassFieldTheory.PadicCompatibleSequences.ExistsPadicIntOfCompatibleSeq
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+public import Formalism.SharpRestriction.LevelLetterCocycles.PairedCharacterCondition
+public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
+public import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CrysOnCond
+public import Development.AutomorphicSpectrum.Definitions.NonGaloisLines.TopLine
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.GoodOAdicCompleteCompactBasisStatement
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.LatticeOpenCompactNhdsBasis
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsAdicCompleteSpanAlgebraMapOfFreeFinite
+public import ReciprocityTheory.ClassFieldTheory.PadicCompatibleSequences.ExistsPadicIntOfCompatibleSeq
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism Formalism.ConjugateSelfDual Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations Module GlobalTheory.CompanionTheory.LocDual
 
 noncomputable section
@@ -91,7 +100,7 @@ theorem jr_mk (L' : Formalism.WeaklyAdmissibleFiltrations.Lattice (O := O) ρ') 
 
 theorem jr_inj (L' : Formalism.WeaklyAdmissibleFiltrations.Lattice (O := O) ρ') {ϖ : O} (hϖ : algebraMap O LL ϖ ≠ 0) (r : ℕ) :
     Function.Injective (jr L' hϖ r) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨t, rfl⟩ := Submodule.Quotient.mk_surjective _ x
   rw [jr_mk, Submodule.Quotient.mk_eq_zero] at hx
@@ -122,7 +131,7 @@ theorem mem_Z1Q_of_jr (L' : Formalism.WeaklyAdmissibleFiltrations.Lattice (O := 
     b ∈ quotientCocycles L' _ (Ip_stable L' ϖ r) := by
   refine ⟨IsLocallyConstant.desc b (jr L' hϖ r) hb.1 (jr_inj L' hϖ r), fun g h => ?_⟩
   apply jr_inj L' hϖ r
-  rw [map_add, jr_act]
+  rw [map_add (f := _), jr_act]
   exact hb.2 g h
 
 theorem cup_congr1 {L : Formalism.WeaklyAdmissibleFiltrations.Lattice (O := O) ρ} {L' : Formalism.WeaklyAdmissibleFiltrations.Lattice (O := O) ρ'}
@@ -247,7 +256,7 @@ theorem XX_step {Cob : (G × G → LL) → Prop}
       (fun g => (lq L _ (d g) : V)) g = ϖ ^ r • (t : V) := fun g => lq_stp L ϖ r (d g)
   refine ⟨⟨hd.1.1.comp _, fun g h => ?_⟩, fun s hs hk => ?_, fun hc => hd.2.2 ?_⟩
   · change stp L ϖ r (d (g * h)) = _
-    rw [hd.1.2 g h, map_add, stp_act]
+    rw [hd.1.2 g h, map_add (f := _), stp_act]
   · refine (hCob _ _ (cup_congr1 hP _ _ s hk hlift)).2 (hd.2.1 s hs fun h => ?_)
     rw [pow_succ', mul_smul, hk, smul_zero]
   · exact (hCob _ _ (cup_congr1 hP _ _ c hck hlift)).1 hc
@@ -381,43 +390,5 @@ theorem core [TopologicalSpace V] [ContinuousAdd V] [ContinuousConstSMul LL V] [
 
 end Gen
 
-open GlobalTheory.CompanionTheory.LocDual in
-
-theorem dualD_of_dualQ : ∀ (D : D7) (l : ℕ) [Fact l.Prime] (K : FinExt l), FinZQ ((D.loc l).PD K) →
-    DualQ ((D.loc l).PD K) → DualD ((D.loc l).PD K) := by
-  intro D l _ K hF hQ LL _ _ _ O _ _ hG L1 hL1 A A' LA LA' P hP S hBS hSZ c hc H
-  obtain ⟨⟨hdom, hdvr, hfrac⟩, -⟩ := id hG
-  haveI := hdom
-  haveI := hdvr
-  haveI := hfrac
-  obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible O
-  have hne : algebraMap O LL ϖ ≠ 0 := fun h =>
-    hϖ.ne_zero ((IsFractionRing.injective O LL) (by rw [h, map_zero]))
-  obtain ⟨hO, -⟩ := GlobalTheory.T.goodO_adic_complete_compact_basis l LL O hG ϖ hϖ
-  obtain ⟨-, hb, -, -, -⟩ := GlobalTheory.T.lattice_open_compact_nhds_basis D l K LL O hG A LA ϖ hϖ
-  obtain ⟨-, -, -, hbd', -⟩ := GlobalTheory.T.lattice_open_compact_nhds_basis D l K LL O hG A' LA' ϖ hϖ
-  haveI : CompactSpace ↥(GK K) :=
-    haveI := K.2
-    isCompact_iff_compactSpace.1 (InfiniteGalois.fixingSubgroup_isClosed K.1).isCompact
-  haveI : Module.Free O ↥LA.T := LA.free
-  haveI : Module.Finite O ↥LA.T := Module.Finite.iff_fg.2 LA.fg
-  refine core (Cob := CobO ((D.loc l).PD K) L1) ?_ (fun x hx y hy => (hP.2 y).1 hy x hx) hne
-    (GlobalTheory.CNorm.isAdicComplete_of_free_finite _ hO) hb ?_
-    (fun r => hF LL O hG A LA ϖ hϖ r (Ip_stable LA ϖ r))
-    (fun r => (hQ LL O hG L1 hL1 A A' LA LA' P hP ϖ hϖ r (Ip_stable LA ϖ r) (Ip_stable LA' ϖ r)).2)
-    hBS hSZ hc H
-  · intro z z' h
-    have : (fun x => (Submodule.Quotient.mk (z x) : LL ⧸ L1.T)) =
-        fun x => (Submodule.Quotient.mk (z' x) : LL ⧸ L1.T) := by
-      funext x
-      obtain ⟨a, ha⟩ := h x
-      refine (Submodule.Quotient.eq _).2 ?_
-      rw [ha, hL1]
-      exact ⟨a, rfl⟩
-    unfold CobO
-    rw [this]
-  · intro v
-    obtain ⟨n, hn⟩ := hbd' (fun _ => v) continuous_const
-    exact ⟨n, hn 1⟩
 
 end GlobalTheory.CompanionTheory.TdDualD

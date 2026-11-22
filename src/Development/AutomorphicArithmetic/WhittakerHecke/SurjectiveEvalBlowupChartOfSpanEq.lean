@@ -1,4 +1,9 @@
-import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowup
+module
+
+public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowup
+
+@[expose] public section
+
 open FunctorialResolution.Blowup
 
 namespace UpperTheory.ChartGen
@@ -58,7 +63,8 @@ theorem UpperTheory.surjective_eval_blowupChart_of_span_eq :
       sum_mem fun l _ => mul_mem (hC _) (hX l)
     have heq : chartFraction I c b = ∑ l, chartRingHom I c (s l) * chartFraction I c (a l) := by
       apply cancel_rho I c 1
-      rw [pow_one, ← chartRingHom_coe_eq_chartFraction_mul, ← hs, map_sum, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [pow_one, ← chartRingHom_coe_eq_chartFraction_mul, ← hs, map_sum, Finset.sum_mul]
       refine Finset.sum_congr rfl fun l _ => ?_
       rw [map_mul, chartRingHom_coe_eq_chartFraction_mul I c (a l), mul_assoc]
     rw [heq]
@@ -81,7 +87,7 @@ theorem UpperTheory.surjective_eval_blowupChart_of_span_eq :
         rw [hbe]
         ring
       · rintro x y ⟨wx, hwx, hx⟩ ⟨wy, hwy, hy⟩
-        exact ⟨wx + wy, add_mem hwx hwy, by rw [map_add, hx, hy, add_mul]⟩
+        exact ⟨wx + wy, add_mem hwx hwy, by rw [map_add (f := _), hx, hy, add_mul]⟩
   intro z
   obtain ⟨n, r, hr, hz⟩ := exists_mul_pow_eq I c z
   obtain ⟨w, hw, hwe⟩ := hpow n r hr

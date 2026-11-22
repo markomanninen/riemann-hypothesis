@@ -1,16 +1,21 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HaarScalingMultiplicative
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsFieldIdemOne
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MeasureUnitImage
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MeasureComplementImageEqZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PointEqTranslate
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PieceMeasureLtTop
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsDependentColumn
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GUEqOneAdd
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsGlGD
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompInfSingleInfSelf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFrameLeftInvGram
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HaarScalingMultiplicative
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsFieldIdemOne
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MeasureUnitImage
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MeasureComplementImageEqZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PointEqTranslate
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PieceMeasureLtTop
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsDependentColumn
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GUEqOneAdd
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsGlGD
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompInfSingleInfSelf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFrameLeftInvGram
+
+@[expose] public section
+
 open MeasureTheory Topology Filter GlobalTheory.CompanionTheory.NullFr
 open scoped NNReal ENNReal Matrix
 
@@ -316,8 +321,8 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.CompanionTheory.NullFr
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem nullSing_of_idemEx : IdemEx → NullSing := by
   intro hI D r t V b₀ hb S e he ν hν
   haveI : IsTopologicalRing (AE D) := GlobalTheory.Doubling.isTopologicalRing_tens

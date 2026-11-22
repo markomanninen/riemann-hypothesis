@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.Hypotheses.GalCoh
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.IsUnramifiedOutsideIffLeMaxUnramifiedOutside
-import GroundTheory.ProfiniteCohomology.ContinuousCochains
+module
+
+public import Mathlib
+public import ReciprocityTheory.Hypotheses.GalCoh
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.IsUnramifiedOutsideIffLeMaxUnramifiedOutside
+public import GroundTheory.ProfiniteCohomology.ContinuousCochains
+
+@[expose] public section
 
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh ReciprocityTheory.Gal Formalism.ConjugateSelfDual
 open scoped Pointwise IntermediateField
@@ -13,8 +17,8 @@ section
 variable {F K Ω : Type*} [Field F] [NumberField F] [Field K] [NumberField K] [Algebra F K]
   [Field Ω] [Algebra F Ω] [Algebra K Ω] [IsScalarTower F K Ω]
 
-omit [NumberField F] [NumberField K] in
 
+omit [NumberField F] [NumberField K] in
 theorem restrictScalars_smul (h : Ω ≃ₐ[K] Ω) (A : ValuationSubring Ω) :
     (h.restrictScalars F) • A = h • A := by
   ext x
@@ -22,8 +26,8 @@ theorem restrictScalars_smul (h : Ω ≃ₐ[K] Ω) (A : ValuationSubring Ω) :
     ValuationSubring.mem_pointwise_smul_iff_inv_smul_mem]
   rfl
 
-omit [NumberField K] [Field K] [Algebra F K] [Algebra K Ω] [IsScalarTower F K Ω] in
 
+omit [NumberField K] [Field K] [Algebra F K] [Algebra K Ω] [IsScalarTower F K Ω] in
 theorem mem_inertia_of_integers [IsAlgClosure F Ω] {A : ValuationSubring Ω} {σ : Ω ≃ₐ[F] Ω}
     (hd : σ • A = A) (hb : ∀ b : Ω, IsIntegral ℤ b → A.valuation (σ b - b) < 1) :
     σ ∈ Inertia (F := F) A := by
@@ -79,9 +83,9 @@ theorem exists_residue_correction [IsAlgClosure K Ω] {A : ValuationSubring Ω}
   set P := primeBelow (F := K) A with hPdef
   haveI : w.asIdeal.IsMaximal := w.isMaximal
   haveI : P.LiesOver w.asIdeal := ⟨(under_primeBelow hA).symm⟩
-  haveI : P.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := 𝓞 K) P
-    (by rw [show Ideal.comap (algebraMap (𝓞 K) (IntCl K Ω)) P = w.asIdeal from
-      under_primeBelow hA]; exact w.isMaximal)
+  haveI : P.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := 𝓞 K) P
+    (by rw [show Ideal.under (𝓞 K) P = w.asIdeal from under_primeBelow hA]
+        exact w.isMaximal)
   let e : IntCl K Ω ≃+* IntCl K Ω := actInt σ₁
   have hP : P = P.map (e : IntCl K Ω →+* IntCl K Ω) := by
     rw [Ideal.map_comap_of_equiv]

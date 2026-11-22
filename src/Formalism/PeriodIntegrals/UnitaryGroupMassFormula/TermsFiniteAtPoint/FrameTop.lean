@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.FrameOp
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.FrameOp
+
+@[expose] public section
 
 noncomputable section
 
@@ -118,7 +122,8 @@ theorem frameOp_holds : FrameOp := by
     intro b a
     have h := congrArg (fun M : Matrix (Fin D.R.rS) (Fin D.R.rS) (𝓞 D.host.E) =>
       algebraMap (𝓞 D.host.E) D.host.E (M b a)) hUiU
-    simp only [Matrix.mul_apply, Matrix.one_apply, map_sum, map_mul] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.one_apply, map_sum, map_mul] at h
     exact h.trans (by split_ifs <;> simp)
   have hUU : ∀ a b, ∑ c, star (UE c a) * U'E c b = if a = b then 1 else 0 := by
     intro a b

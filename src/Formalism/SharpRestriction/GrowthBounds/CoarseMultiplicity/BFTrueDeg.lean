@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.CoarseMultAt
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.WeightWLet
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.CoarseMultAt
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.WeightWLet
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.AdLat
 open scoped TensorProduct Matrix nonZeroDivisors
@@ -72,7 +76,7 @@ theorem galoisAut_mem_adelicCompletionOfElementSet (c : E ≃ₐ[F] E) {I J : Se
     obtain ⟨a, ha, x, hx, rfl⟩ := hx
     exact tmul_mem_adelicCompletion_of_integral F ha (h x hx)
   | zero => rw [map_zero]; exact zero_mem _
-  | add y z _ _ h1 h2 => rw [map_add]; exact add_mem h1 h2
+  | add y z _ _ h1 h2 => rw [map_add (f := _)]; exact add_mem h1 h2
   | neg y _ h1 => rw [map_neg]; exact neg_mem h1
 
 theorem mem_range_iff_adele_integral (x : F) :
@@ -103,7 +107,7 @@ theorem linearForm_integral_of_one_tmul_mem_adelicCompletion {I : Set E} (t : E 
       exact adele_mul_integral F
         ((mem_range_iff_adele_integral F _).1 (ht y hy) v) (ha v)
     | zero => rw [map_zero]; exact adele_zero_integral F v
-    | add y z _ _ h1 h2 => rw [map_add]; exact adele_add_integral F h1 h2
+    | add y z _ _ h1 h2 => rw [map_add (f := _)]; exact adele_add_integral F h1 h2
     | neg y _ h1 => rw [map_neg]; exact adele_neg_integral F h1
   rw [mem_range_iff_adele_integral]
   have := key _ hx

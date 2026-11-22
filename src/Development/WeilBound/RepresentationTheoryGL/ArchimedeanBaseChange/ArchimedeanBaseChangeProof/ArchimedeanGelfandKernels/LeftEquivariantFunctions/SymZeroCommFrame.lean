@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.IsMultZero
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.IsMultZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -142,8 +146,6 @@ def LSt : Prop :=
         Integrable (fun x => phiOf E T k (tw x d)) μ ∧
           ∫ x, phiOf E T k (tw x d) ∂μ = val (infOf lam) * conj (weylChar lam fun a => z a ^ 2)
 
-def ChainOf : Prop := WaveEx → WaveSpeed → GelComm → Chain
-def GelFlagOf : Prop := GelComm → GelN → GelFlag
 def VCOf : Prop := WaveEx → WaveSpeed → MultAlg → GelComm → GelFlag → FlagField → NilUni → KerZero → VCSt
 def LOf : Prop := WaveEx → WaveSpeed → KerEx → MultAlg → Chain → ConeSt → Homot → SuppSt → LSt
 

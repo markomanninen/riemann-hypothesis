@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,13 +105,16 @@ theorem coefA_toSum {T : X →ₗ[ℂ] X} (hT : ∀ x y, inner ℂ (T x) y = inn
     (Submodule.span ℂ {y | y ∈ M' ∧ ∃ θ : ℝ, θ ≤ C ∧ T y = (θ : ℂ) • y}) ℓ
   refine ⟨z, hZM (hLZ hzL), fun y hy => ?_⟩
   obtain ⟨m, b, θ, hsum, hb⟩ := coefA_decompM hT hloc hy
-  rw [hsum, inner_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum, inner_sum, map_sum]
   refine Finset.sum_congr rfl (fun i _ => ?_)
   by_cases hθ : θ i ≤ C
   · exact hz (b i) (Submodule.subset_span ⟨(hb i).1, θ i, hθ, (hb i).2⟩)
   · push_neg at hθ
     rw [hhigh (b i) (hb i).1 (θ i) hθ (hb i).2]
-    exact inner_span_eq_zero_of_eigenvalue_gt hT (fun u hu => hu.2) (hb i).2 hθ z hzL
+    exact inner_span_eq_zero_of_eigenvalue_gt hT
+      (s := {y | y ∈ M' ∧ ∃ θ : ℝ, θ ≤ C ∧ T y = (θ : ℂ) • y})
+      (fun _ hu => hu.2) (hb i).2 hθ z hzL
 
 theorem coefA_high {T : Y →ₗ[ℂ] Y} (hT : ∀ x y, inner ℂ (T x) y = inner ℂ x (T y))
     {L : Submodule ℂ Y} (hLd : FiniteDimensional ℂ L) (hL : ∀ x ∈ L, T x ∈ L) :
@@ -188,9 +195,11 @@ theorem coefA_ofSum {T : X →ₗ[ℂ] X} (hT : ∀ x y, inner ℂ (T x) y = inn
   refine ⟨ι (∑ k, x k), Submodule.mem_map_of_mem (Submodule.sum_mem _ (fun k _ => hxM k)), ?_⟩
   intro y hy
   obtain ⟨n, c, η, hys, hc⟩ := coefA_decompM hT hloc hy
-  rw [map_sum, hzs, hys, sum_inner, sum_inner]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, hzs, hys, sum_inner, sum_inner]
   refine Finset.sum_congr rfl (fun k _ => ?_)
-  rw [map_sum, inner_sum, inner_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, inner_sum, inner_sum]
   refine Finset.sum_congr rfl (fun j _ => ?_)
   by_cases hkj : θ k = η j
   · exact hxr k (c j) (hc j).1 (by rw [hkj]; exact (hc j).2)

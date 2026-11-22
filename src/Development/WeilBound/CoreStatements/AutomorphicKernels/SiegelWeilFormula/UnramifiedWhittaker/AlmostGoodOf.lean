@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.BasisSet
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.BasisSet
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,8 +56,6 @@ def TraceDualAt : Prop :=
   ∀ (d : ℕ) (bs : Module.Basis (Fin d) F E) (v : HeightOneSpectrum (𝓞 F)), IntAt v (basisSet σ bs) →
   ∀ a : Fv F v ⊗[F] E,
     (∀ b ∈ Rv bs v, Algebra.trace (Fv F v) (Fv F v ⊗[F] E) (a * b) ∈ v.adicCompletionIntegers F) ↔ a ∈ Rv bs v
-
-def AlmostGoodOf : Prop := FinInt → PsiBasic → PsiCond → LocRingE → LocMat → AlmostGood
 
 end PositivityTheory.SiegelWeilFormula.Gunr
 

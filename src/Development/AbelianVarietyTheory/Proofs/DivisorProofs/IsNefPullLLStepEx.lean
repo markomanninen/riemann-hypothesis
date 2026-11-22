@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.InterNumDetNonposSplitTorus
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsTangentEquiv
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsCohSubDegEqSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFrameOfProjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagSpaceComponentSmoothProjectiveConnected
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExOfHeadWt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothOfRelativeDimensionOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.GenBridgeB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.InterNumDetNonposSplitTorus
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsTangentEquiv
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsCohSubDegEqSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFrameOfProjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagSpaceComponentSmoothProjectiveConnected
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExOfHeadWt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothOfRelativeDimensionOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.GenBridgeB
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -30,7 +34,7 @@ def spanSub : Sub F where
     { carrier := {s | ∀ j (W : X.Opens) (h₁ : W ≤ V) (h₂ : W ≤ T j),
         resM F h₁ s = ∑ a, dualApp (l j a) h₂ (resM F h₁ s) • resM F h₂ (w j a)}
       add_mem' := fun hs ht j W h₁ h₂ => by
-        simp only [map_add, add_smul, Finset.sum_add_distrib]
+        simp only [map_add (f := _), add_smul, Finset.sum_add_distrib]
         rw [← hs j W h₁ h₂, ← ht j W h₁ h₂]
       zero_mem' := fun j W h₁ h₂ => by simp
       smul_mem' := fun a s hs j W h₁ h₂ => by
@@ -42,7 +46,8 @@ def spanSub : Sub F where
     refine Twist.sec_ext_of_cover (fun x => W ⊓ U x) (fun _ => inf_le_left)
       (fun x hx' => Opens.mem_iSup.2 ⟨⟨x, hx'⟩, hx', hx _⟩) fun x => ?_
     have := hs x j (W ⊓ U x) inf_le_right (inf_le_left.trans h₂)
-    simp only [map_sum, resM_smul, ← dualApp_resM, resM_resM] at this ⊢
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, resM_smul, ← dualApp_resM, resM_resM] at this ⊢
     exact this
 
 theorem exists_sub_det {L : LB X} (hL : L.IsLB) (w : ∀ j, Fin r → Γ(F, L.U j)) (l : ∀ j, Fin r → Γ(VB.dual F, L.U j))
@@ -59,12 +64,14 @@ theorem exists_sub_det {L : LB X} (hL : L.IsLB) (w : ∀ j, Fin r → Γ(F, L.U 
   let N := spanSub w l
   have hm (j) (b) : w j b ∈ N.sec (L.U j) := fun j' V h₁ h₂ => by
     have e := congrArg (resM F (le_inf h₂ h₁)) (hB j' j b)
-    simp only [map_sum, resM_smul, resM_resM] at e
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, resM_smul, resM_resM] at e
     rw [e]
     simp only [hl']
   have hi (j) {V : X.Opens} (h : V ≤ L.U j) (c : Fin r → Γ(X, V)) :
       N.incl.app V (∑ b, c b • resM _ h (N.mkSec _ (hm j b))) = ∑ b, c b • resM F h (w j b) := by
-    simp only [map_sum, Scheme.Modules.Hom.app_smul, app_resM, Sub.incl_app_mkSec]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Scheme.Modules.Hom.app_smul, app_resM, Sub.incl_app_mkSec]
   have he (j) : IsFrame fun b => N.mkSec _ (hm j b) := isFrame_iff.2 fun V h => by
     refine ⟨Fintype.linearIndependent_iff.2 fun c hc a => ?_, fun s _ =>
       (Submodule.mem_span_range_iff_exists_fun _).2 ⟨fun a => dualApp (l j a) h (resM F le_rfl (N.incl.app V s)),
@@ -88,8 +95,8 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheo
   {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {O : Type} [CommRing O] {β : O →+* c.F} {Y : Model Xo c β}
   {Z : Scheme.{0}} {π : Z ⟶ Y.X} (F : Frames Y π)
 
-open Classical in
 
+open Classical in
 theorem LL_stepEx_g_inv (σ : E →+* ℂ) {n : ℕ} (hn : n ≤ Dw.mult σ) (k k' : F.J) :
     ((show Γ(Z, F.U k ⊓ F.U k')ˣ from (F.LL (stepEx σ n)).g k k')⁻¹).val =
       ∏ a : Fin n, F.B k k' σ (a.castLE hn) (a.castLE hn) := by
@@ -155,14 +162,16 @@ theorem exists_step_sub {C : Scheme.{0}} [C.IsSeparated] [PreconnectedSpace C] (
     rw [← e, dualApp_sum, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun s _ => ?_
     have e' : w j a' = ∑ s, F.uAt j.1.2 _ (hin j.2.1.1 j.2.2) σ s (a'.castLE hn) • (hb j).basis le_rfl s := by
-      simp only [w, Frames.vecAt, vec_apply, map_sum, map_smul, IsFrame.basis_apply, resM_self, b,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [w, Frames.vecAt, vec_apply, map_sum, map_smul, IsFrame.basis_apply, resM_self, b,
         Module.Basis.map_apply]
     rw [dualApp_smul, LinearMap.smul_apply, IsFrame.dualApp_coord, e', Module.Basis.repr_sum_self, GlobalTheory.LB.resG_self,
       smul_eq_mul]
   have h₂ (j j' : J) (a : Fin n) : resM (Lie t.G) (inf_le_right : j.1.1 ⊓ j'.1.1 ≤ _) (w j' a) =
       ∑ s, B j j' s a • resM (Lie t.G) inf_le_left (w j s) := by
     refine (hres j' (hT j j') inf_le_right _).trans ?_
-    rw [F.vecAt_eq_sum j.1.2 j'.1.2 _ (hin (hT j j').1 (inf_le_left.trans j.2.2)) _ (hh j j'), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [F.vecAt_eq_sum j.1.2 j'.1.2 _ (hin (hT j j').1 (inf_le_left.trans j.2.2)) _ (hh j j'), map_sum]
     refine (Finset.sum_of_injOn (Fin.castLE hn) (Fin.castLE_injective hn).injOn (fun _ _ => Finset.mem_univ _)
       (fun s _ h => ?_) fun s _ => ?_).symm
     · have hs : a.castLE hn < s := lt_of_not_ge fun h' => h ⟨⟨s, lt_of_le_of_lt h' a.2⟩, by simp, rfl⟩

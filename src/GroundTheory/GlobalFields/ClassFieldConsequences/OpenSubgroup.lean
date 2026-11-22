@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.ClassFieldConsequences.CongruenceSubgroupLeStandardOpenSubgroup
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ClassFieldConsequences.CongruenceSubgroupLeStandardOpenSubgroup
+
+@[expose] public section
 
 open Topology Filter NumberField IsDedekindDomain Function
 open scoped NumberField.AdeleRing
@@ -71,8 +75,9 @@ theorem Modulus.exists_congruenceSubgroup_le (H : Subgroup (IdeleGroup K))
       by_contra h
       exact hv (hn0 v h)
   let 𝔪 : Modulus K := ⟨∏ᶠ v, v.asIdeal ^ n v, finprod_asIdeal_pow_ne_bot n, Set.univ⟩
-  have hle : ∀ v, n v ≤ 𝔪.exponent v :=
-    (finprod_asIdeal_pow_dvd_iff hsupp (finprod_asIdeal_pow_ne_bot n)).1 dvd_rfl
+  have hle (v : HeightOneSpectrum (𝓞 K)) : n v ≤ 𝔪.exponent v := by
+    rw [exponent, ite_eq_left (FiniteMultiplicity.of_prime_left v.prime 𝔪.ideal_ne_bot)]
+    exact (finprod_asIdeal_pow_dvd_iff hsupp (finprod_asIdeal_pow_ne_bot n)).mp dvd_rfl v
   refine ⟨𝔪, rfl, fun x hx ↦ ?_⟩
   obtain ⟨hf, hi⟩ := 𝔪.mem_congruenceSubgroup.1 hx
   rw [← ofFinite_mul_ofInfinite x]
@@ -93,12 +98,6 @@ theorem IdeleClassGroup.exists_map_congruenceSubgroup_le (H : Subgroup (IdeleCla
   obtain ⟨𝔪, h𝔪, hle⟩ := Modulus.exists_congruenceSubgroup_le (H.comap (IdeleClassGroup.mk K))
     (hH.preimage (IdeleClassGroup.continuous_mk K))
   exact ⟨𝔪, h𝔪, Subgroup.map_le_iff_le_comap.2 hle⟩
-
-theorem IdeleClassGroup.exists_map_congruenceSubgroup_le_of_finiteIndex
-    (H : Subgroup (IdeleClassGroup K)) (hH : IsOpen (H : Set (IdeleClassGroup K)))
-    (_ : H.FiniteIndex) :
-    ∃ 𝔪 : Modulus K, 𝔪.congruenceSubgroup.map (IdeleClassGroup.mk K) ≤ H :=
-  (IdeleClassGroup.exists_map_congruenceSubgroup_le H hH).imp fun _ h ↦ h.2
 
 theorem Modulus.isOpen_map_congruenceSubgroup (𝔪 : Modulus K) :
     IsOpen (𝔪.congruenceSubgroup.map (IdeleClassGroup.mk K) : Set (IdeleClassGroup K)) := by

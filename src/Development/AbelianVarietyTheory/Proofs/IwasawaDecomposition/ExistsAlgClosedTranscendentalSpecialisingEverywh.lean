@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial IsLocalRing
 
@@ -96,10 +100,11 @@ theorem genval (K : Type) [Field K] [IsAlgClosed K] : ∃ (L : Type) (_ : Field 
       have hsaL' : s - ι a ∈ ((↑) : V → L) '' (maximalIdeal V : Set V) := by
         rw [ValuationSubring.image_maximalIdeal]; exact hsaL
       obtain ⟨w, hw, hw'⟩ := hsaL'
-      convert hw
-      apply Subtype.ext
-      rw [hw']
-      rfl
+      have heq : sV - ιV a = w := by
+        apply Subtype.ext
+        exact hw'.symm
+      rw [heq]
+      exact hw
     have hne : sV - ιV a ≠ 0 := by
       intro h
       have h1 := congrArg Subtype.val h

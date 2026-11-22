@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FRatioSelf
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAffCoverSpec
-import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SmoothOfRelativeDimensionOfDimOfFinrankDerivatio
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FRatioSelf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAffCoverSpec
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SmoothOfRelativeDimensionOfDimOfFinrankDerivatio
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.CechDR GlobalTheory.PD
 
@@ -32,7 +36,7 @@ theorem exists_basis_mod_sq {A : Type} [CommRing A] [Algebra ℂ A] (e : A →+*
     exact he c
   let φ : A →ₗ[ℂ] ℂ ⊗[A] Ω[A⁄ℂ] :=
     { toFun := fun a => (1 : ℂ) ⊗ₜ[A] D ℂ A a
-      map_add' := fun a b => by rw [map_add, TensorProduct.tmul_add]
+      map_add' := fun a b => by rw [map_add (f := _), TensorProduct.tmul_add]
       map_smul' := fun c a => by rw [(D ℂ A).map_smul c a, key]; rfl }
   have hφ : ∀ x : RingHom.ker (algebraMap A ℂ), φ x =
       kerCotangentToTensor ℂ A ℂ ((RingHom.ker (algebraMap A ℂ)).toCotangent x) :=
@@ -51,7 +55,8 @@ theorem exists_basis_mod_sq {A : Type} [CommRing A] [Algebra ℂ A] (e : A →+*
   have hmemg : ∀ c : Fin d → ℂ, ∑ j, c j • (g j : A) ∈ RingHom.ker (algebraMap A ℂ) := fun c =>
     Ideal.sum_mem _ fun j _ => by rw [Algebra.smul_def]; exact Ideal.mul_mem_left _ _ (g j).2
   have hφg : ∀ c : Fin d → ℂ, φ (∑ j, c j • (g j : A)) = ∑ j, c j • b j := fun c => by
-    rw [map_sum]; simp only [map_smul, hg]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]; simp only [map_smul, hg]
   refine ⟨fun j => g j, fun j => (g j).2, ?_, ?_⟩
   · intro a ha
     refine ⟨fun j => b.repr (φ a) j, ?_⟩

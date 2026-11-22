@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToRingActOpOfRingAct
-import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyHomFixRepTrivial
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqNearFibreOfQuotContracts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomDiffUnitSpecialises
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqUnitOfPullbackEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToRingActOpOfRingAct
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyHomFixRepTrivial
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqNearFibreOfQuotContracts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomDiffUnitSpecialises
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqUnitOfPullbackEq
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.EndLoc
@@ -32,7 +37,7 @@ theorem isClosed_of_isOpen_of_stable {S : Scheme.{0}} [IsLocallyNoetherian S] {L
     exact ⟨⟨x, hxU⟩, hxO, hxL⟩
   let D : Set (U : Set S) := ⋃ Z ∈ {Z ∈ irreducibleComponents (U : Set S) | (Z ∩ L').Nonempty}, Z
   have hD : IsClosed D :=
-    (TopologicalSpace.NoetherianSpace.finite_irreducibleComponents.subset fun _ h => h.1).isClosed_biUnion
+    (TopologicalSpace.NoetherianSpace.finite_irreducibleComponents.subset (by exact fun _ h => h.1)).isClosed_biUnion
       fun Z h => isClosed_of_mem_irreducibleComponents Z h.1
   have hLD : L' ⊆ D := fun y hy =>
     Set.mem_biUnion ⟨irreducibleComponent_mem_irreducibleComponents y, y, mem_irreducibleComponent, hy⟩

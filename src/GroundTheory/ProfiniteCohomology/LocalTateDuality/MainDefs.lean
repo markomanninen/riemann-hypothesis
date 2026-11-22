@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalClassFormationAlt
-import GroundTheory.ProfiniteCohomology.LocalTateDuality.EqZeroOfForallCupPairingZmodMulEqZeroLeft
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing
-import GroundTheory.ProfiniteCohomology.CartierDual
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalClassFormationAlt
+public import GroundTheory.ProfiniteCohomology.LocalTateDuality.EqZeroOfForallCupPairingZmodMulEqZeroLeft
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing
+public import GroundTheory.ProfiniteCohomology.CartierDual
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -57,22 +62,6 @@ def brauerInvOfIsSepClosure : galoisBrauerGroup K Ksep →+ QZ :=
   haveI := algebraicValuativeRel_valuativeExtension K Ksep
   brauerInv K Ksep
 
-theorem brauerInvOfIsSepClosure_bijective :
-    Function.Bijective (brauerInvOfIsSepClosure K Ksep) :=
-  letI := algebraicValuativeRel K Ksep
-  letI := algebraicTopology K Ksep
-  haveI := algebraicTopology_isValuativeTopology K Ksep
-  haveI := algebraicValuativeRel_valuativeExtension K Ksep
-  brauerInv_bijective K Ksep
-
-def brauerInvEquivOfIsSepClosure : galoisBrauerGroup K Ksep ≃+ QZ :=
-  AddEquiv.ofBijective (brauerInvOfIsSepClosure K Ksep) (brauerInvOfIsSepClosure_bijective K Ksep)
-
-@[simp]
-theorem brauerInvEquivOfIsSepClosure_apply (y : galoisBrauerGroup K Ksep) :
-    brauerInvEquivOfIsSepClosure K Ksep y = brauerInvOfIsSepClosure K Ksep y :=
-  rfl
-
 theorem brauerInvOfIsSepClosure_eq_inv_top (y : galoisBrauerGroup K Ksep) :
     brauerInvOfIsSepClosure K Ksep y = (localClassFormationOfIsSepClosure K Ksep).inv ⊤
       ((cohomologyRes (galUnits.{0} K Ksep)
@@ -110,13 +99,6 @@ def dualRepRootsOfUnityIso (M : Rep.{u} (ULift.{u} ℤ) Gal(L/K)) (n : ℕ)
   cartierDualIsoHomRootsOfUnityOfNsmul K L M n hM
 
 variable {K L}
-
-@[simp]
-theorem dualRepRootsOfUnityIso_hom_apply (M : Rep.{u} (ULift.{u} ℤ) Gal(L/K)) (n : ℕ)
-    (hM : ∀ m : M, n • m = 0) (f : M →ₗ[ULift.{u} ℤ] galRootsOfUnity.{u} K L n) (m : M) :
-    ((dualRepRootsOfUnityIso K L M n hM).hom.hom f : M →ₗ[ULift.{u} ℤ] galUnits.{u} K L) m =
-      (rootsOfUnityToUnits K L n).hom (f m) :=
-  rfl
 
 end Bridge
 

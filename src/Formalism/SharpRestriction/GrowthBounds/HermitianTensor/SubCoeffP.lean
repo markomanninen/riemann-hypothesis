@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.RowActTransv
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.LamAddC
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.RowActTransv
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.LamAddC
+
+@[expose] public section
 
 noncomputable section
 

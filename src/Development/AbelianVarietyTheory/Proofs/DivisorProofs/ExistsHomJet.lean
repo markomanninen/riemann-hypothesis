@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EllFamNontrivial
-import Development.AbelianVarietyTheory.Definitions.Divisors.FstTszeSec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EllFamNontrivial
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FstTszeSec
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,7 +20,7 @@ def liftSq {g : ℕ} {O C : Type} [CommRing O] [CommRing C] (ρ : O →+* C) (n 
   map_one' := by simp
   map_zero' := by simp
   map_add' x y := by
-    simp only [TrivSqZeroExt.fst_add, TrivSqZeroExt.snd_add, Pi.add_apply, map_add, add_mul,
+    simp only [TrivSqZeroExt.fst_add, TrivSqZeroExt.snd_add, Pi.add_apply, map_add (f := _), add_mul,
       Finset.sum_add_distrib]
     ring
   map_mul' x y := by
@@ -28,7 +32,7 @@ def liftSq {g : ℕ} {O C : Type} [CommRing O] [CommRing C] (ρ : O →+* C) (n 
         ρ x.fst * (ρ (y.snd a) * n a) + (ρ (x.snd a) * n a) * ρ y.fst := fun a ↦ by
       have : (x * y).snd a = x.fst * y.snd a + x.snd a * y.fst := by
         simp [TrivSqZeroExt.snd_mul, mul_comm]
-      rw [this, map_add, map_mul, map_mul]; ring
+      rw [this, map_add (f := _), map_mul, map_mul]; ring
     rw [add_mul, mul_add, mul_add, h0, add_zero, TrivSqZeroExt.fst_mul, map_mul]
     simp only [h1, Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.sum_mul]
     ring

@@ -1,5 +1,9 @@
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.BesselOrbitConvolutions.BesselNonvanishingReduction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.VanishingOfL2Equivariant
+module
+
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.BesselOrbitConvolutions.BesselNonvanishingReduction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VanishingOfL2Equivariant
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped InnerProductSpace ENNReal
@@ -27,18 +31,118 @@ theorem vanishing_of_L2_equivariant {k r : ℕ} {ε : Fin (2 * r + k + 1) → Bo
   obtain ⟨hlam, hσ, -, -, hw0, -, -, -, -, hW, hN, hG, hq⟩ := hS'
   obtain ⟨-, hBC2, hBC3, -⟩ := hBC hIn k r ε lam h H σ w0 Wp z c u π μW μN μG νq hS
   ext ξ
-  have hc : ContinuousOn (fun g => be z c π σ μW μN (σ g x) v ξ) (Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk k r)) :=
+  let K := Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk k r)
+  let F : Mx k r → Wp := fun g => be z c π σ μW μN (σ g x) v ξ
+  have hc : ContinuousOn F K :=
     (hBC3 x hx v hv).clm_apply continuousOn_const
-  have heq : ∀ hh ∈ Formalism.QuantumDeterminants.UWset k r z, ∀ n ∈ Formalism.QuantumDeterminants.Nset k r, ∀ g ∈ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk k r),
-      be z c π σ μW μN (σ (hh * n * g) x) v ξ = Formalism.QuantumDeterminants.psi k r z c n • π hh (be z c π σ μW μN (σ g x) v ξ) := by
+  have heq : ∀ hh ∈ Formalism.QuantumDeterminants.UWset k r z,
+      ∀ n ∈ Formalism.QuantumDeterminants.Nset k r, ∀ g ∈ K,
+        F (hh * n * g) = Formalism.QuantumDeterminants.psi k r z c n • π hh (F g) := by
     intro hh hhW n hn g hg
     have hhn : hh * n ∈ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk k r) := Formalism.QuantumDeterminants.WeylGroupFacts.uh_mul hhW.1 hn.1
     have hm : σ (hh * n * g) = (σ (hh * n)).comp (σ g) := TranslationBesselVanishing.sigma_mul hσ hhn hg
+    dsimp only [F]
     rw [hm, ContinuousLinearMap.comp_apply,
       hBC2 v hv hh hhW n hn (σ g x) (TranslationBesselVanishing.smooth_translate hσ hx hg)]
     rfl
-  have h0 := aez hW hN hG hq (fun g => be z c π σ μW μN (σ g x) v ξ) hc heq (hl ξ) 1 Formalism.QuantumDeterminants.WeylGroupFacts.uh_one
-  simpa [sigma_one hσ] using h0
+  classical
+  let S : Set (Formalism.QuantumDeterminants.Mt k r) := {g | Matrix.of g ∈ K}
+  let G : Formalism.QuantumDeterminants.Mt k r → ℝ≥0∞ :=
+    S.indicator fun g => (‖F (Matrix.of g)‖₊ : ℝ≥0∞) ^ 2
+  have hSm : MeasurableSet S := uh_meas
+  have hGc : ContinuousOn (fun g : Formalism.QuantumDeterminants.Mt k r =>
+      (‖F (Matrix.of g)‖₊ : ℝ≥0∞) ^ 2) S :=
+    (ENNReal.continuous_pow 2).comp_continuousOn
+      ((ENNReal.continuous_coe.comp continuous_nnNorm).comp_continuousOn hc)
+  have hGm : Measurable G := hGc.measurable_piecewise continuousOn_const hSm
+  have hGzero {g : Formalism.QuantumDeterminants.Mt k r} (hg : g ∈ S) :
+      G g = 0 ↔ F (Matrix.of g) = 0 := by
+    simp [G, Set.indicator_of_mem hg]
+  have hνint : ∫⁻ g, G g ∂νq = 0 := by
+    apply nonpos_iff_eq_zero.mp
+    calc
+      ∫⁻ g, G g ∂νq ≤ PI.BesselPeriodGGP.l2SG νq F :=
+        lintegral_mono (Set.indicator_le_self S _)
+      _ = 0 := hl ξ
+  have hmu := DDSmoothness.muSof_facts hW hN
+  have hνS : ∀ᵐ g ∂νq, g ∈ S := DDSmoothness.ae_UH_of_quot hG.2.2.1 hmu.1 hmu.2 hq
+  have := hW.1
+  have := hN.1
+  have hWae :
+      ∀ᵐ p ∂(μW.prod μN), Matrix.of p.1 ∈ Formalism.QuantumDeterminants.UWset k r z :=
+    Measure.quasiMeasurePreserving_fst.ae (ae_iff.2 hW.2.2.1)
+  have hNae :
+      ∀ᵐ p ∂(μW.prod μN), Matrix.of p.2 ∈ Formalism.QuantumDeterminants.Nset k r :=
+    Measure.quasiMeasurePreserving_snd.ae (ae_iff.2 hN.2.2.1)
+  have hμint : ∫⁻ g, G g ∂μG = 0 := by
+    rw [hq G hGm]
+    refine (lintegral_congr_ae ?_).trans lintegral_zero
+    filter_upwards [hνS, (lintegral_eq_zero_iff hGm).mp hνint] with g hg hg0
+    let mulPair (p : Formalism.QuantumDeterminants.Mt k r ×
+        Formalism.QuantumDeterminants.Mt k r) : Formalism.QuantumDeterminants.Mt k r :=
+      fun i j => (Matrix.of p.1 * Matrix.of p.2) i j
+    let mulRight (s : Formalism.QuantumDeterminants.Mt k r) : Formalism.QuantumDeterminants.Mt k r :=
+      fun i j => (Matrix.of s * Matrix.of g) i j
+    have hmul : Continuous mulPair := continuous_fst.matrix_mul continuous_snd
+    have hright : Continuous mulRight := continuous_id.matrix_mul continuous_const
+    change (∫⁻ s, (G ∘ mulRight) s ∂Measure.map mulPair (μW.prod μN)) = 0
+    rw [lintegral_map (hGm.comp hright.measurable) hmul.measurable]
+    refine (lintegral_congr_ae ?_).trans lintegral_zero
+    filter_upwards [hWae, hNae] with p hpW hpN
+    apply (hGzero (DDSmoothness.uh_mul (DDSmoothness.uh_mul hpW.1 hpN.1) hg)).mpr
+    change F (Matrix.of p.1 * Matrix.of p.2 * Matrix.of g) = 0
+    rw [heq (Matrix.of p.1) hpW (Matrix.of p.2) hpN (Matrix.of g) hg,
+      (hGzero hg).mp hg0, map_zero, smul_zero]
+  have hμS : ∀ᵐ g ∂μG, g ∈ S := ae_iff.2 hG.2.2.1
+  have hμF : ∀ᵐ g ∂μG, F (Matrix.of g) = 0 := by
+    filter_upwards [hμS, (lintegral_eq_zero_iff hGm).mp hμint] with g hg hg0
+    exact (hGzero hg).mp hg0
+  have hF1 : F 1 = 0 := by
+    by_contra hne
+    obtain ⟨V, hVo, hV⟩ := (continuousOn_iff'.mp hc) {0}ᶜ isOpen_compl_singleton
+    have h1V : (1 : Mx k r) ∈ V := by
+      have h1 : (1 : Mx k r) ∈ F ⁻¹' {0}ᶜ ∩ K :=
+        ⟨hne, Formalism.QuantumDeterminants.WeylGroupFacts.uh_one⟩
+      rw [hV] at h1
+      exact h1.1
+    have hVae : ∀ᵐ g : Formalism.QuantumDeterminants.Mt k r ∂μG, Matrix.of g ∉ V := by
+      filter_upwards [hμS, hμF] with g hg hg0 hgV
+      have hg' : Matrix.of g ∈ V ∩ K := ⟨hgV, hg⟩
+      rw [← hV] at hg'
+      exact hg'.1 hg0
+    have hVnull : μG (Matrix.of ⁻¹' V) = 0 := by
+      change μG {g | Matrix.of g ∈ V} = 0
+      simpa only [not_not] using ae_iff.mp hVae
+    let O (g : K) : Set (Formalism.QuantumDeterminants.Mt k r) :=
+      Formalism.QuantumDeterminants.lmulM (g : Mx k r)⁻¹ ⁻¹' (Matrix.of ⁻¹' V)
+    have hlmul (a : Mx k r) : Continuous (Formalism.QuantumDeterminants.lmulM a) :=
+      continuous_const.matrix_mul continuous_id
+    have hVo' : IsOpen (Matrix.of ⁻¹' V : Set (Formalism.QuantumDeterminants.Mt k r)) :=
+      hVo.preimage continuous_id
+    obtain ⟨T, hTc, hT⟩ := TopologicalSpace.isOpen_iUnion_countable O
+      (fun g => hVo'.preimage (hlmul (g : Mx k r)⁻¹))
+    have hOnull (g : K) : μG (O g) = 0 := by
+      dsimp only [O]
+      rw [← Measure.map_apply (hlmul (g : Mx k r)⁻¹).measurable hVo'.measurableSet,
+        hG.2.2.2 _ (Formalism.QuantumDeterminants.WeylGroupFacts.uh_inv g.2), hVnull]
+    have hSnull : μG S = 0 := by
+      refine measure_mono_null (t := ⋃ g ∈ T, O g) ?_
+        ((measure_biUnion_null_iff hTc).mpr fun g _ => hOnull g)
+      intro g hg
+      rw [hT]
+      refine Set.mem_iUnion.mpr ⟨⟨Matrix.of g, hg⟩, ?_⟩
+      change (Matrix.of g)⁻¹ * Matrix.of g ∈ V
+      rw [Matrix.nonsing_inv_mul (Matrix.of g)
+        (Formalism.QuantumDeterminants.WeylGroupFacts.isUnit_of_uh hg)]
+      exact h1V
+    apply hG.2.1
+    rw [← Measure.measure_univ_eq_zero, ← Set.union_compl_self S]
+    exact measure_union_null hSnull hG.2.2.1
+  have hσ1 : σ 1 = 1 := by
+    obtain ⟨P, hP, hD⟩ := hσ
+    have hPu := Matrix.isUnit_det_of_right_inverse (Matrix.mem_unitaryGroup_iff.mp hP.2)
+    simpa [Matrix.nonsing_inv_mul P hPu] using hD.2.2.1.1.1
+  simpa [F, hσ1] using hF1
 
 theorem zeroCaseDD_of (hBC : CompanionTheory.D.Upq.BesselFunctionalConstruction.BeConv) (hNI : CompanionTheory.D.Upq.BesselFunctionalConstruction.NormIdSm) (hSch : SchurH) : CompanionTheory.D.Upq.BesselFunctionalConstruction.ZeroCaseDD := by
   intro hIn k r ε lam h H _ _ _ σ w0 Wp _ _ _ _ z c u π μW μN μG νq hS hDD v hv x hx
@@ -71,7 +175,11 @@ theorem zeroCase_of (hBC : CompanionTheory.D.Upq.BesselFunctionalConstruction.Be
   have hdeg : PI.BesselPeriodGGP.fdegH μG σ w0 = d := DDSmoothness.fdeg_eq hd hSd hw0ne
   have hw0DD : w0 ∈ DDsp σ w0 := by
     refine Submodule.subset_span ⟨1, Formalism.QuantumDeterminants.WeylGroupFacts.uh_one, ?_⟩
-    simp [sigma_one hσ]
+    have hσ1 : σ 1 = 1 := by
+      obtain ⟨P, hP, hD⟩ := hσ
+      have hPu := Matrix.isUnit_det_of_right_inverse (Matrix.mem_unitaryGroup_iff.mp hP.2)
+      simpa [Matrix.nonsing_inv_mul P hPu] using hD.2.2.1.1.1
+    simp [hσ1]
   have hw0s : w0 ∈ PI.UpqRep.smoothVecs (k := k) (r := r) σ := DDSmoothness.DD_smooth hIn.2.2.1 hlam hσ hw0 w0 hw0DD
   have hmu := DDSmoothness.muSof_facts hW hN
   have hae := DDSmoothness.ae_UH_of_quot hG.2.2.1 hmu.1 hmu.2 hq

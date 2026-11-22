@@ -1,4 +1,8 @@
-import Formalism.StatementU
+module
+
+public import Formalism.StatementU
+
+@[expose] public section
 
 open ArithmeticFunction
 

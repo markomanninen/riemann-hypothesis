@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.GTDefs
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.GTDefs
+
+@[expose] public section
 
 noncomputable section
 

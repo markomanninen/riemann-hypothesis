@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -138,7 +142,7 @@ lemma algebraMap_mk (a : ∀ i, V i) :
 
 instance [∀ i, IsFractionRing (V i) (K i)] : IsFractionRing (Ult U V) (Ult U K) := by
   have hinj : Function.Injective (algebraMap (Ult U V) (Ult U K)) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨a, rfl⟩ := mk_surjective U x
     rw [algebraMap_mk, mk_eq_zero_iff] at hx
@@ -192,7 +196,7 @@ def ofFamily (h : ∀ i, B → A i) (h1 : ∀ᶠ i in (U : Filter ι), h i 1 = 1
     filter_upwards [hadd 0 0] with i hi
     simpa using hi
   map_add' a b := by
-    rw [← map_add, mk_eq_mk_iff]
+    rw [← map_add (f := _), mk_eq_mk_iff]
     exact hadd a b
 
 lemma ofFamily_apply (h : ∀ i, B → A i) (h1 hadd hmul) (b : B) :
@@ -201,7 +205,7 @@ lemma ofFamily_apply (h : ∀ i, B → A i) (h1 hadd hmul) (b : B) :
 def homOf (h : ∀ i, B → A i) (hh : IsAEHom U h) : B →+* Ult U A :=
   ofFamily U h
     (by filter_upwards [hh] with i ⟨p, hp⟩; rw [← hp, map_one])
-    (fun a b => by filter_upwards [hh] with i ⟨p, hp⟩; rw [← hp, map_add])
+    (fun a b => by filter_upwards [hh] with i ⟨p, hp⟩; rw [← hp, map_add (f := _)])
     (fun a b => by filter_upwards [hh] with i ⟨p, hp⟩; rw [← hp, map_mul])
 
 lemma homOf_apply (h : ∀ i, B → A i) (hh : IsAEHom U h) (b : B) :

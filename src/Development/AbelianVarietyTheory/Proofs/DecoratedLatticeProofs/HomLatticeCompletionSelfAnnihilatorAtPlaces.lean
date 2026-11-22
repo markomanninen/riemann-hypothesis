@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl IsDedekindDomain NumberField
 open scoped TensorProduct
@@ -13,8 +17,8 @@ namespace GlobalTheory.SelfDualAt
 
 variable {D : D7}
 
-open Classical in
 
+open Classical in
 def indP (P : Pl D → Prop) : Af D.host.F :=
   ⟨fun v => if P v then 1 else 0, Filter.Eventually.of_forall fun v => by
     by_cases h : P v
@@ -42,8 +46,8 @@ theorem symplO_smul_swap (S T : HSp D) (c : AF D.host.F) (x y : WO S T) :
   unfold symplO
   rw [hO_smul_swap]
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem compFin_repr (w : Pl D) (y : Af D.host.F ⊗[D.host.F] D.host.E) (k : Fin (Module.finrank D.host.F D.host.E)) :
     (Algebra.TensorProduct.basis (Fv D.host.F w) (Module.finBasis D.host.F D.host.E)).repr
         (GlobalTheory.IndefiniteRowSideFullHecke.UnramifiedCharacter.compFin D w y) k =
@@ -55,7 +59,7 @@ theorem compFin_repr (w : Pl D) (y : Af D.host.F ⊗[D.host.F] D.host.E) (k : Fi
     rw [h, Algebra.TensorProduct.basis_repr_tmul, Algebra.TensorProduct.basis_repr_tmul]
     simp [Finsupp.smul_apply, Finsupp.mapRange_apply, map_mul, AlgHom.commutes]
   | add x y hx hy =>
-    simp only [RingHom.map_add, LinearEquiv.map_add, Finsupp.add_apply, hx, hy]
+    simp only [RingHom.map_add (f := _), LinearEquiv.map_add (e := _), Finsupp.add_apply, hx, hy]
     exact (RingHom.map_add (evalV D.host.F w).toRingHom _ _).symm
 
 theorem eq_zero_of_compFin (y : Af D.host.F ⊗[D.host.F] D.host.E) (h : ∀ w, GlobalTheory.IndefiniteRowSideFullHecke.UnramifiedCharacter.compFin D w y = 0) :
@@ -82,8 +86,8 @@ theorem compFin_alg_cP (P : Pl D → Prop) (w : Pl D) (hw : P w) :
   rw [h, evalV_indP, if_pos hw]
   exact Algebra.TensorProduct.one_def.symm
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem algebraMap_placeIdempotent_mul (P : Pl D → Prop) (z : AE D) (hz : z ∈ idAt D P) :
     algebraMap (AF D.host.F) (AE D) (cP P) * z = z := by
   rw [idAt, Ideal.mem_inf, Ideal.mem_iInf] at hz

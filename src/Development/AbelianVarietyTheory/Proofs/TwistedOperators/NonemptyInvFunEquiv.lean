@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.MinorOrderedEntries
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IrreducibleDistinctUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.MinorOrderedEntries
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IrreducibleDistinctUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,16 +52,14 @@ theorem Iso.tprod {V' W' : Type} [AddCommGroup V'] [Module ℂ V'] [AddCommGroup
   obtain ⟨e', he'⟩ := h'
   refine ⟨TensorProduct.congr e e', fun g x => ?_⟩
   induction x with
-  | zero => simp
   | tmul a b => simp [he, he']
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem Iso.tprod_comm (ρ : Representation ℂ G V) (σ : Representation ℂ G W) : Iso (ρ.tprod σ) (σ.tprod ρ) := by
   refine ⟨TensorProduct.comm ℂ V W, fun g x => ?_⟩
   induction x with
-  | zero => simp
   | tmul a b => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem Iso.dual {G : Type} [Group G] {ρ : Representation ℂ G V} {σ : Representation ℂ G W} (h : Iso ρ σ) :
     Iso ρ.dual σ.dual := by
@@ -118,7 +120,8 @@ theorem Contracts.congr {F F' V' W' : Type} [AddCommGroup F] [Module ℂ F] [Add
   · obtain ⟨x, rfl⟩ := (TensorProduct.congr e1 e2).surjective x
     refine hk (l ∘ₗ (TensorProduct.congr e1 e2).toLinearMap) (fun h f v => ?_) x ?_
     · simp [he1, he2, hl]
-    · simpa using hx
+    · change e3 (π ((TensorProduct.congr e1 e2).symm ((TensorProduct.congr e1 e2) x))) = 0 at hx
+      simpa only [LinearEquiv.symm_apply_apply, LinearEquiv.map_eq_zero_iff] using hx
 
 end General
 
@@ -148,7 +151,7 @@ theorem Iso.outer {ρ : ∀ τ, Representation ℂ G (V τ)} {σ : ∀ τ, Repre
   refine ⟨PiTensorProduct.congr e, fun g x => ?_⟩
   induction x using PiTensorProduct.induction_on with
   | smul_tprod c v => simp [outer_apply, he]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 end Outer
 

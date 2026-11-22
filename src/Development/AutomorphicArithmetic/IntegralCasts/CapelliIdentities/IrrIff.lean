@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Ra6.irr_iff :
     ∀ {G W : Type} [inst : Group G] [inst_1 : AddCommGroup W]

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLowestKTypeFockMapThetaVectors
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPolynomialModelCoefficientSpaceRealPoints
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockPolynomialVectorChangeOrthonormalBasesSubst
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaWeightArithmeticAtPlaceProof
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaLiftInfinityTypesAtRealPlace
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HolomorphicDiscreteSeries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLowestKTypeFockMapThetaVectors
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPolynomialModelCoefficientSpaceRealPoints
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockPolynomialVectorChangeOrthonormalBasesSubst
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaWeightArithmeticAtPlaceProof
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaLiftInfinityTypesAtRealPlace
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HolomorphicDiscreteSeries
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum GlobalTheory.JointHarm
 open scoped TensorProduct InnerProductSpace Classical
@@ -90,7 +94,7 @@ theorem exists_real_model (V : HSp D) (θ : InfFam D) (c : CoefA V) (lam : D.wha
   refine Subtype.ext (MvPolynomial.ext _ _ fun m => ?_)
   let L : c.W →ₗ[ℂ] ℂ := MvPolynomial.lcoeff ℂ m ∘ₗ (VV ℂ lam).subtype ∘ₗ e.symm.toLinearMap
   have hf : Continuous fun h => L (c.ρ h (e v)) := L.continuous_of_finiteDimensional.comp (hc.2.2.1 _)
-  have hg : Continuous fun h => MvPolynomial.coeff m (actP lam (invTrK fun τ => realGL θ V h (l.symm τ)) v.1) := by
+  have hg : Continuous fun h => AddMonoidAlgebra.coeff (actP lam (invTrK fun τ => realGL θ V h (l.symm τ)) v.1) m := by
     refine continuous_coeff_actP lam _ (fun τ => ?_) _ m
     refine (((realGL_laws hθ V).1 (l.symm τ)).comp continuous_inv).matrix_transpose.congr fun h => ?_
     show (realGL θ V h⁻¹ (l.symm τ) : Matrix (Fin V.rank) (Fin V.rank) ℂ)ᵀ = _
@@ -99,7 +103,7 @@ theorem exists_real_model (V : HSp D) (θ : InfFam D) (c : CoefA V) (lam : D.wha
   by_contra hne
   obtain ⟨γ, hγ, k, hk, hU, -⟩ := GlobalTheory.RealApprox.weak_approx_real V u hu _ (isOpen_ne_fun hf hg) hne
   refine hU ?_
-  show L (c.ρ (γ * k) (e v)) = MvPolynomial.coeff m (actP lam (invTrK fun τ => realGL θ V (γ * k) (l.symm τ)) v.1)
+  show L (c.ρ (γ * k) (e v)) = AddMonoidAlgebra.coeff (actP lam (invTrK fun τ => realGL θ V (γ * k) (l.symm τ)) v.1) m
   rw [map_mul, map_mul (realGL θ V), hc.1 k hk, hfin k hk, mul_one, mul_one, hrat ⟨γ, hγ⟩ v]
   simp [L, rhoK_coe]
 
@@ -250,13 +254,14 @@ theorem exists_io_poly (D : D7) (V W : HSp D) (θ : InfFam D) (Sp : D.what₂.Ta
     have hm := (GlobalTheory.T.fockPolynomialAction_one_mul_adjoint D W.rank V.rank M.ε x₁ x₂ x₃).2.1 k₀ κ 1 1 (fun τ => mem_KC_of_K (hk₀ τ))
       (fun τ => mem_KC_of_K (hκ τ)) (fun _ => isUnit_one) (fun _ => isUnit_one)
     rw [mul_one] at hm
-    rw [this, hm, Module.End.mul_apply, hΔ, Finset.prod_inv_distrib]
+    rw [this, hm, Module.End.mul_apply, hΔ]
+    simp only [RingHom.id_apply, Finset.prod_inv_distrib]
     have hP : (∏ ρ, N ρ) ≠ 0 := Finset.prod_ne_zero_iff.2 fun ρ _ => hN' ρ
     convert one_smul ℂ _ using 2
     field_simp
 
-open GlobalTheory.IndefiniteRowSideFullHecke.InfinityTypes in
 
+open GlobalTheory.IndefiniteRowSideFullHecke.InfinityTypes in
 theorem weights_label (D : D7) (i : Fin D.R.m) (τ : D.what₂.Tau) (p q : ℕ) (hp : p = pS D i τ) (hq : q = qS D i τ)
     (lam : Fin (Wc D i).rank → ℝ) (ε : Fin (Wc D i).rank → Bool)
     (hen : IsEnum (Formalism.L2.NTheta.holPar p q (Formalism.L2.NTheta.kapW (D.hc τ) p q)) lam ε) :

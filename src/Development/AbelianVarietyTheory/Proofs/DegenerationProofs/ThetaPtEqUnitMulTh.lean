@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Definitions.Degenerations.RigGen
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsGenOfLocalOnBase
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsUniqueWeilIs
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.WeilIsIffCommIsOfAndLiftSubsingleton
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SymmetricLiftOddOrderExistsUnique
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.RigGen
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsGenOfLocalOnBase
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsUniqueWeilIs
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.WeilIsIffCommIsOfAndLiftSubsingleton
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SymmetricLiftOddOrderExistsUnique
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -161,8 +165,8 @@ theorem pt_negT (z : T ⟶ A) : (ptSecT A z).left ≫ (negT A T).left = (ptSecT 
 theorem pt_mulT (z : T ⟶ A) (m : ℕ) : (ptSecT A z).left ≫ (mulT A T m).left = (ptSecT A (z ^ m)).left := by
   rw [← Over.comp_left, mulT, comp_lift, SymLiftOdd.comp_pow', ptSecT, lift_fst, lift_snd]; rfl
 
-open CommPairing GlobalLift in
 
+open CommPairing GlobalLift in
 theorem frame_pow (hG : GlobalFnsSt) (P : PolAV S) {T : Over S} {m : ℕ} (hm : Odd m)
     {α : LB.Gen (LB.LinComb P.L (K := Fin 2) ![(snd T P.A).left, (snd T P.A ^ m).left] ![(m : ℤ) ^ 2, -1])}
     (hα : α.IsGen) {x : T ⟶ P.A} (hx : x ^ (m ^ 2) = 1) {θ : ThetaGrp P.A P.L ((m : ℤ) ^ 2) T}
@@ -265,8 +269,8 @@ theorem exists_unit_of_gen {th th₁ : LB.Sec (LPow A L 1 T)} (h : IsGenSec A L 
     (fun j => by simp)
   exact ⟨Units.mkOfMulEqOne (r' 0) r ((mul_comm _ _).trans (congrFun q 0)), e⟩
 
-open CommPairing in
 
+open CommPairing in
 theorem exists_unit_stalk (hG : GlobalFnsSt) (P : PolAV S) {T : Over S} {m : ℕ} (hm : Odd m)
     {rig : LB.Gen (P.L.pull (eSec P.A))} (hrig : rig.IsGen) {th₁ : LB.Sec (LPow P.A P.L 1 T)}
     (h₁ : IsSecBasis _ (fun _ : Fin 1 => th₁)) {I : Type} {x p : I → (T ⟶ P.A)} (hx : ∀ i, x i ^ m = p i)
@@ -324,8 +328,8 @@ end GlobalTheory.ThetaCompare
 
 namespace GlobalTheory
 
-open Classical ThetaCompare in
 
+open Classical ThetaCompare in
 theorem thetaPt_eq_unit_mul_th : Laws → ∀ (o Ω : Type) [CommRing o] [Field Ω] [Algebra o Ω] [ArithBase o Ω] (S : ThetaSys o Ω) (ρ : S.Real) (I : Type) (x : I → (baseOver (Sp S.R) ⟶ ρ.P.A)) (a : I → S.Gam) (v : I → S.R), (∀ i, x i ^ (S.r * S.N) = ρ.pt (a i)) → IsThetaPtOver ρ.P (S.r * S.N) x (fun i => fn (v i)) → ∃ c : (S.R)ˣ, ∀ i, ∃ e : ℕ, (v i : Ω) = (c : S.R) * algebraMap o Ω (S.ζ ^ e) * S.th (a i) := by
   intro hL o Ω _ _ _ hb S ρ I x a v hx H
   have hm : Odd (S.r * S.N) := by

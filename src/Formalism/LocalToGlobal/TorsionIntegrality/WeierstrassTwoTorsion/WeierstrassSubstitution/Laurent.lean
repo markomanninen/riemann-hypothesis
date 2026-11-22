@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementT
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementT
+
+@[expose] public section
 
 open PowerSeries
 
@@ -63,12 +67,6 @@ theorem uPow_mul_neg (n : ℤ) : (uPow n : LaurentSeries R) * uPow (-n) = 1 := b
   first | rw [add_neg_cancel] | rw [add_neg_self] | rw [add_right_neg]
   exact uPow_zero
 
-theorem uPow_mul_cancel (n : ℤ) {f g : LaurentSeries R} (h : uPow n * f = uPow n * g) :
-    f = g := by
-  calc f = uPow (-n) * (uPow n * f) := by rw [← mul_assoc, uPow_neg_mul, one_mul]
-    _ = uPow (-n) * (uPow n * g) := by rw [h]
-    _ = g := by rw [← mul_assoc, uPow_neg_mul, one_mul]
-
 theorem uPow_natCast (n : ℕ) : (uPow (n : ℤ) : LaurentSeries R) = toL (X ^ n) := by
   induction n with
   | zero => simp [uPow_zero]
@@ -105,7 +103,7 @@ theorem dL_uPow_mul (m : ℤ) (f : LaurentSeries R) :
   push_cast
   ring
 
-theorem dL_toL (f : R⟦X⟧) : dL (toL f) = toL (derivative R f) := by
+theorem dL_toL (f : R⟦X⟧) : dL (toL f) = toL (derivative f) := by
   ext n
   rw [dL_coeff]
   rcases lt_or_ge n 0 with hn | hn
@@ -132,10 +130,10 @@ theorem dL_mul (f g : LaurentSeries R) : dL (f * g) = f * dL g + g * dL f := by
     rw [← uPow_add]; congr 1; ring
   have h3 : (HahnSeries.C (((m + k : ℤ)) : R) : LaurentSeries R)
       = HahnSeries.C ((m : ℤ) : R) + HahnSeries.C ((k : ℤ) : R) := by
-    rw [Int.cast_add, map_add]
+    rw [Int.cast_add, map_add (f := _)]
   rw [e, dL_uPow_mul, dL_toL, Derivation.leibniz]
-  simp only [dL_uPow_mul, dL_toL, Derivation.leibniz, smul_eq_mul, map_add, map_mul]
-  linear_combination (toL F * toL (derivative R G) + toL G * toL (derivative R F)) * h0
+  simp only [dL_uPow_mul, dL_toL, Derivation.leibniz, smul_eq_mul, map_add (f := _), map_mul]
+  linear_combination (toL F * toL (derivative G) + toL G * toL (derivative F)) * h0
     + (toL F * toL G * uPow (m + k - 1)) * h3
     + (HahnSeries.C ((m : ℤ) : R) * toL F * toL G) * h1
     + (HahnSeries.C ((k : ℤ) : R) * toL F * toL G) * h2
@@ -157,37 +155,11 @@ theorem dL_one : dL (1 : LaurentSeries R) = 0 := by
   have h := dL_C (R := R) 1
   rwa [map_one] at h
 
-theorem derivation_coeff : DLCoeff.{u} := by
-  intro R _ f n
-  exact dL_coeff f n
-
-theorem derivation_leibniz : DLLeibniz.{u} := by
-  intro R _ f g
-  exact dL_mul f g
-
-theorem derivation_coe : DLCoe.{u} := by
-  intro R _ f
-  exact dL_toL f
-
-theorem laurent_power_rules : UPowRules.{u} := by
-  intro R _
-  exact ⟨uPow_zero, uPow_one, uPow_add, dL_uPow, dL_C, toL_C⟩
-
-theorem laurent_embedding_injective : ToLInjective.{u} := by
-  intro R _
-  exact ⟨toL_injective, fun n f g h => uPow_mul_cancel n h⟩
-
 def derivationOfLeibniz {k A M : Type*} [CommSemiring k] [CommSemiring A] [AddCommGroup M]
     [Algebra k A] [Module A M] [Module k M] (D : A → M)
     (hadd : ∀ a b, D (a + b) = D a + D b) (hsmul : ∀ (r : k) (a : A), D (r • a) = r • D a)
     (hmul : ∀ a b, D (a * b) = a • D b + b • D a) : Derivation k A M :=
   Derivation.mk' { toFun := D, map_add' := hadd, map_smul' := hsmul } hmul
-
-theorem derivationOfLeibniz_apply {k A M : Type*} [CommSemiring k] [CommSemiring A]
-    [AddCommGroup M] [Algebra k A] [Module A M] [Module k M] (D : A → M)
-    (hadd : ∀ a b, D (a + b) = D a + D b) (hsmul : ∀ (r : k) (a : A), D (r • a) = r • D a)
-    (hmul : ∀ a b, D (a * b) = a • D b + b • D a) (a : A) :
-    derivationOfLeibniz D hadd hsmul hmul a = D a := rfl
 
 def dLDR (R : Type u) [CommRing R] : Derivation R (LaurentSeries R) (LaurentSeries R) :=
   derivationOfLeibniz (fun f => dL f) (fun a b => map_add dL a b)
@@ -197,47 +169,8 @@ def dLDR (R : Type u) [CommRing R] : Derivation R (LaurentSeries R) (LaurentSeri
       rw [toL_C, dL_mul, dL_C, mul_zero, add_zero])
     (fun f g => by rw [smul_eq_mul, smul_eq_mul, dL_mul])
 
-def dLD (R : Type u) [CommRing R] : Derivation ℤ (LaurentSeries R) (LaurentSeries R) :=
-  derivationOfLeibniz (fun f => dL f) (fun a b => map_add dL a b)
-    (fun r f => by
-      rw [Algebra.smul_def, eq_intCast, zsmul_eq_mul, dL_mul,
-        ← map_intCast (HahnSeries.C : R →+* LaurentSeries R), dL_C, mul_zero, add_zero])
-    (fun f g => by rw [smul_eq_mul, smul_eq_mul, dL_mul])
-
-@[simp] theorem dLDR_apply (f : LaurentSeries R) : dLDR R f = dL f := rfl
-
-@[simp] theorem dLD_apply (f : LaurentSeries R) : dLD R f = dL f := rfl
-
 theorem isDer_dL : (∀ a b : LaurentSeries R, dL (a + b) = dL a + dL b) ∧
     (∀ a b : LaurentSeries R, dL (a * b) = a * dL b + b * dL a) := by
   exact ⟨fun a b => map_add dL a b, dL_mul⟩
-
-theorem dL_inv_of_mul_eq_one {f g : LaurentSeries R} (h : f * g = 1) :
-    dL g = - g ^ 2 * dL f := by
-  have h0 := dL_mul f g
-  rw [h, dL_one] at h0
-  linear_combination (-g) * h0 - (dL g) * h
-
-theorem dL_pow (f : LaurentSeries R) (n : ℕ) :
-    dL (f ^ n) = (n : LaurentSeries R) * f ^ (n - 1) * dL f := by
-  induction n with
-  | zero => simp [dL_one]
-  | succ k ih =>
-    rw [pow_succ, dL_mul, ih]
-    rcases k with _ | j
-    · simp
-    · simp only [Nat.add_sub_cancel]
-      push_cast
-      ring
-
-theorem dL_neg (f : LaurentSeries R) : dL (-f) = - dL f := by
-  exact map_neg dL f
-
-theorem dL_sub (f g : LaurentSeries R) : dL (f - g) = dL f - dL g := by
-  exact map_sub dL f g
-
-theorem dL_C_mul (r : R) (f : LaurentSeries R) :
-    dL (HahnSeries.C r * f) = HahnSeries.C r * dL f := by
-  rw [dL_mul, dL_C, mul_zero, add_zero]
 
 end Formalism.L2.Th1.A

@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowGrpEq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RepresentationAtEveryPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevRowSuccInfUA
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AuxiliaryVectorDecompositionEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInverseUnipotentVolumeConjDiagonalEq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiUnipotentEqProdRootExchange
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OffPlacesPartMovedLevelKeepsStandardHomLattice
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemFlagUnipotentRadicalOfBesselNormalFrameLocal
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselColumnFormCentralTranslation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilDatumPowersUnramifiedEtaTilde
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowGrpEq
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RepresentationAtEveryPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevRowSuccInfUA
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AuxiliaryVectorDecompositionEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInverseUnipotentVolumeConjDiagonalEq
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiUnipotentEqProdRootExchange
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OffPlacesPartMovedLevelKeepsStandardHomLattice
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemFlagUnipotentRadicalOfBesselNormalFrameLocal
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselColumnFormCentralTranslation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilDatumPowersUnramifiedEtaTilde
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
@@ -93,7 +97,7 @@ theorem embX_KO {g : GL n k} (h : g ∈ KO k n) : embX c g ∈ KO k (n ⊕ Fin c
     · exact H r s
     · exact zero_mem _
     · exact zero_mem _
-    · rw [fromBlocks_apply₂₂, one_apply]; split_ifs
+    · rw [fromBlocks_apply₂₂, Matrix.one_apply]; split_ifs
       · exact one_mem _
       · exact zero_mem _
   obtain ⟨h1, h2⟩ := (mem_KO_iff _).1 h
@@ -124,7 +128,7 @@ theorem ae_zero {e : AE D} {P : Finset (Pl D.host.E)} (he : IsIdemSum e P) {z : 
       · rw [show piAt w e = 0 from e2 w hw, zero_mul]
   have e3 : cA D e * z = 0 := by
     have := congrArg (cA D) (key _ h2)
-    rwa [RingHom.map_mul, cA_cA, RingHom.map_zero] at this
+    rwa [RingHom.map_mul, Formalism.L2.Theta.cA_cA, RingHom.map_zero] at this
   rw [← h, add_mul, key _ h1, e3, add_zero]
 
 theorem entry_zero {e : AE D} {Q : Finset (Pl D.host.E)} (he : IsIdemSum e Q) {V : HSp D} {g : GA D V} (hg : SuppAt e V g) {l m : ℕ}
@@ -362,8 +366,8 @@ theorem shape_row {j : ℕ} (hj : j < D.R.m) : Shape (G.rowDec j hj) (GlobalTheo
   · exact shape_bes (G.rowDec j hj) _ _ _
   · omega
 
-variable {G} in
 
+variable {G} in
 theorem tilt_cols {j : ℕ} (hj₁ : j < D.R.m) {δ : GA D (G.V (.grid D.R.m j))} (h : GlobalTheory.RowVal.IsTilt G j δ) :
     ∃ l : Fin (D.R.m - 1 - j) → D.host.E,
       HMul.hMul (mt _ δ) (rat (frameMat _ _ (G.rowDec j hj₁).ι)) = rat (frameMat _ _ (G.rowDec j hj₁).ι) ∧

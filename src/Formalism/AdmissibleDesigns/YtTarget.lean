@@ -1,5 +1,9 @@
-import Formalism.AdmissibleDesigns.TrCMemZ1D
-import Formalism.AdmissibleDesigns.FiniteClassesContinuousLattice
+module
+
+public import Formalism.AdmissibleDesigns.TrCMemZ1D
+public import Formalism.AdmissibleDesigns.FiniteClassesContinuousLattice
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -19,6 +23,8 @@ variable {D : D7} (i : D.nd.Loc) (dc : TruncatedSeriesCountingIdentities.Decl D 
   (Dd : Formalism.RepresentationBoundsCohomology.ringDataObjects.RingData (D.nd.O i) (D.nd.X i) (Fin D.R.nV) (GE D.nd) D.R.t (Formalism.MainNotions.N.RepresentationBoundsCohomology.blk D.R))
 
 abbrev YtM : Type := ↥(Ymod Dd.r Dd.χ Dd.E) × D.nd.O i
+
+instance instAddCommGroupYtM : AddCommGroup (YtM i Dd) := Prod.instAddCommGroup
 
 abbrev ytRepW (n : ℕ) : Representation (D.nd.O i) ↥(Dw i dc n) (YtM i Dd) :=
   resRep (ytRep (D.nd.O i) Dd.r Dd.χ Dd.E) (Dw i dc n)

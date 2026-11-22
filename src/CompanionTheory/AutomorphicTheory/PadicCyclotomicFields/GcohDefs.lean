@@ -1,5 +1,9 @@
-import Formalism.GaloisCohomology.LocalTateDualityK
-import GroundTheory.ProfiniteCohomology.LocalTateDuality.TensorHomDualRepRootsOfUnityIsoCartierPairing
+module
+
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import GroundTheory.ProfiniteCohomology.LocalTateDuality.TensorHomDualRepRootsOfUnityIsoCartierPairing
+
+@[expose] public section
 
 open CategoryTheory GroundTheory.ProfCoh ReciprocityTheory.Gal ValuativeRel
 

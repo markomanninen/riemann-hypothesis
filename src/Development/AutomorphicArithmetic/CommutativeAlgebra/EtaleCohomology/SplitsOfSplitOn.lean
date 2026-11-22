@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SplitRules
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SplitRules
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ private lemma splitOn_base {X' X Y Z : Scheme.{0}} (p : Z ⟶ Y) (x : X ⟶ Y) (
   let c : Cofan (fun _ : Fin m => X) := Cofan.mk (pullback p x) t
   have hc : IsColimit c := by
     let e : ∐ (fun _ : Fin m => X) ≅ pullback p x := asIso (Sigma.desc t)
-    refine IsColimit.ofIsoColimit (coproductIsCoproduct (fun _ : Fin m => X)) (Cocones.ext e ?_)
+    refine IsColimit.ofIsoColimit (coproductIsCoproduct (fun _ : Fin m => X)) (Cocone.ext e ?_)
     rintro ⟨j⟩
     simp [c, e]
   let c' : Cofan (fun _ : Fin m => X') := Cofan.mk (pullback p (g ≫ x)) t'
@@ -54,7 +58,7 @@ private lemma splitOn_base {X' X Y Z : Scheme.{0}} (p : Z ⟶ Y) (x : X ⟶ Y) (
   obtain ⟨hc'⟩ := hu c' α f (by
       ext ⟨j⟩
       simpa [α, c, c'] using (hw j).symm) (by
-      intro ⟨a⟩ ⟨b⟩ ⟨⟨e⟩⟩
+      intro ⟨a⟩ ⟨b⟩ ⟨e⟩
       obtain rfl : a = b := e
       exact IsPullback.of_horiz_isIso ⟨by simp⟩) (by
       rintro ⟨j⟩

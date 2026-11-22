@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RankLie
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RankLin
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RankLie
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RankLin
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -23,14 +27,18 @@ theorem tvec_inj {c c' : Fin n → R} (h : tvec (x := x) c = tvec (x := x) c') :
   exact tcoord_congr hx h _ _
 
 theorem list_prod_tan' : ∀ {M : ℕ} (u : Fin M → (sp (R₀ := R) (DualNumber R) ⟶ Gx)) (hu : ∀ i, IsTan (u i)),
-    ∃ h : IsTan (List.ofFn u).prod, tcoord hx _ h = ∑ i, tcoord hx (u i) (hu i)
-  | 0, u, hu => by
+    ∃ h : IsTan (List.ofFn u).prod, tcoord hx _ h = ∑ i, tcoord hx (u i) (hu i) := by
+  intro M
+  induction M with
+  | zero =>
+    intro u hu
     have e0 : (List.ofFn u).prod = 1 := by simp
     refine ⟨e0 ▸ isTan_one, ?_⟩
     rw [tcoord_congr hx e0 _ isTan_one, tcoord_one]
     simp
-  | M + 1, u, hu => by
-    obtain ⟨h, e⟩ := list_prod_tan' (fun i => u i.succ) (fun i => hu i.succ)
+  | succ M ih =>
+    intro u hu
+    obtain ⟨h, e⟩ := ih (fun i => u i.succ) (fun i => hu i.succ)
     have e0 : (List.ofFn u).prod = u 0 * (List.ofFn fun i => u i.succ).prod := by
       rw [List.ofFn_succ, List.prod_cons]
     refine ⟨e0 ▸ isTan_mul (hu 0) h, ?_⟩
@@ -103,8 +111,8 @@ variable {n : ℕ} {x : ∀ m : ℕ, sp (R₀ := k) (JetR k (Fin n) m) ⟶ (Over
   (act' : O → ((Over.pullback g).obj G ⟶ (Over.pullback g).obj G)) [∀ a, IsMonHom (act' a)]
   (hact' : ∀ a, act' a = (Over.pullback g).map (b a)) (τ : O →+* k)
 
-include hc hg hab hact' in
 
+include hc hg hab hact' in
 theorem finrank_of_lieMult {N : ℕ} (hL : Geo.Tor.LieMult act tk τ N) :
     Module.finrank k (eigLat hx act' (fun a => τ a)) = N := by
   obtain ⟨vB, hvB, huq⟩ := hL

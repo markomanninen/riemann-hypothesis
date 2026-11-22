@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsFiniteClass
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CommuteOfTrivOutside
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CongruenceElementDecompose
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSplitOfGPl
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsFiniteClass
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CommuteOfTrivOutside
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CongruenceElementDecompose
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSplitOfGPl
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain Polynomial GlobalTheory.HeightCounting GlobalTheory.RowTie GlobalTheory.SplitRead GlobalTheory.NPin
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -100,7 +105,7 @@ theorem ind_epsOff (n N : ℕ) (p : GAf L n → Prop) (hC : ∀ κ, NG.Cong L n 
       intro w hw
       have hw' : w ≠ v := by simpa using hw
       ext i j
-      rw [Matrix.map_apply, gaFold_val, fold_apply, map_add, map_mul, map_mul, map_sub, map_one,
+      rw [Matrix.map_apply, gaFold_val, fold_apply, map_add (f := _), map_mul, map_mul, map_sub, map_one,
         compAt_idemAt_ne L v hw', compAt_one_apply]
       simp
     have hy : TrivOutside {v}ᶜ (gaFold he' hσ' g) := by
@@ -108,7 +113,7 @@ theorem ind_epsOff (n N : ℕ) (p : GAf L n → Prop) (hC : ∀ κ, NG.Cong L n 
       have hw' : w = v := by simpa using hw
       rw [hw']
       ext i j
-      simp only [Matrix.map_apply, gaFold_val, fold_apply, map_add, map_mul, map_sub, map_one,
+      simp only [Matrix.map_apply, gaFold_val, fold_apply, map_add (f := _), map_mul, map_sub, map_one,
         compAt_idemAt_self, compAt_one_apply]
       simp
     have hp : p (gaFold he' hσ' g) := by

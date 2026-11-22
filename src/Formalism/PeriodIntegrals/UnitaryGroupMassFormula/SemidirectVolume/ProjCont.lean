@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.ProjHA
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.ProjHA
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem piMat_eq (g : HA R σ J) :
       LinearMap.toMatrix' (datR R σ J P T).pW *
         ((HA.mat R σ J g : GL (Fin M) (R ⊗[F] E)) : Matrix (Fin M) (Fin M) (R ⊗[F] E)) *
           LinearMap.toMatrix' (datR R σ J P T).pW := by
-  simp only [piMat, PG.Dat.Pi, map_add, LinearMap.toMatrix'_comp, toMatrix'_lin, Matrix.mul_assoc]
+  simp only [piMat, PG.Dat.Pi, map_add (f := _), LinearMap.toMatrix'_comp, toMatrix'_lin, Matrix.mul_assoc]
 
 theorem mat_inv (g : HA R σ J) : HA.mat R σ J g⁻¹ = (HA.mat R σ J g)⁻¹ := rfl
 

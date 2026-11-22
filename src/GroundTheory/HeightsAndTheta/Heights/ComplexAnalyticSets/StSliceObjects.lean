@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StatementsCurrent
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StatementsCurrent
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -37,10 +42,6 @@ theorem zeroSet_sliceIdeal (J : Ideal (MvPolynomial (Fin n) ℂ)) (L : Matrix (F
       rintro _ ⟨i, rfl⟩
       rw [SetLike.mem_coe, RingHom.mem_ker, map_sub, eval_linPoly, eval_C, hL, sub_self]
     exact RingHom.mem_ker.1 (hle hf)
-
-theorem isRadicalAt_of_isRadical {I : Ideal (MvPolynomial (Fin n) ℂ)} (hI : I.IsRadical)
-    (q : Fin n → ℂ) : IsRadicalAt I q :=
-  fun f hf => ⟨1, by simp, by rw [one_mul]; exact hI hf⟩
 
 end
 

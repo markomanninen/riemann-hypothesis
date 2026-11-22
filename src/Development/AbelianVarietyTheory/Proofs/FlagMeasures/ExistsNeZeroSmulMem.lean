@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocClosed
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocClosed
+
+@[expose] public section
 
 open NumberField
 
@@ -8,7 +12,7 @@ namespace GlobalTheory.NonzeroIntegerSmulMem
 
 theorem exists_ne_zero_smul_mem {E : Type} [Field E] [NumberField E] [StarRing E]
     {S : Formalism.BasicNotions.HSpace E} (L : Submodule (RingOfIntegers E) (Formalism.BasicNotions.HSpace.V S))
-    (hL : Submodule.IsLattice E L) (x : Formalism.BasicNotions.HSpace.V S) :
+    (hL : Submodule.IsFullLattice E L) (x : Formalism.BasicNotions.HSpace.V S) :
     ∃ r : RingOfIntegers E, r ≠ (0 : RingOfIntegers E) ∧ r • x ∈ L := by
 
   have hx : x ∈ Submodule.span E (L : Set (Formalism.BasicNotions.HSpace.V S)) := by

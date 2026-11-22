@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyEigC
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyEigC
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem keyEig_of (hT : TeichSt) (hJ : JointEigSt) : KeyEigSt := by
     · exact uniq _ _ (by rw [← hσ 0, map_zero, Matrix.zero_mulVec, zero_smul])
     · intro x y
       refine uniq _ _ ?_
-      rw [← hσ (x + y), map_add, Matrix.add_mulVec, hσ x, hσ y, add_smul]
+      rw [← hσ (x + y), map_add (f := _), Matrix.add_mulVec, hσ x, hσ y, add_smul]
   choose χ hχ using hχ
   refine ⟨m, w', χ, ?_, fun j => ⟨hPw' j, hχ j⟩⟩
   rw [hw', ← Matrix.mulVec_sum, ← hsum, Matrix.mulVec_mulVec, P_idem]

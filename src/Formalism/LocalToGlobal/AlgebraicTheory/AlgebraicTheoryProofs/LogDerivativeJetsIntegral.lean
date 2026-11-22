@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.AlgebraicTheory.StatementA
+module
+
+public import Formalism.LocalToGlobal.AlgebraicTheory.StatementA
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -6,7 +10,7 @@ open scoped BigOperators
 namespace Formalism.L2.AlgTh
 
 theorem jet_succ_eq {K : Type} [Field K] [CharZero K] (F a : PowerSeries K)
-    (h : PowerSeries.derivative K F = a * F) (i : ℕ) :
+    (h : PowerSeries.derivative (R := K) F = a * F) (i : ℕ) :
     (((i + 1).factorial : ℕ) : K) * PowerSeries.coeff (i + 1) F =
       ∑ p ∈ Finset.HasAntidiagonal.antidiagonal i, ((i.choose p.1 : ℕ) : K) *
         ((((p.1).factorial : ℕ) : K) * PowerSeries.coeff p.1 a) *
@@ -64,7 +68,7 @@ theorem power_log_derivative_jets : PowLogDer := by
   cases M with
   | zero => omega
   | succ n =>
-    have hd := congrArg (PowerSeries.derivative K) h
+    have hd := congrArg (PowerSeries.derivative (R := K)) h
     rw [Derivation.leibniz_pow, Derivation.leibniz, PowerSeries.derivative_C] at hd
     simp only [smul_eq_mul, nsmul_eq_mul, smul_zero, add_zero, add_tsub_cancel_right] at hd
     have hC : (PowerSeries.C (c ^ (n + 1)) : PowerSeries K) ≠ 0 := by
@@ -73,6 +77,6 @@ theorem power_log_derivative_jets : PowLogDer := by
       simpa using congrArg PowerSeries.constantCoeff h0
     apply mul_left_cancel₀ hC
     rw [map_natCast]
-    linear_combination (-((n + 1 : ℕ) : PowerSeries K) * PowerSeries.derivative K G) * h + G * hd
+    linear_combination (-((n + 1 : ℕ) : PowerSeries K) * PowerSeries.derivative (R := K) G) * h + G * hd
 
 end Formalism.L2.AlgTh

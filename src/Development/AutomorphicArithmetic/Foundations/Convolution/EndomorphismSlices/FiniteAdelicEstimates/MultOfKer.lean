@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.ImportsAlt
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.BlkGrowth
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.ImportsAlt
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.BlkGrowth
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ attribute [local instance] borelG borelF borelA borelH
 private theorem herm_chi {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
     (l : InfinitePlace E → DomWeight n) (v : InfinitePlace E) : IsHerm (chi l v) := by
   refine ⟨Equiv.refl _, fun i => ?_⟩
-  simp [chi, infOf, Complex.conj_ofReal, map_sub, map_add, map_div₀, map_natCast, map_intCast, map_one, map_ofNat]
+  simp [chi, infOf, Complex.conj_ofReal, map_sub, map_add (f := _), map_div₀, map_natCast, map_intCast, map_one, map_ofNat]
 
 private theorem mult_of_ker {n : ℕ} [MeasurableSpace (G n)] {μ : Measure (G n)} {M : KMod n}
     {w : List (Bool × ℕ)} {g : ℝ → ℝ} {T : ℝ} {k : Mat n → (M.V →L[ℂ] M.V)}
@@ -42,7 +46,7 @@ theorem ptOk : PtOk := by
     intro ψ hψ
     have h : ∃ r, 0 ≤ r ∧ ∀ x y g, ψ x y g ≠ 0 → logSize (finGL E a g.1) ≤ r ∧ logSize (finGL E b g.2) ≤ r :=
       (PositivityTheory.Rg.BcB.F.BlockFiniteConvolution.rtAlg' E A.blk 1 1).2.2 ψ hψ
-    rw [PositivityTheory.Rg.BcB.F.sizeOf, dif_pos h]
+    rw [PositivityTheory.Rg.BcB.F.sizeOf, dite_eq_left h]
     exact h.choose_spec
   refine ⟨herm_chi l₁, herm_chi l₂, ?_, ?_, ?_⟩
   · intro wa wb ψ hψ

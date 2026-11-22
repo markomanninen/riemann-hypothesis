@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
+
+@[expose] public section
 
 open scoped BigOperators
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ Formalism.L2.Pj NumberField
@@ -12,7 +16,7 @@ variable {R : Type} [CommRing R] {d n : ℕ}
 
 theorem dofN_add (F : Fin d → PS R 2 d) (b : Fin n) (u : Fin d → R) (f g : PS R n d) :
     DofN F b u (f + g) = DofN F b u f + DofN F b u g := by
-  simp only [DofN, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [DofN, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 theorem dofN_smul (F : Fin d → PS R 2 d) (b : Fin n) (u : Fin d → R) (t : R) (f : PS R n d) :
     DofN F b u (t • f) = t • DofN F b u f := by
@@ -76,7 +80,7 @@ theorem dpolyN_add_left (F : Fin d → PS R 2 d) (cp : ι → Fin n) (u : ι →
     dpolyN_eq_sum_of_subset F cp u Q f (P.support ∪ Q.support) Finset.subset_union_right,
     ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun m _ => ?_
-  rw [MvPolynomial.coeff_add, map_add, add_mul]
+  rw [MvPolynomial.coeff_add, map_add (f := _), add_mul]
 
 theorem dpolyN_C_mul_left (F : Fin d → PS R 2 d) (cp : ι → Fin n) (u : ι → Fin d → R)
     (t : R) (P : MvPolynomial ι R) (f : PS R n d) :
@@ -95,11 +99,11 @@ end NabLin
 theorem nabValN_bilinear : ∀ (K : Type) [CommRing K] [Algebra ℚ K] (d : ℕ) (O : Type) [CommRing O] [StarRing O] (B : FB K d O) (h : PS K 2 d) (w0 : O) (m n : ℕ) (ι : Type) [Fintype ι] (cp : ι → Fin n) (u : ι → Fin d → K), (∀ (f g : PS K n d) (P : MvPolynomial ι K), nabValN B K h w0 m (f + g) cp u P = nabValN B K h w0 m f cp u P + nabValN B K h w0 m g cp u P) ∧ (∀ (t : K) (f : PS K n d) (P : MvPolynomial ι K), nabValN B K h w0 m (t • f) cp u P = t * nabValN B K h w0 m f cp u P) ∧ (∀ (f : PS K n d) (P Q : MvPolynomial ι K), nabValN B K h w0 m f cp u (P + Q) = nabValN B K h w0 m f cp u P + nabValN B K h w0 m f cp u Q) ∧ (∀ (t : K) (f : PS K n d) (P : MvPolynomial ι K), nabValN B K h w0 m f cp u (MvPolynomial.C t * P) = t * nabValN B K h w0 m f cp u P) := by
   intro K _ _ d O _ _ B h w0 m n ι _ cp u
   refine ⟨fun f g P => ?_, fun t f P => ?_, fun f P Q => ?_, fun t f P => ?_⟩
-  · simp only [nabValN, add_mul, dpolyN_add_right, map_add]
+  · simp only [nabValN, add_mul, dpolyN_add_right, map_add (f := _)]
   · simp only [nabValN]
     rw [smul_mul_assoc, dpolyN_smul_right, MvPowerSeries.smul_eq_C_mul, map_mul,
       MvPowerSeries.constantCoeff_C]
-  · simp only [nabValN, dpolyN_add_left, map_add]
+  · simp only [nabValN, dpolyN_add_left, map_add (f := _)]
   · simp only [nabValN]
     rw [dpolyN_C_mul_left, map_mul, MvPowerSeries.constantCoeff_C]
 

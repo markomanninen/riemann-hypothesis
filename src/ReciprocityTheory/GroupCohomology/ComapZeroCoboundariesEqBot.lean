@@ -1,4 +1,8 @@
-import ReciprocityTheory.GroupCohomology.ContinuousContractNth
+module
+
+public import ReciprocityTheory.GroupCohomology.ContinuousContractNth
+
+@[expose] public section
 
 namespace ReciprocityTheory.Coh
 

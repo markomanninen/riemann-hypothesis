@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsLineEigenvalue
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PVecAtNeZero
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsLineEigenvalue
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PVecAtNeZero
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -16,8 +20,8 @@ def LineEigenvalue.coordRatio (h : HermitianForm F E W) (v : Basis ι E W) (x₀
     (i : InfinitePlace E → ι) (g : archUnitary h v) (w : InfinitePlace E) : ℂ :=
   ((((g : InfinitePlace E → GL ι ℂ) w : Matrix ι ι ℂ) *ᵥ vecAt v x₀ w) (i w)) / vecAt v x₀ w (i w)
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem LineEigenvalue.continuous_coordRatio (h : HermitianForm F E W) (v : Basis ι E W) (x₀ : W)
     (i : InfinitePlace E → ι) (w : InfinitePlace E) :
     Continuous fun g : archUnitary h v => coordRatio h v x₀ i g w := by
@@ -27,8 +31,8 @@ theorem LineEigenvalue.continuous_coordRatio (h : HermitianForm F E W) (v : Basi
     ((Units.continuous_val.comp ((continuous_apply w).comp continuous_subtype_val)).matrix_mulVec
       continuous_const)
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem LineEigenvalue.mulVec_eq_coordRatio {h : HermitianForm F E W} {v : Basis ι E W} {x₀ : W}
     {i : InfinitePlace E → ι} (hi : ∀ w, vecAt v x₀ w (i w) ≠ 0) {g : archUnitary h v}
     (hg : g ∈ lineStab h v x₀) (w : InfinitePlace E) :

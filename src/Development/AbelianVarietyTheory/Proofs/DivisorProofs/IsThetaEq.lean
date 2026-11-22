@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveStructureSheafDegTwoVanish
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianUnobstructed
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveStructureSheafDegTwoVanish
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianUnobstructed
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential MonoidalCategory CartesianMonoidalCategory MonObj
 open scoped TensorProduct
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.LiftSys GlobalTheory.Obs
@@ -25,7 +30,7 @@ theorem isTheta_eq {R R₀ B B₀ B' : Type} [CommRing R] [CommRing R₀] [CommR
     obtain ⟨b, rfl⟩ := hp y
     rw [h₁.der, h₂.der]
   · rw [map_zero, map_zero]
-  · intro y z _ _ hy hz; rw [map_add, map_add, hy, hz]
+  · intro y z _ _ hy hz; rw [map_add (f := _), map_add (f := _), hy, hz]
   · intro c z _ hz
     obtain ⟨b, rfl⟩ := hp c
     rw [h₁.smul, h₂.smul, hz]
@@ -40,7 +45,7 @@ theorem isSig_eq {R R₀ R₁ : Type} [CommRing R] [CommRing R₀] [CommRing R�
   | tmul y x =>
     obtain ⟨b, rfl⟩ := hp x
     rw [h, h']
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem isOb2_add : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀] (I : Ideal R) (hI : I ^ 2 = 0) (π : R →+* R₀) (hπ : Function.Surjective π) (hk : RingHom.ker π = I) (R₁ : Type) [CommRing R₁] [Algebra R₀ R₁] (α : Aug I π R₁) (C : Type) [Category.{0} C] (F : C ⥤ CommAlgCat.{0} R₀) (L : Pre I π F) (w w' : Glob1 F) (c c' : GlobalTheory.CatCoh.H2 (ext R₁ F)), L.IsOb2 α w c → L.IsOb2 α w' c' → L.IsOb2 α (w + w') (c + c') := by
   intro R R₀ _ _ I hI π hπ hk R₁ _ _ α C _ F L w w' c c' h h'
@@ -54,8 +59,8 @@ theorem isOb2_add : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀] (I : Ideal 
   have ez : (z + z').1 T T' T'' a b = z.1 T T' T'' a b + z'.1 T T' T'' a b := rfl
   refine ⟨?_, ?_⟩
   · unfold Aug.KerQ at k₁ k₂ ⊢
-    rw [ez, map_add, k₁, k₂, add_zero]
-  · rw [ez, map_add, s₁, eσ, s₂, ← eθ]
+    rw [ez, map_add (f := _), k₁, k₂, add_zero]
+  · rw [ez, map_add (f := _), s₁, eσ, s₂, ← eθ]
     exact (map_add (θ T T' T'' a b) (w.1 T) (w'.1 T)).symm
 
 end GlobalTheory.Obs

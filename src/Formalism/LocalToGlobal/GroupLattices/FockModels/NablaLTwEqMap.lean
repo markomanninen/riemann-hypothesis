@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.MkP
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.MkP
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -102,7 +106,7 @@ def psiL (R K : Type) [CommRing R] [Field K] [Algebra R K] (m : ℕ) (lam : Fin 
     (g : Matrix (Fin (m + 1)) (Fin (m + 1)) K) :
     MvPolynomial (Fin (m + 1) × Fin (m + 1)) R →ₗ[R] MvPolynomial (Fin (m + 1) × Fin (m + 1)) K where
   toFun := fun f => g.det ^ (-(lam (Fin.last m))) • rowAct K g⁻¹ (MvPolynomial.map (algebraMap R K) f)
-  map_add' := by intro x y; rw [map_add, map_add, smul_add]
+  map_add' := by intro x y; rw [map_add (f := _), map_add (f := _), smul_add]
   map_smul' := by
     intro c x
     have h1 : MvPolynomial.map (algebraMap R K) (c • x) =
@@ -142,8 +146,8 @@ theorem bc_map {R R' X X' Y Y' : Type*} [CommRing R] [CommRing R'] [AddCommGroup
   congr 1
   exact Set.image_congr fun a _ => (hT a).symm
 
-include hφ in
 
+include hφ in
 theorem bc_nablaLTw (m : ℕ) (lam : Fin (m + 1) → ℤ) (g : Matrix (Fin (m + 1)) (Fin (m + 1)) K)
     (hg : IsUnit g.det) :
     BC (MvPolynomial.map φK) (nablaLTw R K m lam g) (nablaLTw R' K' m lam (g.map φK)) := by
@@ -158,8 +162,8 @@ theorem map_blockEmb {S : Type} {k n : ℕ} (s : S) (F : MvPolynomial (Fin k × 
   unfold blockEmb
   exact (MvPolynomial.map_rename φK _ F)
 
-include hφ in
 
+include hφ in
 theorem bc_tensorLat {S : Type} [Fintype S] {k n : ℕ} (M : S → Submodule R (MvPolynomial (Fin k × Fin n) K))
     (M' : S → Submodule R' (MvPolynomial (Fin k × Fin n) K'))
     (h : ∀ s, BC (MvPolynomial.map φK) (M s) (M' s)) :
@@ -205,8 +209,8 @@ theorem bc_tensorLat {S : Type} [Fintype S] {k n : ℕ} (M : S → Submodule R (
     rw [map_prod]
     exact Finset.prod_congr rfl fun s _ => map_blockEmb φK s (F s)
 
-include hφ in
 
+include hφ in
 theorem bc_colSpan {k : ℕ} (g : Matrix (Fin k) (Fin k) K) :
     BC (vecS φ φK hφ k) (colSpan R g) (colSpan R' (g.map φK)) := by
   have h0 := bc_span (vecS φ φK hφ k) (Set.range fun c : Fin k => fun i => g i c)
@@ -216,8 +220,8 @@ theorem bc_colSpan {k : ℕ} (g : Matrix (Fin k) (Fin k) K) :
   rw [h1] at h0
   exact h0
 
-include hφ in
 
+include hφ in
 theorem base_change_H0 (hinj : Function.Injective (algebraMap R K)) (hinj' : Function.Injective (algebraMap R' K'))
     (m : ℕ) (lam : Fin (m + 1) → ℤ) (hlam : Antitone lam)
     (Λ : Submodule R (Fin (m + 1) → K)) (Λ' : Submodule R' (Fin (m + 1) → K')) (hΛ : IsLattice R Λ)

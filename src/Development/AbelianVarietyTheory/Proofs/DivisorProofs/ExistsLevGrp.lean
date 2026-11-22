@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtPlace
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtLevZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtPlace
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtLevZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,7 +85,7 @@ theorem exists_levGrp {l₁ l₂ : D.La → (𝟙_ (Over (Sp k)) ⟶ o.A)} (h₁
   let F := (wSub D w0 r).liftQ ψ hker
   have hF : ∀ y, F (Submodule.Quotient.mk y) = Submodule.Quotient.mk (z y) := fun y => rfl
   have inj : Function.Injective F := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro q hq
     obtain ⟨y, rfl⟩ := Submodule.Quotient.mk_surjective _ q
     rw [hF, Submodule.Quotient.mk_eq_zero] at hq

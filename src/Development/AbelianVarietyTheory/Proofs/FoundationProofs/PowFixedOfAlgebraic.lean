@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 
@@ -65,7 +69,7 @@ theorem residue_pow_fixed (l : ℕ) [Fact (Nat.Prime l)] {Ω : Type} [Field Ω] 
   refine ⟨p.map (Int.castRingHom (ZMod l)), ?_, ?_⟩
   · intro h0
     have hdvd : ∀ n, (l : ℤ) ∣ p.coeff n := fun n => by
-      have h := congrArg (fun q => Polynomial.coeff q n) h0
+      have h := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q n) h0
       simp only [Polynomial.coeff_map, Polynomial.coeff_zero, eq_intCast] at h
       exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ l).mp h
     have hC : Polynomial.C (l : ℤ) ∣ p := (Polynomial.C_dvd_iff_dvd_coeff _ _).mpr hdvd

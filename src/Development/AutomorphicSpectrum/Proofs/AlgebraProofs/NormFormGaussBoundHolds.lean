@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNormFormGaussBound
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PDehomNormPIntegral
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNormFormGaussBound
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PDehomNormPIntegral
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GlobalTheory.CompanionTheory.Ar.Giv
@@ -70,7 +75,7 @@ theorem normFormGaussBound : NormFormGaussBound.Statement := by
   set f := LinearMap.charpoly (Algebra.lmul P Ω x) with hf
 
   have h0 : algebraMap P Ω (f.coeff 0) = aeval (fun i => l i / l j) (c n) := by
-    have := congrArg (fun g => Polynomial.coeff g 0) hcp
+    have := congrArg (fun g => _root_.AddMonoidAlgebra.coeff (M := ℕ) g 0) hcp
     simp only [Polynomial.coeff_map, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow] at this
     rw [this, Finset.sum_eq_single n]
     · simp
@@ -170,7 +175,7 @@ theorem normFormGaussBound : NormFormGaussBound.Statement := by
       obtain ⟨e1, r1, h1⟩ := ha
       obtain ⟨e2, r2, h2⟩ := hb
       refine ⟨e1 + e2, W ^ e2 * r1 + W ^ e1 * r2, ?_⟩
-      rw [map_add, map_mul, map_mul, map_pow, map_pow, h1, h2]
+      rw [map_add (f := _), map_mul, map_mul, map_pow, map_pow, h1, h2]
       show w ^ e2 * _ + w ^ e1 * _ = _
       ring
     | neg a _ ha =>

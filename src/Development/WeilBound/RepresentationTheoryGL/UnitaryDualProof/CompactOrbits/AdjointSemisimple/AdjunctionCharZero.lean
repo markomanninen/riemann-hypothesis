@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.LocStep
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.LocStep
+
+@[expose] public section
 
 namespace PositivityTheory.RgUd.T.AdjPf
 
@@ -117,7 +121,7 @@ theorem adjunction_char_zero [CharZero k] : Adj (k := k) := by
         change Matrix.toLin' x * Matrix.toLin' y = Matrix.toLin' y * Matrix.toLin' x
         rw [Module.End.mul_eq_comp, Module.End.mul_eq_comp, ← Matrix.toLin'_mul,
           ← Matrix.toLin'_mul, hcomm x hx y hy]
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Module.End.IsSemisimple.add_of_commute hcm ihx ihy
     | mul x y hx hy ihx ihy =>
       have hcm : Commute (Matrix.toLin' x) (Matrix.toLin' y) := by

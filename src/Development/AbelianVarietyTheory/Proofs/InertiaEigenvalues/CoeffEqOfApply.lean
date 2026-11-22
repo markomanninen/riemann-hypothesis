@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.DiagonalQuotientEigen
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompletionLines
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.DiagonalQuotientEigen
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompletionLines
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem zc_neg (c : F⟦X⟧) {n : ℤ} (h : n < 0) : zc c n = 0 := by
 
 theorem zc_add (c c' : F⟦X⟧) (n : ℤ) : zc (c + c') n = zc c n + zc c' n := by
   unfold zc
-  split_ifs <;> simp [map_add]
+  split_ifs <;> simp [map_add (f := _)]
 
 theorem zc_mul (f c : F⟦X⟧) (n : ℤ) (N : ℕ) (h : n < N) :
     zc (f * c) n = ∑ j ∈ Finset.range N, coeff j f * zc c (n - j) := by
@@ -132,7 +136,7 @@ theorem exists_coords : ∀ {F M A N : Type} [Field F] [AddCommGroup M] [Module 
   choose e he using hex
   have hinj := lines_injective (F := F) u hd
   have eadd : ∀ x y, e (x + y) = e x + e y := fun x y =>
-    hinj (by rw [← he, lines_add, ← he, ← he, map_add])
+    hinj (by rw [← he, lines_add, ← he, ← he, map_add (f := _)])
   refine ⟨AddMonoidHom.mk' e eadd, ?_, ?_, ?_⟩
   · intro a x
     show e (a • x) = lev a • e x

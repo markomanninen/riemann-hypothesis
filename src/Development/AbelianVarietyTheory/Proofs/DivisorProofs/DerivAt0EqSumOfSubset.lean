@@ -1,7 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuationTheory
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.WtSubOneLe
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatFrame
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.TypicalCurveStructureConstants
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.RootStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.FactorialWeightedSumBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.OmBStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.WtSubOneLe
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatFrame
+
+@[expose] public section
 
 open MvPowerSeries ReciprocityTheory.PGsh ReciprocityTheory.ChartRestriction.G.Sh GlobalTheory.FGDepth
 
@@ -26,7 +33,7 @@ theorem derivAt0_linear (C : Type) [Field C] [CharZero C] (v : AddValuation C (W
   · unfold derivAt0
     rw [← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun α _ => ?_
-    rw [map_add, mul_add]
+    rw [map_add (f := _), mul_add]
   · unfold derivAt0
     rw [Finset.mul_sum]
     refine Finset.sum_congr rfl fun α _ => ?_

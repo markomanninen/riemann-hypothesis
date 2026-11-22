@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivCompM
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivCompM
+
+@[expose] public section
 
 open GlobalTheory.Nef
 
@@ -23,10 +27,10 @@ theorem firstOrder_isJet : ∀ (A B R : Type) [CommRing A] [CommRing B] [CommRin
     refine ⟨C (-(δ f * δ g)), ?_⟩
     beta_reduce
     rw [hδ, map_mul, map_mul]
-    simp only [map_add, map_mul, map_neg]
+    simp only [map_add (f := _), map_mul, map_neg]
     ring
   · intro f g
-    simp [map_add]
+    simp [map_add (f := _)]
     exact ⟨0, by ring⟩
   · simp [hδ1]
   · intro b
@@ -37,7 +41,7 @@ theorem firstOrder_isJet : ∀ (A B R : Type) [CommRing A] [CommRing B] [CommRin
     rw [hεm', hdm]
     have hrC : ∀ x : R, rescale (2 : R) (C x) = C x := by
       intro x; ext n; rw [coeff_rescale, coeff_C]; split_ifs with h <;> simp [h]
-    simp only [map_add, map_mul, rescale_X, hrC]
+    simp only [map_add (f := _), map_mul, rescale_X, hrC]
     ring
   · intro f
     simp

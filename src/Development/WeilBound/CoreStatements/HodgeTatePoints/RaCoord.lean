@@ -1,9 +1,13 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.RaCpaf
-import ReciprocityTheory.DualLattices.CotangentSurjective
-import ReciprocityTheory.DualLattices.SumValCoord
-import ReciprocityTheory.DualLattices.ProdDvdOfIso
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.RaCpaf
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+public import ReciprocityTheory.DualLattices.SumValCoord
+public import ReciprocityTheory.DualLattices.ProdDvdOfIso
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+
+@[expose] public section
 
 noncomputable section
 

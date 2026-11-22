@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsSubFibreSubFib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalFractionFieldStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteProjectiveStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelIsBaseChangeStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsSubFibreSubFib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalFractionFieldStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteProjectiveStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelIsBaseChangeStatement
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -22,16 +26,49 @@ theorem finrank_lieModel_of_algebra (X : Scheme.{0}) (G : Over X) [GrpObj G] [Sm
   have hφ : Spec.map (CommRingCat.ofHom (algebraMap A K)) ≫ x = spMap (algebraMap A K) ≫ x := rfl
   have hsm : ∀ (a : A) (t : V), a • t = algebraMap A K a • t := fun a t => by
     rw [algebraMap_smul]
-  have ex : ∀ e, ∃ t, MV.pt t = LieTangent.epsBase (algebraMap A K) hφ ≫ M₀.pt e :=
-    fun e => MV.onto _ (LieTangent.isTanAt_base _ hφ (M₀.tan e))
+  have halg : (dualMap (algebraMap A K)).comp (algebraMap A (DualNumber A)) =
+      (algebraMap K (DualNumber K)).comp (algebraMap A K) := by
+    ext a <;> simp [dualMap, TrivSqZeroExt.algebraMap_eq_inl]
+  let b : epsAt (spMap (algebraMap A K) ≫ x) ⟶ epsAt x :=
+    Over.homMk (spMap (dualMap (algebraMap A K))) (by
+      change spMap (dualMap (algebraMap A K)) ≫ Spec.map _ ≫ x = Spec.map _ ≫ spMap (algebraMap A K) ≫ x
+      simp only [spMap]
+      rw [← Category.assoc, ← Category.assoc, ← Spec.map_comp, ← Spec.map_comp,
+        ← CommRingCat.ofHom_comp, ← CommRingCat.ofHom_comp, halg])
+  have htan (e : E₀) : IsTanAt G (spMap (algebraMap A K) ≫ x) (b ≫ M₀.pt e) := by
+    have h1 : (Over.homMk (spMap (algebraMap A K)) rfl : Over.mk (spMap (algebraMap A K) ≫ x) ⟶ Over.mk x) ≫ (1 : Over.mk x ⟶ G) = 1 := MonObj.comp_one _
+    have h2 : spMap (algebraMap A K) ≫ (1 : Over.mk x ⟶ G).left = (1 : Over.mk (spMap (algebraMap A K) ≫ x) ⟶ G).left := by rw [← h1]; rfl
+    have hv := M₀.tan e
+    unfold IsTanAt at hv ⊢
+    rw [← h2, ← hv]
+    change Spec.map _ ≫ spMap (dualMap (algebraMap A K)) ≫ (M₀.pt e).left = spMap (algebraMap A K) ≫ Spec.map _ ≫ (M₀.pt e).left
+    simp only [spMap]
+    rw [← Category.assoc, ← Category.assoc, ← Spec.map_comp, ← Spec.map_comp,
+      ← CommRingCat.ofHom_comp, ← CommRingCat.ofHom_comp]
+    congr 2
+    congr 1
+    exact RingHom.ext fun a => by simp [dualMap]
+  have ex : ∀ e, ∃ t, MV.pt t = b ≫ M₀.pt e :=
+    fun e => MV.onto _ (htan e)
   choose f hf using ex
   let j : E₀ →ₗ[A] V :=
     { toFun := f
       map_add' := fun a b => MV.inj (by rw [MV.add, hf, hf, hf, M₀.add, comp_mul])
       map_smul' := fun c e => MV.inj (by
-        rw [RingHom.id_apply, hsm, LieModel.pt_smul, hf, hf, LieModel.pt_smul, ← Category.assoc,
-          LieTangent.base_scale, Category.assoc]) }
-  have hl : ∀ e, M₀.Lifts (algebraMap A K) (𝟙 G.left) e (MV.pt (j e)) := fun e => by
+        rw [RingHom.id_apply, hsm, LieModel.pt_smul, hf, hf, LieModel.pt_smul, ← Category.assoc]
+        have hb : b ≫ LieTangent.epsScale x c =
+            LieTangent.epsScale (spMap (algebraMap A K) ≫ x) (algebraMap A K c) ≫ b := by
+          apply Over.OverMorphism.ext
+          change spMap (dualMap (algebraMap A K)) ≫ Spec.map (CommRingCat.ofHom (epsMul c)) =
+            Spec.map (CommRingCat.ofHom (epsMul (algebraMap A K c))) ≫ spMap (dualMap (algebraMap A K))
+          simp only [spMap]
+          rw [← Spec.map_comp, ← Spec.map_comp, ← CommRingCat.ofHom_comp, ← CommRingCat.ofHom_comp]
+          congr 1
+          congr 1
+          refine RingHom.ext fun a => TrivSqZeroExt.ext ?_ ?_ <;> simp [dualMap, epsMul, mul_smul]
+        rw [hb, Category.assoc]) }
+
+  have hl : ∀ e, ((MV.pt (j e)).left ≫ (𝟙 G.left) = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap A K)) ≫ (M₀.pt e).left) := fun e => by
     change (MV.pt (f e)).left ≫ 𝟙 G.left = _
     rw [hf, Category.comp_id]
     rfl
@@ -60,7 +97,7 @@ theorem lieModel_transport {X : Scheme.{0}} {Ω : Type} [Field Ω] {G : Over X} 
       ∀ e t, M.ValAt z' e (MC.pt t) → M.ValAt z e (TL.pt t) := by
   subst hz
   have hd : dualMap (algebraMap L L) = RingHom.id _ := RingHom.ext fun a =>
-    TrivSqZeroExt.ext (LieTangent.dualMap_fst _ a) (LieTangent.dualMap_snd _ a)
+    by ext <;> simp [dualMap]
   exact ⟨TL, fun t => by rw [hd, CommRingCat.ofHom_id, Spec.map_id, Category.id_comp], fun _ _ h => h⟩
 
 theorem lieModel_valFrame : ∀ (X : Scheme.{0}) (G : Over X) [GrpObj G] [IsCommMonObj G] [Smooth G.hom] (Ω : Type) [Field Ω] (ξ : Sp Ω ⟶ X) (Li : Type) [AddCommGroup Li] [Module Ω Li] (M : LieModel G ξ Li) (L : Type) [Field L] (zL : Sp L ⟶ X) (T : Type) [AddCommGroup T] [Module L T] (TL : LieModel G zL T) (h : genPt ξ ⤳ centre zL) (Ix : Type) [Fintype Ix] (f : Ix → Li), IsCptGen ξ → LinearIndependent Ω f → Submodule.span Ω (Set.range f) = ⊤ → M.lat ⟨centre zL, h⟩ = Submodule.span (regAt ξ ⟨centre zL, h⟩) (Set.range f) → ∃ w : Ix → T, (∀ i, M.ValAt zL (f i) (TL.pt (w i))) ∧ LinearIndependent L w ∧ Submodule.span L (Set.range w) = ⊤ ∧ ∀ (A : Set Ix) (e : Li) (u : T), e ∈ Submodule.span (regAt ξ ⟨centre zL, h⟩) (f '' A) → M.ValAt zL e (TL.pt u) → u ∈ Submodule.span L (w '' A) := by

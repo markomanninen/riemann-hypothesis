@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedWeil
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+module
+
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedWeil
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+
+@[expose] public section
 
 noncomputable section
 

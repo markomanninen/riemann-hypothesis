@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ZetaActRefl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModularGroupRowVecAndConjRightActions
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ZetaActRefl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModularGroupRowVecAndConjRightActions
+
+@[expose] public section
 
 open scoped UpperHalfPlane MatrixGroups Matrix ModularForm ComplexConjugate
 open GlobalTheory.QFam GlobalTheory.WpFam
@@ -28,14 +32,15 @@ private theorem ringEquiv_cSum_eq_cSum_vmul_dg (N : ℕ) (g : ℂ ≃+* ℂ) (a 
   obtain ⟨h0, h1⟩ := vmul_dg_apply_zero_and_one x a
   unfold _root_.GlobalTheory.WpFam.ZetaAct at hg
   unfold _root_.GlobalTheory.WpFam.cSum
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [h0, h1]
-  simp only [map_mul, map_pow, map_natCast, map_add, apply_ite g, map_zero, hs, hg]
+  simp only [map_mul, map_pow, map_natCast, map_add (f := _), apply_ite g, map_zero, hs, hg]
   rw [mul_neg, mul_left_comm (a : ZMod N)]
 
-open scoped UpperHalfPlane MatrixGroups Matrix ModularForm ComplexConjugate in
 
+open scoped UpperHalfPlane MatrixGroups Matrix ModularForm ComplexConjugate in
 theorem _root_.GlobalTheory.WpFam.CoeffConj.main : ∀ (N : ℕ) [NeZero N] (g : ℂ ≃+* ℂ) (a : (ZMod N)ˣ), _root_.GlobalTheory.WpFam.ZetaAct g N a → ∀ (x : Fin 2 → ZMod N) (k : ℕ), g (_root_.GlobalTheory.WpFam.cB N x k) = _root_.GlobalTheory.WpFam.cB N (_root_.GlobalTheory.WpFam.vmul x (_root_.GlobalTheory.WpFam.dg a)) k ∧ g (_root_.GlobalTheory.WpFam.cD N x k) = _root_.GlobalTheory.WpFam.cD N (_root_.GlobalTheory.WpFam.vmul x (_root_.GlobalTheory.WpFam.dg a)) k ∧ g (_root_.GlobalTheory.WpFam.cG N k) = _root_.GlobalTheory.WpFam.cG N k ∧ g (_root_.GlobalTheory.WpFam.cP N x k) = _root_.GlobalTheory.WpFam.cP N (_root_.GlobalTheory.WpFam.vmul x (_root_.GlobalTheory.WpFam.dg a)) k := by
   intro N _ g a hg x k
   obtain ⟨h0, h1⟩ := vmul_dg_apply_zero_and_one x a
@@ -58,7 +63,7 @@ theorem _root_.GlobalTheory.WpFam.CoeffConj.main : ∀ (N : ℕ) [NeZero N] (g :
     rcases eq_or_ne k 0 with rfl | hk
     · simp only [if_true, h0, h1]
       split_ifs
-      · simp only [map_div₀, map_pow, map_sub, map_add, map_mul, map_one, hζ]
+      · simp only [map_div₀, map_pow, map_sub, map_add (f := _), map_mul, map_one, hζ]
       · exact map_zero g
     · simp only [hk, if_false]
       exact ringEquiv_cSum_eq_cSum_vmul_dg N g a hg 2 (-1) (by simp) x k

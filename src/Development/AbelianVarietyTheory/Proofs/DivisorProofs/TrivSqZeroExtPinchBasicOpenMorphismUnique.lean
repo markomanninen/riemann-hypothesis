@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.Definitions.Divisors.HopfLaurent
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuasiCompactZeroSec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpMapFstSurjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HopfLaurent
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuasiCompactZeroSec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpMapFstSurjective
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry KaehlerDifferential MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.AbCoh GlobalTheory.AbTan
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -32,7 +37,7 @@ theorem appTop_joint_inj (β : TrivSqZeroExt R M →+* TrivSqZeroExt B M) (hβ :
   have e2 : TrivSqZeroExt.snd c' = 0 := by
     have : β c' = TrivSqZeroExt.inl (algebraMap R B (TrivSqZeroExt.fst c')) + TrivSqZeroExt.inr (TrivSqZeroExt.snd c') := by
       conv_lhs => rw [← TrivSqZeroExt.inl_fst_add_inr_snd_eq c']
-      rw [map_add, hβ.1, hβ.2]; rfl
+      rw [map_add (f := _), hβ.1, hβ.2]; rfl
     have := congrArg TrivSqZeroExt.snd this
     rw [← n2] at this
     simpa using this.symm

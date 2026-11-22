@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LocPoly
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LocPoly
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Polynomial GroundTheory.Automorphic UpperTheory.V
 open GlobalTheory.CuspRep (GA Af Ad ratGL finGL locGL pFin)
 open UpperTheory.V.TR (Rinf Lie chart infGL pInf toL rmul invSet CuspSub)
@@ -71,8 +76,8 @@ section Specific
 
 variable {K : Type} [Field K] [NumberField K] {n : ℕ}
 
-open Classical in
 
+open Classical in
 def wordOf (v : InfinitePlace K) (p : Equiv.Perm (Fin n)) (l : List (Fin n)) : List (Lie K n) :=
   l.map fun j => toL (Matrix.single (p j) j (Pi.single v 1))
 

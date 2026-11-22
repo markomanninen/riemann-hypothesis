@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DgMatOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DgMatOne
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.BCT.CtLevel
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -76,7 +81,7 @@ theorem hasCompactSupport_ctMu_split : ∀ (E : Type) [Field E] [NumberField E] 
   set S : Set (GLw n w) := Subtype.val '' tsupport f with hSdef
   have hS : IsCompact S := hf.image continuous_subtype_val
   have hK := (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w n).2
-  set C : Set (GLw n w) := (GlobalTheory.LFun.KGL w n : Set (GLw n w)) * S * (GlobalTheory.LFun.KGL w n : Set (GLw n w)) with hCdef
+  set C : Set (GLw n w) := (GlobalTheory.LFun.KGL w (n := n) : Set (GLw n w)) * S * (GlobalTheory.LFun.KGL w (n := n) : Set (GLw n w)) with hCdef
   have hC : IsCompact C := (hK.mul hS).mul hK
   have hmem : ∀ m, ctMu h w μ f m ≠ 0 → ∃ X, blk h w m X ∈ C := by
     intro m hm
@@ -87,7 +92,7 @@ theorem hasCompactSupport_ctMu_split : ∀ (E : Type) [Field E] [NumberField E] 
     set y := (k : GLw n w)⁻¹ * blk h w m (Multiplicative.toAdd X) * k with hy
     have hyS : y ∈ S := by
       refine ⟨⟨y, hUL y⟩, subset_tsupport _ ?_, rfl⟩
-      have : toSub (UL n w) y = ⟨y, hUL y⟩ := by rw [toSub, dif_pos (hUL y)]
+      have : toSub (UL n w) y = ⟨y, hUL y⟩ := by rw [toSub, dite_eq_left (hUL y)]
       simpa [this] using hk
     have e : blk h w m (Multiplicative.toAdd X) = (k : GLw n w) * y * (k : GLw n w)⁻¹ := by
       rw [hy]; group

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCCurvPolyCut
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCCurvPolyCut
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -81,7 +85,8 @@ theorem plt_kap {P : M.Par} {A : Type} [Ring A] [Algebra ℂ A] (κ : (M.Ty P �
     rw [hc ρ u, Finset.sum_apply]
     rfl
   dsimp only
-  rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   simp only [map_smul]
 
 theorem expand {A : Type} [Ring A] [Algebra ℂ A] (m : ℕ) (GG GGi K α β γ Wt1 Wt2 Θ : A)
@@ -268,7 +273,7 @@ theorem curvature_polynomial_of_scalar : GTCCurvPolyOfScal := by
           rw [hcx ρ u, show P.k - 1 = m + 1 by omega, show P.k - 2 = m by omega]
           simp only [Pi.add_apply, Pi.smul_apply, Pi.one_apply, smul_eq_mul, mul_one]
           ring]
-    rw [map_add, map_add, map_smul, map_smul, map_one]
+    rw [map_add (f := _), map_add (f := _), map_smul, map_smul, map_one]
   have hX' : PLT m X' := plt_kap d.κ _ (fun ρ => scalPLT (cx ρ) (fun u => rfl))
   have hxP : PLT (m + 2) (fun u => d.x u) :=
     (((plt_monomial (m + 1) (1 : A)).add ((plt_monomial m K).mono (by omega))).add (hX'.mono (by omega))).congr
@@ -283,7 +288,7 @@ theorem curvature_polynomial_of_scalar : GTCCurvPolyOfScal := by
           rw [hcw ρ u, hm]
           simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, Pi.algebraMap_apply, Algebra.algebraMap_self,
             RingHom.id_apply]]
-    rw [map_add, map_add, map_smul, map_smul, AlgHom.commutes]
+    rw [map_add (f := _), map_add (f := _), map_smul, map_smul, AlgHom.commutes]
   have hW' : PLT (m + 2) W' := plt_kap d.κ _ (fun ρ => scalPLT (cw ρ) (fun u => by rw [hm]))
   have hC1 : d.L.GG * (d.L.ζ * d.L.GGi * (d.L.ζb * d.L.GGi)) + d.L.GGi * algebraMap ℂ A (-(P.TT : ℂ)) = 1 := by
     have := C1 d; rwa [hTT] at this

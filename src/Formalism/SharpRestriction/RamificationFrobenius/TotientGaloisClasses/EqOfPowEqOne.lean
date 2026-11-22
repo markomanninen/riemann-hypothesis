@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ArtinMapSecondEqJacobiSym
-import Formalism.GL3MeanSquares.HookFormulaTorsion.DifferentIdealConditions
+module
+
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ArtinMapSecondEqJacobiSym
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.DifferentIdealConditions
+
+@[expose] public section
 
 open NumberField IntermediateField Ideal
 open scoped Pointwise

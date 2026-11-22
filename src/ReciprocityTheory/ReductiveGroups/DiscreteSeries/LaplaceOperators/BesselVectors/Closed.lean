@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.BesselVectors.BesselNVGOfNv
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.Imports
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.FamilyGapImplicationHolds
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.NVHTop
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.BesselVectors.BesselNVGOfNv
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.Imports
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.FamilyGapImplicationHolds
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.NVHTop
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.DS.Lap.TopClosed
 

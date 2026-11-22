@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DefClassDecompIff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteAndMass
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DefClassDecompIff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteAndMass
+
+@[expose] public section
 
 namespace GlobalTheory.DefiniteDecompObj
 

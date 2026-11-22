@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsProbabilityMeasureMuPart
-import Formalism.MeanHeightDescent.DivisionInequalityWithCovolume
-import Formalism.MeanHeightDescent.CovolumeFullAssemblyWeighted
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.DeterminantCauchySchwarz
-import Formalism.MeanHeightDescent.AverageDegreeBounds.GoodBadCut
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsProbabilityMeasureMuPart
+public import Formalism.MeanHeightDescent.DivisionInequalityWithCovolume
+public import Formalism.MeanHeightDescent.AverageDegreeBounds.GlobalBoundRefinements
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.DeterminantCauchySchwarz
+public import Formalism.MeanHeightDescent.AverageDegreeBounds.GoodBadCut
+
+@[expose] public section
 
 open NumberField GlobalTheory.AllWt Module TensorProduct Matrix
 
@@ -46,18 +50,18 @@ theorem relIndex_span {R S M W : Type} [CommRing R] [CommRing S] [Algebra R S] [
     rw [hN, Submodule.baseChange_span, ← Set.range_comp]; rfl
   have hmz : ∀ z : S ⊗[R] M, m • z ∈ N.baseChange S := fun z => by
     induction z with
-    | zero => simp
     | tmul a x => rw [← tmul_smul]; exact Submodule.tmul_mem_baseChange_of_mem a (hme x)
     | add x y hx hy => rw [smul_add]; exact add_mem hx hy
   have hinj : Function.Injective θ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro z hz
     have h1 := hmz z
     rw [hP, Submodule.mem_span_range_iff_exists_fun] at h1
     obtain ⟨a, ha⟩ := h1
     have h2 : ∑ k, a k • l (e k) = 0 := by
       have := congrArg θ ha
-      rw [LinearMap.map_smul_of_tower, hz, smul_zero, map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [LinearMap.map_smul_of_tower, hz, smul_zero, map_sum] at this
       simpa [hθ] using this
     have h3 := Fintype.linearIndependent_iff.1 he a h2
     have h4 : m • z = 0 := by rw [← ha]; simp [h3]
@@ -79,8 +83,8 @@ theorem relIndex_span {R S M W : Type} [CommRing R] [CommRing S] [Algebra R S] [
     Nat.card_congr (TensorProduct.tensorQuotientEquiv S N).toEquiv]
   rfl
 
-open scoped ComplexOrder in
 
+open scoped ComplexOrder in
 theorem det_le_of_dense {K ι κ : Type} [Field K] [Fintype ι] [Fintype κ] {j : ℕ} (σ : K →+* ℂ) (hσ : DenseRange σ)
     (A : Matrix ι (Fin j) ℂ) (B : Matrix κ (Fin j) ℂ) (t : ℝ)
     (h : ∀ x : Fin j → K, Formalism.HermitianLatticesTheory.cnorm (A *ᵥ fun k => σ (x k)) ≤ t * Formalism.HermitianLatticesTheory.cnorm (B *ᵥ fun k => σ (x k))) :
@@ -119,7 +123,7 @@ theorem denseRange_of_not_isReal {K : Type} [Field K] {σ : K →+* ℂ} (hσ : 
   · rw [denseRange_iff_closure_range, ← RingHom.coe_fieldRange]
     exact congrArg (fun s : Subfield ℂ => (s : Set ℂ)) h
 
-theorem sum_mk (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (g : InfinitePlace K → ℝ) :
+theorem sum_mk (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (g : InfinitePlace K → ℝ) :
     ∑ σ : K →+* ℂ, g (InfinitePlace.mk σ) = 2 * ∑ v, g v := by
   classical
   rw [← Finset.sum_fiberwise (s := Finset.univ) (g := fun σ : K →+* ℂ => InfinitePlace.mk σ), Finset.mul_sum]
@@ -128,7 +132,7 @@ theorem sum_mk (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (g : In
     Finset.sum_const, nsmul_eq_mul, InfinitePlace.card_filter_mk_eq, (IsTotallyComplex.isComplex v).mult_eq_two]
   rfl
 
-theorem sum_comap (K K' : Type) [Field K] [NumberField K] [IsTotallyComplex K] [Field K'] [NumberField K']
+theorem sum_comap (K K' : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] [Field K'] [NumberField K']
     [Algebra K K'] (g : InfinitePlace K → ℝ) :
     ∑ w : InfinitePlace K', g (w.comap (algebraMap K K')) = finrank K K' * ∑ v, g v := by
   classical
@@ -167,15 +171,15 @@ theorem normAt_sum (x : Fin j → K) :
     Formalism.HermitianLatticesTheory.normAt b X v (∑ k, x k • e k) = Formalism.HermitianLatticesTheory.cnorm (cols b X v e *ᵥ fun k => v.embedding (x k)) := by
   unfold Formalism.HermitianLatticesTheory.normAt
   congr 1
-  funext i
-  simp only [Formalism.HermitianLatticesTheory.fcoord, Formalism.HermitianLatticesTheory.vecAt, cols, Matrix.mulVec, dotProduct, map_sum, map_smul, Finsupp.coe_finset_sum,
+  ext i
+  simp only [Formalism.HermitianLatticesTheory.fcoord, Formalism.HermitianLatticesTheory.vecAt, Matrix.mulVec, dotProduct, cols, map_sum, map_smul, Finsupp.coe_finsetSum,
     Finset.sum_apply, Finsupp.smul_apply, smul_eq_mul, map_mul, Matrix.of_apply, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
 
 end Frames
 
-theorem gram_le {K K' V V' ι κ : Type} [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K] [Field K']
+theorem gram_le {K K' V V' ι κ : Type} [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] [Field K']
     [NumberField K'] [StarRing K'] [Algebra K K'] [AddCommGroup V] [Module K V] [AddCommGroup V'] [Module K' V']
     [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ] {b : Basis ι K V} {X : InfinitePlace K → Matrix ι ι ℂ}
     {b' : Basis κ K' V'} {X' : InfinitePlace K' → Matrix κ κ ℂ} {N : (K →+* ℂ) → V → ℝ} {N' : (K' →+* ℂ) → V' → ℝ}
@@ -191,7 +195,8 @@ theorem gram_le {K K' V V' ι κ : Type} [Field K] [NumberField K] [StarRing K] 
   have h1 : ∀ x : Fin j → K, Formalism.HermitianLatticesTheory.cnorm (cols b' X' w (fun k => φ (e k)) *ᵥ fun k => σ (x k)) ≤
       t * N σ (∑ k, x k • e k) := fun x => by
     have h := ht w.embedding (∑ k, x k • e k)
-    rw [← (hG' w).2, map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← (hG' w).2, map_sum] at h
     simp only [map_smulₛₗ] at h
     rw [normAt_sum] at h
     exact h
@@ -219,7 +224,7 @@ theorem gram_le {K K' V V' ι κ : Type} [Field K] [NumberField K] [StarRing K] 
     rw [← Complex.norm_conj]
     simp [Matrix.mulVec, dotProduct, hB]
 
-theorem rk_mul_mu_eq {K V ι : Type} [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K] [AddCommGroup V]
+theorem rk_mul_mu_eq {K V ι : Type} [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] [AddCommGroup V]
     [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [Fintype ι] [DecidableEq ι] (b : Basis ι K V)
     (X : InfinitePlace K → Matrix ι ι ℂ) (hX : ∀ v, IsUnit (X v).det) {j : ℕ} (e : Fin j → V)
     (he : LinearIndependent K e) (L : Submodule (𝓞 K) V) (hL : L.FG)
@@ -247,7 +252,7 @@ theorem rk_mul_mu_eq {K V ι : Type} [Field K] [NumberField K] [StarRing K] [IsT
     rw [h5, mul_div_cancel₀ _ Formalism.ExtensionFiltration.HermitianIdempotentFrameLemmas.nPl_ne_zero]
     linarith
 
-theorem slope_sq_sub_le_slope_sq_span : ∀ (K K' V V' : Type) [Field K] [NumberField K] [IsTotallyComplex K] [Field K'] [NumberField K'] [Algebra K K'] [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [AddCommGroup V'] [Module K' V'] [Module (𝓞 K') V'] [IsScalarTower (𝓞 K') K' V'] (N : (K →+* ℂ) → V → ℝ) (N' : (K' →+* ℂ) → V' → ℝ) (ι : V →ₛₗ[algebraMap K K'] V') (L : Submodule (𝓞 K) V) (c : ℝ), HasGram N → HasGram N' → (∀ σ x, N ((starRingEnd ℂ).comp σ) x = N σ x) → (∀ (n : ℕ) (b : Fin n → V), LinearIndependent K b → LinearIndependent K' (fun k => ι (b k))) → L.FG → L ≠ ⊥ → (∀ σ' x, N' σ' (ι x) ≤ Real.exp c * N (σ'.comp (algebraMap K K')) x) → slope_sq N L - 2 * c ≤ slope_sq N' (Submodule.span (𝓞 K') (ι '' (L : Set V))) := by
+theorem slope_sq_sub_le_slope_sq_span : ∀ (K K' V V' : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] [Field K'] [NumberField K'] [Algebra K K'] [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [AddCommGroup V'] [Module K' V'] [Module (𝓞 K') V'] [IsScalarTower (𝓞 K') K' V'] (N : (K →+* ℂ) → V → ℝ) (N' : (K' →+* ℂ) → V' → ℝ) (ι : V →ₛₗ[algebraMap K K'] V') (L : Submodule (𝓞 K) V) (c : ℝ), HasGram N → HasGram N' → (∀ σ x, N ((starRingEnd ℂ).comp σ) x = N σ x) → (∀ (n : ℕ) (b : Fin n → V), LinearIndependent K b → LinearIndependent K' (fun k => ι (b k))) → L.FG → L ≠ ⊥ → (∀ σ' x, N' σ' (ι x) ≤ Real.exp c * N (σ'.comp (algebraMap K K')) x) → slope_sq N L - 2 * c ≤ slope_sq N' (Submodule.span (𝓞 K') (ι '' (L : Set V))) := by
   intro K K' V V' _ _ _ _ _ _ _ _ _ _ _ _ _ _ N N' ι L c ⟨⟨n, ⟨b, X⟩, hG⟩⟩ ⟨⟨n', ⟨b', X'⟩, hG'⟩⟩ hc hli hL h0 hN
   letI : StarRing K := starRingOfComm
   letI : StarRing K' := starRingOfComm
@@ -283,7 +288,8 @@ theorem slope_sq_sub_le_slope_sq_span : ∀ (K K' V V' : Type) [Field K] [Number
       refine le_antisymm (Submodule.span_le.2 ?_) (Submodule.span_mono ?_)
       · rintro _ ⟨x, hx, rfl⟩
         obtain ⟨a, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun K).1 (hsp ▸ Submodule.subset_span hx)
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         exact Submodule.sum_mem _ fun k _ => by
           rw [map_smulₛₗ]; exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
       · rintro _ ⟨k, rfl⟩; exact ⟨e k, heL k, rfl⟩

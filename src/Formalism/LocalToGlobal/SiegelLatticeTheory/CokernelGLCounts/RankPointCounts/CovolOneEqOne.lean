@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.EmbSInjective
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.EmbSInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem pi_measure_eq_prod_absNorm_mul_sqrt_discr (K : Type) [Field K] [NumberFi
   have h2 : ∀ y, sw (usw y) = y := fun y => rfl
   have hsw : MeasurePreserving sw _ _ := swap_mp (ι := ι) (P := P) (ENNReal.ofReal c • (volume : Measure ℂ))
   have husw : Measurable usw :=
-    measurable_pi_lambda _ fun v => measurable_pi_lambda _ fun p =>
+    Measurable.of_eval fun v => Measurable.of_eval fun p =>
       (measurable_pi_apply v).comp (measurable_pi_apply p)
   let B : ∀ _ : P, (P → ι → ℂ) → (P → ι → ℂ) → (ι → ℂ) := fun p y y' v => BX p (fun q => y q v) (fun q => y' q v)
   let τT : ∀ _ : P, (P → ι → ℂ) → (ι → ℂ) := fun p y => τ p (usw y)
@@ -55,10 +59,10 @@ theorem pi_measure_eq_prod_absNorm_mul_sqrt_discr (K : Type) [Field K] [NumberFi
   rw [hpre, hsw.measure_preimage hKT.nullMeasurableSet]
   refine covol_oneT K ι φ σ hφ P h B ?_ ?_ ?_ c hc I Λ hΛ k hk hk0 s hs τT ?_ ?_ (usw ⁻¹' Kset) hKT ?_
   · intro p
-    refine measurable_pi_lambda _ fun v => ?_
+    refine Measurable.of_eval fun v => ?_
     have hf : Measurable (fun z : (P → ι → ℂ) × (P → ι → ℂ) => ((fun q => z.1 q v), (fun q => z.2 q v))) :=
-      (measurable_pi_lambda _ fun q => (measurable_pi_apply v).comp ((measurable_pi_apply q).comp measurable_fst)).prodMk
-        (measurable_pi_lambda _ fun q => (measurable_pi_apply v).comp ((measurable_pi_apply q).comp measurable_snd))
+      (Measurable.of_eval fun q => (measurable_pi_apply v).comp ((measurable_pi_apply q).comp measurable_fst)).prodMk
+        (Measurable.of_eval fun q => (measurable_pi_apply v).comp ((measurable_pi_apply q).comp measurable_snd))
     exact (hBm p).comp hf
   · intro p x x' y y' hxy
     funext v

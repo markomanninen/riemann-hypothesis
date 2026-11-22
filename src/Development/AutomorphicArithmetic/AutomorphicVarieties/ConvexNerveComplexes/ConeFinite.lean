@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.NerveFaceClosed
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.Sublevel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.VertFinite
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.NerveFaceClosed
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.Sublevel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.VertFinite
+
+@[expose] public section
 
 open Set UpperTheory.V.ConeExtensionAcyclic
 

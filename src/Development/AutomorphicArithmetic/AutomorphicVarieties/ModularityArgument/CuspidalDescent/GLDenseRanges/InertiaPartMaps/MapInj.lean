@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.KirCusp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MemFixedOfCharacterSumProjection
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.RankFixedInfCharacterEigenspace
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsLevelOneAddCharLiftingResidue
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.CardUnipotentUpperEqPow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.UnipotentUpperMapSurjective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsInjectiveGenericUnipotentCharacters
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IndexNeZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.LevelTorusLeTorus
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.KirCusp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MemFixedOfCharacterSumProjection
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.RankFixedInfCharacterEigenspace
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsLevelOneAddCharLiftingResidue
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.CardUnipotentUpperEqPow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.UnipotentUpperMapSurjective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsInjectiveGenericUnipotentCharacters
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IndexNeZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.LevelTorusLeTorus
+
+@[expose] public section
 
 noncomputable section
 
@@ -127,9 +131,10 @@ theorem eOp : EOp := by
         lift f p.1.1 * (iA k n y : Matrix (Fin n) (Fin n) k) p.1.1 p.1.2 =
         ((∑ p : {p : Fin n × Fin n // (p.2 : ℕ) = p.1 + 1},
           l (f p : 𝓀[k]) * (y.1.val p.1.1 p.1.2) : 𝒪[k]) : k) := by
-      rw [AddSubmonoidClass.coe_finset_sum]
+      rw [AddSubmonoidClass.coe_finsetSum]
       exact Finset.sum_congr rfl fun p _ => by rw [hlp]; rfl
-    rw [e, hres, map_sum (IsLocalRing.residue 𝒪[k])]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, hres, map_sum (IsLocalRing.residue 𝒪[k])]
     congr 2
     refine Finset.sum_congr rfl fun p _ => ?_
     rw [map_mul, hl]
@@ -137,7 +142,7 @@ theorem eOp : EOp := by
   refine ⟨ψ, ∑ x, Finsupp.single (iA k n (s x)) (c x), j,
     Finset.univ.map ⟨lift, hinj⟩, hψ, ⟨?_, ?_, ?_⟩, ?_, ?_, ?_⟩
   · intro g hg
-    obtain ⟨x, -, hx⟩ := Finset.mem_biUnion.1 (Finsupp.support_finset_sum hg)
+    obtain ⟨x, -, hx⟩ := Finsupp.mem_support_finsetSum g hg
     have : g = iA k n (s x) := by
       have := Finsupp.support_single_subset hx
       simpa using this

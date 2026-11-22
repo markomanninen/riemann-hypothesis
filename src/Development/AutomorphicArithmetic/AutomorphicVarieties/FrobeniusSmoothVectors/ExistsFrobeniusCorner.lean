@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CornerUnits
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrobeniusCornerOrderSkips
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CornerUnits
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrobeniusCornerOrderSkips
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -22,7 +26,8 @@ private theorem cor_sub {K : Type} [CommRing K] (A : Matrix (Fin 3) (Fin 3) K) (
   simp [Matrix.submatrix_sub, Matrix.submatrix_smul, cor_one']
 
 private theorem cor_J {K : Type} [CommRing K] (A : Matrix (Fin 3) (Fin 3) K) :
-    (Jmat K 3 * Aᵀ * Jmat K 3).submatrix cor cor = Jmat K 2 * (A.submatrix cor cor)ᵀ * Jmat K 2 := by
+    (Jmat (R := K) 3 * Aᵀ * Jmat (R := K) 3).submatrix cor cor =
+      Jmat (R := K) 2 * (A.submatrix cor cor)ᵀ * Jmat (R := K) 2 := by
   ext i j
   simp only [Matrix.submatrix_apply, Matrix.mul_apply, Matrix.transpose_apply, Fin.sum_univ_three, Fin.sum_univ_two]
   fin_cases i <;> fin_cases j <;> simp [Jmat, cor, Fin.rev]
@@ -55,7 +60,8 @@ theorem UpperTheory.V.Fr.exists_frobenius_corner :
         exact cor_mul _ _ (hc a 0 (by decide)) (hc a 2 (by decide)) }
   refine ⟨⟨s, fun v i => ρ.ψ v (cor i), ?_, ?_, ?_⟩, ?_⟩
   · intro g
-    show (ρ.r (F.star g)).submatrix cor cor = Jmat K 2 * ((ρ.r g).submatrix cor cor)ᵀ * Jmat K 2
+    show (ρ.r (F.star g)).submatrix cor cor =
+      Jmat (R := K) 2 * ((ρ.r g).submatrix cor cor)ᵀ * Jmat (R := K) 2
     rw [ρ.pol, cor_J]
   · intro i j hij
     have hd := ρ.diag (cor i) (cor j) (hinj.ne hij)

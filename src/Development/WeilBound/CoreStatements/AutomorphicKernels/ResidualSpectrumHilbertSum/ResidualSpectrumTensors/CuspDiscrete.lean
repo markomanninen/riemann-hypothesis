@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.ResidualSpectrumHilbertSum.ResidualSpectrumTensors.Development
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspRapidDecaySiegelGL
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DiscreteSpectrumGLTwoOfCuspidalSpectrum
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.ResidualSpectrumHilbertSum.ResidualSpectrumTensors.Development
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspRapidDecaySiegelGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DiscreteSpectrumGLTwoOfCuspidalSpectrum
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ open NumberField GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DiscSp
 
 namespace PositivityTheory.RSHS.L1
 
-theorem cuspDiscrete (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (N : ℕ) (hN : 1 ≤ N) :
+theorem cuspDiscrete (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (N : ℕ) (hN : 1 ≤ N) :
     PositivityTheory.RSHS.CuspDiscrete E N := by
   intro π hu hn
   refine ⟨fun φ hφ => (π.cusp φ hφ).1, fun φ hφ => ?_, π.stable, π.ne_bot, π.irred⟩

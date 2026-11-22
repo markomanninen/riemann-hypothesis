@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.GaussSumValuationTeichmuller
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.GaussSumValuationTeichmuller
+
+@[expose] public section
+
 open scoped Matrix TensorProduct
 open Matrix
 set_option maxHeartbeats 1000000 in

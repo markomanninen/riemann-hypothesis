@@ -1,12 +1,17 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWeakTopologyWittTiltTensor
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZlTowerGen
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOfTailStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowInclRSmulMemStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearMapPiContinuousCoordStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousZlSmulStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWeakTopologyWittTiltTensor
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZlTowerGen
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOfTailStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowInclRSmulMemStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearMapPiContinuousCoordStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousZlSmulStatement
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc TensorProduct GlobalTheory.NL Formalism.MainNotions.DeltaInvariantLattices GlobalTheory.WeakClosed
 open scoped Topology PowerSeries.WithPiTopology
 set_option synthInstance.maxHeartbeats 400000
@@ -43,7 +48,7 @@ theorem continuous_io_smul_of {O RA RW M : Type} [CommRing O] [TopologicalSpace 
           have : (fun i => PowerSeries.C ((c + c') i)) =
               (fun i => PowerSeries.C (c i)) + fun i => PowerSeries.C (c' i) := by
             funext i; simp
-          simp only [this, map_add, add_smul]
+          simp only [this, map_add (f := _), add_smul]
         map_smul' := fun o c => by
           have : (fun i => PowerSeries.C ((o • c) i)) = o • (fun i => PowerSeries.C (c i)) := by
             funext i; simp [PowerSeries.smul_eq_C_mul, map_mul]
@@ -86,6 +91,9 @@ theorem continuous_inclR_io_smul : ∀ {l : ℕ} [Fact l.Prime] {P : LocPrime l}
   haveI : NeZero (Module.finrank ℚ_[l] ↥(K0 K)) := ⟨(finrank_maxUnramifiedSubfield_pos K).ne'⟩
   have hlin : ∀ f : (ZMod (Module.finrank ℚ_[l] ↥(K0 K)) → ↥(OL LL)) →ₗ[↥(OL LL)] TW (RW LL) T,
       Continuous f := fun f => GlobalTheory.T.continuous_linearMap_pi_of_continuous_coord bO (GlobalTheory.T.continuous_padicInt_smul_latB T b) f
+  haveI : IsScalarTower ↥(OL LL) (RW LL) (TW (RW LL) T) :=
+    TensorProduct.isScalarTower_left (R := ↥(OL LL)) (M := RW LL) (N := ↥T.L.T)
+      (R' := RW LL) (R'₂ := ↥(OL LL))
   exact continuous_io_smul_of E.tie.io (inclR LL) y _ E.tie.io_π (GlobalTheory.T.exists_pow_inclR_smul_mem' AI s T b y) hlin
 
 end GlobalTheory.WeakClosed

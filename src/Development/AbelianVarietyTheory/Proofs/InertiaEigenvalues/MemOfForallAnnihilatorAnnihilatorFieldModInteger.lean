@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoefficientRingIntegersCompactAdicPropertiesStatement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoefficientRingIntegersCompactAdicPropertiesStatement
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct Module
 
 namespace GlobalTheory.DoubleAnnihilator
@@ -16,8 +21,7 @@ local notation "QE" => LL ⧸ LinearMap.range (Algebra.linearMap O LL)
 
 theorem mk_eq_zero_iff (z : LL) :
     (Submodule.Quotient.mk z : QE) = 0 ↔ ∃ b : O, algebraMap O LL b = z := by
-  rw [Submodule.Quotient.mk_eq_zero, LinearMap.mem_range]
-  simp [Algebra.linearMap_apply]
+  simp only [Submodule.Quotient.mk_eq_zero, LinearMap.mem_range, Algebra.linearMap_apply]
 
 theorem baer [IsDomain O] [IsPrincipalIdealRing O] (hinj : Function.Injective (algebraMap O LL)) :
     Module.Baer O QE := by
@@ -40,8 +44,7 @@ theorem baer [IsDomain O] [IsPrincipalIdealRing O] (hinj : Function.Injective (a
     rw [this, map_smul, ← hz, LinearMap.toSpanSingleton_apply, ← Submodule.Quotient.mk_smul,
       ← Submodule.Quotient.mk_smul]
     congr 1
-    rw [Algebra.smul_def, Algebra.smul_def, map_mul]
-    field_simp
+    simp only [Algebra.smul_def, map_mul, mul_assoc, mul_inv_cancel_left₀ haL]
 
 theorem endo_on_torsion (ℓ : O) (hℓ : algebraMap O LL ℓ ≠ 0) (h : QE →ₗ[O] QE) (n : ℕ) :
     ∃ c : O, ∀ e : QE, ℓ ^ n • e = 0 → h e = c • e := by
@@ -104,8 +107,8 @@ end GlobalTheory.DoubleAnnihilator
 
 namespace GlobalTheory
 
-open GlobalTheory.DoubleAnnihilator in
 
+open GlobalTheory.DoubleAnnihilator in
 theorem mem_of_forall_annihilator_annihilator :
     ∀ (l : ℕ) [Fact l.Prime] (LL : Type) [Field LL] [Algebra ℚ_[l] LL] [TopologicalSpace LL]
       (O : Type) [CommRing O] [Algebra O LL], GoodO (Qp := ℚ_[l]) LL O →
@@ -143,7 +146,8 @@ theorem mem_of_forall_annihilator_annihilator :
   have hexp : ∀ (a : Fin r → O) (s : N), β (∑ i, a i • v i) s =
       Submodule.Quotient.mk (∑ i, algebraMap O LL (a i) * y s i) := by
     intro a s
-    rw [← Submodule.mkQ_apply, map_sum, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Submodule.mkQ_apply, map_sum, map_sum, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, LinearMap.smul_apply, ← hy, Submodule.mkQ_apply, ← Submodule.Quotient.mk_smul,
       Algebra.smul_def]
@@ -170,7 +174,8 @@ theorem mem_of_forall_annihilator_annihilator :
       rw [hexp, mk_eq_zero_iff]; exact hT ⟨s, hs⟩)
     rw [hexp, mk_eq_zero_iff] at h1
     exact h1
-  obtain ⟨F, hF⟩ := (hKc.diff hUo).elim_finite_subfamily_closed T hTcl hempty
+  obtain ⟨F, hF⟩ := (hKc.diff hUo).elim_finite_subfamily_closed T hTcl
+    (Set.disjoint_iff_inter_eq_empty.mpr hempty)
   have hfin : ∀ d : M, (∀ s ∈ F, β d s.1 = 0) → β d c = 0 := by
     intro d hd
     obtain ⟨a, rfl⟩ := hspan d
@@ -183,7 +188,7 @@ theorem mem_of_forall_annihilator_annihilator :
         have h2 := hd s hs
         rw [hexp, mk_eq_zero_iff] at h2
         exact h2
-    rw [hF] at hx
+    rw [Set.disjoint_iff_inter_eq_empty.mp hF] at hx
     exact hx
 
   let τ : M →ₗ[O] (F → LL ⧸ LinearMap.range (Algebra.linearMap O LL)) :=
@@ -219,7 +224,8 @@ theorem mem_of_forall_annihilator_annihilator :
     choose k hk using h5
     refine ⟨Finset.univ.sup k, fun d => ?_⟩
     obtain ⟨a, rfl⟩ := hspan d
-    rw [map_sum, LinearMap.sum_apply, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply, Finset.smul_sum]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [map_smul, LinearMap.smul_apply, smul_comm, hk i _ (Finset.le_sup (Finset.mem_univ i)),
       smul_zero]
@@ -233,7 +239,8 @@ theorem mem_of_forall_annihilator_annihilator :
   choose cs hcs using hcoef
   have hkey : ∀ d, β d c = β d (∑ s : F, cs s • s.1.1) := by
     intro d
-    rw [hφG d, ← Finset.univ_sum_single (τ d), map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hφG d, ← Finset.univ_sum_single (τ d), map_sum, map_sum]
     refine Finset.sum_congr rfl fun s _ => ?_
     rw [hτ, hcs s _ (hn _ d), map_smul]
   have hdiff : c - ∑ s : F, cs s • s.1.1 ∈ S :=

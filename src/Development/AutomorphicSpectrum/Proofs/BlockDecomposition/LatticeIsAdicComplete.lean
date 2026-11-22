@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.LatDefs
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.GrSplit
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemLatticeSubIffSum
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.LatDefs
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.GrSplit
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemLatticeSubIffSum
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -41,7 +45,7 @@ theorem Cpl.ext {l : ℕ} {N P Q : Type*} [AddCommGroup N] [AddCommGroup P] [Add
     obtain ⟨p, rfl⟩ := hπ q
     choose w hw using fun n => hπ (z n)
     have ht : ∀ n, π (s n + l ^ n • w n - p) = 0 := fun n => by
-      rw [map_sub, map_add, map_nsmul, hw, ← hz n]; abel
+      rw [map_sub, map_add (f := _), map_nsmul, hw, ← hz n]; abel
     choose t ht' using fun n => (hex _).1 (ht n)
     have step : ∀ n, ∃ v : N, t (n + 1) - t n = l ^ n • v := fun n => by
       have e : j (t (n + 1) - t n) = l ^ n • (y n + l • w (n + 1) - w n) := by
@@ -63,7 +67,7 @@ theorem exists_pi {P V Q : Type*} [AddCommGroup P] [AddCommGroup V] [AddCommGrou
     ∃ π : P →+ Q, Function.Surjective π ∧ ∀ x, π x = 0 ↔ x ∈ K := by
   choose c hc using h1
   have hadd : ∀ x y, mk (c (x + y)) = mk (c x) + mk (c y) := fun x y => by
-    rw [← sub_eq_zero, ← map_add, ← map_sub, ← h2, map_sub, map_add]
+    rw [← sub_eq_zero, ← map_add (f := _), ← map_sub, ← h2, map_sub, map_add (f := _)]
     have := K.sub_mem (K.add_mem (hc x) (hc y)) (hc (x + y))
     have e : g (c (x + y)) - (g (c x) + g (c y)) = x - g (c x) + (y - g (c y)) - (x + y - g (c (x + y))) := by abel
     rwa [e]
@@ -191,7 +195,7 @@ theorem head (i : ℕ) {y : B} (hy : y ∈ S f ξ l M i) :
     refine ⟨a + b, ?_⟩
     have := AddSubgroup.add_mem _ ha hb
     convert this using 1
-    rw [map_add]; ring
+    rw [map_add (f := _)]; ring
   | neg x _ hx =>
     obtain ⟨a, ha⟩ := hx
     refine ⟨-a, ?_⟩
@@ -253,7 +257,7 @@ def gF (i : ℕ) : W →+ F f ξ l M i :=
   AddMonoidHom.mk' (fun w => ⟨gA f ξ l M i w, gA_mem f ξ l M i w⟩) fun a b => by
     apply Subtype.ext
     show gA f ξ l M i (a + b) = gA f ξ l M i a + gA f ξ l M i b
-    simp only [gA, map_add, add_mul]
+    simp only [gA, map_add (f := _), add_mul]
 
 variable {f ξ l}
 

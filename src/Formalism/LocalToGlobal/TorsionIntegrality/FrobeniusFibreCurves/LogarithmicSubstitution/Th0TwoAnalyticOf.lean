@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.Th0FromPhPrime
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.GoodModelLattice
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.BridgeTwoMore
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalI
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementJ
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.Th0FromPhPrime
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.GoodModelLattice
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.BridgeTwoMore
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalI
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementJ
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -20,7 +24,7 @@ theorem norm_transport (ι : ℂ ≃+* ℂ_[2]) (α : ℂ) (n : ℕ) (h : ((n : 
     ι α * ι (conj α) = (n : ℂ_[2]) + 1 := by
   rw [← map_mul, Complex.mul_conj, ← h]
   push_cast
-  rw [map_add, map_natCast, map_one]
+  rw [map_add (f := _), map_natCast, map_one]
 
 theorem Th0TwoAnalytic_of (hE : HalfFibreExists) (hF : FibreZInstance) (hH : HalfShiftSeries)
     (hM : FibreMap) : ThetaZeroTwoAnalytic := by
@@ -70,7 +74,7 @@ theorem Th0TwoAnalytic_of (hE : HalfFibreExists) (hF : FibreZInstance) (hH : Hal
   have hk : (ι : ℂ →+* ℂ_[2]) (3 * L.weierstrassP (ω₀ / 2) ^ 2 - L.g₂ / 4) =
       3 * ι (L.weierstrassP (ω₀ / 2)) ^ 2 - ι L.g₂ / 4 := by
     simp only [RingEquiv.coe_toRingHom, map_sub, map_mul, map_pow, map_div₀, map_ofNat]
-  rw [map_add, map_mul, PowerSeries.map_C, PowerSeries.map_C, Map.map_wOf, hk, ← hP] at hfib'
+  rw [map_add (f := _), map_mul, PowerSeries.map_C, PowerSeries.map_C, Map.map_wOf, hk, ← hP] at hfib'
   have hZ : IsFibreZ (wpReg W)
       (PowerSeries.C (px W (ptW 2 L ι W (ω₀ / 2)) + W.b₂ / 12) +
         PowerSeries.C (3 * (px W (ptW 2 L ι W (ω₀ / 2)) + W.b₂ / 12) ^ 2 - g₂ W / 4) *

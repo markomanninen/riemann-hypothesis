@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.BesselNonvanishingReduction
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LowSmooth
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CapelliEigenvalues.Smooth
+module
+
+public import Formalism.HermitianCurvature.BesselNonvanishingReduction
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LowSmooth
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CapelliEigenvalues.Smooth
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped InnerProductSpace ENNReal ComplexConjugate ContDiff
@@ -32,7 +36,7 @@ theorem smooth_add {σ : Mx k r → (H →L[ℂ] H)} {v w : H} (hv : v ∈ PI.Up
   obtain ⟨V, G, hV, hgV, hG, hGe⟩ := hw g₀ hg₀
   refine ⟨U ∩ V, fun g => F g + G g, hU.inter hV, ⟨hgU, hgV⟩,
     (hF.mono Set.inter_subset_left).add (hG.mono Set.inter_subset_right), fun g hg hgH => ?_⟩
-  simp only [map_add, hFe g hg.1 hgH, hGe g hg.2 hgH]
+  simp only [map_add (f := _), hFe g hg.1 hgH, hGe g hg.2 hgH]
 
 theorem smooth_smul {σ : Mx k r → (H →L[ℂ] H)} (a : ℂ) {v : H} (hv : v ∈ PI.UpqRep.smoothVecs (k := k) (r := r) σ) :
     a • v ∈ PI.UpqRep.smoothVecs (k := k) (r := r) σ := by

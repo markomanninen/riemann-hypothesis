@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.LocalGlobalCompatibility.TemperedLocalGlobal.LocalGlobalOfIwahori
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Mono0OfLpDimEqOne
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.LocalGlobalCompatibility.TemperedLocalGlobal.LocalGlobalOfIwahori
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Mono0OfLpDimEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem eq_det_smul_one (hV : finrank ℂ V = 1) (f : Module.End ℂ V) :
   have h2 := LinearMap.aeval_self_charpoly f
   obtain ⟨t, ht⟩ : ∃ t : ℂ, f = t • (1 : Module.End ℂ V) := by
     refine ⟨-f.charpoly.coeff 0, ?_⟩
-    rw [h1, map_add, aeval_X, aeval_C, Algebra.algebraMap_eq_smul_one] at h2
+    rw [h1, map_add (f := _), aeval_X, aeval_C, Algebra.algebraMap_eq_smul_one] at h2
     rw [neg_smul, eq_neg_iff_add_eq_zero]
     exact h2
   subst ht
@@ -50,7 +54,7 @@ theorem charpoly_map_one (hV' : finrank ℂ V' = 1) (f : Module.End ℂ V) :
     induction u using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [F]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   rw [← LinearEquiv.charpoly_conj F]
   congr 1
   refine LinearMap.ext fun v => ?_

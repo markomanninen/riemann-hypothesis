@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.DeterminantUnitTheta.GraphTransport4
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.DeterminantUnitTheta.GraphTransport4
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,9 +56,9 @@ theorem gamR_sep {g : SplitG M.L} {t₁ t₂ : Term V M r} (hg₁ : GoodG H g t�
   have eT' : algebraMap F E t₂.T' = algebraMap F E t₁.T' := by rw [hT']
   constructor
   · show H.mkW t₂.f ⟨v, hv⟩ = φ (H.mkW t₁.f ⟨u, hu⟩)
-    rw [D1, D2, map_add, map_smul, map_smul, hz, ho, a1, a2, eT]
+    rw [D1, D2, map_add (f := _), map_smul, map_smul, hz, ho, a1, a2, eT]
   · show H.mkW t₂.f' ⟨v', hv'⟩ = φ' (H.mkW t₁.f' ⟨u', hu'⟩)
-    rw [D1', D2', map_add, map_smul, map_smul, hz', ho', b1, b2, eT']
+    rw [D1', D2', map_add (f := _), map_smul, map_smul, hz', ho', b1, b2, eT']
 
 theorem isomD_iffG {g : SplitG M.L} {t₁ t₂ : Term V M r} (hg₁ : GoodG H g t₁) (hg₂ : GoodG H g t₂)
     (θ : DDt H t₁ ≃ₗ[M.L.O] DDt H t₂) :

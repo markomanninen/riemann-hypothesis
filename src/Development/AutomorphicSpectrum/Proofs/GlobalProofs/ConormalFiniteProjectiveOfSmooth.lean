@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.EffCartierIffForallCartAt
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LocPrincipalSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.EffCartierIffForallCartAt
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LocPrincipalSpan
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R GlobalTheory.CompanionTheory.Hypotheses₂.CentreOver
 
-open TensorProduct in
 
+open TensorProduct in
 theorem GlobalTheory.CompanionTheory.Hypotheses₂.Conormal.finite_projective_cotangent :
     ∀ {k A : Type} [Field k] [CommRing A] (φ : k →+* A) (I : Ideal A), φ.Smooth →
       ((Ideal.Quotient.mk I).comp φ).Smooth →

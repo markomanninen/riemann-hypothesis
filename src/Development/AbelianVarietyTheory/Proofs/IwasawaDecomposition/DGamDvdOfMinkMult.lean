@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PredMemGamRanks
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExtUHInjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimeToLevelOfDvdTrueDGam
-import Formalism.SharpRestriction.GlobalSchurBounds.MainIn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PredMemGamRanks
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExtUHInjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimeToLevelOfDvdTrueDGam
+public import Formalism.SharpRestriction.GlobalSchurBounds.MainIn
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,8 +36,8 @@ theorem DGam_dvd_of_minkMult : ∀ {X : Fields} (R : Ranks), X.Ok →
   have hE : Module.finrank ℚ X.E = 2 * X.f := by
     rw [← Module.finrank_mul_finrank ℚ X.F X.E, hX.rankE, Fields.f, hX.card_Tau, mul_comm]
   refine DGam_dvd (posStar_of_ok hX) R fun a ha => ?_
-  obtain ⟨n, hn, N, h1, -, rfl⟩ := Set.mem_iUnion₂.1 ha
-  haveI := autO_finite (posStar_of_ok hX) h1
+  obtain ⟨n, hn, N, hN, hUni, rfl⟩ := Set.mem_iUnion₂.1 ha
+  haveI := autO_finite (posStar_of_ok hX) (hcnt_isFullLattice_of_unimodular hN hUni)
   refine GlobalTheory.DGamOnRecord.card_dvd_of_minkMult hM ?_ _
   rw [hE]
   exact Nat.mul_le_mul_left _ (le_N_of_mem_gamRanks R hn)

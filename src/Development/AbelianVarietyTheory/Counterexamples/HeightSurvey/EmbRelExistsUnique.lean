@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.IsAutFunDef
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.IsAutFunDef
+
+@[expose] public section
 
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice MeasureTheory IsDedekindDomain NumberField Formalism.L2.Theta
@@ -28,7 +32,8 @@ theorem GA_ext (V : HSp D) {g h : GA D V} (e : (matHom V g).1 = (matHom V h).1) 
 theorem hT_coord (V : HSp D) (x y : V.V) :
     V.hT x y = ∑ i, ∑ j, star (V.frame.repr x i) * V.gram i j * V.frame.repr y j := by
   conv_lhs => rw [← V.frame.sum_repr x, ← V.frame.sum_repr y]
-  simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, HSpace.gram]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, HSpace.gram]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Finset.mul_sum]
@@ -79,10 +84,9 @@ theorem tens_inj {F E A B : Type} [Field F] [Field E] [Algebra F E] [CommRing A]
         (Algebra.TensorProduct.map (AlgHom.snd F A B) (AlgHom.id F E) z) := by
     intro z
     induction z with
-    | zero => simp
     | tmul x y => simp [← TensorProduct.add_tmul]
     | add x y hx hy =>
-      simp only [map_add]
+      simp only [map_add (f := _)]
       rw [add_add_add_comm, ← hx, ← hy]
   ext i j
   have a' := congr_fun (congr_fun a i) j
@@ -114,12 +118,6 @@ theorem embRel_unique (A B : HSp D) (ι : B.V →ₗ[D.host.E] A.V) (hι : HSpac
     exact congr_fun this i
   apply GA_ext
   exact split_gen (incA D) P (B.gram⁻¹ * T) _ _ ((key g₁ h₁).trans (key g₂ h₂).symm) (h₁.1.trans h₂.1.symm)
-
-theorem one_mem_KsphC (V : HSp D) (S) : (1 : GA D V) ∈ KsphC V S := by
-  have : finMat D.sp.cm.sig V.gram (1 : GA D V) = 1 :=
-    Matrix.map_one _ (map_zero _) (map_one _)
-  refine ⟨one_mem _, fun y => by rw [this, Matrix.one_mulVec], fun v _ => ?_⟩
-  rw [this]; exact Matrix.map_one _ (map_zero _) (map_one _)
 
 theorem GfC_inf_GinfC (V : HSp D) {g : GA D V} (h₁ : g ∈ GfC V) (h₂ : g ∈ GinfC V) : g = 1 := by
   apply GA_ext

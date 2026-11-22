@@ -1,11 +1,16 @@
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.CountData
+module
+
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.CountData
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology GlobalTheory.CompanionTheory.SW.Core
 open scoped ENNReal NNReal MatrixGroups
 
 namespace GlobalTheory.CompanionTheory.SW.Diag
 
-open scoped MatrixOrder in
 
+open scoped MatrixOrder in
 theorem exists_eq_transpose_mul_self {ι : Type} [Fintype ι] [DecidableEq ι]
     {T : Matrix ι ι ℝ} (hT : T.PosSemidef) : ∃ B : Matrix ι ι ℝ, T = Bᵀ * B := by
   have hH := hT.isHermitian
@@ -20,7 +25,6 @@ theorem exists_eq_transpose_mul_self {ι : Type} [Fintype ι] [DecidableEq ι]
     rw [diagonal_mul_diagonal]
     congr 1
     funext i
-    simp only [Function.comp_apply, RCLike.ofReal_real_eq_id, id_eq]
     exact (Real.mul_self_sqrt (hT.eigenvalues_nonneg i)).symm
   refine ⟨diagonal (fun i => Real.sqrt (hH.eigenvalues i)) * Uᵀ, ?_⟩
   rw [transpose_mul, transpose_transpose, diagonal_transpose]

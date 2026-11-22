@@ -1,11 +1,21 @@
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.Multi
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ClBasic
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.WDBasic
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.GenericIrreducibility.NormEqOneOfIsUnitarisableU
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalFieldTwoVocabulariesDictionary
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EpsilonFactorsAtOneHalf
-import GroundTheory.LocalFields.LocalZetaChar
+module
+
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.Multi
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ClBasic
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.WDBasic
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.GenericIrreducibility.NormEqOneOfIsUnitarisableU
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Langlands
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLocalExtensionOfFiniteIndexWeilSubgroup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecTransportFieldIso
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalArtinExistsHolds
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GaussSumNeZeroOfRamified
+public import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EpsilonFactorsAtOneHalf
+public import GroundTheory.LocalFields.LocalZetaChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +37,16 @@ private theorem nabs_eq_residue (z : kˣ) :
 
 private theorem norm_smooth_char {χ : kˣ →* ℂˣ} (hχ : IsSmoothChar χ) (z : kˣ) :
     ‖(χ z : ℂ)‖ = nabs k z ^ GroundTheory.LocalField.quasiCharExponent χ := by
-  rw [GroundTheory.LocalField.norm_quasiChar_apply (GlobalTheory.DelEps.GaussBridge.continuous_of_isSmoothChar hχ) z,
+  have hc : Continuous χ := by
+    refine continuous_def.2 fun U _ => isOpen_iff_forall_mem_open.2 fun x hx => ?_
+    refine ⟨(fun y => x⁻¹ * y) ⁻¹' (χ.ker : Set kˣ), fun y hy => ?_,
+      hχ.preimage (continuous_const_mul _), by simp⟩
+    have h : χ (x⁻¹ * y) = 1 := hy
+    rw [map_mul, map_inv, inv_mul_eq_one] at h
+    show χ y ∈ U
+    rw [← h]
+    exact hx
+  rw [GroundTheory.LocalField.norm_quasiChar_apply hc z,
     GroundTheory.LocalField.modulus_of_ne_zero z.ne_zero, nabs_eq_residue]
   simp
 
@@ -62,7 +81,7 @@ end Abs
 
 theorem expo : Expo := by
   intro E Ω _ _ _ _ _ A w h a ha
-  let ω₀ : IrrGL (HeightOneSpectrum.adicCompletion E w) → ((HeightOneSpectrum.adicCompletion E w)ˣ →* ℂˣ) :=
+  let ω₀ : IrrGL (k := HeightOneSpectrum.adicCompletion E w) → ((HeightOneSpectrum.adicCompletion E w)ˣ →* ℂˣ) :=
     fun y => Classical.choose (clBasic (HeightOneSpectrum.adicCompletion E w) y).1
   have hω₀ : ∀ y, IsSmoothChar (ω₀ y) ∧ HasCentralChar y.rep (ω₀ y) ∧
       ∀ ω', HasCentralChar y.rep ω' → ω' = ω₀ y :=

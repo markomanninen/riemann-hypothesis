@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.LocStep
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.LocStep
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,7 @@ theorem cr_adj [CharZero k] (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) (hZ : 
       exact Module.End.IsSemisimple.of_mem_adjoin_pair (Commute.refl _) hss hss
         (Subalgebra.algebraMap_mem _ r)
     | add y z hy hz ihy ihz =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Module.End.IsSemisimple.add_of_commute (lin_comm_lemma (adj_comm Z hZ hs y hy z hz)) ihy ihz
     | mul y z hy hz ihy ihz =>
       rw [show Matrix.toLin' (y * z) = Matrix.toLin' y * Matrix.toLin' z from

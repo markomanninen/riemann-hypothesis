@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemFin
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemFin
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,8 +31,8 @@ theorem mul_pairA (x : AF D.host.F) (α : Af D.host.F) :
 theorem finPart_tmul (x : AF D.host.F) (z : D.host.E) : finPart D (x ⊗ₜ[D.host.F] z) = sndA D.host.F x ⊗ₜ[D.host.F] z :=
   rfl
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem mul_gen (a : AE D) (α : Af D.host.F) (m : D.host.E) :
     a * (pairA D.host.F 0 α ⊗ₜ[D.host.F] m) =
       jF D (finPart D a * (α ⊗ₜ[D.host.F] (1 : D.host.E))) * ((1 : AF D.host.F) ⊗ₜ[D.host.F] m) := by
@@ -37,7 +41,7 @@ theorem mul_gen (a : AE D) (α : Af D.host.F) (m : D.host.E) :
   | tmul x z =>
     rw [Algebra.TensorProduct.tmul_mul_tmul, mul_pairA, finPart_tmul, Algebra.TensorProduct.tmul_mul_tmul, mul_one,
       jF_tmul, Algebra.TensorProduct.tmul_mul_tmul, mul_one]
-  | add x y hx hy => rw [add_mul, hx, hy, map_add, add_mul, map_add, add_mul]
+  | add x y hx hy => rw [add_mul, hx, hy, map_add (f := _), add_mul, map_add (f := _), add_mul]
 
 theorem gen_mem (S T : HSp D) (ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E))
     (ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)) {α : Af D.host.F} (hα : α ∈ intAf D.host.F)
@@ -78,7 +82,7 @@ theorem jF_gen_mem (S T : HSp D) (ΛS : Submodule (𝓞 D.host.E) (Fin S.rank �
         ((1 : AF D.host.F) ⊗ₜ[D.host.F] (c * t i * ∑ k, star (s k) * S.gram k j)) : WO S T) =
         (Matrix.of fun i j => jF D x * ((1 : AF D.host.F) ⊗ₜ[D.host.F] (c * t i * ∑ k, star (s k) * S.gram k j))) +
         (Matrix.of fun i j => jF D y * ((1 : AF D.host.F) ⊗ₜ[D.host.F] (c * t i * ∑ k, star (s k) * S.gram k j))) := by
-      ext i j; rw [Matrix.add_apply, Matrix.of_apply, Matrix.of_apply, Matrix.of_apply, map_add, add_mul]
+      ext i j; rw [Matrix.add_apply, Matrix.of_apply, Matrix.of_apply, Matrix.of_apply, map_add (f := _), add_mul]
     rw [hm]; exact add_mem hx hy
   | neg x _ hx =>
     have hm : (Matrix.of fun i j => jF D (-x) *
@@ -87,8 +91,8 @@ theorem jF_gen_mem (S T : HSp D) (ΛS : Submodule (𝓞 D.host.E) (Fin S.rank �
       ext i j; rw [Matrix.neg_apply, Matrix.of_apply, Matrix.of_apply, map_neg, neg_mul]
     rw [hm]; exact neg_mem hx
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem latO_smul_mem (S T : HSp D) (ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E))
     (ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)) {a : AE D} (ha : finPart D a ∈ intAE D) {u : WO S T}
     (hu : u ∈ latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) (fun _ => True)) :

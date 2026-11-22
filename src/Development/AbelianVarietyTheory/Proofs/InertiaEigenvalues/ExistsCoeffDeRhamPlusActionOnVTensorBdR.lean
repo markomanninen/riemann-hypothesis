@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 
@@ -7,9 +12,9 @@ noncomputable section
 
 namespace GlobalTheory.BKGal.JumpDR
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
-
 theorem exists_odAction : ∀ (l : ℕ) [Fact l.Prime] (Pl : LocPrime l) (AI : LocAinf l Pl) (Td : LocTied l Pl AI)
     (LL : FinExt l) (T : QLat LL), ∃ A : OD l ↥(OL LL) →+ (T.V ⊗[ℚ_[l]] Pl.R.BdR →+ T.V ⊗[ℚ_[l]] Pl.R.BdR),
     ∀ (o : ↥(OL LL)) (b : Per.BdRp l) (v : T.V) (c : Pl.R.BdR),
@@ -28,7 +33,7 @@ theorem exists_odAction : ∀ (l : ℕ) [Fact l.Prime] (Pl : LocPrime l) (AI : L
   have hb : ∀ o b b', F o (b + b') = F o b + F o b' := fun o b b' => by
     apply TensorProduct.ext'
     intro v c
-    rw [LinearMap.add_apply, hF, hF, hF, map_add, add_mul, tmul_add]
+    rw [LinearMap.add_apply, hF, hF, hF, map_add (f := _), add_mul, tmul_add]
   have ho : ∀ o o' b, F (o + o') b = F o b + F o' b := fun o o' b => by
     apply TensorProduct.ext'
     intro v c

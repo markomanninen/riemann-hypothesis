@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PadicUnitNorm
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PadicUnitNorm
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.CuspRep GlobalTheory.UnitaryBC UpperTheory.Gal.W2.Seed UpperTheory.Gal.G1
 open scoped TensorProduct
 
@@ -87,7 +92,7 @@ theorem UpperTheory.Gal.G1.pAdFour :
         map_add' := fun _ _ => rfl }
     have key : φ (algebraMap F (FiniteAdeleRing (𝓞 F) F) (c : F) *
         (qf tr nm (A 0) (A 1) + qf tr nm (A 2) (A 3))) = φ 1 := by
-      simp only [qf, map_mul, map_add, map_pow, map_intCast, map_one]
+      simp only [qf, map_mul, map_add (f := _), map_pow, map_intCast, map_one]
       have hA : ∀ i, φ (A i) = f v i := fun _ => rfl
       have hc' : φ (algebraMap F (FiniteAdeleRing (𝓞 F) F) (c : F)) =
           algebraMap F (v.adicCompletion F) (c : F) := rfl

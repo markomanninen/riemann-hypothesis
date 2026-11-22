@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -51,7 +55,7 @@ theorem chart_etale_of_univ {R A S B : Type} [CommRing R] [CommRing A] [CommRing
       change γ (h s) * γ (φ a) = _
       rw [e1, e2]
       simp [Algebra.TensorProduct.tmul_mul_tmul]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   have hb : Function.Bijective e := Function.bijective_iff_has_inverse.2 ⟨γ, hinv2, hinv1⟩
   rw [← he1]
   exact RingHom.Etale.stableUnderComposition _ _ (RingHom.etale_algebraMap.2 inferInstance)

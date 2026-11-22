@@ -1,13 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.FlagBasis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.EigLatBasis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.Biextensions.CubicalExtendsSt
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnitOnInjectiveOfCommRing
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TateIsoDifferBySimilitude
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.FlagBasis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.EigLatBasis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.Biextensions.CubicalExtendsSt
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnitOnInjectiveOfCommRing
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TateIsoDifferBySimilitude
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj
@@ -146,13 +150,13 @@ noncomputable def familyUnifTateIso (hP : IsPeriod (U.Di i) ty P) :
   ζ_prim _ hn := expNegUnit_isPrimitiveRoot hn
   ζ_pow _ _ hn hm := expNegUnit_mul_pow hn hm
   ev n a := U.ex i P ((n : ℂ)⁻¹ • P a)
-  add n a b := by rw [map_add, smul_add, U.ex_add i P hP]
+  add n a b := by rw [map_add (f := _), smul_add, U.ex_add i P hP]
   lin n c a := by
     rw [← U.ex_lin i P hP]
     congr 1
-    funext j
-    simp only [Pi.smul_apply, smul_eq_mul, hP.1]
-    ring
+    funext k
+    simp only [Pi.smul_apply, smul_eq_mul, hP.1 c a k]
+    exact mul_left_comm _ _ _
   ker n hn a := by
     have hn' : (n : ℂ) ≠ 0 := Nat.cast_ne_zero.2 hn.ne'
     rw [U.ex_ker i P hP]

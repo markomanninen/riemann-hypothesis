@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ThetaChr
-import Formalism.LocalToGlobal.JointCharacters.LocEMulLocE
+module
+
+public import Formalism.LocalToGlobal.ThetaChr
+public import Formalism.LocalToGlobal.JointCharacters.LocEMulLocE
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,8 @@ def IsRatioAt (e : Formalism.L2.Theta.AE D) (k : D.host.E) (y : Formalism.L2.The
 def InPrimeK (x : D.host.E) (p : HeightOneSpectrum (𝓞 D.host.K)) : Prop :=
   ∃ y : 𝓞 D.host.K, ((y : D.host.K) : D.host.E) = x ∧ y ∈ p.asIdeal
 
-open Classical in
 
+open Classical in
 def redV (F : Type) [Field F] [NumberField F] (v : HeightOneSpectrum (𝓞 F)) (x : v.adicCompletion F) : Formalism.L2.Forms.kv F v :=
   if h : x ∈ v.adicCompletionIntegers F then IsLocalRing.residue (v.adicCompletionIntegers F) ⟨x, h⟩ else 0
 

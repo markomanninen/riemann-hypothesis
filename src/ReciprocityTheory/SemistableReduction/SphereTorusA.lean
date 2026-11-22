@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+module
+
+public import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem logMahlerMeasure_comp_C_mul_X_le (p : ℂ[X]) {c : ℂ} (hc : c ≠ 0) (
       apply mul_le_mul _ ih (mahlerMeasure_nonneg _) (mahlerMeasure_nonneg _)
       have h1 : (X - C a).comp (C c * X) = C c * X + C (-a) := by
         simp [sub_eq_add_neg]
-      rw [h1, mahlerMeasure_C_mul_X_add_C hc, mahlerMeasure_X_sub_C, norm_neg]
+      rw [h1, mahlerMeasure_C_mul_X_add_C, mahlerMeasure_X_sub_C, norm_neg]
       exact max_le_max hc1 le_rfl
   rw [logMahlerMeasure_eq_log_MahlerMeasure, logMahlerMeasure_eq_log_MahlerMeasure]
   apply Real.log_le_log (mahlerMeasure_pos_of_ne_zero hq)

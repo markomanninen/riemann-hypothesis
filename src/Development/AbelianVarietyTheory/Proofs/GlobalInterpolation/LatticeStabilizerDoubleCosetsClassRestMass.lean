@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL5.PClassDecomp
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DoubleCosetsMassLevel
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DefClassDecompIff
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.PClassDecomp
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DoubleCosetsMassLevel
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DefClassDecompIff
+
+@[expose] public section
+
 open NumberField MeasureTheory Formalism.BasicNotions Formalism.MainNotions.StandardLattice Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.GlobalTheoryTheory.GenusMassVolumes
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 

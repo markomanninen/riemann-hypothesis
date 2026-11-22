@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField
 open scoped ComplexConjugate
@@ -23,8 +27,6 @@ instance : SetLike (CMType E) (E →+* ℂ) where
     rintro ⟨a, _⟩ ⟨b, _⟩ h
     congr
 
-instance : PartialOrder (CMType E) := .ofSetLike (CMType E) (E →+* ℂ)
-
 theorem mem_iff_conjugate_notMem (Φ : CMType E) (τ : E →+* ℂ) :
     τ ∈ Φ ↔ ComplexEmbedding.conjugate τ ∉ Φ := Φ.mem_iff_conjugate_notMem' τ
 
@@ -36,13 +38,6 @@ theorem mem_or_conjugate_mem (Φ : CMType E) (τ : E →+* ℂ) :
     τ ∈ Φ ∨ ComplexEmbedding.conjugate τ ∈ Φ := by
   rw [conjugate_mem_iff]
   exact em _
-
-def conjugate (Φ : CMType E) : CMType E where
-  carrier := {τ | ComplexEmbedding.conjugate τ ∈ Φ}
-  mem_iff_conjugate_notMem' _ := Φ.mem_iff_conjugate_notMem _
-
-theorem mem_conjugate (Φ : CMType E) (τ : E →+* ℂ) :
-    τ ∈ Φ.conjugate ↔ ComplexEmbedding.conjugate τ ∈ Φ := Iff.rfl
 
 noncomputable def sumEquiv (Φ : CMType E) : Φ ⊕ Φ ≃ (E →+* ℂ) :=
   Equiv.ofBijective (Sum.elim (fun τ => τ.1) (fun τ => ComplexEmbedding.conjugate τ.1)) <| by
@@ -57,25 +52,6 @@ noncomputable def sumEquiv (Φ : CMType E) : Φ ⊕ Φ ≃ (E →+* ℂ) :=
       rcases Φ.mem_or_conjugate_mem τ with h | h
       · exact ⟨.inl ⟨τ, h⟩, rfl⟩
       · exact ⟨.inr ⟨_, h⟩, hinv τ⟩
-
-noncomputable def ofPlaces (E : Type*) [Field E] [CharZero E] [IsTotallyComplex E] :
-    CMType E where
-  carrier := Set.range (InfinitePlace.embedding (K := E))
-  mem_iff_conjugate_notMem' τ := by
-    constructor
-    · rintro ⟨w, rfl⟩ ⟨w', h⟩
-      have h1 : w' = w := by
-        rw [← InfinitePlace.mk_embedding w', h, InfinitePlace.mk_conjugate_eq,
-          InfinitePlace.mk_embedding]
-      rw [h1] at h
-      exact IsTotallyComplex.complexEmbedding_not_isReal w.embedding
-        (ComplexEmbedding.isReal_iff.mpr h.symm)
-    · intro h
-      rcases InfinitePlace.embedding_mk_eq τ with h1 | h1
-      · exact ⟨_, h1⟩
-      · exact absurd ⟨_, h1⟩ h
-
-instance [CharZero E] [IsTotallyComplex E] : Nonempty (CMType E) := ⟨ofPlaces E⟩
 
 end Field
 
@@ -92,12 +68,6 @@ theorem sum_univ_eq {M : Type*} [AddCommMonoid M] (g : (E →+* ℂ) → M) :
 
 theorem two_mul_card : 2 * Fintype.card Φ = Module.finrank ℚ E := by
   rw [← Embeddings.card E ℂ, ← Fintype.card_congr Φ.sumEquiv, Fintype.card_sum, two_mul]
-
-theorem card_eq_finrank [IsCMField E] :
-    Fintype.card Φ = Module.finrank ℚ (maximalRealSubfield E) := by
-  have h := Module.finrank_mul_finrank ℚ (maximalRealSubfield E) E
-  rw [Algebra.IsQuadraticExtension.finrank_eq_two _ E, ← Φ.two_mul_card] at h
-  omega
 
 instance : Nonempty Φ := by
   rw [← Fintype.card_pos_iff]
@@ -143,12 +113,6 @@ theorem eq_zero_of_sum_re_eq_zero (δ : Φ → ℂ)
   simpa using h2 (Φ.sumEquiv (.inl τ))
 
 end NumberField
-
-example {E : Type*} [Field E] [NumberField E] (Φ : CMType E) : Φ.conjugate ≠ Φ := by
-  intro h
-  obtain ⟨τ⟩ : Nonempty Φ := inferInstance
-  have h1 : τ.1 ∈ Φ.conjugate := by rw [h]; exact τ.2
-  exact (Φ.mem_iff_conjugate_notMem _).mp τ.2 h1
 
 end CMType
 

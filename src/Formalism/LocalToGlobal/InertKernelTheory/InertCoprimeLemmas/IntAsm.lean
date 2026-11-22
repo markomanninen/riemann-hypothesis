@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.InertKernelTheory.DefsInt
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.FinalEq
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsInt
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.FinalEq
+
+@[expose] public section
 
 noncomputable section
 

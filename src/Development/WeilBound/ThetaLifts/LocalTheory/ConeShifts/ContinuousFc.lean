@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ExtendByZeroOnSubsetApplyCoe
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.FubTate
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.OrdLEqNegLog
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.NormCmExtensionSplitPlaceEqZpow
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IntegralFiniteAdeleCompactClosedMultiples
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ExtendByZeroOnSubsetApplyCoe
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.FubTate
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.OrdLEqNegLog
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.NormCmExtensionSplitPlaceEqZpow
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IntegralFiniteAdeleCompactClosedMultiples
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,8 +29,8 @@ theorem id_borel : BorelSpace (AE F E)ˣ := ⟨rfl⟩
 
 attribute [local instance] id_lc id_sc id_borel
 
-variable (F E) in
 
+variable (F E) in
 def fc : AE F E →+* FiniteAdeleRing (𝓞 E) E := (finAdEquiv F E).toRingHom.comp (finTens F E)
 
 def cw (w : HeightOneSpectrum (𝓞 E)) : AE F E →+* w.adicCompletion E := (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV E w).toRingHom.comp (fc F E)
@@ -73,8 +77,8 @@ theorem io_mul (a b : AF F) : (io a * io b : AE F E) = io (a * b) := (map_mul _ 
 theorem io_idem {a : AF F} (h : a * a = a) : (io a * io a : AE F E) = io a := by rw [io_mul, h]
 theorem io_orth {a b : AF F} (h : a * b = 0) : (io a * io b : AE F E) = 0 := by rw [io_mul, h]; exact map_zero _
 
-variable (F) in
 
+variable (F) in
 def ew (w : HeightOneSpectrum (𝓞 E)) : AE F E := extZero F E ((finAdEquiv F E).symm (1 - Neutral.B1.finiteSingle E w 0))
 
 theorem inf_ew (w : HeightOneSpectrum (𝓞 E)) : infTens F E (ew F w) = 0 := infTens_extZero _
@@ -112,7 +116,8 @@ theorem cw_rest (w : HeightOneSpectrum (𝓞 E)) (T : Finset (Pl F)) :
 theorem idem_eq_sum (v : Pl F) : (io (idem F v) : AE F E) = ∑ w ∈ Formalism.L2.Host.aboveF (L := E) F v, ew F w + 0 := by
   classical
   refine ae_ext (by rw [inf_io rfl, add_zero, map_sum, Finset.sum_eq_zero fun w _ => inf_ew w]) fun u => ?_
-  rw [add_zero, map_sum, cw_idem]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [add_zero, map_sum, cw_idem]
   simp only [cw_ew, Finset.sum_ite_eq, mem_aboveF]
 
 abbrev PI (a : AE F E) : (AE F E)ˣ →* (AE F E)ˣ := unitP (R := AE F E) a
@@ -137,8 +142,8 @@ theorem vw_one (w) : vw w (1 : (AE F E)ˣ) = 1 := by simp [vw]
 theorem vw_inv (w) (l : (AE F E)ˣ) : vw w l * vw w l⁻¹ = 1 := by rw [← vw_mul, mul_inv_cancel, vw_one]
 theorem vw_ne (w) (l : (AE F E)ˣ) : vw w l ≠ 0 := left_ne_zero_of_mul_eq_one (vw_inv w l)
 
-variable (F E) in
 
+variable (F E) in
 def UI : Subgroup (AE F E)ˣ where
   carrier := {l | ∀ w, vw w l = 1}
   one_mem' := vw_one
@@ -160,21 +165,23 @@ theorem isOpen_UI : IsOpen (UI F E : Set (AE F E)ˣ) := by
   rw [this]
   exact (h1.preimage Units.continuous_val).inter (h1.preimage Units.continuous_coe_inv)
 
-theorem sysI : Sys (PI (F := F) (E := E)) ⊤ (UI F E) fun a => a * a = a where
-  cont a ha := unitInvariant_continuous ha
-  comp a b ha hb := unitInvariant_comp ha hb
-  zero := unitInvariant_zero
-  add a b ha hb h := ⟨idem_add ha hb h, unitInvariant_add ha hb h⟩
-  idem _ h := h
-  cK := isClosed_univ
-  mK _ _ _ _ := trivial
-  mU := isOpen_UI.measurableSet
-  one := (UI F E).one_mem
-  mul _ h _ h' := (UI F E).mul_mem h h'
-  pU a ha l hl w := by
-    rcases cw_cases ha w with e | e
-    · rw [vw, cw_PI_zero ha e, map_one]
-    · rw [vw, cw_PI_one ha e]; exact hl w
+theorem sysI : Sys (PI (F := F) (E := E)) ⊤ (UI F E) fun a => a * a = a := by
+  refine {
+    cont a ha := unitInvariant_continuous ha
+    comp a b ha hb := unitInvariant_comp ha hb
+    zero := unitInvariant_zero
+    add a b ha hb h := ⟨idem_add ha hb h, unitInvariant_add ha hb h⟩
+    idem _ h := h
+    cK := isClosed_univ
+    mK _ _ _ _ := trivial
+    mU := isOpen_UI.measurableSet
+    one := (UI F E).one_mem
+    mul _ h _ h' := (UI F E).mul_mem h h'
+    pU := ?_ }
+  intro a ha l hl w
+  rcases cw_cases ha w with e | e
+  · rw [vw, cw_PI_zero ha e, map_one]
+  · rw [vw, cw_PI_one ha e]; exact hl w
 
 theorem inf_of_part {a : AE F E} (ha : a * a = a) (h0 : infTens F E a = 0) {l : (AE F E)ˣ} (h : l ∈ part PI ⊤ a) :
     infTens F E l = 1 := by
@@ -188,8 +195,8 @@ theorem cpt_I {a : AE F E} (ha : a * a = a) (h0 : infTens F E a = 0) :
   have hc := hS.prod (hS.image MulOpposite.continuous_op)
   have key : ∀ l ∈ (part PI ⊤ a : Set (AE F E)ˣ) ∩ UI F E, ∃ y, (∀ w, y w ∈ HeightOneSpectrum.adicCompletionIntegers E w) ∧
       j y = (l : AE F E) := fun l hl => ⟨fc F E l, fun w => (hl.2 w).le, tens_ext
-        (by rw [inf_of_part ha h0 hl.1, map_add, map_sub, map_one, infTens_extZero, infTens_extZero, sub_zero, add_zero])
-        (by rw [map_add, map_sub, map_one, finTens_extZero, finTens_extZero, sub_self, zero_add]
+        (by rw [inf_of_part ha h0 hl.1, map_add (f := _), map_sub, map_one, infTens_extZero, infTens_extZero, sub_zero, add_zero])
+        (by rw [map_add (f := _), map_sub, map_one, finTens_extZero, finTens_extZero, sub_self, zero_add]
             exact (finAdEquiv F E).symm_apply_apply _)⟩
   refine (Units.isClosedEmbedding_embedProduct.isCompact_preimage hc).of_isClosed_subset
     ((sysI.closed ha).inter ((UI F E).isClosed_of_isOpen isOpen_UI)) fun l hl => ⟨key l hl, _, key l⁻¹
@@ -231,14 +238,19 @@ theorem measEx_of (hS : StabEx) : MeasEx := by
   haveI := (ua_top (σ := σ) X.J).2
   haveI := borelUA (σ := σ) X.J
   have hc := stab_compact hS hB hX hK
-  have sy := sysU hK hc
   have ei := kAt_eq K (evI F) real_idem fun _ => at_inf_iff
   have ef := fun v => kAt_eq K (evFin F v) (idem_idem v) fun _ => at_fin_iff
   have di := idAt_eq (E := E) (evI F) real_idem fun _ => at_inf_iff
   have df := fun v => idAt_eq (E := E) (evFin F v) (idem_idem v) fun _ => at_fin_iff
   have h1 : ∀ {a}, Gd a → ∀ S, S = part (PU σ X.J) K a → ∃ μ : Measure S, μ.IsHaarMeasure ∧ μ Set.univ = 1 := by
     rintro a ha S rfl
-    exact exists_haar _ (sy.closed ha) Set.univ trivial (co_U hK hc ha).1 (co_U hK hc ha).2
+    have hp : Continuous (PU σ X.J a) :=
+      ((unitInvariant_continuous ha.1).comp continuous_subtype_val).subtype_mk _
+    have hclosed : IsClosed (part (PU σ X.J) K a : Set (UA σ X.J)) :=
+      hc.isClosed.inter (isClosed_eq hp continuous_id)
+    have : CompactSpace (part (PU σ X.J) K a) :=
+      isCompact_iff_compactSpace.1 (hc.of_isClosed_subset hclosed fun _ h => h.1)
+    exact exists_haar _ hclosed Set.univ trivial isCompact_univ isOpen_univ
   have h2 : ∀ S : Subgroup (AE F E)ˣ, ∀ P : Set S, (∃ μ : Measure S, μ.IsHaarMeasure ∧ μ P = 1) →
       ∃ μ : @Measure S (borel _), @Measure.IsHaarMeasure _ _ _ (borel _) μ ∧ μ P = 1 := fun S P h => by
     have : borel S = Subtype.instMeasurableSpace := (@BorelSpace.measurable_eq S _ Subtype.instMeasurableSpace (Subtype.borelSpace _)).symm

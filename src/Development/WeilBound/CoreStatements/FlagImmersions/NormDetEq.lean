@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.Transport
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.Transport
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,13 +46,13 @@ theorem det_head {N k : ℕ} {α : Type} [Fintype α] [DecidableEq α] (hd : Fin
 theorem gram_sub {N : ℕ} {α β : Type} (hd : Fin N → ℝ) (g : Matrix (Fin N) (Fin N) ℂ) (f : α → Fin N) (f' : β → Fin N) :
     (gramOf hd g).submatrix f f' = (g.submatrix id f)ᴴ * diagonal (fun i => (hd i : ℂ)) * g.submatrix id f' := by
   ext a b
-  simp [gramOf, mul_apply, conjTranspose_apply]
+  simp [gramOf, Matrix.mul_apply, conjTranspose_apply]
 
 theorem norm_det_eq {r s : ℕ} {Γ : Matrix (Fin r) (Fin r) ℂ} (hΓ : Γ.PosDef) (h : s ≤ r) :
     ‖(Γ.submatrix (Fin.castLE h) (Fin.castLE h)).det‖ = leadMinor Γ s := by
   have h1 := (hΓ.submatrix (Fin.castLE_injective h)).det_pos
   unfold leadMinor
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact (Complex.re_eq_norm.2 h1.le).symm
 
 theorem sum_grLog {p q : ℕ} {Γ : Matrix (Fin p) (Fin p) ℂ} {Γ' : Matrix (Fin q) (Fin q) ℂ} (h : Γ.PosDef) (h' : Γ'.PosDef)
@@ -139,7 +143,7 @@ theorem matStep : MatStep := by
     rw [hSd, diagonal_conjTranspose]
     congr 1
     funext a
-    simp
+    simp [sigForm]
   rw [hPQ] at h
   obtain ⟨b1, b2, b3⟩ := blocks hCu hS h
   have hqN : q ≤ p + q := by omega
@@ -239,7 +243,7 @@ theorem matStep : MatStep := by
         Xᴴ.submatrix (Fin.castLE hm) id * -B⁻¹ * X.submatrix id (Fin.castLE hm) =
         Γ.submatrix (Fin.castLE hm) (Fin.castLE hm) := by
       ext a b
-      simp [mul_apply]
+      simp [Matrix.mul_apply]
     have e5 := low q le_rfl
     rw [Nat.sub_self, leadMinor_size_zero] at e5
     have e6 : ‖B.det‖ = 1 / leadMinor Γ' q := e5
@@ -287,8 +291,8 @@ theorem matStep : MatStep := by
       have e1 : (M * g) a b = (M * g.submatrix id fr) a ⟨b - q, by omega⟩ := by
         conv_lhs => rw [e0]
         rfl
-      rw [e1, gr, hL, one_apply]
-      simp only [Fin.ext_iff]
+      rw [e1, gr, hL]
+      simp only [Matrix.one_apply, Fin.ext_iff]
       congr 1
       apply propext
       omega

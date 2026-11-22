@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+
+@[expose] public section
+
 open scoped MatrixGroups TensorProduct
 open Matrix GlobalTheory.KZ
 
@@ -52,18 +57,19 @@ private theorem exists_mul_add_mul_eq_C_of_monic_irreducible {k : Type} [Field k
       Polynomial.natDegree_map_eq_of_injective hinj] at this
     omega)
   obtain ⟨a, b, hab⟩ := hcop
-  obtain ⟨ca, hA⟩ := IsLocalization.integerNormalization_map_to_map
+  obtain ⟨ca, hca, hA⟩ := IsLocalization.integerNormalization_spec
     (nonZeroDivisors (Polynomial k)) a
-  obtain ⟨cb, hB⟩ := IsLocalization.integerNormalization_map_to_map
+  obtain ⟨cb, hcb, hB⟩ := IsLocalization.integerNormalization_spec
     (nonZeroDivisors (Polynomial k)) b
-  refine ⟨Polynomial.C (ca : Polynomial k) *
+  refine ⟨Polynomial.C ca *
       IsLocalization.integerNormalization (nonZeroDivisors (Polynomial k)) b,
-    Polynomial.C (cb : Polynomial k) *
+    Polynomial.C cb *
       IsLocalization.integerNormalization (nonZeroDivisors (Polynomial k)) a,
-    (ca : Polynomial k) * cb,
-    mul_ne_zero (nonZeroDivisors.coe_ne_zero ca) (nonZeroDivisors.coe_ne_zero cb), ?_⟩
+    ca * cb,
+    mul_ne_zero (nonZeroDivisors.coe_ne_zero ⟨ca, hca⟩)
+      (nonZeroDivisors.coe_ne_zero ⟨cb, hcb⟩), ?_⟩
   apply Polynomial.map_injective _ hinj
-  simp only [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_C, hA, hB,
+  simp only [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_C, hA, hB,
     polynomial_smul_eq_C_algebraMap_mul, map_mul, Polynomial.C_mul]
   linear_combination (Polynomial.C (algebraMap (Polynomial k) (FractionRing (Polynomial k)) ca) *
     Polynomial.C (algebraMap (Polynomial k) (FractionRing (Polynomial k)) cb)) * hab
@@ -113,11 +119,11 @@ private theorem valuation_eval2_aeval_lt_one (V : ValuationSubring F) (W : Valua
   exact lt_of_le_of_lt (mul_le_of_le_one_right' (pow_le_one' hω i))
     (valuation_aeval_map_subtype_lt_one V W t ht (Q.coeff i) (hQ i))
 
-open scoped MatrixGroups TensorProduct in
-open Matrix in
-open scoped MatrixGroups TensorProduct in
-open Matrix in
 
+open scoped MatrixGroups TensorProduct in
+open Matrix in
+open scoped MatrixGroups TensorProduct in
+open Matrix in
 theorem _root_.GlobalTheory.gaussExtension_coeff_mem_nonunits : ∀ {F : Type} [Field F] {L : Type} [Field L] [Algebra F L] (t : L) (V : ValuationSubring F) (W : ValuationSubring L), (∀ a : F, algebraMap F L a ∈ W ↔ a ∈ V) → (∀ P : Polynomial F, (∀ i, P.coeff i ∈ V) → (∃ i, P.coeff i ≠ 0 ∧ P.coeff i ∈ V ∧ (P.coeff i)⁻¹ ∈ V) → W.valuation (Polynomial.aeval t P) = 1) → ∀ (Ψ : Polynomial (Polynomial V)) (ω : L), Ψ.Monic → (Ψ.map (Polynomial.mapRingHom V.subtype)).eval₂ (Polynomial.aeval t).toRingHom ω = 0 → (∀ (k : Type) [Field k] (φ : V →+* k) (A B : Polynomial (Polynomial k)), A.Monic → B.Monic → A * B = Ψ.map (Polynomial.mapRingHom φ) → A.natDegree = 0 ∨ B.natDegree = 0) → ∀ R : Polynomial (Polynomial F), R.natDegree < Ψ.natDegree → (∀ i j, (R.coeff i).coeff j ∈ V) → R.eval₂ (Polynomial.aeval t).toRingHom ω ∈ W.nonunits → ∀ i j, (R.coeff i).coeff j ∈ V.nonunits := by
   intro F _ L _ _ t V W hVW hgauss Ψ ω hΨ hroot hirr R hdeg hRV hRW i₀ j₀
   by_contra hnot
@@ -208,7 +214,7 @@ theorem _root_.GlobalTheory.gaussExtension_coeff_mem_nonunits : ∀ {F : Type} [
   obtain ⟨cv, rfl⟩ := Polynomial.map_surjective _ IsLocalRing.residue_surjective c
   set D : Polynomial (Polynomial V) := Av * Rv + Bv * Ψ - Polynomial.C cv with hDdef
   have hDm : D.map (Polynomial.mapRingHom (IsLocalRing.residue V)) = 0 := by
-    simp only [hDdef, Polynomial.map_sub, Polynomial.map_add, Polynomial.map_mul, Polynomial.map_C]
+    simp only [hDdef, Polynomial.map_sub, Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_C]
     rw [sub_eq_zero]
     exact hABc
   have hD : ∀ i j, W.valuation (algebraMap F L ((D.coeff i).coeff j : F)) < 1 := by
@@ -224,7 +230,7 @@ theorem _root_.GlobalTheory.gaussExtension_coeff_mem_nonunits : ∀ {F : Type} [
       (Polynomial.aeval t).toRingHom ω := fun P => rfl
   have hCeq : Polynomial.C cv = Av * Rv + Bv * Ψ - D := (sub_sub_cancel _ _).symm
   have hsplit : ev (Polynomial.C cv) = ev Av * ev Rv + ev Bv * ev Ψ - ev D := by
-    rw [hCeq, map_sub, map_add, map_mul, map_mul]
+    rw [hCeq, map_sub, map_add (f := _), map_mul, map_mul]
   rw [hev Ψ, hroot, mul_zero, add_zero] at hsplit
   obtain ⟨j, hj⟩ : ∃ j, IsLocalRing.residue V (cv.coeff j) ≠ 0 := by
     by_contra h

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.Models
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsDenominatorRegularStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsDenominatorRegularStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
-open GlobalTheory.CompanionTheory.Ar.BT GroundTheory.PAdicHodge
+open GlobalTheory.CompanionTheory.Ar.BT
 
 namespace GlobalTheory.CompanionTheory.Ar.BT
 
@@ -58,7 +62,9 @@ theorem QFGroup.exists_denom [Finite T] (Γ : QFGroup R T) (f : T → FractionRi
   have key : ∀ g : Γ.G.left, ∃ d : R, d ≠ 0 ∧ ∃ U : Γ.G.left.Opens, g ∈ U ∧
       ∀ g' ∈ U, Γ.RegularAt (fun t => algebraMap R (FractionRing R) d * f t) g' := by
     intro g
-    obtain ⟨d, hd, U, hg, s, hs⟩ := GlobalTheory.T.exists_denominator_regular R T Γ f g
+    have hreg : ∃ d : R, d ≠ 0 ∧ Γ.RegularAt (fun t => algebraMap R (FractionRing R) d * f t) g :=
+      RegDenom.exists_denom_regularAt R T Γ f g
+    obtain ⟨d, hd, U, hg, s, hs⟩ := hreg
     exact ⟨d, hd, U, hg, fun g' hg' => ⟨U, hg', s, hs⟩⟩
   choose d hd U hgU hU using key
   obtain ⟨F, hF⟩ := CompactSpace.elim_nhds_subcover (fun g => (U g : Set Γ.G.left))
@@ -74,10 +80,11 @@ theorem QFGroup.exists_denom [Finite T] (Γ : QFGroup R T) (f : T → FractionRi
 
 end GlobalTheory.CompanionTheory.Ar.BT
 
-open Classical in
 
+open Classical in
 theorem GlobalTheory.CompanionTheory.Ar.BT.btOrder_full_rank : ∀ (R : Type) [CommRing R] [IsDomain R] (T : Type) [CommGroup T] [Finite T]
     (Γ : QFGroup R T), ∃ d : R, d ≠ 0 ∧ ∀ f : T → R, d • f ∈ Γ.btOrder ⊤ := by
+  classical
   intro R _ _ T _ _ Γ
   have := Fintype.ofFinite T
   let δ : T → T → R := fun s h => if h = s then 1 else 0
@@ -107,6 +114,6 @@ theorem GlobalTheory.CompanionTheory.Ar.BT.btOrder_full_rank : ∀ (R : Type) [C
   refine ⟨∏ x, e x, Finset.prod_ne_zero_iff.2 fun x _ => he x, fun f => ?_⟩
   have hf : (∏ x, e x) • f = ∑ s, f s • ((∏ x, e x) • δ s) := by
     funext h
-    simp [δ, Finset.sum_apply, _root_.mul_comm, _root_.mul_left_comm, _root_.mul_assoc, Finset.mul_sum]
+    simp [δ, Finset.sum_apply, _root_.mul_comm]
   rw [hf]
   exact Subalgebra.sum_mem _ fun s _ => Subalgebra.smul_mem _ (hmem s) _

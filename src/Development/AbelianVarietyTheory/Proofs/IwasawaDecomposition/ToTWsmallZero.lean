@@ -1,23 +1,27 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOpenKer
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousCoordSymm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOrientedWeilDatumOfAdelicWeilRepThetaStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdjoinGelfandInvariantsDualPairEqStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GlRelOfCanonicalCommutationRelationsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSmoothFunctionsOfClosedRightDerivativesStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicHeightGrowthOfCosetGrowthUnitaryPairStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothCuspFormMemUnitaryRapidDecayFormsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GelfandInvariantsActKernelFamilyShiftedStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaKernelLiftConvergesContinuousGrowthDerivStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOpenLevelFixingThetaFunctionStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KernelLiftGelfandInvariantFiniteOfFiniteStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeilRepThetaFunctionPolynomialGrowthRealPointsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaKernelLieActionThroughWeylAlgebraStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOpenKer
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousCoordSymm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOrientedWeilDatumOfAdelicWeilRepThetaStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdjoinGelfandInvariantsDualPairEqStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GlRelOfCanonicalCommutationRelationsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSmoothFunctionsOfClosedRightDerivativesStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicHeightGrowthOfCosetGrowthUnitaryPairStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothCuspFormMemUnitaryRapidDecayFormsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GelfandInvariantsActKernelFamilyShiftedStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaKernelLiftConvergesContinuousGrowthDerivStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOpenLevelFixingThetaFunctionStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KernelLiftGelfandInvariantFiniteOfFiniteStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeilRepThetaFunctionPolynomialGrowthRealPointsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaKernelLieActionThroughWeylAlgebraStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,7 +106,7 @@ theorem isKerSys_thKer (hθ : IsInfFam θ) {ψ : AddChar (AF D.host.F) ℂ} (hψ
     refine ⟨U, U', a, b, fun k h1 h2 k' h3 h4 g h => ?_⟩
     have e' : om (g * k, h * k') = om (g, h) * om (k, k') := by rw [← map_mul]; rfl
     change om (g * k, h * k') f.1 0 = om (g, h) f.1 0
-    rw [e', Module.End.mul_apply, e k h1 h2 k' h3 h4]
+    rw [e', mul_apply_eq_comp, e k h1 h2 k' h3 h4]
   obtain ⟨x, d, hx⟩ := GlobalTheory.T.thetaKernel_lieAction_through_weylAlgebra D ψ hψ S T om hw hc θ hθ
   have derV : ∀ τ, ∀ X ∈ lieAt S τ, ∀ f, ∃ f', ∀ g h,
       HasDerivAt (fun t : ℝ => thKer ψ S T om f (g * oneP θ S τ X t) h) (thKer ψ S T om f' g h) 0 :=
@@ -170,7 +174,31 @@ theorem liftAut : GlobalTheory.Published.CuspRapidDecay → ∀ D : D7, LiftAut 
     have e' : ∀ g h, Wf.ker V W χ χ' Φ g h = swapKer (thKer ψ W V om) f g h := fun g h =>
       (Wf.om_swap V W χ χ' ha g h Φ ⟨_, mem_ThS.2 hΦ⟩ (fun _ => rfl) 0).symm.trans (e h g)
     simp only [e']
-    exact (isKerSys_thKer hθ hψ hw hc).swap.lift hP hθ hq hF f
+    have hk := isKerSys_thKer hθ hψ hw hc
+    have hs : IsKerSys θ V W (swapKer (thKer ψ W V om)) := by
+      refine ⟨fun f => (hk.cont f).comp continuous_swap, fun f γ hγ δ hδ g g' =>
+        hk.left f δ hδ γ hγ g' g, ?_, ?_, ?_, ?_, ?_⟩
+      · intro f
+        obtain ⟨U, U', hU, hU', hk'⟩ := hk.level f
+        exact ⟨U', U, hU', hU, fun k hk1 hk2 k' hk1' hk2' g g' =>
+          hk' k' hk1' hk2' k hk1 hk2 g' g⟩
+      · obtain ⟨N, hN⟩ := hk.growth
+        refine ⟨N, fun f => ?_⟩
+        obtain ⟨C, hC⟩ := hN f
+        refine ⟨C, fun g g' => ?_⟩
+        have hb := hC g' g
+        rw [mul_comm (height θ W g' : ℝ)] at hb
+        exact hb
+      · intro τ X hX f
+        obtain ⟨f', hf'⟩ := hk.derW τ X hX f
+        exact ⟨f', fun g g' => hf' g' g⟩
+      · intro τ X hX f
+        obtain ⟨f', hf'⟩ := hk.derV τ X hX f
+        exact ⟨f', fun g g' => hf' g' g⟩
+      · intro τ
+        obtain ⟨a, b, ha, hb, hab⟩ := hk.cap τ
+        exact ⟨b, a, fun k f g' => hb k f g', fun k f g => ha k f g, hab.symm⟩
+    exact hs.lift hP hθ hq hF f
 
 end GlobalTheory.Mem.Lift
 

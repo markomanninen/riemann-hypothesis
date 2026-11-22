@@ -1,18 +1,23 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.ThmFlatA
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatLineGenerator
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.CardComapMulFinsumEqFinsumFibres
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.FinConstFor
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenFrameFieldExtension
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenFrameIffEigenspaceBasis
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteBaseChange
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueEquiv
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPushAlongMap
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianTripleSpreadsOut
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.PadicEmbeddingDiscreteValuationRing
-import Development.WeilBound.CoreStatements.SesquilinearFractions.NBasic
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LawsProved
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.ThmFlatA
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatLineGenerator
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.CardComapMulFinsumEqFinsumFibres
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.FinConstFor
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenFrameFieldExtension
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenFrameIffEigenspaceBasis
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteBaseChange
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueEquiv
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPushAlongMap
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianTripleSpreadsOut
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.PadicEmbeddingDiscreteValuationRing
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.NBasic
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LawsProved
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl GlobalTheory.CompanionTheory.Ar.Flat
 
@@ -45,20 +50,23 @@ theorem alg_descend {O K T : Type} [CommRing O] [Field K] [AddCommGroup T] [Modu
   choose a' ha' using fun k i => hZ (Or.inl ⟨(k, i), rfl⟩)
   choose l' hl' using fun k i => hZ (Or.inr ⟨(k, i), rfl⟩)
   have hbu : ∀ k, b (∑ i, a' k i • s i) = u k := fun k => by
-    rw [map_sum, ← ha k]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← ha k]
     exact Finset.sum_congr rfl fun i _ => by rw [hsm, hs, ha']
   have heig : ∀ x, x ∈ eigSp ρV σV ↔ b x ∈ eigSp ρ σ := fun x => by
     rw [EigBase.mem_eigSp, EigBase.mem_eigSp]
     refine forall_congr' fun a => ?_
     rw [← hρ, ← hσ, RingHom.comp_apply, ← hsm, hb.eq_iff]
   have hsum : ∀ cf : Fin n → V, b (∑ k, cf k • ∑ i, a' k i • s i) = ∑ k, g (cf k) • u k := fun cf => by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun k _ => by rw [hsm, hbu]
   refine ⟨fun k => ∑ i, a' k i • s i, hbu, fun k => (heig _).2 (by rw [hbu]; exact h1 k), fun e he => ?_⟩
   obtain ⟨cf, hcf, -⟩ := h2 _ ((heig e).1 he)
   obtain ⟨x, hx⟩ := (Submodule.mem_span_range_iff_exists_fun V).1 (hsp ▸ Submodule.mem_top : e ∈ _)
   have hc : ∀ k, cf k = g (∑ i, x i * l' k i) := fun k => by
-    rw [← hL' cf, ← hcf, ← hx, map_sum, map_sum, map_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hL' cf, ← hcf, ← hx, map_sum, map_sum, map_sum, Finset.sum_apply]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [hsm, hs, map_smul, map_mul, hl']
     rfl
@@ -84,17 +92,16 @@ theorem lie_lift {S : Scheme.{0}} {G : Over S} [GrpObj G] [IsCommMonObj G] [Smoo
   · have := hl e
     show (M'.pt (f (j e))).left = _
     rw [hf]
-    simpa [LieModel.Lifts] using this
+    simpa using this
   · show f (j (c • e)) = g c • f (j e)
     rw [j.map_smul, ← algebraMap_smul R' c (j e), f.map_smul]
     rfl
   · refine eq_top_iff.2 fun y _ => ?_
     obtain ⟨z, rfl⟩ := f.surjective y
     induction z using hj.inductionOn with
-    | zero => simp
     | tmul m => exact Submodule.subset_span ⟨m, rfl⟩
     | smul s n h => rw [map_smul]; exact Submodule.smul_mem _ _ (h trivial)
-    | add m n h h' => rw [map_add]; exact Submodule.add_mem _ (h trivial) (h' trivial)
+    | add m n h h' => rw [map_add (f := _)]; exact Submodule.add_mem _ (h trivial) (h' trivial)
   · haveI : Module.Projective R V := (LieProj.lie_finite_projective_baseChange S G R x V M).2.1
     haveI : FaithfulSMul R R' := (faithfulSMul_iff_algebraMap_injective R R').2 hg
     intro a c hac
@@ -109,7 +116,8 @@ theorem span_map {R R' V V' : Type} [CommRing R] [CommRing R'] [AddCommGroup V] 
   rw [eq_top_iff, ← h, Submodule.span_le]
   rintro _ ⟨e, rfl⟩
   obtain ⟨x, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun R).1 (hs ▸ Submodule.mem_top : e ∈ _)
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Submodule.sum_mem _ fun i _ => by
     rw [hb]; exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
 
@@ -179,8 +187,7 @@ theorem frame_transfer {E : Type} [Field E] [NumberField E] [IsCMField E] {H : H
 
 theorem exists_sab {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {S S' : Scheme.{0}} (f : S' ⟶ S)
     (t : SAB H S) : ∃ t' : SAB H S', Nonempty (SABMap t' t f) := by
-  obtain ⟨PP', cub, sym, adj, prim, m₁, -⟩ := sabPull Out.proved_CubePullSt f t
-  exact ⟨_, ⟨m₁⟩⟩
+  exact GlobalTheory.ModFam.exists_sabPull f t
 
 theorem exists_point {X : Scheme.{0}} {F : Type} [Field F] (s : X ⟶ Sp F) [LocallyOfFiniteType s] (U : Set X)
     (hU : IsOpen U) (hne : U.Nonempty) : ∃ (L : Type) (_ : Field L) (β : F →+* L) (y : Sp L ⟶ X),
@@ -327,8 +334,8 @@ end GlobalTheory.CompanionTheory.Ar.Flat.LinePointFrame
 
 namespace GlobalTheory.CompanionTheory.Ar.Flat
 
-open LinePointFrame in
 
+open LinePointFrame in
 theorem line_function_norm_zero_away : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (Xo : Moduli D l) (c : Coeff l) (U : Set (Xo.XF c)) (τ : E →+* ℂ) (φ : FrameFn Xo c), τ (H.rt : E) = H.rt0 → IsOpen U → U.Nonempty → IsLineFn U τ φ → ∃ n : ℕ, 0 < n ∧ ∀ (p : Nat.Primes) (κ : c.F →+* ℂ_[p]) (t : ℝ), ¬ (p : ℕ) ∣ n → HasFinNorm U τ φ p κ t → t = 0 := by
   intro E _ _ _ H D l Xo c U τ φ hτ hU hne hφ
   haveI := c.fin

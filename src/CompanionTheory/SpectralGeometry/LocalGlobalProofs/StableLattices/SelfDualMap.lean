@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdelesLocalRingTotallyReal
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ExistsUnipotentInvariantCompactlySupportedWeight
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdelesLocalRingTotallyReal
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ExistsUnipotentInvariantCompactlySupportedWeight
+
+@[expose] public section
 
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
@@ -71,11 +75,11 @@ theorem iff_of_unit (ψR : R → ℂ) (lam : Measure R) [SigmaFinite lam] (c : �
     have h1 := selfDual_map evalE.symm ν _ hν
     have h2 := (h _).1 h1
     have h3 := congrArg (Measure.map evalE) h2
-    rw [hmm, Measure.map_smul, hp] at h3
+    rw [hmm, Measure.map_smul, hp] at h3 <;> try exact hm.aemeasurable
     exact h3
   · rintro rfl
     have h1 := selfDual_map evalE _ _ ((h _).2 rfl)
-    rw [Measure.map_smul, hp] at h1
+    rw [Measure.map_smul, hp] at h1 <;> try exact hm.aemeasurable
     simpa using h1
 
 end Unit

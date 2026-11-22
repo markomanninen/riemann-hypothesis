@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import Formalism.LocalToGlobal.ProjectiveLattices.VAtVNeBot
-import Formalism.LocalToGlobal.ProjectiveLattices.RulInst
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FramePointVectorsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameBorelChangeVectorsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlatModelTorusRingStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import Formalism.LocalToGlobal.ProjectiveLattices.VAtVNeBot
+public import Formalism.LocalToGlobal.ProjectiveLattices.RulInst
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FramePointVectorsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameBorelChangeVectorsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlatModelTorusRingStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl GlobalTheory.CompanionTheory.Ar.Flat
 
 noncomputable section
@@ -40,7 +45,7 @@ theorem glue_rel (R : Type) [CommRing R] [IsReduced R]
       haveI : I.IsPrime := hI
       let ψ : R →+* I.ResidueField := algebraMap R I.ResidueField
       have key : ψ (a * g' - a' * g) = 0 := by
-        rw [map_sub, map_mul, map_mul]
+        rw [RingHom.map_sub, map_mul, map_mul]
         by_cases h1 : ψ g = 0
         · rw [(h _ ψ).1 h1, h1]; simp
         by_cases h2 : ψ g' = 0
@@ -273,8 +278,8 @@ namespace GlobalTheory.CompanionTheory.Ar.Flat
 
 open GlobalTheory.CompanionTheory.Ar.Flat.RuleGlue
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_flat_rule : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (Xo : Moduli D l) (c : Coeff l) (U : Set (Xo.XF c)) (τ : E →+* ℂ) (O : Type) [CommRing O] (β : O →+* c.F) (Y : Model Xo c β) (Z : CptOver Y U) (φ : FrameFn Xo c), τ (H.rt : E) = H.rt0 → IsClopen U → IsLineFn U τ φ → FlatOnModel Z τ φ → ∃ s s' e : Formalism.L2.Pj.Rul Xo c, e ∈ Formalism.L2.Pj.sec Xo c 0 0 ∧ s * s' = e ∧ s * e = s ∧ s' * e = s' ∧ (∀ (a a' : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) (f : Formalism.L2.Pj.Rul Xo c), (∀ x : (E →+* ℂ) × ℕ, x.2 < D.mult x.1 → (a' x : ℤ) = a x + Set.indicator {x : (E →+* ℂ) × ℕ | x.1 = ComplexEmbedding.conjugate τ} 1 x - Set.indicator {x : (E →+* ℂ) × ℕ | x.1 = τ} 1 x) → (f ∈ Formalism.L2.Pj.sec Xo c a n → f * s ∈ Formalism.L2.Pj.sec Xo c a' n) ∧ (f ∈ Formalism.L2.Pj.sec Xo c a' n → f * s' ∈ Formalism.L2.Pj.sec Xo c a n)) ∧ ∀ (p : Formalism.L2.Pj.TRing c.F) (z : Formalism.L2.Pj.FrPt Xo c p.R) (F : Type) [Field F] (ψ : p.R →+* F) (y : Sp F ⟶ Xo.XF c), under y = spMap ψ ≫ z.x → y ≫ pullback.snd _ _ = spMap (ψ.comp (algebraMap c.F p.R)) → (¬ Set.range y ⊆ U → ψ (e p z) = 0) ∧ (Set.range y ⊆ U → ψ (e p z) = 1 ∧ ∀ (v : Vecs y D.p) (w : Vecs y D.q) (hp : D.mult τ = D.p) (hq : D.mult (ComplexEmbedding.conjugate τ) = D.q), (∀ i, (v i).left = spMap (Formalism.L2.Pj.dualMap ψ) ≫ z.u τ (i.cast hp.symm)) → (∀ j, (w j).left = spMap (Formalism.L2.Pj.dualMap ψ) ≫ z.u (ComplexEmbedding.conjugate τ) (j.cast hq.symm)) → ψ (s p z) = φ F y v w) := by
   intro E _ _ _ H D l Xo c U τ O _ β Y Z φ hτ hU hl hf
   have hp : D.mult τ = D.p := by rw [Datum.mult, if_pos hτ]
@@ -296,12 +301,12 @@ theorem exists_flat_rule : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
       haveI := red p
       exact eq_zero_of_fields x h
   have hee : ∀ p z, e p z * e p z = e p z := fun p z => sub_eq_zero.1 (zero p _ fun F _ ψ => by
-    rw [map_sub, map_mul]
+    rw [ψ.map_sub, ψ.map_mul]
     by_cases hr : Set.range (fpt z ψ) ⊆ U
     · rw [((C p z F ψ).2 hr).1]; simp
     · rw [((C p z F ψ).1 hr).1]; simp)
   have hsE : ∀ p z, s p z * e p z = s p z := fun p z => sub_eq_zero.1 (zero p _ fun F _ ψ => by
-    rw [map_sub, map_mul]
+    rw [ψ.map_sub, ψ.map_mul]
     by_cases hr : Set.range (fpt z ψ) ⊆ U
     · rw [((C p z F ψ).2 hr).1]; simp
     · rw [((C p z F ψ).1 hr).2]; simp)
@@ -315,7 +320,7 @@ theorem exists_flat_rule : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
         show _ ∈ RingHom.ker (algebraMap p.R m.ResidueField)
         rwa [Ideal.ker_algebraMap_residueField]
       exact this
-    rw [map_sub, map_add, map_one] at h0
+    rw [ψ.map_sub, ψ.map_add, ψ.map_one] at h0
     by_cases hr : Set.range (fpt z ψ) ⊆ U
     · rw [((C p z _ ψ).2 hr).1] at h0
       exact FS p z _ ψ hr (by simpa using h0)
@@ -357,8 +362,8 @@ theorem exists_flat_rule : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
         · rw [ew j, h.2.1, ← Category.assoc, dualMap_spMap_comp]
       · rw [(D1.1 hr).1, (D1.1 hr).2, (D2.1 hr).1, (D2.1 hr).2]
         exact ⟨rfl, rfl⟩
-    exact ⟨sub_eq_zero.1 (zero q _ fun F _ ψ => by rw [map_sub, (key F ψ).1, sub_self]),
-      sub_eq_zero.1 (zero q _ fun F _ ψ => by rw [map_sub, (key F ψ).2, sub_self])⟩
+    exact ⟨sub_eq_zero.1 (zero q _ fun F _ ψ => by rw [ψ.map_sub, (key F ψ).1, sub_self]),
+      sub_eq_zero.1 (zero q _ fun F _ ψ => by rw [ψ.map_sub, (key F ψ).2, sub_self])⟩
   have hnat' : ∀ (p q : Formalism.L2.Pj.TRing c.F) (f : p.R →ₐ[c.F] q.R) (y : Formalism.L2.Pj.FrPt Xo c p.R)
       (z : Formalism.L2.Pj.FrPt Xo c q.R), Formalism.L2.Pj.FrMap f y z → s' q z = f (s' p y) := fun p q f y z h => by
     obtain ⟨h1, h2⟩ := hnat p q f y z h
@@ -379,7 +384,7 @@ theorem exists_flat_rule : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
       have h1 : under (fpt y ψ) = spMap ψ ≫ y'.x := by rw [fpt_under, h.1]
       have D2 := hse p y' F ψ (fpt y ψ) h1 (fpt_snd y ψ)
       have D1 := C p y F ψ
-      rw [map_mul, map_mul]
+      rw [ψ.map_mul, ψ.map_mul]
       by_cases hr : Set.range (fpt y ψ) ⊆ U
       · obtain ⟨v, w, ev, ew, hfr⟩ := GlobalTheory.T.frame_point_vectors E H D l Xo c τ p.R y F ψ (fpt y ψ) hp hq (fpt_under y ψ) (fpt_snd y ψ)
         obtain ⟨v', w', ev', ew', hfr'⟩ := GlobalTheory.T.frame_point_vectors E H D l Xo c τ p.R y' F ψ (fpt y ψ) hp hq h1 (fpt_snd y ψ)
@@ -390,11 +395,11 @@ theorem exists_flat_rule : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
         exact hl.chg F _ _ v w v' w' A B (hfr U hr) (hfr' U hr) hA hB
       · rw [(D1.1 hr).1, (D1.1 hr).2, (D2.1 hr).1, (D2.1 hr).2]
         simp
-    have k1 : e p y' - e p y = 0 := zero p _ fun F _ ψ => by rw [map_sub, (key F ψ).1, sub_self]
+    have k1 : e p y' - e p y = 0 := zero p _ fun F _ ψ => by rw [ψ.map_sub, (key F ψ).1, sub_self]
     have k2 : s p y' * Formalism.L2.Pj.wchar (detE D τ) t - s p y * Formalism.L2.Pj.wchar (detE D (ComplexEmbedding.conjugate τ)) t = 0 :=
       zero p _ fun F _ ψ => by
         have := (key F ψ).2
-        exact (map_sub ψ _ _).trans (sub_eq_zero.2 this)
+        exact (ψ.map_sub _ _).trans (sub_eq_zero.2 this)
     exact ⟨sub_eq_zero.1 k1, sub_eq_zero.1 k2⟩
   have hwt' : ∀ (p : Formalism.L2.Pj.TRing c.F) (t : Formalism.L2.Pj.Ix D → (p.R)ˣ) (y y' : Formalism.L2.Pj.FrPt Xo c p.R),
       Formalism.L2.Pj.FrBor t y y' →

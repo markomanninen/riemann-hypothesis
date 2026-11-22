@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacConstBHGlue
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.BesselFrame
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingConstruction
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacConstBHGlue
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.BesselFrame
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingConstruction
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 
@@ -32,10 +36,6 @@ theorem meas_gA (E : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) {f 
     rw [e]
     exact mulMt_meas (mulMt_meas (invMt_meas measurable_fst) measurable_const) measurable_snd
   exact hf.comp this
-
-theorem meas_gB (E : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) {f : Mt k r → ℝ≥0∞} (hf : Measurable f) :
-    Measurable fun p : Mt k r × Mt k r => f (gB E p.1 p.2) :=
-  hf.comp (meas_PQinv (fun p : Mt k r × Mt k r => Matrix.of p.1 * E) (fun p => Matrix.of p.2) (by fun_prop) (by fun_prop))
 
 theorem measurable_comp_group_action (E : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) (a0 : Mt k r) {f : Mt k r → ℝ≥0∞}
     (hf : Measurable f) : Measurable fun b : Mt k r => f (gA E a0 b) := by

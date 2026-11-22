@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.ExistsNonzeroPhysicalHighestWeightVectorTensFock
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SchSharpA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CsqDdPt
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.KernelLemma
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PRVComponents
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.ExistsNonzeroPhysicalHighestWeightVectorTensFock
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SchSharpA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CsqDdPt
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.KernelLemma
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PRVComponents
+
+@[expose] public section
 
 noncomputable section
 
@@ -123,7 +127,7 @@ theorem dirac_sharp {ε : Fin n → Bool} {lam : Fin n → ℝ} (hg : Gap3 ε la
     induction z0 using TensorProduct.induction_on with
     | zero => simp
     | tmul m f => simp [TensorProduct.map_tmul, hc _ m.2, TensorProduct.smul_tmul']
-    | add x y hx hy => simp only [map_add, hx, hy, smul_add]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, smul_add]
   have hD2 := two_D_sq_khw (eT_isGlRep hE) cpT_cmT_isCAR (eT_commutesCAR E) hzK' hcas
   have hval : nsq (lam - phSum Ph - rhoC ε + rhoC ε) - nsq (rho n) - casVal lam =
       nsq (lam - phSum Ph) - nsq lam := by
@@ -160,17 +164,5 @@ theorem dirac_sharp {ε : Fin n → Bool} {lam : Fin n → ℝ} (hg : Gap3 ε la
   have p1 := tform_self_re_nonneg (D z)
   have p2 := tform_self_re_pos hz0
   nlinarith
-
-theorem no_irreducible_at_noncompact_root_shift {ε : Fin n → Bool} {lam : Fin n → ℝ} (hg : Gap3 ε lam)
-    {M : Type*} [NormedAddCommGroup M] [InnerProductSpace ℂ M] {E : Fin n → Fin n → Module.End ℂ M}
-    (hE : IsGlRep E) (hU : IsInfUnitary ε E) {a b : Fin n} (hab : a < b) (hε : ε a ≠ ε b)
-    {W : Submodule ℂ M} (hW : IsKIrrHW ε E (lowK ε lam - root a b) W)
-    (hc : ∀ v ∈ W, casimir E v = (casVal lam : ℂ) • v) : False := by
-  have hP : phSum {(a, b)} = root a b := by simp [phSum]
-  refine dirac_sharp hg hE hU (Ph := {(a, b)}) ?_ (singleton_nonempty _) (by rw [hP]; exact hW) hc
-  intro x hx
-  rw [mem_singleton] at hx
-  subst hx
-  exact ⟨hab, hε⟩
 
 end ReciprocityTheory.ChartRestriction.DS.TRGap

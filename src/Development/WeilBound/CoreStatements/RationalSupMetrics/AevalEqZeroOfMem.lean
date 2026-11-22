@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.HasMultiplier
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.HasMultiplier
+
+@[expose] public section
 
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo GlobalTheory.CompanionTheory.Ar.Small Filter Topology
 

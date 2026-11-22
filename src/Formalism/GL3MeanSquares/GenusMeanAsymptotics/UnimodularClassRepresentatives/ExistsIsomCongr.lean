@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.WCC
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.WCC
+
+@[expose] public section
 
 open NumberField Module
 
@@ -37,7 +41,17 @@ theorem exists_isom_congr (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (
     have e : v + (v + (j - 2 * v)) = j := by omega
     rw [e]
     exact WCA.InL.of_mem h𝔭 hxy
-  obtain ⟨g, hgI, hgJ, hgS, hgxy⟩ := WCC.core hK hF hs han hA₀i h𝔭 hn hv hx0 hx hy hJ hw
+  have hnMap : algebraMap F K (n : F) = algebraMap (𝓞 K) K (algebraMap (𝓞 F) (𝓞 K) n) :=
+    (IsScalarTower.algebraMap_apply (𝓞 F) F K n).symm.trans
+      (IsScalarTower.algebraMap_apply (𝓞 F) (𝓞 K) K n)
+  obtain ⟨g, hgI, hgJ, hgS, hgxy⟩ :
+      ∃ g ∈ Formalism.HermitianLatticesTheory.isom h,
+        (∀ z, WCA.InL 𝔭 A₀ 0 z → WCA.InL 𝔭 A₀ (j - 2 * v) (g z - z)) ∧
+        (∀ z, WCA.InL 𝔭 A₀ 0 z → WCA.InL 𝔭 A₀ 0 (g.symm z)) ∧ g x = y :=
+    _root_.Formalism.HermitianLattices.Ext.L3.WCC.core
+      (K := K) (F := F) (V := V) (A := A₀) (x := x) (y := y)
+      (v := v) (J := j - 2 * v) hK hF hs han hA₀i h𝔭 hn hv hx0
+      (hx.trans hnMap) (hy.trans hnMap) hJ hw
   have hL : ∀ z, z ∈ locF 𝔭 A₀ → g z ∈ locF 𝔭 A₀ := by
     intro z hz
     have hz0 : WCA.InL 𝔭 A₀ 0 z := (WCA.inL_zero_iff hp).2 hz

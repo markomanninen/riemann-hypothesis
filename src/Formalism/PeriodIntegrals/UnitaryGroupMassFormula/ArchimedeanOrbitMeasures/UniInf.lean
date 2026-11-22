@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.EqOneOfToHAFin
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.EqOneOfToHAFin
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,8 +44,5 @@ theorem unimodInf_holds : UnimodInf := by
         (lintegral_map_equiv f (MeasurableEquiv.mulRight (X.toInf hb s))).symm
     _ = ∫⁻ g, f g ∂X.measG.μGinf := by
         rw [MeasurableEquiv.coe_mulRight, hm]
-
-theorem jacOne_of_goodChart (hK : KPos) (hG : GoodChartEx) : JacOne :=
-  jacOne_of_good hK unimodInf_holds hG
 
 end PI.AprimeInfW

@@ -1,23 +1,27 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.CocyclesToWachVectorsBoundOfExtTool
-import Formalism.SharpRestriction.LevelLetterCocycles.FirstLiftOfUniformizerClause
-import Formalism.SharpRestriction.LevelLetterCocycles.SecondLiftOfHypotheses
-import Formalism.SharpRestriction.LevelLetterCocycles.ExtDataExtTool
-import Formalism.SharpRestriction.LevelLetterCocycles.EvaluationAtUniformizerPower
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalClauseOfFrobeniusHyps
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.LemKD
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.FilDimOf
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.SmulSDivMem
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExistsXPowMul
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
-import Formalism.SharpRestriction.LevelLetterCocycles.IsFracOL
-import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
-import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
-import Formalism.SharpRestriction.LevelLetterCocycles.ElementDenominator
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelClauseOfOpenTool
-import Formalism.SharpRestriction.LevelLetterCocycles.RingConditionOfDeltaInvariants
-import Formalism.SharpRestriction.LevelLetterCocycles.CompleteMax
-import Formalism.SharpRestriction.LevelLetterCocycles.TruncationClauseOfLatticeHypotheses
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.CocyclesToWachVectorsBoundOfExtTool
+public import Formalism.SharpRestriction.LevelLetterCocycles.FirstLiftOfUniformizerClause
+public import Formalism.SharpRestriction.LevelLetterCocycles.SecondLiftOfHypotheses
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExtDataExtTool
+public import Formalism.SharpRestriction.LevelLetterCocycles.EvaluationAtUniformizerPower
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalClauseOfFrobeniusHyps
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.LemKD
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.FilDimOf
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.SmulSDivMem
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExistsXPowMul
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
+public import Formalism.SharpRestriction.LevelLetterCocycles.IsFracOL
+public import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
+public import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
+public import Formalism.SharpRestriction.LevelLetterCocycles.ElementDenominator
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelClauseOfOpenTool
+public import Formalism.SharpRestriction.LevelLetterCocycles.RingConditionOfDeltaInvariants
+public import Formalism.SharpRestriction.LevelLetterCocycles.CompleteMax
+public import Formalism.SharpRestriction.LevelLetterCocycles.TruncationClauseOfLatticeHypotheses
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,8 +52,8 @@ theorem level_tools_of_admitted' (hA : admitted D HW F Cm CR CA CB CK) : Formali
   Formalism.MainNotions.UnusedSlot80.tools_unramified_statement D HW F Cm ⟨fun l _ K s LL h => (hA.1 l K s LL h).2.2.1, laurent_clause_of_admitted' D HW F Cm hA,
     uniformizer_clause_of_admitted D HW F Cm hA⟩
 
-set_option maxHeartbeats 0 in
 
+set_option maxHeartbeats 0 in
 theorem local_lemmas_of_literature (hA : admitted D HW F Cm CR CA CB CK) (h23 : Formalism.MainNotions.LiftingTheory.adm23 D HW F)
     (hHerr : Formalism.MainNotions.ElementDenominator.HerrClassNaturalExtension D.loc D.locA HW F) (a22 : Formalism.MainNotions.CrystallineLiftingBounds.adm22 D HW F)
     (hFont : Formalism.MainNotions.InvariantsGenerators.LitFont D HW F) : cocyclesToWachVectorsBoundAtGoodExtensions D HW F := by

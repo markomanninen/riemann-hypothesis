@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.FactsW
-import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.GenusApproximationProofs.IdempotentCalculationHolds
-import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.GenusApproximationProofs.GlueSmulSame
+module
+
+public import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.FactsW
+public import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.GenusApproximationProofs.IdempotentCalculationHolds
+public import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.GenusApproximationProofs.GlueSmulSame
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ theorem cay_cT_apply (σ : A →+* A) (M : Matrix m m A) (i j : m) : Formalism.U
 
 theorem cay_cT_add (σ : A →+* A) (M N : Matrix m m A) :
     Formalism.UG.cT σ (M + N) = Formalism.UG.cT σ M + Formalism.UG.cT σ N := by
-  ext i j; simp only [cay_cT_apply, Matrix.add_apply, map_add]
+  ext i j; simp only [cay_cT_apply, Matrix.add_apply, map_add (f := _)]
 
 theorem cay_cT_sub (σ : A →+* A) (M N : Matrix m m A) :
     Formalism.UG.cT σ (M - N) = Formalism.UG.cT σ M - Formalism.UG.cT σ N := by
@@ -180,7 +184,7 @@ theorem cayleyStep_of : EAtNeZero → ApproxA → UnitNear → CayleyStep := by
   have hQ0 : Q0 + Formalism.UG.cT σE Q0 = 1 := by
     ext i j
     rw [Matrix.add_apply, cay_cT_apply, hQ0d, Matrix.of_apply, Matrix.of_apply]
-    simp only [map_mul, map_sub, map_add, map_inv₀, map_ofNat, hσEE, hδE]
+    simp only [map_mul, map_sub, map_add (f := _), map_inv₀, map_ofNat, hσEE, hδE]
     have h2 : (2 : E)⁻¹ * 2 = 1 := inv_mul_cancel₀ two_ne_zero
     linear_combination ((1 : Matrix (Fin n) (Fin n) E) i j) * h2
   have hι2 : iA F E (2 : E)⁻¹ * 2 = 1 := by
@@ -192,7 +196,7 @@ theorem cayleyStep_of : EAtNeZero → ApproxA → UnitNear → CayleyStep := by
     ext i j
     have e1 := hb i j
     have e2 : σA (Q j i) = iA F E (σE (b j i)) + 2 * iA F E (algebraMap (𝓞 F) E D) * σA (s' j i) := by
-      rw [hb j i, map_add, map_mul, hσι, hσD, hι2D]
+      rw [hb j i, map_add (f := _), map_mul, hσι, hσD, hι2D]
     have e3 : Q i j + σA (Q j i) = iA F E ((1 : Matrix (Fin n) (Fin n) E) i j) := by
       have h := congrFun (congrFun hQ i) j
       rw [Matrix.add_apply, cay_cT_apply, hδA] at h

@@ -1,10 +1,20 @@
-import Development.AutomorphicArithmetic.AdelicQuotients.PolynomialDataFiniteKType
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThetaBasicK
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThkBasePolFin
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThkBasePairsL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThkFacArch
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SchurStep
+public import Development.WeilBound.ThetaLifts.FrameEstimates.CuspRapid
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.TendstoIndMul
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PolFin
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.ArchimedeanEvaluationVector
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PairsL
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PairsB
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThetaBasicK
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThkBasePolFin
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThkBasePairsL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThkFacArch
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -67,7 +77,7 @@ theorem UpperTheory.exists_finiteDimensional_weil_archimedean_orbit :
     obtain ⟨V, h1, h2, h3⟩ := hx
     obtain ⟨V', h1', h2', h3'⟩ := hy
     exact ⟨V ⊔ V', inferInstance, sup_le h2 h2', fun k hk => by
-      rw [map_add]; exact Submodule.add_mem_sup (h3 k hk) (h3' k hk)⟩
+      rw [map_add (f := _)]; exact Submodule.add_mem_sup (h3 k hk) (h3' k hk)⟩
   | smul c x _ hx =>
     obtain ⟨V, h1, h2, h3⟩ := hx
     exact ⟨V, h1, h2, fun k hk => by rw [map_smul]; exact V.smul_mem c (h3 k hk)⟩

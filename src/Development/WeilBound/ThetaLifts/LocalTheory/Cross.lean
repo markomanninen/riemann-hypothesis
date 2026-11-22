@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ISmulEqZero
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ISmulEqZero
+
+@[expose] public section
 
 noncomputable section
 

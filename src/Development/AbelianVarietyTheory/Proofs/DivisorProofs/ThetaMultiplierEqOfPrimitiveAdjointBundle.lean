@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPrimitiveValueOfRingElementPsiRelation
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsActIffIsDiagEnd
-import Development.AbelianVarietyTheory.Definitions.Divisors.TorMatch
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PsiEqTauOfBundlePrimitiveForEndomorphism
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTripleLinearTorsionIso
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsRingActionDegenerationLinearUniformisation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisedGroupHomInducedMapsUnique
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsHeckeQuotientTriple
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TwistBaseChangeAndValuationStatements
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPrimitiveValueOfRingElementPsiRelation
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsActIffIsDiagEnd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorMatch
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PsiEqTauOfBundlePrimitiveForEndomorphism
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTripleLinearTorsionIso
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsRingActionDegenerationLinearUniformisation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisedGroupHomInducedMapsUnique
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsHeckeQuotientTriple
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TwistBaseChangeAndValuationStatements
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -25,16 +30,9 @@ section Ring
 
 variable {S : Scheme.{0}} {G : Over S} [GrpObj G] [IsCommMonObj G]
 
-theorem isMonHom_mul' (f g : G ⟶ G) [IsMonHom f] [IsMonHom g] : IsMonHom (f * g) where
-  one_hom := by
-    rw [MonObj.comp_mul, IsMonHom.one_hom, IsMonHom.one_hom, MonObj.one_eq_one, _root_.mul_one]
-  mul_hom := by
-    have h : ∀ k : G ⟶ G, [IsMonHom k] → (k ⊗ₘ k) ≫ μ[G] = (fst G G ≫ k) * (snd G G ≫ k) := fun k _ => by
-      rw [MonObj.mul_eq_mul, MonObj.comp_mul]
-      simp
-    rw [MonObj.comp_mul, IsMonHom.mul_hom, IsMonHom.mul_hom, h, h, MonObj.mul_eq_mul, MonObj.comp_mul]
-    simp only [← Category.assoc, tensorHom_fst, tensorHom_snd, MonObj.comp_mul]
-    exact mul_mul_mul_comm _ _ _ _
+theorem isMonHom_mul' (f g : G ⟶ G) [IsMonHom f] [IsMonHom g] : IsMonHom (f * g) := by
+  rw [Hom.mul_def]
+  infer_instance
 
 def evId (e : AddMonoid.End (Additive (G ⟶ G))) : G ⟶ G := (e (Additive.ofMul (𝟙 _))).toMul
 
@@ -42,8 +40,8 @@ structure IsEnd (e : AddMonoid.End (Additive (G ⟶ G))) : Prop where
   hom : IsMonHom (evId e)
   eq : ∀ x, (e x).toMul = x.toMul ≫ evId e
 
-variable (G) in
 
+variable (G) in
 def endRing : Subring (AddMonoid.End (Additive (G ⟶ G))) where
   carrier := {e | IsEnd e}
   mul_mem' {a b} ha hb := by
@@ -125,7 +123,8 @@ theorem polyAct_X : (polyAct f).act xO = f := by
   exact (congrArg (fun u : endRing G => evId u.1) e).trans (Category.id_comp f)
 
 def addOf (o : RingAct G PolyO) : PolyO →+ Additive (G ⟶ G) :=
-  AddMonoidHom.mk' (fun a => Additive.ofMul (o.act a)) fun a b => by rw [o.map_add]; rfl
+  AddMonoidHom.mk' (fun a => Additive.ofMul (o.act a)) fun a b =>
+    congrArg Additive.ofMul (o.map_add a b)
 
 theorem polyAct_star {f' : G ⟶ G} (h : f * f' = 𝟙 G) : (polyAct f).act (star xO) = f' := by
   have e := map_sub (addOf (polyAct f)) 1 xO
@@ -169,7 +168,7 @@ theorem adjCls_all {L : LB G.left} (hL : L.IsLB) (hΘ : ∃ t : LB.Gen (Theta G 
         rw [star_one, o.map_one, Category.comp_id, Category.comp_id]
       add_mem' := fun {a b} ha hb T x z => by
         show lam _ x (z ≫ o.act (star (a + b))) = lam _ (x ≫ o.act (a + b)) z
-        rw [star_add, o.map_add, o.map_add]
+        rw [star_add, o.map_add (star a) (star b), o.map_add a b]
         show lam _ x (z ≫ (o.act (star a) * o.act (star b))) = lam _ (x ≫ (o.act a * o.act b)) z
         rw [MonObj.comp_mul, MonObj.comp_mul, lam_mul_right' hL hΘ, lam_mul_left hL hΘ, ha, hb]
       zero_mem' := fun T x z => by

@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelDensities.Pieces
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelDensities.TprodMemNnRealSet
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelDensities.Pieces
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelDensities.TprodMemNnRealSet
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ theorem halfLam_spec {F E : Type} [Field F] [NumberField F] [Field E] [NumberFie
   have h : ∃ Λ : ℂ, IsLamLim F E Λ := ⟨Λ, hΛ⟩
   have he : h.choose = Λ := lamLim_unique h.choose_spec hΛ
   obtain ⟨h1, h2⟩ := lamLim_real hΛ
-  rw [halfLam, dif_pos h, he, Real.coe_toNNReal _ (by linarith)]
+  rw [halfLam, dite_eq_left h, he, Real.coe_toNNReal _ (by linarith)]
   conv_rhs => rw [h1]
   push_cast
   ring

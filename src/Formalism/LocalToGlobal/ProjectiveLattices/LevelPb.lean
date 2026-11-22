@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
+
+@[expose] public section
 
 noncomputable section
 
@@ -232,8 +236,8 @@ theorem QE_cop_ne {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpq : p ≠ q) (e f
 
 end LPb
 
-open LPb in
 
+open LPb in
 theorem levelPb_exists (D : D7) (pb : Fin 2 → HeightOneSpectrum (𝓞 D.host.K))
     (hg : ∀ k, ((D.host.g k : ℕ) : 𝓞 D.host.K) ∈ (pb k).asIdeal) :
     ∃ l : Level (hostOfRecord D), (l.M = D.host.g 0 * D.host.g 1 ∧ l.A = 1) ∧

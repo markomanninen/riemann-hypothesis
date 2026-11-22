@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
-import CompanionTheory.AutomorphicTheory.PlaceSeparation.ArtinA
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.Ramification
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
+public import CompanionTheory.AutomorphicTheory.PlaceSeparation.ArtinA
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.Ramification
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ GlobalTheory.Col UpperTheory.Kd.C7
 
 private theorem unramified_uniformizer_divides {K E : Type} [Field K] [NumberField K] [Field E] [NumberField E] [Algebra K E]

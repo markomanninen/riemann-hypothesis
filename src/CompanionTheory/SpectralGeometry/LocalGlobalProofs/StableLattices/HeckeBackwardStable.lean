@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.BackStable
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.BackStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,8 @@ theorem eeVd_apply (X : GMod n) (f : Fin n → X.V) (a : Fin n) :
 
 theorem commute_tensVd_eeVd (X : GMod n) (c d : Fin n) : Commute (tensVd X.E c d) (eeVd X.E) := by
   refine LinearMap.ext fun f => funext fun a => ?_
-  simp only [Module.End.mul_apply, tensVd_apply, eeVd_apply, map_neg, map_sum, map_sub]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Module.End.mul_apply, tensVd_apply, eeVd_apply, map_neg, map_sum, map_sub]
   simp only [comm_apply X c d a _ _, sum_sub_distrib, sum_add_distrib, apply_ite (X.E a _), map_zero]
   by_cases h : a = d
   · subst h

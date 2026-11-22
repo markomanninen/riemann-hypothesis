@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceAdeleRing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceAdeleRing
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem exists_bound_rat {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (hL : 
 theorem exists_bound_latLoc {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {n : ℕ}
     (L : Submodule (𝓞 E) (Fin n → E)) [Submodule.IsLattice E L] (v : HeightOneSpectrum (𝓞 F)) :
     ∃ C : ℝ≥0, ∀ y ∈ latLoc F L v, ∀ i : Fin n, absFin F v (y i) ≤ C := by
-  obtain ⟨C, hC⟩ := exists_bound_rat L (Submodule.IsLattice.fg (A := E)) v
+  obtain ⟨C, hC⟩ := exists_bound_rat L (Submodule.IsLattice.fg (A := E) L) v
   refine ⟨C, fun y hy i => ?_⟩
   change y ∈ AddSubgroup.closure _ at hy
   induction hy using AddSubgroup.closure_induction with

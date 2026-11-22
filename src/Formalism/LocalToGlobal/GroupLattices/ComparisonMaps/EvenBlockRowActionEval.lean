@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CmpCMemMIff
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ProdMemSpan
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CmpCMemMIff
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ProdMemSpan
+
+@[expose] public section
 
 open MvPolynomial Matrix Formalism.GradedWeylDivisibility Formalism.MainNotions.G
 
@@ -15,7 +19,7 @@ theorem eval_rowAct (g : Matrix (Fin k) (Fin k) K) (f : MvPolynomial (Fin k × F
     eval (fun x => z x.1 x.2) (rowAct K g f) = eval (fun x => (g * z) x.1 x.2) f := by
   induction f using MvPolynomial.induction_on with
   | C a => simp [rowAct]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     simp only [map_mul, hp]
     congr 1

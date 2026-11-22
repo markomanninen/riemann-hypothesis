@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormInverseCounting.DuForm
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormInverseCounting.DuForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,8 @@ theorem splitForm_iota_secondProj (hs : M.split = some g) (Zh : Matrix (Fin (r +
     ph2 g (formG M.L.O (M.L.cj : E →+* E) (algebraMap F E ((g.q : F)⁻¹)) Zh (algebraMap F E T)
       (algebraMap F E T') (iota1 hs l) (iota2 hs w)) = 0 := by
   unfold formG
-  simp [map_sum, map_mul, secondProj_iotaOne_eq_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_mul, secondProj_iotaOne_eq_zero]
 
 theorem splitForm_iota_firstProj (hs : M.split = some g) (Zh : Matrix (Fin (r + 1)) (Fin (r + 1)) E) (T T' : F)
     (hG : IsUnit (gramG (M.L.cj : E →+* E) (algebraMap F E ((g.q : F)⁻¹)) Zh (algebraMap F E T)
@@ -64,7 +69,8 @@ theorem splitForm_iota_firstProj (hs : M.split = some g) (Zh : Matrix (Fin (r + 
       dotProduct (fun i => ph1 g (iota1 hs l i : E)) (Matrix.mulVec (G.map (ph1 g))⁻¹ fun j => ph1 g (iota1 hs w j : E)) := by
     rw [← map_inv_of (ph1 g) G hG]
     unfold formG
-    simp only [map_sum, map_mul, hcw, dotProduct, Matrix.mulVec, Matrix.map_apply, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, hcw, dotProduct, Matrix.mulVec, Matrix.map_apply, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     ring
   have hP : (pM r (g.q : F)⁻¹)⁻¹ = qM r (g.q : F) := Matrix.inv_eq_right_inv (pM_mul_qM _ hq)

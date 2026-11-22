@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormAdditiveCharacterTypePrimeEqOne
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToLePerp
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemPerpSpan
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormAdditiveCharacterTypePrimeEqOne
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToLePerp
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemPerpSpan
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical
 
@@ -240,7 +245,7 @@ theorem witness_independence : ∀ {F : Type} [Field F] [ValuativeRel F] [Topolo
   intro F _ _ _ _ _ E _ _ _ L r k S d Λ n n' H
   have hT : S.IsTerm d Λ := ⟨(n, n'), H⟩
   have K : S.IsTermW d Λ (S.wit d Λ).1 (S.wit d Λ).2 := by
-    rw [Frames.wit, dif_pos hT]
+    rw [Frames.wit, dite_eq_left hT]
     exact hT.choose_spec
   obtain ⟨c1, w1⟩ := compare S H K
   obtain ⟨c2, -⟩ := compare S K H

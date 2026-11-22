@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StNbarSmooth
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PMuRegSmooth
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PVertFactorPos
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StNbarSmooth
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PMuRegSmooth
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PVertFactorPos
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -45,8 +50,8 @@ theorem hermOfFun_h_of_mem {P : Ideal (MRing ι)} (hP : IsMultiHomogIdeal P) {a 
 
 end NbarSmooth
 
-open MuRegSmooth TopNPoly NbarSmooth in
 
+open MuRegSmooth TopNPoly NbarSmooth in
 theorem NbarSmooth.proof (hE : HermExtend.Statement) (hP : ProjSmoothAlong.Statement)
     (hVS : VertFactorSmooth.Statement) : NbarSmooth.Statement := by
   intro II Ψ _ _ K _ ι _ Ω _ _ E _ _ D O Lt _ _ _ X B p q t hsm

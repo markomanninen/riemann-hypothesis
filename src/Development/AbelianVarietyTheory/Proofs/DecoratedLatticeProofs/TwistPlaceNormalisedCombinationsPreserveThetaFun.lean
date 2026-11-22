@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CosInj
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisOFinsetSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CosInj
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisOFinsetSum
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.QPl ValuativeRel
 open GlobalTheory.PosOne (toOne Covers TriPos)
@@ -37,8 +42,15 @@ theorem aconv_support {G : Type} [AddMonoid G] (P : AddSubmonoid G) :
     have ih := aconv_support P l (fun e' he' => hl e' (List.mem_cons_of_mem _ he'))
     have he := hl e List.mem_cons_self
     change g ∈ (e.sum fun g a => (aconv l).sum fun h b => Finsupp.single (g + h) (a * b)).support at hg
-    obtain ⟨x, hx, hg⟩ := Finset.mem_biUnion.1 (Finsupp.support_sum hg)
-    obtain ⟨y, hy, hg⟩ := Finset.mem_biUnion.1 (Finsupp.support_sum hg)
+    have houter : g ∈ e.support.biUnion
+        (fun x => ((aconv l).sum fun y b => Finsupp.single (x + y) (e x * b)).support) :=
+      Finsupp.support_sum (f := e)
+        (g := fun x a => (aconv l).sum fun y b => Finsupp.single (x + y) (a * b)) hg
+    rcases Finset.mem_biUnion.mp houter with ⟨x, hx, hg⟩
+    have hinner : g ∈ (aconv l).support.biUnion
+        (fun y => (Finsupp.single (x + y) (e x * aconv l y)).support) :=
+      Finsupp.support_sum (f := aconv l) (g := fun y b => Finsupp.single (x + y) (e x * b)) hg
+    rcases Finset.mem_biUnion.mp hinner with ⟨y, hy, hg⟩
     rw [Finset.mem_singleton.1 (Finsupp.support_single_subset hg)]
     exact P.add_mem (he x hx) (ih y hy)
 

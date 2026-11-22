@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.ArvOSobPfK
-import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.ArvOSobPfAs
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.ArvOSobPfK
+public import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.ArvOSobPfAs
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,8 @@ theorem evP_qP (k : Fin n → Fin n → ℂ) : evP (qP (n := n)) k = (qr k : ℂ
     intro a j; rw [Matrix.one_apply]; split_ifs <;> simp
   have hz : ∀ z : ℂ, starRingEnd ℂ z * z = ((‖z‖ ^ 2 : ℝ) : ℂ) := by
     intro z; rw [← Complex.normSq_eq_conj_mul_self, Complex.normSq_eq_norm_sq]
-  simp only [evP, qP, qr, map_sum, map_mul, map_sub, MvPolynomial.eval_X, MvPolynomial.eval_C,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [evP, qP, qr, map_sum, map_mul, map_sub, MvPolynomial.eval_X, MvPolynomial.eval_C,
     Sum.elim_inl, Sum.elim_inr, Complex.ofReal_sum]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun j _ => ?_
   rw [← hz, map_sub, hδ]
@@ -30,7 +35,7 @@ theorem evP_qP (k : Fin n → Fin n → ℂ) : evP (qP (n := n)) k = (qr k : ℂ
 theorem continuous_qr : Continuous (qr (n := n)) := by
 
   unfold qr
-  exact continuous_finset_sum _ fun a _ => continuous_finset_sum _ fun j _ =>
+  exact continuous_finsetSum _ fun a _ => continuous_finsetSum _ fun j _ =>
     ((continuous_apply_apply a j).sub continuous_const).norm.pow 2
 
 theorem qr_nonneg (k : Fin n → Fin n → ℂ) : 0 ≤ qr k := by
@@ -40,19 +45,6 @@ theorem qr_nonneg (k : Fin n → Fin n → ℂ) : 0 ≤ qr k := by
 theorem qr_one : qr (Matrix.of.symm (1 : Matrix (Fin n) (Fin n) ℂ)) = 0 := by
 
   simp [qr]
-
-theorem eq_one_of_qr (k : Fin n → Fin n → ℂ) (h : qr k = 0) : k = Matrix.of.symm (1 : Matrix (Fin n) (Fin n) ℂ) := by
-
-  unfold qr at h
-  funext a j
-  have h1 := (Finset.sum_eq_zero_iff_of_nonneg
-    (fun a _ => Finset.sum_nonneg fun j _ => sq_nonneg _)).1 h a (Finset.mem_univ a)
-  have h2 := (Finset.sum_eq_zero_iff_of_nonneg (fun j _ => sq_nonneg _)).1 h1 j (Finset.mem_univ j)
-  have h3 : k a j = (1 : Matrix (Fin n) (Fin n) ℂ) a j := by
-    have h4 : ‖k a j - (1 : Matrix (Fin n) (Fin n) ℂ) a j‖ = 0 := by
-      rwa [sq_eq_zero_iff] at h2
-    exact sub_eq_zero.1 (norm_eq_zero.1 h4)
-  exact h3
 
 private theorem norm_sub_one_sq_le_qr (k : Fin n → Fin n → ℂ) (a j : Fin n) :
     ‖k a j - (1 : Matrix (Fin n) (Fin n) ℂ) a j‖ ^ 2 ≤ qr k := by
@@ -202,7 +194,7 @@ theorem polyKernel_holds : PolyKernel := by
     have step1 : ∫ k in Uᶜ, ‖((I⁻¹ * g k : ℝ) : ℂ)‖ ∂μ ≤
         ∫ k in {k : Fin n → Fin n → ℂ | qr k < ε}ᶜ, ‖((I⁻¹ * g k : ℝ) : ℂ)‖ ∂μ :=
       setIntegral_mono_set hni.integrableOn (ae_of_all _ fun k => norm_nonneg _)
-        (Set.compl_subset_compl.2 hWU).eventuallyLE
+        (Set.compl_subset_compl.2 hWU).eventuallySubset
     have step2 : ∫ k in {k : Fin n → Fin n → ℂ | qr k < ε}ᶜ, ‖((I⁻¹ * g k : ℝ) : ℂ)‖ ∂μ ≤
         ∫ k in {k : Fin n → Fin n → ℂ | qr k < ε}ᶜ, I⁻¹ * β ^ N ∂μ := by
       refine setIntegral_mono_ae_restrict hni.integrableOn (integrable_const _).integrableOn ?_

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsLocalRingOfIdem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsLocalRingOfIdem
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,9 +105,9 @@ private theorem mulLat_unit_comm (u t : Aˣ) (L : Submodule O A) :
   simp only [_root_.GlobalTheory.UnitLemma.Orbit.mem_mulLat]
   rw [mul_left_comm]
 
+
 open Polynomial in
 variable {K : _root_.GlobalTheory.UnitLemma.UQ} in
-
 theorem _root_.GlobalTheory.UnitLemma.NormClass.N_norm_class : ∀ (K : _root_.GlobalTheory.UnitLemma.UQ) (B : _root_.GlobalTheory.UnitLemma.InvAlg K) (x : B.A) (u : B.Aˣ),
     B.N (x * (u * B.σ (u : B.A))) = B.N x ∧
       K.eta (B.gramDet (x * (u * B.σ (u : B.A)))) = K.eta (B.gramDet x) := by

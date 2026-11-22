@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.RowFormsLemmas
-import Formalism.GL3MeanSquares.HookFormulaTorsion.DoubleCosetDecompositionAll
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.RowFormsLemmas
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.DoubleCosetDecompositionAll
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -83,11 +87,11 @@ end Abstract
 section TwoLevels
 
 variable {X : Fields} {n r : ℕ} {ST SG SG0 : Finset (HeightOneSpectrum (𝓞 X.E))}
-  (C : CoefPk X n (DecoSet X.E n ST SG)) {ι : GLG X.E r SG0 →* GLG X.E n SG} {ΛP ΛK : LevFam X.E X.K n SG}
+  (C : CoefPk X n (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))) {ι : GLG (E := X.E) (n := r) (SG := SG0) →* GLG (E := X.E) (n := n) (SG := SG)} {ΛP ΛK : LevFam X.E X.K n SG}
   {Λ0 : LevFam X.E X.K r SG0}
 
 def rf_subN (ΛP ΛK : LevFam X.E X.K n SG) : Subgroup (FormG ΛP) where
-  carrier := {g | (g.2.1 : GLG X.E n SG) ∈ ΛK.grp}
+  carrier := {g | (g.2.1 : GLG (E := X.E) (n := n) (SG := SG)) ∈ ΛK.grp}
   one_mem' := ΛK.grp.one_mem
   mul_mem' := fun ha hb => ΛK.grp.mul_mem ha hb
   inv_mem' := fun ha => ΛK.grp.inv_mem ha
@@ -99,7 +103,7 @@ def rf_cosetEquiv (H : LevFam.Split ι ΛP ΛK Λ0) (hinj : ∀ a : ↥Λ0.grp, 
     · intro a b hab
       have h1 := QuotientGroup.eq.mp hab
       have h2 : (ι a.1)⁻¹ * ι b.1 ∈ ΛK.grp := h1
-      have h3 : ι ((a⁻¹ * b : ↥Λ0.grp) : GLG X.E r SG0) ∈ ΛK.grp := by
+      have h3 : ι ((a⁻¹ * b : ↥Λ0.grp) : GLG (E := X.E) (n := r) (SG := SG0)) ∈ ΛK.grp := by
         rw [Subgroup.coe_mul, Subgroup.coe_inv, map_mul, map_inv]
         exact h2
       exact (inv_mul_eq_one.mp (hinj _ h3))
@@ -114,8 +118,8 @@ def rf_cosetEquiv (H : LevFam.Split ι ΛP ΛK Λ0) (hinj : ∀ a : ↥Λ0.grp, 
 
 theorem rf_cs_split (H : LevFam.Split ι ΛP ΛK Λ0) (hinj : ∀ a : ↥Λ0.grp, ι a.1 ∈ ΛK.grp → a = 1)
     (hP : (formGSD C ΛP).Ok) (hK : (formGSD C ΛK).Ok) (sP : (formGSD C ΛP).Sec) (sK : (formGSD C ΛK).Sec)
-    (F : DecoSet X.E n ST SG → X.K)
-    (hF : ∀ (γ : UF X.E n) (h : ↥ΛP.grp) (d : DecoSet X.E n ST SG), F ((γ, (h.1 : GLG X.E n SG)) • d) = F d) :
+    (F : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG) → X.K)
+    (hF : ∀ (γ : UF X.E n) (h : ↥ΛP.grp) (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)), F ((γ, (h.1 : GLG (E := X.E) (n := n) (SG := SG))) • d) = F d) :
     (formGSD C ΛK).csOf hK sK F = (Nat.card ↥Λ0.grp : X.K) * (formGSD C ΛP).csOf hP sP F := by
   classical
   let _ := hP.fintypeCl
@@ -127,13 +131,13 @@ theorem rf_cs_split (H : LevFam.Split ι ΛP ΛK Λ0) (hinj : ∀ a : ↥Λ0.grp
 
   let up : FormG ΛK → ↥(rf_subN ΛP ΛK) := fun g => ⟨(g.1, ⟨g.2.1, (H.sub g.2).1⟩), g.2.2⟩
   let dn : ↥(rf_subN ΛP ΛK) → FormG ΛK := fun g => (g.1.1, ⟨g.1.2.1, g.2⟩)
-  have hstab : ∀ d : DecoSet X.E n ST SG,
+  have hstab : ∀ d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG),
       MulAction.stabilizer (FormG ΛK) d ≃ MulAction.stabilizer ↥(rf_subN ΛP ΛK) d := fun d =>
     { toFun := fun g => ⟨up g.1, g.2⟩
       invFun := fun g => ⟨dn g.1, g.2⟩
       left_inv := fun _ => rfl
       right_inv := fun _ => rfl }
-  have key := rf_cs_subgroup (Γ := FormG ΛP) (D := DecoSet X.E n ST SG) (M := X.K) (rf_subN ΛP ΛK) F
+  have key := rf_cs_subgroup (Γ := FormG ΛP) (D := DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) (M := X.K) (rf_subN ΛP ΛK) F
     (fun g d => hF g.1 g.2 d) hP.fin_stab (Finset.univ.image sP.rep) (Finset.univ.image sK.rep)
     (by
       intro a
@@ -162,7 +166,7 @@ theorem rf_cs_split (H : LevFam.Split ι ΛP ΛK Λ0) (hinj : ∀ a : ↥Λ0.grp
   · rw [(formGSD C ΛP).wt_eq, Rat.smul_def, Rat.cast_inv, Rat.cast_natCast, smul_eq_mul]
 
 theorem rf_ip_split (H : LevFam.Split ι ΛP ΛK Λ0) (hinj : ∀ a : ↥Λ0.grp, ι a.1 ∈ ΛK.grp → a = 1)
-    (hP : (formGSD C ΛP).Ok) (hK : (formGSD C ΛK).Ok) (φ ψ : DecoSet X.E n ST SG → C.V)
+    (hP : (formGSD C ΛP).Ok) (hK : (formGSD C ΛK).Ok) (φ ψ : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG) → C.V)
     (hφ : φ ∈ (formGSD C ΛP).EqFun) (hψ : ψ ∈ (formGSD C ΛP).EqFun) :
     (formGSD C ΛP).ip hP φ ψ = ((Nat.card ↥Λ0.grp : X.K))⁻¹ * (formGSD C ΛK).ip hK φ ψ := by
   have h0 : (Nat.card ↥Λ0.grp : X.K) ≠ 0 := Nat.cast_ne_zero.mpr Nat.card_pos.ne'
@@ -170,9 +174,9 @@ theorem rf_ip_split (H : LevFam.Split ι ΛP ΛK Λ0) (hinj : ∀ a : ↥Λ0.grp
     (fun γ h d => by
       have e1 := hφ ((γ, h) : FormG ΛP) d
       have e2 := hψ ((γ, h) : FormG ΛP) d
-      show C.pair (φ ((γ, (h.1 : GLG X.E n SG)) • d)) (ψ ((γ, (h.1 : GLG X.E n SG)) • d)) = _
-      have e1' : φ ((γ, (h.1 : GLG X.E n SG)) • d) = (formGSD C ΛP).ρ ((γ, h) : FormG ΛP) (φ d) := e1
-      have e2' : ψ ((γ, (h.1 : GLG X.E n SG)) • d) = (formGSD C ΛP).ρ ((γ, h) : FormG ΛP) (ψ d) := e2
+      show C.pair (φ ((γ, (h.1 : GLG (E := X.E) (n := n) (SG := SG))) • d)) (ψ ((γ, (h.1 : GLG (E := X.E) (n := n) (SG := SG))) • d)) = _
+      have e1' : φ ((γ, (h.1 : GLG (E := X.E) (n := n) (SG := SG))) • d) = (formGSD C ΛP).ρ ((γ, h) : FormG ΛP) (φ d) := e1
+      have e2' : ψ ((γ, (h.1 : GLG (E := X.E) (n := n) (SG := SG))) • d) = (formGSD C ΛP).ρ ((γ, h) : FormG ΛP) (ψ d) := e2
       rw [e1', e2']
       exact hP.inv _ _ _)
   show (formGSD C ΛP).csOf hP (formGSD C ΛP).outSec (fun d => C.pair (φ d) (ψ d)) =
@@ -206,41 +210,31 @@ theorem rf_g0Hat_injX (a : G0 X.E Pr.vGs R.r) (ha : unipotentGroupBlockEmbedding
     exact h1
   exact rf_diagEmb_mem_HK _ _ _ h3
 
-theorem rf_g0Hat_injV (j : ℕ) (a : G0 X.E Pr.vGs R.r) (ha : unipotentGroupBlockEmbedding Pr sel mu (r_le_nV R) a ∈ (mtTyKK Ch sel mu j).grp) :
-    a = 1 := by
-  funext w
-  have h1 : unipotentGroupBlockEmbedding Pr sel mu (r_le_nV R) a (inlSG w) ∈ (((mtTyK Ch j).glue
-      (mtTyQ R (mu : Chr X.F X.E X.K) (QE sel (mu : Chr X.F X.E X.K)))) (inlSG w)).H :=
-    (mtTyKK Ch sel mu j).mem_at ⟨_, ha⟩ (inlSG w)
-  rw [LevFam.glue_of_mem _ _ (inlSG w) w.2] at h1
-  have h2 : unipotentGroupBlockEmbedding Pr sel mu (r_le_nV R) a (inlSG w) = diagEmb _ (r_le_nV R) (a w) := extGLG_of_mem _ (inlSG w) w.2
-  have h3 : diagEmb _ (r_le_nV R) (a w) ∈ HK R.nV (𝓞 X.E ⧸ w.1.asIdeal) R.r [R.t] := by
-    rw [← h2]
-    exact h1
-  exact rf_diagEmb_mem_HK _ _ _ h3
-
 theorem levelSumX (h : (mtildeGSD W Ch sel mu P).Ok) (h' : (mtildeKGSD W Ch sel mu).Ok)
-    (φ ψ : DecoSet X.E (R.N R.m - 1) ∅ (rowSG Pr sel mu) → VV X.K W.sgTrue)
+    (φ ψ : DecoSet (E := X.E) (n := R.N R.m - 1) (ST := ∅) (SG := rowSG Pr sel mu) → VV X.K W.sgTrue)
     (hφ : φ ∈ (mtildeGSD W Ch sel mu P).EqFun) (hψ : ψ ∈ (mtildeGSD W Ch sel mu P).EqFun) :
     (mtildeGSD W Ch sel mu P).ip h φ ψ = ((Nat.card P.grp : X.K))⁻¹ * (mtildeKGSD W Ch sel mu).ip h' φ ψ := by
-  exact rf_ip_split (rowVal W (rowSG Pr sel mu)) (rowTy_split Ch sel mu P).inv
-    (fun a ha => Subtype.ext (rf_g0Hat_injX Ch sel mu a.1 ha)) h h' φ ψ hφ hψ
-
-theorem levelSumV (j : ℕ) (h : (mtGSD W Ch sel mu P j).Ok) (h' : (mtKGSD W Ch sel mu j).Ok)
-    (φ ψ : DecoSet X.E R.nV ∅ (rowSG Pr sel mu) → VV X.K (W.lamV j))
-    (hφ : φ ∈ (mtGSD W Ch sel mu P j).EqFun) (hψ : ψ ∈ (mtGSD W Ch sel mu P j).EqFun) :
-    (mtGSD W Ch sel mu P j).ip h φ ψ = ((Nat.card P.grp : X.K))⁻¹ * (mtKGSD W Ch sel mu j).ip h' φ ψ := by
-  exact rf_ip_split (mtVal W j (rowSG Pr sel mu)) (mtTy_split Ch sel mu P j).inv
-    (fun a ha => Subtype.ext (rf_g0Hat_injV Ch sel mu j a.1 ha)) h h' φ ψ hφ hψ
-
-theorem levelCsX (h : (mtildeGSD W Ch sel mu P).Ok) (h' : (mtildeKGSD W Ch sel mu).Ok)
-    (F : DecoSet X.E (R.N R.m - 1) ∅ (rowSG Pr sel mu) → X.K)
-    (hF : ∀ (g : (mtildeGSD W Ch sel mu P).G) (d : (mtildeGSD W Ch sel mu P).D), F (g • d) = F d) :
-    (mtildeKGSD W Ch sel mu).csOf h' (mtildeKGSD W Ch sel mu).outSec F =
-      (Nat.card P.grp : X.K) * (mtildeGSD W Ch sel mu P).csOf h (mtildeGSD W Ch sel mu P).outSec F := by
-  exact rf_cs_split (rowVal W (rowSG Pr sel mu)) (rowTy_split Ch sel mu P).inv
-    (fun a ha => Subtype.ext (rf_g0Hat_injX Ch sel mu a.1 ha)) h h' _ _ F
-    (fun γ k d => hF (γ, k) d)
+  let ΛP := rowTy Ch sel mu P
+  let ΛK := rowTyKK Ch sel mu
+  let ι := unipotentGroupBlockEmbedding Pr sel mu (r_le_X' R)
+  have H : LevFam.Split ι ΛP ΛK P := rowTy_split Ch sel mu P
+  have Hinv : LevFam.Split ι ΛP.inv ΛK.inv P.inv :=
+    { fac := by
+        intro g
+        obtain ⟨a, k, hfac, hchr⟩ := H.fac ⟨g.1, g.2⟩
+        refine ⟨⟨a.1, a.2⟩, ⟨k.1, k.2⟩, hfac, ?_⟩
+        rw [ΛP.inv_chr ⟨g.1, g.2⟩, P.inv_chr a, ΛK.inv_chr k, hchr, mul_inv]
+      emb := by
+        intro a
+        obtain ⟨hm, hchr⟩ := H.emb ⟨a.1, a.2⟩
+        exact ⟨hm, by rw [ΛP.inv_chr ⟨_, hm⟩, P.inv_chr ⟨a.1, a.2⟩, hchr]⟩
+      sub := by
+        intro k
+        obtain ⟨hm, hchr⟩ := H.sub ⟨k.1, k.2⟩
+        exact ⟨hm, by rw [ΛP.inv_chr ⟨_, hm⟩, ΛK.inv_chr ⟨k.1, k.2⟩, hchr]⟩ }
+  have hinj : ∀ a : ↥P.inv.grp, ι a.1 ∈ ΛK.inv.grp → a = 1 := fun a ha =>
+    Subtype.ext (rf_g0Hat_injX Ch sel mu a.1 ha)
+  exact rf_ip_split (rowVal W (rowSG Pr sel mu)) Hinv hinj h h' φ ψ hφ hψ
 
 end Rows
 

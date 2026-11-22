@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementG
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsIsHomogeneousOfEquivariant
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementG
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsIsHomogeneousOfEquivariant
+
+@[expose] public section
 
 set_option autoImplicit false
 

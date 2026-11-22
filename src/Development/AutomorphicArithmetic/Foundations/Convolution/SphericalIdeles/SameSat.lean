@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SphConj
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.LiftAll
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SmoEq
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.PowSat
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PowTwist
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.CarryLift
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.FamParts
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.CoreLift
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExTwist
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SSatIff
-import Development.AutomorphicArithmetic.Foundations.Convolution.NormCharacterPowers.NormCharPowHolds
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SphConj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.LiftAll
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SmoEq
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.PowSat
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PowTwist
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.CarryLift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.FamParts
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.CoreLift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExTwist
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SSatIff
+public import Development.AutomorphicArithmetic.Foundations.Convolution.NormCharacterPowers.NormCharPowHolds
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction
@@ -20,14 +24,15 @@ open UpperTheory.V.Published UpperTheory.CBC PositivityTheory.RgJS
 section SlopeTestRemainingChoices
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-  [IsTotallyComplex F] [IsTotallyComplex E] {n : ℕ}
+  [_root_.NumberField.IsTotallyComplex F] [_root_.NumberField.IsTotallyComplex E] {n : ℕ}
 
 private theorem bc_tw {χ : HChar F} {χ' : HChar E} {s : ℂ} (h : IsPow χ s) (h' : IsPow χ' s)
     (π : CuspSub F n) (P : CuspSub E n) (H : WeakBC (Cusp.cx π).sat (Cusp.cx P).sat) :
     WeakBC (Cusp.cx (π.twist χ)).sat (Cusp.cx (P.twist χ')).sat := by
   refine Filter.Eventually.mono H fun w hw f hf => ?_
   obtain ⟨B, hB, hB'⟩ := hw f hf
-  have hf' : Ideal.absNorm w.asIdeal = Ideal.absNorm (w.under (𝓞 F)).asIdeal ^ f := hf
+  have hf' : Ideal.absNorm w.asIdeal = Ideal.absNorm (w.under (𝓞 F)).asIdeal ^ f := by
+    simpa only [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply] using hf
   have hv : χ'.val w = χ.val (w.under (𝓞 F)) ^ f := by
     apply Units.ext
     rw [Units.val_pow_eq_pow_val, (Sph.powSat F χ s h _).2, (Sph.powSat E χ' s h' w).2, hf', Nat.cast_pow,
@@ -46,8 +51,10 @@ private theorem same_sat [IsGalois F E] (hp : (Module.finrank F E).Prime) (π : 
     ∀ᶠ w : Pl E in cofinite, ∃ B, sat w B ∧ sat' w B := by
   have hN := (places F E hp).2.2.2.2.1
   filter_upwards [H, H'] with w a b
-  obtain ⟨B, hB, hB'⟩ := a _ (hN w)
-  obtain ⟨C, hC, hC'⟩ := b _ (hN w)
+  have hn : normV w = normV (w.under (𝓞 F)) ^ resDeg F w := by
+    simpa only [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply] using hN w
+  obtain ⟨B, hB, hB'⟩ := a _ hn
+  obtain ⟨C, hC, hC'⟩ := b _ hn
   obtain rfl := hB.unique hC
   exact ⟨_, hB', hC'⟩
 

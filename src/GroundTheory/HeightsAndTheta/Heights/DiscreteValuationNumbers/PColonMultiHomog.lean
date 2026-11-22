@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -18,24 +23,24 @@ theorem component_mul_multiHomog {R : Type*} [CommRing R] {K : Type} [DecidableE
     rw [coeff_weightedHomogeneousComponent]
     split_ifs with hx1
     · rfl
-    · by_cases h2 : coeff x.2 f = 0
+    · by_cases h2 : AddMonoidAlgebra.coeff f x.2 = 0
       · rw [h2, mul_zero, mul_zero]
       · exfalso
         apply hx1
         have hw := hf h2
         rw [Finset.HasAntidiagonal.mem_antidiagonal] at hx
-        rw [← hx, map_add, hw] at hd
+        rw [← hx, map_add (f := _), hw] at hd
         exact add_right_cancel hd
   · refine Finset.sum_eq_zero fun x hx => ?_
     rw [coeff_weightedHomogeneousComponent]
     split_ifs with hx1
-    · by_cases h2 : coeff x.2 f = 0
+    · by_cases h2 : AddMonoidAlgebra.coeff f x.2 = 0
       · rw [h2, mul_zero]
       · exfalso
         apply hd
         have hw := hf h2
         rw [Finset.HasAntidiagonal.mem_antidiagonal] at hx
-        rw [← hx, map_add, hw, hx1]
+        rw [← hx, map_add (f := _), hw, hx1]
     · rw [zero_mul]
 
 theorem ColonMultiHomog.proof : ColonMultiHomog.Statement := by

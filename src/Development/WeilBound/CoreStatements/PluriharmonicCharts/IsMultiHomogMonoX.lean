@@ -1,8 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.IsBlockMapInitialVertex
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PDiagDiv
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PDiagOrd
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PDiagOrdOne
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.IsBlockMapInitialVertex
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PDiagDiv
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PDiagOrd
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PDiagOrdOne
+
+@[expose] public section
+
 open MvPolynomial Matrix ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped Classical
 
@@ -29,7 +34,7 @@ theorem div_eq_of_local {P Δ : Ideal (MRing ι)} (hPp : P.IsPrime) (hΔp : Δ.I
   have hP : h ∉ P := fun hh => hhΔ (hPΔ hh)
   have hone : multAt (P ⊔ Ideal.span {g}) Δ = 1 := by
     unfold multAt
-    rw [dif_pos hΔp, DiagonalOrderOne.length_eq_one_of_sat _ Δ
+    rw [dite_eq_left hΔp, DiagonalOrderOne.length_eq_one_of_sat _ Δ
       (sup_le hPΔ ((Ideal.span_singleton_le_iff_mem _).2 hgΔ)) hsat]
     rfl
   have hJΔ : P ⊔ Ideal.span {g * h} ≤ Δ :=
@@ -49,7 +54,8 @@ theorem div_eq_of_local {P Δ : Ideal (MRing ι)} (hPp : P.IsPrime) (hΔp : Δ.I
       exact Q.sub_mem (Q.mul_mem_left u hgQ) (hPQ hm)
     rcases hQ.1.mem_or_mem hvh with h1 | h1
     exacts [hvQ h1, hhQ h1]
-  ext W
+  apply Finsupp.ext
+  intro W
   have hcg := DiagonalDivisor.divCycle_eq_ite (s := g) hP W
   have hch := DiagonalDivisor.divCycle_eq_ite (s := h) hgP W
   rw [mul_comm h g] at hch
@@ -142,7 +148,7 @@ theorem congr_aeval {σ : Type} (O : Subring Φ) (a b : σ → Φ) (V : Φ) (ha 
     obtain ⟨h1, ρ, h2, h3⟩ := hf
     obtain ⟨h1', ρ', h2', h3'⟩ := hg
     exact ⟨by rw [map_add]; exact add_mem h1 h1', ρ + ρ', add_mem h2 h2', by
-      rw [map_add, map_add]; linear_combination h3 + h3'⟩
+      rw [map_add (f := _), map_add (f := _)]; linear_combination h3 + h3'⟩
   | mul_X f q hf =>
     obtain ⟨h1, ρ, h2, h3⟩ := hf
     obtain ⟨ρ', h2', h3'⟩ := hab q
@@ -188,7 +194,8 @@ end PenFrame
 theorem pen_lin (μ : ι k₀ → Φ) (A : ι k₀ → Φ) (t : RatFunc Φ) :
     ∑ m, algebraMap Φ (RatFunc Φ) (μ m) * penCo y k₀ A B t ⟨none, m⟩ =
       algebraMap Φ (RatFunc Φ) (∑ m, μ m * A m) + t * algebraMap Φ (RatFunc Φ) (∑ m, μ m * B m) := by
-  simp only [penCo, mul_add, Finset.sum_add_distrib, mul_left_comm _ t, ← Finset.mul_sum, ← map_mul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [penCo, mul_add, Finset.sum_add_distrib, mul_left_comm _ t, ← Finset.mul_sum, ← map_mul, ← map_sum]
 
 theorem local_data {z : (Σ o : Option K, ι (o.getD k₀)) → L}
     (hz : IsPt (penCo y k₀ (fun m => y ⟨k₀, m⟩) B RatFunc.X) z) {c : ∀ o, iW ι k₀ o} (hc : ∀ o, z ⟨o, c o⟩ ≠ 0)
@@ -238,7 +245,7 @@ theorem local_data {z : (Σ o : Option K, ι (o.getD k₀)) → L}
     rwa [Fr.p_eq, show Fr.ε * y ⟨k₀, m⟩ * (Fr.ε⁻¹ / y ⟨k₀, c (some k₀)⟩) = y ⟨k₀, m⟩ / y ⟨k₀, c (some k₀)⟩ by
       field_simp] at this
   · rw [Fr.p_eq, Fr.r_eq, show w ⟨none, m⟩ = φ (y ⟨k₀, m⟩) + RatFunc.X * φ (B m) from rfl]
-    simp only [map_mul, map_add, map_neg, map_inv₀, map_zero]
+    simp only [map_mul, map_add (f := _), map_neg, map_inv₀, map_zero]
     change _ = φ _ * φ _ * _ + (φ _ * φ _ + φ _ * φ _) * _
     field_simp
     ring

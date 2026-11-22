@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.BesselNonvanishingReduction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselDecayBounds.DecayZeroRight.NormDec
+module
+
+public import Formalism.HermitianCurvature.BesselNonvanishingReduction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselDecayBounds.DecayZeroRight.NormDec
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped InnerProductSpace

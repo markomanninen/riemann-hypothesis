@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.FourierWhittaker (whittaker)
@@ -12,59 +16,49 @@ section SlopeTestRemainingChoices
 
 variable {E : Type} [Field E] [NumberField E] {n : ℕ}
 
-private theorem wl_nice_zero : Nice (0 : GA E n → ℂ) where
-  cont := continuous_zero
-  bdd := ⟨0, fun g => by simp⟩
-  left := fun _ _ => rfl
-  cusp := fun _ _ _ g => constantTerm_zero g
-  level := ⟨⊤, fun _ _ _ => rfl⟩
+private theorem wl_nice_zero : Nice (0 : GA E n → ℂ) := by
+  exact ⟨continuous_zero, ⟨0, fun _ => by simp⟩, fun _ _ => rfl,
+    fun _ _ _ g => constantTerm_zero g, ⟨⊤, fun _ _ _ => rfl⟩⟩
 
-private theorem wl_nice_add {f f' : GA E n → ℂ} (h : Nice f) (h' : Nice f') : Nice (f + f') where
-  cont := h.cont.add h'.cont
-  bdd := by
-    obtain ⟨C, hC⟩ := h.bdd
+private theorem wl_nice_add {f f' : GA E n → ℂ} (h : Nice f) (h' : Nice f') : Nice (f + f') := by
+  refine ⟨h.cont.add h'.cont, ?_, IsLeftInvariant.add h.left h'.left, ?_, ?_⟩
+  · obtain ⟨C, hC⟩ := h.bdd
     obtain ⟨C', hC'⟩ := h'.bdd
     exact ⟨C + C', fun g => (norm_add_le _ _).trans (add_le_add (hC g) (hC' g))⟩
-  left := IsLeftInvariant.add h.left h'.left
-  cusp := fun r a b g => by
+  · intro r a b g
     have e := constantTerm_add (r := r) h.cont h'.cont g
     rw [h.cusp r a b g, h'.cusp r a b g, add_zero] at e
     exact e
-  level := by
-    obtain ⟨V, hV⟩ := h.level
+  · obtain ⟨V, hV⟩ := h.level
     obtain ⟨V', hV'⟩ := h'.level
     refine ⟨V ⊓ V', fun g v hv => ?_⟩
     rw [OpenSubgroup.mem_inf] at hv
     rw [Pi.add_apply, Pi.add_apply, hV g v hv.1, hV' g v hv.2]
 
-private theorem wl_nice_smul {f : GA E n → ℂ} (h : Nice f) (z : ℂ) : Nice (z • f) where
-  cont := h.cont.const_smul z
-  bdd := by
-    obtain ⟨C, hC⟩ := h.bdd
+private theorem wl_nice_smul {f : GA E n → ℂ} (h : Nice f) (z : ℂ) : Nice (z • f) := by
+  refine ⟨h.cont.const_smul z, ?_, IsLeftInvariant.smul z h.left, ?_, ?_⟩
+  · obtain ⟨C, hC⟩ := h.bdd
     refine ⟨‖z‖ * C, fun g => ?_⟩
     rw [Pi.smul_apply, norm_smul]
     exact mul_le_mul_of_nonneg_left (hC g) (norm_nonneg _)
-  left := IsLeftInvariant.smul z h.left
-  cusp := fun r a b g => by
+  · intro r a b g
     have e := constantTerm_smul (r := r) z f g
     rw [h.cusp r a b g, smul_zero] at e
     exact e
-  level := by
-    obtain ⟨V, hV⟩ := h.level
+  · obtain ⟨V, hV⟩ := h.level
     exact ⟨V, fun g v hv => by rw [Pi.smul_apply, Pi.smul_apply, hV g v hv]⟩
 
 private theorem wl_nice_tr {f : GA E n → ℂ} (h : Nice f) (x : GL (Fin n) (Af E)) :
-    Nice (fun g => f (g * finGL E n x)) where
-  cont := h.cont.comp (continuous_id.mul continuous_const)
-  bdd := h.bdd.imp fun _ hC _ => hC _
-  left := fun γ g => by
+    Nice (fun g => f (g * finGL E n x)) := by
+  refine ⟨h.cont.comp (continuous_id.mul continuous_const),
+    h.bdd.imp (fun _ hC _ => hC _), ?_, ?_, ?_⟩
+  · intro γ g
     have e := h.left γ (g * finGL E n x)
     rw [← mul_assoc] at e
     exact e
-  cusp := fun r a b g =>
-    (constantTerm_rightTranslate (r := r) f (finGL E n x) g).trans (h.cusp r a b _)
-  level := by
-    obtain ⟨V, hV⟩ := h.level
+  · intro r a b g
+    exact (constantTerm_rightTranslate (r := r) f (finGL E n x) g).trans (h.cusp r a b _)
+  · obtain ⟨V, hV⟩ := h.level
     refine ⟨V.comap (MulAut.conj x⁻¹).toMonoidHom ?_, fun g v hv => ?_⟩
     · show Continuous fun v => x⁻¹ * v * x⁻¹⁻¹
       exact (continuous_const.mul continuous_id).mul continuous_const

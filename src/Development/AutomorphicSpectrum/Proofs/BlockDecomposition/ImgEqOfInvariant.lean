@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.NonEllFlag
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.CharpolyBlockAndInvariantUnderStabilizerNilradic
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwCentPreservesFlag
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AevalIntertwining
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.NonEllFlag
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.CharpolyBlockAndInvariantUnderStabilizerNilradic
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwCentPreservesFlag
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AevalIntertwining
+
+@[expose] public section
 
 open Polynomial Matrix PositivityTheory.Rg.BcB
 
@@ -224,7 +228,7 @@ theorem invariant_eq_ker [FiniteDimensional K V] (f : Module.End K V) (hs : Squa
       exact (Submodule.Quotient.mk_eq_zero W).1 h1.symm
     have h2 : v = aeval f w (aeval f b v) := by
       have h3 := congrArg (fun p => aeval f p v) huw
-      simp only [map_add, map_mul, map_one, LinearMap.add_apply, Module.End.mul_apply, Module.End.one_apply] at h3
+      simp only [map_add (f := _), map_mul, map_one, LinearMap.add_apply, Module.End.mul_apply, Module.End.one_apply] at h3
       rw [LinearMap.mem_ker.1 hv, map_zero, zero_add] at h3
       exact h3.symm
     rw [h2]

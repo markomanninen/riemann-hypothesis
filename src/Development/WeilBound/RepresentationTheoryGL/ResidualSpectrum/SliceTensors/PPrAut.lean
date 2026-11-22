@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.TwistedSlicesSquareIntegrable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AutomorphicFormDerivativeModerateGrowth
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.TwistedSlicesSquareIntegrable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AutomorphicFormDerivativeModerateGrowth
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,7 +12,7 @@ open NumberField GlobalTheory.CuspRep GlobalTheory.CuspStab
 
 namespace PositivityTheory.Rg.Rs.PrAut
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {N : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {N : ℕ}
 
 theorem isAutForm_act (hF : GlobalTheory.Published.AutomorphicFormsFiniteGL) (o : Op E N) {φ : Sm E N} (h : IsAutForm φ) :
     IsAutForm (act o φ) := by

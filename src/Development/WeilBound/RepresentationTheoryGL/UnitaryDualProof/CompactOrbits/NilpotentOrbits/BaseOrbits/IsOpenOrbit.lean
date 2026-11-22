@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.BaseOrbits.IsOpenCball1
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.BaseOrbits.PieceMem
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.BaseOrbits.IsOpenCball1
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.BaseOrbits.PieceMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,12 +57,13 @@ theorem orbit_nhds (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) (hZ : CR Z) (h0
     have hrep : ∀ v : Fin n → k, ψ v = ∑ i, v i • ψ (fun j => if i = j then 1 else 0) := by
       intro v
       conv_lhs => rw [pi_eq_sum_univ v]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [map_smul]
     have hfun : (ψ : (Fin n → k) → Matrix (Fin n) (Fin n) k) =
         fun v => ∑ i, v i • ψ (fun j => if i = j then 1 else 0) := funext hrep
     rw [hfun]
-    exact continuous_finset_sum _ (fun i _ => (continuous_apply i).smul continuous_const)
+    exact continuous_finsetSum _ (fun i _ => (continuous_apply i).smul continuous_const)
   let Φ : Wt e → Matrix (Fin n) (Fin n) k := fun w' => 1 + ψ (w'.1 - w.1)
   have hΦ : Continuous Φ :=
     continuous_const.add (hψc.comp (continuous_subtype_val.sub continuous_const))
@@ -117,7 +122,8 @@ theorem unif (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) (e : Matrix (Fin n) (
     refine hcs.eventually_forall_of_forall_eventually (fun p _ => ?_)
     have hS : IsOpen {x | f x = f p} := hlc.isOpen_fiber _
     have hι : Topology.IsInducing (Prod.map id Subtype.val : Y × Wt e → Y × (Fin n → k)) :=
-      Topology.IsInducing.id.prodMap Topology.IsInducing.subtypeVal
+      Topology.IsInducing.id.prodMap
+        (Topology.IsInducing.subtypeVal (t := {w : Fin n → k | e *ᵥ w = w}))
     obtain ⟨t, ht, hte⟩ := hι.isOpen_iff.mp hS
     have hH : Continuous (fun z : Matrix (Fin n) (Fin n) k × (Y × Wt e) => (z.2.1, z.1 *ᵥ z.2.2.1)) :=
       continuous_snd.fst.prodMk (continuous_fst.matrix_mulVec (continuous_subtype_val.comp continuous_snd.snd))

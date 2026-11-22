@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.Desc
 
@@ -60,7 +64,7 @@ theorem exists_pow_mul_mem_of_finiteType_away {R C : Type} [CommRing R] [CommRin
       obtain ⟨k, d, hd, e'⟩ := hz
       refine ⟨n + k, b * x ^ k + d * x ^ n,
         add_mem (mul_mem hb (pow_mem hxB _)) (mul_mem hd (pow_mem hxB _)), ?_⟩
-      rw [map_add, map_mul, map_mul, map_pow, map_pow, ← e, ← e']
+      rw [map_add (f := _), map_mul, map_mul, map_pow, map_pow, ← e, ← e']
       ring
     | mul y z _ _ hy hz =>
       obtain ⟨n, b, hb, e⟩ := hy
@@ -106,7 +110,7 @@ theorem exists_smul_mem_of_finiteType_tensor {R C : Type} [CommRing R] [CommRing
       obtain ⟨k, hk, d, hd, e'⟩ := hz
       refine ⟨n * k, mul_mem hn hk, k • b + n • d,
         add_mem (B.smul_mem hb _) (B.smul_mem hd _), ?_⟩
-      rw [map_add, map_smul, map_smul, ← e, ← e', smul_add, smul_smul, smul_smul, mul_comm k n]
+      rw [map_add (f := _), map_smul, map_smul, ← e, ← e', smul_add, smul_smul, smul_smul, mul_comm k n]
     | mul y z _ _ hy hz =>
       obtain ⟨n, hn, b, hb, e⟩ := hy
       obtain ⟨k, hk, d, hd, e'⟩ := hz

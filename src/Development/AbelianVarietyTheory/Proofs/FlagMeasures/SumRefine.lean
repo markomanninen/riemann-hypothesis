@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Cint
+module
+
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Cint
+
+@[expose] public section
 
 namespace GlobalTheory.SumRefinement
 

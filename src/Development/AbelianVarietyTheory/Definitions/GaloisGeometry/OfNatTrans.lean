@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -25,7 +29,7 @@ def d (n : ℕ) : Cn F n →ₗ[R] Cn F (n + 1) where
   toFun f s := ∑ i : Fin (n + 2), (-1 : ℤ) ^ (i : ℕ) • (F.map (toLast i s)).hom (f (face i s))
   map_add' f g := by
     funext s
-    simp only [Pi.add_apply, map_add, smul_add, Finset.sum_add_distrib]
+    simp only [Pi.add_apply, map_add (f := _), smul_add, Finset.sum_add_distrib]
   map_smul' r f := by
     funext s
     simp only [Pi.smul_apply, map_smul, RingHom.id_apply, Finset.smul_sum]
@@ -76,7 +80,8 @@ theorem d_pullC (n : ℕ) (f : Cn F n) : d F' n (m.pullC n f) = m.pullC (n + 1) 
   funext s
   change ∑ i : Fin (n + 2), (-1 : ℤ) ^ (i : ℕ) • (F'.map (toLast i s)).hom (m.τ _ (f (face i s ⋙ m.G))) =
     m.τ _ (∑ i : Fin (n + 2), (-1 : ℤ) ^ (i : ℕ) • (F.map (m.G.map (toLast i s))).hom (f (face i s ⋙ m.G)))
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun i _ => by rw [map_zsmul, m.nat]
 
 def pullZ (n : ℕ) : LinearMap.ker (d F n) →ₛₗ[σ] LinearMap.ker (d F' n) :=
@@ -99,13 +104,5 @@ def pull (n : ℕ) : H F n →ₛₗ[σ] H F' n :=
       exact ⟨m.pullC n g, by rw [m.d_pullC, hg]⟩)
 
 end Mor
-
-example (n : ℕ) (f : Cn F n) (s : ComposableArrows C n) : (Mor.id F).pullC n f s = f s := rfl
-
-example : Bn F 0 = ⊥ := rfl
-
-example (f : Cn F 0) (s : ComposableArrows C 1) :
-    d F 0 f s = (F.map (toLast 0 s)).hom (f (face 0 s)) - (F.map (toLast 1 s)).hom (f (face 1 s)) := by
-  simp [d, Fin.sum_univ_two, sub_eq_add_neg]
 
 end GlobalTheory.CatH

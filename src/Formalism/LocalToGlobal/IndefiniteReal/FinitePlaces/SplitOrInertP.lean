@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SplitInt
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SbHalfHalfInd
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SplitInt
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SbHalfHalfInd
+
+@[expose] public section
 
 noncomputable section
 

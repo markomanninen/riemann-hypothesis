@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.LocUnr
-import Development.WeilBound.ThetaLifts.LatticeBasics.LocUnrInertA
-import Development.WeilBound.ThetaLifts.LatticeBasics.LocUnrInertN
-import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedCohomology.ExistsSelfDual
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOne
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.LocUnr
+public import Development.WeilBound.ThetaLifts.LatticeBasics.LocUnrInertA
+public import Development.WeilBound.ThetaLifts.LatticeBasics.LocUnrInertN
+public import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedCohomology.ExistsSelfDual
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,7 +86,7 @@ theorem abs_at (hσ : IsCMExt F E σ) (hw : IsInertAt F E v w) {h : w.under (�
   have e' : toCompl h u.1 = y := e
   have h0 : Valued.v y.1 ≠ 0 := (map_ne_zero _).2 y.ne_zero
   have h1 : Valued.v y.1 = WithZero.exp (-ordL y.1) := by
-    rw [ordL, dif_neg h0, neg_neg]; exact (WithZero.coe_unzero h0).symm
+    rw [ordL, dite_eq_right h0, neg_neg]; exact (WithZero.coe_unzero h0).symm
   have n0 : Algebra.norm (Fv F v) u.1 ≠ 0 := (u.isUnit.map _).ne_zero
   have h2 : Valued.v (Algebra.norm (Fv F v) u.1) = WithZero.exp (-(2 * ordL y.1)) := by
     have h3 := congrArg (toCompl h) (GlobalTheory.Doubling.algebraMap_norm_eq hσ u.1)
@@ -103,8 +107,54 @@ theorem frame {B : Base F E} {r s : ℕ} (hσ : IsCMExt F E σ) (hY : Y.IsHerm �
     {c : w.adicCompletion E →+* w.adicCompletion E} (hc : IsConjAt σ h c) :
     ∃ a, IsFrameAt w Y.L a ∧ cT c a.1 * ((incM F Y.J).map (piE h))ᵀ * a.1 = antiJ _ n := by
   have hd : ((1 : E) • Y.Jᵀ).det ≠ 0 := by rw [one_smul, Matrix.det_transpose]; exact (Vac.herm_det hY).ne_zero
-  obtain ⟨a, h1, h2⟩ := exists_frame_antiJ hσ (J := (1 : E) • Y.Jᵀ) ⟨fun i j => by simp [hY.herm], hd⟩ hY.lat.fg hY.lat.span_eq_top hw hc
-    (PositivityTheory.ThKG.Loc.Iwa.selfDual_of hd hY.lat (fun y hy x hx => SelfDual.inclR_mem_intLoc v (by
+  have hspan : Submodule.span E (Y.L : Set (Fin n → E)) = ⊤ := by
+    by_contra hne
+    obtain ⟨f, hf0, hf⟩ := Submodule.exists_le_ker_of_lt_top _ (lt_top_iff_ne_top.mpr hne)
+    let a : Fin n → E := fun i => σ (f (Pi.single i 1))
+    let u : Fin n → E := a ᵥ* Y.J⁻¹
+    have hu : u ᵥ* Y.J = a := by
+      simp [u, Matrix.vecMul_vecMul, Matrix.nonsing_inv_mul _ (Vac.herm_det hY)]
+    have hform (x : Fin n → E) : form σ Y.J u x = σ (f x) := by
+      rw [Vac.form_eq, hu, LinearMap.pi_apply_eq_sum_univ f x, map_sum]
+      refine Finset.sum_congr rfl fun k _ => ?_
+      rw [smul_eq_mul, map_mul, mul_comm]
+      have he : (fun j => if k = j then (1 : E) else 0) = Pi.single k 1 := funext fun j => by
+        rw [Pi.single_apply]; exact if_congr eq_comm rfl rfl
+      rw [he]
+    have hline (c : E) : c • u ∈ Y.L := by
+      apply (hY.dual _).2
+      intro x hx
+      have hx0 : f x = 0 := hf (Submodule.subset_span hx)
+      have he : form σ Y.J (c • u) x = c * form σ Y.J u x := by
+        rw [Vac.form_eq, Vac.form_eq, Matrix.smul_vecMul, Finset.mul_sum]
+        simp [Pi.smul_apply, smul_eq_mul, mul_assoc]
+      rw [he, hform, hx0, map_zero, mul_zero]
+      exact isIntegral_zero
+    have hu0 : u = 0 := by
+      by_contra hn
+      obtain ⟨i, hi⟩ := Function.ne_iff.mp hn
+      let coord := (LinearMap.proj i : (Fin n → E) →ₗ[E] E).restrictScalars (𝓞 E)
+      have ht : Y.L.map coord = ⊤ := by
+        rw [eq_top_iff]
+        intro x _
+        exact ⟨(x / u i) • u, hline _, div_mul_cancel₀ _ hi⟩
+      have : Module.Finite (𝓞 E) E := Module.finite_def.mpr (ht ▸ hY.lat.fg.map coord)
+      exact RingOfIntegers.not_isField E
+        (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
+    have ha : a = 0 := by simpa [hu0] using hu.symm
+    apply hf0
+    apply LinearMap.ext
+    intro x
+    rw [LinearMap.pi_apply_eq_sum_univ f x]
+    apply Finset.sum_eq_zero
+    intro i _
+    have hi : σ (f (Pi.single i 1)) = 0 := congrFun ha i
+    have hi' : f (Pi.single i 1) = 0 := (map_eq_zero σ).mp hi
+    have he : (fun j => if i = j then (1 : E) else 0) = Pi.single i 1 := funext fun j => by
+      rw [Pi.single_apply]; exact if_congr eq_comm rfl rfl
+    simp [he, hi']
+  obtain ⟨a, h1, h2⟩ := exists_frame_antiJ hσ (J := (1 : E) • Y.Jᵀ) ⟨fun i j => by simp [hY.herm], hd⟩ hY.lat.fg hspan hw hc
+    (PositivityTheory.ThKG.Loc.Iwa.selfDual_of hd hY.lat.toIsLattice (fun y hy x hx => SelfDual.inclR_mem_intLoc v (by
       rw [PositivityTheory.ThKG.Loc.Iwa.hE_smul, one_mul]; exact ⟨⟨_, (hY.dual y).1 hy x hx⟩, rfl⟩)) (s := 1)
       ((Ideal.ne_top_iff_one _).1 v.isPrime.ne_top) fun y hy => by
         simp only [OneMemClass.coe_one, map_one, one_smul]

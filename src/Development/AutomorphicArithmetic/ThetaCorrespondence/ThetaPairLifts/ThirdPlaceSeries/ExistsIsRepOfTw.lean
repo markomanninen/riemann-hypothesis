@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsGaloisRepOfCuspidal
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsGaloisRepOfCuspidal
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -29,14 +33,16 @@ theorem exists_isRepOf_tw_alt : GlobalTheory.Published.GlobalArtinReciprocity �
   have hν := GlobalTheory.HeckeGal.Model.absPow_isAbsPow D.host.E (-(D.R.t : ℝ) / 2)
   have hψu : (cf.eta⁻¹ * GlobalTheory.HeckeGal.Model.absPow D.host.E (-(D.R.t : ℝ) / 2)).UnrAt w := by
     intro x hx
-    rw [HChar.loc_mul, hU x hx, hν.1 w x hx, one_mul]
+    change (cf.eta⁻¹).loc w x * (GlobalTheory.HeckeGal.Model.absPow D.host.E (-(D.R.t : ℝ) / 2)).loc w x = 1
+    rw [hU x hx, hν.1 w x hx, one_mul]
   have hμv := hμ.frob_unr ha (Or.inl hwl') hψu hB hσ
   set u : ℂ := (((cf.eta⁻¹ * GlobalTheory.HeckeGal.Model.absPow D.host.E (-(D.R.t : ℝ) / 2)).val w : ℂˣ) : ℂ)⁻¹ with hu_def
   have hu1 : D.naut.frobEig (D.naut.lpTw (D.naut.locG D.naut.etaTinv w) (-(D.R.t : ℝ) / 2)) = {u} := by
     rw [D.naut.frobEig_tw _ _ hue, hf, Multiset.map_singleton]
     congr 1
     rw [hu_def, HChar.val_mul, HChar.val_inv, Units.val_mul, hν.2.1 w]
-    have hn' : (Ideal.absNorm w.asIdeal : ℕ) = normV w := rfl
+    have hn' : (Ideal.absNorm w.asIdeal : ℕ) = normV w := by
+      simp [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
     rw [hn', mul_inv, Units.val_inv_eq_inv_val, Complex.cpow_neg, inv_inv]
   have hχu : ι ((μ σ : (Qbar l)ˣ) : Qbar l) = u := by
     rw [hμv, map_inv₀, ι.apply_symm_apply]

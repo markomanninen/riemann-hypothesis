@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafDictPf
-import Mathlib.CategoryTheory.Limits.Preserves.Ulift
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafDictPf
+public import Mathlib.CategoryTheory.Limits.Preserves.Ulift
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.KummerTheory.FlasquePf

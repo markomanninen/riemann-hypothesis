@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Qe19.LiftEquiv :
     Prop :=
@@ -24,12 +28,14 @@ private theorem UpperTheory.Reformulated.B.Qe19.fixed_lift {Γ : Type} [Group Γ
   have hc : (Fintype.card H : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
   refine ⟨(Fintype.card H : ℂ)⁻¹ • ∑ k : H, A.ρ k a, ?_, ?_⟩
   · intro h hh
-    rw [map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_sum]
     congr 1
     refine Fintype.sum_equiv (Equiv.mulLeft (⟨h, hh⟩ : H)) _ _ ?_
     intro k
     simp [map_mul]
-  · rw [map_smul, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_sum]
     have h1 : ∀ k : H, (Rep.Hom.hom f) (A.ρ k a) = b := by
       intro k
       rw [Rep.hom_comm_apply, ha, hb k k.2]

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PadicSubsetSums.CentralIdempotents.EigenbasisOfDistinctRoots
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GGMirabolicBase
+module
+
+public import Mathlib
+public import Formalism.PadicSubsetSums.CentralIdempotents.EigenbasisOfDistinctRoots
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GGMirabolicBase
+
+@[expose] public section
 
 namespace PI
 

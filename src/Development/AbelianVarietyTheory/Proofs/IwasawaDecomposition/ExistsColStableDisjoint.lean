@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColLieApply
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EventuallyExistsMulIsLowerTriangular
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AevalTotalDegreeLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColLieApply
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EventuallyExistsMulIsLowerTriangular
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AevalTotalDegreeLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,14 +22,16 @@ theorem exists_sub_perp {E : Type*} [AddCommGroup E] [Module ℂ E] (B : E →�
   let L : E →ₗ[ℂ] (Fin (Module.finrank ℂ W) → ℂ) := LinearMap.pi fun i => B.flip (b i)
   have hL (P) (h : L P = 0) (w) (hw : w ∈ W) : B P w = 0 := by
     have := congrArg W.subtype (b.sum_repr ⟨w, hw⟩)
-    rw [map_sum, Submodule.subtype_apply] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Submodule.subtype_apply] at this
     change _ = w at this
-    rw [← this, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← this, map_sum]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [map_smul, map_smulₛₗ]
     exact smul_eq_zero_of_right _ (congrFun h i)
   have hinj : Function.Injective (L ∘ₗ W.subtype) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     exact Subtype.ext (hB _ (hL x hx x x.2))
   obtain ⟨x, hx⟩ := (LinearMap.injective_iff_surjective_of_finrank_eq_finrank (by simp)).mp hinj
@@ -82,8 +88,8 @@ theorem fockInner_colSub [Fintype ι] (τ : ι) (g : Matrix.unitaryGroup (Fin n)
 
 end Compl
 
-open Compl in
 
+open Compl in
 theorem exists_colStable_disjoint (ι : Type) [Fintype ι] (m n : ℕ) (X : Type) [AddCommGroup X] [Module ℂ X]
     [FiniteDimensional ℂ X] (U W : Submodule ℂ (X →ₗ[ℂ] Pol ι m n))
     (hU : ∀ Φ ∈ U, ∀ τ g, colSub m τ g ∘ₗ Φ ∈ U) (hW : ∀ Φ ∈ W, ∀ τ g, colSub m τ g ∘ₗ Φ ∈ W) (hlt : U < W) :
@@ -138,7 +144,8 @@ theorem exists_colStable_disjoint (ι : Type) [Fintype ι] (m n : ℕ) (X : Type
   have hβD : β ∈ D := by
     rw [hD]
     intro x
-    rw [← b.sum_repr x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr x, map_sum]
     refine R.sum_mem fun i _ => ?_
     rw [map_smul]
     exact R.smul_mem _ ((hR _).2 (hd i))

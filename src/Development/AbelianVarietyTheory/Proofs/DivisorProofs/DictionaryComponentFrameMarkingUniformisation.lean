@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GenReads
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniqueLinearLiftUniformisedFibres
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsDerivAt0CompLinear
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnitFrameEqOrthonormalMulTriangular
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameUniformEmbeddingSecond
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RealAdelesCmFieldEquivComplexCmType
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ArchimedeanMatrixUnitaryContinuousMultiplicativeStatement
-import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.OrthonormalBaseFrameNeg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GenReads
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniqueLinearLiftUniformisedFibres
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsDerivAt0CompLinear
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnitFrameEqOrthonormalMulTriangular
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameUniformEmbeddingSecond
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RealAdelesCmFieldEquivComplexCmType
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ArchimedeanMatrixUnitaryContinuousMultiplicativeStatement
+public import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.OrthonormalBaseFrameNeg
+
+@[expose] public section
 
 namespace GlobalTheory.AdTh.MarkUniq
 
@@ -108,7 +112,7 @@ theorem mark_congr {J : Type} (e : Fin g ≃ J) (e' : Fin g' ≃ J) (F : FamilyU
   obtain ⟨b, hb⟩ := (F'.ex_ker i' P' hP' _).1 h4
   have hM : (l.M : ℂ) ≠ 0 := by have := l.three_le; exact Nat.cast_ne_zero.2 (by omega)
   refine ⟨b, hP'.2.1 ?_⟩
-  rw [map_add, map_nsmul, hb, ← smul_sub, ← Nat.cast_smul_eq_nsmul ℂ, smul_inv_smul₀ hM, add_sub_cancel]
+  rw [map_add (f := _), map_nsmul, hb, ← smul_sub, ← Nat.cast_smul_eq_nsmul ℂ, smul_inv_smul₀ hM, add_sub_cancel]
 
 end Geo
 
@@ -130,7 +134,7 @@ theorem realM_mt {D : D7} {θ : InfFam D} (hθ : IsInfFam θ) (W : HSp D) (h : G
   have e : θ hτ.choose = t := GlobalTheory.LettersCheck.isInfEmb_unique τ _ _ (by
     have := hθ hτ.choose
     rwa [← hτ.choose_spec] at this) ht
-  rw [realM, dif_pos hτ, ← e]
+  rw [realM, dite_eq_left hτ, ← e]
   rfl
 
 theorem finVec_congr {D : D7} (W : HSp D) (N : ℕ) (p m q : Fin W.rank → D.host.E)
@@ -166,9 +170,9 @@ theorem rat_eq_of_archM {D : D7} (W : HSp D) {γ γ' : GA D W} (hγ : γ ∈ GQ 
 
 end GlobalTheory.AdTh.MarkUniq
 
+
 open GlobalTheory.AdTh.MarkUniq in
 set_option maxHeartbeats 1000000 in
-
 theorem GlobalTheory.AdTh.dict_atComp_markAd : ∀ (D : D7) (H : Geo.Tor.Host D.host.E) (Dw : Datum H) (l : Geo.Tor.Level H) (Xo : Moduli Dw l) (c : Coeff l) (σ : c.F →+* ℂ) (r : ℕ) (U : Unf Xo c σ r), GoodEmb c σ → IsUnf U → 1 ≤ r → l.A = 1 → ∀ (θ : InfFam D) (W : HSp D) (hr : W.rank = r) (dict : GA D W → Σ k, Frame (U.X k).Ψ r) (ι : Dw.La →ₗ[𝓞 D.host.E] (Fin W.rank → D.host.E)) (g : ℕ) (e : Fin g ≃ Σ τ : D.host.E →+* ℂ, Fin (Dw.mult τ)) (F : FamilyUnif Xo (σ.comp (IntermediateField.inclusion c.le).toRingHom) (fun j => relab c σ (e j).1)) (ik : U.Comp → Fin F.n) (φ : ∀ k, (F.Di (ik k)).La ≃ₗ[𝓞 D.host.E] (U.X k).Λ) (th : ∀ k, (U.X k).Ψ → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) (x₀ : (D.host.E →+* ℂ) → Matrix (Fin r) (Fin r) ℂ), IsInfFam θ → (∀ k, IsMod W hr (U.X k)) → (∀ k, IsOrthogonalFrame (U.X k) x₀) → (∀ k τ, IsInfEmb τ.1 (th k τ)) → DictLat U W hr dict ι e F ik φ th x₀ → ∀ (Wt : UW (Formalism.L2.PjFree.Unf.ofPj U)) (h : GA D W), IsONFr (U.X (dict h).1) (dict h).2 ∧ ∃ γ, AtComp θ W hr U.X dict x₀ h γ ∧ MarkAd l W hr ι (γ * h) (Wt.mark (dict h).1) ∧ ∀ γ', AtComp θ W hr U.X dict x₀ h γ' → γ' = γ := by
   intro D H Dw l Xo c σ r U hσ hU hr1 hA θ W hr dict ι g e F ik φ th x₀ hθ hMod hx₀ hth hD Wt h
   subst hr
@@ -213,7 +217,7 @@ theorem GlobalTheory.AdTh.dict_atComp_markAd : ∀ (D : D7) (H : Geo.Tor.Host D.
     have hb' : (φ k (F.t (ik k) a) : Fin W.rank → D.host.E) =
         Wt.mark k a + l.M • (Wt.φ k b : Fin W.rank → D.host.E) := by
       have := congrArg (fun z => (Wt.φ k z : Fin W.rank → D.host.E)) hb
-      simp only [map_add, map_nsmul] at this
+      simp only [map_add (f := _), map_nsmul] at this
       exact (congrArg Subtype.val (hφ _)).symm.trans this
     refine ⟨w - finVec W (Wt.φ k b : Fin W.rank → D.host.E), sub_mem hw
       (((GlobalTheory.MarkCoset.latG_spec D W _).1 _).1 ((hmem _).1 (Wt.φ k b).2)), ?_⟩

@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.CharacterGerms.CoeffOneSubstCurve
-import Formalism.LocalToGlobal.CharacterGerms.ConstantZeroCompCoordinate
-import Formalism.LocalToGlobal.CharacterGerms.PderivDoubleMultiplicationJacobian
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePOActSelf
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.CoeffOneSubstCurve
+public import Formalism.LocalToGlobal.CharacterGerms.ConstantZeroCompCoordinate
+public import Formalism.LocalToGlobal.CharacterGerms.PderivDoubleMultiplicationJacobian
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePOActSelf
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -122,7 +126,7 @@ theorem idx_apply (μ : Fin 1 × Fin dd →₀ ℕ) (i j : Fin dd) :
     intro h
     exact h10 (congrArg Prod.fst h)
   rw [Finsupp.add_apply, Finsupp.single_apply, if_neg hne, add_zero]
-  exact Finsupp.mapDomain_apply hinj μ ((0 : Fin 1), i)
+  exact Finsupp.mapDomain_apply_of_injective hinj μ ((0 : Fin 1), i)
 
 theorem aLin_eq (Y : FBChart C V O dd) (u w : Fin dd → C) :
     Y.aLin u w = ∑ i, coeff (Finsupp.single ((0 : Fin 1), i) V.l) (zl w Y.u1) * u i ^ V.l := by
@@ -153,8 +157,8 @@ theorem linear_part_unit_frobenius (Y : FBChart C V O dd) {w : Fin dd → C} (hw
 
 end PairPointEvaluation
 
-open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ PartialDerivEval MaximalIdealCongruence FirstVanishing SelfAdjointCongruence PairPointEvaluation MvPowerSeries in
 
+open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ PartialDerivEval MaximalIdealCongruence FirstVanishing SelfAdjointCongruence PairPointEvaluation MvPowerSeries in
 theorem aLinAdj_holds : ALinAdjSt := by
   intro C _ _ V O _ _ dd Y e eb heI hebI he0 heb0 hhom hW u hu hV1 v hv
   have hl := V.l_prime.two_le
@@ -221,7 +225,7 @@ theorem aLinAdj_holds : ALinAdjSt := by
   have k2 := congrArg (subst (fun q : Fin 1 × Fin dd => γ0 q.2)) key
   rw [subst_add hG, subst_add hG, ← MvPowerSeries.smul_eq_C_mul, subst_smul hG, hcomp e he0, hcomp M hM0] at k2
   have k3 := congrArg (PowerSeries.coeff V.l) k2
-  rw [map_add, map_add, map_smul, smul_eq_mul] at k3
+  rw [map_add (f := _), map_add (f := _), map_smul, smul_eq_mul] at k3
 
   have hA1 := coeff_l_frob (hSI v hv) (hS0 v) (linear_part_unit_frobenius Y hv) (hδcv e he0 heI)
   have hlin : ∀ i, PowerSeries.coeff 1 (subst (fun q : Fin 1 × Fin dd => γ0 q.2) (e i)) = linAct e u i := fun i => by

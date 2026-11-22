@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.NatCardAlgHomEqFinrankOfIsReducedOfIsFractionRin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.NatCardAlgHomEqFinrankOfIsReducedOfIsFractionRin
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -10,6 +14,7 @@ theorem finite_card_trace_algHom_of_isReduced_baseChange :
       [Module.Finite O H] [Field K] [IsAlgClosed K] [Algebra O K], IsReduced (K ⊗[O] H) →
       Finite (H →ₐ[O] K) ∧ Nat.card (H →ₐ[O] K) = Module.finrank O H ∧
         ∀ h : H, algebraMap O K (Algebra.trace O H h) = ∑ᶠ ga : H →ₐ[O] K, ga h := by
+  classical
   intro O H K _ _ _ _ _ _ _ _ _ hred
   have : IsReduced (K ⊗[O] H) := hred
   have hcard : Nat.card (H →ₐ[O] K) = Module.finrank O H :=

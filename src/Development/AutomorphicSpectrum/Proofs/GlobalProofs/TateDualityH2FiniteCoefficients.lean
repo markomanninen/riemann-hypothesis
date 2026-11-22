@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.RationalDualityOfAllCoefficients
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateDualDeRhamAndFilZeroDimAll
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankH1fDeRham
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.TmulOneMemDcris
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.CyclotomicTwistFiniteModuleCocycle
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.CyclotomicTwistFiniteModuleCoboundary
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.CyclotomicCupTwoCochainLocallyConstant
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.ExistsDualLattices
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.LatticeOpenCompactNhdsBasis
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.CupFlipContinuousCocycle
-import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.BkMain
-import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohTop
-import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohTopEuler
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CupFlip
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.RationalDualityOfAllCoefficients
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateDualDeRhamAndFilZeroDimAll
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankH1fDeRham
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.TmulOneMemDcris
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.CyclotomicTwistFiniteModuleCocycle
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.CyclotomicTwistFiniteModuleCoboundary
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.CyclotomicCupTwoCochainLocallyConstant
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.ExistsDualLattices
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.LatticeOpenCompactNhdsBasis
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.CupFlipContinuousCocycle
+public import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.BkMain
+public import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohTop
+public import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohTopEuler
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CupFlip
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism Formalism.ConjugateSelfDual Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations Module GlobalTheory.CompanionTheory.LocDual
 
@@ -30,9 +34,9 @@ theorem actLoc (l : ℕ) [Fact l.Prime] (Lp : LocPrime l) (K : FinExt l)
     IsLocallyConstant fun g => actQ LA _ hI g m :=
   act_lc A LA ϖ r hI (latTop l Lp K LL O hG A LA ϖ hϖ).2.1 m
 
+
 open GlobalTheory.CompanionTheory.LocDual.Q in
 set_option maxHeartbeats 1000000 in
-
 theorem dualQ : Formalism.GaloisCohomology.LocalTateDualityK → ∀ (l : ℕ) [Fact l.Prime] (Lp : LocPrime l) (K : FinExt l),
     TopInj (Lp.PD K) → DualQ (Lp.PD K) := by
   intro hT l _ Lp K hTop LL _ _ _ O _ _ hG L1 hL1 A A' LA LA' P hdual ϖ hϖ r hI hI'
@@ -67,9 +71,9 @@ theorem dualQ : Formalism.GaloisCohomology.LocalTateDualityK → ∀ (l : ℕ) [
     (cobChar hT l Lp K (r + 1) χ hn hcomp) (dblAnn hT l Lp K (r + 1) χ hn hcomp)
     (dblAnnR hT l Lp K (r + 1) χ hn hcomp)
 
+
 open GlobalTheory.CompanionTheory.TdDualD in
 open GlobalTheory.CompanionTheory.LocDual in
-
 theorem dualDL : ∀ (l : ℕ) [Fact l.Prime] (Lp : LocPrime l) (K : FinExt l), FinZQ (Lp.PD K) →
     DualQ (Lp.PD K) → DualD (Lp.PD K) := by
   intro l _ Lp K hF hQ LL _ _ _ O _ _ hG L1 hL1 A A' LA LA' P hP S hBS hSZ c hc H
@@ -107,8 +111,8 @@ theorem dualDL : ∀ (l : ℕ) [Fact l.Prime] (Lp : LocPrime l) (K : FinExt l), 
     obtain ⟨n, hn⟩ := hbd' (fun _ => v) continuous_const
     exact ⟨n, hn 1⟩
 
-open GlobalTheory.CompanionTheory.LocDual.CobDetect in
 
+open GlobalTheory.CompanionTheory.LocDual.CobDetect in
 theorem cobLO : ∀ (l : ℕ) [Fact l.Prime] (Lp : LocPrime l) (K : FinExt l), FinZQ (Lp.PD K) → TopInj (Lp.PD K) → CobLO (Lp.PD K) := by
   intro l _ Lp K hfin htop LL _ _ _ O _ _ hO L1 hL1 z hz
   have hO' := hO
@@ -142,8 +146,8 @@ theorem cobLO : ∀ (l : ℕ) [Fact l.Prime] (Lp : LocPrime l) (K : FinExt l), F
     cobL_of_all L1 hL1 hϖ hop hc hb (fun n => hfin LL O hO A L1 ϖ hϖ n (stable_pw L1 ϖ n))
       (fun r z hr hz' => htop LL O hO L1 hL1 ϖ hϖ r z hr hz') hz h⟩
 
-open GlobalTheory.TateTop Formalism.MainNotions.LocalSituation GlobalTheory.Cyc GlobalTheory.Cyc.TwistLift Filter Topology in
 
+open GlobalTheory.TateTop Formalism.MainNotions.LocalSituation GlobalTheory.Cyc GlobalTheory.Cyc.TwistLift Filter Topology in
 theorem tate_duality_H2_finite_coefficients (hT : Formalism.GaloisCohomology.LocalTateDualityK) (l : ℕ) [Fact l.Prime] (Lp : LocPrime l) (K : FinExt l) :
     LocalTateTopDegree (Lp.PD K) := by
   intro LL _ _ _ O _ _ hO L1 hL1
@@ -187,8 +191,8 @@ theorem tate_duality_H2_finite_coefficients (hT : Formalism.GaloisCohomology.Loc
     rw [← h1]
     rfl
 
-open GlobalTheory.CompanionTheory.LocDual.Top in
 
+open GlobalTheory.CompanionTheory.LocDual.Top in
 theorem topLine : ∀ (l : ℕ) [Fact l.Prime] (Lp : LocPrime l) (K : FinExt l),
     LocalTateTopDegree (Lp.PD K) → CobLO (Lp.PD K) → TopLine (Lp.PD K) := by
   intro l _ Lp K hT hC LL _ _ _ O _ _ hO z z' hz hz' hd hd' hn
@@ -210,8 +214,8 @@ theorem topLine : ∀ (l : ℕ) [Fact l.Prime] (Lp : LocPrime l) (K : FinExt l),
   obtain ⟨φ⟩ := hT LL O hO L1 hL1
   exact topLine_at L1 hL1 hop hϖ hc φ (hC LL O hO L1 hL1) hz hz' hd hd' hn
 
-open GlobalTheory.CompanionTheory.LocDual.Kernels in
 
+open GlobalTheory.CompanionTheory.LocDual.Kernels in
 theorem rightKernel (l : ℕ) [Fact l.Prime] (Lp : LocPrime l) (K : FinExt l)
     (hD : DualD (Lp.PD K)) (hC : CobLO (Lp.PD K))
     (LL : Type) [Field LL] [Algebra ℚ_[l] LL] [TopologicalSpace LL] (O : Type) [CommRing O]
@@ -330,8 +334,8 @@ theorem rightKernel (l : ℕ) [Fact l.Prime] (Lp : LocPrime l) (K : FinExt l)
   rw [neg_one_smul, ← sub_eq_add_neg] at hz'
   exact sub_eq_zero.mp hz'
 
-open GlobalTheory.CompanionTheory.LocDual.Kernels in
 
+open GlobalTheory.CompanionTheory.LocDual.Kernels in
 theorem nondegLL : ∀ (l : ℕ) [Fact l.Prime] (Lp : LocPrime l) (K : FinExt l), DualD (Lp.PD K) →
     CobLO (Lp.PD K) → NondegL (Lp.PD K) := by
   intro l _ Lp K hD hC LL _ _ _ O _ _ hO A A' P hP
@@ -340,8 +344,8 @@ theorem nondegLL : ∀ (l : ℕ) [Fact l.Prime] (Lp : LocPrime l) (K : FinExt l)
   exact rightKernel l Lp K hD hC LL O hO A' A P.flip hf.1 a ha
     (fun b hb => ((hf.2 a ha b hb).2.2.1).mp (h b hb))
 
-open GlobalTheory.CompanionTheory.LocDual.FinT in
 
+open GlobalTheory.CompanionTheory.LocDual.FinT in
 theorem finrank_H1_rational_eq_lattice : ∀ (l : ℕ) [Fact l.Prime] (Lp : LocPrime l) (K : FinExt l), FinZQ (Lp.PD K) → TateFiniteness (Lp.PD K) ∧ ∀ (LL : Type) [Field LL] [Algebra ℚ_[l] LL] [TopologicalSpace LL] (O : Type) [CommRing O] [Algebra O LL], GoodO (Qp := ℚ_[l]) LL O → ∀ (A : GRep ↥(GK K) ℚ_[l] LL O) (LA : Lattice (O := O) A.ρ), Module.Finite LL (H1V A.ρ) ∧ finrank LL (H1V A.ρ) = finrank O (LatticeCohomology LA) := by
   intro l _ Lp K hZ
   have key : ∀ (LL : Type) [Field LL] [Algebra ℚ_[l] LL] [TopologicalSpace LL] (O : Type) [CommRing O]
@@ -378,8 +382,8 @@ theorem finrank_H1_rational_eq_lattice : ∀ (l : ℕ) [Fact l.Prime] (Lp : LocP
     IsLocalizedModule.rank_eq (nonZeroDivisors O) le_rfl (toV LA)
   rw [finrank, finrank, h1, h2]
 
-open GlobalTheory.CompanionTheory.GrowthOfInvariants in
 
+open GlobalTheory.CompanionTheory.GrowthOfInvariants in
 theorem H0_torsion_growth_bound : ∀ (l : ℕ) [Fact l.Prime] (Lp : LocPrime l) (K : FinExt l), TateFiniteness (Lp.PD K) → ∀ (LL : Type) [Field LL] [Algebra ℚ_[l] LL] [TopologicalSpace LL] (O : Type) [CommRing O] [Algebra O LL], GoodO (Qp := ℚ_[l]) LL O → ∀ (A : GRep ↥(GK K) ℚ_[l] LL O) (LA : Lattice (O := O) A.ρ) (ϖ : O), Irreducible ϖ → ∃ C : ℕ, ∀ (r : ℕ) (hI : StableSub LA (Ideal.span {ϖ ^ r} • ⊤ : Submodule O ↥LA.T)), Nat.card (O ⧸ Ideal.span {ϖ}) ^ (r * finrank LL ↥(H0V A.ρ)) ≤ Nat.card {x : ↥LA.T ⧸ (Ideal.span {ϖ ^ r} • ⊤ : Submodule O ↥LA.T) // ∀ g, actQ LA _ hI g x = x} ∧ Nat.card {x : ↥LA.T ⧸ (Ideal.span {ϖ ^ r} • ⊤ : Submodule O ↥LA.T) // ∀ g, actQ LA _ hI g x = x} ≤ C * Nat.card (O ⧸ Ideal.span {ϖ}) ^ (r * finrank LL ↥(H0V A.ρ)) := by
   intro l _ Lp K hcore LL _ _ _ O _ _ hG A LA ϖ hϖ
   obtain ⟨⟨hO, hD, hF⟩, -⟩ := id hG

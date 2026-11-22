@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntDerApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocalRingDualNumber
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GroupSchemeStalkEvalAtOriginOriginStalkConstants
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CotangentBidualToTangentFunctionInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntDerApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocalRingDualNumber
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GroupSchemeStalkEvalAtOriginOriginStalkConstants
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CotangentBidualToTangentFunctionInjective
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry IsLocalRing
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -25,7 +30,7 @@ theorem constO_eq_strMap : constO G = (GlobalTheory.IndefiniteRowSideFullHecke.H
       ((Spec (CommRingCat.of R)).presheaf.germ ⊤ (G.hom (origin G)) trivial).hom
         ((Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom r) := by
     rw [Scheme.ΓSpecIso_inv]
-    exact (congrArg (fun q => q.hom r) (StructureSheaf.toOpen_germ (R := R) ⊤ (G.hom (origin G)) trivial)).symm
+    rfl
   have h2 := congrArg (fun q => q.hom ((Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom r))
     (Scheme.Hom.germ_stalkMap G.hom ⊤ (origin G) trivial)
   simp only [CommRingCat.hom_comp, RingHom.comp_apply] at h2

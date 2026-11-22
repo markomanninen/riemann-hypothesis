@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.HZeroPf
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.HZeroPf
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Polynomial

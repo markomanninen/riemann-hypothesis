@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MixedCoefficientClosed
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MixedCoefficientClosed
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,8 @@ theorem sg_lin (X : RawChart C d I κ) {ι : Type} [Fintype ι] (m : ι → C) (
     X.sg (fun i => ∑ q, m q * u q i) = ∑ q, m q • X.sg (u q) := by
   apply MvPowerSeries.ext
   intro μ
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [MvPowerSeries.coeff_smul]
   show -∑ i, (∑ q, m q * u q i) * _ = ∑ q, m q * -∑ i, u q i * _
   simp only [Finset.sum_mul, mul_neg, Finset.mul_sum, Finset.sum_neg_distrib]
@@ -32,7 +37,8 @@ theorem alongCv_lin {γ : κ → PowerSeries C} (hγ : ∀ i, PowerSeries.consta
     (m : ι → C) (f : ι → MvPowerSeries κ C) : alongCv γ (∑ q, m q • f q) = ∑ q, m q • alongCv γ (f q) := by
   have hS : MvPowerSeries.HasSubst γ := MvPowerSeries.hasSubst_of_constantCoeff_zero hγ
   unfold alongCv
-  simp only [← MvPowerSeries.substAlgHom_apply hS, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← MvPowerSeries.substAlgHom_apply hS, map_sum, map_smul]
 
 theorem phi_lin (X : RawChart C d I κ) (l : ℕ) (hl : 0 < l) (ζ : C) {γ δ : κ → PowerSeries C}
     (hγ : ∀ i, PowerSeries.constantCoeff (γ i) = 0)
@@ -44,10 +50,12 @@ theorem phi_lin (X : RawChart C d I κ) (l : ℕ) (hl : 0 < l) (ζ : C) {γ δ :
   rw [sg_lin, alongCv_lin hγ, alongCv_lin hδ]
   simp only [smul_sub, Finset.sum_sub_distrib, Finset.smul_sum]
   congr 1
-  · simp only [← PowerSeries.coe_substAlgHom hS, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [← PowerSeries.coe_substAlgHom hS, map_sum, map_smul]
   · rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun q _ => ?_
     ext n
     simp only [PowerSeries.coeff_rescale, PowerSeries.coeff_smul, smul_eq_mul]
@@ -79,7 +87,8 @@ theorem coeffIdentity_plainChart_of_three [IsAlgClosed C] [CharZero C] (X : RawC
     show (V.l : C) * x 2 (Sum.inr q) = 0
     rw [h2, mul_zero]
   · have h1 := hC ζ hζ γ δ (z q) (ε q) hγ hδ (hz q) (hε q) hrel' (hrel q) hmm
-    rw [funext (hz1 q), funext (hε1 q), phi_lin X V.l hl0 ζ (fun i => (hγ i).1) (fun i => (hδ i).1), map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [funext (hz1 q), funext (hε1 q), phi_lin X V.l hl0 ζ (fun i => (hγ i).1) (fun i => (hδ i).1), map_sum] at h1
     simp only [PowerSeries.coeff_smul, smul_eq_mul] at h1
     obtain ⟨hc0, hcA, _⟩ := hq q
     have hAint : V.Ge 0 (PowerSeries.coeff V.l (phi X V.l ζ γ δ (X.u (1 - g) q))) := by
@@ -114,14 +123,15 @@ theorem FBChart.rawSelf_axis1 (Y : FBChart C V O dd) (p : SelfData Y d I0) (e : 
   show MvPowerSeries.coeff e (∑ col, hCol col Y.h) = 0
   exact van_sum Finset.univ _ (fun col _ => van_hCol col 1 Y.h (gauge_axes Y 1)) e he
 
-theorem FBChart.rawSelf_basic (Y : FBChart C V O dd) (p : SelfData Y d I0) : SelfConjCharts.Basic (Y.rawSelf p) V where
-  lg0 := Y.self_chart_log_constantCoeff p
-  exlg := Y.rawSelf_exlg p
-  lin := Y.rawSelf_lin p
-  axis0 := Y.rawSelf_axis0 p
-  axis1 := Y.rawSelf_axis1 p
-  uint := Y.rawSelf_u_integral p
-  hmis := hStabSelf_holds C V O dd Y d I0 p
+theorem FBChart.rawSelf_basic (Y : FBChart C V O dd) (p : SelfData Y d I0) : SelfConjCharts.Basic (Y.rawSelf p) V := by
+  exact
+    { lg0 := Y.self_chart_log_constantCoeff p
+      exlg := Y.rawSelf_exlg p
+      lin := Y.rawSelf_lin p
+      axis0 := Y.rawSelf_axis0 p
+      axis1 := Y.rawSelf_axis1 p
+      uint := Y.rawSelf_u_integral p
+      hmis := hStabSelf_holds C V O dd Y d I0 p }
 
 end Self
 

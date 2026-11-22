@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PNoLogSt
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.CasimirOnParabolicInduction
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.DiagonalInfinityValues.InfGLValDiag
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceMemOfQdetMem
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PNoLogSt
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.CasimirOnParabolicInduction
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.DiagonalInfinityValues.InfGLValDiag
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceMemOfQdetMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,14 +13,14 @@ open NumberField Polynomial GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTh
 
 namespace PositivityTheory.Rg.BcB.SpectralAccumulation.Cz.NoLogarithmTerms
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 def Zr (N r : ℕ) : Lie E N := fun i j => if i = j ∧ (i : ℕ) < r then 1 else 0
 
 def Tr1 (r s : ℕ) (τ : E →+* ℂ) : Module.End ℂ (Sm E (r + s)) :=
   ∑ i : Fin r, Eop τ (Fin.castAdd s i) (Fin.castAdd s i)
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem aInf_add' (N r : ℕ) (s t : ℝ) : aInf E N r (s + t) = aInf E N r s * aInf E N r t := by
   apply Units.ext
   change Matrix.diagonal _ = Matrix.diagonal _ * Matrix.diagonal _
@@ -26,7 +30,7 @@ theorem aInf_add' (N r : ℕ) (s t : ℝ) : aInf E N r (s + t) = aInf E N r s * 
   simp only [Pi.mul_apply]
   split_ifs <;> simp [← Complex.exp_add]
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem aInf_zero' (N r : ℕ) : aInf E N r 0 = 1 :=
   Units.ext (by
     change Matrix.diagonal _ = 1
@@ -73,14 +77,16 @@ theorem lie_Zr (r s : ℕ) : lie E (r + s) (Zr (r + s) r) =
   classical
   simp only [Tr1, ← Finset.sum_add_distrib, Eop_add_Eop_conj]
   rw [Finset.sum_comm]
-  simp only [← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← map_sum]
   have h1 : ∑ w : InfinitePlace E, atEmb w.embedding (1 : ℂ) = (1 : Cinf E) := by
     have e : ∀ w : InfinitePlace E, atEmb w.embedding (1 : ℂ) = Pi.single w ((fun _ => (1 : ℂ)) w) := by
       intro w; simp [atEmb, InfinitePlace.mk_embedding]
     simp only [e]
     exact Finset.univ_sum_single _
   rw [h1]
-  simp only [lieS_apply, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [lieS_apply, ← map_sum]
   congr 1
   funext a b
   simp only [Zr, toL, Finset.sum_apply, Matrix.of_symm_apply, Matrix.single_apply]
@@ -109,7 +115,7 @@ theorem Tr1_comm (r s : ℕ) (τ τ' : E →+* ℂ) : Commute (Tr1 (E := E) r s 
   intro j _
   exact Eop_diag_comm _ _ _ _
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem hasDerivAt_aInf (N r : ℕ) : HasDerivAt (fun t : ℝ => toL (aInf E N r t).val) (Zr N r) 0 := by
   rw [hasDerivAt_pi]; intro i
   rw [hasDerivAt_pi]; intro j
@@ -141,8 +147,19 @@ theorem hasDerivAt_aT (r s : ℕ) (Φ : Sm E (r + s)) (h : GA E (r + s)) (t : �
   simpa [lie_apply] using h2
 
 theorem lev_aT (r s : ℕ) (t : ℝ) : lev (Ad E) r s (aT E r r t, 1) = aT E (r + s) r t := by
+  have val_emb₂ {T : Type} [CommRing T] (g : GL (Fin r) T × GL (Fin s) T) :
+      (GlobalTheory.SmGL.emb₂ T (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)) g : Matrix (Fin (r+s)) (Fin (r+s)) T) =
+        Matrix.reindex (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)) (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)) (Matrix.fromBlocks g.1.val 0 0 g.2.val) := by
+    ext i j
+    obtain ⟨u, rfl⟩ := (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).surjective i
+    obtain ⟨v, rfl⟩ := (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).surjective j
+    simp only [Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_apply_apply]
+    rcases u with u | u <;> rcases v with v | v
+    all_goals simp [GlobalTheory.SmGL.emb₂, GlobalTheory.SmGL.leviEmb,
+      GlobalTheory.SmGL.leviTwo, GlobalTheory.SmGL.two, Matrix.blockDiagonal'_apply_eq,
+      Matrix.blockDiagonal'_apply_ne]
   apply Units.ext
-  rw [GlobalTheory.SmGL.val_emb₂, JFinTr.aT_val, JFinTr.aT_val]
+  rw [lev, val_emb₂, JFinTr.aT_val, JFinTr.aT_val]
   ext i j
   obtain ⟨i, rfl⟩ := (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).surjective i
   obtain ⟨j, rfl⟩ := (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).surjective j

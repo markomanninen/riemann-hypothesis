@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.HcToIdele
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.HcToIdele
+
+@[expose] public section
 
 noncomputable section
 
@@ -129,7 +133,7 @@ theorem finite_split_holds : FinSplit := by
         rw [← map_mul, mul_inv_cancel_left]
       rw [h1]
       exact mul_mem (hb w hw) hx'
-    · exact (isOpen_finiteIntegralUnits F).preimage (continuous_mul_left b⁻¹)
+    · exact (isOpen_finiteIntegralUnits F).preimage (continuous_const_mul b⁻¹)
     · show b⁻¹ * b ∈ finiteIntegralUnits F
       rw [inv_mul_cancel]
       exact one_mem _

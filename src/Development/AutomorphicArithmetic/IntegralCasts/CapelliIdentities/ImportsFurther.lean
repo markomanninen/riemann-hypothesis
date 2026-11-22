@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.DYdd7.main :
     ∀ {l : ℕ} (f : ℕ → ℚ),

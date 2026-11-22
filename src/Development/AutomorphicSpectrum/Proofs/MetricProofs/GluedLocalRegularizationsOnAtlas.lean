@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.LeviForms.RegGlue
-import ReciprocityTheory.AnalyticForms.LeviForms.RegChartC
-import ReciprocityTheory.AnalyticForms.LeviForms.TailCut
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.LeviForms.RegGlue
+public import ReciprocityTheory.AnalyticForms.LeviForms.RegChartC
+public import ReciprocityTheory.AnalyticForms.LeviForms.TailCut
+
+@[expose] public section
+
 open MeasureTheory Metric Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.AnForm.M.FinHolAtlas
 open scoped ContDiff
 
@@ -157,7 +162,7 @@ lemma chart_data {e : ℕ} {X : Type} [TopologicalSpace X] (A B : FinHolAtlas e 
       exact ⟨hVU z (hVt z hz), hVb z hz⟩
     have hsm : ContDiffOn ℝ ∞ (f ∘ (A.chart k).symm)
         ((A.chart k).target ∩ (A.chart k).symm ⁻¹' (th.U xj ∩ (bdry s)ᶜ)) :=
-      ((hW.1.1 xj k).mono fun y hy => ⟨hy.1, hy.2.1⟩).add
+      ((hW.1.1 xj k).mono (by exact fun y hy => ⟨hy.1, hy.2.1⟩)).add
         ((hW.2.1 k).mono fun y hy => ⟨hy.1, hy.2.2⟩)
     have hφ : ContDiffAt ℝ 2 (f ∘ (A.chart k).symm) (τ z) :=
       (hsm.contDiffAt (hO.mem_nhds hmem)).of_le (by norm_cast)
@@ -217,8 +222,8 @@ lemma chart_data {e : ℕ} {X : Type} [TopologicalSpace X] (A B : FinHolAtlas e 
 
 end Compare
 
-open ReciprocityTheory.AnForm.P.RegularChartScaling in
 
+open ReciprocityTheory.AnForm.P.RegularChartScaling in
 theorem polyMaxOff_charts_compare {e : ℕ} {X : Type} [TopologicalSpace X] [CompactSpace X] [T2Space X] (A B : FinHolAtlas e X) (L th : LocPot X) (s : X → X → ℂ) (ph : X → ℝ) (C₅ M : ℝ) (x : Fin B.n → X) (S : Fin B.n → Finset (Fin e)) (m : Fin B.n → Fin e → ℕ) (hAB : A.Compatible B) (h2 : ∀ j, closedBall (0 : Fin e → ℂ) 2 ⊆ (B.chart j).target) (hU : ∀ j, (B.chart j).source ⊆ th.U (x j)) (hle : ∀ y, logNormSec L s y ≤ 0) (hcl : IsClosed (bdry s)) (hS : ∀ j, ∀ y ∈ (B.chart j).target, ((B.chart j).symm y ∈ bdry s ↔ ∃ i ∈ S j, y i = 0)) (hM : ∀ j, ∀ y ∈ closedBall (0 : Fin e → ℂ) 2, (B.chart j).symm y ∉ bdry s → |rW L s ((B.chart j).symm y) - rLoc (S j) (m j) y| ≤ M) (hW : IsSingWeight A L s th ph C₅) : ∃ C t₀ : ℝ, 0 < t₀ ∧ ∀ t, 0 < t → t ≤ t₀ → ∀ j k, ∀ y ∈ chartBall B j (5 / 4) ∩ chartBall B k (5 / 4), |(polyMaxOff (S j) (fun z => th.φ (x j) ((B.chart j).symm z) + ph ((B.chart j).symm z)) (B.chart j y) t - th.φ (x j) y) - (polyMaxOff (S k) (fun z => th.φ (x k) ((B.chart k).symm z) + ph ((B.chart k).symm z)) (B.chart k y) t - th.φ (x k) y)| ≤ epsT C t := by
   classical
 
@@ -231,11 +236,11 @@ theorem polyMaxOff_charts_compare {e : ℕ} {X : Type} [TopologicalSpace X] [Com
     have h1 : ContDiffOn ℝ ∞ (fun z => th.φ (x p.1) ((B.chart p.1).symm z) -
         th.φ (x p.2) ((B.chart p.1).symm z))
         ((B.chart p.1).target ∩ (B.chart p.1).symm ⁻¹' (B.chart p.2).source) := by
-      refine ContDiffOn.sub ((hBth p.1 p.1).mono fun z hz => ⟨hz.1, hU p.1 ((B.chart p.1).map_target hz.1)⟩) ?_
+      refine ContDiffOn.sub ((hBth p.1 p.1).mono fun z (hz : z ∈ (B.chart p.1).target ∩ (B.chart p.1).symm ⁻¹' (B.chart p.2).source) => ⟨hz.1, hU p.1 ((B.chart p.1).map_target hz.1)⟩) ?_
       intro z hz
 
       exact ((smoothOn_of_compatible hAB (th.isOpen_U (x p.2)) (hW.1.1 (x p.2)) p.1).mono
-        fun z hz => ⟨hz.1, hU p.2 hz.2⟩) z hz
+        fun z (hz : z ∈ (B.chart p.1).target ∩ (B.chart p.1).symm ⁻¹' (B.chart p.2).source) => ⟨hz.1, hU p.2 hz.2⟩) z hz
     exact h1.of_le (by norm_cast)
   have hpair := fun p : Fin B.n × Fin B.n =>
     Compare.overlap_pair B p.1 p.2 h2 _ (hg p)

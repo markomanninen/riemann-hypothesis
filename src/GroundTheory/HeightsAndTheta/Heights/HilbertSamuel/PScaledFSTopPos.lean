@@ -1,14 +1,19 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsScaledFSTopPos
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFSGeomDegPos
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PIntegralAgainstPositive
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPerturbSemipos
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.SmallSectionCountLeOfInjOn
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.WhittakerFunctional
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ArithVarZero
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PThmIUnique
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsAntisym
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsScaledFSTopPos
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFSGeomDegPos
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PIntegralAgainstPositive
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPerturbSemipos
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.SmallSectionCountLeOfInjOn
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.WhittakerFunctional
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ArithVarZero
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PThmIUnique
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsAntisym
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -21,8 +26,8 @@ namespace ScaledFSTopPos
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem geoNum_nonneg : ∀ (n : ℕ) (V : Ideal (MRing ι)) (a : Fin n → K → ℤ), (∀ j k, 0 ≤ a j k) →
     0 ≤ geoNum n V a
   | 0, V, a, _ => by
@@ -58,7 +63,7 @@ theorem logNorm_fsH_nonpos (c : ∀ k, ι k) {z : (Σ k, ι k) → ℂ} (hz : �
       rw [fsH, GroundTheory.Heights₂.Heights.Inter.ofMetrics_fs_h]
       simp
     rw [hfs]
-    refine Finset.prod_le_prod (fun k _ => norm_nonneg _) fun k _ => Real.le_sqrt_of_sq_le ?_
+    refine Finset.prod_le_prod₀ (fun k _ => norm_nonneg _) fun k _ => Real.le_sqrt_of_sq_le ?_
     exact Finset.single_le_sum (f := fun i => ‖z ⟨k, i⟩‖ ^ 2) (fun i _ => sq_nonneg _) (Finset.mem_univ (c k))
   unfold logNorm
   apply Real.log_nonpos (div_nonneg (norm_nonneg _) hpos.le)

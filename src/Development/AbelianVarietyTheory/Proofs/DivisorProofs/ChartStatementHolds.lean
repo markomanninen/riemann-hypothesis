@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapPairDetCovec
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAffineTangentBasisLocally
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSectionOfIsIsoRestrict
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapPairDetCovec
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAffineTangentBasisLocally
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSectionOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -31,22 +35,6 @@ theorem exists_affine_normal_domain {X : Scheme.{0}} [GlobalTheory.IsNormalSchem
   have hd : IsDomain Γ(X, U) := (affine_isIntegral_iff _).1 this
   exact ⟨U, hU, hd, hzU, fun q hq => (hle hq).1,
     (GlobalTheory.IsNormalScheme.spec_iff_of_isDomain _).1 (GlobalTheory.IsNormalScheme.spec_of_isAffineOpen hU)⟩
-
-theorem chartSt : ChartSt := by
-  intro E _ _ _ H Dw l' Xo' c' W Y p hp hW x
-  have hN : GlobalTheory.IsNormalScheme Y.X := (GlobalTheory.isNormalScheme_iff _).2 Y.normal
-  have := GlobalTheory.ProjBlowup.isDiscreteValuationRing_coeff c' hp.ne_zero hW
-  have : IsProper Y.s := projProper _ _ _ Y.proj
-  have : IsLocallyNoetherian Y.X := LocallyOfFiniteType.isLocallyNoetherian Y.s
-  obtain ⟨V, g, e, hxV, he⟩ := exists_affine_isTanBasis E H Y.X Y.t Y.X (𝟙 _) x
-  obtain ⟨U, hU, hd, hxU, hle, hic⟩ := exists_affine_normal_domain V.1 hxV
-  obtain ⟨ρ, eρ⟩ : ∃ ρ : Γ(Y.X, V.1) →+* Γ(Y.X, U), spMap ρ ≫ V.2.fromSpec = hU.fromSpec :=
-    ⟨(Y.X.presheaf.map (homOfLE hle).op).hom, V.2.map_fromSpec hU _⟩
-  have hb := isTanBasis_bc he ρ
-  rw [Category.comp_id, eρ] at hb
-  refine ⟨Γ(Y.X, U), inferInstance, hd, hic, hU.fromSpec, g, _, inferInstance, ?_, hb⟩
-  rw [hU.range_fromSpec]
-  exact hxU
 
 end GlobalTheory.FlatModel
 

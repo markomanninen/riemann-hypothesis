@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementFr
+module
+
+public import Formalism.HermitianCurvature.StatementFr
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.Fr11
 
@@ -18,7 +22,7 @@ lemma dg_mul (g h : Ix S → ℂ) : (dg g * dg h : SlopeTestRemainingChoices S A
 lemma dg_add (g h : Ix S → ℂ) : (dg g + dg h : SlopeTestRemainingChoices S A) = dg (fun e => g e + h e) := by
   unfold dg
   rw [Matrix.diagonal_add]
-  simp only [map_add]
+  simp only [map_add (f := _)]
 
 lemma dg_smul (c : ℂ) (g : Ix S → ℂ) : (c • dg g : SlopeTestRemainingChoices S A) = dg (fun e => c * g e) := by
   apply Matrix.ext
@@ -131,7 +135,7 @@ lemma mult_single (l : Letter ℂ S) (γ : ℂ) :
   funext e
   simp only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one]
   generalize e l.intersection_update_fsHerm_neg_one = k
-  fin_cases k <;> simp [sg] <;> ring
+  fin_cases k <;> simp [sg, sub_eq_add_neg, div_eq_mul_inv]
 
 lemma eU_sum (a : S) : (eU a 0 0 + eU a 1 1 : SlopeTestRemainingChoices S A) = 1 := by
   rw [eU_same, eU_same, dg_add, ← dg_one]
@@ -168,7 +172,8 @@ lemma letterSum_step (l : Letter ℂ S) (Y : ℂ) (hY : Y ≠ l.pt) :
         letterSum (l :: v) w Y
   | [], v, _ => by simp [letterSum, Ph_zero]
   | l' :: w, v, h => by
-    obtain ⟨h1, h2, h3⟩ := h l' (by simp)
+    have hhead := h l' List.mem_cons_self
+    rcases hhead with ⟨h1, h2, h3⟩
     have ih := letterSum_step l Y hY w (v ++ [l']) (fun l'' hl => h l'' (by simp [hl]))
     simp only [letterSum]
     rw [Ph_add, ih, Ph_res _ _ _ _ _ _ h2 h3 hY, ← mult_single, ← mul_assoc, mult_single_eU _ _ _ h1,
@@ -221,7 +226,8 @@ lemma io_smul (c : ℂ) (x : A) : (io (c • x) : SlopeTestRemainingChoices S A)
   simp [io, Matrix.scalar_apply, Matrix.diagonal_apply, Matrix.smul_apply]
 
 lemma io_sum {J : Type} (s : Finset J) (x : J → A) : (io (∑ j ∈ s, x j) : SlopeTestRemainingChoices S A) = ∑ j ∈ s, io (x j) := by
-  simp only [io, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [io, map_sum]
 
 lemma Kw_nil {r : ℕ} (L : LevelData A r) : (Kw L ([] : List (Letter ℂ S)) : SlopeTestRemainingChoices S A) = 0 := by
   simp [Kw]

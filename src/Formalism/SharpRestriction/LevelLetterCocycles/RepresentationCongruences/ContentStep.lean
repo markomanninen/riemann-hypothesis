@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.RingDataOfCaseAOfP9
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DvdCoeffsOfMemSpanDistinguished
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.FormalSeriesValueAtTwoPointsGenericPoints
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.RingDataOfCaseAOfP9
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DvdCoeffsOfMemSpanDistinguished
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.FormalSeriesValueAtTwoPointsGenericPoints
+
+@[expose] public section
 
 noncomputable section
 
@@ -103,11 +107,11 @@ theorem deA_le {l : ℕ} [hlp : Fact l.Prime] (b₀ y : ℕ) (hy : 1 ≤ y) (hb 
   set a := b₀ / l + 1 with ha
   have hab : a ≤ b₀ := Nat.div_lt_self (by omega) (by omega)
   rcases le_or_gt a (y - 1) with h | h
-  · simp only [min_eq_left h, Nat.sub_self, Nat.choose_self, padicValNat.one, add_zero, Nat.cast_zero]
+  · simp only [min_eq_left h, Nat.sub_self, Nat.choose_self, Nat.padicValNat_def, multiplicity_one_right, add_zero, Nat.cast_zero]
     linarith
   · rw [min_eq_right h.le]
     have hV : padicValNat l (a.choose (y - 1)) ≤ Nat.log l a := by
-      rw [← Nat.factorization_def _ hlp.out]
+      rw [Nat.padicValNat_def, ← Nat.factorization_def _ hlp.out]
       exact Nat.factorization_choose_le_log
     have hl1 : (1 : ℝ) < l := by exact_mod_cast (show 1 < l by omega)
     have hb0 : (0 : ℝ) < b₀ := by exact_mod_cast (show 0 < b₀ by omega)
@@ -210,7 +214,7 @@ theorem content_step (W : LocWach PD LL O v n) (hcase : Formalism.MainNotions.Li
     rw [hπ]; ring
   have hcc0 : constantCoeff (W.π₀ c) = 0 := GS.π₀₁_cc (GS.ringData_of_caseA_of_p9 W hcase hP9)
   have hccq : constantCoeff (qA W c) = ((PD.p : ℕ) : O) := by
-    rw [hq, map_add, hcc0, constantCoeff_C, zero_add]
+    rw [hq, map_add (f := _), hcc0, constantCoeff_C, zero_add]
   have hε : IsUnit (1 - (w : LetA O n) c * qA W c ^ (PD.p - 1)) := by
     rw [PowerSeries.isUnit_iff_constantCoeff, map_sub, map_one, map_mul, map_pow, hccq]
     apply IsLocalRing.isUnit_one_sub_self_of_mem_nonunits

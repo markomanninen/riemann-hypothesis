@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.WedgeNrmLeOfWedgeNormLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WedgeNrmLeOfWedgeNormLe
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -13,10 +17,10 @@ open GlobalTheory.AllWt
 open scoped ENNReal Classical
 
 theorem eLpNorm_sq_le_add {α : Type} [MeasurableSpace α] {μ : Measure α} (hμ : μ Set.univ ≤ 1) {f g : α → ℝ} {C : ℝ}
-    (hC : 0 ≤ C) (h : ∀ a, f a ^ 2 ≤ g a ^ 2 + C) : eLpNorm f 2 μ ^ 2 ≤ eLpNorm g 2 μ ^ 2 + ENNReal.ofReal C := by
-  have key : ∀ u : α → ℝ, eLpNorm u 2 μ ^ 2 = ∫⁻ a, ENNReal.ofReal (u a ^ 2) ∂μ := fun u => by
-    have e := eLpNorm_nnreal_pow_eq_lintegral (f := u) (μ := μ) (p := 2) two_ne_zero
-    simp only [NNReal.coe_ofNat, ENNReal.rpow_ofNat, ENNReal.coe_ofNat] at e
+    (hC : 0 ≤ C) (h : ∀ a, f a ^ 2 ≤ g a ^ 2 + C) : eLpNorm' f 2 μ ^ 2 ≤ eLpNorm' g 2 μ ^ 2 + ENNReal.ofReal C := by
+  have key : ∀ u : α → ℝ, eLpNorm' u 2 μ ^ 2 = ∫⁻ a, ENNReal.ofReal (u a ^ 2) ∂μ := fun u => by
+    have e := (lintegral_rpow_eNorm_eq_rpow_eLpNorm' (f := u) (μ := μ) (q := 2) (by norm_num)).symm
+    simp only [ENNReal.rpow_ofNat] at e
     rw [e]
     refine lintegral_congr fun a => ?_
     rw [Real.enorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
@@ -59,13 +63,13 @@ theorem exists_ptN_le {P : FDSec X} (hP : P ∈ holSub X la) :
   ⟨(supE X la P).toReal, ENNReal.toReal_nonneg, fun p => (ENNReal.ofReal_le_iff_le_toReal (supE_ne_top X la hP)).1
     (le_iSup (fun p : FPt X => ENNReal.ofReal ((X p.1).pnorm (la p.1) (P p.1) p.2)) p)⟩
 
-omit [Fintype Cp] in
 
+omit [Fintype Cp] in
 theorem ptN_add_le (P Q : FDSec X) (z : Σ k, FD.Frame (X k).Ψ r) : ptN la (P + Q) z ≤ ptN la P z + ptN la Q z :=
   pnorm_add_le _ _ _ _ _
 
-omit [Fintype Cp] in
 
+omit [Fintype Cp] in
 theorem ptN_smul (a : ℂ) (P : FDSec X) (z : Σ k, FD.Frame (X k).Ψ r) : ptN la (a • P) z = ‖a‖ * ptN la P z :=
   pnorm_smul _ _ _ _ _
 
@@ -84,7 +88,7 @@ theorem exists_ptN_sub_le {K W : Type} [Field K] [AddCommGroup W] [Module K W] {
     obtain ⟨f, hf, h₁⟩ := hP (ε / 2) (half_pos hε)
     obtain ⟨g, hg, h₂⟩ := hQ (ε / 2) (half_pos hε)
     refine ⟨f + g, add_mem hf hg, fun p => ?_⟩
-    rw [map_add, show P + Q - (rd f + rd g) = (P - rd f) + (Q - rd g) by abel]
+    rw [map_add (f := _), show P + Q - (rd f + rd g) = (P - rd f) + (Q - rd g) by abel]
     exact (ptN_add_le _ _ _).trans (by linarith [h₁ p, h₂ p])
   | smul a P _ hP =>
     intro ε hε
@@ -199,9 +203,9 @@ theorem bergOn_le_bergCusp {G : WTZ E} {σ : c.F →+* ℂ}
       simp only [ptN, FD.Data.pnorm, eq_zero_of_mem_span_cuspOn hQ hw, norm_zero, zero_mul]
   have hpet : petE (V (goodOf c σ)) (dict (goodOf c σ)) μ (modelWt (U (goodOf c σ)) G) Q ≤
       petE (V (goodOf c σ)) (dict (goodOf c σ)) μ (modelWt (U (goodOf c σ)) G) P :=
-    eLpNorm_mono fun q => by
+    eLpNorm'_mono_ae (by norm_num) (Filter.Eventually.of_forall fun q => by
       rw [Real.norm_of_nonneg (ptN_nonneg _ _ _), Real.norm_of_nonneg (ptN_nonneg _ _ _)]
-      exact hle _
+      exact hle _)
   have hz' : ptN (modelWt (U (goodOf c σ)) G) P ⟨z.1, z.2.1⟩ = ptN (modelWt (U (goodOf c σ)) G) Q ⟨z.1, z.2.1⟩ := by
     have := hPQ _ hz
     simp only [ptN, FD.Data.pnorm] at this ⊢

@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExpFromBlocks
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockTwoApply
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SandwichApply
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExpFromBlocks
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockTwoApply
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SandwichApply
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexConjugate

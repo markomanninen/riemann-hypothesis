@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MvPolynomial
 
 namespace GlobalTheory
@@ -44,10 +49,11 @@ theorem isIntegral_coneRing_of_forall_valuationSubring :
   refine ⟨p.natDegree, b, hjinj ?_⟩
   have e1 := hpx
   rw [hp.as_sum] at e1
-  simp only [Polynomial.eval₂_add, Polynomial.eval₂_finset_sum, Polynomial.eval₂_X_pow,
+  simp only [Polynomial.eval₂_add, Polynomial.eval₂_finsetSum, Polynomial.eval₂_X_pow,
     Polynomial.eval₂_mul, Polynomial.eval₂_C] at e1
   rw [Finset.sum_range (fun k => algebraMap (j.comp g).range L (p.coeff k) * j y ^ k)] at e1
-  rw [map_zero, ← e1, map_add, map_sum, map_pow]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_zero, ← e1, map_add (f := _), map_sum, map_pow]
   congr 1
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_mul, map_pow]

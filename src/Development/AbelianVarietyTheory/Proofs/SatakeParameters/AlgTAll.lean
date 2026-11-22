@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.AlgTAll
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.AlgTAll
+
+@[expose] public section
 
 namespace GlobalTheory.ThLoc
 

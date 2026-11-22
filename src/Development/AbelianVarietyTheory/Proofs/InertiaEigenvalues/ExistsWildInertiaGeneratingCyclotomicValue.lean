@@ -1,9 +1,14 @@
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CentralIdemCoeff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CycZBridge
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousAlgebraMapPadicInt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FixOfStabilizerTrivial
-import Development.AutomorphicArithmetic.CyclotomicBounds.FactorizationConductorLeLocalLevel
+module
+
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CentralIdemCoeff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CycZBridge
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousAlgebraMapPadicInt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FixOfStabilizerTrivial
+public import Development.AutomorphicArithmetic.CyclotomicBounds.FactorizationConductorLeLocalLevel
+
+@[expose] public section
+
 open Formalism Formalism.MainNotions Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial Module TensorProduct GlobalTheory.Pass
 
 noncomputable section
@@ -151,7 +156,7 @@ namespace GlobalTheory.WildCycGen
 theorem one_add_pow_sub_mem {l : ℕ} [Fact l.Prime] {s c : ℕ} (hs : 1 ≤ s) (hc : c % l = 1) :
     (1 + (l : ℤ_[l]) ^ s) ^ c - (1 + (l : ℤ_[l]) ^ s) ∈ Ideal.span {(l : ℤ_[l]) ^ (s + 1)} := by
   rw [← PadicInt.ker_toZModPow, RingHom.mem_ker]
-  simp only [map_sub, map_pow, map_add, map_one, map_natCast]
+  simp only [map_sub, map_pow, map_add (f := _), map_one, map_natCast]
   obtain ⟨s', rfl⟩ : ∃ s', s = s' + 1 := ⟨s - 1, by omega⟩
   set X : ZMod (l ^ (s' + 1 + 1)) := (l : ZMod (l ^ (s' + 1 + 1))) ^ (s' + 1) with hX
   have hlx : (l : ZMod (l ^ (s' + 1 + 1))) * X = 0 := by
@@ -188,6 +193,7 @@ theorem main : ∀ (D : D7) (i : D.nd.Loc) (k : Fin 2), D.nd.l i = D.host.g k �
     rw [(GlobalTheory.TypeDegOne.degree_one D i k hk).1]
     have h5 : D.R.f = 2 * D.R.ord := rfl
     rw [h5]
+    have hord := D.R.toFrame.ord_pos
     positivity
   obtain ⟨σ, hσI, hσc⟩ := GlobalTheory.PtCore.EpsAll.exists_generator (GlobalTheory.EpsInertia.epsAll D i) w hw
   obtain ⟨g0, hC, hP⟩ := exists_proL hl σ

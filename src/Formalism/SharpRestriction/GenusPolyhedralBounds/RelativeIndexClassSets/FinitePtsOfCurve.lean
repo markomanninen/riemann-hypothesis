@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.PublishedIntClosHolds
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.EfRankSum
+module
+
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.PublishedIntClosHolds
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.EfRankSum
+
+@[expose] public section
 
 noncomputable section
 

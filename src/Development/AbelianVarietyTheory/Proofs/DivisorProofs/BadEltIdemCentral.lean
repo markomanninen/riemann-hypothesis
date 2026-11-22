@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
-import Formalism.LocalRingCardinality.SpanPowerMembership.NZTypeD
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NZTypeD
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,8 +28,8 @@ theorem fac_self (k : Fin 2) (t : Tup D k) (v : D.nd.PlG k) : fac D k t ⟨k, v�
 theorem fac_ne (k : Fin 2) (t : Tup D k) (kv : Σ k : Fin 2, D.nd.PlG k) (h : kv.1 ≠ k) : fac D k t kv = 1 := by
   simp [fac, h]
 
-open Classical in
 
+open Classical in
 theorem prod_fac_coeff (k : Fin 2) (t : Tup D k) (g : G0g D.nd) :
     ∏ kv : (Σ k : Fin 2, D.nd.PlG k), (fac D k t kv).coeff (g kv) =
       if ∀ kv : (Σ k : Fin 2, D.nd.PlG k), kv.1 ≠ k → g kv = 1 then
@@ -69,7 +73,7 @@ theorem badElt_eq_sum (k : Fin 2) (S : Finset (Tup D k)) :
     badElt D k S = ∑ t ∈ S, Formalism.BasicNotions.Examples₂.NZ.tens (fac D k t) := by
   apply MonoidAlgebra.coeff_injective
   ext g
-  rw [MonoidAlgebra.coeff_sum, Finsupp.finset_sum_apply]
+  rw [MonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply]
   simp only [Formalism.BasicNotions.Examples₂.NZ.tens_coeff, prod_fac_coeff]
   simp only [badElt, MonoidAlgebra.coeff_ofCoeff, Finsupp.equivFunOnFinite_symm_apply_apply]
   split_ifs with hc

@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CovariantVectorMove.MoveOperatorCovariance
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CovariantVectorMove.MoveOperatorCovariance
+
+@[expose] public section
 
 open Finset Formalism.REAL
 
@@ -43,8 +47,8 @@ def Pv (p : ℕ) (τ : Equiv.Perm (Fin (m + 1))) : A :=
 
 def Mv (p : ℕ) : A := ∑ τ, ((Equiv.Perm.sign τ : ℤ) : A) * Pv E y a b w p τ
 
-omit [Algebra ℂ A] in
 
+omit [Algebra ℂ A] in
 def symV (x c d : Fin n) : A := (if x = d then y c else 0) + (if x = c then y d else 0)
 
 omit [Algebra ℂ A] in
@@ -61,7 +65,7 @@ theorem midV (hy : ∀ a b c, E a b * y c - y c * E a b = if a = c then -y b els
   simp only [Tm, symV]
   split_ifs at h ⊢
   all_goals
-    simp only [map_add, map_one, mul_add, add_mul, mul_one, zero_add, add_zero, h, c2]
+    simp only [map_add (f := _), map_one, mul_add, add_mul, mul_one, zero_add, add_zero, h, c2]
     try noncomm_ring
 
 theorem stepV (hy : ∀ a b c, E a b * y c - y c * E a b = if a = c then -y b else 0)

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.MixedChange
-import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.DuCount
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.MixedChange
+public import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.DuCount
+
+@[expose] public section
 
 noncomputable section
 

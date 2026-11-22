@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaPartD
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermInf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermOf
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleTopologyStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaPartD
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermInf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermOf
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleTopologyStatement
+
+@[expose] public section
+
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC GlobalTheory.CompanionTheory.SiegelND
@@ -30,7 +35,7 @@ theorem sigR_sigR {F E : Type} [Field F] [Field E] [Algebra F E] (R : Type) [Com
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul r e => simp [sigR, hσ]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem sigR_smul {F E : Type} [Field F] [Field E] [Algebra F E] (R : Type) [CommRing R]
     [Algebra F R] (σ : E →ₐ[F] E) (h : F) (t : R ⊗[F] E) :
@@ -86,7 +91,7 @@ theorem hermE_dense_finite : ∀ (F E : Type) [Field F] [NumberField F] [Field E
   have hPm : ∀ m, Pm m ∈ HermR (Af F) σ n := by
     intro m a b
     show sigR (Af F) σ (h • (m b a + sigR (Af F) σ (m a b))) = h • (m a b + sigR (Af F) σ (m b a))
-    rw [sigR_smul, map_add, sigR_sigR _ _ hσ, add_comm]
+    rw [sigR_smul, map_add (f := _), sigR_sigR _ _ hσ, add_comm]
   have hsmul : Continuous fun x : Af F ⊗[F] E => h • x := by
     simp_rw [Algebra.smul_def]
     exact continuous_const.mul continuous_id
@@ -110,14 +115,14 @@ theorem hermE_dense_finite : ∀ (F E : Type) [Field F] [NumberField F] [Field E
   have hc : c ∈ hermE σ n := by
     intro a b
     show σ (h • (c₀ b a + σ (c₀ a b))) = h • (c₀ a b + σ (c₀ b a))
-    rw [Algebra.smul_def, map_mul, AlgHom.commutes, ← Algebra.smul_def, map_add, hσ, add_comm]
+    rw [Algebra.smul_def, map_mul, AlgHom.commutes, ← Algebra.smul_def, map_add (f := _), hσ, add_comm]
   refine ⟨⟨c, hc⟩, ?_⟩
   have hcP : hermIn (Af F) σ n ⟨c, hc⟩ = P (c₀.map (inclR (Af F))) := by
     apply Subtype.ext
     ext a b
     show inclR (Af F) (h • (c₀ a b + σ (c₀ b a))) =
       h • (inclR (Af F) (c₀ a b) + sigR (Af F) σ (inclR (Af F) (c₀ b a)))
-    rw [inclR_smul, map_add, sigR_inclR]
+    rw [inclR_smul, map_add (f := _), sigR_inclR]
   rw [hcP]
   exact hc₀
 

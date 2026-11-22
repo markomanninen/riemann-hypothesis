@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlternatingSumThreeTerms
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlternatingSumThreeTerms
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex Simplicial TensorProduct GlobalTheory.EtC GlobalTheory.CechOne
 
 namespace GlobalTheory.CechOne

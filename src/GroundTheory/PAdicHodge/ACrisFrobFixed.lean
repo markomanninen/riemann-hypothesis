@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.PAdicHodge.ACrisBdRGalois
-import GroundTheory.PAdicHodge.UnramifiedClosure
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.ACrisBdRGalois
+public import GroundTheory.PAdicHodge.UnramifiedClosure
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -16,11 +21,10 @@ section General
 variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p]
 
-local notation "𝒪" => normInteger K
+local notation "𝔸" => Localization.Away (p : AInf K p)
 local notation "𝒪♭" => PreTilt (normInteger K) p
 local notation "θ" => fontaineTheta (normInteger K) p
-local notation "𝔸" => Localization.Away (p : AInf K p)
-local notation "φ" => WittVector.frobeniusEquiv p (PreTilt (normInteger K) p)
+local notation "φ" => WittVector.frobeniusEquiv p 𝒪♭
 
 theorem exists_dpow_frobenius_eq_p_mul {x : AInf K p} (hx : x ∈ RingHom.ker θ) {n : ℕ}
     (hn : n ≠ 0) : ∃ z ∈ ACrisZero K p, dpow n (φ x) = (p : 𝔸) * z := by
@@ -32,11 +36,10 @@ theorem exists_dpow_frobenius_eq_p_mul {x : AInf K p} (hx : x ∈ RingHom.ker θ
   have hpb : (p : 𝔸) * b = algebraMap (AInf K p) 𝔸 (φ x) := by
     have h1 : ((p : ℕ) : 𝔸) * ((p - 1).factorial : 𝔸) = (p.factorial : 𝔸) := by
       rw [← Nat.cast_mul, Nat.mul_factorial_pred hp.out.ne_zero]
-    rw [hy, map_add, map_mul, map_pow, map_natCast, mul_add, ← mul_assoc, h1, factorial_mul_dpow]
+    rw [hy, map_add (f := _), map_mul, map_pow, map_natCast, mul_add, ← mul_assoc, h1, factorial_mul_dpow]
   have hv : (n.factorial).factorization p ≤ n - 1 := by
     rw [Nat.factorization_def _ hp.out]
-    have := padicValNat_factorial_lt_of_ne_zero p hn
-    omega
+    exact Nat.le_pred_of_lt (multiplicity_factorial_lt_of_ne_zero p hn)
   obtain ⟨c, hc⟩ := exists_natCast_mul_eq_pow (K := K) (p := p) (Nat.factorial_ne_zero n) hv
   refine ⟨algebraMap (AInf K p) 𝔸 c * b ^ n, Subalgebra.mul_mem _ (Subalgebra.algebraMap_mem _ c)
     (Subalgebra.pow_mem _ hb n), ?_⟩
@@ -64,7 +67,7 @@ theorem exists_phiAway_eq {y : 𝔸} (hy : y ∈ ACrisZero K p) :
   | add y₁ y₂ _ _ h₁ h₂ =>
     obtain ⟨w₁, z₁, hz₁, e₁⟩ := h₁
     obtain ⟨w₂, z₂, hz₂, e₂⟩ := h₂
-    exact ⟨w₁ + w₂, z₁ + z₂, add_mem hz₁ hz₂, by rw [map_add, e₁, e₂, map_add]; ring⟩
+    exact ⟨w₁ + w₂, z₁ + z₂, add_mem hz₁ hz₂, by rw [map_add (f := _), e₁, e₂, map_add (f := _)]; ring⟩
   | mul y₁ y₂ _ _ h₁ h₂ =>
     obtain ⟨w₁, z₁, hz₁, e₁⟩ := h₁
     obtain ⟨w₂, z₂, hz₂, e₂⟩ := h₂
@@ -82,8 +85,8 @@ theorem of_eq_algebraMap (t : ACrisZero K p) :
       algebraMap (ACrisZero K p) (ACris K p) t :=
   rfl
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_eq_add_p_pow_mul (k : ℕ) (y : ACris K p) :
     ∃ yk : ACrisZero K p, ∃ z : ACris K p,
       y = algebraMap (ACrisZero K p) (ACris K p) yk + (p : ACris K p) ^ k * z := by
@@ -92,7 +95,7 @@ theorem exists_eq_add_p_pow_mul (k : ℕ) (y : ACris K p) :
   have hker : y - _root_.AdicCompletion.of _ _ yk ∈ Ideal.span {(p : ACris K p)} ^ k := by
     rw [← span_p_pow_map, ← ker_adicCompletion_evalₐ (Submodule.fg_span_singleton _),
       RingHom.mem_ker]
-    simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, map_sub]
+    simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, RingHom.map_sub]
     rw [← hyk]
     exact sub_eq_zero.2 (_root_.AdicCompletion.evalₐ_of _ k yk).symm
   rw [Ideal.span_singleton_pow, Ideal.mem_span_singleton'] at hker
@@ -101,48 +104,50 @@ theorem exists_eq_add_p_pow_mul (k : ℕ) (y : ACris K p) :
   rw [← of_eq_algebraMap, mul_comm (_ ^ k) z, hz]
   exact (add_sub_cancel _ _).symm
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_phi_eq (y : ACris K p) :
     ∃ w : AInf K p, ∃ z : ACris K p,
-      phi K p y = algebraMap (AInf K p) (ACris K p) w + (p : ACris K p) * z := by
+      phi (K := K) (p := p) y = algebraMap (AInf K p) (ACris K p) w + (p : ACris K p) * z := by
   obtain ⟨y₀, z₁, rfl⟩ := exists_eq_add_p_pow_mul 1 y
   obtain ⟨w, z, hz, e⟩ := exists_phiAway_eq y₀.2
-  refine ⟨w, algebraMap (ACrisZero K p) (ACris K p) ⟨z, hz⟩ + phi K p z₁, ?_⟩
-  have e' : phiZero K p y₀ = algebraMap (AInf K p) (ACrisZero K p) w +
+  refine ⟨w, algebraMap (ACrisZero K p) (ACris K p) ⟨z, hz⟩ + phi (K := K) (p := p) z₁, ?_⟩
+  have e' : phiZero (K := K) (p := p) y₀ = algebraMap (AInf K p) (ACrisZero K p) w +
       (p : ACrisZero K p) * ⟨z, hz⟩ :=
     Subtype.ext (by rw [coe_phiZero, e]; rfl)
-  have hof : phi K p (algebraMap (ACrisZero K p) (ACris K p) y₀) =
-      algebraMap (ACrisZero K p) (ACris K p) (phiZero K p y₀) := phi_of y₀
+  have hof : phi (K := K) (p := p) (algebraMap (ACrisZero K p) (ACris K p) y₀) =
+      algebraMap (ACrisZero K p) (ACris K p) (phiZero (K := K) (p := p) y₀) := phi_of y₀
   have hw : algebraMap (AInf K p) (ACris K p) w =
       algebraMap (ACrisZero K p) (ACris K p) (algebraMap (AInf K p) (ACrisZero K p) w) :=
     AdicCompletion.algebraMap_apply _ w
-  rw [map_add, map_mul, pow_one, map_natCast, hof, e', map_add, map_mul, map_natCast, hw, mul_add,
-    add_assoc]
+  rw [RingHom.map_add, map_mul, pow_one, map_natCast, hof, e', RingHom.map_add, map_mul,
+    map_natCast, hw, mul_add]
+  ring
+
 
 omit [CharZero K] in
-
 theorem phi_iterate_algebraMap (n : ℕ) (w : AInf K p) :
-    (phi K p)^[n] (algebraMap (AInf K p) (ACris K p) w) =
+    (phi (K := K) (p := p))^[n] (algebraMap (AInf K p) (ACris K p) w) =
       algebraMap (AInf K p) (ACris K p) ((φ ^ n) w) := by
   induction n with
   | zero => rfl
   | succ n ih =>
     rw [Function.iterate_succ_apply', ih, phi_algebraMap, pow_succ', RingAut.mul_apply]
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_phi_iterate_eq (n : ℕ) (y : ACris K p) :
     ∃ w : AInf K p, ∃ z : ACris K p,
-      (phi K p)^[n] y = algebraMap (AInf K p) (ACris K p) w + (p : ACris K p) ^ n * z := by
+      (phi (K := K) (p := p))^[n] y = algebraMap (AInf K p) (ACris K p) w + (p : ACris K p) ^ n * z := by
   induction n with
   | zero => exact ⟨0, y, by rw [Function.iterate_zero_apply, map_zero, pow_zero, one_mul, zero_add]⟩
   | succ n ih =>
     obtain ⟨w, z, e⟩ := ih
     obtain ⟨w', z', e'⟩ := exists_phi_eq (K := K) z
     refine ⟨φ w + (p : AInf K p) ^ n * w', z', ?_⟩
-    rw [Function.iterate_succ_apply', e, map_add, map_mul, map_pow, map_natCast, phi_algebraMap, e',
-      map_add, map_mul, map_pow, map_natCast, mul_add, ← add_assoc, ← mul_assoc, ← pow_succ]
+    rw [Function.iterate_succ_apply', e, RingHom.map_add, map_mul, map_pow, map_natCast,
+      phi_algebraMap, e', RingHom.map_add, map_mul, map_pow, map_natCast, mul_add, ← add_assoc,
+      ← mul_assoc, ← pow_succ]
 
 theorem thetaField_toBDeRhamPlus (a : 𝔸) :
     IsPerfectoidField.thetaBDeRhamPlusField p (toBDeRhamPlus (normInteger K) p a) =
@@ -197,14 +202,14 @@ theorem thetaField_iota (y : ACris K p) :
     rw [iota_of, thetaField_toBDeRhamPlus, theta_of, coe_thetaZero])
   exact congrArg Subtype.val (RingHom.congr_fun hF y)
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_theta_eq_sum_of_phi_iterate {y : ACris K p} {N : ℕ} (hN : 1 ≤ N)
-    (hy : (phi K p)^[N] y = y) {m : ℕ} (hm : 1 ≤ m) :
+    (hy : (phi (K := K) (p := p))^[N] y = y) {m : ℕ} (hm : 1 ≤ m) :
     ∃ c : ℕ → normInteger K, ∀ j : ℕ, ∃ e : normInteger K,
       (theta K p y : K) = ∑ i ∈ Finset.range m, (p : K) ^ i * ((c i : K)) ^ p ^ (N * j) +
         (p : K) ^ m * (e : K) := by
-  have hfix : ∀ j, (phi K p)^[N * j] y = y := fun j => by
+  have hfix : ∀ j, (phi (K := K) (p := p))^[N * j] y = y := fun j => by
     rw [Function.iterate_mul]; exact Function.iterate_fixed hy j
   obtain ⟨w, z, e⟩ := exists_phi_iterate_eq (N * m) y
   rw [hfix m] at e
@@ -222,21 +227,23 @@ theorem exists_theta_eq_sum_of_phi_iterate {y : ACris K p} {N : ℕ} (hN : 1 ≤
   set n := N * j
 
   have hyn : y = algebraMap (AInf K p) (ACris K p) ((φ ^ n) w) +
-      (p : ACris K p) ^ m * ((phi K p ^ n) z') := by
+      (p : ACris K p) ^ m * ((phi (K := K) (p := p) ^ n) z') := by
     conv_lhs => rw [← hfix j, ← RingHom.coe_pow, e']
-    rw [map_add, map_mul, map_pow, map_natCast, RingHom.coe_pow, phi_iterate_algebraMap]
+    rw [RingHom.map_add, map_mul, map_pow, map_natCast, RingHom.coe_pow, phi_iterate_algebraMap]
   have hwn : (φ ^ n) w = ∑ i ∈ Finset.range m, teichmuller p (a i ^ p ^ n) * (p : AInf K p) ^ i +
       (p : AInf K p) ^ m * (φ ^ n) w'' := by
     have hw2 : w = ∑ i ∈ Finset.range m, teichmuller p (a i) * (p : AInf K p) ^ i +
         (p : AInf K p) ^ m * w'' := by rw [← hw'']; ring
     conv_lhs => rw [hw2]
-    rw [map_add, map_sum, map_mul, map_pow, map_natCast]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), map_sum, map_mul, map_pow, map_natCast]
     congr 1
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, map_pow, map_natCast, WittVector.frobeniusEquiv_pow_teichmuller]
-  refine ⟨θ ((φ ^ n) w'') + theta K p ((phi K p ^ n) z'), ?_⟩
+  refine ⟨θ ((φ ^ n) w'') + theta K p ((phi (K := K) (p := p) ^ n) z'), ?_⟩
   conv_lhs => rw [hyn]
-  rw [map_add, map_mul, map_pow, map_natCast, theta_algebraMap, hwn, map_add, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), map_mul, map_pow, map_natCast, theta_algebraMap, hwn, map_add (f := _), map_sum, map_mul,
     map_pow, map_natCast]
   simp only [map_mul, map_pow, map_natCast, fontaineTheta_teichmuller]
   push_cast
@@ -251,7 +258,7 @@ section Cp
 variable {p : ℕ} [hp : Fact p.Prime]
 
 theorem exists_theta_approx_of_phi_iterate {y : ACris ℂ_[p] p} {N : ℕ} (hN : 1 ≤ N)
-    (hy : (phi ℂ_[p] p)^[N] y = y) (m : ℕ) :
+    (hy : (phi (K := ℂ_[p]) (p := p))^[N] y = y) (m : ℕ) :
     ∃ u ∈ unramifiedClosure p,
       ‖((theta ℂ_[p] p y : normInteger ℂ_[p]) : ℂ_[p]) - (u : ℂ_[p])‖ ≤ ‖(p : ℂ_[p])‖ ^ m := by
   rcases Nat.eq_zero_or_pos m with rfl | hm
@@ -270,7 +277,8 @@ theorem exists_theta_approx_of_phi_iterate {y : ACris ℂ_[p] p} {N : ℕ} (hN :
   have hp1 : ‖(p : ℂ_[p])‖ ≤ 1 := norm_natCast_p_lt_one.le
   have hcoe : ((∑ i ∈ Finset.range m, (p : PadicAlgCl p) ^ i * u i : PadicAlgCl p) : ℂ_[p]) =
       ∑ i ∈ Finset.range m, (p : ℂ_[p]) ^ i * (u i : ℂ_[p]) := by
-    simp only [PadicComplex.coe_eq, map_sum, map_mul, map_pow, map_natCast]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [PadicComplex.coe_eq, map_sum, map_mul, map_pow, map_natCast]
   rw [he, hcoe]
   have hdiff : ∑ i ∈ Finset.range m, (p : ℂ_[p]) ^ i * (c i : ℂ_[p]) ^ p ^ (N * J) +
       (p : ℂ_[p]) ^ m * (e : ℂ_[p]) - ∑ i ∈ Finset.range m, (p : ℂ_[p]) ^ i * (u i : ℂ_[p]) =

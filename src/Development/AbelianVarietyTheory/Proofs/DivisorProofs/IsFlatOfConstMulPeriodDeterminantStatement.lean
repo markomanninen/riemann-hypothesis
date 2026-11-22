@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFlatOfConstMulPeriodDeterminant
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFramedChartSnc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSectionOfChg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFlatOfConstMulPeriodDeterminant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFramedChartSnc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSectionOfChg
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.IndefiniteRowSideFullHecke GlobalTheory.IndefiniteRowSideFullHecke.HermitianCompactForm GlobalTheory.Toroidal GlobalTheory.ShFam GlobalTheory.ShFam.Pad GlobalTheory.ShFam.Hor GlobalTheory.DetLine
 set_option maxHeartbeats 1000000 in

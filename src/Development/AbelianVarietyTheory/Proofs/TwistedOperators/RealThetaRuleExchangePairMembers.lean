@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDualPairSwapSymmetry
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDualPairSwapSymmetry
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open MeasureTheory Matrix GlobalTheory.Chain GlobalTheory.ChainFr GlobalTheory.Grid
@@ -10,11 +14,11 @@ open GlobalTheory.PairLift
 
 noncomputable section
 
+local notation "FP" => Formalism.BasicNotions.TH.Pol
+
 namespace GlobalTheory.SwapRule
 
 open MvPolynomial
-
-local notation "FP" => Formalism.BasicNotions.TH.Pol
 
 variable {p q r s : ℕ}
 
@@ -27,7 +31,7 @@ theorem comm_comm' {V1 V2 : Type*} [AddCommGroup V1] [Module ℂ V1] [AddCommGro
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem comm_map' {V1 V2 W1 W2 : Type*} [AddCommGroup V1] [Module ℂ V1] [AddCommGroup V2] [Module ℂ V2]
     [AddCommGroup W1] [Module ℂ W1] [AddCommGroup W2] [Module ℂ W2]
@@ -37,7 +41,7 @@ theorem comm_map' {V1 V2 W1 W2 : Type*} [AddCommGroup V1] [Module ℂ V1] [AddCo
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 def tr {V1 V2 : Type*} [AddCommGroup V1] [Module ℂ V1] [AddCommGroup V2] [Module ℂ V2]
     (f : FP r s p q →ₗ[ℂ] V2 ⊗[ℂ] V1) : FP p q r s →ₗ[ℂ] V1 ⊗[ℂ] V2 :=
@@ -72,8 +76,6 @@ namespace GlobalTheory.SwapRule
 
 open MvPolynomial
 
-local notation "FP" => Formalism.BasicNotions.TH.Pol
-
 variable {p q r s : ℕ}
 
 theorem intw_tr {T0 : GrpData (p * r + q * s) (p * s + q * r)} {T1 : GrpData p q} {T2 : GrpData r s}
@@ -106,7 +108,8 @@ theorem fock_inner_sum {T0 : GrpData (p * r + q * s) (p * s + q * r)} {T1 : GrpD
     (m : ι → (Ix p q × Ix r s →₀ ℕ)) (hm : Set.InjOn m t) :
     inner ℂ (F.ι (∑ i ∈ t, c i • monomial (m i) 1)) (F.ι (∑ i ∈ t, c i • monomial (m i) 1)) =
       ∑ i ∈ t, star (c i) * c i * (m i).prod (fun _ k => (k.factorial : ℂ)) := by
-  simp only [map_sum, map_smul, sum_inner, inner_sum, inner_smul_left, inner_smul_right, F.fockIP]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, sum_inner, inner_sum, inner_smul_left, inner_smul_right, F.fockIP]
   refine Finset.sum_congr rfl fun i hi => ?_
   rw [Finset.sum_eq_single i]
   · simp only [if_true]; simp [mul_assoc, mul_left_comm]
@@ -115,7 +118,7 @@ theorem fock_inner_sum {T0 : GrpData (p * r + q * s) (p * s + q * r)} {T1 : GrpD
     simp
   · intro hi'; exact absurd hi hi'
 
-theorem pol_as_sum (P : FP p q r s) : P = ∑ α ∈ P.support, coeff α P • monomial α 1 := by
+theorem pol_as_sum (P : FP p q r s) : P = ∑ α ∈ P.support, AddMonoidAlgebra.coeff P α • monomial α 1 := by
   conv_lhs => rw [P.as_sum]
   refine Finset.sum_congr rfl fun α _ => ?_
   rw [smul_monomial, smul_eq_mul, mul_one]
@@ -124,13 +127,14 @@ theorem norm_swap {T0 : GrpData (p * r + q * s) (p * s + q * r)} {T1 : GrpData p
     {T2 : GrpData r s} (F : FockData T0 T1 T2) {T0' : GrpData (r * p + s * q) (r * q + s * p)}
     {T1' : GrpData r s} {T2' : GrpData p q} (F' : FockData T0' T1' T2') (Φ : FP r s p q) :
     ‖F.ι (rename Prod.swap Φ)‖ = ‖F'.ι Φ‖ := by
-  have h1 : rename Prod.swap Φ = ∑ α ∈ Φ.support, coeff α Φ • monomial (Finsupp.mapDomain Prod.swap α) 1 := by
+  have h1 : rename Prod.swap Φ = ∑ α ∈ Φ.support, AddMonoidAlgebra.coeff Φ α • monomial (Finsupp.mapDomain Prod.swap α) 1 := by
     conv_lhs => rw [pol_as_sum Φ]
-    simp only [map_sum, map_smul, rename_monomial]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, rename_monomial]
   have hinj : Set.InjOn (fun α : Ix r s × Ix p q →₀ ℕ => Finsupp.mapDomain Prod.swap α) Φ.support :=
     fun a _ b _ h => Finsupp.mapDomain_injective Prod.swap_injective h
-  have e1 := fock_inner_sum F Φ.support (fun α => coeff α Φ) _ hinj
-  have e2 := fock_inner_sum F' Φ.support (fun α => coeff α Φ) id (Set.injOn_id _)
+  have e1 := fock_inner_sum F Φ.support (fun α => AddMonoidAlgebra.coeff Φ α) _ hinj
+  have e2 := fock_inner_sum F' Φ.support (fun α => AddMonoidAlgebra.coeff Φ α) id (Set.injOn_id _)
   simp only [id] at e2
   rw [← pol_as_sum Φ] at e2
   rw [← h1] at e1
@@ -152,8 +156,6 @@ end GlobalTheory.SwapRule
 namespace GlobalTheory.SwapRule
 
 open MvPolynomial
-
-local notation "FP" => Formalism.BasicNotions.TH.Pol
 
 variable {p q r s : ℕ}
 

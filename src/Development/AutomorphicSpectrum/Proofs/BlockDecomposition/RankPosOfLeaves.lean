@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.TreeParts
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.TreeParts
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem good_disc : ∀ {N : ℕ} {t : Tr E N}, t.Good → t.Disc := by
     · exact Or.inr ⟨h.1, h.2.1⟩
   | node t₁ t₂ i₁ i₂ => exact fun h => ⟨i₁ h.1, i₂ h.2⟩
 
-theorem disc_stable : ∀ {N : ℕ} {t : Tr E N}, t.Disc → t.AllLeaves fun _ V => IsStable V := by
+theorem disc_stable : ∀ {N : ℕ} {t : Tr E N}, t.Disc → t.AllLeaves fun _ V => _root_.GlobalTheory.CuspRep.IsStable V := by
   intro N t
   induction t with
   | leaf V z =>
@@ -82,11 +86,11 @@ def CapEig {N : ℕ} (ψ : Sm E N) (m : (E →+* ℂ) → Multiset ℂ) : Prop :
 
 def FinGen {N : ℕ} (K : Subgroup (GL (Fin N) (Af E))) (W : Submodule ℂ (Kinf E N → ℂ)) (U : Submodule ℂ (Sm E N)) : Prop :=
   ∃ S : Finset (Sm E N), (∀ φ ∈ S, TypeB K W φ) ∧ ↑S ⊆ (U : Set (Sm E N)) ∧
-    ∀ U' : Submodule ℂ (Sm E N), IsStable U' → ↑S ⊆ (U' : Set (Sm E N)) → U ≤ U'
+    ∀ U' : Submodule ℂ (Sm E N), _root_.GlobalTheory.CuspRep.IsStable U' → ↑S ⊆ (U' : Set (Sm E N)) → U ≤ U'
 
 def Fac {N : ℕ} (K : Subgroup (GL (Fin N) (Af E))) (W : Submodule ℂ (Kinf E N → ℂ))
     (Θ : ∀ M : ℕ, Set (Subgroup (GL (Fin M) (Af E)))) (Ω : ∀ M : ℕ, Set (Submodule ℂ (Kinf E M → ℂ))) : Prop :=
-  ∀ U : Submodule ℂ (Sm E N), IsStable U → (∀ φ ∈ U, IsAutForm φ) → FinGen K W U → NonPos U → CentIm U →
+  ∀ U : Submodule ℂ (Sm E N), _root_.GlobalTheory.CuspRep.IsStable U → (∀ φ ∈ U, IsAutForm φ) → FinGen K W U → NonPos U → CentIm U →
     (∀ τ : E →+* ℂ, ∃ m, HasInfCharGL U τ m ∧ m.Nodup) → U ≠ ⊥ →
     ∃ (t : Tr E N) (T : Sm E N →ₗ[ℂ] Sm E N), Red t ∧ t.Good ∧ t.AllLeaves (ListLeaf Θ Ω) ∧
       (∀ o, ∀ ψ ∈ U, T (act o ψ) = act o (T ψ)) ∧ (∀ ψ ∈ U, T ψ ∈ t.space) ∧ ∃ ψ ∈ U, T ψ ≠ 0
@@ -129,7 +133,7 @@ def PairStep₁ : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
   (K₁ : Subgroup (GL (Fin a) (Af E))) (K₂ : Subgroup (GL (Fin b) (Af E)))
   (W₁ : Submodule ℂ (Kinf E a → ℂ)) (W₂ : Submodule ℂ (Kinf E b → ℂ))
   (U₁ U₁' : Submodule ℂ (Sm E a)) (U₂ : Submodule ℂ (Sm E b)) (T : Sm E a →ₗ[ℂ] Sm E a) (f : ι → H E a b → ℂ),
-  FiniteDimensional ℂ W₁ → FiniteDimensional ℂ W₂ → IsStable U₁ → (∀ o, ∀ ψ ∈ U₁, T (act o ψ) = act o (T ψ)) →
+  FiniteDimensional ℂ W₁ → FiniteDimensional ℂ W₂ → _root_.GlobalTheory.CuspRep.IsStable U₁ → (∀ o, ∀ ψ ∈ U₁, T (act o ψ) = act o (T ψ)) →
   (∀ ψ ∈ U₁, T ψ ∈ U₁') → (∀ i, f i ∈ pairSpace U₁ U₂) → (∀ i, TypeH K₁ K₂ W₁ W₂ (f i)) →
   (∃ i m₂, ∃ φ : Sm E a, (φ.1 = fun x => f i (x, m₂)) ∧ T φ ≠ 0) →
   (fun i => ap₁ T (f i)) ≠ 0 ∧ (∀ i, ap₁ T (f i) ∈ pairSpace U₁' U₂) ∧ (∀ i, TypeH K₁ K₂ W₁ W₂ (ap₁ T (f i))) ∧
@@ -139,7 +143,7 @@ def PairStep₂ : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
   (K₁ : Subgroup (GL (Fin a) (Af E))) (K₂ : Subgroup (GL (Fin b) (Af E)))
   (W₁ : Submodule ℂ (Kinf E a → ℂ)) (W₂ : Submodule ℂ (Kinf E b → ℂ))
   (U₁ : Submodule ℂ (Sm E a)) (U₂ U₂' : Submodule ℂ (Sm E b)) (T : Sm E b →ₗ[ℂ] Sm E b) (f : ι → H E a b → ℂ),
-  FiniteDimensional ℂ W₁ → FiniteDimensional ℂ W₂ → IsStable U₂ → (∀ o, ∀ ψ ∈ U₂, T (act o ψ) = act o (T ψ)) →
+  FiniteDimensional ℂ W₁ → FiniteDimensional ℂ W₂ → _root_.GlobalTheory.CuspRep.IsStable U₂ → (∀ o, ∀ ψ ∈ U₂, T (act o ψ) = act o (T ψ)) →
   (∀ ψ ∈ U₂, T ψ ∈ U₂') → (∀ i, f i ∈ pairSpace U₁ U₂) → (∀ i, TypeH K₁ K₂ W₁ W₂ (f i)) →
   (∃ i m₁, ∃ φ : Sm E b, (φ.1 = fun x => f i (m₁, x)) ∧ T φ ≠ 0) →
   (fun i => ap₂ T (f i)) ≠ 0 ∧ (∀ i, ap₂ T (f i) ∈ pairSpace U₁ U₂') ∧ (∀ i, TypeH K₁ K₂ W₁ W₂ (ap₂ T (f i))) ∧
@@ -149,17 +153,17 @@ def PairEmb : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (a 
   (K₁ : Subgroup (GL (Fin a) (Af E))) (K₂ : Subgroup (GL (Fin b) (Af E)))
   (W₁ : Submodule ℂ (Kinf E a → ℂ)) (W₂ : Submodule ℂ (Kinf E b → ℂ))
   (X₁ Y₁ : Submodule ℂ (Sm E a)) (X₂ Y₂ : Submodule ℂ (Sm E b)) (G : ι → H E a b → ℂ),
-  FiniteDimensional ℂ W₁ → FiniteDimensional ℂ W₂ → IsStable X₁ → IsStable X₂ → Emb X₁ (· ∈ Y₁) → Emb X₂ (· ∈ Y₂) →
+  FiniteDimensional ℂ W₁ → FiniteDimensional ℂ W₂ → _root_.GlobalTheory.CuspRep.IsStable X₁ → _root_.GlobalTheory.CuspRep.IsStable X₂ → Emb X₁ (· ∈ Y₁) → Emb X₂ (· ∈ Y₂) →
   G ≠ 0 → (∀ i, G i ∈ pairSpace X₁ X₂) → (∀ i, TypeH K₁ K₂ W₁ W₂ (G i)) →
   ∃ G' : ι → H E a b → ℂ, G' ≠ 0 ∧ (∀ i, G' i ∈ pairSpace Y₁ Y₂) ∧ (∀ i, TypeH K₁ K₂ W₁ W₂ (G' i)) ∧
     ∀ (h : HeckeM E a b ι) (c : ℂ), heckeAct h G = c • G → heckeAct h G' = c • G'
 
 def HullGen : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (N : ℕ)
   (K : Subgroup (GL (Fin N) (Af E))) (W : Submodule ℂ (Kinf E N → ℂ)) (S : Set (Sm E N)),
-  (∀ φ ∈ S, TypeB K W φ) → FiniteDimensional ℂ (Submodule.span ℂ S) → IsStable (hull S) ∧ FinGen K W (hull S)
+  (∀ φ ∈ S, TypeB K W φ) → FiniteDimensional ℂ (Submodule.span ℂ S) → _root_.GlobalTheory.CuspRep.IsStable (hull S) ∧ FinGen K W (hull S)
 
 def CapEquiv : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (N : ℕ) (U : Submodule ℂ (Sm E N))
-  (T : Sm E N →ₗ[ℂ] Sm E N) (ψ : Sm E N) (m : (E →+* ℂ) → Multiset ℂ), IsStable U →
+  (T : Sm E N →ₗ[ℂ] Sm E N) (ψ : Sm E N) (m : (E →+* ℂ) → Multiset ℂ), _root_.GlobalTheory.CuspRep.IsStable U →
   (∀ o, ∀ χ ∈ U, T (act o χ) = act o (T χ)) → ψ ∈ U → CapEig ψ m → CapEig (T ψ) m
 
 def DiscInf : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (M : ℕ) (V : Submodule ℂ (Sm E M)),

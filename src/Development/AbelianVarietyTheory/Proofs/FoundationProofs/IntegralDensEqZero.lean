@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.IsSemiChar
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.IntegrableOnFundamentalDomainOfContinuous
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.IsSemiChar
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.IntegrableOnFundamentalDomainOfContinuous
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,11 +37,11 @@ theorem altE_swap (hH : IsHerm H) (x y : V) : altE H y x = -altE H x y := by
   simp [altE, hH x y]
 
 theorem chi_add_left (x x' y : V) : chi H (x + x') y = chi H x y * chi H x' y := by
-  simp only [chi, ← Complex.exp_add, altE, map_add, LinearMap.add_apply, add_im]
+  simp only [chi, ← Complex.exp_add, altE, map_add (f := _), LinearMap.add_apply, add_im]
   congr 1; push_cast; ring
 
 theorem chi_add_right (x y y' : V) : chi H x (y + y') = chi H x y * chi H x y' := by
-  simp only [chi, ← Complex.exp_add, altE, map_add, add_im]
+  simp only [chi, ← Complex.exp_add, altE, map_add (f := _), add_im]
   congr 1; push_cast; ring
 
 theorem chi_eq_one_iff (x y : V) : chi H x y = 1 ↔ ∃ m : ℤ, altE H x y = m := by
@@ -63,7 +67,7 @@ theorem int_swap (hH : IsHerm H) {x y : V} (h : ∃ m : ℤ, altE H x y = m) : �
 
 theorem opU_opU (hH : IsHerm H) (x y : V) (F : V → ℂ) (z : V) :
     opU H x (opU H y F) z = cexp (-(Real.pi * I * (altE H x y : ℂ))) * opU H (x + y) F z := by
-  simp only [opU, add_assoc, map_add, LinearMap.add_apply]
+  simp only [opU, add_assoc, map_add (f := _), LinearMap.add_apply]
   rw [mul_assoc, mul_left_comm _ (F _), ← Complex.exp_add, ← Complex.exp_add, sub_swap hH x y]
   congr 2
   ring
@@ -127,8 +131,10 @@ theorem inter_mem_fixedBy (hH : IsHerm H) {A₁ A₂ : AddSubgroup V} [Finite (A
     rw [AddSubgroup.coe_add, alpha_opU_add hH hd₂ hs₂ a.2 s.2, opU_of_fixed hs₁ hF (AddSubgroup.mem_addSubgroupOf.1 hs), opU_mul,
       ← mul_assoc (α s), alpha_sq hs₂ s.2, one_mul]
 
-open Classical in
 
+local instance (p : Prop) : Decidable p := Classical.propDecidable p
+
+open Classical in
 theorem sum_chi (hH : IsHerm H) {A₁ A₂ : AddSubgroup V} [Fintype (A₁ ⧸ A₂.addSubgroupOf A₁)]
     (hd₁ : IsSelfDual H A₁) (hd₂ : IsSelfDual H A₂) {y : V} (hy : y ∈ A₂) :
     ∑ c : A₁ ⧸ A₂.addSubgroupOf A₁, chi H ((Quotient.out c : A₁) : V) y =
@@ -171,7 +177,8 @@ theorem card_eq_card (hH : IsHerm H) {A₁ A₂ : AddSubgroup V} [Fintype (A₁ 
       altE_swap hH y x]
     congr 1; push_cast; ring
   rw [Finset.sum_comm] at h1
-  simp only [fun (c : A₁ ⧸ A₂.addSubgroupOf A₁) (d : A₂ ⧸ A₁.addSubgroupOf A₂) =>
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [fun (c : A₁ ⧸ A₂.addSubgroupOf A₁) (d : A₂ ⧸ A₁.addSubgroupOf A₂) =>
     h3 ((Quotient.out c : A₁) : V) ((Quotient.out d : A₂) : V), ← map_sum] at h1
   rw [h2, map_natCast] at h1
   exact_mod_cast h1.symm
@@ -214,8 +221,8 @@ theorem inter_inter (hH : IsHerm H) {A₁ A₂ : AddSubgroup V} [Finite (A₁ �
   rw [← h2]
   field_simp
 
-omit [Module ℂ V] in
 
+omit [Module ℂ V] in
 theorem finite_quot {A₁ A₂ : AddSubgroup V} (hfg : A₂.FG) (h : ∀ x ∈ A₂, ∃ m : ℕ, 0 < m ∧ m • x ∈ A₁) :
     Finite (A₂ ⧸ A₁.addSubgroupOf A₂) := by
   have : AddGroup.FG A₂ := (AddGroup.fg_iff_addSubgroup_fg A₂).2 hfg
@@ -242,7 +249,7 @@ theorem isSemiChar_round (hH : IsHerm H) (s : ℝ) {A : AddSubgroup V} (hint : A
       simp
       ring
     have hs : s / 2 * (H (x + y) (x + y)).re = ((a + b + e + 2 * (k - e) : ℤ) : ℝ) := by
-      simp only [map_add, LinearMap.add_apply, add_re, hH x y, conj_re]
+      simp only [map_add (f := _), LinearMap.add_apply, add_re, hH x y, conj_re]
       rw [altE] at he
       push_cast
       linarith
@@ -325,19 +332,26 @@ theorem discrete_of_selfDual (hH : IsHerm H) {A : AddSubgroup W} (hd : IsSelfDua
     simp only [Set.mem_preimage, Set.mem_iInter, Set.mem_setOf_eq, Set.mem_singleton_iff]
     constructor
     · intro h
-      have h0 : ∀ y ∈ A, altE H x y = 0 := by
-        intro y hy
-        rw [← hs] at hy
-        induction hy using AddSubgroup.closure_induction with
+      have h0' : ∀ z : A, altE H x z = 0 := by
+        intro z
+        have hz : z ∈ AddSubsemigroup.closure (↑s : Set A) := by
+          rw [hs]
+          exact Set.mem_univ _
+        induction hz using AddSubsemigroup.closure_induction with
         | mem y hy =>
-          obtain ⟨m, hm⟩ := hd.ge x.2 y (hs ▸ AddSubgroup.subset_closure hy)
+          obtain ⟨m, hm⟩ := hd.ge x.2 y y.2
           have := h y hy
           rw [hm] at this ⊢
           have : |m| < 1 := by exact_mod_cast this
           exact_mod_cast Int.abs_lt_one_iff.1 this
-        | zero => simp [altE]
-        | add a b _ _ ha hb => simp only [altE, map_add, add_im] at ha hb ⊢; rw [ha, hb, add_zero]
-        | neg a _ ha => simp only [altE, map_neg, neg_im] at ha ⊢; rw [ha, neg_zero]
+        | add a b _ _ ha hb =>
+          change ((H (x : W)) ((a : W) + (b : W))).im = 0
+          rw [map_add]
+          simp only [add_im]
+          change altE H (x : W) (a : W) + altE H (x : W) (b : W) = 0
+          rw [ha, hb]
+          simp
+      have h0 : ∀ y ∈ A, altE H x y = 0 := fun y hy => h0' ⟨y, hy⟩
       by_contra hx
       have hx' : (x : W) ≠ 0 := fun h => hx (Subtype.ext h)
       have hm : ∀ t : ℝ, t • (x : W) ∈ A := fun t => hd.le fun y hy =>
@@ -482,7 +496,8 @@ theorem mean_inter (hH : IsHerm H) {A₁ A₂ : AddSubgroup W} [Finite (A₂ ⧸
       have h2 : ((Real.sqrt m : ℝ) : ℂ)⁻¹ * ((Real.sqrt m : ℝ) : ℂ)⁻¹ = (m⁻¹ : ℝ) := by
         rw [← mul_inv, ← Complex.ofReal_mul, Real.mul_self_sqrt hpos.le, Complex.ofReal_inv]
       rw [rho_eq hH, inter_eq, ← h2]
-      simp only [dens, map_mul, map_sum, map_inv₀, Complex.conj_ofReal]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [dens, map_mul, map_sum, map_inv₀, Complex.conj_ofReal]
       rw [mul_mul_mul_comm, Finset.sum_mul_sum, mul_assoc]
       congr 1
       simp only [Finset.sum_mul]
@@ -495,11 +510,11 @@ theorem mean_inter (hH : IsHerm H) {A₁ A₂ : AddSubgroup W} [Finite (A₂ ⧸
         (continuous_const.mul (continuous_dens hH (differentiable_opU hc _).continuous
           (differentiable_opU hc _).continuous))
     rw [integral_congr_ae (Filter.Eventually.of_forall hpt), integral_const_mul,
-      integral_finset_sum _ fun y _ => integrable_finset_sum _ fun y' _ => hint y y',
+      MeasureTheory.integral_finsetSum _ fun y _ => MeasureTheory.integrable_finsetSum _ fun y' _ => hint y y',
       Complex.ofReal_mul, Complex.ofReal_sum]
     congr 1
     refine Finset.sum_congr rfl fun c _ => ?_
-    rw [integral_finset_sum _ fun y' _ => hint c y', Finset.sum_eq_single_of_mem c (Finset.mem_univ _)]
+    rw [MeasureTheory.integral_finsetSum _ fun y' _ => hint c y', Finset.sum_eq_single_of_mem c (Finset.mem_univ _)]
     · rw [alpha_sq hs₂ (hrm c), ← integral_complex_ofReal]
       simp only [one_mul, ← rho_eq hH, rho_opU hH]
     · intro c' _ hne

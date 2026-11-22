@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
-import Development.AutomorphicSpectrum.Proofs.JetProofs.ContinuousIteratedFDerivPartial
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HaarRightInvariantCompact
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
+public import Development.AutomorphicSpectrum.Proofs.JetProofs.ContinuousIteratedFDerivPartial
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HaarRightInvariantCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,7 +77,7 @@ theorem continuousOn_inv : ContinuousOn (fun y : Mat n => y⁻¹) (GLs n) := by
 
 theorem continuousOn_lg : ContinuousOn (lg : Mat n → ℝ) (GLs n) := by
   have h : ContinuousOn (fun y : Mat n => 1 + ∑ a, ∑ b, (‖y a b‖ ^ 2 + ‖y⁻¹ a b‖ ^ 2)) (GLs n) := by
-    refine continuousOn_const.add (continuousOn_finset_sum _ fun a _ => continuousOn_finset_sum _ fun b _ => ?_)
+    refine continuousOn_const.add (continuousOn_finsetSum _ fun a _ => continuousOn_finsetSum _ fun b _ => ?_)
     refine ContinuousOn.add ?_ ?_
     · exact ((continuous_id.matrix_elem a b).norm.pow 2).continuousOn
     · exact (((continuous_id.matrix_elem a b).comp_continuousOn continuousOn_inv).norm).pow 2

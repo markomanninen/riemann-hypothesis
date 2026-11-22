@@ -1,4 +1,8 @@
-import Formalism.MahlerMeasure.LieRoots
+module
+
+public import Formalism.MahlerMeasure.LieRoots
+
+@[expose] public section
 
 namespace Formalism.GM
 

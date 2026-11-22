@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhOneValSt
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhOneValSt
+
+@[expose] public section
 
 set_option autoImplicit false
 

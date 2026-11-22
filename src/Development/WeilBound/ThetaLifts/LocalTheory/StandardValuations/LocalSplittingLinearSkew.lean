@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.SplitProd
-import Development.WeilBound.ThetaLifts.LocalTheory.IsArchimedeanLocalEquivariantMap
-import Development.WeilBound.ThetaLifts.CartanFactorisation.TensOfEval
-import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.ValIffNorm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStdCharNegOneOfStandardTraceAdelicAddChar
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.SplitProd
+public import Development.WeilBound.ThetaLifts.LocalTheory.IsArchimedeanLocalEquivariantMap
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.TensOfEval
+public import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.ValIffNorm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStdCharNegOneOfStandardTraceAdelicAddChar
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -38,7 +42,7 @@ theorem pure_cancel {κ : Type} [Fintype κ] {w : ∀ v : Pl F, (κ → Fv F v) 
     exact hg (SchwartzMap.ext hn)
   funext y
   let y' : ∀ u : ({v} : Finset (Pl F)), κ → Fv F u := fun u => (Finset.mem_singleton.1 u.2).symm ▸ y
-  let m : MultilinearMap ℂ (fun u : ({v} : Finset (Pl F)) => (κ → Fv F u) → ℂ) ℂ :=
+  let m : MultilinearMap (RingHom.id ℂ) (fun u : ({v} : Finset (Pl F)) => (κ → Fv F u) → ℂ) ℂ :=
     (MultilinearMap.mkPiAlgebra ℂ _ ℂ).compLinearMap fun u => LinearMap.proj (y' u)
   let ez : SInf F κ →ₗ[ℂ] ℂ := ⟨⟨fun f => f z, fun _ _ => rfl⟩, fun _ _ => rfl⟩
   have h2 := congrArg (TensorProduct.lift ((LinearMap.mul ℂ ℂ).compl₁₂ ez (PiTensorProduct.lift m))) this
@@ -47,7 +51,7 @@ theorem pure_cancel {κ : Type} [Fintype κ] {w : ∀ v : Pl F, (κ → Fv F v) 
     rw [Fintype.prod_eq_single (⟨v, Finset.mem_singleton_self v⟩ : ({v} : Finset (Pl F)))
       fun u hu => absurd (Subtype.ext (Finset.mem_singleton.1 u.2)) hu]
     simp [y']
-  simp only [Fin.sum_univ_two, map_add, map_smul, TensorProduct.lift.tmul, LinearMap.compl₁₂_apply, PiTensorProduct.lift.tprod,
+  simp only [Fin.sum_univ_two, map_add (f := _), map_smul, TensorProduct.lift.tmul, LinearMap.compl₁₂_apply, PiTensorProduct.lift.tprod,
     Matrix.cons_val_zero, Matrix.cons_val_one, map_zero, LinearMap.mul_apply', hm] at h2
   have h3 : g z * (a y - b y) = 0 := by
     change (1 : ℂ) • (g z * a y) + (-1 : ℂ) • (g z * b y) = 0 at h2
@@ -58,7 +62,7 @@ theorem pure_cancel {κ : Type} [Fintype κ] {w : ∀ v : Pl F, (κ → Fv F v) 
 theorem opF_eq {κ : Type} [Fintype κ] {T} {φ φ₁ : (κ → Fv F v) → ℂ} (hφ : φ ∈ SB _) (h₁ : φ₁ ∈ SB _) (h : Acts (evFin F v) T φ φ₁) :
     opF v T φ = φ₁ := by
   have ex : ∃ φ₁ ∈ SB (κ → Fv F v), Acts (evFin F v) T φ φ₁ := ⟨φ₁, h₁, h⟩
-  rw [opF, dif_pos ex]
+  rw [opF, dite_eq_left ex]
   exact action_uniqueness F κ v T φ hφ _ _ ex.choose_spec.2 h
 
 def dm {k : Type} [Field k] (Y Z : Matrix (Fin n) (Fin d) k) : k := ofM Y ⬝ᵥ ofM Z
@@ -67,10 +71,20 @@ def Hv (M : Model σ X W) (ψ : AddChar (AF F) ℂ) (v : Pl F) (u : Matrix (Fin 
   schr (psiV ψ v) (locW v (M.co.e u)) φ
 
 theorem acts_Hv {u} (hu : At (evFin F v) u) (φ : Fl F v n d) : Acts (evFin F v) (M.co.rho ψ u) φ (Hv M ψ v u φ) :=
-  adjoint_statement.Heisenberg₂ F _ ψ v _ (hu.kd_map M.co.e.toLinearMap) φ
+  by
+    open PositivityTheory.Member.ZakTransform GlobalTheory.CompanionTheory.Ar.SvN in
+    intro r hr
+    change schr ψ (M.co.e u) (tens (evFin F v) φ r) = tens (evFin F v) (Hv M ψ v u φ) r
+    have ha : At (evFin F v) (M.co.e u) := hu.kd_map M.co.e.toLinearMap
+    rw [schr_tens ψ _ _ (indep_of hr.1), offP_eq, sub_smul,
+      (at_iff _).1 ha, one_smul, sub_self, schr_zero]
+    congr 1
+    unfold Hv
+    congr 1
+    exact Subsingleton.elim _ _
 
 theorem Hv_mem (hψ : IsStd ψ) (u) {φ : Fl F v n d} (h : φ ∈ SB _) : Hv M ψ v u φ ∈ SB _ :=
-  PositivityTheory.ThKH.Evl.schr_mem ((adjoint_statement.psi F ψ hψ).2 v).1 _ h
+  PositivityTheory.ThKH.Evl.schr_mem (hψ.1.comp PositivityTheory.Member.ZakTransform.cont_at) _ h
 
 structure Lin (M : Model σ X W) (ψ : AddChar (AF F) ℂ) (v : Pl F)
     (c₁ c₂ : Matrix (Fin n) (Fin d) (AE F E) → Matrix (Fin n) (Fin d) (Fv F v))
@@ -92,7 +106,7 @@ theorem lin_of (hψ : IsStd ψ) {π₁ π₀ : AE F E →+* Fv F v} {c₁ c₂ �
   have e : Hv M ψ v (u₁ + u₀) φ = Hv M ψ v u₁ (Hv M ψ v u₀ φ) := by
     have f := congrArg (evFin F v) ((M.co.form u₁ u₀).symm.trans (hs u₁ u₀ a1 b1))
     rw [ev_sgl, e1, e0, h0, map_sub, ev_dot, ev_dot] at f
-    rw [Hv, Hv, Hv, KCo.schr_schr, map_add, locW_add]
+    rw [Hv, Hv, Hv, KCo.schr_schr, map_add (f := _), locW_add]
     erw [f]
     simp
   obtain ⟨x, hx, x1, -⟩ := sur (Y + c₁ u₁) 0
@@ -105,13 +119,13 @@ theorem lin_of (hψ : IsStd ψ) {π₁ π₀ : AE F E →+* Fv F v} {c₁ c₂ �
   rw [dm, show ofM (Y + c₁ (u₁ + u₀)) = ofM Y + ofM (c₁ (u₁ + u₀)) from rfl, add_dotProduct]
   rw [show ofM (c₁ (u₁ + u₀)) ⬝ᵥ ofM (c₂ (u₁ + u₀)) = 0 from h0, add_zero]; rfl
 
-variable (t) in
 
+variable (t) in
 def cW (b : GL (Fin n) (Fv F v)) (c : GL (Fin d) (Fv F v)) (u : Matrix (Fin n) (Fin d) (AE F E)) : Matrix (Fin n) (Fin d) (Fv F v) :=
   (b⁻¹).1 * u.map (piW t) * (c⁻¹).1ᵀ
 
-variable (σ t X W) in
 
+variable (σ t X W) in
 def cB (b : GL (Fin n) (Fv F v)) (c : GL (Fin d) (Fv F v)) (u : Matrix (Fin n) (Fin d) (AE F E)) : Matrix (Fin n) (Fin d) (Fv F v) :=
   -(b.1ᵀ * X.J.map t * u.map (piW (t.comp σ)) * (W.J.map t)ᵀ * c.1)
 
@@ -222,7 +236,7 @@ theorem sb_comp {A B : Type} [TopologicalSpace A] [TopologicalSpace B] (e : A �
   ⟨h.1.comp_continuous e.continuous, h.2.comp_homeomorph e⟩
 
 theorem isPsi (hψ : IsStd ψ) (hu : PsiUnr ψ v) : IsPsi (psiV ψ v) :=
-  ⟨((adjoint_statement.psi F ψ hψ).2 v).1, fun _ => GlobalTheory.StdCharFromIsStd.norm_psi hψ _, fun x => by
+  ⟨(hψ.1.comp PositivityTheory.Member.ZakTransform.cont_at), fun _ => GlobalTheory.StdCharFromIsStd.norm_psi hψ _, fun x => by
     have := hu x
     simp only [int_iff] at this
     exact this⟩

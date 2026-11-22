@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ChLApply
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TranslationInvariantSchwartzBruhatMapFactorsInte
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddCharConductorAndHaarIntegersExist
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ChLApply
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TranslationInvariantSchwartzBruhatMapFactorsInte
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddCharConductorAndHaarIntegersExist
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData
 open scoped Topology
@@ -36,7 +40,7 @@ theorem measurePreserving_adjoin {ι X : Type} [DecidableEq ι] [MeasurableSpace
       (ν.prod (Measure.pi fun _ : I => ν)) (Measure.pi fun _ : ↥(insert e I : Finset ι) => ν) := by
   have hm : Measurable
       (fun (p : X × (I → X)) (i : ↥(insert e I : Finset ι)) => if h : i.1 ∈ I then p.2 ⟨i.1, h⟩ else p.1) := by
-    refine measurable_pi_lambda _ fun i => ?_
+    refine Measurable.of_eval fun i => ?_
     by_cases h : i.1 ∈ I
     · simp only [dif_pos h]; fun_prop
     · simp only [dif_neg h]; fun_prop
@@ -82,7 +86,8 @@ theorem integrable_red : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalS
     have : (w : Matrix R Q k → k) = fun t => ∑ r, ∑ q, t r q * w (Matrix.single r q 1) := by
       funext t
       conv_lhs => rw [Matrix.matrix_eq_sum_single t]
-      simp only [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum]
       refine Finset.sum_congr rfl fun r _ => Finset.sum_congr rfl fun q _ => ?_
       rw [← smul_eq_mul, ← map_smul, Matrix.smul_single, smul_eq_mul, mul_one]
     rw [this]
@@ -205,7 +210,7 @@ theorem integral_cosets : ∀ (k : Type) [Field k] [ValuativeRel k] [Topological
         exact hba (hS b hb a ha hm)
       · exact fun ha' => absurd ha ha'
   rw [integral_congr_ae (Filter.Eventually.of_forall hT),
-    integral_finset_sum _ fun q _ => (he.comp_sub_right _).const_mul _]
+    MeasureTheory.integral_finsetSum _ fun q _ => (he.comp_sub_right _).const_mul _]
   simp only [integral_const_mul, hshift, ← Finset.sum_mul]
   rw [mul_comm]
   rfl
@@ -232,7 +237,7 @@ theorem red_shift : ∀ (k : Type) [Field k] [TopologicalSpace k] [MeasurableSpa
     rw [← smul_eq_mul, ← map_smul, Matrix.smul_single, smul_eq_mul, mul_one]
   have h1 : ψ (-w (Matrix.single e.1 e.2 u)) = 1 := by rw [AddChar.map_neg_eq_inv, hw, hψ, inv_one]
   unfold red
-  simp only [fill_add_single β E I x _ e hI hE u, hΦ, map_add, neg_add, AddChar.map_add_eq_mul, h1, mul_one]
+  simp only [fill_add_single β E I x _ e hI hE u, hΦ, map_add (f := _), neg_add, AddChar.map_add_eq_mul, h1, mul_one]
 
 theorem red_indicator : ∀ (k : Type) [Field k] [TopologicalSpace k] [MeasurableSpace k] (ψ : AddChar k Circle) (ν : Measure k) (R Q : Type) [Fintype R] [Fintype Q] [DecidableEq R] [DecidableEq Q] (w : Matrix R Q k →ₗ[k] k) (β : Matrix R Q k) (E I : Finset (R × Q)) (e : R × Q), e ∉ E → e ∉ I → ∀ (Φ : Matrix R Q k → ℂ) (A : Set k) (x : Matrix R Q k), red ψ ν w β E I (Set.indicator {t : Matrix R Q k | t e.1 e.2 ∈ A} Φ) x = Set.indicator {z : Matrix R Q k | z e.1 e.2 ∈ A} (red ψ ν w β E I Φ) x := by
   intro k _ _ _ ψ ν R Q _ _ _ _ w β E I e hE hI Φ A x
@@ -275,7 +280,7 @@ theorem integrate_entry : ∀ (k : Type) [Field k] [ValuativeRel k] [Topological
     intro f hf x
     unfold red
     simp only [Finset.sum_apply, Finset.sum_mul]
-    exact integral_finset_sum S fun a _ => integrable_red k ψ ν hψ hν R Q w β E I (f a) (hf a) x
+    exact MeasureTheory.integral_finsetSum S fun a _ => integrable_red k ψ ν hψ hν R Q w β E I (f a) (hf a) x
   have hsum : ∀ x, ∑ a ∈ S, red ψ ν w β E I Φ.1 (x + Matrix.single e.1 e.2 (a - x e.1 e.2)) = 0 := by
     intro x
     have h0 : red ψ ν w β E (insert e I) Φ.1 x = 0 := congrFun hΦ x
@@ -351,8 +356,10 @@ theorem integrate_entry : ∀ (k : Type) [Field k] [ValuativeRel k] [Topological
     · simp only [Set.indicator_of_notMem (show x ∉ {z : Matrix R Q k | z e.1 e.2 ∈ (U : Set k)} from hx),
         Finset.sum_const_zero, Pi.zero_apply]
   have hL := hK (∑ a ∈ S, Φ' a) hΞ
-  rw [← hcov, map_sum]
-  rw [map_sum] at hL
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hcov, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum] at hL
   rw [← hL]
   exact Finset.sum_congr rfl fun a _ => (hΦ'L a).symm
 

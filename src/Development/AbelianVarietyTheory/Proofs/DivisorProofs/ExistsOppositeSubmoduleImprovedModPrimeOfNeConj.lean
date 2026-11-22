@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmHostUnitAddConjEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLinearFormFactorThroughTraceGenerator
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmHostUnitAddConjEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLinearFormFactorThroughTraceGenerator
+
+@[expose] public section
 
 noncomputable section
 
@@ -108,7 +112,7 @@ theorem exists_improves_of_ne_conj : ∀ {E : Type} [Field E] [NumberField E] [I
     have b1 : H.bar e ∈ 𝔭 := (hmem _).1 he𝔭'
     have b2 : H.bar e' - 1 ∈ 𝔭 := by simpa using (hmem _).1 he1'
     have : y (ζ ℓ') = y (ζ ℓ) - H.bar e • y (ζ ℓ₀) - (H.bar e' - 1) • y (ζ ℓ') := by
-      rw [hℓdef, map_add, hζs, hζs, map_add, map_smul, map_smul, sub_smul, one_smul]; abel
+      rw [hℓdef, map_add (f := _), hζs, hζs, map_add (f := _), map_smul, map_smul, sub_smul, one_smul]; abel
     show y (ζ ℓ') ∈ img D y Z' 𝔭
     rw [this]
     exact sub_mem (sub_mem hu (Submodule.mem_sup_right (Submodule.smul_mem_smul b1 trivial)))

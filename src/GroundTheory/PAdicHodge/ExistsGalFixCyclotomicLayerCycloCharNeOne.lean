@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.PAdicHodge.TateCpTwist
-import GroundTheory.PAdicHodge.AxLemma
-import GroundTheory.PAdicHodge.TateNormalizedTrace
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.TateCpTwist
+public import GroundTheory.PAdicHodge.AxLemma
+public import GroundTheory.PAdicHodge.TateNormalizedTrace
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.PAdicHodge
@@ -39,7 +44,7 @@ theorem one_add_pow_ne_one {w : PadicAlgCl p} (hw0 : w ≠ 0) (hw : ‖w‖ < (p
     have hknorm : ((k + 1 + 1 : ℕ) : ℝ)⁻¹ ≤ ‖((k + 1 + 1 : ℕ) : PadicAlgCl p)‖ := by
       rw [norm_natCast_padicAlgCl hk0, zpow_neg, zpow_natCast]
       gcongr
-      exact_mod_cast Nat.le_of_dvd (by omega) pow_padicValNat_dvd
+      exact_mod_cast Nat.le_of_dvd (by omega) (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
     have hkpos : (0 : ℝ) < ((k + 1 + 1 : ℕ) : ℝ) := by exact_mod_cast Nat.succ_pos _
     have hC : ‖((m' + 1).choose (k + 1 + 1) : PadicAlgCl p)‖ ≤
         ‖((m' + 1 : ℕ) : PadicAlgCl p)‖ * ((k + 1 + 1 : ℕ) : ℝ) := by
@@ -298,13 +303,6 @@ theorem cpTwistRep_invariants_eq_bot {j : ℤ} (hj : j ≠ 0) : (cpTwistRep K j)
   intro x hx
   rw [ContRepresentation.mem_invariants] at hx
   exact (Submodule.mem_bot K).2 (eq_zero_of_forall_twistScalar_mul_smul_eq K hj hx)
-
-noncomputable def continuousCohomologyZeroEquiv :
-    continuousCohomology 0 (cpTwist K 0) ≃ₗ[K] K :=
-  (ContinuousCohomology.zeroIso (cpTwist K 0)).toContinuousLinearEquiv.toLinearEquiv ≪≫ₗ
-    LinearEquiv.ofEq _ _ (cpTwistRep_invariants_zero K) ≪≫ₗ
-    (LinearEquiv.ofInjective (Algebra.linearMap K ℂ_[p])
-      (FaithfulSMul.algebraMap_injective K ℂ_[p])).symm
 
 end Invariants
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FormalDegreeSchurOrthogonality
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegrableMulInner
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FormalDegreeSchurOrthogonality
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegrableMulInner
+
+@[expose] public section
+
 open MeasureTheory GlobalTheory.CompanionTheory.UnitaryFramesMetricPeriods GlobalTheory.CompanionTheory.RgHeA
 open scoped InnerProductSpace ComplexConjugate
 set_option maxHeartbeats 1000000 in

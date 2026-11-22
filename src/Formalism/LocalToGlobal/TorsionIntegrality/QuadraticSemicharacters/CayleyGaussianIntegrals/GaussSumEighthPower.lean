@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.UnitaryConstant
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.UnitaryConstant
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -83,7 +87,7 @@ theorem sum_sq_of_anti {P : Type*} [AddCommGroup P] [Fintype P] {Φ : P → ℂ}
   have hB : ∀ v w, B (T v) (T w) * B v w = 1 := by
     intro v w
     have h1 := hT (v + w)
-    rw [map_add, h.add, h.add] at h1
+    rw [map_add (f := _), h.add, h.add] at h1
     have h2 := hT v
     have h3 := hT w
     have h4 : (Φ v * Φ (T v)) * (Φ w * Φ (T w)) * (B (T v) (T w) * B v w) = 1 := by
@@ -132,12 +136,17 @@ theorem sum_sq_of_anti {P : Type*} [AddCommGroup P] [Fintype P] {Φ : P → ℂ}
         simp [h.phi_zero]
 
 theorem pow4 (h : IsQuadFn φ b) :
-    IsQuadFn (fun v : Fin 4 → M => ∏ i, φ (v i)) (fun v w => ∏ i, b (v i) (w i)) where
-  add v w := by simp only [Pi.add_apply, h.add, Finset.prod_mul_distrib]
-  left u v w := by simp only [Pi.add_apply, h.left, Finset.prod_mul_distrib]
-  sq k v := by simp only [Pi.smul_apply, h.sq, Finset.prod_pow]
-  ne v := Finset.prod_ne_zero_iff.2 fun i _ => h.ne _
-  nondeg v hv := by
+    IsQuadFn (fun v : Fin 4 → M => ∏ i, φ (v i)) (fun v w => ∏ i, b (v i) (w i)) := by
+  refine { add := ?_, left := ?_, sq := ?_, ne := ?_, nondeg := ?_ }
+  · intro v w
+    simp only [Pi.add_apply, h.add, Finset.prod_mul_distrib]
+  · intro u v w
+    simp only [Pi.add_apply, h.left, Finset.prod_mul_distrib]
+  · intro k v
+    simp only [Pi.smul_apply, h.sq, Finset.prod_pow]
+  · intro v
+    exact Finset.prod_ne_zero_iff.2 fun i _ => h.ne _
+  · intro v hv
     funext i
     apply h.nondeg
     intro y
@@ -246,7 +255,7 @@ theorem gaussSumEighthPower : GaussEighth := by
       T v = a • v + c • quatI M v + d • quatJ M v + e • quatK M v :=
     ⟨AddMonoidHom.mk'
       (fun v : Fin 4 → M => a • v + c • quatI M v + d • quatJ M v + e • quatK M v)
-      (fun v w => by simp only [map_add, smul_add]; abel), fun v => rfl⟩
+      (fun v w => by simp only [map_add (f := _), smul_add]; abel), fun v => rfl⟩
   have hT : ∀ v : Fin 4 → M, (∏ i, φ (v i)) * (∏ i, φ (T v i)) = 1 := by
     intro v
     have hO : (∏ i, φ ((a • v + c • quatI M v + d • quatJ M v + e • quatK M v) i))

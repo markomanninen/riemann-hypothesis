@@ -1,10 +1,15 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LevelLiftIsLiftPrincipalLevelDatumRealisation
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DualTypePlacesIsSplitNonconjugateOfAdmissible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ClassSumSmallerLevel
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralEqVolMulSum
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ThetaSeriesTypeUnderSupportedLifts
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParahoricLevelLiftsExist
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpecialisedUniversalSeriesEqTwistedThetaSeries
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LevelLiftIsLiftPrincipalLevelDatumRealisation
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DualTypePlacesIsSplitNonconjugateOfAdmissible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ClassSumSmallerLevel
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralEqVolMulSum
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ThetaSeriesTypeUnderSupportedLifts
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParahoricLevelLiftsExist
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpecialisedUniversalSeriesEqTwistedThetaSeries
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum IsDedekindDomain NumberField GlobalTheory.ExportSeries
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -194,8 +199,8 @@ theorem term_eq (B : Base S T) {ψ : Twist D Circle} (hQ : B.admitted ψ.Q) {g :
           rfl
   · simp
 
-open Classical in
 
+open Classical in
 theorem datum_sum (B : Base S T) {ψ : Twist D Circle} (hQ : B.admitted ψ.Q) {ι : Type} [Fintype ι] (g : ι → GA D S)
     (hk : ∀ i, Lev.finE S (g i) ∈ lev D.sp.cm S.gram B.F.βS (B.levS ψ))
     (inj : ∀ i j, rTup B.F.βS (B.levS ψ) (Lev.finE S (g i)) = rTup B.F.βS (B.levS ψ) (Lev.finE S (g j)) → i = j)
@@ -252,8 +257,8 @@ theorem datum_sum (B : Base S T) {ψ : Twist D Circle} (hQ : B.admitted ψ.Q) {�
         rintro ⟨h0, h1⟩
         exact hy ⟨h0, _, h1, (hk i).2⟩
 
-open Classical in
 
+open Classical in
 theorem om_princ_move {B : Base S T} (hB : B.Good) (hS : S.SigOK) {ψ : Twist D Circle} (hψ : ψ.Good) (hQ : B.admitted ψ.Q)
     {ω : PairRep S T} (hω : B.IsWeil ψ.chi ω) {g : GA D S} (hg : g ∈ GfC S) (sg : Lev.finE S g ∈ St B.F.βS) :
     ω (g, 1) ((GlobalTheory.FlatVecSum.princ B).vecFlat ψ) = (((vacC B ψ g 1 : ℂˣ) : ℂ) * 1) •
@@ -281,8 +286,8 @@ theorem om_princ_move {B : Base S T} (hB : B.Good) (hS : S.SigOK) {ψ : Twist D 
   rw [inv_one] at this
   rw [one_mul, this]
 
-open Classical in
 
+open Classical in
 theorem vec_sum {B : Base S T} (hB : B.Good) (hS : S.SigOK) {ψ : Twist D Circle} (hψ : ψ.Good) (hQ : B.admitted ψ.Q)
     {ω : PairRep S T} (hω : B.IsWeil ψ.chi ω) {ι : Type} [Fintype ι] (g : ι → GA D S) (hg : ∀ i, g i ∈ GfC S)
     (hk : ∀ i, Lev.finE S (g i) ∈ lev D.sp.cm S.gram B.F.βS (B.levS ψ))
@@ -297,7 +302,8 @@ theorem vec_sum {B : Base S T} (hB : B.Good) (hS : S.SigOK) {ψ : Twist D Circle
     funext x
     rw [datum_sum B hQ g hk inj surj x, Finset.sum_apply]
     rfl
-  conv_rhs => rw [Base.vecFlat, Base.vecAt, Frame.vec, e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [Base.vecFlat, Base.vecAt, Frame.vec, e, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [om_princ_move hB hS hψ hQ hω (hg i) (parLev_St (lev_le_parLev (hk i))), smul_smul, map_smul, mul_one, Units.val_mul]
 
@@ -312,10 +318,10 @@ theorem om_fock {B : Base S T} (hB : B.Good) {ν : (AE D)ˣ →* Circle} {ω : P
     (hg : g ∈ GfC S) {f : WO S T → ℂ} (hf : IsThetaFunO B.F.ψ S T f) (P : Links.PolF D T.rank S.rank) :
     ω (g, 1) (B.F.fock f P) = B.F.fock (ω (g, 1) f) P :=
   (GlobalTheory.OrientedHeis.om_pureTensorO D _ _ S T _ _ ω hω hB.frame.vac.2.inf _ _ _ _ _ _ _ _ g 1
-    (fun τ => by simp [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ hg])
-    (fun τ => by simp [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ (one_mem _)])
-    (fun τ => by simp [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ hg])
-    (fun τ => by simp [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ (one_mem _)]) f hf P).2
+    (fun τ => by rw [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ hg] <;> simp)
+    (fun τ => by rw [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ (one_mem _)] <;> simp)
+    (fun τ => by rw [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ hg] <;> simp)
+    (fun τ => by rw [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ (one_mem _)] <;> simp) f hf P).2
 
 theorem sum_om_fock_princ : ∀ {D : D7} {S T : HSp D} (B : Base S T), B.Good → S.SigOK → ∀ (ψ : Twist D Circle), ψ.Good → B.admitted ψ.Q →
     ∀ (ω : PairRep S T), B.IsWeil ψ.chi ω → ∀ (F : Finset (Bridge.Gf S)) (hF : ∀ u ∈ F, u ∈ B.levJ ψ),

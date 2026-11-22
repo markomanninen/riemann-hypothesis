@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.HasStrictFDerivAtEquiv
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsBlockGenFinite
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.HasStrictFDerivAtEquiv
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsBlockGenFinite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

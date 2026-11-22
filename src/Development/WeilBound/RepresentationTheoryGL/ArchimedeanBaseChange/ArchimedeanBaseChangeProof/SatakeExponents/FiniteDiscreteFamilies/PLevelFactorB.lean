@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.FiniteDiscreteFamilies.FinCut
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSphericalFactorOfSphericalSubquotient
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.FiniteDiscreteFamilies.FinCut
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSphericalFactorOfSphericalSubquotient
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,8 +30,8 @@ theorem fixed_ne_bot_mono {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V]
   obtain ⟨v, hv, hv0⟩ := (Submodule.ne_bot_iff _).1 h
   exact (Submodule.ne_bot_iff _).2 ⟨v, fun g => hv ⟨g.1, hle g.2⟩, hv0⟩
 
-variable (k n) in
 
+variable (k n) in
 def coreH (K : Subgroup (GL n k)) : Subgroup (GL n k) :=
   ((K.subgroupOf (KO k n)).normalCore).map (KO k n).subtype
 
@@ -72,8 +76,8 @@ theorem isOpen_coreH {K : Subgroup (GL n k)} (hK : IsOpen (K : Set (GL n k))) :
     rw [hts] at this
     exact this
 
-variable (k) in
 
+variable (k) in
 def Ki (e : (Σ a, m a) ≃ n) (H : Subgroup (GL n k)) (a : α) : Subgroup (GL (m a) k) :=
   H.comap ((leviEmb k e).comp (MonoidHom.mulSingle (fun b => GL (m b) k) a)) ⊓ KO k (m a)
 
@@ -101,8 +105,15 @@ theorem exists_fixed_of_parInd_H (e : (Σ a, m a) ≃ n) {W : Type} [AddCommGrou
     exact h0 (Subtype.ext (Subtype.ext (funext h)))
   obtain ⟨p, c, hc, rfl⟩ := MultiIrr.exists_parab_mul e x
   refine ⟨f.1.1 c, fun h => hx (by rw [parInd_law, h]; simp), fun g hg hgH => ?_⟩
-  have h1 := parInd_law e ρ f ⟨_, leviEmb_mem_parab k e g⟩ c
-  rw [leviProj_leviEmb, deltaHalf_eq_one_of_KO hg, Units.val_one, one_smul] at h1
+  have hmem : leviEmb k e g ∈ parab k e := by
+    refine mem_parab_iff.2 fun a b i j hab => ?_
+    simp [leviEmb, Matrix.blockDiagonal'_apply, hab.ne']
+  have hproj : leviProj k e ⟨leviEmb k e g, hmem⟩ = g := by
+    funext a
+    ext i j
+    simp [leviEmb]
+  have h1 := parInd_law e ρ f ⟨_, hmem⟩ c
+  rw [hproj, deltaHalf_eq_one_of_KO hg, Units.val_one, one_smul] at h1
   have h2 := hf ⟨c⁻¹ * leviEmb k e g * c, hH c hc _ hgH⟩
   have h3 := congrArg (fun F : IndSp e ρ => F.1.1 c) h2
   simp only [parInd_apply, MonoidHom.one_apply, Units.val_one, one_smul] at h3
@@ -131,7 +142,7 @@ end LevelFixedParabolic
 open LevelFixedParabolic in
 theorem levelFactor : LevelFactor := by
   intro E _ _ _ w c n N h K hK
-  have hKO : ∀ m, GlobalTheory.LFun.KGL w m = KO (w.adicCompletion E) (Fin m) := fun m =>
+  have hKO : ∀ m, GlobalTheory.LFun.KGL w (n := m) = KO (w.adicCompletion E) (Fin m) := fun m =>
     (GlobalTheory.SmGL.SphCompletion.KO_completion w m).symm
   refine ⟨Ki (m := fun i => Fin (N i)) (w.adicCompletion E) (stdBlocks N h) (coreH (w.adicCompletion E) (Fin n) K),
     fun i => isOpen_Ki (stdBlocks N h) (isOpen_coreH hK) i, fun hle i => ?_, fun σ hσ i => ?_⟩

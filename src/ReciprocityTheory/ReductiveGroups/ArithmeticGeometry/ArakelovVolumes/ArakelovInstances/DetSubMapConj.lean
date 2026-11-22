@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.LminorMapConj
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.LminorMapConj
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -33,7 +37,7 @@ theorem mat_line (x0 b : Frame X.Ψ r) (hb : b ∈ Bor X.Ψ r) (z u : V (nd X)) 
   show mat x0 τ * mat (nmat X (z + ζ • u)) τ =
     mat x0 τ * mat (nmat X z) τ * mat b τ *
       ((1 + ζ • ((mat b τ)⁻¹ * ((mat (nmat X z) τ)⁻¹ * KapPf.Lin X τ u) * mat b τ)) * (mat b τ)⁻¹)
-  rw [KapPf.nmat_eq X (z + ζ • u) τ, map_add, map_smul]
+  rw [KapPf.nmat_eq X (z + ζ • u) τ, map_add (f := _), map_smul]
   simp only [Matrix.add_mul, Matrix.mul_add, Matrix.one_mul, Matrix.mul_one, Matrix.smul_mul, Matrix.mul_smul,
     Matrix.mul_assoc, Matrix.mul_nonsing_inv_cancel_left _ _ hBu, Matrix.mul_nonsing_inv _ hBu,
     Matrix.mul_nonsing_inv_cancel_left _ _ hNu]

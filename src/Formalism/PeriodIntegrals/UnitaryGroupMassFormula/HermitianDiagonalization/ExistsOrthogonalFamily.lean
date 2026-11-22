@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianDiagonalization.HermDiag
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.AdelicCompactOpens.HermDefONFamily
+
+@[expose] public section
 
 namespace PI.UnitaryGroupMassFormula.HermConj
 
@@ -19,7 +23,7 @@ variable {σ : E →+* E} {V : Type} [AddCommGroup V] [Module E V] {h : V → V 
 
 theorem IsHermForm.add_left (hh : IsHermForm σ h) (x y z : V) :
     h (x + y) z = h x z + h y z := by
-  rw [hh.herm z (x + y), hh.add, map_add, ← hh.herm z x, ← hh.herm z y]
+  rw [hh.herm z (x + y), hh.add, map_add (f := _), ← hh.herm z x, ← hh.herm z y]
 
 theorem IsHermForm.smul_left (hh : IsHermForm σ h) (a : E) (x y : V) :
     h (a • x) y = σ a * h x y := by
@@ -90,7 +94,7 @@ theorem exists_orthogonal_family [CharZero E] (σ : E →+* E) :
       have hw0 : ∀ i, h v (w i) = 0 := fun i => by
         rw [← hfv]; exact LinearMap.mem_ker.1 (w i).2
       refine ⟨Fin.cons v (fun i => (w i : V)), ?_, ?_⟩
-      · rw [linearIndependent_fin_cons]
+      · rw [linearIndependent_finCons]
         refine ⟨hwi.map' (LinearMap.ker f).subtype (Submodule.ker_subtype _), ?_⟩
         intro hmem
         have hle : Submodule.span E (Set.range fun i => (w i : V)) ≤ LinearMap.ker f :=

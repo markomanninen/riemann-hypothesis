@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.AllLeaves
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.AllLeaves
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,10 +12,10 @@ open GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.CompanionTheory.CT
 namespace PositivityTheory.Rg.BcB.SpectralAccumulation.Cz
 
 def IsAutSt {E : Type} [Field E] [NumberField E] [IsCMField E] {N : ℕ} (U : Submodule ℂ (Sm E N)) : Prop :=
-  IsStable U ∧ ∀ φ ∈ U, IsAutForm φ
+  _root_.GlobalTheory.CuspRep.IsStable U ∧ ∀ φ ∈ U, IsAutForm φ
 
 def FinGen {E : Type} [Field E] [NumberField E] [IsCMField E] {N : ℕ} (U : Submodule ℂ (Sm E N)) : Prop :=
-  ∃ S : Finset (Sm E N), (↑S : Set (Sm E N)) ⊆ U ∧ ∀ W : Submodule ℂ (Sm E N), IsStable W → (↑S : Set (Sm E N)) ⊆ W → U ≤ W
+  ∃ S : Finset (Sm E N), (↑S : Set (Sm E N)) ⊆ U ∧ ∀ W : Submodule ℂ (Sm E N), _root_.GlobalTheory.CuspRep.IsStable W → (↑S : Set (Sm E N)) ⊆ W → U ≤ W
 
 def SplitInv {E : Type} [Field E] [NumberField E] [IsCMField E] {N : ℕ} (U : Submodule ℂ (Sm E N)) : Prop :=
   ∀ φ ∈ U, ∀ (t : ℝ) g, φ.1 (splitCentre E N t * g) = φ.1 g

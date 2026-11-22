@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagBundle
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsTwistedDualGensSpan
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSpanBundleDim
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagBundle
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsTwistedDualGensSpan
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSpanBundleDim
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -55,7 +60,8 @@ theorem FlagBundleDim.proof (hspan : TwistedDualGensSpan.Statement)
   have hGH : ∀ l m, (Matrix.of G * H) l m = φ l (v (ι' m)) := by
     intro l m
     conv_rhs => rw [← w.sum_repr (v (ι' m))]
-    rw [map_sum, hsum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, hsum]
     · simp [Matrix.mul_apply, hG, hH, mul_comm]
     · intro j hj
       have hm := m.isLt
@@ -76,7 +82,8 @@ theorem FlagBundleDim.proof (hspan : TwistedDualGensSpan.Statement)
       | mem x hx =>
         obtain ⟨l, rfl⟩ := hx
         have := congrFun hg l
-        simpa [hG, map_sum, Finset.sum_apply, mul_comm] using this
+        set_option synthInstance.maxHeartbeats 100000 in
+          simpa [hG, map_sum, Finset.sum_apply, mul_comm] using this
       | zero => simp
       | add x z _ _ hx hz => rw [LinearMap.add_apply, hx, hz, add_zero]
       | smul r x _ hx => rw [LinearMap.smul_apply, hx, smul_zero]

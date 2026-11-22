@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
-import Formalism.LocalToGlobal.GroupLattices.FockModels.OperatorsPreserveLattices
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.OperatorsPreserveLattices
+
+@[expose] public section
 
 namespace Formalism.L2.KerInert
 

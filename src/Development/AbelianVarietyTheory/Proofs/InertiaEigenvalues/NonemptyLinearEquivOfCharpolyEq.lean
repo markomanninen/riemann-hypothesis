@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,8 +34,6 @@ theorem tr_prod [FiniteDimensional k V] [FiniteDimensional k W] (a : A) :
   rw [tr, h, LinearMap.trace_prodMap']
   rfl
 
-theorem tr_one [FiniteDimensional k V] : tr k V (1 : A) = finrank k V := by rw [tr, map_one, LinearMap.trace_one]
-
 theorem finiteDimensional_sub [FiniteDimensional k V] (P : Submodule A V) : FiniteDimensional k P := inferInstanceAs (FiniteDimensional k (P.restrictScalars k))
 
 theorem finrank_eq_zero_of_hom [CharZero k] [FiniteDimensional k V] [FiniteDimensional k W]
@@ -48,7 +50,7 @@ theorem finrank_eq_zero_of_hom [CharZero k] [FiniteDimensional k V] [FiniteDimen
           (h₁ ((LinearMap.snd A V W).comp (φ.comp (LinearMap.inl A V W)))) v
         have e₂ := LinearMap.congr_fun
           (h₂ ((LinearMap.fst A V W).comp (φ.comp (LinearMap.inr A V W)))) w
-        have e₃ : φ (v, w) = φ (v, 0) + φ (0, w) := by rw [← map_add]; simp
+        have e₃ : φ (v, w) = φ (v, 0) + φ (0, w) := by rw [← map_add (f := _)]; simp
         simp only [LinearMap.comp_apply, LinearMap.inl_apply, LinearMap.inr_apply, LinearMap.snd_apply,
           LinearMap.fst_apply, LinearMap.zero_apply] at e₁ e₂
         change ((φ (v, w)).1, (0 : W)) = φ (v, 0)
@@ -165,7 +167,7 @@ theorem exists_equiv_of_trace_eq [CharZero k] {Γ V W : Type} [Monoid Γ] [AddCo
           Representation.asModuleEquiv_symm_map_rho, LinearEquiv.symm_apply_apply]
         rfl
       rw [e₁, e₂, h]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | smul c a ha => simp only [map_smul, ha]
   obtain ⟨e⟩ := nonempty_linear_equiv_of_charpoly_eq (k := k) (A := MonoidAlgebra k Γ) _ ρ.asModule σ.asModule le_rfl key
   refine ⟨ρ.asModuleEquiv.symm.trans ((e.restrictScalars k).trans σ.asModuleEquiv), fun g v => ?_⟩

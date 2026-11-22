@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.LevBasis
-import Development.AbelianVarietyTheory.Statements.ThetaLevelCharacters.MemThetaLevelCharDimZero
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.UnimodularAndTangentOfIsAH
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.LevelThreeSeparatesTangentVectors
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.LevBasis
+public import Development.AbelianVarietyTheory.Statements.ThetaLevelCharacters.MemThetaLevelCharDimZero
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.UnimodularAndTangentOfIsAH
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.LevelThreeSeparatesTangentVectors
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -87,8 +91,8 @@ section Frames
 
 variable {A : Over (Sp ℂ)} [GrpObj A] {L : LB A.left} {g : ℕ}
 
-open PullHermitian in
 
+open PullHermitian in
 theorem exists_frame_ratio (hL : L.IsLB) (u u₀ : HolUnif A L g) (F : (Fin g → ℂ) →ₗ[ℂ] (Fin g → ℂ))
     (hF : ∀ z, u₀.ex (F z) = u.ex z) :
     ∃ r : (Fin g → ℂ) → ℂ, Differentiable ℂ r ∧ (∀ z, r z ≠ 0) ∧
@@ -185,7 +189,7 @@ theorem sections_eq_level : ThetaUnifAV → ∀ (g : ℕ) (x : KeyIn ℂ) (h : x
       have h3 := hth i _ hi'
       rw [hper, h2, h1] at h3
       have h4 := hu₀.2.2.2 k i (e z) (by rw [he, hF]; exact hi)
-      rw [hk, ← map_add, he, he (z + w), hrf i z hi, hrf i _ hi', ← he, ← hk] at h4
+      rw [hk, ← map_add (f := _), he, he (z + w), hrf i z hi, hrf i _ hi', ← he, ← hk] at h4
       refine mul_right_cancel₀ (mul_ne_zero hz (u.fr_ne i _ hi')) ?_
       unfold hermForm
       linear_combination r z * h3 - thetaChar τ a b z * h4
@@ -199,13 +203,13 @@ theorem sections_eq_level : ThetaUnifAV → ∀ (g : ℕ) (x : KeyIn ℂ) (h : x
       rw [← he, e.apply_symm_apply]; exact k.2))
     have hk := e.symm_apply_eq.1 hmn
     have h1 := hf.2 m n z
-    rw [hG, hG, map_add, ← hk, mul_comm (f (e z)), ← _root_.mul_assoc, ← mul_pow, ← key m n k hk z, mul_pow] at h1
+    rw [hG, hG, map_add (f := _), ← hk, mul_comm (f (e z)), ← _root_.mul_assoc, ← mul_pow, ← key m n k hk z, mul_pow] at h1
     refine mul_right_cancel₀ (pow_ne_zero l (hr0 _)) (h1.trans ?_)
     ring
   · exact (hf.1.comp hed).mul (hr.pow l)
   · have hk := (UnifCompare.mem_iff u u₀ F hF _).2 ((hΛ _).2 ⟨m, n, rfl⟩)
     have h1 := hf.2 ⟨e _, hk⟩ (e z)
-    rw [hG, hG, map_add, mul_comm (f (e z)), ← _root_.mul_assoc, ← mul_pow, ← key m n ⟨e _, hk⟩ rfl z, mul_pow, h1]
+    rw [hG, hG, map_add (f := _), mul_comm (f (e z)), ← _root_.mul_assoc, ← mul_pow, ← key m n ⟨e _, hk⟩ rfl z, mul_pow, h1]
     ring
   · obtain ⟨z, rfl⟩ := e.surjective w
     rw [he] at hj ⊢

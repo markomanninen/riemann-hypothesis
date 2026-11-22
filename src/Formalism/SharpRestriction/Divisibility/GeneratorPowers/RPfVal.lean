@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.RStatement
-import Formalism.LocalToGlobal.ProjectiveLattices.CrudeVal
+module
+
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.RStatement
+public import Formalism.LocalToGlobal.ProjectiveLattices.CrudeVal
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -32,10 +36,11 @@ theorem prime_mem_iff {p : ℕ} (hp : p.Prime) : ((p : ℕ) : 𝓞 K) ∈ la.asI
 
 theorem padic_prime (l : ℕ) [Fact l.Prime] {p : ℕ} (hp : p.Prime) :
     padicValNat l p = if l = p then 1 else 0 := by
+  rw [Nat.padicValNat_def]
   split_ifs with h
-  · subst h; exact padicValNat_self
+  · subst h; exact Nat.multiplicity_self hp.one_lt
   · have : Fact p.Prime := ⟨hp⟩
-    exact padicValNat_primes h
+    exact multiplicity_primes h
 
 theorem vLa_pPow {Q q d : ℕ} (hQ : Q ≠ 0) (hq : q.Prime) (hd : d.Prime) (a b c : ℕ) :
     vLa la (((Q ^ a * q ^ b * d ^ c : ℕ) : ℕ) : K) =
@@ -49,12 +54,12 @@ theorem vLa_pPow {Q q d : ℕ} (hQ : Q ≠ 0) (hq : q.Prime) (hd : d.Prime) (a b
   rw [crv_vLa_natCast la (Nat.mul_ne_zero (Nat.mul_ne_zero h2 hq') hd')]
   congr 2
   have e1 : padicValNat (resCharOf la) (Q ^ a) = a * padicValNat (resCharOf la) Q := by
-    rw [padicValNat.pow]
+    simp only [Nat.padicValNat_def, Nat.multiplicity_pow]
   have e2 : padicValNat (resCharOf la) (q ^ b) = b * padicValNat (resCharOf la) q := by
-    rw [padicValNat.pow]
+    simp only [Nat.padicValNat_def, Nat.multiplicity_pow]
   have e3 : padicValNat (resCharOf la) (d ^ c) = c * padicValNat (resCharOf la) d := by
-    rw [padicValNat.pow]
-  rw [padicValNat.mul (Nat.mul_ne_zero h2 hq') hd', padicValNat.mul h2 hq', e1, e2, e3,
+    simp only [Nat.padicValNat_def, Nat.multiplicity_pow]
+  rw [(show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (Nat.mul_ne_zero h2 hq') hd', (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) h2 hq', e1, e2, e3,
     padic_prime _ hq, padic_prime _ hd]
 
 theorem nat_mem_iff (n : ℕ) : ((n : ℕ) : 𝓞 K) ∈ la.asIdeal ↔ resCharOf la ∣ n := by
@@ -124,7 +129,7 @@ theorem vAdd_sW (B : WeightFamilies.Prov D) (hinj : Function.Injective D.what₂
     rw [if_pos hS, if_neg h1, if_neg h2]
     generalize padicValNat (resCharOf la) D.host.QS = m
     push_cast; ring
-  · rw [if_neg hS, padicValNat.eq_zero_of_not_dvd hS]
+  · rw [if_neg hS, Nat.padicValNat_def, multiplicity_eq_zero_of_not_dvd hS]
     split_ifs <;> (try (exfalso; omega)) <;> (try (exfalso; tauto)) <;> push_cast <;> ring
 
 end Formalism.MainNotions.ModuliIntegralCharts.H1.RPfVal

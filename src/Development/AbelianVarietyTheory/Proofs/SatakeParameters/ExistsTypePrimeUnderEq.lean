@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.AbelianHostFieldConditions
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SubOneMemMapOfEq
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.AbelianHostFieldConditions
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SubOneMemMapOfEq
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2.Col
 
 noncomputable section
@@ -26,7 +31,7 @@ theorem mem_divs_iff {A : Type} [CommRing A] [IsDedekindDomain A] {a : A} (ha : 
     refine (Ideal.finite_factors h0).subset fun v hv => ?_
     exact Ideal.dvd_span_singleton.2 hv
   unfold divs
-  rw [dif_pos hfin, Set.Finite.mem_toFinset]
+  rw [dite_eq_left hfin, Set.Finite.mem_toFinset]
   rfl
 
 def conjPrime (X : Fields) (P : HeightOneSpectrum (𝓞 X.E)) : HeightOneSpectrum (𝓞 X.E) where

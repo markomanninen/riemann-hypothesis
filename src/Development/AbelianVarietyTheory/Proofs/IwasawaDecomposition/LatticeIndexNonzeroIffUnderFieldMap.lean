@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.QuotientMetricDivisors.Statement
-import Formalism.HermitianLattices.StatementLat
-import Formalism.LocalRingCardinality.Lemmas
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MapSpanBaseChangeEquivSubmoduleOf
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthBaseChangeQuotientOfMapMaximalIdeal
+module
+
+public import Mathlib
+public import Formalism.QuotientMetricDivisors.Statement
+public import Formalism.HermitianLattices.StatementLat
+public import Formalism.LocalRingCardinality.Lemmas
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MapSpanBaseChangeEquivSubmoduleOf
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthBaseChangeQuotientOfMapMaximalIdeal
+
+@[expose] public section
 
 open NumberField IsDedekindDomain IsLocalRing TensorProduct
 
@@ -126,7 +130,7 @@ theorem exists_lidx_eq_mul (K K' : Type) [Field K] [NumberField K] [Field K'] [N
     rw [IsScalarTower.algebraMap_apply (𝓞 K) (𝓞 K') O', ← IsScalarTower.algebraMap_apply (𝓞 K') O' K',
       ← IsScalarTower.algebraMap_apply]
   letI : Algebra O O' := Localization.AtPrime.algebraOfLiesOver P.asIdeal P'.asIdeal
-  have : Localization.AtPrime.IsLiesOverAlgebra P.asIdeal P'.asIdeal := ⟨rfl⟩
+  have : Localization.AtPrime.IsLiesOverAlgebra P.asIdeal P'.asIdeal := inferInstance
   have : IsScalarTower (𝓞 K) O O' := inferInstance
   have : IsLocalHom (algebraMap O O') := inferInstance
   have : IsDiscreteValuationRing O :=

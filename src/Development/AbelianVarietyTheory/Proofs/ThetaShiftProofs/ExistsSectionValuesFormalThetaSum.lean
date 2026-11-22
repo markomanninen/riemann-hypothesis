@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IdealPart
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.MemThetaShiftZero
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ToUnitCompLeft
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.SecValFeTranslate
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IdealPart
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.MemThetaShiftZero
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ToUnitCompLeft
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.SecValFeTranslate
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.ArcPts
@@ -46,7 +50,7 @@ theorem exists_vals_fsum : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E] [
       push_cast
       rw [Λ.A.psi_add]
       field_simp
-    obtain ⟨t, h₁, h₂⟩ := cast (Λ.ε (α + j • mu)) (by rw [map_add, map_nsmul])
+    obtain ⟨t, h₁, h₂⟩ := cast (Λ.ε (α + j • mu)) (by rw [map_add (f := _), map_nsmul])
     refine ⟨t, h₁, fun z => Eq.trans ?_ (h₂ z)⟩
     exact congrArg (fun q => FrameValue.secVal Λ.u a.D₀.P.isLB t (Λ.u.ex z).left ![z, z + q, q, 0])
       ((map_add Λ.A.ct _ _).trans (congrArg _ (map_nsmul Λ.A.ct _ _)))
@@ -83,7 +87,7 @@ theorem exists_vals_fsum : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E] [
     have e₁ : f x = 0 := hf.2 x fun y e => hx (Λ.ε.symm (W.e.symm y)) (by
       rw [← e]
       show W.e (Λ.ε _) = _
-      rw [map_add, map_add, map_nsmul, map_nsmul, Λ.ε.apply_symm_apply, W.e.apply_symm_apply])
+      rw [map_add (f := _), map_add (f := _), map_nsmul, map_nsmul, Λ.ε.apply_symm_apply, W.e.apply_symm_apply])
     have e₂ : famVal (Ξ.g v) (f x) (jf x) = 0 := by
       rw [e₁]
       exact (dif_pos (hc x).1).trans ((congrArg _ (map_zero _)).trans (map_zero _))

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem fl_step {F E : Type*} [Field F] [Field E] [Algebra F E] (p : ℕ) [hp : 
   have hmon : (X ^ p - C b).Monic := monic_X_pow_sub_C _ hp.out.ne_zero
   have hmin : X ^ p - C b = minpoly L x := minpoly.eq_of_irreducible_of_monic hirr haev hmon
   have hint : IsIntegral L x := ⟨X ^ p - C b, hmon, by simpa [aeval_def] using haev⟩
-  rw [adjoin.finrank hint, ← hmin, natDegree_X_pow_sub_C]
+  rw [adjoin.finrank hint, ← hmin, natDegree_X_pow_sub_C _]
 
 theorem fl_greedy {F E : Type*} [Field F] [Field E] [Algebra F E] [FiniteDimensional F E]
     (p : ℕ) [hp : Fact p.Prime] [CharP E p] (h : ∀ x : E, x ^ p ∈ Set.range (algebraMap F E)) :

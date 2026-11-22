@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRInvDefs
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRInvDefs
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 

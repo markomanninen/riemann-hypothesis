@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -39,20 +44,6 @@ def KodairaGeneric.Statement : Prop :=
     ∃ (k : ℕ) (e : Ω), 1 ≤ k ∧ e ≠ 0 ∧ e ∈ chartLatQ y ((k : ℤ) • a - 1) 1
 
 section Inhabitants
-
-theorem IsArithVar.eq_of_le {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
-    {P W : Ideal (MRing ι)} {d : ℕ} (hP : IsArithVar P d) (hW : IsArithVar W d) (hPW : P ≤ W) : P = W := by
-  by_contra hne
-  obtain ⟨g, hgW, hgP⟩ := SetLike.exists_of_lt (lt_of_le_of_ne hPW hne)
-  have : P.IsPrime := hP.2.1.1
-  have hr : Ideal.Quotient.mk P g ∈ nonZeroDivisors (MRing ι ⧸ P) :=
-    mem_nonZeroDivisors_of_ne_zero (by rwa [Ne, Ideal.Quotient.eq_zero_iff_mem])
-  have h := ringKrullDim_succ_le_of_surjective (Ideal.Quotient.factor hPW)
-    (Ideal.Quotient.factor_surjective hPW) hr (by
-      rw [Ideal.Quotient.factor_mk, Ideal.Quotient.eq_zero_iff_mem]; exact hgW)
-  rw [hP.2.2.2, hW.2.2.2] at h
-  have h' : d + Fintype.card K + 1 ≤ d + Fintype.card K := by exact_mod_cast h
-  omega
 
 open ProjLine
 

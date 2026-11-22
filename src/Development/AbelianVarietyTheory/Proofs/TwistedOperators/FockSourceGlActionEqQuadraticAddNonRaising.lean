@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ChosenSeries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ChosenSeries
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Matrix GlobalTheory.Chain GlobalTheory.Chain.RealIt
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -13,7 +18,8 @@ open GlobalTheory.IndefiniteRowSideFullHecke.RaisingLoweringOperators
 theorem deg_X_pderiv {σ : Type} (a b : σ) (P : MvPolynomial σ ℂ) :
     (MvPolynomial.X a * MvPolynomial.pderiv b P).totalDegree ≤ P.totalDegree := by
   classical
-  conv_lhs => rw [P.as_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [P.as_sum, map_sum, Finset.mul_sum]
   refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun s hs => ?_)
   rw [MvPolynomial.pderiv_monomial]
   by_cases h : s b = 0
@@ -141,7 +147,8 @@ theorem quadS_ne_zero (X : Matrix (Fin a) (Fin a) ℂ) (i : Fin b) (j k : Fin a)
         all_goals simp
       · simp
   have h1 := congrArg (MvPolynomial.aeval f) h0
-  simp only [quadS, map_sum, map_smul, key, map_zero] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [quadS, map_sum, map_smul, key, map_zero] at h1
   rw [Finset.sum_eq_single j, Finset.sum_eq_single k, Finset.sum_eq_single i] at h1
   · simp [hX, sgn_ne_zero] at h1
   · intro i' _ h; simp [h]

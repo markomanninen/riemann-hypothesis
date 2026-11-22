@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.InvSerSub
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExponentialIntegrality.InvNatMemWf
+module
+
+public import Formalism.PeriodIntegrals.InvSerSub
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExponentialIntegrality.InvNatMemWf
+
+@[expose] public section
 
 noncomputable section
 

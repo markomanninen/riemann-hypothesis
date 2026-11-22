@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsES
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsES
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,8 +78,8 @@ section Pos
 
 open scoped ComplexOrder
 
-omit hS in
 
+omit hS in
 theorem posType_of (I : AutInst) (μ : Measure I.Gf) [μ.IsMulLeftInvariant] [IsFiniteMeasureOnCompacts μ]
     {f : I.Gf → ℂ} (hc : Continuous f) {C : Set I.Gf} (hC : IsCompact C) (hCo : IsOpen C)
     (hsupp : ∀ x, f x ≠ 0 → x ∈ C) (hconv : I.convF μ f f = f) (hsa : ∀ x, f x⁻¹ = star (f x)) :
@@ -114,9 +118,9 @@ theorem posType_of (I : AutInst) (μ : Measure I.Gf) [μ.IsMulLeftInvariant] [Is
   have key : ∫ z, ((Complex.normSq (∑ j, c j * f (z⁻¹ * x j)) : ℝ) : ℂ) ∂μ =
       ∑ i, ∑ j, star (c i) * c j * f ((x i)⁻¹ * x j) := by
     simp_rw [hF]
-    rw [integral_finset_sum _ (fun i _ => integrable_finset_sum _ (fun j _ => (hint i j).const_mul _))]
+    rw [integral_finsetSum _ (fun i _ => integrable_finsetSum _ (fun j _ => (hint i j).const_mul _))]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [integral_finset_sum _ (fun j _ => (hint i j).const_mul _)]
+    rw [integral_finsetSum _ (fun j _ => (hint i j).const_mul _)]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [integral_const_mul, hsub]
   rw [← key, integral_complex_ofReal]

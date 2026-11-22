@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.CTKernel
+module
+
+public import Development.WeilBound.ThetaLifts.CTKernel
+
+@[expose] public section
 
 noncomputable section
 

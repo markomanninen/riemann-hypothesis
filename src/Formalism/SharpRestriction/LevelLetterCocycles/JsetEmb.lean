@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Lemmata.GeneralBFactUpperForm.Imports
-import Lemmata.GeneralBFactUpperVariant.Imports
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Lemmata.GeneralBFactUpperForm.Imports
+public import Lemmata.GeneralBFactUpperVariant.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,15 +19,6 @@ variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field 
     {B BdR : Type} [CommRing B] [CommRing BdR] [Algebra Qp B] [Algebra K₀ B] [IsScalarTower Qp K₀ B]
     [Algebra Qp BdR] [Algebra K₀ BdR] [Algebra K BdR] [IsScalarTower Qp K BdR]
     [IsScalarTower K₀ K BdR] [IsScalarTower Qp K₀ BdR]
-
-def EmbSplitSt (PD : PeriodData G Qp K₀ K B BdR) : Prop :=
-  ∀ (LL : Type) [Field LL] [Algebra Qp LL] [Fintype (K →ₐ[Qp] LL)],
-    CharZero Qp → FiniteDimensional Qp LL → Fintype.card (K →ₐ[Qp] LL) = finrank Qp K →
-    ∀ (V : Type) [AddCommGroup V] [Module LL V] [Module Qp V] [IsScalarTower Qp LL V]
-      (ρ : Representation LL G V), Module.Finite LL ↥(DdR PD ρ) →
-      finrank LL ↥(DdR PD ρ) = ∑ τ : K →ₐ[Qp] LL, finrank LL ↥(DdRE PD ρ τ) ∧
-      ∀ a : ℤ, finrank LL ↥(DdR PD ρ ⊓ FilV PD (LL := LL) (V := V) a) =
-        ∑ τ : K →ₐ[Qp] LL, finrank LL ↥(FildR PD ρ τ a)
 
 end Iface
 
@@ -85,81 +80,13 @@ theorem lagrange_eigen_decomposition {ι : Type*} [Fintype ι] [DecidableEq ι] 
   · have hs := Lagrange.sum_basis hinj (Finset.univ_nonempty (α := ι))
     calc ∑ i, aeval T (Lagrange.basis Finset.univ v i) x
         = aeval T (∑ i, Lagrange.basis Finset.univ v i) x := by
-          rw [map_sum, LinearMap.sum_apply]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum, LinearMap.sum_apply]
       _ = x := by rw [hs, map_one, Module.End.one_apply]
   · rw [aeval_apply_eigenvector_alt T (v j) u hu]
     by_cases h : i = j
     · subst h; rw [Lagrange.eval_basis_self hinj (Finset.mem_univ _), one_smul, if_pos rfl]
     · rw [Lagrange.eval_basis_of_ne h (Finset.mem_univ _), zero_smul, if_neg h]
-
-theorem finrank_sum_embedding_eigenspaces [FiniteDimensional Qp K] [Algebra.IsSeparable Qp K] [Fintype (K →ₐ[Qp] LL)]
-    (hcard : Fintype.card (K →ₐ[Qp] LL) = finrank Qp K)
-    (m : K →+* Module.End LL M)
-    (hm : ∀ q, m (algebraMap Qp K q) = algebraMap LL _ (algebraMap Qp LL q))
-    (W : Submodule LL M) [FiniteDimensional LL W] (hW : ∀ c x, x ∈ W → m c x ∈ W) :
-    finrank LL W = ∑ τ : K →ₐ[Qp] LL,
-      finrank LL ↥(W ⊓ ⨅ c : K, LinearMap.ker ((m c : M →ₗ[LL] M) - τ c • LinearMap.id)) := by
-  classical
-  have pb : PowerBasis Qp K := Field.powerBasisOfFiniteOfSeparable Qp K
-  have hU : ∀ (τ : K →ₐ[Qp] LL) (u : M),
-      u ∈ (⨅ c : K, LinearMap.ker ((m c : M →ₗ[LL] M) - τ c • LinearMap.id)) ↔
-        ∀ c, m c u = τ c • u := by
-    intro τ u
-    simp only [Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply, LinearMap.smul_apply,
-      LinearMap.id_apply, sub_eq_zero]
-  have hv : Function.Injective fun τ : K →ₐ[Qp] LL => τ pb.gen := fun τ σ h => pb.algHom_ext h
-  have hint : IsIntegral Qp pb.gen := Algebra.IsIntegral.isIntegral _
-  have hroot : ∀ τ : K →ₐ[Qp] LL,
-      ((minpoly Qp pb.gen).map (algebraMap Qp LL)).eval (τ pb.gen) = 0 := by
-    intro τ
-    rw [eval_map, ← aeval_def, aeval_algHom_apply, minpoly.aeval, map_zero]
-  have hnf : (minpoly Qp pb.gen).map (algebraMap Qp LL) =
-      Lagrange.nodal Finset.univ fun τ : K →ₐ[Qp] LL => τ pb.gen := by
-    refine eq_of_monic_of_dvd_of_natDegree_le Lagrange.nodal_monic ((minpoly.monic hint).map _)
-      (nodal_dvd_of_roots hv hroot) ?_
-    rw [natDegree_map, pb.natDegree_minpoly, ← pb.finrank, ← hcard, Lagrange.natDegree_nodal,
-      Finset.card_univ]
-  have hT0 : aeval (m pb.gen) (Lagrange.nodal Finset.univ fun τ : K →ₐ[Qp] LL => τ pb.gen) = 0 := by
-    rw [← hnf, aeval_map_commute m hm, minpoly.aeval, map_zero]
-  have : Nonempty (K →ₐ[Qp] LL) :=
-    Fintype.card_pos_iff.1 (hcard ▸ Module.finrank_pos)
-  obtain ⟨heig, hsum, hsel⟩ := lagrange_eigen_decomposition hv (m pb.gen) hT0
-
-  have hall : ∀ (τ : K →ₐ[Qp] LL) (u : M), m pb.gen u = τ pb.gen • u → ∀ c, m c u = τ c • u := by
-    intro τ u hu c
-    obtain ⟨g, -, rfl⟩ := pb.exists_eq_aeval c
-    rw [← aeval_map_commute m hm, aeval_apply_eigenvector_alt _ _ u hu, eval_map, ← aeval_def,
-      aeval_algHom_apply]
-  set e : (K →ₐ[Qp] LL) → Module.End LL M := fun τ =>
-    aeval (m pb.gen) (Lagrange.basis Finset.univ (fun σ : K →ₐ[Qp] LL => σ pb.gen) τ) with he
-  have heW : ∀ τ x, x ∈ W → e τ x ∈ W := fun τ x hx =>
-    aeval_mem_stable_submodule _ W (fun y hy => hW pb.gen y hy) _ x hx
-  have heU : ∀ τ x, e τ x ∈ (⨅ c : K, LinearMap.ker ((m c : M →ₗ[LL] M) - τ c • LinearMap.id)) :=
-    fun τ x => (hU τ _).2 (hall τ _ (heig τ x))
-  have hsel' : ∀ σ τ u, u ∈ (⨅ c : K, LinearMap.ker ((m c : M →ₗ[LL] M) - τ c • LinearMap.id)) →
-      e σ u = if σ = τ then u else 0 := fun σ τ u hu => hsel σ τ u ((hU τ u).1 hu pb.gen)
-  let Φ : W ≃ₗ[LL] ((τ : K →ₐ[Qp] LL) →
-      ↥(W ⊓ ⨅ c : K, LinearMap.ker ((m c : M →ₗ[LL] M) - τ c • LinearMap.id))) :=
-    { toFun := fun w τ => ⟨e τ w, Submodule.mem_inf.2 ⟨heW τ w w.2, heU τ w⟩⟩
-      map_add' := fun x y => by
-        funext τ; apply Subtype.ext
-        show e τ (x + y : M) = e τ x + e τ y
-        rw [map_add]
-      map_smul' := fun a x => by
-        funext τ; apply Subtype.ext
-        show e τ (a • (x : M)) = a • e τ x
-        rw [map_smul]
-      invFun := fun F => ⟨∑ τ, (F τ : M), W.sum_mem fun τ _ => (Submodule.mem_inf.1 (F τ).2).1⟩
-      left_inv := fun w => by
-        apply Subtype.ext
-        show ∑ τ, e τ w = w
-        exact hsum w
-      right_inv := fun F => by
-        funext σ; apply Subtype.ext
-        show e σ (∑ τ, (F τ : M)) = F σ
-        rw [map_sum, Finset.sum_congr rfl fun τ _ => hsel' σ τ _ (Submodule.mem_inf.1 (F τ).2).2]
-        simp }
-  rw [Φ.finrank_eq, Module.finrank_pi_fintype]
 
 end Gen
 
@@ -178,7 +105,7 @@ theorem de_rham_mul_one : mulVdR (Qp := Qp) (LL := LL) (V := V) (BdR := BdR) (1 
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [mulVdR]
-  | add x y hx hy => rw [map_add, hx, hy, map_add]
+  | add x y hx hy => rw [map_add (f := _), hx, hy, map_add (f := _)]
 
 theorem de_rham_mul_mul (c d : K) : mulVdR (Qp := Qp) (LL := LL) (V := V) (BdR := BdR) (c * d) =
     mulVdR (Qp := Qp) (LL := LL) (V := V) (BdR := BdR) c * mulVdR (Qp := Qp) (LL := LL) (V := V) (BdR := BdR) d := by
@@ -187,14 +114,14 @@ theorem de_rham_mul_mul (c d : K) : mulVdR (Qp := Qp) (LL := LL) (V := V) (BdR :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [mulVdR]
-  | add x y hx hy => rw [map_add, hx, hy, map_add, map_add]
+  | add x y hx hy => rw [map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]
 
 theorem de_rham_mul_zero : mulVdR (Qp := Qp) (LL := LL) (V := V) (BdR := BdR) (0 : K) = 0 := by
   refine LinearMap.ext fun x => ?_
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [mulVdR]
-  | add x y hx hy => rw [map_add, hx, hy]; simp
+  | add x y hx hy => rw [map_add (f := _), hx, hy]; simp
 
 theorem de_rham_mul_add (c d : K) : mulVdR (Qp := Qp) (LL := LL) (V := V) (BdR := BdR) (c + d) =
     mulVdR (Qp := Qp) (LL := LL) (V := V) (BdR := BdR) c + mulVdR (Qp := Qp) (LL := LL) (V := V) (BdR := BdR) d := by
@@ -203,7 +130,7 @@ theorem de_rham_mul_add (c d : K) : mulVdR (Qp := Qp) (LL := LL) (V := V) (BdR :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [mulVdR, add_mul, TensorProduct.tmul_add]
-  | add x y hx hy => rw [map_add, hx, hy, map_add, map_add]; abel
+  | add x y hx hy => rw [map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]; abel
 
 theorem de_rham_mul_algebraMap (q : Qp) : mulVdR (Qp := Qp) (LL := LL) (V := V) (BdR := BdR) (algebraMap Qp K q) =
     algebraMap LL (Module.End LL (V ⊗[Qp] BdR)) (algebraMap Qp LL q) := by
@@ -215,7 +142,7 @@ theorem de_rham_mul_algebraMap (q : Qp) : mulVdR (Qp := Qp) (LL := LL) (V := V) 
     simp only [mulVdR, AlgebraTensorModule.map_tmul, LinearMap.id_apply, LinearMap.mulLeft_apply]
     rw [← IsScalarTower.algebraMap_apply Qp K BdR, ← Algebra.smul_def, ← TensorProduct.smul_tmul,
       TensorProduct.smul_tmul', algebraMap_smul]
-  | add x y hx hy => rw [map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [map_add (f := _), hx, hy, smul_add]
 
 variable (PD : PeriodData G Qp K₀ K B BdR) (ρ : Representation LL G V)
 
@@ -225,7 +152,7 @@ theorem de_rham_action_mul (g : G) (c : K) (x : V ⊗[Qp] BdR) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [actVdR, mulVdR, map_mul, AlgEquiv.commutes]
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, map_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]
 
 theorem de_rham_mul_stable (c : K) (x : V ⊗[Qp] BdR) (hx : x ∈ DdR PD ρ) :
     mulVdR (Qp := Qp) (LL := LL) (V := V) (BdR := BdR) c x ∈ DdR PD ρ := by
@@ -244,7 +171,7 @@ theorem de_rham_mul_filtration_stable (a : ℤ) (c : K) (x : V ⊗[Qp] BdR)
     refine ⟨v ⊗ₜ ⟨algebraMap K BdR c * b, ?_⟩, ?_⟩
     · rw [← Algebra.smul_def]; exact (PD.Fil a).smul_mem c b.2
     · simp [mulVdR]
-  | add y z hy hz => rw [map_add, map_add]; exact Submodule.add_mem _ hy hz
+  | add y z hy hz => rw [map_add (f := _), map_add (f := _)]; exact Submodule.add_mem _ hy hz
 
 end Conc
 
@@ -253,27 +180,6 @@ variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field 
     {B BdR : Type} [CommRing B] [CommRing BdR] [Algebra Qp B] [Algebra K₀ B] [IsScalarTower Qp K₀ B]
     [Algebra Qp BdR] [Algebra K₀ BdR] [Algebra K BdR] [IsScalarTower Qp K BdR]
     [IsScalarTower K₀ K BdR] [IsScalarTower Qp K₀ BdR]
-
-theorem embSplit (PD : PeriodData G Qp K₀ K B BdR) : EmbSplitSt PD := by
-  intro LL _ _ _ hQp _ hcard V _ _ _ _ ρ hfin
-  have := hQp
-  have := hfin
-  have : FiniteDimensional Qp K := PD.finK
-  have : Algebra.IsSeparable Qp K := Algebra.IsAlgebraic.isSeparable_of_perfectField
-  let m : K →+* Module.End LL (V ⊗[Qp] BdR) :=
-    { toFun := fun c => mulVdR c
-      map_one' := de_rham_mul_one
-      map_mul' := de_rham_mul_mul
-      map_zero' := de_rham_mul_zero
-      map_add' := de_rham_mul_add }
-  have hm : ∀ q, m (algebraMap Qp K q) = algebraMap LL _ (algebraMap Qp LL q) := de_rham_mul_algebraMap
-  refine ⟨finrank_sum_embedding_eigenspaces hcard m hm (DdR PD ρ) fun c x hx => de_rham_mul_stable PD ρ c x hx, fun a => ?_⟩
-  rw [finrank_sum_embedding_eigenspaces hcard m hm (DdR PD ρ ⊓ FilV PD a) fun c x hx => Submodule.mem_inf.2
-    ⟨de_rham_mul_stable PD ρ c x (Submodule.mem_inf.1 hx).1,
-      de_rham_mul_filtration_stable PD a c x (Submodule.mem_inf.1 hx).2⟩]
-  refine Finset.sum_congr rfl fun τ _ => ?_
-  rw [FildR, DdRE, inf_right_comm]
-  rfl
 
 end Formalism.MainNotions.N.JsetEmb
 

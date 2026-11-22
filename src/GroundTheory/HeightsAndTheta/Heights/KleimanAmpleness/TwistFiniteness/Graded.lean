@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistFiniteness.PsiOfIsHomogeneous
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistFiniteness.PsiOfIsHomogeneous
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -66,12 +71,14 @@ theorem projT_mem_TMod {m : Amb x η} (hm : m ∈ TMod x η S n0 d0 g0) (c : ℤ
     · exact Submodule.subset_span ⟨j, rfl⟩
     · rw [map_zero]; exact zero_mem _
   | zero => rw [map_zero, map_zero, map_zero]; exact zero_mem _
-  | add a b _ _ ha hb => rw [map_add, map_add, map_add]; exact add_mem (ha c) (hb c)
+  | add a b _ _ ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _)]; exact add_mem (ha c) (hb c)
   | smul p m _ hm =>
     have hsum : toA x η (p • m) = ∑ d ∈ Finset.range (p.totalDegree + 1),
         phi x η S (homogeneousComponent d p) * toA x η m := by
-      rw [toA_smulP, ← Finset.sum_mul, ← map_sum, sum_homogeneousComponent]
-    rw [hsum, map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [toA_smulP, ← Finset.sum_mul, ← map_sum, sum_homogeneousComponent]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsum, map_sum, map_sum]
     refine Submodule.sum_mem _ fun d _ => ?_
     rw [projT_mul_of_mem (phi_mem_tgr x η S (homogeneousComponent_isHomogeneous d p))]
     have h := Submodule.smul_mem _ (homogeneousComponent d p) (hm (c - d))
@@ -83,7 +90,8 @@ def pieceM (c : ℤ) : Submodule (Sy S r) (TMod x η S n0 d0 g0) where
   carrier := {m | toA x η (m : Amb x η) ∈ tgr c}
   add_mem' {a b} ha hb := by
     change toA x η ((a : Amb x η) + b) ∈ tgr c
-    rw [map_add]; exact add_mem ha hb
+    rw [map_add (toA x η)]
+    exact add_mem ha hb
   zero_mem' := by
     change toA x η ((0 : TMod x η S n0 d0 g0) : Amb x η) ∈ tgr c
     rw [Submodule.coe_zero, map_zero]; exact zero_mem _
@@ -113,7 +121,7 @@ theorem isInternal_pieceM : DirectSum.IsInternal (pieceM x η S n0 d0 g0) := by
         DFinsupp.mapRange_single (hf := fun c => map_zero (pc c))
       rw [this, DirectSum.coeAddMonoidHom_of]
       rfl
-    | add a b ha hb => simp only [map_add, ha, hb, Submodule.coe_add]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb, Submodule.coe_add]
   constructor
   · intro v w hvw
     have h1 : Φ v = Φ w := (gradeBy.isInternal (R := Ω) (AddMonoidHom.fst ℤ ℤ)).1 (by
@@ -135,8 +143,10 @@ theorem isInternal_pieceM : DirectSum.IsInternal (pieceM x η S n0 d0 g0) := by
         rw [AddEquiv.apply_symm_apply]; exact projT_mem c _⟩, ?_⟩
     apply Subtype.ext
     apply (toA x η).injective
-    rw [map_sum]
-    simp only [DirectSum.coeAddMonoidHom_of, Submodule.coe_sum, map_sum, AddEquiv.apply_symm_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [DirectSum.coeAddMonoidHom_of, Submodule.coe_sum, map_sum, AddEquiv.apply_symm_apply]
     exact hF
 
 def tgraded : GradedPMod (Sy S r) N (TMod x η S n0 d0 g0) where

@@ -1,9 +1,13 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
-import GroundTheory.GlobalFields.TateThesis.TateThetaDecay
-import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
-import GroundTheory.GlobalFields.TateThesis.GlobalZetaFinite
-import GroundTheory.GlobalFields.TateThesis.EulerFactorsInfinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.ClosedOneU
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
+public import GroundTheory.GlobalFields.TateThesis.TateThetaDecay
+public import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
+public import GroundTheory.GlobalFields.TateThesis.GlobalZetaFinite
+public import GroundTheory.GlobalFields.TateThesis.EulerFactorsInfinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.ClosedOneU
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,8 +35,8 @@ theorem finite_dd : {w : HeightOneSpectrum (𝓞 F) | dd w ≠ 0}.Finite := by
   simp only [Set.mem_ofPred_eq, dd, ordI, Nat.cast_ne_zero] at hw ⊢
   exact (Associates.count_ne_zero_iff_dvd h0 w.irreducible).1 hw
 
-variable (F) in
 
+variable (F) in
 def idealOf (e : HeightOneSpectrum (𝓞 F) → ℤ) : (FractionalIdeal (𝓞 F)⁰ F)ˣ := ∏ᶠ w, primeIdealUnit w ^ e w
 
 def Jc (c : HeightOneSpectrum (𝓞 F) → ℕ) : (FractionalIdeal (𝓞 F)⁰ F)ˣ := idealOf F fun w => (c w : ℤ)

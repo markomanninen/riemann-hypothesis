@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.Carries
-import GroundTheory.AutomorphicForms.TraceNormComp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.Carries
+public import GroundTheory.AutomorphicForms.TraceNormComp
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic PositivityTheory.Rg.Tf.IntegralApplyAeEq Set Filter Topology UpperTheory.V.Z.IntegralApplyAeEq
 open scoped InnerProductSpace FourierTransform ComplexConjugate
@@ -24,7 +28,7 @@ theorem UpperTheory.V.Z.IntegralApplyAeEq.avSpec :
       hψ.smul_bdd ‖h‖ (F.cont h).aestronglyMeasurable (Eventually.of_forall fun t => (F.norm t h).le)
     let A : G →ₗ[ℂ] G :=
       { toFun := fun h => ∫ t, ψ t • F.U t h
-        map_add' := fun x y => by simp only [map_add, smul_add]; exact integral_add (hi x) (hi y)
+        map_add' := fun x y => by simp only [map_add (f := _), smul_add]; exact integral_add (hi x) (hi y)
         map_smul' := fun c x => by simp only [map_smul, RingHom.id_apply, smul_comm _ c]; exact integral_smul c _ }
     have hb : ∀ h, ‖A h‖ ≤ (∫ t, ‖ψ t‖) * ‖h‖ := fun h => by
       refine (norm_integral_le_integral_norm _).trans_eq ?_

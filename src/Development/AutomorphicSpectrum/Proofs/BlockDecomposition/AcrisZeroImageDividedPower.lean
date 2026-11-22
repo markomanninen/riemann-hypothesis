@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.EtaleComparisonMapOfFacts
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.EtaleComparisonMapOfFacts
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Limits AlgebraicGeometry Opposite GroundTheory.PAdicHodge CrystallineSemistableComparison CrystallineSemistableComparison.CH CrystallineSemistableComparison.E GlobalTheory.EtC
 
@@ -19,7 +24,8 @@ theorem cris_log (A : PAlg l) (n : ℕ) {x : Ainf l} (hx : x ∈ RingHom.ker (th
     A.cris n (ACris.log hx) = ∑ k ∈ Finset.range (l * n), A.cris n (ACris.logTerm hx k) := by
   obtain ⟨N, hN⟩ := ACris.isAdicSum_log hx n
   have h2 := cris_eq_zero A n (hN (max N (l * n)) (le_max_left _ _))
-  rw [map_sub, sub_eq_zero, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, sub_eq_zero, map_sum,
     ← Finset.sum_range_add_sum_Ico _ (le_max_right N (l * n)),
     Finset.sum_eq_zero (s := Finset.Ico (l * n) (max N (l * n))) (fun k hk =>
       cris_eq_zero A n (ACris.logTerm_mem hx (Finset.mem_Ico.1 hk).1)), add_zero] at h2
@@ -30,7 +36,8 @@ theorem cris_logTerm (A : PAlg l) (n k : ℕ) {x : Ainf l} (hx : x ∈ RingHom.k
       (-1) ^ k * (k.factorial : A.Acr n) * A.mkAcr n (A.cris0 (ACris.dpowZero hx (k + 1))) := by
   rw [ACris.logTerm, AdicCompletion.algebraMap_apply, Algebra.algebraMap_self, RingHom.id_apply,
     PAlg.cris_of, ACris.logTermZero]
-  simp only [map_mul, map_pow, map_neg, map_one, map_natCast]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_mul, map_pow, map_neg, map_one, map_natCast]
 
 theorem acrisZero_image_divided_power (A : PAlg l) (k : ℕ) {x : Ainf l} (hx : x ∈ RingHom.ker (theta0 l)) :
     (A.cris0 (ACris.dpowZero hx k)).1 = dpw k (WittVector.map A.s x) :=

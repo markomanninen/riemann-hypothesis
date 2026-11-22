@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IMemSiegel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IMemSiegel
+
+@[expose] public section
 
 open Matrix Complex GlobalTheory.SW
 open scoped ComplexConjugate Real
@@ -36,7 +40,7 @@ theorem exists_symplectic_rows (F : ((ι → ℚ) × (ι → ℚ)) →ₗ[ℚ] (
 
   have e1 : (σ * Matrix.J ι ℚ * σᵀ) a b = (r a).1 ⬝ᵥ (r b).2 - (r a).2 ⬝ᵥ (r b).1 := by
     simp [Matrix.mul_apply, Matrix.J, Fintype.sum_sum_type, σ, dotProduct, Matrix.one_apply,
-      Finset.sum_neg_distrib, sub_eq_add_neg, add_comm]
+      Finset.sum_neg_distrib, sub_eq_add_neg, add_comm, Function.swap]
   rw [e1, ← hF, hr, hr]
   rcases a with a | a <;> rcases b with b | b <;>
     simp [Matrix.J, dotProduct, Pi.single_apply, Matrix.one_apply, eq_comm]

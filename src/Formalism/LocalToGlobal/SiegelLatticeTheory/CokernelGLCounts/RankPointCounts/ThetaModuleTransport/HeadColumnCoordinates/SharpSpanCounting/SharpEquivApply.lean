@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumACut
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumACut
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableS
 variable {M : Model F E} {V : Type} [AddCommGroup V] [Module E V] (H : HermSp M V)
 
 theorem h_add_right (x y y' : V) : H.h x (y + y') = H.h x y + H.h x y' := by
-  rw [H.h_herm (y + y') x, H.h_add_left, map_add, ← H.h_herm, ← H.h_herm]
+  rw [H.h_herm (y + y') x, H.h_add_left, map_add (f := _), ← H.h_herm, ← H.h_herm]
 
 theorem h_smul_right (a : E) (x y : V) : H.h x (a • y) = M.L.cj a * H.h x y := by
   rw [H.h_herm (a • y) x, H.h_smul_left, map_mul, ← H.h_herm]
@@ -179,10 +183,6 @@ theorem map_sharp_MMo {r : ℕ} (t : Term V M r) (hG : IsUnit (gramH H (H.MMfam 
 def ddEquiv {r : ℕ} (t : Term V M r) (hG : IsUnit (gramH H (H.MMfam t)).det) :
     DDt H t ≃ₗ[M.L.O] (Fin (r + 1) ⊕ Fin (r + 1) → M.L.O) ⧸ relSub H t :=
   Submodule.Quotient.equiv _ _ (sharpEquiv H t hG) (map_sharp_MMo H t hG)
-
-theorem ddEquiv_mk {r : ℕ} (t : Term V M r) (hG : IsUnit (gramH H (H.MMfam t)).det)
-    (u : ↥(MMsharp H t)) :
-    ddEquiv H t hG (ddMk H t u) = Submodule.Quotient.mk (sharpEquiv H t hG u) := rfl
 
 end Sharp
 

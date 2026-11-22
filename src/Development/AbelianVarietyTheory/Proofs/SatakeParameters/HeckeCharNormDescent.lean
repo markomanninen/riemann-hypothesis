@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RegPolOfRepOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.BcDefs
-import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms.BaseChange
-import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms.InfiniteAdeleRingMapInfiniteAdeleRingMap
-import GroundTheory.GlobalFields.NormResidueSymbol.FunctorialInfinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RegPolOfRepOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.BcDefs
+public import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms.BaseChange
+public import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms.InfiniteAdeleRingMapInfiniteAdeleRingMap
+public import GroundTheory.GlobalFields.NormResidueSymbol.FunctorialInfinite
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -56,9 +61,9 @@ theorem normChar_locInf {K L : Type} [Field K] [NumberField K] [Field L] [Number
   rw [this]
   simp
 
+
 open scoped GroundTheory.Global.AdeleBaseChange in
 open GlobalTheory.UnitaryHeckeBaseChange in
-
 theorem ideleNorm_eq (E : Type) [Field E] [NumberField E] [IsCMField E] (x : (AdeleRing (𝓞 E) E)ˣ) :
     GlobalTheory.GalOfCusp.ideleNorm E x = GroundTheory.Global.ideleNorm (maximalRealSubfield E) E x := by
   apply Units.ext
@@ -72,8 +77,21 @@ theorem ideleNorm_eq (E : Type) [Field E] [NumberField E] [IsCMField E] (x : (Ad
     | zero => rw [map_zero, map_zero]
     | tmul a l =>
       rw [toAdele_tmul, GroundTheory.Global.AdeleBaseChange.adeleTensorAlgEquivLeft_tmul]
-      exact mul_comm _ _
-    | add a b ha hb => rw [map_add, map_add, ha, hb]
+      have hmap : GlobalTheory.IndefiniteRowSideFullHecke.UnitaryHeckeCharacterIdele.adeleMap
+          (maximalRealSubfield E) E = GroundTheory.Global.AdeleBaseChange.adeleMap (maximalRealSubfield E) E := by
+        ext a : 1
+        apply Prod.ext
+        · funext w
+          open scoped NumberField.LiesOver in
+          change AbsoluteValue.Completion.map _ _ _ = algebraMap _ _ _
+          rw [AbsoluteValue.Completion.algebraMap_eq_of_liesOver]
+        · apply FiniteAdeleRing.ext
+          intro w
+          change GlobalTheory.IndefiniteRowSideFullHecke.UnitaryHeckeCharacterIdele.finiteCompletionMap _ _ w _ =
+            GroundTheory.Global.SemiLocal.completionMap _ w _
+          rfl
+      rw [hmap, mul_comm]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
   change adeleNorm E (x : AdeleRing (𝓞 E) E) = _
   rw [GroundTheory.Global.coe_ideleNorm, ← hz, h]
   have h3 : adeleEquiv (isCMExt_real E) z = _ := h2 z

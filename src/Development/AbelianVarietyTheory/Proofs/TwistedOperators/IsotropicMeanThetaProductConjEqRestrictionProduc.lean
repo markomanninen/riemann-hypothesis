@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.CovolOneIntegralAdd
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfAeFundamentalDomain
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.CovolOneIntegralAdd
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfAeFundamentalDomain
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,12 +18,20 @@ namespace GlobalTheory.IsoMeanProd
 
 variable {D : D7}
 
-local infixl:70 " ⬝ " => HMul.hMul
-
 theorem symplOH_iso_mid {V V' W : HSp D} {r : ℕ} {C : Matrix (Fin V.rank) (Fin r) D.host.E}
     {B : Matrix (Fin V.rank) (Fin V'.rank) D.host.E} (hs : IsIsoSplit V V' C B)
     (q₀ : Matrix (Fin W.rank) (Fin r) D.host.E) (a : Mx D W.rank r) (x : WO V' W) :
     symplOH V W (isoPart V W C (q₀.map (incA D))) (isoPart V W C a + midPart V V' W B x) = 0 := by
+  have rat_mul {l m n : ℕ} (M : Matrix (Fin l) (Fin m) D.host.E)
+      (N : Matrix (Fin m) (Fin n) D.host.E) :
+      GlobalTheory.MixModel.rat (M * N) = GlobalTheory.MixModel.rat M * GlobalTheory.MixModel.rat N := Matrix.map_mul
+  have adj_mul {l m n : ℕ} (x : Mx D l m) (y : Mx D m n) :
+      GlobalTheory.MixModel.adj (x * y) = GlobalTheory.MixModel.adj y * GlobalTheory.MixModel.adj x :=
+    Formalism.UG.cT_mul (cA D) x y
+  have hO_eq_trace (T : HSp D) (x y : WO V T) :
+      hO V T x y = (GlobalTheory.MixModel.giA V * (GlobalTheory.MixModel.adj y * (GlobalTheory.MixModel.gA T * x))).trace := by
+    simp only [hO, Matrix.trace, Matrix.diag_apply, Matrix.mul_apply, Finset.mul_sum, mul_assoc]
+    rfl
   set P : Mx D r V.rank := GlobalTheory.MixModel.rat (adj D C * V.gram) with hP
   set Q : Mx D V'.rank V.rank := GlobalTheory.MixModel.rat (V'.gram⁻¹ * adj D B * V.gram) with hQ
   have hG := GlobalTheory.MixModel.gram_conjTranspose V
@@ -27,16 +39,16 @@ theorem symplOH_iso_mid {V V' W : HSp D} {r : ℕ} {C : Matrix (Fin V.rank) (Fin
   have hU := GlobalTheory.MixModel.gram_isUnit_det V
   have hC0 : adj D C * V.gram * C = 0 := hs.frame.2.2
   have hO : adj D C * V.gram * B = 0 := hs.orth
-  have k1 : P ⬝ GlobalTheory.MixModel.giA V ⬝ GlobalTheory.MixModel.adj P = 0 := by
-    rw [hP, ← GlobalTheory.MixModel.rat_conjTranspose, GlobalTheory.MixModel.giA, ← GlobalTheory.MixModel.rat_mul, ← GlobalTheory.MixModel.rat_mul]
+  have k1 : P * GlobalTheory.MixModel.giA V * GlobalTheory.MixModel.adj P = 0 := by
+    rw [hP, ← GlobalTheory.MixModel.rat_conjTranspose, GlobalTheory.MixModel.giA, ← rat_mul, ← rat_mul]
     have : adj D C * V.gram * V.gram⁻¹ * (adj D C * V.gram)ᴴ = 0 := by
       change Cᴴ * V.gram * V.gram⁻¹ * (Cᴴ * V.gram)ᴴ = 0
       change Cᴴ * V.gram * C = 0 at hC0
       rw [Matrix.conjTranspose_mul, hG, Matrix.conjTranspose_conjTranspose, Matrix.mul_assoc (Cᴴ * V.gram),
         ← Matrix.mul_assoc V.gram⁻¹, Matrix.nonsing_inv_mul _ hU, Matrix.one_mul, hC0]
     rw [this, GlobalTheory.MixModel.rat_zero]
-  have k2 : P ⬝ GlobalTheory.MixModel.giA V ⬝ GlobalTheory.MixModel.adj Q = 0 := by
-    rw [hP, hQ, ← GlobalTheory.MixModel.rat_conjTranspose, GlobalTheory.MixModel.giA, ← GlobalTheory.MixModel.rat_mul, ← GlobalTheory.MixModel.rat_mul]
+  have k2 : P * GlobalTheory.MixModel.giA V * GlobalTheory.MixModel.adj Q = 0 := by
+    rw [hP, hQ, ← GlobalTheory.MixModel.rat_conjTranspose, GlobalTheory.MixModel.giA, ← rat_mul, ← rat_mul]
     have : adj D C * V.gram * V.gram⁻¹ * (V'.gram⁻¹ * adj D B * V.gram)ᴴ = 0 := by
       change Cᴴ * V.gram * V.gram⁻¹ * (V'.gram⁻¹ * Bᴴ * V.gram)ᴴ = 0
       change Cᴴ * V.gram * B = 0 at hO
@@ -44,18 +56,18 @@ theorem symplOH_iso_mid {V V' W : HSp D} {r : ℕ} {C : Matrix (Fin V.rank) (Fin
         Matrix.mul_assoc (Cᴴ * V.gram), ← Matrix.mul_assoc V.gram⁻¹,
         Matrix.nonsing_inv_mul _ hU, Matrix.one_mul, ← Matrix.mul_assoc, hO, Matrix.zero_mul]
     rw [this, GlobalTheory.MixModel.rat_zero]
-  have e1 : isoPart V W C (q₀.map (incA D)) = GlobalTheory.MixModel.rat q₀ ⬝ P := rfl
-  have e2 : isoPart V W C a + midPart V V' W B x = a ⬝ P + x ⬝ Q := rfl
-  have k3 : P ⬝ GlobalTheory.MixModel.giA V ⬝ GlobalTheory.MixModel.adj (a ⬝ P + x ⬝ Q) = 0 := by
-    rw [GlobalTheory.MixModel.adj_add, GlobalTheory.MixModel.adj_mul, GlobalTheory.MixModel.adj_mul, Matrix.mul_add,
+  have e1 : isoPart V W C (q₀.map (incA D)) = GlobalTheory.MixModel.rat q₀ * P := rfl
+  have e2 : isoPart V W C a + midPart V V' W B x = a * P + x * Q := rfl
+  have k3 : P * GlobalTheory.MixModel.giA V * GlobalTheory.MixModel.adj (a * P + x * Q) = 0 := by
+    rw [GlobalTheory.MixModel.adj_add, adj_mul, adj_mul, Matrix.mul_add,
       ← Matrix.mul_assoc, ← Matrix.mul_assoc, k1, k2, Matrix.zero_mul, Matrix.zero_mul, add_zero]
-  rw [GlobalTheory.MixModel.symplOH_eq, GlobalTheory.MixModel.hO_eq_trace, e1, e2]
-  have e3 : GlobalTheory.MixModel.giA V ⬝ (GlobalTheory.MixModel.adj (a ⬝ P + x ⬝ Q) ⬝ (GlobalTheory.MixModel.gA W ⬝ (GlobalTheory.MixModel.rat q₀ ⬝ P))) =
-      (GlobalTheory.MixModel.giA V ⬝ GlobalTheory.MixModel.adj (a ⬝ P + x ⬝ Q) ⬝ GlobalTheory.MixModel.gA W ⬝ GlobalTheory.MixModel.rat q₀) ⬝ P := by
+  rw [GlobalTheory.MixModel.symplOH_eq, hO_eq_trace, e1, e2]
+  have e3 : GlobalTheory.MixModel.giA V * (GlobalTheory.MixModel.adj (a * P + x * Q) * (GlobalTheory.MixModel.gA W * (GlobalTheory.MixModel.rat q₀ * P))) =
+      (GlobalTheory.MixModel.giA V * GlobalTheory.MixModel.adj (a * P + x * Q) * GlobalTheory.MixModel.gA W * GlobalTheory.MixModel.rat q₀) * P := by
     simp only [Matrix.mul_assoc]
   rw [e3, Matrix.trace_mul_comm]
-  have e4 : P ⬝ (GlobalTheory.MixModel.giA V ⬝ GlobalTheory.MixModel.adj (a ⬝ P + x ⬝ Q) ⬝ GlobalTheory.MixModel.gA W ⬝ GlobalTheory.MixModel.rat q₀) =
-      (P ⬝ GlobalTheory.MixModel.giA V ⬝ GlobalTheory.MixModel.adj (a ⬝ P + x ⬝ Q)) ⬝ (GlobalTheory.MixModel.gA W ⬝ GlobalTheory.MixModel.rat q₀) := by
+  have e4 : P * (GlobalTheory.MixModel.giA V * GlobalTheory.MixModel.adj (a * P + x * Q) * GlobalTheory.MixModel.gA W * GlobalTheory.MixModel.rat q₀) =
+      (P * GlobalTheory.MixModel.giA V * GlobalTheory.MixModel.adj (a * P + x * Q)) * (GlobalTheory.MixModel.gA W * GlobalTheory.MixModel.rat q₀) := by
     simp only [Matrix.mul_assoc]
   rw [e4, k3, Matrix.zero_mul, Matrix.trace_zero, map_zero]
 

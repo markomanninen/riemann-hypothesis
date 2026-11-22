@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.PrimeDiscriminants.SlopeTestRemainingChoices
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.SWEqSOf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.PlaceBoundOddRamifiedOfCharts
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.PrimeDiscriminants.SlopeTestRemainingChoices
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.SWEqSOf
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
+public import Formalism.LocalToGlobal.ProjectiveLattices.ChartDirectionsIntegral
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section

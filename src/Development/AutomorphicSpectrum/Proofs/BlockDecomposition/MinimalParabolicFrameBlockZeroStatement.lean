@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MinimalParabolicFrameBlockZero
-import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
-import Development.WeilBound.ThetaLifts.Reductions.SiegelPar
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GoodConstOfAniso
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SumFrameIdem
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MinimalParabolicFrameBlockZero
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelPar
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GoodConstOfAniso
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SumFrameIdem
+
+@[expose] public section
+
 open NumberField MeasureTheory Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet PositivityTheory.ThKR GlobalTheory.CompanionTheory.RapidDecay
 open Formalism.UG (cT)
 open GlobalTheory.Orb (archMat)

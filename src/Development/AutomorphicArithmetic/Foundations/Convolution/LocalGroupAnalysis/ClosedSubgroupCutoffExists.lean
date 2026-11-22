@@ -1,4 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+
+@[expose] public section
+
 open PositivityTheory.Rg.Tf.Geo
 open MeasureTheory Topology
 open scoped ENNReal Pointwise

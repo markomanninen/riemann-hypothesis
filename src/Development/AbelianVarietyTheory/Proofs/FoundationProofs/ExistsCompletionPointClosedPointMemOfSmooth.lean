@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsDiscreteValuationRingOfMaximalIdealEqSpa
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsDiscreteValuationRingOfMaximalIdealEqSpa
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -11,17 +15,17 @@ section Lift
 
 variable {X S : Scheme.{u}} (f : X ⟶ S)
 
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry IsLocalRing in
 variable {X S : Scheme.{u}} (f : X ⟶ S) in
-
 theorem _root_.GlobalTheory.range_subset_opens_of_isLocalRing {B : CommRingCat.{u}} [IsLocalRing B] (s : Spec B ⟶ S)
     {U : S.Opens} (h : s (closedPoint B) ∈ U) : Set.range s ⊆ U := by
   rintro _ ⟨y, rfl⟩
   exact ((specializes_closedPoint y).map s.base.hom.continuous).mem_open U.isOpen h
 
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry IsLocalRing in
 variable {X S : Scheme.{u}} (f : X ⟶ S) in
-
 theorem _root_.GlobalTheory.exists_isAffineOpen_pair (x : X) {O : X.Opens} (hx : x ∈ O) :
     ∃ (U : S.Opens) (V : X.Opens), IsAffineOpen U ∧ IsAffineOpen V ∧ V ≤ f ⁻¹ᵁ U ∧ V ≤ O ∧
       x ∈ V := by
@@ -32,9 +36,9 @@ theorem _root_.GlobalTheory.exists_isAffineOpen_pair (x : X) {O : X.Opens} (hx :
       (show x ∈ ((O ⊓ f ⁻¹ᵁ U : X.Opens) : Set X) from ⟨hx, hxU⟩) (O ⊓ f ⁻¹ᵁ U).isOpen
   exact ⟨U, V, hU, hV, fun y hy => (hVle hy).2, fun y hy => (hVle hy).1, hxV⟩
 
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry IsLocalRing in
 variable {X S : Scheme.{u}} (f : X ⟶ S) in
-
 theorem _root_.GlobalTheory.exists_lift_of_smooth_of_isAffineOpen [Smooth f] {U : S.Opens} {V : X.Opens}
     (hU : IsAffineOpen U) (hV : IsAffineOpen V) (hVU : V ≤ f ⁻¹ᵁ U) {B C : CommRingCat.{u}}
     (π : B ⟶ C) (s : Spec B ⟶ S) (x₀ : Spec C ⟶ X) (h : x₀ ≫ f = Spec.map π ≫ s)
@@ -75,29 +79,9 @@ theorem _root_.GlobalTheory.exists_lift_of_smooth_of_isAffineOpen [Smooth f] {U 
     ext r
     exact ψ.commutes r
 
-theorem exists_lift_of_smooth_of_henselian [Smooth f] {B C : CommRingCat.{u}} [IsLocalRing B]
-    (π : B ⟶ C) (hπ : Function.Surjective π) [HenselianRing B (RingHom.ker π.hom)]
-    (s : Spec B ⟶ S) (x₀ : Spec C ⟶ X) (h : x₀ ≫ f = Spec.map π ≫ s) :
-    ∃ x : Spec B ⟶ X, Spec.map π ≫ x = x₀ ∧ x ≫ f = s := by
-  have : IsLocalRing C :=
-    isLocalRing_of_surjective_of_henselian (RingHom.ker π.hom) π.hom hπ fun _ => Iff.rfl
-  have : IsLocalHom π.hom := ⟨fun b hb =>
-    isUnit_of_isUnit_map_of_henselian (RingHom.ker π.hom) π.hom hπ (fun _ => Iff.rfl) hb⟩
-  obtain ⟨U, V, hU, hV, hVU, -, hxV⟩ :=
-    exists_isAffineOpen_pair f (x₀ (closedPoint C)) (O := ⊤) trivial
-  refine exists_lift_of_smooth_of_isAffineOpen f hU hV hVU π s x₀ h
-    (range_subset_opens_of_isLocalRing s ?_) (range_subset_opens_of_isLocalRing x₀ hxV) ?_
-  · have e : f (x₀ (closedPoint C)) = s (Spec.map π (closedPoint C)) :=
-      congr($h (closedPoint C))
-    rw [← Spec_closedPoint (f := π), ← e]
-    exact hVU hxV
-  · intro R A _ _ _ _ _ _ π' hπ' φ
-    exact exists_algHom_lift_of_smooth (RingHom.ker π.hom) π'
-      (fun c => (hπ c).imp fun b hb => (hπ' b).trans hb) (fun b => by rw [hπ']; rfl) φ
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry IsLocalRing in
 variable {X S : Scheme.{u}} (f : X ⟶ S) in
-
 theorem _root_.GlobalTheory.lift_ext_of_unramified [FormallyUnramified f] [LocallyOfFiniteType f]
     {B C : CommRingCat.{u}} (π : B ⟶ C) (hπ : Function.Surjective π)
     (hj : RingHom.ker π.hom ≤ Ideal.jacobson ⊥) {x₁ x₂ : Spec B ⟶ X}
@@ -141,11 +125,11 @@ section Quotient
 variable (B : Type u) [CommRing B] [IsLocalRing B] (I : Ideal B) [HenselianRing B I]
   (s : Spec (.of B) ⟶ S)
 
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry IsLocalRing in
 variable {X S : Scheme.{u}} (f : X ⟶ S) in
 variable (B : Type u) [CommRing B] [IsLocalRing B] (I : Ideal B) [HenselianRing B I]
   (s : Spec (.of B) ⟶ S) in
-
 theorem _root_.GlobalTheory.reducePoint_quotient_surjective [Smooth f] :
     Function.Surjective (_root_.GlobalTheory.reducePoint f (CommRingCat.ofHom (Ideal.Quotient.mk I)) s) := by
   rintro ⟨x₀, hx₀⟩
@@ -183,10 +167,10 @@ section Residue
 
 variable (B : Type u) [CommRing B] [HenselianLocalRing B] (s : Spec (.of B) ⟶ S)
 
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry IsLocalRing in
 variable {X S : Scheme.{u}} (f : X ⟶ S) in
 variable (B : Type u) [CommRing B] [HenselianLocalRing B] (s : Spec (.of B) ⟶ S) in
-
 theorem _root_.GlobalTheory.reducePoint_residue_surjective [Smooth f] :
     Function.Surjective (_root_.GlobalTheory.reducePoint f (CommRingCat.ofHom (residue B)) s) :=
   _root_.GlobalTheory.reducePoint_quotient_surjective f B (maximalIdeal B) s
@@ -199,9 +183,9 @@ section QuasiSection
 
 variable {X S : Scheme.{u}} (f : X ⟶ S) [Smooth f]
 
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry IsLocalRing in
 variable {X S : Scheme.{u}} (f : X ⟶ S) [Smooth f] in
-
 theorem _root_.GlobalTheory.exists_etale_point_of_smooth (B : Type u) [CommRing B] [IsLocalRing B]
     (K : Type*) [Field K] [Algebra B K] [Algebra (ResidueField B) K]
     [IsScalarTower B (ResidueField B) K] [Algebra.IsSeparable (ResidueField B) K] [IsSepClosed K]
@@ -251,9 +235,9 @@ theorem _root_.GlobalTheory.exists_etale_point_of_smooth (B : Type u) [CommRing 
     rw [← SetLike.mem_coe, ← hV.range_fromSpec]
     exact ⟨(Spec.map (CommRingCat.ofHom ψ)).base z, rfl⟩
 
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry IsLocalRing in
 variable {X S : Scheme.{u}} (f : X ⟶ S) [Smooth f] in
-
 theorem _root_.GlobalTheory.range_fst_residue {B : Type u} [CommRing B] [IsLocalRing B] (g : X ⟶ Spec (.of B)) :
     Set.range (pullback.fst g (Spec.map (CommRingCat.ofHom (residue B)))) =
       g ⁻¹' {closedPoint B} := by
@@ -279,8 +263,8 @@ end Field
 
 section DiscreteValuation
 
-open CategoryTheory CategoryTheory.Limits AlgebraicGeometry IsLocalRing in
 
+open CategoryTheory CategoryTheory.Limits AlgebraicGeometry IsLocalRing in
 theorem _root_.GlobalTheory.isDiscreteValuationRing_of_etale_of_isLocalHom (V V' : Type*) [CommRing V] [IsDomain V]
     [IsDiscreteValuationRing V] [CommRing V'] [IsLocalRing V'] [Algebra V V']
     [IsLocalHom (algebraMap V V')] [Algebra.Etale V V'] :

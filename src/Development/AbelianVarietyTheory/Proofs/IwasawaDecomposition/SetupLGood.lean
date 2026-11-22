@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TwistDataAgreeAcrossCoefficientsLocalized
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TwistDataAgreeAcrossCoefficientsLocalized
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,6 +80,16 @@ theorem placesOK_B {Pg Q : Finset (HeightOneSpectrum (𝓞 (DL x L).host.E))} (h
 
 theorem wtL_good {n : ℕ} {u : GlobalTheory.ExportSeries.Weight (Dof x) n} (h : u.Good) : (wtL L u).Good := ⟨(by with_unfolding_all exact (h.le :)), (by with_unfolding_all exact (h.lam_eq :))⟩
 
+theorem thetaFun_L_iff {S U : Formalism.BasicNotions.TH.HSp (Dof x)}
+    (F : GlobalTheory.ExportSeries.Frame S U) (f : Formalism.IndefR.Datum.WO S U → ℂ) :
+    @Formalism.IndefR.Datum.IsThetaFunO (DL x L) (frL L F).ψ S U f ↔
+      @Formalism.IndefR.Datum.IsThetaFunO (Dof x) F.ψ S U f := by
+  constructor <;> intro h <;>
+    exact ⟨(by with_unfolding_all exact h.quasi),
+      (by with_unfolding_all exact h.level),
+      (by with_unfolding_all exact h.cont),
+      (by with_unfolding_all exact h.smooth)⟩
+
 theorem frL_good {S U : Formalism.BasicNotions.TH.HSp (Dof x)} {F : GlobalTheory.ExportSeries.Frame S U} (h : F.Good) : (frL L F).Good :=
   { rank_le := (by with_unfolding_all exact (h.rank_le :))
     onbS := (by with_unfolding_all exact (h.onbS :))
@@ -85,7 +99,16 @@ theorem frL_good {S U : Formalism.BasicNotions.TH.HSp (Dof x)} {F : GlobalTheory
     sdT := (by with_unfolding_all exact (h.sdT :))
     frS := (by with_unfolding_all exact (h.frS :))
     frT := (by with_unfolding_all exact (h.frT :))
-    vac := by tr_clause x.o.Z (oL x L).Z h.vac }
+    vac := by
+      rcases h.vac with ⟨hstd, hinf, htheta, hlat, hfock, hnorm⟩
+      exact ⟨(by with_unfolding_all exact hstd),
+        (by with_unfolding_all exact hinf), (by
+          exact ⟨(by with_unfolding_all exact htheta.quasi),
+            (by with_unfolding_all exact htheta.level),
+            (by with_unfolding_all exact htheta.cont),
+            (by with_unfolding_all exact htheta.smooth)⟩),
+        (by with_unfolding_all exact hlat), (by with_unfolding_all exact hfock),
+        (by with_unfolding_all exact hnorm)⟩ }
 
 theorem baseL_good {S U : Formalism.BasicNotions.TH.HSp (Dof x)} {Z : GlobalTheory.ExportSeries.Base S U} (h : Z.Good) : (baseL L Z).Good :=
   { even := (by with_unfolding_all exact (h.even :))
@@ -117,34 +140,46 @@ theorem setupL_good {ρ : GlobalTheory.SeriesTie.Setup (Dof x).ntw} (h : ρ.Good
     latS := (by with_unfolding_all exact (h.latS :))
     latT := (by with_unfolding_all exact (h.latT :))
     Pg := (by with_unfolding_all exact (h.Pg :))
-    delta := fun i j b => kc% (congrArg (twL L) (h.delta (kc% i) (kc% j) b))
+    delta := fun i j b => (by with_unfolding_all exact (congrArg (twL L) (h.delta i j b) : _))
     weil := fun i j b t ht => by
       delta GlobalTheory.ExportSeries.Base.IsWeil
-      tr_leaves x.o.Z (oL x L).Z
-      exact (by with_unfolding_all exact ((h.weil ((i)) ((j)) b (twB L t) (twB_good L ht)) : _))
+      have hw := h.weil i j b (twB L t) (twB_good L ht)
+      have th := thetaFun_L_iff L (ρ.B i j b).F
+      refine ⟨(by with_unfolding_all exact hw.std), (by with_unfolding_all exact hw.hecS),
+        (by with_unfolding_all exact hw.hecT), (by with_unfolding_all exact hw.resS),
+        (by with_unfolding_all exact hw.resT), ?_, ?_, ?_, ?_, ?_, ?_⟩
+      · intro p f hf
+        exact (th _).2 (hw.om_pres p f ((th _).1 hf))
+      · intro g h w f hf
+        exact hw.om_heis g h w f ((th _).1 hf)
+      · intro g hg g' hg' f hf
+        exact hw.om_aut g hg g' hg' f ((th _).1 hf)
+      · intro f hf w
+        exact hw.om_cont f ((th _).1 hf) w
+      · intro μ F hμ hF p f hf
+        exact hw.om_unit μ F hμ hF p f ((th _).1 hf)
+      · intro e he g h hg hh a b ha hb
+        obtain ⟨r, hr, hsplit⟩ := hw.om_split e he g h hg hh a b ha hb
+        refine ⟨r, hr, fun ℓ hℓ f hf => ?_⟩
+        apply hsplit ℓ ?_ f ((th _).1 hf)
+        intro u hu f' hf'
+        exact hℓ u hu f' ((th _).2 hf')
     classes := fun i j b t ht hA =>
       have h' := h.classes ((by with_unfolding_all exact (i :))) ((by with_unfolding_all exact (j :))) b (twB L t) (twB_good L ht) ⟨(by with_unfolding_all exact ((placesOK_B L hA.1) :)), (by with_unfolding_all exact (hA.2 :))⟩
       ⟨(by with_unfolding_all exact (h'.fin :)), (by with_unfolding_all exact (h'.reps :)), (by with_unfolding_all exact (h'.stab :))⟩ }
 
-theorem pinL (l : LC hL x) : GlobalTheory.SeriesTie.RealPin (datL x L).R (datL x L).cG (setupL L l.b.ser.ex.ρ) :=
-  have p := l.b.ser.ex.pin
-  ⟨(by with_unfolding_all exact (p.psi :)), (by with_unfolding_all exact (p.inf :)), (by with_unfolding_all exact (p.cartT :)), (by with_unfolding_all exact (p.onbS :)), (by with_unfolding_all exact (p.onbT :)), (by with_unfolding_all exact (p.latS :)), (by with_unfolding_all exact (p.latT :)), (by with_unfolding_all exact (p.frS :)), (by with_unfolding_all exact (p.frT :)), (by with_unfolding_all exact (p.vac :)), (by with_unfolding_all exact (p.Pg :)),
-    (by with_unfolding_all exact (p.grp :)), (by with_unfolding_all exact (p.mu0 :)), (by with_unfolding_all exact (p.eta :)), (by with_unfolding_all exact (p.delta :)), (by with_unfolding_all exact (p.deltaPl :)), (by with_unfolding_all exact (p.ap :)), (by with_unfolding_all exact (p.am :))⟩
-
-theorem univL (l : LC hL x) : GlobalTheory.UnivChar.IsUnivChar (DL x L).nexp := (by with_unfolding_all exact (l.b.ser.ex.univ :))
 
 open GlobalTheory.SeriesTie in
-
 theorem theta_eq (ρ : Setup (Dof x).ntw) :
     (setupL L ρ).theta = fun i j b h P => (by exact ρ.theta i j b h P) := by
   funext i j b h P
   delta GlobalTheory.SeriesTie.Setup.theta GlobalTheory.ExportSeries.Base.theta GlobalTheory.ExportSeries.Base.vecBase GlobalTheory.ExportSeries.Base.vecAt
     GlobalTheory.ExportSeries.Frame.vec GlobalTheory.ExportSeries.Frame.placeMap
-  tr_leaves x.o.Z (oL x L).Z
-  kexactB (Eq.refl (ρ.theta (kc% i) (kc% j) b (kc% h) (kc% P)))
+  rewrite [GlobalTheory.Mem.R3.Tr.placeModel_eq x.o.Z (oL x L).Z]
+  with_unfolding_all exact Eq.refl (ρ.theta i j b h P)
+
 
 open GlobalTheory.SeriesTie in
-
 theorem isDatum_eq (ρ : Setup (Dof x).ntw) :
     (setupL L ρ).IsDatum = fun i j b s h P => (by exact ρ.IsDatum i j b s h P) := by
   funext i j b s h P

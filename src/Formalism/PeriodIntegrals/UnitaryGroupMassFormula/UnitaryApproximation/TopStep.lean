@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryApproximation.MemIntOEOfIsIntegral
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryApproximation.Development
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryApproximation.MemIntOEOfIsIntegral
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryApproximation.Development
+
+@[expose] public section
 
 noncomputable section
 

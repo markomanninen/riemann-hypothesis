@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
+
+@[expose] public section
+
 open GlobalTheory.Poinc
 open Classical
 
@@ -19,7 +24,7 @@ theorem classSum_norm_eq_of_unique_least : ∀ (p : ℕ) [Fact p.Prime] (X Y : T
     have hx : CongMod m (e.symm y) μ := by
       refine ⟨e.symm (w1 - w2), ?_⟩
       apply e.injective
-      rw [e.apply_symm_apply, map_add, map_nsmul, e.apply_symm_apply, hw1, hw2, smul_sub]
+      rw [e.apply_symm_apply, map_add (f := _), map_nsmul, e.apply_symm_apply, hw1, hw2, smul_sub]
       abel
     have hne : e.symm y ≠ μ := by
       intro h; apply h2; rw [← h, e.apply_symm_apply]

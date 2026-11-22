@@ -1,5 +1,9 @@
-import Mathlib
-import Development.EtaleCohomology.KummerTheory.LHCutGlue
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.KummerTheory.LHCutGlue
+
+@[expose] public section
 
 section
 noncomputable section

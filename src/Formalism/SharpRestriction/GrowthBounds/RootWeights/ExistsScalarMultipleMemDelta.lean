@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.DeltaIntegralEnvelopingStable
-import Lemmata.ClearingDenominators.UmonLeUzmon
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.DeltaIntegralEnvelopingStable
+public import Lemmata.ClearingDenominators.UmonLeUzmon
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,7 +98,7 @@ theorem nabla_to_delta_maps_span_top [NeZero n] [CharZero (KK O)] [FiniteDimensi
       rw [LinearMap.smul_apply, hc, ← mul_prod_erase G _ hg, mul_comm, mul_smul]
       exact Submodule.smul_mem _ _ (ho' _)
     | zero => simp
-    | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
     | smul r y _ hy =>
       rw [← algebraMap_smul (KK O) r y, map_smul, algebraMap_smul]; exact Submodule.smul_mem _ _ hy
   have hc1 : algebraMap O (KK O) c ≠ 0 := by

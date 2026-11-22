@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieRankAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeA
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualNumberMorphismEqOfLocal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieRankAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeA
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualNumberMorphismEqOfLocal
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,8 @@ theorem kill_of_decomp {a : ℕ} (τ : Fin a → O →+* R') (v : M) (w : Fin a 
     (hw : ∀ i c, μ c (w i) = τ i c • w i) (hv : v = ∑ i, w i) (c : Fin a → O) :
     (List.ofFn fun i => μ (c i) - algebraMap R' _ (τ i (c i))).prod v = 0 := by
   classical
-  rw [← lam_prod_gen, hv, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← lam_prod_gen, hv, map_sum]
   refine Finset.sum_eq_zero fun j _ => ?_
   rw [← Finset.prod_erase_mul _ _ (Finset.mem_univ j), map_mul, Module.End.mul_apply, lam_gen_apply, hw,
     sub_self, map_zero]
@@ -73,7 +78,7 @@ theorem decomp_of_kill {a : ℕ} (τ : Fin a → O →+* R')
     simp only [I]
     rw [Ideal.prod_span, ← Submodule.torsionBySet_eq_torsionBySet_span, Submodule.mem_torsionBySet_iff]
     rintro ⟨b, hb⟩
-    obtain ⟨g, hg, rfl⟩ := (Set.mem_finset_prod _ _ _).1 hb
+    obtain ⟨g, hg, rfl⟩ := (Set.mem_finsetProd _ _ _).1 hb
     have hc : ∀ i, ∃ c, gen (τ i) c = g i := fun i => hg (Finset.mem_univ i)
     choose c hc using hc
     show lam μ (∏ i, g i) v = 0
@@ -156,22 +161,22 @@ theorem tv_sum (x : Sp R' ⟶ S) {n : ℕ} (W : Fin n → TanM x A) :
 variable {R'' : Type} [CommRing R'']
 
 def rho (x : Sp R' ⟶ S) (g : R' →+* R'') : epsPtR (spMap g ≫ x) ⟶ epsPtR x :=
-  Over.homMk (spMap (Formalism.L2.Pj.dualMap g)) (by
+  Over.homMk (spMap (Chart.dualMapR g)) (by
     show spMap _ ≫ spMap (algebraMap R' (DualNumber R')) ≫ x = spMap (algebraMap R'' (DualNumber R'')) ≫ spMap g ≫ x
     rw [← Category.assoc, ← Category.assoc, spMap_comp_loc, spMap_comp_loc]
-    have e : (Formalism.L2.Pj.dualMap g).comp (algebraMap R' (DualNumber R')) =
+    have e : (Chart.dualMapR g).comp (algebraMap R' (DualNumber R')) =
         (algebraMap R'' (DualNumber R'')).comp g := by
       refine RingHom.ext fun z => TrivSqZeroExt.ext ?_ ?_ <;>
-        simp [Formalism.L2.Pj.dualMap, TrivSqZeroExt.algebraMap_eq_inl]
+        simp [Chart.dualMapR, TrivSqZeroExt.algebraMap_eq_inl]
     rw [e])
 
 theorem smT_rho (x : Sp R' ⟶ S) (g : R' →+* R'') (c : R') (w : epsPtR x ⟶ A) :
     Formalism.L2.Pj.smT (spMap g ≫ x) (g c) (rho x g ≫ w) = rho x g ≫ Formalism.L2.Pj.smT x c w := by
   apply Over.OverMorphism.ext
   simp only [Over.comp_left, Formalism.L2.Pj.smT_left, rho, Over.homMk_left, ← Category.assoc, spMap_comp_loc]
-  have e : (epsMul (g c)).comp (Formalism.L2.Pj.dualMap g) = (Formalism.L2.Pj.dualMap g).comp (epsMul c) := by
+  have e : (epsMul (g c)).comp (Chart.dualMapR g) = (Chart.dualMapR g).comp (epsMul c) := by
     refine RingHom.ext fun z => TrivSqZeroExt.ext ?_ ?_ <;>
-      simp [Formalism.L2.Pj.dualMap, epsMul, mul_comm]
+      simp [Chart.dualMapR, epsMul, mul_comm]
   rw [e]
 
 theorem rho_tan (x : Sp R' ⟶ S) (g : R' →+* R'') (V : TanM x A) :
@@ -218,12 +223,24 @@ theorem eq_zero_of_res (x : Sp R' ⟶ S) (t : Finset R') (ht : Ideal.span (t : S
   apply tanM_ext
   rw [tv_zero]
   apply Over.OverMorphism.ext
-  refine GlobalTheory.ArLieBase.hom_ext_dualNumber_away ht fun a => ?_
-  have h1 : rho x (algebraMap R' (Localization.Away (a : R'))) ≫ tv U =
-      rho x (algebraMap R' (Localization.Away (a : R'))) ≫ (1 : epsPtR x ⟶ A) := by
+  have ht' : Ideal.span (Set.range (fun a : (t : Set R') =>
+      (TrivSqZeroExt.inl (a : R') : DualNumber R'))) = ⊤ := by
+    have hm := congrArg (Ideal.map (TrivSqZeroExt.inlHom R' R')) ht
+    rw [Ideal.map_span, Ideal.map_top, Set.image_eq_range] at hm
+    exact hm
+  let 𝒰 := (Scheme.affineOpenCoverOfSpanRangeEqTop (R := CommRingCat.of (DualNumber R')) _ ht').openCover
+  refine Scheme.Cover.hom_ext 𝒰 _ _ fun (a : (t : Set R')) => ?_
+  let g := algebraMap R' (Localization.Away (a : R'))
+  have hlocal : rho x g ≫ tv U = rho x g ≫ (1 : epsPtR x ⟶ A) := by
     rw [MonObj.comp_one]
     exact congrArg tv (h a.1 a.2)
-  exact congrArg (fun φ => φ.left) h1
+  have ha : 𝒰.f a = spMap (Chart.toL (a : R')) ≫ spMap (Chart.dAway (a : R')) := by
+    rw [spMap_comp_loc, Chart.toL_comp]
+    rfl
+  have hleft := congrArg (fun φ => φ.left) hlocal
+  change spMap (Chart.dAway (a : R')) ≫ (tv U).left =
+    spMap (Chart.dAway (a : R')) ≫ (1 : epsPtR x ⟶ A).left at hleft
+  simpa only [← Category.assoc, ← ha] using! congrArg (spMap (Chart.toL (a : R')) ≫ ·) hleft
 
 theorem lieAt_of_cover : ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (R : Type) [CommRing R] (b : Base D R) (S : Scheme.{0})
     (A : Over S) [GrpObj A] [IsCommMonObj A] (act : OActN D.O A) (R' : Type) [CommRing R'] (β : R →+* R')

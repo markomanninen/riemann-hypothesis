@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.KerPow
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MemSpanVariable
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.KerPow
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MemSpanVariable
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -20,7 +24,7 @@ private theorem der_sq {O A Q : Type} [CommRing O] [CommRing A] [Algebra O A] [A
     [Module O Q] (x : A →ₐ[O] O) (D : A →ₗ[O] Q) (hD : D ∈ PtDer x Q) (f : A) (hf : f ∈ RingHom.ker x ^ 2) :
     D f = 0 := by
   rw [pow_two] at hf
-  refine Submodule.mul_induction_on hf (fun a ha b hb => ?_) (fun a b ha hb => by rw [map_add, ha, hb, add_zero])
+  refine Submodule.mul_induction_on hf (fun a ha b hb => ?_) (fun a b ha hb => by rw [map_add (f := _), ha, hb, add_zero])
   have h : D (a * b) = x a • D b + x b • D a := hD a b
   rw [h, (RingHom.mem_ker).1 ha, (RingHom.mem_ker).1 hb, zero_smul, zero_smul, add_zero]
 
@@ -46,7 +50,7 @@ theorem UpperTheory.V.Alg.der_extend :
     let D' : R →ₗ[O] Q :=
       { toFun := fun x => D (y x)
         map_add' := fun a b => by
-          rw [← map_add]
+          rw [← map_add (f := _)]
           refine key _ _ ?_
           have := add_mem (hy a) (hy b)
           convert this using 1
@@ -80,7 +84,8 @@ theorem UpperTheory.V.Alg.der_extend :
     have hspan : ∀ g ∈ Ideal.span (Set.range (MvPowerSeries.X : W.σ → MvPowerSeries W.σ O)),
         D (W.π g) = 0 := fun g hg => by
       obtain ⟨c, rfl⟩ := Ideal.mem_span_range_iff_exists_fun.1 hg
-      rw [map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_sum]
       refine Finset.sum_eq_zero fun i _ => ?_
       have h1 : D (W.π (c i) * W.z i) = W.origin h (W.π (c i)) • D (W.z i) + W.origin h (W.z i) • D (W.π (c i)) :=
         hD _ _

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ConstantCoeffSurjective
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.GaloisTwistIdentitySection
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CrystallineFiltrationSpanDividedPowers
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ConstantCoeffSurjective
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.GaloisTwistIdentitySection
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CrystallineFiltrationSpanDividedPowers
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -119,7 +123,7 @@ theorem expand_surjective : Function.Surjective A.expand := by
   | add x y _ _ hx hy =>
     obtain ⟨c, h⟩ := hx
     obtain ⟨c', h'⟩ := hy
-    exact ⟨c + c', by rw [expand_add, h, h', map_add]⟩
+    exact ⟨c + c', by rw [expand_add, h, h', (A.mkAcr 1).map_add]⟩
   | smul w x _ hx =>
     obtain ⟨c, h⟩ := hx
     refine ⟨w.coeff 0 • c, ?_⟩

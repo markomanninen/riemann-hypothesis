@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartNakayamaGen
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChartNakayamaGenLocal
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartNakayamaGen
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChartNakayamaGenLocal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -96,7 +101,8 @@ theorem genNear_of_chart [Nontrivial S] {M : Type} [AddCommGroup M] [Module (MRi
         LocalizedModule.mk ((f₀ * chartMon c a₁) • m) 1 := by
       have e1 : KH.cellRes S M (chart c').1 U (∑ j, (chartMon c a * p j) • z j (chart c')) =
           chartMon (S := S) c a • KH.cellRes S M (chart c).1 U (∑ j, p j • z j (chart c)) := by
-        rw [map_sum, map_sum, Finset.smul_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, map_sum, Finset.smul_sum]
         refine Finset.sum_congr rfl fun j _ => ?_
         rw [map_smul, hagree j, map_smul, mul_smul]
       rw [e1, ← he, map_smul, GenTwistGenerated.cellRes_mk hle, smul_smul,
@@ -128,7 +134,7 @@ theorem genNear_of_chart [Nontrivial S] {M : Type} [AddCommGroup M] [Module (MRi
         (isMultiHomog_chartMon c (fun _ => e))) (isMultiHomog_chartMon c a)) (hp j)
     convert h using 1
     funext k
-    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+    simp only [Pi.add_apply, Pi.mul_apply, Pi.natCast_apply, Pi.one_apply, nsmul_eq_mul]
     have := haE k
     zify [this] at *
     ring

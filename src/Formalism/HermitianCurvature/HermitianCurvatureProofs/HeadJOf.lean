@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelZeroKernel
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelZeroKernel
+
+@[expose] public section
 
 open Matrix MeasureTheory
 

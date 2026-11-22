@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.ExistsEtaleMonoMuTwistIntoTorsorSheafOfMuQuotien
+module
+
+public import Development.EtaleCohomology.TateTwists.ExistsEtaleMonoMuTwistIntoTorsorSheafOfMuQuotien
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 namespace LateralTheory.EtaleFoundations
@@ -13,7 +17,7 @@ theorem kt_mono_sh (q : ℕ) (T G : CommRingCat.{0} ⥤ ModuleCat.{1} (ULift.{1}
 
 theorem kt_res_sec (q : ℕ) (G : CommRingCat.{0} ⥤ ModuleCat.{1} (ULift.{1} (ZMod q))) (V U : Scheme.{0}) (g : V ⟶ U)
     (x : G.obj Γ(U, ⊤)) :
-    Sec.res g (ofRings.sec G U x) = ofRings.sec G V ((G.map g.appTop).hom x) := by
+    Sec.res g (ofRings.sec (R := ZMod q) G U x) = ofRings.sec (R := ZMod q) G V ((G.map g.appTop).hom x) := by
   unfold Sec.res ofRings.sec ofRings
   have := congrArg (fun f => (ModuleCat.Hom.hom f) x)
     ((toSheafify Scheme.etaleTopology (Scheme.Γ ⋙ G)).naturality g.op)
@@ -21,8 +25,8 @@ theorem kt_res_sec (q : ℕ) (G : CommRingCat.{0} ⥤ ModuleCat.{1} (ULift.{1} (
 
 theorem kt_map_sec (q : ℕ) (T G : CommRingCat.{0} ⥤ ModuleCat.{1} (ULift.{1} (ZMod q))) (ι : T ⟶ G) (U : Scheme.{0})
     (x : T.obj Γ(U, ⊤)) :
-    Sec.map ((presheafToSheaf Scheme.etaleTopology _).map (Functor.whiskerLeft Scheme.Γ ι)) (ofRings.sec T U x) =
-      ofRings.sec G U ((ι.app _).hom x) := by
+    Sec.map ((presheafToSheaf Scheme.etaleTopology _).map (Functor.whiskerLeft Scheme.Γ ι))
+      (ofRings.sec (R := ZMod q) T U x) = ofRings.sec (R := ZMod q) G U ((ι.app _).hom x) := by
   unfold Sec.map ofRings.sec
   have := congrArg (fun f => (ModuleCat.Hom.hom (NatTrans.app f (op U))) x)
     (toSheafify_naturality Scheme.etaleTopology (Functor.whiskerLeft Scheme.Γ ι))
@@ -45,15 +49,17 @@ theorem etale_mu_twist_mono_extends_of_presheaf_torsor_embedding (hpre : MuTwist
   have hmι := kt_mono_sh q T G ι hι
   refine ⟨ofRings (ZMod q) G, (presheafToSheaf Scheme.etaleTopology _).map (Functor.whiskerLeft Scheme.Γ τ) ≫
     (presheafToSheaf Scheme.etaleTopology _).map (Functor.whiskerLeft Scheme.Γ ι), @mono_comp _ _ _ _ _ _ hm _ hmι,
-    fun U v => ofRings.sec G U (s _ v), ?_, ?_⟩
+    fun U v => ofRings.sec (R := ZMod q) G U (s _ v), ?_, ?_⟩
   · intro V U g v _
     rw [kt_res_sec]
     exact congrArg _ (hs _ _ g.appTop v)
   · intro U ζ v w h
     beta_reduce
     rw [hr _ ζ v w h]
-    rw [show ofRings.sec G U (s _ v + (ι.app _).hom ((τ.app _).hom (twGenR _ ζ))) =
-      ofRings.sec G U (s _ v) + ofRings.sec G U ((ι.app _).hom ((τ.app _).hom (twGenR _ ζ))) from map_add _ _ _]
+    rw [show ofRings.sec (R := ZMod q) G U (s _ v + (ι.app _).hom ((τ.app _).hom (twGenR _ ζ))) =
+      ofRings.sec (R := ZMod q) G U (s _ v) + ofRings.sec (R := ZMod q) G U ((ι.app _).hom ((τ.app _).hom (twGenR _ ζ))) by
+        unfold ofRings.sec
+        exact map_add _ _ _]
     congr 1
     exact ((kt_map_sec q T G ι U _).symm.trans (congrArg _ (kt_map_sec q (twF q 1) T τ U (twGenR _ ζ)).symm))
 

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LeviMatchingWords.SplitPlaceGeneratorPowers
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MatchingWordOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormalisedMatrixIntegralCompLinearEquivDetStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjAverageUnipotentLocallyConstantCompactSupporStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralLeviConstantTerm
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LeviMatchingWords.SplitPlaceGeneratorPowers
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MatchingWordOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormalisedMatrixIntegralCompLinearEquivDetStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjAverageUnipotentLocallyConstantCompactSupporStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralLeviConstantTerm
+
+@[expose] public section
 
 noncomputable section
 
@@ -109,10 +113,10 @@ theorem ct_adj {n a b : ℕ} (h : a + b = n) (w : Pl E) (F : GLw n w → ℂ)
     ct h w (fun y => starRingEnd ℂ (F y⁻¹)) m = starRingEnd ℂ (ct h w F m⁻¹) := by
   obtain ⟨hU, hcs⟩ := GlobalTheory.T.conjAverage_unipotent_locallyConstant_compactSupport E n a b h w F hF m⁻¹
   have hJ := GlobalTheory.T.normalisedMatrixIntegral_comp_linearEquiv_det E w a b (negL m)
-    (fun X => GlobalTheory.LeviDesc.cavg (GlobalTheory.LFun.KGL w n) F (blk h w m⁻¹ X)) (det_negL_ne_zero m) hU hcs
+    (fun X => GlobalTheory.LeviDesc.cavg (GlobalTheory.LFun.KGL w (n := n)) F (blk h w m⁻¹ X)) (det_negL_ne_zero m) hU hcs
   have hpt : ∀ X : Multiplicative (Matrix (Fin a) (Fin b) (w.adicCompletion E)),
-      avg (fun k : GlobalTheory.LFun.KGL w n => starRingEnd ℂ (F ((((k : GLw n w)⁻¹ * blk h w m (Multiplicative.toAdd X) * k))⁻¹))) =
-      starRingEnd ℂ (GlobalTheory.LeviDesc.cavg (GlobalTheory.LFun.KGL w n) F (blk h w m⁻¹ (negL m (Multiplicative.toAdd X)))) := by
+      avg (fun k : GlobalTheory.LFun.KGL w (n := n) => starRingEnd ℂ (F ((((k : GLw n w)⁻¹ * blk h w m (Multiplicative.toAdd X) * k))⁻¹))) =
+      starRingEnd ℂ (GlobalTheory.LeviDesc.cavg (GlobalTheory.LFun.KGL w (n := n)) F (blk h w m⁻¹ (negL m (Multiplicative.toAdd X)))) := by
     intro X
     unfold GlobalTheory.LeviDesc.cavg
     rw [← avg_conj]
@@ -132,22 +136,22 @@ theorem ct_adj {n a b : ℕ} (h : a + b = n) (w : Pl E) (F : GLw n w → ℂ)
       div_eq_mul_inv]
   have hc : absHalf w (LinearMap.det (negL m)) = absHalf w (m.1.val.det ^ b / m.2.val.det ^ a) :=
     GlobalTheory.BCT.AbsHalfInv.absHalf_congr (v_det_negL m)
-  have h1 : hint (intMat a b w) (fun X => avg fun k : GlobalTheory.LFun.KGL w n =>
+  have h1 : hint (intMat a b w) (fun X => avg fun k : GlobalTheory.LFun.KGL w (n := n) =>
         starRingEnd ℂ (F (((k : GLw n w)⁻¹ * blk h w m (Multiplicative.toAdd X) * k)⁻¹))) =
       starRingEnd ℂ (hint (intMat a b w) fun X =>
-        GlobalTheory.LeviDesc.cavg (GlobalTheory.LFun.KGL w n) F (blk h w m⁻¹ (negL m (Multiplicative.toAdd X)))) := by
+        GlobalTheory.LeviDesc.cavg (GlobalTheory.LFun.KGL w (n := n)) F (blk h w m⁻¹ (negL m (Multiplicative.toAdd X)))) := by
     rw [← hint_conj]
     congr 1
     funext X
     exact hpt X
   have hJ' : (hint (intMat a b w) fun X =>
-      GlobalTheory.LeviDesc.cavg (GlobalTheory.LFun.KGL w n) F (blk h w m⁻¹ (negL m (Multiplicative.toAdd X)))) =
+      GlobalTheory.LeviDesc.cavg (GlobalTheory.LFun.KGL w (n := n)) F (blk h w m⁻¹ (negL m (Multiplicative.toAdd X)))) =
       (absHalf w (LinearMap.det (negL m)) ^ 2)⁻¹ * hint (intMat a b w) (fun X =>
-        GlobalTheory.LeviDesc.cavg (GlobalTheory.LFun.KGL w n) F (blk h w m⁻¹ (Multiplicative.toAdd X))) := hJ
-  show absHalf w (m.1.val.det ^ b / m.2.val.det ^ a) * hint (intMat a b w) (fun X => avg fun k : GlobalTheory.LFun.KGL w n =>
+        GlobalTheory.LeviDesc.cavg (GlobalTheory.LFun.KGL w (n := n)) F (blk h w m⁻¹ (Multiplicative.toAdd X))) := hJ
+  show absHalf w (m.1.val.det ^ b / m.2.val.det ^ a) * hint (intMat a b w) (fun X => avg fun k : GlobalTheory.LFun.KGL w (n := n) =>
         starRingEnd ℂ (F (((k : GLw n w)⁻¹ * blk h w m (Multiplicative.toAdd X) * k)⁻¹))) =
       starRingEnd ℂ (absHalf w ((m⁻¹).1.val.det ^ b / (m⁻¹).2.val.det ^ a) * hint (intMat a b w) (fun X =>
-        GlobalTheory.LeviDesc.cavg (GlobalTheory.LFun.KGL w n) F (blk h w m⁻¹ (Multiplicative.toAdd X))))
+        GlobalTheory.LeviDesc.cavg (GlobalTheory.LFun.KGL w (n := n)) F (blk h w m⁻¹ (Multiplicative.toAdd X))))
   rw [h1, hJ', hc, hinv, map_mul, map_mul, map_inv₀, map_pow, conj_absHalf, conj_absHalf]
   have hA := GlobalTheory.LeviDesc.absHalf_ne_zero' w (m.1.val.det ^ b / m.2.val.det ^ a)
   rw [eq_inv_of_mul_eq_one_left (absHalf_inv_mul w hD0)]
@@ -164,7 +168,7 @@ theorem ctStar : PositivityTheory.Rg.BcB.F.MLM.CtStar := by
   funext m
   have hH := GlobalTheory.CompanionTheory.CtMulSplit.isHk_of_isHecke hU hf
   have hF : ∃ K' : Subgroup (GLw n w), IsOpen (K' : Set (GLw n w)) ∧ IsHecke K' (fun y => f (toSub (UL n w) y)) :=
-    ⟨GlobalTheory.LFun.KGL w n, (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w n).1, hH.2.2.1, fun k hk x =>
+    ⟨GlobalTheory.LFun.KGL w (n := n), (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w n).1, hH.2.2.1, fun k hk x =>
       ⟨by simpa using hH.2.2.2 k hk 1 (Subgroup.one_mem _) x, by simpa using hH.2.2.2 1 (Subgroup.one_mem _) k hk x⟩⟩
   have hstar : (fun y => PositivityTheory.Rg.BcB.F.Eig.lstar f (toSub (UL n w) y)) =
       fun y => starRingEnd ℂ (f (toSub (UL n w) y⁻¹)) := by

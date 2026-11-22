@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsDiscreteSeriesNegSignatureOfIsDiscreteSeriesStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AutomorphicCuspFormsHermitianSpaceSignTwistStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SignedUnitaryGroupCompatStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsDiscreteSeriesNegSignatureOfIsDiscreteSeriesStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AutomorphicCuspFormsHermitianSpaceSignTwistStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SignedUnitaryGroupCompatStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,8 +44,6 @@ def negM {V : HSp D} {S : D.what₂.Tau → SPar} (M : DSModel V S) : DSModel (s
     rw [e, h, ← M.fr_gram τ, Matrix.mul_neg, Matrix.neg_mul]
 
 variable {V : HSp D} {S : D.what₂.Tau → SPar} (M : DSModel V S)
-
-theorem negM_rep (τ : D.what₂.Tau) (g : Matrix (Fin V.rank) (Fin V.rank) ℂ) : (negM M).rep τ g = M.rep τ g := rfl
 
 variable (θ : InfFam D)
 
@@ -126,11 +128,15 @@ theorem eq_symm_update (v : M.Vec) (τ : D.what₂.Tau) (w : M.sm τ) :
       Function.update (fun ρ => (smEquiv M θ hθ ρ).symm (v ρ)) τ ((smEquiv M θ hθ τ).symm w) :=
   funext fun ρ => Function.apply_update (fun ρ (u : M.sm ρ) => (smEquiv M θ hθ ρ).symm u) v τ w ρ
 
-theorem isMultMap_toNeg {T : MMap M} (hT : IsMultMap θ M ∅ 1 T) : IsMultMap θ (negM M) ∅ 1 (toNeg M θ hθ T) where
-  aut v := ((GlobalTheory.T.automorphic_cusp_forms_hermitianSpaceSignTwist D θ hθ true V _).1).2 (hT.aut _)
-  cusp v := ((GlobalTheory.T.automorphic_cusp_forms_hermitianSpaceSignTwist D θ hθ true V _).2).2 (hT.cusp _)
-  lev v k hk := absurd hk (Set.notMem_empty _)
-  equiv τ g hg v w hw := by
+theorem isMultMap_toNeg {T : MMap M} (hT : IsMultMap θ M ∅ 1 T) : IsMultMap θ (negM M) ∅ 1 (toNeg M θ hθ T) := by
+  refine { aut := ?_, cusp := ?_, lev := ?_, equiv := ?_, cont := ?_ }
+  · intro v
+    exact ((GlobalTheory.T.automorphic_cusp_forms_hermitianSpaceSignTwist D θ hθ true V _).1).2 (hT.aut _)
+  · intro v
+    exact ((GlobalTheory.T.automorphic_cusp_forms_hermitianSpaceSignTwist D θ hθ true V _).2).2 (hT.cusp _)
+  · intro v k hk
+    exact absurd hk (Set.notMem_empty _)
+  · intro τ g hg v w hw
     classical
     have hg' : g ∈ Formalism.QuantumDeterminants.UH (gramAt D V τ) := (GlobalTheory.T.signedUnitaryGroup_compat D θ hθ true V).grp τ ▸ hg
     have hw' : ((smEquiv M θ hθ τ w : M.sm τ) : M.H τ) = M.rep τ g ((smEquiv M θ hθ τ (v τ) : M.sm τ) : M.H τ) := by
@@ -141,24 +147,26 @@ theorem isMultMap_toNeg {T : MMap M} (hT : IsMultMap θ M ∅ 1 T) : IsMultMap �
     show T (fun ρ => smEquiv M θ hθ ρ (v ρ)) (ofSgn true V x * atTau θ V τ g) =
       T (fun ρ => smEquiv M θ hθ ρ (v ρ)) (ofSgn true V (x * atTau θ (sgn true V) τ g))
     rw [map_mul, (GlobalTheory.T.signedUnitaryGroup_compat D θ hθ true V).atTau τ g]
-  cont τ v x := by
+  · intro τ v x
     classical
     obtain ⟨ℓ, hℓ, hℓw⟩ := hT.cont τ (fun ρ => smEquiv M θ hθ ρ (v ρ)) (ofSgn true V x)
     refine ⟨ℓ, ?_, fun w => ?_⟩
     · rw [(GlobalTheory.T.signedUnitaryGroup_compat D θ hθ true V).lie τ]; exact hℓ
     · rw [toNeg_apply, eq_update, ← hℓw, coe_smEquiv]; rfl
 
-theorem isMultMap_ofNeg {T : MMap (negM M)} (hT : IsMultMap θ (negM M) ∅ 1 T) : IsMultMap θ M ∅ 1 (ofNeg M θ hθ T) where
-  aut v := by
+theorem isMultMap_ofNeg {T : MMap (negM M)} (hT : IsMultMap θ (negM M) ∅ 1 T) : IsMultMap θ M ∅ 1 (ofNeg M θ hθ T) := by
+  refine { aut := ?_, cusp := ?_, lev := ?_, equiv := ?_, cont := ?_ }
+  · intro v
     have e : (fun g => ofNeg M θ hθ T v (ofSgn true V g)) = T (fun τ => (smEquiv M θ hθ τ).symm (v τ)) := by
       funext g; rw [ofNeg_apply, MulEquiv.symm_apply_apply]
     exact ((GlobalTheory.T.automorphic_cusp_forms_hermitianSpaceSignTwist D θ hθ true V _).1).1 (e ▸ hT.aut _)
-  cusp v := by
+  · intro v
     have e : (fun g => ofNeg M θ hθ T v (ofSgn true V g)) = T (fun τ => (smEquiv M θ hθ τ).symm (v τ)) := by
       funext g; rw [ofNeg_apply, MulEquiv.symm_apply_apply]
     exact ((GlobalTheory.T.automorphic_cusp_forms_hermitianSpaceSignTwist D θ hθ true V _).2).1 (e ▸ hT.cusp _)
-  lev v k hk := absurd hk (Set.notMem_empty _)
-  equiv τ g hg v w hw := by
+  · intro v k hk
+    exact absurd hk (Set.notMem_empty _)
+  · intro τ g hg v w hw
     classical
     have hg' : g ∈ Formalism.QuantumDeterminants.UH (gramAt D (sgn true V) τ) := ((GlobalTheory.T.signedUnitaryGroup_compat D θ hθ true V).grp τ).symm ▸ hg
     have hw' : (((smEquiv M θ hθ τ).symm w : (negM M).sm τ) : (negM M).H τ) =
@@ -170,7 +178,7 @@ theorem isMultMap_ofNeg {T : MMap (negM M)} (hT : IsMultMap θ (negM M) ∅ 1 T)
     show T (fun ρ => (smEquiv M θ hθ ρ).symm (v ρ)) ((ofSgn true V).symm x * atTau θ (sgn true V) τ g) =
       T (fun ρ => (smEquiv M θ hθ ρ).symm (v ρ)) ((ofSgn true V).symm (x * atTau θ V τ g))
     rw [map_mul, ← (GlobalTheory.T.signedUnitaryGroup_compat D θ hθ true V).atTau τ g, MulEquiv.symm_apply_apply]
-  cont τ v x := by
+  · intro τ v x
     classical
     obtain ⟨ℓ, hℓ, hℓw⟩ := hT.cont τ (fun ρ => (smEquiv M θ hθ ρ).symm (v ρ)) ((ofSgn true V).symm x)
     refine ⟨ℓ, ?_, fun w => ?_⟩
@@ -182,7 +190,7 @@ theorem toNeg_mem {T : MMap M} (hT : T ∈ Mult θ M ∅ 1) : toNeg M θ hθ T �
   induction hT using Submodule.span_induction with
   | mem x hx => exact Submodule.subset_span (isMultMap_toNeg M θ hθ hx)
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ c hx
 
 theorem ofNeg_mem {T : MMap (negM M)} (hT : T ∈ Mult θ (negM M) ∅ 1) : ofNeg M θ hθ T ∈ Mult θ M ∅ 1 := by
@@ -190,7 +198,7 @@ theorem ofNeg_mem {T : MMap (negM M)} (hT : T ∈ Mult θ (negM M) ∅ 1) : ofNe
   induction hT using Submodule.span_induction with
   | mem x hx => exact Submodule.subset_span (isMultMap_ofNeg M θ hθ hx)
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ c hx
 
 end GlobalTheory.NegModel
@@ -227,34 +235,40 @@ theorem multT_ofNeg {F : SmT (negM M) →ₗ[ℂ] (GA D (sgn true V) → ℂ)} (
   rw [e]
   exact ofNeg_mem M θ hθ hF
 
-theorem modelTr_negM : ModelTr (RingHom.id ℂ) true θ (negM M) M (smTEquiv M θ hθ).toAddEquiv where
-  smul c x := by
+theorem modelTr_negM : ModelTr (RingHom.id ℂ) true θ (negM M) M (smTEquiv M θ hθ).toAddEquiv := by
+  refine { smul := ?_, cart := ?_, act := ?_, der := ?_, ell := ?_, vec := ?_, mult := ?_, mult' := ?_ }
+  · intro c x
     show smTEquiv M θ hθ (c • x) = c • smTEquiv M θ hθ x
     exact map_smul _ c x
-  cart τ := cart_negM M τ
-  act τ g _ x y := by
+  · intro τ
+    exact cart_negM M τ
+  · intro τ g _ x y
     show _ ↔ inclT M (smTEquiv M θ hθ y) = actT M τ g (inclT M (smTEquiv M θ hθ x))
     rw [inclT_smTEquiv, inclT_smTEquiv]
     rfl
-  der τ Y _ x y := by
+  · intro τ Y _ x y
     show _ ↔ DerT M τ Y (smTEquiv M θ hθ x) (smTEquiv M θ hθ y)
     unfold DerT
     rw [inclT_smTEquiv, inclT_smTEquiv]
     rfl
-  ell w₁ := ⟨w₁, fun x => by
-    show _ = ellT M w₁ (inclT M (smTEquiv M θ hθ x))
-    rw [inclT_smTEquiv]
-    rfl⟩
-  vec v₁ := ⟨fun τ => smEquiv M θ hθ τ (v₁ τ), smTEquiv_tprod M θ hθ v₁, fun τ => by rw [coe_smEquiv]; rfl⟩
-  mult F hF := ⟨_, multT_toNeg M θ hθ hF, fun x g => rfl⟩
-  mult' F₁ hF₁ := ⟨_, multT_ofNeg M θ hθ hF₁, fun x g => by
-    show F₁ x g = F₁ ((smTEquiv M θ hθ).symm (smTEquiv M θ hθ x)) ((ofSgn true V).symm (ofSgn true V g))
-    rw [LinearEquiv.symm_apply_apply, MulEquiv.symm_apply_apply]⟩
+  · intro w₁
+    exact ⟨w₁, fun x => by
+      show _ = ellT M w₁ (inclT M (smTEquiv M θ hθ x))
+      rw [inclT_smTEquiv]
+      rfl⟩
+  · intro v₁
+    exact ⟨fun τ => smEquiv M θ hθ τ (v₁ τ), smTEquiv_tprod M θ hθ v₁, fun τ => by rw [coe_smEquiv]; rfl⟩
+  · intro F hF
+    exact ⟨_, multT_toNeg M θ hθ hF, fun x g => rfl⟩
+  · intro F₁ hF₁
+    exact ⟨_, multT_ofNeg M θ hθ hF₁, fun x g => by
+      show F₁ x g = F₁ ((smTEquiv M θ hθ).symm (smTEquiv M θ hθ x)) ((ofSgn true V).symm (ofSgn true V g))
+      rw [LinearEquiv.symm_apply_apply, MulEquiv.symm_apply_apply]⟩
 
 end GlobalTheory.NegModel
 
-open GlobalTheory.NegModel in
 
+open GlobalTheory.NegModel in
 theorem GlobalTheory.negModel_tr : ∀ (D : D7) (θ : InfFam D), IsInfFam θ → ∀ (V : HSp D) (S : D.what₂.Tau → SPar) (M : DSModel V S),
     ∃ (M₁ : DSModel (sgn true V) fun τ => GlobalTheory.SignedHC.flip (S τ)) (κ : SmT M₁ ≃+ SmT M),
       ModelTr (RingHom.id ℂ) true θ M₁ M κ :=

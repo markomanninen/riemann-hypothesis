@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.TangentEqLcZero
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.TangentEqLcZero
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.Sh.PTb
 
@@ -171,14 +175,14 @@ theorem dvd_of_lgCurve_low (G : LogFGL v d) {α β : Fin d → PowerSeries C}
       ∀ a, (PowerSeries.X : PowerSeries C) ^ N ∣ α a - β a
   | 0, _, a => by simp
   | N + 1, h, a => by
-      have ih := dvd_of_lgCurve_low G hα hβ N (fun a j hj => h a j (by omega))
-      have h1 := PowerSeries.X_pow_dvd_iff.1 (lgCurve_sub_dvd G hα hβ N ih a) N (by omega)
-      rw [map_sub, map_sub, h a N (by omega), sub_self, zero_sub, neg_eq_zero] at h1
-      rw [PowerSeries.X_pow_dvd_iff]
-      intro j hj
-      rcases Nat.lt_succ_iff.1 hj |>.lt_or_eq with hj | rfl
-      · exact PowerSeries.X_pow_dvd_iff.1 (ih a) j hj
-      · rw [map_sub]; exact h1
+      have ih : ∀ a, (PowerSeries.X : PowerSeries C) ^ N ∣ α a - β a :=
+        dvd_of_lgCurve_low G hα hβ N (fun a j hj => h a j (by omega))
+      have hdiff : (PowerSeries.X : PowerSeries C) ^ (N + 1) ∣
+          G.lgCurve α a - G.lgCurve β a := by
+        rw [PowerSeries.X_pow_dvd_iff]
+        intro j hj
+        rw [map_sub, h a j hj, sub_self]
+      simpa only [sub_sub_cancel] using dvd_sub hdiff (lgCurve_sub_dvd G hα hβ N ih a)
 
 theorem coeff_lgCurve_sub_eq (G : LogFGL v d) {α β : Fin d → PowerSeries C}
     (hα : ∀ b, PowerSeries.constantCoeff (α b) = 0)

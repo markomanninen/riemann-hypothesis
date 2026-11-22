@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafTwSecKillCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafTwSecKillCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -43,7 +47,8 @@ theorem key_ring {A K : Type} [CommRing A] [Field K] (φ : A →+* K) (x y : A) 
   refine ⟨?_, ?_⟩
   · have : φ (x * y ^ (k * (q - 1))) = 1 := by
       rw [map_mul, map_pow, h, ← pow_add, add_comm, hkq, mul_comm, pow_mul, ← map_pow, hy, map_one, one_pow]
-    simpa [map_sum, map_pow, this] using hq
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, map_pow, this] using hq
   · intro B _ ψ hs
     have h0 : ψ (∑ b ∈ Finset.range q, (x * y ^ (k * (q - 1))) ^ b) * (ψ (x * y ^ (k * (q - 1))) - 1) = 0 := by
       rw [← map_one ψ, ← map_sub, ← map_mul, geom_sum_mul, hu, sub_self, map_zero]

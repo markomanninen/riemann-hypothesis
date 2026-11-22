@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MonodromyZeroOfWeilDeligneRepClassIff
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousConjFin
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.NotIsGenericDetRepTwo
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsContinuousPadic
-import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MonodromyZeroOfWeilDeligneRepClassIff
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousConjFin
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.NotIsGenericDetRepTwo
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsContinuousPadic
+public import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,8 @@ section Tate
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-variable (k) in
 
+variable (k) in
 def unitFilt (a : ℕ) : Set kˣ :=
   {x | valuation k (x : k) = 1 ∧ valuation k ((x : k) - 1) ≤ uniformizer k ^ a}
 
@@ -42,28 +46,6 @@ theorem HasExponent.unique {χ : kˣ →* ℂˣ} {a b : ℕ} (ha : HasExponent �
   · exact h
   · obtain ⟨x, hx, hx'⟩ := ha.2 b h
     exact absurd (hb.1 x hx) hx'
-
-theorem hasExponent_zero_iff {χ : kˣ →* ℂˣ} : HasExponent χ 0 ↔ IsUnram χ := by
-  refine ⟨fun h x hx => h.1 x ⟨hx, ?_⟩, fun h => ⟨fun x hx => h x hx.1, fun b hb => absurd hb (Nat.not_lt_zero b)⟩⟩
-  rw [pow_zero]
-  exact (Valuation.map_sub _ _ _).trans (by simp [hx])
-
-theorem isTateEps_of_isUnram {ψ : AddChar k Circle} {c : kˣ} (hψ : HasConductor ψ c) {χ : kˣ →* ℂˣ}
-    (hχ : IsUnram χ) : IsTateEps ψ χ ((χ c)⁻¹ : ℂˣ) := by
-  refine ⟨c, 0, {c}, hψ, hasExponent_zero_iff.2 hχ, ⟨by simp, fun y hy => ⟨c, ⟨by simp, ?_⟩, fun r hr => ?_⟩⟩, ?_⟩
-  · have h1 : ord k (y * c⁻¹) = 0 := by
-      have h2 := ord_mul k (y * c⁻¹) c
-      rw [inv_mul_cancel_right] at h2
-      simp only [Nat.cast_zero, sub_zero] at hy
-      omega
-    have h3 := ord_eq_zero_iff.1 h1
-    have h4 : valuation k (y : k) = valuation k (c : k) := by
-      have : (y : k) = ((y * c⁻¹ : kˣ) : k) * c := by simp
-      rw [this, map_mul, h3, one_mul]
-    exact (Valuation.map_sub _ _ _).trans (by simp [h4])
-  · simpa using hr.1
-  · have : ψ (c : k) = 1 := (hψ c).2 le_rfl c le_rfl
-    simp [this]
 
 end Tate
 
@@ -105,33 +87,6 @@ def HasPairEps (ψ : AddChar k Circle) (π : Representation ℂ (GL (Fin (m + 1)
         I (fun g => l (π (tilde (corner g)) v) * l' (τ (tilde g) v')) =
           (ω (-1) : ℂ) ^ m * e * I (fun g => l (π (corner g) v) * l' (τ g v'))
 
-theorem isInvIntegral_zero : IsInvIntegral (LinearMap.proj (1 : GL (Fin 0) k) : (GL (Fin 0) k → ℂ) →ₗ[ℂ] ℂ) :=
-  fun f _ _ => congrArg f (Units.ext (Subsingleton.elim _ _))
-
-theorem hasPairEps_zero_iff (ψ : AddChar k Circle) (χ : kˣ →* ℂˣ) (e : ℂ) :
-    HasPairEps ψ (detRep (Fin (0 + 1)) χ) (detRep (Fin 0) 1) e ↔ e = 1 := by
-  have h0 : ∀ g : GL (Fin 0) k, g = 1 := fun g => Units.ext (Subsingleton.elim _ _)
-  have h1 : corner (1 : GL (Fin 0) k) = 1 := map_one (emb₂ k (stdSum (rfl : 0 + 1 = 0 + 1)))
-  have h2 : tilde (1 : GL (Fin (0 + 1)) k) = 1 := by
-    rw [tilde, map_one, mul_one]
-    ext i j
-    fin_cases i; fin_cases j
-    simp [longElt]
-  have key : ∀ (l l' : Module.Dual ℂ ℂ) (v v' : ℂ),
-      (fun g : GL (Fin 0) k => l (detRep (Fin (0 + 1)) χ (tilde (corner g)) v) * l' (detRep (Fin 0) 1 (tilde g) v')) =
-        fun g => l (detRep (Fin (0 + 1)) χ (corner g) v) * l' (detRep (Fin 0) 1 g v') := fun l l' v v' => by
-    funext g
-    rw [h0 (tilde g), h0 g, h1, h2]
-  constructor
-  · intro H
-    have := H 1 (fun z v => by simp [detRep]) LinearMap.id LinearMap.id
-      (fun u hu v => by simp [detRep, superDiag, det_eq_one_of_mem_unipRad k hu])
-      (fun u hu v => by simp [detRep, superDiag]) _ isInvIntegral_zero 1 1
-    rw [key] at this
-    simpa [h1] using this.symm
-  · rintro rfl ω _ l l' _ _ I _ v v'
-    rw [key]; simp
-
 end Pairs
 
 section Galois
@@ -163,8 +118,8 @@ variable {K L : Type} [Field K] [NumberField K] [Algebra K Ω] [IsAlgClosure K �
   [Field L] [NumberField L] [Algebra L Ω] [IsAlgClosure L Ω] [Algebra K L]
   {v : HeightOneSpectrum (𝓞 K)} {v' : HeightOneSpectrum (𝓞 L)}
 
-variable (L) in
 
+variable (L) in
 def IsLocalExt (h : IsPlaceOver A v) : Prop :=
   ∀ σ : G K Ω, ∃ τ : Weil h, ∀ x : L, (τ : G K Ω) (algebraMap L Ω x) = σ (algebraMap L Ω x)
 
@@ -174,8 +129,8 @@ def Induces {h' : IsPlaceOver A v'} {h : IsPlaceOver A v} (x : WD h') (y : WD h)
     (∀ (σ' : Weil h') (σ : Weil h), (∀ z : Ω, (σ : G K Ω) z = (σ' : G L Ω) z) → ∀ u, j (a.ρ σ' u) = b.ρ σ (j u)) ∧
     Submodule.span ℂ (Set.range fun p : Weil h × (Fin m → ℂ) => b.ρ p.1 (j p.2)) = ⊤
 
-omit [IsAlgClosure K Ω] in
 
+omit [IsAlgClosure K Ω] in
 theorem isLocalExt_self (h : IsPlaceOver A v) : IsLocalExt K h := fun σ => ⟨1, fun x => by simp⟩
 
 theorem induces_self {h : IsPlaceOver A v} (x : WD h) : Induces x x := by
@@ -186,8 +141,8 @@ theorem induces_self {h : IsPlaceOver A v} (x : WD h) : Induces x x := by
 
 end Ind
 
-variable (A) in
 
+variable (A) in
 abbrev EpsFamily : Type 1 :=
   ∀ (L : Type) [Field L] [NumberField L] [Algebra L Ω] [IsAlgClosure L Ω] (v : HeightOneSpectrum (𝓞 L))
     (h : IsPlaceOver A v), AddChar (v.adicCompletion L) Circle → WD h → ℂˣ

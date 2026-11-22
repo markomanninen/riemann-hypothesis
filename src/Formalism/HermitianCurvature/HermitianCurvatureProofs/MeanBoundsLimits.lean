@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.LatticeHerglotzBound
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MiddleThirdEstimate
+module
+
+public import Formalism.HermitianCurvature.LatticeHerglotzBound
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MiddleThirdEstimate
+
+@[expose] public section
 
 open Filter Topology Finset
 

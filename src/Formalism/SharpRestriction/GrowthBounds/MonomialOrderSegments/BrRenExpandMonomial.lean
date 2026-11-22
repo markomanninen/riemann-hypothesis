@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.SecondValuationOfAdmitted
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.SecondValuationOfAdmitted
+
+@[expose] public section
 
 noncomputable section
 
@@ -112,7 +116,8 @@ theorem brDER (S0 : UniformizedDVR p O) [CharZero (KK O)] (h6 : Formalism.MainNo
     have hX : ∀ F : MvPolynomial (Fin r) (KK O),
         F.coeff γ = (brRen (KK O) r F).coeff (γ.mapDomain fun a => ((), a)) :=
       fun F => (coeff_rename_mapDomain _ brRen_inj F γ).symm
-    rw [hX, map_sub, map_sum, brRen_ddiv]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hX, map_sub, map_sum, brRen_ddiv]
     simp only [brRen_term]
     have hα : (fun a => (ρ + p ^ g • β) a) = fun a => ρ a + p ^ g * β a := by
       funext a

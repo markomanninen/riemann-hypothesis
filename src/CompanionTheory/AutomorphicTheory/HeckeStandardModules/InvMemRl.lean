@@ -1,4 +1,8 @@
-import CompanionTheory.AutomorphicTheory.HeckeStandardModules.IntegralOfModule
+module
+
+public import CompanionTheory.AutomorphicTheory.HeckeStandardModules.IntegralOfModule
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.Aut Formalism.UG Formalism.L2 CompanionTheory.Split CompanionTheory.HeckeA
 
@@ -7,8 +11,6 @@ noncomputable section
 namespace CompanionTheory.L3H
 
 variable {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ} {W : Type} [AddCommGroup W] [Module ℂ W]
-
-local notation3 "L⁺" => maximalRealSubfield L
 
 theorem ent_mul (x y : GA L n) : ent (x * y) = ent x * ent y := rfl
 
@@ -72,7 +74,8 @@ theorem key_M0 {l : ℕ} [Fact l.Prime] {c : ℕ} (hc : c ≠ 0) (x : L)
   have hτ : τ (((m * c ^ 2 : ℕ) : L) * x) =
       ∑ r, ((RingOfIntegers.basis L).repr y r : ℂ) * τ (RingOfIntegers.basis L r : L) := by
     have := congrArg (τ.comp (algebraMap (𝓞 L) L)) hy
-    rw [show τ (((m * c ^ 2 : ℕ) : L) * x) = (τ.comp (algebraMap (𝓞 L) L)) y from rfl, ← this, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [show τ (((m * c ^ 2 : ℕ) : L) * x) = (τ.comp (algebraMap (𝓞 L) L)) y from rfl, ← this, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_zsmul, zsmul_eq_mul]
     rfl

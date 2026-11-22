@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.Precomp
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.Precomp
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -86,7 +90,7 @@ theorem dividedPowerFiltration_mul {B : Type} [CommRing B] {J : Ideal B} (δ : D
     (hy : y ∈ pdP δ s) : x * y ∈ pdP δ (r + s) := by
   have : pdP δ r * pdP δ s ≤ pdP δ (r + s) := by
     unfold pdP
-    rw [Ideal.span_mul_span']
+    rw [Ideal.span_mul_span]
     refine Ideal.span_mono ?_
     rintro _ ⟨_, ⟨l, hl, hr, rfl⟩, _, ⟨l', hl', hr', rfl⟩, rfl⟩
     refine ⟨l ++ l', fun q hq => (List.mem_append.1 hq).elim (hl q) (hl' q), ?_, ?_⟩
@@ -98,13 +102,16 @@ section Thick
 variable {b : Base} (L : b.Fun)
 
 theorem grOk {a a' c : ℕ} (h : a + a' = c) :
-    MulOk (thFil L a) (thFil L ((a : ℤ) + 1)) (thFil L a') (thFil L ((a' : ℤ) + 1)) (thFil L c) (thFil L ((c : ℤ) + 1)) where
-  aa T _ _ hx hy := h ▸ dividedPowerFiltration_mul T.δ a a' hx hy
-  ab T _ _ hx hy := h ▸ dividedPowerFiltration_mul T.δ a (a' + 1) hx hy
-  ba T x y hx hy := by
-    have := dividedPowerFiltration_mul T.δ (a + 1) a' hx hy
-    rw [show a + 1 + a' = c + 1 by omega] at this
-    exact this
+    MulOk (thFil L a) (thFil L ((a : ℤ) + 1)) (thFil L a') (thFil L ((a' : ℤ) + 1)) (thFil L c) (thFil L ((c : ℤ) + 1)) := by
+  subst c
+  constructor
+  · intro T x y hx hy
+    exact dividedPowerFiltration_mul T.δ a a' hx hy
+  · intro T x y hx hy
+    exact dividedPowerFiltration_mul T.δ a (a' + 1) hx hy
+  · intro T x y hx hy
+    have hmul := dividedPowerFiltration_mul T.δ (a + 1) a' hx hy
+    rwa [Nat.add_right_comm] at hmul
 
 abbrev grT (a : ℕ) : Thick L ⥤ ModuleCat.{0} b.R := sq (thFil L (a : ℤ)) (thFil L ((a : ℤ) + 1))
 
@@ -145,8 +152,8 @@ def pullH {p : Y ⟶ Spec (CommRingCat.of K)} (u : X ⟶ Y) (hu : u ≫ p = q) (
   ((smS u hu).sq (a := thFil _ (a : ℤ)) (b := thFil _ ((a : ℤ) + 1)) (a' := thFil _ (a : ℤ)) (b' := thFil _ ((a : ℤ) + 1))
     (fun _ _ hx => hx) fun _ _ hx => hx).pull n
 
-variable (q) in
 
+variable (q) in
 def IsDlogFirstChernClass (D : E.LineData X) (x : Hdg q 1 2) : Prop :=
   ∀ (C : Type 1) [Category.{0} C] (g : C ⥤ Thick (smFun X q)), (∀ c, ∃ V ∈ 𝒱D D, InU V (g.obj c)) → ∀ Λ : CLiftK g D,
     Rep ((thFil (smFun X q) ((1 : ℕ) : ℤ)).res g) ((thFil (smFun X q) (((1 : ℕ) : ℤ) + 1)).res g)

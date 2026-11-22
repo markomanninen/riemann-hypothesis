@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -33,16 +37,26 @@ theorem loc_iff {F : Shv R} {U : Scheme.{0}} (a : Sec F U) :
 def supp (F : Shv R) (U : Scheme.{0}) : Submodule (ULift.{1} R) (Sec F U) where
   carrier := {a | sv Z hZ a ∈ Scheme.etaleTopology U}
   zero_mem' := by
-    refine GrothendieckTopology.superset_covering _ (fun V g _ => Or.inr (map_zero _)) (GrothendieckTopology.top_mem _ U)
+    change sv Z hZ (0 : Sec F U) ∈ Scheme.etaleTopology U
+    refine Scheme.etaleTopology.superset_covering ?_ (Scheme.etaleTopology.top_mem U)
+    intro V g _
+    exact Or.inr (map_zero (F.obj.map g.op).hom)
   add_mem' {a b} ha hb := by
-    refine GrothendieckTopology.superset_covering _ (fun V g hg => ?_) (GrothendieckTopology.intersection_covering _ ha hb)
+    change sv Z hZ a ∈ Scheme.etaleTopology U at ha
+    change sv Z hZ b ∈ Scheme.etaleTopology U at hb
+    change sv Z hZ (a + b) ∈ Scheme.etaleTopology U
+    refine Scheme.etaleTopology.superset_covering ?_ (Scheme.etaleTopology.intersection_covering ha hb)
+    intro V g hg
     rcases hg.1 with h | h
     · exact Or.inl h
     rcases hg.2 with h' | h'
     · exact Or.inl h'
-    · right; change (F.obj.map g.op).hom (a + b) = 0; rw [map_add]; exact (congrArg₂ (· + ·) h h').trans (add_zero 0)
+    · right; change (F.obj.map g.op).hom (a + b) = 0; rw [map_add (f := _)]; exact (congrArg₂ (· + ·) h h').trans (add_zero 0)
   smul_mem' c a ha := by
-    refine GrothendieckTopology.superset_covering _ (fun V g hg => ?_) ha
+    change sv Z hZ a ∈ Scheme.etaleTopology U at ha
+    change sv Z hZ (c • a) ∈ Scheme.etaleTopology U
+    refine Scheme.etaleTopology.superset_covering ?_ ha
+    intro V g hg
     rcases hg with h | h
     · exact Or.inl h
     · right; change (F.obj.map g.op).hom (c • a) = 0; rw [map_smul]; exact (congrArg (c • ·) h).trans (smul_zero c)

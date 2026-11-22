@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushInvertible
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabMapCubical
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.AlphaPair
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.WeilIsGrpPullbackIff
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.EqOfDominantGeometricPointsOfUnramified
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FormallyUnramifiedOfTangentMapInjective
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushInvertible
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabMapCubical
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.AlphaPair
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.WeilIsGrpPullbackIff
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.EqOfDominantGeometricPointsOfUnramified
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FormallyUnramifiedOfTangentMapInjective
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -55,7 +59,7 @@ theorem exists_eq_nsmul (D : Datum H) (n : ℕ) (v : D.La) (h : ∀ b, (n : ℤ)
     simpa using h b
   have hn' : (n : ℤ) ≠ 0 := by exact_mod_cast hn.ne'
   let f : D.La →+ ℤ := AddMonoidHom.mk' (fun b => D.EF v b / n) fun b b' => by
-    rw [map_add, Int.add_ediv_of_dvd_left (h b)]
+    rw [map_add (f := _), Int.add_ediv_of_dvd_left (h b)]
   obtain ⟨z, hz⟩ := D.unimod.2 f.toIntLinearMap
   refine ⟨z, D.unimod.1 (LinearMap.ext fun b => ?_)⟩
   rw [map_nsmul, LinearMap.smul_apply, hz]

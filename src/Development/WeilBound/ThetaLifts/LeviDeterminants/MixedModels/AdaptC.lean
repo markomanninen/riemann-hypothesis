@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianTensorSkewHermitianLatticeOpenCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAddCharSymplecticLocalLatticeEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallySelfDualLatticeIndicatorIsVacuum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AddCharHalfTraceTensorLatticeHeisenbergCocycle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianTensorSkewHermitianLatticeOpenCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAddCharSymplecticLocalLatticeEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallySelfDualLatticeIndicatorIsVacuum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AddCharHalfTraceTensorLatticeHeisenbergCocycle
+
+@[expose] public section
 
 noncomputable section
 
@@ -202,7 +206,7 @@ theorem exists_isVac {B : Base F E} {r s r' s' : ℕ} (hX : X.IsHerm σ B r s) (
     (hrat : ∀ x : Matrix (Fin n) (Fin d) E, ∃ y z : Fin n × Fin d → F,
       Ma.co.e (incM F x) = (fun i => algebraMap F (AF F) (y i), fun i => algebraMap F (AF F) (z i)))
     (p q : Matrix (Fin n) (Fin d) (AE F E) → κ₀ → AF F) (π : Matrix (Fin n) (Fin d) (AE F E) → Matrix (Fin n₁) (Fin d₁) (AE F E))
-    (hco : ∀ z, Ma.co.e z = (glue ε (p z) (M₁.co.e (π z)).1, glue ε (q z) (M₁.co.e (π z)).2)) (v : Pl F)
+    (hco : ∀ z, Ma.co.e z = (glue ε (p z) (M₁.co.e (π z)).1, glue ε (q z) (M₁.co.e (π z)).2)) (v : Pl (F := F))
     (hlat : ∀ γ ∈ latAtV X W v, π γ ∈ latAtV X₁ W₁ v)
     (hpq : ∀ γ ∈ latAtV X W v, ∀ γ' ∈ latAtV X W v, B.ψ (p γ' ⬝ᵥ q γ) = 1)
     (hθ : ∀ θ : 𝓞 E, (θ : E) + σ θ = 1 → ∀ γ ∈ latAtV X W v,
@@ -248,7 +252,7 @@ theorem exists_isVac {B : Base F E} {r s r' s' : ℕ} (hX : X.IsHerm σ B r s) (
   simp only [Darboux.rho, schr, tens, hco, glue_dot, glue_add, glue_map ε (evFin F v), Pi.smul_apply, box_glue]
   by_cases ha : (fun k => evFin F v (a k)) ∈ Λ
   · have ha' : (fun k => evFin F v ((a + p γ) k)) ∈ Λ := by
-      simp only [Pi.add_apply, map_add]
+      simp only [Pi.add_apply, map_add (f := _)]
       exact Λ.add_mem ha hp
     have hR₁ : Rest (evFin F v) φ fun b => R (glue ε a b) := by
       refine ⟨fun x z hz => ?_, ?_⟩
@@ -291,7 +295,7 @@ theorem cA_cA {B : Base F E} (hB : B.IsGood σ) (z : AE F E) : cA σ (cA σ z) =
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a e => simp [cA, conj_conj hB]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem exists_model {B : Base F E} {r s r' s' : ℕ} (hB : B.IsGood σ) (hX : X.IsHerm σ B r s) (hW : W.IsSkew σ B r' s')
     {M : Model σ X W} (hM : M.IsGood B.ψ) {M₁ : Model σ X₁ W₁} (hM₁ : M₁.IsGood B.ψ) {κ : Type} [Fintype κ]
@@ -315,17 +319,19 @@ theorem exists_model {B : Base F E} {r s r' s' : ℕ} (hB : B.IsGood σ) (hX : X
   let p : Matrix (Fin n) (Fin d) (AE F E) → κ × Fin 2 → AF F := fun z k => βA.repr (b z k.1) k.2
   let q : Matrix (Fin n) (Fin d) (AE F E) → κ × Fin 2 → AF F := fun z k => -Tr (βA k.2 * D z k.1)
   have hpq : ∀ z z', p z ⬝ᵥ q z' = -Tr (b z ⬝ᵥ D z') := fun z z' => by
-    simp only [dotProduct, Fintype.sum_prod_type, map_sum, ← Finset.sum_neg_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, Fintype.sum_prod_type, map_sum, ← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl fun k _ => ?_
-    conv_rhs => rw [← βA.sum_repr (b z k), Finset.sum_mul, map_sum, ← Finset.sum_neg_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← βA.sum_repr (b z k), Finset.sum_mul, map_sum, ← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [smul_mul_assoc, map_smul, smul_eq_mul, ← mul_neg]
   have hTr : ∀ z, Tr (cA σ z) = Tr z := GlobalTheory.VacCocycle.trace_conj (cA σ) (cA_cA hB)
   let Φ : Matrix (Fin n) (Fin d) (AE F E) →ₗ[AF F] (Fin n × Fin d → AF F) × (Fin n × Fin d → AF F) :=
     { toFun := fun z => (glue ε (p z) (M₁.co.e (π z)).1, glue ε (q z) (M₁.co.e (π z)).2)
       map_add' := fun z z' => by
-        rw [Prod.mk_add_mk, glue_add, glue_add, hπ.map_add, map_add]
-        congr 2 <;> funext k <;> simp [p, q, hb.map_add, hD.map_add, mul_add, add_comm]
+        rw [Prod.mk_add_mk, glue_add, glue_add, hπ.map_add (f := _), map_add (f := _)]
+        congr 2 <;> funext k <;> simp [p, q, hb.map_add (f := _), hD.map_add (f := _), mul_add, add_comm]
       map_smul' := fun c z => by
         rw [Prod.smul_mk, glue_smul, glue_smul, hπ.map_smul, map_smul]
         congr 2 <;> funext k <;> simp [p, q, hb.map_smul, hD.map_smul] }
@@ -334,7 +340,7 @@ theorem exists_model {B : Base F E} {r s r' s' : ℕ} (hB : B.IsGood σ) (hX : X
     have h1 := M₁.co.form (π z) (π z')
     show Tr _ = glue ε _ _ ⬝ᵥ glue ε _ _ - glue ε _ _ ⬝ᵥ glue ε _ _
     change Tr _ = _ at h1
-    rw [glue_dot, glue_dot, hpq, hpq, hH, mul_add, map_add, h1, neg_one_mul, map_neg, map_sub, hTr]
+    rw [glue_dot, glue_dot, hpq, hpq, hH, mul_add, map_add (f := _), h1, neg_one_mul, map_neg, map_sub, hTr]
     ring
   have hbij : Function.Bijective Φ := by
     have := (bijective_of_symp (Φ ∘ₗ M.co.e.symm.toLinearMap) fun u w => by
@@ -377,18 +383,18 @@ theorem exists_model {B : Base F E} {r s r' s' : ℕ} (hB : B.IsGood σ) (hX : X
       simp only [← AddChar.map_add_eq_mul]
       congr 1
       have h1 : inclR (F := F) (AF F) (θ : E) + cA σ (inclR (F := F) (AF F) (θ : E)) = 1 := by
-        rw [GlobalTheory.VacIndic.cA_inclR, ← map_add, hθ, map_one]
+        rw [GlobalTheory.VacIndic.cA_inclR, ← map_add (f := _), hθ, map_one]
       have h2 : Tr (inclR (F := F) (AF F) (θ : E) * cA σ (b γ ⬝ᵥ D γ)) =
           Tr (b γ ⬝ᵥ D γ) - Tr (inclR (F := F) (AF F) (θ : E) * (b γ ⬝ᵥ D γ)) := by
         rw [← hTr, map_mul, cA_cA hB, ← map_sub, eq_sub_of_add_eq' h1, sub_mul, one_mul]
       have h3 : (⅟(2 : AF F)) * 2 = 1 := invOf_mul_self _
       show _ * Tr _ = _ + (_ + _ * Tr _)
-      rw [hpq, hH, mul_add (inclR (F := F) (AF F) (θ : E)), mul_sub, map_add, map_sub, h2]
+      rw [hpq, hH, mul_add (inclR (F := F) (AF F) (θ : E)), mul_sub, map_add (f := _), map_sub, h2]
       generalize (⅟(2 : AF F)) = t at h3 ⊢
       linear_combination (Tr (inclR (F := F) (AF F) (θ : E) * (b γ ⬝ᵥ D γ))) * h3
   choose φa hφa hφb using hv
-  let S : ∀ v : Pl F, (Fin n × Fin d → Fv F v) → ℂ := fun v => Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers F} 1
-  let G : Pl F → Prop := fun v => Model.IsVac (⟨co, fun _ => 0, 0, ∅⟩ : Model σ X W) B.ψ v (S v) ∧
+  let S : ∀ v : Pl (F := F), (Fin n × Fin d → Fv F v) → ℂ := fun v => Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers F} 1
+  let G : Pl (F := F) → Prop := fun v => Model.IsVac (⟨co, fun _ => 0, 0, ∅⟩ : Model σ X W) B.ψ v (S v) ∧
     M₁.vac v = Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers F} 1
   let Ma : Model σ X W := ⟨co, fun v => if G v then S v else φa v, M.μ, M.dom⟩
   obtain ⟨e, he⟩ := exists_isEv ε B Ma M₁ p q π hco ι ι' I
@@ -458,7 +464,8 @@ theorem hTens_plane_right (J : Matrix α α S) (η : S) (J' : Matrix β β S) (z
 
 theorem conj_pair (hc : ∀ z, c (c z) = z) {J : Matrix α α S} {η : S} (hJ : ∀ i j, c (J j i) = η * J i j) (u w : α → S) :
     c (∑ i, ∑ k, u i * J i k * c (w k)) = η * ∑ i, ∑ k, w i * J i k * c (u k) := by
-  simp only [map_sum, map_mul, hc, hJ, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, hc, hJ, Finset.mul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun k _ => by ring
 
@@ -477,7 +484,7 @@ theorem frame_mulVec (H : Plane E m m₁) (w : Fin m₁ ⊕ Fin 2 → E) :
   simp [frame, Matrix.mulVec, dotProduct, Fintype.sum_sum_type, Fin.sum_univ_two]
   ring
 
-theorem exists_frame_inv (hH : H.IsAdapted σ B Y Y₁ i₀ i₁) (hL : Y.L.IsLattice E) :
+theorem exists_frame_inv (hH : H.IsAdapted σ B Y Y₁ i₀ i₁) (hL : Y.L.IsFullLattice E) :
     ∃ Q : Matrix (Fin m₁ ⊕ Fin 2) (Fin m) E, frame H * Q = 1 ∧ Q * frame H = 1 ∧ ∀ u ∈ Y.L,
       (fun i => (Q *ᵥ u) (.inl i)) ∈ Y₁.L ∧ (Q *ᵥ u) (.inr 0) • H.x ∈ Y.L ∧ (Q *ᵥ u) (.inr 1) • H.y ∈ Y.L := by
   have h1 : ∀ z ∈ Y.L, ∃ w, frame H *ᵥ w = z ∧ (fun i => w (.inl i)) ∈ Y₁.L ∧ w (.inr 0) • H.x ∈ Y.L ∧
@@ -485,7 +492,8 @@ theorem exists_frame_inv (hH : H.IsAdapted σ B Y Y₁ i₀ i₁) (hL : Y.L.IsLa
     obtain ⟨s, t, u, hs, ht, hu, rfl⟩ := hH.split z hz
     exact ⟨Sum.elim u ![s, t], frame_mulVec H _, hu, hs, ht⟩
   have h2 : LinearMap.range (frame H).mulVecLin = ⊤ := by
-    rw [eq_top_iff, ← hL.span_eq_top, Submodule.span_le]
+    apply top_unique
+    rw [← hL.span_eq_top, Submodule.span_le]
     intro z hz
     obtain ⟨w, hw, -⟩ := h1 z hz
     exact ⟨w, hw⟩
@@ -562,7 +570,7 @@ theorem incM_mask (m₁ : ℕ) (c s t : ℤ) : incM F (mask E m₁ c s t) = mask
   · fin_cases a <;> simp
 
 theorem lat_map {A : Matrix (Fin n₁) (Fin n) E} {A' : Matrix (Fin d₁) (Fin d) E} (hA : ∀ u ∈ X.L, A *ᵥ u ∈ X₁.L)
-    (hA' : ∀ u ∈ W.L, A' *ᵥ u ∈ W₁.L) {v : Pl F} {γ : Matrix (Fin n) (Fin d) (AE F E)} (hγ : γ ∈ latAtV X W v) :
+    (hA' : ∀ u ∈ W.L, A' *ᵥ u ∈ W₁.L) {v : Pl (F := F)} {γ : Matrix (Fin n) (Fin d) (AE F E)} (hγ : γ ∈ latAtV X W v) :
     incM F A * γ * (incM F A')ᵀ ∈ latAtV X₁ W₁ v := by
   induction hγ using AddSubgroup.closure_induction with
   | mem z hz =>

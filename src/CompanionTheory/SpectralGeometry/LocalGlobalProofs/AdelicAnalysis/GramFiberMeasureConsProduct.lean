@@ -1,8 +1,12 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.StageData
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHaarMeasureStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HermitianMatricesLocallyCompactBorelStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.StageData
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHaarMeasureStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HermitianMatricesLocallyCompactBorelStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,10 +53,10 @@ theorem subst_row_translate : ∀ (F E : Type) [Field F] [NumberField F] [Field 
     rfl
   have hTm : Measurable (fun (r : Fin n → R ⊗[F] E) (j : Fin n) =>
       ((u : R) ⊗ₜ[F] (algebraMap F E t)) * r j) :=
-    measurable_pi_lambda _ fun j => (measurable_pi_apply j).const_mul _
+    Measurable.of_eval fun j => (measurable_pi_apply j).const_mul _
   have hDm : Measurable (fun (r : Fin n → R ⊗[F] E) (j : Fin n) =>
       (((u⁻¹ : Rˣ) : R) ⊗ₜ[F] (algebraMap F E t⁻¹)) * r j) :=
-    measurable_pi_lambda _ fun j => (measurable_pi_apply j).const_mul _
+    Measurable.of_eval fun j => (measurable_pi_apply j).const_mul _
   have hmap : (Measure.pi fun _ : Fin n => coordK R b lam).map
       (fun (r : Fin n → R ⊗[F] E) (j : Fin n) => ((u : R) ⊗ₜ[F] (algebraMap F E t)) * r j) =
       ((cm u : ℝ≥0∞) ^ n) • Measure.pi fun _ : Fin n => coordK R b lam := by

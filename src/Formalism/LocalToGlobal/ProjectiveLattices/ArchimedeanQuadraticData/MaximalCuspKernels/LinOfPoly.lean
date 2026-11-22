@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.MaximalCuspKernels.KerExistsStatement
-import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.ArcWitnessExistence.PolyFr
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.ArcLineFunctions.ArcDatumIsArcPointBasis
+public import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem arcNum_map (Dw : Datum H) (K₁ : Type) [Field K₁]
   have hex : ∃ Q, algebraMap (MvPolynomial (ArcLt Dw) (LaurentSeries K₁)) (ArcS Dw K₁) Q =
       algebraMap (MvPolynomial (ArcLt Dw) (LaurentSeries K₁)) (ArcS Dw K₁) P := ⟨P, rfl⟩
   unfold arcNum
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact inj Dw K₁ hex.choose_spec
 
 theorem laur_alg {S K : Type} [CommRing S] [Field K] [Algebra S K] (x : S) :
@@ -56,7 +60,7 @@ theorem evR_add (f g : Rul Xo c) {S : Type} [CommRing S] [Algebra c.F S] (y : Fr
     evR Xo c (f + g) y = evR Xo c f y + evR Xo c g y := by
   first
   | exact evalAt_add (K := c.F) (fun S _ _ => FrPt Xo c S) (fun φ y z => FrMap φ y z) f g y
-  | simp [evR, map_add]
+  | simp [evR, map_add (f := _)]
 
 theorem evR_smul (a : c.F) (f : Rul Xo c) {S : Type} [CommRing S] [Algebra c.F S] (y : FrPt Xo c S) :
     evR Xo c (a • f) y = algebraMap c.F S a * evR Xo c f y := by

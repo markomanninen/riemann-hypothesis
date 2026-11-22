@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBlockOrderedSumEquivTrueIndex
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PtOfFrameEqOfPointEq
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsDetNeZeroFirstCol
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBlockOrderedSumEquivTrueIndex
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PtOfFrameEqOfPointEq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsDetNeZeroFirstCol
+
+@[expose] public section
 
 open Matrix NumberField MeasureTheory Formalism.DegreeFormula Formalism.MJ Formalism.UG Formalism.L2.Geo
 open ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates GlobalTheory.HodgeDomain GlobalTheory.TrueCx GlobalTheory.FlagFibre
@@ -38,12 +42,12 @@ theorem exists_conj_triangular (n : ℕ) (A : Matrix (Fin n) (Fin n) ℂ) :
     have hBD : B * D = D * T' := by
       ext a c
       refine Fin.cases ?_ (fun a => ?_) a
-      · rw [mul_apply (M := D), Fin.sum_univ_succ]
+      · rw [Matrix.mul_apply (M := D), Fin.sum_univ_succ]
         simp [D, T']
       · refine Fin.cases ?_ (fun c => ?_) c
-        · simp [D, T', mul_apply, Fin.sum_univ_succ, hB]
+        · simp [D, T', Matrix.mul_apply, Fin.sum_univ_succ, hB]
         · have := congrFun (congrFun e' a) c
-          simpa [D, T', mul_apply, Fin.sum_univ_succ] using this
+          simpa [D, T', Matrix.mul_apply, Fin.sum_univ_succ] using this
     refine ⟨P * D, T', ?_, fun a c h => ?_, ?_⟩
     · rw [det_mul, hD]; exact mul_ne_zero hP hQ
     · revert h

@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.CmpPair
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.SplOff
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.CmpPair
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.SplOff
+
+@[expose] public section
 
 namespace PI.SqPair.LCP
 

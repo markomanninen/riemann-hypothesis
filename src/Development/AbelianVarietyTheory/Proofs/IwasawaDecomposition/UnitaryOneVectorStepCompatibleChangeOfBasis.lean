@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StdHermitianFibreProductChangeOfBasisStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryStabilizerAnisotropicVectorEquivComplemenStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryGroupPointsEquivOfChangeOfBasisStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StdHermitianFibreProductChangeOfBasisStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryStabilizerAnisotropicVectorEquivComplemenStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryGroupPointsEquivOfChangeOfBasisStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,8 @@ theorem isHermND_basis (hσ : ∀ z, σ (σ z) = z) {n : ℕ} {J : Matrix (Fin n
   obtain ⟨h1, h2⟩ := hJ
   refine ⟨fun i j => ?_, ?_⟩
   · unfold Formalism.UG.cT
-    simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, Finset.sum_mul, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, Finset.sum_mul, map_sum,
       map_mul, AlgHom.coe_toRingHom, hσ, h1]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
@@ -136,8 +141,8 @@ theorem frame_alg {S : Type} [CommRing S] {n m : ℕ} {g g₂ P : Matrix (Fin n)
 
 end GlobalTheory.GaugeEx.StepTr
 
-open GlobalTheory.GaugeEx.StepTr in
 
+open GlobalTheory.GaugeEx.StepTr in
 theorem GlobalTheory.GaugeEx.stepRel_basis : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (d : ℕ) (b : Module.Basis (Fin d) F E) (s : StdMeas b) (M : ℕ) (J J₂ : Matrix (Fin (M + 1)) (Fin (M + 1)) E) (x : Fin 1 → Fin (M + 1) → E) (a : F) (B : Matrix (Fin (M + 1)) (Fin M) E) (J' : Matrix (Fin M) (Fin M) E) (x₂ : Fin 1 → Fin (M + 1) → E) (B₂ : Matrix (Fin (M + 1)) (Fin M) E) (J₂' : Matrix (Fin M) (Fin M) E) (P : GL (Fin (M + 1)) E) (Q : GL (Fin M) E) (eP : HA (AF F) σ J ≃* HA (AF F) σ J₂) (eQ : HA (AF F) σ J' ≃* HA (AF F) σ J₂') (μ : Measure (HA (AF F) σ J)) (μ' : Measure (HA (AF F) σ J')), StepData σ J x a B J' → J₂ = Formalism.UG.cT (σ : E →+* E) (P : Matrix (Fin (M + 1)) (Fin (M + 1)) E) * J * (P : Matrix (Fin (M + 1)) (Fin (M + 1)) E) → J₂' = Formalism.UG.cT (σ : E →+* E) (Q : Matrix (Fin M) (Fin M) E) * J' * (Q : Matrix (Fin M) (Fin M) E) → (P : Matrix (Fin (M + 1)) (Fin (M + 1)) E).mulVec (x₂ 0) = x 0 → (P : Matrix (Fin (M + 1)) (Fin (M + 1)) E) * B₂ = B * (Q : Matrix (Fin M) (Fin M) E) → (∀ g, FrameRel J J₂ (P : Matrix (Fin (M + 1)) (Fin (M + 1)) E) g (eP g)) → (∀ g, FrameRel J' J₂' (Q : Matrix (Fin M) (Fin M) E) g (eQ g)) → StepRel s σ J x a B J' μ μ' → StepData σ J₂ x₂ a B₂ J₂' ∧ StepRel s σ J₂ x₂ a B₂ J₂' (μ.map eP) (μ'.map eQ) := by
   intro F E iF nF iE nE iA σ hCM d b s M J J₂ x a B J' x₂ B₂ J₂' P Q eP eQ μ μ' hSD hJ₂ hJ₂' hx hB
     hePF heQF hR
@@ -236,10 +241,10 @@ theorem GlobalTheory.GaugeEx.stepRel_basis : ∀ (F E : Type) [Field F] [NumberF
     exact hm.subtype_mk
   have hin : ∀ c : HA (AF F) σ J₂,
       Measurable fun h' : Hstab (AF F) σ J₂ x₂ => f (c * (h' : HA (AF F) σ J₂)) :=
-    fun c => hf.comp ((continuous_mul_left c).measurable.comp measurable_subtype_coe)
+    fun c => hf.comp ((continuous_const_mul c).measurable.comp measurable_subtype_coe)
   have hin1 : ∀ c : HA (AF F) σ J,
       Measurable fun h' : Hstab (AF F) σ J x => f (eP (c * (h' : HA (AF F) σ J))) :=
-    fun c => hf.comp (hPm.comp ((continuous_mul_left c).measurable.comp measurable_subtype_coe))
+    fun c => hf.comp (hPm.comp ((continuous_const_mul c).measurable.comp measurable_subtype_coe))
   have hin2 : ∀ c : HA (AF F) σ J₂,
       Measurable fun k : HA (AF F) σ J₂' => f (c * ((e₂.symm k : Hstab (AF F) σ J₂ x₂) : HA (AF F) σ J₂)) :=
     fun c => (hin c).comp h2m

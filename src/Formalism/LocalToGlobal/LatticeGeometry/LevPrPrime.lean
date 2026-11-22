@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.LatticeGeometry.CompNe
-import Formalism.LocalToGlobal.LatticeGeometry.InstAddCommSemigroupWt
+module
+
+public import Formalism.LocalToGlobal.LatticeGeometry.CompNe
+public import Formalism.LocalToGlobal.LatticeGeometry.InstAddCommSemigroupWt
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,16 +32,6 @@ structure ShimFam (D : D7) (G : DV.Geo D.what₂.LL) (Lev : Type) : Type 1 where
 namespace ShimFam
 
 variable {D : D7} {G : DV.Geo D.what₂.LL} {Lev : Type} (F : ShimFam D G Lev)
-
-def Uw (j : ℕ) : ShimU D G F.jC F.ng (datW D F.κg j) := F.U (datW D F.κg j)
-
-theorem Uw_defin : (datW D F.κg D.R.m).Defin := by
-  unfold datW Dat.Defin Dat.N jcl
-  dsimp only
-  have hm : 1 ≤ D.R.m := le_trans (by norm_num) D.R.two_le_m
-  letI := D.host.cmStar
-  rw [min_self, max_eq_right hm, D.sp.W_rank D.R.m hm le_rfl]
-  simp only [Formalism.BasicNotions.Ranks.sigW, Formalism.BasicNotions.Ranks.r]
 
 end ShimFam
 

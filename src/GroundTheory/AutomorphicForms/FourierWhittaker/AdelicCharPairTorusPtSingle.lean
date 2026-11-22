@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.FourierWhittaker.AlgebraMapIntegerMemIntegralFiniteAdeles
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.FourierWhittaker.AlgebraMapIntegerMemIntegralFiniteAdeles
+
+@[expose] public section
 
 open NumberField NumberField.mixedEmbedding MeasureTheory Topology Set Filter IsDedekindDomain
   Module
@@ -45,7 +49,8 @@ theorem adelicChar_pair_torusPt_single [DecidableEq ι] (ξ : ι → K) (p : ι 
     (∑ i, algebraMap K (InfiniteAdeleRing K) (ξ i) * ofCoord fun j => (Pi.single p s : ι × BIdx K → ℝ) (i, j))
   refine this.trans ?_
   congr 2
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp_rw [infiniteTrace_algebraMap_mul_ofCoord]
   rw [← Fintype.sum_prod_type (f := fun q : ι × BIdx K =>
     (Pi.single p s : ι × BIdx K → ℝ) q * (Algebra.trace ℚ K (ξ q.1 * integralBasis K q.2) : ℝ))]
@@ -223,7 +228,7 @@ theorem summable_vecCoeff_of_deriv [DecidableEq ι] (F : List (ι × BIdx K) →
     refine h.trans ?_
     have hpos' : 0 < ∏ p, (1 + (n p : ℝ) ^ 2) := Finset.prod_pos fun p _ => by positivity
     have hle : ∏ p, (1 + (n p : ℝ) ^ 2) ≤ ∏ p, (1 + (2 * π * (n p : ℝ)) ^ 2) :=
-      Finset.prod_le_prod (fun p _ => by positivity) fun p _ => by
+      Finset.prod_le_prod₀ (fun p _ => by positivity) fun p _ => by
         have : (1 : ℝ) ≤ (2 * π) ^ 2 := by nlinarith [Real.pi_gt_three]
         nlinarith [sq_nonneg (n p : ℝ)]
     refine (div_le_div_of_nonneg_left hB hpos' hle).trans (le_of_eq ?_)

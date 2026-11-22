@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementC
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementC
+
+@[expose] public section
 
 open PowerSeries
 
@@ -36,7 +40,7 @@ theorem eq_wSer_subst (hW : WSerSpec.{u}) (W : WeierstrassCurve R) (s v : R⟦X�
   have hweq : w = s ^ 3 + C W.a₁ * s * w + C W.a₂ * s ^ 2 * w + C W.a₃ * w ^ 2 + C W.a₄ * s * w ^ 2
       + C W.a₆ * w ^ 3 := by
     have h2 := congrArg (subHom s hs) hfix
-    simp only [map_add, map_mul, map_pow, subHom_X, subHom_C] at h2
+    simp only [map_add (f := _), map_mul, map_pow, subHom_X, subHom_C] at h2
     rw [subHom_apply] at h2
     exact h2
   have hw0 : constantCoeff w = 0 := by
@@ -95,7 +99,7 @@ theorem iSerSpec_of (hW : WSerSpec.{u}) (hF : WSerFactor.{u}) (hU : UnitSpec.{u}
   have φw : φ (wSer W) = wSer W * r := by rw [← φa, hwi]
   have φq : φ (iDen W) = r := by
     rw [hq]
-    simp only [map_add, map_mul, map_neg, map_one, φX, φC, φw]
+    simp only [map_add (f := _), map_mul, map_neg, map_one, φX, φC, φw]
     rw [hq] at hqr
     linear_combination hqr
   have φr : φ r = iDen W := by

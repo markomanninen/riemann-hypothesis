@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.UnitaryNorms.PowValCast
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.EqZeroOfNegEq
+module
+
+public import Formalism.LocalToGlobal.UnitaryNorms.PowValCast
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.EqZeroOfNegEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,32 +49,9 @@ theorem range_eq (j : H.E →ₐ[ℚ] Qb) : j.fieldRange = H.EQ := by
   rintro _ ⟨x, rfl⟩
   exact ⟨σ x, (hσ x).symm⟩
 
-theorem aut_mem_F (σ : H.E ≃ₐ[ℚ] H.E) {x : H.E} (hx : x ∈ H.F) : σ x ∈ H.F := fun ψ =>
-  hx (ψ.comp (σ : H.E →+* H.E))
-
-theorem map_FI (j : H.E →ₐ[ℚ] Qb) : H.FI.map j = H.FQ := by
-  refine le_antisymm (le_iSup (fun j : H.E →ₐ[ℚ] Qb => H.FI.map j) j) (iSup_le fun j' => ?_)
-  obtain ⟨σ, hσ⟩ := H.exists_aut j j'
-  rintro _ ⟨x, hx, rfl⟩
-  exact ⟨σ x, H.aut_mem_F σ hx, (hσ x).symm⟩
-
-theorem mem_F_iff (j : H.E →ₐ[ℚ] Qb) (x : H.E) : x ∈ H.F ↔ j x ∈ H.FQ := by
-  rw [← H.map_FI j, IntermediateField.mem_map]
-  constructor
-  · intro hx; exact ⟨_, hx, rfl⟩
-  · rintro ⟨y, hy, hxy⟩
-    rwa [← j.toRingHom.injective hxy]
-
 theorem map_K (j : H.E →ₐ[ℚ] Qb) : H.K.map j = KQ H.d := by
   have hb : j H.sqd ^ 2 = ((-(H.d : ℤ) : ℤ) : Qb) := by rw [← map_pow, H.sqd_sq]; simp
   rw [K, adjoin_map, Set.image_singleton, KQ, sqQ_eq hb]
-
-theorem mem_K_iff (j : H.E →ₐ[ℚ] Qb) (x : H.E) : x ∈ H.K ↔ j x ∈ KQ H.d := by
-  rw [← H.map_K j, IntermediateField.mem_map]
-  constructor
-  · intro hx; exact ⟨_, hx, rfl⟩
-  · rintro ⟨y, hy, hxy⟩
-    rwa [← j.toRingHom.injective hxy]
 
 theorem FQ_le_EQ : H.FQ ≤ H.EQ := iSup_le fun j => by
   rintro _ ⟨x, -, rfl⟩
@@ -89,8 +70,6 @@ def jOf (j : H.E →ₐ[ℚ] Qb) : H.E ≃ₐ[ℚ] H.EQ :=
       obtain ⟨x, hx⟩ := hy
       exact ⟨x, Subtype.ext hx⟩⟩
 
-@[simp] theorem jOf_coe (j : H.E →ₐ[ℚ] Qb) (x : H.E) : ((H.jOf j x : H.EQ) : Qb) = j x := rfl
-
 instance fin_EQ : FiniteDimensional ℚ H.EQ := by
   obtain ⟨j⟩ := H.nonempty_emb
   exact (H.jOf j).toLinearEquiv.finiteDimensional
@@ -103,12 +82,6 @@ instance normal_EQ : Normal ℚ H.EQ := by
 instance fin_FQ : FiniteDimensional ℚ H.FQ :=
   FiniteDimensional.of_injective (inclusion H.FQ_le_EQ).toLinearMap (inclusion H.FQ_le_EQ).toRingHom.injective
 
-theorem FQ_real (τ : Qb →+* ℂ) {y : Qb} (hy : y ∈ H.FQ) : starRingEnd ℂ (τ y) = τ y := by
-  obtain ⟨j⟩ := H.nonempty_emb
-  rw [← H.map_FI j] at hy
-  obtain ⟨x, hx, rfl⟩ := hy
-  exact hx (τ.comp j.toRingHom)
-
 variable {H}
 
 theorem actsAs_of_one {s : H.EQ →ₐ[ℚ] Qb} {g : φ.GG} (j : H.E →ₐ[ℚ] Qb)
@@ -118,41 +91,7 @@ theorem actsAs_of_one {s : H.EQ →ₐ[ℚ] Qb} {g : φ.GG} (j : H.E →ₐ[ℚ]
   have h1 : (⟨j' x, H.mem_EQ j' x⟩ : H.EQ) = ⟨j (σ x), H.mem_EQ j _⟩ := Subtype.ext (hσ x)
   rw [h1, h, hσ, ← AlgEquiv.mul_apply, ← AlgEquiv.mul_apply, H.gal_comm]
 
-theorem ActsAs.unique {s s' : H.EQ →ₐ[ℚ] Qb} {g : φ.GG} (h : H.ActsAs s g) (h' : H.ActsAs s' g) : s = s' := by
-  obtain ⟨j⟩ := H.nonempty_emb
-  ext y
-  obtain ⟨x, rfl⟩ := (H.jOf j).surjective y
-  exact (h j x).trans (h' j x).symm
-
-theorem ActsAs.label_unique {s : H.EQ →ₐ[ℚ] Qb} {g g' : φ.GG} (h : H.ActsAs s g) (h' : H.ActsAs s g') : g = g' := by
-  obtain ⟨j⟩ := H.nonempty_emb
-  apply H.gal.symm.injective
-  ext x
-  exact j.toRingHom.injective ((h j x).symm.trans (h' j x))
-
-theorem ActsAs.sqrt_d {s : H.EQ →ₐ[ℚ] Qb} {g : φ.GG} (h : H.ActsAs s g) (x : H.EQ) (hx : (x : Qb) ∈ sqrts (-(H.d : ℤ))) :
-    s x = (((g.1.2 : ℤˣ) : ℤ) : Qb) * x := by
-  obtain ⟨j⟩ := H.nonempty_emb
-  obtain ⟨y, rfl⟩ := (H.jOf j).surjective x
-  have hy : y ^ 2 = H.sqd ^ 2 := by
-    apply j.toRingHom.injective
-    show j (y ^ 2) = j (H.sqd ^ 2)
-    rw [H.sqd_sq, map_pow, show j y ^ 2 = ((-(H.d : ℤ) : ℤ) : Qb) from hx]; simp
-  have h1 := H.gal_sqd (H.gal.symm g)
-  rw [MulEquiv.apply_symm_apply] at h1
-  refine (h j y).trans ?_
-  rw [jOf_coe]
-  rcases sq_eq_sq_iff_eq_or_eq_neg.mp hy with rfl | rfl
-  · rw [h1, map_mul, map_intCast]
-  · rw [map_neg, h1, map_neg, map_neg, map_mul, map_intCast, mul_neg]
-
 variable (H)
-
-theorem actsAs_gal (j : H.E →ₐ[ℚ] Qb) (σ : H.E ≃ₐ[ℚ] H.E) :
-    H.ActsAs ((j.comp (σ : H.E →ₐ[ℚ] H.E)).comp ((H.jOf j).symm : H.EQ →ₐ[ℚ] H.E)) (H.gal σ) := by
-  refine actsAs_of_one j fun x => ?_
-  show j (σ ((H.jOf j).symm (H.jOf j x))) = _
-  rw [AlgEquiv.symm_apply_apply, MulEquiv.symm_apply_apply]
 
 theorem adjoin_cycZeta : IntermediateField.adjoin ℚ ({H.cycZeta} : Set (Cond.Cyc H.condN)) = ⊤ := by
   rw [eq_top_iff]
@@ -162,7 +101,11 @@ theorem adjoin_cycZeta : IntermediateField.adjoin ℚ ({H.cycZeta} : Set (Cond.C
   exact algebra_adjoin_le_adjoin ℚ _ h1
 
 theorem EQ_le_cycQ : H.EQ ≤ cycQ H.condN := by
-  let κ : Cond.Cyc H.condN →ₐ[ℚ] Qb := IsAlgClosed.lift
+  let κ : Cond.Cyc H.condN →ₐ[ℚ] Qb := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hz : IsPrimitiveRoot (κ H.cycZeta) H.condN := H.cycZeta_prim.map_of_injective κ.toRingHom.injective
   have hκ : κ.fieldRange = cycQ H.condN := by
     rw [AlgHom.fieldRange_eq_map, ← H.adjoin_cycZeta, adjoin_map, Set.image_singleton, cycQ_eq hz]
@@ -172,7 +115,11 @@ theorem EQ_le_cycQ : H.EQ ≤ cycQ H.condN := by
 
 theorem artin (s : Qb ≃ₐ[ℚ] Qb) (u : (ZMod H.condN)ˣ) (hs : ∀ z ∈ mus H.condN, s z = z ^ (u : ZMod H.condN).val) :
     H.ActsAs (restr H.EQ s) (H.art u) := by
-  let κ : Cond.Cyc H.condN →ₐ[ℚ] Qb := IsAlgClosed.lift
+  let κ : Cond.Cyc H.condN →ₐ[ℚ] Qb := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   obtain ⟨τ, hτ⟩ := Cond.aut H.condN (u : ZMod H.condN).val (ZMod.val_coe_unit_coprime u)
   have hτz := hτ H.cycZeta H.cycZeta_prim.pow_eq_one
   have hcomm : (s : Qb →ₐ[ℚ] Qb).comp κ = κ.comp (τ : Cond.Cyc H.condN →ₐ[ℚ] Cond.Cyc H.condN) := by

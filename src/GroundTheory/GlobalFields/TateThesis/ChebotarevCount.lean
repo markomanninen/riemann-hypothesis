@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.ChebotarevFrobenius
-import GroundTheory.GlobalFields.KummerTheory.Splitting
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.ChebotarevFrobenius
+public import GroundTheory.GlobalFields.KummerTheory.Splitting
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -18,8 +22,8 @@ def chebotarevSet (C : Set Gal(L/K)) : Set (HeightOneSpectrum (𝓞 K)) :=
   {v | ∀ w : HeightOneSpectrum (𝓞 L), w.asIdeal.LiesOver v.asIdeal →
     w.asIdeal.ramificationIdx (𝓞 K) = 1 ∧ arithFrobAt (𝓞 K) Gal(L/K) w.asIdeal ∈ C}
 
-omit [IsGalois K L] in
 
+omit [IsGalois K L] in
 theorem mem_fixingSubgroup_fixedField_zpowers (σ : Gal(L/K)) :
     σ ∈ fixingSubgroup (fixedField (Subgroup.zpowers σ)) := by
   rw [fixingSubgroup_fixedField]
@@ -33,16 +37,16 @@ theorem restrictScalars_galFixedZpowers (σ : Gal(L/K)) :
     (galFixedZpowers σ).restrictScalars K = σ :=
   AlgEquiv.ext fun _ ↦ rfl
 
-omit [IsGalois K L] in
 
+omit [IsGalois K L] in
 theorem restrictScalars_mem_zpowers (σ : Gal(L/K)) (g : Gal(L/fixedField (Subgroup.zpowers σ))) :
     g.restrictScalars K ∈ Subgroup.zpowers σ := by
   have h1 : g.restrictScalars K ∈ fixingSubgroup (fixedField (Subgroup.zpowers σ)) :=
     (IntermediateField.mem_fixingSubgroup_iff _ _).2 fun x hx ↦ g.commutes ⟨x, hx⟩
   rwa [fixingSubgroup_fixedField] at h1
 
-omit [IsGalois K L] in
 
+omit [IsGalois K L] in
 theorem isMulCommutative_gal_fixedField_zpowers (σ : Gal(L/K)) :
     IsMulCommutative Gal(L/fixedField (Subgroup.zpowers σ)) := ⟨⟨fun a b ↦ by
   apply AlgEquiv.restrictScalars_injective K

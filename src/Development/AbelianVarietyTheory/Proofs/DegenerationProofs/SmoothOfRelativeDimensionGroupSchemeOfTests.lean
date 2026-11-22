@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.IsNormalSchemeSp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsOpensEtaleOfUniqueClassicalPoints
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.JacobsonClosedPointsToolsInt
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AbelianSchemeProperClosureDataBasicPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsCoordReducedFibreClosedPointStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.QuasiFiniteAtAffineSpaceHomOfVectorOfCoordStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsDominantHomOfVectorOfQuasiFiniteAtStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ClassicalPointEqOfReductionCoordsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.IsNormalSchemeSp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsOpensEtaleOfUniqueClassicalPoints
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.JacobsonClosedPointsToolsInt
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AbelianSchemeProperClosureDataBasicPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsCoordReducedFibreClosedPointStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.QuasiFiniteAtAffineSpaceHomOfVectorOfCoordStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsDominantHomOfVectorOfQuasiFiniteAtStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ClassicalPointEqOfReductionCoordsStatement
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -106,20 +111,26 @@ theorem Core.exists_opens_smoothOfRelativeDimension (C : Core) (hT : C.HasTests)
     convert this using 1
     ext z
     exact Subtype.ext_iff
-  obtain ⟨V, hV, hE⟩ := exists_opens_etale_of_unique_classical_points 𝔸(Fin C.g; C.Z)
-    (𝔸(Fin C.g; C.Z) ↘ C.Z ≫ C.π) hN W.toScheme v ⟨w, hw⟩ U' hc' hqf hU' (by
-      intro p _ a a' h hp hr hg _
-      refine huniq p a a' ?_ ?_ hp hr fun i => ?_
-      · rintro _ ⟨z, rfl⟩
-        exact hg ⟨z, rfl⟩
-      · change a ≫ t = a' ≫ t
-        rw [← hv, reassoc_of% h]
-      · have e : ∀ b : Sp (OO p) ⟶ W.toScheme,
-            b.appTop.hom (u' i) = (b ≫ v).appTop.hom (AffineSpace.coord C.Z i) := fun b => by
-          rw [Scheme.Hom.comp_appTop, CommRingCat.hom_comp, RingHom.comp_apply]
-          exact congrArg _ (AffineSpace.homOfVector_appTop_coord t u' i).symm
-        exact (e a).trans ((congrArg (fun c : Sp (OO p) ⟶ 𝔸(Fin C.g; C.Z) =>
-          c.appTop.hom (AffineSpace.coord C.Z i)) h).trans (e a').symm))
+  have huniq' : ∀ (p : ℕ) [Fact p.Prime] (a a' : Sp (OO p) ⟶ W.toScheme),
+      a ≫ v = a' ≫ v → a (cPt p) = ⟨w, hw⟩ → rPt p ≫ a = rPt p ≫ a' →
+      Set.range (gPt p ≫ a) ⊆ U' → Set.range (gPt p ≫ a') ⊆ U' → a = a' := by
+    intro p _ a a' h hp hr hg _
+    refine huniq p a a' ?_ ?_ hp hr fun i => ?_
+    · change Set.range (gPt p ≫ a ≫ t) ⊆ C.U
+      rintro _ ⟨z, rfl⟩
+      rw [← Category.assoc, Scheme.Hom.comp_apply]
+      exact hg (Set.mem_range_self z)
+    · change a ≫ t = a' ≫ t
+      rw [← hv, reassoc_of% h]
+    · have e : ∀ b : Sp (OO p) ⟶ W.toScheme,
+          b.appTop.hom (u' i) = (b ≫ v).appTop.hom (AffineSpace.coord C.Z i) := fun b => by
+        rw [Scheme.Hom.comp_appTop, CommRingCat.hom_comp, RingHom.comp_apply]
+        exact congrArg _ (AffineSpace.homOfVector_appTop_coord t u' i).symm
+      exact (e a).trans ((congrArg (fun c : Sp (OO p) ⟶ 𝔸(Fin C.g; C.Z) =>
+        c.appTop.hom (AffineSpace.coord C.Z i)) h).trans (e a').symm)
+  obtain ⟨V, hV, hE⟩ : ∃ V : W.toScheme.Opens, ⟨w, hw⟩ ∈ V ∧ Etale (V.ι ≫ v) :=
+    exists_opens_etale_of_unique_classical_points 𝔸(Fin C.g; C.Z)
+      (𝔸(Fin C.g; C.Z) ↘ C.Z ≫ C.π) hN W.toScheme v ⟨w, hw⟩ U' hc' hqf hU' huniq'
   have h5 : SmoothOfRelativeDimension (0 + C.g) ((V.ι ≫ v) ≫ 𝔸(Fin C.g; C.Z) ↘ C.Z) :=
     inferInstance
   rw [Category.assoc, hv, zero_add] at h5

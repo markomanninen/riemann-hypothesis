@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.OrbJetBase
+module
+
+public import Formalism.PeriodIntegrals.OrbJetBase
+
+@[expose] public section
 
 noncomputable section
 

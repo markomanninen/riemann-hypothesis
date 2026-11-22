@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+
+@[expose] public section
 
 namespace Formalism.L2.Pj
 

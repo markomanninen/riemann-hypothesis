@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.KaSmallNonpos
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.KaSmallNonpos
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ def oEOs : 𝓞 D.host.E →+* D.what₂.O where
   map_one' := hinj (by rw [oEOsFun_spec, map_one, map_one])
   map_mul' x y := hinj (by rw [map_mul, oEOsFun_spec, oEOsFun_spec, oEOsFun_spec, map_mul])
   map_zero' := hinj (by rw [oEOsFun_spec, map_zero, map_zero])
-  map_add' x y := hinj (by rw [map_add, oEOsFun_spec, oEOsFun_spec, oEOsFun_spec, map_add])
+  map_add' x y := hinj (by rw [map_add (f := _), oEOsFun_spec, oEOsFun_spec, oEOsFun_spec, map_add (f := _)])
 
 theorem oEOs_injective : Function.Injective (oEOs D hinj) := by
   intro x y hxy
@@ -67,8 +71,6 @@ def po2 (D : D7) : ℕ := D.host.pde'
 
 def zOwnP (D : D7) (p : ℕ) (w : WeightFamilies.Wt D j) : ℕ := p ^ (WeightAlgebra.DF w + 2 * D.R.f * D.R.r * w.n)
 
-def zOwn (D : D7) (w : WeightFamilies.Wt D j) : ℕ := zOwnP D (po D) w
-
 def scalOfP (B : WeightFamilies.Prov D) (hinj : Function.Injective D.what₂.OtoLL) (EX : ErrX D) (p : ℕ)
     (ka wL wF : WeightFamilies.Wt D j) (T : ℕ) : WeightAlgebra.Scal B where
   sW := nnW B hinj EX wL * (pPow D (c2 D wL) (cHalf wL) (cHalf wL) : 𝓞 B.KO)
@@ -78,10 +80,6 @@ def scalOfP (B : WeightFamilies.Prov D) (hinj : Function.Injective D.what₂.Oto
       (WeightFamilies.dimY D j * cHalf wL + cHalf wF) : 𝓞 B.KO)
   sK := (zOwnP D p ka : 𝓞 B.KO) * nnW B hinj EX wL ^ T * nnW B hinj EX wF *
     (pPow D (T * c2 D wL + c2 D wF) (T * cHalf wL + cHalf wF) (T * cHalf wL + cHalf wF) : 𝓞 B.KO)
-
-def scalOf (B : WeightFamilies.Prov D) (hinj : Function.Injective D.what₂.OtoLL) (EX : ErrX D)
-    (ka wL wF : WeightFamilies.Wt D j) (T : ℕ) : WeightAlgebra.Scal B :=
-  scalOfP B hinj EX (po D) ka wL wF T
 
 end Scal
 
@@ -97,8 +95,8 @@ def lR (T : ParamsT D L P) (hK : DV.KapDef D) (j : ℕ) : WeightFamilies.Wt D j 
 def fR (T : ParamsT D L P) (hK : DV.KapDef D) (j : ℕ) : WeightFamilies.Wt D j :=
   fWt D (kaR T hK j) (lR T hK j) T.TO T.nP (even_nP T)
 
-open Classical in
 
+open Classical in
 def nusOf (B : WeightFamilies.Prov D) {j : ℕ} (wL : WeightFamilies.Wt D j) (nuWW : HeightOneSpectrum (𝓞 B.KO) → ℝ)
     (la : HeightOneSpectrum (𝓞 B.KO)) : ℝ :=
   if h : ∃ i : Fin 2, ((D.host.g i : ℕ) : 𝓞 B.KO) ∈ la.asIdeal then
@@ -108,27 +106,6 @@ def nusOf (B : WeightFamilies.Prov D) {j : ℕ} (wL : WeightFamilies.Wt D j) (nu
         (padicValNat (ringChar (𝓞 B.KO ⧸ la.asIdeal)) D.host.QS : ℝ) * (c2 D wL : ℝ)
      else if ((D.host.q : ℕ) : 𝓞 B.KO) ∈ la.asIdeal ∨ ((D.host.d : ℕ) : 𝓞 B.KO) ∈ la.asIdeal then (cHalf wL : ℝ)
      else 0))
-
-def runOfP (T : ParamsT D L P) (hK : DV.KapDef D) (B : WeightFamilies.Prov D) (hinj : Function.Injective D.what₂.OtoLL)
-    (EX : ErrX D) (p : ℕ) (nuWW : ℕ → HeightOneSpectrum (𝓞 B.KO) → ℝ) (j : ℕ) : LiftErrorLocal.Run D B j where
-  S := scalOfP B hinj EX p (kaR T hK j) (lR T hK j) (fR T hK j) T.TO
-  ka := kaR T hK j
-  wL := lR T hK j
-  wF := fR T hK j
-  nP := T.nP
-  nW := T.nWn
-  h0 := LevelStarExponents.h0 L - 4
-  n1 := D.R.r
-  n2 := T.nWn - D.R.r
-  nus := nusOf B (lR T hK j) (nuWW j)
-
-def runOf (T : ParamsT D L P) (hK : DV.KapDef D) (B : WeightFamilies.Prov D) (hinj : Function.Injective D.what₂.OtoLL)
-    (EX : ErrX D) (nuWW : ℕ → HeightOneSpectrum (𝓞 B.KO) → ℝ) (j : ℕ) : LiftErrorLocal.Run D B j :=
-  runOfP T hK B hinj EX (po D) nuWW j
-
-def runOf2 (T : ParamsT D L P) (hK : DV.KapDef D) (B : WeightFamilies.Prov D) (hinj : Function.Injective D.what₂.OtoLL)
-    (EX : ErrX D) (nuWW : ℕ → HeightOneSpectrum (𝓞 B.KO) → ℝ) (j : ℕ) : LiftErrorLocal.Run D B j :=
-  runOfP T hK B hinj EX (po2 D) nuWW j
 
 end Run
 

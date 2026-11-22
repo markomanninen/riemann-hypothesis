@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CARSqA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CARSqA
+
+@[expose] public section
 
 noncomputable section
 

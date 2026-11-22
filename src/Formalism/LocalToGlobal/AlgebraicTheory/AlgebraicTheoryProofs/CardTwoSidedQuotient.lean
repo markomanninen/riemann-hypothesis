@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.KernelIndexForm
-import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.XiConn
-import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.DvdOfNormIntCastLt
+module
+
+public import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.KernelIndexForm
+public import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.XiConn
+public import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.DvdOfNormIntCastLt
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -16,11 +20,11 @@ namespace KerA
 
 private theorem skew_form_add_left {V : Type*} [AddCommGroup V] [Module ℂ V] (H : Sesq V) (x y z : V) :
     altE H (x + y) z = altE H x z + altE H y z := by
-  simp only [altE, map_add, LinearMap.add_apply, Complex.add_im]
+  simp only [altE, map_add (f := _), LinearMap.add_apply, Complex.add_im]
 
 private theorem skew_form_add_right {V : Type*} [AddCommGroup V] [Module ℂ V] (H : Sesq V) (x y z : V) :
     altE H x (y + z) = altE H x y + altE H x z := by
-  simp only [altE, map_add, Complex.add_im]
+  simp only [altE, map_add (f := _), Complex.add_im]
 
 private theorem exp_two_pi_I_int_eq_one (t : ℝ) (h : ∃ m : ℤ, t = m) :
     Complex.exp (2 * Real.pi * Complex.I * (t : ℂ)) = 1 := by
@@ -253,7 +257,7 @@ theorem HV_flat (sc : ℝ) (z w : DVar T a b → ℂ) :
 theorem opU_flat (sc : ℝ) (u : VCx T a b) (F : VCx T a b → ℂ) (w : DVar T a b → ℂ) :
     opU (HV sc) u F (flat T a b w) = opU (matH (hSc T a b sc)) ((flat T a b).symm u) (fun v => F (flat T a b v)) w := by
   simp only [opU]
-  rw [← HV_flat, ← HV_flat, map_add, LinearEquiv.apply_symm_apply]
+  rw [← HV_flat, ← HV_flat, map_add (f := _), LinearEquiv.apply_symm_apply]
 
 theorem alV_flat (d : ℕ) (sc : ℝ) (z : DVar T a b → ℂ) :
     alV d sc (flat T a b z) = alphaQ (Real.sqrt d / 2) (matH (hSc T a b sc)) z := by
@@ -261,7 +265,8 @@ theorem alV_flat (d : ℕ) (sc : ℝ) (z : DVar T a b → ℂ) :
 
 theorem herm_hSc (sc : ℝ) : IsHerm (matH (hSc T a b sc)) := by
   intro x y
-  rw [matH_hSc, matH_hSc, map_mul, map_sum, Complex.conj_ofReal]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [matH_hSc, matH_hSc, map_mul, map_sum, Complex.conj_ofReal]
   congr 1
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, Complex.conj_conj, mul_comm]

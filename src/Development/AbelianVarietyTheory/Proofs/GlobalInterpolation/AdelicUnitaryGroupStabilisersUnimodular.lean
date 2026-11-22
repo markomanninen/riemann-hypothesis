@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.AdelicUnitaryHaarMeasure
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMulRightInvariantHaarAdelicUnitaryGroupHermiti
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HermitianFormFiniteZerosOnLineCmExt
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RestrHomSurjective
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryStabilizerAnisotropicVectorEquivComplemen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.AdelicUnitaryHaarMeasure
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMulRightInvariantHaarAdelicUnitaryGroupHermiti
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HermitianFormFiniteZerosOnLineCmExt
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RestrHomSurjective
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryStabilizerAnisotropicVectorEquivComplemen
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.IndefiniteRowSideFullHecke.AdelicUnitaryHaarMeasure GlobalTheory.GaugeEx
 open GlobalTheory.UnitVectorStabiliser GlobalTheory.HermLineZeros
@@ -44,7 +48,8 @@ theorem exists_stepData (h : IsCMExt F E σ) {M : ℕ} {J : Matrix (Fin (M + 1))
     have h1 : ∀ i, hfLin (σ : E →+* E) J y (b i) = 0 := fun i => by
       have h2 : hfLin (σ : E →+* E) J (b i) y = 0 := by
         rw [← show _ = (0 : E) from congrFun hc0 i]
-        simp only [y, Submodule.coe_sum, Submodule.coe_smul, map_sum, map_smul, Matrix.mulVec,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [y, Submodule.coe_sum, Submodule.coe_smul, map_sum, map_smul, Matrix.mulVec,
           dotProduct, hG, smul_eq_mul]
         exact Finset.sum_congr rfl fun j _ => mul_comm _ _
       exact (herm _ _).symm.trans ((congrArg _ h2).trans (map_zero _))
@@ -55,7 +60,7 @@ theorem exists_stepData (h : IsCMExt F E σ) {M : ℕ} {J : Matrix (Fin (M + 1))
     obtain ⟨t, p, hp, -⟩ := exists_proj (σ : E →+* E) J (x 0) hx.isUnit (LinearMap.ker φ) fun _ => Iff.rfl
     have h5 : ∀ z, Formalism.UG.hform (σ : E →+* E) J z y = 0 := fun z => by
       have : hfLin (σ : E →+* E) J y z = 0 := by
-        rw [hp z, map_add, map_smul, h3, h4, smul_zero, add_zero]
+        rw [hp z, map_add (f := _), map_smul, h3, h4, smul_zero, add_zero]
       exact (herm _ _).symm.trans ((congrArg _ this).trans (map_zero _))
     have h6 : J *ᵥ (y : Fin (M + 1) → E) = 0 := funext fun i => by
       have := h5 (Pi.single i 1)

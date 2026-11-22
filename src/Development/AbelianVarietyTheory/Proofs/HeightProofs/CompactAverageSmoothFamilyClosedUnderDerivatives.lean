@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DifferentiableOneP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSmoothFunctionsOfClosedRightDerivatives
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DifferentiableOneP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSmoothFunctionsOfClosedRightDerivatives
+
+@[expose] public section
 
 noncomputable section
 
@@ -144,7 +148,7 @@ theorem avg_closed : ∀ (D : D7) (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.h
   rw [Finset.sum_congr rfl fun idx _ => (hL τ _ (hmem idx) F hF).2]
   funext x
   simp only [Finset.sum_apply]
-  rw [integral_finset_sum _ fun idx _ => hint _ (hL τ _ (hmem idx) F hF).1 x]
+  rw [integral_finsetSum _ fun idx _ => hint _ (hL τ _ (hmem idx) F hF).1 x]
 
 end GlobalTheory.AvgFam
 

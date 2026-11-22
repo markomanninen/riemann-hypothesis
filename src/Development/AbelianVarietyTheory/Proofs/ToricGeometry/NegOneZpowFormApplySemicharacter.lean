@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix Polynomial
 open scoped BigOperators
@@ -11,16 +15,16 @@ theorem neg_one_zpow_form_apply_semicharacter :
   have hskew : ∀ a b, E a b = - E b a := by
     intro a b
     have h := halt (a + b)
-    simp only [map_add, LinearMap.add_apply, halt] at h
+    simp only [map_add (f := _), LinearMap.add_apply, halt] at h
     linarith
   have hy : w y + w' y = y := by
     have := LinearMap.congr_fun hsum y
     simpa using this
-  have h1 : E x (w y) + E x (w' y) = E x y := by rw [← map_add, hy]
+  have h1 : E x (w y) + E x (w' y) = E x y := by rw [← map_add (f := _), hy]
   have h2 : E y (w x) = - E x (w' y) := by rw [hskew, hadj]
   have h3 : E (x + y) (w (x + y))
       = E x (w x) + E y (w y) + E x y + 2 * (E x (w y) - E x y) := by
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     linarith
   have hne : (-1 : ℂ) ≠ 0 := by norm_num
   rw [h3, zpow_add₀ hne, zpow_add₀ hne, zpow_add₀ hne, _root_.zpow_mul]

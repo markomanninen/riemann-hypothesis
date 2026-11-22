@@ -1,6 +1,10 @@
-import Formalism.GradedWeylDivisibility.StatementB
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwrowLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.StatementB
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwrowLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -27,7 +31,7 @@ theorem lhwline_eval_rowGen (a b : Fin r) (t : K) (x : Fin r × Fin n → K)
       (rowGen (n := n) K a b).commutes c
     rw [h1, Polynomial.eval₂_C, MvPolynomial.eval_C, MvPolynomial.eval_C]
   next p q hp hq =>
-    simp only [map_add, Polynomial.eval₂_add, hp, hq]
+    simp only [map_add (f := _), Polynomial.eval₂_add, hp, hq]
   next p v hp =>
     rw [map_mul, Polynomial.eval₂_mul, hp, map_mul]
     congr 1
@@ -41,7 +45,7 @@ theorem lhwline_eval_colAdd (l j : Fin n) (c : K) (x : Fin r × Fin n → K)
   next c =>
     simp [colAdd]
   next p q hp hq =>
-    simp only [map_add, hp, hq]
+    simp only [map_add (f := _), hp, hq]
   next p v hp =>
     simp only [map_mul, hp, colAdd, aeval_X, lhwline_colOp]
     congr 1
@@ -57,7 +61,7 @@ theorem lhwline_rowDiv_zero (a b : Fin r) (g : MvPolynomial (Fin r × Fin n) K) 
       (rowGen (n := n) K a b).commutes c
     rw [h1, Polynomial.constantCoeff_apply, Polynomial.coeff_C_zero]
   next p q hp hq =>
-    simp only [map_add, hp, hq]
+    simp only [map_add (f := _), hp, hq]
   next p v hp =>
     simp only [map_mul, hp]
     congr 1
@@ -66,7 +70,8 @@ theorem lhwline_rowDiv_zero (a b : Fin r) (g : MvPolynomial (Fin r × Fin n) K) 
 
 theorem lhwline_rowGen_eq (a b : Fin r) (g : MvPolynomial (Fin r × Fin n) K)
     (h : ∀ k : ℕ, 1 ≤ k → rowDiv K a b k g = 0) : rowGen K a b g = Polynomial.C g := by
-  ext1 k
+  apply Polynomial.ext
+  intro k
   rcases Nat.eq_zero_or_pos k with rfl | hk
   · have h0 := lhwline_rowDiv_zero a b g
     simp only [rowDiv] at h0
@@ -333,7 +338,7 @@ theorem lhwline_elim_cleared [Infinite K] (x : Fin r × Fin n → K)
     have hy := ih (by omega)
     have hel : lhwline_elim (k + 1) x = highestWeightLineUpdate ⟨k, hr⟩ ⟨k, hn⟩ (lhwline_elim k x) := by
       simp only [lhwline_elim]
-      rw [dif_pos ⟨hr, hn⟩]
+      rw [dite_eq_left ⟨hr, hn⟩]
     rw [hel]
     apply lhwline_step_cleared k hr hn _ hy
     apply lhwline_pivot_ne k hr hn _ hy
@@ -425,7 +430,7 @@ def lhwline_mnu (hn : n ≤ r) (ν : Fin n → ℕ) : Fin r × Fin n →₀ ℕ 
 
 theorem lhwline_mnu_apply (hn : n ≤ r) (ν : Fin n → ℕ) (a : Fin r) (j : Fin n) :
     lhwline_mnu hn ν (a, j) = if a.val = j.val then ν j else 0 := by
-  simp only [lhwline_mnu, Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.single_apply]
+  simp only [lhwline_mnu, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.single_apply]
   rw [Finset.sum_eq_single j]
   · by_cases h : a.val = j.val
     · have : Fin.castLE hn j = a := Fin.ext (by rw [Fin.coe_castLE]; exact h.symm)
@@ -467,7 +472,7 @@ theorem lhwline_mono_zero (hn : n ≤ r) (ν : Fin n → ℕ)
 theorem lhwline_diag (hn : n ≤ r) (ν : Fin n → ℕ)
     (g : MvPolynomial (Fin r × Fin n) K) (hg : IsWeightedHomogeneous (colW r n) g ν)
     (D : Fin r × Fin n → K) (hD : ∀ (a : Fin r) (j : Fin n), a.val ≠ j.val → D (a, j) = 0) :
-    eval D g = coeff (lhwline_mnu hn ν) g * ∏ v, D v ^ (lhwline_mnu hn ν) v := by
+    eval D g = AddMonoidAlgebra.coeff g (lhwline_mnu hn ν) * ∏ v, D v ^ (lhwline_mnu hn ν) v := by
   rw [MvPolynomial.eval_eq', Finset.sum_eq_single (lhwline_mnu hn ν)]
   · intro m hm hne
     rw [lhwline_mono_zero hn ν g hg D hD m hm hne, mul_zero]

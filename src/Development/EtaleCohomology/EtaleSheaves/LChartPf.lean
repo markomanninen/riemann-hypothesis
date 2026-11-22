@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LEtaleLiftPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LEtaleLiftPf
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,8 @@ theorem isStandardEtale_of_surjective (A : Type) [CommRing A] (A' : Type) [CommR
 
 theorem LChart_of (h1 : LIdemLift) (h2 : LSurjChart) : LateralTheory.E.LEtaleLiftPf.LChart := by
   intro A _ I _ A' _ _ _ φ
-  obtain ⟨g, hg, hs⟩ := h2 A I HenselianRing.jac (h1 A I) A' φ
+  obtain ⟨g, hg, hs⟩ := h2 A I (by simpa only [Ideal.jacobson_bot] using
+    (HenselianRing.jac : I ≤ Ring.jacobson A)) (h1 A I) A' φ
   exact ⟨g, hg, isStandardEtale_of_surjective A A' g hs⟩
 
 end LateralTheory.E.LChartPf

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleTrace.ChartGenOnPf
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleTrace.ChartGenOnPf
+
+@[expose] public section
 
 section
 noncomputable section

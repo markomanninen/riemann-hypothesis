@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TrivFlagMod
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PTwinGradedFrameIff
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.SameGenericSymm
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TrivFlagMod
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PTwinGradedFrameIff
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.SameGenericSymm
+
+@[expose] public section
 
 open MvPolynomial GlobalTheory.CompanionTheory.Ar.Num GroundTheory.Heights₂.Heights.NumbersDVR
 open ReciprocityTheory.ChartRestriction.G.Geo (ChartBundle chartRing)
@@ -37,7 +41,8 @@ theorem repr_of_pair {Ω : Type} [Field Ω] {V : Type} [AddCommGroup V] [Module 
     (h : ∀ i j, β (w i) (w₁ j) = if i = j.rev then 1 else 0) (y : V₁) (j : Fin N) :
     w₁.repr y j = β (w j.rev) y := by
   have hy := congrArg (β (w j.rev)) (w₁.sum_repr y)
-  rw [map_sum] at hy
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum] at hy
   simp only [map_smul, h, smul_eq_mul, mul_ite, mul_one, mul_zero, Fin.rev_inj] at hy
   rw [← hy]
   simp
@@ -130,7 +135,8 @@ theorem PositivityTheory.Xgn.t_flagframe_dual : ∀ (O : Type) [CommRing O] (Ω 
   · rintro ⟨w', hw', hz, rfl⟩
     have key : β (e j.rev) w' = m j.rev * w₁.repr w' j := by
       conv_lhs => rw [← w.sum_repr (e j.rev)]
-      rw [map_sum, LinearMap.sum_apply, Finset.sum_eq_single j.rev]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, LinearMap.sum_apply, Finset.sum_eq_single j.rev]
       · rw [map_smul, LinearMap.smul_apply, smul_eq_mul, he3, hrep w' j]
       · intro k _ hk
         rw [map_smul, LinearMap.smul_apply, smul_eq_mul]

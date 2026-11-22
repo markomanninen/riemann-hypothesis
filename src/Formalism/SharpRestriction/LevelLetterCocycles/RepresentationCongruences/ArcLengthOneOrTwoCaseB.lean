@@ -1,12 +1,16 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ImportsAlt
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.LiftsAtThickLetterType
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.PhiSqPi0PowEqPi0LambdaSq
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.FilVSep
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsPhiBridge
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.SaturationFractionModule
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.RingDataOfCaseAOfP9
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.CoeffRelation
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ImportsAlt
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.LiftsAtThickLetterType
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.PhiSqPi0PowEqPi0LambdaSq
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.FilVSep
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsPhiBridge
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.SaturationFractionModule
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.RingDataOfCaseAOfP9
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.CoeffRelation
+
+@[expose] public section
 
 noncomputable section
 
@@ -251,7 +255,8 @@ theorem arc_length_one_or_two_case_b [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsD
     W.AΔ.sum_mem fun i _ => W.AΔ.mul_mem (htΔ i) (W.AΔ.algebraMap_mem _)
   have hY : ∀ m, algebraMap (LetA O n) W.EE (Y m) = algebraMap (LetA O n) W.EE Φ * (lE W κ * f₁ m) := by
     intro m
-    rw [show lE W κ * f₁ m = ∑ i, gi i * algebraMap O W.EE (c₀ i m) from hsum m, Finset.mul_sum, hYdef, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [show lE W κ * f₁ m = ∑ i, gi i * algebraMap O W.EE (c₀ i m) from hsum m, Finset.mul_sum, hYdef, map_sum]
     exact Finset.sum_congr rfl fun i _ => (htg i m).symm
 
   choose uu huuΔ huuE using hf₁NL.1
@@ -299,7 +304,8 @@ theorem arc_length_one_or_two_case_b [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsD
     have h := congrFun (hGyY m) c
     simp only [hYdef, lA, Finset.sum_apply, Pi.mul_apply, Pi.pow_apply, Pi.natCast_apply, Pi.algebraMap_apply,
       hFq, hTt, hCa] at h
-    simp only [map_mul, map_sum, map_pow, hιC, map_natCast]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_mul, map_sum, map_pow, hιC, map_natCast]
     rw [← h]
   have hTshape : ∀ i, c₀ i ≠ 0 → Tt i = PowerSeries.X ^ ((α i 0).toNat + (b₀ + S - (-(α i 0)).toNat)) *
       (Br.P.p 1 ^ ((α i 1).toNat + (η - (-(α i 1)).toNat)) * Vv i) := by
@@ -317,7 +323,8 @@ theorem arc_length_one_or_two_case_b [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsD
       ∑ i, PowerSeries.coeff k₀' (Tt i) * c₀ i m := by
     intro m
     have := congrArg (PowerSeries.coeff k₀') (hFeq m)
-    simpa only [PowerSeries.coeff_C_mul, map_sum, PowerSeries.coeff_mul_C] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [PowerSeries.coeff_C_mul, map_sum, PowerSeries.coeff_mul_C] using this
   have hFil : ∀ i, PowerSeries.coeff k₀' (Tt i) ≠ 0 →
       dvO W T₁ L b₁ (c₀ i) ∈ FilS W T₁ c 0 ((η : ℤ) + 1) := by
     intro i hne
@@ -353,7 +360,8 @@ theorem arc_length_one_or_two_case_b [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsD
     have hsum' : dvO W T₁ L b₁ (fun m => a * c₁ m) ∈ FilS W T₁ c 0 ((η : ℤ) + 1) := by
       rw [hfun]
       unfold dvO
-      simp only [map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul]
       rw [ArcLengthTwoLifting.dv_sum W T₁ L b₁ Finset.univ (fun i => algebraMap O LL (PowerSeries.coeff k₀' (Tt i)))
         (fun i m => algebraMap O LL (c₀ i m))]
       refine Submodule.sum_mem _ fun i _ => ?_
@@ -396,7 +404,8 @@ theorem arc_length_one_or_two_case_b [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsD
     have e2 : algebraMap (LetA O n) W.EE Φ * (∑ m, f₁ m * algebraMap O W.EE (μ m j) +
         -(((PD.p ^ (A.σ PD.p + rr) : ℕ) : W.EE) * (lE W (A.σ PD.p) * (g₂ * algebraMap O W.EE ((Pi.single k₀ (1 : O) : Fin d → O) j))))) =
         algebraMap (LetA O n) W.EE Z := by
-      rw [hZ, map_add, map_neg, map_sum, mul_add, Finset.mul_sum, mul_neg]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hZ, map_add (f := _), map_neg, map_sum, mul_add, Finset.mul_sum, mul_neg]
       congr 1
       · refine Finset.sum_congr rfl fun m _ => ?_
         rw [← mul_assoc, hGyE m, map_mul, ← IsScalarTower.algebraMap_apply O (LetA O n) W.EE]
@@ -418,7 +427,8 @@ theorem arc_length_one_or_two_case_b [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsD
       Pi.algebraMap_apply, hletcc, one_mul, hFq, hUk, hpsc, hπc, hP0, lA, hCa, map_sub, map_mul, map_pow, hιC,
       map_natCast, Nat.cast_pow] at e4
     apply Br.inj
-    simp only [map_mul, map_sub, map_sum, map_pow, hιC, map_natCast, Nat.cast_pow]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_mul, map_sub, map_sum, map_pow, hιC, map_natCast, Nat.cast_pow]
     by_cases hjk : j = k₀
     · subst hjk
       simp only [if_pos rfl, if_true, ite_true, Pi.single_eq_same, map_one, mul_one, map_mul, map_pow, hιC,

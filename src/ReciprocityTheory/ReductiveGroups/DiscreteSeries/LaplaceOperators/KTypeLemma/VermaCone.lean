@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.VermaConeC
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.VermaConeC
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem vcThV_rV (lam : Fin n → ℝ) (t : Fin n) : vcThV lam (vcRV n t) = ((th
 
 theorem vcThVd_rVd (lam : Fin n → ℝ) (t : Fin n) : vcThVd lam (vcRVd n t) = ((thVd lam t : ℝ) : ℂ) := by
   unfold vcThVd vcRVd
-  rw [dif_pos (Fin.rev t).isLt]
+  rw [dite_eq_left (Fin.rev t).isLt]
   simp only [Fin.eta, Fin.rev_rev]
 
 theorem vcThV_ne (lam : Fin n → ℝ) (hanti : StrictAnti lam) (s : Fin n) :

@@ -1,24 +1,28 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.RegXInst
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveLocInst
-import Formalism.LocalToGlobal.ProjectiveLattices.LocRingPf
-import Formalism.LocalToGlobal.ProjectiveLattices.TieInst
-import Formalism.LocalToGlobal.ProjectiveLattices.RealPtPf
-import Formalism.LocalToGlobal.ProjectiveLattices.HtXfer
-import Formalism.LocalToGlobal.ProjectiveLattices.CompTie
-import Formalism.LocalToGlobal.ProjectiveLattices.AxHInst
-import Formalism.LocalToGlobal.ProjectiveLattices.SupNDataOfNonneg
-import Formalism.LocalToGlobal.ProjectiveLattices.CombAlgOfCombBound
-import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
-import Formalism.LocalToGlobal.ProjectiveLattices.ESecPfA
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.Reframe
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NaturalRuleValueBaseChangeOfIsReduced
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FrameBorelGroupoidProperties
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvaluationLawsGenericFramesAtlasHoldStatement
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NumericalConsequencesOfPins
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.GenericSectionPointsInequivalentValuationsStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.MemRangeOfValVLeOne
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.RegXInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveLocInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.LocRingPf
+public import Formalism.LocalToGlobal.ProjectiveLattices.TieInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.RealPtPf
+public import Formalism.LocalToGlobal.ProjectiveLattices.HtXfer
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompTie
+public import Formalism.LocalToGlobal.ProjectiveLattices.AxHInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.SupNDataOfNonneg
+public import Formalism.LocalToGlobal.ProjectiveLattices.CombAlgOfCombBound
+public import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
+public import Formalism.LocalToGlobal.ProjectiveLattices.ESecPfA
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.Reframe
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NaturalRuleValueBaseChangeOfIsReduced
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FrameBorelGroupoidProperties
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvaluationLawsGenericFramesAtlasHoldStatement
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NumericalConsequencesOfPins
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.GenericSectionPointsInequivalentValuationsStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.MemRangeOfValVLeOne
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 
@@ -42,9 +46,9 @@ def pullVal {L : Type} [Field L] (U : CDVR) (ι : L →+* U.Fr) : AddValuation L
       · subst hx; rw [zero_add]; exact min_le_right _ _
       by_cases hy : y = 0
       · subst hy; rw [add_zero]; exact min_le_left _ _
-      simp only [hxy, hx, hy, if_false, map_add]
+      simp only [hxy, hx, hy, if_false, map_add (f := _)]
       have := min_le_vV_add (V := U.V) ((map_ne_zero ι).2 hx) ((map_ne_zero ι).2 hy)
-        (by rw [← map_add]; exact (map_ne_zero ι).2 hxy)
+        (by rw [← map_add (f := _)]; exact (map_ne_zero ι).2 hxy)
       exact_mod_cast this)
     (fun x y => by
       by_cases hx : x = 0
@@ -106,6 +110,7 @@ end Val
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H}
   {l : Level H} {Xo : Moduli Dw l} {c : Coeff l}
 
+attribute [local instance 100] IntermediateField.instAlgebraSubtypeMem in
 theorem generic_of_ne_zero (h : GenFrEx Xo c) (Z : Comp Xo c) (L : Type) [Field L] [Algebra c.F L]
     (y : FrPt Xo c L)
     (hZ : ∃ a n, ∃ f ∈ sec Xo c a n, evR Xo c f y ≠ 0 ∧ ∀ Z', Z' ≠ Z → evC h Z' f = 0)
@@ -131,7 +136,7 @@ theorem generic_of_ne_zero (h : GenFrEx Xo c) (Z : Comp Xo c) (L : Type) [Field 
     rw [e2 a n f hf, this, map_zero, mul_zero]
   subst hCZ
   have hinj : Function.Injective ψ0 := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro r hr
     by_contra hr0
     obtain ⟨a, n, f, hf, g, hg, h1, h2⟩ := hR r (fun e => hr0 (Subtype.ext e))
@@ -318,13 +323,14 @@ theorem exists_gen_ne_zero {D : D7} {B : WeightFamilies.Prov D} {P : ModuliInteg
   by_contra hc
   push Not at hc
   apply hs.s0.ne_zero
-  rw [Formalism.MainNotions.Gaps.EtaleWeightGaps.sec, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Formalism.MainNotions.Gaps.EtaleWeightGaps.sec, map_sum]
   refine Finset.sum_eq_zero fun k _ => ?_
   rw [Algebra.smul_def, map_mul]
   exact mul_eq_zero_of_right _ (hc k)
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem exists_ratio {D : D7} {T : Top D} (h : LawsP T) {j : ℕ} (hj : InR D j) (hG : GenFrEx (T.Q.Xo j) T.Q.c)
     (hT : GenFromTest (T.Q.Xo j) T.Q.c hG) {ka wL wF : WeightFamilies.Wt D j} (G : GlobalFamilyData (recPlus h j hj) ka wL wF)
     (hB : BIRSt h j hj hG G) (Z : Comp (T.Q.Xo j) T.Q.c) (i : Fin G.N)
@@ -357,8 +363,8 @@ end GlobalTheory.RealisationValues
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.WeightAlgebra Formalism.MainNotions.Gaps.EtaleWeightGaps Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem GlobalTheory.RealisationValues.values_eq_orders : ∀ (D : D7) (T : Top D) (h : LawsP T) (j : ℕ) (hj : InR D j) (hG : GenFrEx (T.Q.Xo j) T.Q.c) [Fintype (Comp (T.Q.Xo j) T.Q.c)] (ka wL wF : WeightFamilies.Wt D j) (G : GlobalFamilyData (recPlus h j hj) ka wL wF) (S : Scal (recB h.toLawsCore)) (g0 : (recB h.toLawsCore).Cusp j wF), CurveHyp h j hj hG ka wL wF G S g0 → GenValInjSt h j hG → CompSplitSt h j hG → BIRSt h j hj hG G → ∀ (y : ∀ la, PtsG G la → (extAll h j hj).Pt' la) (hw : ∀ la ζ, FromW (E := extAll h j hj) (hM := intAtExt_extAll h j hj) ζ (y la ζ)), (∀ la, (secQ (E := extAll h j hj) (hM := intAtExt_extAll h j hj) (y la) (fun ζ => (hw la ζ).toSecPt) g0).InCurve) → (∀ la, (secQ (E := extAll h j hj) (hM := intAtExt_extAll h j hj) (y la) (fun ζ => (hw la ζ).toSecPt) g0).InTie S) → ∀ (δ : ∀ Z : Comp (T.Q.Xo j) T.Q.c, AddValuation (Om Z) (WithTop ℤ) → Ix (T.Q.Dw j) → ℤ), OrdTie hG δ (trivialClassCondition (T.Q.Xo j) T.Q.c) (fun _ => Unit) (fun _ _ _ _ _ => True) → ∀ la (ζ : PtsG G la), ∃ (Z : Comp (T.Q.Xo j) T.Q.c) (v : AddValuation (Om Z) (WithTop ℤ)), ReciprocityTheory.ChartRestriction.G.T0.IsNormDiscrete v ∧ ReciprocityTheory.ChartRestriction.G.T0.IsOver (K := T.Q.c.F) v la ∧ ∀ (w : WeightFamilies.Wt D j) (F : (recB h.toLawsCore).Cusp j w), (evC hG Z F.1 = 0 → (hw la ζ).ev (emb (recPlus h j hj) la G.N ((recPJ h j hj).inc w F)) = 0) ∧ (evC hG Z F.1 ≠ 0 → (hw la ζ).ev (emb (recPlus h j hj) la G.N ((recPJ h j hj).inc w F)) ≠ 0 ∧ vV (hw la ζ).T.V ((hw la ζ).ev (emb (recPlus h j hj) la G.N ((recPJ h j hj).inc w F))) = ordC (δ Z v) v (wtZ (wtA w) w.n) (valC hG (wtA w) w.n F.1 Z)) := by
   intro D T h j hj hG _ ka wL wF G S g0 hH hI hC hB y hw _ _ δ hδ la ζ
   have hT : GenFromTest (T.Q.Xo j) T.Q.c hG := fun Z => (GlobalTheory.T.evaluation_laws_generic_frames_atlas_hold _ _ _ _ (T.Q.Xo j) T.Q.c).1.test _ _

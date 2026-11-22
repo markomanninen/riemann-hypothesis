@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.RootBranches
-import Development.WeilBound.CoreStatements.VolumeEquality.LocInjA
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.BallAutomorphismInverseExists
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.RootBranches
+public import Development.WeilBound.CoreStatements.VolumeEquality.LocInjA
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BallAutomorphismInverseExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,12 +25,12 @@ theorem InLevel.congr {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Ho
       rw [map_smul, γ.apply_symm_apply] at he
       have e1 : D.EF (γ (c • v)) y = D.EF v (H.bar c • γ.symm y) := by
         rw [← D.adj, ← hf (c • v), γ.apply_symm_apply]
-      rw [map_sub, LinearMap.sub_apply, e1, D.adj, he, map_add, map_nsmul]
+      rw [map_sub, LinearMap.sub_apply, e1, D.adj, he, map_add (f := _), map_nsmul]
       exact ⟨-D.EF v e, by simp⟩
     choose φ hφ using hd
     let ψ : D.La →ₗ[ℤ] ℤ := (AddMonoidHom.mk' φ fun y y' => by
       apply mul_left_cancel₀ hM
-      rw [mul_add, ← hφ, ← hφ, ← hφ, map_add]).toIntLinearMap
+      rw [mul_add, ← hφ, ← hφ, ← hφ, map_add (f := _)]).toIntLinearMap
     obtain ⟨e, he⟩ := D.unimod.2 ψ
     refine ⟨e, sub_eq_iff_eq_add'.1 (D.unimod.1 ?_)⟩
     ext y
@@ -38,7 +42,7 @@ theorem InLevel.congr {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Ho
   obtain ⟨e', he'⟩ := h1 (c' • v) (Submodule.smul_mem_smul hc' Submodule.mem_top)
   have hv : v = c • v + c' • v := by rw [← add_smul, e1, one_smul]
   refine ⟨e + e', ?_⟩
-  calc γ v = γ (c • v) + γ (c' • v) := by rw [← map_add, ← hv]
+  calc γ v = γ (c • v) + γ (c' • v) := by rw [← map_add (f := _), ← hv]
     _ = (c • v + c' • v) + l.M • (e + e') := by rw [he, he', smul_add]; abel
     _ = _ := by rw [← hv]
 

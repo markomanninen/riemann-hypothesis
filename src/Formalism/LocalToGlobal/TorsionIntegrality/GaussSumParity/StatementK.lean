@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementB
-import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.Statement
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementB
+public import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.Statement
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

@@ -1,15 +1,18 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleInvariants.Transport
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleRestriction.ExistsInfIdelesLocalResIdelesResFieldEqZeroOfInf
-import GroundTheory.GlobalFields.CompletionAtPlace
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleInvariants.Transport
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleRestriction.ExistsInfIdelesLocalResIdelesResFieldEqZeroOfInf
+public import GroundTheory.GlobalFields.CompletionAtPlace
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory NumberField IntermediateField GroundTheory.Global FiniteSubfield IsDedekindDomain IdeleLimit
   GroundTheory.Global.SemiLocal GroundTheory.LocalField ValuativeRel
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 noncomputable section
 
@@ -35,8 +38,9 @@ variable {K E : FiniteSubfield} [Fact (K ≤ E)]
 
 section Finite
 
-set_option maxHeartbeats 4000000 in
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
+set_option maxHeartbeats 4000000 in
 theorem brauerInvZOfIsSepClosure_idelesLocalRes_idelesResField (v : HeightOneSpectrum (𝓞 K.1))
     (ι : ℚ̄ →ₐ[K.1] AlgebraicClosure (v.adicCompletion K.1))
     (ιE : ℚ̄ →ₐ[E.1] AlgebraicClosure ((placeOfEmbedding ι E).1.adicCompletion E.1))

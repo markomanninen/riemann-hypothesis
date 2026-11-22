@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.GaloisCohomologyRatios.IsDiscreteRepIntRep
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.GaloisCohomologyRatios.IsDiscreteRepIntRep
+
+@[expose] public section
 
 open CategoryTheory GroundTheory.ProfCoh
 

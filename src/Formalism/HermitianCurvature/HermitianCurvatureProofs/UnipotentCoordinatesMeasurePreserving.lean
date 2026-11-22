@@ -1,31 +1,35 @@
-import Formalism.HermitianCurvature.StatementD
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationContinuousOnInvertible
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentHeisenbergDecomposition
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationInvarianceEverySetting
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelSizesJointMean
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DualCovolumeChangeOfVariables
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PoissonJointFirstReduction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwistedIsRealOrderLattice
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocalConditionsAndQuotientSplitting
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PeriodLatticeFactsSplitOfGeneral
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixTranspose
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSetting
-import Formalism.FormalDegreeBessel.FinalG
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DirectionsInParabolic
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerSplit
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerPairs
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowerParabolicCoordinates
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormFlagVector
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ShearMeasurability
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeisenbergLeviConjugationMeasure
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerFourthCondition
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WittOrthonormalBasis
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Block3MulBlocks
+module
+
+public import Formalism.HermitianCurvature.StatementD
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationContinuousOnInvertible
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentHeisenbergDecomposition
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationInvarianceEverySetting
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelSizesJointMean
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DualCovolumeChangeOfVariables
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PoissonJointFirstReduction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwistedIsRealOrderLattice
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocalConditionsAndQuotientSplitting
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PeriodLatticeFactsSplitOfGeneral
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixTranspose
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSetting
+public import Formalism.FormalDegreeBessel.FinalG
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DirectionsInParabolic
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerSplit
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerPairs
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowerParabolicCoordinates
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormFlagVector
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ShearMeasurability
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeisenbergLeviConjugationMeasure
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerFourthCondition
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WittOrthonormalBasis
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Block3MulBlocks
+
+@[expose] public section
 
 noncomputable section
 
@@ -263,7 +267,7 @@ theorem orbital_integral_indep_choice : Formalism.FourierDecayAlt.D.OrbJIndep :=
   intro k r Wp Wq _ _ _ _ D γ μR hrel hR F θ θ' hθ hθ' hi hi'
   by_cases hE : CompleteSpace (Wq →L[ℂ] Wp)
   swap
-  · simp only [integral, dif_neg hE]
+  · simp only [integral_of_not_completeSpace hE]
   have : SigmaFinite μR := sigmaF hR
   have := sfSS D
   have hγ := isUnit_of_G hrel.1
@@ -273,10 +277,7 @@ theorem orbital_integral_indep_choice : Formalism.FourierDecayAlt.D.OrbJIndep :=
   have hinv : μR.map Formalism.FourierDecayAlt.B2.invM = μR :=
     Formalism.FourierDecayAlt.P.haar_measure_inversion k r _ μR (closedR hγ) hR
   have haem : AEMeasurable Formalism.FourierDecayAlt.B2.invM μR := by
-    by_contra h
-    have h0 := Measure.map_of_not_aemeasurable h
-    rw [hinv] at h0
-    exact hR.ne_zero h0
+    exact Formalism.FourierDecayAlt.P.B2x1.invM_meas.aemeasurable
   have H'm : AEStronglyMeasurable (fun x : Mt k r => ∫ q, θ (Formalism.FourierDecayAlt.C6.actR γ (Matrix.of x) q) •
       (θ' q • Formalism.FourierDecayAlt.D.orbIntegrand D γ F q) ∂D.μSS) μR :=
     I2.integral_prod_right.aestronglyMeasurable
@@ -836,8 +837,12 @@ theorem haar_norm {a : ℕ} {U : Set (B.Mat k a)} {μ : Measure (Mt k a)} (hμ :
     rw [Measure.smul_apply, smul_eq_mul, ENNReal.inv_mul_cancel h0 hfin.ne]
   refine ⟨⟨?_, ?_, ?_, ?_, ?_⟩, hn⟩
   · simp [hμ.conc]
-  · intro a ha; rw [Measure.map_smul, hμ.left a ha]
-  · intro a ha; rw [Measure.map_smul, hμ.right a ha]
+  · intro a ha
+    rw [Measure.map_smul, hμ.left a ha]
+    exact (show Continuous (lmulM a) from continuous_const.matrix_mul continuous_id).measurable.aemeasurable
+  · intro a ha
+    rw [Measure.map_smul, hμ.right a ha]
+    exact (show Continuous (B.rmulF a) from continuous_id.matrix_mul continuous_const).measurable.aemeasurable
   · intro K hK
     rw [Measure.smul_apply, smul_eq_mul]
     exact ENNReal.mul_lt_top hct.lt_top (hμ.finite_compact K hK)
@@ -1211,9 +1216,6 @@ theorem herm_rsmul_right {m : ℕ} (H : Matrix (Fin m) (Fin m) ℂ) (a : ℝ) (u
   rw [show (a • w) = ((a : ℂ) • w) by ext i; simp [Complex.real_smul], this]
   all_goals simp only [Complex.star_def, Complex.conj_ofReal]
 
-theorem inWb_smul {w : Fin (2 * r + k + 1) → ℂ} (hw : inWb k r w) (c : ℂ) : inWb k r (c • w) := by
-  intro i hi; simp [hw i hi]
-
 theorem herm_zν (hνz : herm (Hpk k r) ν' z' = 0) : herm (Hpk k r) z' ν' = 0 := by
   rw [herm_symm', hνz]; simp
 
@@ -1508,8 +1510,8 @@ theorem reflection_commutes_m0_mulVec (v : Fin (2 * r + k + 1) → ℂ) : Wb (m�
   simp only [Matrix.mulVec_smul, hme, hms, Wb_smul, Wb_ee, Wb_es, smul_zero, Finset.sum_const_zero, zero_add]
   exact Wb_of_inWb (m0_mulVec_mem_orthogonal m₀ hmU hme hms hW)
 
-include hmU hme hms in
 
+include hmU hme hms in
 theorem orthoProj_m0_intertwine {z z' : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hz' : inWb k r z') (μ : ℝ) (hμ : μ ≠ 0)
     (hmz : m₀ *ᵥ z' = (μ : ℂ) • z) (hzz : herm (Hpk k r) z' z' ≠ 0) (v : Fin (2 * r + k + 1) → ℂ) :
     D.prW k r z (m₀ *ᵥ v) = m₀ *ᵥ D.prW k r z' v := by
@@ -2119,8 +2121,6 @@ def Ut0 (x1 : U.RC k 1 (j + ρ)) : Matrix (Fin (j + 1)) (Fin (j + 1)) ℂ :=
 
 def TX (x1 : U.RC k 1 (j + ρ)) (x : U.RC k j ρ) : U.RC k (j + 1) ρ :=
   (fun v b => Cm x1 x v b, (fun p => Sm x1 x p.1.1 p.1.2, fun a => (Sm x1 x a a).im))
-
-def TU (x1 : U.RC k 1 (j + ρ)) : G.UT (j + 1) → ℂ := fun p => Um x1 p.1.1 p.1.2
 
 theorem skew_diag_re (q : (G.UT j → ℂ) × (Fin j → ℝ)) (a : Fin j) : (U.skewOf q a a).re = 0 := by
   rw [Ux2.skewOf_diag]; simp
@@ -3398,13 +3398,6 @@ end Formalism.FourierDecayAlt.P.Dx2.SplitF
 
 namespace Formalism.FourierDecayAlt.P
 
-theorem unipotent_measure_splitting : Formalism.FourierDecayAlt.D.MuNSplit := by
-  intro k r j hj
-  have h := Dx2.SplitF.split_all (k := k) j (r - j)
-  rw [Dx2.SplitF.muN_cast (show j + (r - j) = r by omega), h,
-    Measure.map_map (Dx2.MN.castMt_cont _).measurable (Dx2.SplitF.psi_meas j (r - j))]
-  rfl
-
 end Formalism.FourierDecayAlt.P
 
 end
@@ -3543,8 +3536,8 @@ theorem rhoF_unique (x : C2.Lstidx w → ℂ) {ρ : B.Mat k r} (hρ : ρ ∈ C6.
     (hu : C2.uMap k r D.z ρ = (low w x)ᴴ) : ρ = rhoF D γ w x :=
   hG.inj hρ (rhoF_spec D hγ hd hG x).1 (by rw [hu, (rhoF_spec D hγ hd hG x).2])
 
-omit hγ hd hG in
 
+omit hγ hd hG in
 def phi0 (w : Equiv.Perm (Fin (r + 1))) (x : Mt k r) : C2.Lstidx w → ℂ :=
   fun q => conj (C2.uMap k r D.z (Matrix.of x) q.1.2 q.1.1)
 
@@ -3588,7 +3581,8 @@ theorem rhoF_meas : Measurable fun x : C2.Lstidx w → ℂ => (Matrix.of.symm (r
       exact Matrix.of.injective (hG.inj ha hb key))
   let f : (C2.Lstidx w → ℂ) → S := fun x => ⟨Matrix.of.symm (rhoF D γ w x), by
     show Matrix.of (Matrix.of.symm (rhoF D γ w x)) ∈ C6.Rset γ
-    simpa using (rhoF_spec D hγ hd hG x).1⟩
+    rw [Equiv.apply_symm_apply]
+    exact (rhoF_spec D hγ hd hG x).1⟩
   have hcomp : S.domRestrict (phi0 D w) ∘ f = id := by
     funext x; exact coordMap_hermRep_leftInverse D hγ hd hG x
   have hf : Measurable f := by
@@ -3627,7 +3621,7 @@ theorem cont_low : Continuous (low w) := by
 theorem Tl_mp (L0 : Matrix (Fin m) (Fin m) ℂ) (hL : L0 ∈ C2.LTset m) :
     MeasurePreserving (Tl w L0) volume volume := by
   refine Formalism.FourierDecayAlt.P.ShearMeasurability.shear_mp (rank w) (Tl w L0) ?_ ?_
-  · refine measurable_pi_lambda _ fun q => ?_
+  · refine Measurable.of_eval fun q => ?_
     exact (((cont_low w).matrix_mul continuous_const).matrix_elem q.1.1 q.1.2).measurable
   · intro q x y hxy
     simp only [Tl, Matrix.mul_apply]
@@ -3655,7 +3649,7 @@ theorem Tl_mp (L0 : Matrix (Fin m) (Fin m) ℂ) (hL : L0 ∈ C2.LTset m) :
 theorem Tr_mp (L0 : Matrix (Fin m) (Fin m) ℂ) (hL : L0 ∈ C2.LTset m) :
     MeasurePreserving (Tr w L0) volume volume := by
   refine Formalism.FourierDecayAlt.P.ShearMeasurability.shear_mp (rank w) (Tr w L0) ?_ ?_
-  · refine measurable_pi_lambda _ fun q => ?_
+  · refine Measurable.of_eval fun q => ?_
     exact ((continuous_const.matrix_mul (cont_low w)).matrix_elem q.1.1 q.1.2).measurable
   · intro q x y hxy
     simp only [Tr, Matrix.mul_apply]
@@ -4044,8 +4038,8 @@ theorem ee_sum_lo (t : Fin r → ℂ) (c0 : Fin r) : (∑ c, t c • DF.ee k r c
   simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, DF.ee, bvec, Pi.single_apply, DF.eI_inj]
   simp
 
-omit D in
 
+omit D in
 theorem mem_N (M : B.Mat k r) (hM : M ∈ UH (Hpk k r)) (U : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ)
     (hU : U ∈ C2.UTset (r + 1)) (he : ∀ a, M *ᵥ DF.ee k r a = ∑ c, U c.castSucc a.castSucc • DF.ee k r c)
     (hw : ∀ j : Fin (2 * r + k + 1), r ≤ j.val → j.val ≤ r + k → ∀ i : Fin (2 * r + k + 1), r ≤ i.val →
@@ -5616,7 +5610,8 @@ theorem cofL_free {γ : B.Mat k r} (hγ : γ ∈ B.GV k r) (a : Fin r) :
   rw [Matrix.mul_apply] at h
   simp only [Matrix.smul_apply, Matrix.one_apply_ne (Fin.castSucc_ne_last a).symm, smul_zero] at h
   have h2 := congrArg (starRingEnd ℂ) h
-  rw [map_sum, map_zero] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero] at h2
   rw [← h2]
   apply Finset.sum_congr rfl; intro c _
   rw [map_mul]; congr 1
@@ -6284,10 +6279,10 @@ section meas
 
 theorem reindex_mp {ι κ X : Type} [Fintype ι] [Fintype κ] [MeasureSpace X] [SigmaFinite (volume : Measure X)]
     (e : ι ≃ κ) : MeasurePreserving (fun (y : κ → X) (i : ι) => y (e i)) volume volume := by
-  refine ⟨measurable_pi_lambda _ (fun i => measurable_pi_apply (e i)), ?_⟩
+  refine ⟨Measurable.of_eval (fun i => measurable_pi_apply (e i)), ?_⟩
   symm
   refine Measure.pi_eq fun s hs => ?_
-  rw [Measure.map_apply (measurable_pi_lambda _ (fun i => measurable_pi_apply (e i))) (MeasurableSet.univ_pi hs)]
+  rw [Measure.map_apply (Measurable.of_eval (fun i => measurable_pi_apply (e i))) (MeasurableSet.univ_pi hs)]
   have : (fun (y : κ → X) (i : ι) => y (e i)) ⁻¹' Set.univ.pi s = Set.univ.pi (fun k => s (e.symm k)) := by
     ext y; simp only [Set.mem_preimage, Set.mem_univ_pi]
     constructor
@@ -6423,8 +6418,8 @@ def reE {ι κ X : Type} [MeasurableSpace X] (e : ι ≃ κ) : (κ → X) ≃ᵐ
   invFun y k := y (e.symm k)
   left_inv y := by funext k; simp
   right_inv y := by funext i; simp
-  measurable_toFun := measurable_pi_lambda _ (fun i => measurable_pi_apply (e i))
-  measurable_invFun := measurable_pi_lambda _ (fun k => measurable_pi_apply (e.symm k))
+  measurable_toFun := Measurable.of_eval (fun i => measurable_pi_apply (e i))
+  measurable_invFun := Measurable.of_eval (fun k => measurable_pi_apply (e.symm k))
 
 end chain
 
@@ -6573,6 +6568,7 @@ theorem utSplit_mp : MeasurePreserving (utSplit (ph := ph) (n := n)) volume
   have h2 := measurePreserving_sumPiEquivProdPi
     (fun _ : (G.UT ph ⊕ (Fin ph × Fin (n + 1))) ⊕ G.UT (n + 1) => (volume : Measure ℂ))
   have h3 := measurePreserving_sumPiEquivProdPi (fun _ : G.UT ph ⊕ (Fin ph × Fin (n + 1)) => (volume : Measure ℂ))
+  set_option synthInstance.maxHeartbeats 200000 in
   have h4 : MeasurePreserving (MeasurableEquiv.prodCongr ((MeasurableEquiv.sumPiEquivProdPi (fun _ => ℂ)).trans
       (MeasurableEquiv.prodCongr (MeasurableEquiv.refl _) (MeasurableEquiv.curry (Fin ph) (Fin (n + 1)) ℂ)))
       (MeasurableEquiv.refl (G.UT (n + 1) → ℂ)))

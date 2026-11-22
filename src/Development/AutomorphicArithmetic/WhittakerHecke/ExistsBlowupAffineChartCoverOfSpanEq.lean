@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FinCover
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ProjSpaceHom
-import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupUniversal
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
-import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupCartier
-import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Development.AutomorphicArithmetic.WhittakerHecke.SurjectiveEvalBlowupChartOfSpanEq
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FinCover
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ProjSpaceHom
+public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupUniversal
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
+public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupCartier
+public import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
+public import Development.AutomorphicArithmetic.WhittakerHecke.SurjectiveEvalBlowupChartOfSpanEq
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor FunctorialResolution.Blowup
 open GroundTheory.Arith.SchemeCoh GroundTheory.Arith.SchemeCoh.ProjSpace MvPolynomial
@@ -23,8 +27,9 @@ private theorem chart_cover {R : Type} [CommRing R] (I : Ideal R) {M : ℕ} (a :
   obtain ⟨c, hc⟩ := (Ideal.mem_span_range_iff_exists_fun).mp hb
   have hsum : reesGenerator I b = ∑ l, algebraMap R ↥(reesAlgebra I) (c l) * reesGenerator I (a l) := by
     apply Subtype.ext
-    rw [AddSubmonoidClass.coe_finset_sum]
-    simp only [reesGenerator_coe, ← hc, MulMemClass.coe_mul, map_sum]
+    rw [AddSubmonoidClass.coe_finsetSum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [reesGenerator_coe, ← hc, MulMemClass.coe_mul, map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     show _ = Polynomial.C (c l) * _
     rw [Polynomial.C_mul_monomial]

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qe22.aeval_inter :
     ∀ {M N : Type} [inst : AddCommGroup M] [inst_1 : _root_.Module ℂ M]
@@ -18,7 +22,7 @@ theorem UpperTheory.Reformulated.B.Qe22.aeval_inter :
   induction p using Polynomial.induction_on' with
   | add p q hp hq =>
     intro x
-    rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, map_add, hp, hq]
+    rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, map_add (f := _), hp, hq]
   | monomial n a =>
     intro x
     rw [Polynomial.aeval_monomial, Polynomial.aeval_monomial, ← Algebra.smul_def,

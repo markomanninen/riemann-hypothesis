@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.KLevTop
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Newform
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AbsPowOneNotIsAlgRat
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.KLevTop
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Newform
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AbsPowOneNotIsAlgRat
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,11 +60,6 @@ def IsLift (k M : ℕ) (f : ℍ → ℂ) (φ : GA ℚ 2 → ℂ) : Prop :=
 structure IsDirOf {M : ℕ} (χ : DirichletCharacter ℂ M) (ω : HChar ℚ) : Prop where
   pos : ∀ t : (TR.Rinf ℚ)ˣ, (∀ v, 0 < t.val v) → ω.1 (TR.infId ℚ t) = 1
   unit : ∀ u, IsZU u → ∀ d : ℤ, (∃ y ∈ Ohat ℚ, (u : Af ℚ) - d = M * y) → ((ω.1 (finId ℚ u) : ℂˣ) : ℂ) * χ (d : ZMod M) = 1
-
-example : IsLift 0 1 1 1 := fun _ _ _ _ => by simp [nsl]
-
-example : IsDirOf (1 : DirichletCharacter ℂ 1) 1 :=
-  ⟨fun _ _ => rfl, fun _ _ _ _ => by rw [MulChar.one_apply (isUnit_of_subsingleton _), mul_one]; rfl⟩
 
 def icoef (f : ℍ → ℂ) (𝔪 : Ideal (𝓞 ℚ)) : ℂ := coef f (Ideal.absNorm 𝔪)
 

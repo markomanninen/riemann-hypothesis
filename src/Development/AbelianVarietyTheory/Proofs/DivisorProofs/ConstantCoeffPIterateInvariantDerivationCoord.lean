@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvDer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvariantDerivationFormalGroupLawIsLinearStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffIterateInvariantDerivationMonomialStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffIterateInvariantDerivationLinearStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapInvariantDerivationFormalGroupLawIterateStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffIterateInvariantDerivationMemStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffIterateInvariantDerivationCongrStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffQuasiLogarithmIntegralLowDegreeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvDer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvariantDerivationFormalGroupLawIsLinearStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffIterateInvariantDerivationMonomialStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffIterateInvariantDerivationLinearStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapInvariantDerivationFormalGroupLawIterateStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffIterateInvariantDerivationMemStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffIterateInvariantDerivationCongrStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffQuasiLogarithmIntegralLowDegreeStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -59,7 +63,8 @@ theorem constantCoeff_iterate_invDer_X_sub_mem : ∀ (p : ℕ) [Fact p.Prime] (B
     map (algebraMap B Q) H + ∑ i, q i • monomial (Finsupp.single i p) (1 : Q)
   have hG : ∀ α : Fin d →₀ ℕ, α.degree ≤ p → coeff α l = coeff α G := by
     intro α hα
-    simp only [G, map_add, coeff_map, hH, map_sum, map_smul, coeff_monomial, smul_eq_mul, mul_ite,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [G, map_add (f := _), coeff_map, hH, map_sum, map_smul, coeff_monomial, smul_eq_mul, mul_ite,
       mul_one, mul_zero]
     by_cases hP : ∀ i, α ≠ Finsupp.single i p
     · rw [hh α ⟨hα, hP⟩, Finset.sum_eq_zero (fun i _ => if_neg (hP i)), add_zero]
@@ -87,7 +92,8 @@ theorem constantCoeff_iterate_invDer_X_sub_mem : ∀ (p : ℕ) [Fact p.Prime] (B
       algebraMap B Q (constantCoeff ((invDer μ u)^[p] H)) +
         ∑ i, q i * algebraMap B Q ((p.factorial : B) * u i ^ p) := by
     rw [← iterLin_apply hμQ]
-    simp only [G, map_add, map_sum, map_smul, iterLin_apply, hmon, hnat]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [G, map_add (f := _), map_sum, map_smul, iterLin_apply, hmon, hnat]
     congr 1
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [smul_eq_C_mul, map_mul, constantCoeff_C, hnat, hmono]
@@ -110,7 +116,8 @@ theorem constantCoeff_iterate_invDer_X_sub_mem : ∀ (p : ℕ) [Fact p.Prime] (B
   have key : b = constantCoeff ((invDer μ u)^[p] H) + ((p - 1).factorial : B) * ∑ i, c i * u i ^ p := by
     apply hF.inj
     rw [← hb, e1, e2]
-    simp only [map_add, map_mul, map_sum, map_pow, map_natCast]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_mul, map_sum, map_pow, map_natCast]
     congr 1
     rw [Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_

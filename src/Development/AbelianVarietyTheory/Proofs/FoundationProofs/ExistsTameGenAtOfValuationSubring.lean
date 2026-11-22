@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions
 
 namespace GlobalTheory.TameInertiaGen

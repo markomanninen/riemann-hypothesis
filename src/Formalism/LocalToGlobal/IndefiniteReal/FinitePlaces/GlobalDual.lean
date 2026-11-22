@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.GlobalDualOfBasis
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ExistsNatSmulSingle
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.GlobalDualOfBasis
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ExistsNatSmulSingle
+
+@[expose] public section
 
 noncomputable section
 

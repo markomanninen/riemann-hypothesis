@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.TailInt
+module
+
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.TailInt
+
+@[expose] public section
 
 noncomputable section
 

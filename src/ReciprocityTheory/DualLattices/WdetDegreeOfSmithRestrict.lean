@@ -1,7 +1,11 @@
-import ReciprocityTheory.DualLattices.EigenQuotientSmithStatement
-import ReciprocityTheory.DualLattices.PowMemCarrier
-import ReciprocityTheory.DualLattices.SumValCoord
-import ReciprocityTheory.DualLattices.VDetEqOneOfIntegral
+module
+
+public import ReciprocityTheory.DualLattices.EigenQuotientSmithStatement
+public import ReciprocityTheory.DualLattices.PowMemCarrier
+public import ReciprocityTheory.DualLattices.SumValCoord
+public import ReciprocityTheory.DualLattices.VDetEqOneOfIntegral
+
+@[expose] public section
 
 noncomputable section
 

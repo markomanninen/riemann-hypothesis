@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
+
+@[expose] public section
 
 open NumberField
 
@@ -26,7 +30,7 @@ private theorem idem_core {A : Type} [CommRing A] (bar : A ≃+* A) (ω : A) (tr
   obtain ⟨v, hv⟩ : ∃ v : Ideal A, v = Ideal.span {(q : A), bar ω - (r : A)} := ⟨_, rfl⟩
   have hbb : bar (bar ω) = ω := by
     have := congrArg bar h1
-    rw [map_add, map_intCast] at this
+    rw [map_add (f := _), map_intCast] at this
     linear_combination this - h1
   have Mu : Ideal.map bar u = v := by
     rw [hu, hv, Ideal.map_span, Set.image_pair, map_natCast, map_sub, map_intCast]
@@ -63,7 +67,7 @@ private theorem idem_core {A : Type} [CommRing A] (bar : A ≃+* A) (ω : A) (tr
   have hcop : ∀ f e, u ^ f ⊔ v ^ e = ⊤ := fun f e =>
     Ideal.isCoprime_iff_sup_eq.1 (IsCoprime.pow (Ideal.isCoprime_iff_sup_eq.2 hsup))
   have hinf : ∀ e, u ^ e ⊓ v ^ e ≤ Ideal.span {(q : A) ^ e} := fun e => by
-    rw [Ideal.inf_eq_mul_of_isCoprime (Ideal.isCoprime_iff_sup_eq.2 (hcop e e)), ← mul_pow,
+    rw [← Ideal.mul_eq_inf_of_isCoprime (Ideal.isCoprime_iff_sup_eq.2 (hcop e e)), ← mul_pow,
       ← Ideal.span_singleton_pow]
     exact Ideal.pow_right_mono hmul e
   have dv : ∀ e y, y ∈ u ^ e → y ∈ v ^ e → (q : A) ^ e ∣ y := fun e y hy1 hy2 =>

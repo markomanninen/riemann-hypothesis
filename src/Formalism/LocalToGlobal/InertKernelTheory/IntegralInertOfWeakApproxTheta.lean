@@ -1,9 +1,41 @@
-import Formalism.LocalToGlobal.InertKernelTheory.AdmissibleEleventhInert
-import Formalism.LocalToGlobal.InertKernelTheory.FinalB
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.GenusOneWittExistsOf
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.GlobalOrthonormalBasisFour
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntWeak
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.OneCopyTh1SOfIsom
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.AdmissibleEleventhInert
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntAsm
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntEasy
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntPull
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntStd
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntBasis
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntTens
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.ThFourIntOf
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.UnitSubstOfLoc
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.MMFour
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntUnit
+public import Mathlib
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementAlg
+public import Formalism.LocalToGlobal.InertKernelTheory.OneCopyTh1S
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.ReBase
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.FourthTensorThetaEqKernel
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OneLetterGaussSharpTranslateHolds
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.FinalFree
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.RenameBlockSingleVariableSeries
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.ConstantCoeffInVarEqZero
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.CoeffSubstLgFOfDegreeOne
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.PhNormFromDatum
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.Hurwitz
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.HurwitzB
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.CoeffPowEqZeroOfCc
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.FrobeniusExtensionOnInclusion
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.TestVectorMemSchwartzBruhat
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.JetsModel
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.JetsOrth
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.GenusOneWittExistsOf
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.GlobalOrthonormalBasisFour
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntWeak
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.OneCopyTh1SOfIsom
+
+@[expose] public section
 
 namespace Formalism.L2.KerInert
 
@@ -17,17 +49,7 @@ theorem unit_substitution_local : UnitSubstLoc :=
     (ModelP.biaddInertAll_of (Dict.biaddInert_of (Sigma.sigmaCurveInert_of Sigma.invAlg' Sigma.secondEisensteinAlgebraic))
       genus_one_witt_exists)
 
-def WeakApproxOrthonormalBasesThetaAlgebraicity : Prop := WAPlaces ∧ OneCopyOrth ∧ IsomONB ∧ ThMMTransAlgPrime
 
-variable [Fact _root_.Formalism.L2.Th1.CM.CM2] in
-theorem factsB_of (h : WeakApproxOrthonormalBasesThetaAlgebraicity) : FactsB :=
-  ⟨weakApprox_of h.1, unitSubst_of_loc unit_substitution_local, unit_substitution_local, MMOnb.globONB_of h.2.1,
-    oneCopyLoc_of_isom h.2.2.1 (AlgGrP.algZero_of_transPrime h.2.2.2), h.2.2.2⟩
 
-variable [Fact _root_.Formalism.L2.Th1.CM.CM2] in
-theorem integral_inert_of_weakApprox_theta (h : WeakApproxOrthonormalBasesThetaAlgebraicity) : IntInert := intInert_ofB (factsB_of h)
-
-variable [Fact _root_.Formalism.L2.Th1.CM.CM2] in
-theorem jets_inert_of_weakApprox_theta (h : WeakApproxOrthonormalBasesThetaAlgebraicity) (hJ : PhiJetInt) : JetsInert := jetsInert_ofB (factsB_of h) hJ
 
 end Formalism.L2.KerInert

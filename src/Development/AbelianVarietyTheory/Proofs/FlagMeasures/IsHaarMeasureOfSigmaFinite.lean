@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsMeasurableLintegralCosetEqOneClosedSubgrou
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LintegralFintypeProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsMeasurableLintegralCosetEqOneClosedSubgrou
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LintegralFintypeProd
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal NNReal

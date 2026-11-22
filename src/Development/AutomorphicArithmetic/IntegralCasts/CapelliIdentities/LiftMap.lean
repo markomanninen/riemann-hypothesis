@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qk56.lift_map :
     ∀ {α β : Type} (f : α → β) (B : Multiset α)

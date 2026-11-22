@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MapMulVecMemOfMemSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MapMulVecMemOfMemSpan
+
+@[expose] public section
+
 open Formalism.MainNotions Formalism.MainNotions.N GlobalTheory.SplitField
 
 namespace GlobalTheory.SplitField

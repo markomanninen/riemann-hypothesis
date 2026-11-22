@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiExistsStatement
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.RealPlaceAnalysis.SmoothVectorGrowthBound
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ModularCharacterEqOneOnExpHermitian
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiExistsStatement
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.RealPlaceAnalysis.SmoothVectorGrowthBound
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ModularCharacterEqOneOnExpHermitian
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,11 +26,6 @@ theorem mir_UJset_eq (ε : Fin n → Bool) : Formalism.MainNotions.S.UJset ε = 
   | exact Iff.rfl
 
 theorem mir_Kset_eq (ε : Fin n → Bool) : Formalism.REAL.Kset ε = Kset ε := by
-  first
-  | rfl
-  | exact Iff.rfl
-
-theorem mir_inP_iff (ε : Fin n → Bool) (X : Matrix (Fin n) (Fin n) ℂ) : Formalism.REAL.inP ε X ↔ inP ε X := by
   first
   | rfl
   | exact Iff.rfl

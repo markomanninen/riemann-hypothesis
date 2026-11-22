@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.LinAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PkLaws
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.AdMeas
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.LinAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PkLaws
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.AdMeas
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -113,7 +117,7 @@ private theorem conjMat {K : Type} [Field K] [NumberField K] {r : ℕ} (g : GL (
 
 private theorem conjU {K : Type} [Field K] [NumberField K] (m : GL (Fin 2) K) (μ : G1 K 2)
     (hμ : (μ : AdelicGLn.AdelicGL K 2) = AdelicGLn.diagonal K 2 m) (y : 𝔸[K]) :
-    ((μ⁻¹ * unipOne K 2 1 (fun _ => y) * μ : G1 K 2) : AdelicGLn.AdelicGL K 2).val =
+    ((μ⁻¹ * unipOne (K := _) (n := _) 1 (fun _ => y) * μ : G1 K 2) : AdelicGLn.AdelicGL K 2).val =
       1 + y • (algebraMap K 𝔸[K]).mapMatrix ((m⁻¹).val * Matrix.single 0 1 1 * m.val) := by
   have hd : ∀ u : GL (Fin 2) K, (AdelicGLn.diagonal K _ u).val = (algebraMap K 𝔸[K]).mapMatrix u.val := fun _ => rfl
   have hs : (algebraMap K 𝔸[K]).mapMatrix (Matrix.single (0 : Fin 2) 1 1) = Matrix.single 0 1 1 := by
@@ -141,7 +145,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.dies :
   have hmul := (blkLaws (K := K)).2.1
   have hP : ∀ a d : Gam K 2, lv (a : G1 K 2) (d : G1 K 2) 0 ∈ PK K := fun a d =>
     ((pkLaws (K := K)).2.1 _).2 ⟨0, a, d, by
-      rw [show nn (0 : unipLattice K (2 + 2) 2).1 = 1 from unipOne_zero 2, one_mul]⟩
+      simp only [AddSubgroup.coe_zero, unipOne_zero, one_mul]⟩
   obtain ⟨X₀, m, C, hC⟩ := linAlg g r (by
     rcases hr with h | h | ⟨h, h1, h2⟩
     · exact Or.inl h
@@ -172,18 +176,20 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.dies :
   · rw [← hF.cusp₂ (lv 1 (μ : G1 K 2) 0 * (γ : G1 K (2 + 2)) * x), ← oneInt]
     congr 1
     funext y
-    obtain ⟨Z, hZ⟩ := fromMat γ (unipOne K (2 + 2) r fun p => y * algebraMap K 𝔸[K] (X₀ p)) 1
-      ((μ : G1 K 2)⁻¹ * unipOne K 2 1 (fun _ => y) * μ) (y • C.map (algebraMap K 𝔸[K])) (by
-        rw [← hg, coe_unipOne, conjMat g X₀ _ _ _ hC, conjU m μ hμ]
+    obtain ⟨Z, hZ⟩ := fromMat γ (unipOne (K := _) (n := _) r fun p => y * algebraMap K 𝔸[K] (X₀ p)) 1
+      ((μ : G1 K 2)⁻¹ * unipOne (K := _) (n := _) 1 (fun _ => y) * (μ : G1 K 2)) (y • C.map (algebraMap K 𝔸[K])) (by
+        rw [← hg, coe_unipOne, conjMat g X₀ _ _ _ hC]
+        rw [conjU m μ hμ]
         simp)
     rw [hZ, mul_assoc, hF.unip, ← hF.rat _ (hP 1 μ)]
     simp only [← mul_assoc, hmul, OneMemClass.coe_one, mul_inv_cancel, one_mul, add_zero]
   · rw [← hF.cusp₁ (lv (μ : G1 K 2) 1 0 * (γ : G1 K (2 + 2)) * x), ← oneInt]
     congr 1
     funext y
-    obtain ⟨Z, hZ⟩ := fromMat γ (unipOne K (2 + 2) r fun p => y * algebraMap K 𝔸[K] (X₀ p))
-      ((μ : G1 K 2)⁻¹ * unipOne K 2 1 (fun _ => y) * μ) 1 (y • C.map (algebraMap K 𝔸[K])) (by
-        rw [← hg, coe_unipOne, conjMat g X₀ _ _ _ hC, conjU m μ hμ]
+    obtain ⟨Z, hZ⟩ := fromMat γ (unipOne (K := _) (n := _) r fun p => y * algebraMap K 𝔸[K] (X₀ p))
+      ((μ : G1 K 2)⁻¹ * unipOne (K := _) (n := _) 1 (fun _ => y) * (μ : G1 K 2)) 1 (y • C.map (algebraMap K 𝔸[K])) (by
+        rw [← hg, coe_unipOne, conjMat g X₀ _ _ _ hC]
+        rw [conjU m μ hμ]
         simp)
     rw [hZ, mul_assoc, hF.unip, ← hF.rat _ (hP μ 1)]
     simp only [← mul_assoc, hmul, OneMemClass.coe_one, mul_inv_cancel, one_mul, add_zero]

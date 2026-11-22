@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.AdmBoundsBOfAdm
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.TsumThree
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.AdmBoundsBOfAdm
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.TsumThree
+
+@[expose] public section
 
 noncomputable section
 

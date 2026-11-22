@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -29,16 +34,6 @@ instance additiveDistribMulAction {Γ M : Type*} [Monoid Γ] [Monoid M] [MulDist
   smul_zero γ := congrArg Additive.ofMul (smul_one γ)
   smul_add γ a b := congrArg Additive.ofMul (smul_mul' γ a.toMul b.toMul)
 
-@[simp]
-theorem toMul_smul_additive {Γ M : Type*} [Monoid Γ] [Monoid M] [MulDistribMulAction Γ M] (γ : Γ)
-    (a : Additive M) : (γ • a).toMul = γ • a.toMul :=
-  rfl
-
-@[simp]
-theorem smul_ofMul_additive {Γ M : Type*} [Monoid Γ] [Monoid M] [MulDistribMulAction Γ M] (γ : Γ)
-    (a : M) : γ • Additive.ofMul a = Additive.ofMul (γ • a) :=
-  rfl
-
 section Rep
 
 def piRep {k Γ X : Type*} [CommSemiring k] [Monoid Γ] [AddCommMonoid X] [Module k X] (ι : Type*)
@@ -60,11 +55,6 @@ def intRepToZMod (n : ℕ) {V : Type*} [AddCommGroup V] [Module (ZMod n) V]
   toFun γ := (ρ γ).toAddMonoidHom.toZModLinearMap n
   map_one' := by ext x; simp
   map_mul' γ δ := by ext x; simp
-
-@[simp]
-theorem intRepToZMod_apply (n : ℕ) {V : Type*} [AddCommGroup V] [Module (ZMod n) V]
-    (ρ : Representation ℤ Γ V) (γ : Γ) (x : V) : intRepToZMod n ρ γ x = ρ γ x :=
-  rfl
 
 variable (Γ) (A : Type*) [AddCommGroup A] [DistribMulAction Γ A] (n : ℕ)
 
@@ -91,11 +81,6 @@ def torsNRep : Representation (ZMod n) Γ (TorsN A n) :=
 @[simp]
 theorem modNRep_mk (γ : Γ) (x : A) :
     modNRep Γ A n γ (Submodule.Quotient.mk x) = Submodule.Quotient.mk (γ • x) :=
-  rfl
-
-@[simp]
-theorem coe_torsNRep_apply (γ : Γ) (x : TorsN A n) :
-    ((torsNRep Γ A n γ x : TorsN A n) : A) = γ • (x : A) :=
   rfl
 
 end Rep
@@ -129,11 +114,11 @@ noncomputable def g (A : Type u) [AddCommGroup A] [DistribMulAction Γ A] : ℤ 
 theorem g_eq (A : Type u) [AddCommGroup A] [DistribMulAction Γ A] [Finite (ModN A l)]
     [Finite (TorsN A l)] :
     d.g A = d.toFun (ModN A l) (modNRep Γ A l) - d.toFun (TorsN A l) (torsNRep Γ A l) := by
-  rw [g, dif_pos ⟨‹_›, ‹_›⟩]
+  rw [g, dite_eq_left ⟨‹_›, ‹_›⟩]
 
 theorem g_of_not_finite (A : Type u) [AddCommGroup A] [DistribMulAction Γ A]
     (h : ¬ (Finite (ModN A l) ∧ Finite (TorsN A l))) : d.g A = 0 := by
-  rw [g, dif_neg h]
+  rw [g, dite_eq_right h]
 
 noncomputable def one [NeZero l] : ℤ :=
   d.toFun (ULift.{u} (ZMod l)) (Representation.trivial (ZMod l) Γ (ULift.{u} (ZMod l)))

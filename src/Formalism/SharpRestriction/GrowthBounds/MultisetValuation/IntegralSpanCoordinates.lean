@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.LatAtZeroUpd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.LatAtZeroUpd
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,8 @@ theorem integral_span_coordinates (a a' : X.G.Kf) (v : X.Pl) (j : ℕ) (La : X.L
     (f : ι → Matrix (Fin ((X.Pj (j + 1)).m + 1)) (Fin ((X.Pj j).m + 1)) (X.G.P.Qq v) → ℚ) (G : (X.Pj j).Xsp) :
     T0 Y a a' v j La La' (∑ x ∈ s, f x) G = ∑ x ∈ s, T0 Y a a' v j La La' (f x) G := by
   unfold T0 Traw
-  rw [map_sum, Finset.smul_sum, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum, map_sum, Finset.smul_sum]
 
 theorem kernel_nsmul (a a' : X.G.Kf) (v : X.Pl) (j : ℕ) (La : X.Lt j) (La' : X.Lt (j + 1)) (n : ℕ)
     (f : Matrix (Fin ((X.Pj (j + 1)).m + 1)) (Fin ((X.Pj j).m + 1)) (X.G.P.Qq v) → ℚ) (G : (X.Pj j).Xsp) :

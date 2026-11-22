@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.SigSplit
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.TowerCodimensionTwo
-import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
-import Development.WeilBound.ThetaLifts.TowerModels.PlaneHerm
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.SigSplit
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.TowerCodimensionTwo
+public import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
+public import Development.WeilBound.ThetaLifts.TowerModels.PlaneHerm
+
+@[expose] public section
 
 noncomputable section
 

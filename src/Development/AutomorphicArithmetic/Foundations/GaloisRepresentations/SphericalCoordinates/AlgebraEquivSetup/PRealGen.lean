@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen GlobalTheory.LKTrip GlobalTheory.LKGeo UpperTheory.Gal.W2.Seed
 open scoped TensorProduct
@@ -38,7 +42,7 @@ private lemma inCodiff_add {E : Type} [Field E] [NumberField E] {y z : E} (hy : 
   obtain ⟨m, hm⟩ := hy x
   obtain ⟨n, hn⟩ := hz x
   refine ⟨m + n, ?_⟩
-  rw [add_mul, map_add, hm, hn]
+  rw [add_mul, map_add (f := _), hm, hn]
   push_cast
   rfl
 
@@ -68,7 +72,7 @@ theorem UpperTheory.Gal.W2.Seed.pRealGen :
     exact h2.symm
   set t : E := y * (ε : E) + IsCMField.complexConj E (y * (ε : E)) with ht
   refine ⟨t, ?_, ?_⟩
-  · rw [ht, map_add, conj_conj', add_comm]
+  · rw [ht, map_add (f := _), conj_conj', add_comm]
   · apply hunit E M hM y t ⟨hyc, e, he, hegen⟩
       (inCodiff_add (inCodiff_mul hyc ε) (inCodiff_conj bar hbar (inCodiff_mul hyc ε)))
     intro P hP hMP

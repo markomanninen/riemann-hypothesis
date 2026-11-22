@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.TowerEx
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.TowerEx
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,9 +16,9 @@ namespace GlobalTheory.Asc
 
 variable {D : D7}
 
+
 set_option genSizeOfSpec false in
 set_option genInjectivity false in
-
 structure Gen (ψ : AddChar (AF D.host.F) ℂ) (V V₀ W : HSp D) (ρ : ℕ) (Y : Type) [MeasurableSpace Y] where
   d : HypDec V V₀ ρ
   χV : (AE D)ˣ →* Circle
@@ -98,8 +102,6 @@ def ConjRead : Prop := All fun {D} _ {L} _ {G} W M => ∀ i, ∀ hi : i < D.R.m,
 
 def PartFixed : Prop := All fun {_} _ _ _ {G} W M => ∀ ρ Φ u i h, ∀ k ∈ lev G (.grid (i + 1) 0), ∀ g,
   part W M ρ Φ u (i + 1) h (g * k) = part W M ρ Φ u (i + 1) h g
-
-example (W : HSp D) (R : Subgroup (GA D W)) : (1 : GA D W) ∈ strip W R {1} := ⟨1, one_mem _, 1, rfl, 1, one_mem _, by simp⟩
 
 end GlobalTheory.Asc
 

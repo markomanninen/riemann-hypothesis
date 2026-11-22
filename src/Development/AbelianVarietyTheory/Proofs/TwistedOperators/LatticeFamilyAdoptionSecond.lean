@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.RealTB
-import Formalism.LocalToGlobal.IndefiniteReal.RealPins
-import Formalism.LocalToGlobal.IndefiniteReal.RealRec
-import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.NMjT
-import Formalism.LocalRingCardinality.DataNChTie
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SemilinearExtensionBases
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.FractionalBaseInclusion
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsBasisTensor
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FractionFieldEmbeddingCompat
-import Formalism.LocalRingCardinality.DataIdx
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ImportsFurther
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.RealTB
+public import Formalism.LocalToGlobal.IndefiniteReal.RealPins
+public import Formalism.LocalToGlobal.IndefiniteReal.RealRec
+public import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.NMjT
+public import Formalism.LocalRingCardinality.DataNChTie
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SemilinearExtensionBases
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.FractionalBaseInclusion
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsBasisTensor
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FractionFieldEmbeddingCompat
+public import Formalism.LocalRingCardinality.DataIdx
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ImportsFurther
+
+@[expose] public section
 
 namespace GroupAverageFixedPoints
 section
@@ -40,7 +44,8 @@ theorem avg_fix (a : Γ →* Module.End F M) (P : Subgroup Γ) [Fintype P] (t : 
 
 theorem avg_type (a : Γ →* Module.End F M) (P : Subgroup Γ) [Fintype P] (t : P →* Fˣ) (v : P) (y : M) :
     a (v : Γ) (avg a P t y) = ((t v : Fˣ) : F) • avg a P t y := by
-  simp only [avg, LinearMap.smul_apply, LinearMap.sum_apply, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [avg, LinearMap.smul_apply, LinearMap.sum_apply, map_smul, map_sum]
   rw [smul_comm]
   congr 1
   rw [Finset.smul_sum]
@@ -83,8 +88,8 @@ variable {O K K'' Fm : Type} [CommRing O] [Field K] [Algebra O K] [IsFractionRin
   [Field K''] [Algebra O K''] [Algebra K K''] [IsScalarTower O K K'']
   [AddCommGroup Fm] [Module K Fm] [Module O Fm] [IsScalarTower O K Fm]
 
-variable (O K'') in
 
+variable (O K'') in
 def ext (A : Module.End K Fm) : Module.End K'' (K'' ⊗[O] Fm) :=
   LinearMap.baseChange K'' (A.restrictScalars O)
 
@@ -137,7 +142,7 @@ theorem range_ext (A : Module.End K Fm) :
   · rintro _ ⟨z, rfl⟩
     induction z using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | tmul x m =>
       rw [ext_tmul]
       have : x ⊗ₜ[O] A m = x • ((1 : K'') ⊗ₜ[O] A m) := by
@@ -198,10 +203,12 @@ theorem span_image_good (σ : LL →+* K'') (f : WL →ₛₗ[σ] K'' ⊗[O] Fm)
     have := congrArg (algebraMap K K'') h
     rwa [map_natCast, map_zero] at this))
   have hfE : ∀ x, f (grp aLh cL x) = ext O K'' (grp aF cF) (f x) := fun x => by
-    simp only [grp, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smulₛₗ, ext_sum, ext_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [grp, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smulₛₗ, ext_sum, ext_smul]
     exact Finset.sum_congr rfl fun g _ => by rw [hcf]; congr 1; exact hc g x
   have hfA : ∀ x, f (avg aLh P tL x) = ext O K'' (avg aF P tF) (f x) := fun x => by
-    simp only [avg, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smulₛₗ, ext_sum, ext_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [avg, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smulₛₗ, ext_sum, ext_smul]
     rw [map_inv₀, map_inv₀, map_natCast, map_natCast]
     congr 1
     refine Finset.sum_congr rfl fun u _ => ?_
@@ -287,7 +294,7 @@ theorem isLatIn_span (σ : LL →+* K'') (hint : ∀ a : 𝓞 LL, ∃ r : Oe, σ
       induction hx using Submodule.span_induction with
       | mem x h => exact Submodule.subset_span (by simpa using ⟨x, h, rfl⟩)
       | zero => simp
-      | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+      | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
       | smul a x _ hx =>
         obtain ⟨r, hr⟩ := hint a
         have : eM (a • x) = r • eM x := by
@@ -306,7 +313,7 @@ theorem isLatIn_span (σ : LL →+* K'') (hint : ∀ a : 𝓞 LL, ∃ r : Oe, σ
       induction hv using Submodule.span_induction with
       | mem x h => exact Submodule.subset_span (Submodule.subset_span ⟨x, h, rfl⟩)
       | zero => simp
-      | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+      | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
       | smul a x _ hx => rw [map_smulₛₗ]; exact Submodule.smul_mem _ _ hx
     have hx' : x ∈ VV := hx
     rw [← hVV] at hx'
@@ -347,7 +354,8 @@ theorem inj_span_of_carries {emb : LL →+* K''} (e : WL →ₛₗ[emb] K'' ⊗[
   set b := Basis.ofVectorSpace LL WL with hbdef
   have hsum : ∀ x, e x = ∑ i ∈ (b.repr x).support, emb (b.repr x i) • b'' i := fun x => by
     conv_lhs => rw [← b.linearCombination_repr x]
-    simp [Finsupp.linearCombination_apply, Finsupp.sum, map_sum, map_smulₛₗ, hb]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Finsupp.linearCombination_apply, Finsupp.sum, map_sum, map_smulₛₗ, hb]
   constructor
   · refine (injective_iff_map_eq_zero e).2 fun x hx => ?_
     rw [hsum] at hx
@@ -376,11 +384,13 @@ theorem ext_intertwine (hF : IsForm LL WK) {emb : LL →+* K''} (eF : Fm ≃ₗ[
   have e1 := he (Fin n) a f
   have e2 := he (Fin n) (fun k => cL * a k) (fun k => rK (f k))
   have e3 : cL • rL (∑ k, a k • b k) = ∑ k, (cL * a k) • ((rK (f k) : WK) : WL) := by
-    rw [map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, ← hr (f k), mul_smul]
   have e4 : ∑ k, a k • b k = ∑ k, a k • ((f k : WK) : WL) := rfl
-  rw [e3, e2, e4, e1, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e3, e2, e4, e1, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [ext_tmul]
   have e5 : aF (eF.symm ((1 : K) ⊗ₜ[Ks] f k)) = cK • eF.symm ((1 : K) ⊗ₜ[Ks] rK (f k)) := by
@@ -413,7 +423,7 @@ theorem isKsForm_of_iso {A : FormsL LL Ks WL W G} {A' : FormsL LL Ks' WL' W' G'}
       obtain ⟨k, rfl⟩ := h
       exact Submodule.subset_span ⟨k, rfl⟩
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul c x _ hx =>
       have h1 : c • x = algebraMap Ks LL (I.eK.symm c) • x := by
         rw [← I.eK_LL, RingEquiv.apply_symm_apply, algebraMap_smul]
@@ -437,7 +447,8 @@ theorem isKsForm_of_iso {A : FormsL LL Ks WL W G} {A' : FormsL LL Ks' WL' W' G'}
     obtain ⟨a, ha⟩ := (Submodule.mem_span_range_iff_exists_fun LL).1 hx
     have : x = ∑ k, a k • I.e.symm (b k) := by
       apply I.e.injective
-      rw [← ha, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← ha, map_sum]
       simp
     rw [this]
     exact Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
@@ -688,71 +699,6 @@ theorem heq_cast {R : Type} {n m : ℕ} (h : n = m) (z : Fin m → R) : HEq z (z
   subst h
   rfl
 
-set_option synthInstance.maxHeartbeats 400000 in
-set_option maxHeartbeats 4000000 in
-
-theorem lattice_of_lifts : ∀ (D : D7) (L : SizeData₂ D) (hT : GatTies D) (Gi : Formalism.MainNotions.G.Inst D L) (Gl : Formalism.MainNotions.G.LatInst D) (Kc : Formalism.MainNotions.G.Consts) (Y : DivX D) (cX : ExtraC) (ex : Extra D L hT Gi Gl Kc Y cX) (Rc : Formalism.L2.RecT ex) (P : RowSideFamily ex) (Dcf : ∀ Zs : DefSub P.A3.fam3.amb3, DefCols (P.A3.side3 P.Ps P.ψs Zs)) (Spf : ∀ Zs : DefSub P.A3.fam3.amb3, SPer (Dcf Zs)) (Zscf : DefSub P.A3.fam3.amb3 → IndefScale P.A3.fam3.base3) (S : Formalism.L2.SG.SpectralTiesReal.STiesR Rc) (B : RealTB Rc P Dcf Spf Zscf S) (_ : RealPins B.Q) (_ : RealRec B.Q) (jD : ∀ j, (Y.MjH j).V →ₗ[D.what₂.LL] B.Q.Sx.WL j) (eM : ∀ w j, (Y.MjH j).V →ₛₗ[ex.nch.embW w] FractionRing (ex.nch.Oe w) ⊗[D.ntw.O (ex.nch.twI w)] D.nexp.Fm (ex.nch.twI w) j (ex.nch.sd w)), NChTie D ex.nch → (∀ (i : Fin D.R.m) (x : (Y.MjH ((i : ℕ) + 1)).V) (y : Fin (Module.finrank D.what₂.LL (B.Q.Rl.toRealDat.WL B.Q.F.lv2 false i)) → D.what₂.LL), HEq ((P.JM.eW i).symm x) y → (B.Q.nexp.fi i).e (jD ((i : ℕ) + 1) x) = jDL B.Q.Rl B.Q.F.lv2 i y) → (∀ w j (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) (x : (Y.MjH j).V) (n : ℕ) (a : Fin n → D.what₂.LL) (f : Fin n → FmK B.Q.Sx j), jD j x = ∑ k, a k • (show ↥(B.Q.Sx.A j).WK from f k).1 → eM w j x = ∑ k, ex.nch.embW w (a k) ⊗ₜ[D.ntw.O (ex.nch.twI w)] (B.Q.nexp.eF (ex.nch.twI w) j (ex.nch.sd w) h1 h2).symm ((1 : KB B.Q.Sx (ex.nch.twI w) (ex.nch.sd w)) ⊗ₜ[B.Q.Sx.Ks] f k)) → ∀ w j, D.what₂.muAt w ≠ D.what₂.mu0 → 1 ≤ j → j ≤ D.R.m → NForms.IsLatIn (Submodule.span (ex.nch.Oe w) (eM w j '' ((Y.MjH j).L : Set (Y.MjH j).V))) ((((NForms.V0 D (ex.nch.twI w) j (ex.nch.sd w)).restrictScalars (D.ntw.O (ex.nch.twI w))).baseChange (FractionRing (ex.nch.Oe w))).restrictScalars (ex.nch.Oe w)) := by
-  intro D L hT Gi Gl Kc Y cX ex Rc P Dcf Spf Zscf S B hPin hRec jD eM hN hjD hSum w j hne h1 h2
-  obtain ⟨i, rfl⟩ : ∃ i : Fin D.R.m, j = (i : ℕ) + 1 := ⟨⟨j - 1, by omega⟩, by simp; omega⟩
-  have hgrp := P.tied.div.grp
-  have hIe : P.I.eG = B.Q.Rl.eG.trans B.Q.cG := hPin.eGtie
-  have hC : ∀ h, (Formalism.L2.DIV.idemOf P.A3.A.X).coeff h = ((D.nexp.eLL0 (P.I.eG h) : D.LL0) : D.what₂.LL) := fun h =>
-    D.what₂.embLL.injective ((hgrp.e0 h).trans (D.nStage_trivialCharacter_coeff_eq _).symm)
-  obtain ⟨e, he1, he2⟩ := stage2 (w := w) hN P.I.eG B.Q.Sx ((i : ℕ) + 1) (B.Q.Rl.FW i) (B.Q.nexp.fi i) (B.fw.ks i)
-    (fun s => by rw [hIe]; exact B.Q.nexp.geq i s) (B.Q.nexp.rho _ h1 h2) (B.Q.nexp.chi _ h1 h2)
-    (B.Q.nexp.eF _ _ _ h1 h2) (B.Q.nexp.act _ _ _ h1 h2) (fun g => (Formalism.L2.DIV.idemOf P.A3.A.X).coeff g) hC P.P0 P.ψ0⁻¹
-    hgrp.lvl0 (fun u hu => by
-      obtain ⟨x, hx1, hx2⟩ := hgrp.psi0 u hu (ex.nch.twI w) (ex.nch.sd w)
-      exact ⟨x, hx1, hx2⟩)
-  have hd := Formalism.IndefR.dWL_eq B.Q i
-  have hForm := isKsForm_of_iso (B.Q.nexp.fi i) (B.fw.ks i)
-  have heM : ∀ x, eM w ((i : ℕ) + 1) x = e (jD ((i : ℕ) + 1) x) := by
-    intro x
-    obtain ⟨n, b, hbK, -, -, -, hsp⟩ := hForm
-    have hx : jD ((i : ℕ) + 1) x ∈ Submodule.span D.what₂.LL (Set.range b) := hsp ▸ Submodule.mem_top
-    obtain ⟨a, ha⟩ := (Submodule.mem_span_range_iff_exists_fun D.what₂.LL).1 hx
-    let f : Fin n → FmK B.Q.Sx ((i : ℕ) + 1) := fun k => ⟨b k, hbK k⟩
-    have h5 := hSum w ((i : ℕ) + 1) h1 h2 x n a f ha.symm
-    rw [h5, ← ha]
-    exact (he1 n a f).symm
-  have hWg : (B.Q.Rl.FW i).Wgood P.P0 P.ψ0⁻¹ (fun g => (Formalism.L2.DIV.idemOf P.A3.A.X).coeff g) =
-      B.Q.Rl.toRealDat.WL B.Q.F.lv2 false i := rfl
-  have hrange : Set.range (eM w ((i : ℕ) + 1)) =
-      (fun y => e ((B.Q.nexp.fi i).e.symm y)) ''
-        ((B.Q.Rl.FW i).Wgood P.P0 P.ψ0⁻¹ (fun g => (Formalism.L2.DIV.idemOf P.A3.A.X).coeff g) : Set _) := by
-    ext z
-    constructor
-    · rintro ⟨x, rfl⟩
-      refine ⟨(B.Q.nexp.fi i).e (jD ((i : ℕ) + 1) x), ?_, ?_⟩
-      · rw [hjD i x _ (heq_cast hd ((P.JM.eW i).symm x))]
-        rw [SetLike.mem_coe, hWg]
-        simp only [Formalism.IndefR.NX.jDL, Fintype.linearCombination_apply]
-        exact Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (Module.finBasis D.what₂.LL _ k).2
-      · simp only [LinearEquiv.symm_apply_apply, heM]
-    · rintro ⟨y, hy, rfl⟩
-      rw [SetLike.mem_coe, hWg] at hy
-      let Bs := Module.finBasis D.what₂.LL (B.Q.Rl.toRealDat.WL B.Q.F.lv2 false i)
-      let z : Fin (Module.finrank D.what₂.LL (B.Q.Rl.toRealDat.WL B.Q.F.lv2 false i)) → D.what₂.LL := Bs.equivFun ⟨y, hy⟩
-      let x := P.JM.eW i (z ∘ Fin.cast hd.symm)
-      have hH : HEq ((P.JM.eW i).symm x) z := by
-        simp only [x, LinearEquiv.symm_apply_apply]
-        exact (heq_cast hd.symm z).symm
-      have h6 := hjD i x z hH
-      have h7 : Formalism.IndefR.NX.jDL B.Q.Rl B.Q.F.lv2 i z = y := by
-        simp only [Formalism.IndefR.NX.jDL, Fintype.linearCombination_apply]
-        have h8 := Bs.sum_equivFun ⟨y, hy⟩
-        have h9 : ((∑ k, Bs.equivFun ⟨y, hy⟩ k • Bs k : B.Q.Rl.toRealDat.WL B.Q.F.lv2 false i) : Fin (B.Q.Rl.nW i) → D.what₂.LL) = y :=
-          congrArg Subtype.val h8
-        rw [AddSubmonoidClass.coe_finset_sum] at h9
-        exact h9
-      refine ⟨x, ?_⟩
-      rw [heM]
-      change e _ = e ((B.Q.nexp.fi i).e.symm y)
-      rw [← h7, ← h6, LinearEquiv.symm_apply_apply]
-  refine isLatIn_span (ex.nch.embW w) (integers_embed _) (eM w ((i : ℕ) + 1)) (Y.MjH ((i : ℕ) + 1)).L
-    (Y.MjH_good _).2.1 (Y.MjH_good _).2.2 _ ?_
-  rw [hrange]
-  exact he2
 
 end GlobalTheory.CompanionTheory.LatSpan
 
@@ -767,7 +713,5 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Numb
 open Formalism.L2.Rows
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
-theorem _root_.GlobalTheory.Adopt.lattice_family_adoption_second : ∀ (D : D7) (L : SizeData₂ D) (hT : GatTies D) (Gi : Formalism.MainNotions.G.Inst D L) (Gl : Formalism.MainNotions.G.LatInst D) (Kc : Formalism.MainNotions.G.Consts) (Y : DivX D) (cX : ExtraC) (ex : Extra D L hT Gi Gl Kc Y cX) (Rc : Formalism.L2.RecT ex) (P : RowSideFamily ex) (Dcf : ∀ Zs : DefSub P.A3.fam3.amb3, DefCols (P.A3.side3 P.Ps P.ψs Zs)) (Spf : ∀ Zs : DefSub P.A3.fam3.amb3, SPer (Dcf Zs)) (Zscf : DefSub P.A3.fam3.amb3 → IndefScale P.A3.fam3.base3) (S : Formalism.L2.SG.SpectralTiesReal.STiesR Rc) (B : RealTB Rc P Dcf Spf Zscf S) (_ : RealPins B.Q) (_ : RealRec B.Q) (jD : ∀ j, (Y.MjH j).V →ₗ[D.what₂.LL] B.Q.Sx.WL j) (eM : ∀ w j, (Y.MjH j).V →ₛₗ[ex.nch.embW w] FractionRing (ex.nch.Oe w) ⊗[D.ntw.O (ex.nch.twI w)] D.nexp.Fm (ex.nch.twI w) j (ex.nch.sd w)), NChTie D ex.nch → (∀ (i : Fin D.R.m) (x : (Y.MjH ((i : ℕ) + 1)).V) (y : Fin (Module.finrank D.what₂.LL (B.Q.Rl.toRealDat.WL B.Q.F.lv2 false i)) → D.what₂.LL), HEq ((P.JM.eW i).symm x) y → (B.Q.nexp.fi i).e (jD ((i : ℕ) + 1) x) = jDL B.Q.Rl B.Q.F.lv2 i y) → (∀ w j (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) (x : (Y.MjH j).V) (n : ℕ) (a : Fin n → D.what₂.LL) (f : Fin n → FmK B.Q.Sx j), jD j x = ∑ k, a k • (show ↥(B.Q.Sx.A j).WK from f k).1 → eM w j x = ∑ k, ex.nch.embW w (a k) ⊗ₜ[D.ntw.O (ex.nch.twI w)] (B.Q.nexp.eF (ex.nch.twI w) j (ex.nch.sd w) h1 h2).symm ((1 : KB B.Q.Sx (ex.nch.twI w) (ex.nch.sd w)) ⊗ₜ[B.Q.Sx.Ks] f k)) → ∀ w j, D.what₂.muAt w ≠ D.what₂.mu0 → 1 ≤ j → j ≤ D.R.m → NForms.IsLatIn (Submodule.span (ex.nch.Oe w) (eM w j '' ((Y.MjH j).L : Set (Y.MjH j).V))) ((((NForms.V0 D (ex.nch.twI w) j (ex.nch.sd w)).restrictScalars (D.ntw.O (ex.nch.twI w))).baseChange (FractionRing (ex.nch.Oe w))).restrictScalars (ex.nch.Oe w)) := by
-  first | exact @GroupAverageFixedPoints.GlobalTheory.CompanionTheory.LatSpan.lattice_of_lifts | exact GroupAverageFixedPoints.GlobalTheory.CompanionTheory.LatSpan.lattice_of_lifts | (intros; apply GroupAverageFixedPoints.GlobalTheory.CompanionTheory.LatSpan.lattice_of_lifts <;> assumption)
 
 end

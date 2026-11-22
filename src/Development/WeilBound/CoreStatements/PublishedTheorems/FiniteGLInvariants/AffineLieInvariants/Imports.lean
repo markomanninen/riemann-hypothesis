@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.AffineGLForms.TopEig
-import Development.WeilBound.CoreStatements.PublishedTheorems.FiniteGLInvariants.AffineLieInvariants.InvariantOfLieOneLEqZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GenericFiniteByInductionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermFiniteOfSmallerStatement
+module
+
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.AffineGLForms.TopEig
+public import Development.WeilBound.CoreStatements.PublishedTheorems.FiniteGLInvariants.AffineLieInvariants.InvariantOfLieOneLEqZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GenericFiniteByInductionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermFiniteOfSmallerStatement
+
+@[expose] public section
 
 theorem CuspFormAutomorphicBounds.automorphicFormsFiniteGL : GlobalTheory.Published.AutomorphicFormsFiniteGL :=
   PositivityTheory.Affgl.TopEig.top (GlobalTheory.T.generic_finite_by_induction CuspFormAutomorphicBounds.cuspFin GlobalTheory.T.constant_term_finite_of_smaller)

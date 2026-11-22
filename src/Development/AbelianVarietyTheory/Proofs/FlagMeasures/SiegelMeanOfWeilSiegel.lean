@@ -1,25 +1,29 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
-import Formalism.LocalToGlobal.GlobalTheory.GL5.Statement
-import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualUnramifiedPlaces
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniqueInfEmb
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GaussianTermMeasurableAndStabilizerInvariant
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalUnitaryPointsDiscreteFundamentalDomain
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelicUnitaryCongruenceTopology
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutInstDegreeRootDiscriminantRankStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LocalDensityOfSelfDualLatticeLemmas
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsOfFixedInt
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicCharacterFrequenciesAndConductorProductStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CmEulerProductDiscrUnramifiedStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsAdelicUnitaryGroupModelsEquivStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SelfDualMeasureGaussian
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsSelfDualLatticeCompletionMaxOrderStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsSchwartzBruhatIndicatorLocalLatticeCompletionStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EventuallyLocalLatticeCompletionEqCoordinateLattStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IndicatorCompletedLatticeEqFinprodLocalStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemAdelicLatticeClosureIffSwapMemSpanStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnramifiedAdditiveCharacterConductor
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.Statement
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualUnramifiedPlaces
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniqueInfEmb
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GaussianTermMeasurableAndStabilizerInvariant
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalUnitaryPointsDiscreteFundamentalDomain
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelicUnitaryCongruenceTopology
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutInstDegreeRootDiscriminantRankStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LocalDensityOfSelfDualLatticeLemmas
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsOfFixedInt
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicCharacterFrequenciesAndConductorProductStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CmEulerProductDiscrUnramifiedStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsAdelicUnitaryGroupModelsEquivStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SelfDualMeasureGaussian
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsSelfDualLatticeCompletionMaxOrderStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsSchwartzBruhatIndicatorLocalLatticeCompletionStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EventuallyLocalLatticeCompletionEqCoordinateLattStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IndicatorCompletedLatticeEqFinprodLocalStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemAdelicLatticeClosureIffSwapMemSpanStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnramifiedAdditiveCharacterConductor
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.Count GlobalTheory.GaussMean
 open Formalism.MainNotions.S (AutInst uMat)
@@ -86,7 +90,7 @@ theorem const_eq {ι κ : Type} [Fintype κ] (q : ι → ℝ) (hq : ∀ u, 0 < q
     hasProd_prod_of_ne_finset_one fun u hu => by simp [hout u hu]
   have h2 : ∏ u ∈ hm.toFinset, (q u ^ m u) ^ ((1 / 2 : ℝ) - (n : ℝ)) =
       ((2 * w) ^ f * ∏ v, |lam v|) ^ ((1 / 2 : ℝ) - (n : ℝ)) := by
-    rw [Real.finset_prod_rpow _ _ fun u _ => (zpow_pos (hq u) _).le, ← hp,
+    rw [Real.finsetProd_rpow _ _ (fun u _ => (zpow_pos (hq u) _).le) _, ← hp,
       finprod_eq_prod_of_mulSupport_subset _ (s := hm.toFinset)]
     intro u hu
     by_contra h
@@ -103,7 +107,7 @@ theorem const_eq {ι κ : Type} [Fintype κ] (q : ι → ℝ) (hq : ∀ u, 0 < q
       ← Real.rpow_neg (by positivity), ← Real.rpow_add (by positivity)]
     congr 1; push_cast; ring
   rw [Finset.prod_mul_distrib, Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, hf,
-    Real.finset_prod_rpow _ _ fun v _ => abs_nonneg _, Real.mul_rpow (by positivity) hl.le, h6, mul_pow, pow_mul 2]
+    Real.finsetProd_rpow _ _ (fun v _ => abs_nonneg _) _, Real.mul_rpow (by positivity) hl.le, h6, mul_pow, pow_mul 2]
   have : (2 ^ n : ℝ) ^ f ≠ 0 := by positivity
   have h7 : (∏ v, |lam v|) ^ ((1 / 2 : ℝ) - (n : ℝ)) = ((∏ v, |lam v|) ^ ((n : ℝ) - 1 / 2))⁻¹ :=
     eq_inv_of_mul_eq_one_right h5
@@ -111,64 +115,5 @@ theorem const_eq {ι κ : Type} [Fintype κ] (q : ι → ℝ) (hq : ∀ u, 0 < q
   rw [h7]
   field_simp
 
-open Classical in
-
-def term (I : AutInst) (x : I.GA) (y : Fin I.n → I.E) : ℝ :=
-  if y ∈ lamX I x then ∏ v, gauss (((uMat (x.1 v))⁻¹ * (I.P v)⁻¹) *ᵥ fun i => I.φ v (y i)) else 0
-
-theorem term_nonneg (I : AutInst) (x : I.GA) (y : Fin I.n → I.E) : 0 ≤ term I x y := by
-  unfold term
-  split_ifs
-  · exact Finset.prod_nonneg fun v _ => (gauss_pos _).le
-  · exact le_rfl
-
-theorem measurable_term (I : AutInst) (y : Fin I.n → I.E) :
-    Measurable fun x : I.GA => ENNReal.ofReal (term I x y) := by
-  classical
-  obtain ⟨h1, h2, -⟩ := GlobalTheory.StabUnfold.gaussAt_meas_inv I y
-  have e : (fun x : I.GA => ENNReal.ofReal (term I x y)) = fun x => if x.2 ∈ {h : I.Gf | y ∈ lamX I (1, h)} then
-      ∏ v, ENNReal.ofReal (gauss ((uMat (x.1 v))⁻¹ *ᵥ GlobalTheory.StabUnfold.infVec I v y)) else 0 := by
-    funext x
-    unfold term
-    by_cases h : y ∈ lamX I x
-    · rw [if_pos h, if_pos (show x.2 ∈ {h : I.Gf | y ∈ lamX I (1, h)} from h),
-        ENNReal.ofReal_prod_of_nonneg fun v _ => (gauss_pos _).le]
-      simp only [GlobalTheory.StabUnfold.infVec, Matrix.mulVec_mulVec]
-    · rw [if_neg h, if_neg (show ¬ x.2 ∈ {h : I.Gf | y ∈ lamX I (1, h)} from h), ENNReal.ofReal_zero]
-  rw [e]
-  exact Measurable.ite (measurable_snd h1.measurableSet)
-    (Finset.measurable_prod _ fun v _ => (h2 v).comp ((measurable_pi_apply v).comp measurable_fst)) measurable_const
-
-theorem test_eq_term (I : AutInst) (θ : InfinitePlace I.F → (Ainf I.F ⊗[I.F] I.E →+* ℂ))
-    (hθ : ∀ v, Formalism.MainNotions.StandardLattice.IsInfEmb (I.φ v) (θ v)) (T : HA (AF I.F) I.cm.sig I.J ≃ₜ* I.GA)
-    (hf : ∀ h, I.fmat (T h).2 = (Formalism.MainNotions.StandardLattice.finMat I.cm.sig I.J h).map (Algebra.TensorProduct.comm I.F _ _))
-    (hi : ∀ v h, uMat ((T h).1 v) = (I.P v)⁻¹ * Formalism.MainNotions.StandardLattice.infMat I.cm.sig I.J (θ v) h * I.P v)
-    (h : HA (AF I.F) I.cm.sig I.J) (X : Fin 1 → Fin I.n → I.E) :
-    ((∏ v, gauss ((I.P v)⁻¹ *ᵥ fun i => θ v (projInf (h⁻¹ • ratTup (F := I.F) (AF I.F) X) 0 i)) : ℝ) : ℂ) *
-      {Y : Fin 1 → Fin I.n → Af I.F ⊗[I.F] I.E | Y 0 ∈ Formalism.MainNotions.StandardLattice.latHat I.F I.E (I.L : Set (Fin I.n → I.E))}.indicator
-        (1 : (Fin 1 → Fin I.n → Af I.F ⊗[I.F] I.E) → ℂ) (projFin (h⁻¹ • ratTup (F := I.F) (AF I.F) X)) =
-      (term I (T h) (X 0) : ℂ) := by
-  have e0 : ∀ i, (h⁻¹ • ratTup (F := I.F) (AF I.F) X) 0 i =
-      ∑ j, (HA.mat (AF I.F) I.cm.sig I.J h⁻¹).1 i j * ((1 : AF I.F) ⊗ₜ[I.F] X 0 j) := fun i => rfl
-  have e1 : projFin (h⁻¹ • ratTup (F := I.F) (AF I.F) X) 0 ∈ Formalism.MainNotions.StandardLattice.latHat I.F I.E (I.L : Set (Fin I.n → I.E)) ↔
-      X 0 ∈ lamX I (T h) := by
-    rw [GlobalTheory.T.mem_adelicLatticeClosure_iff_swap_mem_span, (GlobalTheory.PointLattice.lamX_selfDual I (T h)).1, show (T h).2⁻¹ = (T h⁻¹).2 by rw [map_inv]; rfl, hf]
-    refine iff_of_eq (congrArg (· ∈ I.Lf) (funext fun i => ?_))
-    simp only [projFin, e0, map_sum, map_mul, Algebra.TensorProduct.map_tmul, map_one]
-    rfl
-  have e2 : ∀ v, ((I.P v)⁻¹ *ᵥ fun i => θ v (projInf (h⁻¹ • ratTup (F := I.F) (AF I.F) X) 0 i)) =
-      ((uMat ((T h).1 v))⁻¹ * (I.P v)⁻¹) *ᵥ fun i => I.φ v (X 0 i) := fun v => by
-    rw [GlobalTheory.StabUnfold.uMat_inv_eq, show ((T h).1 v)⁻¹ = (T h⁻¹).1 v by rw [map_inv]; rfl, hi,
-      Matrix.mul_nonsing_inv_cancel_right _ _ ((Matrix.isUnit_iff_isUnit_det _).1 (I.P_unit v)),
-      ← Matrix.mulVec_mulVec]
-    congr 1
-    funext i
-    simp only [projInf, e0, map_sum, map_mul, Algebra.TensorProduct.map_tmul, map_one, AlgHom.id_apply, (hθ v).1]
-    rfl
-  unfold term
-  by_cases hx : X 0 ∈ lamX I (T h)
-  · rw [if_pos hx, Set.indicator_of_mem (by exact e1.2 hx), Pi.one_apply, mul_one]
-    simp only [e2]
-  · rw [if_neg hx, Set.indicator_of_notMem (by exact fun h' => hx (e1.1 h')), mul_zero, Complex.ofReal_zero]
 
 end GlobalTheory.SiegelWeilMean

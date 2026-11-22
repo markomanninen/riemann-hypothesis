@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsUnitarisableTrivChar
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LocalLanglandsGL
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSubquotientOfSameSphericalHeckeEigenvalues
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SatakeParameterOfSpherical
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeviIntegralFacts
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SphericalHeckeValuesSameParameters
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SatakeParametersOfTwist
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsUnitarisableTrivChar
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LocalLanglandsGL
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSubquotientOfSameSphericalHeckeEigenvalues
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SatakeParameterOfSpherical
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeviIntegralFacts
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SphericalHeckeValuesSameParameters
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SatakeParametersOfTwist
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,7 @@ theorem idem_mem_of_orbit (hs : IsSmooth π) (hi : π.IsIrreducible) (hc : IsCom
       show π.asAlgebraHom (MonoidAlgebra.of ℂ G g) y = _
       simp
     rw [this]; exact h g
-  | add a b ha hb => rw [map_add, map_add]; exact add_mem ha hb
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
   | smul r a ha => rw [map_smul, map_smul]; exact S.smul_mem _ ha
 
 theorem exists_scalar [TopologicalSpace.SeparableSpace G] (hs : IsSmooth π) (hi : π.IsIrreducible)
@@ -142,7 +146,7 @@ theorem map_idem_of_fixed (hs : ∀ a, IsSmooth (ρ a)) (hc : ∀ a, IsCompact (
       congr 1
       funext a
       exact GlobalTheory.LGrp.mem_fixed.1 (idem_mem _ _ _) _ (hg a trivial)
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   rw [h3, idem_of_mem hS hC (GlobalTheory.LGrp.mem_fixed.2 fun g hg => hv g fun a => hg a trivial)]
 
 end Abstract
@@ -171,9 +175,18 @@ theorem eq_zero_of_apply_one {f : IndSp e ρ} (hf : f ∈ fixed (parInd e ρ) (K
 
 theorem apply_one_fixed {f : IndSp e ρ} (hf : f ∈ fixed (parInd e ρ) (KO k n)) (g : Levi k m)
     (hg : ∀ a, g a ∈ KO k (m a)) : ρ g (f.1.1 1) = f.1.1 1 := by
-  have h1 := parInd_law e ρ f ⟨_, leviEmb_mem_parab k e g⟩ 1
+  have hm : leviEmb k e g ∈ parab k e := mem_parab_iff.2 fun _ _ i j hab => by
+    classical
+    letI : DecidableEq α := Classical.decEq α
+    simp [leviEmb]
+    exact Matrix.blockDiagonal'_apply_ne (fun a => (g a : Matrix (m a) (m a) k)) i j hab.ne'
+  have hp : leviProj k e ⟨leviEmb k e g, hm⟩ = g := by
+    funext a
+    ext i j
+    simp [leviProj_apply, leviEmb, Matrix.blockDiagonal'_apply_eq]
+  have h1 := parInd_law e ρ f ⟨_, hm⟩ 1
   have h2 := ((LeviInt.levi_integral_facts k α n m e).1 g 1 (one_mem _)).2 ⟨hg, one_mem _⟩
-  rw [leviProj_leviEmb, deltaHalf_eq_one hg, Units.val_one, one_smul] at h1
+  rw [hp, deltaHalf_eq_one hg, Units.val_one, one_smul] at h1
   rw [← h1, ← apply_mul_of_fixed e hf 1 h2, one_mul]
 
 theorem exists_fixed_apply_one {x : W} (hx : ∀ g : Levi k m, (∀ a, g a ∈ KO k (m a)) → ρ g x = x) :
@@ -230,7 +243,8 @@ theorem heckeVec_multiProd (hK : IsCommensurated (KO k n)) {h : GL n k → ℂ} 
       Submodule.subtype _ ∘ₗ Submodule.subtype _
   refine (map_idem_of_fixed hs (fun _ => GlobalTheory.SplitFlip.isCompact_KO) (apply_one_fixed e hf')).symm.trans ?_
   show L (heckeVec (multiProd e π) (KO k n) h f) = (_ : ℂ) • f.1.1 1
-  rw [heckeVec_eq_of_section hh.1 hf _ hp, finsum_eq_sum_of_support_subset (s := hfin.toFinset),
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [heckeVec_eq_of_section hh.1 hf _ hp, finsum_eq_sum_of_support_subset (s := hfin.toFinset),
     finsum_eq_sum_of_support_subset (s := hfin.toFinset), map_sum, Finset.sum_smul]
   · refine Finset.sum_congr rfl fun c hc => ?_
     rw [map_smul, mul_assoc, mul_smul]
@@ -240,6 +254,7 @@ theorem heckeVec_multiProd (hK : IsCommensurated (KO k n)) {h : GL n k → ℂ} 
     rw [mul_one] at this
     rw [one_mul, this, h1, map_smul, map_smul, map_smul, piTensor_tprod, PiTensorProduct.map_tprod,
       funext (hω c (hfin.mem_toFinset.1 hc)), MultilinearMap.map_smul_univ, mul_smul, smul_comm r]
+    simp only [RingHom.id_apply]
   · exact fun c hc => hfin.mem_toFinset.2 fun h0 => hc (by simp [show h (p c) = 0 from h0])
   · exact fun c hc => hfin.mem_toFinset.2 fun h0 => hc (by simp [show h (p c) = 0 from h0])
 
@@ -254,23 +269,23 @@ open GlobalTheory.WeylGL
 variable {E : Type} [Field E] [NumberField E] {w : HeightOneSpectrum (𝓞 E)} {n : ℕ}
   {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
 
-theorem isCompact_KGL : IsCompact (KGL w n : Set (GL (Fin n) (w.adicCompletion E))) := by
+theorem isCompact_KGL : IsCompact (KGL w (n := n) : Set (GL (Fin n) (w.adicCompletion E))) := by
   rw [KGL, ← SphCompletion.KO_completion w n]
   exact GlobalTheory.SplitFlip.isCompact_KO
 
 theorem exists_scalar_GL {π : Representation ℂ (GL (Fin n) (w.adicCompletion E)) V} (hs : IsSmooth π)
     (hi : π.IsIrreducible) :
-    ∀ h ∈ Hecke ℂ (KGL w n), ∃ c : ℂ, ∀ x ∈ fixed π (KGL w n), heckeVec π (KGL w n) h x = c • x :=
+    ∀ h ∈ Hecke ℂ (KGL w (n := n)), ∃ c : ℂ, ∀ x ∈ fixed π (KGL w (n := n)), heckeVec π (KGL w (n := n)) h x = c • x :=
   haveI := secondCountableTopology_GL (w.adicCompletion E) (Fin n)
   exists_scalar hs hi isCompact_KGL (Final.GLintComm E w n) (Final.HeckeCommGL E w n ℂ)
 
 theorem exists_hasSatGL_of_isIrreducible {π : Representation ℂ (GL (Fin n) (w.adicCompletion E)) V} (hs : IsSmooth π)
-    (hi : π.IsIrreducible) (h : GlobalTheory.LGrp.IsSpherical π (KGL w n)) : ∃ B, HasSatGL w π B :=
+    (hi : π.IsIrreducible) (h : GlobalTheory.LGrp.IsSpherical π (KGL w (n := n))) : ∃ B, HasSatGL w π B :=
   ExSatGL.exists_hasSatGL E w n V π h (exists_scalar_GL hs hi)
 
 theorem dosetInd_eq_Tj {ϖ : w.adicCompletion E} (h0 : ϖ ≠ 0) (hu : IsUnifV E w ϖ) {g : GL (Fin n) (w.adicCompletion E)}
     (h1 : IntM g) (h2 : IntM (tor h0 (fun _ => 1) * g⁻¹)) :
-    ∃ j ≤ n, dosetInd ℂ (KGL w n) g = Tj ℂ n (Ov E w) ϖ j := by
+    ∃ j ≤ n, dosetInd ℂ (KGL w (n := n)) g = Tj ℂ n (Ov E w) ϖ j := by
   obtain ⟨a, ha, c, hc, d, hd, rfl⟩ := cartan h0 hu g
   have a0 : ∀ i, 0 ≤ a i := (intM_tor h0 hu a).1 (intM_doset h1 ⟨c⁻¹, inv_mem hc, d⁻¹, inv_mem hd, by group⟩)
   have a1 : ∀ i, 0 ≤ 1 - a i := (intM_tor h0 hu (fun _ => 1 - a _)).1 (intM_doset h2 ⟨d, hd, c, hc, by
@@ -303,7 +318,7 @@ theorem intM_of_Tj {ϖ : w.adicCompletion E} (h0 : ϖ ≠ 0) (hu : IsUnifV E w �
 
 theorem idem_of_isSatVecGL {π : Representation ℂ (GL (Fin n) (w.adicCompletion E)) V} (hs : IsSmooth π) {x : V}
     {B : Multiset ℂˣ} (hx : IsSatVecGL w π x B) {ϖ : w.adicCompletion E} (hu : IsUnifV E w ϖ) {j : ℕ} (hj : j ≤ n)
-    {g : GL (Fin n) (w.adicCompletion E)} (hg : dosetInd ℂ (KGL w n) g = Tj ℂ n (Ov E w) ϖ j) :
+    {g : GL (Fin n) (w.adicCompletion E)} (hg : dosetInd ℂ (KGL w (n := n)) g = Tj ℂ n (Ov E w) ϖ j) :
     idem hs (H := KO _ (Fin n)) GlobalTheory.SplitFlip.isCompact_KO (π g x) =
       ((((P.finite_cosets_in_doset (Final.GLintComm E w n) g).toFinset.card : ℂ))⁻¹ * satEig (qV E w) n B j) • x := by
   have h := GlobalTheory.LGrp.Zonal.heckeVec_dosetInd hs isCompact_KGL (Final.GLintComm E w n) hx.2.1 g
@@ -376,8 +391,8 @@ theorem chiDelta_eq {β : ∀ a, Fin (N a) → ℂ} {γ : Fin n → ℂ} (hγ : 
   congr 2
   ring
 
-omit h in
 
+omit h in
 theorem exists_model {S : Multiset ℂˣ} (hS : S.card = n) :
     ∃ (X : Type) (_ : AddCommGroup X) (_ : Module ℂ X) (R : Representation ℂ (GL (Fin n) (w.adicCompletion E)) X)
       (β : Fin n → ℂˣ) (l : X →ₗ[ℂ] ℂ) (y : X), IsSmooth R ∧ Finset.univ.val.map β = S ∧ IsSatVecGL w R y S ∧ l y = 1 ∧
@@ -416,7 +431,7 @@ theorem exists_map_isSatVecGL {X : Fin c → Type} [∀ a, AddCommGroup (X a)] [
     | smul_tprod t z =>
       rw [map_smul, map_smul, map_smul, piTensor_tprod, hev, hev, smul_eq_mul, smul_eq_mul, mul_left_comm,
         ← Finset.prod_mul_distrib, Finset.prod_congr rfl fun a _ => hl a _ (hg a) _]
-    | add z z' hz hz' => rw [map_add, map_add, map_add, hz, hz', mul_add]
+    | add z z' hz hz' => rw [map_add (f := _), map_add (f := _), map_add (f := _), hz, hz', mul_add]
   let γ : Fin n → ℂˣ := (fun s : Σ a, Fin (N a) => β s.1 s.2) ∘ (stdBlocks N h).symm
   have hγ : Finset.univ.val.map γ = ∑ a, Finset.univ.val.map (β a) := by
     rw [← Multiset.map_map, Multiset.map_univ_val_equiv, ← Finset.univ_sigma_univ]
@@ -441,14 +456,14 @@ theorem exists_map_isSatVecGL {X : Fin c → Type} [∀ a, AddCommGroup (X a)] [
 theorem exists_sat_multiProd {X : Fin c → Type} [∀ a, AddCommGroup (X a)] [∀ a, Module ℂ (X a)]
     {π : ∀ a, Representation ℂ (GL (Fin (N a)) (w.adicCompletion E)) (X a)} (hs : ∀ a, IsSmooth (π a))
     (hi : ∀ a, (π a).IsIrreducible) {f : IndSp (stdBlocks N h) (piTensor π)}
-    (hf : f ∈ fixed (multiProd (stdBlocks N h) π) (KGL w n)) (h0 : f ≠ 0) :
+    (hf : f ∈ fixed (multiProd (stdBlocks N h) π) (KGL w (n := n))) (h0 : f ≠ 0) :
     ∃ S : Fin c → Multiset ℂˣ, (∀ a, HasSatGL w (π a) (S a)) ∧
       IsSatVecGL w (multiProd (stdBlocks N h) π) f (∑ a, S a) := by
-  have hKO : ∀ m, KGL w m = KO (w.adicCompletion E) (Fin m) := fun m => (SphCompletion.KO_completion w m).symm
+  have hKO : ∀ m, KGL w (n := m) = KO (w.adicCompletion E) (Fin m) := fun m => (SphCompletion.KO_completion w m).symm
   have hf' := hf
   rw [hKO] at hf'
   have hv := map_idem_of_fixed hs (fun _ => GlobalTheory.SplitFlip.isCompact_KO) (apply_one_fixed _ hf')
-  have hsph : ∀ a, GlobalTheory.LGrp.IsSpherical (π a) (KGL w (N a)) := fun a e => by
+  have hsph : ∀ a, GlobalTheory.LGrp.IsSpherical (π a) (KGL w (n := (N a))) := fun a e => by
     rw [hKO] at e
     refine h0 (eq_zero_of_apply_one _ hf' (hv.symm.trans ?_))
     generalize f.1.1 1 = u
@@ -457,7 +472,7 @@ theorem exists_sat_multiProd {X : Fin c → Type} [∀ a, AddCommGroup (X a)] [�
       rw [map_smul, PiTensorProduct.map_tprod, MultilinearMap.map_coord_zero _ a, smul_zero]
       have := idem_mem (hs a) GlobalTheory.SplitFlip.isCompact_KO (x a)
       rwa [e] at this
-    | add x y hx hy => rw [map_add, hx, hy, add_zero]
+    | add x y hx hy => rw [map_add (f := _), hx, hy, add_zero]
   choose S hS using fun a => exists_hasSatGL_of_isIrreducible (hs a) (hi a) (hsph a)
   choose x hx using fun a => (hS a).exists_vec
   have hr : ∀ u, ∃ r : ℂ, PiTensorProduct.map (fun a => idem (hs a) (H := KO _ _) GlobalTheory.SplitFlip.isCompact_KO) u =
@@ -467,11 +482,12 @@ theorem exists_sat_multiProd {X : Fin c → Type} [∀ a, AddCommGroup (X a)] [�
       choose t ht using fun a => exists_idem_eq_smul (hs a) (hi a) GlobalTheory.SplitFlip.isCompact_KO
         (hKO _ ▸ Final.GLintComm E w (N a)) (hKO _ ▸ exists_scalar_GL (hs a) (hi a)) (hKO _ ▸ (hx a).2.1) (hx a).1 (y a)
       exact ⟨r * ∏ a, t a, by
-        rw [map_smul, PiTensorProduct.map_tprod, funext ht, MultilinearMap.map_smul_univ, mul_smul]⟩
+        rw [map_smul, PiTensorProduct.map_tprod, funext ht, MultilinearMap.map_smul_univ, mul_smul]
+        simp only [RingHom.id_apply]⟩
     | add y z hy hz =>
       obtain ⟨r, hr⟩ := hy
       obtain ⟨t, ht⟩ := hz
-      exact ⟨r + t, by rw [map_add, hr, ht, add_smul]⟩
+      exact ⟨r + t, by rw [map_add (f := _), hr, ht, add_smul]⟩
   obtain ⟨r, hr⟩ := hr (f.1.1 1)
   rw [hv] at hr
   choose Z iZ mZ R β l y hR hβ hyS h1 hl using fun a => exists_model (w := w) (hS a).card
@@ -486,7 +502,7 @@ theorem exists_sat_multiProd {X : Fin c → Type} [∀ a, AddCommGroup (X a)] [�
   refine ⟨S, hS, h0, hf, hY.2.2.1, fun ϖ hϖ j hj => ?_⟩
   have hϖ0 : ϖ ≠ 0 := fun e => by simp [IsUnifV, e] at hϖ
   have hT := Tj_mem_hecke (n := n) hϖ j
-  have hK : IsCommensurated (KGL w n) := Final.GLintComm E w n
+  have hK : IsCommensurated (KGL w (n := n)) := Final.GLintComm E w n
   have e1 := (map_heckeVec (ρ := multiProd (stdBlocks N h) R) hK hT Y hYe F).trans (hY.2.2.2 ϖ hϖ j hj)
   rw [hKO] at hT hK e1 ⊢
   have hp : ∀ q : GL (Fin n) (w.adicCompletion E) ⧸ KO (w.adicCompletion E) (Fin n),
@@ -517,14 +533,14 @@ section Twist
 variable {ρ : Representation ℂ (GL (Fin n) (w.adicCompletion E)) V}
   {ρ' : Representation ℂ (GL (Fin n) (w.adicCompletion E)) W} {s : ℂ}
 
-theorem absPow_det_of_mem (s : ℂ) {g : GL (Fin n) (w.adicCompletion E)} (hg : g ∈ KGL w n) :
+theorem absPow_det_of_mem (s : ℂ) {g : GL (Fin n) (w.adicCompletion E)} (hg : g ∈ KGL w (n := n)) :
     absPow (w.adicCompletion E) s (Matrix.GeneralLinearGroup.det g) = 1 :=
   Units.ext (by
     rw [KGL, ← SphCompletion.KO_completion w n] at hg
     simp [val_absPow, LeviInt.nabs_det_eq_one hg])
 
 theorem mem_fixed_twist (T : (twist ρ (detChar (Fin n) (absPow _ s))).Equiv ρ') (x : V) :
-    T x ∈ fixed ρ' (KGL w n) ↔ x ∈ fixed ρ (KGL w n) := by
+    T x ∈ fixed ρ' (KGL w (n := n)) ↔ x ∈ fixed ρ (KGL w (n := n)) := by
   simp only [GlobalTheory.LGrp.mem_fixed]
   refine forall₂_congr fun g hg => ?_
   have := T.toIntertwiningMap.isIntertwining _ _ g x
@@ -543,7 +559,7 @@ theorem hasSatGL_of_twist (T : (twist ρ (detChar (Fin n) (absPow _ s))).Equiv �
     refine ⟨h0, hy, by rw [Multiset.card_map, hx.2.2.1], fun ϖ hϖ j hj => ?_⟩
     rw [GlobalTheory.SphGal.satEig_map_mul, mul_smul, ← map_smul T.toLinearEquiv, ← hx.2.2.2 ϖ hϖ j hj, heckeVec, heckeVec]
     have e := T.toLinearEquiv.toAddEquiv.map_finsum
-      (fun c : _ ⧸ KGL w n => Tj ℂ n (Ov E w) ϖ j c.out • ρ c.out x)
+      (fun c : _ ⧸ KGL w (n := n) => Tj ℂ n (Ov E w) ϖ j c.out • ρ c.out x)
     rw [show T.toLinearEquiv _ = _ from e, smul_finsum]
     refine finsum_congr fun c => ?_
     by_cases hc : Tj ℂ n (Ov E w) ϖ j c.out = 0

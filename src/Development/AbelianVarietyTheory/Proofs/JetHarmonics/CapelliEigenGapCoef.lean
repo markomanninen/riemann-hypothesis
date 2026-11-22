@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SupWOfSup
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormSqUnitNormalizationLe
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CapelliKFiniteCoefficient
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselPeriodAdjointPair
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CapelliEigenvalueKFiniteDiscreteSeriesCoeffStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CentredCapelliOperatorFormsAgreeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SupWOfSup
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormSqUnitNormalizationLe
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CapelliKFiniteCoefficient
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselPeriodAdjointPair
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CapelliEigenvalueKFiniteDiscreteSeriesCoeffStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CentredCapelliOperatorFormsAgreeStatement
+
+@[expose] public section
+
 open BranchingSupport BpJoin Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
 

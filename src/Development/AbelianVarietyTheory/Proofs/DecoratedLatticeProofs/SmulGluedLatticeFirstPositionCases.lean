@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiesOnRamOfInvariant
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.DualLiftInvariance
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiesOnRamOfInvariant
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.DualLiftInvariance
+
+@[expose] public section
 
 open GlobalTheory.LatPair ValuativeRel
 open scoped Pointwise
@@ -49,7 +53,8 @@ theorem eq_gluedS_of_mem (q : Unif k) {M : Submodule 𝒪[k] (n ⊕ Fin 1 → k)
     rw [e]
     exact add_mem hs (M.smul_mem _ hm)
 
-theorem gluedS_zero_eq_lastPair_lat (q : Unif k) (L : Submodule 𝒪[k] (n → k)) [L.IsLattice k] :
+theorem gluedS_zero_eq_lastPair_lat [Fintype n] (q : Unif k) (L : Submodule 𝒪[k] (n → k))
+    [L.IsFullLattice k] :
     gluedS q 1 L 0 = (lastPair q L).lat := by
   change _ = (glue (GlobalTheory.IndefiniteRowSideFullHecke.AppendedVectorData.isGlue_last q L)).lat
   rw [glue_lat]
@@ -73,14 +78,30 @@ theorem smul_gluedS_cases : ∀ (k : Type) [Field k] [ValuativeRel k] [Topologic
     (n : Type) [Fintype n] [DecidableEq n] (q : Unif k) (P : Pair k n) (h : GL (n ⊕ Fin 1) k),
     (Pi.single (Sum.inr 0) 1 : n ⊕ Fin 1 → k) ∈ h • gluedS q 1 P.ker P.vec →
     (∀ x ∈ h • gluedS q 1 P.ker P.vec, (q.1 : k) * x (Sum.inr 0) ∈ 𝒪[k]) →
-    (∃ (Λ : Submodule 𝒪[k] (n → k)) (_ : Λ.IsLattice k), h • gluedS q 1 P.ker P.vec = lastKer Λ ∨
+    (∃ (Λ : Submodule 𝒪[k] (n → k)) (_ : Λ.IsFullLattice k), h • gluedS q 1 P.ker P.vec = lastKer Λ ∨
       h • gluedS q 1 P.ker P.vec = (lastPair q Λ).lat) ∨
     ∃ g : GL n k, h • gluedS q 1 P.ker P.vec = embX 1 g • gluedS q 1 P.ker P.vec := by
   intro k _ _ _ _ n _ _ q P h hz hq
-  have hML : (h • gluedS q 1 P.ker P.vec).IsLattice k := inferInstance
+  have hML : (h • gluedS q 1 P.ker P.vec).IsFullLattice k := inferInstance
   generalize h • gluedS q 1 P.ker P.vec = M at hz hq hML ⊢
-  haveI := hML
-  haveI : (interX M).IsLattice k := GlobalTheory.LevelUnfold.isLattice_interX M
+  have : (interX M).IsFullLattice k := by
+    refine { toIsLattice := Submodule.IsLattice.of_fg k ?_, span_eq_top := ?_ }
+    · exact Submodule.fg_of_fg_map_injective (inX k n 1)
+        (fun x y e => funext fun i => congrFun e (Sum.inl i))
+        (hML.fg.of_le (Submodule.map_comap_le _ _))
+    · refine eq_top_iff.2 fun x _ => ?_
+      have hx : inX k n 1 x ∈ Submodule.span k (M : Set (n ⊕ Fin 1 → k)) :=
+        hML.span_eq_top ▸ Submodule.mem_top
+      obtain ⟨y, hy, d, hd⟩ := (IsLocalization.mem_span_iff (M := nonZeroDivisors 𝒪[k])).1 hx
+      have hdx : (d : 𝒪[k]) • x ∈ interX M := by
+        change inX k n 1 ((d : 𝒪[k]) • x) ∈ M
+        rw [map_smul, hd, ← IsScalarTower.algebraMap_smul k (d : 𝒪[k]), smul_smul,
+          IsLocalization.mk'_spec', map_one, one_smul]
+        simpa only [Submodule.span_eq] using hy
+      have h := (Submodule.span k (interX M : Set (n → k))).smul_mem
+        (IsLocalization.mk' k 1 d) (Submodule.subset_span hdx)
+      rwa [← IsScalarTower.algebraMap_smul k (d : 𝒪[k]), smul_smul,
+        IsLocalization.mk'_spec, map_one, one_smul] at h
   have hqi : (q.1 : k) * q.inv = 1 := mul_inv_cancel₀ q.ne_zero
   by_cases hO : ∀ x ∈ M, x (Sum.inr 0) ∈ 𝒪[k]
   · refine Or.inl ⟨interX M, inferInstance, Or.inl ?_⟩
@@ -109,7 +130,7 @@ theorem smul_gluedS_cases : ∀ (k : Type) [Field k] [ValuativeRel k] [Topologic
           simp
       rw [e]
       exact add_mem h1 (M.smul_mem _ hz)
-  · push_neg at hO
+  · push Not at hO
     obtain ⟨m₀, hm₀, hm₀'⟩ := hO
     have ht : IsUnit (⟨_, hq m₀ hm₀⟩ : 𝒪[k]) := by
       by_contra ht

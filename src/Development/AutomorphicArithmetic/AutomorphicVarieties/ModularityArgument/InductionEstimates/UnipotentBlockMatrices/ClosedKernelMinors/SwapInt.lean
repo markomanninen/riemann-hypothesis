@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.KillAvg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ConjMat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ThBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.LongCell
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PkLaws
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.KillAvg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ConjMat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ThBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.LongCell
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PkLaws
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -33,20 +37,20 @@ private theorem swap_int {K : Type} [Field K] [NumberField K] (F : G1 K (2 + 2) 
     (hfin : ∀ C : Set (G1 K (2 + 2)), IsCompact C → {q : Cos K | ∃ g ∈ C, F ((q.out : G1 K (2 + 2)) * g) ≠ 0}.Finite)
     (g : G1 K (2 + 2)) :
     (Function.support fun q : Cos K => ∫ X in unipFundamentalDomain K (2 + 2) 2,
-      F ((q.out : G1 K (2 + 2)) * (nn X * g)) ∂unipMeasure K (2 + 2) 2).Finite ∧ ∀ S : Set (Cos K),
-    ∫ X in unipFundamentalDomain K (2 + 2) 2, ∑ᶠ q ∈ S, F ((q.out : G1 K (2 + 2)) * (nn X * g)) ∂unipMeasure K (2 + 2) 2 =
+      F ((q.out : G1 K (2 + 2)) * (unipOne 2 X * g)) ∂unipMeasure K (2 + 2) 2).Finite ∧ ∀ S : Set (Cos K),
+    ∫ X in unipFundamentalDomain K (2 + 2) 2, ∑ᶠ q ∈ S, F ((q.out : G1 K (2 + 2)) * (unipOne 2 X * g)) ∂unipMeasure K (2 + 2) 2 =
       ∑ᶠ q ∈ S, ∫ X in unipFundamentalDomain K (2 + 2) 2,
-        F ((q.out : G1 K (2 + 2)) * (nn X * g)) ∂unipMeasure K (2 + 2) 2 := by
+        F ((q.out : G1 K (2 + 2)) * (unipOne 2 X * g)) ∂unipMeasure K (2 + 2) 2 := by
   classical
   obtain ⟨C, hC, hD⟩ := exists_isCompact_superset_unipFundamentalDomain (K := K) (n := 2 + 2) (r := 2)
-  have hc : Continuous fun X : UPos (2 + 2) 2 → 𝔸[K] => nn X * g := (continuous_unipOne 2).mul continuous_const
+  have hc : Continuous fun X : UPos (2 + 2) 2 → 𝔸[K] => unipOne 2 X * g := (continuous_unipOne 2).mul continuous_const
   have hQ := hfin _ (hC.image hc)
   have hz : ∀ q : Cos K, q ∉ hQ.toFinset → ∀ X ∈ unipFundamentalDomain K (2 + 2) 2,
-      F ((q.out : G1 K (2 + 2)) * (nn X * g)) = 0 := fun q hq X hX => by
+      F ((q.out : G1 K (2 + 2)) * (unipOne 2 X * g)) = 0 := fun q hq X hX => by
     by_contra h
     exact hq (hQ.mem_toFinset.2 ⟨_, ⟨X, hD hX, rfl⟩, h⟩)
   have hz' : ∀ q : Cos K, q ∉ hQ.toFinset → ∫ X in unipFundamentalDomain K (2 + 2) 2,
-      F ((q.out : G1 K (2 + 2)) * (nn X * g)) ∂unipMeasure K (2 + 2) 2 = 0 := fun q hq =>
+      F ((q.out : G1 K (2 + 2)) * (unipOne 2 X * g)) ∂unipMeasure K (2 + 2) 2 = 0 := fun q hq =>
     setIntegral_eq_zero_of_forall_eq_zero (hz q hq)
   refine ⟨hQ.toFinset.finite_toSet.subset fun q hq => by_contra fun h => hq (hz' q h), fun S => ?_⟩
   have e : ∀ f : Cos K → ℂ, (∀ q, q ∉ hQ.toFinset → f q = 0) → ∑ᶠ q ∈ S, f q = ∑ q ∈ hQ.toFinset.filter (· ∈ S), f q := by
@@ -55,23 +59,24 @@ private theorem swap_int {K : Type} [Field K] [NumberField K] (F : G1 K (2 + 2) 
     ext q
     simp only [mem_inter_iff, Function.mem_support, Finset.coe_filter, mem_setOf_eq]
     exact ⟨fun h => ⟨⟨by_contra fun h' => h.2 (hf q h'), h.1⟩, h.2⟩, fun h => ⟨h.1.2, h.2⟩⟩
-  have hI : ∀ q : Cos K, Integrable (fun X => F ((q.out : G1 K (2 + 2)) * (nn X * g)))
+  have hI : ∀ q : Cos K, Integrable (fun X => F ((q.out : G1 K (2 + 2)) * (unipOne 2 X * g)))
       ((unipMeasure K (2 + 2) 2).restrict (unipFundamentalDomain K (2 + 2) 2)) := fun q =>
     ((hF.comp (continuous_const.mul hc)).continuousOn.integrableOn_compact hC).mono_set hD
-  rw [e _ hz', ← integral_finset_sum _ fun q _ => hI q]
+  rw [e _ hz', ← integral_finsetSum _ fun q _ => hI q]
   exact setIntegral_congr_fun measurableSet_unipFundamentalDomain fun X hX => e _ fun q hq => hz q hq X hX
 
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.thCt :
-    ∀ {K : Type} [Field K] [NumberField K] (F : G1 K (2 + 2) → ℂ), PFun F → InBand F → ∀ g,
-      ∫ X in unipFundamentalDomain K (2 + 2) 1, th F (unipOne K (2 + 2) 1 X * g) ∂unipMeasure K (2 + 2) 1 = 0 ∧
-      ∫ X in unipFundamentalDomain K (2 + 2) 3, th F (unipOne K (2 + 2) 3 X * g) ∂unipMeasure K (2 + 2) 3 = 0 ∧
+    ∀ {K : Type} [Field K] [NumberField K] (F : G1 K (2 + 2) → ℂ),
+      UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.PFun F → InBand F → ∀ g,
+      ∫ X in unipFundamentalDomain K (2 + 2) 1, th F (unipOne (K := K) (n := 2 + 2) 1 X * g) ∂unipMeasure K (2 + 2) 1 = 0 ∧
+      ∫ X in unipFundamentalDomain K (2 + 2) 3, th F (unipOne (K := K) (n := 2 + 2) 3 X * g) ∂unipMeasure K (2 + 2) 3 = 0 ∧
       HasCompactSupport (fun X : UPos (2 + 2) 2 → 𝔸[K] => F (w0 K * nn X * g)) ∧
-      ∫ X in unipFundamentalDomain K (2 + 2) 2, th F (unipOne K (2 + 2) 2 X * g) ∂unipMeasure K (2 + 2) 2 = volN K * F g + ∫ X, F (w0 K * nn X * g) ∂unipMeasure K (2 + 2) 2 := by
+      ∫ X in unipFundamentalDomain K (2 + 2) 2, th F (unipOne (K := K) (n := 2 + 2) 2 X * g) ∂unipMeasure K (2 + 2) 2 = volN K * F g + ∫ X, F (w0 K * nn X * g) ∂unipMeasure K (2 + 2) 2 := by
   intro K _ _ F hF hB g
   obtain ⟨hfin, -⟩ := thBasic (Measure.haar : Measure (G1 K (2 + 2))) F hF.cont hF.rat hB
   obtain ⟨-, -, -, -, -, -, hw, hwΓ, -⟩ := blkLaws (K := K)
   obtain ⟨hpar, hPK, -, hout⟩ := pkLaws (K := K)
-  have hodd : ∀ r, r = 1 ∨ r = 3 → ∫ X in unipFundamentalDomain K (2 + 2) r, th F (unipOne K (2 + 2) r X * g)
+  have hodd : ∀ r, r = 1 ∨ r = 3 → ∫ X in unipFundamentalDomain K (2 + 2) r, th F (unipOne (K := K) (n := 2 + 2) r X * g)
       ∂unipMeasure K (2 + 2) r = 0 := fun r hr => by
     have := killAvg F hF.cont hF.rat hB r univ (fun _ _ _ _ _ => mem_univ _)
       (fun q _ => dies F hF q.out r (hr.imp_right Or.inl)) g
@@ -97,7 +102,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.thCt :
   have hneg : ∀ ξ, n (-ξ) = (n ξ)⁻¹ := fun ξ => eq_inv_of_mul_eq_one_left (by rw [← hadd, neg_add_cancel, hn0])
   have hnP : ∀ ξ, n ξ ∈ ParΓ K 2 2 := fun ξ => (hpar _).2 fun i j hi hj => by
     change unipMatrix ξ.1 i j = 0
-    rw [unipMatrix, Matrix.add_apply, blockEntry_apply, dif_neg (by omega), Matrix.one_apply_ne (by
+    rw [unipMatrix, Matrix.add_apply, blockEntry_apply, dite_eq_right (by omega), Matrix.one_apply_ne (by
       rintro rfl; omega), add_zero]
   have hinj : Function.Injective c := fun ξ η h => by
     have h1 := (hmk _ _).1 h
@@ -115,7 +120,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.thCt :
       show 2 + ((j : ℕ) - 2) = j
       have : 2 ≤ (j : ℕ) := hj
       omega)
-    rw [e1, e2, unipMatrix, Matrix.add_apply, blockEntry_apply, dif_pos ⟨hi, hj⟩, Matrix.one_apply_ne (by
+    rw [e1, e2, unipMatrix, Matrix.add_apply, blockEntry_apply, dite_eq_left ⟨hi, hj⟩, Matrix.one_apply_ne (by
       rintro rfl
       exact absurd hi (not_lt.2 hj)), zero_add] at h2
     exact h2

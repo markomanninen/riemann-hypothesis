@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasDerivAtOfContinuousHom
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WirtingerCombinationNeZero
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasDerivAtOfContinuousHom
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WirtingerCombinationNeZero
+
+@[expose] public section
 
 namespace PositivityTheory.Rg.Cz
 

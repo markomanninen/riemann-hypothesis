@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.WKTensFockGenSub
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.DetOneSubEqSumMinors
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.TraceEqTraceRestrictOfRangeLe
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.AdPhysApplySingle
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.DetOneSubEqSumMinors
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.TraceEqTraceRestrictOfRangeLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,16 +27,10 @@ theorem tco_physSub_zero {y : TensorProduct ℂ N (Fock n)} (hy : y ∈ physical
     rw [h0, map_zero, map_zero]
   change tcoef ((fockBasis n).coord s) (LinearMap.lTensor N (cpFock x.1 x.2)
     (LinearMap.lTensor N (cmFock x.1 x.2) y)) = 0 at h1
-  rw [tcoef_lTensor, tcoef_lTensor, tcoef_eq_sum] at h1
-  rw [Finset.sum_eq_single s] at h1
-  · have hxs : finProdFinEquiv x ∈ s := by rw [hxdef, Equiv.apply_symm_apply]; exact hm
-    simpa [lf_num_basis, hxs] using h1
-  · intro S _ hS
-    simp only [LinearMap.coe_comp, Function.comp_apply, lf_num_basis]
-    split_ifs
-    · simp [Module.Basis.coord_apply, Finsupp.single_apply, Ne.symm hS]
-    · simp
-  · simp
+  have hxs : finProdFinEquiv x ∈ s := by
+    rw [hxdef, Equiv.apply_symm_apply]
+    exact hm
+  rwa [tcoef_lTensor, tcoef_lTensor, LinearMap.comp_assoc, gc_coord_num, ite_eq_left hxs, one_smul] at h1
 
 theorem tensFock_inf_physSub (L : Submodule ℂ N) :
     tensFock (n := n) L ⊓ physicalSubspace ε = LinearMap.range (TensorProduct.map L.subtype (physFock ε).subtype) := by
@@ -41,7 +39,8 @@ theorem tensFock_inf_physSub (L : Submodule ℂ N) :
     have hmem : ∀ s, tcoef ((fockBasis n).coord s) y ∈ L := fun s => tcoef_mem hyT _
     refine ⟨∑ S : LfIdx ε, (⟨tcoef ((fockBasis n).coord S.1) y, hmem S.1⟩ : L) ⊗ₜ
       (⟨fockBasis n S.1, physWedge_mem S⟩ : physFock ε), ?_⟩
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [TensorProduct.map_tmul, Submodule.coe_subtype]
     symm
     calc y = ∑ s, tcoef ((fockBasis n).coord s) y ⊗ₜ fockBasis n s := tcoef_expand y
@@ -65,14 +64,13 @@ theorem tensFock_inf_physSub (L : Submodule ℂ N) :
     · show _ ∈ physicalSubspace ε
       rw [mem_physicalSubspace_iff]
       intro j b hjb
-      induction x using TensorProduct.induction_on with
-      | zero => simp
+      induction x using TensorProduct.inductionOn with
       | tmul l f =>
         have hf := f.2
         simp only [physFock, Submodule.mem_iInf, LinearMap.mem_ker] at hf
         simp only [TensorProduct.map_tmul, cmT, LinearMap.id_apply, Submodule.coe_subtype, hf j b hjb,
           TensorProduct.tmul_zero]
-      | add x x' hx hx' => rw [map_add, map_add, hx, hx', add_zero]
+      | add x x' hx hx' => rw [map_add (f := _), map_add (f := _), hx, hx', add_zero]
 
 end Supp
 
@@ -96,10 +94,9 @@ theorem str_tensFock_physSub (hD : IsDerivedOn ε σ D E) {k : Matrix (Fin n) (F
   set fP := (CliffordAlgebra.involute.toLinearMap ∘ₗ (ff ε k).toLinearMap).restrict (involute_ff_mapsTo k)
   have hsq : ∀ x, (gradT ∘ₗ wK hD hk) (Φ x) = Φ (TensorProduct.map sL fP x) := by
     intro x
-    induction x using TensorProduct.induction_on with
-    | zero => simp
+    induction x using TensorProduct.inductionOn with
     | tmul l f => rfl
-    | add x x' hx hx' => rw [map_add, map_add, hx, hx', map_add, map_add]
+    | add x x' hx hx' => rw [map_add (f := _), map_add (f := _), hx, hx', map_add (f := _), map_add (f := _)]
   have hconj : (gradT ∘ₗ wK hD hk).restrict hY0 = e.conj (TensorProduct.map sL fP) := by
     apply LinearMap.ext
     intro y

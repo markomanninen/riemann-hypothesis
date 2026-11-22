@@ -1,6 +1,10 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.ExistsFarFromPoints
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.RootNorm
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.HDSucc
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.ExistsFarFromPoints
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.RootNorm
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.HDSucc
+
+@[expose] public section
 
 open Finset Complex
 
@@ -22,7 +26,7 @@ theorem prodLower (n : ℕ) (z : Fin n → ℂ) (ρ : ℝ) (hρ : 0 < ρ) (ξ : 
   calc ρ⁻¹ ^ n * ∏ i, |ρ - ‖z i‖| = ∏ i, (ρ⁻¹ * |ρ - ‖z i‖|) := by
         rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     _ ≤ ∏ i, ‖1 - z i * ξ‖ :=
-        Finset.prod_le_prod (fun i _ => mul_nonneg (inv_nonneg.mpr hρ.le) (abs_nonneg _))
+        Finset.prod_le_prod₀ (fun i _ => mul_nonneg (inv_nonneg.mpr hρ.le) (abs_nonneg _))
           (fun i _ => hfac i)
     _ = ‖∏ i, (1 - z i * ξ)‖ := (norm_prod Finset.univ _).symm
 

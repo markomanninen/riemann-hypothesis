@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.FormalDegreeBessel.StatementDS
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GapAtLeast
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.FormalDegreeBessel.StatementDS
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GapAtLeast
+
+@[expose] public section
+
 open Formalism.BasicNotions
 
 namespace GlobalTheory.FdegRowsBound
@@ -74,11 +79,11 @@ theorem interlace_bound {K n : ℕ} (hn : K + 1 = n) (u : Fin n → ℝ) (v : Fi
   have hu : StrictAnti u := Fin.strictAnti_iff_succ_lt.2 fun i => (h2 i).trans (h1 i)
   rw [vand_cast]
   simp only [Finset.prod_filter]
-  apply Finset.prod_le_prod
+  apply Finset.prod_le_prod₀
   · intro i _
     exact Finset.prod_nonneg fun j _ => by split_ifs <;> positivity
   intro i _
-  apply Finset.prod_le_prod
+  apply Finset.prod_le_prod₀
   · intro j _; split_ifs <;> positivity
   intro j _
   by_cases hij : i < j
@@ -177,16 +182,16 @@ theorem fdeg_rows_le : ∀ (R : Ranks) (P Q : HCParam R), Q.v = P.v → Q.b = P.
   have hC : ∏ i : Fin (R.k - 1), ∏ j : Fin R.m, |((Q.v i : ℚ) : ℝ) - -((Q.b j : ℚ) : ℝ)| ≤
       B ^ ((R.k - 1) * R.m) := by
     calc _ ≤ ∏ i : Fin (R.k - 1), ∏ j : Fin R.m, B :=
-          Finset.prod_le_prod (fun i _ => Finset.prod_nonneg fun j _ => abs_nonneg _)
-            (fun i _ => Finset.prod_le_prod (fun j _ => abs_nonneg _) (fun j _ => by
+          Finset.prod_le_prod₀ (fun i _ => Finset.prod_nonneg fun j _ => abs_nonneg _)
+            (fun i _ => Finset.prod_le_prod₀ (fun j _ => abs_nonneg _) (fun j _ => by
               rw [sub_neg_eq_add, abs_of_pos (hpos i j)]; exact hvb i j))
       _ = B ^ ((R.k - 1) * R.m) := by
           simp only [Finset.prod_const, Finset.card_univ, Fintype.card_fin, ← pow_mul, mul_comm]
   have hD : ∏ i : Fin R.m, ∏ j ∈ univ.filter (fun j => i < j),
       |-((Q.b i : ℚ) : ℝ) - -((Q.b j : ℚ) : ℝ)| ≤ B ^ (R.m * (R.m - 1) / 2) := by
     calc _ ≤ ∏ i : Fin R.m, ∏ j ∈ univ.filter (fun j => i < j), B :=
-          Finset.prod_le_prod (fun i _ => Finset.prod_nonneg fun j _ => abs_nonneg _)
-            (fun i _ => Finset.prod_le_prod (fun j _ => abs_nonneg _) (fun j hj => by
+          Finset.prod_le_prod₀ (fun i _ => Finset.prod_nonneg fun j _ => abs_nonneg _)
+            (fun i _ => Finset.prod_le_prod₀ (fun j _ => abs_nonneg _) (fun j hj => by
               simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hj
               have c1 : ((Q.b i : ℚ) : ℝ) < ((Q.b j : ℚ) : ℝ) := by exact_mod_cast hbmono hj
               have c2 := hbb i j

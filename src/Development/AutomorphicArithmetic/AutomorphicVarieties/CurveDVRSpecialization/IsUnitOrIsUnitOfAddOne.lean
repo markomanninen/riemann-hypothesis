@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
 
 namespace UpperTheory.V.Pr
 
@@ -43,12 +47,6 @@ def LinClosedOfAdic : Prop :=
   ∀ (G A κ : Type) [TopologicalSpace G] [CommRing A] [IsDomain A] [IsNoetherianRing A] [IsLocalRing A] [Field κ]
     (j : A →+* κ), Function.Injective j → ∀ (n : ℕ) (a : G → Matrix (Fin n) (Fin n) A),
     (∀ s t, AdicCont (maximalIdeal A) fun g => a g s t) → LinClosed fun g => (a g).map j
-
-def IrrProcyclic : Prop :=
-  ∀ (G κ : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [Field κ] [IsAlgClosed κ]
-    (n : ℕ), n.Prime → ∀ (r : G →* GL (Fin n) κ), LinClosed (gm r) →
-    (∀ U : Subgroup G, IsOpen (U : Set G) → MatIrr U (gm r)) → ∀ (Z : Subgroup G) [Z.Normal] (g : G),
-    (Z ⊔ Subgroup.zpowers g).topologicalClosure = ⊤ → MatIrr Z (gm r)
 
 def StrongIrr {G κ : Type} [Group G] [Field κ] {n : ℕ} (r : G →* GL (Fin n) κ) : Prop :=
   ∀ (W : Submodule κ (Fin n → κ)) (S : Subgroup G), S.FiniteIndex → (∀ g, g ∈ S ↔ ∀ v ∈ W, gm r g *ᵥ v ∈ W) →
@@ -98,7 +96,7 @@ def ConstOfAlg : Prop :=
 
 def ConstOfChar : Prop :=
   ∀ (G k A : Type) [Group G] [Field k] [Finite k] [CommRing A] [IsDomain A] [IsLocalRing A] [Algebra k A],
-    (2 : k) ≠ 0 → ∀ (η : G →* ℤˣ) (Ψ : G →* kˣ) (c g₁ : G), Marks η Ψ c g₁ → ∀ r : G →* GG 3 A, HasMult η r →
+    (2 : k) ≠ 0 → ∀ (η : G →* ℤˣ) (Ψ : G →* kˣ) (c g₁ : G), Marks η Ψ c g₁ → ∀ r : G →* GG (m := 3) (R := A), HasMult η r →
     (∀ g, EntIn (maximalIdeal A) ((r g).mat - ((r0 η Ψ g).mat).map (algebraMap k A))) → Normalised c g₁ r →
     ∀ U : Subgroup G, U.FiniteIndex →
     (∀ g ∈ U, η g = 1 → (r g).mat.charpoly = (((r0 η Ψ g).mat).map (algebraMap k A)).charpoly) →
@@ -113,17 +111,12 @@ attribute [instance] IsCD.complete IsCD.isLocalHom IsCD.fin
 
 def FinCrit : Prop :=
   ∀ (O R : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsAdicComplete (maximalIdeal O) O]
-    [Finite (ResidueField O)] [CommRing R] [Algebra O R] [IsCO O R] (W : WPres O ℤ R),
+    [Finite (ResidueField O)] [CommRing R] [Algebra O R] [IsCO O R] (W : UpperTheory.V.Alg.WPres O ℤ R),
     (∀ i, W.z i ∈ maximalIdeal R) →
     (∀ (A : Type) [CommRing A] [Algebra O A] [IsCD O A] (f : R →ₐ[O] A), IsLocalHom f →
       (∀ a ∈ maximalIdeal O, algebraMap O A a = 0) →
       (∀ i, W.wt i = 0 → f (W.z i) = 0) ∧
         ((∀ i, W.wt i < 0 → f (W.z i) = 0) ∨ ∀ i, 0 < W.wt i → f (W.z i) = 0)) →
     Module.Finite O (W.part 0)
-
-example (l : ℕ) [Fact l.Prime] : IsCD ℤ_[l] ℤ_[l] where
-  complete := inferInstance
-  isLocalHom := ⟨fun _ h => h⟩
-  fin := Finite.of_equiv _ (PadicInt.residueField (p := l)).symm.toEquiv
 
 end UpperTheory.V.Pr

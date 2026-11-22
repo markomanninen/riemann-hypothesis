@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -150,9 +154,6 @@ def yv (v : Fin P.nV) (F : P.Tup → P.Xsp) : P.Tup → P.Xsp :=
     ∑ᶠ (L'' : Submodule (P.W v) (Fin (P.m + 1) → P.Qq v)) (_ : IsEdge p (P.n' v) P.r ⟨L'', L v⟩),
       F (Function.update L v L'')
 
-def Sandwich (e : ℕ) : Prop :=
-  C.Mna.map (((p : O) ^ e) • LinearMap.id) ≤ C.M ∧ C.M ≤ C.Mna
-
 def TrivStab : Prop := ∀ (γ : C.Γ) (L : P.Tup), P.IsLatTup L → C.smul γ L = L → γ = 1
 
 def FinClasses : Prop :=
@@ -194,9 +195,6 @@ def d : ℕ := Module.finrank G.O G.M
 def dna : ℕ := Module.finrank G.O G.Mna
 
 def yv (v : Fin G.P.nV) (F : G.Fn) : G.Fn := fun i => Level.yv (P := G.P) v (F i)
-
-def Sandwich : Prop :=
-  G.Mna.map (((p : G.O) ^ G.e) • LinearMap.id) ≤ G.M ∧ G.M ≤ G.Mna
 
 def TrivStab : Prop := ∀ i, (G.lev i).TrivStab
 

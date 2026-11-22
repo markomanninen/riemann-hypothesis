@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.EquivariantKillsCyclicOfZero
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.EquivariantKillsCyclicOfZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -188,7 +192,8 @@ theorem equivariant_injective_of_cyclic (D : Formalism.BasicNotions.D7) (h2 : ad
       H (EG a b y) = (t + (((a : ℕ) : K) - ((b : ℕ) : K))) • EG a b y := by
     intro a b y t hy
     have e1 : ∑ c : Fin n, ((c : ℕ) : K) • EG a b (EG c c y) = EG a b (H y) := by
-      rw [hHapp, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hHapp, map_sum]
       simp only [map_smul]
     have e2 : ∑ c : Fin n, ((c : ℕ) : K) • (if c = a then EG c b y else 0) =
         ((a : ℕ) : K) • EG a b y := by
@@ -239,7 +244,7 @@ theorem equivariant_injective_of_cyclic (D : Formalism.BasicNotions.D7) (h2 : ad
     obtain ⟨r, rfl⟩ := Submodule.mem_span_singleton.mp hx
     have hz0 : z ∈ Module.End.eigenspace H h0 := by
       rw [Module.End.mem_eigenspace_iff]
-      rw [map_add, map_smul, Hg0, smul_add, smul_comm h0 r g0] at hw
+      rw [map_add (f := _), map_smul, Hg0, smul_add, smul_comm h0 r g0] at hw
       exact add_left_cancel hw
     have hz' : z = 0 := (Submodule.mem_bot K).mp
       ((Module.End.eigenspaces_iSupIndep H h0).le_bot (Submodule.mem_inf.mpr ⟨hz0, hz⟩))
@@ -258,7 +263,7 @@ theorem equivariant_injective_of_cyclic (D : Formalism.BasicNotions.D7) (h2 : ad
   have hHw : H w = h0 • w := by
     have e : H w - h0 • w = h0 • w' - H w' := by
       have h := congrArg H hsum
-      rw [map_add, Hg0, ← hsum, smul_add] at h
+      rw [map_add (f := _), Hg0, ← hsum, smul_add] at h
       rw [sub_eq_sub_iff_add_eq_add, h, add_comm]
     have h1 : H w - h0 • w ∈ LinearMap.ker F := sub_mem (Hmem _ hWs w hw) (Submodule.smul_mem _ _ hw)
     have h2' : H w - h0 • w ∈ W' := by

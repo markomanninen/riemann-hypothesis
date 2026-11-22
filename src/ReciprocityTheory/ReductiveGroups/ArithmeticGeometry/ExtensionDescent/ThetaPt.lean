@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.BaseOver
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.BaseOver
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -157,15 +161,6 @@ def IsPullSec (L : LB A.left) (a : ℤ) {T T' : Over S} (h : T' ⊗ A ⟶ T ⊗ 
 def InVV (P : PolAV S) (N m : ℕ) {T : Over S} (s : LB.Sec (LPow P.A P.L N T)) : Prop :=
   ∀ p : T.left, ∃ V : T.left.Opens, p ∈ V ∧ ∃ sV : LB.Sec (LPow P.A P.L N (overRes V)),
     IsPullSec P.A P.L N (overResι V ▷ P.A) (whiskerRight_snd _ _) s sV ∧ InVVOver P N m sV
-
-def InVVw (P : PolAV S) (N m : ℕ) {T : Over S} {I : Type} (h : I → (T ⟶ P.A))
-    (χ : I → Γ(T.left, ⊤)ˣ) (s : LB.Sec (LPow P.A P.L N T)) : Prop :=
-  Odd N ∧ IsUnit (N : Γ(T.left, ⊤)) ∧ InVV P N m s ∧
-    ∀ p : T.left, ∃ V : T.left.Opens, p ∈ V ∧ ∃ sV : LB.Sec (LPow P.A P.L N (overRes V)),
-      IsPullSec P.A P.L N (overResι V ▷ P.A) (whiskerRight_snd _ _) s sV ∧
-      ∀ (i : I) (U : ThetaGrp P.A P.L N (overRes V)) (s' : LB.Sec (LPow P.A P.L N (overRes V))),
-        SymLift P.A P.L N N (overResι V ≫ h i) U → IsActOf P.A P.L N U sV s' →
-          ∀ j, s'.f j = liftFun P.A _ (unitRes V (χ i) : Γ((overRes V).left, ⊤)) * sV.f j
 
 def IsEvT (P : PolAV S) (N : ℕ) {T : Over S} {I : Type} (x : I → (T ⟶ P.A))
     (τ : ∀ i, LB.Gen (LB.LinComb P.L (Y := T.left) (K := Fin 1) (fun _ => (x i).left) (fun _ => (N : ℤ))))

@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.LocalUnitCase.UnitaryIdeleSplitPlaceSection
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.PlaceBetween
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.CLocConjAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.UnderChosenPlaceAndIsSplitAtOfDecompLe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.PlaceEmbeddingsBijectiveInfinitePlaces
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsFixedVectorOfLocalFixedVectors
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsTensorDualEmbeddingOfHasWeightAt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.LocalUnitCase.UnitaryIdeleSplitPlaceSection
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.PlaceBetween
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.CLocConjAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.UnderChosenPlaceAndIsSplitAtOfDecompLe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.PlaceEmbeddingsBijectiveInfinitePlaces
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsFixedVectorOfLocalFixedVectors
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsTensorDualEmbeddingOfHasWeightAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -159,13 +163,13 @@ section U
 
 variable {l : ℕ} [Fact l.Prime] {L Ω : Type} [Field L] [NumberField L] [IsCMField L] [Field Ω] [Algebra L Ω] [IsAlgClosure L Ω]
 
-variable (n : ℕ) (s : HidaSetting l L Ω) in
 
+variable (n : ℕ) (s : HidaSetting l L Ω) in
 private def kS : Subgroup (UA L n) :=
-  GlobalTheory.UnitaryBC.finU L n ⊓ (⨅ (u : Plc L) (_ : u.under (𝓞 (Lp L)) ∉ s.S), (KO (u.adicCompletion L) (Fin n)).comap (cLoc u)) ⊓
+  GlobalTheory.UnitaryBC.finU (E := L) (n := n) ⊓ (⨅ (u : Plc L) (_ : u.under (𝓞 (Lp L)) ∉ s.S), (KO (u.adicCompletion L) (Fin n)).comap (cLoc u)) ⊓
     ⨅ (v : Plc (Lp L)) (_ : v ∈ s.S), (cLoc (s.w v)).ker
 
-private theorem mem_kS {n : ℕ} {s : HidaSetting l L Ω} {k : UA L n} : k ∈ kS n s ↔ k ∈ GlobalTheory.UnitaryBC.finU L n ∧
+private theorem mem_kS {n : ℕ} {s : HidaSetting l L Ω} {k : UA L n} : k ∈ kS n s ↔ k ∈ GlobalTheory.UnitaryBC.finU (E := L) (n := n) ∧
     (∀ u : Plc L, u.under (𝓞 (Lp L)) ∉ s.S → cLoc u k ∈ KO (u.adicCompletion L) (Fin n)) ∧
     ∀ v ∈ s.S, cLoc (s.w v) k = 1 := by
   simp only [kS, Subgroup.mem_inf, Subgroup.mem_iInf, Subgroup.mem_comap, MonoidHom.mem_ker, and_assoc]
@@ -190,7 +194,7 @@ private theorem kS_vec {n : ℕ} {s : HidaSetting l L Ω} (V : s.Lev) (hV : V.S'
     ∃ φ ∈ σ, φ ≠ 0 ∧ ∀ k ∈ kS n s, RU L n k φ = φ := by
   obtain ⟨hund, hspl⟩ := UpperTheory.under_chosen_place_and_isSplitAt_of_decomp_le l L Ω s
   have hsplit : ∀ w : Plc L, w.under (𝓞 (Lp L)) ∈ s.S → IsSplitAt w := fun w hw => hspl w (V.split _ (hV ▸ hw))
-  have hKO : ∀ u : Plc L, KO (u.adicCompletion L) (Fin n) = GlobalTheory.LFun.KGL u n :=
+  have hKO : ∀ u : Plc L, KO (u.adicCompletion L) (Fin n) = GlobalTheory.LFun.KGL u (n := n) :=
     fun u => GlobalTheory.SmGL.SphCompletion.KO_completion u n
   have hT : ((fun w : Plc L => w.under (𝓞 (Lp L))) ⁻¹' s.S).Finite := by
     refine (hV ▸ V.fin : s.S.Finite).preimage' fun v _ => ?_
@@ -221,7 +225,7 @@ private theorem toGS_cmp {n : ℕ} {s : HidaSetting l L Ω} {k : Ga l L n} (hk :
   ⟨fun u => congrFun (congrArg Prod.fst hk) u, congrArg Prod.snd hk⟩
 
 private theorem KS_lift {n : ℕ} {s : HidaSetting l L Ω} (V : s.Lev) {k : Ga l L n} (hk : k ∈ KS n s) {x : UA L n}
-    (hx : x ∈ GlobalTheory.UnitaryBC.finU L n) (h1 : (away l L n).rangeRestrict x = k)
+    (hx : x ∈ GlobalTheory.UnitaryBC.finU (E := L) (n := n)) (h1 : (away l L n).rangeRestrict x = k)
     (h2 : ∀ v : V.frame.Vl, cLoc (s.w v.1) x = 1) : x ∈ kS n s := by
   obtain ⟨hk1, hk2⟩ := Subgroup.mem_inf.1 hk
   obtain ⟨c1, c2⟩ := toGS_cmp (MonoidHom.mem_ker.1 hk1)
@@ -258,7 +262,7 @@ private theorem vs_ne (hn : 1 ≤ n) (hV : V.S' = s.S) (Q : QData V) {c : Coef l
     VS V ι e ξ Q τ₀ σ ≠ ⊥ := by
   obtain ⟨φ, hφ, hφ0, hφK⟩ := kS_vec (n := n) V hV hσ hun
   obtain ⟨hfin, hbij⟩ := UpperTheory.placeEmbeddings_bijective_infinitePlaces l L Ω s V ι
-  have hcomm : ∀ x ∈ infU L n, ∀ k ∈ GlobalTheory.UnitaryBC.finU L n, ∀ ψ, RU L n k (RU L n x ψ) = RU L n x (RU L n k ψ) :=
+  have hcomm : ∀ x ∈ infU L n, ∀ k ∈ GlobalTheory.UnitaryBC.finU (E := L) (n := n), ∀ ψ, RU L n k (RU L n x ψ) = RU L n x (RU L n k ψ) :=
     fun x hx k hk ψ => by rw [GlobalTheory.DefU.RU_RU, GlobalTheory.DefU.RU_RU, GlobalTheory.DefU.fin_mul_inf hk hx]
   let M : Submodule ℂ (UA L n → ℂ) := σ ⊓ fixd (RU L n) (kS n s)
   let N : Submodule ℂ (Fin 1 → UA L n → ℂ) := M.comap (LinearMap.proj 0)
@@ -334,7 +338,7 @@ variable {l : ℕ} [Fact l.Prime] {L Ω : Type} [Field L] [NumberField L] [IsCMF
 private theorem toGS_sec (hb : Function.Bijective ((toGS n s).comp (GaS n s).subtype)) (p : GS n s) :
     toGS n s (secS n s p) = p := by
   unfold secS
-  rw [dif_pos hb]
+  rw [dite_eq_left hb]
   exact (MulEquiv.ofBijective _ hb).apply_symm_apply p
 
 private theorem toKT_eq (hb : Function.Bijective ((toGS n s).comp (GaS n s).subtype)) (u : Ub n s) {k : Ga l L n} (hk : k ∈ KS n s)

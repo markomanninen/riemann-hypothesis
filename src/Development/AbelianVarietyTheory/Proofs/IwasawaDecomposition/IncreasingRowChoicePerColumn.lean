@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.WeylLatDual
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WwCauchyBinet
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CauchyBinet.WwCauchyBinetMain
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualWeylEqSpanColProd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StandardWeylLatticesFockDual
-import Formalism.GradedWeylDivisibility.FinalB
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQHW
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQRowAct
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.WeylLatDual
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WwCauchyBinet
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CauchyBinet.WwCauchyBinetMain
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualWeylEqSpanColProd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StandardWeylLatticesFockDual
+public import Formalism.GradedWeylDivisibility.FinalB
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQHW
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQRowAct
+
+@[expose] public section
 
 open MvPolynomial
 

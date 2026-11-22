@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.CharacterGerms.RankMaximalSelfOfProjection
-import Formalism.LocalToGlobal.CharacterGerms.LinearPartUnitFrobenius
-import Formalism.LocalToGlobal.CharacterGerms.ConstantZeroMultiplicationPair
-import Formalism.LocalToGlobal.CharacterGerms.FunEqCoreHolds
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyEig2
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RankMaximalSelfOfProjection
+public import Formalism.LocalToGlobal.CharacterGerms.LinearPartUnitFrobenius
+public import Formalism.LocalToGlobal.CharacterGerms.ConstantZeroMultiplicationPair
+public import Formalism.LocalToGlobal.CharacterGerms.FunEqCoreHolds
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyEig2
+
+@[expose] public section
 
 set_option autoImplicit false
 

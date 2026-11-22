@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ZeroMemUnrHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ResKill
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.TotKill
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.NearLevel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ContinuousToTorsionBounded
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ZeroMemUnrHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ResKill
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.TotKill
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.NearLevel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ContinuousToTorsionBounded
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum UpperTheory.V.Bern UpperTheory.V.B4 UpperTheory.V.B5 UpperTheory.V.Odd
 

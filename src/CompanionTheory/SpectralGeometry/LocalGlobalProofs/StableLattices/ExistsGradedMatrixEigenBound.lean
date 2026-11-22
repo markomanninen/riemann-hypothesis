@@ -1,7 +1,15 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HsConjTranspose
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.KeepsMul
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HsConjTranspose
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ParabolicSubgroupEquality
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedEmbeddingToM
+
+@[expose] public section
+
 open Matrix
-open CompanionTheory.RgExh.Dec CompanionTheory.RgExh.Dec.L ReciprocityTheory.ChartRestriction.DS GlobalTheory.CompanionTheory.PSubFlag GlobalTheory.CompanionTheory.UGeo
+open CompanionTheory.RgExh.Dec ReciprocityTheory.ChartRestriction.DS GlobalTheory.CompanionTheory.PSubFlag GlobalTheory.CompanionTheory.UGeo
 
 noncomputable section
 
@@ -12,7 +20,7 @@ variable {n : ℕ}
 theorem aeval_intertwine {R : Type*} [Ring R] [Algebra ℝ R] {X A B : R} (h : X * A = B * X)
     (p : Polynomial ℝ) : X * Polynomial.aeval A p = Polynomial.aeval B p * X := by
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => simp only [map_add, mul_add, add_mul, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), mul_add, add_mul, hp, hq]
   | monomial k a =>
     have hk : X * A ^ k = B ^ k * X := by
       induction k with
@@ -68,7 +76,7 @@ theorem algebraMap_eq (a : ℝ) : algebraMap ℝ (Matrix (Fin n) (Fin n) ℂ) a 
 theorem cj_aeval (h1 : Uᴴ * U = 1) (h2 : U * Uᴴ = 1) (d : Fin n → ℝ) (p : Polynomial ℝ) :
     Polynomial.aeval (cj U d) p = cj U (fun i => p.eval (d i)) := by
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => simp only [map_add, Polynomial.eval_add, hp, hq, cj_add]
+  | add p q hp hq => simp only [map_add (f := _), Polynomial.eval_add, hp, hq, cj_add]
   | monomial k a =>
     have hk : cj U d ^ k = cj U (fun i => d i ^ k) := by
       induction k with
@@ -133,19 +141,18 @@ theorem core {J G H : Matrix (Fin n) (Fin n) ℂ} (hJ : J * J = 1) (hHG : H * G 
     calc _ = Hᴴ * (H * G) * Gᴴ := by simp only [Matrix.mul_assoc]
       _ = (G * H)ᴴ := by rw [hHG, Matrix.mul_one, conjTranspose_mul]
       _ = 1 := by rw [hGH, conjTranspose_one]
-  have hnn : ∀ i, 0 ≤ lam i := fun i => by
+  have hHinj : Function.Injective H.mulVec := by
+    intro x y hxy
+    have h := congrArg (fun v => G *ᵥ v) hxy
+    simpa only [mulVec_mulVec, hGH, one_mulVec] using h
+  have hpos : ∀ i, 0 < lam i := fun i => by
     rw [hlam]
     open scoped ComplexOrder in
-    exact (Matrix.posSemidef_conjTranspose_mul_self H).eigenvalues_nonneg i
-  have hn0 : ∀ i, lam i ≠ 0 := fun i h0 => by
-    have hd := congrArg Matrix.det hTG
-    rw [Matrix.det_mul, hT.det_eq_prod_eigenvalues, ← hlam, Finset.prod_eq_zero (Finset.mem_univ i) (by simp [h0])] at hd
-    simp at hd
-  have hpos : ∀ i, 0 < lam i := fun i => lt_of_le_of_ne (hnn i) (hn0 i).symm
+    exact (Matrix.PosDef.conjTranspose_mul_self H hHinj).eigenvalues_pos i
   have hinv : cj U (fun i => (lam i)⁻¹) = G * Gᴴ := by
     have e : cj U (fun i => (lam i)⁻¹) * (Hᴴ * H) = 1 := by
       rw [hTc, cj_mul h1, ← cj_one (U := U) h2]
-      congr 1; funext i; exact inv_mul_cancel₀ (hn0 i)
+      congr 1; funext i; exact inv_mul_cancel₀ (hpos i).ne'
     calc _ = cj U (fun i => (lam i)⁻¹) * ((Hᴴ * H) * (G * Gᴴ)) := by rw [hTG, Matrix.mul_one]
       _ = _ := by rw [← Matrix.mul_assoc, e, Matrix.one_mul]
   have hHc : Hᴴ = J * G * J := by
@@ -193,12 +200,12 @@ theorem core {J G H : Matrix (Fin n) (Fin n) ℂ} (hJ : J * J = 1) (hHG : H * G 
     have hH : nsq (H *ᵥ y) = nsq (cj U (fun i => Real.sqrt (lam i)) *ᵥ y) := by
       refine nsq_eq_of_gram ?_ y
       rw [cj_conj, cj_mul h1, hTc]
-      congr 1; funext i; exact (Real.mul_self_sqrt (hnn i)).symm
+      congr 1; funext i; exact (Real.mul_self_sqrt (hpos i).le).symm
     rw [hPm, hPz, hH, nsq_cj h1, nsq_cj h1, nsq_cj h1, Finset.mul_sum, Finset.mul_sum,
       ← Finset.sum_add_distrib]
     refine Finset.sum_le_sum fun i _ => ?_
     have hc : 0 ≤ ‖(Uᴴ *ᵥ y) i‖ ^ 2 := by positivity
-    rw [Real.sq_sqrt (hnn i)]
+    rw [Real.sq_sqrt (hpos i).le]
     have hfa : a i = f (lam i) := by rw [ha]
     rcases ha3 i with h | h | h
     · have h' := hα i (by rw [← hfa, h])
@@ -214,8 +221,8 @@ theorem core {J G H : Matrix (Fin n) (Fin n) ℂ} (hJ : J * J = 1) (hHG : H * G 
 
 end GlobalTheory.CompanionTheory.UGeo.SpecGrad
 
-open GlobalTheory.CompanionTheory.UGeo.SpecGrad in
 
+open GlobalTheory.CompanionTheory.UGeo.SpecGrad in
 theorem GlobalTheory.CompanionTheory.UGeo.SpecGrad.grading_of_spectral :
     ∀ (n : ℕ) (ε : Fin n → Bool) (g : S7.UJ ε) (hT : ((S7.toM g⁻¹)ᴴ * S7.toM g⁻¹).IsHermitian) (f : ℝ → ℝ) (α β : ℝ), (∀ l : ℝ, 0 < l → (f l = -1 ∨ f l = 0 ∨ f l = 1) ∧ f l⁻¹ = - f l) → (∀ i, f (hT.eigenvalues i) = -1 → α ≤ hT.eigenvalues i) → (∀ i, f (hT.eigenvalues i) = 0 → β⁻¹ ≤ hT.eigenvalues i) → (∃ i, f (hT.eigenvalues i) ≠ 0) → ∃ A' : Matrix (Fin n) (Fin n) ℂ, IsGrad ε A' ∧ ∀ y : Fin n → ℂ, α * nsq (Pm A' *ᵥ y) + β⁻¹ * nsq (Pz A' *ᵥ y) ≤ nsq (S7.toM g⁻¹ *ᵥ y) := by
   intro n ε g hT f α β hf hα hβ hne

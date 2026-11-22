@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCrysLatOfTrivial
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InclWFrobIter
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBinomial
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TeichPow
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicPowerSeriesAlgHomActionLaws
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCrysLatOfTrivial
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InclWFrobIter
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBinomial
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TeichPow
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicPowerSeriesAlgHomActionLaws
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,8 +49,8 @@ def gamOf (W : LocWach PD LL O v n) {s : ℕ} (hs : W.s = s) : WGam PD LL O v n 
     gamK_eq_one := hs ▸ W.gamK_eq_one
     GKs_def := hs ▸ W.GKs_def }
 
-open Classical in
 
+open Classical in
 def levOf (W : LocWach PD LL O v n) (i : ZMod n) (ζ : LL) : LetA O n →ₐ[O] PowerSeries LL :=
   if ∃ j : ℕ, IsPrimitiveRoot ζ (PD.p ^ j) then W.lev i ζ else W.lev i 1
 
@@ -88,16 +92,16 @@ variable {W : LocWach PD LL O v n} (E : EtTie W RA RW inclR φR gR πA) {s : ℕ
 def ioOf : WIo (serOf W hs hp hL) RA RW inclR φR gR πA :=
   { E with ioE_φ := hI.1, ioE_γ := hI.2 }
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 def etOf : WEt (ioOf E hs hp hL hI) := { W, E with }
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 def clOf : WCl (etOf E hs hp hL hI) := { W, E with }
 
-open Classical in
 
+open Classical in
 def nOf (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) : Submodule (LetA O n) (W.DD T) :=
   if IsCrys PD T.ρ then W.N T else ⊥
 
@@ -107,8 +111,8 @@ theorem nOf_ind (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (p : Submodule 
     (h1 : p (W.N T)) (h0 : p ⊥) : p (nOf W T) := by
   unfold nOf; split_ifs <;> assumption
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 def latOf {Zl : Type} [CommRing Zl] (zl : PowerSeries Zl →+* LetA O n) (h1 : IsCrys PD W.one.ρ)
     (hP : ∀ T, @Module.Projective (PowerSeries Zl) _ ↥(W.N T) _ (Module.compHom _ zl)) :
     WN (etOf E hs hp hL hI) zl where
@@ -163,33 +167,33 @@ abbrev GamL := gamOf (H.W K s LL h) (H.W_s K s LL h)
 
 variable (hL : Laws H F h)
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 abbrev SerL := serOf (H.W K s LL h) (H.W_s K s LL h) (p_prime P K) hL.lev
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 abbrev IoL := ioOf (F.E K s LL h).tie (H.W_s K s LL h) (p_prime P K) hL.lev hL.io
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem ioW : IoW (Γ := GamL H h) (R := SerL H F h hL) (IoL H F h hL) := (F.E K s LL h).inertia_action_on_roots
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 abbrev EtL := etOf (F.E K s LL h).tie (H.W_s K s LL h) (p_prime P K) hL.lev hL.io
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 abbrev ClL := clOf (F.E K s LL h).tie (H.W_s K s LL h) (p_prime P K) hL.lev hL.io
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 abbrev LatL :=
   latOf (F.E K s LL h).tie (H.W_s K s LL h) (p_prime P K) hL.lev hL.io _ hL.one (H.W_proj K s LL h)
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem latL_N {T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)} (hT : IsCrys (P.PD K) T.ρ) :
     (LatL H F h hL).N T = (H.W K s LL h).N T := nOf_crys _ hT
 
@@ -217,8 +221,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
 def evL (W : LocWach PD L O v n) (i : ZMod n) (ζ : L) : O⟦X⟧ →ₐ[O] L⟦X⟧ :=
   (W.lev i ζ).comp (AlgHom.pi fun _ => AlgHom.id O O⟦X⟧)
 
-omit [CharZero L] [Algebra ℚ L] in
 
+omit [CharZero L] [Algebra ℚ L] in
 theorem lev_eq_evL (W : LocWach PD L O v n) (i : ZMod n) (ζ : L) (a : LetA O n) :
     W.lev i ζ a = evL W i ζ (a i) := by
   have := W.lev_letter i ζ (a - fun _ => a i) (by simp)
@@ -228,7 +232,7 @@ theorem lev_eq_evL (W : LocWach PD L O v n) (i : ZMod n) (ζ : L) (a : LetA O n)
 theorem evL_X (W : LocWach PD L O v n) (i : ZMod n) {ζ : L} (h : ∃ j : ℕ, IsPrimitiveRoot ζ (PD.p ^ j)) :
     evL W i ζ X = C ζ * exp L - 1 := by
   obtain ⟨E, h1, h2, h3⟩ := W.lev_π i ζ h
-  have : E = exp L := ode_unique 1 (by simpa using h2) (by simpa using derivative_exp L) (by simpa using h1)
+  have : E = exp L := PowerSeries.exp_unique_of_derivative_eq_self (by simpa using h2) (by simpa using h1)
   rw [← this, ← h3, add_sub_cancel_left]
   rfl
 
@@ -276,20 +280,12 @@ theorem levLaws : LevLaws (H.W K s LL h) := by
 
 theorem laws : Laws H F h := by
   have : FiniteDimensional ℚ_[l] ↥LL.1 := LL.2
+  set_option synthInstance.maxHeartbeats 200000 in
   exact ⟨levLaws H h, ⟨fun e => GlobalTheory.TorsionBoundCompare.ioE_φ _ Subtype.val_injective e,
     fun g e => GlobalTheory.TorsionBoundCompare.ioE_γ _ Subtype.val_injective g e⟩,
     GlobalTheory.TrivCrys.isCrys_lat_of_trivial _ (H.W K s LL h).one_triv⟩
 
-set_option maxHeartbeats 1000000 in
 
-example : (LatL H F h (laws H F h)).N (H.W K s LL h).one = (H.W K s LL h).N (H.W K s LL h).one :=
-  latL_N H F h _ (laws H F h).one
-
-set_option maxHeartbeats 1000000 in
-
-example (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)) :
-    (EtL H F h (laws H F h)).φD T = (H.W K s LL h).φD T ∧ (ClL H F h (laws H F h)).cl T = (H.W K s LL h).cl T :=
-  ⟨rfl, rfl⟩
 
 end Holds
 

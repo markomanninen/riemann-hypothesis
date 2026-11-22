@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.StatementA
+module
+
+public import Formalism.GradedWeylDivisibility.StatementA
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -20,7 +24,7 @@ theorem lsat_map_colAddGen {R S : Type*} [CommRing R] [CommRing S] (φ : R →+*
   next a =>
     simp [colAddGen]
   next p q hp hq =>
-    simp only [map_add, hp, hq]
+    simp only [map_add (f := _), hp, hq]
   next p v hp =>
     simp only [map_mul, hp, map_X]
     congr 1

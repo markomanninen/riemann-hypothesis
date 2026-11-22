@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChebotarevDegreeOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChebotarevDegreeOne
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual UpperTheory.V.ZK
 
@@ -17,7 +21,8 @@ theorem root_eq_one {R : Type} [CommRing R] [IsDomain R] (P : Ideal R) (q : ℕ)
     rw [← map_one (Ideal.Quotient.mk P), Ideal.Quotient.eq]
     exact h1
   have h3 := congrArg (Ideal.Quotient.mk P) h0
-  simp only [map_sum, map_pow, h2, one_pow, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_pow, h2, one_pow, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one,
     map_zero] at h3
   rw [← Ideal.Quotient.eq_zero_iff_mem, map_natCast]
   exact h3
@@ -38,8 +43,8 @@ theorem val_le (B : ValuationSubring Ω) (x : 𝓞 F) : B.valuation (algebraMap 
   have hz : IsIntegral ℤ (algebraMap F Ω (x : F)) := x.isIntegral_coe.map (algebraMap F Ω).toIntAlgHom
   exact (Valuation.integer.integers B.valuation).mem_of_integral hz.tower_top
 
-omit [NumberField F] in
 
+omit [NumberField F] in
 theorem frob_fix {v : HeightOneSpectrum (𝓞 F)} {B : ValuationSubring Ω} (hB : IsPlaceOver B v) {N : ℕ} (hN : N ≠ 0)
     {σ : G F Ω} (hσ : IsFrob B N σ) {q : ℕ} (hq0 : q ≠ 0) (hq : (q : 𝓞 F) ∉ v.asIdeal) {ζ : 𝓞 F}
     (hζ : IsPrimitiveRoot ζ q) {β : F} {x : Ω} (hx : x ^ q = algebraMap F Ω β) {a b t : 𝓞 F}

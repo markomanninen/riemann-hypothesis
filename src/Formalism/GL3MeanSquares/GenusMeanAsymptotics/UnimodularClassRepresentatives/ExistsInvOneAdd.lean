@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsLocUnif
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsLocUnif
+
+@[expose] public section
 
 open Matrix
 
@@ -17,7 +21,7 @@ theorem Cayley.exists_det_one_add (hS : IsLocUnif S ϖ) {M : Matrix n n K} (hM :
     ext i j
     by_cases h : i = j <;> simp [h, ϖ₀]
   rw [hmap, ← RingHom.map_det, Matrix.det_one_add_smul ϖ₀ M₀]
-  simp only [map_add, map_mul, map_one, map_pow, Subring.coe_subtype]
+  simp only [map_add (f := _), map_mul, map_one, map_pow, Subring.coe_subtype]
   simp only [Subring.coe_add, Subring.coe_mul, ϖ₀]
   ring
 

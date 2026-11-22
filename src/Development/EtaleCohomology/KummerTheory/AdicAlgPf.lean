@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.AdicDegPf
+module
+
+public import Development.EtaleCohomology.KummerTheory.AdicDegPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -35,7 +39,8 @@ theorem adic_decomp [Module.Finite ℤ_[l] M] : ∃ (r : ℕ) (c : Fin r → M) 
   · exact LinearIndependent.of_comp T.mkQ (hcomp ▸ b.linearIndependent)
   · intro x
     refine ⟨b.repr (T.mkQ x), x - ∑ s, b.repr (T.mkQ x) s • c s, by abel, hkill _ ?_⟩
-    rw [← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply, map_sub, map_sum]
     simp only [map_smul, hc]
     rw [b.sum_repr, sub_self]
 
@@ -52,7 +57,8 @@ theorem adic_qbasis {r : ℕ} (c : Fin r → M) (e : ℕ) (he : 0 < e) (hli : Li
   have hfτ : f τ = 0 := by
     have h1 : (e : ℚ_[l]) • f τ = 0 := by rw [Nat.cast_smul_eq_nsmul, ← map_nsmul, hτ, map_zero]
     exact (smul_eq_zero.mp h1).resolve_left (Nat.cast_ne_zero.mpr he.ne')
-  rw [map_add, hfτ, add_zero, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), hfτ, add_zero, map_sum]
   refine Submodule.sum_mem _ fun s _ => ?_
   rw [map_smul]
   exact Submodule.smul_of_tower_mem _ _ (Submodule.subset_span ⟨s, rfl⟩)
@@ -67,7 +73,8 @@ def levH (l : ℕ) [Fact l.Prime] (E : Spc) (n i : ℤ) (k : ℕ) : Hl l E n i �
 theorem lev_comb (l : ℕ) [Fact l.Prime] {E : Spc} {n i : ℤ} {r : ℕ} (c : Fin r → Hl l E n i) (a : Fin r → ℤ_[l]) (k : ℕ) :
     lev l (∑ s, a s • c s) k = comb (l ^ k) (fun s => lev l (c s) k) (fun s => PadicInt.toZModPow k (a s)) := by
   change levH l E n i k _ = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   rfl
 
 theorem AdicAlg_of : AdicAlg := by

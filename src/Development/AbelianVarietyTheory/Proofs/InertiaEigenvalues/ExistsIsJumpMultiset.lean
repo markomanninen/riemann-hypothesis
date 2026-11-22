@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.BlockJumpCount
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FinrankAddOfBiprod
-import Development.AbelianVarietyTheory.Counterexamples.HeckeCharacterExamples.SecondTwistCrystallineSmallOfJumpsOfCrys
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyThetaOnBdRPlusPeriodData
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsDRAndDdRLeFilZeroOfTwist
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteJumpsInfFiltration
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.BlockJumpCount
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FinrankAddOfBiprod
+public import Development.AbelianVarietyTheory.Counterexamples.HeckeCharacterExamples.SecondTwistCrystallineSmallOfJumpsOfCrys
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyThetaOnBdRPlusPeriodData
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsDRAndDdRLeFilZeroOfTwist
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteJumpsInfFiltration
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ theorem exists_eigen_line {Qp K LL : Type} [Field Qp] [Field K] [Field LL] [Alge
       have : a ⊗ₜ[Qp] c = a • ((1 : LL) ⊗ₜ[Qp] c) := by rw [smul_tmul', smul_eq_mul, mul_one]
       rw [this, smul_mul_assoc, hy, map_smul, smul_smul]
       simp [φ]
-    | add a b ha hb => rw [add_mul, ha, hb, map_add, add_smul]
+    | add a b ha hb => rw [add_mul, ha, hb, map_add (f := _), add_smul]
   have hu : ∀ c : K, ((1 : LL) ⊗ₜ[Qp] c) * (1 - e) = τ c • (1 - e) := by
     intro c
     have h1 : (1 : LL) ⊗ₜ[Qp] c - algebraMap LL _ (τ c) ∈ RingHom.ker φ := by
@@ -156,7 +160,7 @@ theorem multV_twist [Algebra.IsSeparable Qp K] (hs : ∃ s ∈ PD.Fil (-1), PD.�
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul v k => simp [hΨ, mulVdR, drTwistMap_apply, mul_assoc]
-    | add x y hx hy => simp only [map_add, mul_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), mul_add, hx, hy]
   obtain ⟨u, hu0, hu⟩ := exists_eigen_line τ
   have hE : DdRE PD ρ τ = Submodule.span LL {Ψ u} := by
     rw [← Set.image_singleton, ← Submodule.map_span]
@@ -176,7 +180,7 @@ theorem multV_twist [Algebra.IsSeparable Qp K] (hs : ∃ s ∈ PD.Fil (-1), PD.�
     rintro _ ⟨x, rfl⟩
     induction x using TensorProduct.induction_on with
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add a b ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+    | add a b ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
     | tmul v k =>
       refine ⟨v ⊗ₜ ⟨drTwistMap PD e k, ?_⟩, rfl⟩
       rw [drTwistMap_apply, ← Algebra.smul_def]
@@ -186,7 +190,7 @@ theorem multV_twist [Algebra.IsSeparable Qp K] (hs : ∃ s ∈ PD.Fil (-1), PD.�
     rintro _ ⟨⟨y, rfl⟩, z, hz⟩
     let q := ((PD.Fil ((e : ℤ) + 1)).restrictScalars Qp).mkQ
     have hq : Function.Injective (q ∘ₗ drTwistMap PD e) := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro k hk
       exact eq_zero_of_twist_mem PD hs e k ((Submodule.Quotient.mk_eq_zero _).1 hk)
     have h2 : LinearMap.lTensor LL (q ∘ₗ drTwistMap PD e) y = 0 := by
@@ -310,59 +314,5 @@ theorem cycZ_eq_chi {l : ℕ} [Fact l.Prime] {E Ω : Type} [Field E] [Field Ω] 
     ge_of_tendsto' (tendsto_pow_atTop_nhds_zero_of_lt_one (r := (l : ℝ)⁻¹) (by positivity)
       (inv_lt_one_of_one_lt₀ hl1)) fun m => by simpa using key m
   exact (sub_eq_zero.1 (norm_le_zero_iff.1 h0)).symm
-
-theorem blockJumps_at_all (D : D7) : blockJumps_at D := by
-  intro i r ρ π _ _ ⟨e, he⟩ w hw τ
-  haveI : IsAlgClosed D.nd.Om := IsAlgClosure.isAlgClosed D.host.E
-  let s : Br.G D.nbr i w hw → GE D.nd := fun g => decS D.nd w (Br.iota D.nbr i w hw g)
-  let f := Br.toLLK (D.nbr i w hw)
-  have hf : ∀ c, f (toK D.nd i c) = (D.nbr i w hw).toLL c := Br.toLLK_alg (D.nbr i w hw)
-  have hχ : ∀ (c : Fin D.R.t) g, (chiU D.nd i 1)⁻¹ g * chiU D.nd i ((c : ℕ) + 1) g =
-      (epsU D.nd i g)⁻¹ ^ (c : ℕ) := fun c g => by
-    have h := D.nd.chi_def i ((c : ℕ) + 1) (by omega) c.2
-    change (D.nd.chi i 1)⁻¹ g * D.nd.chi i ((c : ℕ) + 1) g = _
-    rw [h, MonoidHom.mul_apply, MonoidHom.inv_apply, inv_mul_cancel_left, Nat.cast_add, Nat.cast_one,
-      add_sub_cancel_right, MonoidHom.zpow_apply, zpow_neg, zpow_natCast, inv_pow]
-    rfl
-  obtain ⟨e', he'⟩ := split_map f (fun g => mapM (toK D.nd i) (rTwO D.nd i r π) (s g))
-    (fun g => mapM (toK D.nd i) (WpO D.nd i ρ π) (s g))
-    (fun g c => toK D.nd i (((epsU D.nd i (s g))⁻¹ ^ (c : ℕ) : (D.nd.O i)ˣ) : D.nd.O i)) e (fun g u => by
-      have h1 : ∀ {k : ℕ} (M : GE D.nd →* Matrix (Fin k) (Fin k) (D.nd.O i)) v,
-          (mapM (toK D.nd i) (twistM M (chiU D.nd i 1)⁻¹) (s g)).mulVec v =
-            toK D.nd i (((chiU D.nd i 1)⁻¹ (s g) : (D.nd.O i)ˣ) : D.nd.O i) •
-              (mapM (toK D.nd i) M (s g)).mulVec v := fun M v => by
-        rw [← Matrix.smul_mulVec]
-        congr 1
-        ext a b
-        exact map_mul (toK D.nd i) _ _
-      rw [rTwO, WpO, h1, h1, map_smul, he]
-      refine Prod.ext rfl (funext fun c => ?_)
-      simp only [← hχ, Units.val_mul, map_mul, mul_assoc]
-      rfl)
-  have hε : ∀ g, (D.nbr i w hw).toLL ((epsU D.nd i (s g) : (D.nd.O i)ˣ) : D.nd.O i) =
-      algebraMap ℚ_[D.nd.l i] (Br.LL D.nbr i w hw) ((Br.PD D.loc D.nbr i w hw).χ g : ℚ_[D.nd.l i]) := by
-    intro g
-    rw [Br.PD, (D.loc _).PD_χ, ← cycZ_eq_chi (D.nbr i w hw) (D.loc _) g]
-    exact congrArg Subtype.val ((D.nbr i w hw).eO_alg _)
-  have hM : ∀ {k : ℕ} (M : GE D.nd →* Matrix (Fin k) (Fin k) (D.nd.O i)) g v,
-      matRep (Br.loc D.nbr i w hw M) g v = ((mapM (toK D.nd i) M (s g)).map f).mulVec v := fun M g v => by
-    rw [show (mapM (toK D.nd i) M (s g)).map f = Br.loc D.nbr i w hw M g from
-      Matrix.ext fun a b => hf _]
-    rfl
-  refine jumps_of_split _ (GlobalTheory.SmallJumpExample.isField_bdR D _) ?_ _ _ e' (fun g u => ?_) τ
-  · obtain ⟨x, hx, hx1⟩ := GlobalTheory.ThetaTie.exists_inverse_fontaineElement_mem_fil_neg_one (D.locT (D.nd.l i))
-    refine ⟨x, ?_, by rw [Br.PD, (D.loc _).PD_ι, (D.loc _).period_datum_t_eq, hx1]⟩
-    exact ((D.locT _).fil _ _ _).2 (((D.locT _).fil _ _ _).1 hx)
-  · rw [hM, hM, he']
-    refine Prod.ext rfl (funext fun c => ?_)
-    refine congrArg (· * (e' u).2 c) ?_
-    rw [hf, Units.val_pow_eq_pow_val, map_pow, map_units_inv, hε]
-
-theorem blockJumpsF_all {eps : ℝ} (Fm : FamP eps) (CH : ℝ) : blockJumpsF Fm CH :=
-  ⟨0, fun _ _ _ => blockJumps_at_all _⟩
-
-theorem blockJumpsClosed_all (𝒞 : FamClass) : blockJumpsClosed 𝒞 :=
-  ⟨1, one_pos, fun _ _ _ => ⟨⟨0, fun _ => 0, fun _ => 0, fun _ => 0⟩,
-    fun _ _ _ _ => blockJumpsF_all _ _⟩⟩
 
 end GlobalTheory.BlockJumps

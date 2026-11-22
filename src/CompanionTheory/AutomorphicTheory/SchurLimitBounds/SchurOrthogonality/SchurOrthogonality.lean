@@ -1,4 +1,8 @@
-import CompanionTheory.AutomorphicTheory.SchurLimitBounds.SchurOrthogonality.URepSchur
+module
+
+public import CompanionTheory.AutomorphicTheory.SchurLimitBounds.SchurOrthogonality.URepSchur
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,10 +69,6 @@ def SqInt (μ : Measure G) (π : UnitaryRep G H) : Prop := ∀ v w : H, MemLp (f
 def pairing (μ : Measure G) (π : UnitaryRep G H) (σ : UnitaryRep G K) (v w : H) (v' w' : K) : ℂ :=
   ∫ g, ⟪w, π g v⟫_ℂ * star ⟪w', σ g v'⟫_ℂ ∂μ
 
-theorem integrable_pairing {π : UnitaryRep G H} {σ : UnitaryRep G K} (hπ : SqInt μ π) (hσ : SqInt μ σ)
-    (v w : H) (v' w' : K) : Integrable (fun g => ⟪w, π g v⟫_ℂ * star ⟪w', σ g v'⟫_ℂ) μ :=
-  (hπ v w).integrable_mul (hσ v' w').star
-
 theorem integral_mul_right (f : G → ℂ) (h : G) :
     ∫ g, f (g * h) ∂μ = (Measure.modularCharacterFun h : ℝ) * ∫ g, f g ∂μ := by
   have e : Measure.map (· * h) μ = Measure.modularCharacterFun h • μ := by
@@ -123,8 +123,8 @@ theorem exists_op_left {π : UnitaryRep G H} {σ : UnitaryRep G K} (hπ : SqInt 
     rw [← inner_conj_symm, ← hA, ← integral_conj]
     unfold pairing
     congr 1
-    funext g
-    simp
+    funext x
+    simp [inner_conj_symm]
   refine ⟨A, fun h w => ?_, key⟩
   refine ext_inner_right ℂ fun w' => ?_
   rw [UnitaryRep.inner_map_left, ← key, ← key, ← pairing_left π σ v w v' _ h]
@@ -211,7 +211,8 @@ theorem schur_orthogonality {π : UnitaryRep G H} (hirr : π.IsIrreducible) (hπ
   ring
 
 theorem pairing_eq_zero {π : UnitaryRep G H} {σ : UnitaryRep G K} (hπi : π.IsIrreducible)
-    (hσi : σ.IsIrreducible) (hπ : SqInt μ π) (hσ : SqInt μ σ) (hne : ¬ π.IsEquivalent σ)
+    (hσi : σ.IsIrreducible) (hπ : SqInt μ π) (hσ : SqInt μ σ)
+    (hne : ¬ Nonempty (π.Equiv σ))
     (v w : H) (v' w' : K) : pairing μ π σ v w v' w' = 0 := by
   obtain ⟨A, hA, h⟩ := exists_op_left hπ hσ v v'
   rw [h, hπi.eq_zero_of_not_isEquivalent hσi hne hA]

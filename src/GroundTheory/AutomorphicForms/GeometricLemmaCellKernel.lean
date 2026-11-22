@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GeometricLemmaJacquetCell
-import GroundTheory.AutomorphicForms.InductionJacquet
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GeometricLemmaJacquetCell
+public import GroundTheory.AutomorphicForms.InductionJacquet
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

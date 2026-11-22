@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Model
@@ -11,7 +16,7 @@ lemma div_le_padicValNat_factorial (N p : ℕ) (hp : p.Prime) :
   have := Fact.mk hp
   rcases lt_or_ge N p with h | h
   · rw [Nat.div_eq_of_lt h]; exact Nat.zero_le _
-  · rw [padicValNat_factorial (b := Nat.log p N + 1) (Nat.lt_succ_self _)]
+  · rw [Nat.padicValNat_def, multiplicity_factorial (b := Nat.log p N + 1) (Nat.lt_succ_self _)]
     have h1 : 1 ∈ Finset.Ico 1 (Nat.log p N + 1) := by
       have := Nat.log_pos hp.one_lt h
       simp only [Finset.mem_Ico]; omega
@@ -31,7 +36,7 @@ lemma prod_pow_div_dvd_factorial (N : ℕ) :
     · intro p hp
       have hp' := (Finset.mem_filter.1 hp).2
       exact_mod_cast (pow_dvd_pow p (div_le_padicValNat_factorial N p hp')).trans
-        pow_padicValNat_dvd
+        (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
   exact_mod_cast this
 
 theorem MertensUpper.proof : MertensUpper.Statement := by

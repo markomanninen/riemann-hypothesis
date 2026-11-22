@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
+
+@[expose] public section
+
 open MeasureTheory Matrix Finset
 open scoped ContDiff ComplexConjugate InnerProductSpace
 open PositivityTheory.RgTw (Mat G)
@@ -48,14 +53,14 @@ theorem conv_eq_sum_of_kernels : LgFacts → ∀ (n : ℕ) [MeasurableSpace (G n
     rw [smul_mul_smul_comm]
   have hi : ∀ i ∈ (Finset.univ : Finset ι), Integrable
       (fun y : G n => ∑ j, (c i * c' j) • (ks i y.val * ks' j ((y⁻¹ : G n).val * x))) μ :=
-    fun i _ => integrable_finset_sum _ fun j _ => (hint i j).smul (c i * c' j)
+    fun i _ => MeasureTheory.integrable_finsetSum _ fun j _ => (hint i j).smul (c i * c' j)
   unfold conv
-  rw [hpt, integral_finset_sum _ hi]
+  rw [hpt, MeasureTheory.integral_finsetSum _ hi]
   refine Finset.sum_congr rfl fun i _ => ?_
   have hj : ∀ j ∈ (Finset.univ : Finset ι'), Integrable
       (fun y : G n => (c i * c' j) • (ks i y.val * ks' j ((y⁻¹ : G n).val * x))) μ :=
     fun j _ => (hint i j).smul (c i * c' j)
-  rw [integral_finset_sum _ hj]
+  rw [MeasureTheory.integral_finsetSum _ hj]
   exact Finset.sum_congr rfl fun j _ => integral_smul (c i * c' j) _
 
 end GlobalTheory.CompanionTheory.WaveMult

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.LiftLaSpec
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.LiftLaSpec
+
+@[expose] public section
 
 noncomputable section
 

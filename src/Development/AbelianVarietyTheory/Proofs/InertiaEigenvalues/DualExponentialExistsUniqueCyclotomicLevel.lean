@@ -1,20 +1,24 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOrbitPadicComplex
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormUnitPowSubOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFontaineThetaOnAinfStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamFilQuotientXiPowerAinfStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateInvariantsCyclotomicTwistStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicTwistCocycleCoboundaryStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.H1BallCocycleLogCyclotomicStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyThetaOnBdRPlusPeriodDataStatement
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOrbitPadicComplex
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormUnitPowSubOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFontaineThetaOnAinfStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamFilQuotientXiPowerAinfStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateInvariantsCyclotomicTwistStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicTwistCocycleCoboundaryStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.H1BallCocycleLogCyclotomicStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyThetaOnBdRPlusPeriodDataStatement
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
 
 noncomputable section
 
@@ -190,7 +194,7 @@ theorem Small.add {n k : ℕ} {x y : P.R.BdR} (hx : Small AI n k x) (hy : Small 
   obtain ⟨b, hb⟩ := hy
   refine ⟨a + b, ?_⟩
   convert add_mem ha hb using 1
-  rw [map_add, map_add]; ring
+  rw [map_add (f := _), map_add (f := _)]; ring
 
 theorem Small.sub {n k : ℕ} {x y : P.R.BdR} (hx : Small AI n k x) (hy : Small AI n k y) :
     Small AI n k (x - y) := by
@@ -257,7 +261,7 @@ theorem small_cob (u : GQ l → ℚ_[l]) (hu : Tendsto u (𝓝 1) (𝓝 1)) (hu1
   have h5 : Small AI n (m + k) (P.actQdR g (P.ιB (AI.ιA a)) - P.ιB (AI.ιA a)) := by
     refine ⟨x, ?_⟩
     have h6 := congrArg (fun w => P.ιB (AI.ιA w)) h4
-    simp only [map_sub, map_add, map_mul, map_pow, map_natCast] at h6
+    simp only [map_sub, map_add (f := _), map_mul, map_pow, map_natCast] at h6
     rw [act_ι, ← AI.ιA_act]
     have h7 := (h2 (AI.ξ ^ n * y)).2 (dvd_mul_right _ _)
     simp only [map_mul, map_pow] at h7
@@ -385,8 +389,8 @@ theorem th_tw (j : ℤ) (σ : GQ l) {y : P.R.BdR} (hy : y ∈ Fl P 0) :
   rw [th_q J _ (act_mem σ hy), J.θ_act σ y hy]
   rfl
 
-include T in
 
+include T in
 theorem graded {e : ℕ} {z : GQ l → ℚ_[l]}
     (hz : CocOn (Gj K s) (fun σ y => ((P.χQ σ ^ (-(e : ℤ)) : ℚ_[l]ˣ) : ℚ_[l]) * y) Set.univ z)
     (i : ℕ) {b : P.R.BdR} (hb : b ∈ Fl P 0)
@@ -404,7 +408,7 @@ theorem graded {e : ℕ} {z : GQ l → ℚ_[l]}
     congr 1
     refine (t_unit.pow i).mul_left_cancel ?_
     rw [mul_add, ← tw_act, ← hy' _ hg, ← hy' _ hh, ← hy' _ (mul_mem hg hh), hz.2.2 g hg h hh]
-    simp only [cB, map_mul, map_add, map_sub, mul_zpow, Units.val_mul, AlgEquiv.commutes,
+    simp only [cB, map_mul, map_add (f := _), map_sub, mul_zpow, Units.val_mul, AlgEquiv.commutes,
       AlgEquiv.mul_apply]
     ring
   refine ⟨y, fun σ hσ => ⟨hy σ hσ, hy' σ hσ⟩, cont_of_one
@@ -447,7 +451,7 @@ theorem descend {e : ℕ} {z : GQ l → ℚ_[l]}
       exact hβ σ hσ)
     rw [Nat.cast_succ]
     convert h2 using 1
-    rw [map_add, mul_add, tw_act, mul_sub, ← (hy σ hσ).2]
+    rw [map_add (f := _), mul_add, tw_act, mul_sub, ← (hy σ hσ).2]
     ring
 
 include T J hs in
@@ -469,7 +473,7 @@ theorem exists_exp {e : ℕ} {z : GQ l → ℚ_[l]}
       th_q J _ (om_mem α), J.θ_Om, J.θ_act σ x hx, hβ σ hσ]
     ring)
   convert h2 using 1
-  rw [map_add, mul_add, tw_act, mul_sub, mul_sub, ← (hy σ hσ).2, sub_self]
+  rw [map_add (f := _), mul_add, tw_act, mul_sub, mul_sub, ← (hy σ hσ).2, sub_self]
   simp only [cB, zpow_zero, Units.val_one, map_one]
   ring
 

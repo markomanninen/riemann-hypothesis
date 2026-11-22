@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.LeviCommutantWordReduction
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NegRightMulLetterShiftApply
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.LeviCommutantWordReduction
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NegRightMulLetterShiftApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -130,13 +134,13 @@ theorem rho_capWord {lev : Fin n → ℕ} {W : Type} [AddCommGroup W] [Module �
     obtain ⟨j, u⟩ := x
     simp only [Function.comp_apply, AlgHom.comp_apply, capWord, evCap, FreeAlgebra.lift_ι_apply, capLetter]
     by_cases hj : j < numLev lev
-    · rw [dif_pos hj]
+    · rw [dite_eq_left hj]
       simp only [capS]
       rw [qminor_reindex _ _ (blkE_injective lev j), ← AlgHom.comp_apply, qdet_map]
       congr 1
       funext p q
       exact hρ ⟨j, hj⟩ p q
-    · rw [dif_neg hj, map_one]
+    · rw [dite_eq_right hj, map_one]
       have hc : (blk lev j).card = 0 := by
         refine Finset.card_eq_zero.2 (Finset.filter_eq_empty_iff.2 fun a _ ha => hj ?_)
         rw [← ha]
@@ -156,7 +160,7 @@ theorem mem_range_capWord (lev : Fin n → ℕ) {y : UD (bd lev)}
     refine ⟨FreeAlgebra.ι ℂ ((i : ℕ), u - ((bd lev i : ℂ) - 1) / 2), ?_⟩
     change capWord lev (FreeAlgebra.ι ℂ _) = _
     simp only [capWord, FreeAlgebra.lift_ι_apply, capLetter]
-    rw [dif_pos i.2]
+    rw [dite_eq_left i.2]
     simp
   obtain ⟨z, hz⟩ := hle hy
   exact ⟨z, hz⟩

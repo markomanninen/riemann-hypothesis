@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowEqPowOfModEqSim
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowEqPowOfModEqSim
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.AV GlobalTheory.AV.AbVar GlobalTheory.PDivGroup GlobalTheory.Dieu GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKMid GlobalTheory.LKGeo GlobalTheory.LKRes
@@ -50,7 +55,7 @@ theorem val_eval_eq_one (c : AfP p) (u : ℕ → ℕ)
   have hsmall : Valued.v (AfP.eval v (l • β)) < 1 := by
     rw [map_nsmul, nsmul_eq_mul, map_mul]
     exact lt_of_le_of_lt (mul_le_of_le_one_right' (hβ v)) hlt
-  rw [e, map_add, map_natCast]
+  rw [e, map_add (f := _), map_natCast]
   rw [Valuation.map_add_eq_of_lt_left _ (by rw [hu]; exact hsmall), hu]
 
 theorem exists_mul_eq_one : ∀ (p : ℕ) [Fact p.Prime] (c : AfP p) (u : ℕ → ℕ),

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocallyFreeFiniteProjectiveBaseChange
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocallyFreeFiniteProjectiveBaseChange
+
+@[expose] public section
+
 open GlobalTheory.CompanionTheory.Ar.Num
 
 namespace PositivityTheory.Xgn.KernelLatticeBaseChange
@@ -31,7 +36,7 @@ theorem map_mem (T : A →ₗ[C] B) {S : Set A} {S' : Set B} (h : ∀ e ∈ S, T
     rw [map_smul]
     exact smul_mem hc (h e he)
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact AddSubgroup.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact AddSubgroup.add_mem _ hx hy
   | neg x _ hx => rw [map_neg]; exact AddSubgroup.neg_mem _ hx
 
 end Span
@@ -49,7 +54,8 @@ theorem exists_section {o Ω : Type} [CommRing o] [Field Ω] [Algebra o Ω] (R :
   choose z hz using hz
   refine ⟨∑ i, (φ i).smulRight (z i), fun e he heU => ?_⟩
   have h4 := congrArg ρ (hv e)
-  rw [h2 e heU, map_sum] at h4
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h2 e heU, map_sum] at h4
   simp only [map_smul] at h4
   have : (e, (∑ i, (φ i).smulRight (z i)) e) = ∑ i, φ i e • (ρ (v i : V), z i) := by
     ext
@@ -69,7 +75,8 @@ theorem exists_lift {ι κ : Type} [Fintype ι] (T : (ι → Ω) →ₗ[Ω] (κ 
   classical
   refine ⟨Fintype.linearCombination C fun x => bcMap Ω C κ (T (Pi.single x 1)), fun v => ?_⟩
   conv_rhs => rw [pi_eq_sum_univ' v]
-  rw [Fintype.linearCombination_apply, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Fintype.linearCombination_apply, map_sum, map_sum]
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [map_smul, map_smul, bc_apply, algebraMap_smul]
 
@@ -90,7 +97,7 @@ theorem key {o : Type} [CommRing o] [Algebra o C] (RC : Subalgebra o C) {ι κ :
       obtain ⟨u, hu, rfl⟩ := hx
       rw [hρc, h2 u hu]
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, hx, hy]
+    | add x y _ _ hx hy => rw [map_add (f := _), hx, hy]
     | smul c x _ hx => rw [map_smul, hx]
   let T : ((ι → C) × (κ → C)) →ₗ[C] ((ι → C) × (κ → C)) :=
     LinearMap.prod (ρc ∘ₗ LinearMap.fst C _ _)
@@ -106,7 +113,7 @@ theorem key {o : Type} [CommRing o] [Algebra o C] (RC : Subalgebra o C) {ι κ :
   · have := Δ.add_mem (Δ.sub_mem hgm hg') (hσ _ (h3 g hg) (h1 g))
     simpa using this
   · rw [hT]
-    simp only [Prod.map, hρc, hσc, map_add, map_sub]
+    simp only [Prod.map, hρc, hσc, map_add (f := _), map_sub]
 
 variable {F : Type} [Zero F] {n : ℕ}
 

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsLiftBirationalAmple
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGeneratedNonzeroSection
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenOnFibres
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsLiftBirationalAmple
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGeneratedNonzeroSection
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenOnFibres
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -74,11 +79,12 @@ theorem chartLat_var [DecidableEq K] (p : Σ k, ι k) : y p ∈ chartLat y (Pi.s
   rw [e, ← div_eq_mul_inv]
   exact Algebra.subset_adjoin ⟨p, rfl⟩
 
-open Classical in
 
+open Classical in
 theorem chartLat_form {g : MRing ι} {d : K → ℕ} (hg : IsMultiHomog g d) :
     aeval y g ∈ chartLat y (fun k => (d k : ℤ)) 1 := by
-  rw [g.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [g.as_sum, map_sum]
   refine AddSubgroup.sum_mem _ fun m hm => ?_
   rw [aeval_monomial, Finsupp.prod_fintype _ _ (fun _ => pow_zero _), algebraMap_int_eq, eq_intCast,
     ← zsmul_eq_mul]
@@ -124,7 +130,7 @@ theorem IsRatio.add {w w' : Ω} (hw : IsRatio z w) (hw' : IsRatio z w') : IsRati
   obtain ⟨d', g', h', hg', hh', h0', e'⟩ := hw'
   refine ⟨d + d', g * h' + h * g', h * h', GenOnFibres.homog_add (GenOnFibres.homog_mul hg hh')
     (GenOnFibres.homog_mul hh hg'), GenOnFibres.homog_mul hh hh', by simp [h0, h0'], ?_⟩
-  simp only [map_add, map_mul, e, e']
+  simp only [map_add (f := _), map_mul, e, e']
   ring
 
 theorem IsRatio.mul {w w' : Ω} (hw : IsRatio z w) (hw' : IsRatio z w') : IsRatio z (w * w') := by
@@ -147,8 +153,8 @@ end Ratios
 
 end LiftBirationalAmple
 
-open LiftBirationalAmple in
 
+open LiftBirationalAmple in
 theorem LiftBirationalAmple.proof (h : GeneratedNonzeroSection.Statement) : LiftBirationalAmple.Statement := by
   classical
   intro K _ _ ι _ _ Ω _ _ y D N c hvar hbir hc hample

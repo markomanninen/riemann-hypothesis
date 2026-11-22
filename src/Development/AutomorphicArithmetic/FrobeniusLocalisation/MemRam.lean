@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdFormula
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.LayerBot
+module
+
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdFormula
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.LayerBot
+
+@[expose] public section
 
 open UpperTheory.HF
 
@@ -70,12 +74,9 @@ theorem UpperTheory.HF.mem_ram :
     have hr : (Module.finrank ℚ H.E : ℝ) ≠ 0 := by
       have := Module.finrank_pos (R := ℚ) (M := H.E)
       positivity
-    have key := dvd_iff_padicValNat_ne_zero (p := l) hd
     simp only [HostRaw.ram, Nat.mem_primeFactors, HostRaw.vdH, Ne, div_eq_zero_iff, hr, or_false,
-      Nat.cast_eq_zero]
-    rw [Ne] at key
-    rw [← key]
-    tauto
+      Nat.cast_eq_zero, Nat.padicValNat_def, hl, hd, not_false_eq_true, true_and, and_true]
+    exact dvd_iff_multiplicity_ne_zero (p := l) hd
   have hlow : l ∈ H.ram → 1 - 1 / (H.el l : ℝ) ≤ H.vdH l := by
     intro hram
     have hpos : 0 < e := hdvdE.1 (hB.1 (hC.1 hram))

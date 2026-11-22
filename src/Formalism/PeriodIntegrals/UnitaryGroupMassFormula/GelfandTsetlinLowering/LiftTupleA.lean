@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftDefs
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LRowdivLemmas
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftDefs
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LRowdivLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,8 @@ theorem rowGen_gmin {r c m : ℕ} (a b : Fin r) (ρ : Fin m → Fin r) (κ : Fin
   rw [Finset.sum_comm, Finset.powerset_univ]
   refine Finset.sum_congr rfl fun S _ => ?_
   split_ifs with hS
-  · rw [h2, map_sum, Finset.mul_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun σ _ => ?_
     have hBS : ∏ i ∈ S, B σ i =
         Polynomial.X ^ S.card * Polynomial.C (∏ i ∈ S, (X (a, κ (σ i)) : MvPolynomial (Fin r × Fin c) ℤ)) := by
@@ -178,7 +183,7 @@ theorem rowDiv_prod {r c n K : ℕ} (e : Fin n → Fin r) (sz : Fin K → ℕ)
   classical
   unfold rowDiv
   rw [map_mul, hC, map_prod, Finset.prod_congr rfl (fun k _ => hG k a b (I k)), Fintype.prod_sum,
-    Finset.mul_sum, Polynomial.finset_sum_coeff]
+    Finset.mul_sum, Polynomial.finsetSum_coeff]
   refine Finset.sum_congr rfl fun F _ => ?_
   rw [Finset.prod_ite_zero]
   by_cases hA : ∀ k ∈ (Finset.univ : Finset (Fin K)), ∀ p ∈ F k, I k p = b
@@ -188,7 +193,7 @@ theorem rowDiv_prod {r c n K : ℕ} (e : Fin n → Fin r) (sz : Fin K → ℕ)
         Polynomial.monomial (∑ k, (F k).card) (C0 * ∏ k, G k (upd (I k) (F k) a)) by
       rw [← Polynomial.C_mul_X_pow_eq_monomial, map_mul]
       ring]
-    rw [Polynomial.coeff_monomial]
+    rw [Polynomial.coeff_monomial_apply]
     have hA' : ∀ k, ∀ p ∈ F k, I k p = b := fun k => hA k (Finset.mem_univ k)
     by_cases hs : ∑ k, (F k).card = t
     · rw [if_pos hs, if_pos ⟨hA', hs⟩]
@@ -222,16 +227,17 @@ theorem rowDiv_comb {r c n K : ℕ} (e : Fin n → Fin r) (sz : Fin K → ℕ)
   · unfold rowDiv
     simp
   · intro f g hf hg
-    rw [map_add, map_add, map_add]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _)]
     unfold rowDiv at hf hg ⊢
-    rw [map_add, Polynomial.coeff_add, hf, hg]
+    rw [map_add (f := _), Polynomial.coeff_add, hf, hg]
   · intro J c
     unfold tlin
     rw [Finsupp.linearCombination_single, Finsupp.linearCombination_single, map_smul, hsm,
       rowDiv_prod e sz G hG C0 a b hC t J]
     congr 1
     unfold tmat
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun F _ => ?_
     split_ifs
     · rw [Finsupp.linearCombination_single, one_smul]
@@ -254,9 +260,7 @@ theorem applyWord_comb {r c n K : ℕ} (e : Fin n → Fin r) (sz : Fin K → ℕ
   | x :: w, hw, d => by
     have hx : x.1 ≠ x.2.1 := hw x List.mem_cons_self
     have hw' : OffDiag w := fun y hy => hw y (List.mem_cons_of_mem _ hy)
-    show rowDiv ℤ (e x.1) (e x.2.1) x.2.2 (applyWord ℤ (w.map fun x => (e x.1, e x.2.1, x.2.2))
-        (Finsupp.linearCombination ℤ (fun J => C0 * ∏ k, G k (J k)) d)) = _
-    rw [applyWord_comb e sz G hG C0 hC w hw' d, rowDiv_comb e sz G hG C0 x.1 x.2.1 (hC _ _ hx)]
-    rfl
+    rw [List.map_cons, applyWord_cons, twd, LinearMap.comp_apply,
+      applyWord_comb e sz G hG C0 hC w hw' d, rowDiv_comb e sz G hG C0 x.1 x.2.1 (hC _ _ hx)]
 
 end PI.WGL.LTA

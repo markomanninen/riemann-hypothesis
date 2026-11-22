@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.FrobeniusOrbits.Statement
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Galois
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.CoprimeTwoPow
-import Formalism.TameInertiaTowers.TowerFieldFoundations
+module
+
+public import Mathlib
+public import Formalism.FrobeniusOrbits.Statement
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Galois
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.CoprimeTwoPow
+public import Formalism.TameInertiaTowers.TowerFieldFoundations
+
+@[expose] public section
 
 open NumberField IntermediateField Ideal
 open scoped Pointwise
@@ -180,7 +184,7 @@ theorem hPart_inertia (hqd : HypOdd q d) (h : IsLayer (e + 2) q d ζ a b) (p : �
     rw [hinv]
     exact hζint.pow _
   have hθint : IsIntegral ℤ (thE ζ a b) :=
-    (isIntegral_algebraMap_iff (algebraMap (hostE ζ a b) L).injective).mp (hζint.add hζiint)
+    (isIntegral_algebraMap_iff ).mp (hζint.add hζiint)
   obtain ⟨zz, hzz⟩ : ∃ z : 𝓞 L, (z : L) = ζ := ⟨⟨ζ, hζint⟩, rfl⟩
   obtain ⟨tt, htt⟩ : ∃ t : 𝓞 (hostE ζ a b), (t : hostE ζ a b) = thE ζ a b := ⟨⟨_, hθint⟩, rfl⟩
   have hth : ((thE ζ a b : hostE ζ a b) : L) = ζ + ζ⁻¹ := rfl
@@ -204,7 +208,7 @@ theorem hPart_inertia (hqd : HypOdd q d) (h : IsLayer (e + 2) q d ζ a b) (p : �
   have hrel : zq ^ n + zq ^ ((2 ^ (e + 2) - 1) * n) = zq + zq ^ (2 ^ (e + 2) - 1) := by
     have h0 := Ideal.Quotient.eq_zero_iff_mem.mpr hmemQ
     rw [heq] at h0
-    simp only [map_sub, map_add, map_pow, hzq] at h0
+    simp only [map_sub, map_add (f := _), map_pow, hzq] at h0
     linear_combination h0
   have hzzN : zz ^ (2 ^ (e + 2)) = 1 := by
     ext1
@@ -369,7 +373,7 @@ theorem stab_two_sgn (hqd : HypOdd q d) (hd16 : d % 16 = 7) (h : IsLayer (e + 2)
           | rfl
           | push_cast; rfl
           | simp
-      rw [e1, e2, hωv, map_div₀, map_add, map_one, hσb, map_ofNat]
+      rw [e1, e2, hωv, map_div₀, map_add (f := _), map_one, hσb, map_ofNat]
       ring
     have hsmul : ∀ z, σ • z ∈ P ↔ z ∈ P := smul_mem_iff_of_stab σ P hσ
     have hprodP : ω * (1 - ω) ∈ P := by
@@ -613,7 +617,5 @@ theorem hostDecompConj : HostDecompConj := by
       exact absurd hval (by decide)
     · rw [h1, Units.val_neg, Units.val_one, map_neg, map_one] at hval
       exact absurd hval (by decide)
-
-theorem hostDecompBoth : HostDecomp ∧ HostDecompConj := ⟨hostDecomp, hostDecompConj⟩
 
 end Formalism.FrobeniusOrbits

@@ -1,4 +1,8 @@
-import Formalism.SatakeDualWeyl.StatementB
+module
+
+public import Formalism.SatakeDualWeyl.StatementB
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,8 @@ theorem hform_gram {K : Type} [Field K] [StarRing K] {n : Type} [Fintype n] [Dec
     funext k
     simp [Finset.sum_apply, Pi.single_apply]
   conv_lhs => rw [hx x, hx y]
-  simp only [map_sum, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, map_smul, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, map_smul, smul_eq_mul,
     Finset.mul_sum]
   unfold Formalism.UG.hform Formalism.UG.gram
   conv_lhs => rw [Finset.sum_comm]
@@ -81,45 +86,5 @@ theorem hermitian_lattice_correspondence_holds : Formalism.UG.HermBridge := by
       hform_gram h ((g : Matrix n n K) *ᵥ Pi.single i 1) ((g : Matrix n n K) *ᵥ Pi.single j 1),
       hform_gram h (Pi.single i 1) (Pi.single j 1), hform_mulVec, hform_single, hform_single] at this
     exact this
-
-theorem hermitian_correspondence_surjective_holds : Formalism.UG.HermBridgeSurj := by
-  intro K _ _ n _ _ h u _
-  refine ⟨Matrix.GeneralLinearGroup.toLin.symm
-    ((LinearMap.GeneralLinearGroup.generalLinearEquiv K (n → K)).symm u), ?_⟩
-  unfold Formalism.UG.glEquiv
-  simp
-
-theorem stabilizer_group_map_holds : Formalism.UG.StabGmap := by
-  intro K _ R _ _ n _ _ Λ g
-  unfold Formalism.UG.stabGL HermitianLatticesTheory.gmap
-  show (∀ x : n → K, x ∈ Λ ↔ (g : Matrix n n K) *ᵥ x ∈ Λ) ↔ _
-  constructor
-  · intro hg
-    ext y
-    rw [Submodule.mem_map]
-    constructor
-    · rintro ⟨x, hx, rfl⟩
-      show Formalism.UG.glEquiv g x ∈ Λ
-      rw [glEquiv_apply']
-      exact (hg x).mp hx
-    · intro hy
-      refine ⟨(Formalism.UG.glEquiv g).symm y, ?_, ?_⟩
-      · rw [hg, ← glEquiv_apply']
-        simpa using hy
-      · show Formalism.UG.glEquiv g ((Formalism.UG.glEquiv g).symm y) = y
-        simp
-  · intro hg x
-    constructor
-    · intro hx
-      rw [← hg, Submodule.mem_map]
-      exact ⟨x, hx, glEquiv_apply' g x⟩
-    · intro hx
-      rw [← hg, Submodule.mem_map] at hx
-      obtain ⟨z, hz, hzx⟩ := hx
-      have hzx' : Formalism.UG.glEquiv g z = (g : Matrix n n K) *ᵥ x := hzx
-      have hzx'' : Formalism.UG.glEquiv g z = Formalism.UG.glEquiv g x := by
-        rw [hzx', glEquiv_apply']
-      rw [← (Formalism.UG.glEquiv g).injective hzx'']
-      exact hz
 
 end Formalism.UG.P

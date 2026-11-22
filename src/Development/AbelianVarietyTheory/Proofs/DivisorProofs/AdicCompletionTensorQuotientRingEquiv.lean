@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing TensorProduct
 
@@ -96,7 +100,7 @@ theorem ker_psi [IsNoetherianRing A] (hs : Function.Surjective (algebraMap A B))
         rw [AdicCompletion.algebraMap_apply]; rfl
       rw [hm]
       exact Ideal.mul_mem_left _ _ (Ideal.mem_map_of_mem _ m.2)
-    | add a b ha hb => rw [map_add, map_add]; exact add_mem ha hb
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
   · rw [Ideal.map_le_iff_le_comap]
     intro a ha
     rw [Ideal.mem_comap, RingHom.mem_ker, psi_algebraMap, AdicCompletion.algebraMap_apply]
@@ -148,7 +152,7 @@ theorem theta_bijective [IsNoetherianRing A] (hs : Function.Surjective (algebraM
     intro t
     induction t using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => rw [map_add, map_add, ha, hb]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
     | tmul b x =>
       obtain ⟨a, rfl⟩ := hs b
       rw [theta, Algebra.TensorProduct.lift_tmul, Algebra.ofId_apply,

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsArchOne
-import Development.AbelianVarietyTheory.BlockTheory.PoincareCuspForms.SmallUnipotentElements
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LactMemDomOfIsom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsArchOne
+public import Development.AbelianVarietyTheory.BlockTheory.PoincareCuspForms.SmallUnipotentElements
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LactMemDomOfIsom
+
+@[expose] public section
+
 open NumberField Module ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.IndefiniteRowSideFullHecke.FrameWeightGapBounds GlobalTheory.ShareOn GlobalTheory.CuspEmb
 
 set_option autoImplicit false
@@ -25,9 +30,10 @@ theorem C_mem_nonZeroDivisors : ∀ (E : Type) [Field E] [NumberField E] [IsCMFi
   intro E _ _ _ r U C _ _ M D hD
   have key : ∀ p : Polynomial (HA M), p * Polynomial.C D = 0 → p = 0 := by
     intro p hp
-    ext i : 1
+    apply Polynomial.ext
+    intro i
     have hq : p.coeff i * D = 0 := by
-      have := congrArg (fun q => Polynomial.coeff q i) hp
+      have := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q i) hp
       simp only [Polynomial.coeff_mul_C, Polynomial.coeff_zero] at this
       exact this
     have hq' : ((p.coeff i : HA M) : C → M.dom → ℂ) * (D : C → M.dom → ℂ) = 0 := by

@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 namespace GlobalTheory.JR.OrbitProper
@@ -28,7 +33,8 @@ theorem conj_pow_GL (g : GL (Fin r) k) (A : Matrix (Fin r) (Fin r) k) (j : ℕ) 
 theorem Bm_sec (a : Inv r k) : Bm (sec a) = 1 := by
   ext i j
   simp only [Bm, sec, of_apply]
-  rw [companionMatrixOfCoeffs_pow_mulVec_first_basis a.1 j j.2, one_apply, Pi.single_apply]
+  rw [companionMatrixOfCoeffs_pow_mulVec_first_basis a.1 j j.2]
+  simp [Pi.single_apply, Matrix.one_apply]
 
 theorem Bm_act (g : GL (Fin r) k) (Y : Gl r k) :
     Bm (act g Y) = (g : Matrix (Fin r) (Fin r) k) * Bm Y := by
@@ -36,14 +42,14 @@ theorem Bm_act (g : GL (Fin r) k) (Y : Gl r k) :
   simp only [Bm, act, of_apply]
   rw [conj_pow_GL, mulVec_mulVec, mul_assoc _ _ (g : Matrix (Fin r) (Fin r) k), Units.inv_mul, mul_one,
     ← mulVec_mulVec]
-  simp [mul_apply, mulVec, dotProduct]
+  simp [Matrix.mul_apply, mulVec, dotProduct]
 
 theorem Cm_act (g : GL (Fin r) k) (Y : Gl r k) :
     Cm (act g Y) = Cm Y * ((g⁻¹ : GL (Fin r) k) : Matrix (Fin r) (Fin r) k) := by
   ext i j
   simp only [Cm, act, of_apply]
   rw [conj_pow_GL, vecMul_vecMul, ← mul_assoc, ← mul_assoc, Units.inv_mul, one_mul, ← vecMul_vecMul]
-  simp [mul_apply, vecMul, dotProduct]
+  simp [Matrix.mul_apply, vecMul, dotProduct]
 
 theorem Cm_sec (a : Inv r k) : Cm (sec a) = hankel a := by
   ext i j

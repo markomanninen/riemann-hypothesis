@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.FaceDSingle
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.KerOrb
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.FaceDSingle
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.KerOrb
+
+@[expose] public section
 
 open CategoryTheory UpperTheory.V.KH
 

@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.EvNatPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.ThValDescIn
-import Formalism.LocalToGlobal.ProjectiveLattices.CoreProofs
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.EvNatPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.ThValDescIn
+public import Formalism.LocalToGlobal.ProjectiveLattices.CoreProofs
+
+@[expose] public section
 
 noncomputable section
 

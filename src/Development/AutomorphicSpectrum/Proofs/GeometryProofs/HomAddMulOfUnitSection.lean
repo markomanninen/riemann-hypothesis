@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DerRingInjective
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DerRingInjective
+
+@[expose] public section
 
 noncomputable section
 

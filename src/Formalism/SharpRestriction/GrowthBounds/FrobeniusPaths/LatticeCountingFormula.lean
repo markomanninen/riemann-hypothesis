@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LiftedColumnOrder
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LiftedColumnOrder
+
+@[expose] public section
 
 noncomputable section
 

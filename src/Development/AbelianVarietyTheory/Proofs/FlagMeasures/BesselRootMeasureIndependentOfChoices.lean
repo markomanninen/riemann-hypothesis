@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RootMeasureTransportDoubleCoset
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RootMeasureTransportDoubleCoset
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,9 +30,15 @@ theorem ptEntry_symm : ∀ (bs : List (ℂ × ℕ)) (i j : ℕ), ptEntry bs i j 
 
 theorem ptEntry_row : ∀ (bs : List (ℂ × ℕ)), (∀ b ∈ bs, b.1 ≠ 0 ∧ 1 ≤ b.2) → ∀ i, i < (bs.map Prod.snd).sum →
     ∃ j, j < (bs.map Prod.snd).sum ∧ blockIdx bs j = blockIdx bs i ∧ ptEntry bs i j ≠ 0 ∧
-      ∀ j', j' ≠ j → ptEntry bs i j' = 0
-  | [], _, i, hi => by simp at hi
-  | (t, s) :: bs, h, i, hi => by
+      ∀ j', j' ≠ j → ptEntry bs i j' = 0 := by
+  intro bs
+  induction bs with
+  | nil =>
+    intro _ i hi
+    simp at hi
+  | cons b bs ih =>
+    rcases b with ⟨t, s⟩
+    intro h i hi
     have ht : t ≠ 0 := (h (t, s) (by simp)).1
     simp only [List.map_cons, List.sum_cons] at hi ⊢
     by_cases his : i < s
@@ -41,7 +51,10 @@ theorem ptEntry_row : ∀ (bs : List (ℂ × ℕ)), (∀ b ∈ bs, b.1 ≠ 0 ∧
       · intro j' hj'
         simp only [ptEntry]
         split_ifs <;> first | rfl | omega
-    · obtain ⟨j, h1, h2, h3, h4⟩ := ptEntry_row bs (fun b hb => h b (by simp [hb])) (i - s) (by omega)
+    · have hbs (b : ℂ × ℕ) (hb : b ∈ bs) : b.1 ≠ 0 ∧ 1 ≤ b.2 :=
+        h b (List.mem_cons_of_mem _ hb)
+      have hi' : i - s < (bs.map Prod.snd).sum := by omega
+      obtain ⟨j, h1, h2, h3, h4⟩ := ih hbs (i - s) hi'
       refine ⟨j + s, by omega, ?_, ?_, ?_⟩
       · simp only [blockIdx]
         rw [if_neg (by omega), if_neg his, Nat.add_sub_cancel, h2]
@@ -68,8 +81,9 @@ theorem ptEntry_inj : ∀ (bs bs' : List (ℂ × ℕ)), (∀ b ∈ bs, b.1 ≠ 0
     simp only [List.map_cons, List.sum_cons, List.map_nil, List.sum_nil] at e
     omega
   | (t, s) :: bs, (t', s') :: bs', h, h', e, H => by
-    obtain ⟨ht, hs⟩ : t ≠ 0 ∧ 1 ≤ s := h (t, s) (by simp)
-    obtain ⟨ht', hs'⟩ : t' ≠ 0 ∧ 1 ≤ s' := h' (t', s') (by simp)
+    have ht : t ≠ 0 := (h (t, s) (by simp)).1
+    have hs : 1 ≤ s := (h (t, s) (by simp)).2
+    have hs' : 1 ≤ s' := (h' (t', s') (by simp)).2
     simp only [List.map_cons, List.sum_cons] at e H
     have h0 := H 0 (s - 1) (by omega) (by omega)
     simp only [ptEntry] at h0
@@ -283,7 +297,8 @@ theorem map_lr {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (p : Point �
     funext q
     exact besselUnipotent_matrix_mul_three hz ha hx'.1 hb _ _ ((mem_rootPat p q.1).1 q.2).1
   rw [Measure.map_map (measurable_rootCoords z p) (continuous_lr a b).measurable, Measure.map_congr hae,
-    ← Measure.map_map hT.measurable (measurable_rootCoords z p), h1, Measure.map_smul, hT.map_eq]
+    ← Measure.map_map hT.measurable (measurable_rootCoords z p), h1,
+    Measure.map_smul c hT.measurable.aemeasurable, hT.map_eq]
 
 def Sg (r : ℕ) : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ := Matrix.diagonal fun b => (-1 : ℂ) ^ (r - b.val)
 
@@ -407,7 +422,7 @@ theorem eq_one_of_fix {z z' : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hz
       rw [fvec_apply_ge z _ i (by omega)]
       split_ifs with hl
       · simp only [T, Matrix.of_apply]
-        rw [dif_neg (by omega), mul_zero]
+        rw [dite_eq_right (by omega), mul_zero]
       · rw [zero_mul]
   rw [h8, ← Matrix.mul_assoc] at h3
   have h9 : Matrix.fromRows T (0 : Matrix (Fin (r + 1)) (Fin (2 * r + k + 1)) ℂ) = 0 := by
@@ -482,7 +497,9 @@ theorem conc_conj {P Q g : Mat k r} (hP : P ∈ Nset k r) (hQ : Q ∈ Nset k r) 
     (h0 : μ {x | Matrix.of x ∉ Rset k r g} = 0) :
     (μ.map (lr P⁻¹ P)) {x | Matrix.of x ∉ Rset k r (Q * g * P)} = 0 := by
   rw [Measure.map_apply (continuous_lr _ _).measurable (measurableSet_notR _)]
-  exact measure_mono_null (fun x hx hx' => hx (conj_mem' hP hQ hx')) h0
+  refine measure_mono_null (fun x hx => ?_) h0
+  show Matrix.of x ∉ Rset k r g
+  exact fun hx' => hx (conj_mem' hP hQ hx')
 
 theorem conc_lmul {g t : Mat k r} (hg : g ∈ GG k r) (ht : t ∈ Rset k r g) {μ : Measure (Mt k r)}
     (h0 : μ {x | Matrix.of x ∉ Rset k r g} = 0) : (μ.map (lr t 1)) {x | Matrix.of x ∉ Rset k r g} = 0 := by
@@ -493,7 +510,9 @@ theorem conc_lmul {g t : Mat k r} (hg : g ∈ GG k r) (ht : t ∈ Rset k r g) {�
     have := N.2.1 _ ht.2 _ hx.2
     simpa only [Matrix.mul_assoc, Matrix.nonsing_inv_mul_cancel_left _ _ (unit_det hg)] using this
   rw [Measure.map_apply (continuous_lr _ _).measurable (measurableSet_notR _)]
-  exact measure_mono_null (fun x hx hx' => hx (key _ hx')) h0
+  refine measure_mono_null (fun x hx => ?_) h0
+  show Matrix.of x ∉ Rset k r g
+  exact fun hx' => hx (key _ hx')
 
 theorem map_lr_lr (μ : Measure (Mt k r)) (a b c d : Mat k r) :
     (μ.map (lr a b)).map (lr c d) = μ.map (lr (c * a) (b * d)) := by

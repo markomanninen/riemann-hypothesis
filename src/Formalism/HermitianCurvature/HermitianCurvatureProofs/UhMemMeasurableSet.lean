@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbConvDDOfDecDD
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UhMeasurableSet
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselNeZeroOfCyclicOrbit
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbConvDDOfDecDD
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UhMeasurableSet
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselNeZeroOfCyclicOrbit
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,7 +77,7 @@ theorem dd_stable {ε : Fin (2 * r + k + 1) → Bool} {lam : Fin (2 * r + k + 1)
     rw [e]
     exact Submodule.subset_span ⟨g * h, hmm g hg h hh, rfl⟩
   | zero => simp
-  | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+  | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
   | smul a y _ hy => rw [map_smul]; exact Submodule.smul_mem _ a hy
 
 theorem l_of_be {H Wp : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]

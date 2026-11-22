@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,8 @@ theorem ctrl_apply (F : Fin m → X.Fn Ω (W.d + 1)) (g : Ga × Gp) (i : Fin m) 
 
 def Lat (Λ : Submodule O Ω) : Submodule O (Fin m → X.Fn Ω (W.d + 1)) where
   carrier := {F | ∀ i g k, X.unt m W F i g k ∈ Λ}
-  add_mem' h h' i g k := by rw [map_add]; exact add_mem (h i g k) (h' i g k)
+  add_mem' h h' i g k := by
+    simpa only [map_add, Pi.add_apply] using Λ.add_mem (h i g k) (h' i g k)
   zero_mem' i g k := by rw [map_zero]; exact zero_mem _
   smul_mem' c F h i g k := by
     rw [LinearMap.map_smul_of_tower]; exact Λ.smul_mem c (h i g k)
@@ -38,8 +43,8 @@ def Lat (Λ : Submodule O Ω) : Submodule O (Fin m → X.Fn Ω (W.d + 1)) where
 theorem mem_lat (Λ : Submodule O Ω) (F : Fin m → X.Fn Ω (W.d + 1)) :
     F ∈ X.Lat m W Λ ↔ ∀ i g k, X.unt m W F i g k ∈ Λ := Iff.rfl
 
-variable {m} in
 
+variable {m} in
 abbrev ClO (τ : X.Ub →* GL (Fin m) O) (U : Subgroup X.Ub) (c : ℕ) (φ : X.I.T →* Oˣ) :
     Submodule Ω (Fin m → X.Fn Ω (W.d + 1)) :=
   X.Cl ((Matrix.GeneralLinearGroup.map (algebraMap O Ω)).comp τ) W.ξ U c ((Units.map (algebraMap O Ω).toMonoidHom).comp φ)

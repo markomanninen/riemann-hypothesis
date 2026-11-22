@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LiftedColumnCongruence
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LiftedColumnCongruence
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TamagawaSpecialUnitary
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TamagawaSpecialUnitary
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory.DualIndex
@@ -103,7 +108,7 @@ theorem dual_step (M : Submodule (𝓞 F) V) (x : V) :
     · rintro ⟨h1, h2⟩ z hz
       obtain ⟨m, hm, w, hw, rfl⟩ := Submodule.mem_sup.1 hz
       obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hw
-      rw [map_add, LinearMap.map_smul_of_tower]
+      rw [map_add (f := _), LinearMap.map_smul_of_tower]
       exact add_mem (h2 m hm) (Submodule.smul_mem _ c h1)
   rw [e1, e2, AddSubgroup.inf_relIndex_right, AddSubgroup.relIndex_comap]
   refine inv_relIndex_dvd _ _ ?_
@@ -186,8 +191,8 @@ theorem mem_one_iff (z : F) : z ∈ (1 : Submodule (𝓞 F) F) ↔ IsIntegral �
 
 end GlobalTheory.DualIndex
 
-open GlobalTheory.DualIndex in
 
+open GlobalTheory.DualIndex in
 theorem GlobalTheory.abs_norm_det_gram_eq_relIndex : ∀ (F : Type) [Field F] [NumberField F] (V : Type) [AddCommGroup V] [Module F V] [Module (𝓞 F) V] [IsScalarTower (𝓞 F) F V] (n : ℕ) (b : Module.Basis (Fin n) F V) (B : LinearMap.BilinForm F V) (L : AddSubgroup V), B.IsSymm → B.Nondegenerate → (∀ i, b i ∈ L) → (∀ (a : 𝓞 F) x, x ∈ L → a • x ∈ L) → (∀ x ∈ L, ∀ y ∈ L, IsIntegral ℤ (B x y)) → |((Algebra.norm ℚ (Matrix.of fun i j => B (b i) (b j)).det : ℚ) : ℝ)| = (L.relIndex (AddSubgroup.closure {y | ∀ x ∈ L, IsIntegral ℤ (B x y)}) : ℝ) * ((Submodule.span (𝓞 F) (Set.range b)).toAddSubgroup.relIndex L : ℝ) ^ 2 := by
   intro F _ _ V _ _ _ _ n b B L hs hB hb hL hint
   classical

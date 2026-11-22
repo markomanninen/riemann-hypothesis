@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
-import Formalism.HarderNarasimhan.StatementPl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KawamataViehwegVanishingNumberFieldTwistStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChooseMulIntersectionNumberLeSectionDimStatement
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsLinearMapMultilinearMapBaseChange
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.RingKrullDimOfEtaleMvPolynomial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
+public import Formalism.HarderNarasimhan.StatementPl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KawamataViehwegVanishingNumberFieldTwistStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChooseMulIntersectionNumberLeSectionDimStatement
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsLinearMapMultilinearMapBaseChange
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.RingKrullDimOfEtaleMvPolynomial
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
@@ -36,7 +40,7 @@ theorem rankLow : Quoted → RankLow := by
   · rw [Nat.zero_sub, Nat.choose_eq_zero_of_lt hV.one_le, Nat.cast_zero, zero_mul]
     exact Int.natCast_nonneg _
   have hstr : strHom F G.Y = G.str := strHom_eq fun _ => rfl
-  have hproj : IsProjOver (strHom F G.Y) := hstr ▸ hV.proj
+  have hproj : IsProjOver (strHom F (X := G.Y)) := hstr ▸ hV.proj
   have hdim := topologicalKrullDim_le_of_smooth G.str G.D hV.smooth
   have hM : (tens G.K.bundle G.LA).IsLB := isLB_tens G.K.isLB G.isLBA
   let e : twist (GlobalTheory.structureModule G.Y) (tens G.K.bundle G.LA) ≅ LB.toMod (tens G.K.bundle G.LA) :=

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LamIdealOfNotPrimePow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LamIdealOfNotPrimePow
+
+@[expose] public section
 
 open Complex ArithmeticFunction MeasureTheory Filter Topology NumberField GlobalTheory.Hk GlobalTheory.Mem
 open scoped Classical
@@ -230,7 +234,7 @@ lemma conv_eq (F : Ideal (𝓞 K) → Ideal (𝓞 K) → ℝ) {n : ℕ} (hn : n 
       rintro rfl
       exact hC0 (zero_mul c)
     have hch : (if h : J ∣ J * c then Exists.choose h else 0) = c := by
-      rw [dif_pos (dvd_mul_right J c)]
+      rw [dite_eq_left (dvd_mul_right J c)]
       exact mul_left_cancel₀ hJ0 (Exists.choose_spec (dvd_mul_right J c)).symm
     have hNJ : 0 < Ideal.absNorm J := by
       apply Nat.pos_of_ne_zero
@@ -253,7 +257,7 @@ lemma conv_eq (F : Ideal (𝓞 K) → Ideal (𝓞 K) → ℝ) {n : ℕ} (hn : n 
       rw [Ne, Ideal.absNorm_eq_zero_iff]
       exact hJ0
     have hch : (if h : J ∣ I * J then Exists.choose h else 0) = I := by
-      rw [dif_pos (dvd_mul_left J I)]
+      rw [dite_eq_left (dvd_mul_left J I)]
       apply mul_left_cancel₀ hJ0
       rw [← Exists.choose_spec (dvd_mul_left J I), mul_comm]
     dsimp only
@@ -270,7 +274,7 @@ lemma conv_eq (F : Ideal (𝓞 K) → Ideal (𝓞 K) → ℝ) {n : ℕ} (hn : n 
       rintro rfl
       exact hC0 (zero_mul c)
     have hch : (if h : J ∣ J * c then Exists.choose h else 0) = c := by
-      rw [dif_pos (dvd_mul_right J c)]
+      rw [dite_eq_left (dvd_mul_right J c)]
       exact mul_left_cancel₀ hJ0 (Exists.choose_spec (dvd_mul_right J c)).symm
     dsimp only
     rw [hch, mul_comm]

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.DetFactsPAlt
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.ImportsAlt
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.TensorKP
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.DetFactsPAlt
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.ImportsAlt
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.TensorKP
+
+@[expose] public section
 
 noncomputable section
 

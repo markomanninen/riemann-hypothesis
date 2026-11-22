@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LApproxIdS
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.MemOfCoord
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LApproxIdS
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.MemOfCoord
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,7 +61,7 @@ theorem approxId_of (h1 : OneD) : ApproxId := by
   · exact (hTr (fun _ => g1 k)).2 (fun _ => (hg k).1)
   · intro x
     rw [norm_prod]
-    exact Finset.prod_le_one (fun _ _ => norm_nonneg _) (fun i _ => (hg k).2.1 _)
+    exact Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) (fun i _ => (hg k).2.1 _)
   · beta_reduce
     rw [if_pos hT]
     exact mul_nonneg c.2 (Finset.prod_nonneg fun i _ => ((hg k).2.2 _).1)

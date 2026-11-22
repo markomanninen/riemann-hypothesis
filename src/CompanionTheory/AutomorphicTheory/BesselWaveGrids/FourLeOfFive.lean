@@ -1,6 +1,10 @@
-import CompanionTheory.AutomorphicTheory.BesselWaveGrids.Bridge
-import CompanionTheory.AutomorphicTheory.BesselWaveGrids.NqMovedExample
-import CompanionTheory.AutomorphicTheory.BesselWaveGrids.InterlacingGrids.ProgYInjective
+module
+
+public import CompanionTheory.AutomorphicTheory.BesselWaveGrids.Bridge
+public import CompanionTheory.AutomorphicTheory.BesselWaveGrids.NqMovedExample
+public import CompanionTheory.AutomorphicTheory.BesselWaveGrids.InterlacingGrids.ProgYInjective
+
+@[expose] public section
 
 namespace CompanionTheory.WaveGrid
 

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.IsSaturatedFirstCoordinateLine
-import Development.WeilBound.CoreStatements.AmpleLineBundles.IntersectionNumberEqLineHeight
-import Development.WeilBound.CoreStatements.AmpleLineBundles.ExistsPointsBoundedLineHeights
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.IsSaturatedFirstCoordinateLine
+public import Development.WeilBound.CoreStatements.AmpleLineBundles.IntersectionNumberEqLineHeight
+public import Development.WeilBound.CoreStatements.AmpleLineBundles.ExistsPointsBoundedLineHeights
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

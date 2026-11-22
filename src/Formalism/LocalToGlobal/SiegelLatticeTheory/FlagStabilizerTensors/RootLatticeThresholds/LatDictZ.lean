@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictPlan
-import Formalism.HermitianLattices.StatementLat
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictPlan
+public import Formalism.HermitianLattices.StatementLat
+
+@[expose] public section
 
 noncomputable section
 

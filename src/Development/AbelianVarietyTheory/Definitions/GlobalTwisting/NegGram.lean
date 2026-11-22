@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,8 +29,6 @@ def neg (W : HSpace E) : HSpace E :=
       rw [e]; exact h }
 
 theorem neg_rank (W : HSpace E) : (neg W).rank = W.rank := rfl
-
-theorem neg_gram (W : HSpace E) : (neg W).gram = -W.gram := rfl
 
 theorem neg_sig (W : HSpace E) (τ : E →+* ℂ) : (neg W).sig τ = ((W.sig τ).2, (W.sig τ).1) := rfl
 

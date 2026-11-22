@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RankOneEmbeddings
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACProper
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RankOneEmbeddings
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACProper
+
+@[expose] public section
 
 open MeasureTheory Topology
 open Formalism.FourierDecayAlt

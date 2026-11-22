@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCutOffLimit
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartMassCompact
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCutOffDominated
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCutOffBoundaryBound
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCutOffLimit
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartMassCompact
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCutOffDominated
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCutOffBoundaryBound
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

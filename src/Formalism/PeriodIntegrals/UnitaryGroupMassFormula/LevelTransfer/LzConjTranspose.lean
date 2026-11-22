@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementQ
-import Formalism.FormalDegreeBessel.FinalG
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelTransfer.ExpLz
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementQ
+public import Formalism.FormalDegreeBessel.FinalG
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelTransfer.ExpLz
+
+@[expose] public section
 
 open Matrix
 

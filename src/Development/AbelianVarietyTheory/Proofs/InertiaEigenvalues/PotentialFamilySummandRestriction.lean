@@ -1,18 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSummandTw
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PotentiallyCrystallineModuleEqCrystallineRestric
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedDualFamiliesContinuous
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.BaseFont
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankEqOfNondegenerate
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSummandTw
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PotentiallyCrystallineModuleEqCrystallineRestric
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedDualFamiliesContinuous
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.BaseFont
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankEqOfNondegenerate
+
+@[expose] public section
+
 open Formalism Formalism.MainNotions Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module GlobalTheory.Pass Formalism.MainNotions.PairedCharacterCondition GlobalTheory.Pass.LocDual
 
 noncomputable section
 
 namespace GlobalTheory.SummandDual
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem isDR_of_summand (D : D7) (hFont : FontaineAtPlacesOverL (D := D)) (hP : PotDRL D.loc) (i : D.nd.Loc)
     (r : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV) (D.nd.O i))) (hr : GoodR D.nd i r)
     (Xs : Set (D.nd.X i)) (w : HeightOneSpectrum (𝓞 D.host.E)) (hw : w ∈ placesOver D.host.E (D.nd.l i)) (n : ℕ)
@@ -58,7 +63,7 @@ theorem pr_apply (u u' : Fin a → Fin n → LL) : pr LL a n u u' = ∑ b, u b �
 
 def ann (C : Submodule LL (Fin a → Fin n → LL)) : Submodule LL (Fin a → Fin n → LL) where
   carrier := {u' | ∀ u ∈ C, pr LL a n u u' = 0}
-  add_mem' := fun h1 h2 u hu => by rw [map_add, h1 u hu, h2 u hu, add_zero]
+  add_mem' := fun h1 h2 u hu => by rw [map_add (f := _), h1 u hu, h2 u hu, add_zero]
   zero_mem' := fun u _ => by rw [map_zero]
   smul_mem' := fun c u' h u hu => by rw [map_smul, h u hu, smul_zero]
 
@@ -78,7 +83,8 @@ theorem exists_rep (φ : (Fin a → Fin n → LL) →ₗ[LL] LL) :
     simp [Finset.sum_apply, Pi.single_apply, ite_apply, Finset.sum_ite_eq, Finset.sum_ite_eq']
   conv_lhs => rw [hu]
   rw [pr_apply]
-  simp [map_sum, dotProduct]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, dotProduct]
 
 theorem eq_zero_of_pr (u' : Fin a → Fin n → LL) (h : ∀ u, pr LL a n u u' = 0) : u' = 0 := by
   funext b k
@@ -102,10 +108,10 @@ theorem left_nondeg (R C : Submodule LL (Fin a → Fin n → LL)) (hRC : IsCompl
   obtain ⟨u', hu'⟩ := exists_rep (f ∘ₗ R.projectionOnto C hRC)
   have hann : u' ∈ ann C := by
     intro c hc
-    rw [← hu', LinearMap.comp_apply, Submodule.linearProjOfIsCompl_apply_right' hRC hc, map_zero]
+    rw [← hu', LinearMap.comp_apply, Submodule.projectionOnto_apply_of_mem_right hRC hc, map_zero]
   apply hf
   have := hu' u
-  rw [LinearMap.comp_apply, Submodule.linearProjOfIsCompl_apply_left hRC ⟨u, hu⟩] at this
+  rw [LinearMap.comp_apply, Submodule.projectionOnto_apply_left hRC ⟨u, hu⟩] at this
   rw [this]
   exact h u' hann
 
@@ -115,7 +121,7 @@ theorem right_nondeg (R C : Submodule LL (Fin a → Fin n → LL)) (hRC : IsComp
   intro u
   have hu : u ∈ R ⊔ C := by rw [hRC.sup_eq_top]; exact Submodule.mem_top
   obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hu
-  rw [map_add, LinearMap.add_apply, h y hy, hu' z hz, add_zero]
+  rw [map_add (f := _), LinearMap.add_apply, h y hy, hu' z hz, add_zero]
 
 variable {G : Type} [Group G] (T U : Fin a → (G →* Matrix (Fin n) (Fin n) LL)) (χ : G → LL)
 
@@ -150,9 +156,9 @@ theorem finrank_eq_of_perfect {LL : Type} [Field LL] {V V' : Type} [AddCommGroup
   | (intros; apply @_root_.GlobalTheory.NondegenerateFinrank.main <;> first | assumption | infer_instance)
   | (intros; exact _root_.GlobalTheory.NondegenerateFinrank.main ..)
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem dual_of_summand (D : D7) (i : D.nd.Loc)
     (r : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV) (D.nd.O i))) (hr : GoodR D.nd i r)
     (Xs : Set (D.nd.X i)) (w : HeightOneSpectrum (𝓞 D.host.E)) (hw : w ∈ placesOver D.host.E (D.nd.l i))
@@ -198,9 +204,9 @@ theorem dual_of_summand (D : D7) (i : D.nd.Loc)
   · refine ⟨a, x, fun b => LinearMap.proj b ∘ₗ (ann C).subtype, fun b g v => rfl, fun v hv => ?_⟩
     exact Subtype.ext (funext hv)
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem xdual : ∀ (D : D7), FontaineAtPlacesOverL (D := D) → PotDRL D.loc → ∀ (i : D.nd.Loc)
     (r : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV) (D.nd.O i))), GoodR D.nd i r →
     ∀ (Xs : Set (D.nd.X i)) (w : HeightOneSpectrum (𝓞 D.host.E)) (hw : w ∈ placesOver D.host.E (D.nd.l i)) (n : ℕ),

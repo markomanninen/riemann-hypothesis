@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.FlatEq
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.FlatEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,9 +76,10 @@ theorem isCompact_uSet (n : ℕ) : IsCompact (uSet n) := by
       Metric.closedBall (0 : ℂ) 1) :=
     isCompact_univ_pi fun _ => isCompact_univ_pi fun _ => isCompact_closedBall _ _
   refine hbox.of_isClosed_subset ?_ ?_
-  · refine IsClosed.inter ?_ ?_
-    · exact isClosed_eq (continuous_id.matrix_conjTranspose.matrix_mul continuous_id) continuous_const
-    · exact isClosed_eq ((continuous_id.matrix_conjTranspose.matrix_mul continuous_const).matrix_mul continuous_id)
+  · change IsClosed ({u : M2 n | uᴴ * u = 1} ∩ {u : M2 n | InG u})
+    refine IsClosed.inter ?_ ?_
+    · exact isClosed_eq ((continuous_id : Continuous (fun u : M2 n => u)).matrix_conjTranspose.matrix_mul continuous_id) continuous_const
+    · exact isClosed_eq (((continuous_id : Continuous (fun u : M2 n => u)).matrix_conjTranspose.matrix_mul continuous_const).matrix_mul continuous_id)
         continuous_const
   · intro u hu
     have hU : u ∈ Matrix.unitaryGroup (Fin n ⊕ Fin n) ℂ := Matrix.mem_unitaryGroup_iff'.2 hu.1

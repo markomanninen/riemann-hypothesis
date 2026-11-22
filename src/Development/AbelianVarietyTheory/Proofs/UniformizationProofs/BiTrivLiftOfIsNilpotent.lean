@@ -1,14 +1,18 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsUniqueTorusCompat
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsPullLam
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.EqOneOfGroupLike
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.BiTrivTransport
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CoeffMemOfPoints
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsUniqueTorusCompat
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsPullLam
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.EqOneOfGroupLike
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.BiTrivTransport
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CoeffMemOfPoints
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -49,7 +53,13 @@ private theorem exists_unit_ratio_of_isGen (c : CubicalStr G L) {W : Over (Spec 
   refine ⟨f, fun Z r z I hI => ?_⟩
   rw [hf Z r z I hI, v₃ _ _ z I hI, val_mul hI, val_inv, _root_.mul_inv_cancel, _root_.mul_one]
   have e1 : r ≫ (1 : W ⟶ G) = 1 := by simp
-  rw [e1, (isCub_cubV c hI).face₂, _root_.one_mul]
+  have hface : cubV c z I (r ≫ a) 1 (r ≫ x) = 1 := by
+    have e := val_corr hI (c.face 1) (lift (r ≫ a) (r ≫ x)).left
+    rw [val_one] at e
+    refine Eq.trans ?_ e
+    refine Eq.trans ?_ (val_cub c (lift (r ≫ a) (r ≫ x)) hI (x2 G 0) (pzero G _) (x2 G 1)).symm
+    congr 1 <;> simp [x2, pzero, Hom.one_def]
+  rw [e1, hface, _root_.one_mul]
 
 private theorem eq_mul_of_four_factorizations {U : Type} [CommGroup U] {F Ft Ft' B Bt Bt' C At At' Aq : U}
     (hA : Aq = F * B) (hAt : At = Ft * Bt) (hAt' : At' = Ft' * Bt') (lA : Aq = C * At * At')
@@ -128,8 +138,8 @@ variable (h₀ : s₀.IsGen)
     b ≫ pullback.fst _ _ = (lift t x).left → d ≫ pullback.fst _ _ = (lift t' x).left → ∀ (z : Z.left) (I),
     Good L.L z I → val s₀ a z I = cubV c z I (t ≫ i) (t' ≫ i) x * val s₀ b z I * val s₀ d z I)
 
-include h₀ in
 
+include h₀ in
 theorem exists_reduces (hJ : IsNilpotent J) {Y : Over (Spec (CommRingCat.of A))} [IsAffine Y.left] (x : Y ⟶ G) :
     ∃ s, s.IsGen ∧ Reduces i s₀ x s := by
   have hL : L.L.IsLB := L.3
@@ -182,8 +192,8 @@ private theorem mul_assoc_comm_law {U : Type} [CommGroup U] {Gq F θ Vt Vt' Gt G
   rw [e, h]
   ac_rfl
 
-include h₀ l₀ in
 
+include h₀ l₀ in
 theorem exists_lift_affine [IsMonHom i] (hJ : IsNilpotent J) {Y : Over (Spec (CommRingCat.of A))} [IsAffine Y.left]
     (x : Y ⟶ G) : ∃ s, s.IsGen ∧ Reduces i s₀ x s ∧ LawOne c i x s := by
   have hL : L.L.IsLB := L.3
@@ -203,7 +213,18 @@ theorem exists_lift_affine [IsMonHom i] (hJ : IsNilpotent J) {Y : Over (Spec (Co
     have E4 := hf Z t' t'' y z I hI
     rw [mul_assoc t t' t'', hmi] at E1
     rw [hmi] at E3
-    exact mul_eq_mul_of_cocycle_relations E1 E2 E3 E4 ((isCub_cubV c hI).coc (t ≫ i) (t' ≫ i) (t'' ≫ i) (y ≫ x))
+    have hcub : ∀ (u v w q : Z ⟶ G),
+        cubV c z I (u * v) w q * cubV c z I u v q =
+          cubV c z I u (v * w) q * cubV c z I v w q := by
+      intro u v w q
+      let p := lift u (lift v (lift w q))
+      have e := val_corr hI c.cocycle p.left
+      have e' := ((val_mul hI _ _ _).trans
+        (congrArg₂ (· * ·) (val_cub c p hI _ _ _) (val_cub c p hI _ _ _))).symm.trans
+        (e.trans ((val_mul hI _ _ _).trans (congrArg₂ (· * ·) (val_cub c p hI _ _ _) (val_cub c p hI _ _ _))))
+      have hpadd (a b : G4 G ⟶ G) : padd G a b = a * b := rfl
+      simpa [p, x4, hpadd, MonObj.comp_mul, Category.assoc] using e'
+    exact mul_eq_mul_of_cocycle_relations E1 E2 E3 E4 (hcub (t ≫ i) (t' ≫ i) (t'' ≫ i) (y ≫ x))
   have hred : ∀ (Z : Over (Spec (CommRingCat.of A))), (∃ s, s ≫ red J = Z.hom) →
       ∀ (t t' : Z ⟶ 𝕋) (y : Z ⟶ Y) (z : Z.left), gm (lift t (lift t' y)).left z ⊤ f = 1 := by
     intro Z hZ t t' y z
@@ -265,8 +286,8 @@ private theorem comp_opnI_mem {S : Scheme.{0}} {Z Y : Over S} (U : Y.left.Opens)
     (y ≫ opnι Y U).left z ∈ U := by
   exact (y.left z).2
 
-include h₀ l₀ in
 
+include h₀ l₀ in
 theorem exists_glued [IsMonHom i] (hJ : IsNilpotent J) :
     ∃ s : LB.Gen (LB.LinComb L.L (lamφ i) Oε), s.IsGen ∧ ∀ U : G.left.affineOpens, ∃ s',
       Reduces i s₀ (opnι G U.1) s' ∧ LawOne c i (opnι G U.1) s' ∧
@@ -368,7 +389,7 @@ theorem exists_glued [IsMonHom i] (hJ : IsNilpotent J) :
     have e2 : (lift t (y ≫ opnι G U.1) ≫ snd 𝕋 G) = y ≫ opnι G U.1 := lift_snd _ _
     have e3 := congrArg (fun g => g.left p) e2
     simp only [Over.comp_left] at e3
-    first
+    all_goals first
     | (erw [← e3] at *; exact comp_opnI_mem U.1 y p)
     | (rw [← Scheme.Hom.comp_apply, e3]; exact comp_opnI_mem U.1 y p)
     | exact e3 ▸ comp_opnI_mem U.1 y p
@@ -384,8 +405,8 @@ theorem exists_glued [IsMonHom i] (hJ : IsNilpotent J) :
   rw [vtU U Z.left q.left z I hI]
   exact congrArg (fun m => val (s' U) m z I) (congrArg Over.Hom.left hqκ)
 
-include h₀ l₀ in
 
+include h₀ l₀ in
 theorem exists_lift [IsMonHom i] (hJ : IsNilpotent J) :
     ∃ s : LB.Gen (LB.LinComb L.L (lamφ i) Oε), s.IsGen ∧
       (∀ (Z : Over (Spec (CommRingCat.of A))) (t : Z ⟶ 𝕋) (x : Z ⟶ G) (a : Z.left ⟶ pullback (𝕋 ⊗ G).hom (red J)),
@@ -480,8 +501,8 @@ private theorem eq_mul_of_two_factorizations {U : Type} [CommGroup U] {W F Ft Ft
   rw [hc] at h1
   exact mul_right_cancel (h1.trans h2.symm)
 
-include h₀ l₀ in
 
+include h₀ l₀ in
 theorem nonempty_biTriv [IsMonHom i] (hJ : IsNilpotent J)
     (m₀ : ∀ (Z : Over (Spec (CommRingCat.of A))) (t : Z ⟶ 𝕋) (x x' : Z ⟶ G)
       (a b d : Z.left ⟶ pullback (𝕋 ⊗ G).hom (red J)), a ≫ pullback.fst _ _ = (lift t (x * x')).left →
@@ -501,9 +522,34 @@ theorem nonempty_biTriv [IsMonHom i] (hJ : IsNilpotent J)
       have E6 := hf Z t' y z I hI
       rw [v₂ _ _ z I hI, v₂ _ _ z I hI, v₂ _ _ z I hI, MonObj.mul_comp] at E1
       rw [v₂ _ _ z I hI, v₂ _ _ z I hI, v₂ _ _ z I hI] at E5 E6
+      have hcub : IsCub (cubV c z I) := by
+        refine ⟨?_, ?_, ?_, ?_⟩
+        · intro u v
+          have e := val_corr hI (c.face 0) (lift u v).left
+          rw [val_one] at e
+          refine Eq.trans ?_ e
+          refine Eq.trans ?_ (val_cub c (lift u v) hI (pzero G _) (x2 G 0) (x2 G 1)).symm
+          congr 1 <;> simp [x2, pzero, Hom.one_def]
+        · intro u v w
+          let p := lift u (lift v w)
+          refine ((val_corr hI c.cubeSymmetric_swap_first p.left).trans (val_cub c p hI _ _ _)).trans ?_
+          congr 1 <;> simp [p, x3]
+        · intro u v w
+          let p := lift u (lift v w)
+          refine ((val_corr hI c.cubeSymmetric_swap_last p.left).trans (val_cub c p hI _ _ _)).trans ?_
+          congr 1 <;> simp [p, x3]
+        · intro u v w q
+          let p := lift u (lift v (lift w q))
+          have e := val_corr hI c.cocycle p.left
+          have e' := ((val_mul hI _ _ _).trans
+            (congrArg₂ (· * ·) (val_cub c p hI _ _ _) (val_cub c p hI _ _ _))).symm.trans
+            (e.trans ((val_mul hI _ _ _).trans
+              (congrArg₂ (· * ·) (val_cub c p hI _ _ _) (val_cub c p hI _ _ _))))
+          have hpadd (a b : G4 G ⟶ G) : padd G a b = a * b := rfl
+          simpa [p, x4, hpadd, MonObj.comp_mul, Category.assoc] using e'
       exact eq_mul_of_two_factorizations E1 (hlaw Z t t' (y ≫ fst G G) z I hI) (hlaw Z t t' (y ≫ snd G G) z I hI)
         (hlaw Z t t' (y ≫ fst G G * y ≫ snd G G) z I hI) E5 E6
-        ((isCub_cubV c hI).compat (t ≫ i) (t' ≫ i) (y ≫ fst G G) (y ≫ snd G G))
+        (hcub.compat (t ≫ i) (t' ≫ i) (y ≫ fst G G) (y ≫ snd G G))
     · intro Z hZ t y z
       obtain ⟨I, hI⟩ := exists_good_pt hL z
       obtain ⟨a, ha⟩ := exists_red_lift hZ (lift t (y ≫ fst G G * y ≫ snd G G))

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.Hypotheses.GalCoh
+module
+
+public import Mathlib
+public import ReciprocityTheory.Hypotheses.GalCoh
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,8 @@ theorem mem_proKer {l : ℕ} {H : Type*} [Group H] [TopologicalSpace H] {x : H} 
 
 variable {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Algebra F Ω]
 
-variable (F) in
 
+variable (F) in
 def ineKer (A : ValuationSubring Ω) (l : ℕ) : Subgroup (G F Ω) :=
   (proKer l (Ine (F := F) A)).map (Ine (F := F) A).subtype
 
@@ -29,26 +33,27 @@ theorem coe_mem_ineKer {A : ValuationSubring Ω} {l : ℕ} {σ : Ine (F := F) A}
     (σ : G F Ω) ∈ ineKer F A l ↔ σ ∈ proKer l (Ine (F := F) A) :=
   Subgroup.mem_map_iff_mem (Ine (F := F) A).subtype_injective
 
-variable (F) in
 
+variable (F) in
 def IsProGen (A : ValuationSubring Ω) (l : ℕ) (γ : G F Ω) : Prop :=
   γ ∈ Ine (F := F) A ∧
     Ine (F := F) A ≤ (Subgroup.zpowers γ ⊔ ineKer F A l).topologicalClosure
 
-variable (F) in
 
+variable (F) in
 abbrev trivDec (A : ValuationSubring Ω) (l n : ℕ) :
     Representation (ZMod (l ^ n)) (Dec (F := F) A) (ZMod (l ^ n)) :=
   Representation.trivial (ZMod (l ^ n)) (Dec (F := F) A) (ZMod (l ^ n))
 
-variable (F) in
 
+variable (F) in
 abbrev muDec (A : ValuationSubring Ω) (l : ℕ) [Fact l.Prime] (n : ℕ) :
     Representation (ZMod (l ^ n)) (Dec (F := F) A) (ZMod (l ^ n)) :=
-  charRep ((cycMod F Ω l n).comp (Dec (F := F) A).subtype)
+  charRep ((ReciprocityTheory.Gal.cycMod F Ω l n).comp (Dec (F := F) A).subtype)
 
 theorem continuous_cycMod (l : ℕ) [Fact l.Prime] (n : ℕ) :
-    Continuous fun σ : G F Ω => ((cycMod F Ω l n σ : (ZMod (l ^ n))ˣ) : ZMod (l ^ n)) := by
+    Continuous fun σ : G F Ω =>
+      ((ReciprocityTheory.Gal.cycMod F Ω l n σ : (ZMod (l ^ n))ˣ) : ZMod (l ^ n)) := by
   have h1 : Continuous (PadicInt.toZModPow n : ℤ_[l] → ZMod (l ^ n)) := by
     refine continuous_of_continuousAt_zero (PadicInt.toZModPow n : ℤ_[l] →+* ZMod (l ^ n)) ?_
     rw [ContinuousAt, map_zero, nhds_discrete (ZMod (l ^ n)), Filter.tendsto_pure]
@@ -64,8 +69,8 @@ theorem contAction_muDec (A : ValuationSubring Ω) (l : ℕ) [Fact l.Prime] (n :
     ContAction (muDec F A l n) :=
   (((continuous_cycMod l n).comp continuous_subtype_val).comp continuous_fst).mul continuous_snd
 
-variable (F) in
 
+variable (F) in
 def cupMu (A : ValuationSubring Ω) (l : ℕ) [Fact l.Prime] (n : ℕ) :
     H1 (trivDec F A l n) →ₗ[ZMod (l ^ n)] H1 (muDec F A l n) →ₗ[ZMod (l ^ n)] H2 (muDec F A l n) :=
   cupProductH1H1 (trivDec F A l n) (muDec F A l n) (muDec F A l n) (LinearMap.mul _ _)

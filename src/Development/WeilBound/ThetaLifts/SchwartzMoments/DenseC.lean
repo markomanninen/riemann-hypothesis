@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.DenseHasCompactSupport
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.DenseHasCompactSupport
+
+@[expose] public section
 
 noncomputable section
 

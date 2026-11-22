@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.JetsOnCopiesCompatibleFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.SaturationChartsHolds
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SurjectiveOfKerLeMapSupSq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.JetsOnCopiesCompatibleFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.SaturationChartsHolds
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SurjectiveOfKerLeMapSupSq
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -181,7 +185,8 @@ theorem univ_of_dirs {d : ℕ} {κ : Type} [Fintype κ] (β : Fin d ≃ κ)
     obtain ⟨c, hc⟩ := exists_lin _ (hψ0 1 i)
     have hcj : ∀ j, c (β j) = if j = i then 1 else 0 := fun j => by
       have e := congrArg TrivSqZeroExt.snd (AlgHom.congr_fun (h1 j) (zR 1 i))
-      rw [AlgHom.comp_apply, hc, dualLift_zR, TrivSqZeroExt.snd_inr, ← β.sum_comp, map_sum, TrivSqZeroExt.snd_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [AlgHom.comp_apply, hc, dualLift_zR, TrivSqZeroExt.snd_inr, ← β.sum_comp, map_sum, TrivSqZeroExt.snd_sum,
         Finset.sum_eq_single j] at e
       · rw [map_smul, ht, if_pos rfl, TrivSqZeroExt.snd_smul, DualNumber.snd_eps, smul_eq_mul, _root_.mul_one,
           Pi.single_apply] at e
@@ -289,9 +294,9 @@ end Conv
 section Main
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {V : Type} [CommRing V] [IsLocalRing V]
 
+
 open ReciprocityTheory.ChartRestriction.G.Chart (tcoord tan_ext prodPts prodPts_tan) in
 open Formalism.L2.Pj.SaturatedCharts in
-
 theorem isUnivJ_of_isChartG (t : SAB H (Sp V)) (d : ℕ) (FT : Fin d → MvPowerSeries (Fin 2 × Fin d) V)
     (act : 𝓞 E → Fin d → MvPowerSeries (Fin 1 × Fin d) V) (tg : Fin d → (Sp (DualNumber V) ⟶ t.G.left))
     (xT : ∀ m, jOG (𝟙 (Sp V)) d m 1 ⟶ t.G)

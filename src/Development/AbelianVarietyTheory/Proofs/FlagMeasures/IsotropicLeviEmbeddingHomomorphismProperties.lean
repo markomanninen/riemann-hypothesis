@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
+
+@[expose] public section
 
 open MeasureTheory Matrix Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf GlobalTheory.Amp
 open scoped InnerProductSpace ENNReal
@@ -286,7 +290,8 @@ theorem uEmb_mem (hu : IsUnit u.det) : uEmb k r u ∈ GG k r := by
       if a = b then 1 else 0 := fun a b => by
     have h : ∑ c, (starRingEnd ℂ) (u c a) * (starRingEnd ℂ) (u⁻¹ b c) =
         (starRingEnd ℂ) (∑ c, u⁻¹ b c * u c a) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun c _ => by rw [map_mul, mul_comm]
     rw [h, hc]
     by_cases hab : a = b

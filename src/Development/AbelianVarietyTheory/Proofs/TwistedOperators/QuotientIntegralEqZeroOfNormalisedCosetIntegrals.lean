@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.MeasurePreservingRmulQuotMeas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MeasurePreservingRmulQuotMeas
+
+@[expose] public section
 
 open MeasureTheory Set GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary
 open scoped ENNReal
@@ -62,7 +66,7 @@ theorem exists_weight_nt (T N : Subgroup H) (hT : IsClosed (T : Set H)) (hN : Is
   have hUo : ∀ k, IsOpen (U k) := fun k => by
     have : U k = ⋃ p : N × T, (fun x => j p * x) ⁻¹' W k := by ext x; simp [U]
     rw [this]
-    exact isOpen_iUnion fun p => (hWo k).preimage (continuous_mul_left _)
+    exact isOpen_iUnion fun p => (hWo k).preimage (continuous_const_mul _)
   have hcov : ∀ x, ∃ k, x ∈ U k := fun x => by
     obtain ⟨k, hk⟩ := K.exists_mem x
     exact ⟨k, (1, 1), by simpa [j] using K.subset_interior_succ k hk⟩
@@ -77,7 +81,7 @@ theorem exists_weight_nt (T N : Subgroup H) (hT : IsClosed (T : Set H)) (hN : Is
     by_contra hne
     exact Set.disjoint_left.1 (disjoint_disjointed U hne) h h'
   let h : H → ℝ≥0∞ := fun x => ∑' k, (P k).indicator ((W k).indicator 1) x
-  have hh : Measurable h := Measurable.ennreal_tsum fun k =>
+  have hh : Measurable h := Measurable.tsum fun k =>
     (measurable_one.indicator (hWo k).measurableSet).indicator (hPm k)
   have hval : ∀ k x, x ∈ P k → ∀ q, h (j q * x) = (W k).indicator 1 (j q * x) := by
     intro k x hx q

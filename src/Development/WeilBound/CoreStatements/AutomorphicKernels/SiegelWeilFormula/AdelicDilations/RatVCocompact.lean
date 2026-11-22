@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AdelicDilations.FcCont
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AdelicDilations.FcCont
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,9 +15,6 @@ namespace PositivityTheory.SiegelWeilFormula.AStep
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
 
 namespace COneB
-
-example (k : ℕ) : BorelSpace (Fin k → AE F E) := inferInstance
-example (k : ℕ) : OpensMeasurableSpace (Fin k → AE F E) := inferInstance
 
 variable {d : SD σ} (L : LD d)
 
@@ -36,8 +37,8 @@ theorem Nu_cont : Continuous (Nu L) := by
   rw [e]
   exact continuous_finsetSum _ fun j _ => (continuous_apply j).smul continuous_const
 
-omit L in
 
+omit L in
 theorem unit_frame (d : SD σ) (x : d.G) : ∃ e : AE F E,
     (inFrame d.b x)ᵀ * Matrix.fromBlocks 0 1 (e • 1) 0 * (inFrame d.b x).map (cA σ) = Matrix.fromBlocks 0 1 (e • 1) 0 := by
   obtain ⟨⟨ε, hε⟩, -⟩ := d.ok.frame

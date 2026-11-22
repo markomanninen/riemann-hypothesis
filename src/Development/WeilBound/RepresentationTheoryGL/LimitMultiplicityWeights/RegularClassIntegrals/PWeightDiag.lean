@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.LimitMultiplicityWeights.RegularClassIntegrals.ClosedGraph
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.LimitMultiplicityWeights.RegularClassIntegrals.ClosedGraph
+
+@[expose] public section
 
 open MeasureTheory Set GlobalTheory.AutomorphicL2Unitary GlobalTheory.Orb Matrix
 open scoped ContDiff ComplexConjugate Pointwise
@@ -85,7 +89,7 @@ private theorem weightDiag_lemma_2 {n : ℕ} (i : Fin n) (τ : Fin n → ℂ) :
 private theorem weightDiag_lemma_3 {n : ℕ} :
     Continuous (MainStatements.WeightKernel.PWeightDiag.N : Matrix (Fin n) (Fin n) ℂ → ℝ) := by
   unfold MainStatements.WeightKernel.PWeightDiag.N
-  exact continuous_finset_sum _ (fun a _ => continuous_finset_sum _
+  exact continuous_finsetSum _ (fun a _ => continuous_finsetSum _
     (fun b _ => Complex.continuous_normSq.comp (continuous_id.matrix_elem a b)))
 
 private theorem weightDiag_lemma_4 {n : ℕ} (f : MainStatements.WeightKernel.Mx n → MainStatements.WeightKernel.Mx n) (hf : ContDiff ℝ ∞ f) :
@@ -208,7 +212,7 @@ theorem MainStatements.WeightKernel.weightDiag : Lagr → ShiftT → BoundT → 
         (hιc.comp continuous_snd))
     have hGc : Continuous (fun p : H × H => ∑ i, (N (ι p.1⁻¹ * single i i 1 * ι p.2)
         + (N (ι p.1⁻¹ * single i i 1 * ι p.2))⁻¹)) :=
-      continuous_finset_sum _ (fun i _ => (hFc i).add ((hFc i).inv₀ (fun p => (Fpos p.1 p.2 i).ne')))
+      continuous_finsetSum _ (fun i _ => (hFc i).add ((hFc i).inv₀ (fun p => (Fpos p.1 p.2 i).ne')))
     obtain ⟨M0, hM0⟩ := (hC.prod hC').exists_bound_of_continuousOn hGc.continuousOn
     obtain ⟨M, hM1, hbd⟩ : ∃ M : ℝ, 1 ≤ M ∧ ∀ a ∈ C, ∀ b ∈ C', ∀ i,
         N (ι a⁻¹ * single i i 1 * ι b) ≤ M ∧ M⁻¹ ≤ N (ι a⁻¹ * single i i 1 * ι b) := by

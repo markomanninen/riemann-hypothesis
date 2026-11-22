@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.VolFromSW
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.VolFromSW
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,7 +83,8 @@ theorem linIndep_of_isUnit_det (σ : E →ₐ[F] E) {M n : ℕ} (J : Matrix (Fin
   have hM : (gramR R σ J X).mulVec g = 0 := by
     funext b
     have hb := congrArg (hLin R σ J (X b)) hg
-    simp only [map_sum, map_smul, map_zero, smul_eq_mul] at hb
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, map_zero, smul_eq_mul] at hb
     simp only [Matrix.mulVec, dotProduct, Pi.zero_apply]
     rw [← hb]
     exact Finset.sum_congr rfl fun a _ => by rw [mul_comm]; rfl
@@ -105,7 +110,7 @@ theorem continuous_hR (σ : E →ₐ[F] E) {M : ℕ} (J : Matrix (Fin M) (Fin M)
         simp [sigR, Algebra.TensorProduct.algebraMap_apply] }
   have hs : Continuous (sigR R σ) := IsModuleTopology.continuous_of_linearMap sL
   simp only [hR, Formalism.UG.hform]
-  exact continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+  exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
     ((hs.comp ((continuous_apply i).comp continuous_fst)).mul continuous_const).mul
       ((continuous_apply j).comp continuous_snd)
 
@@ -122,7 +127,7 @@ theorem continuous_gramR_apply (σ : E →ₐ[F] E) {M n : ℕ} (J : Matrix (Fin
         simp [sigR, Algebra.TensorProduct.algebraMap_apply] }
   have hs : Continuous (sigR R σ) := IsModuleTopology.continuous_of_linearMap sL
   simp only [gramR, hR, Formalism.UG.hform]
-  exact continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+  exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
     ((hs.comp ((continuous_apply i).comp (continuous_apply a))).mul continuous_const).mul
       ((continuous_apply j).comp (continuous_apply b))
 
@@ -174,7 +179,7 @@ theorem sigR_invol (σ : E →ₐ[F] E) (hσ : ∀ x, σ (σ x) = x) (x : R ⊗[
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a e => simp [sigR, hσ]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem gramR_mem (σ : E →ₐ[F] E) (hσ : ∀ x, σ (σ x) = x) {M n : ℕ}
     (J : Matrix (Fin M) (Fin M) E) (hJ : ∀ i j, σ (J j i) = J i j)
@@ -182,7 +187,8 @@ theorem gramR_mem (σ : E →ₐ[F] E) (hσ : ∀ x, σ (σ x) = x) {M n : ℕ}
   intro a b
   have hJR : ∀ i j, sigR R σ (JR R J j i) = JR R J i j := fun i j => by
     simp [JR, inclR, sigR, hJ]
-  simp only [gramR, hR, Formalism.UG.hform, map_sum, map_mul, sigR_invol R σ hσ, hJR]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [gramR, hR, Formalism.UG.hform, map_sum, map_mul, sigR_invol R σ hσ, hJR]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 

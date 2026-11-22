@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.UnitaryGaloisFamilies.IrrCaseT
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.SumTwoOfHodgeTate
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PstExact
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.UnitaryGaloisFamilies.IrrCaseT
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.SumTwoOfHodgeTate
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PstExact
+
+@[expose] public section
 
 open UpperTheory.V UpperTheory.V.Af UpperTheory.V.Af.Gu UpperTheory.V.Z.Win UpperTheory.V.Z.Win.Gu
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial
@@ -22,8 +26,8 @@ private theorem tensV_section (p : V₁ →ₗ[↥LL.1] V₂) (s : V₂ →ₗ[�
     (x : V₂ ⊗[ℚ_[l]] Bst P) : tensV P p (tensV P s x) = x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | tmul v b => simp [hps]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | tmul v b => simp [tensV, hps]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 variable [FiniteDimensional ↥LL.1 V₀] [FiniteDimensional ↥LL.1 V₁] [FiniteDimensional ↥LL.1 V₂]
 
@@ -31,22 +35,30 @@ private theorem isPst_split {AI : LocAinf l P} (T : LocTied l P AI) {i : V₀ �
     {s : V₂ →ₗ[↥LL.1] V₁} (hi : ∀ g v, i (ρ₀ g v) = ρ₁ g (i v)) (hp : ∀ g v, p (ρ₁ g v) = ρ₂ g (p v))
     (hs : ∀ g v, s (ρ₂ g v) = ρ₁ g (s v)) (h1 : Function.Injective i) (h2 : Function.Exact i p)
     (hps : ∀ v, p (s v) = v) (hV₀ : IsPst P ρ₀) (hV₂ : IsPst P ρ₂) : IsPst P ρ₁ := by
-  obtain ⟨hdom, hfrac, -⟩ := GlobalTheory.Pst.stRegular l P AI ⟨T⟩
   haveI := LL.2
   haveI : FiniteDimensional ℚ_[l] V₀ := Module.Finite.trans ↥LL.1 V₀
   haveI : FiniteDimensional ℚ_[l] V₁ := Module.Finite.trans ↥LL.1 V₁
   haveI : FiniteDimensional ℚ_[l] V₂ := Module.Finite.trans ↥LL.1 V₂
-  have b₁ := GlobalTheory.T.finrank_dpst_unramified_le_dim_representation P hdom hfrac ρ₁
-  haveI f₁ : FiniteDimensional ↥(MaximalUnramifiedExtension l) (DpstUr P ρ₁) :=
-    Module.rank_lt_aleph0_iff.mp (b₁.trans_lt (Cardinal.natCast_lt_aleph0))
   obtain ⟨f₀, c₀⟩ := (isPst_iff P ρ₀).1 hV₀
   obtain ⟨f₂, c₂⟩ := (isPst_iff P ρ₂).1 hV₂
   obtain ⟨hinj, hex⟩ := UpperTheory.V.Loc.PstExact.dmap_exact P hi hp h1 h2
-  have inj : Function.Injective (UpperTheory.V.Loc.PstExact.dUr P hi) := fun x y h => hinj h
-  have sur : Function.Surjective (UpperTheory.V.Loc.PstExact.dUr P hp) := fun y =>
+  let di : DpstUr P ρ₀ →ₗ[↥(MaximalUnramifiedExtension l)] DpstUr P ρ₁ :=
+    { toFun := fun x => toUr P ρ₁ (dmap P hi ((toUr P ρ₀).symm x))
+      map_add' := by intros x y; rw [(toUr P ρ₀).symm.map_add, (dmap P hi).map_add, (toUr P ρ₁).map_add]
+      map_smul' := fun c x => dmap_mulD P hi c ((toUr P ρ₀).symm x) }
+  let dp : DpstUr P ρ₁ →ₗ[↥(MaximalUnramifiedExtension l)] DpstUr P ρ₂ :=
+    { toFun := fun x => toUr P ρ₂ (dmap P hp ((toUr P ρ₁).symm x))
+      map_add' := by intros x y; rw [(toUr P ρ₁).symm.map_add, (dmap P hp).map_add, (toUr P ρ₂).map_add]
+      map_smul' := fun c x => dmap_mulD P hp c ((toUr P ρ₁).symm x) }
+  have inj : Function.Injective di := fun x y h => hinj h
+  have sur : Function.Surjective dp := fun y =>
     ⟨toUr P ρ₁ (dmap P hs ((toUr P ρ₂).symm y)), Subtype.ext (tensV_section P p s hps _)⟩
-  have ex : Function.Exact (UpperTheory.V.Loc.PstExact.dUr P hi) (UpperTheory.V.Loc.PstExact.dUr P hp) := fun y => hex y
-  have e := (UpperTheory.V.Loc.PstExact.dUr P hp).finrank_range_add_finrank_ker
+  have ex : Function.Exact di dp := fun y => hex y
+  letI := f₀
+  letI := f₂
+  haveI f₁ : FiniteDimensional ↥(MaximalUnramifiedExtension l) (DpstUr P ρ₁) :=
+    Module.Finite.of_exact ex sur
+  have e := dp.finrank_range_add_finrank_ker
   rw [LinearMap.range_eq_top.2 sur, finrank_top, LinearMap.exact_iff.mp ex, LinearMap.finrank_range_of_inj inj] at e
   have e' := (p.restrictScalars ℚ_[l]).finrank_range_add_finrank_ker
   have exq : Function.Exact (i.restrictScalars ℚ_[l]) (p.restrictScalars ℚ_[l]) := h2

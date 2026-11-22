@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ImV
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FormallyUnramifiedRingOfIntegersIffDifferentIdea
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HaarMeasureGramGL2ActionTensor
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ImV
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FormallyUnramifiedRingOfIntegersIffDifferentIdea
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HaarMeasureGramGL2ActionTensor
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgAlg GlobalTheory.SgGlob GlobalTheory.SnMass GlobalTheory.SnMass.VolN GlobalTheory.SnMass.SkewVol
 open scoped TensorProduct ENNReal nonZeroDivisors Classical
 
@@ -48,9 +53,9 @@ private theorem ne_id_of_embedding_conj {F E : Type} [Field F] [Field E] [Number
   rw [h] at this
   simpa [ComplexEmbedding.conjugate_coe_eq] using this.symm
 
+
 open NumberField IsDedekindDomain MeasureTheory Matrix in
 open scoped TensorProduct ENNReal nonZeroDivisors Classical in
-
 theorem _root_.GlobalTheory.exists_integer_add_conj_eq_one_of_formallyUnramified :
     ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
       (σ : E →ₐ[F] E), _root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.IsCMExt F E σ → Algebra.FormallyUnramified (𝓞 F) (𝓞 E) →
@@ -78,7 +83,7 @@ theorem _root_.GlobalTheory.exists_integer_add_conj_eq_one_of_formallyUnramified
       rw [← hb]
       exact b.isIntegral_coe
     have hint' : IsIntegral ℤ a :=
-      (isIntegral_algebraMap_iff (algebraMap F E).injective).1 hint
+      (isIntegral_algebraMap_iff ).1 hint
     exact ⟨⟨a, hint'⟩, rfl⟩
   set I : Ideal (𝓞 F) := LinearMap.range (Algebra.intTrace (𝓞 F) (𝓞 E)) with hI
   have hItop : I = ⊤ := by

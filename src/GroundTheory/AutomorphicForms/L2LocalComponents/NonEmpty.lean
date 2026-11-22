@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.L2LocalComponents.NonEmptyOps
-import GroundTheory.AutomorphicForms.MultiplicityOne.ArchTypeExists
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsIsOpenForallCuspRepTFinOneEq
+public import GroundTheory.AutomorphicForms.L2LocalComponents.NonEmptyOps
+public import GroundTheory.AutomorphicForms.MultiplicityOne.ArchTypeExists
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped InnerProductSpace
@@ -17,7 +22,7 @@ attribute [local instance 100] LieRing.ofAssociativeRing
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
-variable (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+variable (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
 theorem uAction_mem {V : Submodule ℂ (CuspL2 μ)} (hVc : IsClosed (V : Set (CuspL2 μ)))
     (hV : (cuspRepT μ).IsInvariant V) (u : UEnv K n) (v : (isExpLieAlgebra K n).smoothVectors (archRepT μ))
@@ -69,8 +74,8 @@ theorem archRepT_comm_starProjection {V : Submodule ℂ (CuspL2 μ)} [CompleteSp
   have := congrArg (fun T : CuspL2 μ →L[ℂ] CuspL2 μ => T y) h
   exact this.symm
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem exists_isZKFinite_of_summand (V : Submodule ℂ (CuspL2 μ)) [CompleteSpace V]
     (hV : (cuspRepT μ).IsInvariant V) (hirr : ((cuspRepT μ).restrict V hV).IsIrreducible) :
     ∃ e ∈ V, e ≠ 0 ∧ IsZKFinite μ e := by
@@ -275,9 +280,9 @@ theorem exists_isZKFinite_of_summand (V : Submodule ℂ (CuspL2 μ)) [CompleteSp
     have hk₂ : AutomorphicForm.finPart (k : AdelicGLn.AdelicGL K n) ∈ AdelicGLn.integralFiniteGL K n :=
       finPart_mem_integralFiniteGL k.2
     set k₂ : AdelicGLn.integralFiniteGL K n := ⟨_, hk₂⟩
-    have h1 : ((archP K n k₁ : normOneGL K n) : AdelicGLn.AdelicGL K n) = infEmb K n k₁ :=
+    have h1 : ((archP K n k₁ : normOneGL (K := K) (n := n)) : AdelicGLn.AdelicGL K n) = infEmb K n k₁ :=
       congrArg Subtype.val (archimedeanProjection_maximalCompact ⟨k₁, hk₁⟩)
-    have hdec : (⟨k, Reduction.maxCompact_le_normOneGL k.2⟩ : normOneGL K n) =
+    have hdec : (⟨k, Reduction.maxCompact_le_normOneGL k.2⟩ : normOneGL (K := K) (n := n)) =
         finOne K n k₂ * archP K n k₁ := by
       rw [finOne_archP_comm]
       ext1

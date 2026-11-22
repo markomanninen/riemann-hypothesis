@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.PetEqRelIndexMulPetProd
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.PetEqRelIndexMulPetProd
+
+@[expose] public section
+
 open UpperHalfPlane ModularForm CongruenceSubgroup MeasureTheory
 open scoped MatrixGroups ModularForm Manifold
 
@@ -16,9 +21,10 @@ theorem uOp_eq_sum_slash (q : ℕ) (k : ℤ) (f : ℍ → ℂ) (hq : 0 < q) : Gl
     rw [Matrix.GeneralLinearGroup.val_det_apply, hval]; simp
   have hpos : 0 < g.det.val := by rw [hdet]; exact_mod_cast hq
   have hq0 : (q : ℂ) ≠ 0 := by exact_mod_cast hq.ne'
-  rw [slash_apply, σ, if_pos hpos, hdet, ← ofComplex_apply (g • z), coe_smul_of_det_pos hpos]
+  rw [slash_apply, σ, ite_eq_left hpos, abs_of_pos hpos, hdet, ← ofComplex_apply (g • z),
+    coe_smul_of_det_pos hpos]
   simp [num, denom, hval]
-  rw [zpow_sub_one₀ hq0]
-  field_simp
+  rw [mul_assoc, ← zpow_neg (q : ℂ) k, ← zpow_add₀ hq0,
+    show k - 1 + -k = -1 by omega, zpow_neg_one, mul_comm]
 
 end GlobalTheory.Hk

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.CyclicPowerClassOfExpEquiv
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartB
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.CyclicPowerClassOfExpEquiv
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartB
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ def Bd (c : ℝ) (f : MvPowerSeries ι K) : Prop := ∀ n, ‖MvPowerSeries.coef
 
 theorem bd_add {c : ℝ} {f g : MvPowerSeries ι K} (hf : Bd c f) (hg : Bd c g) : Bd c (f + g) :=
   fun n => by
-    rw [map_add]
+    rw [map_add (f := _)]
     exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hf n) (hg n))
 
 theorem bd_neg {c : ℝ} {f : MvPowerSeries ι K} (hf : Bd c f) : Bd c (-f) := fun n => by
@@ -60,7 +64,8 @@ theorem bd_pow {a : ℝ} {f : MvPowerSeries ι K} (ha : 0 ≤ a) (hf : Bd a f) (
 
 theorem bd_sum {α : Type} {c : ℝ} (hc : 0 ≤ c) (s : Finset α) (F : α → MvPowerSeries ι K)
     (h : ∀ a ∈ s, Bd c (F a)) : Bd c (∑ a ∈ s, F a) := fun n => by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hc fun a ha => h a ha n
 
 theorem bd_natCast (k : ℕ) : Bd 1 ((k : ℕ) : MvPowerSeries ι K) := by
@@ -91,7 +96,8 @@ theorem coeff_truncD (d : ℕ) (f : MvPowerSeries ι K) (n : ι →₀ ℕ) :
     MvPowerSeries.coeff n (truncD d f) = if n.degree < d then MvPowerSeries.coeff n f else 0 := by
   classical
   unfold truncD
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [MvPowerSeries.coeff_monomial]
   rw [Finset.sum_ite_eq]
   simp
@@ -147,7 +153,7 @@ theorem bd_of_mul {c : ℝ} (hc : 0 ≤ c) {X U : MvPowerSeries ι K} (hU : Bd 1
     have e : X - (X * U - truncD d X * U + truncD d X) = -((X - truncD d X) * (U - 1)) := by ring
     rw [e]
     exact low_neg (low_mul hXh hU')
-  rw [coeff_eq_of_low hlow hm, map_add, coeff_truncD_self X hm, add_zero]
+  rw [coeff_eq_of_low hlow hm, map_add (f := _), coeff_truncD_self X hm, add_zero]
   exact bd_sub h (sm_mul hc hl hU) m
 
 end Induct
@@ -207,7 +213,7 @@ theorem frob_add (hp : p.Prime) (hnp : ‖(p : K)‖ = (p : ℝ)⁻¹) {x y : Mv
       (x ^ p - PhiH hp.ne_zero σ x) + (y ^ p - PhiH hp.ne_zero σ y) +
         MvPowerSeries.C (p : K) * (x * y *
           ∑ k ∈ Ioo 0 p, x ^ (k - 1) * y ^ (p - k - 1) * ((p.choose k / p : ℕ) : MvPowerSeries ι K)) := by
-    rw [add_pow_prime_eq hp, map_add, map_natCast]
+    rw [add_pow_prime_eq hp, map_add (f := _), map_natCast]
     ring
   rw [e]
   refine bd_add (bd_add hx' hy') (sm_mul hpos (bd_C hpos hnp.le) (int_mul (int_mul hx hy) ?_))
@@ -255,7 +261,7 @@ theorem frob_congr [Finite ι] (hp : p.Prime) (hnp : ‖(p : K)‖ = (p : ℝ)�
         (f ^ p - (truncD (n.degree + 1) f) ^ p) -
         PhiH hp.ne_zero σ (f - truncD (n.degree + 1) f) := by
     rw [map_sub]; ring
-  rw [e, map_sub, map_add, h1 n (by omega), h2 n (by omega), add_zero, sub_zero]
+  rw [e, map_sub, map_add (f := _), h1 n (by omega), h2 n (by omega), add_zero, sub_zero]
   exact hg n
 
 end Congr
@@ -301,6 +307,7 @@ theorem norm_fact_bound (hp : p.Prime) (hnp : ‖(p : K)‖ = (p : ℝ)⁻¹) (k
   have hlt : ‖(p : K)‖ < 1 := by rw [hnp]; exact inv_lt_one_of_one_lt₀ hp1
   have hv : padicValNat p (k + 1).factorial ≤ k := by
     have h := sub_one_mul_padicValNat_factorial_lt_of_ne_zero (p := p) (n := k + 1) (by omega)
+    rw [← Nat.padicValNat_def] at h
     have h2 : 1 ≤ p - 1 := by have := hp.two_le; omega
     have h3 : 1 * padicValNat p (k + 1).factorial ≤ (p - 1) * padicValNat p (k + 1).factorial :=
       Nat.mul_le_mul_right _ h2
@@ -356,7 +363,7 @@ theorem small_of_exp [Finite ι] (hp : p.Prime) (hnp : ‖(p : K)‖ = (p : ℝ)
     · simpa using low_mul hEh (low_zero (mvExp (truncD d D)))
     · have := low_mul hEl1 hDh
       rwa [add_comm] at this
-  rw [coeff_eq_of_low hlow hm, map_add, coeff_truncD_self D hm, add_zero]
+  rw [coeff_eq_of_low hlow hm, map_add (f := _), coeff_truncD_self D hm, add_zero]
   exact bd_sub hD hEl m
 
 end ExpS
@@ -404,7 +411,7 @@ theorem int_of_frob (hp : p.Prime) (hnp : ‖(p : K)‖ = (p : ℝ)⁻¹)
     · exact low_mono (by omega) (low_mul (low_zero k) (low_mul hFh hFh))
     · exact low_mono (by omega) (low_mul (low_mul hFh (low_zero r)) hG1)
   have h1 := coeff_eq_of_low hlow hm
-  rw [map_add, MvPowerSeries.coeff_C_mul, MvPowerSeries.coeff_C_mul, hFlm, mul_zero, add_zero] at h1
+  rw [map_add (f := _), MvPowerSeries.coeff_C_mul, MvPowerSeries.coeff_C_mul, hFlm, mul_zero, add_zero] at h1
   have h2 := hY m
   rw [← h1, norm_mul, hnp] at h2
   exact le_of_mul_le_mul_left (by simpa using h2) hpos
@@ -422,7 +429,7 @@ theorem mvExp_natMul {Ψ : MvPowerSeries ι K} (h0 : MvPowerSeries.constantCoeff
   | succ n ih =>
     have e : MvPowerSeries.C ((n + 1 + 1 : ℕ) : K) * Ψ =
         MvPowerSeries.C ((n + 1 : ℕ) : K) * Ψ + Ψ := by
-      rw [Nat.cast_succ (n + 1), map_add, map_one]; ring
+      rw [Nat.cast_succ (n + 1), map_add (f := _), map_one]; ring
     rw [e, mvExp_add (by simp [h0]) h0, ih, pow_succ (mvExp Ψ) (n + 1)]
 
 theorem PhiH_mvExp {p : ℕ} (hp : p ≠ 0) (σ : K →+* K) {Ψ : MvPowerSeries ι K}
@@ -443,39 +450,41 @@ end Rel
 
 end DworkIntegrality
 
+
 open DworkIntegrality in
-
 theorem dwork_multivariable : DworkMv := by
-  intro K ι _ _ _ _ p σ hp hnp hσ Ψ h0
-  have hpos : (0 : ℝ) ≤ (p : ℝ)⁻¹ := by positivity
-  rw [← PhiH_apply hp.ne_zero]
-  have hΦ0 : MvPowerSeries.constantCoeff (PhiH hp.ne_zero σ Ψ) = 0 := by
-    rw [PhiH_apply, frobVar_eq_expand hp.ne_zero, MvPowerSeries.constantCoeff_expand,
-      MvPowerSeries.constantCoeff_map, h0, map_zero]
-  have hpΨ0 : MvPowerSeries.constantCoeff (MvPowerSeries.C (p : K) * Ψ) = 0 := by simp [h0]
-  have hDe0 : MvPowerSeries.constantCoeff (PhiH hp.ne_zero σ Ψ - MvPowerSeries.C (p : K) * Ψ) = 0 := by
-    rw [map_sub, hΦ0, hpΨ0, sub_zero]
-  have hpow : mvExp (MvPowerSeries.C (p : K) * Ψ) = (mvExp Ψ) ^ p := by
-    obtain ⟨n, rfl⟩ : ∃ n, p = n + 1 := ⟨p - 1, by have := hp.pos; omega⟩
-    exact mvExp_natMul h0 n
-  have hid : PhiH hp.ne_zero σ (mvExp Ψ) =
-      (mvExp Ψ) ^ p * mvExp (PhiH hp.ne_zero σ Ψ - MvPowerSeries.C (p : K) * Ψ) := by
-    rw [PhiH_mvExp hp.ne_zero σ h0, ← hpow, ← mvExp_add hpΨ0 hDe0]
-    congr 1
-    ring
-  have hF1 := constantCoeff_mvExp h0
-  have hG1 := constantCoeff_mvExp hDe0
-  constructor
-  · intro hint
-    have hB := frob_congr hp hnp hσ (f := mvExp Ψ) hint
-    refine small_of_exp hp hnp hDe0 (bd_of_mul hpos (U := (mvExp Ψ) ^ p) (int_pow hint p)
-      (by rw [map_pow, hF1, one_pow]) ?_)
-    have e : (mvExp (PhiH hp.ne_zero σ Ψ - MvPowerSeries.C (p : K) * Ψ) - 1) * (mvExp Ψ) ^ p =
-        -((mvExp Ψ) ^ p - PhiH hp.ne_zero σ (mvExp Ψ)) := by
-      rw [hid]; ring
-    rw [e]
-    exact bd_neg hB
-  · intro hsm
-    exact int_of_frob hp hnp hσ hF1 hG1 (exp_small hp hnp hDe0 hsm) hid
-
+  open DworkIntegrality in
+    intro K ι _ _ _ _ p σ hp hnp hσ Ψ h0
+    have hpos : (0 : ℝ) ≤ (p : ℝ)⁻¹ := by positivity
+    rw [← PhiH_apply hp.ne_zero σ Ψ]
+    change Integral (mvExp Ψ) ↔ DworkIntegrality.Bd (p : ℝ)⁻¹
+      (PhiH hp.ne_zero σ Ψ - MvPowerSeries.C (p : K) * Ψ)
+    have hΦ0 : MvPowerSeries.constantCoeff (PhiH hp.ne_zero σ Ψ) = 0 := by
+      rw [PhiH_apply, frobVar_eq_expand hp.ne_zero, MvPowerSeries.constantCoeff_expand,
+        MvPowerSeries.constantCoeff_map, h0, map_zero]
+    have hpΨ0 : MvPowerSeries.constantCoeff (MvPowerSeries.C (p : K) * Ψ) = 0 := by simp [h0]
+    have hDe0 : MvPowerSeries.constantCoeff (PhiH hp.ne_zero σ Ψ - MvPowerSeries.C (p : K) * Ψ) = 0 := by
+      rw [map_sub, hΦ0, hpΨ0, sub_zero]
+    have hpow : mvExp (MvPowerSeries.C (p : K) * Ψ) = (mvExp Ψ) ^ p := by
+      obtain ⟨n, rfl⟩ : ∃ n, p = n + 1 := ⟨p - 1, by have := hp.pos; omega⟩
+      exact mvExp_natMul h0 n
+    have hid : PhiH hp.ne_zero σ (mvExp Ψ) =
+        (mvExp Ψ) ^ p * mvExp (PhiH hp.ne_zero σ Ψ - MvPowerSeries.C (p : K) * Ψ) := by
+      rw [PhiH_mvExp hp.ne_zero σ h0, ← hpow, ← mvExp_add hpΨ0 hDe0]
+      congr 1
+      ring
+    have hF1 := constantCoeff_mvExp h0
+    have hG1 := constantCoeff_mvExp hDe0
+    constructor
+    · intro hint
+      have hB := frob_congr hp hnp hσ (f := mvExp Ψ) hint
+      refine small_of_exp hp hnp hDe0 (bd_of_mul hpos (U := (mvExp Ψ) ^ p) (int_pow hint p)
+        (by rw [map_pow, hF1, one_pow]) ?_)
+      have e : (mvExp (PhiH hp.ne_zero σ Ψ - MvPowerSeries.C (p : K) * Ψ) - 1) * (mvExp Ψ) ^ p =
+          -((mvExp Ψ) ^ p - PhiH hp.ne_zero σ (mvExp Ψ)) := by
+        rw [hid]; ring
+      rw [e]
+      exact bd_neg hB
+    · intro hsm
+      exact int_of_frob hp hnp hσ hF1 hG1 (exp_small hp hnp hDe0 hsm) hid
 end Formalism.InvariantFactorPaths.G7

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace PI.EF.PK
 
@@ -24,6 +28,6 @@ lemma vert_inv_right (c d b : ℝ) (w : ℂ) (hb : w.re < b) :
     rw [one_div, div_eq_mul_inv]
   rw [smul_eq_mul, ← intervalIntegral.integral_const_mul,
     intervalIntegral.integral_eq_sub_of_hasDerivAt (fun y _ => hd y)]
-  exact (continuous_const.mul (continuous_const.div (by fun_prop) hne)).intervalIntegrable _ _
+  exact (continuous_const.mul (continuous_const.div₀ (by fun_prop) hne)).intervalIntegrable _ _
 
 end PI.EF.PK

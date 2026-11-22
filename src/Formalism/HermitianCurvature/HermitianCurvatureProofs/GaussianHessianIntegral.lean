@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementG
+module
+
+public import Formalism.HermitianCurvature.StatementG
+
+@[expose] public section
 
 section Factorisation
 
@@ -45,7 +49,7 @@ theorem exists_takagi_vector (T : E →ₗ⋆[ℂ] E) (hT : ∀ x y, ⟪T x, y�
     have hTx : T x = -((σ : ℂ) • (x : E)) := eq_neg_of_add_eq_zero_left hy
     rw [T.map_smulₛₗ, hTx, Complex.conj_I, smul_neg, neg_smul, neg_neg, smul_comm]
   · refine key _ (S.add_mem (hS _ x.2) (S.smul_mem _ x.2)) hy ?_
-    rw [map_add, T.map_smulₛₗ, hAx, hμσ, Complex.conj_ofReal, smul_add, smul_smul, pow_two, add_comm]
+    rw [map_add (f := _), T.map_smulₛₗ, hAx, hμσ, Complex.conj_ofReal, smul_add, smul_smul, pow_two, add_comm]
 
 theorem exists_takagi_family (T : E →ₗ⋆[ℂ] E) (hT : ∀ x y, ⟪T x, y⟫_ℂ = ⟪T y, x⟫_ℂ) :
     ∀ (n : ℕ) (S : Submodule ℂ E), finrank ℂ S = n → (∀ x ∈ S, T x ∈ S) →
@@ -126,7 +130,8 @@ theorem takMap_apply {d : ℕ} (H : Matrix (Fin d) (Fin d) ℂ) (x : EuclideanSp
 
 theorem takMap_symm {d : ℕ} (H : Matrix (Fin d) (Fin d) ℂ) (hH : H.IsSymm)
     (x y : EuclideanSpace ℂ (Fin d)) : ⟪takMap H x, y⟫_ℂ = ⟪takMap H y, x⟫_ℂ := by
-  simp only [PiLp.inner_apply, takMap_apply, RCLike.inner_apply, map_sum, map_mul, Complex.conj_conj,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [PiLp.inner_apply, takMap_apply, RCLike.inner_apply, map_sum, map_mul, Complex.conj_conj,
     Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -408,7 +413,7 @@ theorem gaussOne_of_damped (h : GaussOneDamped) : GaussOne := by
   have hb : 0 < ‖β‖ := norm_pos_iff.2 hβ
   have hab : 0 < ‖a‖ := norm_pos_iff.2 ha
   have hc : ContinuousAt (fun δ:ℝ => ‖β‖ / Real.sqrt (4 * δ ^ 2 + ‖β‖ ^ 2 * ‖a‖ ^ 2)) 0 := by
-    apply ContinuousAt.div continuousAt_const (by fun_prop)
+    apply ContinuousAt.div₀ continuousAt_const (by fun_prop)
     have : 0 < 4 * (0:ℝ) ^ 2 + ‖β‖ ^ 2 * ‖a‖ ^ 2 := by positivity
     exact (Real.sqrt_pos.2 this).ne'
   have h2 := (Complex.continuous_ofReal.continuousAt.comp hc).tendsto.mono_left
@@ -452,43 +457,9 @@ theorem gaussMulti_of (hT : Takagi) (hG : GaussOneDamped) : GaussMulti := by
   refine tendsto_finsetProd _ fun k _ => ?_
   exact gaussOne_of_damped hG β _ hβ (div_ne_zero (by exact_mod_cast hσ0 k) ht)
 
-theorem hessDet : HessDet := by
-  intro m z
-  rw [Matrix.det_smul]
-  have h : (Matrix.of fun _ _ => (1:ℂ) : Matrix (Fin (m+1)) (Fin (m+1)) ℂ)
-      = Matrix.replicateCol Unit (fun _ : Fin (m+1) => (1:ℂ)) * Matrix.replicateRow Unit (fun _ : Fin (m+1) => (1:ℂ)) := by
-    ext i j; simp [Matrix.mul_apply]
-  rw [h, Matrix.det_one_add_replicateCol_mul_replicateRow]
-  simp [dotProduct]
-  ring
-
-theorem gaussHessOfMulti : GaussHessOfMulti := by
-  intro hG hD m β t z hβ ht hz
-  have hdet : (z⁻¹ • (1 + Matrix.of fun _ _ => (1 : ℂ)) : Matrix (Fin (m + 1)) (Fin (m + 1)) ℂ).det ≠ 0 := by
-    rw [hD m z]
-    have : ((m:ℂ)+2) ≠ 0 := by
-      have : ((m:ℂ)+2) = ((m+2 : ℕ) : ℂ) := by push_cast; ring
-      rw [this]; exact_mod_cast (Nat.succ_ne_zero (m+1))
-    exact mul_ne_zero this (pow_ne_zero _ (inv_ne_zero hz))
-  have hs : (z⁻¹ • (1 + Matrix.of fun _ _ => (1 : ℂ)) : Matrix (Fin (m + 1)) (Fin (m + 1)) ℂ).IsSymm := by
-    ext i j; simp [Matrix.transpose_apply, Matrix.one_apply, eq_comm, mul_add]
-  have h := hG (m+1) β t _ hβ ht hs hdet
-  rw [hD m z] at h
-  convert h using 3
-  have h2 : ‖(m:ℂ)+2‖ = (m:ℝ)+2 := by
-    have : ((m:ℂ)+2) = (((m:ℝ)+2 : ℝ):ℂ) := by push_cast; ring
-    rw [this, Complex.norm_real, Real.norm_of_nonneg (by positivity)]
-  rw [norm_mul, norm_pow, norm_inv, h2]
-  have : 0 < ‖z‖ := norm_pos_iff.2 hz
-  field_simp
-  rw [← mul_pow]; simp [this.ne']
-
 end Formalism.FourierDecayAlt.P.G9
 
 theorem Formalism.FourierDecayAlt.P.gaussian_multi_integral : Formalism.FourierDecayAlt.G.GaussMulti :=
   Formalism.FourierDecayAlt.P.G9.gaussMulti_of Formalism.FourierDecayAlt.P.takagi_factorization Formalism.FourierDecayAlt.P.G9.gaussOneDamped
-
-theorem Formalism.FourierDecayAlt.P.gaussian_hessian_integral : Formalism.FourierDecayAlt.G.GaussHess :=
-  Formalism.FourierDecayAlt.P.G9.gaussHessOfMulti Formalism.FourierDecayAlt.P.gaussian_multi_integral Formalism.FourierDecayAlt.P.G9.hessDet
 
 end SeveralVariables

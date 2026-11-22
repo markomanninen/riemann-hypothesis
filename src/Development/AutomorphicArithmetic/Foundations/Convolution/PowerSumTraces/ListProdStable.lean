@@ -1,14 +1,18 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OfinProd
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.SummandFactorAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OlocEx
-import Development.AutomorphicArithmetic.TwistedTraces.UiwPowCompEqOfAntitone
-import Development.AutomorphicArithmetic.TwistedTraces.IwahoriCompactOpenAndIwCosetIndicatorTest
-import Development.AutomorphicArithmetic.TwistedTraces.EigenspaceCompLevelProjectionEqInfFixed
-import Development.AutomorphicArithmetic.TwistedTraces.EigenspaceInfSphericalLeClosedInvariant
-import Development.AutomorphicArithmetic.TwistedTraces.TrOnEqMulOfEqSmulOnSubspace
-import Development.AutomorphicArithmetic.TwistedTraces.LocalHeckeOperatorMemOfClosedInvariant
-import Development.AutomorphicArithmetic.TwistedTraces.ExistsPosConstProdLocalHeckeOperators
-import Development.AutomorphicArithmetic.TwistedTraces.FiniteDimensionalEigenspaceInfFixedCompactOpen
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OfinProd
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.SummandFactorAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OlocEx
+public import Development.AutomorphicArithmetic.TwistedTraces.UiwPowCompEqOfAntitone
+public import Development.AutomorphicArithmetic.TwistedTraces.IwahoriCompactOpenAndIwCosetIndicatorTest
+public import Development.AutomorphicArithmetic.TwistedTraces.EigenspaceCompLevelProjectionEqInfFixed
+public import Development.AutomorphicArithmetic.TwistedTraces.EigenspaceInfSphericalLeClosedInvariant
+public import Development.AutomorphicArithmetic.TwistedTraces.TrOnEqMulOfEqSmulOnSubspace
+public import Development.AutomorphicArithmetic.TwistedTraces.LocalHeckeOperatorMemOfClosedInvariant
+public import Development.AutomorphicArithmetic.TwistedTraces.ExistsPosConstProdLocalHeckeOperators
+public import Development.AutomorphicArithmetic.TwistedTraces.FiniteDimensionalEigenspaceInfFixedCompactOpen
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.CuspidalSpectrum GlobalTheory.IndefiniteRowSideFullHecke.IwahoriDoubleCosets GlobalTheory.PRep Formalism.BasicNotions GlobalTheory.CuspRep GlobalTheory.SmGL PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Geo UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.GM UpperTheory.ConvolutionTheory.C
@@ -51,7 +55,7 @@ private theorem list_prod_stable {H : Type*} [NormedAddCommGroup H] [InnerProduc
     rw [List.prod_cons]
     exact h T (by simp) _ (ih (fun T' hT' => h T' (by simp [hT'])) v hv)
 
-private theorem amp_A_eq {K : Type} [Field K] [NumberField K] {n : ℕ} {μ : Measure (normOneGL K n)} [μ.IsHaarMeasure]
+private theorem amp_A_eq {K : Type} [Field K] [NumberField K] {n : ℕ} {μ : Measure (normOneGL (K := K) (n := n))} [μ.IsHaarMeasure]
     (𝔞 : Amp μ) (ν : Measure (archGroup K n)) [ν.IsHaarMeasure] (a : TI K n)
     (U : Subgroup (AdelicGLn.FiniteAdelicGL K n)) (h1 : 𝔞.ν = ν) (h2 : 𝔞.a₀ = a) (h3 : 𝔞.U = U) :
     𝔞.A = Oinf μ ν a ∘L prj (fixF μ U) := by

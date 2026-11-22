@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.IsStarRep
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GelfandInvariantsCentralCharacter
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GelfValTwoEqCvalR
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.IsStarRep
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GelfandInvariantsCentralCharacter
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GelfValTwoEqCvalR
+
+@[expose] public section
 
 open Finset Formalism.REAL
 

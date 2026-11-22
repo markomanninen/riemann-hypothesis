@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+
+@[expose] public section
 
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
@@ -18,7 +22,7 @@ theorem exists_basis_one_delta (σ : E →ₐ[F] E) {δ : E} (hδ : σ δ = -δ)
     intro s t hst
     have h1 : s • (1 : E) + t • (-δ) = 0 := by
       have := congrArg σ hst
-      simpa [map_add, map_smul, hδ] using this
+      simpa [map_add (f := _), map_smul, hδ] using this
     have hs : (2 * s) • (1 : E) = 0 := by
       have : (2 * s) • (1 : E) = (s • (1 : E) + t • δ) + (s • (1 : E) + t • (-δ)) := by module
       rw [this, hst, h1, add_zero]
@@ -119,7 +123,7 @@ theorem algebra_tensor_invol : ∀ (F E : Type) [Field F] [NumberField F] [Field
     have hadd := (Commute.all _ _).isNilpotent_add hx hs
     have e1 : (a ⊗ₜ[F] (1 : E) + c ⊗ₜ[F] δ) + sigR R σ (a ⊗ₜ[F] (1 : E) + c ⊗ₜ[F] δ) =
         (a + a) ⊗ₜ[F] (1 : E) := by
-      rw [map_add, hsig, hsig, map_one, hδ, TensorProduct.tmul_neg, TensorProduct.add_tmul]
+      rw [map_add (f := _), hsig, hsig, map_one, hδ, TensorProduct.tmul_neg, TensorProduct.add_tmul]
       abel
     rw [e1] at hadd
     have ha : a = 0 := half a (hnil _ hadd)
@@ -135,11 +139,11 @@ theorem algebra_tensor_invol : ∀ (F E : Type) [Field F] [NumberField F] [Field
     rwa [map_ofNat] at this
   · induction y using TensorProduct.induction_on with
     | zero => simp
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | tmul a e => rw [hsig, hsig, hσσ]
   · rw [hsig, hδ, TensorProduct.tmul_neg]
   · obtain ⟨a, c, rfl⟩ := exists_coord b hb0 hb1 y
-    rw [map_add, hsig, hsig, map_one, hδ, TensorProduct.tmul_neg, ← TensorProduct.neg_tmul] at hy
+    rw [map_add (f := _), hsig, hsig, map_one, hδ, TensorProduct.tmul_neg, ← TensorProduct.neg_tmul] at hy
     have hc := (coord_inj b hb0 hb1 hy).2
     have : c = 0 := half c (by nth_rewrite 1 [← hc]; simp)
     exact ⟨a, by rw [this, TensorProduct.zero_tmul, add_zero]⟩

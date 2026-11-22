@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GermIntegrals.StepSt
+module
+
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GermIntegrals.StepSt
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.ThetaGL ValuativeRel PositivityTheory.Tls2.Ming3
 open scoped Topology Pointwise
@@ -22,7 +26,7 @@ theorem valSet_eq (a : k) (c : kˣ) :
 
 theorem isOpen_valSet (a : k) (c : kˣ) : IsOpen {y : k | valuation k (y - a) ≤ valuation k (c : k)} := by
   rw [valSet_eq]
-  exact (continuous_add_left (-a)).isOpen_preimage _ ((GlobalTheory.SplitWeil.isOpen_int k).smul c)
+  exact (continuous_const.add continuous_id).isOpen_preimage _ ((GlobalTheory.SplitWeil.isOpen_int k).smul c)
 
 private theorem vol_valSet_lemma : SigmaCompactSpace k := by
   obtain ⟨t, ht0, ht1⟩ := Valuation.IsNontrivial.exists_lt_one (v := valuation k)
@@ -188,7 +192,7 @@ theorem transport {r t : ℕ} {c : kˣ} (hc : valuation k (c : k) < 1) {x : Matr
   let M : Matrix (Fin (r + t)) (Fin (r + t)) 𝒪[k] := 1 + D'
   have hres : M.map (IsLocalRing.residue 𝒪[k]) = 1 := by
     ext i j
-    simp only [M, Matrix.map_apply, Matrix.add_apply, map_add]
+    simp only [M, Matrix.map_apply, Matrix.add_apply, map_add (f := _)]
     have h0 : IsLocalRing.residue 𝒪[k] (D' i j) = 0 := by
       rw [IsLocalRing.residue_eq_zero_iff, IsLocalRing.mem_maximalIdeal, mem_nonunits_iff,
         Valuation.Integer.not_isUnit_iff_valuation_lt_one]
@@ -206,7 +210,7 @@ theorem transport {r t : ℕ} {c : kˣ} (hc : valuation k (c : k) < 1) {x : Matr
   have hgv : (Matrix.GeneralLinearGroup.map (algebraMap 𝒪[k] k) g).val = 1 + D := by
     ext i j
     change algebraMap 𝒪[k] k ((1 + D') i j) = (1 + D) i j
-    rw [Matrix.add_apply, Matrix.add_apply, map_add]
+    rw [Matrix.add_apply, Matrix.add_apply, map_add (f := _)]
     congr 1
     by_cases hij : i = j
     · subst hij
@@ -322,7 +326,8 @@ theorem decomp_smul (ν : Measure k) (hν : IsUnitVol ν) {n r : ℕ} {V W : Typ
     rw [Submodule.coe_smul, hI]
   have hB : B Ψ w = (∑ x ∈ S, Ψ.1 x) • B (I c' x₀) w := by
     conv_lhs => rw [hΨ]
-    rw [map_sum, LinearMap.sum_apply, Finset.sum_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply, Finset.sum_smul]
     refine Finset.sum_congr rfl fun x hx => ?_
     rw [map_smul, LinearMap.smul_apply, hA x (hS x hx)]
   have hfun : ∀ y, Ψ.1 y = ∑ x ∈ S, Ψ.1 x • (ballM c' x).indicator (fun _ => (1 : ℂ)) y := by
@@ -332,7 +337,7 @@ theorem decomp_smul (ν : Measure k) (hν : IsUnitVol ν) {n r : ℕ} {V W : Typ
   have hint : ∫ y, Ψ.1 y ∂volM ν (Fin n) (Fin r) =
       (∑ x ∈ S, Ψ.1 x) * ((volM ν (Fin n) (Fin r) (ballM c' x₀)).toReal : ℂ) := by
     rw [integral_congr_ae (Filter.Eventually.of_forall hfun),
-      integral_finset_sum S (f := fun x a => Ψ.1 x • (ballM c' x).indicator (fun _ => (1 : ℂ)) a)
+      integral_finsetSum S (f := fun x a => Ψ.1 x • (ballM c' x).indicator (fun _ => (1 : ℂ)) a)
         (fun x _ => (integrable_ind ν hν c' x).smul (Ψ.1 x)), Finset.sum_mul]
     refine Finset.sum_congr rfl fun x _ => ?_
     rw [integral_smul, integral_ind, volM_ballM_eq ν hν c' x x₀, smul_eq_mul]

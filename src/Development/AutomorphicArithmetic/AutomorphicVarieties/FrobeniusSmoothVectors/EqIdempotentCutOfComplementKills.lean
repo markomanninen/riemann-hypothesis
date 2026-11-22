@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -100,7 +104,7 @@ theorem UpperTheory.V.Fr.adjoin_image_in_residue_range :
       exact ⟨_, rfl⟩
     | add x y hx hy ihx ihy =>
       show φ (⟨x, hDA hx⟩ + ⟨y, hDA hy⟩) ∈ f.range
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem ihx ihy
     | mul x y hx hy ihx ihy =>
       show φ (⟨x, hDA hx⟩ * ⟨y, hDA hy⟩) ∈ f.range

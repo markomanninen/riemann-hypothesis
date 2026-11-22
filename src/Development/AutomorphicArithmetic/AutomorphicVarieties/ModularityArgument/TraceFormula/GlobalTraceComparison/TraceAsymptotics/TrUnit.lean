@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,12 +51,12 @@ theorem trUnit : TrUnit := by
     ext v
     simp [LinearMap.restrict_apply, levOp_unit_fixed ρ K v.1 v.2]
   unfold twTr
-  rw [dif_pos h, hid]
+  rw [dite_eq_left h, hid]
   by_cases hf : FiniteDimensional ℂ (fixed ρ K)
   · exact LinearMap.trace_id ℂ _
   · rw [Module.finrank_of_not_finite hf, Nat.cast_zero]
     unfold LinearMap.trace
-    rw [dif_neg]
+    rw [dite_eq_right]
     · simp
     · rintro ⟨s, ⟨b⟩⟩
       exact hf (Module.Finite.of_basis b)

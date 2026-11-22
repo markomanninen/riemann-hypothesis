@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ToFirst
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CurveFamilyFormalGermStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FamilyGivesConjugateLieDataStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FormalGermLieBasisStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FormalIsomorphismTransportStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ToFirst
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CurveFamilyFormalGermStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FamilyGivesConjugateLieDataStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FormalGermLieBasisStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FormalIsomorphismTransportStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1 GlobalTheory.CompanionTheory.Ar.Crv GlobalTheory.CompanionTheory.Ar.Conj
 open scoped CategoryTheory.Obj
@@ -145,7 +150,8 @@ theorem lieLat_conjData : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
       rw [h2] at h1
       exact (isCombAtG_iff_lie t M c _ _).1 h1
     · funext j
-      simp [map_sum, Matrix.mulVec, dotProduct, hec, mul_comm]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, Matrix.mulVec, dotProduct, hec, mul_comm]
   constructor
   · intro hv
     have hsub : Y.lieLat M i ≤ (D.lie i).comap e.toLinearMap.toAddMonoidHom := by

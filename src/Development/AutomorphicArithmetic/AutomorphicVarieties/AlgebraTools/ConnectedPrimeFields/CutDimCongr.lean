@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.CommutativeAlgebra.ChainConnInDim
-import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.IsSaturatedChain
-import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.Integral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ConnectedPrimeFields.IsWeaklyRegularPairModOneLeft
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ConnectedPrimeFields.BaseExistsPrime
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ConnectedPrimeFields.MaxNotMemMinimalPrimes
+module
+
+public import Mathlib
+public import ReciprocityTheory.CommutativeAlgebra.ChainConnInDim
+public import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.IsSaturatedChain
+public import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.Integral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ConnectedPrimeFields.IsWeaklyRegularPairModOneLeft
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ConnectedPrimeFields.BaseExistsPrime
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ConnectedPrimeFields.MaxNotMemMinimalPrimes
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.AlgebraTools.Conn
 
@@ -56,8 +60,11 @@ private theorem cut_dim_map {A R : Type} [CommRing A] [CommRing R] [Algebra A R]
     obtain ⟨Q, -, hQ, hQp⟩ := Ideal.exists_ideal_over_prime_of_isIntegral p (⊥ : Ideal R)
       (by simp [← RingHom.ker_eq_comap_bot,
         (RingHom.injective_iff_ker_eq_bot _).mp (FaithfulSMul.algebraMap_injective A R)])
-    have hle : J.map (algebraMap A R) ≤ Q := Ideal.map_le_iff_le_comap.mpr (hQp ▸ hJ)
-    exact hQp ▸ Ideal.comap_mono hle
+    change Ideal.comap (algebraMap A R) Q = p at hQp
+    have hle : J.map (algebraMap A R) ≤ Q := Ideal.map_le_iff_le_comap.mpr (by simpa [hQp] using hJ)
+    have hcomap : Ideal.comap (algebraMap A R) (J.map (algebraMap A R)) ≤
+        Ideal.comap (algebraMap A R) Q := Ideal.comap_mono hle
+    simpa [hQp] using hcomap
 
 private theorem cut_rad_max {R : Type} [CommRing R] [IsLocalRing R] {I : Ideal R} (hI : I ≠ ⊤)
     (h : ringKrullDim (R ⧸ I) = 0) : I.radical = maximalIdeal R := by

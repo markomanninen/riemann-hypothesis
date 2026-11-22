@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,9 +22,9 @@ private theorem isNilpotent_of_mem_of_isNilDP {B : Type} [CommRing B]
   simp only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one] at h
   rw [← δ.factorial_mul_dpow_eq_pow hx, h, mul_zero]
 
+
 set_option autoImplicit false in
 open CategoryTheory AlgebraicGeometry DividedPowers in
-
 theorem _root_.GlobalTheory.Cris.exists_finite_small_cover (R : Type) [CommRing R] (I : Ideal R) (κ : DividedPowers I)
     (X : Scheme.{0}) (s : X ⟶ _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Sp R) (K : Type) (U : K → X.Opens) (hU : ⨆ i, U i = ⊤)
     (T : _root_.GlobalTheory.Cris.Thick κ s) : ∃ (n : ℕ) (b : Fin n → T.B),

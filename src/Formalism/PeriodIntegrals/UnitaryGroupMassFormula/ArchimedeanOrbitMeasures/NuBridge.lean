@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.NuBridgeA
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.NuBridgeA
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,8 +55,8 @@ theorem norm_reimV_sq (M : V → Matrix (Fin n) (Fin m) ℂ) :
   refine Finset.sum_congr rfl fun v _ => Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [Complex.sq_norm, Complex.normSq_apply]
 
-variable (V m) in
 
+variable (V m) in
 def hermFam : Submodule ℝ (V → Matrix (Fin m) (Fin m) ℂ) where
   carrier := {M | ∀ v, (M v)ᴴ = M v}
   add_mem' {M N} hM hN v := by
@@ -109,12 +113,12 @@ theorem nuBridge : NuBridge := by
   have thH_add : ∀ S T, thH (S + T) = thH S + thH T := by
     intro S T
     funext v i j
-    simp [thH, Matrix.map_apply, map_add]
+    simp [thH, Matrix.map_apply, map_add (f := _)]
   have TcF_add : ∀ S T, TcF (S + T) = TcF S + TcF T := by
     intro S T
     have e : (⟨_, memK (S + T)⟩ : Kr) = ⟨_, memK S⟩ + ⟨_, memK T⟩ := Subtype.ext (by
       show (reimVE : _ ≃ₗ[ℝ] _) (thH (S + T)) = (reimVE : _ ≃ₗ[ℝ] _) (thH S) + (reimVE : _ ≃ₗ[ℝ] _) (thH T)
-      rw [thH_add, map_add])
+      rw [thH_add, map_add (f := _)])
     exact (congrArg bK.repr e).trans (map_add bK.repr _ _)
   have hθc : ∀ v i j, Continuous fun S : HmI X => PI.AprimeInfU.thetaInf X v (S.1 i j) :=
     fun v i j => (continuous_thetaInf X v).comp (continuous_subtype_val.matrix_elem i j)
@@ -148,7 +152,7 @@ theorem nuBridge : NuBridge := by
     have hSm : Sm ∈ HermR (Ainf X.B.I.F) X.B.I.cm.sig (D.R.rS + 1 + D.R.rS) := by
       show ∀ a b, sigR (Ainf X.B.I.F) X.B.I.cm.sig (Sm b a) = Sm a b
       intro a b
-      simp only [Sm, h2, map_mul, map_add, sigR_invP _ _ (sig_invI X), sigR_alg]
+      simp only [Sm, h2, map_mul, map_add (f := _), sigR_invP _ _ (sig_invI X), sigR_alg]
       ring
     refine ⟨⟨Sm, hSm⟩, ?_⟩
     have e : thH ⟨Sm, hSm⟩ = M := by
@@ -156,7 +160,7 @@ theorem nuBridge : NuBridge := by
       have hMh : conj (M v b a) = M v a b := by
         have := congrFun (congrFun (hM v) a) b
         simpa [Matrix.conjTranspose_apply] using this
-      simp only [thH, Matrix.map_apply, Sm, h2, map_mul, map_add, NuB.theta_alg, NuB.theta_sigR, hy, hMh,
+      simp only [thH, Matrix.map_apply, Sm, h2, map_mul, map_add (f := _), NuB.theta_alg, NuB.theta_sigR, hy, hMh,
         half_emb]
       ring
     show bK.repr _ = s
@@ -197,9 +201,11 @@ theorem nuBridge : NuBridge := by
     simp only [sumReI]
     refine Finset.sum_congr rfl fun v _ => ?_
     show (PI.AprimeInfU.evInf X v (pairHerm (Ainf X.B.I.F) X.B.I.cm.sig (D.R.rS + 1 + D.R.rS) S T)).re = _
-    rw [pairHerm, map_mul, NuB.evInf_alg, NuB.evInf_trace, half_emb, half_re, map_sum, Complex.re_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [pairHerm, map_mul, NuB.evInf_alg, NuB.evInf_trace, half_emb, half_re, map_sum, Complex.re_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
-    rw [map_sum, Complex.re_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Complex.re_sum]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [map_mul, hTh v a b]
     simp only [thH, Matrix.map_apply, Complex.mul_re, Complex.conj_re, Complex.conj_im]

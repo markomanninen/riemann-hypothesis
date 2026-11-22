@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.IsolateSpec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocallyIffAffineEtalePointCoverStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.IsolateSpec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocallyIffAffineEtalePointCoverStatement
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Gal.TranscendenceTraces
 
@@ -25,5 +29,5 @@ theorem UpperTheory.Gal.TranscendenceTraces.locFinGeo_of :
       (pullback.snd r (g ≫ ι)) (pullback.lift_snd _ _ _)
   refine ⟨φ ≫ s ≫ pullback.fst π (pullback.fst r ι), ?_⟩
   rw [Category.assoc, Category.assoc, pullback.condition, ← Category.assoc s, hs]
-  simp only [φ]
-  rw [pullback.lift_fst_assoc, pullback.lift_fst]
+  dsimp only [φ]
+  rw [← Category.assoc, pullback.lift_fst, pullback.lift_fst]

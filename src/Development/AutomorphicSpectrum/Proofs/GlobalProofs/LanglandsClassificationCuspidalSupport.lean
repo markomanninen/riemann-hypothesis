@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.TotallyDisjointProductIrreducible
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BernsteinUnitaryProductIrreducible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SupercuspidalSupportUniqueGL
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsCuspidalSupportIrreducibleSmoothGL
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsSubquotientParIndProductsFlattened
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ParabolicInductionProductBlockRenamingEquivStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PiExteriorTensorSmoothIrreducibleIsIrreducibleStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MapInjectiveOfInjective
-import CompanionTheory.AutomorphicTheory.HeckeStandardModules.EqZeroOfCompAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.TotallyDisjointProductIrreducible
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BernsteinUnitaryProductIrreducible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SupercuspidalSupportUniqueGL
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsCuspidalSupportIrreducibleSmoothGL
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsSubquotientParIndProductsFlattened
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ParabolicInductionProductBlockRenamingEquivStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PiExteriorTensorSmoothIrreducibleIsIrreducibleStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MapInjectiveOfInjective
+public import CompanionTheory.AutomorphicTheory.HeckeStandardModules.EqZeroOfCompAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem parIndMap_injective {α n : Type} {m : α → Type} [Fintype α] [Linear
     (congrArg (fun z : IndSp e σ => z.1.1 g) h)))
 
 def Embeds (N : ℕ) (Q : Irr k N) : Prop :=
-  ∃ (s : ℕ) (u : Fin s → IrrGL k) (e : (Σ a, Fin (u a).1) ≃ Fin N),
+  ∃ (s : ℕ) (u : Fin s → IrrGL (k := k)) (e : (Σ a, Fin (u a).1) ≃ Fin N),
     (∀ a, (u a).IsCusp) ∧ ∃ φ : Q.π.IntertwiningMap (multiProd e fun a => (u a).rep),
       Function.Injective φ
 
@@ -78,7 +82,7 @@ theorem embeds_zero (Q : Irr k 0) : Embeds 0 Q := by
       exact LinearMap.ker_eq_bot.1 h'
     · have h' : LinearMap.ker f = ⊤ := congrArg Subrepresentation.toSubmodule h
       exact absurd (LinearMap.ker_eq_top.1 h' ▸ rfl : f v = 0) hf
-  let u : Fin 0 → IrrGL k := fun a => a.elim0
+  let u : Fin 0 → IrrGL (k := k) := fun a => a.elim0
   haveI : IsEmpty (Σ a, Fin (u a).1) := ⟨fun x => x.1.elim0⟩
   let e : (Σ a, Fin (u a).1) ≃ Fin 0 := Equiv.equivOfIsEmpty _ _
   let L := GlobalTheory.EmptyProd.lineEquiv (k := k) e fun a => (u a).rep
@@ -94,7 +98,7 @@ theorem embeds_cusp (n : ℕ) (hn : 0 < n) (π : Irr k n) (hc : IsCuspidal π.π
         rfl
       right_inv := fun _ => rfl }
   obtain ⟨φ⟩ := nonempty_equiv_multiProd_one π.smooth e (fun _ _ => rfl)
-  let x : IrrGL k := IrrGL.of π.π π.smooth π.irr
+  let x : IrrGL (k := k) := IrrGL.of π.π π.smooth π.irr
   let ψ := multiProdEquiv e fun _ : Fin 1 => IrrGL.equivOf π.π π.smooth π.irr
   refine ⟨1, fun _ => x, e, fun _ => (IrrGL.isCusp_of.2 ⟨hn, hc⟩), (φ.trans ψ).toIntertwiningMap,
     (φ.trans ψ).toLinearEquiv.injective⟩
@@ -120,7 +124,7 @@ theorem reduce_embed (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness
 
 theorem glue_embed (n : ℕ) (π : Irr k n) (s : ℕ) (d : Fin s → ℕ) (e : (Σ a, Fin (d a)) ≃ Fin n)
     (σ : ∀ a, Irr k (d a)) (φ : π.π.IntertwiningMap (multiProd e fun a => (σ a).π))
-    (hφ : Function.Injective φ) (t : Fin s → ℕ) (u : ∀ a, Fin (t a) → IrrGL k)
+    (hφ : Function.Injective φ) (t : Fin s → ℕ) (u : ∀ a, Fin (t a) → IrrGL (k := k))
     (e' : ∀ a, (Σ b, Fin (u a b).1) ≃ Fin (d a)) (hu : ∀ a b, (u a b).IsCusp)
     (ψ : ∀ a, (σ a).π.IntertwiningMap (multiProd (e' a) fun b => (u a b).rep))
     (hψ : ∀ a, Function.Injective (ψ a)) : Embeds n π := by
@@ -157,7 +161,7 @@ theorem embeds (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness) (hGL
 theorem main : GlobalTheory.Published.BernsteinZelevinskyFiniteness → GlobalTheory.Published.GeometricLemma →
     ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
       (N : ℕ) (Q : GlobalTheory.SplitRead.Irr k N),
-      ∃ (s : ℕ) (u : Fin s → GlobalTheory.LocGL.IrrGL k) (e : (Σ a, Fin (u a).1) ≃ Fin N),
+      ∃ (s : ℕ) (u : Fin s → GlobalTheory.LocGL.IrrGL (k := k)) (e : (Σ a, Fin (u a).1) ≃ Fin N),
         (∀ a, (u a).IsCusp) ∧
           ∃ φ : Q.π.IntertwiningMap (GlobalTheory.SmGL.multiProd e fun a => (u a).rep),
             Function.Injective φ :=

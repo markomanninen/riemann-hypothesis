@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteAlgebrasOverHenselianAndComplete
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsGrpObjOfFlatClosed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteAlgebrasOverHenselianAndComplete
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsGrpObjOfFlatClosed
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,11 +67,6 @@ theorem isFinite_opensRange_ι_comp (i : Y ⟶ X) [IsOpenImmersion i] (f : X ⟶
   rw [this]
   infer_instance
 
-theorem isClosed_of_isFinite_ι_comp (f : X ⟶ S) [IsSeparated f] (U : X.Opens)
-    [IsFinite (U.ι ≫ f)] : IsClosed (U : Set X) := by
-  have : IsFinite U.ι := .of_comp _ f
-  simpa using U.ι.isClosedMap.isClosed_range
-
 theorem isFinite_of_comp_surjective (p : Y ⟶ X) [Surjective p] (f : X ⟶ S) [IsSeparated f]
     [LocallyOfFiniteType f] [IsFinite (p ≫ f)] : IsFinite f := by
   have : UniversallyClosed f := .of_comp_surjective p _
@@ -103,8 +102,6 @@ theorem isFinite_bot_ι_comp (f : X ⟶ S) : IsFinite ((⊥ : X.Opens).ι ≫ f)
   inferInstance
 
 def finitePart (f : X ⟶ S) : X.Opens := sSup {U : X.Opens | IsFinite (U.ι ≫ f)}
-
-def finitePartCompl (f : X ⟶ S) : X.Opens := ⟨interior (finitePart f : Set X)ᶜ, isOpen_interior⟩
 
 theorem mem_finitePart {f : X ⟶ S} {x : X} :
     x ∈ finitePart f ↔ ∃ U : X.Opens, IsFinite (U.ι ≫ f) ∧ x ∈ U :=
@@ -183,6 +180,10 @@ theorem mem_finitePart_of_eq_closedPoint (f : X ⟶ Spec R) [LocallyOfFiniteType
     (PrimeSpectrum.localization_away_comap_range (Localization.Away e) e).ge hey
   exact ⟨z, by simp [hz]⟩
 
+theorem preimage_finitePart_eq_top (f : X ⟶ Spec R) [LocallyOfFiniteType f] [LocallyQuasiFinite f]
+    (h : Y ⟶ X) [IsFinite (h ≫ f)] : h ⁻¹ᵁ finitePart f = ⊤ :=
+  preimage_eq_top_of_closedFibre_subset f _ (mem_finitePart_of_eq_closedPoint f) h
+
 variable (f : X ⟶ Spec R) [IsSeparated f] [LocallyOfFiniteType f] [QuasiCompact f]
   [LocallyQuasiFinite f]
 
@@ -203,47 +204,6 @@ instance isFinite_finitePart : IsFinite ((finitePart f).ι ≫ f) := by
     (mem_finitePart_of_eq_closedPoint f)
   rwa [finitePart_eq_of_closedFibre_subset f U hU]
 
-theorem isClosed_finitePart : IsClosed (finitePart f : Set X) :=
-  isClosed_of_isFinite_ι_comp f _
-
-instance isClosedImmersion_finitePart_ι : IsClosedImmersion (finitePart f).ι :=
-  .of_isPreimmersion _ (by simpa using isClosed_finitePart f)
-
-@[simp]
-theorem coe_finitePartCompl : (finitePartCompl f : Set X) = (finitePart f : Set X)ᶜ :=
-  (isClosed_finitePart f).isOpen_compl.interior_eq
-
-theorem isCompl_finitePart : IsCompl (finitePart f) (finitePartCompl f) := by
-  rw [isCompl_iff, disjoint_iff, codisjoint_iff]
-  constructor <;> ext1 <;> simp
-
-instance isClosedImmersion_finitePartCompl_ι : IsClosedImmersion (finitePartCompl f).ι :=
-  .of_isPreimmersion _ (by simpa using (finitePart f).isOpen)
-
-instance isIso_coprodDesc_finitePart :
-    IsIso (coprod.desc (finitePart f).ι (finitePartCompl f).ι) := by
-  obtain ⟨hc⟩ := nonempty_isColimit_binaryCofanMk_of_isCompl (finitePart f).ι
-    (finitePartCompl f).ι (by simpa using isCompl_finitePart f)
-  have : coprod.desc (finitePart f).ι (finitePartCompl f).ι =
-      ((coprodIsCoprod _ _).coconePointUniqueUpToIso hc).hom := by
-    apply coprod.hom_ext
-    · rw [coprod.inl_desc]
-      exact ((coprodIsCoprod _ _).comp_coconePointUniqueUpToIso_hom hc ⟨.left⟩).symm
-    · rw [coprod.inr_desc]
-      exact ((coprodIsCoprod _ _).comp_coconePointUniqueUpToIso_hom hc ⟨.right⟩).symm
-  rw [this]
-  exact Iso.isIso_hom _
-
-omit [IsSeparated f] [QuasiCompact f] in
-
-theorem preimage_finitePart_eq_top (h : Y ⟶ X) [IsFinite (h ≫ f)] : h ⁻¹ᵁ finitePart f = ⊤ :=
-  preimage_eq_top_of_closedFibre_subset f _ (mem_finitePart_of_eq_closedPoint f) h
-
-omit [IsSeparated f] [QuasiCompact f] in
-
-theorem finitePart_le_preimage (h : Y ⟶ X) : finitePart (h ≫ f) ≤ h ⁻¹ᵁ finitePart f :=
-  finitePart_le_preimage_of_closedFibre_subset f _ (mem_finitePart_of_eq_closedPoint f) h
-
 end Henselian
 
 section Lift
@@ -257,7 +217,6 @@ def finitePartLift (f : X ⟶ Spec R) [LocallyOfFiniteType f] [LocallyQuasiFinit
     rw [Scheme.Opens.range_ι]
     exact (preimage_finitePart_eq_top f h).ge (Set.mem_univ y))
 
-@[reassoc (attr := simp)]
 theorem finitePartLift_ι (f : X ⟶ Spec R) [LocallyOfFiniteType f] [LocallyQuasiFinite f]
     (h : Y ⟶ X) [IsFinite (h ≫ f)] : finitePartLift f h ≫ (finitePart f).ι = h :=
   IsOpenImmersion.lift_fac _ _ _
@@ -268,22 +227,6 @@ theorem existsUnique_lift_finitePart (f : X ⟶ Spec R) [LocallyOfFiniteType f]
   subst w
   exact ⟨finitePartLift f h, finitePartLift_ι f h, fun l hl ↦ by
     rw [← cancel_mono (finitePart f).ι, hl, finitePartLift_ι]⟩
-
-def finitePartMap (g : Y ⟶ Spec R) (f : X ⟶ Spec R) [LocallyOfFiniteType f]
-    [LocallyQuasiFinite f] (h : Y ⟶ X) (w : h ≫ f = g) :
-    (finitePart g).toScheme ⟶ finitePart f :=
-  h.resLE _ _ (w ▸ finitePart_le_preimage f h)
-
-@[reassoc (attr := simp)]
-theorem finitePartMap_ι (g : Y ⟶ Spec R) (f : X ⟶ Spec R) [LocallyOfFiniteType f]
-    [LocallyQuasiFinite f] (h : Y ⟶ X) (w : h ≫ f = g) :
-    finitePartMap g f h w ≫ (finitePart f).ι = (finitePart g).ι ≫ h :=
-  h.resLE_comp_ι _
-
-@[simp]
-theorem finitePartMap_id (f : X ⟶ Spec R) [LocallyOfFiniteType f] [LocallyQuasiFinite f] :
-    finitePartMap f f (𝟙 X) (Category.id_comp f) = 𝟙 _ := by
-  simp [← cancel_mono (finitePart f).ι]
 
 end Lift
 
@@ -326,20 +269,6 @@ section Group
 open MonoidalCategory CartesianMonoidalCategory MonObj
 
 variable {R : CommRingCat.{u}}
-
-abbrev finitePartOver {S : Scheme.{u}} (G : Over S) : Over S :=
-  Over.mk ((finitePart G.hom).ι ≫ G.hom)
-
-def finitePartOverι {S : Scheme.{u}} (G : Over S) : finitePartOver G ⟶ G :=
-  Over.homMk (finitePart G.hom).ι rfl
-
-@[simp]
-theorem finitePartOverι_left {S : Scheme.{u}} (G : Over S) :
-    (finitePartOverι G).left = (finitePart G.hom).ι := rfl
-
-instance mono_finitePartOverι {S : Scheme.{u}} (G : Over S) : Mono (finitePartOverι G) :=
-  have : Mono (finitePartOverι G).left := inferInstanceAs (Mono (finitePart G.hom).ι)
-  Over.mono_of_mono_left _
 
 end Group
 

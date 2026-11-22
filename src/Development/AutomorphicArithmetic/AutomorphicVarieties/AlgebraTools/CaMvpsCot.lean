@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CotInd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCotOfSpan
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PiSpanVariable
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CotInd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCotOfSpan
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PiSpanVariable
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.AlgebraTools
 

@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.TopEntryWaveEquation
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopTwistDensOfWaveQQ
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HasFDerivAtFsvSelf
+module
+
+public import Formalism.HermitianCurvature.TopEntryWaveEquation
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopTwistDensOfWaveQQ
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HasFDerivAtFsvSelf
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate
@@ -103,10 +107,9 @@ theorem zeta_entries (hZ : NF.ActualZetaSmooth) {P : M.Par} {z z' : Fin (2 * P.r
   have hcore : ∀ A B : Module.End ℂ (RadSp P.k P.r z z' π π'),
       mkP Wv' Wv * mkP A B * mkP Wv Wv' = mkP (Wv' * A * Wv) (Wv' * B * Wv) := by
     intro A B
-    apply Prod.ext
-    · simp only [pr_mul_fst, mkPair_fst', mul_assoc]
-    · apply MulOpposite.unop_injective
-      simp only [pr_mul_snd, mkPair_snd', mul_assoc]
+    refine pr_ext rfl ?_
+    change Wv' * (B * Wv) = Wv' * B * Wv
+    exact (mul_assoc _ _ _).symm
   have e11 : ∀ Y, Wv' * X.t Y 1 1 * Wv = X.t Y 1 1 := by
     intro Y
     rw [mul_assoc, (hA Y).2.1, ← mul_assoc, hWW, one_mul]
@@ -127,17 +130,17 @@ theorem zeta_entries (hZ : NF.ActualZetaSmooth) {P : M.Par} {z z' : Fin (2 * P.r
     congr 1
     simp only [ActualOps.QQ, Matrix.of_apply]
     rw [hcore, e10 Y, e01 (star Y)]
-    apply Prod.ext
-    · simp only [mkPair_fst', sub_eq_add_neg, pr_add_fst, pr_neg_fst, pr_mul_fst, pr_alg_fst]
+    apply pr_ext
+    · change X.t Y 1 0 - s • X.t Y 1 1 = X.t Y 1 0 - X.t Y 1 1 * algebraMap ℂ _ s
       rw [← Algebra.commutes, ← Algebra.smul_def]
-    · apply MulOpposite.unop_injective
-      simp only [mkPair_snd', sub_eq_add_neg, pr_add_snd, pr_neg_snd, pr_mul_snd, pr_alg_snd]
-      rw [← Algebra.smul_def, neg_smul]
+    · change X.t (star Y) 0 1 + (-conj s) • X.t (star Y) 1 1 =
+        X.t (star Y) 0 1 - algebraMap ℂ _ (conj s) * X.t (star Y) 1 1
+      rw [← Algebra.smul_def, neg_smul, sub_eq_add_neg]
 
 end Entries
 
-open TwistedTransfer in
 
+open TwistedTransfer in
 theorem topTwistDensOfZeta : TopTwistDensOfZeta := by
   intro hZ Wp Wq _ _ _ _ _ _ S _ _ P z z' π π' X μ L st l0 K hD
   obtain ⟨hP, -, hAL, hQQ, -, -, hSL, hLS⟩ := hD
@@ -152,14 +155,15 @@ theorem topTwistDensOfZeta : TopTwistDensOfZeta := by
   have hW'W : Wv' * Wv = 1 := by
     apply LinearMap.ext; intro Φ; apply Subtype.ext; funext c g
     simp only [Module.End.mul_apply, Module.End.one_apply, hW1, hW2, smul_smul, fsv_neg_mul_fsv, one_smul]
-  have f_fi : mkP Wv Wv' * mkP Wv' Wv = 1 := pr_ext (by simpa using hWW') (by simpa using hWW')
-  have fi_f : mkP Wv' Wv * mkP Wv Wv' = 1 := pr_ext (by simpa using hW'W) (by simpa using hW'W)
+  have f_fi : mkP Wv Wv' * mkP Wv' Wv = 1 := pr_ext hWW' hWW'
+  have fi_f : mkP Wv' Wv * mkP Wv Wv' = 1 := pr_ext hW'W hW'W
   have hfn : ∀ g ∈ Fr.zfns L, Commute (mkP Wv Wv') g := by
     obtain ⟨-, -, -, -, -, -, hz, hzi, hzb, hzbi, hG, hGi, -⟩ := hAL
     have key : ∀ j j' : Fin 6, Commute (mkP Wv Wv') (mkP (X.fn j) (X.fn j')) := by
       intro j j'
       show _ * _ = _ * _
-      exact pr_ext (by simpa using mulOp_comm_fn X Wv _ hW j) (by simpa using (mulOp_comm_fn X Wv' _ hW' j').symm)
+      exact pr_ext (TwistedTransfer.mulOp_comm_fn X Wv _ hW j)
+        (TwistedTransfer.mulOp_comm_fn X Wv' _ hW' j').symm
     intro g hg
     simp only [Fr.zfns, Set.mem_insert_iff, Set.mem_singleton_iff] at hg
     rcases hg with rfl | rfl | rfl | rfl | rfl | rfl
@@ -169,8 +173,8 @@ theorem topTwistDensOfZeta : TopTwistDensOfZeta := by
     · rw [hzbi]; exact key _ _
     · rw [hG]; exact key _ _
     · rw [hGi]; exact key _ _
-  have hGG : Commute (mkP Wv Wv') L.GG := hfn _ (mem_zfns L).2.2.2.2.1
-  have hfiGG : Commute (mkP Wv' Wv) L.GG := (commute_inv hGG.symm f_fi fi_f).symm
+  have hGG : Commute (mkP Wv Wv') L.GG := hfn _ (TwistedTransfer.mem_zfns L).2.2.2.2.1
+  have hfiGG : Commute (mkP Wv' Wv) L.GG := (TwistedTransfer.commute_inv hGG.symm f_fi fi_f).symm
   obtain ⟨e11, e10⟩ := zeta_entries hZ hP X st l0 hQQ s Wv Wv' hW hW'
   have hx : ∀ Y, Commute (mkP Wv Wv') (st.x Y) := by
     intro Y
@@ -193,7 +197,7 @@ theorem topTwistDensOfZeta : TopTwistDensOfZeta := by
     intro Y hY
     have h := e10 Y
     rw [hLS.low Y hY, hLS.tau Y] at h
-    have hfix : Commute (mkP Wv' Wv) (st.x Y) := (commute_inv (hx Y).symm f_fi fi_f).symm
+    have hfix : Commute (mkP Wv' Wv) (st.x Y) := (TwistedTransfer.commute_inv (hx Y).symm f_fi fi_f).symm
     have cancel : ∀ T, st.xi Y * L.GGi * (L.GG * st.x Y * T) = T := by
       intro T
       calc st.xi Y * L.GGi * (L.GG * st.x Y * T) = st.xi Y * (L.GGi * L.GG) * st.x Y * T := by
@@ -206,14 +210,15 @@ theorem topTwistDensOfZeta : TopTwistDensOfZeta := by
       simp only [mul_assoc]
     rw [h3, ← mul_sub] at h
     rw [← cancel (mkP Wv' Wv * _ * mkP Wv Wv'), h, cancel]
-  have hWH : WaveHyp L st (mkP Wv Wv') (mkP Wv' Wv) s := ⟨f_fi, fi_f, rfl, hfn, hx, hl⟩
-  obtain ⟨hFV, hd⟩ := frame_twist_F hSL hLS hWH w hw.1
+  have hWH : TwistedTransfer.WaveHyp L st (mkP Wv Wv') (mkP Wv' Wv) s := ⟨f_fi, fi_f, rfl, hfn, hx, hl⟩
+  obtain ⟨hFV, hd⟩ := TwistedTransfer.frame_twist_F hSL hLS hWH w hw.1
   have hM : (Fr.ofWord L st w).d L * (Fr.ofWord L st w).F * Vw (mkP Wv Wv') s w =
       io (mkP Wv Wv') * ((Fr.ofWord L st w).d L * (Fr.ofWord L st w).F) := by
     rw [mul_assoc, hFV, ← mul_assoc, ← hd.eq, mul_assoc]
   unfold topDens
   rw [Finset.mul_sum]
   refine Finset.sum_congr rfl fun e _ => ?_
-  rw [← act_mul, hM, act_mul, act_io, mkPair_fst', hW1, hsInner_smul_left]
+  have hfst : (mkP Wv Wv').1 = Wv := rfl
+  rw [← act_mul, hM, act_mul, act_io, hfst, hW1, hsInner_smul_left]
 
 end Formalism.FourierDecayAlt.P5

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DetNotMemSpanMulVecOfSocle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DetNotMemSpanMulVecOfSocle
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -41,7 +45,7 @@ theorem exists_mul_kills_ker_of_localization (O H : Type) [CommRing O] [CommRing
       linear_combination ((∏ x ∈ G.erase b, s x : M) : H) * hs b
     | zero => simp
     | add a b _ _ ha hb =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       linear_combination ha + hb
     | smul c a _ ha =>
       rw [map_smul, smul_eq_mul, map_mul, Algebra.smul_def]

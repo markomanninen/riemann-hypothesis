@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
-import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsPotentiallySemistableCoefficientFieldEnlarge
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CharpolyEqOfIsNilpotentSub
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsFrobSSWdRep
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsUnitOfStableLine
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinrankLetterHomComp
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CharpolyWeilDelignePotSemistableEnlargeCoefficie
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RepERankOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DmulMulDRight
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DeRhamCharacterTwistIffLocalEmbedding
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+public import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsPotentiallySemistableCoefficientFieldEnlarge
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CharpolyEqOfIsNilpotentSub
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsFrobSSWdRep
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsUnitOfStableLine
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinrankLetterHomComp
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CharpolyWeilDelignePotSemistableEnlargeCoefficie
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RepERankOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DmulMulDRight
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DeRhamCharacterTwistIffLocalEmbedding
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain Polynomial GlobalTheory.HeightCounting GlobalTheory.RowTie GlobalTheory.SplitRead GlobalTheory.NPin
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open Formalism.BasicNotions.Loc GlobalTheory.Pst GlobalTheory.WeilDeligne
@@ -37,9 +42,9 @@ theorem mulB_assoc (y y' : (Fin 1 → ↥L.1) ⊗[ℚ_[l]] Bst P) (w : V ⊗[ℚ
       | zero => simp
       | tmul v c =>
         rw [mulB_tmul, mulB_tmul, mulB_tmul, mulB_tmul, Pi.smul_apply, smul_eq_mul, mul_smul, mul_assoc]
-      | add w w' hw hw' => simp only [map_add, hw, hw']
-    | add y y' hy hy' => simp only [map_add, LinearMap.add_apply, hy, hy']
-  | add y y' hy hy' => simp only [map_add, LinearMap.add_apply, hy, hy']
+      | add w w' hw hw' => simp only [map_add (f := _), hw, hw']
+    | add y y' hy hy' => simp only [map_add (f := _), LinearMap.add_apply, hy, hy']
+  | add y y' hy hy' => simp only [map_add (f := _), LinearMap.add_apply, hy, hy']
 
 theorem mulB_comm (y y' : (Fin 1 → ↥L.1) ⊗[ℚ_[l]] Bst P) :
     mulB P (Fin 1 → ↥L.1) y y' = mulB P (Fin 1 → ↥L.1) y' y := by
@@ -54,15 +59,15 @@ theorem mulB_comm (y y' : (Fin 1 → ↥L.1) ⊗[ℚ_[l]] Bst P) :
       funext i
       rw [Subsingleton.elim i 0]
       simp [mul_comm]
-    | add y y' hy hy' => simp only [map_add, LinearMap.add_apply, hy, hy']
-  | add y y' hy hy' => simp only [map_add, LinearMap.add_apply, hy, hy']
+    | add y y' hy hy' => simp only [map_add (f := _), LinearMap.add_apply, hy, hy']
+  | add y y' hy hy' => simp only [map_add (f := _), LinearMap.add_apply, hy, hy']
 
 theorem one_mulB (w : V ⊗[ℚ_[l]] Bst P) :
     mulB P V ((fun _ => (1 : ↥L.1)) ⊗ₜ (1 : Bst P)) w = w := by
   induction w using TensorProduct.induction_on with
   | zero => simp
   | tmul v c => rw [mulB_tmul, one_smul, one_mul]
-  | add w w' hw hw' => simp only [map_add, hw, hw']
+  | add w w' hw hw' => simp only [map_add (f := _), hw, hw']
 
 variable {K : FinExt l}
 
@@ -72,7 +77,7 @@ theorem stRep_twist (ρs ρt : Representation ↥L.1 ↥(GK K) V) (χ : ↥(GK K
   induction w using TensorProduct.induction_on with
   | zero => simp
   | tmul v c => rw [stRep_tmul, stRep_tmul, ht, TensorProduct.smul_tmul']
-  | add w w' hw hw' => simp only [map_add, smul_add, hw, hw']
+  | add w w' hw hw' => simp only [map_add (f := _), smul_add, hw, hw']
 
 theorem stRep_trivial_one (g : ↥(GK K)) :
     stRep P (Representation.trivial ↥L.1 ↥(GK K) (Fin 1 → ↥L.1)) g ((fun _ => (1 : ↥L.1)) ⊗ₜ (1 : Bst P)) =
@@ -82,10 +87,10 @@ theorem stRep_trivial_one (g : ↥(GK K)) :
 
 end GlobalTheory.Pst.TwistLetters.Invert
 
+
 set_option maxHeartbeats 1600000 in
 set_option synthInstance.maxHeartbeats 200000 in
 open GlobalTheory.Pst.TwistLetters.Invert in
-
 theorem GlobalTheory.Pst.TwistLetters.exists_dmul_eq_of_inv : ∀ {l : ℕ} [Fact l.Prime] (P : LocPrime l) {K L : FinExt l} {V : Type} [AddCommGroup V] [Module ↥L.1 V] [Module ℚ_[l] V] [IsScalarTower ℚ_[l] ↥L.1 V] (ρs ρt : Representation ↥L.1 ↥(GK K) V) (ρm : Representation ↥L.1 ↥(GK K) (Fin 1 → ↥L.1)) (χ : ↥(GK K) → ↥L.1) (hm : ∀ g v, ρm g v = χ g • v) (ht : ∀ g v, ρt g v = χ g • ρs g v) (y : ↥(Dpst P ρm)) (y' : (Fin 1 → ↥L.1) ⊗[ℚ_[l]] Bst P), GlobalTheory.Pst.TwistLetters.mulB P (Fin 1 → ↥L.1) y' (y : (Fin 1 → ↥L.1) ⊗[ℚ_[l]] Bst P) = (fun _ => (1 : ↥L.1)) ⊗ₜ (1 : Bst P) → ∀ z : ↥(Dpst P ρt), ∃ x : ↥(Dpst P ρs), GlobalTheory.Pst.TwistLetters.dmul P ρs ρt ρm χ hm ht x y = z := by
   intro l _ P K L V _ _ _ _ ρs ρt ρm χ hm ht y y' hinv z
   have hmτ : ∀ g w, stRep P ρm g w =

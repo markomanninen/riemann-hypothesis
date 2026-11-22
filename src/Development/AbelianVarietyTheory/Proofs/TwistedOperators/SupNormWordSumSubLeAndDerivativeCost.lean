@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DerAlong
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DRhoSumAndSobOLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DerAlong
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DRhoSumAndSobOLe
+
+@[expose] public section
 
 noncomputable section
 

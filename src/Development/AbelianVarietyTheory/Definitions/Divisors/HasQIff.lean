@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,9 +21,6 @@ def IsRAct {ι : Type} (act : ι → SL(2, ℤ) → ι) : Prop :=
 
 def ActBij {ι : Type} (act : ι → SL(2, ℤ) → ι) : Prop :=
   ∀ γ, Function.Bijective fun i => act i γ
-
-def FamQ {ι : Type} (act : ι → SL(2, ℤ) → ι) (w : ℤ) (N : ℕ) (f : ι → ℍ → ℂ) (a : ι → ℕ → ℂ) : Prop :=
-  IsFam act w f ∧ ∀ i, HasQ N (f i) (a i)
 
 def conv (a b : ℕ → ℂ) (n : ℕ) : ℂ := ∑ p ∈ Finset.HasAntidiagonal.antidiagonal n, a p.1 * b p.2
 

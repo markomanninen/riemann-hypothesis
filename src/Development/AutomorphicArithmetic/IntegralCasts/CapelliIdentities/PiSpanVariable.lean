@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.PowerSeriesMemSpanAllVariables.pi_span_X :
     ∀ {O σ : Type} [inst : CommRing O] (s : Finset σ)

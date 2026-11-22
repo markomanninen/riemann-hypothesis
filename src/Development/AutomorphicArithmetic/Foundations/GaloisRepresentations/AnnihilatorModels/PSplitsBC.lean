@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TensorProduct
 open UpperTheory.Gal.crystallineComparison
 
@@ -17,11 +22,11 @@ theorem UpperTheory.Gal.crystallineComparison.splitsBC_of :
       intro x
       induction x using TensorProduct.induction_on with
       | zero => simp
-      | add a b ha hb => simp only [map_add, ha, hb]
+      | add a b ha hb => simp only [map_add (f := _), ha, hb]
       | tmul b y =>
         induction y using TensorProduct.induction_on with
         | zero => simp
-        | add a c ha hc => simp only [tmul_add, map_add, ha, hc]
+        | add a c ha hc => simp only [tmul_add, map_add (f := _), ha, hc]
         | tmul r s =>
           funext i
           rw [splitMap_tmul, hz', Algebra.TensorProduct.cancelBaseChange_tmul, splitMap_tmul]

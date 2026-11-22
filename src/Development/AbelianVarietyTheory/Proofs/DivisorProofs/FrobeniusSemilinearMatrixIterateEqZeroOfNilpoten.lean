@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -14,7 +18,7 @@ theorem frobSemilinear_iterate_eq_zero : ∀ (p : ℕ) [Fact p.Prime] (S : Type)
         exact Matrix.mulVec_zero Q
       map_add' := by
         intro x y
-        simp only [L, Pi.add_apply, map_add]
+        simp only [L, Pi.add_apply, map_add (f := _)]
         exact Matrix.mulVec_add Q _ _ }
   have hF : ∀ n, ⇑(F ^ n) = L^[n] := fun n => AddMonoid.End.coe_pow (M := ι → S) F n
   have hsmul : ∀ (a : S) (w : ι → S), L (a • w) = a ^ p • L w := by
@@ -34,7 +38,8 @@ theorem frobSemilinear_iterate_eq_zero : ∀ (p : ℕ) [Fact p.Prime] (S : Type)
   have hdecomp : ∀ w : ι → S, L^[N] w = ∑ j, (w j) ^ (p ^ N) • L^[N] (Pi.single j 1) := by
     intro w
     conv_lhs => rw [← Finset.univ_sum_single w]
-    rw [← hF, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hF, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [hF, ← hsmulN]
     congr 1

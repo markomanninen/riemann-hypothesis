@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 
@@ -57,7 +62,7 @@ theorem kappa_smul (w : WCb l) :
   | tmul v x =>
     rw [smul_tmul', kappa_tmul, kappa_tmul, smul_tmul', smul_eq_mul, smul_eq_mul,
       Algebra.TensorProduct.tmul_mul_tmul, one_mul]
-  | add x y hx hy => rw [smul_add, map_add, map_add, smul_add, hx, hy]
+  | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), smul_add, hx, hy]
 
 theorem kappa_frob :
     letI := zlLat T
@@ -68,7 +73,7 @@ theorem kappa_frob :
   induction y using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul v x => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 def mulZ (o : O) :
     letI := zlLat T
@@ -86,7 +91,7 @@ theorem kappa_mulZ (o : O) :
   induction y using TensorProduct.induction_on with
   | zero => simp only [map_zero, smul_zero]
   | tmul v x => exact tmul_smul o ((1 : O) ⊗ₜ[ℤ_[l]] v : OW l O) x
-  | add x y hx hy => simp only [map_add, smul_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), smul_add, hx, hy]
 
 end Kappa
 
@@ -103,7 +108,7 @@ theorem exists_coord (I : Ident t ϖ P T) {N : Type} [AddCommGroup N] (J : N →
   choose c hc hJ using fun x => (h (J x)).1 ⟨x, rfl⟩
   refine ⟨AddMonoidHom.mk' c fun x y => ?_, hc, hJ, fun m hm => ?_⟩
   · have h1 := map_add J x y
-    rw [hJ, hJ, hJ, ← map_add, ← map_add] at h1
+    rw [hJ, hJ, hJ, ← map_add (f := _), ← map_add (f := _)] at h1
     exact congrArg Subtype.val (toW_injective t ϖ P (I.j.injective h1))
   · obtain ⟨x, hx⟩ := (h _).2 ⟨m, hm, rfl⟩
     rw [hJ] at hx
@@ -118,8 +123,8 @@ theorem eq_of_j_eq (I : Ident t ϖ P T) (f : ZMod a → A O K) (v w : ME P)
   rw [← map_smul, ← ϖ.iW_of_mem t K, ← h1] at h
   exact congrArg Subtype.val (toW_injective t ϖ P (I.j.injective h))
 
-variable (K t ϖ) in
 
+variable (K t ϖ) in
 theorem inclO_iTot_E_pow (k : ℕ) : inclO l O (ϖ.iTot t K ((fun _ => EIn l e _) ^ k)) =
     (1 : O) ⊗ₜ[ℤ_[l]] (inclW l (ϖ.ev a (eis l a e)) ^ k) := by
   rw [map_pow, map_pow, PiSys.iTot_E, inclO_tmul, Algebra.TensorProduct.tmul_pow, one_pow]

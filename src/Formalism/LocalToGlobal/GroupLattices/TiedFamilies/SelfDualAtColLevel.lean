@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.IntSplitOf
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.SelfDualPI
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.IntSplitOf
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.SelfDualPI
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.ExistsNatMulMem.exists_nat_mul_mem :
     ∀ (F : Type) [inst : Field F] [NumberField F] (x : F),

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Wlocal
-import Formalism.SharpRestriction.GrowthBounds.DataG
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Wlocal
+public import Formalism.SharpRestriction.GrowthBounds.DataG
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem gShift_one {R : Type*} [CommRing R] {n : ℕ} (δ : ℤ) :
       simp
     · exact absurd rfl hd
   · intro d hd
-    exact absurd (MvPolynomial.coeff_zero d) hd
+    simp at hd
 
 theorem gShift_pow {R : Type*} [CommRing R] {n : ℕ}
     {P : Polynomial (MvPolynomial (Fin r × Fin n) R)} {μ δ : ℤ}
@@ -86,7 +90,7 @@ theorem gShift_algebraMap {R : Type*} [CommRing R] {n : ℕ} (c : R) (δ : ℤ) 
       simp
     · exact absurd rfl hd
   · intro d hd
-    exact absurd (MvPolynomial.coeff_zero d) hd
+    simp at hd
 
 theorem gShift_gen {R : Type*} [CommRing R] {n : ℕ} (a b : Fin r) (v : Fin r × Fin n) :
     GShift ht (Polynomial.C (X v) +
@@ -96,7 +100,7 @@ theorem gShift_gen {R : Type*} [CommRing R] {n : ℕ} (a b : Fin r) (v : Fin r �
   have hX : ∀ u : Fin r × Fin n, IsWeightedHomogeneous (htW ht n) (X u : MvPolynomial (Fin r × Fin n) R) (ht u.1) :=
     fun u => isWeightedHomogeneous_X R (htW ht n) u
   have h0 : ∀ m : ℤ, IsWeightedHomogeneous (htW ht n) (0 : MvPolynomial (Fin r × Fin n) R) m :=
-    fun m d hd => absurd (MvPolynomial.coeff_zero d) hd
+    fun m d hd => by simp at hd
   split_ifs with hb
   · rw [Polynomial.coeff_add, Polynomial.coeff_C, Polynomial.X_mul_C, Polynomial.coeff_C_mul_X]
     by_cases hk0 : k = 0
@@ -132,10 +136,11 @@ theorem g_rowDiv_shift (R : Type*) [CommRing R] {n : ℕ} (H : ℤ) (a b : Fin r
     (f : MvPolynomial (Fin r × Fin n) R) (hf : IsWeightedHomogeneous (htW ht n) f H) :
     IsWeightedHomogeneous (htW ht n) (rowDiv R a b k f) (H + k * (ht a - ht b)) := by
   unfold rowDiv
-  conv => enter [2, 1, 2]; rw [f.as_sum]
-  rw [map_sum, Polynomial.finsetSum_coeff]
+  rw [f.as_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Polynomial.finsetSum_coeff]
   refine IsWeightedHomogeneous.sum _ _ _ fun d hd => ?_
-  have := gShift_rowGen_monomial (ht := ht) R a b d (coeff d f) k
+  have := gShift_rowGen_monomial (ht := ht) R a b d (AddMonoidAlgebra.coeff f d) k
   rwa [hf (mem_support_iff.mp hd)] at this
 
 theorem g_weight {n : ℕ} (d : Fin r × Fin n →₀ ℕ) :
@@ -143,9 +148,9 @@ theorem g_weight {n : ℕ} (d : Fin r × Fin n →₀ ℕ) :
   refine Finsupp.induction_linear d ?_ ?_ ?_
   · simp
   · intro f g hf hg
-    rw [map_add, hf, hg, ← Finset.sum_add_distrib]
+    rw [map_add (f := _), hf, hg, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun a _ => ?_
-    rw [map_add, Pi.add_apply, Nat.cast_add, mul_add]
+    rw [map_add (f := _), Pi.add_apply, Nat.cast_add, mul_add]
   · intro v k
     simp only [Finsupp.weight_apply, Finsupp.sum_single_index, zero_smul, implies_true]
     rw [Finset.sum_eq_single v.1]
@@ -203,7 +208,7 @@ private theorem finsupp_weight_rowW_eq_rowDeg {k n : ℕ} (d : Fin k × Fin n �
   refine Finsupp.induction_linear d ?_ ?_ ?_
   · simp [rowDeg]
   · intro f g hf hg
-    rw [map_add, Pi.add_apply, hf, hg]
+    rw [map_add (f := _), Pi.add_apply, hf, hg]
     simp only [rowDeg, Finsupp.add_apply, Finset.sum_add_distrib]
   · intro v c
     simp only [Finsupp.weight_apply, Finsupp.sum_single_index, zero_smul, implies_true]
@@ -255,7 +260,8 @@ theorem diag_monomial {K : Type} [Field K] {k n : ℕ} (r : ℕ) (c : K) (d : Fi
 theorem diag_const {K : Type} [Field K] {k n : ℕ} (r : ℕ) (c : K) (G : MvPolynomial (Fin k × Fin n) K) (π0 : ℕ)
     (h : ∀ d ∈ G.support, piR r d = π0) : rowAct K (lb_D k r c) G = (c⁻¹) ^ π0 • G := by
   conv_lhs => rw [G.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   conv_rhs => rw [G.as_sum]
   rw [Finset.smul_sum]
   refine Finset.sum_congr rfl fun d hd => ?_
@@ -292,7 +298,7 @@ theorem weyl_diag (O Kf : Type) [CommRing O] [IsDomain O] [Field Kf] [Algebra O 
       obtain ⟨z, hz⟩ := g_applyWord (ht := fun a : Fin k => if a.val < r then (1 : ℤ) else 0) O (le_refl k) ν hν wd
       have hπ : ∀ d' ∈ (map (algebraMap O Kf) Wd).support, piR r d' = piR r d := by
         intro d' hd'
-        have h1 : coeff d' Wd ≠ 0 := by
+        have h1 : AddMonoidAlgebra.coeff Wd d' ≠ 0 := by
           intro h
           rw [mem_support_iff, coeff_map, h, map_zero] at hd'
           exact hd' rfl

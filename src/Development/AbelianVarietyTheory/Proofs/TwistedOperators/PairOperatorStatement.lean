@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointOperatorIdentities
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsFFNeZeroThree
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointOperatorIdentities
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsFFNeZeroThree
+
+@[expose] public section
 
 open ValuativeRel Matrix IsLocalRing
 open GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.IndefiniteRowSideFullHecke.AdjointOperatorIdentities
@@ -11,11 +15,11 @@ namespace GlobalTheory.PairOp
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {n : Type}
   {M : Type} [AddCommGroup M] [Module ℂ M]
 
-theorem smul_ofDual (L : Submodule 𝒪[k] (n → k)) [L.IsLattice k] (c : 𝓀[k]ˣ)
+theorem smul_ofDual (L : Submodule 𝒪[k] (n → k)) [L.IsFullLattice k] (c : 𝓀[k]ˣ)
     (f : {f : Module.Dual 𝓀[k] (Red L) // f ≠ 0}) :
     c • ofDual L f = ofDual L ⟨(c : 𝓀[k]) • f.1, smul_ne_zero c.ne_zero f.2⟩ := rfl
 
-theorem smul_up (L : Submodule 𝒪[k] (n → k)) [L.IsLattice k] (q : Unif k) (c : 𝓀[k]ˣ) (x : {x : Red L // x ≠ 0}) :
+theorem smul_up (L : Submodule 𝒪[k] (n → k)) [L.IsFullLattice k] (q : Unif k) (c : 𝓀[k]ˣ) (x : {x : Red L // x ≠ 0}) :
     c • up L q x = up L q ⟨((c⁻¹ : 𝓀[k]ˣ) : 𝓀[k]) • x.1, smul_ne_zero (c⁻¹).ne_zero x.2⟩ := by
   obtain ⟨s, hs⟩ := IsLocalRing.residue_surjective (((c⁻¹ : 𝓀[k]ˣ) : 𝓀[k]))
   have hy : Red.mk L x.1.out = x.1 := Red.mk_out x.1
@@ -46,80 +50,83 @@ theorem sum_family_eq_zero {ι : Type} {φ : Form k n M} (h : φ ∈ Mram k n M)
     obtain ⟨j, hj, hj'⟩ := hS c i hi
     exact Finset.mem_image.mpr ⟨j, hj, hj'⟩
 
-theorem vanishing [Fintype n] [DecidableEq n] (q : Unif k) : Vanishing k n M q where
-  trLat_eq_zero φ h L _ := by
-    rw [trLat_apply]
-    exact Model.sum_stable_eq_zero h _ fun c P => by simp
-  trKer_eq_zero φ h L _ := by
-    rw [trKer_apply]
-    exact Model.sum_stable_eq_zero h _ fun c P => by simp
-  partial_lat φ h L _ S hS := by
-    refine sum_family_eq_zero h (fun f => ofDual L f) (fun f g hfg => ?_) S fun c f hf => ?_
-    · exact (latEquiv L).injective (Subtype.ext hfg)
-    · exact ⟨⟨(c : 𝓀[k]) • f.1, smul_ne_zero c.ne_zero f.2⟩, hS c f _ hf rfl, (smul_ofDual L c f).symm⟩
-  partial_ker φ h L _ S hS := by
-    refine sum_family_eq_zero h (fun x => up L q x) (fun x y hxy => ?_) S fun c x hx => ?_
-    · exact (kerEquiv L q).injective (Subtype.ext hxy)
-    · exact ⟨⟨((c⁻¹ : 𝓀[k]ˣ) : 𝓀[k]) • x.1, smul_ne_zero (c⁻¹).ne_zero x.2⟩, hS c⁻¹ x _ hx rfl,
-        (smul_up L q c x).symm⟩
-  invariant_eq_zero π P v hv M' _ _ θ hθ := by
-    classical
-    letI : Fintype 𝓀[k]ˣ := Fintype.ofFinite _
+theorem vanishing [Fintype n] [DecidableEq n] (q : Unif k) : Vanishing k n M q := by
+  exact {
+    trLat_eq_zero φ h L _ := by
+      rw [trLat_apply]
+      exact Model.sum_stable_eq_zero h _ fun c P => by simp
+    trKer_eq_zero φ h L _ := by
+      rw [trKer_apply]
+      exact Model.sum_stable_eq_zero h _ fun c P => by simp
+    partial_lat φ h L _ S hS := by
+      refine sum_family_eq_zero h (fun f => ofDual L f) (fun f g hfg => ?_) S fun c f hf => ?_
+      · exact (latEquiv L).injective (Subtype.ext hfg)
+      · exact ⟨⟨(c : 𝓀[k]) • f.1, smul_ne_zero c.ne_zero f.2⟩, hS c f _ hf rfl, (smul_ofDual L c f).symm⟩
+    partial_ker φ h L _ S hS := by
+      refine sum_family_eq_zero h (fun x => up L q x) (fun x y hxy => ?_) S fun c x hx => ?_
+      · exact (kerEquiv L q).injective (Subtype.ext hxy)
+      · exact ⟨⟨((c⁻¹ : 𝓀[k]ˣ) : 𝓀[k]) • x.1, smul_ne_zero (c⁻¹).ne_zero x.2⟩, hS c⁻¹ x _ hx rfl,
+          (smul_up L q c x).symm⟩
+    invariant_eq_zero π P v hv M' _ _ θ hθ := by
+      classical
+      letI : Fintype 𝓀[k]ˣ := Fintype.ofFinite _
 
-    have scal : ∀ s : 𝒪[k]ˣ, ∃ g : GL n k, ∀ x : n → k, g • x = (s : 𝒪[k]) • x := by
-      intro s
-      refine ⟨Units.map (Matrix.scalar n : k →+* Matrix n n k).toMonoidHom
-        (Units.map (algebraMap 𝒪[k] k).toMonoidHom s), fun x => ?_⟩
-      ext i
-      simp [Units.smul_def, Matrix.scalar_apply, Matrix.mulVec_diagonal, Algebra.smul_def]
+      have scal : ∀ s : 𝒪[k]ˣ, ∃ g : GL n k, ∀ x : n → k, g • x = (s : 𝒪[k]) • x := by
+        intro s
+        refine ⟨Units.map (Matrix.scalar n : k →+* Matrix n n k).toMonoidHom
+          (Units.map (algebraMap 𝒪[k] k).toMonoidHom s), fun x => ?_⟩
+        ext i
+        simp [Units.smul_def, Matrix.scalar_apply, Matrix.mulVec_diagonal, Algebra.smul_def]
 
-    have stab : ∀ (g : GL n k) (s : 𝒪[k]ˣ), (∀ x : n → k, g • x = (s : 𝒪[k]) • x) →
-        ∀ L : Submodule 𝒪[k] (n → k), g ∈ latStab L := by
-      intro g s hg L
-      open Pointwise in rw [MulAction.mem_stabilizer_iff]
-      ext x
-      rw [mem_smul_iff]
-      have e : x = (s : 𝒪[k]) • (g⁻¹ • x) := by rw [← hg, smul_inv_smul]
-      constructor
-      · intro h
-        rw [e]
-        exact L.smul_mem _ h
-      · intro h
-        have e' : g⁻¹ • x = ((s⁻¹ : 𝒪[k]ˣ) : 𝒪[k]) • x := by
-          conv_rhs => rw [e]
-          rw [smul_smul, Units.inv_mul, one_smul]
-        rw [e']
-        exact L.smul_mem _ h
+      have stab : ∀ (g : GL n k) (s : 𝒪[k]ˣ), (∀ x : n → k, g • x = (s : 𝒪[k]) • x) →
+          ∀ L : Submodule 𝒪[k] (n → k), g ∈ latStab L := by
+        intro g s hg L
+        open Pointwise in rw [MulAction.mem_stabilizer_iff]
+        ext x
+        rw [mem_smul_iff]
+        have e : x = (s : 𝒪[k]) • (g⁻¹ • x) := by rw [← hg, smul_inv_smul]
+        constructor
+        · intro h
+          rw [e]
+          exact L.smul_mem _ h
+        · intro h
+          have e' : g⁻¹ • x = ((s⁻¹ : 𝒪[k]ˣ) : 𝒪[k]) • x := by
+            conv_rhs => rw [e]
+            rw [smul_smul, Units.inv_mul, one_smul]
+          rw [e']
+          exact L.smul_mem _ h
 
-    have lift : ∀ c : 𝓀[k]ˣ, ∃ s : 𝒪[k]ˣ, (Units.map (residue 𝒪[k]).toMonoidHom s)⁻¹ = c := by
-      intro c
-      obtain ⟨t, ht⟩ := IsLocalRing.residue_surjective ((c⁻¹ : 𝓀[k]ˣ) : 𝓀[k])
-      have hu : IsUnit t := by
-        by_contra hnu
-        have h0 : residue 𝒪[k] t = 0 :=
-          (IsLocalRing.residue_eq_zero_iff t).mpr ((IsLocalRing.mem_maximalIdeal t).mpr hnu)
-        rw [ht] at h0
-        exact (c⁻¹).ne_zero h0
-      refine ⟨hu.unit, ?_⟩
-      rw [inv_eq_iff_eq_inv]
-      ext
-      simp [ht]
-    have hθc : ∀ c : 𝓀[k]ˣ, θ (formOf π P v (c • P)) = θ v := by
-      intro c
-      obtain ⟨s, hs⟩ := lift c
-      obtain ⟨g, hg⟩ := scal s
-      have hgP : g • P = c • P := by rw [scalar_smul_eq g s hg P, hs]
-      rw [← hgP, formOf_smul]
-      rcases hθ with h | h
-      · exact h g (stab g s hg P.lat) v
-      · exact h g (stab g s hg P.ker) v
-    have hsum : ∑ c : 𝓀[k]ˣ, formOf π P v (c • P) = 0 := (mem_Mram _).mp hv P
-    have h0 := congrArg θ hsum
-    rw [map_sum, map_zero] at h0
-    simp only [hθc, Finset.sum_const, Finset.card_univ] at h0
-    have hcard : (Fintype.card 𝓀[k]ˣ : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
-    rw [← Nat.cast_smul_eq_nsmul ℂ] at h0
-    exact (smul_eq_zero.mp h0).resolve_left hcard
+      have lift : ∀ c : 𝓀[k]ˣ, ∃ s : 𝒪[k]ˣ, (Units.map (residue 𝒪[k]).toMonoidHom s)⁻¹ = c := by
+        intro c
+        obtain ⟨t, ht⟩ := IsLocalRing.residue_surjective ((c⁻¹ : 𝓀[k]ˣ) : 𝓀[k])
+        have hu : IsUnit t := by
+          by_contra hnu
+          have h0 : residue 𝒪[k] t = 0 :=
+            (IsLocalRing.residue_eq_zero_iff t).mpr ((IsLocalRing.mem_maximalIdeal t).mpr hnu)
+          rw [ht] at h0
+          exact (c⁻¹).ne_zero h0
+        refine ⟨hu.unit, ?_⟩
+        rw [inv_eq_iff_eq_inv]
+        ext
+        simp [ht]
+      have hθc : ∀ c : 𝓀[k]ˣ, θ (formOf π P v (c • P)) = θ v := by
+        intro c
+        obtain ⟨s, hs⟩ := lift c
+        obtain ⟨g, hg⟩ := scal s
+        have hgP : g • P = c • P := by rw [scalar_smul_eq g s hg P, hs]
+        rw [← hgP, formOf_smul]
+        rcases hθ with h | h
+        · exact h g (stab g s hg P.lat) v
+        · exact h g (stab g s hg P.ker) v
+      have hsum : ∑ c : 𝓀[k]ˣ, formOf π P v (c • P) = 0 := (mem_Mram _).mp hv P
+      have h0 := congrArg θ hsum
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero] at h0
+      simp only [hθc, Finset.sum_const, Finset.card_univ] at h0
+      have hcard : (Fintype.card 𝓀[k]ˣ : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
+      rw [← Nat.cast_smul_eq_nsmul ℂ] at h0
+      exact (smul_eq_zero.mp h0).resolve_left hcard
+  }
 
 theorem cross_dia (q : Unif k) {P₁ P : Pair k n} (h : P.lat = P₁.ker) (c : 𝓀[k]ˣ) :
     cross q (c • P₁) (c • P) = cross q P₁ P := by
@@ -262,7 +269,7 @@ theorem FF_FFStar [Fintype n] (hχ : χ ≠ 1) (φ : Form k n M) :
   funext P₁
   rw [FF_apply, Pi.sub_apply, Pi.smul_apply, tr'_apply]
   set L := P₁.ker with hL
-  haveI : L.IsLattice k := by rw [hL]; infer_instance
+  have : L.IsFullLattice k := by rw [hL]; infer_instance
   letI : Fintype {f : Module.Dual 𝓀[k] (Red L) // f ≠ 0} := Fintype.ofFinite _
   letI : Fintype {x : Red L // x ≠ 0} := Fintype.ofFinite _
   letI : Fintype (Module.Dual 𝓀[k] (Red L)) := Fintype.ofFinite _
@@ -301,8 +308,8 @@ theorem FF_FFStar [Fintype n] (hχ : χ ≠ 1) (φ : Form k n M) :
   simp only [hinner, sub_smul, ite_smul, zero_smul, one_smul, Finset.sum_sub_distrib, Finset.sum_ite_eq',
     Finset.mem_univ, if_true]
 
-variable (χ) in
 
+variable (χ) in
 theorem FFStar_eq_U_GsStar {φ : Form k n M} (h : φ ∈ Mram k n M) : FFStar q χ φ = U q (GsStar χ φ) := by
   classical
   letI : Fintype 𝓀[k]ˣ := Fintype.ofFinite _
@@ -443,65 +450,67 @@ theorem U_D_ram [Fintype n] (hχ : χ ≠ 1) {φ : Form k n M} (h : φ ∈ Mram 
   simp only [LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply, hN, sub_zero, map_smul] at h3
   exact eq_zpow_smul h3
 
-variable (χ) in
 
+variable (χ) in
 theorem unit_FFStar_FF (c : 𝓀[k]ˣ) :
     (dia c * FFStar q χ * (dia c⁻¹ * FF q χ) : Module.End ℂ (Form k n M)) = FFStar q χ * FF q χ := by
   rw [← FFStar_dia q χ c, mul_assoc, ← mul_assoc (dia c), ← map_mul, mul_inv_cancel, map_one, one_mul]
 
-variable (χ) in
 
+variable (χ) in
 theorem unit_FF_FFStar (c : 𝓀[k]ˣ) :
     (dia c⁻¹ * FF q χ * (dia c * FFStar q χ) : Module.End ℂ (Form k n M)) = FF q χ * FFStar q χ := by
   rw [← FF_dia q χ c⁻¹, mul_assoc, ← mul_assoc (dia c⁻¹), ← map_mul, inv_mul_cancel, map_one, one_mul]
 
-theorem operatorIdentities [Fintype n] (hχ : χ ≠ 1) : OperatorIdentities k n M q χ where
-  FFStar_formula φ L _ _ f := by
-    rw [FFStar_apply, ofDual_lat, sum_withKer L q]
-    simp only [cross_up_ofDual]
-  FFStar_mul_FF := LinearMap.ext fun φ => by
-    rw [Module.End.mul_apply, Model.FFStar_FF q hχ φ]
-    simp
-  FF_mul_FFStar := LinearMap.ext fun φ => by
-    rw [Module.End.mul_apply, FF_FFStar q hχ φ]
-    simp
-  FFStar_FF_ram φ h := FFStar_FF_ram q hχ h
-  FF_FFStar_ram φ h := FF_FFStar_ram q hχ h
-  FF_mem_ram φ h := mem_ram (fun c => FF_dia q χ c) h
-  FFStar_mem_ram φ h := mem_ram (fun c => FFStar_dia q χ c) h
-  D_dia c := D_dia q c
-  FF_dia c := FF_dia q χ c
-  FF_eq_D_Gs φ h := FF_eq_D_Gs_of_mem_Mram q h
-  Gs_mul_GsStar := Gs_mul_GsStar hχ
-  D_U_ram φ h := D_U_ram q hχ h
-  U_D_ram φ h := U_D_ram q hχ h
-  FFStar_dia c := FFStar_dia q χ c
-  U_dia c := U_dia q c
-  dia_mem_ram c φ h := mem_ram (fun d => dia_dia c d) h
-  phiOne_dia c m _ P Q := by
-    funext x
-    unfold phiOne
-    by_cases hM : Maps P Q x
-    · rw [if_pos hM, if_pos ((maps_dia c).mpr hM)]
-    · rw [if_neg hM, if_neg fun h' => hM ((maps_dia c).mp h')]
-  twisted_class_sum ε φ L _ _ f := by
-    rw [dia_apply, smul_ofDual, FFStar_ofDual]
-    simp [LinearMap.smul_apply]
-  sign_FFStar_sign_FF := by
-    have e := unit_FFStar_FF (n := n) (M := M) q χ (-1)
-    have hm : ((-1 : 𝓀[k]ˣ))⁻¹ = -1 := by simp
-    rw [hm] at e
-    exact e
-  sign_ram φ h := by
-    have e := LinearMap.congr_fun (unit_FFStar_FF q χ (-1)) φ
-    have hm : ((-1 : 𝓀[k]ˣ))⁻¹ = -1 := by simp
-    rw [hm] at e
-    simp only [Module.End.mul_apply] at e
-    rw [e, FFStar_FF_ram q hχ h]
-  unit_ram c φ h := by
-    have e := LinearMap.congr_fun (unit_FFStar_FF q χ c) φ
-    simp only [Module.End.mul_apply] at e
-    rw [e, FFStar_FF_ram q hχ h]
+theorem operatorIdentities [Fintype n] (hχ : χ ≠ 1) : OperatorIdentities k n M q χ := by
+  exact {
+    FFStar_formula φ L _ _ f := by
+      rw [FFStar_apply, ofDual_lat, sum_withKer L q]
+      simp only [cross_up_ofDual]
+    FFStar_mul_FF := LinearMap.ext fun φ => by
+      rw [Module.End.mul_apply, Model.FFStar_FF q hχ φ]
+      simp
+    FF_mul_FFStar := LinearMap.ext fun φ => by
+      rw [Module.End.mul_apply, FF_FFStar q hχ φ]
+      simp
+    FFStar_FF_ram φ h := FFStar_FF_ram q hχ h
+    FF_FFStar_ram φ h := FF_FFStar_ram q hχ h
+    FF_mem_ram φ h := mem_ram (fun c => FF_dia q χ c) h
+    FFStar_mem_ram φ h := mem_ram (fun c => FFStar_dia q χ c) h
+    D_dia c := D_dia q c
+    FF_dia c := FF_dia q χ c
+    FF_eq_D_Gs φ h := FF_eq_D_Gs_of_mem_Mram q h
+    Gs_mul_GsStar := Gs_mul_GsStar hχ
+    D_U_ram φ h := D_U_ram q hχ h
+    U_D_ram φ h := U_D_ram q hχ h
+    FFStar_dia c := FFStar_dia q χ c
+    U_dia c := U_dia q c
+    dia_mem_ram c φ h := mem_ram (fun d => dia_dia c d) h
+    phiOne_dia c m _ P Q := by
+      funext x
+      unfold phiOne
+      by_cases hM : Maps P Q x
+      · rw [if_pos hM, if_pos ((maps_dia c).mpr hM)]
+      · rw [if_neg hM, if_neg fun h' => hM ((maps_dia c).mp h')]
+    twisted_class_sum ε φ L _ _ f := by
+      rw [dia_apply, smul_ofDual, FFStar_ofDual]
+      simp [LinearMap.smul_apply]
+    sign_FFStar_sign_FF := by
+      have e := unit_FFStar_FF (n := n) (M := M) q χ (-1)
+      have hm : ((-1 : 𝓀[k]ˣ))⁻¹ = -1 := by simp
+      rw [hm] at e
+      exact e
+    sign_ram φ h := by
+      have e := LinearMap.congr_fun (unit_FFStar_FF q χ (-1)) φ
+      have hm : ((-1 : 𝓀[k]ˣ))⁻¹ = -1 := by simp
+      rw [hm] at e
+      simp only [Module.End.mul_apply] at e
+      rw [e, FFStar_FF_ram q hχ h]
+    unit_ram c φ h := by
+      have e := LinearMap.congr_fun (unit_FFStar_FF q χ c) φ
+      simp only [Module.End.mul_apply] at e
+      rw [e, FFStar_FF_ram q hχ h]
+  }
 
 section Adjoint
 variable {A B A' B' : Module.End ℂ (Form k n ℂ)}
@@ -573,7 +582,7 @@ private theorem cntIp_add_right (φ φ₁ φ₂ : Form k n ℂ) (h : (Function.s
     cntIp φ (φ₁ + φ₂) = cntIp φ φ₁ + cntIp φ φ₂ := by
   rw [cntIp_eq_sum_of_support_subset _ _ h.toFinset (Or.inr (by simp)), cntIp_eq_sum_of_support_subset _ _ h.toFinset (Or.inr (by simp)),
     cntIp_eq_sum_of_support_subset _ _ h.toFinset (Or.inr (by simp)), ← Finset.sum_add_distrib]
-  exact Finset.sum_congr rfl fun P _ => by rw [Pi.add_apply, map_add, mul_add]
+  exact Finset.sum_congr rfl fun P _ => by rw [Pi.add_apply, map_add (f := _), mul_add]
 
 theorem isAdj_sum {ι : Type} (s : Finset ι) (a b : ι → ℂ) (A B : ι → Module.End ℂ (Form k n ℂ))
     (hab : ∀ i, (starRingEnd ℂ) (b i) = a i) (h : ∀ i, IsAdj (A i) (B i)) :

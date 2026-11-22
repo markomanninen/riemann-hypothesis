@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgEquivMatrixGlueCrt
-import Mathlib
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgEquivMatrixGlueCrt
+
+@[expose] public section
+
 open scoped TensorProduct
 open Function
 set_option maxHeartbeats 1000000 in

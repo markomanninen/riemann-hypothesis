@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutMP2
-import Formalism.HermitianCurvature.StatementJF
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutMP2
+public import Formalism.HermitianCurvature.StatementJF
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt MeasureTheory
 open Formalism.REAL Formalism.QuantumDeterminants

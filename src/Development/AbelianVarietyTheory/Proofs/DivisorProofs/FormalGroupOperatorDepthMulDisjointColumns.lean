@@ -1,10 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuationTheory
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.WtSubOneLe
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatFrame
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupExpTwoSidedInverseUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivAt0EqSumOfSubset
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupDifferentialOperatorDepthEqIInfMonomiStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.TypicalCurveStructureConstants
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.RootStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.FactorialWeightedSumBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.OmBStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.WtSubOneLe
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatFrame
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupExpTwoSidedInverseUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivAt0EqSumOfSubset
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupDifferentialOperatorDepthEqIInfMonomiStatement
+
+@[expose] public section
 
 open MvPowerSeries ReciprocityTheory.PGsh ReciprocityTheory.ChartRestriction.G.Sh GlobalTheory.FGDepth
 
@@ -61,7 +68,7 @@ theorem suppIn_finsuppProd {T : Set σ} {τ : Type} (β : τ →₀ ℕ) (a : τ
 theorem suppIn_add {T : Set σ} {f g : MvPowerSeries σ C} (hf : SuppIn T f) (hg : SuppIn T g) :
     SuppIn T (f + g) := by
   intro α hα
-  rw [map_add] at hα
+  rw [map_add (f := _)] at hα
   by_cases h : coeff α f = 0
   · rw [h, zero_add] at hα; exact hg α hα
   · exact hf α h
@@ -220,8 +227,8 @@ theorem expAlong_const (x : Σ b, Fin (d b)) : constantCoeff (expAlong G u x) = 
   exact constantCoeff_subst_eq_zero (hasSubst_of_constantCoeff_eq_zero (colLin_const u x.1))
     (colLin_const u x.1) ((expOf_twoSided_unique C v (d x.1) (G x.1)).1.1 x.2)
 
-omit [CharZero C] [Fintype κ] in
 
+omit [CharZero C] [Fintype κ] in
 theorem expAlong_suppIn (x : Σ b, Fin (d b)) :
     SuppIn {y : Σ b, ι b | y.1 = x.1} (expAlong G u x) := by
   unfold expAlong
@@ -300,8 +307,8 @@ end
 
 end DepthAdd
 
-open DepthAdd in
 
+open DepthAdd in
 theorem depth_mul_of_disjoint_columns : ∀ (C : Type) [Field C] [CharZero C]
     (v : AddValuation C (WithTop ℝ)) (κ : Type) [Fintype κ] [DecidableEq κ] (d : κ → ℕ)
     (G : ∀ b, LogFGL v (d b)) (ι : κ → Type) [∀ b, Fintype (ι b)] [∀ b, DecidableEq (ι b)]
@@ -311,9 +318,9 @@ theorem depth_mul_of_disjoint_columns : ∀ (C : Type) [Field C] [CharZero C]
   intro C _ _ v κ _ _ d G ι _ _ u S P Q hP hQ
   classical
   have hP' : ∀ α ∈ P.support, ∀ y ∈ α.support, y ∈ {y : Σ b, ι b | y.1 ∈ S} :=
-    fun α hα y hy => hP y ((MvPolynomial.mem_vars y).2 ⟨α, hα, hy⟩)
+    fun α hα y hy => hP y ((MvPolynomial.mem_vars_iff_mem_support y).2 ⟨α, hα, hy⟩)
   have hQ' : ∀ α ∈ Q.support, ∀ y ∈ α.support, y ∉ {y : Σ b, ι b | y.1 ∈ S} :=
-    fun α hα y hy => hQ y ((MvPolynomial.mem_vars y).2 ⟨α, hα, hy⟩)
+    fun α hα y hy => hQ y ((MvPolynomial.mem_vars_iff_mem_support y).2 ⟨α, hα, hy⟩)
   let l : ((Σ b, Fin (d b)) →₀ ℕ) → ((Σ b, Fin (d b)) →₀ ℕ) := fun γ => γ.filter fun x => x.1 ∈ S
   let r : ((Σ b, Fin (d b)) →₀ ℕ) → ((Σ b, Fin (d b)) →₀ ℕ) := fun γ => γ.filter fun x => x.1 ∉ S
   have hsplit : ∀ γ, monAlong G u γ = monAlong G u (l γ) * monAlong G u (r γ) := fun γ => by

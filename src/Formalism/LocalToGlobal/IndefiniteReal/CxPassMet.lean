@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.CxPassSk
-import Formalism.LocalToGlobal.Divisibility.RowLatLemmas
-import Formalism.LocalToGlobal.Divisibility.FramesLemmas
-import Formalism.LocalToGlobal.Divisibility.ProjLemmas
-import Formalism.BranchSandwichDivisors.StatementL
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.CxPassSk
+public import Formalism.LocalToGlobal.Divisibility.RowLatLemmas
+public import Formalism.LocalToGlobal.Divisibility.FramesLemmas
+public import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+public import Formalism.BranchSandwichDivisors.StatementL
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder InnerProductSpace
@@ -24,12 +28,6 @@ theorem inv_smul_ne {n : ℕ} (k : ℂ) (hk : k ≠ 0) (A : Matrix (Fin n) (Fin 
       intro hu
       exact h (isUnit_of_mul_isUnit_right hu)
     rw [Matrix.nonsing_inv_apply_not_isUnit _ h, Matrix.nonsing_inv_apply_not_isUnit _ h', smul_zero]
-
-theorem quotMetC_smul {n d : ℕ} (A : Matrix (Fin n) (Fin n) ℂ) (hA : A.PosDef) (P : Matrix (Fin d) (Fin n) ℂ)
-    (c : ℝ) (hc : 0 < c) : quotMetC P ((c : ℂ) • A) = (c : ℂ) • quotMetC P A := by
-  have hc' : (c : ℂ) ≠ 0 := by exact_mod_cast hc.ne'
-  unfold quotMetC
-  rw [inv_smul_ne _ hc', Matrix.mul_smul, Matrix.smul_mul, inv_smul_ne _ (inv_ne_zero hc'), inv_inv]
 
 theorem unitary_inv {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ) (hA : IsUnit A.det)
     (R : Matrix (Fin n) (Fin n) ℂ) (hR : Rᴴ * A * R = A) (hRu : IsUnit R.det) :
@@ -218,24 +216,6 @@ theorem blk_ext {a b : ℕ} {A A' : Matrix (Fin a) (Fin b) α} (h : ∀ x, A *�
     rw [Matrix.toLin'_apply, Matrix.toLin'_apply, h x])
 
 end Gen
-
-theorem blk_orth {K : Type} [Field K] [StarRing K] {n m d d' : ℕ} (H : Matrix (Fin n) (Fin n) K)
-    (z : Matrix (Fin n) (Fin d) K) (Pr : Matrix (Fin d) (Fin n) K) (hPr : Pr = orthPr H z)
-    (H' : Matrix (Fin m) (Fin m) K) (z' : Matrix (Fin m) (Fin d') K) (P' : Matrix (Fin d') (Fin m) K)
-    (hP' : IsOrthProj H' z' P') (R : Matrix (Fin n) (Fin m) K) (Q : Matrix (Fin d) (Fin d') K)
-    (hR : zᴴ * H * R = Q * (z'ᴴ * H')) : Pr * R = (Pr * R * z') * P' := by
-  obtain ⟨-, h2⟩ := hP'
-  rw [Matrix.mul_sub, Matrix.mul_one, sub_eq_zero] at h2
-  have hR' : zᴴ * H * R = Q * z'ᴴ * H' := by rw [hR]; simp only [Matrix.mul_assoc]
-  have e : Q * z'ᴴ * H' * z' * P' = Q * z'ᴴ * H' := by
-    calc Q * z'ᴴ * H' * z' * P' = Q * (z'ᴴ * H' * (z' * P')) := by simp only [Matrix.mul_assoc]
-      _ = Q * (z'ᴴ * H') := by rw [← h2]
-      _ = Q * z'ᴴ * H' := by simp only [Matrix.mul_assoc]
-  subst hPr
-  unfold orthPr
-  calc (zᴴ * H * z)⁻¹ * (zᴴ * H) * R = (zᴴ * H * z)⁻¹ * (zᴴ * H * R) := by simp only [Matrix.mul_assoc]
-    _ = (zᴴ * H * z)⁻¹ * (Q * z'ᴴ * H' * z' * P') := by rw [hR', e]
-    _ = (zᴴ * H * z)⁻¹ * (zᴴ * H) * R * z' * P' := by rw [← hR']; simp only [Matrix.mul_assoc]
 
 theorem blk_maj {K : Type} [Field K] [NumberField K] {n d : ℕ} (X : InfinitePlace K → Matrix (Fin n) (Fin n) ℂ)
     (Y : InfinitePlace K → Matrix (Fin d) (Fin d) ℂ) (v : InfinitePlace K) (J : Matrix (Fin d) (Fin n) K) (c : ℂ)
@@ -727,24 +707,14 @@ theorem side_lv (b : Bool) :
     lv (faceOf I.A I.P0 I.ψ0 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) b = I.A.side (I.lvP b) (I.lvψ b) I.X.zs := by
   cases b <;> rfl
 
-theorem side_g : lv (faceOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false = I.A.side ⊥ 1 I.X.zs := rfl
-
-theorem toR_cr (b : Bool) (t : I.A.fam.base.Tup) :
-    HEq (I.cr.toR I.X.zs b t) ((I.A.fam.R t).toF (I.A.fam.lvl (I.lvP b) (I.lvψ b)) (I.X.zs.Z t)) := by
-  cases b <;> exact HEq.rfl
-
-theorem toR_cg (t : I.A.fam.base.Tup) :
-    I.cg.toR I.X.zs false t = (I.A.fam.R t).toF (I.A.fam.lvl ⊥ 1) (I.X.zs.Z t) := rfl
-
-theorem Jm_eq (b : Bool) : I.Jm b = I.Jt b I.A.fam.base.μ0 := rfl
-
 theorem iC_cpt {Bs : DefBase K} {A : DefAmb Bs} (X : CxData A) {fc : DefSub A → DefFace Bs} (cr : Crd A fc) (b : Bool)
     (t : Bs.Tup) (x : Fin ((lv (fc X.zs) b).dQ t) → K) :
     X.iC cr b t (cpt Bs.v0.embedding x) = X.Θ t (X.jR t (cr.toR X.zs b t x)) := by
   have hx : x = ∑ k, x k • (Pi.single k (1 : K) : Fin ((lv (fc X.zs) b).dQ t) → K) := by
     funext i; simp [Finset.sum_apply, Pi.single_apply]
   conv_rhs => rw [hx]
-  simp only [map_sum, map_smul, LinearMap.map_smulₛₗ, CxData.iC, lin_apply, cpt]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, LinearMap.map_smulₛₗ, CxData.iC, lin_apply, cpt]
 
 theorem gramE_unit' {Bs : DefBase K} {A : DefAmb Bs} (X : CxData A) {fc : DefSub A → DefFace Bs} (cr : Crd A fc) (b : Bool)
     (h1 : Function.Injective (X.iC cr b Bs.μ0)) (hn : 0 < X.nP b) : IsUnit (frameOf (X.gramE cr b)).det :=

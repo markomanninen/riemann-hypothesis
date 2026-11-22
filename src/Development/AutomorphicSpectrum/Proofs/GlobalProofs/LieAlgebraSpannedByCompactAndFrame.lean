@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IoInjective
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SkewOfCommute
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.QuadraticGelfandInvariantEqNegSumSqDefinite
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IoInjective
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.QuadraticGelfandInvariantEqNegSumSqDefinite
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta MeasureTheory Matrix
 open scoped TensorProduct Topology InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -52,11 +56,11 @@ theorem sum_frame {A : Type} [Ring A] [Algebra ℂ A] (L : Matrix (Fin n) (Fin n
     intro a b
     by_cases c : e a = e b
     · have := pair_sq (L (single a b 1)) (L (single b a 1)) (s := 1) (Or.inl rfl)
-      simp only [xv, yv, gv, c, sg, if_true, if_false, map_zero, mul_zero, map_smul, map_sub, map_add, Bool.false_eq_true]
+      simp only [xv, yv, gv, c, sg, if_true, if_false, map_zero, mul_zero, map_smul, map_sub, map_add (f := _), Bool.false_eq_true]
       rw [add_zero, zero_sub, this]
       module
     · have := pair_sq (L (single a b 1)) (L (single b a 1)) (s := -1) (Or.inr rfl)
-      simp only [xv, yv, gv, c, sg, if_true, if_false, map_zero, mul_zero, map_smul, map_sub, map_add, Bool.false_eq_true]
+      simp only [xv, yv, gv, c, sg, if_true, if_false, map_zero, mul_zero, map_smul, map_sub, map_add (f := _), Bool.false_eq_true]
       rw [add_zero, sub_zero, this]
       module
   rw [← Finset.sum_sub_distrib, Fintype.sum_prod_type]
@@ -72,14 +76,14 @@ theorem sum_frame {A : Type} [Ring A] [Algebra ℂ A] (L : Matrix (Fin n) (Fin n
   module
 
 theorem Jm_herm (e : Fin n → Bool) : (Formalism.REAL.Jm e)ᴴ = Formalism.REAL.Jm e := by
-  unfold Formalism.REAL.Jm
+  delta Formalism.REAL.Jm
   rw [diagonal_conjTranspose]
   congr 1
   funext a
   by_cases h : e a <;> simp [h]
 
 theorem Jm_sq (e : Fin n → Bool) : Formalism.REAL.Jm e * Formalism.REAL.Jm e = 1 := by
-  unfold Formalism.REAL.Jm
+  delta Formalism.REAL.Jm
   rw [diagonal_mul_diagonal, ← diagonal_one]
   congr 1
   funext a
@@ -89,11 +93,11 @@ theorem Jm_unit (e : Fin n → Bool) : IsUnit (Formalism.REAL.Jm e).det := isUni
 
 theorem cj_single (e : Fin n → Bool) (a b : Fin n) :
     cj (Formalism.REAL.Jm e) (single a b 1) = -(sg e a b • single b a 1) := by
-  unfold GlobalTheory.UnitaryLieComplexification.cj
+  delta GlobalTheory.UnitaryLieComplexification.cj
   rw [inv_eq_right_inv (Jm_sq e), conjTranspose_single, star_one]
   congr 1
   ext i j
-  unfold Formalism.REAL.Jm
+  delta Formalism.REAL.Jm
   rw [mul_diagonal, diagonal_mul, Matrix.smul_apply, single_apply]
   by_cases h : b = i ∧ a = j
   · obtain ⟨rfl, rfl⟩ := h
@@ -123,7 +127,9 @@ theorem mem_span_gv (e : Fin n → Bool) {Z : Matrix (Fin n) (Fin n) ℂ}
   have key : ∀ W : Matrix (Fin n) (Fin n) ℂ, (1 / 2 : ℂ) • (W + cj (Formalism.REAL.Jm e) W) ∈ S := by
     intro W
     induction W using Matrix.induction_on' with
-    | h_zero => simp [GlobalTheory.UnitaryLieComplexification.cj]
+    | h_zero =>
+      delta GlobalTheory.UnitaryLieComplexification.cj
+      simp
     | h_add p q hp hq =>
       have : (1 / 2 : ℂ) • (p + q + cj (Formalism.REAL.Jm e) (p + q)) =
           (1 / 2 : ℂ) • (p + cj (Formalism.REAL.Jm e) p) + (1 / 2 : ℂ) • (q + cj (Formalism.REAL.Jm e) q) := by
@@ -196,7 +202,8 @@ theorem yv_kLie (e : Fin n → Bool) (p : Fin n × Fin n × Bool) : IsKLie e (yv
     exact (neg_add_eq_zero.1 h)
   · have hy : yv e p = 0 := by simp [yv, c]
     rw [hy]
-    simp [IsKLie]
+    delta IsKLie
+    simp
 
 end Frame
 
@@ -265,7 +272,8 @@ theorem quadGelf_frame : ∀ (D : D7) (θ : GlobalTheory.Mem.Th.InfF D), IsInfFa
       R ∘ₗ (LinearMap.mulRight ℂ P) ∘ₗ (LinearMap.mulLeft ℂ P⁻¹)
     have hL : ∀ Z, L Z = R (P⁻¹ * Z * P) := fun _ => rfl
     have hg : gelf θ V τ 1 f = ((∑ a, ∑ b, R (Matrix.single a b 1) * R (Matrix.single b a 1)) φ).1 := by
-      rw [gelf, ← (finTwoArrowEquiv _).symm.sum_comp, Fintype.sum_prod_type]
+      delta gelf
+      rw [← (finTwoArrowEquiv _).symm.sum_comp, Fintype.sum_prod_type]
       simp only [LinearMap.sum_apply, Submodule.coe_sum, Module.End.mul_apply]
       rfl
     have key : ∑ a, ∑ b, R (Matrix.single a b 1) * R (Matrix.single b a 1) =

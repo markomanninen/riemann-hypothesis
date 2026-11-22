@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.Columns.ChainTopTilQ
-import Formalism.LocalToGlobal.Columns.ChainLawXi
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.TopLawQ
-import Formalism.LocalToGlobal.Columns.BaseLemmas
+module
+
+public import Formalism.LocalToGlobal.Columns.ChainTopTilQ
+public import Formalism.LocalToGlobal.Columns.ChainLawXi
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.TopLawQ
+public import Formalism.LocalToGlobal.Columns.BaseLemmas
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Matrix
 
@@ -18,7 +22,7 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E] {P : HeightOneSpectru
 theorem tqk_unitV_one {K : Type} [Field K] (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {a : E} (h : redP P a = 1) : LocE.unitV χ a = 1 := by
   have hU : IsUnit (redP P a) := by rw [h]; exact isUnit_one
   unfold LocE.unitV
-  rw [dif_pos hU]
+  rw [dite_eq_left hU]
   have : hU.unit = 1 := Units.ext (by rw [IsUnit.unit_spec, h]; rfl)
   rw [this, map_one, Units.val_one]
 

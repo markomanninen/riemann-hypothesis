@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ theorem finrank_le {M : ℕ} (hM : 0 < M) : Module.finrank ℚ_[l] ↥(Kc l M hM
   rw [e, IntermediateField.adjoin.finrank (Algebra.IsIntegral.isIntegral z)]
   have hne : (X ^ M - C 1 : ℚ_[l][X]) ≠ 0 := X_pow_sub_C_ne_zero hM 1
   have := natDegree_le_of_dvd (minpoly.dvd ℚ_[l] z (p := X ^ M - C 1) (by simp [hz.pow_eq_one])) hne
-  rwa [natDegree_X_pow_sub_C] at this
+  rwa [natDegree_X_pow_sub_C _] at this
 
 theorem Ks_eq {M M' s : ℕ} (hM : 0 < M) (hM' : M = l ^ s * M') (hl : ¬ l ∣ M') :
     Ks (Kc l M hM) s = (Kc l M hM).1 := by
@@ -82,14 +86,6 @@ theorem Ks_lcm {N : ℕ} (hN : 0 < N) :
   refine Ks_eq (M' := ordCompl[l] (Nat.lcm l N)) _ ?_ (Nat.not_dvd_ordCompl hp (lcm_pos hN).ne')
   rw [← hf, Nat.ordProj_mul_ordCompl_eq_self]
 
-theorem good_lcm {N : ℕ} (hN : 0 < N) (h2 : l ≠ 2) (LL : FinExt l)
-    (hLL : ∀ x : Om l, x ^ Nat.lcm l N = 1 → x ∈ LL.1) :
-    Good (Kc l (Nat.lcm l N) (lcm_pos hN)) (max 1 (N.factorization l)) LL := by
-  refine ⟨le_max_left _ _, fun e => absurd e h2, (Ks_lcm hN).ge, fun τ x => ?_⟩
-  have e2 : τ.liftNormal (Om l) (x : Om l) = τ x := AlgHom.liftNormal_commutes τ (Om l) x
-  rw [← e2]
-  exact map_mem _ _ hLL _ _ ((Ks_lcm hN).le x.2)
-
 theorem good_lcm' {N : ℕ} (hN : 0 < N) (h2 : l = 2 → 4 ∣ N) (LL : FinExt l)
     (hLL : ∀ x : Om l, x ^ Nat.lcm l N = 1 → x ∈ LL.1) :
     Good (Kc l (Nat.lcm l N) (lcm_pos hN)) (max 1 (N.factorization l)) LL := by
@@ -109,15 +105,11 @@ theorem GK_normal {M : ℕ} (hM : 0 < M) : (GK (Kc l M hM)).Normal := by
   rw [hn _ h1]
   exact g.apply_symm_apply x
 
-theorem range_normal {M : ℕ} (hM : 0 < M) (K : FinExt l) (hle : GK (Kc l M hM) ≤ GK K) :
-    (Subgroup.inclusion hle).range.Normal := by
-  rw [Subgroup.inclusion_range]
-  exact (GK_normal hM).subgroupOf _
-
 theorem val_index_le {N : ℕ} (hN : 0 < N) (d : ℕ) :
     padicValNat l (Module.finrank ℚ_[l] ↥(Kc l (Nat.lcm l N) (lcm_pos hN)).1 / d) ≤ Nat.log l N + 1 := by
   have hp : l.Prime := Fact.out
-  refine (padicValNat_le_nat_log _).trans ?_
+  rw [Nat.padicValNat_def]
+  refine (multiplicity_le_nat_log _).trans ?_
   rw [← Nat.log_mul_base hp.one_lt hN.ne']
   refine Nat.log_mono_right ((Nat.div_le_self _ _).trans ((finrank_le _).trans ?_))
   rw [mul_comm]

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.NontrivInf
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.NontrivInf
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ def HermInf : Prop := ∀ (n : ℕ) (lam : Fin n → ℤ), PositivityTheory.RgBc
 theorem hermInf_holds : HermInf := by
   intro n lam
   refine ⟨Equiv.refl _, fun a => ?_⟩
-  simp only [PositivityTheory.RgBcC.infOf, Equiv.refl_apply, Bool.false_eq_true, if_false, if_true, map_mul, map_add, map_sub,
+  simp only [PositivityTheory.RgBcC.infOf, Equiv.refl_apply, Bool.false_eq_true, if_false, if_true, map_mul, map_add (f := _), map_sub,
     map_div₀, map_one, map_neg, map_intCast, Complex.conj_natCast, map_ofNat]
   ring
 

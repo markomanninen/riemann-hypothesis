@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.StdBases
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.BeData
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementB
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.HurwitzSubstituteTwoSeries
-import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.OfClosedInt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIntegralOrbitSeriesStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AddCoordExponentIntegralJetsUnramifiedStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.StdBases
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.BeData
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementB
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.HurwitzSubstituteTwoSeries
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.OfClosedInt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIntegralOrbitSeriesStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AddCoordExponentIntegralJetsUnramifiedStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem cc_lgF (l : ℕ) : PowerSeries.constantCoeff (lgF K l) = 0 := by
   simp
 
 theorem lgF_deriv_int {l : ℕ} (hl : 2 ≤ l) (n : ℕ) :
-    PowerSeries.coeff n (PowerSeries.derivative K (lgF K l)) ∈ R := by
+    PowerSeries.coeff n (PowerSeries.derivative (R := K) (lgF K l)) ∈ R := by
   rw [PowerSeries.coeff_derivative]
   unfold lgF
   rw [PowerSeries.coeff_mk, Finset.sum_mul]
@@ -71,7 +75,7 @@ theorem lgF_deriv_int {l : ℕ} (hl : 2 ≤ l) (n : ℕ) :
 theorem hur_expF {l : ℕ} (hl : 2 ≤ l) : Hur R ((expF K l : PowerSeries K) : MvPowerSeries Unit K) := by
   have hu : IsUnit (PowerSeries.coeff 1 (lgF K l)) := by rw [coeff_one_lgF hl]; exact isUnit_one
   unfold expF
-  rw [dif_pos hu]
+  rw [dite_eq_left hu]
   refine hur_substInv R (cc_lgF l) hu ?_ (lgF_deriv_int R hl)
   rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, PowerSeries.coeff_derivative, coeff_one_lgF hl]
   simp
@@ -103,10 +107,6 @@ theorem hur_exp : Hur R ((PowerSeries.exp K : PowerSeries K) : MvPowerSeries Uni
   simp [this]
 
 end Gen
-
-theorem hur_mvExp {K : Type} [NormedField K] [CharZero K] (R : Subring K) {τ : Type} [Finite τ] {h : MvPowerSeries τ K}
-    (h0 : MvPowerSeries.constantCoeff h = 0) (hh : Hur R h) : Hur R (Formalism.DworkPowerSeriesWeights.mvExp h) :=
-  hur_psubst R h0 hh (hur_exp R)
 
 section Cp
 
@@ -148,7 +148,8 @@ theorem uL_spec {σ : MaximalUnramifiedExtension l →+* MaximalUnramifiedExtens
     · exact hur_linTerm _ (norm_iter_le hσ hc _) _
     · exact hur_zero _
   · unfold uL
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero fun s _ => ?_
     split_ifs <;> simp
 
@@ -160,7 +161,8 @@ theorem vL_spec {σ : MaximalUnramifiedExtension l →+* MaximalUnramifiedExtens
     · exact hur_zero _
     · exact hur_linTerm _ (norm_iter_le hσ hc _) _
   · unfold vL
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero fun s _ => ?_
     split_ifs <;> simp
 
@@ -283,7 +285,8 @@ theorem subst_sumE {a : Bool × ι × Fin N0 × Fin N1 → MvPowerSeries (ZMod d
       ∑ e : ι × Fin N0 × Fin N1, MvPowerSeries.subst ![a (false, e), a (true, e)] B := by
   have hs := MvPowerSeries.hasSubst_of_constantCoeff_zero ha
   unfold sumE
-  rw [← MvPowerSeries.coe_substAlgHom hs, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.coe_substAlgHom hs, map_sum]
   refine Finset.sum_congr rfl fun e _ => ?_
   rw [MvPowerSeries.coe_substAlgHom hs,
     MvPowerSeries.subst_comp_subst_apply (MvPowerSeries.hasSubst_of_constantCoeff_zero (fun _ => by simp)) hs]
@@ -295,7 +298,8 @@ theorem subst_sumE {a : Bool × ι × Fin N0 × Fin N1 → MvPowerSeries (ZMod d
 theorem cc_sumE (B : MvPowerSeries (Fin 2) ℂ_[l]) (h : MvPowerSeries.constantCoeff B = 0) :
     MvPowerSeries.constantCoeff (sumE (ι := ι) (N0 := N0) (N1 := N1) B) = 0 := by
   unfold sumE
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun e _ => ?_
   rw [cc_subst (fun _ => by simp), h]
 

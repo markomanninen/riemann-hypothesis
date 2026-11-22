@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TendstoOneOfSummable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOfValILeOne
-import Formalism.LocalRingCardinality.ConjSqrtMinusD
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TendstoOneOfSummable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOfValILeOne
+public import Formalism.LocalRingCardinality.ConjSqrtMinusD
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ExistsNatSmulSingle
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,12 +90,12 @@ end Ring
 
 variable {A : Type} [CommRing A]
 
-variable (A) in
 
+variable (A) in
 def dCol (e : n ⊕ n ≃ ι) : Matrix ι n A := (fromRows 1 1 : Matrix (n ⊕ n) n A).submatrix e.symm id
 
-variable (A) in
 
+variable (A) in
 def fCol (e : n ⊕ n ≃ ι) : Matrix ι n A := (fromRows 1 0 : Matrix (n ⊕ n) n A).submatrix e.symm id
 
 variable (e : n ⊕ n ≃ ι)
@@ -98,33 +103,34 @@ variable (e : n ⊕ n ≃ ι)
 omit [Fintype ι] [DecidableEq ι] in
 theorem dCol_mulVec (x : n → A) : dCol A e *ᵥ x = pairVec e x x := by
   funext j
-  obtain ⟨i | i, rfl⟩ := e.surjective j <;> simp [dCol, mulVec, dotProduct, one_apply]
+  obtain ⟨i | i, rfl⟩ := e.surjective j <;> simp [dCol, mulVec, dotProduct, Matrix.one_apply]
 
 omit [Fintype ι] [DecidableEq ι] in
 theorem fCol_mulVec (x : n → A) : fCol A e *ᵥ x = pairVec e x 0 := by
   funext j
-  obtain ⟨i | i, rfl⟩ := e.surjective j <;> simp [fCol, mulVec, dotProduct, one_apply]
+  obtain ⟨i | i, rfl⟩ := e.surjective j <;> simp [fCol, mulVec, dotProduct, Matrix.one_apply]
 
 omit [DecidableEq ι] in
 theorem transpose_fCol_mul (M : Matrix (n ⊕ n) n A) : (fCol A e)ᵀ * M.submatrix e.symm id = M.toRows₁ := by
   ext i j
-  simp [fCol, mul_apply, ← e.sum_comp, one_apply, toRows₁]
+  simp [fCol, Matrix.mul_apply, ← e.sum_comp, Matrix.one_apply, toRows₁]
 
 omit [Fintype n] [Fintype ι] [DecidableEq ι] in
 theorem dCol_map {B : Type} [CommRing B] (f : A →+* B) : (dCol A e).map f = dCol B e := by
   ext j k
-  obtain ⟨i | i, rfl⟩ := e.surjective j <;> simp [dCol, one_apply, apply_ite f]
+  obtain ⟨i | i, rfl⟩ := e.surjective j <;> simp [dCol, Matrix.one_apply, apply_ite f]
 
 omit [Fintype n] [Fintype ι] [DecidableEq ι] in
 theorem fCol_map {B : Type} [CommRing B] (f : A →+* B) : (fCol A e).map f = fCol B e := by
   ext j k
-  obtain ⟨i | i, rfl⟩ := e.surjective j <;> simp [fCol, one_apply, apply_ite f]
+  obtain ⟨i | i, rfl⟩ := e.surjective j <;> simp [fCol, Matrix.one_apply, apply_ite f]
 
 omit [DecidableEq ι] in
 theorem dCol_isotropic (σ : A →+* A) (J : Matrix n n A) : cT σ (dCol A e) * dblGram e J * dCol A e = 0 := by
   rw [cT, dCol_map]
   ext i j
-  simp [dCol, dblGram, blkMat, mul_apply, ← e.sum_comp, one_apply]
+  simp [dCol, dblGram, blkMat, transpose_fromRows, fromCols_mul_fromBlocks,
+    fromCols_mul_fromRows]
 
 theorem keepsDiag_of_dCol {M : Matrix ι ι A} {c : Matrix n n A} (h : M * dCol A e = dCol A e * c) : KeepsDiag e M :=
   keepsDiag_of_mulVec fun w hw => by
@@ -306,7 +312,7 @@ open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.Genus
 theorem hasIwasawa_of_inert {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     {σ : E →ₐ[F] E} (hσ : ∀ x, σ (σ x) = x) {c : 𝓞 E} (hc : (c : E) + σ c = 1) {n : ℕ}
     {J : Matrix (Fin n) (Fin n) E} (hJ : IsHermND σ J) {Q : Matrix (Fin (n + n)) (Fin (n + n)) E}
-    (hQ : Q = dblGram finSumFinEquiv J) {L : Submodule (𝓞 E) (Fin n → E)} [Submodule.IsLattice E L]
+    (hQ : Q = dblGram finSumFinEquiv J) {L : Submodule (𝓞 E) (Fin n → E)} [Submodule.IsFullLattice E L]
     {v : HeightOneSpectrum (𝓞 F)} {w : HeightOneSpectrum (𝓞 E)} (hw : Formalism.UG.IsInertAt F E v w)
     (hL : IsSelfDualAt σ J L v) : HasIwasawa σ Q (KFin σ Q L v) := fun g => by
   have h := (InertChart.under_eq_iff hw w).2 rfl
@@ -339,7 +345,8 @@ theorem hasIwasawa_inert : ∀ (D : D7) (A : HSp D) (L : Lat A), IsSelfDualC A L
     ¬ Formalism.MainNotions.SchurIrreducible.IsSplit (E := D.host.E) v →
       HasIwasawa D.sp.cm.sig (dblSp A).gram (KFin D.sp.cm.sig (dblSp A).gram L v) := by
   intro D A L hL v hv
-  haveI := hL.1
+  haveI : Submodule.IsFullLattice D.host.E L :=
+    Formalism.IndefR.Fin.PDA.selfDual_isFullLattice A L hL
   have := v.isMaximal
   obtain ⟨P, hP, hPv⟩ := Ideal.exists_maximal_ideal_liesOver_of_isIntegral (S := 𝓞 D.host.E) v.asIdeal
   let w : HeightOneSpectrum (𝓞 D.host.E) := ⟨P, hP.isPrime, Ideal.ne_bot_of_liesOver_of_ne_bot v.ne_bot P⟩
@@ -351,7 +358,7 @@ theorem hasIwasawa_inert : ∀ (D : D7) (A : HSp D) (L : Lat A), IsSelfDualC A L
     (((isCMExt_host D).2.2.2 _ _).trans (Formalism.HC.HostAx.conjE_apply _ _ _).symm)] at hc
   exact hasIwasawa_of_inert (GlobalTheory.LFun.InertChart.conj_conj (isCMExt_host D)) (c := c) hc (GlobalTheory.Doubling.isHermND_gram A)
     (gram_hdbl A) (hi.resolve_left hv)
-    ((SelfDual.forall_isSelfDualAt_iff (σ := D.sp.cm.sig) (GlobalTheory.Doubling.isHermND_gram A).2 hL.1).2 (fun y => hL.2 y) v)
+    ((SelfDual.forall_isSelfDualAt_iff (σ := D.sp.cm.sig) (GlobalTheory.Doubling.isHermND_gram A).2 inferInstance).2 (fun y => hL.2 y) v)
 
 end GlobalTheory.InertIwasawa
 

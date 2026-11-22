@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.MemZeroSubCoe
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.FrobeniusUniformizerPowDvd
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.MemZeroSubCoe
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.FrobeniusUniformizerPowDvd
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -43,7 +47,8 @@ theorem genM (φ : M →+ U) (hφ : ∀ (c : O) (x : M), φ (c • x) = algebraM
       (Submodule.subset_span (Finset.mem_coe.2 (Finset.mem_image_of_mem _ (Finset.mem_univ q)))), ?_⟩
     have hoby : ob ⟨y, trivial⟩ = ob ⟨x, trivial⟩ := by
       have e : (⟨y, trivial⟩ : ↥A) = ∑ q : ↥t, a q • f q := Subtype.ext (by simp [hy])
-      rw [e, map_sum, ← hax]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [e, map_sum, ← hax]
       rw [← Finset.sum_coe_sort t]
       exact Finset.sum_congr rfl fun q _ => by rw [map_smul, hf q]
     have h0 : ob (⟨x, trivial⟩ - ⟨y, trivial⟩) = 0 := by rw [map_sub, hoby, sub_self]

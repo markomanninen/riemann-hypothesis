@@ -1,17 +1,21 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPtsBddConv
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLemmaETailMass
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PModelFibreSumAeSheet
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PModelFibreFinite
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.LintegralFibSum
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeI
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedDensityNonnegOffNullSet
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocDensDivJacN
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeM
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PModelFibreSumAeFibres
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPtsBddConv
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLemmaETailMass
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PModelFibreSumAeSheet
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PModelFibreFinite
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.LintegralFibSum
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeI
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedDensityNonnegOffNullSet
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocDensDivJacN
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeM
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PModelFibreSumAeFibres
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 
@@ -49,7 +53,8 @@ theorem not_flat (Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1) →
       (Fin e → ℂ) →ₗ[ℂ] (Fin e → ℂ)) = 0) : False := by
   obtain ⟨y, hy⟩ := exists_infinite_fibre hO hne han hdet
   refine (fib_finite M Ψ hP hΨ y).not_infinite ((Set.Infinite.image
-    ((M.atlas.chart j).symm.injOn.mono fun u hu => hOt hu.1) hy).mono ?_)
+    (Set.InjOn.mono (s₁ := O ∩ (modelQ M Ψ ∘ (M.atlas.chart j).symm) ⁻¹' {y})
+      (fun u hu => hOt hu.1) (M.atlas.chart j).symm.injOn) hy).mono ?_)
   rintro _ ⟨u, ⟨huO, hqu⟩, rfl⟩
   exact ⟨hqu, h0 u huO⟩
 

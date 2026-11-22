@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.ZLocLower
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.ZLocLower
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 

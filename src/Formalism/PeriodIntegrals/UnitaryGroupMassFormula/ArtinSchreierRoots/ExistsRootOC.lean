@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ArtSch
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ArtSch
+
+@[expose] public section
 
 namespace PI.ArtSch.RootWork
 

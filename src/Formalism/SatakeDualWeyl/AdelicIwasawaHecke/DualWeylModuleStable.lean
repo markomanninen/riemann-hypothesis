@@ -1,5 +1,9 @@
-import Formalism.SatakeDualWeyl.StatementW
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+module
+
+public import Formalism.SatakeDualWeyl.StatementW
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,8 @@ theorem wact_rowAct_mul (R : Type) [CommRing R] (r n : ℕ) (A B : Matrix (Fin r
     Formalism.GradedWeylDivisibility.rowAct R (n := n) (A * B) = (Formalism.GradedWeylDivisibility.rowAct R (n := n) B).comp (Formalism.GradedWeylDivisibility.rowAct R A) := by
   apply MvPolynomial.algHom_ext
   rintro ⟨i, j⟩
-  simp only [Formalism.GradedWeylDivisibility.rowAct, AlgHom.comp_apply, aeval_X, map_sum, map_mul, aeval_C, algebraMap_eq,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.GradedWeylDivisibility.rowAct, AlgHom.comp_apply, aeval_X, map_sum, map_mul, aeval_C, algebraMap_eq,
     Matrix.mul_apply, Finset.sum_mul, Finset.mul_sum, mul_assoc]
   first
   | exact Finset.sum_comm
@@ -47,7 +52,8 @@ private theorem isWeightedHomogeneous_algHom_apply {σ R M : Type*} [CommRing R]
     (φ : MvPolynomial σ R →ₐ[R] MvPolynomial σ R)
     (hφ : ∀ v, IsWeightedHomogeneous w (φ (X v)) (w v)) (f : MvPolynomial σ R) (m : M)
     (hf : IsWeightedHomogeneous w f m) : IsWeightedHomogeneous w (φ f) m := by
-  rw [← mem_weightedHomogeneousSubmodule, f.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← mem_weightedHomogeneousSubmodule, f.as_sum, map_sum]
   refine Submodule.sum_mem _ fun d hd => ?_
   rw [mem_weightedHomogeneousSubmodule]
   have hdw : Finsupp.weight w d = m := hf (mem_support_iff.mp hd)
@@ -57,7 +63,7 @@ private theorem isWeightedHomogeneous_algHom_apply {σ R M : Type*} [CommRing R]
     intro v _
     rw [map_pow]
     exact isWeightedHomogeneous_pow' (hφ v) (d v)
-  have hC : φ (C (coeff d f)) = C (coeff d f) := by
+  have hC : φ (C (AddMonoidAlgebra.coeff f d)) = C (AddMonoidAlgebra.coeff f d) := by
     rw [← MvPolynomial.algebraMap_eq]
     exact φ.commutes _
   rw [monomial_eq, map_mul, hC, ← hdw, ← zero_add (Finsupp.weight w d)]
@@ -93,7 +99,8 @@ theorem dual_weyl_module_stable : Formalism.UG.DwStable := by
       rintro ⟨i, k⟩
       by_cases hkj : k = j
       · subst hkj
-        simp only [AlgHom.comp_apply, Formalism.GradedWeylDivisibility.rowAct, Formalism.GradedWeylDivisibility.colAddGen, aeval_X, map_sum, map_mul,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [AlgHom.comp_apply, Formalism.GradedWeylDivisibility.rowAct, Formalism.GradedWeylDivisibility.colAddGen, aeval_X, map_sum, map_mul,
           aeval_C, map_add, if_true, Option.elim, algebraMap_eq]
         rw [Finset.mul_sum, ← Finset.sum_add_distrib]
         apply Finset.sum_congr rfl

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePProjLie
-import Lemmata.PowMulVecEigen.PowMulVecEig
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePProjLie
+public import Lemmata.PowMulVecEigen.PowMulVecEig
+
+@[expose] public section
 
 noncomputable section
 

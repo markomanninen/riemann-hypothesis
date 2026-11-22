@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParIndJacPlacing
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParIndJacPlacing
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,11 +100,10 @@ theorem nonempty_prod₂_equiv_multiProd_succ (d : Fin (s + 1) → ℕ)
   · rw [stdSum_inr, stdBlocks_val, stdBlocks_val]
     simp [Fin.sum_univ_succ, add_assoc]
   · induction x with
-    | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul v w =>
       induction w using PiTensorProduct.induction_on with
-      | add x y hx hy => simp only [TensorProduct.tmul_add, map_add, hx, hy]
+      | add x y hx hy => simp only [TensorProduct.tmul_add, map_add (f := _), hx, hy]
       | smul_tprod c y =>
         simp only [TensorProduct.tmul_smul, map_smul, TensorProduct.map_tmul, piTensor_tprod, tensorCons_tmul]
         congr 2
@@ -118,7 +121,7 @@ open GlobalTheory.SmGL.MultiIrr GlobalTheory.JHMult
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
   {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
 
-theorem clsGL_nonneg {n : ℕ} (π : Representation ℂ (GL (Fin n) k) V) (h : HasFiniteLength π) (x : IrrGL k) :
+theorem clsGL_nonneg {n : ℕ} (π : Representation ℂ (GL (Fin n) k) V) (h : HasFiniteLength π) (x : IrrGL (k := k)) :
     0 ≤ clsGL π h x := by
   obtain ⟨m, c⟩ := x
   by_cases hm : m = n
@@ -129,7 +132,7 @@ theorem clsGL_nonneg {n : ℕ} (π : Representation ℂ (GL (Fin n) k) V) (h : H
     rintro ⟨c', h'⟩
     exact hm (congrArg Sigma.fst h').symm
 
-theorem clsGL_rep (x : IrrGL k) (h : HasFiniteLength x.rep) : clsGL x.rep h = Finsupp.single x 1 := by
+theorem clsGL_rep (x : IrrGL (k := k)) (h : HasFiniteLength x.rep) : clsGL x.rep h = Finsupp.single x 1 := by
   obtain ⟨n, c⟩ := x
   exact (clsGL_irr c.rep h).trans (by rw [IrrCl.cl_rep])
 
@@ -154,18 +157,18 @@ theorem isSubquotient_of_clsGL_ne {N : ℕ} {B : Representation ℂ (GL (Fin N) 
 
 variable {A : Type 1} [CommRing A]
 
-def bas (Ψ : GrothGL k ≃+ A) (x : IrrGL k) : A := Ψ (Finsupp.single x 1)
+def bas (Ψ : GrothGL k ≃+ A) (x : IrrGL (k := k)) : A := Ψ (Finsupp.single x 1)
 
 def Pos (Ψ : GrothGL k ≃+ A) (a : A) : Prop := ∀ x, 0 ≤ Ψ.symm a x
 
-def pc (Ψ : GrothGL k ≃+ A) (s : Multiset (IrrGL k)) : A := (s.map (bas Ψ)).prod
+def pc (Ψ : GrothGL k ≃+ A) (s : Multiset (IrrGL (k := k))) : A := (s.map (bas Ψ)).prod
 
 variable {Ψ : GrothGL k ≃+ A}
 
 theorem pos_zero : Pos Ψ 0 := fun x => by simp
 
 theorem Pos.add {a b : A} (ha : Pos Ψ a) (hb : Pos Ψ b) : Pos Ψ (a + b) := fun x => by
-  rw [map_add, Finsupp.add_apply]
+  rw [map_add (f := _), Finsupp.add_apply]
   exact add_nonneg (ha x) (hb x)
 
 theorem Pos.zsmul {a : A} (ha : Pos Ψ a) {c : ℤ} (hc : 0 ≤ c) : Pos Ψ (c • a) := fun x => by
@@ -185,20 +188,21 @@ theorem pos_cls {n : ℕ} (π : Representation ℂ (GL (Fin n) k) V) (h : HasFin
   rw [Ψ.symm_apply_apply]
   exact clsGL_nonneg π h x
 
-theorem bas_eq (x : IrrGL k) (h : HasFiniteLength x.rep) : bas Ψ x = Ψ (clsGL x.rep h) := by
+theorem bas_eq (x : IrrGL (k := k)) (h : HasFiniteLength x.rep) : bas Ψ x = Ψ (clsGL x.rep h) := by
   rw [clsGL_rep, bas]
 
-theorem pos_bas (x : IrrGL k) : Pos Ψ (bas Ψ x) := by
+theorem pos_bas (x : IrrGL (k := k)) : Pos Ψ (bas Ψ x) := by
   rw [bas_eq x x.2.rep.hasFiniteLength]
   exact pos_cls _ _
 
 theorem eq_sum_bas (a : A) : a = ∑ x ∈ (Ψ.symm a).support, (Ψ.symm a x) • bas Ψ x := by
   conv_lhs => rw [← Ψ.apply_symm_apply a, ← Finsupp.sum_single (Ψ.symm a)]
-  rw [Finsupp.sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finsupp.sum, map_sum]
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [bas, ← map_zsmul, Finsupp.smul_single_one]
 
-theorem pos_bas_mul (hΨ : IsProductIso k Ψ) (x y : IrrGL k) : Pos Ψ (bas Ψ x * bas Ψ y) := by
+theorem pos_bas_mul (hΨ : IsProductIso k Ψ) (x y : IrrGL (k := k)) : Pos Ψ (bas Ψ x * bas Ψ y) := by
   obtain ⟨h, e⟩ := hΨ.2 _ _ _ _ x.rep y.rep x.2.rep.hasFiniteLength y.2.rep.hasFiniteLength x.2.rep.smooth y.2.rep.smooth
   rw [bas_eq x x.2.rep.hasFiniteLength, bas_eq y y.2.rep.hasFiniteLength, ← e]
   exact pos_cls _ _
@@ -234,16 +238,16 @@ theorem pos_prod_sub (hΨ : IsProductIso k Ψ) {ι : Type*} (t : Finset ι) {f g
 
 @[simp] theorem pc_zero : pc Ψ 0 = 1 := by simp [pc]
 
-theorem pc_add (s t : Multiset (IrrGL k)) : pc Ψ (s + t) = pc Ψ s * pc Ψ t := by simp [pc]
+theorem pc_add (s t : Multiset (IrrGL (k := k))) : pc Ψ (s + t) = pc Ψ s * pc Ψ t := by simp [pc]
 
-theorem pc_sum {ι : Type*} (u : Finset ι) (t : ι → Multiset (IrrGL k)) :
+theorem pc_sum {ι : Type*} (u : Finset ι) (t : ι → Multiset (IrrGL (k := k))) :
     pc Ψ (∑ i ∈ u, t i) = ∏ i ∈ u, pc Ψ (t i) := by
   classical
   induction u using Finset.induction_on with
   | empty => simp
   | insert a u ha ih => rw [Finset.sum_insert ha, Finset.prod_insert ha, pc_add, ih]
 
-theorem pc_map {h : ℕ} (x : Fin h → IrrGL k) : pc Ψ (Finset.univ.val.map x) = ∏ a, bas Ψ (x a) := by
+theorem pc_map {h : ℕ} (x : Fin h → IrrGL (k := k)) : pc Ψ (Finset.univ.val.map x) = ∏ a, bas Ψ (x a) := by
   simp only [pc, Multiset.map_map]
   rfl
 
@@ -300,14 +304,14 @@ theorem multiProd_cls (hΨ : IsProductIso k Ψ) {h : ℕ} : ∀ {d : Fin h → �
     refine ⟨hQ, ?_⟩
     rw [← clsGL_congr E hP hQ, eP, eT, Fin.prod_univ_succ]
 
-theorem prodIrr_cls (hΨ : IsProductIso k Ψ) {h N : ℕ} (x : Fin h → IrrGL k) (hd : ∑ a, (x a).1 = N) :
+theorem prodIrr_cls (hΨ : IsProductIso k Ψ) {h N : ℕ} (x : Fin h → IrrGL (k := k)) (hd : ∑ a, (x a).1 = N) :
     ∃ hp : HasFiniteLength (prodIrr x hd), Ψ (clsGL (prodIrr x hd) hp) = ∏ a, bas Ψ (x a) := by
   obtain ⟨hp, e⟩ := multiProd_cls hΨ hd (fun a => (x a).rep) (fun a => (x a).2.rep.smooth)
     (fun a => (x a).2.rep.hasFiniteLength)
   exact ⟨hp, e.trans (Finset.prod_congr rfl fun a _ => (bas_eq _ _).symm)⟩
 
 theorem pos_pc_sub (hΨ : IsProductIso k Ψ) {N : ℕ} {π : Representation ℂ (GL (Fin N) k) V}
-    {s : Multiset (IrrGL k)} (h : HasSupport π s) (hs : IsSmooth π) (hi : π.IsIrreducible) :
+    {s : Multiset (IrrGL (k := k))} (h : HasSupport π s) (hs : IsSmooth π) (hi : π.IsIrreducible) :
     Pos Ψ (pc Ψ s - bas Ψ (IrrGL.of π hs hi)) := by
   obtain ⟨c, x, rfl, -, -, e, hsub⟩ := h
   have hd : ∑ a, (x a).1 = N := by simpa using Fintype.card_congr e
@@ -331,9 +335,9 @@ theorem pos_pc_sub (hΨ : IsProductIso k Ψ) {N : ℕ} {π : Representation ℂ 
     exact hg _ _ h0 hz
 
 theorem hasSupport_of_coef_ne (hΨ : IsProductIso k Ψ) {N : ℕ} {π : Representation ℂ (GL (Fin N) k) V}
-    {s : Multiset (IrrGL k)} (hc : ∀ y ∈ s, y.IsCusp) (hs : IsSmooth π) (hi : π.IsIrreducible)
+    {s : Multiset (IrrGL (k := k))} (hc : ∀ y ∈ s, y.IsCusp) (hs : IsSmooth π) (hi : π.IsIrreducible)
     (h : Ψ.symm (pc Ψ s) (IrrGL.of π hs hi) ≠ 0) : HasSupport π s := by
-  obtain ⟨c, x, rfl⟩ : ∃ (c : ℕ) (x : Fin c → IrrGL k), Finset.univ.val.map x = s :=
+  obtain ⟨c, x, rfl⟩ : ∃ (c : ℕ) (x : Fin c → IrrGL (k := k)), Finset.univ.val.map x = s :=
     ⟨s.toList.length, s.toList.get, by
       rw [Fin.univ_val_map, List.ofFn_get, Multiset.coe_toList]⟩
   obtain ⟨hp, ep⟩ := prodIrr_cls hΨ x rfl
@@ -348,8 +352,8 @@ theorem hasSupport_of_coef_ne (hΨ : IsProductIso k Ψ) {N : ℕ} {π : Represen
   exact hasSupport_of_isSubquotient hi (fun a => hc _ (Multiset.mem_map_of_mem _ (Finset.mem_univ a)))
     (isSubquotient_of_clsGL_ne hp hs hi h)
 
-theorem hasSupport_of_isSubquotient_prodIrr (hΨ : IsProductIso k Ψ) {c N : ℕ} {y : Fin c → IrrGL k}
-    {hd : ∑ a, (y a).1 = N} {t : Fin c → Multiset (IrrGL k)} (ht : ∀ a, HasSupport (y a).rep (t a))
+theorem hasSupport_of_isSubquotient_prodIrr (hΨ : IsProductIso k Ψ) {c N : ℕ} {y : Fin c → IrrGL (k := k)}
+    {hd : ∑ a, (y a).1 = N} {t : Fin c → Multiset (IrrGL (k := k))} (ht : ∀ a, HasSupport (y a).rep (t a))
     {π : Representation ℂ (GL (Fin N) k) V} (hi : π.IsIrreducible) (h : IsSubquotient π (prodIrr y hd)) :
     HasSupport π (∑ a, t a) := by
   have hs : IsSmooth π := h.isSmooth (isSmooth_prodIrr y hd)
@@ -367,11 +371,11 @@ theorem hasSupport_of_isSubquotient_prodIrr (hΨ : IsProductIso k Ψ) {c N : ℕ
     have h4 := clsGL_of_pos hp hs hi h
     omega
 
-theorem exists_hasSupport (hZ : GlobalTheory.Published.ZelevinskyPolynomialRing) (x : IrrGL k) :
+theorem exists_hasSupport (hZ : GlobalTheory.Published.ZelevinskyPolynomialRing) (x : IrrGL (k := k)) :
     ∃ s, HasSupport x.rep s := by
   obtain ⟨Z, Ψ, hS, hΨ, hX⟩ := hZ k
   let Q : MvPolynomial (Segment k) ℤ → Prop := fun p =>
-    Pos Ψ p ∧ ∃ s : Multiset (IrrGL k), (∀ y ∈ s, y.IsCusp) ∧ Pos Ψ (pc Ψ s - p)
+    Pos Ψ p ∧ ∃ s : Multiset (IrrGL (k := k)), (∀ y ∈ s, y.IsCusp) ∧ Pos Ψ (pc Ψ s - p)
   have q1 : Q 1 := ⟨pos_one hΨ, 0, by simp, by simpa using pos_zero⟩
   have qm : ∀ p q, Q p → Q q → Q (p * q) := by
     rintro p q ⟨a1, s, a2, a3⟩ ⟨b1, t, b2, b3⟩
@@ -410,10 +414,11 @@ theorem exists_hasSupport (hZ : GlobalTheory.Published.ZelevinskyPolynomialRing)
     push_neg at hne
     have h2 : Finsupp.single x (1 : ℤ) = Ψ.symm P := (Ψ.symm_apply_apply _).symm
     have h3 : Ψ.symm P x = 0 := by
-      rw [MvPolynomial.as_sum P, map_sum, Finsupp.finset_sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [MvPolynomial.as_sum P, map_sum, Finsupp.finsetSum_apply]
       refine Finset.sum_eq_zero fun m _ => ?_
-      have h4 : MvPolynomial.monomial m (MvPolynomial.coeff m P) =
-          (MvPolynomial.coeff m P) • MvPolynomial.monomial m (1 : ℤ) := by
+      have h4 : MvPolynomial.monomial m (AddMonoidAlgebra.coeff P m) =
+          (AddMonoidAlgebra.coeff P m) • MvPolynomial.monomial m (1 : ℤ) := by
         rw [MvPolynomial.smul_monomial, smul_eq_mul, mul_one]
       rw [h4, map_zsmul, Finsupp.smul_apply, hne m, smul_zero]
     rw [← h2, Finsupp.single_eq_same] at h3
@@ -434,22 +439,14 @@ namespace GlobalTheory.LocGL.SupportRing
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
   {V : Type} [AddCommGroup V] [Module ℂ V]
 
-theorem hasSupport_nu {x : IrrGL k} {s : Multiset (IrrGL k)} (h : HasSupport x.rep s) (e : ℂ) :
+theorem hasSupport_nu {x : IrrGL (k := k)} {s : Multiset (IrrGL (k := k))} (h : HasSupport x.rep s) (e : ℂ) :
     HasSupport (x.nu e).rep (s.map fun y => y.nu e) :=
   (h.tw _ (isSmoothChar_absPow e)).of_equiv (x.twEquiv _ _)
-
-theorem hasSupport_speh (hZ : GlobalTheory.Published.ZelevinskyPolynomialRing) {x : IrrGL k} {d N : ℕ}
-    {π : Representation ℂ (GL (Fin N) k) V} (h : IsSpeh x d π) {s : Multiset (IrrGL k)} (hs : HasSupport x.rep s) :
-    HasSupport π (∑ j : Fin d, s.map fun y => y.nu (((d : ℂ) - 1) / 2 - (j : ℕ))) := by
-  obtain ⟨Z, Ψ, -, hΨ, -⟩ := hZ k
-  obtain ⟨hd, hc⟩ := h
-  exact hasSupport_of_isSubquotient_prodIrr hΨ (y := spehFactor x d)
-    (t := fun j => s.map fun y => y.nu (((d : ℂ) - 1) / 2 - (j : ℕ))) (fun j => hasSupport_nu hs (((d : ℂ) - 1) / 2 - (j : ℕ))) hc.1 hc.isSubquotient
 
 theorem hasSupport_multiProd (hZ : GlobalTheory.Published.ZelevinskyPolynomialRing) {c N : ℕ} {d : Fin c → ℕ}
     (hd : ∑ a, d a = N) {X : Fin c → Type} [∀ a, AddCommGroup (X a)] [∀ a, Module ℂ (X a)]
     (σ : ∀ a, Representation ℂ (GL (Fin (d a)) k) (X a)) (hs : ∀ a, IsSmooth (σ a))
-    (hi : ∀ a, (σ a).IsIrreducible) {t : Fin c → Multiset (IrrGL k)} (ht : ∀ a, HasSupport (σ a) (t a))
+    (hi : ∀ a, (σ a).IsIrreducible) {t : Fin c → Multiset (IrrGL (k := k))} (ht : ∀ a, HasSupport (σ a) (t a))
     (hI : (multiProd (stdBlocks d hd) σ).IsIrreducible) :
     HasSupport (multiProd (stdBlocks d hd) σ) (∑ a, t a) := by
   obtain ⟨Z, Ψ, -, hΨ, -⟩ := hZ k

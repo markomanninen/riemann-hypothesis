@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvIsIntMapMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvIsIntMapMap
+
+@[expose] public section
 
 open GlobalTheory.IsoTriv
 
@@ -67,7 +71,7 @@ theorem epsSt : EpsSt := by
       rwa [Ideal.span_singleton_eq_span_singleton.mpr hk]
     obtain ⟨c, hc⟩ := Ideal.mem_span_singleton.mp h1
     refine ⟨y, hy, -c, ?_⟩
-    have h4 : φ x + φ y = 1 := by rw [← map_add, hxy, map_one]
+    have h4 : φ x + φ y = 1 := by rw [← map_add (f := _), hxy, map_one]
     rw [← h4, hc]; ring
   choose ε hεJ hε using key
   refine ⟨ε, fun N => ⟨hε N, fun M hM a ⟨z, hz⟩ => ?_⟩⟩

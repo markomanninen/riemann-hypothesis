@@ -1,5 +1,9 @@
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.WeightCompApply
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementC
+module
+
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.WeightCompApply
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementC
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.PW
 
@@ -21,10 +25,11 @@ theorem hwc_le_isoC (LL : Letters N) (j : ℕ) (Cs : Finset (Fin r)) (la : Fin r
 
 theorem coeff_glAct_diag (LL : Letters N) (j : ℕ) (c : Fin r) (x : MvPolynomial (Fin N × Fin r) ℚ_[p])
     (m : Fin N × Fin r →₀ ℕ) :
-    coeff m (glAct p LL j c c x) = ((wt LL j c m : ℤ) : ℚ_[p]) * coeff m x := by
+    AddMonoidAlgebra.coeff (glAct p LL j c c x) m = ((wt LL j c m : ℤ) : ℚ_[p]) * AddMonoidAlgebra.coeff x m := by
   classical
   conv_lhs => rw [x.as_sum]
-  rw [map_sum, coeff_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, coeff_sum]
   simp only [glAct_diag_monomial, coeff_smul, coeff_monomial, smul_eq_mul]
   rw [Finset.sum_eq_single m]
   · rw [if_pos rfl]
@@ -41,13 +46,13 @@ theorem wtSpC_iff_eig (LL : Letters N) (j : ℕ) (Cs : Finset (Fin r)) (la : Fin
   · intro h c hc
     ext m
     rw [coeff_glAct_diag, coeff_smul, smul_eq_mul]
-    by_cases hm : coeff m x = 0
+    by_cases hm : AddMonoidAlgebra.coeff x m = 0
     · rw [hm, mul_zero, mul_zero]
     · have := h (Finset.mem_coe.mpr (mem_support_iff.mpr hm)) c hc
       rw [this]
   · intro h m hm c hc
-    have hm' : coeff m x ≠ 0 := mem_support_iff.mp (Finset.mem_coe.mp hm)
-    have e := congrArg (coeff m) (h c hc)
+    have hm' : AddMonoidAlgebra.coeff x m ≠ 0 := mem_support_iff.mp (Finset.mem_coe.mp hm)
+    have e := congrArg (AddMonoidAlgebra.coeff · m) (h c hc)
     rw [coeff_glAct_diag, coeff_smul, smul_eq_mul] at e
     have := mul_right_cancel₀ hm' e
     exact_mod_cast this

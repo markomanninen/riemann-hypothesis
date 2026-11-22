@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.QuotVolumeNeZeroNeTop
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryUnimodularExistsFundamentalDomain
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.QuotVolumeNeZeroNeTop
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryUnimodularExistsFundamentalDomain
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,10 +39,10 @@ theorem setIntegral_deriv_eq_zero {G : Type} [Group G] [TopologicalSpace G] [IsT
   have key := hasDerivAt_integral_of_dominated_loc_of_deriv_le (μ := μ.restrict 𝓕) (𝕜 := ℝ) (x₀ := 0)
     (F := fun t g => Φ (g * a t)) (F' := fun t g => Φ' (g * a t)) (s := Set.univ) (bound := fun _ => B')
     Filter.univ_mem
-    (.of_forall fun t => (hc.comp (continuous_mul_right _)).measurable.aestronglyMeasurable)
-    (Integrable.of_bound (hc.comp (continuous_mul_right _)).measurable.aestronglyMeasurable B
+    (.of_forall fun t => (hc.comp (continuous_mul_const _)).measurable.aestronglyMeasurable)
+    (Integrable.of_bound (hc.comp (continuous_mul_const _)).measurable.aestronglyMeasurable B
       (.of_forall fun g => hB _))
-    (hc'.comp (continuous_mul_right _)).measurable.aestronglyMeasurable
+    (hc'.comp (continuous_mul_const _)).measurable.aestronglyMeasurable
     (.of_forall fun g t _ => hB' _) (integrable_const _) (.of_forall fun g t _ => hd g t)
   have h2 := key.2
   simp only [setIntegral_mul_right Γ μ h hΦ, h0, mul_one] at h2

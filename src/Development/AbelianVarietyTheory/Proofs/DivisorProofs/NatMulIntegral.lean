@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CoordinateBasisBounds
 
@@ -39,7 +43,7 @@ theorem coord_bound {E : Type} [Field E] [NumberField E] {n : ℕ}
     intro i
     obtain ⟨a, ha⟩ := hx i
     obtain ⟨b, hb⟩ := hy i
-    exact ⟨a + b, by rw [map_add, ← ha, ← hb, Pi.add_apply]; ring⟩
+    exact ⟨a + b, by rw [map_add (f := _), ← ha, ← hb, Pi.add_apply]; ring⟩
   | smul c x _ hx =>
     intro i
     obtain ⟨a, ha⟩ := hx i

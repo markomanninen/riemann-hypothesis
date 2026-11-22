@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnitStep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.OkFin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.DualCard
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnitStep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.OkFin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.DualCard
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr UpperTheory.V.Z.J
 
@@ -37,7 +41,7 @@ theorem UpperTheory.V.Z.J.homBd :
         intro q q'
         rw [← map_add f.1, ← map_add e]
         apply wd f.1 f.2
-        rw [map_add, Function.surjInv_eq hπ, Function.surjInv_eq hπ, Function.surjInv_eq hπ] }
+        rw [map_add (f := _), Function.surjInv_eq hπ, Function.surjInv_eq hπ, Function.surjInv_eq hπ] }
   have hΦ : Function.Injective Φ := by
     intro f g hfg
     have h1 : ∀ y, f.1 (e y) = g.1 (e y) := by

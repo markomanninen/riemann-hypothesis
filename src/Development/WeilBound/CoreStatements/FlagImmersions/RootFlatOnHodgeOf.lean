@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.TauInInjective
-import Development.WeilBound.CoreStatements.VolumeEquality.ChartMeetsPoint
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.NearRecordOfValue
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocalSystemSplitFibresStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlatHermRootLineDegreeStatement
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.TauInInjective
+public import Development.WeilBound.CoreStatements.VolumeEquality.ChartMeetsPoint
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.NearRecordOfValue
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocalSystemSplitFibresStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlatHermRootLineDegreeStatement
+
+@[expose] public section
 
 noncomputable section
 

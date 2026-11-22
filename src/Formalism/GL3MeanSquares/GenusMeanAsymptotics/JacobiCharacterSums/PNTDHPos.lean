@@ -1,5 +1,9 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTDHSt
-import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.Positivity
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTDHSt
+public import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.Positivity
+
+@[expose] public section
 
 open Finset Complex Classical
 

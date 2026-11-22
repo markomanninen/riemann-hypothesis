@@ -1,6 +1,10 @@
-import Formalism.ThetaLogCoordinates.SandwichModelDomains.SpreadSquare
-import Formalism.GradedWeylDivisibility.FinalD
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+module
+
+public import Formalism.ThetaLogCoordinates.SandwichModelDomains.SpreadSquare
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -49,7 +53,7 @@ theorem dsc_approx (p : ℕ) [Fact p.Prime] (r n : ℕ) (hn : n ≤ r) (ν : Fin
     obtain ⟨d1, hd1, z1, rfl⟩ := hx
     obtain ⟨d2, hd2, z2, rfl⟩ := hy
     refine ⟨d1 + d2, Submodule.add_mem _ hd1 hd2, z1 + z2, ?_⟩
-    rw [map_add, smul_add]; abel
+    rw [map_add (f := _), smul_add]; abel
   | smul a x _ hx =>
     obtain ⟨d, hd, z, rfl⟩ := hx
     obtain ⟨a', ha'⟩ := Ideal.mem_span_singleton.mp (PadicInt.appr_spec k a)
@@ -73,9 +77,9 @@ theorem dsc_divide (p : ℕ) [Fact p.Prime] {σ : Type*} (k : ℕ) (g : MvPolyno
     rw [C_dvd_iff_dvd_coeff]
     intro m
     rw [← PadicInt.pow_p_dvd_int_iff]
-    have := congrArg (coeff m) h
+    have := congrArg (AddMonoidAlgebra.coeff · m) h
     rw [coeff_map, coeff_smul] at this
-    exact ⟨coeff m z, by simpa using this⟩
+    exact ⟨AddMonoidAlgebra.coeff z m, by simpa using this⟩
   obtain ⟨g1, rfl⟩ := hd
   exact ⟨g1, by rw [smul_eq_C_mul]⟩
 

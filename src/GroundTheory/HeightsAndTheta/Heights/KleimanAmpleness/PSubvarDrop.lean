@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsStepTwo
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsStepTwo
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -32,7 +37,7 @@ theorem SubvarDrop.proof : SubvarDrop.Statement.{u, w} := by
     have h0 := hhom _ hv 0
     rw [homogeneousComponent_zero] at h0
     have h1 : (1 : Poly k N) ∈ pp := by
-      have hc : coeff 0 (X j * g - 1 : Poly k N) = -1 := by
+      have hc : AddMonoidAlgebra.coeff (X j * g - 1 : Poly k N) 0 = -1 := by
         change constantCoeff (X j * g - 1 : Poly k N) = -1; simp
       rw [hc, map_neg, map_one] at h0
       simpa using pp.neg_mem h0

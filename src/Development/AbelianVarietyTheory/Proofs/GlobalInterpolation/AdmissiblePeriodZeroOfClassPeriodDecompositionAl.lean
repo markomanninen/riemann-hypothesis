@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.StatementFT.PeriodPointConditions
-import Formalism.LocalToGlobal.HilbertRowConditions.RowPin
-import Formalism.LocalToGlobal.HermitianForms.TiedBrRep
-import Formalism.LocalRingCardinality.PosOfIsomEmb
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.SharpRestriction.LevelLetterCocycles.TwGuard
-import Formalism.SharpRestriction.Divisibility.ThetaNormsAndLinks
-import Formalism.SharpRestriction.Divisibility.WeightDegreeSizes
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.StatementFT.PeriodPointConditions
+public import Formalism.LocalToGlobal.HilbertRowConditions.RowPin
+public import Formalism.LocalToGlobal.HermitianForms.TiedBrRep
+public import Formalism.LocalRingCardinality.PosOfIsomEmb
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.SharpRestriction.LevelLetterCocycles.TwGuard
+public import Formalism.SharpRestriction.Divisibility.ThetaNormsAndLinks
+public import Formalism.SharpRestriction.Divisibility.WeightDegreeSizes
+
+@[expose] public section
 
 noncomputable section
 
@@ -137,8 +141,8 @@ theorem vAdd_nat (D : D7) (w : D.what₂.places.Pl) (n : ℕ) (hn : n ≠ 0) :
     pow_ne_zero _ (Nat.cast_ne_zero.mpr hp.ne_zero)
   have hrL : (r : D.what₂.LL) ≠ 0 := Nat.cast_ne_zero.mpr hr0
   have hv : padicValNat (D.what₂.places.resChar w) ((D.what₂.places.resChar w) ^ k * r) = k := by
-    rw [padicValNat.mul (pow_ne_zero _ hp.ne_zero) hr0, padicValNat.prime_pow,
-      padicValNat.eq_zero_of_not_dvd hr, add_zero]
+    rw [Nat.padicValNat_def, Nat.multiplicity_mul (pow_ne_zero _ hp.ne_zero) hr0,
+      Nat.multiplicity_prime_pow, multiplicity_eq_zero_of_not_dvd hr, add_zero]
   rw [hv]
   have e1 : (((D.what₂.places.resChar w ^ k * r : ℕ)) : D.what₂.LL) =
       ((((D.what₂.places.resChar w : ℕ) : 𝓞 D.what₂.LL) ^ k : 𝓞 D.what₂.LL) : D.what₂.LL) * ((r : 𝓞 D.what₂.LL) : D.what₂.LL) := by
@@ -174,7 +178,7 @@ theorem vAdd_card_le (D : D7) (w : D.what₂.places.Pl) (n d : ℕ) (hn : n ≠ 
   have h2 := vAdd_nat D w d hd0
   have h3 : padicValNat (D.what₂.places.resChar w) n ≤ padicValNat (D.what₂.places.resChar w) d := by
     have : Fact (D.what₂.places.resChar w).Prime := ⟨D.what₂.places.resChar_prime w⟩
-    exact (padicValNat_dvd_iff_le hd0).mp (dvd_trans pow_padicValNat_dvd hd)
+    exact ((by simpa only [_root_.Nat.padicValNat_def] using @_root_.multiplicity_dvd_iff_le : ∀ {p : _root_.Nat} [hp : _root_.Fact (_root_.Nat.Prime p)] {a n : _root_.Nat} (ha : a ≠ 0), p ^ n ∣ a ↔ n ≤ _root_.padicValNat p a) hd0).mp (dvd_trans (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _)) hd)
   rw [h1, Int.cast_mul, Int.cast_natCast, Int.cast_natCast]
   exact mul_le_mul_of_nonneg_left (Nat.cast_le.mpr h3) (by positivity)
 
@@ -205,7 +209,8 @@ theorem admissiblePeriodZero_of_classPeriodDecomposition {D : D7} (h : ∀ u, Fo
   refine ⟨∑ c, ((Nat.card ((D.fm u).stabilizer₂ c) : ℕ) : D.what₂.LL)⁻¹ * y c, ?_, ?_⟩
   · have hz : (D.fm u).ptEmb x ∈ (D.fm u).ptC := ((T.valP.rat _).1 ⟨x, rfl⟩).1
     have hG : T.jM ((D.eMt u).symm F) ∈ (D.fm u).ptC := T.per.2.1 _
-    rw [T.per.2.2, petersson_eq_sum_restrict T _ _ hG hz, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [T.per.2.2, petersson_eq_sum_restrict T _ _ hG hz, map_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [map_mul, map_inv₀, map_natCast, hy c]
     unfold Formalism.MainNotions.RT.PeriodPointConditions.pcL

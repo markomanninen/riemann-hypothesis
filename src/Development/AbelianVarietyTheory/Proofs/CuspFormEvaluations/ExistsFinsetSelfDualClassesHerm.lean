@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.SemistableReduction.SemiAll
-import ReciprocityTheory.SemistableReduction.SemiDegZ
-import ReciprocityTheory.SemistableReduction.LatTest
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CmApproximationTransference
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsThickPointHyperbolic
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsFinsetTypesOfBoundedBases
+module
+
+public import Mathlib
+public import ReciprocityTheory.SemistableReduction.SemiAll
+public import ReciprocityTheory.SemistableReduction.SemiDegZ
+public import ReciprocityTheory.SemistableReduction.LatTest
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CmApproximationTransference
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsThickPointHyperbolic
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsFinsetTypesOfBoundedBases
+
+@[expose] public section
 
 open NumberField Matrix Module Submodule ReciprocityTheory.MultiplicativeHeights ComplexConjugate
 open ReciprocityTheory.ChartRestriction.G.FD (herm cc fdeg dE)
@@ -150,8 +154,8 @@ theorem two_mul_hq_le {S : HermForm K r} (M : Majorant S) (σ : K →+* ℂ) (x 
     (fun w _ => ?_) (Finset.mem_univ _)) zero_le_two
   exact (Complex.nonneg_iff.1 ((M.posDef _).posSemidef.dotProduct_mulVec_nonneg _)).1
 
-open CMTransference in
 
+open CMTransference in
 theorem exists_short_basis {S : HermForm K r} {L : Submodule (𝓞 K) (Fin r → K)}
     (hL : IsLattice L) (hsd : IsSelfDual S L) (M : Majorant S) {ε : ℝ} (hε : 0 < ε)
     (hmin : ∀ v ∈ L, v ≠ 0 → ε ≤ (∑ σ : K →+* ℂ, hq (M.H σ) (embVec σ v)) / 2) :
@@ -215,7 +219,8 @@ theorem exists_short_basis {S : HermForm K r} {L : Submodule (𝓞 K) (Fin r →
         obtain ⟨c, rfl⟩ := (mem_span_range_iff_exists_fun ℤ).1 ((hb y).2 hy)
         choose k hk using hk
         refine ⟨∑ j, c j * k j, ?_⟩
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         simp only [map_zsmul, hk]
         simp
       have h := hmin _ hmem (smul_ne_zero (by exact_mod_cast discr_ne_zero K) hu)
@@ -290,7 +295,8 @@ theorem exists_finset_submodule {R : Type} [CommRing R] [IsDedekindDomain R] {r 
         rw [mkQ_apply, Quotient.mk_eq_zero]
         exact ⟨m' ᵥ* N.adjugate, by
           rw [vecMulLinear_apply, vecMul_vecMul, adjugate_mul, vecMul_smul, vecMul_one]⟩
-      rw [mem_comap, h', map_add, h0, add_zero, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [mem_comap, h', map_add (f := _), h0, add_zero, map_sum]
       refine sum_mem fun j _ => ?_
       rw [map_smul]
       exact smul_mem _ _ (subset_span ⟨j, rfl⟩)
@@ -606,42 +612,5 @@ theorem exists_finset_selfDual_classes_herm (G : Matrix (Fin r) (Fin r) K)
   refine ⟨𝒮, fun L hL => ⟨(h1 L hL).1, (hsd L).1 (h1 L hL).2⟩, fun L a b c => ?_, h3⟩
   obtain ⟨L₀, hL₀, γ, hγ, hm, -⟩ := h2 L a ((hsd L).2 ⟨b, c⟩)
   exact ⟨L₀, hL₀, γ, fun x y => by rw [← hermFormOf_h G hG, hγ, hermFormOf_h], hm⟩
-
-noncomputable def hyperbolicHermForm (K : Type) [Field K] [NumberField K] [IsCMField K] :
-    HermForm K 2 :=
-  hermFormOf !![0, 1; 1, 0] fun a b => by fin_cases a <;> fin_cases b <;> simp [cc]
-
-theorem isSelfDual_hyperbolicHermForm :
-    (hyperbolicHermForm K).h ![1, 0] ![1, 0] = 0 ∧ IsLattice (intLat K 2) ∧
-      IsSelfDual (hyperbolicHermForm K) (intLat K 2) := by
-  have hh : ∀ x y : Fin 2 → K,
-      (hyperbolicHermForm K).h x y = y 0 * cc (x 1) + y 1 * cc (x 0) := fun x y => by
-    rw [hyperbolicHermForm, hermFormOf_h]
-    simp [herm, Fin.sum_univ_two]
-  have hc : ∀ {x : K}, IsIntegral ℤ x → IsIntegral ℤ (cc x) := TraceDualMin.isIntegral_cc
-  have he : ∀ a : Fin 2, (Pi.single a 1 : Fin 2 → K) ∈ intLat K 2 := fun a =>
-    (mem_intLat _).2 fun b => isIntegralElt_iff.2 (by
-      rw [Pi.single_apply]
-      split_ifs
-      exacts [isIntegral_one, isIntegral_zero])
-  refine ⟨by simp [hh, cc], ⟨?_, ?_⟩, fun x hx y hy => ?_, fun x hx => ?_⟩
-  · refine Submodule.fg_pi fun _ => ?_
-    rw [Submodule.one_eq_span]
-    exact Submodule.fg_span_singleton 1
-  · rw [eq_top_iff, ← (Pi.basisFun K (Fin 2)).span_eq]
-    refine span_mono ?_
-    rintro _ ⟨a, rfl⟩
-    rw [Pi.basisFun_apply]
-    exact he a
-  · simp only [mem_intLat, isIntegralElt_iff] at hx hy ⊢
-    rw [hh]
-    exact ((hy 0).mul (hc (hx 1))).add ((hy 1).mul (hc (hx 0)))
-  · have h0 := hc (isIntegralElt_iff.1 (hx _ (he 0)))
-    have h1 := hc (isIntegralElt_iff.1 (hx _ (he 1)))
-    simp only [hh, cc] at h0 h1
-    refine (mem_intLat _).2 fun a => isIntegralElt_iff.2 ?_
-    fin_cases a
-    · simpa using h1
-    · simpa using h0
 
 end GlobalTheory

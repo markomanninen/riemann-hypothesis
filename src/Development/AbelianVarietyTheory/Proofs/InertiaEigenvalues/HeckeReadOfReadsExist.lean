@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsScalar
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ZeroDegreeOfPinFor
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UpperLeftBlockEqOneIffOfMemBlockTri
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinPartMulIncAMem
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitOffOutsideS0
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsScalar
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ZeroDegreeOfPinFor
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UpperLeftBlockEqOneIffOfMemBlockTri
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinPartMulIncAMem
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitOffOutsideS0
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,36 +43,7 @@ section Pin
 
 variable (Rl cG S) (YS : NX.NExpRealS Rl cG S)
 
-set_option synthInstance.maxHeartbeats 400000 in
 
-def PinDFor (ρ : Setup D.ntw)
-    (hk : ∀ i j b, ℕ → PlE D.host → Module.End (FractionRing (D.ntw.O i)) (D.nexp.Fm i j b)) : Prop :=
-  ∀ (hL : ∀ j, ℕ → PlE D.host → Module.End D.what₂.LL (S.WL j)) (hs : ∀ j, 1 ≤ j → j ≤ D.R.m → NX.HeckeStabR S j (hL j)),
-    GlobalTheory.ExportPin.Reads Rl cG S YS hL → ∃ u : ∀ i : D.ntw.Tw, Bool → PlE D.host → (D.ntw.O i)ˣ,
-      (∀ i j b (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) (k : ℕ) (P : PlE D.host) (x : D.nexp.Fm i j b), P ∉ D.ntw.S0 i →
-        Formalism.BasicNotions.IsSplitPl D.host P → k ≤ D.R.r →
-        YS.eF i j b h1 h2 (hk i j b k P x) =
-          (algebraMap (D.ntw.O i) (FractionRing (D.ntw.O i)) (u i b P)) ^ k •
-            NX.hkFR S i j b (hL j) (hs j h1 h2) k P (YS.eF i j b h1 h2 x)) ∧
-      IsDeltaInv ρ u
-
-set_option synthInstance.maxHeartbeats 400000 in
-
-def HeckePinD (ρ : Setup D.ntw) : Prop :=
-  ∀ (hL : ∀ j, ℕ → PlE D.host → Module.End D.what₂.LL (S.WL j)) (hs : ∀ j, 1 ≤ j → j ≤ D.R.m → NX.HeckeStabR S j (hL j)),
-    GlobalTheory.ExportPin.Reads Rl cG S YS hL → ∃ u : ∀ i : D.ntw.Tw, Bool → PlE D.host → (D.ntw.O i)ˣ,
-      (∀ i j b (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) (k : ℕ) (P : PlE D.host) (x : D.nexp.Fm i j b), P ∉ D.ntw.S0 i →
-        Formalism.BasicNotions.IsSplitPl D.host P → k ≤ D.R.r →
-        YS.eF i j b h1 h2 (D.nexp.hkF i j b k P x) =
-          (algebraMap (D.ntw.O i) (FractionRing (D.ntw.O i)) (u i b P)) ^ k •
-            NX.hkFR S i j b (hL j) (hs j h1 h2) k P (YS.eF i j b h1 h2 x)) ∧
-      ∀ (i : D.ntw.Tw) (j : Fin D.R.m) (b : Bool) (k : ℕ) (P : PlE D.host), HkIdx i k P →
-        ∀ (α : GA D (Wc D j)) (z : (AE D)ˣ), IsHeckeAt (Wc D j) P k α → IsDetAt (idemAt P) (Wc D j) α z →
-          ρ.eO i b (u i b P) ^ k = (((ρ.B i j b).de.chi z : Circle) : ℂ)⁻¹
-
-def ReadsExist : Prop :=
-  ∃ (hL : ∀ j, ℕ → PlE D.host → Module.End D.what₂.LL (S.WL j))
-    (_ : ∀ j, 1 ≤ j → j ≤ D.R.m → NX.HeckeStabR S j (hL j)), GlobalTheory.ExportPin.Reads Rl cG S YS hL
 
 end Pin
 
@@ -79,9 +54,8 @@ variable (YS : NX.NExpRealS Rl cG S) (v₀ : ∀ (j : Fin D.R.m) (σ : D.what₂
 
 theorem evK_smul (c : NX.KB S i b) (x : NX.KB S i b ⊗[S.Ks] NX.FmK S ((j : ℕ) + 1)) :
     evK YS v₀ hρ i j b (c • x) = ρ.e i b c • evK YS v₀ hρ i j b x := by
-  induction x using TensorProduct.induction_on with
-  | zero => rw [smul_zero, map_zero, smul_zero]
-  | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, smul_add]
+  induction x using TensorProduct.inductionOn with
+  | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
   | tmul a f =>
     rw [TensorProduct.smul_tmul', evK_tmul, evK_tmul, smul_smul]
     exact congrArg (· • _) (map_mul (ρ.e i b) c a)
@@ -91,20 +65,13 @@ theorem evK_hkFR (hL : ℕ → PlE D.host → Module.End D.what₂.LL (S.WL ((j 
     (h : ∀ w, evW YS v₀ j (hL k P w) = c • fun x => ∑ γ ∈ R, evW YS v₀ j w (x * γ))
     (t : NX.KB S i b ⊗[S.Ks] NX.FmK S ((j : ℕ) + 1)) :
     evK YS v₀ hρ i j b (NX.hkFR S i _ b hL hs k P t) = c • fun x => ∑ γ ∈ R, evK YS v₀ hρ i j b t (x * γ) := by
-  induction t using TensorProduct.induction_on with
-  | zero =>
-    have e0 : NX.hkFR S i _ b hL hs k P (0 : NX.Fm S i ((j : ℕ) + 1) b) = 0 := LinearMap.map_zero _
-    rw [show (0 : NX.KB S i b ⊗[S.Ks] NX.FmK S ((j : ℕ) + 1)) = (0 : NX.Fm S i ((j : ℕ) + 1) b) from rfl, e0]
-    have z0 : evK YS v₀ hρ i j b (0 : NX.KB S i b ⊗[S.Ks] NX.FmK S ((j : ℕ) + 1)) = 0 := map_zero _
-    erw [z0]
-    funext x
-    simp
+  induction t using TensorProduct.inductionOn with
   | add x y hx hy =>
     have e0 : NX.hkFR S i _ b hL hs k P ((x + y : NX.KB S i b ⊗[S.Ks] NX.FmK S ((j : ℕ) + 1)) : NX.Fm S i ((j : ℕ) + 1) b) =
         NX.hkFR S i _ b hL hs k P x + NX.hkFR S i _ b hL hs k P y := LinearMap.map_add _ _ _
     rw [e0]
     erw [map_add (evK YS v₀ hρ i j b)]
-    rw [hx, hy, map_add, ← smul_add]
+    rw [hx, hy, map_add (f := _), ← smul_add]
     congr 1
     funext x
     simp [Finset.sum_add_distrib]
@@ -137,7 +104,23 @@ theorem heckeAt_of_scaled {ρ : Setup D.ntw} (hpin : RealPin Rl cG ρ) (hIs : Rl
   rw [Setup.hecke_apply]
   have hδ' := hδ i j b k P hk α z hα hz
   obtain ⟨hk1, hkr, hsp, hP⟩ := hk
-  have ho := GlobalTheory.ExportPin.Model.covered_of_allPlaces Rl hIs hA i P hP hsp
+  have ho : Bridge.SplitOff P (Rl.Sb : Set (Pl D.host.E)) := by
+    have hprime : ∀ Q ∈ Rl.Sb, ∃ l, ((D.host.g l : ℕ) : 𝓞 D.host.E) ∈ Q.asIdeal := by
+      intro Q hQ
+      rw [show Rl.Sb = Rl.Pg from hA] at hQ
+      obtain ⟨l, hl⟩ := (hIs.Pg Q).1 hQ
+      have hmem := Rl.C.P.pb_over l
+      rw [← hl] at hmem
+      have hcast : algebraMap (𝓞 D.host.K) (𝓞 D.host.E) ((D.host.g l : ℕ) : 𝓞 D.host.K) ∈ Q.asIdeal := hmem
+      exact ⟨l, by rwa [map_natCast] at hcast⟩
+    refine ⟨(GlobalTheory.HeckeTieCompare.isSplitPl_iff P).1 hsp, ?_, ?_⟩
+    · intro h
+      obtain ⟨l, hl⟩ := hprime P h
+      exact hP (D.ntw.placesOver_subset_exceptional i l hl)
+    · intro Q hQ h
+      obtain ⟨l, hl⟩ := hprime Q hQ
+      rw [h, Formalism.L2.Col.conjIdeal_asIdeal, Formalism.L2.Col.mem_conjP, map_natCast] at hl
+      exact hP (D.ntw.placesOver_subset_exceptional i l hl)
   have hR' : Bridge.IsDC (levG (Wc D j) (Rl.βW j) (Rl.datWp j Rl.triv)) α R :=
     GlobalTheory.PrincipalLevel.levK_eq_levG hpin i j b ▸ hR
   have hw : ∀ w, evW YS v₀ j (hL ((j : ℕ) + 1) k P w) =

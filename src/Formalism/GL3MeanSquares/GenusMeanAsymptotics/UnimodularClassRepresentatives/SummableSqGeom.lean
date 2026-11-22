@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Filter Topology Finset
 
@@ -24,7 +28,7 @@ theorem sum_ebox (f : ι → ℕ → ℝ) (hf : ∀ i, f i 0 = 1) (s : Finset ι
   rw [Finsupp.prod_of_support_subset _ (Finsupp.support_indicator_subset s g) _ (fun i _ => hf i),
     ← Finset.prod_attach s]
   refine Finset.prod_congr rfl fun i _ => ?_
-  rw [Finsupp.indicator_apply, dif_pos i.2]
+  rw [Finsupp.indicator_apply, dite_eq_left i.2]
 
 theorem mem_ebox_support {v w : ι →₀ ℕ} : v ∈ ebox w.support w ↔ v ≤ w := by
   rw [mem_ebox, Finsupp.le_def]
@@ -83,7 +87,7 @@ theorem summable_prod {u : ι → ℕ → ℝ} (hu0 : ∀ i, u i 0 = 1) (hu : �
     _ = ∏ i ∈ F.biUnion (fun v => v.support), ∑ j ∈ range ((F.sup fun v => v i) + 1), u i j :=
         sum_ebox u hu0 _ _
     _ ≤ ∏ i ∈ F.biUnion (fun v => v.support), Real.exp (t i) := by
-        apply Finset.prod_le_prod (fun i _ => Finset.sum_nonneg fun j _ => hu i j)
+        apply Finset.prod_le_prod₀ (fun i _ => Finset.sum_nonneg fun j _ => hu i j)
         intro i _
         calc _ ≤ 1 + t i := hut i _
           _ ≤ Real.exp (t i) := by linarith [Real.add_one_le_exp (t i)]

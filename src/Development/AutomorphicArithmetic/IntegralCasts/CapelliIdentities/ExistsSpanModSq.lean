@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Ra7.exists_span_mod_sq :
     ∀ {O R K : Type} [inst : CommRing O]

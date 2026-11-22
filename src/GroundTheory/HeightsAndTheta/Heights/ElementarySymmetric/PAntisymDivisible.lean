@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -153,7 +158,8 @@ lemma homogeneousComponent_mul_of_isHomogeneous {Δ : MvPolynomial σ ℝ} {D : 
     (hΔ : Δ.IsHomogeneous D) (l : MvPolynomial σ ℝ) (n : ℕ) :
     homogeneousComponent (D + n) (Δ * l) = Δ * homogeneousComponent n l := by
   conv_lhs => rw [← sum_homogeneousComponent l]
-  rw [Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.mul_sum, map_sum]
   have key : ∀ m, homogeneousComponent (D + n) (Δ * homogeneousComponent m l) =
       if n = m then Δ * homogeneousComponent n l else 0 := by
     intro m
@@ -255,8 +261,8 @@ end Blocks
 
 end AntisymDivisible
 
-open AntisymDivisible in
 
+open AntisymDivisible in
 theorem AntisymDivisible.proof : AntisymDivisible.Statement := by
   intro T _ _ N j P hP hvan
   obtain ⟨hPh, hPa⟩ := hP
@@ -331,7 +337,7 @@ theorem AntisymDivisible.proof : AntisymDivisible.Statement := by
   rw [homogeneousSubmodule_one_eq_span_X, Submodule.mem_span_range_iff_exists_fun] at hl₁h
   obtain ⟨c, hc⟩ := hl₁h
   have coeff_lin : ∀ (g : T × Fin N → T × Fin N) (u : T × Fin N),
-      coeff (Finsupp.single u 1) (∑ w, c w • (X (g w) : MvPolynomial (T × Fin N) ℝ)) =
+      AddMonoidAlgebra.coeff (∑ w, c w • (X (g w) : MvPolynomial (T × Fin N) ℝ)) (Finsupp.single u 1) =
         ∑ w, if g w = u then c w else 0 := by
     intro g u
     simp only [coeff_sum, coeff_smul, coeff_X, Finsupp.single_left_inj one_ne_zero, smul_eq_mul,
@@ -339,8 +345,9 @@ theorem AntisymDivisible.proof : AntisymDivisible.Statement := by
   have const : ∀ (τ : T) (a b : Fin N), a.val < b.val → (b.val < j ∨ j ≤ a.val) →
       c (τ, a) = c (τ, b) := by
     intro τ a b hab hbl
-    have h := congrArg (coeff (Finsupp.single (τ, a) 1)) (inv τ a b hab hbl)
-    rw [← hc, map_sum] at h
+    have h := congrArg (AddMonoidAlgebra.coeff · (Finsupp.single (τ, a) 1)) (inv τ a b hab hbl)
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hc, map_sum] at h
     simp only [map_smul, rename_X] at h
     rw [coeff_lin, coeff_lin] at h
     simp only [Equiv.swap_apply_eq_iff, Equiv.swap_apply_left, Finset.sum_ite_eq',
@@ -349,7 +356,8 @@ theorem AntisymDivisible.proof : AntisymDivisible.Statement := by
   refine ⟨l₁, ⟨?_, ?_⟩, hP1⟩
   · exact homogeneousComponent_isHomogeneous 1 l
   · intro g hg
-    rw [← hc, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hc, map_sum]
     simp only [map_smul, rename_X]
     have hcg : ∀ w, c (g w) = c w := by
       rintro ⟨τ, a⟩

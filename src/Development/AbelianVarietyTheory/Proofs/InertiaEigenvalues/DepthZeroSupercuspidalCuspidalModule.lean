@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsComp
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.TypesDefs
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrincipalCongruenceFixedVectorsLeSmoothVectors
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantOrbit
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MatrixRegular
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsComp
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.TypesDefs
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrincipalCongruenceFixedVectorsLeSmoothVectors
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantOrbit
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MatrixRegular
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,9 @@ theorem exists_dual_frequently {M : Type} [AddCommGroup M] [Module ℂ M] (u : �
     choose i hi using this
     obtain ⟨j, hj⟩ := Finite.exists_infinite_fiber i
     obtain ⟨l, hl⟩ := LinearMap.exists_extend (β.coord j)
-    refine ⟨l, (Set.infinite_coe_iff.1 hj).mono fun m (h : i m = j) => ?_⟩
+    refine ⟨l, (Set.infinite_coe_iff.1 hj).mono ?_⟩
+    intro m h
+    change i m = j at h
     have := LinearMap.congr_fun hl ⟨u m, hm m⟩
     exact fun e => hi m (h ▸ this.symm.trans e)
   · obtain ⟨l, hl⟩ := Module.exists_dual_forall_apply_eq_one (K := ℂ) (s := b) (v := id) hl
@@ -38,11 +44,10 @@ theorem exists_dual_frequently {M : Type} [AddCommGroup M] [Module ℂ M] (u : �
 
 variable {g : ℕ} [Fact g.Prime] {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V]
 
-local notation "φ" => RingHom.mapMatrix (m := Fin n) (PadicInt.toZMod (p := g))
-local notation "ι" => RingHom.mapMatrix (m := Fin n) (algebraMap ℤ_[g] ℚ_[g])
+local notation "φ" => RingHom.mapMatrix (PadicInt.toZMod (p := g))
+local notation "ι" => RingHom.mapMatrix (algebraMap ℤ_[g] ℚ_[g])
 
 variable (g n) in
-
 def KOne : Subgroup (GL (Fin n) ℚ_[g]) := (red g n).ker.map (inc g n)
 
 theorem isCompact_KOne : IsCompact (KOne g n : Set (GL (Fin n) ℚ_[g])) := by
@@ -104,7 +109,7 @@ def dd (hP : P * P = P) (m : ℕ) : GL (Fin n) ℚ_[g] :=
     by rw [idem_mul h, inv_mul_cancel₀ h0, one_smul, add_sub_cancel]⟩
 
 theorem dd_val (hP : P * P = P) (m : ℕ) : (dd hP m).val = ι (P + g ^ m • (1 - P)) := by
-  rw [map_add, map_nsmul, map_sub, map_one, ← Nat.cast_smul_eq_nsmul ℚ_[g], Nat.cast_pow]
+  rw [map_add (f := _), map_nsmul, map_sub, map_one, ← Nat.cast_smul_eq_nsmul ℚ_[g], Nat.cast_pow]
   rfl
 
 theorem dd_zero (hP : P * P = P) : dd hP 0 = 1 :=
@@ -127,7 +132,7 @@ theorem conj_up (hP : P * P = P) {k : GL (Fin n) ℤ_[g]} (hk : red g n k ∈ U 
     simp only [mul_add, add_mul, mul_sub, sub_mul, mul_assoc, hp, hp', mul_one, one_mul, sub_self, add_zero]
   obtain ⟨k', h1, h2⟩ := exists_unit (P * k.val * P + (1 - P) * k.val * (1 - P) +
     (g : Matrix (Fin n) (Fin n) ℤ_[g]) * (P * k.val * (1 - P)) + (1 - P) * (M * P)) (un _ hx2) (by
-      simp only [map_add, map_mul, map_sub, map_one, red_nat, hx, un_val, zero_mul]
+      simp only [map_add (f := _), map_mul, map_sub, map_one, red_nat, hx, un_val, zero_mul]
       simp only [mul_add, add_mul, mul_sub, sub_mul, mul_assoc, hp, hp', mul_one, one_mul, sub_self, add_zero]
       abel)
   refine ⟨k', h2 ▸ un_mem _ ?_ ?_, Units.ext ?_⟩
@@ -153,11 +158,11 @@ theorem conj_down (hP : P * P = P) {u : Gn g n} (hu : u ∈ U (1 - φ P) (φ P))
   obtain ⟨y, rfl⟩ := red_surjective g n u
   have hP' : ∀ r, P * (P * r) = P * r := fun r => by rw [← mul_assoc, hP]
   obtain ⟨k, h1, h2⟩ := exists_unit (1 + (1 - P) * ((y.val - 1) * P)) (red g n y) (by
-    simp only [map_add, map_mul, map_sub, map_one]
+    simp only [map_add (f := _), map_mul, map_sub, map_one]
     change 1 + _ * (((red g n y).val - 1) * _) = _
     rw [hu.2, hu.1, add_sub_cancel])
   obtain ⟨k', h3, h4⟩ := exists_unit (1 + (g : Matrix (Fin n) (Fin n) ℤ_[g]) ^ (m + 1) * ((1 - P) * ((y.val - 1) * P)))
-    1 (by simp only [map_add, map_mul, map_pow, red_nat, map_one, pow_succ, mul_zero, zero_mul, add_zero, Units.val_one])
+    1 (by simp only [map_add (f := _), map_mul, map_pow, red_nat, map_one, pow_succ, mul_zero, zero_mul, add_zero, Units.val_one])
   refine ⟨k, k', h2, h4, Units.ext ?_⟩
   change (dd hP _).val * ι k.val = ι k'.val * (dd hP _).val
   rw [dd_val, ← map_mul, ← map_mul, h1, h3]
@@ -189,7 +194,8 @@ theorem eq_zero_of_mem_twKer {π : Representation ℂ (GL (Fin n) ℚ_[g]) V} (h
       exact Subtype.ext ((repK_red π k _).trans (k1 k hu))) (by
       haveI := Fintype.ofFinite (U (1 - φ P) (φ P))
       change π (dd hP m) (π (dd hP 1) t) ∈ _
-      rw [← Module.End.mul_apply, ← map_mul, ← dd_succ, ht, S_apply, Submodule.coe_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← Module.End.mul_apply, ← map_mul, ← dd_succ, ht, S_apply, Submodule.coe_sum, map_sum]
       refine Submodule.sum_mem _ fun u _ => ?_
       obtain ⟨k, k', h1, h2, h3⟩ := conj_down hP u.2 m
       rw [← h1, repK_red, ← Module.End.mul_apply, ← map_mul, h3, map_mul, Module.End.mul_apply]

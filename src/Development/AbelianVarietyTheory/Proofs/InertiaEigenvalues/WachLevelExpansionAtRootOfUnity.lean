@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +24,8 @@ theorem simple_zero {L : Type} [Field L] (f : PowerSeries L) (h0 : constantCoeff
   simpa using h1
 
 theorem coeff_one_pow_of_deriv {L : Type} [Field L] (U : PowerSeries L)
-    (hU : derivative L U = U) (m : ℕ) : coeff 1 (U ^ m) = (m : L) * constantCoeff U ^ m := by
-  have h : derivative L (U ^ m) = (m : PowerSeries L) * U ^ m := by
+    (hU : derivative U = U) (m : ℕ) : coeff 1 (U ^ m) = (m : L) * constantCoeff U ^ m := by
+  have h : derivative (U ^ m) = (m : PowerSeries L) * U ^ m := by
     induction m with
     | zero => simp
     | succ m ih =>
@@ -43,7 +47,7 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     (W : LocWach PD LL O v n)
 
 theorem φA_one_add : W.φA (1 + letπ) = (1 + letπ) ^ PD.p := by
-  rw [map_add, map_one, W.φA_π]
+  rw [map_add (f := _), map_one, W.φA_π]
   funext i
   have := W.q₀_def
   simp only [Pi.add_apply, Pi.mul_apply, Pi.one_apply, Pi.pow_apply, letπ, LocWach.q]
@@ -56,7 +60,7 @@ theorem φA_pow_one_add (k : ℕ) : (W.φA ^ k) (1 + letπ) = (1 + letπ) ^ (PD.
     rw [pow_succ, AlgHom.mul_apply, φA_one_add, map_pow, ih, ← pow_mul, ← pow_succ]
 
 theorem X_eq : W.X = (1 + letπ) ^ (PD.p ^ (W.s - 1)) - 1 := by
-  rw [← φA_pow_one_add W, map_add, map_one, LocWach.X]
+  rw [← φA_pow_one_add W, map_add (f := _), map_one, LocWach.X]
   ring
 
 theorem q_eq : W.q = ∑ k ∈ Finset.range PD.p, (1 + letπ : LetA O n) ^ k := by
@@ -74,7 +78,8 @@ theorem q_eq : W.q = ∑ k ∈ Finset.range PD.p, (1 + letπ : LetA O n) ^ k := 
   exact sub_eq_zero.mp h4
 
 theorem Q_eq : W.Q = ∑ k ∈ Finset.range PD.p, ((1 + letπ : LetA O n) ^ (PD.p ^ (W.s - 1))) ^ k := by
-  rw [LocWach.Q, q_eq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LocWach.Q, q_eq, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_pow, φA_pow_one_add]
 
@@ -98,10 +103,10 @@ theorem lev_values [CharZero LL] (i : ZMod n) (ζ : LL) (hζ : ∃ j : ℕ, IsPr
   have hζ0 : ζ ≠ 0 := hj.ne_zero (pow_ne_zero _ hp.ne_zero)
   set U : PowerSeries LL := C ζ * E with hUdef
   have hU0 : constantCoeff U = ζ := by simp [hUdef, hE0]
-  have hU1 : derivative LL U = U := by
+  have hU1 : derivative U = U := by
     rw [hUdef, Derivation.leibniz, hE1, derivative_C]
     simp
-  have hlevU : W.lev i ζ (1 + letπ) = U := by rw [map_add, map_one, hE]
+  have hlevU : W.lev i ζ (1 + letπ) = U := by rw [map_add (f := _), map_one, hE]
   have hc1 : ∀ m : ℕ, m ≠ 0 → coeff 1 (U ^ m - 1) ≠ 0 := by
     intro m hm
     rw [map_sub, coeff_one_pow_of_deriv U hU1, hU0, coeff_one]
@@ -113,13 +118,15 @@ theorem lev_values [CharZero LL] (i : ZMod n) (ζ : LL) (hζ : ∃ j : ℕ, IsPr
   have hX : W.lev i ζ W.X = U ^ (PD.p ^ r) - 1 := by
     rw [X_eq, map_sub, map_one, map_pow, hlevU, hr, Nat.add_sub_cancel]
   have hQ : W.lev i ζ W.Q = ∑ k ∈ Finset.range PD.p, (U ^ (PD.p ^ r)) ^ k := by
-    rw [Q_eq, map_sum, hr, Nat.add_sub_cancel]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Q_eq, map_sum, hr, Nat.add_sub_cancel]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_pow, map_pow, hlevU]
   have hXQ : W.lev i ζ W.Q * W.lev i ζ W.X = U ^ (PD.p ^ (r + 1)) - 1 := by
     rw [hX, hQ, geom_sum_mul, ← pow_mul, ← pow_succ]
   have hQ0 : constantCoeff (W.lev i ζ W.Q) = ∑ k ∈ Finset.range PD.p, (ζ ^ (PD.p ^ r)) ^ k := by
-    rw [hQ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hQ, map_sum]
     simp [hU0]
   have hprim : IsPrimitiveRoot ζ (PD.p ^ (r + 1)) ↔
       ζ ^ (PD.p ^ (r + 1)) = 1 ∧ ¬ ζ ^ (PD.p ^ r) = 1 := by
@@ -205,8 +212,8 @@ theorem exists_nonunit {l : ℕ} [Fact l.Prime] (P : LocPrime l) (LL : FinExt l)
 
 end LevPt
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem lev_at_root_of_unity : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let W := (HW l).W K s LL h; ∀ (i : Let K) (ζ : ↥LL.1), (∃ j : ℕ, IsPrimitiveRoot ζ (l ^ j)) → (∃ x : ↥(OL LL), ¬ IsUnit x ∧ (x : ↥LL.1) = ζ - 1 ∧ ∃ w : PowerSeries ↥LL.1, IsUnit w ∧ W.lev i ζ letπ = PowerSeries.C (x : ↥LL.1) + PowerSeries.X * w) ∧ W.lev i ζ (letE i) = 1 ∧ (ζ ^ (l ^ (s - 1)) = 1 → (∃ w : PowerSeries ↥LL.1, IsUnit w ∧ W.lev i ζ W.X = PowerSeries.X * w) ∧ IsUnit (W.lev i ζ W.Q)) ∧ (IsPrimitiveRoot ζ (l ^ s) → (∃ w : PowerSeries ↥LL.1, IsUnit w ∧ W.lev i ζ W.Q = PowerSeries.X * w) ∧ IsUnit (W.lev i ζ W.X)) ∧ (PowerSeries.constantCoeff (W.lev i ζ W.X) = 0 ↔ ζ ^ (l ^ (s - 1)) = 1) ∧ (PowerSeries.constantCoeff (W.lev i ζ W.Q) = 0 ↔ IsPrimitiveRoot ζ (l ^ s)) ∧ W.lev i ζ W.Q ≠ 0 := by
   intro D HW l _ K s LL h W i ζ hζ
   have hp : ((D.loc l).PD K).p = l := (D.loc l).PD_p K

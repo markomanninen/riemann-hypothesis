@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.UniformizerUnitAndQFactor
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.UniformizerUnitAndQFactor
+
+@[expose] public section
 
 noncomputable section
 

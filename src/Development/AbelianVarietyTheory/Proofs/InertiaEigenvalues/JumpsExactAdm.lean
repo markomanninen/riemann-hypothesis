@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.LiftingTheory
-import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingBounds
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsJumpVIffOfExactCrystallineLatticesStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.LiftingTheory
+public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingBounds
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsJumpVIffOfExactCrystallineLatticesStatement
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 
 namespace GlobalTheory

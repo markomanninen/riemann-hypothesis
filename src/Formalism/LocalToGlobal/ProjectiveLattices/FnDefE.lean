@@ -1,10 +1,14 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.FnDefC
-import Formalism.LocalToGlobal.ProjectiveLattices.NrmTieDef
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveOpen
-import Formalism.LocalToGlobal.ProjectiveLattices.CompSplitPfB
-import Formalism.LocalToGlobal.ProjectiveLattices.CompSplitPfD
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CompactEntryBounds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.OrthonormalFlagTranslateHolds
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.FnDefC
+public import Formalism.LocalToGlobal.ProjectiveLattices.NrmTieDef
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveOpen
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompSplitPfB
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompSplitPfD
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CompactEntryBounds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.OrthonormalFlagTranslateHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -108,8 +112,8 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.WeightAl
 
 variable {D : D7} {Tc : Core D} (hL : LawsCore Tc) (j : ℕ)
 
-variable {j} in
 
+variable {j} in
 def CompOf (cm : ∀ σ : Tc.Q.c.F →+* ℂ, (Tc.U j σ).Comp → Comp (Tc.Q.Xo j) Tc.Q.c) : Prop :=
   ∀ (σ : Tc.Q.c.F →+* ℂ) (k : (Tc.U j σ).Comp) (x : ((Tc.U j σ).X k).dom) (q : PrimeSpectrum (CAt σ)),
     cspB_lift ((Tc.U j σ).un k x).x ((Tc.U j σ).un k x).x_over q ∈
@@ -119,19 +123,6 @@ def ptAt (hj : InR D j) (hA : AllTest (Tc.Q.Xo j) Tc.Q.c) (hB : ∀ σ, GoodEmb 
     (h : GenFrEx (Tc.Q.Xo j) Tc.Q.c) (hb : CBaseEx (Tc.Q.Xo j) Tc.Q.c h) (Z : Comp (Tc.Q.Xo j) Tc.Q.c)
     (P : Om Z →+* ℂ) (sg : Tc.Q.c.F →+* ℂ) (hP : sgOf P = sg) : SupPtAt j (goodOf Tc.Q.c sg) :=
   hP ▸ nrmTieDefPt hL j hj hA hB h hb Z P
-
-def FrDense (hj : InR D j) (hA : AllTest (Tc.Q.Xo j) Tc.Q.c)
-    (hB : ∀ σ, GoodEmb Tc.Q.c σ → BCEx (Tc.Q.Xo j) Tc.Q.c σ) (h : GenFrEx (Tc.Q.Xo j) Tc.Q.c)
-    (hb : CBaseEx (Tc.Q.Xo j) Tc.Q.c h) (cm : ∀ σ : Tc.Q.c.F →+* ℂ, (Tc.U j σ).Comp → Comp (Tc.Q.Xo j) Tc.Q.c) :
-    Prop :=
-  ∀ (sg : Tc.Q.c.F →+* ℂ) (Z : Comp (Tc.Q.Xo j) Tc.Q.c) (k : (Tc.U j (goodOf Tc.Q.c sg)).Comp),
-    cm _ k = Z → ∀ x ∈ ((Tc.U j (goodOf Tc.Q.c sg)).X k).dom,
-      x ∈ closure {x' | x' ∈ ((Tc.U j (goodOf Tc.Q.c sg)).X k).dom ∧
-        ∃ (P : Om Z →+* ℂ) (hP : sgOf P = sg) (x0 : Frame ((Tc.U j (goodOf Tc.Q.c sg)).X k).Ψ D.R.r)
-          (hx0 : x0 ∈ ((Tc.U j (goodOf Tc.Q.c sg)).X k).dom),
-          ptAt hL j hj hA hB h hb Z P sg hP = ⟨k, ⟨x0, hx0⟩⟩ ∧
-          ∃ γ ∈ ((Tc.U j (goodOf Tc.Q.c sg)).X k).Γ, lact γ x0 ∈ ((Tc.U j (goodOf Tc.Q.c sg)).X k).dom ∧
-            ∃ b ∈ Bor ((Tc.U j (goodOf Tc.Q.c sg)).X k).Ψ D.R.r, x' = rmul (lact γ x0) b}
 
 end Core
 

@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.TranslateProduct
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.CompInv
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.CurveHyp
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.HasSecondLogDeriv
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.TranslateProduct
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.CompInv
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.CurveHyp
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.HasSecondLogDeriv
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -21,7 +25,7 @@ def TaylorRing : Prop :=
   (∀ f g : ℂ → ℂ, f =ᶠ[nhds 0] g → taylor0 f = taylor0 g)
 
 def TaylorDeriv : Prop :=
-  (∀ f : ℂ → ℂ, AnalyticAt ℂ f 0 → taylor0 (deriv f) = PowerSeries.derivative ℂ (taylor0 f)) ∧
+  (∀ f : ℂ → ℂ, AnalyticAt ℂ f 0 → taylor0 (deriv f) = PowerSeries.derivative (R := ℂ) (taylor0 f)) ∧
   (∀ (f : ℂ → ℂ) (a : ℂ), AnalyticAt ℂ f 0 →
     taylor0 (fun z => f (a * z)) = PowerSeries.rescale a (taylor0 f)) ∧
   (∀ f g : ℂ → ℂ, AnalyticAt ℂ f 0 → AnalyticAt ℂ g 0 → taylor0 f = taylor0 g → f =ᶠ[nhds 0] g)
@@ -50,11 +54,6 @@ def TaylorTh0 : Prop :=
       = Formalism.L2.Th1.B.sigma1 (L.weierstrassP (ω₀ / 2)) (3 * L.weierstrassP (ω₀ / 2) ^ 2 - L.g₂ / 4)
           (Formalism.L2.Th1.B.wOf (L.weierstrassP (ω₀ / 2)) (pSeries L))
         * Formalism.L2.Th1.B.fExp (-(PowerSeries.C (s2 L / 2) * PowerSeries.X ^ 2))
-
-def SigmaUniversal : Prop :=
-  ∃ U : ℕ → MvPolynomial (Fin 2) ℚ, ∀ (K : Type) [Field K] [CharZero K] (g2 g3 : K)
-    (P : PowerSeries K), Formalism.L2.Th1.B.IsWp g2 g3 P →
-    ∀ n, PowerSeries.coeff n (Formalism.L2.Th1.B.sigma P) = MvPolynomial.aeval ![g2, g3] (U n)
 
 def IsWpUnique : Prop :=
   ∀ (K : Type) [Field K] [CharZero K] (g2 g3 : K) (P P' : PowerSeries K),

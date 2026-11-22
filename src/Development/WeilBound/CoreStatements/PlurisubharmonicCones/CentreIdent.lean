@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.PhiTransport
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.TorusExpEqOne
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsDerivAt0CompLinMap
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.PhiTransport
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.TorusExpEqOne
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsDerivAt0CompLinMap
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField TensorProduct Filter Topology Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
 
@@ -14,7 +19,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {R : Ty
 
 theorem centre_ident (e : FamExp t.G M B ψ) {b : Fin n → ℂ} (hb : b ∈ B) (P : AbPart t (spMap (ψ b)))
     (hP : IsPrincipal P.tB) (Mz : LieModel t.G (spMap (ψ b)) (Fin g → ℂ))
-    (hL : ∀ i, M.Lifts (ψ b) (𝟙 _) (Pi.single i 1) (Mz.pt (Pi.single i 1)))
+    (hL : ∀ i, ((Mz.pt (Pi.single i 1)).left ≫ (𝟙 _) = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap (ψ b)) ≫ (M.pt (Pi.single i 1)).left))
     {V : Type} [AddCommGroup V] [Module ℂ V] (MV : LieModel P.tK.G (𝟙 (Sp ℂ)) V)
     (ρ : 𝓞 E →+* Module.End ℂ V) (I : AddSubgroup V) (hf : V → V → ℂ) (hact : MV.IsActOf P.tK.act.act ρ)
     (hI : P.IsCochars MV I)
@@ -74,7 +79,8 @@ theorem centre_ident (e : FamExp t.G M B ψ) {b : Fin n → ℂ} (hb : b ∈ B) 
         by_cases hc : c = a
         · subst hc; simp
         · simp [hc, Finsupp.single_apply]
-      rw [e1, map_sum, star_sum, Matrix.mulVec_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [e1, map_sum, star_sum, Matrix.mulVec_sum]
       refine Finset.sum_eq_zero fun a _ => ?_
       rw [map_smul, star_smul, Matrix.mulVec_smul, e2, smul_zero]
     · have hp : ℓ p ∈ Submodule.span ℝ (u.Λ : Set (Fin g' → ℂ)) := by rw [u.full]; trivial

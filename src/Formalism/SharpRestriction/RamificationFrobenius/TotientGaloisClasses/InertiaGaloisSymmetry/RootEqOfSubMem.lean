@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.CycLift
+module
+
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.CycLift
+
+@[expose] public section
 
 open NumberField IntermediateField Ideal
 open scoped Pointwise
@@ -20,7 +24,8 @@ theorem root_eq_of_sub_mem {S : Type*} [CommRing S] [IsDomain S] (P : Ideal S) [
   · exfalso
     have hq : Ideal.Quotient.mk P x = Ideal.Quotient.mk P y := Ideal.Quotient.eq.2 hxy
     have h1 := congrArg (Ideal.Quotient.mk P) hG
-    rw [map_sum, map_zero] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h1
     simp only [map_mul, map_pow, hq] at h1
     have h2 : ∀ i ∈ Finset.range m, (Ideal.Quotient.mk P y) ^ i * (Ideal.Quotient.mk P y) ^ (m - 1 - i) =
         (Ideal.Quotient.mk P y) ^ (m - 1) := by
@@ -81,7 +86,7 @@ theorem ringHom_ext_zO {R : Type*} [CommRing R] (f g : 𝓞 (Cond.Cyc N) →+* R
   · rw [Set.mem_singleton_iff.1 hy]
     exact h
   · simp only [algebraMap_int_eq, eq_intCast, map_intCast]
-  · rw [map_add, map_add, h1, h2]
+  · rw [map_add (f := _), map_add (f := _), h1, h2]
   · rw [map_mul, map_mul, h1, h2]
 
 variable (l : ℕ) [Fact l.Prime] (Q : Ideal (𝓞 (Cond.Cyc N))) [Q.IsPrime] [Q.LiesOver (span {(l : ℤ)})]

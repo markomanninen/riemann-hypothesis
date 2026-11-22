@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelL2RowsColumns
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelL2RowsColumns
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal
@@ -17,14 +21,14 @@ theorem schurInt_of_schurL : SchurL → SchurInt := by
   intro hS α _ ν _ k A hk hA hrow hcol g f hg hf
   have hkm : AEStronglyMeasurable (fun p : α × α => k p.1 p.2) (ν.prod ν) :=
     hk.aestronglyMeasurable
-  have hgm : AEStronglyMeasurable (fun p : α × α => g p.1) (ν.prod ν) := hg.1.comp_fst
-  have hfm : AEStronglyMeasurable (fun p : α × α => f p.2) (ν.prod ν) := hf.1.comp_snd
+  have hgm : AEStronglyMeasurable (fun p : α × α => g p.1) (ν.prod ν) := hg.aestronglyMeasurable.comp_fst
+  have hfm : AEStronglyMeasurable (fun p : α × α => f p.2) (ν.prod ν) := hf.aestronglyMeasurable.comp_snd
   have hm : AEStronglyMeasurable (fun p : α × α => g p.1 * k p.1 p.2 * f p.2) (ν.prod ν) :=
     (hgm.mul hkm).mul hfm
   refine ⟨hm, ?_⟩
   set K : α → α → ℝ≥0∞ := fun x y => ‖k x y‖ₑ with hK
   have hKm : Measurable (Function.uncurry K) := hk.enorm
-  have hFm : AEMeasurable (fun y => ‖f y‖ₑ) ν := hf.1.aemeasurable.enorm
+  have hFm : AEMeasurable (fun y => ‖f y‖ₑ) ν := hf.aestronglyMeasurable.aemeasurable.enorm
   set h : α → ℝ≥0∞ := fun x => ∫⁻ y, K x y * ‖f y‖ₑ ∂ν with hh
   have hprod : AEMeasurable (fun p : α × α => K p.1 p.2 * ‖f p.2‖ₑ) (ν.prod ν) :=
     hKm.aemeasurable.mul hfm.enorm
@@ -39,7 +43,7 @@ theorem schurInt_of_schurL : SchurL → SchurInt := by
     refine lintegral_congr fun y => ?_
     simp only [enorm_mul, mul_assoc]
   have hhold := ENNReal.lintegral_mul_le_Lp_mul_Lq ν (Real.HolderConjugate.two_two)
-    hg.1.aemeasurable.enorm hhm
+    hg.aestronglyMeasurable.aemeasurable.enorm hhm
   have hG : ∫⁻ x, ‖g x‖ₑ ^ (2 : ℝ) ∂ν ≠ ⊤ := lintegral_enorm_rpow_two_ne_top hg
   have hF : ∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂ν ≠ ⊤ := lintegral_enorm_rpow_two_ne_top hf
   have hH : ∫⁻ x, h x ^ (2 : ℝ) ∂ν ≠ ⊤ := by

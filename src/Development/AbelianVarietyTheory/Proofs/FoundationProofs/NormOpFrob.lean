@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CyclotomicDvdExpandOfCoprime
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBasisOneAddXPow
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsOfRedEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CyclotomicDvdExpandOfCoprime
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBasisOneAddXPow
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsOfRedEqZero
+
+@[expose] public section
+
 open GlobalTheory.Col PowerSeries
 
 theorem GlobalTheory.Col.normOp_frob : ∀ (R : Type) [CommRing R] (p : ℕ) [hp : Fact p.Prime] (σ : R ≃+* R), FrobLift R p σ →

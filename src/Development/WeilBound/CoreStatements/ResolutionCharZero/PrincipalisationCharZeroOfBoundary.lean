@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.ResolutionCharZero.PrincipalisationCharZeroBotOfEff
-import Development.WeilBound.CoreStatements.ResolutionCharZero.RqGend
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.PrincipalisationCharZeroBotOfEff
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.RqGend
+
+@[expose] public section
 
 noncomputable section
 

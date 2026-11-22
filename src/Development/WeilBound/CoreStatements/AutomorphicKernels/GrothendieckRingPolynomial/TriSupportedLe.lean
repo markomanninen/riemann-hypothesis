@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.GrothendieckRingPolynomial.ProdList
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.GrothendieckRingPolynomial.ProdList
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -92,7 +96,7 @@ theorem tri_bij {σ : Type*} (w : σ → ℕ) (ψ : MvPolynomial σ ℤ →+* Mv
       rw [vars_neg] at ht
       exact (mem_supported.1 hq) (Finset.mem_coe.2 ht)
     · have hqe' : ψ q = ((ε⁻¹ : ℤˣ) : ℤ) • p := hqe
-      rw [map_add, map_neg, map_zsmul, hψ, hqe', smul_add, smul_smul, ← Units.val_mul,
+      rw [map_add (f := _), map_neg, map_zsmul, hψ, hqe', smul_add, smul_smul, ← Units.val_mul,
         inv_mul_cancel, Units.val_one, one_smul, add_neg_cancel_right]
   choose ε' q hq hψq using hpre
   let φ : MvPolynomial σ ℤ →+* MvPolynomial σ ℤ :=
@@ -120,7 +124,7 @@ theorem tri_bij {σ : Type*} (w : σ → ℕ) (ψ : MvPolynomial σ ℤ →+* Mv
 theorem uni_inj {M I : Type*} (L : M ≃ I) (w : M → ℕ) (f : M → I →₀ ℤ)
     (h1 : ∀ m, f m (L m) = 1) (hlt : ∀ m n, f m (L n) ≠ 0 → m = n ∨ w m < w n) :
     Function.Injective (Finsupp.linearCombination ℤ f) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   by_contra hne
   have hsupp : a.support.Nonempty := Finsupp.support_nonempty_iff.2 hne
@@ -190,17 +194,27 @@ theorem uni_exists {M I C : Type*} (L : M ≃ I) (c : M → C) (w : M → ℕ) (
       rcases Finset.mem_union.1 (Finsupp.support_add hm) with hm1 | hm1
       · rw [Finsupp.support_single_ne_zero _ one_ne_zero, Finset.mem_singleton] at hm1
         rw [hm1]
-      · obtain ⟨i, hi, hmi⟩ := Finset.mem_biUnion.1 (Finsupp.support_finset_sum hm1)
+      · have hex' : ∃ i ∈ v.support, m ∈ (v i • g i).support := by
+          by_contra h
+          have hz : (∑ i ∈ v.support, v i • g i) m = 0 := by
+            rw [Finset.sum_apply']
+            apply Finset.sum_eq_zero
+            intro i hi
+            apply Finsupp.notMem_support_iff.mp
+            exact fun hmi => h ⟨i, hi, hmi⟩
+          exact Finsupp.mem_support_iff.mp hm1 hz
+        obtain ⟨i, hi, hmi⟩ := hex'
         exact hg1 i hi m (Finsupp.support_smul hmi)
-    · rw [map_add, map_sum, Finsupp.linearCombination_single, one_smul]
-      rw [Finset.sum_congr rfl (fun i hi => by rw [map_smul, hg2 i hi])]
-      have hsum : ∑ i ∈ v.support, v i • Finsupp.single i (1 : ℤ) = v := by
-        conv_rhs => rw [← Finsupp.sum_single v]
-        rw [Finsupp.sum]
-        refine Finset.sum_congr rfl (fun i _ => ?_)
-        rw [Finsupp.smul_single, smul_eq_mul, mul_one]
-      rw [hsum, hv]
-      abel
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [map_add (f := _), map_sum, Finsupp.linearCombination_single, one_smul]
+        rw [Finset.sum_congr rfl (fun i hi => by rw [map_smul, hg2 i hi])]
+        have hsum : ∑ i ∈ v.support, v i • Finsupp.single i (1 : ℤ) = v := by
+          conv_rhs => rw [← Finsupp.sum_single v]
+          rw [Finsupp.sum]
+          refine Finset.sum_congr rfl (fun i _ => ?_)
+          rw [Finsupp.smul_single, smul_eq_mul, mul_one]
+        rw [hsum, hv]
+        abel
 
 theorem uni_bij {M I C : Type*} (L : M ≃ I) (c : M → C) (w : M → ℕ) (b : C → ℕ) (f : M → I →₀ ℤ)
     (hb : ∀ m, w m ≤ b (c m)) (h1 : ∀ m, f m (L m) = 1)

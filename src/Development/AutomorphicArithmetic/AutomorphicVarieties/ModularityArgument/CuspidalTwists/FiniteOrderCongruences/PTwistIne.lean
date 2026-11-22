@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalTwists.FiniteOrderCongruences.TwistIne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AbsPowOneNotIsAlgRat
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ConclusionAbsPow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenKerOfInfConn
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PlaceEqOfContEmbCompEq
-import ReciprocityTheory.GaloisValuations.Global
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalTwists.FiniteOrderCongruences.TwistIne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AbsPowOneNotIsAlgRat
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ConclusionAbsPow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenKerOfInfConn
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PlaceEqOfContEmbCompEq
+public import ReciprocityTheory.GaloisValuations.Global
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ private theorem not_lt_of_not_dvd {Ω : Type} [Field Ω] (A : ValuationSubring �
   rw [← e, map_one] at this
   exact lt_irrefl _ this
 
-private theorem emb_two {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] (hK : Module.finrank ℚ K = 2)
+private theorem emb_two {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (hK : Module.finrank ℚ K = 2)
     (τ e : K →+* ℂ) : e = τ ∨ e = ComplexEmbedding.conjugate τ := by
   classical
   have hc : Fintype.card (K →+* ℂ) = 2 := by rw [Embeddings.card, hK]
@@ -146,7 +150,7 @@ theorem emb_unique {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l
   have h4 := IsUltrametricDist.norm_add_le_max
     (j' (algebraMap K' (w.adicCompletion K') (algebraMap (𝓞 K') K' a)))
     (j' (algebraMap K' (w.adicCompletion K') (algebraMap (𝓞 K') K' b)))
-  rw [← map_add, ← map_add, ← map_add, hab, map_one, map_one, map_one, norm_one] at h4
+  rw [← map_add (f := _), ← map_add (f := _), ← map_add (f := _), hab, map_one, map_one, map_one, norm_one] at h4
   exact absurd (h4.trans_lt (max_lt h1 h2')) (lt_irrefl _)
 
 end TwistIne

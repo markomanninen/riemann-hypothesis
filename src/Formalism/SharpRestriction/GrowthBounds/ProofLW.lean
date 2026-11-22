@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.StmtNumFEx
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.StmtNumFEx
+
+@[expose] public section
 
 noncomputable section
 
@@ -160,7 +164,7 @@ theorem lw_size (X : Formalism.MainNotions.G.Inst D L) (Y : Formalism.MainNotion
       push_cast at h3
       have h4 : (Formalism.MainNotions.G.aL L (t0 + s.val • Formalism.MainNotions.G.hP D (D.what₂.places.resChar w)) : ℝ) ≤ 6 / 5 * L.sc.a := by
         unfold Formalism.MainNotions.G.aL
-        rw [dif_pos (hTT.1 hsT)]
+        rw [dite_eq_left (hTT.1 hsT)]
         exact lw_aT_le _
       linarith
     · unfold al
@@ -202,8 +206,8 @@ theorem lw_size (X : Formalism.MainNotions.G.Inst D L) (Y : Formalism.MainNotion
     have h9 : L.sc.a * (4 * L.sc.a) = (2 * L.sc.a) ^ 2 := by ring
     linarith
 
-open Classical in
 
+open Classical in
 theorem numeric_comparison_of_constants (D : Formalism.BasicNotions.D7) (L : SizeData₂ D) (X : Formalism.MainNotions.G.Inst D L) (Y : Formalism.MainNotions.G.LatInst D)
     (K : Formalism.MainNotions.G.Consts) (h1 : 5 ≤ K.dl1) (h2 : 4 ≤ K.dl2) (h3 : 1 ≤ K.Pr1) (h4 : Formalism.MainNotions.G.rG L.sc < D.R.k)
     (h4' : 2 ≤ L.sc.x) (hS : Formalism.MainNotions.SizesAt L) : Formalism.MainNotions.FormalGroupSystem.SmallResidueCharComparison D L X Y K := by

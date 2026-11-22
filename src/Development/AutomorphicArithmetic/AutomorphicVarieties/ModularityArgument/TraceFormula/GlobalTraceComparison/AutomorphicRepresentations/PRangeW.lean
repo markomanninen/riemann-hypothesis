@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiSeenA
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiSeenA
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ private theorem test_trM {E : Type} [Field E] [NumberField E] [IsCMField E] {n :
     funext y
     simp [trM, Finset.sum_apply]
   constructor
-  · exact continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => (hΦ i j).1.mul continuous_const
+  · exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => (hΦ i j).1.mul continuous_const
   · rw [e]
     exact HasCompactSupport.finset_sum fun i _ => HasCompactSupport.finset_sum fun j _ => (hΦ i j).2.mul_right
 
@@ -68,7 +72,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.rangeW_pf :
     rw [one_mul]
     ring
   simp_rw [hG]
-  rw [integral_finset_sum _ fun b _ => ((rep (p.x b)).1).const_mul _]
+  rw [integral_finsetSum _ fun b _ => ((rep (p.x b)).1).const_mul _]
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [integral_const_mul, key (p.x b) (p.zero b)]
 

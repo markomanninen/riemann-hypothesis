@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.HarderNarasimhan.StatementPl
+module
+
+public import Mathlib
+public import Formalism.HarderNarasimhan.StatementPl
+
+@[expose] public section
 
 open Module NumberField
 
@@ -51,7 +55,7 @@ def Rerealize : Prop :=
       largestSize b'' X'' (A.map (ψ.restrictScalars (𝓞 K))) = largestSize b X A
 
 def QuotRealize : Prop :=
-  ∀ (K V ι : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K] [AddCommGroup V] [Module K V]
+  ∀ (K V ι : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] [AddCommGroup V] [Module K V]
     [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [Fintype ι] [DecidableEq ι]
     (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ), (∀ v, IsUnit (X v).det) →
     ∀ A S : Submodule (𝓞 K) V, A.FG → IsSat (Formalism.HermitianLatticesTheory.realize b X) A S →
@@ -70,7 +74,7 @@ def QuotRealize : Prop :=
             (N.map ((Submodule.span K (S : Set V)).mkQ.restrictScalars (𝓞 K)))
 
 def DualPl : Prop :=
-  ∀ (K V ι : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K] [AddCommGroup V]
+  ∀ (K V ι : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] [AddCommGroup V]
     [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [Fintype ι] [DecidableEq ι]
     (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ), (∀ v, IsUnit (X v).det) →
     ∀ A : Submodule (𝓞 K) V, A.FG → Submodule.span K (A : Set V) = ⊤ →

@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.ShortIntervalPrimes
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DensityAndRegions
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.ShortIntervalPrimes
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DensityAndRegions
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory Formalism.MainNotions.ShortIntervalPrimes
 
 namespace GlobalTheory.ZerosNearOne

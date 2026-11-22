@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicTowerTraceAlmostSurjectiveStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumMulLeftTransversal
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicTowerTraceAlmostSurjectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumMulLeftTransversal
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.Cyc
 
@@ -112,7 +116,8 @@ theorem fixed_iff_mem_Ohat : ∀ (l : ℕ) [Fact l.Prime]
     have hwK : w ∈ Kinf K := by
       rw [← InfiniteGalois.fixedField_fixingSubgroup (Kinf K), IntermediateField.mem_fixedField_iff]
       intro h hh
-      rw [hw, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hw, map_sum]
       refine sum_reps_invariant _ _ S hS hu (fun g => g (b * x)) ?_ h hh
       intro g n hn
       have := (IntermediateField.mem_fixingSubgroup_iff _ _).1 hn _ (L.mul_mem hbL hxL)
@@ -121,7 +126,8 @@ theorem fixed_iff_mem_Ohat : ∀ (l : ℕ) [Fact l.Prime]
     have hιn : ∀ u, ‖ι u‖ = ‖u‖ := fun u => PadicComplex.norm_extends l u
     have hιa : ∀ g u, act g (ι u) = ι (g u) := hact.1
     have hdiff : ι l * y - ι w = ∑ s ∈ S, act s (ι b * (y - ι x)) := by
-      rw [← hb, hw, map_sum, map_sum, Finset.sum_mul, ← Finset.sum_sub_distrib]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hb, hw, map_sum, map_sum, Finset.sum_mul, ← Finset.sum_sub_distrib]
       refine Finset.sum_congr rfl fun s hs => ?_
       rw [map_mul (act s), map_sub, hfix s (hS s hs), hιa, hιa, map_mul, map_mul, mul_sub]
     have hle : ‖ι l * y - ι w‖ ≤ δ / l := by

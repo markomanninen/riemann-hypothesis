@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.FirstStatementA.main :
     ∀ {E : Type} [inst : Field E]

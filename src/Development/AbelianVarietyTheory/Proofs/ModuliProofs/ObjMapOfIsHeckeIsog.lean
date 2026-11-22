@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIsHeckeIsog
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIsHeckeIsog
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,12 +38,21 @@ theorem objMap_of_isHeckeIsog [IsAlgClosed k] [CharZero k] (hL : Out.Laws)
     Nonempty (ObjMap o₁ o₂ (𝟙 _)) := by
   obtain ⟨hom₁, lin₁, sur₁, ker₁, weil₁, lev₁⟩ := h₁
   obtain ⟨hom₂, lin₂, sur₂, ker₂, weil₂, lev₂⟩ := h₂
-  obtain ⟨hab, hdim, -, -⟩ := hfacts E H D l B b _ s o
-  obtain ⟨hab₁, hdim₁, -, -⟩ := hfacts E H D l B b _ s o₁
-  obtain ⟨hab₂, hdim₂, -, -⟩ := hfacts E H D l B b _ s o₂
-  let P := polOf o.t o.proper o.ample o.ktriv hdim
-  let P₁ := polOf o₁.t o₁.proper o₁.ample o₁.ktriv hdim₁
-  let P₂ := polOf o₂.t o₂.proper o₂.ample o₂.ktriv hdim₂
+  obtain ⟨hab, hdim, hrig, hsym⟩ := hfacts E H D l B b _ s o
+  obtain ⟨hab₁, hdim₁, hrig₁, hsym₁⟩ := hfacts E H D l B b _ s o₁
+  obtain ⟨hab₂, hdim₂, hrig₂, hsym₂⟩ := hfacts E H D l B b _ s o₂
+  let P : Out.PolAV (Sp k) :=
+    { A := o.t.G, isAb := hab, g := _, smoothDim := hdim,
+      L := o.t.PP.L, isLB := o.t.PP.isLB, rigid := hrig, sym := hsym,
+      ample := o.ample, ktriv := o.ktriv }
+  let P₁ : Out.PolAV (Sp k) :=
+    { A := o₁.t.G, isAb := hab₁, g := _, smoothDim := hdim₁,
+      L := o₁.t.PP.L, isLB := o₁.t.PP.isLB, rigid := hrig₁, sym := hsym₁,
+      ample := o₁.ample, ktriv := o₁.ktriv }
+  let P₂ : Out.PolAV (Sp k) :=
+    { A := o₂.t.G, isAb := hab₂, g := _, smoothDim := hdim₂,
+      L := o₂.t.PP.L, isLB := o₂.t.PP.isLB, rigid := hrig₂, sym := hsym₂,
+      ample := o₂.ample, ktriv := o₂.ktriv }
   have := o₁.proper
   have := o₂.proper
   obtain ⟨α, hα⟩ := exists_fac hab.smooth ψ₁ ψ₂ fun x hx => (ker₂ x).2 ((ker₁ x).1 hx)

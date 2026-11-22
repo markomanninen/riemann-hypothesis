@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AssembleLattice
-import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
-import Formalism.LocalToGlobal.ProjectiveLattices.RecCond
-import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParPinsOfRec
-import Formalism.LocalToGlobal.ProjectiveLattices.DepthTie
-import Formalism.LocalToGlobal.UnitaryNorms.MemFIffReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AssembleLattice
+public import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecCond
+public import Formalism.LocalToGlobal.ProjectiveLattices.DatProofs
+public import Formalism.LocalToGlobal.ProjectiveLattices.DepthTie
+public import Formalism.LocalToGlobal.UnitaryNorms.MemFIffReal
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem span_image_span (S : Set K) :
   induction hx using Submodule.span_induction with
   | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul b x _ hx =>
     have : φ (b • x) = RingOfIntegers.mapRingHom φ b • φ x := by
       change φ ((b : K) * x) = _

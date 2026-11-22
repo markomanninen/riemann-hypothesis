@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.CharZeroOfIsPrimitiveRoot
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.HasThetaConstantsIffOfThetaLevelPullback
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.HasThetaConstantsRingBaseChange
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsThetaConstantsLocallyOnBase
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaConstantsUniqueUpToUnit
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFiniteEtaleLatticeTorsionHom
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PushEquivSymmLeft
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsTateIsoZetaEq
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.WeilIsAlternatingSkewNatural
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.CharZeroOfIsPrimitiveRoot
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.HasThetaConstantsIffOfThetaLevelPullback
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.HasThetaConstantsRingBaseChange
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsThetaConstantsLocallyOnBase
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaConstantsUniqueUpToUnit
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFiniteEtaleLatticeTorsionHom
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PushEquivSymmLeft
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsTateIsoZetaEq
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.WeilIsAlternatingSkewNatural
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -83,7 +87,7 @@ theorem exists_tateIso_of_level {E : Type} [Field E] [NumberField E] [IsCMField 
     exact exists_congr fun c => by simp [Nat.cast_smul_eq_nsmul, eq_comm]
   let g₀ : D.La →ₗ[𝓞 E] D.La ⧸ M :=
     { toFun := fun a => M.mkQ (f₀ a)
-      map_add' := fun a b => by rw [← map_add, hM, I.add, hf₀, hf₀, hf₀, hadd]
+      map_add' := fun a b => by rw [← map_add (f := _), hM, I.add, hf₀, hf₀, hf₀, hadd]
       map_smul' := fun c a => by rw [← map_smul, RingHom.id_apply, hM, I.lin, hf₀, hf₀, hlin] }
   obtain ⟨f, hf⟩ := Module.projective_lifting_property M.mkQ g₀ M.mkQ_surjective
   have hf' : ∀ a, I.ev N (f a) = x a := fun a => ((hM _ _).1 (LinearMap.congr_fun hf a)).trans (hf₀ a)
@@ -265,8 +269,8 @@ theorem exists_spread (hG : GlobalFnsSt) (hB : SecBaseChangeAnySt) {F K κ : Typ
     · exact hu₀.symm.trans ((congrArg fnA h₄.symm).trans (appTop_fnA j _).symm)
     · exact (congrArg (fun q => q.left.appTop.hom (w a)) eJ).symm
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem exists_full (hL : Laws) (hB : SecBaseChangeAnySt) {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
     {D : Datum H} {l : Geo.Tor.Level H} {B F K κ : Type} [CommRing B] {bs : Base l B} [Field F] [Field K] [IsAlgClosed K]
     [CharZero K] [Field κ] {S : Scheme.{0}} (sF : S ⟶ Sp F) [LocallyOfFiniteType sF] (e : B →+* F) {sB : S ⟶ Sp B}

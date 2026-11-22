@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.LocalEmbeddings.FinMatchDefs
-import Development.AutomorphicArithmetic.DivisorFrames.MemIntAfAndInIdIffSplitComponents
-import Development.AutomorphicArithmetic.DivisorFrames.UnitCharIdempotentSumEqProdOverSplitPlaces
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.LocalEmbeddings.FinMatchDefs
+public import Development.AutomorphicArithmetic.DivisorFrames.MemIntAfAndInIdIffSplitComponents
+public import Development.AutomorphicArithmetic.DivisorFrames.UnitCharIdempotentSumEqProdOverSplitPlaces
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum GlobalTheory.IndefiniteRowSideFullHecke.MatchingAdjoints GlobalTheory.Grid GlobalTheory.ChainFr GlobalTheory.SquareComm GlobalTheory.FinMatch
@@ -56,10 +60,10 @@ private theorem fmFst_loc {k : Type} [Field k] [ValuativeRel k] [TopologicalSpac
     by_cases h' : (topL a M).det ≠ 0 ∧ ValuativeRel.valuation k (topL a M).det = 1
     · rw [dif_pos h', dif_pos ⟨hd ▸ h'.1, ⟨fun i j => h.1 _ _, hd ▸ h'.2⟩, fun i j => h.2 _ _ (by simp)⟩]
       simp only [hd]
-    · rw [dif_neg h', dif_neg]
+    · rw [dite_eq_right h', dite_eq_right]
       rintro ⟨h1, ⟨-, h2⟩, -⟩
       exact h' ⟨hd ▸ h1, hd ▸ h2⟩
-  · rw [if_neg h, dif_neg]
+  · rw [if_neg h, dite_eq_right]
     rintro ⟨-, ⟨h1, -⟩, h2⟩
     refine h ⟨fun i j => ?_, fun i j => ?_⟩
     · induction i using Fin.addCases with

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.FieldNOf
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.FiniteDiscreteFamilies.PeakCone
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.AllLeaves
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.FieldNOf
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.FiniteDiscreteFamilies.PeakCone
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.AllLeaves
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ def PreEquiv (D D' : Pre E n) : Prop :=
   ∃ e : Fin D.c ≃ Fin D'.c, (∀ i w, D.cls i w = D'.cls (e i) w) ∧ ∀ i τ, D.m i τ = D'.m (e i) τ
 
 def IsLevel (K : ∀ w : HeightOneSpectrum (𝓞 E), Subgroup (GL (Fin n) (w.adicCompletion E))) : Prop :=
-  (∀ w, IsOpen (K w : Set (GL (Fin n) (w.adicCompletion E)))) ∧ ∀ᶠ w in Filter.cofinite, GlobalTheory.LFun.KGL w n ≤ K w
+  (∀ w, IsOpen (K w : Set (GL (Fin n) (w.adicCompletion E)))) ∧ ∀ᶠ w in Filter.cofinite, GlobalTheory.LFun.KGL w (n := n) ≤ K w
 
 def HasKType {N : ℕ} (W : Submodule ℂ (Kinf E N → ℂ)) (V : Submodule ℂ (Sm E N)) : Prop :=
   ∃ φ ∈ V, φ ≠ 0 ∧ ∀ g, (fun k : Kinf E N => φ.1 (g * infGL E N (Unitary.toUnits k))) ∈ W

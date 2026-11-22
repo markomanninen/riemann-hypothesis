@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MapCSmulMulVec
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MapCSmulMulVec
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBin
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ def coord (R : Fr l O) (jE : (ZMod n → R.EE) →ₐ[O] W.EE) (T : LocLat G Qp 
   map_add' x y := by
     rw [← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [← add_smul, ← map_add]; rfl
+    rw [← add_smul, ← map_add (f := _)]; rfl
   map_smul' c x := by
     rw [RingHom.id_apply, Finset.smul_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
@@ -56,7 +60,7 @@ theorem coord_apply (R : Fr l O) (jE : (ZMod n → R.EE) →ₐ[O] W.EE) (T : Lo
 def DDinv (T : LocLat G Qp LL O) : Submodule O (W.DD T) where
   carrier := {x | ∀ δ ∈ W.DelF, W.γD T δ x = x}
   zero_mem' := fun δ _ => map_zero _
-  add_mem' := fun ha hb δ hδ => by rw [map_add, ha δ hδ, hb δ hδ]
+  add_mem' := fun ha hb δ hδ => by rw [map_add (f := _), ha δ hδ, hb δ hδ]
   smul_mem' := fun c a ha δ hδ => by rw [map_smul, ha δ hδ]
 
 def wachDeltaInvariantCoboundaries (T : LocLat G Qp LL O) : Submodule O (W.DD T × W.DD T) :=

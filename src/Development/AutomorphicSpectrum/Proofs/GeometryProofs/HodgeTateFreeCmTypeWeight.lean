@@ -1,26 +1,30 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateNormComparison
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenericCentreSpecializes
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.ThmFlatA
-import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.GagaSections
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.OverZpOfInFibre
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFreeIntegralModelsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFreeFlagLatticeLowerStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFreeFlagLatticeUpperStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PointHTOfFarguesHodgeTateStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ChartSequenceHoldsStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HodgeTateChartDifferentGeneratorsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIffChartLocalizationStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsExtendLin
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateChartDualActionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeChartDualActionCompatStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeComponentIntegralOverRingStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeComponentResidueIntegralityStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeComponentReductionAtPStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateNormComparison
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenericCentreSpecializes
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.ThmFlatA
+public import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.GagaSections
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.OverZpOfInFibre
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFreeIntegralModelsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFreeFlagLatticeLowerStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFreeFlagLatticeUpperStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PointHTOfFarguesHodgeTateStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ChartSequenceHoldsStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HodgeTateChartDifferentGeneratorsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIffChartLocalizationStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsExtendLin
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateChartDualActionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeChartDualActionCompatStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeComponentIntegralOverRingStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeComponentResidueIntegralityStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeComponentReductionAtPStatement
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry NumberField GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.HT GlobalTheory.CompanionTheory.Ar.Flat ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles Module GlobalTheory.CompanionTheory.Ar.Flat
@@ -64,7 +68,7 @@ theorem dvd_sq (A K : Type) [CommRing A] [IsDomain A] [Field K] [Algebra A K] (h
     rw [this]
     norm_num
   · obtain ⟨ζ, hζ, e⟩ := h
-    have e' : algebraMap A K (κ + 1) = ζ := by rw [map_add, e]; simp
+    have e' : algebraMap A K (κ + 1) = ζ := by rw [map_add (f := _), e]; simp
     have hz : IsPrimitiveRoot (κ + 1) p := IsPrimitiveRoot.of_map_of_injective (f := algebraMap A K) (by rwa [e']) hinj
     obtain ⟨n, rfl⟩ : ∃ n, p = n + 1 := ⟨p - 1, by have := hp.pos; omega⟩
     have hn : 0 < n := by have := hp.one_lt; omega
@@ -236,7 +240,7 @@ theorem chart_pack : ∀ (A K : Type) [CommRing A] [IsDomain A] [IsNoetherianRin
       rw [this, map_smul, smul_eq_mul]
     have e2 : ∀ l, algebraMap A K (i f l) = algebraMap A K u * J e l := fun l => by
       rw [← hf l, hJu]
-    simp only [e2, map_add, map_mul, map_pow, map_natCast, e1] at hz
+    simp only [e2, map_add (f := _), map_mul, map_pow, map_natCast, e1] at hz
     have e3 : algebraMap A K u * ∑ l, J e l * D.gram σ d l j =
         algebraMap A K u * (algebraMap A K d * D.h (Pi.single j 1) e + (p : K) ^ m * ((algebraMap A K u)⁻¹ * algebraMap A K z)) := by
       rw [Finset.mul_sum]
@@ -297,8 +301,8 @@ end GlobalTheory.CompanionTheory.Ar.Flat.HTL
 
 namespace GlobalTheory.CompanionTheory.Ar.Flat
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem exactModLat_hodgeTate : FarguesHodgeTate → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (Xo : Moduli D l) (c : Coeff l) (O : Type) [CommRing O] (β : O →+* c.F) (Y : Model Xo c β) (S : Finset ℕ) (Ω : Type) [Field Ω] (K : Type) [Fintype K] (J : K → Type) [∀ k, Fintype (J k)] (y : (Σ k, J k) → Ω) (𝔐 : HodgeCpt Y S y) (p : ℕ) [Fact p.Prime], p ∈ S → 0 < D.p + D.q → HTFree 𝔐 p → ∀ τ : CMType H, ExactModLat (𝔐.V (.inl τ)) (𝔐.V (.inr τ)) (p : Ω) (D.p + D.q) := by
   intro hF E _ _ _ H D l Xo c O _ β Y S Ω _ K _ J _ y 𝔐 p _ hpS hpq hfree τ
   obtain ⟨o, ho⟩ := HTL.exists_zp Ω p
@@ -445,7 +449,8 @@ theorem exactModLat_hodgeTate : FarguesHodgeTate → ∀ (E : Type) [Field E] [N
         (fun l => Jc s e l - Jc t e l) (fun l => sub_mem (a1 e hes l) (b1 e het l)) ?_ i
       · ext i j
         have h1 := congrArg (algebraMap (chartRing o (mseg y) s.1) Ω) (congrFun (congrFun hGH i) j)
-        rw [Matrix.mul_apply, map_sum, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add, map_mul, map_pow, map_natCast] at h1
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [Matrix.mul_apply, map_sum, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _), map_mul, map_pow, map_natCast] at h1
         simp only [map_mul] at h1
         simp only [Matrix.mul_apply, Matrix.of_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul]
         have e0 : ∀ k, (Dc s).gram σ (ds s) i k = algebraMap (chartRing o (mseg y) s.1) Ω (G i k) := fun k => (hGg i k).symm

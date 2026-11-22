@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.VolumePreservingUncurry.volume_preserving_uncurry.{u_1, u_2} :
     ∀ (ι : Type u_1) (κ : Type u_2) [inst : Fintype ι] [inst_1 : Fintype κ],
@@ -18,7 +22,7 @@ theorem UpperTheory.Reformulated.B.VolumePreservingUncurry.volume_preserving_unc
             fun (i : Prod ι κ) ↦ Real.measureSpace)) := by
   intro ι κ _ _
   have hm : Measurable (@Function.uncurry ι κ ℝ) :=
-    measurable_pi_lambda _ fun p ↦ (measurable_pi_apply p.2).comp (measurable_pi_apply p.1)
+    Measurable.of_eval fun p ↦ (measurable_pi_apply p.2).comp (measurable_pi_apply p.1)
   refine ⟨hm, ?_⟩
   symm
   refine MeasureTheory.Measure.pi_eq (μ := fun _ : ι × κ ↦ (MeasureTheory.volume : MeasureTheory.Measure ℝ)) ?_

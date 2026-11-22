@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.QaWeightRowInd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.QaWeightRowInd
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,15 +15,8 @@ section LC
 variable {K σ ρ : Type} [Field K]
 
 private theorem coeff_lcoef_eq (L : MvPolynomial ρ K →ₗ[K] K) (f : MvPolynomial σ (MvPolynomial ρ K))
-    (w : σ →₀ ℕ) : coeff w (lcoef L f) = L (coeff w f) :=
+    (w : σ →₀ ℕ) : AddMonoidAlgebra.coeff (lcoef L f) w = L (AddMonoidAlgebra.coeff f w) :=
   coeff_sum_monomial_linear L f w
-
-theorem qa_lcoef_monomial (L : MvPolynomial ρ K →ₗ[K] K) (u : σ →₀ ℕ) (b : MvPolynomial ρ K) :
-    lcoef L (monomial u b) = monomial u (L b) := by
-  classical
-  ext w
-  rw [coeff_lcoef_eq, coeff_monomial, coeff_monomial]
-  split_ifs <;> simp
 
 theorem qa_lcoef_C (L : MvPolynomial ρ K →ₗ[K] K) (b : MvPolynomial ρ K) :
     lcoef L (C b : MvPolynomial σ (MvPolynomial ρ K)) = C (L b) := by
@@ -32,20 +29,23 @@ theorem qa_lcoef_mapC_mul (L : MvPolynomial ρ K →ₗ[K] K) (G : MvPolynomial 
     (h : MvPolynomial σ (MvPolynomial ρ K)) : lcoef L (map C G * h) = G * lcoef L h := by
   classical
   ext w
-  rw [coeff_lcoef_eq, coeff_mul, coeff_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coeff_lcoef_eq, coeff_mul, coeff_mul, map_sum]
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [coeff_map, coeff_lcoef_eq, MvPolynomial.C_mul', map_smul, smul_eq_mul]
 
 theorem qa_eval_lcoef (L : MvPolynomial ρ K →ₗ[K] K) (x : σ → K) (h : MvPolynomial σ (MvPolynomial ρ K)) :
     eval x (lcoef L h) = L (eval (fun i => C (x i)) h) := by
   classical
-  rw [show lcoef L h = ∑ u ∈ h.support, monomial u (L (coeff u h)) from rfl, map_sum]
-  conv_rhs => rw [h.as_sum, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [show lcoef L h = ∑ u ∈ h.support, monomial u (L (AddMonoidAlgebra.coeff h u)) from rfl, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [h.as_sum, map_sum, map_sum]
   refine Finset.sum_congr rfl fun u _ => ?_
   rw [eval_monomial, eval_monomial]
   rw [show (u.prod fun n e => (C (x n) : MvPolynomial ρ K) ^ e) = C (u.prod fun n e => x n ^ e) by
     simp [Finsupp.prod, map_prod, map_pow]]
-  rw [mul_comm (coeff u h), MvPolynomial.C_mul', map_smul, smul_eq_mul, mul_comm]
+  rw [mul_comm (AddMonoidAlgebra.coeff h u), MvPolynomial.C_mul', map_smul, smul_eq_mul, mul_comm]
 
 theorem qa_lcoef_rowAct {k n : ℕ} (L : MvPolynomial ρ K →ₗ[K] K) (g : Matrix (Fin k) (Fin k) K)
     (h : MvPolynomial (Fin k × Fin n) (MvPolynomial ρ K)) :
@@ -63,13 +63,14 @@ theorem qa_lcoef_rowAct {k n : ℕ} (L : MvPolynomial ρ K →ₗ[K] K) (g : Mat
     simpa using RingHom.congr_fun e P
   conv_lhs => rw [h.as_sum]
   conv_rhs => rw [h.as_sum]
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   refine Finset.sum_congr rfl fun u _ => ?_
-  have hm : (monomial u (coeff u h) : MvPolynomial (Fin k × Fin n) (MvPolynomial ρ K)) =
-      map C (monomial u 1) * C (coeff u h) := by
+  have hm : (monomial u (AddMonoidAlgebra.coeff h u) : MvPolynomial (Fin k × Fin n) (MvPolynomial ρ K)) =
+      map C (monomial u 1) * C (AddMonoidAlgebra.coeff h u) := by
     rw [map_monomial, map_one, mul_comm, C_mul_monomial, mul_one]
-  have hr1 : rowAct (MvPolynomial ρ K) (n := n) (g.map C) (C (coeff u h)) = C (coeff u h) := by simp [rowAct]
-  have hr2 : rowAct K (n := n) g (C (L (coeff u h))) = C (L (coeff u h)) := by simp [rowAct]
+  have hr1 : rowAct (MvPolynomial ρ K) (n := n) (g.map C) (C (AddMonoidAlgebra.coeff h u)) = C (AddMonoidAlgebra.coeff h u) := by simp [rowAct]
+  have hr2 : rowAct K (n := n) g (C (L (AddMonoidAlgebra.coeff h u))) = C (L (AddMonoidAlgebra.coeff h u)) := by simp [rowAct]
   rw [hm, map_mul, key, hr1, qa_lcoef_mapC_mul, qa_lcoef_mapC_mul, qa_lcoef_C, map_mul, hr2]
 
 end LC
@@ -96,14 +97,14 @@ theorem block_substitution_blockEmb (b : Bool) (v : MvPolynomial (Fin (r + 1 + 1
   induction v using MvPolynomial.induction_on
   next a =>
     rw [qa_blockEmb_C, block_substitution_C]
-    simp [subY, qa_blockEmb_C]
+    simp [subY]
   next p q hp hq =>
-    rw [map_add, map_add, hp, hq, map_add, map_add]
+    rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _), map_add (f := _)]
   next p x hp =>
     rw [map_mul, map_mul, hp, qa_blockEmb_X, block_substitution_X, map_mul, map_mul]
 
 theorem qa_blockEmb_comp_C (b : Bool) :
-    ((blockEmb K (k := r) (n := r) b).toRingHom).comp C = (C : K →+* MvPolynomial (Bool × (Fin r × Fin r)) K) := RingHom.ext fun a => by simp [qa_blockEmb_C]
+    ((blockEmb K (k := r) (n := r) b).toRingHom).comp C = (C : K →+* MvPolynomial (Bool × (Fin r × Fin r)) K) := RingHom.ext fun a => by simp
 
 theorem qa_lamOf_apply (L : MvPolynomial (Bool × (Fin r × Fin r)) K →ₗ[K] K)
     (x : MvPolynomial (Bool × (Fin (r + 1 + 1) × Fin (r + 1 + 1))) K) : lamOf K r L x = lcoef L (sub2 K r x) := rfl
@@ -119,7 +120,7 @@ theorem qa_eval_map_block (b : Bool)
   rw [MvPolynomial.eval₂_comp_left, RingHom.comp_id]
   congr 1
   funext i
-  simp only [idPoint, Function.comp_apply]
+  simp only [Function.comp_apply, idPoint]
   split_ifs <;> simp
 
 end S2
@@ -127,7 +128,8 @@ end S2
 theorem lamCoeffP : LamCoeffP := by
   classical
   intro K _ r L v t u
-  rw [qa_lamOf_apply, map_mul, block_substitution_blockEmb, block_substitution_blockEmb, coeff_lcoef_eq, coeff_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [qa_lamOf_apply, map_mul, block_substitution_blockEmb, block_substitution_blockEmb, coeff_lcoef_eq, coeff_mul, map_sum]
   simp only [coeff_map]
   rfl
 
@@ -166,7 +168,7 @@ theorem lamEquivP : LamEquivP := by
           (map (blockEmb K (k := r) (n := r) b).toRingHom) :
         MvPolynomial (Fin (r + 1 + 1) × Fin (r + 1 + 1)) (MvPolynomial (Fin r × Fin r) K) →+*
           MvPolynomial (Fin (r + 1 + 1) × Fin (r + 1 + 1)) (MvPolynomial (Bool × (Fin r × Fin r)) K)))
-      (fun c => by simp [rowAct]) (fun i => by simp [rowAct, Matrix.map_apply, map_sum, qa_blockEmb_C])
+      (fun c => by simp [rowAct]) (fun i => by simp [rowAct, Matrix.map_apply, map_sum])
     simpa using RingHom.congr_fun e P
   rw [qa_lamOf_apply, qa_lamOf_apply, map_mul (sub2 K r), map_mul (sub2 K r), block_substitution_blockEmb,
     block_substitution_blockEmb, block_substitution_blockEmb, block_substitution_blockEmb, qa_subY_rowAct, qa_subY_rowAct, hcomm, hcomm,

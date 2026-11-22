@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryAdmissibleFiniteMultiplicityStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousRetractionOntoUnitaryLocalPointsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryAdmissibleFiniteMultiplicityStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousRetractionOntoUnitaryLocalPointsStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ theorem isClosed_UA : IsClosed ((UA E n : Subgroup (GA E n)) : Set (GA E n)) := 
   exact isClosed_eq (((Units.continuous_val.matrix_map GlobalTheory.ThetaPull.continuous_conjAd).matrix_transpose.matrix_mul
     continuous_const).matrix_mul Units.continuous_val) continuous_const
 
-theorem locU_le_finU (w : HeightOneSpectrum (𝓞 E)) : locU n w ≤ finU E n := inf_le_left
+theorem locU_le_finU (w : HeightOneSpectrum (𝓞 E)) : locU n w ≤ finU (E := E) (n := n) := inf_le_left
 
 theorem continuous_inclusion_locU (w : HeightOneSpectrum (𝓞 E)) :
     Continuous (Subgroup.inclusion (locU_le_finU (n := n) w)) :=
@@ -69,7 +73,7 @@ theorem isSmooth_loc (π : AutSub E n) (w : HeightOneSpectrum (𝓞 E)) :
   exact Subtype.ext_iff
 
 theorem exists_compact_open (w : HeightOneSpectrum (𝓞 E)) (r : UA E n →* locU n w) (hr : Continuous r)
-    (hx : ∀ x : locU n w, r x = x) (L : Subgroup (finU E n)) (hL : IsOpen (L : Set (finU E n))) :
+    (hx : ∀ x : locU n w, r x = x) (L : Subgroup (finU (E := E) (n := n))) (hL : IsOpen (L : Set (finU (E := E) (n := n)))) :
     ∃ K : Subgroup (locU n w), IsOpen (K : Set (locU n w)) ∧ IsCompact (K : Set (locU n w)) ∧
       K ≤ L.comap (Subgroup.inclusion (locU_le_finU w)) := by
   obtain ⟨U0, hU0o, hU0c⟩ := GlobalTheory.GLIntegral.exists_isOpen_isCompact E n
@@ -93,14 +97,14 @@ theorem exists_admissible_comp : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
   obtain ⟨r, hr, hrx, hrc⟩ := GlobalTheory.T.exists_continuous_retraction_onto_unitaryLocalPoints E n w
   have hadm := (GlobalTheory.T.definiteUnitary_admissible_finiteMultiplicity E n π).1
   let ρ : Representation ℂ (locU n w) π.V := π.rep.comp (locU n w).subtype
-  let ρf : Representation ℂ (finU E n) π.V := π.rep.comp (finU E n).subtype
+  let ρf : Representation ℂ (finU (E := E) (n := n)) π.V := π.rep.comp (finU (E := E) (n := n)).subtype
   have hρ : IsSmooth ρ := isSmooth_loc π w
   have hle := locU_le_finU (n := n) w
   obtain ⟨φ, hφ, h0⟩ := (Submodule.ne_bot_iff _).1 π.isAut.ne_bot
   let v0 : π.V := ⟨φ, hφ⟩
   have hv0 : v0 ≠ 0 := fun e => h0 (congrArg Subtype.val e)
-  let L : Subgroup (finU E n) := LocEx.stab ρf v0
-  have hLo : IsOpen (L : Set (finU E n)) := by
+  let L : Subgroup (finU (E := E) (n := n)) := LocEx.stab ρf v0
+  have hLo : IsOpen (L : Set (finU (E := E) (n := n))) := by
     convert (π.isAut.aut φ hφ).level using 1
     ext k
     exact Subtype.ext_iff
@@ -126,7 +130,7 @@ theorem exists_admissible_comp : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
     · exact le_bot_iff.1 (h1 ▸ LocEx.le_nullPart hρ hKc W hW h)
     · exact absurd (LocEx.eq_zero_of_mem_nullPart hρ hKc hφK (h1 ▸ Submodule.mem_top)) hv0
 
-  let M : Subgroup (UA E n) := L.map (finU E n).subtype ⊓ r.ker
+  let M : Subgroup (UA E n) := L.map (finU (E := E) (n := n)).subtype ⊓ r.ker
   have hcomm : ∀ k ∈ M, ∀ g : locU n w, Commute k (g : UA E n) := fun k hk g => by
     have h := hrc k g
     rwa [MonoidHom.mem_ker.1 (Subgroup.mem_inf.1 hk).2, OneMemClass.coe_one, inv_one, one_mul] at h
@@ -139,9 +143,9 @@ theorem exists_admissible_comp : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
     exact hk', hv0⟩
   have hfin : ∀ K' : Subgroup (locU n w), IsOpen (K' : Set (locU n w)) →
       FiniteDimensional ℂ ↥(fixed π.rep M ⊓ fixed ρ K') := fun K' hK' => by
-    let r' : finU E n →* locU n w := r.comp (finU E n).subtype
-    let H : Subgroup (finU E n) := L ⊓ (K' ⊓ L.comap (Subgroup.inclusion hle)).comap r'
-    have hHo : IsOpen (H : Set (finU E n)) := hLo.inter ((hK'.inter hLl).preimage (hr.comp continuous_subtype_val))
+    let r' : finU (E := E) (n := n) →* locU n w := r.comp (finU (E := E) (n := n)).subtype
+    let H : Subgroup (finU (E := E) (n := n)) := L ⊓ (K' ⊓ L.comap (Subgroup.inclusion hle)).comap r'
+    have hHo : IsOpen (H : Set (finU (E := E) (n := n))) := hLo.inter ((hK'.inter hLl).preimage (hr.comp continuous_subtype_val))
     haveI := hadm H hHo
     refine Submodule.finiteDimensional_of_le (S₂ := fixed ρf H) fun v hv => LocEx.mem_fix.2 fun k hk => ?_
     obtain ⟨hv1, hv2⟩ := Submodule.mem_inf.1 hv

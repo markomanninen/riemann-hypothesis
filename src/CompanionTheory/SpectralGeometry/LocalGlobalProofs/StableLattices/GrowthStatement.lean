@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.HaarExists
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.HaarExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,8 +95,9 @@ theorem level_zero_of_memLp (ε : Fin n → Bool) (F : Matrix (Fin n) (Fin n) �
   haveI : μ.IsHaarMeasure := Formalism.REAL.instIsHaarMuG n ε
   have h' : MemLp (fun g : S7.UJ ε => F (S7.toM g)) 2 μ := h
   have h2 : ∫⁻ g : S7.UJ ε, ‖F (S7.toM g)‖ₑ ^ 2 ∂μ < ⊤ := by
-    have := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top (p := 2) two_ne_zero ENNReal.ofNat_ne_top h'.2
-    simpa using this
+    simpa only [ENNReal.toReal_ofNat, ENNReal.rpow_two] using
+      lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
+        (p := 2) two_ne_zero ENNReal.ofNat_ne_top h'.eLpNorm_lt_top
   rw [Measure.isMulLeftInvariant_eq_smul (Measure.haar : Measure (S7.UJ ε)) μ, lintegral_smul_measure]
   exact ENNReal.mul_lt_top (by simp) h2
 

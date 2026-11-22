@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeightRegularOfExt
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeightRegularOfExt
+
+@[expose] public section
 
 namespace GlobalTheory.LocalInv
 

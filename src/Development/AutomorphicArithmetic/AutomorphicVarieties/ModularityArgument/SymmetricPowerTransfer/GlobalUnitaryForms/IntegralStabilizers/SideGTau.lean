@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
+
+@[expose] public section
+
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Glob UpperTheory.V.Z.Sym.Loc
 
 private theorem theta_theta {K : Type} [Field K] (Δ : K) (x : U3 Δ) : theta Δ (theta Δ x) = x := by
@@ -66,7 +71,7 @@ theorem UpperTheory.V.Z.Sym.Glob.sideGTau :
     have hl : lmap f Δ (algebraMap K (Lsq K Δ) τ) = algebraMap K' (Lsq K' (f Δ)) (f τ) := by
       ext <;> simp [lmap]
     rw [e, Matrix.charpoly_map, h]
-    simp only [Polynomial.map_mul, Polynomial.map_sub, Polynomial.map_add, Polynomial.map_pow,
+    simp only [Polynomial.map_mul, Polynomial.map_sub, Polynomial.map_add (f := _), Polynomial.map_pow,
       Polynomial.map_X, Polynomial.map_C, Polynomial.map_one, hl]
   · intro O K _ _ _ Δ δ τ hK h
     unfold HasTau at h
@@ -85,6 +90,4 @@ theorem UpperTheory.V.Z.Sym.Glob.sideGTau :
     rw [hc] at ht
     have h2 : IsIntegral O (algebraMap K (Lsq K Δ) τ) := by
       simpa using ht.sub isIntegral_one
-    refine (isIntegral_algebraMap_iff ?_).1 h2
-    intro a b hab
-    simpa using congrArg QuadraticAlgebra.re hab
+    exact isIntegral_algebraMap_iff.1 h2

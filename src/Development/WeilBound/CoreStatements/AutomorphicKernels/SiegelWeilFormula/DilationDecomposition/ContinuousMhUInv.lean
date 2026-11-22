@@ -1,12 +1,16 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.DilationDecomposition.LocDerBig
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsSummableMajorantLatticeSumStatement
-import Development.WeilBound.ThetaLifts.LatticeBasics.SliceSeminorm
-import Development.WeilBound.ThetaLifts.LatticeBasics.FdEqZero
-import Development.WeilBound.ThetaLifts.FrameEstimates.SiegelAll
-import Development.WeilBound.ThetaLifts.FrameEstimates.GrpTop
-import Development.WeilBound.ThetaLifts.FrameEstimates.BlockForm
-import Development.WeilBound.ThetaLifts.FrameEstimates.FundamentalDomainFiniteVolume
-import Development.WeilBound.ThetaLifts.CartanFactorisation.Unimod
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.DilationDecomposition.LocDerBig
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsSummableMajorantLatticeSumStatement
+public import Development.WeilBound.ThetaLifts.LatticeBasics.SliceSeminorm
+public import Development.WeilBound.ThetaLifts.LatticeBasics.FdEqZero
+public import Development.WeilBound.ThetaLifts.FrameEstimates.SiegelAll
+public import Development.WeilBound.ThetaLifts.FrameEstimates.GrpTop
+public import Development.WeilBound.ThetaLifts.FrameEstimates.BlockForm
+public import Development.WeilBound.ThetaLifts.FrameEstimates.FundamentalDomainFiniteVolume
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.Unimod
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,8 @@ theorem crd_mul (M : Matrix (Fin d.m) (Fin d.m) (AE F E)) (Y : Mx F E d.m d.n) :
   have hY : ∀ i', Y i' j = ∑ k', d.crd Y (i', j, k') • bA d k' := fun i' => ((bA d).sum_repr (Y i' j)).symm
   show ((bA d).repr ((M * Y) i j)) k = _
   rw [Matrix.mul_apply, Finset.sum_congr rfl fun i' _ => by rw [hY i']]
-  simp only [Matrix.mulVec, dotProduct, Fintype.sum_prod_type, mh, ite_mul, zero_mul, Finset.sum_ite_eq,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, Fintype.sum_prod_type, mh, ite_mul, zero_mul, Finset.sum_ite_eq,
     Finset.mem_univ, if_true, Finset.mul_sum, mul_smul_comm, map_sum, map_smul, Finsupp.coe_finsetSum,
     Finset.sum_apply, Finsupp.smul_apply, smul_eq_mul]
   refine Finset.sum_congr rfl fun i' _ => ?_
@@ -120,7 +125,7 @@ theorem crd_incM (X : Matrix (Fin d.m) (Fin d.n) E) : d.crd (incM F X) = Positiv
 
 theorem bound_cpt (Fn : Mx F E d.m d.n → ℂ) (hF : Fn ∈ d.schM) (Ω : Set (UA σ d.A.J)) (hΩ : IsCompact Ω) :
     ∃ u : (Ix d → F) → ℝ, Summable u ∧ ∀ h ∈ Ω, ∀ X, ‖Fn (mat h⁻¹ * incM F X)‖ ≤ u (xi d X) := by
-  have hG : (fun c => Fn (d.cmb c)) ∈ GroundTheory.Automorphic.GJMatrix.schwartzBruhatPi F (Ix d) := hF
+  have hG : (fun c => Fn (d.cmb c)) ∈ GroundTheory.Automorphic.GJMatrix.schwartzBruhatPi (K := F) (ι := Ix d) := hF
   obtain ⟨u, hu, hb⟩ := GlobalTheory.T.exists_summable_majorant_lattice_sum hG (hΩ.image (continuous_mhU_inv d))
   refine ⟨u, hu, fun h hh X => ?_⟩
   have e : Fn (mat h⁻¹ * incM F X) =
@@ -166,8 +171,8 @@ end PositivityTheory.SiegelWeilFormula.Kdil.Tb
 
 namespace PositivityTheory.SiegelWeilFormula.Kdil
 
-open Tb in
 
+open Tb in
 theorem thetaBdd_of (hS : GlobalTheory.Published.SiegelSetUnitary) : ThetaBdd := by
   intro F E _ _ _ _ _ σ d Fn hF
   obtain ⟨Ω, hΩ, cov⟩ := (cpt d hS).cov

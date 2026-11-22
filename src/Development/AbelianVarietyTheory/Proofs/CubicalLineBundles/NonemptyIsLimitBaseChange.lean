@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -96,9 +100,9 @@ theorem cone_preimage_le {i j : I} (f : j ⟶ i) (U : (D.obj i).Opens) :
     π i ⁻¹ᵁ U ≤ π j ⁻¹ᵁ (D.map f ⁻¹ᵁ U) := by
   rw [← Scheme.Hom.comp_preimage, w]
 
+
 set_option backward.isDefEq.respectTransparency false in
 include hc in
-
 theorem exists_appLE_π_eq {i : I} {U : (D.obj i).Opens} (hU : IsAffineOpen U)
     (s : Γ(X, π i ⁻¹ᵁ U)) :
     ∃ (j : I) (f : j ⟶ i) (t : Γ(D.obj j, D.map f ⁻¹ᵁ U)),
@@ -116,8 +120,8 @@ theorem exists_appLE_π_eq {i : I} {U : (D.obj i).Opens} (hU : IsAffineOpen U)
       Iso.inv_hom_id_apply]
   exact (e _ _ _ _ t).trans h
 
-include hc in
 
+include hc in
 theorem exists_unit_π_eq {i : I} {U : (D.obj i).Opens} (hU : IsAffineOpen U)
     (s : Γ(X, π i ⁻¹ᵁ U)ˣ) :
     ∃ (j : I) (f : j ⟶ i) (t : Γ(D.obj j, D.map f ⁻¹ᵁ U)ˣ), ∀ y : X, y ∈ π i ⁻¹ᵁ U →
@@ -146,8 +150,8 @@ theorem exists_unit_π_eq {i : I} {U : (D.obj i).Opens} (hU : IsAffineOpen U)
   exact (TopCat.Presheaf.germ_res_apply X.presheaf
     (homOfLE (cone_preimage_le D π w (g ≫ f) U)) y hy _).symm
 
-include hc in
 
+include hc in
 theorem exists_pullU_eq {i : I} {U : (D.obj i).Opens} (hU : IsCompact (U : Set (D.obj i)))
     (s t : Γ(D.obj i, U)ˣ)
     (h : ∀ y : X, π i y ∈ U → gm (π i) y U s = gm (π i) y U t) :
@@ -157,8 +161,8 @@ theorem exists_pullU_eq {i : I} {U : (D.obj i).Opens} (hU : IsCompact (U : Set (
   obtain ⟨j, f, hf⟩ := exists_app_map_eq_map_of_isLimit D _ hc hU s.val t.val (congrArg Units.val h')
   exact ⟨j, f, Units.ext hf⟩
 
-include hc in
 
+include hc in
 theorem exists_units_of_isLimit {i : I} [QuasiSeparatedSpace (D.obj i)] {A : Type} [Finite A]
     (V : A → (D.obj i).Opens) (hV : ∀ a, IsAffineOpen (V a)) (G : ∀ a b, Γ(D.obj i, V a ⊓ V b)ˣ)
     (s : ∀ a, Γ(X, π i ⁻¹ᵁ V a)ˣ)
@@ -217,7 +221,7 @@ theorem exists_units_of_isLimit {i : I} [QuasiSeparatedSpace (D.obj i)] {A : Typ
   refine (val a ha).trans (e'.trans (congrArg₂ (· * ·) ?_ (val b hb).symm))
   rw [D.map_comp]
 
-theorem lb_div_isLB {Y : Scheme.{0}} {M N : LB Y} (hM : M.IsLB) (hN : N.IsLB) : (LB.div N M).IsLB where
+theorem lb_div_isLB {Y : Scheme.{0}} {M N : LB Y} (hM : M.IsLB) (hN : N.IsLB) : (LB.div N M).IsLB := {
   cover := top_le_iff.1 fun y _ => by
     obtain ⟨i, hi⟩ := exists_chart hN y
     obtain ⟨j, hj⟩ := exists_chart hM y
@@ -231,7 +235,7 @@ theorem lb_div_isLB {Y : Scheme.{0}} {M N : LB Y} (hM : M.IsLB) (hN : N.IsLB) : 
       ((gm_res (𝟙 Y) y _ hy _).trans (gm_div M N (𝟙 Y) y q r ⟨hy.1.2, hy.2⟩)))).trans
       (Eq.trans ?_ ((gm_res (𝟙 Y) y _ hy _).trans (gm_div M N (𝟙 Y) y p r ⟨hy.1.1, hy.2⟩)).symm)
     rw [← gm_cocycle hN (𝟙 Y) y hy.1.1.1 hy.1.2.1 hy.2.1, ← gm_cocycle hM (𝟙 Y) y hy.1.1.2 hy.1.2.2 hy.2.2,
-      mul_inv, mul_mul_mul_comm]
+      mul_inv, mul_mul_mul_comm] }
 
 theorem gm_div_pull_g {Y Z : Scheme.{0}} (M N : LB Y) (F : Z ⟶ Y) (z : Z) (p q : N.ι × M.ι)
     (hz : F z ∈ (LB.div N M).U p ⊓ (LB.div N M).U q) :
@@ -243,8 +247,8 @@ theorem gm_div_pull_g {Y Z : Scheme.{0}} (M N : LB Y) (F : Z ⟶ Y) (z : Z) (p q
   exact congrArg₂ (· * ·) (gm_pull_g N F (𝟙 Z) z _ _ (mem_pull.2 hz.1.1) (mem_pull.2 hz.2.1))
     (congrArg (·⁻¹) (gm_pull_g M F (𝟙 Z) z _ _ (mem_pull.2 hz.1.2) (mem_pull.2 hz.2.2)))
 
-include hc in
 
+include hc in
 theorem exists_lbIso_of_isLimit {i : I} [CompactSpace (D.obj i)] [QuasiSeparatedSpace (D.obj i)]
     (M N : LB (D.obj i)) (hM : M.IsLB) (hN : N.IsLB) (h : LBIso (M.pull (π i)) (N.pull (π i))) :
     ∃ (j : I) (f : j ⟶ i), LBIso (M.pull (D.map f)) (N.pull (D.map f)) := by
@@ -328,7 +332,7 @@ theorem FGAbove.exists_ringHom (h : R₀.FG) {S : Type} [CommRing S] (φ : ∀ R
     rfl
   · obtain ⟨T, hx, hy⟩ := two x y
     show φ _ _ = φ _ _ + φ _ _
-    rw [key T x hx, key T y hy, key T _ (add_mem hx hy), ← map_add]
+    rw [key T x hx, key T y hy, key T _ (add_mem hx hy), ← map_add (f := _)]
     rfl
 
 theorem spMap_comp_ring {A A' A'' : Type} [CommRing A] [CommRing A'] [CommRing A''] (f : A →+* A')
@@ -347,7 +351,6 @@ def baseChangeMap {A A' : Type} [CommRing A] [CommRing A'] [Algebra k A] [Algebr
 section
 variable {A A' A'' : Type} [CommRing A] [CommRing A'] [Algebra k A] [Algebra k A'] [CommRing A''] [Algebra k A'']
 
-@[reassoc]
 theorem baseChangeMap_fst (f : A →ₐ[k] A') :
     baseChangeMap pB f ≫ pullback.fst _ _ = pullback.fst _ _ := pullback.lift_fst _ _ _
 
@@ -378,8 +381,8 @@ theorem isAffineHom_baseChangeMap (f : A →ₐ[k] A') : IsAffineHom (baseChange
 
 end
 
-variable (R₀) in
 
+variable (R₀) in
 def baseChangeDiagram : (FGAbove R₀)ᵒᵖ ⥤ Scheme.{0} where
   obj R := pullback pB (spMap (algebraMap k R.unop.1))
   map {R T} f := baseChangeMap pB (Subalgebra.inclusion (show T.unop.1 ≤ R.unop.1 from leOfHom f.unop))
@@ -469,22 +472,5 @@ theorem exists_fg_lbIso [QuasiCompact pB] [QuasiSeparated pB] (h : R₀.FG)
   exact ⟨R.unop.1, R.unop.2.2, R.unop.2.1, hR⟩
 
 end Tower
-
-theorem lbIso_spreads_out (k : IntermediateField ℚ ℂ) (B : Scheme.{0}) (pB : B ⟶ Sp k) [QuasiCompact pB]
-    [QuasiSeparated pB] (R₀ : Subalgebra k ℂ) (h : R₀.FG)
-    (M N : LB (pullback pB (spMap (algebraMap k R₀)))) (hM : M.IsLB) (hN : N.IsLB)
-    (j₀ : pullback pB (spMap (algebraMap k ℂ)) ⟶ pullback pB (spMap (algebraMap k R₀)))
-    (h₁ : j₀ ≫ pullback.fst _ _ = pullback.fst _ _)
-    (h₂ : j₀ ≫ pullback.snd _ _ = pullback.snd _ _ ≫ spMap R₀.val.toRingHom)
-    (H : LBIso (M.pull j₀) (N.pull j₀)) :
-    ∃ (R : Subalgebra k ℂ) (hR : R₀ ≤ R)
-      (i : pullback pB (spMap (algebraMap k R)) ⟶ pullback pB (spMap (algebraMap k R₀))), R.FG ∧
-      i ≫ pullback.fst _ _ = pullback.fst _ _ ∧
-      i ≫ pullback.snd _ _ = pullback.snd _ _ ≫ spMap (Subalgebra.inclusion hR).toRingHom ∧
-      LBIso (M.pull i) (N.pull i) := by
-  obtain rfl : j₀ = baseChangeMap pB R₀.val :=
-    pullback.hom_ext (h₁.trans (baseChangeMap_fst pB _).symm) (h₂.trans (baseChangeMap_snd pB _).symm)
-  obtain ⟨R, hR, hfg, hiso⟩ := exists_fg_lbIso pB h M N hM hN H
-  exact ⟨R, hR, _, hfg, baseChangeMap_fst pB _, baseChangeMap_snd pB _, hiso⟩
 
 end GlobalTheory

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qh20.hfs_aeval_restrict :
     ∀ {L W : Type} [inst : Field L] [inst_1 : AddCommGroup W]
@@ -17,7 +21,7 @@ theorem UpperTheory.Reformulated.B.Qh20.hfs_aeval_restrict :
       rfl
   induction q using Polynomial.induction_on' with
   | add a b ha hb =>
-    rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, Submodule.coe_add, ha, hb]
+    rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, Submodule.coe_add, ha, hb]
   | monomial n a =>
     rw [Polynomial.aeval_monomial, Polynomial.aeval_monomial, Module.End.mul_apply,
       Module.End.mul_apply, Module.algebraMap_end_apply, Module.algebraMap_end_apply,

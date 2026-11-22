@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.EmbeddedFrames.PfD
-import Formalism.RealPlaceAnalysis.Complexify
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.EmbeddedFrames.PfD
+public import Formalism.RealPlaceAnalysis.Complexify
+
+@[expose] public section
 
 open Finset Matrix PositivityTheory.RgHe.Frame
 

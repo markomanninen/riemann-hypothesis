@@ -1,9 +1,13 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.GlueHoldsVar
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.HighGOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.ChainSt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.InvOmega
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.FirstJetIntegralGeneralHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.SecondJetIntegralGeneralHolds
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.GlueHoldsVar
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.HighGOf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.ChainSt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.InvOmega
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.FirstJetIntegralGeneralHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.SecondJetIntegralGeneralHolds
+
+@[expose] public section
 
 theorem jets_high_generation : PI.JetsPhW.HighG :=
   PI.JetsPhW.W.highG_of PI.JetsPhW.W.derivative_chain_rule PI.JetsPhW.W.derivative_self

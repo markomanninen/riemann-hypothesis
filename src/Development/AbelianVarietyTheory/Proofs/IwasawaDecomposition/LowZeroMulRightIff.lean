@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism Formalism.BasicNotions Formalism.L2.DIV Formalism.IndefR.Datum
 open scoped Matrix
@@ -42,7 +46,7 @@ theorem omegaQ_mul_right : ∀ (D : D7) (b r : ℕ) (Q : Finset (Pl D.host.E)) (
     rw [hy PP hP, lowZero_mul_right_iff, det_topL_mul_right, Units.isUnit_units_mul]
   unfold omegaQ
   by_cases c : ∀ PP ∈ Q, LowZero r (y PP) ∧ IsUnit (topL r (y PP)).det
-  · rw [dif_pos c, dif_pos (hiff.2 c), ← Finset.prod_attach Q, Units.coe_prod, ← Finset.prod_inv_distrib,
+  · rw [dite_eq_left c, dite_eq_left (hiff.2 c), ← Finset.prod_attach Q, Units.coe_prod, ← Finset.prod_inv_distrib,
       ← Finset.prod_mul_distrib]
     refine Finset.prod_congr rfl fun PP _ => ?_
     have e : ((hiff.2 c) PP.1 PP.2).2.unit =
@@ -50,6 +54,6 @@ theorem omegaQ_mul_right : ∀ (D : D7) (b r : ℕ) (Q : Finset (Pl D.host.E)) (
       apply Units.ext
       rw [Units.val_mul, IsUnit.unit_spec, IsUnit.unit_spec, hy PP.1 PP.2, det_topL_mul_right]
     rw [e, map_mul, Units.val_mul, zpow_neg_one, zpow_neg_one, mul_inv]
-  · rw [dif_neg c, dif_neg (fun h' => c (hiff.1 h')), mul_zero]
+  · rw [dite_eq_right c, dite_eq_right (fun h' => c (hiff.1 h')), mul_zero]
 
 end GlobalTheory.TwistDatumRight

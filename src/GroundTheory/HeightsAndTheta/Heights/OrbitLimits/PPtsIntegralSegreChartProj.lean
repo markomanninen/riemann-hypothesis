@@ -1,13 +1,18 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PotentialTheory.Pullback
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Assembly
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreChartDim
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PtsIntegrable
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsIntegralSegreChartProj
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartProjFinite
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartZeroSet
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartAbsIntegrable
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsSegreChartFibreSum
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Pullback
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Assembly
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreChartDim
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PtsIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsIntegralSegreChartProj
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartProjFinite
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartZeroSet
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartAbsIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsSegreChartFibreSum
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -78,7 +83,7 @@ theorem PtsIntegralSegreChartProj.proof (hFin : SegreChartProjFinite.Statement)
   have hvar : ∀ J ∈ segreChartComponents P σ i, varInt J (e + 1) G Φ = ∫ y, chartDens J A G' Φ' y := by
     intro J hJ
     have hex : ∃ A₁ : Matrix (Fin (e + 1)) (Fin m) ℂ, IsFiniteProjection J A₁ := ⟨A, hfin J hJ⟩
-    rw [varInt, dif_pos hex, chartInt, hcong J hJ]
+    rw [varInt, dite_eq_left hex, chartInt, hcong J hJ]
     exact (IntegralIndep.full m (e + 1) J A hex.choose G' Φ' (hprime J hJ) (hdim J hJ) (hfin J hJ)
       hex.choose_spec hmeas (hsm J hJ) (habs J hJ)).2.symm
   rw [Finset.sum_congr rfl hvar, ← integral_finsetSum _ hint]

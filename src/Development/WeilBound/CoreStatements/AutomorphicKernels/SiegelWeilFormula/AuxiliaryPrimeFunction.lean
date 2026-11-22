@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.DefsPlus
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobData
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.DefsPlus
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobData
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,8 +60,8 @@ structure SD (σ : E →ₐ[F] E) : Type 1 where
 
 attribute [instance] SD.fin
 
-variable (F E) in
 
+variable (F E) in
 abbrev Mx (p q : ℕ) : Type := Matrix (Fin p) (Fin q) (AE F E)
 
 def fP {m n : ℕ} (P : PX m n) (u : Fin m → Fin n → ℂ) : ℂ := evX P u * gs (2 * Real.pi) u

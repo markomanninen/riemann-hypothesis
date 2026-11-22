@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.CintIdx
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.CintIdx
+
+@[expose] public section
 
 open QuadraticAlgebra Matrix UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc
 
@@ -10,14 +14,14 @@ theorem UpperTheory.V.Z.Sym.Loc.One.intE :
   haveI := L.frac
   have sq_int : ∀ (x : K) (a : O), x ^ 2 = algebraMap O K a → ∃ b : O, algebraMap O K b = x := fun x a h =>
     IsIntegrallyClosed.algebraMap_eq_of_integral (IsIntegral.of_pow (n := 2) (by norm_num) (h ▸ isIntegral_algebraMap))
-  obtain ⟨τ₀, e₀⟩ := sq_int τ (4 + u) (by rw [map_add, hu, map_ofNat]; ring)
+  obtain ⟨τ₀, e₀⟩ := sq_int τ (4 + u) (by rw [map_add (f := _), hu, map_ofNat]; ring)
   have hm : (2 - τ₀) * (2 + τ₀) = (-u : Oˣ) := IsFractionRing.injective O K (by
-    simp only [map_mul, map_sub, map_add, map_ofNat, e₀, Units.val_neg, map_neg, hu]; ring)
+    simp only [map_mul, map_sub, map_add (f := _), map_ofNat, e₀, Units.val_neg, map_neg, hu]; ring)
   have h1 : IsUnit (2 - τ₀) := isUnit_of_mul_isUnit_left (hm ▸ (-u).isUnit)
   have h2 : IsUnit (2 + τ₀) := isUnit_of_mul_isUnit_right (hm ▸ (-u).isUnit)
   refine ⟨⟨τ₀, e₀⟩, ⟨h1.unit, by simp [map_ofNat, e₀]⟩, ⟨h2.unit, by simp [map_ofNat, e₀]⟩, fun x => ⟨fun hx => ?_, ?_⟩⟩
   · have down : ∀ a : K, IsIntegral O (algebraMap K (Etau K τ) a) → ∃ b : O, algebraMap O K b = a := fun a h =>
-      IsIntegrallyClosed.algebraMap_eq_of_integral ((isIntegral_algebraMap_iff (algebraMap K (Etau K τ)).injective).1 h)
+      IsIntegrallyClosed.algebraMap_eq_of_integral ((isIntegral_algebraMap_iff ).1 h)
     obtain ⟨t, ht⟩ := down (2 * x.re + τ * x.im) (by
       convert hx.add (isIntegral_star hx) using 1
       ext <;> simp; ring)

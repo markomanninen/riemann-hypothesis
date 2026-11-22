@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.TableDegreeElevenProduct
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsHomogeneousCompIdeal
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsResolProjSpace
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteFinrankLineBundleSectionsFiniteEtale
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvRFrMapOfIsReduced
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LeastOrderBoundOfOrdTieTriv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.TableDegreeElevenProduct
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsHomogeneousCompIdeal
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsResolProjSpace
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteFinrankLineBundleSectionsFiniteEtale
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvRFrMapOfIsReduced
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LeastOrderBoundOfOrdTieTriv
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -73,10 +77,7 @@ theorem gap_remGaps (a : ℕ) {n : ℤ} (hn : 0 < n) (v : Fin N → ℤ) (k : �
   by_cases h : k + 1 < N
   · rw [remGaps, gap_ofGaps _ _ h, ← Int.emod_def]
     exact ⟨Int.emod_nonneg _ hn.ne', Int.emod_lt_of_pos _ hn⟩
-  · rw [gap, dif_neg h]; exact ⟨le_rfl, hn⟩
-
-example : floorGaps 1 3 ![7, 0, -8] = ![2, 0, -2] ∧ remGaps 1 3 ![7, 0, -8] = ![1, 0, -2] ∧
-    floorGaps 0 3 ![0, 1] = ![0, 1] := by decide
+  · rw [gap, dite_eq_right h]; exact ⟨le_rfl, hn⟩
 
 end Gaps
 
@@ -108,8 +109,6 @@ def rem : AllWt.Weight Dw := fun τ => remGaps P.a P.T₁ ((P.uMinus - FlagTan.k
 def u₂ : AllWt.Weight Dw := P.u₁ + P.rem
 
 def uc : AllWt.Weight Dw := FlagTan.kap Dw + P.u₂ + dimFlag Dw • P.u₁
-
-def u' : AllWt.Weight Dw := uPrime Dw P.u₁
 
 def ub : AllWt.Weight Dw := fun τ => floorGaps P.a (dimFlag Dw + 3) (P.u₁ τ)
 
@@ -231,15 +230,15 @@ theorem bijective_toSecO : Function.Bijective (toSecO : H0 (flagStr X) (X.LL e) 
   (Equiv.ofBijective _ bijective_ofSec_top).symm.bijective.comp
     ((isoOver_of_isOpenImmersion X.inc (opensRange_inc X).ge).bijective_pull (X.F.isLB_LL e) _ le_top)
 
-variable (X e) in
 
+variable (X e) in
 def ruleOf : H0 (flagStr X) (X.LL e) (flagOpen X) →ₗ[c.F] secZ Xo c e where
   toFun m := ⟨FlagCover.toRule (toSecO m), FlagCover.toRule_mem_secZ _⟩
   map_add' m m' := Subtype.ext <| funext₂ fun p P => by
     refine (FlagCover.IsVal.eq_val fun S' _ _ ψ P' hP k hz Q t hQ ht => ?_).symm
     have hO := FlagMod.le_preimage_map (z := X.pt P') X.inc (top_le_inc X) le_top
     change ψ (FlagCover.val _ P + FlagCover.val _ P) = _
-    rw [map_add, FlagCover.isVal_val _ P S' ψ P' hP k hz Q t hQ ht, FlagCover.isVal_val _ P S' ψ P' hP k hz Q t hQ ht,
+    rw [map_add (f := _), FlagCover.isVal_val _ P S' ψ P' hP k hz Q t hQ ht, FlagCover.isVal_val _ P S' ψ P' hP k hz Q t hQ ht,
       coef_toSecO _ _ _ _ hO, coef_toSecO _ _ _ _ hO, coef_toSecO _ _ _ _ hO, map_add, mul_add]
   map_smul' a m := Subtype.ext <| funext₂ fun p P => by
     refine (FlagCover.IsVal.eq_val fun S' _ _ ψ P' hP k hz Q t hQ ht => ?_).symm
@@ -257,13 +256,13 @@ theorem bijective_ruleOf : Function.Bijective (ruleOf X e) := by
   obtain ⟨m, rfl⟩ := bijective_toSecO.2 s
   exact ⟨m, Subtype.ext hs⟩
 
-variable (X e) in
 
+variable (X e) in
 def secOf : secZ Xo c e ≃ₗ[c.F] H0 (flagStr X) (X.LL e) (flagOpen X) :=
   (LinearEquiv.ofBijective _ bijective_ruleOf).symm
 
-open Classical in
 
+open Classical in
 theorem evR_eq_val_secOf {S : Type} [CommRing S] [Algebra c.F S] [_root_.IsReduced S] (f : secZ Xo c e)
     {P Q : FrPt Xo c S} {k : X.F.J} {z : Sp S ⟶ X.YY} {hz : ⊤ ≤ z ⁻¹ᵁ X.F.U k} (hO : ⊤ ≤ z ⁻¹ᵁ flagOpen X)
     {t : Ix Dw → Sˣ} (hQ : X.F.ChartFr k z hz Q) (ht : FrBor t Q P) :
@@ -304,8 +303,8 @@ section Component
 
 variable {Y : Model Xo c (RingHom.id c.F)} (X : FlagCover Y) (Z : Comp Xo c)
 
-variable (Y) in
 
+variable (Y) in
 def barComp : Y.X.Opens := ⟨(closure (Y.j '' (Z : Set (Xo.XF c))ᶜ))ᶜ, isClosed_closure.isOpen_compl⟩
 
 theorem j_mem_barComp (x : Xo.XF c) : Y.j x ∈ barComp Y Z ↔ x ∈ (Z : Set (Xo.XF c)) := by
@@ -345,8 +344,6 @@ abbrev LL₀ (e : Ix Dw → ℤ) : LB (Y₀ X Z) := (X.LL e).pull (inc₀ X Z)
 
 abbrev L₀ (la : AllWt.Weight Dw) : LB (Y₀ X Z) := LL₀ X Z (exOf Dw la 0)
 
-theorem L₀_eq (la : AllWt.Weight Dw) : L₀ X Z la = (X.Llam la).pull (inc₀ X Z) := rfl
-
 theorem exOf_add_zero (a b : AllWt.Weight Dw) : exOf Dw (a + b) 0 = exOf Dw a 0 + exOf Dw b 0 :=
   AllWt.exOf_add a b 0 0
 
@@ -385,7 +382,9 @@ theorem sec₀_mul {e₁ e₂ e : Ix Dw → ℤ} (h : e₁ + e₂ = e) (f₁ : s
 def vanBd (la : AllWt.Weight Dw) : Submodule c.F (H0 (str₀ X Z) (L₀ X Z la) ⊤) where
   carrier := {s | ∀ y ∈ bd₀ X Z, ∀ i hi, germ i y (memTop y) hi s ∈ IsLocalRing.maximalIdeal _}
   zero_mem' y _ i hi := by rw [map_zero]; exact zero_mem _
-  add_mem' hs ht y hy i hi := by rw [map_add]; exact add_mem (hs y hy i hi) (ht y hy i hi)
+  add_mem' hs ht y hy i hi := by
+    rw [map_add (germ i y (memTop y) hi)]
+    exact add_mem (hs y hy i hi) (ht y hy i hi)
   smul_mem' a s hs y hy i hi := by rw [germ_smul]; exact Ideal.mul_mem_left _ _ (hs y hy i hi)
 
 theorem mem_vanBd {la : AllWt.Weight Dw} {s : H0 (str₀ X Z) (L₀ X Z la) ⊤} :
@@ -443,12 +442,6 @@ theorem Extends.space_le (h : Extends X Z U la) : space X Z U la ≤ vanBd X Z l
   rintro s ⟨f, hf⟩
   obtain ⟨s', hs', e⟩ := h f
   exact restr_injective_of_dense le_top (dense_U₀ X Z) (e.trans hf) ▸ hs'
-
-def Extends.toVanBd (h : Extends X Z U la) : Cusp Z U la →ₗ[c.F] vanBd X Z la :=
-  Submodule.inclusion h.space_le ∘ₗ h.equiv.toLinearMap
-
-theorem Extends.toVanBd_injective (h : Extends X Z U la) : Function.Injective h.toVanBd :=
-  (Submodule.inclusion_injective h.space_le).comp h.equiv.injective
 
 end Component
 

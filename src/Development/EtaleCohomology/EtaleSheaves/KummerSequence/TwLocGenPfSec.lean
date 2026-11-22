@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.KummerSequence.LeafKumMuInjPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.KummerSequence.LeafKumMuInjPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite TensorProduct GlobalTheory.EtC
@@ -7,7 +11,7 @@ namespace LateralTheory.E.H2CurveOrder.TwLocGenPfSec
 
 theorem ofRings_sec_res {R : Type} [CommRing R] (M : CommRingCat.{0} ⥤ ModuleCat.{1} (ULift.{1} R)) {V U : Scheme.{0}}
     (g : V ⟶ U) (x : M.obj Γ(U, ⊤)) :
-    Sec.res g (ofRings.sec M U x) = ofRings.sec M V ((M.map g.appTop).hom x) := by
+    Sec.res g (ofRings.sec (R := R) M U x) = ofRings.sec (R := R) M V ((M.map g.appTop).hom x) := by
   have h := congrArg (fun f => f.hom x)
     ((toSheafify Scheme.etaleTopology (Scheme.Γ ⋙ M)).naturality g.op)
   simp only [ModuleCat.hom_comp] at h
@@ -40,7 +44,7 @@ theorem loc_bind {U : Scheme.{0}} {P : ∀ V : Scheme.{0}, (V ⟶ U) → Prop} {
 
 theorem loc_surj {R : Type} [CommRing R] (M : CommRingCat.{0} ⥤ ModuleCat.{1} (ULift.{1} R)) (U : Scheme.{0})
     (y : Sec (ofRings R M) U) :
-    Loc U fun V g => ∃ x : M.obj Γ(V, ⊤), Sec.res g y = ofRings.sec M V x := by
+    Loc U fun V g => ∃ x : M.obj Γ(V, ⊤), Sec.res g y = ofRings.sec (R := R) M V x := by
   have h := Presheaf.imageSieve_mem Scheme.etaleTopology (toSheafify Scheme.etaleTopology (Scheme.Γ ⋙ M)) y
   refine ⟨_, h, fun V g hg => ?_⟩
   obtain ⟨x, hx⟩ := hg
@@ -213,7 +217,8 @@ theorem self_sq {A : Type} [CommRing A] (q : ℕ) [NeZero q] (hq : IsUnit (q : A
     rw [← Ideal.Quotient.eq_zero_iff_mem]
     have hxy : Ideal.Quotient.mk (Ideal.span {d}) x = Ideal.Quotient.mk (Ideal.span {d}) y := by
       rw [Ideal.Quotient.eq]; exact Ideal.subset_span rfl
-    simp only [u, c, map_sub, map_sum, map_mul, map_pow, map_natCast, hxy]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [u, c, map_sub, map_sum, map_mul, map_pow, map_natCast, hxy]
     rw [geom_sum₂_self, sub_self]
   obtain ⟨w0, hw0⟩ := Ideal.mem_span_singleton'.1 hmem
   obtain ⟨cu, hcu⟩ := hc

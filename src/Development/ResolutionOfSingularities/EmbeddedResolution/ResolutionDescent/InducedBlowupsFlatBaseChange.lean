@@ -1,24 +1,29 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupCoproduct
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.DetachedCenterFlatBaseChange
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.ChartFlatBaseChange
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.DetachedLocusFlatBaseChange
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.InactiveTotalSpaceFlatBaseChange
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.BlowupSequenceFlatBaseChange
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.SupportFlatPullback
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.IsoBlowupRemovalBaseChange
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.PullbackUpToEmptyCenters
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.StrictTransformTower
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedStrictTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.SequenceIsomorphism
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupCoproduct
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.DetachedCenterFlatBaseChange
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.ChartFlatBaseChange
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.DetachedLocusFlatBaseChange
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.InactiveTotalSpaceFlatBaseChange
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.BlowupSequenceFlatBaseChange
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.SupportFlatPullback
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.IsoBlowupRemovalBaseChange
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.PullbackUpToEmptyCenters
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.StrictTransformTower
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedStrictTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.SequenceIsomorphism
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
@@ -40,7 +45,6 @@ private theorem congr_hom_apply {A B : Scheme.{u}} {f g : A ⟶ B} (e : f = g) (
   subst e
   rfl
 
-@[reassoc]
 theorem levelMap_succ_comp_transitionMap (F : ChartFlatBaseChange S S') (j : ℕ) (hj : j < S'.length)
     (hσ : F.reindex j ≤ F.reindex (j + 1)) :
     F.levelMap (j + 1) (Nat.succ_le_of_lt hj) ≫ S.ambientSeq.transitionMap hσ =
@@ -53,7 +57,6 @@ theorem levelMap_succ_comp_transitionMap (F : ChartFlatBaseChange S S') (j : ℕ
   rw [Category.assoc, key] at hw
   exact hw
 
-@[reassoc]
 theorem strictTransformComparison_succ_comp_strictTransformMapOfLE (F : ChartFlatBaseChange S S') (j : ℕ) (hj : j < S'.length)
     (hσ : F.reindex j ≤ F.reindex (j + 1)) :
     F.strictTransformComparison (j + 1) (Nat.succ_le_of_lt hj) ≫ S.strictTransformMapOfLE hσ =
@@ -70,13 +73,12 @@ theorem strictTransformComparison_succ_comp_strictTransformMapOfLE (F : ChartFla
     rw [Category.assoc, F.strictTransformComparison_comp_strictTransformι, ← Category.assoc, S'.strictTransformMap_comp_strictTransformι, Category.assoc]
   rw [e1, e2]
 
-@[reassoc]
 theorem inr_totalSpaceMap (F : ChartFlatBaseChange S S') [AlgebraicGeometry.IsReduced Y]
     [AlgebraicGeometry.IsReduced Y'] (j : ℕ) (hj : j ≤ S'.length) :
     (coprod.inr : S'.detachedCoprod j ⟶ S'.totalSpace j) ≫ F.totalSpaceMap j hj =
       F.inactiveTotalMap j hj ≫
         (coprod.inr : S.detachedCoprod (F.reindex j) ⟶ S.totalSpace (F.reindex j)) := by
-  simp [ChartFlatBaseChange.totalSpaceMap]
+  rw [F.totalSpaceMap_eq_coprodMap j hj, coprod.inr_map]
 
 private theorem totalTransition_comp_totalSpaceMap (F : ChartFlatBaseChange S S')
     [AlgebraicGeometry.IsReduced Y] [AlgebraicGeometry.IsReduced Y'] (j : ℕ) (hj : j < S'.length)
@@ -134,7 +136,7 @@ private theorem totalCenter_eq_comap (F : ChartFlatBaseChange S S')
         (coprod.inr : S'.detachedCoprod i ⟶ S'.totalSpace i) = ⊤ := by
       rw [S'.totalCenter_eq]
       exact FunctorialResolution.Blowup.ker_comp_coprod_inl_comap_inr _
-    rw [r1, ← Scheme.IdealSheafData.comap_comp, F.inr_totalSpaceMap,
+    rw [r1, ← Scheme.IdealSheafData.comap_comp, F.inr_totalSpaceMap i hi.le,
       Scheme.IdealSheafData.comap_comp, S.totalCenter_eq,
       FunctorialResolution.Blowup.ker_comp_coprod_inl_comap_inr]
     simp
@@ -215,7 +217,8 @@ private theorem inducedBlowupsIso_hom_fst (F : ChartFlatBaseChange S S') [Algebr
     (i : ℕ) (hi : i ≤ (S'.inducedBlowups h').length) :
     (F.inducedBlowupsSchemeAtIsoPullback h h' i hi).hom ≫ pullback.fst F.baseMap ((S.inducedBlowups h).projectionToBase (F.reindex i))
       = (S'.inducedBlowups h').projectionToBase i :=
-  IsPullback.isoPullback_hom_fst _
+  IsPullback.isoPullback_hom_fst ((F.isPullback_totalSpaceMap h h' i
+    (by rwa [FunctorialResolution.EmbeddedResolution.EmbeddedBlowupSequence.inducedBlowups_length] at hi)).flip)
 
 private theorem inducedBlowupsIso_hom_snd (F : ChartFlatBaseChange S S') [AlgebraicGeometry.IsReduced Y]
     [AlgebraicGeometry.IsReduced Y'] (h : S.TransitionsAreBlowups) (h' : S'.TransitionsAreBlowups)
@@ -267,7 +270,8 @@ theorem isPullbackBlowupSequence_inducedBlowupsWithoutIso (F : ChartFlatBaseChan
     [AlgebraicGeometry.IsReduced Y] [AlgebraicGeometry.IsReduced Y']
     (h : S.TransitionsAreBlowups) (h' : S'.TransitionsAreBlowups) :
     IsPullbackBlowupSequence F.baseMap (S'.inducedBlowupsWithoutIso h') (S.inducedBlowupsWithoutIso h) :=
-  (F.isPullbackUpToEmptyCenters_inducedBlowups h h').isPullbackSequenceOfBlowups_withoutIsoBlowups
+  IsPullbackUpToEmptyCenters.isPullbackSequenceOfBlowups_withoutIsoBlowups
+    (F.isPullbackUpToEmptyCenters_inducedBlowups h h')
 
 end ChartFlatBaseChange
 

@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.Vanishing
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolBridge
-import GroundTheory.ProfiniteCohomology.PoincareDuality
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.Vanishing
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolBridge
+public import GroundTheory.ProfiniteCohomology.PoincareDuality
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -19,8 +24,8 @@ section Infinite
 variable {K L : Type} [Field K] [Field L] [Algebra K L] [FiniteDimensional K L] [IsGalois K L]
   (v : InfinitePlace K) (w : InfinitePlace L) [w.LiesOver v]
 
-include v in
 
+include v in
 theorem subsingleton_groupCohomology_one_infiniteDecomposition :
     Subsingleton (groupCohomology (Rep.ofMulDistribMulAction (MulAction.stabilizer Gal(L/K) w)
       (w.Completion)ˣ) 1) := by
@@ -49,8 +54,8 @@ theorem subsingleton_groupCohomology_one_infiniteDecomposition :
   refine Eq.trans ?_ h
   congr 1
 
-include v in
 
+include v in
 theorem isCyclic_infiniteDecomposition : IsCyclic (MulAction.stabilizer Gal(L/K) w) := by
   have h := natCard_infiniteDecompositionGroup v w
   rcases Nat.lt_or_ge (Module.finrank v.Completion w.Completion) 2 with h2 | h2
@@ -65,9 +70,9 @@ theorem isCyclic_infiniteDecomposition : IsCyclic (MulAction.stabilizer Gal(L/K)
     have h2' : Nat.card (MulAction.stabilizer Gal(L/K) w) = 2 := by omega
     exact isCyclic_of_prime_card (p := 2) h2'
 
+
 include v in
 set_option maxHeartbeats 1000000 in
-
 theorem subsingleton_cohomology_three_infiniteDecomposition :
     Subsingleton (cohomology (Rep.ofMulDistribMulAction (MulAction.stabilizer Gal(L/K) w)
       (w.Completion)ˣ) 3) := by
@@ -86,8 +91,6 @@ theorem subsingleton_cohomology_three_infiniteDecomposition :
 end Infinite
 
 section Global
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 theorem subsingleton_cohomology_three_galUnitsZ_adicCompletion {K : FiniteSubfield}
     (v : HeightOneSpectrum (𝓞 K.1)) :

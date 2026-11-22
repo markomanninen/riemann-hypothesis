@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutMK2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEXMkTopBump
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEXMTC
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEXMkCpt
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutMK2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEXMkTopBump
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEXMTC
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEXMkCpt
+
+@[expose] public section
 
 noncomputable section
 

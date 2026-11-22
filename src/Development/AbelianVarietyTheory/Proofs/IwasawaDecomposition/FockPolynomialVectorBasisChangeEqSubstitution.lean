@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TotalDegreeSubstFLe
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfPderivStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TotalDegreeSubstFLe
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfPderivStable
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.CompactHowe Matrix Complex
 open scoped TensorProduct Real Classical
@@ -120,6 +124,37 @@ theorem aPlus_comm_one (τ : D.what₂.Tau) (z : Matrix (Fin T.rank) (Fin S.rank
     (z' : Matrix (Fin T.rank) (Fin S.rank) ℂ) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) :
     aPlus (heisO ψ S T) θ τ (cplxO 1 1) z (aPlus (heisO ψ S T) θ τ' (cplxO 1 1) z' f) =
     aPlus (heisO ψ S T) θ τ' (cplxO 1 1) z' (aPlus (heisO ψ S T) θ τ (cplxO 1 1) z f) := by
+  have theta_add {f g : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (hg : IsThetaFunO ψ S T g) :
+      IsThetaFunO ψ S T (f + g) := by
+    refine {
+        quasi γ w := by simp only [Pi.add_apply, hf.quasi, hg.quasi, mul_add]
+        level := by
+          obtain ⟨U, hU, h1⟩ := hf.level
+          obtain ⟨U', hU', h2⟩ := hg.level
+          refine ⟨U ⊓ U', hU.inter hU', fun u hu h0 => ?_⟩
+          funext w
+          have e1 := congrFun (h1 u hu.1 h0) w
+          have e2 := congrFun (h2 u hu.2 h0) w
+          unfold heisO at e1 e2 ⊢
+          rw [Pi.add_apply, Pi.add_apply, mul_add, e1, e2]
+        cont := hf.cont.add hg.cont
+        smooth k L h1 h2 w := (hf.smooth k L h1 h2 w).add (hg.smooth k L h1 h2 w)
+
+    }
+  have theta_smul (c : ℂ) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) : IsThetaFunO ψ S T (c • f) := by
+    refine {
+        quasi γ w := by
+          rw [Pi.smul_apply, Pi.smul_apply, hf.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
+        level := by
+          obtain ⟨U, hU, h1⟩ := hf.level
+          refine ⟨U, hU, fun u hu h0 => ?_⟩
+          funext w
+          have e1 := congrFun (h1 u hu h0) w
+          unfold heisO at e1 ⊢
+          rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+        cont := hf.cont.const_smul c
+        smooth k L h1 h2 w := contDiff_const.mul (hf.smooth k L h1 h2 w)
+    }
   have ht := fun τ z => theta_dRho hθ hψ τ z hf
   have hc := fun τ z τ' z' => dRho_comm hψ hθ τ z τ' z' hf
   obtain ⟨h1, h2⟩ := omDir_I τ z τ' z'
@@ -139,31 +174,95 @@ theorem pureTensorO_X_mul (BS : D.what₂.Tau → Matrix (Fin S.rank) (Fin S.ran
     pureTensorO ψ θ S T (fun _ => 1) (fun _ => 1) BS BT f (MvPolynomial.X v * Q) =
       aPlus (heisO ψ S T) θ v.1 (cplxO 1 1) (unitMap (BS v.1) (BT v.1) v.2.1 v.2.2)
         (pureTensorO ψ θ S T (fun _ => 1) (fun _ => 1) BS BT f Q) := by
+  have theta_add {f g : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (hg : IsThetaFunO ψ S T g) :
+      IsThetaFunO ψ S T (f + g) := by
+    refine {
+        quasi γ w := by simp only [Pi.add_apply, hf.quasi, hg.quasi, mul_add]
+        level := by
+          obtain ⟨U, hU, h1⟩ := hf.level
+          obtain ⟨U', hU', h2⟩ := hg.level
+          refine ⟨U ⊓ U', hU.inter hU', fun u hu h0 => ?_⟩
+          funext w
+          have e1 := congrFun (h1 u hu.1 h0) w
+          have e2 := congrFun (h2 u hu.2 h0) w
+          unfold heisO at e1 e2 ⊢
+          rw [Pi.add_apply, Pi.add_apply, mul_add, e1, e2]
+        cont := hf.cont.add hg.cont
+        smooth k L h1 h2 w := (hf.smooth k L h1 h2 w).add (hg.smooth k L h1 h2 w)
+
+    }
+  have theta_smul (c : ℂ) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) : IsThetaFunO ψ S T (c • f) := by
+    refine {
+        quasi γ w := by
+          rw [Pi.smul_apply, Pi.smul_apply, hf.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
+        level := by
+          obtain ⟨U, hU, h1⟩ := hf.level
+          refine ⟨U, hU, fun u hu h0 => ?_⟩
+          funext w
+          have e1 := congrFun (h1 u hu h0) w
+          unfold heisO at e1 ⊢
+          rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+        cont := hf.cont.const_smul c
+        smooth k L h1 h2 w := contDiff_const.mul (hf.smooth k L h1 h2 w)
+    }
   unfold pureTensorO
   exact pure_X_mul (A := aPlusAll (heisO ψ S T) θ (fun _ => cplxO 1 1) BS BT) (P := IsThetaFunO ψ S T)
     (fun _ _ => theta_add) (fun a _ => theta_smul a)
     (fun _ _ h => aPlus_theta hψ hθ _ _ _ h) (fun i j _ h => aPlus_comm_one hψ hθ i.1 _ j.1 _ h)
     (fun i _ _ h h' => aPlus_add hψ hθ i.1 _ _ h h') (fun i a _ h => aPlus_smul hψ hθ i.1 _ _ a h) hf Q v
 
-omit hψ hθ in
 
+omit hψ hθ in
 theorem pureTensorO_subst : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (S T : HSp D), IsStdChar D ψ (-1) → IsInfFam θ → ∀ (BS g : D.what₂.Tau → Matrix (Fin S.rank) (Fin S.rank) ℂ) (BT h : D.what₂.Tau → Matrix (Fin T.rank) (Fin T.rank) ℂ) (f : WO S T → ℂ), IsThetaFunO ψ S T f → ∀ P, pureTensorO ψ θ S T (fun _ => 1) (fun _ => 1) (fun τ => BS τ * g τ) (fun τ => BT τ * h τ) f P = pureTensorO ψ θ S T (fun _ => 1) (fun _ => 1) BS BT f (substF h (fun τ => ((g τ)⁻¹)ᵀ) P) := by
   intro D ψ θ S T hψ hθ BS g BT h f hf P
+  have theta_add {f g : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (hg : IsThetaFunO ψ S T g) :
+      IsThetaFunO ψ S T (f + g) := by
+    refine {
+        quasi γ w := by simp only [Pi.add_apply, hf.quasi, hg.quasi, mul_add]
+        level := by
+          obtain ⟨U, hU, h1⟩ := hf.level
+          obtain ⟨U', hU', h2⟩ := hg.level
+          refine ⟨U ⊓ U', hU.inter hU', fun u hu h0 => ?_⟩
+          funext w
+          have e1 := congrFun (h1 u hu.1 h0) w
+          have e2 := congrFun (h2 u hu.2 h0) w
+          unfold heisO at e1 e2 ⊢
+          rw [Pi.add_apply, Pi.add_apply, mul_add, e1, e2]
+        cont := hf.cont.add hg.cont
+        smooth k L h1 h2 w := (hf.smooth k L h1 h2 w).add (hg.smooth k L h1 h2 w)
+
+    }
+  have theta_smul (c : ℂ) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) : IsThetaFunO ψ S T (c • f) := by
+    refine {
+        quasi γ w := by
+          rw [Pi.smul_apply, Pi.smul_apply, hf.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
+        level := by
+          obtain ⟨U, hU, h1⟩ := hf.level
+          refine ⟨U, hU, fun u hu h0 => ?_⟩
+          funext w
+          have e1 := congrFun (h1 u hu h0) w
+          unfold heisO at e1 ⊢
+          rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+        cont := hf.cont.const_smul c
+        smooth k L h1 h2 w := contDiff_const.mul (hf.smooth k L h1 h2 w)
+    }
   induction P using MvPolynomial.induction_on with
   | C a =>
     rw [← mul_one (MvPolynomial.C a), MvPolynomial.C_mul', map_smul, map_smul, map_smul, map_one (substF _ _)]
     unfold pureTensorO
     rw [pure_one, pure_one]
-  | add p q hp hq => rw [map_add, map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
   | mul_X p v hp =>
     have hm : IsThetaFunO ψ S T
         (pureTensorO ψ θ S T (fun _ => 1) (fun _ => 1) BS BT f (substF h (fun τ => ((g τ)⁻¹)ᵀ) p)) :=
       pure_mem (P := IsThetaFunO ψ S T) (fun _ _ => theta_add) (fun a _ => theta_smul a)
         (fun _ _ h => aPlus_theta hψ hθ _ _ _ h) hf _
-    rw [mul_comm, pureTensorO_X_mul hψ hθ _ _ hf, hp, map_mul, substF_X, unitMap_mul, aPlus_dir_sum hψ hθ _ _ _ hm,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [mul_comm, pureTensorO_X_mul hψ hθ _ _ hf, hp, map_mul, substF_X, unitMap_mul, aPlus_dir_sum hψ hθ _ _ _ hm,
       Finset.sum_mul, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [aPlus_dir_sum hψ hθ _ _ _ hm, Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [aPlus_dir_sum hψ hθ _ _ _ hm, Finset.sum_mul, map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [aPlus_dir_smul hψ hθ _ _ _ hm, mul_assoc, MvPolynomial.C_mul', map_smul, pureTensorO_X_mul hψ hθ _ _ hf]
     rfl

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementZ
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementZ
+
+@[expose] public section
 
 open PowerSeries
 
@@ -31,10 +35,6 @@ def PlusLogDeriv : Prop :=
     DL W (toL (tS W xP) * DL W (xL W))
       = 2 * xL W - toL (xPlus W xP yP) - toL (xPlus W xP (W.toAffine.negY xP yP))
 
-def PlusNeg : Prop :=
-  ∀ (R : Type u) [CommRing R] (W : WeierstrassCurve R) (xP yP : R), W.toAffine.Equation xP yP →
-    (xPlus W xP yP).subst (iSer W) = xPlus W xP (W.toAffine.negY xP yP)
-
 def PlusMap : Prop :=
   ∀ (R : Type u) (S : Type v) [CommRing R] [CommRing S] (φ : R →+* S) (W : WeierstrassCurve R)
     (xP yP : R),
@@ -64,20 +64,20 @@ def TwoTorsionZ : Prop :=
     kap = 3 * xT ^ 2 + 2 * W.a₂ * xT + W.a₄ - W.a₁ * yT ∧
     toL w₁ * (wpL W - HahnSeries.C e₁) = 1 ∧
     X ^ 2 ∣ w₁ ∧ coeff 2 w₁ = 1 ∧ w₁.subst (-X : K⟦X⟧) = w₁ ∧
-    derivative K w₁ ^ 2 = 4 * w₁ * (1 + 3 * C e₁ * w₁ + C kap * w₁ ^ 2) ∧
-    derivative K (derivative K w₁) = 2 + 12 * C e₁ * w₁ + 6 * C kap * w₁ ^ 2 ∧
+    derivative w₁ ^ 2 = 4 * w₁ * (1 + 3 * C e₁ * w₁ + C kap * w₁ ^ 2) ∧
+    derivative (derivative w₁) = 2 + 12 * C e₁ * w₁ + 6 * C kap * w₁ ^ 2 ∧
     (xPlus W xT yT).subst (expSer W) + C (W.b₂ / 12) = C e₁ + C kap * w₁ ∧
     ∀ e₂ e₃ : K, (4 * Polynomial.X ^ 3 - Polynomial.C (g₂ W) * Polynomial.X
         - Polynomial.C (g₃ W) : Polynomial K)
         = 4 * (Polynomial.X - Polynomial.C e₁) * (Polynomial.X - Polynomial.C e₂)
           * (Polynomial.X - Polynomial.C e₃) →
       kap = (e₁ - e₂) * (e₁ - e₃) ∧
-      derivative K w₁ ^ 2 = 4 * w₁ * (1 + C (e₁ - e₂) * w₁) * (1 + C (e₁ - e₃) * w₁)
+      derivative w₁ ^ 2 = 4 * w₁ * (1 + C (e₁ - e₂) * w₁) * (1 + C (e₁ - e₃) * w₁)
 
 def PlusZ : Prop :=
   ∀ (K : Type u) [Field K] [CharZero K] (W : WeierstrassCurve K) (xP yP : K),
     W.toAffine.Equation xP yP →
-    IsFlow (curveS W) (derivative K) ((xPlus W xP yP).subst (expSer W))
+    IsFlow (curveS W) (derivative (R := K)) ((xPlus W xP yP).subst (expSer W))
       ((yPlus W xP yP).subst (expSer W)) ∧
     toL ((tS W xP).subst (expSer W)) * (xZ W - HahnSeries.C xP) = 1 ∧
     dL (toL ((tS W xP).subst (expSer W)) * dL (wpL W))

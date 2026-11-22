@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LocalSystemQuotients.InUQT
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WittChartDescendLevelStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MapHBijOfRes
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FlatOfEtalePoly
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LocalSystemQuotients.InUQT
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WittChartDescendLevelStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MapHBijOfRes
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FlatOfEtalePoly
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -54,8 +58,8 @@ theorem iso_bij {m : ℕ} {T T' : Thick (Wc.L l (B.schFn q) ρ m)} (e : T ≅ T'
   · exact RingHom.congr_fun (congrArg (fun f => f.φ) e.hom_inv_id) x
   · exact RingHom.congr_fun (congrArg (fun f => f.φ) e.inv_hom_id) x
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem local_bij (q : X ⟶ Spec (CommRingCat.of O)) (ρ : O →+* k) {n : ℕ} (hn : n ≠ 0) {W : X.Opens} {d : ℕ}
     (cW : Coord q W d) (j : ℕ) :
     Function.Bijective (((mqS q ρ hn {W}).o (IdF.span _ ((l : WittVector l k) ^ n)) (fun _ => le_rfl)).pull j) := by

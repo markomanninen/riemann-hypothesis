@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ImportsAlt
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.LiftsAtThinLetterType
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.CoeffXSubCPowSelf
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ImportsAlt
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.LiftsAtThinLetterType
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.CoeffXSubCPowSelf
+
+@[expose] public section
 
 noncomputable section
 

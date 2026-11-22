@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.FilZeroEqRangeCDAndCDInjective
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.CoeffEqZeroOfSumTmulLinearIndependentEqZero
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.LinearIndependentQlIntegerBasisSmulLatticeBasis
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsSumTmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.FilZeroEqRangeCDAndCDInjective
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.CoeffEqZeroOfSumTmulLinearIndependentEqZero
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.LinearIndependentQlIntegerBasisSmulLatticeBasis
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsSumTmul
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 set_option maxHeartbeats 2000000
@@ -25,7 +30,16 @@ private theorem abstract_indep {R K O B V C σ κ : Type} [CommRing R] [Field K]
   have h : ∑ p : σ × κ, w p ⊗ₜ[K] f (y p.2 p.1) = 0 := by
     rw [← hd, Fintype.sum_prod_type_right]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [hy k, map_sum, AddMonoidHom.finset_sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hy k, map_sum]
+    have hsum (S : Finset σ) :
+        (∑ s ∈ S, act (ω s ⊗ₜ[R] y k s)) (e k) =
+          ∑ s ∈ S, act (ω s ⊗ₜ[R] y k s) (e k) := by
+      classical
+      induction S using Finset.induction_on with
+      | empty => simp
+      | @insert a S ha ih => simp [ha, ih]
+    rw [hsum]
     exact Finset.sum_congr rfl fun s _ => (hact s k _).symm
   have h0 := UpperTheory.KN.coeff_eq_zero_of_sum_tmul_linearIndependent_eq_zero K V C (σ × κ) w hw _ h
   rw [hy k]

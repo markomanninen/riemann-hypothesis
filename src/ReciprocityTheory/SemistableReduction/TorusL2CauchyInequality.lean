@@ -1,12 +1,16 @@
-import ReciprocityTheory.SemistableReduction.SJCore
-import ReciprocityTheory.SemistableReduction.SjHolds
-import ReciprocityTheory.SemistableReduction.LagrangeIdealLiftsFact
-import ReciprocityTheory.SemistableReduction.HeightLowerBound
-import ReciprocityTheory.SemistableReduction.IntCores
-import ReciprocityTheory.SemistableReduction.TorusMean
-import ReciprocityTheory.SemistableReduction.TorusLex
-import ReciprocityTheory.SemistableReduction.GramOfLinearOrder
-import ReciprocityTheory.SemistableReduction.SphereTorus
+module
+
+public import ReciprocityTheory.SemistableReduction.SJCore
+public import ReciprocityTheory.SemistableReduction.SjHolds
+public import ReciprocityTheory.SemistableReduction.LagrangeIdealLiftsFact
+public import ReciprocityTheory.SemistableReduction.HeightLowerBound
+public import ReciprocityTheory.SemistableReduction.IntCores
+public import ReciprocityTheory.SemistableReduction.TorusMean
+public import ReciprocityTheory.SemistableReduction.TorusLex
+public import ReciprocityTheory.SemistableReduction.GramOfLinearOrder
+public import ReciprocityTheory.SemistableReduction.SphereTorus
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights.Closed
 

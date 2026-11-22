@@ -1,5 +1,9 @@
-import Formalism.GradedWeylDivisibility.FinalD
-import Formalism.GradedWeylDivisibility.StatementE
+module
+
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Formalism.GradedWeylDivisibility.StatementE
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -20,11 +24,11 @@ def lrfc_iota : MvPolynomial (Fin r × Fin n) R →+*
 def lrfc_coeffT (d : Fin r × Fin n →₀ ℕ)
     (G : MvPolynomial (Fin r × Fin n) (MvPolynomial (Fin r × Fin n) R)) :
     MvPolynomial (Fin r × Fin n) R :=
-  ∑ m ∈ G.support, monomial m (coeff d (coeff m G))
+  ∑ m ∈ G.support, monomial m (AddMonoidAlgebra.coeff (AddMonoidAlgebra.coeff G m) d)
 
 theorem lrfc_coeff_coeffT (d m : Fin r × Fin n →₀ ℕ)
     (G : MvPolynomial (Fin r × Fin n) (MvPolynomial (Fin r × Fin n) R)) :
-    coeff m (lrfc_coeffT d G) = coeff d (coeff m G) := by
+    AddMonoidAlgebra.coeff (lrfc_coeffT d G) m = AddMonoidAlgebra.coeff (AddMonoidAlgebra.coeff G m) d := by
   classical
   unfold lrfc_coeffT
   rw [coeff_sum]
@@ -32,16 +36,11 @@ theorem lrfc_coeff_coeffT (d m : Fin r × Fin n →₀ ℕ)
   rw [Finset.sum_ite_eq']
   split_ifs with h
   · rfl
-  · rw [notMem_support_iff.mp h, coeff_zero]
+  · simp [notMem_support_iff.mp h]
 
 theorem lrfc_coeffT_add (d : Fin r × Fin n →₀ ℕ)
     (G H : MvPolynomial (Fin r × Fin n) (MvPolynomial (Fin r × Fin n) R)) :
     lrfc_coeffT d (G + H) = lrfc_coeffT d G + lrfc_coeffT d H := by
-  ext m
-  simp [lrfc_coeff_coeffT]
-
-theorem lrfc_coeffT_zero (d : Fin r × Fin n →₀ ℕ) :
-    lrfc_coeffT (R := R) d 0 = 0 := by
   ext m
   simp [lrfc_coeff_coeffT]
 
@@ -52,7 +51,7 @@ theorem lrfc_coeffT_sum {ι : Type*} (s : Finset ι) (d : Fin r × Fin n →₀ 
   simp [lrfc_coeff_coeffT, coeff_sum]
 
 theorem lrfc_coeffT_monomial (d u : Fin r × Fin n →₀ ℕ) (c : MvPolynomial (Fin r × Fin n) R) :
-    lrfc_coeffT d (monomial u c) = monomial u (coeff d c) := by
+    lrfc_coeffT d (monomial u c) = monomial u (AddMonoidAlgebra.coeff c d) := by
   classical
   ext m
   rw [lrfc_coeff_coeffT, coeff_monomial, coeff_monomial]
@@ -158,7 +157,8 @@ theorem lrfc_coeffT_Phi (L : List (Fin r × Fin r × (Fin r × Fin n)))
       rw [List.nodup_append] at hL'
       intro h
       exact hL'.2.2 v h v (by simp) rfl
-    rw [lrfc_Phi_append_single, lrfc_tau_iota, Polynomial.eval₂_eq_sum, Polynomial.sum_def,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [lrfc_Phi_append_single, lrfc_tau_iota, Polynomial.eval₂_eq_sum, Polynomial.sum_def,
       map_sum, lrfc_coeffT_sum]
     have key : ∀ (j : ℕ) (c : MvPolynomial (Fin r × Fin n) R),
         lrfc_coeffT d (lrfc_Phi w (lrfc_iota c * C (X (s, a, v).2.2) ^ j)) =
@@ -173,7 +173,7 @@ theorem lrfc_coeffT_Phi (L : List (Fin r × Fin r × (Fin r × Fin n)))
       simp only [Finsupp.single_le_iff]
     simp only [key, ih hw]
     rw [Finset.sum_eq_single (d v)]
-    · simp only [le_refl, if_true]
+    · simp only [le_refl, ite_true]
       have hfill : w.map (fun l => (l.1, l.2.1, (d - Finsupp.single v (d v)) l.2.2)) =
           w.map (fun l => (l.1, l.2.1, d l.2.2)) := by
         apply List.map_congr_left
@@ -239,7 +239,7 @@ theorem lrf_mem_col (s : Fin n) (l : Fin r × Fin r × (Fin r × Fin n)) :
     simp only at h1 h2 h3
     refine ⟨a, List.mem_finRange a, ?_⟩
     have hr : s.val < r := lt_trans h2 a.isLt
-    rw [dif_pos ⟨h2, hr⟩, h3]
+    rw [dite_eq_left ⟨h2, hr⟩, h3]
     congr 2
     exact Fin.ext h1.symm
 
@@ -347,7 +347,7 @@ theorem lrf_pt (L : List (Fin r × Fin r × (Fin r × Fin n)))
       simp
     rw [lrfc_Phi_append_single, lrfc_tau, aeval_X]
     by_cases hv : v.1 = l.2.1
-    · rw [if_pos hv, map_add, map_mul, map_add, map_mul, ihw v, ihw (l.1, v.2)]
+    · rw [ite_eq_left hv, map_add (f := _), map_mul, map_add (f := _), map_mul, ihw v, ihw (l.1, v.2)]
       have hC : lrfc_Phi w (C (X l.2.2)) = C (X l.2.2 : MvPolynomial (Fin r × Fin n) R) :=
         (lrfc_Phi w).commutes (X l.2.2)
       rw [hC, eval_C]
@@ -356,13 +356,13 @@ theorem lrf_pt (L : List (Fin r × Fin r × (Fin r × Fin n)))
         obtain ⟨x, hx, hxe⟩ := List.mem_map.mp h
         apply (hPl x hx l (by simp)).2
         rw [← (hMw x hx).2, hxe]
-      rw [if_neg hs, add_zero]
+      rw [ite_eq_right hs, add_zero]
       by_cases hc : l.1.val = v.2.val
       · have hvl : v = l.2.2 := by
           refine Prod.ext (by rw [hv, hMl.2]) (Fin.ext ?_)
           rw [← hc, hMl.1]
         have h1 : idFrame R r n (l.1, v.2) = 1 := by simp [idFrame, hc]
-        rw [h1, if_neg (by rw [hvl]; exact hlw), if_pos ((hmem v).2 (Or.inr hvl)), ← hvl]
+        rw [h1, ite_eq_right (by rw [hvl]; exact hlw), ite_eq_left ((hmem v).2 (Or.inr hvl)), ← hvl]
         simp
       · have hvl : v ≠ l.2.2 := by
           intro h
@@ -382,7 +382,7 @@ theorem lrf_pt (L : List (Fin r × Fin r × (Fin r × Fin n)))
       have e : (v ∈ (w ++ [l]).map (·.2.2)) ↔ v ∈ w.map (·.2.2) := by
         rw [hmem]
         exact or_iff_left hvl
-      rw [if_neg hv, add_zero, ihw v]
+      rw [ite_eq_right hv, add_zero, ihw v]
       simp only [e]
 
 theorem lrf_pt_L (v : Fin r × Fin n) :
@@ -409,14 +409,14 @@ theorem lrf_eval_Phi (F : MvPolynomial (Fin r × Fin n) R) :
 
 theorem lrf_eval_coeffT (d : Fin r × Fin n →₀ ℕ)
     (G : MvPolynomial (Fin r × Fin n) (MvPolynomial (Fin r × Fin n) R)) :
-    eval (idFrame R r n) (lrfc_coeffT d G) = coeff d (eval (lrf_idS R r n) G) := by
+    eval (idFrame R r n) (lrfc_coeffT d G) = AddMonoidAlgebra.coeff (eval (lrf_idS R r n) G) d := by
   induction G using MvPolynomial.induction_on' with
   | monomial u c =>
     rw [lrfc_coeffT_monomial, eval_monomial, eval_monomial]
     have h : (u.prod fun i k => lrf_idS R r n i ^ k) = C (u.prod fun i k => idFrame R r n i ^ k) := by
       simp only [lrf_idS, Finsupp.prod, map_prod, map_pow]
     rw [h, mul_comm c, coeff_C_mul, mul_comm]
-  | add p q hp hq => rw [lrfc_coeffT_add, map_add, map_add, coeff_add, hp, hq]
+  | add p q hp hq => rw [lrfc_coeffT_add, map_add (f := _), map_add (f := _), AddMonoidAlgebra.coeff_add, hp, hq, Finsupp.add_apply]
 
 def lrf_off (m : Fin r × Fin n →₀ ℕ) : Fin r × Fin n →₀ ℕ := m.filter fun v => v.2.val < v.1.val
 
@@ -480,11 +480,11 @@ theorem lrf_unique (m e : Fin r × Fin n →₀ ℕ) (hm : LowerTri m) (he : Low
 
 theorem lrf_coeff_ell (ν : Fin n → ℕ) (F : MvPolynomial (Fin r × Fin n) R) (e : Fin r × Fin n →₀ ℕ)
     (hF : IsWeightedHomogeneous (colW r n) F ν) (he : LowerTri e) (hcol : ∀ s : Fin n, ∑ a : Fin r, e (a, s) = ν s) :
-    coeff (lrf_off e) (eval₂ C (lrf_ell R r n) F) = coeff e F := by
+    AddMonoidAlgebra.coeff (eval₂ C (lrf_ell R r n) F) (lrf_off e) = AddMonoidAlgebra.coeff F e := by
   classical
   rw [eval₂_eq', coeff_sum]
-  have key : ∀ m ∈ F.support, coeff (lrf_off e) (C (coeff m F) * ∏ i, lrf_ell R r n i ^ m i) =
-      if m = e then coeff m F else 0 := by
+  have key : ∀ m ∈ F.support, AddMonoidAlgebra.coeff (C (AddMonoidAlgebra.coeff F m) * ∏ i, lrf_ell R r n i ^ m i) (lrf_off e) =
+      if m = e then AddMonoidAlgebra.coeff F m else 0 := by
     intro m hm
     have hp : (∏ i, lrf_ell R r n i ^ m i) = m.prod fun v k => lrf_ell R r n v ^ k := by
       rw [Finsupp.prod_fintype _ _ (fun i => pow_zero _)]
@@ -494,12 +494,12 @@ theorem lrf_coeff_ell (ν : Fin n → ℕ) (F : MvPolynomial (Fin r × Fin n) R)
       by_cases hme : m = e
       · subst hme
         simp
-      · rw [if_neg hme, if_neg, mul_zero]
+      · rw [ite_eq_right hme, ite_eq_right, mul_zero]
         intro hoff
         apply hme
         refine lrf_unique m e hl he hoff fun s => ?_
         rw [hcol s, ← lccomp_weight_colW_apply, hF (mem_support_iff.mp hm)]
-    · rw [lrf_prod_upper m hl, coeff_zero, mul_zero, if_neg]
+    · rw [lrf_prod_upper m hl, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, mul_zero, ite_eq_right]
       rintro rfl
       exact hl he
   rw [Finset.sum_congr rfl key, Finset.sum_ite_eq']
@@ -520,7 +520,7 @@ theorem coefficient_word : CoeffWord := by
     intro u hu
     rw [lrf_mem_vars] at hu
     simp [lrf_off, Finsupp.filter_apply, hu]
-  rw [if_pos hc, lrf_wordOf e (lrf_off e) hd] at h1
+  rw [ite_eq_left hc, lrf_wordOf e (lrf_off e) hd] at h1
   rw [← h1, lrf_eval_coeffT, lrf_eval_Phi, lrf_coeff_ell ν F e hF he hcol]
 
 end Formalism.CohomologicalDescent.LR

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.PAdicHodge.GaloisOnCp
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.GaloisOnCp
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.PAdicHodge
@@ -11,8 +16,8 @@ noncomputable section
 theorem not_dvd_choose_pow_of_lt {p : ℕ} [hp : Fact p.Prime] {d k : ℕ} (h1 : p ^ k ≤ d)
     (h2 : d < p ^ (k + 1)) : ¬ p ∣ Nat.choose d (p ^ k) := by
   have hlog : Nat.log p d = k := Nat.log_eq_of_pow_le_of_lt_pow h1 h2
-  have hv : padicValNat p (Nat.choose d (p ^ k)) = 0 := by
-    rw [padicValNat_choose h1 (b := k + 1) (by omega), Finset.card_eq_zero,
+  have hv : multiplicity p (Nat.choose d (p ^ k)) = 0 := by
+    rw [multiplicity_choose (p := p) h1 (b := k + 1) (by rw [hlog]; omega), Finset.card_eq_zero,
       Finset.filter_eq_empty_iff]
     intro i hi
     rw [Finset.mem_Ico] at hi
@@ -20,10 +25,7 @@ theorem not_dvd_choose_pow_of_lt {p : ℕ} [hp : Fact p.Prime] {d k : ℕ} (h1 :
     rw [Nat.mod_eq_zero_of_dvd hdvd, zero_add, not_le]
     exact Nat.mod_lt _ (pow_pos hp.out.pos i)
   have hne : Nat.choose d (p ^ k) ≠ 0 := (Nat.choose_pos h1).ne'
-  rcases (padicValNat.eq_zero_iff.1 hv) with h | h | h
-  · exact absurd h hp.out.one_lt.ne'
-  · exact absurd h hne
-  · exact h
+  simpa only [Nat.multiplicity_eq_zero_iff, hp.out.ne_one, hne, false_or] using hv
 
 theorem not_sq_dvd_choose_pow_pow {p : ℕ} [hp : Fact p.Prime] {k : ℕ} (hk : 1 ≤ k) :
     ¬ p ^ 2 ∣ Nat.choose (p ^ k) (p ^ (k - 1)) := by
@@ -33,8 +35,8 @@ theorem not_sq_dvd_choose_pow_pow {p : ℕ} [hp : Fact p.Prime] {k : ℕ} (hk : 
   have hsub : p ^ k - p ^ (k - 1) = p ^ (k - 1) * (p - 1) := by
     obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by omega⟩
     simp only [Nat.add_sub_cancel, pow_succ, Nat.mul_sub, mul_one]
-  have hv : padicValNat p (Nat.choose (p ^ k) (p ^ (k - 1))) ≤ 1 := by
-    rw [padicValNat_choose hle (b := k + 1) (by omega)]
+  have hv : multiplicity p (Nat.choose (p ^ k) (p ^ (k - 1))) ≤ 1 := by
+    rw [multiplicity_choose (p := p) hle (b := k + 1) (by rw [hlog]; omega)]
     calc _ ≤ ({k} : Finset ℕ).card := by
           refine Finset.card_le_card fun i hi => ?_
           rw [Finset.mem_filter, Finset.mem_Ico] at hi
@@ -51,7 +53,7 @@ theorem not_sq_dvd_choose_pow_pow {p : ℕ} [hp : Fact p.Prime] {k : ℕ} (hk : 
       _ = 1 := Finset.card_singleton k
   intro hdvd
   have hne : Nat.choose (p ^ k) (p ^ (k - 1)) ≠ 0 := (Nat.choose_pos hle).ne'
-  have := (padicValNat_dvd_iff_le hne).1 hdvd
+  have := (multiplicity_dvd_iff_le hne).1 hdvd
   omega
 
 section Norms
@@ -64,22 +66,20 @@ theorem norm_natCast_padicAlgCl {n : ℕ} (hn : n ≠ 0) :
     rw [Rat.cast_natCast, map_natCast]
   rw [h1]
   refine (PadicAlgCl.norm_extends p _).trans ?_
-  rw [Padic.eq_padicNorm, padicNorm.eq_zpow_of_nonzero (by exact_mod_cast hn),
-    padicValRat.of_nat]
-  push_cast
-  rfl
+  rw [Padic.eq_padicNorm, padicNorm.eq_zpow_of_ne_zero (by exact_mod_cast hn),
+    Rat.cast_zpow, Rat.cast_natCast, padicValRat.of_nat, Nat.padicValNat_def]
 
 theorem norm_natCast_padicAlgCl_of_not_dvd {n : ℕ} (h : ¬ p ∣ n) :
     ‖(n : PadicAlgCl p)‖ = 1 := by
   have hn : n ≠ 0 := by rintro rfl; exact h (dvd_zero p)
-  rw [norm_natCast_padicAlgCl hn, padicValNat.eq_zero_of_not_dvd h]
+  rw [norm_natCast_padicAlgCl hn, Nat.padicValNat_def, multiplicity_eq_zero_of_not_dvd h]
   simp
 
 theorem inv_le_norm_natCast_padicAlgCl {n : ℕ} (hn : n ≠ 0) (h : ¬ p ^ 2 ∣ n) :
     (p : ℝ)⁻¹ ≤ ‖(n : PadicAlgCl p)‖ := by
   have hv : padicValNat p n ≤ 1 := by
     by_contra hv
-    exact h ((pow_dvd_pow p (by omega)).trans pow_padicValNat_dvd)
+    exact h ((pow_dvd_pow p (by omega)).trans (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _)))
   rw [norm_natCast_padicAlgCl hn, ← zpow_neg_one]
   have hp1 : (1 : ℝ) ≤ p := by exact_mod_cast hp.out.one_lt.le
   exact zpow_le_zpow_right₀ hp1 (by omega)
@@ -100,8 +100,8 @@ theorem norm_multiset_sum_le_of_forall_le {s : Multiset E} {C : ℝ} (hC : 0 ≤
       (max_le (h a (Multiset.mem_cons_self a t))
         (ih fun b hb => h b (Multiset.mem_cons_of_mem hb)))
 
-omit [IsUltrametricDist E] in
 
+omit [IsUltrametricDist E] in
 theorem norm_multiset_prod_le_pow_card {s : Multiset E} {C : ℝ} (h : ∀ a ∈ s, ‖a‖ ≤ C) :
     ‖s.prod‖ ≤ C ^ Multiset.card s := by
   induction s using Multiset.induction_on with
@@ -112,8 +112,8 @@ theorem norm_multiset_prod_le_pow_card {s : Multiset E} {C : ℝ} (h : ∀ a ∈
       (ih fun b hb => h b (Multiset.mem_cons_of_mem hb)) (norm_nonneg _)
       ((norm_nonneg a).trans (h a (Multiset.mem_cons_self a t)))
 
-omit [IsUltrametricDist E] in
 
+omit [IsUltrametricDist E] in
 theorem norm_multiset_prod_eq (s : Multiset E) : ‖s.prod‖ = (s.map norm).prod := by
   induction s using Multiset.induction_on with
   | empty => simp
@@ -278,8 +278,8 @@ def axExponent (p k : ℕ) : ℝ := (p : ℝ) / ((p : ℝ) - 1) ^ 2 * (1 - ((p :
 
 theorem one_lt_prime_cast : (1 : ℝ) < p := by exact_mod_cast hp.out.one_lt
 
-omit hp in
 
+omit hp in
 theorem axExponent_zero : axExponent p 0 = 0 := by simp [axExponent]
 
 theorem axExponent_succ (k : ℕ) :

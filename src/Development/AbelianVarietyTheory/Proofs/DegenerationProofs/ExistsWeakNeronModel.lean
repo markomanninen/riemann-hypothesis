@@ -1,12 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
-import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SmoothFlatAlgebraFiniteCoverDecompStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsSchemeModelOfAffineSmoothChartStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsCoverModelIrreducibleSpecialFibreStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SmoothFlatAlgebraFiniteCoverDecompStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsSchemeModelOfAffineSmoothChartStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsCoverModelIrreducibleSpecialFibreStatement
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -128,8 +133,8 @@ section Alg
 variable (R K : Type) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R] [Field K] [Algebra R K] [IsFractionRing R K]
   {D : Type} [CommRing D] [Algebra K D] [Algebra R D] [IsScalarTower R K D]
 
-include K in
 
+include K in
 theorem flat_sub (B : Subalgebra R D) : Module.Flat R B := by
   rw [Module.Flat.flat_iff_torsion_eq_bot_of_isBezout, Submodule.eq_bot_iff]
   rintro x ⟨c, hc⟩
@@ -144,10 +149,10 @@ theorem flat_sub (B : Subalgebra R D) : Module.Flat R B := by
 def gen (B : Subalgebra R D) : TensorProduct R K B →ₐ[K] D :=
   Algebra.TensorProduct.lift (Algebra.ofId K D) B.val (fun _ _ => Commute.all _ _)
 
-omit [IsDomain R] [IsDiscreteValuationRing R] in
 
+omit [IsDomain R] [IsDiscreteValuationRing R] in
 theorem gen_injective (B : Subalgebra R D) : Function.Injective (gen R K B) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   letI : Algebra B (TensorProduct R K B) := Algebra.TensorProduct.rightAlgebra
   have hl : IsLocalization (Algebra.algebraMapSubmonoid B (nonZeroDivisors R)) (TensorProduct R K B) :=
@@ -164,8 +169,8 @@ theorem gen_injective (B : Subalgebra R D) : Function.Injective (gen R K B) := b
   rw [hb, map_zero] at e
   exact (IsLocalization.map_units (TensorProduct R K B) c).mul_left_eq_zero.1 e
 
-omit [IsDomain R] [IsDiscreteValuationRing R] [IsFractionRing R K] in
 
+omit [IsDomain R] [IsDiscreteValuationRing R] [IsFractionRing R K] in
 theorem gen_surjective {I : Type} (r : I → D)
     (h : Function.Surjective (MvPolynomial.eval₂Hom (algebraMap K D) r)) :
     Function.Surjective (gen R K (Algebra.adjoin R (Set.range r))) := by
@@ -307,7 +312,7 @@ theorem exists_weakNeron : ∀ (R K : Type) [CommRing R] [IsDomain R] [IsDiscret
       refine RingHom.ext fun x => ?_
       induction x using TensorProduct.induction_on with
       | zero => simp
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]
       | tmul x y =>
         have h₅ : c (φ i k y) = b y := congrArg (fun q => q y) hc
         show ψ' (x ⊗ₜ φ i k y) = _
@@ -326,7 +331,7 @@ theorem exists_weakNeron : ∀ (R K : Type) [CommRing R] [IsDomain R] [IsDiscret
     show (M i k).Y.hom ((spMap c.toRingHom ≫ g i k) _) = _
     rw [← Scheme.Hom.comp_apply, hb₀]
     haveI : IsLocalHom (algebraMap R V) := by
-      apply ((IsLocalRing.local_hom_TFAE (algebraMap R V)).out 0 2).2
+      apply ((IsLocalRing.local_hom_tfae (algebraMap R V)).out 1 3).2
       exact hmax.le
     exact IsLocalRing.comap_closedPoint (algebraMap R V)
   obtain ⟨l, hl⟩ := hcov i k _ hsp

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.NeutralLocalFields.Duality
+module
+
+public import Mathlib
+public import ReciprocityTheory.NeutralLocalFields.Duality
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 

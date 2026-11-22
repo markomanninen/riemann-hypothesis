@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.CayleyInverseMeasurable
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.CayleyInverseMeasurable
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,8 @@ def rhoH (X : lieU P Q) : ℝ≥0∞ :=
   ENNReal.ofReal (‖((1 + 1) - ((X : lieU P Q) : Matrix (Fin P ⊕ Fin Q) (Fin P ⊕ Fin Q) ℂ)).det‖⁻¹ ^
     (2 * (P + Q)))
 
-open Classical in
 
+open Classical in
 def cayF (X : lieU P Q) : UpqT P Q :=
   if h : ∃ g : UpqT P Q, UpqT.mat g *
       ((1 + 1) - ((X : lieU P Q) : Matrix (Fin P ⊕ Fin Q) (Fin P ⊕ Fin Q) ℂ)) =
@@ -44,14 +48,5 @@ def LocalHaarUnique : Prop :=
       β ((fun g => h * g) '' S) = β S) →
     (∀ K, IsCompact K → K ⊆ W → β K ≠ ⊤) → β W ≠ 0 →
     ∃ t : ℝ≥0∞, t ≠ 0 ∧ t ≠ ⊤ ∧ ∃ W' ∈ 𝓝 (1 : G), W' ⊆ W ∧ β.restrict W' = t • m.restrict W'
-
-def ExpCay : Prop :=
-  ∀ (P Q : ℕ) (m : Measure (UpqT P Q)) (lam : Measure (lieU P Q)), lam.IsAddHaarMeasure →
-  ∀ D : Set (lieU P Q), D ∈ 𝓝 (0 : lieU P Q) → MeasurableSet D →
-  ∀ f : lieU P Q → ℝ≥0∞, Measurable f → ContinuousAt f 0 → f 0 ≠ ⊤ →
-    (m.restrict (cayS D)).map (cayInv P Q) = (lam.restrict D).withDensity f →
-    Tendsto (fun r : ℝ => m {g | ∃ X ∈ ballU P Q r, UpqT.mat g =
-      NormedSpace.exp (X : Matrix (Fin P ⊕ Fin Q) (Fin P ⊕ Fin Q) ℂ)} /
-      lam (ballU P Q r)) (𝓝[>] 0) (𝓝 (f 0))
 
 end HcInf

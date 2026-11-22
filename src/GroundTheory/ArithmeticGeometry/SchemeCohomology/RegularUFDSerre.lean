@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularLocalDomain
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularLocalDomain
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -128,8 +133,8 @@ theorem hasProjectiveDimensionLT_residueField [IsRegularLocalRing R] {d : ℕ}
     (Shrink.linearEquiv R _).trans (Submodule.quotEquivOfEq _ _ hof)
   exact hasProjectiveDimensionLT_of_iso e.toModuleIso (d + 1)
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem hasProjectiveDimensionLT_of_residueField [IsLocalRing R] [IsNoetherianRing R] (n : ℕ)
     (hk : HasProjectiveDimensionLT (ModuleCat.of R (R ⧸ maximalIdeal R)) (n + 1))
     (M : Type u) [AddCommGroup M] [Module R M] [Module.Finite R M] :

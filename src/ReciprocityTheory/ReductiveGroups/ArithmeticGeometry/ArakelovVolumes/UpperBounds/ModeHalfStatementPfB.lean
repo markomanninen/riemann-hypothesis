@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ModeHalfStatementPfA
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ModeHalfStatementPfA
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up
 
@@ -11,10 +15,6 @@ open scoped ComplexConjugate
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ}
 
 def Nid (r : ℕ) : Fin r → Fin r → ℂ := fun a b => if a = b then 1 else 0
-
-theorem of_Nid : Matrix.of (Nid r) = 1 := by
-  ext a b
-  simp [Nid, Matrix.one_apply]
 
 theorem chosenFrame_isOrthogonal (X : Data E r) : IsOrth X (x0F X) := fun τ => (X.signature τ).choose_spec.2
 
@@ -114,7 +114,7 @@ noncomputable def Mt (p0 : ℕ) (hp : p0 ≤ r) (q : (Fin r → ℂ) × (Fin r �
 private theorem continuous_sf {T : Type*} [TopologicalSpace T] (p0 : ℕ) {f g : T → Fin r → ℂ}
     (hf : Continuous f) (hg : Continuous g) : Continuous fun x => sf p0 (f x) (g x) := by
   simp only [sf]
-  exact continuous_finset_sum _ fun k _ =>
+  exact continuous_finsetSum _ fun k _ =>
     (continuous_const.mul ((continuous_apply k).comp hf)).mul
       (Complex.continuous_conj.comp ((continuous_apply k).comp hg))
 
@@ -124,8 +124,8 @@ theorem Mt_cont (p0 : ℕ) (hp : p0 ≤ r) : Continuous (Mt p0 hp) := by
     continuous_sf p0 continuous_fst
       (continuous_pi fun k => (continuous_apply c).comp ((continuous_apply k).comp continuous_snd.fst))
   unfold Mt
-  exact (continuous_const.mul (Complex.continuous_re.comp (continuous_finset_sum _ fun a _ =>
-    continuous_finset_sum _ fun b _ =>
+  exact (continuous_const.mul (Complex.continuous_re.comp (continuous_finsetSum _ fun a _ =>
+    continuous_finsetSum _ fun b _ =>
       ((hc _).mul ((continuous_apply b).comp ((continuous_apply a).comp continuous_snd.snd))).mul
         (Complex.continuous_conj.comp (hc _))))).sub
     (Complex.continuous_re.comp (continuous_sf p0 continuous_fst continuous_fst))
@@ -178,7 +178,7 @@ theorem Ms_unif (X : Data E r) (τ : X.Ψ) {κ : ℝ} (hκ : 1 < κ) :
       Ms X.p0 X.p0_le N v ≤ κ * ∑ k, ‖v k‖ ^ 2 := by
   set S : Set (Fin r → ℂ) := {v | ∑ k, ‖v k‖ ^ 2 = 1} with hS
   have hScont : Continuous fun v : Fin r → ℂ => ∑ k, ‖v k‖ ^ 2 :=
-    continuous_finset_sum _ fun k _ => ((continuous_apply k).norm).pow 2
+    continuous_finsetSum _ fun k _ => ((continuous_apply k).norm).pow 2
   have hSc : IsCompact S := by
     apply Metric.isCompact_of_isClosed_isBounded (isClosed_eq hScont continuous_const)
     refine (Metric.isBounded_closedBall (x := (0 : Fin r → ℂ)) (r := 1)).subset ?_
@@ -238,52 +238,6 @@ theorem Ms_unif (X : Data E r) (τ : X.Ψ) {κ : ℝ} (hκ : 1 < κ) :
     constructor
     · nlinarith [mul_lt_mul_of_pos_left h1 hs2]
     · nlinarith [mul_lt_mul_of_pos_left h2 hs2]
-
-theorem nmat_cont (X : Data E r) (τ : X.Ψ) : Continuous fun z : V (nd X) => nmat X z τ := by
-  refine continuous_pi fun a => continuous_pi fun b => ?_
-  by_cases h1 : b < a
-  · simp only [nmat, dif_pos h1]
-    first
-      | fun_prop
-      | exact (EuclideanSpace.proj _).continuous
-  · simp only [nmat, dif_neg h1]
-    exact continuous_const
-
-theorem nmat_zero (X : Data E r) (τ : X.Ψ) : nmat X 0 τ = Nid r := by
-  funext a b
-  by_cases h1 : b < a
-  · simp only [nmat, Nid, dif_pos h1, if_neg h1.ne']
-    first
-      | rfl
-      | simp
-  · simp [nmat, Nid, h1]
-
-theorem ball_cmp (X : Data E r) {κ : ℝ} (hκ : 1 < κ) : ∃ ρ : ℝ, 0 < ρ ∧ ρ ≤ 1 ∧
-    ∀ u, IsOrth X u → ∀ z : V (nd X), ‖z‖ < ρ → ∀ τ (v : Fin r → ℂ),
-      κ⁻¹ * X.maj u τ v ≤ X.maj (cpt X u z) τ v ∧ X.maj (cpt X u z) τ v ≤ κ * X.maj u τ v := by
-  have hall : ∀ᶠ z in 𝓝 (0 : V (nd X)), ∀ τ : X.Ψ, ∀ v : Fin r → ℂ,
-      κ⁻¹ * ∑ k, ‖v k‖ ^ 2 ≤ Ms X.p0 X.p0_le (nmat X z τ) v ∧
-        Ms X.p0 X.p0_le (nmat X z τ) v ≤ κ * ∑ k, ‖v k‖ ^ 2 := by
-    rw [Filter.eventually_all]
-    intro τ
-    have hc : Tendsto (fun z => nmat X z τ) (𝓝 0) (𝓝 (Nid r)) := by
-      have := (nmat_cont X τ).tendsto 0
-      rwa [nmat_zero X τ] at this
-    exact hc.eventually (Ms_unif X τ hκ)
-  obtain ⟨ρ0, hρ0, hball⟩ := Metric.eventually_nhds_iff_ball.mp hall
-  refine ⟨min ρ0 1, lt_min hρ0 one_pos, min_le_right _ _, ?_⟩
-  intro u hu z hz τ v
-  have hz' : z ∈ Metric.ball (0 : V (nd X)) ρ0 := by
-    rw [Metric.mem_ball, dist_zero_right]
-    exact lt_of_lt_of_le hz (min_le_left _ _)
-  obtain ⟨h1, h2⟩ := hball z hz' τ ((mat u τ)⁻¹ *ᵥ v)
-  have hY := hu τ
-  have e1 : X.maj (cpt X u z) τ v = Ms X.p0 X.p0_le (nmat X z τ) ((mat u τ)⁻¹ *ᵥ v) :=
-    maj_chart X hY (nmat X z τ) rfl v
-  have e2 : X.maj u τ v = ∑ k, ‖((mat u τ)⁻¹ *ᵥ v) k‖ ^ 2 := by
-    rw [maj_chart X hY (Nid r) (by rw [of_Nid, Matrix.mul_one]) v, Ms_id X τ]
-  rw [e1, e2]
-  exact ⟨h1, h2⟩
 
 end ModeHalfB
 

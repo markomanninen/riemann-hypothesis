@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PerfectTensorGeneratedLiftStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PerfectTensorGeneratedLiftStatement
+
+@[expose] public section
+
 open TensorProduct CrystallineSemistableComparison.D
 open scoped LaurentPolynomial
 
@@ -26,7 +31,7 @@ theorem pq_baseChange_polynomial : ∀ (p : ℕ) [Fact p.Prime] (A : Type) [Comm
       rw [Polynomial.coe_mapRingHom, Polynomial.map_C, hC, h1, Algebra.algebraMap_eq_smul_one,
         Algebra.algebraMap_eq_smul_one, TensorProduct.smul_tmul]
     | add f g hf hg =>
-      rw [map_add, map_add, hf, hg, map_add, TensorProduct.add_tmul]
+      rw [map_add (f := _), map_add (f := _), hf, hg, map_add (f := _), TensorProduct.add_tmul]
     | monomial n a ih =>
       have e : (Polynomial.C a * Polynomial.X ^ (n + 1) : Polynomial A)
           = (Polynomial.C a * Polynomial.X ^ n) * Polynomial.X := by ring

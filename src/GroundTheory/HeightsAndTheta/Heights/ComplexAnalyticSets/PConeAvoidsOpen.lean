@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StConeAvoidsOpen
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StConeAvoidsOpen
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.ComplexSets
@@ -82,14 +87,15 @@ theorem ConeAvoidsOpen.proof : ConeAvoidsOpen.Statement := by
   let T : Matrix (Fin d) (Fin n) ℂ → V → MvPolynomial (Fin n) ℂ :=
     fun A m => a m + ∑ j, h m j * linPoly A j
   let P : Matrix V V (MvPolynomial (Fin d × Fin n) ℂ) := fun m' m =>
-    C (coeff (m' : Fin n →₀ ℕ) (a m)) +
-      ∑ j, ∑ k, C (coeff (m' : Fin n →₀ ℕ) (h m j * X k)) * X (j, k)
+    C (AddMonoidAlgebra.coeff (a m) (m' : Fin n →₀ ℕ)) +
+      ∑ j, ∑ k, C (AddMonoidAlgebra.coeff (h m j * X k) (m' : Fin n →₀ ℕ)) * X (j, k)
   have hP : ∀ (A : Matrix (Fin d) (Fin n) ℂ) (m' m : V),
       (eval fun ij : Fin d × Fin n => A ij.1 ij.2).mapMatrix P m' m =
-        coeff (m' : Fin n →₀ ℕ) (T A m) := by
+        AddMonoidAlgebra.coeff (T A m) (m' : Fin n →₀ ℕ) := by
     intro A m' m
     show eval _ (P m' m) = _
-    simp only [P, T, linPoly, map_add, map_sum, map_mul, eval_C, eval_X, coeff_add, coeff_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [P, T, linPoly, map_add (f := _), map_sum, map_mul, eval_C, eval_X, MvPolynomial.coeff_add, coeff_sum,
       Finset.mul_sum]
     congr 1
     refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun k _ => ?_
@@ -104,7 +110,7 @@ theorem ConeAvoidsOpen.proof : ConeAvoidsOpen.Statement := by
     exact one_ne_zero
   · rw [RingHom.map_det] at hA
     set M := (eval fun ij : Fin d × Fin n => A ij.1 ij.2).mapMatrix P
-    have hMT : ∀ m' m : V, M m' m = coeff (m' : Fin n →₀ ℕ) (T A m) := hP A
+    have hMT : ∀ m' m : V, M m' m = AddMonoidAlgebra.coeff (T A m) (m' : Fin n →₀ ℕ) := hP A
     have hinv : M * M⁻¹ = 1 := Matrix.mul_nonsing_inv M (isUnit_iff_ne_zero.2 hA)
     have hI : ∀ m, T A m ∈ leadIdeal J ⊔ linIdeal A := fun m =>
       Submodule.add_mem_sup (ha m) (Ideal.mem_span_range_iff_exists_fun.2 ⟨h m, rfl⟩)

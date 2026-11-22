@@ -1,10 +1,14 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaAbsoluteValues.KSumApply
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompInsertNthEq
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RemoveNthSuccVecCons
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KDKDelApply
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InvarianceContraction
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AlternatingMapEqZeroOfSpan
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaAbsoluteValues.KSumApply
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompInsertNthEq
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RemoveNthSuccVecCons
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KDKDelApply
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InvarianceContraction
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AlternatingMapEqZeroOfSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,7 +97,8 @@ theorem kHom {β γ : Type} [Fintype β] [Fintype γ] (b : β → P) (a r : P �
           Finset.sum_congr rfl fun s _ => Finset.sum_comm
       _ = _ := Finset.sum_comm
   rw [step3]
-  simp_rw [← map_sum, hinv, map_neg, ← Module.End.mul_apply, hsq']
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [← map_sum, hinv, map_neg, ← Module.End.mul_apply, hsq']
   simp only [LinearMap.sub_apply, Module.End.mul_apply, LinearMap.sum_apply,
     Finset.sum_sub_distrib, Finset.sum_neg_distrib]
   abel
@@ -120,7 +125,8 @@ theorem kT_nonneg {β : Type} [Fintype β] (B : M →ₗ[ℂ] M →ₗ⋆[ℂ] �
     have h2 : (∑ J : Fin (n + 1) → β, B (ω (b ∘ J)) (kD T (kDel T' b ω) (b ∘ J))) =
         starRingEnd ℂ (kIp B b (kD T (kDel T' b ω)) ω) := by
       unfold kIp
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun J _ => hB _ _
     rw [h2, kIp_kD B b T T' hTT (kDel T' b ω) ω, Complex.conj_re, Complex.mul_re]
     have : (((n : ℂ) + 1)).im = 0 := by simp
@@ -138,7 +144,7 @@ theorem kugaAbs_holds : KugaAbs := by
   intro P _ _ M _ _ _ _ β γ _ _ b B a r a' r' D c hb hB hpos ha hr har ha'r' hca hcr hc hD hcas q ω hω X
   have hadj : ∀ X x y, B ((a + r) X x) y = B x ((r - a) X y) := by
     intro X x y
-    simp only [LinearMap.add_apply, LinearMap.sub_apply, map_add, map_sub, ha, hr]
+    simp only [LinearMap.add_apply, LinearMap.sub_apply, map_add (f := _), map_sub, ha, hr]
     ring
   have hzero : kD (a + r) ω = 0 := by
     apply kAlt_eq_zero b hb

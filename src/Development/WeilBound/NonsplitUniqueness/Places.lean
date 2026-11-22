@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
-import GroundTheory.GlobalFields.KummerTheory.Splitting
-import GroundTheory.GlobalFields.TateThesis.DegreeOneDensity
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
+public import GroundTheory.GlobalFields.KummerTheory.Splitting
+public import GroundTheory.GlobalFields.TateThesis.DegreeOneDensity
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,8 +31,7 @@ theorem split_infinite [IsGalois F E] :
   intro hfin
   have h1 := hasDirichletDensity_setOf_splitsCompletely F E
   have h0 := hasDirichletDensity_zero_of_finite hfin
-  unfold NumberField.Set.HasDirichletDensity at h1 h0
-  have h := tendsto_nhds_unique h1 h0
+  have h := h1.dirichletDensity_eq.symm.trans h0.dirichletDensity_eq
   have hpos : (0 : ℝ) < finrank F E := by exact_mod_cast Module.finrank_pos
   rw [one_div] at h
   exact (inv_ne_zero hpos.ne') h

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.VolumeIndexBCongruence
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.VolumeIndexBCongruence
+
+@[expose] public section
 
 noncomputable section
 
@@ -119,7 +123,8 @@ theorem tw_inj (hT : T ≠ 0) (hL : IsUnit L.det) (hZ : IsUnit (Formalism.MainNo
       apply Matrix.eq_zero_of_mulVec_eq_zero hG.ne_zero
       ext l
       have hl : S.hT (gg F F' l) (∑ m, a m • gg F F' m) = 0 := by rw [ha, map_zero]
-      simp only [map_sum, map_smul, smul_eq_mul] at hl
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, smul_eq_mul] at hl
       simp only [Matrix.mulVec, dotProduct, gramOf, Pi.zero_apply]
       rw [← hl]
       exact Finset.sum_congr rfl (fun m _ => mul_comm _ _)
@@ -162,7 +167,8 @@ theorem span_perp_zero (hG : IsUnit (gramOf (gg F F')).det) (a : Fin (r + 1) ⊕
     apply Matrix.eq_zero_of_mulVec_eq_zero hG.ne_zero
     ext l
     have hl := h l
-    simp only [map_sum, map_smul, smul_eq_mul] at hl
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul] at hl
     simp only [Matrix.mulVec, dotProduct, gramOf, Pi.zero_apply]
     rw [← hl]
     exact Finset.sum_congr rfl (fun m _ => mul_comm _ _)
@@ -208,7 +214,7 @@ theorem tw_eq_of (hL : IsUnit L.det) (hZ : IsUnit (Formalism.MainNotions.S.Zhat 
     induction hy using Submodule.span_induction with
     | mem x hx => obtain ⟨m, rfl⟩ := hx; exact hg m
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, map_add, hx, hy]
+    | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
     | smul c x _ hx => rw [map_smul, map_smul, hx]
   have hτs : ∀ m, τ.symm (gg F F' m) ∈ Sg := fun m => sL_mem_span _ (Submodule.subset_span ⟨m, rfl⟩)
   have hss : ∀ m, s.symm (gg F F' m) ∈ Sg := by
@@ -225,7 +231,8 @@ theorem tw_eq_of (hL : IsUnit L.det) (hZ : IsUnit (Formalism.MainNotions.S.Zhat 
   have hqperp : ∀ l, S.hT (gg F F' l) q = 0 := by
     intro l
     have h1 := congrFun (gram_cOf (gg F F') hG x) l
-    rw [hq, hp, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hq, hp, map_sub, map_sum]
     simp only [map_smul, smul_eq_mul]
     rw [← h1]
     simp only [Matrix.mulVec, dotProduct, gramOf]
@@ -246,7 +253,7 @@ theorem tw_eq_of (hL : IsUnit L.det) (hZ : IsUnit (Formalism.MainNotions.S.Zhat 
     rw [ha] at h0
     exact sub_eq_zero.1 h0
   have hx : x = p + q := by rw [hq]; abel
-  rw [hx, map_add, map_add, hspan p hpS, hsq, hτq]
+  rw [hx, map_add (f := _), map_add (f := _), hspan p hpS, hsq, hτq]
 
 end TwProps
 

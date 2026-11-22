@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MvPolynomial Matrix
 
@@ -10,7 +14,8 @@ theorem goal1 {K S : Type*} [CommRing K] [CommRing S] [Algebra K S] {ι : Type*}
   classical
   conv_lhs => rw [G.as_sum]
   conv_rhs => rw [G.as_sum]
-  simp only [map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun s hs => ?_
   simp only [aeval_monomial, Finsupp.prod, mul_pow, Finset.prod_mul_distrib,
     Finset.prod_pow_eq_pow_sum]

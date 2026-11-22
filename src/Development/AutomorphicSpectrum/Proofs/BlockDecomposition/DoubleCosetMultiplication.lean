@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.MatchT
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriTraceOfBorelCasselman
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriAndMaximalCompactCriteria
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VLtOneOfOrdLEqOne
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.MatchT
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriTraceOfBorelCasselman
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriAndMaximalCompactCriteria
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VLtOneOfOrdLEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -245,7 +249,7 @@ theorem iw_chain {w : Pl E} {ϖ : (w.adicCompletion E)ˣ} (hϖ : IsUnifAt ϖ) {n
     have a1 := hx hij.le
     exact (mul_le_of_le_one_left' (v_zpow_le_one hϖ (by omega))).trans_lt (h3 i j hij)
 
-theorem iwGL_le (w : Pl E) (n : ℕ) : iwGL n w ≤ GlobalTheory.LFun.KGL w n := fun g hg => by
+theorem iwGL_le (w : Pl E) (n : ℕ) : iwGL n w ≤ GlobalTheory.LFun.KGL w (n := n) := fun g hg => by
   obtain ⟨h1, h2, -⟩ := (GlobalTheory.CompanionTheory.IwEntries.iwGL_KGL_entries E w n g).1.1 hg
   exact (GlobalTheory.CompanionTheory.IwEntries.iwGL_KGL_entries E w n g).2.2 ⟨h1, h2⟩
 
@@ -269,7 +273,7 @@ theorem dcos_mul_eq {a b : ℕ} (w : Pl E) (t : GLw a w) (s : GLw b w) (y : GLw 
 theorem dcosMul : DcosMul := by
   intro E _ _ _ w ϖ hϖ a b x x' y y' hx hx' hy hy'
   funext m
-  have hK : (iwGL a w).prod (iwGL b w) ≤ (GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b) :=
+  have hK : (iwGL a w).prod (iwGL b w) ≤ (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)) :=
     Subgroup.prod_mono (iwGL_le w a) (iwGL_le w b)
   have hf : ∀ g ∈ (iwGL a w).prod (iwGL b w), ∃ p ∈ (iwGL a w).prod (iwGL b w),
       ∃ q ∈ (iwGL a w).prod (iwGL b w), g = p * q ∧

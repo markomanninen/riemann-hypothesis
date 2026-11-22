@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.EtaleBaseChangeFractionFieldIndEtaleOverPolynomi
-import Mathlib.Algebra.Category.Ring.FilteredColimits
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.EtaleBaseChangeFractionFieldIndEtaleOverPolynomi
+public import Mathlib.Algebra.Category.Ring.FilteredColimits
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits

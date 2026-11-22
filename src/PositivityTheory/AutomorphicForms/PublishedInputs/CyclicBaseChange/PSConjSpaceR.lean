@@ -1,6 +1,10 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.SConjSpaceC
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ContinuousMapGL
-import GroundTheory.GlobalFields.TateThesis.AdeleMeasure
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.SConjSpaceC
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ContinuousMapGL
+public import GroundTheory.GlobalFields.TateThesis.AdeleMeasure
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,8 @@ theorem exists_eval {ι : Type} [Finite ι] (f : (ι → ℝ) →+* ℝ) : ∃ j
   classical
   have := Fintype.ofFinite ι
   have hsum : ∑ j, f (Pi.single j 1) = 1 := by
-    rw [← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum]
     have e : ∑ j, (Pi.single j (1 : ℝ) : ι → ℝ) = 1 := Finset.univ_sum_single (1 : ι → ℝ)
     rw [e, map_one]
   obtain ⟨j, -, hj⟩ := Finset.exists_ne_zero_of_sum_ne_zero (hsum.symm ▸ one_ne_zero : ∑ j, f (Pi.single j 1) ≠ 0)
@@ -104,7 +109,7 @@ theorem pFin_sInf (x : Rinf M) : pFin M (sInf M x) = 0 := rfl
 theorem pFin_sFin (y : Af M) : pFin M (sFin M y) = y := rfl
 
 theorem decomp (x : Ad M) : sInf M (pInf M x) + sFin M (pFin M x) = x :=
-  ad_ext (by rw [map_add, pInf_sInf, pInf_sFin, add_zero]) (by rw [map_add, pFin_sInf, pFin_sFin, zero_add])
+  ad_ext (by rw [map_add (f := _), pInf_sInf, pInf_sFin, add_zero]) (by rw [map_add (f := _), pFin_sInf, pFin_sFin, zero_add])
 
 theorem continuous_pInf : Continuous (pInf M) := by
   have h : Continuous fun x : InfiniteAdeleRing M => (infEq M).symm x :=
@@ -134,7 +139,7 @@ theorem pInf_s_sFin_one (hs : IsGalAd σ s) : pInf M (s (sFin M 1)) = 0 := by
       map_one' := h1
       map_mul' := fun x y => by simp only [map_mul, Pi.mul_apply]
       map_zero' := by simp only [map_zero, Pi.zero_apply]
-      map_add' := fun x y => by simp only [map_add, Pi.add_apply] }
+      map_add' := fun x y => by simp only [map_add (f := _), Pi.add_apply] }
   have hc : Continuous ψ := (continuous_apply w).comp (continuous_pInf.comp (hs.1.comp continuous_sFin))
   have hK := (GroundTheory.Global.isCompact_integralFiniteAdeles M).image hc
   obtain ⟨C, hC⟩ := hK.isBounded.exists_norm_le
@@ -155,7 +160,7 @@ theorem pFin_s_sInf (hs : IsGalAd σ s) (z : Rinf M) : pFin M (s (sInf M z)) = 0
 
 theorem pInf_s (hs : IsGalAd σ s) (x : Ad M) : pInf M (s x) = pInf M (s (sInf M (pInf M x))) := by
   conv_lhs => rw [← decomp x]
-  rw [map_add, map_add, pInf_s_sFin hs, add_zero]
+  rw [map_add (f := _), map_add (f := _), pInf_s_sFin hs, add_zero]
 
 theorem free_etale_sheaf_zmod_exists_hom_sending_generator (hs : IsGalAd σ s) :
     ∃ t : Rinf M →+* Rinf M, Function.Surjective t ∧ ∀ x, pInf M (s x) = t (pInf M x) := by
@@ -168,7 +173,7 @@ theorem free_etale_sheaf_zmod_exists_hom_sending_generator (hs : IsGalAd σ s) :
       map_one' := h1
       map_mul' := fun x y => by simp only [map_mul]
       map_zero' := by simp only [map_zero]
-      map_add' := fun x y => by simp only [map_add] }
+      map_add' := fun x y => by simp only [map_add (f := _)] }
   refine ⟨t, fun z => ⟨pInf M (s.symm (sInf M z)), ?_⟩, fun x => pInf_s hs x⟩
   change pInf M (s (sInf M (pInf M (s.symm (sInf M z))))) = z
   rw [← pInf_s hs, RingEquiv.apply_symm_apply, pInf_sInf]
@@ -211,8 +216,8 @@ theorem map_map' {R S T : Type} [CommRing R] [CommRing S] [CommRing T] (f : R �
     GeneralLinearGroup.map g (GeneralLinearGroup.map f x) = GeneralLinearGroup.map (g.comp f) x := by
   ext i j; rfl
 
-variable (M a) in
 
+variable (M a) in
 def sA (S : Ad M ≃+* Ad M) : GA M a →* GA M a := GeneralLinearGroup.map S.toRingHom
 
 theorem sA_sA_symm (S : Ad M ≃+* Ad M) (g : GA M a) : sA M a S (sA M a S.symm g) = g :=
@@ -230,16 +235,16 @@ theorem sA_infGL (hS : Good S p) (y : GL (Fin a) (Rinf M)) :
       rw [pFin_infGL, sA, map_map']
       exact map_cornerGL_of_zero (sInf M) ((pFin M).comp S.toRingHom) hS.fin0 y)
 
-variable (S) in
 
+variable (S) in
 def finPart (k : GL (Fin a) (Af M)) : GL (Fin a) (Af M) := GeneralLinearGroup.map (pFin M) (sA M a S (finGL M a k))
 
 theorem sA_finGL (hS : Good S p) (k : GL (Fin a) (Af M)) : sA M a S (finGL M a k) = finGL M a (finPart S k) :=
   ga_ext (by rw [pInf_finGL, sA, map_map_comm (pInf M) S.toRingHom (permR p).toRingHom hS.inf, pInf_finGL, map_one])
     (by rw [pFin_finGL]; rfl)
 
-variable (p) in
 
+variable (p) in
 def permL : Lie M a →L[ℝ] Lie M a :=
   LinearMap.toContinuousLinearMap
     { toFun := fun X i j => permR p (X i j)
@@ -274,8 +279,8 @@ theorem height_perm (y : GL (Fin a) (Rinf M)) : height (GeneralLinearGroup.map (
   unfold height
   rw [← map_inv, h1, h1]
 
-variable (p) in
 
+variable (p) in
 def permK (k : Kinf M a) : Kinf M a :=
   ⟨(k : Matrix (Fin a) (Fin a) (Rinf M)).map (permR p).toRingHom, by
     have hk := k.2
@@ -319,8 +324,8 @@ theorem lie_pull (hS : Good S p) (X : Lie M a) (φ : Sm M a) :
   rw [e.fderiv_eq, h2.fderiv]
   rfl
 
-variable (S p) in
 
+variable (S p) in
 def opS : Op M a → Op M a
   | .fin k => .fin (finPart S k)
   | .cpt k => .cpt (permK p k)
@@ -354,8 +359,8 @@ section Conj
 variable {M : Type} [Field M] [NumberField M] [IsTotallyReal M] {a : ℕ}
 variable {σ : M ≃+* M} {s : Ad M ≃+* Ad M} {p : InfinitePlace M ≃ InfinitePlace M}
 
-variable (a) in
 
+variable (a) in
 def pullE (hs : IsGalAd σ s) (hp : ∀ x, pInf M (s x) = permR p (pInf M x)) : Sm M a ≃ₗ[ℂ] Sm M a where
   toFun := pullL (good_alt hs hp)
   invFun := pullL (good_symm hs hp)
@@ -430,9 +435,12 @@ include hs in
 theorem finPart_eq (k : GL (Fin a) (Af M)) : finPart s k = GeneralLinearGroup.map (GlobalTheory.CuspRep.conjFin σ) k := by
   rw [finPart, sA, map_map_comm (pFin M) s.toRingHom (GlobalTheory.CuspRep.conjFin σ) hs.2.2, pFin_finGL]
 
-theorem isAutForm_pull {φ : Sm M a} (h : IsAutForm φ) : IsAutForm (pullE a hs hp φ) where
-  left γ g := by rw [pullE_apply, map_mul, sA_ratGL hs, h.left, pullE_apply]
-  level := by
+theorem isAutForm_pull {φ : Sm M a} (h : IsAutForm φ) : IsAutForm (pullE a hs hp φ) := by
+  constructor
+  case left =>
+    intro γ g
+    rw [pullE_apply, map_mul, sA_ratGL hs, h.left, pullE_apply]
+  case level =>
     have hc : Continuous fun k : GL (Fin a) (Af M) => finPart s k := by
       have e : (fun k : GL (Fin a) (Af M) => finPart s k) =
           fun k => GeneralLinearGroup.map (n := Fin a) (GlobalTheory.CuspRep.conjFin σ) k :=
@@ -442,20 +450,21 @@ theorem isAutForm_pull {φ : Sm M a} (h : IsAutForm φ) : IsAutForm (pullE a hs 
     convert h.level.preimage hc using 1
     ext k
     exact (Eq.congr_left (act_pullE hs hp (.fin k) φ)).trans (pullE a hs hp).injective.eq_iff
-  kfin := by
+  case kfin =>
     have := h.kfin
     refine Submodule.finiteDimensional_of_le (S₂ := (Submodule.span ℂ (Set.range fun k => cptRep M a k φ)).map
       (pullE a hs hp).toLinearMap) (Submodule.span_le.2 ?_)
     rintro _ ⟨k, rfl⟩
     exact ⟨_, Submodule.subset_span ⟨_, rfl⟩, (act_pullE hs hp (.cpt k) φ).symm⟩
-  zfin := by
+  case zfin =>
     have := h.zfin
     refine Submodule.finiteDimensional_of_le (S₂ := (Submodule.span ℂ ((fun z : Module.End ℂ (Sm M a) => z φ) ''
       Zalg M a)).map (pullE a hs hp).toLinearMap) (Submodule.span_le.2 ?_)
     rintro _ ⟨z, hz, rfl⟩
     obtain ⟨z', h1, h2⟩ := Zalg_pull hs hp hz
     exact ⟨_, Submodule.subset_span ⟨z', h1, rfl⟩, (h2 φ).symm⟩
-  growth g := by
+  case growth =>
+    intro g
     obtain ⟨C, N, h1⟩ := h.growth (sA M a s g)
     refine ⟨C, N, fun y => ?_⟩
     rw [pullE_apply, map_mul, sA_infGL (good_alt hs hp), ← height_perm (p := p)]
@@ -474,9 +483,9 @@ theorem symm_mem_ratN {r : ℕ} {x : BlockIx a r → Ad M} (hx : x ∈ ratN M a 
   change algebraMap M (Ad M) (σ.symm (y q)) = s.symm (algebraMap M (Ad M) (y q))
   rw [RingEquiv.eq_symm_apply, hs.2.1, RingEquiv.apply_symm_apply]
 
+
 include hs in
 open MeasureTheory in
-
 theorem isCuspidal_pull {φ : GA M a → ℂ} (hφ : IsCuspidal φ) : IsCuspidal fun g => φ (sA M a s g) := by
   intro r h0 h1 _ _ μ 𝓕 hμ hF g
   have hsc : Continuous s.symm := continuous_symm s hs.1
@@ -497,7 +506,7 @@ theorem isCuspidal_pull {φ : GA M a → ℂ} (hφ : IsCuspidal φ) : IsCuspidal
   have h2 := hφ r h0 h1 (μ.map m) (m '' 𝓕) (β.isAddHaarMeasure_map μ)
     (hF.image_of_equiv m.toEquiv (MeasurePreserving.symm m ⟨m.measurable, rfl⟩).quasiMeasurePreserving e fun y x => by
       change β (β.symm y + x) = y + β x
-      rw [map_add, β.apply_symm_apply]) (sA M a s g)
+      rw [map_add (f := _), β.apply_symm_apply]) (sA M a s g)
   rw [m.measurableEmbedding.setIntegral_map, m.injective.preimage_image] at h2
   rw [← h2]
   congr 1

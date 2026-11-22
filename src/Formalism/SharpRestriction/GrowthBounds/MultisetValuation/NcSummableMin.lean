@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.RelativePresentationOfD7
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.RelativePresentationOfD7
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.ClassFormations
-import GroundTheory.ProfiniteCohomology.Colimit
-import GroundTheory.ProfiniteCohomology.ShapiroDefs
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.TateThree
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.ClassFormations
+public import GroundTheory.ProfiniteCohomology.Colimit
+public import GroundTheory.ProfiniteCohomology.ShapiroDefs
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.TateThree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -14,8 +19,8 @@ open CategoryTheory Limits
 variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
   [TotallyDisconnectedSpace G]
 
-omit [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] in
 
+omit [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] in
 theorem exists_openSubgroup_subgroupOf_eq (U : OpenSubgroup G) (N : Subgroup (U : Subgroup G))
     (hN : IsOpen (N : Set (U : Subgroup G))) :
     ∃ V : OpenSubgroup G, V ≤ U ∧ (V : Subgroup G).subgroupOf U = N := by
@@ -25,8 +30,8 @@ theorem exists_openSubgroup_subgroupOf_eq (U : OpenSubgroup G) (N : Subgroup (U 
 
 variable {C : Rep.{0} (ULift.{0} ℤ) G} [IsDiscreteRep C] (F : ClassFormation C)
 
-include F in
 
+include F in
 theorem ClassFormation.subsingleton_groupCohomology_three_quot (U : OpenSubgroup G)
     (N : Subgroup (U : Subgroup G)) [N.Normal] (hN : IsOpen (N : Set (U : Subgroup G))) :
     Subsingleton (groupCohomology
@@ -38,11 +43,11 @@ theorem ClassFormation.subsingleton_groupCohomology_three_quot (U : OpenSubgroup
     Subgroup.finite_quotient_of_finiteIndex
   let : Fintype ((U : Subgroup G) ⧸ (V : Subgroup G).subgroupOf U) := Fintype.ofFinite _
   exact subsingleton_groupCohomology_three_of_tate _ (F.groupFundamentalClass U V)
-    (fun S => (F.tate_hypotheses hVU S).1) (fun S => (F.tate_hypotheses hVU S).2.1)
-    (fun S => (F.tate_hypotheses hVU S).2.2)
+    (fun S => (F.tate_hypotheses (U := U) (V := V) hVU S).1) (fun S => (F.tate_hypotheses (U := U) (V := V) hVU S).2.1)
+    (fun S => (F.tate_hypotheses (U := U) (V := V) hVU S).2.2)
+
 
 include F in
-
 theorem ClassFormation.subsingleton_cohomology_three (U : OpenSubgroup G) :
     Subsingleton (cohomology (Rep.res (U : Subgroup G).subtype C) 3) := by
   have h0 : ∀ z : cohomology (Rep.res (U : Subgroup G).subtype C) 3, z = 0 := fun z => by

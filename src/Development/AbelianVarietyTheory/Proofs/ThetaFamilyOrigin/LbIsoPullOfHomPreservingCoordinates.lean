@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.PullChartIsLB
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsVVGenOfIsThetaFamily
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsIndepSections
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsIntegralOfIsAbelianSchemeField
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsChartUnit
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LineBundleTrivialIsoDescendField
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.LbIsoOfAssociatedGermsFlatStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.PullChartIsLB
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsVVGenOfIsThetaFamily
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsIndepSections
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsIntegralOfIsAbelianSchemeField
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsChartUnit
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LineBundleTrivialIsoDescendField
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.LbIsoOfAssociatedGermsFlatStatement
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.ZH
@@ -31,7 +36,7 @@ theorem crd_pull {X Y : Scheme.{0}} (φ : X ⟶ Y) (H : LB Y) {J : Type} (s : J 
   rw [hv j]
   congr 1
   unfold valR
-  rw [dif_pos hl, dif_pos hl']
+  rw [dite_eq_left hl, dite_eq_left hl']
   congr 1
   change _ = (y.appLE _ ⊤ hl').hom ((φ.appLE _ _ (pull_le H φ (fun _ => l))).hom ((s j).f l))
   rw [← CommRingCat.comp_apply, Scheme.Hom.appLE_comp_appLE]
@@ -60,7 +65,7 @@ theorem lbIso_pull : Out.Laws → ∀ (K : Type) [Field K] [IsAlgClosed K] (P P'
   have hw := CrdIso.exists_chart_unit (H := lbPow P.L N) (H' := (lbPow P'.L N).pull φ.left) (s := s)
     (s' := fun j => secPull _ φ.left (s' j)) hs (fun F _ y v hv => crd_pull _ _ _ _ _ (hcrd F y v hv))
   have key : LBIso (lbPow P.L 1) ((lbPow P'.L 1).pull φ.left) := by
-    refine GlobalTheory.T.lbIso_of_associated_germs_flat _ _ (Out.mulA P.A m).left _ _ θ (secPull _ φ.left θ') h1 (pull_isLB h1' _) hθ fun y => ?_
+    refine GlobalTheory.T.lbIso_of_associated_germs_flat _ _ (Out.mulA P.A m).left _ _ θ (secPull _ φ.left θ') h1 (LB.isLB_pull h1' _) hθ fun y => ?_
     obtain ⟨k, hk⟩ := exists_chart hN y
     obtain ⟨k', hk'⟩ := exists_chart hN' (φ.left y)
     obtain ⟨l, hl⟩ := exists_chart h1 ((Out.mulA P.A m).left y)
@@ -87,9 +92,25 @@ theorem lbIso_pull : Out.Laws → ∀ (K : Type) [Field K] [IsAlgClosed K] (P P'
     rw [e1]
     refine (hP y k l hk hl).symm.trans (Associated.trans ?_ a1)
     exact ⟨_, (_root_.mul_comm _ _).trans e.symm⟩
-  have e := (CechPic.cls_eq_iff h1 (pull_isLB h1' _)).2 key
-  rw [CechPic.cls_lbPow hL, CechPic.cls_pull h1', CechPic.cls_lbPow hL', one_smul, one_smul] at e
-  rw [← CechPic.cls_eq_iff (pull_isLB hL' _) hL, CechPic.cls_pull hL', e]
+  have oneIso {X : Scheme.{0}} (L : LB X) (hL : L.IsLB) : LBIso (lbPow L 1) L := by
+    apply CechPic.iso_of_chart hL
+    refine ⟨fun j => j PUnit.unit, fun _ _ hy => Set.mem_iInter.1 hy PUnit.unit, ?_⟩
+    intro y p q hp hq
+    refine (gm_linComb L _ _ (𝟙 X) y p q hp hq).trans ?_
+    simp
+  have pullOne {X Y : Scheme.{0}} (L : LB X) (hL : L.IsLB) (f : Y ⟶ X) :
+      LBIso ((lbPow L 1).pull f) (L.pull f) := by
+    apply CechPic.iso_of_chart (LB.isLB_pull hL f)
+    refine ⟨fun j _ => j PUnit.unit PUnit.unit, fun _ _ hy => mem_pull.2 (Set.mem_iInter.1 (mem_pull.1 hy) PUnit.unit), ?_⟩
+    intro y p q hp hq
+    refine (gm_pull_g (lbPow L 1) f (𝟙 Y) y p q hp hq).trans ?_
+    refine (gm_linComb L _ _ (𝟙 Y ≫ f) y _ _ (mem_pull.1 hp) (mem_pull.1 hq)).trans ?_
+    simpa using (gm_pull_g L f (𝟙 Y) y (fun _ => p PUnit.unit PUnit.unit) (fun _ => q PUnit.unit PUnit.unit) (mem_pull.2 (Set.mem_iInter.1 (mem_pull.1 hp) PUnit.unit)) (mem_pull.2 (Set.mem_iInter.1 (mem_pull.1 hq) PUnit.unit))).symm
+  have e := (CechPic.cls_eq_iff h1 (LB.isLB_pull h1' _)).2 key
+  have e1 := (CechPic.cls_eq_iff h1 hL).2 (oneIso P.L hL)
+  have e2 := (CechPic.cls_eq_iff (LB.isLB_pull h1' _) (LB.isLB_pull hL' _)).2 (pullOne P'.L hL' φ.left)
+  rw [e1, e2] at e
+  exact (CechPic.cls_eq_iff (LB.isLB_pull hL' _) hL).1 e.symm
 
 end GlobalTheory.ZH.PolAgree
 end

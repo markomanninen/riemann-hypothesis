@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodG
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodG
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.Geo
 
@@ -99,7 +103,8 @@ theorem goodProjExists : GoodProjExistsStatement := by
       intro j
       have h1 := congrFun h0 ⟨j.1, lt_of_lt_of_le j.2 hr⟩
       rw [hΨ] at h1
-      simp only [forms, map_sum, Algebra.smul_def, map_mul, RingHom.map_rat_algebraMap, hφs]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [forms, map_sum, Algebra.smul_def, map_mul, RingHom.map_rat_algebraMap, hφs]
       simpa using h1
     have hcomp : (evQ P z' hz').comp (aeval (forms (segQ P) L)).toRingHom =
         (algebraMap ℚ ℂ).comp MvPolynomial.constantCoeff := by

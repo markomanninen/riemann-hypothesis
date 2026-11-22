@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Filter Topology
 
@@ -13,7 +17,7 @@ lemma contDiff_mvEval {d : ℕ} (q : MvPolynomial (Fin d) ℂ) :
   | C a => simpa using contDiff_const
   | add p q hp hq => simpa using hp.add hq
   | mul_X p i hp =>
-    have hX : ContDiff ℂ 1 (fun v : (Fin d → ℂ) × ℂ => v.1 i) := (contDiff_apply ℂ ℂ i).comp contDiff_fst
+    have hX : ContDiff ℂ 1 (fun v : (Fin d → ℂ) × ℂ => v.1 i) := (contDiff_apply ℂ (fun _ => ℂ) i).comp contDiff_fst
     simpa using hp.mul hX
 
 lemma contDiff_evalFun {d : ℕ} (p : Polynomial (MvPolynomial (Fin d) ℂ)) :
@@ -39,7 +43,7 @@ theorem main : ∀ {d : ℕ} (p : Polynomial (MvPolynomial (Fin d) ℂ)) (x₀ :
   intro d p x₀ a h0 h1
   set q := Polynomial.map (MvPolynomial.eval x₀) p with hq
   have hFs : HasStrictFDerivAt (evalFun p) (fderiv ℂ (evalFun p) (x₀, a)) (x₀, a) :=
-    (contDiff_evalFun p).contDiffAt.hasStrictFDerivAt one_ne_zero
+    (contDiff_evalFun p).contDiffAt.hasStrictFDerivAt_fderiv one_ne_zero
   have hder : fderiv ℂ (evalFun p) (x₀, a) ∘L ContinuousLinearMap.inr ℂ (Fin d → ℂ) ℂ
       = (1 : ℂ →L[ℂ] ℂ).smulRight (Polynomial.eval a (Polynomial.derivative q)) := by
     have h1' : HasFDerivAt (fun z => evalFun p (x₀, z))
@@ -57,15 +61,20 @@ theorem main : ∀ {d : ℕ} (p : Polynomial (MvPolynomial (Fin d) ℂ)) (x₀ :
   let φ := hFs.implicitFunctionDataOfProdDomain hinv
   refine ⟨fun x => (φ.toOpenPartialHomeomorph.symm (evalFun p (x₀, a), x)).2, ?_, ?_, ?_⟩
   · have := (hFs.eventually_apply_eq_iff_implicitFunctionOfProdDomain hinv).self_of_nhds
-    exact this.mp rfl
+    simpa only [HasStrictFDerivAt.implicitFunctionOfProdDomain_def,
+      ImplicitFunctionData.implicitFunction_apply] using this.mp rfl
   · refine ⟨{x | (evalFun p (x₀, a), x) ∈ φ.toOpenPartialHomeomorph.target}, ?_, ?_⟩
     · apply IsOpen.mem_nhds
       · exact φ.toOpenPartialHomeomorph.open_target.preimage (by fun_prop)
-      · exact φ.map_pt_mem_toOpenPartialHomeomorph_target
+      · simpa only [Set.mem_setOf_eq, φ, HasStrictFDerivAt.pt_implicitFunctionDataOfProdDomain,
+          HasStrictFDerivAt.leftFun_implicitFunctionDataOfProdDomain,
+          HasStrictFDerivAt.rightFun_implicitFunctionDataOfProdDomain, Prod.fst] using
+          φ.map_pt_mem_toOpenPartialHomeomorph_target
     · exact continuous_snd.comp_continuousOn
         (φ.toOpenPartialHomeomorph.continuousOn_symm.comp (by fun_prop) (fun x hx => hx))
   · have := hFs.eventually_apply_implicitFunctionOfProdDomain hinv
     filter_upwards [this] with x hx
-    exact hx.trans h0
+    simpa only [HasStrictFDerivAt.implicitFunctionOfProdDomain_def,
+      ImplicitFunctionData.implicitFunction_apply, evalFun] using hx.trans h0
 
 end GlobalTheory.SmoothPolynomialEvaluation

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.ExistsPerpNeZero
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.OBas1OfUnitV
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.ExistsPerpNeZero
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.OBas1OfUnitV
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,11 +75,11 @@ theorem trNd_of_res {K : Type} [CommRing K] (τ : K →+* K) (π : OR (E := E) v
   have hy : π yO = τ (π (tO * cO)) := hsig (tO * cO) yO rfl
   set s := (tO : Fv F v ⊗[F] E) * c + sigR (Fv F v) σ ((tO : Fv F v ⊗[F] E) * c) with hs
   have hsO : π (tO * cO + yO) ≠ 0 := by
-    rw [map_add, hy, map_mul, htO]
+    rw [map_add (f := _), hy, map_mul, htO]
     exact htb
   have hs0 : s ∈ OEv (E := E) v := (tO * cO + yO).2
   have hsf : sigR (Fv F v) σ s = s := by
-    rw [hs, map_add, sigR_invol σ v hcm, add_comm]
+    rw [hs, map_add (f := _), sigR_invol σ v hcm, add_comm]
   refine ⟨tO, ht0, ?_⟩
   obtain ⟨a, ha, hsa⟩ := fix_int σ v hcm hs0 hsf
   rw [← hs, hsa]
@@ -107,9 +111,5 @@ theorem trNd_of (hR : ResAlg σ J ψ v) : TrNd σ J ψ v := by
 
 theorem unitNorm_of_res (hR : ResAlg σ J ψ v) : UnitNorm σ J ψ v Λ :=
   unitNorm_of σ J ψ v Λ (fixLoc_holds σ v) (trNd_of σ J ψ v hR) (primPerp_holds σ J ψ v Λ)
-
-theorem orbAll_of_res (a : ℕ) (Y : TupV (E := E) v n a) (hN : NormOne σ J ψ v) (hR : ResAlg σ J ψ v) :
-    OrbAll σ J ψ v Λ a Y :=
-  orbAll_of_norm σ J ψ v Λ a Y hN (unitNorm_of_res σ J ψ v Λ hR)
 
 end PI.OmLocU.UnN

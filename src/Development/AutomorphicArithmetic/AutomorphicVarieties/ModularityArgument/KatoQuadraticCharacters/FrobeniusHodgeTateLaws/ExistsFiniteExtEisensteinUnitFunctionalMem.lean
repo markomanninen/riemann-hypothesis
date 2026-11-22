@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.RhoFrob
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.RhoFrob
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,8 +48,8 @@ theorem mes_smul (k : ℕ) (u w : ℤ → ℂ) (α : ℂ) (B : ℕ) (c : ℕ →
   refine Finset.sum_congr rfl fun n _ => ?_
   ring
 
-open Classical in
 
+open Classical in
 def sym (ι : Qbar l ≃+* ℂ) (s : ℂ) {N : ℕ} (g : ZMod N → Qbar l) : ZMod N → ℂ :=
   fun y => if IsUnit y then (ι (g y⁻¹) + s * ι (g (-y)⁻¹)) / 2 else 0
 
@@ -54,8 +58,8 @@ def nu0 (ι : Qbar l ≃+* ℂ) (e : ℕ) (s : ℂ) (u w : ℤ → ℂ) (α : �
   toFun g := ι.symm (mesMu (2 * e + 1) l u w α B c M (sym ι s g))
   map_add' g g' := by
     have : sym ι s (g + g') = fun y => 1 * sym ι s g y + sym ι s g' y := by
-      funext y; simp only [sym, Pi.add_apply, map_add]; split_ifs <;> ring
-    rw [this, mes_lin, one_mul, map_add]
+      funext y; simp only [sym, Pi.add_apply, map_add (f := _)]; split_ifs <;> ring
+    rw [this, mes_lin, one_mul, map_add (f := _)]
   map_smul' a g := by
     have : sym ι s (a • g) = fun y => ι a * sym ι s g y := by
       funext y; simp only [sym, Pi.smul_apply, smul_eq_mul, map_mul]; split_ifs <;> ring
@@ -133,7 +137,7 @@ theorem sgn_cases {s : ℂ} (hs : s * s = 1) : s = 1 ∨ s = -1 := mul_self_eq_o
 theorem symm_sym (ι : Qbar l ≃+* ℂ) (s : ℂ) {N : ℕ} (g : ZMod N → Qbar l) {y : ZMod N} (hy : IsUnit y) :
     ι.symm (sym ι s g y) = (g y⁻¹ + ι.symm s * g (-y⁻¹)) / 2 := by
   unfold sym
-  rw [if_pos hy, neg_inv_unit hy, map_div₀, map_add, map_mul, RingEquiv.symm_apply_apply,
+  rw [if_pos hy, neg_inv_unit hy, map_div₀, map_add (f := _), map_mul, RingEquiv.symm_apply_apply,
     RingEquiv.symm_apply_apply, map_ofNat]
 
 theorem eisensteinUnitFunctional_bounded {ι : Qbar l ≃+* ℂ} {e : ℕ} {s : ℂ} {u w : ℤ → ℂ} {ψ : DirichletCharacter ℂ l} {α : ℂ} {B : ℕ} {c : ℕ → ℂ} {v : ℂ}
@@ -202,7 +206,7 @@ theorem eisensteinUnitFunctional_dirichletChar (ι : Qbar l ≃+* ℂ) (e : ℕ)
   have hs : sym ι s (fun x => χ⁻¹ x) = fun y => (1 + s * ι (χ (-1))) / 2 * ι (χ y) := funext (sym_char ι s χ)
   rw [hs, mes_smul, map_mul]
   congr 1
-  rw [map_div₀, map_add, map_one, map_mul, RingEquiv.symm_apply_apply, map_ofNat]
+  rw [map_div₀, map_add (f := _), map_one, map_mul, RingEquiv.symm_apply_apply, map_ofNat]
 
 theorem eisensteinUnitFunctional_interpolation {ι : Qbar l ≃+* ℂ} {e : ℕ} {s : ℂ} {u w : ℤ → ℂ} {ψ : DirichletCharacter ℂ l} {α : ℂ} {B : ℕ} {c : ℕ → ℂ} {v : ℂ}
     (H : MeasMu ι e s u w ψ α B c v) (hs : s * s = 1) (hl : l ≠ 2) :

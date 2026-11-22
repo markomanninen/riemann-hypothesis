@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.IsBasisB
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnitCharts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.IsBasisB
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnitCharts
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -16,8 +21,8 @@ open CrdCalc
 section Reg
 variable {K C : Type} [Field K] [Field C] {Y : Scheme.{0}} {q : Y ⟶ Sp K} {σ : K →+* C}
 
-variable (q σ) in
 
+variable (q σ) in
 def Reg (W : Y.Opens) (F : (Sp C ⟶ Y) → C) : Prop :=
   ∃ r : Γ(Y, W), ∀ x : Sp C ⟶ Y, x ≫ q = spMap σ → ⊤ ≤ x ⁻¹ᵁ W → F x = valR x W r
 
@@ -38,7 +43,8 @@ theorem Reg.sum {I : Type} [Fintype I] {F : I → (Sp C ⟶ Y) → C} (hF : ∀ 
     Reg q σ W fun x => ∑ i, F i x := by
   choose r hr using hF
   refine ⟨∑ i, r i, fun x hx hW => ?_⟩
-  rw [valR_eq x W hW, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [valR_eq x W hW, map_sum]
   exact Finset.sum_congr rfl fun i _ => (hr i x hx hW).trans (valR_eq x W hW _)
 
 theorem Reg.const (a : K) : Reg q σ W fun _ => σ a :=

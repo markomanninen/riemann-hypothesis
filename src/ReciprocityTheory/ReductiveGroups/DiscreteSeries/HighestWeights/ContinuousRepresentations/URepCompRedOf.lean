@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.DerivExistsAllPosStatement
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.SingleMulJmComm
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.DerivExistsAllPosStatement
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.SingleMulJmComm
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,8 @@ lemma KRep.actM_units {ε : Fin n → Bool} (R : KRep ε) (X : Matrix (Fin n) (F
   conv_rhs => rw [Matrix.matrix_eq_sum_single X]
   have h : ∀ a b, Matrix.single a b (X a b) = X a b • Matrix.single a b (1 : ℂ) := by
     intro a b; rw [Matrix.smul_single, smul_eq_mul, mul_one]
-  simp only [h, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [h, map_sum, map_smul]
   simp [LinearMap.sum_apply, ContinuousLinearMap.sum_apply]
 
 def compactRepOfUnitaryDifferential (ε : Fin n → Bool) (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H]

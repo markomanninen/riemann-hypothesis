@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LineDerivListCompForm
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutesStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.WeilPairingGaloisEquivariantCmTorsionStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ConjugateCurveDatumLatticeIsCurveLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GalStarComplexMultiplicationPointsStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GaloisConjTaylorThetaTranslateStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmQuadraticPhaseEquivariantEmbeddingsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LineDerivListCompForm
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutesStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.WeilPairingGaloisEquivariantCmTorsionStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ConjugateCurveDatumLatticeIsCurveLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GalStarComplexMultiplicationPointsStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GaloisConjTaylorThetaTranslateStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmQuadraticPhaseEquivariantEmbeddingsStatement
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
@@ -35,7 +39,7 @@ theorem thetaTranslation_comp_eq_cocycle_mul (Λ : AddSubgroup ℂ) (x y : ℂ) 
   rw [mul_assoc, ← Complex.exp_add, mul_left_comm, ← Complex.exp_add, add_assoc]
   congr 2
   have h := Complex.sub_conj (y * (starRingEnd ℂ) (x / 2))
-  simp only [map_mul, Complex.conj_conj, map_div₀, map_ofNat, map_add] at h ⊢
+  simp only [map_mul, Complex.conj_conj, map_div₀, map_ofNat, map_add (f := _)] at h ⊢
   push_cast at h ⊢
   simp only [div_eq_mul_inv, mul_inv] at h ⊢
   linear_combination (Real.pi : ℂ) * (area Λ : ℂ)⁻¹ * h
@@ -108,7 +112,7 @@ theorem OddLaw.doubleTranslate_shift_lattice_mod_two_mul {Λ : AddSubgroup ℂ} 
     have a2 := riemannFormImag_real_smul_right Λ m t μ
     push_cast at a1 a2
     rw [a1, ← a2, show (x + 2 * m * μ) / 2 = x / 2 + m * μ by ring]
-    simp only [gl3FieldFirst, map_add, mul_add, Complex.add_im, add_div]
+    simp only [gl3FieldFirst, map_add (f := _), mul_add, Complex.add_im, add_div]
   rw [hω, f1, h.ee_eq_one hμ (Λ.add_mem hx ht)] at e1
   rw [thetaTranslation_comp_eq_cocycle_mul, thetaTranslation_comp_eq_cocycle_mul, f2, ee_add, h.ee_eq_one ht hμ, e1, add_right_comm]
   simp only [one_mul, mul_one]
@@ -231,7 +235,8 @@ theorem Hf_sum (z : VC D N N') (c : Fin r → ℂ) :
       ∑ j, coordB D T b j z * (starRingEnd ℂ) (c j) / (area T.abelian₂ : ℂ) := by
   rw [Hf, ← Finset.sum_div]
   congr 1
-  simp only [coordB, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, embV,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coordB, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, embV,
     Finset.mul_sum, Finset.sum_mul]
   symm
   rw [Finset.sum_comm]
@@ -248,7 +253,8 @@ include hT
 theorem coordB_sum (c : Fin r → ℂ) (j : Fin r) :
     coordB D T b j (∑ i, c i • embV D T (b i)) = c j := by
   change coordL T b j _ = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul]
   simp [coordL_apply, hT]
 
@@ -256,7 +262,7 @@ theorem U_prod (c : Fin r → ℂ) (g : Fin r → ℂ → ℂ) :
     U D T (∑ j, c j • embV D T (b j)) (fun z => ∏ j, g j (coordL T b j z)) =
       fun z => ∏ j, U1 T.abelian₂ (c j) (g j) (coordL T b j z) := by
   funext z
-  simp only [U, U1, Hf_sum, coordB_sum hT, Finset.prod_mul_distrib, ← Complex.exp_sum, map_add]
+  simp only [U, U1, Hf_sum, coordB_sum hT, Finset.prod_mul_distrib, ← Complex.exp_sum, map_add (f := _)]
   congr 1
   · refine Finset.prod_congr rfl fun j _ => ?_
     rw [show coordL T b j (∑ j, c j • embV D T (b j)) = c j from coordB_sum hT c j]
@@ -335,16 +341,19 @@ theorem torConj_emb (τ : D.what₂.Tau) (x : D.host.E) :
 theorem frameCoordinate_orthonormal_baseTorus (hb : OnB D b) (i j : Fin r) :
     coordB D (tor0 D cc δ) b j (embV D (tor0 D cc δ) (b i)) = if i = j then 1 else 0 := by
   rw [← sum_emb_pair hb]
-  simp only [coordB, embV, tor0, map_sum, map_mul, emb_conj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coordB, embV, tor0, map_sum, map_mul, emb_conj]
 
 theorem ortho_torConj (hb : OnB D b) (i j : Fin r) :
     coordB D (torConj D (tor0 D cc δ) ⊤ (topHom s)) b j
       (embV D (torConj D (tor0 D cc δ) ⊤ (topHom s)) (b i)) = if i = j then 1 else 0 := by
   have h := congrArg s (sum_emb_pair hb i j)
-  rw [apply_ite s, map_one, map_zero, map_sum] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [apply_ite s, map_one, map_zero, map_sum] at h
   rw [← h]
   simp only [coordB, embV, torConj_emb, ← emb_conj]
-  simp only [map_sum, map_mul, RingHom.comp_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, RingHom.comp_apply]
 
 theorem conjPair_prod {g g' : Fin r → ℂ → ℂ} (hg : ∀ j, Differentiable ℂ (g j))
     (hg' : ∀ j, Differentiable ℂ (g' j)) (h : ∀ j n, s (coef1 (g j) n) = coef1 (g' j) n) :

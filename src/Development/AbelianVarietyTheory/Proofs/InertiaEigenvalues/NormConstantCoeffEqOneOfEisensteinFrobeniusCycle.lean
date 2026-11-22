@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormPowLeNormFactorial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormPowLeNormFactorial
+
+@[expose] public section
 
 namespace GlobalTheory.BK.Cycle
 
@@ -179,7 +183,7 @@ omit [IsUltrametricDist K] in
 theorem coeff_E (l e n : ℕ) (he : 0 < e) :
     coeff n (E K l e) = if n = e then 1 else if n = 0 then (l : K) else 0 := by
   unfold E
-  rw [map_add, coeff_X_pow, ← map_natCast (C (R := K)) l, coeff_C]
+  rw [map_add (coeff n), coeff_X_pow, ← map_natCast (C (R := K)) l, coeff_C]
   split_ifs <;> first | omega | simp
 
 omit [IsUltrametricDist K] in
@@ -216,7 +220,7 @@ theorem DomTerm.frob (l : ℕ) [Fact l.Prime] {f : K⟦X⟧} {i : ℕ} (h : DomT
   obtain ⟨-, hi, hle, hlt⟩ := h
   have hl0 : 0 < l := (Fact.out : l.Prime).pos
   have hco : ∀ n, coeff n (GlobalTheory.BK.frob K l f) = if l ∣ n then coeff (n / l) f else 0 := fun n => by
-    rw [GlobalTheory.BK.frob, coeff_expand]
+    exact GlobalTheory.BK.coeff_frob l f n
   refine ⟨one_pos, ?_, fun n => ?_, fun n hn => ?_⟩
   · rw [hco, if_pos (dvd_mul_right l i), Nat.mul_div_cancel_left i hl0, one_pow, mul_one]
     rw [one_pow, mul_one] at hi
@@ -285,7 +289,8 @@ theorem norm_constantCoeff_of_dvd {l e n d : ℕ} (he : 0 < e) {r : ℝ} (hr : 0
 omit [IsUltrametricDist K] in
 theorem order_frob (l : ℕ) [Fact l.Prime] {f : K⟦X⟧} {n : ℕ} (h : f.order = n) :
     (frob K l f).order = (l * n : ℕ) := by
-  rw [frob, order_expand, h, nsmul_eq_mul, Nat.cast_mul]
+  change (PowerSeries.expand l (Fact.out : l.Prime).ne_zero f).order = (l * n : ℕ)
+  rw [PowerSeries.order_expand, h, nsmul_eq_mul, Nat.cast_mul]
 
 omit [IsUltrametricDist K] in
 theorem order_eq_zero_of_ne {f : K⟦X⟧} (h : constantCoeff f ≠ 0) : f.order = (0 : ℕ) := by
@@ -361,7 +366,7 @@ theorem norm_constantCoeff_eq_one_of_cycle (K : Type) [NormedField K] [IsUltrame
     rwa [coeff_zero_eq_constantCoeff_apply] at h2
 
   have hF0 : ∀ F : K⟦X⟧, constantCoeff (frob K l F) = constantCoeff F := fun F => by
-    rw [frob, constantCoeff_expand]
+    exact GlobalTheory.BK.constantCoeff_frob l F
   have hkn : ∀ σ, ‖constantCoeff (k σ)‖ = r ^ κ σ := fun σ =>
     norm_constantCoeff_of_dvd he hr hr1 hre (hk σ) (hk' σ) (hkk σ) (hκ σ)
   have hcc : ∀ σ, ‖constantCoeff (Δ σ)‖ * r ^ κ σ =

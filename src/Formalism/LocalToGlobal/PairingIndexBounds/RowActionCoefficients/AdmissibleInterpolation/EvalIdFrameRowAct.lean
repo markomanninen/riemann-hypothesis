@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.WeylComplementInDetCoeffSpan
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.WeylComplementInDetCoeffSpan
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -72,12 +76,6 @@ theorem colH_eq_iff (hν : Antitone ν) (k : ℕ) (s : Fin n) : colH ν k = s.va
     have : ¬ (s.val + 1 < colH ν k) := fun h' => by have := h2.1 h'; omega
     omega
 
-theorem nuNext_le (hν : Antitone ν) (s : Fin n) : nuNext ν s ≤ ν s := by
-  unfold nuNext
-  split_ifs with h
-  · exact hν (Fin.le_def.2 (by simp))
-  · exact Nat.zero_le _
-
 end Heights
 
 theorem card_fin_filter (c : ℕ) (p : ℕ → Prop) [DecidablePred p] :
@@ -131,8 +129,6 @@ theorem prod_colH {M : Type*} [CommMonoid M] {n : ℕ} {ν : Fin n → ℕ} (hν
   congr 1
   rw [← card_colH_eq hν c hc s]
   congr 1
-  ext k
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and, g, Fin.ext_iff, Fin.val_succ]
 
 theorem rowAct_X' {R : Type*} [CommRing R] {r n : ℕ} (g : Matrix (Fin r) (Fin r) R) (v : Fin r × Fin n) :
     rowAct R g (X v) = ∑ b : Fin r, C (g v.1 b) * X (b, v.2) := by
@@ -157,9 +153,7 @@ theorem eval_idFrame_rowAct {R : Type*} [CommRing R] {n : ℕ} (g : Matrix (Fin 
     rw [comp_aeval]
     congr 1
     funext v
-    simp only [map_sum, map_mul, aeval_C, aeval_X, idFrame, Fin.val_inj,
-      mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
-    rfl
+    simp [idFrame, mul_ite, Fin.val_inj]
   exact congrArg (fun φ : MvPolynomial (Fin n × Fin n) R →ₐ[R] R => φ F) h
 
 theorem hvE_eq (K : Type) [CommRing K] (n : ℕ) (ν : Fin n → ℕ) (hν : Antitone ν) (c : ℕ) (hc : ∀ t, ν t ≤ c)
@@ -497,10 +491,11 @@ theorem pairing_odd_holds : PairO := by
     ext a t
     have := t.isLt
     simp only [Matrix.of_apply, xg, Matrix.mvPolynomialX_apply, dif_pos (show n - 1 - t.val < n by omega)]
-    congr 2
-    refine Prod.ext rfl (Fin.ext ?_)
-    show n - 1 - (n - 1 - t.val) = t.val
-    omega
+    have heq : (⟨n - 1 - (n - 1 - t.val), by omega⟩ : Fin n) = t := by
+      apply Fin.ext
+      simp only
+      omega
+    rw [heq]
   let XL : Matrix (Fin n) (Fin n) (FractionRing (MvPolynomial (Fin n × Fin n) K)) :=
     Matrix.of fun a t : Fin n => algebraMap _ _ (xg a (n - 1 - t.val))
   have hdet : XL.det ≠ 0 := by

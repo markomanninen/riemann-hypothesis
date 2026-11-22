@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardLeOfSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardLeOfSpan
+
+@[expose] public section
+
 open GlobalTheory.PhiGam GlobalTheory.AdmLoc GlobalTheory.Models GlobalTheory.TopSteps GlobalTheory.Present GlobalTheory.RedFun Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 open scoped LaurentSeries PowerSeries TensorProduct
 
@@ -61,7 +66,7 @@ theorem exists_diagonal_ringHom_of_letterwise_reductions :
     apply hext
     intro i
     have h := hk i (s i a + s i b)
-    rw [map_add, hs, hs, map_add] at h
+    rw [map_add (f := _), hs, hs, map_add (f := _)] at h
     rw [h, mul_add, mul_add, hk0, hk0]
 
 end GlobalTheory

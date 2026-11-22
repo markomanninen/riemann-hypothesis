@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 namespace EvenCubicNorm
@@ -123,7 +127,7 @@ theorem exists_even_cubic_unit_multiple (R : Type) [CommRing R] [IsDomain R] (X 
   have κcub : ∀ a a' c, κ (a + a' + c) * κ a * κ a' * κ c = κ (a + a') * κ (a + c) * κ (a' + c) := by
     intro a a' c
     simp only [hκ, prodPow_add]
-    congr 1; funext i j; simp only [E, n, map_add, Finsupp.add_apply]; ring
+    congr 1; funext i j; simp only [E, n, map_add (f := _), Finsupp.add_apply]; ring
   have nb : ∀ i k, n i (b k) = if i = k then 1 else 0 := by
     intro i k; simp [n, Finsupp.single_apply, eq_comm]
   have κb : ∀ k, κ (b k) = κ₀ (b k) := by
@@ -138,7 +142,7 @@ theorem exists_even_cubic_unit_multiple (R : Type) [CommRing R] [IsDomain R] (X 
         prodPow z (fun i j => if i = k ∧ j = k then 1 else 0) * prodPow z (fun i j => if i = l ∧ j = l then 1 else 0) *
         prodPow z (fun i j => if i = k ∧ j = l then 1 else 0) * prodPow z (fun i j => if i = l ∧ j = k then 1 else 0) := by
       simp only [prodPow_add]
-      congr 1; funext i j; simp only [E, n, map_add, Finsupp.add_apply]
+      congr 1; funext i j; simp only [E, n, map_add (f := _), Finsupp.add_apply]
       have h1 := nb i k; have h2 := nb i l; have h3 := nb j k; have h4 := nb j l
       simp only [n] at h1 h2 h3 h4
       rw [h1, h2, h3, h4]

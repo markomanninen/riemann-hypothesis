@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
-import Formalism.SharpRestriction.GrowthBounds.WeilJacquetShalikaLaw
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
+public import Formalism.SharpRestriction.GrowthBounds.WeilJacquetShalikaLaw
+
+@[expose] public section
 
 noncomputable section
 

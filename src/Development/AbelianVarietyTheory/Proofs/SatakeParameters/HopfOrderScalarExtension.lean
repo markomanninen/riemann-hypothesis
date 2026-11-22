@@ -1,7 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RealPointsToUnitaryGroupVal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankLeCardOfVanish
-open NumberField GlobalTheory.LKTrip GlobalTheory.HTBetti GlobalTheory.Kg
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GKModules.SmoothVectors
+public import GroundTheory.AutomorphicForms.GKModules.RightRegular
+public import GroundTheory.AutomorphicForms.DiscreteSpectrumAbstract
+public import Development.AbelianVarietyTheory.Definitions.Foundations.AestronglyMeasurableQuotMeasureIffLift
+public import GroundTheory.AutomorphicForms.UnitaryRepresentations.IsInvariantIffCommuteStarProjection
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleCohomology.Product
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianCongrOfPositiveIndexEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveRealTensorToProdMatrixAlgebrasInfPlaces
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DefsRep
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankLeCardOfVanish
+
+@[expose] public section
+
+open NumberField GlobalTheory.LKTrip
 open scoped TensorProduct Matrix.Norms.L2Operator
 
 noncomputable section
@@ -56,10 +69,6 @@ namespace GlobalTheory.SimSign
 open Matrix
 
 variable {n : ℕ}
-
-def phi (h X : Matrix (Fin n) (Fin n) ℂ) (hh : h.IsHermitian) (s : Fin n → Prop) [DecidablePred s] :
-    ({i // s i} → ℂ) →ₗ[ℂ] (Fin n → ℂ) :=
-  Matrix.mulVecLin X ∘ₗ Matrix.mulVecLin (hh.eigenvectorUnitary : Matrix (Fin n) (Fin n) ℂ) ∘ₗ extZero s
 
 theorem sum_pos (h : Matrix (Fin n) (Fin n) ℂ) (hh : h.IsHermitian) (w : {i // 0 < hh.eigenvalues i} → ℂ)
     (hw : w ≠ 0) : 0 < ∑ i, hh.eigenvalues i * Complex.normSq (extZero (fun i => 0 < hh.eigenvalues i) w i) := by

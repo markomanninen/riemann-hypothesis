@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PreservedCoefficient
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PreservedCoefficient
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -23,7 +27,7 @@ private theorem pres_new_low {R S σ : Type} [CommRing R] [CommRing S] [Finite �
     refine Submodule.smul_induction_on hy (fun p hp z _ => ?_) (fun a b ha hb => ?_)
     · rw [map_smul, Algebra.smul_def, map_mul]
       exact Ideal.mul_mem_right _ _ (hIn hp)
-    · rw [map_add, map_add]; exact add_mem ha hb
+    · rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
   have h := key (e (g - (truncTotal n g : MvPolynomial σ R))) (by
     rw [AdicCompletion.pow_smul_top_eq_ker_eval (MvPolynomial.idealOfVars_fg σ R), LinearMap.mem_ker,
       AdicCompletion.eval_apply, toAdicCompletionAlgEquiv_apply, toAdicCompletion_apply_eq_mk_truncTotal]
@@ -67,7 +71,7 @@ private theorem pres_new_mono {O σ τ Y : Type} [CommRing O] [AddCommGroup Y] (
   | add u v hu hv =>
     have : (monomial (u + v) 1 : MvPowerSeries τ O) = monomial u 1 * monomial v 1 := by
       rw [monomial_mul_monomial, one_mul]
-    rw [this, map_mul, map_add]
+    rw [this, map_mul, map_add (f := _)]
     exact mul_mem_wtPart O w hu hv
   | single s n =>
     rw [← X_pow_eq, map_pow, Finsupp.weight_single]
@@ -83,7 +87,7 @@ private theorem pres_new_poly {O σ τ Y : Type} [CommRing O] [AddCommGroup Y] [
     rw [this, map_smul, map_smul, map_smul, map_smul, pres_new_wcomp w j (pres_new_mono wt w Φ hΦ u),
       pres_new_wcomp wt j (h := monomial u 1) (pres_new_mono wt wt (AlgHom.id O _) (X_mem_wtPart O wt) u)]
     split_ifs <;> simp
-  | add p q hp hq => simp only [MvPolynomial.coe_add, map_add, hp, hq]
+  | add p q hp hq => simp only [MvPolynomial.coe_add, map_add (f := _), hp, hq]
 
 private theorem pres_new_comm {O σ τ Y : Type} [CommRing O] [IsLocalRing O] [IsHausdorff (maximalIdeal O) O]
     [Finite τ] [AddCommGroup Y] [DecidableEq Y] (wt : τ → Y) (w : σ → Y)

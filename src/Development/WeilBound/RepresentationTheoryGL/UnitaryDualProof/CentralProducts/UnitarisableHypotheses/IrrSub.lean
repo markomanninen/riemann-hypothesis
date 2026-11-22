@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ theorem fixed_split (U C : Subrepresentation ρ) (hUC : U.toSubmodule ⊓ C.toSu
     {u c : V} (hu : u ∈ U.toSubmodule) (hc : c ∈ C.toSubmodule) (h : ρ g (u + c) = u + c) :
     ρ g u = u := by
   have h1 : ρ g u - u = c - ρ g c := by
-    rw [map_add] at h
+    rw [map_add (f := _)] at h
     rw [sub_eq_sub_iff_add_eq_add, h, add_comm]
   have h2 : ρ g u - u ∈ U.toSubmodule ⊓ C.toSubmodule := by
     refine ⟨sub_mem (U.apply_mem_toSubmodule g hu) hu, ?_⟩

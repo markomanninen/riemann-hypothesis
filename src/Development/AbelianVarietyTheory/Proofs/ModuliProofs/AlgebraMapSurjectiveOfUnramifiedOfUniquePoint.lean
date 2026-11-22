@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
@@ -52,7 +57,7 @@ private lemma algebraMap_injective_of_denseP_unique_lift {R B : Type} [CommRing 
     (hpt : ∀ q ∈ P, ∃ (K : Type) (_ : Field K) (_ : IsAlgClosed K) (x : R →+* K),
       RingHom.ker x = q ∧ ∃! y : B →+* K, y.comp (algebraMap R B) = x) :
     Function.Injective (algebraMap R B) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   apply hP a
   intro p hp _
@@ -80,7 +85,7 @@ private lemma algebraMap_surjective_of_unique_algHom (K A : Type) [Field K] [IsA
     ⟨RingHom.ker φ₀, RingHom.ker_isMaximal_of_surjective _ hφ₀s, fun m hm => hmax m hm⟩
   have hfield := IsArtinianRing.isField_of_isReduced_of_isLocalRing A
   have hinj : Function.Injective φ₀ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     by_contra hne
     obtain ⟨b, hb⟩ := hfield.mul_inv_cancel hne
@@ -148,8 +153,8 @@ private lemma exists_smul_mem_range_algebraMap_of_unique_lift {R B : Type} [Comm
   obtain ⟨a, ha⟩ := h0
   exact ⟨a, by simpa using ha.symm⟩
 
-open scoped TensorProduct in
 
+open scoped TensorProduct in
 theorem _root_.GlobalTheory.algebraMap_bijective_of_unramified_of_unique_geometric_point :
     ∀ (R B : Type) [CommRing R] [IsReduced R] [CommRing B] [Algebra R B] [Module.Finite R B]
       [Algebra.FormallyUnramified R B] (P : Set (Ideal R)),

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Matrix Complex
 
 namespace GlobalTheory.CompanionTheory.Ar.Flat

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.AdMatConjTranspose
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.LowFockB
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.AdMatConjTranspose
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.LowFockB
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,7 +77,8 @@ theorem ffMat_eq (k : Matrix (Fin n) (Fin n) ℂ) (S T : Finset (Fin (n * n))) :
   have h := (ExteriorAlgebra.ιMulti ℂ T.card).toMultilinearMap.map_sum
     (fun i x => adMat ε k x (finProdFinEquiv.symm (T.orderEmbOfFin rfl i)) • Pi.single x (1 : ℂ))
   simp only [AlternatingMap.coe_multilinearMap] at h
-  rw [h, map_sum, Finsupp.finsetSum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, map_sum, Finsupp.finsetSum_apply]
   refine Finset.sum_congr rfl fun r _ => ?_
   rw [AlternatingMap.map_smul_univ, map_smul, Finsupp.smul_apply, smul_eq_mul]
 
@@ -84,7 +89,8 @@ theorem ffMat_poly (S T : Finset (Fin (n * n))) :
     (∏ i, adPoly ε (h i) (finProdFinEquiv.symm (T.orderEmbOfFin rfl i))) *
       MvPolynomial.C ((fockBasis n).repr (ExteriorAlgebra.ιMulti ℂ T.card (fun i => Pi.single (h i) (1 : ℂ))) S),
     fun k => ?_⟩
-  rw [ffMat_eq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ffMat_eq, map_sum]
   refine Finset.sum_congr rfl fun h _ => ?_
   rw [map_mul, map_prod, MvPolynomial.eval_C]
   simp only [eval_adPoly]

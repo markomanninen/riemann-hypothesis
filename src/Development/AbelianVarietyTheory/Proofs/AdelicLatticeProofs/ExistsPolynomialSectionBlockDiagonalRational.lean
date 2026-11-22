@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsPolynomialSectionBlockDiagonalMapStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsPolynomialSectionBlockDiagonalMapStatement
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
@@ -34,14 +39,15 @@ theorem map_rat {R S : Type} [CommRing R] [Algebra ℚ R] [CommRing S] [Algebra 
 
 theorem map_blk {R S : Type} [CommRing R] [Algebra ℚ R] [CommRing S] [Algebra ℚ S] (φ : R →ₐ[ℚ] S)
     (e : Matrix ι ι ℚ) (x : Matrix ι ι R) : φ.mapMatrix (blk e x) = blk e (φ.mapMatrix x) := by
-  simp only [blk, map_add, map_mul, map_sub, map_one, map_rat]
+  simp only [blk, map_add (f := _), map_mul, map_sub, map_one, map_rat]
 
 theorem map_linExt {R S : Type} [CommRing R] [Algebra ℚ R] [CommRing S] [Algebra ℚ S] (φ : R →ₐ[ℚ] S)
     (c : ι × ι → ι × ι → ℚ) (x : Matrix ι ι R) : φ.mapMatrix (linExt c x) = linExt c (φ.mapMatrix x) := by
   ext i j
   show φ (∑ kl : ι × ι, algebraMap ℚ R (c (i, j) kl) * x kl.1 kl.2) =
     ∑ kl : ι × ι, algebraMap ℚ S (c (i, j) kl) * φ (x kl.1 kl.2)
-  simp only [map_sum, map_mul, AlgHom.commutes]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, AlgHom.commutes]
 
 theorem map_poly {R S : Type} [CommRing R] [Algebra ℚ R] [CommRing S] [Algebra ℚ S] (φ : R →ₐ[ℚ] S)
     (b : ι → ι → MvPolynomial (ι × ι) ℚ) (x : Matrix ι ι R) :
@@ -102,7 +108,7 @@ theorem exists_section : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (Γ : Set
   refine ⟨c, b, fun R _ _ => ⟨fun X => ?_, fun X Y => ?_, fun y hy hy1 => ?_, fun x hx => ⟨?_, ?_⟩,
     fun y hy => ⟨?_, ?_⟩⟩⟩
   · have h := transfer_mem (F := fun R _ _ X => 1 + linExt c X)
-      (fun R S _ _ _ _ φ x => by simp only [map_add, map_one, map_linExt])
+      (fun R S _ _ _ _ φ x => by simp only [map_add (f := _), map_one, map_linExt])
       (fun g _ => (hc g).1) (mem_pts_univ X)
     exact h
   · have hp : ∀ X : Matrix ι ι R,
@@ -136,7 +142,7 @@ theorem exists_section : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (Γ : Set
         (blk e g).adjugate)) * (Matrix.of fun i j => ev (b i j) (blk e g)))
       (fun R S _ _ _ _ φ x => rfl)
       (fun R S _ _ _ _ φ x => by
-        simp only [map_mul, map_add, map_sub, map_one, map_linExt, map_rat, map_poly, map_blk,
+        simp only [map_mul, map_add (f := _), map_sub, map_one, map_linExt, map_rat, map_poly, map_blk,
           AlgHom.map_adjugate])
       (Γ := Γ) (by intro g hg; beta_reduce; exact (hb g hg).2.2) hy
     simp only [hy1, hone, mul_one] at h

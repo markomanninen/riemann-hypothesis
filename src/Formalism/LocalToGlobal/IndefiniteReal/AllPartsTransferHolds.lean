@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.AllPartsTransferOfFacts
-import Formalism.LocalToGlobal.IndefiniteReal.TraceOfDiag
-import Formalism.LocalToGlobal.IndefiniteReal.OpNormAtLeOfPoints
-import Formalism.LocalToGlobal.IndefiniteReal.FinrankIntSelf
-import Formalism.LocalToGlobal.IndefiniteReal.ExistsStrictHenselianAbsolutelyClosedLocalRing
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.AllPartsTransferOfFacts
+public import Formalism.LocalToGlobal.IndefiniteReal.TraceOfDiag
+public import Formalism.LocalToGlobal.IndefiniteReal.OpNormAtLeOfPoints
+public import Formalism.LocalToGlobal.IndefiniteReal.FinrankIntSelf
+public import Formalism.LocalToGlobal.IndefiniteReal.ExistsStrictHenselianAbsolutelyClosedLocalRing
+
+@[expose] public section
 
 namespace Formalism.IndefR.LatticeTransfer
 

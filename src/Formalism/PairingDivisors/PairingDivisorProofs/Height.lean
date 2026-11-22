@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PairingDivisors.PairingDivisorProofs.SumValuationNat
+module
+
+public import Mathlib
+public import Formalism.PairingDivisors.PairingDivisorProofs.SumValuationNat
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain Finset
 open Formalism.DivisionValues (vw lw conjPl)

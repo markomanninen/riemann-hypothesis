@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantFibreRankStalkRank
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LiftSemiTmul
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantFibreRankStalkRank
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LiftSemiTmul
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TensorProduct Opposite MonoidalCategory CartesianMonoidalCategory MonObj ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR MainStatements.Hodge GlobalTheory.CompanionTheory.PerfVB
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.constant_fibre_rank_stalk_rank : ∀ (R K : Type) [CommRing R] [AddCommGroup K] [Module R K] [Module.Finite R K] [Module.Projective R K] (g : ℕ), (∀ (k : Type) [Field k] [Algebra R k], Module.finrank k (k ⊗[R] K) = g) → ∀ p : PrimeSpectrum R, Module.rankAtStalk K p = g := by

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsContractRelDimLe
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPFContracted
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsContractRelDimLe
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPFContracted
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -60,8 +65,8 @@ section Contract
 variable {K K' : Type*} [Fintype K] [DecidableEq K] [Fintype K'] [DecidableEq K'] {F : Type*}
   [Field F] (j : K ↪ K') (ι' : K' → Type*)
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem killBlocks_compl_rename :
     (killBlocks (ι := ι') (F := F) (Finset.univ.map j)ᶜ).comp (rename (blockIncl j ι')) =
       rename (blockIncl j ι') := by
@@ -69,8 +74,8 @@ theorem killBlocks_compl_rename :
   intro v
   simp [killBlocks_X, blockIncl]
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem exists_rename_eq_killBlocks_compl (x : MRing ι' F) :
     ∃ a : MRing (fun k => ι' (j k)) F,
       rename (blockIncl j ι') a = killBlocks (Finset.univ.map j)ᶜ x := by
@@ -79,7 +84,7 @@ theorem exists_rename_eq_killBlocks_compl (x : MRing ι' F) :
   | add p q hp hq =>
     obtain ⟨a, ha⟩ := hp
     obtain ⟨b, hb⟩ := hq
-    exact ⟨a + b, by rw [map_add, ha, hb, map_add]⟩
+    exact ⟨a + b, by rw [map_add (f := _), ha, hb, map_add (f := _)]⟩
   | mul_X p v hp =>
     obtain ⟨a, ha⟩ := hp
     obtain ⟨k', i⟩ := v

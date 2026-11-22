@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNsmulFix
-import Development.AbelianVarietyTheory.Definitions.Foundations.OfInfProjInfMulOfFinProjFin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNsmulFix
+public import Development.AbelianVarietyTheory.Definitions.Foundations.OfInfProjInfMulOfFinProjFin
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -18,7 +23,7 @@ def placeAt (v : HeightOneSpectrum (𝓞 F)) (x : Fv F v) : AF F := pairA F 0 (G
 theorem placeAt_add (v : HeightOneSpectrum (𝓞 F)) (x y : Fv F v) :
     placeAt v (x + y) = placeAt v x + placeAt v y := by
   unfold placeAt pairA
-  rw [map_add]
+  rw [map_add (f := _)]
   exact Prod.ext (add_zero 0).symm rfl
 
 theorem placeAt_injective (v : HeightOneSpectrum (𝓞 F)) : Function.Injective (placeAt v) := by
@@ -68,7 +73,7 @@ theorem coords_at_place : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [
     intro s t
     funext i j
     show B.equivFun.symm _ = B.equivFun.symm _ + B.equivFun.symm _
-    rw [← map_add]
+    rw [← map_add (f := _)]
     congr 1
     funext l
     exact placeAt_add v _ _

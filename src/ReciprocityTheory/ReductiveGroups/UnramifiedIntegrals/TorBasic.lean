@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorDefs
-import Formalism.EllipticTorsion.FormalGroupPointsNoTorsion
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.NonsingularNorm
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.CubeThreeR
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.NormNatCastClOfNotDvd
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorDefs
+public import Formalism.EllipticTorsion.FormalGroupPointsNoTorsion
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.NonsingularNorm
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.CubeThreeR
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.NormNatCastClOfNotDvd
+
+@[expose] public section
 
 noncomputable section
 open scoped Classical
@@ -99,14 +103,35 @@ theorem integral_of_not_mem_formalGroup (h : GoodPair l g2 g3) (P : (shortW g2 g
       nlinarith [norm_nonneg y]
 
 theorem torsion_not_mem_formalGroup (h : GoodPair l g2 g3) (P : (shortW g2 g3).toAffine.Point) (N : ℕ) (hN : ¬ l ∣ N)
-    (hNP : N • P = 0) (hP0 : P ≠ 0) : ¬ InFormalGroupPoints P := fun hE =>
-  hP0 (formal_group_points_no_torsion ℂ_[l] _ (good_model h).1 (good_model h).2 N (norm_natCast_Cl_of_not_dvd (l := l) hN) P hE hNP)
+    (hNP : N • P = 0) (hP0 : P ≠ 0) : ¬ InFormalGroupPoints P := fun hE => by
+  have hn := norm_natCast_Cl_of_not_dvd (l := l) hN
+  obtain ⟨m, rfl⟩ : ∃ m, N = m + 1 :=
+    Nat.exists_eq_succ_of_ne_zero (by rintro rfl; simp at hn)
+  have hmul := (FormalGroupPointsTorsion.mulz (good_model h).1 P hE hP0 m).2
+  rw [hNP, Affine.Point.zero_def] at hmul
+  simp only [FormalGroupPointsTorsion.zf, zero_sub, norm_neg, norm_mul, hn, one_mul] at hmul
+  exact lt_irrefl _ hmul
 
 theorem not_mem_formalGroup_sub (h : GoodPair l g2 g3) (P D : (shortW g2 g3).toAffine.Point) (hP : ¬ InFormalGroupPoints P)
     (hD : InFormalGroupPoints D) : ¬ InFormalGroupPoints (P - D) := fun hE => by
-  have := (formal_group_points_subgroup ℂ_[l] _ (good_model h).1 (good_model h).2 (P - D) D hE hD).1
-  rw [sub_add_cancel] at this
-  exact hP this
+  have hadd : InFormalGroupPoints (P - D + D) := by
+    generalize P - D = E at hE ⊢
+    cases E with
+    | zero =>
+      change InFormalGroupPoints (0 + D)
+      rwa [zero_add]
+    | some x₁ y₁ h₁ =>
+      cases D with
+      | zero =>
+        change InFormalGroupPoints (Affine.Point.some x₁ y₁ h₁ + 0)
+        rwa [add_zero]
+      | some x₂ y₂ h₂ =>
+        by_cases hxy : x₁ = x₂ ∧ y₁ = (shortW g2 g3).toAffine.negY x₂ y₂
+        · rw [Affine.Point.add_of_Y_eq hxy.1 hxy.2]
+          trivial
+        · rw [Affine.Point.add_some hxy]
+          exact FormalGroupPointsSubgroup.addX_norm _ (good_model h).1 h₁.1 h₂.1 hxy hE hD
+  exact hP (by simpa only [sub_add_cancel] using hadd)
 
 theorem tor_y_unit (h : GoodPair l g2 g3) (P : (shortW g2 g3).toAffine.Point) (N : ℕ) (hN : ¬ l ∣ N)
     (hNP : N • P = 0) (h2 : P + P ≠ 0) : ‖py _ P‖ = 1 := by

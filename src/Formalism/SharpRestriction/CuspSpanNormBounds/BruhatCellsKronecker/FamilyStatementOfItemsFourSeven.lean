@@ -1,14 +1,18 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BesselShellMomentBounds
-import Formalism.SharpRestriction.CuspSpanNormBounds.SBridge
-import Formalism.SharpRestriction.CuspSpanNormBounds.BranchingAndRankConstants
-import Formalism.FormalDegreeBessel.FinalG
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.OwnEvIntro
-import Formalism.SharpRestriction.CuspSpanNormBounds.LatticeGluingRadicals
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.CfgTopFalseIff
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingConstruction
-import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.LatticeSumBounds
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.ParabolicSumAdmissibleOfParabolic
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.AbsPointwiseMonoConstant
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BesselShellMomentBounds
+public import Formalism.SharpRestriction.CuspSpanNormBounds.SBridge
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BranchingAndRankConstants
+public import Formalism.FormalDegreeBessel.FinalG
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.OwnEvIntro
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LatticeGluingRadicals
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.CfgTopFalseIff
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingConstruction
+public import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.LatticeSumBounds
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.ParabolicSumAdmissibleOfParabolic
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.AbsPointwiseMonoConstant
+
+@[expose] public section
 
 noncomputable section
 
@@ -796,7 +800,7 @@ theorem loss_product_abs_bound (P : Finset ι) (E : List ℕ) (Dn : ι → ℕ �
   rw [Finset.prod_mul_distrib, Finset.prod_const]
   have e1 : B ^ P.card ≤ B ^ Fintype.card ι := pow_le_pow_right₀ hB (Finset.card_le_univ P)
   have e2 : ∏ v ∈ P, (E.map (fun l => max 1 (Dn v l)⁻¹)).foldr max 1 ≤ X ^ E.length := by
-    refine le_trans (Finset.prod_le_prod (fun v _ => le_trans zero_le_one (hf v).2.2) (fun v _ => (hf v).1)) ?_
+    refine le_trans (Finset.prod_le_prod₀ (fun v _ => le_trans zero_le_one (hf v).2.2) (fun v _ => (hf v).1)) ?_
     rw [finset_prod_list_prod_comm P E (fun v l => max 1 (Dn v l)⁻¹)]
     apply list_prod_le_pow_length_local
     · intro l _
@@ -857,7 +861,7 @@ theorem minor_factor_le_size_volume {k r : ℕ} (H : ℝ) (z z' : Fin (2 * r + k
   · rw [dif_pos h]
     exact single_le_finset_prod Finset.univ (fun l : Fin (r + 2) => max 1 (‖Dmin k r z z' γ l‖ / H))
       (fun _ _ => le_max_left _ _) ⟨l, h⟩ (Finset.mem_univ _)
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     simp only [norm_zero, zero_div]
     rw [max_eq_left zero_le_one]
     exact one_le_size_volume H z z' γ
@@ -871,7 +875,7 @@ theorem prod_minor_max_le_height_size (H : ℝ) (hH : 1 ≤ H) (zs zs' : D.what�
     (fun _ => norm_nonneg _)
   rw [D.what₂.card_Tau] at h
   refine le_trans h (mul_le_mul_of_nonneg_left ?_ (by positivity))
-  exact Finset.prod_le_prod (fun _ _ => le_trans zero_le_one (le_max_left _ _))
+  exact Finset.prod_le_prod₀ (fun _ _ => le_trans zero_le_one (le_max_left _ _))
     (fun τ _ => minor_factor_le_size_volume H _ _ _ l)
 
 theorem term_points_setup (H : ℝ) (hH : 1 ≤ H) {w w' : D.what₂.Word}
@@ -911,7 +915,7 @@ theorem term_points_setup (H : ℝ) (hH : 1 ≤ H) {w w' : D.what₂.Word}
       have m2 : ‖DminN (zs τ) (zs' τ) (γs τ) (D.R.rS + 1)‖ ≤ max 1 ‖DminN (zs τ) (zs' τ) (γs τ) (D.R.rS + 1)‖ :=
         le_max_right _ _
       refine max_le (by nlinarith) (le_trans g1 (pow_le_pow_left₀ (norm_nonneg _) m2 2))
-    refine le_trans (Finset.prod_le_prod (fun _ _ => le_trans zero_le_one (le_max_left _ _)) (fun τ _ => hle τ)) ?_
+    refine le_trans (Finset.prod_le_prod₀ (fun _ _ => le_trans zero_le_one (le_max_left _ _)) (fun τ _ => hle τ)) ?_
     rw [Finset.prod_pow]
     exact pow_le_pow_left₀ (Finset.prod_nonneg (fun _ _ => le_trans zero_le_one (le_max_left _ _)))
       (prod_minor_max_le_height_size H hH zs zs' γs _) 2
@@ -1734,7 +1738,7 @@ theorem threshold_bound_even_decay (r q : ℕ) (d : Fin (r + 2) → ℝ) (H B Y 
     have hsz : ∏ l, max 1 (d l / H) ≤ (d ls / H) ^ (r + 1) := by
       rw [Fin.prod_univ_succ, max_eq_left ((div_le_one hH0).2 hd0), one_mul]
       calc ∏ i : Fin (r + 1), max 1 (d i.succ / H) ≤ ∏ _i : Fin (r + 1), d ls / H :=
-            Finset.prod_le_prod (fun i _ => le_trans zero_le_one (le_max_left _ _)) (fun i _ => hf _)
+            Finset.prod_le_prod₀ (fun i _ => le_trans zero_le_one (le_max_left _ _)) (fun i _ => hf _)
         _ = (d ls / H) ^ (r + 1) := by rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     have hs1 : 0 < ∏ l, max 1 (d l / H) :=
       Finset.prod_pos (fun l _ => lt_of_lt_of_le one_pos (le_max_left _ _))
@@ -2131,7 +2135,7 @@ theorem abs_bound_of_zero_decay (D : D7) (large₂ : SizeData₂ D) (C' Cl Cg cb
 theorem size_volume_antitone_height {k r : ℕ} {H H' : ℝ} (hH : 0 < H) (h : H ≤ H') (z z' : Fin (2 * r + k + 1) → ℂ) (γ : MatKR k r) :
     sizeV H' z z' γ ≤ sizeV H z z' γ := by
   unfold sizeV
-  refine Finset.prod_le_prod (fun l _ => le_trans zero_le_one (le_max_left _ _)) (fun l _ => ?_)
+  refine Finset.prod_le_prod₀ (fun l _ => le_trans zero_le_one (le_max_left _ _)) (fun l _ => ?_)
   exact max_le_max le_rfl (div_le_div_of_nonneg_left (norm_nonneg _) hH h)
 
 theorem height_constant_mono_pos (D : D7) (large₂ : SizeData₂ D) {Ch Ch' : ℝ} (h : Ch ≤ Ch') :
@@ -2274,7 +2278,7 @@ theorem threshold_bound_size_decay (r N : ℕ) (d : Fin (r + 2) → ℝ) (H B Y 
     have hsz : ∏ l, max 1 (d l / H) ≤ (d ls / H) ^ (r + 1) := by
       rw [Fin.prod_univ_succ, max_eq_left ((div_le_one hH0).2 hd0), one_mul]
       calc ∏ i : Fin (r + 1), max 1 (d i.succ / H) ≤ ∏ _i : Fin (r + 1), d ls / H :=
-            Finset.prod_le_prod (fun i _ => le_trans zero_le_one (le_max_left _ _)) (fun i _ => hf _)
+            Finset.prod_le_prod₀ (fun i _ => le_trans zero_le_one (le_max_left _ _)) (fun i _ => hf _)
         _ = (d ls / H) ^ (r + 1) := by rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     have hs1 : 0 < ∏ l, max 1 (d l / H) :=
       Finset.prod_pos (fun l _ => lt_of_lt_of_le one_pos (le_max_left _ _))

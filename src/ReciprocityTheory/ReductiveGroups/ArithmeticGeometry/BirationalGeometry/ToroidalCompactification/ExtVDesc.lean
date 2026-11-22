@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExtVHom
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.GlobFnsDvr
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExtVDefect
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExtVCat
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExtVHom
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.GlobFnsDvr
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExtVDefect
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExtVCat
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -41,9 +45,25 @@ theorem pullCubDescent (hExt : extendGenSt.{0}) (hGF : GlobalFnsDvrSt) : PullCub
   let ja : (genFibre V t.G).left ⟶ t.G.left := pullback.fst t.G.hom (specMap V (FractionRing V))
   have h₁ : io.hom.left ≫ m.φ = ja := hio
   have h₂ : io.hom.left ≫ m'.φ = ja ≫ ψ.left := by rw [← hψ, ← Category.assoc, h₁]
+  have hpull : (t'.PP.L.pull ψ.left).IsLB := by
+    refine { cover := top_le_iff.1 ?_, g_self := ?_, cocycle := ?_ }
+    · intro y _
+      obtain ⟨i, hi⟩ := exists_chart t'.PP.isLB (ψ.left y)
+      exact TopologicalSpace.Opens.mem_iSup.2 ⟨fun _ => i, mem_pull.2 hi⟩
+    · intro J
+      refine unit_ext fun y hy => ?_
+      rw [gm_res (𝟙 _) y _ hy, map_one, gm_pull_g t'.PP.L ψ.left (𝟙 _) y J J hy hy]
+      exact gm_self t'.PP.isLB _ y (mem_pull.1 hy)
+    · intro I J K
+      refine unit_ext fun y hy => ?_
+      rw [map_mul, gm_res (𝟙 _) y _ hy, gm_res (𝟙 _) y _ hy, gm_res (𝟙 _) y _ hy,
+        gm_pull_g t'.PP.L ψ.left (𝟙 _) y I J hy.1.1 hy.1.2,
+        gm_pull_g t'.PP.L ψ.left (𝟙 _) y J K hy.1.2 hy.2,
+        gm_pull_g t'.PP.L ψ.left (𝟙 _) y I K hy.1.1 hy.2]
+      exact gm_cocycle t'.PP.isLB _ y (mem_pull.1 hy.1.1) (mem_pull.1 hy.1.2) (mem_pull.1 hy.2)
   let N : RigLB t.G := ⟨LB.div (t'.PP.L.pull ψ.left) t.PP.L,
     divPullGen (eSec t.G) t.PP.rig ((CubeMap.ofHom ψ).rigPull t'.PP.L t'.PP.rig),
-    LB.isLB_div (pull_isLB t'.PP.isLB ψ.left) t.PP.isLB,
+    LB.isLB_div hpull t.PP.isLB,
     divPullGen_isGen _ _ _ t.PP.rigGen (rigPullOf_isGen _ _ _ _ _ t'.PP.rigGen)⟩
   obtain ⟨r, hr⟩ := exists_gen_ratio ψ.left m.φ m'.φ io.hom.left ja h₁ h₂ tK.PP.isLB t.PP.isLB t'.PP.isLB w₁ w₂ p₁ p₂
   have hrg := gen_ratio_isGen ψ.left m.φ m'.φ io.hom.left ja h₁ h₂ tK.PP.isLB w₁ w₂ p₁ p₂ r hr

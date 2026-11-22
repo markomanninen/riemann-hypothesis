@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsAbsIrrCharCompIff
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsClassSumPairingOfIsFormsOf
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteDetermining
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpanRangeMulVec
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IpMtTie
-import Formalism.LocalToGlobal.Columns.InvariantSubspaceCoordsX
-import Formalism.LocalToGlobal.Divisibility.RowSideTie
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsAbsIrrCharCompIff
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsClassSumPairingOfIsFormsOf
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteDetermining
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpanRangeMulVec
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IpMtTie
+public import Formalism.LocalToGlobal.Columns.InvariantSubspaceCoordsX
+public import Formalism.LocalToGlobal.Divisibility.RowSideTie
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ theorem zOf_mem (x : Fin (dimP W Ch sel mu P hX) → X.K) :
 
 def zOf : (Fin (dimP W Ch sel mu P hX) → X.K) →ₗ[X.K] MtildeV W Ch sel mu P where
   toFun x := ⟨_, zOf_mem W Ch sel mu P hX x⟩
-  map_add' x y := Subtype.ext (by simp only [map_add]; rfl)
+  map_add' x y := Subtype.ext (by simp only [map_add (f := _)]; rfl)
   map_smul' c x := Subtype.ext (by simp only [map_smul]; rfl)
 
 theorem zOf_val (x : Fin (dimP W Ch sel mu P hX) → X.K) :
@@ -80,9 +84,6 @@ theorem zOf_surjective : Function.Surjective (zOf W Ch sel mu P hX) := by
   rw [zOf_val]
   show ((resK W Ch sel mu hX).symm (LiftForms.lvlForm _ _ P.grp P.chr x)).1 = φ.1
   rw [hx, LinearEquiv.symm_apply_apply]
-
-def zEquiv : (Fin (dimP W Ch sel mu P hX) → X.K) ≃ₗ[X.K] MtildeV W Ch sel mu P :=
-  LinearEquiv.ofBijective (zOf W Ch sel mu P hX) ⟨zOf_injective W Ch sel mu P hX, zOf_surjective W Ch sel mu P hX⟩
 
 end Gen
 

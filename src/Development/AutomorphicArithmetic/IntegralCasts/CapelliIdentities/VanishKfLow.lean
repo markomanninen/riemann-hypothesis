@@ -1,17 +1,21 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
-import Formalism.LocalRingCardinality.DataRows
-import Formalism.FormalDegreeBessel.StatementG
-import Formalism.LocalToGlobal.BesselHermitianTheta.IsAutFunDef
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ConjEMemHostFIff
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
-import Formalism.LocalRingCardinality.DataHost
-import Formalism.LocalRingCardinality.Params
-import Formalism.LocalRingCardinality.DataTheta
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MultilinearVanishLattice
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Formalism.LocalRingCardinality.DataRows
+public import Formalism.FormalDegreeBessel.StatementG
+public import Formalism.LocalToGlobal.BesselHermitianTheta.IsAutFunDef
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ConjEMemHostFIff
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+public import Formalism.LocalRingCardinality.DataHost
+public import Formalism.LocalRingCardinality.Params
+public import Formalism.LocalRingCardinality.DataTheta
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MultilinearVanishLattice
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.LowTypeThetaMapVanishing.KfLow :
     {D : Formalism.BasicNotions.D7} →

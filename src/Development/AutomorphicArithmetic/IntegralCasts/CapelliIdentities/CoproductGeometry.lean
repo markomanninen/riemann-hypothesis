@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.CoproductGeometry.cop_geom :
     ∀ {R κ : Type} [inst : CommRing R] [IsNoetherianRing R]
@@ -31,7 +35,7 @@ theorem UpperTheory.Reformulated.B.CoproductGeometry.cop_geom :
     | mem x hx => exact ha x hx
     | zero => simpa using ha0
     | add u v _ _ hu hv =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hu hv)
     | smul r u _ hu =>
       rw [smul_eq_mul, map_mul, norm_mul]
@@ -49,5 +53,5 @@ theorem UpperTheory.Reformulated.B.CoproductGeometry.cop_geom :
       rw [map_mul, norm_mul, pow_succ]
       exact mul_le_mul (ih u hu) (hgen v hv) (norm_nonneg _) (pow_nonneg ha0 n)
     | add u _ v _ hu hv =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hu hv)

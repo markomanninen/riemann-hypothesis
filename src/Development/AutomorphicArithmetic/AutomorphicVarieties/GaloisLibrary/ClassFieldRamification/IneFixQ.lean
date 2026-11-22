@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.IsClassFieldHilbert
-import GroundTheory.GlobalFields.TateThesis.Chebotarev
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.CycInertia
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.IneMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.UnramIff
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.IsClassFieldHilbert
+public import GroundTheory.GlobalFields.TateThesis.Chebotarev
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.CycInertia
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.IneMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.UnramIff
+
+@[expose] public section
 
 open NumberField IsDedekindDomain IntermediateField UpperTheory.V.Kum UpperTheory.V.CF
 open scoped Pointwise
@@ -29,7 +33,10 @@ theorem UpperTheory.V.CF.ineFixQ :
       exact v.asIdeal.zero_mem
     obtain ⟨Q, -, hQ, hQv⟩ := Ideal.exists_ideal_over_prime_of_isIntegral v.asIdeal ⊥ hle
     have hpQ : (p : 𝓞 H) ∈ Q := by
-      have hc : (p : 𝓞 K) ∈ Q.comap (algebraMap (𝓞 K) (𝓞 H)) := hQv ▸ hv
+      have hc : (p : 𝓞 K) ∈ Q.comap (algebraMap (𝓞 K) (𝓞 H)) := by
+        change (p : 𝓞 K) ∈ Ideal.under (𝓞 K) Q
+        rw [hQv]
+        exact hv
       simpa [Ideal.mem_comap, map_natCast] using hc
     let w : HeightOneSpectrum (𝓞 H) := ⟨Q, hQ, fun hb => by
       rw [hb] at hpQ

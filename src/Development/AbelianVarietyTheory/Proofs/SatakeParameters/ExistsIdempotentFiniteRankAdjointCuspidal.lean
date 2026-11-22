@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.DualIsConjByOne
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BarKHomSurjective
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CompactSpaceMaximalCompactUnitaryInfiniteStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsSemisimpleOfLocallyFiniteCompactGroupStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsComplementWithoutCommonIrreducibleTypesStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsComplOrthogonalOfNoCommonIrreducibleTypesStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CuspidalTypeClosurePreservedByArchCompactIntertwStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.DualIsConjByOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BarKHomSurjective
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CompactSpaceMaximalCompactUnitaryInfiniteStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsSemisimpleOfLocallyFiniteCompactGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsComplementWithoutCommonIrreducibleTypesStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsComplOrthogonalOfNoCommonIrreducibleTypesStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CuspidalTypeClosurePreservedByArchCompactIntertwStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,10 +19,10 @@ open NumberField Formalism.L2.Host GlobalTheory.CuspRep GlobalTheory.ContraPair 
 
 namespace GlobalTheory.IdemAdj
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem coeffSpan_mul_right {W : Type} [AddCommGroup W] [Module ℂ W] (ρ₀ : Representation ℂ (Kinf E a) W)
     (k' : Kinf E a) {f : Kinf E a → ℂ} (hf : f ∈ AutFin.coeffSpan ρ₀) : (fun k => f (k * k')) ∈ AutFin.coeffSpan ρ₀ := by
   let T : (Kinf E a → ℂ) →ₗ[ℂ] (Kinf E a → ℂ) :=
@@ -47,7 +51,7 @@ def typeSub (π : CuspSub E a) {W : Type} [AddCommGroup W] [Module ℂ W] (ρ₀
   apply_mem_toSubmodule k' ψ hψ g := by
     have e : (fun k : Kinf E a => (cptRep E a k (cptOn π k' ψ).1).1 g) =
         fun k => (fun k : Kinf E a => (cptRep E a k ψ.1).1 g) (k * k') := by
-      funext k; simp [map_mul, act]
+      funext k; simp [map_mul]
     rw [e]; exact coeffSpan_mul_right ρ₀ k' (hψ g)
 
 theorem adj_of_isCompl {V V' : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup V'] [Module ℂ V']
@@ -61,7 +65,7 @@ theorem adj_of_isCompl {V V' : Type} [AddCommGroup V] [Module ℂ V] [AddCommGro
   calc B (X.projection Y h φ) ψ = B (X.projection Y h φ) (X'.projection Y' h' ψ + Y'.projection X' h'.symm ψ) := by
         rw [eψ]
     _ = B (X.projection Y h φ + Y.projection X h.symm φ) (X'.projection Y' h' ψ) := by
-        rw [map_add, map_add, LinearMap.add_apply, m1, m2]
+        rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, m1, m2]
     _ = _ := by rw [eφ]
 
 theorem idem_adj {G V : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [AddCommGroup V] [Module ℂ V]
@@ -199,7 +203,7 @@ theorem exists_idem_adj : AutomorphicFormsFiniteGL → ∀ (L : Type) [Field L] 
     have hd : v - e v ∈ twKer π.finPart K' 1 := by
       rw [← LocGL.idem_eq_zero_iff π.isSmooth_finPart hKc, map_sub, hee, sub_self]
     have hv : v = e v + (v - e v) := by abel
-    conv_lhs => rw [hv, map_add, map_add]
+    conv_lhs => rw [hv, map_add (f := _), map_add (f := _)]
     rw [LocGL.idem_of_mem _ _ (hfixS k _ (LocGL.idem_mem _ _ v)),
       (LocGL.idem_eq_zero_iff π.isSmooth_finPart hKc).2 (hkerS k _ hd), add_zero]
   obtain ⟨heX, heY⟩ := hT e heq
@@ -216,7 +220,7 @@ theorem exists_idem_adj : AutomorphicFormsFiniteGL → ∀ (L : Type) [Field L] 
   have hPTe : ∀ v, PT (e v) = e (PT v) := by
     intro v
     have hv := hPTs v
-    conv_lhs => rw [← hv, map_add, map_add]
+    conv_lhs => rw [← hv, map_add (f := _), map_add (f := _)]
     rw [hPTl _ (heX _ (hPTm v)), hPTr _ (heY _ (Submodule.projection_apply_mem hXY.symm v)), add_zero]
   have hPT2 : ∀ v, PT (PT v) = PT v := fun v => hPTl _ (hPTm v)
   refine ⟨e ∘ₗ PT, ?_, ?_, ?_, ?_⟩

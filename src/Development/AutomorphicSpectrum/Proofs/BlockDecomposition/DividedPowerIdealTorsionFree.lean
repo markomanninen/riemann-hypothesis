@@ -1,4 +1,9 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry CrystallineSemistableComparison CrystallineSemistableComparison.R
 
 namespace GlobalTheory.CompanionTheory.DivPow
@@ -16,7 +21,7 @@ theorem exists_gamma {S : Type} [CommRing S] (I : Ideal S) (z : S)
       simp
     · simpa [hi] using (h i hi).choose_spec.2
 
-theorem pdI_span : ∀ {S : Type} [CommRing S], TF S → ∀ s : Set S,
+theorem pdI_span : ∀ {S : Type} [CommRing S], TF (S := S) → ∀ s : Set S,
     (∀ x ∈ s, ∀ k : ℕ, k ≠ 0 → ∃ y ∈ Ideal.span s, (k.factorial : S) * y = x ^ k) →
     PdI (Ideal.span s) := by
   intro S _ _ s h x hx

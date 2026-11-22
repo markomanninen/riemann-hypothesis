@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftWeightCombinatorialDataULeUZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftWeightCombinatorialDataULeUZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -32,7 +36,7 @@ theorem low_dist : ∀ {D : Formalism.BasicNotions.D7} (L : Formalism.BasicNotio
   have he : (wts L j).e τ = (((D.hc τ).e j : ℚ) : ℝ) := by
     show wj D ((j : ℕ) + 1) τ = _
     unfold wj
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
     congr 3
   have habs : |((wts L j).U (parOf L j) τ a : ℝ) - (wts L j).c τ + (wts L j).e τ| =
       |(((D.hc τ).b i - (D.hc τ).e j : ℚ) : ℝ)| := by

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Divisibility.RowSideTie
-import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+module
+
+public import Formalism.LocalToGlobal.Divisibility.RowSideTie
+public import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open Formalism.DivisionValues Formalism.L2.Indef Formalism.L2.DIV

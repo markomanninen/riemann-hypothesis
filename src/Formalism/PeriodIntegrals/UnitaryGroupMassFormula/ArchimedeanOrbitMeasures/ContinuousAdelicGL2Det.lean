@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.CayDensExCayH
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.CayDensExCayH
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,7 +90,7 @@ theorem cayF_spec (X : lieU P Q) (hX : X ∈ D0 P Q) :
     UpqT.mat (cayF P Q X) * ((1 + 1) - ((X : lieU P Q) : Mat)) = (1 + 1) + ((X : lieU P Q) : Mat) := by
   have hex := cay_exists X hX
   unfold cayF
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact Classical.choose_spec hex
 
 theorem mem_cayley_domain_of (g : UpqT P Q) (X : lieU P Q)
@@ -118,35 +122,7 @@ theorem cayF_mat (X : lieU P Q) (hX : X ∈ D0 P Q) :
   rw [← cayF_spec X hX, Matrix.mul_assoc, Matrix.mul_nonsing_inv _ hB, Matrix.mul_one]
 
 theorem cayInv_cayF (X : lieU P Q) (hX : X ∈ D0 P Q) : cayInv P Q (cayF P Q X) = X := by
-  rw [cayInv_eq]
-  apply Subtype.ext
-  show (1 + 1) * (UpqT.mat (cayF P Q X) + 1)⁻¹ * (UpqT.mat (cayF P Q X) - 1) =
-    ((X : lieU P Q) : Mat)
-  have hs := cayF_spec X hX
-  set Y : Mat := ((X : lieU P Q) : Mat)
-  set G := UpqT.mat (cayF P Q X)
-  obtain ⟨h4, -, hB⟩ := chart_units G Y hs
-  have hinv : (G + 1)⁻¹ = (4 : ℂ)⁻¹ • ((1 + 1) - Y) := by
-    apply Matrix.inv_eq_right_inv
-    rw [Matrix.mul_smul, h4, smul_smul, inv_mul_cancel₀ (by norm_num), one_smul]
-  have hGm : (G - 1) * ((1 + 1) - Y) = Y + Y := by
-    rw [sub_mul, hs, one_mul]
-    abel
-  have hG1 : G - 1 = (Y + Y) * ((1 + 1) - Y)⁻¹ := by
-    rw [← hGm, Matrix.mul_assoc, Matrix.mul_nonsing_inv _ hB, Matrix.mul_one]
-  have hc : ((1 + 1) - Y) * (Y + Y) = (Y + Y) * ((1 + 1) - Y) := by noncomm_ring
-  have h4Y : (1 + 1 : Mat) * (Y + Y) = (4 : ℂ) • Y := by
-    rw [show (4 : ℂ) = 1 + 1 + 1 + 1 by norm_num, add_smul, add_smul, add_smul, one_smul]
-    noncomm_ring
-  rw [hinv, hG1]
-  calc (1 + 1) * ((4 : ℂ)⁻¹ • ((1 + 1) - Y)) * ((Y + Y) * ((1 + 1) - Y)⁻¹)
-      = (4 : ℂ)⁻¹ • ((1 + 1) * ((((1 + 1) - Y) * (Y + Y)) * ((1 + 1) - Y)⁻¹)) := by
-        rw [Matrix.mul_smul, Matrix.smul_mul]
-        simp only [Matrix.mul_assoc]
-    _ = (4 : ℂ)⁻¹ • ((1 + 1) * (Y + Y)) := by
-        rw [hc, Matrix.mul_assoc, Matrix.mul_nonsing_inv _ hB, Matrix.mul_one]
-    _ = Y := by
-        rw [h4Y, smul_smul, inv_mul_cancel₀ (by norm_num), one_smul]
+  exact cayley_inverse_iff P Q (cayF P Q X) X (cayF_spec X hX)
 
 theorem cayInv_rel (g : UpqT P Q) (hu : IsUnit (UpqT.mat g + 1).det) :
     UpqT.mat g * ((1 + 1) - ((cayInv P Q g : lieU P Q) : Mat)) = (1 + 1) + ((cayInv P Q g : lieU P Q) : Mat) := by
@@ -182,9 +158,8 @@ theorem cayley_domain_eq : cayS (D0 P Q) = {g : UpqT P Q | IsUnit (UpqT.mat g + 
   · intro hu
     exact ⟨cayInv P Q g, mem_cayley_domain_of g _ (cayInv_rel g hu), cayInv_rel g hu⟩
 
-theorem continuous_mat : Continuous (UpqT.mat (P := P) (Q := Q)) := by
-  unfold UpqT.mat
-  exact Units.continuous_val.comp continuous_subtype_val
+theorem continuous_mat : Continuous (UpqT.mat (P := P) (Q := Q)) :=
+  (isInducing_mat P Q).continuous
 
 theorem isOpen_cayley_domain : IsOpen (cayS (D0 P Q)) := by
   rw [cayley_domain_eq]
@@ -219,7 +194,7 @@ theorem cayF_zero : cayF P Q 0 = 1 := by
 
 theorem cayF_off (X : lieU P Q) (hX : X ∉ D0 P Q) : cayF P Q X = 1 := by
   unfold cayF
-  rw [dif_neg]
+  rw [dite_eq_right]
   rintro ⟨g, hg⟩
   exact hX (mem_cayley_domain_of g X hg)
 
@@ -229,7 +204,7 @@ private theorem continuous_inv_of_det_ne_zero {α : Type*} [TopologicalSpace α]
   exact (hf.matrix_det.inv₀ hd).smul hf.matrix_adjugate
 
 theorem continuousOn_cayF : ContinuousOn (cayF P Q) (D0 P Q) := by
-  rw [continuousOn_iff_continuous_restrict]
+  rw [continuousOn_iff_continuous_domRestrict]
   have hval : Continuous fun x : D0 P Q => UpqT.mat (cayF P Q x) := by
     have h : (fun x : D0 P Q => UpqT.mat (cayF P Q x)) = fun x : D0 P Q =>
         ((1 + 1) + ((x.1 : lieU P Q) : Mat)) * ((1 + 1) - ((x.1 : lieU P Q) : Mat))⁻¹ :=

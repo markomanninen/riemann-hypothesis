@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.HermitianGenusExtension.SemilocalHermitianLattices.ExistsNormOneOfPair
-import Formalism.PeriodIntegrals.HermitianGenusExtension.SemilocalHermitianLattices.ExistsIsomFix
+module
+
+public import Formalism.PeriodIntegrals.HermitianGenusExtension.SemilocalHermitianLattices.ExistsNormOneOfPair
+public import Formalism.PeriodIntegrals.HermitianGenusExtension.SemilocalHermitianLattices.ExistsIsomFix
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,8 @@ theorem exists_next (hS : IsHermSemilocal S) (hs : h.IsSymm) (hM : IsSelfDualMod
   generalize hwdef : w₀ - ∑ i ∈ s, h (x i) w₀ • x i = w at hwM
   have hxw : ∀ k, h (x k) w = h (x k) w₀ - if k ∈ s then h (x k) w₀ else 0 := by
     intro k
-    rw [← hwdef, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hwdef, map_sub, map_sum]
     congr 1
     simp only [map_smul, smul_eq_mul, hx, mul_ite, mul_one, mul_zero]
     rw [Finset.sum_ite_eq]
@@ -77,7 +82,7 @@ theorem exists_next (hS : IsHermSemilocal S) (hs : h.IsSymm) (hM : IsSelfDualMod
   refine ⟨c • w + d • α⁻¹ • x j, M.add_mem (hM.smul_mem _ hc _ hwM) (hM.smul_mem _ hd _ hy₀),
     hcd, fun i hi => ?_⟩
   have hij : i ≠ j := fun e => hj (e ▸ hi)
-  rw [map_add, map_smul, map_smul, map_smul, hxw, if_pos hi, sub_self, hx, if_neg hij]
+  rw [map_add (f := _), map_smul, map_smul, map_smul, hxw, if_pos hi, sub_self, hx, if_neg hij]
   simp
 
 theorem exists_isom_frame (hS : IsHermSemilocal S) (hs : h.IsSymm) (hd : ∀ x, h x x = 0 → x = 0)

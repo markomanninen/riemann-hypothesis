@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUdlOfIsUnit
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUdlOfIsUnit
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.KmCover
 
@@ -310,8 +314,8 @@ theorem double_coset_cover : ∀ (R K : Type) [CommRing R] [IsDomain R] [IsDiscr
       _ = ∏ i, ∏ j, (Tf i j).card := by simp [S, Fintype.card_piFinset]
       _ ≤ ∏ i : Fin n, ∏ j : Fin n, Nat.card (IsLocalRing.ResidueField R) ^
             (if i < j then (lam i - lam j).toNat else 0) :=
-          Finset.prod_le_prod (fun _ _ => Nat.zero_le _) fun i _ =>
-            Finset.prod_le_prod (fun _ _ => Nat.zero_le _) fun j _ => hT i j
+          Finset.prod_le_prod₀ (fun _ _ => Nat.zero_le _) fun i _ =>
+            Finset.prod_le_prod₀ (fun _ _ => Nat.zero_le _) fun j _ => hT i j
       _ = _ := by simp only [Finset.prod_pow_eq_pow_sum]
   · intro A1 A2 h1 h2
     obtain ⟨u, d, l, hu, hd, hl, hul, hud, hdo, hlu, hld, hA⟩ :=

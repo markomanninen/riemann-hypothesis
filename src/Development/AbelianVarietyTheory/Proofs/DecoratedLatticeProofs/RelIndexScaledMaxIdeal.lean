@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType
+
+@[expose] public section
+
 open ValuativeRel GlobalTheory.SplitWeil
 
 namespace GlobalTheory.ScaledIdealIndex

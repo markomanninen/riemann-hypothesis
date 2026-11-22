@@ -1,6 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FlagM3PadicGlobal
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.LatticeDataThicknessBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsIntegralOpW
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotHasParamOfSubsingleton
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsLocalComponentEigenvectorSplitPlace
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.LatticeDataThicknessBound
+
+@[expose] public section
 
 noncomputable section
 

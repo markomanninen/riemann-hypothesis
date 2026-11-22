@@ -1,14 +1,29 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ParOpApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWittBasisCompactStabiliser
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StableRangeOneDetUnitElementary
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModulusOfNormEqAbs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsWeilFormulas
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsCompactIsOpenUnitsAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HaarVectorScalingIdele
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModerateGrowthOfHasCompactSupport
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatHomOfGAdSymm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralAdaptedTriangularBounded
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWittBasisCompactStabiliser
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdmittedFormEqAdelicThetaDistribution
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantTermUnipotentIntegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdelicSchwartzNeZeroAtOriginStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzSpaceTranslateMem
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DblActId
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RestrictsToQuadraticPowOfRestrictsToQuadraticSig
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsContOnOfLocal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StableRangeOneDetUnitElementary
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModulusOfNormEqAbs
+
+@[expose] public section
 
 open scoped TensorProduct NNReal ENNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK GlobalTheory.Doubling
-open GlobalTheory.SWLit GlobalTheory.TowU GlobalTheory.SiegelCoefTheta
-open GlobalTheory.WeilEx
+open GlobalTheory.SWLit GlobalTheory.TowU
 attribute [-instance] CStarMatrix.instHMulOfFintypeOfMulOfAddCommMonoid
 
 noncomputable section
@@ -20,22 +35,10 @@ section Alg
 variable {R : Type} [CommRing R] {A : Type} [CommRing A] [Algebra R A] {α β ν X : Type} [Fintype β] [DecidableEq β]
   [AddCommGroup X] [Module R X] {e : ν ⊕ ν ≃ α}
 
-omit [DecidableEq β] in
 
-def lmul [Fintype α] [DecidableEq α] (β : Type) (t : GL α A) : Matrix α β A ≃ₗ[R] Matrix α β A where
-  toFun w := (t : Matrix α α A) * w
-  invFun w := ((t⁻¹ : GL α A) : Matrix α α A) * w
-  map_add' _ _ := Matrix.mul_add _ _ _
-  map_smul' c w := by
-    simp only [RingHom.id_apply]
-    exact Matrix.mul_smul _ c w
-  left_inv w := by
-    simp only [← Matrix.mul_assoc, ← Units.val_mul, inv_mul_cancel, Units.val_one, Matrix.one_mul]
-  right_inv w := by
-    simp only [← Matrix.mul_assoc, ← Units.val_mul, mul_inv_cancel, Units.val_one, Matrix.one_mul]
-
-variable [Invertible (2 : R)] {D : Matrix α β A ≃ₗ[R] X × X} (hΔ : ∀ w, LinAct.Del e w → (D w).1 = 0)
-  (hN : ∀ w, LinAct.Nab e w → (D w).2 = 0)
+variable [Invertible (2 : R)] {D : Matrix α β A ≃ₗ[R] X × X}
+  (hΔ : ∀ w, GlobalTheory.SWLit.LinAct.Del e w → (D w).1 = 0)
+  (hN : ∀ w, GlobalTheory.SWLit.LinAct.Nab e w → (D w).2 = 0)
 include hΔ hN
 
 end Alg
@@ -62,7 +65,7 @@ theorem absE_det_unitary {k : ℕ} {J : Matrix (Fin k) (Fin k) E} (hJ : J.det �
     exact hJu.mul_left_cancel (by linear_combination h)
   have hc : Units.map (cA σ : AE F E →* AE F E) d = conjUnit σ d := by
     ext
-    simp only [Units.coe_map, MonoidHom.coe_coe]
+    simp only [Units.coe_map, MonoidHom.coe_ofClass]
     rfl
   have h3 : d * Units.map (cA σ : AE F E →* AE F E) d = 1 := Units.ext (by simpa using h2)
   have h4 : absE F E d * absE F E d = 1 := by

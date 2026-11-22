@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SumMulEqZeroOfSumToReal
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonnegSumSmulIntBilinFormToRealMemPsdCone
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPartOfBasisOfInjective
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemOfCoeffNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SumMulEqZeroOfSumToReal
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonnegSumSmulIntBilinFormToRealMemPsdCone
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPartOfBasisOfInjective
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemOfCoeffNeZero
+
+@[expose] public section
 
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan
 
@@ -13,7 +17,7 @@ theorem apply_eq_zero_of_diag {X : Type} [AddCommGroup X] {β : LinearMap.BilinF
   by_contra hb
   have hA := hp z
   have h := hp (z + (-(β z z + 1) * β y z) • y)
-  simp only [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, hy, hs z y] at h
+  simp only [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, hy, hs z y] at h
   have hb2 : 1 ≤ β y z * β y z := mul_self_pos.2 hb
   have h3 := mul_nonneg (by linarith : 0 ≤ β z z + 1) (sub_nonneg.2 hb2)
   nlinarith [h3]
@@ -30,14 +34,14 @@ theorem exists_pull_eq {O : Type} [CommRing O] {X X₁ : Type} [AddCommGroup X] 
   refine ⟨LinearMap.mk₂ ℤ (fun a b => β (Function.surjInv hr a) (Function.surjInv hr b)) ?_ ?_ ?_ ?_,
     LinearMap.ext₂ fun a b => ?_⟩
   · intro a a' b
-    rw [← LinearMap.add_apply, ← map_add]
-    exact key _ _ _ _ (by rw [map_add, hs', hs', hs']) rfl
+    rw [← LinearMap.add_apply, ← map_add (f := _)]
+    exact key _ _ _ _ (by rw [map_add (f := _), hs', hs', hs']) rfl
   · intro n a b
     rw [← LinearMap.smul_apply, ← map_smul]
     exact key _ _ _ _ (by rw [map_zsmul r, hs', hs']) rfl
   · intro a b b'
-    rw [← map_add]
-    exact key _ _ _ _ rfl (by rw [map_add, hs', hs', hs'])
+    rw [← map_add (f := _)]
+    exact key _ _ _ _ rfl (by rw [map_add (f := _), hs', hs', hs'])
   · intro n a b
     rw [← map_smul]
     exact key _ _ _ _ rfl (by rw [map_zsmul r, hs', hs'])

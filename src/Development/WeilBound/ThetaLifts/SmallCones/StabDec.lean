@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SmallCones.HodgeTateFromSandwich
-import Development.WeilBound.ThetaLifts.SmallCones.MatCancel
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.HodgeTateFromSandwich
+public import Development.WeilBound.ThetaLifts.SmallCones.MatCancel
+
+@[expose] public section
 
 noncomputable section
 

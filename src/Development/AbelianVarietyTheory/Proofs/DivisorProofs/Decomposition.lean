@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagWZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagWZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+
+@[expose] public section
 
 open Matrix
 

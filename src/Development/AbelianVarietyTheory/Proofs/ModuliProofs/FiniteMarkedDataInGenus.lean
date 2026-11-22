@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFiniteClassesOfTraceFormDualEq
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFiniteClassesOfTraceFormDualEq
+
+@[expose] public section
 
 namespace GlobalTheory.MarkedGenus
 
@@ -60,7 +64,7 @@ private lemma match_mod_lemma {E : Type} [Field E] [NumberField E] [IsCMField E]
     simp only [LinearMap.smul_apply, LinearMap.id_apply] at hz
     refine ⟨-(e1.symm z), e1.injective ?_⟩
     have h2 : e2 (fB x) = e1 (fA x) - k • z := by rw [hz]; abel
-    simp only [LinearEquiv.trans_apply, LinearEquiv.apply_symm_apply, map_add, map_neg, map_nsmul, h2,
+    simp only [LinearEquiv.trans_apply, LinearEquiv.apply_symm_apply, map_add (f := _), map_neg, map_nsmul, h2,
       smul_neg, sub_eq_add_neg]
 
 theorem finite_marked_data_in_genus :

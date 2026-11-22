@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmpOfIsCocycle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmpOfIsCocycle
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,7 +20,7 @@ theorem IsCocycle.res_on {Z : Scheme.{0}} {J : Type} {W : J → Z.Opens}
     resG Z (le_inf hi hj) (c i j) + resG Z (le_inf hj hk) (c j k) =
       resG Z (le_inf hi hk) (c i k) := by
   have e := congrArg (resG Z (le_inf (le_inf hi hj) hk)) (hc i j k)
-  simp only [map_add, resG_resG'] at e
+  simp only [map_add (f := _), resG_resG'] at e
   exact e
 
 theorem exists_coboundary_of_cmp_eq_zero (R : Type) [CommRing R] (Z : Scheme.{0}) (s : Z ⟶ Sp R)

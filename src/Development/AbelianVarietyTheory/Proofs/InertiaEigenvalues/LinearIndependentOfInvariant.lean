@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations
 
@@ -45,7 +49,8 @@ theorem linearIndependent_of_invariant (G E M ι : Type) [Field E] [AddCommGroup
       obtain ⟨d, hd⟩ : ∃ d : ι → E, d = fun i => σ g (c' i) - c' i := ⟨_, rfl⟩
       have h1 : ∑ i, σ g (c' i) • v i = 0 := by
         have h2 := congrArg (ρ g) hc'sum
-        rw [map_sum, map_zero] at h2
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, map_zero] at h2
         simpa [hρ, hv] using h2
       have hdsum : ∑ i, d i • v i = 0 := by
         simp only [hd, sub_smul, Finset.sum_sub_distrib, h1, hc'sum, sub_zero]

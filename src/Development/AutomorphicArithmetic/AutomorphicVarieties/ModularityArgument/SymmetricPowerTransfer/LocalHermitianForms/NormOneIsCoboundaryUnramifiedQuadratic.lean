@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LcountNorm
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LcountNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,11 +39,12 @@ structure IsFixP (t : K) (S : Set (Etau K τ)) : Prop where
     funext x
     simp [e, mul_assoc]
 
-open Classical in
 
-def pcount (t : K) : ℂ :=
+open Classical in
+def pcount (t : K) : ℂ := by
+  classical
   letI := quoAct τ
-  wcount (Cint O τ) fun S : Set (Etau K τ) => if IsFixP O τ t S then 1 else 0
+  exact wcount (Cint O τ) fun S : Set (Etau K τ) => if IsFixP O τ t S then 1 else 0
 
 def cls (S : Set (Etau K τ)) : Set (Set (Etau K τ)) := {S' | ∃ s : Kˣ, S' = ((s : K) • ·) '' S}
 
@@ -53,11 +58,12 @@ def cls (S : Set (Etau K τ)) : Set (Set (Etau K τ)) := {S' | ∃ s : Kˣ, S' =
       (fun S => ((a : Etau K τ) * ·) '' S) '' ((fun S => ((b : Etau K τ) * ·) '' S) '' X)
     simp [← Set.image_comp, Function.comp_def, mul_assoc]
 
-open Classical in
 
-def vcount (x : Etau K τ) : ℂ :=
+open Classical in
+def vcount (x : Etau K τ) : ℂ := by
+  classical
   letI := mulAct τ
-  wcount (Cint O τ) fun X : Set (Set (Etau K τ)) => if ∃ S, IsLat O τ S ∧ (∀ y ∈ S, x * y ∈ S) ∧ X = cls τ S then 1 else 0
+  exact wcount (Cint O τ) fun X : Set (Set (Etau K τ)) => if ∃ S, IsLat O τ S ∧ (∀ y ∈ S, x * y ∈ S) ∧ X = cls τ S then 1 else 0
 
 end
 

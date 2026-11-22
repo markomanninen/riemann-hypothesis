@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.MirabolicColumnBlock
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.MirabolicColumnBlock
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,14 +25,15 @@ def mulI (M N : LieI ι a) : LieI ι a := Matrix.of.symm (Matrix.of M * Matrix.o
 def gI (g : GL (Fin a) (ι → ℂ)) : LieI ι a := Matrix.of.symm g.val
 
 theorem mulI_gI (g h : GL (Fin a) (ι → ℂ)) : mulI (gI g) (gI h) = gI (g * h) := by
-  simp [mulI, gI]
+  rfl
 
 theorem gI_one : gI (1 : GL (Fin a) (ι → ℂ)) = oneI ι a := rfl
 
 theorem mulI_assoc (M N P : LieI ι a) : mulI (mulI M N) P = mulI M (mulI N P) := by
-  simp [mulI, Matrix.mul_assoc]
+  exact congrArg Matrix.of.symm (Matrix.mul_assoc (Matrix.of M) (Matrix.of N) (Matrix.of P))
 
-theorem oneI_mulI (M : LieI ι a) : mulI (oneI ι a) M = M := by simp [mulI, oneI]
+theorem oneI_mulI (M : LieI ι a) : mulI (oneI ι a) M = M := by
+  exact congrArg Matrix.of.symm (Matrix.one_mul (Matrix.of M))
 
 def lmul (M : LieI ι a) : LieI ι a →L[ℝ] LieI ι a :=
   LinearMap.toContinuousLinearMap
@@ -187,15 +192,17 @@ variable {ι : Type} [Fintype ι] {a : ℕ} {X : Type} [NormedAddCommGroup X] [N
   (ρ : GL (Fin a) (ι → ℂ) →* (X →L[ℂ] X))
 
 theorem orb_gI (g : GL (Fin a) (ι → ℂ)) (v : X) : orb ρ v (gI g) = ρ g v := by
-  have h : IsUnit (Matrix.of (gI g)) := by simpa [gI] using g.isUnit
-  have hu : h.unit = g := Units.ext (by simp [gI])
+  have h : IsUnit (Matrix.of (gI g)) := by
+    change IsUnit g.val
+    exact g.isUnit
+  have hu : h.unit = g := Units.ext rfl
   simp only [orb]
   rw [dif_pos h, hu]
 
 theorem orb_mulI (g : GL (Fin a) (ι → ℂ)) (v : X) (M : LieI ι a) :
     orb ρ v (mulI (gI g) M) = ρ g (orb ρ v M) := by
   have e : Matrix.of (mulI (gI g) M) = (g : Matrix (Fin a) (Fin a) (ι → ℂ)) * Matrix.of M := by
-    simp [mulI, gI]
+    rfl
   by_cases h : IsUnit (Matrix.of M)
   · have h' : IsUnit (Matrix.of (mulI (gI g) M)) := by rw [e]; exact g.isUnit.mul h
     have hu : h'.unit = g * h.unit := Units.ext (by simp [e])
@@ -203,12 +210,12 @@ theorem orb_mulI (g : GL (Fin a) (ι → ℂ)) (v : X) (M : LieI ι a) :
     rw [dif_pos h', dif_pos h, hu, map_mul, ContinuousLinearMap.mul_apply]
   · have h' : ¬ IsUnit (Matrix.of (mulI (gI g) M)) := by rw [e, Units.isUnit_units_mul]; exact h
     simp only [orb]
-    rw [dif_neg h', dif_neg h, map_zero]
+    rw [dite_eq_right h', dite_eq_right h, map_zero]
 
 theorem orb_mulI_right (g : GL (Fin a) (ι → ℂ)) (v : X) (M : LieI ι a) :
     orb ρ v (mulI M (gI g)) = orb ρ (ρ g v) M := by
   have e : Matrix.of (mulI M (gI g)) = Matrix.of M * (g : Matrix (Fin a) (Fin a) (ι → ℂ)) := by
-    simp [mulI, gI]
+    rfl
   by_cases h : IsUnit (Matrix.of M)
   · have h' : IsUnit (Matrix.of (mulI M (gI g))) := by rw [e]; exact h.mul g.isUnit
     have hu : h'.unit = h.unit * g := Units.ext (by simp [e])
@@ -216,7 +223,7 @@ theorem orb_mulI_right (g : GL (Fin a) (ι → ℂ)) (v : X) (M : LieI ι a) :
     rw [dif_pos h', dif_pos h, hu, map_mul, ContinuousLinearMap.mul_apply]
   · have h' : ¬ IsUnit (Matrix.of (mulI M (gI g))) := by rw [e, Units.isUnit_mul_units]; exact h
     simp only [orb]
-    rw [dif_neg h', dif_neg h]
+    rw [dite_eq_right h', dite_eq_right h]
 
 theorem hasFDerivAt_orb_at {v : X} {D : LieI ι a →L[ℝ] X} (hD : HasFDerivAt (orb ρ v) D (oneI ι a))
     (g : GL (Fin a) (ι → ℂ)) :
@@ -321,7 +328,7 @@ theorem rap_rho (hρ : PolyBd ρ) {u : V → GL (Fin a) (ι → ℂ)} {L : V →
     refine squeeze_zero_norm (fun y => ?_) ht
     exact ((ρ (u y)).le_opNorm _).trans (mul_le_mul_of_nonneg_right (hbd y) (norm_nonneg _))
   have e : (fun y => ρ (u y) (H y)) = fun y => ρ (u y) (H y - H y0) + ρ (u y) (H y0) := by
-    funext y; rw [← map_add, sub_add_cancel]
+    funext y; rw [← map_add (f := _), sub_add_cancel]
   rw [e]
   unfold ContinuousAt
   have := h1.add h2
@@ -440,8 +447,8 @@ section KeyE
 
 variable {ι : Type} [Fintype ι] {a : ℕ} {X : Type} [NormedAddCommGroup X] [NormedSpace ℂ X]
 
-open Classical in
 
+open Classical in
 def unitChartOperator (ρ : GL (Fin a) (ι → ℂ) →* (X →L[ℂ] X)) (M : LieI ι a) : X →L[ℂ] X :=
   if h : IsUnit (Matrix.of M) then ρ h.unit else 0
 
@@ -478,7 +485,8 @@ theorem e_Dy_eq (D : LieI ι a → V → X) (y : V) (D' : LieI ι a →L[ℝ] X)
   ext Z
   rw [e_Dy_apply]
   conv_lhs => rw [← (e_b ι a).sum_repr Z]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, h]
   simp [Complex.coe_smul]

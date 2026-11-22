@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RowsPtAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RowsPtAt
+
+@[expose] public section
 
 noncomputable section
 open scoped Classical
@@ -11,5 +15,4 @@ def CollS {D : D7} {X : HidaSetting D} (Y : Full X) (u : D.what₂.Word) : Prop 
     (Real.sqrt ((D.host.g 0 : ℝ) * (D.host.g 1 : ℝ)))⁻¹ ^ (D.R.k * D.R.f) * ddC X Y u u +
       Real.exp (-((D.R.k : ℝ) * D.R.f * Real.log D.R.k) / 2) * duC X Y u
 
-def CollSBound : Prop := Free CollS
 end GlobalTheory.Core.Deg

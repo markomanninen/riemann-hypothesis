@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsMetricFrOfIsMetricOn
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopPowerHermitianFormDensity
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TopDegreeFormCoeffEqTensorSquareTopCoefficient
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsMetricFrOfIsMetricOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopPowerHermitianFormDensity
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TopDegreeFormCoeffEqTensorSquareTopCoefficient
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -130,9 +134,9 @@ theorem dens_aeval_sym (n : ℕ) (P : MvPolynomial (Fin n × Fin n) ℂ) :
     simp only [coeff_smul, smul_eq_mul, Finset.mul_sum]
     refine Finset.sum_congr rfl fun w _ => by ring
   | add p q hp hq =>
-    rw [map_add, Subalgebra.coe_add, dens_add', hp, hq, ← add_div]
+    rw [map_add (f := _), Subalgebra.coe_add, dens_add', hp, hq, ← add_div]
     congr 1
     unfold topCoeff
-    simp only [coeff_add, mul_add, Finset.sum_add_distrib]
+    simp only [MvPolynomial.coeff_add, mul_add, Finset.sum_add_distrib]
 
 end GlobalTheory.ChernCalc.DensTop

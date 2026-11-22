@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsSchur
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsSchur
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.RestTerms
@@ -15,7 +20,8 @@ theorem SchPowerSumAtRootsOfUnity.rootOfUnity_isPrimitiveRoot {k : ℕ} (hk : 1 
 theorem SchPowerSumAtRootsOfUnity.proof : SchPowerSumAtRootsOfUnity.Statement := by
   intro N k j hk hkN hj
   have hprim := SchPowerSumAtRootsOfUnity.rootOfUnity_isPrimitiveRoot hk
-  simp only [psum, map_sum, map_pow, aeval_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [psum, map_sum, map_pow, aeval_X]
   have hsum : ∑ i : Fin N, rootOfUnityPoint N k i ^ j =
       ∑ i ∈ range k, (rootOfUnity k ^ j) ^ i := by
     unfold rootOfUnityPoint

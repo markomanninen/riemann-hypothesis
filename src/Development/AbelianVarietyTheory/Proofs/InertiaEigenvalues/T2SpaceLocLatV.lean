@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCyclotomicTowerLevelGeneratorProperties
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCyclotomicTowerLevelGeneratorProperties
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.MainNotions.LocalSituation GlobalTheory.Cyc TensorProduct
 
@@ -48,7 +52,7 @@ theorem lTensor_inj {T Y Z : LocLat G Qp LL O} {ι : LatHom T.L Y.L} {π : LatHo
     Function.Injective ((onT ι).lTensor R) := by
   haveI := Z.L.free
   obtain ⟨s, hs⟩ := Module.projective_lifting_property (onT π) LinearMap.id (onT_surj h)
-  have h3 := ((onT_exact h).split_tfae (onT_inj h) (onT_surj h)).out 0 1
+  have h3 := ((onT_exact h).split_tfae (onT_inj h) (onT_surj h)).out 1 2
   obtain ⟨r, hr⟩ := h3.1 ⟨s, hs⟩
   apply Function.LeftInverse.injective (g := r.lTensor R)
   intro x
@@ -68,7 +72,7 @@ theorem lTensor_TWmap {T Y : LocLat G Qp LL O} (ι : LatHom T.L Y.L) (f : RW →
   induction b using TensorProduct.induction_on with
   | zero => simp
   | tmul a t => simp [TWmap]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem lTensor_TWact {T Y : LocLat G Qp LL O} (ι : LatHom T.L Y.L) (f : RW →ₐ[O] RW) (g : G)
     (b : TW RW T) : (onT ι).lTensor RW (TWact f T g b) = TWact f Y g ((onT ι).lTensor RW b) := by
@@ -78,7 +82,7 @@ theorem lTensor_TWact {T Y : LocLat G Qp LL O} (ι : LatHom T.L Y.L) (f : RW →
     simp only [TWact, TensorProduct.map_tmul, LinearMap.lTensor_tmul]
     congr 1
     exact Subtype.ext (ι.equiv g t)
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem generic [T2Space LL] [IsTopologicalRing LL] (E : EtTie W RA RW inclR φR gR πA)
     (hinj : Function.Injective (algebraMap O RW))
@@ -179,7 +183,7 @@ theorem algebraMap_RW_inj (LL : FinExt l) : Function.Injective (algebraMap ↥(O
 
 theorem mem_OL_iff (LL : FinExt l) (x : ℚ_[l]) : algebraMap ℚ_[l] ↥LL.1 x ∈ OL LL ↔ ‖x‖ ≤ 1 := by
   have h1 : algebraMap ℚ_[l] ↥LL.1 x ∈ OL LL ↔ IsIntegral ℤ_[l] x :=
-    isIntegral_algebraMap_iff (algebraMap ℚ_[l] ↥LL.1).injective
+    isIntegral_algebraMap_iff 
   rw [h1, IsIntegrallyClosed.isIntegral_iff]
   constructor
   · rintro ⟨y, rfl⟩

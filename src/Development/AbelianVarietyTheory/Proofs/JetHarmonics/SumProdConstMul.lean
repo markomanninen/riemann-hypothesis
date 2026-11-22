@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.ColValMonomial
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.VRatioGtStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBC
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PowerSeriesExpIntegralCanonGaugeAdditiveSecond
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ColValueMulOfDisjointColumns
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ValLeOfMemSpan
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsEigenColumn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.ColValMonomial
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.VRatioGtStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBC
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PowerSeriesExpIntegralCanonGaugeAdditiveSecond
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ColValueMulOfDisjointColumns
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ValLeOfMemSpan
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsEigenColumn
+
+@[expose] public section
 
 set_option autoImplicit false
 

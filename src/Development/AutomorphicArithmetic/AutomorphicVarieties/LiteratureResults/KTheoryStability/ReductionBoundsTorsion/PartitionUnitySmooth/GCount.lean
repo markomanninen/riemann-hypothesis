@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
+
+@[expose] public section
 
 noncomputable section
 
@@ -229,7 +233,7 @@ private theorem ncard_q_le_mul_le_sqrt_pow_mul_ncard {L : Type} [Field L] [Numbe
             {y : InfinitePlace L → Fin N → ℂ | qR h (y - toR v) < s / 4}.indicator 1 x
             ∂(MeasureTheory.Measure.addHaar :
               MeasureTheory.Measure (InfinitePlace L → Fin N → ℂ)) := by
-          rw [MeasureTheory.lintegral_finset_sum _ fun v _ =>
+          rw [MeasureTheory.lintegral_finsetSum _ fun v _ =>
             (measurable_one.indicator (hmeas (toR v)))]
           refine Finset.sum_congr rfl fun v _ => ?_
           rw [MeasureTheory.lintegral_indicator_one (hmeas (toR v))]

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.WTrans
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.WTrans
+
+@[expose] public section
 
 namespace UpperTheory.V.Z.Sym.Loc
 
@@ -28,8 +32,8 @@ theorem quo_mul_star (z : (Etau K τ)ˣ) : quo z * star (quo z) = 1 := by
         rw [star_mul']; ring
     _ = 1 := by simp
 
-variable (O) in
 
+variable (O) in
 def mulE (y : (EL Δ τ)ˣ) : Sp Δ τ ≃ₗ[O] Sp Δ τ where
   toFun x := (x.1, y * x.2)
   invFun x := (x.1, (y⁻¹ : (EL Δ τ)ˣ) * x.2)
@@ -61,7 +65,7 @@ theorem isFix_map_iff {c : K} {d m d' m' : EL Δ τ} (ψ : Sp Δ τ ≃ₗ[O] Sp
   have := isFix_map (d := d') (m := m') ψ.symm (fun x y => by rw [← h1]; simp) (fun x => ψ.injective (by rw [← h2]; simp)) h
   rwa [← Set.image_comp, show (ψ.symm ∘ ψ : Sp Δ τ → Sp Δ τ) = id from funext ψ.symm_apply_apply, Set.image_id] at this
 
-theorem isFix_mulE (c : K) (d m : EL Δ τ) (y : (EL Δ τ)ˣ) (S : Set (Sp Δ τ)) : IsFix O c d m (mulE O y '' S) ↔
+theorem isFix_mulE (c : K) (d m : EL Δ τ) (y : (EL Δ τ)ˣ) (S : Set (Sp Δ τ)) : IsFix O c d m ((mulE (O := O) y) '' S) ↔
     IsFix O c (d * sigL (y : EL Δ τ) * ((y⁻¹ : (EL Δ τ)ˣ) : EL Δ τ)) (m * (y : EL Δ τ) * star (sigL (y : EL Δ τ))) S := by
   refine isFix_map_iff _ (fun a b => ?_) (fun a => Prod.ext rfl ?_) S
   · change herm c m (a.1, (y : EL Δ τ) * a.2) (b.1, (y : EL Δ τ) * b.2) = _

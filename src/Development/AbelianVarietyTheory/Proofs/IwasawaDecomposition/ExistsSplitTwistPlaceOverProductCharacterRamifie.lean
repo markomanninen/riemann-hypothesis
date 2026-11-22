@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
-import Formalism.LocalToGlobal.GaloisLevelStructure.TiedLevel
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsSplitPlaceGood
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+public import Formalism.LocalToGlobal.GaloisLevelStructure.TiedLevel
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsSplitPlaceGood
+
+@[expose] public section
+
 open Formalism.BasicNotions NumberField IsDedekindDomain Formalism.L2 Formalism.IndefR.Links
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -17,7 +22,7 @@ theorem exists_splitPlace_of_mem_qPl : ∀ (D : D7) (T : Type) (L : LevCh D T) (
   rintro D T L μ0 hL i t v ⟨hg, w, hw, hn⟩
   have hu : (L.C.mu0 i).UnrAt w := (L.C.isMu0 i).unr w fun k hk => hg ⟨w, hw, k, hk⟩
   have hx : ¬ (L.xiH t).UnrAt w := fun h => hn fun x hx => by
-    rw [Formalism.L2.Host.HChar.loc_mul, hu x hx, h x hx, one_mul]
+    simpa [Host.HChar.loc] using congrArg₂ (· * ·) (hu x hx) (h x hx)
   have key : ∀ P ∈ L.Q t, NG.OverPl P v → ∃ s : ReciprocityTheory.Aut.SplitPlace D.host.E, s.v = v ∧ s.w ∈ L.Q t := by
     intro P hP hov
     obtain ⟨s, hs⟩ := GlobalTheory.OffBad.splitPlace_of_isSplitPl D P

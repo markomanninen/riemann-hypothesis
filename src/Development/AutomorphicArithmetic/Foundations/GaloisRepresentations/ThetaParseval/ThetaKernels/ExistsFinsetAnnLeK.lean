@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.ExistsCompactOfFinite
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.ExistsCompactOfFinite
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 

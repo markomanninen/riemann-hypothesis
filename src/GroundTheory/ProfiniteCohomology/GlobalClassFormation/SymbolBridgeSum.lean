@@ -1,14 +1,19 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.SymbolBridge
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.SymbolBridge
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open NumberField IntermediateField GroundTheory.Global FiniteSubfield IsDedekindDomain IdeleGroup
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 attribute [local instance] FiniteSubfield.isGalois_of_normal galCommGroup
 
@@ -49,8 +54,13 @@ theorem finsum_char_localSymbolAt_eq (χ : Additive K.1.fixingSubgroup →ₜ+ Q
       Units.map (algebraMap K.1 (v.adicCompletion K.1) : K.1 →* v.adicCompletion K.1) a := fun v ↦
     Units.ext (coe_finiteProj_diagonal v a)
   have hinf : ∀ w, infiniteProj w (diagonal K.1 a) =
-      Units.map (algebraMap K.1 w.Completion : K.1 →* w.Completion) a := fun w ↦
-    Units.ext (coe_infiniteProj_diagonal w a)
+      Units.map (algebraMap K.1 w.Completion : K.1 →* w.Completion) a := by
+    intro w
+    apply Units.ext
+    change (↑(infiniteProj w (diagonal K.1 a)) : w.Completion) = algebraMap K.1 w.Completion (a : K.1)
+    rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+      Algebra.algebraMap_self_apply]
+    exact coe_infiniteProj_diagonal w a
   have hF_inr : ∀ v, χ (Additive.ofMul (localSymbolAt ι (.inr v) a)) = Multiplicative.toAdd (χ' (localSymbol E.1 v (finiteProj v (diagonal K.1 a)))) := by
     intro v
     rw [hχm_apply, ← hχ'R, hR, restrictHom_localSymbolAt_inr, ← hfin]

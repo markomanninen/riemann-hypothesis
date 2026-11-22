@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FinIso
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecProdRecSatakeLL
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
-import Formalism.SharpRestriction.LevelLetterCocycles.SphericalInertData
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanRepMatrixEqTopOfAbsIrreducible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAdelicExtensionOfAlgebraicWeightDefiniteUnStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinitePartMulDefiniteUnitaryInfinitePointStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUnitaryRationalMatrixOfFirstPresentationPoStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsOpenNhdOneInUnitaryPrincipalCongruenceStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FinIso
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecProdRecSatakeLL
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
+public import Formalism.SharpRestriction.LevelLetterCocycles.SphericalInertData
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanRepMatrixEqTopOfAbsIrreducible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAdelicExtensionOfAlgebraicWeightDefiniteUnStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinitePartMulDefiniteUnitaryInfinitePointStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUnitaryRationalMatrixOfFirstPresentationPoStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsOpenNhdOneInUnitaryPrincipalCongruenceStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host GlobalTheory.HeightCounting NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.FormDict GlobalTheory.DefiniteBC
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -25,12 +30,12 @@ variable {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ}
 def fpt (g : UA L n) : UA L n :=
   ⟨finGL L n (GeneralLinearGroup.map (pFin L) g.1), GlobalTheory.DefU.ClassFin.finGL_mem_UA _ (GlobalTheory.DefU.ClassFin.cT_pFin g)⟩
 
-theorem fpt_mem (g : UA L n) : fpt g ∈ finU L n := pInf_finGL _
+theorem fpt_mem (g : UA L n) : fpt g ∈ finU (E := L) (n := n) := pInf_finGL _
 
 theorem fpt_mul (g h : UA L n) : fpt (g * h) = fpt g * fpt h :=
   Subtype.ext (by simp only [fpt, Subgroup.coe_mul, map_mul])
 
-theorem fpt_of_mem_fin {g : UA L n} (hg : g ∈ finU L n) : fpt g = g := by
+theorem fpt_of_mem_fin {g : UA L n} (hg : g ∈ finU (E := L) (n := n)) : fpt g = g := by
   have h1 : GeneralLinearGroup.map (pInf L) g.1 = 1 := hg
   apply Subtype.ext
   change finGL L n _ = g.1
@@ -97,9 +102,9 @@ theorem RU_phi (f : GAf L n → W) (lam : Module.Dual ℂ W) (x : UA L n) :
   simp only [GlobalTheory.DefU.RU_apply, phi, fy_mul, _root_.mul_inv_rev, map_mul, LinearMap.comp_apply, Module.End.mul_apply]
   rfl
 
-theorem phi_j (hfin : ∀ k ∈ finU L n, R k = 1) (f : GAf L n → W) (lam : Module.Dual ℂ W) (x : GAf L n) :
+theorem phi_j (hfin : ∀ k ∈ finU (E := L) (n := n), R k = 1) (f : GAf L n → W) (lam : Module.Dual ℂ W) (x : GAf L n) :
     phi F R f lam (F.j x) = lam (f x) := by
-  simp only [phi, fy_j, hfin _ ((finU L n).inv_mem (F.fin x)), Module.End.one_apply]
+  simp only [phi, fy_j, hfin _ ((finU (E := L) (n := n)).inv_mem (F.fin x)), Module.End.one_apply]
 
 def phiR (f : GAf L n → W) : Module.Dual ℂ W →ₗ[ℂ] (UA L n → ℂ) where
   toFun lam := phi F R f lam
@@ -126,7 +131,7 @@ section Main
 variable {W : Type} [AddCommGroup W] [Module ℂ W] (F : FinIso L n) (ρ : Representation ℂ (GQ L n) W)
   (R : UA L n →* Module.End ℂ W)
 
-theorem isAutFormU_phi (hfin : ∀ k ∈ finU L n, R k = 1)
+theorem isAutFormU_phi (hfin : ∀ k ∈ finU (E := L) (n := n), R k = 1)
     (hrat : ∀ (γ : UA L n) (γQ : GQ L n) (γ₀ : GL (Fin n) L), γ.1 = ratGL L n γ₀ →
       (((γQ : GAf L n) : GL (Fin n) (AL L)) : Matrix (Fin n) (Fin n) (AL L)) =
         (γ₀ : Matrix (Fin n) (Fin n) L).map Algebra.TensorProduct.includeLeftRingHom → R γ = ρ γQ)
@@ -142,12 +147,12 @@ theorem isAutFormU_phi (hfin : ∀ k ∈ finU L n, R k = 1)
     have hc : Continuous fun g : UA L n => lam (R g⁻¹ (f (fy F g0))) :=
       (hcont (f (fy F g0)) lam).comp continuous_inv
     refine hc.continuousAt.congr ?_
-    let q : UA L n → finU L n := fun g => ⟨fpt (g0⁻¹ * g), fpt_mem _⟩
+    let q : UA L n → finU (E := L) (n := n) := fun g => ⟨fpt (g0⁻¹ * g), fpt_mem _⟩
     have hq : Continuous q := (continuous_fpt.comp (continuous_const.mul continuous_id)).subtype_mk _
     have hq0 : q g0 = 1 := Subtype.ext (by
       change fpt (g0⁻¹ * g0) = 1
       rw [inv_mul_cancel]
-      exact fpt_of_mem_fin (finU L n).one_mem)
+      exact fpt_of_mem_fin (finU (E := L) (n := n)).one_mem)
     have hmem : q ⁻¹' O ∈ 𝓝 g0 := (hO.preimage hq).mem_nhds (by rw [Set.mem_preimage, hq0]; exact h1O)
     filter_upwards [hmem] with g hg
     have e : fy F g = fy F g0 * fy F (q g : UA L n) := by
@@ -164,7 +169,7 @@ theorem isAutFormU_phi (hfin : ∀ k ∈ finU L n, R k = 1)
     simp only [phi, fy_mul, hy, hleft, _root_.mul_inv_rev, map_mul, Module.End.mul_apply]
     rw [← hrat γ γQ γ₀ h1 h2, ← Module.End.mul_apply (R γ⁻¹), ← map_mul, inv_mul_cancel, map_one,
       Module.End.one_apply]
-  · let H : Subgroup (finU L n) :=
+  · let H : Subgroup (finU (E := L) (n := n)) :=
       { carrier := {k | RU L n (k : UA L n) (phi F R f lam) = phi F R f lam}
         mul_mem' := fun {a b} ha hb => by
           change RU L n ((a : UA L n) * b) _ = _
@@ -179,7 +184,7 @@ theorem isAutFormU_phi (hfin : ∀ k ∈ finU L n, R k = 1)
           rw [GlobalTheory.DefU.RU_RU, inv_mul_cancel, map_one]; rfl }
     refine H.isOpen_of_mem_nhds (g := 1) (Filter.mem_of_superset (hO.mem_nhds h1O) fun k hk => ?_)
     change RU L n (k : UA L n) _ = _
-    rw [RU_phi, hfin _ ((finU L n).inv_mem k.2), show lam ∘ₗ (1 : Module.End ℂ W) = lam from LinearMap.ext fun _ => rfl]
+    rw [RU_phi, hfin _ ((finU (E := L) (n := n)).inv_mem k.2), show lam ∘ₗ (1 : Module.End ℂ W) = lam from LinearMap.ext fun _ => rfl]
     congr 1
     exact funext (hOf k hk)
   · refine Submodule.finiteDimensional_of_le (S₂ := LinearMap.range (phiR F R f)) (Submodule.span_le.2 ?_)
@@ -193,7 +198,7 @@ def gens (S : Submodule ℂ (GAf L n → W)) : Set (UA L n → ℂ) :=
   {ψ | ∃ f ∈ S, ∃ lam : Module.Dual ℂ W, ψ = phi F R f lam}
 
 theorem dict_span [FiniteDimensional ℂ W] (hρ : ρ.IsIrreducible) (S : Submodule ℂ (GAf L n → W))
-    (hS : NG.IsIrrRep ρ S) (hfin : ∀ k ∈ finU L n, R k = 1)
+    (hS : NG.IsIrrRep ρ S) (hfin : ∀ k ∈ finU (E := L) (n := n), R k = 1)
     (hrat : ∀ (γ : UA L n) (γQ : GQ L n) (γ₀ : GL (Fin n) L), γ.1 = ratGL L n γ₀ →
       (((γQ : GAf L n) : GL (Fin n) (AL L)) : Matrix (Fin n) (Fin n) (AL L)) =
         (γ₀ : Matrix (Fin n) (Fin n) L).map Algebra.TensorProduct.includeLeftRingHom → R γ = ρ γQ)
@@ -242,7 +247,7 @@ theorem dict_span [FiniteDimensional ℂ W] (hρ : ρ.IsIrreducible) (S : Submod
           rwa [phi_smul]⟩ }
     have hsub : NG.IsSubrep ρ S' := ⟨fun f hf => hS.1.le hf.1, fun h f hf => ⟨hS.1.stable h f hf.1, fun lam => by
       have := hst (F.j h) _ (hf.2 lam)
-      rwa [RU_phi, fy_j, hfin _ ((finU L n).inv_mem (F.fin h)),
+      rwa [RU_phi, fy_j, hfin _ ((finU (E := L) (n := n)).inv_mem (F.fin h)),
         show lam ∘ₗ (1 : Module.End ℂ W) = lam from LinearMap.ext fun _ => rfl] at this⟩⟩
     rcases hS.2.2 S' hsub (fun f hf => hf.1) with h | h
     · left
@@ -264,7 +269,8 @@ theorem dict_span [FiniteDimensional ℂ W] (hρ : ρ.IsIrreducible) (S : Submod
       have hTinf : ∀ x ∈ infU L n, T (R x) ∈ W' := by
         intro x hx
         have := hst x⁻¹ ψ hψ
-        rw [hψe, map_sum] at this
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hψe, map_sum] at this
         convert this using 1
         rw [hT]
         refine Finset.sum_congr rfl fun i _ => ?_
@@ -279,7 +285,7 @@ theorem dict_span [FiniteDimensional ℂ W] (hρ : ρ.IsIrreducible) (S : Submod
           change _ * (GeneralLinearGroup.map (pFin L) (finGL L n (GeneralLinearGroup.map (pFin L) γ.1)))⁻¹ = 1
           rw [pFin_finGL, mul_inv_cancel]
         have hR : R (γ * (fpt γ)⁻¹) = ρ γQ := by
-          rw [map_mul, hfin _ ((finU L n).inv_mem (fpt_mem γ)), mul_one, hrat γ γQ γ₀ h1 h2]
+          rw [map_mul, hfin _ ((finU (E := L) (n := n)).inv_mem (fpt_mem γ)), mul_one, hrat γ γQ γ₀ h1 h2]
         show T (ρ γQ) ∈ W'
         rw [← hR]
         exact hTinf _ hx
@@ -293,7 +299,8 @@ theorem dict_span [FiniteDimensional ℂ W] (hρ : ρ.IsIrreducible) (S : Submod
           convert this using 1
           rw [hT]
           change phiL F R μ (∑ i, lp i v • fs i) = _
-          rw [map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum]
           refine Finset.sum_congr rfl fun i _ => ?_
           rw [map_smul]
           have e : lp i ∘ₗ μ.smulRight v = lp i v • μ := LinearMap.ext fun w => by
@@ -311,12 +318,14 @@ theorem dict_span [FiniteDimensional ℂ W] (hρ : ρ.IsIrreducible) (S : Submod
           = ∑ i, ∑ k, b.repr (R y⁻¹ (fs i (fy F y))) k * lp i (b k) := by
             refine Finset.sum_congr rfl fun i _ => ?_
             conv_lhs => rw [← b.sum_repr (R y⁻¹ (fs i (fy F y)))]
-            rw [map_sum]
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [map_sum]
             simp only [map_smul, smul_eq_mul]
         _ = ∑ k, ∑ i, b.repr (R y⁻¹ (fs i (fy F y))) k * lp i (b k) := Finset.sum_comm
         _ = ∑ k, b.repr (R y⁻¹ ((∑ i, lp i (b k) • fs i) (fy F y))) k := by
             refine Finset.sum_congr rfl fun k _ => ?_
-            simp [Finset.sum_apply, map_sum, map_smul, mul_comm]
+            set_option synthInstance.maxHeartbeats 100000 in
+              simp [Finset.sum_apply, map_sum, map_smul, mul_comm]
         _ = 0 := by simp only [hF, Pi.zero_apply, map_zero, Finsupp.zero_apply, Finset.sum_const_zero]
     · right
       refine le_antisymm hW' (Submodule.span_le.2 ?_)

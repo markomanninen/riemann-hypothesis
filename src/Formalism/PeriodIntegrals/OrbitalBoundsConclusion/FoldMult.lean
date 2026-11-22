@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.FoldMult
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MultiplicityMeasurability.MeasurableMult
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.FoldMult
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MultiplicityMeasurability.MeasurableMult
+
+@[expose] public section
 
 open PI.FoldMult.UnitaryGroupMassFormula
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.CyclotomicNorms.StatementI
+module
+
+public import Mathlib
+public import Formalism.CyclotomicNorms.StatementI
+
+@[expose] public section
 
 open Finset
 
@@ -17,7 +21,7 @@ theorem exceptional_primes_finite_card_le (n m : ℕ) (hn : n ≠ 0) (hm : n < m
     · rintro ⟨hp, h⟩
       refine ⟨⟨hp, ?_, hn⟩, h⟩
       by_contra hd
-      rw [padicValNat.eq_zero_of_not_dvd hd] at h
+      rw [Nat.padicValNat_def, multiplicity_eq_zero_of_not_dvd hd] at h
       simp at h
       omega
     · rintro ⟨⟨hp, -, -⟩, h⟩
@@ -32,7 +36,7 @@ theorem exceptional_primes_finite_card_le (n m : ℕ) (hn : n ≠ 0) (hm : n < m
       conv_rhs => rw [← Nat.prod_factorization_pow_eq_self hn]
       rw [Finsupp.prod, Nat.support_factorization]
       refine Finset.prod_congr rfl fun p hp => ?_
-      rw [Nat.factorization_def n (Nat.prime_of_mem_primeFactors hp)]
+      rw [Nat.padicValNat_def, Nat.factorization_def n (Nat.prime_of_mem_primeFactors hp)]
     have hd : ∏ ℓ ∈ F, ℓ ^ padicValNat ℓ n ∣ n := by
       conv_rhs => rw [← e]
       exact Finset.prod_dvd_prod_of_subset _ _ _ (Finset.filter_subset _ _)

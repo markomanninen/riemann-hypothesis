@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -124,7 +128,8 @@ theorem prj_mem [Infinite k] (P : GL (Fin n) k) (w : Fin n → ℤ) (W : Submodu
         rw [← Submodule.Quotient.mk_eq_zero, gt_mulVec] at h1
         have h2 : (ℓ ∘ₗ W.mkQ) (∑ m ∈ Finset.univ.image w, ((t ^ m : kˣ) : k) • prj P w m y) = 0 := by
           rw [LinearMap.comp_apply, Submodule.mkQ_apply, h1, map_zero]
-        rw [map_sum] at h2
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum] at h2
         simpa only [map_smul, LinearMap.comp_apply, Submodule.mkQ_apply, smul_eq_mul] using h2) m hm
     exact key
   · have : prj P w m y = 0 := by

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerElements.CoefMapSingle
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerElements.CoefMapSingle
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,6 @@ def rel (c : Γ) (ε : ℤ) : MonoidAlgebra A Γ := MonoidAlgebra.single c 1 - (
 
 abbrev Rq (c : Γ) (ε : ℤ) : Type := MonoidAlgebra A Γ ⧸ Ideal.span {rel A c ε}
 
-abbrev Rqz (c : Γ) (ε : ℤ) (z : MonoidAlgebra A Γ) : Type := MonoidAlgebra A Γ ⧸ Ideal.span {rel A c ε, z}
-
 abbrev cls (c : Γ) (ε : ℤ) : MonoidAlgebra A Γ →+* Rq A c ε := Ideal.Quotient.mk _
 
 variable {A}
@@ -23,8 +25,6 @@ variable {A}
 def Qc (c : Γ) : Type := Γ ⧸ Subgroup.zpowers c
 
 instance (c : Γ) : DecidableEq (Qc c) := Classical.decEq _
-
-instance (c : Γ) : Inhabited (Qc c) := ⟨(QuotientGroup.mk 1 : Γ ⧸ Subgroup.zpowers c)⟩
 
 instance [Finite Γ] (c : Γ) : Fintype (Qc c) := @Fintype.ofFinite (Γ ⧸ Subgroup.zpowers c) inferInstance
 
@@ -99,7 +99,7 @@ theorem coefMap_eq (B : Type) [CommRing B] : coefMap B Γ = MonoidAlgebra.mapRin
   refine RingHom.ext fun z => ?_
   induction z using MonoidAlgebra.induction_linear with
   | zero => simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   | single g n => simp [coefMap_single]
 
 theorem coeff_coefMap (B : Type) [CommRing B] (z : MonoidAlgebra ℤ Γ) (g : Γ) :
@@ -117,10 +117,6 @@ section Chars
 variable {Γ : Type} [CommGroup Γ]
 
 def Ch (Ω : Type) [Field Ω] (c : Γ) (ε : ℤ) : Type := {χ : Γ →* Ωˣ // ((χ c : Ωˣ) : Ω) = (ε : Ω)}
-
-instance (Ω : Type) [Field Ω] (c : Γ) : Inhabited (Ch Ω c 1) := ⟨⟨1, by simp⟩⟩
-
-instance (Ω : Type) [Field Ω] (c : Γ) (ε : ℤ) : DecidableEq (Ch Ω c ε) := Classical.decEq _
 
 instance [Finite Γ] (Ω : Type) [Field Ω] (c : Γ) (ε : ℤ) : Fintype (Ch Ω c ε) :=
   @Fintype.ofFinite {χ : Γ →* Ωˣ // ((χ c : Ωˣ) : Ω) = (ε : Ω)} inferInstance
@@ -152,9 +148,6 @@ theorem InPow.zero (l : ℕ) [Fact l.Prime] (t : ℕ) : InPow l t 0 := by
 theorem InPow.add {l : ℕ} [Fact l.Prime] {t : ℕ} {x y : ℚ} (hx : InPow l t x) (hy : InPow l t y) : InPow l t (x + y) := by
   rw [InPow, add_div]; exact (Zl l).add_mem hx hy
 
-theorem InPow.mul {l : ℕ} [Fact l.Prime] {t : ℕ} {x y : ℚ} (hx : x ∈ Zl l) (hy : InPow l t y) : InPow l t (x * y) := by
-  rw [InPow, mul_div_assoc]; exact (Zl l).mul_mem hx hy
-
 theorem InPow.mem {l : ℕ} [Fact l.Prime] {t : ℕ} {x : ℚ} (hx : InPow l t x) : x ∈ Zl l := by
   have hl : (l : ℚ) ^ t ≠ 0 := pow_ne_zero _ (Nat.cast_ne_zero.2 (Fact.out : l.Prime).ne_zero)
   have := (Zl l).mul_mem hx (pow_mem (natCast_mem (Zl l) l) t)
@@ -165,10 +158,6 @@ def denY (N k : ℕ) : ℕ := N * k * (k + 1).factorial
 def sizeY (N a k : ℕ) : ℕ := 2 * a ^ k * N ^ k * k.factorial
 
 def bdX (N a k : ℕ) : ℕ := denY N k * sizeY N a k
-
-def BD (r N a e : ℕ) : ℝ :=
-  r * ((e + 2) * Real.logb 2 N + (e + 1) * Real.logb 2 a + 1 +
-    Real.logb 2 ((e + 1) * (e + 1).factorial * (e + 2).factorial))
 
 theorem denY_pos {N k : ℕ} (hN : 0 < N) (hk : 0 < k) : 0 < denY N k := by
   unfold denY; positivity

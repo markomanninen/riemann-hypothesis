@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.InjectiveOfIsCptGen
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StdSmoothMvPolynomial
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.InjectiveOfIsCptGen
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StdSmoothMvPolynomial
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 

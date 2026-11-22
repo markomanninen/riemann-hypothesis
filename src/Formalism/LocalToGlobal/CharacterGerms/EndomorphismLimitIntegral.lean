@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.CoeffSubstEqSum
-import Formalism.LocalToGlobal.CharacterGerms.RowTieProj
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.CoeffSubstEqSum
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieFB
+
+@[expose] public section
 
 noncomputable section
 
@@ -124,8 +128,6 @@ theorem endomorphism_limit_integral (Y : FBChart C V O dd) : EndomorphismLimitIn
       exact h1.symm
     simp only [hadk] at hE
     exact hE.intS fun k => Y.intAd _
-
-theorem endomorphism_limit_all : EndomorphismLimitAll := fun _ _ _ _ _ _ _ _ Y => endomorphism_limit_integral Y
 
 end RowTiePE0
 

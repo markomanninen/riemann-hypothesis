@@ -1,4 +1,8 @@
-import Formalism.FormalGroupLog.Statement
+module
+
+public import Formalism.FormalGroupLog.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,23 +99,12 @@ private theorem hom_substInj {R : Type*} [CommRing R] {ι : Type*} (f : PowerSer
   have hU : IsUnit (MvPowerSeries.subst ![a, b] H) := by
     rw [MvPowerSeries.isUnit_iff_constantCoeff]
     have hsplit : H = 1 + (H - 1) := by ring
-    rw [hsplit, ← MvPowerSeries.coe_substAlgHom hv, map_add, map_one, MvPowerSeries.coe_substAlgHom,
+    rw [hsplit, ← MvPowerSeries.coe_substAlgHom hv, map_add (f := _), map_one, MvPowerSeries.coe_substAlgHom,
       map_add, map_one,
       MvPowerSeries.constantCoeff_subst_eq_zero hv (fun i => by fin_cases i <;> simp [ha, hb]) c1,
       add_zero]
     exact isUnit_one
   exact sub_eq_zero.1 (hU.mul_left_eq_zero.1 key2)
-
-theorem homId_statement : HomId := by
-  unfold HomId
-  intro R _ F
-  refine ⟨by simp, ?_⟩
-  rw [PowerSeries.subst_X (PowerSeries.HasSubst.of_constantCoeff_zero F.zero_constantCoeff)]
-  have hXY : ![atX (PowerSeries.X : PowerSeries R), atY PowerSeries.X] = MvPowerSeries.X := by
-    funext s
-    fin_cases s <;> simp [atX, atY, PowerSeries.subst_X (PowerSeries.HasSubst.X _)]
-  rw [hXY, MvPowerSeries.subst_self]
-  rfl
 
 theorem homComp_statement : HomComp := by
   unfold HomComp
@@ -152,7 +145,7 @@ theorem log_iff_hom_additive : LogIffHomGa := by
     have hv : MvPowerSeries.HasSubst ![atX f, atY f] :=
       hom_hasSubst_pair _ _ (hom_cc_at f 0 h0) (hom_cc_at f 1 h0)
     show MvPowerSeries.subst _ (MvPowerSeries.X 0 + MvPowerSeries.X 1) = _
-    rw [← MvPowerSeries.coe_substAlgHom hv, map_add, MvPowerSeries.coe_substAlgHom,
+    rw [← MvPowerSeries.coe_substAlgHom hv, map_add (f := _), MvPowerSeries.coe_substAlgHom,
       MvPowerSeries.subst_X hv, MvPowerSeries.subst_X hv]
     rfl
   unfold IsLog IsHom
@@ -166,12 +159,5 @@ theorem substInjective_statement : SubstInjective := by
   unfold SubstInjective
   intro R _ ι f a b h0 h1 ha hb h
   exact hom_substInj f a b h0 h1 ha hb h
-
-theorem log_determines_law : LogDeterminesLaw := by
-  unfold LogDeterminesLaw
-  intro R _ F G f hF hG
-  apply FormalGroup.ext
-  apply hom_substInj f _ _ hF.1 hF.2.1 F.zero_constantCoeff G.zero_constantCoeff
-  rw [hF.2.2, hG.2.2]
 
 end Formalism.G

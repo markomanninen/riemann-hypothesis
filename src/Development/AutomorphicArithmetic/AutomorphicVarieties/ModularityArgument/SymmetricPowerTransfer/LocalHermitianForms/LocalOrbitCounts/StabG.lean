@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.CintIdx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.ExistsOfGOrbNe
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.CintIdx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.ExistsOfGOrbNe
+
+@[expose] public section
 
 open QuadraticAlgebra UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc
 
@@ -75,7 +79,7 @@ theorem UpperTheory.V.Z.Sym.Loc.stabG : UpperTheory.V.Z.Sym.Loc.StabG := by
       exact hd _ (Finset.mem_biUnion.mpr ⟨g, hg, Finset.mem_image.mpr ⟨(a, b), Finset.mem_univ _, rfl⟩⟩)
     | zero => simpa using IsLocalization.isInteger_zero
     | add x x' _ _ h1 h2 =>
-      rw [map_add, Matrix.mul_add, Matrix.add_mul, Matrix.add_apply, smul_add]
+      rw [map_add (f := _), Matrix.mul_add, Matrix.add_mul, Matrix.add_apply, smul_add]
       exact IsLocalization.isInteger_add h1 h2
     | smul o x _ h =>
       rw [← algebraMap_smul K o x, map_smul, Matrix.mul_smul, Matrix.smul_mul, Matrix.smul_apply,
@@ -125,7 +129,7 @@ theorem UpperTheory.V.Z.Sym.Loc.stabG : UpperTheory.V.Z.Sym.Loc.StabG := by
         _ = _ := by rw [e, Algebra.smul_def, ← map_mul, div_eq_inv_mul]
     rw [hr'] at hr
     have hI : IsIntegral O (-2 / algebraMap O K (π * d)) :=
-      (isIntegral_algebraMap_iff (algebraMap K (Etau K τ)).injective).mp hr
+      (isIntegral_algebraMap_iff ).mp hr
     obtain ⟨o, ho⟩ := IsIntegrallyClosed.isIntegral_iff.mp hI
     have h4 : (-2 : O) = π * d * o := by
       apply IsFractionRing.injective O K
@@ -148,7 +152,7 @@ theorem UpperTheory.V.Z.Sym.Loc.stabG : UpperTheory.V.Z.Sym.Loc.StabG := by
       Matrix.smul_mul]
   have φadd : ∀ x x' : Etau K τ, ((y⁻¹ : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) * j (x + x') * ((y : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) = ((y⁻¹ : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) * j x * ((y : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) + ((y⁻¹ : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) * j x' * ((y : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) := by
     intro x x'
-    rw [map_add, Matrix.mul_add, Matrix.add_mul]
+    rw [map_add (f := _), Matrix.mul_add, Matrix.add_mul]
   have φone : ((y⁻¹ : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) * j 1 * ((y : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) = 1 := by rw [map_one, Matrix.mul_one, hYY]
   have φsmul : ∀ (b : K) (x : Etau K τ), ((y⁻¹ : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) * j (b • x) * ((y : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) = b • (((y⁻¹ : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) * j x * ((y : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K)) := by
     intro b x

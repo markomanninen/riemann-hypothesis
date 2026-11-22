@@ -1,13 +1,17 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Height
-import GroundTheory.AutomorphicForms.TraceFormulaConvolution
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsAreCuspForms
-import GroundTheory.AutomorphicForms.MultiplicityOne.OpenSubgroupRep
-import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteLevelGroups
-import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteAdelicHaar
-import GroundTheory.AutomorphicForms.L2LocalComponents.CenterCommute
-import GroundTheory.AutomorphicForms.GKModules.ZKFinite
-import GroundTheory.AutomorphicForms.DixmierMalliavinBasic
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Height
+public import GroundTheory.AutomorphicForms.TraceFormulaConvolution
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsAreCuspForms
+public import GroundTheory.AutomorphicForms.MultiplicityOne.OpenSubgroupRep
+public import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteLevelGroups
+public import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteAdelicHaar
+public import GroundTheory.AutomorphicForms.L2LocalComponents.CenterCommute
+public import GroundTheory.AutomorphicForms.GKModules.ZKFinite
+public import GroundTheory.AutomorphicForms.DixmierMalliavinBasic
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -72,9 +76,11 @@ private theorem UpperTheory.ConvolutionTheory.Tf.Crv.deriv {A : ℝ → U} {D : 
   obtain ⟨ι, _, c, c', v, hc, hA', rfl⟩ := hA
   have e : (fun t => l (A t)) = fun t => ∑ i, c i t * l (v i) := by
     funext t
-    simp [hA', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hA', map_sum]
   rw [e]
-  simp only [map_sum, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, smul_eq_mul]
   exact HasDerivAt.fun_sum fun i _ => (hc i).mul_const _
 
 end
@@ -129,7 +135,7 @@ private theorem UpperTheory.ConvolutionTheory.Tf.crv_AdU (X : 𝔤) (u : Univers
     noncomm_ring
   | add a b ha hb =>
     have key := ha.add hb
-    simp only [map_add]
+    simp only [map_add (f := _)]
     convert key using 1
     noncomm_ring
 

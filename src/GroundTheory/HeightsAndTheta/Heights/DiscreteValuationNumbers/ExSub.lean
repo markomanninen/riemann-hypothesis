@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.InstFintypeSumElim
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ScaledRankOneLeStandardRankOne
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.InstFintypeSumElim
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -8,10 +12,8 @@ namespace GroundTheory.Heights₂.Heights.NumbersDVR
 open MvPolynomial
 open ReciprocityTheory.ChartRestriction.G.Geo (ChartBundle)
 open ReciprocityTheory.ChartRestriction.G.AI.I1 (IFamily IsFieldIntersection)
-open IndefiniteRowSideFullHecke.NumbersDVR.Bundles (IsModelOver mcIdeal joinCoord fnField mseg SameGeneric FlagModel FlagPair IsPull
-  IsVertDiv pairNum pullDeg liftVar ptCoord noCoord ptIdx noIdx ptFlagModel stdE cE unif unif_frac_ne unif_ne_zero
-  sameGeneric_cE pt_model mcIdeal_of_one frac_inj isModelOver_bot card_sigma_of_point fnField_of_one
-  isPull_frame_of_one ptCoord_eq)
+open IndefiniteRowSideFullHecke.NumbersDVR.Bundles
+  (IsModelOver mcIdeal joinCoord fnField mseg SameGeneric FlagModel FlagPair IsPull IsVertDiv pairNum pullDeg liftVar)
 
 def FlagModelJoinLeftAlt.Statement : Prop :=
   ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (Ω : Type) [Field Ω]

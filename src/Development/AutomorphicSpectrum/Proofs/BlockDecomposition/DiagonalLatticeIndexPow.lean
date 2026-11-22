@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsIntZero
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ReadMod
-import ReciprocityTheory.ResidueCardinality.ArtinOntoB
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsIntZero
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ReadMod
+public import ReciprocityTheory.ResidueCardinality.ArtinOntoB
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,7 +98,7 @@ def cornerMap (ϖ : w.adicCompletion E) (a b i j : ℕ) (hi : i ≤ a) :
     have : (⟨_, corner_mem hi (X + Y) p⟩ : w.adicCompletionIntegers E) =
         ⟨_, corner_mem hi X p⟩ + ⟨_, corner_mem hi Y p⟩ :=
       Subtype.ext (by simp [mul_add])
-    simp only [this, map_add, Pi.add_apply]
+    simp only [this, map_add (f := _), Pi.add_apply]
 
 theorem cornerMap_apply (ϖ : w.adicCompletion E) (a b i j : ℕ) (hi : i ≤ a) (W : latD ϖ a b i j)
     (p : Fin i × Fin (b - j)) :
@@ -166,7 +170,7 @@ theorem relIndex_intSub_latD (E : Type) [Field E] [NumberField E] [IsCMField E] 
     (intSub a b w).relIndex (latD ϖ a b i j) = (qV E w) ^ (i * (b - j)) := by
   have hcard : Nat.card (IsLocalRing.ResidueField (w.adicCompletionIntegers E)) = qV E w := by
     rw [ReciprocityTheory.Bridge.ResidueFieldCardinality.card_residue w]
-    rfl
+    simp [qV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
   rw [AddSubgroup.relIndex, ← ker_cornerMap h a b i j hi hj, AddSubgroup.index_ker,
     AddMonoidHom.range_eq_top.mpr (cornerMap_surjective h a b i j hi hj), AddSubgroup.card_top,
     Nat.card_fun, hcard, Nat.card_prod, Nat.card_fin, Nat.card_fin]

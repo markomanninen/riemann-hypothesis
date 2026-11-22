@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.ContentZeroAt
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.ContentZeroAt
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPtsBddConv
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPtsBddConv
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -16,11 +21,5 @@ def RegAboveWeight.Statement : Prop :=
     ∃ t₂ : ℝ, 0 < t₂ ∧ ∃ N : Set ((Σ k, ι k) → ℂ), IsPtsNull (mCoordIdeal D.y) D.n N ∧
       ∀ t : ℝ, 0 < t → t ≤ t₂ → ∀ z ∈ mcPts (mCoordIdeal D.y), z ∉ N →
         phMu X.H z ≤ Real.log (X.S.ref.h z) + X.S.regWeight t (X.M.proj z)
-
-namespace Line
-
-open GroundTheory.Heights₂.Heights.Regular.ProjectiveLine
-
-end Line
 
 end GroundTheory.Heights₂.Heights.LowerBoundFree

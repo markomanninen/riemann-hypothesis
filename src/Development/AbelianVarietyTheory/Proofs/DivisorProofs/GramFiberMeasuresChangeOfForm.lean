@@ -1,9 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.Classify
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSimSys
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimilitudeActionAdelicLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EndIsogenyAlgebraInjectiveClearDenom
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnitOnInjectiveOfCommRing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomLieEquivScalarTmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigExtMapRelFrobCompRigOfOmega
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSimSys
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimilitudeActionAdelicLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EndIsogenyAlgebraInjectiveClearDenom
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnitOnInjectiveOfCommRing
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -79,7 +88,7 @@ theorem exists_simSys_all {N : ℕ} (hN : 0 < N) (hK : N.Coprime p) {k : Type} [
       obtain ⟨a, ha⟩ := (utow n 2 hn two_pos hc2).dvd
       obtain ⟨c, hcc⟩ := h
       rw [hz, hw] at hcc
-      simp only [map_add, map_nsmul, LinearMap.add_apply, LinearMap.smul_apply, nsmul_eq_mul] at hcc
+      simp only [map_add (f := _), map_nsmul, LinearMap.add_apply, LinearMap.smul_apply, nsmul_eq_mul] at hcc
       push_cast at hcc
       refine ⟨c - D.EF (g n x) w - D.EF z (g n y) - n * D.EF z w - a * D.EF x y, ?_⟩
       have h2 : (2 : ℤ) ≠ 0 := two_ne_zero
@@ -115,7 +124,7 @@ theorem map_mem (A : Module.End (AfP p) (AfP p ⊗[ℚ] VQ D)) (hA : ∀ x, A (i
     rw [e, map_smul]
     exact smul_mem hc (hA x)
   | zero => rw [map_zero]; exact zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := A)]; exact add_mem hx hy
   | neg x _ hx => rw [map_neg]; exact neg_mem hx
 
 theorem eq_zero_of_dvd (a : AfP p) (h : ∀ n : ℕ, 0 < n → n.Coprime p → ∃ c, IsIntAf c ∧ a = n • c) : a = 0 := by
@@ -169,7 +178,7 @@ theorem isIntAf_repr {J : Type} (b : Module.Basis J ℤ D.La) (i : J) {z : AfP p
   | zero => simpa using isIntAf_intCast (p := p) 0
   | add x y _ _ hx hy =>
     intro v
-    rw [map_add, Finsupp.add_apply, map_add]
+    rw [map_add (f := _), Finsupp.add_apply, map_add (f := _)]
     exact add_mem (hx v) (hy v)
   | neg x _ hx =>
     intro v
@@ -209,7 +218,7 @@ theorem actOn_injective {C V : Type} [Ring C] [Algebra ℚ C] [AddCommGroup V] [
       rw [e₁]
       simp at this ⊢
       simp [this, TensorProduct.smul_tmul']
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   intro x y h
   rw [e, e] at h
   exact h₁ (j.equiv.injective h)

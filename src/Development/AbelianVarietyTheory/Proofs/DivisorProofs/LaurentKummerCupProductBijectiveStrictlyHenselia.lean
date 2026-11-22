@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullSpMapComp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupChernKummerPullbackNaturalityStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StrictlyHenselianLocalRingAcyclicEverySheafStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitsCohomologyBijective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClassZeroOfGeometricPoints
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LaurentCohomologyInjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DescentEqualizerDegreeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LaurentClassFromIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SurjectiveOfNoetherianCase
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullSpMapComp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupChernKummerPullbackNaturalityStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StrictlyHenselianLocalRingAcyclicEverySheafStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitsCohomologyBijective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClassZeroOfGeometricPoints
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LaurentCohomologyInjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DescentEqualizerDegreeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LaurentClassFromIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SurjectiveOfNoetherianCase
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 open scoped TensorProduct
 
@@ -15,7 +20,7 @@ noncomputable section
 namespace GlobalTheory.EtC.GmPhiBij
 
 theorem inj (q : ℕ) [NeZero q] (R : Type) [CommRing R] (hq : IsUnit (q : R)) (i : ℤ) : Function.Injective (gmPhi q R i) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   refine GlobalTheory.T.class_zero_of_geometric_points q R hq (i - 1) a fun K _ _ f => ?_
   have hqK : IsUnit (q : K) := by simpa using hq.map f

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.Semi
 
@@ -98,10 +102,13 @@ def invGen (φ : K → (Y ⟶ X)) (ε : K → ℤ) (t : Gen (LinComb L φ ε)) :
 def Coh (φ : K → (Y ⟶ X)) (j : K → L.ι) : Prop :=
   ∀ k₁ k₂, φ k₁ = φ k₂ → j k₁ = j k₂
 
-open scoped Classical in
 
+open scoped Classical in
 def SameSum (φ : K → (Y ⟶ X)) (ε : K → ℤ) (φ' : K' → (Y ⟶ X)) (ε' : K' → ℤ) : Prop :=
-  ∀ ψ : Y ⟶ X, (∑ k, if φ k = ψ then ε k else 0) = ∑ k', if φ' k' = ψ then ε' k' else 0
+  by
+    classical
+    exact ∀ ψ : Y ⟶ X,
+      (∑ k, if φ k = ψ then ε k else 0) = ∑ k', if φ' k' = ψ then ε' k' else 0
 
 def Gen.Corr (φ : K → (Y ⟶ X)) (ε : K → ℤ) (φ' : K' → (Y ⟶ X)) (ε' : K' → ℤ)
     (t : Gen (LinComb L φ ε)) (t' : Gen (LinComb L φ' ε')) : Prop :=

@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleTrace.FibrePf
-import Mathlib.AlgebraicGeometry.AlgClosed.Basic
+module
+
+public import Development.EtaleCohomology.EtaleTrace.FibrePf
+public import Mathlib.AlgebraicGeometry.AlgClosed.Basic
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry

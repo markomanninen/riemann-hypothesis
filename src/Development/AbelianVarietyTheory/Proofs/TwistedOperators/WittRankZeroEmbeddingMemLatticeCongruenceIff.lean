@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TopOrthEmb
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilRepRankZeroWittEmbeddingValueAtZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeasureToRealEqMass
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TopOrthEmb
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilRepRankZeroWittEmbeddingValueAtZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeasureToRealEqMass
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.IndefR Formalism.IndefR.Links GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.ChiGrid GlobalTheory.Unf GlobalTheory.FunObj GlobalTheory.RowUnf GlobalTheory.RowChain
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -24,7 +29,7 @@ theorem transport_haar_eq {G H : Type} [Group G] [TopologicalSpace G] [IsTopolog
       Measure.map_apply (map_continuous e).measurable ((map_continuous e.symm).measurable hs)]
     congr 1; ext x; simp
   have hq : Measure.QuasiMeasurePreserving e.symm ν μ :=
-    ⟨(map_continuous e.symm).measurable, by rw [hmap]⟩
+    ⟨(map_continuous e.symm).measurable.aemeasurable, by rw [hmap]⟩
   let eΓ : ΓH → ΓG := fun g => ⟨e g.1, hΓ' g.1 g.2⟩
   have heΓ : Function.Bijective eΓ := by
     refine ⟨fun a b hab => Subtype.ext (e.injective (congrArg Subtype.val hab)), fun y => ⟨⟨e.symm y.1, hΓ y.1 y.2⟩, ?_⟩⟩
@@ -95,7 +100,8 @@ theorem hatL_mulVec_rect {F E : Type} [Field F] [NumberField F] [Field E] [Numbe
     apply Submodule.subset_span
     refine ⟨M *ᵥ z, h z hz, ?_⟩
     funext i
-    simp [Matrix.mulVec, dotProduct, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mulVec, dotProduct, map_sum]
   | zero => simp
   | add y z _ _ hy hz =>
     rw [Matrix.mulVec_add]; exact Submodule.add_mem _ hy hz

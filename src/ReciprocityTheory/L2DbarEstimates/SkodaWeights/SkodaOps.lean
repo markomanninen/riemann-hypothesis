@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.SkodaWeights.IntegrableSliceProdFin
+module
+
+public import ReciprocityTheory.L2DbarEstimates.SkodaWeights.IntegrableSliceProdFin
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.H
 
@@ -84,7 +88,7 @@ private theorem inner_isometry_eq_inner_left_inverse {E F : Type*} [NormedAddCom
     have hsa : s * ‖G k‖ ^ 2 = ‖k‖ ^ 2 := by
       rw [hs]; exact div_mul_cancel₀ _ (pow_pos ha 2).ne'
     have h1 : ‖G (S ((s : ℂ) • G k) + k)‖ ≤ ‖S ((s : ℂ) • G k) + k‖ := hG _
-    rw [map_add, hGS] at h1
+    rw [map_add (f := _), hGS] at h1
     have h2 : ‖(s : ℂ) • G k + G k‖ = (s + 1) * ‖G k‖ := by
       have e : (s : ℂ) • G k + G k = ((s + 1 : ℝ) : ℂ) • G k := by
         rw [Complex.ofReal_add, Complex.ofReal_one, add_smul, one_smul]
@@ -99,7 +103,7 @@ private theorem inner_isometry_eq_inner_left_inverse {E F : Type*} [NormedAddCom
   have hdec : h = S (A h) + k := by rw [hk0]; abel
   have hGh : G h = A h := by
     calc G h = G (S (A h) + k) := by rw [← hdec]
-      _ = A h := by rw [map_add, hGS, hGk, add_zero]
+      _ = A h := by rw [map_add (f := _), hGS, hGk, add_zero]
   rw [hGh, hA, ContinuousLinearMap.adjoint_inner_right]
 
 theorem skodaOps (n : ℕ) (M : Type*) [TopologicalSpace M] [T2Space M]
@@ -126,7 +130,7 @@ theorem skodaOps (n : ℕ) (M : Type*) [TopologicalSpace M] [T2Space M]
     linarith
   have hvc : Continuous fun x => vsq (gv g x) := by
     show Continuous fun x => ∑ i, ‖g i x‖ ^ 2
-    exact continuous_finset_sum _ fun i _ => ((hgc i).norm).pow 2
+    exact continuous_finsetSum _ fun i _ => ((hgc i).norm).pow 2
   have hvm : Measurable fun x => vsq (gv g x) := hvc.measurable
   have hφm : Measurable φ := hφ.measurable
   have hψm : Measurable fun x => φ x + Real.log (vsq (gv g x)) :=

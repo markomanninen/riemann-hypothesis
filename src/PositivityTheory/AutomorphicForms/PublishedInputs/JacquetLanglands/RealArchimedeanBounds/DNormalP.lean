@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.RealArchimedeanBounds.ATrans
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.RealArchimedeanBounds.ATrans
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,7 +87,7 @@ theorem low {ι : Type} [Fintype ι] (y : ι → ℝ) {C c₀ M : ℝ} (hC : 0 <
   · have : Nonempty ι := ⟨v⟩
     have hp : ∏ v', |y v'| ≤ (C * |y v|) ^ Fintype.card ι := by
       rw [← Finset.card_univ, ← Finset.prod_const]
-      exact Finset.prod_le_prod (fun _ _ => abs_nonneg _) fun v' _ => hy v' v
+      exact Finset.prod_le_prod₀ (fun _ _ => abs_nonneg _) fun v' _ => hy v' v
     have hpow := pow_le_of_le_one ha h1.le (Fintype.card_ne_zero (α := ι))
     have hcm : c₀ / M ≤ C * |y v| := by
       rw [div_le_iff₀ hM]

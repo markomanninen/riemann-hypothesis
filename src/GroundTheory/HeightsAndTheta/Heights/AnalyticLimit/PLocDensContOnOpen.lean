@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLocDensContOnOpen
-import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLocDensContOnOpen
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit
@@ -25,8 +30,12 @@ theorem LocDensContOnOpen.proof : LocDensContOnOpen.Statement := by
   have hsm : ∀ i, ContDiffOn ℝ 2 (fun y' => (th i).φ ((A.chart j).symm y0) ((A.chart j).symm y') +
       u i ((A.chart j).symm y')) ((A.chart j).target ∩
         (A.chart j).symm ⁻¹' (Yo ∩ ⋂ i, (th i).U ((A.chart j).symm y0))) := fun i =>
-    ((potSmoothOn A (th i) (hth i) _ j).mono fun y hy => ⟨hy.1, Set.mem_iInter.1 hy.2.2 i⟩).add
-      ((hu2 i).mono fun y hy => ⟨hy.1, hy.2.1⟩)
+    ((potSmoothOn A (th i) (hth i) _ j).mono (t := (A.chart j).target ∩
+      (A.chart j).symm ⁻¹' (Yo ∩ ⋂ i, (th i).U ((A.chart j).symm y0)))
+      fun y hy => ⟨hy.1, Set.mem_iInter.1 hy.2.2 i⟩).add
+      ((hu2 i).mono (t := (A.chart j).target ∩
+        (A.chart j).symm ⁻¹' (Yo ∩ ⋂ i, (th i).U ((A.chart j).symm y0)))
+        fun y hy => ⟨hy.1, hy.2.1⟩)
   have heq : ReciprocityTheory.AnForm.maDens (fun i y' => (th i).φ ((A.chart j).symm y0) ((A.chart j).symm y') +
       u i ((A.chart j).symm y')) =ᶠ[nhds y0] locDens A (fun i => potForm (th i) (u i)) j := by
     filter_upwards [hNo.mem_nhds hy0N] with y hy

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.StableEigenspaces.InterpolationL2Bound
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.StableEigenspaces.InterpolationL2Bound
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem hull_eq_bot {N : ℕ} {S : Set (Sm E N)} (h : ∀ φ ∈ S, φ = 0) : hu
   · intro o φ hφ
     rw [(Submodule.mem_bot ℂ).1 hφ, map_zero]; exact Submodule.zero_mem _
 
-theorem isStable_hull {N : ℕ} (S : Set (Sm E N)) : IsStable (hull S) := by
+theorem isStable_hull {N : ℕ} (S : Set (Sm E N)) : _root_.GlobalTheory.CuspRep.IsStable (hull S) := by
   intro o φ hφ
   rw [hull, Submodule.mem_sInf] at hφ ⊢
   exact fun U hU => hU.2 o φ (hφ U hU)

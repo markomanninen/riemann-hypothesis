@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpFibreDegreeCut
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpFibreDegreeCut
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -74,11 +79,11 @@ theorem exists_frac [W.IsPrime] (hPW : P ≤ W) {a : FractionRing (MRing ι R �
       (add_comm b' b ▸ isMultiHomog_mul hf' hg), isMultiHomog_mul hg hg',
       fun h => (Ideal.IsPrime.mem_or_mem ‹_› h).elim hgW hgW', ?_⟩
     rw [div_add_div _ _ (hne hgW) (hne hgW')]
-    simp only [map_add, map_mul]
+    simp only [map_add (f := _), map_mul]
     ring
   | neg x _ hx =>
     obtain ⟨b, f, g, hf, hg, hgW, rfl⟩ := hx
-    exact ⟨b, -f, g, isMultiHomog_neg hf, hg, hgW, by simp [neg_div]⟩
+    exact ⟨b, -f, g, isMultiHomog_neg hf, hg, hgW, by rw [(fr P).map_neg f, neg_div]⟩
   | mul x y _ _ hx hy =>
     obtain ⟨b, f, g, hf, hg, hgW, rfl⟩ := hx
     obtain ⟨b', f', g', hf', hg', hgW', rfl⟩ := hy
@@ -184,7 +189,8 @@ theorem ev_comp_psi : (ev T hPW hT).comp (psi T hT) = fr P := by
 theorem psi_monomial (s : (Σ k, ι k) →₀ ℕ) (c : R) :
     psi T hT (monomial s c) = AddMonoidAlgebra.single (nz (Finsupp.weight (blockWeight ι) s))
       (constHom P W c * s.prod fun v n => uu T hT v ^ n) := by
-  simp only [psi, coe_eval₂Hom, eval₂_monomial, RingHom.comp_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [psi, coe_eval₂Hom, eval₂_monomial, RingHom.comp_apply,
     AddMonoidAlgebra.singleZeroRingHom_apply, Finsupp.prod, AddMonoidAlgebra.single_pow,
     AddMonoidAlgebra.prod_single, AddMonoidAlgebra.single_mul_single, zero_add, Finsupp.weight_apply,
     Finsupp.sum, map_sum, map_nsmul]
@@ -200,9 +206,10 @@ variable [Fintype K] {P W : Ideal (MRing ι R)} [P.IsPrime] [W.IsPrime] (T : ∀
 
 theorem psi_homog_exists {f : MRing ι R} {b : K → ℕ} (hf : IsMultiHomog f b) :
     ∃ a, psi (P := P) T hT f = AddMonoidAlgebra.single (nz b) a := by
-  refine ⟨∑ s ∈ f.support, constHom P W (coeff s f) * s.prod fun v n => uu T hT v ^ n, ?_⟩
+  refine ⟨∑ s ∈ f.support, constHom P W (AddMonoidAlgebra.coeff f s) * s.prod fun v n => uu T hT v ^ n, ?_⟩
   conv_lhs => rw [f.as_sum]
-  rw [map_sum, ← AddMonoidAlgebra.singleAddHom_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← AddMonoidAlgebra.singleAddHom_apply, map_sum]
   refine Finset.sum_congr rfl fun s hs => ?_
   rw [psi_monomial, AddMonoidAlgebra.singleAddHom_apply]
   congr 2
@@ -227,7 +234,7 @@ theorem psi_eq_zero (hPh : IsMultiHomogIdeal P) {f : MRing ι R} (hf : f ∈ P) 
     psi (P := P) T hT f = 0 := by
   conv_lhs => rw [← sum_weightedHomogeneousComponent (w := blockWeight ι) f]
   refine finsum_induction (fun q => psi (P := P) T hT q = 0) (map_zero _)
-    (fun x y hx hy => by rw [map_add, hx, hy, add_zero]) fun b => ?_
+    (fun x y hx hy => by rw [map_add (f := _), hx, hy, add_zero]) fun b => ?_
   rw [psi_homog T hPW hT (weightedHomogeneousComponent_isWeightedHomogeneous b f)]
   have h0 : fr P (weightedHomogeneousComponent (blockWeight ι) b f) = 0 :=
     fr_eq_zero_iff.mpr (hPh f hf b)
@@ -289,7 +296,7 @@ theorem isLocalization_lau (hPh : IsMultiHomogIdeal P) :
       obtain ⟨⟨r, h⟩, hr⟩ := hp
       obtain ⟨⟨r', h'⟩, hr'⟩ := hq
       refine ⟨⟨r * h' + r' * h, h * h'⟩, ?_⟩
-      simp only [Submonoid.coe_mul, map_mul, map_add] at hr hr' ⊢
+      simp only [Submonoid.coe_mul, map_mul, map_add (f := _)] at hr hr' ⊢
       rw [← hr, ← hr']
       ring
     | single d a =>
@@ -306,7 +313,7 @@ theorem isLocalization_lau (hPh : IsMultiHomogIdeal P) :
         AddMonoidAlgebra.single_mul_single]
       congr 1
       · ext k
-        simp only [Pi.add_apply, map_add, dp, dm]
+        simp only [Pi.add_apply, map_add (f := _), dp, dm]
         simp only [AddMonoidHom.compLeft_apply, Function.comp_apply, Nat.coe_castAddMonoidHom]
         omega
       · apply Subtype.ext
@@ -390,7 +397,9 @@ variable (T : ∀ k, ι k) (hPW : P ≤ W) (hT : ∀ k, (X ⟨k, T k⟩ : MRing 
 theorem ev_mem_locC (p : Lau P W) : ev T hPW hT p ∈ locC hPW := by
   induction p using AddMonoidAlgebra.induction_linear with
   | zero => rw [map_zero]; exact zero_mem _
-  | add p q hp hq => rw [map_add]; exact add_mem hp hq
+  | add p q hp hq =>
+    rw [(ev T hPW hT).map_add p q]
+    exact add_mem hp hq
   | single d a =>
     rw [ev_single, chi_apply]
     refine mul_mem (homLocRing_le_locC hPW a.2) (prod_mem fun k _ => zpow_mem_locC hPW ?_ ?_ _)
@@ -399,8 +408,8 @@ theorem ev_mem_locC (p : Lau P W) : ev T hPW hT p ∈ locC hPW := by
 
 def evC : Lau P W →+* locC hPW := (ev T hPW hT).codRestrict (locC hPW) (ev_mem_locC T hPW hT)
 
-include hT in
 
+include hT in
 theorem incAC_isLocalHom : IsLocalHom (incAC hPW) := by
   letI := (algQC hPW).toAlgebra
   haveI := wbar_isPrime hPW
@@ -429,8 +438,8 @@ theorem incAC_isLocalHom : IsLocalHom (incAC hPW) := by
   simp only [MulMemClass.coe_mul, OneMemClass.coe_one, hag]
   field_simp
 
-include hT in
 
+include hT in
 theorem map_maximalIdeal_incAC [IsLocalRing (homLocRing P W)] (hWh : IsMultiHomogIdeal W) :
     letI := (algQC hPW).toAlgebra
     haveI := wbar_isPrime hPW
@@ -461,7 +470,7 @@ theorem map_maximalIdeal_incAC [IsLocalRing (homLocRing P W)] (hWh : IsMultiHomo
     refine finsum_induction (fun q => ((algQC hPW).comp
         (Ideal.Quotient.mk P)) q ∈ (IsLocalRing.maximalIdeal (homLocRing P W)).map (incAC hPW))
       (by rw [RingHom.map_zero]; exact zero_mem _)
-      (fun x y hx hy => by rw [RingHom.map_add]; exact add_mem hx hy)
+      (fun x y hx hy => by rw [RingHom.map_add (f := _)]; exact add_mem hx hy)
       fun b => ?_
     set wb := weightedHomogeneousComponent (blockWeight ι) b w
     have hwb : IsMultiHomog wb b := weightedHomogeneousComponent_isWeightedHomogeneous b w
@@ -489,8 +498,8 @@ section Length
 variable [Fintype K] {P W : Ideal (MRing ι R)} [P.IsPrime] [W.IsPrime]
   (T : ∀ k, ι k) (hPW : P ≤ W) (hT : ∀ k, (X ⟨k, T k⟩ : MRing ι R) ∉ W)
 
-include hT in
 
+include hT in
 theorem flat_incAC (hPh : IsMultiHomogIdeal P) :
     letI := (incAC hPW).toAlgebra
     Module.Flat (homLocRing P W) (locC hPW) := by
@@ -524,8 +533,8 @@ theorem flat_incAC (hPh : IsMultiHomogIdeal P) :
       simp
   exact Module.Flat.trans (homLocRing P W) (Lau P W) (locC hPW)
 
-include hT in
 
+include hT in
 theorem length_quotient_incAC (hPh : IsMultiHomogIdeal P) (hWh : IsMultiHomogIdeal W)
     [IsLocalRing (homLocRing P W)] (a : homLocRing P W) :
     Module.length (locC hPW) (locC hPW ⧸ Ideal.span {incAC hPW a}) =

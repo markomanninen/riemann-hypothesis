@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LinearIndependentEigProj
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ToFirst
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LinearIndependentEigProj
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ToFirst
+
+@[expose] public section
 
 noncomputable section
 

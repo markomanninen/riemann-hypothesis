@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TiePtRec
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.CmpHyp0P
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.NatActRVtupR
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TiePtRec
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.CmpHyp0P
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.NatActRVtupR
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,8 +54,8 @@ theorem chiRatAll_rec (T : ∀ u : D.what₂.Word, Forms0 D u) (u : D.what₂.Wo
 
 variable {X : Formalism.L2.Herm.Herm0 D}
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem ex_rec (T : ∀ u : D.what₂.Word, Forms0 D u) (Gt : GatTies D) (I : CmpIn D X) (u : D.what₂.Word)
     (w : D.what₂.places.Pl) (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w))
     (hO : PtOne ((T u).cls0).lev (D.gat u w hg) (locAt X u w hg I.B))

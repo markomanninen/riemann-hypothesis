@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RootMeasBig
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RootMeasBig
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,15 +86,16 @@ theorem prod_PS {M : Type*} [CommMonoid M] (F : ℕ → M) :
         by_cases has : a < s
         · by_cases hbs : b < s
           · exact Or.inl ⟨⟨has, hbs⟩, hab⟩
-          · rw [if_pos has, if_neg hbs] at hbi; omega
+          · rw [ite_eq_left has, ite_eq_right hbs] at hbi; omega
         · have hbs : ¬ b < s := by omega
-          rw [if_neg has, if_neg hbs] at hbi
+          rw [ite_eq_right has, ite_eq_right hbs] at hbi
           exact Or.inr ⟨a - s, b - s, ⟨⟨by omega, by omega⟩, by omega, by omega⟩, by omega, by omega⟩
       · rintro (⟨⟨ha, hb⟩, hab⟩ | ⟨a', b', ⟨⟨ha', hb'⟩, hab', hbi'⟩, rfl, rfl⟩)
         · refine ⟨⟨by omega, by omega⟩, hab, ?_⟩
-          rw [if_pos ha, if_pos hb]
+          rw [ite_eq_left ha, ite_eq_left hb]
         · refine ⟨⟨by omega, by omega⟩, by omega, ?_⟩
-          rw [if_neg (by omega), if_neg (by omega), Nat.add_sub_cancel, Nat.add_sub_cancel, hbi']
+          rw [ite_eq_right (by omega), ite_eq_right (by omega), Nat.add_sub_cancel,
+            Nat.add_sub_cancel, hbi']
     rw [hsplit, Finset.prod_disjUnion, prod_block, Finset.prod_image (fun x _ y _ h => by
       simp only [Prod.mk.injEq] at h; exact Prod.ext (by omega) (by omega)), List.map_cons, List.prod_cons]
     congr 1

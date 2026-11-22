@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OfFactorE
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordConstruction
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GtPtAct
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RelationsAreFunctions
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdempotentImageBasePointRationalFractionFieldStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivisionPointCharactersGaloisFixedOfRationalBaseStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OfFactorE
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GtPtAct
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RelationsAreFunctions
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdempotentImageBasePointRationalFractionFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivisionPointCharactersGaloisFixedOfRationalBaseStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -32,9 +37,17 @@ theorem eImage_equiv_conj : ∀ {o W : Type} [CommRing o] [CommRing W] [IsLocalR
     congr 1
     ext x
     exact (RingHom.congr_fun hσ x).symm
-  have e1 := (GlobalTheory.TorusExt.qkExt_iff hB _ hσ p p').1 hext
-  have e2 := (GlobalTheory.TorusExt.qkExt_iff hB _ hσ p p).1 hpp
-  rw [e1, ← e2]
+  have hg' : p.g = p'.g :=
+    GlobalTheory.TorusExt.gt_ext_val (Over.OverMorphism.ext (hpp.2.1.trans hext.2.1.symm)) fun χ y J hJ =>
+      (val_corr hJ (hpp.2.2 χ) _).trans (val_corr hJ (hext.2.2 χ) _).symm
+  have hy' : p.y = p'.y := hpp.1.trans hext.1.symm
+  have hp : p = p' := by
+    obtain ⟨y, g, e⟩ := p
+    obtain ⟨y', g', e'⟩ := p'
+    obtain rfl : y = y' := hy'
+    obtain rfl : g = g' := hg'
+    rfl
+  rw [← hp]
   exact qk_equiv_refl hB p
 
 end GlobalTheory.Mum.GalFixQ

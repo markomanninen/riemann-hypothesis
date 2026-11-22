@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.EpsteinZeta.DedekindFactorK
-import Formalism.DirichletDensity.DirichletDensityProofs.QuadDiscr
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.EpsteinZeta.DedekindFactorK
+public import Formalism.DirichletDensity.DirichletDensityProofs.QuadDiscr
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,7 +111,7 @@ lemma covA_span (K : Type) [Field K] [NumberField K] (d : ℕ) [Fact d.Prime] (h
         rw [hab]
         simp
       have h2 : IsIntegral ℤ a := by
-        rw [← isIntegral_algebraMap_iff (algebraMap ℚ K).injective, ← h1]
+        rw [← isIntegral_algebraMap_iff (B := K), ← h1]
         exact hyint
       obtain ⟨z, hz⟩ := IsIntegrallyClosed.isIntegral_iff.mp h2
       refine ⟨2 * z, by simp [← hz], z ^ 2, by simp [← hz]⟩
@@ -121,7 +125,7 @@ lemma covA_span (K : Type) [Field K] [NumberField K] (d : ℕ) [Fact d.Prime] (h
         compute_degree!
       have hqy : Polynomial.aeval (y : K) q = 0 := by
         rw [hq]
-        simp only [map_add, map_sub, map_mul, map_pow, Polynomial.aeval_X, Polynomial.aeval_C,
+        simp only [map_add (f := _), map_sub, map_mul, map_pow, Polynomial.aeval_X, Polynomial.aeval_C,
           eq_ratCast]
         rw [hab]
         push_cast
@@ -143,8 +147,8 @@ lemma covA_span (K : Type) [Field K] [NumberField K] (d : ℕ) [Fact d.Prime] (h
           minpoly.natDegree_pos (Algebra.IsIntegral.isIntegral _)
         omega
       have hZ := minpoly.isIntegrallyClosed_eq_field_fractions' ℚ hyint
-      have c1 := congrArg (fun p => Polynomial.coeff p 1) (hmin.trans hZ)
-      have c0 := congrArg (fun p => Polynomial.coeff p 0) (hmin.trans hZ)
+      have c1 := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p 1) (hmin.trans hZ)
+      have c0 := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p 0) (hmin.trans hZ)
       simp only [hq, Polynomial.coeff_map, Polynomial.coeff_add, Polynomial.coeff_sub,
         Polynomial.coeff_C_mul, Polynomial.coeff_X_pow, Polynomial.coeff_X, Polynomial.coeff_C,
         eq_intCast] at c1 c0
@@ -205,7 +209,7 @@ lemma covA_span (K : Type) [Field K] [NumberField K] (d : ℕ) [Fact d.Prime] (h
     · exact ⟨u - v, by rw [hu, hv]; ring⟩
   refine ⟨m, B, ?_⟩
   apply FaithfulSMul.algebraMap_injective (𝓞 K) K
-  simp only [map_add, map_mul, map_intCast]
+  simp only [map_add (f := _), map_mul, map_intCast]
   change (y : K) = (m : K) + (B : K) * ((1 + x) / 2)
   rw [hab]
   have ha2 : (2 : K) * a = A := by exact_mod_cast hA.symm
@@ -244,7 +248,7 @@ theorem latI_top_basis (K : Type) [Field K] [NumberField K] (d : ℕ) [Fact d.Pr
       rintro w (rfl | rfl)
       · exact AddSubgroup.subset_closure ⟨1, Submodule.mem_top, by simp⟩
       · exact AddSubgroup.subset_closure ⟨ω', Submodule.mem_top, by simp⟩
-  have hωc : φ (ω : K) = (1 + φ x) / 2 := by rw [hω, map_div₀, map_add, map_one, map_ofNat]
+  have hωc : φ (ω : K) = (1 + φ x) / 2 := by rw [hω, map_div₀, map_add (f := _), map_one, map_ofNat]
   rcases lt_or_ge 0 (φ x).im with hpos | hneg
   · refine ⟨1, φ (ω : K), ?_, key ω hspan, ?_⟩
     · simp [hωc]

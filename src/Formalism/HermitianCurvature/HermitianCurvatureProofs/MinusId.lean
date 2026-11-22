@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.StatementTL
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameOfAdmissibleWord
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.L0ConstantPartCommute
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FreeOf2RmatrixTranspose
+module
+
+public import Formalism.HermitianCurvature.StatementTL
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameOfAdmissibleWord
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.L0ConstantPartCommute
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FreeOf2RmatrixTranspose
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.TLA.L1
 

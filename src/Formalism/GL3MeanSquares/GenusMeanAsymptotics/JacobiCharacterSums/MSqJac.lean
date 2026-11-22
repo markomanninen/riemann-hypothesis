@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.MeanSquareHypWIff
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.MeanSquareHypWIff
+
+@[expose] public section
 
 open Finset Classical
 

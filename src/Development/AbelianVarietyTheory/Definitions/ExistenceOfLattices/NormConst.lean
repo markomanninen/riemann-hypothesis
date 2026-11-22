@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
-import Formalism.LocalToGlobal.ProjectiveLattices.UnifDom
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnifDom
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ResAlgSplitTwo
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ResAlgSplitTwo
+
+@[expose] public section
 
 open PositivityTheory.PfSWUS.Loc GlobalTheory.CompanionTheory.UnrDens
 
@@ -63,7 +67,7 @@ theorem exists_idem (h : ResAlg E τ q ε) (hf : ¬ IsField E) :
     by_contra hN
     have hfix : τ (a * τ a) = a * τ a := by rw [map_mul, h.inv, mul_comm]
     exact hau (isUnit_of_mul_isUnit_left (h.fixedUnit _ hfix hN))
-  have htfix : τ (a + τ a) = a + τ a := by rw [map_add, h.inv, add_comm]
+  have htfix : τ (a + τ a) = a + τ a := by rw [map_add (f := _), h.inv, add_comm]
   by_cases ht : a + τ a = 0
   · exfalso
     have hτa : τ a = -a := by linear_combination ht
@@ -115,7 +119,7 @@ theorem card_zero_split (h : ResAlg E τ q ε) {e : E} (he : e * e = e) (hτ : �
   have hnorm : ∀ p, g p * τ (g p) = (p.1 : E) * (p.2 : E) := by
     rintro ⟨⟨x, hx⟩, ⟨y, hy⟩⟩
     show (x * e + y * (1 - e)) * τ (x * e + y * (1 - e)) = x * y
-    rw [map_add, map_mul, map_mul, hx, hy, hτ, hτf]
+    rw [map_add (f := _), map_mul, map_mul, hx, hy, hτ, hτf]
     linear_combination (2 * x * y - x ^ 2 - y ^ 2) * he
   have hg : Function.Bijective g := by
     constructor
@@ -123,7 +127,7 @@ theorem card_zero_split (h : ResAlg E τ q ε) {e : E} (he : e * e = e) (hτ : �
       have h1 : x * e + y * (1 - e) = x' * e + y' * (1 - e) := hxy
       have h2 : x * (1 - e) + y * e = x' * (1 - e) + y' * e := by
         have := congrArg τ h1
-        simpa only [map_add, map_mul, hx, hy, hx', hy', hτ, hτf] using this
+        simpa only [map_add (f := _), map_mul, hx, hy, hx', hy', hτ, hτf] using this
       have hxe : x * e = x' * e := by
         linear_combination e * h1 + (y - y' - x + x') * he
       have hye : y * e = y' * e := by
@@ -134,8 +138,8 @@ theorem card_zero_split (h : ResAlg E τ q ε) {e : E} (he : e * e = e) (hτ : �
       rfl
     · intro a
       refine ⟨(⟨a * e + τ a * (1 - e), ?_⟩, ⟨a * (1 - e) + τ a * e, ?_⟩), ?_⟩
-      · rw [map_add, map_mul, map_mul, h.inv, hτ, hτf]; ring
-      · rw [map_add, map_mul, map_mul, h.inv, hτ, hτf]; ring
+      · rw [map_add (f := _), map_mul, map_mul, h.inv, hτ, hτf]; ring
+      · rw [map_add (f := _), map_mul, map_mul, h.inv, hτ, hτf]; ring
       · show (a * e + τ a * (1 - e)) * e + (a * (1 - e) + τ a * e) * (1 - e) = a
         linear_combination (2 * a - 2 * τ a) * he
   have hz : ∀ p : Fx τ × Fx τ, (p.1 = zeroFx τ ∨ p.2 = zeroFx τ) ↔ g p * τ (g p) = 0 := by

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.ComplexUniformizationSigOne
-import Development.AutomorphicArithmetic.RealSpanData.RealData
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveRealTensorToProdMatrixAlgebrasInfPlaces
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimilitudePairGramInvCongruent
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PzIffPos
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.PointsNonemptyUnitaryGaussian
+public import Development.AutomorphicArithmetic.RealSpanData.RealData
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveRealTensorToProdMatrixAlgebrasInfPlaces
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimilitudePairGramInvCongruent
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PzIffPos
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -54,56 +58,6 @@ private theorem Pz_pi {I M : Type} [Fintype I] [Ring M] [Algebra ℝ M] (t : I �
         rw [← Finset.prod_sdiff hsub, map_mul, h0 i, mul_zero]
       exact this.symm.trans e
 
-private theorem Pz_iff_pos_inner {W : Type} [NormedAddCommGroup W] [InnerProductSpace ℝ W]
-    [FiniteDimensional ℝ W] (T : Module.End ℝ W) (hT : LinearMap.IsSymmetric T) :
-    Pz T ↔ ∀ x, x ≠ 0 → 0 < inner ℝ (T x) x := by
-  let e := hT.eigenvectorBasis (n := Module.finrank ℝ W) rfl
-  let lam := hT.eigenvalues (n := Module.finrank ℝ W) rfl
-  have hev : ∀ i, Module.End.HasEigenvector T (lam i) (e i) := fun i =>
-    hT.hasEigenvector_eigenvectorBasis rfl i
-  have hTe : ∀ i, T (e i) = lam i • e i := fun i => hev i |>.apply_eq_smul
-  constructor
-  · rintro ⟨s, hs, h⟩ x hx
-    have hl : ∀ i, 0 < lam i := by
-      intro i
-      have h1 := Module.End.aeval_apply_of_hasEigenvector (p := ∏ l ∈ s, (Polynomial.X - Polynomial.C l)) (hev i)
-      rw [h, LinearMap.zero_apply] at h1
-      have h2 := (smul_eq_zero.1 h1.symm).resolve_right (hev i).2
-      rw [Polynomial.eval_prod, Finset.prod_eq_zero_iff] at h2
-      obtain ⟨l, hl, h3⟩ := h2
-      have : lam i = l := by simpa [sub_eq_zero] using h3
-      exact this ▸ hs l hl
-    have hsum : inner ℝ (T x) x = ∑ i, lam i * (inner ℝ x (e i) * inner ℝ x (e i)) := by
-      rw [← e.sum_inner_mul_inner (T x) x]
-      refine Finset.sum_congr rfl fun i _ => ?_
-      rw [hT x (e i), hTe i, inner_smul_right, real_inner_comm x (e i)]
-      ring
-    rw [hsum]
-    obtain ⟨i, hi⟩ : ∃ i, inner ℝ x (e i) ≠ (0 : ℝ) := by
-      by_contra hc
-      push_neg at hc
-      apply hx
-      have := e.sum_inner_mul_inner x x
-      have h0 : inner ℝ x x = (0 : ℝ) := by rw [← this]; simp [hc]
-      exact inner_self_eq_zero.1 h0
-    refine Finset.sum_pos' (fun j _ => mul_nonneg (hl j).le (mul_self_nonneg _)) ⟨i, Finset.mem_univ i, ?_⟩
-    exact mul_pos (hl i) (mul_self_pos.2 hi)
-  · intro h
-    have hl : ∀ i, 0 < lam i := by
-      intro i
-      have := h (e i) (hev i).2
-      rw [hTe i, inner_smul_left] at this
-      simpa [e.orthonormal.1 i] using this
-    refine ⟨Finset.univ.image lam, ?_, ?_⟩
-    · intro l hl'
-      obtain ⟨i, -, rfl⟩ := Finset.mem_image.1 hl'
-      exact hl i
-    · refine e.toBasis.ext fun i => ?_
-      rw [OrthonormalBasis.coe_toBasis]
-      rw [Module.End.aeval_apply_of_hasEigenvector (hev i), Polynomial.eval_prod,
-        Finset.prod_eq_zero (Finset.mem_image_of_mem lam (Finset.mem_univ i)) (by simp)]
-      simp
-
 private theorem Pz_iff_pos {W : Type} [AddCommGroup W] [Module ℝ W] [FiniteDimensional ℝ W]
     (Q : W →ₗ[ℝ] W →ₗ[ℝ] ℝ) (hsym : ∀ x y, Q x y = Q y x) (hpos : ∀ x, x ≠ 0 → 0 < Q x x)
     (T : Module.End ℝ W) (hT : ∀ x y, Q (T x) y = Q x (T y)) :
@@ -121,7 +75,7 @@ private theorem actOn_tmul {C V : Type} [Ring C] [Algebra ℚ C] [AddCommGroup V
 private theorem actOn_inj {C V : Type} [Ring C] [Algebra ℚ C] [AddCommGroup V] [Module ℚ V]
     (rep : C →ₐ[ℚ] Module.End ℚ V) (hrep : Function.Injective rep) :
     Function.Injective (actOn rep ℝ) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   let B := Module.Free.chooseBasis ℚ ℝ
   obtain ⟨c, rfl⟩ := TensorProduct.eq_repr_basis_left B x
@@ -131,7 +85,8 @@ private theorem actOn_inj {C V : Type} [Ring C] [Algebra ℚ C] [AddCommGroup V]
     rw [Finsupp.zero_apply, map_zero]
     refine LinearMap.ext fun v => ?_
     have h1 : actOn rep ℝ (c.sum fun i n => B i ⊗ₜ[ℚ] n) ((1 : ℝ) ⊗ₜ[ℚ] v) = 0 := by rw [hx]; rfl
-    rw [Finsupp.sum, map_sum, LinearMap.sum_apply] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finsupp.sum, map_sum, LinearMap.sum_apply] at h1
     simp only [actOn_tmul, _root_.mul_one] at h1
     have h2 : ((c.mapRange (fun y => rep y v) (by simp)).sum fun i n => B i ⊗ₜ[ℚ] n) = 0 := by
       rw [Finsupp.sum_mapRange_index (by simp)]
@@ -145,11 +100,11 @@ private theorem bc_anti {R A M : Type} [CommRing R] [CommRing A] [AddCommGroup M
     B.baseChange A x y = -B.baseChange A y x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb]; ring
+  | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb]; ring
   | tmul a m =>
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add c d hc hd => simp only [map_add, LinearMap.add_apply, hc, hd]; ring
+    | add c d hc hd => simp only [map_add (f := _), LinearMap.add_apply, hc, hd]; ring
     | tmul a' m' =>
       rw [LinearMap.BilinForm.baseChange_tmul, LinearMap.BilinForm.baseChange_tmul, h m m', neg_smul,
         mul_comm]
@@ -159,7 +114,7 @@ private theorem E_anti {p : ℕ} [Fact p.Prime] (D : Datum p) (x y : ℝ ⊗[ℚ
   have h0 : ∀ x y, D.EF x y = -D.EF y x := by
     intro x y
     have := D.alt (x + y)
-    simp only [map_add, LinearMap.add_apply, D.alt] at this
+    simp only [map_add (f := _), LinearMap.add_apply, D.alt] at this
     linarith
   exact bc_anti _ (bc_anti _ h0) x y
 
@@ -169,16 +124,16 @@ private theorem E_adj {p : ℕ} [Fact p.Prime] {D : Datum p} {G : HTGroup p} (L 
       (D.EF.baseChange ℚ).baseChange ℝ x (actOn L.rep ℝ (starT G.star ℝ b).unop y) := by
   induction b using TensorProduct.induction_on with
   | zero => simp
-  | add b b' h h' => simp only [map_add, LinearMap.add_apply, MulOpposite.unop_add, h, h']
+  | add b b' h h' => simp only [map_add (f := _), LinearMap.add_apply, MulOpposite.unop_add, h, h']
   | tmul r c =>
     rw [starT_tmul]
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x x' h h' => simp only [map_add, LinearMap.add_apply, h, h']
+    | add x x' h h' => simp only [map_add (f := _), LinearMap.add_apply, h, h']
     | tmul s v =>
       induction y using TensorProduct.induction_on with
       | zero => simp
-      | add y y' h h' => simp only [map_add, LinearMap.add_apply, h, h']
+      | add y y' h h' => simp only [map_add (f := _), LinearMap.add_apply, h, h']
       | tmul t w =>
         have h := L.adj c v w
         rw [show sh G c = (G.star c).unop from rfl] at h

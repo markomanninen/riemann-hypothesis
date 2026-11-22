@@ -1,4 +1,8 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FactorRapid
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FactorRapid
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,8 +38,6 @@ def mulL (a : Mat n) : Mat n →L[ℝ] Mat n :=
       map_add' := fun y z => Matrix.mul_add a y z
       map_smul' := fun c y => Matrix.mul_smul a c y }
 
-@[simp] theorem mulL_apply (a y : Mat n) : mulL a y = a * y := rfl
-
 variable {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
 theorem contDiffOn_lTr (x : G n) {f : Mat n → V} (hf : ContDiffOn ℝ ∞ f (GLs n)) :
@@ -51,7 +53,7 @@ theorem Rd_lTr (x : G n) {f : Mat n → V} (hf : ContDiffOn ℝ ∞ f (GLs n)) (
     (hd.hasFDerivAt.comp g (mulL x.val).hasFDerivAt).fderiv
   show fderiv ℝ (f ∘ mulL x.val) g (g * X) = fderiv ℝ f (x.val * g) (x.val * g * X)
   rw [hc]
-  simp [Matrix.mul_assoc]
+  simp [mulL, Matrix.mul_assoc]
 
 theorem contDiffOn_Rw (hR : RCalc) {f : Mat n → V} (hf : ContDiffOn ℝ ∞ f (GLs n))
     (w : List (Bool × Fin n × Fin n)) : ContDiffOn ℝ ∞ (Rw w f) (GLs n) := by
@@ -74,8 +76,8 @@ theorem Rw_lTr (hR : RCalc) (x : G n) {f : Mat n → V} (hf : ContDiffOn ℝ ∞
 
 end LeftTranslateSobolev
 
-open LeftTranslateSobolev in
 
+open LeftTranslateSobolev in
 theorem ltSob : LtSob := by
   intro n _ _ μ _ V _ _ _ _ hR x f hf
   refine ⟨⟨contDiffOn_lTr x hf.1, fun w => ?_⟩, fun g hg => ?_⟩

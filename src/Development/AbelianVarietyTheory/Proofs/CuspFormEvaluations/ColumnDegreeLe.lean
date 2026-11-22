@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -47,7 +51,8 @@ theorem eval_rowOps_eq {K σ : Type*} [Field K] [DecidableEq σ] {p n : ℕ} (z 
         split_ifs
         · simp [hy]
         · simp
-      rw [map_add, eval_X, map_sum, Finset.sum_congr rfl fun k _ => he k, Finset.sum_insert hq, hy_def]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_add (f := _), eval_X, map_sum, Finset.sum_congr rfl fun k _ => he k, Finset.sum_insert hq, hy_def]
       ring
     rw [hfun, ← hb, hinv q.1 q.2 hab (c q), ih fun q' h => hT q' (Finset.mem_insert_of_mem h)]
 
@@ -55,7 +60,7 @@ theorem eval_scale_eq {K σ : Type*} [Field K] (w : σ → ℕ) (P : MvPolynomia
     (t : K) :
     eval (fun s => t ^ w s * x s) P =
       (∑ m ∈ P.support, Polynomial.monomial (∑ s ∈ m.support, w s * m s)
-        (coeff m P * ∏ s ∈ m.support, x s ^ m s)).eval t := by
+        (AddMonoidAlgebra.coeff P m * ∏ s ∈ m.support, x s ^ m s)).eval t := by
   rw [eval_eq, Polynomial.eval_finsetSum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [Polynomial.eval_monomial]
@@ -113,8 +118,8 @@ theorem column_degree_le {K σ : Type*} [Field K] [CharZero K] [DecidableEq σ] 
   push Not at hcon
   set j := ∑ a, ∑ k ∈ S, m0 (z (a, k)) with hj
   let R : MvPolynomial σ K :=
-    ∑ m ∈ P.support.filter (fun m => ∑ a, ∑ k ∈ S, m (z (a, k)) = j), monomial m (coeff m P)
-  have hR0 : coeff m0 R ≠ 0 := by
+    ∑ m ∈ P.support.filter (fun m => ∑ a, ∑ k ∈ S, m (z (a, k)) = j), monomial m (AddMonoidAlgebra.coeff P m)
+  have hR0 : AddMonoidAlgebra.coeff R m0 ≠ 0 := by
     have hmem : m0 ∈ P.support.filter (fun m => ∑ a, ∑ k ∈ S, m (z (a, k)) = j) :=
       Finset.mem_filter.2 ⟨hm0, rfl⟩
     simp only [R, coeff_sum, coeff_monomial]
@@ -161,11 +166,11 @@ theorem column_degree_le {K σ : Type*} [Field K] [CharZero K] [DecidableEq σ] 
     rw [h2, Matrix.det_one] at h1
     exact zero_ne_one h1
   let Q : (σ → K) → Polynomial K := fun y => ∑ m ∈ P.support,
-    Polynomial.monomial (∑ s ∈ m.support, w s * m s) (coeff m P * ∏ s ∈ m.support, y s ^ m s)
+    Polynomial.monomial (∑ s ∈ m.support, w s * m s) (AddMonoidAlgebra.coeff P m * ∏ s ∈ m.support, y s ^ m s)
   have hQcoeff : ∀ y : σ → K, (Q y).coeff j = ∑ m ∈ P.support,
-      if ∑ a, ∑ k ∈ S, m (z (a, k)) = j then coeff m P * ∏ s ∈ m.support, y s ^ m s else 0 := by
+      if ∑ a, ∑ k ∈ S, m (z (a, k)) = j then AddMonoidAlgebra.coeff P m * ∏ s ∈ m.support, y s ^ m s else 0 := by
     intro y
-    simp only [Q, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial, he]
+    simp only [Q, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial_apply, he]
   have key : ∀ x : σ → K, eval x D ≠ 0 → eval x R = 0 := by
     intro x hdet
     let M : Matrix (Fin S.card) (Fin S.card) K := Matrix.of fun a b => x (z (top a, ee b))
@@ -222,7 +227,7 @@ theorem column_degree_le {K σ : Type*} [Field K] [CharZero K] [DecidableEq σ] 
       have hc : ∀ a : Fin S.card, c (top a, b) = -(Matrix.vecMul (v b) M⁻¹) a := by
         intro a
         simp only [c]
-        rw [dif_pos (show ((top a : Fin p) : ℕ) < S.card from a.isLt)]
+        rw [dite_eq_left (show ((top a : Fin p) : ℕ) < S.card from a.isLt)]
         rfl
       simp only [hc, neg_mul, Finset.sum_neg_distrib]
       have := hsum b i
@@ -237,7 +242,8 @@ theorem column_degree_le {K σ : Type*} [Field K] [CharZero K] [DecidableEq σ] 
       exact (eval_rowOps_eq z hz P hinv S.card c (sc t x) T hT).symm
     have hRx : eval x R = (Q x).coeff j := by
       rw [hQcoeff, ← Finset.sum_filter]
-      simp only [R, map_sum, eval_monomial, Finsupp.prod]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [R, map_sum, eval_monomial, Finsupp.prod]
     rw [hRx, hQ, hQcoeff]
     refine Finset.sum_eq_zero fun m hm => ?_
     split_ifs with hmj
@@ -263,6 +269,6 @@ theorem column_degree_le {K σ : Type*} [Field K] [CharZero K] [DecidableEq σ] 
     · rw [hdet, mul_zero]
     · rw [key x hdet, zero_mul]
   have hR : R = 0 := (mul_eq_zero.1 hRD).resolve_right hD
-  exact hR0 (by rw [hR, coeff_zero])
+  exact hR0 (by simp only [hR, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply])
 
 end GlobalTheory

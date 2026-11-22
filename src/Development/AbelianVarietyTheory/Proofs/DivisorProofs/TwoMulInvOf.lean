@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DecayZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DecayZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,7 +100,7 @@ theorem quasiV_thV (hψ : ∀ a : F, ψ (algebraMap F (AF F) a) = 1) (Φ : (Fin 
   have h1 := hψ (ξ ⬝ᵥ b + 1 / 2 * (a ⬝ᵥ b))
   rw [← mul_one (ψ (-(⅟(2 : AF F) * symV (rat a, rat b) w) + _)), ← h1, ← AddChar.map_add_eq_mul]
   congr 1
-  rw [map_add, map_mul, ← invOf_two_eq, ← e3, ← e3]
+  rw [map_add (f := _), map_mul, ← invOf_two_eq, ← e3, ← e3]
   simp only [symV, add_dotProduct, dotProduct_add]
   linear_combination two_mul_invOf (rat a ⬝ᵥ w.2)
 

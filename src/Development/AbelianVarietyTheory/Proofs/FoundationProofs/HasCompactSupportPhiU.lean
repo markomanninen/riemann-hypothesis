@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.DoubleCosetMeasures.LatticeCoset
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.LocalIntegralGL
+module
+
+public import Mathlib
+public import Formalism.DoubleCosetMeasures.LatticeCoset
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.LocalIntegralGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,12 +26,12 @@ theorem phiU_of_mem (ρ : P →* ℂˣ) {x : Matrix (Fin r ⊕ Fin t) (Fin r) F}
   have h1 : (∃ k : P, ((k : GL (Fin r) F) : Matrix (Fin r) (Fin r) F) = toRows₁ x) ∧
       toRows₂ x ∈ IIset O ϖ := ⟨⟨k, hk⟩, h2⟩
   unfold phiU
-  rw [dif_pos h1, LemmaU.choose_eq h1.1 k hk]
+  rw [dite_eq_left h1, LemmaU.choose_eq h1.1 k hk]
 
 theorem phiU_of_notMem (ρ : P →* ℂˣ) {x : Matrix (Fin r ⊕ Fin t) (Fin r) F}
     (hx : x ∉ suppSet t O ϖ P) : phiU O ϖ P ρ x = 0 := by
   unfold phiU
-  rw [dif_neg]
+  rw [dite_eq_right]
   rintro ⟨⟨k, ek⟩, h2⟩
   exact hx ⟨⟨k, k.2, ek⟩, h2⟩
 
@@ -206,12 +210,12 @@ theorem measurableSet_Jset (hO : IsOpen (O : Set F)) (hϖ : ϖ ∈ O) (hϖ0 : ϖ
 omit [TopologicalSpace F] [IsTopologicalRing F] [BorelSpace F] [Field F] in
 theorem measurable_toRows₁ :
     Measurable (fun x : Matrix (Fin r ⊕ Fin t) (Fin r) F => toRows₁ x) :=
-  measurable_pi_lambda _ fun i => measurable_pi_apply (Sum.inl i)
+  Measurable.of_eval fun i => measurable_pi_apply (Sum.inl i)
 
 omit [TopologicalSpace F] [IsTopologicalRing F] [BorelSpace F] [Field F] in
 theorem measurable_toRows₂ :
     Measurable (fun x : Matrix (Fin r ⊕ Fin t) (Fin r) F => toRows₂ x) :=
-  measurable_pi_lambda _ fun i => measurable_pi_apply (Sum.inr i)
+  Measurable.of_eval fun i => measurable_pi_apply (Sum.inr i)
 
 theorem measurableSet_intMat (hO : IsOpen (O : Set F)) (n a : ℕ) :
     MeasurableSet (intMat O n a) := by

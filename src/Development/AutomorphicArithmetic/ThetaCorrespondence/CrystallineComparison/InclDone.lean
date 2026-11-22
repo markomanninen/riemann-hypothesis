@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.InclAsm
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.LeafMain
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.InclAsm
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.LeafMain
+
+@[expose] public section
 
 noncomputable section
 

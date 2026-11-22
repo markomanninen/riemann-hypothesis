@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory MulAction
 open scoped Pointwise ENNReal
 
@@ -30,10 +35,9 @@ theorem setLIntegral_subgroup_mul_left (ν : Measure G) [ν.IsMulLeftInvariant] 
 theorem isFundamentalDomain_iUnion_inv_smul {ν : Measure G} [ν.IsMulLeftInvariant]
     {Λ : Subgroup G} [Countable Λ] {𝓖 : Set G} (h : IsFundamentalDomain Λ 𝓖 ν)
     (S : Subgroup Λ) [Countable (Λ ⧸ S)] :
-    IsFundamentalDomain (S.map Λ.subtype) (⋃ q : Λ ⧸ S, (q.out)⁻¹ • 𝓖) ν where
-  nullMeasurableSet := .iUnion fun q => h.nullMeasurableSet_smul _
-  ae_covers := by
-    filter_upwards [h.ae_covers] with g hg
+    IsFundamentalDomain (S.map Λ.subtype) (⋃ q : Λ ⧸ S, (q.out)⁻¹ • 𝓖) ν := by
+  refine ⟨.iUnion (fun q => h.nullMeasurableSet_smul q.out⁻¹), ?_, ?_⟩
+  · filter_upwards [h.ae_covers] with g hg
     obtain ⟨l, hl⟩ := hg
     have hs : ((QuotientGroup.mk l : Λ ⧸ S).out)⁻¹ * l ∈ S :=
       QuotientGroup.eq.mp (QuotientGroup.out_eq' _)
@@ -41,8 +45,7 @@ theorem isFundamentalDomain_iUnion_inv_smul {ν : Measure G} [ν.IsMulLeftInvari
       Set.mem_iUnion.2 ⟨QuotientGroup.mk l, ?_⟩⟩
     rw [Set.mem_inv_smul_set_iff]
     simpa [Subgroup.smul_def, mul_assoc] using hl
-  aedisjoint := by
-    rintro ⟨s, hs⟩ ⟨t, ht⟩ hst
+  · rintro ⟨s, hs⟩ ⟨t, ht⟩ hst
     obtain ⟨s', hs', rfl⟩ := Subgroup.mem_map.1 hs
     obtain ⟨t', ht', rfl⟩ := Subgroup.mem_map.1 ht
     have hsub : (⟨Λ.subtype s', hs⟩ : S.map Λ.subtype) • (⋃ q : Λ ⧸ S, (q.out)⁻¹ • 𝓖) ∩

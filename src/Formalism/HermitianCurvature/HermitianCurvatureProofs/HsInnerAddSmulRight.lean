@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.TopDensNonnegOfKappa
+module
+
+public import Formalism.HermitianCurvature.TopDensNonnegOfKappa
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ComplexConjugate
@@ -35,7 +39,7 @@ variable {k r : ℕ} {z z' : Fin (2 * r + k + 1) → ℂ} {Wp Wq : Type} [Normed
 theorem act_add_smul (M : SlopeTestRemainingChoices S (Pr (RadSp k r z z' π π'))) (x x' : Ix S → RadSp k r z z' π π') (a : ℂ) :
     act M (x + a • x') = act M x + a • act M x' := by
   funext e
-  simp only [act, Pi.add_apply, Pi.smul_apply, map_add, map_smul, Finset.sum_add_distrib, Finset.smul_sum]
+  simp only [act, Pi.add_apply, Pi.smul_apply, map_add (f := _), map_smul, Finset.sum_add_distrib, Finset.smul_sum]
 
 theorem pairAt_add_smul_left (μ : Measure (Mt k r)) (Φ Φ' Ψ : RadSp k r z z' π π') (c : Fin r → ℂ) (a : ℂ)
     (h1 : Integrable (fun g : Mt k r => B.hsInner ((Φ : Fn k r (Wq →L[ℂ] Wp)) c (Matrix.of g))

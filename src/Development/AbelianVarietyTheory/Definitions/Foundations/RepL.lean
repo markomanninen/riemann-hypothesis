@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.PetIPSmulRight
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.PetIPSmulRight
+
+@[expose] public section
 
 noncomputable section
 

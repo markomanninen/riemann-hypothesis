@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsHomLocRingLocal
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsHomLocRingLocal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -30,7 +35,8 @@ theorem HomLocRingMem.proof : HomLocRingMem.Statement := by
         fun h => (hW.mem_or_mem h).elim hW₁ hW₂, ?_⟩
       · rw [add_comm b₁ b₂, mul_comm g₁ f₂]
         exact hf₂.mul hg₁
-      · simp only [map_add, map_mul]
+      · set_option synthInstance.maxHeartbeats 200000 in
+        simp only [map_add, map_mul]
         rw [div_add_div _ _ (hne g₁ hW₁) (hne g₂ hW₂)]
     · rintro x - ⟨b, f, g, hf, hg, hgW, rfl⟩
       exact ⟨b, -f, g, hf.neg, hg, hgW, by simp only [map_neg, neg_div]⟩

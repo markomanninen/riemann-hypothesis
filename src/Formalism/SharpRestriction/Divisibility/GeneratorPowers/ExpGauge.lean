@@ -1,11 +1,15 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTie
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CocChart
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.SubstCoeRename
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhTwoValHolds
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpGJAd
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpGUPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpGOPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpActOf
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTie
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CocChart
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.SubstCoeRename
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhTwoValHolds
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpGJAd
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpGUPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpGOPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpActOf
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,7 +33,5 @@ theorem expGaugeOf_of (hA : ExpActOfSt) : ExpGaugeOfSt := by
   obtain ⟨β, hβ, hβ0, hβv⟩ := ExpGE.exists_beta C.wP C.prim a hbb wLa hwa wLb hwb
   exact ⟨β, hβ, hβ0, fun m => ExpGL.coc_chart ExpGJPh1.phOneVal_holds ExpGJ.phTwoVal_holds ExpGJ.adVal
     ExpGU.unitId ExpGO.bqOrigin hs C φ hφ hx hact τ u hτc hu a wLa hra wLb hrb β hβv m⟩
-
-theorem expGaugeOf_holds (hE : LinEigSt) : ExpGaugeOfSt := expGaugeOf_of (expActOf_of hE)
 
 end Formalism.MainNotions.ModuliIntegralCharts.H1.ExpGauge

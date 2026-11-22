@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConstantCoeffTeichSub
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgHomExtOfConstantCoeffZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicPowerSeriesAlgHomActionLawsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIntegralCyclotomicChar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltWittEqZeroOfPrimeMulEqZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RootOfUnityPrimeToTeichmullerLift
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConstantCoeffTeichSub
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgHomExtOfConstantCoeffZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicPowerSeriesAlgHomActionLawsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIntegralCyclotomicChar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltWittEqZeroOfPrimeMulEqZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RootOfUnityPrimeToTeichmullerLift
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct GlobalTheory.HWL PowerSeries
 
@@ -101,9 +105,9 @@ theorem ext_exists (p : ℕ) (π : A)
     obtain ⟨a', m', h1', h2'⟩ := hF x' k
     refine ⟨a * π ^ m' + a' * π ^ m, m + m', ?_, ?_⟩
     · convert dvd_add (h1.mul_right (algebraMap A E π ^ m')) (h1'.mul_right (algebraMap A E π ^ m)) using 1
-      simp only [map_add, map_mul, map_pow]; ring
+      simp only [map_add (f := _), map_mul, map_pow]; ring
     · convert dvd_add (h2.mul_right (f π ^ m')) (h2'.mul_right (f π ^ m)) using 1
-      simp only [map_add, map_mul, map_pow]; ring
+      simp only [map_add (f := _), map_mul, map_pow]; ring
   have hmul : ∀ x x', F (x * x') = F x * F x' := fun x x' => eqF _ _ fun k => by
     obtain ⟨a, m, h1, h2⟩ := hF x k
     obtain ⟨a', m', h1', h2'⟩ := hF x' k
@@ -142,7 +146,7 @@ theorem let_unique {n : ℕ} (f f' : LetA O n →ₐ[O] S) (hπ : f letπ = f' l
         funext i
         rw [cst_apply, add_comm]
         exact eq_X_mul_shift_add_const (a i)
-      rw [ha, map_add, map_add, map_mul, map_mul, hc, ← hπ, pow_succ', add_sub_add_left_eq_sub, ← mul_sub]
+      rw [ha, map_add (f := _), map_add (f := _), map_mul, map_mul, hc, ← hπ, pow_succ', add_sub_add_left_eq_sub, ← mul_sub]
       exact mul_dvd_mul_left _ (ih _)
   ext1 a
   rw [← sub_eq_zero]
@@ -154,7 +158,8 @@ theorem let_exists {n : ℕ} [NeZero n] (y : S) [IsAdicComplete (Ideal.span {y})
   obtain ⟨ev, hev⟩ := GlobalTheory.Cyc.IoMap.algHom_exists (R := O) y
     (GlobalTheory.Per.AinfComplete.summ_of_precomplete y) (sep_of_haus y)
   have h1 : ∑ i, u (Pi.single i 1) = 1 := by
-    rw [← map_sum, Finset.univ_sum_single (fun _ : ZMod n => (1 : O))]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, Finset.univ_sum_single (fun _ : ZMod n => (1 : O))]
     exact map_one u
   have h2 : ∀ i j, u (Pi.single i 1) * u (Pi.single j 1) = if i = j then u (Pi.single i 1) else 0 := by
     intro i j
@@ -168,7 +173,8 @@ theorem let_exists {n : ℕ} [NeZero n] (y : S) [IsAdicComplete (Ideal.span {y})
       · simp [hk]
   have h3 : ∀ o : ZMod n → O, ∑ i, u (Pi.single i 1) * algebraMap O S (o i) = u o := by
     intro o
-    conv_rhs => rw [← Finset.univ_sum_single o, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← Finset.univ_sum_single o, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [mul_comm, ← Algebra.smul_def, ← map_smul, ← Pi.single_smul, smul_eq_mul, mul_one]
   have h4 : ∀ r : O, ev (C r) = algebraMap O S r := fun r => by
@@ -252,7 +258,7 @@ theorem binomial_eval {B : Type} [CommRing B] [CharP B l] (ψ : ℤ_[l]⟦X⟧ �
     rw [X_dvd_iff]; simp
   have h3 : binomialSeries ℤ_[l] b = 1 + X * h := by linear_combination hh
   rw [h1, binomialSeries_add, binomialSeries_natMul, binomialSeries_nat, h3]
-  simp only [map_mul, map_pow, map_add, map_one]
+  simp only [map_mul, map_pow, map_add (f := _), map_one]
   rw [add_pow_char_pow, mul_pow, h2]
   simp
 
@@ -522,7 +528,7 @@ theorem comm_φ (p : ℕ) (φ₀ : O⟦X⟧ →ₐ[O] O⟦X⟧) (h0 : φ₀ X = 
     (hs : ∀ x : S, (∀ k, (t ^ p - 1) ^ k ∣ x) → x = 0) : f.comp (letφ φ₀) = φ.comp f := by
   have h1 : (f.comp (letφ φ₀)) letπ = t ^ p - 1 := by
     have : letφ φ₀ (letπ : LetA O n) = (1 + letπ) ^ p - 1 := funext fun i => h0
-    rw [AlgHom.comp_apply, this, map_sub, map_pow, map_add, map_one, ht]
+    rw [AlgHom.comp_apply, this, map_sub, map_pow, map_add (f := _), map_one, ht]
     ring
   refine let_unique _ _ ?_ (fun o => ?_) (by rw [h1]; exact hs)
   · rw [h1, AlgHom.comp_apply, ht, map_sub, map_one, hφ]

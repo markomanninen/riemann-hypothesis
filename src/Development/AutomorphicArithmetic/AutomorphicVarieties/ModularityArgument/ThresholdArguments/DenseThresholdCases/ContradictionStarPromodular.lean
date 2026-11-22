@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.CompactIntegralFields.ConTrace
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.PotentialModularityTower
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.CompactIntegralFields.ConTrace
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.PotentialModularityTower
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -80,7 +84,7 @@ private theorem con_block {K Γ : Type} [Field K] [Group Γ] (r : Γ →* M4 K)
     rw [cp] at hg
     obtain ⟨u, v, huv⟩ := (IsRelPrime.of_squarefree_mul hg).isCoprime
     have := congrArg (aeval (B g0)) huv
-    rw [map_add, map_mul, map_mul, Matrix.aeval_self_charpoly, mul_zero, add_zero, map_one] at this
+    rw [map_add (f := _), map_mul, map_mul, Matrix.aeval_self_charpoly, mul_zero, add_zero, map_one] at this
     exact IsUnit.of_mul_eq_one_right _ this
   have key : ∀ y, (aeval (B g0) (A g0).charpoly * B y).trace =
       (r (g0 * g0 * y)).trace - (A g0).trace * (r (g0 * y)).trace + (A g0).det * (r y).trace := fun y => by
@@ -113,9 +117,11 @@ private theorem con_trace {K : Type} [Field K] [IsAlgClosed K] {l : ℕ} [Fact l
     rw [eval_sub, eval_X, eval_C, sub_eq_zero] at hi
     rw [hi]; exact (hdi i).pow N
   have h4 : IsIntegral (ZMod l) (M.trace - ∑ i, d i) := by
-    rw [← isIntegral_algHom_iff φ Subtype.val_injective, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← isIntegral_algHom_iff φ Subtype.val_injective, map_sub, map_sum]
     refine IsIntegral.sub ?_ (IsIntegral.sum _ fun i _ => hdi i)
-    rw [Matrix.trace, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.trace, map_sum]
     exact h1
   have h5 : M.trace - ∑ i, d i ∈ maximalIdeal V := by
     rw [Matrix.trace, ← Finset.sum_sub_distrib]

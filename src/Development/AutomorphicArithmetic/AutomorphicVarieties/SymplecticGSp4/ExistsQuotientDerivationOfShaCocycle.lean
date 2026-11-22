@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ExDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ExistsLocalFirstOrderLifts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SmoothPtWeightedPresentationOfPointDerivations
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.DerHom
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ExDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ExistsLocalFirstOrderLifts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SmoothPtWeightedPresentationOfPointDerivations
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.DerHom
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
 noncomputable section SlopeTestRemainingChoices
@@ -86,7 +91,7 @@ private theorem ac_lc {Γ R : Type} [TopologicalSpace Γ] [CommRing R] (I : Idea
 
 private theorem ac_add {Γ R : Type} [TopologicalSpace Γ] [CommRing R] {I : Ideal R} {f g : Γ → R} (h : AdicCont I f)
     (h' : AdicCont I g) : AdicCont I fun x => f x + g x := fun N => by
-  simp only [map_add]; exact (h N).add (h' N)
+  simp only [map_add (f := _)]; exact (h N).add (h' N)
 
 private theorem ac_mul {Γ R : Type} [TopologicalSpace Γ] [CommRing R] {I : Ideal R} {f g : Γ → R} (h : AdicCont I f)
     (h' : AdicCont I g) : AdicCont I fun x => f x * g x := fun N => by
@@ -149,6 +154,7 @@ private theorem fr_map {L : LocBase D} {R R' : Type} [CommRing R] [Algebra c.O R
   rw [Lift.map_hom, this]
   rfl
 
+set_option synthInstance.maxHeartbeats 200000 in
 set_option maxHeartbeats 1000000 in
 private theorem main (hD : D.Good) (L : LocBase D) (F : Fr D L) (Q : Type) [CommRing Q] [Algebra c.O Q] [Module c.Oᵐᵒᵖ Q]
     [IsCentralScalar c.O Q] [Module.Finite c.O Q] (z : G ℚ Ω → Q) (lc : IsLocallyConstant z)
@@ -226,29 +232,35 @@ private theorem main (hD : D.Good) (L : LocBase D) (F : Fr D L) (Q : Type) [Comm
     · ext i j : 1
       rw [Matrix.map_apply, AlgHom.comp_apply, y3']
       by_cases h : i = j <;> simp [Matrix.one_apply, h]
-    · rw [F.at0i]
-      refine AlgHom.ext fun x => ?_
-      rw [AlgHom.comp_apply, AlgHom.comp_apply, hq, p1, w1]
-    · rw [Lift.map_hom, Lift.map_hom, F.at0r, hr, hq, tw_fst]
-  obtain ⟨Db, hDb, e1⟩ := (der_hom c.O F.U c.O Q (F.W.origin F.org) fun x => (y x).snd).2
-    ⟨y, fun x => ⟨by rw [← hfst]; rfl, rfl⟩⟩
-  obtain ⟨DB, hDB, e2⟩ := (der_hom c.O L.B c.O c.O (L.W.origin L.org) fun x => (yB x).snd).2
+    · apply AlgHom.ext
+      intro x
+      change F.W.origin F.org (F.i x) = (p (yB x)).fst
+      rw [p1, w1, ← F.at0i]
+      rfl
+    · change F.W.origin F.org (F.r.hom g i j) = (r.hom g i j).fst
+      rw [F.at0r, hr, tw_fst]
+  obtain ⟨Db, hDb, eDb⟩ := (der_hom c.O F.U c.O Q (F.W.origin F.org) (fun x => (y x).snd)).2
+    ⟨y, fun x => ⟨DFunLike.congr_fun hfst x, rfl⟩⟩
+  obtain ⟨DB, hDB, eDB⟩ := (der_hom c.O L.B c.O c.O (L.W.origin L.org) (fun x => (yB x).snd)).2
     ⟨yB, fun x => ⟨w1 x, rfl⟩⟩
-  refine ⟨Db, hDb, DB, hDB, fun i hi x hx => ?_, fun x => ?_, fun g i j => ?_, fun v i j => ?_⟩
-  · rw [e2]; exact w2 i hi x hx
-  · rw [e1, e2]
-    show ((y.comp F.i) x).snd = _
-    rw [y1, AlgHom.comp_apply, p2]
-  · rw [e1]
-    show (y _).snd = _
-    rw [y2', tw_snd]
-  · rw [e1]
-    show (y _).snd = _
-    rw [y3']
+  refine ⟨Db, hDb, DB, hDB, ?_, ?_, ?_, ?_⟩
+  · intro i hi x hx
+    rw [congrFun eDB x]
+    exact w2 i hi x hx
+  · intro x
+    rw [congrFun eDb, congrFun eDB]
+    have e := DFunLike.congr_fun y1 x
+    change y (F.i x) = p (yB x) at e
+    rw [e, p2]
+  · intro g i j
+    rw [congrFun eDb, y2', tw_snd]
+  · intro v i j
+    rw [congrFun eDb, y3']
     by_cases h : i = j <;> simp [Matrix.one_apply, h]
 
 end SlopeTestRemainingChoices
 
+set_option synthInstance.maxHeartbeats 200000 in
 theorem UpperTheory.exists_quotientDerivation_of_shaCocycle :
     ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l} (D : Raw Ω c), D.Good → ∀ (L : LocBase D) (F : Fr D L) (a : c.O) (z : G ℚ Ω → c.O ⧸ Ideal.span {a}), D.ShaCoc a z → ∃ Db ∈ QDer (F.W.origin F.org) a, ∃ DB ∈ PtDer (L.W.origin L.org) c.O, HasWt L.W.part (-wPs) DB ∧ (∀ x, Db (F.i x) = Ideal.Quotient.mk _ (DB x)) ∧ (∀ g i j, Db (F.r.hom g i j) = Ideal.Quotient.mk _ ((Xm c.O * D.r0 g) i j) * z g) ∧ ∀ v i j, Db (F.α v i j) = 0 := by
   intro Ω _ _ _ l _ c D hD L F a z hz

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.Qk14.Qbar :
     (l : ℕ) → [Fact (Nat.Prime l)] → Type :=

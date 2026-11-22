@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,8 @@ def emb (c : ι → B) : E ⊗[F] B := ∑ i, b i ⊗ₜ[F] c i
 
 theorem coord_emb (c : ι → B) : coord b (emb b c) = c := by
   funext k
-  simp only [emb, map_sum, coord_tmul, Finset.sum_apply, Module.Basis.repr_self]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [emb, map_sum, coord_tmul, Finset.sum_apply, Module.Basis.repr_self]
   simp [Finsupp.single_apply]
 
 theorem emb_coord (x : E ⊗[F] B) : emb b (coord b x) = x := by
@@ -37,7 +42,7 @@ theorem emb_coord (x : E ⊗[F] B) : emb b (coord b x) = x := by
     rw [TensorProduct.smul_tmul]
   | add x y hx hy =>
     have : emb b (coord b (x + y)) = emb b (coord b x) + emb b (coord b y) := by
-      simp [emb, map_add, TensorProduct.tmul_add, Finset.sum_add_distrib]
+      simp [emb, map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib]
     rw [this, hx, hy]
 
 theorem coord_injective : Function.Injective (coord b : E ⊗[F] B → ι → B) :=
@@ -46,11 +51,10 @@ theorem coord_injective : Function.Injective (coord b : E ⊗[F] B → ι → B)
 theorem coord_mul (x y : E ⊗[F] B) :
     coord b (x * y) = fun k => ∑ i, ∑ j, b.repr (b i * b j) k • (coord b x i * coord b y j) := by
   conv_lhs => rw [← emb_coord b x, ← emb_coord b y]
-  simp only [emb, Finset.sum_mul_sum, Algebra.TensorProduct.tmul_mul_tmul, map_sum, coord_tmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [emb, Finset.sum_mul_sum, Algebra.TensorProduct.tmul_mul_tmul, map_sum, coord_tmul]
   funext k
   simp [Finset.sum_apply]
-
-theorem coord_smul (c : F) (x : E ⊗[F] B) : coord b (c • x) = c • coord b x := map_smul _ _ _
 
 theorem coord_incl (e : E) :
     coord b (Algebra.TensorProduct.includeLeftRingHom (R := F) (B := B) e) = fun k => algebraMap F B (b.repr e k) := by
@@ -61,7 +65,8 @@ theorem coord_map (σ : E →ₐ[F] E) (x : E ⊗[F] B) :
     coord b (Algebra.TensorProduct.map σ (AlgHom.id F B) x) =
       fun k => ∑ i, b.repr (σ (b i)) k • coord b x i := by
   conv_lhs => rw [← emb_coord b x]
-  simp only [emb, map_sum, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, coord_tmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [emb, map_sum, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, coord_tmul]
   funext k
   simp [Finset.sum_apply]
 
@@ -88,20 +93,21 @@ theorem ctsA_emb {g : X → ι → B} (hg : Continuous g) : CtsA b (fun x => emb
 theorem ctsA_sum {κ : Type*} (s : Finset κ) {f : κ → X → E ⊗[F] B} (hf : ∀ i ∈ s, CtsA b (f i)) :
     CtsA b (fun x => ∑ i ∈ s, f i x) := by
   unfold CtsA
-  simp only [map_sum]
-  exact continuous_finset_sum _ hf
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
+  exact continuous_finsetSum _ hf
 
 theorem ctsA_mul {f g : X → E ⊗[F] B} (hf : CtsA b f) (hg : CtsA b g) : CtsA b (fun x => f x * g x) := by
   unfold CtsA
   simp only [coord_mul]
-  refine continuous_pi fun k => continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => ?_
+  refine continuous_pi fun k => continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => ?_
   exact cont_smul _ (((continuous_apply i).comp hf).mul ((continuous_apply j).comp hg))
 
 theorem ctsA_map (σ : E →ₐ[F] E) {f : X → E ⊗[F] B} (hf : CtsA b f) :
     CtsA b (fun x => Algebra.TensorProduct.map σ (AlgHom.id F B) (f x)) := by
   unfold CtsA
   simp only [coord_map]
-  exact continuous_pi fun k => continuous_finset_sum _ fun i _ => cont_smul _ ((continuous_apply i).comp hf)
+  exact continuous_pi fun k => continuous_finsetSum _ fun i _ => cont_smul _ ((continuous_apply i).comp hf)
 
 end Topology
 

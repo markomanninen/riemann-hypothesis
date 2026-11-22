@@ -1,4 +1,8 @@
-import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.RingKrullDimLocalizationQuotientEqHeight
+module
+
+public import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.RingKrullDimLocalizationQuotientEqHeight
+
+@[expose] public section
 
 namespace ReciprocityTheory.CA
 

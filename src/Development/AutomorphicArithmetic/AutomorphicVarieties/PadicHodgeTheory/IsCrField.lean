@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal TensorProduct Module UpperTheory.V.Loc Topology
 
 private theorem finrank_key {Q E M V : Type} [Field Q] [Field E] [Algebra Q E] [FiniteDimensional Q E]
@@ -25,13 +30,13 @@ theorem UpperTheory.V.Loc.isCrField :
     induction x using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul v b => rfl
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have hD : ∀ g x, actVdR ((PP l).PD K) (resCoef ℚ_[l] ρ) g x = actVdR ((PP l).PD K) ρ g x := by
     intro g x
     induction x using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul v b => rfl
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have hC : ∀ g x, actC (GK K).subtype ρ g x = actVB ((PP l).PD K) ρ g x := by
     intro g x
     induction x using TensorProduct.induction_on with
@@ -39,7 +44,7 @@ theorem UpperTheory.V.Loc.isCrField :
     | tmul v b =>
       change ρ g v ⊗ₜ[ℚ_[l]] (PP l).actQ (g : GQ l) b = ρ g v ⊗ₜ[ℚ_[l]] ((PP l).PD K).actB g b
       rw [(PP l).PD_actB]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   refine ⟨?_, ?_, ?_⟩
   · refine finrank_key (Formalism.WeaklyAdmissibleFiltrations.Dcris ((PP l).PD K) ρ) (Formalism.WeaklyAdmissibleFiltrations.Dcris ((PP l).PD K) (resCoef ℚ_[l] ρ)) (fun x => ?_) _
     simp only [Formalism.WeaklyAdmissibleFiltrations.Dcris, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply, LinearMap.id_apply, hB]

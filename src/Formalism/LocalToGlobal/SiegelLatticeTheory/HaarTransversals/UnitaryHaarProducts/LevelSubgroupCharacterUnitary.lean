@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.HidaSetting
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.HidaSetting
+
+@[expose] public section
 
 noncomputable section
 
@@ -118,7 +122,7 @@ theorem sigA_sigA (a : I.E ⊗[I.F] Af I.F) : sigA I (sigA I a) = a := by
   induction a using TensorProduct.induction_on with
   | zero => rw [map_zero, map_zero]
   | tmul x y => rw [sigA_tmul, sigA_tmul, star_star]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem sigA_inclE (a : I.E) : sigA I (Formalism.UG.inclE (F := I.F) (Af I.F) a) =
     Formalism.UG.inclE (F := I.F) (Af I.F) (star a) := by
@@ -154,7 +158,7 @@ theorem hA_smul_right (u v : VA I) (c : I.E ⊗[I.F] Af I.F) : hA I u (c • v) 
   ring
 
 theorem hA_add_left (u u' v : VA I) : hA I (u + u') v = hA I u v + hA I u' v := by
-  simp only [hA, Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hA, Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hA_smul_left (u v : VA I) (c : I.E ⊗[I.F] Af I.F) : hA I (c • u) v = sigA I c * hA I u v := by
   simp only [hA, Formalism.UG.hform, Pi.smul_apply, smul_eq_mul, map_mul, Finset.mul_sum]
@@ -172,7 +176,8 @@ theorem hA_incl (x y : Fin I.n → I.E) : hA I (incl I x) (incl I y) =
     Formalism.UG.inclE (F := I.F) (Af I.F) (Formalism.UG.hform (starRingEnd I.E) I.J x y) := by
   have key : ∀ a : I.E, Formalism.UG.sigR I.cm.sig (Af I.F) (Formalism.UG.inclE (F := I.F) (Af I.F) a) =
       Formalism.UG.inclE (F := I.F) (Af I.F) (star a) := sigA_inclE I
-  simp only [hA, Formalism.UG.hform, incl, Matrix.map_apply, map_sum, map_mul, key, starRingEnd_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hA, Formalism.UG.hform, incl, Matrix.map_apply, map_sum, map_mul, key, starRingEnd_apply]
 
 theorem J_conj (i j : Fin I.n) : star (I.J i j) = I.J j i := by
   have hh : Formalism.UG.cT (starRingEnd I.E) I.J = I.J := I.J_herm
@@ -186,7 +191,8 @@ theorem hA_symm (u v : VA I) : hA I v u = sigA I (hA I u v) := by
     intro i j
     rw [← J_conj I i j]
     exact sigA_inclE I _
-  simp only [hA, Formalism.UG.hform, map_sum, map_mul, Matrix.map_apply, hs, hJ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hA, Formalism.UG.hform, map_sum, map_mul, Matrix.map_apply, hs, hJ]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring
@@ -290,7 +296,7 @@ theorem inv_e {x : I.Gf} (hx : x ∈ I.Kset)
       I.fmat x⁻¹ *ᵥ v ∈ Mo I g (e0 '' {b | b.1 < m}) := by
     intro m
     induction m using Nat.strong_induction_on with
-    | h m ih =>
+    | ind m ih =>
       refine mv_mem I _ g _ _ ?_ (mL_mv I (fun y hy => K_mv I hxi hy) g (mL_Mo I))
       rintro _ ⟨b, hb, rfl⟩
       have h1 : I.fmat x⁻¹ *ᵥ e0 b = e0 b + (I.fmat x⁻¹ - 1) *ᵥ e0 b := by
@@ -313,7 +319,7 @@ theorem inv_b {x : I.Gf} (hx : x ∈ I.Kset)
       I.fmat x⁻¹ *ᵥ v ∈ Mo I g (Set.range e0 ∪ bw '' {j | j.1 < m}) := by
     intro m
     induction m using Nat.strong_induction_on with
-    | h m ih =>
+    | ind m ih =>
       refine mv_mem I _ g _ _ ?_ (mL_mv I (fun y hy => K_mv I hxi hy) g (mL_Mo I))
       have hsplit : ∀ w : VA I, I.fmat x⁻¹ *ᵥ w = w + (I.fmat x⁻¹ - 1) *ᵥ w := by
         intro w

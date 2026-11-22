@@ -1,12 +1,35 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GaloisRepOfPolarizedCuspidal
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAevalEqOfSeparable
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitsModSqFiniteOfFields
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteSqEqOneOfFiniteAlgebra
-import GroundTheory.GlobalFields.LocalFieldAtPlace
-import GroundTheory.LocalFields.FiniteExtension
-import GroundTheory.LocalFields.UnitsPowers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SimpleTwistedTraceFormulaStable
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsNormalisedOfIsDiscrete
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BernsteinUnitaryProductIrreducible
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.IsTemperedGLOfIsUnitaryLSeg
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GaloisRepOfPolarizedCuspidal
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RadfordShufflePolynomialHolds
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.ClozelPurity
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.ClozelCohomologicalModel
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LocalLanglandsGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChebotarevDegreeOneIffCheb
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CuspidalMultiplicityOne
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HeckeLEntireAndNonzeroAtOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BorelCasselman
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.QuadraticClassFieldTheory
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsOrthonormalOfUnimodular
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAevalEqOfSeparable
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitsModSqFiniteOfFields
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteSqEqOneOfFiniteAlgebra
+public import GroundTheory.GlobalFields.LocalFieldAtPlace
+public import GroundTheory.LocalFields.FiniteExtension
+public import GroundTheory.LocalFields.UnitsPowers
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC GlobalTheory.BCT
 open scoped Classical TensorProduct
 
@@ -113,6 +136,7 @@ theorem finite_fixed (θ : G →* G) (hθ : ∀ g, θ (θ g) = g) (U : Subgroup 
     intro t ht
     rw [Subgroup.mem_centralizer_singleton_iff] at ht ⊢
     have := congrArg θ ht
+    change θ t * γ = γ * θ t
     simpa only [map_mul, hγ] using this)
   have key : ∀ c : TwCl (MonoidHom.id U), ∃ h : G, P c.rep.1 → h * (θ h)⁻¹ ∈ F ∧ c.rep.1 = h⁻¹ * γ * h := by
     intro c
@@ -178,7 +202,7 @@ theorem exists_aeval_of_comm (a b : Matrix (Fin n) (Fin n) K) (hs : a.charpoly.S
     exact LinearMap.congr_fun h1 v
   have hc : ∀ q : K[X], b * aeval a q = aeval a q * b := fun q => by
     induction q using Polynomial.induction_on' with
-    | add p q hp hq => rw [map_add, mul_add, add_mul, hp, hq]
+    | add p q hp hq => rw [map_add (f := _), mul_add, add_mul, hp, hq]
     | monomial k c =>
       rw [aeval_monomial]
       exact (Commute.mul_right (Algebra.commutes c b).symm (Commute.pow_right h.symm k)).eq

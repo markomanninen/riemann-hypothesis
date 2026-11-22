@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MassIntegralLatticesDiscriminantOrderLe
-import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.IdealsOfNormEqIndexSet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MassIntegralLatticesDiscriminantOrderLe
+public import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.IdealsOfNormEqIndexSet
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.Mass Formalism.HermitianLatticesTheory
 open scoped ENNReal Classical
@@ -39,6 +43,19 @@ theorem sub_count {K V : Type} [Field K] [NumberField K] [AddCommGroup V] [Modul
     (M : Submodule (𝓞 K) V) (hM : Submodule.IsLattice K M) (X : ℕ) :
     {N : Submodule (𝓞 K) V | N ≤ M ∧ idxN M N ≠ 0 ∧ idxN M N ≤ X}.encard ≤
       {I : Ideal (𝓞 K) | I ≠ ⊥ ∧ (Ideal.absNorm I : ℝ) ≤ X}.encard := by
+  by_cases hbot : M = ⊥
+  · subst M
+    by_cases hX : X = 0
+    · subst X
+      simp
+    · have htop : (⊤ : Ideal (𝓞 K)) ∈ {I : Ideal (𝓞 K) | I ≠ ⊥ ∧ (Ideal.absNorm I : ℝ) ≤ X} := by
+        simp [Nat.one_le_iff_ne_zero.mpr hX]
+      calc
+        _ ≤ 1 := by
+          apply Set.encard_le_one_iff.mpr
+          intro a b ha hb
+          exact (le_bot_iff.mp ha.1).trans (le_bot_iff.mp hb.1).symm
+        _ ≤ _ := Set.one_le_encard_iff_nonempty.mpr ⟨⊤, htop⟩
   obtain ⟨e⟩ : Nonempty (V ≃ₗ[K] K) :=
     FiniteDimensional.nonempty_linearEquiv_of_finrank_eq (by simp [h1])
   let e' : V →ₗ[𝓞 K] K := (e : V →ₗ[K] K).restrictScalars (𝓞 K)
@@ -47,7 +64,7 @@ theorem sub_count {K V : Type} [Field K] [NumberField K] [AddCommGroup V] [Modul
   have ha0 : a ≠ 0 := nonZeroDivisors.ne_zero ha
   let ψ : V →ₗ[𝓞 K] K := a • e'
   have hψ : Function.Injective ψ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     have : a • e x = 0 := hx
     rw [smul_eq_zero] at this
@@ -72,7 +89,8 @@ theorem sub_count {K V : Type} [Field K] [NumberField K] [AddCommGroup V] [Modul
         (Submodule.map ι (J N)).toAddSubgroup.relIndex (Submodule.map ι (J M)).toAddSubgroup
       rw [hJ N hN, hJ M le_rfl]
     rw [e1]
-    exact AddSubgroup.relIndex_mul_index (hle N hN)
+    simpa only [Ideal.absNorm_eq_index] using
+      AddSubgroup.relIndex_mul_index (Submodule.toAddSubgroup_mono (hle N hN))
   have hJM : J M ≠ ⊥ := by
     intro h0
     have h2 := hJ M le_rfl
@@ -82,10 +100,7 @@ theorem sub_count {K V : Type} [Field K] [NumberField K] [AddCommGroup V] [Modul
       intro x hx
       have : ψ x ∈ (⊥ : Submodule (𝓞 K) K) := h2 ▸ ⟨x, hx, rfl⟩
       exact (injective_iff_map_eq_zero ψ).1 hψ x this
-    have h4 := hM.span_eq_top
-    rw [h3] at h4
-    have : Nontrivial V := Module.nontrivial_of_finrank_pos (R := K) (by omega)
-    simp at h4
+    exact hbot h3
   have hq : ∀ N : Submodule (𝓞 K) V, ∃ I : Ideal (𝓞 K), N ≤ M → J N = J M * I := by
     intro N
     by_cases hN : N ≤ M
@@ -122,7 +137,13 @@ theorem main : MaxMass → ∀ (K V : Type) [Field K] [NumberField K] [StarRing 
   obtain ⟨c, hc⟩ := hMM K hK 1 le_rfl
   obtain ⟨-, hu', ho'⟩ := GlobalTheory.T.exists_maximal_integralHermitianLattice_orthonormal_maximal K V' h' hK hs' hnd'
   obtain ⟨hIl, hIu, hIr⟩ := ho' I _ hI
-  obtain ⟨hImax, -, hIlam⟩ := hu' I hIl hIu
+  have hIfull : Submodule.IsFullLattice K I := by
+    refine { toIsLattice := hIl, span_eq_top := ?_ }
+    obtain ⟨e, -, hspan, rfl, -⟩ := hI
+    apply top_unique
+    rw [← hspan]
+    exact Submodule.span_mono Submodule.subset_span
+  obtain ⟨hImax, -, hIlam⟩ := hu' I hIfull hIu
   have hcI : mass h' I = c := by rw [hc V' h' hs' hp' hIr I hImax, hIlam, mul_one]
   have hdisc := GlobalTheory.T.hermitianLatticeDiscriminantOrder_ne_zero_unimodular K V h hK hs hnd
   obtain ⟨hmass, hmpos, hYst, hfin, -⟩ := GlobalTheory.T.hermitianGenusMass_eq_orbitStabilizerMass K V h hK hs hp M₀ hM₀.1.1
@@ -209,7 +230,7 @@ theorem main : MaxMass → ∀ (K V : Type) [Field K] [NumberField K] [StarRing 
     have h7 := Nat.pos_of_ne_zero (hdisc M' hM''.1).1
     have h8 : idxN M' N ^ 2 ≤ X ^ 2 := (Nat.le_mul_of_pos_left _ h7).trans (h5 ▸ h6)
     exact (Nat.pow_le_pow_iff_left two_ne_zero).1 h8
-  have a3 := (a1.trans a2).trans (sub_count hj M' hM'.1 X)
+  have a3 := (a1.trans a2).trans (sub_count hj M' hM'.1.toIsLattice X)
   rw [← hIfin.cast_ncard_eq] at a3
   refine le_trans ?_ (ENNReal.ofReal_le_ofReal hIcard)
   rw [ENNReal.ofReal_natCast]

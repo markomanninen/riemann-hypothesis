@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DecompositionData
-import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineMapLemmas
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.BaseFont
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DecompositionData
+public import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineMapLemmas
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.BaseFont
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,8 +103,8 @@ def kerY [IsDomain O] [IsPrincipalIdealRing O] (hp : ∀ g v, p (Yt.ρ g v) = p 
     (hint : ∀ v ∈ Yt.L.T, p v ∈ Set.range (algebraMap O LL)) (he₀ : e₀ ∈ Yt.L.T) : LocLat G Qp LL O :=
   LocLat.ofGRep ((GRep.ofLat Yt).sub (LinearMap.ker p) (ker_stable Yt p hp)) (kerLat Yt p e₀ hpe hp hint he₀)
 
-variable (G Qp LL O) in
 
+variable (G Qp LL O) in
 def trivZ (hinj : Function.Injective (algebraMap O LL)) : LocLat G Qp LL O :=
   { V := LL
     ρ := 1

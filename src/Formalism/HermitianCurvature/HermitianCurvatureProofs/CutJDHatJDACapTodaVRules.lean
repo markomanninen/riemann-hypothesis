@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVGrpCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellMulVecBasis
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVGrpCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellMulVecBasis
+
+@[expose] public section
 
 open Matrix
 open scoped ContDiff
@@ -60,8 +64,31 @@ theorem mirror_torus_cell_holds : TorusCellv := by
   intro E _ _ k r D f hD hS c hc g hg hWD l
   have hcne : ∀ a, c a ≠ 0 := hc
   have hl := l.isLt
-  obtain ⟨hW0, -⟩ := head_comm (k := k) c hcne l.val l.castSucc (by simp)
-  obtain ⟨T, hT, hTG, -, -, hTc⟩ := tail (k := k) c hcne l (r - l.val - 1) (Fin.last r) (by simp; omega)
+  have hW0 : wCell k r l.castSucc c ∈ Glev k r 0 := wlist_glev hc _
+  have htail : ∀ n : ℕ, ∀ i : Fin (r + 1), i.val = l.val + 1 + n →
+      ∃ T : Mx k r, T ∈ Glev k r l.succ ∧
+        ∀ c' : Fin r → ℂ, (∀ a : Fin r, l.val < a.val → c' a = c a) →
+          wCell k r i c' = wCell k r l.succ c' * T := by
+    intro n
+    induction n with
+    | zero =>
+      intro i hi
+      have : i = l.succ := Fin.ext (by simpa using hi)
+      subst i
+      exact ⟨1, glev_one _, fun _ _ => by simp⟩
+    | succ n ih =>
+      intro i hi
+      let j : Fin r := ⟨l.val + 1 + n, by have := i.isLt; omega⟩
+      rw [show i = j.succ from Fin.ext (by simpa [j, Nat.add_assoc] using hi)]
+      obtain ⟨T, hTG, hTc⟩ := ih j.castSucc (by simp [j])
+      have hlj : l.val < j.val := by simp [j]; omega
+      refine ⟨T * w1 k r j (c j), glev_mul hTG ?_, ?_⟩
+      · exact glev_mono (by simpa [Fin.le_def] using hlj)
+          (Formalism.FourierDecayAlt.P.weyl_level_element_properties k r j (c j) (hcne j)).1
+      · intro c' hc'
+        rw [Formalism.FourierDecayAlt.P.Qx6.wCell_succ, hTc c' hc', hc' j hlj, Matrix.mul_assoc]
+  obtain ⟨T, hTG, hTc⟩ := htail (r - l.val - 1) (Fin.last r) (by simp; omega)
+  have hT := hTc c (fun _ _ => rfl)
   have hg₁ : T * g ∈ Glev k r l.succ := glev_mul hTG (glev_mono (Fin.le_last _) hg)
   have hsplit : wCell k r (Fin.last r) c * g = wCell k r l.castSucc c * (w1 k r l (c l) * (T * g)) := by
     simp only [hT, Formalism.FourierDecayAlt.P.Qx6.wCell_succ, Matrix.mul_assoc]
@@ -75,12 +102,10 @@ theorem mirror_torus_cell_holds : TorusCellv := by
     (fun x => f (wCell k r l.castSucc c * x)) hD' hS' c hc (T * g) hg₁ hpt).2
   rw [eH_left, ← hsplit] at hrule
   rw [hrule]
-  have hG : ∀ c' ∈ OmX r, wCell k r (Fin.last r) c' ∈ Glev k r 0 := fun c' hc' =>
-    (head_comm (k := k) c' hc' r (Fin.last r) (by simp)).1
   have hd₂ : DifferentiableAt ℝ (fun c' => f (wCell k r (Fin.last r) c' * g)) c := by
     refine diff_comp hS (φ := fun c' => wCell k r (Fin.last r) c' * g)
-      (Formalism.FourierDecayAlt.P.Qx6.cd_matmul (cd_wCell r (Fin.last r) (by simp)) contDiffOn_const)
-      (fun c' hc' => glev_mul (hG c' hc') (glev_mono (zero_le' _) hg)) hc hWD
+      (cdo_mul (wlist_smooth _) contDiffOn_const)
+      (fun _ hc' => glev_mul (wlist_glev hc' _) (glev_mono (zero_le' _) hg)) hc hWD
   have hd₁ : DifferentiableAt ℝ (fun c' => f (wCell k r l.castSucc c * (w1 k r l (c' l) * (T * g)))) c := by
     refine diff_comp hS (φ := fun c' => wCell k r l.castSucc c * (w1 k r l (c' l) * (T * g)))
       (Formalism.FourierDecayAlt.P.Qx6.cd_matmul contDiffOn_const
@@ -105,8 +130,56 @@ theorem mirror_left_rule_cell_holds : LeftRuleCellv := by
   intro E _ _ k r z D f hz hD hDN hS hL c hc g hg hWD a b hba
   have ha := a.isLt
   have hcne : ∀ l, c l ≠ 0 := hc
-  obtain ⟨hW0, hWcomm⟩ := head_comm (k := k) c hcne b.val b.castSucc (by simp)
-  obtain ⟨T, hT, hTG, hTe, -, -⟩ := tail (k := k) c hcne b (r - b.val - 1) (Fin.last r) (by simp; omega)
+  have hW0 : wCell k r b.castSucc c ∈ Glev k r 0 := wlist_glev hc _
+  have hWcomm (n : Mx k r) (hn : n ∈ Glev k r b.castSucc) :
+      wCell k r b.castSucc c * n = n * wCell k r b.castSucc c :=
+    wlist_comm b.castSucc c _ (fun _ ha => of_decide_eq_true (List.mem_filter.mp ha).2) hn
+  have htail : ∀ n : ℕ, ∀ i : Fin (r + 1), i.val = b.val + 1 + n →
+      ∃ T : Mx k r, wCell k r i c = wCell k r b.succ c * T ∧ T ∈ Glev k r b.succ ∧
+        (∀ a : Fin r, b.val < a.val →
+          T *ᵥ bvec (eI k r a) = if a.val < i.val then c a • bvec (esI k r a) else bvec (eI k r a)) ∧
+        (∀ a : Fin r, i.val ≤ a.val → T *ᵥ bvec (esI k r a) = bvec (esI k r a)) := by
+    intro n
+    induction n with
+    | zero =>
+      intro i hi
+      have : i = b.succ := Fin.ext (by simpa using hi)
+      subst i
+      refine ⟨1, by simp, glev_one _, fun a ha => ?_, fun _ _ => by simp⟩
+      rw [ite_eq_right (by simp; omega), Matrix.one_mulVec]
+    | succ n ih =>
+      intro i hi
+      let j : Fin r := ⟨b.val + 1 + n, by have := i.isLt; omega⟩
+      rw [show i = j.succ from Fin.ext (by simpa [j, Nat.add_assoc] using hi)]
+      obtain ⟨T, hT, hTG, hTe, hTs⟩ := ih j.castSucc (by simp [j])
+      have hbj : b.val + 1 ≤ j.val := by simp [j]
+      refine ⟨T * w1 k r j (c j), ?_, glev_mul hTG ?_, ?_, ?_⟩
+      · rw [Formalism.FourierDecayAlt.P.Qx6.wCell_succ, hT, Matrix.mul_assoc]
+      · exact glev_mono (by simpa [Fin.le_def] using hbj)
+          (Formalism.FourierDecayAlt.P.weyl_level_element_properties k r j (c j) (hcne j)).1
+      · intro a ha
+        rw [← Matrix.mulVec_mulVec, weyl_cell_mulVec_basis]
+        by_cases haj : a = j
+        · subst a
+          rw [sw_e, dd_e, Matrix.mulVec_smul, hTs _ (by simp), ite_eq_left (by simp)]
+        · have hne : a.val ≠ j.val := fun h => haj (Fin.ext h)
+          have h₁ : eI k r a ≠ eI k r j := by simpa [eI, Fin.ext_iff] using hne
+          have h₂ : eI k r a ≠ esI k r j := by simp [eI, esI, Fin.ext_iff]; have := j.isLt; omega
+          have hlt : a.val < j.castSucc.val ↔ a.val < j.succ.val := by simp; omega
+          rw [sw_o j h₁ h₂, dd_o j _ h₁ h₂, one_smul, hTe a ha]
+          simp only [hlt]
+      · intro a ha
+        have h₁ : esI k r a ≠ eI k r j := by simp [eI, esI, Fin.ext_iff]; have := a.isLt; omega
+        have h₂ : esI k r a ≠ esI k r j := by
+          have ha' := a.isLt
+          have hja : j.val < a.val := ha
+          intro h
+          have hv := congrArg Fin.val h
+          change 2 * r + k - a.val = 2 * r + k - j.val at hv
+          omega
+        rw [← Matrix.mulVec_mulVec, weyl_cell_mulVec_basis, sw_o j h₁ h₂, dd_o j _ h₁ h₂, one_smul,
+          hTs a (by simp at ha ⊢; omega)]
+  obtain ⟨T, hT, hTG, hTe, -⟩ := htail (r - b.val - 1) (Fin.last r) (by simp; omega)
   have hg₁ : T * g ∈ Glev k r b.succ := glev_mul hTG (glev_mono (Fin.le_last _) hg)
   have hsplit : wCell k r (Fin.last r) c * g = wCell k r b.castSucc c * (w1 k r b (c b) * (T * g)) := by
     simp only [hT, Formalism.FourierDecayAlt.P.Qx6.wCell_succ, Matrix.mul_assoc]
@@ -118,12 +191,12 @@ theorem mirror_left_rule_cell_holds : LeftRuleCellv := by
       n * x ∈ {x | wCell k r b.castSucc c * x ∈ D} := by
     intro x hx n hn
     show wCell k r b.castSucc c * (n * x) ∈ D
-    rw [← Matrix.mul_assoc, hWcomm b.castSucc le_rfl n hn.2, Matrix.mul_assoc]
+    rw [← Matrix.mul_assoc, hWcomm n hn.2, Matrix.mul_assoc]
     exact hDN _ ⟨hWx x hx.1, hx.2⟩ n (nlev_mono (zero_le' _) hn)
   have hL' : LeftEq k r z b.castSucc {x | wCell k r b.castSucc c * x ∈ D} (fun x => f (wCell k r b.castSucc c * x)) := by
     intro x hx n hn
     show f (wCell k r b.castSucc c * (n * x)) = _ • f (wCell k r b.castSucc c * x)
-    rw [← Matrix.mul_assoc, hWcomm b.castSucc le_rfl n hn.2, Matrix.mul_assoc]
+    rw [← Matrix.mul_assoc, hWcomm n hn.2, Matrix.mul_assoc]
     exact hL _ ⟨hWx x hx.1, hx.2⟩ n (nlev_mono (zero_le' _) hn)
   have hpt : w1 k r b (c b) * (T * g) ∈ {x | wCell k r b.castSucc c * x ∈ D} := by
     show _ ∈ D

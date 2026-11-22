@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LowerRankDatum
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FourierCompactness.SigmaSigmaOfGood
-import Development.WeilBound.ThetaLifts.LatticeBasics.IsCompactIntV
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AdelicFormCongruences.MemRatVIff
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.UnipotentLeDiagonalStabiliser
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LowerRankDatum
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FourierCompactness.SigmaSigmaOfGood
+public import Development.WeilBound.ThetaLifts.LatticeBasics.IsCompactIntV
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AdelicFormCongruences.MemRatVIff
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.UnipotentLeDiagonalStabiliser
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -53,7 +57,7 @@ theorem mapc_mul {p q r : Type} [Fintype q] (X : Matrix p q (AE F E)) (Z : Matri
 theorem cong_nCond (hσ : ∀ a, σ (σ a) = a) {n : ℕ} {ε : ℤˣ} (P β : Matrix (Fin n) (Fin n) (AE F E))
     (hβ : β ∈ nCond σ n ε) : (P.map (cA σ))ᵀ * β * P ∈ nCond σ n ε := by
   have hβ' : βᵀ = -((((ε : ℤ) : AE F E)) • β.map (cA σ)) := hβ
-  have hcc : ∀ z, cA σ (cA σ z) = z := GlobalTheory.EisBL.DoubledUnipotentRadical.cA_cA σ hσ
+  have hcc : ∀ z, cA σ (cA σ z) = z := kfour.cA_cA' σ hσ
   have hPP : (P.map (cA σ)).map (cA σ) = P := by ext i j; simp [hcc]
   show ((P.map (cA σ))ᵀ * β * P)ᵀ = -((((ε : ℤ) : AE F E)) • ((P.map (cA σ))ᵀ * β * P).map (cA σ))
   rw [Matrix.transpose_mul, Matrix.transpose_mul, Matrix.transpose_transpose, hβ', mapc_mul, mapc_mul,

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ExponentialPartialDerivatives.UnshiftEvalEqSubstRawUnit
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ExponentialPartialDerivatives.UnshiftEvalEqSubstRawUnit
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,8 @@ def colU (col : Fin 2) : RawChart C d (fun _ => I0) (Fin dd) :=
 theorem linW_const {I : Fin 2 → Type} [∀ g, Fintype (I g)] {κ : Type} (X : RawChart C d I κ) (g : Fin 2) (j : κ) :
     MvPowerSeries.constantCoeff
       (∑ c : I g, X.u g c j • (MvPowerSeries.X (⟨g, c⟩ : WV I) : MvPowerSeries (WV I) C)) = 0 := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun c _ => ?_
   rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, MvPowerSeries.coeff_smul,
     MvPowerSeries.coeff_zero_eq_constantCoeff_apply, MvPowerSeries.constantCoeff_X, mul_zero]
@@ -58,7 +63,8 @@ theorem hRow_self : (Y.rawSelf p).hRow = ∑ col, (colU Y p col).hRow := by
   show ((Y.k : ℕ) : C) • MvPowerSeries.subst (fun q : Fin 2 × (Fin 2 × Fin dd) => (Y.rawSelf p).expPt q.1 q.2)
     (∑ col, hCol col Y.h) = ∑ col, ((Y.k : ℕ) : C) •
       MvPowerSeries.subst (fun q : Fin 2 × Fin dd => (colU Y p col).expPt q.1 q.2) Y.h
-  rw [← MvPowerSeries.coe_substAlgHom hES, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.coe_substAlgHom hES, map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun col _ => ?_
   rw [MvPowerSeries.coe_substAlgHom, subst_E_hCol]
 
@@ -67,7 +73,8 @@ theorem subst_sg_self {τ : Type} {a : Fin 2 × Fin dd → MvPowerSeries τ C}
     MvPowerSeries.subst a ((Y.rawSelf p).sg v) =
       ∑ col, MvPowerSeries.subst (fun i => a (col, i)) ((colU Y p col).sg fun i => v (col, i)) := by
   have hS := MvPowerSeries.hasSubst_of_constantCoeff_zero ha
-  rw [Y.rawSelf_sg p v, ← MvPowerSeries.coe_substAlgHom hS, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Y.rawSelf_sg p v, ← MvPowerSeries.coe_substAlgHom hS, map_sum]
   refine Finset.sum_congr rfl fun col _ => ?_
   rw [MvPowerSeries.coe_substAlgHom, subst_inCol ha]
   rfl
@@ -83,7 +90,8 @@ theorem derAt_self : DerAt V (Y.rawSelf p) := by
   have e1 : MvPowerSeries.subst (fun q : Fin 2 × (Fin 2 × Fin dd) => (Y.rawSelf p).expPt q.1 q.2)
       (∑ col, hCol col (J col)) =
       ∑ col, MvPowerSeries.subst (fun q : Fin 2 × Fin dd => (colU Y p col).expPt q.1 q.2) (J col) := by
-    rw [← MvPowerSeries.coe_substAlgHom hES, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← MvPowerSeries.coe_substAlgHom hES, map_sum]
     refine Finset.sum_congr rfl fun col _ => ?_
     rw [MvPowerSeries.coe_substAlgHom, subst_E_hCol]
   have e2 : MvPowerSeries.subst ((Y.rawSelf p).expPt g) ((Y.rawSelf p).sg ((Y.rawSelf p).u (1 - g) k)) =
@@ -95,7 +103,8 @@ theorem derAt_self : DerAt V (Y.rawSelf p) := by
     exact expPt_col Y p g col i
   have e3 : dVar (⟨1 - g, k⟩ : WV fun _ : Fin 2 => I0) (Y.rawSelf p).hRow =
       ∑ col, dVar (⟨1 - g, k⟩ : WV fun _ : Fin 2 => I0) (colU Y p col).hRow := by
-    rw [hRow_self, dVar_eq, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hRow_self, dVar_eq, map_sum]
     simp only [dVar_eq]
   rw [e3, e1, e2, ← Finset.sum_sub_distrib, Finset.smul_sum]
   exact Finset.sum_congr rfl fun col _ => hJ col
@@ -119,8 +128,8 @@ theorem addM_self : AddM V (Y.rawSelf p) := by
 
 end CEqGen
 
-open CEqGen in
 
+open CEqGen in
 theorem cEqSelf_holds : CEqSelfSt := by
   intro C _ _ V O _ _ dd Y d _ I0 _ p _ H
   exact cEq_of (Y.rawSelf p) H

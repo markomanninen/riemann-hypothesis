@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory HomogeneousLocalization HomogeneousIdeal
 
@@ -36,10 +40,10 @@ theorem isInternal_quotGrading {I : Ideal A} (hI : I.IsHomogeneous 𝒜) :
     obtain ⟨b, hb, hab⟩ := hy
     have hb0 : GradedRing.proj 𝒜 i b = 0 := by
       refine Submodule.iSup_induction _ (motive := fun x => GradedRing.proj 𝒜 i x = 0) hb ?_
-        (map_zero _) (fun x y hx hy => by simp only [map_add, hx, hy, add_zero])
+        (map_zero _) (fun x y hx hy => by simp only [map_add (f := _), hx, hy, add_zero])
       intro j x hx
       refine Submodule.iSup_induction _ (motive := fun x => GradedRing.proj 𝒜 i x = 0) hx ?_
-        (map_zero _) (fun x y hx hy => by simp only [map_add, hx, hy, add_zero])
+        (map_zero _) (fun x y hx hy => by simp only [map_add (f := _), hx, hy, add_zero])
       intro hji z hz
       rw [GradedRing.proj_apply, DirectSum.decompose_of_mem_ne 𝒜 hz hji]
     have hab' : a - b ∈ I := Ideal.Quotient.eq.mp hab.symm
@@ -124,8 +128,8 @@ theorem ofHom_toSpecZero (φ : A →+* B) (hφ : (irrelevant 𝒜).toIdeal.map �
   ext a
   simp
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency.types false in
 @[reassoc]
 theorem SpecMap_ofHom_eq_awayι (φ : A →+* B) (hφ : (irrelevant 𝒜).toIdeal.map φ = ⊤)
     (ψ : B →+* C) {f : A} {n : ℕ} (hn : 0 < n) (hf : f ∈ 𝒜 n) (hu : IsUnit (ψ (φ f))) :
@@ -195,7 +199,6 @@ theorem hom_ext (φ : A →+* B) (hφ : (irrelevant 𝒜).toIdeal.map φ = ⊤) 
   exact h (Localization.Away (φ i.1)) (algebraMap B _) i.1 n hn hf
     (IsLocalization.Away.algebraMap_isUnit _)
 
-@[reassoc]
 theorem SpecMap_ofHom (φ : A →+* B) (hφ : (irrelevant 𝒜).toIdeal.map φ = ⊤) (ψ : B →+* C) :
     Spec.map (CommRingCat.ofHom ψ) ≫ ofHom 𝒜 φ hφ =
       ofHom 𝒜 (ψ.comp φ) (map_irrelevant_comp 𝒜 hφ ψ) := by
@@ -231,7 +234,6 @@ theorem map_irrelevant_comp_graded (g : 𝒜₀ →+*ᵍ ℬ) (hg : irrelevant �
   rw [← Ideal.map_map, _root_.eq_top_iff, ← hφ]
   exact Ideal.map_mono hg
 
-@[reassoc]
 theorem ofHom_map (g : 𝒜₀ →+*ᵍ ℬ) (hg : irrelevant ℬ ≤ (irrelevant 𝒜₀).map g)
     (φ : A' →+* B) (hφ : (irrelevant ℬ).toIdeal.map φ = ⊤) :
     ofHom ℬ φ hφ ≫ Proj.map g hg =

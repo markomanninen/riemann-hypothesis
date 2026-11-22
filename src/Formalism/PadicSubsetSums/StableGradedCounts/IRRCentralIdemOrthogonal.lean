@@ -1,4 +1,8 @@
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRCentralIdempotent
+module
+
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRCentralIdempotent
+
+@[expose] public section
 
 namespace Formalism.IrreducibleCountingLemmas.GaloisIrreducibility
 

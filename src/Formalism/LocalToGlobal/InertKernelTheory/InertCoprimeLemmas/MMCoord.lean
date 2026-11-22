@@ -1,9 +1,13 @@
-import Formalism.LocalToGlobal.InertKernelTheory.DefsMMCoord
-import Formalism.LocalToGlobal.InertKernelTheory.DefsMM
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.PowerSeriesEmbedding
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntTens
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated2
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsMMCoord
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsMM
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.PowerSeriesEmbedding
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntTens
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated2
+
+@[expose] public section
 
 noncomputable section
 

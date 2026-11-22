@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LefschetzSigmaSums.HeckeTraceSemi
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsPermOfMapEq
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LefschetzSigmaSums.HeckeTraceSemi
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsPermOfMapEq
+
+@[expose] public section
+
 open UpperTheory.Gal.LocalSmoothExtension
 
 private theorem exists_perm_of_map_eq {n : ℕ} (a b : Fin n → ℂ)
@@ -13,7 +18,7 @@ theorem UpperTheory.Gal.LocalSmoothExtension.schWEq_of :
   intro F _ _ n lam χ g hg
   have h : ∃ g : (F →+* ℂ) → Fin n → ℂ, Lists χ g := ⟨g, hg⟩
   unfold schW
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   refine Finset.prod_congr rfl fun τ _ => ?_
   obtain ⟨e, he⟩ := exists_perm_of_map_eq (h.choose τ) (g τ)
     ((h.choose_spec τ).symm.trans (hg τ))

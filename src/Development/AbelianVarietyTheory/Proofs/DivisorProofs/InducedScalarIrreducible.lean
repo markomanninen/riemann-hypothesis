@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FullRankSB
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BernsteinUnitaryProductIrreducible
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FullRankSB
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BernsteinUnitaryProductIrreducible
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ def indScalVal (ν β : kˣ →* ℂˣ) (a b : ℕ) :
   map_add' F G := by
     funext x
     show TensorProduct.lid ℂ ℂ (F.1.1 x + G.1.1 x) = _
-    rw [map_add]
+    rw [map_add (f := _)]
     rfl
   map_smul' c F := by
     funext x

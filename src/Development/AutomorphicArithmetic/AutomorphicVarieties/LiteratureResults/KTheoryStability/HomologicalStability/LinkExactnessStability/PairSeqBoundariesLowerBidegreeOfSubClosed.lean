@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LinkExactAff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LinkExactAff
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,8 @@ theorem map_supported_mem {α β : Type} {S : Set α}
     (f : (α →₀ ℤ) →ₗ[ℤ] (β →₀ ℤ)) (P : Submodule ℤ (β →₀ ℤ)) (h : ∀ z ∈ S, f (Finsupp.single z 1) ∈ P) :
     ∀ x ∈ Finsupp.supported ℤ ℤ S, f x ∈ P := by
   intro x hx
-  rw [← Finsupp.sum_single x, Finsupp.sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Finsupp.sum_single x, Finsupp.sum, map_sum]
   refine Submodule.sum_mem _ fun a ha => ?_
   rw [← Finsupp.smul_single_one, map_zsmul]
   exact P.smul_mem _ (h a (hx ha))
@@ -19,13 +24,13 @@ theorem map_supported_mem {α β : Type} {S : Set α}
 theorem hbd_single (V W : Type) (z : List V × List W) :
     hbd V W (Finsupp.single z 1) =
       ∑ i ∈ Finset.range z.1.length, (-1 : ℤ) ^ i • Finsupp.single (z.1.eraseIdx i, z.2) (1 : ℤ) := by
-  simp only [hbd, bd, Finsupp.linearCombination_single, one_smul, Finsupp.mapDomain_finset_sum,
+  simp only [hbd, bd, Finsupp.linearCombination_single, one_smul, Finsupp.mapDomain_finsetSum,
     Finsupp.mapDomain_smul, Finsupp.mapDomain_single]
 
 theorem vbd_single (V W : Type) (z : List V × List W) :
     vbd V W (Finsupp.single z 1) =
       ∑ i ∈ Finset.range z.2.length, (-1 : ℤ) ^ i • Finsupp.single (z.1, z.2.eraseIdx i) (1 : ℤ) := by
-  simp only [vbd, bd, Finsupp.linearCombination_single, one_smul, Finsupp.mapDomain_finset_sum,
+  simp only [vbd, bd, Finsupp.linearCombination_single, one_smul, Finsupp.mapDomain_finsetSum,
     Finsupp.mapDomain_smul, Finsupp.mapDomain_single]
 
 theorem bd_chains2 : ∀ (V W : Type) (D : Set (List V × List W)), SubClosed2 D →

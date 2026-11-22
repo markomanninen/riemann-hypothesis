@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,12 +25,14 @@ theorem coord_rat {K : Type} [Field K] (σ : K →+* ℂ) {E : Type} [AddCommGro
   have hfc : ∀ y : ι → ℂ, f y = ∑ m, y m • f (Pi.single m 1) := by
     intro y
     conv_lhs => rw [← Finset.univ_sum_single y]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun m _ => by
       rw [← map_smul, ← Pi.single_smul, smul_eq_mul, mul_one]
   have hmul : ∀ y : ι → ℂ, ((A'.map σ) *ᵥ y) = fun i => ψ i (f y) := by
     intro y; funext i
-    rw [hfc y, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hfc y, map_sum]
     simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, A', Matrix.of_apply, hA', map_smul,
       smul_eq_mul]
     exact Finset.sum_congr rfl (fun m _ => mul_comm _ _)

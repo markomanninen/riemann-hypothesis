@@ -1,5 +1,10 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 
@@ -108,7 +113,7 @@ theorem map_coord_eq (lam : Measure (Ainf F)) (hl : IsStdInf lam) :
     ((algebraMap F (Ainf F)).comp (algebraMap (𝓞 F) F)).toAddMonoidHom.range with hΓ
   let Ψ : Ainf F → mixedEmbedding.mixedSpace F := fun y => toMixed F (coord F y)
   have hΨadd : ∀ x y, Ψ (x + y) = Ψ x + Ψ y := fun x y => by
-    simp only [Ψ, map_add, toMixed_add]
+    simp only [Ψ, map_add (f := _), toMixed_add]
   have hΨinj : Function.Injective Ψ := (toMixed_injective F).comp (coord F).injective
   have hΨalg : ∀ a : 𝓞 F, Ψ (algebraMap F (Ainf F) (algebraMap (𝓞 F) F a)) =
       mixedEmbedding F (algebraMap (𝓞 F) F a) := fun a => toMixed_coord_algebraMap F _
@@ -131,7 +136,7 @@ theorem map_coord_eq (lam : Measure (Ainf F)) (hl : IsStdInf lam) :
       rw [hmΨ]
       exact (hΨalg b).symm
   have hq : Measure.QuasiMeasurePreserving Ψ lam volume := by
-    refine hmp.quasiMeasurePreserving.comp ⟨coord_measurable F, ?_⟩
+    refine hmp.quasiMeasurePreserving.comp ⟨(coord_measurable F).aemeasurable, ?_⟩
     rw [hc]
     intro s hs
     simp [hs]

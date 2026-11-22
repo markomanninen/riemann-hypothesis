@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -31,24 +36,6 @@ def ChowFormBirational.Statement : Prop :=
             aeval (genSubst (genPt P) c) (∑ l, C (t l) * pderiv (0, l) g) * C (genPt P m)
 
 section Inhabitants
-
-theorem GenericLinearTrdeg.hypotheses_inhabited :
-    Algebra.trdeg ℚ (Algebra.adjoin ℚ (Set.range (fun _ : Fin 1 => (1 : ℚ)))) = ((0 : ℕ) : Cardinal) := by
-  rw [Nat.cast_zero, trdeg_eq_zero_iff]
-  infer_instance
-
-theorem IncIdealDim.hypotheses_inhabited :
-    IsProjPrime (⊥ : Ideal (MvPolynomial (Fin 1) ℚ)) ∧
-      ringKrullDim (MvPolynomial (Fin 1) ℚ ⧸ (⊥ : Ideal (MvPolynomial (Fin 1) ℚ))) =
-        ((0 + 1 : ℕ) : WithBot ℕ∞) :=
-  ⟨isProjPrime_point ℚ, ringKrullDim_quot_bot ℚ 1⟩
-
-theorem ChowFormBirational.hypotheses_inhabited :
-    IsProjPrime (⊥ : Ideal (MvPolynomial (Fin 1) ℚ)) ∧
-      IsChowForm (⊥ : Ideal (MvPolynomial (Fin 1) ℚ)) (0 + 1) (X (0, 0)) ∧
-      ∑ j, (fun _ => (genPt (⊥ : Ideal (MvPolynomial (Fin 1) ℚ)) 0)⁻¹) j *
-        genPt (⊥ : Ideal (MvPolynomial (Fin 1) ℚ)) j = 1 :=
-  ⟨isProjPrime_point ℚ, isChowForm_point ℚ, IncidenceGeneric.hypotheses_inhabited.2⟩
 
 end Inhabitants
 

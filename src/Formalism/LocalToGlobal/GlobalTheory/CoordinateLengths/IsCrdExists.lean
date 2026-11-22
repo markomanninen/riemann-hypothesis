@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.LenLen2OfCoord
-import Formalism.LocalToGlobal.GroupLattices.DownNaturalLevelZero
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.LenLen2OfCoord
+public import Formalism.LocalToGlobal.GroupLattices.DownNaturalLevelZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ theorem isCrd_add (T : Forms0 D u) (B : GL (Fin (D.R.N 0)) D.host.E) {x y : ((D.
     {c : (D.mem u).C.cls 0} {Q Q' : MvPolynomial (D.what₂.Tau × Fin (D.R.N 0) × Fin (D.R.N 0)) ℂ}
     (h : IsCrd T B x c Q) (h' : IsCrd T B y c Q') : IsCrd T B (x + y) c (Q + Q') := by
   intro z
-  rw [map_add, Pi.add_apply, Pi.add_apply, h z, h' z, map_add, Pi.add_apply]
+  rw [map_add (f := _), Pi.add_apply, Pi.add_apply, h z, h' z, map_add (f := _), Pi.add_apply]
 
 theorem isCrd_smul (T : Forms0 D u) (B : GL (Fin (D.R.N 0)) D.host.E) {x : ((D.fm u).lat 0).V}
     {c : (D.mem u).C.cls 0} {Q : MvPolynomial (D.what₂.Tau × Fin (D.R.N 0) × Fin (D.R.N 0)) ℂ}
@@ -84,9 +88,6 @@ def crdL (T : Forms0 D u) (B : (D.mem u).C.cls 0 → GL (Fin (D.R.N 0)) D.host.E
     funext c
     have h := crd_smul T B (r : D.what₂.LL) x c
     rw [Pi.smul_apply, Subring.smul_def r x, h, Subring.smul_def, owEquiv_coe]
-
-theorem crdL_apply (T : Forms0 D u) (B : (D.mem u).C.cls 0 → GL (Fin (D.R.N 0)) D.host.E) (w : D.what₂.places.Pl)
-    (x : Vl D u 0) : crdL T B w x = crd T B x := rfl
 
 theorem crdL_inj (T : Forms0 D u) (B : (D.mem u).C.cls 0 → GL (Fin (D.R.N 0)) D.host.E) (w : D.what₂.places.Pl) :
     Function.Injective (crdL T B w) := by

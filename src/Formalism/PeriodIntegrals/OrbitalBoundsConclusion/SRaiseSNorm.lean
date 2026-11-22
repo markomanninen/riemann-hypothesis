@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LineScalingNorm.CrossSectionAtPoint
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LineScalingNorm.LineMove
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LineScalingNorm.CrossSectionAtPoint
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LineScalingNorm.LineMove
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.Core.TC.MC
 

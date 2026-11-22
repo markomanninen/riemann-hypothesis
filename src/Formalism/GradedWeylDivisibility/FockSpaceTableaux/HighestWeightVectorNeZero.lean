@@ -1,5 +1,9 @@
-import Formalism.GradedWeylDivisibility.StatementA
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwrowLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.StatementA
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwrowLemmas
+
+@[expose] public section
 
 namespace Formalism.GradedWeylDivisibility
 

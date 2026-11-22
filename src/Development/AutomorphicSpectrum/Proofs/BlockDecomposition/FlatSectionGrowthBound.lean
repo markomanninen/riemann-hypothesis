@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesE
-import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldC
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesE
+public import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldC
+
+@[expose] public section
 
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes

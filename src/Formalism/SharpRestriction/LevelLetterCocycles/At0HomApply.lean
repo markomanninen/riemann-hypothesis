@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.GCoordProp
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.GCoordProp
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,8 @@ theorem gCoord_holds (W : LocWach PD LL O v n) : GCoordProp W := by
     simp only [this]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun l _ => ?_
-    rw [← Finset.sum_smul, Matrix.mul_apply, ← at0Hom_apply W hz, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.sum_smul, Matrix.mul_apply, ← at0Hom_apply W hz, map_sum]
     congr 1
     refine Finset.sum_congr rfl fun m₁ _ => ?_
     rw [map_mul, at0Hom_apply, at0Hom_apply, mul_comm]

@@ -1,5 +1,9 @@
-import Formalism.CharacterColumnKernels.CharacterColumnKernelPairSetVariant
-import Formalism.CharacterColumnKernels.StatementX
+module
+
+public import Formalism.CharacterColumnKernels.CharacterColumnKernelPairSetVariant
+public import Formalism.CharacterColumnKernels.StatementX
+
+@[expose] public section
 
 open Finset Classical
 

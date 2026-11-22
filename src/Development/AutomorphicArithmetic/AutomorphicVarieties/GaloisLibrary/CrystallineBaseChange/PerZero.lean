@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.RnStmt
-import GroundTheory.AutomorphicForms.GL2Classical.CuspConverse
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.RnStmt
+public import GroundTheory.AutomorphicForms.GL2Classical.CuspConverse
+
+@[expose] public section
 
 open Filter Topology Asymptotics Function
 open scoped Real

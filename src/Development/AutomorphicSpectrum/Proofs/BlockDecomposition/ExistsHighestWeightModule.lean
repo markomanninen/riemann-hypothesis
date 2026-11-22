@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PRVComponents.TensorActionLieRelations
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PRVComponents.TensorActionLieRelations
+
+@[expose] public section
 
 noncomputable section
 
@@ -108,7 +112,7 @@ theorem conj_single {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : ReciprocityT
       T.dτ (ReciprocityTheory.ChartRestriction.DS.S7.toMK k * Matrix.single c d 1 * star (ReciprocityTheory.ChartRestriction.DS.S7.toMK k)) := by
   have h1 := ReciprocityTheory.ChartRestriction.DS.HW.KType.conj_dτ T k (ReciprocityTheory.ChartRestriction.DS.HW.inK_hermitian_unit h)
   have h2 := ReciprocityTheory.ChartRestriction.DS.HW.KType.conj_dτ T k (ReciprocityTheory.ChartRestriction.DS.HW.inK_skew_hermitian_unit h)
-  rw [ReciprocityTheory.ChartRestriction.DS.HW.single_eq_kp c d, map_add, map_smul, mul_add, add_mul, mul_smul_comm, smul_mul_assoc,
+  rw [ReciprocityTheory.ChartRestriction.DS.HW.single_eq_kp c d, map_add (f := _), map_smul, mul_add, add_mul, mul_smul_comm, smul_mul_assoc,
     h1, h2, Matrix.mul_add, Matrix.add_mul, Matrix.mul_smul, Matrix.smul_mul, map_add, map_smul]
 
 theorem unit_translate {Λ : Fin n → ℝ} (T : ReciprocityTheory.ChartRestriction.DS.S7.KType (fun _ : Fin n => true) Λ)

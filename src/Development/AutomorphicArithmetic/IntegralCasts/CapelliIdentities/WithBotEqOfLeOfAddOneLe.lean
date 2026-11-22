@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Ydd3.withBot_eq_of_le_of_add_one_le :
     ∀ {x : WithBot ℕ∞} {c : ℕ},

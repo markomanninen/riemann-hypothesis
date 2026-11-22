@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
+module
+
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -43,7 +48,7 @@ theorem swapCast_symm_smul_mem {F1 : Subfield E} (h : F1 = maximalRealSubfield E
     | neg u _ hu => rw [smul_neg]; exact neg_mem hu
   | zero => simpa using (latHat F1 E L).zero_mem
   | one => simpa using hw
-  | add a b _ _ ha hb => rw [map_add, add_smul]; exact add_mem (ha hw) (hb hw)
+  | add a b _ _ ha hb => rw [map_add (f := _), add_smul]; exact add_mem (ha hw) (hb hw)
   | neg a _ ha => rw [map_neg, neg_smul]; exact neg_mem (ha hw)
   | mul a b _ _ ha hb => rw [map_mul, mul_smul]; exact ha (hb hw)
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.Choice
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingConstruction
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.Choice
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingConstruction
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,15 +71,15 @@ theorem muS_swap {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hT : 0 < T
   have hco2 : ∀ i j, Measurable fun p : Mt k r × Mt k r => p.2 i j :=
     fun i j => (measurable_pi_apply j).comp ((measurable_pi_apply i).comp measurable_snd)
   have hmul12 : Measurable fun p : Mt k r × Mt k r => (Matrix.of.symm (Matrix.of p.1 * Matrix.of p.2) : Mt k r) := by
-    refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+    refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
     simp only [Matrix.mul_apply, Matrix.of_apply, Matrix.of_symm_apply]
     exact Finset.measurable_sum _ fun l _ => (hco i l).mul (hco2 l j)
   have hmul21 : Measurable fun p : Mt k r × Mt k r => (Matrix.of.symm (Matrix.of p.2 * Matrix.of p.1) : Mt k r) := by
-    refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+    refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
     simp only [Matrix.mul_apply, Matrix.of_apply, Matrix.of_symm_apply]
     exact Finset.measurable_sum _ fun l _ => (hco2 i l).mul (hco l j)
   have hcm : Measurable (Function.uncurry fun (h n : Mt k r) => conjM (Matrix.of h) n) := by
-    refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+    refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
     simp only [Function.uncurry, conjM, Matrix.mul_apply, Matrix.of_apply]
     exact Finset.measurable_sum _ fun l _ =>
       (Finset.measurable_sum _ fun m _ => (hco i m).mul (hco2 m l)).mul ((measurable_inv_apply l j).comp measurable_fst)
@@ -203,7 +207,7 @@ theorem muS_loc {n : ℕ} (hn : n = 2 * r + k + 1) (ε : Fin n → Bool) {Q : Ma
     exact hγ
   · intro s hs
     have hLm : Measurable (lmulM (Formalism.L2.SG.RealObj.trG Q Qi s) : Mt k r → Mt k r) := by
-      refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+      refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
       simp only [lmulM, Matrix.mul_apply, Matrix.of_apply]
       exact Finset.measurable_sum _ fun l _ => measurable_const.mul ((measurable_pi_apply j).comp (measurable_pi_apply l))
     have hsm : Measurable fun x : Formalism.REAL.UJ ε => s * x := measurable_const_mul s

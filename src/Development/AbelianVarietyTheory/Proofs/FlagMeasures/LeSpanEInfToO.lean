@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocOf
+module
+
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocOf
+
+@[expose] public section
 
 open NumberField
 
@@ -33,7 +37,7 @@ theorem exists_smul_mem {E : Type} [Field E] [NumberField E] {V : Type} [AddComm
     exact Λ.smul_mem n hcy
 
 theorem le_spanE_inf_toO {E : Type} [Field E] [NumberField E] [StarRing E] {S : Formalism.BasicNotions.HSpace E}
-    (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsLattice E Λ) (U : Submodule E S.V) :
+    (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsFullLattice E Λ) (U : Submodule E S.V) :
     U ≤ Formalism.MainNotions.S.Lat.spanE S (Λ ⊓ Formalism.MainNotions.S.Lat.toO S U) := by
   intro x hx
   have hxs : x ∈ Submodule.span E (Λ : Set S.V) := by

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+
+@[expose] public section
 
 namespace GlobalTheory.SplitFlip
 
@@ -9,19 +13,16 @@ theorem vertexDiff_tgt (e : Edge) : vertexDiff e.tgt = vertexDiff e.src + 1 := b
   cases e <;> simp [vertexDiff, Edge.src, Edge.tgt] <;> omega
 
 theorem IsPath.pairwise_vertexDiff : ∀ {γ : List Edge}, IsPath γ →
-    γ.Pairwise fun a b => vertexDiff a.src < vertexDiff b.src
-  | [], _ => List.Pairwise.nil
-  | [_], _ => List.pairwise_singleton _ _
-  | a :: b :: t, h => by
-    unfold IsPath at h
-    rw [List.isChain_cons_cons] at h
-    have ih := IsPath.pairwise_vertexDiff (γ := b :: t) h.2
-    have hab : vertexDiff a.src < vertexDiff b.src := by
-      rw [← h.1, vertexDiff_tgt]; omega
-    refine List.Pairwise.cons (fun c hc => ?_) ih
-    rcases List.mem_cons.1 hc with rfl | hc
-    · exact hab
-    · exact hab.trans (List.rel_of_pairwise_cons ih hc)
+    γ.Pairwise fun a b => vertexDiff a.src < vertexDiff b.src := by
+  intro γ h
+  let r : Edge → Edge → Prop := fun a b => vertexDiff a.src < vertexDiff b.src
+  let : Trans r r r := ⟨fun hab hbc => lt_trans hab hbc⟩
+  change γ.Pairwise r
+  apply List.IsChain.pairwise
+  refine List.IsChain.imp (fun {a b} hab => ?_) h
+  change vertexDiff a.src < vertexDiff b.src
+  rw [← hab, vertexDiff_tgt]
+  omega
 
 theorem IsPath.eq_of_vertexDiff_eq {γ : List Edge} (hγ : IsPath γ) {a b : Edge} (ha : a ∈ γ) (hb : b ∈ γ)
     (h : vertexDiff a.src = vertexDiff b.src) : a = b := by

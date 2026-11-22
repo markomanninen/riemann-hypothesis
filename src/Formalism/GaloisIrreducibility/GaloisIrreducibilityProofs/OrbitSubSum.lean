@@ -1,4 +1,8 @@
-import Formalism.GaloisIrreducibility.Statement
+module
+
+public import Formalism.GaloisIrreducibility.Statement
+
+@[expose] public section
 
 namespace Formalism.GaloisIrreducibility
 
@@ -58,7 +62,7 @@ theorem invariant_multiset_orbit_sum {α ι : Type} (f : α → α) (O : ι → 
   obtain ⟨M'', rfl⟩ : ∃ M'', M' = (O i0).val + M'' :=
     ⟨M' - (O i0).val, (add_tsub_cancel_of_le hle0).symm⟩
   have hM'' : M''.map f = M'' := by
-    rw [Multiset.map_add, orbit_map_eq (hO i0 hi0)] at hM
+    rw [Multiset.map_add (f := _), orbit_map_eq (hO i0 hi0)] at hM
     exact add_left_cancel hM
   have hle'' : M'' ≤ ∑ i ∈ I.erase i0, (O i).val := by
     rw [← Finset.add_sum_erase I _ hi0] at hle

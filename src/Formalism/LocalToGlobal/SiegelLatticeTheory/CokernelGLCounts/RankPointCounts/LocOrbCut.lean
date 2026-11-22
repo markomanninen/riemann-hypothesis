@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocOrbSumPf
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocOrbSumPf
+
+@[expose] public section
 
 noncomputable section
 
@@ -272,8 +276,8 @@ end Assembly
 
 section Wt
 
-open Formalism.DoubleCosetMeasures Formalism.DoubleCosetMeasures.P.Supp Matrix Topology in
 
+open Formalism.DoubleCosetMeasures Formalism.DoubleCosetMeasures.P.Supp Matrix Topology in
 theorem isCompact_intLocus (K : Type) [CommRing K] [TopologicalSpace K] [IsTopologicalRing K] [T2Space K]
     (R : Subring K) (hRc : IsCompact (R : Set K)) (s : List ℕ) (t : ℕ → Kˣ) :
     IsCompact {p : lowW K s t × upUniG K s.sum | IsInt R (((p.1 : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) *

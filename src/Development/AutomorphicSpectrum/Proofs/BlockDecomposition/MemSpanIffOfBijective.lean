@@ -1,13 +1,17 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.MapUSharp
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ValuationOfValuationModSquare
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsEtaleLiftOfSurjective
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUniqueLiftOfNilpotent
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsEtaleRootExt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UZeroApplySelf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompletionComplete
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsComplNonZeroDivisor
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PfOfIsCompl
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.MapUSharp
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ValuationOfValuationModSquare
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsEtaleLiftOfSurjective
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUniqueLiftOfNilpotent
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsEtaleRootExt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UZeroApplySelf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompletionComplete
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsComplNonZeroDivisor
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PfOfIsCompl
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -24,7 +28,7 @@ theorem compl_factor {E S B : Type} [CommRing E] [CommRing S] [CommRing B] {π :
   let q : E ⧸ Ideal.span {π} →+* S ⧸ Ideal.span {g π} := Ideal.quotientMap _ g hle
   have hqm : ∀ x, q (Ideal.Quotient.mk _ x) = Ideal.Quotient.mk _ (g x) := fun x => Ideal.quotientMap_mk
   have hinj : Function.Injective q := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective x
     rw [hqm, Ideal.Quotient.eq_zero_iff_mem] at hx
@@ -64,7 +68,7 @@ theorem compl_factor {E S B : Type} [CommRing E] [CommRing S] [CommRing B] {π :
     rw [pow_one] at hx
     obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.1 hx
     have hy : y = g x + c * g π := by rw [hc]; ring
-    rw [hy, map_add, map_add, map_mul, map_mul, h2, hz, mul_zero, mul_zero, add_zero, add_zero, hfx]
+    rw [hy, map_add (f := _), map_add (f := _), map_mul, map_mul, h2, hz, mul_zero, mul_zero, add_zero, add_zero, hfx]
     exact RingHom.congr_fun h1 x
 
 theorem isUnit_of_complete {S : Type} [CommRing S] {ϖ : S} (hc : IsAdicComplete (Ideal.span {ϖ}) S) {x : S}
@@ -196,7 +200,7 @@ theorem core {p : ℕ} (hp : p ≠ 0) {O R Λ : Type} [CommRing O] [CommRing R] 
       rw [← hker, RingHom.mem_ker, map_sub, e1, sub_self]
     obtain ⟨y, hy⟩ := Ideal.mem_span_singleton'.1 e2
     have e3 : z = gD w + y * ϖ := by rw [hy]; ring
-    rw [e3, map_add, map_mul, hf2, mul_zero, add_zero, hgDa, hfg, hEa]
+    rw [e3, map_add (f := _), map_mul, hf2, mul_zero, add_zero, hgDa, hfg, hEa]
     exact hD2 r w hw
   · intro k m
     rw [hcv, hfg, hE2]

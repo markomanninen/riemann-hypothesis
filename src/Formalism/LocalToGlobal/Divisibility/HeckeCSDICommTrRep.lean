@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.TrivialExtensionSideWellFormed
-import Formalism.LocalToGlobal.Divisibility.DivisionHeightBoundColumns
-import Formalism.LocalToGlobal.Columns.HeckeInert
-import Formalism.LocalToGlobal.Columns.HeckeInertLemmas
-import Formalism.LocalToGlobal.Columns.HeckeInertTr
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.TrivialExtensionSideWellFormed
+public import Formalism.LocalToGlobal.Divisibility.DivisionHeightBoundColumns
+public import Formalism.LocalToGlobal.Columns.HeckeInert
+public import Formalism.LocalToGlobal.Columns.HeckeInertLemmas
+public import Formalism.LocalToGlobal.Columns.HeckeInertTr
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder
@@ -99,9 +103,9 @@ end OffI
 section TrI
 
 variable {X : Col.Fields} {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))}
-  (C : Col.CoefPk X n (Col.DecoSet X.E n ST SG)) (Λ : Col.LevFam X.E X.K n SG)
+  (C : Col.CoefPk X n (Col.DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))) (Λ : Col.LevFam X.E X.K n SG)
 
-theorem heckeCSDI_comm_trRep (h : (Col.formGSD C Λ).Ok) {A : Type} [Group A] (ι : A →* Col.GLG X.E n SG)
+theorem heckeCSDI_comm_trRep (h : (Col.formGSD C Λ).Ok) {A : Type} [Group A] (ι : A →* Col.GLG (E := X.E) (n := n) (SG := SG))
     (hι : ∀ a w, (Λ w).NormBy (ι a w)) (SG0 : Finset (HeightOneSpectrum (𝓞 X.E)))
     (S0 : Set (HeightOneSpectrum (𝓞 X.E))) (x : offSubI ST SG0 SG S0 × List ℕ) (a : A) :
     Commute (heckeCSDI (Col.formGSD C Λ) h (formPts C Λ) SG0 S0 x)
@@ -148,10 +152,6 @@ def colFam3 : DefFam3 X.K (Col.G0 X.E Pr.vGs R.r) (Col.LevOff ∅ Pr.vGs S0) (Co
     (Fin R.m) :=
   (colIn3 W Ch sel hX v0 TU Xg S0 xiVal trIv).fam3
 
-def colSide3 (P : Col.LevFam X.E X.K R.r Pr.vGs) (Zs : DefSub (colFam3 W Ch sel hX v0 TU Xg S0 xiVal trIv).amb3) :
-    DefSide (colFam3 W Ch sel hX v0 TU Xg S0 xiVal trIv).base3 :=
-  (colIn3 W Ch sel hX v0 TU Xg S0 xiVal trIv).side3 P.grp P.chr Zs
-
 structure ColHyp3 : Prop where
 
   base : ColHyp W Ch sel v0 TU Xg S0
@@ -164,36 +164,54 @@ structure ColHyp3 : Prop where
 
   splitIL : ∀ (j : Fin R.m) (τ : TupF TU), Col.HeckeFieldsInI (liftPts W Ch sel τ.1 (j.1 + 1)) S0
 
-theorem colFam3_ok (hH : ColHyp3 W Ch sel v0 TU Xg S0) : (colFam3 W Ch sel hX v0 TU Xg S0 xiVal trIv).Ok3 1 where
-  ok2 := colFam_ok W Ch sel hX v0 TU Xg S0 xiVal hH.base
-  what₂ τ :=
-    { comm := heckeCSDAll_comm _ _ _ _ _ (hH.commAllR τ)
-      split := heckeCSDI_split _ _ _ _ _ (hH.splitIR τ)
-      opG := fun k g => heckeCSDI_comm_trRep _ _ _ _ _ _ _ k g
-      plI_inj := Subtype.val_injective }
-  lifts j τ :=
-    { comm := heckeCSDAll_comm _ _ _ _ _ (hH.commAllL j τ)
-      split := heckeCSDI_split _ _ _ _ _ (hH.splitIL j τ)
-      opG := fun k g => heckeCSDI_comm_trRep _ _ _ _ _ _ _ k g
-      plI_inj := Subtype.val_injective }
-
-theorem colFam3_typesSep (hc : Col.HeckeComm (rowPts W Ch sel (mu0 X.F X.E X.K S)) S0)
-    (hI : (colFam3 W Ch sel hX v0 TU Xg S0 xiVal trIv).TrISep) :
-    (colFam3 W Ch sel hX v0 TU Xg S0 xiVal trIv).TypesSep3 :=
-  (colIn3 W Ch sel hX v0 TU Xg S0 xiVal trIv).typesSep3_of' (fun P => Col.SplitOff.q_ne_zero P)
-    (fun P => heckeCSD_zero _ _ _ _ _ P) (heckeCSD_comm _ _ _ _ _ hc) hI
-
-theorem colFam3_typesSep' (hH : ColHyp3 W Ch sel v0 TU Xg S0)
-    (hI : (colFam3 W Ch sel hX v0 TU Xg S0 xiVal trIv).TrISep) :
-    (colFam3 W Ch sel hX v0 TU Xg S0 xiVal trIv).TypesSep3 :=
-  colFam3_typesSep W Ch sel hX v0 TU Xg S0 xiVal trIv (hH.base.commR (mu0F TU)) hI
-
-theorem colSide3_WF (hH : ColHyp3 W Ch sel v0 TU Xg S0)
-    (hI : (colFam3 W Ch sel hX v0 TU Xg S0 xiVal trIv).TrISep) (P : Col.LevFam X.E X.K R.r Pr.vGs)
-    (Zs : DefSub (colFam3 W Ch sel hX v0 TU Xg S0 xiVal trIv).amb3) (hst : Zs.Stable) (hin : Zs.InBlock) :
-    (colSide3 W Ch sel hX v0 TU Xg S0 xiVal trIv P Zs).WF :=
-  (colIn3 W Ch sel hX v0 TU Xg S0 xiVal trIv).side_well_formed (colFam3_ok W Ch sel hX v0 TU Xg S0 xiVal trIv hH) P.grp P.chr Zs
-    hst hin (colFam3_typesSep' W Ch sel hX v0 TU Xg S0 xiVal trIv hH hI)
+theorem colFam3_ok (hH : ColHyp3 W Ch sel v0 TU Xg S0) : (colFam3 W Ch sel hX v0 TU Xg S0 xiVal trIv).Ok3 1 := by
+  have hok : (colFam W Ch sel hX v0 TU Xg S0 xiVal).Ok 1 := by
+    have hbase := hH.base
+    refine ⟨hbase.conj, tupF_finite TU, hbase.irr, ?_, ?_⟩
+    · intro τ
+      exact {
+        good := Col.MtildeKCSD_good W Ch sel τ.1 hX _
+        hrat := Col.CSDRat.H_mem _ (Col.MtildeKCSD_rat W Ch sel τ.1 hX _)
+          (Col.csd_hasRatBasis _ (Col.MtildeKCSD_rat W Ch sel τ.1 hX _))
+        hpos := fun v => (Col.mtildeK_rat W Ch sel τ.1 hX).posH _ v
+        act := Col.unipotentActionForms_good W Ch sel τ.1 hX _
+        actRat := Col.unipotentActionForms_rational W Ch sel τ.1 hX _
+        comm := heckeCSD_comm _ _ _ _ _ (hbase.commR τ)
+        split := heckeCSD_split _ _ _ _ _ (hbase.splitR τ)
+        opG := fun i g => heckeCSD_comm_trRep _ _ _ _ _ _ _ i g
+        blocks := Col.blockOk_firstValB (fun j (P : ↥(offSub ∅ Pr.vGs (Col.rowSG Pr sel τ.1) S0)) =>
+            Ch.muVal j P.1.1 * xiVal τ.1 P.1.1) (q := fun P => Col.SplitOff.q P.1) R.r R.t_odd.pos
+          (by have := R.two_le_m; omega) (fun P => Col.SplitOff.q_ne_zero P.1)
+        q_pos := fun P => Nat.pos_of_ne_zero (Col.SplitOff.q_ne_zero P.1)
+        pl_inj := Subtype.val_injective }
+    · intro j τ
+      exact {
+        good := Col.MtKCSD_good W Ch sel τ.1 hX (j.1 + 1) _
+        hrat := Col.CSDRat.H_mem _ (Col.MtKCSD_rat W Ch sel τ.1 hX (j.1 + 1) _)
+          (Col.csd_hasRatBasis _ (Col.MtKCSD_rat W Ch sel τ.1 hX (j.1 + 1) _))
+        hpos := fun v => (Col.mtK_rat W Ch sel τ.1 hX (j.1 + 1)).posH _ v
+        act := Col.unipotentActionClassSum_good W Ch sel τ.1 hX (j.1 + 1) _
+        actRat := Col.unipotentActionClassSum_rational W Ch sel τ.1 hX (j.1 + 1) _
+        comm := heckeCSD_comm _ _ _ _ _ (hbase.commL j τ)
+        split := heckeCSD_split _ _ _ _ _ (hbase.splitL j τ)
+        opG := fun i g => heckeCSD_comm_trRep _ _ _ _ _ _ _ i g
+        blocks := Col.blockOk_firstValA (fun (P : ↥(offSub ∅ Pr.vGs (Col.rowSG Pr sel τ.1) S0)) =>
+            Ch.muVal j P.1.1 * xiVal τ.1 P.1.1) (fun P => Ch.etaVal P.1.1) (q := fun P => Col.SplitOff.q P.1)
+          R.r R.t_odd.pos (fun P => Col.SplitOff.q_ne_zero P.1)
+        q_pos := fun P => Nat.pos_of_ne_zero (Col.SplitOff.q_ne_zero P.1)
+        pl_inj := Subtype.val_injective }
+  exact {
+    ok2 := hok
+    what₂ := fun τ =>
+      { comm := heckeCSDAll_comm _ _ _ _ _ (hH.commAllR τ)
+        split := heckeCSDI_split _ _ _ _ _ (hH.splitIR τ)
+        opG := fun k g => heckeCSDI_comm_trRep _ _ _ _ _ _ _ k g
+        plI_inj := Subtype.val_injective }
+    lifts := fun j τ =>
+      { comm := heckeCSDAll_comm _ _ _ _ _ (hH.commAllL j τ)
+        split := heckeCSDI_split _ _ _ _ _ (hH.splitIL j τ)
+        opG := fun k g => heckeCSDI_comm_trRep _ _ _ _ _ _ _ k g
+        plI_inj := Subtype.val_injective } }
 
 end Inst
 

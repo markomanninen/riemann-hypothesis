@@ -1,20 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ParamsEx
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GaussianBinomialClosedForm
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ActOfMemGfC
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RaisingLoweringOperators
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TranslateMemCoefLatFn
-import Development.AbelianVarietyTheory.Definitions.Foundations.ForallEventuallyFinLocIff
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FisSelfReNonneg
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockPolynomialSubstitutionCommuteTargetGlAction
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsJointHarmonicOfLoweringStableSubmodule
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ParamsEx
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GaussianBinomialClosedForm
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ActOfMemGfC
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RaisingLoweringOperators
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TranslateMemCoefLatFn
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ForallEventuallyFinLocIff
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FisSelfReNonneg
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockPolynomialSubstitutionCommuteTargetGlAction
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsJointHarmonicOfLoweringStableSubmodule
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
@@ -69,7 +74,8 @@ theorem mem_of_filtration {V W K ι : Type} [AddCommGroup V] [Module ℂ V] [Add
     have hE : ∀ ψ ∈ E, LinearMap.compRight (M := W) ℂ A ψ ∈ E := fun ψ hψ =>
       ⟨fun k w => by
         change A (ψ (ρ k w)) = act k (A (ψ w))
-        simp only [hA, hψ.1, map_sum, hR, hL], fun w => by
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [hA, hψ.1, map_sum, hR, hL], fun w => by
         change A (ψ w) ∈ _
         rw [hA]
         exact Submodule.sum_mem _ fun i _ => hRL i _ _ (hψ.2 w)⟩
@@ -106,12 +112,14 @@ theorem fis_X_mul (v : σ) (P Q : MvPolynomial σ ℂ) : fis (X v * P) Q = fis P
 theorem fis_sum_left {α : Type} (s : Finset α) (f : α → MvPolynomial σ ℂ) (Q : MvPolynomial σ ℂ) :
     fis (∑ i ∈ s, f i) Q = ∑ i ∈ s, fis (f i) Q := by
   unfold fis
-  rw [map_sum, ReciprocityTheory.PGsh.fischer_sum_left]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ReciprocityTheory.PGsh.fischer_sum_left]
 
 theorem fis_sum_right {α : Type} (s : Finset α) (P : MvPolynomial σ ℂ) (f : α → MvPolynomial σ ℂ) :
     fis P (∑ i ∈ s, f i) = ∑ i ∈ s, fis P (f i) := by
   unfold fis
-  rw [map_sum, ReciprocityTheory.PGsh.fischer_sum_right]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ReciprocityTheory.PGsh.fischer_sum_right]
 
 theorem fis_zero_left (Q : MvPolynomial σ ℂ) : fis 0 Q = 0 := by
   simpa using fis_smul_left 0 0 Q
@@ -194,7 +202,8 @@ theorem mem_of_raise : ∀ (D : D7) (n m : ℕ) (w : GlobalTheory.ExportSeries.W
   have hdeg : ∃ d, ∀ w', (φ w').totalDegree ≤ d := by
     let b := Module.finBasis ℂ W
     refine ⟨Finset.univ.sup fun j => (φ (b j)).totalDegree, fun w' => ?_⟩
-    rw [← b.sum_repr w', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr w', map_sum]
     refine totalDegree_finsetSum_le fun j _ => ?_
     rw [map_smul]
     exact (totalDegree_smul_le _ _).trans

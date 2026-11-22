@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeCompletionEqLatticeVectorAddNsmulStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLatticeVectorEqNsmulOfAdelicNsmulStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntDvdOfEqNatMulIntegralAdeleAwayFromPStatement
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.VqInduction
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeCompletionEqLatticeVectorAddNsmulStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLatticeVectorEqNsmulOfAdelicNsmulStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntDvdOfEqNatMulIntegralAdeleAwayFromPStatement
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.VqInduction
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,7 +31,6 @@ private theorem inAf_mem' (x : D.La) : inAf D x ∈ LaHat D :=
 private theorem mulF_tmul (c : 𝓞 D.F) (a : AfP p) (t : ℚ) (x : D.La) :
     mulF D c (a ⊗ₜ (t ⊗ₜ x)) = a ⊗ₜ (t ⊗ₜ (algebraMap (𝓞 D.F) D.O c • x)) := by
   simp [mulF, actQ]
-  rfl
 
 private theorem mulF_inAf (c : 𝓞 D.F) (x : D.La) :
     mulF D c (inAf D x) = inAf D (algebraMap (𝓞 D.F) D.O c • x) := mulF_tmul c 1 1 x
@@ -38,24 +41,24 @@ private theorem vq_induction {P : AfP p ⊗[ℚ] VQ D → Prop} (h0 : P 0) (hadd
 
 private theorem mulF_mul (c d : 𝓞 D.F) (v : AfP p ⊗[ℚ] VQ D) : mulF D (c * d) v = mulF D c (mulF D d v) := by
   refine vq_induction (P := fun v => mulF D (c * d) v = mulF D c (mulF D d v)) (by simp) ?_ ?_ v
-  · intro x y hx hy; simp only [map_add, hx, hy]
+  · intro x y hx hy; simp only [map_add (f := _), hx, hy]
   · intro a t x; simp only [mulF_tmul, map_mul, mul_smul]
 
 private theorem mulF_add (c d : 𝓞 D.F) (v : AfP p ⊗[ℚ] VQ D) : mulF D (c + d) v = mulF D c v + mulF D d v := by
   refine vq_induction (P := fun v => mulF D (c + d) v = mulF D c v + mulF D d v) (by simp) ?_ ?_ v
-  · intro x y hx hy; simp only [map_add, hx, hy]; abel
-  · intro a t x; simp only [mulF_tmul, map_add, add_smul, TensorProduct.tmul_add]
+  · intro x y hx hy; simp only [map_add (f := _), hx, hy]; abel
+  · intro a t x; simp only [mulF_tmul, map_add (f := _), add_smul, TensorProduct.tmul_add]
 
 private theorem mulF_one (v : AfP p ⊗[ℚ] VQ D) : mulF D 1 v = v := by
   refine vq_induction (P := fun v => mulF D 1 v = v) (by simp) ?_ ?_ v
-  · intro x y hx hy; simp only [map_add, hx, hy]
+  · intro x y hx hy; simp only [map_add (f := _), hx, hy]
   · intro a t x; simp only [mulF_tmul, map_one, one_smul]
 
 private theorem mulF_nat (n : ℕ) (v : AfP p ⊗[ℚ] VQ D) : mulF D (n : 𝓞 D.F) v = n • v := by
   induction n with
   | zero =>
     refine vq_induction (P := fun v => mulF D ((0 : ℕ) : 𝓞 D.F) v = (0 : ℕ) • v) (by simp) ?_ ?_ v
-    · intro x y hx hy; simp only [map_add, hx, hy]; simp
+    · intro x y hx hy; simp only [map_add (f := _), hx, hy]; simp
     · intro a t x; simp [mulF_tmul]
   | succ n ih => rw [Nat.cast_succ, mulF_add, mulF_one, ih, succ_nsmul]
 
@@ -66,7 +69,7 @@ private theorem mulF_mem (c : 𝓞 D.F) {v : AfP p ⊗[ℚ] VQ D} (hv : v ∈ La
     rw [mulF_tmul]
     exact AddSubgroup.subset_closure ⟨a, _, ha, rfl⟩
   | zero => rw [map_zero]; exact zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact add_mem hx hy
   | neg x _ hx => rw [map_neg]; exact neg_mem hx
 
 private theorem mem_idHat {𝔟 : Ideal (𝓞 D.F)} {x : 𝓞 D.F} (hx : x ∈ 𝔟) {v : AfP p ⊗[ℚ] VQ D} (hv : v ∈ LaHat D) :
@@ -91,7 +94,7 @@ private theorem actOn_comm (L : Link D G) (y : AfP p ⊗[ℚ] G.C) (b : D.O) :
     actOn L.rep (AfP p) y * (actQ D b).baseChange (AfP p) = (actQ D b).baseChange (AfP p) * actOn L.rep (AfP p) y := by
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => rw [map_add, add_mul, mul_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), add_mul, mul_add, hx, hy]
   | tmul r c =>
     have e : actOn L.rep (AfP p) (r ⊗ₜ c) = r • (L.rep c).baseChange (AfP p) := by
       have e0 : actOn L.rep (AfP p) (r ⊗ₜ c) =
@@ -148,7 +151,7 @@ private theorem div_of_idHat {𝔟 : Ideal (𝓞 D.F)} {c : 𝓞 D.F} {N : ℕ} 
   | add x y _ _ hx hy =>
     obtain ⟨w, hw, ew⟩ := hx
     obtain ⟨w', hw', ew'⟩ := hy
-    exact ⟨w + w', add_mem hw hw', by rw [map_add, ew, ew', smul_add]⟩
+    exact ⟨w + w', add_mem hw hw', by rw [map_add (f := _), ew, ew', smul_add]⟩
   | neg x _ hx =>
     obtain ⟨w, hw, ew⟩ := hx
     exact ⟨-w, neg_mem hw, by rw [map_neg, ew, smul_neg]⟩
@@ -218,15 +221,15 @@ private theorem gen_part (hLG : LatGen) (L : Link D G) (𝔞 : Ideal (𝓞 D.F))
         rw [map_sub, ← actG_mulF, mulF_inAf, e₁]; abel
       have e₃ : L.actG g (inAf D x + N • w') - (inAf D x + N • w') =
           (L.actG g (inAf D x) - inAf D x) + N • (L.actG g w' - w') := by
-        rw [map_add, map_nsmul, smul_sub]; abel
-      rw [e₃, map_add, e₂, map_nsmul, smul_add]
+        rw [map_add (f := _), map_nsmul, smul_sub]; abel
+      rw [e₃, map_add (f := _), e₂, map_nsmul, smul_add]
     intro v hv
     have hu : L.actG g v - v ∈ LaHat D := sub_mem (hg v hv) hv
     obtain ⟨w₁, hw₁, e₁⟩ := step1 v hv
     obtain ⟨y, w, hw, e₂⟩ := GlobalTheory.T.latticeCompletion_eq_latticeVector_add_nsmul p D N hN hNp _ hu
     have hdvd : ∃ u : D.La, algebraMap (𝓞 D.F) D.O a • y = N • u := by
       refine GlobalTheory.T.exists_latticeVector_eq_nsmul_of_adelic_nsmul p D N hN hNp (GlobalTheory.T.int_dvd_of_eq_nat_mul_integralAdeleAwayFromP p N hN hNp) _ ⟨w₁ - mulF D a w, sub_mem hw₁ (mulF_mem a hw), ?_⟩
-      rw [e₂, map_add, mulF_inAf, map_nsmul] at e₁
+      rw [e₂, map_add (f := _), mulF_inAf, map_nsmul] at e₁
       rw [smul_sub, ← e₁]; abel
     have hy : y ∈ wSub D 𝔞 1 := ((hLG p D a N 𝔞 hN hgen).1 y).1 hdvd
     rw [e₂]

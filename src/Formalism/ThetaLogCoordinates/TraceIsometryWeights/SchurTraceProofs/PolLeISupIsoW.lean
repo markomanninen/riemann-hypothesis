@@ -1,6 +1,10 @@
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.LatData
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementB
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementC
+module
+
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.LatData
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementB
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementC
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.PW
 
@@ -97,7 +101,7 @@ theorem intP_of (hT : TypeInt) (hB : LatBasisPol) : IntP := by
         simp
     · simp
     · intro x y hx hy
-      rw [map_add, hx, hy, ← Finset.sum_add_distrib]
+      rw [map_add (f := _), hx, hy, ← Finset.sum_add_distrib]
       exact Finset.sum_congr rfl fun μ _ => (map_add _ _ _).symm
   have hFp : F ∈ Pol p r LL := hF.1
   have hFi : F ∈ (IntPol p (Fin N × Fin r)).toAddSubgroup := hF.2

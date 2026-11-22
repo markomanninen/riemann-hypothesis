@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.UpperBounds.FreeBallIffOfDimXEqZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajorantOrthogonality
-import ReciprocityTheory.SemistableReduction.SemiAll
-import ReciprocityTheory.SemistableReduction.ShareBall
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.UpperBounds.FreeBallIffOfDimXEqZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajorantOrthogonality
+public import ReciprocityTheory.SemistableReduction.SemiAll
+public import ReciprocityTheory.SemistableReduction.ShareBall
+
+@[expose] public section
 
 namespace GlobalTheory.Up.BallExPf
 
@@ -210,7 +214,8 @@ theorem hq_conj {r : ℕ} (H : Matrix (Fin r) (Fin r) ℂ) (u : Fin r → ℂ) :
   unfold hq
   rw [← Complex.conj_re (star u ⬝ᵥ _)]
   congr 1
-  simp [dotProduct, mulVec, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [dotProduct, mulVec, map_sum]
 
 end Mat
 
@@ -229,8 +234,9 @@ theorem gram_iff (X : Data E r) (τ : E →+* ℂ) (M : Matrix (Fin r) (Fin r) �
       ReciprocityTheory.MultiplicativeHeights.signMat X.p0 r := by
     rw [Matrix.diagonal_transpose, ReciprocityTheory.MultiplicativeHeights.signMat]
     congr 1
-    funext a
-    simp only [sgn, ReciprocityTheory.MultiplicativeHeights.sgn]
+    funext k
+    simp [ReciprocityTheory.ChartRestriction.G.FD.sgn,
+      ReciprocityTheory.MultiplicativeHeights.sgn]
     split_ifs <;> simp
   rw [← e1, ← e2, Matrix.transpose_inj]
 

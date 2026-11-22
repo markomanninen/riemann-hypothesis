@@ -1,5 +1,9 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdeal
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdeal
+
+@[expose] public section
 
 namespace FunctorialResolution.EmbeddedResolution
 
@@ -110,7 +114,7 @@ theorem logDerivIdeal_iSup_le {ι : Sort*} (P : Ideal S) (J : ι → Ideal S) :
       (derivation_apply_mem_logDerivIdeal k P (J i) D hD hy)
   · simpa only [map_zero] using Submodule.zero_mem (⨆ i, logDerivIdeal k P (J i))
   · intro a b ha hb
-    simpa only [map_add] using Submodule.add_mem (⨆ i, logDerivIdeal k P (J i)) ha hb
+    simpa only [map_add (f := _)] using Submodule.add_mem (⨆ i, logDerivIdeal k P (J i)) ha hb
 
 def logDerivIdealIterate (P : Ideal S) : ℕ → Ideal S → Ideal S
   | 0, J => J
@@ -120,9 +124,6 @@ theorem logDerivIdealIterate_zero (P J : Ideal S) : logDerivIdealIterate k P 0 J
 
 theorem logDerivIdealIterate_succ (P : Ideal S) (r : ℕ) (J : Ideal S) :
     logDerivIdealIterate k P (r + 1) J = logDerivIdeal k P (logDerivIdealIterate k P r J) := rfl
-
-theorem logDerivIdealIterate_one (P J : Ideal S) :
-    logDerivIdealIterate k P 1 J = logDerivIdeal k P J := rfl
 
 theorem logDerivIdealIterate_add (P : Ideal S) (r s : ℕ) (J : Ideal S) :
     logDerivIdealIterate k P (r + s) J =

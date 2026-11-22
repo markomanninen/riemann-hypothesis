@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.FinrankLeNatCardGroupCohomologyTwoGalUnits
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.BrauerInflation
-import GroundTheory.LocalFields.SeparableClosure
-import GroundTheory.LocalFields.MaximalUnramified
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.FinrankLeNatCardGroupCohomologyTwoGalUnits
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.BrauerInflation
+public import GroundTheory.LocalFields.SeparableClosure
+public import GroundTheory.LocalFields.MaximalUnramified
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -42,11 +47,6 @@ instance finiteDimensional_unramifiedLevel (n : ℕ+) :
 
 instance isGalois_unramifiedLevel (n : ℕ+) : IsGalois F (unramifiedLevel F Ω n) :=
   IsUnramifiedSubextension.isGalois (isUnramifiedSubextension_unramifiedLevel F Ω n)
-
-theorem eq_unramifiedLevel_of_isUnramifiedSubextension {E : IntermediateField F Ω}
-    (hE : IsUnramifiedSubextension E) {n : ℕ+} (hn : Module.finrank F E = n) :
-    E = unramifiedLevel F Ω n :=
-  IsUnramifiedSubextension.eq_adjoin hE hn n.ne_zero (isPrimitiveRoot_unramifiedRoot F Ω n)
 
 theorem unramifiedLevel_le {m n : ℕ+} (h : (m : ℕ) ∣ n) :
     unramifiedLevel F Ω m ≤ unramifiedLevel F Ω n :=

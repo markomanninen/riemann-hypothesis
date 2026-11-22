@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+
+@[expose] public section
 
 namespace GlobalTheory.CocycleCoboundaryNumerator
 
@@ -89,7 +93,7 @@ theorem cocycle_is_coboundary (R : Type) [CommRing R] (D : Type) [CommRing D] [A
     have hb := isUnit_of_mul_isUnit_right (isUnit_of_mul_isUnit_left hu)
     have hk := isUnit_of_mul_isUnit_right hu
     have e4 := hcoc k a b E ψ hk ha hb
-    simp only [map_add, map_sub, map_mul, map_pow]
+    simp only [map_add (f := _), map_sub, map_mul, map_pow]
     rw [← hc a b E ψ ha hb, ← hc k b E ψ hk hb, ← hc k a E ψ hk ha]
     linear_combination (ψ (s a) * ψ (s b) * ψ (s k)) ^ N * e4
   choose M₀ hM₀ using h2
@@ -119,7 +123,8 @@ theorem cocycle_is_coboundary (R : Type) [CommRing R] (D : Type) [CommRing D] [A
   · intro a E _ _ E' _ _ ψ θ ha
     have hinv : Ring.inverse (θ (ψ (s a))) = θ (Ring.inverse (ψ (s a))) :=
       map_inverse_of_isUnit (θ : E →+* E') ha
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [AlgHom.comp_apply, AlgHom.comp_apply, hinv]
     simp only [map_mul, map_pow]
@@ -131,7 +136,8 @@ theorem cocycle_is_coboundary (R : Type) [CommRing R] (D : Type) [CommRing D] [A
     have hab := hc' a b E ψ ha hb
     have hsum : ∑ k, ψ (g k) * ψ (s k) ^ K = 1 := by
       have h := congrArg ψ hg
-      simpa only [map_sum, smul_eq_mul, map_mul, map_pow, map_one] using h
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa only [map_sum, smul_eq_mul, map_mul, map_pow, map_one] using h
     have hd : d a b E ψ = ∑ k, ψ (g k) * ψ (s k) ^ K * d a b E ψ := by
       rw [← Finset.sum_mul, hsum, one_mul]
     rw [hd, ← Finset.sum_sub_distrib]

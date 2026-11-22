@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Filter Topology Set
 open scoped ENNReal NNReal
@@ -73,7 +77,11 @@ theorem le_of_pos (ν : Measure X) (lam : Measure Z) {f : X → ℝ} {g : Z → 
     rw [e] at T
     refine ge_of_tendsto (ENNReal.Tendsto.const_mul T (Or.inr ENNReal.coe_ne_top)) ?_
     filter_upwards [Ioc_mem_nhdsGT hδ] with r hr
-    exact (measure_mono fun y (hy : f y ≤ 0) => le_trans hy hr.1.le).trans (H r hr.1 hr.2)
+    have hsub : {y | f y ≤ 0} ⊆ {y | f y ≤ r} := by
+      intro y hy
+      simp only [mem_setOf_eq] at hy ⊢
+      exact hy.trans hr.1.le
+    exact (measure_mono hsub).trans (H r hr.1 hr.2)
   · exact H s h hs
 
 theorem sqrt_set {A : Type*} (f : A → ℝ) {r : ℝ} (hr : 0 ≤ r) :

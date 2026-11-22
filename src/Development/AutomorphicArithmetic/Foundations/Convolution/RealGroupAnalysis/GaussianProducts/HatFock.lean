@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianProducts.ExistsRowSec
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianProducts.HermAdel
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianProducts.FinHat
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianProducts.ExistsRowSec
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianProducts.HermAdel
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianProducts.FinHat
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -29,7 +33,7 @@ private theorem gauss_split (δ : F) (v : V4 F) : gauss δ v = gR δ v * gE (v 1
     refine Finset.sum_congr rfl fun w _ => ?_
     have e : v 0 ^ 2 + v 1 ^ 2 + 2 * (v 2 ^ 2 - rt δ * v 3 ^ 2) =
         (v 0 ^ 2 + 2 * (v 2 ^ 2 - rt δ * v 3 ^ 2)) + v 1 ^ 2 := by ring
-    rw [e, map_add, map_pow]
+    rw [e, map_add (f := _), map_pow]
     rfl
   rw [gauss, gR, gE, ← Complex.exp_add, h]
   push_cast

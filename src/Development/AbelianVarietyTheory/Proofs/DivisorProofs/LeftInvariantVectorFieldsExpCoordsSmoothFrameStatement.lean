@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeftInvariantVectorFieldsExpCoordsSmoothFrame
-import Development.AbelianVarietyTheory.Definitions.Divisors.ZeroMemSolSet
-import Formalism.UnipotentAdelicQuotients.EllRegCheck
-import GroundTheory.AutomorphicForms.GKModules.Casimir
-import GroundTheory.AutomorphicForms.HarishChandraRegularity.ExpHaar
-import GroundTheory.AutomorphicForms.HarishChandraInvariance.Compact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeftInvariantVectorFieldsExpCoordsSmoothFrame
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ZeroMemSolSet
+public import Formalism.UnipotentAdelicQuotients.EllRegCheck
+public import GroundTheory.AutomorphicForms.GKModules.Casimir
+public import GroundTheory.AutomorphicForms.HarishChandraRegularity.ExpHaar
+public import GroundTheory.AutomorphicForms.HarishChandraInvariance.Compact
+
+@[expose] public section
+
 open ZetaZeros.D.EllReg GlobalTheory.HCA MeasureTheory GroundTheory.Automorphic
 open scoped ContDiff
 set_option maxHeartbeats 1000000 in

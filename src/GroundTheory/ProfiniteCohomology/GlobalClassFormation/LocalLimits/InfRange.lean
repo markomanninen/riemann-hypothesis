@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalLimits.InfLiesOver
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalLimits.ApplyCompletionEmbeddingOfLocalDecompHomEqOne
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalLimits.InfLiesOver
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalLimits.ApplyCompletionEmbeddingOfLocalDecompHomEqOne
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -9,12 +14,10 @@ open NumberField GroundTheory.Global FiniteSubfield
 
 open scoped NumberField.LiesOver
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
 
 variable {K : FiniteSubfield} {v : NumberField.InfinitePlace K.1}
-  (ι : ℚ̄ →ₐ[K.1] AlgebraicClosure v.Completion)
+  (ι : AlgebraicClosure ℚ →ₐ[K.1] AlgebraicClosure v.Completion)
 
 section Level
 
@@ -38,11 +41,15 @@ theorem infLocalDecompHom_surjective : Function.Surjective (infLocalDecompHom ι
     (ψ.liftNormal (AlgebraicClosure v.Completion)) (algebraMap _ _
       (algebraMap F.1 (infPlaceOfEmbedding ι F : NumberField.InfinitePlace F.1).Completion x))
   rw [AlgEquiv.liftNormal_commutes, infiniteDecompositionToLocal_apply]
-  exact congrArg (algebraMap _ (AlgebraicClosure v.Completion))
-    (infiniteDecomposition_smul_coe τ (WithAbs.toAbs _ x)).symm
+  apply congrArg (algebraMap _ (AlgebraicClosure v.Completion))
+  rw [AbsoluteValue.Completion.algebraMap_def, AbsoluteValue.Completion.algebraMap_def,
+    WithAbs.algebraMap_right_apply, WithAbs.algebraMap_right_apply,
+    Algebra.algebraMap_self_apply, Algebra.algebraMap_self_apply,
+    infiniteDecomposition_smul_coe]
+  congr 1
+
 
 omit [F.1.fixingSubgroup.Normal] in
-
 theorem isComplex_infPlaceOfEmbedding {r : F.1} (hr : r ^ 2 = -1) :
     (infPlaceOfEmbedding ι F : NumberField.InfinitePlace F.1).IsComplex := by
   rw [← NumberField.InfinitePlace.not_isReal_iff_isComplex]
@@ -54,16 +61,16 @@ theorem isComplex_infPlaceOfEmbedding {r : F.1} (hr : r ^ 2 = -1) :
   rw [h] at this
   linarith
 
-omit [F.1.fixingSubgroup.Normal] in
 
+omit [F.1.fixingSubgroup.Normal] in
 theorem isAlgClosed_infCompletion {r : F.1} (hr : r ^ 2 = -1) :
     IsAlgClosed (infPlaceOfEmbedding ι F : NumberField.InfinitePlace F.1).Completion :=
   IsAlgClosed.of_ringEquiv ℂ _
     (NumberField.InfinitePlace.Completion.ringEquivComplexOfIsComplex
       (isComplex_infPlaceOfEmbedding ι F hr)).symm
 
-omit [F.1.fixingSubgroup.Normal] in
 
+omit [F.1.fixingSubgroup.Normal] in
 theorem infCompletionEmbedding_surjective {r : F.1} (hr : r ^ 2 = -1) :
     Function.Surjective (infCompletionEmbedding ι F) := by
   have := isAlgClosed_infCompletion ι F hr
@@ -96,7 +103,7 @@ end Level
 
 theorem exists_level_infCompletionEmbedding_surjective :
     ∃ p₀ : GLevel K, ∀ p : GLevel K, p₀ ≤ p → Function.Surjective (infCompletionEmbedding ι p.1) := by
-  obtain ⟨r, hr⟩ := IsAlgClosed.exists_pow_nat_eq (-1 : ℚ̄) two_pos
+  obtain ⟨r, hr⟩ := IsAlgClosed.exists_pow_nat_eq (-1 : AlgebraicClosure ℚ) two_pos
   obtain ⟨p₀, hr₀⟩ := exists_level_mem (K := K) r
   refine ⟨p₀, fun p hp ↦ ?_⟩
   have hrp : r ∈ p.1.1 := (show p₀.1.1 ≤ p.1.1 from hp) hr₀

@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightDegreeLeOfHomogeneousFockWeightVector
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockHarmonicHomogeneousOfKType
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FischerDecompositionFockNoncompactParts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockHarmonicsGradedCompactStableStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GlBlockFiniteDimModuleStructureStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockOperatorsLieRepresentationCommuteStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OmEFormAndDegree
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPolynomialsLocallyFiniteRationalWeights
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightDegreeLeOfHomogeneousFockWeightVector
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockHarmonicHomogeneousOfKType
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FischerDecompositionFockNoncompactParts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockHarmonicsGradedCompactStableStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GlBlockFiniteDimModuleStructureStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockOperatorsLieRepresentationCommuteStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OmEFormAndDegree
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPolynomialsLocallyFiniteRationalWeights
+
+@[expose] public section
 
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible GlobalTheory.FockAlg MvPolynomial
 
@@ -63,7 +67,7 @@ theorem kStable_sup {a : Mat p q →ₗ[ℂ] Module.End ℂ V} {U W : Submodule 
     (hW : KStable a W) : KStable a (U ⊔ W) := by
   intro X hX w hw
   obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hw
-  rw [map_add]
+  rw [map_add (f := _)]
   exact Submodule.add_mem_sup (hU X hX y hy) (hW X hX z hz)
 
 theorem kStable_ker {a : Mat p q →ₗ[ℂ] Module.End ℂ V} {b : Mat p q →ₗ[ℂ] Module.End ℂ V'}
@@ -102,7 +106,7 @@ theorem hw_lift {b : Mat p q →ₗ[ℂ] Module.End ℂ V'}
   have hle : U ≤ W := h2 ▸ le_sup_right
   rw [← h2] at hw
   obtain ⟨y, hy, u, hu, rfl⟩ := Submodule.mem_sup.1 hw
-  have e : g u = g (y + u) := by rw [map_add, LinearMap.mem_ker.1 hy.2, zero_add]
+  have e : g u = g (y + u) := by rw [map_add (f := _), LinearMap.mem_ker.1 hy.2, zero_add]
   refine ⟨u, hle hu, hw_of_map g hg sU (fun x hx h0 => ?_) hu (e ▸ h), e⟩
   have : x ∈ W ⊓ LinearMap.ker g ⊓ U := ⟨⟨hle hx, h0⟩, hx⟩
   rwa [h1] at this
@@ -130,7 +134,7 @@ theorem hw_sup {μ : Ix p q → ℚ} {U W : Submodule ℂ V} (hW : FiniteDimensi
       (U'.sub_mem (sU' _ (isKC_diag i) _ hz) (U'.smul_mem _ hz)) ?_,
       fun i j hij => key _ (sU _ (isKC_pos hij) _ hyy) _ (sU' _ (isKC_pos hij) _ hz) ?_⟩
     · rw [← h.1 i, map_add (a _) (y + y'), smul_add _ (y + y')]; abel
-    · rw [← map_add, h.2 i j hij]
+    · rw [← map_add (f := _), h.2 i j hij]
   refine ⟨y + y', hyy, z, hle hz, ?_, hzh, add_assoc _ _ _⟩
   have := (hwSub a μ).sub_mem h hzh
   rwa [← add_assoc, add_sub_cancel_right] at this
@@ -305,7 +309,7 @@ theorem exists_contr (hI : Intw M1 M2 f) {P : Pol p q r s} (hP : f P ≠ 0) :
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul x y => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem ker_stable1 (hI : Intw M1 M2 f) (Z : Mat p q) {P : Pol p q r s} (h : P ∈ LinearMap.ker f) :
     fockAct1 p q r s Z P ∈ LinearMap.ker f := by
@@ -420,8 +424,8 @@ end Main
 
 end GlobalTheory.FockAlg.MinFirst
 
-open GlobalTheory.FockAlg.MinFirst in
 
+open GlobalTheory.FockAlg.MinFirst in
 theorem GlobalTheory.FockAlg.min_first : ∀ (p q r s : ℕ) (M1 : GKMod p q) (M2 : GKMod r s) (f : Pol p q r s →ₗ[ℂ] TensorProduct ℂ M1.V M2.V), IrrGK M1 → AdmGK M1 → Intw M1 M2 f → f ≠ 0 → ∀ (μ : Ix p q → ℚ), (∃ v, IsHW M1.act μ v) → (∀ ν w, IsHW M1.act ν w → degW (cPair r s) μ ≤ degW (cPair r s) ν) → (∃ (μ' : Ix r s → ℚ) (P : Pol p q r s), P ∈ jointHarm p q r s ∧ IsHW (fockAct1 p q r s) μ P ∧ IsHW (fockAct2 p q r s) μ' P ∧ f P ≠ 0) ∧ ∀ P, OfType (fockAct1 p q r s) μ P → f P ∈ Submodule.map f (genSub (fockAct2 p q r s) {Q | Q ∈ jointHarm p q r s ∧ OfType (fockAct1 p q r s) μ Q}) := by
   intro p q r s M1 M2 f hirr _ hI hf μ hμ hmin
   obtain ⟨e1, s1, s2, -⟩ := GlobalTheory.T.fockHarmonics_graded_compactStable p q r s _ (Or.inr (Or.inr rfl))
@@ -473,7 +477,7 @@ theorem GlobalTheory.FockAlg.min_first : ∀ (p q r s : ℕ) (M1 : GKMod p q) (M
       refine hN (hw_mem hI hmin _ le_sup_right ?_ ?_ hhw.2)
       · intro Z y hy
         obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hy
-        rw [map_add]
+        rw [map_add (f := _)]
         exact Submodule.add_mem_sup (genSub_stable _ _ Z ha) (ker_stable2 hI Z hb)
       · exact fun Q hQ hh => Submodule.mem_sup_left (subset_genSub _ S ⟨hQ, ofType_of_hw hh⟩)
     exact hle hP

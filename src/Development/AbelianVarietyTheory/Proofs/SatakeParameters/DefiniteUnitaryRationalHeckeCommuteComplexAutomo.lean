@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DefiniteUnitaryRealApproxAndFiniteInfiniteSplit
-import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.ClosedAtLConclusionOfMem
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DefiniteUnitaryRealApproxAndFiniteInfiniteSplit
+public import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.ClosedAtLConclusionOfMem
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -14,7 +19,7 @@ noncomputable section
 
 namespace GlobalTheory.EigenConj
 
-theorem opOf_conj : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (σ : ℂ ≃+* ℂ) (t : UA E n →₀ ℂ), (∀ g ∈ t.support, g ∈ finU E n ∧ ∃ q : ℚ, t g = q) → ∀ (φ φ' : UA E n → ℂ) (z : ℂ), IsAutFormU φ → IsAutFormU φ' → (∀ g ∈ finU E n, φ' g = σ (φ g)) → opOf (RU E n) t φ = z • φ → opOf (RU E n) t φ' = σ z • φ' := by
+theorem opOf_conj : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (σ : ℂ ≃+* ℂ) (t : UA E n →₀ ℂ), (∀ g ∈ t.support, g ∈ finU (E := E) (n := n) ∧ ∃ q : ℚ, t g = q) → ∀ (φ φ' : UA E n → ℂ) (z : ℂ), IsAutFormU φ → IsAutFormU φ' → (∀ g ∈ finU (E := E) (n := n), φ' g = σ (φ g)) → opOf (RU E n) t φ = z • φ → opOf (RU E n) t φ' = σ z • φ' := by
   intro E _ _ _ n σ t ht φ φ' z hφ hφ' hfin heig
   have key : ∀ (f : UA E n → ℂ) (x : UA E n),
       opOf (RU E n) t f x = ∑ g ∈ t.support, t g * f (x * g) := by
@@ -24,7 +29,7 @@ theorem opOf_conj : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : 
   have hc1 : Continuous (opOf (RU E n) t φ') := by
     have e : opOf (RU E n) t φ' = fun x => ∑ g ∈ t.support, t g * φ' (x * g) := funext (key φ')
     rw [e]
-    exact continuous_finset_sum _ fun g _ =>
+    exact continuous_finsetSum _ fun g _ =>
       continuous_const.mul (hφ'.cont.comp (continuous_id.mul continuous_const))
   have hc2 : Continuous (σ z • φ') := hφ'.cont.const_smul _
   have hl1 : ∀ γ ∈ ratU E n, ∀ x, opOf (RU E n) t φ' (γ * x) = opOf (RU E n) t φ' x := by
@@ -34,7 +39,7 @@ theorem opOf_conj : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : 
   have hl2 : ∀ γ ∈ ratU E n, ∀ x, (σ z • φ') (γ * x) = (σ z • φ') x := by
     intro γ hγ x
     simp only [Pi.smul_apply, hφ'.left γ hγ]
-  have hfinEq : ∀ h ∈ finU E n, opOf (RU E n) t φ' h = (σ z • φ') h := by
+  have hfinEq : ∀ h ∈ finU (E := E) (n := n), opOf (RU E n) t φ' h = (σ z • φ') h := by
     intro h hh
     have e := congrFun heig h
     rw [key, Pi.smul_apply, smul_eq_mul] at e
@@ -42,11 +47,11 @@ theorem opOf_conj : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : 
     calc ∑ g ∈ t.support, t g * φ' (h * g) = ∑ g ∈ t.support, σ (t g * φ (h * g)) :=
           Finset.sum_congr rfl fun g hg => by
             obtain ⟨hgU, q, hq⟩ := ht g hg
-            rw [map_mul, hfin _ ((finU E n).mul_mem hh hgU), hq, map_ratCast]
+            rw [map_mul, hfin _ ((finU (E := E) (n := n)).mul_mem hh hgU), hq, map_ratCast]
       _ = σ (∑ g ∈ t.support, t g * φ (h * g)) := (map_sum σ _ _).symm
       _ = σ (z * φ h) := by rw [e]
       _ = σ z * φ' h := by rw [map_mul, hfin h hh]
-  have hon : Set.EqOn (opOf (RU E n) t φ') (σ z • φ') ((ratU E n : Set (UA E n)) * (finU E n : Set (UA E n))) := by
+  have hon : Set.EqOn (opOf (RU E n) t φ') (σ z • φ') ((ratU E n : Set (UA E n)) * (finU (E := E) (n := n) : Set (UA E n))) := by
     rintro _ ⟨γ, hγ, g, hg, rfl⟩
     rw [hl1 γ hγ, hl2 γ hγ]
     exact hfinEq g hg

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.HodgeTateFromSandwich
-import ReciprocityTheory.Chebotarev.EulerSum
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HodgeTateFromSandwich
+public import ReciprocityTheory.Chebotarev.EulerSum
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -47,7 +51,8 @@ theorem append_of_shortExact {A M₁ M₂ M₃ : Type*} [CommRing A]
     have hgx : g x ∈ Submodule.span A (Set.range fun i => g (w i)) := hws ▸ Submodule.mem_top
     obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun A).mp hgx
     have hker : g (x - ∑ i, c i • w i) = 0 := by
-      simp [map_sum, hc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, hc]
     obtain ⟨y, hy⟩ := (hfg _).mp hker
     have hy' : y ∈ Submodule.span A (Set.range u) := hus ▸ Submodule.mem_top
     have hfy : f y ∈ Submodule.span A (Set.range fun i => f (u i)) := by
@@ -70,7 +75,7 @@ theorem kaehler_basis_tower : ∀ (R S T : Type) [CommRing R] [CommRing S] [Comm
     Submodule.span T (Set.range fun i => KaehlerDifferential.D R T (Fin.append (fun i => algebraMap S T (z i)) w i)) = ⊤ := by
   intro R S T _ _ _ _ _ _ _ _ e m z w hz hzs hw hws
   have hinj : Function.Injective (KaehlerDifferential.mapBaseChange R S T) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨y, rfl⟩ := (Algebra.H1Cotangent.exact_δ_mapBaseChange R S T x).mp hx
     have : Subsingleton (Algebra.H1Cotangent S T) :=

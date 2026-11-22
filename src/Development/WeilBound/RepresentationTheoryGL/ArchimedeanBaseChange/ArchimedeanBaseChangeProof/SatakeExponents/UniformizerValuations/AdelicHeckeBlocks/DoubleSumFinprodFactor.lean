@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelRep
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyMemKGL
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelRep
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyMemKGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,8 @@ namespace Fm
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {a b : ℕ}
 
 theorem lev_iInf {n : ℕ} {J : Type} [Finite J] [Nonempty J] {K : J → ∀ w : Pl E, Subgroup (GLw n w)}
-    (h : ∀ j, IsLevelFam (thL n) (fun w : Pl E => GlobalTheory.LFun.KGL w n) (K j)) :
-    IsLevelFam (thL n) (fun w : Pl E => GlobalTheory.LFun.KGL w n) (fun w => ⨅ j, K j w) := by
+    (h : ∀ j, IsLevelFam (thL n) (fun w : Pl E => GlobalTheory.LFun.KGL w (n := n)) (K j)) :
+    IsLevelFam (thL n) (fun w : Pl E => GlobalTheory.LFun.KGL w (n := n)) (fun w => ⨅ j, K j w) := by
   refine ⟨fun w => ⟨?_, ?_, ?_⟩, ?_⟩
   · rw [Subgroup.coe_iInf]; exact isOpen_iInter_of_finite fun j => ((h j).1 w).1
   · obtain ⟨j⟩ := ‹Nonempty J›; exact (iInf_le _ j).trans ((h j).1 w).2.1

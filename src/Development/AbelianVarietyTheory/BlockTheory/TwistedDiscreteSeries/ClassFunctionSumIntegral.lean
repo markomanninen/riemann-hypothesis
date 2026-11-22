@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,11 +65,6 @@ theorem mem_classGroupAt (z : GA D V) (γ : GQ V) :
     exact (map_conj_inv (finHom V).rangeRestrict z γ).symm
   rw [e]
   exact mem_levelFin _
-
-theorem exists_lift (x : Bridge.Gf V) : ∃ z : GA D V, (finHom V).rangeRestrict z = x :=
-  (finHom V).rangeRestrict_surjective x
-
-example (c : ℂ) : IsClassFun V K fun _ => c := ⟨fun _ _ _ => rfl, fun _ _ _ => rfl, fun _ _ _ => rfl⟩
 
 end GlobalTheory.IndefiniteRowSideFullHecke.ClassFunctionSumIntegral
 

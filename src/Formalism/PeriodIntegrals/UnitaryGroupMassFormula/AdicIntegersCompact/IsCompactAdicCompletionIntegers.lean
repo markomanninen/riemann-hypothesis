@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.AdelicCompactOpens.IntAdelesCompactOpen
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.AdelicCompactOpens.IntAdelesCompactOpen
+
+@[expose] public section
 
 namespace PI.IntAdCpctOpenWork
 

@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.TripleSumIndependence.TripleSumIndep
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.RightMoveTrianglesOfUnit
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.JArith
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SecondConstantHolds
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.TripleSumIndependence.TripleSumIndep
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.RightMoveTrianglesOfUnit
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.JArith
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SecondConstantHolds
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -47,7 +51,7 @@ theorem la_stab {N N' : ℕ} (T : TaylorLogMetric.Tor D) {M : Submodule (𝓞 D.
     rw [hΦ]
     exact AddSubgroup.subset_closure ⟨w, hw, f A, hf A hA, rfl⟩
   | zero => rw [map_zero]; exact AddSubgroup.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact AddSubgroup.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact AddSubgroup.add_mem _ hx hy
   | neg x _ hx => rw [map_neg]; exact AddSubgroup.neg_mem _ hx
 
 theorem mulO_apply {N N' : ℕ} (r : D.host.E) (x : TaylorLogMetric.VC D N N') (τ : D.what₂.Tau) (i : Fin N') (j : Fin N) :
@@ -296,10 +300,10 @@ theorem form_mul (A : ℝ) (l s : D.host.E) (n : ℕ) (hl : star l * l = -1 + (n
   rw [J.mulO_adj, mulO_mul, hl]
   have : J.mulO N N' (-1 + (n : D.host.E) * s) y = -y + n • J.mulO N N' s y := by
     funext τ i j
-    simp only [mulO_apply, Pi.add_apply, Pi.neg_apply, Pi.smul_apply, map_add, map_neg, map_one, map_mul, map_natCast]
+    simp only [mulO_apply, Pi.add_apply, Pi.neg_apply, Pi.smul_apply, map_add (f := _), map_neg, map_one, map_mul, map_natCast]
     simp only [nsmul_eq_mul]
     ring
-  rw [this, map_add, map_neg, map_nsmul, nsmul_eq_mul]
+  rw [this, map_add (f := _), map_neg, map_nsmul, nsmul_eq_mul]
 
 theorem al_mul (T : TaylorLogMetric.Tor D) {La' : AddSubgroup (TaylorLogMetric.VC D N N')} (hI : Formalism.L2.Ker.Cd.IntegralLatticeDensity.IO.HfInt T La')
     (l s : D.host.E) (e : ℕ) (hl : star l * l = -1 + ((4 * e : ℕ) : D.host.E) * s) {x : TaylorLogMetric.VC D N N'}
@@ -362,22 +366,16 @@ theorem mulO_inv (l s l' : D.host.E) (e : ℕ) (hl : star l * l = -1 + ((4 * e :
   constructor
   · funext τ i j
     have := congrArg (TaylorLogMetric.embT D τ) hE
-    simp only [map_mul, map_add, map_one, map_natCast, map_neg, map_ofNat] at this
+    simp only [map_mul, map_add (f := _), map_one, map_natCast, map_neg, map_ofNat] at this
     simp only [mulO_apply, Pi.add_apply, Pi.smul_apply]
     simp only [nsmul_eq_mul, map_mul, map_neg, map_ofNat]
     linear_combination x τ i j * this
   · funext τ i j
     have := congrArg (TaylorLogMetric.embT D τ) hE
-    simp only [map_mul, map_add, map_one, map_natCast, map_neg, map_ofNat] at this
+    simp only [map_mul, map_add (f := _), map_one, map_natCast, map_neg, map_ofNat] at this
     simp only [mulO_apply, Pi.add_apply, Pi.smul_apply]
     simp only [nsmul_eq_mul, map_mul, map_neg, map_ofNat]
     linear_combination x τ i j * this
-
-theorem mulO_la' (T : TaylorLogMetric.Tor D) (hT : ∀ τ x, T.emb τ x = TaylorLogMetric.embT D τ x)
-    {M : Submodule (𝓞 D.host.E) (Fin N → D.host.E)} {M' : Submodule (𝓞 D.host.E) (Fin N' → D.host.E)}
-    (r : 𝓞 D.host.E) {r' : D.host.E} (hr : (r : D.host.E) = r') {z : TaylorLogMetric.VC D N N'} (hz : z ∈ TaylorLogMetric.La D T M M') :
-    J.mulO N N' r' z ∈ TaylorLogMetric.La D T M M' := by
-  rw [← hr]; exact mulO_la T hT r hz
 
 end Mult
 

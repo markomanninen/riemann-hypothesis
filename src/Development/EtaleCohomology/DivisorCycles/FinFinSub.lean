@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.DivisorCycles.FinSubOf
+module
+
+public import Development.EtaleCohomology.DivisorCycles.FinSubOf
+
+@[expose] public section
 
 namespace LateralTheory.Fin.FinSub
 theorem finite_subrepresentation_etale_charpoly_instance : LateralTheory.DivDb.FinSub := by

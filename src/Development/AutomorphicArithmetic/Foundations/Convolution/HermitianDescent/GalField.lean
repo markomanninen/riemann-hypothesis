@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.NormAlmostAll
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.NormAlmostAll
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,8 @@ private theorem dual_sum (F E : Type) [Field F] [Field E] [Algebra F E] [FiniteD
     refine Finset.sum_congr rfl fun i _ => ?_
     have : Algebra.trace F E (b.traceDual i * z) = b.repr z i := by
       conv_lhs => rw [← b.sum_repr z]
-      simp only [Finset.mul_sum, map_sum, mul_smul_comm, map_smul, Module.Basis.trace_traceDual_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Finset.mul_sum, map_sum, mul_smul_comm, map_smul, Module.Basis.trace_traceDual_mul]
       simp
     rw [this, Algebra.smul_def, mul_comm]
   simp only [trace_eq_sum_automorphisms, Finset.mul_sum, map_mul] at hz

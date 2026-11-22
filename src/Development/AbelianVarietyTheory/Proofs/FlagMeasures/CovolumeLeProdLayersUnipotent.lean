@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IpLEqZeroOfMemSpan
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GaugeMeasureMatrixAlgebraSubgroupLocalAsymptoticStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurePreservingTriangularShearStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TendstoVolumeSublevelDivPowStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.VolumeProductOverGradingLayersStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsOrthonormalLieCoordinatesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TraceCoordSqSumLeHilbertSchmidtUnitaryGroupStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IpLEqZeroOfMemSpan
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GaugeMeasureMatrixAlgebraSubgroupLocalAsymptoticStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurePreservingTriangularShearStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TendstoVolumeSublevelDivPowStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.VolumeProductOverGradingLayersStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsOrthonormalLieCoordinatesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TraceCoordSqSumLeHilbertSchmidtUnitaryGroupStatement
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas Formalism.REAL
 
@@ -24,8 +28,7 @@ theorem continuous_coord (E : Fin d → Matrix (Fin n) (Fin n) ℂ) :
 
 theorem continuous_hs_sub_one : Continuous fun g : UJ ε => hs (uMat g - 1) := by
   unfold hs
-  refine continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => ?_
-  exact ((continuous_uMat_sub_one.matrix_elem i j).norm).pow 2
+  fun_prop
 
 theorem mul_sub_one (g h : UJ ε) :
     uMat (g * h) - 1 = (uMat g - 1) + (uMat h - 1) + (uMat g - 1) * (uMat h - 1) := by
@@ -73,7 +76,7 @@ theorem measurePreserving_coord {m : ℕ} {A : ℕ → Submodule ℝ (Matrix (Fi
           have h3 : (uMat s - 1) * (uMat (σ x) - uMat (σ y)) =
               (uMat s - 1) * (uMat (σ x) - 1) - (uMat s - 1) * (uMat (σ y) - 1) := by noncomm_ring
           rw [h3, map_sub] at h2
-          simp only [mul_sub_one, map_add, hσ2]
+          simp only [mul_sub_one, map_add (f := _), hσ2]
           linarith)
       have he : (fun g => s * g) ∘ σ =
           σ ∘ fun x => x + fun i => ipL (E i) (uMat (s * σ x) - 1) - x i := by
@@ -151,11 +154,11 @@ theorem covol_le_prod_layers : ∀ (ι : Type) [Fintype ι] (n d m : ℕ) (ε : 
       · rcases (Nat.lt_succ_iff.1 hck).lt_or_eq with h | rfl
         · convert hc c h using 1
           funext v i
-          rw [hexp, map_add, map_add, horth v k i.1 (by rw [i.2]; exact h) _ (hδk v),
+          rw [hexp, map_add (f := _), map_add (f := _), horth v k i.1 (by rw [i.2]; exact h) _ (hδk v),
             horth v (k + 1) i.1 (by rw [i.2]; exact hck) _ (hprod v), zero_add, add_zero]
         · convert hδD using 1
           funext v i
-          rw [hexp, map_add, map_add, horth v (c + 1) i.1 (by rw [i.2]; exact hck) _ (hprod v), add_zero]
+          rw [hexp, map_add (f := _), map_add (f := _), horth v (c + 1) i.1 (by rw [i.2]; exact hck) _ (hprod v), add_zero]
           rfl
   obtain ⟨γ, hγ, -, hc⟩ := key m
   exact ⟨γ, hγ, hc⟩

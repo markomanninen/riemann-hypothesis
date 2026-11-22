@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
@@ -15,7 +19,7 @@ private theorem adicCont_add_and_adicCont_mul {R G : Type} [CommRing R] [Topolog
   unfold AdicCont at *
   constructor
   · intro N
-    simpa [map_add] using (hφ N).comp₂ (hψ N) (· + ·)
+    simpa [map_add (f := _)] using (hφ N).comp₂ (hψ N) (· + ·)
   · intro N
     simpa [map_mul] using (hφ N).comp₂ (hψ N) (· * ·)
 
@@ -68,7 +72,7 @@ theorem UpperTheory.V.Pa.bndOps :
       ⟨s1, fun g => -φ1 g, adicCont_neg_of_adicCont hc1, fun g => ?_⟩,
       ⟨s1, fun g => φ1 g⁻¹, adicCont_comp_inv_of_isTopologicalGroup hc1, fun g => he1 g⁻¹⟩⟩
     · exact (adicCont_add_and_adicCont_mul (adicCont_add_and_adicCont_mul (ac_const _) hc1).2 (adicCont_add_and_adicCont_mul (ac_const _) hc2).2).1
-    · simp only [map_add, map_mul, map_pow, he1, he2]
+    · simp only [map_add (f := _), map_mul, map_pow, he1, he2]
       ring
     · simp only [map_mul, he1, he2]
       ring

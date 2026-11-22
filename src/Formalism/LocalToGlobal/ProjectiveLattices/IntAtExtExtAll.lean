@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
-import Formalism.LocalToGlobal.ProjectiveLattices.ExtendedPointBaseChange
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
+public import Formalism.LocalToGlobal.ProjectiveLattices.ExtendedPointBaseChange
+
+@[expose] public section
 
 noncomputable section
 

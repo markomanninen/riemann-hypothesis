@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.PairRelationOfScaledRatio
-import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.PairRelationOfScaledRatio
+public import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
+
+@[expose] public section
 
 open MvPolynomial GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights
 
@@ -10,7 +14,7 @@ theorem eval_toWt {Ψ : Type} {N : ℕ} (lam : Ψ × Fin N → ℝ) (Q : MvPolyn
     eval lam (toWt Q) = eval (fun p => eval lam (gapX p)) Q := by
   induction Q using MvPolynomial.induction_on with
   | C a => simp [toWt]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p n hp => simp only [map_mul, hp, toWt, aeval_X] at *; rw [eval_X]
 
 theorem tele_nat (f : ℕ → ℝ) (i l : ℕ) (h : i ≤ l) :

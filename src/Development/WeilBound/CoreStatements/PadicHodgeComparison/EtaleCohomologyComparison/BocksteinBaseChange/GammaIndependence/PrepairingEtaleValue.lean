@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.AbsProps
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.GammaIndependence.GammaKey
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.GammaIndependence.PullRId
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.GammaIndependence.PullTId
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.AbsProps
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.GammaIndependence.GammaKey
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.GammaIndependence.PullRId
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.GammaIndependence.PullTId
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1000000
@@ -49,8 +53,8 @@ theorem gammaE_id {M : Model l K} {a a' : D.Ch M} (m : D.Mo (𝟙 M.X) (Category
   rw [pullT_id, LinearMap.id_apply, pullR_genMap_id, LinearMap.comp_id] at this
   exact this
 
-include hL in
 
+include hL in
 theorem gammaE_indep {M : Model l K} (hM : G M) (a a' : D.Ch M) (n : ℕ) (u : M.T n) (φ : Module.Dual K (HdR M.q n)) :
     gamma hF β κ a n (E.e a n u) φ = gamma hF β κ a' n (E.e a' n u) φ := by
   obtain ⟨b, ⟨m₁⟩, ⟨m₂⟩⟩ := hL.refine M M (𝟙 M.X) (Category.id_comp _) hM hM a a'
@@ -78,14 +82,14 @@ theorem cV_tmV {M : Model l K} (hM : G M) (a : D.Ch M) (n : ℕ) (z : ℚ_[l]) (
 
 def a0 (M : Model l K) (hM : G M) : D.Ch M := Classical.choice (hL.ch M hM)
 
-open Classical in
 
+open Classical in
 def cP (M : Model l K) (n : ℕ) : M.V n →+ (Module.Dual K (HdR M.q n) →+ R.B) :=
   if hM : G M then cV hF E β κ hM (a0 hL M hM) n else 0
 
 theorem cP_tmV {M : Model l K} (hM : G M) (n : ℕ) (z : ℚ_[l]) (u : M.T n) (φ : Module.Dual K (HdR M.q n)) :
     cP hF hL E β κ M n (tmV M n z u) φ = R.q z * gamma hF β κ (a0 hL M hM) n (E.e _ n u) φ := by
-  rw [cP, dif_pos hM, cV_tmV]
+  rw [cP, dite_eq_left hM, cV_tmV]
 
 theorem cP_toV {M : Model l K} (hM : G M) (a : D.Ch M) (n : ℕ) (u : M.T n) (φ : Module.Dual K (HdR M.q n)) :
     cP hF hL E β κ M n (M.toV n u) φ = gamma hF β κ a n (E.e a n u) φ := by
@@ -93,10 +97,10 @@ theorem cP_toV {M : Model l K} (hM : G M) (a : D.Ch M) (n : ℕ) (u : M.T n) (φ
 
 theorem cP_not {M : Model l K} (hM : ¬ G M) (n : ℕ) (v : M.V n) (φ : Module.Dual K (HdR M.q n)) :
     cP hF hL E β κ M n v φ = 0 := by
-  rw [cP, dif_neg hM]; rfl
+  rw [cP, dite_eq_right hM]; rfl
+
 
 include hL in
-
 theorem isPow_beta (hE : EtSide G) {M : Model l K} (hM : G M) (a : D.Ch M) (x : (D.H a).N 2) (hx : D.c1H a x) :
     ∀ (k : ℕ) (z : (D.H a).N (2 * k)), IsPow (N := (D.H a).N) (D.H a).one (D.H a).cup x k z →
       ∃ v : M.T (2 * k), β.β a (2 * k) z = R.t ^ k • E.e a (2 * k) v := by
@@ -128,7 +132,7 @@ def preP (hE : EtSide G) : Pre G R where
       · intro z' u
         rw [smul_tmV, cP_tmV hF hL E β κ hM, cP_tmV hF hL E β κ hM, map_mul, mul_assoc]
       · intro x y hx hy
-        simp only [smul_add, map_add, AddMonoidHom.add_apply, hx, hy, mul_add]
+        simp only [smul_add, map_add (f := _), AddMonoidHom.add_apply, hx, hy, mul_add]
     · rw [cP_not hF hL E β κ hM, cP_not hF hL E β κ hM, mul_zero]
   lin' M n k v φ := by
     by_cases hM : G M
@@ -138,7 +142,7 @@ def preP (hE : EtSide G) : Pre G R where
         rw [cP_tmV hF hL E β κ hM, cP_tmV hF hL E β κ hM, gamma_lin' hF β κ hM]
         ring
       · intro x y hx hy
-        simp only [map_add, AddMonoidHom.add_apply, hx, hy, mul_add]
+        simp only [map_add (f := _), AddMonoidHom.add_apply, hx, hy, mul_add]
     · rw [cP_not hF hL E β κ hM, cP_not hF hL E β κ hM, mul_zero]
   fin := κ.fin
   top := κ.top
@@ -149,7 +153,7 @@ def preP (hE : EtSide G) : Pre G R where
     · intro z u
       rw [act_tmV, cP_tmV hF hL E β κ hM, cP_tmV hF hL E β κ hM, E.act _ hM, gamma_act hF β κ hL hM, map_mul, hF.σ_q]
     · intro x y hx hy
-      simp only [map_add, AddMonoidHom.add_apply, hx, hy]
+      simp only [map_add (f := _), AddMonoidHom.add_apply, hx, hy]
   fil M n hM r v φ hφ := by
     refine V_induction (p := fun v => R.tB ^ r * cP hF hL E β κ M n v φ ∈ R.P) v ?_ ?_ ?_
     · simp only [map_zero, AddMonoidHom.zero_apply, mul_zero]
@@ -158,7 +162,7 @@ def preP (hE : EtSide G) : Pre G R where
       rw [cP_tmV hF hL E β κ hM, mul_left_comm]
       exact R.P.mul_mem (hF.q_mem z) (gamma_fil hF β κ hM n r _ φ hφ)
     · intro x y hx hy
-      rw [map_add, AddMonoidHom.add_apply, mul_add]
+      rw [map_add (f := _), AddMonoidHom.add_apply, mul_add]
       exact R.P.add_mem hx hy
   nat M N u hu n hM hN v φ := by
     refine V_induction (p := fun v => cP hF hL E β κ M n (Model.pullV u hu n v) φ =
@@ -170,7 +174,7 @@ def preP (hE : EtSide G) : Pre G R where
       obtain ⟨a', -, ⟨m⟩⟩ := hL.refine M N u hu hM hN (a0 hL M hM) (a0 hL N hN)
       rw [gammaE_indep hF hL E β κ hM (a0 hL M hM) a', gammaE_nat hF E β κ m hM hN]
     · intro x y hx hy
-      simp only [map_add, AddMonoidHom.add_apply, hx, hy]
+      simp only [map_add (f := _), AddMonoidHom.add_apply, hx, hy]
   cup M hM := by
     intro i j x y z hxyz m m' b b' φ
     simp only [cP_toV hF hL E β κ hM (a0 hL M hM)]
@@ -239,7 +243,7 @@ theorem cP_span {M : Model l K} (hM : G M) (G' : Model l K → Prop) (S : Subrin
     exact Finset.sum_congr rfl fun i _ => by ring
   · rintro x y ⟨b, hbS, hb⟩ ⟨b', hbS', hb'⟩
     refine ⟨b + b', fun i => S.add_mem (hbS i) (hbS' i), fun φ => ?_⟩
-    rw [map_add, AddMonoidHom.add_apply, hb, hb', ← Finset.sum_add_distrib]
+    rw [map_add (f := _), AddMonoidHom.add_apply, hb, hb', ← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl fun i _ => by rw [Pi.add_apply, add_mul]
 
 def PrepairingEtaleValue : Prop := ∀ (l : ℕ) [Fact l.Prime] (K : IntermediateField ℚ_[l] (PadicAlgCl l)) (R : Per l K)

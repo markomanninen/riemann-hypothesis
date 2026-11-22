@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PolFunApply
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PolFunApply
+
+@[expose] public section
 
 noncomputable section
 

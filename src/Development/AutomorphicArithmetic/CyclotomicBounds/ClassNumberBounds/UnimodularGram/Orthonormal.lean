@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.UnimodularGram.UnitVector
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.UnimodularGram.IsUnimodIffGram
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.UnimodularGram.UnitVector
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.UnimodularGram.IsUnimodIffGram
+
+@[expose] public section
 
 namespace KStar.Cstarloc
 
@@ -66,7 +70,8 @@ private theorem exists_orthonormal_basis_unimodular [IsLocalRing R] (hR : UnramD
     have h2 : ∀ j, h x (b j) = 0 := fun j => by rw [hh, h1, star_zero]
     have h3 : ∀ i j, h (b i) (b j) = if i = j then 1 else 0 := fun i j => by
       have := congrFun (congrFun hb i) j
-      simpa [gram, Matrix.one_apply] using this
+      simpa [gram, Matrix.one_apply, restr, LinearMap.domRestrict₁₂, LinearMap.domRestrict₂_apply,
+        LinearMap.domRestrict_apply] using this
     ext i j
     refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j
     · simp [gram, hx]

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoUpperBoundOfEdgeCount
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoUpperBoundOfEdgeCount
+
+@[expose] public section
 
 noncomputable section
 

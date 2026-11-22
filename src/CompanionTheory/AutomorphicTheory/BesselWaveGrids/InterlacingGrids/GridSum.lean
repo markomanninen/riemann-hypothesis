@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.BlockD.FourierDecayAlt.WaveGridLiftGrid
 
@@ -21,7 +25,7 @@ theorem grid_sqrt_le {K d : ℕ} (grid : Fin K → Fin (d + 1) → ℝ) (nn Q : 
   rw [← Finset.prod_mul_distrib, ← Finset.prod_div_distrib]
   have hle : ∏ a, nn (grid a (n a)) * nn (grid a (n a) + 1) / Q (grid a (n a)) ≤
       ∏ _a : Fin K, β ^ 2 := by
-    apply Finset.prod_le_prod
+    apply Finset.prod_le_prod₀
     · intro a _
       have h := hpos a (n a)
       exact div_nonneg (mul_nonneg h.1.le h.2.1.le) h.2.2.le
@@ -51,7 +55,7 @@ theorem grid_sum_le {K d : ℕ} (grid c : Fin K → Fin (d + 1) → ℝ) (nn Q :
         simp only [Finset.abs_prod]
     _ ≤ 1 * β ^ K := by
         refine mul_le_mul_of_nonneg_right ?_ (pow_nonneg hβ K)
-        apply Finset.prod_le_one
+        apply Finset.prod_le_one₀
         · intro a _
           exact Finset.sum_nonneg (fun i _ => abs_nonneg _)
         · intro a _

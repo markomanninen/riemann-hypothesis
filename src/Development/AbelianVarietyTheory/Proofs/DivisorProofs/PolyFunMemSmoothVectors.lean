@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPlaceRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPlaceRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,7 @@ theorem polyFun_mem_smF : ∀ (D : D7) (θ : D.what₂.Tau → (Ainf D.host.F �
   change ContDiff ℝ ∞ fun X : LieN V => MvPolynomial.eval (realEntries θ V (g * expMap (jInf V) (secInf θ V) X)) P
   induction P using MvPolynomial.induction_on with
   | C a => simpa using contDiff_const
-  | add p q hp hq => simpa only [map_add] using hp.add hq
+  | add p q hp hq => simpa only [map_add (f := _)] using hp.add hq
   | mul_X p n hp => simpa only [map_mul, MvPolynomial.eval_X] using hp.mul (hc n)
 
 end GlobalTheory.CentralOps

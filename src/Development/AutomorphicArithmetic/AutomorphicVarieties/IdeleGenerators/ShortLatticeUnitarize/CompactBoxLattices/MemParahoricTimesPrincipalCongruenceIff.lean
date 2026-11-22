@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShortLatticeUnitarize.Unitarize
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.KLevTop
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShortLatticeUnitarize.Unitarize
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.KLevTop
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.CuspRep UpperTheory.V.Af Matrix
 

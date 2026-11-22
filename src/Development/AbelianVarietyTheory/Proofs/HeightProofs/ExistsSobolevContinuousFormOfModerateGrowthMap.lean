@@ -1,16 +1,20 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.FinitePartTypes
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqExistsIffDsExists
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqUniqueOfClassification
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasTypeAllAddOfEquiv
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OneAddHsConjLe
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CoefBoundOfCasselmanWallach
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CasselmanWallachExtensionBanachTarget
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.NotMemOfMulExp
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.FinitePartTypes
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqExistsIffDsExists
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqUniqueOfClassification
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasTypeAllAddOfEquiv
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OneAddHsConjLe
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CoefBoundOfCasselmanWallach
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CasselmanWallachExtensionBanachTarget
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.NotMemOfMulExp
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,8 +75,8 @@ theorem exists_bdMap (hb : ∀ v, IsKFin ε σ v → ∃ C : ℝ, ∀ g ∈ UJse
         refine ⟨C, fun i => ?_⟩
         rw [norm_div, norm_wt, div_le_iff₀ (wt_pos _ _)]
         exact hC _ i.2.2)
-      map_add' := fun v w => by ext i; simp [add_div]
-      map_smul' := fun c v => by ext i; simp [mul_div_assoc] }
+      map_add' := fun v w => by ext i; simp [mkBd, add_div]; rfl
+      map_smul' := fun c v => by ext i; simp [mkBd, mul_div_assoc] }
   obtain ⟨T₀, hT⟩ := LinearMap.exists_extend f
   refine ⟨T₀, fun v hv i => ?_⟩
   have : T₀ v = f ⟨v, hv⟩ := LinearMap.congr_fun hT ⟨v, hv⟩
@@ -90,7 +94,7 @@ theorem exists_form : GlobalTheory.Published.CasselmanWallach → ∀ (n : ℕ) 
   intro hCW n ε H _ _ _ σ h N T hb hK hd
   change ∀ v, IsKFin ε σ v → ∃ C : ℝ, ∀ g ∈ UJset ε, ‖T v g‖ ≤ C * wt N g at hb
   obtain ⟨T₀, hT₀⟩ := exists_bdMap hb
-  have key : ∀ v, IsKFin ε σ v → ∀ y ∈ UJset ε, ∀ i, rt ε _ N y (T₀ v) i = T v (i.2.1 * y) / wt N i.2.1 := by
+  have key : ∀ v, IsKFin ε σ v → ∀ y ∈ UJset ε, ∀ i : Unit × UJset ε, rt ε _ N y (T₀ v) i = T v (i.2.1 * y) / wt N i.2.1 := by
     intro v hv y hy i
     rw [rt_apply hy, hT₀ v hv]
     have := wt_ne N (i.2.1 * y)

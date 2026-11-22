@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartSpan
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartSpan
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -37,7 +41,8 @@ private lemma sq_mem [Module.Free ℤ X] [Module.Finite ℤ X] (W : WPres O X R)
   obtain ⟨b, hb, hbs⟩ := hs g hg
   have h3 : y = ∑ m ∈ μ, (⟨W.π (b m), W.part_le_A ⟨_, hb m, rfl⟩⟩ : W.A) * m.prod fun i k => W.zA i ^ k := by
     apply Subtype.ext
-    rw [← hy, hbs, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hy, hbs, map_sum]
     simp [π_monomial, Finsupp.prod, WPres.zA]
   rw [h3]
   exact Ideal.sum_mem _ fun m hm => Ideal.mul_mem_left _ _
@@ -59,7 +64,8 @@ theorem UpperTheory.V.Alg.cot_fg :
         RingHom.ker (W.originA h) ^ 2 := by
       refine sq_mem W h j (f - ∑ s : {s // W.wt s = j}, coeff (Finsupp.single s.1 1) f • MvPowerSeries.X s.1)
         (fun m hm => ?_) _ (by simp [hfx', WPres.zA, WPres.z])
-      rw [map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum]
       simp only [map_smul, coeff_X, smul_eq_mul, mul_ite, mul_one, mul_zero]
       by_cases hw : Finsupp.weight W.wt m = j
       · rcases deg_lt_two m (not_le.1 fun h2 => hm ⟨hw, h2⟩) with rfl | ⟨s, rfl⟩
@@ -80,7 +86,8 @@ theorem UpperTheory.V.Alg.cot_fg :
     have h2 : (satSq (W.originA h)).mkQ x = (satSq (W.originA h)).mkQ
         (∑ s : {s // W.wt s = j}, coeff (Finsupp.single s.1 1) f • W.zA s) :=
       (Submodule.Quotient.eq _).2 ⟨1, one_ne_zero, by rwa [one_smul]⟩
-    rw [h2, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, map_sum]
     refine Submodule.sum_mem _ fun s _ => ?_
     rw [map_smul]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨s, rfl⟩)

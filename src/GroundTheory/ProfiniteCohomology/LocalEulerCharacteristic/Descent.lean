@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.ConjAction
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite
-import GroundTheory.ProfiniteCohomology.Shapiro
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.ConjAction
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite
+public import GroundTheory.ProfiniteCohomology.Shapiro
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -77,8 +82,8 @@ noncomputable def coindTraceTermMor (c : G ⧸ (U : Subgroup G)) :
       congr 2
       group⟩
 
-omit [IsDiscreteRep A] in
 
+omit [IsDiscreteRep A] in
 theorem resFunctor_map_coindTrace :
     (Rep.resFunctor (U : Subgroup G).subtype).map (coindTrace (U : Subgroup G) A) =
       ∑ c : G ⧸ (U : Subgroup G), coindTraceTermMor U A c := by
@@ -86,11 +91,6 @@ theorem resFunctor_map_coindTrace :
   change (coindTrace (U : Subgroup G) A).hom f = (∑ c, coindTraceTermMor U A c).hom f
   rw [coindTrace_hom_apply, Rep.sum_hom, Representation.IntertwiningMap.sum_apply]
   rfl
-
-instance isDiscreteRep_res_coind_res :
-    IsDiscreteRep (Rep.res (U : Subgroup G).subtype
-      (Rep.coind (U : Subgroup G).subtype (Rep.res (U : Subgroup G).subtype A))) :=
-  isDiscreteRep_res_subtype _ _
 
 instance isDiscreteRep_resFunctor_obj_coind_res :
     IsDiscreteRep ((Rep.resFunctor (U : Subgroup G).subtype).obj
@@ -147,8 +147,8 @@ section Descent
 variable (hA : Function.Bijective fun a : A => (U : Subgroup G).index • a)
 include hA
 
-omit [(U : Subgroup G).Normal] in
 
+omit [(U : Subgroup G).Normal] in
 theorem cohomologyRes_injective_of_bijective (n : ℕ) :
     Function.Injective (cohomologyRes A (U : Subgroup G) n).hom := by
   intro x y h

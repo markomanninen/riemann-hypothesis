@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,9 +89,6 @@ def HoweAlg {T : Type} {R S : T → ℕ} {V : Type} [AddCommGroup V] [Module ℂ
     (a : ∀ w, Mat (R w) (S w) →ₗ[ℂ] Module.End ℂ V) (C : Submodule ℂ V) : Prop :=
   (∃ L : ℕ, ∀ (m : ℕ) (N : Fin m → Submodule ℂ V), StrictMono N → (∀ k, (∀ w, Stab (a w) (N k)) ∧ C ≤ N k) → m ≤ L) ∧
   ∀ N N' : Submodule ℂ V, (∀ w, Stab (a w) N) → C ≤ N → N ≠ ⊤ → (∀ w, Stab (a w) N') → C ≤ N' → N' ≠ ⊤ → N ⊔ N' ≠ ⊤
-
-example : IsGl (fun _ _ : Fin 2 => (0 : Module.End ℂ ℂ)) ∧ cas (fun _ : Fin 2 => true) (fun _ _ => (0 : Module.End ℂ ℂ)) = 0 := by
-  refine ⟨fun a b c d => by simp, by simp [cas]⟩
 
 end GlobalTheory.HoweR
 

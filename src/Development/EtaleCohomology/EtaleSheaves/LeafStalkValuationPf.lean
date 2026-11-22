@@ -1,7 +1,11 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafExtendCut
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KrullDimSmoothSurjectiveTotal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AffineSpaceSmoothNormal
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafExtendCut
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KrullDimSmoothSurjectiveTotal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AffineSpaceSmoothNormal
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4
@@ -18,7 +22,7 @@ theorem valuationRing_of_dimLE (R : Type) [CommRing R] [IsNoetherianRing R] [IsL
       have hb : (⊥ : Ideal R).IsPrime := Ideal.isPrime_bot
       exact le_antisymm (hmin.2 ⟨hb, bot_le⟩ bot_le) bot_le
     · exact IsLocalRing.eq_maximalIdeal hmax
-  exact ((tfae_of_isNoetherianRing_of_isLocalRing_of_isDomain (R := R)).out 3 1).mp
+  exact ((tfae_of_isNoetherianRing_of_isLocalRing_of_isDomain (R := R)).out 4 2).mp
     (⟨inferInstance, key⟩ : IsIntegrallyClosed R ∧ ∀ P : Ideal R, P ≠ ⊥ → P.IsPrime → P = IsLocalRing.maximalIdeal R)
 
 theorem stalk_facts (Ω : Type) [Field Ω] {C : Scheme.{0}} [IsIntegral C] (c : C ⟶ Sp Ω)

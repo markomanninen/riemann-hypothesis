@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ThickFrames
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensSmoothAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensOp
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.IntPow
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.LactCv
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ArchBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.CvBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CommInt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ThickFrames
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensSmoothAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensOp
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.IntPow
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.LactCv
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ArchBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.CvBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CommInt
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ private lemma pow_ok {T : H →L[ℂ] H} (h : 0 ≤ T ∧ ‖T‖ ≤ 1) (k : �
 
 end Ops
 
-private lemma smooth_pow {F : Type} [Field F] [NumberField F] [IsTotallyComplex F] {n : ℕ}
+private lemma smooth_pow {F : Type} [Field F] [NumberField F] [_root_.NumberField.IsTotallyComplex F] {n : ℕ}
     (ν : Measure (archGroup F n)) [ν.IsHaarMeasure] (a : TI F n) (h1 : SmoothT a) (h2 : LeftFin a) (k : ℕ) :
     ∃ c : TI F n, (∀ g, c g = cvPow ν (a : archGroup F n → ℂ) k g) ∧ SmoothT c ∧ LeftFin c := by
   induction k with
@@ -134,10 +138,10 @@ theorem _root_.UpperTheory.ConvolutionTheory.L1.ampPosition :
   obtain ⟨-, -, hmul, -, -, ⟨s, hs, hsc⟩, -, -⟩ := UpperTheory.ConvolutionTheory.L1.archBasic F E σ m D n
   refine ⟨fun μE _ => ?_, fun μF _ => ?_⟩
   · have hok := tens_ok h.meas h.sq hc h.norm h.tens hs hsc hmul (LL μE)
-      ((rightRegularRep (rationalGLOne E n) μE).compHom (archP E n) continuous_archP)
+      ((rightRegularRep (rationalGLOne (K := E) (n := n)) μE).compHom (archP E n) continuous_archP)
     exact ⟨hE.1 fun _ => hsa, hE.2 fun _ => hla, hok.1, hok.2⟩
   · have hok := pow_op h.sq hc h.norm (LL μF)
-      ((rightRegularRep (rationalGLOne F n) μF).compHom (archP F n) continuous_archP)
+      ((rightRegularRep (rationalGLOne (K := F) (n := n)) μF).compHom (archP F n) continuous_archP)
     exact ⟨hcs, hcl, hok.1, hok.2⟩
 
 end UpperTheory.ConvolutionTheory.L1

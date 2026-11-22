@@ -1,4 +1,8 @@
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
+module
+
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -34,9 +38,6 @@ def InvInvariant : Prop :=
 
 def BallFinite : Prop :=
   ∀ (n : ℕ) (ε : Fin n → Bool) (R : ℝ), muG ε {g | hsG g ≤ R} < ⊤
-
-def BallPos : Prop :=
-  ∀ (n : ℕ) (ε : Fin n → Bool) (R : ℝ), (n : ℝ) < R → 0 < muG ε {g | hsG g < R}
 
 def VolGrowth : Prop :=
   ∀ (n : ℕ) (ε : Fin n → Bool), ∃ C : ℝ, ∀ R : ℝ, 1 ≤ R →

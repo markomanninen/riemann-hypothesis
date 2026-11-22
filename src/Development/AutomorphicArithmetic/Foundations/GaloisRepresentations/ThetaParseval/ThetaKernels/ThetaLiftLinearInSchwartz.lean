@@ -1,8 +1,17 @@
-import Development.AutomorphicArithmetic.AdelicQuotients.ThetaLiftLinear
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.GalTPDefs
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThetaBasicK
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SchurStep
+public import Development.WeilBound.ThetaLifts.FrameEstimates.CuspRapid
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.TendstoIndMul
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PolFin
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.ArchimedeanEvaluationVector
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PairsL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.GalTPDefs
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThetaBasicK
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -18,7 +27,8 @@ theorem integrand_int_k (T : _root_.UpperTheory.TP.Tools_k) {B : Base F E} {M : 
     (hP : _root_.GlobalTheory.ThK.IsPair_k B M χX χW om n 0 d 0) {Φ : Fn F n d} (hΦ : Φ ∈ schA F (Fin n × Fin d)) {φ : UA σ X.J → ℂ} (hφ : IsFn φ)
     (h : UA σ W.J) : IntegrableOn (fun g => theta om Φ g h * star (φ g)) M.dom M.μ := by
   have hc : Cpt σ X.J := T.cpt F E σ B n X n 0 hP.base (Or.inl hP.herm) (by simp)
-  obtain ⟨h1, h2, -⟩ := (T.basic F E σ B n d X W M χX χW om n 0 d 0 hP).1 Φ hΦ
+  have ht := (T.basic F E σ B n d X W M χX χW om n 0 d 0 hP).1 Φ hΦ
+  obtain ⟨h1, h2, -⟩ := ht
   have hcont : Continuous fun g => theta om Φ g h * star (φ g) :=
     (h1.comp (continuous_id.prodMk continuous_const)).mul (continuous_star.comp hφ.1)
   obtain ⟨C, hC⟩ := hc.bdd hcont fun γ hγ g => by
@@ -37,7 +47,7 @@ theorem UpperTheory.thetaLift_linear_in_schwartz :
   · funext h
     have e : ∀ g, theta om (Φ + Φ') g h * star (φ g) = theta om Φ g h * star (φ g) + theta om Φ' g h * star (φ g) := fun g => by
       have : theta om (Φ + Φ') g h = theta om Φ g h + theta om Φ' g h := by
-        simp only [theta, map_add]
+        simp only [theta, map_add (f := _)]
         exact thetaSum_add F (hpres _ _ hΦ) (hpres _ _ hΦ')
       rw [this, add_mul]
     simp only [lift, Pi.add_apply, e]

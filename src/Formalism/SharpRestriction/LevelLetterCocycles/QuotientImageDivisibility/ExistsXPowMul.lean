@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.ExpRules
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.SmulSAddLeft
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ConstantCoeffQZeroEqP
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.Pi0PowSmulInjective
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExpRules
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.SmulSAddLeft
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ConstantCoeffQZeroEqP
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.Pi0PowSmulInjective
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -120,7 +124,7 @@ theorem expRing_of (hR : Formalism.MainNotions.UnusedSlot80.ToolsR.RingP W) : Fo
     rw [hqp, map_mul, PowerSeries.constantCoeff_X, mul_zero]
   have hcpi : PowerSeries.constantCoeff (W.lev i ζ W.π₀) = -(PD.p : LL) := by
     have e : Formalism.MainNotions.LiftingTheory.qp W = W.π₀ + ((PD.p : ℕ) : LetA O n) := rfl
-    rw [e, map_add, map_natCast, map_add, map_natCast] at hcq
+    rw [e, map_add (f := _), map_natCast, map_add (f := _), map_natCast] at hcq
     linear_combination hcq
   refine ⟨⟨_, hunit, hqp⟩, hcpi, ?_⟩
 
@@ -132,7 +136,7 @@ theorem expRing_of (hR : Formalism.MainNotions.UnusedSlot80.ToolsR.RingP W) : Fo
       zero_pow (by omega), mul_zero]
   have e2 : Formalism.MainNotions.LiftingTheory.pk W 1 = W.φA W.π₀ + ((PD.p : ℕ) : LetA O n) := by
     simp [Formalism.MainNotions.LiftingTheory.pk, Formalism.MainNotions.LiftingTheory.qp, map_natCast]
-  rw [e2, PowerSeries.isUnit_iff_constantCoeff, map_add, map_natCast, map_add, hcφ, zero_add,
+  rw [e2, PowerSeries.isUnit_iff_constantCoeff, map_add (f := _), map_natCast, map_add (f := _), hcφ, zero_add,
     map_natCast]
   exact isUnit_iff_ne_zero.2 hp
 

@@ -1,11 +1,34 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushInvertible
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.FlagBasis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ToMatrixTrFormBaseChange
-import Development.AbelianVarietyTheory.Definitions.CMLattices.IsCyclotomicExtensionCyclotomicField28
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsComplexCmAbelianObject
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushInvertible
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.FlagBasis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ToMatrixTrFormBaseChange
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.IsCyclotomicExtensionCyclotomicField28
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPointOfPeriod
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LambdaBundleAdjointOfWeilPairingAdjointStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TheoremOfCubePolAbelianSchemeStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsThetaOfTranslDiff
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSecImageNonzeroLocus
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPrimitiveNormalisation
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PrincipalTorusAlgebraic
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIsMonHomOfMapLattice
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FamilyUnifOfParts
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFormEqOne
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModNOfDvdModulus
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSimTrivialOfMult
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ThetaUnifAVOfLaws
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.TypeFnPeriodExistModuliNonempty
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditionalStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,8 +87,8 @@ def embP (p : ℕ) (τ : F →+* ℂ) (a : 𝓞 F) : ZbarP p :=
 
 variable {S : Scheme.{0}}
 
-open Classical in
 
+open Classical in
 def DetCondP (D : Datum F) (p : ℕ) {k : Type} [Field k] {G : Over S} [GrpObj G] (act : OAct (𝓞 F) G)
     (x : Sp k ⟶ S) (β : D.OEp p →+* k) : Prop :=
   ∃ β' : ZbarP p →+* k, (∀ y : D.OEp p, β' (Subring.inclusion (OEp_le D p) y) = β y) ∧
@@ -136,26 +159,6 @@ def Good (F : Type) [Field F] [NumberField F] (p N : ℕ) : Prop :=
 
 def Datum.Definite (D : Datum F) : Prop := ∃ τ : F →+* ℂ, D.sig τ = 0
 
-def ObjMap.refl {D : Datum F} {p N : ℕ} {s : S ⟶ Sp (D.OEp p)} (o : Obj D p N s) : ObjMap o o (𝟙 S) where
-  φ := 𝟙 _
-  cart := by
-    refine ⟨IsPullback.of_horiz_isIso ⟨by simp⟩, fun T x y x₀ y₀ hx hy => ?_⟩
-    let j : Over.mk (T.hom ≫ 𝟙 S) ⟶ T := Over.homMk (𝟙 T.left) (by simp)
-    have e₁ : x₀ = j ≫ x := Over.OverMorphism.ext (by simp [hx, j])
-    have e₂ : y₀ = j ≫ y := Over.OverMorphism.ext (by simp [hy, j])
-    rw [e₁, e₂, ← MonObj.comp_mul]
-    simp [j]
-  act a := by simp
-  pol := (GlobalTheory.PolBaseChange.lbIso_refl o.PP.isLB).chartPull (Geo.Tor.chartPullId _)
-    (Geo.Tor.chartPullPull _ _ _ rfl)
-  eta a := by simp
-
-theorem exists_good (F : Type) [Field F] [NumberField F] {N : ℕ} (hN : 3 ≤ N) : ∃ p, Good F p N := by
-  obtain ⟨p, hp, hpr⟩ := Nat.exists_infinite_primes ((NumberField.discr F).natAbs + N + 1)
-  refine ⟨p, hpr, fun h => ?_, hN, (Nat.coprime_of_lt_prime (by omega) (by omega) hpr).symm⟩
-  have h₁ := Nat.le_of_dvd (Int.natAbs_pos.2 (NumberField.discr_ne_zero F)) (Int.natCast_dvd.1 h)
-  omega
-
 section Host
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
@@ -173,8 +176,8 @@ theorem conj_mem_type_iff (H : Host E) (τ : E →+* ℂ) :
   · intro h
     rw [(sq_eq_sq_iff_eq_or_eq_neg.mp hsq).resolve_left h, neg_neg]
 
-open Classical in
 
+open Classical in
 theorem sum_mult_eq (D : Geo.Tor.Datum H) (a : E) :
     ∑ τ : E →+* ℂ, (D.mult τ : ℂ) * τ a =
       ∑ τ ∈ Finset.univ.filter (fun τ : E →+* ℂ => τ (H.rt : E) = H.rt0),
@@ -221,17 +224,6 @@ theorem sum_mult_eq (D : Geo.Tor.Datum H) (a : E) :
     obtain ⟨J, h₁, h₂, h₃, h₄⟩ := D.dom
     exact ⟨J, h₁, h₂, h₃, fun a A hA => h₄ a A _ hA (by convert sum_mult_eq D (a : E))⟩
 
-theorem dim_ofHost (D : Geo.Tor.Datum H) : (Datum.ofHost D).dim = D.dim := by
-  have h : ∀ τ : E →+* ℂ, D.mult τ * (D.p + D.q - D.mult τ) = D.p * D.q := fun τ => by
-    unfold Geo.Tor.Datum.mult
-    split_ifs
-    · rw [Nat.add_sub_cancel_left]
-    · rw [Nat.add_sub_cancel, mul_comm]
-  unfold Datum.dim Geo.Tor.Datum.dim
-  simp only [h, Finset.sum_const, Finset.card_univ, NumberField.Embeddings.card, smul_eq_mul]
-  rw [IsTotallyComplex.finrank E, Nat.mul_assoc, Nat.mul_div_cancel_left _ two_pos, Nat.mul_div_cancel_left _ two_pos,
-    Nat.mul_assoc]
-
 theorem definite_ofHost_iff (D : Geo.Tor.Datum H) : (Datum.ofHost D).Definite ↔ D.p = 0 ∨ D.q = 0 := by
   obtain ⟨τ₀, h₀⟩ := HostModel.exists_embedding_rt_eq H
   constructor
@@ -244,117 +236,7 @@ theorem definite_ofHost_iff (D : Geo.Tor.Datum H) : (Datum.ofHost D).Definite �
     · exact ⟨τ₀, (if_pos h₀).trans h⟩
     · exact ⟨(starRingEnd ℂ).comp τ₀, (if_neg fun h' => (conj_mem_type_iff H τ₀).1 h' h₀).trans h⟩
 
-def TateIsoP.ofHost {D : Geo.Tor.Datum H} (p : ℕ) {k : Type} [Field k] {Q : Type} [Group Q] {act : 𝓞 E → Q → Q}
-    {e : ℕ → Q → Q → kˣ → Prop} (I : TateIso D k Q act e) : TateIsoP (Datum.ofHost D) p k Q act e where
-  ζ := I.ζ
-  ζ_prim n hn _ := I.ζ_prim n hn
-  ζ_pow n m hn hm _ := I.ζ_pow n m hn hm
-  ev := I.ev
-  add := I.add
-  lin := I.lin
-  ker n hn _ := I.ker n hn
-  onto n hn _ := I.onto n hn
-  tower n m hn hm _ := I.tower n m hn hm
-  isom n hn _ := I.isom n hn
-
-omit [IsCMField E] in
-
-theorem existsUnique_embedding {k : Type} [Field k] [IsAlgClosed k] (ξ : ℂ →+* k) (σ : 𝓞 E →+* k) :
-    ∃! τ : E →+* ℂ, ∀ a : 𝓞 E, ξ (τ (a : E)) = σ a := by
-  haveI : CharZero k := ξ.charZero_iff ξ.injective |>.1 inferInstance
-  have hi : Function.Injective σ := (RingHom.injective_iff_ker_eq_bot _).2
-    (Ideal.eq_bot_of_comap_eq_bot (R := ℤ) (eq_bot_iff.2 fun n hn => by simpa using hn))
-  have hinj : Function.Injective fun τ : E →+* ℂ => ξ.comp τ := fun τ τ' h =>
-    RingHom.ext fun x => ξ.injective (RingHom.congr_fun h x)
-  have hbij : Function.Bijective fun τ : E →+* ℂ => ξ.comp τ :=
-    (Fintype.bijective_iff_injective_and_card _).2 ⟨hinj, by
-      rw [NumberField.Embeddings.card, NumberField.Embeddings.card]⟩
-  obtain ⟨τ, hτ⟩ := hbij.2 (IsFractionRing.lift (K := E) hi)
-  refine ⟨τ, fun a => (RingHom.congr_fun hτ a).trans (IsFractionRing.lift_algebraMap hi a), fun τ' h => hinj ?_⟩
-  rw [hτ]
-  exact IsLocalization.ringHom_ext (nonZeroDivisors (𝓞 E))
-    (RingHom.ext fun a => (h a).trans (IsFractionRing.lift_algebraMap hi a).symm)
-
-theorem determinantConditionAt_of_determinantCondition (D : Geo.Tor.Datum H) (p : ℕ) {k : Type} [Field k] [IsAlgClosed k] {G : Over S} [GrpObj G]
-    (act : OAct (𝓞 E) G) (x : Sp k ⟶ S) (ξ : ℂ →+* k) (h : DetCond D act x (ξ H.rt0)) :
-    DetCondP (Datum.ofHost D) p act x (ξ.comp ((Datum.ofHost D).OEp p).subtype) := by
-  refine ⟨ξ.comp (ZbarP p).subtype, fun y => ?_, fun σ => ?_⟩
-  · simp only [RingHom.comp_apply, Subring.coe_subtype, Subring.coe_inclusion]
-  obtain ⟨τ, hτ, huniq⟩ := existsUnique_embedding ξ σ
-  have key : LieMult act x σ (D.mult τ) := by
-    unfold Geo.Tor.Datum.mult
-    split_ifs with hr
-    · exact (h σ).1 (by rw [← hτ, hr])
-    · exact (h σ).2 (by rw [← hτ]; exact fun h' => hr (ξ.injective h'))
-  have he : ∀ τ' : E →+* ℂ, (∀ a, (ξ.comp (ZbarP p).subtype) (embP p τ' a) = σ a) ↔ τ' = τ := fun τ' =>
-    ⟨fun h' => huniq τ' h', fun h' => h' ▸ hτ⟩
-  rw [Finset.sum_eq_single_of_mem τ]
-  · exact key
-  · simp only [Finset.mem_filter, Finset.mem_univ, true_and, he]
-  · intro τ' h' hne
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and, he] at h'
-    exact absurd h' hne
-
-def Obj.ofHost {D : Geo.Tor.Datum H} {l : Level H} {b : Base l ℂ} (hb : b.ρ = H.rt0) (p : ℕ) {s : S ⟶ Sp ℂ}
-    (o : Geo.Tor.Obj D l b s) :
-    Obj (Datum.ofHost D) p l.A (s ≫ spMap ((Datum.ofHost D).OEp p).subtype) where
-  A := o.t.G
-  ab := ⟨o.t.semi.comm, o.t.semi.smooth, o.proper, o.t.semi.geomConnected⟩
-  act := o.t.act
-  PP := o.t.PP
-  cub := o.t.cub
-  sym := o.t.sym
-  adj := o.t.adj
-  prim := o.t.prim
-  ample := o.ample
-  ktriv := o.ktriv
-  eta := o.etaA
-  eta_add := o.etaA_add
-  eta_ker := o.etaA_ker
-  geom k _ _ x β hx := by
-    obtain ⟨ξ, hξ⟩ : ∃ ξ : ℂ →+* k, x ≫ s = spMap ξ :=
-      ⟨(Spec.preimage (x ≫ s)).hom, (Spec.map_preimage _).symm⟩
-    obtain rfl : β = ξ.comp ((Datum.ofHost D).OEp p).subtype := by
-      rw [← Category.assoc, hξ] at hx
-      exact congrArg CommRingCat.Hom.hom (Spec.map_injective
-        (hx.symm.trans (Spec.map_comp (CommRingCat.ofHom _) (CommRingCat.ofHom _)).symm))
-    obtain ⟨hdet, I, -, hI, -⟩ := o.geom k x ξ hξ
-    exact ⟨determinantConditionAt_of_determinantCondition D p _ x ξ (hb ▸ hdet), TateIsoP.ofHost p I, hI⟩
-
-theorem exists_obj_ofHost (D : Geo.Tor.Datum H) (hD : 1 ≤ D.p + D.q) (p N : ℕ) (hN : 0 < N) :
-    ∃ o : Obj (Datum.ofHost D) p N (𝟙 (Sp ℂ) ≫ spMap ((Datum.ofHost D).OEp p).subtype),
-      SmoothOfRelativeDimension (Module.finrank ℚ E / 2 * (Datum.ofHost D).n) o.A.hom ∧
-        ∃ x : 𝟙_ (Over (Sp ℂ)) ⟶ o.A, x ≠ 1 := by
-  obtain ⟨b, o, hb, -, h⟩ := GlobalTheory.exists_obj_complex E H D hD (HostModel.level H N hN)
-  exact ⟨Obj.ofHost hb p o, h⟩
 
 end Host
-
-theorem exists_datum_good_obj : ∃ (D : Datum HostModel.E21) (p : ℕ), D.n = 2 ∧ D.dim = 6 ∧ Good HostModel.E21 p 5 ∧
-    ∃ o : Obj D p 5 (𝟙 (Sp ℂ) ≫ spMap (D.OEp p).subtype), SmoothOfRelativeDimension 12 o.A.hom ∧
-      ∃ x : 𝟙_ (Over (Sp ℂ)) ⟶ o.A, x ≠ 1 := by
-  obtain ⟨p, hp⟩ := exists_good HostModel.E21 (N := 5) (by norm_num)
-  refine ⟨Datum.ofHost (HostModel.hypDatum HostModel.host), p, rfl, ?_, hp, ?_⟩
-  · rw [dim_ofHost, Geo.Tor.Datum.dim, HostModel.finrank_rat_E21_eq_twelve]; rfl
-  · have h := exists_obj_ofHost (HostModel.hypDatum HostModel.host) (by norm_num) p 5 (by norm_num)
-    rw [HostModel.finrank_rat_E21_eq_twelve] at h
-    exact h
-
-theorem exists_definite_datum_good_obj : ∃ (D : Datum CM.CyclotomicTwentyEight.CyclotomicFieldTwentyEight) (p : ℕ), D.n = 1 ∧ D.dim = 0 ∧ D.Definite ∧
-    Good CM.CyclotomicTwentyEight.CyclotomicFieldTwentyEight p 5 ∧ ∃ o : Obj D p 5 (𝟙 (Sp ℂ) ≫ spMap (D.OEp p).subtype),
-      ∃ x : 𝟙_ (Over (Sp ℂ)) ⟶ o.A, x ≠ 1 := by
-  obtain ⟨p, hp⟩ := exists_good CM.CyclotomicTwentyEight.CyclotomicFieldTwentyEight (N := 5) (by norm_num)
-  obtain ⟨D, h₁, h₀⟩ := CM.CyclotomicTwentyEight.exists_datum
-  obtain ⟨o, -, ho⟩ := exists_obj_ofHost D (by omega) p 5 (by norm_num)
-  refine ⟨Datum.ofHost D, p, ?_, ?_, (definite_ofHost_iff D).2 (Or.inr h₀), hp, o, ho⟩
-  · change D.p + D.q = 1
-    omega
-  · rw [dim_ofHost, Geo.Tor.Datum.dim, h₀, Nat.mul_zero]
-
-example (D : Datum F) : D.w ≠ 0 := fun h => by simpa [h] using D.w_add
-
-example {E : Type} [Field E] [NumberField E] [IsCMField E] (H : Host E) :
-    ¬ (Datum.ofHost (HostModel.hypDatum H)).Definite := by
-  rw [definite_ofHost_iff]; simp
 
 end GlobalTheory.UPel

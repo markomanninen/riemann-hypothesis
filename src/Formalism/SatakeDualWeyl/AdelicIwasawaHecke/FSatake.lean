@@ -1,7 +1,11 @@
-import Formalism.SatakeDualWeyl.StatementF
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FSatakeC
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.HeckeActMem
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.HeckeConvolutionMemHolds
+module
+
+public import Formalism.SatakeDualWeyl.StatementF
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FSatakeC
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.HeckeActMem
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.HeckeConvolutionMemHolds
+
+@[expose] public section
 
 open Formalism.UG
 
@@ -92,7 +96,7 @@ theorem fSatake_key (hSph : SphericalExistsU) [CompleteSpace L] {ϖ : L} {q m : 
     (fun x a ⟨u, hu, k, hk, e⟩ => fSatake_phi_cell hU hm hφ hu hk e)
     (fun x hx => fSatake_vanish hSph hU hm hm' hα hφ x.out (by
       rintro ⟨b, k, hb, hk, e⟩
-      obtain ⟨a, u, hu, k', hk', e'⟩ := fSatake_cell_exists hU hm hm' hb hk
+      obtain ⟨a, u, hu, k', hk', e'⟩ := fSatake_cell_exists (m := m) hU hm hm' hb hk
       exact hx a ⟨u, hu, k', hk', e ▸ e'⟩))
 
 theorem fSatake_hAct_sph {q m : ℕ} {α : Fin m → ℂ} {h : GU σ n → ℂ} (hh : h ∈ Hecke ℂ (KU σ n))

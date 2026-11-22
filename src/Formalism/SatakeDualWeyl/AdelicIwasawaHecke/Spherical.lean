@@ -1,6 +1,10 @@
-import Formalism.SatakeDualWeyl.StatementE
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SphericalA
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
+module
+
+public import Formalism.SatakeDualWeyl.StatementE
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SphericalA
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.UG
 

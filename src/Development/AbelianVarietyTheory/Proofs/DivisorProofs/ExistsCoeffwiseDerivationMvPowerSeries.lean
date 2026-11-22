@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntDerApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfForallMemFilt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntDerApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfForallMemFilt
+
+@[expose] public section
+
 open IsLocalRing GlobalTheory.FormalOrigin GlobalTheory.FormalOrigin.Extend
 
 namespace GlobalTheory
@@ -15,7 +20,7 @@ theorem mvPowerSeries_derivation_coeffwise (σ R : Type) [CommRing R] (D : Deriv
         intro F G
         funext α
         show D (MvPowerSeries.coeff α (F + G)) = D (MvPowerSeries.coeff α F) + D (MvPowerSeries.coeff α G)
-        rw [map_add, map_add]
+        rw [map_add (f := _), map_add (f := _)]
       map_smul' := by
         intro n F
         funext α
@@ -25,9 +30,10 @@ theorem mvPowerSeries_derivation_coeffwise (σ R : Type) [CommRing R] (D : Deriv
   refine ⟨Derivation.mk' L ?_, ?_⟩
   · intro F G
     ext α
-    rw [smul_eq_mul, smul_eq_mul, map_add]
+    rw [smul_eq_mul, smul_eq_mul, map_add (f := _)]
     erw [hL]
-    rw [MvPowerSeries.coeff_mul, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [MvPowerSeries.coeff_mul, map_sum,
       MvPowerSeries.coeff_mul, mul_comm G, MvPowerSeries.coeff_mul, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun p _ => ?_
     rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]

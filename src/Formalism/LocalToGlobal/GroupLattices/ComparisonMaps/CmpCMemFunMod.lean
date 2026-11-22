@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.IsLatTupSmulIff
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.IsLatTupSmulIff
+
+@[expose] public section
 
 noncomputable section
 

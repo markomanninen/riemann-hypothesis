@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.SplitEig
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RDualC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.SatOfPol
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.SplitEig
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RDualC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.SatOfPol
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -56,24 +60,25 @@ private theorem exists_fixed_pair [TopologicalSpace G] [IsTopologicalGroup G] (h
   haveI := Fintype.ofFinite (K ⧸ GlobalTheory.OrbitAvg.stab ρ K y)
   have hc : ((GlobalTheory.OrbitAvg.stab ρ K y).index : ℂ) ≠ 0 := by exact_mod_cast hfi.index_ne_zero
   have h1 : ∀ q : K ⧸ GlobalTheory.OrbitAvg.stab ρ K y, l (ρ (q.out : K) y) = l y := fun q => hl _ q.out.2 y
-  simp only [GlobalTheory.OrbitAvg.avg, GlobalTheory.OrbitAvg.avgH, GlobalTheory.OrbitAvg.cv, finsum_eq_sum_of_fintype, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [GlobalTheory.OrbitAvg.avg, GlobalTheory.OrbitAvg.avgH, GlobalTheory.OrbitAvg.cv, finsum_eq_sum_of_fintype, map_smul, map_sum]
   rw [Finset.sum_congr rfl fun q _ => h1 q, Finset.sum_const, Finset.card_univ, ← Nat.card_eq_fintype_card,
     ← Subgroup.index, nsmul_eq_mul, smul_eq_mul, inv_mul_cancel_left₀ hc]
 
 end General
 
-open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.UG GlobalTheory.PRep GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.LFun.ConjPlace in
 
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.UG GlobalTheory.PRep GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.LFun.ConjPlace in
 private theorem sat_eq_of_eig {E : Type} [Field E] [NumberField E] {n : ℕ} {w : HeightOneSpectrum (𝓞 E)} {V W : Type}
     [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
     {σ : Representation ℂ (GL (Fin n) (w.adicCompletion E)) V} {ρ : Representation ℂ (GL (Fin n) (w.adicCompletion E)) W}
     (hσ : IsSmooth σ) (β : V →ₗ[ℂ] W →ₗ[ℂ] ℂ)
     (hi : ∀ g x y, β (σ (GlobalTheory.LFun.ConjPlace.invT (RingEquiv.refl _) n g) x) (ρ g y) = β x y)
     {Y : W} {C C' : Multiset ℂˣ} (hY : IsSatVecGL w ρ Y C') {x₀ : V} (hx₀ : β x₀ Y ≠ 0)
-    (hE : ∀ x ∈ fixed σ (KGL w n), C.card = n ∧ ∀ ϖ, IsUnifV E w ϖ → ∀ j ≤ n,
-      β (heckeVec σ (KGL w n) (Tj ℂ n (Ov E w) ϖ j) x) Y = satEig (qV E w) n C j * β x Y) : C = C' := by
+    (hE : ∀ x ∈ fixed σ (KGL w (n := n)), C.card = n ∧ ∀ ϖ, IsUnifV E w ϖ → ∀ j ≤ n,
+      β (heckeVec σ (KGL w (n := n)) (Tj ℂ n (Ov E w) ϖ j) x) Y = satEig (qV E w) n C j * β x Y) : C = C' := by
   classical
-  have hKc : IsCompact (KGL w n : Set (GL (Fin n) (w.adicCompletion E))) :=
+  have hKc : IsCompact (KGL w (n := n) : Set (GL (Fin n) (w.adicCompletion E))) :=
     GlobalTheory.LFun.IntPtsUnitary.isCompact_GLint _ (PI.AdicCompletionValuation.isCompact_adicCompletionIntegers E w)
   let c := RingEquiv.refl (w.adicCompletion E)
   have hc : ∀ a, Valued.v (c a) = Valued.v a := fun _ => rfl
@@ -123,7 +128,7 @@ theorem UpperTheory.ConvolutionTheory.RankTwoDescent.satPair :
     filter_upwards [hsm x] with y hy
     exact Subtype.ext (Subtype.ext (funext fun g => hy g))
   have hker0 : ∀ y : Q.V, (∀ x, B x y = 0) → y = 0 := by
-    have hst : IsStable ((LinearMap.ker B.flip).map Q.V.subtype) := by
+    have hst : _root_.GlobalTheory.CuspRep.IsStable ((LinearMap.ker B.flip).map Q.V.subtype) := by
       rintro o _ ⟨y, hy, rfl⟩
       have hy' : ∀ x, B x y = 0 := fun x => LinearMap.congr_fun (LinearMap.mem_ker.1 hy) x
       refine ⟨Q.op o y, LinearMap.mem_ker.2 (LinearMap.ext fun x => ?_), rfl⟩
@@ -168,7 +173,8 @@ theorem UpperTheory.ConvolutionTheory.RankTwoDescent.satPair :
     push_neg at hn
     refine hY.1 ?_
     have h0 := hker0 ((TC.toDual Q).symm Y) hn
-    simpa using h0
+    have h1 := congrArg (TC.toDual Q) h0
+    simpa only [LinearEquiv.apply_symm_apply, LinearEquiv.map_zero] using h1
   have hi : ∀ g x y, β (σ (GlobalTheory.LFun.ConjPlace.invT (RingEquiv.refl _) 2 g) x) ((TC.dual Q).locRep w g y) = β x y := by
     intro g x y
     obtain ⟨y, rfl⟩ := (TC.toDual Q).surjective y
@@ -185,7 +191,7 @@ theorem UpperTheory.ConvolutionTheory.RankTwoDescent.satPair :
   have hfin := sat_eq_of_eig (n := 2) hsmooth β hi hY hx₀ (fun x hx => by
     have hfix : Fix w x.1.1 := fun g k hk => congrArg (fun u : V => u.1.1 g) (GlobalTheory.LGrp.mem_fixed.1 hx k hk)
     refine ⟨(hC x hfix 1).card, fun ϖ hϖ j hj => ?_⟩
-    have hTz : ∀ g, T (GlobalTheory.LFun.heckeVec σ (GlobalTheory.LFun.KGL w 2) (Formalism.UG.Tj ℂ 2 (Formalism.UG.Ov E w) ϖ j) x) g =
+    have hTz : ∀ g, T (GlobalTheory.LFun.heckeVec σ (GlobalTheory.LFun.KGL w (n := 2)) (Formalism.UG.Tj ℂ 2 (Formalism.UG.Ov E w) ϖ j) x) g =
         GlobalTheory.LFun.satEig (Formalism.UG.qV E w) 2 C j * T x g := by
       intro g
       let L : V →+ ℂ := (Pi.evalAddMonoidHom _ g).comp T.toAddMonoidHom
@@ -196,7 +202,7 @@ theorem UpperTheory.ConvolutionTheory.RankTwoDescent.satPair :
         rw [map_smul, Pi.smul_apply, smul_eq_mul, heq x (σ c.out x) c.out (fun _ => rfl) g, one_mul]
         rfl
       · simp
-    have hz : T (GlobalTheory.LFun.heckeVec σ (GlobalTheory.LFun.KGL w 2) (Formalism.UG.Tj ℂ 2 (Formalism.UG.Ov E w) ϖ j) x -
+    have hz : T (GlobalTheory.LFun.heckeVec σ (GlobalTheory.LFun.KGL w (n := 2)) (Formalism.UG.Tj ℂ 2 (Formalism.UG.Ov E w) ϖ j) x -
         GlobalTheory.LFun.satEig (Formalism.UG.qV E w) 2 C j • x) = 0 := by
       funext g
       simp [map_sub, hTz]

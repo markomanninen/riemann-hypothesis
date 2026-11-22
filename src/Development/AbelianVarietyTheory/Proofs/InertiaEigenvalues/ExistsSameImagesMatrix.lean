@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InvariantSchwartzMemSpanLatticeIndicators
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanIndicatorLowerSetsFinitePoset
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsGLOfSpanRangeEqLocalRing
+
+@[expose] public section
 
 namespace GlobalTheory.DownLift.SplitGen
 
@@ -89,10 +94,10 @@ private lemma exists_matrix_vecMul_span_eq_of_smul_mem {R : Type} [CommRing R] [
   rw [Matrix.det_mul, h0, mul_zero, Matrix.det_smul, Matrix.det_one, mul_one] at this
   exact pow_ne_zero _ hc this.symm
 
+
 variable (O K : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
   [Finite (IsLocalRing.ResidueField O)] [Field K] [Algebra O K] [IsFractionRing O K] (n r : ℕ) in
 variable {O K n r} in
-
 theorem _root_.GlobalTheory.DownLift.SplitGen.exists_same_images_matrix (hr : r ≤ n) {d : O} (hd : d ≠ 0) {V I : Type}
     [AddCommGroup V] [Module ℂ V]
     (M : I → V →ₗ[ℂ] (Matrix (Fin n) (Fin r) K → ℂ)) (f : V) (G : Submodule ℂ V)
@@ -143,7 +148,8 @@ theorem _root_.GlobalTheory.DownLift.SplitGen.exists_same_images_matrix (hr : r 
             Ideal.Quotient.mk (Ideal.span {d ^ 2}) (c * a) := fun c a => by
           rw [Algebra.smul_def, Ideal.Quotient.algebraMap_eq, ← map_mul]
         have e := congrFun (hh a) b
-        simp only [red, Finset.sum_apply, Pi.smul_apply, hs, ← map_sum, Ideal.Quotient.eq,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [red, Finset.sum_apply, Pi.smul_apply, hs, ← map_sum, Ideal.Quotient.eq,
           Ideal.mem_span_singleton'] at e
         obtain ⟨c, hc⟩ := e
         exact ⟨c, by rw [Matrix.mul_apply]; linear_combination -hc⟩
@@ -158,7 +164,8 @@ theorem _root_.GlobalTheory.DownLift.SplitGen.exists_same_images_matrix (hr : r 
         simp only [smul_eq_mul, Matrix.smul_apply, Matrix.add_apply, Matrix.mul_apply, Matrix.map_apply,
           Matrix.of_apply, mul_add, Finset.mul_sum]
         rw [e1, hz a b]
-        simp only [Matrix.mul_apply, map_add, map_sum, map_mul, map_pow, smul_eq_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Matrix.mul_apply, map_add (f := _), map_sum, map_mul, map_pow, smul_eq_mul]
         have : ∀ k, ι d * (ι ((h : Matrix (Fin n) (Fin n) O) a k) * x k b) = ι ((h : Matrix (Fin n) (Fin n) O) a k) * ι (hx.choose k b) :=
           fun k => by rw [← e2 k]; ring
         simp only [this]

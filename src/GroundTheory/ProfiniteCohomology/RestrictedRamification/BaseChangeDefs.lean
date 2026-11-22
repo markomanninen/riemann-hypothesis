@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.IsUnramifiedOutsideIffLeMaxUnramifiedOutside
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.IsUnramifiedOutsideIffLeMaxUnramifiedOutside
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -36,11 +41,6 @@ def fieldEquivOfRestrictScalarsEq : E ≃ₐ[F] E' where
   commutes' _ := rfl
 
 @[simp]
-theorem coe_fieldEquivOfRestrictScalarsEq (x : E) :
-    ((fieldEquivOfRestrictScalarsEq h x : E') : Ω) = x :=
-  rfl
-
-@[simp]
 theorem coe_fieldEquivOfRestrictScalarsEq_symm (y : E') :
     (((fieldEquivOfRestrictScalarsEq h).symm y : E) : Ω) = y :=
   rfl
@@ -52,10 +52,6 @@ def embeddingOfRestrictScalarsEq : L →ₐ[F] E :=
 @[simp]
 theorem coe_embeddingOfRestrictScalarsEq (x : L) :
     ((embeddingOfRestrictScalarsEq h x : E) : Ω) = algebraMap L Ω x :=
-  rfl
-
-theorem fieldEquivOfRestrictScalarsEq_embedding (x : L) :
-    fieldEquivOfRestrictScalarsEq h (embeddingOfRestrictScalarsEq h x) = algebraMap L E' x :=
   rfl
 
 def fixingOfRestrictScalarsEq : Subgroup Gal(E/F) :=
@@ -104,11 +100,6 @@ theorem coe_fixingMulEquivOfRestrictScalarsEq_apply (σ : fixingOfRestrictScalar
       ((σ : Gal(E/F)) ((fieldEquivOfRestrictScalarsEq h).symm x) : Ω) :=
   rfl
 
-theorem fieldEquivOfRestrictScalarsEq_apply_apply (σ : fixingOfRestrictScalarsEq h) (x : E) :
-    fieldEquivOfRestrictScalarsEq h ((σ : Gal(E/F)) x) =
-      fixingMulEquivOfRestrictScalarsEq h σ (fieldEquivOfRestrictScalarsEq h x) :=
-  rfl
-
 theorem coe_fixingMulEquivOfRestrictScalarsEq_symm_apply (τ : Gal(E'/L)) (x : E) :
     (((((fixingMulEquivOfRestrictScalarsEq h).symm τ : fixingOfRestrictScalarsEq h) : Gal(E/F)) x :
       E) : Ω) = (τ (fieldEquivOfRestrictScalarsEq h x) : Ω) :=
@@ -142,10 +133,12 @@ theorem continuous_coe_fixingMulEquivOfRestrictScalarsEq_symm [Algebra.IsIntegra
   intro y hy
   have hy' : y = ∑ i, b.repr ⟨y, hy⟩ i • (b i : E) := by
     have := congrArg K.val (b.sum_repr ⟨y, hy⟩)
-    rw [map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
     simp only [map_smul] at this
     exact this.symm
-  rw [hy', map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hy', map_sum]
   simp only [map_smul, hb]
 
 end Abstract
@@ -158,12 +151,44 @@ variable (S : Set (HeightOneSpectrum (𝓞 F)))
 
 variable [IsGalois F Ω]
 
-theorem exists_le_of_algebraMap_mem (hL : ∀ x : L, algebraMap L Ω x ∈ maxUnramifiedOutside F Ω S) :
+theorem exists_le_of_algebraMap_mem (hL : ∀ x : L, algebraMap L Ω x ∈ (maxUnramifiedOutside (F := F) (Ω := Ω) S)) :
     ∃ E : IntermediateField F Ω, FiniteDimensional F E ∧ IsUnramifiedOutside S E ∧
       ∀ x : L, algebraMap L Ω x ∈ E := by
   classical
+  have mem_iff {x : Ω} : x ∈ maxUnramifiedOutside (F := F) (Ω := Ω) S ↔
+      ∃ E : IntermediateField F Ω, FiniteDimensional F E ∧
+        IsUnramifiedOutside S E ∧ x ∈ E := by
+    constructor
+    · intro hx
+      have hne : Nonempty {E : IntermediateField F Ω // FiniteDimensional F E ∧
+          IsUnramifiedOutside S E} := ⟨⟨⊥, inferInstance, isUnramifiedOutside_bot S⟩⟩
+      have hdir : Directed (· ≤ ·) (fun E : {E : IntermediateField F Ω //
+          FiniteDimensional F E ∧ IsUnramifiedOutside S E} => E.1) := by
+        intro E₁ E₂
+        have := E₁.2.1
+        have := E₂.2.1
+        exact ⟨⟨E₁.1 ⊔ E₂.1, inferInstance, E₁.2.2.sup E₂.2.2⟩, le_sup_left, le_sup_right⟩
+      rw [maxUnramifiedOutside_eq_iSup, ← SetLike.mem_coe,
+        IntermediateField.coe_iSup_of_directed hdir, Set.mem_iUnion] at hx
+      obtain ⟨E, hE⟩ := hx
+      exact ⟨E.1, E.2.1, E.2.2, hE⟩
+    · rintro ⟨E, hf, hu, hx⟩
+      exact le_maxUnramifiedOutside S hu hx
+  have exists_subset (s : Finset Ω)
+      (hs : ∀ x ∈ s, x ∈ maxUnramifiedOutside (F := F) (Ω := Ω) S) :
+      ∃ E : IntermediateField F Ω, FiniteDimensional F E ∧ IsUnramifiedOutside S E ∧
+        ∀ x ∈ s, x ∈ E := by
+    induction s using Finset.induction_on with
+    | empty => exact ⟨⊥, inferInstance, isUnramifiedOutside_bot S, by simp⟩
+    | insert a s _ ih =>
+      obtain ⟨E₁, hf₁, hu₁, ha⟩ := mem_iff.1 (hs a (Finset.mem_insert_self a s))
+      obtain ⟨E₂, hf₂, hu₂, hs₂⟩ := ih fun x hx => hs x (Finset.mem_insert_of_mem hx)
+      refine ⟨E₁ ⊔ E₂, inferInstance, hu₁.sup hu₂, fun x hx => ?_⟩
+      rcases Finset.mem_insert.1 hx with rfl | hx
+      · exact le_sup_left (α := IntermediateField F Ω) ha
+      · exact le_sup_right (α := IntermediateField F Ω) (hs₂ x hx)
   let b := Module.finBasis F L
-  obtain ⟨E, hf, hu, hE⟩ := exists_subset_of_subset_maxUnramifiedOutside S
+  obtain ⟨E, hf, hu, hE⟩ := exists_subset
     (Finset.univ.image fun i => algebraMap L Ω (b i)) fun x hx => by
       obtain ⟨i, -, rfl⟩ := Finset.mem_image.1 hx
       exact hL (b i)
@@ -171,14 +196,15 @@ theorem exists_le_of_algebraMap_mem (hL : ∀ x : L, algebraMap L Ω x ∈ maxUn
   have hx : algebraMap L Ω x = ∑ i, b.repr x i • algebraMap L Ω (b i) := by
     conv_lhs => rw [← b.sum_repr x]
     change IsScalarTower.toAlgHom F L Ω _ = _
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smul]
     rfl
   rw [hx]
   exact sum_mem fun i _ => E.smul_mem (hE _ (Finset.mem_image_of_mem _ (Finset.mem_univ i)))
 
 theorem isUnramifiedIn_of_algebraMap_mem
-    (hL : ∀ x : L, algebraMap L Ω x ∈ maxUnramifiedOutside F Ω S) :
+    (hL : ∀ x : L, algebraMap L Ω x ∈ (maxUnramifiedOutside (F := F) (Ω := Ω) S)) :
     ∀ v ∉ S, Algebra.IsUnramifiedIn (𝓞 L) v.asIdeal := by
   obtain ⟨E, hf, hu, hE⟩ := exists_le_of_algebraMap_mem S hL
   let j : L →ₐ[F] E := (IsScalarTower.toAlgHom F L Ω).codRestrict E.toSubalgebra hE
@@ -193,8 +219,8 @@ theorem isUnramifiedIn_of_algebraMap_mem
   subst e
   exact h
 
-omit [IsGalois F Ω] in
 
+omit [IsGalois F Ω] in
 theorem isUnramifiedOutside_restrictScalars_iff_of_isUnramifiedIn
     (hL : ∀ v ∉ S, Algebra.IsUnramifiedIn (𝓞 L) v.asIdeal) (M : IntermediateField L Ω)
     [FiniteDimensional L M] :
@@ -228,20 +254,60 @@ theorem isUnramifiedOutside_restrictScalars_iff_of_isUnramifiedIn
     exact (isUnramifiedAt_tower_iff (F := F) (L := L) Q).2 ⟨h2, h1⟩
 
 theorem restrictScalars_maxUnramifiedOutside_eq
-    (hL : ∀ x : L, algebraMap L Ω x ∈ maxUnramifiedOutside F Ω S) :
-    (maxUnramifiedOutside L Ω (placesOver S)).restrictScalars F = maxUnramifiedOutside F Ω S := by
+    (hL : ∀ x : L, algebraMap L Ω x ∈ (maxUnramifiedOutside (F := F) (Ω := Ω) S)) :
+    ((maxUnramifiedOutside (F := L) (Ω := Ω) (placesOver S))).restrictScalars F = (maxUnramifiedOutside (F := F) (Ω := Ω) S) := by
   have hLu := isUnramifiedIn_of_algebraMap_mem S hL
   have : IsGalois L Ω := IsGalois.tower_top_of_isGalois F L Ω
+  have mem_iff {x : Ω} : x ∈ maxUnramifiedOutside (F := L) (Ω := Ω) (placesOver S) ↔
+      ∃ M : IntermediateField L Ω, FiniteDimensional L M ∧
+        IsUnramifiedOutside (placesOver S) M ∧ x ∈ M := by
+    constructor
+    · intro hx
+      have hne : Nonempty {M : IntermediateField L Ω // FiniteDimensional L M ∧
+          IsUnramifiedOutside (placesOver S) M} := ⟨⟨⊥, inferInstance,
+            isUnramifiedOutside_bot (placesOver S)⟩⟩
+      have hdir : Directed (· ≤ ·) (fun M : {M : IntermediateField L Ω //
+          FiniteDimensional L M ∧ IsUnramifiedOutside (placesOver S) M} => M.1) := by
+        intro M₁ M₂
+        have := M₁.2.1
+        have := M₂.2.1
+        exact ⟨⟨M₁.1 ⊔ M₂.1, inferInstance,
+          M₁.2.2.sup M₂.2.2⟩, le_sup_left, le_sup_right⟩
+      rw [maxUnramifiedOutside_eq_iSup, ← SetLike.mem_coe,
+        IntermediateField.coe_iSup_of_directed hdir, Set.mem_iUnion] at hx
+      obtain ⟨M, hM⟩ := hx
+      exact ⟨M.1, M.2.1, M.2.2, hM⟩
+    · rintro ⟨M, hf, hu, hx⟩
+      exact le_maxUnramifiedOutside (placesOver S) hu hx
+  have mem_iff_F {x : Ω} : x ∈ maxUnramifiedOutside (F := F) (Ω := Ω) S ↔
+      ∃ E : IntermediateField F Ω, FiniteDimensional F E ∧
+        IsUnramifiedOutside S E ∧ x ∈ E := by
+    constructor
+    · intro hx
+      have hne : Nonempty {E : IntermediateField F Ω // FiniteDimensional F E ∧
+          IsUnramifiedOutside S E} := ⟨⟨⊥, inferInstance, isUnramifiedOutside_bot S⟩⟩
+      have hdir : Directed (· ≤ ·) (fun E : {E : IntermediateField F Ω //
+          FiniteDimensional F E ∧ IsUnramifiedOutside S E} => E.1) := by
+        intro E₁ E₂
+        have := E₁.2.1
+        have := E₂.2.1
+        exact ⟨⟨E₁.1 ⊔ E₂.1, inferInstance, E₁.2.2.sup E₂.2.2⟩, le_sup_left, le_sup_right⟩
+      rw [maxUnramifiedOutside_eq_iSup, ← SetLike.mem_coe,
+        IntermediateField.coe_iSup_of_directed hdir, Set.mem_iUnion] at hx
+      obtain ⟨E, hE⟩ := hx
+      exact ⟨E.1, E.2.1, E.2.2, hE⟩
+    · rintro ⟨E, hf, hu, hx⟩
+      exact le_maxUnramifiedOutside S hu hx
   ext x
   rw [IntermediateField.mem_restrictScalars]
   constructor
   · intro hx
-    obtain ⟨M, hf, hu, hxM⟩ := (mem_maxUnramifiedOutside_iff (placesOver S)).1 hx
+    obtain ⟨M, hf, hu, hxM⟩ := mem_iff.1 hx
     have : FiniteDimensional F (M.restrictScalars F) := FiniteDimensional.trans F L M
     exact le_maxUnramifiedOutside S
       ((isUnramifiedOutside_restrictScalars_iff_of_isUnramifiedIn S hLu M).2 hu) hxM
   · intro hx
-    obtain ⟨E, hf, hu, hxE⟩ := (mem_maxUnramifiedOutside_iff S).1 hx
+    obtain ⟨E, hf, hu, hxE⟩ := mem_iff_F.1 hx
     obtain ⟨E₀, hf₀, hu₀, hE₀⟩ := exists_le_of_algebraMap_mem S hL
     let E' : IntermediateField F Ω := E₀ ⊔ E
     have hE' : ∀ y : L, algebraMap L Ω y ∈ E'.toSubfield := fun y =>
@@ -259,13 +325,13 @@ theorem restrictScalars_maxUnramifiedOutside_eq
       ((isUnramifiedOutside_restrictScalars_iff_of_isUnramifiedIn S hLu M).1 hMu)
       (le_sup_right (α := IntermediateField F Ω) hxE)
 
-variable {S} (hL : ∀ x : L, algebraMap L Ω x ∈ maxUnramifiedOutside F Ω S)
+variable {S} (hL : ∀ x : L, algebraMap L Ω x ∈ (maxUnramifiedOutside (F := F) (Ω := Ω) S))
 
 abbrev gsFieldEquiv :
-    maxUnramifiedOutside F Ω S ≃ₐ[F] maxUnramifiedOutside L Ω (placesOver S) :=
+    (maxUnramifiedOutside (F := F) (Ω := Ω) S) ≃ₐ[F] (maxUnramifiedOutside (F := L) (Ω := Ω) (placesOver S)) :=
   fieldEquivOfRestrictScalarsEq (restrictScalars_maxUnramifiedOutside_eq S hL)
 
-abbrev gsEmbedding : L →ₐ[F] maxUnramifiedOutside F Ω S :=
+abbrev gsEmbedding : L →ₐ[F] (maxUnramifiedOutside (F := F) (Ω := Ω) S) :=
   embeddingOfRestrictScalarsEq (restrictScalars_maxUnramifiedOutside_eq S hL)
 
 end Fields
@@ -275,30 +341,31 @@ section Groups
 variable {F L Ω : Type u} [Field F] [NumberField F] [Field L] [NumberField L] [Field Ω]
   [Algebra F L] [Algebra F Ω] [Algebra L Ω] [IsScalarTower F L Ω] [IsGalois F Ω]
 variable (S : Set (HeightOneSpectrum (𝓞 F)))
-  (hL : ∀ x : L, algebraMap L Ω x ∈ maxUnramifiedOutside F Ω S)
+  (hL : ∀ x : L, algebraMap L Ω x ∈ (maxUnramifiedOutside (F := F) (Ω := Ω) S))
 
 instance finiteDimensional_fieldRange_gsEmbedding :
     FiniteDimensional F (gsEmbedding (S := S) hL).fieldRange := by
   exact LinearEquiv.finiteDimensional (gsEmbedding hL).equivFieldRange.toLinearEquiv
 
-def gsOpenSubgroup : OpenSubgroup (galUnramifiedOutside F Ω S) :=
+def gsOpenSubgroup : OpenSubgroup ((galUnramifiedOutside (F := F) (Ω := Ω) S)) :=
   ⟨fixingOfRestrictScalarsEq (restrictScalars_maxUnramifiedOutside_eq S hL),
     (gsEmbedding (S := S) hL).fieldRange.fixingSubgroup_isOpen⟩
 
-theorem coe_gsOpenSubgroup : (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside F Ω S)) =
+theorem coe_gsOpenSubgroup : (gsOpenSubgroup S hL : Subgroup ((galUnramifiedOutside (F := F) (Ω := Ω) S))) =
     fixingOfRestrictScalarsEq (restrictScalars_maxUnramifiedOutside_eq S hL) :=
   rfl
 
-theorem mem_gsOpenSubgroup_iff (σ : galUnramifiedOutside F Ω S) :
+theorem mem_gsOpenSubgroup_iff (σ : (galUnramifiedOutside (F := F) (Ω := Ω) S)) :
     σ ∈ gsOpenSubgroup S hL ↔ ∀ x : L, σ (gsEmbedding hL x) = gsEmbedding hL x :=
   mem_fixingOfRestrictScalarsEq_iff _ σ
 
-def gsBaseChange : (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside F Ω S)) ≃ₜ*
-    galUnramifiedOutside L Ω (placesOver S) :=
+def gsBaseChange : (gsOpenSubgroup S hL : Subgroup ((galUnramifiedOutside (F := F) (Ω := Ω) S))) ≃ₜ*
+    (galUnramifiedOutside (F := L) (Ω := Ω) (placesOver S)) :=
   have : IsGalois L Ω := IsGalois.tower_top_of_isGalois F L Ω
-  have : CompactSpace (galUnramifiedOutside L Ω (placesOver S)) :=
-    (galUnramifiedOutside_isProfinite (placesOver S)).1
-  have : T2Space (galUnramifiedOutside F Ω S) := (galUnramifiedOutside_isProfinite S).2.1
+  have : CompactSpace ((galUnramifiedOutside (F := L) (Ω := Ω) (placesOver S))) :=
+    (galois_isProfinite L (maxUnramifiedOutside (F := L) (Ω := Ω) (placesOver S))).1
+  have : T2Space ((galUnramifiedOutside (F := F) (Ω := Ω) S)) :=
+    (galois_isProfinite F (maxUnramifiedOutside (F := F) (Ω := Ω) S)).2.1
   have hc : Continuous (fixingMulEquivOfRestrictScalarsEq
       (restrictScalars_maxUnramifiedOutside_eq S hL)).symm :=
     (continuous_coe_fixingMulEquivOfRestrictScalarsEq_symm _).subtype_mk _
@@ -308,27 +375,18 @@ def gsBaseChange : (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside F Ω S)
     continuous_toFun := e.symm.continuous
     continuous_invFun := hc }
 
-theorem gsBaseChange_toMulEquiv : (gsBaseChange S hL).toMulEquiv =
-    fixingMulEquivOfRestrictScalarsEq (restrictScalars_maxUnramifiedOutside_eq S hL) :=
-  rfl
-
 variable {S}
 
-theorem coe_gsBaseChange_apply (σ : (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside F Ω S)))
-    (x : maxUnramifiedOutside L Ω (placesOver S)) :
-    ((gsBaseChange S hL σ x : maxUnramifiedOutside L Ω (placesOver S)) : Ω) =
-      ((σ : galUnramifiedOutside F Ω S) ((gsFieldEquiv hL).symm x) : Ω) :=
+theorem coe_gsBaseChange_apply (σ : (gsOpenSubgroup S hL : Subgroup ((galUnramifiedOutside (F := F) (Ω := Ω) S))))
+    (x : (maxUnramifiedOutside (F := L) (Ω := Ω) (placesOver S))) :
+    ((gsBaseChange S hL σ x : (maxUnramifiedOutside (F := L) (Ω := Ω) (placesOver S))) : Ω) =
+      ((σ : (galUnramifiedOutside (F := F) (Ω := Ω) S)) ((gsFieldEquiv hL).symm x) : Ω) :=
   coe_fixingMulEquivOfRestrictScalarsEq_apply _ σ x
 
-theorem gsFieldEquiv_apply_apply (σ : (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside F Ω S)))
-    (x : maxUnramifiedOutside F Ω S) :
-    gsFieldEquiv hL ((σ : galUnramifiedOutside F Ω S) x) = gsBaseChange S hL σ (gsFieldEquiv hL x) :=
-  fieldEquivOfRestrictScalarsEq_apply_apply _ σ x
-
-theorem coe_gsBaseChange_symm_apply (τ : galUnramifiedOutside L Ω (placesOver S))
-    (x : maxUnramifiedOutside F Ω S) :
-    (((((gsBaseChange S hL).symm τ : (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside F Ω S))) : galUnramifiedOutside F Ω S) x :
-        maxUnramifiedOutside F Ω S) : Ω) = (τ (gsFieldEquiv hL x) : Ω) :=
+theorem coe_gsBaseChange_symm_apply (τ : (galUnramifiedOutside (F := L) (Ω := Ω) (placesOver S)))
+    (x : (maxUnramifiedOutside (F := F) (Ω := Ω) S)) :
+    (((((gsBaseChange S hL).symm τ : (gsOpenSubgroup S hL : Subgroup ((galUnramifiedOutside (F := F) (Ω := Ω) S)))) : (galUnramifiedOutside (F := F) (Ω := Ω) S)) x :
+        (maxUnramifiedOutside (F := F) (Ω := Ω) S)) : Ω) = (τ (gsFieldEquiv hL x) : Ω) :=
   coe_fixingMulEquivOfRestrictScalarsEq_symm_apply _ τ x
 
 end Groups

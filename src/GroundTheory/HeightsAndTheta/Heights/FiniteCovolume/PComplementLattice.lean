@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StComplementLattice
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLinePairOrbitsFinite
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StComplementLattice
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLinePairOrbitsFinite
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -10,11 +14,8 @@ noncomputable section
 
 theorem isAddTorsionFree_of_module (K V : Type*) [Field K] [CharZero K] [AddCommGroup V]
     [Module K V] : IsAddTorsionFree V := by
-  refine ⟨fun k hk x y hxy => ?_⟩
-  have hk' : (k : K) ≠ 0 := Nat.cast_ne_zero.2 hk
-  have e : (k : K) • x = (k : K) • y := by
-    simpa only [Nat.cast_smul_eq_nsmul] using hxy
-  exact smul_right_injective V hk' e
+  letI : HasUniqueDiv V := HasUniqueDiv.of_isTorsionFree K V
+  infer_instance
 
 theorem fg_of_fg_map_of_injective {A B : Type*} [AddCommGroup A] [AddCommGroup B]
     {H : AddSubgroup A} (φ : A →+ B) (hφ : Function.Injective φ) (hH : (H.map φ).FG) : H.FG := by
@@ -33,8 +34,8 @@ variable {F E : Type*} [Field F] [Field E] [NumberField E] [Algebra F E]
   [Algebra.IsQuadraticExtension F E]
 variable {W : Type*} [AddCommGroup W] [Module E W]
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem factorial_nsmul_mem_of_mem_dual {h : HermitianForm F E W} {D : ℕ} {La : AddSubgroup W}
     (hLa : IsDIntegral h D La) {y : W} (hy : y ∈ dualLattice h La) : D.factorial • y ∈ La := by
   have hk : La.relIndex (dualLattice h La) • y ∈ La := by
@@ -130,7 +131,7 @@ theorem ComplementLattice.proof (h : HermitianForm F E W) [FiniteDimensional E W
       have key : h.toSesq (n • (y' : W)) x = h.toSesq (y' : W) (n • x - a • v₀ - b • w₀) := by
         rw [map_nsmul, LinearMap.smul_apply, ← map_nsmul]
         conv_lhs => rw [hnx]
-        rw [map_add, map_add, map_smul, map_smul, e1, e2]
+        rw [map_add (f := _), map_add (f := _), map_smul, map_smul, e1, e2]
         simp
       rw [key]
       have := hy' ⟨_, hmem⟩ hzLa
@@ -140,6 +141,7 @@ theorem ComplementLattice.proof (h : HermitianForm F E W) [FiniteDimensional E W
     exact h2
 
   have : IsAddTorsionFree (hypComplement h v₀ w₀) := isAddTorsionFree_of_module E (hypComplement h v₀ w₀)
+  have : HasUniqueDiv (hypComplement h v₀ w₀) := HasUniqueDiv.of_isTorsionFree E _
   have hGfg : G.FG := fg_of_fg_map_of_injective (nsmulAddMonoidHom N)
     (AddSubgroup.nsmulAddMonoidHom_injective_of_isTorsionFree hNpos.ne')
     (fg_of_le_fg hNG hPlat.fg)

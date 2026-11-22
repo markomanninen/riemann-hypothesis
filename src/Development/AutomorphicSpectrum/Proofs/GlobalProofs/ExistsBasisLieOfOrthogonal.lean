@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LieAlgebraOfLinearGroupClosed
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LieAlgebraOfLinearGroupClosed
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,50 +70,53 @@ theorem orthogonal_of_preserves {E : Type*} [NormedAddCommGroup E] [InnerProduct
 
 end GlobalTheory.CompanionTheory.Hypotheses₂.HCA.InvBasis
 
-open GlobalTheory.CompanionTheory.Hypotheses₂.HCA.InvBasis in
 
+open GlobalTheory.CompanionTheory.Hypotheses₂.HCA.InvBasis in
 theorem GlobalTheory.CompanionTheory.Hypotheses₂.HCA.exists_basis_lieOf_orthogonal : ∀ {n : ℕ} {G : Set (Matrix (Fin n) (Fin n) ℂ)} (_hG : IsLinRed G), ∃ (d : ℕ) (b : Fin d → Matrix (Fin n) (Fin n) ℂ), (∀ i, b i ∈ HCSS.lieOf G) ∧ LinearIndependent ℝ b ∧ (∀ X ∈ HCSS.lieOf G, ∃ r : Fin d → ℝ, X = ∑ i, r i • b i) ∧ ∀ k ∈ maxCpt G, ∃ O : Matrix (Fin d) (Fin d) ℝ, Oᵀ * O = 1 ∧ ∀ i, k * b i * k⁻¹ = ∑ l, O l i • b l := by
-  intro n G hG
-  obtain ⟨hadd, hsmul, -, hAd⟩ := lieOf_isLieSubalgebra hG
-  let L : Submodule ℝ (Matrix (Fin n) (Fin n) ℂ) :=
-    { carrier := HCSS.lieOf G
-      add_mem' := fun {X Y} hX hY => hadd X Y hX hY
-      zero_mem' := fun t => by simpa using hG.one_mem
-      smul_mem' := fun r X hX => hsmul r X hX }
-  let W : Submodule ℝ (EuclideanSpace ℂ (Fin n × Fin n)) := L.map (vecOf (n := n)).toLinearMap
-  have : FiniteDimensional ℝ (EuclideanSpace ℂ (Fin n × Fin n)) :=
-    FiniteDimensional.complexToReal _
-  obtain ⟨d, e, heW, hon, hexp⟩ := exists_orthonormal W
-  have hmemW : ∀ X ∈ HCSS.lieOf G, vecOf X ∈ W := fun X hX => ⟨X, hX, rfl⟩
-  have hbL : ∀ i, vecOf.symm (e i) ∈ HCSS.lieOf G := by
-    intro i
-    obtain ⟨X, hX, hXe⟩ := heW i
-    have : vecOf.symm (e i) = X := by
-      rw [← hXe]; simp
-    rw [this]; exact hX
-  have hexpM : ∀ X ∈ HCSS.lieOf G, X = ∑ i, ⟪e i, vecOf X⟫_ℝ • vecOf.symm (e i) := by
-    intro X hX
-    have h := hexp _ (hmemW X hX)
-    have h2 := congrArg (vecOf (n := n)).symm h
-    rw [map_sum] at h2
-    simpa using h2
-  refine ⟨d, fun i => vecOf.symm (e i), hbL, ?_, ?_, ?_⟩
-  · exact hon.linearIndependent.map' (vecOf (n := n)).symm.toLinearMap
-      (LinearMap.ker_eq_bot.2 (vecOf (n := n)).symm.injective)
-  · intro X hX
-    exact ⟨_, hexpM X hX⟩
-  · intro k hk
-    have hkG : k ∈ G := hk.1
-    have hkU : k ∈ Matrix.unitaryGroup (Fin n) ℂ := hk.2
-    let f : Fin d → EuclideanSpace ℂ (Fin n × Fin n) := fun i => vecOf (k * vecOf.symm (e i) * k⁻¹)
-    have hfW : ∀ i, f i ∈ W := fun i => hmemW _ (hAd k hkG _ (hbL i))
-    have hO := orthogonal_of_preserves hon f (fun i => hexp _ (hfW i)) (fun i j => by
-      have := inner_conj hkU (vecOf.symm (e i)) (vecOf.symm (e j))
-      simpa [f] using this)
-    refine ⟨_, hO, fun i => ?_⟩
-    have h := hexp _ (hfW i)
-    have h2 := congrArg (vecOf (n := n)).symm h
-    rw [map_sum] at h2
-    simpa [f] using h2
+  open GlobalTheory.CompanionTheory.Hypotheses₂.HCA.InvBasis in
+    intro n G hG
+    obtain ⟨hadd, hsmul, -, hAd⟩ := lieOf_isLieSubalgebra hG
+    let L : Submodule ℝ (Matrix (Fin n) (Fin n) ℂ) :=
+      { carrier := HCSS.lieOf G
+        add_mem' := fun {X Y} hX hY => hadd X Y hX hY
+        zero_mem' := fun t => by simpa using hG.one_mem
+        smul_mem' := fun r X hX => hsmul r X hX }
+    let W : Submodule ℝ (EuclideanSpace ℂ (Fin n × Fin n)) := L.map (vecOf (n := n)).toLinearMap
+    have : FiniteDimensional ℝ (EuclideanSpace ℂ (Fin n × Fin n)) :=
+      FiniteDimensional.complexToReal _
+    obtain ⟨d, e, heW, hon, hexp⟩ := exists_orthonormal W
+    have hmemW : ∀ X ∈ HCSS.lieOf G, vecOf X ∈ W := fun X hX => ⟨X, hX, rfl⟩
+    have hbL : ∀ i, vecOf.symm (e i) ∈ HCSS.lieOf G := by
+      intro i
+      obtain ⟨X, hX, hXe⟩ := heW i
+      have : vecOf.symm (e i) = X := by
+        rw [← hXe]; simp
+      rw [this]; exact hX
+    have hexpM : ∀ X ∈ HCSS.lieOf G, X = ∑ i, ⟪e i, vecOf X⟫_ℝ • vecOf.symm (e i) := by
+      intro X hX
+      have h := hexp _ (hmemW X hX)
+      have h2 := congrArg (vecOf (n := n)).symm h
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at h2
+      simpa using h2
+    refine ⟨d, fun i => vecOf.symm (e i), hbL, ?_, ?_, ?_⟩
+    · exact hon.linearIndependent.map' (vecOf (n := n)).symm.toLinearMap
+        (LinearMap.ker_eq_bot.2 (vecOf (n := n)).symm.injective)
+    · intro X hX
+      exact ⟨_, hexpM X hX⟩
+    · intro k hk
+      have hkG : k ∈ G := hk.1
+      have hkU : k ∈ Matrix.unitaryGroup (Fin n) ℂ := hk.2
+      let f : Fin d → EuclideanSpace ℂ (Fin n × Fin n) := fun i => vecOf (k * vecOf.symm (e i) * k⁻¹)
+      have hfW : ∀ i, f i ∈ W := fun i => hmemW _ (hAd k hkG _ (hbL i))
+      have hO := orthogonal_of_preserves hon f (fun i => hexp _ (hfW i)) (fun i j => by
+        have := inner_conj hkU (vecOf.symm (e i)) (vecOf.symm (e j))
+        simpa [f] using this)
+      refine ⟨_, hO, fun i => ?_⟩
+      have h := hexp _ (hfW i)
+      have h2 := congrArg (vecOf (n := n)).symm h
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at h2
+      simpa [f] using h2
 
 end

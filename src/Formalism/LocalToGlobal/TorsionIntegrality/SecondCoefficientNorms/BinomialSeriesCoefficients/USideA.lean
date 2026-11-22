@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.VeluIntegral
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.DegreeLeOfMemAntidiagonal
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.VeluIntegral
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.DegreeLeOfMemAntidiagonal
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -14,7 +18,7 @@ section Int
 variable {K : Type} [Field K] {R : Subring K}
 
 theorem intPS_add {f g : PowerSeries K} (hf : IntPS R f) (hg : IntPS R g) : IntPS R (f + g) := fun n => by
-  rw [map_add]
+  rw [map_add (f := _)]
   exact R.add_mem (hf n) (hg n)
 
 theorem intPS_sub {f g : PowerSeries K} (hf : IntPS R f) (hg : IntPS R g) : IntPS R (f - g) := fun n => by
@@ -42,7 +46,8 @@ theorem intPS_X : IntPS R (PowerSeries.X : PowerSeries K) := by
 
 theorem intPS_sum {ι : Type} (s : Finset ι) {F : ι → PowerSeries K} (hF : ∀ i ∈ s, IntPS R (F i)) :
     IntPS R (∑ i ∈ s, F i) := fun n => by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact R.sum_mem (fun i hi => hF i hi n)
 
 theorem intPS_of_mul_eq_one {U V : PowerSeries K} (hU : IntPS R U)
@@ -123,16 +128,11 @@ theorem subst_C' (a : PowerSeries K) (c : K) :
     PowerSeries.subst a (PowerSeries.C c) = PowerSeries.C c :=
   PowerSeries.subst_C c
 
-theorem subst_sum {ι : Type} {a : PowerSeries K} (ha : PowerSeries.HasSubst a) (s : Finset ι)
-    (F : ι → PowerSeries K) :
-    PowerSeries.subst a (∑ i ∈ s, F i) = ∑ i ∈ s, PowerSeries.subst a (F i) := by
-  rw [← PowerSeries.coe_substAlgHom ha, map_sum]
-
 theorem subst_wpShift_zero {a : PowerSeries K} (ha : PowerSeries.HasSubst a) (e : PowerSeries K) :
     PowerSeries.subst a (wpShift e 0) = 1 + a ^ 2 * PowerSeries.subst a e := by
   unfold wpShift
   rw [← PowerSeries.coe_substAlgHom ha]
-  simp only [map_add, map_one, map_mul, map_pow, map_sub, map_zero, sub_zero,
+  simp only [map_add (f := _), map_one, map_mul, map_pow, map_sub, map_zero, sub_zero,
     PowerSeries.coe_substAlgHom, PowerSeries.subst_X ha]
 
 end Log
@@ -152,16 +152,17 @@ theorem veluXOfSigma' : VeluXFromZ := by
   rw [subst_wpShift_zero hl] at F1
   have F2 := congrArg (PowerSeries.subst (mulBy l linv al)) F0
   rw [← PowerSeries.coe_substAlgHom hm] at F2
-  simp only [map_add, map_mul, map_pow, PowerSeries.coe_substAlgHom] at F2
+  simp only [map_add (f := _), map_mul, map_pow, PowerSeries.coe_substAlgHom] at F2
   rw [subst_C', PowerSeries.subst_X hm, subst_mulBy_l h, PowerSeries.subst_comp_subst_apply hl hm,
     subst_mulBy_l h, subst_wpShift_zero hal] at F2
   have hZr : PowerSeries.subst (PowerSeries.C al * l) e = PowerSeries.subst l (PowerSeries.rescale al e) := by
     rw [subst_rescale h, PowerSeries.subst_comp_subst_apply hl hm, subst_mulBy_l h]
   have F3 := congrArg (PowerSeries.subst l) hE.2.2
   rw [← PowerSeries.coe_substAlgHom hl] at F3
-  simp only [map_add, map_mul, map_sum, map_sub, PowerSeries.coe_substAlgHom] at F3
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_mul, map_sum, map_sub, PowerSeries.coe_substAlgHom] at F3
   simp only [subst_C'] at F3
-  simp only [hw, ← hZr, map_pow, map_add] at F3
+  simp only [hw, ← hZr, map_pow, map_add (f := _)] at F3
   have hsum : ∑ P, (xs P + PowerSeries.C c0 - (PowerSeries.C (xP P) + PowerSeries.C c0)) =
       ∑ P, (xs P - PowerSeries.C (xP P)) := Finset.sum_congr rfl (fun P _ => by ring)
   rw [hsum] at F3

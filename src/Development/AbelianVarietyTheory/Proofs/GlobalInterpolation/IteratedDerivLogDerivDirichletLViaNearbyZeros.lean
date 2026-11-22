@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ZerosDisc
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LogDerivLFunctionStrip
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormSubOneMulRiemannZetaLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ZerosDisc
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LogDerivLFunctionStrip
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormSubOneMulRiemannZetaLe
+
+@[expose] public section
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology GlobalTheory.Lin
 open scoped Classical
 
@@ -126,7 +131,7 @@ lemma growth_triv : ∃ B : ℝ, 0 < B ∧ ∀ (q : ℕ) [NeZero q] (z : ℂ), -
     intro s hs
     rw [norm_prod]
     calc _ ≤ ∏ p ∈ q.primeFactors, (p : ℝ) ^ 3 := by
-          refine Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun p hp => ?_
+          refine Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun p hp => ?_
           have hp' := Nat.prime_of_mem_primeFactors hp
           have h2 : (2 : ℝ) ≤ p := by exact_mod_cast hp'.two_le
           refine (norm_sub_le _ _).trans ?_

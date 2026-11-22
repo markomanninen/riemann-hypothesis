@@ -1,7 +1,11 @@
-import Formalism.GaussJetBounds.GaussJetProofs.ThmAGaussOf
-import Formalism.GaussJetBounds.GaussJetProofs.Transfer
-import Formalism.GaussJetBounds.GaussJetProofs.FJEval
-import Formalism.GaussJetBounds.GaussJetProofs.Labels
+module
+
+public import Formalism.GaussJetBounds.GaussJetProofs.ThmAGaussOf
+public import Formalism.GaussJetBounds.GaussJetProofs.Transfer
+public import Formalism.GaussJetBounds.GaussJetProofs.FJEval
+public import Formalism.GaussJetBounds.GaussJetProofs.Labels
+
+@[expose] public section
 
 namespace Formalism.DworkPowerSeriesWeights
 

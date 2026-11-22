@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ESmall
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsFlagCharactersLeadingMinorsColength
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntProdRename
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartCharacterIsLogarithmStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ESmall
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsFlagCharactersLeadingMinorsColength
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntProdRename
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartCharacterIsLogarithmStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2.Pj ReciprocityTheory.PGsh ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ GlobalTheory.FGDepth GlobalTheory.CharDepth GlobalTheory.FactorDepth GlobalTheory.RefSum
 open GlobalTheory.IndefiniteRowSideFullHecke.TypedPartSplitPrimes (IsIntHom IsOrbit FrobOnType embX primeBelow SplitInK InertInK)
 open GlobalTheory.IndefiniteRowSideFullHecke.BigBlockCharacters (HasChars)
@@ -38,7 +43,8 @@ theorem hasChars_frame_of_hasAF : ∀ (E : Type) [Field E] [NumberField E] [IsCM
     unfold pairDet
     congr 1
     ext a b
-    simp only [Matrix.of_apply, RingHom.mapMatrix_apply, Matrix.map_apply, map_sum, map_mul, frame, lieVec, jX,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.of_apply, RingHom.mapMatrix_apply, Matrix.map_apply, map_sum, map_mul, frame, lieVec, jX,
       RingHom.comp_apply, X.comp, lf]
     exact Finset.sum_congr rfl fun j _ => mul_comm _ _
   have hm := hmin f.2

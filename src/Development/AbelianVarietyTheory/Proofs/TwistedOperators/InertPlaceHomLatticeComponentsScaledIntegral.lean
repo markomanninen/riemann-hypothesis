@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemIntMat
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemHomLatticeIffIntegralMatrixSplitChart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemIntMat
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemHomLatticeIffIntegralMatrixSplitChart
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum GlobalTheory.LFun GlobalTheory.AdelicU GlobalTheory.PRep GlobalTheory.FinZeta GlobalTheory.AdelicScalar GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues GlobalTheory.LiftRows
 open Formalism.IndefR.Lev (levG levChi IsBaseFrame)
@@ -28,7 +33,7 @@ theorem compAt_sigR {v : HeightOneSpectrum (𝓞 D.host.F)} {w : HeightOneSpectr
   induction y using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul a m => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem exists_gen (w : HeightOneSpectrum (𝓞 D.host.E)) :
     ∃ a₀ ∈ D.host.AA, algebraMap D.host.E (w.adicCompletion D.host.E) a₀ ≠ 0 ∧
@@ -50,7 +55,7 @@ theorem exists_gen (w : HeightOneSpectrum (𝓞 D.host.E)) :
     induction ha using Submodule.span_induction with
     | mem a ha => exact hmax a ha
     | zero => simp only [map_zero, zero_le]
-    | add x y _ _ hx hy => rw [RingHom.map_add]; exact (Valuation.map_add_le _ hx hy)
+    | add x y _ _ hx hy => rw [RingHom.map_add (f := _)]; exact (Valuation.map_add_le _ hx hy)
     | smul o x _ hx =>
       have ho : Valued.v (π (o : D.host.E)) ≤ 1 := by
         rw [Formalism.UG.P.levelaf_valued_algebraMap, show w.valuation D.host.E (o : D.host.E) = w.intValuation o from
@@ -108,8 +113,10 @@ theorem map_compW_sum (S T : HSp D) {v : HeightOneSpectrum (𝓞 D.host.F)} {w :
     algebraMap D.host.E (w.adicCompletion D.host.E) a₀ •
       (A * Y * (Formalism.UG.cT c A' * S.gram.map (algebraMap D.host.E (w.adicCompletion D.host.E)))) := by
   refine Matrix.ext fun p q => ?_
-  rw [Matrix.map_apply, Matrix.sum_apply, map_sum]
-  simp only [Matrix.sum_apply, map_sum, Matrix.smul_apply, smul_eq_mul, map_mul, compW_liftFin, compAt_singleAt,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.map_apply, Matrix.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.sum_apply, map_sum, Matrix.smul_apply, smul_eq_mul, map_mul, compW_liftFin, compAt_singleAt,
     GlobalTheory.SplitHomLattice.rk, Matrix.of_apply, compAt_sigR hv hc, compAt_one_tmul]
   simp only [Matrix.mul_apply, Formalism.UG.cT, Matrix.transpose_apply, Matrix.map_apply, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
@@ -125,7 +132,42 @@ theorem mem_map_latF_iff : ∀ (D : D7) (S T : HSp D) (v : HeightOneSpectrum (�
   intro D S T v w hv hw a ha
   obtain ⟨c, hc, -⟩ := InertChart.existsUnique_isConjAt D.sp.cm.sig hw hv
   have hlat := GlobalTheory.HeckeDual.isLattice_frameLat S
-  obtain ⟨aS, haS⟩ := InertChart.exists_isFrameAt (L := frameLat S) hw hlat.fg hlat.span_eq_top
+  have hspan : Submodule.span D.host.E (frameLat S : Set (Fin S.rank → D.host.E)) = ⊤ := by
+    have hfull : Submodule.span D.host.E (S.L0 : Set S.V) = ⊤ := by
+      let W := Submodule.span D.host.E (S.L0 : Set S.V)
+      change W = ⊤
+      by_contra h
+      let e : S.V ≃ₗ⋆[D.host.E] S.V :=
+        (S.frame.equivFun.trans (starLinearEquiv D.host.E)).trans S.frame.equivFun.symm
+      let g : S.V →ₗ[D.host.E] Module.Dual D.host.E W :=
+        (LinearMap.domRestrict' W).comp (S.hT.comp e.toLinearMap)
+      have hdim : Module.finrank D.host.E (Module.Dual D.host.E W) < Module.finrank D.host.E S.V := by
+        rw [Subspace.dual_finrank_eq]
+        exact Submodule.finrank_lt h
+      obtain ⟨x, hx, hx₀⟩ :=
+        Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+      have hsmul (a : D.host.E) : a • e x ∈ S.L0 := by
+        rw [← S.baseLattice_isUnimodular]
+        rw [Formalism.HermitianLatticesTheory.dualBasic_mem_dual]
+        intro y hy
+        have hxy : S.hT (e x) y = 0 :=
+          congrArg (fun f : Module.Dual D.host.E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+        have hyx : S.hT y (e x) = 0 := by
+          rw [(S.herm.eq (e x) y).symm, hxy, map_zero]
+        simp [hyx]
+      let i : D.host.E →ₗ[𝓞 D.host.E] S.L0 :=
+        ((LinearMap.toSpanSingleton D.host.E _ (e x)).restrictScalars (𝓞 D.host.E)).codRestrict S.L0 hsmul
+      let : Module.Finite (𝓞 D.host.E) S.L0 := Module.Finite.iff_fg.mpr S.standardTuple_isLattice.fg
+      let : Module.Finite (𝓞 D.host.E) D.host.E := Module.Finite.of_injective i fun a b hab =>
+        smul_left_injective D.host.E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+      exact RingOfIntegers.not_isField D.host.E
+        (isField_of_isIntegral_of_isField (R := 𝓞 D.host.E) (S := D.host.E)
+          (FaithfulSMul.algebraMap_injective _ _) (Field.toIsField _))
+    have heq : (frameLat S : Set (Fin S.rank → D.host.E)) =
+        S.frame.equivFun.toLinearMap '' (S.L0 : Set S.V) :=
+      (S.frame.equivFun.toEquiv.image_eq_preimage_symm _).symm
+    rw [heq, ← Submodule.map_span, hfull, Submodule.map_top, LinearEquiv.range]
+  obtain ⟨aS, haS⟩ := InertChart.exists_isFrameAt (L := frameLat S) hw hlat.fg hspan
   obtain ⟨a₀, ha₀, h0, hgen⟩ := exists_gen (D := D) w
   set π := algebraMap D.host.E (w.adicCompletion D.host.E) with hπ
   set G : Matrix (Fin S.rank) (Fin S.rank) (w.adicCompletion D.host.E) := S.gram.map π with hG
@@ -162,7 +204,8 @@ theorem mem_map_latF_iff : ∀ (D : D7) (S T : HSp D) (v : HeightOneSpectrum (�
           lam * π (a1 * t i * ∑ k, star (s k) * S.gram k j) := compAt_tmul w α _
       rw [Matrix.map_apply, Matrix.of_apply, e1, Matrix.smul_apply, smul_eq_mul, Matrix.vecMulVec_apply]
       have hconj : ∀ y, c (π y) = π (star y) := fun y => InertChart.conj_algebraMap hc y
-      simp only [map_mul, map_sum, Matrix.vecMul, dotProduct, hG, Matrix.map_apply, hconj]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_mul, map_sum, Matrix.vecMul, dotProduct, hG, Matrix.map_apply, hconj]
       ring_nf
     have hy : ∀ p, ((a⁻¹ : GL (Fin T.rank) (w.adicCompletion D.host.E)).1 *ᵥ fun i => π (t i)) p ∈ Formalism.UG.Ov D.host.E w := by
       refine (ha _).2 ?_

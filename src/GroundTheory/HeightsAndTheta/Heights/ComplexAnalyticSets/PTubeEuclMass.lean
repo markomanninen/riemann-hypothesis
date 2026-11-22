@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StTubeEuclMass
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StTubeCollarMass
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StTubeDeepMass
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StTubeEuclMass
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StTubeCollarMass
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StTubeDeepMass
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

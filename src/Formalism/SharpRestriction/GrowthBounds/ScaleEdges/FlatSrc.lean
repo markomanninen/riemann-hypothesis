@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ScaleNegMono
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ScaleNegMono
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,8 +28,6 @@ theorem isFlat_flW {n' m : ℕ} (d : Fin n' → ℕ) : IsFlat (m := m) (vecE n')
         apply hi
         rw [← Fin.rev_rev i, h0, Fin.rev_zero]
       simp [hi, hr]
-
-theorem LLT_eq (n' : ℕ) : LLT n' = flatLetters (vecE n') := rfl
 
 section Scale
 
@@ -100,7 +102,9 @@ theorem flatSrc (hEP : EdgePlane) (p n' : ℕ) [Fact p.Prime] (W Qq O Kf : Type)
     have hmem := scale_shift (algebraMap O Kf w) hc0 o c' _ ((hΘ.2 g hg e he _ (o + c')).mp key)
     have heq : (algebraMap O Kf w ^ (-(o : ℤ))) • Θ (F' - (w ^ o) • Fsig) =
         (algebraMap O Kf w ^ (-(o : ℤ))) • Θ F' - Θ Fsig := by
-      rw [map_sub, map_smul, ← algebraMap_smul Kf (w ^ o), smul_sub, smul_smul, map_pow,
+      rw [show Θ (F' - (w ^ o) • Fsig) = Θ F' - Θ ((w ^ o) • Fsig) from Θ.map_sub _ _,
+        show Θ ((w ^ o) • Fsig) = (w ^ o) • Θ Fsig from Θ.map_smul _ _,
+        ← algebraMap_smul Kf (w ^ o), smul_sub, smul_smul, map_pow,
         ← zpow_natCast, ← zpow_add₀ hc0, neg_add_cancel, zpow_zero, one_smul]
     rwa [heq] at hmem
   · intro e' he' hsrc hne

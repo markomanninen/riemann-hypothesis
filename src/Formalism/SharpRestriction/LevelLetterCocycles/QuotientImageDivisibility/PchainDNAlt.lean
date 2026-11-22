@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.CmpOfMemX
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.MemZeroSubCoe
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.CmpOfMemX
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.MemZeroSubCoe
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -46,9 +50,6 @@ def Kc (i : ZMod n) : Submodule O ↥(Formalism.MainNotions.RamifiedCoefficientC
     show Formalism.MainNotions.ArcLiftingSetup.cmpD W T (o • (z : W.DD T)) = 0
     rw [cmpD_osmul W T o (NDl_N W T z.2), show Formalism.MainNotions.ArcLiftingSetup.cmpD W T (z : W.DD T) = 0 from hz,
       smul_zero]
-
-theorem mem_Kc {i : ZMod n} (z : ↥(Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T i)) :
-    z ∈ Kc W T i ↔ Formalism.MainNotions.ArcLiftingSetup.cmpD W T (z : W.DD T) = 0 := Iff.rfl
 
 theorem Kc_le [IsDomain O] (i : ZMod n) (k : ℕ) (h3 : Formalism.MainNotions.DeltaInvariantLattices.p3 W T)
     (hmod : Formalism.MainNotions.DeltaInvariantLattices.wachModuleOverLetters W T W.π₀) (hR : Formalism.MainNotions.UnusedSlot80.ToolsR.RingP W) :

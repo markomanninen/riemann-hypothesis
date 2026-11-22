@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.VecZero
-import Development.EtaleCohomology.EtaleTrace.LadicH0LocallyConstant
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.VecZero
+public import Development.EtaleCohomology.EtaleTrace.LadicH0LocallyConstant
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 

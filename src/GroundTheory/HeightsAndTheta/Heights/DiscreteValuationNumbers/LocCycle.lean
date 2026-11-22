@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.DivisorIdealBotUniformiser
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.DivisorIdealBotUniformiser
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -14,8 +19,9 @@ section Defs
 
 variable {R : Type*} [CommRing R]
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def locCycle (J W : Ideal R) : ℤ :=
   if h : W ∈ J.minimalPrimes then
     haveI : W.IsPrime := h.1.1

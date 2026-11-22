@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
 
@@ -20,14 +25,13 @@ theorem one_mem_span_values {A : Type} [CommRing A] (I : Ideal A) [Module.Invert
   rw [← ht]
   clear ht
   induction t with
-  | zero => simp
   | tmul f y => exact Ideal.subset_span ⟨f, y, by simp [contractLeft_apply]⟩
-  | add a b ha hb => rw [map_add]; exact Ideal.add_mem _ ha hb
+  | add a b ha hb => rw [map_add (f := _)]; exact Ideal.add_mem _ ha hb
 
 end GlobalTheory.BSP.ZarPrincipal
 
-open GlobalTheory.BSP.ZarPrincipal in
 
+open GlobalTheory.BSP.ZarPrincipal in
 theorem GlobalTheory.BSP.invertible_ideal_principal_on_cover :
     ∀ (A : Type) [CommRing A] (I : Ideal A), Module.Invertible A ↥I → ∃ (n : ℕ) (s t : Fin n → A),
       Ideal.span (Set.range s) = ⊤ ∧ ∀ i, t i ∈ I ∧ ∀ x ∈ I, ∃ c, s i * x = c * t i := by

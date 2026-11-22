@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ReferenceCharactersFactorTame
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemKDSupUnitIdlIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RelativeLatticeDeterminantClassLaws
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ReferenceCharactersFactorTame
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemKDSupUnitIdlIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RelativeLatticeDeterminantClassLaws
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,26 +23,82 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ}
 theorem ordSub_conj {N : Submodule (𝓞 E) (Sp E n)} (hN : Submodule.IsLattice E N)
     (hu : Formalism.HermitianLatticesTheory.IsUnimodular (hStd E n) N) (P : HeightOneSpectrum (𝓞 E)) :
     ordSub (conjPrime₂ P) (detSub N) = -ordSub P (detSub N) := by
-  have h := CharValCompare.val_dual (P := P) ⟨hN, hu⟩ (isFr_latFr P hN) (isFr_latFr (conjPrime₂ P) hN)
+  have hfr (w : HeightOneSpectrum (𝓞 E)) : IsFr w N (latFr w N) := by
+    first | exact isFr_latFr w ⟨hN, hu⟩ | exact isFr_latFr w hN
+  have hfull : Submodule.IsFullLattice E N := by
+    letI : Submodule.IsLattice E N := hN
+    refine ⟨?_⟩
+    apply top_unique
+    rw [← ((Pi.basisFun E (Fin n)).map (latFr P N)).span_eq]
+    refine Submodule.span_le.2 ?_
+    rintro _ ⟨i, rfl⟩
+    obtain ⟨s, hs, hx⟩ := (mem_locP _ _ _).1 ((hfr P _).2 (CharValCompare.single_mem_stdAt P i))
+    have hs0 : (algebraMap (𝓞 E) E s) ≠ 0 := by
+      intro h
+      have : s = 0 := (FaithfulSMul.algebraMap_injective (𝓞 E) E) (by simpa using h)
+      exact hs (this ▸ P.asIdeal.zero_mem)
+    have hx' : (algebraMap (𝓞 E) E s) • (latFr P N) (Pi.single i 1) ∈ N := by
+      rwa [IsScalarTower.algebraMap_smul]
+    have hm := Submodule.smul_mem (Submodule.span E (N : Set (Sp E n)))
+      (algebraMap (𝓞 E) E s)⁻¹ (Submodule.subset_span hx')
+    rw [← mul_smul, inv_mul_cancel₀ hs0, one_smul] at hm
+    simpa only [Module.Basis.map_apply, Pi.basisFun_apply, SetLike.mem_coe] using hm
+  have h := CharValCompare.val_dual (P := P) ⟨hN, hu⟩ (hfr P) (hfr (conjPrime₂ P))
   rw [map_mul, valuation_star, CharValCompare.conjP_conjP] at h
-  rw [ordSub_detSub_eq hN (isFr_latFr P hN), ordSub_detSub_eq hN (isFr_latFr (conjPrime₂ P) hN)]
+  rw [ordSub_detSub_eq hfull (hfr P), ordSub_detSub_eq hfull (hfr (conjPrime₂ P))]
   unfold ordF
   rw [eq_inv_of_mul_eq_one_right h, WithZero.log_inv]
 
 theorem ordSub_std (w : HeightOneSpectrum (𝓞 E)) : ordSub w (detSub (stdLat E n)) = 0 := by
-  rw [ordSub_detSub_eq (f := 1) stdLat_lattice fun _ => Iff.rfl]
+  have hfull : Submodule.IsFullLattice E (stdLat E n) := by
+    letI : Submodule.IsLattice E (stdLat E n) := stdLat_lattice
+    refine ⟨?_⟩
+    apply top_unique
+    rw [← ((Pi.basisFun E (Fin n)).map ((1 : Sp E n ≃ₗ[E] Sp E n))).span_eq]
+    refine Submodule.span_le.2 ?_
+    rintro _ ⟨i, rfl⟩
+    obtain ⟨s, hs, hx⟩ := (mem_locP _ _ _).1 (((show IsFr w (stdLat E n) 1 from fun _ => Iff.rfl) _).2 (CharValCompare.single_mem_stdAt w i))
+    have hs0 : (algebraMap (𝓞 E) E s) ≠ 0 := by
+      intro h
+      have : s = 0 := (FaithfulSMul.algebraMap_injective (𝓞 E) E) (by simpa using h)
+      exact hs (this ▸ w.asIdeal.zero_mem)
+    have hx' : (algebraMap (𝓞 E) E s) • ((1 : Sp E n ≃ₗ[E] Sp E n)) (Pi.single i 1) ∈ (stdLat E n) := by
+      rwa [IsScalarTower.algebraMap_smul]
+    have hm := Submodule.smul_mem (Submodule.span E ((stdLat E n) : Set (Sp E n)))
+      (algebraMap (𝓞 E) E s)⁻¹ (Submodule.subset_span hx')
+    rw [← mul_smul, inv_mul_cancel₀ hs0, one_smul] at hm
+    simpa only [Module.Basis.map_apply, Pi.basisFun_apply, SetLike.mem_coe] using hm
+  rw [ordSub_detSub_eq (f := 1) hfull fun _ => Iff.rfl]
   simp [ordF]
 
-open Classical in
 
+open Classical in
 theorem ordI_detIdl (SB : Finset (HeightOneSpectrum (𝓞 E))) {N : Submodule (𝓞 E) (Sp E n)} (hN : Submodule.IsLattice E N)
     {fr : HeightOneSpectrum (𝓞 E) → Sp E n ≃ₗ[E] Sp E n} (hf : ∀ P, IsFr P N (fr P)) (w : HeightOneSpectrum (𝓞 E)) :
     ordI w (detIdl SB N fr) =
       if w ∈ SB then ordSub w (detSub N) else if conjPrime₂ w ∈ SB then 0 else ((ordSub w (detSub N)).toNat : ℤ) := by
+  have hfull : Submodule.IsFullLattice E N := by
+    letI : Submodule.IsLattice E N := hN
+    refine ⟨?_⟩
+    apply top_unique
+    rw [← ((Pi.basisFun E (Fin n)).map (fr w)).span_eq]
+    refine Submodule.span_le.2 ?_
+    rintro _ ⟨i, rfl⟩
+    obtain ⟨s, hs, hx⟩ := (mem_locP _ _ _).1 ((hf w _).2 (CharValCompare.single_mem_stdAt w i))
+    have hs0 : (algebraMap (𝓞 E) E s) ≠ 0 := by
+      intro h
+      have : s = 0 := (FaithfulSMul.algebraMap_injective (𝓞 E) E) (by simpa using h)
+      exact hs (this ▸ w.asIdeal.zero_mem)
+    have hx' : (algebraMap (𝓞 E) E s) • (fr w) (Pi.single i 1) ∈ N := by
+      rwa [IsScalarTower.algebraMap_smul]
+    have hm := Submodule.smul_mem (Submodule.span E (N : Set (Sp E n)))
+      (algebraMap (𝓞 E) E s)⁻¹ (Submodule.subset_span hx')
+    rw [← mul_smul, inv_mul_cancel₀ hs0, one_smul] at hm
+    simpa only [Module.Basis.map_apply, Pi.basisFun_apply, SetLike.mem_coe] using hm
   have e : valAt w (detIdl SB N fr) = Valued.v (compAt w (detIdl SB N fr)) := valAt_apply _ _
   rw [ordI, e, compAt_detIdl SB hN]
   split_ifs
-  · rw [valued_algebraMap, ordSub_detSub_eq hN (hf w)]
+  · rw [valued_algebraMap, ordSub_detSub_eq hfull (hf w)]
     rfl
   · simp
   · have h := ordF_unif_self w

@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeF
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsPosPartLocal
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeF
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsPosPartLocal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -189,7 +194,7 @@ theorem sheetDensity_eq {P : Ideal (MRing ι)} {L : Fin e → HermLine ι} (hL :
   have hex : ∃ γ', IsSheet P Ψ y w γ' := ⟨γ, hsh⟩
   have han : AnalyticOnNhd ℂ γ U := analyticOnNhd_of_diffOn hU fun y hy => (hγ y hy).1
   unfold sheetDensity
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   have hc := hex.choose_spec
   set γc := hex.choose
   have hcont : ContinuousAt (fun y' => (y', segre (γc y'))) y :=
@@ -274,8 +279,8 @@ theorem ptsPosDens_eq {P : Ideal (MRing ι)} {L : Fin e → HermLine ι} (hL : �
 
 end PtsPosPartLocal
 
-open PtsPosPartLocal in
 
+open PtsPosPartLocal in
 theorem PtsPosPartLocal.proof : PtsPosPartLocal.Statement := by
   intro K _ ι _ P e Ψ Ψ' L g z hP _ _ hL _ hg _ hs hs'
   classical

@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.KummerTheory.LocalIndexAtPlace
-import GroundTheory.GlobalFields.IdeleGroups.IndexProductFormula
-import GroundTheory.ProfiniteCohomology.KummerBasic
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.KummerTheory.LocalIndexAtPlace
+public import GroundTheory.GlobalFields.IdeleGroups.IndexProductFormula
+public import GroundTheory.ProfiniteCohomology.KummerBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,8 +25,8 @@ variable {K : Type*} [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K))
 abbrev localUnits : Subgroup (v.adicCompletion K)ˣ :=
   (Submonoid.ofClass (v.adicCompletionIntegers K)).units
 
-variable {v} in
 
+variable {v} in
 theorem mem_localUnits_iff {x : (v.adicCompletion K)ˣ} :
     x ∈ localUnits v ↔ Valued.v (x : v.adicCompletion K) = 1 := by
   have hx : Valued.v (x : v.adicCompletion K) ≠ 0 := (Valuation.ne_zero_iff _).2 x.ne_zero

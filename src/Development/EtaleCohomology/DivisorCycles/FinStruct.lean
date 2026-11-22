@@ -1,19 +1,23 @@
-import Development.EtaleCohomology.DivisorCycles.ChainPf
-import Development.EtaleCohomology.DivisorCycles.TangentFieldExtension
-import Development.EtaleCohomology.DivisorCycles.ExpVanPf
-import Development.EtaleCohomology.DivisorCycles.DegPoly2
-import Development.EtaleCohomology.DivisorCycles.TangentDegree
-import Development.EtaleCohomology.DivisorCycles.ProjPf
-import Development.EtaleCohomology.DivisorCycles.TanLiePf
-import Development.EtaleCohomology.DivisorCycles.GradePf
-import Development.EtaleCohomology.DivisorCycles.CycSpecQzkPf
-import Development.EtaleCohomology.DivisorCycles.FixScalOf
-import Development.EtaleCohomology.DivisorCycles.CycleCountPf
-import Development.EtaleCohomology.DivisorCycles.DiagScalar2
-import Development.EtaleCohomology.DivisorCycles.AlgStruct2
-import Development.EtaleCohomology.DivisorCycles.CoeMulInv
-import Development.EtaleCohomology.DivisorCycles.SemisPf
-import Development.EtaleCohomology.DivisorCycles.StructPf
+module
+
+public import Development.EtaleCohomology.DivisorCycles.ChainPf
+public import Development.EtaleCohomology.DivisorCycles.TangentFieldExtension
+public import Development.EtaleCohomology.DivisorCycles.ExpVanPf
+public import Development.EtaleCohomology.DivisorCycles.DegPoly2
+public import Development.EtaleCohomology.DivisorCycles.TangentDegree
+public import Development.EtaleCohomology.DivisorCycles.ProjPf
+public import Development.EtaleCohomology.DivisorCycles.TanLiePf
+public import Development.EtaleCohomology.DivisorCycles.GradePf
+public import Development.EtaleCohomology.DivisorCycles.CycSpecQzkPf
+public import Development.EtaleCohomology.DivisorCycles.FixScalOf
+public import Development.EtaleCohomology.DivisorCycles.CycleCountPf
+public import Development.EtaleCohomology.DivisorCycles.DiagScalar2
+public import Development.EtaleCohomology.DivisorCycles.AlgStruct2
+public import Development.EtaleCohomology.DivisorCycles.CoeMulInv
+public import Development.EtaleCohomology.DivisorCycles.SemisPf
+public import Development.EtaleCohomology.DivisorCycles.StructPf
+
+@[expose] public section
 
 namespace LateralTheory.Fin.Struct
 theorem etale_divisibility_chain_of_key : LateralTheory.DivDb.Chain := by

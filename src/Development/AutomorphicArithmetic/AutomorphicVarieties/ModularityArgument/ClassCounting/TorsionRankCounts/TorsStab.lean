@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.TorsionRankCounts.RankCount
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.HomologicalStability.KStability
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TensorHomCubes.DedekindSR
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Assembly
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.TorsionRankCounts.RankCount
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.HomologicalStability.KStability
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TensorHomCubes.DedekindSR
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Assembly
+
+@[expose] public section
 
 open CategoryTheory NumberField UpperTheory.V UpperTheory.V.KL UpperTheory.V.ZK UpperTheory.V.ZK.Up
 

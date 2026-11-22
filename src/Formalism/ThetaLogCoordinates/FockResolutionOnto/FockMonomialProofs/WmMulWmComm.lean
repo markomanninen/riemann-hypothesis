@@ -1,6 +1,10 @@
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementG
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.RaisingKeepsEarlyLetters
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.DerivativeKeepsSpaceHolds
+module
+
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementG
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.RaisingKeepsEarlyLetters
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.DerivativeKeepsSpaceHolds
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.L4
 
@@ -11,29 +15,28 @@ variable {p : ℕ} [Fact p.Prime] {σ : Type} {n : ℕ}
 
 noncomputable def compW (p : ℕ) [Fact p.Prime] (w : (σ →₀ ℕ) → Fin n → ℤ) (μ : Fin n → ℤ) :
     MvPolynomial σ ℚ_[p] →ₗ[ℚ_[p]] MvPolynomial σ ℚ_[p] where
-  toFun x := compP (fun m => w m = μ) x
+  toFun x := AddMonoidAlgebra.ofCoeff (x.coeff.filter (fun m => w m = μ))
   map_add' x y := by
-    ext m; simp only [coeff_compP, coeff_add]; split_ifs <;> simp
+    simp only [AddMonoidAlgebra.coeff_add, Finsupp.filter_add, AddMonoidAlgebra.ofCoeff_add]
   map_smul' a x := by
-    ext m; simp only [coeff_compP, coeff_smul, RingHom.id_apply]; split_ifs <;> simp
+    simp only [AddMonoidAlgebra.coeff_smul, Finsupp.filter_smul, AddMonoidAlgebra.ofCoeff_smul,
+      RingHom.id_apply]
 
 theorem coeff_compW (w : (σ →₀ ℕ) → Fin n → ℤ) (μ : Fin n → ℤ) (x : MvPolynomial σ ℚ_[p]) (m : σ →₀ ℕ) :
-    coeff m (compW p w μ x) = if w m = μ then coeff m x else 0 := by
-  show coeff m (compP _ x) = _
-  rw [coeff_compP]
-  split_ifs <;> rfl
+    AddMonoidAlgebra.coeff (compW p w μ x) m = if w m = μ then AddMonoidAlgebra.coeff x m else 0 :=
+  rfl
 
 theorem compW_fix (w : (σ →₀ ℕ) → Fin n → ℤ) (μ ν : Fin n → ℤ) (x : MvPolynomial σ ℚ_[p])
-    (hx : ∀ m, coeff m x ≠ 0 → w m = ν) : compW p w μ x = if ν = μ then x else 0 := by
+    (hx : ∀ m, AddMonoidAlgebra.coeff x m ≠ 0 → w m = ν) : compW p w μ x = if ν = μ then x else 0 := by
   ext m
   rw [coeff_compW]
-  by_cases h0 : coeff m x = 0
+  by_cases h0 : AddMonoidAlgebra.coeff x m = 0
   · split_ifs <;> simp [h0]
   · rw [hx m h0]
     split_ifs <;> simp
 
 theorem compW_isW (w : (σ →₀ ℕ) → Fin n → ℤ) (μ : Fin n → ℤ) (x : MvPolynomial σ ℚ_[p]) :
-    ∀ m, coeff m (compW p w μ x) ≠ 0 → w m = μ := by
+    ∀ m, AddMonoidAlgebra.coeff (compW p w μ x) m ≠ 0 → w m = μ := by
   intro m hm
   rw [coeff_compW] at hm
   by_contra h
@@ -47,15 +50,15 @@ theorem sum_compW (w : (σ →₀ ℕ) → Fin n → ℤ) (x : MvPolynomial σ �
   rw [Finset.sum_ite_eq]
   split_ifs with h
   · rfl
-  · have := congrArg (coeff d) (hS _ h)
-    rw [coeff_compW, if_pos rfl, coeff_zero] at this
+  · have := congrArg (AddMonoidAlgebra.coeff · d) (hS _ h)
+    rw [coeff_compW, ite_eq_left rfl, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at this
     exact this.symm
 
 theorem compW_dec (w : (σ →₀ ℕ) → Fin n → ℤ) (x : MvPolynomial σ ℚ_[p]) :
     ∀ μ ∉ x.support.image w, compW p w μ x = 0 := by
   intro μ hμ
   ext m
-  rw [coeff_compW, coeff_zero]
+  rw [coeff_compW, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
   split_ifs with h
   · by_contra hne
     exact hμ (Finset.mem_image.mpr ⟨m, mem_support_iff.mpr hne, h⟩)
@@ -65,24 +68,24 @@ theorem isW_E (E : Fin n → Fin n → MvPolynomial σ ℚ_[p] →ₗ[ℚ_[p]] M
     (w : (σ →₀ ℕ) → Fin n → ℤ)
     (hcomm : ∀ a b c d x, E a b (E c d x) - E c d (E a b x) =
       (if b = c then E a d x else 0) - (if d = a then E c b x else 0))
-    (hdiag : ∀ c x m, coeff m (E c c x) = ((w m c : ℤ) : ℚ_[p]) * coeff m x)
-    (a b : Fin n) (μ : Fin n → ℤ) (x : MvPolynomial σ ℚ_[p]) (hx : ∀ m, coeff m x ≠ 0 → w m = μ) :
-    ∀ m, coeff m (E a b x) ≠ 0 → w m = μ + dl a b := by
+    (hdiag : ∀ c x m, AddMonoidAlgebra.coeff (E c c x) m = ((w m c : ℤ) : ℚ_[p]) * AddMonoidAlgebra.coeff x m)
+    (a b : Fin n) (μ : Fin n → ℤ) (x : MvPolynomial σ ℚ_[p]) (hx : ∀ m, AddMonoidAlgebra.coeff x m ≠ 0 → w m = μ) :
+    ∀ m, AddMonoidAlgebra.coeff (E a b x) m ≠ 0 → w m = μ + dl a b := by
   intro m hm
   funext c
   have h1 : E c c x = ((μ c : ℤ) : ℚ_[p]) • x := by
     ext m'
     rw [hdiag, coeff_smul, smul_eq_mul]
-    by_cases h0 : coeff m' x = 0
+    by_cases h0 : AddMonoidAlgebra.coeff x m' = 0
     · rw [h0, mul_zero, mul_zero]
     · rw [hx m' h0]
-  have h2 := congrArg (coeff m) (hcomm c c a b x)
+  have h2 := congrArg (AddMonoidAlgebra.coeff · m) (hcomm c c a b x)
   rw [h1, map_smul, coeff_sub, hdiag, coeff_smul, smul_eq_mul, coeff_sub] at h2
-  have h3 : coeff m (if c = a then E c b x else 0) = (if c = a then 1 else 0) * coeff m (E a b x) := by
+  have h3 : AddMonoidAlgebra.coeff (if c = a then E c b x else 0) m = (if c = a then 1 else 0) * AddMonoidAlgebra.coeff (E a b x) m := by
     split_ifs with h
     · subst h; rw [one_mul]
     · simp
-  have h4 : coeff m (if b = c then E a c x else 0) = (if c = b then 1 else 0) * coeff m (E a b x) := by
+  have h4 : AddMonoidAlgebra.coeff (if b = c then E a c x else 0) m = (if c = b then 1 else 0) * AddMonoidAlgebra.coeff (E a b x) m := by
     by_cases h : b = c
     · subst h; simp
     · rw [if_neg h, if_neg (Ne.symm h)]; simp
@@ -99,7 +102,7 @@ noncomputable def mkGlW (E : Fin n → Fin n → MvPolynomial σ ℚ_[p] →ₗ[
     (w : (σ →₀ ℕ) → Fin n → ℤ)
     (hcomm : ∀ a b c d x, E a b (E c d x) - E c d (E a b x) =
       (if b = c then E a d x else 0) - (if d = a then E c b x else 0))
-    (hdiag : ∀ c x m, coeff m (E c c x) = ((w m c : ℤ) : ℚ_[p]) * coeff m x) :
+    (hdiag : ∀ c x m, AddMonoidAlgebra.coeff (E c c x) m = ((w m c : ℤ) : ℚ_[p]) * AddMonoidAlgebra.coeff x m) :
     GlW ℚ_[p] (MvPolynomial σ ℚ_[p]) n where
   E := E
   comm := hcomm
@@ -119,7 +122,8 @@ noncomputable def mkGlW (E : Fin n → Fin n → MvPolynomial σ ℚ_[p] →ₗ[
     · simp
   shift := fun a b μ x => by
     conv_lhs => rw [← sum_compW w x _ (compW_dec w x)]
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     have e' : ∀ ν, compW p w μ (E a b (compW p w ν x)) =
         if ν = μ - dl a b then E a b (compW p w ν x) else 0 := by
       intro ν
@@ -177,7 +181,8 @@ theorem eul_X_mul (b : Fin r) (G : MvPolynomial (Fin (K + 1) × Fin r) ℚ_[p]) 
 theorem pderiv_eul (j : Fin r) (G : MvPolynomial (Fin (K + 1) × Fin r) ℚ_[p]) :
     pderiv (Fin.last K, j) (ProjS.eulL (fun c : Fin r => (Fin.last K, c)) G) =
       pderiv (Fin.last K, j) G + ProjS.eulL (fun c : Fin r => (Fin.last K, c)) (pderiv (Fin.last K, j) G) := by
-  rw [ProjS.eulL_apply, ProjS.eulL_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ProjS.eulL_apply, ProjS.eulL_apply, map_sum]
   simp only [pderiv_X_mul, Finset.sum_add_distrib]
   rw [Finset.sum_ite_eq, if_pos (Finset.mem_univ j)]
   congr 1
@@ -187,7 +192,8 @@ theorem eul_Uop (LL : Letters (K + 1)) (c : ℤ) (Cs : Finset (Fin r)) (i : Fin 
     (F : MvPolynomial (Fin (K + 1) × Fin r) ℚ_[p]) :
     ProjS.eulL (fun c : Fin r => (Fin.last K, c)) (Uop p LL c Cs i F) =
       Uop p LL c Cs i F + Uop p LL c Cs i (ProjS.eulL (fun c : Fin r => (Fin.last K, c)) F) := by
-  rw [Uop_apply, Uop_apply, map_sub, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Uop_apply, Uop_apply, map_sub, map_sum]
   simp only [eul_X_mul, eul_glAct, map_sub, map_smul, Finset.sum_add_distrib]
   abel
 
@@ -211,7 +217,8 @@ theorem d_U (LL : Letters (K + 1)) (hv : LL.vec (Fin.last K) = true) (c : ℤ) (
     (hj : j ∈ Cs) (F : MvPolynomial (Fin (K + 1) × Fin r) ℚ_[p]) :
     dW p K j (Uop p LL c Cs i F) - Uop p LL c Cs i (dW p K j F) =
       (if j = i then Aop p K r c F else 0) - glAct p LL (K + 1) i j F := by
-  rw [dW_apply, dW_apply, Uop_apply, Uop_apply, map_sub, map_sum, Aop_apply, glAct_succ LL hv]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [dW_apply, dW_apply, Uop_apply, Uop_apply, map_sub, map_sum, Aop_apply, glAct_succ LL hv]
   simp only [pderiv_X_mul, pderiv_glJ, map_sub, Derivation.map_smul, pderiv_eul, Finset.sum_add_distrib]
   rw [Finset.sum_ite_eq, if_pos hj]
   simp only [mul_sub, mul_add]
@@ -248,7 +255,8 @@ theorem S_S (LL : Letters (K + 1)) (Cs : Finset (Fin r)) (i k : Fin r) (hi : i �
     Sop p LL Cs i * Sop p LL Cs k - Sop p LL Cs k * Sop p LL Cs i =
       (Wm p K k : Module.End ℚ_[p] _) * Sop p LL Cs i - (Wm p K i : Module.End ℚ_[p] _) * Sop p LL Cs k := by
   refine LinearMap.ext fun F => ?_
-  simp only [LinearMap.sub_apply, Module.End.mul_apply, Sop_apply, Wm, LinearMap.mulLeft_apply, map_sum, glJ_X_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.sub_apply, Module.End.mul_apply, Sop_apply, Wm, LinearMap.mulLeft_apply, map_sum, glJ_X_mul]
   rw [Finset.sum_comm (s := Cs) (t := Cs)
     (f := fun b' b => X (Fin.last K, b) * (X (Fin.last K, b') * glAct p LL K i b (glAct p LL K k b' F))),
     ← Finset.sum_sub_distrib]
@@ -291,7 +299,8 @@ theorem aop_weightMul_comm (c : ℤ) (i : Fin r) :
 theorem A_S (LL : Letters (K + 1)) (c : ℤ) (Cs : Finset (Fin r)) (i : Fin r) :
     (Aop p K r c : Module.End ℚ_[p] _) * Sop p LL Cs i = Sop p LL Cs i * Aop p K r c - Sop p LL Cs i := by
   refine LinearMap.ext fun F => ?_
-  simp only [LinearMap.sub_apply, Module.End.mul_apply, Aop_apply, Sop_apply, map_sum, eul_X_mul, eul_glAct, map_sub,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.sub_apply, Module.End.mul_apply, Aop_apply, Sop_apply, map_sum, eul_X_mul, eul_glAct, map_sub,
     map_smul, Finset.sum_add_distrib, Finset.sum_sub_distrib, Finset.smul_sum]
   abel
 
@@ -397,9 +406,9 @@ theorem relX (LL : Letters (K + 1)) (hv : LL.vec (Fin.last K) = true) (c0 : ℤ)
 
 theorem coeff_EX_diag (LL : Letters (K + 1)) (c : ℤ) (a : Fin (s + 1))
     (x : MvPolynomial (Fin (K + 1) × Fin (s + 1)) ℚ_[p]) (m : Fin (K + 1) × Fin (s + 1) →₀ ℕ) :
-    coeff m (EX p LL c a a x) = ((wtX LL c m a : ℤ) : ℚ_[p]) * coeff m x := by
+    AddMonoidAlgebra.coeff (EX p LL c a a x) m = ((wtX LL c m a : ℤ) : ℚ_[p]) * AddMonoidAlgebra.coeff x m := by
   refine Fin.cases ?_ (fun i => ?_) a
-  · show coeff m (Aop p K (s + 1) c x) = ((c - ∑ a : Fin (s + 1), (m (Fin.last K, a) : ℤ) : ℤ) : ℚ_[p]) * coeff m x
+  · show AddMonoidAlgebra.coeff (Aop p K (s + 1) c x) m = ((c - ∑ a : Fin (s + 1), (m (Fin.last K, a) : ℤ) : ℤ) : ℚ_[p]) * AddMonoidAlgebra.coeff x m
     rw [Aop_apply, coeff_sub, coeff_smul, ProjS.coeff_eulL, smul_eq_mul]
     push_cast; ring
   · exact coeff_cartan LL (K + 1) _ x m
@@ -413,7 +422,7 @@ theorem GX_E (LL : Letters (K + 1)) (c : ℤ) (hv : LL.vec (Fin.last K) = true) 
 
 theorem coeff_GX_comp (LL : Letters (K + 1)) (c : ℤ) (hv : LL.vec (Fin.last K) = true) (μ : Fin (s + 1) → ℤ)
     (x : MvPolynomial (Fin (K + 1) × Fin (s + 1)) ℚ_[p]) (m : Fin (K + 1) × Fin (s + 1) →₀ ℕ) :
-    coeff m ((GX p LL c hv).comp μ x) = if wtX LL c m = μ then coeff m x else 0 :=
+    AddMonoidAlgebra.coeff ((GX p LL c hv).comp μ x) m = if wtX LL c m = μ then AddMonoidAlgebra.coeff x m else 0 :=
   coeff_compW (wtX LL c) μ x m
 
 end GX

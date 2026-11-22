@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.UnitTestFunctions.LiftUnit
-import GroundTheory.GlobalFields.TateThesis.EulerFactorsInfinite
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.UnitTestFunctions.LiftUnit
+public import GroundTheory.GlobalFields.TateThesis.EulerFactorsInfinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ namespace GlobalTheory.CompanionTheory.RgEisSign
 
 variable {k : Type} [Field k] [NumberField k]
 
-open scoped Classical in
 
+open scoped Classical in
 def even_im_hermitian_sub (ω : HeckeCharacter k) (w : {w : InfinitePlace k // w.IsReal}) : ℕ :=
   if ω.realComponent w.2 (-1) = 1 then 0 else 1
 

@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.SHSectionPf
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsDiscreteValuationRingOfMaximalIdealEqSpa
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SHSectionPf
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsDiscreteValuationRingOfMaximalIdealEqSpa
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits IsLocalRing

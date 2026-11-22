@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.LevelStarExponents Formalism.MainNotions Formalism.MainNotions.Inhab GlobalTheory.EX NumberField
 
@@ -46,18 +50,6 @@ private theorem rank_k_ineqs_poly_wide (C w y n m k : ℝ) (hw : 0 < w) (hy : 12
       _ = 2 * (w ^ 8 * y ^ 161) := by field_simp
       _ ≤ y ^ 63 * (w ^ 8 * y ^ 161) := by gcongr
       _ = (w ^ 4 * y ^ 112) ^ 2 := by ring
-
-theorem rank_k_ineqs_poly (C w y n m k : ℝ) (hw : 0 < w) (hy : 128 * |C| + 2 ≤ y)
-    (hn1 : w ^ 4 * y ^ 128 ≤ n) (hn2 : n ≤ 2 * (w ^ 4 * y ^ 128))
-    (hm1 : w / y ≤ m) (hm2 : m ≤ 2 * (w / y))
-    (hk1 : w ^ 9 * y ^ 160 ≤ k) (hk2 : k ≤ 2 * (w ^ 9 * y ^ 160)) :
-    C * m ^ 5 * (2 * n) * y ^ 16 * y ^ 16 ≤ k ∧ k ≤ w * n * (n * (y ^ 16)⁻¹) ∧
-      Real.sqrt (k / m) ≤ n * (y ^ 16)⁻¹ := by
-  have hC := abs_nonneg C
-  have hy1 : 1 ≤ y := by linarith
-  refine rank_k_ineqs_poly_wide C w y n m k hw hy hn1 (hn2.trans ?_) hm1 hm2 hk1 hk2
-  have h : y ^ 128 ≤ y ^ 129 := pow_le_pow_right₀ hy1 (by norm_num)
-  gcongr
 
 theorem explicitChoice_rankK_lower_upper_bounds :
     SzRow (fun C D L => (C.P.CkLow * (D.R.m : ℝ) ^ jG * D.R.f * L.sc.L * L.sc.x ^ L.sc.eps ≤ D.R.k) ∧

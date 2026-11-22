@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.VecZero
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ZASmul
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.VecZero
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ZASmul
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -60,20 +64,21 @@ private theorem torsion_of_vec (t : A) (c : A →+* C) (ht : IsUnit (c t))
   have hψ₁ : ∀ q w x, ψ₁ (q ⊗ₜ[R] w) x = (q • x) ⊗ₜ[A] ((1 : A) ⊗ₜ[R] w) := fun _ _ _ => rfl
   let ψ : (F ⊗[R] T) ⊗[F] C →+ P := TensorProduct.liftAddHom ψ₁ (fun f m x => by
     induction m with
-    | zero => simp
-    | add m m' hm hm' => simp only [smul_add, map_add, AddMonoidHom.add_apply, hm, hm']
+    | add m m' hm hm' => simp only [smul_add, map_add (f := _), AddMonoidHom.add_apply, hm, hm']
     | tmul q w =>
       rw [TensorProduct.smul_tmul', hψ₁, hψ₁, smul_eq_mul, mul_comm, mul_smul])
   have hψ : ∀ q w x, ψ ((q ⊗ₜ[R] w) ⊗ₜ[F] x) = (q • x) ⊗ₜ[A] ((1 : A) ⊗ₜ[R] w) := fun _ _ _ => rfl
   have h1 : ∑ k, (c (a k) * Ring.inverse (c t) ^ r) ⊗ₜ[A] ((1 : A) ⊗ₜ[R] v k) = 0 := by
     have := congrArg ψ h
-    rw [map_sum, map_zero] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at this
     simpa only [hψ, one_smul] using this
   have hinv : c t * Ring.inverse (c t) = 1 := Ring.mul_inverse_cancel _ ht
   have h2 : (TensorProduct.mk A C (A ⊗[R] T) 1) (∑ k, (a k ⊗ₜ[R] v k : A ⊗[R] T)) = 0 := by
     have e : (TensorProduct.mk A C (A ⊗[R] T) 1) (∑ k, (a k ⊗ₜ[R] v k : A ⊗[R] T)) =
         t ^ r • ∑ k, (c (a k) * Ring.inverse (c t) ^ r) ⊗ₜ[A] ((1 : A) ⊗ₜ[R] v k) := by
-      rw [map_sum, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.smul_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       have e1 : t ^ r • (c (a k) * Ring.inverse (c t) ^ r) = a k • (1 : C) := by
         rw [hsm, hsm, map_pow, mul_one, mul_left_comm, ← mul_pow, hinv, one_pow, mul_one]
@@ -88,7 +93,7 @@ private theorem apply_tensor (h : T →+ N) (hh : ∀ (s : R) (w : T), h (s • 
     (v : ι → T) (a : ι → A) (s : A) (hs : s • ∑ k, (a k ⊗ₜ[R] v k : A ⊗[R] T) = 0) :
     s • ∑ k, a k • h (v k) = 0 := by
   let B : A →+ T →+ N := AddMonoidHom.mk' (fun x => AddMonoidHom.mk' (fun w => x • h w)
-      (fun w w' => by rw [map_add, smul_add]))
+      (fun w w' => by rw [map_add (f := _), smul_add]))
       (fun x y => by ext w; simp [add_smul])
   have hB : ∀ x w, B x w = x • h w := fun _ _ => rfl
   let φ : A ⊗[R] T →+ N := TensorProduct.liftAddHom B (fun r x w => by
@@ -96,11 +101,11 @@ private theorem apply_tensor (h : T →+ N) (hh : ∀ (s : R) (w : T), h (s • 
   have hφ : ∀ x w, φ (x ⊗ₜ[R] w) = x • h w := fun _ _ => rfl
   have hφs : ∀ (b : A) (y : A ⊗[R] T), φ (b • y) = b • φ y := fun b y => by
     induction y with
-    | zero => simp
-    | add y y' hy hy' => simp only [smul_add, map_add, hy, hy']
+    | add y y' hy hy' => simp only [smul_add, map_add (f := _), hy, hy']
     | tmul x w => rw [TensorProduct.smul_tmul', hφ, hφ, smul_eq_mul, mul_smul]
   have := congrArg φ hs
-  rw [hφs, map_sum, map_zero] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hφs, map_sum, map_zero] at this
   simpa only [hφ] using this
 
 end Abstract

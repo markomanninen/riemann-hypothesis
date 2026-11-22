@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DiscPowerMonomialDegreeAtW
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DiscPowerMonomialDegreeAtW
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,7 +78,108 @@ theorem restMemC_of (D : Formalism.BasicNotions.D7) (hAdm : AdmB D) : RestMemC 1
   have hr : 0 < r := NeZero.pos r
   have hA3 : Formalism.MainNotions.CovariantDegrees.DefiniteRankOne D := hAdm.2.2.2.2.2.2.2.2.1
   obtain ⟨dd, b', b'', P, P1, P2, hPμ, h1, h2, hsum, hC, hPATH, hGood, hSt, hu, hd⟩ := exists_path_decomposition D hAdm hX j b q
-  have H := plHyp_of X p K hX j _ _ dd hPATH
+  have H : PlHyp (segN X.F j - r) (X.beS p K j (X.restr j b) : ℤ) (plPart q.1.1) := by
+    let μ := q.1.1
+    let b := X.restr j b
+    have hP : X.IsPATH p K j b μ dd := hPATH
+    classical
+    have hr : 0 < r := NeZero.pos r
+    have hV := hX.valid
+    obtain ⟨P, hPμ⟩ := hP.path
+    have hrN : r ≤ segN X.F j := k_r_le_segN X.F hV hr j
+    have hNK : segN X.F j + r ≤ K := le_trans (Nat.add_le_add_right (hX.card j) r) hX.NsK
+  
+    have htau : ∀ t (ht : t < r), ∃ l : Fin (segN X.F j), l.val = segN X.F j - r + t ∧
+        segE X.F j l = X.F.fr j t ∧ HStrip (stg μ (segN X.F j - r + t)) (stg μ (segN X.F j - r + t + 1)) (dd l) := by
+      intro t ht
+      let l : Fin (segN X.F j) := ⟨segN X.F j - r + t, by omega⟩
+      have hl : segE X.F j l = X.F.fr j t := (segE_eq_fr_iff X.F hV j l ht).mpr rfl
+      have hvec : (segLL X.F j).vec l = true := by
+        rw [comb_vec, hl]; exact (hV.2.2.2.2.1 j t ht).2
+      have hs := T.step_vec P l hvec
+      rw [hPμ, stg_castSucc μ, stg_succ μ] at hs
+      exact ⟨l, rfl, hl, hs⟩
+    have hlow : ∀ i ≤ segN X.F j - r, ∀ m, stg μ i m ≤ (X.beS p K j b : ℤ) := by
+      intro i hi m
+      have h1 := T.mu_le_dplus P i (by omega) m
+      rw [hPμ, stg_eq μ i (by omega)] at h1
+      have h2 : T.dplus (segLL X.F j) dd i ≤ X.beS p K j b := by
+        let s := i
+        have hs : s ≤ segN X.F j - r := hi
+        classical
+        have hr : 0 < r := NeZero.pos r
+        have hV := hX.valid
+        unfold T.dplus Dat.beS
+        have himg : (X.F.letters j).filter (· < X.F.fr j 0) =
+            (Finset.univ.filter fun l : Fin (segN X.F j) => l.val < segN X.F j - r).image (segE X.F j) := by
+          ext x
+          simp only [Finset.mem_filter, Finset.mem_image, Finset.mem_univ, true_and]
+          constructor
+          · rintro ⟨hx, hlt⟩
+            obtain ⟨i, rfl⟩ := segE_surj X.F j hx
+            exact ⟨i, (segE_lt_fr_iff X.F hV hr j i).mp hlt, rfl⟩
+          · rintro ⟨i, hi, rfl⟩
+            exact ⟨segE_mem X.F j i, (segE_lt_fr_iff X.F hV hr j i).mpr hi⟩
+        rw [himg, Finset.sum_image (fun a _ b _ h => (segE_strictMono X.F j).injective h), Finset.sum_filter]
+        refine Finset.sum_le_sum fun l _ => ?_
+        split_ifs with h1 h2 h2
+        · rw [hP.degs l ((segE_lt_fr_iff X.F hV hr j l).mpr h2)]
+        · omega
+        · exact Nat.zero_le _
+        · exact le_rfl
+      exact le_trans h1 (by exact_mod_cast h2)
+    have hup : ∀ t ≤ r, ∀ m, stg μ (segN X.F j - r + t) m ≤ (X.beS p K j b : ℤ) := by
+      intro t
+      induction t with
+      | zero => intro _ m; exact hlow _ le_rfl m
+      | succ t ih =>
+        intro ht m
+        obtain ⟨l, hlv, hl, hs⟩ := htau t (by omega)
+        rw [show segN X.F j - r + (t + 1) = segN X.F j - r + t + 1 by ring]
+        by_cases hm : m.val = 0
+        · have := hP.head l ⟨t, by omega⟩ hl m (by omega)
+          rw [stg_succ μ, hlv] at this
+          rw [this]
+        · have hm' := m.isLt
+          have h2 := hs.2.1 ⟨m.val - 1, by omega⟩ (by simp only []; omega)
+          have e : (⟨(⟨m.val - 1, by omega⟩ : Fin (r + K)).val + 1, by simp only []; omega⟩ : Fin (r + K)) = m :=
+            Fin.ext (by simp only []; omega)
+          rw [e] at h2
+          exact le_trans h2 (ih (by omega) _)
+    have hdom : ∀ k, k < segN X.F j + 1 → Antitone (stg (plPart μ) k) := by
+      intro k hk a a' haa
+      rw [stg_plPart, stg_plPart, ← stg_eq μ k hk, ← hPμ]
+      exact P.dom _ (by rw [Fin.le_def]; simpa using haa)
+    refine ⟨?_, ?_, ?_⟩
+    · intro i hi m
+      rw [stg_plPart]
+      constructor
+      · have h1 := T.mu_nonneg P i (by omega) (Fin.castAdd K m) (by
+          have := m.isLt
+          simp only [Fin.val_castAdd]; omega)
+        rwa [hPμ, stg_eq μ i (by omega)] at h1
+      · by_cases h : i ≤ segN X.F j - r
+        · exact hlow i h _
+        · have := hup (i - (segN X.F j - r)) (by omega) (Fin.castAdd K m)
+          rwa [show segN X.F j - r + (i - (segN X.F j - r)) = i by omega] at this
+    · intro m
+      rw [stg_plPart]
+      obtain ⟨l, hlv, hl, -⟩ := htau (r - 1) (by omega)
+      have := hP.head l ⟨r - 1, by omega⟩ hl (Fin.castAdd K m) (by
+        have := m.isLt
+        simp only [Fin.val_castAdd]; omega)
+      rw [stg_succ μ, hlv, show segN X.F j - r + (r - 1) + 1 = segN X.F j by omega] at this
+      exact this
+    · intro t ht c
+      obtain ⟨l, hlv, hl, hs⟩ := htau t ht
+      refine colH_step (hdom _ (by omega)) (hdom _ (by omega)) ?_ ?_ c
+      · intro a
+        rw [stg_plPart, stg_plPart]
+        exact hs.1 _
+      · intro a h
+        rw [stg_plPart, stg_plPart]
+        have := hs.2.1 (Fin.castAdd K a) (by simp only [Fin.val_castAdd]; omega)
+        exact this
   have hI' : IsSt P1.mu (Ican P1.mu) := by rw [h1]; exact mem_isSt_Ican H
   have hI'' : IsSt P2.mu q.1.2.1 := by rw [h2]; exact hSt
   have u1 := (standard_polynomial_mem_bounds (segLL X.F j) b' (fun th M => (hA3 p O S _ r (segLL X.F j) b' th M).1) P1 _ hI').1
@@ -165,7 +270,108 @@ theorem restMemD_of (D : Formalism.BasicNotions.D7) (hAdm : AdmB D) (C₀ : ℝ)
   have hr : 0 < r := NeZero.pos r
   have hA3 : Formalism.MainNotions.CovariantDegrees.DefiniteRankOne D := hAdm.2.2.2.2.2.2.2.2.1
   obtain ⟨dd, b', b'', P, P1, P2, hPμ, h1, h2, hsum, hC, hPATH, hGood, hSt, hu, hd⟩ := exists_path_decomposition D hAdm hX j b q
-  have H := plHyp_of X p K hX j _ _ dd hPATH
+  have H : PlHyp (segN X.F j - r) (X.beS p K j (X.restr j b) : ℤ) (plPart q.1.1) := by
+    let μ := q.1.1
+    let b := X.restr j b
+    have hP : X.IsPATH p K j b μ dd := hPATH
+    classical
+    have hr : 0 < r := NeZero.pos r
+    have hV := hX.valid
+    obtain ⟨P, hPμ⟩ := hP.path
+    have hrN : r ≤ segN X.F j := k_r_le_segN X.F hV hr j
+    have hNK : segN X.F j + r ≤ K := le_trans (Nat.add_le_add_right (hX.card j) r) hX.NsK
+  
+    have htau : ∀ t (ht : t < r), ∃ l : Fin (segN X.F j), l.val = segN X.F j - r + t ∧
+        segE X.F j l = X.F.fr j t ∧ HStrip (stg μ (segN X.F j - r + t)) (stg μ (segN X.F j - r + t + 1)) (dd l) := by
+      intro t ht
+      let l : Fin (segN X.F j) := ⟨segN X.F j - r + t, by omega⟩
+      have hl : segE X.F j l = X.F.fr j t := (segE_eq_fr_iff X.F hV j l ht).mpr rfl
+      have hvec : (segLL X.F j).vec l = true := by
+        rw [comb_vec, hl]; exact (hV.2.2.2.2.1 j t ht).2
+      have hs := T.step_vec P l hvec
+      rw [hPμ, stg_castSucc μ, stg_succ μ] at hs
+      exact ⟨l, rfl, hl, hs⟩
+    have hlow : ∀ i ≤ segN X.F j - r, ∀ m, stg μ i m ≤ (X.beS p K j b : ℤ) := by
+      intro i hi m
+      have h1 := T.mu_le_dplus P i (by omega) m
+      rw [hPμ, stg_eq μ i (by omega)] at h1
+      have h2 : T.dplus (segLL X.F j) dd i ≤ X.beS p K j b := by
+        let s := i
+        have hs : s ≤ segN X.F j - r := hi
+        classical
+        have hr : 0 < r := NeZero.pos r
+        have hV := hX.valid
+        unfold T.dplus Dat.beS
+        have himg : (X.F.letters j).filter (· < X.F.fr j 0) =
+            (Finset.univ.filter fun l : Fin (segN X.F j) => l.val < segN X.F j - r).image (segE X.F j) := by
+          ext x
+          simp only [Finset.mem_filter, Finset.mem_image, Finset.mem_univ, true_and]
+          constructor
+          · rintro ⟨hx, hlt⟩
+            obtain ⟨i, rfl⟩ := segE_surj X.F j hx
+            exact ⟨i, (segE_lt_fr_iff X.F hV hr j i).mp hlt, rfl⟩
+          · rintro ⟨i, hi, rfl⟩
+            exact ⟨segE_mem X.F j i, (segE_lt_fr_iff X.F hV hr j i).mpr hi⟩
+        rw [himg, Finset.sum_image (fun a _ b _ h => (segE_strictMono X.F j).injective h), Finset.sum_filter]
+        refine Finset.sum_le_sum fun l _ => ?_
+        split_ifs with h1 h2 h2
+        · rw [hP.degs l ((segE_lt_fr_iff X.F hV hr j l).mpr h2)]
+        · omega
+        · exact Nat.zero_le _
+        · exact le_rfl
+      exact le_trans h1 (by exact_mod_cast h2)
+    have hup : ∀ t ≤ r, ∀ m, stg μ (segN X.F j - r + t) m ≤ (X.beS p K j b : ℤ) := by
+      intro t
+      induction t with
+      | zero => intro _ m; exact hlow _ le_rfl m
+      | succ t ih =>
+        intro ht m
+        obtain ⟨l, hlv, hl, hs⟩ := htau t (by omega)
+        rw [show segN X.F j - r + (t + 1) = segN X.F j - r + t + 1 by ring]
+        by_cases hm : m.val = 0
+        · have := hP.head l ⟨t, by omega⟩ hl m (by omega)
+          rw [stg_succ μ, hlv] at this
+          rw [this]
+        · have hm' := m.isLt
+          have h2 := hs.2.1 ⟨m.val - 1, by omega⟩ (by simp only []; omega)
+          have e : (⟨(⟨m.val - 1, by omega⟩ : Fin (r + K)).val + 1, by simp only []; omega⟩ : Fin (r + K)) = m :=
+            Fin.ext (by simp only []; omega)
+          rw [e] at h2
+          exact le_trans h2 (ih (by omega) _)
+    have hdom : ∀ k, k < segN X.F j + 1 → Antitone (stg (plPart μ) k) := by
+      intro k hk a a' haa
+      rw [stg_plPart, stg_plPart, ← stg_eq μ k hk, ← hPμ]
+      exact P.dom _ (by rw [Fin.le_def]; simpa using haa)
+    refine ⟨?_, ?_, ?_⟩
+    · intro i hi m
+      rw [stg_plPart]
+      constructor
+      · have h1 := T.mu_nonneg P i (by omega) (Fin.castAdd K m) (by
+          have := m.isLt
+          simp only [Fin.val_castAdd]; omega)
+        rwa [hPμ, stg_eq μ i (by omega)] at h1
+      · by_cases h : i ≤ segN X.F j - r
+        · exact hlow i h _
+        · have := hup (i - (segN X.F j - r)) (by omega) (Fin.castAdd K m)
+          rwa [show segN X.F j - r + (i - (segN X.F j - r)) = i by omega] at this
+    · intro m
+      rw [stg_plPart]
+      obtain ⟨l, hlv, hl, -⟩ := htau (r - 1) (by omega)
+      have := hP.head l ⟨r - 1, by omega⟩ hl (Fin.castAdd K m) (by
+        have := m.isLt
+        simp only [Fin.val_castAdd]; omega)
+      rw [stg_succ μ, hlv, show segN X.F j - r + (r - 1) + 1 = segN X.F j by omega] at this
+      exact this
+    · intro t ht c
+      obtain ⟨l, hlv, hl, hs⟩ := htau t ht
+      refine colH_step (hdom _ (by omega)) (hdom _ (by omega)) ?_ ?_ c
+      · intro a
+        rw [stg_plPart, stg_plPart]
+        exact hs.1 _
+      · intro a h
+        rw [stg_plPart, stg_plPart]
+        have := hs.2.1 (Fin.castAdd K a) (by simp only [Fin.val_castAdd]; omega)
+        exact this
   have hI' : IsSt P1.mu (Ican P1.mu) := by rw [h1]; exact mem_isSt_Ican H
   have hI'' : IsSt P2.mu q.1.2.1 := by rw [h2]; exact hSt
   have u1 := (standard_polynomial_mem_bounds (segLL X.F j) b' (fun th M => (hA3 p O S _ r (segLL X.F j) b' th M).1) P1 _ hI').1
@@ -193,8 +399,8 @@ theorem restMemD_of (D : Formalism.BasicNotions.D7) (hAdm : AdmB D) (C₀ : ℝ)
     ring
   rw [hfac, MvPolynomial.mem_restrictSupport_iff]
   intro mm hmm i hi c
-  have hmm' : coeff mm (monomial (X.monTau K j q.1.2.2) (1 : O) *
-      (plEmb O r K (X.discPowerTimesMonomial p K O j b * X.memPl K O j q.1.1) * nmEmb O r K (X.memG K O j q.1))) ≠ 0 := by
+  have hmm' : AddMonoidAlgebra.coeff (monomial (X.monTau K j q.1.2.2) (1 : O) *
+      (plEmb O r K (X.discPowerTimesMonomial p K O j b * X.memPl K O j q.1.1) * nmEmb O r K (X.memG K O j q.1))) mm ≠ 0 := by
     rw [← MvPolynomial.mem_support_iff]; exact_mod_cast hmm
   rw [MvPolynomial.coeff_monomial_mul'] at hmm'
   split_ifs at hmm' with hle

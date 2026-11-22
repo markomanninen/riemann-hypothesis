@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.PureEqPureA
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SchwartzHeisLine
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleTopology
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.SchurTranslationsCharacters
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.WeilRepresentationQuadraticDatum
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.BoundMulTranslate
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAddCharSymplecticLocalLatticeEqOne
-import Development.WeilBound.ThetaLifts.SchwartzMoments.SchwartzDqTendsto
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.PureEqPureA
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SchwartzHeisLine
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleTopology
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.SchurTranslationsCharacters
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.WeilRepresentationQuadraticDatum
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.BoundMulTranslate
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAddCharSymplecticLocalLatticeEqOne
+public import Development.WeilBound.ThetaLifts.SchwartzMoments.SchwartzDqTendsto
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Filter Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun
 open scoped TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -40,7 +45,7 @@ theorem dop_apply (a : V) (L : V →L[ℝ] ℝ) (f : 𝓢(V, ℂ)) (x : V) :
 theorem dop_add (a b : V) (L M : V →L[ℝ] ℝ) (f : 𝓢(V, ℂ)) :
     dop (a + b) (L + M) f = dop a L f + dop b M f := by
   ext x
-  simp only [SchwartzMap.add_apply, dop_apply, map_add, ContinuousLinearMap.add_apply]
+  simp only [SchwartzMap.add_apply, dop_apply, map_add (f := _), ContinuousLinearMap.add_apply]
   push_cast
   ring
 
@@ -85,12 +90,13 @@ def pt (x : κ → mixedEmbedding.mixedSpace F) (y : κ → FiniteAdeleRing (�
 theorem evI_pt (x : κ → mixedEmbedding.mixedSpace F) (y : κ → FiniteAdeleRing (𝓞 F) F) :
     (fun i => evI F (pt x y i)) = x := by
   funext i
-  simp [evI, pt]
+  exact (InfiniteAdeleRing.ringEquiv_mixedSpace F).apply_symm_apply (x i)
 
 theorem pureA_pt (f : (κ → mixedEmbedding.mixedSpace F) → ℂ) (g : (κ → FiniteAdeleRing (𝓞 F) F) → ℂ)
     (x : κ → mixedEmbedding.mixedSpace F) (y : κ → FiniteAdeleRing (𝓞 F) F) :
     pureA F f g (pt x y) = f x * g y := by
-  simp [pureA, pt]
+  change f (fun i => evI F (pt x y i)) * g y = f x * g y
+  rw [evI_pt]
 
 def rOf (g : (κ → FiniteAdeleRing (𝓞 F) F) → ℂ) : (κ → AF F) → ℂ := fun x => g fun i => (x i).2
 
@@ -177,15 +183,15 @@ variable {n d : ℕ} {X : Spc F E n} {W : Spc F E d}
 theorem aOf_add (M : Model σ X W) (u v : Matrix (Fin n) (Fin d) (AE F E)) :
     aOf M (u + v) = aOf M u + aOf M v := by
   funext i
-  simp [aOf, map_add, evI_add]
+  simp [aOf, map_add (f := _), evI_add]
 
 theorem lOf_add (M : Model σ X W) (u v : Matrix (Fin n) (Fin d) (AE F E)) :
     lOf M (u + v) = lOf M u + lOf M v := by
   ext y
-  simp only [lOf, ContinuousLinearMap.add_apply, linForm_apply, ← map_add, ← Finset.sum_add_distrib]
+  simp only [lOf, ContinuousLinearMap.add_apply, linForm_apply, ← map_add (f := _), ← Finset.sum_add_distrib]
   congr 1
   refine Finset.sum_congr rfl fun i _ => ?_
-  simp [map_add, evI_add, mul_add]
+  simp [map_add (f := _), evI_add, mul_add]
 
 theorem evI_half_trace (S : mixedEmbedding.mixedSpace F) :
     Algebra.trace ℝ (mixedEmbedding.mixedSpace F) (evI F ⅟(2 : AF F) * S) =
@@ -196,7 +202,7 @@ theorem evI_half_trace (S : mixedEmbedding.mixedSpace F) :
   have h2 : S = evI F ⅟(2 : AF F) * S + evI F ⅟(2 : AF F) * S := by
     rw [← add_mul, h1, one_mul]
   have h3 := congrArg (Algebra.trace ℝ (mixedEmbedding.mixedSpace F)) h2
-  rw [map_add] at h3
+  rw [map_add (f := _)] at h3
   linarith
 
 open scoped Classical in
@@ -270,8 +276,8 @@ theorem pureA_inj {κ : Type} [Fintype κ] {f₁ f₂ : SInf F κ} {g : (κ → 
 
 variable {M : Model σ Y W} {ψ : AddChar (AF F) ℂ} {om : Rep σ Y W} {k : UA σ W.J}
 
-open scoped Classical in
 
+open scoped Classical in
 def Impl (om : Rep σ Y W) (k : UA σ W.J) (A : SInf F (Fin n × Fin d) →ₗ[ℂ] SInf F (Fin n × Fin d)) : Prop :=
   ∀ f : SInf F (Fin n × Fin d), ∀ g ∈ SB (Fin n × Fin d → FiniteAdeleRing (𝓞 F) F), om (1, k) (pureA F f g) = pureA F (A f) g
 
@@ -286,7 +292,7 @@ theorem exists_impl (hl : ∀ f : SInf F (Fin n × Fin d), ∃ f₁ : SInf F (Fi
     have e : ∀ (p q : SInf F (Fin n × Fin d)), pureA F (⇑(p + q)) g = pureA F p g + pureA F q g := fun p q => by
       funext x
       simp [pureA, add_mul]
-    rw [← hA₀ _ g hg, e, e, map_add, hA₀ _ g hg, hA₀ _ g hg]
+    rw [← hA₀ _ g hg, e, e, map_add (f := _), hA₀ _ g hg, hA₀ _ g hg]
   · refine pureA_inj h0 ?_
     have e : ∀ (p : SInf F (Fin n × Fin d)), pureA F (⇑(c • p)) g = c • pureA F p g := fun p => by
       funext x
@@ -360,7 +366,7 @@ theorem hl_line_deriv (a : V) (L : V →L[ℝ] ℝ) (f : 𝓢(V, ℂ)) :
     (lam.hasTemperateGrowth.mul L.hasTemperateGrowth).add
       ((Function.HasTemperateGrowth.const _).mul (lam.hasTemperateGrowth.mul lam.hasTemperateGrowth))
   have hdiff : ∀ (x : V) (t : ℝ), q (x + t • a) - q x = t * L x + t ^ 2 * (L a / 2) := fun x t => by
-    simp only [hq, map_add, map_smul, hla, smul_eq_mul]
+    simp only [hq, map_add (f := _), map_smul, hla, smul_eq_mul]
     ring
   have t1 := chirp_tg 1 hqt
   have t2 := chirp_tg (-1) hqt
@@ -478,7 +484,7 @@ theorem inter (hψ : IsStd ψ) (hs : IsSplitting (adeleClass F) ψ M.co (actAB (
       have huv : At (evI F) (u + v) := fun s hs => by rw [smul_add, hu s hs, hv s hs, add_zero]
       have h1 := inter_of_ne hψ hs hA huv (by rw [aOf_add, ha, zero_add]; exact hξ) f
       have h2 := inter_of_ne hψ hs hA hv hξ f
-      rw [aOf_add, lOf_add, dop_add, map_add, Matrix.add_mul, aOf_add, lOf_add, dop_add, h2] at h1
+      rw [aOf_add, lOf_add, dop_add, map_add (f := _), Matrix.add_mul, aOf_add, lOf_add, dop_add, h2] at h1
       exact add_right_cancel h1
   · exact inter_of_ne hψ hs hA hu ha f
 
@@ -566,12 +572,14 @@ def iot (p : κ → Af F) : κ → AF F := fun i => pairA F 0 (p i)
 theorem dot_iot (x : κ → AF F) (q : κ → Af F) :
     x ⬝ᵥ iot q = pairA F 0 ((fun i => sndA F (x i)) ⬝ᵥ q) := by
   have h1 : fstAd (x ⬝ᵥ iot q) = 0 := by
-    simp only [dotProduct, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, map_sum]
     refine Finset.sum_eq_zero fun i _ => ?_
     show (x i).1 * 0 = 0
     rw [mul_zero]
   have h2 : sndA F (x ⬝ᵥ iot q) = (fun i => sndA F (x i)) ⬝ᵥ q := by
-    simp only [dotProduct, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, map_sum]
     rfl
   exact Prod.ext h1 h2
 
@@ -729,7 +737,7 @@ theorem exists_arch_operator (hψ : IsStd ψ)
         funext x
         simp [pureA, mul_add]
       funext y
-      simp only [e, map_add, Pi.add_apply]
+      simp only [e, map_add (f := _), Pi.add_apply]
     · intro c φ _
       have e : pureA F f (c • φ) = c • pureA F f φ := by
         funext x

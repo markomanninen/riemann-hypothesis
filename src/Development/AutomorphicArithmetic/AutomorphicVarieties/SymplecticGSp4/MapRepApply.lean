@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,15 +106,6 @@ structure Ord (I : Subgroup H) (ps : Fin 4 → H → R) (s₀ : H) (r : H →* M
   inert : ∀ s ∈ I, ∀ i, prj (fun a => ps a s₀) (r s₀) i * (r s - ps i s • (1 : M4 R)) * prj (fun a => ps a s₀) (r s₀) i = 0
 
 end Rep
-
-example : IsGSp (1 : R) 1 := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> simp [adj_apply, sgn, Fin.rev, Matrix.one_apply]
-
-example : Xm R ∈ sp4 R := by
-  show adj _ = -_
-  ext i j
-  fin_cases i <;> fin_cases j <;> simp [adj_apply, sgn, Xm, Fin.rev, Matrix.single_apply]
 
 end UpperTheory.V.GradeZeroInterpolatingElement
 

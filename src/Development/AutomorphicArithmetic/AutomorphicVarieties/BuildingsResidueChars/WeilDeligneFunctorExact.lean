@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.WdDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.WdDefs
+
+@[expose] public section
 
 open TensorProduct Module GlobalTheory.Pst GlobalTheory.Pst.DpstMap in
 theorem UpperTheory.weilDeligne_functor_exact :

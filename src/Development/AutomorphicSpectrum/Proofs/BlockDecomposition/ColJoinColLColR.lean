@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.WeilSiegelTheta.Unfold2
+module
+
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.WeilSiegelTheta.Unfold2
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,9 +58,6 @@ def joinEquiv : Matrix (Fin m) (Fin r) R × Matrix (Fin m) (Fin s) R ≃ Matrix 
   left_inv z := by simp
   right_inv y := by simp
 
-@[simp] theorem joinEquiv_apply (z : Matrix (Fin m) (Fin r) R × Matrix (Fin m) (Fin s) R) :
-    joinEquiv z = colJoin z.1 z.2 := rfl
-
 theorem colJoin_map {R' : Type*} (f : R → R') (y₁ : Matrix (Fin m) (Fin r) R) (y₂ : Matrix (Fin m) (Fin s) R) :
     (colJoin y₁ y₂).map f = colJoin (y₁.map f) (y₂.map f) := by
   ext i k
@@ -74,10 +75,6 @@ theorem colJoin_neg [Neg R] (y₁ : Matrix (Fin m) (Fin r) R) (y₂ : Matrix (Fi
 
 theorem colJoin_sub [Sub R] (y₁ y₁' : Matrix (Fin m) (Fin r) R) (y₂ y₂' : Matrix (Fin m) (Fin s) R) :
     colJoin (y₁ - y₁') (y₂ - y₂') = colJoin y₁ y₂ - colJoin y₁' y₂' := by
-  ext i k
-  refine Fin.addCases (fun j => ?_) (fun j => ?_) k <;> simp
-
-@[simp] theorem colJoin_zero [Zero R] : colJoin (0 : Matrix (Fin m) (Fin r) R) (0 : Matrix (Fin m) (Fin s) R) = 0 := by
   ext i k
   refine Fin.addCases (fun j => ?_) (fun j => ?_) k <;> simp
 

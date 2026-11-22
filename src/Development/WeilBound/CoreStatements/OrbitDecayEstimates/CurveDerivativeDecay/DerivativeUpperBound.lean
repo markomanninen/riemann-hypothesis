@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.OrbitDecayEstimates.CurveDerivativeDecay.HIntegrability
+module
+
+public import Development.WeilBound.CoreStatements.OrbitDecayEstimates.CurveDerivativeDecay.HIntegrability
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ theorem integral_ratio_bound : IntR := by
   have hI := integrable_of_dec hm μ hφ hC le_rfl hd'
   refine ⟨hI, ?_⟩
   have h1 := lint_le hm μ hC one_pos le_rfl hd'
-  rw [integral_norm_eq_lintegral_enorm hI.1]
+  rw [integral_norm_eq_lintegral_eNorm hI.1]
   refine (ENNReal.toReal_mono (ENNReal.mul_ne_top ENNReal.ofReal_ne_top (nearSet_lt_top ε μ).ne) h1).trans (le_of_eq ?_)
   rw [ENNReal.toReal_mul, ENNReal.toReal_ofReal (by positivity), div_one]
   rfl

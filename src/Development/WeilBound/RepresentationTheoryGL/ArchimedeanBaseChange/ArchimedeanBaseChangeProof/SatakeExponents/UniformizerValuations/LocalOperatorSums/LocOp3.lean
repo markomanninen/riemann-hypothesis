@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LeviOf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermLocallyConstant
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HintConstMulSum
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermConvolutionHecke
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RelIndexEqCard
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LeviOf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermLocallyConstant
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HintConstMulSum
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermConvolutionHecke
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RelIndexEqCard
+
+@[expose] public section
 
 noncomputable section
 

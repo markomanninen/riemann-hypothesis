@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.DictKAOfParts
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsSelfDualSiegelWeilMeasures
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FrameIntegralEqThetaPartNondegenerate
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.DictKAOfParts
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsSelfDualSiegelWeilMeasures
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FrameIntegralEqThetaPartNondegenerate
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,8 +27,14 @@ def aTau (θ : InfFam D) (a : GL (Fin n) (AE D)) (τ : D.what₂.Tau) : GL (Fin 
 def conjH (a : GL (Fin n) (AE D)) (b : hermA D n) : hermA D n :=
   ⟨a.1 * b.1 * adj a.1, by
     have hb : adj b.1 = b.1 := b.2
+    have hmul (x y : Mx D n n) : adj (x * y) = adj y * adj x := by
+      unfold GlobalTheory.MixModel.adj
+      rw [Matrix.map_mul, Matrix.transpose_mul]
+    have haa : adj (adj a.1) = a.1 := by
+      funext i j
+      exact Formalism.L2.Theta.cA_cA (a.1 i j)
     change adj (a.1 * b.1 * adj a.1) = a.1 * b.1 * adj a.1
-    rw [adj_mul, adj_mul, adj_adj, hb, mul_assoc]⟩
+    rw [hmul, hmul, haa, hb, mul_assoc]⟩
 
 def PsiPlaces : Prop :=
   ∀ D n V ψ χ θ μ ω H l s ν Φ, Std D n V ψ χ θ μ ω H l s ν Φ →
@@ -94,10 +104,6 @@ def FinMatch : Prop :=
 def ConjMod : Prop :=
   ∀ (D : D7) (n : ℕ) (lam : Measure (hermA D n)), lam.IsAddHaarMeasure → ∀ (a : GL (Fin n) (AE D)) (f : Mx D n n → ℂ),
     ∫ b, f b.1 ∂lam = ((absA D (Matrix.GeneralLinearGroup.det a) : ℝ) : ℂ) ^ n * ∫ c, f (a.1 * c.1 * adj a.1) ∂lam
-
-def MonoSch : Prop :=
-  ∀ (D : D7) (n : ℕ) (V : HSp D) (θ : InfFam D) (l : D.what₂.Tau → ℝ) (s : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ)
-    (φ : Mx D V.rank n → ℂ), IsMonoFock θ V l s φ → φ ∈ schwartzA θ V.rank n ∧ φ ∈ fockA θ V n l s
 
 def ValueSide : Prop :=
   ∀ (D : D7) (n : ℕ) (V : HSp D) (ν : Measure (GA D V)), ν.IsHaarMeasure →

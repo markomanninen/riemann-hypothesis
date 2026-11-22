@@ -1,21 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSabCancel
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjIsAbelianSchemeDimRigidifiedSym
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.NsmulMemSmulTop
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFormEqOne
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsObjTwistBySimilitude
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TateIsoDifferBySimilitude
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsReducedIsNormalSchemeIsLocallyNoetherianOfSmoo
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModuliRepOfBase
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CompEqIdOfTwists
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelMapFibreSimplyTransitive
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjPull
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjRigidClosed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSabCancel
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjIsAbelianSchemeDimRigidifiedSym
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.NsmulMemSmulTop
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFormEqOne
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsObjTwistBySimilitude
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TateIsoDifferBySimilitude
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsReducedIsNormalSchemeIsLocallyNoetherianOfSmoo
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModuliRepOfBase
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CompEqIdOfTwists
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelMapFibreSimplyTransitive
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjPull
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjRigidClosed
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -69,7 +73,7 @@ theorem exists_factor {l : Level H} {K : Type} [Field K] (β β' : KA l →+* K)
             map_one' := β.injective (by rw [hσ, map_one, map_one])
             map_mul' := fun a b => β.injective (by rw [hσ, map_mul, map_mul, hσ, hσ])
             map_zero' := β.injective (by rw [hσ, map_zero, map_zero])
-            map_add' := fun a b => β.injective (by rw [hσ, map_add, map_add, hσ, hσ]) }, RingHom.ext hσ⟩
+            map_add' := fun a b => β.injective (by rw [hσ, map_add (f := _), map_add (f := _), hσ, hσ]) }, RingHom.ext hσ⟩
 
 theorem zeta_zpow_congr (l : Level H) {i j : ℤ} (h : (l.A : ℤ) ∣ i - j) : (baseKA l).ζ ^ i = (baseKA l).ζ ^ j := by
   have h0 : (baseKA l).ζ ≠ 0 := (baseKA l).ζ_prim.ne_zero l.A_pos.ne'
@@ -127,10 +131,10 @@ def twistObj {s' : S ⟶ Sp (KA l)} (o : Obj D l (baseKA l) s') (g : Sim D) (hpq
   ample := o.ample
   ktriv := o.ktriv
   eta a := o.eta (g.f l.M a)
-  eta_add a c := by rw [map_add, o.eta_add]
+  eta_add a c := by rw [map_add (f := _), o.eta_add]
   eta_ker a ha := o.eta_ker _ (LevelTwist.map_mem_smul_top _ _ ha)
   etaA a := o.etaA (g.f l.A a)
-  etaA_add a c := by rw [map_add, o.etaA_add]
+  etaA_add a c := by rw [map_add (f := _), o.etaA_add]
   etaA_ker a := by rw [map_nsmul, o.etaA_ker]
   geom k _ _ x β hx := by
     obtain ⟨hd, I, hζ', hA', hM⟩ := o.geom k x β hx
@@ -204,29 +208,29 @@ theorem Twist.unique (hpq : 1 ≤ D.p + D.q) (hj : ∀ x, ((jK x : KA l₂) : �
   exact (existsUnique_twist hpq hj h.fix h.root).unique ⟨h.comm, h.map⟩
     ⟨h'.comm, ν, fun x => by rw [hM]; exact a x, fun x => by rw [hA]; exact b x⟩
 
-theorem Twist.one : Twist Xo jK (SimAlg.one D) (RingHom.id _) (𝟙 _) where
-  fix := rfl
-  root := (zpow_one _).symm
-  lowM _ := rfl
-  lowA _ := rfl
-  comm := by rw [spMap_id', Category.id_comp, Category.comp_id]
-  map := ⟨ObjLower.sabId _, fun _ => (Category.comp_id _).trans (Category.id_comp _).symm,
-    fun _ => (Category.comp_id _).trans (Category.id_comp _).symm⟩
+theorem Twist.one : Twist Xo jK (SimAlg.one D) (RingHom.id _) (𝟙 _) :=
+  { fix := rfl,
+    root := (zpow_one _).symm,
+    lowM _ := rfl,
+    lowA _ := rfl,
+    comm := by rw [spMap_id', Category.id_comp, Category.comp_id],
+    map := ⟨ObjLower.sabId _, fun _ => (Category.comp_id _).trans (Category.id_comp _).symm,
+      fun _ => (Category.comp_id _).trans (Category.id_comp _).symm⟩ }
 
 theorem Twist.mul {g g' : Sim D} {σ σ' : KA l₂ →+* KA l₂} {f f' : Xo.X ⟶ Xo.X} (h : Twist Xo jK g σ f)
-    (h' : Twist Xo jK g' σ' f') : Twist Xo jK (SimAlg.mul g g') (σ.comp σ') (f ≫ f') where
-  fix := by rw [RingHom.comp_assoc, h'.fix, h.fix]
-  root := by rw [RingHom.comp_apply, h'.root, map_zpow₀, h.root, ← zpow_mul]; rfl
-  lowM a := (h.lowM _).trans (h'.lowM a)
-  lowA a := (h.lowA _).trans (h'.lowA a)
-  comm := by rw [Category.assoc, h'.comm, ← Category.assoc, h.comm, Category.assoc, spMap_comp']
-  map := by
-    obtain ⟨ν, a, b⟩ := h.map
-    obtain ⟨ν', a', b'⟩ := h'.map
-    obtain ⟨n, hn⟩ := exists_comp_sabMap ν ν' rfl
-    refine ⟨n, fun x => ?_, fun x => ?_⟩
-    · rw [hn, Category.assoc, ← a', ← Category.assoc, ← Category.assoc, ← a]; rfl
-    · rw [hn, Category.assoc, ← b', ← Category.assoc, ← Category.assoc, ← b]; rfl
+    (h' : Twist Xo jK g' σ' f') : Twist Xo jK (SimAlg.mul g g') (σ.comp σ') (f ≫ f') :=
+  { fix := by rw [RingHom.comp_assoc, h'.fix, h.fix],
+    root := by rw [RingHom.comp_apply, h'.root, map_zpow₀, h.root, ← zpow_mul]; rfl,
+    lowM a := (h.lowM _).trans (h'.lowM a),
+    lowA a := (h.lowA _).trans (h'.lowA a),
+    comm := by rw [Category.assoc, h'.comm, ← Category.assoc, h.comm, Category.assoc, spMap_comp'],
+    map := by
+      obtain ⟨ν, a, b⟩ := h.map
+      obtain ⟨ν', a', b'⟩ := h'.map
+      obtain ⟨n, hn⟩ := exists_comp_sabMap ν ν' rfl
+      refine ⟨n, fun x => ?_, fun x => ?_⟩
+      · rw [hn, Category.assoc, ← a', ← Category.assoc, ← Category.assoc, ← a]; rfl
+      · rw [hn, Category.assoc, ← b', ← Category.assoc, ← Category.assoc, ← b]; rfl }
 
 theorem Twist.exists_inv (hpq : 1 ≤ D.p + D.q) (hj : ∀ x, ((jK x : KA l₂) : ℂ) = ((x : KA l) : ℂ))
     {g : Sim D} {σ : KA l₂ →+* KA l₂} {f : Xo.X ⟶ Xo.X} (h : Twist Xo jK g σ f) :
@@ -342,7 +346,7 @@ theorem exists_twist_of_lowers (hL : Out.Laws) (hpq : 1 ≤ D.p + D.q) (hd : l.D
   have hM : ∀ a, e (toUnit _ ≫ o.eta a) = toUnit _ ≫ Xo.univ.eta (g.f l₂.M a) := fun a => by
     obtain ⟨u, hu, v, hv, huv⟩ := level_split l₂
     have hcs : a = u • a + v • a := by rw [← add_smul, huv, one_smul]
-    rw [hcs, o.eta_add, o.eta_ker _ (Submodule.smul_mem_smul hu trivial), map_add, Xo.univ.eta_add, map_smul, map_smul,
+    rw [hcs, o.eta_add, o.eta_ker _ (Submodule.smul_mem_smul hu trivial), map_add (f := _), Xo.univ.eta_add, map_smul, map_smul,
       Xo.univ.eta_ker _ (Submodule.smul_mem_smul hu trivial), _root_.one_mul, _root_.one_mul,
       hI _ (Submodule.smul_mem_smul hv trivial), hJ _ (Submodule.smul_mem_smul hv trivial), ← hJ',
       (hg _ (level_pos l₂)).1, map_smul]
@@ -370,8 +374,8 @@ theorem exists_twist_of_lowers (hL : Out.Laws) (hpq : 1 ≤ D.p + D.q) (hd : l.D
     · show _ ≫ m.φ = _
       rw [hm, ← Category.assoc, hA', Category.assoc, b, Category.assoc]
 
-variable (Xo jK) in
 
+variable (Xo jK) in
 def Grp : Type := {f : Xo.X ⟶ Xo.X // ∃ g σ, Twist Xo jK g σ f}
 
 instance : One (Grp Xo jK) := ⟨⟨𝟙 _, _, _, Twist.one⟩⟩

@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnGeomCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellDecomposition
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LongWeylElement
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnGeomCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellDecomposition
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LongWeylElement
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 

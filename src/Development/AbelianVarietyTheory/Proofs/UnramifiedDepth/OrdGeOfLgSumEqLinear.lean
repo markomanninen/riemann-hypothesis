@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
-import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
+public import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
+
+@[expose] public section
+
 open ReciprocityTheory.PGsh
 
 namespace GlobalTheory.ExpWeight
@@ -29,7 +34,7 @@ theorem OrdBelow.mul {v : AddValuation C (WithTop ℝ)} {ρ : ℝ} {D : ℕ}
   by_cases h2 : p.2 = 0
   · rw [h2, coeff_zero_eq_constantCoeff_apply, hh0, mul_zero, v.map_zero]; exact le_top
   have hd : Finsupp.degree p.1 + Finsupp.degree p.2 = Finsupp.degree α := by
-    rw [← hp', map_add]
+    rw [← hp', map_add (f := _)]
   have d1 : Finsupp.degree p.1 ≠ 0 := fun e => h1 ((Finsupp.degree_eq_zero_iff _).1 e)
   have d2 : Finsupp.degree p.2 ≠ 0 := fun e => h2 ((Finsupp.degree_eq_zero_iff _).1 e)
   rw [v.map_mul]

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.OpenCellDecomposition.OpenCellUnipotents.JTranslate
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.OpenCellDecomposition.OpenCellUnipotents.Imports
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.OpenCellDecomposition.OpenCellUnipotents.BlockIndexOfWeylShuffle
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.OpenCellDecomposition.OpenCellUnipotents.Bridge
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.OpenCellDecomposition.OpenCellBlockShapes.OpenJ
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.OpenCellDecomposition.OpenCellBlockShapes.ValuationOneApplyLe
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.OpenCellDecomposition.OpenCellUnipotents.MemUnipUTwo
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.OpenCellDecomposition.OpenCellUnipotents.JTranslate
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.OpenCellDecomposition.OpenCellUnipotents.Imports
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.OpenCellDecomposition.OpenCellUnipotents.BlockIndexOfWeylShuffle
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.OpenCellDecomposition.OpenCellUnipotents.Bridge
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.OpenCellDecomposition.OpenCellBlockShapes.OpenJ
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.OpenCellDecomposition.OpenCellBlockShapes.ValuationOneApplyLe
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.OpenCellDecomposition.OpenCellUnipotents.MemUnipUTwo
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,8 +37,8 @@ theorem scalar_id (t : ℝ) (ht : 0 < t) (i m r : ℕ) :
 
 variable {r m : ℕ} {W : Type} [AddCommGroup W] [Module ℂ W]
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem openCellPar (ψ : AddChar k Circle) (hψ : Continuous ψ)
     (ρ : Representation ℂ (Levi k fun a => Fin (dd r m a)) W) (hρ : IsSmooth ρ) (ω : kˣ →* ℂˣ)
     (hcent : ∀ (z : kˣ) (t : W), ρ (levZ k r m z) t = (ω z : ℂ) • t)
@@ -46,10 +50,10 @@ theorem openCellPar (ψ : AddChar k Circle) (hψ : Continuous ψ)
           twKer (parInd (stdBlocks (dd r m) (hdd r m)) ρ) (unipB k (Fin (r + m))) (whitChar ψ (r + m)) := by
   obtain ⟨v, hv⟩ := hv
   have hv0 : v ≠ 0 := fun h => hv (h ▸ Submodule.zero_mem _)
-  obtain ⟨J, vol, _, hJker, hJU, _, hJvol⟩ :=
-    CellB.openJ k ψ hψ 2 (r + m) (dd r m) (hdd r m) ρ hρ
-  obtain ⟨n, _, hwhit, hcpt, hopen, f, hf, hfv, hf0⟩ :=
-    exists_bump k ψ hψ 2 (r + m) (dd r m) (hdd r m) ρ hρ v
+  have hJ := CellB.openJ k ψ hψ 2 (r + m) (dd r m) (hdd r m) ρ hρ
+  rcases hJ with ⟨J, vol, -, hJker, hJU, -, hJvol⟩
+  have hbump := exists_bump k ψ hψ 2 (r + m) (dd r m) (hdd r m) ρ hρ v
+  rcases hbump with ⟨n, -, hwhit, hcpt, hopen, f, hf, hfv, hf0⟩
   have hle : CellB.congrL k r m n ≤ unipU k (dd r m) (hdd r m) := inf_le_left
   have hwL : ∀ (u : GL (Fin (r + m)) k) (hb : u ∈ unipB k (Fin (r + m))),
       u ∈ CellB.congrL k r m n → whitChar ψ (r + m) ⟨u, hb⟩ = 1 :=

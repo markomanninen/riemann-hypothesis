@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsProjOverWeierstrass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowPolAV
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsFactorNontrivial
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIsE8IsSharpBasis
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.ExistsUniqueEqConstMulEllTheta
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsGenVal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsProjOverWeierstrass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowPolAV
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsFactorNontrivial
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIsE8IsSharpBasis
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.ExistsUniqueEqConstMulEllTheta
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsGenVal
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,18 @@ theorem formula_trans (D : DegPre R) {r : ℕ} (W : Matrix (Fin r) (Fin r) ℤ) 
   let H : ((TK R).left ⟶ D.P.A.left) → ((TK R).left.presheaf.stalk z)ˣ := fun ψ => gm ψ z _ (D.P.L.g (J ψ) (J₀ ψ))
   let F : Fin r → Fin r → ((TK R).left.presheaf.stalk z)ˣ := fun i j =>
     ∏ a, H (lamPts (toUnit (TK R) ≫ D.c (y i)) (toUnit (TK R) ≫ D.c (y j)) a) ^ Oε a
-  have h₁ := gm_isGen hw x.left z _ _ k k₀ (hJ.mem (tensφ pr) x.left) (hJ₀.mem (tensφ pr) x.left) hk hk₀
+  have h₁ : gm x.left z _ (w.s (fun a => J (x.left ≫ tensφ pr a), k)) =
+      gm x.left z _ ((LB.LinComb D.P.L (tensφ pr) (tensε W)).g
+        (fun a => J (x.left ≫ tensφ pr a)) (fun a => J₀ (x.left ≫ tensφ pr a))) *
+      (gm x.left z _ (L'.g k k₀))⁻¹ *
+      gm x.left z _ (w.s (fun a => J₀ (x.left ≫ tensφ pr a), k₀)) := by
+    have hm : x.left z ∈ (LB.LinComb D.P.L (tensφ pr) (tensε W)).U (fun a => J (x.left ≫ tensφ pr a)) ⊓ L'.U k ⊓
+        ((LB.LinComb D.P.L (tensφ pr) (tensε W)).U (fun a => J₀ (x.left ≫ tensφ pr a)) ⊓ L'.U k₀) :=
+      ⟨⟨hJ.mem (tensφ pr) x.left, hk⟩, hJ₀.mem (tensφ pr) x.left, hk₀⟩
+    have e := congrArg (gm x.left z _) (hw (fun a => J (x.left ≫ tensφ pr a), k)
+      (fun a => J₀ (x.left ≫ tensφ pr a), k₀))
+    exact (gm_res x.left z _ hm _).symm.trans (e.trans ((map_mul _ _ _).trans
+      (congrArg₂ (· * ·) (gm_div L' _ x.left z _ _ hm) (gm_res x.left z _ hm _))))
   have h₂ : gm x.left z _ ((LB.LinComb D.P.L (tensφ pr) (tensε W)).g (fun a => J (x.left ≫ tensφ pr a))
       (fun a => J₀ (x.left ≫ tensφ pr a))) = ∏ i, ∏ j, F i j ^ W i j := by
     refine (gm_linComb D.P.L (tensφ pr) (tensε W) x.left z _ _ (hJ.mem (tensφ pr) x.left) (hJ₀.mem (tensφ pr) x.left)).trans ?_
@@ -61,7 +76,7 @@ theorem formula_trans (D : DegPre R) {r : ℕ} (W : Matrix (Fin r) (Fin r) ℤ) 
     fin_cases a <;> rfl
   refine (congrArg₂ (· * ·) (h₁.trans (congrArg (· * _ * _) h₂)) (Finset.prod_congr rfl fun i _ =>
     Finset.prod_congr rfl fun j _ => congrArg (· ^ W i j) (h₃ i j))).trans ?_
-  simp only [mul_zpow, inv_zpow, Finset.prod_mul_distrib, Finset.prod_inv_distrib, gv]
+  simp only [mul_zpow, inv_zpow, Finset.prod_mul_distrib, Finset.prod_inv_distrib]
   apply Additive.ofMul.injective
   simp only [ofMul_mul, ofMul_inv]
   abel
@@ -87,30 +102,5 @@ theorem exists_psi (D : DegPre R) {r : ℕ} (W : Matrix (Fin r) (Fin r) ℤ) {B'
     rw [trF, Fintype.prod_unique, zpow_neg_one, Category.id_comp]
   exact (a.trans (congrArg₂ (· * ·) b hv)).trans
     (formula_trans D W pr hw x y hx z₀ J J₀ hJ hJ₀ (J' x.left) (J₁ x.left) (hJ' _) (hJ₁ _)).symm
-
-theorem exists_tens [IsLocalRing R] [IsNoetherianRing R] (D : DegPre R) {r : ℕ} (W : Matrix (Fin r) (Fin r) ℤ)
-    (hp : ((W + W.transpose).map (Int.cast : ℤ → ℝ)).PosDef) (hd : IsUnit (W + W.transpose).det) :
-    ∃ D' : DegPre R, D'.P.g = r * D.P.g ∧ Nonempty (Tens D D' W) := by
-  obtain ⟨P', pr, hpr, ⟨lim⟩, hg, w, hw⟩ := PowPol.exists_pow_polAV R D.P W hp hd
-  obtain ⟨D₀, rfl, -⟩ := GlobalTheory.SelfUnif.exists_degData GlobalTheory.firstFiveLaws.1.cube (maximalIdeal R) P'
-  let c : (Fin r → D.X) → (𝟙_ _ ⟶ D₀.toPre.P.A) := fun y => lim.lift (Fan.mk _ fun i => D.c (y i))
-  have hc : ∀ y i, c y ≫ pr i = D.c (y i) := fun y i => lim.fac _ ⟨i⟩
-  have hx : ∀ y i, (toUnit (TK R) ≫ c y) ≫ pr i = toUnit (TK R) ≫ D.c (y i) := fun y i => by rw [Category.assoc, hc]
-  choose ps hps hv using fun y : Fin r → D.X =>
-    exists_psi D W D₀.toPre.P.isLB pr hw (toUnit (TK R) ≫ c y) y (hx y)
-  refine ⟨{ D₀.toPre with
-            X := Fin r → D.X
-            addX := inferInstance
-            freeX := inferInstance
-            finX := inferInstance
-            c := c
-            c_add := fun a b => lim.hom_ext fun i => ?_
-            psi := ps
-            psi_gen := hps }, hg,
-    ⟨{ pr := pr, pr_hom := hpr, lim := lim, xe := AddEquiv.refl _, c_pr := hc, w := w, w_gen := hw, psi := hv }⟩⟩
-  have := hpr i.as
-  change c (a + b) ≫ pr i.as = (c a * c b) ≫ pr i.as
-  rw [MonObj.mul_comp, hc, hc, hc]
-  exact D.c_add _ _
 
 end GlobalTheory.Mum.TraitWit

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigCongr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigCongr
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,8 @@ theorem exists_eigenvector_of_stable {F : Type} [Field F] [Fintype F] (ψ : AddC
     · exact hv0 h
   obtain ⟨l, hl⟩ := hex
   refine ⟨l, w l, W.sum_mem fun x _ => W.smul_mem _ (hW x v hv), hl, fun x => ?_⟩
-  simp only [w, map_sum, map_smul, hT, Finset.smul_sum, smul_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [w, map_sum, map_smul, hT, Finset.smul_sum, smul_smul]
   refine Fintype.sum_equiv (Equiv.addLeft x) _ _ fun z => ?_
   simp only [Equiv.coe_addLeft, ← AddChar.map_add_eq_mul, Pi.add_apply, mul_add, Finset.sum_add_distrib]
   congr 2

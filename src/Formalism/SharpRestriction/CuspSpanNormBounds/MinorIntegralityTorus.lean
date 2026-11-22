@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.KTwoMinorIntegrality
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.KTwoMinorIntegrality
+
+@[expose] public section
 
 noncomputable section
 
@@ -119,7 +123,7 @@ theorem e_mem_XS {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (a : Fin D.R.rS) : 
   have := a.isLt
   omega
 
-theorem e_mem_lam {T : D.host.E} (Λ : Submodule (𝓞 D.host.E) (hS D).V) (F : LFlag (hS D) D.R.rS T)
+theorem e_mem_lam {T : D.host.E} (Λ : Submodule (𝓞 D.host.E) (hS D).V) (F : LFlag (D.sp.Y 0) D.R.rS T)
     (hX : XLam Λ F = XS D F.fl) (a : Fin D.R.rS) : F.fl.e a ∈ Λ := by
   unfold XLam at hX
   have h := e_mem_XS D F.fl a
@@ -150,24 +154,6 @@ theorem det_isIntegral {E : Type*} [Field E] {n : Type*} [Fintype n] [DecidableE
     rfl
   rw [← hM, ← RingHom.map_det]
   exact (M'.det).2
-
-theorem MinorInt_holds : Formalism.MainNotions.KTwoMinorIntegrality.MinorInt := by
-  intro D X u t hF l hl
-  obtain ⟨-, -, hRow, hOK⟩ := hF
-  have hU : Formalism.HermitianLatticesTheory.IsUnimodular (hS D).hT (X.abelian₂ t) := hRow.2.1.2.1
-  have he : ∀ a, (X.fl t).fl.e a ∈ X.abelian₂ t := e_mem_lam D (X.abelian₂ t) (lf D (X.fl t).fl) hRow.2.2
-  have he' : ∀ a, (X.fl' t).fl.e a ∈ X.abelian₂ t := e_mem_lam D (X.abelian₂ t) (X.fl' t) hOK.2
-  have hl' : l ≤ D.R.rS + 1 := by omega
-  unfold Dl leadMinorE
-  rw [dif_pos hl']
-  apply det_isIntegral
-  intro i j
-  have hi : Fin.castLE hl' i = Fin.castSucc ⟨i, by omega⟩ := Fin.ext rfl
-  have hj : Fin.castLE hl' j = Fin.castSucc ⟨j, by omega⟩ := Fin.ext rfl
-  simp only [Matrix.submatrix_apply, Zhat, brS]
-  rw [hi, hj]
-  simp only [FlagG.fvec, Fin.snoc_castSucc]
-  exact pair_int D hU (he' _) (he _)
 
 end Formalism.MainNotions.MinorIntegralityTorus
 

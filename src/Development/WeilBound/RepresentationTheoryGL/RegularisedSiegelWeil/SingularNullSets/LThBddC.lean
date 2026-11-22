@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LThBddB
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubstMemAndComm
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LeftInvSubtypeSum
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LThBddB
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubstMemAndComm
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LeftInvSubtypeSum
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,8 @@ theorem omega_cut (hω : IsWeilSch ψ χ θ W μ ω) {nb : hermA D n → G D n} 
     (hg : GlobalTheory.AdelicU.proj D.sp.cm.sig (Jst D n) v g = 1) (X : Mx D W.rank n) :
     (ω g Ψ').1 X = cutF ψ C (ip W X X) * (ω g Ψ).1 X := by
   subst hΨ'
-  simp only [map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul]
   rw [eval_sum, show cutF ψ C (ip W X X) = ∑ x ∈ C.s, C.co x * pch ψ x.1 (ip W X X) from rfl,
     Finset.sum_mul]
   refine Finset.sum_congr rfl fun x hx => ?_
@@ -133,7 +138,8 @@ theorem fix_open {nb : hermA D n → G D n} (hnb : IsNMap nb) {v : Pl D} (C : Cu
     (hΨ : ∀ k ∈ KAt D n v, ω k Ψ = Ψ) (hΨ' : Ψ' = ∑ x ∈ C.s, C.co x • ω (nb x) Ψ) {k : G D n}
     (hk : k ∈ Ucut nb v C.s) (hkv : k ∈ atPts D.sp.cm.sig (Jst D n) {v}) : ω k Ψ' = Ψ' := by
   subst hΨ'
-  simp only [map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul]
   refine Finset.sum_congr rfl fun x hx => ?_
   have hc := PositivityTheory.Rg.Rsw.L.LThBdd.conj_mem_KAt hnb C hk hkv hx
   congr 1

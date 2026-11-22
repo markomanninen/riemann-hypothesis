@@ -1,9 +1,13 @@
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.FinrankOfLieMult
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.ExistsGram
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeInnerProductPullbackUniqueStatement
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.PadicEmbeddingDiscreteValuationRingStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExtendedArcUAdicUniformisationOfArcData
-import GroundTheory.HeightsAndTheta.Heights.ArithDegree
+module
+
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.FinrankOfLieMult
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.ExistsGram
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeInnerProductPullbackUniqueStatement
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.PadicEmbeddingDiscreteValuationRingStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExtendedArcUAdicUniformisationOfArcData
+public import GroundTheory.HeightsAndTheta.Heights.ArithDegree
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
@@ -81,7 +85,8 @@ theorem exists_vec (hρ : MB.IsActOf t'.act.act ρM) {S S₀ : Scheme.{0}} {tK :
   · refine (hb.1 r _ (fun k => j (y k)) _).2 (congrArg M₀.pt ?_)
     have hu' : g u ≠ 0 := (map_ne_zero_iff _ hg).2 hu
     have h7 := congrArg j h
-    rw [h3, map_sum] at h7
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h3, map_sum] at h7
     simp only [h3] at h7
     simp only [mul_smul]
     rw [← Finset.smul_sum, ← h7, smul_smul, inv_mul_cancel₀ hu', one_smul]
@@ -96,7 +101,7 @@ theorem inf_norm (hρ : MB.IsActOf t'.act.act ρM) (hfib : IsFibre (HodgeIP t'.G
     (hs₁ : β.comp (tauIn c τ) = (e.comp (algebraMap (𝓞 L) L)).comp s₁)
     (hs₂ : β.comp (tauIn c (ComplexEmbedding.conjugate τ)) = (e.comp (algebraMap (𝓞 L) L)).comp s₂)
     {vK : B.carrier → (epsAt (𝟙 (Sp F)) ⟶ tK.G)} {vec : B.carrier → (epsAt (under y) ⟶ Xo.univ.t.G)}
-    (h1 : ∀ z, (vK z).left ≫ n.φ = spMap (dualMap (e.comp (algebraMap (𝓞 L) L))) ≫ (MB.pt z).left)
+    (h1 : ∀ z, (vK z).left ≫ n.φ = spMap (GlobalTheory.CompanionTheory.Ar.dualMap (e.comp (algebraMap (𝓞 L) L))) ≫ (MB.pt z).left)
     (h2 : ∀ z, (vK z).left ≫ mf.φ = (vec z).left) {x₁ : Fin D.p → B.carrier} {x₂ : Fin D.q → B.carrier}
     (hx₁ : (∀ i, x₁ i ∈ eigSp ρM s₁) ∧ LinearIndependent (𝓞 L) x₁ ∧
       ∀ z ∈ eigSp ρM s₁, ∃ u : 𝓞 L, u ≠ 0 ∧ u • z ∈ Submodule.span (𝓞 L) (Set.range x₁))
@@ -136,7 +141,7 @@ theorem inf_norm (hρ : MB.IsActOf t'.act.act ρM) (hfib : IsFibre (HodgeIP t'.G
     have hpt : spMap ((s.comp e).comp (algebraMap (𝓞 L) L)) ≫ 𝟙 _ =
         spMap s ≫ spMap (e.comp (algebraMap (𝓞 L) L)) := (Category.comp_id _).trans hx.symm
     choose vv hvv using fun z => exists_push n hpt (wK z)
-    have hl : ∀ z, MB.Lifts ((s.comp e).comp (algebraMap (𝓞 L) L)) (𝟙 t'.G.left) z (vv z) := fun z =>
+    have hl : ∀ z, ((vv z).left ≫ (𝟙 t'.G.left) = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap ((s.comp e).comp (algebraMap (𝓞 L) L))) ≫ (MB.pt z).left) := fun z =>
       (Category.comp_id _).trans ((hvv z).symm.trans (k1 z))
     have h3 := Gram.gram_eq _ Xo.univ.t.G Xo.univ.t.PP.L _ m (fun k => wec (x k)) Γ
       (Matrix.of fun i j => (B.metric.form (s.comp e)).inner ((1 : ComplexAt (s.comp e)) ⊗ₜ[𝓞 L] x i)
@@ -156,7 +161,7 @@ theorem int_frame (hρ : MB.IsActOf t'.act.act ρM) (n : SABMap tK t' (spMap (e.
     (hgV : (algebraMap V F).comp gV = e.comp (algebraMap (𝓞 L) L)) {T : SAB H (Sp V)} (mT : SABMap T t' (spMap gV))
     (m'' : SABMap tK T (spMap (algebraMap V F))) (hm : n.φ = m''.φ ≫ mT.φ)
     {vK : B.carrier → (epsAt (𝟙 (Sp F)) ⟶ tK.G)} {vec : B.carrier → (epsAt (under y) ⟶ Xo.univ.t.G)}
-    (h1 : ∀ z, (vK z).left ≫ n.φ = spMap (dualMap (e.comp (algebraMap (𝓞 L) L))) ≫ (MB.pt z).left)
+    (h1 : ∀ z, (vK z).left ≫ n.φ = spMap (GlobalTheory.CompanionTheory.Ar.dualMap (e.comp (algebraMap (𝓞 L) L))) ≫ (MB.pt z).left)
     (h2 : ∀ z, (vK z).left ≫ mf.φ = (vec z).left) (s : 𝓞 E →+* 𝓞 L) {r : ℕ} (x : Fin r → B.carrier)
     (hx : ∀ k, x k ∈ eigSp ρM s) (hli : LinearIndependent (𝓞 L) x)
     (hsp : ∀ z ∈ eigSp ρM s, ∃ u, IsUnit (gV u) ∧ u • z ∈ Submodule.span (𝓞 L) (Set.range x)) :
@@ -191,7 +196,7 @@ theorem fin_norm (hρ : MB.IsActOf t'.act.act ρM)
     (hs₁ : β.comp (tauIn c τ) = (e.comp (algebraMap (𝓞 L) L)).comp s₁)
     (hs₂ : β.comp (tauIn c (ComplexEmbedding.conjugate τ)) = (e.comp (algebraMap (𝓞 L) L)).comp s₂)
     {vK : B.carrier → (epsAt (𝟙 (Sp F)) ⟶ tK.G)} {vec : B.carrier → (epsAt (under y) ⟶ Xo.univ.t.G)}
-    (h1 : ∀ z, (vK z).left ≫ n.φ = spMap (dualMap (e.comp (algebraMap (𝓞 L) L))) ≫ (MB.pt z).left)
+    (h1 : ∀ z, (vK z).left ≫ n.φ = spMap (GlobalTheory.CompanionTheory.Ar.dualMap (e.comp (algebraMap (𝓞 L) L))) ≫ (MB.pt z).left)
     (h2 : ∀ z, (vK z).left ≫ mf.φ = (vec z).left)
     (h3 : ∀ (s : 𝓞 E →+* 𝓞 L) (r : ℕ) (x : Fin r → B.carrier), (∀ k, x k ∈ eigSp ρM s) → LinearIndependent (𝓞 L) x →
       (∀ z ∈ eigSp ρM s, ∃ u : 𝓞 L, u ≠ 0 ∧ u • z ∈ Submodule.span (𝓞 L) (Set.range x)) →

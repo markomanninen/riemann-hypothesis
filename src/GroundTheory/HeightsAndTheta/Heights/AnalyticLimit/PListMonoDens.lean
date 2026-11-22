@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasureA
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StListMonoDens
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasureA
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StListMonoDens
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit

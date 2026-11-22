@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace BlockPoly
 
@@ -23,7 +27,7 @@ theorem diag_monomial (c : σ → K) (m : σ →₀ ℕ) (a : K) :
   simp only [mul_pow, Finsupp.prod, Finset.prod_mul_distrib, map_prod, map_pow]
 
 theorem coeff_diag (c : σ → K) (g : MvPolynomial σ K) (s : σ →₀ ℕ) :
-    coeff s (diag c g) = (s.prod fun t e => c t ^ e) * coeff s g := by
+    AddMonoidAlgebra.coeff (diag c g) s = (s.prod fun t e => c t ^ e) * AddMonoidAlgebra.coeff g s := by
   classical
   induction g using MvPolynomial.induction_on' with
   | monomial m a =>
@@ -32,7 +36,7 @@ theorem coeff_diag (c : σ → K) (g : MvPolynomial σ K) (s : σ →₀ ℕ) :
     · subst h; ring
     · simp
   | add p q hp hq =>
-    rw [map_add, coeff_add, coeff_add, hp, hq, mul_add]
+    rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, mul_add]
 
 theorem support_diag {c : σ → K} (hc : ∀ t, c t ≠ 0) (g : MvPolynomial σ K) :
     (diag c g).support = g.support := by
@@ -55,9 +59,6 @@ noncomputable def diagEquiv {c : σ → K} (hc : ∀ t, c t ≠ 0) :
     (algHom_ext fun t => by
       simp only [AlgHom.comp_apply, diag_X, map_mul, algHom_C, algebraMap_eq, AlgHom.id_apply]
       rw [← mul_assoc, ← C_mul, mul_inv_cancel₀ (hc t), C_1, one_mul])
-
-@[simp] theorem diagEquiv_apply {c : σ → K} (hc : ∀ t, c t ≠ 0) (g : MvPolynomial σ K) :
-    diagEquiv hc g = diag c g := rfl
 
 theorem eq_mul_C_of_dvd {g h : MvPolynomial σ K} (hd : g ∣ h)
     (hdeg : h.totalDegree = g.totalDegree) (hh : h ≠ 0) : ∃ a : K, h = C a * g := by
@@ -112,7 +113,7 @@ theorem bdeg_eq_of_dvd [CharZero K] (b : Fin (D + 1))
   obtain ⟨a, ha⟩ := eq_mul_C_of_dvd hd (totalDegree_diag h2 g) hne
   have key : ∀ r ∈ g.support, (2 : K) ^ bdeg b r = a := by
     intro r hr
-    have h3 := congrArg (coeff r) ha
+    have h3 := congrArg (AddMonoidAlgebra.coeff · r) ha
     rw [coeff_diag, prod_cb, coeff_C_mul] at h3
     exact mul_right_cancel₀ (mem_support_iff.mp hr) h3
   have e := (key s hs).trans (key s' hs').symm
@@ -130,7 +131,7 @@ theorem bdeg_mapDomain (e : Equiv.Perm (Fin (D + 1))) (b : Fin (D + 1))
   unfold bdeg
   refine Finset.sum_congr rfl fun j _ => ?_
   have h : ((e b, j) : Fin (D + 1) × Fin (N + 1)) = eT e (b, j) := rfl
-  rw [h, Finsupp.mapDomain_apply (eT e).injective]
+  rw [h, Finsupp.mapDomain_apply_of_injective (eT e).injective]
 
 theorem mapDomain_mem_of_dvd (e : Equiv.Perm (Fin (D + 1)))
     {g : MvPolynomial (Fin (D + 1) × Fin (N + 1)) K}
@@ -152,7 +153,7 @@ theorem mapDomain_mem_of_dvd (e : Equiv.Perm (Fin (D + 1)))
     rw [hq, totalDegree_mul_of_isDomain hg hq0]
     omega
   obtain ⟨a, ha⟩ := eq_mul_C_of_dvd hd hdeg hr
-  have h1 := congrArg (coeff (s.mapDomain (eT e))) ha
+  have h1 := congrArg (AddMonoidAlgebra.coeff · (s.mapDomain (eT e))) ha
   rw [coeff_rename_mapDomain _ hinj, coeff_C_mul] at h1
   rw [mem_support_iff] at hs ⊢
   intro h0
@@ -174,9 +175,6 @@ noncomputable def translEquiv (a : Fin (N + 1) → K) :
     (algHom_ext fun t => by by_cases h : t.1 = 0 <;> simp [transl_X, h])
     (algHom_ext fun t => by by_cases h : t.1 = 0 <;> simp [transl_X, h])
 
-@[simp] theorem translEquiv_apply (a : Fin (N + 1) → K)
-    (g : MvPolynomial (Fin (D + 1) × Fin (N + 1)) K) : translEquiv a g = transl a g := rfl
-
 theorem eval_transl (z : Fin (D + 1) × Fin (N + 1) → K)
     (f : MvPolynomial (Fin (D + 1) × Fin (N + 1)) K) :
     eval (fun t => if t.1 = 0 then 0 else z t) (transl (fun j => z (0, j)) f) = eval z f := by
@@ -184,7 +182,7 @@ theorem eval_transl (z : Fin (D + 1) × Fin (N + 1) → K)
   next c =>
     simp only [algHom_C, eval_C, AlgHom.commutes, algebraMap_eq]
   next p q hp hq =>
-    simp only [map_add, hp, hq]
+    simp only [map_add (f := _), hp, hq]
   next p t hp =>
     obtain ⟨i, j⟩ := t
     simp only [map_mul, hp, transl_X]

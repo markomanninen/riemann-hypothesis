@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.ConjugateTransposeDerivatives.CfSandwich
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContDiffAdjugateEntry
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.ConjugateTransposeDerivatives.CfSandwich
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContDiffAdjugateEntry
+
+@[expose] public section
 
 noncomputable section
 

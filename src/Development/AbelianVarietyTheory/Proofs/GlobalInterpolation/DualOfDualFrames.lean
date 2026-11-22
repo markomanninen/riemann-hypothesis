@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.Statement
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.Statement
+
+@[expose] public section
 
 open Matrix Formalism.UG
 
@@ -18,7 +22,8 @@ theorem hform_frames (τ : A →+* A) (J B C : Matrix (Fin k) (Fin k) A)
   rw [hform_eq_dot]
   have hmap : (τ ∘ (B *ᵥ x)) = (B.map τ) *ᵥ (τ ∘ x) := by
     funext i
-    simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
   have hct : (B.map τ)ᵀ = cT τ B := by
     unfold cT
     rfl
@@ -33,7 +38,8 @@ theorem hform_swap (τ : A →+* A) (hτ : ∀ a, τ (τ a) = a) (J : Matrix (Fi
     intro i j
     simpa using congrFun (congrFun hJ j) i
   unfold hform
-  simp only [map_sum, map_mul, hτ, hJ']
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, hτ, hJ']
   conv_lhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring

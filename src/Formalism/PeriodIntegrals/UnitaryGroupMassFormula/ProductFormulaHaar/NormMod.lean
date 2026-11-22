@@ -1,16 +1,22 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
-open MeasureTheory ValuativeRel
+open MeasureTheory ValuativeRel NumberField IsDedekindDomain
+open scoped NumberField
 
 namespace PI.ProdFormulaE
 
-open scoped Classical in
 
+open scoped Classical in
 def modF (K : Type) [Field K] [TopologicalSpace K] [IsTopologicalRing K] [LocallyCompactSpace K]
-    (a : K) : ℝ :=
-  if h : a = 0 then 0 else ((distribHaarChar K (Units.mk0 a h) : NNReal) : ℝ)
+    (a : K) : ℝ := by
+  classical
+  exact if h : a = 0 then 0 else ((distribHaarChar K (Units.mk0 a h) : NNReal) : ℝ)
 
 section
 
@@ -18,12 +24,12 @@ variable {K : Type} [Field K] [TopologicalSpace K] [IsTopologicalRing K] [Locall
 
 theorem modF_zero : modF K 0 = 0 := by
   unfold modF
-  rw [dif_pos rfl]
+  rw [dite_eq_left rfl]
 
 theorem modF_of_ne {a : K} (h : a ≠ 0) :
     modF K a = ((distribHaarChar K (Units.mk0 a h) : NNReal) : ℝ) := by
   unfold modF
-  rw [dif_neg h]
+  rw [dite_eq_right h]
 
 theorem modF_pos {a : K} (h : a ≠ 0) : 0 < modF K a := by
   rw [modF_of_ne h]
@@ -61,8 +67,8 @@ def IndexFormula : Prop :=
     (t : 𝒪[K]), t ≠ 0 →
       modF K (t : K) * (Nat.card (𝒪[K] ⧸ Ideal.span {t}) : ℝ) = 1
 
-open IsDedekindDomain NumberField in
 
+open IsDedekindDomain NumberField in
 def CardStep : Prop :=
   ∀ (F : Type) [Field F] [NumberField F] (p : HeightOneSpectrum (𝓞 F))
     (K : Type) [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]

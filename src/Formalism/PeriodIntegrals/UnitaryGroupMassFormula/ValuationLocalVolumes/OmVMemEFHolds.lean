@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.OmVPrimOfTrX
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.OmVPrimOfTrX
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,9 +85,5 @@ variable (u' : D.what₂.Word) (ψ : AddChar (AF X.B.I.F) ℂ)
 theorem omVPrim_holds : OmVPrim X u' := omVPrim_of_dd X u' (omVDdLoc_holds X)
 
 theorem omVPrim_holdsX : Formalism.L2.SG.Pf.NcX.OmVSt.OmVPrim X u' := omVPrim_holds X u'
-
-theorem omV_of_rest (hScale : OmVScale X u' ψ) (hBad : OmVBadT X u' ψ) (hLocU : OmVLocU X ψ) :
-    Formalism.L2.SG.Pf.NcVal.OmV X u' ψ :=
-  omV_of_dd X u' ψ (omVDdLoc_holds X) hScale hBad hLocU
 
 end Formalism.L2.SG.Pf.NcVal.OmVSt.OmX

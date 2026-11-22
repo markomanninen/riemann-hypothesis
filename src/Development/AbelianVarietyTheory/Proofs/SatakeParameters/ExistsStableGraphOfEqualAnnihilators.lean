@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Module
 
@@ -103,8 +107,8 @@ theorem graph_of_scalars (C : ι → Subalgebra ℂ (Module.End ℂ V)) (U₁ U�
     have : t = 0 := (smul_eq_zero.mp e2).resolve_right hx₂0
     rw [← e1, this, zero_smul]
 
-open Classical in
 
+open Classical in
 noncomputable def drop (C : ι → Subalgebra ℂ (Module.End ℂ V)) (v : ι) :
     ι → Subalgebra ℂ (Module.End ℂ V) :=
   fun w => if w = v then ⊥ else C w

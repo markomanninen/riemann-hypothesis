@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SiegelWeilAnisotropicUnitary
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SphericalVolumeLift
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SiegelWeilAnisotropicUnitary
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SphericalVolumeLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,8 +34,6 @@ def SiegelWeilUnitaryConvergent : Prop :=
   ∀ f : WO (dblSp A) B → ℂ, IsFockVec ψ θ (dblSp A) B sS sB f →
     (∀ g, Integrable (AutomorphicL2Unitary.descend (GQ B) fun h => thetaKO ω g h f) (autMeasure B ν)) ∧
     Eis.EisValueAt A (flat A a (swSec A B ω μ 𝓨 f) (sZero A B)) (sZero A B) (thetaMean ω ν f)
-
-theorem one_le_of_range {n m : ℕ} (h : n < m) (h' : m ≤ 2 * n) : 1 ≤ n := by omega
 
 end GlobalTheory.Published
 

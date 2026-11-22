@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.MassDataInst
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.MassDataInst
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem Loc_locM_map {B : Type} [CommRing B] (f : A →+* B) (e : A) (M : Matrix
   ext i j
   simp only [locM, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, Matrix.sub_apply, Matrix.one_apply,
     smul_eq_mul]
-  split_ifs <;> simp [map_add, map_mul, map_sub]
+  split_ifs <;> simp [map_add (f := _), map_mul, map_sub]
 
 theorem Loc_cT (σ : A →+* A) (e : A) (hσ : σ e = e) (M : Matrix n n A) :
     Formalism.UG.cT σ (locM e M) = locM e (Formalism.UG.cT σ M) := by

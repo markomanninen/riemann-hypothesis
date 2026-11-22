@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.MultForOfCapCls
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CapelliClassificationOfActionStatement
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.MultForOfCapCls
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CapelliClassificationOfActionStatement
+
+@[expose] public section
 
 namespace PositivityTheory.RgBcC.RealD
 

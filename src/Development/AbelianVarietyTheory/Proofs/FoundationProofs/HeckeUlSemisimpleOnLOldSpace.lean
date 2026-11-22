@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeTqSemisimpleCuspFormsGamma1Statement
-import Development.AbelianVarietyTheory.Definitions.Foundations.PetEqRelIndexMulPetProd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeOperatorsOnHalfPlaneFunctionsAgreeExplicit
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeTOperatorExplicitCuspFormStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeOperatorCommutesDiamondStatement
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.FinDim
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeTqSemisimpleCuspFormsGamma1Statement
+public import Development.AbelianVarietyTheory.Definitions.Foundations.PetEqRelIndexMulPetProd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeOperatorsOnHalfPlaneFunctionsAgreeExplicit
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeTOperatorExplicitCuspFormStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeOperatorCommutesDiamondStatement
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.FinDim
+
+@[expose] public section
+
 open GlobalTheory.HeckeFamilyMatrices Polynomial UpperHalfPlane
 open scoped MatrixGroups ModularForm
 open scoped Manifold
@@ -15,7 +20,7 @@ namespace GlobalTheory.OldSpace
 theorem toGL_mat (γ : SL(2, ℤ)) : toGL (mat γ) = Matrix.SpecialLinearGroup.mapGL ℝ γ := by
   have h : (mat γ).det ≠ 0 := by simp [mat]
   unfold toGL
-  rw [dif_neg h]
+  rw [dite_eq_right h]
   ext i j
   simp [mat, Matrix.SpecialLinearGroup.mapGL]
 
@@ -23,14 +28,14 @@ theorem toGL_mul (A B : Matrix (Fin 2) (Fin 2) ℤ) (hA : A.det ≠ 0) (hB : B.d
     toGL (A * B) = toGL A * toGL B := by
   have hAB : (A * B).det ≠ 0 := by rw [Matrix.det_mul]; exact mul_ne_zero hA hB
   unfold toGL
-  rw [dif_neg hA, dif_neg hB, dif_neg hAB]
+  rw [dite_eq_right hA, dite_eq_right hB, dite_eq_right hAB]
   ext i j
   simp [Matrix.mul_apply]
 
 theorem det_toGL (A : Matrix (Fin 2) (Fin 2) ℤ) (hA : A.det ≠ 0) :
     ((toGL A).det : ℝ) = (A.det : ℝ) := by
   unfold toGL
-  rw [dif_neg hA]
+  rw [dite_eq_right hA]
   simp [Matrix.det_fin_two]
 
 theorem sigma_toGL (A : Matrix (Fin 2) (Fin 2) ℤ) (hA : 0 < A.det) (c : ℂ) : σ (toGL A) c = c := by
@@ -50,7 +55,7 @@ namespace GlobalTheory.OldSpace
 theorem toGL_apply (A : Matrix (Fin 2) (Fin 2) ℤ) (hA : A.det ≠ 0) (i j : Fin 2) :
     (↑(toGL A) : Matrix (Fin 2) (Fin 2) ℝ) i j = (A i j : ℝ) := by
   unfold toGL
-  rw [dif_neg hA]
+  rw [dite_eq_right hA]
   simp
 
 theorem toGL_smul_coe (A : Matrix (Fin 2) (Fin 2) ℤ) (hA : 0 < A.det) (τ : ℍ) :
@@ -240,7 +245,7 @@ theorem good_add {u : Module.End ℂ (ℍ → ℂ)} {α : ℂ} {G H : ℍ → �
     rw [e1, map_mul, Module.End.mul_apply, hG, map_zero]
   have hH' : aeval u ((X - C α) * (g * h)) H = 0 := by
     rw [e2, map_mul, Module.End.mul_apply, hH, map_zero]
-  rw [map_add, hG', hH', add_zero]
+  rw [map_add (f := _), hG', hH', add_zero]
 
 theorem good_of_quad (u : Module.End ℂ (ℍ → ℂ)) (α μ c : ℂ) (hαc : α ^ 2 ≠ c) (G : ℍ → ℂ)
     (h : aeval u (X ^ 2 - C μ * X + C c) G = 0) : Good u α G := by
@@ -276,11 +281,10 @@ theorem eigen_of_good (u : Module.End ℂ (ℍ → ℂ)) (α : ℂ) (G : ℍ →
   have hit : aeval u ((X - C α) ^ n) G = 0 := by
     rw [map_pow, hlin, Module.End.pow_apply]
     convert h using 2
-    funext F; simp
   have key : X - C α = s * ((X - C α) * (X - C α) ^ n) + t * ((X - C α) * g) := by
     linear_combination (-(X - C α)) * hst
   have h1 : aeval u (X - C α) G = 0 := by
-    rw [key, map_add, map_mul, map_mul, LinearMap.add_apply, Module.End.mul_apply, Module.End.mul_apply,
+    rw [key, map_add (f := _), map_mul, map_mul, LinearMap.add_apply, Module.End.mul_apply, Module.End.mul_apply,
       map_mul, Module.End.mul_apply, hit, map_zero, map_zero, hk, map_zero, add_zero]
   rw [hlin] at h1
   simpa [sub_eq_zero] using h1
@@ -417,7 +421,7 @@ theorem ul_oldSpace : ∀ (N l k : ℕ), 5 ≤ N → l.Prime → ¬ l ∣ N → 
     · simp only [ZeroMemClass.coe_zero, map_zero]
       exact ⟨good_zero u α, good_zero u α⟩
     · intro a b ha hb
-      simp only [Submodule.coe_add, map_add]
+      simp only [Submodule.coe_add, map_add (f := _)]
       exact ⟨good_add ha.1 hb.1, good_add ha.2 hb.2⟩
   refine ⟨?_, ?_⟩
   · obtain ⟨g, hg, hgeq⟩ := stab f₁ hf₁
@@ -426,7 +430,7 @@ theorem ul_oldSpace : ∀ (N l k : ℕ), 5 ≤ N → l.Prime → ¬ l ∣ N → 
     have ht := tq_eq N (k : ℤ) l hl0 s χ hs _ hf₁
     rw [← hgeq] at ht
     change u (⇑f₁ + v ⇑f₂) = ⇑g + Lc • ⇑f₂ + v ((-(χ (l : ZMod N))) • ⇑f₁)
-    rw [map_add, huv _ ⟨f₂, rfl, hf₂⟩, map_smul, ht]
+    rw [map_add (f := _), huv _ ⟨f₂, rfl, hf₂⟩, map_smul, ht]
     change u ⇑f₁ + Lc • ⇑f₂ = u ⇑f₁ + χ (l : ZMod N) • v ⇑f₁ + Lc • ⇑f₂ + -χ (l : ZMod N) • v ⇑f₁
     module
   · intro n hn

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsCoinv
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsCoinv
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.RestTerms
@@ -12,13 +17,13 @@ theorem CoinvPolynomialReduction.proof (h1 : CoinvMonomialReduction.Statement) :
     CoinvPolynomialReduction.Statement := by
   intro K _ _ f n H
   choose v hv hvI using fun d => h1 K f n d
-  refine ⟨∑ d ∈ H.support, coeff d H • v d, ?_, ?_⟩
+  refine ⟨∑ d ∈ H.support, AddMonoidAlgebra.coeff H d • v d, ?_, ?_⟩
   · exact Submodule.sum_mem _ fun d _ => Submodule.smul_mem _ _ (hv d)
-  · have e1 : H - ∑ d ∈ H.support, coeff d H • v d =
-        (∑ d ∈ H.support, monomial d (coeff d H)) - ∑ d ∈ H.support, coeff d H • v d := by
+  · have e1 : H - ∑ d ∈ H.support, AddMonoidAlgebra.coeff H d • v d =
+        (∑ d ∈ H.support, monomial d (AddMonoidAlgebra.coeff H d)) - ∑ d ∈ H.support, AddMonoidAlgebra.coeff H d • v d := by
       rw [← H.as_sum]
-    have e2 : (∑ d ∈ H.support, monomial d (coeff d H)) - ∑ d ∈ H.support, coeff d H • v d =
-        ∑ d ∈ H.support, C (coeff d H) * (monomial d (1 : K) - v d) := by
+    have e2 : (∑ d ∈ H.support, monomial d (AddMonoidAlgebra.coeff H d)) - ∑ d ∈ H.support, AddMonoidAlgebra.coeff H d • v d =
+        ∑ d ∈ H.support, C (AddMonoidAlgebra.coeff H d) * (monomial d (1 : K) - v d) := by
       rw [← Finset.sum_sub_distrib]
       refine Finset.sum_congr rfl fun d _ => ?_
       rw [mul_sub, C_mul_monomial, mul_one, smul_eq_C_mul]

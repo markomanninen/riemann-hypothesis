@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.TailTGlueT
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.TailTGlueT
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,11 +14,11 @@ variable {N r K : ℕ}
 
 theorem glueT_lt (t : ℕ) (be : ℤ) (τ : Fin (K + t) → ℤ) (m : Fin (r + K)) (h : m.val < r - t) :
     glueT t be τ m = be := by
-  unfold glueT; rw [dif_pos h]
+  unfold glueT; rw [dite_eq_left h]
 
 theorem glueT_ge (t : ℕ) (ht : t ≤ r) (be : ℤ) (τ : Fin (K + t) → ℤ) (m : Fin (r + K)) (h : r - t ≤ m.val) :
     glueT t be τ m = τ ⟨m.val - (r - t), by have := m.2; omega⟩ := by
-  unfold glueT; rw [dif_neg (by omega), dif_pos]
+  unfold glueT; rw [dite_eq_right (by omega), dite_eq_left]
 
 theorem dom_of_strip_up {n : ℕ} {ν μ : Fin n → ℤ} {b : ℕ} (h : HStrip ν μ b) (hν : Dominant ν) : Dominant μ := by
   intro m m' hmm

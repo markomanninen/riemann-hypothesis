@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableRhoUni
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableFormAdj
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAdjIntAsm
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableRhoUni
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableFormAdj
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAdjIntAsm
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA.FFS
 

@@ -1,11 +1,14 @@
-import Formalism.HyperbolicPlaceProducts.Statement
-import Formalism.HyperbolicPlaceProducts.SubgroupIndexCounts.CardEqCardRangeNsmulMulCardKer
-import Formalism.HyperbolicPlaceProducts.SubgroupIndexCounts.SesquilinearDeterminantHolds
-import Mathlib
-import Formalism.HyperbolicPlaceProducts.SubgroupIndexCounts.SubgroupCount
-import Formalism.HyperbolicPlaceProducts.SubgroupIndexCounts.OmegaPow
-import Formalism.HyperbolicPlaceProducts.SubgroupIndexCounts.CountO
-import Formalism.HyperbolicPlaceProducts.SubgroupIndexCounts.DedekindLFunctions
+module
+
+public import Formalism.HyperbolicPlaceProducts.Statement
+public import Formalism.HyperbolicPlaceProducts.SubgroupIndexCounts.CardEqCardRangeNsmulMulCardKer
+public import Formalism.HyperbolicPlaceProducts.SubgroupIndexCounts.SesquilinearDeterminantHolds
+public import Mathlib
+public import Formalism.HyperbolicPlaceProducts.SubgroupIndexCounts.OmegaPow
+public import Formalism.HyperbolicPlaceProducts.SubgroupIndexCounts.CountO
+public import Formalism.HyperbolicPlaceProducts.SubgroupIndexCounts.DedekindLFunctions
+
+@[expose] public section
 
 namespace Formalism.SLP.Final
 

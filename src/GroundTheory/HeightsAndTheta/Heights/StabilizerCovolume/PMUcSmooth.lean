@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.StMUcSmooth
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PNbarSmooth
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PVertFactorSmooth
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.StMUcSmooth
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PNbarSmooth
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PVertFactorSmooth
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -24,8 +29,8 @@ theorem smoothRepConj_smooth_of {P : Ideal (MRing ι)} {A Z : HermLine ι} (ha :
 
 end MUcSmooth
 
-open MuRegSmooth TopNPoly NbarSmooth MUcSmooth in
 
+open MuRegSmooth TopNPoly NbarSmooth MUcSmooth in
 theorem MUcSmooth.proof (hE : HermExtend.Statement) (hP : ProjSmoothAlong.Statement) : MUcSmooth.Statement := by
   intro II Ψ _ K _ ι _ Ω _ _ E _ _ D H M w S B p q t hsm
   have hVS : VertFactorSmooth.Statement := VertFactorSmooth.proof VertFactorPos.proof

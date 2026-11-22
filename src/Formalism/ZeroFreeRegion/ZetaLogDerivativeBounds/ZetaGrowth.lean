@@ -1,5 +1,9 @@
-import Formalism.ZeroFreeRegion.SmallHeightLogDeriv
-import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.RiemannZetaOneEqOneSubOfRePos
+module
+
+public import Formalism.ZeroFreeRegion.SmallHeightLogDeriv
+public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.RiemannZetaOneEqOneSubOfRePos
+
+@[expose] public section
 
 open Complex Filter Topology
 

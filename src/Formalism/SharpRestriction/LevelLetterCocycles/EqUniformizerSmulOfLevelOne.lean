@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.HermFlagUnipotentAnisotropicVectorSubMem
-import Formalism.SharpRestriction.LevelLetterCocycles.IsTruncIff
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.HermFlagUnipotentAnisotropicVectorSubMem
+public import Formalism.SharpRestriction.LevelLetterCocycles.IsTruncIff
+
+@[expose] public section
 
 open Classical
 
@@ -41,7 +45,8 @@ theorem partialSum_gamma_sub (T : LocLat G Qp LL O) (K : ℕ) (c : ℕ → W.DD 
     W.γ T (P0 W T K c) - P0 W T K c = ∑ y ∈ Finset.range K,
       ((PD.p : ℕ) : O) ^ (Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p K - Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p y) •
         (W.γ T (W.π₀ ^ y • c y) - W.π₀ ^ y • c y) := by
-  rw [P0, map_sum, ← Finset.sum_sub_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [P0, map_sum, ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun y _ => ?_
   rw [(W.γ T).map_smul, smul_sub]
 
@@ -144,7 +149,8 @@ theorem serZ_unique [NeZero n] (hinj : Function.Injective (algebraMap O LL))
       rw [(W.γ T).map_smul, smul_sub (W.π₀ ^ y) (c y) (c' y), map_sub]
       simp only [smul_sub]
       abel
-    rw [hE, map_sum, ← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hE, map_sum, ← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib]
     exact Finset.sum_congr rfl fun y _ => hy y
   set E2 : W.DD T := ((PD.p : ℕ) : O) ^ (j1 + j2) • E
   have hlet : ∀ y, (letE i : LetA O n) • (W.π₀ ^ y • (c y - c' y)) = W.π₀ ^ y • (c y - c' y) := by
@@ -190,7 +196,7 @@ theorem serZ_lin (T : LocLat G Qp LL O) (i : ZMod n) (a a' : O) {ζ ζ' : W.DD T
     refine ⟨j1 + j2, a • ((PD.p : ℕ) : O) ^ j2 • x1 + a' • ((PD.p : ℕ) : O) ^ j1 • x2,
       (W.N T).add_mem ((W.N T).smul_of_tower_mem _ ((W.N T).smul_of_tower_mem _ hx1))
         ((W.N T).smul_of_tower_mem _ ((W.N T).smul_of_tower_mem _ hx2)),
-      fun δ hδ => by simp only [map_add, map_smul, hx1Δ δ hδ, hx2Δ δ hδ], ?_⟩
+      fun δ hδ => by simp only [map_add (f := _), map_smul, hx1Δ δ hδ, hx2Δ δ hδ], ?_⟩
     have hs : ∑ y ∈ Finset.range K, ((PD.p : ℕ) : O) ^ (Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p K - Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p y) •
         (W.γ T (W.π₀ ^ y • (a • c y + a' • c' y)) - W.π₀ ^ y • (a • c y + a' • c' y)) =
         a • ∑ y ∈ Finset.range K, ((PD.p : ℕ) : O) ^ (Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p K - Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p y) •
@@ -248,7 +254,8 @@ theorem redT (hR : Formalism.MainNotions.LiftingTheory.lifta_Ring W) (T : LocLat
       le_trans (eY_mono (PD := PD) (le_of_lt (Finset.mem_range.1 hy))) (Nat.le_add_right _ _)
     rw [LinearMap.map_smul_of_tower, φpow_smul, map_pow, lsmul_eq, lsmul_eq, lsmul_eq]
     exact term_id L _ _ _ _ _ hle (hrs y).2 (hg y) _
-  rw [Finset.smul_sum, Finset.sum_congr rfl e1, Finset.sum_sub_distrib, ← partialSum_pow_shift, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.smul_sum, Finset.sum_congr rfl e1, Finset.sum_sub_distrib, ← partialSum_pow_shift, map_sum,
     Finset.smul_sum, Finset.smul_sum]
 
 theorem Pp_tt [IsDomain O] (hR : Formalism.MainNotions.LiftingTheory.lifta_Ring W) (T : LocLat G Qp LL O) (i : ZMod n)
@@ -280,10 +287,11 @@ theorem zb [NeZero n] [IsDomain O] (hR : Formalism.MainNotions.LiftingTheory.lif
       (Formalism.MainNotions.UnusedSlot80.PhiPowers.φD_pow_letter W T i (c y) (InNΔi_letter W T i (hcN y)) j), fun δ hδ => ?_⟩,
     Submodule.sum_mem _ fun y _ => Submodule.smul_mem _ _
       (Submodule.subset_span ⟨c y, ⟨(hc.2.1 y).2, (hc.2.1 y).1⟩, rfl⟩), ?_⟩
-  · rw [map_sum]
-    refine Finset.sum_congr rfl fun y _ => ?_
-    rw [Formalism.MainNotions.LiftingTheory.frame_γD_smul, hsA y δ hδ,
-      Formalism.MainNotions.UnusedSlot80.PhiPowers.φD_pow_Δ W T (hcN y).1.2 j δ hδ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum]
+      refine Finset.sum_congr rfl fun y _ => ?_
+      rw [Formalism.MainNotions.LiftingTheory.frame_γD_smul, hsA y δ hδ,
+        Formalism.MainNotions.UnusedSlot80.PhiPowers.φD_pow_Δ W T (hcN y).1.2 j δ hδ]
   obtain ⟨z', hz', hζ⟩ := eq_uniformizer_smul_of_level_one W T i hD h1
   set K0 := max M X + 1
   obtain ⟨t0, a, ha, haΔ, hae⟩ := hc.2.2 K0
@@ -484,7 +492,8 @@ theorem zd [NeZero n] [IsDomain O] (hinj : Function.Injective (algebraMap O LL))
       ring
     · refine Finset.sum_congr rfl fun y _ => ?_
       rw [smul_smul, ← pow_add]
-  rw [hsplit, hkx, map_add, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsplit, hkx, map_add (f := _), map_sum]
   refine inMultiple_add W T i j _ (?_) (inMultiple_sum W T i j _ _ _ fun y hy => ?_)
   · rw [LinearMap.map_smul_of_tower]
     exact InFP_osmul W T i j _ _ (keyF' W hr9.1 h2 T i hj le_rfl hXM hx)

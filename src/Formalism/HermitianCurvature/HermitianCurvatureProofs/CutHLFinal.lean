@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadLetterOfMinusPos
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHLMinusPosOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadLetterOfMinusPos
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHLMinusPosOfParts
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutHL
 

@@ -1,4 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.TraceIntegralRestrict
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.CFCoreA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.DSymmHypsInhabited
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.InvoluteFfMapsTo
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,20 +22,19 @@ theorem involute_exteriorPower {p : ℕ} {w : Fock n} (hw : w ∈ ⋀[ℂ]^p (Fi
     obtain ⟨v, rfl⟩ := hx
     exact involute_ιMulti p v
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, hx, hy, smul_add]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, smul_add]
   | smul a x _ hx => rw [map_smul, hx, smul_comm]
 
 theorem gradT_range_ext {V : Submodule ℂ N} {p : ℕ} {z : TensorProduct ℂ N (Fock n)}
     (hz : z ∈ LinearMap.range (TensorProduct.map V.subtype (⋀[ℂ]^p (Fin n × Fin n → ℂ)).subtype)) :
     gradT z = ((-1 : ℂ) ^ p) • z := by
   obtain ⟨x, rfl⟩ := hz
-  induction x using TensorProduct.induction_on with
-  | zero => simp
+  induction x using TensorProduct.inductionOn with
   | tmul v w =>
     simp only [TensorProduct.map_tmul, gradT, Submodule.coe_subtype, AlgHom.toLinearMap_apply,
       LinearMap.id_apply]
     rw [involute_exteriorPower w.2, TensorProduct.tmul_smul]
-  | add x y hx hy => rw [map_add, map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, smul_add]
 
 theorem gradT_cpcm (i a j b : Fin n) :
     gradT (N := N) * (cpT i a * cmT j b) = cpT i a * cmT j b * gradT := by
@@ -50,8 +55,8 @@ theorem gradT_diagE (E : Fin n → Fin n → Module.End ℂ N) (a b : Fin n) (y 
     gradT (diagE ε (eT E) cpT cmT a b y) = diagE ε (eT E) cpT cmT a b (gradT y) := by
   have h1 := LinearMap.congr_fun (eT_gradT E a b) y
   have h2 := LinearMap.congr_fun (gradT_sgE (ε := ε) (N := N) a b) y
-  simp only [Module.End.mul_apply] at h1 h2
-  simp only [diagE, LinearMap.add_apply, map_add, h1, h2]
+  simp only [mul_apply_eq_comp] at h1 h2
+  simp only [diagE, LinearMap.add_apply, map_add (f := _), h1, h2]
 
 theorem gradT_kLowSpan (E : Fin n → Fin n → Module.End ℂ N) {z : TensorProduct ℂ N (Fock n)} {c : ℂ}
     (hz : gradT z = c • z) {y : TensorProduct ℂ N (Fock n)}
@@ -65,7 +70,7 @@ theorem gradT_kLowSpan (E : Fin n → Fin n → Module.End ℂ N) {z : TensorPro
       simp only [lowWord]
       rw [gradT_diagE, ih, map_smul]
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, hx, hy, smul_add]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, smul_add]
   | smul a x _ hx => rw [map_smul, hx, smul_comm]
 
 end ReciprocityTheory.ChartRestriction.DS.TRGap

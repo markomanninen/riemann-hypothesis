@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ProdProdIte
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ProdProdIte
+
+@[expose] public section
 
 noncomputable section
 

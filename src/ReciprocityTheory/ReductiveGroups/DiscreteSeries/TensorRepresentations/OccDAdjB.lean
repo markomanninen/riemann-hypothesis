@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.OccDAdjA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.OccDTensKStable
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.OccDAdjA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.OccDTensKStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -105,7 +109,7 @@ theorem adjB_E (dual : Bool) (hU : IsInfUnitary ε E) {M : Submodule ℂ D} (hME
       funext d
       simp only [tensF, cond_false, tensV_coord, Pi.add_apply, Pi.single_apply]
       split_ifs <;> simp_all
-    rw [hT, map_add, inner_add_right, adjR_inv h c (hME b a y hy), adjR_inv h b (hsc a)]
+    rw [hT, map_add (f := _), inner_add_right, adjR_inv h c (hME b a y hy), adjR_inv h b (hsc a)]
     simp only [tensF, cond_false, tensV_coord, inner_add_left, hU a b (u c) y, adjSign_eq_adjSg]
     by_cases hca : c = a
     · subst hca
@@ -165,9 +169,8 @@ theorem adjB_star_Kset {k : Matrix (Fin n) (Fin n) ℂ} (hk : k ∈ Kset ε) : k
     have hJ : (Jm ε)ᴴ = Jm ε := by
       rw [Jm, Matrix.diagonal_conjTranspose]
       congr 1
-      funext a
-      simp only [Pi.star_apply]
-      split_ifs <;> simp
+      funext c
+      exact adjSg_conj ε c
     rw [hJ] at h
     exact h.symm
 

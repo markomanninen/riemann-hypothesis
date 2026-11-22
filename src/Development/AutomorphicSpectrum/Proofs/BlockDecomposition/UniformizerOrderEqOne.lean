@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsAlgHomMulEquivDec
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPowCharPowEqSelf
-import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohCmp
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbol
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.IsZeroGroupCohomologyQuotientToInvariantsGalAdd
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
-import GroundTheory.GlobalFields.LocalFieldAtPlace
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.TransportA
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdicCompletionValuationMapUniformiser
-import GroundTheory.LocalFields.UnitsBasic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsAlgHomMulEquivDec
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPowCharPowEqSelf
+public import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohCmp
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbol
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.IsZeroGroupCohomologyQuotientToInvariantsGalAdd
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
+public import GroundTheory.GlobalFields.LocalFieldAtPlace
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.TransportA
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdicCompletionValuationMapUniformiser
+public import GroundTheory.LocalFields.UnitsBasic
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Representation Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.Published GlobalTheory.Published.PoitouTate
 open GroundTheory.ProfCoh GroundTheory.LocalField ValuativeRel CategoryTheory
 
@@ -28,7 +33,7 @@ theorem valuation_eq_exp_neg_one_of_mem_of_notMem (F : Type) [Field F] [NumberFi
     intro h
     apply hnle
     rw [h]
-    exact zero_le'
+    exact zero_le
   rw [← WithZero.exp_log hne] at hle hnle ⊢
   rw [WithZero.exp_le_exp] at hle hnle
   congr 1
@@ -48,7 +53,11 @@ theorem ord_algebraMap_eq_one : ∀ (F : Type) [Field F] [NumberField F] (v : He
       (valuation_eq_exp_neg_one_of_mem_of_notMem F v ϖ h1 h2)
   have heq : valuation (v.adicCompletion F) (algebraMap F (v.adicCompletion F) (ϖ : F)) =
       valuation (v.adicCompletion F) (π : v.adicCompletion F) :=
-    ((ValuativeRel.isEquiv (valuation (v.adicCompletion F)) Valued.v).val_eq).2 (hx.trans hv.symm)
+    le_antisymm
+      ((ValuativeRel.isEquiv (valuation (v.adicCompletion F)) Valued.v _ _).2
+        (le_of_eq (hx.trans hv.symm)))
+      ((ValuativeRel.isEquiv (valuation (v.adicCompletion F)) Valued.v _ _).2
+        (le_of_eq (hv.trans hx.symm)))
   have hn := (normalizedValuation_eq_iff (K := v.adicCompletion F)).2 heq
   rw [← ord_uniformizer hπ]
   simp only [ord, hn]

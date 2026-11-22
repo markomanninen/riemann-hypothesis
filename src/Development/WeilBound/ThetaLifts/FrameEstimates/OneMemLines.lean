@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.TowerRallisLemma
-import Development.WeilBound.ThetaLifts.FrameEstimates.ThickFrames
-import Development.WeilBound.ThetaLifts.CartanFactorisation.CartanConj
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.TowerRallisLemma
+public import Development.WeilBound.ThetaLifts.FrameEstimates.ThickFrames
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.CartanConj
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntBTmulBasis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyAdicIntegralSpanClosedMulStar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntBTmulBasis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyAdicIntegralSpanClosedMulStar
+
+@[expose] public section
+
 open Matrix NumberField IsDedekindDomain GlobalTheory.AdicSpan
 open scoped TensorProduct Classical
 
@@ -49,7 +54,8 @@ theorem repr_via {K M ι κ : Type} [Field K] [AddCommGroup M] [Module K M] [Fin
     (d : Module.Basis ι K M) (z : M) (i : κ) :
     c.repr z i = ∑ j, d.repr z j * c.repr (d j) i := by
   conv_lhs => rw [← d.sum_repr z]
-  rw [map_sum, Finsupp.finset_sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finsupp.finsetSum_apply]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_smul, Finsupp.smul_apply, smul_eq_mul]
 
@@ -112,7 +118,8 @@ theorem isIntB_one_tmul_iff_exists_isIntegral : ∀ (L : Type) [Field L] [Number
     have hsz : ℓ.repr ((s : L) * z) i = (s : ℚ) * ℓ.repr z i := by
       rw [← zsmul_eq_mul, map_zsmul, Finsupp.smul_apply, zsmul_eq_mul]
     have hval : v.valuation ℚ (ℓ.repr ((s : L) * z) i) ≤ 1 := by
-      rw [← hc, map_sum, Finsupp.finset_sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hc, map_sum, Finsupp.finsetSum_apply]
       refine Valuation.map_sum_le _ fun j _ => ?_
       rw [map_zsmul, Finsupp.smul_apply, zsmul_eq_mul, map_mul]
       have e : ((c j : ℤ) : ℚ) = algebraMap ℤ ℚ (c j) := rfl

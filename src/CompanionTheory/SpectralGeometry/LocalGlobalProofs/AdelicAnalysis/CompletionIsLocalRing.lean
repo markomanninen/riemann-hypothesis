@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtA
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtA
+
+@[expose] public section
 
 noncomputable section
 

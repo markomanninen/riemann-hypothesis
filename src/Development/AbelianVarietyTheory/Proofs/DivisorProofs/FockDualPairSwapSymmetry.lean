@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+
+@[expose] public section
 
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible GlobalTheory.FockAlg MvPolynomial
 
@@ -33,7 +37,7 @@ theorem rename_omE (l l' : Ln p q r s) (P : Pol p q r s) :
     rename Prod.swap (omE l l' P) =
       omE (l.swap : Ln r s p q) l'.swap (rename Prod.swap P) := by
   unfold omE
-  simp only [LinearMap.add_apply, map_add, Module.End.mul_apply, rename_raiB, rename_lowB,
+  simp only [LinearMap.add_apply, map_add (f := _), Module.End.mul_apply, rename_raiB, rename_lowB,
     Prod.swap_inj]
   congr 1
   split_ifs <;> simp
@@ -41,7 +45,8 @@ theorem rename_omE (l l' : Ln p q r s) (P : Pol p q r s) :
 theorem rename_omAct (M : Matrix (Ln p q r s) (Ln p q r s) ℂ) (P : Pol p q r s) :
     rename Prod.swap (omAct p q r s M P) =
       omAct r s p q (M.submatrix Prod.swap Prod.swap) (rename Prod.swap P) := by
-  simp only [omAct_apply, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [omAct_apply, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul,
     rename_omE]
   refine Fintype.sum_equiv (Equiv.prodComm _ _) _ _ fun l => ?_
   refine Fintype.sum_equiv (Equiv.prodComm _ _) _ _ fun l' => ?_

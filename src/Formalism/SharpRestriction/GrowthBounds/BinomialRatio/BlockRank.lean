@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CountDefs
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegLow
-import Formalism.SharpRestriction.GrowthBounds.CountingStatementReduction
-import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CountDefs
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegLow
+public import Formalism.SharpRestriction.GrowthBounds.CountingStatementReduction
+public import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,13 +34,13 @@ theorem xiVar_inj (N r t : ℕ) : Function.Injective (xiVar N r t) := by
 
 theorem xiExp_xi (N r t : ℕ) (β : Fin r → ℕ) (c : Fin r) : xiExp N r t β (xiVar N r t c) = β c := by
   classical
-  simp only [xiExp, Finsupp.finset_sum_apply, Finsupp.single_apply, (xiVar_inj N r t).eq_iff]
+  simp only [xiExp, Finsupp.finsetSum_apply, Finsupp.single_apply, (xiVar_inj N r t).eq_iff]
   simp
 
 theorem xiExp_other (N r t : ℕ) (β : Fin r → ℕ) (v : BVar N r t) (hv : ∀ c, v ≠ xiVar N r t c) :
     xiExp N r t β v = 0 := by
   classical
-  simp only [xiExp, Finsupp.finset_sum_apply, Finsupp.single_apply]
+  simp only [xiExp, Finsupp.finsetSum_apply, Finsupp.single_apply]
   exact Finset.sum_eq_zero fun c _ => if_neg fun h => hv c h.symm
 
 theorem eq_xiExp (N r t : ℕ) (μ : BVar N r t →₀ ℕ) (h : ∀ v ∈ μ.support, ∃ c, v = xiVar N r t c) :
@@ -57,8 +61,8 @@ def ell (x : (Fin D.T.t → ℕ) × ℕ) (β : Fin r → ℕ) :
 theorem ell_apply (x : (Fin D.T.t → ℕ) × ℕ) (β : Fin r → ℕ) (y : MvPolynomial (Fin N × Fin r) (KK O)) :
     ell D x β y = pre (O := O) D x * (rename (chainEmb N r D.T.t) y * xiMon (KK O) N r D.T.t β) := rfl
 
-open Classical in
 
+open Classical in
 def Lv : Finset ((Fin D.T.t → ℕ) × ℕ) :=
   ((Fintype.piFinset fun i => Finset.range (D.LL.deg (D.letterAt (D.T.pos i)) + 1)) ×ˢ
     Finset.range (D.B + 1)).filter fun x => D.LevelOK x.1 x.2
@@ -164,8 +168,8 @@ private theorem mem_gens_span_le_range_of_levelOK (j : Fin D.T.t → ℕ) (jp : 
   rw [g.as_sum, Finset.mul_sum]
   refine Submodule.sum_mem _ fun m hm => ?_
   obtain ⟨hsupp, hsum⟩ := hgS hm
-  have hmono : monomial m (coeff m g) =
-      coeff m g • xiMon (KK O) N r D.T.t (fun c => m (xiVar N r D.T.t c)) := by
+  have hmono : monomial m (AddMonoidAlgebra.coeff g m) =
+      AddMonoidAlgebra.coeff g m • xiMon (KK O) N r D.T.t (fun c => m (xiVar N r D.T.t c)) := by
     rw [xiMon, ← eq_xiExp N r D.T.t m hsupp, MvPolynomial.smul_monomial, smul_eq_mul, mul_one]
   rw [hmono, mul_smul_comm]
   refine Submodule.smul_mem _ _ ?_
@@ -209,7 +213,7 @@ private theorem IF_range_le_span (i : ↥(IF (r := r) D)) (y : MvPolynomial (Fin
     rw [GLWeightTheory.mem_integral_poly_iff_coeff]
     intro m
     by_cases hm : m ∈ y.support
-    · obtain ⟨o, ho⟩ := hb (coeff m y) (MvPolynomial.coeff_mem_coeffs m (MvPolynomial.mem_support_iff.mp hm))
+    · obtain ⟨o, ho⟩ := hb (AddMonoidAlgebra.coeff y m) (MvPolynomial.coeff_mem_coeffs m (MvPolynomial.mem_support_iff.mp hm))
       refine ⟨o, ?_⟩
       rw [ho, MvPolynomial.coeff_smul, smul_eq_mul, Algebra.smul_def]
     · refine ⟨0, ?_⟩

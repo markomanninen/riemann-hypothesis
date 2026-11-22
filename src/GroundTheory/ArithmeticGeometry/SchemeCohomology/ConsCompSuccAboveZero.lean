@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -78,8 +83,8 @@ lemma d_d (n : ℕ) (σ : Cochain P U n) : d P U (n + 1) (d P U n σ) = 0 := by
   have h2 := congrArg (fun f => f.hom σ) this
   exact h2
 
-variable {P} in
 
+variable {P} in
 def push {P' : (Opens X)ᵒᵖ ⥤ AddCommGrpCat.{u}} (φ : P ⟶ P') (n : ℕ) :
     Cochain P U n →+ Cochain P' U n where
   toFun σ i := φ.app _ (σ i)
@@ -95,7 +100,8 @@ variable {P} in
 lemma push_d {P' : (Opens X)ᵒᵖ ⥤ AddCommGrpCat.{u}} (φ : P ⟶ P') (n : ℕ) (σ : Cochain P U n) :
     push U φ (n + 1) (d P U n σ) = d P' U n (push U φ n σ) := by
   funext i
-  simp only [push, AddMonoidHom.coe_mk, ZeroHom.coe_mk, d_apply, map_sum, map_zsmul, app_res]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [push, AddMonoidHom.coe_mk, ZeroHom.coe_mk, d_apply, map_sum, map_zsmul, app_res]
 
 variable {P} in
 lemma push_comp {P' P'' : (Opens X)ᵒᵖ ⥤ AddCommGrpCat.{u}} (φ : P ⟶ P') (ψ : P' ⟶ P'')
@@ -123,8 +129,8 @@ lemma push_injective {P' : (Opens X)ᵒᵖ ⥤ AddCommGrpCat.{u}} (φ : P ⟶ P'
     Function.Injective (push U φ n) := fun _ _ hστ =>
   funext fun i => h i (congrFun hστ i)
 
-variable {P} in
 
+variable {P} in
 lemma CechAcyclic.of_retract {G : (Opens X)ᵒᵖ ⥤ AddCommGrpCat.{u}} (ι' : P ⟶ G) (r : G ⟶ P)
     (hr : ι' ≫ r = 𝟙 P) (hG : CechAcyclic G U) : CechAcyclic P U := by
   intro n σ hσ
@@ -132,34 +138,6 @@ lemma CechAcyclic.of_retract {G : (Opens X)ᵒᵖ ⥤ AddCommGrpCat.{u}} (ι' : 
   refine ⟨push U r n τ, ?_⟩
   rw [← push_d, hτ, push_comp, hr, push_id]
 
-variable {P} in
-
-lemma CechAcyclic.of_shortExact {F I Q : (Opens X)ᵒᵖ ⥤ AddCommGrpCat.{u}} (f : F ⟶ I) (g : I ⟶ Q)
-    (hfg : f ≫ g = 0)
-    (hinj : ∀ {n : ℕ} (i : Fin n → ι), Function.Injective (f.app (op (inter U i))))
-    (hex : ∀ {n : ℕ} (i : Fin n → ι) (y : I.obj (op (inter U i))),
-      g.app _ y = 0 → ∃ x, f.app _ x = y)
-    (hsurj : ∀ {n : ℕ} (i : Fin n → ι), Function.Surjective (g.app (op (inter U i))))
-    (hF : CechAcyclic F U) (hI : CechAcyclic I U) : CechAcyclic Q U := by
-  intro n σ hσ
-
-  choose τ hτ using fun i => hsurj i (σ i)
-  have hτ' : push U g (n + 1) τ = σ := funext hτ
-
-  have h0 : push U g (n + 2) (d I U (n + 1) τ) = 0 := by rw [push_d, hτ', hσ]
-  choose ρ hρ using fun j => hex j _ (congrFun h0 j)
-  have hρ' : push U f (n + 2) ρ = d I U (n + 1) τ := funext hρ
-
-  have hρc : d F U (n + 2) ρ = 0 := by
-    apply push_injective U f (n + 3) (fun j => hinj j)
-    rw [map_zero, push_d, hρ', d_d]
-  obtain ⟨α, hα⟩ := hF (n + 1) ρ hρc
-
-  have hc : d I U (n + 1) (τ - push U f (n + 1) α) = 0 := by
-    rw [map_sub, ← push_d, hα, hρ', sub_self]
-  obtain ⟨β, hβ⟩ := hI n _ hc
-  refine ⟨push U g n β, ?_⟩
-  rw [← push_d, hβ, map_sub, hτ', push_comp, hfg, push_zero', sub_zero]
 
 def discPresheaf (A : X → AddCommGrpCat.{u}) : (Opens X)ᵒᵖ ⥤ AddCommGrpCat.{u} where
   obj W := AddCommGrpCat.of (∀ x : W.unop, A x.1)
@@ -189,7 +167,8 @@ lemma ev_d {n : ℕ} (σ : Cochain (discPresheaf A) U n) (i : Fin (n + 2) → ι
     (hx : x ∈ inter U i) :
     ev A x hx (d (discPresheaf A) U n σ i) = ∑ k : Fin (n + 2), ((-1 : ℤ) ^ (k : ℕ)) •
       ev A x (inter_le_comp U i k.succAbove hx) (σ (i ∘ k.succAbove)) := by
-  rw [d_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [d_apply, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_zsmul, ev_res]
 

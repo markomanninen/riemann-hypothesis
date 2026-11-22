@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.ImmersedBy
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LinearIndependentOfDetMemNonZeroDivisors
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverMorphismRestrictOfRelAmple
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsHeckeQuotientTriple
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CardZerosOnTorsionLeOfSymmetricVeryAmple
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowerSectionOfChartFunctions
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.ImmersedBy
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LinearIndependentOfDetMemNonZeroDivisors
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverMorphismRestrictOfRelAmple
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsHeckeQuotientTriple
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CardZerosOnTorsionLeOfSymmetricVeryAmple
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowerSectionOfChartFunctions
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -39,8 +43,8 @@ theorem exists_polAV {Z : Scheme.{0}} (G : Over Z) [GrpObj G] [IsCommMonObj G] (
   have hψ : ψ ≫ pullback.fst G.hom W.ι = pullback.fst G.hom x := h₀.1.lift_fst _ _ _
   have h₃ : IsGrpPullback ((Over.pullback x).obj G) ((Over.pullback W.ι).obj G) x' ψ :=
     h₀.cancel (h₂.congr rfl hψ.symm) (h₀.1.lift_snd _ _ _)
-  have hL := pull_isLB L.isLB (pullback.fst G.hom x)
-  have hL₀ := pull_isLB L.isLB (pullback.fst G.hom W.ι)
+  have hL := LB.isLB_pull L.isLB (pullback.fst G.hom x)
+  have hL₀ := LB.isLB_pull L.isLB (pullback.fst G.hom W.ι)
   obtain ⟨w, hw⟩ : LBIso (L.L.pull (pullback.fst G.hom x)) ((L.L.pull (pullback.fst G.hom W.ι)).pull ψ) :=
     LBIso.chartPull (chartPullId _)
       (chartPullLinComb L.L _ (fun _ : PUnit => ψ) (fun _ => pullback.fst G.hom x) (fun _ => 1) (𝟙 _)
@@ -354,7 +358,8 @@ theorem rel_of_genVal (hU₀ : (U₀ : Set M.Z).Nonempty) (k : ℤ) {I : Type} [
     rw [← e₁, Finset.mul_sum]
     refine Eq.trans ?_ (Finset.sum_congr rfl fun i _ => (congrArg (β (valF M.pt W (m i)) * ·) (e₂ i)).trans
       (mul_left_comm _ _ _))
-    simp only [hm, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum, _root_.mul_assoc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hm, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum, _root_.mul_assoc]
     rw [Finset.sum_comm]
   let O : Z.G.left.Opens := Z.G.hom ⁻¹ᵁ W ⊓ (powAlong Z.L.L k (𝟙 _)).U fun _ => jL
   have hO : r y ∈ O := ⟨hy, hj⟩
@@ -363,7 +368,8 @@ theorem rel_of_genVal (hU₀ : (U₀ : Set M.Z).Nonempty) (k : ℤ) {I : Type} [
   have e₄ : resG _ l₁ (σ fun _ => jL) =
       ∑ i, resG _ (inf_le_left : O ≤ _) ((Z.G.hom.app W).hom (m i)) * resG _ l₂ (τ i fun _ => jL) := by
     refine eq_of_valF_generic ξ hξ (hξU hO) (((Points.valR_res ξ l₁ (hξU hO) _).trans e₃).trans (Eq.symm ?_))
-    rw [Points.valF_eq_valR, Points.valR_eq ξ O (hξU hO), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Points.valF_eq_valR, Points.valR_eq ξ O (hξU hO), map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, ← Points.valR_eq, ← Points.valR_eq]
     refine congrArg₂ (· * ·) ((Points.valR_res ξ _ (hξU hO) _).trans ((Points.valR_comp ξ Z.G.hom W _).symm.trans ?_))
@@ -371,7 +377,8 @@ theorem rel_of_genVal (hU₀ : (U₀ : Set M.Z).Nonempty) (k : ℤ) {I : Type} [
     rw [hβ]
     exact Points.valR_spMap_comp β M.pt W (M.top_le_preimage_pt ⟨_, hy⟩) _
   refine (gs_res r y l₁ hO _).symm.trans ((congrArg (gs r y O) e₄).trans ?_)
-  rw [gs_eq r y O hO, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [gs_eq r y O hO, map_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [← gs_eq r y O hO, gs_mul r y O hO]
   exact congrArg₂ (· * ·) ((gs_res r y _ hO _).trans (gs_pull r Z.G.hom y W hy _)) (gs_res r y l₂ hO _)

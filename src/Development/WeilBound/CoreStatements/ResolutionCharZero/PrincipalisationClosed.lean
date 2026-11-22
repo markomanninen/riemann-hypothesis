@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.ResolutionCharZero.PrincipalisationCharZeroOfBoundary
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PrincipalisationOfCharZero
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.PrincipalisationCharZeroOfBoundary
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PrincipalisationOfCharZero
+
+@[expose] public section
 
 noncomputable section
 

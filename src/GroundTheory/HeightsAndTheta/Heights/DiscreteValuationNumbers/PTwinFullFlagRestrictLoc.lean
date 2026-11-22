@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsLocFrac
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsLocFrac
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles
@@ -93,7 +98,8 @@ theorem mcMap_of_isMultiHomog {Ω : Type*} [CommRing Ω] [Algebra R Ω] (x : (Σ
   classical
   conv_lhs => rw [H.as_sum]
   conv_rhs => rw [H.as_sum]
-  rw [map_sum, map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun m hm => ?_
   simp only [mcMap, aeval_monomial, MvPolynomial.algebraMap_apply, map_mul]
   rw [Finsupp.prod_fintype _ _ (fun _ => pow_zero _), Finsupp.prod_fintype _ _ (fun _ => pow_zero _)]
@@ -170,8 +176,8 @@ theorem aeval_ne_zero (hPQ : redIdeal O (mcIdeal O x) ≤ Q) {G : MRingOver O ι
 theorem aeval_genPt_red_ne_zero {G : MRingOver O ι} (hGQ : red O G ∉ Q) :
     aeval (genPt (kap O) Q) (red O G) ≠ 0 := fun h => hGQ ((aeval_genPt_eq_zero_iff Q _).1 h)
 
-variable (O Q) in
 
+variable (O Q) in
 def resOf (F G : MRingOver O ι) : FractionRing (MRingOver (kap O) ι ⧸ Q) :=
   aeval (genPt (kap O) Q) (red O F) / aeval (genPt (kap O) Q) (red O G)
 
@@ -221,8 +227,8 @@ theorem resOf_congr (hPQ : redIdeal O (mcIdeal O x) ≤ Q) {F G F' G' : MRingOve
   rw [div_eq_div_iff (aeval_genPt_red_ne_zero hGQ) (aeval_genPt_red_ne_zero hG'Q)]
   exact hmem
 
-variable (x Q) in
 
+variable (x Q) in
 def locAlg : Subalgebra O Ω where
   carrier := {z | ∃ F G : MRingOver O ι, IsLocFrac O Q F G ∧ aeval x G ≠ 0 ∧ z = aeval x F / aeval x G}
   mul_mem' := by
@@ -232,7 +238,7 @@ def locAlg : Subalgebra O Ω where
   add_mem' := by
     rintro _ _ ⟨F, G, h1, hx, rfl⟩ ⟨F', G', h2, hx', rfl⟩
     exact ⟨F * G' + G * F', G * G', isLocFrac_add h1 h2, by rw [map_mul]; exact mul_ne_zero hx hx',
-      by rw [div_add_div _ _ hx hx', map_add, map_mul, map_mul, map_mul]⟩
+      by rw [div_add_div _ _ hx hx', map_add (f := _), map_mul, map_mul, map_mul]⟩
   algebraMap_mem' c := ⟨C c, 1, isLocFrac_C c, by simp, by simp⟩
 
 theorem mem_locAlg_iff {z : Ω} : z ∈ locAlg x Q ↔
@@ -242,16 +248,16 @@ theorem mem_locAlg (hPQ : redIdeal O (mcIdeal O x) ≤ Q) {F G : MRingOver O ι}
     aeval x F / aeval x G ∈ locAlg x Q :=
   ⟨F, G, h, aeval_ne_zero hPQ h.choose_spec.2.1 h.choose_spec.2.2, rfl⟩
 
+
 open Classical in
 variable (x Q) in
-
 def rs (z : Ω) : FractionRing (MRingOver (kap O) ι ⧸ Q) :=
   if h : z ∈ locAlg x Q then resOf O Q (mem_locAlg_iff.1 h).choose (mem_locAlg_iff.1 h).choose_spec.choose else 0
 
 theorem rs_eq (hPQ : redIdeal O (mcIdeal O x) ≤ Q) {z : Ω} {F G : MRingOver O ι} (hFG : IsLocFrac O Q F G)
     (hz : z = aeval x F / aeval x G) : rs x Q z = resOf O Q F G := by
   have hm : z ∈ locAlg x Q := hz ▸ mem_locAlg hPQ hFG
-  rw [rs, dif_pos hm]
+  rw [rs, dite_eq_left hm]
   obtain ⟨h1, _, h2⟩ := (mem_locAlg_iff.1 hm).choose_spec.choose_spec
   exact resOf_congr hPQ h1 hFG (h2.symm.trans hz)
 
@@ -283,8 +289,8 @@ theorem rs_add (hPQ : redIdeal O (mcIdeal O x) ≤ Q) {a b : Ω} (ha : a ∈ loc
   obtain ⟨F, G, h1, hx, rfl⟩ := ha
   obtain ⟨F', G', h2, hx', rfl⟩ := hb
   rw [rs_frac hPQ h1, rs_frac hPQ h2, rs_eq hPQ (isLocFrac_add h1 h2)
-    (by rw [div_add_div _ _ hx hx', map_add, map_mul, map_mul, map_mul])]
-  simp only [resOf, map_add, map_mul]
+    (by rw [div_add_div _ _ hx hx', map_add (f := _), map_mul, map_mul, map_mul])]
+  simp only [resOf, map_add (f := _), map_mul]
   rw [div_add_div _ _ (aeval_genPt_red_ne_zero h1.choose_spec.2.2)
     (aeval_genPt_red_ne_zero h2.choose_spec.2.2)]
 
@@ -413,8 +419,8 @@ theorem chartMon_ratio (hPQ : redIdeal O (mcIdeal O x) ≤ Q) {s s₀ : ∀ k, �
     rw [rs_prod hPQ _ _ fun k _ => (hk k).1]
     exact Finset.prod_congr rfl fun k _ => (hk k).2⟩
 
-variable (x Q) in
 
+variable (x Q) in
 def goodSub (hPQ : redIdeal O (mcIdeal O x) ≤ Q) (s : ∀ k, ι k) : Subalgebra O Ω where
   carrier := {a | a ∈ locAlg x Q ∧ rs x Q a ∈ chartRing (kap O) (mseg (genPt (kap O) Q)) s}
   mul_mem' := fun ⟨ha, ha'⟩ ⟨hb, hb'⟩ => ⟨mul_mem ha hb, by rw [rs_mul hPQ ha hb]; exact mul_mem ha' hb'⟩

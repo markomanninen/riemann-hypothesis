@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksW
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LevelSubgroupRestrictedProductOfLaws
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaLiftLevelsGoodPrimesProperties
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksW
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LevelSubgroupRestrictedProductOfLaws
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaLiftLevelsGoodPrimesProperties
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,8 @@ open GlobalTheory.LevelProduct
 theorem exists_cut {D : D7} (V : HSp D) (β : GL (Fin V.rank) (Lev.EAf D)) (h : GA D V) (hS : Lev.finE V h ∈ St β)
     (S : Finset (HeightOneSpectrum (𝓞 D.host.F))) :
     ∃ k : GA D V, Lev.finE V k ∈ St β ∧ ∀ PP : Pl D.host.E,
-      (PP.under (𝓞 D.host.F) ∈ S → redFn β PP (Lev.finE V k) = redFn β PP (Lev.finE V h)) ∧
-      (PP.under (𝓞 D.host.F) ∉ S → redFn β PP (Lev.finE V k) = 1) := by
+      ((_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP) ∈ S → redFn β PP (Lev.finE V k) = redFn β PP (Lev.finE V h)) ∧
+      ((_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP) ∉ S → redFn β PP (Lev.finE V k) = 1) := by
   induction S using Finset.cons_induction_on with
   | empty =>
     refine ⟨1, ?_, fun PP => ⟨fun hh => absurd hh (Finset.notMem_empty _), fun _ => ?_⟩⟩
@@ -28,30 +32,30 @@ theorem exists_cut {D : D7} (V : HSp D) (β : GL (Fin V.rank) (Lev.EAf D)) (h : 
     obtain ⟨k, hk, hr⟩ := ih
     have hc : Lev.finE V (cmp V v h) ∈ St β := by
       rw [finE_cmp]; exact piece_mem_St (phi_idem v) (phi_idem' v) hS
-    have hpos : ∀ PP : Pl D.host.E, PP.under (𝓞 D.host.F) = v →
+    have hpos : ∀ PP : Pl D.host.E, (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP) = v →
         redFn β PP (Lev.finE V (cmp V v h)) = redFn β PP (Lev.finE V h) := fun PP e => by
       rw [finE_cmp]; exact redFn_piece (phi_idem v) (phi_idem' v) hS PP (resS_phi_pos e)
-    have hneg : ∀ PP : Pl D.host.E, ¬ PP.under (𝓞 D.host.F) = v →
+    have hneg : ∀ PP : Pl D.host.E, ¬ (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP) = v →
         redFn β PP (Lev.finE V (cmp V v h)) = 1 := fun PP e => by
       rw [finE_cmp] at hc ⊢; exact redFn_piece_eq_one (phi_idem' v) hc PP (resS_phi_neg e)
     refine ⟨cmp V v h * k, ?_, fun PP => ?_⟩
     · rw [MonoidHom.map_mul]; exact Subgroup.mul_mem _ hc hk
     · rw [MonoidHom.map_mul, redFn_mul hc hk, Finset.mem_cons]
-      by_cases e : PP.under (𝓞 D.host.F) = v
+      by_cases e : (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP) = v
       · refine ⟨fun _ => ?_, fun hn => absurd (Or.inl e) hn⟩
         rw [hpos PP e, (hr PP).2 (e ▸ hv), mul_one]
       · rw [hneg PP e, one_mul]
         exact ⟨fun hh => (hr PP).1 (hh.resolve_left e), fun hh => (hr PP).2 fun h' => hh (Or.inr h')⟩
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_mem_smaller : ∀ (D : D7) (V : HSp D) (β : GL (Fin V.rank) (Lev.EAf D)) (Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)), IsSDFrame V β Λ 1 → ∀ (L : LevDat D.host.E ℂ V.rank) (Q' : Finset (Pl D.host.E)) (xq : ∀ PP : Pl D.host.E, (kP PP)ˣ →* ℂˣ), L.Q ⊆ Q' → (∀ PP ∈ L.Pg, ∀ PP' ∈ Q', PP ≠ PP' ∧ ¬ Formalism.IndefR.Lev.IsConjPl PP PP' ∧ ¬ Formalism.IndefR.Lev.IsConjPl PP' PP) → ∀ g ∈ (levEnv V β L).Q, ∃ g' ∈ (levEnv V β { L with Q := Q', xq := xq }).Q, g⁻¹ * g' ∈ (levEnv V β L).J := by
   classical
   intro D V β Λ _ L Q' xq hQ hoff g hg
   obtain ⟨_, h, rfl⟩ := g
   have hh : Lev.finE V h ∈ lev D.sp.cm V.gram β (Lev.flagL L) := hg
   obtain ⟨-, hS, hP, hq⟩ := mem_parLev.1 (lev_le_parLev hh)
-  obtain ⟨k, hk, hr⟩ := exists_cut V β h hS (L.Pg.image fun PP => PP.under (𝓞 D.host.F))
+  obtain ⟨k, hk, hr⟩ := exists_cut V β h hS (L.Pg.image fun PP => (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP))
   have h1 : ∀ PP ∈ L.Pg, redFn β PP (Lev.finE V k) = redFn β PP (Lev.finE V h) := fun PP hPP =>
     (hr PP).1 (Finset.mem_image_of_mem _ hPP)
   have h2 : ∀ PP ∈ Q', redFn β PP (Lev.finE V k) = 1 := fun PP' hPP' => (hr PP').2 fun hm => by

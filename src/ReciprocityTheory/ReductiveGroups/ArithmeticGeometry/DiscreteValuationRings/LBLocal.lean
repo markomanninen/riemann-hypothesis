@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubeSymmetricSwapFirst
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubeSymmetricSwapFirst
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -83,12 +87,10 @@ lemma linComb_cover : ⨆ j, (LB.LinComb L φ ε).U j = ⊤ := by
   choose j hj using hc
   exact TopologicalSpace.Opens.mem_iSup.mpr ⟨j, Set.mem_iInter.mpr hj⟩
 
-include hL in
 
-theorem linComb_isLB : (LB.LinComb L φ ε).IsLB where
-  cover := linComb_cover L hL φ ε
-  g_self := fun j => linComb_g_self L hL φ ε j
-  cocycle := fun i j l => linComb_cocycle L hL φ ε i j l
+include hL in
+theorem linComb_isLB : (LB.LinComb L φ ε).IsLB := by
+  exact ⟨linComb_cover L hL φ ε, linComb_g_self L hL φ ε, linComb_cocycle L hL φ ε⟩
 
 end LinComb
 

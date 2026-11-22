@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GermIntegrals.StepSt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HermitianFormNormSqLeReMulReStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+module
+
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GermIntegrals.StepSt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HermitianFormNormSqLeReMulReStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+
+@[expose] public section
 
 open MeasureTheory PositivityTheory.Tls2.Ming3 GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.ThetaGL ValuativeRel
 
@@ -361,7 +365,8 @@ theorem avg_zero {G : Type} [Group G] {V : Type} [AddCommGroup V] [Module ℂ V]
     exact (pow_le_pow_iff_left₀ (norm_nonneg _) hR.le two_ne_zero).1 h'
   have hexp : Bf v v = ∑ i, s⁻¹ * Bf (σ (g i) v) v := by
     have : Bf v v = Bf (∑ i, s⁻¹ • σ (g i) v) v := by rw [← hv]
-    rw [this, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [this, map_sum, LinearMap.sum_apply]
     simp only [map_smul, LinearMap.smul_apply, smul_eq_mul]
   have hle : (Bf v v).re ≤ (Fintype.card ι : ℝ) * ‖s‖⁻¹ * (Bf v v).re :=
     calc (Bf v v).re ≤ ‖Bf v v‖ := by first | exact Complex.re_le_norm _ | exact Complex.re_le_abs _
@@ -445,7 +450,8 @@ theorem core : BallSt → RkSt → CoreSt := by
   have hBΦ : ∀ w, B Φ w = ∑ ρ, s⁻¹ • σ (g ρ) (B Φ w) := by
     intro w
     have h1 := congrArg (fun f => f w) hΨ
-    simp only [map_sub, map_sum, map_smul, LinearMap.sub_apply, LinearMap.sum_apply, LinearMap.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_smul, LinearMap.sub_apply, LinearMap.sum_apply, LinearMap.smul_apply,
       LinearMap.zero_apply] at h1
     have h2 : ∀ ρ, B (Φρ ρ) w = σ (g ρ) (B Φ w) := by
       intro ρ

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FiniteMinimalPrimes
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FiniteMinimalPrimes
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem proj_smul (c : K → ℂ) (hc : ∀ k, c k ≠ 0) (z : (Σ k, ι k) → 
 theorem continuousOn_proj :
     ContinuousOn (proj (ι := ι)) {z | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0} := by
   refine continuousOn_pi.2 fun q => ?_
-  refine ContinuousOn.div (by fun_prop) (by fun_prop) fun z hz => ?_
+  refine ContinuousOn.div₀ (by fun_prop) (by fun_prop) fun z hz => ?_
   exact Complex.ofReal_ne_zero.2 (normSq_pos (hz q.1)).ne'
 
 theorem compactSpace_pts {P : Ideal (MvPolynomial (Σ k, ι k) ℂ)} (hP : IsMultiHomogIdeal P) :

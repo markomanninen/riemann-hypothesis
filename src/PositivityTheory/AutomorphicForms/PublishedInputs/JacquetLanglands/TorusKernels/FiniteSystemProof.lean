@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.ComplexMinusRealLineMeasureCoordinates
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.ComplexMinusRealLineMeasureCoordinates
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,7 +86,7 @@ theorem factors {J : Type} (ν : Valuation ℂ ℝ≥0) (Λ : ((J → ℂ) → �
       simp only [List.map_cons, List.prod_cons, List.map_append, List.prod_append, List.map_nil,
         List.prod_nil, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
       ring
-    rw [e, map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
+    rw [e, map_add (f := _), map_smul, map_smul, smul_eq_mul, smul_eq_mul]
     apply Valuation.map_add_le
     · rw [Valuation.map_mul]
       calc _ ≤ 1 * B := mul_le_mul' hf.1 (ih hF' _ (hP W _ hW))

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntIndMemSB
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzBruhatLintegralSqNeTopStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubInvMulOutMemIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntIndMemSB
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzBruhatLintegralSqNeTopStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubInvMulOutMemIff
+
+@[expose] public section
 
 open MeasureTheory Matrix ValuativeRel
 
@@ -31,7 +35,8 @@ theorem normSq_unif_mul_resCard_pow_eq_one : ∀ {k : Type} [Field k] [Valuative
   have hFSB : F ∈ GlobalTheory.WeilM.SB (Fin n × Fin d → k) := Submodule.sum_mem _ fun T _ => (hTr _ φ0 hφ0).1
   have hSg : S (diagAt ϖ i0) φ0 = (χ ϖ : ℂ) • F := by
     apply hinj (hS _ φ0 hφ0) (Submodule.smul_mem _ _ hFSB)
-    rw [hχ _ φ0 hφ0, map_smul, map_sum, det_diagAt, hι0]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hχ _ φ0 hφ0, map_smul, map_sum, det_diagAt, hι0]
     funext Y
     simp only [Pi.smul_apply, Finset.sum_apply, smul_eq_mul, (hTr _ φ0 hφ0).2, hι0]
     rw [intInd_diagAt_eq_sum ϖ hϖ]
@@ -55,7 +60,8 @@ theorem normSq_unif_mul_resCard_pow_eq_one : ∀ {k : Type} [Field k] [Valuative
     have hpt : ∀ y, F y * (starRingEnd ℂ) (F y) = ∑ T : Fin d → SplitFlip.Res k 1, ∑ T' : Fin d → SplitFlip.Res k 1,
         Tr (cosetRep ϖ i0 T) φ0 y * (starRingEnd ℂ) (Tr (cosetRep ϖ i0 T') φ0 y) := by
       intro y
-      rw [hF, Finset.sum_apply, map_sum, Finset.sum_mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hF, Finset.sum_apply, map_sum, Finset.sum_mul_sum]
     simp_rw [hpt]
     rw [integral_finsetSum _ fun T _ => integrable_finsetSum _ fun T' _ => hint T T']
     simp_rw [integral_finsetSum _ fun T' _ => hint _ T']

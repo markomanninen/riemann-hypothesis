@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.Friedrichs
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.Friedrichs
+
+@[expose] public section
 
 noncomputable section
 
@@ -158,7 +162,7 @@ theorem bdd_mul (hd : Dense (M : Set H)) (hs : ∀ x y : M, ⟪(Ω x : H), y⟫_
       simp [← res_omega h3 h4 v u hu, hu]
     have h1 : ContinuousLinearMap.adjoint Z x = ((Ω v + I • v : M) : H) := by simpa using hA x v hv
     rw [ContinuousLinearMap.mul_apply, h1, hZ _ _ hTa, ← hv, ← hvu]
-    simp only [map_add, map_smul, Submodule.coe_add, Submodule.coe_smul]
+    simp only [map_add (f := _), map_smul, Submodule.coe_add, Submodule.coe_smul]
     have : I • I • (u : H) = -(u : H) := by rw [smul_smul]; simp
     rw [smul_add, this]
     abel
@@ -199,7 +203,7 @@ theorem bdd_comm (hd : Dense (M : Set H)) (hs : ∀ x y : M, ⟪(Ω x : H), y⟫
     subst hts
     have hx := res_val h3 x v hv
     have : (p : H) = (s' : H) + Ω (Ω s') := by
-      rw [hp, ← hx, map_add, ← hs1, ht2]
+      rw [hp, ← hx, map_add (f := _), ← hs1, ht2]
     have h5 := h4 s'
     rw [← this] at h5
     exact h5.symm

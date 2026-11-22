@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField
 
@@ -75,7 +79,7 @@ theorem UpperTheory.exists_nsmul_mem_sum_image_lattice_of_surjective_mod :
     Submodule.span_le.mpr (by rintro _ ⟨i, rfl⟩; exact hbS i)
   haveI : DiscreteTopology ΛB.toAddSubgroup := ‹DiscreteTopology ΛB›
   haveI : DiscreteTopology (ΛB : Set (Fin gB → ℂ)) := ‹DiscreteTopology ΛB›
-  have hcl : IsClosed (ΛB : Set (Fin gB → ℂ)) := AddSubgroup.isClosed_of_discrete (H := ΛB.toAddSubgroup)
+  have hcl : IsClosed (ΛB : Set (Fin gB → ℂ)) := (ΛB.toAddSubgroup).isClosed_of_discreteTopology
   have hfin : ((ZSpan.fundamentalDomain b) ∩ (ΛB : Set (Fin gB → ℂ))).Finite :=
     Metric.finite_isBounded_inter_isClosed (isDiscrete_iff_discreteTopology.mpr ‹_›)
       (ZSpan.fundamentalDomain_isBounded b) hcl

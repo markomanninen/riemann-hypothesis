@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapMulVecOfMemTD
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapMulVecOfMemTD
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.HaarLin
 
 namespace GlobalTheory.HaarLin.Gauss
@@ -136,7 +141,7 @@ theorem step {κ : Type} [Fintype κ] [DecidableEq κ] (hR : HasStableRangeOne R
   have hls : l ∉ s := Finset.notMem_erase _ _
   have hin : ∀ i : κ, Sum.inl i ∈ s := fun i => by simp [hs, hl]
   have h1 : (M⁻¹ * M) l l = 1 := by rw [nonsing_inv_mul M hM, one_apply_eq]
-  rw [mul_apply, ← Finset.add_sum_erase _ _ (Finset.mem_univ l)] at h1
+  rw [Matrix.mul_apply, ← Finset.add_sum_erase _ _ (Finset.mem_univ l)] at h1
   obtain ⟨t, ht⟩ := hR (M l l) (∑ k ∈ s, M⁻¹ l k * M k l) ⟨M⁻¹ l l, 1, by rw [one_mul]; exact h1⟩
   obtain ⟨E₁, hE₁, H₁⟩ := rowOp l (fun k => t * M⁻¹ l k) s hls
   refine of_left hE₁ hM fun hM₁ => ?_

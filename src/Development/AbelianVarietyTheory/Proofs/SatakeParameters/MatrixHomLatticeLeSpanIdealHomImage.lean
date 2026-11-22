@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.FdOfCharts
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceRepresentativesLaw
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceRepresentativesTrivial
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NatCastMemOfPlace
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemHomLat
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.FdOfCharts
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceRepresentativesLaw
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceRepresentativesTrivial
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NatCastMemOfPlace
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemHomLat
+
+@[expose] public section
 
 noncomputable section
 
@@ -138,8 +142,8 @@ theorem uniform_den (P : HeightOneSpectrum O) {M : Type} [AddCommGroup M] [Modul
       obtain ⟨a, z, hz, rfl⟩ := hn
       obtain ⟨r, hr⟩ := hh z hz
       refine ⟨a * s * r₀ + s₀ * r, ?_⟩
-      rw [map_add, map_smul, Algebra.smul_def]
-      simp only [map_add, map_mul]
+      rw [map_add (f := _), map_smul, Algebra.smul_def]
+      simp only [map_add (f := _), map_mul]
       rw [← hr, ← hr₀]
       ring
   obtain ⟨s, hs, hh⟩ := key g Submodule.subset_span

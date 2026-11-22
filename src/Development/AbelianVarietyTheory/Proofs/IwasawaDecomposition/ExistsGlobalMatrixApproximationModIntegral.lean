@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsGlobalLatticeLocalGiven
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsGlobalLatticeLocalGiven
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,13 +51,13 @@ theorem exists_glob_approx : ∀ {ι : Type} [Fintype ι] [DecidableEq ι] (W Q 
       (algebraMap (W q) (Q q) (Pi.single (M := W) q0 (G q0 i j) q) +
         algebraMap (W q) (Q q) (π q) ^ (2 * M + 1) * algebraMap (W q) (Q q) (z i j q)) := by
     intro q i j
-    rw [map_mul, map_inv₀, map_pow, ht, hz, map_add, map_mul, map_pow]
+    rw [map_mul, map_inv₀, map_pow, ht, hz, map_add (f := _), map_mul, map_pow]
   refine ⟨Matrix.of fun i j => (t ^ M)⁻¹ * x i j, 1 + π q0 • (H q0 * Matrix.of fun i j => z i j q0), ?_, ?_, ?_⟩
   · rw [← IsLocalRing.residue_ne_zero_iff_isUnit, RingHom.map_det]
     have hr : IsLocalRing.residue (W q0) (π q0) = 0 := by
       rw [IsLocalRing.residue_eq_zero_iff]; exact (hπ q0).not_isUnit
     have : (IsLocalRing.residue (W q0)).mapMatrix (1 + π q0 • (H q0 * Matrix.of fun i j => z i j q0)) = 1 := by
-      rw [map_add, map_one]
+      rw [map_add (f := _), map_one]
       have : (IsLocalRing.residue (W q0)).mapMatrix (π q0 • (H q0 * Matrix.of fun i j => z i j q0)) = 0 := by
         ext i j; simp [hr]
       rw [this, add_zero]
@@ -63,7 +67,7 @@ theorem exists_glob_approx : ∀ {ι : Type} [Fintype ι] [DecidableEq ι] (W Q 
           (Matrix.of fun i j => z i j q0).map (algebraMap (W q0) (Q q0))) := by
       rw [← Matrix.map_mul]
       ext i j
-      simp only [Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add, map_mul,
+      simp only [Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _), map_mul,
         Matrix.one_apply, apply_ite (algebraMap (W q0) (Q q0)), map_one, map_zero]
     rw [e1, ← hH q0, mul_add, mul_one, Matrix.mul_smul, Matrix.smul_mul, Matrix.mul_smul, ← Matrix.mul_assoc,
       Matrix.mul_nonsing_inv _ (hg q0), Matrix.one_mul]
@@ -83,7 +87,8 @@ theorem exists_glob_approx : ∀ {ι : Type} [Fintype ι] [DecidableEq ι] (W Q 
           algebraMap (W q) (Q q) (π q) • ((H q).map (algebraMap (W q) (Q q))).mulVec
             (fun j => algebraMap (W q) (Q q) (zc j)) := by
         funext j
-        simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
       rw [e2, ← hH q, Matrix.mulVec_smul, Matrix.smul_mulVec, Matrix.mulVec_smul, Matrix.mulVec_mulVec,
         Matrix.mul_nonsing_inv _ (hg q), Matrix.one_mulVec]
       funext i

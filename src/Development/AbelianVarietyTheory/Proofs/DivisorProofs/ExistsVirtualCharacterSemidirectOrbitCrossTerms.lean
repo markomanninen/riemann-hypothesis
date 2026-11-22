@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.VirtualCharactersMulComapConjIndLinear
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.VirtualCharactersMulComapConjIndLinear
+
+@[expose] public section
+
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI GlobalTheory.Shin SemidirectProduct
 open scoped Classical Pointwise
 
@@ -152,7 +157,7 @@ theorem ind_off (φ : Γ →* MulAut G) (ψ : (inl : G →* G ⋊[φ] Γ).range 
   have : ∀ x : G ⋊[φ] Γ, ext0 (inl : G →* G ⋊[φ] Γ).range ψ (x⁻¹ * (inl δ * inr s) * x) = 0 := by
     intro x
     unfold ext0
-    rw [dif_neg]
+    rw [dite_eq_right]
     rw [mem_range_inl_iff, conj_off_right]
     intro h
     apply hs
@@ -170,7 +175,7 @@ theorem ind_inl (φ : Γ →* MulAut G) [Fintype G] [Fintype Γ] (c : G → ℂ)
       (x⁻¹ * inl g * x) = c (φ x.right⁻¹ g) := by
     intro x
     unfold ext0
-    rw [dif_pos ((mem_range_inl_iff φ _).2 (conj_inl_right φ x g))]
+    rw [dite_eq_left ((mem_range_inl_iff φ _).2 (conj_inl_right φ x g))]
     dsimp only
     rw [inlEquiv_symm_apply]
     show c ((x⁻¹ * inl g * x).left) = _

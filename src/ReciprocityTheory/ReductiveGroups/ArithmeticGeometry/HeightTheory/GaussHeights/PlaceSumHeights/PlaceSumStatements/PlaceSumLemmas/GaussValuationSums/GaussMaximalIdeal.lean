@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.LaTIsPrime
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.LaTIsPrime
+
+@[expose] public section
 
 namespace PI.HtPlacesSumWork
 
@@ -103,7 +107,7 @@ theorem gauss_dvr : IsDiscreteValuationRing (Op D N la) := by
     obtain ⟨y, hy⟩ := hF.mul_inv_cancel hne
     exact (IsLocalRing.mem_maximalIdeal _).mp hmem (isUnit_iff_exists_inv.mpr ⟨y, hy⟩)
   have hprin : (maximalIdeal (ReciprocityTheory.ChartRestriction.G.T0.Op D N la)).IsPrincipal := ⟨⟨_, hmax⟩⟩
-  exact ((IsDiscreteValuationRing.TFAE (ReciprocityTheory.ChartRestriction.G.T0.Op D N la) hnf).out 0 4).mpr hprin
+  exact ((IsDiscreteValuationRing.TFAE (ReciprocityTheory.ChartRestriction.G.T0.Op D N la) hnf).out 1 5).mpr hprin
 
 theorem gauss_lift (x : OT K D N) :
     OpToKT D N la (algebraMap (OT K D N) (Op D N la) x) =
@@ -121,14 +125,14 @@ theorem gauss_clear (p : KTp K D N) :
     exact RingHom.mem_rangeS.mp (hb _ (Finset.mem_image_of_mem _ hv))
   choose! g hg using hint_r
   refine ⟨∑ v ∈ p.support, MvPolynomial.monomial v (g v), b, nonZeroDivisors.coe_ne_zero b, ?_⟩
-  rw [ReciprocityTheory.ChartRestriction.G.T0.OTtoKT, map_sum, MvPolynomial.map_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ReciprocityTheory.ChartRestriction.G.T0.OTtoKT, map_sum, MvPolynomial.map_C]
   conv_rhs => rw [p.as_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun v hv => ?_
   rw [MvPolynomial.map_monomial, MvPolynomial.C_mul_monomial, hg v hv, Algebra.smul_def]
 
 theorem gauss_frac :
-    letI := (OpToKT D N la).toAlgebra
-    IsFractionRing (Op D N la) (KTf K D N) := by
+    @IsFractionRing (Op D N la) _ (KTf K D N) _ (OpToKT D N la).toAlgebra := by
   letI := (ReciprocityTheory.ChartRestriction.G.T0.OpToKT D N la).toAlgebra
   have : IsDomain (ReciprocityTheory.ChartRestriction.G.T0.Op D N la) :=
     IsLocalization.isDomain_localization (Ideal.primeCompl_le_nonZeroDivisors _)
@@ -139,7 +143,7 @@ theorem gauss_frac :
   have hCinj : ∀ k : 𝓞 K, k ≠ 0 → (MvPolynomial.C k : ReciprocityTheory.ChartRestriction.G.T0.OT K D N) ≠ 0 :=
     fun k hk hC => hk (by simpa using hC)
   have hfinj : Function.Injective (ReciprocityTheory.ChartRestriction.G.T0.OpToKT D N la) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨⟨a, t⟩, rfl⟩ := IsLocalization.mk'_surjective (ReciprocityTheory.ChartRestriction.G.T0.laT D N la).primeCompl x
     have h1 := congrArg (ReciprocityTheory.ChartRestriction.G.T0.OpToKT D N la)

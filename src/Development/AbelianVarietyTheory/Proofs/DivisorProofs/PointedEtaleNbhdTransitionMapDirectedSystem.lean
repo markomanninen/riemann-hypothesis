@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InstPreorder
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveResidueCompEtaleHenselian
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InstPreorder
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveResidueCompEtaleHenselian
+
+@[expose] public section
 
 open IsLocalRing GlobalTheory.Henselisation
 
@@ -15,9 +19,9 @@ theorem algebraMap_comp_eq_of_pt {i j : EtNbhd R} (φ₁ φ₂ : i.A →ₐ[R] j
   let ψ₂ : i.A →ₐ[R] j.B := (IsScalarTower.toAlgHom R j.A j.B).comp φ₂
   have : ψ₁ = ψ₂ := by
     refine GlobalTheory.EtaleHensel.algHom_eq_of_residue_eq fun b => ?_
-    rw [← sub_eq_zero, ← map_sub, residue_eq_zero_iff]
+    rw [← sub_eq_zero, ← (residue j.B).map_sub (ψ₁ b) (ψ₂ b), residue_eq_zero_iff]
     show algebraMap j.A j.B (φ₁ b) - algebraMap j.A j.B (φ₂ b) ∈ maximalIdeal j.B
-    rw [← map_sub, IsLocalization.AtPrime.to_map_mem_maximal_iff j.B j.q]
+    rw [← (algebraMap j.A j.B).map_sub (φ₁ b) (φ₂ b), IsLocalization.AtPrime.to_map_mem_maximal_iff j.B j.q]
     show φ₁ b - φ₂ b ∈ RingHom.ker j.pt
     rw [RingHom.mem_ker, map_sub, sub_eq_zero]
     exact (congr($h₁ b)).trans (congr($h₂ b)).symm

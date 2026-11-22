@@ -1,15 +1,19 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.UQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DiffTwoNatural
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.ClosureIdeal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.AevalNat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSpan
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ExistsLimitOfSuccessiveDiffMemFiltration
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.UQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DiffTwoNatural
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.ClosureIdeal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.AevalNat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSpan
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ExistsLimitOfSuccessiveDiffMemFiltration
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -253,7 +257,7 @@ private theorem ev_surj (hs : Seps Dbar s) {D : GDet n A G} (hD : IsDef O Dbar D
       have hu : coord D (s u) = F (MvPowerSeries.X u) + algebraMap O A (cst (coord Dbar (s u))) := by
         rw [h u]
         ring
-      rw [hu, map_add, map_add, AlgHom.commutes, AlgHom.commutes]
+      rw [hu, map_add (f := _), map_add (f := _), AlgHom.commutes, AlgHom.commutes]
       congr 1
       exact congrArg (fun φ : MvPowerSeries σ O →ₐ[O] DualNumber (ResidueField O) => φ (MvPowerSeries.X u)) hc)
     have e2 := congrArg (fun E => coord E t) e
@@ -463,7 +467,7 @@ private theorem assemble (hs : Seps Dbar s) (A : ℕ → Type) [∀ N, CommRing 
     have ha : a ∈ RingHom.ker (F N : MvPowerSeries σ O →+* A N) := (RingHom.mem_ker).2 hx
     obtain ⟨b, hb, c, hc, rfl⟩ := Submodule.mem_sup.1 (hJK N ha)
     have hb0 : Ideal.Quotient.mkₐ O Kinf b = 0 := (Ideal.Quotient.eq_zero_iff_mem (I := Kinf)).2 hb
-    rw [map_add, hb0, zero_add]
+    rw [map_add (f := _), hb0, zero_add]
     exact mem_pow_map _ (N + 1) hc
   have hsepR : ∀ x y : MvPowerSeries σ O ⧸ Kinf, (∀ N, ρ N x = ρ N y) → x = y := by
     intro x y hxy

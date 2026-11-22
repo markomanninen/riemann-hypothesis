@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsAddValuation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsAddValuation
+
+@[expose] public section
 
 namespace GlobalTheory.PadicVal
 

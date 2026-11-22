@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroLeviEigenvectorExists
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroLeviEigenvectorExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,8 @@ theorem minor_mul_sub_mem {R : Type} [CommRing R] {ι : Type} [Fintype ι] [Deci
   rw [← Ideal.Quotient.eq, RingHom.map_mul, RingHom.map_det, RingHom.map_det, RingHom.map_det, ← det_mul]
   congr 1
   ext i j
-  simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.submatrix_apply, Matrix.mul_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.submatrix_apply, Matrix.mul_apply, map_sum, map_mul]
   rw [← Fintype.sum_subtype_add_sum_subtype p]
   have h0 : ∑ l : {x // ¬ p x}, (Ideal.Quotient.mk Q) (A i l) * (Ideal.Quotient.mk Q) (B l j) = 0 := by
     refine Finset.sum_eq_zero fun l _ => ?_

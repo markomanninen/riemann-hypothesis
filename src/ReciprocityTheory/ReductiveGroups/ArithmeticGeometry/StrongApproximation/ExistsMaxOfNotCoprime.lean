@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.SA
 
@@ -21,11 +25,11 @@ theorem gp [IsReduced K] (h2 : IsUnit (2 : K)) {δ : K} (hδ : IsUnit δ) (hσδ
   have e1 := norm_zero_of_not_unit hσ hfix h1
   have e2 := norm_zero_of_not_unit hσ hfix h2'
   have e3 := norm_zero_of_not_unit hσ hfix h3
-  simp only [map_add, map_mul, hσδ, map_neg, map_one] at e2 e3
+  simp only [map_add (f := _), map_mul, hσδ, map_neg, map_one] at e2 e3
   obtain ⟨a, b, hab⟩ := hxy
   have hab' : σ a * σ x + σ b * σ y = 1 := by
     have := congrArg σ hab
-    simpa only [map_add, map_mul, map_one] using this
+    simpa only [map_add (f := _), map_mul, map_one] using this
   have hyy0 : (2 * δ ^ 2) * (y * σ y) = 0 := by linear_combination 2 * e1 - e2 - e3
   have hyy : y * σ y = 0 := ((h2.mul (hδ.pow 2)).mul_right_eq_zero).mp hyy0
   have hxy0 : (2 * δ) * (y * σ x - x * σ y) = 0 := by linear_combination e2 - e3

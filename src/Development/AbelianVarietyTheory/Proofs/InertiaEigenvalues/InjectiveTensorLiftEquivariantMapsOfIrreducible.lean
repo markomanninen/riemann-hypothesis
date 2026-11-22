@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubsingletonJacquetOfPerm
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InSupportOfIsSubquotient
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitaryAdmissibleMatrixCoefficient
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubsingletonJacquetOfPerm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InSupportOfIsSubquotient
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitaryAdmissibleMatrixCoefficient
+
+@[expose] public section
+
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil ValuativeRel Topology
 
 namespace GlobalTheory.SmGL.EvalInj
@@ -27,7 +32,8 @@ private theorem eq_zero_of_sum_intertwining_apply_eq_zero {H X Y : Type} [Group 
       intro g w hw
       rw [LinearMap.mem_ker, hΦ] at hw ⊢
       simp_rw [hφ]
-      rw [← map_sum, hw, map_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, hw, map_zero]
     let p : S →ₗ[ℂ] Y := (LinearMap.proj (Fin.last m)).comp S.subtype
     have hp : Function.Injective p := by
       rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']
@@ -84,8 +90,8 @@ private theorem eq_zero_of_sum_intertwining_apply_eq_zero {H X Y : Type} [Group 
       have h1 := (Fintype.linearIndependent_iff.mp hli) _ hzero (Fin.last m)
       simp at h1
 
-open ValuativeRel Topology in
 
+open ValuativeRel Topology in
 theorem _root_.GlobalTheory.SmGL.EvalInj.lift_subtype_injective :
     ∀ (H X Y : Type) [Group H] [AddCommGroup X] [Module ℂ X] [AddCommGroup Y] [Module ℂ Y]
       (τ : Representation ℂ H X) (ρ : Representation ℂ H Y), ρ.IsIrreducible →
@@ -93,7 +99,7 @@ theorem _root_.GlobalTheory.SmGL.EvalInj.lift_subtype_injective :
       ∀ (M : Submodule ℂ (Y →ₗ[ℂ] X)), (∀ φ ∈ M, ∀ g v, φ (ρ g v) = τ g (φ v)) →
       Function.Injective (TensorProduct.lift M.subtype) := by
   intro H X Y _ _ _ _ _ τ ρ hρ hschur M hM
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro t ht
   obtain ⟨M', hfin, hsub⟩ :=
     TensorProduct.exists_finite_submodule_left_of_setFinite {t} (Set.finite_singleton t)
@@ -113,7 +119,8 @@ theorem _root_.GlobalTheory.SmGL.EvalInj.lift_subtype_injective :
       (Submodule.ker_subtype _)
   have hsum : ∑ i, φ i (y i) = 0 := by
     rw [ht₀] at ht
-    simpa [map_sum, φ] using ht
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, φ] using ht
   have hy0 := eq_zero_of_sum_intertwining_apply_eq_zero τ ρ hρ hschur _ φ hli
     (fun i g v => hM _ (b i : M).2 g v) y hsum
   rw [ht₀, hy0]

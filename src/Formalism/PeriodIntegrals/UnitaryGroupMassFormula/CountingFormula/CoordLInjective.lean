@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.UnimodOneGenus
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IntegralHeckeForms
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.UnimodOneGenus
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IntegralHeckeForms
+
+@[expose] public section
 
 open NumberField Module Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.BasicNotions Formalism.L2.SG.CntLocal
 open Classical
@@ -29,9 +33,6 @@ theorem int_mul_of_ne {b : 𝓞 D.host.E} (hb : b ≠ 0) : ∃ k : ℕ, k ≠ 0 
   · rw [Ne, Ideal.absNorm_eq_zero_iff, Ideal.span_singleton_eq_bot]; exact hb
   · obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.1 (Ideal.absNorm_mem (Ideal.span {b}))
     exact ⟨c, by rw [← hc, mul_comm]⟩
-
-theorem coe_nat_O (k : ℕ) : (((k : 𝓞 D.host.E)) : D.host.E) = (k : D.host.E) := by
-  simp
 
 theorem fi_nat_mul {I : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E} (hI : I ≠ 0) (x : D.host.E) :
     ∃ k : ℕ, k ≠ 0 ∧ (k : D.host.E) * x ∈ I := by
@@ -127,7 +128,8 @@ theorem coordL_injective (hf : PartnerOK D F0 f) : Function.Injective (coordL D 
   have hc0 : ∀ a, c a = 0 := by
     intro a
     have h := ha a
-    rw [← hc, map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hc, map_sum] at h
     have e : ∀ b, (VS D).hT (f a) (c b • F0.e b) = c b * (if b = a then 1 else 0) := by
       intro b
       rw [map_smul, smul_eq_mul, ← (VS D).herm.eq (F0.e b) (f a), hf.1 b a]
@@ -234,7 +236,7 @@ theorem lamC_span (hf : PartnerOK D F0 f) (M : Submodule (𝓞 D.host.E) (WbQ D 
 
 theorem lattice_integral : LamLattice := by
   intro D u F0 f M hf hM
-  exact ⟨lamC_fg D F0 f hf M hM.1.fg, lamC_span D F0 f hf M hM.1.span_eq_top⟩
+  exact Submodule.IsLattice.of_fg D.host.E (lamC_fg D F0 f hf M hM.1.fg)
 
 end Lat
 

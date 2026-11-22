@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Set Metric Filter Topology
 open scoped Nat
@@ -10,46 +14,14 @@ section Periodic
 variable {E V : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [NormedAddCommGroup V] [NormedSpace ℂ V]
 
-theorem entire_apply_eq_of_values_on_compact {F : E → V} (hF : Differentiable ℂ F) {K : Set E}
-    (hK : IsCompact K) (hcov : ∀ x, ∃ k ∈ K, F x = F k) (z w : E) : F z = F w := by
-  refine hF.apply_eq_apply_of_bounded ((hK.image hF.continuous).isBounded.subset ?_) z w
-  rintro _ ⟨x, rfl⟩
-  obtain ⟨k, hk, h⟩ := hcov x
-  exact ⟨k, hk, h.symm⟩
-
-theorem entire_apply_eq_of_periodic_of_compact {F : E → V} (hF : Differentiable ℂ F)
-    {G K : Set E} (hK : IsCompact K) (hcov : ∀ x, ∃ k ∈ K, ∃ g ∈ G, x = k + g)
-    (hper : ∀ x, ∀ g ∈ G, F (x + g) = F x) (z w : E) : F z = F w := by
-  refine entire_apply_eq_of_values_on_compact hF hK (fun x => ?_) z w
-  obtain ⟨k, hk, g, hg, rfl⟩ := hcov x
-  exact ⟨k, hk, hper k g hg⟩
-
-theorem entire_apply_eq_of_periodic_of_bounded [FiniteDimensional ℂ E] {F : E → V}
-    (hF : Differentiable ℂ F) {G K : Set E} (hK : Bornology.IsBounded K)
-    (hcov : ∀ x, ∃ k ∈ K, ∃ g ∈ G, x = k + g)
-    (hper : ∀ x, ∀ g ∈ G, F (x + g) = F x) (z w : E) : F z = F w := by
-  haveI : ProperSpace E := FiniteDimensional.proper ℂ E
-  refine entire_apply_eq_of_periodic_of_compact hF hK.isCompact_closure (fun x => ?_) hper z w
-  obtain ⟨k, hk, g, hg, h⟩ := hcov x
-  exact ⟨k, subset_closure hk, g, hg, h⟩
-
-theorem entire_const_of_addSubgroup_periodic [FiniteDimensional ℂ E] {F : E → V}
-    (hF : Differentiable ℂ F) (G : AddSubgroup E) {K : Set E} (hK : Bornology.IsBounded K)
-    (hcov : ∀ x, ∃ g ∈ G, ∃ k ∈ K, x = g + k)
-    (hper : ∀ x, ∀ g ∈ G, F (x + g) = F x) : ∃ c, ∀ z, F z = c := by
-  refine ⟨F 0, fun z => entire_apply_eq_of_periodic_of_bounded hF (G := G) hK (fun x => ?_)
-    hper z 0⟩
-  obtain ⟨g, hg, k, hk, h⟩ := hcov x
-  exact ⟨k, hk, g, hg, h.trans (add_comm _ _)⟩
-
 theorem entire_apply_eq_of_isZLattice_periodic [NormedSpace ℝ E] [FiniteDimensional ℝ E]
     {F : E → V} (hF : Differentiable ℂ F) (L : Submodule ℤ E) [DiscreteTopology L]
     [IsZLattice ℝ L] (hper : ∀ x, ∀ g ∈ L, F (x + g) = F x) (z w : E) : F z = F w :=
   hF.apply_eq_apply_of_bounded
     (IsZLattice.isCompact_range_of_periodic L F hF.continuous hper).isBounded z w
 
-omit [NormedSpace ℂ E] [NormedAddCommGroup V] [NormedSpace ℂ V] in
 
+omit [NormedSpace ℂ E] [NormedAddCommGroup V] [NormedSpace ℂ V] in
 theorem periodic_of_mem_span_int {F : E → V} {S : Set E}
     (hper : ∀ x, ∀ g ∈ S, F (x + g) = F x) :
     ∀ x, ∀ g ∈ Submodule.span ℤ S, F (x + g) = F x := by
@@ -130,7 +102,7 @@ theorem entire_exists_polynomial_of_poly_bound {F : ℂ → ℂ} (hF : Different
   refine ⟨∑ k ∈ Finset.range (m + 1), Polynomial.monomial k (a k), ?_, fun z => ?_⟩
   · refine Polynomial.natDegree_sum_le_of_forall_le _ _ fun k hk => ?_
     exact (Polynomial.natDegree_monomial_le _).trans (by simpa [Nat.lt_succ_iff] using hk)
-  · rw [ha z, Polynomial.eval_finset_sum]
+  · rw [ha z, Polynomial.eval_finsetSum]
     refine Finset.sum_congr rfl fun k _ => ?_
     simp [mul_comm]
 

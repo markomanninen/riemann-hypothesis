@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Formalism.LocalToGlobal.ProjectiveLattices.UnramBridgeHolds
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvolutionSphericalHeckeAnti
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InertPlaceHeckeDoubleCosetsInverseRepsLabel
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DivisorsAtInvDualLabelAndStabilizerMul
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsCompletedLatticeBasisAtPrime
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CompletedLatticeIntegralityFacts
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsHyperspecialDoubleCosetOfElementaryDivisor
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBaseChangeFiniteAdeleRingEquiv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsHeckeOpFullDualLab
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnramBridgeHolds
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvolutionSphericalHeckeAnti
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InertPlaceHeckeDoubleCosetsInverseRepsLabel
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DivisorsAtInvDualLabelAndStabilizerMul
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsCompletedLatticeBasisAtPrime
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CompletedLatticeIntegralityFacts
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsHyperspecialDoubleCosetOfElementaryDivisor
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBaseChangeFiniteAdeleRingEquiv
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsHeckeOpFullDualLab
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues Polynomial
@@ -162,8 +167,8 @@ theorem idem_mul_span_mem (V : HSp D) (he : e * e = e) (h : Comparison₂ P e) {
     rw [mul_mul_mul_comm, hee, Algebra.TensorProduct.tmul_mul_tmul, one_mul]
     rfl
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_basis (V : HSp D) (he : e * e = e) (h : Comparison₂ P e) :
     ∃ B : Matrix (Fin V.rank) (Fin V.rank) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F ⊗[D.host.F] D.host.E),
       (∀ z, IntVec z → (fun a => finPart D e * B.mulVec z a) ∈ LamHat V) ∧
@@ -176,7 +181,7 @@ theorem exists_basis (V : HSp D) (he : e * e = e) (h : Comparison₂ P e) :
       GlobalTheory.LatDual.smul_mem_lamHat V _ (hz i) _ (idem_mul_span_mem V he h (hb i))
     convert this using 1
     funext a
-    simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, Finset.sum_apply, Finset.mul_sum]
+    simp only [Finset.sum_apply, Pi.smul_apply, Matrix.mulVec, dotProduct, Matrix.of_apply, Finset.mul_sum]
     exact Finset.sum_congr rfl fun i _ => by ring
   · rw [GlobalTheory.LatDual.lamHat_eq_hat] at hy
     induction hy using AddSubgroup.closure_induction with
@@ -201,8 +206,8 @@ theorem exists_basis (V : HSp D) (he : e * e = e) (h : Comparison₂ P e) :
       refine ⟨-z, fun i => neg_mem (hz i), funext fun a => ?_⟩
       rw [Matrix.mulVec_neg, Pi.neg_apply, Pi.neg_apply, mul_neg, mul_neg, congrFun hu a]
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem exists_component (he : e * e = e) (h : Comparison₂ P e) :
     ∃ (φ : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F ⊗[D.host.F] D.host.E →+* P.adicCompletion D.host.E)
       (s : P.adicCompletion D.host.E → Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F ⊗[D.host.F] D.host.E),
@@ -390,7 +395,7 @@ theorem reps_of_sphOp (hK : hyp V P = K) (h : IsPrimeIdem P e f) (h1 : ϖ ∈ P.
   exact Reps.of_dc ha hb ⟨fun γ hγ => (hc.1 γ hγ).2, hc.2⟩
 
 theorem sphOp_rep (h : IsLab V P d) : SphOp V P d (rep V P d) := by
-  rw [Hk3.rep, dif_pos h]
+  rw [Hk3.rep, dite_eq_left h]
   exact h.choose_spec
 
 theorem exists_reps (hK : hyp V P = K) {R : Finset (GA D V)} (hR : SphOp V P d R) :
@@ -409,15 +414,16 @@ theorem unif_ne_zero (h2 : ϖ ∉ P.asIdeal ^ 2) : (ϖ : D.host.E) ≠ 0 := fun 
   rw [show ϖ = 0 from RingOfIntegers.ext h]
   exact zero_mem _)
 
-open GlobalTheory.HeckeDual in
 
+open GlobalTheory.HeckeDual in
 theorem exists_dual {R : Finset (GA D V)} (hR : SphOp V P d R) :
     ∃ R', SphOp V P (dualLab d) R' ∧ R'.card = R.card := by
   obtain ⟨e, f, ϖ, α, hS, hef, hϖ, hϖ2, hd, hJ, hχ, hα, hdiv, hR, hrep⟩ := hR
   obtain ⟨he, v, hf⟩ := idem_of_isPrimeIdem hef
   obtain ⟨a, rfl⟩ := (GlobalTheory.HeckeDual.suppF_iff V hf α).1 hα
   obtain ⟨δ, hδ, hσδ⟩ := exists_skew D
-  haveI := isLattice_frameLat V
+  haveI : Submodule.IsFullLattice D.host.E (GlobalTheory.AdelicU.frameLat V) :=
+    GlobalTheory.AdelicU.SelfDual.isLattice_frameLat V
   have hK : ∀ g, g ∈ {k | k ∈ KsphC V ∅ ∧ SuppF V f k} ↔
       ∃ k ∈ GlobalTheory.AdelicU.stabLoc D.sp.cm.sig V.gram (GlobalTheory.AdelicU.frameLat V) v,
         GlobalTheory.AdelicU.emb D.sp.cm.sig V.gram v k = g := fun g => by
@@ -451,8 +457,8 @@ theorem opOf_single {M : Type} [AddCommGroup M] [Module ℂ M] (π : GA D V →*
 
 end Labels
 
-open GlobalTheory.IdemSupport in
 
+open GlobalTheory.IdemSupport in
 theorem label_operators : ∀ {D : D7} (V : HSp D) (P : Pl D.host.E), (∀ d R, SphOp V P d R → R.card = (rep V P d).card ∧ ∀ (M : Type) [AddCommGroup M] [Module ℂ M] (π : GA D V →* Module.End ℂ M) (u : M), (∀ k ∈ hyp V P, π k u = u) → ∑ γ ∈ R, π γ u = opOf π P (Finsupp.single d 1) u) ∧ (∀ c, ∀ (M : Type) [AddCommGroup M] [Module ℂ M] (π : GA D V →* Module.End ℂ M) (u : M), (∀ k ∈ hyp V P, π k u = u) → ∀ k ∈ hyp V P, π k (opOf π P c u) = opOf π P c u) ∧ (IsLab V P (List.replicate V.rank 0) ∧ ∀ (M : Type) [AddCommGroup M] [Module ℂ M] (π : GA D V →* Module.End ℂ M) (u : M), (∀ k ∈ hyp V P, π k u = u) → opOf π P (Finsupp.single (List.replicate V.rank 0) 1) u = u) ∧ (∀ d, (IsLab V P d ↔ IsLab V P (dualLab d)) ∧ (rep V P (dualLab d)).card = (rep V P d).card) ∧ ∀ e f g, IsPrimeIdem P e f → SuppF V f g → ∃ d, IsLab V P d ∧ (∀ γ ∈ rep V P d, ∃ k₁ ∈ hyp V P, ∃ k₂ ∈ hyp V P, γ = k₁ * g * k₂) ∧ ∀ γ ∈ rep V P (dualLab d), ∃ k₁ ∈ hyp V P, ∃ k₂ ∈ hyp V P, γ = k₁ * g⁻¹ * k₂ := by
   intro D V P
   obtain ⟨K, hK⟩ := exists_hyp V P
@@ -460,7 +466,7 @@ theorem label_operators : ∀ {D : D7} (V : HSp D) (P : Pl D.host.E), (∀ d R, 
   have fix : ∀ (M : Type) [AddCommGroup M] [Module ℂ M] (π : GA D V →* Module.End ℂ M) (u : M),
       (∀ k ∈ hyp V P, π k u = u) → ∀ x, ∀ l ∈ K, π (x * l) u = π x u := by
     intro M _ _ π u hu x l hl
-    rw [map_mul, Module.End.mul_apply, hu l (hK ▸ hl)]
+    rw [map_mul, mul_apply_eq_comp, hu l (hK ▸ hl)]
   have c1 : ∀ d R, SphOp V P d R → R.card = (rep V P d).card ∧ ∀ (M : Type) [AddCommGroup M] [Module ℂ M]
       (π : GA D V →* Module.End ℂ M) (u : M), (∀ k ∈ hyp V P, π k u = u) →
       ∑ γ ∈ R, π γ u = opOf π P (Finsupp.single d 1) u := by
@@ -471,7 +477,8 @@ theorem label_operators : ∀ {D : D7} (V : HSp D) (P : Pl D.host.E), (∀ d R, 
     simp only [one_mul]
   have dual : ∀ d, IsLab V P d → IsLab V P (dualLab d) := fun d ⟨R, hR⟩ => (exists_dual hR).imp fun _ h => h.1
   refine ⟨c1, fun c M _ _ π u hu k hk => ?_, ?_, fun d => ?_, fun e f g h hg => ?_⟩
-  · simp only [opOf, Finsupp.sum, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul]
+  · set_option synthInstance.maxHeartbeats 100000 in
+    simp only [opOf, Finsupp.sum, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul]
     refine Finset.sum_congr rfl fun d _ => congrArg _ ?_
     by_cases hd : IsLab V P d
     · obtain ⟨g, r1, -⟩ := exists_reps hK (sphOp_rep hd)

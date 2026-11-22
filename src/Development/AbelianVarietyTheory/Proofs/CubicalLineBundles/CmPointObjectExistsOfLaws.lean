@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PrincipalLattices.ExistsPrincipalLattice
-import Development.AbelianVarietyTheory.PublishedTheorems.RelativeAmpleness.RelAmpleAndKTrivIff
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsGoodReductionModelCmPeriodFibreStatement
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsCmTensorLatticeCurvePrincipalTripleStatement
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CubeLBPairingIsoIffWeilPairingCompatibleOverRing
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsIsExpPush
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsTensorProductHomOfCmCurveHomFamily
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsUniqueCmHermitianLatticeForm
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CmDatumFormSqrtNegDPurePeriod
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsPullback
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsUniqueExtendRingOfIntegersHom
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsHermFormCurve
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsTenBaseChange
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LieMultTensorOfFinrank
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.HasTypeBaseChange
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.MapRtEqNegIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PrincipalLattices.ExistsPrincipalLattice
+public import Development.AbelianVarietyTheory.PublishedTheorems.RelativeAmpleness.RelAmpleAndKTrivIff
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsGoodReductionModelCmPeriodFibreStatement
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsCmTensorLatticeCurvePrincipalTripleStatement
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CubeLBPairingIsoIffWeilPairingCompatibleOverRing
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsIsExpPush
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsTensorProductHomOfCmCurveHomFamily
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsUniqueCmHermitianLatticeForm
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CmDatumFormSqrtNegDPurePeriod
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsPullback
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsUniqueExtendRingOfIntegersHom
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsHermFormCurve
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsTenBaseChange
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LieMultTensorOfFinrank
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.HasTypeBaseChange
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.MapRtEqNegIff
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
@@ -138,7 +142,7 @@ theorem cmExists : CMCurve → CMPoint → ThetaUnifAV → Out.Laws → Out.Laws
     refine additive_ext (he j.isLeft).1.2.2.2.1 (u := fun z => κ (κ'.symm (e _ z ≫ Φ j)))
       (v := fun z => FU.ex i Pe (F j z)) (fun z w => ?_) (fun z w => ?_) (fun a s => ?_) z
     · simp only [hadd, map_mul]
-    · simp only [map_add, FU.ex_add i Pe hP]
+    · simp only [map_add (f := _), FU.ex_add i Pe hP]
     · apply Over.OverMorphism.ext
       simp only [map_smul, hFP, hκ]
       refine htie j.isLeft ⟨Z.f j a, Z.pure j a⟩ s _ (Over.w _) ?_

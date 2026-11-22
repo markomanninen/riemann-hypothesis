@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.OldestFar
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.OldestFar
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,8 +50,8 @@ theorem forty_eight_bound_arith (Y k N P : ℝ) (hY : 2 ≤ Y) (hk : 1 ≤ k) (h
 
 end Ar
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem arithCondition_of_one_le (C CLa : ℝ) (hC : 1 ≤ C) : RestArithStep C CLa := by
   intro p W Qq O Kf _ _ _ _ _ _ _ _ _ _ ι σ j w n' m r _ _ TT L₁ L₂ de h x lam0 aT bT a Y cpp c0 Dp cStar K _ _ hk
     F nb B hD
@@ -212,7 +216,5 @@ theorem arithCondition_of_one_le (C CLa : ℝ) (hC : 1 ≤ C) : RestArithStep C 
     exact Ar.forty_eight_bound_arith Y _ _ _ hY2 hk1 hNN (le_trans h9 z1)
   exact Ar.arith1 _ a Bv _ ((p : ℝ) ^ g) ((p : ℝ) ^ (L₁ + 1)) ((p : ℝ) ^ Dd) _ (by positivity) (by positivity) hden hBo0
     ha0 hsum hBoa hpow h48 (by linarith)
-
-theorem restArith_all : ∃ C₁ : ℝ, 0 < C₁ ∧ ∀ C : ℝ, C₁ ≤ C → ∀ CLa : ℝ, RestArithStep C CLa := ⟨1, one_pos, fun C hC CLa => arithCondition_of_one_le C CLa hC⟩
 
 end Formalism.MainNotions.PairMembershipBlocks

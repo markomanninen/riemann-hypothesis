@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField NumberField.InfinitePlace NumberField.mixedEmbedding
 
@@ -42,7 +46,8 @@ theorem exists_integer_near (F : Type) [Field F] [NumberField F] :
       mixedEmbedding_apply_isReal, hτ, b, c, v]
   have hz : τ (((∑ i, round (c i) • b i : 𝓞 F)) : F)
       = ∑ i, (round (c i) : ℝ) * τ ((b i : 𝓞 F) : F) := by
-    simp [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum]
   rw [hz, hw, ← Finset.sum_sub_distrib]
   calc |∑ i, ((round (c i) : ℝ) * τ ((b i : 𝓞 F) : F) - c i * τ ((b i : 𝓞 F) : F))|
       ≤ ∑ i, |(round (c i) : ℝ) * τ ((b i : 𝓞 F) : F) - c i * τ ((b i : 𝓞 F) : F)| :=

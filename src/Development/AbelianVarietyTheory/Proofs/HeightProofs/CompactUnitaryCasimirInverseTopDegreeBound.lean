@@ -1,17 +1,22 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.FinitePartTypes
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqExistsIffDsExists
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqUniqueOfClassification
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasTypeAllAddOfEquiv
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OneAddHsConjLe
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CoefBoundOfCasselmanWallach
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.FiniteDimensionalPolyV
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ContDiffMatrixRightInvariantDerivative
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CompactUnitaryCoordFunMulEqSum
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.FinitePartTypes
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqExistsIffDsExists
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqUniqueOfClassification
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasTypeAllAddOfEquiv
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OneAddHsConjLe
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CoefBoundOfCasselmanWallach
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.FiniteDimensionalPolyV
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ContDiffMatrixRightInvariantDerivative
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CompactUnitaryCoordFunMulEqSum
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Matrix
 open Formalism.REAL GlobalTheory.SmoothGlob GlobalTheory.TypeSum
 open scoped TensorProduct
@@ -134,9 +139,9 @@ theorem casInv_lap_symm {d : ℕ} {a b : KG ε → ℂ} (ha : a ∈ polyV ε d) 
     ∫ k, a k * (∑ j, rder ε [X j, X j] b) k ∂(muK ε) =
       ∫ k, (∑ j, rder ε [X j, X j] a) k * b k ∂(muK ε) := by
   simp only [Finset.sum_apply, Finset.mul_sum, Finset.sum_mul]
-  rw [integral_finset_sum _ (fun j _ => casInv_integrable (f := fun k => a k * rder ε [X j, X j] b k)
+  rw [integral_finsetSum _ (fun j _ => casInv_integrable (f := fun k => a k * rder ε [X j, X j] b k)
       ((continuous_of_mem ha).mul (continuous_of_mem (casInv_rder2_mem (hX j) hb)))),
-    integral_finset_sum _ (fun j _ => casInv_integrable (f := fun k => rder ε [X j, X j] a k * b k)
+    integral_finsetSum _ (fun j _ => casInv_integrable (f := fun k => rder ε [X j, X j] a k * b k)
       ((continuous_of_mem (casInv_rder2_mem (hX j) ha)).mul (continuous_of_mem hb)))]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [casInv_rder_pair, casInv_rder_pair]
@@ -157,7 +162,7 @@ theorem casInv_energy {d : ℕ} {p : KG ε → ℂ} (hp : p ∈ polyV ε d) :
     ∫ k, (∑ j, rder ε [X j, X j] p) k * star (p k) ∂(muK ε) =
       -(((∑ j, ∫ k, ‖rder ε [X j] p k‖ ^ 2 ∂(muK ε) : ℝ)) : ℂ) := by
   simp only [Finset.sum_apply, Finset.sum_mul]
-  rw [integral_finset_sum _ (fun j _ => casInv_integrable (f := fun k => rder ε [X j, X j] p k * star (p k))
+  rw [integral_finsetSum _ (fun j _ => casInv_integrable (f := fun k => rder ε [X j, X j] p k * star (p k))
       ((continuous_of_mem (casInv_rder2_mem (hX j) hp)).mul (continuous_star.comp (continuous_of_mem hp))))]
   push_cast
   rw [← Finset.sum_neg_distrib]

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BuiltBoundsCompactOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BuiltBoundsCompactOfParts
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBASM
 

@@ -1,10 +1,14 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoeffOfValues
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BaseIndexConstantInjective
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsotropicNormalFormFullStatement
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TriangularFactorMiddleRow
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OneAddProjectionMemIsotropicSet
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThirdPolynomialExpansion
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SignPermutationIdentity
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoeffOfValues
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BaseIndexConstantInjective
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsotropicNormalFormFullStatement
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TriangularFactorMiddleRow
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OneAddProjectionMemIsotropicSet
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThirdPolynomialExpansion
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SignPermutationIdentity
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ComplexConjugate
@@ -71,9 +75,9 @@ theorem nf_top (z z' : Fin (2 * r + k + 1) → ℂ) (hz' : inWb k r z') (hT' : h
     simp only [hy]
     rw [(xi_Y_zhat_identity k _ z z' γ a b hγ).2, hZ]
     rfl
-  have hfz' : fvec k (i0 + s'' + 1) z' (Fin.last _) = z' := by unfold fvec; rw [dif_neg (by simp)]
+  have hfz' : fvec k (i0 + s'' + 1) z' (Fin.last _) = z' := by unfold fvec; rw [dite_eq_right (by simp)]
   have hfa : ∀ a : Fin (i0 + s'' + 1), fvec k _ z a.castSucc = bvec (eI k _ a) := by
-    intro a; unfold fvec; rw [dif_pos (by have := a.isLt; simp; omega)]; rfl
+    intro a; unfold fvec; rw [dite_eq_left (by have := a.isLt; simp; omega)]; rfl
   have hyz : ∀ a : Fin (i0 + s'' + 1), herm (Hpk k _) z' (y a) = C3.Zb i0 (s'' + 2) hh t a.val (i0 + s'' + 1) := by
     intro a
     have h1 : herm (Hpk k _) z' (y a) = herm (Hpk k _) (γ *ᵥ z') (γ *ᵥ y a) := (herm_unitary γ hγ _ _).symm

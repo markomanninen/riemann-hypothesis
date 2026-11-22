@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Qi29.polyDeriv :
     {n : ℕ} → MvPolynomial (Fin n) ℂ → EuclideanSpace ℂ (Fin n) → EuclideanSpace ℂ (Fin n) →L[ℂ] ℂ :=
@@ -24,9 +28,9 @@ theorem UpperTheory.Reformulated.B.Qi29.hasStrictFDerivAt_eval :
   | add p q hp hq =>
     have h : UpperTheory.Reformulated.B.Qi29.polyDeriv (p + q) x
         = UpperTheory.Reformulated.B.Qi29.polyDeriv p x + UpperTheory.Reformulated.B.Qi29.polyDeriv q x := by
-      simp only [UpperTheory.Reformulated.B.Qi29.polyDeriv, map_add, add_smul, Finset.sum_add_distrib]
+      simp only [UpperTheory.Reformulated.B.Qi29.polyDeriv, map_add (f := _), add_smul, Finset.sum_add_distrib]
     rw [h]
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact hp.add hq
   | mul_X p i hp =>
     have hi : HasStrictFDerivAt (fun y : EuclideanSpace ℂ (Fin n) ↦ y.ofLp i)
@@ -36,7 +40,7 @@ theorem UpperTheory.Reformulated.B.Qi29.hasStrictFDerivAt_eval :
         = (MvPolynomial.eval (fun j : Fin n ↦ x.ofLp j) p) •
             (EuclideanSpace.proj i : EuclideanSpace ℂ (Fin n) →L[ℂ] ℂ)
           + (x.ofLp i) • UpperTheory.Reformulated.B.Qi29.polyDeriv p x := by
-      simp only [UpperTheory.Reformulated.B.Qi29.polyDeriv, Derivation.leibniz, smul_eq_mul, map_add, map_mul,
+      simp only [UpperTheory.Reformulated.B.Qi29.polyDeriv, Derivation.leibniz, smul_eq_mul, map_add (f := _), map_mul,
         MvPolynomial.eval_X, add_smul, Finset.sum_add_distrib, Finset.smul_sum, smul_smul]
       congr 1
       rw [Finset.sum_eq_single i]

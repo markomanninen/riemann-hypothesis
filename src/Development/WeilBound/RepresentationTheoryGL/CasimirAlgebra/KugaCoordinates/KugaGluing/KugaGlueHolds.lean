@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaGluing.KgCxDmatConj
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaGluing.KgCasDiff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactCurveDerivative
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorCompactActionDerivative
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompactDerivativeSeparatingDual
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaGluing.KgCxDmatConj
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaGluing.KgCasDiff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactCurveDerivative
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorCompactActionDerivative
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompactDerivativeSeparatingDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem kugaGlue_holds : KugaGlue := by
     have h1 := kg_form_rTensor Hf B hB3 (lieOp π (toL X.1)) (σ * kgT (toL X.1)) (fun φ ψ => hHl _ φ ψ) x y
     have hs := hreal (toL X.1)
     rw [LinearMap.comp_apply, show kgH X = toL X.1 from rfl, kgA_apply]
-    simp only [LinearMap.add_apply, LinearMap.smul_apply, Module.End.one_apply, map_add, map_smul,
+    simp only [LinearMap.add_apply, LinearMap.smul_apply, Module.End.one_apply, map_add (f := _), map_smul,
       LinearMap.map_smulₛₗ, smul_eq_mul, map_mul, map_neg, Complex.conj_ofReal, map_div₀, map_ofNat, hs]
     linear_combination h1
   have hherm : ∀ (X : Herm E a) (x y : π.V ⊗[ℂ] (Fin Ξ.d → ℂ)),
@@ -39,7 +43,7 @@ theorem kugaGlue_holds : KugaGlue := by
     have h2 := kg_form_lTensor Hf B hB3 _ hD x y
     have hs := hreal (toL X.1)
     rw [LinearMap.comp_apply, show kgH X = toL X.1 from rfl, kgR_apply]
-    simp only [LinearMap.add_apply, LinearMap.smul_apply, Module.End.one_apply, map_add, map_smul,
+    simp only [LinearMap.add_apply, LinearMap.smul_apply, Module.End.one_apply, map_add (f := _), map_smul,
       LinearMap.map_smulₛₗ, smul_eq_mul, map_mul, map_neg, Complex.conj_ofReal, map_div₀, map_ofNat, hs]
     linear_combination h2
 
@@ -48,20 +52,24 @@ theorem kugaGlue_holds : KugaGlue := by
       ∑ k, (c i j k : ℂ) • kgA π Ξ σ (toL (iM (fr k).1)) := by
     intro i j
     show kgA π Ξ σ (toL (fr i).1) * kgA π Ξ σ (toL (fr j).1) - kgA π Ξ σ (toL (fr j).1) * kgA π Ξ σ (toL (fr i).1) = _
-    rw [kgA_comm, hbr i j, show toL (∑ k, c i j k • iM (fr k).1) = kgL (∑ k, c i j k • iM (fr k).1) from rfl,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [kgA_comm, hbr i j, show toL (∑ k, c i j k • iM (fr k).1) = kgL (∑ k, c i j k • iM (fr k).1) from rfl,
       map_sum, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [map_smul, map_smul, ← algebraMap_smul ℂ (c i j k)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_smul, ← algebraMap_smul ℂ (c i j k)]
     rfl
   have hbrR : ∀ i j, (kgR π Ξ σ).comp kgH (fr i) * (kgR π Ξ σ).comp kgH (fr j) -
       (kgR π Ξ σ).comp kgH (fr j) * (kgR π Ξ σ).comp kgH (fr i) =
       ∑ k, (c i j k : ℂ) • kgR π Ξ σ (toL (iM (fr k).1)) := by
     intro i j
     show kgR π Ξ σ (toL (fr i).1) * kgR π Ξ σ (toL (fr j).1) - kgR π Ξ σ (toL (fr j).1) * kgR π Ξ σ (toL (fr i).1) = _
-    rw [kgR_comm, hbr i j, show toL (∑ k, c i j k • iM (fr k).1) = kgL (∑ k, c i j k • iM (fr k).1) from rfl,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [kgR_comm, hbr i j, show toL (∑ k, c i j k • iM (fr k).1) = kgL (∑ k, c i j k • iM (fr k).1) from rfl,
       map_sum, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [map_smul, map_smul, ← algebraMap_smul ℂ (c i j k)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_smul, ← algebraMap_smul ℂ (c i j k)]
     rfl
   have hDk : ∀ k j, kgD _ (hZ k) (fr j) = ∑ i, c i j k • fr i := fun k j => Subtype.ext (by
     rw [kgD_val, Submodule.coe_sum]

@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.Columns.PolyFnLemmas
-import Formalism.LocalToGlobal.Columns.LocWLemmas
-import Formalism.LocalToGlobal.Columns.CoefficientsModP
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocGen
+module
+
+public import Formalism.LocalToGlobal.Columns.PolyFnLemmas
+public import Formalism.LocalToGlobal.Columns.LocWLemmas
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocGen
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Matrix
 open scoped TensorProduct
@@ -142,7 +146,7 @@ theorem vl_map_mem_intSpan (w : Pl.Pl) (lam lam' : ι → DomWeight n) (hn : ∀
       exact zero_mem _
     | add x y _ _ hx hy =>
       intro r hr
-      rw [smul_add, map_add]
+      rw [smul_add, map_add (f := _)]
       exact add_mem (hx r hr) (hy r hr)
     | smul a x _ hx =>
       intro r hr
@@ -278,7 +282,7 @@ theorem vl_coord (J : Matrix (Fin n) (Fin n) E) (lam : ι → DomWeight n) (B : 
 include hval
 
 theorem vl_mem_delAtr_iff (hpw : Function.Surjective pw) (J : Matrix (Fin n) (Fin n) E) (lam lam' : ι → DomWeight n)
-    (hn : ∀ τ, (lam τ).natW = (lam' τ).natW) (M : Submodule (𝓞 E) (Fin n → E)) (hM : Submodule.IsLattice E M) (F : VV K lam) :
+    (hn : ∀ τ, (lam τ).natW = (lam' τ).natW) (M : Submodule (𝓞 E) (Fin n → E)) (hM : Submodule.IsFullLattice E M) (F : VV K lam) :
     F ∈ delAtr emb lam M ↔ ∀ (w : Pl.Pl) (B : GL (Fin n) E), IsLocBasis (Pl.resChar w) (M : Set (Fin n → E)) B →
       ∃ P ∈ vlIntSpan s Pl w lam', evV emb J lam s F =
         fnOf _ (shiftOf lam) (atInf (embAt s emb) ((B⁻¹ : GL (Fin n) E) : Matrix (Fin n) (Fin n) E)) P := by
@@ -293,7 +297,8 @@ theorem vl_mem_delAtr_iff (hpw : Function.Surjective pw) (J : Matrix (Fin n) (Fi
   · intro h w' Bd hBd
     obtain ⟨w, rfl⟩ := hpw w'
     have : Fact (Pl.resChar w).Prime := ⟨Pl.resChar_prime w⟩
-    obtain ⟨B, hB⟩ := Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.LocB.exists_isLocBasis (Pl.resChar w) E M hM.fg hM.span_eq_top
+    letI : Submodule.IsFullLattice E M := hM
+    obtain ⟨B, hB⟩ := Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.LocB.exists_isLocBasis (Pl.resChar w) E M hM.fg Submodule.IsFullLattice.span_eq_top
     obtain ⟨P, hP, hPe⟩ := h w B hB
     obtain ⟨G, hG, rfl⟩ := vl_exists_of_mem_intSpan Pl pw hval s w lam lam' hn hP
     rw [vl_coord emb s J lam B F] at hPe

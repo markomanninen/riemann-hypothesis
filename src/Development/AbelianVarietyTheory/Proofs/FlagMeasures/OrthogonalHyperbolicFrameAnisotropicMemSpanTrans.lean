@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LevelMatchIff
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FrLink
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ColumnWittFrameBasisBlockGram
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LevelMatchIff
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FrLink
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ColumnWittFrameBasisBlockGram
+
+@[expose] public section
+
 open MeasureTheory NumberField IsDedekindDomain Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.ColDict GlobalTheory.St GlobalTheory.St.G
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -12,7 +17,8 @@ variable {D : D7}
 theorem crd_sum_smul (X : HidaSetting D) {ι : Type} [Fintype ι] (c : ι → X.B.I.E) (v : ι → (VS D).V) :
     X.crd (∑ k, X.ιE (c k) • v k) = fun i => ∑ k, c k * X.crd (v k) i := by
   funext i
-  simp [HidaSetting.crd, crdOf, map_sum, Finsupp.coe_finset_sum, Finset.sum_apply, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [HidaSetting.crd, crdOf, map_sum, Finset.sum_apply, map_mul]
 
 theorem crd_injective (X : HidaSetting D) : Function.Injective X.crd := by
   intro v w h
@@ -56,16 +62,19 @@ theorem orth_mem_span_qFr : ∀ (D : D7) (X : HidaSetting D) (u : D.what₂.Word
     intro b
     have h := (hef b).1
     rw [hy] at h
-    simpa [map_add, map_sum, hqe, X.ee, X.ef, (X.zu_orth u b).1] using h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_add (f := _), map_sum, hqe, X.ee, X.ef, (X.zu_orth u b).1] using h
   have c1 : ∀ b, X.ιE (c (Sum.inr (Sum.inl b))) = 0 := by
     intro b
     have h := (hef b).2
     rw [hy] at h
-    simpa [map_add, map_sum, hqf, X.ff, hT_fe, (X.zu_orth u b).2] using h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_add (f := _), map_sum, hqf, X.ff, hT_fe, (X.zu_orth u b).2] using h
   have c3 : X.ιE (c (Sum.inr (Sum.inr (Sum.inr ())))) = 0 := by
     have h := hz
     rw [hy] at h
-    simp [map_add, map_sum, hqz, hT_ze, hT_zf] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_add (f := _), map_sum, hqz, hT_ze, hT_zf] at h
     rw [h.resolve_right (hT_zz_ne X u), map_zero]
   refine ⟨fun j => X.ιE (c (Sum.inl j)), ?_⟩
   rw [hy, Fintype.linearCombination_apply]

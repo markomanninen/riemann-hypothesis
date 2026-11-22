@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DetAdmA
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DetAdmA
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +24,8 @@ def IsBoxD (D : ι → ∀ v : HeightOneSpectrum (𝓞 F), Set (Fv F v)) : Prop 
   (∀ c v, IsClopen (D c v) ∧ IsCompact (D c v)) ∧
     ∀ᶠ v in cofinite, ∀ c, D c v = (v.adicCompletionIntegers F : Set (Fv F v))
 
-variable (F ι) in
 
+variable (F ι) in
 def boxes : Set (Set (ι → Af F)) := {s | ∃ D, IsBoxD D ∧ s = boxS D}
 
 theorem boxS_eq (D : ι → ∀ v : HeightOneSpectrum (𝓞 F), Set (Fv F v)) :
@@ -155,16 +159,8 @@ theorem boxes_seq : ∃ bs : ℕ → Set (ι → Af F), (∀ n, bs n ∈ boxes F
   refine ⟨bs, fun n => hTS (mem_range_self n), ?_⟩
   rw [← sUnion_range, hTU, hU]
 
-theorem isCountablySpanning_boxes : IsCountablySpanning (boxes F ι) := by
-  obtain ⟨bs, h1, h2⟩ := boxes_seq (F := F) (ι := ι)
-  exact ⟨bs, h1, h2⟩
 
 open Classical in
-
-def upd (D : ι → ∀ v : HeightOneSpectrum (𝓞 F), Set (Fv F v)) (c : ι)
-    (v : HeightOneSpectrum (𝓞 F)) (C : Set (Fv F v)) : ι → ∀ v : HeightOneSpectrum (𝓞 F), Set (Fv F v) :=
-  fun c' => if c' = c then Function.update (D c) v (D c v ∩ C) else D c'
-
 private theorem exists_restricted_box_subset_of_isOpen {x : Af F} {U : Set (Af F)} (hU : IsOpen U) (hx : x ∈ U) :
     ∃ E : ∀ v : HeightOneSpectrum (𝓞 F), Set (Fv F v),
       (∀ v, IsClopen (E v) ∧ IsCompact (E v)) ∧
@@ -193,7 +189,7 @@ private theorem exists_restricted_box_subset_of_isOpen {x : Af F} {U : Set (Af F
     obtain ⟨hT1, -, hT3, -⟩ := preimage_sub_integers_mem_and_eq_of_mem v (x v)
     obtain ⟨W, hWt, hWo, hxW⟩ := mem_nhds_iff.1 (ht v)
     obtain ⟨V, hV, hxV, hVW⟩ :=
-      (loc_compact_Haus_tot_disc_of_zero_dim (H := Fv F v)).exists_subset_of_mem_open
+      (loc_compact_Haus_tot_disc_of_zero_dim (X := Fv F v)).exists_subset_of_mem_open
         (show x v ∈ W ∩ _ from ⟨hxW, hT3⟩) (hWo.inter hT1.isOpen)
     exact ⟨V, hV, hxV, hVW.trans (inter_subset_inter_left _ hWt)⟩
   choose V hVc hxV hVsub using key

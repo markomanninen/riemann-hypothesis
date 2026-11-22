@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.FlagImmersions.IsPotentialSumPot
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.FlagImmersions.IsPotentialSumPot
+
+@[expose] public section
 
 noncomputable section
 

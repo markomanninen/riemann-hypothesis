@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.Bdy
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.OrderedCreationCommutesPastLevi
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.Bdy
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.OrderedCreationCommutesPastLevi
+
+@[expose] public section
 
 noncomputable section
 
@@ -196,7 +200,7 @@ theorem lF_glRel : ∀ (n : ℕ) (lev : Fin n → ℕ) (V : Type) [AddCommGroup 
     simp only [Pi.sub_apply, CompanionTheory.D.LK.lift_apply]
     rw [this]
     split_ifs <;> simp
-  simp only [lF, LinearMap.add_apply, map_add, h1, h2]
+  simp only [lF, LinearMap.add_apply, map_add (f := _), h1, h2]
   calc _ = (lift n (E p q) (lift n (E r v) x) - lift n (E r v) (lift n (E p q) x)) +
         (adL p q (adL r v x) - adL r v (adL p q x)) := by abel
     _ = _ := by

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DoubleCosetMultiplication
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCompactSupportDcos
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeAlgebraStructure
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DoubleCosetMultiplication
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCompactSupportDcos
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeAlgebraStructure
+
+@[expose] public section
 
 noncomputable section
 

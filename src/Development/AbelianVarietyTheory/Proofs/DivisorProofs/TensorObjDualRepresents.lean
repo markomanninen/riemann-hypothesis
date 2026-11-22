@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.PowObjGeometricallyConnected
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothOfRelativeDimensionTensorObjDualStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.PowObjGeometricallyConnected
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothOfRelativeDimensionTensorObjDualStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
 open scoped CategoryTheory.Obj
@@ -20,7 +24,7 @@ theorem dualTensorHom_lTensor {N N' : Type} [AddCommGroup N] [Module O N] [AddCo
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul f n => simp [dualTensorHom_apply]
-  | add z w hz hw => simp [map_add, hz, hw]
+  | add z w hz hw => simp [map_add (f := _), hz, hw]
 
 variable {S : Scheme.{0}} {G H : Over S} [GrpObj G] [IsCommMonObj G] [GrpObj H] [IsCommMonObj H]
   {a : OAct O G} {b : OAct O H}
@@ -59,9 +63,9 @@ theorem tensorObj_dual_represents {S : Scheme.{0}} (B : Over S) [GrpObj B] [IsCo
     congr 3
   refine ⟨u, fun x => ?_, fun x y => ?_, fun o x => ?_, fun T f hadd hsmul => ?_⟩
   · refine isMonHom_of_mul_comp _ fun T p q => ?_
-    rw [← hnat, ← hnat, ← hnat, Pts.mk_mul, map_add, LinearMap.add_apply, Pts.hom_add]
+    rw [← hnat, ← hnat, ← hnat, Pts.mk_mul, map_add (f := _), LinearMap.add_apply, Pts.hom_add]
   · change (Φ C _ (x + y)).hom = _
-    rw [map_add, Pts.hom_add]
+    rw [map_add (f := _), Pts.hom_add]
   · change (Φ C _ (o • x)).hom = _
     rw [map_smul, Pts.hom_smul]
   · let F : X →ₗ[O] Pts a T :=

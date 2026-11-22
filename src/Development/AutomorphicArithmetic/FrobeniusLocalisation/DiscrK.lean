@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
-import Formalism.DirichletDensity.DirichletDensityProofs.QuadDiscr
+module
+
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+public import Formalism.DirichletDensity.DirichletDensityProofs.QuadDiscr
+
+@[expose] public section
 
 open NumberField Ideal Formalism.HC Formalism.FrobeniusOrbits
 open scoped Pointwise
@@ -35,7 +39,7 @@ private theorem diffQuadK (K : Type) [Field K] [NumberField K] (d : ℕ) (hd : d
     (by simp [hβ2])
   have h2β : 2 * β ∈ differentIdeal ℤ (𝓞 K) := by
     have := congrArg (fun p => aeval β (derivative p)) hr
-    simp only [derivative_X_pow, derivative_C, derivative_mul, map_add, map_mul,
+    simp only [derivative_X_pow, derivative_C, derivative_mul, map_add (f := _), map_mul,
       minpoly.aeval, zero_mul, add_zero] at this
     have e : (2 : 𝓞 K) * β = aeval β (derivative (minpoly ℤ β)) * aeval β r := by
       rw [← this]; simp [map_ofNat]

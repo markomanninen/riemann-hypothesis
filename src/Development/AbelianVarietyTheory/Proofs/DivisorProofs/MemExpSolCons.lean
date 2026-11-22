@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemBand
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHasCentChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemBand
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHasCentChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ theorem mem_expSol_nil {f : ℝ → ℂ} : f ∈ expSol [] ↔ f = 0 := Submodul
 theorem mem_expSol_cons {c : ℂ} {l : List ℂ} {f : ℝ → ℂ} :
     f ∈ expSol (c :: l) ↔ Differentiable ℝ f ∧ (deriv f - c • f) ∈ expSol l := Iff.rfl
 
-variable (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ)
+variable (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ)
 
 def expCurve (t : ℝ) : GA E a :=
   Matrix.GeneralLinearGroup.scalar (Fin a) (infId E (expU (t • (1 : Cinf E))))

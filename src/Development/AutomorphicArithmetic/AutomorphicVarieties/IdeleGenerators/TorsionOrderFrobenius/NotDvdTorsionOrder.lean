@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShapeFacts
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.HeckeCharacterChoice.ExtAlg
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShapeFacts
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.HeckeCharacterChoice.ExtAlg
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.HeckeGal UpperTheory.V.Base
 
 private theorem glue {G H : Type*} [CommGroup G] [CommGroup H] (p : G →* H)
@@ -19,7 +24,7 @@ private theorem glue {G H : Type*} [CommGroup G] [CommGroup H] (p : G →* H)
   rw [← hω', ← hF]
   rfl
 
-private theorem all_torsion (K : Type) [Field K] [NumberField K] [IsTotallyComplex K]
+private theorem all_torsion (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K]
     (h2 : Module.finrank ℚ K = 2) (u : (𝓞 K)ˣ) : u ∈ Units.torsion K := by
   have hc : Fintype.card (InfinitePlace K) = 1 := by
     have := IsTotallyComplex.finrank K
@@ -46,7 +51,7 @@ private theorem not_dvd_torsionOrder (K : Type) [Field K] [NumberField K] (l : �
   have := hl.two_le
   exact Dvd.dvd.mul_left (dvd_pow_self _ (by omega)) _
 
-private theorem unit_eq (K : Type) [Field K] [NumberField K] [IsTotallyComplex K]
+private theorem unit_eq (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K]
     (h2 : Module.finrank ℚ K = 2) {N : ℕ} (hN : 3 ≤ N) (u : (𝓞 K)ˣ) (n : ℕ)
     (h : (N : 𝓞 K) ∣ (u : 𝓞 K) - n) : u = 1 ∨ u = -1 := by
   haveI : Algebra.IsQuadraticExtension ℚ K := { finrank_eq_two' := h2 }
@@ -99,7 +104,7 @@ private theorem int_dvd (K : Type) [Field K] [NumberField K] (N : ℕ) (a : ℤ)
   simpa using h
 
 theorem UpperTheory.V.Sd.Tw.fin :
-    ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K], Module.finrank ℚ K = 2 → ∀ (l : ℕ), l.Prime → l ≠ 2 →
+    ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K], Module.finrank ℚ K = 2 → ∀ (l : ℕ), l.Prime → l ≠ 2 →
         ¬ (l : ℤ) ∣ discr K → ∀ (N : ℕ), 3 ≤ N → ∀ (χ : (ZMod N)ˣ →* ℂˣ), χ ^ 2 = 1 → χ (-1) = -1 → ∀ τ : K →+* ℂ,
         ∃ (e : (𝓞 K ⧸ Ideal.span {(N : 𝓞 K)})ˣ →* ℂˣ) (m : ℕ), 0 < m ∧ ¬ l ∣ m ∧ (∀ x, e x ^ m = 1) ∧
           (∀ u : (𝓞 K)ˣ, ((e (Units.map (Ideal.Quotient.mk (Ideal.span {(N : 𝓞 K)})).toMonoidHom u) : ℂˣ) : ℂ) =
@@ -114,7 +119,7 @@ theorem UpperTheory.V.Sd.Tw.fin :
   haveI := ringChar.charP (𝓞 K ⧸ Ideal.span {(N : 𝓞 K)})
   let j : ZMod N →+* 𝓞 K ⧸ Ideal.span {(N : 𝓞 K)} := ZMod.castHom (ringChar.dvd hN0) _
   have hj : Function.Injective j := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     obtain ⟨n, rfl⟩ := ZMod.intCast_surjective a
     rw [map_intCast, ← map_intCast (Ideal.Quotient.mk (Ideal.span {(N : 𝓞 K)})), Ideal.Quotient.eq_zero_iff_mem,

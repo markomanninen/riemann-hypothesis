@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsAvgClosure
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InnerKAvgNeZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CompactAverageKFiniteFiniteRank
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRankOneIsAvg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsAvgClosure
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InnerKAvgNeZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CompactAverageKFiniteFiniteRank
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRankOneIsAvg
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,7 +91,8 @@ theorem rank_one_mem (h : Std ε σ) (P : (H → H) → Prop) (A1 : ∀ g ∈ UJ
     | mem M hM =>
       obtain ⟨g, hg, rfl⟩ := hM
       have := (A2 _ _ hQavg (A2 _ _ (A1 g hg) hQavg).2).2
-      simp only [hQ, map_sum, map_smul, inner_sum, inner_smul_right, Finset.sum_smul] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hQ, map_sum, map_smul, inner_sum, inner_smul_right, Finset.sum_smul] at this
       simpa only [mul_comm] using this
     | zero => simpa using A5
     | add M N _ _ hM hN =>

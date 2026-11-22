@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
+
+@[expose] public section
 
 namespace GlobalTheory
 

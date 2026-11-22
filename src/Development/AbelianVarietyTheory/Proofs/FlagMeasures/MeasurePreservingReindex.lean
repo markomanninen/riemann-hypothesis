@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsProjOnOne
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasureLeCardMul
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsOrthonormalBasis
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SobolevIteratedOneParameterSubgroups
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LintegralProductExpChartAllRealPlacesLeStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ContinuousRepresentativePropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LintegralTranslateLeMultiplicityFundamentalStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsProjOnOne
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasureLeCardMul
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsOrthonormalBasis
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SobolevIteratedOneParameterSubgroups
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LintegralProductExpChartAllRealPlacesLeStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ContinuousRepresentativePropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LintegralTranslateLeMultiplicityFundamentalStatement
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec GlobalTheory.Deep GlobalTheory.IndefiniteRowSideFullHecke.OrthonormalPlaceBasis
 open scoped InnerProductSpace ContDiff
@@ -18,12 +22,15 @@ theorem prod_ofFn_single {M : Type*} [Monoid M] : ∀ {m : ℕ} (g : Fin m → M
   | 0, _, a, _ => a.elim0
   | m + 1, g, a, h => by
     rw [List.ofFn_succ, List.prod_cons]
-    refine Fin.cases (fun h => ?_) (fun a h => ?_) a h
-    · rw [List.prod_eq_one, mul_one]
-      intro x hx
-      obtain ⟨i, rfl⟩ := (List.mem_ofFn' _ _).1 hx
-      exact h _ (Fin.succ_ne_zero i)
-    · rw [h 0 (Fin.succ_ne_zero a).symm, one_mul]
+    cases a using Fin.cases
+    · have hprod : (List.ofFn fun i : Fin m => g i.succ).prod = 1 := by
+        apply List.prod_eq_one
+        rw [List.forall_mem_ofFn_iff]
+        intro i
+        exact h _ (Fin.succ_ne_zero i)
+      rw [hprod, mul_one]
+    · rename_i a
+      rw [h 0 (Fin.succ_ne_zero a).symm, one_mul]
       exact prod_ofFn_single (fun i => g i.succ) a fun i hi => h _ fun e => hi (Fin.succ_injective _ e)
 
 theorem prod_ofFn_block {M : Type*} [Monoid M] {m k : ℕ} (g : Fin m → Fin k → M) (a : Fin m)
@@ -182,7 +189,8 @@ theorem cube_bound (B : RowsAut) (c : InfinitePlace B.I.F → ℝ) (s : ℝ) {m 
   have hJ := hSi (fun a => ‖φ (y * (a, 1))‖ₑ ^ 2)
     (hΦm.comp (continuous_const.mul (continuous_id.prodMk continuous_const)).measurable)
   obtain ⟨-, hK0, hK1⟩ := GlobalTheory.CongIndex.measure_Kset_le B.I B.μf B.g hg
-  have hK2 : B.μf (B.I.Kg B.g) ≠ ⊤ := ((measure_mono fun x hx => hx.1).trans_lt hK1).ne
+  have hKg : B.I.Kg B.g ⊆ B.I.Kset := fun _ hx => hx.1
+  have hK2 : B.μf (B.I.Kg B.g) ≠ ⊤ := ((measure_mono hKg).trans_lt hK1).ne
   have hK3 : 0 < (B.μf (B.I.Kg B.g)).toReal := ENNReal.toReal_pos hK0.ne' hK2
   have hcp : 0 ≤ ∏ v, c v := Finset.prod_nonneg fun v _ => (gauge_pos (hc v)).le
   have hM : 0 ≤ (1 + 4 * Real.sqrt B.I.n / tau1 B.I y ^ 2) ^ (2 * (B.I.n ^ 2 * B.I.f)) := by positivity

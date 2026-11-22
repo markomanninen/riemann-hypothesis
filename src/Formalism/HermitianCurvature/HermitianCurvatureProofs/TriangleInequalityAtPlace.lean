@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementTBB
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Formalism.HermitianCurvature.StatementTBB
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.TBBx2
 
@@ -16,21 +20,6 @@ theorem choose_dite_congr {α E : Type*} [Zero E] (P Q : α → Prop) (hPQ : P =
   subst hPQ
   split_ifs with h1 <;> first | rfl | exact hfg _ h1.choose_spec
 
-open Classical in
-theorem orbJ_congr {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
-    [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] (Ds : B.RealPlaceData k r Wp Wq) (γ : B.Mat k r)
-    (μR : Measure (Mt k r)) (F G : B.Mat k r → (Wq →L[ℂ] Wp))
-    (hae : ∀ᵐ q ∂Ds.μSS, D.orbIntegrand Ds γ F q = D.orbIntegrand Ds γ G q) :
-    D.orbJ Ds γ μR F = D.orbJ Ds γ μR G := by
-  unfold D.orbJ
-  exact choose_dite_congr
-    (fun θ => D.IsNormCut Ds γ μR θ ∧ Integrable (fun q => θ q • D.orbIntegrand Ds γ F q) Ds.μSS)
-    (fun θ => D.IsNormCut Ds γ μR θ ∧ Integrable (fun q => θ q • D.orbIntegrand Ds γ G q) Ds.μSS)
-    (funext fun θ => propext (and_congr_right fun _ =>
-      integrable_congr (hae.mono fun q hq => by simp only [hq])))
-    (fun θ => ∫ q, θ q • D.orbIntegrand Ds γ F q ∂Ds.μSS)
-    (fun θ => ∫ q, θ q • D.orbIntegrand Ds γ G q ∂Ds.μSS)
-    (fun θ _ => integral_congr_ae (hae.mono fun q hq => by simp only [hq]))
 
 theorem one_mem_UW (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) :
     (1 : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) ∈ UWset k r z := by
@@ -64,25 +53,11 @@ theorem ae_inSS {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProduct
   have key : ∀ {α β : Type} [MeasurableSpace α] [MeasurableSpace β] (μ : Measure α) (ν : Measure β)
       (P : α → Prop), (∀ᵐ x ∂μ, P x) → ∀ᵐ p ∂(μ.prod ν), P p.1 := by
     intro α β _ _ μ ν P h
-    rw [ae_iff] at h ⊢
-    refine le_antisymm ?_ zero_le
-    calc (μ.prod ν) {p | ¬P p.1} = (μ.prod ν) ({x | ¬P x} ×ˢ Set.univ) := by
-          congr 1
-          ext p
-          simp
-      _ ≤ μ {x | ¬P x} * ν Set.univ := Measure.prod_prod_le _ _
-      _ = 0 := by rw [h, zero_mul]
+    exact Measure.quasiMeasurePreserving_fst.ae h
   have key2 : ∀ {α β : Type} [MeasurableSpace α] [MeasurableSpace β] (μ : Measure α) (ν : Measure β)
       (P : β → Prop), (∀ᵐ y ∂ν, P y) → ∀ᵐ p ∂(μ.prod ν), P p.2 := by
     intro α β _ _ μ ν P h
-    rw [ae_iff] at h ⊢
-    refine le_antisymm ?_ zero_le
-    calc (μ.prod ν) {p | ¬P p.2} = (μ.prod ν) (Set.univ ×ˢ {y | ¬P y}) := by
-          congr 1
-          ext p
-          simp
-      _ ≤ μ Set.univ * ν {y | ¬P y} := Measure.prod_prod_le _ _
-      _ = 0 := by rw [h, mul_zero]
+    exact Measure.quasiMeasurePreserving_snd.ae h
   have h1 : ∀ᵐ x ∂Ds.μW, Matrix.of x ∈ UWset k r Ds.z := ae_iff.mpr Ds.haarW.conc
   have h2 : ∀ᵐ x ∂Ds.μN, Matrix.of x ∈ Nset k r := ae_iff.mpr Ds.haarN.conc
   have h3 : ∀ᵐ x ∂Ds.μW', Matrix.of x ∈ UWset k r Ds.z' := ae_iff.mpr Ds.haarW'.conc
@@ -109,20 +84,6 @@ end
 
 end Formalism.FourierDecayAlt.P.TBBx2
 
-open Formalism.FourierDecayAlt in
-theorem Formalism.FourierDecayAlt.P.vector_truncation_all_places : TBB.VecCutAll := by
-  intro Wp Wq _ _ _ _ _ _ P p χ F hχ ε hε γ hγ hG
-  unfold KB.Pl.V D.vecV
-  split_ifs with h h'
-  · apply Formalism.FourierDecayAlt.P.TBBx2.orbJ_congr
-    filter_upwards [Formalism.FourierDecayAlt.P.TBBx2.ae_inSS p.T.base] with q hq
-    have hχ1 : χ (Formalism.QuantumDeterminants.Gf P.k P.r p.T.base.z p.T.base.z' (B.sgs q h'.choose) / ε) = 1 := by
-      apply hχ.2.2
-      rw [Formalism.FourierDecayAlt.P.TBBx2.Gf_sgs p.T.base q hq h'.choose,
-        Formalism.FourierDecayAlt.P.TBBx2.Gf_of_Zhat _ _ _ γ h'.choose_spec.2.1, le_div_iff₀ hε, one_mul]
-      exact hG
-    simp only [D.orbIntegrand, B.rho, D.cutF, hχ1, Complex.ofReal_one, one_smul]
-  all_goals rfl
 
 namespace Formalism.FourierDecayAlt.P.TBBx2
 
@@ -150,7 +111,7 @@ theorem RR_top (p : KB.Pl P Wp Wq) (G : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (γ
     p.RR G (P.r + 1) [] γ γ = B.hsInner (p.V G γ) (p.V G γ) := by
   have h1 : ¬ (P.r + 1 ≤ P.r) := by omega
   unfold KB.Pl.RR KB.Pl.V D.RRplace
-  rw [dif_pos (And.intro hγ hγ), dif_neg h1, if_pos rfl, if_pos rfl]
+  rw [dite_eq_left (And.intro hγ hγ), dite_eq_right h1, if_pos rfl, if_pos rfl]
 
 theorem Ew_nil (p : KB.Pl P Wp Wq) (nn : ℝ → ℝ) (G : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (i : ℕ) (γ : C.LPt) :
     TBB.Ew p nn G i [] γ = TBB.Ew p (fun _ => 1) G i [] γ := by
@@ -293,69 +254,6 @@ end
 
 end Formalism.FourierDecayAlt.P.TBBx2.Tri
 
-open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.TBB Formalism.FourierDecayAlt.P.TBBx2.Tri in
-theorem Formalism.FourierDecayAlt.P.triangle_inequality_at_place : Formalism.FourierDecayAlt.TBB.TriAt := by
-  intro Wp Wq _ _ _ _ _ _ P p f n fi a b C₁ C₄ n₀ p₀ γ Qγ hb ha hj hB hγ hG hQ
-  have hb0 : 0 < b := by linarith
-  obtain ⟨S, hSdef⟩ : ∃ S : ℝ,
-      S = Real.sqrt (nPt P.k P.r (TTp p) γ) * Real.sqrt (nPt P.k P.r (TTp p) γ) := ⟨_, rfl⟩
-  have hS0 : 0 ≤ S := by rw [hSdef]; exact mul_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)
-  have hA0 : 0 ≤ ∑ i, ‖a i‖ := Finset.sum_nonneg (fun i _ => norm_nonneg (a i))
-  have hEf : Ew p (fun _ => 1) f (P.r + 1) [] γ = S * ‖B.hsVec (p.V f γ)‖ ^ 2 := by rw [hSdef]; exact Ew_top p f hγ
-  have hEi : ∀ i, Ew p (fun _ => 1) (fi i) (P.r + 1) [] γ = S * ‖B.hsVec (p.V (fi i) γ)‖ ^ 2 := fun i => by
-    rw [hSdef]; exact Ew_top p (fi i) hγ
-  have hEi0 : ∀ i, 0 ≤ Ew p (fun _ => 1) (fi i) (P.r + 1) [] γ := fun i => by
-    rw [hEi i]; exact mul_nonneg hS0 (sq_nonneg _)
-  have hvec : (Qγ : ℂ) • B.hsVec (p.V f γ) = ∑ i, a i • B.hsVec (p.V (fi i) γ) := by
-    rw [← hsVec_smul, hQ, hsVec_sum]
-    simp only [hsVec_smul]
-  have hnorm : ‖Qγ‖ * ‖B.hsVec (p.V f γ)‖ ≤ ∑ i, ‖a i‖ * ‖B.hsVec (p.V (fi i) γ)‖ := by
-    have h1 := congrArg norm hvec
-    rw [norm_smul, Complex.norm_real] at h1
-    rw [h1]
-    exact (norm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => (norm_smul (a i) _).le)
-  have hcs := cs_bound (fun i => ‖a i‖) (fun i => ‖B.hsVec (p.V (fi i) γ)‖) (fun i => norm_nonneg (a i))
-  have hQ2 : Qγ ^ 2 * ‖B.hsVec (p.V f γ)‖ ^ 2 ≤ (∑ i, ‖a i‖) * ∑ i, ‖a i‖ * ‖B.hsVec (p.V (fi i) γ)‖ ^ 2 := by
-    have h0 : 0 ≤ ‖Qγ‖ * ‖B.hsVec (p.V f γ)‖ := mul_nonneg (norm_nonneg _) (norm_nonneg _)
-    calc Qγ ^ 2 * ‖B.hsVec (p.V f γ)‖ ^ 2 = (‖Qγ‖ * ‖B.hsVec (p.V f γ)‖) ^ 2 := by
-          rw [mul_pow, Real.norm_eq_abs, sq_abs]
-      _ ≤ (∑ i, ‖a i‖ * ‖B.hsVec (p.V (fi i) γ)‖) ^ 2 := pow_le_pow_left₀ h0 hnorm 2
-      _ ≤ _ := hcs
-  have hreal : Qγ ^ 2 * Ew p (fun _ => 1) f (P.r + 1) [] γ ≤ (∑ i, ‖a i‖) * ∑ i, ‖a i‖ * Ew p (fun _ => 1) (fi i) (P.r + 1) [] γ := by
-    rw [hEf]
-    simp only [hEi]
-    have h2 := mul_le_mul_of_nonneg_left hQ2 hS0
-    have e3 : ∑ i, ‖a i‖ * (S * ‖B.hsVec (p.V (fi i) γ)‖ ^ 2) = S * ∑ i, ‖a i‖ * ‖B.hsVec (p.V (fi i) γ)‖ ^ 2 := by
-      rw [Finset.mul_sum]
-      exact Finset.sum_congr rfl (fun i _ => by ring)
-    rw [e3]
-    nlinarith [h2]
-  have hstep : ∀ i, ENNReal.ofReal (Ew p (fun _ => 1) (fi i) (P.r + 1) [] γ) ≤ ENNReal.ofReal (b ^ (C₄ * ((2 * P.r + 2 : ℕ) : ℝ) ^ 4) * (Gp p γ)⁻¹ ^ (2 * p₀ + n₀)) * jN2 p f := fun i =>
-    (hB i γ hγ hG).trans (by gcongr; exact hj i)
-  calc ENNReal.ofReal (Qγ ^ 2 * Ew p (fun _ => 1) f (P.r + 1) [] γ)
-      ≤ ENNReal.ofReal ((∑ i, ‖a i‖) * ∑ i, ‖a i‖ * Ew p (fun _ => 1) (fi i) (P.r + 1) [] γ) := ENNReal.ofReal_le_ofReal hreal
-    _ = ENNReal.ofReal (∑ i, ‖a i‖) * ∑ i, ENNReal.ofReal ‖a i‖ * ENNReal.ofReal (Ew p (fun _ => 1) (fi i) (P.r + 1) [] γ) := by
-        rw [ENNReal.ofReal_mul hA0,
-          ENNReal.ofReal_sum_of_nonneg (fun i _ => mul_nonneg (norm_nonneg _) (hEi0 i))]
-        congr 1
-        exact Finset.sum_congr rfl fun i _ => ENNReal.ofReal_mul (norm_nonneg _)
-    _ ≤ ENNReal.ofReal (∑ i, ‖a i‖) * ∑ i, ENNReal.ofReal ‖a i‖ * (ENNReal.ofReal (b ^ (C₄ * ((2 * P.r + 2 : ℕ) : ℝ) ^ 4) * (Gp p γ)⁻¹ ^ (2 * p₀ + n₀)) * jN2 p f) := by
-        gcongr with i hi
-        exact hstep i
-    _ = ENNReal.ofReal (∑ i, ‖a i‖) * ENNReal.ofReal (∑ i, ‖a i‖) * ENNReal.ofReal (b ^ (C₄ * ((2 * P.r + 2 : ℕ) : ℝ) ^ 4) * (Gp p γ)⁻¹ ^ (2 * p₀ + n₀)) * jN2 p f := by
-        rw [← Finset.sum_mul, ← ENNReal.ofReal_sum_of_nonneg (fun i _ => norm_nonneg (a i))]
-        ring
-    _ ≤ ENNReal.ofReal (b ^ ((2 * C₁ + C₄) * ((2 * P.r + 2 : ℕ) : ℝ) ^ 4) * (Gp p γ)⁻¹ ^ (2 * p₀ + n₀)) * jN2 p f := by
-        gcongr ?_ * _
-        rw [← ENNReal.ofReal_mul hA0, ← ENNReal.ofReal_mul (mul_nonneg hA0 hA0)]
-        apply ENNReal.ofReal_le_ofReal
-        have hU : b ^ (C₁ * ((2 * P.r + 2 : ℕ) : ℝ) ^ 4) * b ^ (C₁ * ((2 * P.r + 2 : ℕ) : ℝ) ^ 4) * b ^ (C₄ * ((2 * P.r + 2 : ℕ) : ℝ) ^ 4) = b ^ ((2 * C₁ + C₄) * ((2 * P.r + 2 : ℕ) : ℝ) ^ 4) := by
-          rw [← Real.rpow_add hb0, ← Real.rpow_add hb0]
-          congr 1
-          ring
-        calc (∑ i, ‖a i‖) * (∑ i, ‖a i‖) * (b ^ (C₄ * ((2 * P.r + 2 : ℕ) : ℝ) ^ 4) * (Gp p γ)⁻¹ ^ (2 * p₀ + n₀))
-            ≤ b ^ (C₁ * ((2 * P.r + 2 : ℕ) : ℝ) ^ 4) * b ^ (C₁ * ((2 * P.r + 2 : ℕ) : ℝ) ^ 4) * (b ^ (C₄ * ((2 * P.r + 2 : ℕ) : ℝ) ^ 4) * (Gp p γ)⁻¹ ^ (2 * p₀ + n₀)) := by gcongr
-          _ = b ^ ((2 * C₁ + C₄) * ((2 * P.r + 2 : ℕ) : ℝ) ^ 4) * (Gp p γ)⁻¹ ^ (2 * p₀ + n₀) := by rw [← hU]; ring
 
 namespace Formalism.FourierDecayAlt.P.TBBx2.Bp
 

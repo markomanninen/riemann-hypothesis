@@ -1,15 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FinIso
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.RecT
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsComplementaryProductOfIsCuspidal
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
-import Formalism.SharpRestriction.LevelLetterCocycles.SphericalInertData
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIrreducibleSecondFactorOfIrreducibleProductStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSatakeGLOfHasSatakeParametersPrincipalSeriesStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsGenericOfIsLocComp
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalLanglandsSpehProductStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FinIso
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSplitAtOfIsSplitPl
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RankOneUnitary
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsComplementaryProductOfIsCuspidal
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
+public import Formalism.SharpRestriction.LevelLetterCocycles.SphericalInertData
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIrreducibleSecondFactorOfIrreducibleProductStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSatakeGLOfHasSatakeParametersPrincipalSeriesStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsGenericOfIsLocComp
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalLanglandsSpehProductStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host GlobalTheory.HeightCounting NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.FormDict GlobalTheory.DefiniteBC
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -23,7 +30,7 @@ section Core
 
 variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
   {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} {h : IsPlaceOver A w}
-  {rc : IrrGL (w.adicCompletion E) → WD h}
+  {rc : IrrGL (k := w.adicCompletion E) → WD h}
 
 theorem locProd_eq (H : IsRec h rc) : ∀ {c n : ℕ} {d : Fin c → ℕ} (hd : ∑ i, d i = n)
     (σ : ∀ i, SmIrr (GL (Fin (d i)) (w.adicCompletion E))) (σ' : SmIrr (GL (Fin n) (w.adicCompletion E))),
@@ -56,22 +63,6 @@ theorem locProd_eq (H : IsRec h rc) : ∀ {c n : ℕ} {d : Fin c → ℕ} (hd : 
     rw [List.ofFn_succ]
     exact h1.trans (congrArg _ h2)
 
-theorem hasSatGL_rec (H : IsRec h rc) {n : ℕ} (σ : SmIrr (GL (Fin n) (w.adicCompletion E))) (S : Multiset ℂˣ)
-    (hS : GlobalTheory.LFun.HasSatGL w σ.ρ S) :
-    (rc (cls (ParLaws.toRep σ))).unr ∧
-      (rc (cls (ParLaws.toRep σ))).frobEig = S.map fun z => ((z⁻¹ : ℂˣ) : ℂ) := by
-  have hsph : IsSpherical (ParLaws.toRep σ).ρ := by
-    have := hS.1
-    unfold IsSpherical IsSphericalFor
-    rw [GlobalTheory.SmGL.SphCompletion.KO_completion w n]
-    exact this
-  have hu : (rc (cls (ParLaws.toRep σ))).unr := (ParLaws.unr_iff H _).2 hsph
-  obtain ⟨α, hα⟩ := ParLaws.exists_hasSatake_of_unr H hu
-  have e : S = Finset.univ.val.map α := hS.unique (GlobalTheory.T.hasSatakeGL_of_hasSatakeParameters_principalSeries E w n _ σ.ρ α hα)
-  refine ⟨hu, ?_⟩
-  rw [ParLaws.rec_eq_diag H hα, WD.frobEig_diag, e, Multiset.map_map]
-  rfl
-
 end Core
 
 section Record
@@ -86,40 +77,6 @@ theorem e_lpSumList (w : PlE H) (L : List (A.LP w)) : T.e w (lpSumList L) = sumL
     change T.e w (A.lpSum x (lpSumList L)) = (T.e w x).lpSum (sumList (L.map (T.e w)))
     rw [T.sum, ih]
 
-theorem e_recT (w : PlE H) {n : ℕ} (σ : LocIrr w n) :
-    T.e w (recT T hL w n σ) = ParLaws.locRec hL (N.plOm.2 w) (cls (ParLaws.toRep σ)) :=
-  (T.e w).apply_symm_apply _
-
-theorem recProd_recT : RecProd (recT T hL) := by
-  intro w c n d hd σ σ' e
-  apply (T.e w).injective
-  rw [e_recT, e_lpSumList, locProd_eq (ParLaws.isRec_locRec hL (N.plOm.2 w)) hd σ σ' e, List.map_ofFn]
-  congr 2
-  funext i
-  exact (e_recT T hL w (σ i)).symm
-
-theorem recSatake_recT : RecSatake (recT T hL) := by
-  intro w n σ S hS
-  obtain ⟨h1, h2⟩ := hasSatGL_rec (ParLaws.isRec_locRec hL (N.plOm.2 w)) σ S hS
-  have hu : A.unr (recT T hL w n σ) := (T.unr w _).2 (by rw [e_recT]; exact h1)
-  exact ⟨hu, (T.frobEig w _ hu).trans (by rw [e_recT]; exact h2)⟩
-
-theorem recSpeh_recT (hTZ : GlobalTheory.Published.GenericUnitaryDualGL) (hSC : GlobalTheory.Published.StandardCosocleGL) :
-    RecSpeh (recT T hL) := by
-  intro w a d n hd P σ σ' hP hu hq
-  have hg : IsGeneric σ.ρ := GlobalTheory.CuspRep.Generic.isGeneric_of_isLocComp H.E a P w σ hP
-  apply (T.e w).injective
-  rw [e_recT, e_lpSumList, GlobalTheory.T.local_langlands_speh_product _ _ _ w _ _ (ParLaws.isRec_locRec hL (N.plOm.2 w)) hTZ hSC a d n hd σ σ'
-    hu hg hq, List.map_map]
-  congr 1
-  refine List.map_congr_left fun k _ => ?_
-  simp only [Function.comp_apply, T.tw, e_recT]
-
 end Record
-
-theorem recLaws_recT : GlobalTheory.Published.GenericUnitaryDualGL → GlobalTheory.Published.StandardCosocleGL →
-    ∀ (hL : GlobalTheory.Published.LocalLanglandsGL) {R : Ranks} {H : Host R} {what₂ : Rows.Data R} (N : NData R H what₂)
-      (A : NAut N) (T : GlobalTheory.RowTie.WDTie N A), RecProd (recT T hL) ∧ RecSpeh (recT T hL) ∧ RecSatake (recT T hL) :=
-  fun hTZ hSC hL _ _ _ _ _ T => ⟨recProd_recT T hL, recSpeh_recT T hL hTZ hSC, recSatake_recT T hL⟩
 
 end GlobalTheory.FormDict.RecTLaws

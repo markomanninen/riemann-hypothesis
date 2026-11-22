@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.InterPolyProdSum
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BlockSymApply
-import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BlockGraph
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.InterPolyProdSum
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BlockSymApply
+public import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BlockGraph
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -57,14 +61,14 @@ theorem permOf_injective : Function.Injective (permOf hc) := by
 
 theorem graph_apply' {n : ℕ} (g : Fin n → Fin n) (x y : Fin n) :
     (∑ a, Finsupp.single (a, g a) 1 : Fin n × Fin n →₀ ℕ) (x, y) = if g x = y then 1 else 0 := by
-  rw [Finsupp.finset_sum_apply, Finset.sum_eq_single x (fun c _ hc => by simp [Finsupp.single_apply, hc]) (by simp)]
+  rw [Finsupp.finsetSum_apply, Finset.sum_eq_single x (fun c _ hc => by simp [Finsupp.single_apply, hc]) (by simp)]
   simp [Finsupp.single_apply]
 
 theorem graph_permOf (τ : Fin q → Equiv.Perm (Fin p)) :
     (∑ a, Finsupp.single (a, permOf hc τ a) 1 : Fin (p * q) × Fin (p * q) →₀ ℕ) =
       (blockGraph τ).mapDomain (blockEmb hc) := by
-  rw [blockGraph, Finsupp.mapDomain_finset_sum]
-  simp_rw [Finsupp.mapDomain_finset_sum, Finsupp.mapDomain_single, blockEmb_eq]
+  rw [blockGraph, Finsupp.mapDomain_finsetSum]
+  simp_rw [Finsupp.mapDomain_finsetSum, Finsupp.mapDomain_single, blockEmb_eq]
   rw [← (idx hc).sum_comp, ← (Equiv.prodCongrLeft fun b => τ b).sum_comp, Fintype.sum_prod_type, Finset.sum_comm]
   refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun j _ => ?_
   simp [permOf_apply]
@@ -101,11 +105,11 @@ theorem mem_range_of_graph (w : Equiv.Perm (Fin (p * q))) (u : Fin q × Fin p ×
 
 end TopRename
 
-open TopRename in
 
+open TopRename in
 theorem topCoeff_rename_blockEmb : ∀ {p q : ℕ} (h1 : Fintype.card (Unit × Fin p × Fin q) = p * q)
     (G : MvPolynomial (Fin q × Fin p × Fin p) ℂ), GlobalTheory.GoodMetric.topCoeff (rename (blockEmb h1) G) =
-      ∑ τ : Fin q → Equiv.Perm (Fin p), (sgnProd τ : ℂ) * coeff (blockGraph τ) G := by
+      ∑ τ : Fin q → Equiv.Perm (Fin p), (sgnProd τ : ℂ) * AddMonoidAlgebra.coeff G (blockGraph τ) := by
   intro p q h1 G
   rw [GlobalTheory.GoodMetric.topCoeff]
   symm

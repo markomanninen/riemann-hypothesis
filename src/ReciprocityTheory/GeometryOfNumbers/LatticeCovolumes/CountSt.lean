@@ -1,7 +1,11 @@
-import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.ArakelovDegreeEqDegreeOfFamily
-import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.CountZSt
-import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.EllipsoidSt
-import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.CountStC
+module
+
+public import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.ArakelovDegreeEqDegreeOfFamily
+public import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.CountZSt
+public import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.EllipsoidSt
+public import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.CountStC
+
+@[expose] public section
 
 namespace ReciprocityTheory.GeometryOfNumbersTheory
 
@@ -51,7 +55,8 @@ theorem mem_image_of_mem_ellS (h : HermFam K V) (hinv : h.IsConjInv) {E : Submod
     have hl : ∀ y, h.form σ (∑ i, c i • v i) y =
         ∑ i, starRingEnd ℂ (σ (c i)) * h.form σ (v i) y := by
       intro y
-      rw [← h.conj_symm σ y, hr y, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← h.conj_symm σ y, hr y, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_mul, h.conj_symm]
     rw [hl]

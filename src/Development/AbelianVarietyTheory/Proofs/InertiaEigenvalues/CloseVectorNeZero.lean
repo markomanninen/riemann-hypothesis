@@ -1,14 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PowerSeriesOneAddConstMulXMulInv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PowerSeriesOneAddConstMulXMulInv
+
+@[expose] public section
 
 noncomputable section
 open GlobalTheory.PhiGam
 open scoped LaurentSeries PowerSeries
 namespace GlobalTheory.PhiGam.Close
 variable {k : Type} [Field k]
-
-theorem vv_alg : vv k = algebraMap k⟦X⟧ k⸨X⸩ PowerSeries.X := by
-  simp [vv]
 
 variable {V : Type} [AddCommGroup V] [Module k⸨X⸩ V] [Module k⟦X⟧ V] [Module k V]
   [IsScalarTower k⟦X⟧ k⸨X⸩ V]
@@ -136,11 +137,11 @@ private lemma laurentVariable_pow_mul_mem_of_frobenius_lemma_3 {l : ℕ} (hl : 0
   simp [PowerSeries.constantCoeff_X, zero_pow hpos.ne'] at e4
   exact hb0 e4
 
+
 open scoped LaurentSeries PowerSeries in
 variable {k : Type} [Field k] in
 variable {V : Type} [AddCommGroup V] [Module k⸨X⸩ V] [Module k⟦X⟧ V] [Module k V]
   [IsScalarTower k⟦X⟧ k⸨X⸩ V] in
-
 theorem _root_.GlobalTheory.PhiGam.Close.key {l : ℕ} (hl : 0 < l)
     (R : _root_.GlobalTheory.PhiGam.RingPG k l) [FiniteDimensional k⸨X⸩ V] (f : V →ₗ[k] V)
     (hf : _root_.GlobalTheory.PhiGam.Semi R.φ f)
@@ -203,7 +204,8 @@ theorem _root_.GlobalTheory.PhiGam.Close.key {l : ℕ} (hl : 0 < l)
   have f_sum : ∀ c : Module.Free.ChooseBasisIndex k⟦X⟧ N → k⸨X⸩,
       f (∑ i, c i • e i) = ∑ i, R.φ (c i) • f (e i) := by
     intro c
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [hf']
   have fespan : ⊤ ≤ Submodule.span k⸨X⸩ (Set.range (fun i => f (e i))) := by
     rw [← het]
@@ -260,12 +262,12 @@ theorem _root_.GlobalTheory.PhiGam.Close.key {l : ℕ} (hl : 0 < l)
   rw [smul_smul, ← hr i, ← smul_eq]
   exact Submodule.smul_mem _ _ (b i).2
 
+
 open scoped LaurentSeries PowerSeries in
 variable {k : Type} [Field k] in
 variable {V : Type} [AddCommGroup V] [Module k⸨X⸩ V] [Module k⟦X⟧ V] [Module k V]
   [IsScalarTower k⟦X⟧ k⸨X⸩ V] in
 omit [Module k V] in
-
 theorem _root_.GlobalTheory.PhiGam.Close.exists_pow {N N' : Submodule k⟦X⟧ V} (hN : N.FG)
     (hN' : Submodule.span k⸨X⸩ (N' : Set V) = ⊤) :
     ∃ a : ℕ, ∀ x ∈ N, _root_.GlobalTheory.PhiGam.vv k ^ a • x ∈ N' := by
@@ -303,11 +305,11 @@ theorem _root_.GlobalTheory.PhiGam.Close.exists_pow {N N' : Submodule k⟦X⟧ V
     rw [← algebraMap_smul k⸨X⸩ p y, smul_smul, mul_comm, ← smul_smul, algebraMap_smul]
     exact N'.smul_mem p hy
 
+
 open scoped LaurentSeries PowerSeries in
 variable {k : Type} [Field k] in
 variable {V : Type} [AddCommGroup V] [Module k⸨X⸩ V] [Module k⟦X⟧ V] [Module k V]
   [IsScalarTower k⟦X⟧ k⸨X⸩ V] in
-
 theorem _root_.GlobalTheory.PhiGam.Close.le_sg {l : ℕ} (hl : 1 < l) {n : ℕ} [NeZero n]
     (h a : ZMod n → ℕ) (ha : ∀ i, l * a i ≤ a (i + 1) + h (i + 1)) (i : ZMod n) :
     a i ≤ _root_.GlobalTheory.PhiGam.sg l h i := by

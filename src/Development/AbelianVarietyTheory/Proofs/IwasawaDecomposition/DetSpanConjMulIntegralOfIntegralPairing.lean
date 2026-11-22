@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ThClass
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIndexIdeal
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThClass
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIndexIdeal
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2.Pj
 
 namespace GlobalTheory
@@ -37,7 +42,7 @@ theorem detSpan_conj_mul_mem_range (E : Type) [Field E] [NumberField E] [IsCMFie
       rw [Algebra.smul_def, mul_left_comm]
       exact Subring.mul_mem _ ⟨a, rfl⟩ hb
   | zero => simpa using Subring.zero_mem _
-  | add a b _ _ ha hb => rw [map_add, add_mul]; exact Subring.add_mem _ ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _), add_mul]; exact Subring.add_mem _ ha hb
   | smul a b _ hb =>
     rw [Algebra.smul_def, map_mul, mul_assoc]
     exact Subring.mul_mem _ (hc a) hb

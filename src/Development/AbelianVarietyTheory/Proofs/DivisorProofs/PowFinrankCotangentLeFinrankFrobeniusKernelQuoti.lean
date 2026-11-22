@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.AevalSurjectiveOfSpanCotangent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.AevalSurjectiveOfSpanCotangent
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -40,9 +44,8 @@ theorem map_pow_eq (t : H ⊗[k] H) :
     (1 : H ⧸ frobKerIdeal p k H) ⊗ₜ[k] (Ideal.Quotient.mkₐ k (frobKerIdeal p k H)
       (TensorProduct.lid k H (LinearMap.rTensor H (counit (R := k) (A := H)) t)) ^ p) := by
   induction t with
-  | zero => simp [hp.out.ne_zero]
   | add x y hx hy =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     rw [add_pow_of_cast_eq_zero hp.out (cast_eq_zero_of_algebra p k _),
       add_pow_of_cast_eq_zero hp.out (cast_eq_zero_of_algebra p k _), hx, hy, tmul_add]
   | tmul x y =>
@@ -50,21 +53,25 @@ theorem map_pow_eq (t : H ⊗[k] H) :
       LinearMap.rTensor_tmul, TensorProduct.lid_tmul, map_smul, smul_pow, ← map_pow,
       Algebra.algebraMap_eq_smul_one, smul_tmul]
 
-theorem isHopfIdeal : (frobKerIdeal p k H).IsHopfIdeal k where
-  counit_eq_zero x hx := frobKerIdeal_le_augIdeal hp.out.ne_zero k H hx
-  map_mkQ_comul_eq_zero x hx := by
-    have h : frobKerIdeal p k H ≤ RingHom.ker
-        ((Algebra.TensorProduct.map (Ideal.Quotient.mkₐ k (frobKerIdeal p k H))
-          (Ideal.Quotient.mkₐ k (frobKerIdeal p k H))).comp (comulAlgHom k H)) := by
-      refine Ideal.span_le.2 ?_
-      rintro _ ⟨a, ha, rfl⟩
-      rw [SetLike.mem_coe, RingHom.mem_ker, map_pow, AlgHom.comp_apply, map_pow_eq,
-        comulAlgHom_apply, rTensor_counit_comul, TensorProduct.lid_tmul, one_smul, ← map_pow]
-      have : Ideal.Quotient.mkₐ k (frobKerIdeal p k H) (a ^ p) = 0 :=
-        Ideal.Quotient.eq_zero_iff_mem.2 (pow_mem_frobKerIdeal ha)
-      rw [this, tmul_zero]
-    exact h hx
-  antipode_mem x hx := by
+theorem isHopfIdeal : (frobKerIdeal p k H).IsHopfIdeal k := by
+  have : ((frobKerIdeal p k H).restrictScalars k).IsCoideal := by
+    refine ⟨?_, ?_⟩
+    · intro x hx
+      exact frobKerIdeal_le_augIdeal hp.out.ne_zero k H hx
+    · intro x hx
+      have h : frobKerIdeal p k H ≤ RingHom.ker
+          ((Algebra.TensorProduct.map (Ideal.Quotient.mkₐ k (frobKerIdeal p k H))
+            (Ideal.Quotient.mkₐ k (frobKerIdeal p k H))).comp (comulAlgHom k H)) := by
+        refine Ideal.span_le.2 ?_
+        rintro _ ⟨a, ha, rfl⟩
+        rw [SetLike.mem_coe, RingHom.mem_ker, map_pow, AlgHom.comp_apply, map_pow_eq,
+          comulAlgHom_apply, rTensor_counit_comul, TensorProduct.lid_tmul, one_smul, ← map_pow]
+        have : Ideal.Quotient.mkₐ k (frobKerIdeal p k H) (a ^ p) = 0 :=
+          Ideal.Quotient.eq_zero_iff_mem.2 (pow_mem_frobKerIdeal ha)
+        rw [this, tmul_zero]
+      exact h hx
+  refine ⟨?_⟩
+  · intro x hx
     have h : frobKerIdeal p k H ≤ (frobKerIdeal p k H).comap (HopfAlgebra.antipodeAlgHom k H) := by
       refine Ideal.span_le.2 ?_
       rintro _ ⟨a, ha, rfl⟩
@@ -98,7 +105,8 @@ theorem pow_le_finrank {n d : ℕ} {K A : Type*} [Field K] [CommRing A] [Algebra
     intro g hg a
     have hmem : (∑ a, g a • MvPolynomial.monomial (e a) (1 : K)) ∈
         RingHom.ker (MvPolynomial.aeval (R := K) x) := by
-      rw [RingHom.mem_ker, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [RingHom.mem_ker, map_sum]
       simpa only [map_smul] using hg
     have hr : (Set.range fun i => (MvPolynomial.X i : MvPolynomial (Fin d) K) ^ n) =
         (fun s => MvPolynomial.monomial s (1 : K)) '' Set.range (fun i => Finsupp.single i n) := by
@@ -108,7 +116,7 @@ theorem pow_le_finrank {n d : ℕ} {K A : Type*} [Field K] [CommRing A] [Algebra
       simp [MvPolynomial.X_pow_eq_monomial]
     rw [h, hr, MvPolynomial.mem_ideal_span_monomial_image] at hmem
     by_contra hne
-    have hc : MvPolynomial.coeff (e a) (∑ a, g a • MvPolynomial.monomial (e a) (1 : K)) = g a := by
+    have hc : AddMonoidAlgebra.coeff (∑ a, g a • MvPolynomial.monomial (e a) (1 : K)) (e a) = g a := by
       simp [MvPolynomial.coeff_sum, MvPolynomial.coeff_monomial, he.eq_iff]
     obtain ⟨_, ⟨i, rfl⟩, hi⟩ := hmem (e a) (by rw [MvPolynomial.mem_support_iff, hc]; exact hne)
     have h1 := hi i
@@ -126,7 +134,7 @@ theorem pow_finrank_cot_le [Module.Finite k H] :
   have hε : (counitAlgHom k (H ⧸ J)).comp π = counitAlgHom k H := rfl
   have hbij : Function.Bijective (AugCot.map π hε) := by
     refine ⟨?_, AugCot.map_surjective π hε hπ⟩
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro y hy
     obtain ⟨z, rfl⟩ := (AugCot.exact_kerMap_map π hε hπ y).1 hy
     rw [AugCot.kerMap_apply, AugCot.d_of_mem _ (AugCot.ker_le π hε z.2),
@@ -139,7 +147,8 @@ theorem pow_finrank_cot_le [Module.Finite k H] :
   have hsum : ∀ l : Fin (Module.finrank k (AugCot ε)) → k,
       AugCot.d ε (∑ i, l i • (x i : H ⧸ J)) = ∑ i, l i • b i := by
     intro l
-    simp [map_sum, hx]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, hx]
   have hmem : ∀ l : Fin (Module.finrank k (AugCot ε)) → k,
       (∑ i, l i • (x i : H ⧸ J)) ∈ RingHom.ker ε := by
     intro l

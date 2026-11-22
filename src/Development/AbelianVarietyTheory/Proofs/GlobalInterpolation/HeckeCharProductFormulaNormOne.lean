@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsOfStarEq
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsOfStarEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ namespace GlobalTheory.NormOneProd
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {F : Type} [Field F] [NumberField F] [Algebra F E]
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem exists_val_eq {P : HeightOneSpectrum (𝓞 E)}
     (hu : ¬ (P.asIdeal.comap (algebraMap (𝓞 F) (𝓞 E))).map (algebraMap (𝓞 F) (𝓞 E)) ≤ P.asIdeal ^ 2) (x : Eˣ) :
     ∃ k : Fˣ, P.valuation E ((x / upF F k : Eˣ) : E) = 1 := by
@@ -72,8 +76,8 @@ theorem split_unit (hF : ∀ x : F, star (algebraMap F E x) = algebraMap F E x) 
   have h := hχ.1 (P.under (𝓞 F)) (Units.mk0 k hk0)
   rwa [HChar.resFin_apply, hab, Finset.prod_pair hP, a1, a2] at h
 
-open Classical in
 
+open Classical in
 theorem place_prod (hF : ∀ x : F, star (algebraMap F E x) = algebraMap F E x) (hr : Module.finrank F E = 2)
     (hc : ∃ a : E, star a ≠ a)
     (hu : ∀ P : HeightOneSpectrum (𝓞 E),

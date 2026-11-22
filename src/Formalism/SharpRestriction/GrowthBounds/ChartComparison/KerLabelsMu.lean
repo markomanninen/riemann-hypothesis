@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.AlgebraMapUnitZpow
-import Formalism.SharpRestriction.GrowthBounds.LatticeMultiplicityLemmas.LatticeMultiplicityCheck.Retype
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.AlgebraMapUnitZpow
+public import Formalism.SharpRestriction.GrowthBounds.LatticeMultiplicityLemmas.LatticeMultiplicityCheck.Retype
+
+@[expose] public section
 
 open Formalism.MainNotions.G Formalism.BasicNotions NumberField
 

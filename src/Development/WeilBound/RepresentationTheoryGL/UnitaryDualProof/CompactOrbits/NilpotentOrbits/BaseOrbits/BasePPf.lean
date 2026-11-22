@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.BaseOrbits.MainE
-import GroundTheory.AutomorphicForms.WhittakerDistribution
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.BaseOrbits.MainE
+public import GroundTheory.AutomorphicForms.WhittakerDistribution
+
+@[expose] public section
 
 noncomputable section
 

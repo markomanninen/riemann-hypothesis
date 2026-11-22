@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
+
+@[expose] public section
 
 open GlobalTheory GlobalTheory.DI
 
@@ -57,7 +61,7 @@ theorem isDatum_of_frobenius_lifts {K Kt : Type} [CommRing K] [CommRing Kt] (p :
       algebraMap K _ (π z ^ (p - 1)) * ExteriorAlgebra.ι K (KaehlerDifferential.D ℤ K (π z)) +
         d (algebraMap K _ (π w)) := by
     intro i z w hz
-    rw [(hf i).2 z w hz, map_add, map_smul, Algebra.smul_def, hd.alg]
+    rw [(hf i).2 z w hz, map_add (f := _), map_smul, Algebra.smul_def, hd.alg]
   refine ⟨fun i c v => (hf i).1 c v, fun i j c v => (hh i j).1 c v, ?_, ?_, ?_⟩
   · intro i v
     induction v using kaehlerZ_span_induction with
@@ -66,11 +70,11 @@ theorem isDatum_of_frobenius_lifts {K Kt : Type} [CommRing K] [CommRing Kt] (p :
       obtain ⟨w, hz⟩ := hw i z
       have h2 : d (ExteriorAlgebra.ι K (KaehlerDifferential.D ℤ K (π z))) = 0 := by
         rw [← hd.alg, hd.sq]
-      rw [hfD i z w hz, map_add, hd.sq, add_zero, hd.mul, h2, mul_zero, add_zero, hd.alg,
+      rw [hfD i z w hz, map_add (f := _), hd.sq, add_zero, hd.mul, h2, mul_zero, add_zero, hd.alg,
         Derivation.leibniz_pow, map_nsmul, map_smul, smul_mul_assoc, smul_mul_assoc,
         ExteriorAlgebra.ι_sq_zero, smul_zero, smul_zero]
     | h0 => simp
-    | hadd x y hx hy => rw [map_add, map_add, map_add, hx, hy, add_zero]
+    | hadd x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy, add_zero]
     | hsmul c x hx => rw [(hf i).1, map_smul, hsm, hx, smul_zero]
   · intro i j v
     induction v using kaehlerZ_span_induction with
@@ -82,7 +86,7 @@ theorem isDatum_of_frobenius_lifts {K Kt : Type} [CommRing K] [CommRing Kt] (p :
         map_sub]
       abel
     | h0 => simp
-    | hadd x y hx hy => rw [map_add, map_add, map_add, hx, hy, map_add, map_add, map_add, map_add]; abel
+    | hadd x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _)]; abel
     | hsmul c x hx =>
       rw [(hh i j).1, (hf i).1, (hf j).1, map_mul, ← Algebra.smul_def, hsm, hx, map_smul, map_smul, smul_sub]
   · intro i j l v
@@ -96,7 +100,7 @@ theorem isDatum_of_frobenius_lifts {K Kt : Type} [CommRing K] [CommRing Kt] (p :
         (hh i l).2 z (wl - wi) (by rw [hzi, hzl]; ring), map_sub, map_sub, map_sub]
       ring
     | h0 => simp
-    | hadd x y hx hy => rw [map_add, map_add, map_add, ← hx, ← hy]; ring
+    | hadd x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), ← hx, ← hy]; ring
     | hsmul c x hx => rw [(hh i j).1, (hh j l).1, (hh i l).1, ← hx]; ring
 
 end GlobalTheory.DI

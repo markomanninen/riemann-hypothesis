@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.ChainOfCdcB
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.ChainOfCdcB
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,6 @@ attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 variable {n : ℕ}
 
 def mulLL (a : Mat n) : Mat n →L[ℝ] Mat n := LinearMap.toContinuousLinearMap (LinearMap.mulLeft ℝ a)
-
-@[simp] theorem mulLL_apply (a y : Mat n) : mulLL a y = a * y := rfl
 
 theorem hb_conj_back' (k : Matrix.unitaryGroup (Fin n) ℂ) (X : Mat n) :
     (k.1)ᴴ * (k.1 * X * (k.1)ᴴ) * k.1 = X := by
@@ -83,9 +85,9 @@ theorem kapEquiv : KapEquiv := by
         rw [this, ← mul_assoc, ← mul_assoc, rho_mul_inv, one_mul]
       let B : Mat n →ₗ[ℝ] Mat n →ₗ[ℝ] (E.V →L[ℂ] E.V) := LinearMap.mk₂ ℝ
         (fun H H' => -(fderiv ℝ k y (y * H')) * ε H + k y * ε H * fderiv ℝ Fr 1 H')
-        (fun H₁ H₂ H' => by simp only [map_add, mul_add, add_mul]; abel)
+        (fun H₁ H₂ H' => by simp only [map_add (f := _), mul_add, add_mul]; abel)
         (fun c H H' => by simp only [map_smul, mul_smul_comm, smul_mul_assoc, smul_add])
-        (fun H H₁ H₂ => by simp only [Matrix.mul_add, map_add, neg_add, add_mul, mul_add]; abel)
+        (fun H H₁ H₂ => by simp only [Matrix.mul_add, map_add (f := _), neg_add, add_mul, mul_add]; abel)
         (fun c H H' => by
           simp only [Matrix.mul_smul, map_smul, neg_smul, smul_mul_assoc, mul_smul_comm, smul_add, ← smul_neg])
       have hkapR : kapR ε Fr k y = ∑ p, B (hb p) (hb p) := rfl

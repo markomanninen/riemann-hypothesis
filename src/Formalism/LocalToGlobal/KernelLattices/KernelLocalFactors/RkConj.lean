@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThetaLocalEquivalence.ThIndEqAmbOfOf
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.Smooth
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.AmbOfENeSd
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.LinkThIndep
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SplitPairOfGen
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.CharacterFactorUnitaryAction
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.NormOneUnitIdeal
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.GMConjTranspose
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThetaLocalEquivalence.ThIndEqAmbOfOf
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.Smooth
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.AmbOfENeSd
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.LinkThIndep
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SplitPairOfGen
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.CharacterFactorUnitaryAction
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.NormOneUnitIdeal
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.GMConjTranspose
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -28,7 +32,8 @@ theorem vec_gmap {n : ℕ} (γ : UF X.E n) (x : Sp X.E n) : s.vec (γ.1 x) = (ma
   have h := toGLm_mulVec γ.1 x
   rw [← h]
   funext i
-  simp only [Cd.Seam.vec, Matrix.mulVec, dotProduct, map_sum, map_mul, matU]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Cd.Seam.vec, Matrix.mulVec, dotProduct, map_sum, map_mul, matU]
   rfl
 
 theorem lat_gmap {n : ℕ} (γ : UF X.E n) (N : Submodule (𝓞 X.E) (Sp X.E n)) :
@@ -98,10 +103,6 @@ theorem chiLaw_ambOf_of (hok : s.Ok) (hχ : Cd.TaylorLogMetric.IsChi D χ) {a b 
   rw [p1, p2, inv_pow, zpow_neg, zpow_natCast, zpow_natCast, mul_comm]
   rfl
 
-theorem chiLaw_ambOf {σ₀ : X.K →+* ℂ} (hN : Cd.NatOk s cc δ χ cD σ₀) {a b : ℕ} (ha : Even a) (hb : Even b) :
-    (Cd.ambOf s B χ cD : Amb X).ChiLaw a b :=
-  chiLaw_ambOf_of s B χ cD hN.2.2.2.2.2.1 hN.2.2.2.1 ha hb
-
 theorem eNat_analytic (hθ : AnalyticOnNhd ℂ B.thMM Set.univ) (N N' : ℕ)
     (L : Submodule (𝓞 D.host.E) (Fin N → D.host.E)) (L' : Submodule (𝓞 D.host.E) (Fin N' → D.host.E)) :
     AnalyticOnNhd ℂ (B.eNat χ N N' L L') Set.univ := by
@@ -117,9 +118,6 @@ theorem eOmega_ambOf_of (hS : B.StdOK) (a b : ℕ) : (Cd.ambOf s B χ cD : Amb X
   have hA := eNat_analytic B χ (B.thMM_spec hS).1.1 a b (s.lat N) (s.lat N')
   have hc : ContDiff ℂ ⊤ (B.eNat χ a b (s.lat N) (s.lat N')) := hA.contDiff
   exact hc.comp (contDiff_pi.2 fun τ => contDiff_apply ℂ _ (s.iT.symm τ))
-
-theorem eOmega_ambOf {σ₀ : X.K →+* ℂ} (hN : Cd.NatOk s cc δ χ cD σ₀) (a b : ℕ) : (Cd.ambOf s B χ cD : Amb X).EOmega a b :=
-  eOmega_ambOf_of s B χ cD (B.stdOK hN.1 hN.2.1) a b
 
 theorem eqLaw_ambOf_of (hok : s.Ok) (hE : B.EqP χ) {a b : ℕ} (ha : Even a) (hb : Even b) : (Cd.ambOf s B χ cD : Amb X).EqLaw a b := by
   let _ := D.host.cmStar
@@ -148,10 +146,6 @@ theorem eqLaw_ambOf_of (hok : s.Ok) (hE : B.EqP χ) {a b : ℕ} (ha : Even a) (h
     exact e1 _
   rw [f1, f2]
   rfl
-
-theorem eqLaw_ambOf {σ₀ : X.K →+* ℂ} (hN : Cd.NatOk s cc δ χ cD σ₀) {a b : ℕ} (ha : Even a) (hb : Even b) :
-    (Cd.ambOf s B χ cD : Amb X).EqLaw a b :=
-  eqLaw_ambOf_of s B χ cD hN.2.2.2.2.2.1 (Formalism.L2.Ker.Cd.PairingIndexBounds.Eq.SqG.eqP_car B hN.1 hN.2.1 χ hN.2.2.2.1) ha hb
 
 end Laws
 

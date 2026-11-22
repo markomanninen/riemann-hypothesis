@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsActionOfIsPullback
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsActionOfIsPullback
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -50,11 +54,11 @@ theorem up_injective (hq : IsAffineQuotient ρ π) (H : IsPullback φ G.hom G'.h
 def Equivariant (ρ : Γ →* Aut X) (τ : Γ →* Aut G.left) {T : Over X'}
     (w : (Over.pullback π).obj T ⟶ G) : Prop :=
   ∀ g (s : pullback T.hom π ⟶ pullback T.hom π), s ≫ pullback.fst T.hom π = pullback.fst T.hom π →
-    s ≫ pullback.snd T.hom π = pullback.snd T.hom π ≫ (ρ g).hom →
-    s ≫ w.left = w.left ≫ (τ g).hom
+    s ≫ pullback.snd T.hom π = pullback.snd T.hom π ≫ (ρ g).asIso.hom →
+    s ≫ w.left = w.left ≫ (τ g).asIso.hom
 
 theorem Equivariant.exists_up (hq : IsAffineQuotient ρ π) (H : IsPullback φ G.hom G'.hom π)
-    (hτ : ∀ g, (τ g).hom ≫ φ = φ) {T : Over X'} (hT : Flat T.hom)
+    (hτ : ∀ g, (τ g).asIso.hom ≫ φ = φ) {T : Over X'} (hT : Flat T.hom)
     {w : (Over.pullback π).obj T ⟶ G} (hw : Equivariant ρ τ w) : ∃ z : T ⟶ G', up H z = w := by
   have Hp := (IsPullback.of_hasPullback T.hom π).flip
   obtain ⟨σ, hσ⟩ := exists_action_of_isPullback ρ hq.comp_eq Hp
@@ -66,23 +70,23 @@ theorem Equivariant.exists_up (hq : IsAffineQuotient ρ π) (H : IsPullback φ G
   exact (Category.assoc _ _ _).symm.trans (congrArg (· ≫ π) (Over.w w))
 
 omit [Finite Γ] in
-theorem equivariant_up (H : IsPullback φ G.hom G'.hom π) (hτ : ∀ g, (τ g).hom ≫ φ = φ)
-    (hτ' : ∀ g, (τ g).hom ≫ G.hom = G.hom ≫ (ρ g).hom) {T : Over X'} (z : T ⟶ G') :
+theorem equivariant_up (H : IsPullback φ G.hom G'.hom π) (hτ : ∀ g, (τ g).asIso.hom ≫ φ = φ)
+    (hτ' : ∀ g, (τ g).asIso.hom ≫ G.hom = G.hom ≫ (ρ g).asIso.hom) {T : Over X'} (z : T ⟶ G') :
     Equivariant ρ τ (up H z) := fun g s h₁ h₂ ↦ by
   have e : (up H z).left ≫ G.hom = pullback.snd T.hom π := Over.w _
   refine H.hom_ext ?_ ?_
   · rw [Category.assoc, Category.assoc, hτ, up_left, reassoc_of% h₁]
   · rw [Category.assoc, Category.assoc, hτ', e, h₂, reassoc_of% e]
 
-noncomputable def equivariantSubgroup [GrpObj G] (hτ : ∀ g, IsGrpPullback G G (ρ g).hom (τ g).hom)
+noncomputable def equivariantSubgroup [GrpObj G] (hτ : ∀ g, IsGrpPullback G G (ρ g).asIso.hom (τ g).asIso.hom)
     (T : Over X') : Subgroup ((Over.pullback π).obj T ⟶ G) :=
   ⨅ (g : Γ) (s : pullback T.hom π ⟶ pullback T.hom π)
     (_ : s ≫ pullback.fst T.hom π = pullback.fst T.hom π)
-    (h : s ≫ pullback.snd T.hom π = pullback.snd T.hom π ≫ (ρ g).hom),
+    (h : s ≫ pullback.snd T.hom π = pullback.snd T.hom π ≫ (ρ g).asIso.hom),
     (preHom (Over.homMk s h)).eqLocus (pushHom (hτ g) ((Over.pullback π).obj T))
 
 omit [Finite Γ] in
-theorem mem_equivariantSubgroup [GrpObj G] (hτ : ∀ g, IsGrpPullback G G (ρ g).hom (τ g).hom)
+theorem mem_equivariantSubgroup [GrpObj G] (hτ : ∀ g, IsGrpPullback G G (ρ g).asIso.hom (τ g).asIso.hom)
     {T : Over X'} {w : (Over.pullback π).obj T ⟶ G} :
     w ∈ equivariantSubgroup hτ T ↔ Equivariant ρ τ w := by
   simp only [equivariantSubgroup, Subgroup.mem_iInf]
@@ -94,7 +98,7 @@ end QuotientDescent
 open QuotientDescent
 
 theorem quotient_descend_grpObj :
-    ∀ (Γ : Type) [Group Γ] [Finite Γ] (O : Type) [CommRing O] (X X' : Scheme.{0}) (ρ : Γ →* Aut X) (π : X ⟶ X') (G : Over X) [GrpObj G] [IsCommMonObj G] (G' : Over X') (φ : G.left ⟶ G'.left) (τ : Γ →* Aut G.left) (a : OAct O G), (IsAffineHom π ∧ (∀ g, (ρ g).hom ≫ π = π) ∧ ∀ V : X'.Opens, Function.Injective (π.app V).hom ∧ ∀ f : Γ(X, π ⁻¹ᵁ V), (∀ g (h : π ⁻¹ᵁ V ≤ (ρ g).hom ⁻¹ᵁ (π ⁻¹ᵁ V)), ((ρ g).hom.appLE _ _ h).hom f = f) → f ∈ Set.range (π.app V).hom) → IsPullback φ G.hom G'.hom π → Flat G'.hom → (∀ g, (τ g).hom ≫ φ = φ ∧ IsGrpPullback G G (ρ g).hom (τ g).hom ∧ ∀ c, (a.act c).left ≫ (τ g).hom = (τ g).hom ≫ (a.act c).left) → ∃ (_ : GrpObj G') (_ : IsCommMonObj G') (a' : OAct O G'), IsGrpPullback G G' π φ ∧ ∀ c, (a.act c).left ≫ φ = φ ≫ (a'.act c).left := by
+    ∀ (Γ : Type) [Group Γ] [Finite Γ] (O : Type) [CommRing O] (X X' : Scheme.{0}) (ρ : Γ →* Aut X) (π : X ⟶ X') (G : Over X) [GrpObj G] [IsCommMonObj G] (G' : Over X') (φ : G.left ⟶ G'.left) (τ : Γ →* Aut G.left) (a : OAct O G), (IsAffineHom π ∧ (∀ g, (ρ g).asIso.hom ≫ π = π) ∧ ∀ V : X'.Opens, Function.Injective (π.app V).hom ∧ ∀ f : Γ(X, π ⁻¹ᵁ V), (∀ g (h : π ⁻¹ᵁ V ≤ (ρ g).asIso.hom ⁻¹ᵁ (π ⁻¹ᵁ V)), ((ρ g).asIso.hom.appLE _ _ h).hom f = f) → f ∈ Set.range (π.app V).hom) → IsPullback φ G.hom G'.hom π → Flat G'.hom → (∀ g, (τ g).asIso.hom ≫ φ = φ ∧ IsGrpPullback G G (ρ g).asIso.hom (τ g).asIso.hom ∧ ∀ c, (a.act c).left ≫ (τ g).asIso.hom = (τ g).asIso.hom ≫ (a.act c).left) → ∃ (_ : GrpObj G') (_ : IsCommMonObj G') (a' : OAct O G'), IsGrpPullback G G' π φ ∧ ∀ c, (a.act c).left ≫ φ = φ ≫ (a'.act c).left := by
   intro Γ _ _ O _ X X' ρ π G _ _ G' φ τ a ⟨h₁, h₂, h₃⟩ H hG' hτ
   have hq : IsAffineQuotient ρ π :=
     ⟨h₂, h₁, fun V ↦ (h₃ V).1, fun V s hs ↦ (h₃ V).2 s fun g _ ↦ (hs g).2⟩

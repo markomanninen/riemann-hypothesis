@@ -1,5 +1,9 @@
-import Formalism.HarderNarasimhan.DegSupermodZ
-import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+module
+
+public import Formalism.HarderNarasimhan.DegSupermodZ
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+
+@[expose] public section
 
 open Module Submodule
 
@@ -121,7 +125,7 @@ theorem orthogonal_starProjection_comp_of_le {U W : Submodule ℝ E} (hUW : U �
   calc Wᗮ.starProjection (Uᗮ.starProjection x)
       = Wᗮ.starProjection (U.starProjection x) + Wᗮ.starProjection (Uᗮ.starProjection x) := by
         rw [h2, zero_add]
-    _ = Wᗮ.starProjection x := by rw [← map_add, h1]
+    _ = Wᗮ.starProjection x := by rw [← map_add (f := _), h1]
 
 theorem mem_of_orthogonal_starProjection_eq_zero {W : Submodule ℝ E} {x : E}
     (h : Wᗮ.starProjection x = 0) : x ∈ W := by
@@ -137,7 +141,8 @@ theorem covol_le_of_contraction (Q1 Q2 : Submodule ℤ E) [DiscreteTopology Q1]
   apply Real.sqrt_le_sqrt
   have h := gram_det_le E E _ (fun i => (v i : E)) (fun i => (w i : E)) 1 (fun c => by
     have : ∑ i, c i • ((w i : Q2) : E) = f (∑ i, c i • ((v i : Q1) : E)) := by
-      simp only [w, Basis.map_apply, hf, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [w, Basis.map_apply, hf, map_sum, map_smul]
     rw [this, one_mul]
     exact hn _)
   simpa using h
@@ -256,7 +261,7 @@ theorem degree_supermodular_integral : DegSupermodZ := by
         quot B (satur B (A ⊓ B)) := Submodule.mem_map.2 ⟨b, hb, rfl⟩
     refine ⟨⟨_, hpb⟩, Subtype.ext ?_⟩
     rw [hg]
-    simp only [LinearMap.coe_restrictScalars, ContinuousLinearMap.coe_coe, map_add, hPU0 a ha,
+    simp only [LinearMap.coe_restrictScalars, ContinuousLinearMap.coe_coe, map_add (f := _), hPU0 a ha,
       zero_add]
     exact orthogonal_starProjection_comp_of_le hspan b
   let φ := LinearEquiv.ofBijective g ⟨hinj, hsurj⟩

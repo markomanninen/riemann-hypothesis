@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CyclotomicBounds.ZmodTwoQuadraticNeZero
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BoundAtTwoAndThreeForFamily
-import Formalism.SharpRestriction.GlobalTheoremInputs
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.JointConditionTameBound
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CrysOnCond
-import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
-import Formalism.SharpRestriction.LevelLetterCocycles.RamifiedCoefficientChains
-import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.BaseSizes
-import Formalism.SharpRestriction.LevelLetterCocycles.EndomorphismIndexBound
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CycZBridge
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ZmodTwoQuadraticNeZero
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BoundAtTwoAndThreeForFamily
+public import Formalism.SharpRestriction.GlobalTheoremInputs
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.JointConditionTameBound
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CrysOnCond
+public import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+public import Formalism.SharpRestriction.LevelLetterCocycles.RamifiedCoefficientChains
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.BaseSizes
+public import Formalism.SharpRestriction.LevelLetterCocycles.EndomorphismIndexBound
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CycZBridge
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations GlobalTheory.NLink
 
 namespace GlobalTheory.InvariantsKO
@@ -147,7 +152,7 @@ theorem unbotD_le {m : WithBot ℚ} {c : ℚ} (h : m ≤ (c : WithBot ℚ)) (hc 
 
 theorem one_add_padicValNat_le (l : ℕ) [Fact l.Prime] {n t : ℕ} (hn : 0 < n) (hnt : n < t) :
     1 + padicValNat l n ≤ 2 * t := by
-  have h1 : l ^ padicValNat l n ≤ n := Nat.le_of_dvd hn pow_padicValNat_dvd
+  have h1 : l ^ padicValNat l n ≤ n := Nat.le_of_dvd hn (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
   have h2 : 2 ^ padicValNat l n ≤ l ^ padicValNat l n :=
     Nat.pow_le_pow_left (Fact.out : l.Prime).two_le _
   have h3 : padicValNat l n < 2 ^ padicValNat l n := Nat.lt_two_pow_self

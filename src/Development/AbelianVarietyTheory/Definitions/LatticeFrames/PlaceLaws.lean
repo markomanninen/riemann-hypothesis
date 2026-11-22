@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValLastX
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValLastX
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
+
+@[expose] public section
 
 set_option genSizeOfSpec false
 set_option genInjectivity false
@@ -48,8 +52,8 @@ def lst (j : ℕ) (h : j + 2 * 0 + 2 = D.R.m) (τ : Matrix (Fin (c.bes j 0 h).L.
 
 end Comm
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 structure VCom (c : Comm D) where
 
   gP : Finset (Pl D)

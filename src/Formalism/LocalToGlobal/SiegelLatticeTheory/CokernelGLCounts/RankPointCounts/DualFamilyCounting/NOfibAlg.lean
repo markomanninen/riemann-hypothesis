@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NOfibCut
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NOfibCut
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,11 +28,13 @@ theorem hfe (a b : Fin D.R.rS) : (VS D).hT (X.fY a) (X.eX b) = if a = b then 1 e
 
 theorem hT_sumL {ι : Type*} (s : Finset ι) (c : ι → D.host.E) (y : ι → (VS D).V) (x : (VS D).V) :
     (VS D).hT (∑ i ∈ s, c i • y i) x = ∑ i ∈ s, star (c i) * (VS D).hT (y i) x := by
-  simp [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply]
 
 theorem hT_sumR {ι : Type*} (s : Finset ι) (c : ι → D.host.E) (y : ι → (VS D).V) (x : (VS D).V) :
     (VS D).hT x (∑ i ∈ s, c i • y i) = ∑ i ∈ s, c i * (VS D).hT x (y i) := by
-  simp [map_sum, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul, smul_eq_mul]
 
 theorem hT_smulL (c : D.host.E) (x y : (VS D).V) : (VS D).hT (c • x) y = star c * (VS D).hT x y := by
   simp [map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply]
@@ -45,8 +51,8 @@ theorem coef_e (S : Set (Fin D.R.rS)) {x : (VS D).V} (hx : x ∈ Submodule.span 
   | add x y _ _ hx hy =>
     refine ⟨?_, fun b hb => ?_⟩
     · conv_lhs => rw [hx.1, hy.1]
-      simp only [map_add, add_smul, Finset.sum_add_distrib]
-    · rw [map_add, hx.2 b hb, hy.2 b hb, add_zero]
+      simp only [map_add (f := _), add_smul, Finset.sum_add_distrib]
+    · rw [map_add (f := _), hx.2 b hb, hy.2 b hb, add_zero]
   | smul c x _ hx =>
     refine ⟨?_, fun b hb => ?_⟩
     · conv_lhs => rw [hx.1]
@@ -74,7 +80,7 @@ theorem pW_of_inW {w : (VS D).V} (hw : InW X w) : pW X w = w := by
   simp only [pW, (hw _).1, (hw _).2, zero_smul, Finset.sum_const_zero, sub_zero]
 
 theorem pW_add (x y : (VS D).V) : pW X (x + y) = pW X x + pW X y := by
-  simp only [pW, map_add, add_smul, Finset.sum_add_distrib]; abel
+  simp only [pW, map_add (f := _), add_smul, Finset.sum_add_distrib]; abel
 
 theorem pW_smul (c : D.host.E) (x : (VS D).V) : pW X (c • x) = c • pW X x := by
   simp only [pW, map_smul, smul_eq_mul, mul_smul, ← Finset.smul_sum, smul_sub]
@@ -100,10 +106,10 @@ theorem parseval (y y' : (VS D).V) :
       ∑ d, star ((VS D).hT (X.eX d) y) * (VS D).hT (X.fY d) y' + (VS D).hT (pW X y) (pW X y') := by
   have h1 : (VS D).hT (pW X y) y' = (VS D).hT (pW X y) (pW X y') := by
     conv_lhs => rw [decomp X y']
-    rw [map_add, map_add, hT_sumR, hT_sumR]
+    rw [map_add (f := _), map_add (f := _), hT_sumR, hT_sumR]
     simp only [hT_w_e X (pW_inW X y), hT_w_f X (pW_inW X y), mul_zero, Finset.sum_const_zero, zero_add]
   conv_lhs => rw [decomp X y]
-  rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, hT_sumL, hT_sumL, h1]
+  rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, hT_sumL, hT_sumL, h1]
 
 section N
 
@@ -153,7 +159,7 @@ theorem inW_orth {w : (VS D).V} (hw : InW X w) : w ∈ orth (VS D) (Xsp (lf D (X
   induction hx using Submodule.span_induction with
   | mem y hy => obtain ⟨a, rfl⟩ := hy; exact (hw a).1
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, LinearMap.add_apply, hx, hy, add_zero]
+  | add x y _ _ hx hy => rw [map_add (f := _), LinearMap.add_apply, hx, hy, add_zero]
   | smul c x _ hx => rw [hT_smulL, hx, mul_zero]
 
 theorem nw (hn : NFl X u n) {w : (VS D).V} (hw : InW X w) :
@@ -194,7 +200,7 @@ theorem omega_rel (hn : NFl X u n) (a : Fin D.R.rS) {w : (VS D).V} (hw : InW X w
   have h := parseval X (n (X.fY a)) (n w)
   rw [iso hn] at h
   have he : ∀ d, (VS D).hT (X.eX d) (n w) = 0 := fun d => by
-    rw [nw hn hw, map_add, hT_sumR, (hw d).1, zero_add]
+    rw [nw hn hw, map_add (f := _), hT_sumR, (hw d).1, zero_add]
     simp only [X.ee, mul_zero, Finset.sum_const_zero]
   have hp : pW X (n w) = w := by
     conv_lhs => rw [nw hn hw]
@@ -230,8 +236,8 @@ end N
 
 end Alg
 
-open Alg in
 
+open Alg in
 theorem dictGram_holds : DictGram := by
   intro D X u n hn
   refine ⟨fun b a h => Xq_lower hn h, fun a => Xq_diag hn a, fun b => pW_inW X _, ?_⟩

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+
+@[expose] public section
 
 namespace GlobalTheory.KFiniteVectors
 
@@ -19,7 +23,7 @@ def kFiniteVectors (ε : Fin n → Bool) (σ : Matrix (Fin n) (Fin n) ℂ → (H
     refine ⟨S ⊔ T, inferInstance, Submodule.add_mem_sup ha hb, ?_⟩
     intro g hg x hx
     obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.mp hx
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (hSK g hg y hy) (hTK g hg z hz)
   smul_mem' := by
     rintro c a ⟨S, hS, ha, hSK⟩

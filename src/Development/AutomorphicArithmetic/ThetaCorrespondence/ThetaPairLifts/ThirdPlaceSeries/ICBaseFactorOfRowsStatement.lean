@@ -1,7 +1,13 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InjectiveICRowsStatement
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.Realised
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ICBaseFactorOfRows
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TieTest
+public import Formalism.LocalToGlobal.IndefiniteReal.CxLemmas
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.Realised
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ICBaseFactorOfRows
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 

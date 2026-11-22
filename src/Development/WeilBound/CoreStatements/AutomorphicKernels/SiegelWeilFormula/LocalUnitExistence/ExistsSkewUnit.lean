@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.LdExOfLeaves
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalUnitExistence.ExistsLocUnit
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.LdExOfLeaves
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalUnitExistence.ExistsLocUnit
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,10 +40,10 @@ theorem exists_skewUnit {B : Base F E} (hB : B.IsGood σ) :
   obtain ⟨ξ, hξ, hσξ⟩ := UnitA.exists_xi hc
   obtain ⟨S, hS⟩ := UnitA.exists_S (F := F) ξ
   choose u hu1 hu2 hu3 using UnitA.exists_locUnit hB hξ hσξ
-  let xv : ∀ v : Pl F, (Fv F v ⊗[F] E)ˣ := fun v =>
+  let xv : ∀ v : Pl (F := F), (Fv F v ⊗[F] E)ˣ := fun v =>
     ⟨inclR (F := F) (Fv F v) ξ, inclR (F := F) (Fv F v) ξ⁻¹, by rw [← map_mul, mul_inv_cancel₀ hξ, map_one],
       by rw [← map_mul, inv_mul_cancel₀ hξ, map_one]⟩
-  let b : ∀ v : Pl F, GL (Fin 1) (Fv F v ⊗[F] E) := fun v => if v ∈ S then sc1 (u v * (xv v)⁻¹) else 1
+  let b : ∀ v : Pl (F := F), GL (Fin 1) (Fv F v ⊗[F] E) := fun v => if v ∈ S then sc1 (u v * (xv v)⁻¹) else 1
   have hb : ∀ v ∉ S, b v = 1 := fun v hv => if_neg hv
   let e : ∀ w : InfinitePlace F, w.Completion ⊗[F] E ≃+* ℂ := fun w =>
     RingEquiv.ofBijective (infEmb (B.emb w)) (infEmb_bijective hc (B.emb w))

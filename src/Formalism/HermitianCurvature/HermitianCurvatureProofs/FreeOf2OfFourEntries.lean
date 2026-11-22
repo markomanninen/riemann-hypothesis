@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.StatementFr
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositionInsertionDiagonalCompat
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.QEFirstMulSecondEqSwap
+module
+
+public import Formalism.HermitianCurvature.StatementFr
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositionInsertionDiagonalCompat
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QEFirstMulSecondEqSwap
+
+@[expose] public section
 
 open Matrix Formalism.YangianSpanCharacter.T Formalism.YangianSpanCharacter.Y Formalism.FourierDecayAlt.R Formalism.FourierDecayAlt.Wd Formalism.FourierDecayAlt.Fr
 
@@ -480,10 +484,6 @@ end Main
 end Formalism.FourierDecayAlt.P.Fr5
 
 namespace Formalism.FourierDecayAlt.P
-
-theorem gauss_form_plus_letter : Formalism.FourierDecayAlt.Fr.GaussFormPlus := by
-  intro A S _ _ _ _ _ _ r L f a Ya H
-  exact Fr5.gaussFormPlus L f a Ya H
 
 theorem plus_letter_form : Formalism.FourierDecayAlt.Fr.PlusForm := by
   intro A S _ _ _ _ _ _ r L f a Ya H

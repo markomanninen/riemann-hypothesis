@@ -1,6 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.FrobeniusOrbits.HostCorollaries
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.FrobeniusOrbits.HostCorollaries
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.FrobeniusOrbits Formalism.MainNotions.N
 open scoped Pointwise
 
@@ -50,8 +55,12 @@ theorem norm_int_le (c : E →+* PadicAlgCl l) (x : 𝓞 E) : ‖c (x : E)‖ �
   have heq : y ^ n = -∑ i ∈ Finset.range n, (P.coeff i : PadicAlgCl l) * y ^ i := by
     have h := hP
     rw [hPm.as_sum] at h
-    simp only [Polynomial.eval₂_add, Polynomial.eval₂_X_pow, Polynomial.eval₂_finset_sum,
-      Polynomial.eval₂_mul, Polynomial.eval₂_C] at h
+    change (Polynomial.eval₂RingHom (algebraMap ℤ (PadicAlgCl l)) y)
+      (X ^ P.natDegree + ∑ i ∈ Finset.range P.natDegree, (P.coeff i : ℤ[X]) * X ^ i) = 0 at h
+    simp only [map_add, map_sum, map_mul, map_pow, Polynomial.coe_eval₂RingHom,
+      Polynomial.eval₂_X] at h
+    simp only [← Polynomial.C_eq_intCast, Polynomial.eval₂_C] at h
+    simp only [map_intCast] at h
     rw [eq_neg_iff_add_eq_zero]
     simpa using h
   have hle : ‖y ^ n‖ ≤ ‖y‖ ^ (n - 1) := by
@@ -139,7 +148,8 @@ theorem approx (β γ : PadicAlgCl l) (f : ℚ_[l][X]) {ε : ℝ} (hε : 0 < ε)
     intro x hx
     have e1 : aeval x G = ∑ i ∈ Finset.range (n + 1),
         algebraMap ℚ_[l] (PadicAlgCl l) (g i : ℚ_[l]) * x ^ i := by
-      simp only [G, map_sum, map_mul, map_pow, aeval_C, aeval_X, map_ratCast, eq_ratCast]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [G, map_sum, map_mul, map_pow, aeval_C, aeval_X, map_ratCast, eq_ratCast]
     have e2 : aeval x f = ∑ i ∈ Finset.range (n + 1),
         algebraMap ℚ_[l] (PadicAlgCl l) (f.coeff i) * x ^ i := by
       rw [aeval_eq_sum_range, ← hn]
@@ -259,7 +269,7 @@ theorem adjoin_range_eq (c : E →+* PadicAlgCl l) {α : E}
       rw [e1]
       exact IntermediateField.algebraMap_mem _ _
     | add x y _ _ hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem hx hy
     | mul x y _ _ hx hy =>
       rw [map_mul]

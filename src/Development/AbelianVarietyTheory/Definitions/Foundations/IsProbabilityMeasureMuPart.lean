@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
-import Formalism.LocalToGlobal.ProjectiveLattices.CompOrd
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.QuotRealize
-import Formalism.MeanHeightDescent.AverageDegreeBounds.GlobalBoundRefinements
-import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.SectionInputData
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompOrd
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.QuotRealize
+public import Formalism.MeanHeightDescent.AverageDegreeBounds.GlobalBoundRefinements
+public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.SectionInputData
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,20 +31,20 @@ def HasGram (N : (K →+* ℂ) → V → ℝ) : Prop := Nonempty (GramFr N)
 
 variable [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
 
-open Classical in
 
+open Classical in
 def slope_sq (N : (K →+* ℂ) → V → ℝ) (L : Submodule (𝓞 K) V) : ℝ :=
   letI : StarRing K := starRingOfComm
   if h : HasGram N then Formalism.HN.muDef h.some.2.1.1 h.some.2.1.2 L else 0
 
-open Classical in
 
+open Classical in
 def slopeMax_sq (N : (K →+* ℂ) → V → ℝ) (L : Submodule (𝓞 K) V) : ℝ :=
   letI : StarRing K := starRingOfComm
   if h : HasGram N then Formalism.HN.muMaxDef h.some.2.1.1 h.some.2.1.2 L else 0
 
-open Classical in
 
+open Classical in
 def slopeMin_sq (N : (K →+* ℂ) → V → ℝ) (L : Submodule (𝓞 K) V) : ℝ :=
   letI : StarRing K := starRingOfComm
   if h : HasGram N then Formalism.HN.muMinDef h.some.2.1.1 h.some.2.1.2 L else 0
@@ -53,8 +57,8 @@ section Indep
 
 variable [StarRing K]
 
-omit [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 
+omit [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 theorem norm_realize_sq {ι : Type} [Fintype ι] [DecidableEq ι] (b : Basis ι K V)
     (X : InfinitePlace K → Matrix ι ι ℂ) (x : V) :
     ‖Formalism.HermitianLatticesTheory.realize b X x‖ ^ 2 = ∑ v, Formalism.HermitianLatticesTheory.normAt b X v x ^ 2 := by
@@ -65,8 +69,8 @@ theorem norm_realize_sq {ι : Type} [Fintype ι] [DecidableEq ι] (b : Basis ι 
   rw [Complex.sq_norm, Complex.normSq_apply]
   simp [Formalism.HermitianLatticesTheory.realize, Formalism.HermitianLatticesTheory.realizeRaw, sq]
 
-omit [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 
+omit [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 theorem IsGram.norm_realize {ι κ : Type} [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ] {b : Basis ι K V}
     {X : InfinitePlace K → Matrix ι ι ℂ} {b' : Basis κ K V} {X' : InfinitePlace K → Matrix κ κ ℂ}
     {N : (K →+* ℂ) → V → ℝ} (h : IsGram b X N) (h' : IsGram b' X' N) (x : V) :
@@ -92,8 +96,8 @@ theorem IsGram.rk_deg {ι κ : Type} [Fintype ι] [DecidableEq ι] [Fintype κ] 
     (fun y => ⟨fun ⟨m, hm, e⟩ => ⟨⟨m, hm⟩, e⟩, fun ⟨m, e⟩ => ⟨m.1, m.2, e⟩⟩)
     (fun m => h.norm_realize h' m.1)]
 
-omit [NumberField K] [StarRing K] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 
+omit [NumberField K] [StarRing K] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 theorem IsGram.hasGram {ι : Type} [Fintype ι] [DecidableEq ι] {b : Basis ι K V} {X : InfinitePlace K → Matrix ι ι ℂ}
     {N : (K →+* ℂ) → V → ℝ} (h : IsGram b X N) : HasGram N := by
   let e := Fintype.equivFin ι
@@ -146,7 +150,7 @@ end Indep
 theorem deg_bot (N : (K →+* ℂ) → V → ℝ) : deg N (⊥ : Submodule (𝓞 K) V) = 0 := by
   simp [deg, Formalism.HN.rkK]
 
-theorem slope_sq_line [IsTotallyComplex K] (x : K) (hx : x ≠ 0) :
+theorem slope_sq_line [_root_.NumberField.IsTotallyComplex K] (x : K) (hx : x ≠ 0) :
     slope_sq (fun (σ : K →+* ℂ) (y : K) => ‖σ y‖) (Submodule.span (𝓞 K) {x}) =
       -((1 / (Formalism.HN.nPl K : ℝ)) * ∑ v : InfinitePlace K, 2 * Real.log (v x)) := by
   letI : StarRing K := starRingOfComm
@@ -158,10 +162,6 @@ theorem slope_sq_line [IsTotallyComplex K] (x : K) (hx : x ≠ 0) :
   rw [slope_sq_eq h (Submodule.fg_span (Set.finite_singleton x)),
     Formalism.ExtensionFiltration.muDef_line_eq _ _ (fun v => (h v).1) x hx]
   simp [hn, InfinitePlace.norm_embedding_eq]
-
-example [IsTotallyComplex K] :
-    slope_sq (fun (σ : K →+* ℂ) (y : K) => ‖σ y‖) (Submodule.span (𝓞 K) {(1 : K)}) = 0 := by
-  rw [slope_sq_line 1 one_ne_zero]; simp
 
 end Gram
 
@@ -175,8 +175,8 @@ abbrev Psi (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) : Type := {
 
 abbrev Weight (Dw : Datum H) : Type := Psi H → Fin (Dw.p + Dw.q) → ℤ
 
-open Classical in
 
+open Classical in
 def wtOf (Dw : Datum H) (la : Weight Dw) (m : ℤ) : WTZ E :=
   (fun x =>
     if h : x.1 (H.rt : E) = H.rt0 then
@@ -287,19 +287,10 @@ theorem exOf_weightOf (a : (E →+* ℂ) × ℕ → ℤ) (m : ℤ) : exOf Dw (we
       simp only [weightOf, h1, if_false, h2, conjEmb_conjEmb]
       ring
 
-example (w : ℤ) (τ : Psi H) (i j : ℕ) (hi : i < Dw.p) (hj : j < Dw.q) :
-    (wtOf Dw (fun _ _ => w) 0).1 (τ.1, i) = w ∧ (wtOf Dw (fun _ _ => w) 0).1 (conjEmb τ.1, j) = -w := by
-  rw [wtOf_big _ _ _ _ hi, wtOf_small _ _ _ _ hj]; simp
-
-example (τ : Psi H) (i j : ℕ) (hi : i < Dw.p) (hj : j < Dw.q) :
-    (wtOf Dw (fun _ k => if (k : ℕ) < Dw.p then 0 else -1) 0).1 (τ.1, i) = 0 ∧
-      (wtOf Dw (fun _ k => if (k : ℕ) < Dw.p then 0 else -1) 0).1 (conjEmb τ.1, j) = 1 := by
-  rw [wtOf_big _ _ _ _ hi, wtOf_small _ _ _ _ hj]; simp [hi]
-
 variable (Xo : Moduli Dw l) (c : Coeff l)
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def secZ (e : Ix Dw → ℤ) : Submodule c.F (Rul Xo c) where
   carrier := {f | IsNatural (K := c.F) (fun S _ _ => FrPt Xo c S) (fun φ y z => FrMap φ y z) f ∧
     ∀ (p : TRing c.F) (t : Ix Dw → (p.R)ˣ) (y y' : FrPt Xo c p.R), FrBor t y y' →
@@ -321,8 +312,8 @@ theorem mem_secZ {e : Ix Dw → ℤ} {f : Rul Xo c} : f ∈ secZ Xo c e ↔
 
 theorem mem_secZ_exZ {G : WTZ E} {f : Rul Xo c} : f ∈ secZ Xo c (exZ Dw G) ↔ GlobalTheory.IndefiniteRowSideFullHecke.ZeroWeightSections.IsSecZ G f := Iff.rfl
 
-variable (Xo c) in
 
+variable (Xo c) in
 theorem secZ_nat (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) : secZ Xo c (fun i => (ex Dw a n i : ℤ)) = sec Xo c a n := by
   ext f
   rw [← exZ_wtZ, mem_secZ_exZ, GlobalTheory.IndefiniteRowSideFullHecke.ZeroWeightSections.isSecZ_wtZ]
@@ -337,8 +328,8 @@ theorem mul_mem_secZ {e e' : Ix Dw → ℤ} {f g : Rul Xo c} (hf : f ∈ secZ Xo
     simp only [Pi.add_apply, zpow_add, Finset.prod_mul_distrib, Units.val_mul]
     ring
 
-variable (Xo c) in
 
+variable (Xo c) in
 theorem secZ_mul_le (e e' : Ix Dw → ℤ) : secZ Xo c e * secZ Xo c e' ≤ secZ Xo c (e + e') :=
   Submodule.mul_le.2 fun _ hf _ hg => mul_mem_secZ hf hg
 
@@ -370,8 +361,8 @@ section Cusp
 
 variable {r : ℕ}
 
-open Classical in
 
+open Classical in
 def modelWt {σ : c.F →+* ℂ} (U : Unf Xo c σ r) (G : WTZ E) (k : U.Comp) : Wt (U.X k).Ψ r :=
   fun τ j => if (U.X k).p0 ≤ (j : ℕ) then
       G.1 (Function.invFun (relab c σ) τ.1, (j : ℕ) - (U.X k).p0) + G.2 / 2
@@ -542,10 +533,6 @@ theorem evC_eq_zero (h : GenFrEx Xo c) {Z Z' : Comp Xo c} (hne : Z' ≠ Z) {f : 
     evC h Z' f = 0 :=
   hf _ _ (liesOff_genFr h hne)
 
-example (h : GenFrEx Xo c) (ht : GenFromTest Xo c h) {Z Z' : Comp Xo c} (hne : Z' ≠ Z) :
-    (1 : Rul Xo c) ∉ suppOn Z := fun h1 =>
-  one_ne_zero ((evalAt_one _ _ _ (ht Z')).symm.trans (evC_eq_zero h hne h1))
-
 section Inst
 
 abbrev subModuleInt {K R : Type} [Field K] [CommRing R] [Algebra K R] [Algebra (𝓞 K) R] [IsScalarTower (𝓞 K) K R]
@@ -587,8 +574,6 @@ def latW (G : WTZ E) : Submodule (𝓞 c.F) (cuspW Xo c U G) := supLat _
 
 def latOn (Z : Comp Xo c) (G : WTZ E) : Submodule (𝓞 c.F) (cuspOn U Z G) := supLat _
 
-def latZ (la : Weight Dw) (m : ℤ) : Submodule (𝓞 c.F) (cuspW Xo c U (wtOf Dw la m)) := latW U (wtOf Dw la m)
-
 theorem mem_latOn {Z : Comp Xo c} {G : WTZ E} {f : cuspOn U Z G} :
     f ∈ latOn U Z G ↔ (⟨f, cuspOn_le U Z G f.2⟩ : cuspW Xo c U G) ∈ latW U G := Iff.rfl
 
@@ -607,8 +592,6 @@ def classesOver (A : Set (Σ k, Frame (X k).Ψ r)) : Set (AutQ V) := {q | dict q
 
 def muPart (A : Set (Σ k, Frame (X k).Ψ r)) : Measure (AutQ V) := ProbabilityTheory.cond (muQ1 V) (classesOver V dict A)
 
-def muComp (k : Cp) : Measure (AutQ V) := muPart V dict {z | z.1 = k}
-
 theorem isProbabilityMeasure_muPart {A : Set (Σ k, Frame (X k).Ψ r)} (h : muQ1 V (classesOver V dict A) ≠ 0) :
     IsProbabilityMeasure (muPart V dict A) :=
   ProbabilityTheory.cond_isProbabilityMeasure h
@@ -623,13 +606,13 @@ theorem muPart_univ_le (A : Set (Σ k, Frame (X k).Ψ r)) : muPart V dict A Set.
 
 variable (μ : Measure (AutQ V))
 
-def petE (la : ∀ k, Wt (X k).Ψ r) (P : FDSec X) : ENNReal := eLpNorm (fun q : AutQ V => ptN la P (dict q.out)) 2 μ
+def petE (la : ∀ k, Wt (X k).Ψ r) (P : FDSec X) : ENNReal := eLpNorm' (fun q : AutQ V => ptN la P (dict q.out)) 2 μ
 
 theorem petE_smul (la : ∀ k, Wt (X k).Ψ r) (a : ℂ) (P : FDSec X) :
     petE V dict μ la (a • P) = ENNReal.ofReal ‖a‖ * petE V dict μ la P := by
   have : (fun q : AutQ V => ptN la (a • P) (dict q.out)) = ‖a‖ • fun q : AutQ V => ptN la P (dict q.out) :=
     funext fun q => pnorm_smul _ _ a _ _
-  rw [petE, this, eLpNorm_const_smul, petE, Real.enorm_eq_ofReal (norm_nonneg a)]
+  rw [petE, this, eLpNorm'_const_smul _ (by norm_num), petE, Real.eNorm_eq_ofReal (norm_nonneg a)]
 
 theorem petE_le_supE (hμ : μ Set.univ ≤ 1) (hd : ∀ g, (dict g).2 ∈ (X (dict g).1).dom) (la : ∀ k, Wt (X k).Ψ r)
     (P : FDSec X) : petE V dict μ la P ≤ supE X la P := by
@@ -637,8 +620,10 @@ theorem petE_le_supE (hμ : μ Set.univ ≤ 1) (hd : ∀ g, (dict g).2 ∈ (X (d
     rw [Real.enorm_eq_ofReal (ptN_nonneg _ _ _)]
     exact le_iSup (fun p : FPt X => ENNReal.ofReal ((X p.1).pnorm (la p.1) (P p.1) p.2))
       ⟨(dict q.out).1, ⟨(dict q.out).2, hd _⟩⟩
-  refine (eLpNorm_le_of_ae_enorm_bound (Filter.Eventually.of_forall h)).trans ?_
-  rw [smul_eq_mul]
+  have hle : petE V dict μ la P ≤ eLpNorm' (fun _ : AutQ V => supE X la P) 2 μ :=
+    eLpNorm'_mono_eNorm_ae (by norm_num) (Filter.Eventually.of_forall h)
+  refine hle.trans ?_
+  rw [eLpNorm'_const _ (by norm_num), eNorm_eq_self]
   refine (mul_le_mul_right (ENNReal.rpow_le_one hμ (by positivity)) _).trans (by simp)
 
 theorem petE_ne_top [Fintype Cp] (hμ : μ Set.univ ≤ 1) (hd : ∀ g, (dict g).2 ∈ (X (dict g).1).dom)
@@ -743,10 +728,10 @@ theorem petAt_smul (G : WTZ E) (a : c.F) (f : Rul Xo c) :
   ring
 
 theorem petAt_eq (G : WTZ E) (f : Rul Xo c) :
-    petAt U x V dict μ G f = (eLpNorm (fun q : AutQ V => homN U x G f (dict q.out)) 2 μ).toReal := by
+    petAt U x V dict μ G f = (eLpNorm' (fun q : AutQ V => homN U x G f (dict q.out)) 2 μ).toReal := by
   have : (fun q : AutQ V => homN U x G f (dict q.out)) =
       lieFacZ Dw x G • fun q : AutQ V => ptN (modelWt U G) (rdU U f) (dict q.out) := rfl
-  rw [this, eLpNorm_const_smul, ENNReal.toReal_mul, Real.enorm_eq_ofReal (lieFacZ_pos x G).le,
+  rw [this, eLpNorm'_const_smul _ (by norm_num), ENNReal.toReal_mul, Real.eNorm_eq_ofReal (lieFacZ_pos x G).le,
     ENNReal.toReal_ofReal (lieFacZ_pos x G).le]
   rfl
 
@@ -767,17 +752,20 @@ theorem homN_sq_le {G : WTZ E} (hμ : μ Set.univ ≤ 1) (hd : ∀ g, (dict g).2
 
 end One
 
+attribute [local instance high] Submodule.module
+
 variable (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (x : ℝ) {D : D7}
 
 theorem petAt_wtZ {σ : c.F →+* ℂ} (V : HSp D) (dict : GA D V → Σ k, Frame ((U σ).X k).Ψ r) (mu : GA D V → ℂ)
     (hm : MuUnit V dict mu) (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) (h : JMemL2 V σ (rdC U σ a n) dict mu) {f : Rul Xo c}
     (hf : f ∈ cusp Xo c U a n) : petAt (U σ) x V dict (muQ1 V) (wtZ a n) f = l2C U σ V dict mu x a n h f := by
-  rw [l2C, dif_pos hf, petAt, lieFacZ_wtZ]
+  rw [l2C, dite_eq_left hf, petAt, lieFacZ_wtZ]
   congr 1
   show _ = ‖(h ⟨f, hf⟩).toLp _‖
-  rw [Lp.norm_toLp, petE]
+  rw [Lp.norm_toLp, petE, eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) (h ⟨f, hf⟩).aestronglyMeasurable,
+    ENNReal.toReal_ofNat]
   congr 1
-  refine eLpNorm_congr_norm_ae (Filter.Eventually.of_forall fun q => ?_)
+  refine eLpNorm'_congr_norm_ae (Filter.Eventually.of_forall fun q => ?_)
   rw [Real.norm_of_nonneg (ptN_nonneg _ _ _), ptN, pnorm_eq_of_unit _ _ _ _ (hm.2.2.2 _)]
   show _ = ‖mu q.out * rdU (U σ) f (dict q.out).1 (dict q.out).2‖
   rw [norm_mul, hm.2.1, one_mul]
@@ -815,13 +803,9 @@ def rankOn (Z : Comp Xo c) (G : WTZ E) : ℕ := Formalism.HN.rkK (latOn U Z G)
 
 def slopeW_sq (G : WTZ E) : ℝ := slope_sq (normW U x V dict G) (latW U G)
 
-def slopeOn_sq (Z : Comp Xo c) (G : WTZ E) : ℝ := slope_sq (normOn U x V dict Z G) (latOn U Z G)
-
 def degW (G : WTZ E) : ℝ := deg (normW U x V dict G) (latW U G)
 
 def degOn (Z : Comp Xo c) (G : WTZ E) : ℝ := deg (normOn U x V dict Z G) (latOn U Z G)
-
-def degZ (la : Weight Dw) (m : ℤ) : ℝ := degW U x V dict (wtOf Dw la m)
 
 theorem degW_eq (G : WTZ E) : degW U x V dict G = (rankW U G : ℝ) * (slopeW_sq U x V dict G / 2) := rfl
 

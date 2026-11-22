@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.DeterminantCokernelCount.CokernelIndexFactors.StatementB
-import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ImagQuadraticMaximalOrderArithmeticAtSplitPrime
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsUnitOfLagrangian
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.DeterminantCokernelCount.CokernelIndexFactors.StatementB
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ImagQuadraticMaximalOrderArithmeticAtSplitPrime
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsUnitOfLagrangian
+
+@[expose] public section
 
 open GlobalTheory.MomOne Formalism.L2.Ker.JMB
 open scoped ComplexConjugate BigOperators
@@ -11,25 +15,7 @@ namespace GlobalTheory.MomOne.FramePair
 
 variable {g : ℕ}
 
-lemma beta_sum_left (d : ℕ) (Hm : Matrix (Fin g) (Fin g) ℂ) {r : ℕ} (c : Fin r → ℂ) (b : Fin r → Fin g → ℂ)
-    (w : Fin g → ℂ) : beta d Hm (∑ j, c j • b j) w = ∑ j, c j * beta d Hm (b j) w := by
-  simp only [beta, hf, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Finset.sum_mul, Finset.mul_sum]
-  rw [Finset.sum_comm]
-  conv_lhs => enter [2, i]; rw [Finset.sum_comm]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun j _ => ?_
-  rw [Finset.sum_comm]
-  exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
-
-lemma beta_smul_left (d : ℕ) (Hm : Matrix (Fin g) (Fin g) ℂ) (c : ℂ) (v w : Fin g → ℂ) :
-    beta d Hm (c • v) w = c * beta d Hm v w := by
-  simp only [beta, hf, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
-  exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
-
 variable {q : ℕ} [Fact q.Prime]
-
-lemma norm_zc (a : ℤ_[q]) : ‖GlobalTheory.MomOne.zc a‖ = ‖a‖ := by
-  rw [GlobalTheory.MomOne.zc, norm_algebraMap']; rfl
 
 end GlobalTheory.MomOne.FramePair
 
@@ -157,10 +143,10 @@ private lemma eq_sum_beta_div_smul_of_beta_orthogonal {g d : ℕ} {Hm : Matrix (
   rw [hw] at hw0
   exact sub_eq_zero.1 hw0
 
+
 open scoped ComplexConjugate BigOperators in
 open Matrix in
 open scoped ComplexOrder in
-
 theorem _root_.GlobalTheory.MomOne.kapFrame : ∀ (q : ℕ) [Fact q.Prime] (lam : _root_.Formalism.L2.Ker.JMB.Qbar →+* ℂ_[q])
     (ι : ℂ ≃+* ℂ_[q]) (g : ℕ) (S : _root_.Formalism.L2.Ker.JMB.Setup g) (x : Fin g → Fin g → ℂ) (a : Fin g → ℕ) (r : ℕ)
     (b : Fin r → Fin g → ℂ) (n m s s₀ : ℕ) (eps : ℂ) (y : Fin r → Fin (q ^ n)),
@@ -168,7 +154,9 @@ theorem _root_.GlobalTheory.MomOne.kapFrame : ∀ (q : ℕ) [Fact q.Prime] (lam 
     (∀ i, x i ∈ S.La) → (∀ i j, _root_.Formalism.L2.Ker.JMB.beta S.d S.Hm (x i) (x j) = if i = j then (a i : ℂ) else 0) →
     (∀ i, 0 < a i ∧ Nat.Coprime (a i) q) → (∀ i, b i ∈ S.La) → _root_.Formalism.L2.Ker.JMB.IsIdem lam S.d m eps →
     2 * n ≤ m → (s₀ * ∏ i, a i) ∣ s →
-    let y' : Fin g → ℂ := fun i => _root_.Formalism.L2.Ker.JMB.beta S.d S.Hm ((s : ℂ) • _root_.Formalism.L2.Ker.JMB.liftY q n eps b y) (x i) / (a i : ℂ);
+    let y' (i : Fin g) : ℂ :=
+      _root_.Formalism.L2.Ker.JMB.beta S.d S.Hm
+        ((s : ℂ) • _root_.Formalism.L2.Ker.JMB.liftY q n eps b y) (x i) / (a i : ℂ)
     (∀ i, _root_.GlobalTheory.MomOne.Good ι S.d n s₀ (y' i)) ∧
       ∀ (A : Fin r → ℤ_[q]) (A' : Fin g → ℤ_[q]),
         (∀ i, _root_.GlobalTheory.MomOne.zc (A' i) =
@@ -216,7 +204,7 @@ theorem _root_.GlobalTheory.MomOne.kapFrame : ∀ (q : ℕ) [Fact q.Prime] (lam 
   have heps_conj : ‖ι (starRingEnd ℂ eps)‖ ≤ (q : ℝ) ^ (-(m : ℤ)) := by
     have h := hidem.2.2
     unfold _root_.Formalism.L2.Ker.JMB.lamA at h
-    rw [dif_pos (halg _ (hO_conj _ hepsO))] at h
+    rw [dite_eq_left (halg _ (hO_conj _ hepsO))] at h
     rw [hlam ⟨_, halg _ (hO_conj _ hepsO)⟩]
     exact h
   have hdi : ∀ i, s₀ * a i ∣ s := fun i =>
@@ -288,7 +276,8 @@ theorem _root_.GlobalTheory.MomOne.kapFrame : ∀ (q : ℕ) [Fact q.Prime] (lam 
         beta_smul_right_eq_conj_mul]
     have h2 : ι (starRingEnd ℂ (D i)) = ∑ j, ((Nb j : ℂ_[q]) - _root_.GlobalTheory.MomOne.zc (A j)) *
         ι (_root_.Formalism.L2.Ker.JMB.beta S.d S.Hm (x i) (b j)) + (_root_.GlobalTheory.MomOne.zc (A' i) - N i) := by
-      rw [h1, hA i, map_sub, map_sum, map_natCast]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [h1, hA i, map_sub, map_sum, map_natCast]
       simp only [map_mul, map_natCast, sub_mul, Finset.sum_sub_distrib]
       ring
     rw [h2]

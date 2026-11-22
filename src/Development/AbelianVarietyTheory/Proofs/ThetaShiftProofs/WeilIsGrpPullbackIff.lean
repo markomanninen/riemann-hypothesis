@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.ThetaMove
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.ThetaMove
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -91,6 +95,40 @@ theorem val_theta (hG : GlobalFnsSt) (hA : IsAbelianScheme A) {k : ℕ} {T : Ove
     (hx : θ.pt ^ k = 1) {T' : Over S} (σ : T' ⟶ T ⊗ A) (z : T'.left) (J) (hJ : Good Lr.L z J) :
     val θ.φ σ.left z J = cubN (cubV c z J) k 1 (σ ≫ fst T A ≫ θ.pt) (σ ≫ snd T A) *
       val θ.φ (lift (σ ≫ fst T A) (1 : T' ⟶ A)).left z J := by
+  have hCub {T₀ : Over S} {z₀ : T₀.left} {J₀ : (T₀.left ⟶ A.left) → Lr.L.ι}
+      (hJ : Good Lr.L z₀ J₀) : IsCub (cubV c z₀ J₀) := by
+    constructor
+    case face =>
+      intro x y
+      have := val_corr hJ (c.face 0) (lift x y).left
+      rw [val_one] at this
+      refine Eq.trans ?_ this
+      refine Eq.trans ?_ (val_cub c (lift x y) hJ (pzero A _) (x2 A 0) (x2 A 1)).symm
+      congr 1 <;> simp [x2, pzero, Hom.one_def]
+    case s01 =>
+      intro x y w
+      have := (val_corr hJ c.cubeSymmetric_swap_first (lift x (lift y w)).left).trans (val_cub c (lift x (lift y w)) hJ _ _ _)
+      refine Eq.trans this ?_
+      congr 1 <;> simp [x3]
+    case s12 =>
+      intro x y w
+      have := (val_corr hJ c.cubeSymmetric_swap_last (lift x (lift y w)).left).trans (val_cub c (lift x (lift y w)) hJ _ _ _)
+      refine Eq.trans this ?_
+      congr 1 <;> simp [x3]
+    case coc =>
+      intro x x' x'' y
+      have := val_corr hJ c.cocycle (lift x (lift x' (lift x'' y))).left
+      have e := ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_cub c _ hJ _ _ _) (val_cub c _ hJ _ _ _))).symm.trans
+        (this.trans ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_cub c _ hJ _ _ _) (val_cub c _ hJ _ _ _))))
+      have a₀ : lift x (lift x' (lift x'' y)) ≫ x4 A 0 = x := by simp [x4]
+      have a₁ : lift x (lift x' (lift x'' y)) ≫ x4 A 1 = x' := by simp [x4]
+      have a₂ : lift x (lift x' (lift x'' y)) ≫ x4 A 2 = x'' := by simp [x4]
+      have a₃ : lift x (lift x' (lift x'' y)) ≫ x4 A 3 = y := by simp [x4]
+      have b₀ : lift x (lift x' (lift x'' y)) ≫ padd A (x4 A 0) (x4 A 1) = x * x' :=
+        (MonObj.comp_mul _ _ _).trans (by rw [a₀, a₁])
+      have b₁ : lift x (lift x' (lift x'' y)) ≫ padd A (x4 A 1) (x4 A 2) = x' * x'' :=
+        (MonObj.comp_mul _ _ _).trans (by rw [a₁, a₂])
+      rwa [b₀, b₁, a₀, a₁, a₂, a₃] at e
   have hx' : (fst T A ≫ θ.pt) ^ k = 1 := by rw [← MonObj.comp_pow, hx, MonObj.comp_one]
   obtain ⟨t, ht, hv⟩ := exists_gen_torsion c k (fst T A ≫ θ.pt) (snd T A) hx'
   let n : T ⊗ A ⟶ T ⊗ A := lift (fst T A) 1
@@ -120,7 +158,7 @@ theorem val_theta (hG : GlobalFnsSt) (hA : IsAbelianScheme A) {k : ℕ} {T : Ove
     simp only [ofMul_mul, ofMul_zpow, ofMul_one]
     module
   · refine Eq.trans ?_ (ev e y I hI).symm
-    rw [lift_snd, lift_fst, (isCub_cubV c hI).N_one, _root_.one_mul]
+    rw [lift_snd, lift_fst, (hCub hI).N_one, _root_.one_mul]
 
 theorem comm_alg {G U : Type} [CommGroup G] [CommGroup U] {θ : G → G → G → U} (h : IsCub θ) {k : ℕ} {a b : G}
     (ha : a ^ k = 1) (hb : b ^ k = 1) (s : G) (p q e : U) (he : e * cubN θ k 1 a b = cubN θ k 1 b a) :
@@ -139,6 +177,40 @@ theorem comm_alg {G U : Type} [CommGroup G] [CommGroup U] {θ : G → G → G �
 theorem commIsOf_of_isRatio (hG : GlobalFnsSt) (hA : IsAbelianScheme A) {k : ℕ} {T : Over S}
     (θx θy : ThetaGrp A Lr.L k T) (hx : θx.pt ^ k = 1) (hy : θy.pt ^ k = 1) {e : Γ(T.left, ⊤)ˣ}
     (he : IsRatio c k θx.pt θy.pt e) : CommIsOf A Lr.L k θx θy e := by
+  have hCub {T₀ : Over S} {z₀ : T₀.left} {J₀ : (T₀.left ⟶ A.left) → Lr.L.ι}
+      (hJ : Good Lr.L z₀ J₀) : IsCub (cubV c z₀ J₀) := by
+    constructor
+    case face =>
+      intro x y
+      have := val_corr hJ (c.face 0) (lift x y).left
+      rw [val_one] at this
+      refine Eq.trans ?_ this
+      refine Eq.trans ?_ (val_cub c (lift x y) hJ (pzero A _) (x2 A 0) (x2 A 1)).symm
+      congr 1 <;> simp [x2, pzero, Hom.one_def]
+    case s01 =>
+      intro x y w
+      have := (val_corr hJ c.cubeSymmetric_swap_first (lift x (lift y w)).left).trans (val_cub c (lift x (lift y w)) hJ _ _ _)
+      refine Eq.trans this ?_
+      congr 1 <;> simp [x3]
+    case s12 =>
+      intro x y w
+      have := (val_corr hJ c.cubeSymmetric_swap_last (lift x (lift y w)).left).trans (val_cub c (lift x (lift y w)) hJ _ _ _)
+      refine Eq.trans this ?_
+      congr 1 <;> simp [x3]
+    case coc =>
+      intro x x' x'' y
+      have := val_corr hJ c.cocycle (lift x (lift x' (lift x'' y))).left
+      have e := ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_cub c _ hJ _ _ _) (val_cub c _ hJ _ _ _))).symm.trans
+        (this.trans ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_cub c _ hJ _ _ _) (val_cub c _ hJ _ _ _))))
+      have a₀ : lift x (lift x' (lift x'' y)) ≫ x4 A 0 = x := by simp [x4]
+      have a₁ : lift x (lift x' (lift x'' y)) ≫ x4 A 1 = x' := by simp [x4]
+      have a₂ : lift x (lift x' (lift x'' y)) ≫ x4 A 2 = x'' := by simp [x4]
+      have a₃ : lift x (lift x' (lift x'' y)) ≫ x4 A 3 = y := by simp [x4]
+      have b₀ : lift x (lift x' (lift x'' y)) ≫ padd A (x4 A 0) (x4 A 1) = x * x' :=
+        (MonObj.comp_mul _ _ _).trans (by rw [a₀, a₁])
+      have b₁ : lift x (lift x' (lift x'' y)) ≫ padd A (x4 A 1) (x4 A 2) = x' * x'' :=
+        (MonObj.comp_mul _ _ _).trans (by rw [a₁, a₂])
+      rwa [b₀, b₁, a₀, a₁, a₂, a₃] at e
   refine corr_of_val Lr.isLB fun y J hJ => ?_
   have a₁ := val_theta c hG hA θx hx (𝟙 _) y J hJ
   have a₂ := val_theta c hG hA θy hy (translT A θx.pt) y J hJ
@@ -152,11 +224,11 @@ theorem commIsOf_of_isRatio (hG : GlobalFnsSt) (hA : IsAbelianScheme A) {k : ℕ
     (Eq.trans ?_ ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) ((val_mul hJ _ _ _).trans
       (congrArg (val θy.φ (𝟙 _) y J * ·) (val_pull hJ _ _ _))) (val_constGen _ _ _ _ _))).symm)
   rw [Category.id_comp, Category.id_comp, Category.id_comp, a₁, a₂, a₃, a₄]
-  exact comm_alg (isCub_cubV c hJ) (by rw [← MonObj.comp_pow, hx, MonObj.comp_one])
+  exact comm_alg (hCub hJ) (by rw [← MonObj.comp_pow, hx, MonObj.comp_one])
     (by rw [← MonObj.comp_pow, hy, MonObj.comp_one]) _ _ _ _ (he _ (fst T A) y J hJ)
 
-include c in
 
+include c in
 theorem exists_theta {k : ℕ} {T : Over S} (x : T ⟶ A) (hx : x ^ k = 1) (i j : Lr.L.ι)
     (hi : ∀ p, x.left p ∈ Lr.L.U i) (hj : ∀ p, (1 : T ⟶ A).left p ∈ Lr.L.U j) :
     ∃ θ : ThetaGrp A Lr.L k T, θ.pt = x := by
@@ -218,8 +290,42 @@ theorem cubN_rosati (hG : GlobalFnsSt) (hA : IsAbelianScheme A) (f g : A ⟶ A) 
     (h : RosatiAdj A Lr.L f g) {k : ℕ} {T : Over S} {x y : T ⟶ A} (hx : x ^ k = 1) (hy : y ^ k = 1) (z : T.left) (J)
     (hJ : Good Lr.L z J) : ∃ u, cubN (cubV c z J) k 1 x (y ≫ g) = cubN (cubV c z J) k 1 (x ≫ f) y * u ∧
       cubN (cubV c z J) k 1 (y ≫ g) x = cubN (cubV c z J) k 1 y (x ≫ f) * u := by
+  have hCub {T₀ : Over S} {z₀ : T₀.left} {J₀ : (T₀.left ⟶ A.left) → Lr.L.ι}
+      (hJ : Good Lr.L z₀ J₀) : IsCub (cubV c z₀ J₀) := by
+    constructor
+    case face =>
+      intro x y
+      have := val_corr hJ (c.face 0) (lift x y).left
+      rw [val_one] at this
+      refine Eq.trans ?_ this
+      refine Eq.trans ?_ (val_cub c (lift x y) hJ (pzero A _) (x2 A 0) (x2 A 1)).symm
+      congr 1 <;> simp [x2, pzero, Hom.one_def]
+    case s01 =>
+      intro x y w
+      have := (val_corr hJ c.cubeSymmetric_swap_first (lift x (lift y w)).left).trans (val_cub c (lift x (lift y w)) hJ _ _ _)
+      refine Eq.trans this ?_
+      congr 1 <;> simp [x3]
+    case s12 =>
+      intro x y w
+      have := (val_corr hJ c.cubeSymmetric_swap_last (lift x (lift y w)).left).trans (val_cub c (lift x (lift y w)) hJ _ _ _)
+      refine Eq.trans this ?_
+      congr 1 <;> simp [x3]
+    case coc =>
+      intro x x' x'' y
+      have := val_corr hJ c.cocycle (lift x (lift x' (lift x'' y))).left
+      have e := ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_cub c _ hJ _ _ _) (val_cub c _ hJ _ _ _))).symm.trans
+        (this.trans ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_cub c _ hJ _ _ _) (val_cub c _ hJ _ _ _))))
+      have a₀ : lift x (lift x' (lift x'' y)) ≫ x4 A 0 = x := by simp [x4]
+      have a₁ : lift x (lift x' (lift x'' y)) ≫ x4 A 1 = x' := by simp [x4]
+      have a₂ : lift x (lift x' (lift x'' y)) ≫ x4 A 2 = x'' := by simp [x4]
+      have a₃ : lift x (lift x' (lift x'' y)) ≫ x4 A 3 = y := by simp [x4]
+      have b₀ : lift x (lift x' (lift x'' y)) ≫ padd A (x4 A 0) (x4 A 1) = x * x' :=
+        (MonObj.comp_mul _ _ _).trans (by rw [a₀, a₁])
+      have b₁ : lift x (lift x' (lift x'' y)) ≫ padd A (x4 A 1) (x4 A 2) = x' * x'' :=
+        (MonObj.comp_mul _ _ _).trans (by rw [a₁, a₂])
+      rwa [b₀, b₁, a₀, a₁, a₂, a₃] at e
   obtain ⟨u, hu, h₀⟩ := exists_ros hG hA Lr.isLB f g h
-  have C := isCub_cubV c hJ
+  have C := hCub hJ
   have first : ∀ n : ℕ, val₂ u z J (x ^ n) y * cubN (cubV c z J) n 1 x (y ≫ g) =
       val₂ u z J 1 y * (cubN (cubV c z J) n 1 (x ≫ f) y * val₂ u z J x y ^ n) := fun n => by
     induction n with
@@ -264,8 +370,8 @@ theorem IsRatio.rosati (hG : GlobalFnsSt) (hA : IsAbelianScheme A) (f g : A ⟶ 
   rw [← Category.assoc] at this ⊢
   rw [h₁, h₂, ← this, _root_.mul_assoc]
 
-include c in
 
+include c in
 theorem weilIs_rosati (hG : GlobalFnsSt) (hA : IsAbelianScheme A) (f g : A ⟶ A) [IsMonHom f] [IsMonHom g]
     (h : RosatiAdj A Lr.L f g) {k : ℕ} {T : Over S} {x y : T ⟶ A} (hx : x ^ k = 1) (hy : y ^ k = 1)
     (e : Γ(T.left, ⊤)ˣ) : WeilIs A Lr.L k (x ≫ f) y e ↔ WeilIs A Lr.L k x (y ≫ g) e := by
@@ -274,8 +380,8 @@ theorem weilIs_rosati (hG : GlobalFnsSt) (hA : IsAbelianScheme A) (f g : A ⟶ A
   obtain ⟨e₀, he⟩ := exists_isRatio c k (x ≫ f) y hx' hy
   rw [weilIs_iff c hG hA hx' hy he, weilIs_iff c hG hA hx hy' (he.rosati c hG hA f g h hx hy)]
 
-include c in
 
+include c in
 theorem weilIs_pull (hG : GlobalFnsSt) (hA : IsAbelianScheme A) {S₀ : Scheme.{0}} {G : Over S₀} [GrpObj G]
     {L₀ : LB G.left} (hL₀ : L₀.IsLB) {f : S ⟶ S₀} {φ : A.left ⟶ G.left} (hp : IsGrpPullback A G f φ)
     (w : LB.Iso Lr.L (L₀.pull φ)) (hw : w.IsGen) {k : ℕ} {T : Over S} {T₀ : Over S₀} (τ : T.left ⟶ T₀.left)

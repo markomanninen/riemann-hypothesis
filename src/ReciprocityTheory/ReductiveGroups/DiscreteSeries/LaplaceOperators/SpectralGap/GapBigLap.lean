@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.NonvanishingHypotheses
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.GapNum
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.NonvanishingHypotheses
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.GapNum
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem parabolicWeight_sub_succ (k r : ℕ) (v : Fin (k - 1) → ℝ) (b : Fin 
     Formalism.MainNotions.CayleySignature.lam48 k r v b ⟨y.val - 1, by omega⟩ - Formalism.MainNotions.CayleySignature.lam48 k r v b y =
       b ⟨y.val - k + 1, by omega⟩ - b ⟨y.val - k, by omega⟩ := by
   unfold Formalism.MainNotions.CayleySignature.lam48
-  rw [dif_neg (by simp only; omega), dif_neg (by omega)]
+  rw [dite_eq_right (by simp only; omega), dite_eq_right (by omega)]
   have e1 : b ⟨y.val - 1 - (k - 1), by omega⟩ = b ⟨y.val - k, by omega⟩ :=
     congrArg b (Fin.ext (by simp only; omega))
   have e2 : b ⟨y.val - (k - 1), by omega⟩ = b ⟨y.val - k + 1, by omega⟩ :=

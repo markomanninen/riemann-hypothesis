@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.DualDescentField
-import GroundTheory.GlobalFields.ComplexMultiplication.BaseChangeDegree
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.DualQuadratic
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.DualDescentField
+public import GroundTheory.GlobalFields.ComplexMultiplication.BaseChangeDegree
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.DualQuadratic
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -17,14 +21,18 @@ variable {F Ω : Type u} [Field F] [Field Ω] [Algebra F Ω]
 
 theorem x_isogBaseChange (φ : Isogeny E E') :
     (isogBaseChange (F' := Ω) φ).x = bcEmb (F' := Ω) E φ.x := by
+  classical
   obtain ⟨⟨x, y, h, he, -⟩, -⟩ := φ.2
-  simp only [Isogeny.x, isogBaseChange_val, he]
+  change xOf _ (isogBaseChange (F' := Ω) φ).1 = _
+  rw [isogBaseChange_val, he, Point.map_some, Isogeny.x, he]
   rfl
 
 theorem y_isogBaseChange (φ : Isogeny E E') :
     (isogBaseChange (F' := Ω) φ).y = bcEmb (F' := Ω) E φ.y := by
+  classical
   obtain ⟨⟨x, y, h, he, -⟩, -⟩ := φ.2
-  simp only [Isogeny.y, isogBaseChange_val, he]
+  change yOf _ (isogBaseChange (F' := Ω) φ).1 = _
+  rw [isogBaseChange_val, he, Point.map_some, Isogeny.y, he]
   rfl
 
 theorem isogBaseChange_injective :

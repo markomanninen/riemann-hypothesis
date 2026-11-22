@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ section Defs
 
 variable {l : ℕ} [hl : Fact l.Prime] {a : ℕ} [NeZero a] {O : Type} [CommRing O] [Algebra ℤ_[l] O]
 
-variable (l) in
 
+variable (l) in
 def LTo0 {ι : Type} (w : ι → Wq l a) : Prop := ∀ r : ℕ, ∀ᶠ n in cofinite, (l : Wq l a) ^ r ∣ w n
 
 variable (t : Wq l a →ₐ[ℤ_[l]] O) (K : Type) [NormedField K] [IsUltrametricDist K] [Algebra O K] [IsUnitBall O K]
@@ -45,18 +49,18 @@ variable {K}
 def frob2 (φ₂ : K⟦X⟧⟦X⟧ →+* K⟦X⟧⟦X⟧) : (ZMod a → K⟦X⟧⟦X⟧) →+* (ZMod a → K⟦X⟧⟦X⟧) :=
   Pi.ringHom fun τ => φ₂.comp (Pi.evalRingHom (fun _ : ZMod a => K⟦X⟧⟦X⟧) (τ - 1))
 
-variable (a K) in
 
+variable (a K) in
 def constP : (ZMod a → K⟦X⟧) →+* (ZMod a → K⟦X⟧⟦X⟧) :=
   Pi.ringHom fun τ => (C : K⟦X⟧ →+* K⟦X⟧⟦X⟧).comp (Pi.evalRingHom (fun _ : ZMod a => K⟦X⟧) τ)
 
-variable (a) in
 
+variable (a) in
 def shP (sh : K⟦X⟧ →+* K⟦X⟧⟦X⟧) : (ZMod a → K⟦X⟧) →+* (ZMod a → K⟦X⟧⟦X⟧) :=
   Pi.ringHom fun τ => sh.comp (Pi.evalRingHom (fun _ : ZMod a => K⟦X⟧) τ)
 
-variable (a K) in
 
+variable (a K) in
 def diag : (ZMod a → K⟦X⟧⟦X⟧) →+* (ZMod a → K⟦X⟧) :=
   Pi.ringHom fun τ => (constantCoeff : K⟦X⟧⟦X⟧ →+* K⟦X⟧).comp (Pi.evalRingHom (fun _ : ZMod a => K⟦X⟧⟦X⟧) τ)
 
@@ -107,7 +111,7 @@ theorem isUnit_delta_l {A : Type} [CommRing A] (D : Delta l A) (htf : ∀ x : A,
 section Sh
 
 variable {K : Type} [NormedField K] [CharZero K] (sh : K⟦X⟧ →+* K⟦X⟧⟦X⟧)
-  (hsh : ∀ (f : K⟦X⟧) (i : ℕ), (i.factorial : K⟦X⟧) * coeff i (sh f) = (PowerSeries.derivative K)^[i] f)
+  (hsh : ∀ (f : K⟦X⟧) (i : ℕ), (i.factorial : K⟦X⟧) * coeff i (sh f) = (PowerSeries.derivative (R := K))^[i] f)
 include hsh
 
 theorem constantCoeff_sh (f : K⟦X⟧) : constantCoeff (sh f) = f := by
@@ -121,10 +125,10 @@ theorem sh_X : sh X = C X + X := by
   · simp [coeff_C, coeff_X]
     simpa [derivative_X] using h
   · have h3 : ((i + 2).factorial : K⟦X⟧) ≠ 0 := natCast_ne_zero_ps (Nat.cast_ne_zero.2 (Nat.factorial_ne_zero _))
-    have h4 : (PowerSeries.derivative K)^[i + 2] X = 0 := by
+    have h4 : (PowerSeries.derivative (R := K))^[i + 2] X = 0 := by
       rw [Function.iterate_succ_apply, Function.iterate_succ_apply, derivative_X]
-      have : PowerSeries.derivative K (1 : K⟦X⟧) = 0 := (PowerSeries.derivative K).map_one_eq_zero
-      rw [this]; exact Function.iterate_fixed (map_zero _) i
+      rw [derivative_one]
+      exact iterate_derivative_zero
     rw [h4] at h
     rw [(mul_eq_zero.1 h).resolve_left h3]
     simp [coeff_C, coeff_X]
@@ -137,7 +141,7 @@ theorem constantCoeff_φ₂ (l : ℕ) [Fact l.Prime] (φ₂ : K⟦X⟧⟦X⟧ �
     have h : (X : K⟦X⟧⟦X⟧) = sh X - C X := by rw [sh_X sh hsh]; ring
     rw [h, map_sub, hφsh, hφC, frob_X]
   conv_lhs => rw [eq_shift_mul_X_add_const G]
-  rw [map_add, map_mul, hX, hφC, map_add, map_mul, map_sub, constantCoeff_sh sh hsh, constantCoeff_C,
+  rw [map_add (f := _), map_mul, hX, hφC, map_add (f := _), map_mul, map_sub, constantCoeff_sh sh hsh, constantCoeff_C,
     constantCoeff_C, sub_self, mul_zero, zero_add]
 
 end Sh

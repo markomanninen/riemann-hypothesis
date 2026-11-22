@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FormsAre
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DifferentiableSumU
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FormsAre
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DifferentiableSumU
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EmbeddingMemCoefficientField
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsRingEquivOfIsTranscendenceBasis
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.WittCoreInclusionMulVecMemLatticeCompletionAtPla
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ConcreteTwistFrameExtraExcludedOverSmallPrimes
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsRingEquivOfIsTranscendenceBasis
+
+@[expose] public section
+
 open Polynomial
 
 noncomputable section
@@ -96,7 +102,8 @@ theorem lift_eq_zero_of_lift_eq_zero (t t' : Formalism.CyclotomicNorms.Fbar g �
       MonoidAlgebra.lift ℤ ℂ (Formalism.CyclotomicNorms.Fbar g) τ f = aeval (τ u) P := by
     intro τ hτ
     rw [lift_apply_eq_sum, ← Finset.sum_filter_of_ne (p := (· ≠ 0)) (fun x _ hx h0 => hx (by rw [h0, hτ, mul_zero]))]
-    simp only [P, map_sum, map_mul, aeval_C, map_pow, aeval_X, algebraMap_int_eq, eq_intCast, map_intCast]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [P, map_sum, map_mul, aeval_C, map_pow, aeval_X, algebraMap_int_eq, eq_intCast, map_intCast]
     refine Finset.sum_congr rfl fun x hx => ?_
     rw [← map_pow, hk x hx]
   have hζ := isPrimitiveRoot_map t ht hm hu
@@ -125,7 +132,7 @@ theorem exists_ringEquiv_comp_eq : ∀ (g : ℕ) [Fact g.Prime] (t t' : Formalis
   let β' : Q →+* ℂ := Ideal.Quotient.lift (RingHom.ker α) β hker
   have hα' : Function.Injective α' := RingHom.kerLift_injective α
   have hβ' : Function.Injective β' := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro q hq
     obtain ⟨f, rfl⟩ := Ideal.Quotient.mk_surjective q
     have : β f = 0 := hq

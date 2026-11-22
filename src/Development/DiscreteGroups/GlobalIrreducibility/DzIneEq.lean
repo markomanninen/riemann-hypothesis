@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LocalLanglandsGL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LocalLanglandsGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,6 @@ section Fix
 
 variable {E E' Ω : Type} [Field E] [NumberField E] [Field E'] [NumberField E'] [Field Ω] [Algebra E E'] [Algebra E Ω]
   [Algebra E' Ω] [IsScalarTower E E' Ω] [IsAlgClosure E Ω]
-
-local notation "LL" => IntermediateField.normalClosure E E' Ω
 
 theorem natCast_mem_of_normV {K : Type} [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K)) (g n : ℕ)
     (hn : 0 < n) (hN : normV v = g ^ n) : ((g : ℕ) : 𝓞 K) ∈ v.asIdeal := by
@@ -30,6 +32,7 @@ theorem fix_of_ine (A : ValuationSubring Ω) (w : HeightOneSpectrum (𝓞 E)) (h
     (σ : G E Ω) (hσ : σ ∈ Ine (F := E) A) (e : E') : σ (algebraMap E' Ω e) = algebraMap E' Ω e := by
   classical
   have : CharZero Ω := charZero_of_injective_algebraMap (algebraMap E Ω).injective
+  let LL := IntermediateField.normalClosure E E' Ω
   have : NumberField (LL) :=
     { to_charZero := charZero_of_injective_algebraMap (algebraMap E (LL)).injective
       to_finiteDimensional := Module.Finite.trans E (LL) }
@@ -112,7 +115,7 @@ theorem ine_lift {E E' Ω : Type} [Field E] [NumberField E] [Field E'] [NumberFi
       rwa [map_natCast] at this)
     have hlt := Ideal.ramificationIdx'_lt hmap
     rw [Ideal.ramificationIdx'_eq_ramificationIdx w.asIdeal w'.asIdeal w.ne_bot] at hlt
-    have hpos := Ideal.ramificationIdx_pos w'.asIdeal (𝓞 E)
+    have hpos := Ideal.ramificationIdx_pos (R := 𝓞 E) w'.asIdeal
     omega
   have hfix := fix_of_ine A w h w' h' he σ hσ
   let t : G E' Ω := { σ.toRingEquiv with commutes' := hfix }

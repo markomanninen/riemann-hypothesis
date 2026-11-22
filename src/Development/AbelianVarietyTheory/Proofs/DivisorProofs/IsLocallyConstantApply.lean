@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 
 noncomputable section
@@ -47,12 +52,6 @@ theorem legHom_comp [Algebra.IsAlgebraic K Ω] (k : ℕ) (i : Fin (k + 1)) :
   · rfl
   · ext c g
     simp [legHom, baseHom]
-
-def cone [Algebra.IsAlgebraic K Ω] (k : ℕ) :
-    WidePullbackCone (fun _ : Fin (k + 1) => Spec.map (CommRingCat.ofHom (algebraMap K Ω))) :=
-  WidePullbackCone.mk (Spec.map (CommRingCat.ofHom (baseHom K Ω k)))
-    (fun i => Spec.map (CommRingCat.ofHom (legHom K Ω k i)))
-    (fun i => by rw [← Spec.map_comp, ← CommRingCat.ofHom_comp, legHom_comp])
 
 def tailG (k : ℕ) (σ : Fin (k + 1) → (Ω ≃ₐ[K] Ω)) : Fin k → (Ω ≃ₐ[K] Ω) := fun i => (σ 0)⁻¹ * σ i.succ
 

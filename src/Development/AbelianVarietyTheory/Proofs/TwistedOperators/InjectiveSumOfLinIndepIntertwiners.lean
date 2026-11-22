@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -33,7 +37,8 @@ theorem intertwiner_sum_eq_zero_imp {G : Type} [Group G] {N X : Type} [AddCommGr
         ∑ j, φ j (π g (w j)) = 0 := by
       intro g w hw
       simp_rw [IntertwiningMap.isIntertwining]
-      rw [← map_sum, hw, map_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, hw, map_zero]
     let P : Subrepresentation π :=
       { toSubmodule := K.map (LinearMap.proj (Fin.last m))
         apply_mem_toSubmodule := by

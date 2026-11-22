@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Resolvent
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Residue
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.RigidityTheorems.MultOne
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.RigidityTheorems.IsInLieAlgebraISmulAddConjTranspose
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Resolvent
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Residue
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.RigidityTheorems.MultOne
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.RigidityTheorems.IsInLieAlgebraISmulAddConjTranspose
+
+@[expose] public section
 
 noncomputable section
 
@@ -181,7 +185,8 @@ theorem tset_kV {ε : Fin n → Bool} {σ : Matrix (Fin n) (Fin n) ℂ → (H �
       simp only [Submodule.coe_smul] <;> rfl
     funext s
     show ((eeV E f' s : D) : H) = ∑ d, k s d • σ k ((eeV E f d : D) : H)
-    simp only [eeV_coord, hf', map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul, hsingle]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [eeV_coord, hf', map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul, hsingle]
     rw [tset_comb k hu (fun a b r => ((E a b (g r) : D) : H)) s, Finset.sum_comm]
   · have hf' : ∀ r, f' r = ∑ d, star (k r d) • g d := by
       intro r
@@ -192,7 +197,8 @@ theorem tset_kV {ε : Fin n → Bool} {σ : Matrix (Fin n) (Fin n) ℂ → (H �
       simp only [Submodule.coe_smul] <;> rfl
     funext r
     show ((eeVd E f' r : D) : H) = ∑ d, star (k r d) • σ k ((eeVd E f d : D) : H)
-    simp only [eeVd_coord, hf', map_sum, map_smul, map_neg, Submodule.coe_sum, Submodule.coe_smul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [eeVd_coord, hf', map_sum, map_smul, map_neg, Submodule.coe_sum, Submodule.coe_smul,
       Submodule.coe_neg, hsingle, smul_neg, Finset.sum_neg_distrib]
     rw [tset_combd k hu (fun a b s => ((E a b (g s) : D) : H)) r, Finset.sum_comm]
 
@@ -258,11 +264,12 @@ theorem isGKEndo_eeF {ε : Fin n → Bool} {σ : Matrix (Fin n) (Fin n) ℂ → 
           E a b (E r c (f r)) + ((if c = a then E r b (f r) else 0) - (if b = r then E a c (f r) else 0))
             + (if r = a then E a c (f b) else 0) := by
         intro r
-        rw [map_add, hc r c a b (f r)]
+        rw [map_add (f := _), hc r c a b (f r)]
         by_cases h : r = a
         · rw [if_pos h, if_pos h, h]
         · rw [if_neg h, if_neg h, map_zero]
-      simp only [e1, Finset.sum_add_distrib, Finset.sum_sub_distrib, hirr, Finset.sum_ite_eq,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [e1, Finset.sum_add_distrib, Finset.sum_sub_distrib, hirr, Finset.sum_ite_eq,
         Finset.sum_ite_eq', Finset.mem_univ, reduceIte, map_sum]
       abel
     · show eeVd E (tensVd E a b f) c = tensVd E a b (eeVd E f) c
@@ -275,22 +282,12 @@ theorem isGKEndo_eeF {ε : Fin n → Bool} {σ : Matrix (Fin n) (Fin n) ℂ → 
         by_cases h : s = b
         · rw [if_pos h, if_pos h, h]
         · rw [if_neg h, if_neg h, map_zero]
-      simp only [e2, Finset.sum_add_distrib, Finset.sum_sub_distrib, hirr, Finset.sum_ite_eq,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [e2, Finset.sum_add_distrib, Finset.sum_sub_distrib, hirr, Finset.sum_ite_eq,
         Finset.sum_ite_eq', Finset.mem_univ, reduceIte, map_sum, map_neg]
       by_cases hbc : b = c
       · rw [if_pos hbc, if_pos hbc.symm]; abel
       · rw [if_neg hbc, if_neg (Ne.symm hbc)]; abel
-
-theorem isGKEndo_one (dual : Bool) (ε : Fin n → Bool) (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H))
-    (E : Fin n → Fin n → Module.End ℂ D) (S : Submodule ℂ D) : IsGKEndo dual ε σ E S 1 := by
-  refine ⟨fun f hf => hf, fun a b f _ => rfl, fun k _ f _ f' _ h => h⟩
-
-theorem isGKEmb_bot (dual : Bool) (ε : Fin n → Bool) (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H))
-    (E : Fin n → Fin n → Module.End ℂ D) (S : Submodule ℂ D) : IsGKEmb dual ε σ E S ⊥ 0 := by
-  refine ⟨fun x _ => by simp, fun x hx _ => (Submodule.mem_bot ℂ).1 hx, fun a b x _ => by simp, ?_⟩
-  intro k _ x _ x' _ _
-  funext c
-  simp [kDiag]
 
 end Ambient
 

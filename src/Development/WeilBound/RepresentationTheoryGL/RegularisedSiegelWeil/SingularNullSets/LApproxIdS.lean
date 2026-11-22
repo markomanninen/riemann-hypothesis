@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LApproxIdA
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ArchimedeanHaarScalingNormStatement
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LApproxIdA
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ArchimedeanHaarScalingNormStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ namespace PositivityTheory.Rg.Rsw.L.LApproxId
 
 abbrev fixE {F : Type} [Field F] [NumberField F] (ε : AF F) : AddSubgroup (AF F) := fixS (AddMonoidHom.mulLeft ε)
 
-open Classical in
 
+open Classical in
 def IsIdF {F : Type} [Field F] [NumberField F] (S : Finset (HeightOneSpectrum (𝓞 F))) (ε : AF F) : Prop :=
   fstA F ε = 1 ∧ ∀ v, (sndA F ε) v = if v ∈ S then 1 else 0
 

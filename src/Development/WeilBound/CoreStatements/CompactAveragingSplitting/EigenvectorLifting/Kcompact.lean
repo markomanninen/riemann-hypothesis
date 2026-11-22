@@ -1,5 +1,10 @@
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.InertDef
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinPartIdemMulMemIff
+module
+
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.InertDef
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinPartIdemMulMemIff
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.PlaneAd
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,7 +67,7 @@ theorem isCompact_latW (W : Spc F E d) (hW : W.L.FG) (v : Pl F) : IsCompact (lat
       rw [← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun j _ => funext fun i => ?_
       have : ((a + b) j : Fv F v) = a j + b j := rfl
-      rw [this, map_add, add_smul]; rfl
+      rw [this, map_add (f := _), add_smul]; rfl
   have hf : Continuous f := by
     change Continuous fun a : Fin m → v.adicCompletionIntegers F =>
       ∑ j, fun i => atPlace v (a j : Fv F v) • inclR (F := F) (AF F) (s j i)
@@ -79,7 +84,8 @@ theorem isCompact_latW (W : Spc F E d) (hW : W.L.FG) (v : Pl F) : IsCompact (lat
       obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun ℤ).1 hy'
       refine ⟨fun j => c j • ⟨_, ha'⟩, funext fun i => ?_⟩
       change (∑ j, fun i => atPlace v (c j • evFin F v a) • inclR (F := F) (AF F) (s j i)) i = _
-      rw [Finset.sum_apply, Finset.sum_apply, map_sum, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finset.sum_apply, Finset.sum_apply, map_sum, Finset.smul_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_zsmul, ← kc_eq_atPlace ha, Pi.smul_apply, map_zsmul, smul_assoc, smul_comm]
     · rintro _ ⟨a, rfl⟩
@@ -88,11 +94,11 @@ theorem isCompact_latW (W : Spc F E d) (hW : W.L.FG) (v : Pl F) : IsCompact (lat
   rw [e, AddMonoidHom.coe_range]
   exact isCompact_range hf
 
-theorem kc_bound (W : Spc F E d) (hW : W.L.IsLattice E) (v : Pl F) (x : Fin d → E) :
+theorem kc_bound (W : Spc F E d) (hW : W.L.IsFullLattice E) (v : Pl F) (x : Fin d → E) :
     ∃ C : Set (Fin d → AE F E), IsCompact C ∧ ∀ M : Matrix (Fin d) (Fin d) (AE F E),
       (∀ y ∈ latW W v, M *ᵥ y ∈ latW W v) → M *ᵥ (fun i => atPlace v 1 • inclR (F := F) (AF F) (x i)) ∈ C := by
   have hx : x ∈ Submodule.span E (W.L : Set (Fin d → E)) := by
-    rw [Submodule.IsLattice.span_eq_top (A := E)]; trivial
+    rw [Submodule.IsFullLattice.span_eq_top (A := E)]; trivial
   induction hx using Submodule.span_induction with
   | mem y hy => exact ⟨_, isCompact_latW W hW.fg v, fun M hM => hM _ (kc_mem W v (one_mem _) hy)⟩
   | zero =>
@@ -106,7 +112,7 @@ theorem kc_bound (W : Spc F E d) (hW : W.L.IsLattice E) (v : Pl F) (x : Fin d �
     refine ⟨C + C', hC.add hC', fun M hM => ?_⟩
     have : (fun i => atPlace v 1 • inclR (F := F) (AF F) ((y + z) i)) =
         (fun i => atPlace v 1 • inclR (F := F) (AF F) (y i)) + fun i => atPlace v 1 • inclR (F := F) (AF F) (z i) :=
-      funext fun i => by rw [Pi.add_apply, map_add, smul_add]; rfl
+      funext fun i => by rw [Pi.add_apply, map_add (f := _), smul_add]; rfl
     rw [this, Matrix.mulVec_add]
     exact Set.add_mem_add (h M hM) (h' M hM)
   | smul c y _ hy =>
@@ -117,7 +123,7 @@ theorem kc_bound (W : Spc F E d) (hW : W.L.IsLattice E) (v : Pl F) (x : Fin d �
       funext fun i => by rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, map_mul, mul_smul_comm]
     rw [this, Matrix.mulVec_smul]
 
-theorem kc_mat (W : Spc F E d) (hW : W.L.IsLattice E) (v : Pl F) :
+theorem kc_mat (W : Spc F E d) (hW : W.L.IsFullLattice E) (v : Pl F) :
     ∃ S : Set (Matrix (Fin d) (Fin d) (AE F E)), IsCompact S ∧ ∀ M : Matrix (Fin d) (Fin d) (AE F E),
       At (evFin F v) (M - 1) → (∀ y ∈ latW W v, M *ᵥ y ∈ latW W v) → M ∈ S := by
   choose C hC h using fun j : Fin d => kc_bound W hW v (Pi.single j 1)
@@ -150,7 +156,7 @@ theorem kc_closedU (J : Matrix (Fin d) (Fin d) E) :
 theorem kc_cont_mat (J : Matrix (Fin d) (Fin d) E) : Continuous (mat : UA σ J → _) :=
   Units.continuous_val.comp continuous_subtype_val
 
-theorem isCompact_KAt (W : Spc F E d) (hW : W.L.IsLattice E) (v : Pl F) : IsCompact (KAt σ W v) := by
+theorem isCompact_KAt (W : Spc F E d) (hW : W.L.IsFullLattice E) (v : Pl F) : IsCompact (KAt σ W v) := by
   obtain ⟨S, hS, h⟩ := kc_mat W hW v
   have hL := (isCompact_latW W hW.fg v).isClosed
   have hm := kc_cont_mat (σ := σ) W.J
@@ -175,8 +181,15 @@ theorem isCompact_KAt (W : Spc F E d) (hW : W.L.IsLattice E) (v : Pl F) : IsComp
     change u • (mat k⁻¹ - 1) = 0
     rw [e, smul_neg, ← Matrix.mul_smul, hk.1 u hu, Matrix.mul_zero, neg_zero]
 
+private theorem kc_full_of_herm_or_skew {B : Base F E} (hB : B.IsGood σ) {Y : Spc F E n} {r s : ℕ}
+    (hY : Y.IsHerm σ B r s ∨ Y.IsSkew σ B r s) : Y.L.IsFullLattice E := by
+  rcases hY with h | h
+  · exact h.lat
+  · exact h.lat
+
+
 theorem stabiliser_compact : KCompact := fun _ _ _ _ _ _ _ _ _ _ _ _ W _ _ h v =>
   let ⟨_, _, hW⟩ := h.skew
-  isCompact_KAt W hW.lat v
+  isCompact_KAt W (kc_full_of_herm_or_skew h.base (Or.inr hW)) v
 
 end PositivityTheory.ThK

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.ProductBoundThreeFactors
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.ProductBoundThreeFactors
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,15 +29,19 @@ theorem finFub (hIS : S0.IntSStatement) (k r : ℕ) (ε : Fin (2 * r + k + 1) �
   have hHN := hB.2.2.2.2.2
   haveI : SigmaFinite μW := hHW.1
   haveI : SigmaFinite μN := hHN.1
-  have hint := finFub_int' hIS k r ε u lam' h z c Vp π μW μN P hP hB hgap hlam hgl T' μ' hμ v₁ v₂ ξ F C hFc hFb x hx
+  let integrand (y : Formalism.REAL.UJ ε)
+      (p : Formalism.QuantumDeterminants.Mt k r × Formalism.QuantumDeterminants.Mt k r) : Vp :=
+    F (Formalism.MainNotions.S.umat y) • (finKer T' μ' v₁ v₂ P x (Formalism.MainNotions.S.umat y) p •
+      chiInv (Formalism.MainNotions.S.psiGen k r z c) π (Matrix.of p.1) (Matrix.of p.2) ξ)
+  have hint : Integrable (Function.uncurry integrand) ((Formalism.REAL.muG ε).prod (μW.prod μN)) :=
+    finFub_int' hIS k r ε u lam' h z c Vp π μW μN P hP hB hgap hlam hgl T' μ' hμ v₁ v₂ ξ F C hFc hFb x hx
   by_contra hall
   push Not at hall
   apply hne
   have hae := ae_mem_unitary_nilpotent_product z μW μN hHW hHN
   have step1 : per P μW μN (Formalism.MainNotions.S.psiGen k r z c) π F ξ x =
-      ∫ p, ∫ y, F (Formalism.MainNotions.S.umat y) • (finKer T' μ' v₁ v₂ P x (Formalism.MainNotions.S.umat y) p •
-        chiInv (Formalism.MainNotions.S.psiGen k r z c) π (Matrix.of p.1) (Matrix.of p.2) ξ) ∂(Formalism.REAL.muG ε) ∂(μW.prod μN) := by
-    unfold per sInt
+      ∫ p, ∫ y, integrand y p ∂(Formalism.REAL.muG ε) ∂(μW.prod μN) := by
+    delta per sInt
     apply integral_congr_ae
     filter_upwards [hae] with p hp'
     have hs : Matrix.of p.1 * Matrix.of p.2 ∈ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk k r) :=
@@ -43,12 +51,11 @@ theorem finFub (hIS : S0.IntSStatement) (k r : ℕ) (ε : Fin (2 * r + k + 1) �
     rw [hrep _ hJ, ← integral_smul_const]
     congr 1
     funext y
-    rw [mul_smul]
-    rfl
-  rw [step1, integral_integral_swap (by exact hint.swap)]
-  have hz : ∀ y : Formalism.REAL.UJ ε, ∫ p, F (Formalism.MainNotions.S.umat y) • (finKer T' μ' v₁ v₂ P x (Formalism.MainNotions.S.umat y) p •
-        chiInv (Formalism.MainNotions.S.psiGen k r z c) π (Matrix.of p.1) (Matrix.of p.2) ξ) ∂(μW.prod μN) = 0 := by
+    exact mul_smul _ _ _
+  rw [step1, ← integral_integral_swap hint]
+  have hz : ∀ y, ∫ p, integrand y p ∂(μW.prod μN) = 0 := by
     intro y
+    dsimp only [integrand]
     rw [integral_smul]
     have hy := unitary_matrix_mem_set ε y
     have h0 := hall _ (cayley_conj_inv_mem_hermitian_group hP hy)
@@ -59,7 +66,7 @@ theorem finFub (hIS : S0.IntSStatement) (k r : ℕ) (ε : Fin (2 * r + k + 1) �
         fun p => ⟪v₂, S7.PsiM T' μ' (P * ((P⁻¹ * Formalism.MainNotions.S.umat y * P)⁻¹ * (Matrix.of p.1 * Matrix.of p.2 * x)) * P⁻¹) v₁⟫_ℂ •
           chiInv (Formalism.MainNotions.S.psiGen k r z c) π (Matrix.of p.1) (Matrix.of p.2) ξ := by
       funext p
-      unfold finKer
+      delta finKer
       rw [conj_inv_mul_conj _ _ _ hd]
     rw [hfun, h0, smul_zero]
   simp only [hz, integral_zero]

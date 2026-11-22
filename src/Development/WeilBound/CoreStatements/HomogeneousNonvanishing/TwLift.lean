@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.ProIsoAt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.ProIsoAt
+
+@[expose] public section
+
 open NumberField TensorProduct GlobalTheory.CompanionTheory.Ar
 
 namespace PositivityTheory.UnitarySelfGeneration
@@ -62,7 +67,7 @@ theorem tw_lift : ∀ (p : ℕ) [Fact p.Prime] (O : Type) [CommRing O] (L L' : T
           rintro z1 z2 ⟨w1, hw1⟩ ⟨w2, hw2⟩
           show ∃ w : ℤ_[p] ⊗[ℤ] L', _
           refine ⟨w1 + w2, ?_⟩
-          rw [Prod.fst_add, Prod.snd_add, TensorProduct.tmul_add, TensorProduct.tmul_add, map_add,
+          rw [Prod.fst_add, Prod.snd_add, TensorProduct.tmul_add, TensorProduct.tmul_add, map_add (f := _),
             hw1, hw2, smul_add]
           abel
         zero_mem' := by
@@ -73,7 +78,7 @@ theorem tw_lift : ∀ (p : ℕ) [Fact p.Prime] (O : Type) [CommRing O] (L L' : T
           show ∃ w : ℤ_[p] ⊗[ℤ] L', _
           refine ⟨LinearMap.baseChange ℤ_[p] (LinearMap.lsmul O L' c).toAddMonoidHom.toIntLinearMap w,
             ?_⟩
-          rw [Prod.smul_fst, Prod.smul_snd, hO c z.2, ← hls c z.1, hw, map_add, map_smul] },
+          rw [Prod.smul_fst, Prod.smul_snd, hO c z.2, ← hls c z.1, hw, map_add (f := _), map_smul] },
       fun k z => Iff.rfl⟩
   have hsurj : ∀ k, Function.Surjective ((LinearMap.snd O L' L).comp (G k).subtype) := by
     intro k x
@@ -108,7 +113,7 @@ theorem tw_lift : ∀ (p : ℕ) [Fact p.Prime] (O : Type) [CommRing O] (L L' : T
     obtain ⟨x, v, hv⟩ := PositivityTheory.UnitarySelfGeneration.lift_dense p L k (φ.symm ((1 : ℤ_[p]) ⊗ₜ[ℤ] y))
     obtain ⟨w, hw⟩ := ha k x
     have h1 : (1 : ℤ_[p]) ⊗ₜ[ℤ] y = φ ((1 : ℤ_[p]) ⊗ₜ[ℤ] x) + (p : ℤ_[p]) ^ k • φ v := by
-      rw [← map_smul, ← map_add, ← hv, LinearEquiv.apply_symm_apply]
+      rw [← map_smul, ← map_add (f := _), ← hv, LinearEquiv.apply_symm_apply]
     have h2 : (1 : ℤ_[p]) ⊗ₜ[ℤ] (y - a k x) = (p : ℤ_[p]) ^ k • (φ v - w) := by
       rw [TensorProduct.tmul_sub, h1, hw, smul_sub]
       abel
@@ -129,7 +134,7 @@ theorem tw_lift : ∀ (p : ℕ) [Fact p.Prime] (O : Type) [CommRing O] (L L' : T
     rw [e1, e2, hw1, hw2]
     refine Dvd.intro (B'.baseChange ℤ_[p] (φ ((1 : ℤ_[p]) ⊗ₜ[ℤ] x)) w2 +
       B'.baseChange ℤ_[p] w1 (φ ((1 : ℤ_[p]) ⊗ₜ[ℤ] y) + (p : ℤ_[p]) ^ k • w2)) ?_
-    simp only [map_add, LinearMap.add_apply, map_smul, LinearMap.smul_apply, smul_eq_mul]
+    simp only [map_add (f := _), LinearMap.add_apply, map_smul, LinearMap.smul_apply, smul_eq_mul]
     ring
   · intro k x
     obtain ⟨w1, hw1⟩ := ha (k + 1) x

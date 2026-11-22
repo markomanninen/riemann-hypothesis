@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankHopfAlgebraEqRangeMulKernelStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankHopfAlgebraEqRangeMulKernelStatement
+
+@[expose] public section
+
 open CategoryTheory TensorProduct Coalgebra Bialgebra GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Dieu
 
 namespace GlobalTheory.Dieu
@@ -18,7 +23,7 @@ theorem surjective_iff_finrank_quot_kerIdeal_eq_one :
     rw [kerIdeal_of_surjective hf]
     have hs : Function.Surjective (counitAlgHom k A) := fun c =>
       ⟨algebraMap k A c, by simp⟩
-    let e : (A ⧸ augIdeal k A) ≃ₐ[k] k := Ideal.quotientKerAlgEquivOfSurjective hs
+    let e : (A ⧸ augIdeal (R := k) (A := A)) ≃ₐ[k] k := Ideal.quotientKerAlgEquivOfSurjective hs
     rw [e.toLinearEquiv.finrank_eq, Module.finrank_self]
   · intro h
     have hL := GlobalTheory.T.finrank_hopfAlgebra_eq_range_mul_kernel k A C f

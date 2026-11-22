@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitsBasic
-import Mathlib.AlgebraicGeometry.Morphisms.FormallyUnramified
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitsBasic
+public import Mathlib.AlgebraicGeometry.Morphisms.FormallyUnramified
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry UpperTheory.Gal.G3
 

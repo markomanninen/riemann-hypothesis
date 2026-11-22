@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 def UpperTheory.One.M.Sw : Prop := False
 

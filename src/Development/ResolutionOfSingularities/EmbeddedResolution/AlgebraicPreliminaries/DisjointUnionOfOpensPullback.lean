@@ -1,5 +1,10 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.DisjointUnionOfOpens
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.DisjointUnionOfOpens
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
 
 namespace FunctorialResolution.EmbeddedResolution

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryExpSkewHermitian
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryExpSkewHermitian
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,10 +63,9 @@ theorem intertwines_unitary : ∀ {n : ℕ} (H V : Type) [NormedAddCommGroup H] 
   obtain ⟨X, hX, hk⟩ := GlobalTheory.CompanionTheory.UnitaryExp.exists_skew_exp_eq n k
   have hk1 : onePar X hX 1 = k := by
     apply Subtype.ext
-    have := congrArg Units.val hk
-    have h4 : ((uG k : _ˣ) : Matrix (Fin n) (Fin n) ℂ) = k.1 := rfl
-    rw [h4] at this
-    simpa [onePar] using this.symm
+    have hk_val : k.1 = (GLK.expG X 1).val := congrArg Units.val hk
+    delta GLK.expG at hk_val
+    exact (hk_val.trans (IsUnit.unit_spec _)).symm
   let Tc : H →L[ℝ] V :=
     (⟨T, T.continuous_of_finiteDimensional⟩ : H →L[ℂ] V).restrictScalars ℝ
   have hsub : ∀ u s : ℝ, onePar X hX (u - s) * onePar X hX s = onePar X hX u := by
@@ -83,7 +86,7 @@ theorem intertwines_unitary : ∀ {n : ℕ} (H V : Type) [NormedAddCommGroup H] 
       rw [← hsub u s, map_mul]
       rfl
     rw [e] at h2
-    simpa only [hT] using h2
+    simpa only [map_sum, map_smul, hT] using h2
   have hU : ∀ (v : V) (s : ℝ), HasDerivAt (fun s => σ (onePar X hX s) v)
       (∑ a, ∑ b, X a b • Kf a b (σ (onePar X hX s) v)) s := by
     intro v s

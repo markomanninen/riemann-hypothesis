@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.CoeffGaugeSquareLowDegree
-import Formalism.SharpRestriction.GrowthBounds.GenIntSPsubst
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoeffGaugeSquareLowDegree
+public import Formalism.SharpRestriction.GrowthBounds.GenIntSPsubst
+
+@[expose] public section
 
 noncomputable section
 

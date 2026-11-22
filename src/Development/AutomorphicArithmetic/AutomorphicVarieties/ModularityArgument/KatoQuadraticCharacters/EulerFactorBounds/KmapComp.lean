@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.KatoTwistedClassNormCompatibleCyclotomic
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsPrimitiveRootTopZeta
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.KatoTwistedClassNormCompatibleCyclotomic
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsPrimitiveRootTopZeta
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,12 +76,13 @@ theorem sApi : SApi := by
     fun a b h u => ev_succ _ _ _ (h u), fun a b u => ev_zero _ _, fun s t a => ?_, fun a => ?_⟩
   · rw [sub_self, map_zero]
   · rw [← neg_sub, map_neg, hab u, neg_zero]
-  · rw [← sub_add_sub_cancel (a u) (b u) (c u), map_add, hab u, hbc u, add_zero]
-  · rw [Pi.add_apply, Pi.add_apply, add_sub_add_comm, map_add, h u, h' u, add_zero]
+  · rw [← sub_add_sub_cancel (a u) (b u) (c u), map_add (f := _), hab u, hbc u, add_zero]
+  · rw [Pi.add_apply, Pi.add_apply, add_sub_add_comm, map_add (f := _), h u, h' u, add_zero]
   · rw [Pi.sub_apply, Pi.sub_apply, sub_sub_sub_comm, map_sub, h u, h' u, sub_zero]
   · rw [Pi.smul_apply, Pi.smul_apply, ← smul_sub, map_smul, h u, smul_zero]
-  · rw [Finset.sum_apply, Finset.sum_apply, ← Finset.sum_sub_distrib, map_sum]
-    exact Finset.sum_eq_zero (fun i hi => h i hi u)
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [Finset.sum_apply, Finset.sum_apply, ← Finset.sum_sub_distrib, map_sum]
+      exact Finset.sum_eq_zero (fun i hi => h i hi u)
   · rw [← sub_smul]
     apply ev_smul
     rw [idl, Ideal.span_singleton_pow, Ideal.mem_span_singleton]

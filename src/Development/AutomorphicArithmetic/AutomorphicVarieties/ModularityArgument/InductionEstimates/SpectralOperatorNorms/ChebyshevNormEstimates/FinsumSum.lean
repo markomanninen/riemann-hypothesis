@@ -1,14 +1,18 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.Exponents3
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.FamExp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.GoodConst
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.TruncSB
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.ActLaws
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.Regroup
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.SideEstX
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.SideEst
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.TotalDegreeAevalLe
-import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.Degree
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.Exponents3
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.FamExp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.GoodConst
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.TruncSB
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.ActLaws
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.Regroup
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.ChebyshevNormEstimates.SideEstX
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.SideEst
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.TotalDegreeAevalLe
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.Degree
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -97,7 +101,7 @@ private theorem val_gam (x : ℝ) (Λ : (K →+* ℂ) → Multiset ℂ) (t : Pl 
   unfold val
   induction γ using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p i hp => simp only [map_mul, hp]; simp
 
 private theorem evK_congr (hT : TruncSpec) (S : Set (Pl K)) (Φ : KF (Ix K n) (Pl K × Fin n)) (hΦ : admitted S Φ) (L L' : Ix K n → ℂ)
@@ -124,7 +128,7 @@ private theorem pt_card (b : Datum K n) (S : Set (Pl K)) (Λ : (K →+* ℂ) →
   rw [Multiset.card_map]
   exact ((h1 i).2 w hw).1
 
-private theorem tr_eq {l : ℕ} {μ : Measure (normOneGL K n)} [μ.IsHaarMeasure] {θ : Twist μ} (𝔰 : Side θ l)
+private theorem tr_eq {l : ℕ} {μ : Measure (normOneGL (K := K) (n := n))} [μ.IsHaarMeasure] {θ : Twist μ} (𝔰 : Side θ l)
     (p : Submodule ℂ (LL μ) → Prop) (x : ℝ) (j : ℕ) :
     𝔰.tr p x j = ∑ᶠ y ∈ {y : ℝ × Submodule ℂ (LL μ) | (IsSummand μ y.2 ∧ y.2.map (θ.U : LL μ →ₗ[ℂ] LL μ) = y.2 ∧
       eigIn y.2 𝔰.toAmp.A y.1 ≠ ⊥) ∧ p y.2 ∧ y.1 = x}, trOn (eigIn y.2 𝔰.toAmp.A y.1) ((𝔰.Uq 0 ^ j) ∘L Rop μ 𝔰.g ∘L θ.U) := by
@@ -218,7 +222,7 @@ private theorem abs3 (T₁ T₂ T₃ : Type) (a₁ : T₁ → ℝ) (a₂ : T₂ 
       exact hj m hm m' hm'
 
 private theorem side_fin (hTr : TrExp) (hEV : EvVal) (hTS : TruncSpec) (hOS : OneSide) (hEv : EvEx) {K : Type} [Field K] [NumberField K]
-    [IsTotallyComplex K] {μ : Measure (normOneGL K (2 + 2))} [μ.IsHaarMeasure] {θ : Twist μ} (𝔰 : Side θ 2) :
+    [_root_.NumberField.IsTotallyComplex K] {μ : Measure (normOneGL (K := K) (n := (2 + 2)))} [μ.IsHaarMeasure] {θ : Twist μ} (𝔰 : Side θ 2) :
     (∀ y : ℝ × Submodule ℂ (LL μ), (IsSummand μ y.2 ∧ y.2.map (θ.U : LL μ →ₗ[ℂ] LL μ) = y.2 ∧ eigIn y.2 𝔰.toAmp.A y.1 ≠ ⊥) → 0 < y.1 →
       ExpF fun j => trOn (eigIn y.2 𝔰.toAmp.A y.1) ((𝔰.Uq 0 ^ j) ∘L Rop μ 𝔰.g ∘L θ.U)) ∧
     ∀ x : ℝ, 0 < x → {y : ℝ × Submodule ℂ (LL μ) |
@@ -239,8 +243,8 @@ private theorem side_fin (hTr : TrExp) (hEV : EvVal) (hTS : TruncSpec) (hOS : On
   · obtain ⟨η, s, h1, h2, h3⟩ := key _ hx
     exact s.finite_toSet.subset fun y hy => (h2 y).mpr ⟨hy.2 ▸ h1, hy.1⟩
 
-private theorem fam_card (hPar : ParEx) {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
-    {μ : Measure (normOneGL E (2 + 2))} [μ.IsHaarMeasure] {θ : Twist μ} {𝔢 : Side θ 2} (𝔵 : UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.Fam 𝔢) :
+private theorem fam_card (hPar : ParEx) {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
+    {μ : Measure (normOneGL (K := E) (n := (2 + 2)))} [μ.IsHaarMeasure] {θ : Twist μ} {𝔢 : Side θ 2} (𝔵 : UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.Fam 𝔢) :
     (∀ τ, (𝔵.Λ τ).card = 2 + 2) ∧ ∀ w ∉ 𝔢.S, (𝔵.t w).card = 2 + 2 ∧ 0 ∉ 𝔵.t w := by
   have h1 : IsSummand (BW.mu1 E 2) 𝔵.τ₁ :=
     ⟨𝔵.pair.irr₁.le, 𝔵.pair.irr₁.closed, 𝔵.pair.irr₁.inv, 𝔵.pair.irr₁.ne, fun V a b c => 𝔵.pair.irr₁.irr V a b c⟩
@@ -253,8 +257,8 @@ private theorem fam_card (hPar : ParEx) {E : Type} [Field E] [NumberField E] [Is
     exact ⟨(hPar E 2 (by norm_num) _ _ h1).2.2 w _ (𝔵.at₁.2 w hw), (hPar E 2 (by norm_num) _ _ h2).2.2 w _ (𝔵.at₂.2 w hw)⟩
 
 private theorem sep (hEV : EvVal) (hVB : ValBc) (hSep : SepPoly) {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E]
-    [Algebra F E] [IsTotallyComplex F] [IsTotallyComplex E] {n : ℕ} (hn : 0 < n)
-    {μE : Measure (normOneGL E n)} [μE.IsHaarMeasure] {μF : Measure (normOneGL F n)} [μF.IsHaarMeasure] (𝔞 : Amp μE) (𝔟 : Amp μF)
+    [Algebra F E] [_root_.NumberField.IsTotallyComplex F] [_root_.NumberField.IsTotallyComplex E] {n : ℕ} (hn : 0 < n)
+    {μE : Measure (normOneGL (K := E) (n := n))} [μE.IsHaarMeasure] {μF : Measure (normOneGL (K := F) (n := n))} [μF.IsHaarMeasure] (𝔞 : Amp μE) (𝔟 : Amp μF)
     (hS : ∀ w : Pl E, w ∈ 𝔞.S ↔ w.under (𝓞 F) ∈ 𝔟.S) (Λ : (E →+* ℂ) → Multiset ℂ) (t : Pl E → Multiset ℂ)
     (hΛ : ∀ τ, (Λ τ).card = n) (ht : ∀ w ∉ 𝔞.S, (t w).card = n)
     (sE : Finset (ℝ × Submodule ℂ (LL μE))) (sF : Finset (ℝ × Submodule ℂ (LL μF)))
@@ -302,129 +306,130 @@ private theorem sep (hEV : EvVal) (hVB : ValBc) (hSep : SepPoly) {F E : Type} [F
   · rw [(hVB F E n y.1 _ (tF y) P fun z hz => ((hLF y hy).2 _ fun h => h1 _ (h2.1 z hz) ((hS _).mpr h)).1).1]
     exact h4 (Sum.inr ⟨y, Finset.mem_filter.mpr ⟨hy, hy'⟩⟩) y.1
 
-set_option maxHeartbeats 1600000 in
+set_option maxHeartbeats 16000000 in
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.cixOf :
     ParEx → TrExp → EvVal → ValBc → KillEx2 → KfBc → TruncSpec → SepPoly → OneSide → OneSideX → EvEx → Kill → KillExempt → FamEx → CIx := by
-  intro hPar hTr hEV hVB hK2 hKf hTS hSep hOS hOSX hEv hKill hKX hFam F E _ _ _ _ _ _ _ μE _ μF _ θ 𝔢 𝔣 c hG 𝔵 hoff
-  classical
-  obtain ⟨hAE0, hAE1, -, evE, hevE, hinE⟩ := hEv E (2 + 2) (by norm_num) μE 𝔢.toAmp
-  obtain ⟨hAF0, hAF1, -, evF, hevF, hinF⟩ := hEv F (2 + 2) (by norm_num) μF 𝔣.toAmp
-  obtain ⟨Nn, Cf, hN⟩ := hFam E μE _ 𝔵.τ₁ 𝔵.τ₂ 𝔵.pair 𝔵.D 𝔵.d 𝔵.d' 𝔵.A 𝔵.A' 𝔵.P 𝔵.isP
-  obtain ⟨evz, hevz⟩ := evzEx 𝔵 evE hevE
-  obtain ⟨⟨sp, hsp, hsp1, hsp0⟩, hexp⟩ := famExp 𝔵 Nn Cf hN hAE0 hAE1
-  refine ⟨Nn, hN.2, fun x hx => ?_⟩
-  by_cases hx1 : 1 < x
-  · refine Eventually.of_forall fun j => ?_
-    rw [hsp0 x hx (fun h => absurd (hsp1 x h) (not_le.mpr hx1)) j]
-    simp only [Side.tr, eig_bot _ _ hAE1 x hx1, eig_bot _ _ hAF1 x hx1, trOn_bot, finsum_zero, mul_zero, add_zero]
-  obtain ⟨d, hd, hd'⟩ := UpperTheory.ConvolutionTheory.FX.degree
-  obtain ⟨hS, p, C₀, hp, hGeo⟩ := hG
-  obtain ⟨eE, fE⟩ := side_fin hTr hEV hTS hOS hEv 𝔢
-  obtain ⟨eF, fF⟩ := side_fin hTr hEV hTS hOS hEv 𝔣
-  obtain ⟨hΛ, ht⟩ := fam_card hPar 𝔵
-  have key := abs3 _ _ _ Prod.fst id Prod.fst
-    (fun y j => trOn (eigIn y.2 𝔢.toAmp.A y.1) ((𝔢.Uq 0 ^ j) ∘L Rop μE 𝔢.g ∘L θ.U))
-    (fun a j => (1 / 2 : ℂ) * 𝔵.tr Nn a j)
-    (fun y j => -c * trOn (eigIn y.2 𝔣.toAmp.A y.1) ((𝔣.Uq 0 ^ j) ∘L Rop μF 𝔣.g ∘L (Twist.id μF).U))
-    _ (fun y => At μE 𝔢.S y.2 𝔵.Λ 𝔵.t) (fun a => a ∈ sp) (fun _ => True)
-    _ (fun y => ∃ Λ' t', At μF 𝔣.S y.2 Λ' t' ∧ 𝔵.Λ = bcInf Λ' ∧ ∀ w ∉ 𝔢.S, 𝔵.t w = bcSat t' w)
-    x hx (not_lt.mp hx1) (2 * p) (by omega) d hd hd' eE (fun a _ _ => ExpF.mul (hexp a) _)
-    (fun y h1 h2 => (eF y h1 h2).mul _) (fE x hx) (sp.finite_toSet.subset fun a ha => ha.1) (fF x hx) ?_
-  · refine key.mono fun j hj => ?_
-    rw [tr_eq, tr_eq]
-    have h2 : ∑ᶠ i ∈ {i : ℝ | i ∈ sp ∧ True ∧ id i = x}, (1 / 2 : ℂ) * 𝔵.tr Nn i j = (1 / 2 : ℂ) * 𝔵.tr Nn x j := by
-      by_cases hxs : x ∈ sp
-      · have : {i : ℝ | i ∈ sp ∧ True ∧ id i = x} = {x} := by
-          ext i
-          exact ⟨fun h => h.2.2, fun h => ⟨h ▸ hxs, trivial, h⟩⟩
-        rw [this, finsum_mem_singleton]
-      · have : {i : ℝ | i ∈ sp ∧ True ∧ id i = x} = ∅ := by
-          ext i
-          exact ⟨fun h => hxs (h.2.2 ▸ h.1), fun h => h.elim⟩
-        rw [this, finsum_mem_empty, hsp0 x hx hxs, mul_zero]
-    rw [h2, ← mul_finsum_mem] at hj
-    linear_combination hj
-  intro N
-  obtain ⟨cE, hE⟩ := sideEstX hOSX hEV hTS E μE θ 𝔢 𝔵 evE evz Nn Cf hevE hinE hevz hN.1 sp hsp C₀ N
-  obtain ⟨cF, hF⟩ := sideEst hOS hEV hTS F (2 + 2) 2 (by norm_num) μF _ 𝔣 evF hevF hinF C₀
-  refine ⟨max cE cF, fun η hη hηx => ?_⟩
-  have hη1 : η ≤ 1 := hηx.le.trans (not_lt.mp hx1)
-  obtain ⟨χ, hχ1, hχ2, hχ3, hχ4, hχ5⟩ := chi_ex η hη
-  obtain ⟨sE, hsE, -, hE⟩ := hE η hη hη1 χ hχ1 hχ2 hχ3
-  obtain ⟨sF, hsF, -, hF⟩ := hF η hη hη1 χ hχ1 hχ2 hχ3
-  obtain ⟨B, _, b, hb1, hb2, hb3⟩ := hKX E μE θ 𝔢 𝔵 η hη
-  obtain ⟨B', _, b', hb1', hb3'⟩ := hKill F (2 + 2) (by norm_num) μF 𝔣.toAmp η hη
-  obtain ⟨L, hL⟩ := (bdLem E (2 + 2) ∅ ∅ 0 0 0 0 0 0).2.2.2 𝔵.Λ hΛ
-  obtain ⟨Φ, hΦ, hΦ0, hΦ1, hΦ2⟩ := hK2 F E (2 + 2) 𝔢.S 𝔣.S hS B B' b b' hb1 hb1' L 𝔵.t (fun w hw => (ht w hw).1)
-    (by rw [hL]; exact hb2) (by rw [hL]; exact fun i => hoff (b' i))
-  obtain ⟨⟨G, hΦG⟩, hT⟩ := hTS E (2 + 2) 𝔢.S Φ hΦ
-  obtain ⟨⟨κ₁, D₁, hκ₁, hB₁⟩, -⟩ := hT G hΦG
-  obtain ⟨Φ', G', hΦ', hΦG', hGG, hΦΦ⟩ := hKf F E (2 + 2) 𝔢.S 𝔣.S hS Φ G hΦ hΦG
-  have hkill' : ∀ i, Kills 𝔣.S Φ' (b' i) := fun i L' t' h => by
-    rw [hΦΦ L' t' (pt_card _ _ _ _ h)]
-    exact hΦ2 i L' t' h
-  obtain ⟨P₀, κ₂, D₂, hκ₂, hB₂, hP0, hPE, hPF⟩ := sep hEV hVB hSep (by norm_num) 𝔢.toAmp 𝔣.toAmp hS 𝔵.Λ 𝔵.t hΛ
-    (fun w hw => (ht w hw).1) sE sF
-    (fun y hy => ⟨hη.trans ((hsE y).mp hy).1, ((hsE y).mp hy).2.1, ((hsE y).mp hy).2.2.2⟩)
-    (fun y hy => ⟨hη.trans ((hsF y).mp hy).1, ((hsF y).mp hy).2.1, ((hsF y).mp hy).2.2.2⟩)
-  have hκ : ∀ w ∈ κ₁ ∪ κ₂, w ∉ 𝔢.S := fun w hw => (Finset.mem_union.mp hw).elim (hκ₁ w) (hκ₂ w)
-  obtain ⟨γ, hγ1, hγ0, hγ⟩ := hGeo (κ₁ ∪ κ₂) hκ 𝔵.t (fun w hw => ht w (hκ w hw)) (D₁ + D₂)
-  have hP : ∀ y ∈ (map C γ * P₀ : PR E (2 + 2)).vars, y.1 ∉ 𝔢.S := fun y hy =>
-    (Finset.mem_union.mp (vars_mul _ _ hy)).elim (fun h => hκ _ (hγ1 y (vars_map _ _ h))) fun h => hκ₂ _ (hB₂.1 y h)
-  have hVB0 := hVB F E (2 + 2) 0 (fun _ => 0) (fun _ => Multiset.replicate (2 + 2) 0) (map C γ * P₀) fun _ _ => by simp
-  have hP' : ∀ y ∈ (bcPR F (map C γ * P₀ : PR E (2 + 2))).vars, y.1 ∉ 𝔣.S := fun y hy h => by
-    obtain ⟨y', h1, h2⟩ := hVB0.2.1 y hy
-    exact hP y' h1 ((hS _).mpr (h2 ▸ h))
-  obtain ⟨uE, w, huE, hw, hE⟩ := hE Φ G hΦ hΦG (hb3 evE hevE hevz.comm χ hχ1 hχ4 hχ5 Φ G hΦ hΦ1 hΦG) _ hP
-  obtain ⟨uF, huF, hF⟩ := hF Φ' G' hΦ' hΦG' (hb3' evF hevF χ hχ1 hχ4 hχ5 Φ' G' hΦ' hkill' hΦG') _ hP'
-  refine ⟨sE, sp.filter (η < ·), sF, uE, w, uF, x * val x 𝔵.Λ 𝔵.t (map C γ * P₀ : PR E (2 + 2)) * evK L (hval 𝔵.t) Φ, ?_, hsE,
-    fun a => by rw [Finset.mem_filter, and_comm]; rfl, hsF, fun y hy => ?_, fun a _ => ?_, fun y hy => ?_, fun s₀ => ?_⟩
-  · rw [map_mul, val_gam]
-    exact mul_ne_zero (mul_ne_zero (by exact_mod_cast hx.ne') (mul_ne_zero hγ0 (hP0 x hx.ne'))) hΦ0
-  · by_cases hg : At μE 𝔢.S y.2 𝔵.Λ 𝔵.t
-    · refine ⟨_, huE y hy L 𝔵.t (hL ▸ hg), fun _ h => ?_, fun h => absurd hg h⟩
-      rw [hL, h]
-    · obtain ⟨L', t', h1, h2⟩ := hPE y hy hg
-      refine ⟨_, huE y hy L' t' h1, fun h => absurd h hg, fun _ => ?_⟩
-      rw [map_mul, h2, mul_zero, mul_zero, zero_mul]
-  · refine ⟨_, hw a L hL, fun _ h => ?_, fun h => absurd trivial h⟩
-    rw [show a = x from h]
-  · by_cases hg : ∃ Λ' t', At μF 𝔣.S y.2 Λ' t' ∧ 𝔵.Λ = bcInf Λ' ∧ ∀ w ∉ 𝔢.S, 𝔵.t w = bcSat t' w
-    · obtain ⟨Λ', t', h1, h2, h3⟩ := id hg
-      obtain ⟨L', rfl⟩ := (bdLem F (2 + 2) ∅ ∅ 0 0 0 0 0 0).2.2.2 Λ' fun τ => (h1.1 τ).1
-      refine ⟨_, huF y hy L' t' h1, fun _ h => ?_, fun h => absurd hg h⟩
-      rw [h, hΦΦ L' t' fun v hv => (h1.2 v hv).1,
-        (hVB F E (2 + 2) x _ t' _ fun z hz => (h1.2 _ fun h => hP z hz ((hS _).mpr h)).1).1, ← h2,
-        val_congr x _ _ _ _ h3 _ hP, evK_congr hTS _ Φ hΦ L (fun y => L' (y.1.comp (algebraMap F E), y.2)) _ _ (hL.trans h2) h3]
-    · obtain ⟨L', t', h1, h2⟩ := hPF y hy hg
-      refine ⟨_, huF y hy L' t' h1, fun h => absurd h hg, fun _ => ?_⟩
-      rw [map_mul, map_mul, h2, mul_zero, mul_zero, zero_mul]
-  obtain ⟨ME, hME, hE⟩ := hE (2 * p) (by omega) s₀
-  obtain ⟨MF, hMF, hF⟩ := hF (2 * p) N s₀
-  obtain ⟨J, hJ⟩ := eventually_atTop.mp (hγ evE evF hevE hevF)
-  refine ⟨ME + (‖c‖ + 1) * MF, ?_⟩
-  filter_upwards [hE, eventually_ge_atTop J, deg_ev d hd p hp (s₀ + D₂)] with j hE hj hdeg m hm m' hm'
-  have hBd : Bd (κ₁ ∪ κ₂) (D₁ + D₂) ((j + m') / p) (chebP η (j / (2 * p) + m) * (trunc (d j) G * P₀) : PR E (2 + 2)) := by
-    have h1 := (bdLem E (2 + 2) _ _ _ _ _ _ _ _).1 (hB₁ (d j)) hB₂
-    have h2 := (bdLem E (2 + 2) _ _ _ _ _ _ _ _).1 ((bdLem E (2 + 2) (κ₁ ∪ κ₂) ∅ 0 0 0 0 0 0).2.1 η (j / (2 * p) + m)) h1
-    refine (bdLem E (2 + 2) _ _ _ _ _ _ _ 0).2.2.1 ?_ (by omega) ?_ h2
-    · intro z hz
-      simpa using hz
-    · have := hdeg m'
-      omega
-  obtain ⟨gE, gF, r1, r2, r3⟩ := hJ (j + m') (by omega) _ hBd.1 hBd.2.1 hBd.2.2
-  have q1 : (map C γ * (chebP η (j / (2 * p) + m) * (trunc (d j) G * P₀)) : PR E (2 + 2)) =
-      chebP η (j / (2 * p) + m) * (trunc (d j) G * (map C γ * P₀)) := by ring
-  rw [q1] at r1 r2
-  rw [map_mul (bcPR F), map_mul (bcPR F), hVB0.2.2, ← hGG] at r2
-  have b1 := hE (d j) m hm m' hm' gE r1
-  have b2 := hF j (d j) m hm m' hm' gF r2
-  refine le_trans ?_ (comb_bd ME MF ‖c‖ hME hMF (norm_nonneg _) (d j) cE cF j _ _ _ _ (Nat.cast_nonneg _) (by positivity)
-    (by positivity) b1 b2)
-  rw [← norm_mul, ← norm_neg (_ - _ - _)]
-  refine le_trans (le_of_eq ?_) (norm_add_le _ _)
-  congr 1
-  rw [r3, mul_sub, Finset.mul_sum, ← sub_eq_zero]
-  have : ∀ (u v : ℂ), u * (-c * v) = -(c * (u * v)) := fun u v => by ring
-  simp only [this, Finset.sum_neg_distrib, id]
-  ring
+  set_option maxHeartbeats 4000000 in
+    intro hPar hTr hEV hVB hK2 hKf hTS hSep hOS hOSX hEv hKill hKX hFam F E _ _ _ _ _ _ _ μE _ μF _ θ 𝔢 𝔣 c hG 𝔵 hoff
+    classical
+    obtain ⟨hAE0, hAE1, -, evE, hevE, hinE⟩ := hEv E (2 + 2) (by norm_num) μE 𝔢.toAmp
+    obtain ⟨hAF0, hAF1, -, evF, hevF, hinF⟩ := hEv F (2 + 2) (by norm_num) μF 𝔣.toAmp
+    obtain ⟨Nn, Cf, hN⟩ := hFam E μE _ 𝔵.τ₁ 𝔵.τ₂ 𝔵.pair 𝔵.D 𝔵.d 𝔵.d' 𝔵.A 𝔵.A' 𝔵.P 𝔵.isP
+    obtain ⟨evz, hevz⟩ := evzEx 𝔵 evE hevE
+    obtain ⟨⟨sp, hsp, hsp1, hsp0⟩, hexp⟩ := famExp 𝔵 Nn Cf hN hAE0 hAE1
+    refine ⟨Nn, hN.2, fun x hx => ?_⟩
+    by_cases hx1 : 1 < x
+    · refine Eventually.of_forall fun j => ?_
+      rw [hsp0 x hx (fun h => absurd (hsp1 x h) (not_le.mpr hx1)) j]
+      simp only [Side.tr, eig_bot _ _ hAE1 x hx1, eig_bot _ _ hAF1 x hx1, trOn_bot, finsum_zero, mul_zero, add_zero]
+    obtain ⟨d, hd, hd'⟩ := UpperTheory.ConvolutionTheory.FX.degree
+    obtain ⟨hS, p, C₀, hp, hGeo⟩ := hG
+    obtain ⟨eE, fE⟩ := side_fin hTr hEV hTS hOS hEv 𝔢
+    obtain ⟨eF, fF⟩ := side_fin hTr hEV hTS hOS hEv 𝔣
+    obtain ⟨hΛ, ht⟩ := fam_card hPar 𝔵
+    have key := abs3 _ _ _ Prod.fst id Prod.fst
+      (fun y j => trOn (eigIn y.2 𝔢.toAmp.A y.1) ((𝔢.Uq 0 ^ j) ∘L Rop μE 𝔢.g ∘L θ.U))
+      (fun a j => (1 / 2 : ℂ) * 𝔵.tr Nn a j)
+      (fun y j => -c * trOn (eigIn y.2 𝔣.toAmp.A y.1) ((𝔣.Uq 0 ^ j) ∘L Rop μF 𝔣.g ∘L (Twist.id μF).U))
+      _ (fun y => At μE 𝔢.S y.2 𝔵.Λ 𝔵.t) (fun a => a ∈ sp) (fun _ => True)
+      _ (fun y => ∃ Λ' t', At μF 𝔣.S y.2 Λ' t' ∧ 𝔵.Λ = bcInf Λ' ∧ ∀ w ∉ 𝔢.S, 𝔵.t w = bcSat t' w)
+      x hx (not_lt.mp hx1) (2 * p) (by omega) d hd hd' eE (fun a _ _ => ExpF.mul (hexp a) _)
+      (fun y h1 h2 => (eF y h1 h2).mul _) (fE x hx) (sp.finite_toSet.subset fun a ha => ha.1) (fF x hx) ?_
+    · refine key.mono fun j hj => ?_
+      rw [tr_eq, tr_eq]
+      have h2 : ∑ᶠ i ∈ {i : ℝ | i ∈ sp ∧ True ∧ id i = x}, (1 / 2 : ℂ) * 𝔵.tr Nn i j = (1 / 2 : ℂ) * 𝔵.tr Nn x j := by
+        by_cases hxs : x ∈ sp
+        · have : {i : ℝ | i ∈ sp ∧ True ∧ id i = x} = {x} := by
+            ext i
+            exact ⟨fun h => h.2.2, fun h => ⟨h ▸ hxs, trivial, h⟩⟩
+          rw [this, finsum_mem_singleton]
+        · have : {i : ℝ | i ∈ sp ∧ True ∧ id i = x} = ∅ := by
+            ext i
+            exact ⟨fun h => hxs (h.2.2 ▸ h.1), fun h => h.elim⟩
+          rw [this, finsum_mem_empty, hsp0 x hx hxs, mul_zero]
+      rw [h2, ← mul_finsum_mem] at hj
+      linear_combination hj
+    intro N
+    obtain ⟨cE, hE⟩ := sideEstX hOSX hEV hTS E μE θ 𝔢 𝔵 evE evz Nn Cf hevE hinE hevz hN.1 sp hsp C₀ N
+    obtain ⟨cF, hF⟩ := sideEst hOS hEV hTS F (2 + 2) 2 (by norm_num) μF _ 𝔣 evF hevF hinF C₀
+    refine ⟨max cE cF, fun η hη hηx => ?_⟩
+    have hη1 : η ≤ 1 := hηx.le.trans (not_lt.mp hx1)
+    obtain ⟨χ, hχ1, hχ2, hχ3, hχ4, hχ5⟩ := chi_ex η hη
+    obtain ⟨sE, hsE, -, hE⟩ := hE η hη hη1 χ hχ1 hχ2 hχ3
+    obtain ⟨sF, hsF, -, hF⟩ := hF η hη hη1 χ hχ1 hχ2 hχ3
+    obtain ⟨B, _, b, hb1, hb2, hb3⟩ := hKX E μE θ 𝔢 𝔵 η hη
+    obtain ⟨B', _, b', hb1', hb3'⟩ := hKill F (2 + 2) (by norm_num) μF 𝔣.toAmp η hη
+    obtain ⟨L, hL⟩ := (bdLem E (2 + 2) ∅ ∅ 0 0 0 0 0 0).2.2.2 𝔵.Λ hΛ
+    obtain ⟨Φ, hΦ, hΦ0, hΦ1, hΦ2⟩ := hK2 F E (2 + 2) 𝔢.S 𝔣.S hS B B' b b' hb1 hb1' L 𝔵.t (fun w hw => (ht w hw).1)
+      (by rw [hL]; exact hb2) (by rw [hL]; exact fun i => hoff (b' i))
+    obtain ⟨⟨G, hΦG⟩, hT⟩ := hTS E (2 + 2) 𝔢.S Φ hΦ
+    obtain ⟨⟨κ₁, D₁, hκ₁, hB₁⟩, -⟩ := hT G hΦG
+    obtain ⟨Φ', G', hΦ', hΦG', hGG, hΦΦ⟩ := hKf F E (2 + 2) 𝔢.S 𝔣.S hS Φ G hΦ hΦG
+    have hkill' : ∀ i, Kills 𝔣.S Φ' (b' i) := fun i L' t' h => by
+      rw [hΦΦ L' t' (pt_card _ _ _ _ h)]
+      exact hΦ2 i L' t' h
+    obtain ⟨P₀, κ₂, D₂, hκ₂, hB₂, hP0, hPE, hPF⟩ := sep hEV hVB hSep (by norm_num) 𝔢.toAmp 𝔣.toAmp hS 𝔵.Λ 𝔵.t hΛ
+      (fun w hw => (ht w hw).1) sE sF
+      (fun y hy => ⟨hη.trans ((hsE y).mp hy).1, ((hsE y).mp hy).2.1, ((hsE y).mp hy).2.2.2⟩)
+      (fun y hy => ⟨hη.trans ((hsF y).mp hy).1, ((hsF y).mp hy).2.1, ((hsF y).mp hy).2.2.2⟩)
+    have hκ : ∀ w ∈ κ₁ ∪ κ₂, w ∉ 𝔢.S := fun w hw => (Finset.mem_union.mp hw).elim (hκ₁ w) (hκ₂ w)
+    obtain ⟨γ, hγ1, hγ0, hγ⟩ := hGeo (κ₁ ∪ κ₂) hκ 𝔵.t (fun w hw => ht w (hκ w hw)) (D₁ + D₂)
+    have hP : ∀ y ∈ (map C γ * P₀ : PR E (2 + 2)).vars, y.1 ∉ 𝔢.S := fun y hy =>
+      (Finset.mem_union.mp (vars_mul _ _ hy)).elim (fun h => hκ _ (hγ1 y (vars_map _ _ h))) fun h => hκ₂ _ (hB₂.1 y h)
+    have hVB0 := hVB F E (2 + 2) 0 (fun _ => 0) (fun _ => Multiset.replicate (2 + 2) 0) (map C γ * P₀) fun _ _ => by simp
+    have hP' : ∀ y ∈ (bcPR F (map C γ * P₀ : PR E (2 + 2))).vars, y.1 ∉ 𝔣.S := fun y hy h => by
+      obtain ⟨y', h1, h2⟩ := hVB0.2.1 y hy
+      exact hP y' h1 ((hS _).mpr (h2 ▸ h))
+    obtain ⟨uE, w, huE, hw, hE⟩ := hE Φ G hΦ hΦG (hb3 evE hevE hevz.comm χ hχ1 hχ4 hχ5 Φ G hΦ hΦ1 hΦG) _ hP
+    obtain ⟨uF, huF, hF⟩ := hF Φ' G' hΦ' hΦG' (hb3' evF hevF χ hχ1 hχ4 hχ5 Φ' G' hΦ' hkill' hΦG') _ hP'
+    refine ⟨sE, sp.filter (η < ·), sF, uE, w, uF, x * val x 𝔵.Λ 𝔵.t (map C γ * P₀ : PR E (2 + 2)) * evK L (hval 𝔵.t) Φ, ?_, hsE,
+      fun a => by rw [Finset.mem_filter, and_comm]; rfl, hsF, fun y hy => ?_, fun a _ => ?_, fun y hy => ?_, fun s₀ => ?_⟩
+    · rw [map_mul, val_gam]
+      exact mul_ne_zero (mul_ne_zero (by exact_mod_cast hx.ne') (mul_ne_zero hγ0 (hP0 x hx.ne'))) hΦ0
+    · by_cases hg : At μE 𝔢.S y.2 𝔵.Λ 𝔵.t
+      · refine ⟨_, huE y hy L 𝔵.t (hL ▸ hg), fun _ h => ?_, fun h => absurd hg h⟩
+        rw [hL, h]
+      · obtain ⟨L', t', h1, h2⟩ := hPE y hy hg
+        refine ⟨_, huE y hy L' t' h1, fun h => absurd h hg, fun _ => ?_⟩
+        rw [map_mul, h2, mul_zero, mul_zero, zero_mul]
+    · refine ⟨_, hw a L hL, fun _ h => ?_, fun h => absurd trivial h⟩
+      rw [show a = x from h]
+    · by_cases hg : ∃ Λ' t', At μF 𝔣.S y.2 Λ' t' ∧ 𝔵.Λ = bcInf Λ' ∧ ∀ w ∉ 𝔢.S, 𝔵.t w = bcSat t' w
+      · obtain ⟨Λ', t', h1, h2, h3⟩ := id hg
+        obtain ⟨L', rfl⟩ := (bdLem F (2 + 2) ∅ ∅ 0 0 0 0 0 0).2.2.2 Λ' fun τ => (h1.1 τ).1
+        refine ⟨_, huF y hy L' t' h1, fun _ h => ?_, fun h => absurd hg h⟩
+        rw [h, hΦΦ L' t' fun v hv => (h1.2 v hv).1,
+          (hVB F E (2 + 2) x _ t' _ fun z hz => (h1.2 _ fun h => hP z hz ((hS _).mpr h)).1).1, ← h2,
+          val_congr x _ _ _ _ h3 _ hP, evK_congr hTS _ Φ hΦ L (fun y => L' (y.1.comp (algebraMap F E), y.2)) _ _ (hL.trans h2) h3]
+      · obtain ⟨L', t', h1, h2⟩ := hPF y hy hg
+        refine ⟨_, huF y hy L' t' h1, fun h => absurd h hg, fun _ => ?_⟩
+        rw [map_mul, map_mul, h2, mul_zero, mul_zero, zero_mul]
+    obtain ⟨ME, hME, hE⟩ := hE (2 * p) (by omega) s₀
+    obtain ⟨MF, hMF, hF⟩ := hF (2 * p) N s₀
+    obtain ⟨J, hJ⟩ := eventually_atTop.mp (hγ evE evF hevE hevF)
+    refine ⟨ME + (‖c‖ + 1) * MF, ?_⟩
+    filter_upwards [hE, eventually_ge_atTop J, deg_ev d hd p hp (s₀ + D₂)] with j hE hj hdeg m hm m' hm'
+    have hBd : Bd (κ₁ ∪ κ₂) (D₁ + D₂) ((j + m') / p) (chebP η (j / (2 * p) + m) * (trunc (d j) G * P₀) : PR E (2 + 2)) := by
+      have h1 := (bdLem E (2 + 2) _ _ _ _ _ _ _ _).1 (hB₁ (d j)) hB₂
+      have h2 := (bdLem E (2 + 2) _ _ _ _ _ _ _ _).1 ((bdLem E (2 + 2) (κ₁ ∪ κ₂) ∅ 0 0 0 0 0 0).2.1 η (j / (2 * p) + m)) h1
+      refine (bdLem E (2 + 2) _ _ _ _ _ _ _ 0).2.2.1 ?_ (by omega) ?_ h2
+      · intro z hz
+        simpa using hz
+      · have := hdeg m'
+        omega
+    obtain ⟨gE, gF, r1, r2, r3⟩ := hJ (j + m') (by omega) _ hBd.1 hBd.2.1 hBd.2.2
+    have q1 : (map C γ * (chebP η (j / (2 * p) + m) * (trunc (d j) G * P₀)) : PR E (2 + 2)) =
+        chebP η (j / (2 * p) + m) * (trunc (d j) G * (map C γ * P₀)) := by ring
+    rw [q1] at r1 r2
+    rw [map_mul (bcPR F), map_mul (bcPR F), hVB0.2.2, ← hGG] at r2
+    have b1 := hE (d j) m hm m' hm' gE r1
+    have b2 := hF j (d j) m hm m' hm' gF r2
+    refine le_trans ?_ (comb_bd ME MF ‖c‖ hME hMF (norm_nonneg _) (d j) cE cF j _ _ _ _ (Nat.cast_nonneg _) (by positivity)
+      (by positivity) b1 b2)
+    rw [← norm_mul, ← norm_neg (_ - _ - _)]
+    refine le_trans (le_of_eq ?_) (norm_add_le _ _)
+    congr 1
+    rw [r3, mul_sub, Finset.mul_sum, ← sub_eq_zero]
+    have : ∀ (u v : ℂ), u * (-c * v) = -(c * (u * v)) := fun u v => by ring
+    simp only [this, Finset.sum_neg_distrib, id]
+    ring

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjRelEquiv
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ValIrreducible
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjRelEquiv
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ValIrreducible
+
+@[expose] public section
+
 open NumberField GlobalTheory.UnitaryBC IsDedekindDomain Matrix Polynomial GlobalTheory.CuspRep Formalism.UG GlobalTheory.BCT GlobalTheory.KapLat
 open scoped Classical
 
@@ -13,12 +18,14 @@ variable {K : GlobalTheory.UnitLemma.UQ} (B : GlobalTheory.UnitLemma.InvAlg K)
 theorem herm_sum_left (x z : B.A) {ι : Type} (s : Finset ι) (f : ι → B.A) :
     B.herm x (∑ k ∈ s, f k) z = ∑ k ∈ s, B.herm x (f k) z := by
   unfold GlobalTheory.UnitLemma.InvAlg.herm
-  rw [Finset.mul_sum, Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.mul_sum, Finset.sum_mul, map_sum]
 
 theorem herm_sum_right (x y : B.A) {ι : Type} (s : Finset ι) (f : ι → B.A) :
     B.herm x y (∑ k ∈ s, f k) = ∑ k ∈ s, B.herm x y (f k) := by
   unfold GlobalTheory.UnitLemma.InvAlg.herm
-  rw [map_sum, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.mul_sum, map_sum]
 
 theorem herm_eq_sum {n : ℕ} (x : B.A) (b : Module.Basis (Fin n) K.E B.A)
     (hb : ∀ i j, B.herm x (b i) (b j) = if i = j then 1 else 0) (y z : B.A) :
@@ -47,7 +54,8 @@ theorem GlobalTheory.KapLat.exists_model_of_orthonormal_basis :
   have hψ : ∀ y k, ψ y k = e (b.repr y k) := fun y k => rfl
   have hstd : ∀ y z, stdH w (ψ y) (ψ z) = e (B.herm x y z) := by
     intro y z
-    rw [herm_eq_sum B x b hb, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [herm_eq_sum B x b hb, map_sum]
     unfold stdH
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [hψ, hψ, map_mul, hbr.1]
@@ -59,7 +67,8 @@ theorem GlobalTheory.KapLat.exists_model_of_orthonormal_basis :
       conv_lhs => rw [← b.sum_repr y]
       rw [Finset.mul_sum]
       exact Finset.sum_congr rfl fun i _ => mul_smul_comm _ _ _
-    rw [hψ, hy, map_sum, Finsupp.coe_finsetSum, Finset.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hψ, hy, map_sum, Finsupp.coe_finsetSum, Finset.sum_apply, map_sum]
     simp only [Matrix.mulVec, dotProduct, M, Matrix.of_apply, hψ, map_smul, Finsupp.smul_apply, smul_eq_mul,
       map_mul]
     exact Finset.sum_congr rfl fun i _ => mul_comm _ _

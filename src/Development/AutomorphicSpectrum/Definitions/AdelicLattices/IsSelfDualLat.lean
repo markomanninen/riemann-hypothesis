@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,13 +93,6 @@ def adLevelGrp (c : E ≃ₐ[F] E) (J : Matrix (Fin N) (Fin N) E) (Λ : Submodul
     (𝔞 : Ideal (𝓞 E)) : Subgroup (GL (Fin N) (Adf F E)) :=
   suGrp (sigAd c) (J.map (inclAd F E)) ⊓
     congGrp (hatLat F Λ.toAddSubgroup) (hatLat F (𝔞 • Λ).toAddSubgroup)
-
-structure IsSelfDualLat (σ : E →+* E) (ξ : E) (J : Matrix (Fin N) (Fin N) E)
-    (Λ : Submodule (𝓞 E) (Fin N → E)) : Prop where
-  fg : Λ.FG
-  span : Submodule.span E (Λ : Set (Fin N → E)) = ⊤
-  dual : ∀ x : Fin N → E, x ∈ Λ ↔
-    ∀ y ∈ Λ, ∃ k : ℤ, Algebra.trace ℚ E (ξ * ∑ i, ∑ j, x i * J i j * σ (y j)) = k
 
 def AdGenus (c : E ≃ₐ[F] E) (J : Matrix (Fin N) (Fin N) E) (Λ Λ' : Submodule (𝓞 E) (Fin N → E)) : Prop :=
   ∃ g ∈ uGrp (sigAd c) (J.map (inclAd F E)), ∀ x,

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdEApply
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CardCokernelUnramifiedOrderMatrixOfDetBase
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdEApply
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CardCokernelUnramifiedOrderMatrixOfDetBase
+
+@[expose] public section
 
 open GlobalTheory.UnitLemma GlobalTheory.StableLatCount Polynomial
 
@@ -31,8 +35,8 @@ namespace GlobalTheory.LatIndexDet
 variable (O : Type) [CommRing O] [IsDomain O] (E : Type) [Field E] [Algebra O E] [IsFractionRing O E]
   {V : Type} [AddCommGroup V] [Module E V] [Module O V] [IsScalarTower O E V]
 
-include E in
 
+include E in
 theorem isTorsionFree_lat (N : Submodule O V) : Module.IsTorsionFree O N := by
   refine Module.IsTorsionFree.of_smul_eq_zero fun r x h => ?_
   by_cases hr : r = 0

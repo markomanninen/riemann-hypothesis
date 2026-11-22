@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PieriBlockIdeals.PieriColumnMinors.RowGenDerivative
+module
+
+public import Mathlib
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.RowGenDerivative
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility TensorProduct
 

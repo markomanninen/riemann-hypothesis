@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.ShiftSupport
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.HintSph
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalFixedOpenSubgroupGLw
-import Development.AutomorphicSpectrum.Proofs.TwistedProofs.SphericalVectorMemFixedRight
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.ShiftSupport
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.HintSph
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalFixedOpenSubgroupGLw
+public import Development.AutomorphicSpectrum.Proofs.TwistedProofs.SphericalVectorMemFixedRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -106,13 +110,13 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.exAct :
     UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.ExAct := by
   intro E _ _ _ n w e
   have hu : IsUnifV E w (unif w) := Classical.epsilon_spec (exists_isUnifV w)
-  have hK : IsCommensurated (KGL w n) := Formalism.UG.Final.GLintComm E w n
-  have hT : ∀ j : Fin (n + 1), Tj ℂ n (Ov E w) (unif w) j ∈ Formalism.UG.Hecke ℂ (KGL w n) :=
+  have hK : IsCommensurated (KGL w (n := n)) := Formalism.UG.Final.GLintComm E w n
+  have hT : ∀ j : Fin (n + 1), Tj ℂ n (Ov E w) (unif w) j ∈ Formalism.UG.Hecke ℂ (KGL w (n := n)) :=
     fun j => Tj_mem_hecke hu j
   obtain ⟨ho, hc⟩ := GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL (E := E) w n
-  have hmem : fn1 n w e ∈ Formalism.UG.Hecke ℂ (KGL w n) := fn_mem _ hK _ hT e
-  have hH : IsHecke (KGL w n) (fn1 n w e) := isHecke_of_mem hc hmem
+  have hmem : fn1 n w e ∈ Formalism.UG.Hecke ℂ (KGL w (n := n)) := fn_mem _ hK _ hT e
+  have hH : IsHecke (KGL w (n := n)) (fn1 n w e) := isHecke_of_mem hc hmem
   refine ⟨hH, fun V _ _ ρ x B hx => ?_⟩
-  have hfix : x ∈ fixed ρ (KGL w n) := hx.2.1
+  have hfix : x ∈ fixed ρ (KGL w (n := n)) := hx.2.1
   rw [(cvOp _ _ ho hc V ρ _ _ hH hH x hfix).2.2]
   exact heckeVec_fn _ hK _ hT ρ hfix _ (fun j => hx.2.2.2 (unif w) hu j (Nat.lt_succ_iff.1 j.2)) e

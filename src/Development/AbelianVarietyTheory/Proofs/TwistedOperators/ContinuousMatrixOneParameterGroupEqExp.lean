@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsUnitIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsUnitIntegral
+
+@[expose] public section
+
 open scoped Matrix
 open Filter Topology
 

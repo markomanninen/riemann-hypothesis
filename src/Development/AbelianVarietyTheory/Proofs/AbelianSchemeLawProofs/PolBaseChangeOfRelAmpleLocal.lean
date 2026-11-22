@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.TangentLinearity.ConstPullback
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.TangentLinearity.ConstPullback
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,8 +64,8 @@ theorem sym_pull (h : IsGrpPullback A' A f φ) (hs : Sym A L) : Sym A' (L.pull �
     rw [Category.assoc, inv_comm h, ← Category.assoc, ← hψ, Category.assoc]
   · exact hψ.symm
 
-omit [GrpObj A] [GrpObj A'] in
 
+omit [GrpObj A] [GrpObj A'] in
 theorem relAmple_restrict (h : IsPullback φ A'.hom A.hom f) (hL : L.IsLB) (hA : RelAmple A L)
     (V : S.Opens) (hV : IsAffineOpen V) :
     RelAmple (Over.mk (A'.hom ∣_ (f ⁻¹ᵁ V))) ((L.pull φ).pull (A'.hom ⁻¹ᵁ (f ⁻¹ᵁ V)).ι) := by
@@ -70,8 +74,8 @@ theorem relAmple_restrict (h : IsPullback φ A'.hom A.hom f) (hL : L.IsLB) (hA :
   obtain ⟨w, hw⟩ : LBIso ((L.pull φ).pull (A'.hom ⁻¹ᵁ (f ⁻¹ᵁ V)).ι) (L.pull ((A'.hom ⁻¹ᵁ (f ⁻¹ᵁ V)).ι ≫ φ)) :=
     LBIso.chartPull (chartPullLinComb L φ (fun _ : PUnit => (A'.hom ⁻¹ᵁ (f ⁻¹ᵁ V)).ι)
       (fun _ => (A'.hom ⁻¹ᵁ (f ⁻¹ᵁ V)).ι ≫ φ) (fun _ => 1) (𝟙 _) fun _ => (Category.id_comp _).symm)
-      (chartPullId _) (lbIso_refl (pull_isLB hL _))
-  exact relAmple_pull (A' := Over.mk (A'.hom ∣_ (f ⁻¹ᵁ V))) H hL (pull_isLB (pull_isLB hL _) _)
+      (chartPullId _) (lbIso_refl (LB.isLB_pull hL _))
+  exact relAmple_pull (A' := Over.mk (A'.hom ∣_ (f ⁻¹ᵁ V))) H hL (LB.isLB_pull (LB.isLB_pull hL _) _)
     ((isGen_iff w).1 hw) V hV (fun y => y.2) hA
 
 end GlobalTheory.PolBaseChange
@@ -87,7 +91,7 @@ theorem polBaseChange_of_relAmple_local :
   intro hloc S S' f P
   have h := isGrpPullback_pullback P.A f
   have hab := TLinPf.isAb_pullback f P.A P.isAb
-  have hL' := pull_isLB P.isLB (pullback.fst P.A.hom f)
+  have hL' := LB.isLB_pull P.isLB (pullback.fst P.A.hom f)
   obtain ⟨w, hw⟩ := lbIso_refl hL'
   have := hab.proper
   have hamp : RelAmple ((Over.pullback f).obj P.A) (P.L.pull (pullback.fst P.A.hom f)) := by

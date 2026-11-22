@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.InvertibleSheaf
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjSpace
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjTwist
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.Linear
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.InvertibleSheaf
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjSpace
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjTwist
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.Linear
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh

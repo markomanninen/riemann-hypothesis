@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.MaIntEmpty
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.EventuallyDifferentiableAtOfContDiffAtTwo
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.MaIntEmpty
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.EventuallyDifferentiableAtOfContDiffAtTwo
+
+@[expose] public section
 
 open Matrix Complex ComplexConjugate
 open scoped ComplexOrder MatrixOrder
@@ -45,15 +49,10 @@ theorem form_sub_left (H : Matrix n n ℂ) (v v' w : n → ℂ) :
 theorem form_sub_right (H : Matrix n n ℂ) (v w w' : n → ℂ) :
     form H v (w - w') = form H v w - form H v w' := by simp [form, mulVec_sub]
 
-theorem form_add (H K : Matrix n n ℂ) (v w : n → ℂ) :
-    form (H + K) v w = form H v w + form K v w := by simp [form, add_mulVec]
-
-theorem form_smul (c : ℂ) (H : Matrix n n ℂ) (v w : n → ℂ) :
-    form (c • H) v w = c * form H v w := by simp [form, smul_mulVec]
-
 theorem conj_form {H : Matrix n n ℂ} (hH : H.IsHermitian) (v w : n → ℂ) :
     conj (form H v w) = form H w v := by
-  simp only [form_eq_sum, map_sum, map_mul, conj_conj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [form_eq_sum, map_sum, map_mul, conj_conj]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rw [← hH.apply a b]; simp; ring
@@ -105,7 +104,7 @@ theorem gnorm_smul {H : Matrix n n ℂ} (hH : H.PosSemidef) (c : ℂ) (v : n →
 theorem gnorm_add_le {H : Matrix n n ℂ} (hH : H.PosSemidef) (v w : n → ℂ) :
     gnorm H (v + w) ≤ gnorm H v + gnorm H w := by
   obtain ⟨R, -, h2⟩ := exists_root hH
-  rw [h2, h2, h2, map_add]; exact norm_add_le _ _
+  rw [h2, h2, h2, map_add (f := _)]; exact norm_add_le _ _
 
 theorem norm_form_le {H : Matrix n n ℂ} (hH : H.PosSemidef) (v w : n → ℂ) :
     ‖form H v w‖ ≤ gnorm H v * gnorm H w := by
@@ -178,9 +177,6 @@ theorem opNorm_le_iff (hH : H.PosDef) (hK : K.PosSemidef) {T : Matrix n m ℂ} {
   ⟨fun h => ⟨(opNorm_nonneg H K T).trans h, fun v => (gnorm_mulVec_le hH hK T v).trans
     (mul_le_mul_of_nonneg_right h (gnorm_nonneg _ _))⟩, fun h => opNorm_le_of_bound h.1 h.2⟩
 
-@[simp] theorem opNorm_zero (H : Matrix m m ℂ) (K : Matrix n n ℂ) : opNorm H K 0 = 0 :=
-  le_antisymm (opNorm_le_of_bound le_rfl fun v => by simp) (opNorm_nonneg _ _ _)
-
 theorem opNorm_add_le (hH : H.PosDef) (hK : K.PosSemidef) (S T : Matrix n m ℂ) :
     opNorm H K (S + T) ≤ opNorm H K S + opNorm H K T :=
   opNorm_le_of_bound (add_nonneg (opNorm_nonneg _ _ _) (opNorm_nonneg _ _ _)) fun v => by
@@ -193,13 +189,6 @@ theorem opNorm_smul_le (hH : H.PosDef) (hK : K.PosSemidef) (c : ℂ) (T : Matrix
   opNorm_le_of_bound (mul_nonneg (norm_nonneg _) (opNorm_nonneg _ _ _)) fun v => by
     rw [smul_mulVec, gnorm_smul hK, mul_assoc]
     exact mul_le_mul_of_nonneg_left (gnorm_mulVec_le hH hK T v) (norm_nonneg _)
-
-theorem opNorm_mul_le (hH : H.PosDef) (hK : K.PosDef) (hL : L.PosSemidef) (S : Matrix l n ℂ)
-    (T : Matrix n m ℂ) : opNorm H L (S * T) ≤ opNorm K L S * opNorm H K T :=
-  opNorm_le_of_bound (mul_nonneg (opNorm_nonneg _ _ _) (opNorm_nonneg _ _ _)) fun v => by
-    rw [← mulVec_mulVec, mul_assoc]
-    exact (gnorm_mulVec_le hK hL S _).trans
-      (mul_le_mul_of_nonneg_left (gnorm_mulVec_le hH hK.posSemidef T v) (opNorm_nonneg _ _ _))
 
 theorem le_two_mul_of_forall_scale {x c a b : ℝ} (hc : 0 ≤ c) (ha : 0 ≤ a) (hb : 0 ≤ b)
     (h : ∀ s, 0 < s → x ≤ c * (s * a ^ 2 + b ^ 2 / s)) : x ≤ 2 * c * a * b := by
@@ -252,12 +241,6 @@ theorem opNorm_le_of_selfAdjoint (hH : H.PosSemidef) {T : Matrix m m ℂ}
   · rw [← h0]; exact mul_nonneg hc (gnorm_nonneg _ _)
   · nlinarith
 
-theorem norm_form_mulVec_le (hH : H.PosDef) (T : Matrix m m ℂ) (v : m → ℂ) :
-    ‖form H (T *ᵥ v) v‖ ≤ opNorm H H T * gnorm H v ^ 2 := by
-  refine (norm_form_le hH.posSemidef _ _).trans ?_
-  rw [sq, ← mul_assoc]
-  exact mul_le_mul_of_nonneg_right (gnorm_mulVec_le hH hH.posSemidef T v) (gnorm_nonneg _ _)
-
 end OpNorm
 
 section Sesq
@@ -273,9 +256,6 @@ structure IsSesq (F : V → V → M) : Prop where
   add_right : ∀ x y y', F x (y + y') = F x y + F x y'
 
   smul_right : ∀ (c : ℂ) x y, F x (c • y) = conj c • F x y
-
-theorem isSesq_form (H : Matrix n n ℂ) : IsSesq (form H) :=
-  ⟨form_add_left H, form_smul_left H, form_add_right H, form_smul_right H⟩
 
 theorem IsSesq.polarisation {F : V → V → M} (hF : IsSesq F) (x y : V) :
     F x y = (1 / 4 : ℂ) • ((F (x + y) (x + y) + (-1 : ℂ) • F (x - y) (x - y)) +
@@ -330,25 +310,20 @@ def quotGram (H : Matrix (m ⊕ l) (m ⊕ l) ℂ) : Matrix l l ℂ :=
 
 def orthCoeff (H : Matrix (m ⊕ l) (m ⊕ l) ℂ) : Matrix m l ℂ := H.toBlocks₁₁ᵀ⁻¹ * H.toBlocks₂₁ᵀ
 
-variable (m l) in
 
+variable (m l) in
 def incl : Matrix (m ⊕ l) m ℂ := fromRows 1 0
 
-variable (m l) in
 
+variable (m l) in
 def quotMap : Matrix l (m ⊕ l) ℂ := fromCols 0 1
 
 def orthLift (H : Matrix (m ⊕ l) (m ⊕ l) ℂ) : Matrix (m ⊕ l) l ℂ := fromRows (-orthCoeff H) 1
 
 def orthProj (H : Matrix (m ⊕ l) (m ⊕ l) ℂ) : Matrix m (m ⊕ l) ℂ := fromCols 1 (orthCoeff H)
 
-def blockSS (H T : Matrix (m ⊕ l) (m ⊕ l) ℂ) : Matrix m m ℂ := orthProj H * T * incl m l
-
-def blockSQ (H T : Matrix (m ⊕ l) (m ⊕ l) ℂ) : Matrix m l ℂ := orthProj H * T * orthLift H
-
-def blockQS (T : Matrix (m ⊕ l) (m ⊕ l) ℂ) : Matrix l m ℂ := quotMap m l * T * incl m l
-
-def blockQQ (H T : Matrix (m ⊕ l) (m ⊕ l) ℂ) : Matrix l l ℂ := quotMap m l * T * orthLift H
+def blockQS (T : Matrix (m ⊕ l) (m ⊕ l) ℂ) : Matrix l m ℂ :=
+  quotMap (m := m) (l := l) * T * incl (m := m) (l := l)
 
 variable {H : Matrix (m ⊕ l) (m ⊕ l) ℂ}
 
@@ -356,31 +331,9 @@ theorem blockQS_eq (T : Matrix (m ⊕ l) (m ⊕ l) ℂ) : blockQS T = T.toBlocks
   conv_lhs => rw [← fromBlocks_toBlocks T]
   simp [blockQS, quotMap, incl, fromCols_mul_fromBlocks, fromCols_mul_fromRows]
 
-theorem orthProj_mul_incl (H : Matrix (m ⊕ l) (m ⊕ l) ℂ) : orthProj H * incl m l = 1 := by
-  simp [orthProj, incl, fromCols_mul_fromRows]
-
-theorem orthProj_mul_orthLift (H : Matrix (m ⊕ l) (m ⊕ l) ℂ) : orthProj H * orthLift H = 0 := by
-  simp [orthProj, orthLift, fromCols_mul_fromRows]
-
-theorem quotMap_mul_incl : quotMap m l * incl m l = 0 := by
-  simp [quotMap, incl, fromCols_mul_fromRows]
-
-theorem quotMap_mul_orthLift (H : Matrix (m ⊕ l) (m ⊕ l) ℂ) : quotMap m l * orthLift H = 1 := by
+theorem quotMap_mul_orthLift (H : Matrix (m ⊕ l) (m ⊕ l) ℂ) :
+    quotMap (m := m) (l := l) * orthLift H = 1 := by
   simp [quotMap, orthLift, fromCols_mul_fromRows]
-
-theorem incl_mul_orthProj_add (H : Matrix (m ⊕ l) (m ⊕ l) ℂ) :
-    incl m l * orthProj H + orthLift H * quotMap m l = 1 := by
-  rw [quotMap, orthLift, incl, orthProj, fromRows_mul_fromCols, fromRows_mul_fromCols,
-    fromBlocks_add, ← fromBlocks_one]
-  simp
-
-theorem form_incl (H : Matrix (m ⊕ l) (m ⊕ l) ℂ) (u u' : m → ℂ) :
-    form H (incl m l *ᵥ u) (incl m l *ᵥ u') = form (subGram H) u u' := by
-  rw [form_mulVec, form]
-  congr 2
-  conv_lhs => rw [← fromBlocks_toBlocks H]
-  simp [incl, subGram, transpose_fromRows, conjTranspose_fromRows_eq_fromCols_conjTranspose,
-    transpose_fromCols, fromCols_mul_fromBlocks, fromCols_mul_fromRows]
 
 theorem orthLift_transpose_mul (hu : IsUnit (subGram H).det) :
     (orthLift H)ᵀ * H = fromCols 0 (quotGram H) := by
@@ -392,12 +345,6 @@ theorem orthLift_transpose_mul (hu : IsUnit (subGram H).det) :
   congr 1
   · rw [Matrix.neg_mul, nonsing_inv_mul_cancel_right H.toBlocks₁₁ _ hu]; simp
   · rw [quotGram]; simp [sub_eq_neg_add]
-
-theorem form_orthLift_incl (hu : IsUnit (subGram H).det) (q : l → ℂ) (u : m → ℂ) :
-    form H (orthLift H *ᵥ q) (incl m l *ᵥ u) = 0 := by
-  rw [form_mulVec, orthLift_transpose_mul hu]
-  simp [incl, conjTranspose_fromRows_eq_fromCols_conjTranspose, transpose_fromCols,
-    fromCols_mul_fromRows]
 
 theorem form_orthLift (hu : IsUnit (subGram H).det) (q q' : l → ℂ) :
     form H (orthLift H *ᵥ q) (orthLift H *ᵥ q') = form (quotGram H) q q' := by
@@ -414,17 +361,17 @@ theorem det_eq_det_subGram_mul (hu : IsUnit (subGram H).det) :
 theorem isUnit_det_quotGram (h : IsUnit H.det) (hu : IsUnit (subGram H).det) :
     IsUnit (quotGram H).det := isUnit_of_mul_isUnit_right (det_eq_det_subGram_mul hu ▸ h)
 
-omit [Fintype m] [Fintype l] [DecidableEq m] [DecidableEq l] in
 
+omit [Fintype m] [Fintype l] [DecidableEq m] [DecidableEq l] in
 theorem isHermitian_subGram (h : H.IsHermitian) : (subGram H).IsHermitian := h.submatrix Sum.inl
 
-omit [Fintype m] [Fintype l] [DecidableEq m] [DecidableEq l] in
 
+omit [Fintype m] [Fintype l] [DecidableEq m] [DecidableEq l] in
 theorem conjTranspose_toBlocks₁₂ (h : H.IsHermitian) : H.toBlocks₁₂ᴴ = H.toBlocks₂₁ := by
   ext i j; exact h.apply _ _
 
-omit [Fintype l] [DecidableEq l] in
 
+omit [Fintype l] [DecidableEq l] in
 theorem isHermitian_quotGram (h : H.IsHermitian) : (quotGram H).IsHermitian := by
   have h1 : H.toBlocks₁₁.IsHermitian := isHermitian_subGram h
   have h2 : H.toBlocks₂₂.IsHermitian := h.submatrix Sum.inr
@@ -433,8 +380,8 @@ theorem isHermitian_quotGram (h : H.IsHermitian) : (quotGram H).IsHermitian := b
   rw [IsHermitian, conjTranspose_mul, conjTranspose_mul, conjTranspose_conjTranspose, h1.inv.eq,
     Matrix.mul_assoc]
 
-omit [DecidableEq m] [DecidableEq l] in
 
+omit [DecidableEq m] [DecidableEq l] in
 theorem posDef_subGram (h : H.PosDef) : (subGram H).PosDef :=
   h.submatrix Sum.inl_injective
 
@@ -451,62 +398,6 @@ section FinFrame
 
 variable {N : ℕ}
 
-def splitFin {k : ℕ} (hk : k ≤ N) : Fin k ⊕ Fin (N - k) ≃ Fin N :=
-  finSumFinEquiv.trans (finCongr (Nat.add_sub_cancel' hk))
-
-def adapt {k : ℕ} (hk : k ≤ N) (T : Matrix (Fin N) (Fin N) ℂ) :
-    Matrix (Fin k ⊕ Fin (N - k)) (Fin k ⊕ Fin (N - k)) ℂ :=
-  T.submatrix (splitFin hk) (splitFin hk)
-
-def firstGram {k : ℕ} (hk : k ≤ N) (H : Matrix (Fin N) (Fin N) ℂ) : Matrix (Fin k) (Fin k) ℂ :=
-  H.submatrix (Fin.castLE hk) (Fin.castLE hk)
-
-def lastGram {k : ℕ} (hk : k ≤ N) (H : Matrix (Fin N) (Fin N) ℂ) :
-    Matrix (Fin (N - k)) (Fin (N - k)) ℂ := quotGram (adapt hk H)
-
-def stepGram (H : Matrix (Fin N) (Fin N) ℂ) (i : Fin N) :
-    Matrix (Fin i ⊕ Unit) (Fin i ⊕ Unit) ℂ :=
-  H.submatrix (Sum.elim (Fin.castLE i.2.le) fun _ => i) (Sum.elim (Fin.castLE i.2.le) fun _ => i)
-
-def gradedGram (H : Matrix (Fin N) (Fin N) ℂ) (i : Fin N) : Matrix Unit Unit ℂ :=
-  quotGram (stepGram H i)
-
-theorem det_firstGram_succ (H : Matrix (Fin N) (Fin N) ℂ) (i : Fin N)
-    (hu : IsUnit (firstGram i.2.le H).det) :
-    (firstGram (k := i + 1) i.2 H).det = (firstGram i.2.le H).det * gradedGram H i () () := by
-  have h := det_eq_det_subGram_mul (H := stepGram H i) hu
-  rw [det_unique (quotGram _)] at h
-  rw [← det_submatrix_equiv_self
-    ((Equiv.sumCongr (Equiv.refl _) (Equiv.ofUnique Unit (Fin 1))).trans finSumFinEquiv)]
-  refine Eq.trans ?_ h
-  congr 1
-  ext (a | a) (b | b) <;> rfl
-
-theorem posDef_gradedGram {H : Matrix (Fin N) (Fin N) ℂ} (h : H.PosDef) (i : Fin N) :
-    (gradedGram H i).PosDef := by
-  refine posDef_quotGram (h.submatrix ?_)
-  rintro (a | a) (b | b) hab
-  · exact congrArg _ (Fin.castLE_injective i.2.le hab)
-  · exact absurd (congrArg Fin.val hab) a.2.ne
-  · exact absurd (congrArg Fin.val hab) b.2.ne'
-  · rfl
-
 end FinFrame
-
-example : form (1 : Matrix Unit Unit ℂ) (fun _ => I) (fun _ => 1) = I := by simp [form_eq_sum]
-
-example : quotGram (fromBlocks (1 : Matrix Unit Unit ℂ) (of fun _ _ => I) (of fun _ _ => -I)
-    (of fun _ _ => 3) : Matrix (Unit ⊕ Unit) (Unit ⊕ Unit) ℂ) () () = 2 := by
-  simp [quotGram, mul_apply]; norm_num
-
-example : opNorm (1 : Matrix Unit Unit ℂ) 1 ((2 : ℂ) • (1 : Matrix Unit Unit ℂ)) ≤ 2 ∧
-    ¬ opNorm (1 : Matrix Unit Unit ℂ) 1 ((2 : ℂ) • (1 : Matrix Unit Unit ℂ)) ≤ 1 := by
-  have h : ∀ v : Unit → ℂ, gnorm 1 (((2 : ℂ) • (1 : Matrix Unit Unit ℂ)) *ᵥ v) = 2 * gnorm 1 v :=
-    fun v => by rw [smul_mulVec, one_mulVec, gnorm_smul PosSemidef.one]; simp
-  simp only [opNorm_le_iff PosDef.one PosSemidef.one, h]
-  refine ⟨⟨by norm_num, fun v => le_rfl⟩, fun h' => ?_⟩
-  have := gnorm_pos (H := (1 : Matrix Unit Unit ℂ)) PosDef.one (v := fun _ => 1)
-    (fun h0 => one_ne_zero (congrFun h0 ()))
-  linarith [h'.2 fun _ => 1]
 
 end GlobalTheory.HermFrame

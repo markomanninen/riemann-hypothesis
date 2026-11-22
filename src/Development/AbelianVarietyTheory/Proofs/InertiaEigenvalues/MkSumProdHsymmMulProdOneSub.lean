@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SchurEqJtDet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SchurEqJtDet
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem prod_map_X_eq_monomial_toFinsupp {n : ℕ} (s : Multiset (Fin n)) :
   induction s using Multiset.induction_on with
   | empty => simp
   | cons a s ih =>
-    rw [Multiset.map_cons, Multiset.prod_cons, ih, ← Multiset.singleton_add, map_add,
+    rw [Multiset.map_cons, Multiset.prod_cons, ih, ← Multiset.singleton_add, map_add (f := _),
       Multiset.toFinsupp_singleton, MvPolynomial.X, MvPolynomial.monomial_mul, one_mul]
 
 theorem sum_toFinsupp_fin {n : ℕ} (s : Multiset (Fin n)) :

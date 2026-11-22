@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.NeBotOfIsMaximal
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.NeBotOfIsMaximal
+
+@[expose] public section
 
 open NumberField Module Filter Topology
 open scoped Classical
@@ -26,7 +30,7 @@ private theorem abs_prod_sub_prod_le_of_bounded_differences {ι : Type*} (S : Fi
     have hCp : 0 ≤ C p := le_trans (abs_nonneg _) hxp
     have hys : |∏ i ∈ s, y i| ≤ ∏ i ∈ s, C i := by
       rw [Finset.abs_prod]
-      exact Finset.prod_le_prod (fun i _ => abs_nonneg _) fun i hi => hy i (Finset.mem_insert_of_mem hi)
+      exact Finset.prod_le_prod₀ (fun i _ => abs_nonneg _) fun i hi => hy i (Finset.mem_insert_of_mem hi)
     have hdiff : |x p - y p| ≤ 2 * C p * d p := by
       by_cases h : x p = y p
       · rw [h, sub_self, abs_zero]
@@ -61,7 +65,7 @@ theorem abs_prod_sub_le (S : Finset {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal})
   by_contra hlt
   have hni : n ∉ 𝔭.1 ^ (k + 1 - c 𝔭) := by
     intro hm
-    rw [if_pos hm] at hlt
+    rw [ite_eq_left hm] at hlt
     exact hlt le_rfl
   have hv := BoxSum.vF_lt_of_notMem hni
   have hk : vF 𝔭.1 n + c 𝔭 ≤ k := by omega
@@ -74,7 +78,7 @@ theorem tendsto_err (S : Finset {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal}) (A B 
     Tendsto (fun k : ℕ => A * ∑ 𝔭 ∈ S, B / (Ideal.absNorm 𝔭.1 : ℝ) ^ (k + 1 - c 𝔭)) atTop (𝓝 0) := by
   have h0 : Tendsto (fun k : ℕ => ∑ 𝔭 ∈ S, B / (Ideal.absNorm 𝔭.1 : ℝ) ^ (k + 1 - c 𝔭)) atTop
       (𝓝 (∑ 𝔭 ∈ S, (0 : ℝ))) := by
-    refine tendsto_finset_sum _ fun 𝔭 _ => ?_
+    refine tendsto_finsetSum _ fun 𝔭 _ => ?_
     have hne : 𝔭.1 ≠ ⊥ := Ring.ne_bot_of_isMaximal_of_not_isField 𝔭.2 (NumberField.RingOfIntegers.not_isField F)
     have h1 : Ideal.absNorm 𝔭.1 ≠ 1 := fun h => 𝔭.2.ne_top (Ideal.absNorm_eq_one_iff.1 h)
     have h2 : Ideal.absNorm 𝔭.1 ≠ 0 := fun h => hne (Ideal.absNorm_eq_zero_iff.1 h)
@@ -95,7 +99,7 @@ private theorem finsum_boxSet_inf_eq_sum_ite_mem (hK : Formalism.HermitianLattic
   rw [finsum_mem_eq_finite_toFinset_sum _ hfin, Finset.sum_ite, Finset.sum_const_zero, add_zero]
   refine Finset.sum_congr ?_ fun _ _ => rfl
   ext n
-  simp only [Set.Finite.mem_toFinset, Finset.mem_filter, Set.mem_setOf_eq, Submodule.mem_inf]
+  simp only [Set.Finite.mem_toFinset, Finset.mem_filter, Set.mem_ofPred_eq, Submodule.mem_inf]
   tauto
 
 private theorem local_density_error_le_of_bounded_congruent (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F) (m : ℕ)
@@ -182,7 +186,7 @@ theorem tendsto_sum_of_mean (hK : Formalism.HermitianLatticesTheory.IsCMUnram K)
     exact_mod_cast hle
   have hμ : Tendsto (fun k : ℕ => L1 / (Ideal.absNorm b : ℝ) * ∏ 𝔭 ∈ S, ((Ideal.absNorm 𝔭.1 : ℝ) ^ (-(k : ℤ)) *
       ∑ᶠ n' : 𝓞 F ⧸ 𝔭.1 ^ k, a 𝔭 (Quotient.out n'))) atTop (𝓝 (L1 / (Ideal.absNorm b : ℝ) * 1)) := by
-    have := tendsto_finset_prod S hmean
+    have := tendsto_finsetProd S hmean
     simp only [Finset.prod_const_one] at this
     exact this.const_mul _
   have hErr := tendsto_err S (2 * ∏ 𝔭 ∈ S, C 𝔭) L1 c
@@ -202,7 +206,7 @@ theorem tendsto_sum_of_mean (hK : Formalism.HermitianLatticesTheory.IsCMUnram K)
       ∑ᶠ n ∈ {n : 𝓞 F | n ∈ boxSet K F ((j : ℝ) ^ 2) ∧ n ∈ b ⊓ 𝔭.1 ^ (k + 1 - c 𝔭)},
         (Ideal.absNorm (Ideal.span {n}) : ℝ) ^ (m - 1)) atTop
       (𝓝 (2 * (∏ 𝔭 ∈ S, C 𝔭) * ∑ 𝔭 ∈ S, L1 / (Ideal.absNorm (b ⊓ 𝔭.1 ^ (k + 1 - c 𝔭)) : ℝ))) := by
-    refine Tendsto.const_mul _ (tendsto_finset_sum S fun 𝔭 _ => ?_)
+    refine Tendsto.const_mul _ (tendsto_finsetSum S fun 𝔭 _ => ?_)
     have := tendsto_sum_ideal hK hF hm (hIne 𝔭 (k + 1 - c 𝔭))
     rwa [← hL1] at this
   obtain ⟨J1, hJ1⟩ := Metric.tendsto_atTop.1 hP (ε / 4) (by linarith)

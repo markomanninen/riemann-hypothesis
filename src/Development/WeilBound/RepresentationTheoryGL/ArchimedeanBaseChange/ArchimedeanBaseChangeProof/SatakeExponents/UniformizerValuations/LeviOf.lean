@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SubOfNonNil
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SubOfNonNil
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,19 +21,19 @@ def phi3 (h : a + b = n) (w : Pl E) (f : GLw n w → ℂ) (x y : GLw n w) (m : G
   absHalf w (m.1.val.det ^ b / m.2.val.det ^ a) *
     hint (intMat a b w) fun X => f (x⁻¹ * blk h w m (Multiplicative.toAdd X) * y)
 
-def gconv {w : Pl E} (f₁ f₂ : GLw n w → ℂ) (y : GLw n w) : ℂ := hint (GlobalTheory.LFun.KGL w n) fun z => f₁ z * f₂ (z⁻¹ * y)
+def gconv {w : Pl E} (f₁ f₂ : GLw n w → ℂ) (y : GLw n w) : ℂ := hint (GlobalTheory.LFun.KGL w (n := n)) fun z => f₁ z * f₂ (z⁻¹ * y)
 
 def mconv {w : Pl E} (u₁ u₂ : GLw a w × GLw b w → ℂ) (m : GLw a w × GLw b w) : ℂ :=
-  hint ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) fun m' => u₁ m' * u₂ (m'⁻¹ * m)
+  hint ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) fun m' => u₁ m' * u₂ (m'⁻¹ * m)
 
 def leviOf (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w)) : Set (GLw a w × GLw b w) := {m | blk h w m 0 ∈ K'}
 
-variable (E) in
 
+variable (E) in
 def LocOpUniformizer : Prop :=
   ∀ (n a b : ℕ) (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w)), IsOpen (K' : Set (GLw n w)) →
-    K' ≤ GlobalTheory.LFun.KGL w n → (∀ k ∈ GlobalTheory.LFun.KGL w n, ∀ k' ∈ K', k * k' * k⁻¹ ∈ K') →
-    ∀ X : Finset (GLw n w), (∀ x ∈ X, x ∈ GlobalTheory.LFun.KGL w n) → (∀ k ∈ GlobalTheory.LFun.KGL w n, ∃! x ∈ X, x⁻¹ * k ∈ K') →
+    K' ≤ GlobalTheory.LFun.KGL w (n := n) → (∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∀ k' ∈ K', k * k' * k⁻¹ ∈ K') →
+    ∀ X : Finset (GLw n w), (∀ x ∈ X, x ∈ GlobalTheory.LFun.KGL w (n := n)) → (∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∃! x ∈ X, x⁻¹ * k ∈ K') →
     (∀ f : GLw n w → ℂ, IsHk K' f → ∀ x ∈ X, ∀ y ∈ X,
       IsLocallyConstant (phi3 h w f x y) ∧ HasCompactSupport (phi3 h w f x y) ∧
       ∀ k₁ ∈ leviOf h w K', ∀ k₂ ∈ leviOf h w K', ∀ m, phi3 h w f x y (k₁ * m * k₂) = phi3 h w f x y m) ∧
@@ -39,7 +43,7 @@ def LocOpUniformizer : Prop :=
     ∀ (W : Type) [AddCommGroup W] [Module ℂ W] (ρ : Representation ℂ (GLw a w × GLw b w) W),
       ∀ (f : GLw n w → ℂ), IsHk K' f → ∀ u ∈ fixed (GlobalTheory.SmGL.ind₂ (GlobalTheory.SmGL.stdSum h) ρ) K', ∀ x ∈ X,
         ∀ lw : W →ₗ[ℂ] ℂ, lw ((hk (GlobalTheory.SmGL.ind₂ (GlobalTheory.SmGL.stdSum h) ρ) K' f u).1.1 x) =
-          ∑ y ∈ X, hint ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b))
+          ∑ y ∈ X, hint ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)))
             fun m => phi3 h w f x y m * lw (ρ m (u.1.1 y))
 
 end PositivityTheory.Rg.BcN.F2

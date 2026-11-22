@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddKapTP
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddKapNrmW
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddKapTP
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddKapNrmW
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField
 open scoped ComplexConjugate Matrix

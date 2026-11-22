@@ -1,20 +1,26 @@
-import Formalism.SharpRestriction.GrowthBounds.FlipOneThree
-import Formalism.MahlerMeasure.CoarseLevelSlackInequalities
-import Formalism.PolynomialDimension.FinalM
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.DischargeHeightBound
-import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.LatticeTheoremEps28Valid
-import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
-import Lemmata.GeneralBFactLeftBisForm.Imports
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FlipOneThree
+public import Formalism.MahlerMeasure.CoarseLevelSlackInequalities
+public import Formalism.MahlerMeasure.FinalT
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.WeightSpaceDimensionMonotone
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.SmithZp
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.TheoremM
+public import Formalism.PolynomialDimension.MultinomialDepth.MonoCount
+public import Formalism.PolynomialDimension.MultinomialDepth.PartnerM
+public import Formalism.PolynomialDimension.MultinomialDepth.TieOps
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.DischargeHeightBound
+public import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.LatticeTheoremEps28Valid
+public import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
+public import Lemmata.GeneralBFactLeftBisForm.Imports
+
+@[expose] public section
 
 noncomputable section
 
 namespace Formalism.MainNotions.G.CountingStatementReduction
 
 open Formalism.MainNotions.flipOneThree Formalism.GM Formalism.GM.M Formalism.InvariantFactorPaths.PW Formalism.InvariantFactorPaths.L4 Finset
-
-theorem eps_eq (X : InstM) (i : Fin X.T.t) :
-    X.eps i = Formalism.CountingSumsFrames.epsSeg (X.T.S (X.LL.setTies X.T X.top) i : ℝ) (X.Yl i) (Formalism.CountingSumsFrames.kapSeg X.p X.a X.r X.s)
-      (Formalism.CountingSumsFrames.lgSeg X.p X.a X.r) X.E := rfl
 
 theorem alternative_mean_value_theorem (D : Formalism.BasicNotions.D7) (X : InstM) : ModelLatticeRank D X := fun hX =>
   Formalism.InvariantFactorPaths.MC.Top.theoremMV7 X.p X.s X.r X.LL X.T X.a X.E X.Yl X.n₀ X.dd X.ρ hX.1 hX.2.1 hX.2.2.1 hX.2.2.2.1
@@ -298,37 +304,28 @@ def lowM (γ : A) (v : Fin n → A) (b' : Matrix (Fin n) (Fin n) A) : Matrix (Fi
 
 variable (W : Fin n → A) (Dm : Matrix (Fin n) (Fin n) A) (γ : A) (v : Fin n → A) (b' : Matrix (Fin n) (Fin n) A)
 
-@[simp] theorem blk_00 : blk W Dm 0 0 = 1 := rfl
-@[simp] theorem blk_0s (j : Fin n) : blk W Dm 0 j.succ = W j := rfl
-@[simp] theorem cornerScalarBlockMatrix_apply_succ_zero (i : Fin n) : blk W Dm i.succ 0 = 0 := rfl
-@[simp] theorem blk_ss (i j : Fin n) : blk W Dm i.succ j.succ = Dm i j := rfl
-@[simp] theorem lowM_00 : lowM γ v b' 0 0 = γ := rfl
-@[simp] theorem lowM_0s (j : Fin n) : lowM γ v b' 0 j.succ = 0 := rfl
-@[simp] theorem lowerMatrix_succ_zero (i : Fin n) : lowM γ v b' i.succ 0 = v i := rfl
-@[simp] theorem lowM_ss (i j : Fin n) : lowM γ v b' i.succ j.succ = b' i j := rfl
-
 theorem blk_det : (blk W Dm).det = Dm.det := by
   rw [Matrix.det_succ_column_zero, Fin.sum_univ_succ]
   have h : (blk W Dm).submatrix Fin.succ Fin.succ = Dm := by
     ext i j
-    simp [Matrix.submatrix_apply]
-  simp [h]
+    simp [Matrix.submatrix_apply, blk]
+  simp [h, blk]
 
 theorem blk_map (φ : A →+* A') : (blk W Dm).map φ = blk (fun j => φ (W j)) (Dm.map φ) := by
   ext i j
-  refine Fin.cases ?_ (fun i' => ?_) i <;> refine Fin.cases ?_ (fun j' => ?_) j <;> simp
+  refine Fin.cases ?_ (fun i' => ?_) i <;> refine Fin.cases ?_ (fun j' => ?_) j <;> simp [blk]
 
 theorem lowM_mul_blk_00 : (lowM γ v b' * blk W Dm) 0 0 = γ := by
-  rw [Matrix.mul_apply, Fin.sum_univ_succ]; simp
+  rw [Matrix.mul_apply, Fin.sum_univ_succ]; simp [lowM, blk]
 
 theorem lowM_mul_blk_0s (j : Fin n) : (lowM γ v b' * blk W Dm) 0 j.succ = γ * W j := by
-  rw [Matrix.mul_apply, Fin.sum_univ_succ]; simp
+  rw [Matrix.mul_apply, Fin.sum_univ_succ]; simp [lowM, blk]
 
 theorem lowerMatrix_mul_block_succ_zero (i : Fin n) : (lowM γ v b' * blk W Dm) i.succ 0 = v i := by
-  rw [Matrix.mul_apply, Fin.sum_univ_succ]; simp
+  rw [Matrix.mul_apply, Fin.sum_univ_succ]; simp [lowM, blk]
 
 theorem lowM_mul_blk_ss (i j : Fin n) : (lowM γ v b' * blk W Dm) i.succ j.succ = v i * W j + (b' * Dm) i j := by
-  rw [Matrix.mul_apply, Fin.sum_univ_succ, Matrix.mul_apply]; simp
+  rw [Matrix.mul_apply, Fin.sum_univ_succ, Matrix.mul_apply]; simp [lowM, blk]
 
 end GlobalTheory
 
@@ -505,9 +502,6 @@ theorem corner_entry_ne_zero : g00 O n ≠ 0 := by
 
 abbrev CA := Localization.Away (g00 O n)
 
-instance instDomCA : IsDomain (CA O n) :=
-  IsLocalization.isDomain_localization (powers_le_nonZeroDivisors_of_noZeroDivisors (corner_entry_ne_zero O n))
-
 theorem CA_inj : Function.Injective (algebraMap (GLCoord O (n + 1)) (CA O n)) :=
   IsLocalization.injective _ (powers_le_nonZeroDivisors_of_noZeroDivisors (corner_entry_ne_zero O n))
 
@@ -667,7 +661,8 @@ end Primes
 theorem residue_matrix_generic_corner_entry (O : Type) [CommRing O] (r : ℕ)
     (hM : IsUnit (aeval (fun x : Fin (r + 1 + 1) × Fin (r + 1 + 1) => resMat O r x.1 x.2) (genMat O (r + 1 + 1)).det)) :
     evalG (R := O) (resMat O r) hM (g0r O (r + 1)) = X (Fin.last r) := by
-  rw [evaluation_generic_corner_entry, ← Fin.succ_last, resMat_eq, blk_0s]
+  rw [evaluation_generic_corner_entry, ← Fin.succ_last, resMat_eq]
+  rfl
 
 theorem cW_last (O : Type) [CommRing O] [IsDomain O] (r : ℕ) :
     cW O (r + 1) (Fin.last r) = ((gam O (r + 1))⁻¹ : (CA O (r + 1))ˣ) *
@@ -744,10 +739,10 @@ theorem res_coeff (O : Type) [CommRing O] (r : ℕ) (c : ℤ) (ka : Fin (r + 1) 
       (fun _ => 0) (b.map φ) * blk XX (g.map φ) := by
     ext i j
     refine Fin.cases ?_ (fun i' => ?_) i <;> refine Fin.cases ?_ (fun j' => ?_) j
-    · rw [lowM_mul_blk_00]; simp
-    · rw [lowM_mul_blk_0s]; simp
-    · rw [lowerMatrix_mul_block_succ_zero]; simp
-    · rw [lowM_mul_blk_ss, blk_ss, Matrix.map_mul]; simp
+    · rw [lowM_mul_blk_00]; simp [blk]
+    · rw [lowM_mul_blk_0s]; simp [blk]
+    · rw [lowerMatrix_mul_block_succ_zero]; simp [blk]
+    · rw [lowM_mul_blk_ss, Matrix.map_mul]; simp [blk]
   have hu2 : IsUnit (aeval (fun x : Fin (r + 1 + 1) × Fin (r + 1 + 1) => blk XX (g.map φ) x.1 x.2)
       (genMat O (r + 1 + 1)).det) := by
     have := mapC_unit (O := O) (Fin (r + 1)) g hg
@@ -781,7 +776,7 @@ theorem res_coeff (O : Type) [CommRing O] (r : ℕ) (c : ℤ) (ka : Fin (r + 1) 
     rw [h1]
     rfl
   rw [hchi] at key
-  have := congrArg (fun P => coeff m P) key
+  have := congrArg (fun P => AddMonoidAlgebra.coeff P m) key
   simp only [coeff_map, coeff_C_mul] at this
   exact this
 
@@ -1062,9 +1057,9 @@ theorem subOps_wt [CharZero K] (Lt : Letters (Fin N)) (S : Set (Fin N)) (φ : Fi
   funext a
   have h1 := (mem_weightSpace_iff_diag _ mu F).1 hF a
   rw [subOps_apply, gl_operator_apply_derivation] at h1
-  have h2 := congrArg (coeff m) h1
+  have h2 := congrArg (AddMonoidAlgebra.coeff · m) h1
   rw [diagonal_derivation_coeff, coeff_smul, smul_eq_mul] at h2
-  have h3 : coeff m F ≠ 0 := by simpa using hm
+  have h3 : AddMonoidAlgebra.coeff F m ≠ 0 := by simpa using hm
   have h4 := mul_right_cancel₀ h3 h2
   show wtS Lt S m (φ a) = mu a
   exact_mod_cast h4
@@ -1085,8 +1080,8 @@ theorem isoProj_of_set (E : GLOps n K V) (lam : Fin n → ℤ) (e : Module.End K
     IsIsoProj E lam e :=
   ⟨fun x hx => h.1 lam rfl x hx, fun mu hmu x hx => h.2 mu (by simpa using hmu) x hx⟩
 
-open Classical in
 
+open Classical in
 theorem setProj_eq_sum (E : GLOps n K V) (hT : (⨆ mu : Fin n → ℤ, isoSub E mu) = ⊤) (T : Set (Fin n → ℤ))
     (e : Module.End K V) (he : IsIsoProjSet E T e) (ee : (Fin n → ℤ) → Module.End K V)
     (hee : ∀ lam, IsIsoProj E lam (ee lam)) (x : V) :
@@ -1112,13 +1107,13 @@ theorem setProj_eq_sum (E : GLOps n K V) (hT : (⨆ mu : Fin n → ℤ, isoSub E
     obtain ⟨A1, h1⟩ := hx
     obtain ⟨A2, h2⟩ := hy
     refine ⟨A1 ∪ A2, fun B hB => ?_⟩
-    rw [map_add, h1 B (Finset.union_subset_left hB), h2 B (Finset.union_subset_right hB), ← Finset.sum_add_distrib]
+    rw [map_add (f := _), h1 B (Finset.union_subset_left hB), h2 B (Finset.union_subset_right hB), ← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl fun mu _ => (map_add _ _ _).symm
 
 end Abs
 
-open Classical in
 
+open Classical in
 theorem subOps_int (D : Formalism.BasicNotions.D7) (p n' : ℕ) (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
     (S0 : UniformizedDVR p O) (hG : AdmissibleDVR p n' O) (N r n : ℕ) (hn : 0 < n) (Lt : Letters (Fin N)) (S : Set (Fin N))
     (φ : Fin n → Fin r) (hφ : Function.Injective φ)
@@ -1132,7 +1127,7 @@ theorem subOps_int (D : Formalism.BasicNotions.D7) (p n' : ℕ) (O : Type) [Comm
       ∀ F ∈ Pol (KK O) r d, F ∈ L →
         ((p : KK O) ^ (N0 n * Nat.log p (2 * degIn d S + n - 1))) • e F ∈ L := by
   have hchar : CharZero (KK O) := (integral_formula_lattice_holds p n' O S0 hG).1
-  have hCR : CompleteReducibilityIsotypic := complete_reducibility_of_semisimple D (Formalism.MainNotions.G.GLWeightTheory.weight_condition_from_integral_form D)
+  have hCR : CompleteReducibilityIsotypic := Formalism.MainNotions.G.GLWeightTheory.complete_reducibility_of_semisimple D (Formalism.MainNotions.G.GLWeightTheory.weight_condition_from_integral_form D)
   have hRes : SubrepRestrictionRep := subrep_restriction_of_reducibility hCR
   have hRep : IsGLRep (subOps (KK O) Lt S φ) := subOps_rep Lt S φ hφ
   have hst : ∀ a b, ∀ x ∈ Pol (KK O) r d, subOps (KK O) Lt S φ a b x ∈ Pol (KK O) r d :=
@@ -1292,7 +1287,7 @@ theorem iso_indep_abs (E : GLOps n K V) (hT : (⨆ mu : Fin n → ℤ, isoSub E 
       rwa [LinearMap.mem_ker, LinearMap.flip_apply] at this
     · exact hB i mu (Ne.symm h) x hx y hy
   | zero => simp
-  | add y z _ _ hy hz => rw [map_add, hy, hz, add_zero]
+  | add y z _ _ hy hz => rw [map_add (f := _), hy, hz, add_zero]
 
 theorem isoProjSet_exists_abs (E : GLOps n K V) (hT : (⨆ mu : Fin n → ℤ, isoSub E mu) = ⊤)
     (hI : iSupIndep (isoSub E)) (T : Set (Fin n → ℤ)) : ∃ e, IsIsoProjSet E T e := by
@@ -1324,7 +1319,7 @@ theorem isoProjSet_comm_abs (E : GLOps n K V) (hT : (⨆ mu : Fin n → ℤ, iso
     · rw [he.1 mu h x hx, he.1 mu h _ (hX _ x hx)]
     · rw [he.2 mu h x hx, he.2 mu h _ (hX _ x hx), map_zero]
   | zero => simp
-  | add x y _ _ hx hy => simp only [map_add, hx, hy]
+  | add x y _ _ hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem isoProjSet_selfadj_abs (E : GLOps n K V) (hT : (⨆ mu : Fin n → ℤ, isoSub E mu) = ⊤) (T : Set (Fin n → ℤ))
     (e : Module.End K V) (he : IsIsoProjSet E T e) (B : V →ₗ[K] V →ₗ[K] K)
@@ -1348,9 +1343,9 @@ theorem isoProjSet_selfadj_abs (E : GLOps n K V) (hT : (⨆ mu : Fin n → ℤ, 
           rw [he.1 nu h' y hy, hB mu nu hne x hx y hy]
         · rw [he.2 nu h' y hy, map_zero]
     | zero => simp
-    | add y z _ _ hy hz => simp only [map_add, hy, hz]
+    | add y z _ _ hy hz => simp only [map_add (f := _), hy, hz]
   | zero => simp
-  | add x z _ _ hx hz => simp only [map_add, LinearMap.add_apply, hx, hz]
+  | add x z _ _ hx hz => simp only [map_add (f := _), LinearMap.add_apply, hx, hz]
 
 end abs
 
@@ -1363,7 +1358,6 @@ theorem fock_nondeg' {σ : Type} (F : MvPolynomial σ K) (h : ∀ G, fockBilinea
   have h1 := h (monomial m 1)
   rw [fockBilinear_apply, fock_form_symm, fock_form_monomial, one_mul] at h1
   have h2 : ((expFact m : ℕ) : K) ≠ 0 := by exact_mod_cast exponent_factorial_ne_zero_of m
-  rw [coeff_zero]
   exact (mul_eq_zero.1 h1).resolve_right h2
 
 theorem subOps_contra (Lt : Letters (Fin N)) (S : Set (Fin N)) (φ : Fin n → Fin r) (a b : Fin n)
@@ -1373,7 +1367,7 @@ theorem subOps_contra (Lt : Letters (Fin N)) (S : Set (Fin N)) (φ : Fin n → F
 
 theorem subOps_top (D : Formalism.BasicNotions.D7) (Lt : Letters (Fin N)) (S : Set (Fin N)) (φ : Fin n → Fin r)
     (hRep : IsGLRep (subOps K Lt S φ)) : (⨆ mu : Fin n → ℤ, isoSub (subOps K Lt S φ) mu) = ⊤ :=
-  complete_reducibility_of_semisimple D (Formalism.MainNotions.G.GLWeightTheory.weight_condition_from_integral_form D) K _ n _ hRep
+  Formalism.MainNotions.G.GLWeightTheory.complete_reducibility_of_semisimple D (Formalism.MainNotions.G.GLWeightTheory.weight_condition_from_integral_form D) K _ n _ hRep
 
 theorem subOps_orth (Lt : Letters (Fin N)) (S : Set (Fin N)) (φ : Fin n → Fin r)
     (hRep : IsGLRep (subOps K Lt S φ)) (lam mu : Fin n → ℤ) (h : lam ≠ mu)
@@ -1462,7 +1456,7 @@ theorem mem_bbSpec_one_iff {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValua
       obtain ⟨μ, c, hc, rfl⟩ := hx
       rw [fock_lattice_monomial_iff hV]
       unfold halfFactorialValuation
-      simpa using hc
+      simpa [Nat.padicValNat_def] using hc
     | zero => exact fock_lattice_zero_mem hV
     | add x y _ _ hx hy => exact fock_lattice_add_mem hV hx hy
     | smul o x _ hx => exact fock_lattice_smul_mem hV o hx
@@ -1471,7 +1465,7 @@ theorem mem_bbSpec_one_iff {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValua
     refine Submodule.sum_mem _ fun m _ => Submodule.subset_span ⟨m, F.coeff m, ?_, rfl⟩
     have := (fock_lattice_monomial_iff hV m _).1 ((fock_lattice_iff_monomials hV F).1 h m)
     unfold halfFactorialValuation at this
-    simpa using this
+    simpa [Nat.padicValNat_def] using this
 
 theorem mem_bbSpec_one_iff' {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {p : ℕ}
     (hp : p.Prime) (S0 : UniformizedDVR p O) {σ : Type} (F : MvPolynomial σ (KK O)) :
@@ -1778,29 +1772,6 @@ theorem r_ge (C0 CYb Cde Ck CD Cb Cc : ℝ) (X : flipOneThree.Inst) (hH : flipOn
 
 theorem p_prime (X : flipOneThree.Inst) : X.p.Prime := X.std.1.prime
 
-theorem lat_facts (p n' : ℕ) (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (S0 : UniformizedDVR p O)
-    (hG : AdmissibleDVR p n' O) :
-    CharZero (KK O) ∧ ∀ (N r : ℕ) (Lt : Letters (Fin N)),
-      (∀ S : Set (Fin N), ∀ u ∈ UZgens (glOps (KK O) r Lt S),
-        (∀ F ∈ IntPol O (Fin N × Fin r), u F ∈ IntPol O (Fin N × Fin r)) ∧
-        ∀ F ∈ bbSpec O p (Fin N × Fin r) 1, u F ∈ bbSpec O p (Fin N × Fin r) 1) ∧
-      ∀ d : Fin N → ℕ, (latticeMultidegreePart (IntPol O (Fin N × Fin r)) d).FG ∧
-        MQ (K := KK O) (latticeMultidegreePart (IntPol O (Fin N × Fin r)) d) = ⊤ ∧
-        (latticeMultidegreePart (bbSpec O p (Fin N × Fin r) 1) d).FG ∧
-        MQ (K := KK O) (latticeMultidegreePart (bbSpec O p (Fin N × Fin r) 1) d) = ⊤ := by
-  obtain ⟨hc, h⟩ := integral_formula_lattice_holds p n' O S0 hG
-  refine ⟨hc, fun N r Lt => ?_⟩
-  obtain ⟨-, h2, BBs, hBB, h3⟩ := h r (Fin N) Lt
-  have hV := valuation_properties_hold hG.1 S0
-  have hEq : bbSpec O p (Fin N × Fin r) 1 = BBs := by
-    ext F
-    rw [mem_bbSpec_one_iff hV, hBB]
-  refine ⟨fun S u hu => ⟨(h2 S u hu).1, fun F hF => ?_⟩, fun d => ?_⟩
-  · rw [mem_bbSpec_one_iff hV] at hF ⊢
-    exact (h2 S u hu).2 F hF
-  · rw [hEq]
-    exact h3 d
-
 end Formalism.MainNotions.G.CountingStatementReduction
 
 namespace Formalism.MainNotions.G.CountingStatementReduction
@@ -1957,7 +1928,8 @@ theorem wtProj_stable {n : ℕ} {E : GLOps n K V} (hE : IsGLRep E) (la : Fin n �
     · exact hall la h
     · rw [Finsupp.notMem_support_iff.1 h]; exact Submodule.zero_mem _
   have : wtProj hE la x = f la := by
-    rw [← hsum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hsum, map_sum]
     by_cases h : la ∈ f.support
     · rw [Finset.sum_eq_single la]
       · exact wtProj_same hE la (hf la)
@@ -2034,9 +2006,9 @@ theorem ext_abs {r n : ℕ} (E : GLOps r K V) (φ : Fin n → Fin r) (hE : IsGLR
     intro x
     obtain ⟨a, ha, b, hb, rfl⟩ := wt_split hE la x
     have h1 : wtProj hE la (a + b) = a := by
-      rw [map_add, wtProj_same hE la ha, wtProj_other hE la hb, add_zero]
+      rw [map_add (f := _), wtProj_same hE la ha, wtProj_other hE la hb, add_zero]
     have h2 : wtProj hE la (e' (a + b)) = e' a := by
-      rw [map_add, map_add, wtProj_same hE la (hewt la a ha), wtProj_other hE la (heoth b hb), add_zero]
+      rw [map_add (f := _), map_add (f := _), wtProj_same hE la (hewt la a ha), wtProj_other hE la (heoth b hb), add_zero]
     rw [h1, h2]
   have hran : ∀ y, e' y ∈ isoSub E' la' := by
     intro y
@@ -2047,7 +2019,7 @@ theorem ext_abs {r n : ℕ} (E : GLOps r K V) (φ : Fin n → Fin r) (hE : IsGLR
       · subst h; rw [hiso.1 y hy]; exact hy
       · rw [hiso.2 mu h y hy]; exact Submodule.zero_mem _
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
   have hwt' : ∀ x ∈ weightSp E la, x ∈ weightSp E' la' := by
     intro x hx
     rw [mem_weightSpace_iff_diagonal_rep] at hx ⊢
@@ -2079,7 +2051,7 @@ theorem ext_abs {r n : ℕ} (E : GLOps r K V) (φ : Fin n → Fin r) (hE : IsGLR
         exact Submodule.mem_iSup_of_mem mu (Submodule.mem_iSup_of_mem h hy)
     | zero => simp
     | add y z _ _ hy hz =>
-      have : y + z - e' (y + z) = (y - e' y) + (z - e' z) := by rw [map_add]; abel
+      have : y + z - e' (y + z) = (y - e' y) + (z - e' z) := by rw [map_add (f := _)]; abel
       rw [this]; exact Submodule.add_mem _ hy hz
   have hlow : (⨆ (mu : Fin n → ℤ) (_ : mu ≠ la'), isoSub E' mu) ≤ (lowIm E').comap (wtProj hE' la') := by
     refine iSup₂_le fun mu hmu x hx => ?_
@@ -2120,8 +2092,8 @@ theorem ext_abs {r n : ℕ} (E : GLOps r K V) (φ : Fin n → Fin r) (hE : IsGLR
             iSup₂_le fun ν hν z hz => wt_orth B hB hν hx2 hz
           exact this hb
         have h1 : wtProj hE la (a + b) = a := by
-          rw [map_add, wtProj_same hE la ha, wtProj_other hE la hb, add_zero]
-        rw [h1, map_add, hb0, add_zero]
+          rw [map_add (f := _), wtProj_same hE la ha, wtProj_other hE la hb, add_zero]
+        rw [h1, map_add (f := _), hb0, add_zero]
       rw [hpr, ← hcomm]
       have hh : e' (wtProj hE la y) ∈ hwK E' := (hmem y).2
       have : lowIm E' ≤ LinearMap.ker (B.flip (e' (wtProj hE la y))) := by
@@ -2171,7 +2143,7 @@ theorem ext_poly (D : Formalism.BasicNotions.D7) {K : Type} [Field K] [CharZero 
       ∀ F ∈ weightSp (glOps K r Lt S) la, P F = e' F := by
   have hE : IsGLRep (glOps K r Lt S) := polynomial_isGLRep Lt S
   have hE' : IsGLRep (fun a b => glOps K r Lt S (φ a) (φ b) : GLOps n K _) := ext_rep hE hφ
-  exact ext_abs (glOps K r Lt S) φ hE hE' (complete_reducibility_of_semisimple D (Formalism.MainNotions.G.GLWeightTheory.weight_condition_from_integral_form D) K _ n _ hE')
+  exact ext_abs (glOps K r Lt S) φ hE hE' (Formalism.MainNotions.G.GLWeightTheory.complete_reducibility_of_semisimple D (Formalism.MainNotions.G.GLWeightTheory.weight_condition_from_integral_form D) K _ n _ hE')
     (fockBilinear K (Fin N × Fin r)) (fun a b x y => fock_form_contravariant Lt S a b x y)
     (fun x hx => ext_fock_nondeg x hx) la e' he'
 
@@ -2312,8 +2284,8 @@ def blockForm (b : SegBlock s r) :
     MvPolynomial (BVar (2 * s + 1) r S.t) (KK O) → MvPolynomial (BVar (2 * s + 1) r S.t) (KK O) → KK O :=
   fun f g => ((specConst p S b : ℕ) : KK O) * fock f g
 
-open Classical in
 
+open Classical in
 def segSub (aTop : Fin s → ℕ)
     (L₂ : SegBlock s r → Submodule O (MvPolynomial (BVar (2 * s + 1) r S.t) (KK O))) :
     Submodule O (SegVs O r s S.t) :=
@@ -2323,8 +2295,8 @@ theorem fock_zero_right' {R : Type*} [CommSemiring R] {σ : Type*} (F : MvPolyno
     fock F (0 : MvPolynomial σ R) = 0 := by
   unfold fock; simp
 
-open Classical in
 
+open Classical in
 theorem segSub_good (aTop : Fin s → ℕ) (aPlus : ℕ) (m D : ℝ)
     (L₂ : SegBlock s r → Submodule O (MvPolynomial (BVar (2 * s + 1) r S.t) (KK O)))
     (h : ∀ b, Kept p r S aTop b → GoodSub p (blockForm O p r S b) (blockLat O p r S aTop aPlus m b) (L₂ b) D) :
@@ -2473,16 +2445,6 @@ theorem admissible_without_key_of_admissible {D : Formalism.BasicNotions.D7} {C0
     (h : admitted D C0 CYb Cde Ck CD Cb CE1 CE2 Ckap Cc Cs X) : AdmNoK D C0 CYb Cde Ck CD Cb CE1 CE2 Ckap Cc Cs X :=
   ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.2.2.2.2.1, h.2.2.2.2.2.2.2.2.1, h.2.2.2.2.2.2.2.2.2.1, h.2.2.2.2.2.2.2.2.2.2⟩
 
-def BlockFormRemaining (D : Formalism.BasicNotions.D7) (C0 CYb Cde Ck CD Cb CE1 CE2 Ckap Cc Cs C : ℝ) : Prop :=
-  ∀ X : flipOneThree.Inst, AdmNoK D C0 CYb Cde Ck CD Cb CE1 CE2 Ckap Cc Cs X → RemainingCountingStatement C0 CYb Cde Ck CD Cb CE1 CE2 Cc C X
-
-def BlockFormRemainingUniform (D : Formalism.BasicNotions.D7) : Prop :=
-  TransportedAlt fun C0 CYb Cde Ck CD Cb CE1 CE2 Cc => ∀ Ckap Cs : ℝ, ∃ C : ℝ, 0 < C ∧
-    BlockFormRemaining D C0 CYb Cde Ck CD Cb CE1 CE2 Ckap Cc Cs C
-
-def RemainingCountingBound : Prop :=
-  TransportedAlt fun C0 CYb Cde Ck CD Cb CE1 CE2 Cc => ∃ C : ℝ, 0 < C ∧ ∀ X : flipOneThree.Inst, RemainingCountingStatement C0 CYb Cde Ck CD Cb CE1 CE2 Cc C X
-
 end Formalism.MainNotions.G.CountingStatementReduction
 
 namespace Formalism.MainNotions.G.CountingStatementReduction
@@ -2623,8 +2585,8 @@ def segSubMap (aTop : Fin s → ℕ)
   map_add' := fun x y => by funext b; apply Subtype.ext; rfl
   map_smul' := fun c x => by funext b; apply Subtype.ext; rfl
 
-open Classical in
 
+open Classical in
 def segSubEquiv (aTop : Fin s → ℕ)
     (L₂ : SegBlock s r → Submodule O (MvPolynomial (BVar (2 * s + 1) r S.t) (KK O))) :
     segSub O p r S aTop L₂ ≃ₗ[O] (∀ b : keptSet p r S aTop, L₂ b.1) :=
@@ -2761,8 +2723,8 @@ namespace Formalism.MainNotions.G.CountingStatementReduction
 
 open Formalism.MainNotions.flipOneThree Formalism.MainNotions.G Finset
 
-open Classical in
 
+open Classical in
 theorem double_count {α δ : Type*} (A : Finset α) (Dl : Finset δ) (rel : δ → α → Prop)
     (n rk m : δ → α → ℝ) (ε K : ℝ) (hε : 0 ≤ ε) (hK : 0 ≤ K)
     (hn : ∀ d ∈ Dl, ∀ a ∈ A, 0 ≤ n d a) (hm : ∀ d ∈ Dl, ∀ a ∈ A, 0 ≤ m d a)
@@ -2898,8 +2860,8 @@ theorem segPos_ne_next (TT : Finset (Fin n')) (j : Fin (numSeg TT)) (i : Fin (se
   · omega
   · omega
 
-open Classical in
 
+open Classical in
 def realW (TT : Finset (Fin n')) (j : Fin (numSeg TT)) (a0 : ℕ) (aTop : Fin (segS TT j) → ℕ) (aPlus : ℕ) :
     Fin n' → ℕ :=
   fun s => if h : ∃ i, segPos TT j i = s then aTop h.choose else if s = segNext TT j then aPlus else a0
@@ -2949,13 +2911,13 @@ def mCl (dl : DCl X) (aTop : Fin X.s → ℕ) : ℕ :=
             (fun i => coarseC X.L.p (X.S C0 CE1 CE2) aTop (Formalism.MainNotions.ColumnSystems.digitBlock dl.1 dl.2) i) *
     Formalism.MainNotions.ColumnSystems.symDim (X.L.m + 1) ((X.S C0 CE1 CE2).bPlus : ℤ)
 
-open Classical in
 
+open Classical in
 def keptSum (f : SegBlock X.s X.r → ℕ) (aTop : Fin X.s → ℕ) : ℕ :=
   ∑ᶠ b : SegBlock X.s X.r, if Kept X.p X.r (X.S C0 CE1 CE2) aTop b then f b else 0
 
-open Classical in
 
+open Classical in
 def clSum (f : SegBlock X.s X.r → ℕ) (aTop : Fin X.s → ℕ) (dl : DCl X) : ℕ :=
   ∑ᶠ b : SegBlock X.s X.r,
     if Kept X.p X.r (X.S C0 CE1 CE2) aTop b ∧ b.rz = dl.1 ∧ b.ry = dl.2 then f b else 0
@@ -3000,8 +2962,8 @@ theorem clSum_eq_sum {aTop : Fin X.s → ℕ} (hfin : {b | Kept X.p X.r (X.S C0 
     by_contra hk
     exact hb (if_neg fun h => hk h.1)
 
-open Classical in
 
+open Classical in
 theorem keptSum_eq_classes {aTop : Fin X.s → ℕ} (hfin : {b | Kept X.p X.r (X.S C0 CE1 CE2) aTop b}.Finite)
     (f : SegBlock X.s X.r → ℕ) :
     keptSum C0 CE1 CE2 X f aTop =
@@ -3064,13 +3026,13 @@ theorem rank_ge {D : Formalism.BasicNotions.D7} {CYb Cde Ck CD Cb Cc : ℝ} (hH 
 
 variable (C0 CE1 CE2 X)
 
-open Classical in
 
+open Classical in
 def MCl (aTop : Fin X.s → ℕ) : ℝ :=
   ∑ dl ∈ (clSet C0 CE1 CE2 X).filter (fun dl => Compat C0 CE1 CE2 X dl aTop), (mCl C0 CE1 CE2 X dl aTop : ℝ)
 
-open Classical in
 
+open Classical in
 def DigitClassDimensionComparison (g : (Fin X.s → ℕ) → ℕ → SegBlock X.s X.r → ℕ) (ε : ℝ) : Prop :=
   ∀ dl ∈ clSet C0 CE1 CE2 X,
     ∑ a ∈ (box X).filter (fun a => Compat C0 CE1 CE2 X dl a.1), (clSum C0 CE1 CE2 X (g a.1 a.2) a.1 dl : ℝ) ≤
@@ -3091,8 +3053,8 @@ theorem meanBox_eq (κ : (Fin X.s → ℕ) → ℕ → ℝ) :
   unfold meanBox box
   rw [Finset.sum_product]
 
-open Classical in
 
+open Classical in
 theorem mean_of_classes {D : Formalism.BasicNotions.D7} {CYb Cde Ck CD Cb Cc : ℝ} (hH : flipOneThree.HI C0 CYb Cde Ck CD Cb Cc X)
     (h11 : adm11 D C0 CYb Cde Ck CD Cb CE1 CE2 Cc X)
     (hfin : ∀ aTop : Fin X.s → ℕ, {b | Kept X.p X.r (X.S C0 CE1 CE2) aTop b}.Finite)
@@ -3207,8 +3169,8 @@ theorem card_Ev (k n : ℕ) : (Ev k n).card = (k + n - 1).choose n := by
     rw [Finset.mem_finsuppAntidiag]
     exact ⟨(mem_Ev e).1 he, Finset.subset_univ _⟩
 
-open Classical in
 
+open Classical in
 theorem card_Ev_digits (k a P : ℕ) (hP : 0 < P) :
     (Ev k a).card = ∑ ρ ∈ Fintype.piFinset (fun _ : Fin k => range P),
       if (∑ c, ρ c ≤ a ∧ P ∣ a - ∑ c, ρ c) then (Ev k ((a - ∑ c, ρ c) / P)).card else 0 := by
@@ -3284,8 +3246,8 @@ theorem symDim_choose (r n : ℕ) : Formalism.MainNotions.ColumnSystems.symDim (
   have e3 : r + 1 - 1 = r := by omega
   rw [e1, e3]
 
-open Classical in
 
+open Classical in
 theorem symDim_digits (r a P : ℕ) (hP : 0 < P) :
     ∑ ρ ∈ Fintype.piFinset (fun _ : Fin (r + 1) => range P),
       (if (∑ c, ρ c ≤ a ∧ P ∣ a - ∑ c, ρ c) then Formalism.MainNotions.ColumnSystems.symDim (r + 1) (((a - ∑ c, ρ c) / P : ℕ) : ℤ) else 0) =
@@ -3341,14 +3303,14 @@ section Flat
 
 variable (C0 CE1 CE2 : ℝ) (X : flipOneThree.Inst)
 
-open Classical in
 
+open Classical in
 def fA (i : Fin X.s) (ρ : Fin (X.r + 1) → ℕ) : ℕ :=
   if (∑ c, ρ c ≤ (X.S C0 CE1 CE2).bTop i ∧ (X.S C0 CE1 CE2).P X.p i ∣ (X.S C0 CE1 CE2).bTop i - ∑ c, ρ c) then
     Formalism.MainNotions.ColumnSystems.symDim (X.r + 1) ((((X.S C0 CE1 CE2).bTop i - ∑ c, ρ c) / (X.S C0 CE1 CE2).P X.p i : ℕ) : ℤ) else 0
 
-open Classical in
 
+open Classical in
 def fC (i : Fin X.s) (a : ℕ) (ρ : Fin (X.r + 1) → ℕ) : ℕ :=
   if (∑ c, ρ c ≤ a ∧ (X.S C0 CE1 CE2).P X.p i ∣ a - ∑ c, ρ c) then
     Formalism.MainNotions.ColumnSystems.symDim (X.r + 1) (((a - ∑ c, ρ c) / (X.S C0 CE1 CE2).P X.p i : ℕ) : ℤ) else 0
@@ -3398,8 +3360,8 @@ theorem mCl_factor (rz ry : Fin X.s → Fin (X.r + 1) → ℕ) (hrz : rz ∈ dig
         exact h2 i (Finset.mem_univ i) (by unfold fC; exact if_neg hn)
     rw [hz, mul_zero]
 
-open Classical in
 
+open Classical in
 theorem MCl_eq (hp : 0 < X.p) (aTop : Fin X.s → ℕ) :
     MCl C0 CE1 CE2 X aTop =
       ((cstM C0 CE1 CE2 X * ∏ i, Formalism.MainNotions.ColumnSystems.symDim (X.r + 1) (aTop i : ℤ) : ℕ) : ℝ) := by
@@ -3458,7 +3420,7 @@ theorem restFlat_proved (hp : 0 < X.p) (ha : 1 ≤ X.L.a) :
       (((hi : ℝ) / X.L.a) ^ X.r) ^ X.s * ∏ i, (Formalism.MainNotions.ColumnSystems.symDim (X.r + 1) (aTop' i : ℤ) : ℝ) := by
     calc (∏ i, (Formalism.MainNotions.ColumnSystems.symDim (X.r + 1) (aTop i : ℤ) : ℝ))
         ≤ ∏ i : Fin X.s, (((hi : ℝ) / X.L.a) ^ X.r * (Formalism.MainNotions.ColumnSystems.symDim (X.r + 1) (aTop' i : ℤ) : ℝ)) :=
-          Finset.prod_le_prod (fun i _ => Nat.cast_nonneg _) (fun i _ => hone i)
+          Finset.prod_le_prod₀ (fun i _ => Nat.cast_nonneg _) (fun i _ => hone i)
       _ = (((hi : ℝ) / X.L.a) ^ X.r) ^ X.s * ∏ i, (Formalism.MainNotions.ColumnSystems.symDim (X.r + 1) (aTop' i : ℤ) : ℝ) := by
           rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
   push_cast

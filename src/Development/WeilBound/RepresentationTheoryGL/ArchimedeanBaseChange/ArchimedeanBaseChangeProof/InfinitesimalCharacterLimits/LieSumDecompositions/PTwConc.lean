@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.SplitInv
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PProjA
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.TensorOperatorTrees.TwShift
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.SplitInv
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PProjA
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.TensorOperatorTrees.TwShift
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,18 @@ theorem chiDet_lev {r s : ℕ} (χ : Formalism.L2.Host.HChar E) (m : GA E r × G
       (χ : GlobalTheory.Mem.Chr.Ideles E →* ℂˣ) (Matrix.GeneralLinearGroup.det m.2)
   rw [← map_mul]
   congr 1
-  exact det_emb₂ _ _ m
+  apply Units.ext
+  simp only [Units.val_mul, Matrix.GeneralLinearGroup.val_det_apply]
+  have h : (lev (Ad E) r s m : Matrix (Fin (r + s)) (Fin (r + s)) (Ad E)) =
+      Matrix.reindex (stdSum (rfl : r + s = r + s)) (stdSum (rfl : r + s = r + s))
+        (Matrix.fromBlocks m.1.val 0 0 m.2.val) := by
+    ext i j
+    obtain ⟨i, rfl⟩ := (stdSum (rfl : r + s = r + s)).surjective i
+    obtain ⟨j, rfl⟩ := (stdSum (rfl : r + s = r + s)).surjective j
+    simp only [Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_apply_apply]
+    rcases i with i | i <;> rcases j with j | j <;>
+      simp [lev, emb₂, leviEmb, leviTwo, two, Matrix.blockDiagonal'_apply]
+  rw [h, Matrix.det_reindex_self, Matrix.det_fromBlocks_zero₂₁]
 
 omit [IsCMField E] in
 theorem chiDet_zero (χ : Formalism.L2.Host.HChar E) (g : GA E 0) : chiDet 0 χ g = 1 := by

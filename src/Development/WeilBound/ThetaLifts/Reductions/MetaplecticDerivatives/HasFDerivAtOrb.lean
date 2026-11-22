@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.Reductions.MetaplecticDerivatives.MpFOne
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.MetaplecticDerivatives.MpFOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,8 @@ theorem hasFDerivAt_orb (hT : TopG l) (hN : NearOne l) (hD : SecDer l) {k : ℕ}
       _ = _ := by rw [ht]; rfl
   have h3 := h2.congr_of_eventuallyEq heq
   refine h3.congr_fderiv (ContinuousLinearMap.ext fun x => ?_)
-  simp only [ContinuousLinearMap.comp_apply, FunLike.coe_sum, Finset.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ContinuousLinearMap.comp_apply, FunLike.coe_sum, Finset.sum_apply,
     ContinuousLinearMap.smulRight_apply, map_sum, map_smul]
   simp only [hL, orb]
 

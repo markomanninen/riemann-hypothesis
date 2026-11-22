@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CompHt
-import Mathlib
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompHt
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ theorem fnFG_of (h : KapFG Xo c) : FnFG Xo c := by
       rw [← MvPolynomial.algebraMap_eq, ← IsScalarTower.algebraMap_apply]
       exact hC a
     next p₁ p₂ h₁ h₂ =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact K.add_mem h₁ h₂
     next p₁ i h₁ =>
       rw [map_mul]

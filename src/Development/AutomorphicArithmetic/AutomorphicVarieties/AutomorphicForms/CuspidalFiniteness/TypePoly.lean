@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.CuspSemisimpleReal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.RepNewform
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHasCentChar
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CasimirScalarOfCapelliDeterminantEigenvalue
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.CuspSemisimpleReal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.RepNewform
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHasCentChar
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CasimirScalarOfCapelliDeterminantEigenvalue
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
 
 open NumberField GlobalTheory.CuspRep UpperTheory.V
 
@@ -30,7 +34,8 @@ theorem casMem : ∀ (A : Type) [Ring A] [Algebra ℂ A] (n : ℕ) (E : Fin n �
     (fun i j => φ (E i i * E j j - E j i * E i j)) (fun d => φ (Rm d)) (φ 1) 0 (fun Y => by
       have h2 := congrArg φ (hR Y).symm
       rw [h0 _ (h Y)] at h2
-      simp only [map_add, map_sum, map_smul, smul_eq_mul, sub_eq_add_neg (a := Y)] at h2
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_add (f := _), map_sum, map_smul, smul_eq_mul, sub_eq_add_neg (a := Y)] at h2
       simp only [add_zero]
       rw [h2, h0 1 (one_mem S), mul_zero])
   have h2 := core.2
@@ -38,7 +43,8 @@ theorem casMem : ∀ (A : Type) [Ring A] [Algebra ℂ A] (n : ℕ) (E : Fin n �
   have h4 := h0 _ ht
   rw [map_sub, h0 _ (mul_mem ht ht)] at h3
   simp only [h0 1 (one_mem S), mul_zero, zero_add, Finset.sum_erase_eq_sub (Finset.mem_univ _)] at h2
-  simp only [map_sub φ, map_sum, map_smul, smul_eq_mul] at h3 h2 h4
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub φ, map_sum, map_smul, smul_eq_mul] at h3 h2 h4
   apply hφ
   simp only [sub_mul, Finset.sum_sub_distrib, ← Finset.mul_sum, h4, mul_assoc, neg_mul, one_mul, Finset.sum_neg_distrib] at h2 h3
   linear_combination -h3 - h2
@@ -112,7 +118,8 @@ theorem polySlices : ∀ (T M ι : Type) [AddCommGroup T] [Module ℂ T] [AddCom
   have hev : ∀ i (q : Polynomial ℂ) x, s i (Polynomial.aeval C q x) = Polynomial.aeval D q (s i x) := by
     intro i q x
     rw [Polynomial.aeval_eq_sum_range, Polynomial.aeval_eq_sum_range]
-    simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, hpow]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, hpow]
   have hpow2 : ∀ (n : ℕ) (y : U), (((D.restrict hD ^ n) y : U) : M) = (D ^ n) y := by
     intro n
     induction n with

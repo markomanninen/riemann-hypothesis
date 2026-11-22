@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifDefs
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspCorrespondenceBound
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsEmbLabel
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LabelEmbCompInjective
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.Rt0NeZero
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifDefs
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspCorrespondenceBound
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsEmbLabel
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LabelEmbCompInjective
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.Rt0NeZero
+
+@[expose] public section
 
 noncomputable section
 

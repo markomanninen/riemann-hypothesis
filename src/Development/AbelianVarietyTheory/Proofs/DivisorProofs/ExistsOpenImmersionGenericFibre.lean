@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SpecializesGenericImage
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsMonoFamNontrivial
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNormalisedBlowupCyclotomicAwayProjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomExtOfSecCoord
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocallyQuasiFiniteOfFiniteGeometricFibres
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSecCoordOfSubsingletonPic
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SecCoordBcScaleUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SpecializesGenericImage
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsMonoFamNontrivial
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNormalisedBlowupCyclotomicAwayProjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomExtOfSecCoord
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocallyQuasiFiniteOfFiniteGeometricFibres
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSecCoordOfSubsingletonPic
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SecCoordBcScaleUnique
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
@@ -59,7 +63,7 @@ theorem exists_openImmersion_genericFibre (F : Type) [Field F] (o : Type) [CommR
     · rw [← e₂, ← Category.assoc, hy, Category.assoc]
     · rw [← e₁, ← Category.assoc, hy, Category.assoc]
   obtain ⟨hoi, -, hdom⟩ :=
-    GlobalTheory.isOpenImmersion_lift_toNormalization_of_isLocalization (nonZeroDivisors o) hb f' f e₁.symm
+    GlobalTheory.isOpenImmersion_lift_toNormalization_of_isLocalization (M := nonZeroDivisors o) hb f' f e₁.symm
   refine ⟨pullback.lift f.toNormalization f' (by simp [e₁]) ≫
     (pullbackRightPullbackFstIso (PSpace.str o m) (spMap (algebraMap o F)) f.fromNormalization).hom,
     inferInstance, (Scheme.Hom.denseRange _), ?_, ?_⟩

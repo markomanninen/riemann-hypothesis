@@ -1,4 +1,8 @@
-import Formalism.LandauZeroFreeBounds.NoZeroComplexOf
+module
+
+public import Formalism.LandauZeroFreeBounds.NoZeroComplexOf
+
+@[expose] public section
 
 open Complex Filter Topology
 
@@ -74,8 +78,15 @@ lemma re_negLogDeriv_le (q : ℕ) [NeZero q] (s : ℂ) (hs : 1 < s.re) :
       (g := riemannZeta) s hPne hζ hPd hζd
   have hprod : logDeriv (fun z : ℂ => ∏ p ∈ q.primeFactors, (1 - (p : ℂ) ^ (-z))) s =
       ∑ p ∈ q.primeFactors, logDeriv (fun z : ℂ => 1 - (p : ℂ) ^ (-z)) s :=
-    logDeriv_prod (f := fun (p : ℕ) (z : ℂ) => 1 - (p : ℂ) ^ (-z))
-      (fun p hp => (hfac p hp).1) (fun p hp => (hfac p hp).2.1)
+    by
+      have hfun : (∏ p ∈ q.primeFactors, fun z : ℂ => 1 - (p : ℂ) ^ (-z)) =
+          fun z => ∏ p ∈ q.primeFactors, (1 - (p : ℂ) ^ (-z)) := by
+        funext z
+        exact Finset.prod_apply (s := q.primeFactors)
+          (g := fun (p : ℕ) (z : ℂ) => 1 - (p : ℂ) ^ (-z)) (a := z)
+      rw [← hfun]
+      exact logDeriv_prod (f := fun (p : ℕ) (z : ℂ) => 1 - (p : ℂ) ^ (-z))
+        (fun p hp => (hfac p hp).1) (fun p hp => (hfac p hp).2.1)
   have hneg : negLD (1 : DirichletCharacter ℂ q) s =
       -(logDeriv (DirichletCharacter.LFunction (1 : DirichletCharacter ℂ q)) s) := rfl
   have hS : ‖∑ p ∈ q.primeFactors, logDeriv (fun z : ℂ => 1 - (p : ℂ) ^ (-z)) s‖ ≤

@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SandwichNormalForm
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SourceLatticeInvariance
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.LatticeNormalFormUnipotent
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormalFormAtPrime
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnipotentCharacterArgumentMulStabilizer
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SandwichNormalForm
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SourceLatticeInvariance
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.LatticeNormalFormUnipotent
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormalFormAtPrime
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnipotentCharacterArgumentMulStabilizer
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col GlobalTheory.QNormal
 
@@ -54,7 +58,7 @@ theorem isFrame : IsFrame (LinearMap.range (Loc.inX F n c)) (fun i : Fin c => Lo
   · rw [Fintype.linearIndependent_iff]
     intro g hg i
     have := congrFun hg (Fin.natAdd n i)
-    rw [sum_eN_apply, dif_neg (by simp)] at this
+    rw [sum_eN_apply, dite_eq_right (by simp)] at this
     simpa using this
   · rw [Submodule.disjoint_def]
     rintro _ ⟨x, rfl⟩ hv
@@ -63,9 +67,9 @@ theorem isFrame : IsFrame (LinearMap.range (Loc.inX F n c)) (fun i : Fin c => Lo
     have h1 := congrFun hg l
     rw [sum_eN_apply] at h1
     by_cases h : l.1 < n
-    · rw [dif_pos h] at h1
+    · rw [dite_eq_left h] at h1
       exact h1.symm
-    · rw [inX_apply, dif_neg h]
+    · rw [inX_apply, dite_eq_right h]
       rfl
   · rw [codisjoint_iff, eq_top_iff]
     intro v _
@@ -88,7 +92,7 @@ theorem R1cond_of {r : (Fin (n + c) → F) ≃ₗ[F] (Fin (n + c) → F)}
     (h3 : ∀ i : Fin c, r (Loc.eN F (n + c) (n + i.1)) - Loc.eN F (n + c) (n + i.1) ∈ Loc.Ufl F n c i.1) :
     Loc.R1cond F n c r := by
   refine ⟨fun i v hv => ?_, ?_, fun i => ?_⟩
-  · rw [decomp v, map_add, map_sum]
+  · rw [decomp v, map_add (f := _), map_sum]
     refine add_mem (Ufl_mono (Nat.zero_le i) (h1 _)) (Submodule.sum_mem _ fun j _ => ?_)
     by_cases hj : j.1 < i
     · rw [map_smul]
@@ -148,12 +152,34 @@ theorem isLattice_map {O : Type} [CommRing O] [Algebra O F] {V W : Type} [AddCom
     Submodule.IsLattice F (L.map (φ.toLinearMap.restrictScalars O)) := by
   refine ⟨hL.fg.map _, ?_⟩
   have h : ((L.map (φ.toLinearMap.restrictScalars O) : Submodule O W) : Set W) = φ.toLinearMap '' (L : Set V) := rfl
-  rw [h, Submodule.span_image, hL.span_eq_top, Submodule.map_top, LinearEquiv.range]
+  intro s hs hli
+  have hs' : φ.symm '' s ⊆ (L : Set V) := by
+    intro x hx
+    obtain ⟨y, hy, rfl⟩ := hx
+    obtain ⟨z, hz, rfl⟩ := h ▸ hs hy
+    simpa using hz
+  have hi : LinearIndepOn O id (φ.symm '' s) := by
+    apply (linearIndepOn_id_imageₛ_iff (f := φ.symm.toLinearMap.restrictScalars O) φ.symm.injective.injOn).2
+    exact hli
+  have hf := hL.linearIndepOn (φ.symm '' s) hs' hi
+  have hm := (linearIndepOn_id_imageₛ_iff (f := φ.toLinearMap) φ.injective.injOn).2 hf
+  simpa [Set.image_image, Function.comp_def] using hm
+
+theorem isFullLattice_map {O : Type} [CommRing O] [Algebra O F] {V W : Type}
+    [AddCommGroup V] [Module F V] [Module O V] [IsScalarTower O F V]
+    [AddCommGroup W] [Module F W] [Module O W] [IsScalarTower O F W]
+    (φ : V ≃ₗ[F] W) (L : Submodule O V) (hL : Submodule.IsFullLattice F L) :
+    Submodule.IsFullLattice F (L.map (φ.toLinearMap.restrictScalars O)) := by
+  haveI := isLattice_map φ L hL.toIsLattice
+  refine { span_eq_top := ?_ }
+  change Submodule.span F (φ.toLinearMap '' (L : Set V)) = ⊤
+  rw [← Submodule.map_span φ.toLinearMap, hL.span_eq_top, Submodule.map_top, LinearEquiv.range]
 
 theorem latticeNormalFormCoord_of : GlobalTheory.IndefiniteRowSideFullHecke.FlagUnipotentSemidirect.LatticeNormalForm → GlobalTheory.IndefiniteRowSideFullHecke.FlagUnipotentSemidirect.LatticeNormalFormCoord := by
   intro H O F _ _ _ _ _ _ q hq n c L hL Λ hΛ
   let φ := LinearEquiv.ofInjective (Loc.inX F n c) inX_injective
-  obtain ⟨r, e, z, hr, ⟨z', rfl⟩, h⟩ := H O F (Fin (n + c) → F) q hq c _ _ isFrame _ (isLattice_map φ L hL) Λ hΛ
+  obtain ⟨r, e, z, hr, ⟨z', rfl⟩, h⟩ := H O F (Fin (n + c) → F) q hq c _ _ isFrame _ (by
+    first | exact isFullLattice_map φ L hL | exact isLattice_map φ L hL) Λ hΛ
   refine ⟨r, mem_unipotentRadical_of_isSemidirect hr, e, z', ?_⟩
   rw [h]
   congr 1

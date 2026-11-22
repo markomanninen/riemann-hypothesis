@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ChainStepsAreGridArrows
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ChainStepsAreGridArrows
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,7 @@ theorem fin_add {D : D7} {S T : HSp D} {a b : WO S T} (ha : a.map (infPart D) = 
   have h1 : infPart D (a i j) = 0 := congrFun (congrFun ha i) j
   have h2 : infPart D (b i j) = 0 := congrFun (congrFun hb i) j
   show infPart D (a i j + b i j) = 0
-  rw [RingHom.map_add, h1, h2, add_zero]
+  rw [RingHom.map_add (f := _), h1, h2, add_zero]
 
 theorem fin_neg {D : D7} {S T : HSp D} {a : WO S T} (ha : a.map (infPart D) = 0) : (-a).map (infPart D) = 0 := by
   ext i j
@@ -98,7 +102,8 @@ theorem heis_mem_span {f x : WO S T → ℂ} {b : WO S T} (hb : b.map (infPart D
     (hx : x ∈ Submodule.span ℂ (Set.range fun a : {a : WO S T // a.map (infPart D) = 0} => heisO ψ S T a f)) :
     heisO ψ S T b x ∈ Submodule.span ℂ (Set.range fun a : {a : WO S T // a.map (infPart D) = 0} => heisO ψ S T a f) := by
   obtain ⟨c, rfl⟩ := Finsupp.mem_span_range_iff_exists_finsupp.1 hx
-  rw [← GlobalTheory.SplitScalar.heisL_apply, Finsupp.sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← GlobalTheory.SplitScalar.heisL_apply, Finsupp.sum, map_sum]
   refine Submodule.sum_mem _ fun a _ => ?_
   rw [map_smul, GlobalTheory.SplitScalar.heisL_apply, GlobalTheory.LatVac.heisO_heisO]
   exact Submodule.smul_mem _ _ (Submodule.smul_mem _ _ (Submodule.subset_span ⟨⟨b + a, fin_add hb a.2⟩, rfl⟩))

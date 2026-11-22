@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UpqRep
-import Formalism.PeriodIntegrals.IsLowUnitH
+module
+
+public import Formalism.PeriodIntegrals.UpqRep
+public import Formalism.PeriodIntegrals.IsLowUnitH
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset
 open scoped InnerProductSpace

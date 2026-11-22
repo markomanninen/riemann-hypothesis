@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.GL3MeanSquares.LegendreCoefficient
-import Formalism.FormalGroupWitt.FormalGroupWittProofs.IntegralSubstVector
-import Formalism.FormalGroupWitt.FormalGroupWittProofs.SolveV
-import Formalism.FormalGroupWitt.FormalGroupWittProofs.EqSingleOfDegreeEqOne
-import Formalism.FormalGroupWitt.FormalGroupWittProofs.InvIntV
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.LegendreCoefficient
+public import Formalism.FormalGroupWitt.FormalGroupWittProofs.IntegralSubstVector
+public import Formalism.FormalGroupWitt.FormalGroupWittProofs.SolveV
+public import Formalism.FormalGroupWitt.FormalGroupWittProofs.EqSingleOfDegreeEqOne
+public import Formalism.FormalGroupWitt.FormalGroupWittProofs.InvIntV
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,8 @@ private theorem g3cw2_lin_integral {K : Type} [NormedField K] [IsUltrametricDist
     (hg : ∀ k, Formalism.G.IntegralMv (g k)) :
     Formalism.G.IntegralMv (∑ k, MvPowerSeries.C (a k) * g k) := by
   intro d
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one fun k _ => ?_
   rw [MvPowerSeries.coeff_C_mul, norm_mul]
   exact mul_le_one₀ (ha k) (norm_nonneg _) (hg k d)
@@ -26,7 +31,8 @@ private theorem g3cw2_subst_lin {K : Type} [Field K] {σ ρ τ : Type} [Fintype 
     (hh : MvPowerSeries.HasSubst h) :
     MvPowerSeries.subst h (∑ k, MvPowerSeries.C (a k) * g k) =
       ∑ k, MvPowerSeries.C (a k) * MvPowerSeries.subst h (g k) := by
-  rw [← MvPowerSeries.coe_substAlgHom (R := K) hh, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.coe_substAlgHom (R := K) hh, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_mul, MvPowerSeries.coe_substAlgHom, MvPowerSeries.subst_C]
 
@@ -38,7 +44,8 @@ private theorem g3cw2_inv_lin {K : Type} [Field K] {σ τ : Type} [Fintype σ] [
         simp_rw [Finset.mul_sum, ← mul_assoc, ← map_mul]
     _ = ∑ k, ∑ j, MvPowerSeries.C (J i j * J' j k) * a k := Finset.sum_comm
     _ = ∑ k, MvPowerSeries.C ((J * J') i k) * a k := by
-        simp_rw [← Finset.sum_mul, ← map_sum, Matrix.mul_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp_rw [← Finset.sum_mul, ← map_sum, Matrix.mul_apply]
     _ = a i := by
         rw [hJ]
         simp [Matrix.one_apply]
@@ -52,12 +59,14 @@ theorem integralInverse_statement : IntegralInverse := by
   let f : σ → MvPowerSeries σ K := fun j => ∑ i, MvPowerSeries.C (J' j i) * T i
   have hf0 : ∀ j, MvPowerSeries.constantCoeff (f j) = 0 := by
     intro j
-    simp [f, map_sum, hT0]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [f, map_sum, hT0]
   have hfI : ∀ j, Formalism.G.IntegralMv (f j) := fun j => g3cw2_lin_integral _ (fun i => hJ'I j i) _ hTI
   have hfId : Formalism.FG.IsIdMod2 f := by
     refine ⟨hf0, fun j m => ?_⟩
     have h1 : MvPowerSeries.coeff (Finsupp.single m 1) (f j) = (J' * L) j m := by
-      simp only [f, map_sum, MvPowerSeries.coeff_C_mul, Matrix.mul_apply, hL, Matrix.of_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [f, map_sum, MvPowerSeries.coeff_C_mul, Matrix.mul_apply, hL, Matrix.of_apply]
     rw [h1, hJL, Matrix.one_apply]
     simp [eq_comm]
   have hTf : ∀ i, T i = ∑ j, MvPowerSeries.C (L i j) * f j := fun i => (g3cw2_inv_lin L J' hLJ T i).symm
@@ -68,7 +77,8 @@ theorem integralInverse_statement : IntegralInverse := by
   let G : σ → MvPowerSeries σ K := fun j => ∑ k, MvPowerSeries.C (J' j k) * MvPowerSeries.X k
   have hG0 : ∀ j, MvPowerSeries.constantCoeff (G j) = 0 := by
     intro j
-    simp [G, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [G, map_sum]
   obtain ⟨X', hX'0, hX'⟩ := Formalism.FG.solve_exists_vector K σ σ f G hfId hG0
   have hX's : MvPowerSeries.HasSubst X' := MvPowerSeries.hasSubst_of_constantCoeff_zero hX'0
   have hX'I : ∀ i, Formalism.G.IntegralMv (X' i) := by

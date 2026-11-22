@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsThickId
-import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardSmoothLiftOverSqZeroThickening
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeCohomologyIsoPresentedCrystal
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsThickId
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardSmoothLiftOverSqZeroThickening
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeCohomologyIsoPresentedCrystal
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open scoped TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.CechPic GlobalTheory.AbDual GlobalTheory.Obs GlobalTheory.LBLift
@@ -12,8 +17,8 @@ noncomputable section
 
 namespace GlobalTheory.LBLift
 
-open MvPolynomial in
 
+open MvPolynomial in
 theorem standardSmoothRelDim_lift_of_sqZero {R R₀ : Type} [CommRing R] [CommRing R₀] (I : Ideal R) (hI : I ^ 2 = 0)
     (π : R →+* R₀) (hπ : Function.Surjective π) (hk : RingHom.ker π = I) (g : ℕ) (B₀ : Type) [CommRing B₀]
     [Algebra R₀ B₀] (hB₀ : Algebra.IsStandardSmoothOfRelativeDimension g R₀ B₀) :
@@ -58,7 +63,8 @@ theorem standardSmoothRelDim_lift_of_sqZero {R R₀ : Type} [CommRing R] [CommRi
     let c' : τ → MvPolynomial κ R := fun j => Function.surjInv hmap (c j)
     have hc' : ∀ j, MvPolynomial.map π (c' j) = c j := fun j => Function.surjInv_eq hmap _
     have hg : f - ∑ j, c' j * v j ∈ RingHom.ker (MvPolynomial.map (σ := κ) π) := by
-      rw [RingHom.mem_ker, map_sub, map_sum, ← hc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [RingHom.mem_ker, map_sub, map_sum, ← hc]
       simp [hc', hv]
     rw [MvPolynomial.ker_map, hk] at hg
     have hs : ∑ j, c' j * v j ∈ J :=

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SiegelFinite
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SiegelFinite
+
+@[expose] public section
 
 open Set Filter Topology
 open NumberField IsDedekindDomain
@@ -48,7 +52,7 @@ theorem exists_natCast_conj_mem (U : Subgroup (AdelicGLn.integralFiniteGL K n))
       Filter.pi fun _ => 𝓝 (0 : FiniteAdeleRing (𝓞 K) K) := hev
   rw [Filter.mem_pi] at hev'
   obtain ⟨I, -, tt, htt, hIt⟩ := hev'
-  obtain ⟨M, hM, hMW⟩ := exists_natCast_mul_mem_of_mem_nhds K (Filter.iInter_mem.2 htt)
+  obtain ⟨M, hM, hMW⟩ := GroundTheory.Automorphic.CuspidalSpectrum.exists_natCast_mul_mem_of_mem_nhds K (Filter.iInter_mem.2 htt)
   refine ⟨M, hM, fun b hb ρ hρ k hk z hz1 hz2 => ?_⟩
   set w : UPos n r → FiniteAdeleRing (𝓞 K) K := fun p => (z p).2
   have hw : w ∈ I.pi tt := fun p _ => by

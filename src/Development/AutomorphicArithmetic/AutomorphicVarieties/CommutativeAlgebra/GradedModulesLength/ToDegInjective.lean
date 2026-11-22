@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.OrbitVanishingLocal
-import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.UZGen
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.OrbitVanishingLocal
+public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.UZGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem lat_single (i : Fin k) : lat N (Finsupp.single i 1) = N i := by
   rw [lat, Finset.prod_eq_single i] <;> simp +contextual [Finsupp.single_apply, eq_comm]
 
 def rees : Subalgebra B (MvPolynomial (Fin k) A) where
-  carrier := {p | ∀ m, MvPolynomial.coeff m p ∈ lat N m}
+  carrier := {p | ∀ m, AddMonoidAlgebra.coeff p m ∈ lat N m}
   mul_mem' {p q} hp hq m := by
     classical
     rw [MvPolynomial.coeff_mul]
@@ -56,18 +60,18 @@ theorem toDeg_injective : Function.Injective (toDeg (k := k)) := fun m m' h =>
   Finsupp.ext fun i => Int.ofNat_inj.1 (congrFun h i)
 
 def reesGr (d : Deg k) : Submodule B (rees N) where
-  carrier := {p | ∀ m, toDeg m ≠ d → MvPolynomial.coeff m p.1 = 0}
+  carrier := {p | ∀ m, toDeg m ≠ d → AddMonoidAlgebra.coeff p.1 m = 0}
   add_mem' {p q} hp hq m hm := by
-    show MvPolynomial.coeff m (p.1 + q.1) = 0
+    show AddMonoidAlgebra.coeff (p.1 + q.1) m = 0
     rw [MvPolynomial.coeff_add, hp m hm, hq m hm, add_zero]
   zero_mem' _ _ := rfl
   smul_mem' c p hp m hm := by
-    show MvPolynomial.coeff m (c • p.1) = 0
+    show AddMonoidAlgebra.coeff (c • p.1) m = 0
     rw [MvPolynomial.coeff_smul, hp m hm, smul_zero]
 
 theorem mono_mem (m : Fin k →₀ ℕ) (f : A) (hf : f ∈ lat N m) : mono N m f hf ∈ reesGr N (toDeg m) := fun n hn => by
   classical
-  show MvPolynomial.coeff n (MvPolynomial.monomial m f) = 0
+  show AddMonoidAlgebra.coeff (MvPolynomial.monomial m f) n = 0
   rw [MvPolynomial.coeff_monomial, if_neg]
   rintro rfl
   exact hn rfl
@@ -80,13 +84,13 @@ theorem sec_mem (i : Fin k) (f : A) (hf : f ∈ N i) : sec N i f hf ∈ reesGr N
 instance : SetLike.GradedMonoid (reesGr N) where
   one_mem m hm := by
     classical
-    show MvPolynomial.coeff m 1 = 0
+    show AddMonoidAlgebra.coeff 1 m = 0
     rw [MvPolynomial.coeff_one, if_neg]
     rintro rfl
     exact hm rfl
   mul_mem d d' p q hp hq m hm := by
     classical
-    show MvPolynomial.coeff m (p.1 * q.1) = 0
+    show AddMonoidAlgebra.coeff (p.1 * q.1) m = 0
     rw [MvPolynomial.coeff_mul]
     refine Finset.sum_eq_zero fun c hc => ?_
     by_cases h1 : toDeg c.1 = d
@@ -95,9 +99,9 @@ instance : SetLike.GradedMonoid (reesGr N) where
       exact hm (by rw [← Finset.HasAntidiagonal.mem_antidiagonal.1 hc, toDeg_add, h1, h2])
     · rw [hp _ h1, zero_mul]
 
-theorem eq_sum_mono (p : rees N) : p = ∑ m ∈ p.1.support, mono N m (MvPolynomial.coeff m p.1) (p.2 m) := by
+theorem eq_sum_mono (p : rees N) : p = ∑ m ∈ p.1.support, mono N m (AddMonoidAlgebra.coeff p.1 m) (p.2 m) := by
   apply Subtype.ext
-  rw [AddSubmonoidClass.coe_finset_sum]
+  rw [AddSubmonoidClass.coe_finsetSum]
   exact p.1.as_sum
 
 theorem rees_internal : DirectSum.IsInternal (reesGr N) := by
@@ -107,9 +111,9 @@ theorem rees_internal : DirectSum.IsInternal (reesGr N) := by
   · intro d
     rw [Submodule.disjoint_def]
     intro p hp hq
-    have key : ∀ m, toDeg m = d → MvPolynomial.coeff m p.1 = 0 := by
+    have key : ∀ m, toDeg m = d → AddMonoidAlgebra.coeff p.1 m = 0 := by
       intro m hm
-      refine Submodule.iSup_induction (motive := fun q : rees N => MvPolynomial.coeff m q.1 = 0) _ hq ?_ rfl ?_
+      refine Submodule.iSup_induction (motive := fun q : rees N => AddMonoidAlgebra.coeff q.1 m = 0) _ hq ?_ rfl ?_
       · intro j q hq
         by_cases hj : j = d
         · have : q = 0 := by simpa [hj] using hq
@@ -117,7 +121,7 @@ theorem rees_internal : DirectSum.IsInternal (reesGr N) := by
         · have hq' : q ∈ reesGr N j := by simpa [hj] using hq
           exact hq' m (by rw [hm]; exact Ne.symm hj)
       · intro a b ha hb
-        show MvPolynomial.coeff m (a.1 + b.1) = 0
+        show AddMonoidAlgebra.coeff (a.1 + b.1) m = 0
         rw [MvPolynomial.coeff_add, ha, hb, add_zero]
     apply Subtype.ext
     ext m
@@ -133,14 +137,14 @@ instance : GradedAlgebra (reesGr N) :=
   { (inferInstance : SetLike.GradedMonoid (reesGr N)), (rees_internal N).chooseDecomposition with }
 
 def coefIdeal (J : Ideal A) : Ideal (rees N) where
-  carrier := {p | ∀ m, MvPolynomial.coeff m p.1 ∈ J}
+  carrier := {p | ∀ m, AddMonoidAlgebra.coeff p.1 m ∈ J}
   add_mem' {p q} hp hq m := by
-    show MvPolynomial.coeff m (p.1 + q.1) ∈ J
+    show AddMonoidAlgebra.coeff (p.1 + q.1) m ∈ J
     rw [MvPolynomial.coeff_add]; exact add_mem (hp m) (hq m)
   zero_mem' _ := J.zero_mem
   smul_mem' c p hp m := by
     classical
-    show MvPolynomial.coeff m (c.1 * p.1) ∈ J
+    show AddMonoidAlgebra.coeff (c.1 * p.1) m ∈ J
     rw [MvPolynomial.coeff_mul]
     exact Submodule.sum_mem _ fun c _ => J.mul_mem_left _ (hp _)
 
@@ -225,7 +229,7 @@ def posW {τ : Type} (wt : τ → ℤ) (i : τ) : ℕ := (wt i).toNat
 
 def fil (E : Type) [CommRing E] {τ : Type} (wt : τ → ℤ) (n : ℕ) : Submodule E (MvPowerSeries τ E) where
   carrier := {g | ∀ ν, Finsupp.weight (negW wt) ν < n → MvPowerSeries.coeff ν g = 0}
-  add_mem' ha hb ν hν := by rw [map_add, ha ν hν, hb ν hν, add_zero]
+  add_mem' ha hb ν hν := by rw [map_add (f := _), ha ν hν, hb ν hν, add_zero]
   zero_mem' _ _ := map_zero _
   smul_mem' c g hg ν hν := by rw [map_smul, hg ν hν, smul_zero]
 
@@ -243,6 +247,6 @@ structure IsChart0 {O A τ : Type} [CommRing O] [IsDomain O] [CommRing A] [Algeb
 def leadKer {O A τ : Type} [CommRing O] [IsDomain O] [CommRing A] [Algebra O A] {𝒜 : ℤ → Submodule O A}
     [GradedAlgebra 𝒜] {x : A →ₐ[O] O} {r s r' s' m : ℕ} (Q : Eqns 𝒜 x r s r' s' m) (wt : τ → ℤ)
     (φ : A →ₐ[O] MvPowerSeries τ (FractionRing O)) : Set (mR Q) :=
-  {p | ∀ μ : Fin 3 →₀ ℕ, φ (MvPolynomial.coeff μ p.1) ∈ fil (FractionRing O) wt (2 * μ 0 + 4 * μ 2 + 1)}
+  {p | ∀ μ : Fin 3 →₀ ℕ, φ (AddMonoidAlgebra.coeff p.1 μ) ∈ fil (FractionRing O) wt (2 * μ 0 + 4 * μ 2 + 1)}
 
 end UpperTheory.V.Alg.M

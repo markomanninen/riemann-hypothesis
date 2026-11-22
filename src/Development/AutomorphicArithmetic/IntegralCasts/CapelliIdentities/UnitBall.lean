@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.UnitBallLemmas.IsIntP :
     {p : ℕ} → [inst : Fact (Nat.Prime p)] → ℂ_[p] → Prop :=

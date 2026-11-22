@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDIdentSpec
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SignedCoordinateEqSignSmul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DiagonalTransferAction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.QNFAsm
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDIdentSpec
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SignedCoordinateEqSignSmul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DiagonalTransferAction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QNFAsm
+
+@[expose] public section
 
 open MeasureTheory
 

@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LiftCoordinatesInGoodPartFamily
-import Formalism.LocalToGlobal.IndefiniteReal.LiftGoodPartComplexEqRangeFamily
-import Formalism.LocalToGlobal.IndefiniteReal.MajAtEqZeroOfMemQpOfNe
-import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RangeAdjointRat
-import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RatMuOfRowTest
-import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RatThOfLiftTest
-import Formalism.LocalToGlobal.IndefiniteReal.FinrankISupLeSum
-import Formalism.LocalToGlobal.IndefiniteReal.CutPassage
-import Formalism.LocalToGlobal.IndefiniteReal.IsometricPeriodsOfUnitHypotheses
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LiftCoordinatesInGoodPartFamily
+public import Formalism.LocalToGlobal.IndefiniteReal.LiftGoodPartComplexEqRangeFamily
+public import Formalism.LocalToGlobal.IndefiniteReal.MajAtEqZeroOfMemQpOfNe
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RangeAdjointRat
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RatMuOfRowTest
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RatThOfLiftTest
+public import Formalism.LocalToGlobal.IndefiniteReal.FinrankISupLeSum
+public import Formalism.LocalToGlobal.IndefiniteReal.CutPassage
+public import Formalism.LocalToGlobal.IndefiniteReal.IsometricPeriodsOfUnitHypotheses
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder InnerProductSpace
@@ -131,8 +135,5 @@ def basePackageFullHecke (hC : PrimitiveStatementsWithPassage A3 P0 ψ0 P1 ψ1 D
     (X.heckeC_of (hC.what₂ true).1 hC.heckeRC.some).some
 
 end CoreR3
-
-theorem package_from_primitive_statements : PackageFromComplexDataConditions (K := K) (G := G) (Pl0 := Pl0) (I0 := I0) (Ty := Ty) (T := T) (m := m) :=
-  fun _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ hC => ⟨basePackageFullHecke hC⟩
 
 end Formalism.IndefR.Cx

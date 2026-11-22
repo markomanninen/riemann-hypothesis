@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtalePrismAlexanderWhitneyHomotopyOfRelations
+module
+
+public import Development.EtaleCohomology.TateTwists.EtalePrismAlexanderWhitneyHomotopyOfRelations
+
+@[expose] public section
 
 open CategoryTheory GlobalTheory.EtC
 
@@ -20,29 +24,24 @@ def cone {p N : ℕ} (a : SimplexCategory.mk p ⟶ SimplexCategory.mk N) :
 def v0 {N : ℕ} : SimplexCategory.mk 0 ⟶ SimplexCategory.mk N :=
   SimplexCategory.mkHom ⟨fun _ => 0, fun _ _ _ => le_rfl⟩
 
-@[simp] lemma cone_zero {p N : ℕ} (a : SimplexCategory.mk p ⟶ SimplexCategory.mk N) :
-    (cone a).toOrderHom 0 = 0 := rfl
-@[simp] lemma cone_succ {p N : ℕ} (a : SimplexCategory.mk p ⟶ SimplexCategory.mk N) (j : Fin (p + 1)) :
-    (cone a).toOrderHom j.succ = a.toOrderHom j := rfl
-@[simp] lemma vertex_zero_apply {N : ℕ} (j : Fin 1) : (v0 (N := N)).toOrderHom j = 0 := rfl
-
 lemma δ0_cone {p N : ℕ} (a : SimplexCategory.mk p ⟶ SimplexCategory.mk N) :
     SimplexCategory.δ 0 ≫ cone a = a := by
   ext j
-  simp [SimplexCategory.δ]
+  simp [SimplexCategory.δ, cone]
 
 lemma δsucc_cone {p N : ℕ} (a : SimplexCategory.mk (p + 1) ⟶ SimplexCategory.mk N) (i : Fin (p + 2)) :
     SimplexCategory.δ i.succ ≫ cone a = cone (SimplexCategory.δ i ≫ a) := by
   ext j
   induction j using Fin.cases with
-  | zero => simp [SimplexCategory.δ]
-  | succ j => simp [SimplexCategory.δ, Fin.succ_succAbove_succ]
+  | zero => simp [SimplexCategory.δ, cone]
+  | succ j => simp [SimplexCategory.δ, cone, Fin.succ_succAbove_succ]
 
 lemma δ1_cone {N : ℕ} (a : SimplexCategory.mk 0 ⟶ SimplexCategory.mk N) :
     SimplexCategory.δ 1 ≫ cone a = v0 := by
   ext j
   fin_cases j
-  simp [SimplexCategory.δ]
+  simp [SimplexCategory.δ, cone, v0]
+  rfl
 
 abbrev X {N : ℕ} (p r : ℕ) (a : SimplexCategory.mk p ⟶ SimplexCategory.mk N)
     (b : SimplexCategory.mk r ⟶ SimplexCategory.mk N) : Pr N →₀ ℤ :=
@@ -116,20 +115,23 @@ lemma key {N : ℕ} (z : Pr N) (hz : z.1 + z.2.1 ≠ 0) :
     cases r with
     | zero => simp at hz
     | succ r =>
-      rw [H_X, Hg_zero, map_add, d_X, d_X, d_X, simplex_pair_first_face_cone_vertex_formula, diffOne_zero, diffOne_zero, simplex_pair_second_face_cone_succ_formula, simplex_pair_second_face_succ_alternating_sum, simplex_pair_second_face_succ_alternating_sum]
-      simp only [map_add, map_sub, map_sum, map_zsmul, H_X, Hg_zero, smul_add, Finset.sum_add_distrib, zero_add,
+      rw [H_X, Hg_zero, map_add (f := _), d_X, d_X, d_X, simplex_pair_first_face_cone_vertex_formula, diffOne_zero, diffOne_zero, simplex_pair_second_face_cone_succ_formula, simplex_pair_second_face_succ_alternating_sum, simplex_pair_second_face_succ_alternating_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_add (f := _), map_sub, map_sum, map_zsmul, H_X, Hg_zero, smul_add, Finset.sum_add_distrib, zero_add,
         pow_zero, pow_one, one_smul, neg_smul, map_zero]
       abel
   | succ p =>
     cases r with
     | zero =>
       rw [H_X, Hg_succ, d_X, d_X, simplex_pair_first_face_cone_succ_formula, simplex_pair_first_face_succ_alternating_sum, simplex_pair_second_face_of_vertex_eq_zero, simplex_pair_second_face_of_vertex_eq_zero]
-      simp only [map_add, map_sub, map_sum, map_zsmul, H_X, smul_zero, add_zero, map_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_add (f := _), map_sub, map_sum, map_zsmul, H_X, smul_zero, add_zero, map_zero]
       simp only [Hg, smul_add, Finset.sum_add_distrib, alt_const, add_zero]
       abel
     | succ r =>
       rw [H_X, Hg_succ, d_X, d_X, simplex_pair_first_face_cone_succ_formula, simplex_pair_first_face_succ_alternating_sum, simplex_pair_second_face_succ_alternating_sum, simplex_pair_second_face_succ_alternating_sum]
-      simp only [map_add, map_sub, map_sum, map_zsmul, H_X, Hg_succ, map_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_add (f := _), map_sub, map_sum, map_zsmul, H_X, Hg_succ, map_zero]
       simp only [Hg, smul_add, Finset.sum_add_distrib, alt_const, add_zero]
       have e : (-1 : ℤ) ^ (p + 2) = -(-1) ^ (p + 1) := by ring
       rw [e, neg_smul]
@@ -163,20 +165,21 @@ lemma deg_H {N k : ℕ} {c : Pr N →₀ ℤ} (hdeg : Pr.Deg (k + 1) c) : Pr.Deg
 
 end LateralTheory.EtaleFoundations.AcycPf
 
-open LateralTheory.EtaleFoundations.AcycPf in
 
+open LateralTheory.EtaleFoundations.AcycPf in
 theorem LateralTheory.EtaleFoundations.SteenPf.leaf_acyc_of : LateralTheory.EtaleFoundations.SteenPf.leaf_acyc := by
   intro N k c hdeg hcyc
-  refine ⟨H N c, deg_H hdeg, ?_⟩
-  have h : ∀ y ∈ c.support, Pr.d N (H N (Finsupp.single y (c y))) + H N (Pr.d N (Finsupp.single y (c y))) =
+  refine ⟨LateralTheory.EtaleFoundations.AcycPf.H N c, LateralTheory.EtaleFoundations.AcycPf.deg_H hdeg, ?_⟩
+  have h : ∀ y ∈ c.support, Pr.d N (LateralTheory.EtaleFoundations.AcycPf.H N (Finsupp.single y (c y))) + LateralTheory.EtaleFoundations.AcycPf.H N (Pr.d N (Finsupp.single y (c y))) =
       Finsupp.single y (c y) := by
     intro y hy
     have hy' := hdeg y hy
-    rw [← Finsupp.smul_single_one, map_zsmul, map_zsmul, map_zsmul, map_zsmul, ← smul_add, key y (by omega)]
-  have e : Pr.d N (H N c) + H N (Pr.d N c) = c := by
+    rw [← Finsupp.smul_single_one, map_zsmul, map_zsmul, map_zsmul, map_zsmul, ← smul_add, LateralTheory.EtaleFoundations.AcycPf.key y (by omega)]
+  have e : Pr.d N (LateralTheory.EtaleFoundations.AcycPf.H N c) + LateralTheory.EtaleFoundations.AcycPf.H N (Pr.d N c) = c := by
     conv_rhs => rw [← Finsupp.sum_single c]
     conv_lhs => rw [← Finsupp.sum_single c]
-    simp only [Finsupp.sum, map_sum, ← Finset.sum_add_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finsupp.sum, map_sum, ← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl h
   rw [hcyc, map_zero, add_zero] at e
   exact e

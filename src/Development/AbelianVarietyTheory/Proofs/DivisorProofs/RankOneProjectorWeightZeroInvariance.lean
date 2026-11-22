@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NablaSchur
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NablaSchur
+
+@[expose] public section
 
 open GlobalTheory.LeviCut
 
@@ -14,7 +18,7 @@ theorem rankOne_H_X_pow (X H : Module.End ℚ W) (hHX : ∀ w, H (X w) = X (H w)
   | zero => simp
   | succ k ih =>
     simp only [pow_succ, Module.End.mul_apply]
-    rw [ih, hHX, map_add, map_smul]
+    rw [ih, hHX, map_add (f := _), map_smul]
     push_cast
     module
 
@@ -38,7 +42,7 @@ theorem rankOne_X_Y_pow (X Y H : Module.End ℚ W) (hXY : ∀ w, X (Y w) = Y (X 
     have h1 : (Y ^ (k + 1 + 1)) w = (Y ^ (k + 1)) (Y w) := by
       rw [pow_succ Y (k + 1), Module.End.mul_apply]
     rw [h1, ih, hXY, hHY]
-    simp only [map_add, map_sub, map_smul, pow_succ, Module.End.mul_apply]
+    simp only [map_add (f := _), map_sub, map_smul, pow_succ, Module.End.mul_apply]
     push_cast
     module
 
@@ -56,8 +60,8 @@ end GlobalTheory.LeviCut
 
 namespace GlobalTheory.LeviCut
 
-open RankOnePf in
 
+open RankOnePf in
 theorem rankOne : RankOne := by
   intro W _ _ N K D hG hB o q ho hq hoq T hoT hqT
   have hqo : q ≠ o := Ne.symm hoq
@@ -108,7 +112,7 @@ theorem rankOne : RankOne := by
       induction n with
       | zero => simp
       | succ n ih =>
-        rw [Finset.sum_range_succ, map_add, ih, map_smul, hterm n]
+        rw [Finset.sum_range_succ, map_add (f := _), ih, map_smul, hterm n]
         have hc := rankOne_coef_succ n
         rw [show coef 0 n = -(coef 0 (n + 1) * (((n + 1) * (n + 1 + 1) : ℕ) : ℚ)) by rw [hc, neg_neg]]
         module

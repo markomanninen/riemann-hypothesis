@@ -1,11 +1,16 @@
-import Formalism.WachLatticeTwists.RamifiedBlockRings.ChainFromPrimitiveData
-import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.RingObjectsExist
-import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.DeltaRing
-import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.DensityPointOfCornerSimple
-import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.Density
-import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.CornerSimple
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.MemCcIdealIffForall
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthKerOfDetEqZero
+module
+
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.ChainFromPrimitiveData
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.RingObjectsExist
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.DistinctEigenvalueCornerPerturbation
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.TheoremNFiveDeltaClause
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.DensityPointOfCornerSimple
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.Statement
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.IdemFactor
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.MemCcIdealIffForall
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthKerOfDetEqZero
+
+@[expose] public section
 
 open Finset Classical
 
@@ -14,28 +19,6 @@ noncomputable section
 namespace Formalism.RepresentationBoundsCohomology.ringDataObjects
 
 open Formalism.NG Formalism.TruncatedSeriesCounting.TruncatedSeriesCountingIdentities Formalism.RepresentationBoundsCohomology.BR
-
-theorem x0 : DensityPointExists := density_point_of_corner_simple density cornerSimple
-
-theorem bridge : StatBridge := by
-  intro O _ _ X T d _ _ G _ r π eB heB hid m jj a h c
-  have hx : ∀ x, eB x * eB x = eB x := fun x => congrFun hid x
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · have h1 : (fun x => c • ∑ i, jj i x • (eB x * a i x * eB x)) =
-        c • ∑ i, (fun x => jj i x • (eB * a i * eB) x) := by
-      funext x; simp [Finset.sum_apply]
-    rw [h1]
-    refine (spanSub T r).smul_mem ((spanSub T r).sum_mem fun i _ => ?_) c
-    have h2 : (fun x => jj i x • (eB * a i * eB) x) = term r (jj i) 1 * (eB * a i * eB) := by
-      funext x; simp [term]
-    rw [h2]
-    exact mul_mem_tSpan T r (term_mem T r (h i).1 1)
-      (mul_mem_tSpan T r (mul_mem_tSpan T r heB (h i).2.2) heB)
-  · funext x
-    simp only [Pi.mul_apply, Matrix.mul_smul, Finset.mul_sum, ← mul_assoc, hx]
-  · funext x
-    simp only [Pi.mul_apply, Matrix.smul_mul, Finset.sum_mul, mul_assoc, hx]
-  · simp [(h _).2.1]
 
 theorem bcSpan : StatBcSpan := by
   intro O O' _ _ _ X T
@@ -65,7 +48,7 @@ theorem bcLocal : StatBcLocal := by
       have h2 := congrArg (IsLocalRing.ResidueField.map (algebraMap O O')) h
       exact h2
     | algebraMap c => rfl
-    | add f g _ _ hf hg => simp only [Pi.add_apply, map_add, hf, hg]
+    | add f g _ _ hf hg => simp only [Pi.add_apply, map_add (f := _), hf, hg]
     | mul f g _ _ hf hg => simp only [Pi.mul_apply, map_mul, hf, hg]
   have : Algebra.IsIntegral O' (X → O') := inferInstance
   have : Algebra.IsIntegral (bcT O' T) (X → O') := Algebra.IsIntegral.tower_top O'
@@ -344,17 +327,5 @@ theorem deltaO_eq {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing 
   rw [Finset.mem_Ioo] at hi
   rw [hrr 0 (by omega), hrr i hi.2]
   simp
-
-theorem deltaBc : StatDeltaBc := by
-  intro O O' _ _ _ _ _ _ _ e he
-  refine ⟨?_, fun ℓ => ?_⟩
-  · intro X d G _ _ _ t bl T r π χ₁ ε g₀ eB e₁ s D' hD'
-    have h1 : D'.δO = algebraMap O O'
-        (∏ i ∈ Finset.Ioo 0 t, ((χ₁ g₀ : O) - (χ₁ g₀ : O) * (((ε g₀)⁻¹ ^ i : Oˣ) : O))) := by
-      rw [deltaO_eq hD', map_prod]
-      refine Finset.prod_congr rfl fun i _ => ?_
-      simp [bcChar]
-    exact ⟨h1, by rw [h1, he]⟩
-  · rw [Formalism.NG.IdempotentNormalFormsLenFacts.length_quot_span, Formalism.NG.IdempotentNormalFormsLenFacts.length_quot_span, ← he, map_natCast (algebraMap O O')]
 
 end Formalism.RepresentationBoundsCohomology.ringDataObjects

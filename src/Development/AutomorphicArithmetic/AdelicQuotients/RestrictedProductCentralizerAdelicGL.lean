@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SplitEquiv
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SplitEquiv
+
+@[expose] public section
+
 open UpperTheory.ConvolutionTheory.G UpperTheory.ConvolutionTheory.T4
 
 theorem UpperTheory.restrictedProduct_centralizer_adelicGL :

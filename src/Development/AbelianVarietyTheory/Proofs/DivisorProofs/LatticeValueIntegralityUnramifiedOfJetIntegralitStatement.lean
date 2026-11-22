@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeValueIntegralityUnramifiedOfJetIntegralit
-import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeValueIntegralityUnramifiedOfJetIntegralit
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
+
+@[expose] public section
+
 open GlobalTheory.LatVal GlobalTheory.LatJet
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.latticeValueIntegrality_unramified_of_jetIntegrality : GlobalTheory.IndefiniteRowSideFullHecke.DefiningCoordinates.Statement → JetInt → LatIntUnr := by

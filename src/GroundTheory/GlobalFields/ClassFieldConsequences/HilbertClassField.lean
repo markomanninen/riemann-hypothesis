@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.ClassFieldConsequences.TrivialModulus
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ClassFieldConsequences.TrivialModulus
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

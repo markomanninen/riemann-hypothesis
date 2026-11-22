@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.SiegelWeilUnitaryConvergent
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsSelfDualForm
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.SiegelWeilUnitaryConvergent
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsSelfDualForm
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ theorem exists_basis {F E : Type} [Field F] [NumberField F] [Field E] [NumberFie
     rw [LinearIndependent.pair_iff]
     intro s t hst
     have h' := congrArg σ hst
-    simp only [map_add, hsm, map_one, hσδ, map_zero, smul_neg] at h'
+    simp only [map_add (f := _), hsm, map_one, hσδ, map_zero, smul_neg] at h'
     have ht : t = 0 := key s t (by rw [hst, sub_eq_add_neg, h'])
     subst ht
     simpa using hst
@@ -70,7 +74,7 @@ theorem exists_basis {F E : Type} [Field F] [NumberField F] [Field E] [NumberFie
   have hq : b.repr (δ * δ) 1 = 0 := by
     refine key (b.repr (δ * δ) 0) _ ?_
     have h' := congrArg σ hs
-    simp only [map_add, hsm, map_one, hσδ, hσ2, smul_neg] at h'
+    simp only [map_add (f := _), hsm, map_one, hσδ, hσ2, smul_neg] at h'
     rw [hs, sub_eq_add_neg, h']
   rw [hq, zero_smul, add_zero] at hs
   refine ⟨b, b.repr (δ * δ) 0, ?_, hb0, by rw [hb1, hσδ], ?_⟩
@@ -98,7 +102,7 @@ theorem rc_mk (a c : R) : rc R b (mk R b a c) = ![a, c] := by
     rw [mk, tmul_eq, tmul_eq]
   funext k
   rw [rc, h]
-  simp only [map_add, map_smul, Module.Basis.repr_self, Finsupp.add_apply, Finsupp.smul_apply]
+  simp only [map_add (f := _), map_smul, Module.Basis.repr_self, Finsupp.add_apply, Finsupp.smul_apply]
   fin_cases k <;> simp
 
 theorem mk_rc (y : R ⊗[F] E) : mk R b (rc R b y 0) (rc R b y 1) = y := by
@@ -108,7 +112,7 @@ theorem mk_rc (y : R ⊗[F] E) : mk R b (rc R b y 0) (rc R b y 1) = y := by
   exact this
 
 theorem rc_add (y z : R ⊗[F] E) (k : Fin 2) : rc R b (y + z) k = rc R b y k + rc R b z k := by
-  simp [rc, map_add]
+  simp [rc, map_add (f := _)]
 
 variable {R b}
 variable {σ : E →ₐ[F] E} {D : F}
@@ -270,9 +274,11 @@ theorem pair_eq (h2 : (2 : F) ≠ 0) (hb0 : b 0 = 1) (hσ : σ (b 1) = - b 1)
   have A : pairHerm R σ n S T = ∑ i, ∑ j, (rc R b (S.1 i j) 0 * rc R b (T.1 i j) 0 +
       (-algebraMap F R D * rc R b (S.1 i j) 1 * rc R b (T.1 i j) 1)) := by
     unfold pairHerm
-    rw [map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [trace_eq hb0 hD, ← mul_assoc, hh, one_mul, rc_mul hb0 hD, (herm_rc hb0 hσ hT j i).1,
       (herm_rc hb0 hσ hT j i).2]

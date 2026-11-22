@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsRhoPtOfSplitting
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.BlockJumpCount
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BlockCharactersCrystallineOfRules
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCrysInclusion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsRhoPtOfSplitting
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.BlockJumpCount
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BlockCharactersCrystallineOfRules
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCrysInclusion
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,8 @@ theorem isCrys_chiE_of_constituent (D : D7) (i : D.nd.Loc) (w : HeightOneSpectru
     have h1 := congrArg f (congrFun (hg (decS D.nd w (Br.iota D.nbr i w hw g))) a)
     have h2 : (mapM (toK D.nd i) M (decS D.nd w (Br.iota D.nbr i w hw g))).mulVec v a =
         ∑ b, toK D.nd i (M (decS D.nd w (Br.iota D.nbr i w hw g)) a b) * v b := rfl
-    rw [h2, map_sum, Pi.smul_apply, smul_eq_mul, map_mul, hf] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, map_sum, Pi.smul_apply, smul_eq_mul, map_mul, hf] at h1
     simp only [map_mul, hf] at h1
     rw [Pi.smul_apply, smul_eq_mul]
     exact h1

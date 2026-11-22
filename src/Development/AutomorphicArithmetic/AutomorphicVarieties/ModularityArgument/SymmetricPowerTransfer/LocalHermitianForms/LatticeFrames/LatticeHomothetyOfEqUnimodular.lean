@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LatticeFrames.IsUnimodularCliffordLatticeStabilizer
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LatticeFrames.IsUnimodularCliffordLatticeStabilizer
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,7 +130,7 @@ theorem exists_lat (L : IsLoc O Δ) (hc : c = (τ ^ 2 - 4) * algebraMap O K ε *
     obtain ⟨α, γ, hz⟩ : ∃ α γ : K, psi s β h y1 = α • y1 + γ • y2 := ⟨_, _, coord hind _⟩
     have hpz : psi s β e (psi s β h y1) = 0 := by
       rw [orth e h heh, pe1, map_zero, neg_zero]
-    rw [hz, map_add, map_smul, map_smul, pe1, pe2, smul_zero, zero_add, smul_smul, smul_eq_zero] at hpz
+    rw [hz, map_add (f := _), map_smul, map_smul, pe1, pe2, smul_zero, zero_add, smul_smul, smul_eq_zero] at hpz
     rcases hpz with h0 | h0
     · rcases mul_eq_zero.mp h0 with h1 | h1
       · exact ⟨α, by rw [hz, h1, zero_smul, add_zero]⟩
@@ -151,7 +155,8 @@ theorem exists_lat (L : IsLoc O Δ) (hc : c = (τ ^ 2 - 4) * algebraMap O K ε *
       rw [map_mul, ← hμ2, ← mul_assoc, hinvE, one_mul, sq, sub_self]
     exact IsIntegrallyClosed.isIntegral_iff.mp hint
   obtain ⟨Λ, hΛ⟩ : ∃ Λ : Set (Etau K τ), ∀ b, b ∈ Λ ↔
-      ∃ p q : O, b = algebraMap O K p • y1 + algebraMap O K q • y2 := ⟨_, fun _ => Iff.rfl⟩
+      ∃ p q : O, b = algebraMap O K p • y1 + algebraMap O K q • y2 :=
+    ⟨{b | ∃ p q : O, b = algebraMap O K p • y1 + algebraMap O K q • y2}, fun _ => Iff.rfl⟩
   have hy1Λ : y1 ∈ Λ := (hΛ _).mpr ⟨1, 0, by simp⟩
   have hy2Λ : y2 ∈ Λ := (hΛ _).mpr ⟨0, 1, by simp⟩
   have hLat : IsLat O τ Λ := by
@@ -172,7 +177,7 @@ theorem exists_lat (L : IsLoc O Δ) (hc : c = (τ ^ 2 - 4) * algebraMap O K ε *
     intro v hv
     obtain ⟨a, b, d, rfl⟩ := hspan v hv
     rw [mem_S0_of_sum_eq hΛ, ← algebraMap_smul K a e, ← algebraMap_smul K b f, ← algebraMap_smul K d h]
-    simp only [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply, pe1, pe2, pf1, pf2, hμ, ph2]
+    simp only [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply, pe1, pe2, pf1, pf2, hμ, ph2]
     constructor
     · refine (hΛ _).mpr ⟨d * mμ, b, ?_⟩
       rw [map_mul, hmμ]
@@ -228,7 +233,7 @@ theorem lattice_homothety_of_eq_unimodular (L : IsLoc O Δ) (hD : τ ^ 2 - 4 ≠
     have h1 := hE _ (hF _ hbM)
     have h2' := hE _ hbM
     rw [hbpq] at h1 h2'
-    simp only [map_add, map_smul, he1, he2, hf1, hf2, smul_zero, add_zero, zero_add] at h1 h2'
+    simp only [map_add (f := _), map_smul, he1, he2, hf1, hf2, smul_zero, add_zero, zero_add] at h1 h2'
     exact ⟨(hmemJ p).mpr h1, (hmemJ q).mpr h2'⟩
   have hback : ∀ p q : K, p ∈ J → q ∈ J → p • y₁ + q • y₂ ∈ M' := by
     intro p q hp hq

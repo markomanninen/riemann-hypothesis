@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleFreeSheafHomUniversalPropertyHolds
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleFreeSheafHomUniversalPropertyHolds
+
+@[expose] public section
 
 namespace LateralTheory.Fin.EtaleFreeSheafUniversalProperty
 theorem etale_free_module_cohomology_hom_of_components : LateralTheory.EtaleFoundations.EtaleFreeSheafUniversalProperty := by

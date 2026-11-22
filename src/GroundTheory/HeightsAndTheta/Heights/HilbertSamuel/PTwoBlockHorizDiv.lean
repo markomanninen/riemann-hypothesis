@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PTwoBlockCoeffCycle
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChangeOfLattice
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PTwoBlockCoeffCycle
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChangeOfLattice
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -54,7 +59,7 @@ theorem multAt_eq_of_mul {K : Type*} [Fintype K] {ι : K → Type*} [∀ k, Fint
     rw [mul_add]
     exact J₂.add_mem (hJ₂ y hy) (J₂.mul_mem_left _ hz)
   unfold multAt
-  rw [dif_pos ‹W.IsPrime›, dif_pos ‹W.IsPrime›, e₁, e₂]
+  rw [dite_eq_left ‹W.IsPrime›, dite_eq_left ‹W.IsPrime›, e₁, e₂]
 
 theorem mem_minimalPrimes_iff {I₁ I₂ W : Ideal R}
     (h : ∀ Q : Ideal R, Q.IsPrime → Q ≤ W → (I₁ ≤ Q ↔ I₂ ≤ Q)) :
@@ -153,8 +158,8 @@ theorem sup_le_iff_of_horiz {x : Ix κ → Ω} {B : Matrix (Ix κ) (Ix κ) ℚ} 
 
 end TwoBlockHorizDiv
 
-open TwoBlockHorizDiv in
 
+open TwoBlockHorizDiv in
 theorem TwoBlockHorizDiv.proof : TwoBlockHorizDiv.Statement := by
   intro Ω _ _ κ _ x B c l hsp hl W hW
   have hiff : IsRelevant W → ∀ Q : Ideal (MRing (FinTwoTypeFamily κ)), Q.IsPrime → Q ≤ W →

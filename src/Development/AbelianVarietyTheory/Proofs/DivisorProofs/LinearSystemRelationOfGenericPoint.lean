@@ -1,6 +1,13 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.FramedLatticeZeroCycleHeight
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+public import Mathlib
+public import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointHeight
+
+@[expose] public section
+
 open NumberField MvPolynomial ReciprocityTheory.MultiplicativeHeights GlobalTheory GlobalTheory.ChowHt GlobalTheory.Adelic GlobalTheory.HSCore GlobalTheory.HSChoice
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -34,7 +41,8 @@ theorem valR_relFn {K : Type} [Field K] (x : Sp K ⟶ S.Y) (c : S.L.ι) (hx : pt
   have hc : (valMap x _ h).hom.comp ((resG S.Y le_top).comp (algebraMap F Γ(S.Y, ⊤))) = S.baseHom x := by
     ext b
     exact ((valR_eq x _ h _).symm.trans (valR_res x le_top h _)).trans (S.valR_algebraMap x b)
-  simp only [relFn, valR_eq x _ h, map_add, map_sum, map_mul, map_pow, eval₂_comp_left, hc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [relFn, valR_eq x _ h, map_add (f := _), map_sum, map_mul, map_pow, eval₂_comp_left, hc]
   rfl
 
 theorem relation_of_generic (F : Type) [Field F] (S : LinSys F) (hY : AlgebraicGeometry.IsIntegral S.Y)

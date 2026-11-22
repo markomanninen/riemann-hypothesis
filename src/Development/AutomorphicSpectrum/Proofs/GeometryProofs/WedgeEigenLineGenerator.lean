@@ -1,28 +1,33 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.GagaSections
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.WedgeEqSpanOfIsFrameAt
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordDegreeBoundOfFlag
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenLatticeVectorBundleStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsValFam
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsCombMatrixMulStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsCombIdentityMatrixStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenvectorLinearCombinationStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsCombFieldExtensionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenFrameFieldExtensionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemSpanOfIotaMultiProportionalStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IotaMultiChangeOfBasisDetStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IotaMultiNeZeroOfLinIndepStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComponentSpecializationTangentCombStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComponentSpecializationFieldExtStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComponentPointCmEigenFrameStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.GagaSections
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.WedgeEqSpanOfIsFrameAt
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordDegreeBoundOfFlag
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenLatticeVectorBundleStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsValFam
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsCombMatrixMulStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsCombIdentityMatrixStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenvectorLinearCombinationStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsCombFieldExtensionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenFrameFieldExtensionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemSpanOfIotaMultiProportionalStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IotaMultiChangeOfBasisDetStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IotaMultiNeZeroOfLinIndepStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComponentSpecializationTangentCombStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComponentSpecializationFieldExtStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComponentPointCmEigenFrameStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl GlobalTheory.CompanionTheory.Ar.Flat Filter Topology Metric
 
@@ -52,15 +57,28 @@ theorem comb_eig {P : Type} [CommRing P] (act : OAct P G) (σ : P →+* F) {n : 
 
 theorem comb_base {F' : Type} [Field F'] (f : F →+* F') {x' : Sp F' ⟶ S} (hx : spMap f ≫ x = x') {n : ℕ}
     {v : Fin n → (epsAt x ⟶ G)} {cf : Fin n → F} {w : epsAt x ⟶ G} {v' : Fin n → (epsAt x' ⟶ G)}
-    {w' : epsAt x' ⟶ G} (hv : ∀ i, (v' i).left = spMap (dualMap f) ≫ (v i).left)
-    (hw : w'.left = spMap (dualMap f) ≫ w.left) (h : IsComb cf v w) : IsComb (fun i => f (cf i)) v' w' :=
-  GlobalTheory.T.is_comb_field_extension S G F x F' f x' hx n v cf w v' w' hv hw h
+    {w' : epsAt x' ⟶ G} (hv : ∀ i, (v' i).left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ (v i).left)
+    (hw : w'.left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ w.left) (h : IsComb cf v w) :
+    IsComb (fun i => f (cf i)) v' w' := by
+  obtain ⟨u, hu, e⟩ := h
+  let g := LieCarrier.epsHom f x x' hx
+  have hw' : w' = g ≫ w := Over.OverMorphism.ext hw
+  refine ⟨fun i => g ≫ u i, fun i => ?_, ?_⟩
+  · have hscale : spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ spMap (epsMul (cf i)) =
+        spMap (epsMul (f (cf i))) ≫ spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) := by
+      simp only [spMap, ← Spec.map_comp, ← CommRingCat.ofHom_comp, LieCarrier.dualMap_epsMul]
+    change spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ (u i).left = _
+    rw [hu i, ← Category.assoc, hscale, Category.assoc, hv i]
+  · rw [hw', e, CombBase.comp_list_prod, List.map_ofFn]
+    rfl
 
 theorem eigFrame_base [Smooth G.hom] {P : Type} [CommRing P] (act : OAct P G) (σ : P →+* F) {F' : Type} [Field F']
     (f : F →+* F') {x' : Sp F' ⟶ S} (hx : spMap f ≫ x = x') {n : ℕ} {v : Fin n → (epsAt x ⟶ G)}
-    {v' : Fin n → (epsAt x' ⟶ G)} (hv : ∀ i, (v' i).left = spMap (dualMap f) ≫ (v i).left)
-    (h : IsEigFrame act x σ v) : IsEigFrame act x' (f.comp σ) v' :=
-  GlobalTheory.T.eigen_frame_field_extension S G F x P act σ F' f x' hx n v v' hv h
+    {v' : Fin n → (epsAt x' ⟶ G)} (hv : ∀ i, (v' i).left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ (v i).left)
+    (h : IsEigFrame act x σ v) : IsEigFrame act x' (f.comp σ) v' := by
+  let _ : Algebra F F' := f.toAlgebra
+  subst x'
+  exact EigBase.eigFrame_base x act σ v v' hv h
 
 theorem wedge_span {Ω V : Type} [Field Ω] [AddCommGroup V] [Module Ω V] {n : ℕ} {b e : Fin n → V} {t : Ω}
     (he : LinearIndependent Ω e) (ht : t ≠ 0)
@@ -91,8 +109,28 @@ theorem valFam_comb (Z : CptOver Y U) {F : Type} [Field F] {y : Sp F ⟶ Xo.XF c
 
 theorem valFam_base (Z : CptOver Y U) {F F' : Type} [Field F] [Field F'] (f : F →+* F') {y : Sp F ⟶ Xo.XF c}
     {y' : Sp F' ⟶ Xo.XF c} (hy : y' = spMap f ≫ y) {n : ℕ} {b : Fin n → Z.V} {v : Vecs y n} {v' : Vecs y' n}
-    (hv : ∀ i, (v' i).left = spMap (dualMap f) ≫ (v i).left) (h : IsValFam Z y b v) : IsValFam Z y' b v' :=
-  GlobalTheory.T.isValFam_of_field_extension E H D l Xo c O β Y U Z F F' f y y' hy n b v v' hv h
+    (hv : ∀ i, (v' i).left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ (v i).left)
+    (h : IsValFam Z y b v) : IsValFam Z y' b v' := by
+  subst y'
+  intro i
+  obtain ⟨u, ⟨hc, t, ht, hu⟩, s, hs, hsv, hsu⟩ := h i
+  have hzz : spMap f ≫ (y ≫ Y.j) = (spMap f ≫ y) ≫ Y.j := (Category.assoc _ _ _).symm
+  let g := LieCarrier.epsHom f (y ≫ Y.j) ((spMap f ≫ y) ≫ Y.j) hzz
+  refine ⟨g ≫ u, ?_, spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ s, ?_, ?_, ?_⟩
+  · have hval (z' : Sp F' ⟶ Y.X) (hz : spMap f ≫ (y ≫ Y.j) = z') :
+        Z.M.ValAt z' (b i) (LieCarrier.epsHom f (y ≫ Y.j) z' hz ≫ u) := by
+      subst z'
+      let _ : Algebra F F' := f.toAlgebra
+      have hcent : centre (spMap f ≫ (y ≫ Y.j)) = centre (y ≫ Y.j) := by
+        change (y ≫ Y.j) ((spMap f) (IsLocalRing.closedPoint F')) = (y ≫ Y.j) (IsLocalRing.closedPoint F)
+        exact congrArg (y ≫ Y.j) (Subsingleton.elim _ _)
+      exact LieFib.valAt_base Z.M (y ≫ Y.j) hc (hcent ▸ hc) t ht _ u rfl hu
+    exact hval _ hzz
+  · rw [Category.assoc, hs]
+    exact Over.w (LieCarrier.epsHom f y (spMap f ≫ y) rfl)
+  · rw [Category.assoc, hsv, hv i]
+  · rw [Category.assoc, hsu]
+    rfl
 
 theorem exists_valFam (Z : CptOver Y U) (τ : E →+* ℂ)
     (hβ : Function.Injective β ∧ IsNoetherianRing O ∧ ∀ x : c.F, ∃ a b : O, β b ≠ 0 ∧ x * β b = β a)
@@ -258,8 +296,8 @@ def IsGen (Z : CptOver Y U) (τ : E →+* ℂ) (a : ⋀[Z.Ω]^D.p Z.V)
     (B : Matrix (Fin D.q) (Fin D.q) F), IsRat Z τ a b y v₀ w₀ r₀ ∧ (∀ i, IsComb (A i) v₀ (v i)) ∧
     (∀ j, IsComb (B j) w₀ (w j)) ∧ A.det ≠ 0 ∧ r * A.det = r₀ * B.det
 
-open Classical in
 
+open Classical in
 def repFn (Z : CptOver Y U) (τ : E →+* ℂ) (a : ⋀[Z.Ω]^D.p Z.V) (b : ⋀[Z.Ω]^D.q Z.V) : FrameFn Xo c :=
   fun F _ y v w => if h : ∃ r, IsGen Z τ a b y v w r then h.choose else 0
 
@@ -412,7 +450,7 @@ theorem repFn_eq {F : Type} [Field F] {y : Sp F ⟶ Xo.XF c} {v : Vecs y D.p} {w
     (h : IsGen Z τ a b y v w r) : repFn Z τ a b F y v w = r := by
   have hex : ∃ r, IsGen Z τ a b y v w r := ⟨r, h⟩
   unfold repFn
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact isGen_unique hβ hτ hg hex.choose_spec h
 
 theorem exists_isGen {F : Type} [Field F] {βF : c.F →+* F} {y : Sp F ⟶ Xo.XF c} {v : Vecs y D.p}
@@ -432,8 +470,9 @@ theorem exists_isGen {F : Type} [Field F] {βF : c.F →+* F} {y : Sp F ⟶ Xo.X
 omit hβ hτ hg in
 theorem rat_base {F F' : Type} [Field F] [Field F'] (f : F →+* F') {y : Sp F ⟶ Xo.XF c}
     {v : Vecs y D.p} {w : Vecs y D.q} {v' : Vecs (spMap f ≫ y) D.p} {w' : Vecs (spMap f ≫ y) D.q} {r : F}
-    (hv' : ∀ i, (v' i).left = spMap (dualMap f) ≫ (v i).left)
-    (hw' : ∀ i, (w' i).left = spMap (dualMap f) ≫ (w i).left) (h : IsRat Z τ a b y v w r) :
+    (hv' : ∀ i, (v' i).left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ (v i).left)
+    (hw' : ∀ i, (w' i).left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ (w i).left)
+    (h : IsRat Z τ a b y v w r) :
     IsRat Z τ a b (spMap f ≫ y) v' w' (f r) := by
   obtain ⟨βF, b₁, b₂, α, κ, hfr, ea, eb, hv, hw, hr⟩ := h
   haveI : Smooth Xo.univ.t.G.hom := Xo.univ.t.semi.smooth
@@ -454,27 +493,30 @@ theorem rat_base {F F' : Type} [Field F] [Field F'] (f : F →+* F') {y : Sp F �
 omit hβ hτ hg in
 theorem isGen_base {F F' : Type} [Field F] [Field F'] (f : F →+* F') {y : Sp F ⟶ Xo.XF c}
     {v : Vecs y D.p} {w : Vecs y D.q} {v' : Vecs (spMap f ≫ y) D.p} {w' : Vecs (spMap f ≫ y) D.q} {r : F}
-    (hv' : ∀ i, (v' i).left = spMap (dualMap f) ≫ (v i).left)
-    (hw' : ∀ i, (w' i).left = spMap (dualMap f) ≫ (w i).left) (h : IsGen Z τ a b y v w r) :
+    (hv' : ∀ i, (v' i).left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ (v i).left)
+    (hw' : ∀ i, (w' i).left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ (w i).left)
+    (h : IsGen Z τ a b y v w r) :
     IsGen Z τ a b (spMap f ≫ y) v' w' (f r) := by
   obtain ⟨v₀, w₀, r₀, A, B, hR, hA, hB, hd, e⟩ := h
   have hx : spMap f ≫ under y = under (spMap f ≫ y) := (Category.assoc _ _ _).symm
-  have p₁ : ∀ i, ((LieTangent.epsBase f hx ≫ v₀ i : epsAt (under (spMap f ≫ y)) ⟶ _)).left =
-    spMap (dualMap f) ≫ (v₀ i).left := fun _ => rfl
-  have p₂ : ∀ i, ((LieTangent.epsBase f hx ≫ w₀ i : epsAt (under (spMap f ≫ y)) ⟶ _)).left =
-    spMap (dualMap f) ≫ (w₀ i).left := fun _ => rfl
-  refine ⟨fun i => LieTangent.epsBase f hx ≫ v₀ i, fun i => LieTangent.epsBase f hx ≫ w₀ i, f r₀, f.mapMatrix A,
+  let g := LieCarrier.epsHom f (under y) (under (spMap f ≫ y)) hx
+  have p₁ : ∀ i, (g ≫ v₀ i).left =
+    spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ (v₀ i).left := fun _ => rfl
+  have p₂ : ∀ i, (g ≫ w₀ i).left =
+    spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ (w₀ i).left := fun _ => rfl
+  refine ⟨fun i => g ≫ v₀ i, fun i => g ≫ w₀ i, f r₀, f.mapMatrix A,
     f.mapMatrix B, rat_base f p₁ p₂ hR, fun i => comb_base f hx p₁ (hv' i) (hA i),
     fun i => comb_base f hx p₂ (hw' i) (hB i), ?_, ?_⟩
   · rw [← RingHom.map_det]
     exact (map_ne_zero f).2 hd
   · rw [← RingHom.map_det, ← RingHom.map_det, ← map_mul, ← map_mul, e]
 
-theorem isLineFn_repFn : IsLineFn U τ (repFn Z τ a b) where
-  ne F _ βF y v w hfr := by
+theorem isLineFn_repFn : IsLineFn U τ (repFn Z τ a b) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro F _ βF y v w hfr
     obtain ⟨r, hr, h⟩ := exists_isGen hβ hτ hg hfr
     rwa [repFn_eq hβ hτ hg h]
-  chg F _ βF y v w v' w' A B hfr hfr' hA hB := by
+  · intro F _ βF y v w v' w' A B hfr hfr' hA hB
     obtain ⟨r, -, h⟩ := exists_isGen hβ hτ hg hfr
     obtain ⟨v₀, w₀, r₀, A₀, B₀, hR, a₀, b₀, d₀, e₀⟩ := id h
     have hR' := hR
@@ -489,7 +531,7 @@ theorem isLineFn_repFn : IsLineFn U τ (repFn Z τ a b) where
     have : r = r₀ * B₀.det / A₀.det := by field_simp; exact e₀
     rw [this]
     field_simp
-  nat F F' _ _ f βF y v w y' v' w' hfr hy hv hw := by
+  · intro F F' _ _ f βF y v w y' v' w' hfr hy hv hw
     subst hy
     obtain ⟨r, -, h⟩ := exists_isGen hβ hτ hg hfr
     rw [repFn_eq hβ hτ hg h, repFn_eq hβ hτ hg (isGen_base f hv hw h)]

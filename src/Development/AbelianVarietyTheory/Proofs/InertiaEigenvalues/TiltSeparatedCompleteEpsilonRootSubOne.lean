@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsAlgClosedTiltFieldAndValuationRing
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFontaineThetaOnAinf
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsAlgClosedTiltFieldAndValuationRing
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFontaineThetaOnAinf
+
+@[expose] public section
 
 namespace GlobalTheory.TiltComplete
 
@@ -21,7 +25,7 @@ theorem coeff_sum_stable (t : Perfection R p) (a : ℕ → Perfection R p) (n M 
   induction N, h using Nat.le_induction with
   | base => rfl
   | succ N h ih =>
-    rw [Finset.sum_range_succ, map_add, ih, map_mul, map_pow, pow_eq_zero_of_le h hM, zero_mul,
+    rw [Finset.sum_range_succ, map_add (f := _), ih, map_mul, map_pow, pow_eq_zero_of_le h hM, zero_mul,
       add_zero]
 
 theorem exists_limit (t : Perfection R p) (M : ℕ → ℕ)

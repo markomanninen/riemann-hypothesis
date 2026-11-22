@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.FormalChartAtZero
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.FormalChartAtZero
+
+@[expose] public section
+
 open TensorProduct IsLocalRing Matrix ReciprocityTheory.PGsh ReciprocityTheory.PGsh.Up ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Be2
 
 namespace GlobalTheory
@@ -41,7 +46,7 @@ theorem isLocalRing_tensorProduct_of_finite_of_points :
     | zero => simp
     | add x y hx hy =>
       have := M.add_mem hx hy
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       convert this using 1
       ring
     | tmul a a' =>

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsSectionOrder
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsSectionOrder
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -14,7 +19,7 @@ variable {O B : Type} [CommRing O] [IsLocalRing O] [CommRing B] [Algebra O B]
 
 theorem comap_eq_maximalIdeal [Module.Finite O B] (P : Ideal B) [P.IsMaximal] :
     P.comap (algebraMap O B) = maximalIdeal O :=
-  IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal P)
+  IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_under_of_isIntegral_of_isMaximal P)
 
 theorem finite_maximalSpectrum [Module.Finite O B] : Finite (MaximalSpectrum B) := by
   have hfin := Algebra.QuasiFinite.finite_primesOver (R := O) (S := B) (maximalIdeal O)
@@ -61,14 +66,12 @@ theorem isLocalHom_localization [Module.Finite O B] (P : Ideal B) [P.IsMaximal] 
   rw [← IsScalarTower.algebraMap_apply] at h2
   exact h2 ha
 
-omit [IsLocalRing O] in
 
+omit [IsLocalRing O] in
 theorem length_residueField (P : Ideal B) [P.IsMaximal] :
     Module.length O (ResidueField (Localization.AtPrime P)) = Module.length O (B ⧸ P) := by
-  let e : (B ⧸ P) ≃+* ResidueField (Localization.AtPrime P) :=
-    IsLocalization.AtPrime.equivQuotMaximalIdeal P (Localization.AtPrime P)
   let e' : (B ⧸ P) ≃ₐ[B] ResidueField (Localization.AtPrime P) :=
-    AlgEquiv.ofRingEquiv (f := e) fun x => rfl
+    IsLocalization.AtPrime.equivQuotMaximalIdeal P (Localization.AtPrime P)
   exact (e'.toLinearEquiv.restrictScalars O).length_eq.symm
 
 theorem ord_mul_length [Module.Finite O B] (P : Ideal B) [P.IsMaximal] (θ : B) :
@@ -88,8 +91,8 @@ theorem ord_mul_length [Module.Finite O B] (P : Ideal B) [P.IsMaximal] (θ : B) 
   rw [h2, h1]
   rfl
 
-omit [IsLocalRing O] in
 
+omit [IsLocalRing O] in
 theorem length_localization_quotient (I : Ideal B) (Q : Ideal (B ⧸ I)) [Q.IsMaximal] :
     Module.length O (Localization.AtPrime Q) =
       Module.length O (Localization.AtPrime (Q.comap (Ideal.Quotient.mk I)) ⧸
@@ -159,8 +162,8 @@ theorem finsum_reindex [Module.Finite O B] (θ : B) :
 
 end LengthFiniteAlgebra
 
-open LengthFiniteAlgebra in
 
+open LengthFiniteAlgebra in
 theorem LengthFiniteAlgebra.proof : LengthFiniteAlgebra.Statement := by
   intro O B _ _ _ _ _ _ θ
   have hr : LinearMap.range (LinearMap.mulLeft O θ) = (Ideal.span {θ}).restrictScalars O := by

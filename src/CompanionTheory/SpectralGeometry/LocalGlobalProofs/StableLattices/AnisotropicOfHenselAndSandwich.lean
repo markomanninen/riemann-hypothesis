@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
+
+@[expose] public section
 
 open CompanionTheory.Rg.FlB
 
@@ -14,7 +18,7 @@ variable {L : Type} [NontriviallyNormedField L] {V : Type} [AddCommGroup V] [Mod
 
 lemma add_left (hh : IsHerm s h) (x y z : V) : h (x + y) z = h x z + h y z := by
   have h1 := hh.2.2.1
-  rw [h1 z (x + y), hh.1, map_add, h1 z x, h1 z y]
+  rw [h1 z (x + y), hh.1, map_add (f := _), h1 z x, h1 z y]
 
 lemma smul_left (hh : IsHerm s h) (a : L) (x y : V) : h (a • x) y = s a * h x y := by
   have h1 := hh.2.2.1
@@ -39,7 +43,7 @@ lemma pair_le [IsUltrametricDist L] [CompleteSpace L] (hH : StHensel) (hs : IsIn
   have hbpos : 0 < ‖b‖ := by linarith
   have hb0 : b ≠ 0 := norm_pos_iff.mp hbpos
   have hsb : s b = b := by
-    rw [hbd, map_add, ← h1 x y, ← h1 y x, add_comm]
+    rw [hbd, map_add (f := _), ← h1 x y, ← h1 y x, add_comm]
   have hsx : s (h x x) = h x x := (h1 x x).symm
   have hsy : s (h y y) = h y y := (h1 y y).symm
   have hc1 : s (h y y / b ^ 2) = h y y / b ^ 2 := by

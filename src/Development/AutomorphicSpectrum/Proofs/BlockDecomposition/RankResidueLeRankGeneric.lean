@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNonzeroMinorOfRank
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KvFintype
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNonzeroMinorOfRank
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KvFintype
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Jp
 

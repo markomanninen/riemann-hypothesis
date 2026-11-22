@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AlgAtLeAlgD
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AlgAtLeAlgD
+
+@[expose] public section
 
 noncomputable section
 

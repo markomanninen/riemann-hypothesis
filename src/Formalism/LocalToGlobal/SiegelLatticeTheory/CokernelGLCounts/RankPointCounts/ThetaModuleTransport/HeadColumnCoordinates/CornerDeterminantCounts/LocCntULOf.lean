@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.CornerDeterminantCounts.ThetaMbeU
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.CornerDeterminantCounts.ThetaMbeU
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ theorem R_eq_O' (hs : M.split = none) : M.R = M.L.O := by
 
 theorem dl_full' (H : HermSp M V) {r : ℕ} (f f' : Fin (r + 1) → V) :
     H.Dl f f' (r + 1) = (H.Zhat f f').det := by
-  rw [Formalism.MainNotions.S.Loc.HermSp.Dl, dif_pos le_rfl]
+  rw [Formalism.MainNotions.S.Loc.HermSp.Dl, dite_eq_left le_rfl]
   simp [Fin.castLE_rfl]
 
 theorem locCntUL_of

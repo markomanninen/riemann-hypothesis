@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -110,7 +114,8 @@ private theorem hop_mul [∀ i, TopologicalSpace (G i)] [∀ i, IsTopologicalGro
       by_cases hj : j = i
       · subst hj; simp
       · rw [Pi.mulSingle_eq_of_ne hj]; exact ha c hc j hj
-    rw [e, hs b, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, hs b, map_sum]
     refine Finset.sum_congr rfl fun d _ => ?_
     rw [← Module.End.mul_apply, ← map_mul]
     exact act_congr ρ hv (QuotientGroup.out_eq' _).symm

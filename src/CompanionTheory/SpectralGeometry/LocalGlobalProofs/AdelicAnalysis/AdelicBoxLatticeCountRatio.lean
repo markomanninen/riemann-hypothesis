@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LatticeBallCountRatioBoundStatement
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LatticeBallCountRatioBoundStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ def intSub {d M : ℕ} (b : Module.Basis (Fin d) F E) {Λ : Type} [AddCommGroup 
   add_mem' := by
     intro x y hx hy v a i k
     have h := add_mem (hx v a i k) (hy v a i k)
-    simpa [projV, projFin, mul_add, map_add] using h
+    simpa [projV, projFin, mul_add, map_add (f := _)] using h
   neg_mem' := by
     intro x hx v a i k
     have h := neg_mem (hx v a i k)
@@ -33,7 +37,7 @@ def coord (hF : IsTotallyReal F) {d M : ℕ} (b : Module.Basis (Fin d) F E) :
       ((Algebra.TensorProduct.basis (Ainf F) b).repr (projInf X p.1 p.2.1) p.2.2.1 p.2.2.2)) (by
     intro X Y
     ext p
-    simp only [projInf, map_add, Pi.add_apply, Finsupp.coe_add, PiLp.add_apply]
+    simp only [projInf, map_add (f := _), Pi.add_apply, Finsupp.coe_add, PiLp.add_apply]
     exact map_add _ _ _)
 
 theorem norm_coord (hF : IsTotallyReal F) {d M : ℕ} (b : Module.Basis (Fin d) F E)

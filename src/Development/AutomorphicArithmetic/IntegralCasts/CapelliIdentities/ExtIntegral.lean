@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qe16.ext_integral :
     ∀ {B S K : Type} [inst : CommRing B] [inst_1 : CommRing S]
@@ -9,7 +13,7 @@ theorem UpperTheory.Reformulated.B.Qe16.ext_integral :
   haveI hP : (RingHom.ker φ).IsPrime := RingHom.ker_isPrime φ
   obtain ⟨Q, -, hQ, hQP⟩ := Ideal.exists_ideal_over_prime_of_isIntegral (S := S)
     (RingHom.ker φ) ⊥ (by
-      rw [← RingHom.ker_eq_comap_bot, (RingHom.injective_iff_ker_eq_bot _).1 hinj]
+      rw [Ideal.under_def, ← RingHom.ker_eq_comap_bot, (RingHom.injective_iff_ker_eq_bot _).1 hinj]
       exact bot_le)
   haveI : Q.LiesOver (RingHom.ker φ) := ⟨hQP.symm⟩
   letI : Algebra (B ⧸ RingHom.ker φ) K := (RingHom.kerLift φ).toAlgebra
@@ -24,6 +28,10 @@ theorem UpperTheory.Reformulated.B.Qe16.ext_integral :
     Module.isTorsionFree_iff_faithfulSMul.2 inferInstance
   haveI : Nontrivial (B ⧸ RingHom.ker φ) := Ideal.Quotient.nontrivial_iff.2 hP.ne_top
   haveI : Algebra.IsAlgebraic (B ⧸ RingHom.ker φ) (S ⧸ Q) := Algebra.IsIntegral.isAlgebraic
-  let f : (S ⧸ Q) →ₐ[B ⧸ RingHom.ker φ] K := IsAlgClosed.lift
+  let f : (S ⧸ Q) →ₐ[B ⧸ RingHom.ker φ] K := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨f.toRingHom.comp (Ideal.Quotient.mk Q), fun b => ?_⟩
   exact (f.commutes (Ideal.Quotient.mk _ b)).trans (RingHom.kerLift_mk φ b)

@@ -1,5 +1,9 @@
-import Formalism.GradedWeylDivisibility.StatementA
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LRowdivLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.StatementA
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LRowdivLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -11,7 +15,7 @@ private theorem rowDiv_add_fock_space_tableaux (R : Type*) [CommRing R] {r n : �
     (f g : MvPolynomial (Fin r × Fin n) R) :
     rowDiv R a b k (f + g) = rowDiv R a b k f + rowDiv R a b k g := by
   unfold rowDiv
-  rw [map_add, Polynomial.coeff_add]
+  rw [map_add (f := _), Polynomial.coeff_add]
 
 private theorem rowDiv_smul_fock_space_tableaux (R : Type*) [CommRing R] {r n : ℕ} (a b : Fin r) (k : ℕ)
     (c : R) (f : MvPolynomial (Fin r × Fin n) R) :

@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.HasLenLeOfSurj
+module
+
+public import ReciprocityTheory.DualLattices.HasLenLeOfSurj
+
+@[expose] public section
 
 noncomputable section
 

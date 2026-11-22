@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ReLatSelf
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.VolumePerpendicular
-import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.AdelicUnitaryGroups
-import Formalism.LocalToGlobal.BesselHermitianTheta.IsAutFunDef
-import Formalism.LocalToGlobal.GlobalTheory.GL5.Statement
-import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
-import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicLinearIndependent
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsGlIsometryCompEqOfNondegenerate
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.MemAdelicLatticeIffLocalSelfDualCompletion
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLocalConjugationSelfDualLatticesHostStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsAdelicUnitaryOfLocalFamilyAlmostAllTrivialStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsVolumeTransportOfLatticeIsometryStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ReLatSelf
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.VolumePerpendicular
+public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.AdelicUnitaryGroups
+public import Formalism.LocalToGlobal.BesselHermitianTheta.IsAutFunDef
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.Statement
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+public import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicLinearIndependent
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsGlIsometryCompEqOfNondegenerate
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.MemAdelicLatticeIffLocalSelfDualCompletion
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLocalConjugationSelfDualLatticesHostStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsAdelicUnitaryOfLocalFamilyAlmostAllTrivialStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsVolumeTransportOfLatticeIsometryStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem rightInvariant_of_finite_covolume {G : Type} [Group G] [TopologicalSpace
   have e : μ.map (· * g) = ((μ.map (· * g)).haarScalarFactor μ : ℝ≥0∞) • μ :=
     Measure.isMulLeftInvariant_eq_smul _ μ
   have h' : IsFundamentalDomain Γ ((· * g) ⁻¹' 𝓕) μ :=
-    h.preimage_of_equiv (f := (· * g)) ⟨measurable_mul_const g, by rw [e]; exact Measure.smul_absolutelyContinuous⟩
+    h.preimage_of_equiv (f := (· * g)) ⟨(measurable_mul_const g).aemeasurable, by rw [e]; exact Measure.smul_absolutelyContinuous⟩
       Function.bijective_id fun γ x => mul_assoc _ _ _
   have h1 : μ.map (· * g) 𝓕 = μ 𝓕 :=
     ((MeasurableEquiv.mulRight g).map_apply 𝓕).trans (h'.measure_eq h)
@@ -79,12 +83,6 @@ theorem isVol_of_pair (V : HSp D) {P Q : ℕ} {μ : Measure (GA D V)} (h : IsVol
   have := Formalism.L2.GlobalTheoryTheory.GenusMassVolumes.Unfold.smulInvariant_subgroup (GQ V) μ'
   have h𝓖' : IsFundamentalDomain (GQ V) 𝓖 μ' := h𝓖
   exact (h𝓖'.measure_eq h𝓕).trans e
-
-theorem exists_pair (V : HSp D) (hs : V.SigOK) {P Q : ℕ} (hPQ : ∀ τ, V.sig τ = (P, Q)) :
-    ∃ (μ : Measure (GA D V)) (𝓕 : Set (GA D V)), IsVolMeas D V P Q μ ∧ IsFundamentalDomain (GQ V) 𝓕 μ := by
-  obtain ⟨p, h1, h2⟩ := GlobalTheory.VolPairExists.exists_volPair V hs
-  simp only [hPQ] at h1
-  exact ⟨p.1, p.2, h1, h2⟩
 
 theorem exists_conj (V : HSp D) (L : Submodule (𝓞 D.host.E) V.V) (h1 : Submodule.IsLattice D.host.E L)
     (h2 : Formalism.HermitianLatticesTheory.IsUnimodular V.hT L) : ∃ k ∈ GfC V, ∀ y, y ∈ latHat D.host.F D.host.E (L0c D V) ↔
@@ -185,22 +183,5 @@ theorem isVol_of_isometry (V V' : HSp D) (e : V.V ≃ₗ[D.host.E] V'.V) (he : �
     exact iff_of_eq (congrArg (· ∈ 𝓕) (φ.symm_apply_apply g))
   have hr := rightInvariant_of_finite_covolume (GQ V₁) (μ.map φ) h𝓖 (hvol ▸ ENNReal.ofReal_ne_top)
   exact isVol_of_pair V' (isVolMeas_reLat V₁ V'.L0 V'.standardTuple_isLattice V'.baseLattice_isUnimodular hν hr) h𝓖 hx hvol
-
-theorem sig_eq {W₁ W₂ : HSp D} (e : W₁.V ≃ₗ[D.host.E] W₂.V) (he : ∀ a b, W₂.hT (e a) (e b) = W₁.hT a b)
-    (hr : W₁.rank = W₂.rank) (h₁ : W₁.SigOK) (h₂ : W₂.SigOK) (τ : D.host.E →+* ℂ) : W₂.sig τ = W₁.sig τ := by
-  have hw : (Matrix.of fun i j => W₂.hT (e (W₁.frame i)) (e (W₁.frame j))) = W₁.gram :=
-    Matrix.ext fun i j => he _ _
-  have := sig_family W₂ τ (D.sp.cm.cmUnram.2.1 τ) _ (hw ▸ h₁ τ) (h₂ τ)
-  have s1 := sig_sum W₁ h₁ τ
-  have s2 := sig_sum W₂ h₂ τ
-  exact Prod.ext (by omega) (by omega)
-
-def OneVector (D : D7) (W : HSp D) (P Q : ℕ) (β : D.host.E) (P' Q' : ℕ) : Prop :=
-  ∃ x : W.V, W.hT x x = β ∧ ∃ (W' : HSp D) (ι : W'.V →ₗ[D.host.E] W.V),
-    HSpace.IsIsomEmb W' W ι ∧ LinearMap.range ι = LinearMap.ker (W.hT x) ∧ W'.SigOK ∧ (∀ τ, W'.sig τ = (P', Q')) ∧
-    ∀ (μ : Measure (GA D W)) (𝓕 : Set (GA D W)) (μ' : Measure (GA D W')) (𝓕' : Set (GA D W')),
-      IsVolMeas D W P Q μ → IsFundamentalDomain (GQ W) 𝓕 μ → IsVolMeas D W' P' Q' μ' →
-      IsFundamentalDomain (GQ W') 𝓕' μ' →
-      (μ 𝓕).toReal / (μ' 𝓕').toReal = Formalism.HermitianLatticesTheory.massRatioRightSide D.host.E W.rank
 
 end GlobalTheory.VolumeRatioTypings

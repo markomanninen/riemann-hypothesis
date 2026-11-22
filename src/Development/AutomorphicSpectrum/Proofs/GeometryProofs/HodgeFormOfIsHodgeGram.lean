@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ContDiffUncentre
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsRigTransport
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ContDiffUncentre
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsRigTransport
+
+@[expose] public section
 
 noncomputable section
 

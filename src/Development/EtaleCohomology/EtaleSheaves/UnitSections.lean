@@ -1,7 +1,12 @@
-import Development.EtaleCohomology.EtaleSheaves.TwistGenerators.LeafTwGenIndepOf
-import Development.EtaleCohomology.EtaleSheaves.LeafPrimCoverPf
-import Development.EtaleCohomology.EtaleSheaves.LPrimLocPf
-import Development.EtaleCohomology.EtaleSheaves.IsChernClassCocycle
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.TwistGenerators.LeafTwGenIndepOf
+public import Development.EtaleCohomology.EtaleSheaves.LeafPrimCoverPf
+public import Development.EtaleCohomology.EtaleSheaves.LPrimLocPf
+public import Development.EtaleCohomology.EtaleSheaves.InstCommRingR
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC

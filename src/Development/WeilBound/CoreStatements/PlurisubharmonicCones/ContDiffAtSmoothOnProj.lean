@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.PotentialsBoundedRegSettingEqReference
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.BoundedStatements
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChartLocalAnalyticTrivializationStatement
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHoloInjDerivInj
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PVertFactorSmooth
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.GlueCharts
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.PotentialsBoundedRegSettingEqReference
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.BoundedStatements
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChartLocalAnalyticTrivializationStatement
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHoloInjDerivInj
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PVertFactorSmooth
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.GlueCharts
+
+@[expose] public section
+
 open Filter Topology Metric
 open scoped ContDiff
 open ReciprocityTheory.ChartRestriction.G.Geo GroundTheory.Heights₂.Heights.LowerBoundFree
@@ -21,7 +26,8 @@ theorem exists_local_inverse {m : ℕ} {f : (Fin m → ℂ) → Fin m → ℂ} {
   have hV : x ∈ interior (U ∩ {y | AnalyticAt ℂ f y}) :=
     mem_interior_iff_mem_nhds.2 (inter_mem hU hf.eventually_analyticAt)
   have hi : Function.Injective (fderiv ℂ f x) :=
-    HoloInjDerivInj.proof m f _ isOpen_interior (fun y hy => (interior_subset hy).2)
+    HoloInjDerivInj.proof m f (interior (U ∩ {y | AnalyticAt ℂ f y})) isOpen_interior
+      (fun y hy => (interior_subset hy).2)
       (hinj.mono fun y hy => (interior_subset hy).1) x hV
   let e : (Fin m → ℂ) ≃L[ℂ] (Fin m → ℂ) :=
     (LinearEquiv.ofInjectiveEndo (fderiv ℂ f x : (Fin m → ℂ) →ₗ[ℂ] Fin m → ℂ) hi).toContinuousLinearEquiv

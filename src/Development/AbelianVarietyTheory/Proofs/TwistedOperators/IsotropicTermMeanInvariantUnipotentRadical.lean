@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilCompatibleOfSameSplittingCharacterStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WittTowerRestrictionUnipotentRadicalInvariantStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnipotentRadicalTargetPreservesIsotropicMeanStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaRestrictIsotropicQuotientWittTowerPropertieStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilDatumOfSplittingCharactersStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsEtaTildeUnramified
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasChr
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.EmbRelExistsUnique
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnipotentRadicalMeanEqVolumeMulRationalMeanStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilCompatibleOfSameSplittingCharacterStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WittTowerRestrictionUnipotentRadicalInvariantStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnipotentRadicalTargetPreservesIsotropicMeanStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaRestrictIsotropicQuotientWittTowerPropertieStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilDatumOfSplittingCharactersStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsEtaTildeUnramified
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasChr
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.EmbRelExistsUnique
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnipotentRadicalMeanEqVolumeMulRationalMeanStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField Matrix
 open GlobalTheory.IndefiniteRowSideFullHecke.AdjointIsotropicDecomposition
@@ -82,14 +86,13 @@ end GlobalTheory.IsoTermMean
 
 namespace GlobalTheory.IsoTermMean
 variable {D : D7}
-local infixl:70 " ⬝ₘ " => HMul.hMul
 
 theorem mt_mul_frame (V : HSp D) {r : ℕ} (C : Matrix (Fin V.rank) (Fin r) D.host.E) {g : GA D V}
-    (hg : g ∈ NI V C) : mt V g ⬝ₘ (C.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) = C.map (incA D) := by
+    (hg : g ∈ NI V C) : mt V g * (C.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) = C.map (incA D) := by
   induction hg using Subgroup.closure_induction with
   | mem x hx =>
     obtain ⟨h1, -, -⟩ := hx
-    have h : (mt V x - 1) ⬝ₘ (C.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) = 0 := h1
+    have h : (mt V x - 1) * (C.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) = 0 := h1
     rwa [Matrix.sub_mul, Matrix.one_mul, sub_eq_zero] at h
   | one => simp [Formalism.L2.Theta.mt]
   | mul x y _ _ hx hy =>
@@ -98,28 +101,28 @@ theorem mt_mul_frame (V : HSp D) {r : ℕ} (C : Matrix (Fin V.rank) (Fin r) D.ho
   | inv x _ hx =>
     have e : mt V x⁻¹ * mt V x = 1 := by
       simp only [Formalism.L2.Theta.mt, ← Units.val_mul, ← map_mul, inv_mul_cancel, map_one, Units.val_one]
-    calc mt V x⁻¹ ⬝ₘ (C.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D))
-          = mt V x⁻¹ ⬝ₘ (mt V x ⬝ₘ (C.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D))) := by rw [hx]
+    calc mt V x⁻¹ * (C.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D))
+          = mt V x⁻¹ * (mt V x * (C.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D))) := by rw [hx]
       _ = C.map (incA D) := by rw [← Matrix.mul_assoc, e, Matrix.one_mul]
 
 theorem hO_iso (S T : HSp D) {s : ℕ} (L : Matrix (Fin T.rank) (Fin s) D.host.E) (hL : adj D L * T.gram * L = 0)
     (α β : Matrix (Fin s) (Fin S.rank) (AE D)) :
-    hO S T ((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) ⬝ₘ α) ((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) ⬝ₘ β) = 0 := by
-  have hM : (((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) ⬝ₘ β).map (cA D))ᵀ ⬝ₘ
-      (T.gram.map (incA D) : Matrix (Fin T.rank) (Fin T.rank) (AE D)) ⬝ₘ ((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) ⬝ₘ α) = 0 := by
-    have e1 : ((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) ⬝ₘ β).map (cA D) =
-        ((L.map star).map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) ⬝ₘ β.map (cA D) := by
+    hO S T ((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) * α) ((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) * β) = 0 := by
+  have hM : (((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) * β).map (cA D))ᵀ *
+      (T.gram.map (incA D) : Matrix (Fin T.rank) (Fin T.rank) (AE D)) * ((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) * α) = 0 := by
+    have e1 : ((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) * β).map (cA D) =
+        ((L.map star).map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) * β.map (cA D) := by
       rw [Matrix.map_mul]; congr 1
-    have e2 : (((L.map star).map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)))ᵀ ⬝ₘ
-        (T.gram.map (incA D) : Matrix (Fin T.rank) (Fin T.rank) (AE D)) ⬝ₘ (L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) =
+    have e2 : (((L.map star).map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)))ᵀ *
+        (T.gram.map (incA D) : Matrix (Fin T.rank) (Fin T.rank) (AE D)) * (L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) =
         ((adj D L * T.gram * L).map (incA D) : Matrix (Fin s) (Fin s) (AE D)) := by
       rw [Matrix.map_mul, Matrix.map_mul, adj_eq, Matrix.transpose_map]
     rw [e1, Matrix.transpose_mul]
-    calc _ = (β.map (cA D))ᵀ ⬝ₘ ((((L.map star).map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)))ᵀ ⬝ₘ
-          (T.gram.map (incA D) : Matrix (Fin T.rank) (Fin T.rank) (AE D)) ⬝ₘ (L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D))) ⬝ₘ α := by
+    calc _ = (β.map (cA D))ᵀ * ((((L.map star).map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)))ᵀ *
+          (T.gram.map (incA D) : Matrix (Fin T.rank) (Fin T.rank) (AE D)) * (L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D))) * α := by
           simp only [Matrix.mul_assoc]
       _ = 0 := by rw [e2, hL, Matrix.map_zero _ (map_zero _), Matrix.mul_zero, Matrix.zero_mul]
-  have hent : ∀ b a, ∑ c, ∑ d, cA D (((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) ⬝ₘ β) c b) * incA D (T.gram c d) * ((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) ⬝ₘ α) d a = 0 := by
+  have hent : ∀ b a, ∑ c, ∑ d, cA D (((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) * β) c b) * incA D (T.gram c d) * ((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) * α) d a = 0 := by
     intro b a
     have h := congrFun (congrFun hM b) a
     simp only [Matrix.mul_apply (M := _ * _), Matrix.mul_apply (M := Matrix.transpose _), Matrix.transpose_apply,
@@ -128,8 +131,8 @@ theorem hO_iso (S T : HSp D) {s : ℕ} (L : Matrix (Fin T.rank) (Fin s) D.host.E
     exact h
   unfold hO
   refine Finset.sum_eq_zero fun a _ => Finset.sum_eq_zero fun b _ => ?_
-  calc _ = incA D (S.gram⁻¹ a b) * ∑ c, ∑ d, cA D (((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) ⬝ₘ β) c b) * incA D (T.gram c d) *
-        ((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) ⬝ₘ α) d a := by
+  calc _ = incA D (S.gram⁻¹ a b) * ∑ c, ∑ d, cA D (((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) * β) c b) * incA D (T.gram c d) *
+        ((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) * α) d a := by
         rw [Finset.mul_sum]; refine Finset.sum_congr rfl fun c _ => ?_
         rw [Finset.mul_sum]; refine Finset.sum_congr rfl fun d _ => ?_
         ring
@@ -137,7 +140,7 @@ theorem hO_iso (S T : HSp D) {s : ℕ} (L : Matrix (Fin T.rank) (Fin s) D.host.E
 
 theorem symplO_iso (S T : HSp D) {s : ℕ} (L : Matrix (Fin T.rank) (Fin s) D.host.E) (hL : adj D L * T.gram * L = 0)
     (α β : Matrix (Fin s) (Fin S.rank) (AE D)) :
-    symplO S T ((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) ⬝ₘ α) ((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) ⬝ₘ β) = 0 := by
+    symplO S T ((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) * α) ((L.map (incA D) : Matrix (Fin T.rank) (Fin s) (AE D)) * β) = 0 := by
   rw [symplO, hO_iso S T L hL, mul_zero, map_zero]
 
 end GlobalTheory.IsoTermMean
@@ -145,7 +148,6 @@ end GlobalTheory.IsoTermMean
 namespace GlobalTheory.IsoTermMean
 open GlobalTheory.IndefiniteRowSideFullHecke.AdjointIsotropicDecomposition
 variable {D : D7}
-local infixl:70 " ⬝ₘ " => HMul.hMul
 
 theorem mt_one (V : HSp D) : mt V 1 = 1 := by simp [Formalism.L2.Theta.mt]
 
@@ -157,17 +159,16 @@ end GlobalTheory.IsoTermMean
 namespace GlobalTheory.IsoTermMean
 open GlobalTheory.IndefiniteRowSideFullHecke.AdjointIsotropicDecomposition
 variable {D : D7}
-local infixl:70 " ⬝ₘ " => HMul.hMul
 
 theorem map_frame_decomp (V V' : HSp D) {r : ℕ} (C C' : Matrix (Fin V.rank) (Fin r) D.host.E)
     (B : Matrix (Fin V.rank) (Fin V'.rank) D.host.E) (hs : IsIsoSplit V V' C B) (h1 : adj D C * V.gram * C' = 1)
     (h2 : adj D C' * V.gram * C' = 0) (h3 : adj D C' * V.gram * B = 0) :
     (1 : Matrix (Fin V.rank) (Fin V.rank) (AE D)) =
-      (C.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) ⬝ₘ
+      (C.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) *
         ((adj D C' * V.gram).map (incA D) : Matrix (Fin r) (Fin V.rank) (AE D)) +
-      (B.map (incA D) : Matrix (Fin V.rank) (Fin V'.rank) (AE D)) ⬝ₘ
+      (B.map (incA D) : Matrix (Fin V.rank) (Fin V'.rank) (AE D)) *
         ((V'.gram⁻¹ * adj D B * V.gram).map (incA D) : Matrix (Fin V'.rank) (Fin V.rank) (AE D)) +
-      (C'.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) ⬝ₘ
+      (C'.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) *
         ((adj D C * V.gram).map (incA D) : Matrix (Fin r) (Fin V.rank) (AE D)) := by
   have e : C * (adj D C' * V.gram) + B * (V'.gram⁻¹ * adj D B * V.gram) + C' * (adj D C * V.gram) = 1 :=
     frame_decomp V V' C C' B hs.frame.2.2 hs.isom hs.orth hs.rank h1 h2 h3
@@ -177,25 +178,25 @@ theorem map_frame_decomp (V V' : HSp D) {r : ℕ} (C C' : Matrix (Fin V.rank) (F
 theorem decomp (V V' W : HSp D) {r s : ℕ} (C C' : Matrix (Fin V.rank) (Fin r) D.host.E)
     (B : Matrix (Fin V.rank) (Fin V'.rank) D.host.E)
     (hI : (1 : Matrix (Fin V.rank) (Fin V.rank) (AE D)) =
-      (C.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) ⬝ₘ
+      (C.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) *
         ((adj D C' * V.gram).map (incA D) : Matrix (Fin r) (Fin V.rank) (AE D)) +
-      (B.map (incA D) : Matrix (Fin V.rank) (Fin V'.rank) (AE D)) ⬝ₘ
+      (B.map (incA D) : Matrix (Fin V.rank) (Fin V'.rank) (AE D)) *
         ((V'.gram⁻¹ * adj D B * V.gram).map (incA D) : Matrix (Fin V'.rank) (Fin V.rank) (AE D)) +
-      (C'.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) ⬝ₘ
+      (C'.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) *
         ((adj D C * V.gram).map (incA D) : Matrix (Fin r) (Fin V.rank) (AE D)))
     (Lm : Matrix (Fin W.rank) (Fin s) (AE D)) (K : Matrix (Fin s) (Fin V.rank) (AE D))
     (M : Matrix (Fin V.rank) (Fin V.rank) (AE D))
-    (hM : (M - 1) ⬝ₘ (C.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) = 0) :
-    (Lm ⬝ₘ K ⬝ₘ M : WO V W) =
-      isoPart V W C (Lm ⬝ₘ (K ⬝ₘ (M - 1) ⬝ₘ (C'.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)))) +
-        (midPart V V' W B (Lm ⬝ₘ (K ⬝ₘ (M - 1) ⬝ₘ (B.map (incA D) : Matrix (Fin V.rank) (Fin V'.rank) (AE D)))) +
-          Lm ⬝ₘ K) := by
-  have e : (Lm ⬝ₘ K ⬝ₘ M : WO V W) = Lm ⬝ₘ K + Lm ⬝ₘ K ⬝ₘ (M - 1) ⬝ₘ
-      ((C.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) ⬝ₘ
+    (hM : (M - 1) * (C.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) = 0) :
+    (Lm * K * M : WO V W) =
+      isoPart V W C (Lm * (K * (M - 1) * (C'.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)))) +
+        (midPart V V' W B (Lm * (K * (M - 1) * (B.map (incA D) : Matrix (Fin V.rank) (Fin V'.rank) (AE D)))) +
+          Lm * K) := by
+  have e : (Lm * K * M : WO V W) = Lm * K + Lm * K * (M - 1) *
+      ((C.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) *
         ((adj D C' * V.gram).map (incA D) : Matrix (Fin r) (Fin V.rank) (AE D)) +
-      (B.map (incA D) : Matrix (Fin V.rank) (Fin V'.rank) (AE D)) ⬝ₘ
+      (B.map (incA D) : Matrix (Fin V.rank) (Fin V'.rank) (AE D)) *
         ((V'.gram⁻¹ * adj D B * V.gram).map (incA D) : Matrix (Fin V'.rank) (Fin V.rank) (AE D)) +
-      (C'.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) ⬝ₘ
+      (C'.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) *
         ((adj D C * V.gram).map (incA D) : Matrix (Fin r) (Fin V.rank) (AE D))) := by
     rw [← hI, Matrix.mul_one, Matrix.mul_sub, Matrix.mul_one]; abel
   rw [e]
@@ -209,7 +210,6 @@ end GlobalTheory.IsoTermMean
 namespace GlobalTheory.IsoTermMean
 open GlobalTheory.IndefiniteRowSideFullHecke.AdjointIsotropicDecomposition
 variable {D : D7}
-local infixl:70 " ⬝ₘ " => HMul.hMul
 
 theorem term_eq_aux (V V' W : HSp D) (r : ℕ) (C C' : Matrix (Fin V.rank) (Fin r) D.host.E)
     (B : Matrix (Fin V.rank) (Fin V'.rank) D.host.E) (hs : IsIsoSplit V V' C B) (h1 : adj D C * V.gram * C' = 1)
@@ -220,34 +220,34 @@ theorem term_eq_aux (V V' W : HSp D) (r : ℕ) (C C' : Matrix (Fin V.rank) (Fin 
     (m : Matrix (Fin s) (Fin r) D.host.E) (hL : IsIsoFrame W L) (n : NI V C) (F : WO V W → ℂ)
     (hF : IsThetaFunO ψ V W F) (Lm : Matrix (Fin W.rank) (Fin s) (AE D)) (hLm : Lm = L.map (incA D))
     (K : Matrix (Fin s) (Fin V.rank) (AE D)) (hK : K = (m * adj D C' * V.gram).map (incA D)) :
-    res V V' W C B μ 𝓨 (heisO ψ V W (Lm ⬝ₘ K) (ω ((n : GA D V), 1) F)) 0 =
-      res V V' W C B μ 𝓨 (heisO ψ V W (Lm ⬝ₘ K) F)
-        (Lm ⬝ₘ (K ⬝ₘ (mt V (n : GA D V) - 1) ⬝ₘ (B.map (incA D) : Matrix (Fin V.rank) (Fin V'.rank) (AE D)))) := by
+    res V V' W C B μ 𝓨 (heisO ψ V W (Lm * K) (ω ((n : GA D V), 1) F)) 0 =
+      res V V' W C B μ 𝓨 (heisO ψ V W (Lm * K) F)
+        (Lm * (K * (mt V (n : GA D V) - 1) * (B.map (incA D) : Matrix (Fin V.rank) (Fin V'.rank) (AE D)))) := by
   have hstd := hω.std
   have hLiso : adj D L * W.gram * L = 0 := hL.2.2
   have hres := (GlobalTheory.T.thetaRestrictIsotropicQuotient_wittTower_properties D V V' W r C B hs ψ hstd μ 𝓨 hY).1
-  have hact : actO V W (n : GA D V) 1 (Lm ⬝ₘ K ⬝ₘ mt V (n : GA D V)) = Lm ⬝ₘ K := by
+  have hact : actO V W (n : GA D V) 1 (Lm * K * mt V (n : GA D V)) = Lm * K := by
     simp only [actO, mt_one, Matrix.one_mul, Matrix.mul_assoc, mt_mul_inv, Matrix.mul_one]
-  have hFu := GlobalTheory.ThetaClosed.isThetaFunO_heisO_all hstd hF (Lm ⬝ₘ K ⬝ₘ mt V (n : GA D V))
-  have step1 : heisO ψ V W (Lm ⬝ₘ K) (ω ((n : GA D V), 1) F) =
-      ω ((n : GA D V), 1) (heisO ψ V W (Lm ⬝ₘ K ⬝ₘ mt V (n : GA D V)) F) := by
+  have hFu := GlobalTheory.ThetaClosed.isThetaFunO_heisO_all hstd hF (Lm * K * mt V (n : GA D V))
+  have step1 : heisO ψ V W (Lm * K) (ω ((n : GA D V), 1) F) =
+      ω ((n : GA D V), 1) (heisO ψ V W (Lm * K * mt V (n : GA D V)) F) := by
     rw [hω.om_heis (n : GA D V) 1 _ F hF, hact]
   have step2 := GlobalTheory.T.wittTower_restriction_unipotentRadical_invariant D V V' W r C B hs ψ χS χT ω hω μ 𝓨 hY n _ hFu
-  have hM : (mt V (n : GA D V) - 1) ⬝ₘ (C.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) = 0 := by
+  have hM : (mt V (n : GA D V) - 1) * (C.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)) = 0 := by
     rw [Matrix.sub_mul, mt_mul_frame V C n.2, Matrix.one_mul, sub_self]
   have hdec := decomp V V' W C C' B (map_frame_decomp V V' C C' B hs h1 h2 h3) Lm K (mt V (n : GA D V)) hM
-  have o1 : symplO V W (isoPart V W C (Lm ⬝ₘ (K ⬝ₘ (mt V (n : GA D V) - 1) ⬝ₘ
+  have o1 : symplO V W (isoPart V W C (Lm * (K * (mt V (n : GA D V) - 1) *
       (C'.map (incA D) : Matrix (Fin V.rank) (Fin r) (AE D)))))
-      (midPart V V' W B (Lm ⬝ₘ (K ⬝ₘ (mt V (n : GA D V) - 1) ⬝ₘ
-        (B.map (incA D) : Matrix (Fin V.rank) (Fin V'.rank) (AE D)))) + Lm ⬝ₘ K) = 0 := by
+      (midPart V V' W B (Lm * (K * (mt V (n : GA D V) - 1) *
+        (B.map (incA D) : Matrix (Fin V.rank) (Fin V'.rank) (AE D)))) + Lm * K) = 0 := by
     simp only [isoPart, midPart, Matrix.mul_assoc, ← Matrix.mul_add]
     rw [hLm]; exact symplO_iso V W L hLiso _ _
-  have o2 : symplO V W (midPart V V' W B (Lm ⬝ₘ (K ⬝ₘ (mt V (n : GA D V) - 1) ⬝ₘ
-        (B.map (incA D) : Matrix (Fin V.rank) (Fin V'.rank) (AE D))))) (Lm ⬝ₘ K) = 0 := by
+  have o2 : symplO V W (midPart V V' W B (Lm * (K * (mt V (n : GA D V) - 1) *
+        (B.map (incA D) : Matrix (Fin V.rank) (Fin V'.rank) (AE D))))) (Lm * K) = 0 := by
     simp only [midPart, Matrix.mul_assoc]
     rw [hLm]; exact symplO_iso V W L hLiso _ _
-  have hF0 := GlobalTheory.ThetaClosed.isThetaFunO_heisO_all hstd hF (Lm ⬝ₘ K)
-  have hF1 := GlobalTheory.ThetaClosed.isThetaFunO_heisO_all hstd hF0 (midPart V V' W B (Lm ⬝ₘ (K ⬝ₘ (mt V (n : GA D V) - 1) ⬝ₘ
+  have hF0 := GlobalTheory.ThetaClosed.isThetaFunO_heisO_all hstd hF (Lm * K)
+  have hF1 := GlobalTheory.ThetaClosed.isThetaFunO_heisO_all hstd hF0 (midPart V V' W B (Lm * (K * (mt V (n : GA D V) - 1) *
         (B.map (incA D) : Matrix (Fin V.rank) (Fin V'.rank) (AE D)))))
   rw [step1, step2, hdec, GlobalTheory.SplitScalar.heisO_add_of_orth ψ V W o1, GlobalTheory.SplitScalar.heisO_add_of_orth ψ V W o2,
     (hres _ hF1).2.2.2, (hres _ hF0).2.2.1]
@@ -258,23 +258,22 @@ end GlobalTheory.IsoTermMean
 namespace GlobalTheory.IsoTermMean
 open GlobalTheory.IndefiniteRowSideFullHecke.AdjointIsotropicDecomposition
 variable {D : D7}
-local infixl:70 " ⬝ₘ " => HMul.hMul
 
 theorem iso_read_periodic (V' W : HSp D) (ψ : AddChar (AF D.host.F) ℂ) {s : ℕ} (L : Matrix (Fin W.rank) (Fin s) D.host.E)
     (hL : IsIsoFrame W L) (G : WO V' W → ℂ) (hG : IsThetaFunO ψ V' W G) :
-    Continuous (fun a : Mx D s V'.rank => G ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) ⬝ₘ a)) ∧
+    Continuous (fun a : Mx D s V'.rank => G ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) * a)) ∧
     ∀ γ ∈ ratMx D s V'.rank, ∀ a : Mx D s V'.rank,
-      G ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) ⬝ₘ (γ + a)) =
-        G ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) ⬝ₘ a) := by
+      G ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) * (γ + a)) =
+        G ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) * a) := by
   refine ⟨hG.cont.comp (continuous_const.matrix_mul continuous_id), ?_⟩
   intro γ hγ a
   obtain ⟨γ₀, rfl⟩ := hγ
   have hLiso : adj D L * W.gram * L = 0 := hL.2.2
-  have e : ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) ⬝ₘ
+  have e : ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) *
       ((incA D).toAddMonoidHom.mapMatrix γ₀ : Mx D s V'.rank)) = ratW W V' (L * γ₀) := by
     simp only [ratW, Matrix.map_mul]; rfl
   rw [Matrix.mul_add, e, hG.quasi, symplOH]
-  have h0 : symplO V' W (ratW W V' (L * γ₀)) ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) ⬝ₘ a) = 0 := by
+  have h0 : symplO V' W (ratW W V' (L * γ₀)) ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) * a) = 0 := by
     rw [← e]; exact symplO_iso V' W L hLiso _ _
   rw [h0, mul_zero, neg_zero, AddChar.map_zero_eq_one, one_mul]
 
@@ -282,8 +281,8 @@ theorem heis_comm_radical (V W : HSp D) (ψ : AddChar (AF D.host.F) ℂ) (χS χ
     (ω : GA D V × GA D W →* Module.End ℂ (WO V W → ℂ)) (hω : IsWeilDatumO ψ V W χS χT ω) {s : ℕ}
     (L : Matrix (Fin W.rank) (Fin s) D.host.E) (K : Matrix (Fin s) (Fin V.rank) (AE D)) (n' : NI W L)
     (f : WO V W → ℂ) (hf : IsThetaFunO ψ V W f) :
-    heisO ψ V W ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) ⬝ₘ K) (ω (1, (n' : GA D W)) f) =
-      ω (1, (n' : GA D W)) (heisO ψ V W ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) ⬝ₘ K) f) := by
+    heisO ψ V W ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) * K) (ω (1, (n' : GA D W)) f) =
+      ω (1, (n' : GA D W)) (heisO ψ V W ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) * K) f) := by
   rw [hω.om_heis 1 (n' : GA D W) _ f hf]
   congr 1
   simp only [actO, inv_one, mt_one, Matrix.mul_one, ← Matrix.mul_assoc, mt_mul_frame W L n'.2]
@@ -297,7 +296,7 @@ theorem mean_isoTerm_invariant : ∀ (D : D7) (V V' W : HSp D) (r : ℕ) (C C' :
   obtain ⟨μ', 𝓐, hA, hmean⟩ := GlobalTheory.T.unipotentRadicalMean_eq_volume_mul_rationalMean D V V' r C C' B hs h1 h2 h3 κ 𝓝 hκ h𝓝 s m hm
   have hres := (GlobalTheory.T.thetaRestrictIsotropicQuotient_wittTower_properties D V V' W r C B hs ψ hstd μ 𝓨 hY).1
   have hw₀ : isoPart V W C' (Matrix.map (L * m) (incA D)) =
-      (L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) ⬝ₘ
+      (L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) *
         ((m * adj D C' * V.gram).map (incA D) : Matrix (Fin s) (Fin V.rank) (AE D)) := by
     simp only [isoPart, Matrix.map_mul, Matrix.mul_assoc]
   rw [hw₀]
@@ -306,38 +305,38 @@ theorem mean_isoTerm_invariant : ∀ (D : D7) (V V' W : HSp D) (r : ℕ) (C C' :
     rw [show (((n : GA D V), (n' : GA D W)) : GA D V × GA D W) = ((n : GA D V), 1) * (1, (n' : GA D W)) by simp,
       map_mul, Module.End.mul_apply]
   have hf1 : IsThetaFunO ψ V W (ω (1, (n' : GA D W)) f) := hω.om_pres _ f hf
-  have hf0 := GlobalTheory.ThetaClosed.isThetaFunO_heisO_all hstd hf ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) ⬝ₘ
+  have hf0 := GlobalTheory.ThetaClosed.isThetaFunO_heisO_all hstd hf ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) *
         ((m * adj D C' * V.gram).map (incA D) : Matrix (Fin s) (Fin V.rank) (AE D)))
   have hG0 := (hres _ hf0).2.1
-  have hG1 : res V V' W C B μ 𝓨 (heisO ψ V W ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) ⬝ₘ
+  have hG1 : res V V' W C B μ 𝓨 (heisO ψ V W ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) *
         ((m * adj D C' * V.gram).map (incA D) : Matrix (Fin s) (Fin V.rank) (AE D))) (ω (1, (n' : GA D W)) f)) =
-      ω' (1, (n' : GA D W)) (res V V' W C B μ 𝓨 (heisO ψ V W ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) ⬝ₘ
+      ω' (1, (n' : GA D W)) (res V V' W C B μ 𝓨 (heisO ψ V W ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) *
         ((m * adj D C' * V.gram).map (incA D) : Matrix (Fin s) (Fin V.rank) (AE D))) f)) := by
     rw [heis_comm_radical V W ψ χS χT ω hω L _ n' f hf, hcomp _ _ hf0]
   have hG1' := hω'.om_pres (1, (n' : GA D W)) _ hG0
   have p0 := iso_read_periodic V' W ψ L hL _ hG0
   have p1 := iso_read_periodic V' W ψ L hL _ hG1'
-  calc _ = ∫ n in 𝓝, ω' (1, (n' : GA D W)) (res V V' W C B μ 𝓨 (heisO ψ V W ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) ⬝ₘ
+  calc _ = ∫ n in 𝓝, ω' (1, (n' : GA D W)) (res V V' W C B μ 𝓨 (heisO ψ V W ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) *
           ((m * adj D C' * V.gram).map (incA D) : Matrix (Fin s) (Fin V.rank) (AE D))) f))
-          ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) ⬝ₘ
-            (((m * adj D C' * V.gram).map (incA D) : Matrix (Fin s) (Fin V.rank) (AE D)) ⬝ₘ (mt V (n : GA D V) - 1) ⬝ₘ
+          ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) *
+            (((m * adj D C' * V.gram).map (incA D) : Matrix (Fin s) (Fin V.rank) (AE D)) * (mt V (n : GA D V) - 1) *
               (B.map (incA D) : Matrix (Fin V.rank) (Fin V'.rank) (AE D)))) ∂κ := by
         congr 1; funext n
         rw [hsplit n, term_eq_aux V V' W r C C' B hs h1 h2 h3 ψ χS χT ω hω μ 𝓨 hY s L m hL n _ hf1 _ rfl _ rfl, hG1]
     _ = ((κ 𝓝).toReal : ℂ) * ∫ a in 𝓐, ω' (1, (n' : GA D W)) (res V V' W C B μ 𝓨 (heisO ψ V W
-          ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) ⬝ₘ
+          ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) *
           ((m * adj D C' * V.gram).map (incA D) : Matrix (Fin s) (Fin V.rank) (AE D))) f))
-          ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) ⬝ₘ a) ∂μ' := hmean _ p1.1 p1.2
+          ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) * a) ∂μ' := hmean _ p1.1 p1.2
     _ = ((κ 𝓝).toReal : ℂ) * ∫ a in 𝓐, (res V V' W C B μ 𝓨 (heisO ψ V W
-          ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) ⬝ₘ
+          ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) *
           ((m * adj D C' * V.gram).map (incA D) : Matrix (Fin s) (Fin V.rank) (AE D))) f))
-          ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) ⬝ₘ a) ∂μ' := by
+          ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) * a) ∂μ' := by
         rw [GlobalTheory.T.unipotentRadical_target_preserves_isotropic_mean D V' W s L hL ψ χS χT ω' hω' μ' 𝓐 hA n' _ hG0]
     _ = ∫ n in 𝓝, (res V V' W C B μ 𝓨 (heisO ψ V W
-          ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) ⬝ₘ
+          ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) *
           ((m * adj D C' * V.gram).map (incA D) : Matrix (Fin s) (Fin V.rank) (AE D))) f))
-          ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) ⬝ₘ
-            (((m * adj D C' * V.gram).map (incA D) : Matrix (Fin s) (Fin V.rank) (AE D)) ⬝ₘ (mt V (n : GA D V) - 1) ⬝ₘ
+          ((L.map (incA D) : Matrix (Fin W.rank) (Fin s) (AE D)) *
+            (((m * adj D C' * V.gram).map (incA D) : Matrix (Fin s) (Fin V.rank) (AE D)) * (mt V (n : GA D V) - 1) *
               (B.map (incA D) : Matrix (Fin V.rank) (Fin V'.rank) (AE D)))) ∂κ := (hmean _ p0.1 p0.2).symm
     _ = _ := by
         refine (congrArg (fun φ : NI V C → ℂ => ∫ n in 𝓝, φ n ∂κ) (funext fun n => ?_)).symm

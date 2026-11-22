@@ -1,5 +1,9 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.P5meas
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.UnitaryTransvectionZeroSecondMemClosure
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.P5meas
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.UnitaryTransvectionZeroSecondMemClosure
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,7 +97,7 @@ theorem measurable_kernF_comp {X : Type*} [TopologicalSpace X] [MeasurableSpace 
   classical
   unfold kernF
   refine Measurable.mul (Continuous.measurable ?_) (Measurable.ite ?_ (Continuous.measurable ?_) measurable_const)
-  · refine continuous_finset_prod _ fun v _ => ?_
+  · refine continuous_finsetProd _ fun v _ => ?_
     have h1 : Continuous fun p => (UpperTheory.V.TR.pInf F (A p) v : ℂ) :=
       Complex.continuous_ofReal.comp ((continuous_pInf_apply v).comp hA)
     have h2 : Continuous fun p => (UpperTheory.V.TR.pInf F (Z p) v : ℂ) :=

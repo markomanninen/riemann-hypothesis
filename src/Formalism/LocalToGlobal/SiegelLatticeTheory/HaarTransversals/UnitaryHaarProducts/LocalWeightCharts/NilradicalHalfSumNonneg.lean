@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.WavePacketL1L2
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.WavePacketL1L2
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,14 +101,22 @@ theorem opn_conjTranspose (A : Mat k r) : opn Aᴴ = opn A := by
 
 local instance instAlgCLM (n : ℕ) :
     Algebra ℂ (EuclideanSpace ℂ (Fin n) →L[ℂ] EuclideanSpace ℂ (Fin n)) := ContinuousLinearMap.algebra
-local instance instModCLM (n : ℕ) :
-    Module ℂ (EuclideanSpace ℂ (Fin n) →L[ℂ] EuclideanSpace ℂ (Fin n)) := ContinuousLinearMap.module
 
 theorem opn_continuous : Continuous (fun M : Mat k r => opn M) := by
   unfold opn
-  have h : Continuous (fun M : Mat k r => Matrix.toEuclideanCLM (n := Fin (2 * r + k + 1)) (𝕜 := ℂ) M) :=
-    LinearMap.continuous_of_finiteDimensional
-      ((Matrix.toEuclideanCLM (n := Fin (2 * r + k + 1)) (𝕜 := ℂ)).toAlgEquiv.toLinearEquiv.toLinearMap)
+  letI : SMul ℂ (Mat k r) := (Pi.module _ _ ℂ).toSMul
+  letI : Module ℂ (Mat k r) := Pi.module _ _ ℂ
+  letI : Module ℂ (EuclideanSpace ℂ (Fin (2 * r + k + 1)) →L[ℂ]
+      EuclideanSpace ℂ (Fin (2 * r + k + 1))) := ContinuousLinearMap.module
+  letI : ContinuousSMul ℂ (Mat k r) := ⟨by
+    apply continuous_pi; intro i
+    apply continuous_pi; intro j
+    exact continuous_fst.mul ((continuous_apply j).comp ((continuous_apply i).comp continuous_snd))⟩
+  let f : Mat k r →ₗ[ℂ] (EuclideanSpace ℂ (Fin (2 * r + k + 1)) →L[ℂ]
+      EuclideanSpace ℂ (Fin (2 * r + k + 1))) :=
+    (Matrix.toEuclideanCLM (n := Fin (2 * r + k + 1)) (𝕜 := ℂ)).toAlgEquiv.toLinearEquiv.toLinearMap
+  have h : Continuous f := ContinuousLinearMap.continuous_of_continuous_uncurry f
+    Matrix.continuous_uncurry_toEuclideanCLM
   exact continuous_norm.comp h
 
 theorem opn_inv_le {g : Mat k r} (hg : g ∈ Gr k r) :

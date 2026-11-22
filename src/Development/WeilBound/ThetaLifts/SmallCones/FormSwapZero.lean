@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SmallCones.SoKill
-import Development.WeilBound.ThetaLifts.SmallCones.ExpAlg
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.SoKill
+public import Development.WeilBound.ThetaLifts.SmallCones.ExpAlg
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,8 @@ theorem sig_sig (h : IsCMExt F E σ) (x : E) : σ (σ x) = x := by
 
 theorem form_swap (hσ : ∀ x, σ (σ x) = x) {J : Matrix (Fin n) (Fin n) E} (ε : E) (h : ∀ i j, σ (J j i) = ε * J i j) (x y : Fin n → E) :
     σ (form σ J x y) = ε * form σ J y x := by
-  simp only [form, dotProduct, mulVec, map_sum, map_mul, hσ, h, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [form, dotProduct, mulVec, map_sum, map_mul, hσ, h, Finset.mul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
@@ -49,16 +54,17 @@ theorem hTens_vec (a c : AE F E) (x p : Fin n → E) (y q : Fin d → E) :
     hTens (cA σ) (incM F X.J) (incM F W.J) (a • incM F (vecMulVec x y)) (c • incM F (vecMulVec p q)) =
       a * cA σ c * inclR (F := F) (AF F) (form σ X.J x p * form σ W.J y q) := by
   have hc : ∀ z : E, cA σ (inclR (F := F) (AF F) z) = inclR (F := F) (AF F) (σ z) := fun z => rfl
-  simp only [hTens, form, dotProduct, mulVec, incM, Matrix.smul_apply, map_apply, vecMulVec_apply, smul_eq_mul, map_mul, hc, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hTens, form, dotProduct, mulVec, incM, Matrix.smul_apply, map_apply, vecMulVec_apply, smul_eq_mul, map_mul, hc, map_sum,
     Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [Finset.sum_congr rfl fun i _ => Finset.sum_comm, Finset.sum_comm]
   exact Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun k _ => by ring
 
-theorem plane_span {H : Plane E n n₁} {i₀ i₁ : ℕ} (h : H.IsAdapted σ B X X₁ i₀ i₁) (hL : X.L.IsLattice E) (z : Fin n → E) :
+theorem plane_span {H : Plane E n n₁} {i₀ i₁ : ℕ} (h : H.IsAdapted σ B X X₁ i₀ i₁) (hL : X.L.IsFullLattice E) (z : Fin n → E) :
     ∃ (s t : E) (u : Fin n₁ → E), z = s • H.x + H.ι *ᵥ u + t • H.y := by
-  have hz : z ∈ Submodule.span E (X.L : Set (Fin n → E)) := by rw [hL.span_eq_top]; trivial
+  have hz : z ∈ Submodule.span E (X.L : Set (Fin n → E)) := by rw [Submodule.IsFullLattice.span_eq_top (self := hL)]; trivial
   induction hz using Submodule.span_induction with
   | mem z hz =>
     obtain ⟨s, t, u, -, -, -, e⟩ := h.split z hz
@@ -159,7 +165,7 @@ theorem soEv_of (hL : LinEx) (hLow : Low) : SoEv := by
   let L : Fn F n d →ₗ[ℂ] ℂ :=
     { toFun := fun Φ => ι₀ (fun y => e (M.co.rho B.ψ s₀ Φ) (repl B.v₁ z y)) (coB σ X₁ W₁ t x₀)
       map_add' := fun a b => by
-        rw [rho_add, map_add]
+        rw [rho_add, map_add (f := _)]
         exact congrFun (map_add ι₀ _ _) _
       map_smul' := fun c a => by
         rw [rho_smul, map_smul]

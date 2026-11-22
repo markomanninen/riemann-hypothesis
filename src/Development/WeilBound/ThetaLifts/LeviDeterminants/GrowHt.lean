@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.GrowDef
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModerateGrowthOfHasCompactSupport
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.GrowDef
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModerateGrowthOfHasCompactSupport
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,6 @@ variable {F : Type} [Field F] [NumberField F]
 
 def evH : AF F →+* mixedEmbedding.mixedSpace F :=
   (InfiniteAdeleRing.ringEquiv_mixedSpace F).toRingHom.comp (RingHom.fst _ _)
-
-theorem evH_eq (a : AF F) : evI F a = evH a := rfl
 
 def Sz (m : ℕ) (c : ℝ) (a : AF F) : Prop :=
   ‖evH a‖ ≤ c ∧ ∀ v, evFin F v ((m : AF F) * a) ∈ v.adicCompletionIntegers F
@@ -28,10 +30,12 @@ theorem Sz.mul {m m' : ℕ} {c c' : ℝ} {a a' : AF F} (h : Sz m c a) (h' : Sz m
 theorem Sz.sum {ι : Type} [Fintype ι] {m : ℕ} {c : ℝ} {a : ι → AF F} (h : ∀ i, Sz m c (a i)) :
     Sz m (Fintype.card ι * c) (∑ i, a i) := by
   refine ⟨?_, fun v => ?_⟩
-  · rw [map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine (norm_sum_le_of_le _ fun i _ => (h i).1).trans ?_
     simp
-  · rw [Finset.mul_sum, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.mul_sum, map_sum]
     exact sum_mem fun i _ => (h i).2 v
 
 theorem Sz.mono {m m' : ℕ} {c c' : ℝ} {a : AF F} (h : Sz m c a) (hm : m ∣ m') (hc : c ≤ c') : Sz m' c' a := by
@@ -82,24 +86,27 @@ theorem intF_mul {a z : AF F} (ha : IntF a) (hz : ∀ v, evFin F v z ∈ v.adicC
 theorem intF_sum {ι : Type} [Fintype ι] {a : ι → AF F} (h : ∀ i, IntF (a i)) : IntF (∑ i, a i) := by
   refine ⟨?_, fun v => ?_⟩
   · exact (map_sum (RingHom.fst (Ainf F) (Af F)) a Finset.univ).trans (Finset.sum_eq_zero fun i _ => (h i).1)
-  · rw [map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact sum_mem fun i _ => (h i).2 v
 
 variable {κ : Type} [Fintype κ]
 
-variable (F κ) in
 
+variable (F κ) in
 def crd : Pt F κ ≃ₗ[AF F] (κ ⊕ κ → AF F) := (LinearEquiv.sumArrowLequivProdArrow κ κ (AF F) (AF F)).symm
 
 theorem crd_apply (s : Pt F κ →ₗ[AF F] Pt F κ) (w : Pt F κ) (i : κ ⊕ κ) :
     crd F κ (s w) i = ∑ j, crd F κ w j * crd F κ (s ((crd F κ).symm (Pi.single j 1))) i := by
   have : w = ∑ j, crd F κ w j • (crd F κ).symm (Pi.single j 1) := by
     apply (crd F κ).injective
-    simp only [map_sum, map_smul, LinearEquiv.apply_symm_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearEquiv.apply_symm_apply]
     funext k
     simp [Finset.sum_apply, Pi.single_apply]
   conv_lhs => rw [this]
-  simp only [map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
 
 theorem bd_of_sz {s : Pt F κ →ₗ[AF F] Pt F κ} {m : ℕ} {c : ℝ} (hc : 0 ≤ c)
     (h : ∀ i j, Sz m c (crd F κ (s ((crd F κ).symm (Pi.single j 1))) i)) : Bd s m (Fintype.card (κ ⊕ κ) * c) := by
@@ -144,11 +151,14 @@ theorem exists_norm_repr_le {ι : Type} [Fintype ι] [DecidableEq ι] (b : Modul
       ∑ τ : E →ₐ[F] ℂ, infEmb (t τ) y * τ (b i) := fun y => by
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add y z hy hz => simp only [map_add, Finsupp.add_apply, hy, hz, add_mul, Finset.sum_add_distrib]
+    | add y z hy hz => simp only [map_add (f := _), Finsupp.add_apply, hy, hz, add_mul, Finset.sum_add_distrib]
     | tmul a e =>
       have h : ∀ x : F, InfinitePlace.Completion.extensionEmbedding w (algebraMap F w.Completion x) =
-          algebraMap F ℂ x := fun x =>
-        InfinitePlace.Completion.extensionEmbedding_coe w ((WithAbs.equiv w.1).symm x)
+          algebraMap F ℂ x := fun x => by
+        rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+          Algebra.algebraMap_self_apply, InfinitePlace.Completion.extensionEmbedding_coe]
+        change w.embedding ((WithAbs.equiv w.1) ((WithAbs.equiv w.1).symm x)) = w.embedding x
+        rw [RingEquiv.apply_symm_apply]
       rw [Algebra.TensorProduct.basis_repr_tmul, Finsupp.smul_apply, Finsupp.mapRange_apply, smul_eq_mul, map_mul,
         h, Module.Basis.traceDual_repr_apply, Algebra.traceForm_apply,
         trace_eq_sum_embeddings, Finset.mul_sum]
@@ -199,9 +209,11 @@ theorem bilin {R A ι : Type} [CommRing R] [CommRing A] [Algebra R A] [Fintype �
       β.repr (M p.1.1 p.1.2.1) p.1.2.2 * β.repr (N p.2.1 p.2.2.1) p.2.2.2 *
         l (Matrix.single p.1.1 p.1.2.1 (β p.1.2.2) * u * (Matrix.single p.2.1 p.2.2.1 (β p.2.2.2))ᵀ) := by
   refine (congrArg₂ (fun A B => l (A * u * Bᵀ)) (expand β M) (expand β N)).trans ?_
-  rw [Fintype.sum_prod_type (α₁ := Fin n × Fin n × ι) (α₂ := Fin d × Fin d × ι), Matrix.sum_mul, Matrix.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Fintype.sum_prod_type (α₁ := Fin n × Fin n × ι) (α₂ := Fin d × Fin d × ι), Matrix.sum_mul, Matrix.sum_mul, map_sum]
   refine Finset.sum_congr rfl fun p _ => ?_
-  rw [Matrix.transpose_sum, Matrix.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.transpose_sum, Matrix.mul_sum, map_sum]
   refine Finset.sum_congr rfl fun q _ => ?_
   rw [Matrix.transpose_smul, Matrix.mul_smul, Matrix.smul_mul, Matrix.smul_mul, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
   ring

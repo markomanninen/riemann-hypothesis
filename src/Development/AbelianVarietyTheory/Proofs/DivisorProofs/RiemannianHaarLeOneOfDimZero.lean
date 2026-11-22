@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PermMMulTranspose
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentHaarRealSUOfMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RiemannianHaarIndependentOfOrthonormalFrame
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrincipalCongruenceConjMemArithmeticGroup
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpqLocallyCompactGroup
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LocallyCompactSecondCountableBorelCountable
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.MuCardLeTwo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PermMMulTranspose
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentHaarRealSUOfMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RiemannianHaarIndependentOfOrthonormalFrame
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrincipalCongruenceConjMemArithmeticGroup
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpqLocallyCompactGroup
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LocallyCompactSecondCountableBorelCountable
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.MuCardLeTwo
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix GlobalTheory.AdLat GlobalTheory.UCls GlobalTheory.SUVol ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Up GlobalTheory.CovTop.VolUp
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.StandardLattice Formalism.IndefR.Lev Formalism.IndefR.Datum GlobalTheory.AdelicScalar
 open scoped ENNReal
@@ -64,8 +69,8 @@ theorem fromFrame_eq_zero {E : Type} [Field E] [NumberField E] [IsCMField E] {r 
 
 end GlobalTheory.SUVol.Degenerate
 
-open GlobalTheory.SUVol.Degenerate in
 
+open GlobalTheory.SUVol.Degenerate in
 theorem GlobalTheory.SUVol.Degenerate.riemHaar_le_one : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (Ψ : Finset (E →+* ℂ)) (G : Matrix (Fin r) (Fin r) E) (x : Frame Ψ r), 1 ≤ r → (∀ τ, (mat x τ).det ≠ 0) → Ψ.card * (r ^ 2 - 1) = 0 → ∀ S : Set (realSU Ψ G), riemHaar Ψ G x S ≤ 1 := by
   intro E _ _ _ r Ψ G x hr hdet hc S
   have h : Ψ.card = 0 ∨ r = 1 := by
@@ -88,14 +93,18 @@ theorem GlobalTheory.SUVol.Degenerate.riemHaar_le_one : ∀ (E : Type) [Field E]
     intro s
     set b := (stdOrthonormalBasis ℝ K).toBasis
     have hb : b.addHaar Set.univ = 1 := by
-      rw [Module.Basis.addHaar, ← Set.Nonempty.eq_univ (b.parallelepiped).nonempty]
-      exact Measure.addHaarMeasure_self
+      rw [← Set.Nonempty.eq_univ (b.parallelepiped).nonempty]
+      exact b.addHaar_self
     calc riemLie Ψ G x s ≤ riemLie Ψ G x Set.univ := measure_mono (Set.subset_univ _)
       _ ≤ 1 := by
         unfold riemLie
         by_cases hm : AEMeasurable (fun Y : K => fromFrame x Y.1) b.addHaar
         · rw [Measure.map_apply_of_aemeasurable hm MeasurableSet.univ, Set.preimage_univ, hb]
-        · rw [Measure.map_of_not_aemeasurable hm]; simp
+        · have hne : b.addHaar ≠ 0 := by
+            intro he
+            simp [he] at hb
+          rw [Measure.map_of_not_aemeasurable_of_ne_zero hm hne]
+          simp
   set μ := (Measure.haar : Measure (realSU Ψ G))
   have hu0 : μ Set.univ ≠ 0 := (isOpen_univ.measure_ne_zero μ Set.univ_nonempty)
   have hut : μ Set.univ ≠ ⊤ := (isCompact_univ.measure_lt_top).ne

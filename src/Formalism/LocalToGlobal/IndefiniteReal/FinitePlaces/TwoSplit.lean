@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.TwoSplitIdem
-import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.EqOfLeOfAbsNormEq
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.TwoSplitIdem
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.EqOfLeOfAbsNormEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem alphaH_integral (H : Host R) : IsIntegral ℤ (alphaH H) := by
 theorem star_alphaH (H : Host R) : (letI := H.cmStar; star (alphaH H)) = 1 - alphaH H := by
   rw [Formalism.BasicNotions.Examples₂.star_eq_conj]
   unfold alphaH
-  rw [map_div₀, map_add, map_one, Formalism.MainNotions.UnusedSlot33.HK.conj_b]
+  rw [map_div₀, map_add (f := _), map_one, Formalism.MainNotions.UnusedSlot33.HK.conj_b]
   have h2 : H.conj (2 : H.E) = 2 := map_ofNat _ 2
   rw [h2]
   ring
@@ -66,7 +70,7 @@ theorem twoSplits (D : D7) : TwoSplits D := by
   · obtain ⟨c', hc', hc'e⟩ := hstar a hm
     have h1 : a + c' = 1 := by
       apply inj
-      rw [map_add, map_one, hc'e, ha, hsa]; ring
+      rw [map_add (f := _), map_one, hc'e, ha, hsa]; ring
     exact hP.ne_top ((Ideal.eq_top_iff_one _).2 (h1 ▸ P.asIdeal.add_mem hm hc'))
   · obtain ⟨c', hc', hc'e⟩ := hstar _ hm
     have h1 : -c' - (a - 1) = 1 := by

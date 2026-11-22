@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.Measures
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NilpotentOfStrict
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.Measures
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NilpotentOfStrict
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.SG.Sub Formalism.L2.SG.Measures
 open scoped TensorProduct ENNReal
@@ -69,13 +73,13 @@ theorem map_add_nilpotent_of_compactOpen {G : Type*} [AddCommGroup G] [Topologic
         fun x => ∑ j ∈ Finset.range m, ((-N) ^ j : Module.End ℤ G) x :=
       funext fun x => LinearMap.sum_apply _ _ _
     rw [this]
-    exact continuous_finset_sum _ fun j _ => hpow _ hnegc j
+    exact continuous_finsetSum _ fun j _ => hpow _ hnegc j
   let L : G ≃ₜ+ G :=
     { toFun := fun x => x + N x
       invFun := (∑ j ∈ Finset.range m, (-N) ^ j : Module.End ℤ G)
       left_inv := fun x => LinearMap.congr_fun h1 x
       right_inv := fun x => LinearMap.congr_fun h2 x
-      map_add' := fun x y => by rw [map_add]; abel
+      map_add' := fun x y => by rw [map_add (f := _)]; abel
       continuous_toFun := continuous_id.add hNc
       continuous_invFun := hinv }
   have hLB : L ⁻¹' (B : Set G) = B := by
@@ -122,8 +126,8 @@ theorem colOp_pow {R : Type*} [CommRing R] {a n : ℕ} (w : Matrix (Fin a) (Fin 
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun d _ => by rw [mul_comm]
 
-open GlobalTheory.GaugeEx in
 
+open GlobalTheory.GaugeEx in
 theorem unitri_haar : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (n : ℕ) (J : Matrix (Fin n) (Fin n) E), IsHermND σ J → ∀ (v : HeightOneSpectrum (𝓞 F)), ∀ (a : ℕ) (u : Matrix (Fin a) (Fin a) (Fv F v ⊗[F] E)), (∀ i, u i i = 1) → (∀ i j, j < i → u i j = 0) → (∀ μ : Measure (Fin a → Fin n → Fv F v ⊗[F] E), μ.IsAddHaarMeasure → μ.map (fun X b => ∑ c, u c b • X c) = μ) ∧ ∀ ν : Measure (HermR (Fv F v) σ a), ν.IsAddHaarMeasure → ∀ φ : HermR (Fv F v) σ a → HermR (Fv F v) σ a, (∀ S, (φ S : Matrix (Fin a) (Fin a) (Fv F v ⊗[F] E)) = (u.map (sigR (Fv F v) σ)).transpose * (S : Matrix (Fin a) (Fin a) (Fv F v ⊗[F] E)) * u) → ν.map φ = ν := by
   intro F E _ _ _ _ _ σ _ n J _ v a u h1 h0
   have : FiniteDimensional F E := Module.Finite.of_restrictScalars_finite ℚ F E

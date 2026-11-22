@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ScPiExists
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ScPiExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,8 @@ theorem hJ_rv (I : Formalism.MainNotions.S.AutInst) (v : NumberField.InfinitePla
       ← Matrix.mulVec_mulVec, Matrix.dotProduct_mulVec, ← Matrix.star_mulVec,
       Matrix.mulVec_mulVec, hP, Matrix.one_mulVec]
   rw [key]
-  simp only [Formalism.UG.hform, map_sum, map_mul, starRingEnd_apply, hstar, dotProduct, mulVec,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.UG.hform, map_sum, map_mul, starRingEnd_apply, hstar, dotProduct, mulVec,
     Matrix.map_apply, Pi.star_apply, Finset.mul_sum, mul_assoc]
 
 end PI.ScPiFrameW

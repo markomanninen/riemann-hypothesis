@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BoundAtTwoThreeFamily
-import Formalism.SharpRestriction.GlobalTheoremInputs
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsFurtherMore
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BoundAtTwoThreeFamily
+public import Formalism.SharpRestriction.GlobalTheoremInputs
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsFurtherMore
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations GlobalTheory.NLink
 
 noncomputable section
@@ -27,13 +32,13 @@ theorem sumOver_mono (D : D7) (l : ℕ) (hl : l ≠ 0) {f g : HeightOneSpectrum 
 theorem le_supZ {D : D7} (i : D.nd.Loc) (f : D.nd.X i → ℝ) {π : D.nd.X i} (hπ : π ∈ D.nd.Zgood i) :
     f π ≤ KillingConditions.supZ i f := by
   unfold KillingConditions.supZ
-  rw [dif_pos ⟨π, hπ⟩]
+  rw [dite_eq_left ⟨π, hπ⟩]
   exact Finset.le_sup' f hπ
 
 end GlobalTheory.NLink.Adm4Tab
 
-open GlobalTheory.NLink.Adm4Tab in
 
+open GlobalTheory.NLink.Adm4Tab in
 theorem GlobalTheory.NLink.admissible_table_of_conclusion : ∀ (D : D7) (L : SizeData₂ D) (P : ParameterChoice' D L) (X : KillingConditions.HubData D) (C : ℝ) (tf : TwistedPlaces.Tab L),
     Concl L P X C → (∀ i, TwistedPlaces.TwLoc D i → (D.nd.l i ∈ D.host.small ∨ D.nd.l i = 3) → ∀ π ∈ D.nd.Zgood i,
       Bd X.ρ i π (TwistedPlaces.sumOver D (D.nd.l i) (tf.len i) + tf.BB i)) → TwistedPlaces.ArchimedeanSignatureMatching L (tab L X tf C) := by

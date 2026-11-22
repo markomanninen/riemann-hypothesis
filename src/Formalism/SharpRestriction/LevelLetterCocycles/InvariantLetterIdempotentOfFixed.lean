@@ -1,10 +1,14 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.IsTruncIff
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.Pi0PowSmulInjective
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExistsInIInPNPowSmulSubMap
-import Formalism.SharpRestriction.LevelLetterCocycles.KillerLevCoreOf
-import Formalism.SharpRestriction.LevelLetterCocycles.CoordHomMapTrace
-import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantLattices
-import Formalism.SharpRestriction.LevelLetterCocycles.ExpRules
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.IsTruncIff
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.Pi0PowSmulInjective
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExistsInIInPNPowSmulSubMap
+public import Formalism.SharpRestriction.LevelLetterCocycles.KillerLevCoreOf
+public import Formalism.SharpRestriction.LevelLetterCocycles.CoordHomMapTrace
+public import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantLattices
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExpRules
+
+@[expose] public section
 
 noncomputable section
 
@@ -160,7 +164,8 @@ theorem frobeniusSpan_le_pullback (hmod : Formalism.MainNotions.DeltaInvariantLa
   obtain ⟨x', hx', rfl⟩ := hx
   obtain ⟨a, ha, -⟩ := hbN x' hx'
   simp only [LinearMap.smul_apply, LinearMap.id_apply, SetLike.mem_coe]
-  rw [ha, Finset.smul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ha, Finset.smul_sum, map_sum]
   refine Submodule.sum_mem _ fun j _ => ?_
   rw [smul_comm, Formalism.MainNotions.WachCoordinates.Br.φD_smulA]
   refine Submodule.smul_mem _ _ (frobenius_mem_pullback_one W T ((W.N T).smul_mem _ (hb j).1)

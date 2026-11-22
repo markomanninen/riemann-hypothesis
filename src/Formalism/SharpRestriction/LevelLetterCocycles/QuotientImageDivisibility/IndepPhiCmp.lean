@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.HasSubstPi0Series
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.HasSubstPi0Series
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -24,7 +28,7 @@ theorem φVB_inj : Function.Injective (φVB PD (LL := LL) (V := V)) := by
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul x b => simp [φVB]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   intro a b hab
   rw [h, h] at hab
   exact Module.Flat.lTensor_preserves_injective_linearMap _ PD.φ_inj hab
@@ -89,7 +93,8 @@ theorem indep_phi_cmp (hdom : IsDomain O) (hFr : IsFractionRing O LL)
   have hsum : ∑ m, c m • W.cmp T ⟨e m, (he.1 m).1⟩ = 0 := by
     apply φVB_inj PD (LL := LL) (V := T.V)
     apply Formalism.MainNotions.UnusedSlot80.LevR.ιV_inj (PD := PD) (LL := LL) (V := T.V)
-    rw [map_zero, map_zero, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zero, map_zero, map_sum, map_sum]
     simpa [map_smul] using hc
   obtain ⟨⟨dd, hdd⟩, hint⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors O)
     (Finset.univ : Finset (Fin r)) c
@@ -102,12 +107,14 @@ theorem indep_phi_cmp (hdom : IsDomain O) (hFr : IsFractionRing O LL)
     refine ⟨?_, fun δ hδ => ?_⟩
     · rw [hz, Finset.smul_sum]
       exact Finset.sum_congr rfl fun m _ => by rw [smul_comm, (he.1 m).2.1]
-    · rw [hz, map_sum]
+    · set_option synthInstance.maxHeartbeats 100000 in
+      rw [hz, map_sum]
       exact Finset.sum_congr rfl fun m _ => by rw [map_smul, (he.1 m).2.2 δ hδ]
   have hcz : W.cmp T ⟨z, hzN⟩ = 0 := by
     have e1 : (⟨z, hzN⟩ : ↥(W.N T)) = ∑ m, o m • (⟨e m, (he.1 m).1⟩ : ↥(W.N T)) :=
       Subtype.ext (by simp [hz, Submodule.coe_sum])
-    rw [e1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, map_sum]
     simp only [W.cmp_smul]
     calc ∑ m, algebraMap O LL (o m) • W.cmp T ⟨e m, (he.1 m).1⟩
         = ∑ m, algebraMap O LL dd • (c m • W.cmp T ⟨e m, (he.1 m).1⟩) := by
@@ -115,7 +122,7 @@ theorem indep_phi_cmp (hdom : IsDomain O) (hFr : IsFractionRing O LL)
           rw [ho m, Algebra.smul_def, mul_smul]
       _ = 0 := by rw [← Finset.smul_sum, hsum, smul_zero]
   have hPN := ker_NDl W T i h3 hmod hR (x := z) ⟨hzN, hzD⟩
-    (by unfold Formalism.MainNotions.ArcLiftingSetup.cmpD; rw [dif_pos hzN]; exact hcz)
+    (by unfold Formalism.MainNotions.ArcLiftingSetup.cmpD; rw [dite_eq_left hzN]; exact hcz)
   obtain ⟨y, hy, hyΔ, hzy⟩ := hPN
   rw [pow_one] at hzy
   have hyl : (letE i : LetA O n) • y = y := by

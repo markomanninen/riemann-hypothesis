@@ -1,13 +1,17 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.ComplementarySeries.SegmentJacquetSubquotients.SegRepOf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DerivativeCuspidalPairLength
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProdMapInjective
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductIrreducibleAppendEquivStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdjacentQuotientOfTwoSegment
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothIterPhi
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetQuotientEigenvector
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.ComplementarySeries.SegmentJacquetSubquotients.SegRepOf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DerivativeCuspidalPairLength
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProdMapInjective
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductIrreducibleAppendEquivStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdjacentQuotientOfTwoSegment
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothIterPhi
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetQuotientEigenvector
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ namespace StageC
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-abbrev cls {d : ℕ} (σ : IrrRep (GL (Fin d) k)) : IrrGL k := IrrGL.of σ.ρ σ.smooth σ.irr
+abbrev cls {d : ℕ} (σ : IrrRep (GL (Fin d) k)) : IrrGL (k := k) := IrrGL.of σ.ρ σ.smooth σ.irr
 
 theorem segTerm_smooth {d : ℕ} (σ : IrrRep (GL (Fin d) k)) (l : ℕ) (a : Fin l) : IsSmooth (segTerm σ.ρ l a) :=
   isSmooth_twist σ.smooth (isSmoothChar_absPow _).detChar
@@ -27,7 +31,7 @@ theorem segTerm_smooth {d : ℕ} (σ : IrrRep (GL (Fin d) k)) (l : ℕ) (a : Fin
 theorem segTerm_irr {d : ℕ} (σ : IrrRep (GL (Fin d) k)) (l : ℕ) (a : Fin l) : (segTerm σ.ρ l a).IsIrreducible :=
   isIrreducible_twist σ.irr _
 
-abbrev tcl {d : ℕ} (σ : IrrRep (GL (Fin d) k)) (l : ℕ) (a : Fin l) : IrrGL k :=
+abbrev tcl {d : ℕ} (σ : IrrRep (GL (Fin d) k)) (l : ℕ) (a : Fin l) : IrrGL (k := k) :=
   IrrGL.of (segTerm σ.ρ l a) (segTerm_smooth σ l a) (segTerm_irr σ l a)
 
 theorem tcl_eq {d : ℕ} (σ : IrrRep (GL (Fin d) k)) (l : ℕ) (a : Fin l) : tcl σ l a = (cls σ).nu ((a : ℕ) : ℂ) :=
@@ -112,7 +116,7 @@ theorem Emb.range (h : Emb ρ₁ ρ₂) [Nontrivial V₁] :
 
 end Emb
 
-theorem sum_app {p q : ℕ} (x : Fin p → IrrGL k) (y : Fin q → IrrGL k) :
+theorem sum_app {p q : ℕ} (x : Fin p → IrrGL (k := k)) (y : Fin q → IrrGL (k := k)) :
     ∑ a, (Fin.append x y a).1 = ∑ a, (x a).1 + ∑ a, (y a).1 := by
   rw [Fin.sum_univ_add]
   simp only [Fin.append_left, Fin.append_right]
@@ -144,7 +148,7 @@ theorem embL (σ : Representation ℂ (GL (Fin r) k) U) (σ' : Representation �
 end Two
 
 set_option synthInstance.maxHeartbeats 400000 in
-theorem emb_right {p q q' r t : ℕ} (A : Fin p → IrrGL k) (y : Fin q → IrrGL k) (y' : Fin q' → IrrGL k)
+theorem emb_right {p q q' r t : ℕ} (A : Fin p → IrrGL (k := k)) (y : Fin q → IrrGL (k := k)) (y' : Fin q' → IrrGL (k := k))
     (hA : ∑ a, (A a).1 = r) (hy : ∑ a, (y a).1 = t) (hy' : ∑ a, (y' a).1 = t) (h : Emb (prodIrr y hy) (prodIrr y' hy'))
     (h1 : ∑ a, (Fin.append A y a).1 = r + t) (h2 : ∑ a, (Fin.append A y' a).1 = r + t) :
     Emb (prodIrr (Fin.append A y) h1) (prodIrr (Fin.append A y') h2) :=
@@ -152,7 +156,7 @@ theorem emb_right {p q q' r t : ℕ} (A : Fin p → IrrGL k) (y : Fin q → IrrG
     (GlobalTheory.T.product_irreducible_append_equiv k p q' r t A y' hA hy' h2)
 
 set_option synthInstance.maxHeartbeats 400000 in
-theorem emb_left {p p' q r t : ℕ} (y : Fin p → IrrGL k) (y' : Fin p' → IrrGL k) (B : Fin q → IrrGL k)
+theorem emb_left {p p' q r t : ℕ} (y : Fin p → IrrGL (k := k)) (y' : Fin p' → IrrGL (k := k)) (B : Fin q → IrrGL (k := k))
     (hy : ∑ a, (y a).1 = r) (hy' : ∑ a, (y' a).1 = r) (hB : ∑ a, (B a).1 = t) (h : Emb (prodIrr y hy) (prodIrr y' hy'))
     (h1 : ∑ a, (Fin.append y B a).1 = r + t) (h2 : ∑ a, (Fin.append y' B a).1 = r + t) :
     Emb (prodIrr (Fin.append y B) h1) (prodIrr (Fin.append y' B) h2) :=
@@ -160,10 +164,10 @@ theorem emb_left {p p' q r t : ℕ} (y : Fin p → IrrGL k) (y' : Fin p' → Irr
     (GlobalTheory.T.product_irreducible_append_equiv k p' q r t y' B hy' hB h2)
 
 set_option synthInstance.maxHeartbeats 400000 in
-theorem comb {n c N : ℕ} (xx : Fin n → IrrGL k) (hdx : ∑ a, (xx a).1 = N) (iz : Fin n) (z : IrrGL k) (hz : xx iz = z)
-    (pr : Fin 2 → IrrGL k) (hs : ∑ j, (pr j).1 = z.1) (d : ℕ) (hsd : ∀ j, (pr j).1 = d) (hsc : ∀ j, (pr j).IsCusp)
+theorem comb {n c N : ℕ} (xx : Fin n → IrrGL (k := k)) (hdx : ∑ a, (xx a).1 = N) (iz : Fin n) (z : IrrGL (k := k)) (hz : xx iz = z)
+    (pr : Fin 2 → IrrGL (k := k)) (hs : ∑ j, (pr j).1 = z.1) (d : ℕ) (hsd : ∀ j, (pr j).1 = d) (hsc : ∀ j, (pr j).IsCusp)
     (hu : Nonempty ((jac (stdBlocks (fun j => (pr j).1) hs) z.rep).Equiv (piTensor fun j => (pr j).rep)))
-    (y : Fin c → IrrGL k) (hy : ∑ a, (y a).1 = N) (hyc : ∀ a, (y a).IsCusp) (hjm : 1 ≤ Zc.jm y hy (prodIrr xx hdx)) :
+    (y : Fin c → IrrGL (k := k)) (hy : ∑ a, (y a).1 = N) (hyc : ∀ a, (y a).IsCusp) (hjm : 1 ≤ Zc.jm y hy (prodIrr xx hdx)) :
     ∃ f : Fin 2 ↪o Fin c, ∀ j, y (f j) = pr j := by
   subst hz
   have hA : GlobalTheory.Published.IrreducibleAdmissibleGL := GlobalTheory.CompanionTheory.BZCuspPair.irrAdm
@@ -178,13 +182,13 @@ theorem comb {n c N : ℕ} (xx : Fin n → IrrGL k) (hdx : ∑ a, (xx a).1 = N) 
   exact ⟨f, hf⟩
 
 set_option synthInstance.maxHeartbeats 400000 in
-theorem classMain {i q N : ℕ} (t : Fin (i + 2 + q) → IrrGL k) (ht : ∑ a, (t a).1 = N) (pr : Fin 2 → IrrGL k)
-    (hpr : ∀ j, pr j = t (Fin.castAdd q (Fin.natAdd i j))) (z : IrrGL k) (hs : ∑ j, (pr j).1 = z.1)
+theorem classMain {i q N : ℕ} (t : Fin (i + 2 + q) → IrrGL (k := k)) (ht : ∑ a, (t a).1 = N) (pr : Fin 2 → IrrGL (k := k))
+    (hpr : ∀ j, pr j = t (Fin.castAdd q (Fin.natAdd i j))) (z : IrrGL (k := k)) (hs : ∑ j, (pr j).1 = z.1)
     (he : Emb z.rep (prodIrr pr hs)) :
-    ∃ (n : ℕ) (xx : Fin n → IrrGL k) (hdx : ∑ a, (xx a).1 = N) (iz : Fin n), xx iz = z ∧
+    ∃ (n : ℕ) (xx : Fin n → IrrGL (k := k)) (hdx : ∑ a, (xx a).1 = N) (iz : Fin n), xx iz = z ∧
       Emb (prodIrr xx hdx) (prodIrr t ht) := by
-  obtain ⟨A, hA⟩ : ∃ A : Fin i → IrrGL k, ∀ a, A a = t (Fin.castAdd q (Fin.castAdd 2 a)) := ⟨_, fun _ => rfl⟩
-  obtain ⟨B, hB⟩ : ∃ B : Fin q → IrrGL k, ∀ b, B b = t (Fin.natAdd (i + 2) b) := ⟨_, fun _ => rfl⟩
+  obtain ⟨A, hA⟩ : ∃ A : Fin i → IrrGL (k := k), ∀ a, A a = t (Fin.castAdd q (Fin.castAdd 2 a)) := ⟨_, fun _ => rfl⟩
+  obtain ⟨B, hB⟩ : ∃ B : Fin q → IrrGL (k := k), ∀ b, B b = t (Fin.natAdd (i + 2) b) := ⟨_, fun _ => rfl⟩
   have hfun : Fin.append (Fin.append A pr) B = t := by
     funext a
     refine Fin.addCases (fun u => ?_) (fun b => ?_) a
@@ -213,7 +217,7 @@ theorem exists_alt_ter {d : ℕ} (σ : IrrRep (GL (Fin d) k)) {U : Type} [AddCom
     (τ : Representation ℂ (GL (Fin (2 * d)) k) U) (hsS : IsSmooth τ) (hiS : τ.IsIrreducible)
     (hs : ∑ j, (tcl σ 2 j).1 = 2 * d) (a2 : Emb τ (prodIrr (tcl σ 2) hs))
     (eS : (jac (consecBlocks 2 d) τ).Equiv (piTensor (segTerm σ.ρ 2))) :
-    ∃ (z : IrrGL k) (hs : ∑ j, (tcl σ 2 j).1 = z.1), Emb z.rep (prodIrr (tcl σ 2) hs) ∧
+    ∃ (z : IrrGL (k := k)) (hs : ∑ j, (tcl σ 2 j).1 = z.1), Emb z.rep (prodIrr (tcl σ 2) hs) ∧
       Nonempty ((jac (stdBlocks (fun j => (tcl σ 2 j).1) hs) z.rep).Equiv (piTensor fun j => (tcl σ 2 j).rep)) := by
   have a1 : Emb (IrrGL.of τ hsS hiS).rep τ := Emb.of' ⟨IrrGL.equivOf τ hsS hiS⟩
   have he2 : stdBlocks (fun j => (tcl σ 2 j).1) hs = consecBlocks 2 d := blocks_eq 2 d hs
@@ -228,7 +232,7 @@ theorem exists_alt_ter {d : ℕ} (σ : IrrRep (GL (Fin d) k)) {U : Type} [AddCom
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
 theorem exists_unit_one_add_generator (h2 : PositivityTheory.Pf1.SegRepC.SegTwo) {d : ℕ} (hd : 0 < d) (σ : IrrRep (GL (Fin d) k)) (hσ : IsCuspidal σ.ρ) :
-    ∃ (z : IrrGL k) (hs : ∑ j, (tcl σ 2 j).1 = z.1), Emb z.rep (prodIrr (tcl σ 2) hs) ∧
+    ∃ (z : IrrGL (k := k)) (hs : ∑ j, (tcl σ 2 j).1 = z.1), Emb z.rep (prodIrr (tcl σ 2) hs) ∧
       Nonempty ((jac (stdBlocks (fun j => (tcl σ 2 j).1) hs) z.rep).Equiv (piTensor fun j => (tcl σ 2 j).rep)) := by
   obtain ⟨S, hiS, -, ⟨eS⟩⟩ := h2 k d hd σ hσ
   have hs : ∑ j, (tcl σ 2 j).1 = 2 * d := sum_const_fin 2 d

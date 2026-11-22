@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.DictNormalPf
+module
+
+public import Development.EtaleCohomology.KummerTheory.DictNormalPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -54,7 +58,7 @@ theorem NrmMk_of : NrmMk := by
         (chainsXIso R E (-i).toNat).hom ≫ φ ((-i).toNat) j (by omega) else 0), ?_⟩
   intro p s h U x
   unfold ev
-  rw [Cochain.mk_v, dif_pos (by omega)]
+  rw [Cochain.mk_v, dite_eq_left (by omega)]
   rw [aux R n s (fun q hq => φ q s hq) p (-(-(p : ℤ))).toNat (by omega) _ h]
   simp only [Iso.inv_hom_id_assoc]
   exact phi_gen R _ (I.X s) _ _ U x

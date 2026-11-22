@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -71,7 +75,7 @@ theorem gaussAbs_aeval_le : ∀ (E : Type) [Field E] [NumberField E] (v : Finite
   refine ReciprocityTheory.MultiplicativeHeights.finite_place_sum_le v _ _ h0 fun s _ => ?_
   have hprod : ReciprocityTheory.MultiplicativeHeights.gaussAbs v (∏ i ∈ s.support, φ i ^ s i) ≤ 1 :=
     gaussAbs_prod_le_one v _ _ fun i _ => gaussAbs_pow_le_one v _ (h i) _
-  have hC := gaussAbs_C_mul_le v (coeff s g) _ hprod
+  have hC := gaussAbs_C_mul_le v (AddMonoidAlgebra.coeff g s) _ hprod
   rw [MvPolynomial.algebraMap_eq]
   exact (ReciprocityTheory.MultiplicativeHeights.coeff_le_gauss_abs v _ t).trans
     (hC.trans (ReciprocityTheory.MultiplicativeHeights.coeff_le_gauss_abs v g s))

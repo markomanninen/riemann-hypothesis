@@ -1,6 +1,10 @@
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.LatData
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.CommProjectionHolds
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementB
+module
+
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.LatData
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.CommProjectionHolds
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementB
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.PW
 

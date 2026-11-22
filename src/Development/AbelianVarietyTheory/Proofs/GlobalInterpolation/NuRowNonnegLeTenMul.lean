@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.LocalQuadraticParts
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OneLeLetterBlockLength
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.LocalQuadraticParts
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OneLeLetterBlockLength
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.DV Formalism.MainNotions NumberField IsDedekindDomain
 
@@ -10,7 +14,7 @@ namespace GlobalTheory
 theorem nuRow_zero_le (D : D7) (u : D.what₂.Word) (j : ℕ) (τ : D.what₂.Tau) (hk : 0 < D.R.k) :
     nuRow D u j τ 0 ≤ ((((D.hcW u τ).u ⟨0, hk⟩ : ℚ)) : ℝ) + wSz D j τ := by
   unfold nuRow srcPar
-  rw [dif_pos hk]
+  rw [dite_eq_left hk]
   have h1 : 1 ≤ D.R.N j := by unfold Ranks.N; omega
   have h1' : (1 : ℝ) ≤ D.R.N j := by exact_mod_cast h1
   have h2 : (0 : ℝ) ≤ D.R.N (j - 1) := Nat.cast_nonneg _

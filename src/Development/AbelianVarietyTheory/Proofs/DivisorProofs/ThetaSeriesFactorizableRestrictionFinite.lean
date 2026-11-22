@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorPureTensorComponentAtPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStdCharNegOneOfStandardTraceAdelicAddChar
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicRapidDecayOfMemAdelicSchwartzSpace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExtendByZeroMemSchA
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RapidDecayAdelicIntegrablePeriodisationContinuou
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TotallyRealSelfAnnihilatorAdeleCharacter
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqZeroOfFourierEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorPureTensorComponentAtPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStdCharNegOneOfStandardTraceAdelicAddChar
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicRapidDecayOfMemAdelicSchwartzSpace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExtendByZeroMemSchA
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RapidDecayAdelicIntegrablePeriodisationContinuou
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TotallyRealSelfAnnihilatorAdeleCharacter
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqZeroOfFourierEqZero
+
+@[expose] public section
+
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun
 
 noncomputable section
@@ -32,7 +37,7 @@ theorem exists_haar_factor {G : Type} [AddCommGroup G] [TopologicalSpace G] [IsT
   haveI : SecondCountableTopology H₁ := TopologicalSpace.Subtype.secondCountableTopology _
   haveI : SecondCountableTopology H₂ := TopologicalSpace.Subtype.secondCountableTopology _
   have k₁ : ∀ z : H₁ × H₂, p ((z.1 : G) + z.2) = z.1 := fun z => by
-    rw [map_add, (m₂ _).1 z.2.2, add_zero]
+    rw [map_add (f := _), (m₂ _).1 z.2.2, add_zero]
     exact (sub_eq_zero.1 ((m₁ _).1 z.1.2)).symm
   let e : (H₁ × H₂) ≃ₜ+ G :=
     { toFun := fun z => (z.1 : G) + z.2
@@ -68,7 +73,7 @@ theorem proportional {G : Type} [AddCommGroup G] (p : G →+ G) (hpp : ∀ x, p 
   have hv : v (x₀ - p x₀) ≠ 0 := fun hv => hx₀' (by rw [hΨ, hv, mul_zero])
   refine ⟨conj (Φ x₀) / conj (Ψ x₀), funext fun x => ?_⟩
   have h1 := h x₀ (p x - p x₀) (by rw [map_sub, hpp, hpp])
-  have e1 : p (x₀ + (p x - p x₀)) = p x := by rw [map_add, map_sub, hpp, hpp, add_sub_cancel]
+  have e1 : p (x₀ + (p x - p x₀)) = p x := by rw [map_add (f := _), map_sub, hpp, hpp, add_sub_cancel]
   have e2 : x₀ + (p x - p x₀) - p x = x₀ - p x₀ := by abel
   rw [hΨ (x₀ + _), hΦ (x₀ + _), e1, e2] at h1
   have h2 := congrArg conj h1
@@ -208,16 +213,17 @@ theorem schA_facts (hF : IsTotallyReal F) {κ : Type} [Fintype κ] [MeasurableSp
 
 def infOne : AF F := ((1 : InfiniteAdeleRing F), (0 : FiniteAdeleRing (𝓞 F) F))
 
-def idem (S : Finset (Pl F)) : AF F :=
+def idem (S : Finset (Pl (F := F))) : AF F :=
   infOne + ∑ w ∈ S, GlobalTheory.LatVac.liftV w 1
 
-theorem fstA_idem (S : Finset (Pl F)) : fstA F (idem S) = 1 := by
+theorem fstA_idem (S : Finset (Pl (F := F))) : fstA F (idem S) = 1 := by
   have h0 : fstA F (infOne (F := F)) = 1 := rfl
-  have hl : ∀ w : Pl F, fstA F (GlobalTheory.LatVac.liftV w 1) = 0 := fun w => rfl
-  rw [idem, map_add, map_sum, h0, Finset.sum_eq_zero fun w _ => hl w, add_zero]
+  have hl : ∀ w : Pl (F := F), fstA F (GlobalTheory.LatVac.liftV w 1) = 0 := fun w => rfl
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [idem, map_add (f := _), map_sum, h0, Finset.sum_eq_zero fun w _ => hl w, add_zero]
 
 open Classical in
-theorem evFin_idem (S : Finset (Pl F)) (w : Pl F) : evFin F w (idem S) = if w ∈ S then 1 else 0 := by
+theorem evFin_idem (S : Finset (Pl (F := F))) (w : Pl (F := F)) : evFin F w (idem S) = if w ∈ S then 1 else 0 := by
   have h0 : evFin F w (infOne (F := F)) = 0 :=
     map_zero (evalV F w)
   have hs : ∑ x ∈ S, evFin F w (GlobalTheory.LatVac.liftV x 1) = ∑ x ∈ S, if w = x then (1 : Fv F w) else 0 := by
@@ -225,14 +231,15 @@ theorem evFin_idem (S : Finset (Pl F)) (w : Pl F) : evFin F w (idem S) = if w �
     by_cases hx : w = x
     · subst hx; rw [if_pos rfl, GlobalTheory.LatVac.evFin_liftV]
     · rw [if_neg hx]; exact evalV_singleFin_ne hx _
-  rw [idem, map_add, map_sum, h0, hs, Finset.sum_ite_eq S w (fun _ => (1 : Fv F w)), zero_add]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [idem, map_add (f := _), map_sum, h0, hs, Finset.sum_ite_eq S w (fun _ => (1 : Fv F w)), zero_add]
 
-theorem evI_idem_mul (S : Finset (Pl F)) (t : AF F) : evI F (idem S * t) = evI F t := by
+theorem evI_idem_mul (S : Finset (Pl (F := F))) (t : AF F) : evI F (idem S * t) = evI F t := by
   change InfiniteAdeleRing.ringEquiv_mixedSpace F (fstA F (idem S * t)) =
     InfiniteAdeleRing.ringEquiv_mixedSpace F (fstA F t)
   rw [map_mul (fstA F), fstA_idem, one_mul]
 
-theorem mul_idem_eq_zero (S : Finset (Pl F)) (t : AF F) (h1 : evI F t = 0) (h2 : ∀ w ∈ S, evFin F w t = 0) :
+theorem mul_idem_eq_zero (S : Finset (Pl (F := F))) (t : AF F) (h1 : evI F t = 0) (h2 : ∀ w ∈ S, evFin F w t = 0) :
     t * idem S = 0 := by
   classical
   have h3 : fstA F t = 0 := (InfiniteAdeleRing.ringEquiv_mixedSpace F).injective (by rw [map_zero]; exact h1)
@@ -245,7 +252,7 @@ theorem mul_idem_eq_zero (S : Finset (Pl F)) (t : AF F) (h1 : evI F t = 0) (h2 :
     · rw [h2 w hw, zero_mul]
     · rw [mul_zero]
 
-theorem idem_mul_idem (S : Finset (Pl F)) : idem S * idem S = idem S := by
+theorem idem_mul_idem (S : Finset (Pl (F := F))) : idem S * idem S = idem S := by
   classical
   have := mul_idem_eq_zero S (1 - idem S) (by
     change InfiniteAdeleRing.ringEquiv_mixedSpace F (fstA F (1 - idem S)) = 0
@@ -255,8 +262,7 @@ theorem idem_mul_idem (S : Finset (Pl F)) : idem S * idem S = idem S := by
   exact this.symm
 
 open Classical in
-
-theorem pure_split {κ : Type} [Fintype κ] (S : Finset (Pl F)) (f : SInf F κ) (φ ω : ∀ w : Pl F, (κ → Fv F w) → ℂ)
+theorem pure_split {κ : Type} [Fintype κ] (S : Finset (Pl (F := F))) (f : SInf F κ) (φ ω : ∀ w : Pl (F := F), (κ → Fv F w) → ℂ)
     (hω : ∀ᶠ w in Filter.cofinite, ω w = Set.indicator {x | ∀ i, x i ∈ w.adicCompletionIntegers F} 1)
     (hφ : ∀ w, w ∉ S → φ w = ω w) (x : κ → AF F) :
     pure f φ x = (fun z : κ → AF F => f (fun i => evI F (z i)) * ∏ w ∈ S, φ w fun i => evFin F w (z i)) (idem S • x) *
@@ -298,11 +304,11 @@ theorem pure_split {κ : Type} [Fintype κ] (S : Finset (Pl F)) (f : SInf F κ) 
 
 theorem scalar_of_coeff : GlobalTheory.FunPr.Hypotheses₂ → ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E)
     (a a' : ℕ) (G : Geo σ a a') (X : Chars F E) (om : Rep σ G.V G.W) (om' : Rep σ G.V' G.W), IsTriple B G X om om' →
-    ∀ (S : Finset (Pl F)) (f : SInf F (Fin a' × Fin (a + a'))) (φ : ∀ w : Pl F, (Fin a' × Fin (a + a') → Fv F w) → ℂ),
+    ∀ (S : Finset (Pl (F := F))) (f : SInf F (Fin a' × Fin (a + a'))) (φ : ∀ w : Pl (F := F), (Fin a' × Fin (a + a') → Fv F w) → ℂ),
     (∀ w, φ w ∈ SB (Fin a' × Fin (a + a') → Fv F w)) → (∀ w, w ∉ S → φ w = G.M'.vac w) →
-    ∀ (m : ℕ) (f' : Fin m → SInf F (Fin a' × Fin (a + a'))) (φ' : Fin m → ∀ w : Pl F, (Fin a' × Fin (a + a') → Fv F w) → ℂ),
+    ∀ (m : ℕ) (f' : Fin m → SInf F (Fin a' × Fin (a + a'))) (φ' : Fin m → ∀ w : Pl (F := F), (Fin a' × Fin (a + a') → Fv F w) → ℂ),
     (∀ i w, φ' i w ∈ SB (Fin a' × Fin (a + a') → Fv F w)) → (∀ i w, w ∉ S → φ' i w = G.M'.vac w) →
-    (∀ u : Matrix (Fin a') (Fin (a + a')) (AE F E), (∀ t : AF F, evI F t = 0 → (∀ w ∈ S, evFin F w t = 0) → t • u = 0) →
+    (∀ u : Matrix (Fin a') (Fin (a + a')) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)), (∀ t : AF F, evI F t = 0 → (∀ w ∈ S, evFin F w t = 0) → t • u = 0) →
       ∀ μ : @MeasureTheory.Measure (Fin a' × Fin (a + a') → AF F) (borel _),
         @MeasureTheory.Measure.IsAddHaarMeasure _ _ _ (borel _) μ →
         (@MeasureTheory.integral _ ℂ _ _ (borel _) μ fun x =>
@@ -319,7 +325,7 @@ theorem scalar_of_coeff : GlobalTheory.FunPr.Hypotheses₂ → ∀ (F E : Type) 
   have hF : IsTotallyReal F := hT.base.cm.1
   have hψ := GlobalTheory.StdCharFromIsStd.isCharAF hT.base.std
   have hω := hT.geo.hM'.std
-  have hmem : ∀ (g : SInf F (Fin a' × Fin (a + a'))) (χ : ∀ w : Pl F, (Fin a' × Fin (a + a') → Fv F w) → ℂ),
+  have hmem : ∀ (g : SInf F (Fin a' × Fin (a + a'))) (χ : ∀ w : Pl (F := F), (Fin a' × Fin (a + a') → Fv F w) → ℂ),
       (∀ w, χ w ∈ SB (Fin a' × Fin (a + a') → Fv F w)) → (∀ w, w ∉ S → χ w = G.M'.vac w) →
       pure g χ ∈ schA F (Fin a' × Fin (a + a')) := fun g χ h1 h2 =>
     GlobalTheory.TensUniq.pure_mem_schA g χ h1 (by

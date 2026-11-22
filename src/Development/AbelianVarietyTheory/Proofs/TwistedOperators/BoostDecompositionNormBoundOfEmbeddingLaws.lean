@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.OneMemNbh
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DiscreteBranchingUpq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsUnitaryPositiveBlockColumnEqStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIndefiniteUnitaryBoostHilbertSchmidtStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.OneMemNbh
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ProjExists
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsUnitaryPositiveBlockColumnEqStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIndefiniteUnitaryBoostHilbertSchmidtStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -128,8 +132,8 @@ end GlobalTheory.SepReal.BoostHilbertSchmidtTrace
 
 namespace GlobalTheory.SepReal
 
-open BoostHilbertSchmidtTrace in
 
+open BoostHilbertSchmidtTrace in
 theorem boost_of_embLaws : EmbLaws → Boost := by
   intro hE n e ε ε' hS g hg
   obtain ⟨-, -, -, -, -, hstab, -, -, -, -, -, hinvn, -⟩ := hE n e ε ε' hS

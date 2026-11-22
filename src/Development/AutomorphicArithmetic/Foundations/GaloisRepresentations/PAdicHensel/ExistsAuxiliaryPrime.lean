@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.SetupBasicHolds
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PadicUnitNormHolds
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PAuxPrime
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PArithK
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PScOf
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PRootAt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PStdForm
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.SetupBasicHolds
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PadicUnitNormHolds
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PAuxPrime
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PArithK
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PScOf
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PRootAt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PStdForm
+
+@[expose] public section
 
 open UpperTheory.Gal.W2.Seed
 

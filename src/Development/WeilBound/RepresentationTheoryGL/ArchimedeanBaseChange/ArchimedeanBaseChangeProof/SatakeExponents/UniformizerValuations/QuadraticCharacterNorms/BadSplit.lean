@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.BadEx2
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.MatchBPf
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.SymIdx
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemULOfSplit
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.BadEx2
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.MatchBPf
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.SymIdx
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemULOfSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem badSplit2 (h3 : M3) : ∀ (E : Type) [Field E] [NumberField E] [IsCMFiel
   have hK := BadSplitP.isLevel_of_isCong hKB
   have e : fixFn n a w μ m KB = ctMu (Nat.add_sub_cancel' ha) w μ (U.lone KB) := by
     unfold fixFn
-    rw [dif_pos ha, if_pos hw]
+    rw [dite_eq_left ha, if_pos hw]
   have hH : IsHecke KB (U.lone KB) := MB.mb_isHecke_lone hK (MB.mb_isCompact_KL_split hw)
   obtain ⟨K₁, K₂, h1, h2, -, hf⟩ := GlobalTheory.BCT.CtLevel.ctMu_hecke E hE n a ha w hw μ hμ KB hK
   rw [e]

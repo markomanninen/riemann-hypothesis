@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -16,7 +20,8 @@ theorem trace_matrix_pi_operator : ∀ (W : Type) [AddCommGroup W] [Module ℂ W
     · subst hkj
       rw [LinearMap.proj_comp_single_same, LinearMap.comp_id, if_pos rfl]
     · rw [LinearMap.proj_comp_single_ne (R := ℂ) (φ := fun _ : Fin m => W) j k (Ne.symm hkj), LinearMap.comp_zero, map_zero, if_neg hkj]
-  simp only [map_sum, map_smul, key, smul_eq_mul, mul_ite, mul_zero, Finset.sum_ite_eq,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, key, smul_eq_mul, mul_ite, mul_zero, Finset.sum_ite_eq,
     Finset.mem_univ, if_true, Matrix.trace, Matrix.diag, Finset.sum_mul]
 
 end GlobalTheory

@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGaugeLinesAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGaugeLinesLeft
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGaugeLinesRight
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGaugeLinesAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGaugeLinesLeft
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGaugeLinesRight
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA
 

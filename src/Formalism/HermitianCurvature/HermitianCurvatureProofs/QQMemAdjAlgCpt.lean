@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CsliceContinuous
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CsliceContinuous
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate InnerProductSpace ContDiff
@@ -21,8 +25,8 @@ def CptAt (Φ : RadSp k r z z' π π') (c : Fin r → ℂ) : Prop :=
   ∃ K : Set (Mx k r), IsCompact K ∧ K ⊆ {g | 0 < GGl k r z z' g} ∧
     ∀ g ∈ Glev k r (Fin.last r), g ∉ K → (Φ : Fn k r (Wq →L[ℂ] Wp)) c g = 0
 
-variable (k r z z' π π') in
 
+variable (k r z z' π π') in
 def cptSub : Submodule ℂ (RadSp k r z z' π π') where
   carrier := {Φ | ∀ c ∈ OmX r, CptAt Φ c}
   zero_mem' := fun c _ => ⟨∅, isCompact_empty, Set.empty_subset _, fun g _ _ => rfl⟩

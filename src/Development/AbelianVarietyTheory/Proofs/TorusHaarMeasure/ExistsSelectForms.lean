@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
-import ReciprocityTheory.L2DbarEstimates.LeviForms.LogNormSq
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.HoloSmooth
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
+public import ReciprocityTheory.L2DbarEstimates.LeviForms.LogNormSq
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.HoloSmooth
+
+@[expose] public section
 
 open ReciprocityTheory.L2DbarEstimates Topology
 open scoped ContDiff Matrix
@@ -45,7 +49,8 @@ theorem wJac_mulVec {n N : ℕ} (w : Fin N → V n → ℂ) (x : V n)
     ext i
     simp [bas, Pi.single_apply]
   conv_rhs => rw [hξ]
-  simp only [wJac, Matrix.mulVec, dotProduct, wd_of_differentiableAt (hw k), map_sum, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [wJac, Matrix.mulVec, dotProduct, wd_of_differentiableAt (hw k), map_sum, map_smul,
     smul_eq_mul]
   exact Finset.sum_congr rfl fun j _ => mul_comm _ _
 

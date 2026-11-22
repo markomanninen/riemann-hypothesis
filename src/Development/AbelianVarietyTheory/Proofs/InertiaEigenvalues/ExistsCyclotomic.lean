@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemOfAssembleMem
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsPrimitiveRootSubIsUnitOfDvdSubOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemOfAssembleMem
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsPrimitiveRootSubIsUnitOfDvdSubOne
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.CycRing
@@ -15,7 +19,7 @@ variable {k : Type} [Field k]
 theorem const_hom (σ : k⟦X⟧ →ₐ[k] k⟦X⟧) (h : X ∣ σ X) (a : k⟦X⟧) : constantCoeff (σ a) = constantCoeff a := by
   obtain ⟨c, hc⟩ := h
   have hC : σ (C (constantCoeff a)) = C (constantCoeff a) := σ.commutes _
-  conv_lhs => rw [eq_X_mul_shift_add_const a, map_add, map_mul, hc, hC]
+  conv_lhs => rw [eq_X_mul_shift_add_const a, map_add (f := _), map_mul, hc, hC]
   simp
 
 theorem dvd_hom_sub (σ : k⟦X⟧ →ₐ[k] k⟦X⟧) (n : ℕ) (h : X ^ n ∣ σ X - X) (a : k⟦X⟧) : X ^ n ∣ σ a - a := by
@@ -29,7 +33,7 @@ theorem dvd_hom_sub (σ : k⟦X⟧ →ₐ[k] k⟦X⟧) (n : ℕ) (h : X ^ n ∣ 
       set s : k⟦X⟧ := mk fun p => coeff (p + 1) a
       have ha : a = X * s + C (constantCoeff a) := eq_X_mul_shift_add_const a
       have : σ a - a = (σ X - X) * σ s + X * (σ s - s) := by
-        conv_lhs => rw [ha, map_add, map_mul, hC]
+        conv_lhs => rw [ha, map_add (f := _), map_mul, hC]
         ring
       rw [this]
       refine dvd_add (((pow_dvd_pow _ hm).trans h).mul_right _) ?_
@@ -58,7 +62,7 @@ theorem mem_range_of_step (σ : k⟦X⟧ →ₐ[k] k⟦X⟧) (h : X ∣ σ X) (S
       have : σ (A b) - b.1 = σ X * (σ (A (T' b)) - (T' b).1) := by
         have e1 := congrArg σ (hA b)
         have e2 : b.1 = C (c b.1 b.2) + σ X * (T' b).1 := hb' b.1 b.2
-        rw [map_add, map_mul, hC] at e1
+        rw [map_add (f := _), map_mul, hC] at e1
         linear_combination e1 - e2
       rw [this, pow_succ']
       exact mul_dvd_mul h (ih _)
@@ -145,7 +149,7 @@ instance charP_powerSeries : CharP k⟦X⟧ l := charP_of_injective_algebraMap (
 theorem hom_opp' (σ : k⟦X⟧ →ₐ[k] k⟦X⟧) (t : ℤ_[l]) (h : σ X = onePlusPow k l t - 1) (z : ℤ_[l]) :
     σ (onePlusPow k l z) = onePlusPow k l (t * z) := by
   have hX : X ∣ σ X := h ▸ opp_dvd t
-  have h' : σ (1 + X) = onePlusPow k l t := by rw [map_add, map_one, h]; ring
+  have h' : σ (1 + X) = onePlusPow k l t := by rw [map_add (f := _), map_one, h]; ring
   have key : ∀ N : ℕ, X ^ N ∣ σ (onePlusPow k l z) - onePlusPow k l (t * z) := by
     intro N
     obtain ⟨w, hw⟩ := Ideal.mem_span_singleton.1 (PadicInt.appr_spec N z)
@@ -164,13 +168,14 @@ theorem hom_opp' (σ : k⟦X⟧ →ₐ[k] k⟦X⟧) (t : ℤ_[l]) (h : σ X = on
   ext n
   exact X_pow_dvd_iff.1 (key (n + 1)) n (by omega)
 
-variable (k l) in
 
+variable (k l) in
 def trace (m : ℤ_[l]) : k⟦X⟧ := 1 + ∑ z ∈ mu l, onePlusPow k l (m * z)
 
 theorem hom_trace (σ : k⟦X⟧ →ₐ[k] k⟦X⟧) (t : ℤ_[l]) (h : σ X = onePlusPow k l t - 1) (m : ℤ_[l]) :
     σ (trace k l m) = trace k l (t * m) := by
-  simp only [trace, map_add, map_one, map_sum, hom_opp' σ t h, mul_assoc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [trace, map_add (f := _), map_one, map_sum, hom_opp' σ t h, mul_assoc]
 
 theorem trace_mul {t : ℤ_[l]} (ht : t ^ (l - 1) = 1) (m : ℤ_[l]) : trace k l (t * m) = trace k l m := by
   have := sum_mu_mul (fun z => onePlusPow k l (m * z)) ht
@@ -204,8 +209,8 @@ theorem trace_one : ∃ c : k⟦X⟧, trace k l 1 = X ^ (l - 1) * (1 + X * c) :=
   rw [trace]
   linear_combination hc + h2
 
-variable (k) in
 
+variable (k) in
 def act (t : ℤ_[l]) : k⟦X⟧ →ₐ[k] k⟦X⟧ := sb (onePlusPow k l t - 1) (opp_dvd t)
 
 theorem act_X (t : ℤ_[l]) : act k t X = onePlusPow k l t - 1 := sb_X _ _
@@ -221,8 +226,8 @@ theorem act_X_eq (t : ℤ_[l]) : ∃ e : k⟦X⟧, act k t X = X * e ∧ constan
   rw [← this]
   simp [coeff_one, FrobeniusBinomialReduction.red]
 
-variable (l) in
 
+variable (l) in
 def Inv (b : k⟦X⟧) : Prop := ∀ z : ℤ_[l], z ^ (l - 1) = 1 → act k z b = b
 
 theorem inv_trace (m : ℤ_[l]) : Inv l (trace k l m) := fun z hz => by
@@ -266,8 +271,8 @@ theorem Inv.pow_dvd {b : k⟦X⟧} (h : Inv l b) (hX : X ∣ b) : X ^ (l - 1) �
   have := key (l - 1 - 1) (Nat.sub_add_cancel pred_pos).le
   rwa [Nat.sub_add_cancel pred_pos] at this
 
-variable (k l) in
 
+variable (k l) in
 def emb : k⟦X⟧ →ₐ[k] k⟦X⟧ := sb (trace k l 1) X_dvd_trace
 
 theorem emb_X : emb k l X = trace k l 1 := sb_X _ _
@@ -296,12 +301,12 @@ theorem inv_iff (b : k⟦X⟧) : Inv l b ↔ ∃ a, emb k l a = b := by
     simp only [act, emb, sb_apply] at this ⊢
     rw [subst_comp_subst_apply (s X_dvd_trace) (s (opp_dvd z)), this]
 
-variable (k l) in
 
+variable (k l) in
 def fr : k⟦X⟧ →ₐ[k] k⟦X⟧ := sb (X ^ l) (dvd_pow_self _ hl.out.ne_zero)
 
-variable (k l) in
 
+variable (k l) in
 def ga : k⟦X⟧ →ₐ[k] k⟦X⟧ := sb ((1 + X) ^ (1 + l) - 1) (X_dvd_iff.2 gam_const)
 
 theorem fr_X : fr k l X = onePlusPow k l l - 1 := by rw [opp_nat, frob_eq]; exact sb_X _ _

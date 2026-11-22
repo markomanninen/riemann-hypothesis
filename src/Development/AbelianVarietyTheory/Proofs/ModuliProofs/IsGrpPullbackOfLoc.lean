@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SurjectiveAppTopPullbackSndOfApp
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.AppTopSurjective
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsGenOfInvariant
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SurjectiveAppTopPullbackSndOfApp
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.AppTopSurjective
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsGenOfInvariant
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -121,7 +125,7 @@ theorem tMap_iff {t' : TObj g k J b s'} {t : TObj g k J b s} {f : S' ⟶ S} : TM
 
 theorem lbIso_pull_pull {X Y Z : Scheme.{0}} {L : LB X} (hL : L.IsLB) (f : Y ⟶ X) (h : Z ⟶ Y) :
     LBIso ((L.pull f).pull h) (L.pull (h ≫ f)) :=
-  (PolBaseChange.lbIso_refl (pull_isLB hL (h ≫ f))).chartPull
+  (PolBaseChange.lbIso_refl (LB.isLB_pull hL (h ≫ f))).chartPull
     (chartPullOut L (fun _ : PUnit => f) (fun _ => 1) h _ fun _ => rfl) (chartPullId _)
 
 theorem lbIso_pull {Y Z : Scheme.{0}} {L M : LB Y} (H : LBIso L M) (h : Z ⟶ Y) : LBIso (L.pull h) (M.pull h) :=
@@ -134,8 +138,8 @@ theorem IsTM.comp {t'' : TObj g k J b s''} {t' : TObj g k J b s'} {t : TObj g k 
     {φ : t'.A.left ⟶ t.A.left} {φ' : t''.A.left ⟶ t'.A.left} (h' : IsTM t'' t' f' φ') (h : IsTM t' t f φ) :
     IsTM t'' t (f' ≫ f) (φ' ≫ φ) := by
   refine ⟨h'.1.comp h.1, ?_, fun i => ?_, fun j => ?_⟩
-  · exact LBIso.trans t''.isLB (pull_isLB t'.isLB _) (pull_isLB t.isLB _) h'.2.1
-      (LBIso.trans (pull_isLB t'.isLB _) (pull_isLB (pull_isLB t.isLB _) _) (pull_isLB t.isLB _)
+  · exact LBIso.trans t''.isLB (LB.isLB_pull t'.isLB _) (LB.isLB_pull t.isLB _) h'.2.1
+      (LBIso.trans (LB.isLB_pull t'.isLB _) (LB.isLB_pull (LB.isLB_pull t.isLB _) _) (LB.isLB_pull t.isLB _)
         (lbIso_pull h.2.1 φ') (lbIso_pull_pull t.isLB φ φ'))
   · rw [← Category.assoc, h'.2.2.1, Category.assoc, h.2.2.1, Category.assoc]
   · rw [← Category.assoc, h'.2.2.2, Category.assoc, h.2.2.2, Category.assoc]
@@ -150,8 +154,8 @@ theorem IsTM.cancel {t'' : TObj g k J b s''} {t' : TObj g k J b s'} {t : TObj g 
   refine ⟨F, hF, h.1.cancel (by rw [hF]; exact n.1) hw, ?_, fun i => ?_, fun j => ?_⟩
   · have H := n.2.1
     rw [← hF] at H
-    exact LBIso.trans t''.isLB (pull_isLB t.isLB _) (pull_isLB t'.isLB _) H
-      (LBIso.trans (pull_isLB t'.isLB _) (pull_isLB (pull_isLB t.isLB _) _) (pull_isLB t.isLB _)
+    exact LBIso.trans t''.isLB (LB.isLB_pull t.isLB _) (LB.isLB_pull t'.isLB _) H
+      (LBIso.trans (LB.isLB_pull t'.isLB _) (LB.isLB_pull (LB.isLB_pull t.isLB _) _) (LB.isLB_pull t.isLB _)
         (lbIso_pull h.2.1 F) (lbIso_pull_pull t.isLB φ F)).symm
   · apply hp.hom_ext
     · rw [Category.assoc, hF, n.2.2.1, Category.assoc, Category.assoc, h.2.2.1]
@@ -231,12 +235,12 @@ theorem tMap_of_loc (hG : Out.GlobalFnsSt) (t t' : TObj g k J b s)
     isGrpPullback_of_loc φ (ext fun p => by rw [← Category.assoc, hφ, (ha p).1.1.w, (ha' p).1.1.w])
       fun p => ⟨W p, x p, (u p).A, inferInstance, a p, hx p, hc p, (ha p).1, by rw [hφ]; exact (ha' p).1⟩
   refine ⟨φ, gp, ?_, fun i => hom_ext_loc fun p => ⟨W p, x p, hx p, hc p, ?_⟩, fun j => ext fun p => ?_⟩
-  · refine lbIso_of_loc hG t.ab t.isLB (pull_isLB t'.isLB _) t.rigid (PolBaseChange.rigidified_pull gp t'.rigid)
+  · refine lbIso_of_loc hG t.ab t.isLB (LB.isLB_pull t'.isLB _) t.rigid (PolBaseChange.rigidified_pull gp t'.rigid)
       fun p => ⟨W p, _, x p, a p, _, hx p, hc p, (ha p).1.1, ?_⟩
     have H := (ha' p).2.1
     rw [← hφ] at H
-    exact LBIso.trans (pull_isLB t.isLB _) (u p).isLB (pull_isLB (pull_isLB t'.isLB _) _) (ha p).2.1.symm
-      (LBIso.trans (u p).isLB (pull_isLB t'.isLB _) (pull_isLB (pull_isLB t'.isLB _) _) H
+    exact LBIso.trans (LB.isLB_pull t.isLB _) (u p).isLB (LB.isLB_pull (LB.isLB_pull t'.isLB _) _) (ha p).2.1.symm
+      (LBIso.trans (u p).isLB (LB.isLB_pull t'.isLB _) (LB.isLB_pull (LB.isLB_pull t'.isLB _) _) H
         (lbIso_pull_pull t'.isLB φ (a p)).symm)
   · rw [← Category.assoc, ← (ha p).2.2.1, Category.assoc, hφ, (ha' p).2.2.1, Category.id_comp]
   · rw [← Category.assoc, ← (ha p).2.2.2, Category.assoc, hφ, (ha' p).2.2.2, ← Category.assoc, hφ]

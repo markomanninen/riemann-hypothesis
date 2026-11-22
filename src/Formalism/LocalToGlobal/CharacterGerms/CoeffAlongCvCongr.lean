@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.GeOfPowEqOne
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.GeOfPowEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -110,7 +114,8 @@ theorem sumV_mem (V : VF C) (g : Fin 2) (hlg0 : ∀ i, MvPowerSeries.constantCoe
     intro i
     rw [hA]
     show PowerSeries.constantCoeff (∑ c : I g, X.u g c i • tyS V.l (fun s => sumV y s (Sum.inl c))) = 0
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     apply Finset.sum_eq_zero
     intro c _
     rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, PowerSeries.coeff_smul,
@@ -136,7 +141,8 @@ theorem sumV_mem (V : VF C) (g : Fin 2) (hlg0 : ∀ i, MvPowerSeries.constantCoe
     show PowerSeries.coeff m' (∑ c : I g, X.u g c j • tyS V.l (fun s => sumV y s (Sum.inl c))) =
       PowerSeries.coeff m' (alongCv (γN N) (X.lg j))
     rw [h1N N j]
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [PowerSeries.coeff_smul, PowerSeries.coeff_smul, htyN N _ m' hm']
   have hγI : IsCv V γ := by
@@ -161,7 +167,8 @@ theorem sumV_mem (V : VF C) (g : Fin 2) (hlg0 : ∀ i, MvPowerSeries.constantCoe
       alongCv γ (X.sg (X.u (1 - g) q)) -
       ∑ c : I g, (if X.ty g c = X.ty (1 - g) q then
         X.sg1 (X.u g c) (X.u (1 - g) q) • tyS V.l (fun s => sumV y s (Sum.inl c)) else 0)) = _
-    rw [map_sub, map_sub, map_add, map_add, map_sum, map_sum, htyN N _ m hm,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sub, map_add (f := _), map_add (f := _), map_sum, map_sum, htyN N _ m hm,
       coeff_alongCv_congr hγ0 (fun i => (hγN N i).1) (fun i => hγN' N i) _ m hm]
     congr 1
     refine Finset.sum_congr rfl fun c _ => ?_

@@ -1,4 +1,8 @@
-import Formalism.JumpKernelCokernel.Statement
+module
+
+public import Formalism.JumpKernelCokernel.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,7 +71,7 @@ theorem coeff_dvd_of_mem (ℓ : O) (n k : ℕ) {r : PowerSeries O} (hr : r ∈ J
     ∀ i < n, ℓ ^ k ∣ coeff i r := by
   intro i hi
   obtain ⟨a, c, rfl⟩ := Ideal.mem_span_pair.mp hr
-  rw [map_add, coeff_mul_X_pow', if_neg (by omega), zero_add, coeff_mul_C]
+  rw [map_add (f := _), coeff_mul_X_pow', if_neg (by omega), zero_add, coeff_mul_C]
   exact dvd_mul_left _ _
 
 theorem mem_of_coeff_dvd (ℓ : O) (n k : ℕ) (p : PowerSeries O)
@@ -77,7 +81,7 @@ theorem mem_of_coeff_dvd (ℓ : O) (n k : ℕ) (p : PowerSeries O)
   refine Ideal.mem_span_pair.mpr
     ⟨PowerSeries.mk fun j => coeff (j + n) p, PowerSeries.mk fun i => if i < n then c i else 0, ?_⟩
   ext i
-  rw [map_add, coeff_mul_X_pow', coeff_mul_C, coeff_mk, coeff_mk]
+  rw [map_add (f := _), coeff_mul_X_pow', coeff_mul_C, coeff_mk, coeff_mk]
   split_ifs with h1 h2 h2
   · omega
   · rw [Nat.sub_add_cancel h1]
@@ -133,7 +137,7 @@ def topMap (ℓ : O) (n k : ℕ) (hn : 0 < n) :
   map_add' a b := by
     obtain ⟨p, rfl⟩ := Ideal.Quotient.mk_surjective a
     obtain ⟨q, rfl⟩ := Ideal.Quotient.mk_surjective b
-    rw [← map_add, topFun_mk ℓ n k hn, topFun_mk ℓ n k hn, topFun_mk ℓ n k hn, map_add, map_add]
+    rw [← map_add (f := _), topFun_mk ℓ n k hn, topFun_mk ℓ n k hn, topFun_mk ℓ n k hn, map_add (f := _), map_add (f := _)]
   map_smul' c a := by
     obtain ⟨p, rfl⟩ := Ideal.Quotient.mk_surjective a
     rw [Algebra.smul_def, ← Ideal.Quotient.mk_algebraMap, ← map_mul,

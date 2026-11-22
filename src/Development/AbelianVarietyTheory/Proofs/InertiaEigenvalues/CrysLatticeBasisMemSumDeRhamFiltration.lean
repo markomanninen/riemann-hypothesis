@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallineFilteredDeRhamComparisonStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallineFilteredDeRhamComparisonStatement
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP GlobalTheory.MemLoc
 open scoped Formalism.Per NNReal
 
@@ -58,7 +63,7 @@ theorem coord_mulLeft {d : ℕ} (e : Module.Basis (Fin d) ℚ_[l] V) (r : Fin d)
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v y => simp [coord_tmul, mul_smul_comm]
-  | add x y hx hy => simp only [map_add, hx, hy, mul_add]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, mul_add]
 
 theorem coord_mem {d : ℕ} (e : Module.Basis (Fin d) ℚ_[l] V) (r : Fin d) (F : Submodule ℚ_[l] B)
     (x : V ⊗[ℚ_[l]] B)
@@ -68,7 +73,7 @@ theorem coord_mem {d : ℕ} (e : Module.Basis (Fin d) ℚ_[l] V) (r : Fin d) (F 
   induction w using TensorProduct.induction_on with
   | zero => simp
   | tmul v y => simpa [coord_tmul] using F.smul_mem (e.repr v r) y.2
-  | add x y hx hy => simpa only [map_add] using F.add_mem hx hy
+  | add x y hx hy => simpa only [map_add (f := _)] using F.add_mem hx hy
 
 theorem coord_map {d : ℕ} (e : Module.Basis (Fin d) ℚ_[l] V) (s : Fin d) (f : V →ₗ[ℚ_[l]] V)
     (τ : B →ₗ[ℚ_[l]] B) (x : V ⊗[ℚ_[l]] B) :
@@ -80,7 +85,7 @@ theorem coord_map {d : ℕ} (e : Module.Basis (Fin d) ℚ_[l] V) (s : Fin d) (f 
     simp only [AlgebraTensorModule.map_tmul, coord_tmul, map_smul, smul_smul]
     rw [← Finset.sum_smul, ← LinearMap.toMatrix_mulVec_repr e e f v]
     rfl
-  | add x y hx hy => simp only [map_add, hx, hy, smul_add, Finset.sum_add_distrib]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, smul_add, Finset.sum_add_distrib]
 
 end GlobalTheory.CrysCoordDR
 
@@ -126,7 +131,8 @@ theorem GlobalTheory.crysLattice_basis_mem_sum_fil_dR : ∀ (l : ℕ) [Fact l.Pr
       exact this g
     show _ = T.eD (coord (basisQ L.T L.span b) s (dd i))
     conv_rhs => rw [← hinv]
-    rw [actVdR, coord_map, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [actVdR, coord_map, map_sum]
     simp only [Matrix.mulVec, dotProduct, Matrix.map_apply]
     refine Finset.sum_congr rfl fun r _ => ?_
     rw [toMatrix_basisQ, Algebra.smul_def, map_mul, T.zD]
@@ -141,12 +147,14 @@ theorem GlobalTheory.crysLattice_basis_mem_sum_fil_dR : ∀ (l : ℕ) [Fact l.Pr
     simpa using (hdd i).2.2
   · funext r
     have h1 := congrArg (coord (basisQ L.T L.span b) r) hsum
-    rw [← basisQ_apply L.T L.span b j, coord_tmul, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← basisQ_apply L.T L.span b j, coord_tmul, map_sum] at h1
     simp only [coord_mulLeft, Module.Basis.repr_self] at h1
     rw [Finset.sum_apply]
     simp only [Pi.smul_apply, smul_eq_mul]
     have h2 := congrArg T.eD h1
-    rw [map_sum] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h2
     simp only [map_mul] at h2
     rw [← h2]
     by_cases hr : r = j

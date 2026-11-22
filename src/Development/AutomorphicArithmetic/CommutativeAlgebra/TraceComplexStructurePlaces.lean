@@ -1,9 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.ComplexUniformizationSigOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankJointEigenspaceAddConjEqMul
-import Development.AutomorphicArithmetic.RealSpanData.RealData
-import Development.AutomorphicArithmetic.RealSpanData.JSpan
-import Development.AutomorphicArithmetic.CommutativeAlgebra.TraceActionEqSumPlaces
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.PointsNonemptyUnitaryGaussian
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankJointEigenspaceAddConjEqMul
+public import Development.AutomorphicArithmetic.RealSpanData.RealData
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.TraceActionEqSumPlaces
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -120,7 +123,8 @@ private theorem jt_S {p : ℕ} [Fact p.Prime] (D : Datum p) (c : 𝓞 D.F) :
   have hc : (starRingEnd ℂ) (∑ τ ∈ Finset.univ.filter (fun τ : D.F →+* ℂ => τ (D.ω : D.F) ≠ D.ρc),
         (D.n : ℂ) * τ (c : D.F)) =
       ∑ τ ∈ Finset.univ.filter (fun τ : D.F →+* ℂ => ¬ τ (D.ω : D.F) ≠ D.ρc), (D.n : ℂ) * τ (c : D.F) := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_nbij' (fun σ => (starRingEnd ℂ).comp σ) (fun σ => (starRingEnd ℂ).comp σ) ?_ ?_ ?_ ?_ ?_
     · intro σ hσ
       have hσ' : σ (D.ω : D.F) ≠ D.ρc := (Finset.mem_filter.mp hσ).2
@@ -171,7 +175,7 @@ private theorem jt_lhs {p : ℕ} [Fact p.Prime] (D : Datum p) (τ₁ : D.F →+*
     refine Finset.sum_congr rfl fun σ _ => ?_
     ring
   rw [e0, e1, e2, ← hS]
-  simp only [map_mul, map_add, map_sub, Complex.conj_I, Complex.conj_natCast, Complex.conj_conj]
+  simp only [map_mul, map_add (f := _), map_sub, Complex.conj_I, Complex.conj_natCast, Complex.conj_conj]
   ring
 
 private theorem jt_actOn {C V : Type} [Ring C] [Algebra ℚ C] [AddCommGroup V] [Module ℚ V]

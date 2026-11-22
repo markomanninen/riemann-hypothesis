@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.CosetTrace
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CosetTrace
+
+@[expose] public section
+
 open GlobalTheory.AlmostEt
 open scoped NNReal
 

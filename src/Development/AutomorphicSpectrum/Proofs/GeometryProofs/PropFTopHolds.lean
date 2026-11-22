@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.PropFTop
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DeltaTermLogDegreeBoundStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HBBound
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RootFlatPushforwardGeoFunStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.SumLogPrimeDivPredBoundStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.PropFTop
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DeltaTermLogDegreeBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HBBound
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RootFlatPushforwardGeoFunStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.SumLogPrimeDivPredBoundStatement
+
+@[expose] public section
+
 open MvPolynomial NumberField Filter Topology ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I2 GlobalTheory.CompanionTheory.Ar.Top GlobalTheory.CompanionTheory.Ar.Flat
 
 noncomputable section

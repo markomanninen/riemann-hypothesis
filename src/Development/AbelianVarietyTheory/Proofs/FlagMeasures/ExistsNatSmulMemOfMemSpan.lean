@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocClosed
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocClosed
+
+@[expose] public section
 
 open NumberField
 
@@ -53,7 +57,7 @@ theorem exists_nat_smul_mem_of_mem_span {K V : Type*} [Field K] [NumberField K] 
     exact key a _ hx
 
 theorem exists_nat_smul_mem {D : Formalism.BasicNotions.D7} (Λ : GlobalTheory.Unfold.LV D)
-    (hΛ : Submodule.IsLattice ((Formalism.BasicNotions.D7.host D).E) Λ)
+    (hΛ : Submodule.IsFullLattice ((Formalism.BasicNotions.D7.host D).E) Λ)
     (v : Formalism.BasicNotions.HSpace.V (Formalism.MainNotions.S.VS D)) :
     ∃ n : ℕ, 0 < n ∧ (n : (Formalism.BasicNotions.D7.host D).E) • v ∈ Λ :=
   exists_nat_smul_mem_of_mem_span Λ (by rw [hΛ.span_eq_top]; exact Submodule.mem_top)

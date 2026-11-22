@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,10 +22,10 @@ theorem ellA_mul (z : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) {g h : Mat 
     ellA k r z (g * h) a = ellA k r z g a + ellA k r z h a := by
   unfold ellA
   by_cases ha : a.val + 1 < r
-  · rw [dif_pos ha, dif_pos ha, dif_pos ha]
+  · rw [dite_eq_left ha, dite_eq_left ha, dite_eq_left ha]
     exact mul_apply_add hg hh _ _ (by simp only [eI]; omega) (by simp only [eI]; omega)
       (by simp only [eI]; omega) (by simp only [eI]; omega)
-  · rw [dif_neg ha, dif_neg ha, dif_neg ha]
+  · rw [dite_eq_right ha, dite_eq_right ha, dite_eq_right ha]
     simp only [Matrix.mulVec, dotProduct]
     rw [← Finset.sum_add_distrib]
     apply Finset.sum_congr rfl
@@ -61,9 +65,9 @@ theorem ellA_block (z : Fin (2 * r + k + 1) → ℂ) {h h' g : Mat k r}
   have hrow : ∀ p, h (eI k r a) p = if eI k r a = p then 1 else 0 :=
     fun p => hh.2 _ p (by simp only [eI]; omega)
   by_cases ha : a.val + 1 < r
-  · rw [dif_pos ha, dif_pos ha, mul_apply_of_col _ _ _ (fun q => hh'.1 q _ (by simp only [eI]; omega)),
+  · rw [dite_eq_left ha, dite_eq_left ha, mul_apply_of_col _ _ _ (fun q => hh'.1 q _ (by simp only [eI]; omega)),
       mul_apply_of_row _ _ _ hrow]
-  · rw [dif_neg ha, dif_neg ha, ← Matrix.mulVec_mulVec, hz, ← Matrix.mulVec_mulVec,
+  · rw [dite_eq_right ha, dite_eq_right ha, ← Matrix.mulVec_mulVec, hz, ← Matrix.mulVec_mulVec,
       mulVec_apply_of_row _ _ hrow]
 
 theorem psiGen_block (z : Fin (2 * r + k + 1) → ℂ) (c : Fin r → ℂ) {h h' g : Mat k r}
@@ -84,11 +88,11 @@ theorem ellA_continuous (z : Fin (2 * r + k + 1) → ℂ) (a : Fin r) :
   by_cases h : a.val + 1 < r
   · have e : (fun g : Mat k r => ellA k r z g a) =
         fun g => g (eI k r a) (eI k r ⟨a.val + 1, h⟩) := by
-      funext g; unfold ellA; rw [dif_pos h]
+      funext g; unfold ellA; rw [dite_eq_left h]
     rw [e]
     exact (continuous_apply _).comp (continuous_apply _)
   · have e : (fun g : Mat k r => ellA k r z g a) = fun g => (g *ᵥ z) (eI k r a) := by
-      funext g; unfold ellA; rw [dif_neg h]
+      funext g; unfold ellA; rw [dite_eq_right h]
     rw [e]
     exact (continuous_apply (eI k r a)).comp
       (continuous_id.matrix_mulVec continuous_const : Continuous fun g : Mat k r => g *ᵥ z)
@@ -218,6 +222,3 @@ theorem piS_unitary : ∀ (k r : ℕ) {Wp : Type} [NormedAddCommGroup Wp] [Inner
   · exact continuousOn_clm_apply.2 hrep.2.2
 
 end GlobalTheory.SgInf.PiUnitary
-
-open MeasureTheory Matrix Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf in
-example : ∀ (k r : ℕ) {Wp : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [FiniteDimensional ℂ Wp] [CompleteSpace Wp] (z : Fin (2 * r + k + 1) → ℂ) (c : Fin r → ℂ) (π : Mat k r → (Wp →L[ℂ] Wp)), inWb k r z → 0 < Tz k r z → IsURepOn (UWset k r z) π → (∀ h ∈ UWset k r z, ∀ m ∈ Nset k r, hPart k r (h * m) = h ∧ PiS (psiGen k r z c) π (h * m) = psiGen k r z c m • π h) ∧ IsURepOn (Sset k r z) (PiS (psiGen k r z c) π) ∧ (∀ s ∈ Sset k r z, ‖PiS (psiGen k r z c) π s‖ ≤ 1 ∧ ContinuousLinearMap.adjoint (PiS (psiGen k r z c) π s) = PiS (psiGen k r z c) π s⁻¹) ∧ ContinuousOn (PiS (psiGen k r z c) π) (Sset k r z) ∧ (∀ m ∈ Nset k r, ‖psiGen k r z c m‖ = 1 ∧ ∀ m' ∈ Nset k r, psiGen k r z c (m * m') = psiGen k r z c m * psiGen k r z c m') := GlobalTheory.SgInf.PiUnitary.piS_unitary

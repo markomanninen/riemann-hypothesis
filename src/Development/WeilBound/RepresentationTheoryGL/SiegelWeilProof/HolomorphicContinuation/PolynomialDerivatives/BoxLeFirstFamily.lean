@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.SymKEqZeroOfOm
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.SymKEqZeroOfOm
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ variable {m n : ℕ} {ε : Fin m → Bool}
 
 theorem opMono_add (t : (Fin m × Fin n × Bool) ⊕ (Fin m × Fin n × Bool) →₀ ℕ) (f g : PX m n) :
     opMono t (f + g) = opMono t f + opMono t g := by
-  simp [opMono, map_add, mul_add]
+  simp [opMono, map_add (f := _), mul_add]
 
 theorem opMono_smul (t : (Fin m × Fin n × Bool) ⊕ (Fin m × Fin n × Bool) →₀ ℕ) (r : ℂ) (f : PX m n) :
     opMono t (r • f) = r • opMono t f := by
@@ -22,8 +26,6 @@ def opL (s : Sym m n) : Module.End ℂ (PX m n) where
   toFun := op s
   map_add' f g := by simp [op, opMono_add, smul_add, Finset.sum_add_distrib]
   map_smul' r f := by simp [op, opMono_smul, Finset.smul_sum, smul_comm r]
-
-@[simp] theorem opL_apply (s : Sym m n) (f : PX m n) : opL s f = op s f := rfl
 
 theorem op_eq (s : Sym m n) (T : Finset _) (h : s.support ⊆ T) (f : PX m n) :
     op s f = ∑ t ∈ T, s.coeff t • opMono t f := by
@@ -36,7 +38,7 @@ theorem op_add_sym (s₁ s₂ : Sym m n) (f : PX m n) : op (s₁ + s₂) f = op 
   classical
   rw [op_eq (s₁ + s₂) (s₁.support ∪ s₂.support) support_add, op_eq s₁ (s₁.support ∪ s₂.support)
     Finset.subset_union_left, op_eq s₂ (s₁.support ∪ s₂.support) Finset.subset_union_right, ← Finset.sum_add_distrib]
-  exact Finset.sum_congr rfl fun t _ => by rw [coeff_add, add_smul]
+  exact Finset.sum_congr rfl fun t _ => by rw [MvPolynomial.coeff_add, add_smul]
 
 theorem op_smul_sym (s : Sym m n) (r : ℂ) (f : PX m n) : op (r • s) f = r • op s f := by
   classical
@@ -98,7 +100,7 @@ theorem rr_Om (N : ℕ) (x : S (n := n) ε N) : rr R N (OmS ε N x) = OmH R hV (
 theorem rr_aeval (N : ℕ) (q : Polynomial ℂ) (x : S (n := n) ε N) :
     rr R N (Polynomial.aeval (OmS ε N) q x) = Polynomial.aeval (OmH R hV) q (rr R N x) := by
   induction q using Polynomial.induction_on' with
-  | add p q hp hq => simp only [map_add, LinearMap.add_apply, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), LinearMap.add_apply, hp, hq]
   | monomial k a =>
     simp only [Polynomial.aeval_monomial, Module.End.mul_apply, LinearMap.map_smul_of_tower,
       Algebra.algebraMap_eq_smul_one, LinearMap.smul_apply, Module.End.one_apply, map_smul]
@@ -112,14 +114,14 @@ end main
 theorem aeval_ker {V : Type*} [AddCommGroup V] [Module ℂ V] (T : Module.End ℂ V) (v : V) (h : T v = 0)
     (q : Polynomial ℂ) : Polynomial.aeval T q v = q.eval 0 • v := by
   conv_lhs => rw [← Polynomial.divX_mul_X_add q]
-  rw [map_add, map_mul, Polynomial.aeval_X, Polynomial.aeval_C, LinearMap.add_apply, Module.End.mul_apply, h,
+  rw [map_add (f := _), map_mul, Polynomial.aeval_X, Polynomial.aeval_C, LinearMap.add_apply, Module.End.mul_apply, h,
     map_zero, zero_add, Algebra.algebraMap_eq_smul_one, LinearMap.smul_apply, Module.End.one_apply,
     Polynomial.coeff_zero_eq_eval_zero]
 
 end CoreD
 
-open CoreD in
 
+open CoreD in
 theorem equivLift_of (hFFT : PositivityTheory.Rg.Sw.FFT) (_hSF : SemiFam) (hD : Dens) (hS : SymKComm) (hI : InvOp)
     (hF : FormFacts) : EquivLift := by
   intro m n ε c hc R t ht htk

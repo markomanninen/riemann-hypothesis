@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.AdelicGroupAlgebraActionInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushInvertible
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.AdelicGroupAlgebraActionInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushInvertible
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.TwModule
 
@@ -8,16 +12,13 @@ open GlobalTheory.CompanionTheory.Ar
 
 variable {O : Type} [CommRing O] (s : O ≃+* O) (L : Type) [AddCommGroup L] [Module O L]
 
-theorem twMod_smul (c : O) (x : L) :
-    (c • (show TwMod s L from x) : TwMod s L) = (show TwMod s L from s c • x) := rfl
-
 def twOut {n : ℕ} (f : (Fin n → O) →ₗ[O] L) : (Fin n → O) →ₗ[O] TwMod s L where
   toFun v := (show TwMod s L from f (fun i => s (v i)))
   map_add' v w := by
     have : (fun i => s ((v + w) i)) = (fun i => s (v i)) + (fun i => s (w i)) := by
       funext i; simp
     show f (fun i => s ((v + w) i)) = f (fun i => s (v i)) + f (fun i => s (w i))
-    rw [this, map_add]
+    rw [this, map_add (f := _)]
   map_smul' c v := by
     have : (fun i => s ((c • v) i)) = s c • (fun i => s (v i)) := by
       funext i; simp

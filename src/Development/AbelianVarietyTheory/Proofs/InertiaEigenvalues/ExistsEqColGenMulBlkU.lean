@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WhittakerLawUpperTriangularUnipotentAdelic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WhittakerLawUpperTriangularUnipotentAdelic
+
+@[expose] public section
 
 noncomputable section
 
@@ -103,10 +107,10 @@ theorem blkU_add {n : ℕ} (x y : UnipotentBlockColumnIndex a n n → R) : (blkU
 
 theorem blkU_mem_mirU (m : ℕ) {n : ℕ} (y : UnipotentBlockColumnIndex a n n → R) : blkU y ∈ mirU R a m := fun i k _ hk => by
   have : (k : ℕ) ≤ i := hk
-  rw [blkU_apply, dif_neg (by omega), add_zero]
+  rw [blkU_apply, dite_eq_right (by omega), add_zero]
 
 theorem blkU_mem_lateU {m n : ℕ} (h : m ≤ n) (y : UnipotentBlockColumnIndex a n n → R) : blkU y ∈ lateU R a m :=
-  ⟨blkU_mem_mirU m y, fun i k hk => by rw [blkU_apply, dif_neg (by omega), add_zero]⟩
+  ⟨blkU_mem_mirU m y, fun i k hk => by rw [blkU_apply, dite_eq_right (by omega), add_zero]⟩
 
 def colGen (R : Type) [CommRing R] (a n : ℕ) : Subgroup (GL (Fin a) R) :=
   Subgroup.closure {u | ∃ k, n ≤ k ∧ ∃ y : UnipotentBlockColumnIndex a k k → R, u = blkU y}
@@ -148,7 +152,7 @@ theorem exists_peel {m n : ℕ} (hmn : m ≤ n) {g : GL (Fin a) R} (hg : g ∈ m
         by_cases hkn : n + 1 ≤ (k : ℕ)
         · exact h1 i k hkn
         · exact hg₁ i k (by omega) (by change (k : ℕ) ≤ i; omega)
-    · rw [hval, dif_neg (by omega), sub_zero, h2 i k (by omega)]
+    · rw [hval, dite_eq_right (by omega), sub_zero, h2 i k (by omega)]
 
 theorem exists_eq_colGen_mul_blkU {n : ℕ} {u : GL (Fin a) R} (hu : u ∈ lateU R a n) :
     ∃ v ∈ colGen R a (n + 1), ∃ y : UnipotentBlockColumnIndex a n n → R, u = v * blkU y := by

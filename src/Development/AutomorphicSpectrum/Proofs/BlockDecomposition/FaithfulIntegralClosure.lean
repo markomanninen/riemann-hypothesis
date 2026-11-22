@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsGoodPoly
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsGoodPoly
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 
 namespace GlobalTheory.CompanionTheory.TraceJac
@@ -57,7 +62,8 @@ theorem trace_radical (π : R) (hπ : Irreducible π) (y z : integralClosure R L
     have h3 : Matrix.trace ((Algebra.leftMulMatrix (Module.Free.chooseBasis R (integralClosure R L)) y).map
         (IsLocalRing.residue R)) = IsLocalRing.residue R
           (Matrix.trace (Algebra.leftMulMatrix (Module.Free.chooseBasis R (integralClosure R L)) y)) := by
-      simp [Matrix.trace, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Matrix.trace, map_sum]
     rw [← h3]
     exact h2.eq_zero
   have hmem := (IsLocalRing.residue_eq_zero_iff _).mp htrace0
@@ -133,7 +139,7 @@ theorem exists_den {R S L : Type*} [CommRing R] [CommRing S] [IsDomain S] [Field
   | add y z _ _ hy hz =>
     obtain ⟨y', hy'⟩ := hy
     obtain ⟨z', hz'⟩ := hz
-    exact ⟨y' + z', by rw [map_add, map_add, mul_add, hy', hz', map_add]⟩
+    exact ⟨y' + z', by rw [map_add (f := _), map_add (f := _), mul_add, hy', hz', map_add (f := _)]⟩
   | smul r y _ hy =>
     obtain ⟨y', hy'⟩ := hy
     obtain ⟨r', hr'⟩ := hE r
@@ -141,7 +147,7 @@ theorem exists_den {R S L : Type*} [CommRing R] [CommRing S] [IsDomain S] [Field
     have e1 : algebraMap S L (r • y) = algebraMap R L r * algebraMap S L y := by
       rw [Algebra.smul_def, map_mul, ← IsScalarTower.algebraMap_apply]
     rw [e1, Derivation.leibniz, hr', smul_eq_mul, smul_eq_mul]
-    simp only [map_add, map_mul, ← IsScalarTower.algebraMap_apply, ← hy']
+    simp only [map_add (f := _), map_mul, ← IsScalarTower.algebraMap_apply, ← hy']
     ring
 
 section dvr2

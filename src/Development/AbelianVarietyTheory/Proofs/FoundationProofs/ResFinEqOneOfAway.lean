@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
-import Formalism.PairingDivisors.StatementA
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
-import Development.AbelianVarietyTheory.BlockTheory.AdelicCMFields.UnitaryHeckeCharacterIdele
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPlaceOverMoveValConjPl
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedPowSubOneLtOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsProdInfMulFinPart
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmData
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSplitPlOfTwoMem
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeckeLEntireAndNonzeroAtOneHolds
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
+public import Formalism.PairingDivisors.StatementA
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
+public import Development.AbelianVarietyTheory.BlockTheory.AdelicCMFields.UnitaryHeckeCharacterIdele
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPlaceOverMoveValConjPl
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedPowSubOneLtOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsProdInfMulFinPart
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmData
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSplitPlOfTwoMem
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeckeLEntireAndNonzeroAtOneHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,7 +73,7 @@ variable {E : Type} [Field E] [NumberField E] {χ : HChar E} {m : ℕ}
 theorem isUnitary_of_pow (hm : m ≠ 0) (h : ∀ x, χ.1 x ^ m = 1) : χ.IsUnitary := fun x =>
   Complex.norm_eq_one_of_pow_eq_one (by rw [← Units.val_pow_eq_pow_val, h, Units.val_one]) hm
 
-theorem locInf_of_pow [IsTotallyComplex E] (hm : m ≠ 0) (h : ∀ x, χ.1 x ^ m = 1) (w : InfinitePlace E)
+theorem locInf_of_pow [_root_.NumberField.IsTotallyComplex E] (hm : m ≠ 0) (h : ∀ x, χ.1 x ^ m = 1) (w : InfinitePlace E)
     (x : (w.Completion)ˣ) : χ.locInf w x = 1 := by
   let e := InfinitePlace.Completion.ringEquivComplexOfIsComplex (IsTotallyComplex.isComplex w)
   obtain ⟨z, hz⟩ := IsAlgClosed.exists_pow_nat_eq (e x) (Nat.pos_of_ne_zero hm)
@@ -82,7 +86,7 @@ theorem locInf_of_pow [IsTotallyComplex E] (hm : m ≠ 0) (h : ∀ x, χ.1 x ^ m
   rw [e2, map_pow]
   exact h _
 
-theorem inf_of_pow [IsTotallyComplex E] (hm : m ≠ 0) (h : ∀ x, χ.1 x ^ m = 1) (k : Eˣ) : χ.inf k = 1 := by
+theorem inf_of_pow [_root_.NumberField.IsTotallyComplex E] (hm : m ≠ 0) (h : ∀ x, χ.1 x ^ m = 1) (k : Eˣ) : χ.inf k = 1 := by
   show χ.1 (infDiag k) = 1
   rw [infDiag, MonoidHom.finsetProd_apply, map_prod]
   exact Finset.prod_eq_one fun w _ => locInf_of_pow hm h w _
@@ -152,7 +156,6 @@ theorem ordF_up (hu : ∀ P : HeightOneSpectrum (𝓞 E), Algebra.IsUnramifiedAt
   have : (P.asIdeal.under (𝓞 F)).IsMaximal := (P.under (𝓞 F)).isMaximal
   have h : P.valuation E (algebraMap F E k) = (P.under (𝓞 F)).valuation F k := by
     rw [← HeightOneSpectrum.valuation_liesOver E (P.under (𝓞 F)) P (k : F),
-      Ideal.ramificationIdx'_eq_ramificationIdx _ _ (P.under (𝓞 F)).ne_bot,
       Ideal.ramificationIdx_eq_one_iff.2 (hu P), pow_one]
   unfold ordF
   rw [← h]
@@ -187,8 +190,8 @@ theorem ideleMap_local (v : HeightOneSpectrum (𝓞 F)) (k : Fˣ) :
     · rw [ev_local_ne hw, map_one]
       exact (Finset.prod_eq_one fun P hP => ev_local_ne (fun e : w = P => hw (e ▸ mem_aboveF.1 hP)) _).symm
 
-open GlobalTheory.IndefiniteRowSideFullHecke.UnitaryHeckeCharacterIdele in
 
+open GlobalTheory.IndefiniteRowSideFullHecke.UnitaryHeckeCharacterIdele in
 theorem resFin_eq_one_of_away (χ : HChar E) (S : Finset (HeightOneSpectrum (𝓞 F)))
     (h : ∀ v ∉ S, ∀ k, χ.resFin v k = 1) (v : HeightOneSpectrum (𝓞 F)) (k : Fˣ) : χ.resFin v k = 1 := by
   have e : ∀ (v : HeightOneSpectrum (𝓞 F)) (k : Fˣ),

@@ -1,11 +1,16 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.LocalParameters
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdeal
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealLocalization
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheaf
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealOrder
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealOrderDecrease
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.LocalParameters
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdeal
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealLocalization
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheaf
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealOrder
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealOrderDecrease
+
+@[expose] public section
+
 universe u
 
 open AlgebraicGeometry CategoryTheory TopologicalSpace
@@ -200,7 +205,7 @@ private theorem finite_kaehlerDifferential_of_isLocalization (k A B : Type u) [C
 
 theorem finite_kaehlerDifferential_stalk (k : Type u) [Field k] {X : Scheme.{u}}
     (p : X ⟶ Spec (CommRingCat.of k)) [AlgebraicGeometry.Smooth p] (x : X) :
-    letI := stalkAlgebra k p x
+    letI := stalkAlgebra k p x;
     Module.Finite (X.presheaf.stalk x) (KaehlerDifferential k (X.presheaf.stalk x)) := by
   let algStalk : Algebra k (X.presheaf.stalk x) := stalkAlgebra k p x
   show Module.Finite (X.presheaf.stalk x) (KaehlerDifferential k (X.presheaf.stalk x))
@@ -228,7 +233,7 @@ private theorem free_kaehlerDifferential_of_formallySmooth (k : Type u) [Field k
 
 theorem free_kaehlerDifferential_stalk (k : Type u) [Field k] {X : Scheme.{u}}
     (p : X ⟶ Spec (CommRingCat.of k)) [AlgebraicGeometry.Smooth p] (x : X) :
-    letI := stalkAlgebra k p x
+    letI := stalkAlgebra k p x;
     Module.Free (X.presheaf.stalk x) (KaehlerDifferential k (X.presheaf.stalk x)) := by
   let algst : Algebra k (X.presheaf.stalk x) := stalkAlgebra k p x
   have _hN : IsNoetherianRing (X.presheaf.stalk x) := isNoetherianRing_stalk k p x

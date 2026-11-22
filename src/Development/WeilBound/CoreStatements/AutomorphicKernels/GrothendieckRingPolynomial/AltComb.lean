@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.LUnlinkedComm
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.LUnlinkedComm
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,8 +43,8 @@ theorem sub_sublist {α : Type*} {h : ℕ} (W : List α) (c : Fin W.length → F
   have := (List.filter_sublist (p := fun p => decide (c p = i)) (l := List.finRange W.length)).map W.get
   rwa [← List.ofFn_eq_map, List.ofFn_get] at this
 
-open Classical in
 
+open Classical in
 theorem shuffleCount_eq {α : Type*} {h : ℕ} (W : List α) (D : Fin h → List α) (hW : W.Nodup) :
     shuffleCount W D = if (∀ i, (D i).Sublist W) ∧ (∀ x ∈ W, ∃! i, x ∈ D i) then 1 else 0 := by
   unfold shuffleCount
@@ -204,8 +208,8 @@ end PositivityTheory.Groth.AltC
 
 namespace PositivityTheory.Groth.AltC
 
-open Classical in
 
+open Classical in
 theorem altSumN (L : ℕ) (hL : 0 < L) (s : Finset (Finset (Fin L))) (hs : ∀ S, S ∈ s ↔ ∀ a ∈ S, (a : ℕ) ≠ 0)
     {h : ℕ} (b l : Fin h → ℕ) (hl : ∀ i, 0 < l i) (f : Finset (Fin L) → ℤ)
     (hf : ∀ S, f S = (-1) ^ S.card * if Cond L (S.map Fin.valEmbedding) b l then 1 else 0) :

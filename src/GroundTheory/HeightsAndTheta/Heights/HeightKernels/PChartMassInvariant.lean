@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartMass
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ChartMassAffine
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartMass
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ChartMassAffine
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -80,8 +85,8 @@ theorem chartMass_conj (M T : Matrix (Fin (e + 1)) (Fin (e + 1)) ℂ) (hM : M.Po
 
 end ChartMongeAmpereAffineInvariance
 
-open ChartMongeAmpereAffineInvariance in
 
+open ChartMongeAmpereAffineInvariance in
 theorem ChartMassInvariant.proof : ChartMassInvariant.Statement := by
   intro e M hM
   let S : Matrix (Fin (e + 1))ᵒᵈ (Fin (e + 1))ᵒᵈ ℂ := M
@@ -91,7 +96,7 @@ theorem ChartMassInvariant.proof : ChartMassInvariant.Statement := by
   have hPdet : P.det ≠ 0 := (isUnit_det_of_invertible P₀).ne_zero
   set T : Matrix (Fin (e + 1)) (Fin (e + 1)) ℂ := Pᴴ with hTdef
   have hT : ∀ j : Fin e, T 0 j.succ = 0 := fun j => by
-    have h := LDL.lowerInv_triangular hS (i := OrderDual.toDual j.succ) (j := OrderDual.toDual 0)
+    have h := LDL.isLowerTriangular_lowerInv hS (i := OrderDual.toDual j.succ) (j := OrderDual.toDual 0)
       (OrderDual.toDual_lt_toDual.mpr (Fin.succ_pos j))
     rw [hTdef, conjTranspose_apply, show P j.succ 0 = 0 from h, star_zero]
   have hTdet : T.det ≠ 0 := by

@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DerivativePreservation.EabPresMain
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DerivativePreservation.EabPresMain
+
+@[expose] public section
 
 theorem qnEabPres : Formalism.FourierDecayAlt.Q.EabPres := by
   intro E _ _ k r z i D a b f f₂ s hD hf hf₂

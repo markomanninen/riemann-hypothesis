@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.Subgroup
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.NotDvdSuperIndexBotOfIsProPGroup
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.CdpOpenSubgroupLe
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.Closed
-import GroundTheory.ProfiniteCohomology.NotDvdSuperIndexIffMap
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.Vanishing
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.Subgroup
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.NotDvdSuperIndexBotOfIsProPGroup
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.CdpOpenSubgroupLe
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.Closed
+public import GroundTheory.ProfiniteCohomology.NotDvdSuperIndexIffMap
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.Vanishing
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -84,8 +89,7 @@ theorem cdp_le_of_forall_openSubgroup {ℓ : ℕ} (hℓ : ℓ.Prime) (A : Rep.{0
         rw [hfix]⟩
   have hcomp : ψ ≫ ψ' = 𝟙 _ := by
     ext x
-    change e.symm (e x.down) = x.down
-    exact e.symm_apply_apply x.down
+    simp [ψ, ψ', uliftIntLinearEquivAddHom_symm_apply]
   have hinj : Function.Injective (cohomologyMap ψ (n + 1)).hom := fun x y hxy => by
     have h' := congrArg (cohomologyMap ψ' (n + 1)).hom hxy
     rwa [← ModuleCat.comp_apply, ← ModuleCat.comp_apply, ← cohomologyMap_comp, hcomp,

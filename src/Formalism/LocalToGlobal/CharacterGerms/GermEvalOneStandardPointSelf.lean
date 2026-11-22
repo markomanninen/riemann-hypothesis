@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.ConstantZeroDoubleMultiplicationPair
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePGmExLem
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.ConstantZeroDoubleMultiplicationPair
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePGmExLem
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,7 +20,7 @@ variable {C : Type} [Field C] [CharZero C] {dd : ℕ}
 
 theorem pderiv_eval_single {n : ℕ} {P : Pt C n dd} (hP : ∀ j, constantCoeff (P j) = 0) (f : PS C 1 dd)
     (q : Fin n × Fin dd) :
-    pderiv C q (ev ![P] f) = ∑ j, ev ![P] (pderiv C ((0 : Fin 1), j) f) * pderiv C q (P j) := by
+    pderiv (R := C) q (ev ![P] f) = ∑ j, ev ![P] (pderiv (R := C) ((0 : Fin 1), j) f) * pderiv (R := C) q (P j) := by
   unfold ev
   rw [Formalism.G.LogCR.pderiv_subst (a := fun p : Fin 1 × Fin dd => (![P] : Fin 1 → Pt C n dd) p.1 p.2)
     (fun p => by obtain ⟨k, j⟩ := p; fin_cases k; exact hP j) f q, Fintype.sum_prod_type, Fin.sum_univ_one]
@@ -36,8 +40,8 @@ theorem ev_zero_pt {n : ℕ} (f : PS C 1 dd) : ev (n := n) ![(0 : Pt C n dd)] f 
   rfl
 
 theorem pderiv_pt {n : ℕ} (q : Fin n × Fin dd) (k : Fin n) (j : Fin dd) :
-    pderiv C q (pt C dd k j) = if (k, j) = q then 1 else 0 := by
-  show pderiv C q (X (k, j)) = _
+    pderiv (R := C) q (pt C dd k j) = if (k, j) = q then 1 else 0 := by
+  show pderiv (R := C) q (X (k, j)) = _
   rw [pderiv_X, Pi.single_apply]
 
 theorem constant_zero_first_then_zero : Z0 (![pt C (n := 1) dd 0, 0] : Fin 2 → Pt C 1 dd) :=
@@ -54,10 +58,10 @@ theorem formalGroupLaw_ev_x_zero (G : FGLaw C dd) (i : Fin dd) : ev (n := 1) ![p
   rw [e]; exact G.unit i
 
 def JF (G : FGLaw C dd) : Matrix (Fin dd) (Fin dd) (PS C 1 dd) :=
-  fun k i => ev (n := 1) ![pt C dd 0, 0] (pderiv C ((1 : Fin 2), i) (G.F k))
+  fun k i => ev (n := 1) ![pt C dd 0, 0] (pderiv (R := C) ((1 : Fin 2), i) (G.F k))
 
 def Jac (P : Pt C 1 dd) : Matrix (Fin dd) (Fin dd) (PS C 1 dd) :=
-  fun k i => pderiv C ((0 : Fin 1), i) (P k)
+  fun k i => pderiv (R := C) ((0 : Fin 1), i) (P k)
 
 def cmp (P : Pt C 1 dd) (A : Matrix (Fin dd) (Fin dd) (PS C 1 dd)) : Matrix (Fin dd) (Fin dd) (PS C 1 dd) :=
   fun k i => ev ![P] (A k i)
@@ -83,23 +87,23 @@ theorem JL_JF {V : VF C} {O : Type} [CommRing O] [StarRing O] (Y : FBChart C V O
     funext fun j => PartialDerivEval.eval_points_two _
   have h1 := Y.lg_add k
   rw [hAdd] at h1
-  have h2 := congrArg (pderiv C ((1 : Fin 2), i)) h1
-  have hd0 : ∀ g : PS C 1 dd, pderiv C ((1 : Fin 2), i) (ev (n := 2) ![pt C dd 0] g) = 0 := by
+  have h2 := congrArg (pderiv (R := C) ((1 : Fin 2), i)) h1
+  have hd0 : ∀ g : PS C 1 dd, pderiv (R := C) ((1 : Fin 2), i) (ev (n := 2) ![pt C dd 0] g) = 0 := by
     intro g
     rw [pderiv_eval_single (P := pt C (n := 2) dd 0) (fun j => z0_pt 0 j)]
     refine Finset.sum_eq_zero fun j _ => ?_
     rw [pderiv_pt, if_neg (fun h => absurd (Prod.mk.inj h).1 (by decide)), mul_zero]
-  have hd1 : ∀ g : PS C 1 dd, pderiv C ((1 : Fin 2), i) (ev (n := 2) ![pt C dd 1] g) =
-      ev (n := 2) ![pt C dd 1] (pderiv C ((0 : Fin 1), i) g) := by
+  have hd1 : ∀ g : PS C 1 dd, pderiv (R := C) ((1 : Fin 2), i) (ev (n := 2) ![pt C dd 1] g) =
+      ev (n := 2) ![pt C dd 1] (pderiv (R := C) ((0 : Fin 1), i) g) := by
     intro g
     rw [pderiv_eval_single (P := pt C (n := 2) dd 1) (fun j => z0_pt 1 j),
       Finset.sum_eq_single i (fun j _ hj => by rw [pderiv_pt, if_neg (fun h => hj (Prod.mk.inj h).2), mul_zero])
         (fun h => absurd (Finset.mem_univ i) h), pderiv_pt, if_pos rfl, mul_one]
-  rw [map_add, pderiv_eval_single (P := Y.B.G.F) Y.B.G.const, hd0, hd1, zero_add] at h2
+  rw [map_add (f := _), pderiv_eval_single (P := Y.B.G.F) Y.B.G.const, hd0, hd1, zero_add] at h2
   have h3 := congrArg (ev (n := 1) ![pt C dd 0, 0]) h2
   rw [ev_sum constant_zero_first_then_zero] at h3
-  have hL : ∀ j, ev (n := 1) ![pt C dd 0, 0] (ev ![Y.B.G.F] (pderiv C ((0 : Fin 1), j) (Y.lg k))) =
-      pderiv C ((0 : Fin 1), j) (Y.lg k) := by
+  have hL : ∀ j, ev (n := 1) ![pt C dd 0, 0] (ev ![Y.B.G.F] (pderiv (R := C) ((0 : Fin 1), j) (Y.lg k))) =
+      pderiv (R := C) ((0 : Fin 1), j) (Y.lg k) := by
     intro j
     rw [ev_ev (z0_1 _ Y.B.G.const) constant_zero_first_then_zero]
     have e : (fun k' j' => ev (n := 1) ![pt C dd 0, 0] ((![Y.B.G.F] : Fin 1 → Pt C 2 dd) k' j')) =
@@ -121,7 +125,7 @@ theorem JL_JF {V : VF C} {O : Type} [CommRing O] [StarRing O] (Y : FBChart C V O
   rw [Matrix.mul_apply, Matrix.one_apply]
   simp only [Jac, JF]
   rw [h3]
-  have hc : constantCoeff (pderiv C ((0 : Fin 1), i) (Y.lg k)) = if k = i then 1 else 0 := by
+  have hc : constantCoeff (pderiv (R := C) ((0 : Fin 1), i) (Y.lg k)) = if k = i then 1 else 0 := by
     rw [← coeff_zero_eq_constantCoeff_apply, coeff_pderiv, zero_add,
       Y.lg_lin k _ (by simp), coeff_X]
     by_cases hki : k = i
@@ -167,7 +171,7 @@ theorem lg_mulL {V : VF C} {O : Type} [CommRing O] [StarRing O] (Y : FBChart C V
 theorem jac_mulL {V : VF C} {O : Type} [CommRing O] [StarRing O] (Y : FBChart C V O dd) (n : ℕ) :
     cmp (mulL Y.B.G.F n) (Jac Y.lg) * Jac (mulL Y.B.G.F n) = n • Jac Y.lg := by
   funext k i
-  have h := congrArg (pderiv C ((0 : Fin 1), i)) (lg_mulL Y n k)
+  have h := congrArg (pderiv (R := C) ((0 : Fin 1), i)) (lg_mulL Y n k)
   rw [pderiv_eval_single (multiplication_constantCoeff_zero Y.B.G n), map_nsmul] at h
   rw [Matrix.mul_apply, Matrix.smul_apply]
   exact h
@@ -201,9 +205,16 @@ theorem JF_const (G : FGLaw C dd) (k i : Fin dd) :
     fin_cases k'
     · exact map_zero _
     · exact z0_pt 0 j
-  have h := congrArg (pderiv C ((0 : Fin 1), i)) (G.unit k)
-  rw [pderiv_eval_pair hA] at h
-  have h0 : ∀ j, pderiv C ((0 : Fin 1), i) ((0 : Pt C 1 dd) j) = 0 := fun j => map_zero _
+  have h := congrArg (pderiv (R := C) ((0 : Fin 1), i)) (G.unit k)
+  have hpair {a : Fin 2 → Pt C 1 dd} (ha : Z0 a) (f : PS C 2 dd) (q : Fin 1 × Fin dd) :
+      pderiv (R := C) q (ev a f) =
+        ∑ j, ev a (pderiv (R := C) ((0 : Fin 2), j) f) * pderiv (R := C) q (a 0 j) +
+        ∑ j, ev a (pderiv (R := C) ((1 : Fin 2), j) f) * pderiv (R := C) q (a 1 j) := by
+    unfold ev
+    rw [Formalism.G.LogCR.pderiv_subst (a := fun p : Fin 2 × Fin dd => a p.1 p.2)
+      (fun p => ha p.1 p.2) f q, Fintype.sum_prod_type, Fin.sum_univ_two]
+  rw [hpair hA] at h
+  have h0 : ∀ j, pderiv (R := C) ((0 : Fin 1), i) ((0 : Pt C 1 dd) j) = 0 := fun j => map_zero _
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, h0, mul_zero, Finset.sum_const_zero, zero_add,
     pderiv_pt, pderiv_X] at h
   rw [Finset.sum_eq_single i (fun x _ hx => by rw [if_neg (by simp [hx]), mul_zero])
@@ -217,7 +228,11 @@ theorem JF_const (G : FGLaw C dd) (k i : Fin dd) :
 
 theorem JF_int {V : VF C} {O : Type} [CommRing O] [StarRing O] (Y : FBChart C V O dd) (k i : Fin dd) :
     IntS V (JF Y.B.G k i) := by
-  refine intS_ev constant_zero_first_then_zero (fun k' j => ?_) (intS_pderiv (Y.intF k) _)
+  have hd : IntS V (pderiv (R := C) ((1 : Fin 2), i) (Y.B.G.F k)) := by
+    intro μ
+    rw [coeff_pderiv]
+    exact (Y.intF k _).mul_int ((ge_natCast (μ (1, i))).add VF.Ge.one)
+  refine intS_ev constant_zero_first_then_zero (fun k' j => ?_) hd
   fin_cases k'
   · exact intS_X _
   · exact intS_zero

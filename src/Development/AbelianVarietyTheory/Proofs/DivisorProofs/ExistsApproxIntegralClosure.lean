@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+
+@[expose] public section
 
 namespace GlobalTheory.DecompFixed
 
@@ -37,10 +41,6 @@ def satIdeal (q : Ideal B) [q.IsPrime] (J : Ideal (decompFixed A G q)) :
     have : b * (c • y) = c * (b * y) := by rw [smul_eq_mul]; ring
     rw [this]
     exact J.mul_mem_left _ hby
-
-theorem mem_satIdeal {q : Ideal B} [q.IsPrime] {J : Ideal (decompFixed A G q)}
-    {y : decompFixed A G q} :
-    y ∈ satIdeal A G q J ↔ ∃ b : decompFixed A G q, (b : B) ∉ q ∧ b * y ∈ J := Iff.rfl
 
 end GlobalTheory.DecompFixed
 
@@ -336,7 +336,7 @@ theorem exists_approx [IsLocalRing A] [Algebra.IsInvariant A B G] (q : Ideal B) 
   haveI : Algebra.IsIntegral A B := Algebra.IsInvariant.isIntegral A B G
   have hcomap : q.comap (algebraMap A B) = maximalIdeal A := by
     haveI : (q.comap (algebraMap A B)).IsMaximal :=
-      Ideal.isMaximal_comap_of_isIntegral_of_isMaximal q
+      Ideal.isMaximal_under_of_isIntegral_of_isMaximal q
     exact IsLocalRing.eq_maximalIdeal this
   have hm : ∀ a ∈ maximalIdeal A, algebraMap A B a ∈ q := fun a ha => by
     rw [← hcomap] at ha; exact ha
@@ -379,7 +379,7 @@ theorem exists_approx [IsLocalRing A] [Algebra.IsInvariant A B G] (q : Ideal B) 
       obtain ⟨d, hd, hyd⟩ := hy
       refine ⟨c + d, Ideal.add_mem _ hc hd, ?_⟩
       have : x + y - algebraMap A R (c + d) = (x - algebraMap A R c) + (y - algebraMap A R d) := by
-        rw [map_add]; ring
+        rw [map_add (f := _)]; ring
       rw [this]; exact Ideal.add_mem _ hxc hyd
     | smul r x _ hx =>
       obtain ⟨c, hc, hxc⟩ := hx
@@ -418,7 +418,7 @@ theorem exists_approx [IsLocalRing A] [Algebra.IsInvariant A B G] (q : Ideal B) 
           ((-(b - algebraMap A R β)) * (y - algebraMap A R a) +
             (b * (y - algebraMap A R a) - algebraMap A R c)) := by
         have : algebraMap A R γ * algebraMap A R β = 1 := by rw [← map_mul, hγ, map_one]
-        rw [map_add, map_mul]
+        rw [map_add (f := _), map_mul]
         linear_combination (-(y - algebraMap A R a)) * this
       rw [key]
       refine Ideal.mul_mem_left _ _ (Ideal.add_mem _ ?_ hcy)

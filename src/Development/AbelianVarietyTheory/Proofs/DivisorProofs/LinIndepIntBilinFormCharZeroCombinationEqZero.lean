@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -27,7 +31,8 @@ theorem linIndep_intBilinForm_charZero_comb_eq_zero
   have hrel : ∑ i, ℓ (a i) • (L ∘ gam) i = 0 := by
     funext y z
     have h0 := congrArg ℓ (hsum y z)
-    rw [map_sum, map_zero] at h0
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h0
     simp only [Finset.sum_apply, Pi.smul_apply, Function.comp_apply, Pi.zero_apply, smul_eq_mul, L,
       LinearMap.coe_mk, AddHom.coe_mk]
     rw [← h0]

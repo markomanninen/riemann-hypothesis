@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.PerDeriv
-import Mathlib.Analysis.Fourier.FiniteAbelian.PontryaginDuality
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.PerDeriv
+public import Mathlib.Analysis.Fourier.FiniteAbelian.PontryaginDuality
+
+@[expose] public section
 
 open UpperTheory.V.Sd.Eis
 

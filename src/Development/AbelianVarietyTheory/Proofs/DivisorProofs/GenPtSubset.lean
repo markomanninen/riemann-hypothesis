@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsINeZeroKind
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OrientedHermitianFormQuadSumEqTrace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHasLocalSmall
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsINeZeroKind
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OrientedHermitianFormQuadSumEqTrace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHasLocalSmall
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,20 +24,20 @@ namespace GlobalTheory.BigDat
 
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc} {i j : ℕ}
 
-variable (G i j) in
 
+variable (G i j) in
 abbrev Pt : Type := Matrix (Fin (spW G i j).rank) (Fin ((spW G i j).rank + (spW₁ G i j).rank)) (AE D)
 
-variable (G i j) in
 
+variable (G i j) in
 abbrev Ix : Type := Fin (spW G i j).rank × Fin ((spW G i j).rank + (spW₁ G i j).rank)
 
-variable (G i j) in
 
+variable (G i j) in
 abbrev HomV : Type := WO (negSp (spW G i j)) (spV G i j)
 
-variable (G i j) in
 
+variable (G i j) in
 abbrev HomW : Type := WO (spV₁ G i j) (spW G i j)
 
 abbrev mapV (e : Num G i j) (u : Pt G i j) : HomV G i j := mulG (negSp (spW G i j)) (colV e u)ᵀ
@@ -114,8 +118,8 @@ abbrev sympPt (Γ : GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.G
   symp (R := AF D.host.F) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA D.sp.cm.sig) (-1) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM D.host.F Γ.V.J)
     (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.incM D.host.F Γ.W.J) u u'
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem symp_eq (e : Num G i j) (Γ : GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.Geo G i j) (hW : Γ.V.J = (1 : D.host.E) • (spW G i j).gram)
     (hWW : Γ.W.J = skewGram (spV G i j) (spV₁ G i j) e) (x x' : Pt G i j) :
     sympPt Γ x x' = symplO _ _ (mapV e x) (mapV e x') + symplO _ _ (mapW e x) (mapW e x') := by
@@ -151,7 +155,7 @@ theorem symp_eq (e : Num G i j) (Γ : GlobalTheory.IndefiniteRowSideFullHecke.Un
   unfold sympPt symp symplO
   rw [hA, hB1, hB2]
   conv_rhs => arg 2; rw [← GlobalTheory.DualPairCheck.trace_cA]
-  rw [← map_add]
+  rw [← map_add (f := _)]
   congr 1
   erw [h2, h1]
   rw [hN, hJW, hJV, Matrix.mul_smul, Matrix.smul_mul, Matrix.smul_mul,
@@ -185,7 +189,7 @@ theorem rho_rho {R W κ : Type} [CommRing R] [Invertible (2 : R)] [AddCommGroup 
     (co : Darboux B κ) (ψ : AddChar R ℂ) (u u₀ : W) (Φ : (κ → R) → ℂ) :
     co.rho ψ u (co.rho ψ u₀ Φ) = ψ (⅟(2 : R) * B u u₀) • co.rho ψ (u + u₀) Φ := by
   funext x
-  simp only [Darboux.rho, schr, co.form, map_add, Prod.fst_add, Prod.snd_add, Pi.smul_apply, smul_eq_mul]
+  simp only [Darboux.rho, schr, co.form, map_add (f := _), Prod.fst_add, Prod.snd_add, Pi.smul_apply, smul_eq_mul]
   rw [← mul_assoc, ← mul_assoc, ← AddChar.map_add_eq_mul, ← AddChar.map_add_eq_mul, add_assoc x]
   congr 2
   simp only [add_dotProduct, dotProduct_add]
@@ -195,13 +199,13 @@ theorem thetaPt_rho (Γ : GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjuga
     (u₀ : Pt G i j) : thetaPt Γ ψ (Γ.M.co.rho ψ u₀ Φ) = heisPt Γ ψ u₀ (thetaPt Γ ψ Φ) :=
   funext fun u => (congrArg (thetaSum D.host.F) (rho_rho Γ.M.co ψ u u₀ Φ)).trans tsum_mul_left
 
-variable (G i j) in
 
+variable (G i j) in
 abbrev latV : AddSubgroup (HomV G i j) :=
   latO (negSp (spW G i j)) (spV G i j) (G.Λ (.grid (i + 1) (j + 1)) : Set _) (G.Λ (.grid i (j + 1)) : Set _) fun _ => True
 
-variable (G i j) in
 
+variable (G i j) in
 abbrev latW : AddSubgroup (HomW G i j) :=
   latO (spV₁ G i j) (spW G i j) (G.Λ (.grid (i + 1) j) : Set _) (G.Λ (.grid (i + 1) (j + 1)) : Set _) fun _ => True
 

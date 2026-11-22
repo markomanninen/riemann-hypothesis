@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.IsCombAt
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsCombAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,11 +28,5 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
   (Xo : Moduli Dw l) (c : Coeff l)
-
-example : Algebra c.F (Rul Xo c) := inferInstance
-example : Algebra (𝓞 c.F) (Rul Xo c) := inferInstance
-example : IsScalarTower (𝓞 c.F) c.F (Rul Xo c) := inferInstance
-example (a : c.F) (f : Rul Xo c) : Rul Xo c := a • f
-example (a : 𝓞 c.F) (f : Rul Xo c) : Rul Xo c := a • f
 
 end Formalism.L2.Pj

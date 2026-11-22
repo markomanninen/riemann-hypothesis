@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.T2SpaceGlCompletionsOver
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.AmpFin
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.LevelEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PosSide
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.GoodEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.InfSplit
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ArchBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ArchSlotEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.AmpSlot
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.PairPosition
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.BumpEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.IntPow
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ParEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.FixLev
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.T2SpaceGlCompletionsOver
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.AmpFin
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.LevelEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PosSide
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.GoodEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.InfSplit
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ArchBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ArchSlotEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.AmpSlot
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.PairPosition
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.BumpEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.IntPow
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ParEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.FixLev
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace GroundTheory.Automorphic.AutomorphicForm
@@ -52,19 +56,19 @@ private theorem prj_of_mem (V : Submodule ℂ H) {x : H} (h : x ∈ V) : prj V x
 
 end Hilb
 
-private theorem oinf_congr {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+private theorem oinf_congr {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
     (ν ν' : Measure (archGroup K n)) [ν.IsHaarMeasure] [ν'.IsHaarMeasure] (h : ν = ν') (a : TI K n) : Oinf μ ν a = Oinf μ ν' a := by
   subst h
   rfl
 
-private theorem fixL_anti {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (w : Pl K)
+private theorem fixL_anti {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (w : Pl K)
     {J J' : Subgroup (Gw n w)} (h : J ≤ J') : fixL μ w J' ≤ fixL μ w J :=
   biInf_mono fun _ hu => Subgroup.map_mono h hu
 
 theorem UpperTheory.ConvolutionTheory.Sph.liftAt (hCI : UpperTheory.ConvolutionTheory.CI) (hGM : UpperTheory.ConvolutionTheory.GM.GM) :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [IsTotallyComplex F]
-    [IsTotallyComplex E] (σ : E ≃ₐ[F] E), (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime → ∀ n : ℕ, 0 < n →
-    ∀ (μE : Measure (normOneGL E n)) [μE.IsHaarMeasure] (μF : Measure (normOneGL F n)) [μF.IsHaarMeasure] (θ : Twist μE),
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [_root_.NumberField.IsTotallyComplex F]
+    [_root_.NumberField.IsTotallyComplex E] (σ : E ≃ₐ[F] E), (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime → ∀ n : ℕ, 0 < n →
+    ∀ (μE : Measure (normOneGL (K := E) (n := n))) [μE.IsHaarMeasure] (μF : Measure (normOneGL (K := F) (n := n))) [μF.IsHaarMeasure] (θ : Twist μE),
       IsGalTwist σ θ → ∀ (V : Submodule ℂ (LL μF)) Λ t (S₀ : Set (Pl F)), IsSummand μF V → S₀.Finite → At μF S₀ V Λ t →
       OffAll F n (bcInf (K := E) Λ) (bcSat t) → ∀ v₀ : Pl F, v₀ ∉ S₀ → GM.Unr E v₀ →
       ∃ V' : Submodule ℂ (LL μE), IsSummand μE V' ∧ AtAE μE V' (bcInf Λ) (bcSat t) ∧
@@ -105,7 +109,7 @@ theorem UpperTheory.ConvolutionTheory.Sph.liftAt (hCI : UpperTheory.ConvolutionT
   obtain ⟨⟨p⟩, hD⟩ := (infSplit F E σ hσ m hm).imp (fun h => h inferInstance) id
   obtain ⟨D, -⟩ := hD p
   let νF : Measure (archGroup F n) := Measure.haar
-  let π := (rightRegularRep (rationalGLOne F n) μF).compHom (archP F n) continuous_archP
+  let π := (rightRegularRep (rationalGLOne (K := F) (n := n)) μF).compHom (archP F n) continuous_archP
   obtain ⟨b, hb1, hb2, hb3, hb4⟩ := bumpEx F n νF _ π v₀ hv0
   obtain ⟨νE, iE, a, aE, aF, hA⟩ := archPositionEx F E σ m D n νF b hb1 hb2 hb3
   obtain ⟨hAE, hAF⟩ := ampPosition F E σ m D n νE νF b a aE aF hA

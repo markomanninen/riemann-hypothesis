@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,14 +73,16 @@ theorem rhoFun_congr (w : l ⊕ l → ℝ) {f g : EuclideanSpace ℝ l → ℂ} 
   rw [show f (x + pPart w) = g (x + pPart w) from hx]
 
 theorem eLpNorm_rhoFun (w : l ⊕ l → ℝ) (f : L2 l) : eLpNorm (rhoFun w f) 2 volume = eLpNorm f 2 volume := by
-  rw [← eLpNorm_comp_measurePreserving (Lp.aestronglyMeasurable f) (measurePreserving_add_right volume (pPart w))]
-  refine eLpNorm_congr_norm_ae (.of_forall fun x => ?_)
+  have hpres := measurePreserving_add_right volume (pPart w)
+  have hshift := (Lp.aestronglyMeasurable f).comp_measurePreserving hpres
+  rw [← eLpNorm_comp_measurePreserving (Lp.aestronglyMeasurable f) hpres]
+  refine eLpNorm_congr_norm_ae ((continuous_phase w).aestronglyMeasurable.mul hshift)
+    hshift (.of_forall fun x => ?_)
   simp [rhoFun, norm_phase]
 
-theorem memLp_rhoFun (w : l ⊕ l → ℝ) (f : L2 l) : MemLp (rhoFun w f) 2 volume :=
-  ⟨(continuous_phase w).aestronglyMeasurable.mul
-      ((Lp.aestronglyMeasurable f).comp_measurePreserving (measurePreserving_add_right volume (pPart w))),
-    by rw [eLpNorm_rhoFun]; exact Lp.eLpNorm_lt_top f⟩
+theorem memLp_rhoFun (w : l ⊕ l → ℝ) (f : L2 l) : MemLp (rhoFun w f) 2 volume := by
+  rw [memLp_iff, eLpNorm_rhoFun]
+  exact Lp.eLpNorm_lt_top f
 
 def rhoIsometry (w : l ⊕ l → ℝ) : L2 l →ₗᵢ[ℂ] L2 l where
   toFun f := (memLp_rhoFun w f).toLp

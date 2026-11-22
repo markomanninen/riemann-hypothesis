@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UniversalAnticyclotomicCharacterLaws
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenKerOfInfConn
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DenseRangeUnits
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNatCongrOfAbsNormPrime
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmEmbeddingProperties
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CompletelySplitPrimeHostPlaceProperties
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPadicAlgClRingEquivComplexCompEqOfCountabl
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EmbeddingClosedIntegral
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPlaceOverMoveValConjPl
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BijectiveCmType
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemZpowersOfTameGen
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsGeneratorSqEqOfSqMemZpowers
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedPowSubOneLtOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UniversalAnticyclotomicCharacterLaws
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenKerOfInfConn
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DenseRangeUnits
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNatCongrOfAbsNormPrime
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmEmbeddingProperties
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CompletelySplitPrimeHostPlaceProperties
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPadicAlgClRingEquivComplexCompEqOfCountabl
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EmbeddingClosedIntegral
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPlaceOverMoveValConjPl
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BijectiveCmType
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemZpowersOfTameGen
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsGeneratorSqEqOfSqMemZpowers
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedPowSubOneLtOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -110,8 +114,12 @@ theorem AlmostIn.block {K : Type} [Field K] {ε : K →+* ℂ} {μ η : HChar E}
 
 theorem block_loc {μ η : HChar E} {r : ℕ} {v : HeightOneSpectrum (𝓞 E)} (hη : η.UnrAt v) {x : (v.adicCompletion E)ˣ}
     (hx : IsUnitAt v x) : (block μ η r).loc v x = μ.loc v x := by
-  rw [block, HChar.loc_mul, HChar.loc_mul, HChar.loc_inv, hη x hx, (Model.absPow_isAbsPow E _).1 v x hx]
-  simp
+  have loc_mul (a b : HChar E) (v : HeightOneSpectrum (𝓞 E)) (x : (v.adicCompletion E)ˣ) :
+      (a * b).loc v x = a.loc v x * b.loc v x := rfl
+  have loc_inv (a : HChar E) (v : HeightOneSpectrum (𝓞 E)) (x : (v.adicCompletion E)ˣ) :
+      (a⁻¹).loc v x = (a.loc v x)⁻¹ := rfl
+  rw [block, loc_mul, loc_mul, loc_inv, hη x hx, (Model.absPow_isAbsPow E _).1 v x hx]
+  simp [loc_mul, loc_inv, hη x hx, (Model.absPow_isAbsPow E _).1 v x hx]
 
 theorem isAlgPos_mul {χ χ' : HChar E} {n n' : (E →+* ℂ) → ℤ} (h : IsAlgPos χ n) (h' : IsAlgPos χ' n') :
     IsAlgPos (χ * χ') (n + n') := fun k hk => by
@@ -185,8 +193,6 @@ theorem IsGal.pow_eq_one (ha : IsGlobalArtin art) (h : IsGal art κ ι χ 0 r) {
   rw [MonoidHom.pow_apply, ← map_pow, MonoidHom.one_apply, inQ_eq_one, map_pow] at this
   exact this
 
-omit [TopologicalSpace O] in
-theorem sideIso_true (ι : Qbar l ≃+* ℂ) : sideIso ι true = ι := rfl
 
 omit [TopologicalSpace O] in
 theorem sideIso_false (ι : Qbar l ≃+* ℂ) (x : Qbar l) : sideIso ι false x = starRingEnd ℂ (ι x) := rfl
@@ -448,13 +454,6 @@ theorem sideIso_read {l : ℕ} [Fact l.Prime] {L K : Type} [Field L] [Field K] {
   · rw [sideIso_false, if_neg (by simp), hf', Complex.conj_conj]
   · exact hf x
 
-theorem read_conj {l : ℕ} [Fact l.Prime] {L LL : Type} [Field L] [Field LL] [CharZero LL] [StarRing LL]
-    (LL0 : IntermediateField ℚ LL) (ε : LL →+* ℂ) (hε : ∀ x, ε (star x) = starRingEnd ℂ (ε x))
-    (h0 : ∀ x : LL0, star (x : LL) ∈ LL0) {κ : L →+* Qbar l} {ι : Qbar l ≃+* ℂ} {f f' : LL0 →+* L}
-    (hc : ∀ x y : LL0, (y : LL) = star (x : LL) → f' x = f y) (hf : ∀ x : LL0, ι (κ (f x)) = ε x) (x : LL0) :
-    ι (κ (f' x)) = starRingEnd ℂ (ε x) := by
-  rw [hc x ⟨_, h0 x⟩ rfl, hf, ← hε]
-
 variable {R : Ranks} {H : Formalism.BasicNotions.Host R} {Ω : Type} [Field Ω] [Algebra H.E Ω] {cc : Ω ≃+* Ω}
   {e : Fin R.m → R.Psi → ℚ} (C : GlobalTheory.Mem.Chr.HFrame H e) {art : Ideles H.E →* Gab H.E Ω}
 
@@ -506,6 +505,8 @@ theorem IsGal.anti (hcc : IsCMConjOm H.E Ω cc) (ha : IsGlobalArtin art) {l : �
 
 theorem hostHeckeFrame_twist_galois_characters (hcc : IsCMConjOm H.E Ω cc) (ha : IsGlobalArtin art) (he : ∀ j τ, ∃ z : ℤ, e j τ = z)
     (hg : ∀ k, (placesOver H.E (H.g k)).ncard = Module.finrank ℚ H.E) : HeckeTwistCharactersDeltaChi H cc C art := by
+  have loc_mul (a b : HChar H.E) (v : HeightOneSpectrum (𝓞 H.E)) (x : (v.adicCompletion H.E)ˣ) :
+      (a * b).loc v x = a.loc v x * b.loc v x := rfl
   intro l _ O _ _ _ _ _ _ _ hO κ hκ ι K _ ε f f' hf hf' hμ hη hδ pD hpD
   have hl : l.Prime := Fact.out
   obtain ⟨hp, hpl, hpg, hp15, hD⟩ := inertialOrderFifteenChar_auxiliaryPrime_spec C (l := l)
@@ -539,22 +540,26 @@ theorem hostHeckeFrame_twist_galois_characters (hcc : IsCMConjOm H.E Ω cc) (ha 
     rw [ha', Nat.pow_mod, hp15, one_pow]
     rfl
   · refine ((hch _ b).unr_iff ha (Or.inl h1) hA).2 fun x hx => ?_
-    rw [block_loc (C.isEta.unr v) hx, HChar.loc_mul, (C.isMu0 _).unr v h2 x hx, hD.unr v (mt (hmem v).2 h3) x hx, one_mul]
+    rw [block_loc (C.isEta.unr v) hx, loc_mul, (C.isMu0 _).unr v h2 x hx, hD.unr v (mt (hmem v).2 h3) x hx, one_mul]
   · obtain ⟨x, hx, ex⟩ := exists_unit ha hA hσ
     have hv' := (hmem v).1 hv
     have e1 := (hch (ix j) b).loc (Or.inl (notMem_of_ne hp hl hpl hv')) ex
-    rw [block_loc (C.isEta.unr v) hx, HChar.loc_mul,
+    rw [block_loc (C.isEta.unr v) hx, loc_mul,
       (C.isMu0 _).unr v (fun k => notMem_of_ne hp (H.g_prime k) (hpg k) hv') x hx, one_mul,
       ← hd.side hm0 hm b ex] at e1
     exact Units.ext (toQ_injective κ ((sideIso ι b).injective e1))
   · refine ((hch _ b).ine_pow_iff ha (Or.inl h2) hA _).2 fun x hx => ?_
     have hN := (GlobalTheory.Mem.Chr.splitsC_main R H _ (H.g_prime k) (hg k) v h1).1
-    rw [block_loc (C.isEta.unr v) hx, HChar.loc_mul,
+    rw [block_loc (C.isEta.unr v) hx, loc_mul,
       hD.unr v (notMem_of_ne (H.g_prime k) hp (hpg k).symm h1) x hx, mul_one, ← hN]
     exact (GlobalTheory.Mem.WildChar.orders_on_units _ _ v).1 ((C.isMu0 _).tame v) x hx
 
 theorem hostHeckeFrame_toric_quotient_character (hcc : IsCMConjOm H.E Ω cc) (ha : IsGlobalArtin art) (he : ∀ j τ, ∃ z : ℤ, e j τ = z) :
     ToricHeckeQuotientCharacter H cc C art := by
+  have loc_mul (a b : HChar H.E) (v : HeightOneSpectrum (𝓞 H.E)) (x : (v.adicCompletion H.E)ˣ) :
+      (a * b).loc v x = a.loc v x * b.loc v x := rfl
+  have loc_inv (a : HChar H.E) (v : HeightOneSpectrum (𝓞 H.E)) (x : (v.adicCompletion H.E)ˣ) :
+      (a⁻¹).loc v x = (a.loc v x)⁻¹ := rfl
   intro l _ O _ _ _ _ _ _ _ hO κ hκ ι K _ ε f f' hf hf' pD hpD delta hd O' _ _ _ _ _ hO' hlO' j b χ c hχF hχi hχw hμ hδ hχ
     S0 hS1 hS2 hS3 hS4
   have hl : l.Prime := Fact.out
@@ -582,7 +587,7 @@ theorem hostHeckeFrame_toric_quotient_character (hcc : IsCMConjOm H.E Ω cc) (ha
     have hv' := (hmem v).1 hv
     obtain ⟨n, hn⟩ := (GlobalTheory.Mem.WildChar.orders_on_units _ χ v).2 (hχw v hv) x hx
     have e1 := hr.loc (Or.inl (notMem_of_ne hp hl hpl hv')) ex
-    rw [HChar.loc_mul, HChar.loc_mul, HChar.loc_inv,
+    rw [loc_mul, loc_mul, loc_inv,
       (C.isMu0 _).unr v (fun k => notMem_of_ne hp (H.g_prime k) (hpg k) hv') x hx, one_mul] at e1
     have e2 := hd.side hm0 hm b ex
     refine ⟨n, ?_⟩
@@ -598,6 +603,8 @@ theorem hostHeckeFrame_toric_quotient_character (hcc : IsCMConjOm H.E Ω cc) (ha
 
 theorem hostHeckeFrame_localisation_character_spec (hcc : IsCMConjOm H.E Ω cc) (ha : IsGlobalArtin art) (he : ∀ j τ, ∃ z : ℤ, e j τ = z) :
     LocalisationCharacterSpec H cc C art := by
+  have loc_mul (a b : HChar H.E) (v : HeightOneSpectrum (𝓞 H.E)) (x : (v.adicCompletion H.E)ˣ) :
+      (a * b).loc v x = a.loc v x * b.loc v x := rfl
   intro l _ O _ _ _ _ _ _ _ hO κ hκ ι K _ ε f hf j Q ψ hψ hQ hμ hη hδ hψv
   have hl : l.Prime := Fact.out
   obtain ⟨hp, hpl, hpg, -, hD⟩ := inertialOrderFifteenChar_auxiliaryPrime_spec C (l := l)
@@ -624,7 +631,7 @@ theorem hostHeckeFrame_localisation_character_spec (hcc : IsCMConjOm H.E Ω cc) 
     push Not at hn
     refine (hψ.ram v).1 (fun x hx => ?_) hv
     have := (hr.unr_iff ha (Or.inl hvl) hA).1 hn x hx
-    rwa [block_loc (C.isEta.unr v) hx, HChar.loc_mul, HChar.loc_mul, (C.isMu0 j).unr v (hQ v hv).1 x hx,
+    rwa [block_loc (C.isEta.unr v) hx, loc_mul, loc_mul, (C.isMu0 j).unr v (hQ v hv).1 x hx,
       hD.unr v (hQ v hv).2 x hx, one_mul, one_mul] at this
   · have hu : (C.mu0 j * (delAt H C l * ψ)).UnrAt w := ((C.isMu0 j).unr w w2).mul ((hD.unr w w3).mul ((hψ.ram w).2 w4))
     refine ⟨hu.mul (C.isEta.unr w).inv, fun B σ hB hσ => ?_⟩
@@ -634,9 +641,10 @@ theorem hostHeckeFrame_localisation_character_spec (hcc : IsCMConjOm H.E Ω cc) 
     rw [block_val, mul_inv, ← Complex.cpow_neg, ← Units.val_inv_eq_inv_val] at e1
     refine Eq.trans ?_ e1.symm
     congr 2
-    unfold Ranks.nV
-    push_cast
-    ring
+    · simp [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
+    · unfold Ranks.nV
+      push_cast
+      ring
 
 theorem hostFrame_localisationTwistCharacterCompat (ha : IsGlobalArtin art) : LocalisationTwistCharacterCompat H C art := by
   intro l₀ _ O₀ _ _ _ _ _ _ _ hO₀ κ₀ hκ₀ ι₀ l _ O _ _ _ _ _ _ _ hO κ hκ ι hll K _ ε f₀ f hf₀ hf t ht j ψ hμ hη hδ
@@ -688,6 +696,8 @@ theorem mu0_loc_eq_inv_om_pow_of_div_of_absNorm_eq {k : Fin 2} {w : PlE H} (hw :
 
 theorem hostHeckeFrame_tame_galois_characters (ha : IsGlobalArtin art) (he : ∀ j τ, ∃ z : ℤ, e j τ = z)
     (hg : ∀ k, (placesOver H.E (H.g k)).ncard = Module.finrank ℚ H.E) : TameInertiaGeneratorCharacterSpec H C art := by
+  have loc_mul (a b : HChar H.E) (v : HeightOneSpectrum (𝓞 H.E)) (x : (v.adicCompletion H.E)ˣ) :
+      (a * b).loc v x = a.loc v x * b.loc v x := rfl
   intro k w hw A hA tg htg teich hinj
   haveI : Fact (H.g k).Prime := ⟨H.g_prime k⟩
   have hwg := C.P.overP hw
@@ -753,7 +763,7 @@ theorem hostHeckeFrame_tame_galois_characters (ha : IsGlobalArtin art) (he : ∀
     refine ⟨n, htU ?_⟩
     rw [← hz, map_zpow, map_zpow, hγ']
   · have e1 := h.loc (Or.inl (notMem_of_ne (H.g_prime k) Fact.out hl.symm hwg)) ex
-    rw [block_loc (C.isEta.unr w) hx, HChar.loc_mul, hξ x hx, mul_one, hxa j, pow_mul, ← map_pow, ← hγa, map_pow, ← hγ',
+    rw [block_loc (C.isEta.unr w) hx, loc_mul, hξ x hx, mul_one, hxa j, pow_mul, ← map_pow, ← hγa, map_pow, ← hγ',
       ← pow_mul, ← map_pow, ← map_inv] at e1
     exact e1
 

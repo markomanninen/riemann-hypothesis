@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.OneSubEvTInvInt
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.UnitaryApproxFin
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.OneSubEvTInvInt
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.UnitaryApproxFin
+
+@[expose] public section
 
 open NumberField PI.UJClassFin PI.UnitaryGroupMassFormula.UJClassFin IsDedekindDomain
 open scoped TensorProduct
@@ -21,7 +25,7 @@ theorem Psi_sigR (v : HeightOneSpectrum (𝓞 F)) (x : Af F ⊗[F] E) :
     have e1 : PI.UJClassFin.sigR (Af F) σ (a ⊗ₜ[F] e) = a ⊗ₜ[F] σ e := by simp [PI.UJClassFin.sigR]
     rw [e1, Psi_tmul, Psi_tmul]
     simp [PI.UnitaryApproxDefs.sigR]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem Psi_inclR (v : HeightOneSpectrum (𝓞 F)) (e : E) :
     Psi v (inclR (F := F) (Af F) e) = PI.UnitaryApproxDefs.inclE (F := F) (Fv F v) e := by

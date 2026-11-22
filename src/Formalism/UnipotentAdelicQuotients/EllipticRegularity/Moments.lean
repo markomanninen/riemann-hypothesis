@@ -1,4 +1,8 @@
-import Formalism.UnipotentAdelicQuotients.EllRegCut
+module
+
+public import Formalism.UnipotentAdelicQuotients.EllRegCut
+
+@[expose] public section
 
 namespace ZetaZeros.D.EllReg
 

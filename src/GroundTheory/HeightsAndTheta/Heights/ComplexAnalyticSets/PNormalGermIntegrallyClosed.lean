@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalGermIntegrallyClosed
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StZariskiAnalyticNormality
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRueckertNullstellensatz
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.OsgoodSeparate
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalGermIntegrallyClosed
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StZariskiAnalyticNormality
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRueckertNullstellensatz
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.OsgoodSeparate
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -83,7 +88,8 @@ theorem exists_eq_mul_of_integral_relation {S : Type*} [CommRing S] [IsDomain S]
   have hrelK : algebraMap S K f ^ d + ∑ j, algebraMap S K (a j) * algebraMap S K f ^ (j : ℕ) *
       algebraMap S K g ^ (d - (j : ℕ)) = 0 := by
     have h2 := congrArg (algebraMap S K) hrel
-    simp only [map_add, map_sum, map_mul, map_pow, map_zero] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sum, map_mul, map_pow, map_zero] at h2
     exact h2
   have hg0 : algebraMap S K g ≠ 0 := fun h0 => hg (hinj (by rw [h0, map_zero]))
   generalize hfK : algebraMap S K f = fK at hrelK
@@ -165,14 +171,16 @@ theorem proof (hRueckert : RueckertNullstellensatz.Statement)
     simpa [hA, pA, GA, Finset.sum_apply, mul_pow] using hz
   have hPS : π PA = 0 := by
     have h1 : (π PA * π GA) ^ m = 0 := by
-      rw [← map_mul, ← map_pow, hprod, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_mul, ← map_pow, hprod, map_sum]
       exact Finset.sum_eq_zero fun i _ => by rw [map_mul, hπpoly _ (hpI i), mul_zero]
     exact (mul_eq_zero.1 ((pow_eq_zero_iff (Nat.pos_iff_ne_zero.1 hm)).1 h1)).resolve_right hGS
 
   have : IsDomain S := Ideal.Quotient.isDomain J
   obtain ⟨y, hy⟩ := exists_eq_mul_of_integral_relation (π FA) (π GA) (fun j => π (aA j)) hGS (by
     rw [← hPS]
-    simp only [PA, map_add, map_sum, map_mul, map_pow])
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [PA, map_add (f := _), map_sum, map_mul, map_pow])
   obtain ⟨φ, rfl⟩ := Ideal.Quotient.mk_surjective y
   obtain ⟨HA, rfl⟩ := toGerm_surjective w φ
   have hdiff : π (FA - GA * HA) = 0 := by

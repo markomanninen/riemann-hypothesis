@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -68,7 +72,7 @@ theorem selfDual_lattice_exists_norm_one_mod :
   have hnorm : ∀ s t : ℚ, h (((s : K) + (t : K) * θ) • y1) (((s : K) + (t : K) * θ) • y1)
       = (((s ^ 2 + (d : ℚ) * t ^ 2) * u1 : ℚ) : K) := by
     intro s t
-    simp only [map_smul, LinearMap.smul_apply, LinearMap.map_smulₛₗ, smul_eq_mul, hu1, map_add,
+    simp only [map_smul, LinearMap.smul_apply, LinearMap.map_smulₛₗ, smul_eq_mul, hu1, map_add (f := _),
       map_mul, map_ratCast, hσθ]
     push_cast
     linear_combination (-(t : K) ^ 2 * (u1 : K)) * hθ
@@ -92,7 +96,7 @@ theorem selfDual_lattice_exists_norm_one_mod :
     refine ⟨(a : K) • y1 + (b : K) • y2,
       L.add_mem (hL _ (intCast_mem O a) _ hy1L) (hL _ (intCast_mem O b) _ hy2L),
       W.add_mem (W.smul_mem _ hy1W) (W.smul_mem _ hy2W), _, ?_, hab'⟩
-    simp only [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply,
+    simp only [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply,
       LinearMap.map_smulₛₗ, smul_eq_mul, hu1, hu2, h12, h21, map_intCast]
     push_cast
     ring

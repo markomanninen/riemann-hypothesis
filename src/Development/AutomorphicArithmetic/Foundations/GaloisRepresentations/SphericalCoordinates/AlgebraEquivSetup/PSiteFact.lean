@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.TrivOfLe
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.PInIdBasic
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocEqOneOfMemGam
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.TrivOfLe
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.PInIdBasic
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocEqOneOfMemGam
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKGeo GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.CuspRep GlobalTheory.UnitaryBC Formalism.UG
 open UpperTheory.Gal.CertificateRingHomMap (GUf Plc comp lev GLw IsCen mat sim)
 open UpperTheory.Gal.W2.Seed UpperTheory.Gal.Int.Geo UpperTheory.Gal.Int.Geo.Pl UpperTheory.Gal.Spc
@@ -28,8 +33,8 @@ private lemma natCast_not_mem_of_coprime {E : Type} [Field E] [NumberField E] (u
   exact add_mem (Ideal.mul_mem_left _ _ h) (Ideal.mul_mem_left _ _ hq)
 
 private lemma comp_cj_mem {E : Type} [Field E] [NumberField E] [IsCMField E] (hI : UpperTheory.Gal.W2.Seed.IntConj) {n : ℕ} (g : GUf E n)
-    (w : Plc E) (hs : sim g ∈ UpperTheory.Gal.CertificateRingHomMap.ZU) (h : comp w g ∈ KGL w n) :
-    comp (UpperTheory.Gal.CertificateRingHomMap.cj w) g ∈ KGL (UpperTheory.Gal.CertificateRingHomMap.cj w) n := by
+    (w : Plc E) (hs : sim g ∈ UpperTheory.Gal.CertificateRingHomMap.ZU) (h : comp w g ∈ KGL w (n := n)) :
+    comp (UpperTheory.Gal.CertificateRingHomMap.cj w) g ∈ KGL (UpperTheory.Gal.CertificateRingHomMap.cj w) (n := n) := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · have e : comp (UpperTheory.Gal.CertificateRingHomMap.cj w) g = 1 := Units.ext (Subsingleton.elim _ _)
     rw [e]
@@ -60,7 +65,7 @@ private lemma exists_not_mem_of_sup {E : Type} [Field E] [NumberField E] (w : Pl
 
 private lemma loc_mem {E : Type} [Field E] [NumberField E] [IsCMField E] {A : Arith E} {n p : ℕ} [Fact p.Prime] {S : Setup A n p}
     (hD : Dict) (hS : Sides) (hI : UpperTheory.Gal.W2.Seed.IntConj) (hC : UpperTheory.Gal.CertificateRingHomMap.LocComm) (F : Frame S) {x : E} (hx : Gen A x)
-    {N : Lv p} {w : Plc E} (σ : Site S N w) (hw : IsSplitAt w) {y : GLw n w} (hy : y ∈ KGL w n) :
+    {N : Lv p} {w : Plc E} (σ : Site S N w) (hw : IsSplitAt w) {y : GLw n w} (hy : y ∈ KGL w (n := n)) :
     F.j (UpperTheory.Gal.CertificateRingHomMap.loc hw y) ∈ σ.K₀ := by
   have hq : σ.q.Prime := σ.atp.prime
   have hG : A.Good σ.q := σ.good
@@ -85,10 +90,10 @@ private lemma loc_mem {E : Type} [Field E] [NumberField E] [IsCMField E] {A : Ar
     have h2 : N.1 = 0 := by exact_mod_cast h1
     have := N.2.1
     omega
-  have hy' : comp w (UpperTheory.Gal.CertificateRingHomMap.loc hw y) ∈ KGL w n := by
+  have hy' : comp w (UpperTheory.Gal.CertificateRingHomMap.loc hw y) ∈ KGL w (n := n) := by
     rwa [UpperTheory.Gal.CertificateRingHomMap.comp_loc]
   have tri : ∀ u : Plc E, comp u (UpperTheory.Gal.CertificateRingHomMap.loc hw y) = 1 ∨ ((σ.q : 𝓞 E) ∈ u.asIdeal ∧
-      comp u (UpperTheory.Gal.CertificateRingHomMap.loc hw y) ∈ KGL u n ∧ ∃ s ∈ Ideal.span {((ordCompl[σ.q] N.1 : ℕ) : 𝓞 E)} * σ.𝔞, s ∉ u.asIdeal) := by
+      comp u (UpperTheory.Gal.CertificateRingHomMap.loc hw y) ∈ KGL u (n := n) ∧ ∃ s ∈ Ideal.span {((ordCompl[σ.q] N.1 : ℕ) : 𝓞 E)} * σ.𝔞, s ∉ u.asIdeal) := by
     intro u
     by_cases h1 : u = w
     · rw [h1]
@@ -98,8 +103,8 @@ private lemma loc_mem {E : Type} [Field E] [NumberField E] [IsCMField E] {A : Ar
     · rw [h2]
       exact Or.inr ⟨hqc, comp_cj_mem hI _ _ (by simp [one_mem]) hy', hs _ _ hqc hω ht'⟩
     · exact Or.inl (UpperTheory.Gal.CertificateRingHomMap.comp_loc_of_apart hw ((hap u).2 ⟨h1, h2⟩) y)
-  have hK : ∀ u : Plc E, (σ.q : 𝓞 E) ∈ u.asIdeal → comp u (UpperTheory.Gal.CertificateRingHomMap.loc hw y) ∈ KGL u n →
-      F.a u * comp u (UpperTheory.Gal.CertificateRingHomMap.loc hw y) * (F.a u)⁻¹ ∈ KGL u n := fun u h1 h2 =>
+  have hK : ∀ u : Plc E, (σ.q : 𝓞 E) ∈ u.asIdeal → comp u (UpperTheory.Gal.CertificateRingHomMap.loc hw y) ∈ KGL u (n := n) →
+      F.a u * comp u (UpperTheory.Gal.CertificateRingHomMap.loc hw y) * (F.a u)⁻¹ ∈ KGL u (n := n) := fun u h1 h2 =>
     have ha := F.a_int u σ.q hq hG h1
     mul_mem (mul_mem ha h2) (inv_mem ha)
   refine (σ.isLev _).2 ⟨(hD E A n p S F _).2.1.2 fun u _ => ?_, ((hD E A n p S F _).2.2.1 _ hb).2 fun u _ i k => ?_⟩
@@ -120,7 +125,7 @@ private lemma loc_mem {E : Type} [Field E] [NumberField E] [IsCMField E] {A : Ar
 
 private lemma pr_mem {E : Type} [Field E] [NumberField E] [IsCMField E] {A : Arith E} {n p : ℕ} [Fact p.Prime] {S : Setup A n p}
     (hD : Dict) (F : Frame S) {N : Lv p} {w : Plc E} (σ : Site S N w) (hp : (p : 𝓞 E) ∉ w.asIdeal) {g : GUf E n}
-    (hk : F.j g ∈ σ.K₀) : comp w g ∈ KGL w n := by
+    (hk : F.j g ∈ σ.K₀) : comp w g ∈ KGL w (n := n) := by
   have h1 := ((σ.isLev _).1 hk).1
   have h2 := (hD E A n p S F g).2.1.1 h1 w hp
   have ha := F.a_int w σ.q σ.atp.prime σ.good (σ.atp.le (q_in_uId S.D _ _))

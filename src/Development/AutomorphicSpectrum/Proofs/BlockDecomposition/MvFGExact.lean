@@ -1,10 +1,15 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.InclStd
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MapHComp
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MemBoundariesZeroIff
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CechVanishingFromCover
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BalancedLiftTmul
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubsingletonTensor
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.InclStd
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MapHComp
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MemBoundariesZeroIff
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CechVanishingFromCover
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BalancedLiftTmul
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubsingletonTensor
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 
@@ -81,8 +86,8 @@ theorem mvFG_exact (hU : Cosieve U) (hV : Cosieve V) (n : ℕ) : Function.Exact 
     refine sub_eq_zero.2 ?_
     rfl
 
-open Classical in
 
+open Classical in
 def extV (hU : Cosieve U) (hV : Cosieve V) {n : ℕ} (y : CH.Cn ((infP U V).ι ⋙ F) n) : CH.Cn (U.ι ⋙ F) n :=
   fun t => if h : V (t.obj 0).obj then
     y (liftW (P := infP U V) (fun _ _ f h => ⟨hU f h.1, hV f h.2⟩) t ⟨(t.obj 0).property, h⟩) else 0

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasLatticesComplete
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsUniquePairsToTower
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CubeTheorem
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CubWeilOneLeft
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.WeilIsValueEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasLatticesComplete
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsUniquePairsToTower
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CubeTheorem
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CubWeilOneLeft
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.WeilIsValueEq
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -28,21 +32,18 @@ variable [Algebra R A] [Algebra R B] {D E : Type} [CommRing D] [Algebra R D] [Co
 def ev (x : A →ₐ[R] D) (z : B →ₐ[R] D) : A ⊗[R] B →ₐ[R] D :=
   Algebra.TensorProduct.lift x z fun _ _ => Commute.all _ _
 
-@[simp] theorem ev_tmul (x : A →ₐ[R] D) (z : B →ₐ[R] D) (a : A) (b : B) : ev x z (a ⊗ₜ b) = x a * z b := rfl
-
 theorem ev_comp_left (x : A →ₐ[R] D) (z : B →ₐ[R] D) : (ev x z).comp Algebra.TensorProduct.includeLeft = x :=
-  AlgHom.ext fun a => by simp
+  AlgHom.ext fun a => by simp [ev]
 
 theorem ev_comp_right (x : A →ₐ[R] D) (z : B →ₐ[R] D) : (ev x z).comp Algebra.TensorProduct.includeRight = z :=
-  AlgHom.ext fun a => by simp
+  AlgHom.ext fun a => by simp [ev]
 
 theorem tensorToHom_ev (f : A →ₐ[R] D) (g : B →ₐ[R] E) (u : A ⊗[R] B) (φ : CartierDual R E) :
     tensorToHom R D E (ev (Algebra.TensorProduct.includeLeft.comp f) (Algebra.TensorProduct.includeRight.comp g) u) φ =
       f (tensorToHom R A B u (transpose g.toLinearMap φ)) := by
   induction u with
-  | zero => simp
-  | add s t hs ht => simp only [map_add, LinearMap.add_apply, hs, ht]
-  | tmul a b => simp
+  | add s t hs ht => simp only [map_add (f := _), LinearMap.add_apply, hs, ht]
+  | tmul a b => simp [ev, tensorToHom_apply]
 
 theorem tensorToHom_mul_right (u v : A ⊗[R] B) (φ ψ : CartierDual R B) :
     tensorToHom R A (B ⊗[R] B)
@@ -52,13 +53,11 @@ theorem tensorToHom_mul_right (u v : A ⊗[R] B) (φ ψ : CartierDual R B) :
           (Algebra.TensorProduct.includeRight.comp Algebra.TensorProduct.includeRight) v : A ⊗[R] (B ⊗[R] B))
       (toConv (pair R B B (φ ⊗ₜ ψ))) = tensorToHom R A B u φ * tensorToHom R A B v ψ := by
   induction u with
-  | zero => simp
-  | add s t hs ht => simp only [map_add, LinearMap.add_apply, add_mul, hs, ht]
+  | add s t hs ht => simp only [map_add (f := _), LinearMap.add_apply, add_mul, hs, ht]
   | tmul a b =>
     induction v with
-    | zero => simp
-    | add s t hs ht => simp only [map_add, LinearMap.add_apply, mul_add, hs, ht]
-    | tmul a' b' => simp [mul_smul, smul_comm (φ.ofConv b)]
+    | add s t hs ht => simp only [map_add (f := _), LinearMap.add_apply, mul_add, hs, ht]
+    | tmul a' b' => simp [ev, tensorToHom_apply, mul_smul, smul_comm (φ.ofConv b)]
 
 theorem tensorToHom_mul_left [Module.Finite R B] [Module.Projective R B] (u v : A ⊗[R] B) (φ : CartierDual R B) :
     tensorToHom R (A ⊗[R] A) B
@@ -68,22 +67,19 @@ theorem tensorToHom_mul_left [Module.Finite R B] [Module.Projective R B] (u v : 
           Algebra.TensorProduct.includeRight v : (A ⊗[R] A) ⊗[R] B) φ =
       TensorProduct.map (tensorToHom R A B u) (tensorToHom R A B v) (Coalgebra.comul φ) := by
   induction u with
-  | zero => simp
-  | add s t hs ht => simp only [map_add, LinearMap.add_apply, add_mul, hs, ht, TensorProduct.map_add_left]
+  | add s t hs ht => simp only [map_add (f := _), LinearMap.add_apply, add_mul, hs, ht, TensorProduct.map_add_left]
   | tmul a b =>
     induction v with
-    | zero => simp
-    | add s t hs ht => simp only [map_add, LinearMap.add_apply, mul_add, hs, ht, TensorProduct.map_add_right]
+    | add s t hs ht => simp only [map_add (f := _), LinearMap.add_apply, mul_add, hs, ht, TensorProduct.map_add_right]
     | tmul a' b' =>
       have key : ∀ t : CartierDual R B ⊗[R] CartierDual R B,
           TensorProduct.map (tensorToHom R A B (a ⊗ₜ b)) (tensorToHom R A B (a' ⊗ₜ b')) t =
             pair R B B t (b ⊗ₜ b') • (a ⊗ₜ a') := fun t => by
         induction t with
-        | zero => simp
-        | add s t hs ht => simp only [map_add, LinearMap.add_apply, add_smul, hs, ht]
-        | tmul f g => simp [← smul_tmul', smul_smul, mul_comm]
+        | add s t hs ht => simp only [map_add (f := _), LinearMap.add_apply, add_smul, hs, ht]
+        | tmul f g => simp [tensorToHom_apply, ← smul_tmul', smul_smul, mul_comm]
       rw [key, pair_comul_tmul]
-      simp
+      simp [ev, tensorToHom_apply]
 
 end Values
 
@@ -117,12 +113,12 @@ def IsBimul.hom : CartierDual R B →ₐc[R] A where
     have k : ∀ v : A ⊗[R] B, Coalgebra.counit (tensorToHom R A B v φ) =
         φ (ev (1 : WithConv (A →ₐ[R] B)).ofConv (AlgHom.id R B) v) := fun v => by
       induction v with
-      | zero => simp
-      | add s t hs ht => simp only [map_add, LinearMap.add_apply, hs, ht]
+      | add s t hs ht => simp only [map_add (f := _), LinearMap.add_apply, hs, ht]
       | tmul a b =>
-        have : φ.ofConv (algebraMap R B (Coalgebra.counit a) * b) = Coalgebra.counit a * φ.ofConv b := by
-          rw [← Algebra.smul_def, map_smul, smul_eq_mul]
-        simpa [mul_comm] using this.symm
+        change Coalgebra.counit (φ.ofConv b • a) =
+          φ.ofConv (algebraMap R B (Coalgebra.counit a) * b)
+        rw [← Algebra.smul_def, map_smul, map_smul]
+        exact mul_comm _ _
     exact (k u).trans (congrArg φ.ofConv e')
   map_comp_comul := LinearMap.ext fun φ => by
     have e := h.mul_left ((A ⊗[R] A) ⊗[R] B)
@@ -139,9 +135,10 @@ def IsBimul.hom : CartierDual R B →ₐc[R] A where
     have k : ∀ v : A ⊗[R] B, tensorToHom R A B v 1 =
         ev (AlgHom.id R A) (1 : WithConv (B →ₐ[R] A)).ofConv v := fun v => by
       induction v with
-      | zero => simp
-      | add s t hs ht => simp only [map_add, LinearMap.add_apply, hs, ht]
-      | tmul a b => simp [Algebra.smul_def, mul_comm]
+      | add s t hs ht => simp only [map_add (f := _), LinearMap.add_apply, hs, ht]
+      | tmul a b =>
+        change (Coalgebra.counit (R := R) b) • a = a * algebraMap R A (Coalgebra.counit b)
+        rw [Algebra.smul_def, mul_comm]
     exact (k u).trans e'
   map_mul' φ ψ := by
     have e := h.mul_right (A ⊗[R] (B ⊗[R] B)) Algebra.TensorProduct.includeLeft
@@ -249,28 +246,6 @@ theorem exists_of_cubical [IsCommMonObj (A ⊗ B)] (hAB : IsAbelianScheme (A ⊗
   exact ⟨w, fun n => ⟨U n, (UU.cubWeil_iff_weilIs globalFns_holds hAB (hU n).1 (hU n).2.1 _).1 (hU n),
     fun χ => (hw n χ).trans (tensorToHom_apply _ _)⟩⟩
 
-theorem exists_of_isDual (hC : GlobalTheory.Published.CubeTheorem) (hA : IsAbelianScheme A) (hB : IsAbelianScheme B)
-    {P : LB (A ⊗ B).left} (hP : IsDual A B P) {𝒜 ℬ : PDivGroup p R} (t : 𝒜.TorsionTower A)
-    (s : ℬ.TorsionTower B) : ∃ w : 𝒜 ⟶ ℬ.dual, IsWeilHom t s P w := by
-  have hAB := AbelianSchemeGerms.isAbelianScheme_tensor A B hA hB
-  have := hAB.comm
-  obtain ⟨r, hr⟩ : AbLaw.Triv (P.pull (eSec (A ⊗ B))) := by
-    have e := (AbDual.triv_ev_iff hP.isLB _ _).2
-      (AbDual.evc_one_right hP.isLB hP.zero (1 : 𝟙_ (Over (Sp R)) ⟶ A))
-    have e' : CartesianMonoidalCategory.lift (1 : 𝟙_ (Over (Sp R)) ⟶ A) (1 : 𝟙_ (Over (Sp R)) ⟶ B) = η[A ⊗ B] := by
-      ext <;> simp [Hom.one_def]
-    rw [AbDual.ev, e'] at e
-    exact e
-  obtain ⟨τ, hτ⟩ := triv_theta hC hAB hP.isLB
-  obtain ⟨τ', hτ', hn⟩ := AbLaw.Cube.exists_normalised hP.isLB τ hτ
-  exact exists_of_cubical hAB
-    (AbLaw.Cube.cubicalOfNormalised globalFns_holds hAB ⟨P, r, hP.isLB, hr⟩ τ' hτ' hn) t s
-
 end Geo
-
-theorem exists_isWeilHom : GlobalTheory.Published.CubeTheorem → ∀ (p : ℕ) [Fact p.Prime] (K : Type) [Field K] (A : Over (Sp K))
-    [GrpObj A], IsAbelianScheme A → ∀ (P : LB (A ⊗ A).left), IsDual A A P →
-    ∀ (𝒜 : PDivGroup p K) (t : 𝒜.TorsionTower A), ∃ w : 𝒜 ⟶ 𝒜.dual, IsWeilHom t t P w :=
-  fun hC _ _ _ _ _ _ hA _ hP _ t => exists_of_isDual hC hA hA hP t t
 
 end GlobalTheory.WeilHom

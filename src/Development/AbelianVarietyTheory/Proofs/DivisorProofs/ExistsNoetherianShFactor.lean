@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GalMapMul
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsFactorStrictHenselisation
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIndEtaleOfEtaleOfIsIndEtale
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GalMapMul
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsFactorStrictHenselisation
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIndEtaleOfEtaleOfIsIndEtale
+
+@[expose] public section
+
 open GlobalTheory.EtC IsLocalRing
 
 namespace GlobalTheory.NoethSHFactor
@@ -32,8 +37,10 @@ theorem exists_noetherian_sh_factor : ∀ (R A : Type) [CommRing R] [IsNoetheria
       rw [← hb', RingHom.comp_apply, ← h1, map_mul]
       exact hx.mul (by rw [← RingHom.comp_apply, hb']; exact hunit s)
     exact (mem_maximalIdeal _).1 hr h2
-  obtain ⟨D, _, _, _, c, w, hwc, P, _, φ, hφ, hφc, -⟩ :=
-    GlobalTheory.StrictHensFactor.exists_factor_strictHenselisation Rp Rp A (Algebra.ofId Rp A)
+  have hfactor :=
+    _root_.GlobalTheory.StrictHensFactor.exists_factor_strictHenselisation Rp Rp A
+      (Algebra.ofId Rp A)
+  obtain ⟨D, _, _, _, c, w, hwc, P, _, φ, hφ, _, _⟩ := hfactor
   haveI : IsNoetherianRing Rp := IsLocalization.isNoetherianRing p.primeCompl Rp inferInstance
   haveI : IsNoetherianRing (Localization.AtPrime P) :=
     IsLocalization.isNoetherianRing P.primeCompl _ inferInstance
@@ -42,9 +49,8 @@ theorem exists_noetherian_sh_factor : ∀ (R A : Type) [CommRing R] [IsNoetheria
     GlobalTheory.StalkNoeth.isNoetherianRing_of_indEt (Localization.AtPrime P) D hφ.2.2.2
   refine ⟨D, inferInstance, hD, ⟨hφ.1, hφ.2.1⟩, (c : Rp →+* D).comp (algebraMap R Rp), (w : D →+* A), ?_⟩
   rw [← RingHom.comp_assoc]
-  have : (w : D →+* A).comp (c : Rp →+* D) = b' := by
-    ext x
-    exact DFunLike.congr_fun hwc x
-  rw [this, hb']
+  have hwc' : (w : D →+* A).comp (c : Rp →+* D) = b' :=
+    congrArg AlgHom.toRingHom hwc
+  rw [hwc', hb']
 
 end GlobalTheory.NoethSHFactor

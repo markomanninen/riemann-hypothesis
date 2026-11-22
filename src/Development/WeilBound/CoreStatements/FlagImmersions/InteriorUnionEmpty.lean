@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogResolutionCompatiblePullback
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsMultiHomogIdealMap
-import ReciprocityTheory.AnalyticForms.PotentialTheory.Degree
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogResolutionCompatiblePullback
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsMultiHomogIdealMap
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Degree
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,7 +130,7 @@ theorem degree_comp {e d : ℕ} {X Y Z : Type} [TopologicalSpace X] [Topological
         show π (h c) = x
         rw [hcx]; exact hy
     rw [← himg]
-    refine (Set.ncard_image_of_injOn ?_).symm
+    refine (Set.InjOn.ncard_image ?_).symm
     intro z hz w _ hzw
     obtain ⟨c, hc⟩ := Set.ncard_eq_one.1 (b5 (h z) (hN _ hz))
     have e1 : w ∈ h ⁻¹' {h z} := hzw.symm

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FRatioSelf
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAffCoverSpec
-import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.RingKrullDimLeOfQuasiFinite
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsCotangentBasis
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AlgebraMapBasicOpen
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FRatioLinear
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FRatioSelf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAffCoverSpec
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.RingKrullDimLeOfQuasiFinite
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsCotangentBasis
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AlgebraMapBasicOpen
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FRatioLinear
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.CechDR GlobalTheory.PD
 
@@ -28,11 +32,6 @@ theorem lin_mem (c : Fin (N + 1) → ℂ) : lin c ∈ ProjSpace.grading ℂ N 1 
   unfold lin
   exact Submodule.sum_mem _ fun l _ => Submodule.smul_mem _ _ (ProjSpace.X_mem ℂ N l)
 
-def linMap : (Fin (N + 1) → ℂ) →ₗ[ℂ] MvPolynomial (Fin (N + 1)) ℂ where
-  toFun := lin
-  map_add' a b := by simp [lin, add_smul, Finset.sum_add_distrib]
-  map_smul' a b := by simp [lin, smul_smul, Finset.smul_sum]
-
 theorem exists_X_notMem (z : PSpace ℂ N) :
     ∃ l, (MvPolynomial.X l : MvPolynomial (Fin (N + 1)) ℂ) ∉ z.asHomogeneousIdeal.toIdeal := by
   by_contra h
@@ -45,9 +44,6 @@ theorem exists_X_notMem (z : PSpace ℂ N) :
   apply ProjectiveSpectrum.not_irrelevant_le z
   intro x hx
   exact hle (ProjSpace.irrelevant_le_span_X ℂ N hx)
-
-def van (z : PSpace ℂ N) : Submodule ℂ (Fin (N + 1) → ℂ) :=
-  (z.asHomogeneousIdeal.toIdeal.restrictScalars ℂ).comap linMap
 
 theorem exists_finite_gen {Y : Scheme.{0}} [NoetherianSpace Y] (Z : Set Y) (hZ : IsClosed Z) :
     ∃ T : Set Y, T.Finite ∧ T ⊆ Z ∧ ∀ x ∈ Z, ∃ t ∈ T, t ⤳ x := by
@@ -92,14 +88,6 @@ theorem ev₀_algebraMap (z : ℂ) : ev₀ ι g₀ hy (algebraMap ℂ (Sec p (fO
 theorem ev₀_smul (z : ℂ) (a : Sec p (fOpen ι g₀)) : ev₀ ι g₀ hy (z • a) = z * ev₀ ι g₀ hy a := by
   rw [Algebra.smul_def, map_mul, ev₀_algebraMap]
 
-theorem ev₀_vv (l : Fin (N + 1)) : ev₀ ι g₀ hy (vv ι g₀ hg₀ hy l) = 0 := by
-  unfold vv
-  rw [map_sub, ev₀_algebraMap, sub_self]
-
-theorem ev₀_sum (c : Fin (N + 1) → ℂ) : ev₀ ι g₀ hy (∑ l, c l • vv ι g₀ hg₀ hy l) = 0 := by
-  rw [map_sum]
-  exact Finset.sum_eq_zero fun l _ => by rw [ev₀_smul, ev₀_vv, mul_zero]
-
 theorem mkQ_eq_mkQ (a b : Sec p (fOpen ι g₀)) :
     (sqQ ι g₀ hy).mkQ a = (sqQ ι g₀ hy).mkQ b ↔ a - b ∈ RingHom.ker (ev₀ ι g₀ hy) ^ 2 := by
   rw [Submodule.mkQ_apply, Submodule.mkQ_apply, Submodule.Quotient.eq]
@@ -117,7 +105,8 @@ theorem Lm_apply (hp : ι ≫ PSpace.str ℂ N = p) (c : Fin (N + 1) → ℂ) :
     fRatio_linear X p N ι hp g₀ hg₀ c (lin_mem c)
   rw [hfr]
   congr 1
-  simp only [vv, smul_sub, Finset.sum_sub_distrib, map_sum, ev₀_smul, map_mul, Algebra.smul_def,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [vv, smul_sub, Finset.sum_sub_distrib, map_sum, ev₀_smul, map_mul, Algebra.smul_def,
     ev₀_algebraMap, mul_sub]
 
 end Cot

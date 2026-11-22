@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsClasses
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsEqSum
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MovFn
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ActOMemLatOOfHat
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIdemAtConjOfOtherPrimeOverSplit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHasLocalSmall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenComapProdLev
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsClasses
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsEqSum
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MovFn
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ActOMemLatOOfHat
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIdemAtConjOfOtherPrimeOverSplit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHasLocalSmall
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenComapProdLev
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.RowVertexInv GlobalTheory.SplitFlip
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
@@ -29,10 +34,11 @@ theorem notOff (S : GridChoice W U) {t : T} (ht : t ∈ U) {w : Pl D.host.E} (hw
 theorem cpt_supp_zero {S : Finset ℕ} {w : Pl D.host.E} (hw : ¬ Off S w) {P : Finset (Pl D.host.E)} {e : AE D}
     (he : IsIdemSum e P) (hoff : ∀ w' ∈ P, Off S w') : cpt w (toEAf D (e + cA D e)) = 0 := by
   obtain ⟨⟨es, hes, rfl⟩, -⟩ := he
-  rw [map_sum, ← Finset.sum_add_distrib, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← Finset.sum_add_distrib, map_sum, map_sum]
   refine Finset.sum_eq_zero fun w' hw' => ?_
   obtain ⟨hne, hnc⟩ := GlobalTheory.StdHalfLat.ne_and_not_conj hw (hoff w' hw')
-  rw [map_add, map_add, (cpt_of_isIdemAt (hes w' hw')).2 w hne,
+  rw [map_add (f := _), map_add (f := _), (cpt_of_isIdemAt (hes w' hw')).2 w hne,
     (cpt_of_isIdemAt (GlobalTheory.MovedIdem.isIdemAt_conj (hes w' hw') (GlobalTheory.IdemSupport.mem_cP w'))).2 w ?_, add_zero]
   rintro rfl
   apply hnc
@@ -152,5 +158,5 @@ theorem rowAt_move : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : 
     by_cases hi : i < D.R.m
     · rw [dif_pos hi, dif_pos hi, Function.update_of_ne (fun h => h1 (by simpa [Fin.ext_iff] using h)),
         Function.update_of_ne (fun h => h2 (by simpa [Fin.ext_iff] using h))]
-    · rw [dif_neg hi, dif_neg hi]
+    · rw [dite_eq_right hi, dite_eq_right hi]
 end GlobalTheory.RowMoveAt

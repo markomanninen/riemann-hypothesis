@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
+
+@[expose] public section
 
 noncomputable section
 open NumberField
@@ -71,8 +75,8 @@ theorem IsRat.act (hE : O.EquivAt κ cc) (hχ : R.grp_chiW) (g : G) {F : GA D (W
       O.phi cc (f k : C.R ((i : ℕ) + 1)) (x * hk.choose))) * e3
   · exact IsRat.zero O κ cc
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem of_before_projector (hE : O.EquivAt κ cc) (hχ : R.grp_chiW) (hG : R.thP_thG) (ph : ℂ)
     (h : ∀ x : A.fam.amb.FL i A.μ0, IsRat O κ cc (ph • R.thF i A.μ0 (jVx R i A.μ0 x) v₀)) : O.PhRat κ v₀ cc ph := by
   intro x

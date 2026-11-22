@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsOpenKerUnramMulTame
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsDoubleDescentRanksOneThreeFive
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsIsCombAt
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EntriesWellDefined
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteQuotientCosetsScaledStandardLatticeBox
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsOpenFix
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsOneCombSphLevel
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatticeClasses
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsAddChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsOpenKerUnramMulTame
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsDoubleDescentRanksOneThreeFive
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsIsCombAt
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EntriesWellDefined
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteQuotientCosetsScaledStandardLatticeBox
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsOpenFix
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsOneCombSphLevel
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatticeClasses
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsAddChar
+
+@[expose] public section
 
 set_option genSizeOfSpec false
 set_option genInjectivity false
@@ -143,8 +147,8 @@ def wtT (j : ℕ) (α : ChT G δ hδ η A M j) : ℂ :=
       (Nat.card {yb | SameOrb ((G.T δ hδ η).lev (G.s + 1) 0 rfl).J (box _ (G.ϖ ^ M)) (cosT G δ hδ η A M α) yb} : ℂ))
   else (idxT G δ hδ η (G.s + 1 + 1) : ℂ)
 
-open Classical in
 
+open Classical in
 def epsT (j : ℕ) (α : ChT G δ hδ η A M j) : GA D (c.V j) →₀ ℂ :=
   if j = 0 then Finsupp.single 1 1 else
   if hj : j ≤ G.s then
@@ -192,8 +196,8 @@ theorem repT_mem {D : D7} {c : Comm D} {v : VCom c} {B : GlobalTheory.Fam.Base c
   · exact x.1.2 d h
   · exact absurd o.2 (by omega)
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem exists_ext_of_reps : ∀ (D : D7) (c : Comm D) (v : VCom c) (B : GlobalTheory.Fam.Base c) (PP : Formalism.L2.DIV.Pl D.host.E) (G : QGeo v B PP) (χ : ℕ → (AE D)ˣ →* Circle), c.Is → ∀ (δ : G.kˣ →* ℂˣ) (hδ : IsTame δ) (η : ℕ → G.kˣ →* ℂˣ), (∀ j, IsUnram (η j)) → (∀ j, j ≤ G.s + 1 → (ofSplit G.q).IsComp (χ j)⁻¹ (η (j + 1) * δ)) → ∀ A, (G.T δ hδ η).IsRepSystem A G.ψk G.ν → ∀ M : ℕ, (G.T δ hδ η).Adapted A (box _ (G.ϖ ^ M)⁻¹) (box _ (G.ϖ ^ M)) → ∃ E : QExt G χ, E.δ = δ ∧ E.η = η ∧ E.A = A ∧ E.M = M ∧ ∀ y, ∃ z ∈ box (XIx (Fin D.R.k) (Fin D.R.t) (G.s + 1)) (G.ϖ ^ E.M)⁻¹, Submodule.Quotient.mk z = E.cos y := by
   intro D c v B PP G χ hc δ hδ η hη hcomp A hA M hM
   haveI := G.unitVol.1
@@ -266,23 +270,23 @@ theorem exists_ext_of_reps : ∀ (D : D7) (c : Comm D) (v : VCom c) (B : GlobalT
     intro j d h
     obtain rfl : d = G.s - j := by omega
     unfold eLT
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
     exact combOf_spec _ _ _ _ _
   ·
     intro j d H α γ
     obtain rfl : d = G.s - (j + 1) := by omega
     unfold dLT
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
     exact combOf_spec _ _ _ _ _
   ·
     intro α y
     unfold dLT
-    rw [dif_neg (by omega), dif_pos rfl]
+    rw [dite_eq_right (by omega), dite_eq_left rfl]
     exact combOf_spec _ _ _ _ _
   ·
     intro y u
     unfold dLT
-    rw [dif_neg (by omega), dif_neg (by omega), dif_pos rfl]
+    rw [dite_eq_right (by omega), dite_eq_right (by omega), dite_eq_left rfl]
     exact combOf_spec _ _ _ _ _
   ·
     intro j ρ hρ d h α
@@ -296,7 +300,7 @@ theorem exists_ext_of_reps : ∀ (D : D7) (c : Comm D) (v : VCom c) (B : GlobalT
         rw [hr]
         exact isOneComb_zero G δ hδ η ρ _ hρ _
       · unfold epsT
-        rw [if_pos rfl]
+        rw [ite_eq_left rfl]
         simp
     · have hP : (D.R.m - j) / 2 = ρ + 1 := by omega
       have H : ∃ e, IsOneComb G.ψk G.ν ((D.R.m - j) / 2) ((G.T δ hδ η).lev j (G.s - j + 1) (by omega))
@@ -311,32 +315,32 @@ theorem exists_ext_of_reps : ∀ (D : D7) (c : Comm D) (v : VCom c) (B : GlobalT
         rw [hP]
         exact id
       unfold epsT
-      rw [if_neg hj0, dif_pos (by omega), dif_pos H]
+      rw [ite_eq_right hj0, dite_eq_left (by omega), dite_eq_left H]
   ·
     intro α
     unfold epsT
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
   ·
     intro j d h
     obtain rfl : d = G.s + 1 - j := by omega
     unfold idxT
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
   ·
     unfold idxT
-    rw [dif_neg (by omega)]
+    rw [dite_eq_right (by omega)]
   ·
     intro j d h α
     obtain rfl : d = G.s - j := by omega
     unfold wtT
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
   ·
     intro y
     unfold wtT
-    rw [dif_neg (by omega), dif_pos rfl]
+    rw [dite_eq_right (by omega), dite_eq_left rfl]
   ·
     intro u
     unfold wtT
-    rw [dif_neg (by omega), dif_neg (by omega)]
+    rw [dite_eq_right (by omega), dite_eq_right (by omega)]
   ·
     rintro (x | o)
     · exact absurd rfl x.2
@@ -350,14 +354,6 @@ theorem exists_ext_of_reps : ∀ (D : D7) (c : Comm D) (v : VCom c) (B : GlobalT
     exact mulVec_mem_box hI ((Submodule.Quotient.eq _).1 hw.symm)
 
 variable {D : D7} {c : Comm D} {v : VCom c} {B : GlobalTheory.Fam.Base c} {PP : Formalism.L2.DIV.Pl D.host.E}
-
-def unitary {A : Type} [Group A] (δ : A →* ℂˣ) : A →* Circle where
-  toFun x := ⟨(δ x : ℂ) / (‖(δ x : ℂ)‖ : ℂ), mem_sphere_zero_iff_norm.2 (by
-    rw [norm_div, Complex.norm_real, norm_norm, div_self (norm_ne_zero_iff.2 (δ x).ne_zero)])⟩
-  map_one' := Subtype.ext (by simp)
-  map_mul' x y := Subtype.ext (by
-    change ((δ (x * y) : ℂˣ) : ℂ) / _ = (δ x : ℂ) / (‖(δ x : ℂ)‖ : ℂ) * ((δ y : ℂ) / (‖(δ y : ℂ)‖ : ℂ))
-    rw [map_mul, Units.val_mul, norm_mul, Complex.ofReal_mul, div_mul_div_comm])
 
 variable {G : QGeo v B PP} {χ : ℕ → (AE D)ˣ →* Circle} (E : QExt G χ)
 

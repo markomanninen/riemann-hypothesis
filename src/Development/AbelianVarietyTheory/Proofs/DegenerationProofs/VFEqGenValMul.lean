@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ReframeSt
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsNumOf
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ConstOfNormPeriodic
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.NonemptyCubicalPull
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ReframeSt
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsNumOf
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ConstOfNormPeriodic
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.NonemptyCubicalPull
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -68,7 +72,14 @@ theorem exists_cube_down {S S' : Scheme.{0}} {G : Over S} [GrpObj G] [IsCommMonO
   rw [q, map_one] at e
   have p := prod_cub (1 : G2 G' ⟶ G') (x2 G' 0) (x2 G' 1) (fun q => gw w q y (J (q ≫ F)) (J' q))
   rw [_root_.one_mul, _root_.one_mul] at p
-  have e' := ((isCub_cubV c (T := Over.mk ((G2 G').hom ≫ f)) hJ).face _ _).symm.trans (e.trans (congrArg (· * _) p))
+  have face : val c.t (lift (1 : Over.mk ((G2 G').hom ≫ f) ⟶ G)
+      (lift (pushHom gp _ (x2 G' 0)) (pushHom gp _ (x2 G' 1)))).left y J = 1 := by
+    have h := val_corr hJ (c.face 0) (lift (pushHom gp _ (x2 G' 0)) (pushHom gp _ (x2 G' 1))).left
+    rw [val_one] at h
+    refine Eq.trans ?_ h
+    refine Eq.trans ?_ (val_cub c (lift (pushHom gp _ (x2 G' 0)) (pushHom gp _ (x2 G' 1))) hJ (pzero G _) (x2 G 0) (x2 G 1)).symm
+    congr 1 <;> simp [x2, pzero, Hom.one_def]
+  have e' := face.symm.trans (e.trans (congrArg (· * _) p))
   refine (val_pull hJ' _ _ _).trans (Eq.trans ?_ (val_one _).symm)
   rw [Category.id_comp]
   apply Additive.ofMul.injective

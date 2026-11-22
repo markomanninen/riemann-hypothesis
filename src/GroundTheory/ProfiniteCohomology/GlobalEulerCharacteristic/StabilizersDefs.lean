@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeMackey
-import GroundTheory.ProfiniteCohomology.RealPlaces.GSDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeMackey
+public import GroundTheory.ProfiniteCohomology.RealPlaces.GSDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -78,10 +83,6 @@ variable (ιs : ∀ v : S, Ω →ₐ[F] AlgebraicClosure ((v : HeightOneSpectrum
 def gsDecompGroup (v : S) : Subgroup (L ≃ₐ[F] L) :=
   ((gsRestrictGal hL).comp (gsFinFamily S ιs v).toMonoidHom).range
 
-theorem mem_gsDecompGroup_iff (v : S) (τ : L ≃ₐ[F] L) :
-    τ ∈ gsDecompGroup hL ιs v ↔ ∃ g, gsRestrictGal hL (gsFinFamily S ιs v g) = τ :=
-  Iff.rfl
-
 theorem map_range_gsQuotientGalEquiv
     [(gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside F Ω S)).Normal] (v : S) :
     ((QuotientGroup.mk' (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside F Ω S))).comp
@@ -103,10 +104,6 @@ variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
 
 def gsRealDecompGroup (v : {v : InfinitePlace K.1 // v.IsReal}) : Subgroup (L.1 ≃ₐ[K.1] L.1) :=
   ((gsRestrictGal hL).comp (gsRealFamily S ιr v).toMonoidHom).range
-
-theorem mem_gsRealDecompGroup_iff (v : {v : InfinitePlace K.1 // v.IsReal}) (τ : L.1 ≃ₐ[K.1] L.1) :
-    τ ∈ gsRealDecompGroup S ιr hL v ↔ ∃ g, gsRestrictGal hL (gsRealFamily S ιr v g) = τ :=
-  Iff.rfl
 
 end Real
 

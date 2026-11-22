@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,6 @@ variable {n : ℕ} (ε : Fin n → Bool)
 
 def pt (k : KG ε) : ((Fin n × Fin n) ⊕ (Fin n × Fin n)) → ℂ :=
   Sum.elim (fun x => toMK k x.1 x.2) (fun x => star (toMK k x.1 x.2))
-
-theorem ev_eq (k : KG ε) (P : Poly n) : ev (toMK k) P = eval (pt ε k) P := rfl
 
 theorem continuous_toMK : Continuous fun k : KG ε => toMK k :=
   Units.continuous_val.comp (continuous_subtype_val.comp continuous_subtype_val)
@@ -53,7 +55,7 @@ theorem star_evL (P : Poly n) : ∃ Q : Poly n, Q.totalDegree ≤ P.totalDegree 
     rw [eval_rename, eval_map, ← coe_eval₂Hom]
     induction P using MvPolynomial.induction_on with
     | C a => simp
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | mul_X p v hp =>
       simp only [map_mul, hp, eval_X, coe_eval₂Hom, eval₂_X]
       rcases v with x | x <;> simp [pt]

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.GaloisLevelStructure.TiedHecke
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictRing
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GaloisLevelStructure.TiedHecke
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictRing
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.L2 Formalism.L2.NG Formalism.AUTREP
 open NumberField IsDedekindDomain
@@ -14,7 +18,7 @@ section General
 
 variable (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ)
 
-local notation3 "L⁺" => NumberField.maximalRealSubfield L
+local notation3 "L⁺" => maximalRealSubfield L
 
 theorem ALint_le : ReciprocityTheory.Aut.ALint L ≤ Formalism.MainNotions.S.IntAf (L⁺) L := by
   rw [ReciprocityTheory.Aut.ALint, Subring.closure_le]

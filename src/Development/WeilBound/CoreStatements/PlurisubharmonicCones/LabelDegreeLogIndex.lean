@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.LinearIndependentImg
+module
+
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.LinearIndependentImg
+
+@[expose] public section
 
 open NumberField GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp GroundTheory.Heights₂.Heights
 

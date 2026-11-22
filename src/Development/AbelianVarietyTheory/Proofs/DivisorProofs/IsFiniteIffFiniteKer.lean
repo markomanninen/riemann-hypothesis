@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -51,8 +56,8 @@ end GlobalTheory.AV.FinKer
 
 namespace GlobalTheory.AV.AbVar
 
-open GlobalTheory.AV.FinKer in
 
+open GlobalTheory.AV.FinKer in
 theorem isFinite_iff_finite_ker : ∀ (K : Type) [Field K] (A B : AbVar K) (f : A ⟶ B),
     IsFinite f.hom.left ↔ Finite (ptMap f).ker := by
   intro K _ A B f

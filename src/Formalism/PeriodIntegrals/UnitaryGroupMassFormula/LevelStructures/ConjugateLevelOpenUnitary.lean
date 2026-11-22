@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.MassDataInst
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.ConjugateLevelLeMaximalCompact
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.K2uLeKfHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.HaarIdx
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.MassDataInst
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.ConjugateLevelLeMaximalCompact
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.K2uLeKfHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.HaarIdx
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,10 +49,6 @@ def KvSub (X : HidaSetting D) (v : HeightOneSpectrum (𝓞 X.B.I.F)) :
     Subgroup (HA (Fv X.B.I.F v) X.B.I.cm.sig X.B.I.J) :=
   (Kloc (E := X.B.I.E) v (X.B.I.L : Set (Fin X.B.I.n → X.B.I.E))).comap
     (HR (Fv X.B.I.F v) X.B.I.cm.sig X.B.I.J).subtype
-
-theorem coe_KvSub (X : HidaSetting D) (v : HeightOneSpectrum (𝓞 X.B.I.F)) :
-    (KvSub X v : Set (HA (Fv X.B.I.F v) X.B.I.cm.sig X.B.I.J)) =
-      Kv X.B.I.cm.sig X.B.I.J (X.B.I.L : Set (Fin X.B.I.n → X.B.I.E)) v := rfl
 
 theorem local_level_le_maximal (X : HidaSetting D) (hb : AdBridgeIso X.B.I) (hK : X.LevelSubgroupCharacter) (hL : X.LevelSubgroupNormalized)
     (w : D.what₂.Word) (v : HeightOneSpectrum (𝓞 X.B.I.F)) : conjugateLevelLocal X hb hK w v ≤ KvSub X v := by
@@ -112,8 +112,8 @@ theorem haarIdxGlob_of (hO : ConjugateLevelOpenUnitary) : HaarIdxGlob := by
   have hop := hO X hb hK hT hL w
   rw [eA] at hop
   have hBor : BorelSpace (Hsub (Af X.B.I.F) X.B.I.cm.sig X.B.I.J (frameOf X w)) :=
-    Subtype.borelSpace ((Hsub (Af X.B.I.F) X.B.I.cm.sig X.B.I.J (frameOf X w) : Subgroup _) :
-      Set (HA (Af X.B.I.F) X.B.I.cm.sig X.B.I.J))
+    Subtype.borelSpace (fun x => x ∈ ((Hsub (Af X.B.I.F) X.B.I.cm.sig X.B.I.J (frameOf X w) : Subgroup _) :
+      Set (HA (Af X.B.I.F) X.B.I.cm.sig X.B.I.J)))
   have key := toReal_eq_relIndex_mul_of_haar (G := Hsub (Af X.B.I.F) X.B.I.cm.sig X.B.I.J (frameOf X w))
     (contMul_sub _) hBor
     (X.measW w).μHf hH _ _ hle hop
@@ -155,8 +155,8 @@ theorem haarIdxLoc_of (hO : ParabolicLevelOpenLocal) : HaarIdxLoc := by
   have hop := hO X hb hK hT hL w p
   rw [eA] at hop
   have hBor : BorelSpace (Ssub (Fv X.B.I.F p.1) X.B.I.cm.sig X.B.I.J (frameOf X w)) :=
-    Subtype.borelSpace ((Ssub (Fv X.B.I.F p.1) X.B.I.cm.sig X.B.I.J (frameOf X w) : Subgroup _) :
-      Set (HA (Fv X.B.I.F p.1) X.B.I.cm.sig X.B.I.J))
+    Subtype.borelSpace (fun x => x ∈ ((Ssub (Fv X.B.I.F p.1) X.B.I.cm.sig X.B.I.J (frameOf X w) : Subgroup _) :
+      Set (HA (Fv X.B.I.F p.1) X.B.I.cm.sig X.B.I.J)))
   have key := toReal_eq_relIndex_mul_of_haar (G := Ssub (Fv X.B.I.F p.1) X.B.I.cm.sig X.B.I.J (frameOf X w))
     (contMul_sub _) hBor
     ((X.measW w).μSv p.1) hH _ _ hle hop

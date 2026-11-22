@@ -1,13 +1,17 @@
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.RowWtSpan
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.RowLetter
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OnePos
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.GradedWeylDivisibility.FinalD
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AdjointTensorOfSingleValid
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FirstWeightLeConductor
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FormCoreSK
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.OpWords
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OpBound
+module
+
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.RowWtSpan
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.RowLetter
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OnePos
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AdjointTensorOfSingleValid
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FirstWeightLeConductor
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FormCoreSK
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.OpWords
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OpBound
+
+@[expose] public section
 
 noncomputable section
 

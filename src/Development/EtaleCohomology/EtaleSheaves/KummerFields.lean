@@ -1,9 +1,14 @@
-import Development.EtaleCohomology.EtaleSheaves.IsChernClassCocycle
-import Development.EtaleCohomology.EtaleSheaves.KummerSequence.ResMapNsmulHomotopy
-import Development.EtaleCohomology.EtaleSheaves.KummerSequence.LeafKumMuPf
-import Development.EtaleCohomology.EtaleSheaves.KummerFields.H0Naturality
-import Development.EtaleCohomology.EtaleSheaves.KummerFields.GmSecSurj
-import Development.EtaleCohomology.EtaleSheaves.LeafKumCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.InstCommRingR
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.EtaleCohomology.EtaleSheaves.KummerSequence.ResMapNsmulHomotopy
+public import Development.EtaleCohomology.EtaleSheaves.KummerSequence.LeafKumMuPf
+public import Development.EtaleCohomology.EtaleSheaves.KummerFields.H0Naturality
+public import Development.EtaleCohomology.EtaleSheaves.KummerFields.GmSecSurj
+public import Development.EtaleCohomology.EtaleSheaves.LeafKumCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC

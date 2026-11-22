@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JpUnif
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JpUnif
+
+@[expose] public section
+
 open Matrix GlobalTheory.CompanionTheory.Jp
 
 noncomputable section
@@ -94,18 +99,18 @@ theorem exists_integral {O L : Type} [CommRing O] [Field L] (ι : O →+* L) (h�
   have hC' : ι.mapMatrix C = dL * ι.mapMatrix C' := hC
   have hD' : ι ϖ • ι.mapMatrix D = dL * ι.mapMatrix D' := hD
   have h1' : ι.mapMatrix C * ι.mapMatrix Bi + ι.mapMatrix D * ι.mapMatrix Di = 1 := by
-    rw [← map_mul, ← map_mul, ← map_add, h1, map_one]
+    rw [← map_mul, ← map_mul, ← map_add (f := _), h1, map_one]
   have h2' : ι.mapMatrix C' * ι.mapMatrix Bi' + ι.mapMatrix D' * ι.mapMatrix Di' = 1 := by
-    rw [← map_mul, ← map_mul, ← map_add, h2, map_one]
+    rw [← map_mul, ← map_mul, ← map_add (f := _), h2, map_one]
   have hCi : ι.mapMatrix C' = dLi * ι.mapMatrix C := by
     rw [hC', ← Matrix.mul_assoc, hd', Matrix.one_mul]
   have hDi : ι.mapMatrix D' = ι ϖ • (dLi * ι.mapMatrix D) := by
     rw [← Matrix.mul_smul, hD', ← Matrix.mul_assoc, hd', Matrix.one_mul]
   have hF : ι.mapMatrix (C * Bi' + ϖ • (D * Di')) = dL := by
-    rw [map_add, hs, map_mul, map_mul, hC', ← Matrix.smul_mul, hD', Matrix.mul_assoc, Matrix.mul_assoc, ← Matrix.mul_add,
+    rw [map_add (f := _), hs, map_mul, map_mul, hC', ← Matrix.smul_mul, hD', Matrix.mul_assoc, Matrix.mul_assoc, ← Matrix.mul_add,
       h2', Matrix.mul_one]
   have hG : ι.mapMatrix (ϖ • (C' * Bi) + D' * Di) = ι ϖ • dLi := by
-    rw [map_add, hs, map_mul, map_mul, hCi, hDi, Matrix.smul_mul, Matrix.mul_assoc, Matrix.mul_assoc, ← smul_add,
+    rw [map_add (f := _), hs, map_mul, map_mul, hCi, hDi, Matrix.smul_mul, Matrix.mul_assoc, Matrix.mul_assoc, ← smul_add,
       ← Matrix.mul_add, h1', Matrix.mul_one]
   refine ⟨hinj ?_, hinj ?_, hinj ?_, hinj ?_⟩
   · rw [map_mul, hF, hG, hs, map_one, Matrix.mul_smul, hd]
@@ -139,11 +144,11 @@ theorem iD_eq_rank : ∀ (O L : Type) [CommRing O] [IsDomain O] [IsDiscreteValua
   have hd0 : (lowerLeftBlock κ * (κ'⁻¹).1.toBlocks₁₂ + ϖ • (dBlk κ * (κ'⁻¹).1.toBlocks₂₂)).map (IsLocalRing.residue O) =
       R (lowerLeftBlock κ) * R (κ'⁻¹).1.toBlocks₁₂ := by
     change R _ = _
-    rw [map_add, hsz, add_zero, map_mul]
+    rw [map_add (f := _), hsz, add_zero, map_mul]
   have hE0 : (ϖ • (lowerLeftBlock κ' * (κ⁻¹).1.toBlocks₁₂) + dBlk κ' * (κ⁻¹).1.toBlocks₂₂).map (IsLocalRing.residue O) =
       R (dBlk κ') * R (κ⁻¹).1.toBlocks₂₂ := by
     change R _ = _
-    rw [map_add, hsz, zero_add, map_mul]
+    rw [map_add (f := _), hsz, zero_add, map_mul]
   have r1 : ((lowerLeftBlock κ * (κ'⁻¹).1.toBlocks₁₂ + ϖ • (dBlk κ * (κ'⁻¹).1.toBlocks₂₂)).map (IsLocalRing.residue O)).rank
       = (R (lowerLeftBlock κ)).rank := by
     apply le_antisymm

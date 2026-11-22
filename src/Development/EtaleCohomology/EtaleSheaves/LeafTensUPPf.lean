@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.PairExtensionOfTensorUniversal
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.PairExtensionOfTensorUniversal
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex GlobalTheory.EtC
@@ -32,7 +36,7 @@ theorem lift_d (μ : Pair I J K) (U : Scheme.{0}) (w : ℤ) :
   simp only [LinearMap.comp_apply]
   change Sec.map (K.d w (w + 1)) (μ.lift U w (lo I J ⟨(s, t), h⟩ (a ⊗ₜ b))) =
     μ.lift U (w + 1) (dT I J U w (lo I J ⟨(s, t), h⟩ (a ⊗ₜ b)))
-  rw [dT_tmul, map_add, map_zsmul, lift_lo, lift_lo, lift_lo, μ.leibniz, Units.smul_def]
+  rw [dT_tmul, map_add (f := _), map_zsmul, lift_lo, lift_lo, lift_lo, μ.leibniz, Units.smul_def]
 
 def liftP (μ : Pair I J K) (w : ℤ) : TP I J w ⟶ (K.X w).obj where
   app U := ModuleCat.ofHom (μ.lift U.unop w)

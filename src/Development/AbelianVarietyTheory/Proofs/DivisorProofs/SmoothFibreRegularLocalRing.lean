@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsRegularRingOfSmooth
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsRegularRingOfSmooth
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory
 
 namespace GlobalTheory.FibreRegular

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.CellDefs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EvFinSSOneNot
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EqZeroOfComps
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.CellDefs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EvFinSSOneNot
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EqZeroOfComps
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,7 +91,7 @@ theorem unit_of_basis {R A ι : Type*} [CommRing R] [TopologicalSpace R] [IsTopo
     have h1 : L (1 - e + e * z) = f • L z + (1 - f) • (1 : Matrix ι ι R) := by
       have h0 : (Algebra.leftMulMatrix b) e = f • (1 : Matrix ι ι R) := by
         rw [he, AlgHom.commutes, Algebra.algebraMap_eq_smul_one]
-      simp only [L, map_add, map_sub, map_one, map_mul, h0, smul_mul_assoc, one_mul, sub_smul, one_smul]
+      simp only [L, map_add (f := _), map_sub, map_one, map_mul, h0, smul_mul_assoc, one_mul, sub_smul, one_smul]
       abel
     simp only [N]
     rw [h1, det_mix f hf, Matrix.det_one]

@@ -1,5 +1,9 @@
-import Formalism.PadicSubsetSums.StableGradedCounts.ZBrauerNesbittAlg
-import Lemmata.ScalarExtension.Scal
+module
+
+public import Formalism.PadicSubsetSums.StableGradedCounts.ZBrauerNesbittAlg
+public import Lemmata.ScalarExtension.Scal
+
+@[expose] public section
 
 noncomputable section
 open Polynomial
@@ -359,7 +363,7 @@ theorem cp_eq_of_span {K A : Type} [Field K] [IsAlgClosed K] [Ring A] [Algebra K
           rw [← Finset.sum_add_distrib]
           refine Finset.sum_congr rfl fun F hF => ?_
           obtain ⟨T, hT⟩ := hlin F hF
-          rw [hT, hT, hT, map_add, mul_add]
+          rw [hT, hT, hT, map_add (f := _), mul_add]
         rw [hxy, hx, hy, add_zero]
       | smul r x _ hx =>
         have hrx : ∑ F ∈ t1 ∪ t2, c F * (F (r • x)).nextCoeff =

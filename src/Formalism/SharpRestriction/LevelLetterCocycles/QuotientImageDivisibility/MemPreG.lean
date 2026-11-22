@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.LevNOsmul
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.FrobeniusSqComparisonLetter
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.LevNOsmul
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.FrobeniusSqComparisonLetter
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -26,7 +30,7 @@ def preG (i : ZMod n) {U : Type} [AddCommGroup U] [Module LL U]
   carrier := {x | G (Formalism.MainNotions.ArcLiftingSetup.cmpD W T (x : W.DD T)) ∈ Z}
   add_mem' := fun {a b} ha hb => by
     show G (Formalism.MainNotions.ArcLiftingSetup.cmpD W T ((a : W.DD T) + b)) ∈ Z
-    rw [cmpD_add W T (NDl_N W T a.2) (NDl_N W T b.2), map_add]
+    rw [cmpD_add W T (NDl_N W T a.2) (NDl_N W T b.2), map_add (f := _)]
     exact Z.add_mem ha hb
   zero_mem' := by
     show G (Formalism.MainNotions.ArcLiftingSetup.cmpD W T 0) ∈ Z
@@ -88,7 +92,7 @@ theorem pass3 [IsDomain O] [IsPrincipalIdealRing O] [IsFractionRing O LL]
     have e : Formalism.MainNotions.ArcLiftingSetup.cmpD W T ((x + x' : ↥(Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T (c - 1 - 1))) : W.DD T) =
         Formalism.MainNotions.ArcLiftingSetup.cmpD W T (x : W.DD T) + Formalism.MainNotions.ArcLiftingSetup.cmpD W T (x' : W.DD T) :=
       cmpD_add W T (NDl_N W T x.2) (NDl_N W T x'.2)
-    rw [e, hd0a, map_add, smul_add, smul_add]
+    rw [e, hd0a, map_add (f := _), smul_add, smul_add]
     have := Fη.add_mem h1 h2
     convert this using 1
     abel
@@ -153,7 +157,7 @@ theorem pass3 [IsDomain O] [IsPrincipalIdealRing O] [IsFractionRing O LL]
     have e : Formalism.MainNotions.ArcLiftingSetup.cmpD W T ((y + y' : ↥(Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T (c - 1 - 1 - 1))) :
         W.DD T) = Formalism.MainNotions.ArcLiftingSetup.cmpD W T (y : W.DD T) + Formalism.MainNotions.ArcLiftingSetup.cmpD W T (y' : W.DD T) :=
       cmpD_add W T (NDl_N W T y.2) (NDl_N W T y'.2)
-    rw [e, map_add, map_add, hd0a, smul_add, smul_add]
+    rw [e, map_add (f := _), map_add (f := _), hd0a, smul_add, smul_add]
     have := Fη.add_mem h1 h2
     convert this using 1
     abel
@@ -184,7 +188,7 @@ theorem pass3 [IsDomain O] [IsPrincipalIdealRing O] [IsFractionRing O LL]
     { toFun := fun α => C.mkQ (φ2 (∑ k, algebraMap O LL (α k) • Formalism.MainNotions.ArcLiftingSetup.cmpD W T (bF k)))
       map_zero' := by simp
       map_add' := fun α β => by
-        simp only [Pi.add_apply, map_add, add_smul, Finset.sum_add_distrib] }
+        simp only [Pi.add_apply, map_add (f := _), add_smul, Finset.sum_add_distrib] }
   have hphA : ∀ (o : O) (α : Fin d → O), phA (o • α) = algebraMap O LL o • phA α := by
     intro o α
     simp only [phA, AddMonoidHom.coe_mk, ZeroHom.coe_mk, Pi.smul_apply, smul_eq_mul, map_mul,
@@ -202,7 +206,8 @@ theorem pass3 [IsDomain O] [IsPrincipalIdealRing O] [IsFractionRing O LL]
       rw [Submodule.span_le]
       rintro _ ⟨α, rfl⟩
       refine ⟨_, ?_, rfl⟩
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Submodule.sum_mem _ fun k _ => by
         rw [map_smul]; exact Submodule.smul_mem _ _ (hletter k)
     exact (Submodule.finrank_mono hsub).trans hRk
@@ -241,7 +246,7 @@ theorem pass3 [IsDomain O] [IsPrincipalIdealRing O] [IsFractionRing O LL]
       rw [hsG, Finset.coe_image]
       exact h
     have e : Submodule.Quotient.mk y = Amb.mkQ (y - lin σ) + Amb.mkQ (lin σ) := by
-      rw [← map_add, sub_add_cancel]; rfl
+      rw [← map_add (f := _), sub_add_cancel]; rfl
     rw [e]
     exact Submodule.add_mem _ (Submodule.mem_sup_left hm1) (Submodule.mem_sup_right hm2)
   have ch2 := pchain_of_gen (pstep_gen (lenO := lenOl PD (O := O)) (m := m) (c := cc) F3b ψ3c

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.GapAbsOf
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.GapAbsOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ lemma dd_step (S : Multiset ℂ) (n : ℕ) (hS : Multiset.card S = n + 1) (T : M
   have h' : ψ (v (j + 1)) = ψ (T (v j)) + (-1 : ℂ) ^ (j + 1) * S.esymm (j + 1) * ψ x := by
     rw [← h]; ring
   rw [h']
-  simp only [LinearMap.comp_apply, map_add, map_mul]
+  simp only [LinearMap.comp_apply, map_add (f := _), map_mul]
   ring
 
 lemma dd_pow (S : Multiset ℂ) (n : ℕ) (hS : Multiset.card S = n + 1) (T : Module.End ℂ E) (v : ℕ → E) (x : E)
@@ -79,7 +83,7 @@ lemma dd_aeval (S : Multiset ℂ) (n : ℕ) (hS : Multiset.card S = n + 1) (T : 
   | add p r hp hr =>
     have : (p + r) * dd n v ψ - dd n v (ψ ∘ₗ (aeval T (p + r))) =
         (p * dd n v ψ - dd n v (ψ ∘ₗ (aeval T p))) + (r * dd n v ψ - dd n v (ψ ∘ₗ (aeval T r))) := by
-      rw [map_add, LinearMap.comp_add, dd_add]; ring
+      rw [map_add (f := _), LinearMap.comp_add, dd_add]; ring
     rw [this]; exact dvd_add hp hr
   | monomial k a =>
     have e : ψ ∘ₗ (aeval T (monomial k a)) = a • (ψ ∘ₗ (T ^ k)) := by
@@ -158,7 +162,8 @@ lemma rel_of_pair (S : Multiset ℂ) (n : ℕ) (hS : Multiset.card S = n + 1) (q
     (hp : ∀ j ≤ n, d * φ (v j) = (q ^ (n + 1 - j) - 1) * (((-1 : ℂ) ^ j) * S.esymm j) * c) :
     C d * (X * dd n v φ) =
       C c * (((S.map (fun t => X - C t)).prod).comp (C q * X) - (S.map (fun t => X - C t)).prod) := by
-  rw [Multiset.prod_X_sub_X_eq_sum_esymm, hS, ← coe_compRingHom_apply, map_sum, ← Finset.sum_sub_distrib,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Multiset.prod_X_sub_X_eq_sum_esymm, hS, ← coe_compRingHom_apply, map_sum, ← Finset.sum_sub_distrib,
     Finset.sum_range_succ, dd, Finset.mul_sum, Finset.mul_sum]
   simp only [coe_compRingHom_apply]
   have hlast : ((-1 : ℂ[X]) ^ (n + 1) * (C (S.esymm (n + 1)) * X ^ (n + 1 - (n + 1)))).comp (C q * X) -

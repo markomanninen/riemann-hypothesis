@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.PStab
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.PStab
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,14 +26,14 @@ theorem prod_sum_sum (g : Fin q → ι → ι → ℂ) :
 
 theorem tp_mul (A B : Matrix ι ι ℂ) : tp q (A * B) = tp q A * tp q B := by
   ext I J
-  simp only [tp, of_apply, mul_apply]
+  simp only [tp, of_apply, Matrix.mul_apply]
   rw [Fintype.prod_sum]
   simp [Finset.prod_mul_distrib]
 
 omit [Fintype ι] in
 theorem tp_one [DecidableEq ι] : tp q (1 : Matrix ι ι ℂ) = 1 := by
   ext I J
-  simp only [tp, of_apply, one_apply]
+  change (∏ i, (if I i = J i then (1 : ℂ) else 0)) = (if I = J then (1 : ℂ) else 0)
   by_cases h : I = J
   · subst h; simp
   · rw [if_neg h]
@@ -56,13 +60,13 @@ theorem fT'_conj (A : Matrix (Fin q → ι) (Fin q → ι) ℂ) (P : Matrix ι �
     fT' A (fun i => P * B i * Pᴴ) = fT' (tp q Pᵀ * A * tp q (P.map star)) B := by
   have h1 : ∀ (b : Matrix ι ι ℂ) (x y : ι), (P * b * Pᴴ) x y = ∑ u, ∑ v, P x u * b u v * star (P y v) := by
     intro b x y
-    simp only [mul_apply, conjTranspose_apply, Finset.sum_mul]
+    simp only [Matrix.mul_apply, conjTranspose_apply, Finset.sum_mul]
     rw [Finset.sum_comm]
   unfold fT'
   simp only [h1, prod_sum_sum, Finset.mul_sum]
   rw [sum4]
   refine Finset.sum_congr rfl fun U _ => Finset.sum_congr rfl fun V _ => ?_
-  simp only [mul_apply, tp, of_apply, transpose_apply, map_apply, Finset.sum_mul]
+  simp only [Matrix.mul_apply, tp, of_apply, transpose_apply, map_apply, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun J _ => Finset.sum_congr rfl fun I _ => ?_
   simp only [Finset.prod_mul_distrib]
@@ -76,7 +80,7 @@ variable {W : Type} [Fintype W] {m : ℕ}
 
 theorem blk_mul (d e : W → Matrix (Fin m) (Fin m) ℂ) : blk d * blk e = blk fun w => d w * e w := by
   ext x y
-  simp only [blk, mul_apply, of_apply]
+  simp only [blk, Matrix.mul_apply, of_apply]
   rw [Fintype.sum_prod_type]
   simp only
   by_cases h : x.1 = y.1
@@ -92,8 +96,8 @@ theorem blk_mul (d e : W → Matrix (Fin m) (Fin m) ℂ) : blk d * blk e = blk f
 
 theorem blk_one : blk (fun _ : W => (1 : Matrix (Fin m) (Fin m) ℂ)) = 1 := by
   ext x y
-  simp only [blk, of_apply, one_apply, Prod.ext_iff]
-  by_cases h : x.1 = y.1 <;> simp [h]
+  by_cases h₁ : x.1 = y.1 <;> by_cases h₂ : x.2 = y.2 <;>
+    simp [blk, Matrix.one_apply, Prod.ext_iff, h₁, h₂]
 
 theorem blk_transpose (d : W → Matrix (Fin m) (Fin m) ℂ) : (blk d)ᵀ = blk fun w => (d w)ᵀ := by
   ext x y
@@ -249,7 +253,8 @@ variable {q : ℕ}
 theorem f_expand (f : ContinuousMultilinearMap ℝ (fun _ : Fin q => HS L N) ℝ) (Y : Fin q → HS L N) :
     f Y = ∑ κ : Fin q → K L N, (∏ i, coef (κ i) (Y i)) * f (fun i => MH (κ i)) := by
   have : f Y = f (fun i => ∑ k : K L N, coef k (Y i) • MH k) := congrArg f (funext fun i => herm_decomp (Y i))
-  rw [this, ContinuousMultilinearMap.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [this, ContinuousMultilinearMap.map_sum]
   refine Finset.sum_congr rfl fun κ _ => ?_
   rw [ContinuousMultilinearMap.map_smul_univ, smul_eq_mul]
 
@@ -304,10 +309,10 @@ theorem conj_supp (d1 d2 : InfinitePlace L → Matrix (Fin N) (Fin N) ℂ)
     (A : Matrix (Fin q → Ix (InfinitePlace L) N) (Fin q → Ix (InfinitePlace L) N) ℂ)
     (hA : ∀ I J, A I J ≠ 0 → ∀ i, (I i).1 = (J i).1) (X Y : Fin q → Ix (InfinitePlace L) N)
     (h : (tp q (blk d1) * A * tp q (blk d2)) X Y ≠ 0) (i : Fin q) : (X i).1 = (Y i).1 := by
-  rw [mul_apply] at h
+  rw [Matrix.mul_apply] at h
   obtain ⟨J, -, hJ⟩ := Finset.exists_ne_zero_of_sum_ne_zero h
   obtain ⟨h1, h2⟩ := mul_ne_zero_iff.1 hJ
-  rw [mul_apply] at h1
+  rw [Matrix.mul_apply] at h1
   obtain ⟨I, -, hI⟩ := Finset.exists_ne_zero_of_sum_ne_zero h1
   obtain ⟨h3, h4⟩ := mul_ne_zero_iff.1 hI
   rw [tp_blk_supp d1 X I h3 i, hA I J h4 i, tp_blk_supp d2 J Y h2 i]

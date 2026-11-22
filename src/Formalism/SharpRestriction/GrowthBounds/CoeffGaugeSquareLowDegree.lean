@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.CoeffIdentitySelfConjOfTwo
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoeffIdentitySelfConjOfTwo
+
+@[expose] public section
 
 noncomputable section
 
@@ -187,7 +191,8 @@ theorem coeff_gaugeSquare_low_degree (X : RawChart C d I κ)
     (hax : ∀ e : Fin 2 × κ →₀ ℕ, (∀ s ∈ e.support, s.1 ≠ 1) → coeff e X.h = 0) (e : Fin 2 × κ →₀ ℕ)
     (he : zdeg e < 2) : coeff e (h2 X) = 0 := by
   unfold h2
-  rw [map_add, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), map_sum]
   by_cases h0 : ∀ i, e (1, i) = 0
   · rw [Finset.sum_eq_zero fun i _ => coeff_X_mul_rho i _ e (h0 i), add_zero]
     apply hax
@@ -266,7 +271,8 @@ theorem r1sHLin_holds : GaugeLeadingTermLinear := by
       unfold h2
       rw [subst_add hS]
       congr 1
-      rw [← substAlgHom_apply hS, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← substAlgHom_apply hS, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [substAlgHom_apply hS, subst_mul hS, subst_X hS]
     have e2 : ∀ F : MvPowerSeries κ C, subst a (rho F) = inV 0 (alongCv x F) := by
@@ -284,12 +290,14 @@ theorem r1sHLin_holds : GaugeLeadingTermLinear := by
   have hK2 : Kd (m * 2) (subst a (h2 X)) := Kd_subst ha0 haK (coeff_gaugeSquare_low_degree X hax)
   constructor
   · intro n j hj
-    rw [hdec, map_sub, hK2 n j (by omega), map_sum, zero_sub, neg_eq_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hdec, map_sub, hK2 n j (by omega), map_sum, zero_sub, neg_eq_zero]
     apply Finset.sum_eq_zero
     intro i _
     rw [coeff_inV_mul, hc i j hj, zero_mul]
   · intro n
-    rw [hdec, map_sub, hK2 n m (by omega), map_sum, zero_sub]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hdec, map_sub, hK2 n m (by omega), map_sum, zero_sub]
     congr 1
     simp only [coeff_inV_mul]
     have hv : (fun i => PowerSeries.coeff m (c i)) =
@@ -297,7 +305,8 @@ theorem r1sHLin_holds : GaugeLeadingTermLinear := by
       funext k
       rw [Finset.sum_eq_single k (fun q _ hq => by rw [Pi.single_eq_of_ne (Ne.symm hq), mul_zero])
         (fun h => absurd (Finset.mem_univ k) h), Pi.single_eq_same, mul_one]
-    rw [hv, sg_lin, alongCv_lin hx, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hv, sg_lin, alongCv_lin hx, map_sum]
     simp only [PowerSeries.coeff_smul, smul_eq_mul]
 
 end Formalism.L2.FormalSeriesBounds

@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.InfEmbGrpEq
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.FormsFiniteAlt
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.InfEmbGrpEq
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.FormsFiniteAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,15 +23,15 @@ def CharFinite : Prop :=
       ∀ z ∈ (isExpLieAlgebra K n).centerU, uAction z φ = χ z • φ})
 
 def AutTo : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (φ : Sm E a),
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (φ : Sm E a),
     IsAutForm φ → IsAutomorphicForm (K := E) (n := a) φ.1
 
 def CptTo : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), ∃ e : archCompact E a ≃* Kinf E a,
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), ∃ e : archCompact E a ≃* Kinf E a,
     ∀ (φ : Sm E a) (k : archCompact E a) (g : GA E a), (cptRep E a (e k) φ).1 g = φ.1 (g * infEmb E a k)
 
 def CentreTo : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), ∀ z ∈ (isExpLieAlgebra E a).centerU,
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), ∀ z ∈ (isExpLieAlgebra E a).centerU,
     ∃ z' ∈ Algebra.adjoin ℂ {x : Module.End ℂ (Sm E a) | ∃ τ u, x = cap τ u},
       ∀ (φ : Sm E a) (h : φ.1 ∈ archSmooth E a), (uAction z ⟨φ.1, h⟩).1 = (z' φ).1
 
@@ -56,7 +60,7 @@ theorem charFinite_of (h : Fin.FormsFinite) : CharFinite := by
         (∀ g, (fun k : archCompact K n => φ.1 (g * infEmb K n k)) ∈ GlobalTheory.Published.AutFin.coeffSpan ρ) ∧
         ∀ z ∈ (isExpLieAlgebra K n).centerU, uAction z φ = χ z • φ}
       add_mem' := fun {φ ψ} p q => ⟨p.1.add q.1, fun k hk g => congrArg₂ (· + ·) (p.2.1 k hk g) (q.2.1 k hk g),
-        fun g => add_mem (p.2.2.1 g) (q.2.2.1 g), fun z hz => by rw [map_add, p.2.2.2 z hz, q.2.2.2 z hz, smul_add]⟩
+        fun g => add_mem (p.2.2.1 g) (q.2.2.1 g), fun z hz => by rw [map_add (f := _), p.2.2.2 z hz, q.2.2.2 z hz, smul_add]⟩
       zero_mem' := ⟨isAutomorphicForm_zero, fun _ _ _ => rfl, fun _ => zero_mem _, fun z _ => by simp⟩
       smul_mem' := fun c φ p => ⟨p.1.smul c, fun k hk g => congrArg (c * ·) (p.2.1 k hk g),
         fun g => Submodule.smul_mem _ c (p.2.2.1 g), fun z hz => by rw [map_smul, p.2.2.2 z hz, smul_comm]⟩ }

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.NdHomSingle
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.PreDef
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.NdHomSingle
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.PreDef
+
+@[expose] public section
 
 noncomputable section
 

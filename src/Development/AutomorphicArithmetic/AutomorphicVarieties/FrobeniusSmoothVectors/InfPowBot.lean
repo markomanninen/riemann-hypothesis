@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -51,7 +55,7 @@ theorem UpperTheory.V.Fr.pr_sec :
   let s : C → C' := fun c => σ (Ideal.Quotient.mk (maximalIdeal C ^ N₀) c) + w c
   have hs : ∀ c, p (s c) = c := by
     intro c
-    simp only [s, map_add, hwp]
+    simp only [s, map_add (f := _), hwp]
     ring
   have hsd : ∀ n ≥ N₀, ∀ c₁ c₂ : C, c₁ - c₂ ∈ maximalIdeal C ^ n →
       s c₁ - s c₂ ∈ maximalIdeal C' ^ n := by

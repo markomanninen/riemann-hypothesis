@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalClauseOfFrobeniusHyps
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExistsXPowMul
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.SmulSDivMem
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMulVBFilCris
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalClauseOfFrobeniusHyps
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExistsXPowMul
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.SmulSDivMem
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMulVBFilCris
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,8 @@ theorem PhiSeq_smulS (hp : (PD.p : LL) ≠ 0) {T : LocLat G Qp LL O} {m : ℤ} {
     ⟨Int.toNat (k - m) + 1, by have := Int.self_le_toNat (k - m); push_cast; omega⟩
   rw [smulS_eq_sum (LB_PhiSeq hd) _ k N hN]
   simp only [PhiSeq]
-  rw [smulS_eq_sum hd g k N hN, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [smulS_eq_sum hd g k N hN, map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_smul, smul_smul, PowerSeries.coeff_rescale, smul_smul]
   congr 1
@@ -69,7 +74,7 @@ theorem laurentBounded_zero_of_trivial_twist (hs : W.s = 1) {Pt : ZMod n → LL 
   have hcc : PowerSeries.constantCoeff (W.lev i 1 W.X) = 0 := by
     rw [hX]
     have := congrArg PowerSeries.constantCoeff hF
-    rw [map_add, map_one, map_mul, PowerSeries.constantCoeff_C, hF0, one_mul] at this
+    rw [map_add (f := _), map_one, map_mul, PowerSeries.constantCoeff_C, hF0, one_mul] at this
     linear_combination this
   have h0 := ((h4.1 i 1 ⟨0, by simp⟩ hcc).1 x k).2 hk
   refine rk_ιV_inj PD (LL := LL) (V := T.V) ?_
@@ -118,7 +123,7 @@ theorem rescale_ne_zero (hp : (PD.p : LL) ≠ 0) {f : PowerSeries LL} (hf : f �
 theorem cc_levπ1 (i : ZMod n) : PowerSeries.constantCoeff (W.lev i 1 letπ) = 0 := by
   obtain ⟨F, hF0, -, hF⟩ := W.lev_π i 1 ⟨0, by simpa using IsPrimitiveRoot.one⟩
   have := congrArg PowerSeries.constantCoeff hF
-  rw [map_add, map_one, map_mul, PowerSeries.constantCoeff_C, hF0, one_mul] at this
+  rw [map_add (f := _), map_one, map_mul, PowerSeries.constantCoeff_C, hF0, one_mul] at this
   linear_combination this
 
 theorem cc_levπ₀1 (hR : RingA W) (h2 : 2 ≤ PD.p) (i : ZMod n) :
@@ -139,7 +144,7 @@ theorem levQ_ne (hA : Formalism.MainNotions.LiftingTheory.CaseA W) (hR : RingA W
   · intro h0
     have := congrArg PowerSeries.constantCoeff h0
     have e : Formalism.MainNotions.LiftingTheory.qp W = W.π₀ + ((PD.p : ℕ) : LetA O n) := rfl
-    rw [e, map_add, map_natCast, map_add, cc_levπ₀1 hR PD.hp.two_le, map_natCast, map_zero, zero_add] at this
+    rw [e, map_add (f := _), map_natCast, map_add (f := _), cc_levπ₀1 hR PD.hp.two_le, map_natCast, map_zero, zero_add] at this
     exact hp this
   · obtain ⟨⟨u, hu, he⟩, -, -⟩ := expRing_of W hR hA i ζ hζ
     rw [he]
@@ -348,7 +353,8 @@ theorem key_idJ {T : LocLat G Qp LL O} (Φ : W.DD T →ₗ[O] W.DD T) (ψ : LetA
         L ^ (σ + (J - e y)) • (r y • Φ (cc y)) := by
     intro y _
     rw [sub_smul, smul_sub, smul_smul (L ^ σ), ← pow_add]
-  rw [lO_smul, map_sub, map_sum, hΦL, Finset.sum_congr rfl fun y _ => hφ y, smul_sub, smul_sub,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [lO_smul, map_sub, map_sum, hΦL, Finset.sum_congr rfl fun y _ => hφ y, smul_sub, smul_sub,
     Finset.smul_sum, Finset.smul_sum, Finset.sum_congr rfl ht, Finset.sum_congr rfl hs,
     Finset.sum_sub_distrib, smul_smul, smul_smul, mul_comm (L ^ J)]
   abel
@@ -412,7 +418,8 @@ theorem expH (hA : Formalism.MainNotions.LiftingTheory.CaseA W) (hR : RingA W) (
           (⟨cc y, hcc y⟩ : ↥(W.N T)) := by
       apply Subtype.ext
       simp only [hh, Submodule.coe_sub, Submodule.coe_smul, Submodule.coe_sum, smul_smul]
-    rw [hhsub, levB_sub, map_sum, Pi.sub_apply, Finset.sum_apply, levB_smul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hhsub, levB_sub, map_sum, Pi.sub_apply, Finset.sum_apply, levB_smul,
       smulSeries_apply_zero (laurentBounded_zero_of_trivial_twist C hs h4 i _)]
     have h0 : ∀ y ∈ Finset.range K, C.levB T i 1 ((((PD.p : ℕ) : LetA O n) ^ (J - e y) * W.π₀ ^ y) •
         (⟨cc y, hcc y⟩ : ↥(W.N T))) 0 = 0 := by
@@ -602,7 +609,8 @@ theorem tHor_of (Ct : CmpTie W E ιdR p1 tS zS) (hinj : Function.Injective (alge
       smulS (W.lev (i + ((j' + 1 : ℕ) : ZMod n)) ζ Bb)
         (smulS (W.lev (i + ((j' + 1 : ℕ) : ZMod n)) ζ (Formalism.MainNotions.LiftingTheory.qp W ^ k * a)) Stuff) := by
     simp only [U]
-    rw [levB_smul, levB_add, map_sum, levB_smul, hEBh,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [levB_smul, levB_add, map_sum, levB_smul, hEBh,
       Finset.sum_congr rfl fun y hy => by rw [levB_smul, hLxc y hy]]
     rw [smulS_comm hΦh, Finset.sum_congr rfl fun y _ => smulS_comm (hΦc y) _ _,
       ← smulS_sum _ _ (fun y _ => LB_smulS (hΦc y) _),

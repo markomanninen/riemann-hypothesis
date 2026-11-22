@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedPhiGammaModelCharacterEqStandardStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ModelObjAndAbcStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ModelPreimageOfInjectiveFinDimRepModelHomStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ModelPushOfSurjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapExactMiddle
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapAevalNab
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedPhiGammaModelCharacterEqStandardStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ModelObjAndAbcStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ModelPreimageOfInjectiveFinDimRepModelHomStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ModelPushOfSurjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapExactMiddle
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapAevalNab
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.TopSteps.ExtPair
@@ -48,7 +52,7 @@ theorem aeval_nab_mem {a : ℕ} (g : Vc k a →ₗ[k] Vc k a) (N : Submodule k�
     simp only [Polynomial.aeval_C, Module.algebraMap_end_apply]
     exact N.smul_of_tower_mem c hx
   | add p q hp hq =>
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     exact N.add_mem (hp x hx) (hq x hx)
   | monomial m c ih =>
     rw [pow_succ, ← mul_assoc, map_mul, Polynomial.aeval_X, Module.End.mul_apply]
@@ -75,8 +79,8 @@ theorem exists_model_repr_inZZ : ∀ {k G : Type} [Field k] [Group G] {l n : ℕ
     have h : p (E.ρ σ x) = p x := by
       conv_lhs => rw [hx]
       conv_rhs => rw [hx]
-      rw [map_add, map_smul, ← ha, hez]
-      simp only [map_add, map_smul, hpa, add_zero]
+      rw [map_add (f := _), map_smul, ← ha, hez]
+      simp only [map_add (f := _), map_smul, hpa, add_zero]
     rw [h]
     change _ = (((1 : G →* kˣ) σ : kˣ) : k) • p x
     simp
@@ -140,19 +144,19 @@ theorem exists_model_repr_inZZ : ∀ {k G : Type} [Field k] [Group G] {l n : ℕ
             change F.map A E a (i - 1) m ∈ NE (i - 1)
             rw [hm]; exact Submodule.sub_mem _ hx (Submodule.smul_mem _ _ (hεN _))
           refine ⟨(F.D A).φ i m, Submodule.subset_span ⟨m, hmN, rfl⟩, R.φ (algebraMap k⟦X⟧ k⸨X⸩ c), ?_⟩
-          rw [aφ, hm, ← (F.D E).φ_semi i, algebraMap_smul, ← map_add, sub_add_cancel]
+          rw [aφ, hm, ← (F.D E).φ_semi i, algebraMap_smul, ← map_add (f := _), sub_add_cancel]
         | zero => exact ⟨0, Submodule.zero_mem _, 0, by simp⟩
         | add y y' _ _ hy hy' =>
           obtain ⟨m, hm, c, rfl⟩ := hy
           obtain ⟨m', hm', c', rfl⟩ := hy'
-          exact ⟨m + m', Submodule.add_mem _ hm hm', c + c', by rw [map_add, add_smul]; abel⟩
+          exact ⟨m + m', Submodule.add_mem _ hm hm', c + c', by rw [map_add (f := _), add_smul]; abel⟩
         | smul d y _ hy =>
           obtain ⟨m, hm, c, rfl⟩ := hy
           refine ⟨d • m, Submodule.smul_mem _ _ hm, d • c, ?_⟩
           rw [smul_add, LinearMap.map_smul_of_tower, smul_assoc]
       obtain ⟨m, hm, c, hc⟩ := hdec _ ((hAB i).2 (mem_sh_iff_exists.2 ⟨_, hεN i, rfl⟩))
       have h5 := congrArg (F.map E (chr 1) p i) hc
-      rw [map_smul, map_add, map_smul, pφ, hεp, hεp, F.unit_φ, (hD i).apply_apply_eq_zero, zero_add] at h5
+      rw [map_smul, map_add (f := _), map_smul, pφ, hεp, hεp, F.unit_φ, (hD i).apply_apply_eq_zero, zero_add] at h5
       have h6 : vv k ^ Dt.wst i = c := smul_left_injective _ (F.unit_ne i) h5
       rw [mem_sh_iff_smul_mem, neg_neg]
       have h7 : vv k ^ Dt.wst i • b i = -m := by

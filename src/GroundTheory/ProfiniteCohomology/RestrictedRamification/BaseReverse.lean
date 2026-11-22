@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.CompactCupEqCompactCupRight
-import GroundTheory.ProfiniteCohomology.PoincarePairs.IsDiscreteRepResHomCoindRes
-import GroundTheory.TateCohomology.CupGraded
-import GroundTheory.ProfiniteCohomology.Bridge
-import GroundTheory.ProfiniteCohomology.PoincarePairs.ConeProduct
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.CompactCupEqCompactCupRight
+public import GroundTheory.ProfiniteCohomology.PoincarePairs.IsDiscreteRepResHomCoindRes
+public import GroundTheory.TateCohomology.CupGraded
+public import GroundTheory.ProfiniteCohomology.Bridge
+public import GroundTheory.ProfiniteCohomology.PoincarePairs.ConeProduct
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -68,8 +73,8 @@ theorem cochainOf_revLC (n : ℕ) (x : (cochainsComplex A).X n) :
 
 variable {A}
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [IsDiscreteRep A] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] [IsDiscreteRep A] in
 theorem revCochain_zero (f : (Fin 0 → G) → A) : revCochain 0 f = f := by
   funext x
   rw [revCochain_apply, triangle_zero, pow_zero, one_smul, show Fin.last 0 = 0 from rfl,
@@ -178,13 +183,13 @@ theorem revCochain_two_apply (x : (Fin 2 → G) → A) (a b : G) :
   have : ((-1 : k) ^ 3) = -1 := by norm_num
   rw [this, neg_one_smul]
 
-variable (A) in
 
+variable (A) in
 def revHtpyOne (f : (Fin 1 → G) → A) : (Fin 0 → G) → A :=
   fun _ => f ![1]
 
-variable (A) in
 
+variable (A) in
 def revHtpyTwo (x : (Fin 2 → G) → A) : (Fin 1 → G) → A :=
   fun g => -x ![g 0, (g 0)⁻¹] - A.ρ (g 0) (x ![1, 1])
 
@@ -208,7 +213,7 @@ theorem revCochain_one_sub (f : (Fin 1 → G) → A) :
   rw [revCochain_one_apply, revD_zero_apply]
   simp only [revHtpyOne, revHtpyTwo, Matrix.cons_val_zero]
   rw [revD_one_apply, revD_one_apply, mul_inv_cancel, one_mul]
-  simp only [map_add, map_sub, map_one, Module.End.one_apply]
+  simp only [map_add (f := _), map_sub, map_one, Module.End.one_apply]
   abel
 
 theorem revCochain_two_sub (x : (Fin 2 → G) → A) (hx : (inhomogeneousCochains.d A 2).hom x = 0) :
@@ -243,7 +248,7 @@ theorem revCochain_two_sub (x : (Fin 2 → G) → A) (hx : (inhomogeneousCochain
       _ = x ![1, a⁻¹] - (x ![1, a⁻¹] - x ![1, a⁻¹] + x ![1, a⁻¹] - x ![1, 1]) := by rw [h]
       _ = _ := by abel
   rw [mul_inv_rev, C1, C2, C3]
-  simp only [map_add, map_sub, map_neg, map_mul, Module.End.mul_apply]
+  simp only [map_add (f := _), map_sub, map_neg, map_mul, Module.End.mul_apply]
   abel
 
 end Homotopy
@@ -447,24 +452,6 @@ theorem d_coconeMkZero (x : K.X 0) :
   change (f.f 0).hom x + 0 = (f.f 0).hom x
   exact add_zero _
 
-theorem coconeLeft_μ_coconeMkSucc {K' L' N N' : CochainComplex (ModuleCat.{u} k) ℕ} {f' : K' ⟶ L'}
-    (μL : LeibnizPairing L N' L') (ρ : N ⟶ N') (μK : LeibnizPairing K N K')
-    (hc : ∀ {r s n : ℕ} (h : r + s = n) (x : K.X r) (z : N.X s),
-      (f'.f n).hom (μK.μ h x z) = μL.μ h ((f.f r).hom x) ((ρ.f s).hom z))
-    {r s m : ℕ} (h : r + 1 + s = m + 1) (h0 : r + s = m) (x : K.X (r + 1)) (y : L.X r) (z : N.X s) :
-    (LeibnizPairing.coconeLeft μL ρ μK hc).μ h (coconeMkSucc f x y) z =
-      coconeMkSucc f' (μK.μ h x z) (μL.μ h0 y ((ρ.f s).hom z)) :=
-  rfl
-
-theorem coconeRight_μ_coconeMkSucc {K' L' M M' : CochainComplex (ModuleCat.{u} k) ℕ} {f' : K' ⟶ L'}
-    (μR : LeibnizPairing M' L L') (ρ : M ⟶ M') (μK : LeibnizPairing M K K')
-    (hc : ∀ {r s n : ℕ} (h : r + s = n) (x : M.X r) (y : K.X s),
-      (f'.f n).hom (μK.μ h x y) = μR.μ h ((ρ.f r).hom x) ((f.f s).hom y))
-    {r s m : ℕ} (h : s + (r + 1) = m + 1) (h0 : s + r = m) (z : M.X s) (x : K.X (r + 1)) (y : L.X r) :
-    (LeibnizPairing.coconeRight μR ρ μK hc).μ h z (coconeMkSucc f x y) =
-      coconeMkSucc f' (μK.μ h z x) ((-1 : k) ^ s • μR.μ h0 ((ρ.f s).hom z) y) :=
-  rfl
-
 end ConeElements
 
 section ConeIdentity
@@ -617,14 +604,14 @@ section CupReverse
 variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   {A B C : Rep.{u} k G} [IsDiscreteRep A] [IsDiscreteRep B] [IsDiscreteRep C]
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [IsDiscreteRep A] [IsDiscreteRep B] [IsDiscreteRep C] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] [IsDiscreteRep A] [IsDiscreteRep B] [IsDiscreteRep C] in
 noncomputable abbrev resPairingAlong {H : Type u} [Group H] (ψ : H →* G) (μ : A ⊗ B ⟶ C) :
     Rep.res ψ A ⊗ Rep.res ψ B ⟶ Rep.res ψ C :=
   (Rep.resFunctor ψ).map μ
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [IsDiscreteRep A] [IsDiscreteRep B] [IsDiscreteRep C] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] [IsDiscreteRep A] [IsDiscreteRep B] [IsDiscreteRep C] in
 theorem revCochain_hom {X Y : Rep.{u} k G} (μ : X ⟶ Y) {n : ℕ} (F : (Fin n → G) → X) (σ : Fin n → G) :
     revCochain n (fun τ => μ.hom (F τ)) σ = μ.hom (revCochain n F σ) := by
   rw [revCochain_apply, revCochain_apply, map_smul, Rep.hom_comm_apply]
@@ -641,8 +628,8 @@ theorem revLC_cupPairingCochains (μ : A ⊗ B ⟶ C) {p q n : ℕ} (h : p + q =
     revCochain_cupCochain h h', map_smul]
   rfl
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [IsDiscreteRep A] [IsDiscreteRep B] [IsDiscreteRep C] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] [IsDiscreteRep A] [IsDiscreteRep B] [IsDiscreteRep C] in
 theorem braiding_comp_resPairingAlong {H : Type u} [Group H] (ψ : H →* G) (μ : A ⊗ B ⟶ C) :
     (β_ (Rep.res ψ B) (Rep.res ψ A)).hom ≫ resPairingAlong ψ μ = resPairingAlong ψ ((β_ B A).hom ≫ μ) := by
   apply Rep.hom_ext
@@ -694,8 +681,8 @@ theorem neg_one_pow_succ_mul_mul (r s : ℕ) :
     (-1 : k) ^ ((r + 1) * s) * (-1 : k) ^ s = (-1 : k) ^ (r * s) := by
   rw [Nat.succ_mul, pow_add, mul_assoc, ← mul_pow, neg_one_mul, neg_neg, one_pow, mul_one]
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem revCone_compactCup_succ (μ : A ⊗ B ⟶ C) {r s m : ℕ} (h : r + 1 + s = m + 1)
     (h' : s + (r + 1) = m + 1) (x : (cochainsComplex A).X (r + 1))
     (y : (piComplex fun v => cochainsComplex (Rep.res (φ v).toMonoidHom A)).X r)
@@ -736,8 +723,8 @@ theorem revCone_compactCup_succ (μ : A ⊗ B ⟶ C) {r s m : ℕ} (h : r + 1 + 
   rw [e, braiding_comp_resPairingAlong, ← neg_one_pow_succ_mul_mul r s, ← smul_smul] at key
   exact key
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem revCone_compactCup_zero (μ : A ⊗ B ⟶ C) {s : ℕ} (h : 0 + s = s) (h' : s + 0 = s)
     (x : (cochainsComplex A).X 0) (z : (cochainsComplex B).X s) :
     ((revCone φ C (fun v => Rep.res (φ v).toMonoidHom C) (fun _ => 𝟙 _)).f s).hom

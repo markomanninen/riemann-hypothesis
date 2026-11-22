@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.LisoSmulMem
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.LadjFrame
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.LretrCancel
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.LTheta
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.LisoSmulMem
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.LadjFrame
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.LretrCancel
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.LTheta
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,35 +79,6 @@ theorem rlift_spl_of_retr (hcm : Formalism.HermitianLatticesTheory.IsCMUnram E) 
     simp only [LinearMap.sub_apply, LinearMap.smul_apply, LinearMap.comp_apply]
     rw [h0, hzero' y hy, map_zero, smul_zero, sub_zero]
 
-theorem rlift_spl_exists (hcm : Formalism.HermitianLatticesTheory.IsCMUnram E) (Λ : Submodule (𝓞 E) S.V) (X : Submodule E S.V)
-    (hlat : Submodule.IsLattice E Λ) (huni : Formalism.HermitianLatticesTheory.IsUnimodular S.hT Λ) (hiso : ∀ x ∈ X, ∀ y ∈ X, S.hT x y = 0)
-    (z m : S.V) (hz : z ∈ Λ) (hzX : ∀ x ∈ X, S.hT x z = 0) (hm : m ∈ Λ) (hmX : ∀ x ∈ X, S.hT x m = 0)
-    (hmz : S.hT m z = 1) :
-    ∃ P P' : S.V →ₗ[E] S.V, rlift_Spl Λ X P P' ∧ P z = 0 := by
-  obtain ⟨product_zeroth_terms, hid, hX, hint⟩ := l_retr E S Λ X hlat
-  have hdual : ∀ l ∈ Λ, ∃ o : 𝓞 E, (o : E) = S.hT m l := by
-    intro l hl
-    have h1 : l ∈ Formalism.HermitianLatticesTheory.dual S.hT Λ := by rw [huni]; exact hl
-    unfold Formalism.HermitianLatticesTheory.dual Formalism.E.hdual at h1
-    simp only [Submodule.mem_iInf, Submodule.mem_comap, LinearMap.restrictScalars_apply] at h1
-    obtain ⟨o, ho⟩ := Submodule.mem_one.1 (h1 m hm)
-    exact ⟨o, ho⟩
-  obtain ⟨P, P', hS, hk⟩ := rlift_spl_of_retr hcm Λ X huni hiso (product_zeroth_terms - (S.hT m).smulRight (product_zeroth_terms z))
-    (fun x hx => by
-      simp only [LinearMap.sub_apply, LinearMap.smulRight_apply]
-      rw [rlift_swap (hmX x hx), zero_smul, sub_zero, hid x hx])
-    (fun y => by
-      simp only [LinearMap.sub_apply, LinearMap.smulRight_apply]
-      exact X.sub_mem (hX y) (X.smul_mem _ (hX z)))
-    (fun l hl => by
-      simp only [LinearMap.sub_apply, LinearMap.smulRight_apply]
-      obtain ⟨o, ho⟩ := hdual l hl
-      rw [← ho]
-      exact Λ.sub_mem (hint l hl) (liso_smul_mem Λ o (hint z hz)))
-  refine ⟨P, P', hS, hk z hzX ?_⟩
-  simp only [LinearMap.sub_apply, LinearMap.smulRight_apply]
-  rw [hmz, one_smul, sub_self]
-
 section Spl
 
 variable {Λ : Submodule (𝓞 E) S.V} {X : Submodule E S.V} {P P' : S.V →ₗ[E] S.V}
@@ -151,7 +126,7 @@ theorem rlift_three {X : Submodule E S.V} (hiso : ∀ x ∈ X, ∀ y ∈ X, S.hT
     {x w y x' w' y' : S.V} (hx : x ∈ X) (hx' : x' ∈ X) (hw : ∀ v ∈ X, S.hT v w = 0) (hw' : ∀ v ∈ X, S.hT v w' = 0)
     (hyy : S.hT y y' = 0) (hwy : S.hT w y' = 0) (hyw : S.hT y w' = 0) :
     S.hT (x + w + y) (x' + w' + y') = S.hT x y' + S.hT w w' + S.hT y x' := by
-  simp only [map_add, LinearMap.add_apply]
+  simp only [map_add (f := _), LinearMap.add_apply]
   rw [hiso x hx x' hx', hw' x hx, rlift_swap (hw x' hx'), hyy, hwy, hyw]
   ring
 

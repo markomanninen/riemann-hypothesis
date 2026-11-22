@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HilbertKodairaSpencer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAHOfIsFactorAH
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HilbertKodairaSpencer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAHOfIsFactorAH
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -95,7 +99,7 @@ theorem exists_selfDual_overlattice {V : Type*} [AddCommGroup V] [Module ℝ V] 
     obtain ⟨n₂, h₂⟩ := hx b₁ hb₁
     obtain ⟨n₃, h₃⟩ := hx a₁ ha₁
     have e : B (a₁ + m • x) (b₁ + k • x) = B a₁ b₁ + k * B a₁ x + m * B x b₁ + m * k * B x x := by
-      simp only [← Int.cast_smul_eq_zsmul ℝ, map_add, map_smul, LinearMap.add_apply,
+      simp only [← Int.cast_smul_eq_zsmul ℝ, map_add (f := _), map_smul, LinearMap.add_apply,
         LinearMap.smul_apply, smul_eq_mul]
       ring
     refine ⟨n₁ - k * n₃ + m * n₂, ?_⟩
@@ -126,7 +130,8 @@ theorem exists_nsmul_mem_of_dual {g : ℕ} {Hm : Matrix (Fin g) (Fin g) ℂ} (hH
     rw [hGe]; rfl
   have key : ∀ (c : _ → ℝ) i, imForm Hm (∑ j, c j • e j) (e i) = (Matrix.mulVec GR c) i := by
     intro c i
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply,
       smul_eq_mul, Matrix.mulVec, dotProduct, hGRe]
     exact Finset.sum_congr rfl fun j _ => mul_comm _ _
   have hd : G.det ≠ 0 := by
@@ -207,12 +212,12 @@ theorem exists_unimodular_overlattice : ∀ (g : ℕ) (Λ : Submodule ℤ (Fin g
   have inj : Function.Injective (Int.cast : ℤ → ℝ) := Int.cast_injective
   let Ef : LinearMap.BilinForm ℤ Λ₁ := LinearMap.mk₂ ℤ F
     (fun a a' b => inj (by
-      rw [Int.cast_add, ← hF, ← hF, ← hF, Submodule.coe_add, map_add, LinearMap.add_apply]))
+      rw [Int.cast_add, ← hF, ← hF, ← hF, Submodule.coe_add, map_add (f := _), LinearMap.add_apply]))
     (fun c a b => inj (by
       rw [smul_eq_mul, Int.cast_mul, ← hF, ← hF, Submodule.coe_smul, ← Int.cast_smul_eq_zsmul ℝ,
         map_smul, LinearMap.smul_apply, smul_eq_mul]))
     (fun a b b' => inj (by
-      rw [Int.cast_add, ← hF, ← hF, ← hF, Submodule.coe_add, map_add]))
+      rw [Int.cast_add, ← hF, ← hF, ← hF, Submodule.coe_add, map_add (f := _)]))
     (fun c a b => inj (by
       rw [smul_eq_mul, Int.cast_mul, ← hF, ← hF, Submodule.coe_smul, ← Int.cast_smul_eq_zsmul ℝ,
         map_smul, smul_eq_mul]))
@@ -237,7 +242,8 @@ theorem exists_unimodular_overlattice : ∀ (g : ℕ) (Λ : Submodule ℤ (Fin g
     set x : Fin g → ℂ := ∑ i, (φ (b i) : ℝ) • D i with hx_def
     have hxe : ∀ j, imForm Hm x (e j) = φ (b j) := by
       intro j
-      rw [hx_def, map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hx_def, map_sum, LinearMap.sum_apply]
       simp only [map_smul, LinearMap.smul_apply, smul_eq_mul, hD,
         LinearMap.BilinForm.apply_dualBasis_left, mul_ite, mul_one, mul_zero]
       simp

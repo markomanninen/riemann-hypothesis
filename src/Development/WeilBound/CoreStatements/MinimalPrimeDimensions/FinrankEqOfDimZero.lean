@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.GenIdeal
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ProjPointIdealMemProjComponentsOfIsProjPureDim
+module
+
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.GenIdeal
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ProjPointIdealMemProjComponentsOfIsProjPureDim
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option linter.style.haveILetI false
@@ -25,7 +29,8 @@ theorem ker_aeval_eq (τ : Fin m → Ω) (k : Fin m) (hk : τ k = 1) :
       ∑ d ∈ Finset.range (g.totalDegree + 1), aeval τ (homogeneousComponent d g) := by
     intro g
     conv_lhs => rw [← sum_homogeneousComponent g]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
   apply le_antisymm
   · intro g hg
     rw [RingHom.mem_ker] at hg
@@ -40,7 +45,8 @@ theorem ker_aeval_eq (τ : Fin m → Ω) (k : Fin m) (hk : τ k = 1) :
       have := (isHomogeneous_X_pow (R := κ) k (N - d)).mul (homogeneousComponent_isHomogeneous d g)
       rwa [hdN] at this
     have hh0 : aeval τ h = 0 := by
-      simp only [hh, map_sum, map_mul, map_pow, aeval_X, hk, one_pow, one_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hh, map_sum, map_mul, map_pow, aeval_X, hk, one_pow, one_mul]
       rw [← hcomp]
       exact hg
     have hdiff : g - h ∈ Ideal.span {X k - 1} := by
@@ -149,7 +155,7 @@ theorem ptIdeal_eq_coneIdeal (hB : B.IsLB) {k : Fin m} (t : Fin m → Γ(Z, nonz
     rcases hg' with h | ⟨_, h⟩
     · exact h
     · exfalso
-      have := congrArg (fun q => Polynomial.coeff q 1) h
+      have := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q 1) h
       simp at this
       exact this hb
   · intro g hg
@@ -237,10 +243,10 @@ theorem dim_add_one_le (h1 : StPts) (hE : Emb p s) :
 
 private theorem algX_strHom_top {κ : Type} [Field κ] {Z : Scheme.{0}} [Algebra κ Γ(Z, ⊤)] :
     algX (strHom κ Z) ⊤ = algebraMap κ Γ(Z, ⊤) := by
-  ext r
-  rw [algebraMap_eq_strHom]
-  simp [algX, Scheme.Hom.appLE, Scheme.Hom.appTop]
-  rfl
+  set_option backward.isDefEq.respectTransparency false in
+    ext r
+    rw [algebraMap_eq_strHom]
+    simp [algX, Scheme.Hom.appLE, Scheme.Hom.appTop, homOfLE_refl]
 
 private theorem evaluation_genericPoint_eq_zero_iff {Z : Scheme.{0}} [IsIntegral Z] {U : Z.Opens}
     (hU : genericPoint Z ∈ U) (a : Γ(Z, U)) :

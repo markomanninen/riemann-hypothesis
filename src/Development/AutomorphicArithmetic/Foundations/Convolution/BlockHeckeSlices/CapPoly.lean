@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.IdeleRoots.ConstantFrames.GaugeExistence.QdetSub
+module
+
+public import Mathlib
+public import GroundTheory.IdeleRoots.ConstantFrames.GaugeExistence.QdetSub
+
+@[expose] public section
 
 open Polynomial GroundTheory.BlockD.FourierDecayAlt.GaugeExists
 
@@ -19,7 +23,8 @@ theorem UpperTheory.ConvolutionTheory.BW.exists_capPoly {A : Type} [Ring A] [Alg
       simp
   · rintro m rfl
     have h1 : (qdetPoly F).coeff m = ∑ i, F i i - (((m + 1 : ℕ) : ℂ) * (((m + 1 : ℕ) : ℂ) - 1) / 2) • 1 := by
-      rw [coeff_qdetPoly_top F m le_rfl, hsub m rfl, Finset.sum_sub_distrib, ← map_sum, sum_fin_cast,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [coeff_qdetPoly_top F m le_rfl, hsub m rfl, Finset.sum_sub_distrib, ← map_sum, sum_fin_cast,
         Algebra.algebraMap_eq_smul_one]
     rw [finsetSum_coeff, Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_eq_zero, hN, h1]
     · rw [coeff_C_mul, coeff_C_mul]
@@ -31,8 +36,9 @@ theorem UpperTheory.ConvolutionTheory.BW.exists_capPoly {A : Type} [Ring A] [Alg
       rw [coeff_C_mul, coeff_X_add_C_pow, Nat.choose_eq_zero_of_lt (Finset.mem_range.1 hj)]
       simp
   · intro u
-    rw [← evU_qdetPoly, evU_apply, eval₂_eq_sum_range' _ (Nat.lt_succ_of_le (natDegree_qdetPoly_le F)), map_sum,
-      eval_finset_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← evU_qdetPoly, evU_apply, eval₂_eq_sum_range' _ (Nat.lt_succ_of_le (natDegree_qdetPoly_le F)), map_sum,
+      eval_finsetSum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [RingHom.id_apply, ← map_pow, ← Algebra.commutes, ← Algebra.smul_def, map_smul]
     simp [mul_comm]

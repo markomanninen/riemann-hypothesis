@@ -1,14 +1,18 @@
-import Formalism.LocalRingCardinality.DataParams₂
-import Formalism.ThetaLiftIndependence.FinalThetaLiftAMFKIndep
-import Formalism.FrobeniusOrbits.HostCorollaries
-import Formalism.LocalRingCardinality.HostCls
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameCyclicGenerator
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.GradedWeylDivisibility.FinalB
-import Formalism.GradedWeylDivisibility.FinalD
-import Formalism.GradedWeylDivisibility.StatementE
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+module
+
+public import Formalism.LocalRingCardinality.DataParams₂
+public import Formalism.ThetaLiftIndependence.FinalThetaLiftAMFKIndep
+public import Formalism.FrobeniusOrbits.HostCorollaries
+public import Formalism.LocalRingCardinality.HostCls
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameCyclicGenerator
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.GradedWeylDivisibility.FinalB
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Formalism.GradedWeylDivisibility.StatementE
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,6 @@ open NumberField IsDedekindDomain
 section ranks
 
 variable (R : Ranks)
-
-theorem Ranks.two_le_m' : 2 ≤ R.m := R.two_le_m
 
 theorem Ranks.k_ge : 5 ≤ R.k := by
   have h1 := R.two_le_m
@@ -500,8 +502,6 @@ theorem bridge_iota_holds : bridge_iota := by
   rw [h2, map_pow, h1]
   rfl
 
-theorem iotaHInv_iotaH (e : ℕ) (i : ZMod (2 ^ e)) : iotaHInv e (iotaH e i) = i := Function.leftInverse_invFun (iotaH_bijective e).injective i
-
 theorem iotaH_iotaHInv (e : ℕ) (h : HGrp e) : iotaH e (iotaHInv e h) = h := Function.rightInverse_invFun (iotaH_bijective e).surjective h
 
 theorem bridge_star_holds : bridge_star := by
@@ -602,12 +602,14 @@ theorem hT_expand (S : HSpace E) (x y : S.V) :
   have key : ∀ u : S.V, S.hT u y = ∑ b, S.hT u (S.frame b) * S.frame.repr y b := by
     intro u
     conv_lhs => rw [← S.frame.sum_repr y]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun b _ => by rw [LinearMap.map_smul, smul_eq_mul, mul_comm]
   have key2 : ∀ b, S.hT x (S.frame b) = ∑ a, star (S.frame.repr x a) * S.hT (S.frame a) (S.frame b) := by
     intro b
     conv_lhs => rw [← S.frame.sum_repr x]
-    rw [map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply]
     exact Finset.sum_congr rfl fun a _ => by rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply]
   rw [key x]
   simp only [key2, Finset.sum_mul, HSpace.gram]
@@ -947,7 +949,7 @@ theorem factNormFockUnitary : FactNormFockUnitary := by
     rw [← AlgHom.comp_apply, ← h1.1, inv_mul_cancel, h1.2, AlgHom.id_apply]
   simpa [Formalism.UG.dwAct] using congrArg (Formalism.REAL.fockF f) key
 
-theorem nPl_two_mul (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] :
+theorem nPl_two_mul (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] :
     (Formalism.HN.nPl K : ℝ) * 2 = Module.finrank ℚ K := by
   simp only [Formalism.HN.nPl]
   have h1 := NumberField.InfinitePlace.card_add_two_mul_card_eq_rank K

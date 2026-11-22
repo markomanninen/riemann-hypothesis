@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
-import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectivePair
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HilbertEisensteinSummandUnitSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectivePair
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HilbertEisensteinSummandUnitSmul
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -100,7 +104,7 @@ theorem isGVal_of_isEisValue : ∀ (E : Type) [Field E] [NumberField E] [IsCMFie
     have h2 : defCoord φ z (T x) i = (n : ℂ) * defCoord φ z (B x) i := by
       rw [h1, defCoord_mul φ z _ _ i (by simp)]; simp
     rw [← h2]
-    simp only [coord, defCoord, hT, map_add, map_mul, hφ, hθ, Equiv.symm_apply_apply, Complex.conj_ofReal]
+    simp only [coord, defCoord, hT, map_add (f := _), map_mul, hφ, hθ, Equiv.symm_apply_apply, Complex.conj_ofReal]
     ring
   set b : Emb (FR E) → ℂ := fun j ↦ τ + z (e.symm j) * (1 * τ + (starRingEnd ℂ (τ : ℂ) - τ)) with hb
   set a : Emb (FR E) → ℂ := fun j ↦ 1 + z (e.symm j) * 1 with ha

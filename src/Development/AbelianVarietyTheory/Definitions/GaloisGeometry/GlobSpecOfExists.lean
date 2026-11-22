@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.GrowthBounds.DataGChain
-import Formalism.LocalToGlobal.Columns.HeckeSp
-import Formalism.LocalToGlobal.Columns.ColFormsLemmas
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GrowthBounds.DataGChain
+public import Formalism.LocalToGlobal.Columns.HeckeSp
+public import Formalism.LocalToGlobal.Columns.ColFormsLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,10 +28,6 @@ structure PlTie (X : Fields) (P : Places p O Kf) where
     iw v (x : X.E) = algebraMap (P.W v) (P.Qq v) (y + (p : P.W v) ^ n * z)
   even : ∀ v (s : Fin (P.n' v)), Even s.val → ∀ x, eK (X.emb (pos ⟨v, s⟩) x) = P.ι v ((P.σ v ^ s.val) (iw v x))
   odd : ∀ v (s : Fin (P.n' v)), ¬ Even s.val → ∀ x, eK (X.embBar (pos ⟨v, s⟩) x) = P.ι v ((P.σ v ^ s.val) (iw v x))
-
-def PlTie.withWt {X : Fields} {P : Places p O Kf} (T : PlTie X P) (m' : ℕ) (lam0' : ∀ v, Fin (P.n' v) → Fin (m' + 1) → ℤ)
-    (dom' : ∀ v, IsDominant (lam0' v)) : PlTie X (P.withWt m' lam0' dom') :=
-  ⟨T.pr, T.iw, T.eK, T.pos, T.pr_inj, T.pr_ne, T.pr_all, T.iw_int, T.iw_dense, T.even, T.odd⟩
 
 def SameOff {E : Type} [Field E] [NumberField E] {n : ℕ} (p : ℕ) (N N' : Submodule (𝓞 E) (Sp E n)) : Prop :=
   ∀ Q : HeightOneSpectrum (𝓞 E), ((p : ℕ) : 𝓞 E) ∉ Q.asIdeal → localization₂ Q.asIdeal N = localization₂ Q.asIdeal N'
@@ -59,8 +59,6 @@ variable {X : Fields} {P : Places p O Kf} (T : PlTie X P) {n : ℕ} (hn : n = P.
 
 def PlTie.vec (v : Fin P.nV) (x : Sp X.E n) : Fin (P.m + 1) → P.Qq v := fun i => T.iw v (x (Fin.cast hn.symm i))
 
-def PlTie.tup (N : Submodule (𝓞 X.E) (Sp X.E n)) : P.Tup := fun v => Submodule.span (P.W v) (T.vec hn v '' (N : Set (Sp X.E n)))
-
 def PlTie.act (v : Fin P.nV) : UF X.E n →* GL (Fin (P.m + 1)) (P.Qq v) :=
   (Formalism.UG.bc (T.iw v)).comp
     ((Units.map (Matrix.reindexAlgEquiv X.E X.E (finCongr hn)).toMulEquiv.toMonoidHom).comp (ufGL X.E n))
@@ -70,16 +68,6 @@ def PlTie.detTw (c : ℤ) (γ : UF X.E n) : Kf :=
 
 def PlTie.WtEq (lam : X.Tau → DomWeight n) (c : ℤ) : Prop :=
   ∀ v s i, P.lam0 v s i = (lam (T.pos ⟨v, s⟩)).w (Fin.cast hn.symm i) + c
-
-structure ValTie (lam : X.Tau → DomWeight n) (c : ℤ) where
-  θ : VV X.K lam →ₛₗ[T.eK] P.Xsp
-  li : LinearIndependent Kf fun i => θ (bVV X.K lam i)
-  span : Submodule.span Kf (Set.range θ) = P.Vtup
-  equiv : ∀ (γ : UF X.E n) x, θ (rhoVr X.emb lam (ufGL X.E n γ) x) = T.detTw c γ • P.natAct (fun v => T.act hn v γ) (θ x)
-  del : ∀ N, Submodule.IsLattice X.E N → IsUnimodular (hStd X.E n) N →
-    Submodule.span O (θ '' (delAtr X.emb lam N : Set (VV X.K lam))) = P.HtupW (T.tup hn N)
-  nab : ∀ N, Submodule.IsLattice X.E N → IsUnimodular (hStd X.E n) N →
-    Submodule.span O (θ '' (nabAtr X.emb lam N : Set (VV X.K lam))) = P.Htup (T.tup hn N)
 
 end Loc
 
@@ -197,19 +185,6 @@ end RetractionModules
 theorem PlTie.nV_pos_of_prime {X : Fields} {P : Places p O Kf} (T : PlTie X P) (hp : p.Prime) : 0 < P.nV :=
   RetractionModules.nV_pos T hp
 
-theorem PlTie.WtEq.unique {X : Fields} {P : Places p O Kf} {T : PlTie X P} (hp : p.Prime) {n : ℕ} {hn : n = P.m + 1}
-    {lam : X.Tau → DomWeight n} {c c' : ℤ} (h : T.WtEq hn lam c) (h' : T.WtEq hn lam c') : c = c' := by
-  have v : Fin P.nV := ⟨0, T.nV_pos_of_prime hp⟩
-  have s : Fin (P.n' v) := ⟨0, lt_of_lt_of_le two_pos (P.setting v).two_le⟩
-  exact add_left_cancel ((h v s 0).symm.trans (h' v s 0))
-
-theorem PlTie.wtEq_withWt {X : Fields} {P : Places p O Kf} (T : PlTie X P) (m' : ℕ) (lam : X.Tau → DomWeight (m' + 1)) (c : ℤ)
-    (dom' : ∀ v, IsDominant fun s i => (lam (T.pos ⟨v, s⟩)).w i + c) :
-    (T.withWt m' (fun v s i => (lam (T.pos ⟨v, s⟩)).w i + c) dom').WtEq (n := m' + 1) rfl lam c :=
-  fun _ _ _ => rfl
-
-example {X : Fields} {P : Places p O Kf} (T : PlTie X P) {n : ℕ} (γ : UF X.E n) : T.detTw 0 γ = 1 := zpow_zero _
-
 namespace PSys
 
 variable {X : Fields} {n : ℕ} {lam : X.Tau → DomWeight n} {S : GSD X.K} (Y : PSys X n p lam S)
@@ -217,22 +192,6 @@ variable {X : Fields} {n : ℕ} {lam : X.Tau → DomWeight n} {S : GSD X.K} (Y :
 def Comp : Type := Quot fun d d' : S.D => ∃ g : S.G, Y.Aw (g • d) d'
 
 def rep (a : Y.Comp) : S.D := Quot.out a
-
-theorem comp_mk_eq_iff (d d' : S.D) :
-    (Quot.mk _ d : Y.Comp) = Quot.mk _ d' ↔ ∃ g : S.G, Y.Aw (g • d) d' := by
-  have he : Equivalence fun d d' : S.D => ∃ g : S.G, Y.Aw (g • d) d' :=
-    ⟨fun d => ⟨1, by rw [one_smul]; exact Y.aw_equiv.refl d⟩,
-      fun ⟨g, h⟩ => ⟨g⁻¹, by
-        have h1 := Y.aw_smul g⁻¹ _ _ h
-        rw [inv_smul_smul] at h1
-        exact Y.aw_equiv.symm h1⟩,
-      fun ⟨g, h⟩ ⟨g', h'⟩ => ⟨g' * g, by
-        rw [mul_smul]
-        exact Y.aw_equiv.trans (Y.aw_smul g' _ _ h) h'⟩⟩
-  exact Quot.eq.trans he.eqvGen_iff
-
-theorem exists_aw_rep (d : S.D) : ∃ g : S.G, Y.Aw (g • d) (Y.rep (Quot.mk _ d)) :=
-  (Y.comp_mk_eq_iff _ _).1 (Quot.out_eq (Quot.mk _ d : Y.Comp)).symm
 
 def Gam (d : S.D) : Subgroup S.G where
   carrier := {g | Y.Aw (g • d) d}
@@ -292,82 +251,12 @@ def chiLift (hp : p.Prime) (c : ℤ) : Y.ChiLift T c where
   χ d := (Y.exists_chi T hp c).choose.comp (Y.Gam d).subtype
   spec _ g := (Y.exists_chi T hp c).choose_spec g.1
 
-theorem ChiLift.eq_chiLift (hp : p.Prime) {c : ℤ} (x : Y.ChiLift T c) : x = Y.chiLift T hp c := by
-  haveI := (P.setting ⟨0, T.nV_pos_of_prime hp⟩).frac_O
-  have h : x.χ = (Y.chiLift T hp c).χ := by
-    funext d
-    ext g
-    exact IsFractionRing.injective O Kf ((x.spec d g).trans ((Y.chiLift T hp c).spec d g).symm)
-  cases x
-  cases h
-  rfl
-
 def lev {c : ℤ} (x : Y.ChiLift T c) (a : Y.Comp) : Level P where
   Γ := Y.Gam (Y.rep a)
   act v := ((T.act hn v).comp Y.u).comp (Y.Gam (Y.rep a)).subtype
   χ := x.χ (Y.rep a)
 
-open Classical in
 
-def glob (a : Y.Comp) (L : P.Tup) : S.D :=
-  if h : ∃ d, Y.Aw (Y.rep a) d ∧ T.tup hn (Y.N d) = L then h.choose else Y.rep a
-
-theorem glob_spec_of_exists (a : Y.Comp) (L : P.Tup) (h : ∃ d, Y.Aw (Y.rep a) d ∧ T.tup hn (Y.N d) = L) :
-    Y.Aw (Y.rep a) (Y.glob T hn a L) ∧ T.tup hn (Y.N (Y.glob T hn a L)) = L := by
-  unfold glob
-  rw [dif_pos h]
-  exact h.choose_spec
-
-theorem aw_glob (a : Y.Comp) (L : P.Tup) : Y.Aw (Y.rep a) (Y.glob T hn a L) := by
-  by_cases h : ∃ d, Y.Aw (Y.rep a) d ∧ T.tup hn (Y.N d) = L
-  · exact (Y.glob_spec_of_exists T hn a L h).1
-  · unfold glob
-    rw [dif_neg h]
-    exact Y.aw_equiv.refl _
-
-open Classical in
-
-def cmp {c : ℤ} (V : ValTie T hn lam c) (φ : S.D → S.V) (a : Y.Comp) (L : P.Tup) : P.Xsp :=
-  if P.IsLatTup L then V.θ (Y.eV (φ (Y.glob T hn a L))) else 0
-
-def nbr (Q : HeightOneSpectrum (𝓞 X.E)) (i : ℕ) (d : S.D) : Set S.D :=
-  {d' | Y.Aw d d' ∧ IsHeckeNbr Q.asIdeal i (Y.N d) (Y.N d')}
-
-def nbrAt (v : Fin P.nV) (i : ℕ) (d : S.D) : Set S.D := Y.nbr (conjPrime₂ (T.pr v)) i d
-
-theorem nbrAt_le {v : Fin P.nV} {i : ℕ} {d d' : S.D} (h : d' ∈ Y.nbrAt T v i d) :
-    (conjPrime₂ (T.pr v)).asIdeal • Y.N d' ≤ Y.N d ∧ (T.pr v).asIdeal • Y.N d ≤ Y.N d' := by
-  refine ⟨h.2.1, ?_⟩
-  have h2 := h.2.2.1
-  rw [conjIdeal_asIdeal] at h2
-  refine le_trans (Submodule.smul_mono (fun r hr => ?_) le_rfl) h2
-  rw [mem_conjP, mem_conjP, cO_cO]
-  exact hr
-
-theorem tup_lev_smul {c : ℤ}
-    (x : Y.ChiLift T c) (a : Y.Comp) (g : Y.Gam (Y.rep a)) (d : S.D) :
-    T.tup hn (Y.N (g.1 • d)) = (Y.lev T hn x a).smul g (T.tup hn (Y.N d)) := by
-  subst hn
-  funext v
-  rw [Y.N_smul]
-  unfold Level.smul PlTie.tup gmap
-  rw [Submodule.map_span, Submodule.map_coe, Set.image_image, Set.image_image]
-  congr 1
-  refine Set.image_congr fun y _ => ?_
-  funext i
-  have h : (Y.u g.1).1 y = Matrix.mulVec ((ufGL X.E _ (Y.u g.1) : GL _ X.E) : Matrix _ _ X.E) y := by
-    change _ = Matrix.mulVec (LinearMap.toMatrix' ((Y.u g.1).1 : Sp X.E (P.m + 1) →ₗ[X.E] Sp X.E (P.m + 1))) y
-    rw [LinearMap.toMatrix'_mulVec]; rfl
-  change T.iw v ((Y.u g.1).1 y i) = ∑ k, T.iw v (((ufGL X.E _ (Y.u g.1) : GL _ X.E) : Matrix _ _ X.E) i k) * T.iw v (y k)
-  rw [h]
-  simp [Matrix.mulVec, dotProduct]
-
-theorem theta_lev_smul {c : ℤ}
-    (x : Y.ChiLift T c) (V : ValTie T hn lam c) (φ : S.EqFun) (a : Y.Comp) (g : Y.Gam (Y.rep a)) (d : S.D) :
-    V.θ (Y.eV (φ.1 (g.1 • d))) =
-      (((Y.lev T hn x a).χ g : Oˣ) : O) • (Y.lev T hn x a).actX g (V.θ (Y.eV (φ.1 d))) := by
-  rw [φ.2, Y.rho, map_smulₛₗ, V.equiv, smul_smul, ← x.spec, algebraMap_smul]
-  rfl
 
 end PSys
 
@@ -383,31 +272,5 @@ def gatOf {X : Fields} {n : ℕ} {lam : X.Tau → DomWeight n} {P : Places p O K
     exact Fintype.ofFinite _
   lev a := (Y a.1).lev T hn ((Y a.1).chiLift T hp c) a.2
   e := e
-
-def cmpFam {X : Fields} {n : ℕ} {lam : X.Tau → DomWeight n} {P : Places p O Kf} (T : PlTie X P) (hn : n = P.m + 1)
-    (F : GFam X.K) (Y : ∀ b, PSys X n p lam (F.mem b)) {c : ℤ} (V : ValTie T hn lam c) (φ : F.Forms)
-    (a : Σ b, (Y b).Comp) : P.Tup → P.Xsp :=
-  (Y a.1).cmp T hn V (φ a.1).1 a.2
-
-def cmpFamL {X : Fields} {n : ℕ} {lam : X.Tau → DomWeight n} {P : Places p O Kf} (T : PlTie X P) (hn : n = P.m + 1)
-    (F : GFam X.K) (Y : ∀ b, PSys X n p lam (F.mem b)) {c : ℤ} (V : ValTie T hn lam c) :
-    F.Forms →ₛₗ[T.eK] ((Σ b, (Y b).Comp) → P.Tup → P.Xsp) where
-  toFun := cmpFam T hn F Y V
-  map_add' φ ψ := by
-    funext a L
-    simp only [cmpFam, PSys.cmp, Pi.add_apply]
-    split_ifs
-    · rw [← map_add, ← map_add]; rfl
-    · simp
-  map_smul' r φ := by
-    funext a L
-    simp only [cmpFam, PSys.cmp, Pi.smul_apply]
-    split_ifs
-    · rw [← map_smulₛₗ, ← map_smul]; rfl
-    · simp
-
-example {X : Fields} {n : ℕ} {lam : X.Tau → DomWeight n} {P : Places p O Kf} (T : PlTie X P) (hn : n = P.m + 1)
-    (F : GFam X.K) (hF : F.Ok) (Y : ∀ b, PSys X n p lam (F.mem b)) {c : ℤ} (hw : T.WtEq hn lam c) (hp : p.Prime) (e : ℕ) :
-    (gatOf T hn F hF Y hw hp e).Fn = ((Σ b, (Y b).Comp) → P.Tup → P.Xsp) := rfl
 
 end GlobalTheory.GO

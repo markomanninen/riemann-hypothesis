@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.LocalFields.UnitsBasic
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsRootOfAdicComplete
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.UnitsBasic
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsRootOfAdicComplete
+
+@[expose] public section
 
 namespace GroundTheory.LocalField
 
@@ -39,7 +43,8 @@ theorem eq_one_of_pow_eq_one {m : ℕ} (hm : (m : 𝓀[K]) ≠ 0) {u : 𝒪[K]ˣ
   rw [← Units.val_pow_eq_pow_val, h, Units.val_one, sub_self] at hgeom
   have hS : IsUnit (∑ i ∈ Finset.range m, (u : 𝒪[K]) ^ i) := by
     rw [← residue_ne_zero_iff_isUnit]
-    simpa [map_sum, hres] using hm
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, hres] using hm
   have := (hS.mul_right_eq_zero).mp hgeom
   ext
   simpa [sub_eq_zero] using this
@@ -125,30 +130,6 @@ theorem unitsMulInvTeichmuller_mem (u : 𝒪[K]ˣ) :
 
 variable (K)
 
-noncomputable def unitsEquivResidueProd : 𝒪[K]ˣ ≃* 𝓀[K]ˣ × unitFiltration K 1 where
-  toFun u := (unitsToResidue K u, ⟨_, unitsMulInvTeichmuller_mem u⟩)
-  invFun p := teichmuller K p.1 * p.2
-  left_inv u := by simp
-  right_inv p := by
-    obtain ⟨ζ, v, hv⟩ := p
-    have hv' : unitsToResidue K v = 1 := by rwa [← MonoidHom.mem_ker, ker_unitsToResidue]
-    ext
-    · simp [hv']
-    · simp [hv']
-  map_mul' u w := by
-    ext
-    · simp
-    · simp only [map_mul, mul_inv_rev, Prod.snd_mul, Subgroup.coe_mul]
-      simp only [mul_comm, mul_left_comm, mul_assoc]
-
-@[simp]
-theorem unitsEquivResidueProd_fst (u : 𝒪[K]ˣ) :
-    (unitsEquivResidueProd K u).1 = unitsToResidue K u := rfl
-
-@[simp]
-theorem unitsEquivResidueProd_symm_apply (ζ : 𝓀[K]ˣ) (v : unitFiltration K 1) :
-    (unitsEquivResidueProd K).symm (ζ, v) = teichmuller K ζ * v := rfl
-
 end Teichmuller
 
 section Powers
@@ -179,17 +160,6 @@ theorem exists_unitFiltration_le_range_pow {m : ℕ} (hm : (m : K) ≠ 0) :
   obtain ⟨k, ε, hk⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible hm' hϖ
   refine ⟨2 * k + 1, fun w hw ↦ ?_⟩
   obtain ⟨x, hx⟩ := exists_pow_eq_of_mem hϖ hm0 (ε := ε) (by rw [hk, mul_comm]) hw
-  exact ⟨x, hx⟩
-
-theorem unitFiltration_one_le_range_pow {m : ℕ} (hm : (m : 𝓀[K]) ≠ 0) :
-    unitFiltration K 1 ≤ (powMonoidHom m : 𝒪[K]ˣ →* 𝒪[K]ˣ).range := by
-  obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[K]
-  have hu : IsUnit (m : 𝒪[K]) := by
-    rw [← residue_ne_zero_iff_isUnit, map_natCast]; exact hm
-  have hm0 : m ≠ 0 := by rintro rfl; simp at hm
-  intro w hw
-  obtain ⟨x, hx⟩ := exists_pow_eq_of_mem hϖ hm0 (k := 0) (ε := hu.unit) (by simp)
-    (by simpa using hw)
   exact ⟨x, hx⟩
 
 theorem finite_quotient_range_pow {m : ℕ} (hm : (m : K) ≠ 0) :

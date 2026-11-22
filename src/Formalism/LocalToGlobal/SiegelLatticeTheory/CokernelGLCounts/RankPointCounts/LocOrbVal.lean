@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocOrbCut
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocOrbCut
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,14 +68,14 @@ theorem uLow_lowUni {n : ℕ} (x : Loc.IL n → E) : Formalism.DoubleCosetMeasur
   refine ⟨fun i j hij => ?_, fun a => ?_⟩
   · have h' : i < j := OrderDual.toDual_lt_toDual.mp hij
     simp only [Loc.uLow]
-    rw [if_neg (ne_of_lt h'), dif_neg (not_lt.mpr h'.le)]
+    rw [if_neg (ne_of_lt h'), dite_eq_right (not_lt.mpr h'.le)]
   · simp [Loc.uLow]
 
 theorem uUp_upUni {n : ℕ} (w : Loc.Pt E n) (y : Loc.IN w → E) : Formalism.DoubleCosetMeasures.IsUpUni (Loc.uUp w y) := by
   refine ⟨fun i j hij => ?_, fun a => ?_⟩
   · have h' : j < i := hij
     simp only [Loc.uUp]
-    rw [if_neg (ne_of_gt h'), dif_neg (fun h => absurd h.1 (not_lt.mpr h'.le))]
+    rw [if_neg (ne_of_gt h'), dite_eq_right (fun h => absurd h.1 (not_lt.mpr h'.le))]
   · simp [Loc.uUp]
 
 def rI {m : ℕ} (a : Loc.Pt E (m + 1)) (B : Matrix (Fin (m + 1)) (Fin (m + 1)) E) :
@@ -191,7 +195,7 @@ theorem val (M : Loc.Model F E) (hOK : M.OK) {m : ℕ} (a : Loc.Pt E (m + 1)) (c
     exact Formalism.FourierDecayAlt.P.A5x6.pt_det_isUnit _
   rw [Formalism.MainNotions.LocalOrbitGerms.Cls.bbIntegrand_eq]
   unfold valQ Formalism.MainNotions.LocalOrbitGerms.Cls.GG
-  rw [dif_pos ⟨hIq, hdq⟩, dif_pos ⟨hI', hdz⟩, phase_eq M hOK a q xy l ρ hl hρ hq,
+  rw [dite_eq_left ⟨hIq, hdq⟩, dite_eq_left ⟨hI', hdz⟩, phase_eq M hOK a q xy l ρ hl hρ hq,
     nIso_orb M l ρ hl hρ hq hIq hdq hI' hdz]
   rfl
 

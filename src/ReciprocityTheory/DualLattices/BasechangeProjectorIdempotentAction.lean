@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.RestrictedHopfOrderApproximationStatement
+module
+
+public import ReciprocityTheory.DualLattices.RestrictedHopfOrderApproximationStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,8 @@ variable {p : ℕ} [Fact p.Prime] {g : ℕ} {C : Type} [Field C] {v : Valuation 
 private lemma reducedColumnMap_toZMod {r : ℕ} (Bw : Matrix (Ix g) (Fin r) ℤ_[p]) (x : Fin r → ℤ_[p]) :
     psiW Bw (fun i => PadicInt.toZMod (x i)) = red p g (Bw *ᵥ x) := by
   funext i
-  simp [psiW, red, Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [psiW, red, Matrix.mulVec, dotProduct, map_sum, map_mul]
 
 private lemma map_algebraMap_mulVec_comp {m n : Type} [Fintype n] (M : Matrix m n ℤ_[p]) (t : n → ℤ_[p]) :
     M.map (algebraMap ℤ_[p] R) *ᵥ (algebraMap ℤ_[p] R ∘ t) = algebraMap ℤ_[p] R ∘ (M *ᵥ t) := by
@@ -55,7 +60,7 @@ private lemma isHopfApproximable_sum (H : HodgeTateDatum p g v R O σ cp) {r : �
     beta_reduce at hsS ⊢
     rw [Finset.sum_insert ha]
     rw [Pi.add_apply, Pi.smul_apply]
-    simp only [Algebra.smul_def, map_add, map_mul] at hsa hsS ⊢
+    simp only [Algebra.smul_def, map_add (f := _), map_mul] at hsa hsS ⊢
     linear_combination (algebraMap R C (c a)) * hsa + hsS
 
 private lemma isHopfApproximable_comp_mulVec (H : HodgeTateDatum p g v R O σ cp) {r : ℕ} (Bw : Matrix (Ix g) (Fin r) ℤ_[p])
@@ -272,7 +277,7 @@ theorem restrictedHopfOrderApproximation : RestrictedHopfOrderApproximationState
         ((PadicInt.toZMod (x i)).val : R) + (p : R) * algebraMap ℤ_[p] R (y i) := by
       intro i
       conv_lhs => rw [hy i]
-      simp only [map_add, map_mul, map_natCast]
+      simp only [map_add (f := _), map_mul, map_natCast]
     have hR : ∑ i, dj * lam i * ((PadicInt.toZMod (x i)).val : R) -
         dj * ∑ i, lam i * algebraMap ℤ_[p] R (x i) =
         -(dj * (p : R) * ∑ i, lam i * algebraMap ℤ_[p] R (y i)) := by
@@ -280,7 +285,8 @@ theorem restrictedHopfOrderApproximation : RestrictedHopfOrderApproximationState
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [hxR i]
       ring
-    rw [hFval, ← map_sum, ← map_sub, hR, map_neg, Valuation.map_neg]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hFval, ← map_sum, ← map_sub, hR, map_neg, Valuation.map_neg]
     simp only [map_mul]
     calc v (algebraMap R C dj) * v (algebraMap R C (p : R)) *
           v (algebraMap R C (∑ i, lam i * algebraMap ℤ_[p] R (y i)))

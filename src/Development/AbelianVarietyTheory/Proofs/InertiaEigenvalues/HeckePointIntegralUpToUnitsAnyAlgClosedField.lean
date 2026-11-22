@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckeValueIntegrality
-import Formalism.LocalToGlobal.ProjectiveLattices.NonnegIffOfLiesTotal
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HeckeFrameIntAnyField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckeValueIntegrality
+public import Formalism.LocalToGlobal.ProjectiveLattices.NonnegIffOfLiesTotal
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HeckeFrameIntAnyField
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -17,7 +21,11 @@ theorem heckeFrameInt_anyField_of : GlobalTheory.IndefiniteRowSideFullHecke.Unus
   letI : Algebra T.Fr Ω := k.toRingHom.toAlgebra
   haveI : IsScalarTower c.F T.Fr Ω := IsScalarTower.of_algebraMap_eq fun a => (k.commutes a).symm
   let k₀ : T.Fr →ₐ[c.F] AlgebraicClosure T.Fr := IsScalarTower.toAlgHom c.F T.Fr (AlgebraicClosure T.Fr)
-  let φ₀ : AlgebraicClosure T.Fr →ₐ[T.Fr] Ω := IsAlgClosed.lift
+  let φ₀ : AlgebraicClosure T.Fr →ₐ[T.Fr] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let φ : AlgebraicClosure T.Fr →ₐ[c.F] Ω := φ₀.restrictScalars c.F
   have hφk : ∀ a, φ (k₀ a) = k a := fun a => φ₀.commutes a
 

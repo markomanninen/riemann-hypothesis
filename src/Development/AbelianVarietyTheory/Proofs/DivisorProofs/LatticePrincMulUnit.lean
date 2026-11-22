@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DTermOrigin
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinPartEqOneOfLevel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModFMulPosPrincipal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdNormSq
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasSumZeroOfTwoLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DTermOrigin
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinPartEqOneOfLevel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModFMulPosPrincipal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdNormSq
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasSumZeroOfTwoLe
+
+@[expose] public section
 
 noncomputable section
 

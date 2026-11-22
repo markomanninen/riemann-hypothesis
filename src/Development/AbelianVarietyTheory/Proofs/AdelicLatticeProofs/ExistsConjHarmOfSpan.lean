@@ -1,7 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsEnergyMin
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SumHermitianLogGramEqZeroOfEnergyMinimum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsEnergyMin
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HermitianLogTraceSqFirstVariationBound
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsHermitianLogOfPosDefGramStatement
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
@@ -106,7 +112,7 @@ private lemma isLog_isHermitian {ι : Type} [Fintype ι] [DecidableEq ι] {H A :
   obtain ⟨U, d, hU, rfl, -⟩ := hH
   simp [conjTranspose_mul, Matrix.mul_assoc, diagonal_conjTranspose]
   congr 3
-  funext i
+  ext i
   simp
 
 open Matrix Polynomial in
@@ -288,9 +294,9 @@ private lemma isLog_commute {ι : Type} [Fintype ι] [DecidableEq ι] {H A : Mat
     diagonal_mul_diagonal, diagonal_mul_diagonal]
   simp only [mul_comm]
 
+
 open Matrix Polynomial in
 open scoped Kronecker ComplexOrder TensorProduct in
-
 theorem _root_.GlobalTheory.ClassFin.exists_conj_harm_of_span : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (σ : Type) [Fintype σ] (τ : σ ≃ σ) (g : σ → Matrix ι ι ℂ), (∀ s, g (τ s) * g s = 1) → Submodule.span ℂ (Set.range g) = ⊤ → ∃ P : Matrix ι ι ℂ, IsUnit P.det ∧ _root_.GlobalTheory.ClassFin.Harm (fun s => P * g s * P⁻¹) := by
   intro ι _ _ σ _ τ g hτ hspan
   have hdet : ∀ s, IsUnit (g s).det := fun s => Matrix.isUnit_det_of_left_inverse (hτ s)

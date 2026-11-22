@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.IsTermOver
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.IsTermOver
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.Loc Formalism.MainNotions.S.LocNG
 
 noncomputable section
@@ -13,7 +18,7 @@ variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
 def hL (y : V) : V →+ E := ⟨⟨fun x => H.h x y, H.h_zero_left y⟩, fun x x' => H.h_add_left x x' y⟩
 
 lemma h_add_right (x y z : V) : H.h x (y + z) = H.h x y + H.h x z := by
-  rw [H.h_herm (y + z) x, H.h_add_left, map_add, ← H.h_herm, ← H.h_herm]
+  rw [H.h_herm (y + z) x, H.h_add_left, map_add (f := _), ← H.h_herm, ← H.h_herm]
 
 lemma h_smul_right (c : E) (x y : V) : H.h x (c • y) = M.L.cj c * H.h x y := by
   rw [H.h_herm (c • y) x, H.h_smul_left, map_mul, ← H.h_herm]
@@ -167,7 +172,7 @@ theorem Lset_LamStd (L : Submodule M.L.O (H.Wb Fr.f)) :
       | add x y _ _ hx hy =>
         have e : (⟨Fr.prF (x + y), prF_perp Fr _⟩ : ↥(H.perp (H.X Fr.f))) =
             ⟨Fr.prF x, prF_perp Fr x⟩ + ⟨Fr.prF y, prF_perp Fr y⟩ := Subtype.ext (prF_add Fr x y)
-        rw [e, map_add]; exact L.add_mem hx hy
+        rw [e, map_add (f := _)]; exact L.add_mem hx hy
       | smul c x _ hx =>
         have e : (⟨Fr.prF (c • x), prF_perp Fr _⟩ : ↥(H.perp (H.X Fr.f))) =
             (c : E) • ⟨Fr.prF x, prF_perp Fr x⟩ := Subtype.ext (prF_smul Fr (c : E) x)

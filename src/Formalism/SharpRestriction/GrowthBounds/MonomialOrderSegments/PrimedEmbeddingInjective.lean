@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.CgeZeroIffIntegral
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.AddMemSupportOfMemSupportCoefOut
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.SlopeOfBinomCombGen
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.CollapseExponent
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.CgeZeroIffIntegral
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.AddMemSupportOfMemSupportCoefOut
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.SlopeOfBinomCombGen
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.CollapseExponent
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,7 +108,8 @@ theorem vala_dg_labels (D : TwistData K) (gg : (D.Tau → Fin D.r → ℕ) → D
   letI : DecidablePred out := Classical.decPred _
   have hoS : ∀ i ∈ S, ¬ out i := by
     rintro i hi ⟨t, rfl⟩; exact hS t hi
-  conv => rw [sum_coefOut out Z, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv => rw [sum_coefOut out Z, map_sum]
   refine vala_sum _ _ fun μ hμ => ?_
   have e : dg (fun ζ => gg (D.labF ζ) ζ) (monomial μ 1 * coefOut out μ Z) =
       dg (gg (D.labF μ)) (monomial μ 1 * coefOut out μ Z) := by

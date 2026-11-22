@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.ResultantValuation.ResultantAdjugateProofs.Laplace
+module
+
+public import Mathlib
+public import Formalism.ResultantValuation.ResultantAdjugateProofs.Laplace
+
+@[expose] public section
 
 open Polynomial
 

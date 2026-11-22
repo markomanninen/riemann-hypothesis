@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SquareIntegrableGammaZetabarInv
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SquareIntegrableGammaZetabarInv
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA.BStar
 
@@ -38,8 +42,6 @@ theorem cjD_sum {ι : Type} (s : Finset ι) (f : ι → (DQ P).R) : cjD P (∑ i
   induction s using Finset.induction_on with
   | empty => rw [Finset.sum_empty, Finset.sum_empty, cjD_zero]
   | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, cjD_add, ih]
-
-theorem multiplierPair_fst (f fb g : (DQ P).R) : ((DQ P).fnP f fb).1 g = f * g := rfl
 
 theorem multiplierPair_mul (f fb g gb : (DQ P).R) :
     (DQ P).fnP f fb * (DQ P).fnP g gb = (DQ P).fnP (f * g) (fb * gb) := by
@@ -131,11 +133,12 @@ theorem fm_mul {a b : A P (DQ P)} (ha : FM P a) (hb : FM P b) : FM P (a * b) := 
   · rw [Matrix.mul_apply, cjD_sum, ← multiplierPair_sum]
     refine Finset.sum_congr rfl fun π' _ => ?_
     rw [hpa, hpb, multiplierPair_mul, cjD_mul]
-  · rw [map_sum]
-    refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun π' _ => ?_)
-    rw [map_mul, norm_mul]
-    exact mul_le_mul ((hCa π π' q).trans (le_max_left _ _)) ((hCb π' π'' q).trans (le_max_left _ _))
-      (norm_nonneg _) (le_max_right _ _)
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum]
+      refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun π' _ => ?_)
+      rw [map_mul, norm_mul]
+      exact mul_le_mul ((hCa π π' q).trans (le_max_left _ _)) ((hCb π' π'' q).trans (le_max_left _ _))
+        (norm_nonneg _) (le_max_right _ _)
 
 theorem fm_star {a : A P (DQ P)} (ha : FM P a) : FM P (star a) := by
   intro π π'
@@ -160,7 +163,8 @@ theorem actA_fm_apply {b : A P (DQ P)} {β : M.Ty P → M.Ty P → (DQ P).R}
     (hβ : ∀ π π', b π π' = (DQ P).fnP (β π π') (cjD P (β π π'))) (V : M.Ty P → SmQ P.r P.TT) (π : M.Ty P)
     (q : Qp P.r P.TT) : evQ P (actA P b V π) q = ∑ π', evD P q (β π π') * evQ P (V π') q := by
   show evD P q (∑ π', (b π π').1 (V π')) = ∑ π', evD P q (β π π') * evD P q (V π')
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun π' _ => ?_
   rw [hβ π π']
   rfl
@@ -207,7 +211,8 @@ theorem ipA_fm {b : A P (DQ P)} (hb : FM P b) {ε : ℝ} (U V : M.Ty P → SmQ P
     intro π
     rw [← integral_finsetSum _ (fun π' _ => hint π π' _ _ (hCc π π'))]
     congr 1; funext q
-    rw [actA_fm_apply P hβ V π q, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [actA_fm_apply P hβ V π q, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun π' _ => ?_
     rw [map_mul, evD_cjD]
   have eR : ∀ π, ∫ q, evQ P (actA P (star b) U π) q * conj (evQ P (V π) q) ∂mu0 P.r P.TT =
@@ -309,8 +314,6 @@ theorem cjD_βR (hTT : 0 ≤ P.TT) : cjD P (βR P) = βRb P := extD P fun q => b
     Complex.conj_conj]
 
 theorem cjD_βDb (hTT : 0 ≤ P.TT) : cjD P (βDb P) = βD P := by rw [← cjD_βD hTT, cjD_cjD]
-
-theorem cjD_βRb (hTT : 0 ≤ P.TT) : cjD P (βRb P) = βR P := by rw [← cjD_βR hTT, cjD_cjD]
 
 theorem prod_norm_ne (q : Qp P.r P.TT) : ∏ l, ‖q.1.1 l‖ ≠ 0 :=
   Finset.prod_ne_zero_iff.2 fun l _ => norm_ne_zero_iff.2 (q.2.1 l)

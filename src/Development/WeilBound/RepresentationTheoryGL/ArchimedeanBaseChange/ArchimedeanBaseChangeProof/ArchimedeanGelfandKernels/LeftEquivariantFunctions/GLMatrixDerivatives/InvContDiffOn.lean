@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.KchainSt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.KchainSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 variable {n : ℕ} {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] {s : Set E}
 
 theorem entry_contDiff (a b : Fin n) : ContDiff ℝ ∞ (fun y : Mat n => y a b) :=
-  contDiff_apply_apply ℝ ℂ a b
+  contDiff_apply_apply ℝ a b
 
 theorem mat_contDiffOn {F : E → Mat n} (h : ∀ a b, ContDiffOn ℝ ∞ (fun x => F x a b) s) :
     ContDiffOn ℝ ∞ F s := by
@@ -44,9 +48,6 @@ theorem mul_contDiffOn {F H : E → Mat n} (hF : ContDiffOn ℝ ∞ F s) (hH : C
   refine mat_contDiffOn fun a b => ?_
   simp only [Matrix.mul_apply]
   exact ContDiffOn.sum fun c _ => (entry_of hF a c).mul (entry_of hH c b)
-
-theorem isOpen_GLs' : IsOpen (GLs n) :=
-  isOpen_ne.preimage (continuous_id.matrix_det (n := Fin n) (R := ℂ))
 
 theorem inv_contDiffOn : ContDiffOn ℝ ∞ (fun y : Mat n => y⁻¹) (GLs n) := by
   refine mat_contDiffOn fun a b => ?_
@@ -80,11 +81,6 @@ theorem mul_mem {x y : Mat n} (hx : x ∈ GLs n) (hy : y ∈ GLs n) : x * y ∈ 
   simp only [GLs, Set.mem_ofPred_eq, Matrix.det_mul] at *
   exact mul_ne_zero hx hy
 
-theorem invSmooth : InvSmooth := by
-  intro n
-  refine ⟨isOpen_GLs', inv_contDiffOn, ?_, det_contDiff, star_contDiff⟩
-  exact inv_contDiffOn.comp star_contDiff.contDiffOn fun y hy => conjT_mem hy
-
 theorem coneGL : ConeGL := by
   intro n σ hσ v hv
   have hpd : (hOf v).PosDef := hv
@@ -98,7 +94,7 @@ theorem coneGL : ConeGL := by
 theorem hOf_contDiff : ContDiff ℝ ∞ (fun v : Fin n × Fin n → ℝ => hOf v) := by
   unfold hOf
   refine ContDiff.sum fun p _ => ?_
-  exact (Complex.ofRealCLM.contDiff.comp (contDiff_apply ℝ ℝ p)).smul contDiff_const
+  exact (Complex.ofRealCLM.contDiff.comp (contDiff_apply ℝ (fun _ => ℝ) p)).smul contDiff_const
 
 theorem kcSmooth : KcSmooth := by
   intro n V _ _ σ c Fr k Γ T d hd hσs hσ hFr hk

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.KaUnfoldPfB
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.KaUnfoldPfB
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.KU
 
@@ -13,11 +17,8 @@ local instance instMSMat {m n : Type*} : MeasurableSpace (Matrix m n ℂ) :=
 local instance instBorelMat {m n : Type*} [Fintype m] [Fintype n] : BorelSpace (Matrix m n ℂ) :=
   inferInstanceAs (BorelSpace (m → n → ℂ))
 
-local instance instSCMat {m n : Type*} [Fintype m] [Fintype n] : SecondCountableTopology (Matrix m n ℂ) :=
-  inferInstanceAs (SecondCountableTopology (m → n → ℂ))
-
 theorem meas_inv {n : Type*} [Fintype n] [DecidableEq n] : Measurable fun A : Matrix n n ℂ => A⁻¹ := by
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   simp only [Matrix.inv_def, Ring.inverse_eq_inv, Matrix.smul_apply, smul_eq_mul]
   exact (continuous_id.matrix_det.measurable.inv).mul
     (continuous_id.matrix_adjugate.matrix_elem i j).measurable
@@ -30,7 +31,7 @@ theorem meas_Yb {p q : ℕ} : Measurable fun M : Matrix (Fin p ⊕ Fin q) (Fin p
         continuous_id.matrix_elem (Sum.inr i) (Sum.inr j)).measurable
   have hBi := (meas_inv (n := Fin q)).comp hB
   unfold Yb
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   simp only [Matrix.mul_apply]
   refine Finset.measurable_sum _ fun k _ => ?_
   exact (continuous_id.matrix_elem (Sum.inl i) (Sum.inr k)).measurable.mul
@@ -73,8 +74,6 @@ theorem meas_Bor (X : Data E r) : MeasurableSet (Bor X.Ψ r) := by
     · simp only [hca, true_implies]
       exact (isClosed_eq (by fun_prop) continuous_const).measurableSet
     · simp [hca]
-
-local instance instPolishFrame (X : Data E r) : PolishSpace (Frame X.Ψ r) where
 
 def Sset (X : Data E r) (x0 : Frame X.Ψ r) (FF : Set (V (nd X))) : Set (Frame X.Ψ r) :=
   (fun pr : V (nd X) × Frame X.Ψ r => rmul (cpt X x0 pr.1) pr.2) '' (FF ×ˢ Bor X.Ψ r)

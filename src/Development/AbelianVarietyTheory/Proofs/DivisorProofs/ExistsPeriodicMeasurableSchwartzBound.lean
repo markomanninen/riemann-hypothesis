@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantFinprodSchwartzBruhatFiniteAdel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportFinprodSchwartzBruhatFiniteAdel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorPureTensorComponentAtPlace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantFinprodSchwartzBruhatFiniteAdel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportFinprodSchwartzBruhatFiniteAdel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorPureTensorComponentAtPlace
+
+@[expose] public section
 
 open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open IsDedekindDomain NumberField MeasureTheory
@@ -51,8 +55,8 @@ theorem hasCompactSupport_pureA {f : (κ → mixedEmbedding.mixedSpace F) → �
   funext i
   exact Prod.ext ((InfiniteAdeleRing.ringEquiv_mixedSpace F).symm_apply_apply _) rfl
 
-variable (F κ) in
 
+variable (F κ) in
 theorem exists_bump : ∃ f : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.SInf F κ, HasCompactSupport f ∧ f 0 = 1 := by
   let b : ContDiffBump (0 : κ → mixedEmbedding.mixedSpace F) := ⟨1, 2, one_pos, one_lt_two⟩
   have h1 : HasCompactSupport fun x => (b x : ℂ) :=
@@ -62,19 +66,21 @@ theorem exists_bump : ∃ f : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensor
   show (b 0 : ℂ) = 1
   rw [b.one_of_mem_closedBall (Metric.mem_closedBall_self zero_le_one), Complex.ofReal_one]
 
+
 variable (κ) in
+def intPts (κ : Type)
+    (v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)) :
+    Set (κ → Fv F v) := {x | ∀ i, x i ∈ v.adicCompletionIntegers F}
 
-def intPts (v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F) : Set (κ → Fv F v) := {x | ∀ i, x i ∈ v.adicCompletionIntegers F}
-
-theorem intPts_eq (v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F) :
+theorem intPts_eq (v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)) :
     intPts κ v = Set.pi Set.univ fun _ => (v.adicCompletionIntegers F : Set (Fv F v)) := by
   ext x; simp [intPts]
 
-theorem isCompact_intPts (v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F) : IsCompact (intPts κ v) := by
+theorem isCompact_intPts (v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)) : IsCompact (intPts κ v) := by
   rw [intPts_eq]
   exact isCompact_univ_pi fun _ => ReciprocityTheory.GeneralLinearIntegers.GeneralLinearIntegersOpenCompact.isCompact_integers v
 
-theorem isOpen_intPts (v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F) : IsOpen (intPts κ v) := by
+theorem isOpen_intPts (v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)) : IsOpen (intPts κ v) := by
   rw [intPts_eq]
   exact isOpen_set_pi Set.finite_univ fun _ _ => Valued.isOpen_valuationSubring _
 
@@ -89,7 +95,7 @@ theorem indicator_mem_SB {X : Type} [TopologicalSpace X] [T2Space X] {U : Set X}
   · filter_upwards [hc.isClosed.isOpen_compl.mem_nhds hx] with y hy
     rw [Set.indicator_of_notMem hx, Set.indicator_of_notMem hy]
 
-theorem exists_cofactor : ∀ {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ] (v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F),
+theorem exists_cofactor : ∀ {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ] (v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)),
     ∃ (r : (κ → AF F) → ℂ) (K : Set (κ → Fv F v)), @Measurable _ _ (borel _) _ r ∧
       (∀ x z, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (evFin F v) z → r (x + z) = r x) ∧
       (∀ φ ∈ GlobalTheory.WeilM.SB (κ → Fv F v), GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.tens (evFin F v) φ r ∈ GlobalTheory.WeilM.schA F κ) ∧
@@ -101,7 +107,7 @@ theorem exists_cofactor : ∀ {F : Type} [Field F] [NumberField F] {κ : Type} [
   letI : MeasurableSpace (κ → AF F) := borel _
   haveI : BorelSpace (κ → AF F) := ⟨rfl⟩
   obtain ⟨f, hfc, hf0⟩ := exists_bump F κ
-  let φ : ∀ w : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F, (κ → Fv F w) → ℂ := fun w => (intPts κ w).indicator 1
+  let φ : ∀ w : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F), (κ → Fv F w) → ℂ := fun w => (intPts κ w).indicator 1
   have hφ : ∀ w, φ w ∈ GlobalTheory.WeilM.SB _ := fun w => indicator_mem_SB (isCompact_intPts w) (isOpen_intPts w)
   have hstd : ∀ᶠ w in Filter.cofinite, φ w = Set.indicator {x | ∀ i, x i ∈ w.adicCompletionIntegers F} 1 :=
     Filter.Eventually.of_forall fun _ => rfl

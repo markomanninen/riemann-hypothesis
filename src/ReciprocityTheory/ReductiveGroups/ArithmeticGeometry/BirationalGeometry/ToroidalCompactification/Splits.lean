@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrData
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrData
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+
+@[expose] public section
 
 noncomputable section
 
@@ -201,7 +205,11 @@ theorem splitsAt (hC : Out.CubePullSt) (hU : Out.UnramExtSt) (hB : Out.GtBaseCha
   obtain ⟨k, _, _, hfin, hsep, S, hGt⟩ := hS x
   let Ω := AlgebraicClosure (ResidueField P.V)
   let _ : Algebra (Y.X.residueField x) (ResidueField P.V) := φ₀.hom.toAlgebra
-  let σ : k →ₐ[Y.X.residueField x] Ω := IsAlgClosed.lift
+  let σ : k →ₐ[Y.X.residueField x] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let bs := Module.finBasis (Y.X.residueField x) k
   let k' := IntermediateField.adjoin (ResidueField P.V) (Set.range fun i => σ (bs i))
   have sepσ : ∀ z : k, IsSeparable (ResidueField P.V) (σ z) := fun z =>
@@ -211,7 +219,8 @@ theorem splitsAt (hC : Out.CubePullSt) (hU : Out.UnramExtSt) (hB : Out.GtBaseCha
   have : Algebra.IsSeparable (ResidueField P.V) k' :=
     (IntermediateField.isSeparable_adjoin_iff_isSeparable _ _).2 (by rintro _ ⟨i, rfl⟩; exact sepσ _)
   have hmem : ∀ z : k, σ z ∈ k' := fun z => by
-    rw [← bs.sum_repr z, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← bs.sum_repr z, map_sum]
     refine sum_mem fun i _ => ?_
     rw [map_smul, Algebra.smul_def, IsScalarTower.algebraMap_apply (Y.X.residueField x) (ResidueField P.V) Ω]
     exact mul_mem (k'.algebraMap_mem _) (IntermediateField.subset_adjoin _ _ ⟨i, rfl⟩)

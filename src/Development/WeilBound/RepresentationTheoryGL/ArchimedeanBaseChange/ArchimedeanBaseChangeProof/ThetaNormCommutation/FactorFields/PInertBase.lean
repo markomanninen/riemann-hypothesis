@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.FactorFields.TensorCompl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOfBasis
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.FactorFields.TensorCompl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOfBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem decomp (E : Type) [Field E] [NumberField E] [IsCMField E] (s : E) (hs : 
     (hcs : IsCMField.complexConj E s = -s) (x : E) :
     ∃ p q : maximalRealSubfield E, x = algebraMap _ E p + s * algebraMap _ E q := by
   obtain ⟨p, hp⟩ := exists_real E ((x + IsCMField.complexConj E x) / 2) (by
-    rw [map_div₀, map_add, IsCMField.complexConj_apply_apply, map_ofNat]; ring)
+    rw [map_div₀, map_add (f := _), IsCMField.complexConj_apply_apply, map_ofNat]; ring)
   obtain ⟨q, hq⟩ := exists_real E ((x - IsCMField.complexConj E x) / (2 * s)) (by
     rw [map_div₀, map_sub, map_mul, IsCMField.complexConj_apply_apply, map_ofNat, hcs]
     field_simp; ring)
@@ -48,12 +52,12 @@ theorem inertBase_pf (h1 : TensorCompl) : InertBase := by
     | tmul a x =>
       obtain ⟨p, q, hx⟩ := InertBaseP.decomp E s hs hcs x
       refine ⟨a * algebraMap _ _ p, a * algebraMap _ _ q, ?_⟩
-      simp only [GlobalTheory.LFun.toCompl_tmul, hx, map_mul, map_add, GlobalTheory.LFun.complMap_algebraMap]
+      simp only [GlobalTheory.LFun.toCompl_tmul, hx, map_mul, map_add (f := _), GlobalTheory.LFun.complMap_algebraMap]
       ring
     | add t1 t2 e1 e2 =>
       obtain ⟨a1, b1, f1⟩ := e1
       obtain ⟨a2, b2, f2⟩ := e2
-      exact ⟨a1 + a2, b1 + b2, by rw [map_add, f1, f2, map_add, map_add]; ring⟩
+      exact ⟨a1 + a2, b1 + b2, by rw [map_add (f := _), f1, f2, map_add (f := _), map_add (f := _)]; ring⟩
 
 end PositivityTheory.Rg.BcB.G3
 

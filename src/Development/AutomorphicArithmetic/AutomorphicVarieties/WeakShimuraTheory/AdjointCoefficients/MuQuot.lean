@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointCoefficients.ClosureComm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointMemSp4
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointCoefficients.ClosureComm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointMemSp4
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -42,7 +46,7 @@ theorem UpperTheory.V.Ws.X1.muQuot :
       · simp [e, key, (hPψ v).2]
     · exact map_zero g
     · intro x y _ _ hx hy
-      rw [map_add, hx, hy, add_zero]
+      rw [map_add (f := _), hx, hy, add_zero]
     · intro r x _ hx
       rw [smul_eq_mul, map_mul, hx, mul_zero]
   have hne : I ≠ ⊤ := by

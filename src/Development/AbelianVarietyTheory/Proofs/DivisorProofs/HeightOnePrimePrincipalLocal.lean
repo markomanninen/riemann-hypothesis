@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLogMult
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtCoord
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumOrdSubOneLeOrdWedgeDifferentials
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntersectionNumberPullbackProportionalOfProporti
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLogMult
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtCoord
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumOrdSubOneLeOrdWedgeDifferentials
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntersectionNumberPullbackProportionalOfProporti
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry TopologicalSpace Filter
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -20,7 +25,7 @@ theorem heightOne_prime_locallyPrincipal_of_factorial_localization : ∀ (R S : 
   have hPSprime : (P.map (algebraMap R S)).IsPrime :=
     IsLocalization.isPrime_of_isPrime_disjoint p.primeCompl S P hP hdisj
   have hcomap : (P.map (algebraMap R S)).comap (algebraMap R S) = P :=
-    IsLocalization.comap_map_of_isPrime_disjoint p.primeCompl S hP hdisj
+    IsLocalization.under_map_of_isPrime_disjoint p.primeCompl S hP hdisj
   have hPS0 : P.map (algebraMap R S) ≠ ⊥ := by
     obtain ⟨x, hxP, hx0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hP0
     intro h

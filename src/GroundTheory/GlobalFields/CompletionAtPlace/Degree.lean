@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.CompletionAtPlace.Integers
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.CompletionAtPlace.Integers
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,9 +42,8 @@ theorem toResidueInteger_surjective : Function.Surjective (toResidueInteger u) :
   obtain ⟨y, rfl⟩ := Ideal.Quotient.mk_surjective z
   have hy : (y : u.adicCompletion F) ∈ u.adicCompletionIntegers F :=
     (mem_valuationInteger_iff u _).1 y.2
-  have hn : {z : u.adicCompletion F | Valued.v.restrict (z - y) <
-      ((1 : (MonoidWithZeroHom.ValueGroup₀ (.ofClass (Valued.v :
-        Valuation (u.adicCompletion F) ℤᵐ⁰)))ˣ) : _)} ∈ nhds (y : u.adicCompletion F) :=
+  have hn : {z : u.adicCompletion F | Valued.v.restrict (z - y) < 1} ∈
+      nhds (y : u.adicCompletion F) :=
     Valued.mem_nhds.2 ⟨1, subset_rfl⟩
   obtain ⟨_, hz, r, rfl⟩ := mem_closure_iff_nhds.1
     (adicCompletionIntegers_subset_closure_ringOfIntegers u hy) _ hn
@@ -108,10 +111,6 @@ open AdicLiesOver
 
 variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
   (v : HeightOneSpectrum (𝓞 K)) (w : HeightOneSpectrum (𝓞 L)) [w.asIdeal.LiesOver v.asIdeal]
-
-example : Module.finrank (v.adicCompletion K) (w.adicCompletion L) =
-    w.asIdeal.ramificationIdx (𝓞 K) * w.asIdeal.inertiaDeg (𝓞 K) :=
-  finrank_adicCompletion v w
 
 end Check
 

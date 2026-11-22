@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.LenIdStatement
+module
+
+public import ReciprocityTheory.DualLattices.LenIdStatement
+
+@[expose] public section
 
 noncomputable section
 

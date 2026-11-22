@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
+
+@[expose] public section
 
 open UpperTheory.V.FW
 
@@ -20,7 +24,7 @@ private theorem UpperTheory.V.FW.descZ_mul {k F G : Type} [CommRing k] [CommRing
     MonoidAlgebra.map ϖ (u * toK k G a) = MonoidAlgebra.map ϖ u * toK F G a := by
   induction a using MonoidAlgebra.induction_linear with
   | zero => simp
-  | add x y hx hy => rw [map_add, mul_add, MonoidAlgebra.map_add, hx, hy, map_add, mul_add]
+  | add x y hx hy => rw [map_add (f := _), mul_add, MonoidAlgebra.map_add (f := _), hx, hy, map_add (f := _), mul_add]
   | single g n =>
     ext h
     simp only [toK, MonoidAlgebra.mapRingHom_single, eq_intCast, MonoidAlgebra.coeff_map,
@@ -48,13 +52,13 @@ theorem UpperTheory.V.FW.descZ :
   have h1 : MonoidAlgebra.map ϖ (1 : MonoidAlgebra k G) = 1 := by
     rw [MonoidAlgebra.one_def, MonoidAlgebra.map_single, hϖ, MonoidAlgebra.one_def]
   have h2 := descZ_mul ϖ 1 x
-  rw [one_mul, h1, one_mul, ← huv, MonoidAlgebra.map_add, descZ_mul, descZ_mul] at h2
+  rw [one_mul, h1, one_mul, ← huv, MonoidAlgebra.map_add (f := _), descZ_mul, descZ_mul] at h2
   have hs : Function.Surjective (toK (ZMod l) G) :=
     MonoidAlgebra.map_surjective (Int.castRingHom (ZMod l) : ℤ →+ ZMod l) ZMod.intCast_surjective
   obtain ⟨u', hu⟩ := hs (MonoidAlgebra.map ϖ u)
   obtain ⟨v', hv⟩ := hs (MonoidAlgebra.map ϖ v)
   obtain ⟨z, hz⟩ := descZ_ker l (x - (u' * a + v' * b)) (by
-    rw [map_sub, map_add, map_mul, map_mul, hu, hv, h2, sub_self])
+    rw [map_sub, map_add (f := _), map_mul, map_mul, hu, hv, h2, sub_self])
   have hx' : x = u' * a + v' * b + z * (l : MonoidAlgebra ℤ G) := by rw [← hz]; ring
   rw [hx']
   refine Ideal.add_mem _ (Ideal.add_mem _ ?_ ?_) ?_ <;>

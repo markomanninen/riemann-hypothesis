@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CoordEquivSymmApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CoordEquivSymmApply
+
+@[expose] public section
+
 open scoped Classical ENNReal
 open Matrix MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.LocWSOf Formalism.L2.SG.PoincareInHH.PoincareSetting GlobalTheory.CovDom GlobalTheory.CovDomGrp
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -22,7 +27,8 @@ theorem mul_eOf_Pc_apply (u : D.what₂.Word)
 theorem eOf_Pc_mul_apply (u : D.what₂.Word) (ν : Matrix (Fin D.R.rS) (Fin D.R.rS) D.host.E)
     (i : Fin (2 * D.R.rS + D.R.k + 1)) (a : Fin D.R.rS) :
     (GlobalTheory.SgAlg.eOf (Pc X u) * ν) i a = crdH X (∑ b, ν b a • X.eX b) i := by
-  rw [← coordEquiv_symm_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← coordEquiv_symm_apply, map_sum]
   simp [Matrix.mul_apply, GlobalTheory.SgAlg.eOf, Pc, coordEquiv_symm_apply, Finset.sum_apply, mul_comm]
 
 theorem xflag_Fu (u : D.what₂.Word) (j : ℕ) :
@@ -74,7 +80,7 @@ theorem flag_iff {D : D7} (X : HidaSetting D) (u : D.what₂.Word) (n : (VS D).V
       exact Submodule.span_mono (Set.image_mono hsub) (hstep i)
     | zero => simp
     | add x y _ _ hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       convert Submodule.add_mem _ hx hy using 1
       abel
     | smul c x _ hx =>

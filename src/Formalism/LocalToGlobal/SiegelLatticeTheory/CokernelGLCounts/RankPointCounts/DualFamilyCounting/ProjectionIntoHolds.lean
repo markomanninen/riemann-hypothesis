@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.BigLineBundleMoriwaki
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsUnimodularAtAdjoinIff
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.BigLineBundleMoriwaki
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsUnimodularAtAdjoinIff
+
+@[expose] public section
 
 open NumberField Module
 
@@ -49,7 +53,7 @@ theorem mem_locF_dualIn {h : V →ₗ⋆[K] V →ₗ[K] K} {X : Submodule K V} {
     exact Submodule.smul_mem _ _ (ht y hy).2
   | zero => simp
   | add a b _ _ ha hb =>
-    rw [map_add, LinearMap.add_apply]
+    rw [map_add (f := _), LinearMap.add_apply]
     exact Submodule.add_mem _ ha hb
   | smul c a _ ha => exact form_ozmul_left_mem h c ha
 
@@ -66,7 +70,7 @@ theorem projection_into_holds : ProjInto := by
   have h0 : h y (Y.projection X hc.symm x) = 0 := hXY y hyX _ (Submodule.projection_apply_mem _ x)
   have hx' : x ∈ dualF h 𝔭 Λ := by rw [hΛd]; exact hx
   have := hx' y hyΛ
-  rw [← e, map_add, h0, add_zero] at this
+  rw [← e, map_add (f := _), h0, add_zero] at this
   exact this
 
 end Formalism.L2.SG.Pf.G6

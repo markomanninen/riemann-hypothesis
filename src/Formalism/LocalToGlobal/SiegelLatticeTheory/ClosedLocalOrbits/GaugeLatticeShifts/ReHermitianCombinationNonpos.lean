@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.Corank
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.FlagVectorMemLocalization
-import Lemmata.GeneralBFactThirdForm.Imports
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.Corank
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.FlagVectorMemLocalization
+public import Lemmata.GeneralBFactThirdForm.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,104 +105,20 @@ theorem mem_qLat {Λ : Submodule (𝓞 E) V} {W X : Submodule E V} {q : QW W X} 
     q ∈ qLat Λ W X ↔ ∃ w : W, (w : V) ∈ Λ ∧ Submodule.Quotient.mk w = q := by
   simp [qLat]
 
-theorem exists_smul_mem (Λ : Submodule (𝓞 E) V) [hΛ : Submodule.IsLattice E Λ] (v : V) :
+theorem exists_smul_mem (Λ : Submodule (𝓞 E) V) [hΛ : Submodule.IsFullLattice E Λ] (v : V) :
     ∃ s : 𝓞 E, s ≠ 0 ∧ s • v ∈ Λ := by
   first | exact Bl.general_b_fact_third_form.goal1 .. | (apply Bl.general_b_fact_third_form.goal1 <;> assumption) | (intros; apply Bl.general_b_fact_third_form.goal1 <;> assumption)
 
 theorem qLat_isLattice (Λ : Submodule (𝓞 E) V) [hΛ : Submodule.IsLattice E Λ] (W X : Submodule E V) :
     Submodule.IsLattice E (qLat Λ W X) := by
-  refine ⟨?_, ?_⟩
-  · refine Submodule.FG.map _ ?_
-    refine Submodule.fg_of_fg_map_injective ((W.subtype).restrictScalars (𝓞 E)) ?_ ?_
-    · exact Subtype.val_injective
-    · refine Submodule.FG.of_le hΛ.fg ?_
-      intro v hv
-      obtain ⟨w, hw, rfl⟩ := hv
-      exact hw
-  · rw [eq_top_iff]
-    intro q _
-    induction q using Submodule.Quotient.induction_on with | H w => ?_
-    obtain ⟨s, hs, hsw⟩ := exists_smul_mem Λ (w : V)
-    have hmem : Submodule.Quotient.mk (s • w) ∈ qLat Λ W X := mem_qLat.2 ⟨s • w, by simpa using hsw, rfl⟩
-    have hsE : algebraMap (𝓞 E) E s ≠ 0 := by simpa using hs
-    have : (Submodule.Quotient.mk w : QW W X) =
-        (algebraMap (𝓞 E) E s)⁻¹ • (Submodule.Quotient.mk (s • w) : QW W X) := by
-      rw [Submodule.Quotient.mk_smul, ← algebraMap_smul E s, smul_smul, inv_mul_cancel₀ hsE, one_smul]
-    rw [this]
-    exact Submodule.smul_mem _ _ (Submodule.subset_span hmem)
-
-theorem quot_fix (h : V →ₗ⋆[E] V →ₗ[E] E) (hs : h.IsSymm) (W X : Submodule E V)
-    (hR : ∀ x ∈ W, ∀ y ∈ X, h x y = 0) (hL : ∀ x ∈ X, ∀ y ∈ W, h x y = 0)
-    (hpos : ∀ w ∈ W, w ∉ X → 0 < Algebra.trace ℚ E (h w w))
-    (Λ : Submodule (𝓞 E) V) [Submodule.IsLattice E Λ] (δ : V ≃ₗ[E] V) (hδ : δ ∈ Formalism.HermitianLatticesTheory.isom h)
-    (hδΛ : ∀ v, δ v ∈ Λ ↔ v ∈ Λ) (hW : W.map (δ : V →ₗ[E] V) = W) (hX : X.map (δ : V →ₗ[E] V) = X)
-    {g₁ g₂ : ℕ} (hg₁ : g₁.Prime) (hg₂ : g₂.Prime) (hne : g₁ ≠ g₂)
-    (hstep : ∀ w ∈ W, w ∈ Λ → ∃ a ∈ W, a ∈ Λ ∧ δ w - w - ((g₁ * g₂ : ℕ) : 𝓞 E) • a ∈ X) :
-    ∀ w ∈ W, δ w - w ∈ X := by
-  set Q := qEquiv δ W X hW hX with hQ
-  have hlat := qLat_isLattice Λ W X
-  have hiso : Q ∈ Formalism.HermitianLatticesTheory.isom (qForm h W X hR hL) := by
-    have : ∀ a b, qForm h W X hR hL (Q a) (Q b) = qForm h W X hR hL a b := by
-      intro a b
-      induction a using Submodule.Quotient.induction_on with | H a => ?_
-      induction b using Submodule.Quotient.induction_on with | H b => ?_
-      rw [hQ, qEquiv_mk, qEquiv_mk, qForm_mk, qForm_mk]
-      exact hδ a b
-    exact this
-  have hpq : ∀ q : QW W X, q ≠ 0 → 0 < Algebra.trace ℚ E (qForm h W X hR hL q q) := by
-    intro q hq
-    induction q using Submodule.Quotient.induction_on with | H w => ?_
-    rw [qForm_mk]
-    refine hpos w w.2 ?_
-    intro hwX
-    apply hq
-    rw [Submodule.Quotient.mk_eq_zero]
-    exact hwX
-  have haut : Q ∈ Formalism.L2.Col.autLat (qLat Λ W X) := by
-    have : Formalism.HermitianLatticesTheory.gmap Q (qLat Λ W X) = qLat Λ W X := by
-      ext n
-      constructor
-      · rintro ⟨m, hm, rfl⟩
-        obtain ⟨w, hwΛ, rfl⟩ := mem_qLat.1 hm
-        refine mem_qLat.2 ⟨⟨δ w, (mem_of_map_eq hW _).2 w.2⟩, (hδΛ w).2 hwΛ, ?_⟩
-        rfl
-      · intro hn
-        obtain ⟨w, hwΛ, rfl⟩ := mem_qLat.1 hn
-        have h1 : δ (δ.symm w) ∈ W := by simpa using w.2
-        have h2 : δ (δ.symm w) ∈ Λ := by simpa using hwΛ
-        refine ⟨Submodule.Quotient.mk ⟨δ.symm w, (mem_of_map_eq hW _).1 h1⟩,
-          mem_qLat.2 ⟨_, (hδΛ _).1 h2, rfl⟩, ?_⟩
-        show Q _ = _
-        rw [hQ, qEquiv_mk]
-        congr 1
-        apply Subtype.ext
-        simp
-    exact this
-  have hunip : ∀ PP : Ideal (𝓞 E), ((g₁ * g₂ : ℕ) : 𝓞 E) ∈ PP →
-      Formalism.L2.Col.UnipMod PP (qLat Λ W X) Q := by
-    intro PP hPP
-    refine ⟨haut, 1, fun q hq => ?_⟩
-    obtain ⟨w, hwΛ, rfl⟩ := mem_qLat.1 hq
-    obtain ⟨a, haW, haΛ, hXa⟩ := hstep w w.2 hwΛ
-    have key : Q (Submodule.Quotient.mk w) - Submodule.Quotient.mk w =
-        ((g₁ * g₂ : ℕ) : 𝓞 E) • (Submodule.Quotient.mk ⟨a, haW⟩ : QW W X) := by
-      rw [hQ, qEquiv_mk, ← Submodule.Quotient.mk_sub, ← Submodule.Quotient.mk_smul, Submodule.Quotient.eq]
-      simpa using hXa
-    rw [pow_one, LinearMap.sub_apply, Module.End.one_apply, LinearEquiv.coe_coe, key]
-    exact Submodule.smul_mem_smul hPP (mem_qLat.2 ⟨⟨a, haW⟩, haΛ, rfl⟩)
-  obtain ⟨P₁, hP₁, hg₁P⟩ := Formalism.L2.SG.LemmaN.exists_prime_over E hg₁
-  obtain ⟨P₂, hP₂, hg₂P⟩ := Formalism.L2.SG.LemmaN.exists_prime_over E hg₂
-  have hfin : IsOfFinOrder Q :=
-    Formalism.L2.Col.isOfFinOrder_of_isom (qForm h W X hR hL) (qForm_isSymm h hs W X hR hL) hpq hlat hiso haut
-  have hmul : ((g₁ * g₂ : ℕ) : 𝓞 E) = (g₁ : 𝓞 E) * (g₂ : 𝓞 E) := by push_cast; ring
-  have hone : Q = 1 := Formalism.L2.SG.LemmaN.lemmaNcGlob_of_exists E (QW W X) (qLat Λ W X) hlat Q hfin hg₁ hg₂
-    hne hP₁.ne_top hP₂.ne_top hg₁P hg₂P (hunip P₁ (by rw [hmul]; exact Ideal.mul_mem_right _ _ hg₁P))
-    (hunip P₂ (by rw [hmul]; exact Ideal.mul_mem_left _ _ hg₂P))
-  intro w hw
-  have h1 := congrArg (fun f : QW W X ≃ₗ[E] QW W X => f (Submodule.Quotient.mk ⟨w, hw⟩)) hone
-  simp only [hQ, qEquiv_mk, LinearEquiv.coe_one, id_eq] at h1
-  rw [Submodule.Quotient.eq] at h1
-  simpa using h1
+  apply Submodule.IsLattice.of_fg E
+  refine Submodule.FG.map _ ?_
+  refine Submodule.fg_of_fg_map_injective ((W.subtype).restrictScalars (𝓞 E)) ?_ ?_
+  · exact Subtype.val_injective
+  · refine Submodule.FG.of_le hΛ.fg ?_
+    intro v hv
+    obtain ⟨w, hw, rfl⟩ := hv
+    exact hw
 
 end Quot
 
@@ -240,21 +160,7 @@ theorem flag_form_zero {T : E} (F : FlagG S r T) : ∀ x ∈ F.Xplus, ∀ v ∈ 
   obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hx2
   have h1 : S.hT x1 v = 0 :=
     form_span_left (s := Set.range F.e) (by rintro _ ⟨i, rfl⟩; exact hX v hv i) x1 hx1
-  rw [map_add, LinearMap.add_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, h1, hzX v hv]
-  simp
-
-theorem flag_X_le {T : E} (F : FlagG S r T) : F.X ≤ orth S F.Xplus := by
-  intro v hv
-  rw [mem_orth_iff_bl]
-  exact fun x hx => flag_form_zero F x hx v hv
-
-theorem flag_z_orth {T : E} (F : FlagG S r T) : ∀ x ∈ F.X, S.hT x F.z = 0 :=
-  form_span_left (s := Set.range F.e) (by rintro _ ⟨i, rfl⟩; exact F.z_orth i)
-
-theorem Xa_self {T : E} (F : FlagG S r T) : F.Xa r = F.X := by
-  simp only [FlagG.Xa, FlagG.X]
-  congr 1
-  ext v
+  rw [map_add (f := _), LinearMap.add_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, h1, hzX v hv]
   simp
 
 theorem orth_map_bl {γ : S.V ≃ₗ[E] S.V} (hγ : ∀ a b, S.hT (γ a) (γ b) = S.hT a b) (U : Submodule E S.V) :
@@ -442,7 +348,8 @@ theorem sig_bound {N p q : ℕ} (G : Matrix (Fin N) (Fin N) ℂ) (hG : Formalism
     set x := ∑ l, d l • c l with hx
     have hprx : ∀ s, pr x s = ∑ l, d l * pr (c l) s := by
       intro s
-      rw [hx, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hx, map_sum]
       simp
     have hinr : ∀ b, pr x (Sum.inr b) = 0 := by
       intro b
@@ -488,138 +395,6 @@ def PosW (D : D7) : Prop :=
   ∀ T' : ℕ, 0 < T' → ∀ F' : FlagG (VS D) D.R.rS (T' : D.host.E), ∀ v ∈ orth (VS D) F'.Xplus, v ∉ F'.X →
     0 < Algebra.trace ℚ D.host.E ((VS D).hT v v)
 
-theorem betaL_of (D : D7) (u u' : D.what₂.Word) (hI : IotaLift D u u') (hP : PosW D) : BetaL D u u' := by
-  intro _ F0 Λ hΛ x y _ _ β₁ β₂ hp₁ hp₂ v hv
-  haveI : Submodule.IsLattice D.host.E Λ := hΛ.2.1.1
-  obtain ⟨⟨hiso₁, hΛ₁⟩, hfl₁, hz₁, hι₁⟩ := hp₁
-  obtain ⟨⟨hiso₂, hΛ₂⟩, hfl₂, hz₂, hι₂⟩ := hp₂
-  have i₁ : ∀ a b, (VS D).hT (β₁ a) (β₁ b) = (VS D).hT a b := hiso₁
-  have i₂ : ∀ a b, (VS D).hT (β₂ a) (β₂ b) = (VS D).hT a b := hiso₂
-  set δ : (VS D).V ≃ₗ[D.host.E] (VS D).V := β₁.trans β₂.symm with hδdef
-  have hβδ : ∀ w, β₂ (δ w) = β₁ w := fun w => by simp [hδdef]
-  have iδ : ∀ a b, (VS D).hT (δ a) (δ b) = (VS D).hT a b := fun a b => by
-    rw [← i₂ (δ a) (δ b), hβδ, hβδ, i₁]
-
-  have hΛmem : ∀ β : (VS D).V ≃ₗ[D.host.E] (VS D).V, Formalism.HermitianLatticesTheory.gmap β Λ = Λ → ∀ w, β w ∈ Λ ↔ w ∈ Λ := by
-    intro β hβ w
-    constructor
-    · intro hw
-      rw [← hβ] at hw
-      obtain ⟨y', hy', hyw⟩ := hw
-      have : y' = w := β.injective hyw
-      exact this ▸ hy'
-    · intro hw
-      rw [← hβ]
-      exact Submodule.mem_map_of_mem hw
-  have hδΛ : ∀ w, δ w ∈ Λ ↔ w ∈ Λ := fun w => by
-    rw [← hΛmem β₂ hΛ₂, hβδ, hΛmem β₁ hΛ₁]
-
-  set X' : Submodule D.host.E (VS D).V := x.1.fl.X with hX'def
-  set Xp : Submodule D.host.E (VS D).V := x.1.fl.Xplus with hXpdef
-  set W0 : Submodule D.host.E (VS D).V := orth (VS D) Xp with hW0def
-  have hX₁ : X'.map (β₁ : (VS D).V →ₗ[D.host.E] (VS D).V) = y.1.fl.X := by
-    have := hfl₁ D.R.rS
-    simpa [Xflag, Xa_self] using this
-  have hX₂ : X'.map (β₂ : (VS D).V →ₗ[D.host.E] (VS D).V) = y.1.fl.X := by
-    have := hfl₂ D.R.rS
-    simpa [Xflag, Xa_self] using this
-  have hδX' : ∀ w, δ w ∈ X' ↔ w ∈ X' := fun w => by
-    rw [← mem_of_map_eq hX₂, hβδ, mem_of_map_eq hX₁]
-  have hδXm : X'.map (δ : (VS D).V →ₗ[D.host.E] (VS D).V) = X' := map_eq_of_iff hδX'
-  have hδz : δ x.1.fl.z = x.1.fl.z := by
-    apply β₂.injective
-    rw [hβδ, hz₁, hz₂]
-  have hδXp : Xp.map (δ : (VS D).V →ₗ[D.host.E] (VS D).V) = Xp := by
-    rw [hXpdef, FlagG.Xplus, Submodule.map_sup, Submodule.map_span, Set.image_singleton]
-    simp only [LinearEquiv.coe_coe, hδz]
-    rw [← hX'def, hδXm]
-  have hδW : W0.map (δ : (VS D).V →ₗ[D.host.E] (VS D).V) = W0 := by
-    rw [hW0def, orth_map_bl iδ, hδXp]
-  have hXW : X' ≤ W0 := flag_X_le x.1.fl
-  have hXXp : X' ≤ Xp := le_sup_left
-  have hW0L : W0 ≤ orth (VS D) X' := orth_anti hXXp
-  have hR : ∀ a ∈ W0, ∀ b ∈ X', (VS D).hT a b = 0 := fun a ha b hb =>
-    (VS D).herm.eq_iff.1 ((mem_orth_iff_bl.1 ha) b (hXXp hb))
-  have hL : ∀ a ∈ X', ∀ b ∈ W0, (VS D).hT a b = 0 := fun a ha b hb =>
-    (mem_orth_iff_bl.1 hb) a (hXXp ha)
-
-  have hTpos : 0 < Tu D u' := (D.mem u').A.T_prime.pos
-  have hpos : ∀ w ∈ W0, w ∉ X' → 0 < Algebra.trace ℚ D.host.E ((VS D).hT w w) :=
-    fun w hw hwX => hP (Tu D u') hTpos x.1.fl w hw hwX
-
-  have hadm : XLam Λ (lf D F0) ≤ Ideal.span {((gS D : ℕ) : 𝓞 D.host.E)} • Λ ⊔ XLam Λ x.1 :=
-    xlam_le Λ (gS D) (lf D F0) x.1 hΛ.2.1.2.2.2 x.2.2.2.1 x.2.2.1
-  have hstep : ∀ w ∈ W0, w ∈ Λ → ∃ a ∈ W0, a ∈ Λ ∧
-      δ w - w - ((D.host.g 0 * D.host.g 1 : ℕ) : 𝓞 D.host.E) • a ∈ X' := by
-    intro w hwW hwΛ
-    have hwL : w ∈ Lrep Λ x.1 := ⟨hwΛ, hW0L hwW⟩
-    obtain ⟨l, hl, hlw⟩ := hI F0 Λ hΛ x w hwL
-    have h1 : l - β₁ w ∈ NgX Λ (gS D) (lf D F0) y.1 := (hι₁ w hwL l hl).1 hlw
-    have hδwW : δ w ∈ W0 := (mem_of_map_eq hδW w).2 hwW
-    have hδwL : δ w ∈ Lrep Λ x.1 := ⟨(hδΛ w).2 hwΛ, hW0L hδwW⟩
-    have h2 : l - δ w ∈ NgX Λ (gS D) (lf D F0) x.1 := (hι₂ (δ w) hδwL l hl).2 (by rw [hβδ]; exact h1)
-    have h3 : δ w - w ∈ NgX Λ (gS D) (lf D F0) x.1 := by
-      have := sub_mem hlw h2
-      rwa [show l - w - (l - δ w) = δ w - w by abel] at this
-    have h4 : NgX Λ (gS D) (lf D F0) x.1 ≤ Ideal.span {((gS D : ℕ) : 𝓞 D.host.E)} • Λ ⊔ XLam Λ x.1 :=
-      sup_le (sup_le le_sup_left hadm) le_sup_right
-    obtain ⟨p, hp, c, hc, hpc⟩ := Submodule.mem_sup.1 (h4 h3)
-    rw [Submodule.ideal_span_singleton_smul] at hp
-    obtain ⟨a, haΛ, rfl⟩ := (Submodule.mem_smul_pointwise_iff_exists _ _ _).1 hp
-    have hcX : c ∈ X' := hc.2
-    have hga : ((gS D : ℕ) : 𝓞 D.host.E) • a ∈ W0 := by
-      have : ((gS D : ℕ) : 𝓞 D.host.E) • a = δ w - w - c := by rw [← hpc]; abel
-      rw [this]
-      exact sub_mem (sub_mem hδwW hwW) (hXW hcX)
-    have hg0 : ((gS D : ℕ) : D.host.E) ≠ 0 := by
-      have h0 := (D.host.g_prime 0).ne_zero
-      have h1' := (D.host.g_prime 1).ne_zero
-      simp only [gS]
-      exact_mod_cast Nat.mul_ne_zero h0 h1'
-    have haW : a ∈ W0 := by
-      have : a = ((gS D : ℕ) : D.host.E)⁻¹ • (((gS D : ℕ) : 𝓞 D.host.E) • a) := by
-        rw [← coe_smul_eq (S := VS D), smul_smul]
-        push_cast
-        rw [inv_mul_cancel₀ hg0, one_smul]
-      rw [this]
-      exact W0.smul_mem _ hga
-    refine ⟨a, haW, haΛ, ?_⟩
-    have : δ w - w - ((D.host.g 0 * D.host.g 1 : ℕ) : 𝓞 D.host.E) • a = c := by
-      rw [← hpc]
-      simp only [gS]
-      abel
-    rw [this]
-    exact hcX
-  have hfix := quot_fix (VS D).hT (VS D).herm W0 X' hR hL hpos Λ δ iδ hδΛ hδW hδXm
-    (D.host.g_prime 0) (D.host.g_prime 1) D.host.g_ne hstep
-
-  have hzz : (VS D).hT x.1.fl.z x.1.fl.z ≠ 0 := by
-    rw [x.1.fl.z_norm]
-    exact neg_ne_zero.2 (tu_ne_zero u')
-  set c : D.host.E := (VS D).hT x.1.fl.z v / (VS D).hT x.1.fl.z x.1.fl.z with hc
-  have hv0 : v - c • x.1.fl.z ∈ W0 := by
-    rw [hW0def, mem_orth_iff_bl]
-    intro q hq
-    obtain ⟨q1, hq1, q2, hq2, rfl⟩ := Submodule.mem_sup.1 hq
-    obtain ⟨d, rfl⟩ := Submodule.mem_span_singleton.1 hq2
-    have hv' := mem_orth_iff_bl.1 hv
-    have e1 : (VS D).hT q1 (v - c • x.1.fl.z) = 0 := by
-      rw [map_sub, map_smul, hv' q1 hq1, flag_z_orth x.1.fl q1 hq1]
-      simp
-    have e2 : (VS D).hT x.1.fl.z (v - c • x.1.fl.z) = 0 := by
-      rw [map_sub, map_smul, hc, smul_eq_mul, div_mul_cancel₀ _ hzz, sub_self]
-    rw [map_add, LinearMap.add_apply, e1, LinearMap.map_smulₛₗ, LinearMap.smul_apply, e2]
-    simp
-  have hδv : δ v - v ∈ X' := by
-    have h0 := hfix _ hv0
-    have : δ (v - c • x.1.fl.z) - (v - c • x.1.fl.z) = δ v - v := by
-      rw [map_sub, map_smul, hδz]
-      abel
-    rwa [this] at h0
-  have hfin : β₂ (δ v - v) ∈ y.1.fl.X := (mem_of_map_eq hX₂ _).2 hδv
-  rw [map_sub, hβδ] at hfin
-  exact hfin
-
 end D7
 
 section PosWPf
@@ -633,7 +408,8 @@ theorem form_coord {E : Type} [Field E] [NumberField E] [StarRing E] (S : Formal
     τ (S.hT a b) = cform (S.gram.map τ) (fun i => τ (S.frame.equivFun a i))
       (fun j => τ (S.frame.equivFun b j)) := by
   conv_lhs => rw [← S.frame.sum_equivFun a, ← S.frame.sum_equivFun b]
-  simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul,
     map_mul, starRingEnd_apply, hconj]
   simp only [cform, dotProduct, Matrix.mulVec, Matrix.map_apply, Formalism.BasicNotions.HSpace.gram, Pi.star_apply,
     Finset.mul_sum]
@@ -688,7 +464,7 @@ theorem posW_holds (D : D7) : PosW D := by
       obtain ⟨a1, ha1, a2, ha2, hsum⟩ := Submodule.mem_sup.1 hvs
       obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 ha1
       have h1 : (VS D).hT F'.z v = c * (VS D).hT F'.z F'.z := by
-        rw [← hsum, map_add, map_smul, flag_form_zero F' F'.z hzXp a2 ha2, smul_eq_mul, add_zero]
+        rw [← hsum, map_add (f := _), map_smul, flag_form_zero F' F'.z hzXp a2 ha2, smul_eq_mul, add_zero]
       rw [hzv, F'.z_norm] at h1
       have hc : c = 0 := by
         rcases mul_eq_zero.1 h1.symm with h | h
@@ -736,7 +512,11 @@ theorem posW_holds (D : D7) : PosW D := by
     rw [← this]
     simp
   have hpos : 0 < ∑ σ : D.host.E →ₐ[ℚ] ℂ, (σ t).re := by
-    let σ0 : D.host.E →ₐ[ℚ] ℂ := IsAlgClosed.lift
+    let σ0 : D.host.E →ₐ[ℚ] ℂ := (by
+      refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+      solve_by_elim* (maxDepth := 2) only [*,
+        @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+        @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
     exact Finset.sum_pos (fun σ _ => hτ σ.toRingHom) ⟨σ0, Finset.mem_univ _⟩
   exact_mod_cast key' ▸ hpos
 
@@ -747,31 +527,6 @@ section Final
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.TermDef Formalism.L2.SG.Corank
-
-theorem iotaLift_holds (D : D7) (u u' : D.what₂.Word) : IotaLift D u u' := by
-  intro F0 Λ hΛ x x' hx'
-  obtain ⟨ξ, hξ⟩ := x.2.2.1
-  have hU := hΛ.2.1.2.1
-  have hFC := hΛ.2.1.2.2.2
-  have hmem : x' ∈ Lrep Λ (lf D F0) ⊔ Ideal.span {((gS D : ℕ) : 𝓞 D.host.E)} • Λ := by
-    refine mem_of_forall_locP (fun P => ?_)
-    haveI := P.isPrime
-    by_cases hgP : ((gS D : ℕ) : 𝓞 D.host.E) ∈ P.asIdeal
-    · obtain ⟨t, ht, l, hl, hlt⟩ :=
-        PI.UnitaryGroupMassFormula.BetaLUniq.EigB.iotaLift hU hFC hξ P hgP x' hx'.1 hx'.2
-      refine ⟨t, ht, ?_⟩
-      have e : t • x' = l - (l - t • x') := by abel
-      rw [e]
-      exact sub_mem (Submodule.mem_sup_left hl) (Submodule.mem_sup_right hlt)
-    · exact ⟨_, hgP, Submodule.mem_sup_right (Submodule.smul_mem_smul (Ideal.mem_span_singleton_self _) hx'.1)⟩
-  obtain ⟨l, hl, n, hn, hln⟩ := Submodule.mem_sup.1 hmem
-  refine ⟨l, hl, ?_⟩
-  have e : l - x' = -n := by rw [← hln]; abel
-  rw [e]
-  exact neg_mem (Submodule.mem_sup_left (Submodule.mem_sup_left hn))
-
-theorem beta_lattice_holds : ∀ (D : D7) (u u' : D.what₂.Word), BetaL D u u' :=
-  fun D u u' => betaL_of D u u' (iotaLift_holds D u u') (posW_holds D)
 
 end Final
 

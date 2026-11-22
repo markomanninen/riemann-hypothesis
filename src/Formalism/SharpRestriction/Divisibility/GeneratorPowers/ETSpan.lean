@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ETPointStatement
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ETPointStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 

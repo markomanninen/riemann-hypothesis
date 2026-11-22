@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuBesselLoc
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BesselOfWPf
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselFunctionalOfSigmaContinuity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothAdd
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuBesselLoc
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BesselOfWPf
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselFunctionalOfSigmaContinuity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothAdd
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,8 +62,8 @@ theorem mem_DD (C : Choice X θ) (τ : D.what₂.Tau) (γ : Formalism.REAL.UJ (X
   rw [← e]
   exact Submodule.subset_span ⟨_, hxU, rfl⟩
 
-variable [Fact Formalism.FourierDecayAlt.ThreeDimData.DecLow] in
 
+variable [Fact Formalism.FourierDecayAlt.ThreeDimData.DecLow] in
 theorem locDDQ (hI : Formalism.FourierDecayAlt.ThreeDimData.Inputs) (hRT : ReproTr) (hL2 : L2RightTranslation) (hGp : GapOfHyp)
     (hG : Formalism.L2.SG.ConcreteSettingExists.GapHyp D) (C : Choice X θ) (hLF : LocFactor C) (u : D.what₂.Word)
     (τ : D.what₂.Tau) :

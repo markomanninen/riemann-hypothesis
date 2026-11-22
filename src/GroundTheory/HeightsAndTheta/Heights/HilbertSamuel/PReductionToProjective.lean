@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsTopPullFS
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjDegGenDeg
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenDegMatAct
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFrameChange
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsMetricToFS
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsTopPullFS
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjDegGenDeg
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenDegMatAct
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFrameChange
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsMetricToFS
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.Statement
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramLoc
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.Statement
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,8 +27,8 @@ abbrev rcIntAlg (v : HeightOneSpectrum (𝓞 F)) :
 theorem rc_isIntegral (v : HeightOneSpectrum (𝓞 F)) (x : E ⊗[F] v.adicCompletion F)
     (hx : x ∈ Formalism.UG.tensInt (F := F) (v.adicCompletion F) (Formalism.UG.intOE E)
       (v.adicCompletionIntegers F).toSubring) :
-    letI := rcIntAlg (E := E) v
-    IsIntegral (v.adicCompletionIntegers F) x := by
+    @IsIntegral (v.adicCompletionIntegers F) (E ⊗[F] v.adicCompletion F) _ _
+      (rcIntAlg (E := E) v) x := by
   letI := rcIntAlg (E := E) v
   unfold Formalism.UG.tensInt Formalism.UG.intOE at hx
   refine (Subring.closure_le (t := (integralClosure (v.adicCompletionIntegers F)
@@ -69,7 +73,8 @@ theorem rc_idem_zero (v : HeightOneSpectrum (𝓞 F)) (f t : E ⊗[F] v.adicComp
     have h := congrArg (f * ·) hq0
     simp only [mul_zero] at h
     rw [Polynomial.eval₂_eq_sum_range, Finset.mul_sum] at h
-    rw [Polynomial.eval_eq_sum_range, map_sum, Finset.mul_sum, ← h]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Polynomial.eval_eq_sum_range, map_sum, Finset.mul_sum, ← h]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     rw [one_pow, mul_one, mul_left_comm, hidem, mul_comm]
   have hsplit : (p.scaleRoots c').eval 1 =
@@ -128,7 +133,7 @@ theorem rc_finrank (v : HeightOneSpectrum (𝓞 F)) :
              rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, smul_eq_mul])
           | (simp [Algebra.smul_def, Algebra.TensorProduct.tmul_mul_tmul, mul_comm]; done)
         | add x y hx hy =>
-          rw [smul_add, map_add, map_add, hx, hy, smul_add] }
+          rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add] }
   rw [← e.finrank_eq, Module.finrank_baseChange]
 
 end

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.TraceClass
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.TraceClass
+
+@[expose] public section
 
 noncomputable section
 

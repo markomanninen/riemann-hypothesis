@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.LetAct
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.LetAct
+
+@[expose] public section
 
 set_option autoImplicit false
 

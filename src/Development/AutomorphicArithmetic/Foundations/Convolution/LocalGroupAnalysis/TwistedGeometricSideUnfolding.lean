@@ -1,5 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
-import GroundTheory.AutomorphicForms.TraceFormulaGeometric
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+public import GroundTheory.AutomorphicForms.TraceFormulaGeometric
+
+@[expose] public section
+
 open PositivityTheory.Rg.Tf.Geo
 open MeasureTheory Topology Filter Set Function
 open scoped ENNReal Pointwise
@@ -173,15 +178,54 @@ private theorem one_class (Γ : Subgroup X) [DiscreteTopology Γ] (μ : Measure 
     intro i
     rw [hE]
     dsimp only
-    rw [setIntegral_smul_set μ]
-    simp_rw [hconj]
+    have hchange := (measurePreserving_mul_left μ (d i : X)).integral_comp
+      (MeasurableEquiv.mulLeft (d i : X)).measurableEmbedding
+      (fun x => (E i).indicator (fun x => f (x⁻¹ * γ * θ x)) x)
+    have hpre : (fun x => (d i : X) * x) ⁻¹' E i = fundamentalDomain Γ := by
+      ext x
+      simp [hE, Set.mem_smul_set_iff_inv_smul_mem]
+    calc
+      ∫ x in E i, f (x⁻¹ * γ * θ x) ∂μ =
+          ∫ x, (E i).indicator (fun x => f (x⁻¹ * γ * θ x)) x ∂μ :=
+        (integral_indicator (hEm i)).symm
+      _ = ∫ x, (E i).indicator (fun x => f (x⁻¹ * γ * θ x)) ((d i : X) * x) ∂μ :=
+        hchange.symm
+      _ = ∫ x in fundamentalDomain Γ, f (((d i : X) * x)⁻¹ * γ * θ ((d i : X) * x)) ∂μ := by
+        rw [← integral_indicator (measurableSet_fundamentalDomain Γ)]
+        congr 1
+        funext x
+        have hx : ((d i : X) * x ∈ E i) ↔ x ∈ fundamentalDomain Γ := by
+          change x ∈ (fun x => (d i : X) * x) ⁻¹' E i ↔ _
+          rw [hpre]
+        simp [Set.indicator, hx]
+      _ = _ := by simp_rw [hconj]
   have hnorm : ∀ i, ∫ x in E i, ‖f (x⁻¹ * γ * θ x)‖ ∂μ =
       ∫ x in fundamentalDomain Γ, ‖f (x⁻¹ * (i.1 : X) * θ x)‖ ∂μ := by
     intro i
     rw [hE]
     dsimp only
-    rw [setIntegral_smul_set μ]
-    simp_rw [hconj]
+    have hchange := (measurePreserving_mul_left μ (d i : X)).integral_comp
+      (MeasurableEquiv.mulLeft (d i : X)).measurableEmbedding
+      (fun x => (E i).indicator (fun x => ‖f (x⁻¹ * γ * θ x)‖) x)
+    have hpre : (fun x => (d i : X) * x) ⁻¹' E i = fundamentalDomain Γ := by
+      ext x
+      simp [hE, Set.mem_smul_set_iff_inv_smul_mem]
+    calc
+      ∫ x in E i, ‖f (x⁻¹ * γ * θ x)‖ ∂μ =
+          ∫ x, (E i).indicator (fun x => ‖f (x⁻¹ * γ * θ x)‖) x ∂μ :=
+        (integral_indicator (hEm i)).symm
+      _ = ∫ x, (E i).indicator (fun x => ‖f (x⁻¹ * γ * θ x)‖) ((d i : X) * x) ∂μ :=
+        hchange.symm
+      _ = ∫ x in fundamentalDomain Γ,
+          ‖f (((d i : X) * x)⁻¹ * γ * θ ((d i : X) * x))‖ ∂μ := by
+        rw [← integral_indicator (measurableSet_fundamentalDomain Γ)]
+        congr 1
+        funext x
+        have hx : ((d i : X) * x ∈ E i) ↔ x ∈ fundamentalDomain Γ := by
+          change x ∈ (fun x => (d i : X) * x) ⁻¹' E i ↔ _
+          rw [hpre]
+        simp [Set.indicator, hx]
+      _ = _ := by simp_rw [hconj]
   have hEi : ∀ i, IntegrableOn (fun x => f (x⁻¹ * γ * θ x)) (E i) μ := by
     intro i
     have h := (measurePreserving_mul_left μ (d i : X)).integrableOn_comp_preimage

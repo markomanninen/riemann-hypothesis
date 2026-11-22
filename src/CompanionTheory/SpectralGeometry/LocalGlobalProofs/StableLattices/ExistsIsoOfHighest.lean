@@ -1,6 +1,10 @@
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.SimpleDistinctness.ScalarCharacterOfL2Embedding
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKTypeMultiplicityOneUnconditional
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOnePOf
+module
+
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.SimpleDistinctness.ScalarCharacterOfL2Embedding
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKTypeMultiplicityOneUnconditional
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOnePOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,10 +29,6 @@ def sndL (V V' : Type) [NormedAddCommGroup V] [InnerProductSpace ℂ V] [NormedA
   LinearMap.snd ℂ V V' ∘ₗ (WithLp.linearEquiv 2 ℂ (V × V')).toLinearMap
 
 def pair (x : V) (y : V') : WithLp 2 (V × V') := WithLp.toLp 2 (x, y)
-
-@[simp] theorem fstL_pair (x : V) (y : V') : fstL V V' (pair x y) = x := rfl
-
-@[simp] theorem sndL_pair (x : V) (y : V') : sndL V V' (pair x y) = y := rfl
 
 theorem ext2 {x y : WithLp 2 (V × V')} (h₁ : fstL V V' x = fstL V V' y) (h₂ : sndL V V' x = sndL V V' y) : x = y :=
   WithLp.ofLp_injective _ (Prod.ext h₁ h₂)
@@ -88,8 +88,8 @@ theorem kHighest_snd {ε : Fin n → Bool} {μ : Fin n → ℝ} {x : WithLp 2 (V
 
 theorem kHighest_pair {ε : Fin n → Bool} {μ : Fin n → ℝ} {x : V} {y : V'} (h : KHighest ε E μ x)
     (h' : KHighest ε E' μ y) : KHighest ε (sumE E E') μ (pair x y) :=
-  ⟨fun a => ext2 (by simpa using h.1 a) (by simpa using h'.1 a),
-    fun c d hcd he => ext2 (by simpa using h.2 c d hcd he) (by simpa using h'.2 c d hcd he)⟩
+  ⟨fun a => ext2 (by simpa [fstL, sndL, pair, sumE] using h.1 a) (by simpa [fstL, sndL, pair, sumE] using h'.1 a),
+    fun c d hcd he => ext2 (by simpa [fstL, sndL, pair, sumE] using h.2 c d hcd he) (by simpa [fstL, sndL, pair, sumE] using h'.2 c d hcd he)⟩
 
 theorem isMin_sumE {ε : Fin n → Bool} {lam : Fin n → ℝ} (hM : IsMin ε E lam) (hM' : IsMin ε E' lam) :
     IsMin ε (sumE E E') lam := by
@@ -133,20 +133,20 @@ theorem exists_iso_of_highest {ε : Fin n → Bool} {lam : Fin n → ℝ} (hlam 
   have hno₁ : pair v₁ (0 : V') ∉ C := by
     intro h
     obtain ⟨c, hc⟩ := hone _ h (kHighest_pair k₁ ⟨fun a => by simp, fun a b _ _ => by simp⟩)
-    have e₁ : v₁ = c • v₁ := by simpa [hv] using congrArg (fstL V V') hc
-    have e₂ : (0 : V') = c • v₂ := by simpa [hv] using congrArg (sndL V V') hc
+    have e₁ : v₁ = c • v₁ := by simpa [fstL, sndL, pair, hv] using congrArg (fstL V V') hc
+    have e₂ : (0 : V') = c • v₂ := by simpa [fstL, sndL, pair, hv] using congrArg (sndL V V') hc
     rcases smul_eq_zero.1 e₂.symm with rfl | h
     · exact h₁ (by simpa using e₁)
     · exact h₂ h
   have hno₂ : pair (0 : V) v₂ ∉ C := by
     intro h
     obtain ⟨c, hc⟩ := hone _ h (kHighest_pair ⟨fun a => by simp, fun a b _ _ => by simp⟩ k₂)
-    have e₁ : (0 : V) = c • v₁ := by simpa [hv] using congrArg (fstL V V') hc
-    have e₂ : v₂ = c • v₂ := by simpa [hv] using congrArg (sndL V V') hc
+    have e₁ : (0 : V) = c • v₁ := by simpa [fstL, sndL, pair, hv] using congrArg (fstL V V') hc
+    have e₂ : v₂ = c • v₂ := by simpa [fstL, sndL, pair, hv] using congrArg (sndL V V') hc
     rcases smul_eq_zero.1 e₁.symm with rfl | h
     · exact h₂ (by simpa using e₂)
     · exact h₁ h
-  have hsplit : pair v₁ (0 : V') + pair (0 : V) v₂ = v := ext2 (by simp [hv]) (by simp [hv])
+  have hsplit : pair v₁ (0 : V') + pair (0 : V) v₂ = v := ext2 (by simp [fstL, sndL, pair, hv]) (by simp [fstL, sndL, pair, hv])
 
   let K₁ : Submodule ℂ V :=
     C.comap ((WithLp.linearEquiv 2 ℂ (V × V')).symm.toLinearMap ∘ₗ LinearMap.inl ℂ V V')
@@ -158,7 +158,7 @@ theorem exists_iso_of_highest {ε : Fin n → Bool} {lam : Fin n → ℝ} (hlam 
     refine (hS K₁ fun a b x hx => ?_).resolve_right fun h => hno₂ ?_
     · rw [mem₁] at hx ⊢
       have := hst a b _ hx
-      have e : sumE E E' a b (pair x (0 : V')) = pair (E a b x) (0 : V') := ext2 (by simp) (by simp)
+      have e : sumE E E' a b (pair x (0 : V')) = pair (E a b x) (0 : V') := ext2 (by simp [fstL, sndL, pair, sumE]) (by simp [fstL, sndL, pair, sumE])
       rwa [e] at this
     · have : pair v₁ (0 : V') ∈ C := (mem₁ _).1 (h ▸ Submodule.mem_top)
       have h' := C.sub_mem hvC this
@@ -167,7 +167,7 @@ theorem exists_iso_of_highest {ε : Fin n → Bool} {lam : Fin n → ℝ} (hlam 
     refine (hS' K₂ fun a b x hx => ?_).resolve_right fun h => hno₁ ?_
     · rw [mem₂] at hx ⊢
       have := hst a b _ hx
-      have e : sumE E E' a b (pair (0 : V) x) = pair (0 : V) (E' a b x) := ext2 (by simp) (by simp)
+      have e : sumE E E' a b (pair (0 : V) x) = pair (0 : V) (E' a b x) := ext2 (by simp [fstL, sndL, pair, sumE]) (by simp [fstL, sndL, pair, sumE])
       rwa [e] at this
     · have : pair (0 : V) v₂ ∈ C := (mem₂ _).1 (h ▸ Submodule.mem_top)
       have h' := C.sub_mem hvC this
@@ -178,19 +178,19 @@ theorem exists_iso_of_highest {ε : Fin n → Bool} {lam : Fin n → ℝ} (hlam 
   have b₁ : Function.Bijective q₁ := by
     refine ⟨(injective_iff_map_eq_zero q₁).2 fun w hw => ?_, fun x => ?_⟩
     · have hw' : fstL V V' (w : WithLp 2 (V × V')) = 0 := hw
-      have e : (w : WithLp 2 (V × V')) = pair (0 : V) (sndL V V' w) := ext2 (by simpa using hw') (by simp)
+      have e : (w : WithLp 2 (V × V')) = pair (0 : V) (sndL V V' w) := ext2 (by simpa [fstL, sndL, pair] using hw') (by simp [fstL, sndL, pair, sumE])
       have : sndL V V' w ∈ K₂ := (mem₂ _).2 (e ▸ w.2)
       rw [hK₂, Submodule.mem_bot] at this
-      exact Subtype.ext (by rw [e, this]; exact ext2 (by simp) (by simp))
+      exact Subtype.ext (by rw [e, this]; exact ext2 (by simp [fstL, sndL, pair, sumE]) (by simp [fstL, sndL, pair, sumE]))
     · obtain ⟨w, hw, rfl⟩ : x ∈ C.map (fstL V V') := hp₁ ▸ Submodule.mem_top
       exact ⟨⟨w, hw⟩, rfl⟩
   have b₂ : Function.Bijective q₂ := by
     refine ⟨(injective_iff_map_eq_zero q₂).2 fun w hw => ?_, fun x => ?_⟩
     · have hw' : sndL V V' (w : WithLp 2 (V × V')) = 0 := hw
-      have e : (w : WithLp 2 (V × V')) = pair (fstL V V' w) (0 : V') := ext2 (by simp) (by simpa using hw')
+      have e : (w : WithLp 2 (V × V')) = pair (fstL V V' w) (0 : V') := ext2 (by simp [fstL, sndL, pair, sumE]) (by simpa [fstL, sndL, pair] using hw')
       have : fstL V V' w ∈ K₁ := (mem₁ _).2 (e ▸ w.2)
       rw [hK₁, Submodule.mem_bot] at this
-      exact Subtype.ext (by rw [e, this]; exact ext2 (by simp) (by simp))
+      exact Subtype.ext (by rw [e, this]; exact ext2 (by simp [fstL, sndL, pair, sumE]) (by simp [fstL, sndL, pair, sumE]))
     · obtain ⟨w, hw, rfl⟩ : x ∈ C.map (sndL V V') := hp₂ ▸ Submodule.mem_top
       exact ⟨⟨w, hw⟩, rfl⟩
   let f₁ : C ≃ₗ[ℂ] V := LinearEquiv.ofBijective q₁ b₁

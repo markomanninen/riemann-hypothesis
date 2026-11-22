@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.JacobianTraceQuotients.TraceQuot
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsCommonEigenvectorSecond
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.JacobianTraceQuotients.TraceQuot
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsCommonEigenvectorSecond
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter ValuativeRel
 open GroundTheory.Global GroundTheory.Global.SemiLocal
@@ -94,7 +98,7 @@ theorem UpperTheory.Gal.Join.twExp :
       ext y
       rfl
     unfold trIn
-    rw [dif_pos hst, hfeq, hzero]
+    rw [dite_eq_left hst, hfeq, hzero]
   obtain ⟨χ, hχ, hN⟩ := hex
   have hNst : ∀ t, ∀ y ∈ N χ, r t y ∈ N χ := by
     intro t y hy

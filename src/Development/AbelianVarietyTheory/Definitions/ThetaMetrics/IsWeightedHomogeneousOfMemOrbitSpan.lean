@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MvPolynomial Matrix
 
@@ -29,10 +33,9 @@ theorem laplacian_apply (t : T) (a : Fin p) (b : Fin q) (P : Poly R T p q κ) :
 def IsHarmonic (P : Poly R T p q κ) : Prop := ∀ t a b, laplacian t a b P = 0
 
 variable (R T p q κ) in
-
 def harmonicSubmodule : Submodule R (Poly R T p q κ) where
   carrier := {P | IsHarmonic P}
-  add_mem' hP hQ t a b := by rw [map_add, hP, hQ, add_zero]
+  add_mem' hP hQ t a b := by rw [map_add (f := _), hP, hQ, add_zero]
   zero_mem' t a b := map_zero _
   smul_mem' r P hP t a b := by rw [map_smul, hP, smul_zero]
 
@@ -157,11 +160,6 @@ theorem map_minorProd [Fintype T] (f : R →+* S) (c : T → Fin p → ℕ) (c' 
   · exact Finset.prod_congr rfl fun i _ => by
       rw [ringHom_yMinor _ t i (φ t) (fun a => f ∘ φ t a) fun a b => map_yForm _ _ _ _]
 
-theorem IsPerp.map (f : R →+* S) {ε : T → Fin p → κ → R} {φ : T → Fin q → κ → R}
-    (h : IsPerp ε φ) : IsPerp (fun t a => f ∘ ε t a) (fun t b => f ∘ φ t b) := fun t a b => by
-  have := congrArg f (h t a b)
-  simpa [dotProduct] using this
-
 end Forms
 
 section Degree
@@ -251,13 +249,6 @@ theorem minorProd_isWeightedHomogeneous [Fintype T] (w : T → Fin p ⊕ Fin q �
   · refine IsWeightedHomogeneous.prod _ _ _ fun i _ => IsWeightedHomogeneous.pow ?_ _
     exact det_isWeightedHomogeneous _ _ _ fun a b => rowForm_isWeightedHomogeneous w t _ _
 
-theorem minorProd_isHomogeneous [Fintype T] (c : T → Fin p → ℕ) (c' : T → Fin q → ℕ)
-    (ε : T → Fin p → κ → R) (φ : T → Fin q → κ → R) :
-    (minorProd c c' ε φ).IsHomogeneous (typeDegree c c') := by
-  have := minorProd_isWeightedHomogeneous (fun _ _ => (1 : ℕ)) c c' ε φ
-  simp only [smul_eq_mul, mul_one, sum_partOf] at this
-  exact this
-
 end Degree
 
 section Subst
@@ -270,14 +261,14 @@ noncomputable def colSubst (A : T → Matrix κ κ' R) (B : T → Matrix κ' κ 
     | (t, Sum.inl a, k) => xForm t a (A t k)
     | (t, Sum.inr b, k) => yForm t b fun l => B t l k
 
-omit [Fintype κ] in
 
+omit [Fintype κ] in
 @[simp] theorem colSubst_X_xVar (A : T → Matrix κ κ' R) (B : T → Matrix κ' κ R) (t : T) (a : Fin p)
     (k : κ) : colSubst A B (X (xVar t a k) : Poly R T p q κ) = xForm t a (A t k) := by
   simp [colSubst]
 
-omit [Fintype κ] in
 
+omit [Fintype κ] in
 @[simp] theorem colSubst_X_yVar (A : T → Matrix κ κ' R) (B : T → Matrix κ' κ R) (t : T) (b : Fin q)
     (k : κ) : colSubst A B (X (yVar t b k) : Poly R T p q κ) = yForm t b fun l => B t l k := by
   simp [colSubst]
@@ -285,14 +276,16 @@ omit [Fintype κ] in
 theorem colSubst_xForm (A : T → Matrix κ κ' R) (B : T → Matrix κ' κ R) (t : T) (a : Fin p)
     (ε : κ → R) : colSubst A B (xForm t a ε : Poly R T p q κ) = xForm t a (ε ᵥ* A t) := by
   have : ε ᵥ* A t = ∑ k, ε k • A t k := by ext l; simp [vecMul, dotProduct]
-  rw [this, map_sum, xForm_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [this, map_sum, xForm_apply, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [← smul_eq_C_mul, map_smul, map_smul, colSubst_X_xVar]
 
 theorem colSubst_yForm (A : T → Matrix κ κ' R) (B : T → Matrix κ' κ R) (t : T) (b : Fin q)
     (φ : κ → R) : colSubst A B (yForm t b φ : Poly R T p q κ) = yForm t b (B t *ᵥ φ) := by
   have : B t *ᵥ φ = ∑ k, φ k • fun l => B t l k := by ext l; simp [mulVec, dotProduct, mul_comm]
-  rw [this, map_sum, yForm_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [this, map_sum, yForm_apply, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [← smul_eq_C_mul, map_smul, map_smul, colSubst_X_yVar]
 
@@ -328,8 +321,8 @@ theorem colSubst_minorProd [Fintype T] (A : T → Matrix κ κ' R) (B : T → Ma
       (ringHom_yMinor (colSubst A B).toRingHom t i (φ t) (fun a => B t *ᵥ φ t a)
         fun a b => colSubst_yForm _ _ _ _ _)
 
-omit [Fintype κ] in
 
+omit [Fintype κ] in
 theorem eval_colSubst (A : T → Matrix κ κ' R) (B : T → Matrix κ' κ R) (z : Var T p q κ' → R)
     (P : Poly R T p q κ) :
     eval z (colSubst A B P) = eval (fun v => match v with
@@ -337,19 +330,20 @@ theorem eval_colSubst (A : T → Matrix κ κ' R) (B : T → Matrix κ' κ R) (z
       | (t, Sum.inr b, k) => ((fun l => z (yVar t b l)) ᵥ* B t) k) P := by
   induction P using MvPolynomial.induction_on with
   | C r => simp [algHom_C]
-  | add P Q hP hQ => simp only [map_add, hP, hQ]
+  | add P Q hP hQ => simp only [map_add (f := _), hP, hQ]
   | mul_X P v hP =>
     obtain ⟨t, a | b, k⟩ := v
     · rw [map_mul, map_mul, map_mul, hP, eval_X, colSubst_X_xVar, eval_xForm]; rfl
     · rw [map_mul, map_mul, map_mul, hP, eval_X, colSubst_X_yVar, eval_yForm, dotProduct_comm]; rfl
 
-omit [Fintype κ] in
 
+omit [Fintype κ] in
 theorem colSubst_isWeightedHomogeneous {M : Type*} [AddCommMonoid M] (w : T → Fin p ⊕ Fin q → M)
     (A : T → Matrix κ κ' R) (B : T → Matrix κ' κ R) {P : Poly R T p q κ} {m : M}
     (hP : IsWeightedHomogeneous (rowWeight w) P m) :
     IsWeightedHomogeneous (rowWeight w) (colSubst A B P) m := by
-  rw [P.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [P.as_sum, map_sum]
   refine IsWeightedHomogeneous.sum _ _ _ fun d hd => ?_
   rw [← hP (mem_support_iff.mp hd), colSubst, aeval_monomial, Finsupp.weight_apply, Finsupp.sum,
     Finsupp.prod]
@@ -390,7 +384,6 @@ theorem colActHom_mul (g h : T → GL κ R) :
   simp only [Pi.mul_apply, _root_.mul_inv_rev, Units.val_mul]
 
 variable (R T p q κ) in
-
 noncomputable def colAct : (T → GL κ R) →* (Poly R T p q κ ≃ₐ[R] Poly R T p q κ) where
   toFun g := AlgEquiv.ofAlgHom (colActHom g) (colActHom g⁻¹)
     (by rw [← colActHom_mul, mul_inv_cancel, colActHom_one])
@@ -399,17 +392,14 @@ noncomputable def colAct : (T → GL κ R) →* (Poly R T p q κ ≃ₐ[R] Poly 
   map_mul' g h := AlgEquiv.ext fun P => DFunLike.congr_fun (colActHom_mul g h) P
 
 theorem colAct_apply (g : T → GL κ R) (P : Poly R T p q κ) :
-    colAct R T p q κ g P = colSubst (fun t => ((g t)⁻¹ : GL κ R)) (fun t => g t) P := rfl
+    colAct R T p q κ g P =
+      colSubst (fun t => ((g t)⁻¹ : GL κ R)) (fun t => (g t : Matrix κ κ R)) P := rfl
 
 variable (R T p q κ) in
-
 noncomputable def colRep : Representation R (T → GL κ R) (Poly R T p q κ) where
   toFun g := (colAct R T p q κ g).toLinearMap
   map_one' := by rw [map_one]; rfl
   map_mul' g h := by rw [map_mul]; rfl
-
-@[simp] theorem colRep_apply (g : T → GL κ R) (P : Poly R T p q κ) :
-    colRep R T p q κ g P = colAct R T p q κ g P := rfl
 
 theorem colAct_xForm (g : T → GL κ R) (t : T) (a : Fin p) (ε : κ → R) :
     colAct R T p q κ g (xForm t a ε) = xForm t a (covecAct (g t) ε) := colSubst_xForm _ _ _ _ _
@@ -428,17 +418,14 @@ end Action
 section Base
 
 variable (R) in
-
 def baseCovec (h : p + q ≤ n) (a : Fin p) : Fin n → R :=
   Pi.single (Fin.castLE (by omega) a) 1
 
 variable (R) in
-
 def baseVec (h : p + q ≤ n) (b : Fin q) : Fin n → R :=
   Pi.single (Fin.rev (Fin.castLE (by omega) b)) 1
 
 variable (R T) in
-
 theorem isPerp_base (h : p + q ≤ n) :
     IsPerp (fun _ : T => baseCovec R h) (fun _ => baseVec R h) := fun t a b => by
   have : Fin.castLE (by omega : p ≤ n) a ≠ Fin.rev (Fin.castLE (by omega : q ≤ n) b) := by
@@ -461,13 +448,11 @@ theorem linearIndependent_baseVec (h : p + q ≤ n) : LinearIndependent R (baseV
 variable [Fintype T]
 
 variable (R) in
-
 noncomputable def basePoly (h : p + q ≤ n) (c : T → Fin p → ℕ) (c' : T → Fin q → ℕ) :
     Poly R T p q (Fin n) :=
   minorProd c c' (fun _ => baseCovec R h) (fun _ => baseVec R h)
 
 variable (R) in
-
 noncomputable def orbitSpan (h : p + q ≤ n) (c : T → Fin p → ℕ) (c' : T → Fin q → ℕ) :
     Submodule R (Poly R T p q (Fin n)) :=
   Submodule.span R (Set.range fun g : T → GL (Fin n) R =>
@@ -490,14 +475,9 @@ theorem colAct_mem_orbitSpan (g : T → GL (Fin n) R) {P : Poly R T p q (Fin n)}
     have := colAct_basePoly_mem h c c' (g * g')
     rwa [map_mul] at this
   | zero => simp
-  | add P Q _ _ hP hQ => rw [map_add]; exact add_mem hP hQ
+  | add P Q _ _ hP hQ => rw [map_add (f := _)]; exact add_mem hP hQ
   | smul r P _ hP => rw [map_smul]; exact Submodule.smul_mem _ _ hP
 
-variable (R) in
-
-noncomputable def orbitSubrep : Subrepresentation (colRep R T p q (Fin n)) where
-  toSubmodule := orbitSpan R h c c'
-  apply_mem_toSubmodule g _ hP := colAct_mem_orbitSpan h c c' g hP
 
 theorem map_basePoly (f : R →+* S) : MvPolynomial.map f (basePoly R h c c') = basePoly S h c c' := by
   rw [basePoly, map_minorProd, basePoly]
@@ -527,50 +507,6 @@ theorem basePoly_ne_zero [Nontrivial R] : basePoly R h c c' ≠ 0 := fun e => by
   rw [e, map_zero] at this
   exact zero_ne_one this
 
-theorem totalDegree_basePoly [Nontrivial R] :
-    (basePoly R h c c').totalDegree = typeDegree c c' :=
-  (minorProd_isHomogeneous c c' _ _).totalDegree (basePoly_ne_zero h c c')
-
 end Base
-
-example : IsHarmonic (X (xVar () 0 0) * X (yVar () 0 0) - X (xVar () 0 1) * X (yVar () 0 1) :
-    Poly ℤ Unit 1 1 (Fin 2)) := by
-  rintro ⟨⟩ a b
-  obtain rfl := Subsingleton.elim a 0
-  obtain rfl := Subsingleton.elim b 0
-  simp only [← xForm_single, ← yForm_single, map_sub, laplacian_xForm_mul_yForm]
-  simp
-
-example : laplacian () 0 0 (X (xVar () 0 0) * X (yVar () 0 0) : Poly ℤ Unit 1 1 (Fin 2)) = 1 := by
-  simp only [← xForm_single, ← yForm_single, laplacian_xForm_mul_yForm]
-  simp
-
-example : basePoly ℤ (show 1 + 1 ≤ 2 from le_rfl) (fun (_ : Unit) _ => 2) (fun _ _ => 1) =
-    X (xVar () 0 0) ^ 2 * X (yVar () 0 1) := by
-  simp [basePoly, minorProd, xMinor, yMinor, baseCovec, baseVec]
-
-example : basePoly ℤ (show 2 + 0 ≤ 2 from le_rfl) (fun (_ : Unit) => ![0, 1]) (fun _ _ => 0) =
-    X (xVar () 0 0) * X (xVar () 1 1) - X (xVar () 0 1) * X (xVar () 1 0) := by
-  have : (xMinor () 1 (baseCovec ℤ (show 2 + 0 ≤ 2 from le_rfl)) : Poly ℤ Unit 2 0 (Fin 2)) =
-      X (xVar () 0 0) * X (xVar () 1 1) - X (xVar () 0 1) * X (xVar () 1 0) := by
-    refine (det_fin_two _).trans ?_
-    simp only [baseCovec, of_apply, xForm_single]; rfl
-  simp [basePoly, minorProd, this]
-
-example : typeDegree (fun _ : Unit => ![2, 1]) (fun _ => ![2]) = 6 ∧ partOf ![2, 1] = ![3, 1] := by
-  decide
-
-example (u : Rˣ) (k : Fin n) :
-    colAct R Unit 1 1 (Fin n) (fun _ => Matrix.GeneralLinearGroup.scalar (Fin n) u)
-        (X (xVar () 0 k)) = (↑u⁻¹ : R) • X (xVar () 0 k) ∧
-    colAct R Unit 1 1 (Fin n) (fun _ => Matrix.GeneralLinearGroup.scalar (Fin n) u)
-        (X (yVar () 0 k)) = (u : R) • X (yVar () 0 k) := by
-  simp only [← xForm_single, ← yForm_single, colAct_xForm, colAct_yForm, ← map_smul]
-  constructor
-  · congr 1
-    rw [covecAct, ← map_inv]
-    ext l; simp [Matrix.GeneralLinearGroup.scalar, Pi.single_apply, diagonal_apply, eq_comm]
-  · congr 1
-    ext l; simp [vecAct, Matrix.GeneralLinearGroup.scalar, Pi.single_apply, diagonal_apply, eq_comm]
 
 end GlobalTheory.Harm

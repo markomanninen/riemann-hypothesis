@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.ClosedPointLifts.ClosedLift
-import Development.EtaleCohomology.EtaleSheaves.LeafConeZeroPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ClosedPointLifts.ClosedLift
+public import Development.EtaleCohomology.EtaleSheaves.LeafConeZeroPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -40,8 +44,8 @@ abbrev rA (A : Type) [CommRing A] [IsLocalRing A] : Spec (CommRingCat.of (IsLoca
 def gF : pullback (prS p ι s ≫ pullback.snd p s) (rA A) ⟶ pullback (pullback.snd p s) (rA A) :=
   pullback.lift (pullback.fst _ _ ≫ prS p ι s) (pullback.snd _ _) (by rw [Category.assoc, pullback.condition])
 
-variable {ι p s} in
 
+variable {ι p s} in
 def hF (w : Spec (CommRingCat.of (IsLocalRing.ResidueField A)) ⟶ W) (hw : w ≫ ι = rA A ≫ s) :
     pullback (pullback.snd p s) (rA A) ⟶ pullback (prS p ι s ≫ pullback.snd p s) (rA A) :=
   pullback.lift (pullback.lift (pullback.fst _ _) (pullback.snd _ _ ≫ w)

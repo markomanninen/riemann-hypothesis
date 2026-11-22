@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.LeviForms.LogNormSq
+module
+
+public import ReciprocityTheory.L2DbarEstimates.LeviForms.LogNormSq
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up
 

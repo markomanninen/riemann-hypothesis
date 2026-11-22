@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsFibreChartIff
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsFibreChartIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,12 +43,12 @@ theorem contDiffOn_minorIJ (N e : ℕ) (Un : Set (Fin e → ℂ))
   · have hm : (fun w => minorIJ (A w) I J) =
         fun w => ((A w).submatrix (I.orderEmbOfFin hc) (J.orderEmbOfFin rfl)).det := by
       funext w
-      rw [minorIJ, dif_pos hc]
+      rw [minorIJ, dite_eq_left hc]
     rw [hm]
     exact contDiffOn_det _ fun a b => h _ _
   · have hm : (fun w => minorIJ (A w) I J) = fun _ => (0 : ℂ) := by
       funext w
-      rw [minorIJ, dif_neg hc]
+      rw [minorIJ, dite_eq_right hc]
     rw [hm]
     exact contDiffOn_const
 

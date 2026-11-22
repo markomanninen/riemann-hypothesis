@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.TwSecPf
+module
+
+public import Development.EtaleCohomology.KummerTheory.TwSecPf
+
+@[expose] public section
 
 noncomputable section
 open Polynomial IsLocalRing GlobalTheory.EtC
@@ -28,7 +32,8 @@ theorem uniq (hq : IsUnit (q : B)) {u v : B} (hu : u ^ q = 1) (hv : v ^ q = 1)
   have hq' := neZero_res hq
   have hS : IsUnit (∑ i ∈ Finset.range q, u ^ i * v ^ (q - 1 - i)) := by
     apply isUnit_of_map_unit (residue B)
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_mul, map_pow, h]
     rw [geom_sum₂_self]
     have hv' : residue B v ^ q = 1 := by rw [← map_pow, hv, map_one]

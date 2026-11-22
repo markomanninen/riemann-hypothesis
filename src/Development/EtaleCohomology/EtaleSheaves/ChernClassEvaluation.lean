@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.ChernClassExistence
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ChernClassExistence
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -13,7 +17,6 @@ theorem chains_d (E : Spc) (p : ℕ) :
   unfold chainsXIso
   congr 2
   simp [chainsN]
-  rfl
 
 theorem freeGen_nat {P Q : PSh} (f : P ⟶ Q) (U : Scheme.{0}) (x : P.obj (op U)) :
     (((free R).map f).hom.app (op U)).hom (freeGen R P U x) = freeGen R Q U (f.app (op U) x) := by
@@ -46,7 +49,8 @@ theorem evDelta_pf : ChernClassExistence.LeafEvDelta := by
     rw [δ_v n m hm α _ t ht s (-(p : ℤ)) (by omega) (by push_cast; omega), chains_d]
     simp only [Preadditive.comp_add, Preadditive.comp_zsmul, Category.assoc, Iso.inv_hom_id_assoc]
     simp [Sec.map, Units.smul_def, Preadditive.comp_sum, Preadditive.sum_comp, Preadditive.zsmul_comp, Preadditive.comp_zsmul, freeGen_nat, Sx.face]
-    rw [evH_apply, map_zsmul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [evH_apply, map_zsmul, map_sum]
     congr 1
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_zsmul]

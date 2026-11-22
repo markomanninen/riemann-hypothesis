@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.IntMvPolynomialCoeffAbsSumMulLe
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.IntMvPolynomialCoeffAbsSumMulLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -164,7 +168,7 @@ theorem latTor_of : FrameBasis → OneVar → LatTor := by
             Set.indicator_of_mem (s := {x | IsIntegral ℤ ((m : E) * x)}) (a := i x p) (ha hx p.1 p.2) _
         have h5 : ∏ p, (1 + A p) ^ N₀ ≤ (K * (1 + z)) ^ (N₀ * c) := by
           rw [pow_mul, hc, ← Finset.card_univ, ← Finset.prod_const]
-          exact Finset.prod_le_prod (fun p _ => by have := hA0 p; positivity)
+          exact Finset.prod_le_prod₀ (fun p _ => by have := hA0 p; positivity)
             fun p _ => pow_le_pow_left₀ (by have := hA0 p; positivity) (hA p) _
         have h6 : 0 < ∏ p, (1 + A p) ^ N₀ := Finset.prod_pos fun p _ => by have := hA0 p; positivity
         rw [hg, ← ENNReal.ofReal_coe_nnreal, ← ENNReal.ofReal_mul (by positivity)]

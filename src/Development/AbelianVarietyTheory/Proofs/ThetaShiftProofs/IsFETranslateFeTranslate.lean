@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DataRigidSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdNeg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.GenCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ThetaGen
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueFamOfReps
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.LinearIndependentOfIsExtension
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DataRigidSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdNeg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.GenCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ThetaGen
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueFamOfReps
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.LinearIndependentOfIsExtension
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -79,22 +83,6 @@ def famComp (j : ℕ) (α : D.X) : Fam D F j →ₗ[F] SecFMod D F j α where
   toFun s := s.s α
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
-
-def IsFETranslate (j : ℕ) (mu α : D.X) (s : SecBMod D j α) (t : SecBMod D j (α + j • mu)) : Prop :=
-  ∀ u : LB.Gen (LB.LinComb D.P.L (DegPre.deltaφ D (FractionRing R) j α mu) (DegPre.deltaε j)), u.IsGen →
-    LB.Gen.Corr D.P.L _ _ _ _ (LB.pullGen D.P.L _ _ u (DegPre.zF D (FractionRing R)).left)
-      (DegPre.famMult D (FractionRing R) j mu α) →
-    GeneratorPullback.SecRel D.P.L (DegPre.famφ D (FractionRing R) (α + j • mu)) (DegPre.famε j)
-      (resF D (FractionRing R) j (α + j • mu) t) (DegPre.famφ D (FractionRing R) α) (DegPre.famε j)
-      (resF D (FractionRing R) j α s) (DegPre.trF D (FractionRing R) mu).left
-      (DegPre.deltaφ D (FractionRing R) j α mu) (DegPre.deltaε j) u
-
-theorem IsFETranslate.unique (hG : GlobalFnsSt) {j : ℕ} {mu α : D.X} {s : SecBMod D j α}
-    {t t' : SecBMod D j (α + j • mu)} (h : IsFETranslate D j mu α s t) (h' : IsFETranslate D j mu α s t') : t = t' := by
-  obtain ⟨⟨u, hu, hc⟩, -⟩ := gen_fe (D := D) (F := FractionRing R) hG j mu α
-  refine resF_injective D (FractionRing R) j _ (sec_ext' D.P.isLB fun y J hJ => ?_)
-  exact ((secRel_iff D.P.isLB _ _ _ _ _ _ _ _ _ u).1 (h u hu hc) _ _ y J hJ).trans
-    ((secRel_iff D.P.isLB _ _ _ _ _ _ _ _ _ u).1 (h' u hu hc) _ _ y J hJ).symm
 
 abbrev trB (mu : D.X) : D.P.A ⟶ D.P.A := 𝟙 D.P.A * cP D D.P.A mu
 
@@ -231,8 +219,8 @@ theorem secThrough_pullB (j : ℕ) (α : a.D₀.X) (s : SecBMod a.D₀ j α) :
 
 variable (F : Type) [Field F] [Algebra (FractionRing (PowerSeries k)) F]
 
-omit hW in
 
+omit hW in
 abbrev constF (k : Type) [Field k] (F : Type) [Field F] [Algebra (FractionRing (PowerSeries k)) F] : k →+* F :=
   (toF (R := PowerSeries k) F).comp (PowerSeries.C (R := k))
 
@@ -290,8 +278,8 @@ theorem eq_constFam {α : a.D₀.X} {s₀ : SecBMod a.D₀ j α} {s : Fam P.toPr
   · exact FamFree.eq_of_eq_add_nsmul hG _ _ hχ (h₁.trans (constFam_self hW F hG hj α s₀).symm)
   · exact (h₂ χ fun mu h => hχ ⟨mu, h⟩).trans (constFam_off hW F hG hj α s₀ χ fun mu h => hχ ⟨mu, h⟩).symm
 
-omit hW in
 
+omit hW in
 def expo (a : ArcIn D l β k b) (j : ℕ) (α mu : a.D₀.X) : ℤ := j * (a.be mu mu / 2) + a.be mu α
 
 omit hW in

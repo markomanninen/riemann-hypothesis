@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.SemiCharBasic
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.QuasiPeriodConstUnique
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.SemiCharBasic
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.QuasiPeriodConstUnique
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -30,7 +34,7 @@ theorem heisenbergMul : OpUMul := by
   simp only [opU]
   rw [mul_assoc, ← Complex.exp_add, mul_left_comm, ← Complex.exp_add, add_assoc z x y]
   congr 2
-  simp only [map_add, LinearMap.add_apply]
+  simp only [map_add (f := _), LinearMap.add_apply]
   linear_combination (-(Real.pi : ℂ) / 2) * hs
 
 theorem heisenbergComm : OpUComm := by
@@ -45,24 +49,9 @@ theorem heisenbergComm : OpUComm := by
   push_cast
   ring
 
-theorem heisenbergNorm : OpUNorm := by
-  intro V _ _ H hH x F z
-  have hre := re_swap H hH z x
-  have hE : (-(Real.pi : ℂ) * H z x - (Real.pi : ℂ) * H x x / 2).re =
-      -Real.pi * (H z x).re - Real.pi * (H x x).re / 2 := by
-    simp [Complex.sub_re, Complex.mul_re]
-  have hzz : (H (z + x) (z + x)).re = (H z z).re + 2 * (H z x).re + (H x x).re := by
-    simp only [map_add, LinearMap.add_apply, Complex.add_re]
-    linarith
-  simp only [opU, norm_mul, Complex.norm_exp, hE]
-  rw [hzz, mul_pow, ← Real.exp_nat_mul, mul_assoc, ← Real.exp_add]
-  congr 2
-  push_cast
-  ring
-
 theorem heisenbergIsometry : OpUIsom := by
   intro V W _ _ _ _ H H' g hg x G z
-  simp only [opU, map_add]
+  simp only [opU, map_add (f := _)]
   rw [hg z x, hg x x]
 
 theorem precompHeisenberg : PullOpU := by
@@ -74,7 +63,7 @@ theorem precompHeisenberg : PullOpU := by
   have h2 : H (δ x) (δ x) = H x x := by
     have h := hδ x x
     simpa only [LinearEquiv.coe_coe] using h
-  simp only [pullInv, opU, map_add, LinearEquiv.symm_apply_apply, h1, h2]
+  simp only [pullInv, opU, map_add (f := _), LinearEquiv.symm_apply_apply, h1, h2]
 
 theorem semicharacterBasic : SemiCharBasic := by
   intro V _ _ H hH Λ α hα
@@ -142,7 +131,7 @@ theorem heisenbergAnalytic : OpUAnalytic := by
   intro V _ _ _ H x F hF z _
   let L : V →ₗ[ℂ] ℂ :=
     { toFun := fun v => H v x
-      map_add' := fun a b => by simp only [map_add, LinearMap.add_apply]
+      map_add' := fun a b => by simp only [map_add (f := _), LinearMap.add_apply]
       map_smul' := fun c a => by simp only [map_smul, LinearMap.smul_apply, RingHom.id_apply] }
   have hlin : AnalyticAt ℂ (fun v => H v x) z := (LinearMap.toContinuousLinearMap L).analyticAt z
   have hF' : AnalyticAt ℂ (fun v => F (v + x)) z :=
@@ -159,8 +148,10 @@ theorem matH_apply {n : Type*} [Fintype n] (h : Matrix n n ℂ) (z w : n → ℂ
 theorem matrixFormBasic : MatHBasic := by
   intro n _ h
   refine ⟨fun z w => rfl, fun hh x y => ?_⟩
-  rw [matH_apply, matH_apply, map_sum]
-  simp_rw [map_sum, map_mul, Complex.conj_conj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [matH_apply, matH_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [map_sum, map_mul, Complex.conj_conj]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   have hc : conj (h i j) = h j i := by
@@ -181,7 +172,8 @@ theorem standardFormBasic : StdHBasic := by
   intro L n _ _
   have harea := Formalism.L2.Th1.F.PeriodAreaSignLemmas.area_pos L
   refine ⟨stdH_apply L n, fun x y => ?_, fun x hx => ?_⟩
-  · rw [stdH_apply, stdH_apply, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [stdH_apply, stdH_apply, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     simp only [Formalism.L2.Th1.F.herm, map_div₀, map_mul, Complex.conj_conj, Complex.conj_ofReal]
     ring

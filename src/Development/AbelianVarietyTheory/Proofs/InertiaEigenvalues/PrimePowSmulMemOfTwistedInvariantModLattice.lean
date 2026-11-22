@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOrbitPadicComplex
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateInvariantsCyclotomicTwistStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CocycleTwistCoboundaryOnBallStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOrbitPadicComplex
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateInvariantsCyclotomicTwistStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CocycleTwistCoboundaryOnBallStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.Cyc
 
@@ -12,13 +16,6 @@ namespace GlobalTheory.FrameInv
 
 variable {l : ℕ} [Fact l.Prime] {act : GQ l →* (PadicComplex l ≃+* PadicComplex l)}
   {χ : GQ l →* ℚ_[l]ˣ}
-
-theorem act_fix (ha : IsActC act) {F : IntermediateField ℚ_[l] (Om l)} {g : GQ l}
-    (hg : g ∈ F.fixingSubgroup) {y : PadicComplex l} (hy : y ∈ inC F) : act g y = y := by
-  obtain ⟨x, hx, rfl⟩ := hy
-  have h := ha.1 g x
-  rw [(IntermediateField.mem_fixingSubgroup_iff _ _).1 hg x hx] at h
-  exact h
 
 variable {r : ℕ} {U : GQ l → Matrix (Fin r) (Fin r) (PadicComplex l)}
 
@@ -105,7 +102,7 @@ private theorem continuousOn_twistedAction_lemma (hact : _root_.GlobalTheory.Cyc
   refine continuousOn_pi.2 fun a => ?_
   simp only [Pi.smul_apply, Matrix.mulVec, dotProduct, smul_eq_mul]
   refine (continuous_cyclotomicCharPow_lemma_6 hχ i).continuousOn.mul ?_
-  refine continuousOn_finset_sum _ fun b _ => ?_
+  refine continuousOn_finsetSum _ fun b _ => ?_
   exact (hF.2.1 a b).mul
     (_root_.GlobalTheory.Cyc.IsActC.continuous_orbit l act hact (y b)).continuousOn
 
@@ -146,7 +143,8 @@ private theorem twistedAction_mul_lemma_2 (hact : _root_.GlobalTheory.Cyc.IsActC
     ← Matrix.mulVec_smul]
   congr 2
   funext a
-  simp [Matrix.mulVec, dotProduct, map_sum, map_mul, hfix, hc, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.mulVec, dotProduct, map_sum, map_mul, hfix, hc, Finset.mul_sum]
 
 open scoped Matrix in
 variable {l : ℕ} [Fact l.Prime] in
@@ -225,7 +223,8 @@ private theorem eq_zero_of_twistedInvariant_offJumps_lemma_5 (hact : _root_.Glob
       _root_.GlobalTheory.Cyc.twAct act χ i U σ (∑ k, c k • B k) =
         ∑ k, (_root_.GlobalTheory.Cyc.chiC χ (i - u k) σ * act σ (c k)) • B k := by
     intro σ hσ c
-    rw [show _root_.GlobalTheory.Cyc.twAct act χ i U σ (∑ k, c k • B k) =
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [show _root_.GlobalTheory.Cyc.twAct act χ i U σ (∑ k, c k • B k) =
         (AddMonoidHom.mk' (_root_.GlobalTheory.Cyc.twAct act χ i U σ)
           (twistedAction_add_lemma_12 act χ i U σ)) (∑ k, c k • B k) from rfl, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
@@ -246,11 +245,11 @@ private theorem eq_zero_of_twistedInvariant_offJumps_lemma_5 (hact : _root_.Glob
   rw [← hw']
   simp [hcoef]
 
+
 open scoped Matrix in
 variable {l : ℕ} [Fact l.Prime] {act : _root_.Formalism.BasicNotions.Loc.GQ l →* (PadicComplex l ≃+* PadicComplex l)}
   {χ : _root_.Formalism.BasicNotions.Loc.GQ l →* ℚ_[l]ˣ} in
 variable {r : ℕ} {U : _root_.Formalism.BasicNotions.Loc.GQ l → Matrix (Fin r) (Fin r) (PadicComplex l)} in
-
 theorem _root_.GlobalTheory.FrameInv.pow_smul_mem_of_invariant_mod : ∀ (l : ℕ) [Fact l.Prime]
     (act : _root_.Formalism.BasicNotions.Loc.GQ l →* (PadicComplex l ≃+* PadicComplex l)) (χ : _root_.Formalism.BasicNotions.Loc.GQ l →* ℚ_[l]ˣ),
     _root_.GlobalTheory.Cyc.IsActC act → _root_.GlobalTheory.Cyc.IsCyc χ →

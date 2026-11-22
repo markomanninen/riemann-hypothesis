@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.IsChartIff
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsChartIff
+
+@[expose] public section
 
 set_option autoImplicit false
 

@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.IsUnitOfValEqZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.WeakApprox
-import Development.AbelianVarietyTheory.Proofs.AlgebraicCurves.PlacesRestrictInjective
-import Formalism.LocalToGlobal.ProjectiveLattices.LocalIntegralPolynomials.ExistsValuationAdaptedIndex
-import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.IsUnitOfValEqZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.WeakApprox
+public import Development.AbelianVarietyTheory.Proofs.AlgebraicCurves.PlacesRestrictInjective
+public import Formalism.LocalToGlobal.ProjectiveLattices.LocalIntegralPolynomials.ExistsValuationAdaptedIndex
+public import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.T0 IsLocalRing MvPolynomial
 
@@ -34,8 +38,8 @@ theorem card_free (j0 : Fin N) : Fintype.card (Fin (D + 1) × Fin N) = Fintype.c
     Fintype.card {p : Fin (D + 1) × Fin N // p.1 = 0 ∨ p.2 ≠ j0} := by congr
   omega
 
-open Classical in
 
+open Classical in
 def subst (x : Fin N → Ω) (j0 : Fin N) (p : Fin (D + 1) × Fin N) : MvPolynomial (Free D N j0) Ω :=
   if h : p.1 = 0 ∨ p.2 ≠ j0 then X ⟨p, h⟩
   else -∑ k : {k : Fin N // k ≠ j0}, C (x k / x j0) * X ⟨(p.1, k), Or.inr k.2⟩
@@ -62,7 +66,8 @@ theorem aeval_subst {F : Type} [Field F] [Algebra Ω F] (x : Fin N → Ω) (j0 :
     have hr := hrel i'
     rw [Fintype.sum_eq_add_sum_subtype_ne _ k] at hr
     have hx' : algebraMap Ω F (x k) ≠ 0 := (map_ne_zero _).2 hx
-    simp only [map_neg, map_sum, map_mul, aeval_C, aeval_X, map_div₀]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_neg, map_sum, map_mul, aeval_C, aeval_X, map_div₀]
     apply mul_right_cancel₀ hx'
     rw [neg_mul, Finset.sum_mul, eq_comm, ← add_eq_zero_iff_eq_neg, ← hr]
     congr 1
@@ -76,8 +81,8 @@ section Gauss
 variable {K : Type} [Field K] [NumberField K] (la : HeightOneSpectrum (𝓞 K)) {Ω : Type} [Field Ω] [Algebra K Ω]
   {D N : ℕ}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem free_indep (htr : Algebra.trdeg K Ω = D) (x : Fin N → Ω) (j0 : Fin N) (hx : x j0 ≠ 0)
     {F : Type} [Field F] [Algebra Ω F] (w : AddValuation F (WithTop ℤ)) (u : Fin (D + 1) × Fin N → F)
     (hu : ∀ p, u p ∈ vRing w)
@@ -95,8 +100,8 @@ theorem free_indep (htr : Algebra.trdeg K Ω = D) (x : Fin N → Ω) (j0 : Fin N
     (fun p α => subst_mem x j0 hint p α)
     (card_free j0) (aeval_subst x j0 hx u hrel) (ValuationResidueLemmas.indep_u (K := K) (Ω := Ω) w la (fun p => ⟨u p, hu p⟩) h0 h1)).2.2
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem gauss_one (htr : Algebra.trdeg K Ω = D) (x : Fin N → Ω) (j0 : Fin N) (hx : x j0 ≠ 0)
     {F : Type} [Field F] (w : AddValuation F (WithTop ℤ)) (ι : Ω →+* F) (u : Fin (D + 1) × Fin N → F)
     (h0 : ∀ P : MvPolynomial (Fin (D + 1) × Fin N) (𝓞 K),
@@ -410,7 +415,7 @@ theorem exists_att (hκ : ∀ o : la.adicCompletionIntegers K, κ o = φ (C o))
       · rw [← hκ]; exact h'.approx hκ hϖm n hc
     | add p q hp hq =>
       have := Subring.add_mem _ hp hq
-      simpa only [map_add, Prod.mk_add_mk] using this
+      simpa only [map_add (f := _), Prod.mk_add_mk] using this
     | mul_X p s hp =>
       have := Subring.mul_mem _ hp (le_lim w w' A₀ (⟨X s, by simp⟩ : (e (φ (X s)), e' (φ (X s))) ∈ A₀))
       simpa only [map_mul, Prod.mk_mul_mk] using this

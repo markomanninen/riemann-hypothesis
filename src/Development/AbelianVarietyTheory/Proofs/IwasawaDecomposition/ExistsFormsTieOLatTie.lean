@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.RowSideTie
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.RowSideTie
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions NumberField IsDedekindDomain Formalism.L2.DIV Formalism.L2.Indef
 open scoped ComplexOrder
@@ -23,7 +27,7 @@ variable {K : Type} [Field K] {n : ℕ}
 noncomputable def emb (σ : K →+* ℂ) (S : Matrix (Fin n) (Fin n) ℂ) : (Fin n → K) →ₛₗ[σ] EuclideanSpace ℂ (Fin n) where
   toFun x := Matrix.toEuclideanLin S (WithLp.toLp 2 fun i => σ (x i))
   map_add' x y := by
-    rw [← map_add]
+    rw [← map_add (f := _)]
     congr 1
     ext i
     simp
@@ -54,7 +58,7 @@ noncomputable def act (σ : K →+* ℂ) (S T : Matrix (Fin n) (Fin n) ℂ) (h1 
       _ = _ := by simp only [mul_assoc]
   map_zero' := by simp
   map_add' E F := by
-    rw [← map_add, Matrix.map_add _ (map_add σ), mul_add, add_mul]
+    rw [← map_add (f := _), Matrix.map_add _ (map_add σ), mul_add, add_mul]
 
 theorem emb_single (σ : K →+* ℂ) (S : Matrix (Fin n) (Fin n) ℂ) (i : Fin n) :
     emb σ S (Pi.single i 1) = Matrix.toEuclideanLin S (EuclideanSpace.basisFun (Fin n) ℂ i) := by
@@ -100,22 +104,22 @@ theorem emb_span (σ : K →+* ℂ) (S T : Matrix (Fin n) (Fin n) ℂ) (h1 : S *
 
 theorem formsTie [NumberField K] [StarRing K] (σ : K →+* ℂ) (hσ : ∀ x, σ (star x) = starRingEnd ℂ (σ x))
     (H : Matrix (Fin n) (Fin n) K) (S T : Matrix (Fin n) (Fin n) ℂ) (h0 : Sᴴ * S = H.map σ) (h1 : S * T = 1)
-    (h2 : T * S = 1) (E : Matrix (Fin n) (Fin n) K) : FormsTie σ (emb σ S) H E (act σ S T h1 h2 E) where
-  li := by
-    rw [show (fun i => emb σ S (Pi.single i 1)) =
+    (h2 : T * S = 1) (E : Matrix (Fin n) (Fin n) K) : FormsTie σ (emb σ S) H E (act σ S T h1 h2 E) := by
+  refine ⟨?_, emb_span σ S T h1 h2, ?_, ?_⟩
+  · rw [show (fun i => emb σ S (Pi.single i 1)) =
         (Matrix.toEuclideanLin S) ∘ (EuclideanSpace.basisFun (Fin n) ℂ) from funext (emb_single σ S)]
     exact (EuclideanSpace.basisFun (Fin n) ℂ).orthonormal.linearIndependent.map'
       _ (LinearMap.ker_eq_bot.mpr (bij S T h1 h2).1)
-  span := emb_span σ S T h1 h2
-  inner x y := by
+  · intro x y
     rw [EuclideanSpace.inner_eq_star_dotProduct, emb_ofLp, emb_ofLp, Matrix.star_mulVec, dotProduct_comm,
       ← Matrix.dotProduct_mulVec, Matrix.mulVec_mulVec, h0]
-    simp only [Formalism.DivisionValues.hform, Matrix.toLinearMapₛₗ₂'_apply, map_sum, map_mul, smul_eq_mul, dotProduct,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Formalism.DivisionValues.hform, Matrix.toLinearMapₛₗ₂'_apply, map_sum, map_mul, smul_eq_mul, dotProduct,
       Matrix.mulVec, Finset.mul_sum, Pi.star_apply, Matrix.map_apply, RingHom.id_apply, starRingEnd_apply]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun k _ => ?_
     simp only [hσ, starRingEnd_apply]
     ring
-  op_eq x := by
+  · intro x
     apply WithLp.ofLp_injective
     change (S * E.map σ * T) *ᵥ (S *ᵥ fun i => σ (x i)) = S *ᵥ fun i => σ ((E *ᵥ x) i)
     rw [Matrix.mulVec_mulVec, mul_assoc (S * E.map σ), h2, mul_one, ← Matrix.mulVec_mulVec]
@@ -126,7 +130,7 @@ theorem formsTie [NumberField K] [StarRing K] (σ : K →+* ℂ) (hσ : ∀ x, �
 theorem exists_lat [NumberField K] {O : Type} [CommRing O] (o : O →+* K) (σ : K →+* ℂ) {W : Type} [AddCommGroup W]
     [Module ℂ W] (j : (Fin n → K) →ₛₗ[σ] W) (hj : Function.Injective j)
     (hsp : Submodule.span ℂ (Set.range fun i => j (Pi.single i 1)) = ⊤)
-    (N : Submodule (𝓞 K) (Fin n → K)) (hN : Submodule.IsLattice K N) :
+    (N : Submodule (𝓞 K) (Fin n → K)) (hN : Submodule.IsFullLattice K N) :
     ∃ M : Rows.OLat O (σ.comp o) W, OLatTie σ M j N ∧
       ((∀ y, IsIntegral ℤ (o y)) → (M.carrier : Set W) = j '' (N : Set (Fin n → K))) := by
   classical
@@ -149,26 +153,27 @@ theorem exists_lat [NumberField K] {O : Type} [CommRing O] (o : O →+* K) (σ :
     | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
     | smul a x _ hx => rw [LinearMap.map_smulₛₗ]; exact Submodule.smul_mem _ _ hx
   have hGK : Submodule.span K (G : Set (Fin n → K)) = ⊤ := by
-    rw [eq_top_iff, ← hN.span_eq_top, Submodule.span_le]
-    intro x hx
-    have hx' : x ∈ Submodule.span ℤ (G : Set (Fin n → K)) := by rw [hG]; exact hx
-    exact Submodule.span_le_restrictScalars ℤ K _ hx'
+    rw [← Submodule.span_span_of_tower ℤ K (G : Set (Fin n → K)), hG]
+    exact hN.span_eq_top
   have hspan : Submodule.span ℂ ((G.image j : Finset W) : Set W) = ⊤ := by
-    rw [eq_top_iff, ← hsp, Submodule.span_le]
+    apply top_unique
+    rw [← hsp]
+    apply Submodule.span_le.mpr
     rintro _ ⟨i, rfl⟩
-    exact key _ (hGK ▸ Submodule.mem_top)
-
+    exact key _ (by rw [hGK]; trivial)
   have hZ : ∀ x ∈ N, ∃ f : (Fin n → K) → ℤ, j x = ∑ g ∈ G, (f g : ℂ) • j g := by
     intro x hx
     have hx' : x ∈ Submodule.span ℤ (G : Set (Fin n → K)) := by rw [hG]; exact hx
     obtain ⟨f, -, hf⟩ := Submodule.mem_span_finset.mp hx'
     refine ⟨f, ?_⟩
-    rw [← hf, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hf, map_sum]
     refine Finset.sum_congr rfl fun g _ => ?_
     rw [map_zsmul, Int.cast_smul_eq_zsmul]
 
   have hcomb : ∀ a : (Fin n → K) → K, ∑ g ∈ G, σ (a g) • j g = j (∑ g ∈ G, a g • g) := fun a => by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun g _ => (LinearMap.map_smulₛₗ j (a g) g).symm
   refine ⟨⟨G.image j, hspan⟩, ⟨fun v hv => ?_, fun x => ⟨fun hx => ?_, fun ⟨c, hc⟩ => ?_⟩⟩, fun hint => ?_⟩
   · obtain ⟨g, -, rfl⟩ := Finset.mem_image.mp hv
@@ -206,7 +211,7 @@ theorem exists_lat [NumberField K] {O : Type} [CommRing O] (o : O →+* K) (σ :
       rw [Function.leftInverse_invFun hj g]
       simp
 
-theorem exists_formsTie_oLatTie : ∀ (K O : Type) [Field K] [NumberField K] [StarRing K] [CommRing O] (o : O →+* K) (σ : K →+* ℂ) (n : ℕ) (H : Matrix (Fin n) (Fin n) K) (N : Submodule (𝓞 K) (Fin n → K)), (∀ x, σ (star x) = starRingEnd ℂ (σ x)) → (H.map σ).PosDef → Submodule.IsLattice K N → ∃ (j : (Fin n → K) →ₛₗ[σ] EuclideanSpace ℂ (Fin n)) (M : Rows.OLat O (σ.comp o) (EuclideanSpace ℂ (Fin n))) (ρ : Matrix (Fin n) (Fin n) K →+* Module.End ℂ (EuclideanSpace ℂ (Fin n))), (∀ E, FormsTie σ j H E (ρ E)) ∧ OLatTie σ M j N ∧ ((∀ y, IsIntegral ℤ (o y)) → (M.carrier : Set (EuclideanSpace ℂ (Fin n))) = j '' (N : Set (Fin n → K))) := by
+theorem exists_formsTie_oLatTie : ∀ (K O : Type) [Field K] [NumberField K] [StarRing K] [CommRing O] (o : O →+* K) (σ : K →+* ℂ) (n : ℕ) (H : Matrix (Fin n) (Fin n) K) (N : Submodule (𝓞 K) (Fin n → K)), (∀ x, σ (star x) = starRingEnd ℂ (σ x)) → (H.map σ).PosDef → Submodule.IsFullLattice K N → ∃ (j : (Fin n → K) →ₛₗ[σ] EuclideanSpace ℂ (Fin n)) (M : Rows.OLat O (σ.comp o) (EuclideanSpace ℂ (Fin n))) (ρ : Matrix (Fin n) (Fin n) K →+* Module.End ℂ (EuclideanSpace ℂ (Fin n))), (∀ E, FormsTie σ j H E (ρ E)) ∧ OLatTie σ M j N ∧ ((∀ y, IsIntegral ℤ (o y)) → (M.carrier : Set (EuclideanSpace ℂ (Fin n))) = j '' (N : Set (Fin n → K))) := by
   intro K O _ _ _ _ o σ n H N hσ hH hN
   obtain ⟨S, T, h0, h1, h2⟩ := exists_sqrt (H.map σ) hH
   obtain ⟨M, hM, hcar⟩ := exists_lat o σ (emb σ S) (emb_injective σ S T h1 h2) (emb_span σ S T h1 h2) N hN

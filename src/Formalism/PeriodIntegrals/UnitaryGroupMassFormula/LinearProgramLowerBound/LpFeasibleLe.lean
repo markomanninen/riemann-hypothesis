@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LpLower
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LpLower
+
+@[expose] public section
 
 namespace PI
 

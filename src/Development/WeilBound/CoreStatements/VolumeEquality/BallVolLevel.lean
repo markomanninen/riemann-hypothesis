@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.BallVolDefs
-import Development.WeilBound.CoreStatements.EqualVolumeCompactOpens.RmulScalOne
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsLatticeEmbedding
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.BallVolDefs
+public import Development.WeilBound.CoreStatements.EqualVolumeCompactOpens.RmulScalOne
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsLatticeEmbedding
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,9 +68,9 @@ theorem congr_iff (hi : Function.Injective e) {δ : Λ ≃ₗ[𝓞 E] Λ} {γ : 
     (∃ y ∈ LinearMap.range e, γ *ᵥ e x = e x + M • y) ↔ ∃ y, δ x = x + M • y := by
   constructor
   · rintro ⟨_, ⟨y, rfl⟩, hy⟩
-    exact ⟨y, hi (by rw [h, hy, map_add, map_nsmul])⟩
+    exact ⟨y, hi (by rw [h, hy, map_add (f := _), map_nsmul])⟩
   · rintro ⟨y, hy⟩
-    exact ⟨e y, ⟨y, rfl⟩, by rw [← h, hy, map_add, map_nsmul]⟩
+    exact ⟨e y, ⟨y, rfl⟩, by rw [← h, hy, map_add (f := _), map_nsmul]⟩
 
 variable [IsCMField E]
 

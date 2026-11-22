@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShortLatticeUnitarize.Unitarize
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.IdealValuations.LocComplY
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShortLatticeUnitarize.Unitarize
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.IdealValuations.LocComplY
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual UpperTheory.V.Sd
 
@@ -209,7 +213,7 @@ private theorem exL_uniq {w : Pl F} (hN : Ideal.absNorm w.asIdeal = l)
       have e : x = a + l * ((x - a) / l) := by field_simp; ring
       have e2 : J x - J' x = l * (J ((x - a) / l) - J' ((x - a) / l)) := by
         generalize (x - a) / l = y at e
-        rw [e]; simp only [map_add, map_mul, map_intCast, map_natCast]; ring
+        rw [e]; simp only [map_add (f := _), map_mul, map_intCast, map_natCast]; ring
       rw [e2, norm_mul, pow_succ']
       exact mul_le_mul_of_nonneg_left (ih _ hy) (norm_nonneg _)
   have key2 : ∀ x, Valued.v x ≤ 1 → J x = J' x := by

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementE
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementGK
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.KernelFromKOne
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementE
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementGK
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.KernelFromKOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem reduce (K₁ : Type) [NormedField K₁] [IsUltrametricDist K₁] [CharZe
         (sf : Fin C → ZMod (2 * ν)) (T : ∀ c, Fin (l c) → Fin r0 → K)
         (I' : ∀ c, Fin (l c) → Fin r1),
         EntryHyp p ν r0 r1 C u' F' TT ξ e l T ∧
-        (∀ n, ‖MvPolynomial.coeff n (frameJet colN hts hp I F)‖ ≤
+        (∀ n, ‖AddMonoidAlgebra.coeff (frameJet colN hts hp I F) n‖ ≤
           ‖jetPair (entryOp ξ e l sf T I') F'‖) ∧
         alN e = alG TT colN hts ∧ capN sf = capG TT colN hts ∧ lsN l sf = lsG TT colN hts ∧
         ∀ (J : Finset (Fin r1)) (i : ℕ), 1 ≤ i →
@@ -96,7 +100,8 @@ theorem reduce (K₁ : Type) [NormedField K₁] [IsUltrametricDist K₁] [CharZe
     rw [← hgauss, ← hop]
     unfold frameJet
     rw [Formalism.DworkPowerSeriesWeights.eval₂_jetPairPoly, map_prod]
-    simp only [Formalism.DworkPowerSeriesWeights.ringMap_minorProd, map_sum, map_mul, MvPolynomial.map_C, MvPolynomial.map_X,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Formalism.DworkPowerSeriesWeights.ringMap_minorProd, map_sum, map_mul, MvPolynomial.map_C, MvPolynomial.map_X,
       MvPolynomial.coe_eval₂Hom, MvPolynomial.eval₂_X]
     exact le_rfl
 

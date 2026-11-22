@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.WwMain
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LFunctionMinors.FintypeColChoice
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.WwMain
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LFunctionMinors.FintypeColChoice
+
+@[expose] public section
 
 open MvPolynomial Finset Matrix
 
@@ -27,7 +31,8 @@ theorem block (hCB : CBSorted) {Lt : Type} (l : ℕ) [Fact l.Prime] (N0 N1 : ℕ
             Matrix (Fin N1) (Fin p) (MvPolynomial (Lt × ℕ × Fin N0) ℂ_[l]))).det := by
         congr 1
         refine Matrix.ext fun i j => ?_
-        simp only [Matrix.mul_apply, Matrix.of_apply, map_sum, map_mul, Finset.sum_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Matrix.mul_apply, Matrix.of_apply, map_sum, map_mul, Finset.sum_mul]
         first
           | (rw [Finset.sum_comm]
              exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by ring)

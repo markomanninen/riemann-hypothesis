@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsLv
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsLv
+
+@[expose] public section
+
 open scoped TensorProduct NNReal ENNReal Matrix
 open NumberField MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet GlobalTheory.UAut GlobalTheory.EisLine GlobalTheory.SphEis
 open GlobalTheory.ResLine (IsHt SemiLat)
@@ -14,7 +19,7 @@ theorem covolume_ne_top_of_continuousMulEquiv : ∀ (G : Type) [Group G] [Topolo
   set μ : Measure G := π.map E.symm with hμdef
   have hμ : μ.IsHaarMeasure := ContinuousMulEquiv.isHaarMeasure_map π e.symm
   have hqmp : MeasureTheory.Measure.QuasiMeasurePreserving E μ π := by
-    refine ⟨E.measurable, ?_⟩
+    refine ⟨E.measurable.aemeasurable, ?_⟩
     rw [hμdef, Measure.map_map E.measurable E.symm.measurable]
     simp only [MeasurableEquiv.self_comp_symm, Measure.map_id]
     exact Measure.AbsolutelyContinuous.rfl

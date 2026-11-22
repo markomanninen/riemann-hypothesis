@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
-import Formalism.SharpRestriction.CuspSpanNormBounds.PlaceDegreeData
-import Formalism.SharpRestriction.CuspSpanNormBounds.DstarEq
-import Formalism.LocalToGlobal.GlobalTheory.IrreducibleOfCountSizes
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PlaceDegreeData
+public import Formalism.SharpRestriction.CuspSpanNormBounds.DstarEq
+public import Formalism.LocalToGlobal.GlobalTheory.IrreducibleOfCountSizes
+
+@[expose] public section
 
 noncomputable section
 

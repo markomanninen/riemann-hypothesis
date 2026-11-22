@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinMapsOfForall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAddCharSymplecticLocalLatticeEqOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallySelfDualLatticeIndicatorIsVacuum
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAddCharSymplecticLocalLatticeEqOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallySelfDualLatticeIndicatorIsVacuum
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped TensorProduct Matrix
 
 noncomputable section
@@ -85,7 +90,7 @@ theorem det_ne_zero_of_skew (σ : E →ₐ[F] E) (B : Base F E) {n r s : ℕ} {X
   rw [Matrix.det_smul, ← RingHom.mapMatrix_apply, ← RingHom.map_det, h0, map_zero, mul_zero]
 
 theorem exists_formFrame (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (hJ : J.det ≠ 0)
-    (L : Submodule (𝓞 E) (Fin n → E)) (hL : L.IsLattice E)
+    (L : Submodule (𝓞 E) (Fin n → E)) (hL : L.IsFullLattice E)
     (hdual : ∀ y, (∀ x ∈ L, form σ J y x ∈ (algebraMap (𝓞 E) E).range) → y ∈ L) :
     ∃ (k : ℕ) (S T : Matrix (Fin n) (Fin k) E), (∀ j, (fun i => S i j) ∈ L) ∧ (∀ j, (fun i => T i j) ∈ L) ∧
       T * (J * S.map σ)ᵀ = 1 := by
@@ -104,7 +109,8 @@ theorem exists_formFrame (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin
             rw [Finset.sum_comm]
             exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
         _ = σ ((Φ *ᵥ x) j) := by
-            rw [h2]; simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [h2]; simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
     rw [e]; exact GlobalTheory.AdelicU.SelfDual.sig_mem_range σ (hΦ x hx j)
   · rw [Matrix.transpose_mul, ← Matrix.mul_assoc, Matrix.mul_assoc _ (Φ.map σ)ᵀ, ← Matrix.transpose_mul,
       ← Matrix.map_mul, h1, Matrix.map_one _ (map_zero _) (map_one _), Matrix.transpose_one, Matrix.mul_one,
@@ -113,7 +119,7 @@ theorem exists_formFrame (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin
 theorem cA_inclR (σ : E →ₐ[F] E) (e : E) : cA σ (inclR (F := F) (AF F) e) = inclR (F := F) (AF F) (σ e) := rfl
 
 theorem trace_inclR (e : E) :
-    Algebra.trace (AF F) (AE F E) (inclR (F := F) (AF F) e) = algebraMap F (AF F) (Algebra.trace F E e) := by
+    Algebra.trace (AF F) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) (inclR (F := F) (AF F) e) = algebraMap F (AF F) (Algebra.trace F E e) := by
   show Algebra.trace (AF F) (AF F ⊗[F] E) ((1 : AF F) ⊗ₜ[F] e) = _
   rw [Algebra.trace_apply, Algebra.trace_apply, ← Algebra.baseChange_lmul, LinearMap.trace_baseChange]
 
@@ -124,8 +130,8 @@ theorem inclR_smul (t : F) (x : E) :
   rfl
 
 theorem trace_expand {k : ℕ} (s c : Fin k → 𝓞 E)
-    (hsc : ∀ e : E, ∑ i, Algebra.trace F E ((c i : E) * e) • (s i : E) = e) (u : AE F E) :
-    u = ∑ i, Algebra.trace (AF F) (AE F E) (inclR (F := F) (AF F) (c i : E) * u) • inclR (F := F) (AF F) (s i : E) := by
+    (hsc : ∀ e : E, ∑ i, Algebra.trace F E ((c i : E) * e) • (s i : E) = e) (u : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) :
+    u = ∑ i, Algebra.trace (AF F) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) (inclR (F := F) (AF F) (c i : E) * u) • inclR (F := F) (AF F) (s i : E) := by
   induction u using TensorProduct.induction_on with
   | zero => simp
   | tmul a e =>
@@ -135,12 +141,13 @@ theorem trace_expand {k : ℕ} (s c : Fin k → 𝓞 E)
     rw [h1]
     simp_rw [mul_smul_comm, map_smul, ← map_mul, trace_inclR, smul_eq_mul]
     conv_lhs => rw [← hsc e]
-    rw [map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [inclR_smul, smul_smul]
   | add x y hx hy =>
     conv_lhs => rw [hx, hy]
-    simp only [mul_add, map_add, add_smul, Finset.sum_add_distrib]
+    simp only [mul_add, map_add (f := _), add_smul, Finset.sum_add_distrib]
 
 theorem incM_mul {m n p : ℕ} (A : Matrix (Fin m) (Fin n) E) (B : Matrix (Fin n) (Fin p) E) :
     incM F (A * B) = incM F A * incM F B := Matrix.map_mul
@@ -149,7 +156,7 @@ theorem incM_one {n : ℕ} : incM F (1 : Matrix (Fin n) (Fin n) E) = 1 := Matrix
 
 theorem decomp {n d k k' : ℕ} (T : Matrix (Fin n) (Fin k) E) (P : Matrix (Fin k) (Fin n) E)
     (T' : Matrix (Fin d) (Fin k') E) (P' : Matrix (Fin k') (Fin d) E) (h : T * P = 1) (h' : T' * P' = 1)
-    (z : Matrix (Fin n) (Fin d) (AE F E)) :
+    (z : Matrix (Fin n) (Fin d) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) :
     z = ∑ j, ∑ l, (incM F P * z * (incM F P')ᵀ) j l • incM F (Matrix.vecMulVec (fun i => T i j) (fun i => T' i l)) := by
   have key : incM F T * (incM F P * z * (incM F P')ᵀ) * (incM F T')ᵀ = z := by
     rw [← Matrix.mul_assoc, ← Matrix.mul_assoc, ← incM_mul, h, incM_one, Matrix.one_mul, Matrix.mul_assoc,
@@ -166,11 +173,12 @@ theorem decomp {n d k k' : ℕ} (T : Matrix (Fin n) (Fin k) E) (P : Matrix (Fin 
   exact Finset.sum_congr rfl fun _ _ => by ring
 
 theorem hTens_frame (σ : E →ₐ[F] E) {n d k k' : ℕ} (JA : Matrix (Fin n) (Fin n) E) (JB : Matrix (Fin d) (Fin d) E)
-    (S : Matrix (Fin n) (Fin k) E) (S' : Matrix (Fin d) (Fin k') E) (z : Matrix (Fin n) (Fin d) (AE F E)) (e : E)
+    (S : Matrix (Fin n) (Fin k) E) (S' : Matrix (Fin d) (Fin k') E) (z : Matrix (Fin n) (Fin d) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) (e : E)
     (j : Fin k) (l : Fin k') :
     hTens (cA σ) (incM F JA) (incM F JB) z (incM F (Matrix.vecMulVec (fun i => e * S i j) (fun i => S' i l))) =
       inclR (F := F) (AF F) (σ e) * (incM F (JA * S.map σ)ᵀ * z * (incM F (JB * S'.map σ)ᵀ)ᵀ) j l := by
-  simp only [hTens, incM, Matrix.map_apply, Matrix.mul_apply, Matrix.transpose_apply, Matrix.vecMulVec_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hTens, incM, Matrix.map_apply, Matrix.mul_apply, Matrix.transpose_apply, Matrix.vecMulVec_apply,
     cA_inclR, map_mul, map_sum, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun b _ => ?_
@@ -187,7 +195,7 @@ namespace GlobalTheory.InertSelfDual
 theorem latAtV_selfDual : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     (σ : E →ₐ[F] E) (B : Base F E)
     (a a' : ℕ) (G : Geo σ a a') (X : Chars F E) (om : Rep σ G.V G.W) (om' : Rep σ G.V' G.W), IsTriple B G X om om' →
-    ∀ (v : Pl F) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w →
+    ∀ (v : Pl (F := F)) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w →
     (∀ z : Matrix (Fin a) (Fin (a + a')) (AE F E), At (evFin F v) z →
       (z ∈ latAtV G.V G.W v ↔ ∀ γ ∈ latAtV G.V G.W v,
         B.ψ (symp (R := AF F) (cA σ) (-1) (incM F G.V.J) (incM F G.W.J) z γ) = 1)) := by

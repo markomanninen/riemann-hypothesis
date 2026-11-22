@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreNormBound
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjAvoidingForm
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreRepresentatives
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreNormMax
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsMetricMaxComparison
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreNormBound
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjAvoidingForm
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreRepresentatives
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreNormMax
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsMetricMaxComparison
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -32,11 +37,11 @@ theorem FibreNormBound.proof (h₁ : ProjAvoidingForm.Statement) (h₂ : FibreRe
       have h0 : 0 ≤ A.h z := (A.pos z hzb).le
       calc ‖eval z (map (Int.castRingHom ℂ) g)‖
           ≤ M * A.h z ^ τ * ‖eval z (map (Int.castRingHom ℂ) h)‖ := hle
-        _ ≤ M * (C * (HermLine.ofMetrics (fun k => maxMetric ℂ (ι k)) A.a).h z) ^ τ *
+        _ ≤ M * (C * (HermLine.ofMetrics (fun k => maxMetric (C := ℂ) (ι := ι k)) A.a).h z) ^ τ *
               ‖eval z (map (Int.castRingHom ℂ) h)‖ := by
             gcongr
             exact hAC z hzb
-        _ = M * C ^ τ * (HermLine.ofMetrics (fun k => maxMetric ℂ (ι k)) A.a).h z ^ τ *
+        _ = M * C ^ τ * (HermLine.ofMetrics (fun k => maxMetric (C := ℂ) (ι := ι k)) A.a).h z ^ τ *
               ‖eval z (map (Int.castRingHom ℂ) h)‖ := by ring)
     have hB0 : (0 : ℝ) ≤ B := zero_le_one.trans hB1
     have hpow : C ^ (τ * n) ≤ C ^ (n * (τ + 1)) :=

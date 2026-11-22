@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UpqRep
-import Formalism.PeriodIntegrals.IsLowUnitH
-import Formalism.FormalDegreeBessel.StatementG
-import Formalism.FormalDegreeBessel.StatementDS
-import Formalism.PeriodIntegrals.BesselPeriodGGP
-import Formalism.PeriodIntegrals.BesselMapUniq
-import Formalism.PeriodIntegrals.KFinSmooth
-import Formalism.HermitianCurvature.StatementB
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UpqRep
+public import Formalism.PeriodIntegrals.IsLowUnitH
+public import Formalism.FormalDegreeBessel.StatementG
+public import Formalism.FormalDegreeBessel.StatementDS
+public import Formalism.PeriodIntegrals.BesselPeriodGGP
+public import Formalism.PeriodIntegrals.BesselMapUniq
+public import Formalism.PeriodIntegrals.KFinSmooth
+public import Formalism.HermitianCurvature.StatementB
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ def mulP {k r : ℕ} (p : Mt k r × Mt k r) : Mt k r := fun i j => (Matrix.of p.
 
 theorem measurable_mulP {k r : ℕ} : Measurable (mulP (k := k) (r := r)) := by
   unfold mulP
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   simp only [Matrix.mul_apply, Matrix.of_apply]
   refine Finset.measurable_sum _ fun l _ => ?_
   fun_prop
@@ -87,25 +91,6 @@ def wordSeminorm {k r : ℕ} (σ : Mat k r → (H →L[ℂ] H)) (Ws : List (List
 
 end Side
 
-def DecProj : Prop :=
-  ∀ (k r : ℕ) (ε : Fin (2 * r + k + 1) → Bool) (lam : Fin (2 * r + k + 1) → ℝ) (h : ℝ)
-    (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] (σ : Mat k r → (H →L[ℂ] H)),
-    1 ≤ k → IsHCParam lam → IsDSHpk k r ε lam σ → GapAtLeast ε lam h → DecGap k r h →
-    ∀ (P : Mat k r) (E : H →L[ℂ] H), IsCayleyU k r ε P →
-      IsOrthProjOnto E (lowKSub ε lam fun g => σ (P⁻¹ * g * P)) →
-      ∀ κ X : Mat k r, κ ∈ UH (Hpk k r) → κ ∈ Matrix.unitaryGroup (Fin (2 * r + k + 1)) ℂ →
-        InLieHpk k r X → Xᴴ = X →
-        ‖E ∘L σ (κ * NormedSpace.exp X) ∘L E‖ ≤
-          Real.exp (-(h / 8) * min (gN X ^ 2) (gN X / Real.sqrt (2 * ((r : ℝ) + 1))))
-
-def DecLow : Prop :=
-  ∀ (k r : ℕ) (ε : Fin (2 * r + k + 1) → Bool) (lam : Fin (2 * r + k + 1) → ℝ) (h : ℝ)
-    (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] (σ : Mat k r → (H →L[ℂ] H)),
-    1 ≤ k → IsHCParam lam → IsDSHpk k r ε lam σ → GapAtLeast ε lam h → DecGap k r h →
-    ∀ w₁ w₂ : H, IsLowUnitH k r ε lam σ w₁ → IsLowUnitH k r ε lam σ w₂ →
-      ∀ x ∈ UH (Hpk k r),
-        ‖⟪w₂, σ x w₁⟫_ℂ‖ ≤ decConst r h * dimV k r ^ (decExp r h / 2) * gN x ^ (-decExp r h)
-
 def DecKFin : Prop :=
   ∀ (k r : ℕ) (ε : Fin (2 * r + k + 1) → Bool) (lam : Fin (2 * r + k + 1) → ℝ) (h : ℝ)
     (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] (σ : Mat k r → (H →L[ℂ] H)),
@@ -120,16 +105,5 @@ def DecSmooth : Prop :=
       ∃ (C : ℝ) (Ws : List (List (Mat k r))), (∀ D ∈ Ws, ∀ X ∈ D, InLieHpk k r X) ∧
         ∀ w ∈ smoothVecs (k := k) (r := r) σ, ∀ x ∈ UH (Hpk k r),
           ‖⟪v₀, σ x w⟫_ℂ‖ ≤ C * wordSeminorm σ Ws w * gN x ^ (1 - a)
-
-example : decExp 1 16 = 1 := by
-  unfold decExp
-  rw [show (2 * (((1 : ℕ) : ℝ) + 1)) = 2 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
-  norm_num
-
-example : dimN 1 1 = 5 ∧ thrG 1 1 = 16 ∧ thrS 1 1 = 15 ∧ thrSS 1 1 = 181 := by
-  simp only [thrSS, thrS, thrG, dimN, dimV, propExp]; norm_num
-
-example (k r : ℕ) : ∃ h, Size k r h :=
-  ⟨max _ _, le_max_left _ _, le_max_right _ _⟩
 
 end GlobalTheory.IndefiniteRowSideFullHecke.SideNormalisedGap

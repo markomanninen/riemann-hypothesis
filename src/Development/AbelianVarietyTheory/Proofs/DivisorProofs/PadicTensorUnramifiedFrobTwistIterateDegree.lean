@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TwOrbMEqTwOrbUOfNormal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobQIterateSelf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TwOrbMEqTwOrbUOfNormal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobQIterateSelf
+
+@[expose] public section
+
 open ReciprocityTheory.DiscreteGroups.LocalClassField Matrix GlobalTheory.LKRes
 open scoped TensorProduct
 
@@ -21,7 +26,7 @@ theorem tensorMap_id_iterate_eq_self {R A B : Type*} [CommRing R] [CommRing A] [
     intro k x y
     induction k with
     | zero => rfl
-    | succ k ih => rw [Function.iterate_succ_apply', ih, map_add, Function.iterate_succ_apply',
+    | succ k ih => rw [Function.iterate_succ_apply', ih, map_add (f := _), Function.iterate_succ_apply',
         Function.iterate_succ_apply']
   have hzero : ∀ k, (⇑e)^[k] (0 : A ⊗[R] B) = 0 := by
     intro k
@@ -39,5 +44,3 @@ theorem sigKQ_iterate_self : ∀ (p : ℕ) [Fact p.Prime] (K : IntermediateField
   exact tensorMap_id_iterate_eq_self (A := K) (frobQ p r) r (frobQ_iterate_self p r hr) x
 
 end GlobalTheory.LKRes
-
-example : ∀ (p : ℕ) [Fact p.Prime] (K : IntermediateField ℚ_[p] (PadicAlgCl p)) (r : ℕ), 0 < r → ∀ x : KQ p K r, (⇑(sigKQ p K r))^[r] x = x := GlobalTheory.LKRes.sigKQ_iterate_self

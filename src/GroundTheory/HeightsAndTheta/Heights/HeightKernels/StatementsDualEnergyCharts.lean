@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartEnergy
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ScaledExample
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartEnergy
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ScaledExample
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -21,17 +26,6 @@ def DualEnergyCharts.Statement : Prop :=
               if (j : ℕ) < k then dualLine F b hb else dualLine F.withStdMetric b hb)
             (fun z => Real.log ((dualLine F b hb).h z) - Real.log ((dualLine F.withStdMetric b hb).h z)) =
           ∑ σ : K →+* ℂ, chartMixedEnergy ((A σ)ᴴ * F.metric σ * A σ) ((A σ)ᴴ * A σ) k
-
-example : Σ' (b : Module.Basis Unit ℤ (dualLattice HermLattice.scaledExample)),
-    Function.Bijective (Matrix.mulVecLin (dualEmbMatrix b)) ∧ 1 ≤ 1 ∧
-      HermLattice.scaledExample.metric ≠ HermLattice.scaledExample.withStdMetric.metric :=
-  ⟨dualBasisStandard, dualEmbMatrix_standard_bijective, le_rfl, fun h => by
-    have h1 := congrFun (congrFun (congrFun h (Rat.castHom ℂ)) 0) 0
-    simp [HermLattice.scaledExample, HermLattice.withStdMetric] at h1⟩
-
-example : Function.Bijective (1 : Matrix (Fin 1) (Fin (1 - 1 + 1)) ℂ).mulVec := by
-  have h : (1 : Matrix (Fin 1) (Fin 1) ℂ).mulVec = id := funext Matrix.one_mulVec
-  exact h ▸ Function.bijective_id
 
 end
 

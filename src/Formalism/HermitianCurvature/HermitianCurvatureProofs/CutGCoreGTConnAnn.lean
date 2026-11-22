@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_GCore_GTConnCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HasFDerivAtBrReal
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_GCore_GTConnCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HasFDerivAtBrReal
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Complex
 

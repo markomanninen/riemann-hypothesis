@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermDef
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -289,7 +293,7 @@ theorem frame_sub_mem_span {T : E} {F : LFlag S r T} {n : S.V ≃ₗ[E] S.V} (hn
         exact F.fl.z_orth i
       · simp
       · intro x y _ _ hx hy
-        simp [map_add, hx, hy]
+        simp [map_add (f := _), hx, hy]
       · intro c x _ hx
         simp [hx]
     have := hn.2.2 _ hz
@@ -345,7 +349,8 @@ theorem zhat_rel {T T' : E} (F : LFlag S r T) {F₁ F₂ : LFlag S r T'} (h : DC
       rw [hfr b, ← hiso (n⁻¹ (frame F a)) (m (frame F₁ b))]
       simp
     rw [e1, hα a, hβ b]
-    simp only [Matrix.mul_apply, ZhatL, Zhat, brS, map_sum, map_smulₛₗ, LinearMap.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, ZhatL, Zhat, brS, map_sum, map_smulₛₗ, LinearMap.sum_apply,
       LinearMap.smul_apply, smul_eq_mul, Matrix.map_apply, Matrix.transpose_apply, starRingEnd_apply]
     simp only [Finset.mul_sum, Finset.sum_mul, RingHom.id_apply]
     refine Finset.sum_congr rfl (fun _ _ => Finset.sum_congr rfl (fun _ _ => ?_))

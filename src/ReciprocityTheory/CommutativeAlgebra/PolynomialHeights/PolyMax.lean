@@ -1,4 +1,8 @@
-import ReciprocityTheory.CommutativeAlgebra.ChainConnInDim
+module
+
+public import ReciprocityTheory.CommutativeAlgebra.ChainConnInDim
+
+@[expose] public section
 
 namespace ReciprocityTheory.CA
 
@@ -44,7 +48,7 @@ theorem isMaximal_comap_of_isMaximal_of_comap_eq {S' S : Type*} [CommRing S'] [C
     | exact Algebra.IsIntegral.tower_top P
     | exact Algebra.IsIntegral.tower_top (R := P)
   letI : Field (S ⧸ 𝔑) := Ideal.Quotient.field _
-  have hbot := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := S') (⊥ : Ideal (S ⧸ 𝔑))
+  have hbot := Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := S') (⊥ : Ideal (S ⧸ 𝔑))
   have heq : (⊥ : Ideal (S ⧸ 𝔑)).comap (algebraMap S' (S ⧸ 𝔑)) = 𝔑.comap (algebraMap S' S) := by
     ext y
     rw [Ideal.mem_comap, Ideal.mem_bot, Ideal.mem_comap]

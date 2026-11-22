@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.TraceFormDualOneTraceFormDual
-import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.TraceFormDualOneTraceFormDual
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.FD.HermitianTraceFormVanishing
 
@@ -29,9 +33,9 @@ private theorem fractionalIdeal_eq_one_of_smul_submodule_eq_self {E : Type} [Fie
     _ ≤ c * 1 := by gcongr
     _ = c := mul_one c
 
+
 open NumberField in
 open scoped Matrix in
-
 theorem _root_.GlobalTheory.trace_xi_mul_conj_int_iff_mem :
     ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (X : _root_.ReciprocityTheory.ChartRestriction.G.FD.DataX E r) (𝔄 : FractionalIdeal (nonZeroDivisors (𝓞 E)) E), 0 < r → 𝔄 ≠ 0 → X.Λ = Submodule.span (𝓞 E) {v | ∃ a ∈ 𝔄, ∃ u ∈ X.L', v = a • u} → ∀ x : E, (∀ y ∈ 𝔄, ∃ n : ℤ, Algebra.trace ℚ E (X.ξ0 * x * _root_.ReciprocityTheory.ChartRestriction.G.FD.cc y) = n) ↔ x ∈ 𝔄 := by
   intro E _ _ _ r X 𝔄 hr h𝔄 hΛ x

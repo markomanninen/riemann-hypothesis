@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Partners
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FrameLats
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Partners
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FrameLats
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,13 +20,6 @@ abbrev HCo (a : ℕ) : Type := (Fin a → ℝ) × ({p : Fin a × Fin a // p.1 < 
 
 def hOf {a : ℕ} (t : HCo a) : Matrix (Fin a) (Fin a) ℂ := fun i j =>
   if h : i < j then t.2 ⟨(i, j), h⟩ else if h' : j < i then star (t.2 ⟨(j, i), h'⟩) else (t.1 i : ℂ)
-
-theorem hOf_isHermitian {a : ℕ} (t : HCo a) : (hOf t).IsHermitian := by
-  ext i j
-  rcases lt_trichotomy i j with h | rfl | h
-  · simp [hOf, Matrix.conjTranspose_apply, h, h.not_gt]
-  · simp [hOf, Matrix.conjTranspose_apply]
-  · simp [hOf, Matrix.conjTranspose_apply, h, h.not_gt]
 
 abbrev Tup (k r a : ℕ) : Type := Fin (2 * r + k + 1) → Fin a → ℂ
 
@@ -42,20 +39,6 @@ def IsGramConst (k r a : ℕ) (μ : Measure (Mt k r)) (C : ℝ) : Prop :=
         ENNReal.ofReal (C * ‖(hOf t).det‖ ^ (2 * r + k + 1 - a)) *
           ∫⁻ g, Φ (Matrix.of.symm (Matrix.of g * Matrix.of (s t))) ∂μ
 
-def IsSec (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (μsec : ℂ → Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) :
-    Prop :=
-  (∀ i j, Measurable fun ζ => μsec ζ i j) ∧ ∀ ζ : ℂ, Tz k r z * Tz k r z' < Complex.normSq ζ →
-    (μsec ζ)ᴴ * Hb k * μsec ζ = Hb k ∧ herm (Hpk k r) (bigCell k r 1 (μsec ζ) *ᵥ z') z = ζ
-
-def IsIntC (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (μsec : ℂ → Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ)
-    (μG μW μN μW' : Measure (Mt k r)) (C : ℝ) : Prop :=
-  0 < C ∧ ∀ f : Mt k r → ℝ≥0∞, Measurable f →
-    ∫⁻ g, f g ∂μG = ENNReal.ofReal C * ∫⁻ q : (Fin r → ℂ) × ℂ,
-      ENNReal.ofReal (bcWeight k r (Tz k r z) (Tz k r z') q) *
-        ∫⁻ p : (Mt k r × Mt k r) × (Mt k r × Mt k r),
-          f (Matrix.of.symm (Matrix.of p.1.1 * Matrix.of p.1.2 * bigCell k r q.1 (μsec q.2) *
-            (Matrix.of p.2.1 * Matrix.of p.2.2)⁻¹)) ∂((μW.prod μN).prod (μW'.prod μN))
-
 section Glob
 
 variable {E : Type} [Field E] [NumberField E]
@@ -63,17 +46,6 @@ variable {E : Type} [Field E] [NumberField E]
 def tupLat {n a : ℕ} (𝔞 : Fin a → FractionalIdeal (𝓞 E)⁰ E) (P : Matrix (Fin n) (Fin a) E) :
     Submodule (𝓞 E) (Fin n → E) :=
   Submodule.span (𝓞 E) {v | ∃ (b : Fin a) (x : E), x ∈ 𝔞 b ∧ v = x • fun i => P i b}
-
-def ConfT (σ : E →+* E) {n a : ℕ} (J : Matrix (Fin n) (Fin n) E) (𝔞 : Fin a → FractionalIdeal (𝓞 E)⁰ E)
-    (T : Matrix (Fin a) (Fin a) E) : Set (Submodule (𝓞 E) (Fin n → E) × Matrix (Fin n) (Fin a) E) :=
-  {x | GlobalTheory.SgGlob.SelfDual σ J x.1 ∧ Free x.2 ∧ pairM σ J x.2 x.2 = T ∧ PrimIn (tupLat 𝔞 x.2) x.1}
-
-def IsoT (σ : E →+* E) {n a : ℕ} (J : Matrix (Fin n) (Fin n) E) (γ : Matrix (Fin n) (Fin n) E)
-    (x y : Submodule (𝓞 E) (Fin n → E) × Matrix (Fin n) (Fin a) E) : Prop :=
-  IsUn σ J γ ∧ latMap γ x.1 = y.1 ∧ γ * x.2 = y.2
-
-def MassT (σ : E →+* E) {n a : ℕ} (J : Matrix (Fin n) (Fin n) E) (𝔞 : Fin a → FractionalIdeal (𝓞 E)⁰ E)
-    (T : Matrix (Fin a) (Fin a) E) : ℝ≥0∞ := massOf (ConfT σ J 𝔞 T) (IsoT σ J)
 
 def dualM (σ : E →+* E) {a : ℕ} (𝔞 : Fin a → FractionalIdeal (𝓞 E)⁰ E) (T : Matrix (Fin a) (Fin a) E) :
     Submodule (𝓞 E) (Fin a → E) :=
@@ -236,45 +208,14 @@ theorem cork_one_zero (σ : E →+* E) (h2 : Module.finrank F E = 2) {a : ℕ}
   rw [← this]
   rfl
 
-open scoped Classical in
 
+open scoped Classical in
 def eta₃ (E : Type) [Field E] [NumberField E] [Algebra F E] (v : HeightOneSpectrum (𝓞 F)) : ℝ :=
   if (v.asIdeal.primesOver (𝓞 E)).ncard = 2 then 1 else -1
 
 def densV (σ : E →+* E) (n : ℕ) {a : ℕ} (𝔞 : Fin a → FractionalIdeal (𝓞 E)⁰ E)
     (T : Matrix (Fin a) (Fin a) E) (v : HeightOneSpectrum (𝓞 F)) : ℝ :=
   GlobalTheory.SgDen.densF (Ideal.absNorm v.asIdeal) (eta₃ E v) n a (cork σ 𝔞 T v)
-
-example (σ : E →+* E) (h2 : Module.finrank F E = 2) (v : HeightOneSpectrum (𝓞 F)) :
-    densV σ 1 (fun _ : Fin 1 => (1 : FractionalIdeal (𝓞 E)⁰ E)) 0 v = 0 := by
-  rw [densV, cork_one_zero σ h2, GlobalTheory.SgDen.densF]
-  exact Finset.prod_eq_zero (i := 0) (by simp) (by simp)
-
-example (σ : E →+* E) (v : HeightOneSpectrum (𝓞 F)) :
-    densV σ 1 (fun _ : Fin 1 => (1 : FractionalIdeal (𝓞 E)⁰ E)) 1 v =
-      1 - eta₃ E v * (Ideal.absNorm v.asIdeal : ℝ)⁻¹ := by
-  rw [densV, cork_one_one, GlobalTheory.SgDen.densF]
-  simp
-
-def locLat (v : HeightOneSpectrum (𝓞 F)) {n : ℕ} (Λ : Submodule (𝓞 E) (Fin n → E)) :
-    AddSubgroup (Fin n → Fv F v ⊗[F] E) :=
-  AddSubgroup.closure {y | ∃ c ∈ v.adicCompletionIntegers F, ∃ x ∈ Λ, y = fun i => c ⊗ₜ[F] x i}
-
-def locId (v : HeightOneSpectrum (𝓞 F)) (I : FractionalIdeal (𝓞 E)⁰ E) : AddSubgroup (Fv F v ⊗[F] E) :=
-  AddSubgroup.closure {y | ∃ c ∈ v.adicCompletionIntegers F, ∃ x ∈ I, y = c ⊗ₜ[F] x}
-
-def IntLoc (v : HeightOneSpectrum (𝓞 F)) {n a : ℕ} (𝔞 : Fin a → FractionalIdeal (𝓞 E)⁰ E)
-    (L : AddSubgroup (Fin n → Fv F v ⊗[F] E)) : Set (Fin a → Fin n → Fv F v ⊗[F] E) :=
-  {X | ∀ b, ∀ x ∈ locId v (𝔞 b), x • X b ∈ L}
-
-def PrimLoc (v : HeightOneSpectrum (𝓞 F)) {n a : ℕ} (𝔞 : Fin a → FractionalIdeal (𝓞 E)⁰ E)
-    (L : AddSubgroup (Fin n → Fv F v ⊗[F] E)) : Set (Fin a → Fin n → Fv F v ⊗[F] E) :=
-  {X | X ∈ IntLoc v 𝔞 L ∧ LinearIndependent (Fv F v ⊗[F] E) X ∧
-    ∀ c : Fin a → Fv F v ⊗[F] E, ∑ b, c b • X b ∈ L → ∀ b, c b ∈ locId v (𝔞 b)}
-
-def normAt (v : HeightOneSpectrum (𝓞 F)) (I : FractionalIdeal (𝓞 E)⁰ E) : ℝ :=
-  ((locId v I).relIndex (locId v (1 : FractionalIdeal (𝓞 E)⁰ E)) : ℝ) /
-    ((locId v (1 : FractionalIdeal (𝓞 E)⁰ E)).relIndex (locId v I) : ℝ)
 
 def difAt (v : HeightOneSpectrum (𝓞 F)) : ℝ :=
   (Ideal.absNorm v.asIdeal : ℝ) ^
@@ -293,26 +234,6 @@ variable (σ : E →ₐ[F] E) {k r : ℕ} (J : Matrix (Fin (2 * r + k + 1)) (Fin
 
 def IsModelAt (A : InfinitePlace E → Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) : Prop :=
   ∀ w, (A w)ᴴ * Hpk k r * A w = J.map w.embedding
-
-def IsVolM (Λ : Submodule (𝓞 E) (Fin (2 * r + k + 1) → E))
-    (A : InfinitePlace E → Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ)
-    (μw : InfinitePlace E → Measure (Mt k r)) (μ : Measure (HA (AF F) σ J)) : Prop :=
-  μ.IsHaarMeasure ∧
-  AllSome (fun θ : InfinitePlace E → (Ainf F ⊗[F] E →+* ℂ) =>
-    ∀ w, Formalism.MainNotions.StandardLattice.IsInfEmb w.embedding (θ w)) fun θ =>
-  ∀ B : InfinitePlace E → Set (Mt k r), (∀ w, MeasurableSet (B w)) →
-    μ {h | (∀ y, y ∈ Formalism.MainNotions.StandardLattice.latHat F E (Λ : Set (Fin (2 * r + k + 1) → E)) ↔
-          (Formalism.MainNotions.StandardLattice.finMat σ J h).mulVec y ∈ Formalism.MainNotions.StandardLattice.latHat F E (Λ : Set (Fin (2 * r + k + 1) → E))) ∧
-        ∀ w, ∃ b ∈ B w, Matrix.of b * A w = A w * Formalism.MainNotions.StandardLattice.infMat σ J (θ w) h} =
-      ∏ w, μw w (B w)
-
-def GlobData (Λ : Submodule (𝓞 E) (Fin (2 * r + k + 1) → E))
-    (A : InfinitePlace E → Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ)
-    (μw : InfinitePlace E → Measure (Mt k r)) (V₀ : ℝ≥0∞) : Prop :=
-  IsCMExt F E σ ∧ Algebra.FormallyUnramified (𝓞 F) (𝓞 E) ∧ IsHermND σ J ∧
-    GlobalTheory.SgGlob.SelfDual (σ : E →+* E) J Λ ∧ IsModelAt J A ∧ (∀ w, IsHaarOn (UH (Hpk k r)) (μw w)) ∧
-    ∃ (μ : Measure (HA (AF F) σ J)) (𝓕 : Set (HA (AF F) σ J)), IsVolM σ J Λ A μw μ ∧
-      IsFundamentalDomain (HFinIn (AF F) σ J) 𝓕 μ ∧ μ 𝓕 = V₀
 
 end Glob
 

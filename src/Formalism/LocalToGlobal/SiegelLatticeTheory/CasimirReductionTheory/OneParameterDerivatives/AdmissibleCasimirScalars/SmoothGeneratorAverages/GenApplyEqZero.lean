@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.AdmissibleCasimirScalars.CompactDerivativesBounded
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.AdmissibleCasimirScalars.CompactDerivativesBounded
+
+@[expose] public section
 
 open Matrix Finset
 open scoped InnerProductSpace
@@ -253,7 +257,8 @@ lemma dS_sum (hC : Calc ε σ D) {X : Matrix (Fin n) (Fin n) ℂ} (hX : inG ε X
   have e : (fun t : ℝ => σ (NormedSpace.exp ((t : ℂ) • X)) (∑ i ∈ s, a i • w i)) =
       fun t : ℝ => ∑ i ∈ s, a i • σ (NormedSpace.exp ((t : ℂ) • X)) (w i) := by
     funext t
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun i _ => map_smul _ _ _
   show deriv (fun t : ℝ => σ (NormedSpace.exp ((t : ℂ) • X)) (∑ i ∈ s, a i • w i)) 0 = _
   rw [e]
@@ -319,7 +324,8 @@ lemma cas_inv (hC : Calc ε σ D) (hst : ∀ (g : UJ ε), ∀ v ∈ D, σ (umat 
   have e1 : σ (umat g) (Cas ε σ v) = -∑ p, ∑ r, ∑ q, ((cf ε p * (zc g p r * zc g p q) : ℝ) : ℂ) •
       dS σ (gen ε r) (dS σ (gen ε q) (σ (umat g) v)) := by
     unfold Cas
-    rw [map_neg, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_neg, map_sum]
     congr 1
     refine Finset.sum_congr rfl fun p _ => ?_
     have hg := gen_inG ε p

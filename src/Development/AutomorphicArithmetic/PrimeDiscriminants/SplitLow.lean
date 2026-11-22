@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataParams₂
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataParams₂
+
+@[expose] public section
 
 namespace UpperTheory.Host
 

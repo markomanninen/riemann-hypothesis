@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveCrystalHodgeLiftClasses
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveCrystalHodgeLiftClasses
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj DividedPowers
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.SqLift GlobalTheory.Published GlobalTheory.Published.GrothendieckMessing
@@ -127,18 +131,20 @@ theorem dpow_idl (κ : DividedPowers I) {N : ℕ} (hN : NilExp κ (N + 2)) :
     rw [smul_eq_mul, κ.dpow_mul (idl_le κ N hxm), hx n hn, mul_zero]
 
 theorem isSubDPIdeal (κ : DividedPowers I) {N : ℕ} (hN : NilExp κ (N + 2)) :
-    IsSubDPIdeal κ (idl κ (N + 1) ⊓ I) where
-  isSubideal := inf_le_right
-  dpow_mem n hn j hj := by
-    rcases Nat.lt_or_ge n 2 with h | h
-    · obtain rfl : n = 1 := by omega
-      rw [κ.dpow_one hj.2]; exact hj
-    · rw [dpow_idl κ hN j hj.1 n h]; exact Submodule.zero_mem _
+    IsSubDPIdeal κ (idl κ (N + 1) ⊓ I) := by
+  refine DividedPowers.IsSubDPIdeal.mk inf_le_right ?_
+  intro n hn j hj
+  rcases Nat.lt_or_ge n 2 with h | h
+  · obtain rfl : n = 1 := by omega
+    rw [κ.dpow_one hj.2]
+    exact hj
+  · rw [dpow_idl κ hN j hj.1 n h]
+    exact Ideal.zero_mem _
 
 end GlobalTheory.SqLift.DPStep
 
-open GlobalTheory.SqLift.DPStep in
 
+open GlobalTheory.SqLift.DPStep in
 theorem GlobalTheory.SqLift.exists_isStep_nilExp :
     ∀ (R R₀ : Type) [CommRing R] [CommRing R₀] (I : Ideal R) (κ : DividedPowers I) (π : R →+* R₀),
     Function.Surjective π → RingHom.ker π = I → ∀ N : ℕ, NilExp κ (N + 2) →

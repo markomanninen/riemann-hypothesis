@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory in
 theorem UpperTheory.Reformulated.B.Qo7.eq_zero_of_orth :

@@ -1,5 +1,9 @@
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementA
-import Formalism.PolynomialDimension.MultinomialDepth.MonoCount
+module
+
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementA
+public import Formalism.PolynomialDimension.MultinomialDepth.MonoCount
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.PW
 

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.RestSplit
-import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
-import Formalism.SharpRestriction.GrowthBounds.PolBridge
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.RestSplit
+public import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
+public import Formalism.SharpRestriction.GrowthBounds.PolBridge
+
+@[expose] public section
 
 noncomputable section
 

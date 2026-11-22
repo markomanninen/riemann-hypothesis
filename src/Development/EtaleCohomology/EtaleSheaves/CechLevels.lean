@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.EtaleDegreeZeroCohomologyEquivLocallyConstantFun
-import Mathlib.RingTheory.Spectrum.Prime.RingHom
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.EtaleDegreeZeroCohomologyEquivLocallyConstantFun
+public import Mathlib.RingTheory.Spectrum.Prime.RingHom
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC

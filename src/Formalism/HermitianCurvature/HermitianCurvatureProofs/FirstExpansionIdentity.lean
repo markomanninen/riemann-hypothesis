@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AAvCongr
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AAvCongr
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -57,7 +61,7 @@ theorem first_expansion_identity : ExpansionOmittedColumn := by
       rw [hxi a p (by omega)]
       split_ifs with hp'
       · unfold Zb
-        rw [dif_pos ha, dif_neg (by omega)]
+        rw [dite_eq_left ha, dite_eq_right (by omega)]
       · rfl
     · intro a b
       have ha := a.isLt

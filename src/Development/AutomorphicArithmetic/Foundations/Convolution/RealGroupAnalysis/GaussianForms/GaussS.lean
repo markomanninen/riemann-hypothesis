@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianForms.NApply
-import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianForms.NApply
+public import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -29,7 +33,7 @@ private theorem gaussEquiv_apply {F : Type} [Field F] [NumberField F] [IsTotally
   rw [InfinitePlace.Completion.ringEquivRealOfIsReal_apply]
 
 theorem UpperTheory.ConvolutionTheory.R2.C.gaussS :
-    ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (ι : Type) [Fintype ι] (g : FiniteAdeleRing (𝓞 F) F → ℂ), g ∈ finiteSchwartzBruhat F → (fun v : ι → A F => ∏ i, g1 g (v i)) ∈ schwartzBruhatPi F ι := by
+    ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (ι : Type) [Fintype ι] (g : FiniteAdeleRing (𝓞 F) F → ℂ), g ∈ finiteSchwartzBruhat F → (fun v : ι → A F => ∏ i, g1 g (v i)) ∈ schwartzBruhatPi (K := F) (ι := ι) := by
   intro F _ _ _ ι _ g hg
   have h := schwartzBruhatTensorPi_mem
     (SchwartzMap.compCLMOfContinuousLinearEquiv ℂ (gaussEquiv F ι)

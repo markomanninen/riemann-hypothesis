@@ -1,5 +1,11 @@
-import Mathlib
-import GroundTheory.PAdicHodge.BCrisEigenFixed
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.BCrisNewton
+public import GroundTheory.PAdicHodge.GalSmulAlgebraMapPadicPlus
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -41,15 +47,10 @@ theorem iotaB_periodTCris_eq :
 
 variable {L : IntermediateField ℚ_[p] (PadicAlgCl p)}
 
-include hζ in
-set_option maxHeartbeats 1600000 in
-theorem galB_eq_of_smul_iotaB (σ : Gal(PadicAlgCl p/L)) {B : BCris hε}
-    (h : σ • iotaB hε hζ B = iotaB hε hζ B) : galB hε σ B = B :=
-  iotaB_injective hε hζ ((iotaB_galB (K := L) hε hζ σ B).trans h)
+
 
 include hζ in
 set_option maxHeartbeats 3200000 in
-
 theorem isUnit_of_galB_fixed [FiniteDimensional ℚ_[p] L] {B : BCris hε} (hB0 : B ≠ 0)
     (h : ∀ σ : Gal(PadicAlgCl p/L), galB hε σ B = B) : IsUnit B := by
   obtain ⟨k, hk, hBk⟩ := bCris_fixed_mem_maxUnramified hε hζ (K := L) B h

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.PairVal
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.CellBru
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.PairVal
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.CellBru
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ theorem psiInf_add (g : ℕ) (x y : K) : psiInf g (x + y) = psiInf g x * psiInf 
   unfold psiInf
   rw [← Complex.exp_add]
   congr 1
-  rw [map_add]
+  rw [map_add (f := _)]
   push_cast
   ring
 
@@ -277,19 +281,30 @@ theorem pts_inj : ∀ (bs bs' : List (K × ℕ)), (∀ b ∈ bs, b.1 ≠ 0 ∧ 1
     have := (hv (t, s) (by simp)).2
     simp only [List.map_nil, List.sum_nil, List.map_cons, List.sum_cons] at hs; omega
   | (t, s) :: b1, (t', s') :: b1', hv, hv', hs, h => by
-    simp only [List.map_cons, List.sum_cons] at hs h
-    have hs1 := (hv (t, s) (by simp)).2
-    have hs1' := (hv' (t', s') (by simp)).2
-    obtain ⟨e1, e2⟩ := h 0 (by omega)
-    simp only [pσ, pv, if_pos (show 0 < s by omega), if_pos (show 0 < s' by omega)] at e1 e2
-    have ess : s = s' := by omega
-    subst ess e2
-    have := pts_inj b1 b1' (fun b hb => hv b (by simp [hb])) (fun b hb => hv' b (by simp [hb])) (by omega)
-      (fun i hi => by
-        obtain ⟨a, b⟩ := h (s + i) (by omega)
-        simp only [pσ, pv, if_neg (show ¬ (s + i < s) by omega), Nat.add_sub_cancel_left] at a b
-        exact ⟨by omega, b⟩)
-    rw [this]
+    simp only [List.map_cons, List.sum_cons] at hs
+    have hs1 : 0 < s := (hv (t, s) (by simp)).2
+    have hs1' : 0 < s' := (hv' (t', s') (by simp)).2
+    have hzero : 0 < (((t, s) :: b1).map Prod.snd).sum := by
+      simp only [List.map_cons, List.sum_cons]
+      omega
+    have hsize : s - 1 = s' - 1 := by
+      simpa only [pσ, if_pos hs1, if_pos hs1', Nat.sub_zero] using (h 0 hzero).1
+    have hlabel : t = t' := by
+      simpa only [pv, if_pos hs1, if_pos hs1'] using (h 0 hzero).2
+    have hsEq : s = s' := by omega
+    subst s'
+    subst t'
+    apply congrArg (List.cons (t, s))
+    refine pts_inj b1 b1' (fun b hb => hv b (by simp [hb]))
+      (fun b hb => hv' b (by simp [hb])) (Nat.add_left_cancel hs) ?_
+    intro i hi
+    have hindex : s + i < (((t, s) :: b1).map Prod.snd).sum := by
+      simpa only [List.map_cons, List.sum_cons] using Nat.add_lt_add_left hi s
+    have hshift : ¬ s + i < s := by omega
+    have hentries := h (s + i) hindex
+    refine ⟨Nat.add_left_cancel (n := s) ?_, ?_⟩
+    · simpa only [pσ, if_neg hshift, Nat.add_sub_cancel_left] using hentries.1
+    · simpa only [pv, if_neg hshift, Nat.add_sub_cancel_left] using hentries.2
 
 theorem pt_eq_of_struct (p p' : Point K N) (h : ∀ i, i < N → pσ p.1 i = pσ p'.1 i ∧ pv p.1 i = pv p'.1 i) :
     p = p' :=
@@ -400,8 +415,8 @@ theorem simple_eq (p : Point K N) {n m : Matrix (Fin N) (Fin N) K} (hn : IsLoUni
       have k := key ⟨a + 1, ha⟩ (fσ p ⟨a, by omega⟩)
       rw [fσ_fσ, (hm _ _).1 (show fσ p ⟨a, by omega⟩ < fσ p ⟨a + 1, ha⟩ by exact hc), mul_zero] at k
       have := (mul_eq_zero.mp k).resolve_right (pv_ne' p _)
-      simp only [F]; rw [dif_pos ha]; exact this
-    · exact hne (by simp only [F]; rw [dif_neg ha])
+      simp only [F]; rw [dite_eq_left ha]; exact this
+    · exact hne (by simp only [F]; rw [dite_eq_right ha])
   have hG : ∀ a ∈ Finset.range N, G a ≠ 0 → sameB p.1 N a := by
     intro a _ hne
     by_contra hs
@@ -411,8 +426,8 @@ theorem simple_eq (p : Point K N) {n m : Matrix (Fin N) (Fin N) K} (hn : IsLoUni
       have k := key (fσ p ⟨a, by omega⟩) ⟨a + 1, ha⟩
       rw [fσ_fσ, (hn _ _).1 (show fσ p ⟨a, by omega⟩ < fσ p ⟨a + 1, ha⟩ by exact hc), zero_mul] at k
       have := (mul_eq_zero.mp k.symm).resolve_left (pv_ne' p _)
-      simp only [G]; rw [dif_pos ha]; exact this
-    · exact hne (by simp only [G]; rw [dif_neg ha])
+      simp only [G]; rw [dite_eq_left ha]; exact this
+    · exact hne (by simp only [G]; rw [dite_eq_right ha])
   have hGF : ∀ a ∈ (Finset.range N).filter (sameB p.1 N), G a = F (pσ p.1 (a + 1)) := by
     intro a ha
     obtain ⟨-, hs⟩ := Finset.mem_filter.mp ha
@@ -428,7 +443,7 @@ theorem simple_eq (p : Point K N) {n m : Matrix (Fin N) (Fin N) K} (hn : IsLoUni
     rw [hb3] at k
     have hv := pv_ne' p ⟨pσ p.1 (a + 1), by omega⟩
     simp only [Fin.val_mk] at hv
-    simp only [F, G]; rw [dif_pos ha1, dif_pos hb1]
+    simp only [F, G]; rw [dite_eq_left ha1, dite_eq_left hb1]
     exact mul_left_cancel₀ hv (k.symm.trans (mul_comm _ _))
   rw [eLo, eUp, ← Finset.sum_filter_of_ne hF, ← Finset.sum_filter_of_ne hG]
   refine (Finset.sum_nbij' (fun a => pσ p.1 (a + 1)) (fun a => pσ p.1 (a + 1)) ?_ ?_ ?_ ?_ hGF).symm
@@ -532,30 +547,13 @@ theorem zhat_move {T T' : E} (F : LFlag S r T) (F' : LFlag S r T') {s : S.V ≃�
   have hiso : S.hT (s (frame F a)) (s (frame F' b)) = S.hT (frame F a) (frame F' b) := hs _ _
   have lhs : ZhatL F F' a b = S.hT (frame F a) (frame F' b) := rfl
   rw [lhs, ← hiso, h1, h2]
-  simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ₂, map_smul, Matrix.mul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ₂, map_smul, Matrix.mul_apply,
     Matrix.conjTranspose_apply, smul_eq_mul, Finset.mul_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun d _ => ?_
   simp only [show ∀ x y, ZhatL F F' x y = S.hT (frame F x) (frame F' y) from fun _ _ => rfl, starRingEnd_apply,
     RingHom.id_apply]
   ring
-
-theorem frame_coef_unique {T T' : E} (F : LFlag S r T) (F' : LFlag S r T') (hdet : (ZhatL F F').det ≠ 0)
-    {x y : Fin (r + 1) → E} (h : ∑ c, x c • frame F c = ∑ c, y c • frame F c) : x = y := by
-  have hz : ∀ d, ∑ c, star (x c - y c) * ZhatL F F' c d = 0 := by
-    intro d
-    have h0 : ∑ c, (x c - y c) • frame F c = 0 := by
-      simp only [sub_smul, Finset.sum_sub_distrib, h, sub_self]
-    have : S.hT (∑ c, (x c - y c) • frame F c) (frame F' d) = 0 := by rw [h0]; simp
-    rw [map_sum, LinearMap.sum_apply] at this
-    simp only [LinearMap.map_smulₛₗ₂, smul_eq_mul] at this
-    exact this
-  have hv : Matrix.vecMul (fun c => star (x c - y c)) (ZhatL F F') = 0 := by
-    ext d; simp only [Matrix.vecMul, dotProduct, Pi.zero_apply]; exact hz d
-  have := Matrix.eq_zero_of_vecMul_eq_zero hdet hv
-  funext c
-  have hc := congrFun this c
-  simp only [Pi.zero_apply, star_eq_zero] at hc
-  exact sub_eq_zero.mp hc
 
 end Frame
 
@@ -565,10 +563,6 @@ variable {K : Type} [Field K] {N : ℕ}
 
 theorem det_loUni {L : Matrix (Fin N) (Fin N) K} (h : IsLoUni L) : L.det = 1 := by
   rw [Matrix.det_of_isLowerTriangular L (fun i j hij => (h i j).1 hij)]
-  exact Finset.prod_eq_one fun i _ => (h i i).2 rfl
-
-theorem det_upUni {U : Matrix (Fin N) (Fin N) K} (h : IsUpUni U) : U.det = 1 := by
-  rw [Matrix.det_of_isUpperTriangular (fun i j hij => (h i j).1 hij)]
   exact Finset.prod_eq_one fun i _ => (h i i).2 rfl
 
 theorem ptMat_sq (p : Point K N) :
@@ -585,28 +579,10 @@ theorem det_ptMat_ne (p : Point K N) : (ptMat p).det ≠ 0 := by
   rw [Matrix.det_mul, h0, zero_mul, Matrix.det_diagonal] at this
   exact (Finset.prod_ne_zero_iff.mpr fun i _ => mul_ne_zero (pv_ne' p i) (pv_ne' p _)) this.symm
 
-theorem pσ_big : ∀ bs : List (K × ℕ), (∀ b ∈ bs, b.2 = 1) → ∀ i, pσ bs i = i
-  | [], _, _ => rfl
-  | (t, s) :: bs, h, i => by
-    have hs : s = 1 := h (t, s) (by simp)
-    subst hs
-    simp only [pσ]
-    split_ifs with hi
-    · omega
-    · rw [pσ_big bs (fun b hb => h b (by simp [hb])) (i - 1)]; omega
-
-theorem fσ_big (p : Point K N) (h : ∀ b ∈ p.1, b.2 = 1) (a : Fin N) : fσ p a = a :=
-  Fin.ext (pσ_big p.1 h a)
-
 theorem zhatOM_eq_pv {r : ℕ} (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) K) :
     ZhatOM Z = Z * Matrix.diagonal (fun b : Fin (r + 1) => (-1 : K) ^ (r - b.val)) := by
   ext a b
   simp [ZhatOM, Matrix.mul_diagonal, mul_comm]
-
-theorem conjT_loUni [StarRing K] {u : Matrix (Fin N) (Fin N) K} (h : IsUpUni u) : IsLoUni u.conjTranspose := by
-  intro i j
-  simp only [Matrix.conjTranspose_apply]
-  exact ⟨fun hij => by rw [(h j i).1 hij, star_zero], fun hij => by subst hij; rw [(h i i).2 rfl, star_one]⟩
 
 end Big
 
@@ -618,13 +594,13 @@ def NormRepStep : Prop :=
   ∀ (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)) (Λ : Submodule (𝓞 D.host.E) (VS D).V),
     IsRowLat D F0 Λ → ∀ t : TermsOf D u' F0 Λ,
       IsRel Λ (lf D F0) (PD D Λ (lf D F0) u') D.host.F t → IsGen Λ (lf D F0) (PD D Λ (lf D F0) u') (gS D) t →
-        ∃ F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E),
+        ∃ F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E),
           TermDef.Rep Λ (lf D F0) (PD D Λ (lf D F0) u') t F' ∧ AdmWit Λ (gS D) (lf D F0) F' 1
 
 def NormRepMove : Prop :=
   ∀ (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)) (Λ : Submodule (𝓞 D.host.E) (VS D).V),
     IsRowLat D F0 Λ → ∀ t : TermsOf D u' F0 Λ, IsRel Λ (lf D F0) (PD D Λ (lf D F0) u') D.host.F t →
-      ∀ F₁ F₂ : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E),
+      ∀ F₁ F₂ : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E),
         TermDef.Rep Λ (lf D F0) (PD D Λ (lf D F0) u') t F₁ → AdmWit Λ (gS D) (lf D F0) F₁ 1 →
         TermDef.Rep Λ (lf D F0) (PD D Λ (lf D F0) u') t F₂ → AdmWit Λ (gS D) (lf D F0) F₂ 1 →
         ∀ w : Point D.host.E (D.R.rS + 1), IsInCell (ZhatOM (ZhatL (lf D F0) F₁)) w →
@@ -637,29 +613,6 @@ def AutLzFin : Prop :=
 
 variable (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)) (what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V))
 
-def BigCellIdx : Prop :=
-  ∀ (δ : ∀ p : Formalism.MainNotions.S.LocalSplitGroups.PlF D, (D.s.atP p).Fp)
-    (M : ∀ p : Formalism.MainNotions.S.LocalSplitGroups.PlF D, Formalism.MainNotions.S.Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep),
-    (∀ p, Formalism.MainNotions.S.LocalSplitGroups.Agree δ M p) → ∀ (t : Term D u u' F0 what₂) (w : Point D.host.E (D.R.rS + 1))
-      (F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) (L U : MatR D),
-      t.relevant → t.generic → NormRep t w F' L U → BigCell w → volIdx D u u' F0 what₂ δ M t w F' L = 1
-
-def VolOrbit : Prop :=
-  ∀ (δ : ∀ p : Formalism.MainNotions.S.LocalSplitGroups.PlF D, (D.s.atP p).Fp)
-    (M : ∀ p : Formalism.MainNotions.S.LocalSplitGroups.PlF D, Formalism.MainNotions.S.Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep),
-    (∀ p, Formalism.MainNotions.S.LocalSplitGroups.Agree δ M p) → ∃ wt : MatR D → ℝ, ∀ (t : Term D u u' F0 what₂)
-      (w : Point D.host.E (D.R.rS + 1)) (F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) (L U : MatR D),
-      t.relevant → t.generic → NormRep t w F' L U →
-        vRdef D u u' F0 what₂ δ M t = ((orbT D u u' F0 what₂ t (ZhatL (lf D F0) F')).ncard : ℝ) * wt (ZhatL (lf D F0) F')
-
-def VolIdxRep : Prop :=
-  ∀ (δ : ∀ p : Formalism.MainNotions.S.LocalSplitGroups.PlF D, (D.s.atP p).Fp)
-    (M : ∀ p : Formalism.MainNotions.S.LocalSplitGroups.PlF D, Formalism.MainNotions.S.Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep),
-    (∀ p, Formalism.MainNotions.S.LocalSplitGroups.Agree δ M p) → ∀ (t : Term D u u' F0 what₂) (w : Point D.host.E (D.R.rS + 1))
-      (F₁ F₂ : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) (L₁ U₁ L₂ U₂ : MatR D),
-      t.relevant → t.generic → NormRep t w F₁ L₁ U₁ → NormRep t w F₂ L₂ U₂ →
-        volIdx D u u' F0 what₂ δ M t w F₁ L₁ = volIdx D u u' F0 what₂ δ M t w F₂ L₂
-
 end Steps
 
 section Proofs
@@ -668,7 +621,7 @@ variable {D : D7} {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS ((Tu D u : �
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
 
 theorem pt_eq_of_cells (hCP : CellPointUniq) (hTF : TermFun D u u') (hrows : IsRowReps D F0 what₂)
-    (t : Term D u u' F0 what₂) {F₁ F₂ : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)}
+    (t : Term D u u' F0 what₂) {F₁ F₂ : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)}
     (h₁ : TermDef.Rep t.lam (lf D F0) (PD D t.lam (lf D F0) u') t.cls F₁)
     (h₂ : TermDef.Rep t.lam (lf D F0) (PD D t.lam (lf D F0) u') t.cls F₂) {w w' : Point D.host.E (D.R.rS + 1)}
     (c₁ : IsInCell (ZhatOM (ZhatL (lf D F0) F₁)) w) (c₂ : IsInCell (ZhatOM (ZhatL (lf D F0) F₂)) w') : w = w' := by

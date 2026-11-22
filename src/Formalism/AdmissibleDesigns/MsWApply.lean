@@ -1,5 +1,9 @@
-import Formalism.AdmissibleDesigns.TwistedTargetOfInputs
-import Formalism.AdmissibleDesigns.FiniteClassesLocalEq
+module
+
+public import Formalism.AdmissibleDesigns.TwistedTargetOfInputs
+public import Formalism.AdmissibleDesigns.FiniteClassesLocalEq
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -26,9 +30,9 @@ theorem msW_apply {w : HeightOneSpectrum (𝓞 D.host.E)} (hw : w ∈ placesOver
   | rfl
   | simp [Matrix.map_apply]
 
+
 set_option maxHeartbeats 2000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem embRW_of {T : Subalgebra (D.nd.O i) (D.nd.X i → D.nd.O i)} {π : D.nd.X i} {ε : GE D.nd →* (D.nd.O i)ˣ}
     {g0 : GE D.nd} {eB e₁ s : D.nd.X i → Matrix (Fin D.R.nV) (Fin D.R.nV) (D.nd.O i)}
     (hD : Formalism.RepresentationBoundsCohomology.ringDataObjects.RingDef (D.nd.O i) T (Formalism.MainNotions.N.RepresentationBoundsCohomology.repX D.nd r) π (chiU D.nd i 1) ε g0 eB e₁ s Dd)
@@ -69,8 +73,8 @@ theorem embRW_of {T : Subalgebra (D.nd.O i) (D.nd.X i → D.nd.O i)} {π : D.nd.
     { toFun := fun v a => e ((Λ (untr e v)) q.1 a q.2)
       map_add' := fun v v₂ => funext fun a => by
         show e ((Λ (untr e v + untr e v₂)) q.1 a q.2) = _
-        rw [map_add]
-        simp [map_add]
+        rw [map_add (f := _)]
+        simp [map_add (f := _)]
       map_smul' := fun c v => funext fun a => by
         show e ((Λ (e.symm c • untr e v)) q.1 a q.2) = c * e ((Λ (untr e v)) q.1 a q.2)
         rw [smulK]
@@ -97,7 +101,8 @@ theorem embRW_of {T : Subalgebra (D.nd.O i) (D.nd.X i → D.nd.O i)} {π : D.nd.
         (γ : GE D.nd) = ((Br.iota D.nbr i w hw g : Gw D.nd w) : GE D.nd) → ∀ b,
         e ((Λ (locRep ρP γ (untr e v))) q.1 b q.2) = (MsW i r hw (Dd.p q.1) g).mulVec (Ψ q v) b := by
       intro q γ hγ b
-      rw [hΛe, Pi.mul_apply, hγ, uElt_at i r Dd hr' hsm hχ, Matrix.mul_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hΛe, Pi.mul_apply, hγ, uElt_at i r Dd hr' hsm hχ, Matrix.mul_apply, map_sum]
       simp only [Matrix.mulVec, dotProduct, msW_apply]
       refine Finset.sum_congr rfl fun c _ => ?_
       simp [Ψ, Matrix.map_apply, map_mul]

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BasePlaceNotMemChiGridBadPlaces
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LineLatAt
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BasePlaceNotMemChiGridBadPlaces
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LineLatAt
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.ChiGrid
 open scoped TensorProduct nonZeroDivisors
@@ -26,8 +31,8 @@ theorem tmul_mul_incA {D : D7} (y : AF D.host.F) (t e : D.host.E) :
   show (y ⊗ₜ[D.host.F] t) * ((1 : AF D.host.F) ⊗ₜ[D.host.F] e) = _
   rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem mem_idV_of_mem {D : D7} {A B : HSp D} {c : ℕ} {ε : D.host.E} (d : GlobalTheory.ChiGrid.HermitianOrthogonalExtensionData A B c ε) (hε : ε ≠ 0)
     (Λ : Submodule (𝓞 D.host.E) (Fin A.rank → D.host.E)) (𝔟 : Fin c → GlobalTheory.SeeSaw.FI D) (v : GlobalTheory.FinPl.Pl D)
     (q : Fin c) (b : AE D)
@@ -40,7 +45,7 @@ theorem mem_idV_of_mem {D : D7} {A B : HSp D} {c : ℕ} {ε : D.host.E} (d : Glo
     have := q.2; have := p.2
     rw [hr, Fin.val_rev, Fin.ext_iff]; omega
   have hκ : κ ≠ 0 := by
-    rw [hκdef, antiDiagonalSignGramMatrix, if_pos ((hcond q).2 rfl)]
+    rw [hκdef, antiDiagonalSignGramMatrix, ite_eq_left ((hcond q).2 rfl)]
     split_ifs
     · exact hε
     · exact one_ne_zero
@@ -58,7 +63,7 @@ theorem mem_idV_of_mem {D : D7} {A B : HSp D} {c : ℕ} {ε : D.host.E} (d : Glo
     rw [e2]
     split_ifs with hp
     · subst hp; rw [← hκdef]; exact inv_mul_cancel₀ hκ
-    · rw [antiDiagonalSignGramMatrix, if_neg (fun h' => hp ((hcond p).1 h')), mul_zero]
+    · rw [antiDiagonalSignGramMatrix, ite_eq_right (fun h' => hp ((hcond p).1 h')), mul_zero]
   have hπM : ∀ i, ∑ j, π j * frameMat B A d.ι j i = 0 := by
     intro i
     have e := congrFun (congrFun d.perp i) r
@@ -105,7 +110,7 @@ theorem mem_idV_of_mem {D : D7} {A B : HSp D} {c : ℕ} {ε : D.host.E} (d : Glo
           · rw [Finset.sum_comm]; exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
         rw [h1]
         simp only [hπM, hπa, zero_mul, Finset.sum_const_zero, zero_add, ite_mul, one_mul,
-          Finset.sum_ite_eq', Finset.mem_univ, if_true]
+          Finset.sum_ite_eq', Finset.mem_univ, ite_true]
       rw [e]
       exact AddSubgroup.subset_closure ⟨α, hα, hαv, u q, hu q, rfl⟩
     | zero => rw [map_zero]; exact zero_mem _
@@ -116,11 +121,12 @@ theorem mem_idV_of_mem {D : D7} {A B : HSp D} {c : ℕ} {ε : D.host.E} (d : Glo
     show ∑ k, incA D (π k) * (b * incA D (d.a k q)) = b
     have : ∀ k, incA D (π k) * (b * incA D (d.a k q)) = b * incA D (π k * d.a k q) := fun k => by
       rw [map_mul (incA D) (π k) (d.a k q)]; ring
-    rw [Finset.sum_congr rfl (fun k _ => this k), ← Finset.mul_sum, ← map_sum, hπa q, if_pos rfl, map_one, mul_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_congr rfl (fun k _ => this k), ← Finset.mul_sum, ← map_sum, hπa q, ite_eq_left rfl, map_one, mul_one]
   rwa [e] at key
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem mem_of_mem_idV {D : D7} {A B : HSp D} {c : ℕ} {ε : D.host.E} (d : GlobalTheory.ChiGrid.HermitianOrthogonalExtensionData A B c ε)
     (Λ : Submodule (𝓞 D.host.E) (Fin A.rank → D.host.E)) (𝔟 : Fin c → GlobalTheory.SeeSaw.FI D) (v : GlobalTheory.FinPl.Pl D)
     (q : Fin c) (b : AE D)

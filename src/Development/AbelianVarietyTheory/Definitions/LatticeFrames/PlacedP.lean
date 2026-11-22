@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.Framed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.Framed
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,15 +24,6 @@ variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotio
 def PrimTop {c : Comm D} (tP : Finset (GlobalTheory.FinPl.Pl D)) (ζ₀ : Fin c.Lz.rank → D.host.E) : Prop :=
   ∀ p, p ∉ tP → ∀ a ∈ GlobalTheory.FinPl.idAt D (· = p),
     a • ratV (vecB (c.oT D.R.m rfl) ζ₀) ∈ GlobalTheory.FinPl.latV (c.X D.R.m) (c.x D.R.m).L (· = p) ↔ a ∈ GlobalTheory.FinPl.intAt D (· = p)
-
-def PlacedP : Prop :=
-  ∃ (k : Type) (_ : Field k) (_ : ValuativeRel k) (_ : TopologicalSpace k) (_ : IsNonarchimedeanLocalField k) (ι : Type)
-    (v : VCom f.c) (o : TDat f.c k ι) (n : ℕ) (G : Fin n → GLoc v) (pl : Fin n ≃ (pk W).Pg),
-    f.c.Is ∧ v.Is ∧ VTie f v ∧ ShapeOff v o ∧ GPin G ∧ GRead f G pl ∧ BotTie f B v o G ∧ PrimTop (c := f.c) v.tP o.ζ₀
-
-theorem PlacedP.placed (h : PlacedP f B) : Placed f B := by
-  obtain ⟨k, a1, a2, a3, a4, ι, v, o, n, G, pl, h1, h2, h3, h4, h5, h6, h7, -⟩ := h
-  exact ⟨k, a1, a2, a3, a4, ι, v, o, n, G, pl, h1, h2, h3, h4, h5, h6, h7⟩
 
 end GlobalTheory.MiTop
 

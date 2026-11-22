@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OverExtAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsLocalRingOfIdem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OverExtAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsLocalRingOfIdem
+
+@[expose] public section
+
 open GlobalTheory.UnitLemma GlobalTheory.UnitLemma.Unr Polynomial
 
 noncomputable section
@@ -34,7 +39,18 @@ theorem isUnit_discr_of_isMaximal_map {R S : Type} [CommRing R] [IsLocalRing R] 
   by_contra h
   exact h2 (Ideal.Quotient.eq_zero_iff_mem.2 ((mem_maximalIdeal _).2 h))
 
-theorem discr_trace_isUnit : ∀ (K K' : UQ) (d : ℕ) (φ : K.E →+* K'.E), IsUnrExt K K' d φ → ∀ (π : K.O) (π' : K'.O), algebraMap K'.O K'.E π' = φ (algebraMap K.O K.E π) → IsLocalRing.maximalIdeal K.O = Ideal.span {π} → IsLocalRing.maximalIdeal K'.O = Ideal.span {π'} → letI : Algebra K.E K'.E := φ.toAlgebra; ∀ w : Module.Basis (Fin d) K.E K'.E, (∀ z : K'.E, (∃ y : K'.O, algebraMap K'.O K'.E y = z) ↔ ∀ k, ∃ a : K.O, algebraMap K.O K.E a = w.repr z k) → ∃ u : K.O, IsUnit u ∧ algebraMap K.O K.E u = (Matrix.of fun k m => Algebra.trace K.E K'.E (w k * w m)).det := by
+theorem discr_trace_isUnit :
+    ∀ (K K' : UQ) (d : ℕ) (φ : K.E →+* K'.E), IsUnrExt K K' d φ →
+    ∀ (π : K.O) (π' : K'.O),
+      algebraMap K'.O K'.E π' = φ (algebraMap K.O K.E π) →
+      IsLocalRing.maximalIdeal K.O = Ideal.span {π} →
+      IsLocalRing.maximalIdeal K'.O = Ideal.span {π'} →
+      (letI : Algebra K.E K'.E := φ.toAlgebra
+       ∀ w : Module.Basis (Fin d) K.E K'.E,
+         (∀ z : K'.E, (∃ y : K'.O, algebraMap K'.O K'.E y = z) ↔
+           ∀ k, ∃ a : K.O, algebraMap K.O K.E a = w.repr z k) →
+         ∃ u : K.O, IsUnit u ∧
+           algebraMap K.O K.E u = (Matrix.of fun k m => Algebra.trace K.E K'.E (w k * w m)).det) := by
   intro K K' d φ _ π π' hππ' hm hm'
   letI : Algebra K.E K'.E := φ.toAlgebra
   intro w hw
@@ -68,7 +84,8 @@ theorem discr_trace_isUnit : ∀ (K K' : UQ) (d : ℕ) (φ : K.E →+* K'.E), Is
   have hsum : ∀ (g : Fin d → K.O) (v : Fin d → K'.O),
       algebraMap K'.O K'.E (∑ k, g k • v k) = ∑ k, algebraMap K.O K.E (g k) • algebraMap K'.O K'.E (v k) := by
     intro g v
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun k _ => hsm _ _
 
   have hw1 : ∀ k, ∃ y : K'.O, algebraMap K'.O K'.E y = w k := by
@@ -113,7 +130,8 @@ theorem discr_trace_isUnit : ∀ (K K' : UQ) (d : ℕ) (φ : K.E →+* K'.E), Is
   have hTr : ∀ y, algebraMap K.O K.E (Algebra.trace K.O K'.O y) =
       Algebra.trace K.E K'.E (algebraMap K'.O K'.E y) := by
     intro y
-    rw [Algebra.trace_eq_matrix_trace b, Algebra.trace_eq_matrix_trace w, Matrix.trace, Matrix.trace,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Algebra.trace_eq_matrix_trace b, Algebra.trace_eq_matrix_trace w, Matrix.trace, Matrix.trace,
       map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     simp only [Matrix.diag_apply, Algebra.leftMulMatrix_apply, LinearMap.toMatrix_apply,

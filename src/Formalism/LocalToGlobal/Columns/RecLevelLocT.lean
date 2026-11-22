@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.RecLevelLoc
+module
+
+public import Formalism.LocalToGlobal.Columns.RecLevelLoc
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix
 open scoped TensorProduct
@@ -13,7 +17,7 @@ open Formalism.UG Formalism.UG.P
 section Princ
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
-variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] (ST SG : Finset (Pl E)) (H : Subgroup (GLG E n SG))
+variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] (ST SG : Finset (Pl E)) (H : Subgroup (GLG (E := E) (n := n) (SG := SG)))
 
 theorem rll_put_entry (v : HeightOneSpectrum (𝓞 F)) (g : GL (Fin n) (E ⊗[F] v.adicCompletion F)) (i j : Fin n) :
     (rll_put n v g : Matrix (Fin n) (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) i j - (1 : Matrix (Fin n) (Fin n) _) i j =
@@ -290,12 +294,12 @@ theorem rll_baseLb_eq (h : BasePi ST π) : baseLb E n ST = rll_dLat n (algebraMa
       by_cases hi : i = lastIdx n
       · subst hi
         dsimp only
-        rw [dif_pos rfl, map_mul, ht, mul_inv_cancel_left₀ h.coe_ne_zero]
+        rw [dite_eq_left rfl, map_mul, ht, mul_inv_cancel_left₀ h.coe_ne_zero]
       · simp only [dif_neg hi]
         exact ((hI _).mp (h1 i hi)).choose_spec
     · intro P hP
       dsimp only
-      rw [dif_pos rfl]
+      rw [dite_eq_left rfl]
       exact Ideal.mul_mem_right _ _ (h.mem hP)
 
 theorem rll_one_eq_range : ((1 : Submodule (𝓞 E) E) : Set E) = (intOE E : Set E) := by

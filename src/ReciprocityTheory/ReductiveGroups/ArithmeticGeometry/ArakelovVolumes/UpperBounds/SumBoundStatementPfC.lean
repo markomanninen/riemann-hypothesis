@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.SumBoundStatementPfB
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.SumBoundStatementPfB
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up
 
@@ -53,7 +57,7 @@ theorem sumBd_w_le_big {M : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ} (h :
 theorem sumBd_prod_le_big {f : ℕ} (w : Fin f → ℝ) (h0 : ∀ k, 0 ≤ w k) (h1 : ∀ k, w k ≤ 1) (k0 : Fin f)
     {b : ℝ} (hb : w k0 ≤ b) : ∏ k, w k ≤ b := by
   rw [← Finset.mul_prod_erase Finset.univ w (Finset.mem_univ k0)]
-  have h2 : ∏ k ∈ Finset.univ.erase k0, w k ≤ 1 := Finset.prod_le_one (fun k _ => h0 k) (fun k _ => h1 k)
+  have h2 : ∏ k ∈ Finset.univ.erase k0, w k ≤ 1 := Finset.prod_le_one₀ (fun k _ => h0 k) (fun k _ => h1 k)
   have h3 : 0 ≤ ∏ k ∈ Finset.univ.erase k0, w k := Finset.prod_nonneg fun k _ => h0 k
   nlinarith [h0 k0]
 
@@ -170,7 +174,7 @@ theorem sumBd_sum {f : ℕ} {s c : ℝ} (hs : 2 * (f : ℝ) * ((p + q : ℕ) : �
     rcases Nat.eq_zero_or_pos m0 with h0 | hpos
     · rw [h0, pow_zero, div_one]
       calc ∏ k, (Complex.normSq (det (x a k).toBlocks₂₂))⁻¹ ^ s ≤ 1 :=
-            Finset.prod_le_one (fun k _ => hw0 a k) (fun k _ => hw1 a k)
+            Finset.prod_le_one₀ (fun k _ => hw0 a k) (fun k _ => hw1 a k)
         _ ≤ B ^ s := Real.one_le_rpow hB1 hs0
     · obtain ⟨m, hm⟩ : ∃ m, m0 = m + 1 := ⟨m0 - 1, by omega⟩
       have hnot : a ∉ Bs m := Nat.find_min (hex a) (by omega)

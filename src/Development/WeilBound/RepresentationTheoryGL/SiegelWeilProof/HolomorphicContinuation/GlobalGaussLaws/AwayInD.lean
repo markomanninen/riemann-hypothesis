@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.AwayInC
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.AwayInC
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,34 @@ theorem gen_sch (θ : InfFam D) (V : HSp D) (l : D.what₂.Tau → ℝ) (s : D.w
   have hhv : ∀ b, h b = poly b * G b := fun b => by
     rw [hh, SchwartzMap.smulLeftCLM_apply_apply hpolyT, smul_eq_mul]
   obtain ⟨Fp, hFp⟩ := GlobalTheory.SchwartzHadamard.exists_schwartz_prod S h
-  let e := (eL (n := n) τ fr hfr).toContinuousLinearEquiv
+  let e₀ : (D.what₂.Tau → Fin V.rank → Fin n → ℂ) ≃ₗ[ℝ]
+      ((Fin V.rank → Fin n → ℂ) × Bsp τ V.rank n) :=
+    { toFun := fun z => (Matrix.of.symm (fr⁻¹ * Matrix.of (z τ)), fun t => z t.1)
+      invFun := fun ab t => if ht : t = τ then Matrix.of.symm (fr * Matrix.of ab.1) else ab.2 ⟨t, ht⟩
+      map_add' := fun z w => by
+        ext1
+        · exact Matrix.mul_add fr⁻¹ (Matrix.of (z τ)) (Matrix.of (w τ))
+        · rfl
+      map_smul' := fun r z => by
+        ext1
+        · exact Matrix.mul_smul fr⁻¹ r (Matrix.of (z τ))
+        · rfl
+      left_inv := fun z => by
+        funext t
+        by_cases ht : t = τ
+        · subst t
+          simp
+          change (fr * (fr⁻¹ * Matrix.of (z τ))).row = (Matrix.of (z τ)).row
+          rw [Matrix.mul_nonsing_inv_cancel_left fr _ hfr]
+        · simp [ht]
+      right_inv := fun ab => by
+        ext1
+        · simp
+          change (fr⁻¹ * (fr * Matrix.of ab.1)).row = (Matrix.of ab.1).row
+          rw [Matrix.nonsing_inv_mul_cancel_left fr _ hfr]
+        · funext t
+          simp [t.2] }
+  let e := e₀.toContinuousLinearEquiv
   let Fz : 𝓢(D.what₂.Tau → Fin V.rank → Fin n → ℂ, ℂ) := SchwartzMap.compCLMOfContinuousLinearEquiv ℂ e Fp
   have hFz : ∀ z, Fz z = S (Matrix.of.symm (fr⁻¹ * Matrix.of (z τ))) * (poly (fun t => z t.1) * G (fun t => z t.1)) := by
     intro z

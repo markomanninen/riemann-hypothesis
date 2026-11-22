@@ -1,5 +1,9 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.LeafSHSysPf
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.LeafSHSysPf
+
+@[expose] public section
 
 open CategoryTheory Limits TensorProduct
 
@@ -78,7 +82,10 @@ theorem coeq {X Y : Pt R Ω} (f g : X ⟶ Y) : ∃ (Z : Pt R Ω) (h : Y ⟶ Z), 
       apply hu.mul_left_injective
       simp only [zero_mul, ← map_mul, hs' x, map_zero]
     have h3 : algebraMap Y.A B (f.1 x) = algebraMap Y.A B (g.1 x) := by
-      rw [map_sub, sub_eq_zero] at h0; exact h0.symm
+      have h0' : algebraMap Y.A B (g.1 x) - algebraMap Y.A B (f.1 x) = 0 := by
+        rw [← (algebraMap Y.A B).map_sub]
+        exact h0
+      exact (sub_eq_zero.mp h0').symm
     show e (algebraMap Y.A B (f.1 x)) = e (algebraMap Y.A B (g.1 x))
     rw [h3]
 

@@ -1,7 +1,11 @@
-import Formalism.LocalRingCardinality.DataParams₂
-import Formalism.LogFactorialIndices.StatementSize
-import Formalism.QuotientMetricDivisors.TheoremDivIneqRowsShift
-import Formalism.MirabolicMackeyTheory.StatementT
+module
+
+public import Formalism.LocalRingCardinality.DataParams₂
+public import Formalism.LogFactorialIndices.StatementSize
+public import Formalism.QuotientMetricDivisors.TheoremDivIneqRowsShift
+public import Formalism.MirabolicMackeyTheory.StatementT
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,9 +79,6 @@ def B0 : ℝ := (N.R.f : ℝ) * N.R.m * N.sc.b * N.sc.x ^ N.sc.eps
 
 end NumDatum
 
-def hFrob (e p : ℕ) : ZMod (2 ^ e) :=
-  if h : Nat.Coprime p (2 ^ (e + 2)) then iotaHInv e (hcl e (ZMod.unitOfCoprime p h)) else 0
-
 def frobUnitMod (M p : ℕ) : (ZMod M)ˣ := by
   classical
   exact if h : ∃ w : (ZMod M)ˣ, ((w : ZMod M).cast : ZMod (ordCompl[p] M)) = (p : ZMod (ordCompl[p] M)) ∧
@@ -85,28 +86,6 @@ def frobUnitMod (M p : ℕ) : (ZMod M)ˣ := by
 
 def hArt {φ : Formalism.HC.Frame} (H : Formalism.HC.HostRaw φ) (p : ℕ) : φ.A :=
   φ.iotaInv (H.art (frobUnitMod H.condN p)).2
-
-theorem frobUnitMod_of_coprime {M p : ℕ} (h : Nat.Coprime p M) : frobUnitMod M p = ZMod.unitOfCoprime p h := by
-  have h0 : M.factorization p = 0 := by
-    by_cases hp : p.Prime
-    · exact Nat.factorization_eq_zero_of_not_dvd (hp.coprime_iff_not_dvd.1 h)
-    · exact Nat.factorization_eq_zero_of_not_prime M hp
-  have k1 : ∀ (A : ℕ), A = M → ∀ w : ZMod M, ((w.cast : ZMod A) = (p : ZMod A) ↔ w = (p : ZMod M)) := by
-    rintro A rfl w
-    rw [ZMod.cast_id]
-  have k2 : ∀ (B : ℕ), B = 1 → ∀ w : ZMod M, (w.cast : ZMod B) = 1 := by
-    rintro B rfl w
-    exact Subsingleton.elim _ _
-  have key : ∀ w : (ZMod M)ˣ, (((w : ZMod M).cast : ZMod (ordCompl[p] M)) = (p : ZMod (ordCompl[p] M)) ∧
-      ((w : ZMod M).cast : ZMod (ordProj[p] M)) = 1) ↔ w = ZMod.unitOfCoprime p h := by
-    intro w
-    rw [k1 _ (by rw [h0, pow_zero, Nat.div_one]), and_iff_left (k2 _ (by rw [h0, pow_zero]) _), Units.ext_iff,
-      ZMod.coe_unitOfCoprime]
-  have hex : ∃ w : (ZMod M)ˣ, ((w : ZMod M).cast : ZMod (ordCompl[p] M)) = (p : ZMod (ordCompl[p] M)) ∧
-      ((w : ZMod M).cast : ZMod (ordProj[p] M)) = 1 := ⟨_, (key _).2 rfl⟩
-  unfold frobUnitMod
-  rw [dif_pos hex]
-  exact (key _).1 hex.choose_spec
 
 namespace NumDatum
 
@@ -117,13 +96,6 @@ def cls (p : ℕ) : PrimeClass := primeClass N.H.toHostRaw p
 def hP (p : ℕ) : N.R.A :=
   if h : Nat.Coprime p N.H.condN then N.R.iotaInv (N.H.art (ZMod.unitOfCoprime p h)).2
   else N.R.iotaInv (N.H.art (frobUnitMod N.H.condN p)).2
-
-theorem hP_eq_hArt (p : ℕ) : N.hP p = hArt N.H.toHostRaw p := by
-  unfold hP hArt
-  split
-  · rename_i h
-    rw [frobUnitMod_of_coprime h]
-  · rfl
 
 def pos (p : ℕ) (z : RPl N.R) (s : ℕ) : RPl N.R :=
   (xor z.1 (decide (N.cls p = PrimeClass.signal ∧ Odd s)), z.2 + s • N.hP p)
@@ -138,25 +110,6 @@ instance ordP_neZero (p : ℕ) : NeZero (N.ordP p) := by
   · exact (Nat.mul_pos two_pos (addOrderOf_pos _)).ne'
   · exact (addOrderOf_pos _).ne'
 
-def swapP (p : ℕ) : Prop :=
-  N.cls p = PrimeClass.signal ∨ (N.cls p = PrimeClass.splitK ∧ N.H.psAt p = -1)
-
-instance swapP_decidable (p : ℕ) : Decidable (N.swapP p) :=
-  inferInstanceAs (Decidable (_ ∨ _))
-
-def posS (p : ℕ) (z : RPl N.R) (s : ℕ) : RPl N.R :=
-  (xor z.1 (decide (N.swapP p ∧ Odd s)), z.2 + s • N.hP p)
-
-def ordPS (p : ℕ) : ℕ :=
-  if N.swapP p then 2 * addOrderOf (2 • N.hP p) else addOrderOf (N.hP p)
-
-instance ordPS_neZero (p : ℕ) : NeZero (N.ordPS p) := by
-  refine ⟨?_⟩
-  unfold ordPS
-  split
-  · exact (Nat.mul_pos two_pos (addOrderOf_pos _)).ne'
-  · exact (addOrderOf_pos _).ne'
-
 def eQ (j : ℕ) (z : RPl N.R) : ℚ :=
   if h : 1 ≤ j ∧ j ≤ N.R.m then (N.hc z).e ⟨j - 1, by omega⟩ else 0
 
@@ -165,8 +118,8 @@ def w (j : ℕ) (z : RPl N.R) : ℝ := ((N.eQ j z : ℚ) : ℝ)
 def FOrb (j p : ℕ) (z : RPl N.R) : ℝ :=
   lpF p (N.ordP p) (fun s => ((N.R.k : ℝ) - 1) * N.w j (N.pos p z s.val))
 
-open Classical in
 
+open Classical in
 def FInert (j p : ℕ) : ℝ :=
   if N.cls p = PrimeClass.inertClass ∧ N.hP p = 0 then
     ∑ z : RPl N.R, ((N.R.k : ℝ) - 1) * N.w j z / ((p : ℝ) ^ 2 - 1)
@@ -192,8 +145,8 @@ def Dminus (j : ℕ) : ℚ := ∑ z : RPl N.R, ∑ c ∈ Finset.range (N.R.sigW 
 
 def FTypeG (j : ℕ) : ℝ := -(((N.Dplus j + N.Dminus j : ℚ) : ℝ)) / 2
 
-open Classical in
 
+open Classical in
 def FjP (j p : ℕ) : ℝ :=
   if p = N.g 0 ∨ p = N.g 1 then N.FTypeG j
   else if N.cls p = PrimeClass.ramD then N.FRamD j
@@ -202,11 +155,6 @@ def FjP (j p : ℕ) : ℝ :=
 
 def Fj {K : Type} [Field K] [NumberField K] (j : ℕ) (w : HeightOneSpectrum (𝓞 K)) : ℝ :=
   N.FjP j (Formalism.EigenvalueLevelCeiling.plc w)
-
-def suppP : Finset ℕ :=
-  ((Finset.range (⌊N.sc.X'' N.R.n⌋₊ + 1)).filter Nat.Prime) ∪ {N.g 0, N.g 1, N.d}
-
-def Fo : ℝ := ∑ j ∈ N.lifts, ∑ p ∈ N.suppP, Real.log p * N.FjP j p
 
 def uW (δ : Code N) (z : RPl N.R) (i : Fin N.R.k) : ℚ :=
   if h : 1 ≤ i.1 ∧ i.1 + 1 < N.R.k then
@@ -279,31 +227,25 @@ def ctD (δ : Code N) (j : ℕ) (t : N.R.A) : ℚ :=
 def EatD (W : Finset (Code N)) (hW : W.Nonempty) (j : ℕ) : ℝ :=
   N.FRamD j + (W.sup' hW fun δ => ((∑ t : N.R.A, N.ctD δ j t : ℚ) : ℝ)) / 2
 
-def exch : ℝ := (N.R.f : ℝ) * N.R.k * (N.Nm : ℝ)
-
 def EatC (cdig : ℝ) (j p : ℕ) : ℝ :=
   cdig * (N.R.f : ℝ) * (N.Nm : ℝ) ^ 2 * Real.logb p N.sc.a + (∑ z : RPl N.R, N.w j z) / ((p : ℝ) ^ 2 - 1)
 
-def EatG (C : ℝ) (δ : Code N) (j : ℕ) (bar : Bool) : ℝ :=
-  N.FTypeG j + (if bar then ((N.Dpi δ j : ℚ) : ℝ) else 0) +
-    C * (N.R.f : ℝ) * ((N.Nm : ℝ) ^ 2 + (N.R.m : ℝ) ^ 2 * N.eta)
 
 open Classical in
-
 def kindA (p : ℕ) : Finset (RPl N.R) := Finset.univ.filter fun z => ¬ N.cls p = PrimeClass.signal ∧ z.1 = false
 
-open Classical in
 
+open Classical in
 def kindBC (p : ℕ) : Finset (RPl N.R) := Finset.univ.filter fun z => N.cls p = PrimeClass.signal ∨ z.1 = true
 
-open Classical in
 
+open Classical in
 def topsBC (p : ℕ) : Finset (RPl N.R) := (N.kindBC p).filter fun z => z.1 = false ∧ z.2 ∈ N.TT
 
 def IsCs (p : ℕ) : Prop := N.cls p = PrimeClass.inertClass ∧ Odd (addOrderOf (N.hP p)) ∧ N.hP p ≠ 0
 
-open Classical in
 
+open Classical in
 def EatX (c6 : ℝ) (j p : ℕ) : ℝ :=
   if N.IsCs p then
     ((N.R.k : ℝ) - 1) * (∑ z ∈ N.kindBC p, N.w j z) / (p : ℝ) ^ 3 +

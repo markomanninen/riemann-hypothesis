@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GaugeMeasureMatrixAlgebraSubgroupLocalAsymptoticStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitaryJLieCoordsConjLinearStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitaryJMapConjEqSmulOfNormalizingStatement
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.RightDerivativeZeroOutsideSupport
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GaugeMeasureMatrixAlgebraSubgroupLocalAsymptoticStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitaryJLieCoordsConjLinearStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitaryJMapConjEqSmulOfNormalizingStatement
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.RightDerivativeZeroOutsideSupport
+
+@[expose] public section
+
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
 
 namespace GlobalTheory.GaugeConjScale
@@ -68,7 +73,7 @@ theorem scalar_eq_inv_det {X : Type} [MeasurableSpace X] (μ : Measure X) (T : X
     show h g < ρ
     linarith
   have hm : ∀ r : ℝ, Measurable (fun g => (fun i => t g i / r : Fin d → ℝ)) := fun r =>
-    measurable_pi_lambda _ fun i => ((measurable_pi_apply i).comp ht).div_const r
+    Measurable.of_eval fun i => ((measurable_pi_apply i).comp ht).div_const r
   have hint : ∀ r : ℝ, IntegrableOn (fun g => ψ (fun i => t g i / r)) {g | h g < ρ} μ := by
     intro r
     refine Measure.integrableOn_of_bounded (M := 1) hfin (hψc.measurable.comp (hm r)).aestronglyMeasurable ?_
@@ -96,14 +101,14 @@ theorem scalar_eq_inv_det {X : Type} [MeasurableSpace X] (μ : Measure X) (T : X
     have hr : 0 < r := hr
     rw [mul_left_comm, key]
     refine mul_le_mul_of_nonneg_left ?_ (by positivity)
-    exact setIntegral_mono_set ((hint r).mono_set hs2) (Eventually.of_forall fun g => hφ0 _) hs1.eventuallyLE
+    exact setIntegral_mono_set ((hint r).mono_set hs2) (Eventually.of_forall fun g => hφ0 _) (Filter.Eventually.of_forall hs1)
   have a2 : c * ∫ x, φ x ≤ ∫ x, ψ x := by
     refine le_of_tendsto_of_tendsto l1 l3 ?_
     filter_upwards [self_mem_nhdsWithin] with r hr
     have hr : 0 < r := hr
     rw [mul_left_comm, key]
     refine mul_le_mul_of_nonneg_left ?_ (by positivity)
-    exact setIntegral_mono_set (hint r) (Eventually.of_forall fun g => hφ0 _) hs2.eventuallyLE
+    exact setIntegral_mono_set (hint r) (Eventually.of_forall fun g => hφ0 _) (Filter.Eventually.of_forall hs2)
   exact mul_right_cancel₀ hφp.ne' ((le_antisymm a2 a1).trans hψi)
 
 theorem hs_conj_le {n : ℕ} {ε : Fin n → Bool} (m g : Formalism.REAL.UJ ε) :

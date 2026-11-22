@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.TateCohomology.InfRes
-import GroundTheory.ProfiniteCohomology.Colimit
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.Brauer
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.IsZeroGroupCohomologyQuotientToInvariantsGalAdd
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.BrauerInflationDefs
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.InfRes
+public import GroundTheory.ProfiniteCohomology.Colimit
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.Brauer
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.IsZeroGroupCohomologyQuotientToInvariantsGalAdd
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.BrauerInflationDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -78,11 +83,6 @@ noncomputable def galTowerKerEquiv :
           have h1 : σ.1.restrictNormal E = 1 := MonoidHom.mem_ker.1 σ.2
           rw [h1] at hx
           exact hx.symm, Subtype.ext (AlgEquiv.ext fun _ => rfl)⟩⟩
-
-@[simp]
-theorem coe_galTowerKerEquiv_apply (τ : Gal(F/E)) (x : F) :
-    ((galTowerKerEquiv K E F τ : Gal(F/K)) : F → F) x = τ x :=
-  rfl
 
 theorem isZero_groupCohomology_one_ker_galUnits [FiniteDimensional K F] :
     IsZero (groupCohomology (Rep.res (AlgEquiv.restrictNormalHom (F := K) (K₁ := F) E).ker.subtype
@@ -165,8 +165,8 @@ section Profinite
 
 variable {K L : Type u} [Field K] [Field L] [Algebra K L] [IsGalois K L]
 
-omit [IsGalois K L] in
 
+omit [IsGalois K L] in
 theorem fixedField_le_of_le {U V : OpenNormalSubgroup Gal(L/K)} (h : V ≤ U) :
     fixedField (U : Subgroup Gal(L/K)) ≤ fixedField (V : Subgroup Gal(L/K)) :=
   fun _ hx => (mem_fixedField_iff _ _).2 fun σ hσ => (mem_fixedField_iff _ _).1 hx σ (h hσ)
@@ -196,7 +196,7 @@ theorem transition_comp_groupCohomologyQuotientGalUnitsIso {U V : OpenNormalSubg
 
 theorem unitsInflation_fixedField_two_injective (U : OpenNormalSubgroup Gal(L/K)) :
     Function.Injective (unitsInflation (fixedField (U : Subgroup Gal(L/K))) 2).hom := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro y hy
   obtain ⟨y₀, rfl⟩ : ∃ y₀, (groupCohomologyQuotientGalUnitsIso U 2).hom.hom y₀ = y :=
     ⟨(groupCohomologyQuotientGalUnitsIso U 2).inv.hom y, by

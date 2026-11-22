@@ -1,5 +1,9 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.LConvCut
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvCut
+
+@[expose] public section
 
 noncomputable section
 open Matrix GlobalTheory.SmGL GlobalTheory.Whittaker GlobalTheory.LocLanglands
@@ -76,5 +80,3 @@ theorem InH_zero (g : GL (Fin (m + 1)) k) (hg : InH 0 g) : g = 1 :=
   Units.ext (Matrix.ext fun p q => hg p q (by simp))
 
 end DiscreteGroups.sglob.LConvKir
-
-example {K : Type} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] : ContinuousInv₀ K := inferInstance

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.WeberRayClassFields.WeberRayFieldSt
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.JointQ
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AssembleLattice
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DisjointExceptional
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsPageRunRecord
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.WeberRayClassFields.WeberRayFieldSt
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.JointQ
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AssembleLattice
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DisjointExceptional
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsPageRunRecord
+
+@[expose] public section
 
 set_option autoImplicit false
 

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.PermutesRefl
-import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
-import Development.AbelianVarietyTheory.Statements.PrincipalLattices.LogHermFormOfUnitDiscriminant
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsLinearOfIsMonHom
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsHomOfLinearScalingHermForm
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.PolCountableAndTangentExt
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.EqZeroOfSumEmbeddingSmul
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsLieCombOneIffComp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.PermutesRefl
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
+public import Development.AbelianVarietyTheory.Statements.PrincipalLattices.LogHermFormOfUnitDiscriminant
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsLinearOfIsMonHom
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsHomOfLinearScalingHermForm
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.PolCountableAndTangentExt
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.EqZeroOfSumEmbeddingSmul
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsLieCombOneIffComp
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.PureType GlobalTheory.CompRat
@@ -132,7 +136,7 @@ theorem exists_endo_comm : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
       linear_combination (C.c * a.2 / 4) * hsq - (C.c * a.2 / 4) * hn)
     (fun x y => by
       have e : wC H (0, 1) * starRingEnd ℂ (wC H (0, 1)) = n := by
-        rw [hα, map_div₀, map_add, rt0_conj_neg_ne_zero, map_one, map_ofNat]
+        rw [hα, map_div₀, map_add (f := _), rt0_conj_neg_ne_zero, map_one, map_ofNat]
         linear_combination (-1 / 4 : ℂ) * hsq + (1 / 4 : ℂ) * hn
       simp only [LinearMap.smul_apply, LinearMap.id_apply, hermForm, star_smul, Matrix.mulVec_smul, smul_dotProduct,
         dotProduct_smul, smul_eq_mul]
@@ -142,7 +146,7 @@ theorem exists_endo_comm : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
   · unfold Curve.pt
     rw [← Over.comp_left, ← hF]
     congr 2
-    funext _
+    ext i
     simp only [LinearMap.smul_apply, LinearMap.id_apply, Pi.smul_apply, smul_eq_mul]
     ring
   · have e := C.u.ex_add (fun _ => C.c * (z - z')) (fun _ => C.c * z')
@@ -168,6 +172,6 @@ theorem exists_endo_comm : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
     rw [this, hz]
     rfl
   · refine comm_of_fixed C.P C.g_eq C.u hd he W (wC H (0, 1)) hF τ ?_ io h
-    rw [hα, map_div₀, map_add, hτ, map_one, map_ofNat]
+    rw [hα, map_div₀, map_add (f := _), hτ, map_one, map_ofNat]
 
 end GlobalTheory.CurveEndo

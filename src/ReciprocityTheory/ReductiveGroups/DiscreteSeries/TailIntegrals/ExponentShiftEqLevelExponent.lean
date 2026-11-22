@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.InnerCLe
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.InnerCLe
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThickTransComp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LinCombTrivG
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThickTransComp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LinCombTrivG
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -56,11 +60,6 @@ theorem app_res {X Y : Scheme.{0}} (f : Y ⟶ X) (y : Γ(X, ⊤)) (V : X.Opens) 
       (Y.presheaf.map (homOfLE le_top).op).hom (f.appTop.hom y) := by
   rw [app_res_lemma_2 f y V, map_map_lemma] <;> rfl
 
-theorem app_res' {X Y : Scheme.{0}} (f : Y ⟶ X) (y : Γ(X, ⊤)) (V : X.Opens) :
-    (f.app V).hom ((X.presheaf.map (homOfLE le_top).op).hom y) =
-      (Y.presheaf.map (homOfLE le_top).op).hom (f.appTop.hom y) :=
-  app_res_lemma_2 f y V
-
 theorem map_map {Y : Scheme.{0}} {U V W : Y.Opens} (h : W ≤ V) (h' : V ≤ U) (y : Γ(Y, U)) :
     (Y.presheaf.map (homOfLE h).op).hom ((Y.presheaf.map (homOfLE h').op).hom y) =
       (Y.presheaf.map (homOfLE (h.trans h')).op).hom y :=
@@ -109,16 +108,6 @@ theorem isConst_invGen {φ : K → (Y ⟶ X)} {ε : K → ℤ} {t : LB.Gen (LB.L
   first
     | exact (map_inv (res le_top) a).symm
     | simp [gv, map_inv]
-
-theorem isConst_powGen {φ : K → (Y ⟶ X)} {ε : K → ℤ} {t : LB.Gen (LB.LinComb L φ ε)}
-    {a : Γ(Y, ⊤)ˣ} (ht : IsConst t a) (n : ℕ) : IsConst (GeneratorPullback.powGen L φ ε t n) (a ^ n) := by
-  intro j
-  have e1 : t.s j = gv a (LB.wchart L φ j) := ht j
-  show (t.s j) ^ n = gv (a ^ n) (LB.wchart L φ j)
-  rw [e1]
-  first
-    | exact (map_pow (res le_top) a n).symm
-    | simp [gv, map_pow]
 
 theorem isConst_oneGen (L : LB X) : IsConst (LB.oneGen L (Y := Y)) 1 := by
   intro j
@@ -268,23 +257,5 @@ theorem psiIn (n : ℤ) (m : ℕ) (hm : m ≤ n.natAbs ^ 2) : tatePre.PsiIn n (I
     have hv : ((tatePre.psi n).s j).val = ((TK R).left.presheaf.map (homOfLE le_top).op).hom
         ((pi0 ^ (n ^ 2) : Γ((TK R).left, ⊤)ˣ) : Γ((TK R).left, ⊤)) := rfl
     rw [jK_toOpen, hv, map_map_lemma, ← e2] <;> rfl
-
-def tateData : DegData R I where
-  toPre := tatePre
-  psi_even := psiEven
-  tau_bimult := tauBimult
-  psi_pos := fun (n : ℤ) hn => by
-    have h1 : 1 ≤ n.natAbs := Nat.one_le_iff_ne_zero.2 (Int.natAbs_ne_zero.2 hn)
-    have := psiIn n 1 (by nlinarith)
-    simpa using this
-  psi_tendsto := fun m => by
-    refine (Set.finite_Icc (-(m : ℤ)) m).subset ?_
-    intro n hn
-    by_contra hc
-    apply hn
-    apply psiIn n m
-    simp only [Set.mem_Icc, not_and_or, not_le] at hc
-    have : m < n.natAbs := by omega
-    nlinarith
 
 end ReciprocityTheory.ChartRestriction.G.Out.InhTate

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SelfDualLoc
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SelfDualLoc
+
+@[expose] public section
 
 open Matrix
 
@@ -24,7 +28,7 @@ theorem hform_smul_right (x : n → A) (c : A) (y : n → A) :
 
 theorem hform_add_left (x x' y : n → A) :
     hform σ J (x + x') y = hform σ J x y + hform σ J x' y := by
-  simp only [PI.SelfDualLoc.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [PI.SelfDualLoc.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hform_smul_left (c : A) (x y : n → A) :
     hform σ J (c • x) y = σ c * hform σ J x y := by
@@ -59,6 +63,7 @@ theorem hform_sum_left {ι : Type} (s : Finset ι) (f : ι → n → A) (y : n �
 theorem hform_map {B : Type} [CommRing B] (τ : B →+* B) (f : A →+* B)
     (hf : ∀ a, f (σ a) = τ (f a)) (x y : n → A) :
     hform τ (J.map f) (fun i => f (x i)) (fun i => f (y i)) = f (hform σ J x y) := by
-  simp only [PI.SelfDualLoc.hform, map_sum, map_mul, hf, Matrix.map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [PI.SelfDualLoc.hform, map_sum, map_mul, hf, Matrix.map_apply]
 
 end PI.SelfDualLoc.W

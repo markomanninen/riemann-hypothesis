@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ImportsAlt
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DivAddLogbLeEightMulErrorScale
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.TruncatedCoefficientPoly
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.IsDistPow
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ImportsAlt
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DivAddLogbLeEightMulErrorScale
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.TruncatedCoefficientPoly
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.IsDistPow
+
+@[expose] public section
 
 noncomputable section
 

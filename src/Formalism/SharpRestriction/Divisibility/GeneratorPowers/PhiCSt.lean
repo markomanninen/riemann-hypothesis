@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.ModuliIntegralCharts
+module
+
+public import Formalism.SharpRestriction.Divisibility.ModuliIntegralCharts
+
+@[expose] public section
 
 set_option autoImplicit false
 

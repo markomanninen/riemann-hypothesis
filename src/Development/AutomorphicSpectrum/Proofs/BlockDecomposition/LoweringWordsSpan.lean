@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
-import GroundTheory.AutomorphicForms.HarishChandraCentre.VermaCoordEqZeroOfMemNPlusU
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ActEqZeroOfMem
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SimpleLoweringPowMemIdealStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NatOfSimpleLoweringNilpotentStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CasimirEqOfSingularWeightVectorStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EqZeroOfLowExponentCasimirStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WeightVectorMemLowSpanSupVermaStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LowSpanInfIdealLeSquareSpanStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AnnihilatorSpannedByWeightVectorsStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.VermaCoordEqZeroOfMemNPlusU
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ActEqZeroOfMem
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SimpleLoweringPowMemIdealStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NatOfSimpleLoweringNilpotentStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CasimirEqOfSingularWeightVectorStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EqZeroOfLowExponentCasimirStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WeightVectorMemLowSpanSupVermaStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LowSpanInfIdealLeSquareSpanStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AnnihilatorSpannedByWeightVectorsStatement
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -140,7 +145,8 @@ theorem pres_rho : ∀ {n : ℕ} {A Z : Type} [AddCommGroup A] [Module ℂ A] [A
   have hYlow : Y ∈ lowSpan n :=
     Submodule.sum_mem _ fun l hl => Submodule.smul_mem _ _ (word_mem_lowSpan (hs l hl))
   have hYt : φ Y t = 0 := by
-    rw [hY, map_sum, LinearMap.sum_apply, ← hsum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hY, map_sum, LinearMap.sum_apply, ← hsum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [map_smul, LinearMap.smul_apply, act_word φ hφ]
   have hYJ : Y ∈ Jp n := by
@@ -149,7 +155,8 @@ theorem pres_rho : ∀ {n : ℕ} {A Z : Type} [AddCommGroup A] [Module ℂ A] [A
     exact mem_Jp_of_adW φ t ht0 hd' hu' (-ht μ + 1).toNat μ y (by omega) hy h0
   have hYs := GlobalTheory.T.low_span_inf_ideal_le_square_span Y hYlow hYJ
   have h := act_eq_zero_of_sqSpan ψ hψ z hz hYs
-  rw [hY, map_sum, LinearMap.sum_apply] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hY, map_sum, LinearMap.sum_apply] at h
   rw [← h]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [map_smul, LinearMap.smul_apply, act_word ψ hψ]

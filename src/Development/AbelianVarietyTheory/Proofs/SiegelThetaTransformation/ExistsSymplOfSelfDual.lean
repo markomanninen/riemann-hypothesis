@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsStabForm
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DualRestrictSurjectiveOfIsTorsionFreeQuotient
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsFundamentalDomainMeanNormSqThetaChar
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.PeriodCoordinateThetaOfSignedHeisenbergVacuumStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DetHermitianFormAtFramePeriodCoordsOfUnitFrameStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsStabForm
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DualRestrictSurjectiveOfIsTorsionFreeQuotient
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsFundamentalDomainMeanNormSqThetaChar
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.PeriodCoordinateThetaOfSignedHeisenbergVacuumStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DetHermitianFormAtFramePeriodCoordsOfUnitFrameStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr
@@ -26,7 +30,7 @@ theorem exists_sympl_of_selfDual {V : Type} [AddCommGroup V] [Module ℚ V] [Fin
     ∃ b : Fin g ⊕ Fin g → V, (∀ u, u ∈ N ↔ ∃ m : Fin g ⊕ Fin g → ℤ, u = ∑ j, m j • b j) ∧
       ∀ i j, B (b i) (b j) = -(omegaStd (Pi.single i 1) (Pi.single j 1) : ℤ) := by
   haveI : Module.Finite ℤ N := Module.Finite.iff_fg.2 hfg
-  haveI : IsAddTorsionFree V := IsAddTorsionFree.of_module_rat V
+  haveI : HasUniqueDiv V := HasUniqueDiv.of_module_rat V
   haveI : Module.Free ℤ N := inferInstance
   choose f hf using fun (x y : N) => (hN x).1 x.2 y y.2
   let ω : LinearMap.BilinForm ℤ N := LinearMap.mk₂ ℤ (fun x y => -f x y)
@@ -51,7 +55,7 @@ theorem exists_sympl_of_selfDual {V : Type} [AddCommGroup V] [Module ℚ V] [Fin
     obtain ⟨k, hk, hv⟩ := hfull v
     have h1 : k • v ∈ Submodule.span ℚ (Set.range fun i => (e i : V)) := by
       have := congrArg (Subtype.val) (e.sum_repr ⟨_, hv⟩)
-      simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul] at this
+      simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul] at this
       rw [← this]
       exact Submodule.sum_mem _ fun i _ => zsmul_mem (Submodule.subset_span (Set.mem_range_self i)) _
     have := Submodule.smul_mem _ (k : ℚ)⁻¹ h1
@@ -78,7 +82,8 @@ theorem exists_sympl_of_selfDual {V : Type} [AddCommGroup V] [Module ℚ V] [Fin
         have : ∀ i, ψ (e i) = -(φ (e i) : ℚ) := fun i => by
           have := eQ.constr_basis ℚ (fun i => -(φ (e i) : ℚ)) i
           rwa [Module.Basis.mk_apply] at this
-        simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul, map_sum, map_zsmul, this]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul, map_sum, map_zsmul, this]
         simp
       let z := (B.toDual hnd).symm ψ
       have hz : ∀ y, B z y = ψ y := fun y => LinearMap.BilinForm.apply_toDual_symm_apply ψ y
@@ -90,7 +95,7 @@ theorem exists_sympl_of_selfDual {V : Type} [AddCommGroup V] [Module ℚ V] [Fin
   obtain ⟨c, hc⟩ := exists_isSymplecticBasis_of_finrank halt hbij hrk
   refine ⟨fun j => c j, fun u => ⟨fun hu => ⟨c.repr ⟨u, hu⟩, ?_⟩, ?_⟩, fun i j => ?_⟩
   · have := congrArg (Subtype.val) (c.sum_repr ⟨_, hu⟩)
-    simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul] at this
+    simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul] at this
     exact this.symm
   · rintro ⟨m, rfl⟩
     exact Submodule.sum_mem _ fun j _ => N.smul_mem _ (c j).2

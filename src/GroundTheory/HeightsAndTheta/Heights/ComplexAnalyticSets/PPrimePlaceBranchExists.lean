@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StPrimePlaceBranchExists
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelPointOfPlace
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelDisc
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelProjectionLocallyInjective
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PNormalModelExists
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PLocalDimDomain
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StPrimePlaceBranchExists
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelPointOfPlace
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelDisc
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelProjectionLocallyInjective
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PNormalModelExists
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PLocalDimDomain
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

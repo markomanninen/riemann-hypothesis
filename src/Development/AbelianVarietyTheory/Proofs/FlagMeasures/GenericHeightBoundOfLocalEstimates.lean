@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.StepLocGenPinnedGP
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MainEqWire
+module
+
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.StepLocGenPinnedGP
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MainEqWire
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveStructureSheafDegTwoVanish
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianUnobstructed
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveStructureSheafDegTwoVanish
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianUnobstructed
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential MonoidalCategory CartesianMonoidalCategory MonObj
 open scoped TensorProduct
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.LiftSys GlobalTheory.Obs
@@ -27,7 +32,7 @@ theorem eq_jj {y : R₁} {i : I} (hq : α.q y = 0) (hk : α.k y = i) : y = jj α
   exact sub_eq_zero.mp h
 
 theorem jj_add (i i' : I) : jj α (i + i') = jj α i + jj α i' :=
-  (eq_jj α (by rw [map_add, jj_q, jj_q, add_zero]) (by rw [map_add, jj_k, jj_k]; rfl)).symm
+  (eq_jj α (by rw [map_add (f := _), jj_q, jj_q, add_zero]) (by rw [map_add (f := _), jj_k, jj_k]; rfl)).symm
 
 theorem jj_smul (r : R) (i : I) : jj α (r • i) = π r • jj α i :=
   (eq_jj α (by rw [map_smul, jj_q, smul_zero]) (by rw [α.smul, jj_k]; rfl)).symm
@@ -37,7 +42,7 @@ variable {B B₀ : Type} [CommRing B] [Algebra R B] [CommRing B₀] [Algebra R�
 def tau (hs : SemiHom π p) : I ⊗[R] B →+ R₁ ⊗[R₀] B₀ :=
   TensorProduct.liftAddHom
     (AddMonoidHom.mk' (fun i ↦ AddMonoidHom.mk' (fun b ↦ jj α i ⊗ₜ[R₀] p b)
-      (fun b b' ↦ by rw [map_add, TensorProduct.tmul_add]))
+      (fun b b' ↦ by rw [map_add (f := _), TensorProduct.tmul_add]))
       (fun i i' ↦ by ext b; simp [jj_add, TensorProduct.add_tmul]))
     (fun r i b ↦ by
       simp only [AddMonoidHom.mk'_apply]
@@ -66,7 +71,7 @@ theorem GlobalTheory.Obs.sig_inj_of_flat : ∀ (R R₀ : Type) [CommRing R] [Com
     | add a c ha hc =>
       obtain ⟨za, hza⟩ := ha
       obtain ⟨zc, hzc⟩ := hc
-      exact ⟨za + zc, by rw [map_add, hza, hzc, map_add, map_add, TensorProduct.tmul_add]; abel⟩
+      exact ⟨za + zc, by rw [map_add (f := _), hza, hzc, map_add (f := _), map_add (f := _), TensorProduct.tmul_add]; abel⟩
   obtain ⟨z, hz⟩ := hrange y
   rw [show Algebra.TensorProduct.map α.q (AlgHom.id R₀ B₀) y = 0 from hy, map_zero,
     TensorProduct.tmul_zero, sub_zero] at hz
@@ -75,7 +80,7 @@ theorem GlobalTheory.Obs.sig_inj_of_flat : ∀ (R R₀ : Type) [CommRing R] [Com
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul i b => rw [tau_tmul, hσ, jj_k]; simp
-    | add a c ha hc => rw [map_add, map_add, map_add, map_add, ha, hc]
+    | add a c ha hc => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), ha, hc]
   have hinj : Function.Injective (fun z ↦ TensorProduct.lid R B (LinearMap.rTensor B I.subtype z)) :=
     (TensorProduct.lid R B).injective.comp
       (Module.Flat.rTensor_preserves_injective_linearMap _ Subtype.val_injective)

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.Development
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnramifiedExtensionIntegralBasis
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriFactorization
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.Development
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnramifiedExtensionIntegralBasis
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriFactorization
+
+@[expose] public section
 
 open PositivityTheory.Rg.Tf.Loc Matrix ValuativeRel
 

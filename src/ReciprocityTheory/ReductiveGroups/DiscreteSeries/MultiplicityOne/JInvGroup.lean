@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvGroupA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvGroupB
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvGroupA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvGroupB
+
+@[expose] public section
 
 noncomputable section
 

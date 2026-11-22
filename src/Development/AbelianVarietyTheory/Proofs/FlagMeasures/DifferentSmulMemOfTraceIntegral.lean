@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField
 namespace GlobalTheory.TraceDualHom
 
@@ -16,7 +21,8 @@ theorem exists_linear_trace_eq (E : Type) [Field E] [NumberField E] (a : ℕ)
   choose t ht using h
   refine ⟨∑ i, t i • LinearMap.proj i, fun x => ?_⟩
   conv_rhs => rw [← Finset.univ_sum_single x]
-  simp [ht, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [ht, map_sum]
 
 theorem different_mul_mem (E : Type) [Field E] [NumberField E] (x : E)
     (hx : ∀ c : 𝓞 E, ∃ m : ℤ, Algebra.trace ℚ E (x * c) = m)

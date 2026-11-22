@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.WeylDimShift
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.WeylDimShift
+
+@[expose] public section
 
 noncomputable section
 
@@ -110,7 +114,7 @@ theorem count_of_exact (D : Formalism.BasicNotions.D7) (h35 : tableLineDegreeFiv
   have hT : ∏ t ∈ TT, ((1 - ((m + 1 : ℕ) : ℝ) * c0 / a) * (weylDim (m + 1) (lam0 t) : ℝ)) ≤
       ∏ t ∈ TT, (((Nat.choose (flatDeg lam0 t + (m + 1) - 1) (m + 1 - 1) : ℕ) : ℝ) *
         (weylDim m (fun i : Fin m => lam0 t i.succ) : ℝ)) := by
-    refine Finset.prod_le_prod (fun t _ => ?_) fun t ht => top_count (by have := hB.m_ge; omega) ha hW t ht
+    refine Finset.prod_le_prod₀ (fun t _ => ?_) fun t ht => top_count (by have := hB.m_ge; omega) ha hW t ht
     refine mul_nonneg (by linarith) ?_
     exact_mod_cast (gram_weylDim_pos (m + 1) (lam0 t) (hdom t)).le
   rw [Finset.prod_mul_distrib, Finset.prod_mul_distrib, Finset.prod_const] at hT

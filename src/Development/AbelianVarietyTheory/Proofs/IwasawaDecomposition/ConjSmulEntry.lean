@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsSpanOfOnto
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetReducedBlockEqResidueDet
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.DetSubMemOfConj
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsSpanOfOnto
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetReducedBlockEqResidueDet
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.DetSubMemOfConj
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism Formalism.IndefR Formalism.IndefR.FWT Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.L2.Pj Formalism.IndefR.Datum
 open scoped TensorProduct Matrix
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -45,8 +50,8 @@ end GlobalTheory.RedAdjCong
 
 namespace GlobalTheory
 
-open GlobalTheory.RedAdjCong in
 
+open GlobalTheory.RedAdjCong in
 theorem redM_adj_congr : ∀ (D : D7) (S T : HSp D) (βS : GL (Fin S.rank) (EAf D)) (βT : GL (Fin T.rank) (EAf D)) (e : AE D) (La : Type) [AddCommGroup La] [Module (𝓞 D.host.E) La] (ι : La →ₗ[𝓞 D.host.E] (Fin T.rank → D.host.E)), (∀ x : Fin S.rank → La, IsIntM (uMat S T βS βT e fun b => ι (x b))) → ∀ (J : Ideal (𝓞 D.host.E)) (PP : Pl D.host.E), (∀ a ∈ J, ∃ a' ∈ PP.asIdeal, (a' : D.host.E) = star (a : D.host.E)) → ∀ x x' : Fin S.rank → La, (∀ b, x b - x' b ∈ J • (⊤ : Submodule (𝓞 D.host.E) La)) → redM PP (uMat S T βS βT e fun b => ι (x' b)) = redM PP (uMat S T βS βT e fun b => ι (x b)) := by
   intro D S T βS βT e La _ _ ι hint J PP hJ x x' hx
   ext i j
@@ -55,13 +60,13 @@ theorem redM_adj_congr : ∀ (D : D7) (S T : HSp D) (βS : GL (Fin S.rank) (EAf 
       intro y z
       apply Subtype.ext
       show uMat S T βS βT e (fun b => ι (y b + z b)) i j = _ + _
-      simp only [map_add]
+      simp only [map_add (f := _)]
       exact adj_add S T βS βT e _ _ i j)
   let g : (Fin S.rank → La) →+ kP PP := (resS D.host.F PP).toAddMonoidHom.comp f
   have hg : ∀ y, redM PP (uMat S T βS βT e fun b => ι (y b)) i j = g y := by
     intro y
     unfold redM
-    rw [dif_pos (hint y i j)]
+    rw [dite_eq_left (hint y i j)]
     rfl
   have hs : ∀ a ∈ J, ∀ y : Fin S.rank → La, g (a • y) = 0 := by
     intro a ha y
@@ -81,9 +86,10 @@ theorem redM_adj_congr : ∀ (D : D7) (S T : HSp D) (βS : GL (Fin S.rank) (EAf 
       rw [Pi.single_smul']
       exact hs a ha _
     · intro u v hu hv
-      rw [Pi.single_add, map_add, hu, hv, add_zero]
+      rw [Pi.single_add, map_add (f := _), hu, hv, add_zero]
   have h3 : g (x - x') = 0 := by
-    rw [← Finset.univ_sum_single (x - x'), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.univ_sum_single (x - x'), map_sum]
     exact Finset.sum_eq_zero fun b _ => h0 b _ (hx b)
   rw [hg, hg]
   rw [map_sub, sub_eq_zero] at h3

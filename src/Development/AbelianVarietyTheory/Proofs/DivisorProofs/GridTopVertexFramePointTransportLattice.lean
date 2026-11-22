@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.KernelNormConstantSpec
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.EmbRelExistsUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.KernelNormConstantSpec
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.EmbRelExistsUnique
+
+@[expose] public section
 
 noncomputable section
 
@@ -136,8 +140,8 @@ section Lat
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
+local notation "hat" => Formalism.L2.Herm.hatL (F := F)
 local notation "ιf" => inclE (F := F) (E := E) (Formalism.L2.Herm.Af F)
-local notation "hat" => Formalism.L2.Herm.hatL (F := F) (E := E)
 
 theorem hat_mulVec {p q : ℕ} (N : Matrix (Fin p) (Fin q) E) {Λ : Submodule (𝓞 E) (Fin q → E)}
     {Λ' : Submodule (𝓞 E) (Fin p → E)} (h : ∀ y ∈ Λ, N *ᵥ y ∈ Λ') {v} (hv : v ∈ hat Λ) :
@@ -146,14 +150,12 @@ theorem hat_mulVec {p q : ℕ} (N : Matrix (Fin p) (Fin q) E) {Λ : Submodule (�
   · rintro _ ⟨x, hx, rfl⟩
     refine Submodule.subset_span ⟨N *ᵥ x, h x hx, ?_⟩
     funext i
-    simp [Matrix.mulVec, dotProduct, map_sum]
+    exact RingHom.map_mulVec ιf N x i
   · rw [Matrix.mulVec_zero]; exact zero_mem _
   · intro x y _ _ hx hy
     rw [Matrix.mulVec_add]; exact add_mem hx hy
   · intro s x _ hx
-    have : N.map ιf *ᵥ (s • x) = s • (N.map ιf *ᵥ x) := by
-      rw [Subring.smul_def, Subring.smul_def, Matrix.mulVec_smul]
-    rw [this]
+    rw [Matrix.mulVec_smul]
     exact Submodule.smul_mem _ s hx
 
 variable {n k c : ℕ} {M : Matrix (Fin n) (Fin k) E} {a : Matrix (Fin n) (Fin c) E} {Q : Matrix (Fin k) (Fin n) E}
@@ -205,7 +207,7 @@ end Lat
 
 def unitLat (D : D7) : Submodule (𝓞 D.host.E) (Fin 1 → D.host.E) where
   carrier := {u | ∀ p, u p ∈ (1 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E)}
-  zero_mem' := fun p => (1 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E).zero_mem
+  zero_mem' := fun _ => (1 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E).zero_mem
   add_mem' := fun hu hv p => (1 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E).val.add_mem (hu p) (hv p)
   smul_mem' := fun c _ hu p => (1 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E).val.smul_mem c (hu p)
 
@@ -314,8 +316,8 @@ theorem map_incA_rhoF {p q : ℕ} (X : Matrix (Fin p) (Fin q) D.host.E) :
     (X.map (incA D)).map (rhoF D) = X.map (inclE (F := D.host.F) (Formalism.L2.Herm.Af D.host.F)) :=
   Matrix.ext fun i j => rhoF_incA (X i j)
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem top_abs (d : HermitianOrthogonalExtensionData A B 1 1) (S : Finset ℕ) (Λ : Submodule (𝓞 D.host.E) (Fin A.rank → D.host.E))
     (Λs : Submodule (𝓞 D.host.E) (Fin B.rank → D.host.E)) (hΛ : Λs = d.lat Λ fun _ => 1)
     (fr₀ : GL (Fin A.rank) D.host.E) (u₀ : GfC A) (hon : cT σ fr₀.1 * A.gram * fr₀.1 = 1)
@@ -356,8 +358,9 @@ theorem top_abs (d : HermitianOrthogonalExtensionData A B 1 1) (S : Finset ℕ) 
       HMul.hMul X ((emb d).map (incA D))) hg) (extM_mul _ _ _ m3)
   · have hq : (prj d).map (incA D) *ᵥ (fun i => incA D (d.a i 0)) = 0 := by
       funext l
-      have := congrArg (incA D) (congrFun (congrFun (orthogonalSumProjection_mul_auxiliary d) l) 0)
-      simpa [Matrix.mulVec, dotProduct, Matrix.mul_apply, map_sum] using this
+      refine (RingHom.map_mulVec (incA D) (prj d) (fun i => d.a i 0) l).symm.trans ?_
+      change incA D ((prj d * d.a) l 0) = 0
+      rw [orthogonalSumProjection_mul_auxiliary, Matrix.zero_apply, map_zero]
     exact Eq.trans (congrArg (fun X : Matrix (Fin B.rank) (Fin B.rank) (AF D.host.F ⊗[D.host.F] D.host.E) =>
       X *ᵥ (fun i => incA D (d.a i 0))) hg) (extM_mulVec _ _ _ hq)
 

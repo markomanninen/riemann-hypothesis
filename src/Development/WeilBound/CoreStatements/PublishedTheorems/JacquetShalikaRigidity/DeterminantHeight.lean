@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+
+@[expose] public section
 
 noncomputable section
 
@@ -112,7 +116,7 @@ theorem minkowski_bound_of : D0 → MinkowskiBoundAlt := by
     have hprod : (s ^ k * a L) ^ k ≤ Dt g := by
       rw [hD]
       calc (s ^ k * a L) ^ k = ∏ _i : Fin k, s ^ k * a L := by simp
-        _ ≤ ∏ i, a i := Finset.prod_le_prod (fun _ _ => hsa.le) (fun i _ => hlow i)
+        _ ≤ ∏ i, a i := Finset.prod_le_prod₀ (fun _ _ => hsa.le) (fun i _ => hlow i)
     have hDt : 0 < Dt g := by rw [hD]; exact Finset.prod_pos fun i _ => ha i
     have hDpos : 0 < Dt g ^ ((k : ℝ)⁻¹) := Real.rpow_pos_of_pos hDt _
     have hDk : (Dt g ^ ((k : ℝ)⁻¹)) ^ k = Dt g := Real.rpow_inv_natCast_pow hDt.le (by omega)

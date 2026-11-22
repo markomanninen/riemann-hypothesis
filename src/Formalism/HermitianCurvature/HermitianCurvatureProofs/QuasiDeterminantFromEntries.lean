@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementFr
-import Formalism.YangianSpanCharacter.YangianRelationFirst
+module
+
+public import Formalism.HermitianCurvature.StatementFr
+public import Formalism.YangianSpanCharacter.YangianRelationFirst
+
+@[expose] public section
 
 open Matrix Formalism.YangianSpanCharacter.T Formalism.YangianSpanCharacter.Y Formalism.FourierDecayAlt.R Formalism.FourierDecayAlt.Wd Formalism.FourierDecayAlt.Fr
 
@@ -357,7 +361,7 @@ theorem start_is_frame : StartFrame := by
   · intro Y hY _
     simp only [lift0, Matrix.map_apply, one_mul, mul_one, Formalism.FourierDecayAlt.Fr.FrameData.l, Formalism.FourierDecayAlt.Fr.kapL]
     rw [hst.low Y hY]
-    simp only [io, map_mul, map_add]
+    simp only [io, map_mul, map_add (f := _)]
 
 theorem frame_module_of_word : WordJoint := by
   intro A S _ _ _ _ _ _ r L st w
@@ -382,18 +386,5 @@ theorem frame_module_of_word : WordJoint := by
       · funext Y; simp [ofWord, hl, FrameData.minus, qw, h3]
       · simp [ofWord, hl, FrameData.minus, h4]
       · ext Y; simp [ofWord, hl, FrameData.minus, h5, Reg, RegL, and_comm]
-
-theorem residue_partial_fractions : ResidueStep := by
-  intro B _ _ Z γ Ya Y h1 h2 h3
-  have e1 : Y - γ ≠ 0 := sub_ne_zero.mpr h1
-  have e2 : Ya - γ ≠ 0 := sub_ne_zero.mpr h2
-  have e3 : Y - Ya ≠ 0 := sub_ne_zero.mpr h3
-  constructor
-  · simp only [← sub_smul, smul_smul]
-    congr 1
-    first | (field_simp; ring) | field_simp | ring
-  · simp only [← sub_smul, ← add_smul, smul_smul]
-    congr 1
-    first | (field_simp; ring) | field_simp | ring
 
 end Formalism.FourierDecayAlt.P

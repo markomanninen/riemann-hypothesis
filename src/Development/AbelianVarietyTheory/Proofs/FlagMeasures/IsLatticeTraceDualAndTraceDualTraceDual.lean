@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsLatMeasurableConst
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurableSetDetNormPos
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsLatMeasurableConst
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurableSetDetNormPos
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.FlagBase GlobalTheory.MeanDual
 
@@ -12,9 +16,9 @@ variable (E : Type) [Field E] [NumberField E] (j : ℕ)
 
 def halfTraceForm : LinearMap.BilinForm ℚ (Fin j → E) :=
   LinearMap.mk₂ ℚ (fun x y => Algebra.trace ℚ E (x ⬝ᵥ y) / 2)
-    (fun x x' y => by rw [add_dotProduct, map_add, add_div])
+    (fun x x' y => by rw [add_dotProduct, map_add (f := _), add_div])
     (fun c x y => by rw [smul_dotProduct, map_smul, smul_eq_mul, smul_eq_mul, mul_div_assoc])
-    (fun x y y' => by rw [dotProduct_add, map_add, add_div])
+    (fun x y y' => by rw [dotProduct_add, map_add (f := _), add_div])
     (fun c x y => by rw [dotProduct_smul, map_smul, smul_eq_mul, smul_eq_mul, mul_div_assoc])
 
 theorem halfTraceForm_apply (x y : Fin j → E) :
@@ -79,36 +83,39 @@ private theorem smul_mem_span_rat_restrictScalars (Λ : Submodule (𝓞 E) (Fin 
     rw [smul_comm]
     exact Submodule.smul_mem _ _ hy
 
-theorem isLattice_restrict (Λ : Submodule (𝓞 E) (Fin j → E)) (h : Submodule.IsLattice E Λ) :
-    Submodule.IsLattice ℚ (Λ.restrictScalars ℤ) where
-  fg := Submodule.FG.restrictScalars h.fg
-  span_eq_top := by
-    refine Submodule.eq_top_iff'.mpr fun v => ?_
-    have hv : v ∈ Submodule.span E (Λ : Set (Fin j → E)) := by
-      rw [h.span_eq_top]
-      trivial
-    induction hv using Submodule.span_induction with
-    | mem y hy => exact Submodule.subset_span hy
-    | zero => exact zero_mem _
-    | add y z _ _ hy hz => exact add_mem hy hz
-    | smul a y _ hy => exact smul_mem_span_rat_restrictScalars E j Λ a hy
+theorem isLattice_restrict (Λ : Submodule (𝓞 E) (Fin j → E)) (h : Submodule.IsFullLattice E Λ) :
+    Submodule.IsFullLattice ℚ (Λ.restrictScalars ℤ) := by
+  refine { toIsLattice := Submodule.IsLattice.of_fg ℚ
+             (Submodule.FG.restrictScalars (Submodule.IsLattice.fg E Λ)),
+           span_eq_top := ?_ }
+  refine Submodule.eq_top_iff'.mpr fun v => ?_
+  have hv : v ∈ Submodule.span E (Λ : Set (Fin j → E)) := by
+    rw [h.span_eq_top]
+    trivial
+  induction hv using Submodule.span_induction with
+  | mem y hy => exact Submodule.subset_span hy
+  | zero => exact zero_mem _
+  | add y z _ _ hy hz => exact add_mem hy hz
+  | smul a y _ hy => exact smul_mem_span_rat_restrictScalars E j Λ a hy
 
-theorem exists_basis (Λ : Submodule (𝓞 E) (Fin j → E)) (h : Submodule.IsLattice E Λ) :
+theorem exists_basis (Λ : Submodule (𝓞 E) (Fin j → E)) (h : Submodule.IsFullLattice E Λ) :
     ∃ (n : ℕ) (b : Module.Basis (Fin n) ℚ (Fin j → E)),
       Λ.restrictScalars ℤ = Submodule.span ℤ (Set.range b) := by
 
   have := isLattice_restrict E j Λ h
+  have := Submodule.IsLattice.free ℚ (Λ.restrictScalars ℤ)
+  have := Submodule.IsLattice.finite ℚ (Λ.restrictScalars ℤ)
   let bF := Module.finBasis ℤ (Λ.restrictScalars ℤ)
-  refine ⟨_, bF.extendOfIsLattice ℚ, ?_⟩
-  have hb : ⇑(bF.extendOfIsLattice ℚ) = (Λ.restrictScalars ℤ).subtype ∘ bF :=
-    funext fun k => bF.extendOfIsLattice_apply ℚ k
+  refine ⟨_, bF.extendOfIsFullLattice ℚ, ?_⟩
+  have hb : ⇑(bF.extendOfIsFullLattice ℚ) = (Λ.restrictScalars ℤ).subtype ∘ bF :=
+    funext fun k => bF.extendOfIsFullLattice_apply ℚ k
   rw [hb, Set.range_comp, ← Submodule.map_span, bF.span_eq, Submodule.map_top,
     Submodule.range_subtype]
 
 theorem isLattice_trDual_and_trDual_trDual :
     ∀ (E : Type) [Field E] [NumberField E] (j : ℕ) (Λ : Submodule (𝓞 E) (Fin j → E)),
-      Submodule.IsLattice E Λ →
-        Submodule.IsLattice E (trDual E j Λ) ∧ trDual E j (trDual E j Λ) = Λ := by
+      Submodule.IsFullLattice E Λ →
+        Submodule.IsFullLattice E (trDual E j Λ) ∧ trDual E j (trDual E j Λ) = Λ := by
   intro E _ _ j Λ h
   obtain ⟨n, b, hb⟩ := exists_basis E j Λ h
   have hB := halfTraceForm_nondegenerate E j
@@ -117,8 +124,9 @@ theorem isLattice_trDual_and_trDual_trDual :
   have hD : (trDual E j Λ).restrictScalars ℤ =
       Submodule.span ℤ (Set.range ((halfTraceForm E j).dualBasis hB b)) := by
     rw [restrict_trDual, hb, LinearMap.BilinForm.dualSubmodule_span_of_basis _ hB]
-  refine ⟨⟨?_, ?_⟩, ?_⟩
-  · apply Submodule.FG.of_restrictScalars ℤ
+  refine ⟨{ toIsLattice := ?_, span_eq_top := ?_ }, ?_⟩
+  · apply Submodule.IsLattice.of_fg E
+    apply Submodule.FG.of_restrictScalars ℤ
     rw [hD]
     exact Submodule.fg_span (Set.finite_range _)
   · refine eq_top_iff.mpr fun v _ => ?_

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -15,16 +19,13 @@ variable (F : Fin d → PS k 2 d) (v : Fin d → k)
 
 theorem dof_add (f g : PS k 1 d) : Dof F v (f + g) = Dof F v f + Dof F v g := by
   unfold Dof
-  simp only [map_add, mul_add, Finset.sum_add_distrib]
+  simp only [map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 theorem dof_zero : Dof F v (0 : PS k 1 d) = 0 := by
   simp [Dof]
 
 theorem dof_C (a : k) : Dof F v (C a : PS k 1 d) = 0 := by
-  unfold Dof
-  have h : ∀ j : Fin d, pderiv k ((0 : Fin 1), j) (C a : PS k 1 d) = 0 := fun j => by
-    simp
-  simp [h]
+  simp [Dof]
 
 theorem dof_mul (f g : PS k 1 d) : Dof F v (f * g) = Dof F v f * g + f * Dof F v g := by
   unfold Dof
@@ -49,16 +50,6 @@ theorem T_cons (l : ι) (w : List ι) (A : PS k 1 d) : T F u (l :: w) A = Dof F 
 
 theorem T_append (w w' : List ι) (A : PS k 1 d) : T F u (w ++ w') A = T F u w (T F u w' A) := by
   simp [T, List.foldr_append]
-
-theorem T_add (w : List ι) (A B : PS k 1 d) : T F u w (A + B) = T F u w A + T F u w B := by
-  induction w with
-  | nil => rfl
-  | cons l w ih => rw [T_cons, T_cons, T_cons, ih, dof_add]
-
-theorem T_zero (w : List ι) : T F u w (0 : PS k 1 d) = 0 := by
-  induction w with
-  | nil => rfl
-  | cons l w ih => rw [T_cons, ih, dof_zero]
 
 def splits : List ι → List (List ι × List ι)
   | [] => [([], [])]

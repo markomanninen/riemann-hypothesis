@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnipMinSubsetMinParOne
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CvecSurjective
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModerateGrowthOfHasCompactSupport
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnipMinSubsetMinParOne
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CvecSurjective
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModerateGrowthOfHasCompactSupport
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 set_option maxSynthPendingDepth 1
@@ -21,6 +25,8 @@ open GroundTheory.Automorphic GroundTheory.Automorphic.Anisotropic
 variable {K E : Type} [Field K] [NumberField K] [CommRing E] [Algebra K E] [Algebra.IsQuadraticExtension K E]
 variable {ι : Type} [Fintype ι] [DecidableEq ι] (H : Matrix ι ι E)
 
+local notation "𝒩'" => Fintype.card (ι × Fin (Module.finrank K E))
+
 def ratCent {m : Type} (S : m → Matrix ι ι (K ⊗[K] E)) : Subgroup (GL ι (K ⊗[K] E)) where
   carrier := {g | ∀ k, (g : Matrix ι ι (K ⊗[K] E)) * S k = S k * g}
   one_mem' k := by simp
@@ -32,8 +38,6 @@ def ratCent {m : Type} (S : m → Matrix ι ι (K ⊗[K] E)) : Subgroup (GL ι (
         = ↑a⁻¹ * (S k * ↑a) * ↑a⁻¹ := by simp [mul_assoc]
       _ = ↑a⁻¹ * (↑a * S k) * ↑a⁻¹ := by rw [h]
       _ = S k * ↑a⁻¹ := by simp
-
-local notation "𝒩'" => Fintype.card (ι × Fin (Module.finrank K E))
 
 theorem exists_isCompact_trHom_centralizer (hH : IsUnit H.det) {m : Type} [Finite m]
     (S : m → Matrix ι ι (K ⊗[K] E)) (G₀ : Subgroup (GL ι (𝔸[K] ⊗[K] E)))
@@ -48,7 +52,7 @@ theorem exists_isCompact_trHom_centralizer (hH : IsUnit H.det) {m : Type} [Finit
   classical
   let b := Module.finBasis K E
   let G : Subgroup (AdelicGLn.AdelicGL K 𝒩') := G₀.map (trHom b 𝔸[K])
-  have hG1 : G ≤ Reduction.normOneGL K 𝒩' := by
+  have hG1 : G ≤ Reduction.normOneGL (K := K) (n := 𝒩') := by
     rintro _ ⟨u, hu, rfl⟩
     rw [Reduction.mem_normOneGL]
     set a := AdelicGLn.det K 𝒩' (trHom b 𝔸[K] u)
@@ -217,8 +221,9 @@ theorem isCompact_setOf_trHom_mem (hH : IsUnit H.det) {C : Set (GL (Fin 𝒩') �
   classical
   let b := Module.finBasis K E
   set Ω : Set (unitaryPoints K E H 𝔸[K]) := {v | trHom b 𝔸[K] (v : GL ι (𝔸[K] ⊗[K] E)) ∈ C} with hΩ
-  have hΩcl : IsClosed Ω :=
-    hC.isClosed.preimage ((continuous_trHom b 𝔸[K]).comp continuous_subtype_val)
+  have hΩcl : IsClosed Ω := by
+    set_option synthInstance.maxHeartbeats 200000 in
+    exact hC.isClosed.preimage ((continuous_trHom b 𝔸[K]).comp continuous_subtype_val)
   let Fc : Matrix (Fin 𝒩') (Fin 𝒩') 𝔸[K] → ι × ι × Fin (Module.finrank K E) → 𝔸[K] :=
     fun A p =>
     coords b 𝔸[K] ((readoff (ι := ι) b 𝔸[K] A)ᵀ p.1 p.2.1) p.2.2
@@ -228,6 +233,7 @@ theorem isCompact_setOf_trHom_mem (hH : IsUnit H.det) {C : Set (GL (Fin 𝒩') �
   set D := (unitaryCoords H 𝔸[K] b) ⁻¹' (Fc '' (Units.val '' C)) with hD
   have hDc : IsCompact D := (isClosedEmbedding_unitaryCoords H 𝔸[K] b hH).isCompact_preimage
     ((hC.image Units.continuous_val).image hFc)
+  open scoped Pointwise in
   have hsub : Ω ⊆ D⁻¹ := by
     intro v hv
     show v⁻¹ ∈ D
@@ -235,6 +241,7 @@ theorem isCompact_setOf_trHom_mem (hH : IsUnit H.det) {C : Set (GL (Fin 𝒩') �
     funext p
     simp only [Fc, trHom_val, readoff_resHom, transpose_transpose]
     rfl
+  open scoped Pointwise in
   exact hDc.inv.of_isClosed_subset hΩcl hsub
 
 theorem exists_isCompact_rational_centralizer (hH : IsUnit H.det) {m : Type} [Finite m]
@@ -303,7 +310,7 @@ theorem HR_conj_eq {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (R : Type) [CommRing
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul r e => rfl
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   ext g
   show cT (sigR R (conj F E).toAlgHom) _ * _ * _ = _ ↔ _
   rw [this]
@@ -314,11 +321,11 @@ theorem exists_mem_ratPts {n : ℕ} (J : Matrix (Fin n) (Fin n) E) {m : GL (Fin 
     ∃ δ ∈ ratPts (conj F E).toAlgHom J,
       matHom (AF F) (conj F E).toAlgHom J δ = diagGL (Algebra.ofId F (AF F)) m := by
   let x : unitaryPoints F E J F := ⟨m, hm⟩
-  have e : ((unitaryDiagonal F J x : unitaryPoints F E J (AF F)) : GL (Fin n) (AF F ⊗[F] E)) =
+  have e : ((unitaryMap F E J (Algebra.ofId F (AF F)) x : unitaryPoints F E J (AF F)) : GL (Fin n) (AF F ⊗[F] E)) =
       diagGL (Algebra.ofId F (AF F)) m := Units.ext rfl
   have hmem : diagGL (Algebra.ofId F (AF F)) m ∈ HR (AF F) (conj F E).toAlgHom J := by
     rw [HR_conj_eq, ← e]
-    exact (unitaryDiagonal F J x).2
+    exact (unitaryMap F E J (Algebra.ofId F (AF F)) x).2
   refine ⟨⟨_, hmem⟩, ?_, rfl⟩
   have key : diagGL (Algebra.ofId F (AF F)) m =
       Formalism.UG.bc (inclR (AF F)) (unitaryPointsRationalEquiv F E J x : GL (Fin n) E) := by
@@ -332,7 +339,7 @@ theorem exists_mem_ratPts {n : ℕ} (J : Matrix (Fin n) (Fin n) E) {m : GL (Fin 
       rw [tensorMap_tmul, Algebra.TensorProduct.lid_tmul]
       show algebraMap F (AF F) r ⊗ₜ[F] e = (1 : AF F) ⊗ₜ[F] (r • e)
       rw [Algebra.algebraMap_eq_smul_one, TensorProduct.smul_tmul]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   exact ⟨_, (unitaryPointsRationalEquiv F E J x).2, key.symm⟩
 
 end Rational

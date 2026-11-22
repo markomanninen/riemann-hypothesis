@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.HeckeInertComm
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PatchAtSelf
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSmulMemOfIsLattice
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.HeckeInertComm
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PatchAtSelf
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSmulMemOfIsLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,16 +39,20 @@ theorem exists_smul_mem_of_fg {R M : Type*} [CommRing R] [AddCommGroup M] [Modul
       exact B.add_mem (B.smul_mem _ hta) (B.smul_mem _ (hsG y hy))
   exact key G subset_rfl
 
+private theorem infinite_places (E : Type) [Field E] [NumberField E] :
+    Infinite (HeightOneSpectrum (𝓞 E)) := by
+  have : Infinite (HeightOneSpectrum (𝓞 ℚ)) :=
+    Infinite.of_surjective _ (Rat.HeightOneSpectrum.primesEquiv (R := 𝓞 ℚ)).surjective
+  refine Infinite.of_surjective (fun w : HeightOneSpectrum (𝓞 E) => w.under (𝓞 ℚ)) fun v => ?_
+  have := v.isMaximal
+  obtain ⟨Q, hQ, hl⟩ := Ideal.exists_maximal_ideal_liesOver_of_isIntegral (S := 𝓞 E) v.asIdeal
+  exact ⟨⟨Q, hQ.isPrime, Ideal.ne_bot_of_liesOver_of_ne_bot v.ne_bot Q⟩,
+    HeightOneSpectrum.ext hl.over.symm⟩
+
 theorem exists_smul_mem_lattice {E : Type} [Field E] [NumberField E] {n : ℕ}
-    (B : Submodule (𝓞 E) (Sp E n)) (hB : Submodule.IsLattice E B) (x : Sp E n) :
-    ∃ r ∈ nonZeroDivisors (𝓞 E), r • x ∈ B := by
-  first
-  | exact @_root_.GlobalTheory.SmulMemOfIsLattice.exists_smul_mem_of_isLattice
-  | exact _root_.GlobalTheory.SmulMemOfIsLattice.exists_smul_mem_of_isLattice
-  | (apply _root_.GlobalTheory.SmulMemOfIsLattice.exists_smul_mem_of_isLattice <;> assumption)
-  | (intros; apply _root_.GlobalTheory.SmulMemOfIsLattice.exists_smul_mem_of_isLattice <;> assumption)
-  | (intros; apply @_root_.GlobalTheory.SmulMemOfIsLattice.exists_smul_mem_of_isLattice <;> first | assumption | infer_instance)
-  | (intros; exact _root_.GlobalTheory.SmulMemOfIsLattice.exists_smul_mem_of_isLattice ..)
+    (B : Submodule (𝓞 E) (Sp E n)) (hB : Submodule.IsFullLattice E B) (x : Sp E n) :
+    ∃ r ∈ nonZeroDivisors (𝓞 E), r • x ∈ B :=
+  _root_.GlobalTheory.SmulMemOfIsLattice.exists_smul_mem_of_isLattice B hB x
 
 theorem exists_pow_smul_le_of_localization_eq {E : Type} [Field E] [NumberField E] {n : ℕ}
     (P : HeightOneSpectrum (𝓞 E)) (A B : Submodule (𝓞 E) (Sp E n)) (hA : A.FG)
@@ -53,12 +61,16 @@ theorem exists_pow_smul_le_of_localization_eq {E : Type} [Field E] [NumberField 
     ∃ k : ℕ, P.asIdeal ^ k • A ≤ B := by
   set I : Ideal (𝓞 E) := B.colon (A : Set (Sp E n)) with hIdef
   have hI0 : I ≠ ⊥ := by
-    obtain ⟨s, hs, hsA⟩ := exists_smul_mem_of_fg (nonZeroDivisors (𝓞 E)) A B hA
-      (fun x _ => exists_smul_mem_lattice B hB x)
+    letI := infinite_places E
+    obtain ⟨Q, hQ⟩ := exists_ne P
+    obtain ⟨s, hs, hsA⟩ := exists_smul_mem_of_fg Q.asIdeal.primeCompl A B hA (fun x hx => by
+      have hxA : x ∈ localization₂ Q.asIdeal A := ⟨1, Q.asIdeal.primeCompl.one_mem, by simpa using hx⟩
+      rw [h Q hQ] at hxA
+      exact hxA)
     intro hI
     have hsI : s ∈ I := Submodule.mem_colon.2 hsA
     rw [hI, Ideal.mem_bot] at hsI
-    exact nonZeroDivisors.ne_zero hs hsI
+    exact hs (hsI ▸ Q.asIdeal.zero_mem)
   have hIQ : ∀ Q : HeightOneSpectrum (𝓞 E), Q ≠ P → ¬ I ≤ Q.asIdeal := by
     intro Q hQ hle
     obtain ⟨s, hs, hsA⟩ := exists_smul_mem_of_fg Q.asIdeal.primeCompl A B hA (fun x hx => by

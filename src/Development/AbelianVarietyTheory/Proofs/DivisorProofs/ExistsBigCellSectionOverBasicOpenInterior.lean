@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBaseFrame
-import Development.AbelianVarietyTheory.Definitions.Divisors.P22
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrameVectorIsCombinationEigenbasisFlagSpacePoint
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BigCellFramedPointVectorsLowerTriangularEigenbas
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BigCellEigenbasisCombinationCoeffUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BigCellPointEqOfBaseAndCellCoordinatesEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBaseFrame
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrameVectorIsCombinationEigenbasisFlagSpacePoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BigCellFramedPointVectorsLowerTriangularEigenbas
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BigCellEigenbasisCombinationCoeffUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BigCellPointEqOfBaseAndCellCoordinatesEq
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open GlobalTheory GlobalTheory.CechPic GlobalTheory.Vanishing GlobalTheory.CompHS
@@ -69,7 +74,8 @@ theorem exists_frPt_of_basis (M : MChart Y) {y : Sp S ⟶ Xo.XF c}
   let u : ∀ σ : E →+* ℂ, Matrix (Fin M.n) (Fin (Dw.mult σ)) S := fun σ j i => (vec M x hM).symm (f σ i) j
   have hu : ∀ σ i, vec M x hM (fun j => u σ j i) = f σ i := fun σ i => (vec M x hM).apply_symm_apply _
   have hs : ∀ σ (a : Fin (Dw.mult σ) → S), vec M x hM ((u σ).mulVec a) = ∑ i, a i • f σ i := fun σ a => by
-    simp only [← hu, ← map_smul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← hu, ← map_smul, ← map_sum]
     congr 1
     funext j
     simp [Matrix.mulVec, dotProduct, Finset.sum_apply, _root_.mul_comm]
@@ -240,10 +246,11 @@ theorem Carries.map {S S' : Type} [CommRing S] [CommRing S'] {z : Sp S ⟶ Y₀ 
     rw [← frX_frMap hPP, Category.assoc, hP]; exact hx'
   refine ⟨inst', P', hP', ?_, fun σ i => ?_⟩
   · rw [Category.assoc, hz]; exact TF.X.ptY_frMap hPP
-  · rw [← tanPull_frVec hPP hP hP' hx' σ i, hvec, map_sum]
-    exact Finset.sum_congr rfl fun j _ => by
-      rw [map_smulₛₗ, tanPull_valV TF hv _ hx' hU hU']
-      rfl
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [← tanPull_frVec hPP hP hP' hx' σ i, hvec, map_sum]
+      exact Finset.sum_congr rfl fun j _ => by
+        rw [map_smulₛₗ, tanPull_valV TF hv _ hx' hU hU']
+        rfl
 
 variable {W : (Y₀ TF.X Z).Opens} {k : TF.X.F.J}
   {L N : ∀ σ : E →+* ℂ, Matrix (Fin (Dw.mult σ)) (Fin (Dw.mult σ)) Γ(Y₀ TF.X Z, W)}
@@ -275,7 +282,8 @@ theorem Carries.eq_of_cell (hC : IsCell TF Z U e v W k L N) {S : Type} [CommRing
     · show ev zw W hW (L σ i j) = 0
       rw [hLz σ i j h, map_zero]
     · rw [(GlobalTheory.LieMet.isComb_iff (fun j => valV TF hv _ hU (e ⟨σ, j⟩)) _ _).1 (hcomb S zw hW hU hk hxx σ i)]
-      simp only [hvec, Finset.smul_sum, smul_smul, Matrix.mul_apply, map_sum, map_mul, Finset.sum_smul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hvec, Finset.smul_sum, smul_smul, Matrix.mul_apply, map_sum, map_mul, Finset.sum_smul,
         Matrix.map_apply]
       exact Finset.sum_comm
   rw [← cancel_mono (inc₀ TF.X Z), hpt, heq]
@@ -287,9 +295,9 @@ def univN (Dw : Datum H) (A : Type) [CommRing A] (σ : E →+* ℂ) :
 theorem isUnit_det_univN {A B : Type} [CommRing A] [CommRing B] (f : MvPolynomial (VIx Dw) A →+* B) (σ : E →+* ℂ) :
     IsUnit ((univN Dw A σ).map f).det := by
   rw [Matrix.det_of_upperTriangular (M := (univN Dw A σ).map f) (fun i j (h : j < i) => by
-    rw [Matrix.map_apply, univN, dif_neg (not_lt.2 h.le), if_neg h.ne', map_zero])]
+    rw [Matrix.map_apply, univN, dite_eq_right (not_lt.2 h.le), if_neg h.ne', map_zero])]
   refine IsUnit.prod_univ_iff.2 fun i => ?_
-  rw [Matrix.map_apply, univN, dif_neg (lt_irrefl i), if_pos rfl, map_one]
+  rw [Matrix.map_apply, univN, dite_eq_right (lt_irrefl i), if_pos rfl, map_one]
   exact isUnit_one
 
 theorem eval₂Hom_univN {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (f : A →+* B) (g : C →+* B)
@@ -298,9 +306,9 @@ theorem eval₂Hom_univN {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (
     MvPolynomial.eval₂Hom f (fun a => g (cellCoord N a)) (univN Dw A σ i j) = g (N σ i j) := by
   rw [univN]
   rcases lt_trichotomy i j with h | rfl | h
-  · rw [dif_pos h]; exact MvPolynomial.eval₂Hom_X' _ _ _
-  · rw [dif_neg (lt_irrefl i), if_pos rfl, h1, map_one, map_one]
-  · rw [dif_neg (not_lt.2 h.le), if_neg h.ne', h0 σ i j h, map_zero, map_zero]
+  · rw [dite_eq_left h]; exact MvPolynomial.eval₂Hom_X' _ _ _
+  · rw [dite_eq_right (lt_irrefl i), if_pos rfl, h1, map_one, map_one]
+  · rw [dite_eq_right (not_lt.2 h.le), if_neg h.ne', h0 σ i j h, map_zero, map_zero]
 
 theorem Carries.nonempty (hC : IsCell TF Z U e v W k L N) (a : Γ(TF.Y.X, U.1)) {S : Type} [CommRing S]
     [Algebra (MvPolynomial (VIx Dw) Γ(TF.Y.X, U.1)) S]
@@ -395,7 +403,7 @@ namespace GlobalTheory.LogPole
 
 open GlobalTheory.FlagMod
 
-theorem exists_cell_section_away : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (TF : TorFlag Xo c) (Z : Comp Xo c), FnAlgClosed Xo c → ∀ (U : TF.Y.X.affineOpens) (n : ℕ) (e : (Σ τ : E →+* ℂ, Fin (Dw.mult τ)) ≃ Fin n) (v : Fin n → (Sp (DualNumber Γ(TF.Y.X, U.1)) ⟶ TF.Y.t.G.left)), IsEigBasis TF U e v → ∀ (W : (Y₀ TF.X Z).Opens) (k : TF.X.F.J) (L N : ∀ σ : E →+* ℂ, Matrix (Fin (Dw.mult σ)) (Fin (Dw.mult σ)) Γ(Y₀ TF.X Z, W)), IsCell TF Z U e v W k L N → ∀ (a : Γ(TF.Y.X, U.1)), TF.Y.X.basicOpen a ≤ LogKS.interior TF.Y ⊓ barComp TF.Y Z ⊓ (TF.X.F.M k).U → (∃ w : Y₀ TF.X Z, w ∈ W ∧ w ∈ U₀ TF.X Z ∧ toBase TF Z w ∈ TF.Y.X.basicOpen a) → ∃ z₁ : Sp (Localization.Away (MvPolynomial.C a : MvPolynomial (VIx Dw) Γ(TF.Y.X, U.1))) ⟶ Y₀ TF.X Z, ⊤ ≤ z₁ ⁻¹ᵁ U₀ TF.X Z ∧ (∃ hU : ⊤ ≤ (z₁ ≫ toBase TF Z) ⁻¹ᵁ U.1, ∀ r, ev (z₁ ≫ toBase TF Z) U.1 hU r = algebraMap (MvPolynomial (VIx Dw) Γ(TF.Y.X, U.1)) (Localization.Away (MvPolynomial.C a : MvPolynomial (VIx Dw) Γ(TF.Y.X, U.1))) (MvPolynomial.C r)) ∧ ((z₁ ⁻¹ᵁ W : TopologicalSpace.Opens _) : Set (Sp (Localization.Away (MvPolynomial.C a : MvPolynomial (VIx Dw) Γ(TF.Y.X, U.1))))).Nonempty ∧ ∀ (S : Type) [CommRing S] (ψ : Localization.Away (MvPolynomial.C a : MvPolynomial (VIx Dw) Γ(TF.Y.X, U.1)) →+* S) (hW : ⊤ ≤ (spMap ψ ≫ z₁) ⁻¹ᵁ W) (σ : E →+* ℂ), ∃ b : Matrix (Fin (Dw.mult σ)) (Fin (Dw.mult σ)) S, (∀ i j, i < j → b i j = 0) ∧ ∀ i j, ψ (algebraMap (MvPolynomial (VIx Dw) Γ(TF.Y.X, U.1)) _ (if h : i < j then MvPolynomial.X ⟨σ, ⟨(i, j), h⟩⟩ else if i = j then 1 else 0)) = ∑ m, b i m * ev (spMap ψ ≫ z₁) W hW ((L σ * N σ) m j) := by
+theorem exists_cell_section_away : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (TF : TorFlag Xo c) (Z : Comp Xo c), FnAlgClosed (Xo := Xo) (c := c) → ∀ (U : TF.Y.X.affineOpens) (n : ℕ) (e : (Σ τ : E →+* ℂ, Fin (Dw.mult τ)) ≃ Fin n) (v : Fin n → (Sp (DualNumber Γ(TF.Y.X, U.1)) ⟶ TF.Y.t.G.left)), IsEigBasis TF U e v → ∀ (W : (Y₀ TF.X Z).Opens) (k : TF.X.F.J) (L N : ∀ σ : E →+* ℂ, Matrix (Fin (Dw.mult σ)) (Fin (Dw.mult σ)) Γ(Y₀ TF.X Z, W)), IsCell TF Z U e v W k L N → ∀ (a : Γ(TF.Y.X, U.1)), TF.Y.X.basicOpen a ≤ LogKS.interior TF.Y ⊓ barComp TF.Y Z ⊓ (TF.X.F.M k).U → (∃ w : Y₀ TF.X Z, w ∈ W ∧ w ∈ U₀ TF.X Z ∧ toBase TF Z w ∈ TF.Y.X.basicOpen a) → ∃ z₁ : Sp (Localization.Away (MvPolynomial.C a : MvPolynomial (VIx Dw) Γ(TF.Y.X, U.1))) ⟶ Y₀ TF.X Z, ⊤ ≤ z₁ ⁻¹ᵁ U₀ TF.X Z ∧ (∃ hU : ⊤ ≤ (z₁ ≫ toBase TF Z) ⁻¹ᵁ U.1, ∀ r, ev (z₁ ≫ toBase TF Z) U.1 hU r = algebraMap (MvPolynomial (VIx Dw) Γ(TF.Y.X, U.1)) (Localization.Away (MvPolynomial.C a : MvPolynomial (VIx Dw) Γ(TF.Y.X, U.1))) (MvPolynomial.C r)) ∧ ((z₁ ⁻¹ᵁ W : TopologicalSpace.Opens _) : Set (Sp (Localization.Away (MvPolynomial.C a : MvPolynomial (VIx Dw) Γ(TF.Y.X, U.1))))).Nonempty ∧ ∀ (S : Type) [CommRing S] (ψ : Localization.Away (MvPolynomial.C a : MvPolynomial (VIx Dw) Γ(TF.Y.X, U.1)) →+* S) (hW : ⊤ ≤ (spMap ψ ≫ z₁) ⁻¹ᵁ W) (σ : E →+* ℂ), ∃ b : Matrix (Fin (Dw.mult σ)) (Fin (Dw.mult σ)) S, (∀ i j, i < j → b i j = 0) ∧ ∀ i j, ψ (algebraMap (MvPolynomial (VIx Dw) Γ(TF.Y.X, U.1)) _ (if h : i < j then MvPolynomial.X ⟨σ, ⟨(i, j), h⟩⟩ else if i = j then 1 else 0)) = ∑ m, b i m * ev (spMap ψ ≫ z₁) W hW ((L σ * N σ) m j) := by
   intro E _ _ _ H Dw l Xo c TF Z _ U n e v hv W k L N hC a ha hw
   exact CellSection.exists_section_props hv hC a ha hw
     (Localization.Away (MvPolynomial.C a : MvPolynomial (VIx Dw) Γ(TF.Y.X, U.1)))

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms.BaseChange
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms.BaseChange
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

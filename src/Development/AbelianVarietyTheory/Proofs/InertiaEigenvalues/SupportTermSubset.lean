@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdmissibleEmptyOfGood
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdmissibleEmptyOfGood
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ namespace GlobalTheory.LawTrace
 variable {G Γ W : Type} [Group G] [Group Γ] [AddCommGroup W] [Module ℂ W]
   (ι : Γ →* G) (ρ : Γ →* Module.End ℂ W) (J : Subgroup G) (χ : J →* ℂˣ)
 
-open Classical in
 
+open Classical in
 def term (y x : G) (P : W) (γ : Γ) : W :=
   if h : (ι γ * y)⁻¹ * x ∈ J then ((χ ⟨_, h⟩ : ℂˣ) : ℂ) • ρ γ P else 0
 
@@ -47,7 +51,7 @@ theorem term_mul (y x : G) (P : W) (γ₀ γ : Γ) (k : J) :
   unfold term
   by_cases h : (ι γ * y)⁻¹ * x ∈ J
   · have h' : (ι (γ₀ * γ) * y)⁻¹ * (ι γ₀ * x * k) ∈ J := by rw [e]; exact J.mul_mem h k.2
-    rw [dif_pos h', dif_pos h]
+    rw [dite_eq_left h', dite_eq_left h]
     have ek : (⟨_, h'⟩ : J) = ⟨_, h⟩ * k := Subtype.ext e
     rw [ek, map_mul, map_mul, Units.val_mul, map_smul, smul_smul, mul_comm, Module.End.mul_apply]
   · have h' : ¬ (ι (γ₀ * γ) * y)⁻¹ * (ι γ₀ * x * k) ∈ J := by
@@ -102,7 +106,7 @@ theorem tr_self {y : G} (hf : Finite (Bridge.stab ι J y)) {F : G → W} (hF : F
       rw [Bridge.mem_stab, ← J.inv_mem_iff]
       simp [mul_assoc]
     by_cases h : (ι γ * y)⁻¹ * y ∈ J
-    · rw [dif_pos h, if_pos (hc.1 h)]
+    · rw [dite_eq_left h, if_pos (hc.1 h)]
       have := GlobalTheory.ExportSeries.mem_lawForms.1 hF γ y ⟨_, h⟩
       rw [show ι γ * y * ((ι γ * y)⁻¹ * y) = y by group] at this
       exact this.symm

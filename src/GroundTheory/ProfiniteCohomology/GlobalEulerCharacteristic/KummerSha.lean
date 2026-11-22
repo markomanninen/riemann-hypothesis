@@ -1,17 +1,22 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseKummer
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.SInvariantToInvariantsEqZeroIff
-import GroundTheory.ProfiniteCohomology.PoitouTate.PtCompactDualMapEqZeroOfPtCompactToGlobalEqZero
-import GroundTheory.ProfiniteCohomology.CupProducts.Projection
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseKummer
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.SInvariantToInvariantsEqZeroIff
+public import GroundTheory.ProfiniteCohomology.PoitouTate.PtCompactDualMapEqZeroOfPtCompactToGlobalEqZero
+public import GroundTheory.ProfiniteCohomology.CupProducts.Projection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory NumberField IsDedekindDomain GroundTheory.Global
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
   (ιs : ∀ v : S, ℚ̄ →ₐ[K.1] AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1))
@@ -31,18 +36,27 @@ theorem gsRootsLocalUnitsMor_eq (v : S) :
         (rootsOfUnityToSUnits S (maxUnramifiedOutside K.1 ℚ̄ S) ℓ) ≫ gsSUnitsLocalMor S ιs v :=
   (gsKummerLocalMap S ιs ℓ v).comm₁₂.symm
 
-include hℓS in
 
+include hℓS in
 theorem cohomologyMap_gsRootsLocalUnitsMor_injective (v : S) :
     Function.Injective (cohomologyMap (gsRootsLocalUnitsMor S ιs ℓ v) 2).hom := by
   have h2 := cohomologyMap_f_injective_of_subsingleton (localKummer_shortExact S ℓ v) 1
     subsingleton_cohomology_one_galUnits
   have h1 : Function.Injective (cohomologyMap (gsRootsOmegaMor S ιs ℓ v) 2).hom := by
+    have hbij : Function.Bijective (gsRootsOmegaMor S ιs ℓ v).hom := by
+      obtain ⟨z, hz⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot ℚ̄ ℓ
+      have hzS : z ∈ maxUnramifiedOutside K.1 ℚ̄ S :=
+        mem_maxUnramifiedOutside_of_pow_eq_one S (NeZero.ne ℓ) hℓS hz.pow_eq_one
+      have hzS' : IsPrimitiveRoot (⟨z, hzS⟩ : maxUnramifiedOutside K.1 ℚ̄ S) ℓ :=
+        hz.of_map_of_injective (f := (maxUnramifiedOutside K.1 ℚ̄ S).val) Subtype.val_injective
+      have hF := bijective_restrictRootsOfUnity_of_isPrimitiveRoot ℓ
+        ((ιs v).comp (maxUnramifiedOutside K.1 ℚ̄ S).val).toRingHom hzS'
+      exact Additive.ofMul.bijective.comp (hF.comp Additive.toMul.bijective)
     have hc := congrArg (fun φ => cohomologyMap φ 2)
-      (comp_repInvOfBijective (gsRootsOmegaMor S ιs ℓ v) (bijective_gsRootsOmegaMor S ιs ℓ hℓS v))
+      (comp_repInvOfBijective (gsRootsOmegaMor S ιs ℓ v) hbij)
     have hc' := (cohomologyMap_comp _ _ 2).symm.trans (hc.trans (cohomologyMap_id 2))
     refine Function.LeftInverse.injective (g := (cohomologyMap (repInvOfBijective
-      (gsRootsOmegaMor S ιs ℓ v) (bijective_gsRootsOmegaMor S ιs ℓ hℓS v)) 2).hom) fun a => ?_
+      (gsRootsOmegaMor S ιs ℓ v) hbij) 2).hom) fun a => ?_
     exact congrArg (fun φ => φ.hom a) hc'
   have e := cohomologyMap_comp (gsRootsOmegaMor S ιs ℓ v)
     (kummerSequence ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)
@@ -51,8 +65,8 @@ theorem cohomologyMap_gsRootsLocalUnitsMor_injective (v : S) :
   have hab' := (congrArg (fun φ => φ.hom a) e).symm.trans ((hab : _).trans (congrArg (fun φ => φ.hom b) e))
   exact h1 (h2 hab')
 
-include hℓS in
 
+include hℓS in
 theorem ptRes_eq_zero_iff (v : S) (x : cohomology (gsRoots S ℓ) 2) :
     ptRes (gsFinFamily S ιs) (gsRoots S ℓ) v 2 x = 0 ↔
       (cohomologyMapAlong (gsFinFamily S ιs v).toMonoidHom (continuous_toMonoidHom _)
@@ -81,10 +95,10 @@ theorem ptRes_eq_zero_iff (v : S) (x : cohomology (gsRoots S ℓ) 2) :
 
 variable {ℓ} (hℓ : ℓ.Prime)
 
+
 set_option maxHeartbeats 4000000 in
 omit [NeZero ℓ] in
 include hℓS hℓ in
-
 theorem eq_zero_of_gsSUnitsLocalMor_eq_zero (hK : Odd ℓ ∨ IsTotallyComplex K.1)
     (y : cohomology (galSUnitsMax K.1 ℚ̄ S) 2) (hy : ℓ • y = 0)
     (hloc : ∀ v : S, (cohomologyMapAlong (gsFinFamily S ιs v).toMonoidHom (continuous_toMonoidHom _)
@@ -116,8 +130,8 @@ theorem eq_zero_of_gsSUnitsLocalMor_eq_zero (hK : Odd ℓ ∨ IsTotallyComplex K
       rfl
     · exact brauerLocal_sUnitsBrauer_inr K S _ _ w hw
 
-include hℓS hℓ in
 
+include hℓS hℓ in
 theorem mem_ptSha_iff_cohomologyMap_eq_zero (hK : Odd ℓ ∨ IsTotallyComplex K.1)
     (x : cohomology (gsRoots S ℓ) 2) :
     x ∈ ptSha (gsFinFamily S ιs) (gsRoots S ℓ) 2 ↔
@@ -139,16 +153,6 @@ theorem mem_ptSha_iff_cohomologyMap_eq_zero (hK : Odd ℓ ∨ IsTotallyComplex K
     funext v
     exact (ptRes_eq_zero_iff S ιs ℓ hℓS v x).2 ((congrArg _ hy).trans (map_zero _))
 
-include hℓS hℓ in
-
-theorem mem_ptSha_iff_exists_δ (hK : Odd ℓ ∨ IsTotallyComplex K.1) (x : cohomology (gsRoots S ℓ) 2) :
-    x ∈ ptSha (gsFinFamily S ιs) (gsRoots S ℓ) 2 ↔
-      ∃ z : cohomology (galSUnitsMax K.1 ℚ̄ S) 1,
-        (δ (sUnitsKummerSequence_shortExact (Ω := ℚ̄) S ℓ hℓS) 1 2 rfl).hom z = x := by
-  refine (mem_ptSha_iff_cohomologyMap_eq_zero S ιs hℓS hℓ hK x).trans ⟨fun h => ?_, ?_⟩
-  · exact exists_δ_eq_of_cohomologyMap_f_eq_zero (sUnitsKummerSequence_shortExact (Ω := ℚ̄) S ℓ hℓS) 1 2 rfl x h
-  · rintro ⟨z, rfl⟩
-    exact congrArg (fun φ => φ.hom z) (δ_comp (sUnitsKummerSequence_shortExact (Ω := ℚ̄) S ℓ hℓS) 1 2 rfl)
 
 end
 

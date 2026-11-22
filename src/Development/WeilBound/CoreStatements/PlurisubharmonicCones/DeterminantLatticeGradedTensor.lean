@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.DeterminantLatticeGenerator
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GrIsGenAt
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.DeterminantLatticeGenerator
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GrIsGenAt
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Matrix
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp

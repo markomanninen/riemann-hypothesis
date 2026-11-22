@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GKModules.SmoothVectors
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GKModules.SmoothVectors
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -171,7 +175,7 @@ theorem rightDeriv_bracket {f : G → F} (hf : h.IsSmoothFun f) (X Y : 𝔤) :
     (h.hasDerivAt_Ad_expG X Y)
   have e := hg.unique (hg'.congr_of_eventuallyEq (Eventually.of_forall fun s => ?_))
   · change D2 (er + eu) et = h.rightDeriv (h.bracket X Y) f g at e
-    rw [Pi.sub_apply, ← e, map_add, ContinuousLinearMap.add_apply, db, hsymm, dd, sub_eq_add_neg]
+    rw [Pi.sub_apply, ← e, map_add (f := _), ContinuousLinearMap.add_apply, db, hsymm, dd, sub_eq_add_neg]
   · simp only [zero_add, Function.comp_apply]
     rw [diag]
 

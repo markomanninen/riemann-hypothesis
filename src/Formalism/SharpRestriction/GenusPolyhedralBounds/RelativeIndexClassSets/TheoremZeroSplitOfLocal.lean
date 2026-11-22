@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.TheoremZeroSplitOfLocalAndSum
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.VanishingOrderLeWeightSize
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.PvsDimYPos
+module
+
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.TheoremZeroSplitOfLocalAndSum
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.VanishingOrderLeWeightSize
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.PvsDimYPos
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ theorem deepC (large₂ : SizeData₂ D) (X : PJ D B P j) {ka wL wF : WeightFami
     (hC : SetC large₂ X CK C1 A1 ka wL wF T nP nW h0)
     (tW : G.TiedW S Gc Prw) (tZ : G.TiedZ S T Gc) (dH : DeepHerm X ka) (dS : DeepSubMul X) (dL : DeepLogD X ka Pd)
     (pG : PageGd X ka large₂ CG AG Pd) (hG0 : 0 ≤ Gc) (hP0 : 0 ≤ Prw)
-    (hlat : Submodule.IsLattice B.KO (B.Mlat j ka))
+    (hlat : Submodule.IsFullLattice B.KO (B.Mlat j ka))
     (hLAM : ∀ F : B.Cusp j ka, F ∈ B.Mlat j ka → F ≠ 0 → -(p * ka.size) ≤ WeightFamilies.meanLogSup B F)
     (hS2 : ∀ (F : B.Cusp j ka) (σ : B.KO →+* ℂ), B.supN j ka σ F ^ 2 ≤
       Real.exp (WeightFamilies.PPv D large₂ CG AG * (1 + Real.log ka.size)) * B.l2NormAlt j ka σ F ^ 2) :
@@ -33,9 +37,10 @@ theorem deepC (large₂ : SizeData₂ D) (X : PJ D B P j) {ka wL wF : WeightFami
     intro k β
     have : G.zc k β = z' k β := X.inc_inj ka ((hz k β).trans (hz1 k β).symm)
     rw [this]; exact hz2 k β
+  letI := hlat
   exact deepPacketP large₂ X ka wL (X.wF0 wL wF) (a0 D j T) hwt G.w G.th0 G.alz (fun k => (hz0 k).2.2.2) G.zc hz _
     (fun la => SizeBoundsAlt.gaussC_nonneg _ G.zc la) (SizeBoundsAlt.gaussC_gaussLe hzM) hWd Hm
-    (fun Ctr hC => SizeBoundsAlt.trans_of_minima _root_.transference_successive_minima _ hlat.span_eq_top Hm hconj Ctr hC)
+    (fun Ctr hC => SizeBoundsAlt.trans_of_minima _root_.transference_successive_minima _ (Submodule.IsFullLattice.span_eq_top (A := B.KO) (M := B.Mlat j ka)) Hm hconj Ctr hC)
     dS p hLAM Gc Prw Pd
     (fun σ F => (hS2 F σ).trans (mul_le_mul_of_nonneg_right (Real.exp_le_exp.mpr pG) (sq_nonneg _)))
     hG0 hP0 G.mx (fun σ k => (Real.le_exp_log _).trans (Real.exp_le_exp.mpr (hmx σ k))) hmxm

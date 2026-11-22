@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.CompF
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.ExistsFilEqBot
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.CompF
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.ExistsFilEqBot
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -182,16 +186,16 @@ abbrev redOpen (i : X₀ ⟶ X) : K → X₀.Opens := fun k ↦ i ⁻¹ᵁ U k
 def Red.G : Tag κ (s₀ ≫ spMap π) (redOpen U i) ⥤ (NT κ U (s := s)).FullSubcategory where
   obj T := ⟨⟨h.mor.obj T.T, T.k, T.le⟩, h.inN_obj T.T⟩
   map f := ObjectProperty.homMk (⟨h.mor.functor.map (Tag.Hom.f f), h.le_of_le (Tag.Hom.le f)⟩ : Tag.Hom _ _)
-  map_id _ := ObjectProperty.hom_ext _ (Tag.hom_ext (Thick.hom_ext fun _ ↦ rfl))
-  map_comp _ _ := ObjectProperty.hom_ext _ (Tag.hom_ext (Thick.hom_ext fun _ ↦ rfl))
+  map_id _ := ObjectProperty.hom_ext _ (Tag.Hom.ext (Thick.Hom.ext' (AlgHom.ext fun _ ↦ rfl)))
+  map_comp _ _ := ObjectProperty.hom_ext _ (Tag.Hom.ext (Thick.Hom.ext' (AlgHom.ext fun _ ↦ rfl)))
 
 def Red.H : (NT κ U (s := s)).FullSubcategory ⥤ Tag κ (s₀ ≫ spMap π) (redOpen U i) where
   obj S := ⟨h.up S.obj.T S.property, S.obj.k, (h.unit S.property).le_preimage S.obj.le⟩
   map {S S'} f := ⟨h.upTo S.property (Tag.Hom.f f.hom ≫ h.unit S'.property),
     fun _ hp ↦ Tag.Hom.le f.hom hp⟩
-  map_id _ := Tag.hom_ext (Thick.hom_ext fun _ ↦ rfl)
+  map_id _ := Tag.Hom.ext (Thick.Hom.ext' (AlgHom.ext fun _ ↦ rfl))
   map_comp f g := by
-    refine Tag.hom_ext (Thick.hom_ext fun b ↦ ?_)
+    refine Tag.Hom.ext (Thick.Hom.ext' (AlgHom.ext fun b ↦ ?_))
     exact (rfl : (Tag.Hom.f g.hom).φ ((Tag.Hom.f f.hom).φ b) = (Tag.Hom.f g.hom).φ ((Tag.Hom.f f.hom).φ b))
 
 abbrev FN (κ : DividedPowers I) (s : X ⟶ Sp R) (U : K → X.Opens) :
@@ -214,13 +218,13 @@ def Red.η : 𝟭 _ ⟶ h.H U ⋙ h.G U where
   app S := ObjectProperty.homMk
     (⟨h.unit S.property, le_rfl⟩ : Tag.Hom S.obj ((h.G U).obj ((h.H U).obj S)).obj)
   naturality S S' f := by
-    refine ObjectProperty.hom_ext _ (Tag.hom_ext (Thick.hom_ext fun b ↦ ?_))
+    refine ObjectProperty.hom_ext _ (Tag.Hom.ext (Thick.Hom.ext' (AlgHom.ext fun b ↦ ?_)))
     exact (rfl : (Tag.Hom.f f.hom).φ b = (Tag.Hom.f f.hom).φ b)
 
 def Red.ε : h.G U ⋙ h.H U ⟶ 𝟭 _ where
   app T := (⟨h.upTo (h.inN_obj T.T) (𝟙 _), le_rfl⟩ : Tag.Hom ((h.H U).obj ((h.G U).obj T)) T)
   naturality S S' f := by
-    refine Tag.hom_ext (Thick.hom_ext fun b ↦ ?_)
+    refine Tag.Hom.ext (Thick.Hom.ext' (AlgHom.ext fun b ↦ ?_))
     exact (rfl : (Tag.Hom.f f).φ b = (Tag.Hom.f f).φ b)
 
 theorem Red.cG_pull1 : Function.Bijective (h.cG U).pull1 := by

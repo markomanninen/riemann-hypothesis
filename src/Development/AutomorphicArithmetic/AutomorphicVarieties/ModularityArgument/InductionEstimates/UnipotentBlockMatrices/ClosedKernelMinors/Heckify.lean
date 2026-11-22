@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.TypeFin
-import GroundTheory.AutomorphicForms.GKModules.ParametricIntegral
-import GroundTheory.AutomorphicForms.GKModules.Garding
-import GroundTheory.AutomorphicForms.L2LocalComponents.ArchBump
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SmoothingFinite
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.TypeFin
+public import GroundTheory.AutomorphicForms.GKModules.ParametricIntegral
+public import GroundTheory.AutomorphicForms.GKModules.Garding
+public import GroundTheory.AutomorphicForms.L2LocalComponents.ArchBump
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SmoothingFinite
+
+@[expose] public section
 
 section Lie
 
@@ -210,9 +214,10 @@ private theorem integ₂ {F : G1 K n × G1 K n → ℂ} (hF : Continuous F) : In
 
 private theorem cont_int {Φ : G1 K n → G1 K n → ℂ} (hΦ : Continuous (Function.uncurry Φ)) :
     Continuous fun x => ∫ k, Φ x k ∂D.ν := by
-  haveI := D.prob
-  have := continuous_parametric_integral_of_continuous (μ := D.ν) hΦ (typeFin D).1
-  rwa [Measure.restrict_eq_self_of_ae_mem D.supp] at this
+  set_option synthInstance.maxHeartbeats 400000 in
+    haveI := D.prob
+    have := continuous_parametric_integral_of_continuous (μ := D.ν) hΦ (typeFin D).1
+    rwa [Measure.restrict_eq_self_of_ae_mem D.supp] at this
 
 private theorem sub_int (f : G1 K n → ℂ) :
     ∫ k, f k ∂D.ν = ∫ s : (D.U : Set (G1 K n)), f s ∂(Measure.comap Subtype.val D.ν) := by
@@ -226,18 +231,19 @@ private theorem fin_comap : IsFiniteMeasure (Measure.comap (Subtype.val : ↥(D.
 
 private theorem idem_int {Φ : G1 K n → ℂ} (hΦ : Continuous Φ) :
     ∫ h, D.e h * ∫ k, D.e k * Φ (h * k) ∂D.ν ∂D.ν = ∫ k, D.e k * Φ k ∂D.ν := by
-  haveI := D.prob
-  have h1 : ∀ᵐ h ∂D.ν, D.e h * ∫ k, D.e k * Φ (h * k) ∂D.ν = ∫ k, D.e h * (D.e (h⁻¹ * k) * Φ k) ∂D.ν :=
-    D.supp.mono fun h hh => by
-      have := (D.inv h hh).integral_comp (measurableEmbedding_mulLeft h) (fun k => D.e (h⁻¹ * k) * Φ k)
-      rw [integral_const_mul, ← this]
-      simp
-  rw [integral_congr_ae h1, integral_integral_swap
-    (integ₂ D (F := Function.uncurry fun h k => D.e h * (D.e (h⁻¹ * k) * Φ k))
-      ((D.cont.comp continuous_fst).mul ((D.cont.comp (continuous_fst.inv.mul continuous_snd)).mul (hΦ.comp continuous_snd))))]
-  refine integral_congr_ae (D.supp.mono fun k hk => ?_)
-  simp only [← mul_assoc]
-  rw [integral_mul_const, D.idem k hk]
+  set_option synthInstance.maxHeartbeats 400000 in
+    haveI := D.prob
+    have h1 : ∀ᵐ h ∂D.ν, D.e h * ∫ k, D.e k * Φ (h * k) ∂D.ν = ∫ k, D.e h * (D.e (h⁻¹ * k) * Φ k) ∂D.ν :=
+      D.supp.mono fun h hh => by
+        have := (D.inv h hh).integral_comp (measurableEmbedding_mulLeft h) (fun k => D.e (h⁻¹ * k) * Φ k)
+        rw [integral_const_mul, ← this]
+        simp
+    rw [integral_congr_ae h1, integral_integral_swap
+      (integ₂ D (F := Function.uncurry fun h k => D.e h * (D.e (h⁻¹ * k) * Φ k))
+        ((D.cont.comp continuous_fst).mul ((D.cont.comp (continuous_fst.inv.mul continuous_snd)).mul (hΦ.comp continuous_snd))))]
+    refine integral_congr_ae (D.supp.mono fun k hk => ?_)
+    simp only [← mul_assoc]
+    rw [integral_mul_const, D.idem k hk]
 
 end Typ
 
@@ -284,68 +290,70 @@ variable (D : TypeDat K n)
 
 private theorem exR (f : CC K n) : ∃ b : CC K n, (∀ g, b g = ∫ k, f (g * k⁻¹) * D.e k ∂D.ν) ∧
     (UpperTheory.ConvolutionTheory.C.IsLeftSmooth f → UpperTheory.ConvolutionTheory.C.IsLeftSmooth b) := by
-  have hU := (typeFin D).1
-  have hc : Continuous fun g => ∫ k, f (g * k⁻¹) * D.e k ∂D.ν :=
-    cont_int D (Φ := fun g k => f (g * k⁻¹) * D.e k)
-      ((f.continuous.comp (continuous_fst.mul continuous_snd.inv)).mul (D.cont.comp continuous_snd))
-  have hz : ∀ g, g ∉ tsupport f * (D.U : Set (G1 K n)) → ∫ k, f (g * k⁻¹) * D.e k ∂D.ν = 0 := fun g hg => by
-    refine integral_eq_zero_of_ae (D.supp.mono fun k hk => ?_)
-    have : f (g * k⁻¹) = 0 := by
-      by_contra h0
-      exact hg ⟨_, subset_tsupport _ h0, k, hk, by simp⟩
-    simp [this]
-  refine ⟨⟨⟨_, hc⟩, HasCompactSupport.intro (f.hasCompactSupport.isCompact.mul hU) hz⟩, fun _ => rfl, fun hf => ⟨fun x => ?_, ?_⟩⟩
-  · haveI : CompactSpace (D.U : Set (G1 K n)) := isCompact_iff_compactSpace.1 hU
-    haveI := fin_comap D
-    have := smooth_avg (Measure.comap Subtype.val D.ν) hf (w := fun s : (D.U : Set (G1 K n)) => D.e s)
-      (D.cont.comp continuous_subtype_val) (q := fun _ => 1) (r := fun _ => 1) continuous_const continuous_const
-      (y := fun s => x * (s : G1 K n)⁻¹) (continuous_const.mul continuous_subtype_val.inv)
-    convert this using 2 with A
-    change ∫ k, f (archP K n A * x * k⁻¹) * D.e k ∂D.ν = _
-    rw [sub_int]
-    refine integral_congr_ae (Eventually.of_forall fun s => ?_)
-    simp [mul_comm (D.e _), mul_assoc]
-  · obtain ⟨-, U, hUo, hinv⟩ := hf
-    refine ⟨U, hUo, fun u hu x => ?_⟩
-    change ∫ k, f (finOne K n u * x * k⁻¹) * D.e k ∂D.ν = ∫ k, f (x * k⁻¹) * D.e k ∂D.ν
-    simp only [mul_assoc, hinv u hu]
+  set_option synthInstance.maxHeartbeats 400000 in
+    have hU := (typeFin D).1
+    have hc : Continuous fun g => ∫ k, f (g * k⁻¹) * D.e k ∂D.ν :=
+      cont_int D (Φ := fun g k => f (g * k⁻¹) * D.e k)
+        ((f.continuous.comp (continuous_fst.mul continuous_snd.inv)).mul (D.cont.comp continuous_snd))
+    have hz : ∀ g, g ∉ tsupport f * (D.U : Set (G1 K n)) → ∫ k, f (g * k⁻¹) * D.e k ∂D.ν = 0 := fun g hg => by
+      refine integral_eq_zero_of_ae (D.supp.mono fun k hk => ?_)
+      have : f (g * k⁻¹) = 0 := by
+        by_contra h0
+        exact hg ⟨_, subset_tsupport _ h0, k, hk, by simp⟩
+      simp [this]
+    refine ⟨⟨⟨_, hc⟩, HasCompactSupport.intro (f.hasCompactSupport.isCompact.mul hU) hz⟩, fun _ => rfl, fun hf => ⟨fun x => ?_, ?_⟩⟩
+    · haveI : CompactSpace (D.U : Set (G1 K n)) := isCompact_iff_compactSpace.1 hU
+      haveI := fin_comap D
+      have := smooth_avg (Measure.comap Subtype.val D.ν) hf (w := fun s : (D.U : Set (G1 K n)) => D.e s)
+        (D.cont.comp continuous_subtype_val) (q := fun _ => 1) (r := fun _ => 1) continuous_const continuous_const
+        (y := fun s => x * (s : G1 K n)⁻¹) (continuous_const.mul continuous_subtype_val.inv)
+      convert this using 2 with A
+      change ∫ k, f (archP K n A * x * k⁻¹) * D.e k ∂D.ν = _
+      rw [sub_int]
+      refine integral_congr_ae (Eventually.of_forall fun s => ?_)
+      simp [mul_comm (D.e _), mul_assoc]
+    · obtain ⟨-, U, hUo, hinv⟩ := hf
+      refine ⟨U, hUo, fun u hu x => ?_⟩
+      change ∫ k, f (finOne K n u * x * k⁻¹) * D.e k ∂D.ν = ∫ k, f (x * k⁻¹) * D.e k ∂D.ν
+      simp only [mul_assoc, hinv u hu]
 
 private theorem exL (f : CC K n) : ∃ c : CC K n, (∀ g, c g = ∫ k, D.e k * f (k⁻¹ * g) ∂D.ν) ∧
     (UpperTheory.ConvolutionTheory.C.IsLeftSmooth f → UpperTheory.ConvolutionTheory.C.IsLeftSmooth c) := by
-  have hU := (typeFin D).1
-  have hc : Continuous fun g => ∫ k, D.e k * f (k⁻¹ * g) ∂D.ν :=
-    cont_int D (Φ := fun g k => D.e k * f (k⁻¹ * g))
-      ((D.cont.comp continuous_snd).mul (f.continuous.comp (continuous_snd.inv.mul continuous_fst)))
-  have hz : ∀ g, g ∉ (D.U : Set (G1 K n)) * tsupport f → ∫ k, D.e k * f (k⁻¹ * g) ∂D.ν = 0 := fun g hg => by
-    refine integral_eq_zero_of_ae (D.supp.mono fun k hk => ?_)
-    have : f (k⁻¹ * g) = 0 := by
-      by_contra h0
-      exact hg ⟨k, hk, _, subset_tsupport _ h0, by simp⟩
-    simp [this]
-  refine ⟨⟨⟨_, hc⟩, HasCompactSupport.intro (hU.mul f.hasCompactSupport.isCompact) hz⟩, fun _ => rfl, fun hf => ⟨fun x => ?_, ?_⟩⟩
-  · haveI : CompactSpace (D.U : Set (G1 K n)) := isCompact_iff_compactSpace.1 hU
-    haveI := fin_comap D
-    let κ : ↥(D.U : Set (G1 K n)) → archGroup K n := fun s => infPart K n (((s : G1 K n)⁻¹ : G1 K n) : AdelicGLn.AdelicGL K n)
-    have hκ : Continuous κ := continuous_infPart.comp (continuous_subtype_val.comp continuous_subtype_val.inv)
-    have := smooth_avg (Measure.comap Subtype.val D.ν) hf (w := fun s : (D.U : Set (G1 K n)) => D.e s)
-      (D.cont.comp continuous_subtype_val) (q := κ) (r := fun s => (κ s)⁻¹) hκ hκ.inv (y := fun s => (s : G1 K n)⁻¹ * x)
-      (continuous_subtype_val.inv.mul continuous_const)
-    convert this using 2 with A
-    change ∫ k, D.e k * f (k⁻¹ * (archP K n A * x)) ∂D.ν = _
-    rw [sub_int]
-    refine integral_congr_ae (Eventually.of_forall fun s => ?_)
-    simp only [← mul_assoc]
-    rw [conj_arch]
-  · obtain ⟨-, U, hUo, hinv⟩ := hf
-    obtain ⟨N, hN⟩ := ProfiniteGrp.exist_openNormalSubgroup_sub_open_nhds_of_one hUo U.one_mem
-    refine ⟨N.toOpenSubgroup.toSubgroup, N.toOpenSubgroup.isOpen, fun u hu x => ?_⟩
-    change ∫ k, D.e k * f (k⁻¹ * (finOne K n u * x)) ∂D.ν = ∫ k, D.e k * f (k⁻¹ * x) ∂D.ν
-    refine integral_congr_ae (D.supp.mono fun k hk => ?_)
-    have hk' : k⁻¹ ∈ KG K n := SetLike.le_def.1 (typeFin D).2.1 (D.U.inv_mem hk)
-    rw [KG, Subgroup.mem_comap] at hk'
-    obtain ⟨φ, hφ⟩ := fin_conj (m := k⁻¹) hk' u
-    beta_reduce
-    rw [← mul_assoc, hφ, mul_assoc, hinv _ (hN (N.isNormal'.conj_mem u hu φ))]
+  set_option synthInstance.maxHeartbeats 400000 in
+    have hU := (typeFin D).1
+    have hc : Continuous fun g => ∫ k, D.e k * f (k⁻¹ * g) ∂D.ν :=
+      cont_int D (Φ := fun g k => D.e k * f (k⁻¹ * g))
+        ((D.cont.comp continuous_snd).mul (f.continuous.comp (continuous_snd.inv.mul continuous_fst)))
+    have hz : ∀ g, g ∉ (D.U : Set (G1 K n)) * tsupport f → ∫ k, D.e k * f (k⁻¹ * g) ∂D.ν = 0 := fun g hg => by
+      refine integral_eq_zero_of_ae (D.supp.mono fun k hk => ?_)
+      have : f (k⁻¹ * g) = 0 := by
+        by_contra h0
+        exact hg ⟨k, hk, _, subset_tsupport _ h0, by simp⟩
+      simp [this]
+    refine ⟨⟨⟨_, hc⟩, HasCompactSupport.intro (hU.mul f.hasCompactSupport.isCompact) hz⟩, fun _ => rfl, fun hf => ⟨fun x => ?_, ?_⟩⟩
+    · haveI : CompactSpace (D.U : Set (G1 K n)) := isCompact_iff_compactSpace.1 hU
+      haveI := fin_comap D
+      let κ : ↥(D.U : Set (G1 K n)) → archGroup K n := fun s => infPart K n (((s : G1 K n)⁻¹ : G1 K n) : AdelicGLn.AdelicGL K n)
+      have hκ : Continuous κ := continuous_infPart.comp (continuous_subtype_val.comp continuous_subtype_val.inv)
+      have := smooth_avg (Measure.comap Subtype.val D.ν) hf (w := fun s : (D.U : Set (G1 K n)) => D.e s)
+        (D.cont.comp continuous_subtype_val) (q := κ) (r := fun s => (κ s)⁻¹) hκ hκ.inv (y := fun s => (s : G1 K n)⁻¹ * x)
+        (continuous_subtype_val.inv.mul continuous_const)
+      convert this using 2 with A
+      change ∫ k, D.e k * f (k⁻¹ * (archP K n A * x)) ∂D.ν = _
+      rw [sub_int]
+      refine integral_congr_ae (Eventually.of_forall fun s => ?_)
+      simp only [← mul_assoc]
+      rw [conj_arch]
+    · obtain ⟨-, U, hUo, hinv⟩ := hf
+      obtain ⟨N, hN⟩ := ProfiniteGrp.exist_openNormalSubgroup_sub_open_nhds_of_one hUo U.one_mem
+      refine ⟨N.toOpenSubgroup.toSubgroup, N.toOpenSubgroup.isOpen, fun u hu x => ?_⟩
+      change ∫ k, D.e k * f (k⁻¹ * (finOne K n u * x)) ∂D.ν = ∫ k, D.e k * f (k⁻¹ * x) ∂D.ν
+      refine integral_congr_ae (D.supp.mono fun k hk => ?_)
+      have hk' : k⁻¹ ∈ KG K n := SetLike.le_def.1 (typeFin D).2.1 (D.U.inv_mem hk)
+      rw [KG, Subgroup.mem_comap] at hk'
+      obtain ⟨φ, hφ⟩ := fin_conj (m := k⁻¹) hk' u
+      beta_reduce
+      rw [← mul_assoc, hφ, mul_assoc, hinv _ (hN (N.isNormal'.conj_mem u hu φ))]
 
 end Ops
 
@@ -353,53 +361,54 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.heckify :
     ∀ {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (G1 K n)) [μ.IsHaarMeasure] (D : TypeDat K n) (a₀ : CC K n), CuspidalProjection.ccStar a₀ = a₀ → UpperTheory.ConvolutionTheory.C.IsLeftSmooth a₀ →
       ∃ a : CC K n, D.Hecke a ∧ CuspidalProjection.ccStar a = a ∧ UpperTheory.ConvolutionTheory.C.IsLeftSmooth a ∧
         ∀ g, a g = ∫ k, ∫ k', D.e k * a₀ (k⁻¹ * g * k'⁻¹) * D.e k' ∂D.ν ∂D.ν := by
-  intro K _ _ n μ _ D a₀ hst hsm
-  haveI := D.prob
-  obtain ⟨b, hb, hbs⟩ := exR D a₀
-  obtain ⟨a, ha, has⟩ := exL D b
-  have hform : ∀ g, a g = ∫ k, ∫ k', D.e k * a₀ (k⁻¹ * g * k'⁻¹) * D.e k' ∂D.ν ∂D.ν := fun g => by
-    rw [ha]
-    refine integral_congr_ae (Eventually.of_forall fun k => ?_)
-    beta_reduce
-    rw [hb, ← integral_const_mul]
-    refine integral_congr_ae (Eventually.of_forall fun k' => ?_)
-    simp only [mul_assoc]
-  have hs₀ : ∀ y, conj (a₀ y) = a₀ y⁻¹ := fun y => by
-    have := DFunLike.congr_fun hst y⁻¹
-    rwa [CuspidalProjection.ccStar_apply, inv_inv] at this
-  have hTc : Continuous fun p : G1 K n × G1 K n => a₀ (p.1 * p.2) := a₀.continuous.comp (continuous_fst.mul continuous_snd)
-  have key : ∀ g, conj (a g⁻¹) = a g := fun g => by
-    let T : G1 K n → G1 K n → ℂ := fun k k' => D.e k * a₀ (k⁻¹ * g * k'⁻¹) * D.e k'
-    have hT : Continuous (Function.uncurry fun k k' => T k' k) :=
-      ((D.cont.comp continuous_snd).mul (a₀.continuous.comp ((continuous_snd.inv.mul continuous_const).mul
-        continuous_fst.inv))).mul (D.cont.comp continuous_fst)
-    calc conj (a g⁻¹) = ∫ k, ∫ k', T k'⁻¹ k⁻¹ ∂D.ν ∂D.ν := by
-          rw [hform, ← integral_conj]
-          refine integral_congr_ae (D.supp.mono fun k hk => ?_)
-          beta_reduce
-          rw [← integral_conj]
-          refine integral_congr_ae (D.supp.mono fun k' hk' => ?_)
-          simp only [T, map_mul, ← D.star k hk, ← D.star k' hk', hs₀, mul_inv_rev, inv_inv, mul_assoc]
-          ring
-      _ = ∫ k, ∫ k', T k' k⁻¹ ∂D.ν ∂D.ν :=
-          integral_congr_ae (Eventually.of_forall fun k => inv_int D fun k' => T k' k⁻¹)
-      _ = ∫ k, ∫ k', T k' k ∂D.ν ∂D.ν := inv_int D fun k => ∫ k', T k' k ∂D.ν
-      _ = ∫ k', ∫ k, T k' k ∂D.ν ∂D.ν := integral_integral_swap (integ₂ D hT)
-      _ = a g := (hform g).symm
-  have hL : ∀ g, ∫ k, D.e k * a (k⁻¹ * g) ∂D.ν = a g := fun g => by
-    rw [ha g, ← idem_int D (Φ := fun k => b (k⁻¹ * g)) (b.continuous.comp (continuous_inv.mul continuous_const))]
-    refine integral_congr_ae (Eventually.of_forall fun h => ?_)
-    beta_reduce
-    rw [ha]
-    simp only [mul_inv_rev, mul_assoc]
-  have hR : ∀ g, ∫ k, a (g * k⁻¹) * D.e k ∂D.ν = a g := fun g => by
-    have h2 := inv_int D fun k => D.e k * a (k⁻¹ * g⁻¹)
-    simp only [inv_inv] at h2
-    rw [hL] at h2
-    rw [← key g, ← h2, ← integral_conj]
-    refine integral_congr_ae (D.supp.mono fun k hk => ?_)
-    simp only [map_mul, D.star k hk, Complex.conj_conj]
-    rw [show k * g⁻¹ = (g * k⁻¹)⁻¹ by simp, key, mul_comm]
-  refine ⟨a, fun g => ⟨hL g, hR g⟩, ?_, has (hbs hsm), hform⟩
-  ext g
-  rw [CuspidalProjection.ccStar_apply, key]
+  set_option synthInstance.maxHeartbeats 400000 in
+    intro K _ _ n μ _ D a₀ hst hsm
+    haveI := D.prob
+    obtain ⟨b, hb, hbs⟩ := exR D a₀
+    obtain ⟨a, ha, has⟩ := exL D b
+    have hform : ∀ g, a g = ∫ k, ∫ k', D.e k * a₀ (k⁻¹ * g * k'⁻¹) * D.e k' ∂D.ν ∂D.ν := fun g => by
+      rw [ha]
+      refine integral_congr_ae (Eventually.of_forall fun k => ?_)
+      beta_reduce
+      rw [hb, ← integral_const_mul]
+      refine integral_congr_ae (Eventually.of_forall fun k' => ?_)
+      simp only [mul_assoc]
+    have hs₀ : ∀ y, conj (a₀ y) = a₀ y⁻¹ := fun y => by
+      have := DFunLike.congr_fun hst y⁻¹
+      rwa [CuspidalProjection.ccStar_apply, inv_inv] at this
+    have hTc : Continuous fun p : G1 K n × G1 K n => a₀ (p.1 * p.2) := a₀.continuous.comp (continuous_fst.mul continuous_snd)
+    have key : ∀ g, conj (a g⁻¹) = a g := fun g => by
+      let T : G1 K n → G1 K n → ℂ := fun k k' => D.e k * a₀ (k⁻¹ * g * k'⁻¹) * D.e k'
+      have hT : Continuous (Function.uncurry fun k k' => T k' k) :=
+        ((D.cont.comp continuous_snd).mul (a₀.continuous.comp ((continuous_snd.inv.mul continuous_const).mul
+          continuous_fst.inv))).mul (D.cont.comp continuous_fst)
+      calc conj (a g⁻¹) = ∫ k, ∫ k', T k'⁻¹ k⁻¹ ∂D.ν ∂D.ν := by
+            rw [hform, ← integral_conj]
+            refine integral_congr_ae (D.supp.mono fun k hk => ?_)
+            beta_reduce
+            rw [← integral_conj]
+            refine integral_congr_ae (D.supp.mono fun k' hk' => ?_)
+            simp only [T, map_mul, ← D.star k hk, ← D.star k' hk', hs₀, mul_inv_rev, inv_inv, mul_assoc]
+            ring
+        _ = ∫ k, ∫ k', T k' k⁻¹ ∂D.ν ∂D.ν :=
+            integral_congr_ae (Eventually.of_forall fun k => inv_int D fun k' => T k' k⁻¹)
+        _ = ∫ k, ∫ k', T k' k ∂D.ν ∂D.ν := inv_int D fun k => ∫ k', T k' k ∂D.ν
+        _ = ∫ k', ∫ k, T k' k ∂D.ν ∂D.ν := integral_integral_swap (integ₂ D hT)
+        _ = a g := (hform g).symm
+    have hL : ∀ g, ∫ k, D.e k * a (k⁻¹ * g) ∂D.ν = a g := fun g => by
+      rw [ha g, ← idem_int D (Φ := fun k => b (k⁻¹ * g)) (b.continuous.comp (continuous_inv.mul continuous_const))]
+      refine integral_congr_ae (Eventually.of_forall fun h => ?_)
+      beta_reduce
+      rw [ha]
+      simp only [mul_inv_rev, mul_assoc]
+    have hR : ∀ g, ∫ k, a (g * k⁻¹) * D.e k ∂D.ν = a g := fun g => by
+      have h2 := inv_int D fun k => D.e k * a (k⁻¹ * g⁻¹)
+      simp only [inv_inv] at h2
+      rw [hL] at h2
+      rw [← key g, ← h2, ← integral_conj]
+      refine integral_congr_ae (D.supp.mono fun k hk => ?_)
+      simp only [map_mul, D.star k hk, Complex.conj_conj]
+      rw [show k * g⁻¹ = (g * k⁻¹)⁻¹ by simp, key, mul_comm]
+    refine ⟨a, fun g => ⟨hL g, hR g⟩, ?_, has (hbs hsm), hform⟩
+    ext g
+    rw [CuspidalProjection.ccStar_apply, key]

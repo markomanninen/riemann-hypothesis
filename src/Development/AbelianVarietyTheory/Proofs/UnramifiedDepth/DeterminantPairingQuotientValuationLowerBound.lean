@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
-import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.WtAddSingle
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.LegendreBoundsFactorialMultiIndexCapelli
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
+public import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.WtAddSingle
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.LegendreBoundsFactorialMultiIndexCapelli
+
+@[expose] public section
 
 open ReciprocityTheory.PGsh
 
@@ -24,7 +28,7 @@ theorem cayDet_isHomogeneous (n : ℕ) (C : Type) [CommRing C] :
   simpa using h
 
 theorem coeff_cayDet_pow_nonneg (C : Type) [Field C] (v : AddValuation C (WithTop ℝ))
-    (n x : ℕ) (A : Fin n × Fin n →₀ ℕ) : 0 ≤ v (coeff A (cayDet n C ^ x)) := by
+    (n x : ℕ) (A : Fin n × Fin n →₀ ℕ) : 0 ≤ v (AddMonoidAlgebra.coeff (cayDet n C ^ x) A) := by
   rw [← cayDet_map (R := C), ← map_pow, coeff_map, eq_intCast]
   exact intCast_nonneg v _
 
@@ -48,13 +52,13 @@ theorem le_val_div {C : Type} [Field C] (v : AddValuation C (WithTop ℝ)) {N D 
     exact WithTop.coe_le_coe.mpr (by linarith)
 
 theorem main : (∀ (C : Type) [Field C] [CharZero C] (v : AddValuation C (WithTop ℝ)) (l : ℕ), l.Prime → v (l : C) = 1 → ∀ (i n₀ s : ℕ) (Q : MvPolynomial (Fin n₀ × Fin n₀) C), 1 ≤ s → 1 ≤ n₀ →
-    (∀ A, (((s : ℝ) / 8 - (n₀ : ℝ) ^ 2 * (Real.logb l (n₀ * s) + 1) : ℝ) : WithTop ℝ) ≤ v (MvPolynomial.coeff A Q)) →
+    (∀ A, (((s : ℝ) / 8 - (n₀ : ℝ) ^ 2 * (Real.logb l (n₀ * s) + 1) : ℝ) : WithTop ℝ) ≤ v (AddMonoidAlgebra.coeff Q A)) →
     (((s : ℝ) / 8 - (n₀ : ℝ) ^ 2 * (3 * Real.logb l n₀ + 2 * Real.logb l s + i + 3) : ℝ) : WithTop ℝ) ≤
-      v ((∑ A ∈ (cayDet n₀ C ^ (l ^ i * s)).support, MvPolynomial.coeff A (cayDet n₀ C ^ (l ^ i * s)) * (A.prod fun _ e => (e.factorial : C)) * MvPolynomial.coeff A (Q)) / (∑ A ∈ (cayDet n₀ C ^ (l ^ i * s)).support, MvPolynomial.coeff A (cayDet n₀ C ^ (l ^ i * s)) * (A.prod fun _ e => (e.factorial : C)) * MvPolynomial.coeff A (cayDet n₀ C ^ (l ^ i * s))))) := by
+      v ((∑ A ∈ (cayDet n₀ C ^ (l ^ i * s)).support, AddMonoidAlgebra.coeff (cayDet n₀ C ^ (l ^ i * s)) A * (A.prod fun _ e => (e.factorial : C)) * AddMonoidAlgebra.coeff (Q) A) / (∑ A ∈ (cayDet n₀ C ^ (l ^ i * s)).support, AddMonoidAlgebra.coeff (cayDet n₀ C ^ (l ^ i * s)) A * (A.prod fun _ e => (e.factorial : C)) * AddMonoidAlgebra.coeff (cayDet n₀ C ^ (l ^ i * s)) A))) := by
   intro C _ _ v l hl hvl i n₀ s Q hs hn₀ hQ
   have hvnat : ∀ m : ℕ, m ≠ 0 → v (m : C) = ((padicValNat l m : ℝ) : WithTop ℝ) := by
     intro m hm
-    rw [natCast_eq_factorization v hl hvl hm, Nat.factorization_def m hl]
+    rw [natCast_eq_factorization v hl hvl hm, Nat.factorization_def m hl, ← Nat.padicValNat_def]
   obtain ⟨-, hL2, hL3⟩ := GlobalTheory.LegendreBounds.legendre_bounds l hl
   have hk0 : l ^ i * s ≠ 0 := Nat.mul_ne_zero (pow_ne_zero _ hl.ne_zero) (by omega)
 
@@ -74,8 +78,8 @@ theorem main : (∀ (C : Type) [Field C] [CharZero C] (v : AddValuation C (WithT
   obtain ⟨qb, hqb⟩ : ∃ qb : ℝ, qb = (s : ℝ) / 8 - (n₀ : ℝ) ^ 2 * (Real.logb l (n₀ * s) + 1) :=
     ⟨_, rfl⟩
   have hnum : ∀ A ∈ (cayDet n₀ C ^ (l ^ i * s)).support, ((wb + qb : ℝ) : WithTop ℝ) ≤
-      v (MvPolynomial.coeff A (cayDet n₀ C ^ (l ^ i * s)) * (A.prod fun _ e => (e.factorial : C)) *
-        MvPolynomial.coeff A Q) := by
+      v (AddMonoidAlgebra.coeff (cayDet n₀ C ^ (l ^ i * s)) A * (A.prod fun _ e => (e.factorial : C)) *
+        AddMonoidAlgebra.coeff Q A) := by
     intro A hA
     have hsum := sum_eq_of_mem_support C n₀ (l ^ i * s) A hA
     have hW := hL2 (Fin n₀ × Fin n₀) A
@@ -89,7 +93,7 @@ theorem main : (∀ (C : Type) [Field C] [CharZero C] (v : AddValuation C (WithT
       Finset.prod_ne_zero_iff.mpr fun j _ => Nat.factorial_ne_zero _
     have h2 : (wb : WithTop ℝ) ≤ ((padicValNat l (∏ j, (A j).factorial) : ℝ) : WithTop ℝ) :=
       WithTop.coe_le_coe.mpr (by rw [hwb, sq]; linarith)
-    have h3 : (qb : WithTop ℝ) ≤ v (MvPolynomial.coeff A Q) := by
+    have h3 : (qb : WithTop ℝ) ≤ v (AddMonoidAlgebra.coeff Q A) := by
       rw [hqb]; exact hQ A
     rw [AddValuation.map_mul, AddValuation.map_mul, hwt, hvnat _ hne]
     calc ((wb + qb : ℝ) : WithTop ℝ) = 0 + (wb : WithTop ℝ) + (qb : WithTop ℝ) := by

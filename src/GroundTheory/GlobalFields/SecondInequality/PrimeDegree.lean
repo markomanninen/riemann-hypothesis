@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms.InfiniteAdeleRingMapInfiniteAdeleRingMap
-import GroundTheory.GlobalFields.SecondInequality.Statement
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms.InfiniteAdeleRingMapInfiniteAdeleRingMap
+public import GroundTheory.GlobalFields.SecondInequality.Statement
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

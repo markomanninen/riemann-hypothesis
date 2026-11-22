@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelQPfA
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.PhibOLComplete
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelQPfA
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.PhibOLComplete
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem phibN_div (p : ℕ) (hp : p.Prime) [Nontrivial O] [IsAdicComplete (Ideal
   haveI : CharP (PowerSeries (O ⧸ I)) p := charP_of_injective_algebraMap hinj p
   have hmap : PowerSeries.map (Ideal.Quotient.mk I) (((1 + PowerSeries.X) ^ p - 1) ^ N) =
       PowerSeries.X ^ (p * N) := by
-    simp only [map_pow, map_sub, map_add, map_one, PowerSeries.map_X]
+    simp only [map_pow, map_sub, map_add (f := _), map_one, PowerSeries.map_X]
     rw [add_pow_char, one_pow, add_sub_cancel_left, ← pow_mul]
   have key : ∀ c : O, Ideal.Quotient.mk I c = 1 → IsUnit c := by
     intro c hc
@@ -109,7 +113,8 @@ theorem avg_mem (u : Oˣ) (x : LetA O n) : avg W u x ∈ W.AΔ := by
   show ∀ δ ∈ W.DelF, W.γA δ (avg W u x) = avg W u x
   intro δ' hδ'
   unfold avg
-  rw [map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_smul, map_sum]
   congr 1
   refine Finset.sum_nbij' (fun δ => δ' * δ) (fun δ => δ'⁻¹ * δ) ?_ ?_ ?_ ?_ ?_
   · intro a ha
@@ -131,7 +136,7 @@ theorem avg_self (u : Oˣ) (hu : (u : O) = (W.DelF.card : ℕ)) {x : LetA O n} (
     smul_smul, Units.inv_mul, one_smul]
 
 theorem avg_add (u : Oˣ) (x y : LetA O n) : avg W u (x + y) = avg W u x + avg W u y := by
-  simp only [avg, map_add, Finset.sum_add_distrib, smul_add]
+  simp only [avg, map_add (f := _), Finset.sum_add_distrib, smul_add]
 
 theorem avg_mul_left (u : Oˣ) {y : LetA O n} (hy : y ∈ W.AΔ) (x : LetA O n) :
     avg W u (y * x) = y * avg W u x := by
@@ -144,7 +149,8 @@ theorem avg_mul_left (u : Oˣ) {y : LetA O n} (hy : y ∈ W.AΔ) (x : LetA O n) 
 
 theorem avg_sum (u : Oˣ) {ι : Type} (s : Finset ι) (f : ι → LetA O n) :
     avg W u (∑ i ∈ s, f i) = ∑ i ∈ s, avg W u (f i) := by
-  simp only [avg, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [avg, map_sum, Finset.smul_sum]
   exact Finset.sum_comm
 
 theorem div_at (hp : PD.p.Prime) [Nontrivial O] [IsAdicComplete (Ideal.span {((PD.p : ℕ) : O)}) O]
@@ -195,7 +201,8 @@ theorem div_at (hp : PD.p.Prime) [Nontrivial O] [IsAdicComplete (Ideal.span {((P
     show (R : PowerSeries O) = (∑ i : Fin (PD.p * N), algebraMap O (LetA O n) (R.coeff i) * (letπ : LetA O n) ^ (i : ℕ)) j
     rw [Finset.sum_apply]
     ext k
-    rw [Polynomial.coeff_coe, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Polynomial.coeff_coe, map_sum]
     have ht : ∀ i : Fin (PD.p * N), PowerSeries.coeff k ((algebraMap O (LetA O n) (R.coeff i) * (letπ : LetA O n) ^ (i : ℕ)) j) =
         if k = (i : ℕ) then R.coeff k else 0 := by
       intro i

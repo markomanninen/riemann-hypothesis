@@ -1,10 +1,14 @@
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeMapArea
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeMapAreaOne
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PAreaFormulaInj
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PAreaFormulaInjSet
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PAreaFormulaLocal
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChartGramMA
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.CmpbHessAtAddConst
+module
+
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeMapArea
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeMapAreaOne
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PAreaFormulaInj
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PAreaFormulaInjSet
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PAreaFormulaLocal
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChartGramMA
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.CmpbHessAtAddConst
+
+@[expose] public section
 
 set_option autoImplicit false
 

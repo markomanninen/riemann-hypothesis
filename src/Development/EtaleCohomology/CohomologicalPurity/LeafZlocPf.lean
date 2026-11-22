@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafFlqPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafFlqPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -27,7 +31,7 @@ theorem sep {R : Type} [CommRing R] {G : Shv R} {Y : Scheme.{0}} (s : Sec G Y)
   let Zf : I → Scheme.{0} := fun i => i.1.1
   let ff : ∀ i : I, Zf i ⟶ Y := fun i => i.1.2
   have hG : Presheaf.IsSheaf (Scheme.etaleTopology) (G.obj ⋙ forget (ModuleCat.{1} (ULift.{1} R))) :=
-    (Presheaf.isSheaf_iff_isSheaf_forget _ _ (forget (ModuleCat.{1} (ULift.{1} R)))).1 G.cond
+    (Presheaf.isSheaf_iff_isSheaf_forget _ _ (forget (ModuleCat.{1} (ULift.{1} R)))).1 G.property
   have hmem : Sieve.generate (Presieve.ofArrows Zf ff) ∈ Scheme.etaleTopology Y := by
     apply Precoverage.generate_mem_toGrothendieck
     refine (Scheme.ofArrows_mem_precoverage_iff (P := (@Etale : MorphismProperty Scheme.{0}))).2 ⟨fun y => ?_, fun i => ?_⟩

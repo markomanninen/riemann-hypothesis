@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.NabValNMap
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsIntegralCombinationOfMemHaO
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.VVAlgebraMapNonnegDvr
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.NabValNMap
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsIntegralCombinationOfMemHaO
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.VVAlgebraMapNonnegDvr
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -11,8 +15,8 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.G
 
 namespace GlobalTheory.ThetaLeast
 
-open MvPowerSeries ReciprocityTheory.ChartRestriction.G.TB ReciprocityTheory.ChartRestriction.G.TB.WickVanishing GlobalTheory.QuadDeriv GlobalTheory.GaugeBaseChange in
 
+open MvPowerSeries ReciprocityTheory.ChartRestriction.G.TB ReciprocityTheory.ChartRestriction.G.TB.WickVanishing GlobalTheory.QuadDeriv GlobalTheory.GaugeBaseChange in
 theorem nabValN_algebraMap (S S' : Type) [CommRing S] [Algebra ℚ S] [CommRing S'] [Algebra ℚ S'] [Algebra S S']
     (d : ℕ) (O : Type) [CommRing O] [StarRing O] (B : FB S d O) (h : PS S 2 d)
     (hc : MvPowerSeries.constantCoeff h = 0) (w0 : O) (m n : ℕ) (f : PS S n d) (κ : Type) [Fintype κ]
@@ -53,7 +57,8 @@ theorem nabValN_algebraMap (S S' : Type) [CommRing S] [Algebra ℚ S] [CommRing 
     fin_cases j
     exact baseChange_pt ψ b
   unfold nabValN
-  rw [← MvPowerSeries.constantCoeff_map, ← GlobalTheory.dpolyN_map, eF, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.constantCoeff_map, ← GlobalTheory.dpolyN_map, eF, map_mul,
     map_expS _ _ (by
       rw [MvPowerSeries.smul_eq_C_mul, map_mul, map_sum, Finset.sum_eq_zero fun b _ => cb b, mul_zero]),
     MvPowerSeries.smul_eq_C_mul, MvPowerSeries.smul_eq_C_mul, map_mul, map_C, map_natCast ψ, map_sum,
@@ -90,7 +95,7 @@ theorem exists_combination_integers (K : Type) [Field K] [NumberField K] (T : CD
   haveI : IsLocalRing V := IsLocalization.AtPrime.isLocalRing V p
   haveI : IsDedekindDomain V := IsLocalization.isDedekindDomain (𝓞 K) hS V
   haveI : IsPrincipalIdealRing V :=
-    ((tfae_of_isNoetherianRing_of_isLocalRing_of_isDomain V).out 2 0).1 ‹IsDedekindDomain V›
+    ((tfae_of_isNoetherianRing_of_isLocalRing_of_isDomain V).out 3 1).1 ‹IsDedekindDomain V›
   have hu : ∀ s : p.primeCompl, IsUnit (φ s) := fun s => by
     by_contra hn
     exact s.2 ((IsLocalRing.mem_maximalIdeal _).2 hn)

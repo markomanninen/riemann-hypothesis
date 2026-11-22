@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypFormsCl
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.LiMap
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypFormsCl
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.LiMap
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusHomOfIff
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TwistBaseChangeAndValuationStatements
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.FunctorialOfUnif
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.EndomorphismTorusExtensionPeriodOfAdjoint
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusExtensionMapWelldefinedAdditiveCharactersStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommutatorPairingEqOfMumfordBundleIsoStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusHomOfIff
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TwistBaseChangeAndValuationStatements
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.FunctorialOfUnif
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.EndomorphismTorusExtensionPeriodOfAdjoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusExtensionMapWelldefinedAdditiveCharactersStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommutatorPairingEqOfMumfordBundleIsoStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR
 open scoped CategoryTheory.Obj
@@ -22,6 +27,27 @@ theorem periods_of_key : ∀ (R : Type) [CommRing R] [IsDomain R] [CharZero R] (
   haveI : CharZero F := charZero_of_injective_algebraMap (algebraMap (FractionRing R) F).injective
   letI := gtGroup D₁.toPre F
   letI := gtGroup D₂.toPre F
+  letI : ∀ (D : DegPre R), AddCommGroup (GtPtF D F) := fun D => gtGroup D F
+  let iota : ∀ {D : DegPre R}, D.TauBimult → D.X →+ GtPtF D F := fun {D} hB =>
+    letI := gtGroup D F
+    AddMonoidHom.mk' (fun x => (exists_iota (F := F) hB x).choose) fun x x' => by
+      obtain ⟨b, v⟩ := (isIota_iff_val _ _).1 (exists_iota (F := F) hB x).choose_spec
+      obtain ⟨b', v'⟩ := (isIota_iff_val _ _).1 (exists_iota (F := F) hB x').choose_spec
+      obtain ⟨b'', v''⟩ := (isIota_iff_val _ _).1 (exists_iota (F := F) hB (x + x')).choose_spec
+      refine (isAdd_iff_eq _ _ _).1 ((isAdd_iff_val _ _ _).2 ⟨by rw [b, b', b'', cPoint_add], fun χ y J hJ => ?_⟩)
+      have C : IsCub (th D (T := TF (R := R) F) y J) := isCub_cubV D.cub hJ
+      rw [v χ y J hJ, v' χ y J hJ, v'' χ y J hJ, b, b', C.s01, C.s12]
+      exact tau_mul (𝟙 (TF (R := R) F)) hJ hB x x' χ
+  have isIota_iff_eq : ∀ {D : DegPre R} (hB : D.TauBimult) (x : D.X) (g : GtPtF D F), GtPtF.IsIota x g ↔ g = iota hB x := by
+    intro D hB x g
+    exact ⟨fun h => isIota_unique h (exists_iota (F := F) hB x).choose_spec,
+      fun h => h ▸ (exists_iota (F := F) hB x).choose_spec⟩
+  have qk_nsmul : ∀ {D : DegPre R} (hB : D.TauBimult) {k : ℕ} (p : QkPt D F k), k • p.g = iota hB p.y := by
+    intro D hB k p
+    obtain ⟨h, h₁, h₂⟩ := p.eq
+    exact ((isNsmul_iff_eq _ _ _).1 h₁).symm.trans ((isIota_iff_eq hB _ _).1 h₂)
+  let qkMk : ∀ {D : DegPre R} (hB : D.TauBimult) {k : ℕ} (y : D.X) (g : GtPtF D F), k • g = iota hB y → QkPt D F k :=
+    fun {D} hB {k} y g h => ⟨y, g, k • g, (isNsmul_iff_eq _ _ _).2 rfl, (isIota_iff_eq hB _ _).2 h⟩
   have hB₁ := D₁.tau_bimult
   have hB₂ := D₂.tau_bimult
   have inj₂ := GlobalTheory.IotaInj.main hL R I hA D₂ F
@@ -34,21 +60,21 @@ theorem periods_of_key : ∀ (R : Type) [CommRing R] [IsDomain R] [CharZero R] (
   have hm : ∀ x x', Act D₁.toPre D₂.toPre b h x x' ↔ x' = m x := fun x x' => ⟨hmu x x', fun e => e ▸ hmf x⟩
 
   have push : ∀ k : ℕ, 1 ≤ k → ∀ f₁ f₂, Tors U₁.toUnifPre F k f₁ → Tors U₂.toUnifPre F k f₂ → ∀ p : QkPt D₁.toPre F k,
-      ∃ p' : QkPt D₂.toPre F k, p'.g = m p.g ∧ f₂ p' = f₁ p ≫ c ∧ GtPtF.IsIota p'.y (m (iota hB₁ F p.y)) := by
+      ∃ p' : QkPt D₂.toPre F k, p'.g = m p.g ∧ f₂ p' = f₁ p ≫ c ∧ GtPtF.IsIota p'.y (m (iota hB₁ p.y)) := by
     intro k hk f₁ f₂ hf₁ hf₂ p
     obtain ⟨p', e₁, e₂⟩ := hkey k hk p (f₁ p) ((hf₁.1 _ _).2 rfl) (m p.g) ((hm _ _).2 rfl)
     refine ⟨p', e₁, ((hf₂.1 _ _).1 e₂).symm, (isIota_iff_eq hB₂ _ _).2 ?_⟩
     rw [← qk_nsmul hB₂ p', e₁, ← map_nsmul, qk_nsmul hB₁ p]
   obtain ⟨f₁, hf₁⟩ := GlobalTheory.TorsionIso.torsion_eq hL R I hA D₁ A₁ G₁ hG₁ U₁ F 1 le_rfl
   obtain ⟨f₂, hf₂⟩ := GlobalTheory.TorsionIso.torsion_eq hL R I hA D₂ A₂ G₂ hG₂ U₂ F 1 le_rfl
-  have ex₁ : ∀ y, ∃ y', GtPtF.IsIota y' (m (iota hB₁ F y)) := fun y => by
-    obtain ⟨p', -, -, hp'⟩ := push 1 le_rfl f₁ f₂ hf₁ hf₂ (qkMk hB₁ y (iota hB₁ F y) (one_smul _ _))
+  have ex₁ : ∀ y, ∃ y', GtPtF.IsIota y' (m (iota hB₁ y)) := fun y => by
+    obtain ⟨p', -, -, hp'⟩ := push 1 le_rfl f₁ f₂ hf₁ hf₂ (qkMk hB₁ y (iota hB₁ y) (one_smul _ _))
     exact ⟨p'.y, hp'⟩
   choose φ₀ hφ₀ using ex₁
   let φ : D₁.toPre.X →+ D₂.toPre.X := AddMonoidHom.mk' φ₀ fun y y' => inj₂ _ _ _ (hφ₀ (y + y'))
     ((isIota_iff_eq hB₂ _ _).2 (by
-      rw [map_add, map_add, map_add, ← (isIota_iff_eq hB₂ _ _).1 (hφ₀ y), ← (isIota_iff_eq hB₂ _ _).1 (hφ₀ y')]))
-  have hφ : ∀ y, GtPtF.IsIota (φ y) (m (iota hB₁ F y)) := hφ₀
+      rw [map_add (f := _), map_add (f := _), map_add (f := _), ← (isIota_iff_eq hB₂ _ _).1 (hφ₀ y), ← (isIota_iff_eq hB₂ _ _).1 (hφ₀ y')]))
+  have hφ : ∀ y, GtPtF.IsIota (φ y) (m (iota hB₁ y)) := hφ₀
   refine ⟨φ, fun y g hg => ⟨m g, (hm _ _).2 rfl, ?_⟩, fun y => ?_⟩
   · rw [(isIota_iff_eq hB₁ _ _).1 hg]; exact hφ y
   refine GlobalTheory.KeyIota.eq_of_torsion_chars (F := F) fun k hk t ht => ?_
@@ -60,18 +86,18 @@ theorem periods_of_key : ∀ (R : Type) [CommRing R] [IsDomain R] [CharZero R] (
     obtain ⟨w, hw⟩ := U₁.toUnifPre.ext
     exact ((hf₁.1 p _).2 rfl w hw).1
 
-  obtain ⟨gk, hgk⟩ := dv₁ k hk (iota hB₁ F y)
+  obtain ⟨gk, hgk⟩ := dv₁ k hk (iota hB₁ y)
   let p : QkPt D₁.toPre F k := ⟨y, gk, _, hgk, (isIota_iff_eq hB₁ _ _).2 rfl⟩
   obtain ⟨p', -, hpp', hp'⟩ := push k hk f₁ f₂ hf₁ hf₂ p
   have hyp' : p'.y = φ y := inj₂ _ _ _ hp' (hφ y)
 
-  have h0 : k • torusPt D₁.toPre F (Additive.ofMul t) = iota hB₁ F 0 := by
+  have h0 : k • torusPt D₁.toPre F (Additive.ofMul t) = iota hB₁ 0 := by
     rw [← map_nsmul, ← ofMul_pow, ht, ofMul_one, map_zero, map_zero]
   let q : QkPt D₁.toPre F k := qkMk hB₁ 0 (torusPt D₁.toPre F (Additive.ofMul t)) h0
   have hq : IsTor t q.g := (isTor_iff _ _).2 (isTorusPtF_torusPt t)
   obtain ⟨q', hqg, hqq', hq'i⟩ := push k hk f₁ f₂ hf₁ hf₂ q
   have hq'0 : q'.y = 0 := inj₂ _ _ _ hq'i ((isIota_iff_eq hB₂ _ _).2 (by
-    show m (iota hB₁ F 0) = iota hB₂ F 0
+    show m (iota hB₁ 0) = iota hB₂ 0
     simp only [map_zero]))
   have hq'tor : IsTor (t.comp (AddMonoidHom.toMultiplicative h)) q'.g := tor t q.g q'.g hq ((hm _ _).2 hqg)
 
@@ -80,7 +106,7 @@ theorem periods_of_key : ∀ (R : Type) [CommRing R] [IsDomain R] [CharZero R] (
   choose aEf haE huE using ec.1
   let aE : GtPtF D₁.toPre F →+ GtPtF D₁.toPre F := AddMonoidHom.mk' aEf fun x x' => (isAdd_iff_eq _ _ _).1
     (adE x x' (x + x') _ _ _ ((isAdd_iff_eq _ _ _).2 rfl) (haE x) (haE x') (haE _))
-  have hqE0 : k • aE q.g = iota hB₁ F 0 := by
+  have hqE0 : k • aE q.g = iota hB₁ 0 := by
     rw [← map_nsmul]
     show aE (k • torusPt D₁.toPre F (Additive.ofMul t)) = _
     simp only [h0, map_zero]

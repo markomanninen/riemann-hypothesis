@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PFrameEx
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PFrameEx
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
 open GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKGeo Polynomial
@@ -41,17 +46,14 @@ private theorem intM_mul {A B : MF G} (hA : IntM A) (hB : IntM B) : IntM (fun w 
     exact int_sum _ fun l => int_mul (hA w i l) (hB w l j)
 
 private theorem intL_add {a b : Loc G} (ha : IntL a) (hb : IntL b) : IntL (a + b) := fun w i => by
-  have h := IsUltrametricDist.norm_add_le_max ((a w i : G.Fw w) : PadicAlgCl p) ((b w i : G.Fw w) : PadicAlgCl p)
-  exact h.trans (max_le (ha w i) (hb w i))
+  change ‖(a w i : PadicAlgCl p) + (b w i : PadicAlgCl p)‖ ≤ 1
+  exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (ha w i) (hb w i))
 
 private theorem intL_sub {a b : Loc G} (ha : IntL a) (hb : IntL b) : IntL (a - b) := fun w i => by
-  have e : (((a - b) w i : G.Fw w) : PadicAlgCl p) = (a w i : PadicAlgCl p) + -(b w i : PadicAlgCl p) := by
-    rw [← sub_eq_add_neg]
-    rfl
-  have h := IsUltrametricDist.norm_add_le_max ((a w i : G.Fw w) : PadicAlgCl p) (-((b w i : G.Fw w) : PadicAlgCl p))
-  rw [norm_neg] at h
-  rw [e]
-  exact h.trans (max_le (ha w i) (hb w i))
+  change ‖(a w i : PadicAlgCl p) - (b w i : PadicAlgCl p)‖ ≤ 1
+  rw [sub_eq_add_neg]
+  refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (ha w i) ?_)
+  simpa only [norm_neg] using hb w i
 
 private theorem norm_p_lt : ‖((p : ℕ) : PadicAlgCl p)‖ < 1 := by
   have h := norm_algebraMap' (PadicAlgCl p) (p : ℚ_[p])
@@ -220,10 +222,8 @@ private theorem norm_swap (g g' : Gp G) :
 
 private theorem intPt_of {g g' : Gp G} (hH : IntM (fun w => Pm g w * Gm g' w))
     (hI : IntM (fun w => Pm g' w * Gm g w)) (hs : ‖((g.1⁻¹ * g'.1 : ℚ_[p]ˣ) : ℚ_[p])‖ = 1) :
-    IntPt (g⁻¹ * g') := by
-  refine ⟨hs, fun w i j => ⟨hH w i j, ?_⟩⟩
-  rw [inv_val]
-  exact hI w i j
+    IntPt (g⁻¹ * g') :=
+  ⟨hs, fun w i j => ⟨hH w i j, by simpa only [inv_val] using hI w i j⟩⟩
 
 private theorem mono {d : ∀ w : Fin G.m, G.Fw w} (hd0 : ∀ w, d w ≠ 0)
     (hd : ∀ a : Loc G, (∀ z : Loc G, IntL z → ‖pairL a z‖ ≤ 1) ↔ IntL (fun w => d w • a w))

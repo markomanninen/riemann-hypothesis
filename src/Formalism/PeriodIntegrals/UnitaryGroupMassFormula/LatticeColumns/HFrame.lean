@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeColumns.HBlock
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeColumns.HBlock
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.AdmissibleOfIwasawa
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.IwaAll
-import Formalism.PeriodIntegrals.PhMeasCore
-import Formalism.RealPlaceAnalysis.Complexify
+module
+
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.AdmissibleOfIwasawa
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.IwaAll
+public import Formalism.PeriodIntegrals.PhMeasCore
+public import Formalism.RealPlaceAnalysis.Complexify
+
+@[expose] public section
 
 namespace CompanionTheory.D.gk.admitted
 

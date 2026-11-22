@@ -1,21 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Formalism.LocalToGlobal.ProjectiveLattices.DivFinOfLawA3
-import Formalism.LocalToGlobal.ProjectiveLattices.NrmContPf
-import Formalism.LocalToGlobal.ProjectiveLattices.AxHSup
-import Formalism.LocalToGlobal.ProjectiveLattices.RegQFree
-import Formalism.LocalToGlobal.ProjectiveLattices.GenFrPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsLinearIndependentDIffTrdegAdjoinEq
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.AeEvalCircleMapNeZero
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.AemeasurableFinsumSection
-import Development.AbelianVarietyTheory.Proofs.AlgebraicCurves.AlgebraicIndependentFreeVar
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IntegralAndRationalOfPolynomialGrowth
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ContDiffEvalFun
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Formalism.LocalToGlobal.ProjectiveLattices.DivFinOfLawA3
+public import Formalism.LocalToGlobal.ProjectiveLattices.NrmContPf
+public import Formalism.LocalToGlobal.ProjectiveLattices.AxHSup
+public import Formalism.LocalToGlobal.ProjectiveLattices.RegQFree
+public import Formalism.LocalToGlobal.ProjectiveLattices.GenFrPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsLinearIndependentDIffTrdegAdjoinEq
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.AeEvalCircleMapNeZero
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.AemeasurableFinsumSection
+public import Development.AbelianVarietyTheory.Proofs.AlgebraicCurves.AlgebraicIndependentFreeVar
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IntegralAndRationalOfPolynomialGrowth
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ContDiffEvalFun
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -73,8 +77,8 @@ theorem exists_continuousOn_roots {d : ℕ} (p : Polynomial (MvPolynomial (Fin d
   · rintro ⟨i, rfl⟩
     exact h2 i
 
-open Polynomial in
 
+open Polynomial in
 theorem exists_embeddings_of_roots {F L : Type} [Field F] [Field L] [Algebra F L]
     (pb : PowerBasis F L) (τ : F →+* ℂ) {n : ℕ} (r : Fin n → ℂ)
     (hr : ∀ z, ((minpoly F pb.gen).map τ).eval z = 0 ↔ ∃ i, r i = z) :
@@ -142,7 +146,7 @@ theorem exists_continuousOn_embeddings (K : Type) [Field K] [CharZero K] (σ : T
       (∀ f, τ f = ev f t) ∧ p.map (MvPolynomial.eval (cf t)) = (minpoly F pb.gen).map τ := by
     intro t ht
     have hinj : Function.Injective (MvPolynomial.eval₂Hom sg t : R →+* ℂ) := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro q hq
       by_contra h
       exact hG t ht q h hq
@@ -155,7 +159,8 @@ theorem exists_continuousOn_embeddings (K : Type) [Field K] [CharZero K] (σ : T
     refine ⟨IsFractionRing.lift hinj, hτa, hτ, ?_⟩
     have hmon : (minpoly F pb.gen).Monic := minpoly.monic pb.isIntegral_gen
     conv_rhs => rw [hmon.as_sum, pb.natDegree_minpoly]
-    rw [Polynomial.map_add, Polynomial.map_pow, Polynomial.map_X, Polynomial.map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Polynomial.map_add (f := _), Polynomial.map_pow, Polynomial.map_X, Polynomial.map_sum,
       Polynomial.map_add, Polynomial.map_pow, Polynomial.map_X, Polynomial.map_sum,
       Finset.sum_range]
     simp [cf, hτ]
@@ -200,7 +205,8 @@ theorem exists_continuousOn_embeddings (K : Type) [Field K] [CharZero K] (σ : T
     refine hc.congr fun t ht => ?_
     show P t k a = _
     conv_lhs => rw [← pb.basis.sum_repr a]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [Algebra.smul_def, map_mul, pb.basis_eq_pow, map_pow, hP1 t ht, hP2 t ht]
   · intro k l hkl
@@ -209,8 +215,8 @@ theorem exists_continuousOn_embeddings (K : Type) [Field K] [CharZero K] (σ : T
     rw [← hP1 t ht, ← hP1 t ht]
     exact DFunLike.congr_fun hkl _
 
-open MeasureTheory ReciprocityTheory.ChartRestriction.G.T0 SectionSum in
 
+open MeasureTheory ReciprocityTheory.ChartRestriction.G.T0 SectionSum in
 theorem exists_local_families (K Ω : Type) [Field K] [CharZero K] [Countable K] [Field Ω]
     [Algebra K Ω] (D N : ℕ) (j₀ : Fin (N + 1)) (w : Fin (N + 1) → Ω) (hw : w j₀ = 1)
     (hfg : (⊤ : IntermediateField K Ω).FG) (htr : Algebra.trdeg K Ω = D)

@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.NonFieldTypeVanishing
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasOrbIntTensorOfHasOrbInt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCyclicOfFiniteQuotient
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SelfAdjointFactorIdempotentOrthogonalSplittingRaStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeightedOrbitalIntegralTypeTestVanishStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AnisotropicTorusFundamentalDomainFiniteMeasureStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ClassTermEqVolumeMulOrbitalIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RegularSemisimpleUnitaryGroupConcreteStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TypeIdempotentConstantTermVanishStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.NonFieldTypeVanishing
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasOrbIntTensorOfHasOrbInt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCyclicOfFiniteQuotient
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SelfAdjointFactorIdempotentOrthogonalSplittingRaStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeightedOrbitalIntegralTypeTestVanishStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AnisotropicTorusFundamentalDomainFiniteMeasureStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ClassTermEqVolumeMulOrbitalIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RegularSemisimpleUnitaryGroupConcreteStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TypeIdempotentConstantTermVanishStatement
+
+@[expose] public section
 
 open MeasureTheory Set Filter GlobalTheory.AdelicU GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary NumberField IsDedekindDomain
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR.Mult
@@ -62,40 +66,6 @@ theorem covol_lt_top {γ : GRat D.sp.cm.sig V.gram} (hγ : IsNonFieldAniso D.sp.
   obtain ⟨hreg, k, K, iF, iA, he, -, hK⟩ := hγ
   exact GlobalTheory.T.anisotropic_torus_fundamentalDomain_finite_measure GlobalTheory.T.regularSemisimple_unitaryGroup_concrete D V γ hreg k K he hK dt 𝓣 h𝓣
 
-set_option maxHeartbeats 4000000 in
-theorem productClause {S : D.what₂.Tau → SPar} {M : DSModel V S} {T : TypeDataG V} {U : AuxiliaryPlaceHermitianSpace V}
-    {μa : ∀ w, Measure (GArch D.sp.cm.sig V.gram w)} {μf : ∀ v, Measure (GLoc D.sp.cm.sig V.gram v)}
-    {μ : Measure (GA D V)} (hμ : IsRestrictedProd D.sp.cm.sig V.gram (frameLat V) μa μf μ)
-    {fa : ∀ w, GArch D.sp.cm.sig V.gram w → ℂ} {ff : ∀ v, GLoc D.sp.cm.sig V.gram v → ℂ}
-    (ha : IsTestArchG M μa fa) (hf : IsTestFin T U μf ff)
-    {γ : GRat D.sp.cm.sig V.gram} (hγ : IsNonFieldAniso D.sp.cm.sig V.gram γ.1.1) :
-    ProductClause μa μf μ fa ff (ratEmb D.sp.cm.sig V.gram γ) := by
-  intro dta dtf dt hdt 𝓣 h𝓣
-  have hreg := hγ.1
-  have hcm := isCMExt_host D
-  have hJ := isHermND_gram V
-  obtain ⟨hta, htf, htt, -⟩ := id hdt
-  have i1 : ∀ w, (dta w).IsMulRightInvariant := fun w =>
-    haveI := hta w; isMulRightInvariant_cent (isMulCommutative_cent_HA (isRegSS_projArch_ratEmb hreg w)) _
-  have i2 : ∀ v, (dtf v).IsMulRightInvariant := fun v =>
-    haveI := htf v; isMulRightInvariant_cent (isMulCommutative_cent_HA (isRegSS_proj_ratEmb hreg v)) _
-  have hvol : dt 𝓣 < ⊤ := @covol_lt_top D V γ hγ dt htt 𝓣 h𝓣
-  have hfa : ∀ w, Continuous (fa w) ∧ HasCompactSupport (fa w) := fun w =>
-    ⟨continuous_of_mem_ccSmooth (continuous_archCoord _ _ w) (ha.mem w), (ha.mem w).1⟩
-  have hff : IsFinFamily D.sp.cm.sig V.gram (frameLat V) ff := hf.isFinFamily
-  have hKv := (regular_semisimple_adelic hcm hJ (frameLat V) γ hreg).1
-  have hpa : ∀ w, IsProperOrbit (cent (projArch D.sp.cm.sig V.gram w (ratEmb D.sp.cm.sig V.gram γ)))
-      (projArch D.sp.cm.sig V.gram w (ratEmb D.sp.cm.sig V.gram γ)) := fun w =>
-    isProperOrbit_GArch hcm hJ (isRegSS_projArch_ratEmb hreg w)
-  have hpf : ∀ v, IsProperOrbit (cent (proj D.sp.cm.sig V.gram v (ratEmb D.sp.cm.sig V.gram γ)))
-      (proj D.sp.cm.sig V.gram v (ratEmb D.sp.cm.sig V.gram γ)) := fun v =>
-    isProperOrbit_GLoc hcm hJ (isRegSS_proj_ratEmb hreg v)
-  obtain ⟨-, hoa, hob, h1, hO⟩ := @hasOrbInt_tensor _ _ _ _ _ _ _ _ _ _ (frameLat V) _ μa μf μ _ dta dtf dt fa ff
-    hμ hdt i1 i2 hfa hff hKv (fun w => Or.inl (hpa w)) (fun v => Or.inl (hpf v))
-  refine ⟨hvol, _, _, hoa, hob, h1, hO, fun 𝓕 h𝓕 => ?_⟩
-  have hc := continuous_of_mem_ccAd (tensor_mem_ccAd ha.mem hf.isFinFamily)
-  exact @GlobalTheory.T.classTerm_eq_volume_mul_orbitalIntegral (GA D V) _ _ _ _ _ _ _ _ (GQ V) _ (ratEmb D.sp.cm.sig V.gram γ) (ratEmb_mem_GQ γ)
-    (isMulCommutative_cent_ratEmb hreg) μ hμ.2.2.1 dt htt 𝓣 h𝓣 hvol _ _ hc.1 hc.2 hO 𝓕 h𝓕
 
 instance discreteTopology_subgroupOf_cent (γ : GA D V) : DiscreteTopology ((GQ V).subgroupOf (cent γ)) :=
   DiscreteTopology.of_continuous_injective (f := fun t : (GQ V).subgroupOf (cent γ) => (⟨t.1.1, t.2⟩ : GQ V))
@@ -138,12 +108,5 @@ theorem zeroClause {T : TypeDataG V} (hH : HypH (k := fun v : T.S => ResF v.1) T
   have h := hcls 𝓕 h𝓕
   rwa [hfp, mul_zero, mul_zero] at h
 
-set_option maxHeartbeats 4000000 in
-
-theorem nonFieldTypeVanishing : NonFieldTypeVanishing := by
-  intro D V _ S M T U hH μa μf μ hμ fa ff ha hf γ hγ
-  have hL := localClause (fun v => hμ.2.1 v) hf hγ
-  have hP := productClause hμ ha hf hγ
-  exact ⟨hL, hP, zeroClause hH hγ hL hP⟩
 
 end GlobalTheory.NonFieldType

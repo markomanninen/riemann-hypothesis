@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SobContId
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DRhoSumAndSobOLe
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralNormSqEqToL2
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaFunctionHeisenbergWordSupLeLevelPow
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.CovolOneIntegralAdd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SobContId
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DRhoSumAndSobOLe
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralNormSqEqToL2
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaFunctionHeisenbergWordSupLeLevelPow
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.CovolOneIntegralAdd
+
+@[expose] public section
 
 section
 open scoped ComplexConjugate Matrix NNReal ENNReal TensorProduct Classical
@@ -44,8 +48,8 @@ theorem actO_actO_inv {S T : HSp D} (g : GA D S) (h : GA D T) (x : WO S T) :
   rw [← Matrix.mul_assoc (Formalism.L2.Theta.mt T h), ← mt_mul_eq, ← mt_mul_eq, mul_inv_cancel, mul_inv_cancel,
     mt_one_eq, mt_one_eq, Matrix.one_mul, Matrix.mul_one]
 
-open GlobalTheory.Size in
 
+open GlobalTheory.Size in
 theorem dRho_om {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} {S T : HSp D} {χS χT : (AE D)ˣ →* Circle}
     {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)} (hom : IsWeilDatumO ψ S T χS χT om) (hθ : IsInfFam θ)
     (g : GA D S) (h : GA D T) (τ : D.what₂.Tau) (z : Matrix (Fin T.rank) (Fin S.rank) ℂ) {f : WO S T → ℂ}
@@ -69,7 +73,7 @@ def dirSize (θ : InfFam D) (S T : HSp D) (x : GA D S × GA D T) : ℝ :=
 
 theorem continuous_dirSize {θ : InfFam D} (hθ : IsInfFam θ) (S T : HSp D) : Continuous (dirSize θ S T) := by
   unfold dirSize
-  refine continuous_finset_sum _ fun a _ => continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => ?_
+  refine continuous_finsetSum _ fun a _ => continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => ?_
   have h1 : Continuous fun x : GA D S × GA D T => compAt θ a.1 (Formalism.L2.Theta.mt T x.2⁻¹) :=
     (GlobalTheory.RealWeil.continuous_compAt hθ a.1 _ _).comp ((continuous_mt_eq T).comp continuous_snd.inv)
   have h2 : Continuous fun x : GA D S × GA D T => compAt θ a.1 (Formalism.L2.Theta.mt S x.1) :=
@@ -92,8 +96,8 @@ theorem actO_neg' {S T : HSp D} (g : GA D S) (h : GA D T) (x : WO S T) :
   unfold Formalism.IndefR.Datum.actO
   rw [Matrix.mul_neg, Matrix.neg_mul]
 
-open GlobalTheory.Size in
 
+open GlobalTheory.Size in
 theorem word_om_le {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} {S T : HSp D} {χS χT : (AE D)ˣ →* Circle}
     {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)} (hom : IsWeilDatumO ψ S T χS χT om) (hθ : IsInfFam θ)
     {μ : Measure (WO S T)} {𝓕 : Set (WO S T)} (hμ : IsCovolOne (ratL T S) μ 𝓕) {K : Set (GA D S × GA D T)}
@@ -141,8 +145,8 @@ theorem word_om_le {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} {S T : HSp D
 
 end UpperTheory.Lit.Rallis.ThetaDens.WeilCompact
 
-open UpperTheory.Lit.Rallis.ThetaDens.WeilCompact GlobalTheory.Size in
 
+open UpperTheory.Lit.Rallis.ThetaDens.WeilCompact GlobalTheory.Size in
 theorem UpperTheory.Lit.Rallis.ThetaDens.om_compact_sobCont : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (χS χT : (AE D)ˣ →* Circle) (om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)), IsWeilDatumO ψ S T χS χT om → ∀ θ : InfFam D, IsInfFam θ → ∀ (μ : Measure (WO S T)) (𝓕 : Set (WO S T)), IsCovolOne (ratL T S) μ 𝓕 → ∀ K : Set (GA D S × GA D T), IsCompact K → ∀ U : AddSubgroup (WO S T), IsOpen (U : Set (WO S T)) → ∃ U' : AddSubgroup (WO S T), IsOpen (U' : Set (WO S T)) ∧ (∀ f ∈ thetaLevel ψ S T U, ∀ x ∈ K, om x f ∈ thetaLevel ψ S T U') ∧ ∀ d : ℕ, ∃ (d' : ℕ) (C : ℝ≥0), ∀ f ∈ thetaLevel ψ S T U, ∀ x ∈ K, sobO ψ θ μ 𝓕 d (om x f) ≤ C * sobO ψ θ μ 𝓕 d' f := by
   intro D ψ S T χS χT om hom θ hθ μ 𝓕 hμ K hK U hU
   let U' : AddSubgroup (WO S T) :=
@@ -187,9 +191,9 @@ theorem UpperTheory.Lit.Rallis.ThetaDens.om_compact_sobCont : ∀ (D : D7) (ψ :
       fun f hf x hx => ?_⟩
     show wordSum (heisDer ψ θ) (l2O μ 𝓕) d (om x f) ≤ _
     unfold wordSum
-    rw [ENNReal.coe_finset_sum, Finset.sum_mul]
+    rw [ENNReal.ofNNReal_finsetSum, Finset.sum_mul]
     refine Finset.sum_le_sum fun k hk => ?_
-    rw [ENNReal.coe_finset_sum, Finset.sum_mul]
+    rw [ENNReal.ofNNReal_finsetSum, Finset.sum_mul]
     refine Finset.sum_le_sum fun a _ => ?_
     calc _ ≤ (C k : ℝ≥0∞) * sobO ψ θ μ 𝓕 k f := hC k _ (List.length_ofFn) x hx f hf.1
       _ ≤ C k * sobO ψ θ μ 𝓕 d f := by
@@ -382,7 +386,8 @@ namespace UpperTheory.Lit.Rallis.ThetaDens
 open GlobalTheory
 
 theorem eLpNorm_sub_tendsto_of_unif {X : Type} [MeasurableSpace X] (ν : Measure X) (hν : ν Set.univ = 1)
-    (g : ℕ → X → ℂ) (f : X → ℂ) (h : TendstoUniformly g f Filter.atTop) :
+    (g : ℕ → X → ℂ) (f : X → ℂ) (hm : ∀ j, AEStronglyMeasurable (g j - f) ν)
+    (h : TendstoUniformly g f Filter.atTop) :
     Filter.Tendsto (fun j => eLpNorm (g j - f) 2 ν) Filter.atTop (nhds 0) := by
   rw [ENNReal.tendsto_nhds_zero]
   intro ε hε
@@ -392,7 +397,7 @@ theorem eLpNorm_sub_tendsto_of_unif {X : Type} [MeasurableSpace X] (ν : Measure
   have hb : ∀ᵐ x ∂ν, ‖(g j - f) x‖ ≤ δ := Filter.Eventually.of_forall fun x => by
     have := (hj x).le
     rwa [dist_comm, dist_eq_norm] at this
-  refine (eLpNorm_le_of_ae_bound hb).trans ?_
+  refine (eLpNorm_le_of_ae_bound (hm j) hb).trans ?_
   simpa [hν] using hδ.le
 
 theorem wordAct_heisDer_sub {D : D7} {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1)) {θ : InfFam D}
@@ -411,13 +416,16 @@ theorem wordAct_heisDer_sub {D : D7} {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsS
 
 theorem sobO_sub_tendsto_zero : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ θ : InfFam D, IsInfFam θ → ∀ S T : HSp D, ∀ (μ : Measure (WO S T)) (𝓕 : Set (WO S T)), IsCovolOne (ratL T S) μ 𝓕 → ∀ (u : ℕ → WO S T → ℂ) (f : WO S T → ℂ), IsThetaFunO ψ S T f → (∀ j, IsThetaFunO ψ S T (u j)) → (∀ l : List (D.what₂.Tau × Fin T.rank × Fin S.rank × Bool), TendstoUniformly (fun j => GlobalTheory.Size.wordAct (GlobalTheory.Size.heisDer ψ θ) l (u j)) (GlobalTheory.Size.wordAct (GlobalTheory.Size.heisDer ψ θ) l f) Filter.atTop) → ∀ d, Filter.Tendsto (fun j => sobO ψ θ μ 𝓕 d (u j - f)) Filter.atTop (nhds 0) := by
   intro D ψ hψ θ hθ S T μ 𝓕 hμ u f hf hu hl d
+  haveI : BorelSpace (WO S T) := ⟨rfl⟩
   have key : ∀ l : List (D.what₂.Tau × Fin T.rank × Fin S.rank × Bool), Filter.Tendsto
       (fun j => GlobalTheory.Size.l2O μ 𝓕 (GlobalTheory.Size.wordAct (GlobalTheory.Size.heisDer ψ θ) l (u j - f))) Filter.atTop (nhds 0) := by
     intro l
     simp only [wordAct_heisDer_sub hψ hθ (hu _) hf l, GlobalTheory.Size.l2O]
-    exact eLpNorm_sub_tendsto_of_unif _ (by rw [Measure.restrict_apply_univ]; exact hμ.2.2) _ _ (hl l)
-  have := tendsto_finset_sum (Finset.range (d + 1)) fun k _ =>
-    tendsto_finset_sum (Finset.univ : Finset (Fin k → D.what₂.Tau × Fin T.rank × Fin S.rank × Bool))
+    exact eLpNorm_sub_tendsto_of_unif _ (by rw [Measure.restrict_apply_univ]; exact hμ.2.2) _ _
+      (fun j => ((GlobalTheory.Size.theta_word hψ hθ l (hu j)).cont.sub
+        (GlobalTheory.Size.theta_word hψ hθ l hf).cont).aestronglyMeasurable) (hl l)
+  have := tendsto_finsetSum (Finset.range (d + 1)) fun k _ =>
+    tendsto_finsetSum (Finset.univ : Finset (Fin k → D.what₂.Tau × Fin T.rank × Fin S.rank × Bool))
       fun a _ => key (List.ofFn a)
   simp only [Finset.sum_const_zero] at this
   exact this
@@ -546,7 +554,8 @@ theorem differentiableAt_of_tendstoLocallyUniformly_directional :
     intro T
     ext x
     conv_lhs => rw [← hc x]
-    simp [map_sum, map_smul, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_smul, mul_comm]
   have hlim := tendstoLocallyUniformly_sum_smul_const (F := E →L[ℝ] ℂ) Finset.univ
     (fun a => (c a).smulRight (1 : ℂ)) (fun a j y => fderiv ℝ (g j) y (v a)) ψ hψ
   have hlim' : TendstoLocallyUniformly (fun j y => fderiv ℝ (g j) y)
@@ -600,7 +609,8 @@ theorem contDiff_of_class_tendstoLocallyUniformly : ∀ {E : Type} [NormedAddCom
     funext y
     ext x
     conv_lhs => rw [← hc x]
-    simp only [map_sum, map_smul, (h y).2, ContinuousLinearMap.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, (h y).2, ContinuousLinearMap.sum_apply,
       ContinuousLinearMap.smul_apply, ContinuousLinearMap.smulRight_apply]
     refine Finset.sum_congr rfl fun a _ => ?_
     simp only [Complex.real_smul, smul_eq_mul]
@@ -652,8 +662,8 @@ open GlobalTheory.ThetaDens
 namespace UpperTheory.Lit.Rallis.ThetaDens
 open GlobalTheory
 
-open GlobalTheory.FockCompare GlobalTheory.OrientedHeis GlobalTheory.Size in
 
+open GlobalTheory.FockCompare GlobalTheory.OrientedHeis GlobalTheory.Size in
 theorem sm_of_tendstoUniformly_words {G R A : Type} [AddCommGroup G] [NormedAddCommGroup R] [NormedSpace ℝ R]
     [FiniteDimensional ℝ R] [Fintype A] (ι : R →+ G) (p : G →+ R) (om : R →ₗ[ℝ] R →ₗ[ℝ] ℝ) (hp : ∀ x, p (ι x) = x)
     (v : A → R) (c : A → R →L[ℝ] ℝ) (hv : ∀ x, ∑ a, c a x • v a = x) (g : List A → ℕ → G → ℂ)
@@ -686,7 +696,7 @@ theorem sm_of_tendstoUniformly_words {G R A : Type} [AddCommGroup G] [NormedAddC
     rw [add_zero] at this
     have e2 : (fun y : R => g l j (w + ι x + ι y)) = fun y => g l j (w + ι (x + y)) := by
       funext y
-      rw [map_add, add_assoc]
+      rw [map_add (f := _), add_assoc]
     rw [← this, e2]
     ring
   rw [e]
@@ -705,8 +715,8 @@ theorem sum_coord_single {τs : Type} [Fintype τs] {m n : ℕ} (x : τs → Fin
     Finset.sum_eq_single j (fun b _ hb => by simp [hb]) (by simp)]
   simp [add_comm]
 
-open GlobalTheory.FockCompare GlobalTheory.OrientedHeis GlobalTheory.Size in
 
+open GlobalTheory.FockCompare GlobalTheory.OrientedHeis GlobalTheory.Size in
 theorem contDiff_of_tendstoUniformly_words : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ θ : InfFam D, IsInfFam θ → ∀ (S T : HSp D) (u : ℕ → WO S T → ℂ), (∀ j, IsThetaFunO ψ S T (u j)) → ∀ F : List (D.what₂.Tau × Fin T.rank × Fin S.rank × Bool) → WO S T → ℂ, (∀ l, TendstoUniformly (fun j => GlobalTheory.Size.wordAct (GlobalTheory.Size.heisDer ψ θ) l (u j)) (F l) Filter.atTop) → ∀ (l : List (D.what₂.Tau × Fin T.rank × Fin S.rank × Bool)) (k : ℕ) (L : (Fin k → ℝ) →+ WO S T), Continuous L → (∀ t, (L t).map (finPart D) = 0) → ∀ w, ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) fun t => F l (w + L t) := by
   intro D ψ hψ θ hθ S T u hu F hF l
   obtain ⟨σ, h⟩ := GlobalTheory.RealLineAt.exists_inverse_chart hθ
@@ -1035,7 +1045,7 @@ theorem sobBdd_absThetaInt : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T 
     (fun f hf g hg => by
       rw [← lintegral_add_left' (hint f hf.1).1.enorm]
       refine lintegral_mono fun q => ?_
-      simp only [GlobalTheory.AutomorphicL2Unitary.descend, thetaKO, hadd f g hf.1 hg.1, map_add, Pi.add_apply]
+      simp only [GlobalTheory.AutomorphicL2Unitary.descend, thetaKO, hadd f g hf.1 hg.1, map_add (f := _), Pi.add_apply]
       exact enorm_add_le _ _)
     (fun c f hf => by
       rw [← lintegral_const_mul' _ _ enorm_ne_top]
@@ -1050,7 +1060,7 @@ theorem sobBdd_absThetaInt : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T 
       have e : u j - f = u j + (-1 : ℂ) • f := by rw [neg_one_smul, sub_eq_add_neg]
       have hf' : (-1 : ℂ) • f ∈ thetaLevel ψ S T U' := Submodule.smul_mem _ _ hf
       rw [e, hadd _ _ (hu j).1 hf'.1, hsm _ _ hf.1]
-      simp only [GlobalTheory.AutomorphicL2Unitary.descend, thetaKO, map_add, Pi.add_apply, neg_one_smul,
+      simp only [GlobalTheory.AutomorphicL2Unitary.descend, thetaKO, map_add (f := _), Pi.add_apply, neg_one_smul,
         sub_eq_add_neg, map_neg, Pi.neg_apply])
   obtain ⟨d', C', hb⟩ := hb d
   refine ⟨d', C * C', fun f hf x hx => ?_⟩

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StatementsArea
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StAreaGraphBound
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StatementsArea
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StAreaGraphBound
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

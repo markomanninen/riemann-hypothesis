@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.FrameBr
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.FrameBr
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible UpperTheory.V.Lit UpperTheory.V.Lit.Bor
 open scoped TensorProduct
 
@@ -37,13 +42,14 @@ theorem UpperTheory.V.Lit.Bor.kugaSucc :
       (LinearMap.mk₂ ℝ (fun Z Y => (B - A) (toL Z) (ω (Function.update X i Y)))
         (fun Z Z' Y => LinearMap.congr_fun (map_add (B - A) (toL Z) (toL Z')) _)
         (fun c Z Y => LinearMap.congr_fun (map_smul (B - A) c (toL Z)) _)
-        (fun Z Y Y' => by rw [AlternatingMap.map_update_add, map_add])
+        (fun Z Y Y' => by rw [AlternatingMap.map_update_add, map_add (f := _)])
         (fun c Z Y => by rw [AlternatingMap.map_update_smul, LinearMap.map_smul_of_tower])) (X i) hs
   have h1 : dCo (A + B) (del (B - A) e ω) X =
       ∑ j, ∑ i, (A + B) (toL (X i).1) ((B - A) (toL (e j).1) (ω (Function.update X i (e j)))) := by
     rw [dCo_apply, Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [del_apply, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [del_apply, map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← hup, map_zsmul, map_zsmul]
   have h2 : del (B - A) e (dCo (A + B) ω) X =
@@ -51,7 +57,8 @@ theorem UpperTheory.V.Lit.Bor.kugaSucc :
         ∑ i, (B - A) (toL (e j).1) ((A + B) (toL (X i).1) (ω (Function.update X i (e j))))) := by
     rw [del_apply]
     refine Finset.sum_congr rfl fun j _ => ?_
-    rw [dCo_cons, map_sub, dCo_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [dCo_cons, map_sub, dCo_apply, map_sum]
     congr 1
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [← hup, map_zsmul, map_zsmul, map_zsmul]
@@ -65,7 +72,8 @@ theorem UpperTheory.V.Lit.Bor.kugaSucc :
     rw [Finset.sum_neg_distrib, Finset.sum_comm]
     congr 1
     refine Finset.sum_congr rfl fun j _ => ?_
-    rw [hω _ (hs j), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hω _ (hs j), map_sum]
   rw [h1, h2, Finset.sum_sub_distrib, add_sub_left_comm, h3, ← sub_eq_add_neg, ← Finset.sum_sub_distrib,
     cas, cas, ← Finset.sum_sub_distrib, LinearMap.sum_apply]
   refine Finset.sum_congr rfl fun j _ => ?_

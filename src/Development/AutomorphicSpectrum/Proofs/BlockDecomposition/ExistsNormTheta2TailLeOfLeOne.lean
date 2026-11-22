@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormLeNormInfCModuleSectionMul
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.RankOneEisenstein.Theta2Integral
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormLeNormInfCModuleSectionMul
+public import GroundTheory.AutomorphicForms.GL2.GodementSection
+public import GroundTheory.GlobalFields.TateThesis.TateMain
+
+@[expose] public section
 
 open NumberField Matrix MeasureTheory Filter Topology
 open scoped NumberField.AdeleRing SchwartzMap ContDiff
-open PositivityTheory.EisRk1 GroundTheory.Global GroundTheory.Automorphic GroundTheory.Automorphic.Adele2 GroundTheory.Automorphic.GodementSection IdeleGroup
+open GroundTheory.Global GroundTheory.Automorphic GroundTheory.Automorphic.Adele2 GroundTheory.Automorphic.GodementSection IdeleGroup
 
 namespace GlobalTheory.CompanionTheory.EisRk1
 
@@ -24,7 +29,7 @@ theorem norm_iteratedFDeriv_dilate_le (f : 𝓢(E, ℝ)) {a : ℝ} (ha0 : 0 ≤ 
     (by exact_mod_cast le_top)]
   refine (ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _).trans ?_
   refine mul_le_of_le_one_right (norm_nonneg _) ?_
-  exact Finset.prod_le_one (fun _ _ ↦ norm_nonneg _) fun _ _ ↦ hle
+  exact Finset.prod_le_one₀ (fun _ _ ↦ norm_nonneg _) fun _ _ ↦ hle
 
 theorem exists_schwartz_majorant [FiniteDimensional ℝ E] (φ : 𝓢(E, ℂ)) :
     ∃ Φ : 𝓢(E, ℂ), ∃ r : E → ℝ, (∀ y, Φ y = (r y : ℂ)) ∧ ∀ y, ‖φ y‖ ≤ r y := by
@@ -145,11 +150,5 @@ set_option maxSynthPendingDepth 1
 set_option synthInstance.maxSize 1000
 
 variable {K : Type _} [Field K] [NumberField K]
-
-noncomputable def contragredient (h : GL (Fin 2) 𝔸[K]) : GL (Fin 2) 𝔸[K] :=
-  ⟨((h⁻¹ : GL (Fin 2) 𝔸[K]) : Matrix (Fin 2) (Fin 2) 𝔸[K])ᵀ,
-    (h : Matrix (Fin 2) (Fin 2) 𝔸[K])ᵀ,
-    by rw [← transpose_mul, ← Units.val_mul, mul_inv_cancel, Units.val_one, transpose_one],
-    by rw [← transpose_mul, ← Units.val_mul, inv_mul_cancel, Units.val_one, transpose_one]⟩
 
 end GlobalTheory.CompanionTheory.EisRk1

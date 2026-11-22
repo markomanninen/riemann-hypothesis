@@ -1,8 +1,12 @@
-import CompanionTheory.AutomorphicTheory.RankOneTori.RpowNegLe
-import Formalism.SharpRestriction.CuspSpanNormBounds.BigCellDensity
-import Formalism.SharpRestriction.CuspSpanNormBounds.SpanMemOfImage
-import Formalism.FormalDegreeBessel.FinalG
-import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.SigmaFiniteAmplitudes.RStabInv
+module
+
+public import CompanionTheory.AutomorphicTheory.RankOneTori.RpowNegLe
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BigCellDensity
+public import Formalism.SharpRestriction.CuspSpanNormBounds.SpanMemOfImage
+public import Formalism.FormalDegreeBessel.FinalG
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.SigmaFiniteAmplitudes.RStabInv
+
+@[expose] public section
 
 open MeasureTheory Matrix Formalism.QuantumDeterminants Formalism.MainNotions.S Formalism.MainNotions.S.Pv.AmpDDPf Formalism.MainNotions.S.Pv.AmpDDPf.CC Formalism.FourierDecayAlt
 open scoped ENNReal
@@ -144,7 +148,8 @@ theorem root_haar (hk : 1 ≤ k) (L : LocBessel k r) (hc : L.c ≠ 0) {γ : Poin
     refine ⟨by rw [Measure.smul_apply, hroot.1, smul_zero], ?_⟩
     show (t • μR).map (rootCoords (k0 + 1) r L.z γ) =
       ENNReal.ofReal ((‖cStd‖ / (2 * Real.pi)) ^ (rootPat γ).card) • volume
-    rw [Measure.map_smul, hroot.2, smul_smul, ht, ← ENNReal.ofReal_mul (by positivity), ← mul_pow,
+    rw [Measure.map_smul _ (Formalism.MainNotions.BigCellDensity.meas_rootCoords L.z γ).aemeasurable,
+      hroot.2, smul_smul, ht, ← ENNReal.ofReal_mul (by positivity), ← mul_pow,
       Formalism.MainNotions.BigCellDensity.ucStd]
     congr 3
     field_simp

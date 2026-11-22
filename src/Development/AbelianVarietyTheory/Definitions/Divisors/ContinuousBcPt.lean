@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DensConst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCoordsBaseChange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DensConst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCoordsBaseChange
+
+@[expose] public section
 
 set_option autoImplicit false
 

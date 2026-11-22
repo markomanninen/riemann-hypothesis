@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FockRAddRight
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FockRAddRight
+
+@[expose] public section
 
 noncomputable section
 

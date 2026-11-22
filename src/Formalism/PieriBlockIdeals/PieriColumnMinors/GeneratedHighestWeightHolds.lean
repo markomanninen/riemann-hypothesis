@@ -1,4 +1,8 @@
-import Formalism.PieriBlockIdeals.StatementLP
+module
+
+public import Formalism.PieriBlockIdeals.StatementLP
+
+@[expose] public section
 
 namespace Formalism.CohomologicalDescent.LP
 

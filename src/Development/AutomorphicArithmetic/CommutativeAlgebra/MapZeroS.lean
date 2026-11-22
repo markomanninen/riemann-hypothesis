@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCochainEvalOnSimplexBasicPropertiesStatement
+module
+
+public import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCochainEvalOnSimplexBasicPropertiesStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Pbf
 
 noncomputable section
@@ -26,7 +31,7 @@ def psi (W : Scheme.{0}) {I Q P : Cx R} (μ : Pair Q P I) (z : Sec (P.X 1) W) (T
   AddMonoidHom.mk' (fun x => Sec.res (prod.snd : W ⨯ T ⟶ T) (c₁ x) +
       s.negOnePow • μ.mul (W ⨯ T) (s + -1) 1 s (by omega) (Sec.res (prod.snd : W ⨯ T ⟶ T) (c₂ x)) (Sec.res (prod.fst : W ⨯ T ⟶ W) z))
     (fun x y => by
-      simp only [map_add, LinearMap.add_apply, smul_add]
+      simp only [map_add (f := _), LinearMap.add_apply, smul_add]
       abel)
 
 def inL {K I Q : Cx R} {m n : ℤ} (h : m + 1 = n) (α₁ : Cocycle K I n) (α₂ : Cocycle K Q m) : Cocycle K (LL I Q) n :=
@@ -71,7 +76,7 @@ theorem c₁_cc {I Q : Cx R} {T : Scheme.{0}} {s : ℤ} (a : Sec (I.X s) T) (b :
   have h2 : ((biprod.inr : sh Q ⟶ LL I Q).f s) ≫ ((biprod.fst : LL I Q ⟶ I).f s) = 0 := by
     rw [← HomologicalComplex.comp_f, biprod.inr_fst, HomologicalComplex.zero_f]
   unfold cc
-  rw [map_add]
+  rw [map_add (f := _)]
   change Sec.map _ (Sec.map _ a) + Sec.map _ (Sec.map _ _) = a
   rw [map_map, map_map, h1, h2, map_idS, map_zeroS, add_zero]
 
@@ -81,7 +86,7 @@ theorem c₂_cc {I Q : Cx R} {T : Scheme.{0}} {s : ℤ} (a : Sec (I.X s) T) (b :
   have h2 : ((biprod.inr : sh Q ⟶ LL I Q).f s) ≫ ((biprod.snd : LL I Q ⟶ sh Q).f s) = 𝟙 _ := by
     rw [← HomologicalComplex.comp_f, biprod.inr_snd, HomologicalComplex.id_f]
   unfold cc
-  rw [map_add]
+  rw [map_add (f := _)]
   change (Sec.map (((biprod.inl : I ⟶ LL I Q).f s) ≫ ((biprod.snd : LL I Q ⟶ sh Q).f s)) a +
     Sec.map (((biprod.inr : sh Q ⟶ LL I Q).f s) ≫ ((biprod.snd : LL I Q ⟶ sh Q).f s)) (show Sec ((sh Q).X s) T from b) : Sec ((sh Q).X s) T) = b
   rw [h1, h2, map_zeroS, zero_add]
@@ -125,13 +130,52 @@ theorem c₂_d {I Q : Cx R} {T : Scheme.{0}} (s t : ℤ) (x : Sec ((LL I Q).X s)
 
 theorem sg_pull {X Y : Scheme.{0}} {I : Cx R} {n : ℤ} (f : Y ⟶ X) (α : Cocycle ((chains R).obj (sch.obj X)) I n) :
     sg (zcomp (Cocycle.ofHom ((chains R).map (sch.map f))) α (zero_add n)) = Sec.res f (sg α) := by
-  have h1 := (GlobalTheory.T.etaleCochainEvalOnSimplex_basic_properties R (E := sch.obj X) (I := I) (n := n)).2.2.2.1 (sch.map f) α.1 0 n (by simp) Y (𝟙 Y)
-  have h2 := (GlobalTheory.T.etaleCochainEvalOnSimplex_basic_properties R (E := sch.obj X) (I := I) (n := n)).2.1 α.1 0 n (by simp) Y X f (𝟙 X)
-  refine h1.trans (Eq.trans ?_ h2.symm)
-  congr 1
+  let k := op (SimplexCategory.mk 0)
+  let g := (sch.map f).app k
+  have hChains : (chainsXIso R (sch.obj Y) 0).inv ≫ ((chains R).map (sch.map f)).f (-((0 : ℕ) : ℤ)) =
+      (free R).map g ≫ (chainsXIso R (sch.obj X) 0).inv := by
+    have h : ((chains R).map (sch.map f)).f (-((0 : ℕ) : ℤ)) =
+        (chainsXIso R (sch.obj Y) 0).hom ≫ ((chainsN R).map (sch.map f)).f 0 ≫
+          (chainsXIso R (sch.obj X) 0).inv :=
+      HomologicalComplex.extendMap_f ((chainsN R).map (sch.map f))
+        ComplexShape.embeddingDownNat (i := 0) rfl
+    rw [h, Iso.inv_hom_id_assoc]
+    rfl
+  have hMap : Sec.map ((free R).map g) (freeGen R ((sch.obj Y).obj k) Y (𝟙 Y)) =
+      freeGen R ((sch.obj X).obj k) Y f := by
+    have h := ConcreteCategory.congr_hom
+      (NatTrans.congr_app (toSheafify_naturality Scheme.etaleTopology.{0} ((freeP R).map (yoneda.map f))) (op Y))
+      (ModuleCat.freeMk (ULift.up (𝟙 Y)))
+    have hGen : ((freeP R).map (yoneda.map f)).app (op Y) (ModuleCat.freeMk (ULift.up (𝟙 Y))) =
+        ModuleCat.freeMk (ULift.up f) := by
+      change (ModuleCat.free (ULift.{1} R)).map (TypeCat.ofHom (fun x : ULift (Y ⟶ Y) => ULift.up (x.down ≫ f)))
+        (ModuleCat.freeMk (ULift.up (𝟙 Y))) = _
+      rw [ModuleCat.free_map_apply]
+      exact congrArg (fun a : Y ⟶ X => ModuleCat.freeMk (ULift.up a)) (Category.id_comp f)
+    exact h.symm.trans (congrArg ((toSheafify Scheme.etaleTopology ((freeP R).obj (yoneda.obj X))).app (op Y)).hom hGen)
+  have hRes : Sec.res f (freeGen R ((sch.obj X).obj k) X (𝟙 X)) = freeGen R ((sch.obj X).obj k) Y f := by
+    have h := ConcreteCategory.congr_hom
+      ((toSheafify Scheme.etaleTopology ((freeP R).obj (yoneda.obj X))).naturality f.op)
+      (ModuleCat.freeMk (ULift.up (𝟙 X)))
+    have hGen : ((freeP R).obj (yoneda.obj X)).map f.op (ModuleCat.freeMk (ULift.up (𝟙 X))) =
+        ModuleCat.freeMk (ULift.up f) := by
+      change (ModuleCat.free (ULift.{1} R)).map (TypeCat.ofHom (fun x : ULift (X ⟶ X) => ULift.up (f ≫ x.down)))
+        (ModuleCat.freeMk (ULift.up (𝟙 X))) = _
+      rw [ModuleCat.free_map_apply]
+      exact congrArg (fun a : Y ⟶ X => ModuleCat.freeMk (ULift.up a)) (Category.comp_id f)
+    exact h.symm.trans (congrArg ((toSheafify Scheme.etaleTopology ((freeP R).obj (yoneda.obj X))).app (op Y)).hom hGen)
+  change Sec.map ((chainsXIso R (sch.obj Y) 0).inv ≫
+      ((Cochain.ofHom ((chains R).map (sch.map f))).comp α.1 (zero_add n)).v _ _ (by simp))
+      (freeGen R ((sch.obj Y).obj k) Y (𝟙 Y)) =
+    Sec.res f (Sec.map ((chainsXIso R (sch.obj X) 0).inv ≫ α.1.v _ _ (by simp))
+      (freeGen R ((sch.obj X).obj k) X (𝟙 X)))
+  rw [Cochain.zero_cochain_comp_v, Cochain.ofHom_v, ← Category.assoc, hChains, Category.assoc,
+    ← map_map, hMap, res_map, hRes]
 
-theorem sg_sub {X : Scheme.{0}} {I : Cx R} {n : ℤ} (α β : Cocycle ((chains R).obj (sch.obj X)) I n) : sg (α - β) = sg α - sg β :=
-  ((GlobalTheory.T.etaleCochainEvalOnSimplex_basic_properties R (E := sch.obj X) (I := I) (n := n)).1 α.1 β.1 0 n (by simp) X (𝟙 X)).2.1
+theorem sg_sub {X : Scheme.{0}} {I : Cx R} {n : ℤ} (α β : Cocycle ((chains R).obj (sch.obj X)) I n) : sg (α - β) = sg α - sg β := by
+  change ev (α.1 - β.1) 0 n (by simp) X (𝟙 X) = sg α - sg β
+  simp only [sg, ev, Cochain.sub_v, Preadditive.comp_sub]
+  rfl
 
 theorem res_add {F : Shv R} {V U : Scheme.{0}} (g : V ⟶ U) (x y : Sec F U) : Sec.res g (x + y) = Sec.res g x + Sec.res g y :=
   map_add _ _ _
@@ -170,6 +214,5 @@ theorem LL_ge (I Q : Cx R) [I.IsStrictlyGE 0] [Q.IsStrictlyGE 0] : (LL I Q).IsSt
     rw [← HomologicalComplex.comp_f, ← HomologicalComplex.comp_f, ← HomologicalComplex.add_f_apply, biprod.total, HomologicalComplex.id_f]
   rw [IsZero.iff_id_eq_zero, ← h, hI.eq_of_tgt ((biprod.fst : LL I Q ⟶ I).f i) 0, hQ.eq_of_tgt ((biprod.snd : LL I Q ⟶ sh Q).f i) 0]
   simp
-  exact zero_comp
 
 end UpperTheory.Kun

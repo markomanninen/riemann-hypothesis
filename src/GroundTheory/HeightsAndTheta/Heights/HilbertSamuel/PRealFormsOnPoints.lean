@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRealFormsOnPoints
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsComplexFormsOnPoints
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsIndependentModBaseChange
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRealFormsOnPoints
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsComplexFormsOnPoints
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsIndependentModBaseChange
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -20,12 +25,14 @@ theorem RealFormsOnPoints.proof (hN : ComplexFormsOnPoints.Statement)
     intro n hn
     apply hli n
     have hmem : ∑ i, n i • g i ∈ mCoordIdeal y := by
-      rw [← Ideal.Quotient.eq_zero_iff_mem, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← Ideal.Quotient.eq_zero_iff_mem, map_sum]
       simpa only [map_zsmul] using hn
     have h0 : mConeMap y (∑ i, n i • g i) = 0 := hmem
     have hsum : mConeMap y (∑ i, n i • g i) =
         MvPolynomial.C (∑ i, n i • aeval y (g i)) * ∏ k, MvPolynomial.X k ^ e k := by
-      rw [map_sum, map_sum, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_sum, Finset.sum_mul]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_zsmul, ProjLine.mConeMap_eq_of_isMultiHomog y (hg i), map_zsmul, smul_mul_assoc]
     rw [hsum] at h0
@@ -38,13 +45,15 @@ theorem RealFormsOnPoints.proof (hN : ComplexFormsOnPoints.Statement)
 
   have hF : (∑ i, (c i : ℂ) • MvPolynomial.map (Int.castRingHom ℂ) (g i)) ∈ I := by
     refine hN K ι _ hprime hrel _ fun z hz => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simpa only [smul_eval] using hc z hz
   rw [Fintype.linearIndependent_iff] at hC
   funext i
   have h := hC (fun i => (c i : ℂ)) (by
     rw [← Ideal.Quotient.eq_zero_iff_mem] at hF
-    rw [← hF, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hF, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← Ideal.Quotient.mkₐ_eq_mk ℂ, map_smul]) i
   exact_mod_cast h

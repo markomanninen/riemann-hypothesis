@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotSymEOfNe
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnifAlong
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsWithoutCohomology
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.HasBasisOfBasis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotSymEOfNe
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnifAlong
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsWithoutCohomology
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.HasBasisOfBasis
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsXPowSmulEqZeroOfEqXSubOneSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsXPowSmulEqZeroOfEqXSubOneSmul
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits DirectSum MvPolynomial TensorProduct GlobalTheory
 open scoped Pointwise
@@ -102,7 +106,7 @@ theorem finite_quotSMulTop_ker_of_graded :
     obtain ⟨y', hy', v₀, hyv⟩ := hn n₀ le_rfl
     have hφy' : φ y' ∈ 𝒢 n₀ := hφ hy'
     have h1 : φ y = φ y' + (X i - 1 : MvPolynomial ι R) • φ v₀ := by
-      rw [hyv, map_add, map_smul]
+      rw [hyv, map_add (f := _), map_smul]
     have h2 : φ y' = (X i - 1 : MvPolynomial ι R) • (w - φ v₀) := by
       rw [smul_sub, ← hyw, h1]
       abel

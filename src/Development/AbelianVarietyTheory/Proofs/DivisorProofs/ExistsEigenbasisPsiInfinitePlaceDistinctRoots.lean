@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.Brauer.TensorSimple
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatrixDiagonalizableOfCharpolyEqProdDistinct
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CardRootsMapPol
+module
+
+public import Mathlib
+public import GroundTheory.Brauer.TensorSimple
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatrixDiagonalizableOfCharpolyEqProdDistinct
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CardRootsMapPol
+
+@[expose] public section
 
 noncomputable section
 

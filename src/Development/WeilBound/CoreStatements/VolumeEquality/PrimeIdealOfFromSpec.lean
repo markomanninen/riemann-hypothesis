@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EtaleLocalizationAtPrimeTensorOfLowHeight
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtFractionNoetherianClosed
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EtaleLocalizationAtPrimeTensorOfLowHeight
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtFractionNoetherianClosed
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,7 @@ theorem mem_range_ev {U : X.Opens} (hU : IsAffineOpen U) (hg : genPt ξ ∈ U) (
     { carrier := {t | ev ξ U hg t * a ∈ (ev ξ U hg).range}
       add_mem' := fun {t t'} ht ht' => by
         show ev ξ U hg (t + t') * a ∈ (ev ξ U hg).range
-        rw [map_add, add_mul]; exact add_mem ht ht'
+        rw [map_add (f := _), add_mul]; exact add_mem ht ht'
       zero_mem' := by
         show ev ξ U hg 0 * a ∈ (ev ξ U hg).range
         rw [map_zero, zero_mul]; exact zero_mem _
@@ -87,12 +91,6 @@ theorem mem_range_ev {U : X.Opens} (hU : IsAffineOpen U) (hg : genPt ξ ∈ U) (
     obtain ⟨s, t, ht, e⟩ := exists_frac hU ⟨_, hs _ hy⟩ hy hg (ha _ hy)
     rw [primeIdealOf_fromSpec hU y hy] at ht
     exact absurd (hIm (show ev ξ U hg t * a ∈ (ev ξ U hg).range from ⟨s, e.symm⟩)) ht
-
-theorem regAt_mono {p q : Cpt ξ} (h : q.1 ⤳ p.1) : regAt ξ p ≤ regAt ξ q := by
-  rintro _ ⟨g, rfl⟩
-  refine ⟨X.presheaf.stalkSpecializes h g, ?_⟩
-  have := congrArg (fun φ => φ.hom g) (X.presheaf.stalkSpecializes_comp q.2 h)
-  exact congrArg (Scheme.stalkClosedPointTo ξ).hom this
 
 theorem mem_regAt_gen (hξ : IsCptGen ξ) (a : Ω) : a ∈ regAt ξ ⟨genPt ξ, specializes_rfl⟩ := by
   obtain ⟨g, rfl⟩ := hξ.bij.2 a

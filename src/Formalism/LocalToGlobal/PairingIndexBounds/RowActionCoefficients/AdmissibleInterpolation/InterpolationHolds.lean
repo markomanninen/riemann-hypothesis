@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.WeylComplementInDetCoeffSpan
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.WeylComplementInDetCoeffSpan
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -18,16 +22,18 @@ theorem interpolation_holds : Interp := by
     apply MvPolynomial.funext
     intro x
     have := congrArg φ (h x)
-    rw [map_sum, map_zero] at this
-    rw [map_zero, map_sum, ← this]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zero, map_sum, ← this]
     refine Finset.sum_congr rfl fun m' _ => ?_
     rw [eval_monomial, map_smul, smul_eq_mul, mul_comm]
-  have hc : coeff m P = φ (w m) := by
+  have hc : AddMonoidAlgebra.coeff P m = φ (w m) := by
     classical
     simp only [P, coeff_sum, coeff_monomial]
     rw [Finset.sum_ite_eq' S m]
     rw [if_pos hm]
-  rw [hP, coeff_zero] at hc
+  simp only [hP, AddMonoidAlgebra.coeff_zero, Pi.zero_apply] at hc
   exact hφ hc.symm
 
 theorem prod_span {ι R A : Type*} [Fintype ι] [DecidableEq ι] [CommRing R] [CommRing A] [Algebra R A] (S : ι → Set A)

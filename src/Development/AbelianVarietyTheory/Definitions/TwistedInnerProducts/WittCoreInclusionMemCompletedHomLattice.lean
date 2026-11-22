@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExtendByZeroTrivialDecomposition
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PZeroHyperbolicZeroEqOne
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HomLatticeCompletionSelfAnnihilatorAtPlaces
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicPointComponentsAtPlacesLatticesVacua
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsTameFinitePlaceHermitianAll
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSplitLatMonoId
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsThetaAtMoveLat
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemSchwartzAOfIsSchwartzBruhat
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergIsotropicFixesVacuum
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsPeriodIdealLocalGeneratorAtSplitPoint
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LatHatOpenAndContinuous
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCharOfTrace
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitPlaceMatrixCoordinateOnHalf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExtendByZeroTrivialDecomposition
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PZeroHyperbolicZeroEqOne
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HomLatticeCompletionSelfAnnihilatorAtPlaces
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicPointComponentsAtPlacesLatticesVacua
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsTameFinitePlaceHermitianAll
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSplitLatMonoId
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsThetaAtMoveLat
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemSchwartzAOfIsSchwartzBruhat
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergIsotropicFixesVacuum
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsPeriodIdealLocalGeneratorAtSplitPoint
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LatHatOpenAndContinuous
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCharOfTrace
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitPlaceMatrixCoordinateOnHalf
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,7 @@ theorem finLat_of {m n : ℕ} {A : AddSubgroup (Mx D m n)} (fin : ∀ a ∈ A, M
   refine ⟨fin, hC.of_isClosed_subset ?_ h, opn⟩
   obtain ⟨i1, -, -, i4, -⟩ := lattice_Mx D m n
   obtain ⟨U, h1, h2, h3⟩ := opn
-  let e : Mx D m n →+ Mx D m n := DistribMulAction.toAddMonoidHom _ (idem D fun _ => True)
+  let e : Mx D m n →+ Mx D m n := DistribSMul.toAddMonoidHom _ (idem D fun _ => True)
   have he : Continuous e := continuous_id.const_smul (idem D fun _ => True)
   have ho : IsOpen (A.comap e : Set (Mx D m n)) := (A.comap e).isOpen_of_mem_nhds (g := 0)
     (Filter.mem_of_superset ((h1.preimage he).mem_nhds (by rwa [Set.mem_preimage, map_zero])) fun a ha => h3 _ ha (mxAt_idem a))
@@ -90,8 +94,8 @@ theorem sec_fin {s : (Af D.host.F ⊗[D.host.F] D.host.E) →+ AE D} (s2 : ∀ a
   · rw [RingHom.map_sub, s3, RingHom.map_mul, GlobalTheory.FinPlLoc.infPart_of_idAt ha, mul_zero, sub_zero]
   · rw [RingHom.map_sub, s2, sub_self]
 
-theorem finLat_latO {S T : HSp D} {LS : Lat S} {LT : Lat T} (hS : Submodule.IsLattice D.host.E LS)
-    (hT : Submodule.IsLattice D.host.E LT) : FinLat (latO S T (LS : Set _) (LT : Set _) fun _ => True) := by
+theorem finLat_latO {S T : HSp D} {LS : Lat S} {LT : Lat T} (hS : Submodule.IsFullLattice D.host.E LS)
+    (hT : Submodule.IsFullLattice D.host.E LT) : FinLat (latO S T (LS : Set _) (LT : Set _) fun _ => True) := by
   obtain ⟨M, hM, hden⟩ := GlobalTheory.PlaceDatum.exists_den_latO (S := S) (T := T) hS.fg hT.fg
   obtain ⟨K, hK, hmul⟩ := GlobalTheory.PlaceDatum.exists_nsmul_mem_latO (S := S) (T := T) hS hT
   obtain ⟨s, s1, s2, s3⟩ := GlobalTheory.SchwartzBruhatTensor.exists_finSection D
@@ -100,7 +104,7 @@ theorem finLat_latO {S T : HSp D} {LS : Lat S} {LT : Lat T} (hS : Submodule.IsLa
   refine finLat_of (fun a ha => latO_mxAt ha) ⟨{a | ∀ i j, finPart D (incA D (K : D.host.E)⁻¹ * a i j) ∈ intAE D}, ?_, ?_, ?_⟩
     (C := (fun z => Matrix.of fun i j => incA D (M : D.host.E)⁻¹ * s (z i j)) ''
       {z : Matrix (Fin T.rank) (Fin S.rank) _ | ∀ i j, z i j ∈ intAE D}) (IsCompact.image ?_ ?_) fun a ha => ?_
-  · simp only [Set.setOf_forall]
+  · simp only [Set.ofPred_forall]
     exact isOpen_iInter_of_finite fun i => isOpen_iInter_of_finite fun j => (GlobalTheory.SchwartzBruhatTensor.isOpen_intAE D).preimage
       ((GlobalTheory.Member.continuous_finPart D).comp (continuous_const.mul (continuous_id.matrix_elem i j)))
   · intro i j
@@ -319,13 +323,14 @@ abbrev homL (P : GlobalTheory.FinPl.Pl D → Prop) : AddSubgroup (WO V W) :=
 abbrev pcs (ψ : AddChar (AF D.host.F) ℂ) : Pieces V₀ W W₀ ρ σ :=
   piecesOf dV dW ψ (homL dV dW LV₀ LW₀ 𝔟 𝔠 fun _ => True) (homL dV dW LV₀ LW₀ 𝔟 𝔠 fun _ => True)
 
-theorem stdAt_pcs (v : GlobalTheory.FinPl.Pl D) : StdAt dV dW (pcs dV dW LV₀ LW₀ 𝔟 𝔠 ψ) (splitL dV LV₀ 𝔟) (splitL dW LW₀ 𝔠) v where
-  a _ ha := mem_latO_at (mxAt_mul' ha dV.pX)
-  a' a ha := ⟨idem D (· = v) • a, fun i j => (mem_idOff_iff _ _).2 (by
-      rw [Matrix.sub_apply, Matrix.smul_apply, smul_eq_mul, mul_sub, ← mul_assoc, idem_mul_self, sub_self]), by
-    rw [HypDec.extX_apply, Matrix.smul_mul]
-    exact idem_mem_latO ha⟩
-  b _ ha := mem_latO_at (mxAt_mul' (mxAt_mul dW.jX ha) dV.p0)
+theorem stdAt_pcs (v : GlobalTheory.FinPl.Pl D) : StdAt dV dW (pcs dV dW LV₀ LW₀ 𝔟 𝔠 ψ) (splitL dV LV₀ 𝔟) (splitL dW LW₀ 𝔠) v := by
+  exact
+    { a _ ha := mem_latO_at (mxAt_mul' ha dV.pX)
+      a' a ha := ⟨idem D (· = v) • a, fun i j => (mem_idOff_iff _ _).2 (by
+            rw [Matrix.sub_apply, Matrix.smul_apply, smul_eq_mul, mul_sub, ← mul_assoc, idem_mul_self, sub_self]), by
+          rw [HypDec.extX_apply, Matrix.smul_mul]
+          exact idem_mem_latO ha⟩
+      b _ ha := mem_latO_at (mxAt_mul' (mxAt_mul dW.jX ha) dV.p0) }
 
 variable {dV dW LV₀ LW₀ 𝔟 𝔠} (hψ : IsStdChar D ψ (-1)) (hV : IsSelfDualC V (splitL dV LV₀ 𝔟)) (hV₀ : IsSelfDualC V₀ LV₀)
   (hW : IsSelfDualC W (splitL dW LW₀ 𝔠)) (hW₀ : IsSelfDualC W₀ LW₀) {x : Mx D W.rank ρ} {y : Mx D V₀.rank σ}
@@ -343,29 +348,30 @@ include hV₀ hW₀
 
 theorem is_pcs (uni : ∀ u : UX D ρ, MxAt (fun _ => True) (u.1.1 - 1) →
       dV.extX W (x ⬝ u.1.1 - x) ∈ homL dV dW LV₀ LW₀ 𝔟 𝔠 (fun _ => True) → psiUni ψ u.1 = 1) :
-    (pcs dV dW LV₀ LW₀ 𝔟 𝔠 ψ).Is dV dW x ψ where
-  a₁ := finLat_comap (finLat_latO hV.1 hW.1) _ (A := 1) (A' := 1) (fun a => by rw [Matrix.one_mul]; rfl) (Matrix.one_mul _) dV.pX_jX
-  a₂ := by
-    rw [pcs_A₂ hψ hV hW]
-    exact finLat_comap (finLat_latO hV.1 hW.1) _ (A := 1) (A' := 1) (fun a => by rw [Matrix.one_mul]; rfl) (Matrix.one_mul _) dV.pY_jY
-  b₁ := finLat_comap (finLat_latO hV.1 hW.1) _ (fun _ => rfl) dW.pX_jX dV.p0_j0
-  b₂ := finLat_comap (finLat_latO hV.1 hW.1) _ (fun _ => rfl) dW.pY_jY dV.p0_j0
-  dualA a ha := by
-    rw [pcs_A₂ hψ hV hW]
-    exact dualX hV hW hψ ha
-  dualA' a ha := by
-    rw [pcs_A₂ hψ hV hW]
-    exact dualY hV hW hψ ha
-  dualB a ha := (wittExtendByZero_mem_completedHomLattice hV hV₀ hW).trans ((dualX' hW hV₀ hψ ha).trans
-    (forall_congr' fun _ => imp_congr_left (wittExtendByZero_mem_completedHomLattice hV hV₀ hW).symm))
-  dualB' a ha := (wittExtendByZero_mem_completedHomLattice hV hV₀ hW).trans ((dualY' hW hV₀ hψ ha).trans
-    (forall_congr' fun _ => imp_congr_left (wittExtendByZero_mem_completedHomLattice hV hV₀ hW).symm))
-  uni := uni
-  fin₀ u hu := latO_mxAt ((wittCoreInclusion_mem_completedHomLattice hW hW₀ hV₀).1 ((wittExtendByZero_mem_completedHomLattice hV hV₀ hW).1 hu))
-  vac₀ := by
-    obtain ⟨f, hf, f0⟩ := exists_vac hψ hV₀ hW₀
-    exact ⟨f, ⟨hf.1, fun u hu => hf.2.1 u ((wittCoreInclusion_mem_completedHomLattice hW hW₀ hV₀).1 ((wittExtendByZero_mem_completedHomLattice hV hV₀ hW).1 hu)),
-      fun e he u hu => hf.2.2 e he u ((wittCoreInclusion_mem_completedHomLattice hW hW₀ hV₀).1 ((wittExtendByZero_mem_completedHomLattice hV hV₀ hW).1 hu))⟩, f0⟩
+    (pcs dV dW LV₀ LW₀ 𝔟 𝔠 ψ).Is dV dW x ψ := by
+  exact
+    { a₁ := finLat_comap (finLat_latO (GlobalTheory.ProjXCols.selfDual_isFullLattice V _ hV) (GlobalTheory.ProjXCols.selfDual_isFullLattice W _ hW)) _ (A := 1) (A' := 1) (fun a => by rw [Matrix.one_mul]; rfl) (Matrix.one_mul _) dV.pX_jX
+      a₂ := by
+        rw [pcs_A₂ hψ hV hW]
+        exact finLat_comap (finLat_latO (GlobalTheory.ProjXCols.selfDual_isFullLattice V _ hV) (GlobalTheory.ProjXCols.selfDual_isFullLattice W _ hW)) _ (A := 1) (A' := 1) (fun a => by rw [Matrix.one_mul]; rfl) (Matrix.one_mul _) dV.pY_jY
+      b₁ := finLat_comap (finLat_latO (GlobalTheory.ProjXCols.selfDual_isFullLattice V _ hV) (GlobalTheory.ProjXCols.selfDual_isFullLattice W _ hW)) _ (fun _ => rfl) dW.pX_jX dV.p0_j0
+      b₂ := finLat_comap (finLat_latO (GlobalTheory.ProjXCols.selfDual_isFullLattice V _ hV) (GlobalTheory.ProjXCols.selfDual_isFullLattice W _ hW)) _ (fun _ => rfl) dW.pY_jY dV.p0_j0
+      dualA a ha := by
+        rw [pcs_A₂ hψ hV hW]
+        exact dualX hV hW hψ ha
+      dualA' a ha := by
+        rw [pcs_A₂ hψ hV hW]
+        exact dualY hV hW hψ ha
+      dualB a ha := (wittExtendByZero_mem_completedHomLattice hV hV₀ hW).trans ((dualX' hW hV₀ hψ ha).trans
+        (forall_congr' fun _ => imp_congr_left (wittExtendByZero_mem_completedHomLattice hV hV₀ hW).symm))
+      dualB' a ha := (wittExtendByZero_mem_completedHomLattice hV hV₀ hW).trans ((dualY' hW hV₀ hψ ha).trans
+        (forall_congr' fun _ => imp_congr_left (wittExtendByZero_mem_completedHomLattice hV hV₀ hW).symm))
+      uni := uni
+      fin₀ u hu := latO_mxAt ((wittCoreInclusion_mem_completedHomLattice hW hW₀ hV₀).1 ((wittExtendByZero_mem_completedHomLattice hV hV₀ hW).1 hu))
+      vac₀ := by
+        obtain ⟨f, hf, f0⟩ := exists_vac hψ hV₀ hW₀
+        exact ⟨f, ⟨hf.1, fun u hu => hf.2.1 u ((wittCoreInclusion_mem_completedHomLattice hW hW₀ hV₀).1 ((wittExtendByZero_mem_completedHomLattice hV hV₀ hW).1 hu)),
+          fun e he u hu => hf.2.2 e he u ((wittCoreInclusion_mem_completedHomLattice hW hW₀ hV₀).1 ((wittExtendByZero_mem_completedHomLattice hV hV₀ hW).1 hu))⟩, f0⟩ }
 
 variable (hx : idem D (fun _ => True) • dV.extX W x ∈ homL dV dW LV₀ LW₀ 𝔟 𝔠 fun _ => True)
   (hy : idem D (fun _ => True) • dW.incAdj V₀ y ∈ latO V₀ W (LV₀ : Set _) (splitL dW LW₀ 𝔠 : Set _) fun _ => True)
@@ -385,8 +391,8 @@ theorem splits_pcs : Splits dV dW (pcs dV dW LV₀ LW₀ 𝔟 𝔠 ψ) x y ψ (h
     rw [add_right_comm]
     exact ((dV.coordS W).left_inv u).symm.trans (congrArg (fun w => dV.extX W (u ⬝ dV.jX) + dV.ext0 W w + dV.extY W (u ⬝ dV.jY)) e.symm)
 
-omit hW₀ in
 
+omit hW₀ in
 theorem vac_mem_cls {f : WO V W → ℂ} (hf : VacG ψ V W (homL dV dW LV₀ LW₀ 𝔟 𝔠 fun _ => True) f) :
     f ∈ cls dV dW (pcs dV dW LV₀ LW₀ 𝔟 𝔠 ψ) x y ψ := by
   have key := GlobalTheory.FinPl.FlatFix.fix_of_isotropic ψ V W _ _ _ hV hW (fun v _ => GlobalTheory.FinPl.TamePlaces.tame D v) f hf.2
@@ -411,7 +417,7 @@ end Pcs
 
 theorem exists_uni {ρ : ℕ} {N : Mx D ρ ρ} (h2 : ∀ i j, j ≤ i → N i j = 0) : ∃ u : UX D ρ, u.1.1 = 1 + N := by
   have hd : (1 + N).det = 1 := by
-    rw [Matrix.det_of_upperTriangular fun i j (h : j < i) => by
+    rw [Matrix.det_of_isUpperTriangular fun i j (h : j < i) => by
       rw [Matrix.add_apply, h2 i j h.le, Matrix.one_apply_ne h.ne', add_zero]]
     exact Finset.prod_eq_one fun i _ => by rw [Matrix.add_apply, h2 i i le_rfl, Matrix.one_apply_eq, add_zero]
   obtain ⟨u, hu⟩ : IsUnit (1 + N) := (Matrix.isUnit_iff_isUnit_det _).2 (hd ▸ isUnit_one)
@@ -476,8 +482,8 @@ theorem hO_extX_extY (a b : Mx D W.rank ρ) : hO V W (dV.extX W a) (dV.extY W b)
   simp only [map_zero, zero_add, add_zero, hO_eq_trace V₀, Matrix.mul_zero, trace_zero] at h
   rw [h, show pairS W (0 : Mx D W.rank ρ) 0 = 0 by simp [pairS], add_zero]
 
-variable (dV dW) in
 
+variable (dV dW) in
 theorem symplO_shift (N : Mx D ρ ρ) :
     symplO V W (dV.extX W (dW.jX ⬝ N)) (dV.extY W (dW.jY ⬝ (incA D (-D.host.xi0⁻¹) • rat (shiftM D ρ)))) =
       Algebra.trace (AF D.host.F) (AE D) (upSum N) := by
@@ -493,8 +499,8 @@ theorem xZero_mem (h1 : ∀ i, ∀ b ∈ 𝔟 i, α⁻¹ * b ∈ 𝔠 i) : idem 
     exact e_mem fun i => h1 i _ (((mem_splitL _ _ _ z).1 hz).1 i)) hα
   rwa [Matrix.mul_smul, smul_smul, mul_inv_cancel₀ α0, one_smul, rat_mul] at this
 
-include hψ in
 
+include hψ in
 theorem uni_xZero (h2 : ∀ i, ∀ w ∈ dualC (𝔟 (i + 1)), α⁻¹ * -D.host.xi0⁻¹ * w ∈ dualC (𝔠 i)) (u : UX D ρ)
     (h : dV.extX W (xZero dW ⬝ u.1.1 - xZero dW) ∈ homL dV dW LV₀ LW₀ 𝔟 𝔠 fun _ => True) : psiUni ψ u.1 = 1 := by
   have hw := rat_mem_latO (P := fun _ => True) hV hW (dW.e' * ((α⁻¹ * -D.host.xi0⁻¹) • shiftM D ρ) * dV.qY) (fun z hz => by
@@ -553,13 +559,14 @@ theorem inhabitants (hψ : IsStdChar D ψ (-1)) {V V₀ W W₀ : HSp D} {ρ : �
   have hW₀ := GlobalTheory.PlaceModel.isSelfDualC_latFrame W₀
   have hV := isSelfDualC_splitL dV b0 hV₀
   have hW := isSelfDualC_splitL dW c0 hW₀
-  obtain ⟨N, hN, hy⟩ := GlobalTheory.PlaceDatum.exists_nsmul_mem_latO' (S := V₀) (T := W) hV₀.1 hW.1
+  obtain ⟨N, hN, hy⟩ := GlobalTheory.PlaceDatum.exists_nsmul_mem_latO' (S := V₀) (T := W)
+    (GlobalTheory.ProjXCols.selfDual_isFullLattice V₀ _ hV₀) (GlobalTheory.ProjXCols.selfDual_isFullLattice W _ hW)
     (idem D (fun _ => True) • dW.incAdj V₀ (yZero V₀ ρ z₀))
     (Matrix.ext fun i j => GlobalTheory.FinPlLoc.infPart_of_idAt (mxAt_idem (P := fun _ => True) _ i j))
   rw [smul_comm, ← map_nsmul, ← yZero_nsmul] at hy
   have hp := is_pcs hψ hV hV₀ hW hW₀ (x := xZero dW) fun u _ => uni_xZero hψ hV hW hα α0 h2 u
   obtain ⟨f, hf, f0⟩ := exists_vac hψ hV hW
-  refine ⟨_, _, _, GlobalTheory.PlaceModel.latFrame V₀, _, GlobalTheory.PlaceModel.latFrame W₀, N, hN, finLat_latO hV.1 hW.1, hp, splits_pcs hψ hV hV₀ hW hW₀ (xZero_mem hV hW hα α0 h1) hy,
+  refine ⟨_, _, _, GlobalTheory.PlaceModel.latFrame V₀, _, GlobalTheory.PlaceModel.latFrame W₀, N, hN, finLat_latO (GlobalTheory.ProjXCols.selfDual_isFullLattice V _ hV) (GlobalTheory.ProjXCols.selfDual_isFullLattice W _ hW), hp, splits_pcs hψ hV hV₀ hW hW₀ (xZero_mem hV hW hα α0 h1) hy,
     ⟨f, vac_mem_cls hψ hV hV₀ hW (xZero_mem hV hW hα α0 h1) hy hf, f0⟩, fun v => ⟨stdAt_pcs _ _ _ _ _ _ v,
       condK_one hV hW hp (stdAt_pcs _ _ _ _ _ _ v) (xZero_mem hV hW hα α0 h1) fun ξ hξ =>
         psi_eq_one hψ hV₀ hW hy (GlobalTheory.PlaceModel.latO_le_top _ ((wittExtendByZero_mem_completedHomLattice hV hV₀ hW).1 hξ))⟩, Filter.Eventually.and ?_ ?_⟩
@@ -573,13 +580,6 @@ theorem inhabitants (hψ : IsStdChar D ψ (-1)) {V V₀ W W₀ : HSp D} {ρ : �
     filter_upwards [GlobalTheory.FinPl.Inhab.ae_latO hV₀ hW, GlobalTheory.FinPl.Inhab.ae_family hM'] with v k1 k2 _ a _
     rw [k1, GlobalTheory.FinPl.Inhab.incAdj_smul, e, ← GlobalTheory.FinPl.Inhab.mem_intGrp, ← GlobalTheory.FinPl.Inhab.int_cA_iff, ← k2, Prod.forall]
     rfl
-
-example (D : D7) : ∃ (ψ : AddChar (AF D.host.F) ℂ) (V V₀ : HSp D) (d : HypDec V V₀ 1) (p : Pieces V₀ V V₀ 1 1), 0 < V₀.rank ∧
-    IsStdChar D ψ (-1) ∧ p.Is d d (xZero d) ψ := by
-  obtain ⟨ψ, hψ⟩ := GlobalTheory.StdAdelicChar.exists_isStdChar D
-  obtain ⟨p, -, -, -, -, -, -, -, -, h, -⟩ := inhabitants hψ (hypDecThree D) (hypDecThree D) (z₀ := fun _ => 1)
-    fun h => one_ne_zero (congrFun h ⟨0, Nat.one_pos⟩)
-  exact ⟨ψ, _, _, _, p, Nat.one_pos, hψ, h⟩
 
 end GlobalTheory.AscFinWit
 

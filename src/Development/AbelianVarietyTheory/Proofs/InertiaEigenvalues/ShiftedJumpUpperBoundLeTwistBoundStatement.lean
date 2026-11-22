@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ShiftedJumpUpperBoundLeTwistBound
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.TableLineDegreeTwo
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemIntPts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ShiftedJumpUpperBoundLeTwistBound
+public import Formalism.SharpRestriction.LevelLetterCocycles.TableLineDegreeTwo
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemIntPts
+
+@[expose] public section
+
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.shiftedJumpUpperBound_le_twist_bound : ∀ (t : ℕ) (up : Bool) (Fl Fc : Finset ℤ) (η S B W0 : ℝ), 1 ≤ t → (t : ℝ) ≤ η → 0 ≤ B → 0 ≤ S →
     (∀ z ∈ Fl, |(z : ℝ) - ((t : ℝ) - 1) / 2| ≤ η ∧ 2 * B + (t : ℝ) / 2 + 3 ≤ |(z : ℝ) - ((t : ℝ) - 1) / 2|) →

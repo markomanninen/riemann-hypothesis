@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MapInvMEq
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MapInvMEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,7 +79,7 @@ theorem gN_mul_rpow (hNI : NormInv) {x Y : Mx k r} (hx : x ∈ Formalism.Quantum
 theorem meas_matmul {α : Type*} [MeasurableSpace α] {f g : α → Formalism.QuantumDeterminants.Mt k r}
     (hf : Measurable f) (hg : Measurable g) :
     Measurable (fun p => (fun i j => (Matrix.of (f p) * Matrix.of (g p)) i j : Formalism.QuantumDeterminants.Mt k r)) := by
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   simp only [Matrix.mul_apply, Matrix.of_apply]
   refine Finset.measurable_sum _ fun l _ => ?_
   exact ((measurable_pi_apply l).comp ((measurable_pi_apply i).comp hf)).mul

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LocDensCorank
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDensityCorank.SplitCount
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.EulerFactorTwo
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDensityCorank.CongruenceDensity
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LocDensCorank
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDensityCorank.SplitCount
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.EulerFactorTwo
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDensityCorank.CongruenceDensity
+
+@[expose] public section
 
 open ValuativeRel Classical
 

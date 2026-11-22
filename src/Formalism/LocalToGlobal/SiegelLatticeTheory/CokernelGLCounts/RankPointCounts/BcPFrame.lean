@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FrGlobOfFull
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.WithZeroLeOneEqExp
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FrGlobOfFull
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.WithZeroLeOneEqExp
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem denF (x : D.host.E) : ∃ d : 𝓞 D.host.F, d ≠ 0 ∧ IsIntegral ℤ 
   have hbi : IsIntegral ℤ (b : D.host.E) := (b : 𝓞 D.host.E).2
   have hbc : IsIntegral ℤ (D.conjF (b : D.host.E)) := hbi.map (D.conjF.toRingHom.toIntAlgHom)
   obtain ⟨t0, ht0⟩ := conjF_fix ((b : D.host.E) * D.conjF (b : D.host.E)) (by rw [map_mul, conjF_invol, mul_comm])
-  have ht0i : IsIntegral ℤ t0 := (isIntegral_algebraMap_iff (algebraMap D.host.F D.host.E).injective).1
+  have ht0i : IsIntegral ℤ t0 := (isIntegral_algebraMap_iff ).1
     (by rw [ht0]; exact hbi.mul hbc)
   refine ⟨⟨t0, ht0i⟩, ?_, ?_⟩
   · intro h
@@ -65,11 +69,11 @@ theorem baseChangeAt_frame (p : PlF D) (j : Fin (nV D)) : baseChange₂ D p ((VS
   simp only [baseChange₂, AddMonoidHom.coe_mk, ZeroHom.coe_mk, Module.Basis.repr_self, Finsupp.single_apply, Pi.single_apply]
   split_ifs with h1 h2 h2 <;> simp_all [eq_comm]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_isLattice_eq_localLattice (Zd : LocDat D) (p : PlF D) (M : Submodule (Zd.M p).L.O (Vp D p)) (hfg : M.FG)
     (hsp : Submodule.span (D.s.atP p).Ep (M : Set (Vp D p)) = ⊤) :
-    ∃ Λ' : Submodule (𝓞 D.host.E) (VS D).V, Submodule.IsLattice D.host.E Λ' ∧ M = lattice₂ D Zd.M p Λ' := by
+    ∃ Λ' : Submodule (𝓞 D.host.E) (VS D).V, Submodule.IsFullLattice D.host.E Λ' ∧ M = lattice₂ D Zd.M p Λ' := by
   let u : 𝓞 D.host.F → (D.s.atP p).Ep := fun d => algebraMap (D.s.atP p).Fp (D.s.atP p).Ep ((D.s.atP p).ιF (d : D.host.F))
   have u_mem : ∀ d, u d ∈ (D.s.atP p).O := fun d => by
     show algebraMap (D.s.atP p).Fp (D.s.atP p).Ep ((D.s.atP p).ιF (d : D.host.F)) ∈ (D.s.atP p).O
@@ -146,19 +150,25 @@ theorem exists_isLattice_eq_localLattice (Zd : LocDat D) (p : PlF D) (M : Submod
   have hbcf : ∀ i, baseChange₂ D p (algebraMap D.host.F D.host.E (c : D.host.F) • (VS D).frame i) = u c • (Pi.single i 1 : Vp D p) := by
     intro i
     rw [baseChange_smul₂, baseChangeAt_frame, iE_alg]
-  have hlat : Submodule.IsLattice D.host.E Λ' := by
-    refine ⟨by rw [hΛ']; exact Submodule.fg_span hGfin, ?_⟩
-    rw [eq_top_iff, ← (VS D).frame.span_eq, Submodule.span_le]
-    rintro _ ⟨i, rfl⟩
+  have hlat : Submodule.IsFullLattice D.host.E Λ' := by
+    have hfg' : Λ'.FG := by
+      rw [hΛ']
+      exact Submodule.fg_span hGfin
+    letI := Submodule.IsLattice.of_fg D.host.E hfg'
+    refine ⟨?_⟩
     have hcE : algebraMap D.host.F D.host.E (c : D.host.F) ≠ 0 := by
-      rw [ne_eq, map_eq_zero]; exact_mod_cast hc0
-    have hmem : algebraMap D.host.F D.host.E (c : D.host.F) • (VS D).frame i ∈ Submodule.span D.host.E (Λ' : Set (VS D).V) :=
-      Submodule.subset_span (by rw [hΛ']; exact Submodule.subset_span (hGc i))
-    have e : (VS D).frame i = (algebraMap D.host.F D.host.E (c : D.host.F))⁻¹ •
-        (algebraMap D.host.F D.host.E (c : D.host.F) • (VS D).frame i) := by
-      rw [smul_smul, inv_mul_cancel₀ hcE, one_smul]
-    rw [SetLike.mem_coe, e]
-    exact Submodule.smul_mem _ _ hmem
+      apply (map_ne_zero _).mpr
+      exact_mod_cast hc0
+    apply top_unique
+    rw [← (VS D).frame.span_eq, Submodule.span_le]
+    rintro _ ⟨i, rfl⟩
+    rw [SetLike.mem_coe]
+    have hi : algebraMap D.host.F D.host.E (c : D.host.F) • (VS D).frame i ∈ Λ' := by
+      rw [hΛ']
+      exact Submodule.subset_span (hGc i)
+    have hinv := (Submodule.span D.host.E (Λ' : Set (VS D).V)).smul_mem
+      (algebraMap D.host.F D.host.E (c : D.host.F))⁻¹ (Submodule.subset_span hi)
+    simpa only [smul_smul, inv_mul_cancel₀ hcE, one_smul] using hinv
   refine ⟨Λ', hlat, le_antisymm ?_ ?_⟩
   · rw [← hs, Submodule.span_le]
     intro m hm
@@ -182,7 +192,7 @@ theorem exists_isLattice_eq_localLattice (Zd : LocDat D) (p : PlF D) (M : Submod
         exact M.add_mem (hsM m hm) (hcv _ (hov m))
       · rw [hbcf]; exact hce i
     | zero => rw [map_zero]; exact M.zero_mem
-    | add a b _ _ ha hb => rw [map_add]; exact M.add_mem ha hb
+    | add a b _ _ ha hb => rw [map_add (f := _)]; exact M.add_mem ha hb
     | smul a y _ hy =>
       rw [oE_smul, baseChange_smul₂]
       exact smulM (iE_int (D.s.atP p) (a : 𝓞 D.host.E).2) hy

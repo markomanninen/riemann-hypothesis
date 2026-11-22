@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ChLApply
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddCharConductorAndHaarIntegersExist
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ChLApply
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddCharConductorAndHaarIntegersExist
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData
 open scoped Topology
 
@@ -47,15 +52,16 @@ theorem continuous_form (w : Matrix R Q k →ₗ[k] k) : Continuous w := by
   have h : (w : Matrix R Q k → k) = fun m => ∑ i, ∑ j, m i j * w (Matrix.single i j 1) := by
     funext m
     conv_lhs => rw [Matrix.matrix_eq_sum_single m]
-    simp only [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     rw [← smul_eq_mul, ← map_smul, Matrix.smul_single, smul_eq_mul, mul_one]
   rw [h]
-  exact continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+  exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
     (continuous_id.matrix_elem i j).mul continuous_const
 
-omit [Fintype R] [Fintype Q] in
 
+omit [Fintype R] [Fintype Q] in
 theorem exists_cball_single {f : Matrix R Q k → ℂ} (hf : f ∈ SB (Matrix R Q k)) (e : R × Q) :
     ∃ s : kˣ, ∀ t ∈ cball s, ∀ x, f (x + Matrix.single e.1 e.2 t) = f x := by
   have hc : Continuous fun t : k => (Matrix.single e.1 e.2 t : Matrix R Q k) := by
@@ -152,7 +158,7 @@ theorem kills_insert_of_evalLaw : ∀ (k : Type) [Field k] [ValuativeRel k] [Top
     funext y
     have h1 : w (Matrix.single e.1 e.2 u) = u * w (Matrix.single e.1 e.2 1) := by
       rw [← smul_eq_mul, ← map_smul, Matrix.smul_single, smul_eq_mul, mul_one]
-    rw [fillAt_add_single β hE hI, hs₁ u (hs hu).1, map_add, neg_add, AddChar.map_add_eq_mul, h1,
+    rw [fillAt_add_single β hE hI, hs₁ u (hs hu).1, map_add (f := _), neg_add, AddChar.map_add_eq_mul, h1,
       hc.eq_one (neg_mem_cball (hs hu).2), mul_one]
   let p : Matrix R Q k → k ⧸ ballGrp s := fun x => QuotientAddGroup.mk (x e.1 e.2)
   have hp : IsLocallyConstant p := (isLocallyConstant_mk s).comp_continuous (continuous_id.matrix_elem _ _)
@@ -165,7 +171,7 @@ theorem kills_insert_of_evalLaw : ∀ (k : Type) [Field k] [ValuativeRel k] [Top
     rw [← integral_const_mul]
     congr 1
     funext y
-    simp only [P, p, fillAt_apply_of_notMem β hE hI, mul_assoc]
+    simp [P, p, fillAt_apply_of_notMem β hE hI, mul_assoc]
   have hP : ∀ q, L (P q) = 0 := by
     intro q
     induction q using QuotientAddGroup.induction_on with | H a => ?_
@@ -194,7 +200,7 @@ theorem kills_insert_of_evalLaw : ∀ (k : Type) [Field k] [ValuativeRel k] [Top
             ((integrable_red hψ ν w β E I (P a).2 x).const_mul z)]
           congr 1
           funext y
-          simp only [Submodule.coe_sub, Submodule.coe_smul, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
+          change (Φ'.1 (fillAt β E I x y) - z * (P a).1 (fillAt β E I x y)) * _ = _
           ring
         rw [h4, h2, hred]
         split_ifs with hx
@@ -218,7 +224,8 @@ theorem kills_insert_of_evalLaw : ∀ (k : Type) [Field k] [ValuativeRel k] [Top
     split_ifs with hx
     · rfl
     · exact image_eq_zero_of_notMem_tsupport fun h => hx ⟨x, h, rfl⟩
-  rw [hsum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum, map_sum]
   exact Finset.sum_eq_zero fun q _ => hP q
 
 end GlobalTheory.PartRedEval

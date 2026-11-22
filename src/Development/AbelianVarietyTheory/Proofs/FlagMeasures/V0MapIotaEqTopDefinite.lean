@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.DivisionCompatibleToSub2Indef2
-import Formalism.LocalToGlobal.GroupLattices.JointServices.LevelOperatorFixesImage
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RowSideIotaMapsFixedColumnsOntoOfMatrices
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.DivisionCompatibleToSub2Indef2
+public import Formalism.LocalToGlobal.GroupLattices.JointServices.LevelOperatorFixesImage
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RowSideIotaMapsFixedColumnsOntoOfMatrices
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.L2.DIV Formalism.L2.Indef NumberField
 

@@ -1,7 +1,11 @@
-import Formalism.MirabolicMackeyTheory.StatementLoc
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.GlobalBoundRefinements
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.IdxRules
-import Formalism.HermitianLattices.HermitianLatticesProofs.LocBasic
+module
+
+public import Formalism.MirabolicMackeyTheory.StatementLoc
+public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.GlobalBoundRefinements
+public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.IdxRules
+public import Formalism.HermitianLattices.HermitianLatticesProofs.LocBasic
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 
@@ -12,9 +16,6 @@ namespace Formalism.EigenvalueLevelCeiling
 open Formalism.DivisionValues Formalism.HermitianLatticesTheory
 
 section Gen
-
-def lenQ {R W : Type*} [CommRing R] [AddCommGroup W] [Module R W] (X Y : Submodule R W) : ℕ :=
-  (Module.length R (↥X ⧸ Y.comap X.subtype)).toNat
 
 theorem locLen_congr {R W : Type*} [CommRing R] [AddCommGroup W] [Module R W] (p : Ideal R) [p.IsPrime]
     {A A' C C' : Submodule R W} (hA : localization₂ p A = localization₂ p A') (hC : localization₂ p C = localization₂ p C') :

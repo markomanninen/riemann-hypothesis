@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InnerProductFormula
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaIntegrandIntegrable
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpqLocallyCompactGroup
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LamLowNumericalEnd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralFundamentalDomainEqSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SummableAbsNormInvSq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExpNegLeNormTprodOneSubInv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbsLogInvOneSubLeTwoMulAbs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToNatFloorLe
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MultRealElt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjFrameMemUH
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VolEqIndexMulMass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InnerProductFormula
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaIntegrandIntegrable
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpqLocallyCompactGroup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LamLowNumericalEnd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralFundamentalDomainEqSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SummableAbsNormInvSq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExpNegLeNormTprodOneSubInv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbsLogInvOneSubLeTwoMulAbs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToNatFloorLe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MultRealElt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjFrameMemUH
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VolEqIndexMulMass
+
+@[expose] public section
 
 noncomputable section
 
@@ -120,7 +124,7 @@ theorem isMultiplicityInner_of_model (H : HMod (MMap M)) {N : ℂ} (h : ∀ x y,
   have h1 : ∀ x y : H.H, inner ℂ x y ≠ 0 → ∃ c, IsMultIP M μ 𝓕 (H.e x) (H.e y) c := fun x y hxy => by
     by_contra hc
     apply hxy
-    rw [h, ipM, dif_neg hc, mul_zero]
+    rw [h, ipM, dite_eq_right hc, mul_zero]
   refine ipM_spec _ _ _ _ _ ?_
   by_cases hx : x = 0
   · subst hx

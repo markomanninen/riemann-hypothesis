@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.Adelise
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.RW
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.Adelise
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.RW
+
+@[expose] public section
 
 noncomputable section
 

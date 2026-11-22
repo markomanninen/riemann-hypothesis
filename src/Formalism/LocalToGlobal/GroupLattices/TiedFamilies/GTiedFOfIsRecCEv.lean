@@ -1,11 +1,15 @@
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.FullTiedCBase
-import Formalism.LocalToGlobal.GroupLattices.LinkGConcreteNoKer
-import Formalism.SharpRestriction.SmoothDesignExistence.DGamSmooth
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.IntSplitOf
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.RecThm
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TieIwLevTieOf
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.CmpHyp0P
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.SelfDualAtColLevel
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.FullTiedCBase
+public import Formalism.LocalToGlobal.GroupLattices.LinkGConcreteNoKer
+public import Formalism.SharpRestriction.SmoothDesignExistence.DGamSmooth
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.IntSplitOf
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.RecThm
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TieIwLevTieOf
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.CmpHyp0P
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.SelfDualAtColLevel
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,15 +53,5 @@ inductive IsRecC (D : D7) (Gt : GatTies D) (c : LatCmp D) : Prop
       Cmp.latCmpC T (gatTiesC D0 sc 1 Lc I ψ hd) (cmpInC D0 sc 1 Lc I ψ hd H0 hL B hBs hB)
         (CH.toHyp0 fun u w hg v s x => pos_C D0 sc 1 Lc I ψ hd H0 hL B hBs hB iK lam hK hPos u w hg v s x).toHyp⟩)
     : IsRecC D Gt c
-
-theorem gTiedAll_of_isRecC {D : D7} {Gt : GatTies D} {c : LatCmp D} (h : IsRecC D Gt c) : Nonempty (GroupCompatibilityAll D Gt c) := by
-  obtain ⟨D0, sc, Lc, I, ψ, hd, H0, hL, T, B, hBs, hB, iK, lam, hK, hPos, CH, heq⟩ := h
-  cases heq
-  exact ⟨groupCompatibilityOfRecursion D0 sc 1 Lc I ψ hd H0 hL T B hBs hB (CH.toHyp0 fun u w hg v s x => pos_C D0 sc 1 Lc I ψ hd H0 hL B hBs hB iK lam hK hPos u w hg v s x).toHyp fun u w h => isHyperbolicAt_rec_of_placeIdentification D0 u w h (I u w h)⟩
-
-def IsRecCEv : FamClass := fun Fm =>
-  ∃ x0 : ℝ, ∀ x ≥ x0, ∀ (i : Fm.Ix x) (hx : Fm.x1 < x), IsRecC (Fm.D x i) (Fm.gatT x i) (Fm.ex x hx i).cmp
-
-def IsRecCF : FamClass := fun Fm => ∀ x i (hx : Fm.x1 < x), IsRecC (Fm.D x i) (Fm.gatT x i) (Fm.ex x hx i).cmp
 
 end Formalism.L2.G

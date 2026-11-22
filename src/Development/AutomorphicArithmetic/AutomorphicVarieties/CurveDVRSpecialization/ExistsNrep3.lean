@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.RatTorsionFree
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.HostFrameEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.PropagationTheoremGL2
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.MatGstar
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.RatTorsionFree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.HostFrameEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.PropagationTheoremGL2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.MatGstar
+
+@[expose] public section
 
 open NumberField IsLocalRing Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Aut UpperTheory.V.Pr UpperTheory.V
 open Matrix
@@ -45,9 +49,9 @@ private theorem ord_zero {D A : Type} [CommRing A] (T R : D → Matrix (Fin 3) (
 
 private theorem descend {H Γ A : Type} [Group H] [TopologicalSpace H] [CompactSpace H] [Group Γ] [TopologicalSpace Γ]
     [T2Space Γ] [CommRing A] (I : Ideal A) (p : H →* Γ) (hp : Continuous p) (hs : Function.Surjective p)
-    (r : H →* GG 3 A) (hk : p.ker ≤ r.ker) (hc : UnitaryThreeInertia.AdicCont I r) :
-    ∃ r' : Γ →* GG 3 A, (∀ s, r' (p s) = r s) ∧ UnitaryThreeInertia.AdicCont I r' := by
-  let r' : Γ →* GG 3 A :=
+    (r : H →* GG (m := 3) (R := A)) (hk : p.ker ≤ r.ker) (hc : UnitaryThreeInertia.AdicCont I r) :
+    ∃ r' : Γ →* GG (m := 3) (R := A), (∀ s, r' (p s) = r s) ∧ UnitaryThreeInertia.AdicCont I r' := by
+  let r' : Γ →* GG (m := 3) (R := A) :=
     p.liftOfRightInverse (Function.surjInv hs) (Function.rightInverse_surjInv hs) ⟨r, hk⟩
   have hr' : ∀ s, r' (p s) = r s := fun s => MonoidHom.liftOfRightInverse_comp_apply _ _ _ _ s
   refine ⟨r', hr', fun n => ?_⟩
@@ -60,7 +64,8 @@ private theorem descend {H Γ A : Type} [Group H] [TopologicalSpace H] [CompactS
   simp [hr']
 
 private theorem closed_one {H A : Type} [Group H] [TopologicalSpace H] [CommRing A] [IsLocalRing A] [IsNoetherianRing A]
-    (r : H →* GG 3 A) (hc : UnitaryThreeInertia.AdicCont (maximalIdeal A) r) : IsClosed {s | (r s).mat = 1} := by
+    (r : H →* GG (m := 3) (R := A)) (hc : UnitaryThreeInertia.AdicCont (maximalIdeal A) r) :
+    IsClosed {s | (r s).mat = 1} := by
   have hne : maximalIdeal A ≠ ⊤ := (maximalIdeal.isMaximal A).ne_top
   have hbot := Ideal.iInf_pow_eq_bot_of_isLocalRing (maximalIdeal A) hne
   have e : {s | (r s).mat = 1} = ⋂ n : ℕ, {s | (r s).mat.map (Ideal.Quotient.mk (maximalIdeal A ^ n)) =
@@ -123,17 +128,20 @@ private theorem upl_compact (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure �
     exact isClosed_biInter fun x _ => stab _
   exact isCompact_iff_compactSpace.mp hcl.isCompact
 
-private theorem mat_mul {A : Type} [CommRing A] (x y : GG 3 A) (hx : x.right = 1) : (x * y).mat = x.mat * y.mat := by
+private theorem mat_mul {A : Type} [CommRing A] (x y : GG (m := 3) (R := A)) (hx : x.right = 1) :
+    (x * y).mat = x.mat * y.mat := by
   simp [GG.mat, hx]
 
-private theorem conj_mat {G A : Type} [Group G] [CommRing A] (h : GL (Fin 3) A) (r : G →* GG 3 A) (s : G)
+private theorem conj_mat {G A : Type} [Group G] [CommRing A] (h : GL (Fin 3) A)
+    (r : G →* GG (m := 3) (R := A)) (s : G)
     (hs : (r s).right = 1) : (conjBy h⁻¹ r s).mat = (h⁻¹ : GL (Fin 3) A).val * (r s).mat * h.val := by
   simp [conjBy, GG.mat, MulAut.conj_apply, hs, SemidirectProduct.mul_left, SemidirectProduct.mul_right,
     mul_assoc]
 
 private theorem local_chars {G H O A : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [Group H]
     [TopologicalSpace H] [CommRing O] [IsLocalRing O] [CommRing A] [IsLocalRing A] [Algebra O A]
-    (η : G →* ℤˣ) (Ψ : G →* Oˣ) (D I : Subgroup G) (r : G →* GG 3 A) (hr : UnitaryThreeInertia.Red η Ψ r)
+    (η : G →* ℤˣ) (Ψ : G →* Oˣ) (D I : Subgroup G) (r : G →* GG (m := 3) (R := A))
+    (hr : UpperTheory.V.UnitaryThreeInertia.Red η Ψ r)
     (hc : UnitaryThreeInertia.AdicCont (maximalIdeal A) r)
     (ht : UnitaryThreeInertia.CondT (η.comp D.subtype) (Ψ.comp D.subtype) (I.subgroupOf D) (r.comp D.subtype))
     (φ : H →* G) (hφ : Continuous φ) (γ : G) (hγ : η γ = 1) (h1 : ∀ g, η (φ g) = 1) (hD : ∀ g, γ⁻¹ * φ g * γ ∈ D) :
@@ -271,11 +279,13 @@ private theorem local_chars {G H O A : Type} [Group G] [TopologicalSpace G] [IsT
 theorem UpperTheory.V.Pr.exists_nrep3 :
     ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsLocalRing O] {η : G ℚ Ω →* ℤˣ} {Ψ : G ℚ Ω →* Oˣ} {σ g₁ : G ℚ Ω} {B : ValuationSubring Ω} {M : ℕ}
       {L : Type} [Field L] [NumberField L] [Algebra L Ω] {Φ : Fr.Frame l (ResidueField O)} (k : GalLink η Ψ σ g₁ B M L Φ) [CharP (ResidueField O) l] {C₀ : ℕ}, Φ.Ok C₀ → l ∣ M → σ * σ = 1 →
-    ∀ {A : Type} [CommRing A] [IsDomain A] [IsLocalRing A] [IsNoetherianRing A] [Algebra O A] [IsLocalHom (algebraMap O A)] (r : G ℚ Ω →* GG 3 A), OrdPt l η Ψ σ g₁ B r → ∃ ρ : Fr.NRep Φ 3 A, IsLiftA O ρ ∧ (∀ s : G L Ω, ρ.r (k.p0 s) = (r (Base.galEmb ℚ L Ω s)).mat) ∧
+    ∀ {A : Type} [CommRing A] [IsDomain A] [IsLocalRing A] [IsNoetherianRing A] [Algebra O A] [IsLocalHom (algebraMap O A)]
+      (r : G ℚ Ω →* GG (m := 3) (R := A)), UpperTheory.V.Pr.OrdPt l η Ψ σ g₁ B r →
+      ∃ ρ : Fr.NRep Φ 3 A, IsLiftA O ρ ∧ (∀ s : G L Ω, ρ.r (k.p0 s) = (r (Base.galEmb ℚ L Ω s)).mat) ∧
       ∀ v i, ∀ g ∈ Φ.Iv v, (ρ.ψ v i g : A) = algebraMap O A (UnitaryThreeInertia.psi Ψ i (k.j v g)) := by
   intro Ω _ _ _ l _ O _ _ η Ψ σ g₁ B M L _ _ _ Φ k _ C₀ hOk hlM hσ A _ _ _ _ _ _ r hr
   haveI := upl_compact Ω L
-  let ru : ↥(upl Ω L) →* GG 3 A := r.comp (upl Ω L).subtype
+  let ru : ↥(upl Ω L) →* GG (m := 3) (R := A) := r.comp (upl Ω L).subtype
   have ru_cont : UnitaryThreeInertia.AdicCont (maximalIdeal A) ru := fun n =>
     (hr.cont n).comp_continuous continuous_subtype_val
   have hk : k.p.ker ≤ ru.ker := by

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,7 +111,7 @@ theorem UpperTheory.RealTr.isoFacts :
       exact hz'
     · simp
     · intro a b ha hb
-      rw [map_add, ha, hb, smul_add]
+      rw [map_add (f := _), ha, hb, smul_add]
   have hM : ∀ μ', wsp F μ' ⊓ S ≠ ⊥ → Maj μ' ν := by
     intro μ' hne
     by_contra hnot

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.LSegJacquet
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyEquivContraOfChar
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmoothContragredientIrreducibleAndReflexive
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitarisableOfSquareIntegrable
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.LSegJacquet
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyEquivContraOfChar
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmoothContragredientIrreducibleAndReflexive
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitarisableOfSquareIntegrable
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,14 +85,14 @@ theorem eq_of_isCoatom_of_mem_range {S S' : Subrepresentation π} (hS : IsCoatom
   have h2 := pullContra_apply_eq_zero S' l' hb
   have h3 : (pullContra S l).1 b = 0 := (congrArg (fun y : smoothPart π.dual => y.1 b) hl').symm.trans h2
   show (pullContra S l).1 (a + b) = 0
-  rw [map_add, h1, h3, add_zero]
+  rw [map_add (f := _), h1, h3, add_zero]
 
 end General
 
 theorem isCosocle_of_isSocle_contra : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V), IsSmooth π → HasFiniteLength π → ∀ τ' : IrrRep (GL (Fin N) k), IsSocle τ'.ρ (contra π) → ∃ τ : IrrRep (GL (Fin N) k), IsCosocle τ.ρ π := by
   intro k _ _ _ _ hA N V _ _ π hπ hfl τ' hτ
   obtain ⟨hi, f, hf, hat⟩ := hτ
-  have hG := GlobalTheory.SqIntUnit.compactOpen_basis k N
+  have hG := GlobalTheory.SqIntUnit.compactOpen_basis (k := k) N
   have hat0 : IsAtom f.range := isAtom_range hi f hf
   have hsm : ∀ S : Subrepresentation π, IsSmooth (ProjLine.quot S) := fun S =>
     (IsSubquotient.of_surjective (ProjLine.quotMk S) S.toSubmodule.mkQ_surjective).isSmooth hπ

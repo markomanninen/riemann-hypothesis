@@ -1,6 +1,10 @@
-import Formalism.HarderNarasimhan.StatementFrameF
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.FrameHermSharpB
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.FrameLinearAlgebraFirst
+module
+
+public import Formalism.HarderNarasimhan.StatementFrameF
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.FrameHermSharpB
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.FrameLinearAlgebraFirst
+
+@[expose] public section
 
 open Module NumberField Finset Formalism.CorankShareLayerCake.FR
 
@@ -33,7 +37,7 @@ theorem thmF_share {I : Type} [Fintype I] (m : I → ℕ) (x : ∀ i, Fin (m i) 
     simp [hempty]
 
 theorem thmF_place {K W κ κ₁ I : Type} [Field K] [NumberField K] [StarRing K]
-    [IsTotallyComplex K] [AddCommGroup W] [Module K W] [Module (𝓞 K) W] [IsScalarTower (𝓞 K) K W]
+    [_root_.NumberField.IsTotallyComplex K] [AddCommGroup W] [Module K W] [Module (𝓞 K) W] [IsScalarTower (𝓞 K) K W]
     [Fintype κ] [DecidableEq κ] [Fintype κ₁] [DecidableEq κ₁] [Fintype I]
     {V ι : I → Type} [∀ i, AddCommGroup (V i)] [∀ i, Module K (V i)] [∀ i, Module (𝓞 K) (V i)]
     [∀ i, IsScalarTower (𝓞 K) K (V i)] [∀ i, Fintype (ι i)] [∀ i, DecidableEq (ι i)]
@@ -163,8 +167,8 @@ theorem hilbert_schmidt_zero_map {E F : Type*} [NormedAddCommGroup E] [InnerProd
     (c : ℝ) : hs2 (frK c (0 : E →ₗ[ℂ] F) - LinearMap.id) = finrank ℂ E := by
   simp [hs2, frK, LinearMap.trace_id]
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem theoremFSharp_of (hLA : FrameLA1) : TheoremFSharp := by
   intro K W κ κ₁ I _ _ _ _ _ _ _ _ _ _ _ _ _ _ V ι _ _ _ _ _ _ b' X' cc b X N B h v Y Y' Ball γ
     s u HH e η δ hX' hX hY hY' hccFG hccSpan hNFG hNSpan hR hBN hht hs hu hmax hHH hHH0

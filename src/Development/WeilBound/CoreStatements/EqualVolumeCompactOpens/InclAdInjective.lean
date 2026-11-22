@@ -1,7 +1,11 @@
-import GroundTheory.GlobalFields.Adele.Topology
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.StrongApproximation.SAOpenStatement
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.RelIndexNeZeroOfIsCompactOfRelOpen
-import Development.WeilBound.CoreStatements.EqualVolumeCompactOpens.Master
+module
+
+public import GroundTheory.GlobalFields.Adele.Topology
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.StrongApproximation.SAOpenStatement
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.RelIndexNeZeroOfIsCompactOfRelOpen
+public import Development.WeilBound.CoreStatements.EqualVolumeCompactOpens.Master
+
+@[expose] public section
 
 noncomputable section
 
@@ -125,9 +129,6 @@ theorem inclAd_injective : Function.Injective (inclAd F E) :=
 
 theorem diagGL_val (γ : GL (Fin N) E) :
     (diagGL F γ : Matrix (Fin N) (Fin N) (Adf F E)) = (γ : Matrix (Fin N) (Fin N) E).map (inclAd F E) := rfl
-
-theorem diagGL_injective : Function.Injective (diagGL F : GL (Fin N) E → GL (Fin N) (Adf F E)) := fun a b h =>
-  Units.ext (Matrix.map_injective inclAd_injective (congrArg Units.val h))
 
 theorem diagGL_mem_u (c : E ≃ₐ[F] E) (J : Matrix (Fin N) (Fin N) E) (γ : GL (Fin N) E) :
     diagGL F γ ∈ UA c J ↔ γ ∈ uGrp c.toRingHom J := by

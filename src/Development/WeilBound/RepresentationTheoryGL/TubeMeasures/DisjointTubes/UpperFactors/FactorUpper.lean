@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.TubeMeasures.DisjointTubes.TubeSt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TubeMeasures.DisjointTubes.TubeSt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix GlobalTheory.AdLat GlobalTheory.UCls GlobalTheory.SUVol ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Up
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.StandardLattice Formalism.IndefR.Lev Formalism.IndefR.Datum GlobalTheory.AdelicScalar
@@ -52,13 +56,13 @@ theorem num : NumSt := by
       rw [Finset.prod_const, Finset.card_range, inv_pow, ← pow_mul, sq]
     rw [e]
     unfold ReciprocityTheory.ChartRestriction.DS.volU
-    exact Finset.prod_le_prod (fun i _ => by positivity)
+    exact Finset.prod_le_prod₀ (fun i _ => by positivity)
       (fun i hi => MainStatements.Tam.N.factor_lower r i (Finset.mem_range.mp hi))
   · have e : (13 : ℝ) ^ (r ^ 2) = ∏ _i ∈ Finset.range r, (13 : ℝ) ^ r := by
       rw [Finset.prod_const, Finset.card_range, ← pow_mul, sq]
     rw [e]
     unfold ReciprocityTheory.ChartRestriction.DS.volU
-    exact Finset.prod_le_prod (fun i _ => by positivity)
+    exact Finset.prod_le_prod₀ (fun i _ => by positivity)
       (fun i hi => MainStatements.Tam.N.factor_upper r i (Finset.mem_range.mp hi))
 
 end MainStatements.Tam

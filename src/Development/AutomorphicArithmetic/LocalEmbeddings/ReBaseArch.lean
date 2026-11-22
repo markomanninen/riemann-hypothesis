@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicWeilRepSchrodingerModelUnique
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ProductMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicWeilRepSchrodingerModelUnique
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ProductMap
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped Matrix TensorProduct
@@ -26,16 +30,13 @@ def prU (c : A →ₐ[R] A) (J : Matrix ι ι A) (e : R) (he : e * e = e) : UG c
     show (e • g.1.1 + (1 - e) • 1)ᵀ * J * (e • g.1.1 + (1 - e) • (1 : Matrix ι ι A)).map c = J
     have hm : (e • g.1.1 + (1 - e) • (1 : Matrix ι ι A)).map c = e • g.1.1.map c + (1 - e) • 1 := by
       ext i j
-      simp only [Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, map_add, map_smul, Matrix.one_apply]
+      simp only [Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, map_add (f := _), map_smul, Matrix.one_apply]
       split_ifs <;> simp
     rw [hm]
     simp only [Matrix.transpose_add, Matrix.transpose_smul, Matrix.transpose_one, Matrix.add_mul, Matrix.mul_add,
       Matrix.smul_mul, Matrix.mul_smul, smul_smul, smul_add, he, h1, h2, h3,
       zero_smul, add_zero, zero_add, Matrix.one_mul, Matrix.mul_one, hg]
     rw [← add_smul, add_sub_cancel, one_smul]
-
-theorem prU_val (c : A →ₐ[R] A) (J : Matrix ι ι A) (e : R) (he : e * e = e) (g : UG c J) :
-    (prU c J e he g).1.1 = e • g.1.1 + (1 - e) • 1 := rfl
 
 theorem continuous_prU [TopologicalSpace A] [ContinuousAdd A] [ContinuousConstSMul R A] (c : A →ₐ[R] A)
     (J : Matrix ι ι A) (e : R) (he : e * e = e) : Continuous (prU c J e he) := by
@@ -51,7 +52,7 @@ theorem smul_det_prM (e : R) (he : e * e = e) (M : Matrix ι ι A) {u : R} (hu :
   have h1 : (Ideal.Quotient.mk I).mapMatrix (prM e he ι M) = 1 := by
     ext i j
     simp only [prM_apply, RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply]
-    simp only [map_add, Algebra.smul_def, map_mul, map_sub, h0, map_one, Matrix.one_apply]
+    simp only [map_add (f := _), Algebra.smul_def, map_mul, map_sub, h0, map_one, Matrix.one_apply]
     split_ifs <;> simp
   have h2 : (prM e he ι M).det - 1 ∈ I := by
     rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, RingHom.map_det, h1, Matrix.det_one, map_one, sub_self]
@@ -76,8 +77,8 @@ open GlobalTheory.WeilSchUnique
 
 variable {F : Type} [Field F] [NumberField F] {E : Type} [Field E] [NumberField E] [Algebra F E]
 
-variable (F) in
 
+variable (F) in
 def eInf : AF F := ((1 : InfiniteAdeleRing F), (0 : FiniteAdeleRing (𝓞 F) F))
 
 theorem eInf_mul : eInf F * eInf F = eInf F := Prod.ext (one_mul (1 : InfiniteAdeleRing F)) (zero_mul (0 : FiniteAdeleRing (𝓞 F) F))
@@ -96,19 +97,19 @@ theorem evI_one_sub_eInf : evI F (1 - eInf F) = 0 := by
 
 theorem member_arch_eq (σ : E →ₐ[F] E) (hσ : IsCMExt F E σ) {a b : ℕ} (JA : Matrix (Fin a) (Fin a) E)
     (JB : Matrix (Fin b) (Fin b) E) (ε : ℤˣ) (hJ : ∀ i j, σ (JB j i) = ((ε : ℤ) : E) * JB i j) (hdet : JB.det ≠ 0)
-    (ψ : AddChar (AF F) ℂ) (hψ : IsStd ψ) {κ : Type} [Fintype κ]
-    (d : Darboux (symp (cA σ) (-1) (incM F JA) (incM F JB)) κ) (χ χ₁ : Chr F E)
+    (ψ : AddChar (AF F) ℂ) (hψ : (_root_.Continuous ψ ∧ (∀ x : F, ψ (algebraMap F (AF F) x) = 1) ∧ ∀ a : (AF F), _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.evI (F := F)) a → ψ a = _root_.Complex.exp (-(2 * _root_.Real.pi * _root_.Complex.I) * (_root_.Algebra.trace ℝ (_root_.NumberField.mixedEmbedding.mixedSpace F) ((_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.evI (F := F)) a) : ℝ)))) {κ : Type} [Fintype κ]
+    (d : Darboux (symp (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (-1) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JA) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JB)) κ) (χ χ₁ : Chr F E)
     (hχ : ∀ z : (AE F E)ˣ, At (evI F) ((z : AE F E) - 1) → χ z = χ₁ z)
-    (om om₁ : UG (cA σ) (incM F JB) →* Module.End ℂ ((κ → AF F) → ℂ))
-    (h : IsUWeilB (cA σ) (adeleClass F) ψ (-1) (incM F JA) (incM F JB) d χ om)
-    (h₁ : IsUWeilB (cA σ) (adeleClass F) ψ (-1) (incM F JA) (incM F JB) d χ₁ om₁) :
+    (om om₁ : UG (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JB) →* Module.End ℂ ((κ → AF F) → ℂ))
+    (h : IsUWeilB (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (adeleClass F) ψ (-1) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JA) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JB) d χ om)
+    (h₁ : IsUWeilB (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (adeleClass F) ψ (-1) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JA) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JB) d χ₁ om₁) :
     ∀ g, At (evI F) (g.1.1 - 1) → ∀ Φ ∈ schA F κ, om g Φ = om₁ g Φ := by
   obtain ⟨-, dd, omd, hdd, ⟨-, hS, hR⟩, hres⟩ := h
   obtain ⟨-, dd₁, omd₁, hdd₁, ⟨-, hS₁, hR₁⟩, hres₁⟩ := h₁
   have hee : ∀ w, dd₁.e w = dd.e w := fun w => by
     rw [← Matrix.fromCols_toCols w, hdd, hdd₁]
   have hrho : ∀ w, dd₁.rho ψ w = dd.rho ψ w := fun w => by simp only [Darboux.rho, hee]
-  have inv_mul : ∀ (p : UG (cA σ) (dbl (incM F JB))) φ, omd p (omd p⁻¹ φ) = φ := fun p φ => by
+  have inv_mul : ∀ (p : UG (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (dbl ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JB))) φ, omd p (omd p⁻¹ φ) = φ := fun p φ => by
     rw [← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply]
   obtain ⟨φz, hφz, hφz0⟩ := GlobalTheory.T.exists_adelicSchwartz_ne_zero_at_origin F (κ ⊕ κ)
 
@@ -122,9 +123,9 @@ theorem member_arch_eq (σ : E →ₐ[F] E) (hσ : IsCMExt F E σ) {a b : ℕ} (
         have e1 : schr ψ (dd.e w') = dd.rho ψ w' := rfl
         rw [e1, Module.End.mul_apply, Module.End.mul_apply]
         calc omd p⁻¹ (omd₁ p (dd.rho ψ w' φ)) = omd p⁻¹ (omd₁ p (dd₁.rho ψ w' φ)) := by rw [hrho]
-          _ = omd p⁻¹ (dd₁.rho ψ (actB (cA σ) p w') (omd₁ p φ)) := by rw [hS₁.impl p w' φ hφ]
-          _ = omd p⁻¹ (dd.rho ψ (actB (cA σ) p w') (omd₁ p φ)) := by rw [hrho]
-          _ = dd.rho ψ (actB (cA σ) p⁻¹ (actB (cA σ) p w')) (omd p⁻¹ (omd₁ p φ)) :=
+          _ = omd p⁻¹ (dd₁.rho ψ (actB (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) p w') (omd₁ p φ)) := by rw [hS₁.impl p w' φ hφ]
+          _ = omd p⁻¹ (dd.rho ψ (actB (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) p w') (omd₁ p φ)) := by rw [hrho]
+          _ = dd.rho ψ (actB (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) p⁻¹ (actB (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) p w')) (omd p⁻¹ (omd₁ p φ)) :=
               hS.impl _ _ _ (hS₁.pres p φ hφ)
           _ = _ := by rw [actB_inv_actB])
     refine ⟨c, fun φ hφ => ?_⟩
@@ -143,7 +144,7 @@ theorem member_arch_eq (σ : E →ₐ[F] E) (hσ : IsCMExt F E σ) {a b : ℕ} (
     rw [map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, hcf q φ hφ, map_smul,
       hcf p _ (hsp q φ hφ), smul_smul, mul_comm]).symm
   have hone : cf 1 = 1 := (huniq 1 1 fun φ _ => by simp).symm
-  let cM : UG (cA σ) (dbl (incM F JB)) →* ℂ := { toFun := cf, map_one' := hone, map_mul' := hmul }
+  let cM : UG (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (dbl ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JB)) →* ℂ := { toFun := cf, map_one' := hone, map_mul' := hmul }
   let c := cM.toHomUnits
   have hcv : ∀ p, ((c p : ℂˣ) : ℂ) = cf p := fun p => rfl
   have hcont_cf : Continuous cf := by
@@ -166,7 +167,7 @@ theorem member_arch_eq (σ : E →ₐ[F] E) (hσ : IsCMExt F E σ) {a b : ℕ} (
     rw [this]
     exact hcont_cf.inv₀ fun p => by rw [← hcv]; exact (c p).ne_zero
   obtain ⟨l, hl, hlinv, φ₀, hφ₀, hl0⟩ := GlobalTheory.T.exists_diagonalLagrangian_invariant_form F ψ κ
-  have hP : ∀ (p : UG (cA σ) (dbl (incM F JB))) (t : GL (Fin b) (AE F E)),
+  have hP : ∀ (p : UG (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (dbl ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JB))) (t : GL (Fin b) (AE F E)),
       ((p : GL (Fin b ⊕ Fin b) (AE F E)) : Matrix _ _ (AE F E)) * diagCols (Fin b) = diagCols (Fin b) * t.1 →
         χ (Matrix.GeneralLinearGroup.det t) = χ₁ (Matrix.GeneralLinearGroup.det t) → c p = 1 := fun p t hpt hχt => by
     have hφ := hsp p⁻¹ φ₀ hφ₀
@@ -180,13 +181,13 @@ theorem member_arch_eq (σ : E →ₐ[F] E) (hσ : IsCMExt F E σ) {a b : ℕ} (
     exact mul_right_cancel₀ hl0 (by rw [one_mul]; exact e1.symm)
   haveI : ContinuousAdd (AE F E) := IsModuleTopology.toContinuousAdd (AF F) (AE F E)
   haveI : ContinuousSMul (AF F) (AE F E) := IsModuleTopology.toContinuousSMul (AF F) (AE F E)
-  let π := prU (cA σ) (dbl (incM F JB)) (eInf F) eInf_mul
+  let π := prU (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (dbl ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JB)) (eInf F) eInf_mul
   have hc1 := GlobalTheory.T.doubledUnitary_character_trivial_of_siegel F E σ hσ b JB ε hJ hdet (c.comp π) (hcont.comp (continuous_prU _ _ _ _)) (fun p t hpt => by
     refine hP (π p) (Units.map (prM (eInf F) eInf_mul (Fin b)) t) ?_ (hχ _ fun u hu => ?_)
     · exact prM_mul (eInf F) eInf_mul hpt
     · exact smul_det_prM (eInf F) eInf_mul t.1 (mul_eInf hu))
   intro g hg Φ hΦ
-  obtain ⟨gd, hgd⟩ := GlobalTheory.T.exists_unitaryDoubled_blockDiag_one (AF F) (AE F E) (cA σ) (Fin b) (incM F JB) g
+  obtain ⟨gd, hgd⟩ := GlobalTheory.T.exists_unitaryDoubled_blockDiag_one (AF F) (AE F E) (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (Fin b) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JB) g
   have hπ : π gd = gd := by
     refine Subtype.ext (Units.ext ?_)
     have h0 : (1 - eInf F) • (g.1.1 - 1) = 0 := hg _ evI_one_sub_eInf
@@ -195,7 +196,8 @@ theorem member_arch_eq (σ : E →ₐ[F] E) (hσ : IsCMExt F E σ) {a b : ℕ} (
     exact prM_fromBlocks _ _ h0
   have hcf1 : cf gd = 1 := by
     have := congrArg (fun f => f gd) hc1
-    simp only [MonoidHom.comp_apply, hπ, MonoidHom.one_apply] at this
+    change c (π gd) = 1 at this
+    rw [hπ] at this
     rw [← hcv, this]; rfl
   obtain ⟨φ₂, hφ₂, hφ₂0⟩ := GlobalTheory.T.exists_adelicSchwartz_ne_zero_at_origin F κ
   have hb := GlobalTheory.T.productFunctionOnSumCoords_mem_adelicSchwartzSpace F κ κ Φ hΦ φ₂ hφ₂
@@ -208,7 +210,7 @@ theorem member_arch_eq (σ : E →ₐ[F] E) (hσ : IsCMExt F E σ) {a b : ℕ} (
   exact mul_right_cancel₀ hφ₂0 this
 
 theorem weil_arch_eq {σ : E →ₐ[F] E} (hσ : IsCMExt F E σ) {n d : ℕ} {X : Spc F E n} {W : Spc F E d} {M : Model σ X W}
-    {ψ : AddChar (AF F) ℂ} {χX χW χX₁ χW₁ : Chr F E} (hψ : IsStd ψ) (hX : ∀ i j, σ (X.J j i) = X.J i j) (hXd : X.J.det ≠ 0)
+    {ψ : AddChar (AF F) ℂ} {χX χW χX₁ χW₁ : Chr F E} (hψ : (_root_.Continuous ψ ∧ (∀ x : F, ψ (algebraMap F (AF F) x) = 1) ∧ ∀ a : (AF F), _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.evI (F := F)) a → ψ a = _root_.Complex.exp (-(2 * _root_.Real.pi * _root_.Complex.I) * (_root_.Algebra.trace ℝ (_root_.NumberField.mixedEmbedding.mixedSpace F) ((_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.evI (F := F)) a) : ℝ)))) (hX : ∀ i j, σ (X.J j i) = X.J i j) (hXd : X.J.det ≠ 0)
     (hW : ∀ i j, σ (W.J j i) = -W.J i j) (hWd : W.J.det ≠ 0)
     (hχX : ∀ z : (AE F E)ˣ, At (evI F) ((z : AE F E) - 1) → χX z = χX₁ z)
     (hχW : ∀ z : (AE F E)ˣ, At (evI F) ((z : AE F E) - 1) → χW z = χW₁ z)

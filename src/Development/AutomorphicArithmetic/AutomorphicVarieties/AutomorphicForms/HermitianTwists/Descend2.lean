@@ -1,7 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HermitianTwists.RepNewformOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.Sl2Low
+module
 
-open private bound cas wt_low from Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.Sl2Low
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HermitianTwists.RepNewformOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.Sl2Low
+
+@[expose] public section
 
 namespace UpperTheory.V.Af.Rn
 
@@ -14,16 +16,28 @@ private theorem descend2 (hL : W * L - L * W = (-2 : ℂ) • L)
     (h0 : ∀ x, H x x = 0 → x = 0) (hW : ∀ x y, H (W x) y = H x (W y)) (hH : ∀ x y, H (L x) y = -H x (R y))
     (j : ℕ) : ∀ x : V, x ≠ 0 → W x = ((j : ℤ) : ℂ) • x →
       ∃ x, x ≠ 0 ∧ (W x = (2 : ℂ) • x ∨ W x = 0) ∧ L x = 0 := by
-  have hC' : (4 : ℂ) • (R * L) = (((0 : ℕ) : ℂ) * (((0 : ℕ) : ℂ) - 2)) • 1 - (W * W - (2 : ℂ) • W) := by
-    simpa using hC
+  have lower_weight {y : V} {n : ℤ} (hy : W y = (n : ℂ) • y) :
+      W (L y) = ((n - 2 : ℤ) : ℂ) • L y := by
+    have h := congrArg (fun f : Module.End ℂ V => f y) hL
+    simp only [LinearMap.sub_apply, mul_apply_eq_comp, LinearMap.smul_apply, hy, map_smul] at h
+    rw [sub_eq_iff_eq_add] at h
+    rw [h]
+    push_cast
+    module
   induction j using Nat.strong_induction_on with
   | _ j ih =>
   intro x hx hWx
-  have hRL := cas hC' hWx
-  have hLz : (((0 : ℕ) : ℤ) * (((0 : ℕ) : ℤ) - 2) - (j : ℤ) * ((j : ℤ) - 2) = 0) → L x = 0 := by
+  have hRL : R (L x) = (((-((j : ℤ) * ((j : ℤ) - 2)) : ℤ) : ℂ) / 4) • x := by
+    have h := congrArg (fun f : Module.End ℂ V => f x) hC
+    simp only [LinearMap.sub_apply, mul_apply_eq_comp, LinearMap.smul_apply,
+      LinearMap.neg_apply, hWx, map_smul] at h
+    calc
+      R (L x) = (1 / 4 : ℂ) • ((4 : ℂ) • R (L x)) := by rw [smul_smul]; norm_num
+      _ = _ := by rw [h]; push_cast; module
+  have hLz : (j : ℤ) * ((j : ℤ) - 2) = 0 → L x = 0 := by
     intro hz
     rw [hz] at hRL
-    simp only [Int.cast_zero, zero_div, zero_smul] at hRL
+    simp only [neg_zero, Int.cast_zero, zero_div, zero_smul] at hRL
     apply h0
     rw [hH, hRL, map_zero, neg_zero]
   by_cases hLx : L x = 0
@@ -31,10 +45,8 @@ private theorem descend2 (hL : W * L - L * W = (-2 : ℂ) • L)
     rw [hLx, map_zero] at hRL
     have hc := (smul_eq_zero.1 hRL.symm).resolve_right hx
     have hz : (j : ℤ) * ((j : ℤ) - 2) = 0 := by
-      have : (((0 * (0 - 2) - (j : ℤ) * ((j : ℤ) - 2) : ℤ) : ℂ)) = 0 := by
-        simpa using hc
-      have := Int.cast_eq_zero.1 this
-      linarith
+      have hc' := (div_eq_zero_iff.mp hc).resolve_right (by norm_num)
+      exact neg_eq_zero.mp (Int.cast_eq_zero.mp hc')
     rcases mul_eq_zero.1 hz with h | h
     · right
       rw [hWx, h]
@@ -46,10 +58,38 @@ private theorem descend2 (hL : W * L - L * W = (-2 : ℂ) • L)
       simp
   · rcases j with _ | _ | _ | j
     · exact absurd (hLz (by norm_num)) hLx
-    · have := bound hL hC' h0 hW hH hx hWx
-      norm_num at this
+    · have hWx' : W x = x := by simpa using hWx
+      have hLw : W (L x) = -L x := by
+        have hw := lower_weight hWx
+        norm_num at hw
+        simpa using hw
+      have hRL' : R (L x) = (1 / 4 : ℂ) • x := by
+        norm_num at hRL ⊢
+        exact hRL
+      have h1 : H x (L x) = 0 := by
+        have e := hW x (L x)
+        rw [hWx', hLw, map_neg] at e
+        linear_combination e / 2
+      have h2 : H (L x) x = 0 := by
+        have e := hW (L x) x
+        rw [hLw, hWx', map_neg, LinearMap.neg_apply] at e
+        linear_combination -e / 2
+      have hdiag : H (L x) (L x) = -(1 / 4 : ℂ) * H x x := by
+        simp only [hH, hRL', map_smul, smul_eq_mul, neg_mul]
+      have hy : H (x + (2 : ℂ) • L x) (x + (2 : ℂ) • L x) = 0 := by
+        simp only [map_add, LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply,
+          smul_eq_mul, map_ofNat, h1, h2, hdiag]
+        ring
+      have hy0 := h0 _ hy
+      have hsum : (2 : ℂ) • x = 0 := by
+        calc
+          (2 : ℂ) • x = W (x + (2 : ℂ) • L x) + (x + (2 : ℂ) • L x) := by
+            rw [map_add, map_smul, hWx', hLw]
+            module
+          _ = 0 := by rw [hy0, map_zero, add_zero]
+      exact (hx ((smul_eq_zero.1 hsum).resolve_left (by norm_num))).elim
     · exact absurd (hLz (by norm_num)) hLx
-    · have hw := wt_low hL hWx
+    · have hw := lower_weight hWx
       refine ih (j + 1) (by omega) (L x) hLx ?_
       rw [hw]
       push_cast
@@ -88,7 +128,7 @@ theorem UpperTheory.V.Af.Rn.sl2Two :
       · rw [LinearMap.neg_apply, neg_eq_zero] at h
         have hR : R (L y) = 0 := by
           have := congrArg (fun T : Module.End ℂ V => T y) hRL
-          simp only [LinearMap.smul_apply, Module.End.mul_apply, LinearMap.neg_apply,
+          simp only [LinearMap.smul_apply, mul_apply_eq_comp, LinearMap.neg_apply,
             LinearMap.sub_apply, h, map_zero, smul_zero, sub_zero, neg_zero] at this
           exact (smul_eq_zero.1 this).resolve_left (by norm_num)
         apply h0

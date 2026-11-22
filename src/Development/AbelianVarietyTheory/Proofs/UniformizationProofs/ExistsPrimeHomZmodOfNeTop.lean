@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -71,7 +75,7 @@ theorem support_subgroup_odd_index :
     obtain ⟨z, hz⟩ := hd x
     have h1 := hΛ _ hz
     have h2 : f z + f z = 0 := CharTwo.add_self_eq_zero _
-    rw [map_add, map_add, h2, add_zero] at h1
+    rw [map_add (f := _), map_add (f := _), h2, add_zero] at h1
     simpa using h1
 
 end GlobalTheory

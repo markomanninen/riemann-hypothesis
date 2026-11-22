@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.HeckeTupleStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.HeckeTupleStatement
+
+@[expose] public section
 
 namespace Formalism.IndefR.NonGenericAndKTwoTheorems
 

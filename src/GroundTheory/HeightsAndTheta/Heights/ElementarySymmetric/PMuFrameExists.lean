@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.MuFrameExists
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.EventuallyInFrameDomain
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.MuFrameExists
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.EventuallyInFrameDomain
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

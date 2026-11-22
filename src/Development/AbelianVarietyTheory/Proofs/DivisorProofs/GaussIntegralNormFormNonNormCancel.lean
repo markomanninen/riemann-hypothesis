@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnipVal
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactOpenNormClosedBallQuadraticStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegralClosedBallAddCharEqZeroStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomogeneousMeasureEqSmulAddHaarLocalFieldStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulMemRangeNormStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapMulLeftEqNormSmulStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuadExtTopologyStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnipVal
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactOpenNormClosedBallQuadraticStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegralClosedBallAddCharEqZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomogeneousMeasureEqSmulAddHaarLocalFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulMemRangeNormStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapMulLeftEqNormSmulStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuadExtTopologyStatement
+
+@[expose] public section
+
 open MeasureTheory Matrix GlobalTheory.KSp GlobalTheory.SplitUnitary
 open GlobalTheory.WeilM (UG IsQuad IsHerm ResEtaPow)
 open GlobalTheory.SplitWeil (SB nabs)
@@ -84,15 +89,15 @@ theorem gauss_cancel : ∀ (F : Type) [Field F] [CharZero F] [ValuativeRel F] [T
       simp only [m]
       congr 1
       funext z
-      simp only [Units.val_mul, Units.coe_map, Function.comp, map_mul]
-      ring
+      simp [map_mul, mul_comm, mul_left_comm, mul_assoc]
     simp only [n]
-    rw [h2, h1, Measure.map_smul, smul_smul, map_mul, mul_right_comm,
+    rw [h2, h1, Measure.map_smul _ (hm a).aemeasurable, smul_smul, map_mul, mul_right_comm,
       mul_inv_cancel₀ (distribHaarChar_pos).ne', one_mul]
   have hn2 : ∀ a u : Fˣ, (n a).map (fun x => (u : F) * x) = (distribHaarChar F u)⁻¹ • n (u * a) := by
     intro a u
     simp only [n, m]
-    rw [Measure.map_smul, Measure.map_map (measurable_const_mul _) (hm a), smul_smul, map_mul,
+    rw [Measure.map_smul _ (measurable_const_mul _).aemeasurable,
+      Measure.map_map (measurable_const_mul _) (hm a), smul_smul, map_mul,
       inv_mul_cancel_left₀ (distribHaarChar_pos).ne']
     congr 2
     funext z

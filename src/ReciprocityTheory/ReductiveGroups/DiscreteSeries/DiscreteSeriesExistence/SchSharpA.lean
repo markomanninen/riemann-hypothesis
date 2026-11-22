@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.CFPrimeB
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.LowFock
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CARUnit
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.CFPrimeB
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.LowFock
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CARUnit
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,13 +28,15 @@ theorem tform_conj (y y' : TensorProduct ℂ M (Fock n)) : star (tform y y') = t
 theorem tform_sum_left {ι : Type*} (t : Finset ι) (f : ι → TensorProduct ℂ M (Fock n))
     (y' : TensorProduct ℂ M (Fock n)) : tform (∑ i ∈ t, f i) y' = ∑ i ∈ t, tform (f i) y' := by
   unfold tform
-  simp only [map_sum, sum_inner]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, sum_inner]
   exact sum_comm
 
 theorem tform_sum_right {ι : Type*} (t : Finset ι) (f : ι → TensorProduct ℂ M (Fock n))
     (y : TensorProduct ℂ M (Fock n)) : tform y (∑ i ∈ t, f i) = ∑ i ∈ t, tform y (f i) := by
   unfold tform
-  simp only [map_sum, inner_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, inner_sum]
   exact sum_comm
 
 theorem tform_neg_left (y y' : TensorProduct ℂ M (Fock n)) : tform (-y) y' = -tform y y' := by
@@ -88,7 +94,8 @@ theorem tco_lTensor (g : Module.End ℂ (Fock n)) (s : Finset (Fin (n * n))) (y 
     tco s (TensorProduct.map LinearMap.id g y) =
       ∑ t, (fockBasis n).repr (g (fockBasis n t)) s • tco t y := by
   conv_lhs => rw [tcoef_expand y]
-  simp only [map_sum, TensorProduct.map_tmul, LinearMap.id_apply, tcoef_tmul, Module.Basis.coord_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, TensorProduct.map_tmul, LinearMap.id_apply, tcoef_tmul, Module.Basis.coord_apply]
 
 theorem tform_eT {ε : Fin n → Bool} {E : Fin n → Fin n → Module.End ℂ M} (hU : IsInfUnitary ε E) (a b : Fin n)
     (y y' : TensorProduct ℂ M (Fock n)) :

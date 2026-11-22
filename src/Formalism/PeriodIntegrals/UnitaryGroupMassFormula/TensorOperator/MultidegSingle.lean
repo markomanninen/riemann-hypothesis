@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.Development
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.Development
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -23,7 +27,8 @@ theorem step_mem (t : Fin n') (a b : Fin k) (d : Fin n' → ℕ) (G : MvPolynomi
     (hG : G ∈ Pol K (ι := Fin n') k d) :
     X (t, a) * pderiv (t, b) G ∈ Pol K (ι := Fin n') k d := by
   rw [Pol, MvPolynomial.mem_restrictSupport_iff] at hG
-  rw [G.as_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [G.as_sum, map_sum, Finset.mul_sum]
   refine Submodule.sum_mem _ fun m hm => ?_
   have hdm : ∀ i, multideg m i = d i := hG hm
   rw [MvPolynomial.pderiv_monomial, MvPolynomial.X, MvPolynomial.monomial_mul]

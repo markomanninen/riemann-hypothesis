@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.AlgOfCyc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TAlgCyc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TAlgRes
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.AlgOfCyc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TAlgCyc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TAlgRes
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -176,14 +180,17 @@ private theorem nhd_loc (V : Set (Ideles E)) (hV : V ∈ 𝓝 (1 : Ideles E)) : 
       · subst hw
         rw [Function.update_self, Function.update_self, add_sub_cancel_left, e1]
       · rw [Function.update_of_ne hw, Function.update_of_ne hw, sub_self, smul_zero, add_zero]
-  refine ⟨{u | (u : AdeleRing (𝓞 E) E).2 - 1 ∈ P ∧ ((u⁻¹ : Ideles E) : AdeleRing (𝓞 E) E).2 - 1 ∈ P}, Filter.inter_mem ?_ ?_,
+  refine ⟨{u | (u : AdeleRing (𝓞 E) E).2 - 1 ∈ P ∧ ((u⁻¹ : Ideles E) : AdeleRing (𝓞 E) E).2 - 1 ∈ P}, ?_,
     fun u hu v x hx => ?_⟩
-  · have hc : Continuous fun u : Ideles E => (u : AdeleRing (𝓞 E) E).2 - 1 :=
-      (continuous_snd.comp (Units.continuous_val (M := AdeleRing (𝓞 E) E))).sub continuous_const
-    exact hc.continuousAt.preimage_mem_nhds (t := P) (by convert hP; exact sub_self _)
-  · have hc : Continuous fun u : Ideles E => ((u⁻¹ : Ideles E) : AdeleRing (𝓞 E) E).2 - 1 :=
-      (continuous_snd.comp (Units.continuous_coe_inv (M := AdeleRing (𝓞 E) E))).sub continuous_const
-    exact hc.continuousAt.preimage_mem_nhds (t := P) (by convert hP; exact sub_self _)
+  · change ({u : Ideles E | (u : AdeleRing (𝓞 E) E).2 - 1 ∈ P} ∩
+      {u : Ideles E | ((u⁻¹ : Ideles E) : AdeleRing (𝓞 E) E).2 - 1 ∈ P}) ∈ 𝓝 1
+    apply Filter.inter_mem
+    · have hc : Continuous fun u : Ideles E => (u : AdeleRing (𝓞 E) E).2 - 1 :=
+        (continuous_snd.comp (Units.continuous_val (M := AdeleRing (𝓞 E) E))).sub continuous_const
+      exact hc.continuousAt.preimage_mem_nhds (t := P) (by convert hP; exact sub_self _)
+    · have hc : Continuous fun u : Ideles E => ((u⁻¹ : Ideles E) : AdeleRing (𝓞 E) E).2 - 1 :=
+        (continuous_snd.comp (Units.continuous_coe_inv (M := AdeleRing (𝓞 E) E))).sub continuous_const
+      exact hc.continuousAt.preimage_mem_nhds (t := P) (by convert hP; exact sub_self _)
   · obtain ⟨k1, b, hb, e⟩ := key u hu.1 v x hx
     obtain ⟨k2, b', hb', e'⟩ := key u⁻¹ hu.2 v x⁻¹ (by
       rw [Units.val_inv_eq_inv_val, hx]
@@ -246,8 +253,10 @@ private theorem pos_conn (k : Eˣ) (hk : ∀ φ : E →+* ℝ, 0 < φ (k : E)) :
     · exact fun y hy => ⟨Units.mk0 y fun e => h0 (e ▸ hy), rfl⟩
   rcases w.isReal_or_isComplex with hw | hw
   · let e := InfinitePlace.Completion.ringEquivRealOfIsReal hw
-    have he : e (algebraMap E w.Completion (k : E)) = InfinitePlace.embedding_of_isReal hw (k : E) :=
-      InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe hw ((WithAbs.equiv w.1).symm (k : E))
+    have he : e (algebraMap E w.Completion (k : E)) = InfinitePlace.embedding_of_isReal hw (k : E) := by
+      rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+        Algebra.algebraMap_self_apply]
+      simpa [e] using InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe hw ((WithAbs.equiv w.1).symm (k : E))
     refine key (e ⁻¹' Set.Ioi 0) ((InfinitePlace.Completion.isometryEquivRealOfIsReal hw).toHomeomorph.isPreconnected_preimage.2
       isPreconnected_Ioi) (by simp) (by simp) ?_
     rw [Set.mem_preimage, he]

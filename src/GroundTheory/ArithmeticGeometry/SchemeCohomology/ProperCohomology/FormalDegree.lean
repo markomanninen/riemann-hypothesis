@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ReesNatural
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalIdealMul
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.CechFamily
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ReesNatural
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalIdealMul
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.CechFamily
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -89,7 +94,7 @@ def reesDeg (n : ℕ) : Γ(reesSheaf I F, reesPr I X ⁻¹ᵁ V) →+ Γ(idealPo
     apply idealPowι_app_injective I n
     refine (Equiv.apply_ofInjective_symm (idealPowι_app_injective (F := F) (V := V) I n) _).trans ?_
     change reesCoef I hF hV n (s + s') = _
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     congr 1
     · exact (Equiv.apply_ofInjective_symm (idealPowι_app_injective (F := F) (V := V) I n)
         ⟨reesCoef I hF hV n s, reesCoef_mem I hF hV n s⟩).symm
@@ -112,8 +117,8 @@ lemma lsingle_mem_reesSubmodule (n : ℕ) (g : Γ(idealPow I F n, V)) :
     exact (mem_range_idealPowι_iff I hV n _).1 ⟨g, rfl⟩
   · exact zero_mem _
 
-include hF hV in
 
+include hF hV in
 def reesInc (n : ℕ) : Γ(idealPow I F n, V) →+ Γ(reesSheaf I F, reesPr I X ⁻¹ᵁ V) :=
   (reesSectionsEquiv I hF hV).symm.toAddMonoidHom.comp
     (AddMonoidHom.codRestrict

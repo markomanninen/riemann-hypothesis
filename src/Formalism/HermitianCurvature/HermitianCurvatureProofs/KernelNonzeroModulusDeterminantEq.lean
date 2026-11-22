@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.BlockKernelPropertiesOfSteps
-import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.LowUniMulVecELast
-import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.MulInvBlockDiagApplySameBlock
+module
+
+public import Formalism.HermitianCurvature.BlockKernelPropertiesOfSteps
+public import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.LowUniMulVecELast
+public import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.MulInvBlockDiagApplySameBlock
+
+@[expose] public section
 
 noncomputable section
 
@@ -136,12 +140,12 @@ theorem lat_mulR (ho : IsOpen (R : Set K)) (hc : IsCompact (R : Set K)) (x : Kˣ
       · intro hy
         exact ⟨_, hy, by simp⟩
     rw [h]
-    exact ho.preimage (continuous_mul_left _)
+    exact ho.preimage (continuous_const_mul _)
   · have h : ((mulR R (x : K)) : Set K) = (fun y => (x : K) * y) '' (R : Set K) := by
       ext y
       simp [mulR]
     rw [h]
-    exact hc.image (continuous_mul_left _)
+    exact hc.image (continuous_const_mul _)
 
 theorem modK_pos (ho : IsOpen (R : Set K)) (hc : IsCompact (R : Set K)) (x : Kˣ) :
     0 < modK R (x : K) := by
@@ -253,10 +257,6 @@ theorem dl_mul (hL : Lat (LL R ι)) {M N : Matrix ι ι K} (hM : IsUnit M.det) (
   unfold dl
   rw [map_mv_mul, ← gi_trans (lat_map hM (lat_map hN hL)) (lat_map hM hL) hL,
     gi_map (mv_injective hM), mul_comm]
-
-theorem dl_pos (hL : Lat (LL R ι)) {M : Matrix ι ι K} (hM : IsUnit M.det) : 0 < dl R M := by
-  unfold dl
-  exact gi_pos (lat_map hM hL) hL
 
 end Mat
 
@@ -777,33 +777,73 @@ theorem det_orbZ (w : Point K) (p : lowW K w.1 w.2 × upUniG K w.1.sum) :
   unfold orbZ
   rw [Matrix.det_mul, Matrix.det_mul, isLowUni_det _ h1, isUpUni_det _ h2, one_mul, mul_one]
 
-theorem isUnit_det_pt (s : List ℕ) (t : ℕ → Kˣ) : IsUnit (pt s t).det := Matrix.isUnit_det_of_right_inverse (Formalism.DoubleCosetMeasures.P.Phase.pt_mul_ptI s t)
+private theorem revIn_fin_spec (s : List ℕ) (j : ℕ) (hj : j < s.sum) :
+    revIn s j < s.sum ∧ revIn s (revIn s j) = j := by
+  induction s generalizing j with
+  | nil => simp at hj
+  | cons a s ih =>
+    simp only [List.sum_cons] at hj ⊢
+    by_cases h : j < a
+    · have hrev : a - 1 - j < a := by omega
+      rw [revIn, ite_eq_left h]
+      constructor
+      · omega
+      · rw [revIn, ite_eq_left hrev]
+        omega
+    · have htail : j - a < s.sum := by omega
+      obtain ⟨hlt, hinv⟩ := ih (j - a) htail
+      have hrev : ¬ a + revIn s (j - a) < a := by omega
+      rw [revIn, ite_eq_right h]
+      constructor
+      · omega
+      · rw [revIn, ite_eq_right hrev, Nat.add_sub_cancel_left, hinv]
+        omega
+
+theorem isUnit_prod {n : ℕ} (f : Fin n → Kˣ) : IsUnit (∏ a : Fin n, ((f a : Kˣ) : K)) := by
+  rw [← Units.coe_prod]
+  exact Units.isUnit _
+
+private theorem det_pt_eq (s : List ℕ) (t : ℕ → Kˣ) :
+    ∃ ε : ℤˣ, (pt s t).det = (∏ a : Fin s.sum, ((t (blk s a) : Kˣ) : K)) * ((ε : ℤ) : K) := by
+  let r : Fin s.sum → Fin s.sum := fun a => ⟨revIn s a, (revIn_fin_spec s a a.isLt).1⟩
+  have hr : Function.Involutive r := fun a => Fin.ext (revIn_fin_spec s a a.isLt).2
+  let σ := Function.Involutive.toPerm r hr
+  have hpt : pt s t = Matrix.diagonal (fun a : Fin s.sum => ((t (blk s a) : Kˣ) : K)) *
+      σ.permMatrix K := by
+    ext a b
+    have hab : σ a = b ↔ (b : ℕ) = revIn s a := by
+      rw [Fin.ext_iff]
+      exact eq_comm
+    simp only [Formalism.DoubleCosetMeasures.pt, Equiv.Perm.permMatrix, Matrix.diagonal_mul,
+      PEquiv.toMatrix_apply, Equiv.toPEquiv_apply, Option.mem_def, Option.some.injEq, hab]
+    split_ifs <;> simp
+  exact ⟨Equiv.Perm.sign σ, by rw [hpt, Matrix.det_mul, Matrix.det_diagonal, Matrix.det_permutation]⟩
+
+theorem isUnit_det_pt (s : List ℕ) (t : ℕ → Kˣ) : IsUnit (pt s t).det := by
+  obtain ⟨ε, hε⟩ := det_pt_eq s t
+  rw [hε]
+  exact (isUnit_prod _).mul (ε.isUnit.map (Int.castRingHom K))
 
 theorem modK_det_pt (s : List ℕ) (t : ℕ → Kˣ) :
     modK R (pt s t).det = modK R (∏ a : Fin s.sum, ((t (blk s a) : Kˣ) : K)) := by
-  set σ : Equiv.Perm (Fin s.sum) :=
-    Function.Involutive.toPerm (Formalism.DoubleCosetMeasures.P.Phase.revF s)
-      (show Function.Involutive (Formalism.DoubleCosetMeasures.P.Phase.revF s) from Formalism.DoubleCosetMeasures.P.Phase.revF_revF s) with hσ
-  have hpt : pt s t = Matrix.diagonal (fun a : Fin s.sum => ((t (blk s a) : Kˣ) : K)) *
-      (σ.toPEquiv.toMatrix : Matrix (Fin s.sum) (Fin s.sum) K) := by
-    ext a b
-    simp only [Formalism.DoubleCosetMeasures.pt, Matrix.diagonal_mul, PEquiv.toMatrix_apply, Equiv.toPEquiv_apply,
-      Option.mem_def, Option.some.injEq, hσ, Function.Involutive.coe_toPerm]
-    split_ifs with h1 h2 h2
-    · simp
-    · exact absurd (Fin.ext (by simp only [Function.Involutive.coe_toPerm, Formalism.DoubleCosetMeasures.P.Phase.revF_val]; exact h1.symm)) h2
-    · exact absurd (by rw [← h2]; simp only [Function.Involutive.coe_toPerm, Formalism.DoubleCosetMeasures.P.Phase.revF_val]) h1
-    · simp
-  rw [hpt, Matrix.det_mul, Matrix.det_diagonal, Matrix.det_permutation]
-  rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h | h <;> rw [h] <;> simp [modK_neg]
+  obtain ⟨ε, hε⟩ := det_pt_eq s t
+  rw [hε]
+  rcases Int.units_eq_one_or ε with h | h <;> rw [h] <;> simp [modK_neg]
 
-theorem blk_lt : ∀ (s : List ℕ) (j : ℕ), j < s.sum → blk s j < s.length
-  | [], j, h => by simp at h
-  | a :: s, j, h => by
+theorem blk_lt : ∀ (s : List ℕ) (j : ℕ), j < s.sum → blk s j < s.length := by
+  intro s
+  induction s with
+  | nil =>
+    intro j h
+    simp at h
+  | cons a s ih =>
+    intro j h
+    rw [List.sum_cons] at h
     simp only [blk, List.length_cons]
     split_ifs with hj
     · omega
-    · have := blk_lt s (j - a) (by simp only [List.sum_cons] at h; omega)
+    · have hj' : j - a < s.sum := by omega
+      have hblk := ih (j - a) hj'
       omega
 
 theorem blk_append_lt : ∀ (s : List ℕ) (k j : ℕ), j < s.sum → blk (s ++ [k]) j = blk s j
@@ -814,13 +854,17 @@ theorem blk_append_lt : ∀ (s : List ℕ) (k j : ℕ), j < s.sum → blk (s ++ 
     · rfl
     · rw [blk_append_lt s k (j - a) (by simp only [List.sum_cons] at h; omega)]
 
-theorem blk_append_ge : ∀ (s : List ℕ) (k j : ℕ), j < k → blk (s ++ [k]) (s.sum + j) = s.length
-  | [], k, j, h => by simp [blk, h]
-  | a :: s, k, j, h => by
+theorem blk_append_ge : ∀ (s : List ℕ) (k j : ℕ), j < k → blk (s ++ [k]) (s.sum + j) = s.length := by
+  intro s k
+  induction s with
+  | nil =>
+    intro j h
+    simp [blk, h]
+  | cons a s ih =>
+    intro j h
     simp only [List.cons_append, blk, List.sum_cons, List.length_cons]
-    rw [if_neg (by omega)]
-    have : a + s.sum + j - a = s.sum + j := by omega
-    rw [this, blk_append_ge s k j h]; omega
+    have hsub : a + s.sum + j - a = s.sum + j := by omega
+    rw [ite_eq_right (by omega), hsub, ih j h, Nat.add_comm 1]
 
 theorem prod_addBlock (h : Point K) (s : ℕ) (t : Kˣ) :
     (∏ a : Fin (addBlock h s t).1.sum,
@@ -847,10 +891,6 @@ theorem prod_addBlock (h : Point K) (s : ℕ) (t : Kˣ) :
         rw [Finset.mem_range] at hj
         rw [blk_append_ge h.1 s j hj, Function.update_self]
     rw [Finset.prod_congr rfl e, Finset.prod_const, Finset.card_range]
-
-theorem isUnit_prod {n : ℕ} (f : Fin n → Kˣ) : IsUnit (∏ a : Fin n, ((f a : Kˣ) : K)) := by
-  rw [← Units.coe_prod]
-  exact Units.isUnit _
 
 variable [TopologicalSpace K] [IsTopologicalRing K] {ψ : AddChar K ℂ}
 

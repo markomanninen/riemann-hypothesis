@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIdempotentComponentOfGroupElement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinPartAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqSumFiniteCoordsOfInfinitePartZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIdempotentComponentOfGroupElement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinPartAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqSumFiniteCoordsOfInfinitePartZero
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory Matrix ValuativeRel GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.FinPl
 open IsDedekindDomain NumberField
@@ -102,12 +106,15 @@ theorem c_mul {W : Type} [Fintype W] (v : W → Pl D) (hv : Function.Injective v
   have hp1 : fstA D.host.F (pairA D.host.F 1 0) = 1 := rfl
   have hp2 : sndA D.host.F (pairA D.host.F 1 0) = 0 := rfl
   refine baseAdele_ext_infinite_finite ?_ ?_
-  · rw [map_mul, map_zero, map_sub, map_sub, map_sum, map_one, hp1]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_mul, map_zero, map_sub, map_sub, map_sum, map_one, hp1]
     simp [hf]
-  · rw [map_mul, map_zero, map_sub, map_sub, map_sum, map_one, hp2]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_mul, map_zero, map_sub, map_sub, map_sum, map_one, hp2]
     simp only [hs, sub_zero]
     refine af_ext _ fun u => ?_
-    rw [map_mul, map_zero, map_sub, map_one, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_mul, map_zero, map_sub, map_one, map_sum]
     by_cases hu : u ∈ Set.range v
     · obtain ⟨w0, rfl⟩ := hu
       rw [Finset.sum_eq_single w0 (fun w _ hw => evalV_single_ne _ (fun e => hw (hv e).symm))
@@ -164,21 +171,19 @@ theorem mt_list_prod (V : HSp D) {W : Type} (h : W → GA D V) (E : W → AE D)
     (hh : ∀ w, mt V (h w) = E w • M + (1 - E w) • (1 : Matrix (Fin V.rank) (Fin V.rank) (AE D)))
     (horth : ∀ w w', w ≠ w' → E w * E w' = 0) :
     ∀ l : List W, l.Nodup → mt V ((l.map h).prod) = (l.map E).sum • M + (1 - (l.map E).sum) • 1
-  | [], _ => by simp [mt_one]
+  | [], _ => by simp
   | w :: l, hl => by
     rw [List.nodup_cons] at hl
     rw [List.map_cons, List.prod_cons, mt_mul, mt_list_prod V h E M hh horth l hl.2, hh, List.map_cons,
       List.sum_cons]
     apply cut_mul
-    rw [← List.sum_map_mul_left]
-    apply List.sum_eq_zero
-    intro x hx
-    obtain ⟨y, hy, rfl⟩ := List.mem_map.mp hx
-    exact horth w y (fun e => hl.1 (e ▸ hy))
+    rw [← List.sum_map_mul_left l E (E w)]
+    exact List.sum_eq_zero (List.forall_mem_map.mpr fun y hy =>
+      horth w y (fun e => hl.1 (e ▸ hy)))
+
 
 set_option maxHeartbeats 800000 in
 open GlobalTheory.LocWeil.PlaceIdem in
-
 theorem prod_of_trivOff : ∀ (D : D7) (V : HSp D) (W : Type) [Fintype W] [DecidableEq W] (v : W → Pl D) (e : W → AE D),
     Function.Injective v → (∀ w, IsSplitIdem D (e w) ∧ ∃ ε, IsPlaceIdem D (v w) ε ∧
       e w + cA D (e w) = algebraMap (AF D.host.F) (AE D) ε) →

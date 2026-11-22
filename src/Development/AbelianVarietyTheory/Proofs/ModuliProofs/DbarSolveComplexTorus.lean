@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TorusEllipticSystemSolvableStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TorusEllipticSystemSolvableStatement
+
+@[expose] public section
+
 open Complex Matrix
 open scoped ContDiff BigOperators Real
 
@@ -31,7 +36,8 @@ theorem exists_equiv_latticeCoords (g : ℕ) (Λ : Submodule ℤ (Fin g → ℂ)
 theorem realLinear_eq_sum_single {n : ℕ} (L : (Fin n → ℝ) →L[ℝ] ℂ) (u : Fin n → ℝ) :
     L u = ∑ k, (u k : ℂ) * L (Pi.single k 1) := by
   conv_lhs => rw [← Finset.univ_sum_single u]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   have : (Pi.single k (u k) : Fin n → ℝ) = u k • (Pi.single k 1 : Fin n → ℝ) := by
     rw [← Pi.single_smul]; simp
@@ -67,9 +73,10 @@ theorem dbar_symbol_elliptic {n g : ℕ} (T : (Fin n → ℝ) ≃L[ℝ] (Fin g �
       by_cases hc : c = a
       · subst hc; simp
       · simp [hc]
-    rw [hz, map_sum, sum_dotProduct]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hz, map_sum, sum_dotProduct]
     refine Finset.sum_eq_zero fun a _ => ?_
-    rw [map_add, map_smul, map_smul, add_dotProduct, smul_dotProduct, smul_dotProduct, h1, h2]
+    rw [map_add (f := _), map_smul, map_smul, add_dotProduct, smul_dotProduct, smul_dotProduct, h1, h2]
     simp
   have := h3 (T ξ)
   rw [T.symm_apply_apply] at this
@@ -83,14 +90,14 @@ theorem dbar_solve_complexTorus : ∀ (g : ℕ) (Λ : Submodule ℤ (Fin g → �
       I * (T.symm (I • (Pi.single a 1 : Fin g → ℂ)) k : ℂ))
     (dbar_symbol_elliptic T) (fun a => w a ∘ T)
     (fun a => ⟨(hw a).1.comp T.contDiff, fun ν x => by
-      simp only [Function.comp, map_add]
+      simp only [Function.comp, map_add (f := _)]
       exact (hw a).2 ⟨_, hT1 ν⟩ _⟩)
     (fun a b x => by
       rw [dbar_comp_equiv, dbar_comp_equiv]
       exact hc a b _)
   refine ⟨t, f ∘ T.symm, hf.comp T.symm.contDiff, fun l z => ?_, fun a z => ?_⟩
   · obtain ⟨ν, hν⟩ := hT2 l
-    simp only [Function.comp, map_add, hν]
+    simp only [Function.comp, map_add (f := _), hν]
     exact hper ν _
   · have h1 := dbar_comp_equiv T (f ∘ T.symm) (T.symm z) (Pi.single a 1)
       (I • (Pi.single a 1 : Fin g → ℂ))

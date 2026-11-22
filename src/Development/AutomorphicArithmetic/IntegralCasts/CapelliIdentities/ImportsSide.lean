@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.DYha3.main :
     ∀ {E : Type} [inst : Field E] [NumberField E] (x : E), ∃ (n : ℕ), (0 : ℕ) < n ∧ IsIntegral ℤ ((↑n : E) * x) := by

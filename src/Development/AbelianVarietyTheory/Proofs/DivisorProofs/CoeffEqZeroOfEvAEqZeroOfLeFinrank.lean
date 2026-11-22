@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowerSeriesEvalAtNilpotentXEqCoordinateStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowerSeriesEvalAtNilpotentXEqCoordinateStatement
+
+@[expose] public section
+
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Katz
 
 namespace GlobalTheory.BoxMonomials
@@ -26,8 +31,8 @@ theorem exists_boxPt {q : ℕ} (β : Fin d →₀ ℕ) (h : ∀ i, β i < q) :
 
 end GlobalTheory.BoxMonomials
 
-open GlobalTheory.BoxMonomials in
 
+open GlobalTheory.BoxMonomials in
 theorem GlobalTheory.coeff_eq_zero_of_evA_eq_zero_of_le_finrank :
     ∀ (K A : Type) [Field K] [CommRing A] [Algebra K A] [Module.Finite K A] (d q : ℕ)
       (x : Fin d → A) (hx : ∀ i, IsNilpotent (x i)) (J : Ideal A),
@@ -80,7 +85,7 @@ theorem GlobalTheory.coeff_eq_zero_of_evA_eq_zero_of_le_finrank :
         rw [hmono β i hi c]
         exact Submodule.zero_mem _
     | add P Q hP hQ =>
-      rw [MvPolynomial.coe_add, map_add]
+      rw [MvPolynomial.coe_add, map_add (f := _)]
       exact Submodule.add_mem _ hP hQ
   have hcard : Fintype.card (Fin d → Fin q) = Module.finrank K (A ⧸ J) := by
     apply le_antisymm
@@ -95,7 +100,8 @@ theorem GlobalTheory.coeff_eq_zero_of_evA_eq_zero_of_le_finrank :
     ∑ a : Fin d → Fin q, coeff (boxPt a) f • monomial (boxPt a) (1 : K) with hP
   have hPcoeff : ∀ a : Fin d → Fin q, coeff (boxPt a) P = coeff (boxPt a) f := by
     intro a
-    rw [hP, map_sum, Finset.sum_eq_single a]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hP, map_sum, Finset.sum_eq_single a]
     · simp [coeff_monomial]
     · intro b _ hb
       simp [coeff_monomial, boxPt_injective.ne (Ne.symm hb)]
@@ -113,7 +119,8 @@ theorem GlobalTheory.coeff_eq_zero_of_evA_eq_zero_of_le_finrank :
     omega
   have hsum : h = ∑ i, hi i := by
     ext β
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [hic]
     by_cases hb : ∀ i, β i < q
     · obtain ⟨a, rfl⟩ := exists_boxPt β hb
@@ -143,7 +150,8 @@ theorem GlobalTheory.coeff_eq_zero_of_evA_eq_zero_of_le_finrank :
           omega
       · simp
   have hEh : E h = 0 := by
-    rw [hsum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsum, map_sum]
     apply Finset.sum_eq_zero
     intro i _
     obtain ⟨g, hg⟩ := hdiv i
@@ -153,9 +161,10 @@ theorem GlobalTheory.coeff_eq_zero_of_evA_eq_zero_of_le_finrank :
   have hfP : f = P + h := by rw [hh]; ring
   have hzero : ∑ a : Fin d → Fin q, coeff (boxPt a) f • v a = 0 := by
     have : E P = ∑ a : Fin d → Fin q, coeff (boxPt a) f • v a := by
-      rw [hP, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hP, map_sum]
       simp only [map_smul, hv]
-    rw [← this, ← hEf, hfP, map_add, hEh, add_zero]
+    rw [← this, ← hEf, hfP, map_add (f := _), hEh, add_zero]
   have hall := Fintype.linearIndependent_iff.1 hli _ hzero
   obtain ⟨a, rfl⟩ := exists_boxPt α (fun i => lt_of_le_of_lt (Finsupp.le_degree i α) hα)
   exact hall a

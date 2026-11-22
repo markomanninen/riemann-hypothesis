@@ -1,9 +1,13 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.PiInvApply
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvGroup
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvChar
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StReps
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JTransM
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.PiInvApply
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvGroup
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvChar
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StReps
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JTransM
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped InnerProductSpace ENNReal ComplexConjugate

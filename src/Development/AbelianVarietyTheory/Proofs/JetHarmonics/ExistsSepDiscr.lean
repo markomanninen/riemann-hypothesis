@@ -1,8 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GaugeIntCut
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndFrFix
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FrTanDirAlg
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.GermExCut
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBMapPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CanonB
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndFrFix
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FrTanDirAlg
+
+@[expose] public section
 
 open NumberField TensorProduct
 
@@ -10,8 +17,8 @@ namespace GlobalTheory.IntSepElement
 
 variable (E : Type) [Field E] [NumberField E]
 
-open scoped Classical in
 
+open scoped Classical in
 noncomputable def dualB : Module.Basis (Module.Free.ChooseBasisIndex ℤ (𝓞 E)) ℚ E :=
   (Algebra.traceForm ℚ E).dualBasis (traceForm_nondegenerate ℚ E) (integralBasis E)
 
@@ -33,7 +40,8 @@ theorem repr_eq_trace (z : E) (i : Module.Free.ChooseBasisIndex ℤ (𝓞 E)) :
     convert h
     rfl
   conv_rhs => rw [← (integralBasis E).sum_repr z]
-  rw [Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.mul_sum, map_sum]
   simp_rw [mul_smul_comm, LinearMap.map_smul, h, smul_eq_mul, mul_ite, mul_one, mul_zero]
   rw [Finset.sum_ite_eq']
   simp
@@ -47,7 +55,8 @@ theorem sum_mul_dualB : ∑ i, integralBasis E i * dualB E i = 1 := by
   classical
   have key : ∀ z : E, Algebra.trace ℚ E ((∑ i, integralBasis E i * dualB E i) * z) = Algebra.trace ℚ E z := by
     intro z
-    rw [Finset.sum_mul, map_sum, Algebra.trace_eq_matrix_trace (integralBasis E) z, Matrix.trace]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_mul, map_sum, Algebra.trace_eq_matrix_trace (integralBasis E) z, Matrix.trace]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Matrix.diag_apply, Algebra.leftMulMatrix_eq_repr_mul, repr_eq_trace]
     congr 1
@@ -80,7 +89,8 @@ theorem exists_sep_discr :
   have hy' : ∀ i, algebraMap (𝓞 E) E (y i) = ((discr E : ℤ) : E) * dualB E i := hy
   refine ⟨RingOfIntegers.basis E, y, ?_, fun a => ?_⟩
   · apply RingOfIntegers.coe_injective
-    rw [map_sum, map_intCast]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_intCast]
     simp only [map_mul, hy', ← integralBasis_apply]
     calc ∑ i, integralBasis E i * (((discr E : ℤ) : E) * dualB E i)
         = ((discr E : ℤ) : E) * ∑ i, integralBasis E i * dualB E i := by
@@ -89,7 +99,8 @@ theorem exists_sep_discr :
   · have h1 : ∀ k, ∑ i, (RingOfIntegers.basis E).repr (a * RingOfIntegers.basis E i) k • y i = a * y k := by
       intro k
       apply RingOfIntegers.coe_injective
-      rw [map_sum, map_mul, hy']
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_mul, hy']
       have h2 := sum_dualB E (dualB E k * algebraMap (𝓞 E) E a)
       calc ∑ i, algebraMap (𝓞 E) E ((RingOfIntegers.basis E).repr (a * RingOfIntegers.basis E i) k • y i)
           = ((discr E : ℤ) : E) * ∑ i, Algebra.trace ℚ E

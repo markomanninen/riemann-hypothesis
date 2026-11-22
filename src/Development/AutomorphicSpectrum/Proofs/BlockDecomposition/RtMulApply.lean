@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.WhittakerVanishingImpliesZero
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.WhittakerVanishingImpliesZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ variable {E : Type} [Field E] [NumberField E] {a : ℕ}
 theorem Rt_mul_apply (g h : GA E a) (φ : XB E a) : Rt E a (g * h) φ = Rt E a g (Rt E a h φ) := by
   rw [map_mul]; rfl
 
-theorem polyBd_repI [IsTotallyComplex E] : PolyBd (repI E a) :=
+theorem polyBd_repI [_root_.NumberField.IsTotallyComplex E] : PolyBd (repI E a) :=
   ⟨1, 0, zero_le_one, fun g x => by
     have : ‖repI E a g x‖ = ‖x‖ := norm_Rt _ _
     simp [this]⟩
@@ -42,7 +46,7 @@ theorem conj_stab {G H X : Type} [Group G] [Group H] [TopologicalSpace H] [Conti
   change R (f u) (R g x) = R g x
   rw [← hR, key, hR, hu']
 
-theorem lev_Rt [IsTotallyComplex E] (hfl : ∀ (w : Pl E) (u : GL (Fin a) (w.adicCompletion E)),
+theorem lev_Rt [_root_.NumberField.IsTotallyComplex E] (hfl : ∀ (w : Pl E) (u : GL (Fin a) (w.adicCompletion E)),
       cLoc w (fl a w u : GA E a) = u)
     (hcomm : ∀ (w : Pl E) (g : GA E a), cLoc w g = 1 → ∀ u, g * fl a w u = fl a w u * g)
     (S : Finset (Pl E)) (g : GA E a) (φ : XB E a) (hφ : Lev S φ) : Lev S (Rt E a g φ) := by
@@ -83,7 +87,7 @@ theorem g5b : S2 → G0 → G5b := by
     have e : repW a w u φ = φ := hu
     have e' : repW a w u φ' = φ' := hu'
     change repW a w u (φ + φ') = φ + φ'
-    rw [map_add, e, e']
+    rw [map_add (f := _), e, e']
   · intro w hw
     filter_upwards with u
     change repW a w u 0 = 0

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ProdFormulaE
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ProdFormulaE
+
+@[expose] public section
 
 noncomputable section
 

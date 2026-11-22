@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSchwartzTranslate
-import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSchwartzTranslate
+public import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
+
+@[expose] public section
+
 open GlobalTheory.RealWeil MeasureTheory
 open scoped SchwartzMap
 

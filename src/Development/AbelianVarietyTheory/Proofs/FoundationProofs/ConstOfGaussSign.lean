@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdxEqRelIndex
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryThetaConstantEqInverseDeterminantPhase
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdxEqRelIndex
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryThetaConstantEqInverseDeterminantPhase
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum GlobalTheory.RatEqui GlobalTheory.InertParity
 open scoped BigOperators Pointwise
 
@@ -43,7 +48,7 @@ theorem gauss_quot (D : D7) (hG : GaussSign D) (M : Type) [AddCommGroup M] [Modu
   have e1 : ∀ x, φ (o (R.mkQ x)) = φ x := fun x => hcongr _ _ (ho _)
   have e2 : ∀ x y, β (o (R.mkQ x)) (o (R.mkQ y)) = β x y := fun x y => by
     have h1 := hadd (o (R.mkQ x)) (o (R.mkQ y))
-    rw [e1, e1, hcongr _ (x + y) (by rw [map_add, map_add, ho, ho]), hadd] at h1
+    rw [e1, e1, hcongr _ (x + y) (by rw [map_add (f := _), map_add (f := _), ho, ho]), hadd] at h1
     exact (mul_left_cancel₀ (mul_ne_zero (h0 x) (h0 y)) h1).symm
   let p : M ⧸ N →+ M ⧸ R := QuotientAddGroup.lift N R.mkQ.toAddMonoidHom fun x hx =>
     (Submodule.Quotient.mk_eq_zero R).2 (hNR hx)
@@ -54,12 +59,12 @@ theorem gauss_quot (D : D7) (hG : GaussSign D) (M : Type) [AddCommGroup M] [Modu
     (fun k l => by
       obtain ⟨x, rfl⟩ := R.mkQ_surjective k
       obtain ⟨y, rfl⟩ := R.mkQ_surjective l
-      rw [← map_add, e1, e1, e1, e2, hadd])
+      rw [← map_add (f := _), e1, e1, e1, e2, hadd])
     (fun k k' l => by
       obtain ⟨x, rfl⟩ := R.mkQ_surjective k
       obtain ⟨x', rfl⟩ := R.mkQ_surjective k'
       obtain ⟨y, rfl⟩ := R.mkQ_surjective l
-      rw [← map_add, e2, e2, e2, hβ])
+      rw [← map_add (f := _), e2, e2, e2, hβ])
     (fun a k l => by
       obtain ⟨x, rfl⟩ := R.mkQ_surjective k
       obtain ⟨y, rfl⟩ := R.mkQ_surjective l
@@ -103,7 +108,7 @@ theorem gauss_sign (D : D7) (hG : GaussSign D) {V : Type} [AddCommGroup V] [Modu
   have hcomm : ∀ b x, C (T b x) = T b (C x) := by
     intro b x
     obtain ⟨z, rfl⟩ := hsurj x
-    rw [hC, map_sub, hTc, hC, map_smul, map_add, hTc]
+    rw [hC, map_sub, hTc, hC, map_smul, map_add (f := _), hTc]
   have hskew : ∀ x y, H (C x) y = -H x (C y) := by
     intro x y
     obtain ⟨z, rfl⟩ := hsurj x
@@ -178,7 +183,7 @@ theorem gauss_sign (D : D7) (hG : GaussSign D) {V : Type} [AddCommGroup V] [Modu
   · intro x x' y
     rw [← ex_add]
     congr 1
-    simp only [AddSubgroup.coe_add, map_add, LinearMap.add_apply, Complex.add_im]
+    simp only [AddSubgroup.coe_add, map_add (f := _), LinearMap.add_apply, Complex.add_im]
     ring
   · intro b x y
     simp only [hsm, hcomm, hTH]
@@ -223,7 +228,7 @@ theorem gauss_sign (D : D7) (hG : GaussSign D) {V : Type} [AddCommGroup V] [Modu
     refine ⟨fun c => ex (s * (H x (T c x)).re - (H (C x) (T c x)).im), fun b c => ?_, fun b => ?_⟩
     · rw [← ex_add]
       congr 1
-      simp only [hTa, map_add, Complex.add_im, Complex.add_re]
+      simp only [hTa, map_add (f := _), Complex.add_im, Complex.add_re]
       ring_nf
     · simp only [ψ, hsm, hcomm, hTH]
       rw [mul_comm b, hTm]

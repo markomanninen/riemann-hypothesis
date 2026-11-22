@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.SplitComps
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSncModel
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.SplitComps
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSncModel
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,15 +1,19 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
-import Development.WeilBound.ThetaLifts.Reductions.SiegelPar
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EqZeroOfIsIntegralMulOfSmall
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GoodConstOfAniso
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SumFrameIdem
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TorusArchimedeanFrameActionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeFrameWeightRatioBoundStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MinimalParabolicFrameBlockZeroStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactFiniteAdelicDenominatorStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FrameBlockZeroStabilizesFlagStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdeleSplitSndDiagonal
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelPar
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EqZeroOfIsIntegralMulOfSmall
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GoodConstOfAniso
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SumFrameIdem
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TorusArchimedeanFrameActionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeFrameWeightRatioBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MinimalParabolicFrameBlockZeroStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactFiniteAdelicDenominatorStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FrameBlockZeroStabilizesFlagStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdeleSplitSndDiagonal
+
+@[expose] public section
 
 noncomputable section
 
@@ -113,7 +117,8 @@ theorem block_bound : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Numb
     simp only [map_mul, hAdef, hA'def, hGdef, hG'def, hM₁]
   have hP : ∑ α, P α = 1 := by
     have : ∑ α, P α = (τ.1.mapMatrix) (∑ α, frameIdem (σ : E →+* E) J X Y α) := by
-      rw [map_sum]; rfl
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]; rfl
     rw [this, sum_frameIdem, map_one]
   have hTor : ∀ β, A * P β = ((frameWt t β : ℝ) : ℂ) • P β := fun β =>
     GlobalTheory.T.torus_archimedean_frame_action F E σ h n J hJ r X Y hW t a ha ht.1 w τ β

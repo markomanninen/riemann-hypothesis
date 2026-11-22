@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.DoubleCosetMeasures.LatticeCoset
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.LocalIntegralGL
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FromBlocksMulInv
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasCompactSupportPhiU
+module
+
+public import Mathlib
+public import Formalism.DoubleCosetMeasures.LatticeCoset
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.LocalIntegralGL
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FromBlocksMulInv
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasCompactSupportPhiU
+
+@[expose] public section
 
 noncomputable section
 

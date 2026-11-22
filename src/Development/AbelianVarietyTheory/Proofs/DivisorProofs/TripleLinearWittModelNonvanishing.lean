@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinearWeilFunctionalUnramifiedVector
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSmulOfCommuteHeisenbergLinearModelSchwartzBruh
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerOperatorHeisenbergInnerPreserving
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOpenSubgroupPeriodicStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFinsetEqSumAddCosetIndicatorStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharacterTrivialMatrixLatticeOpenCompactBasisStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinearWeilFunctionalUnramifiedVector
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSmulOfCommuteHeisenbergLinearModelSchwartzBruh
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerOperatorHeisenbergInnerPreserving
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOpenSubgroupPeriodicStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFinsetEqSumAddCosetIndicatorStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharacterTrivialMatrixLatticeOpenCompactBasisStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhat
+
+@[expose] public section
+
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun MeasureTheory Topology
 open scoped Matrix
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -47,15 +52,16 @@ theorem ip_sum_sum (μ : Measure X) [IsFiniteMeasureOnCompacts μ] {V : Type} (F
   have e : (fun z => (∑ y ∈ F, a y • xs y) z * (starRingEnd ℂ) ((∑ y ∈ F, a y • xs y) z)) =
       fun z => ∑ y ∈ F, ∑ y' ∈ F, a y * (starRingEnd ℂ) (a y') * (xs y z * (starRingEnd ℂ) (xs y' z)) := by
     funext z
-    simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum]
     rw [Finset.sum_mul_sum]
     refine Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => ?_
     rw [map_mul]
     ring
-  rw [e, integral_finset_sum _ (fun y _ => integrable_finset_sum _ fun y' _ =>
+  rw [e, integral_finsetSum _ (fun y _ => integrable_finsetSum _ fun y' _ =>
     (integrable_mul_conj μ (hxs y) (hxs y')).const_mul _)]
   refine Finset.sum_congr rfl fun y _ => ?_
-  rw [integral_finset_sum _ (fun y' _ => (integrable_mul_conj μ (hxs y) (hxs y')).const_mul _)]
+  rw [integral_finsetSum _ (fun y' _ => (integrable_mul_conj μ (hxs y) (hxs y')).const_mul _)]
   refine Finset.sum_congr rfl fun y' _ => ?_
   rw [integral_const_mul]
 
@@ -102,8 +108,8 @@ section Cosets
 
 variable {T : Type} [TopologicalSpace T] [MeasurableSpace T] [OpensMeasurableSpace T]
 
-open Classical in
 
+open Classical in
 theorem expand (μ : Measure T) [IsFiniteMeasureOnCompacts μ] {V : Type} [AddGroup V]
     (ι : (T → ℂ) →ₗ[ℂ] (V → ℂ)) (hinj : Set.InjOn ι (SB T)) (L : AddSubgroup V) (xs : V → T → ℂ)
     (hxs : ∀ y, xs y ∈ SB T) (hιxs : ∀ y, ι (xs y) = cind L y) (c : ℂ)
@@ -112,7 +118,8 @@ theorem expand (μ : Measure T) [IsFiniteMeasureOnCompacts μ] {V : Type} [AddGr
     ip μ x x = (∑ y ∈ F, ∑ y' ∈ F, if y - y' ∈ L then f y * (starRingEnd ℂ) (f y') else 0) * c := by
   have hxe : x = ∑ y ∈ F, f y • xs y := by
     refine hinj hx (Submodule.sum_mem _ fun y _ => Submodule.smul_mem _ _ (hxs y)) ?_
-    rw [hf, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hf, map_sum]
     simp only [map_smul, hιxs]
     exact hF
   rw [hxe, ip_sum_sum μ F f xs hxs, Finset.sum_mul]
@@ -146,8 +153,8 @@ namespace GlobalTheory.LinearModelL2
 
 open GlobalTheory.LinSchur
 
-open Classical in
 
+open Classical in
 theorem ip_cind {V : Type} [AddCommGroup V] [TopologicalSpace V] [IsTopologicalAddGroup V] [MeasurableSpace V]
     [BorelSpace V] (ν : Measure V) [ν.IsAddRightInvariant] (L : AddSubgroup V) (y y' : V) :
     ip ν (cind L y) (cind L y') = if y - y' ∈ L then ip ν (cind L 0) (cind L 0) else 0 := by
@@ -166,8 +173,8 @@ theorem ip_cind {V : Type} [AddCommGroup V] [TopologicalSpace V] [IsTopologicalA
       · simp [h1]
     rw [e, integral_zero]
 
-open Classical in
 
+open Classical in
 theorem ip_cosets {T : Type} [TopologicalSpace T] [MeasurableSpace T] [OpensMeasurableSpace T]
     {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {n d : ℕ}
     (μ : Measure T) (ψ0 : AddChar k ℂ) (hψ : Continuous ψ0)
@@ -194,7 +201,7 @@ theorem ip_cosets {T : Type} [TopologicalSpace T] [MeasurableSpace T] [OpensMeas
       simp only [Pi.smul_apply, smul_eq_mul]
       unfold cind
       split_ifs with hY
-      · rw [mul_one, mul_one, show l Y = l (Y - z) + l z by rw [← map_add, sub_add_cancel],
+      · rw [mul_one, mul_one, show l Y = l (Y - z) + l z by rw [← map_add (f := _), sub_add_cancel],
           AddChar.map_add_eq_mul, hl1 _ hY, one_mul]
       · simp
     have e := hMuI l (Tr (-y) x0) (Tr (-y') x0)
@@ -206,7 +213,7 @@ theorem ip_cosets {T : Type} [TopologicalSpace T] [MeasurableSpace T] [OpensMeas
       have h2 : ψ0 w * ψ0 (-w) = 1 := by
         rw [← AddChar.map_add_eq_mul, add_neg_cancel, AddChar.map_zero_eq_one]
       exact mul_left_cancel₀ (addChar_ne_zero ψ0 w) (h1.trans h2.symm)
-    rw [hconj, ← AddChar.map_add_eq_mul, ← map_neg, ← map_add, ← sub_eq_add_neg] at e
+    rw [hconj, ← AddChar.map_add_eq_mul, ← map_neg, ← map_add (f := _), ← sub_eq_add_neg] at e
     have e2 : (ψ0 (l (y - y')) - 1) * ip μ (Tr (-y) x0) (Tr (-y') x0) = 0 := by linear_combination e
     rcases mul_eq_zero.mp e2 with h3 | h3
     · exact absurd (sub_eq_zero.mp h3) hl2

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.SPicDefs
-import GroundTheory.GlobalFields.SUnits
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.SPicDefs
+public import GroundTheory.GlobalFields.SUnits
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -41,8 +46,8 @@ theorem ordAt_integerUnit_eq_of_associated {a b : 𝓞 F} (ha : a ≠ 0) (hb : b
   rw [hu, ordAt_mul]
   simp [ordAt, valuation_of_unit_eq]
 
-open scoped Classical in
 
+open scoped Classical in
 theorem ordAt_placeUnit (v w : HeightOneSpectrum (𝓞 F)) :
     ordAt w (GroundTheory.Global.SUnit.placeUnit v) = if w = v then (classNumber F : ℤ) else 0 := by
   rw [ordAt, GroundTheory.Global.SUnit.valuationOfNeZero_placeUnit]
@@ -56,8 +61,8 @@ theorem placeUnit_eq_integerUnit (v : HeightOneSpectrum (𝓞 F)) :
 def primeNZD (v : HeightOneSpectrum (𝓞 F)) : (Ideal (𝓞 F))⁰ :=
   ⟨v.asIdeal, mem_nonZeroDivisors_of_ne_zero v.ne_bot⟩
 
-open scoped Classical in
 
+open scoped Classical in
 theorem exists_ordAt_eq_of_mk0_eq {v p : HeightOneSpectrum (𝓞 F)}
     (h : ClassGroup.mk0 (primeNZD v) = ClassGroup.mk0 (primeNZD p)) :
     ∃ x : Fˣ, ∀ w, ordAt w x = (if w = v then 1 else 0) - (if w = p then 1 else 0) := by
@@ -122,8 +127,8 @@ theorem classNumber_nsmul_sPic (c : sPic S) : classNumber F • c = 0 := by
     by_cases hw : v = w <;> simp [hw]
     ring
 
-open scoped Classical in
 
+open scoped Classical in
 noncomputable def sPicGen (c : ClassGroup (𝓞 F)) : sPic S :=
   if h : ∃ v : {v : HeightOneSpectrum (𝓞 F) // v ∉ S}, ClassGroup.mk0 (primeNZD v.1) = c then
     sPicMk S (Finsupp.single h.choose 1)
@@ -134,7 +139,7 @@ theorem sPicMk_single_eq_sPicGen (v : {v : HeightOneSpectrum (𝓞 F) // v ∉ S
   classical
   have hex : ∃ u : {v : HeightOneSpectrum (𝓞 F) // v ∉ S},
       ClassGroup.mk0 (primeNZD u.1) = ClassGroup.mk0 (primeNZD v.1) := ⟨v, rfl⟩
-  rw [sPicGen, dif_pos hex]
+  rw [sPicGen, dite_eq_left hex]
   obtain ⟨x, hx⟩ := exists_ordAt_eq_of_mk0_eq hex.choose_spec.symm
   rw [← sub_eq_zero, ← map_sub]
   refine (QuotientAddGroup.eq_zero_iff _).2 ⟨Additive.ofMul x, ?_⟩
@@ -150,7 +155,7 @@ theorem closure_range_sPicGen : AddSubgroup.closure (Set.range (sPicGen S)) = �
   obtain ⟨D, rfl⟩ := QuotientAddGroup.mk'_surjective (divS S).range c
   induction D using Finsupp.induction_linear with
   | zero => rw [map_zero]; exact zero_mem _
-  | add f g hf hg => rw [map_add]; exact add_mem hf hg
+  | add f g hf hg => rw [map_add (sPicMk S)]; exact add_mem hf hg
   | single v m =>
     rw [← Finsupp.smul_single_one, map_zsmul]
     refine AddSubgroup.zsmul_mem _ ?_ m

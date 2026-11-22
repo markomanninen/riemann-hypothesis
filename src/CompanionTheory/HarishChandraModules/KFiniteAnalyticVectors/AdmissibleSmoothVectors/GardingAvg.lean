@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Topology Set Filter
 open scoped ContDiff
@@ -49,7 +53,7 @@ theorem exists_strictHenselian_absolutely_closed_local_ring (ρ : G → H →L[�
   let L : H →ₗ[ℂ] H :=
     { toFun := fun u => ∫ x, w x • ρ x u ∂μ
       map_add' := fun u v => by
-        simp only [map_add, smul_add]
+        simp only [map_add (f := _), smul_add]
         exact integral_add (integrable_w μ ρ hρ hw hc u) (integrable_w μ ρ hρ hw hc v)
       map_smul' := fun c u => by
         simp only [map_smul, RingHom.id_apply]
@@ -140,7 +144,7 @@ theorem exists_preimage {H : Type*} [NormedAddCommGroup H] [NormedSpace ℂ H] (
   intro v hv
   let L : Y →ₗ[ℂ] Y := (T : H →ₗ[ℂ] H).restrict hT
   have hL : Function.Injective L := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro y hy
     exact Subtype.ext (hi y y.2 (congrArg Subtype.val hy))
   obtain ⟨u, hu⟩ := LinearMap.surjective_of_injective hL ⟨v, hv⟩

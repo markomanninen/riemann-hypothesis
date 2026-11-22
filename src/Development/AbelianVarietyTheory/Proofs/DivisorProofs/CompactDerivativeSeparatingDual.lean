@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.Tpr
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.PosPartUnitaryMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.Tpr
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.PosPartUnitaryMul
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh GlobalTheory.WignerGL GlobalTheory.WigAlg Formalism.REAL
 open scoped TensorProduct
@@ -10,16 +14,17 @@ noncomputable section
 namespace GlobalTheory.CochainInv
 
 theorem continuous_multilinear {ι : Type} [Fintype ι] {V G : Type} [NormedAddCommGroup V] [NormedSpace ℝ V]
-    [FiniteDimensional ℝ V] [NormedAddCommGroup G] [NormedSpace ℝ G] (f : MultilinearMap ℝ (fun _ : ι => V) G) :
+    [FiniteDimensional ℝ V] [NormedAddCommGroup G] [NormedSpace ℝ G] (f : (ι → V) →ₘₗ[ℝ] G) :
     Continuous f := by
   classical
   let b := Module.finBasis ℝ V
   have h : ∀ x : ι → V, f x = ∑ r : ι → Fin (Module.finrank ℝ V), (∏ i, b.coord (r i) (x i)) • f (fun i => b (r i)) := by
     intro x
     conv_lhs => rw [show x = fun i => ∑ j, b.coord j (x i) • b j from funext fun i => (b.sum_repr (x i)).symm]
-    rw [MultilinearMap.map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [MultilinearMap.map_sum]
     refine Finset.sum_congr rfl fun r _ => ?_
-    rw [← MultilinearMap.map_smul_univ]
+    simpa only [RingHom.id_apply] using f.map_smul_univ (fun i => b.coord (r i) (x i)) (fun i => b (r i))
   rw [show (f : (ι → V) → G) = fun x => ∑ r : ι → Fin (Module.finrank ℝ V), (∏ i, b.coord (r i) (x i)) • f (fun i => b (r i))
     from funext h]
   refine continuous_finsetSum _ fun r _ => (continuous_finsetProd _ fun i _ => ?_).smul continuous_const
@@ -47,8 +52,8 @@ end GlobalTheory.CochainInv
 
 namespace GlobalTheory.CochainInv
 
-open GlobalTheory.GKCoh in
 
+open GlobalTheory.GKCoh in
 theorem lie_apply_eq_sum : ∀ (E : Type) [Field E] [NumberField E] (a : ℕ) (M : Type) [AddCommGroup M] [Module ℂ M] [Module ℝ M] [IsScalarTower ℝ ℂ M] (κ : Kinf E a → Module.End ℂ M) (L : Lie E a →ₗ[ℝ] Module.End ℂ M) (S : Set (Module.Dual ℂ M)) (c : ℝ → Kinf E a) (Z : Matrix (Fin a) (Fin a) (Cinf E)), star Z = -Z → c 0 = 1 → HasDerivAt (fun t => toL (c t).1) (toL Z) 0 → (∀ m, (∀ l ∈ S, l m = 0) → m = 0) → (∀ l ∈ S, ∀ m, HasDerivAt (fun t => l (κ (c t) m)) (l (L (toL Z) m)) 0) → ∀ (q : ℕ) (ω : Herm E a [⋀^Fin q]→ₗ[ℝ] M), IsCochain κ ω → ∀ Y W : Fin q → Herm E a, (∀ i, (W i).1 = Z * (Y i).1 - (Y i).1 * Z) → L (toL Z) (ω Y) = ∑ i, ω (Function.update Y i (W i)) := by
   intro E _ _ a M _ _ _ _ κ L S c Z hZ hc0 hc hS hκ q ω hω Y W hW
   classical
@@ -69,7 +74,7 @@ theorem lie_apply_eq_sum : ∀ (E : Type) [Field E] [NumberField E] (a : ℕ) (M
     exact key
   refine sub_eq_zero.1 (hS _ fun l hl => ?_)
   rw [map_sub, sub_eq_zero]
-  let f : MultilinearMap ℝ (fun _ : Fin q => Lie E a) ℂ :=
+  let f : (Fin q → Lie E a) →ₘₗ[ℝ] ℂ :=
     (l.restrictScalars ℝ).compMultilinearMap (ω.toMultilinearMap.compLinearMap fun _ => hermPart)
   let F : ContinuousMultilinearMap ℝ (fun _ : Fin q => Lie E a) ℂ := ⟨f, continuous_multilinear f⟩
   have hF : ∀ x, F x = l (ω (fun i => hermPart (x i))) := fun x => rfl
@@ -81,7 +86,8 @@ theorem lie_apply_eq_sum : ∀ (E : Type) [Field E] [NumberField E] (a : ℕ) (M
     funext i
     exact hermPart_toL (adHerm (c t) (Y i))
   rw [h2, ContinuousMultilinearMap.linearDeriv_apply] at h1
-  rw [(hκ l hl (ω Y)).unique h1, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [(hκ l hl (ω Y)).unique h1, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [hF]
   congr 2

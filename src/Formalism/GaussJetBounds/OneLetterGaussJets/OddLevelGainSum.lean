@@ -1,4 +1,8 @@
-import Formalism.GaussJetBounds.Statement
+module
+
+public import Formalism.GaussJetBounds.Statement
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -26,8 +30,8 @@ def JnumOneLetter (s : ZMod d) : ℕ :=
 
 def kaMaxOneLetter : ℕ := max (TT.sup nu1) (Finset.univ.sup (capL d TT nu1 nu2))
 
-open Classical in
 
+open Classical in
 def oddLevelGainSum (s : ZMod d) : ℝ :=
   ∑' e : ℕ,
     if Odd e ∧ ¬ (∃ s' ∈ TT, IsLeast {e' : ℕ | Odd e' ∧ s + (e' : ZMod d) = s'} e) then
@@ -35,8 +39,5 @@ def oddLevelGainSum (s : ZMod d) : ℝ :=
     else 0
 
 end TopData
-
-def digitLossOneLetter {ι : Type v} (l : ℕ) (κ : ι →₀ ℕ) : ℝ :=
-  ∑ i ∈ κ.support, ((Nat.log l (κ i) : ℝ) + 1)
 
 end Formalism.DworkPowerSeriesWeights.OddLevelGainBounds

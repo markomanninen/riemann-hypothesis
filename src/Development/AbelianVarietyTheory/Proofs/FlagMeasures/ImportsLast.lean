@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField
 
@@ -19,7 +23,7 @@ theorem eq_zero_of_small (E : Type) [Field E] [NumberField E] (x : RingOfInteger
   obtain ⟨w0⟩ := (inferInstance : Nonempty (InfinitePlace E))
   rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ w0)] at h1
   have hle : ∏ w ∈ Finset.univ.erase w0, w (x : E) ^ w.mult ≤ 1 :=
-    Finset.prod_le_one (fun w _ => pow_nonneg (hnn w _) _) fun w _ => pow_le_one₀ (hnn w _) (h w).le
+    Finset.prod_le_one₀ (fun w _ => pow_nonneg (hnn w _) _) fun w _ => pow_le_one₀ (hnn w _) (h w).le
   have hlt : w0 (x : E) ^ w0.mult < 1 :=
     pow_lt_one₀ (hnn w0 _) (h w0) NumberField.InfinitePlace.mult_ne_zero
   have h3 : w0 (x : E) ^ w0.mult * ∏ w ∈ Finset.univ.erase w0, w (x : E) ^ w.mult ≤ w0 (x : E) ^ w0.mult :=

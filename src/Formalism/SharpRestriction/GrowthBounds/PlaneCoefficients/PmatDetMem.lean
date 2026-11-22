@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PlaneCoeffOneTTens
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PlaneCoeffOneTTens
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem restSP : RestSP := by
     · exact Subalgebra.pow_mem _ (pmat_det_mem R hrk _ _ (hfr j)) _
     · exact Subalgebra.pow_mem _ (pmat_det_mem R hrk _ _ (hAr _)) _
   have hvars : v ∈ (SPR R p F hrk c' Q).vars :=
-    (mem_vars v).2 ⟨ga, hga, Finsupp.mem_support_iff.2 hv⟩
+    (mem_vars_iff_mem_support v).2 ⟨ga, hga, Finsupp.mem_support_iff.2 hv⟩
   exact (mem_supported.1 hmem) (Finset.mem_coe.2 hvars)
 
 end Formalism.MainNotions.PairMembershipBlocks

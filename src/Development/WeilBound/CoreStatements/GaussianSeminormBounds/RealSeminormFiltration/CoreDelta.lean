@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreDefs
+module
+
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,13 +21,13 @@ theorem mulL (x : A) (t : A ⊗[ℂ] B) : (x ⊗ₜ[ℂ] (1 : B)) * t = (LinearM
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp
-  | add a b ha hb => rw [mul_add, map_add, ha, hb]
+  | add a b ha hb => rw [mul_add, map_add (f := _), ha, hb]
 
 theorem mulR (y : B) (t : A ⊗[ℂ] B) : ((1 : A) ⊗ₜ[ℂ] y) * t = (LinearMap.mulLeft ℂ y).lTensor A t := by
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp
-  | add a b ha hb => rw [mul_add, map_add, ha, hb]
+  | add a b ha hb => rw [mul_add, map_add (f := _), ha, hb]
 
 theorem derL (D : Derivation ℂ A A) (t : A ⊗[ℂ] B) (x : A) (y : B) :
     D.toLinearMap.rTensor B (t * (x ⊗ₜ[ℂ] y)) =
@@ -34,7 +38,7 @@ theorem derL (D : Derivation ℂ A A) (t : A ⊗[ℂ] B) (x : A) (y : B) :
     simp only [Algebra.TensorProduct.tmul_mul_tmul, LinearMap.rTensor_tmul, Derivation.coeFn_coe,
       Derivation.leibniz, smul_eq_mul, TensorProduct.add_tmul]
     rw [add_comm, mul_comm x]
-  | add a b ha hb => rw [add_mul, map_add, ha, hb, map_add, add_mul, add_mul]; abel
+  | add a b ha hb => rw [add_mul, map_add (f := _), ha, hb, map_add (f := _), add_mul, add_mul]; abel
 
 theorem derR (D : Derivation ℂ B B) (t : A ⊗[ℂ] B) (x : A) (y : B) :
     D.toLinearMap.lTensor A (t * (x ⊗ₜ[ℂ] y)) =
@@ -45,7 +49,7 @@ theorem derR (D : Derivation ℂ B B) (t : A ⊗[ℂ] B) (x : A) (y : B) :
     simp only [Algebra.TensorProduct.tmul_mul_tmul, LinearMap.lTensor_tmul, Derivation.coeFn_coe,
       Derivation.leibniz, smul_eq_mul, TensorProduct.tmul_add]
     rw [add_comm, mul_comm y]
-  | add a b ha hb => rw [add_mul, map_add, ha, hb, map_add, add_mul, add_mul]; abel
+  | add a b ha hb => rw [add_mul, map_add (f := _), ha, hb, map_add (f := _), add_mul, add_mul]; abel
 
 end Gen
 
@@ -97,13 +101,13 @@ theorem dl_pdL (a : Ix p q) (k : Fin r) (f : Pol p q r s) :
       (pderiv ((a, Sum.inl k) : Ln p q r 0)).toLinearMap.rTensor _ (dl p q r s f) := by
   induction f using MvPolynomial.induction_on with
   | C c => simp [dl_C]
-  | add f g hf hg => simp only [map_add, hf, hg]
+  | add f g hf hg => simp only [map_add (f := _), hf, hg]
   | mul_X f i hf =>
     have h1 : pderiv (a, Sum.inl k) (f * X i) =
         pderiv (a, Sum.inl k) f * X i + f * pderiv (a, Sum.inl k) (X i) := by
       rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
       ring
-    simp only [h1, map_add, map_mul, hf, dl_pderiv_inl_X_eq_rTensor]
+    simp only [h1, map_add (f := _), map_mul, hf, dl_pderiv_inl_X_eq_rTensor]
     obtain ⟨b, m | m⟩ := i
     · rw [dl_XL, derL, LinearMap.rTensor_tmul]
       rfl
@@ -129,13 +133,13 @@ theorem dl_pdR (a : Ix p q) (k : Fin s) (f : Pol p q r s) :
       (pderiv ((a, Sum.inr k) : Ln p q 0 s)).toLinearMap.lTensor _ (dl p q r s f) := by
   induction f using MvPolynomial.induction_on with
   | C c => simp [dl_C]
-  | add f g hf hg => simp only [map_add, hf, hg]
+  | add f g hf hg => simp only [map_add (f := _), hf, hg]
   | mul_X f i hf =>
     have h1 : pderiv (a, Sum.inr k) (f * X i) =
         pderiv (a, Sum.inr k) f * X i + f * pderiv (a, Sum.inr k) (X i) := by
       rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
       ring
-    simp only [h1, map_add, map_mul, hf, dl_pderiv_inr_X_eq_lTensor]
+    simp only [h1, map_add (f := _), map_mul, hf, dl_pderiv_inr_X_eq_lTensor]
     obtain ⟨b, m | m⟩ := i
     · rw [dl_XL, derR, LinearMap.lTensor_tmul]
       rfl
@@ -165,7 +169,7 @@ theorem dl_raiR (a : Ix p q) (k : Fin s) (f : Pol p q r s) :
 theorem dl_omL (a b : Ix p q) (k : Fin r) (f : Pol p q r s) :
     dl p q r s (omE (a, Sum.inl k) (b, Sum.inl k) f) =
       (omE ((a, Sum.inl k) : Ln p q r 0) (b, Sum.inl k)).rTensor _ (dl p q r s f) := by
-  simp only [omE, LinearMap.add_apply, Module.End.mul_apply, map_add, dl_raiL, dl_lowL,
+  simp only [omE, LinearMap.add_apply, Module.End.mul_apply, map_add (f := _), dl_raiL, dl_lowL,
     LinearMap.rTensor_add, LinearMap.rTensor_mul]
   by_cases h : a = b
   · subst h
@@ -177,7 +181,7 @@ theorem dl_omL (a b : Ix p q) (k : Fin r) (f : Pol p q r s) :
 theorem dl_omR (a b : Ix p q) (k : Fin s) (f : Pol p q r s) :
     dl p q r s (omE (a, Sum.inr k) (b, Sum.inr k) f) =
       (omE ((a, Sum.inr k) : Ln p q 0 s) (b, Sum.inr k)).lTensor _ (dl p q r s f) := by
-  simp only [omE, LinearMap.add_apply, Module.End.mul_apply, map_add, dl_raiR, dl_lowR,
+  simp only [omE, LinearMap.add_apply, Module.End.mul_apply, map_add (f := _), dl_raiR, dl_lowR,
     LinearMap.lTensor_add, LinearMap.lTensor_mul]
   by_cases h : a = b
   · subst h
@@ -234,7 +238,8 @@ theorem dl_unit (a b : Ix p q) (f : Pol p q r s) :
       (fockAct1 p q r 0 (Eab a b)).rTensor _ (dl p q r s f) +
       (fockAct1 p q 0 s (Eab a b)).lTensor _ (dl p q r s f) := by
   rw [act_unit, act_unit, act_unit, sumL, sumR]
-  simp only [Fintype.sum_sum_type, LinearMap.add_apply, map_add, LinearMap.sum_apply, map_sum, dl_omL, dl_omR,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Fintype.sum_sum_type, LinearMap.add_apply, map_add (f := _), LinearMap.sum_apply, map_sum, dl_omL, dl_omR,
     Finset.univ_eq_empty, Finset.sum_empty, add_zero, zero_add, Fin.sum_univ_zero]
 
 theorem eq_sum_units (Z : Mat p q) : Z = ∑ a, ∑ b, Z a b • Eab a b := by
@@ -247,7 +252,8 @@ theorem dl_act (Z : Mat p q) (f : Pol p q r s) :
     dl p q r s (fockAct1 p q r s Z f) =
       (fockAct1 p q r 0 Z).rTensor _ (dl p q r s f) + (fockAct1 p q 0 s Z).lTensor _ (dl p q r s f) := by
   rw [eq_sum_units Z]
-  simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, sumL, sumR, dl_unit,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, sumL, sumR, dl_unit,
     LinearMap.rTensor_smul, LinearMap.lTensor_smul, smul_add, Finset.sum_add_distrib]
 
 def iA (p q r s : ℕ) : Ln p q r 0 → Ln p q r s := fun l => (l.1, Sum.elim Sum.inl Fin.elim0 l.2)
@@ -287,7 +293,7 @@ theorem nontrivial_of_form {p q r s : ℕ} (c : ℂ) (b : Pol p q r 0 →ₗ[ℂ
     | zero => simp
     | tmul u v => simpa [hB'] using hb Z u v
     | add x y hx hy =>
-      simp only [map_add]
+      simp only [map_add (f := _)]
       linear_combination hx + hy
   have hle : coinvSub (act1 p q r s) (chiTr c) ≤ LinearMap.ker (B' ∘ₗ (dl p q r s).toLinearMap) := by
     refine iSup_le fun Z => ?_

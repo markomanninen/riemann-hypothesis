@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshExtB
+module
+
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshExtB
+
+@[expose] public section
 
 open Metric Real Filter Topology MeasureTheory
 
@@ -180,9 +184,11 @@ theorem good {z w : Fin D → ℂ} (hzA : z ∉ coordDiv S)
       simp only [hgdef]
       exact vext_of_not (hinV ζ hζ hζF).2
     have hcont : ContinuousOn g (closedBall 0 r \ ↑F) := by
+      have hmaps : Set.MapsTo (fun ζ : ℂ => z + ζ • w) (closedBall 0 r \ ↑F)
+          (U \ coordDiv S) := fun ζ hζ => hinV ζ hζ.1 hζ.2
       have : ContinuousOn (fun ζ : ℂ => max (u (z + ζ • w)) (-κ)) (closedBall 0 r \ ↑F) :=
         (hc.comp (by fun_prop : Continuous fun ζ : ℂ => z + ζ • w).continuousOn
-          (fun ζ hζ => hinV ζ hζ.1 hζ.2)).sup continuousOn_const
+          hmaps).sup continuousOn_const
       exact this.congr fun ζ hζ => hgeq ζ hζ.1 hζ.2
     have hsub : ∀ a s, 0 < s → closedBall a s ⊆ ball (0 : ℂ) r \ ↑F →
         g a ≤ circleAverage g a s := by

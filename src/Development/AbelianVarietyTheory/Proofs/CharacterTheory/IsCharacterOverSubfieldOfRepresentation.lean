@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
+
+@[expose] public section
+
 open GlobalTheory.BI
 noncomputable section
 namespace GlobalTheory.BI
@@ -42,10 +47,6 @@ def transportSubOrderIso (ρ : Representation K G V) (e : V ≃ₗ[K] W) :
     · intro h v hv
       exact h (show e v ∈ S from hv)
 
-theorem isIrreducible_transportRep (ρ : Representation K G V) (e : V ≃ₗ[K] W)
-    (h : ρ.IsIrreducible) : (transportRep ρ e).IsIrreducible := by
-  haveI : IsSimpleOrder (Subrepresentation ρ) := h
-  exact (transportSubOrderIso ρ e).isSimpleOrder
 end
 
 theorem _root_.GlobalTheory.BI.isChar_and_isIrrChar_of_rep :

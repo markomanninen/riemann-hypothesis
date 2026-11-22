@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.WeilSiegelTheta.BigCellDefs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousRs
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CmTypeRestrictRealSubfieldInfinitePlaceBijective
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.WeilSiegelTheta.BigCellDefs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousRs
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CmTypeRestrictRealSubfieldInfinitePlaceBijective
+
+@[expose] public section
 
 noncomputable section
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct
@@ -37,7 +41,7 @@ def hermQ (D : D7) (r : ℕ) : Submodule ℚ (Matrix (Fin r) (Fin r) D.host.E) w
     have h1 := congrFun (congrFun ha i) j
     have h2 := congrFun (congrFun hb i) j
     simp only [Matrix.transpose_apply, Matrix.map_apply] at h1 h2 ⊢
-    simp only [Matrix.add_apply, map_add, h1, h2]
+    simp only [Matrix.add_apply, map_add (f := _), h1, h2]
   zero_mem' := by
     ext i j
     simp
@@ -67,7 +71,7 @@ def formH (α : D.host.F) (δ : Matrix (Fin r) (Fin r) D.host.E) : hermQ D r →
     (fun a => ∑ τ, (tauE D τ (algebraMap D.host.F D.host.E α * Matrix.trace (δ * a.1))).re)
     (by
       intro a b
-      simp only [Submodule.coe_add, mul_add, Matrix.trace_add, map_add, Complex.add_re,
+      simp only [Submodule.coe_add, mul_add, Matrix.trace_add, map_add (f := _), Complex.add_re,
         Finset.sum_add_distrib])
 
 theorem formH_apply (α : D.host.F) (δ : Matrix (Fin r) (Fin r) D.host.E) (a : hermQ D r) :
@@ -111,7 +115,8 @@ theorem trace_sq_ne_zero {δ : Matrix (Fin r) (Fin r) D.host.E} (hδ : δ ∈ he
     have e : tauE D τ (Matrix.trace (δ * δ)) =
         ((∑ i, ∑ j, Complex.normSq (tauE D τ (δ i j)) : ℝ) : ℂ) := by
       push_cast
-      simp only [Matrix.trace, Matrix.diag_apply, Matrix.mul_apply, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.trace, Matrix.diag_apply, Matrix.mul_apply, map_sum, map_mul]
       refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
       rw [hc i j, Complex.mul_conj]
     rw [← e, hn, map_zero]
@@ -128,7 +133,8 @@ theorem trace_sq_ne_zero {δ : Matrix (Fin r) (Fin r) D.host.E} (hδ : δ ∈ he
 theorem sig_trace_sq {δ : Matrix (Fin r) (Fin r) D.host.E} (hδ : δ ∈ hermQ D r) :
     D.sp.cm.sig (Matrix.trace (δ * δ)) = Matrix.trace (δ * δ) := by
   have hm := mem_hermQ.1 hδ
-  simp only [Matrix.trace, Matrix.diag_apply, Matrix.mul_apply, map_sum, map_mul, hm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.trace, Matrix.diag_apply, Matrix.mul_apply, map_sum, map_mul, hm]
   rw [Finset.sum_comm]
 
 theorem inv_smul_mem {δ : Matrix (Fin r) (Fin r) D.host.E} (hδ : δ ∈ hermQ D r) {x : D.host.E}

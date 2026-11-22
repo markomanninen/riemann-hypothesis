@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsInvOne
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsInvOne
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC GlobalTheory.Mem.Col2.AdT Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 namespace GlobalTheory.DenseGL
@@ -70,9 +75,9 @@ theorem one_add_small {n : ℕ} (X : Matrix (Fin n) (Fin n) (P.adicCompletion E)
     (HeightOneSpectrum.mem_adicCompletionIntegers _ _ _).2 (hX r s).le
   let X' : Matrix (Fin n) (Fin n) O := fun r s => ⟨X r s, hmem r s⟩
   have hmap : O.subtype.mapMatrix (1 + X') = 1 + X := by
-    rw [map_add, map_one]; rfl
+    rw [map_add (f := _), map_one]; rfl
   have hq : (Ideal.Quotient.mk (smallIdeal P)).mapMatrix (1 + X') = 1 := by
-    rw [map_add, map_one, add_eq_left]
+    rw [map_add (f := _), map_one, add_eq_left]
     ext r s
     exact Ideal.Quotient.eq_zero_iff_mem.2 (hX r s)
   have hd : (1 + X').det - 1 ∈ smallIdeal P := by

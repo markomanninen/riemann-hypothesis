@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLocalizedModuleSubtype
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLocalizedModuleSubtype
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.Mass Formalism.HermitianLatticesTheory
 open scoped ENNReal Classical
 
@@ -55,7 +60,7 @@ theorem exists_move (h : V →ₗ⋆[K] V →ₗ[K] K) (hs : ∀ x y, star (h x 
   have l1 : ∀ x ∈ Λ, h v x - (h u x - h u' x) ∈ I := by
     intro x hx
     have : h v x - (h u x - h u' x) = θ * (h w x - (h u x - h u' x)) := by
-      simp only [hv, map_add, map_sub, LinearMap.map_smulₛₗ, LinearMap.sub_apply, LinearMap.add_apply,
+      simp only [hv, map_add (f := _), map_sub, LinearMap.map_smulₛₗ, LinearMap.sub_apply, LinearMap.add_apply,
         LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, hθ, map_one]
       ring
     rw [this]
@@ -63,7 +68,7 @@ theorem exists_move (h : V →ₗ⋆[K] V →ₗ[K] K) (hs : ∀ x y, star (h x 
   have l2 : ∀ x ∈ Λ, h x v - h x w ∈ I := by
     intro x hx
     have : h x v - h x w = θ * (h x (u - u') - h x w) := by
-      simp only [hv, map_add, map_smul, smul_eq_mul]
+      simp only [hv, map_add (f := _), map_smul, smul_eq_mul]
       ring
     rw [this]
     exact hI' _ (A.sub_mem (hh _ hx _ (Λ.sub_mem hu hu')) (hh _ hx _ hw)) _ hθI
@@ -159,7 +164,7 @@ theorem exists_idem {P : Ideal (𝓞 K)} (hP : P.IsMaximal) (hc : conjIdeal (K :
   have := hP.coprime_of_ne hm hc.symm
   obtain ⟨e, he, f, hf, hef⟩ := Submodule.mem_sup.1 (this ▸ Submodule.mem_top : (1 : 𝓞 K) ∈ P ⊔ P.comap (cj K))
   refine ⟨e, he, ?_⟩
-  have : 1 - cj K e = cj K f := by rw [← map_one (cj K), ← hef, map_add]; ring
+  have : 1 - cj K e = cj K f := by rw [← map_one (cj K), ← hef, map_add (f := _)]; ring
   rw [this]
   exact hf
 
@@ -256,8 +261,8 @@ theorem exists_rep [FiniteDimensional K V] (h : V →ₗ⋆[K] V →ₗ[K] K) (h
 
 variable [NumberField K]
 
-omit [StarRing K] in
 
+omit [StarRing K] in
 theorem exists_form {M L : Submodule (𝓞 K) V} (hM : Submodule.IsLattice K M) {P : Ideal (𝓞 K)}
     (φ : (↥M ⧸ L.comap M.subtype) ≃ₗ[𝓞 K] (𝓞 K ⧸ P)) :
     ∃ (f : V →ₗ[K] K) (ψ : M →ₗ[𝓞 K] 𝓞 K), (∀ y : M, f y = algebraMap (𝓞 K) K (ψ y)) ∧
@@ -269,20 +274,50 @@ theorem exists_form {M L : Submodule (𝓞 K) V} (hM : Submodule.IsLattice K M) 
       rw [algebraMap_smul]; exact congrArg Subtype.val ha
     have h3 : algebraMap (𝓞 K) K a ≠ 0 := IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors a.2
     exact Subtype.ext ((smul_eq_zero.1 h2).resolve_left h3)
+  letI : Submodule.IsLattice K M := hM
+  have : Module.Finite (𝓞 K) M := Submodule.IsLattice.finite K M
   have : Module.FinitePresentation (𝓞 K) M := Module.finitePresentation_of_finite _ _
   have : Module.Projective (𝓞 K) M := Module.Flat.projective_of_finitePresentation
   obtain ⟨ψ, hψ⟩ := Module.projective_lifting_property (Submodule.mkQ P)
     (φ.toLinearMap ∘ₗ (L.comap M.subtype).mkQ) (Submodule.mkQ_surjective P)
-  have := GlobalTheory.UnimodQuot.isLocalizedModule_subtype hM
+  let S := Submodule.span K (M : Set V)
+  let m : M →ₗ[𝓞 K] S := M.subtype.codRestrict (S.restrictScalars (𝓞 K))
+    (fun x => Submodule.subset_span x.2)
+  haveI : IsLocalizedModule (nonZeroDivisors (𝓞 K)) m := by
+    refine ⟨?_, ?_, ?_⟩
+    · intro a
+      rw [Module.End.isUnit_iff]
+      have ha0 : ((a : 𝓞 K) : K) ≠ 0 := by
+        have := nonZeroDivisors.ne_zero a.2
+        exact_mod_cast this
+      have e : ⇑(algebraMap (𝓞 K) (Module.End (𝓞 K) S) a) =
+          fun v => ((a : 𝓞 K) : K) • v := by
+        funext v
+        exact (algebraMap_smul K (a : 𝓞 K) v).symm
+      rw [e]
+      exact MulAction.bijective (Units.mk0 _ ha0)
+    · intro y
+      obtain ⟨t, ht⟩ := multiple_mem_span_of_mem_localization_span
+        (nonZeroDivisors (𝓞 K)) K (M : Set V) y y.2
+      rw [Submodule.span_eq] at ht
+      exact ⟨(⟨_, ht⟩, t), Subtype.ext rfl⟩
+    · intro x y hxy
+      have hv : (x : V) = (y : V) := congrArg (fun z : S => (z : V)) hxy
+      have h : x = y := Subtype.ext hv
+      exact ⟨1, by simpa using h⟩
   have hu : ∀ x : nonZeroDivisors (𝓞 K), IsUnit (algebraMap (𝓞 K) (Module.End (𝓞 K) K) x) :=
     fun x => IsLocalizedModule.map_units (S := nonZeroDivisors (𝓞 K)) (Algebra.linearMap (𝓞 K) K) x
-  refine ⟨LinearMap.extendScalarsOfIsLocalization (nonZeroDivisors (𝓞 K)) K
-      (IsLocalizedModule.lift (nonZeroDivisors (𝓞 K)) M.subtype (Algebra.linearMap (𝓞 K) K ∘ₗ ψ) hu), ψ,
-    fun y => IsLocalizedModule.lift_apply (nonZeroDivisors (𝓞 K)) M.subtype _ hu y, fun y => ?_⟩
-  have e : Submodule.mkQ P (ψ y) = φ ((L.comap M.subtype).mkQ y) := LinearMap.congr_fun hψ y
-  rw [← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply, e, LinearEquiv.map_eq_zero_iff, Submodule.mkQ_apply,
-    Submodule.Quotient.mk_eq_zero]
-  rfl
+  let g : S →ₗ[K] K := LinearMap.extendScalarsOfIsLocalization (nonZeroDivisors (𝓞 K)) K
+      (IsLocalizedModule.lift (nonZeroDivisors (𝓞 K)) m (Algebra.linearMap (𝓞 K) K ∘ₗ ψ) hu)
+  obtain ⟨f, hf⟩ := g.exists_extend
+  refine ⟨f, ψ, fun y => ?_, fun y => ?_⟩
+  · exact (LinearMap.congr_fun hf (m y)).trans
+      (IsLocalizedModule.lift_apply (nonZeroDivisors (𝓞 K)) m _ hu y)
+  ·
+    have e : Submodule.mkQ P (ψ y) = φ ((L.comap M.subtype).mkQ y) := LinearMap.congr_fun hψ y
+    rw [← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply, e, LinearEquiv.map_eq_zero_iff, Submodule.mkQ_apply,
+      Submodule.Quotient.mk_eq_zero]
+    rfl
 
 theorem exists_vec [FiniteDimensional K V] (h : V →ₗ⋆[K] V →ₗ[K] K) (hs : ∀ x y, star (h x y) = h y x)
     (hn : h.Nondegenerate) {M L : Submodule (𝓞 K) V} (hM : Submodule.IsLattice K M) {P : Ideal (𝓞 K)}
@@ -327,9 +362,9 @@ theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommG
     by_cases a : h u' w₁ ∈ locId P
     · by_cases b : h u w₂ ∈ locId P
       · refine ⟨w₁ + w₂, Submodule.add_mem _ hw₁ hw₂, fun H => k₁ ?_, fun H => k₂ ?_⟩
-        · rw [map_add] at H
+        · rw [map_add (f := _)] at H
           simpa using Submodule.sub_mem _ H b
-        · rw [map_add] at H
+        · rw [map_add (f := _)] at H
           simpa using Submodule.sub_mem _ H a
       · exact ⟨w₂, hw₂, b, k₂⟩
     · exact ⟨w₁, hw₁, k₁, a⟩

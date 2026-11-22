@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FinitePartTraceCharacterIdempotentInverseDiffere
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittProjAnisotropicMulVecLeviEq
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSumFrame
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsTameFinitePlaceHermitianAll
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SmulColMul
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IncAdjYZeroMulVec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FinitePartTraceCharacterIdempotentInverseDiffere
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittProjAnisotropicMulVecLeviEq
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSumFrame
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsTameFinitePlaceHermitianAll
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SmulColMul
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IncAdjYZeroMulVec
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConjugateHalfCommutantActsOnCosetVectorByScalar
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,7 +67,8 @@ theorem top_idele (hc : c.Is) (pre : PreT v o)
     rintro rfl
     rw [zero_mul, zero_mul] at hn
     exact mul_ne_zero (neg_ne_zero.2 (mul_ne_zero hξ (star_ne_zero.2 hξ))) pre.line.2 hn.symm
-  obtain ⟨μ, hμ⟩ := line_idele (c.oT (j + 1 + 1) h) pre.line (hc.x (j + 1 + 1) (by omega)).sd.1 v.NT (· ∈ v.tP)
+  obtain ⟨μ, hμ⟩ := line_idele (c.oT (j + 1 + 1) h) pre.line
+    (GlobalTheory.CosScalar.selfDual_full _ _ (hc.x (j + 1 + 1) (by omega)).sd) v.NT (· ∈ v.tP)
     (hs (j + 1 + 1) h)
   obtain ⟨m₀, m1, m2⟩ := patch v.tP (fun _ => 1) (α * μ * inU lam hlam * (xiU D * cU α)⁻¹)
   refine ⟨m₀, fun x hx a ha => by rw [m1 x hx a ha, Units.val_one, one_mul], fun j' h' => ?_⟩

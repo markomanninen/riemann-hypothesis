@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.QuotientMetricDivisors.ProdFormula
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Formalism.HermitianLattices.HermitianLatticesProofs.IndexBasic
+module
+
+public import Mathlib
+public import Formalism.QuotientMetricDivisors.ProdFormula
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Formalism.HermitianLattices.HermitianLatticesProofs.IndexBasic
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder
@@ -71,7 +75,8 @@ variable {R K V : Type*} [CommRing R] [IsDedekindDomain R] [Field K] [Algebra R 
   [IsFractionRing R K] [AddCommGroup V] [Module K V] [Module R V] [IsScalarTower R K V]
 
 theorem idxLcv_lidx_add (p : Ideal R) [p.IsPrime] (A B C : Submodule R V)
-    (hA : Submodule.IsLattice K A) (hB : Submodule.IsLattice K B) (hC : Submodule.IsLattice K C) :
+    (hA : Submodule.IsFullLattice K A) (hB : Submodule.IsFullLattice K B)
+    (hC : Submodule.IsFullLattice K C) :
     Formalism.HermitianLatticesTheory.lidx p A C = Formalism.HermitianLatticesTheory.lidx p A B + Formalism.HermitianLatticesTheory.lidx p B C := by
   have hfin : ∀ X Y : Submodule R V, X.FG → Formalism.HermitianLatticesTheory.locS (nonZeroDivisors R) Y = ⊤ →
       Module.length R (↥(Formalism.HermitianLatticesTheory.localization₂ p X) ⧸
@@ -80,21 +85,15 @@ theorem idxLcv_lidx_add (p : Ideal R) [p.IsPrime] (A B C : Submodule R V)
     obtain ⟨d, hd, hdY⟩ :=
       Formalism.HermitianLatticesTheory.indexBasic_denom (nonZeroDivisors R) X Y hX (by rw [hY]; exact le_top)
     exact Module.length_ne_top_iff.mpr (Formalism.HermitianLatticesTheory.indexBasic_finLen p X Y hX hd hdY)
-  have hAt := Formalism.HermitianLatticesTheory.indexBasic_locS_top (K := K) A
-    (Submodule.IsLattice.span_eq_top (self := hA))
-  have hBt := Formalism.HermitianLatticesTheory.indexBasic_locS_top (K := K) B
-    (Submodule.IsLattice.span_eq_top (self := hB))
-  have hCt := Formalism.HermitianLatticesTheory.indexBasic_locS_top (K := K) C
-    (Submodule.IsLattice.span_eq_top (self := hC))
-  have hAfg : A.FG := Submodule.IsLattice.fg (self := hA)
-  have hBfg : B.FG := Submodule.IsLattice.fg (self := hB)
-  have hCfg : C.FG := Submodule.IsLattice.fg (self := hC)
-  have hDt : Formalism.HermitianLatticesTheory.locS (nonZeroDivisors R) (A ⊓ B ⊓ C) = ⊤ := by
-    rw [Formalism.HermitianLatticesTheory.locBasic_locS_inf, Formalism.HermitianLatticesTheory.locBasic_locS_inf, hAt, hBt, hCt]
-    simp
-  have hAD := hfin A _ hAfg hDt
-  have hBD := hfin B _ hBfg hDt
-  have hCD := hfin C _ hCfg hDt
+  let _ : Submodule.IsFullLattice K A := hA
+  let _ : Submodule.IsFullLattice K B := hB
+  let _ : Submodule.IsFullLattice K C := hC
+  have hD : Submodule.IsFullLattice K (A ⊓ B ⊓ C) := inferInstance
+  have hDt := Formalism.HermitianLatticesTheory.indexBasic_locS_top (K := K) (A ⊓ B ⊓ C)
+    hD.span_eq_top
+  have hAD := hfin A _ hA.toIsLattice.fg hDt
+  have hBD := hfin B _ hB.toIsLattice.fg hDt
+  have hCD := hfin C _ hC.toIsLattice.fg hDt
   rw [Formalism.HermitianLatticesTheory.indexBasic_lidx_via p A C (A ⊓ B ⊓ C) (le_trans inf_le_left inf_le_left)
       inf_le_right hAD hCD,
     Formalism.HermitianLatticesTheory.indexBasic_lidx_via p A B (A ⊓ B ⊓ C) (le_trans inf_le_left inf_le_left)
@@ -119,13 +118,26 @@ theorem imageLcv_std_li (d : ℕ) : LinearIndependent K (fun i => (Pi.single i 1
   exact (Pi.basisFun K (Fin d)).linearIndependent
 
 theorem imageLcv_std_lat (d : ℕ) :
-    Submodule.IsLattice K
+    Submodule.IsFullLattice K
       (Submodule.span (𝓞 K) (Set.range (fun i => (Pi.single i 1 : Fin d → K)))) := by
-  refine ⟨Submodule.fg_span (Set.finite_range _), ?_⟩
+  refine {
+    toIsLattice := Submodule.IsLattice.of_fg K (Submodule.fg_span (Set.finite_range _))
+    span_eq_top := ?_ }
   rw [Submodule.span_span_of_tower, imageLcv_std_eq]
   exact (Pi.basisFun K (Fin d)).span_eq
 
-theorem imageLcv_gram_ne [IsTotallyComplex K] {d : ℕ}
+omit [StarRing K] in
+theorem matLat_isFullLattice {d d' : ℕ} (φ : Matrix (Fin d') (Fin d) K)
+    (hφ : Function.Surjective φ.mulVec) (L : Submodule (𝓞 K) (Fin d → K))
+    (hL : Submodule.IsFullLattice K L) : Submodule.IsFullLattice K (matLat φ L) := by
+  refine {
+    toIsLattice := Submodule.IsLattice.of_fg K (hL.toIsLattice.fg.map _)
+    span_eq_top := ?_ }
+  change Submodule.span K (φ.mulVecLin '' (L : Set (Fin d → K))) = ⊤
+  rw [Submodule.span_image, hL.span_eq_top, Submodule.map_top, LinearMap.range_eq_top]
+  exact hφ
+
+theorem imageLcv_gram_ne [_root_.NumberField.IsTotallyComplex K] {d : ℕ}
     (X : InfinitePlace K → Matrix (Fin d) (Fin d) ℂ) (hX : ∀ v, IsUnit (X v).det)
     (e : Fin d → Fin d → K) (he : LinearIndependent K e) (v : InfinitePlace K) :
     (gram X v e).det.re ≠ 0 := by
@@ -137,7 +149,25 @@ theorem imageLcv_gram_ne [IsTotallyComplex K] {d : ℕ}
 
 end Main
 
-theorem imageLcv_of (h : LcvBasis) : ImageLcv := by
+set_option quotPrecheck false in
+local notation "CovolumeViaBasis" =>
+  (∀ (K : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] (d : ℕ)
+    (X : InfinitePlace K → Matrix (Fin d) (Fin d) ℂ), (∀ v, IsUnit (X v).det) →
+    ∀ L : Submodule (𝓞 K) (Fin d → K), Submodule.IsFullLattice K L →
+    ∀ e : Fin d → Fin d → K, LinearIndependent K e →
+      (Function.support fun w : HeightOneSpectrum (𝓞 K) =>
+        lw w * (idx w (Submodule.span (𝓞 K) (Set.range e)) L : ℝ)).Finite ∧
+      lcv X L = (2 / (finrank ℚ K : ℝ)) * ∑ v, Real.log (gram X v e).det.re +
+        2 * ∑ᶠ w : HeightOneSpectrum (𝓞 K), lw w * (idx w (Submodule.span (𝓞 K) (Set.range e)) L : ℝ))
+
+theorem imageLcv_of (h : CovolumeViaBasis) :
+    ∀ (K : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] (d : ℕ)
+      (XS XT : InfinitePlace K → Matrix (Fin d) (Fin d) ℂ), (∀ v, IsUnit (XS v).det) →
+      (∀ v, IsUnit (XT v).det) →
+      ∀ φ : Matrix (Fin d) (Fin d) K, IsUnit φ.det →
+      ∀ L : Submodule (𝓞 K) (Fin d → K), Submodule.IsFullLattice K L →
+        lcv XT (matLat φ L) = lcv XS L +
+          (2 / (finrank ℚ K : ℝ)) * ∑ v, Real.log (detRatio XS XT φ v) := by
   intro K _ _ _ _ d XS XT hXS hXT φ hφ L hL
   classical
   have hu : IsUnit φ := (Matrix.isUnit_iff_isUnit_det φ).mpr hφ
@@ -162,15 +192,7 @@ theorem imageLcv_of (h : LcvBasis) : ImageLcv := by
       matLat φ (Submodule.span (𝓞 K) (Set.range (fun i => (Pi.single i 1 : Fin d → K)))) := by
     rw [matLat, Submodule.map_span, ← Set.range_comp]
     rfl
-  have hLat : Submodule.IsLattice K (matLat φ L) := by
-    refine ⟨(Submodule.IsLattice.fg (self := hL)).map _, ?_⟩
-    have : ((matLat φ L : Submodule (𝓞 K) (Fin d → K)) : Set (Fin d → K)) =
-        (Matrix.mulVecLin φ) '' (L : Set (Fin d → K)) := by
-      rw [matLat, Submodule.map_coe]
-      rfl
-    rw [this, Submodule.span_image, Submodule.IsLattice.span_eq_top (self := hL), Submodule.map_top,
-      LinearMap.range_eq_top]
-    exact hsurj
+  have hLat := matLat_isFullLattice φ hsurj L hL
   obtain ⟨-, h1⟩ := h K d XT hXT (matLat φ L) hLat _ hF
   obtain ⟨-, h2⟩ := h K d XS hXS L hL _ hE
   have hidx : ∀ w : HeightOneSpectrum (𝓞 K),
@@ -191,7 +213,12 @@ theorem imageLcv_of (h : LcvBasis) : ImageLcv := by
   simp only [hdet, Finset.sum_sub_distrib]
   ring
 
-theorem idxLcv_of (h : LcvBasis) : IdxLcv := by
+theorem idxLcv_of (h : CovolumeViaBasis) :
+    ∀ (K : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] (d : ℕ)
+      (X : InfinitePlace K → Matrix (Fin d) (Fin d) ℂ), (∀ v, IsUnit (X v).det) →
+      ∀ A B : Submodule (𝓞 K) (Fin d → K), Submodule.IsFullLattice K A → Submodule.IsFullLattice K B →
+        (Function.support fun w : HeightOneSpectrum (𝓞 K) => lw w * (idx w A B : ℝ)).Finite ∧
+        lcv X B = lcv X A + 2 * ∑ᶠ w : HeightOneSpectrum (𝓞 K), lw w * (idx w A B : ℝ) := by
   intro K _ _ _ _ d X hX A B hA hB
   classical
   have hE := imageLcv_std_li (K := K) d

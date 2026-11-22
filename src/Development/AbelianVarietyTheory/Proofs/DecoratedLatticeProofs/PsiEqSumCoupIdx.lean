@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ToOneSucc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ToOneSucc
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.PosOne
 open GlobalTheory.IndefiniteRowSideFullHecke.FourierJacobiAverage (app HasTensorVal fl opEFJ IsQuotIntFJ IsFJ Represents)
 open GlobalTheory.IndefiniteRowSideFullHecke.FramePositiveSum (IsCO rescale)
@@ -17,14 +22,14 @@ theorem psi_eq_sum_coupIdx : ∀ (k : Type) [Field k] [ValuativeRel k] [Topologi
     simp_rw [hc, mul_ite, mul_one, mul_zero]
     rw [Finset.sum_ite_eq]
     split_ifs with hm
-    · exact (Chain.xiPen_mk hA hg y x₀).symm
+    · exact (T.xiPen_mk hA hg y x₀).symm
     · by_contra hne
       exact hm (Finset.mem_coe.1 (hS ⟨y, (hA g hg x₀ y).1 hne, rfl, g, hg, x₀, hne⟩))
   refine ⟨key, fun η => ?_⟩
   have hfun : T.Psi g x₀ = fun y => ∑ yb ∈ S, T.xiPen (box _ c₂) g yb x₀ * cosetInd (box _ c₂) yb y := funext key
   rw [hfun]
   simp only [GlobalTheory.StepData.hat, Finset.sum_mul]
-  rw [integral_finset_sum]
+  rw [MeasureTheory.integral_finsetSum]
   · refine Finset.sum_congr rfl fun yb _ => ?_
     simp_rw [mul_assoc]
     exact integral_const_mul _ _

@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.DefGroup
-import Formalism.LocalToGlobal.GaloisLevelStructure.DefsLevel
-import ReciprocityTheory.Automorphisms.SplitCoeAlgebraMap
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.DefGroup
+public import Formalism.LocalToGlobal.GaloisLevelStructure.DefsLevel
+public import ReciprocityTheory.Automorphisms.SplitCoeAlgebraMap
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2 Formalism.L2.DIV
 
 namespace GlobalTheory

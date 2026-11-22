@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsOrthFull
-import Development.WeilBound.CoreStatements.AmpleLineBundles.SpanLeOfMem
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsOrthFull
+public import Development.WeilBound.CoreStatements.AmpleLineBundles.SpanLeOfMem
+
+@[expose] public section
+
 open GroundTheory.Heights₂.Heights NumberField TensorProduct ComplexAt GlobalTheory.CompanionTheory.Ar Matrix
 open scoped BigOperators ComplexOrder
 

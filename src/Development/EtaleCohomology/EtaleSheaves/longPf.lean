@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.CxDescPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.CxDescPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CochainComplex.HomComplex
@@ -15,7 +19,7 @@ theorem four_inj {A B C D A' B' C' D' : Type*} [AddCommGroup A] [AddCommGroup B]
     (h2 : Function.Exact α β) (h2' : Function.Exact α' β') (h3 : Function.Exact β γ)
     (s1 : ∀ x, b (α x) = α' (a x)) (s2 : ∀ x, c (β x) = β' (b x)) (s3 : ∀ x, d (γ x) = γ' (c x))
     (ha : Function.Surjective a) (hb : Function.Injective b) (hd : Function.Injective d) : Function.Injective c := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   have : γ x = 0 := hd (by rw [s3, hx, map_zero, map_zero])
   obtain ⟨y, rfl⟩ := (h3 x).1 this
@@ -39,7 +43,7 @@ theorem four_surj {B C D E B' C' D' E' : Type*} [AddCommGroup B] [AddCommGroup C
   have : γ' (x' - c w) = 0 := by rw [map_sub, ← s3, hy, sub_self]
   obtain ⟨u', hu'⟩ := (h2' _).1 this
   obtain ⟨u, rfl⟩ := hb u'
-  exact ⟨w + β u, by rw [map_add, s2, hu', add_sub_cancel]⟩
+  exact ⟨w + β u, by rw [map_add (f := _), s2, hu', add_sub_cancel]⟩
 
 theorem cpull_comp {R : Type} [CommRing R] {K L M : Cx R} (f : K ⟶ L) (g : L ⟶ M) (I : Cx R) (n : ℤ) (x) :
     cpull (f ≫ g) I n x = cpull f I n (cpull g I n x) := by

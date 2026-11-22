@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TateRat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.MapRepApply
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TateRat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.MapRepApply
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc Topology
 
 theorem UpperTheory.V.Loc.cocLift (hP : LocalPublishedTheorems) {v l : ℕ} [Fact v.Prime] [Fact l.Prime] {G : Type} [Group G]
@@ -76,7 +81,7 @@ theorem UpperTheory.V.Loc.cocLift (hP : LocalPublishedTheorems) {v l : ℕ} [Fac
   · have e : χ g * y h - y (g * h) + y g = z (g, h) := congrArg Subtype.val (congrFun hyZ (g, h))
     simp only [z] at e
     linear_combination -e
-  · rw [map_add, hs', (hJ _).1 (y g).2, add_zero]
+  · rw [map_add (f := _), hs', (hJ _).1 (y g).2, add_zero]
 
 namespace UpperTheory.V.Loc.SpBor
 
@@ -151,8 +156,8 @@ private theorem bor_cont {X : Type} [TopologicalSpace X] [TopologicalSpace B] [I
 
 end UpperTheory.V.Loc.SpBor
 
-open UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Loc.SpBor in
 
+open UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Loc.SpBor in
 theorem UpperTheory.V.Loc.borLift (hP : LocalPublishedTheorems) {v l : ℕ} [Fact v.Prime] [Fact l.Prime] {G : Type} [Group G]
     [TopologicalSpace G] [IsTopologicalGroup G] (φ : G →* GQ v) (hφ : IsOpenEmbedding φ)
     {B : Type} [CommRing B] [Algebra ℚ_[l] B] [Module.Finite ℚ_[l] B] [TopologicalSpace B] [IsModuleTopology ℚ_[l] B]

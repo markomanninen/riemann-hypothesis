@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveComp
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.PublishedIntClosHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.SpanSteps
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveComp
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.PublishedIntClosHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.SpanSteps
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,14 +24,6 @@ def TieReadSt : Prop :=
   ∀ u : WeightFamilies.Wt D j, ReciprocityTheory.ChartRestriction.G.PullbackSections.JInjRd T j (wtA u) u.n
 
 abbrev KT (T : Top D) (j N : ℕ) : Type := FractionRing (MvPolynomial (Idx D j N) T.Q.c.F)
-
-def IsIoExt {N : ℕ} (io : KT T j N →+* ℂ) : Prop :=
-  ∀ a : T.Q.c.F, io (algebraMap T.Q.c.F (KT T j N) a) = T.σ₀ a
-
-def rdSec {ka wL wF : WeightFamilies.Wt D j} (G : GlobalFamilyData (recPlus h j hj) ka wL wF) (io : KT T j G.N →+* ℂ)
-    (i : Fin (WeightFamilies.dimY D j + 1)) :=
-  ∑ k', io (algebraMap (MvPolynomial (Idx D j G.N) T.Q.c.F) (KT T j G.N) (MvPolynomial.X (i, k'))) •
-    rdR h j (G.w k')
 
 def TieMaxCuspSt (CR Tt c : ℝ) (ka : WeightFamilies.Wt D j) : Prop :=
   ∀ F : (recB h.toLawsCore).Cusp j ka,

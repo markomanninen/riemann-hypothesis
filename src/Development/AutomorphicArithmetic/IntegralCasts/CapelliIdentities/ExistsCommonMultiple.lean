@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qm7.exists_common_multiple.{u_2} :
     ∀ {ι : Type u_2} (s : Finset ι)

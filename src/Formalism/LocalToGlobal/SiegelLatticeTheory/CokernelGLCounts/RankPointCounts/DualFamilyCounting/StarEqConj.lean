@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.GpHerm
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NOfibFibT
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.GpHerm
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NOfibFibT
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem star_eq_conj' (t : D.host.E) : star t = D.host.conj t := by
 theorem theta_spec : IsIntegral ℤ (theta D) ∧ theta D + D.host.conj (theta D) = 1 := by
   have h := thetaEx_holds D
   unfold theta
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem entry_rel {X0 : Matrix (Fin D.R.rS) (Fin D.R.rS) D.host.E} {xs : Fin D.R.rS → (VS D).V}
@@ -46,7 +50,7 @@ theorem kblk {X0 : Matrix (Fin D.R.rS) (Fin D.R.rS) D.host.E} {xs : Fin D.R.rS �
   simp only [Pi.sub_apply]
   rw [Hc_blkQ X u X0 xs M hup hd hW v, Matrix.map_apply]
   have e := congrArg (embS D (X.pl v)) (entry_rel X hok p.1.1 p.1.2)
-  rw [map_add, map_neg, Formalism.BasicNotions.Examples₂.emb_star, starRingEnd_apply] at e
+  rw [map_add (f := _), map_neg, Formalism.BasicNotions.Examples₂.emb_star, starRingEnd_apply] at e
   rw [show embS D (X.pl v) (Gp D X0 xs p.1.1 p.1.2) =
       -(embS D (X.pl v) (M p.1.1 p.1.2) + star (embS D (X.pl v) (M p.1.2 p.1.1))) by
     rw [e, neg_neg]]
@@ -68,7 +72,7 @@ theorem xiA_conj {X0 : Matrix (Fin D.R.rS) (Fin D.R.rS) D.host.E} {xs : Fin D.R.
   have hθ : D.host.conj (theta D) = 1 - theta D := eq_sub_of_add_eq' (theta_spec (D := D)).2
   have hM : star (M a a) = -Gp D X0 xs a a - M a a := eq_sub_of_add_eq' (entry_rel X hok a a)
   unfold xiA
-  rw [map_add, map_mul, hθ, hs (M a a), hs (Gp D X0 xs a a), Gp_diag_star X0 xs a, hM]
+  rw [map_add (f := _), map_mul, hθ, hs (M a a), hs (Gp D X0 xs a a), Gp_diag_star X0 xs a, hM]
   ring
 
 theorem imblk {X0 : Matrix (Fin D.R.rS) (Fin D.R.rS) D.host.E} {xs : Fin D.R.rS → (VS D).V}
@@ -87,7 +91,7 @@ theorem imblk {X0 : Matrix (Fin D.R.rS) (Fin D.R.rS) D.host.E} {xs : Fin D.R.rS 
     have h1 := congrArg (embS D (X.pl v)) (Gp_diag_star X0 xs a)
     rw [Formalism.BasicNotions.Examples₂.emb_star] at h1
     exact Complex.conj_eq_iff_im.mp h1
-  simp only [xiA, map_add, map_mul, Complex.add_im, Complex.mul_im, hreal]
+  simp only [xiA, map_add (f := _), map_mul, Complex.add_im, Complex.mul_im, hreal]
   ring
 
 end Formalism.L2.SG.Pf.NcReal.JX.NOf

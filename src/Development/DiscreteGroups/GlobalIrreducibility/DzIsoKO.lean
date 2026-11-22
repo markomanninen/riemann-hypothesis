@@ -1,6 +1,10 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.ExistsOfMemKOne
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PadicIntGLSmulMemPrincipalCongruenceFixed
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.ExistsOfMemKOne
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PadicIntGLSmulMemPrincipalCongruenceFixed
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,16 +55,6 @@ theorem exists_of_mem_KO {n : ℕ} {m : GL (Fin n) (w.adicCompletion E)} (hm : m
   change i ((algebraMap ℤ_[g] ℚ_[g]).mapMatrix A a b) = m.val a b
   rw [hA]
   simp
-
-theorem map_inc_range (n : ℕ) :
-    (inc g n).range.map (Matrix.GeneralLinearGroup.map i.toRingHom) = KO (w.adicCompletion E) (Fin n) := by
-  ext m
-  constructor
-  · rintro ⟨_, ⟨k, rfl⟩, rfl⟩
-    exact map_inc_mem_KO i hi k
-  · intro hm
-    obtain ⟨k, rfl⟩ := exists_of_mem_KO i hi hm
-    exact ⟨_, ⟨k, rfl⟩, rfl⟩
 
 def toKO (n : ℕ) : GL (Fin n) ℤ_[g] →* KO (w.adicCompletion E) (Fin n) :=
   ((Matrix.GeneralLinearGroup.map i.toRingHom).comp (inc g n)).codRestrict _ fun k => map_inc_mem_KO i hi k

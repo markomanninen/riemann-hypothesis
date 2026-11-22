@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ClosedDiscGaugeCompletionBasicPropertiesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ClosedDiscGaugeCompletionBasicPropertiesStatement
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
 
@@ -27,8 +32,8 @@ theorem l_mul_inv : (l : Pk) * sI = 1 := by
   rw [← map_natCast (algebraMap (𝕎k) (Pk)) l]
   exact IsLocalization.Away.mul_invSelf _
 
-omit [CharP k l] [PerfectRing k l] in
 
+omit [CharP k l] [PerfectRing k l] in
 theorem norm_l_mul (y : Pk) : ‖(l : Pk) * y‖ = ‖y‖ / l := by
   have h := (GlobalTheory.T.closedDiscGaugeCompletion_basic_properties l (WittVector l k) 0 1).2.1 (ofPre l 0 1 y)
   rw [← map_natCast (ofPre l (0 : WittVector l k) 1) l, ← map_mul, norm_ofPre, norm_ofPre] at h
@@ -77,7 +82,7 @@ theorem ball_lt_one {r : ℝ} (hr : r < 1) {y : Pk} (hy : y ∈ ball l (0 : 𝕎
   | add x y _ _ hx hy =>
     obtain ⟨w, rfl⟩ := hx
     obtain ⟨w', rfl⟩ := hy
-    exact ⟨w + w', by rw [mul_add, map_add]⟩
+    exact ⟨w + w', by rw [mul_add, map_add (f := _)]⟩
   | smul c x _ hx =>
     obtain ⟨w, rfl⟩ := hx
     exact ⟨c * w, by rw [Algebra.smul_def, ← map_mul, mul_left_comm]⟩
@@ -247,8 +252,8 @@ theorem exists_of_norm_le (x : Dk) (hx : ‖x‖ ≤ 1) : ∃ w : 𝕎k, x = toD
 
 end GlobalTheory.BSP.DiscZero
 
-open GlobalTheory.BSP.DiscZero in
 
+open GlobalTheory.BSP.DiscZero in
 theorem GlobalTheory.BSP.disc_zero_one : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K),
     (∀ x y : Disc l (0 : Wq l bk.a) 1, ‖x * y‖ = ‖x‖ * ‖y‖) ∧
     (∀ x : Disc l (0 : Wq l bk.a) 1, ‖x‖ ≤ 1 → ∃ w, x = toDisc l (0 : Wq l bk.a) 1 w) ∧

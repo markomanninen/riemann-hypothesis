@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.SelfAdjointForms.Stabilizers.ExistsBallPf
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.SelfAdjointForms.Stabilizers.ConjCircleEqOne
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.SelfAdjointForms.Stabilizers.VmvMulVecApply
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.SelfAdjointForms.Stabilizers.ExistsBallPf
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.SelfAdjointForms.Stabilizers.ConjCircleEqOne
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.SelfAdjointForms.Stabilizers.VmvMulVecApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +84,8 @@ theorem key' (hB : Lv ψ h π s B) (K : Subgroup (GL (Fin (m + 1)) k)) (D : Set 
             (π (blkAt k (m + 1) N (by omega) g) w) := by rw [hc, hw g hg]
       _ = B (avg ψ h π (xi0 k m) (ball (m + 1) r) v) w := form_inv hB g hdet _ _
   have e := congrArg (fun x => B x w) hdec
-  simp only [map_smul, map_sum, LinearMap.smul_apply, LinearMap.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_smul, map_sum, LinearMap.smul_apply, LinearMap.sum_apply,
     smul_eq_mul] at e
   rw [Finset.sum_congr rfl hterm, Finset.sum_const, nsmul_eq_mul] at e
   have hR0 : (R.card : ℂ) ≠ 0 := by

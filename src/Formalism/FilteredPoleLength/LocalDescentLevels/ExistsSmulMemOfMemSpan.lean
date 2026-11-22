@@ -1,6 +1,10 @@
-import Formalism.FilteredPoleLength.ReducedBasisBounds.BetaSesquilinearity
-import Formalism.LogFactorialIndices.LogProductFormula
-import Lemmata.MiscLemmasO.Imports
+module
+
+public import Formalism.FilteredPoleLength.ReducedBasisBounds.BetaSesquilinearity
+public import Formalism.LogFactorialIndices.LogProductFormula
+public import Lemmata.MiscLemmasO.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -116,7 +120,7 @@ theorem inter_baseChange_lattice : SpanImageInf := by
       obtain ⟨i, rfl⟩ := hy
       exact Submodule.subset_span ⟨i, hb' i⟩
     | zero => simp
-    | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
     | smul r y _ hy => rw [hjO]; exact Submodule.smul_mem _ _ hy
   have hK : ∀ y ∈ Submodule.span K (b '' s), j y ∈ Submodule.span K' (b' '' s) := by
     intro y hy
@@ -125,7 +129,7 @@ theorem inter_baseChange_lattice : SpanImageInf := by
       obtain ⟨i, hi, rfl⟩ := hy
       exact Submodule.subset_span ⟨i, hi, hb' i⟩
     | zero => simp
-    | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
     | smul r y _ hy => rw [hjK]; exact Submodule.smul_mem _ _ hy
   apply le_antisymm
   · rintro x ⟨hx1, hx2⟩

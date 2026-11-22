@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.IsTwistedDualOfGaloisRep
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.IsTwistedDualOfGaloisRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,8 +83,8 @@ variable {L : SizeData₂ D} {HW : HWOf D.loc} {F : FonOf D.loc D.locA HW} {i : 
     {w : HeightOneSpectrum (𝓞 D.host.E)} {hw : w ∈ placesOver D.host.E (D.nd.l i)}
     {Cx : Formalism.MainNotions.TruncatedSeriesCountingIdentities.CoefExt D i w hw} {hG : Good (D.nbr i w hw).Kw 1 Cx.LL}
 
-variable (ρ π hG) in
 
+variable (ρ π hG) in
 structure WordBaseC (Wd : WordDat (nLet i w hw)) : Prop where
   zeta : ∃ ζ : ↥Cx.LL.1, IsPrimitiveRoot ζ (D.nd.l i)
   mult : ∀ T₂ : LatW i w hw Cx, IsTwistedDualOfGaloisRep i ρ π w hw Cx T₂ →

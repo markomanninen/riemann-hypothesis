@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,11 +26,13 @@ theorem gram_det_ne (V : HSp D) : V.gram.det ≠ 0 := by
     apply V.nondeg.2
     intro x
     have hx : x = ∑ i, V.frame.repr x i • V.frame i := (V.frame.sum_repr x).symm
-    rw [hx, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx, map_sum, LinearMap.sum_apply]
     refine Finset.sum_eq_zero fun i _ => ?_
     have h1 : ∑ j, V.gram i j * v j = 0 := congr_fun h0 i
     have h2 : V.hT (V.frame i) (V.frame.equivFun.symm v) = ∑ j, V.gram i j * v j := by
-      rw [Module.Basis.equivFun_symm_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Module.Basis.equivFun_symm_apply, map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_smul, smul_eq_mul, mul_comm]; rfl
     rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, h2, h1, smul_zero]

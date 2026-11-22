@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Re1.lower_iff :
     ∀ {n : ℕ} (P : Fin n → Prop) [inst : DecidablePred P],

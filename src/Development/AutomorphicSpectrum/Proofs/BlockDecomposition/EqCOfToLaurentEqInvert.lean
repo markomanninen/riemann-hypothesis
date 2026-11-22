@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+
+@[expose] public section
 
 open TensorProduct CrystallineSemistableComparison.D
 open scoped LaurentPolynomial
@@ -11,7 +15,7 @@ variable {K : Type} [CommRing K]
 theorem coeff_nat (p : Polynomial K) (k : ℕ) :
     (Polynomial.toLaurent p).coeff (k : ℤ) = p.coeff k := by
   rw [LaurentPolynomial.coeff_toLaurent]
-  exact Finsupp.mapDomain_apply Nat.castEmbedding.injective _ k
+  exact Finsupp.mapDomain_apply_of_injective Nat.castEmbedding.injective _ k
 
 theorem coeff_neg (p : Polynomial K) (k : ℤ) (hk : k < 0) :
     (Polynomial.toLaurent p).coeff k = 0 := by
@@ -52,7 +56,7 @@ theorem exists_split (h : K[T;T⁻¹]) :
     obtain ⟨p₁, p₂, rfl⟩ := hp
     obtain ⟨q₁, q₂, rfl⟩ := hq
     refine ⟨p₁ + q₁, p₂ + q₂, ?_⟩
-    simp only [map_add]
+    simp only [map_add (f := _)]
     ring
   | C_mul_T n a =>
     rcases lt_or_ge n 0 with hn | hn

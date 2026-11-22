@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsDehomNormPIntegral
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PDehomCharpolyForms
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsDehomNormPIntegral
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PDehomCharpolyForms
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -32,7 +37,8 @@ theorem mem_range_map_iff {τ : Type*} (V : Subring ℚ) (F : MvPolynomial τ �
     exact (F'.coeff ν).2
   · intro h
     refine ⟨∑ ν ∈ F.support, monomial ν ⟨F.coeff ν, h ν⟩, ?_⟩
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_monomial]
     exact F.support_sum_monomial_coeff
 
@@ -89,15 +95,15 @@ theorem coeff_mem_of_dehom_coeff_mem {Ω : Type} [Field Ω] [CharZero Ω] {D : �
     split_ifs
     · exact (mem_range_map_iff V H).mp hHW ν
     · exact V.zero_mem
-  have h1 : coeff (μ + Finsupp.single j (N2 - N)) (X j ^ (N2 - N) * F) = coeff μ F := by
+  have h1 : AddMonoidAlgebra.coeff (X j ^ (N2 - N) * F) (μ + Finsupp.single j (N2 - N)) = AddMonoidAlgebra.coeff F μ := by
     rw [X_pow_eq_monomial, mul_comm, coeff_mul_monomial, mul_one]
   rw [← h1]
   exact (mem_range_map_iff V _).mp hKW _
 
 end DehomNormPIntegral
 
-open DehomCharpolyForms DehomNormPIntegral in
 
+open DehomCharpolyForms DehomNormPIntegral in
 theorem DehomNormPIntegral.proof : DehomNormPIntegral.Statement := by
   intro Ω _ _ D l P _ hP hgen p hp M hM j m u hu c hchom hcp μ
   classical
@@ -107,7 +113,7 @@ theorem DehomNormPIntegral.proof : DehomNormPIntegral.Statement := by
   set f := LinearMap.charpoly (Algebra.lmul P Ω u) with hf
 
   have h0 : algebraMap P Ω (f.coeff 0) = aeval (fun i => l i / l j) (c n) := by
-    have := congrArg (fun g => Polynomial.coeff g 0) hcp
+    have := congrArg (fun g => _root_.AddMonoidAlgebra.coeff (M := ℕ) g 0) hcp
     simp only [Polynomial.coeff_map, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow] at this
     rw [this, Finset.sum_eq_single n]
     · simp

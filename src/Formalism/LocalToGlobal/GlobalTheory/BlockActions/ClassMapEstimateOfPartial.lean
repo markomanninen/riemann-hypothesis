@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ArchimedeanSignatureMatchingOfTrivialBranchingSymm
-import Formalism.LocalToGlobal.HilbertRowConditions.RowPin
-import Formalism.SharpRestriction.GlobalSchurBounds.FiniteModelOfAdmissibleTransports
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ArchimedeanSignatureMatchingOfTrivialBranchingSymm
+public import Formalism.LocalToGlobal.HilbertRowConditions.RowPin
+public import Formalism.SharpRestriction.GlobalSchurBounds.FiniteModelOfAdmissibleTransports
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassFiniteness.Development
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictRing
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassFiniteness.Development
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictRing
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,8 @@ theorem intAf_mul {a b : Af F} (ha : a ∈ intAf F) (hb : b ∈ intAf F) : a * b
 
 theorem intAf_one : (1 : Af F) ∈ intAf F := (intAf_iff _).mpr (one_mem _)
 
-variable (F E) in
 
+variable (F E) in
 def Oh : AddSubgroup (Af F ⊗[F] E) :=
   AddSubgroup.closure {r | ∃ a ∈ intAf F, ∃ e : E, IsIntegral ℤ e ∧ r = a ⊗ₜ[F] e}
 
@@ -123,7 +127,7 @@ theorem approx (N : ℕ) (hN : 0 < N) (r : Af F ⊗[F] E) :
     obtain ⟨e1, o1, ho1, rfl⟩ := hx
     obtain ⟨e2, o2, ho2, rfl⟩ := hy
     refine ⟨e1 + e2, o1 + o2, add_mem ho1 ho2, ?_⟩
-    rw [map_add, smul_add]; abel
+    rw [map_add (f := _), smul_add]; abel
 
 theorem nat_mult (c : 𝓞 F) (hc : c ≠ 0) : ∃ k : ℕ, 0 < k ∧ ∃ c' : 𝓞 F, (k : 𝓞 F) = c * c' := by
   obtain ⟨c', h⟩ := Ideal.mem_span_singleton'.mp (Ideal.absNorm_mem (Ideal.span {c}))

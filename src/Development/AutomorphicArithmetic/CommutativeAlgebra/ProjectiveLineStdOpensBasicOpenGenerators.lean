@@ -1,7 +1,11 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.StandardChartsLineOne
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ProjSpaceHom
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.TwistingSheafCore
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.StandardChartsLineOne
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ProjSpaceHom
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.TwistingSheafCore
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry LateralTheory.E.t_E2Cut LateralTheory.E.StandardEtaleChartsMultivariableHensel
 
@@ -26,7 +30,7 @@ private theorem closure_chart (i j : Fin 2) (hij : i ≠ j) :
         eq_intCast MvPolynomial.C c, map_intCast]
       exact intCast_mem _ c
     | add p q hp hq =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem hp hq
     | mul_X p n hp =>
       rw [map_mul]
@@ -61,11 +65,17 @@ private theorem mul_res :
         (chartHom (A := ℤ) (n := 1) 0 (MvPolynomial.X 1)) *
       resR (inf_le_right : stdOpen ℤ 1 0 ⊓ stdOpen ℤ 1 1 ≤ stdOpen ℤ 1 1)
         (chartHom (A := ℤ) (n := 1) 1 (MvPolynomial.X 0)) = 1 := by
+  letI : CommRing (ringOn (projectiveSpace ℤ 1) (stdOpen ℤ 1 0 ⊓ stdOpen ℤ 1 1)) :=
+    inferInstanceAs (CommRing Γ(projectiveSpace ℤ 1, stdOpen ℤ 1 0 ⊓ stdOpen ℤ 1 1))
   have h := ProjTwist.ratio_mul_ratio' (𝒜 := grading ℤ 1) (X_mem (A := ℤ) (n := 1) 0)
     (X_mem (A := ℤ) (n := 1) 1) (X_mem (A := ℤ) (n := 1) 0)
-  rw [ProjTwist.ratio_self] at h
-  rw [chartHom_eq_ratio, chartHom_eq_ratio, mul_comm]
-  exact h.trans (map_one _)
+  rw [ProjTwist.ratio_self, map_one] at h
+  rw [← chartHom_eq_ratio, ← chartHom_eq_ratio] at h
+  change resR (inf_le_right : stdOpen ℤ 1 0 ⊓ stdOpen ℤ 1 1 ≤ stdOpen ℤ 1 1)
+      (chartHom (A := ℤ) (n := 1) 1 (MvPolynomial.X 0)) *
+    resR (inf_le_left : stdOpen ℤ 1 0 ⊓ stdOpen ℤ 1 1 ≤ stdOpen ℤ 1 0)
+      (chartHom (A := ℤ) (n := 1) 0 (MvPolynomial.X 1)) = 1 at h
+  exact (mul_comm _ _).trans h
 
 end UpperTheory.ProjectiveLineClosure
 

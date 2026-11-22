@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.HeckeTate
 
@@ -110,7 +114,7 @@ theorem comp_sub_mem {N : R} (u₁ u₂ u₃ : M →ₗ[R] M') (w₁ w₂ w₃ :
       (a₁ * b₂) • w₂ (u₁ x) + (a₁ * b₃) • w₃ (u₁ x) + (a₂ * b₁) • w₁ (u₂ x) + (a₂ * b₃) • w₃ (u₂ x) +
       (a₃ * b₁) • w₁ (u₃ x) + (a₃ * b₂) • w₂ (u₃ x) +
       (a₁ * b₁ * t₁ + a₂ * b₂ * t₂ + a₃ * b₃ * t₃ - 1) • x := by
-    simp only [LinearMap.add_apply, LinearMap.smul_apply, map_add, map_smul, h₁, h₂, h₃]
+    simp only [LinearMap.add_apply, LinearMap.smul_apply, map_add (f := _), map_smul, h₁, h₂, h₃]
     module
   rw [this]
   repeat' apply Submodule.add_mem
@@ -136,7 +140,7 @@ theorem exists_adjoint (h : IsUnimod σ B) (h' : IsUnimod σ B') (hσ : ∀ a, �
   have hv' : ∀ a y, B' (u a) y = B a (v y) := fun a y => by
     rw [h.skew a, hv, h'.skew]; rfl
   refine ⟨⟨⟨v, fun x y => h.ext fun a => ?_⟩, fun r y => h.ext fun a => ?_⟩, hv'⟩
-  · rw [map_add, ← hv', ← hv', ← hv', map_add]
+  · rw [map_add (f := _), ← hv', ← hv', ← hv', map_add (f := _)]
   · simp only [RingHom.id_apply]
     rw [← hv', ← hσ r, ← h'.adj, ← h.adj, ← hv', map_smul u]
 
@@ -185,7 +189,7 @@ theorem exists_glued [IsDedekindDomain R] [CharZero R] (h : IsUnimod σ B) (h' :
   choose w hw using hexw
   have hexπ : ∀ n : ℕ, ∃ π : M →ₗ[R] M', ∀ a, i (π a) = ((1 - e n - σ (e n)) * p) • a := fun n => by
     choose f hf using hlow _ (P.sub_mem (he1 n) (heσ n))
-    exact ⟨⟨⟨f, fun x y => hi (by rw [map_add, hf, hf, hf, smul_add])⟩,
+    exact ⟨⟨⟨f, fun x y => hi (by rw [map_add (f := _), hf, hf, hf, smul_add])⟩,
       fun r x => hi (by simp only [RingHom.id_apply]; rw [map_smul, hf, hf, smul_comm])⟩, hf⟩
   choose π hπ using hexπ
   choose ρ hρ using fun n => exists_adjoint h h' hσ (π n)
@@ -217,7 +221,7 @@ theorem exists_glued [IsDedekindDomain R] [CharZero R] (h : IsUnimod σ B) (h' :
   let H : ℕ → M' →ₗ[R] M := fun n =>
     σ (e n) • φa + (e n * w n) • φ' + (1 - e n - σ (e n)) • ρ n
   have hGH : ∀ n a y, B' (G n a) y = B a (H n y) := fun n a y => by
-    simp only [G, H, LinearMap.add_apply, LinearMap.smul_apply, map_add, AddMonoidHom.add_apply,
+    simp only [G, H, LinearMap.add_apply, LinearMap.smul_apply, map_add (f := _), AddMonoidHom.add_apply,
       h'.adj, hφa, hχ, hρ, map_smul, map_mul, hσ, hσ3]
   have hcong : ∀ n : ℕ, 0 < n → ∃ c₁ c₂ c₃ c₄ c₅ : R,
       e n * (1 - e n) = n * c₁ ∧ σ (e n) * (1 - σ (e n)) = n * c₂ ∧ e n * σ (e n) = n * c₃ ∧
@@ -318,7 +322,7 @@ theorem exists_glued [IsDedekindDomain R] [CharZero R] (h : IsUnimod σ B) (h' :
     have hen' : (n : R) ∣ σ (e n) := by simpa using map_dvd σ hen
     have : i (G n a) - (p : R) • a = e n • i (φ a) + (σ (e n) * σ (w n)) • i (χ a) +
         ((e n + σ (e n)) * ((e n + σ (e n) - 2) * p)) • a := by
-      simp only [G, LinearMap.add_apply, LinearMap.smul_apply, map_add, map_smul, hπ]
+      simp only [G, LinearMap.add_apply, LinearMap.smul_apply, map_add (f := _), map_smul, hπ]
       module
     rw [this]
     exact add_mem (add_mem (smul_mem_mults hen _) (smul_mem_mults (hen'.mul_right _) _))

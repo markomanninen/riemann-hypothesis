@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.TransposedFrameImageBlockwiseHolds
-import Formalism.GradedWeylDivisibility.FinalC
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.TransposedFrameImageBlockwiseHolds
+public import Formalism.GradedWeylDivisibility.FinalC
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+
+@[expose] public section
 
 open MvPolynomial
 

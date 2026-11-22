@@ -1,21 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Formalism.LocalToGlobal.IndefiniteReal.ExistsChosenExtremalVector
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LowestKTypeValuesKilledByLoweringPart
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockVectorMixedLaplacianKilledLoweringKilled
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousMovPair
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HolomorphicTypeAtExtremalOfKEquivariantLoweringK
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HolomorphicDiscreteSeriesLowestKTypeSmoothIrredu
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FormsModelHolomorphicIntegralExtremalWeight
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MixedLaplacianKillsProductOfMinors
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSmoothFunctionsOfClosedRightDerivatives
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsThetaLiftLinearMapCuspFormMultiplicity
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.L2MatrixCoeffBoundedHolomorphicFormEqExtremalVec
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ThetaPairingInvariant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Formalism.LocalToGlobal.IndefiniteReal.ExistsChosenExtremalVector
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LowestKTypeValuesKilledByLoweringPart
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockVectorMixedLaplacianKilledLoweringKilled
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousMovPair
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HolomorphicTypeAtExtremalOfKEquivariantLoweringK
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HolomorphicDiscreteSeriesLowestKTypeSmoothIrredu
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FormsModelHolomorphicIntegralExtremalWeight
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MixedLaplacianKillsProductOfMinors
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSmoothFunctionsOfClosedRightDerivatives
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsThetaLiftLinearMapCuspFormMultiplicity
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.L2MatrixCoeffBoundedHolomorphicFormEqExtremalVec
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ThetaPairingInvariant
+
+@[expose] public section
 
 noncomputable section
 
@@ -147,8 +151,8 @@ theorem Killed.coef (hom : IsWeilDatumO ψ S T χS χT om) (hc : IsCovolOne (rat
   have e : om (1, g) (L f) = 0 := funext fun w => congrFun (((hL f hf).1 1 w).symm.trans (hk τ Z hZ 1 w)) g
   simp [e, thetaIP]
 
-open GlobalTheory.FockKill GlobalTheory.FockIndep GlobalTheory.OrientedHeis in
 
+open GlobalTheory.FockKill GlobalTheory.FockIndep GlobalTheory.OrientedHeis in
 theorem killed_of_harmonic (hom : IsWeilDatumO ψ S T χS χT om) (hθ : IsInfFam θ) (kS : S.SigOK) (kT : T.SigOK)
     (BS : D.what₂.Tau → Mt S.rank) (hBS : ∀ τ, IsONBasis (gramAt D S τ) 1 (BS τ) S.rank) (M : DSModel T Sp)
     (p : D.what₂.Tau → ℕ) (hp : ∀ τ a, M.ε τ a = decide ((a : ℕ) < p τ)) (f : WO S T → ℂ) (hf : IsThetaFunO ψ S T f)
@@ -189,7 +193,7 @@ theorem killed_of_harmonic (hom : IsWeilDatumO ψ S T χS χT om) (hθ : IsInfFa
   have a2 := ((hY φ hφ).2.2.2 (h, g) w).deriv
   simp only [Prod.mk_mul_mk, mul_one] at a1 a2
   have a3 := congrFun (congrArg (om (h, g)) key) w
-  rw [LinearMap.add_apply, LinearMap.smul_apply, map_add, map_smul, map_zero] at a3
+  rw [LinearMap.add_apply, LinearMap.smul_apply, map_add (f := _), map_smul, map_zero] at a3
   simp only [Pi.add_apply, Pi.smul_apply, Rder]
   rw [a1, a2]
   exact a3
@@ -206,7 +210,7 @@ def killedSub (hom : IsWeilDatumO ψ S T χS χT om) (hθ : IsInfFam θ) (M : DS
     funext g
     have a' := congrFun a g
     have b' := congrFun b g
-    simp only [map_add, Pi.add_apply, Pi.zero_apply] at a' b' ⊢
+    simp only [map_add (f := _), Pi.add_apply, Pi.zero_apply] at a' b' ⊢
     rw [a', b', add_zero]
   zero_mem' := by
     intro τ Z _ h w
@@ -224,8 +228,8 @@ def killedSub (hom : IsWeilDatumO ψ S T χS χT om) (hθ : IsInfFam θ) (M : DS
     simp only [map_smul, Pi.smul_apply, Pi.zero_apply] at a' ⊢
     rw [a', smul_zero]
 
-open GlobalTheory.DefLift.LowerKill GlobalTheory.PointAtPlaceHom GlobalTheory.Mem.RealTranslate in
 
+open GlobalTheory.DefLift.LowerKill GlobalTheory.PointAtPlaceHom GlobalTheory.Mem.RealTranslate in
 theorem values_killed (hom : IsWeilDatumO ψ S T χS χT om) (hθ : IsInfFam θ) (M : DSModel T Sp) (h1 : LowSm M)
     (h2 : GlobalTheory.IndefiniteRowSideFullHecke.HolomorphicLowestType.LowIrr M) (c : CoefA S) (hc : c.Is) (pt : PolF D T.rank S.rank →ₗ[ℂ] (WO S T → ℂ))
     (hpt : ∀ P, IsThetaFunO ψ S T (pt P)) (Δ : PolF D T.rank S.rank)
@@ -260,7 +264,7 @@ theorem values_killed (hom : IsWeilDatumO ψ S T χS χT om) (hθ : IsInfFam θ)
         rw [← Module.End.mul_apply, ← map_mul, Prod.mk_mul_mk, mul_one]
       rw [e]
       exact hx τ Z hZ (h * u) y
-  let B : MultilinearMap ℂ (fun τ => lowT M τ) (PolF D T.rank S.rank) :=
+  let B : MultilinearMap (RingHom.id ℂ) (fun τ => lowT M τ) (PolF D T.rank S.rank) :=
     (io.flip w).compMultilinearMap (PiTensorProduct.tprod ℂ)
   refine mem_of_translates h1 h2 B N v₀ (fun ρ h0 => ?_) (step1 w) ?_ v
   · have := hv₀ ρ
@@ -298,7 +302,7 @@ theorem holAd_coef (hom : IsWeilDatumO ψ S T χS χT om) (hcv : IsCovolOne (rat
     { toFun := fun e g => thetaIP μ 𝓕 a (om (1, g) (pt (io e w)))
       map_add' := fun e e' => by
         funext g
-        simp only [map_add, LinearMap.add_apply, Pi.add_apply]
+        simp only [map_add (f := _), LinearMap.add_apply, Pi.add_apply]
         exact thetaInner_add_right hom hcv ha (hom.om_pres _ _ (hpt _)) (hom.om_pres _ _ (hpt _))
       map_smul' := fun r e => by
         funext g
@@ -315,8 +319,8 @@ theorem holAd_coef (hom : IsWeilDatumO ψ S T χS χT om) (hcv : IsCovolOne (rat
   simp only [hU, rTr]
   rw [← this, ← Module.End.mul_apply, ← map_mul, Prod.mk_mul_mk, mul_one]
 
-open GlobalTheory.HolDict.InterpolationCoefficientsInL2 in
 
+open GlobalTheory.HolDict.InterpolationCoefficientsInL2 in
 theorem coef_eq (hom : IsWeilDatumO ψ S T χS χT om) (hcv : IsCovolOne (ratL T S) μ 𝓕) (hθ : IsInfFam θ)
     (M : DSModel T Sp) (hS : HolShape M) {w : D.what₂.Tau → Fin T.rank → ℤ} (hW : WtIs M w) {v : M.Vec}
     (hv : IsExtVec M v) {J : WO S T → ℂ} (hJ : IsThetaFunO ψ S T J)
@@ -392,8 +396,8 @@ theorem coef_eq (hom : IsWeilDatumO ψ S T χS χT om) (hcv : IsCovolOne (ratL T
   beta_reduce at key
   rwa [hLinv u₀ hu₀] at key
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem coef_extremal : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T : Type) (A : FamIn D.what₂.LL G Pl0 T D.R.m) (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A), Laws R F → R.FullP → ∀ (i : Fin D.R.m) (t : T) μ 𝓕, IsCovolOne (ratL (Wc D i) (Vc D i)) μ 𝓕 → ∀ v : (∀ ρ, lowT (R.MW i (sg0 D A)) ρ), Formalism.IndefR.FWT.IsExtVec (R.MW i (sg0 D A)) (fun ρ => ((v ρ : (R.MW i (sg0 D A)).sm ρ))) → ∀ w, ∀ u ∈ GinfC (Wc D i),
     thetaIP μ 𝓕 (jointVec R i t v w) (R.ωP i t (1, u) (jointVec R i t v w)) =
       thetaIP μ 𝓕 (jointVec R i t v w) (jointVec R i t v w) *

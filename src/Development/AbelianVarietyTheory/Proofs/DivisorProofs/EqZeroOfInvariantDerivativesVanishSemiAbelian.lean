@@ -1,9 +1,14 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
-import Development.AbelianVarietyTheory.Definitions.Divisors.RigidForFan
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueIsPointOfDualNumber
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StalkDerivationMemSpanInvariantSemiAbelianStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDerivationExtendingCotangentFormStatement
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RigidForFan
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueIsPointOfDualNumber
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StalkDerivationMemSpanInvariantSemiAbelianStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDerivationExtendingCotangentFormStatement
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -117,9 +122,9 @@ theorem exists_stalkDer (Z : Scheme) (d : Fld Z) (hd : IsField ⊤ d) (z : Z) :
       rw [TopCat.Presheaf.germ_res_apply]; exact (hg w).symm
     have e : u + w = Z.presheaf.germ V z hV
         (Z.presheaf.map iu.op (g u) + Z.presheaf.map iw.op (g w)) := by
-      rw [map_add, ← eu, ← ew]
+      rw [map_add (f := _), ← eu, ← ew]
     show Z.presheaf.germ (W (u + w)) z (hW _) (d _ (g (u + w))) = _
-    rw [wd _ _ _ hV _ _ ((hg (u + w)).trans e), hadd V le_top, map_add, hres', hres',
+    rw [wd _ _ _ hV _ _ ((hg (u + w)).trans e), hadd V le_top, map_add (f := _), hres', hres',
       TopCat.Presheaf.germ_res_apply, TopCat.Presheaf.germ_res_apply]
   · intro u w
     let V := W u ⊓ W w
@@ -134,13 +139,13 @@ theorem exists_stalkDer (Z : Scheme) (d : Fld Z) (hd : IsField ⊤ d) (z : Z) :
         (Z.presheaf.map iu.op (g u) * Z.presheaf.map iw.op (g w)) := by
       rw [map_mul, ← eu, ← ew]
     show Z.presheaf.germ (W (u * w)) z (hW _) (d _ (g (u * w))) = _
-    rw [wd _ _ _ hV _ _ ((hg (u * w)).trans e), hmul V le_top, map_add, map_mul, map_mul, hres', hres']
+    rw [wd _ _ _ hV _ _ ((hg (u * w)).trans e), hmul V le_top, map_add (f := _), map_mul, map_mul, hres', hres']
     simp only [TopCat.Presheaf.germ_res_apply, hg]
 
 theorem germ_mem_of_valR_eq_zero (A : Type) [CommRing A] (Z : Scheme) (x : Sp A ⟶ Z) (W : Z.Opens)
     (hW : ⊤ ≤ x ⁻¹ᵁ W) (q₀ : Sp A) (h : x.base q₀ ∈ W) (g : Γ(Z, W)) (hg : valR x W g = 0) :
     Z.presheaf.germ W _ h g ∈ maximalIdeal (Z.presheaf.stalk (x.base q₀)) := by
-  rw [valR, dif_pos hW] at hg
+  rw [valR, dite_eq_left hW] at hg
   have h0 : Scheme.Hom.appLE x W ⊤ hW g = 0 := by
     have := congrArg (Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom hg
     rwa [← CommRingCat.comp_apply, Iso.hom_inv_id, CommRingCat.id_apply, map_zero] at this
@@ -184,7 +189,8 @@ theorem euler_of_span (B : Type) [CommRing B] [IsLocalRing B] [IsNoetherianRing 
     apply Subtype.ext; simp [hre]
   show z - ∑ a, (∑ i, (y i : B) * b i a) * D a z ∈ _
   refine ((maximalIdeal B).toCotangent_eq_zero ⟨_, hmem⟩).1 ?_
-  rw [← hw, map_sub, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hw, map_sub, map_sum]
   simp only [map_smul, hy]
   have hcoord : ∀ i, c i • β i = β.coord i ((maximalIdeal B).toCotangent ⟨z, hz⟩) • β i := by
     intro i; rw [hb i z hz, ← algebraMap_smul (ResidueField B) (∑ a, b i a * D a z) (β i)]; rfl

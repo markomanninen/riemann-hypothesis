@@ -1,6 +1,10 @@
-import Formalism.FormalDegreeBessel.StatementIO
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Formalism.RealPlaceAnalysis.FinalF
+module
+
+public import Formalism.FormalDegreeBessel.StatementIO
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Formalism.RealPlaceAnalysis.FinalF
+
+@[expose] public section
 
 open Matrix
 open scoped ContDiff
@@ -15,11 +19,12 @@ attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 abbrev IOPt {n : ℕ} (ε : Fin n → Bool) : Type := {g : Matrix (Fin n) (Fin n) ℂ // inUJ ε g}
 
-open Classical in
 
+open Classical in
 def ioExt {n : ℕ} (ε : Fin n → Bool) {E : Type} [Zero E] (φ : IOPt ε → E) :
-    Matrix (Fin n) (Fin n) ℂ → E :=
-  fun g => if h : inUJ ε g then φ ⟨g, h⟩ else 0
+    Matrix (Fin n) (Fin n) ℂ → E := by
+  classical
+  exact fun g => if h : inUJ ε g then φ ⟨g, h⟩ else 0
 
 section Core
 
@@ -35,7 +40,7 @@ lemma io_inUJ_mul {A B : Matrix (Fin n) (Fin n) ℂ} (hA : inUJ ε A) (hB : inUJ
 lemma ioExt_at {φ : IOPt ε → E} {g : Matrix (Fin n) (Fin n) ℂ} (hg : inUJ ε g) :
     ioExt ε φ g = φ ⟨g, hg⟩ := by
   unfold ioExt
-  rw [dif_pos hg]
+  rw [dite_eq_left hg]
 
 lemma io_smooth_congr {f f' : Matrix (Fin n) (Fin n) ℂ → E} (h : ∀ g, inUJ ε g → f g = f' g)
     (hf : SmoothOnGV ε f) : SmoothOnGV ε f' := by
@@ -161,8 +166,8 @@ lemma io_eab_zero (a b : Fin n) (g : Matrix (Fin n) (Fin n) ℂ) :
     EabV ε a b (fun _ : Matrix (Fin n) (Fin n) ℂ => (0 : E)) g = 0 := by
   simp only [EabV, EcV, RdV, deriv_const, smul_zero, add_zero]
 
-variable (ε E) in
 
+variable (ε E) in
 def ioS : Submodule ℂ (IOPt ε → E) where
   carrier := {φ | SmoothOnGV ε (ioExt ε φ)}
   add_mem' {φ ψ} hφ hψ :=
@@ -176,8 +181,8 @@ lemma io_mem_smooth (x : ioS ε E) : SmoothOnGV ε (ioExt ε (x : IOPt ε → E)
 def IORep (F : Matrix (Fin n) (Fin n) ℂ → E) (φ : IOPt ε → E) : Prop :=
   ∀ g (hg : inUJ ε g), F g = φ ⟨g, hg⟩
 
-variable (ε) in
 
+variable (ε) in
 def ioT (a b : Fin n) (φ : IOPt ε → E) : IOPt ε → E := fun g => EabV ε a b (ioExt ε φ) g.1
 
 lemma ioT_rep {F : Matrix (Fin n) (Fin n) ℂ → E} {φ : IOPt ε → E} (h : IORep F φ) (a b : Fin n) :
@@ -206,8 +211,8 @@ lemma ioT_smul {φ : IOPt ε → E} (hφ : φ ∈ ioS ε E) (c : ℂ) (a b : Fin
     (fun h hh => by simp only [ioExt_at hh, Pi.smul_apply, zero_add]) a b g.2,
     io_eab_lin io_smooth_zero hφ c a b g.2, io_eab_zero, zero_add]
 
-variable (ε E) in
 
+variable (ε E) in
 def ioE (a b : Fin n) : Module.End ℂ (ioS ε E) where
   toFun x := ⟨ioT ε a b x.1, ioT_mem x.2 a b⟩
   map_add' x y := Subtype.ext (ioT_add x.2 y.2 a b)
@@ -220,12 +225,6 @@ lemma ioE_rep {F : Matrix (Fin n) (Fin n) ℂ → E} {x : ioS ε E} (h : IORep F
 lemma io_rep_ext (x : ioS ε E) : IORep (ioExt ε x.1) x.1 := by
   intro g hg
   exact ioExt_at hg
-
-lemma io_rep_unique {F : Matrix (Fin n) (Fin n) ℂ → E} {x y : ioS ε E} (hx : IORep F x.1)
-    (hy : IORep F y.1) : x = y := by
-  apply Subtype.ext
-  funext g
-  exact (hx g.1 g.2).symm.trans (hy g.1 g.2)
 
 lemma io_rep_mk {f : Matrix (Fin n) (Fin n) ℂ → E} (hf : SmoothOnGV ε f) :
     ∃ x : ioS ε E, IORep f x.1 := by
@@ -294,74 +293,5 @@ lemma io_gl : GlRel (ioE ε E) := by
   split_ifs <;> simp [r3, r4]
 
 end Core
-
-theorem capelli_central_holds : CapCentral := by
-  intro n ε E _ _ f u c d g hf hg
-  obtain ⟨x, hx⟩ := io_rep_mk (ε := ε) (E := E) hf
-  have hq := qDetCentral (Module.End ℂ (ioS ε E)) n (ioE ε E) (io_gl ε E) u c d
-  calc capelli ε u (EabV ε c d f) g
-      = (qminor (ioE ε E) id id u (ioE ε E c d x) : IOPt ε → E) ⟨g, hg⟩ :=
-        io_qminor_rep id id u (ioE_rep hx c d) g hg
-    _ = (ioE ε E c d (qminor (ioE ε E) id id u x) : IOPt ε → E) ⟨g, hg⟩ :=
-        congrArg (fun y : ioS ε E => (y : IOPt ε → E) ⟨g, hg⟩) (LinearMap.congr_fun hq x)
-    _ = EabV ε c d (capelli ε u f) g := (ioE_rep (io_qminor_rep id id u hx) c d g hg).symm
-
-theorem capelli_highest_weight_holds : CapHW := by
-  intro n ε E _ _ f ν hf hHW g hg
-  obtain ⟨x, hx⟩ := io_rep_mk (ε := ε) (E := E) hf
-  have hW : IsHW (ioE ε E) ν x := by
-    refine ⟨fun a => ?_, fun a b hab => ?_⟩
-    · refine Subtype.ext (funext fun p => ?_)
-      obtain ⟨g', hg'⟩ := p
-      calc (ioE ε E a a x : IOPt ε → E) ⟨g', hg'⟩ = EabV ε a a f g' := (ioE_rep hx a a g' hg').symm
-        _ = ν a • f g' := (hHW g' hg').1 a
-        _ = ν a • (x : IOPt ε → E) ⟨g', hg'⟩ := by rw [hx g' hg']
-        _ = ((ν a • x : ioS ε E) : IOPt ε → E) ⟨g', hg'⟩ := rfl
-    · refine Subtype.ext (funext fun p => ?_)
-      obtain ⟨g', hg'⟩ := p
-      calc (ioE ε E a b x : IOPt ε → E) ⟨g', hg'⟩ = EabV ε a b f g' := (ioE_rep hx a b g' hg').symm
-        _ = 0 := (hHW g' hg').2 a b hab
-        _ = ((0 : ioS ε E) : IOPt ε → E) ⟨g', hg'⟩ := rfl
-  have hu : ∀ u : ℂ, capelli ε u f g = (∏ k : Fin n, (u - ((k : ℕ) : ℂ) + ν k)) • f g := by
-    intro u
-    calc capelli ε u f g = (qminor (ioE ε E) id id u x : IOPt ε → E) ⟨g, hg⟩ :=
-          io_qminor_rep id id u hx g hg
-      _ = (((∏ k : Fin n, (u - ((k : ℕ) : ℂ) + ν k)) • x : ioS ε E) : IOPt ε → E) ⟨g, hg⟩ :=
-          congrArg (fun y : ioS ε E => (y : IOPt ε → E) ⟨g, hg⟩)
-            (qDetHW (ioS ε E) n (ioE ε E) ν x (io_gl ε E) hW u)
-      _ = (∏ k : Fin n, (u - ((k : ℕ) : ℂ) + ν k)) • (x : IOPt ε → E) ⟨g, hg⟩ := rfl
-      _ = (∏ k : Fin n, (u - ((k : ℕ) : ℂ) + ν k)) • f g := by rw [hx g hg]
-  refine ⟨hu, fun Y => ?_⟩
-  rw [hu]
-  congr 1
-  exact Finset.prod_congr rfl fun k _ => by ring
-
-theorem capelli_comatrix_holds : CapComatrix := by
-  intro m ε E _ _ f u i l g hf hg
-  obtain ⟨x, hx⟩ := io_rep_mk (ε := ε) (E := E) hf
-  have hq := LinearMap.congr_fun
-    (qComatrix (Module.End ℂ (ioS ε E)) m (ioE ε E) (io_gl ε E) u i l) x
-  have hy : ∀ j : Fin (m + 1), IORep (qminorOp (EabV ε) (Fin.succAbove j) (Fin.succAbove i) u
-      (Top (EabV ε) (u - (m : ℂ)) j l f))
-      (qminor (ioE ε E) (Fin.succAbove j) (Fin.succAbove i) u (Tm (ioE ε E) (u - (m : ℂ)) j l x)).1 :=
-    fun j => io_qminor_rep _ _ u (io_Tm_rep hx _ j l)
-  have hs := io_rep_sum (fun j : Fin (m + 1) => ((-1 : ℂ) ^ ((i : ℕ) + (j : ℕ)))) hy g hg
-  have hc : (∑ j : Fin (m + 1), ((-1 : ℂ) ^ ((i : ℕ) + (j : ℕ))) •
-      qminor (ioE ε E) (Fin.succAbove j) (Fin.succAbove i) u (Tm (ioE ε E) (u - (m : ℂ)) j l x)) =
-      (if i = l then qdet (ioE ε E) u else 0) x := by
-    rw [← hq]
-    simp only [LinearMap.sum_apply, Module.End.mul_apply, Module.End.intCast_apply]
-    refine Finset.sum_congr rfl fun j _ => ?_
-    simp only [← Int.cast_smul_eq_zsmul ℂ, Int.cast_pow, Int.cast_neg, Int.cast_one]
-  calc (∑ j : Fin (m + 1), ((-1 : ℂ) ^ ((i : ℕ) + (j : ℕ))) •
-        qminorOp (EabV ε) (Fin.succAbove j) (Fin.succAbove i) u (Top (EabV ε) (u - (m : ℂ)) j l f) g)
-      = ((∑ j : Fin (m + 1), ((-1 : ℂ) ^ ((i : ℕ) + (j : ℕ))) •
-          qminor (ioE ε E) (Fin.succAbove j) (Fin.succAbove i) u (Tm (ioE ε E) (u - (m : ℂ)) j l x) :
-          ioS ε E) : IOPt ε → E) ⟨g, hg⟩ := hs
-    _ = (((if i = l then qdet (ioE ε E) u else 0) x : ioS ε E) : IOPt ε → E) ⟨g, hg⟩ := by rw [hc]
-    _ = if i = l then capelli ε u f g else 0 := by
-      split_ifs with h
-      · exact (io_qminor_rep id id u hx g hg).symm
-      · rfl
 
 end Formalism.QuantumDeterminants

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ProdFormulaE
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ProdFormulaE
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,10 +23,6 @@ theorem nontrivial (L : LocAt F E sig p) : Nontrivial L.Ep :=
 theorem finite (L : LocAt F E sig p) : Module.Finite L.Fp L.Ep :=
   Module.finite_of_finrank_pos (finrank_pos L)
 
-theorem ιE_injective (L : LocAt F E sig p) : Function.Injective L.ιE := by
-  have := nontrivial L
-  exact L.ιE.injective
-
 theorem isUnit_ιE (L : LocAt F E sig p) {x : E} (hx : x ≠ 0) : IsUnit (L.ιE x) :=
   (isUnit_iff_ne_zero.mpr hx).map L.ιE
 
@@ -32,7 +32,8 @@ theorem ιE_smul (L : LocAt F E sig p) (a : F) (y : E) : L.ιE (a • y) = L.ιF
 theorem ιE_eq_sum (L : LocAt F E sig p) {ι : Type*} [Fintype ι] (b : Module.Basis ι F E) (y : E) :
     L.ιE y = ∑ i, L.ιF (b.repr y i) • L.ιE (b i) := by
   conv_lhs => rw [← b.sum_repr y]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun i _ => ιE_smul L _ _
 
 theorem span_basis (L : LocAt F E sig p) {ι : Type*} [Fintype ι] (b : Module.Basis ι F E) :
@@ -71,7 +72,8 @@ theorem trace_ιE (L : LocAt F E sig p) (h : Module.finrank F E = 2) (x : E) :
     Algebra.trace L.Fp L.Ep (L.ιE x) = L.ιF (Algebra.trace F E x) := by
   classical
   let b := Module.finBasisOfFinrankEq F E h
-  rw [Algebra.trace_eq_matrix_trace (basisE L b h), Algebra.trace_eq_matrix_trace b,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Algebra.trace_eq_matrix_trace (basisE L b h), Algebra.trace_eq_matrix_trace b,
     leftMulMatrix_ιE, Matrix.trace, Matrix.trace, map_sum]
   rfl
 
@@ -107,7 +109,7 @@ theorem trace_ιE_ql (L : LocAt F E sig p) (h : Module.finrank F E = 2) (x : E) 
   rw [trace_tower, trace_ιE L h]
 
 theorem psiE_ιE (L : LocAt F E sig p) (h : Module.finrank F E = 2) (x : E) :
-    haveI := L.ellPrime
+    letI := L.ellPrime
     ∃ a : ℚ, (∃ n : ℕ, a.den = (resChar p) ^ n) ∧
       ‖Algebra.trace ℚ_[resChar p] L.Fp (L.ιF (Algebra.trace F E x)) - (a : ℚ_[resChar p])‖ ≤ 1 ∧
       L.psiE (L.ιE x) = Complex.exp (2 * Real.pi * Complex.I * (a : ℂ)) := by

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ def PowSat : Prop :=
     χ.UnrAt v ∧ ((χ.val v : ℂˣ) : ℂ) = (Ideal.absNorm v.asIdeal : ℂ) ^ (-s)
 
 def SmoEq : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (n : ℕ), 1 ≤ n → ∀ P P' : CuspSub K n,
+  ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (n : ℕ), 1 ≤ n → ∀ P P' : CuspSub K n,
     (∀ᶠ w in cofinite, ∃ B, (Cusp.cx P).sat w B ∧ (Cusp.cx P').sat w B) → P = P'
 
 def NormUnr : Prop :=
@@ -30,17 +34,17 @@ def NormUnr : Prop :=
     IsNormChar E η → ∀ v : Pl F, GM.Unr E v → η.UnrAt v
 
 def SphConj : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [IsTotallyComplex F]
-    [IsTotallyComplex E] (σ : E ≃ₐ[F] E), (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime → ∀ n : ℕ, 0 < n →
-    ∀ (μ : Measure (normOneGL E n)) [μ.IsHaarMeasure] (θ : Twist μ), IsGalTwist σ θ → ∀ V : Submodule ℂ (LL μ),
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [_root_.NumberField.IsTotallyComplex F]
+    [_root_.NumberField.IsTotallyComplex E] (σ : E ≃ₐ[F] E), (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime → ∀ n : ℕ, 0 < n →
+    ∀ (μ : Measure (normOneGL (K := E) (n := n))) [μ.IsHaarMeasure] (θ : Twist μ), IsGalTwist σ θ → ∀ V : Submodule ℂ (LL μ),
       V.map (θ.U : LL μ →ₗ[ℂ] LL μ) = V → ∀ w w' : Pl E, w.under (𝓞 F) = w'.under (𝓞 F) →
       V ⊓ fixL μ w (GLnLocal.integralGL (w.adicCompletion E) n) ≠ ⊥ →
       V ⊓ fixL μ w' (GLnLocal.integralGL (w'.adicCompletion E) n) ≠ ⊥
 
 def Norm : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [IsTotallyComplex F]
-    [IsTotallyComplex E] (σ : E ≃ₐ[F] E), (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime → ∀ n : ℕ, 0 < n →
-    ∀ (μE : Measure (normOneGL E n)) [μE.IsHaarMeasure] (μF : Measure (normOneGL F n)) [μF.IsHaarMeasure]
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [_root_.NumberField.IsTotallyComplex F]
+    [_root_.NumberField.IsTotallyComplex E] (σ : E ≃ₐ[F] E), (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime → ∀ n : ℕ, 0 < n →
+    ∀ (μE : Measure (normOneGL (K := E) (n := n))) [μE.IsHaarMeasure] (μF : Measure (normOneGL (K := F) (n := n))) [μF.IsHaarMeasure]
       (π : CuspSub F n) (P : CuspSub E n), WeakBC (Cusp.cx π).sat (Cusp.cx P).sat →
       ∃ (s : ℂ) (χ : HChar F) (χ' : HChar E) (V : Submodule ℂ (LL μF)) (V' : Submodule ℂ (LL μE)) (θ : Twist μE),
         T.IsPow χ s ∧ T.IsPow χ' s ∧ Dp.Carries μF (π.twist χ) V ∧ Dp.Carries μE (P.twist χ') V' ∧ IsGalTwist σ θ ∧
@@ -48,15 +52,15 @@ def Norm : Prop :=
         (∀ Λ t, T.AtAE μF V Λ t → T.OffAll F n (bcInf (K := E) Λ) (bcSat t)) ∧ ∀ Λ t, T.AtAE μE V' Λ t → T.OffAll F n Λ t
 
 def Up : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [IsTotallyComplex F]
-    [IsTotallyComplex E] (σ : E ≃ₐ[F] E), (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime → ∀ n : ℕ, 0 < n →
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [_root_.NumberField.IsTotallyComplex F]
+    [_root_.NumberField.IsTotallyComplex E] (σ : E ≃ₐ[F] E), (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime → ∀ n : ℕ, 0 < n →
     ∀ (π : CuspSub F n) (P : CuspSub E n), WeakBC (Cusp.cx π).sat (Cusp.cx P).sat → ∀ v : Pl F, GM.Unr E v →
       ∀ B, (Cusp.cx π).sat v B → ∀ w : Pl E, w.under (𝓞 F) = v → ∀ f : ℕ, normV w = normV v ^ f →
         (Cusp.cx P).sat w (B.map (· ^ f))
 
 def Down : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [IsTotallyComplex F]
-    [IsTotallyComplex E] (σ : E ≃ₐ[F] E), (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime → ∀ n : ℕ, 0 < n →
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [_root_.NumberField.IsTotallyComplex F]
+    [_root_.NumberField.IsTotallyComplex E] (σ : E ≃ₐ[F] E), (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime → ∀ n : ℕ, 0 < n →
     ∀ (π : CuspSub F n) (P : CuspSub E n), WeakBC (Cusp.cx π).sat (Cusp.cx P).sat → ∀ v : Pl F, GM.Unr E v →
       (∃ w : Pl E, w.under (𝓞 F) = v ∧ ∃ B', (Cusp.cx P).sat w B') → ∃ B, (Cusp.cx π).sat v B
 

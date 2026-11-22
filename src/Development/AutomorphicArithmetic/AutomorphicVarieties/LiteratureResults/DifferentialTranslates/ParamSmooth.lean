@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.IntegralityGoodReduction
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.IntegralityGoodReduction
+
+@[expose] public section
 
 open Set MeasureTheory Metric Filter Topology
 open scoped ContDiff
@@ -34,10 +38,11 @@ theorem paramSmooth : ParamSmooth := by
       simp only [K, hb0 q'.2 hq', zero_smul]
   have hf : LocallyIntegrable ((Ioc (0 : ℝ) 1).indicator fun _ => (1 : ℝ)) volume :=
     ((integrable_indicator_iff measurableSet_Ioc).2 (integrableOn_const (by simp))).locallyIntegrable
-  have hgs : ∀ p, ∀ x, p ∈ u → x ∉ -closedBall (1 / 2 : ℝ) (ε + 1 / 2) →
+  let k : Set ℝ := Neg.neg '' closedBall (1 / 2 : ℝ) (ε + 1 / 2)
+  have hgs : ∀ p, ∀ x, p ∈ u → x ∉ k →
       (fun z (y : ℝ) => K (z, -y)) p x = 0 := by
     intro p x _ hx
-    have := hb0 (-x) (fun h => hx (Set.mem_neg.2 h))
+    have := hb0 (-x) (fun h => hx ⟨-x, h, by simp⟩)
     simp only [K, this, zero_smul]
   have hg' : ContDiffOn ℝ (⊤ : ℕ∞) (↿(fun z (y : ℝ) => K (z, -y))) (u ×ˢ Set.univ) := by
     have h1 : ContDiff ℝ ∞ (fun p : P × ℝ => (p.1, -p.2)) :=
@@ -47,7 +52,8 @@ theorem paramSmooth : ParamSmooth := by
     exact ⟨hp, Set.mem_univ _⟩
   have hv0 : ContDiffOn ℝ (⊤ : ℕ∞) (fun _ : P => (0 : ℝ)) u := contDiffOn_const
   have main := contDiffOn_convolution_right_with_param_comp (μ := volume)
-    (ContinuousLinearMap.lsmul ℝ ℝ) hv0 hu (isCompact_closedBall _ _).neg hgs hf hg'
+    (ContinuousLinearMap.lsmul ℝ ℝ) hv0 hu
+    ((isCompact_closedBall _ _).image continuous_neg) hgs hf hg'
   have fin : ContDiffOn ℝ ∞ (fun p => ∫ s in (0 : ℝ)..1, g (p, s)) u := by
     refine main.congr ?_
     intro z _

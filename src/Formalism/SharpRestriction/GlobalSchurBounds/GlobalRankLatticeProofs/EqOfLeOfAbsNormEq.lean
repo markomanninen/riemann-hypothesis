@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataHost
-import Formalism.FrobeniusOrbits.HostCorollaries
-import Formalism.DirichletDensity.HostDensityArith
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataHost
+public import Formalism.FrobeniusOrbits.HostCorollaries
+public import Formalism.DirichletDensity.HostDensityArith
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,10 +62,6 @@ theorem conj_b : H.conj H.sqrtMinusD = - H.sqrtMinusD := by
   rw [H.gal_sqd, show H.gal H.conj = R.cc from H.gal.apply_symm_apply _]
   simp [Formalism.HC.Frame.cc, c0]
 
-theorem sqrt_d_pos : 0 < Real.sqrt H.d := by
-  obtain ⟨-, hd, -⟩ := H.hyp
-  exact Real.sqrt_pos.2 (by exact_mod_cast hd.pos)
-
 theorem b_ne_zero : H.sqrtMinusD ≠ 0 := by
   obtain ⟨-, hd, -⟩ := H.hyp
   intro h
@@ -112,7 +112,7 @@ theorem different_quad (K : Type) [Field K] [NumberField K] (a : ℤ) (x : K)
     (minpoly.eq_of_irreducible_of_monic hirr hev hmon).symm
   have hrank : Module.finrank ℚ K = 2 := by
     have := IntermediateField.adjoin.finrank (K := ℚ) (x := x) (.of_finite ℚ x)
-    rw [hmin, natDegree_X_pow_sub_C, hadj, IntermediateField.finrank_top'] at this
+    rw [hmin, natDegree_X_pow_sub_C _, hadj, IntermediateField.finrank_top'] at this
     exact this
   obtain ⟨c, hc⟩ : ∃ c : ℤ, a = 4 * c + 1 := ⟨a / 4, by omega⟩
   have hcK : (a : K) = 4 * c + 1 := by rw [hc]; push_cast; ring

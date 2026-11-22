@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaAbsoluteValues.KSumApply
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaAbsoluteValues.KSumApply
+
+@[expose] public section
 
 open PositivityTheory.Rg.Cz Fin Function
 
@@ -50,7 +54,8 @@ theorem kDel_kD {β : Type} [Fintype β] (T T' : P →ₗ[ℝ] Module.End ℂ M)
     kDel T' b (kD T η) Y = ∑ i, T' (b i) (T (b i) (η Y)) -
       ∑ t, ∑ i, T' (b i) (T (Y t) (η (Function.update Y t (b i)))) := by
   rw [kDel_apply]
-  simp only [kD_vecCons, map_sub, map_sum, Finset.sum_sub_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [kD_vecCons, map_sub, map_sum, Finset.sum_sub_distrib]
   congr 1
   exact Finset.sum_comm
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ConstantCoeffEv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ConstantCoeffEv
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -30,8 +34,6 @@ theorem pt_apply {n : ℕ} (j : Fin n) (i : Fin d) : pt k (n := n) d j i = (X (j
 
 variable (G : FGLaw k d)
 
-theorem cz_F : ∀ i, constantCoeff (G.F i) = 0 := G.const
-
 theorem formalGroupLaw_ev_x_zero (i : Fin d) : ev (n := 1) ![pt k d 0, 0] (G.F i) = (X ((0 : Fin 1), i) : PS k 1 d) := by
   have hz : CZ (![pt k (n := 1) d 0, 0] : Fin 2 → Pt k 1 d) := CZ.cons (cc_pt 0) (CZ.cons cc_zero CZ.nil)
   have hs : CZ (![pt k (n := 2) d 1, pt k d 0] : Fin 2 → Pt k 2 d) := CZ.cons (cc_pt 1) (CZ.cons (cc_pt 0) CZ.nil)
@@ -45,18 +47,18 @@ theorem formalGroupLaw_ev_x_zero (i : Fin d) : ev (n := 1) ![pt k d 0, 0] (G.F i
   exact h.symm
 
 theorem pderiv_ev_zero {m n : ℕ} {a : Fin m → Pt k n d} (ha : CZ a) (f : PS k m d) (v : Fin n × Fin d)
-    (h : ∀ j i, pderiv k v (a j i) = 0) : pderiv k v (ev a f) = 0 := by
+    (h : ∀ j i, pderiv v (a j i) = 0) : pderiv v (ev a f) = 0 := by
   rw [pderiv_ev ha]; simp [h]
 
 theorem pderiv_pt {n : ℕ} (v : Fin n × Fin d) (j : Fin n) (i : Fin d) :
-    pderiv k v (pt k (n := n) d j i) = if (j, i) = v then 1 else 0 := by
+    pderiv v (pt k (n := n) d j i) = if (j, i) = v then 1 else 0 := by
   classical
   rw [pt_apply, pderiv_X]
   simp [Pi.single_apply, eq_comm]
 
-def Jac : Fin d → Fin d → PS k 1 d := fun i b => ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), b) (G.F i))
+def Jac (G : FGLaw k d) : Fin d → Fin d → PS k 1 d := fun i b => ev (n := 1) ![pt k d 0, 0] (pderiv ((1 : Fin 2), b) (G.F i))
 
-def Ar : Fin d → Fin d → PS k 2 d := fun i b => pderiv k ((1 : Fin 2), b) (G.F i)
+def Ar (G : FGLaw k d) : Fin d → Fin d → PS k 2 d := fun i b => pderiv ((1 : Fin 2), b) (G.F i)
 
 section Fams
 
@@ -93,23 +95,23 @@ theorem jac_F (i b : Fin d) :
   set aR : Fin 2 → Pt k 3 d := ![pt k d 0, fun l => ev (n := 3) ![pt k d 1, pt k d 2] (G.F l)] with haR
   have hL : CZ aL := CZ.cons (fun l => constantCoeff_ev cz01 (G.const l)) (CZ.cons (cc_pt 2) CZ.nil)
   have hR : CZ aR := CZ.cons (cc_pt 0) (CZ.cons (fun l => constantCoeff_ev cz12 (G.const l)) CZ.nil)
-  have dL : pderiv k ((2 : Fin 3), b) (ev aL (G.F i)) = ev aL (pderiv k ((1 : Fin 2), b) (G.F i)) := by
+  have dL : pderiv ((2 : Fin 3), b) (ev aL (G.F i)) = ev aL (pderiv ((1 : Fin 2), b) (G.F i)) := by
     rw [pderiv_ev hL, Fintype.sum_prod_type, Fin.sum_univ_two]
-    have h0 : ∀ c, pderiv k ((2 : Fin 3), b) (aL 0 c) = 0 := fun c =>
+    have h0 : ∀ c, pderiv ((2 : Fin 3), b) (aL 0 c) = 0 := fun c =>
       pderiv_ev_zero cz01 _ _ (fun j l => by fin_cases j <;> simp [pderiv_pt])
     simp only [h0, mul_zero, Finset.sum_const_zero, zero_add]
     simp [haL, pderiv_pt]
-  have dR : pderiv k ((2 : Fin 3), b) (ev aR (G.F i)) = ∑ c, ev aR (pderiv k ((1 : Fin 2), c) (G.F i)) *
-      ev (n := 3) ![pt k d 1, pt k d 2] (pderiv k ((1 : Fin 2), b) (G.F c)) := by
+  have dR : pderiv ((2 : Fin 3), b) (ev aR (G.F i)) = ∑ c, ev aR (pderiv ((1 : Fin 2), c) (G.F i)) *
+      ev (n := 3) ![pt k d 1, pt k d 2] (pderiv ((1 : Fin 2), b) (G.F c)) := by
     rw [pderiv_ev hR, Fintype.sum_prod_type, Fin.sum_univ_two]
-    have h0 : ∀ c, pderiv k ((2 : Fin 3), b) (aR 0 c) = 0 := fun c => by simp [haR, pderiv_pt]
-    have h1 : ∀ c, pderiv k ((2 : Fin 3), b) (aR 1 c) =
-        ev (n := 3) ![pt k d 1, pt k d 2] (pderiv k ((1 : Fin 2), b) (G.F c)) := fun c => by
+    have h0 : ∀ c, pderiv ((2 : Fin 3), b) (aR 0 c) = 0 := fun c => by simp [haR, pderiv_pt]
+    have h1 : ∀ c, pderiv ((2 : Fin 3), b) (aR 1 c) =
+        ev (n := 3) ![pt k d 1, pt k d 2] (pderiv ((1 : Fin 2), b) (G.F c)) := fun c => by
       simp only [haR, Matrix.cons_val_one, Matrix.cons_val_zero]
       rw [pderiv_ev cz12, Fintype.sum_prod_type, Fin.sum_univ_two]
       simp [pderiv_pt]
     simp only [h0, h1, mul_zero, Finset.sum_const_zero, zero_add]
-  have h := congrArg (fun g => ev (n := 2) ![pt k d 0, pt k d 1, 0] (pderiv k ((2 : Fin 3), b) g)) (G.assoc i)
+  have h := congrArg (fun g => ev (n := 2) ![pt k d 0, pt k d 1, 0] (pderiv ((2 : Fin 3), b) g)) (G.assoc i)
   beta_reduce at h
   rw [dL, dR, ev_sum czZ] at h
   have eL : ∀ g : PS k 2 d, ev (n := 2) ![pt k d 0, pt k d 1, 0] (ev aL g) = ev (n := 2) ![G.F, 0] g := by
@@ -135,7 +137,7 @@ theorem jac_F (i b : Fin d) :
     · simp [haR, pt_apply, ev_X czZ]
     · show ev (n := 2) ![pt k d 0, pt k d 1, 0] (ev (n := 3) ![pt k d 1, pt k d 2] (G.F c)) = X ((1 : Fin 2), c)
       rw [ev_z_yz, formalGroupLaw_ev_y_zero]
-  have eJ : ev (n := 2) ![G.F] (Jac G i b) = ev (n := 2) ![G.F, 0] (pderiv k ((1 : Fin 2), b) (G.F i)) := by
+  have eJ : ev (n := 2) ![G.F] (Jac G i b) = ev (n := 2) ![G.F, 0] (pderiv ((1 : Fin 2), b) (G.F i)) := by
     rw [Jac, ev_ev (czFF G) cz1]
     congr 1
     funext j c

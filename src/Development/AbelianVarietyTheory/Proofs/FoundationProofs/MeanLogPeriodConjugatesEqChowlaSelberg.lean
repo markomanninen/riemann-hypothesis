@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeInvariantsPeriodPairDictionaryStatement
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.MeanLogLieNormSqEqMeanLogEta
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsNumberFieldDefiningCmCurveHoms
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsCmCurvesOfWeierstrassCurves
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsEllipticCurvePolarisedLatticeFamilyStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ThetaUniformisationComplexAbelianVarietyStatement
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditionalStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SemiAbelianHomExtensionDvrStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.QCoreGlobPf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeInvariantsPeriodPairDictionaryStatement
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.MeanLogLieNormSqEqMeanLogEta
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsNumberFieldDefiningCmCurveHoms
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsCmCurvesOfWeierstrassCurves
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsEllipticCurvePolarisedLatticeFamilyStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ThetaUniformisationComplexAbelianVarietyStatement
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditionalStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SemiAbelianHomExtensionDvrStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.QCoreGlobPf
+
+@[expose] public section
 
 namespace GlobalTheory.PeriodMean
 
@@ -176,6 +180,8 @@ theorem mean_log_area {d : ℕ} [NeZero d] (h2 : Module.finrank ℚ K = 2) (hD :
     rw [latticeNormDisc, latticeNormDisc, e4, norm_one, mul_one, Real.log_mul (pow_pos (latticeArea_pos _) _).ne'
       (norm_ne_zero_iff.2 (g₂_cube_sub_g₃_sq_ne_zero _)), Real.log_pow, Real.log_pow, ← (hL' _).2] at this
     exact_mod_cast this.symm
+  let _ : Module.Free M N := Module.Free.of_divisionRing M N
+  have : Module.Finite M N := Module.Finite.of_restrictScalars_finite ℚ M N
   have e5 := Finset.sum_congr (rfl : Finset.univ = Finset.univ) fun s _ => e3 s
   rw [Finset.sum_add_distrib, sum_log_norm_unit, ← Finset.mul_sum, ← Finset.mul_sum, add_zero,
     ReciprocityTheory.ChartRestriction.G.FreeQuotientRank.sum_embeddings_restrict fun s => Real.log (latticeArea (L s))] at e5
@@ -185,7 +191,6 @@ theorem mean_log_area {d : ℕ} [NeZero d] (h2 : Module.finrank ℚ K = 2) (hD :
   rw [Complex.ofReal_re, Complex.sub_re, Complex.ofReal_re] at e7
   rw [← key, Finset.sum_neg_distrib, neg_div, e7, ← Module.finrank_mul_finrank ℚ M N] at e6
   have hM : (Module.finrank ℚ M : ℝ) ≠ 0 := by exact_mod_cast Module.finrank_pos.ne'
-  have : Module.Finite M N := Module.Finite.of_restrictScalars_finite ℚ M N
   have hN : (Module.finrank M N : ℝ) ≠ 0 := by exact_mod_cast Module.finrank_pos.ne'
   rw [← mul_left_cancel₀ (by norm_num) e5, Nat.cast_mul, mul_comm (Module.finrank ℚ M : ℝ),
     mul_div_mul_left _ _ hN] at e6
@@ -221,7 +226,7 @@ theorem mean_log_period : ∀ (D : D7), admG1 D → ∀ (cc : Ideal (𝓞 D.host
     nlinarith [sq_nonneg (h.embedding r)]
   have e1 : TaylorLogMetric.liftM M (g2 (lamOf D cc δ)) ^ 3 - 27 * TaylorLogMetric.liftM M (g3 (lamOf D cc δ)) ^ 2 = 1 :=
     (algebraMap M ℂ).injective (by
-      rw [map_sub, map_mul, map_pow, map_pow, map_ofNat, map_one, ← h1, TaylorLogMetric.liftM, TaylorLogMetric.liftM, dif_pos h2, dif_pos h3]; rfl)
+      rw [map_sub, map_mul, map_pow, map_pow, map_ofNat, map_one, ← h1, TaylorLogMetric.liftM, TaylorLogMetric.liftM, dite_eq_left h2, dite_eq_left h3]; rfl)
   choose L hL using fun s : M →+* ℂ => hex (s (TaylorLogMetric.liftM M (g2 (lamOf D cc δ)))) (s (TaylorLogMetric.liftM M (g3 (lamOf D cc δ)))) (by
     have := congrArg s e1
     rw [map_sub, map_mul, map_pow, map_pow, map_ofNat, map_one] at this
@@ -236,7 +241,7 @@ theorem mean_log_period : ∀ (D : D7), admG1 D → ∀ (cc : Ideal (𝓞 D.host
       · rintro ⟨y, hy, rfl⟩
         obtain ⟨c, hc, rfl⟩ := (FractionalIdeal.mem_coeIdeal _).1 hy
         exact ⟨c, hc, rfl⟩)
-    (by rw [← e2, ← e3]; exact h1) M _ _ (by rw [← e2, TaylorLogMetric.liftM, dif_pos h2]) (by rw [← e3, TaylorLogMetric.liftM, dif_pos h3]) L hL
+    (by rw [← e2, ← e3]; exact h1) M _ _ (by rw [← e2, TaylorLogMetric.liftM, dite_eq_left h2]) (by rw [← e3, TaylorLogMetric.liftM, dite_eq_left h3]) L hL
   refine Eq.trans ?_ key
   congr 1
   refine (Fintype.sum_equiv (RingHom.equivRatAlgHom M ℂ) _ _ fun s => ?_).symm

@@ -1,5 +1,9 @@
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.ValuationIntCastLtOneIff
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.MemRangeOfAevalRatEqZero
+module
+
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.ValuationIntCastLtOneIff
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.MemRangeOfAevalRatEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,7 @@ theorem res_injective (ι : Ω →+* PadicAlgCl p) : Function.Injective (res (F 
     simp only [Function.comp_apply]
     rw [← res_spec ι σ x, ← res_spec ι τ x, h]
   exact AlgEquiv.ext (congrFun
-    ((denseRange (F := F) ι).equalizer (continuous_GK ι σ) (continuous_GK ι τ) h2))
+    ((denseRange F ι).equalizer (continuous_GK ι σ) (continuous_GK ι τ) h2))
 
 theorem continuous_res (ι : Ω →+* PadicAlgCl p) : Continuous (res (F := F) ι) := by
   letI : Algebra Ω (PadicAlgCl p) := ι.toAlgebra

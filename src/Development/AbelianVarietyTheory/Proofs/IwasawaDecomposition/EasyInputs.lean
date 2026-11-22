@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Formalism.LocalRingCardinality.PosOfIsomEmb
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffSetIntegralNat
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DimKKapAtWcPos
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsCharFamIsVacVec
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRepsOfOpenCompact
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSelfDualCoordLatticeOfSelfDualFrame
-import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Formalism.LocalRingCardinality.PosOfIsomEmb
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffSetIntegralNat
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DimKKapAtWcPos
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsCharFamIsVacVec
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRepsOfOpenCompact
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSelfDualCoordLatticeOfSelfDualFrame
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
@@ -45,15 +49,12 @@ theorem selfDualOK (D : D7) : SelfDualOK D := by
     refine (hL.fg.map f).of_le fun x hx => ⟨_, h2 x hx, ?_⟩
     change (N : D.host.E)⁻¹ • ((N : D.host.E) • x) = x
     rw [smul_smul, inv_mul_cancel₀ hM0, one_smul]
-  · rw [eq_top_iff, ← hL.span_eq_top, Submodule.span_le]
-    intro x hx
-    have := Submodule.smul_mem _ (N : D.host.E)⁻¹
-      (Submodule.subset_span (R := D.host.E) (s := (Λ : Set (Fin V.rank → D.host.E))) (h1 x hx))
-    rwa [smul_smul, inv_mul_cancel₀ hM0, one_smul] at this
+  · intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
   · rw [← GlobalTheory.SDFrameLattice.mem_dualL_iff, hd]
 
-open scoped Pointwise in
 
+open scoped Pointwise in
 theorem petAll (D : D7) : PetAll D := by
   intro V μ 𝓕 hμ h𝓕 F hc hl h0 hi
   haveI : BorelSpace (GA D V) := ⟨rfl⟩

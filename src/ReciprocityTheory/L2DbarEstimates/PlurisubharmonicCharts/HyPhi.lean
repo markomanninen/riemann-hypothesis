@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.ContDiffAtSectionFrameQuotient
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.ContDiffAtSectionFrameQuotient
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 
@@ -160,7 +164,7 @@ theorem hy (n : ℕ) (Y : Type u) [TopologicalSpace Y] [T2Space Y] [SecondCounta
         ((A.smooth_ph A.kap (A.pick y0)).continuousOn.mono hcb))
     set U := e.source ∩ e ⁻¹' ball (e y0) (r / 2) with hU
     have hUo : IsOpen U := e.isOpen_inter_preimage isOpen_ball
-    have hyU : y0 ∈ U := ⟨hi, mem_ball_self (by linarith)⟩
+    have hyU : y0 ∈ U := ⟨hi, by exact Set.mem_preimage.mpr (mem_ball_self (by linarith))⟩
     have hUM : MeasurableSet (U ∩ M) := (hUo.inter hMo).measurableSet
     refine ⟨U, hUo.mem_nhds hyU, ?_⟩
     have hC1n : 0 ≤ C1 := le_trans (by positivity) (hC1 (e y0) (mem_closedBall_self (by linarith)))

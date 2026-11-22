@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosedFormsMulClosed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosedFormsMulClosed
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -43,7 +47,8 @@ theorem dbarAt_sum_smul {ι : Type} [Fintype ι] {v : V n} {g : ι → V n → �
       ∑ p, dbar (g p) v (coordVec a) • c p := by
     refine (bas n).ext_elem fun S => ?_
     rw [FormMul.repr_coefwise]
-    simp only [map_sum, map_smul, Finsupp.finset_sum_apply, Finsupp.smul_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Finsupp.finsetSum_apply, Finsupp.smul_apply, smul_eq_mul]
     rw [dbar_sum (A := fun p x => g p x * (bas n).repr (c p) S) (fun p _ => (hg p).mul (differentiableAt_const _)),
       ContinuousLinearMap.sum_apply]
     refine Finset.sum_congr rfl fun p _ => ?_
@@ -55,7 +60,8 @@ theorem dbarAt_sum_smul {ι : Type} [Fintype ι] {v : V n} {g : ι → V n → �
 theorem differentiableAt_sum_smul {ι : Type} [Fintype ι] {v : V n} {g : ι → V n → ℂ}
     (hg : ∀ p, DifferentiableAt ℝ (g p) v) (c : ι → Alt n) (S : Finset (Fin (n + n))) :
     DifferentiableAt ℝ (fun x => (bas n).repr (∑ p, g p x • c p) S) v := by
-  simp only [map_sum, map_smul, Finsupp.finset_sum_apply, Finsupp.smul_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, Finsupp.finsetSum_apply, Finsupp.smul_apply, smul_eq_mul]
   exact DifferentiableAt.fun_sum fun p _ => (hg p).mul (differentiableAt_const _)
 
 theorem dbarAt_add {v : V n} {F G : V n → Alt n} (hF : ∀ S, DifferentiableAt ℝ (fun x => (bas n).repr (F x) S) v)
@@ -63,7 +69,7 @@ theorem dbarAt_add {v : V n} {F G : V n → Alt n} (hF : ∀ S, DifferentiableAt
     dbarAt (fun x => F x + G x) v = dbarAt F v + dbarAt G v := by
   simp only [dbarAt, ← Finset.sum_add_distrib, ← mul_add]
   refine Finset.sum_congr rfl fun a _ => congrArg _ ((bas n).ext_elem fun S => ?_)
-  simp only [map_add, Finsupp.add_apply, FormMul.repr_coefwise]
+  simp only [map_add (f := _), Finsupp.add_apply, FormMul.repr_coefwise]
   rw [dbar_add (hF S) (hG S), ContinuousLinearMap.add_apply]
 
 theorem dbarAt_const (c : Alt n) (v : V n) : dbarAt (fun _ => c) v = 0 := by
@@ -90,7 +96,7 @@ def closedAt (v : V n) : Subsemiring (V n → Ev n) where
   add_mem' := by
     rintro F G ⟨hF, hF0⟩ ⟨hG, hG0⟩
     refine ⟨fun S => ?_, ?_⟩
-    · simp only [Pi.add_apply, Subalgebra.coe_add, map_add, Finsupp.add_apply]
+    · simp only [Pi.add_apply, Subalgebra.coe_add, map_add (f := _), Finsupp.add_apply]
       exact (hF S).add (hG S)
     · simp only [Pi.add_apply, Subalgebra.coe_add]
       rw [dbarAt_add hF hG, hF0, hG0, add_zero]
@@ -115,7 +121,7 @@ theorem dbar_form_mem {v : V n} {θ : Fin n → V n → ℂ} (hθ : ∀ a, ContD
     (fun x => ∑ a, ∑ b, dbar (θ a) x (coordVec b) • sym (a, b)) ∈ closedRing v := by
   have e (x : V n) : ((∑ a, ∑ b, dbar (θ a) x (coordVec b) • sym (a, b) : Ev n) : Alt n) =
       ∑ p : Fin n × Fin n, dbar (θ p.1) x (coordVec p.2) • (dz p.1 * dzb p.2) := by
-    simp only [AddSubmonoidClass.coe_finset_sum, Subalgebra.coe_smul, sym, Fintype.sum_prod_type]
+    simp only [AddSubmonoidClass.coe_finsetSum, Subalgebra.coe_smul, sym, Fintype.sum_prod_type]
   have hd (p : Fin n × Fin n) : DifferentiableAt ℝ (fun x => dbar (θ p.1) x (coordVec p.2)) v :=
     differentiableAt_dbar_apply (hθ p.1) _
   change IsClosedAt v _
@@ -142,8 +148,9 @@ theorem dbar_form_mem {v : V n} {θ : Fin n → V n → ℂ} (hθ : ∀ a, ContD
 theorem coeff_charpolyRev_map {A B r : Type} [CommRing A] [CommRing B] [Fintype r] [DecidableEq r] (f : A →+* B)
     (M : Matrix r r A) (j : ℕ) : (M.map f).charpolyRev.coeff j = f (M.charpolyRev.coeff j) := by
   rw [← Polynomial.coeff_map, charpolyRev, charpolyRev, ← Polynomial.coe_mapRingHom, RingHom.map_det]
-  congr 2
-  ext i k : 2
+  apply congrArg (fun p : Polynomial B => p.coeff j)
+  apply congrArg Matrix.det
+  ext i k
   by_cases h : i = k <;> simp [h, Matrix.one_apply]
 
 theorem dbarAt_chernAt : ∀ {n : ℕ} {r : Type} [Fintype r] [DecidableEq r] (H : V n → Matrix r r ℂ) (s : Set (V n)),
@@ -158,8 +165,8 @@ theorem dbarAt_chernAt : ∀ {n : ℕ} {r : Type} [Fintype r] [DecidableEq r] (H
     have h1 := coeff_charpolyRev_map (MvPolynomial.aeval (R := ℂ) (sym (n := n))).toRingHom (-curvPoly H w) j
     have h2 := coeff_charpolyRev_map ((Pi.evalRingHom (fun _ : V n => Ev n) w).comp (closedRing v).subtype) M j
     refine h1.symm.trans (Eq.trans ?_ h2)
-    congr 2
-    ext i k : 2
+    apply congrArg (fun N : Matrix r r (Ev n) => N.charpolyRev.coeff j)
+    ext i k
     simp [M, curvPoly, curv, Algebra.smul_def]
   have hm : IsClosedAt v _ := (closedRing v).mul_mem (const_mem v (algebraMap ℂ _ (kappa ^ j))) (M.charpolyRev.coeff j).2
   have e : (fun w => (chernAt H w j : Alt n)) = fun w =>

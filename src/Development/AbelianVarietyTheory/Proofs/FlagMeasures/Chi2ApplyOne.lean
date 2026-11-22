@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InstExists
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.PoincareInHH
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
-import Formalism.LocalRingCardinality.DataTies
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnimodularity.ConstructionA
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DEqFinrankHHX
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FEqAndRdEq
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.VolumeRatioEqSignatureIndex
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CovolFormalDegreeEq
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InstExists
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.PoincareInHH
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+public import Formalism.LocalRingCardinality.DataTies
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnimodularity.ConstructionA
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DEqFinrankHHX
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FEqAndRdEq
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.VolumeRatioEqSignatureIndex
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CovolFormalDegreeEq
+
+@[expose] public section
 
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.SplitPrimeNormLemmas Formalism.L2.SG.PoincareInHH.PoincareSetting
 
@@ -35,8 +39,8 @@ theorem e_one : X.B.e 1 = 1 / (X.volK2 : ℂ) := by
   rw [hc, star_one]
   rfl
 
-open Formalism Formalism.L2 Formalism.L2.SG in
 
+open Formalism Formalism.L2 Formalism.L2.SG in
 theorem dstarD_eq
     (hI : (X.B.μf X.B.I.Kset).toReal / X.volK2 = Formalism.MainNotions.StandardLattice.idxSig D (D.host.g 0) (D.host.g 1))
     (hV : (∏ v, X.dv v) * X.B.I.vol X.B.μf X.B.fund / (X.B.μf X.B.I.Kset).toReal =

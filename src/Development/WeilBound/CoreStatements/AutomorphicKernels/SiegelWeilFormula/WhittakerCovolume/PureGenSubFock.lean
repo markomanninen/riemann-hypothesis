@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.WhitKOfSteps
-import Development.WeilBound.ThetaLifts.LatticeBasics.IsCompactIntV
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.WhitKOfSteps
+public import Development.WeilBound.ThetaLifts.LatticeBasics.IsCompactIntV
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,8 @@ theorem T_eq_lin (d : SD σ) (Φ : d.Fn) (X : Mx F E d.m d.n) :
 theorem T_sum (d : SD σ) {k : ℕ} (c : Fin k → ℂ) (Φs : Fin k → d.Fn) :
     d.T (∑ i, c i • Φs i) = ∑ i, c i • d.T (Φs i) := by
   funext X
-  simp only [T_eq_lin, map_sum, map_smul, Finset.sum_apply, Pi.smul_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [T_eq_lin, map_sum, map_smul, Finset.sum_apply, Pi.smul_apply]
 
 theorem T_sub (d : SD σ) (Φ Ψ : d.Fn) : d.T (Φ - Ψ) = d.T Φ - d.T Ψ := by
   funext X

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.TraceIntegralBasis
 
@@ -22,14 +26,6 @@ noncomputable def iota : E →+ VS E where
 variable {E}
 
 lemma iota_apply (x : E) (w : CP E) : iota E x w = w.1.embedding x := rfl
-
-lemma emb_cc (φ : E →+* ℂ) (y : E) : φ (cc y) = conj (φ y) := by
-  unfold cc
-  first
-    | exact (IsCMField.isConj_complexConj E φ).eq y
-    | exact ComplexEmbedding.IsConj.eq (IsCMField.isConj_complexConj φ) y
-    | exact IsCMField.complexEmbedding_complexConj E φ y
-    | simp
 
 lemma conj_conj (φ : E →+* ℂ) :
     ComplexEmbedding.conjugate (ComplexEmbedding.conjugate φ) = φ := by
@@ -135,7 +131,8 @@ lemma mem_span_bas {x : VS E} (hx : x ∈ span ℤ (Set.range (bas E))) :
     ∃ α : 𝓞 E, x = iota E (α : E) := by
   obtain ⟨c, rfl⟩ := (mem_span_range_iff_exists_fun ℤ).1 hx
   refine ⟨∑ i, c i • RingOfIntegers.basis E i, ?_⟩
-  simp only [bas_apply, integralBasis_apply, ← map_zsmul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [bas_apply, integralBasis_apply, ← map_zsmul, ← map_sum]
 
 lemma card_CP : Fintype.card (CP E) = fdeg E ∧ finrank ℚ E = 2 * Fintype.card (CP E) := by
   have h := InfinitePlace.card_add_two_mul_card_eq_rank E

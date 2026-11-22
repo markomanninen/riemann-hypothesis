@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsExcisionNbhdSelf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsExcisionNbhdSelf
+
+@[expose] public section
+
 open GlobalTheory.EtC Polynomial
 
 namespace GlobalTheory.EtC
@@ -38,7 +43,8 @@ theorem exists_excisionNbhd_adjoin_root : ∀ (A : Type) [CommRing A] (h : A) (q
         Ideal.Quotient.eq_zero_iff_mem]
       simpa using I.neg_mem hr
     · show IsUnit (aeval _ g)
-      simp only [g, map_sum, map_mul, map_pow, aeval_X, aeval_C, Ideal.Quotient.algebraMap_eq]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [g, map_sum, map_mul, map_pow, aeval_X, aeval_C, Ideal.Quotient.algebraMap_eq]
       rw [geom_sum₂_self]
       refine IsUnit.mul ?_ (IsUnit.pow _ ?_)
       · simpa using hq.map (Ideal.Quotient.mk I)
@@ -58,7 +64,8 @@ theorem exists_excisionNbhd_adjoin_root : ∀ (A : Type) [CommRing A] (h : A) (q
         algebraMap A P.Ring c * algebraMap A P.Ring h := by
       have e1 : aeval P.X g * (P.X - algebraMap A P.Ring r) =
           P.X ^ (m + 1) - (algebraMap A P.Ring r) ^ (m + 1) := by
-        simp only [g, map_sum, map_mul, map_pow, aeval_X, aeval_C]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [g, map_sum, map_mul, map_pow, aeval_X, aeval_C]
         exact geom_sum₂_mul _ _ _
       rw [mul_comm, e1, e2, ← map_pow, ← map_sub, ← hc, map_mul]
     rw [Ideal.mem_span_singleton']

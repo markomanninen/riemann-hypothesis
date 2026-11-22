@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -41,7 +45,8 @@ theorem exists_linearIndependent_pow_apply_of_isAlgClosed (f : Module.End K W)
   have hsum : ∀ j, ∑ k : Fin n, c k * μ j ^ (k : ℕ) = 0 := by
     have h2 : ∑ j, (∑ k : Fin n, c k * μ j ^ (k : ℕ)) • w j = 0 := by
       rw [← hc]
-      simp only [map_sum, hpow, Finset.smul_sum, smul_smul, Finset.sum_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, hpow, Finset.smul_sum, smul_smul, Finset.sum_smul]
       exact Finset.sum_comm
     exact fun j => (Fintype.linearIndependent_iff.1 hli) _ h2 j
   have hV : Matrix.vandermonde μ *ᵥ c = 0 := by
@@ -189,7 +194,8 @@ theorem IsCyclicVector.exists_aeval_apply_eq (hv : IsCyclicVector f v) (x : V) :
     ∃ p : E[X], aeval f p v = x := by
   refine ⟨∑ k : Fin (finrank E V), C ((cyclicBasis hv).repr x k) * X ^ (k : ℕ), ?_⟩
   conv_rhs => rw [← (cyclicBasis hv).sum_repr x]
-  rw [map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, LinearMap.sum_apply]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [aeval_C_mul_X_pow_apply, cyclicBasis_apply]
 
@@ -211,7 +217,7 @@ theorem aeval_apply_eq_sum_modByMonic (f : Module.End E V) (v : V) (p : E[X]) :
     aeval f p v = ∑ k : Fin (finrank E V), (p %ₘ f.charpoly).coeff k • (f ^ (k : ℕ)) v := by
   have hmon := LinearMap.charpoly_monic f
   conv_lhs => rw [← modByMonic_add_div p f.charpoly]
-  rw [map_add, map_mul, LinearMap.aeval_self_charpoly, zero_mul, add_zero]
+  rw [map_add (f := _), map_mul, LinearMap.aeval_self_charpoly, zero_mul, add_zero]
   by_cases h0 : p %ₘ f.charpoly = 0
   · simp [h0]
   have hdeg : (p %ₘ f.charpoly).natDegree < finrank E V := by
@@ -234,7 +240,8 @@ theorem IsCyclicVector.exists_conj {f' : Module.End E V'} {v' : V'} (hv : IsCycl
     rfl
   have hp : ∀ p : E[X], e (aeval f p v) = aeval f' p v' := by
     intro p
-    rw [aeval_apply_eq_sum_modByMonic, aeval_apply_eq_sum_modByMonic, map_sum, ← hch]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [aeval_apply_eq_sum_modByMonic, aeval_apply_eq_sum_modByMonic, map_sum, ← hch]
     rw [← (finCongr hdim).sum_comp]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, he]

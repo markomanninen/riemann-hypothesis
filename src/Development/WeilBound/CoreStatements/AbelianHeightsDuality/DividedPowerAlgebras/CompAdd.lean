@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RatBasisLinearIndependentInt
-import Development.WeilBound.LevelCriteria.IsLevOneIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RatBasisLinearIndependentInt
+public import Development.WeilBound.LevelCriteria.IsLevOneIff
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -91,11 +95,12 @@ theorem comp_add {J : Ideal B} {γ : ℕ → B → B} (H : IsPreDP J γ) {a b : 
           have := H.mul k 0 0 J.zero_mem
           rw [mul_zero, zero_pow hk.ne', zero_mul] at this
           rw [map_zero, this]⟩
-      add_mem' := fun {x y} hx hy ↦ ⟨by rw [map_add]; exact J.add_mem hx.1 hy.1, fun k ↦ by
+      add_mem' := fun {x y} hx hy ↦ ⟨by rw [map_add (f := _)]; exact J.add_mem hx.1 hy.1, fun k ↦ by
         choose w hw hw' using hx.2
         choose w₁ hw₁ hw₁' using hy.2
         refine ⟨_, fact_sum x y w w₁ hw hw₁ k, ?_⟩
-        rw [map_add, H.add k _ hx.1 _ hy.1, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_add (f := _), H.add k _ hx.1 _ hy.1, map_sum]
         simp only [map_mul, hw', hw₁']⟩
       smul_mem' := fun c x hx ↦ ⟨by rw [smul_eq_mul, map_mul]; exact J.mul_mem_left _ hx.1, fun k ↦ by
         obtain ⟨w, hw, hw'⟩ := hx.2 k
@@ -108,7 +113,8 @@ theorem comp_add {J : Ideal B} {γ : ℕ → B → B} (H : IsPreDP J γ) {a b : 
   let z : ℕ → L ⊗[ℤ] L := fun k ↦ ∑ p ∈ Finset.HasAntidiagonal.antidiagonal k, u p.1 * v p.2
   have hz : ∀ k, (k.factorial : L ⊗[ℤ] L) * z k = (u 1 + v 1) ^ k := fact_sum _ _ u v hu hv
   have ψz : ∀ k, ψ (z k) = γ k (a + b) := fun k ↦ by
-    rw [H.add k a ha b hb, map_sum]; simp only [map_mul, ψu, ψv]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [H.add k a ha b hb, map_sum]; simp only [map_mul, ψu, ψv]
   have zW : z n ∈ W := Ideal.sum_mem _ fun p hp ↦ by
     have hp' : p.1 + p.2 = n := by simpa using hp
     by_cases h : p.1 = 0

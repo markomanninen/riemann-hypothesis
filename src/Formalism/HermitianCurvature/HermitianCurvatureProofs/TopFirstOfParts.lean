@@ -1,12 +1,16 @@
-import Formalism.HermitianCurvature.StatementHeads
-import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
-import Formalism.HermitianCurvature.StatementTL
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaCompactSupport
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyContinuousOn
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftClosedUnderOperations
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellValues
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadJFExists
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbJConvCpt
+module
+
+public import Formalism.HermitianCurvature.StatementHeads
+public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+public import Formalism.HermitianCurvature.StatementTL
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaCompactSupport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyContinuousOn
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftClosedUnderOperations
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellValues
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadJFExists
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbJConvCpt
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Topology
 open scoped ComplexConjugate
@@ -18,8 +22,6 @@ namespace Formalism.FourierDecayAlt.P.PBN
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants
 
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
-def TopFirstOfParts : Prop := TL.WordStep → RadAATop → KB.DensC → KB.TopFirst
 
 def DegTopOfParts : Prop := TL.WordStep → RadAATop → PolyTop → KB.DensC → KB.DegTop
 
@@ -134,7 +136,8 @@ theorem vecV_sub (Bs : B.RealPlaceData k r Wp Wq) (ν' : Fin (2 * r + k + 1) →
       rw [e12, e1, e2, ← integral_sub i1 i2]
       congr 1
       funext p
-      simp only [D.orbIntegrand, B.rho, ContinuousLinearMap.sub_comp, ContinuousLinearMap.comp_sub, smul_sub]
+      simp only [D.orbIntegrand, B.rho, ContinuousLinearMap.sub_comp,
+        ContinuousLinearMap.comp_sub, smul_sub]
     · simp only [dif_neg h', sub_zero]
   · simp only [dif_neg h, sub_zero]
 

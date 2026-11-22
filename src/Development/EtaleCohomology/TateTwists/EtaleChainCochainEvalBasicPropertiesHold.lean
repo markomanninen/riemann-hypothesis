@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.EtaleCohomology.TateTwists.EtaleCochainEvaluationLinear
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.EtaleCohomology.TateTwists.EtaleCochainEvaluationLinear
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -27,7 +31,7 @@ theorem isZero_pos {E : Spc} (a : ℤ) (ha : 0 < a) : IsZero (((chains R).obj E)
 theorem free_ext {P : PSh} {F : Shv R} (φ ψ : (free R).obj P ⟶ F)
     (hφ : ∀ U x, Sec.map φ (freeGen R P U x) = Sec.map ψ (freeGen R P U x)) : φ = ψ := by
   apply Sheaf.hom_ext
-  apply sheafify_hom_ext _ _ _ F.cond
+  apply sheafify_hom_ext _ _ _ F.property
   ext U : 2
   apply ModuleCat.free_hom_ext
   rintro ⟨x⟩

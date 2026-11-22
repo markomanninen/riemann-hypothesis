@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleTensorUniversalPropertyOfDegreewise
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleTensorUniversalPropertyOfDegreewise
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex GlobalTheory.EtC
 open scoped DirectSum TensorProduct
@@ -21,7 +25,7 @@ theorem tens_ind {I J : Cx R} (V : Scheme.{0}) (w : ℤ) (P : Tens I J V w → P
     induction t using TensorProduct.induction_on with
     | zero => simpa using h0
     | tmul a b => exact hm p a b
-    | add a b ha hb => rw [map_add]; exact hadd _ _ ha hb
+    | add a b ha hb => rw [map_add (f := _)]; exact hadd _ _ ha hb
   | add a b ha hb => exact hadd _ _ ha hb
 
 theorem res_lof {I J : Cx R} {V U : Scheme.{0}} (g : V ⟶ U) (w : ℤ) (p : {p : ℤ × ℤ // p.1 + p.2 = w})
@@ -59,13 +63,13 @@ def TP (I J : Cx R) (w : ℤ) : Scheme.{0}ᵒᵖ ⥤ ModuleCat.{1} (ULift.{1} R)
   map_id U := by
     refine ModuleCat.hom_ext (LinearMap.ext fun x => ?_)
     refine tens_ind U.unop w (fun x => Tens.res (𝟙 U.unop) w x = x) (by simp) (fun a b ha hb => ?_) (fun p a b => ?_) x
-    · rw [map_add, ha, hb]
+    · rw [map_add (f := _), ha, hb]
     · rw [res_lof]; simp [Sec.res]
   map_comp g h := by
     refine ModuleCat.hom_ext (LinearMap.ext fun x => ?_)
     refine tens_ind _ w (fun x => Tens.res (g ≫ h).unop w x = Tens.res h.unop w (Tens.res g.unop w x))
       (by simp) (fun a b ha hb => ?_) (fun p a b => ?_) x
-    · rw [map_add, ha, hb, map_add, map_add]
+    · rw [map_add (f := _), ha, hb, map_add (f := _), map_add (f := _)]
     · rw [res_lof, res_lof, res_lof]; simp [Sec.res]
 
 def alpha {I J K : Cx R} (τ : Pair I J K) (w : ℤ) : TP I J w ⟶ (K.X w).obj where
@@ -74,7 +78,7 @@ def alpha {I J K : Cx R} (τ : Pair I J K) (w : ℤ) : TP I J w ⟶ (K.X w).obj 
     refine ModuleCat.hom_ext (LinearMap.ext fun x => ?_)
     refine tens_ind U.unop w (fun x => τ.lift V.unop w (Tens.res g.unop w x) = Sec.res g.unop (τ.lift U.unop w x))
       (by simp) (fun a b ha hb => ?_) (fun p a b => ?_) x
-    · simp only [map_add, ha, hb]
+    · simp only [map_add (f := _), ha, hb]
     · rw [res_lof, lift_lof, lift_lof, τ.nat]
 
 def beta {I J I' J' K' : Cx R} (ν : Pair I' J' K') (f : I ⟶ I') (g : J ⟶ J') (w : ℤ) : TP I J w ⟶ (K'.X w).obj where
@@ -84,7 +88,7 @@ def beta {I J I' J' K' : Cx R} (ν : Pair I' J' K') (f : I ⟶ I') (g : J ⟶ J'
     refine tens_ind U.unop w (fun x => ν.lift V.unop w (Tmap f g V.unop w (Tens.res e.unop w x)) =
         Sec.res e.unop (ν.lift U.unop w (Tmap f g U.unop w x)))
       (by simp) (fun a b ha hb => ?_) (fun p a b => ?_) x
-    · simp only [map_add, ha, hb]
+    · simp only [map_add (f := _), ha, hb]
     · rw [res_lof, tmap_lof, tmap_lof, lift_lof, lift_lof, ν.nat, TensUnivPf.nat_sec, TensUnivPf.nat_sec]
 
 theorem alpha_locSurj {I J K : Cx R} (τ : Pair I J K) (hτ : τ.IsTensor) (w : ℤ) :

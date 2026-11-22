@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicPointComponentsAtPlacesLatticesVacua
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualSplitComponentIsLatticeStabilizerEq
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsSelfDualLatticeAtPlaceLatticeCompletion
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FractionalIdealCompletionLocallyPrincipal
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.EventuallyIncAMulMemIntAt
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatticeLocalEqIntegralAlmostAll
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilDatumAtPlaceEqLatticeIntertwinerMulDetChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicPointComponentsAtPlacesLatticesVacua
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualSplitComponentIsLatticeStabilizerEq
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsSelfDualLatticeAtPlaceLatticeCompletion
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FractionalIdealCompletionLocallyPrincipal
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.EventuallyIncAMulMemIntAt
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatticeLocalEqIntegralAlmostAll
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilDatumAtPlaceEqLatticeIntertwinerMulDetChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -116,7 +120,8 @@ theorem herm_smul (S : HSp D) (a b : AE D) (x y : Fin S.rank → AE D) :
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
 theorem herm_conj (S : HSp D) (x y : Fin S.rank → AE D) : cA D (hermAt S x y) = hermAt S y x := by
-  simp only [hermAt, map_sum, RingHom.map_mul, cA_cA]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hermAt, map_sum, RingHom.map_mul, cA_cA]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   have : cA D (gA S j i) = gA S i j := congrFun (congrFun (adj_gA S) i) j
@@ -124,7 +129,8 @@ theorem herm_conj (S : HSp D) (x y : Fin S.rank → AE D) : cA D (hermAt S x y) 
 
 theorem herm_rat (S : HSp D) (z : Fin S.rank → D.host.E) :
     hermAt S (ratV z) (ratV z) = incA D (star z ⬝ᵥ S.gram *ᵥ z) := by
-  simp only [hermAt, dotProduct, mulVec, Finset.mul_sum, map_sum, RingHom.map_mul, mul_assoc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hermAt, dotProduct, mulVec, Finset.mul_sum, map_sum, RingHom.map_mul, mul_assoc]
   rfl
 
 theorem rat_mulVec {m n : ℕ} (M : Matrix (Fin m) (Fin n) D.host.E) (z : Fin n → D.host.E) :
@@ -153,20 +159,21 @@ theorem line_vec {L : HSp D} {ζ : Fin L.rank → D.host.E} (h : IsLineVec L ζ)
   rw [mul_right_comm, ← RingHom.map_mul, inv_mul_cancel₀ h0, RingHom.map_one, one_mul]
 
 theorem line_gen {L : HSp D} {ζ : Fin L.rank → D.host.E} (h : IsLineVec L ζ) {Λ : Lat L}
-    (hΛ : Submodule.IsLattice D.host.E Λ) (x : Pl D) : ∃ e : D.host.E, e ≠ 0 ∧ ∀ a ∈ idAt D (· = x),
+    (hΛ : IsSelfDualC L Λ) (x : Pl D) : ∃ e : D.host.E, e ≠ 0 ∧ ∀ a ∈ idAt D (· = x),
       a • ratV ζ ∈ latV L Λ (· = x) ↔ incA D e⁻¹ * a ∈ intAt D (· = x) := by
   obtain ⟨i₀, hi, h0⟩ := line_coord h
   let I : Submodule (𝓞 D.host.E) D.host.E := Λ.map (LinearMap.proj (R := 𝓞 D.host.E) (φ := fun _ => D.host.E) i₀)
-  have hI : I.FG := hΛ.fg.map _
+  have hI : I.FG := hΛ.1.fg.map _
   let 𝔞 : FI D := ⟨I, FractionalIdeal.isFractional_of_fg hI⟩
   have hc : ∀ y : Fin L.rank → D.host.E, y = fun _ => y i₀ := fun y => funext fun i => by rw [hi i]
   have h𝔞 : 𝔞 ≠ 0 := fun h' => by
     have h1 : ∀ y ∈ Λ, y = 0 := fun y hy => by
       have : y i₀ = 0 := FractionalIdeal.eq_zero_iff.1 h' _ ⟨y, hy, rfl⟩
       rw [hc y, this]; rfl
-    have h2 : Submodule.span D.host.E (Λ : Set (Fin L.rank → D.host.E)) ≤ ⊥ := Submodule.span_le.2 h1
-    rw [hΛ.span_eq_top] at h2
-    exact h0 (congrFun (h2 (Submodule.mem_top (x := ζ))) i₀)
+    have hζ : ζ ∈ Λ := (hΛ.2 ζ).2 fun y hy => by
+      refine ⟨0, ?_⟩
+      simp [h1 y hy]
+    exact h0 (congrFun (h1 ζ hζ) i₀)
   obtain ⟨g, hg, hgen⟩ := GlobalTheory.IdVGen.idV_gen D x 𝔞 h𝔞
   have key : ∀ y : Fin L.rank → AE D, y ∈ latV L Λ (· = x) ↔ y i₀ ∈ idV 𝔞 x := fun y => by
     constructor
@@ -221,11 +228,11 @@ theorem orth_line {X T L : HSp D} (o : OrthDec X T L) {Λ : Lat X} {ΛT : Lat T}
     (h : OrthAt o Λ ΛT ΛL x) (ζ : Fin L.rank → D.host.E) (a : AE D) :
     a • ratV ζ ∈ latV L ΛL (· = x) ↔ a • ratV (vecB o ζ) ∈ latV X Λ (· = x) := by
   have e : (ratV (vecB o ζ) : Fin X.rank → AE D) = o.jB *ᵥ ratV ζ := (rat_mulVec _ _).symm
-  rw [h, e, mulVec_smul, mulVec_smul, mulVec_mulVec, mulVec_mulVec, o.pA_jB, o.pB_jB, zero_mulVec, smul_zero, one_mulVec,
+  rw [h, e, ← mulVec_smul, mulVec_mulVec, mulVec_mulVec, o.pA_jB, o.pB_jB, zero_mulVec, one_mulVec,
     and_iff_right (zero_mem _)]
 
 theorem line_idele {X T L : HSp D} (o : OrthDec X T L) {ζ : Fin L.rank → D.host.E} (hζ : IsLineVec L ζ) {Λ : Lat X}
-    (hΛ : Submodule.IsLattice D.host.E Λ) (ΛT : Lat T) (P : Pl D → Prop)
+    (hΛ : Submodule.IsFullLattice D.host.E Λ) (ΛT : Lat T) (P : Pl D → Prop)
     (h : ∀ x, ¬ P x → ∃ ΛL : Lat L, IsSelfDualC L ΛL ∧ OrthAt o Λ ΛT ΛL x) :
     ∃ μ : (AE D)ˣ, ∀ x, ¬ P x → ∀ a ∈ idAt D (· = x),
       a • ratV (vecB o ζ) ∈ latV X Λ (· = x) ↔ ((μ⁻¹ : (AE D)ˣ) : AE D) * a ∈ intAt D (· = x) := by
@@ -234,7 +241,7 @@ theorem line_idele {X T L : HSp D} (o : OrthDec X T L) {ζ : Fin L.rank → D.ho
     by_cases hx : P x
     · exact ⟨1, fun h' => absurd hx h'⟩
     · obtain ⟨ΛL, hL, ho⟩ := h x hx
-      obtain ⟨e, he, hg⟩ := line_gen hζ hL.1 x
+      obtain ⟨e, he, hg⟩ := line_gen hζ hL x
       exact ⟨inU e he, fun _ a ha => by rw [← orth_line o ho, hg a ha, inU_inv]⟩
   choose u hu using h1
   have hz : vecB o ζ ≠ 0 := fun h0 => by
@@ -267,7 +274,7 @@ theorem line_idele {X T L : HSp D} (o : OrthDec X T L) {ζ : Fin L.rank → D.ho
 theorem colMul_id {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) {x : Pl D} (j : Fin ρ) {a : AE D}
     (h : ∀ k, colMul d.jX j a k ∈ idAt D (· = x)) : a ∈ idAt D (· = x) := by
   have h1 := mulVec_mem_idAt d.pX h j
-  have h2 : (d.pX *ᵥ colMul d.jX j a) j = a * (d.pX ⬝ d.jX) j j := by
+  have h2 : (d.pX *ᵥ colMul d.jX j a) j = a * (d.pX * d.jX) j j := by
     simp only [mulVec, dotProduct, colMul, Matrix.mul_apply, Finset.mul_sum]
     exact Finset.sum_congr rfl fun k _ => by ring
   rwa [h2, d.pX_jX, Matrix.one_apply_eq, mul_one] at h1

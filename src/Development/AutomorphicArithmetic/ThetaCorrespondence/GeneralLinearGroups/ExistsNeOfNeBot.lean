@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LanglandsDistinctCuspidalPairEmbedding
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalMultiplicityProductZero
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsEmbeddingParIndOfJacquetNontrivial
-import GroundTheory.AutomorphicForms.CuspidalSplittingIsotypic
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LanglandsDistinctCuspidalPairEmbedding
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalMultiplicityProductZero
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsEmbeddingParIndOfJacquetNontrivial
+public import GroundTheory.AutomorphicForms.CuspidalSplittingIsotypic
+
+@[expose] public section
 
 open Filter Topology GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult UpperTheory.Lit.Cas UpperTheory.Lit.Red
 
@@ -158,8 +162,8 @@ end Abstract
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-open GroundTheory.Automorphic.Parabolic (isotypicPart isotypicKernel) in
 
+open GroundTheory.Automorphic.Parabolic (isotypicPart isotypicKernel) in
 private theorem exists_irr_quot {G V W : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [AddCommGroup V]
     [Module ℂ V] [AddCommGroup W] [Module ℂ W] {b : ℕ} (ψ : GL (Fin b) k →* G) (hψ : Continuous ψ)
     (hdec : ∀ g, ∃ (h : GL (Fin b) k) (g' : G), g = ψ h * g' ∧ ∀ x, ψ x * g' = g' * ψ x)
@@ -231,12 +235,12 @@ private theorem exists_irr_quot {G V W : Type} [Group G] [TopologicalSpace G] [I
   obtain rfl : X = ⊤ := top_le_iff.1 hle
   exact isSimpleOrder_iff_isAtom_top.2 hX
 
-set_option maxHeartbeats 1600000 in
 
-theorem exists_emb (hG : GlobalTheory.Published.GeometricLemma) (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness) (x : IrrGL k)
-    {h : ℕ} (q : Fin h → IrrGL k) (hq : ∑ a, (q a).1 = x.1) (c : Fin h) (hc : (q c).IsCusp)
+set_option maxHeartbeats 1600000 in
+theorem exists_emb (hG : GlobalTheory.Published.GeometricLemma) (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness) (x : IrrGL (k := k))
+    {h : ℕ} (q : Fin h → IrrGL (k := k)) (hq : ∑ a, (q a).1 = x.1) (c : Fin h) (hc : (q c).IsCusp)
     (hj : jm q hq x.rep ≠ 0) :
-    ∃ (r : Fin h → IrrGL k) (hr : ∑ a, (r a).1 = x.1) (f : x.rep.IntertwiningMap (prodIrr r hr)),
+    ∃ (r : Fin h → IrrGL (k := k)) (hr : ∑ a, (r a).1 = x.1) (f : x.rep.IntertwiningMap (prodIrr r hr)),
       r c = q c ∧ Function.Injective f := by
   classical
   let π : GlobalTheory.SplitRead.Irr k x.1 := ⟨x.2.rep.V, x.rep, x.2.rep.smooth, x.2.rep.irr⟩
@@ -287,9 +291,9 @@ theorem exists_emb (hG : GlobalTheory.Published.GeometricLemma) (hBZ : GlobalThe
   exact ⟨fun a => IrrGL.of (σ a).π (σ a).smooth (σ a).irr, hq, Ψ.toIntertwiningMap.comp φ,
     (IrrGL.of_eq_of.2 ⟨η⟩).trans (IrrGL.of_rep (q c)), Ψ.toLinearEquiv.injective.comp hφ⟩
 
-theorem emb_of (x : IrrGL k) (r : Fin 2 → IrrGL k) (hr : ∑ a, (r a).1 = x.1)
+theorem emb_of (x : IrrGL (k := k)) (r : Fin 2 → IrrGL (k := k)) (hr : ∑ a, (r a).1 = x.1)
     (f : x.rep.IntertwiningMap (prodIrr r hr)) (hf : Function.Injective f) : Emb x (r 0) (r 1) := by
-  have key : ∀ y z : IrrGL k, r = ![y, z] → Emb x y z := by
+  have key : ∀ y z : IrrGL (k := k), r = ![y, z] → Emb x y z := by
     rintro y z rfl
     exact ⟨hr, f, hf⟩
   refine key _ _ (funext fun a => ?_)
@@ -298,7 +302,7 @@ theorem emb_of (x : IrrGL k) (r : Fin 2 → IrrGL k) (hr : ∑ a, (r a).1 = x.1)
 end UpperTheory.Lit.Full.EmbR
 
 theorem UpperTheory.Lit.Full.embR :
-    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (x : IrrGL k) (q : Fin 2 → IrrGL k) (hq : ∑ a, (q a).1 = x.1), (q 1).IsCusp → jm q hq x.rep ≠ 0 → ∃ y, Emb x y (q 1) := by
+    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (x : IrrGL (k := k)) (q : Fin 2 → IrrGL (k := k)) (hq : ∑ a, (q a).1 = x.1), (q 1).IsCusp → jm q hq x.rep ≠ 0 → ∃ y, Emb x y (q 1) := by
   intro hG hBZ k _ _ _ _ x q hq hc hj
   obtain ⟨r, hr, f, h1, hf⟩ := EmbR.exists_emb hG hBZ x q hq 1 hc hj
   exact ⟨r 0, h1 ▸ EmbR.emb_of x r hr f hf⟩

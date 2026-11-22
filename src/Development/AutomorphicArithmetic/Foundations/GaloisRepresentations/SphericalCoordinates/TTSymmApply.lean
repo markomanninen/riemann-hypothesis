@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LineBasis
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LineBasis
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
 open GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKGeo Polynomial
@@ -241,7 +246,7 @@ private theorem core {P : Type} [Fintype P] {n g : ℕ} (hJ : HermOfJ) (H : P �
     rw [hJ0, TT_symm_apply, Function.update_self, ← e3, ← Matrix.mulVec_smul]
     congr 1
     funext i
-    simp only [TT_apply, Function.update_self, hsgv i, Pi.smul_apply, smul_eq_mul]
+    simp only [Pi.smul_apply, smul_eq_mul, hsgv, TT_apply, Function.update_self]
     ring
   have hzim : (hv (H v) z z).im = 0 := hv_self_im (hH v) z
   have hterm : ∀ x v', 0 ≤ r v' * (-(s v') * Complex.I * hv (H v') (R.symm (Complex.I • R x) v') (x v')).re ∧

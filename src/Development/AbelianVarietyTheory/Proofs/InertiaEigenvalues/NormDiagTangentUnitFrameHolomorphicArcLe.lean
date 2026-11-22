@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.BaseNorm
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CabsDiagEqOne
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolArcNilpotent
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HermFormSumSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.BaseNorm
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CabsDiagEqOne
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolArcNilpotent
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HermFormSumSmul
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj Formalism.L2.Pj.QAt GlobalTheory.ArcQ GlobalTheory.Frames
@@ -67,7 +71,7 @@ theorem diag_le {g : ℕ} (d : Fin g → ℝ) (M : Matrix (Fin g) (Fin g) ℂ)
     rw [Matrix.mulVec_diagonal, Pi.star_apply, RCLike.star_def, mul_left_comm, Complex.mul_conj,
       ← Complex.ofReal_mul, Complex.ofReal_re, Complex.normSq_eq_norm_sq]
   have hinj : Function.Injective (Matrix.toLin' M) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro v hv
     by_contra h0
     have := hpos v h0
@@ -115,7 +119,8 @@ theorem exists_im_tau : ∃ A N : Matrix (Fin g) (Fin g) ℝ, ∀ w : ℂ, (Θ.�
       have := (Θ.per 0 k).1
       rwa [Ha.Pw_eq, zero_smul, add_zero] at this
     rw [h1, ← hu, hs]
-    simp only [map_sum, map_zsmul, Matrix.mulVec_sum, Matrix.mulVec_smul, hp]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul, Matrix.mulVec_sum, Matrix.mulVec_smul, hp]
     simp [Pi.single_apply]
   refine ⟨Matrix.of fun j k => ((Θ.h *ᵥ Ha.P₀ (Θ.bas (Pi.single (.inr k) 1))) j).im,
     Matrix.of fun j k => ((Θ.h *ᵥ Ha.N (Θ.bas (Pi.single (.inr k) 1))) j).re, fun w => ?_⟩
@@ -148,8 +153,8 @@ theorem im_tau_mono {w₀ w : ℂ} (hw : w₀.im ≤ w.im) (x : Fin g → ℝ) :
   have := mul_le_mul_of_nonneg_right hw hN
   linarith
 
-omit [IsScalarTower ℂ (FractionRing ℂ) ℂ] in
 
+omit [IsScalarTower ℂ (FractionRing ℂ) ℂ] in
 theorem exists_riem_inv {w : ℂ} {Hm : Matrix (Fin g) (Fin g) ℂ} (hR : IsRiem Fu Ha.i (Ha.Pw w) Hm) :
     ∃ G : Matrix (Fin g) (Fin g) ℝ, G * (Θ.τ w).map Complex.im = 1 ∧ ∀ v, (hermForm Hm v v).re =
       (fun j => ((Θ.h *ᵥ v) j).re) ⬝ᵥ G *ᵥ (fun j => ((Θ.h *ᵥ v) j).re) +
@@ -163,8 +168,8 @@ theorem exists_riem_inv {w : ℂ} {Hm : Matrix (Fin g) (Fin g) ℂ} (hR : IsRiem
       by_cases hij : i = j <;> simp [Pi.single_apply, hij, eq_comm]), fun v => ?_⟩
   rw [← re_hermForm_sum Hm p h1, ← eq_sum Θ.h p (fun i => (Θ.per w i).1)]
 
-include Θ in
 
+include Θ in
 theorem riem_anti {w₀ w : ℂ} (h₀ : Ha.T < w₀.im) (hw : w₀.im ≤ w.im) {H₀ Hm : Matrix (Fin g) (Fin g) ℂ}
     (hR₀ : IsRiem Fu Ha.i (Ha.Pw w₀) H₀) (hR : IsRiem Fu Ha.i (Ha.Pw w) Hm) (v : Fin g → ℂ) :
     (hermForm Hm v v).re ≤ (hermForm H₀ v v).re := by
@@ -176,9 +181,9 @@ theorem riem_anti {w₀ w : ℂ} (h₀ : Ha.T < w₀.im) (hw : w₀.im ≤ w.im)
 
 end ThetaShiftProofs
 
+
 open GlobalTheory.FrameNormLie GlobalTheory.FrameNorm in
 set_option maxHeartbeats 1000000 in
-
 theorem point_bound {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E}
     {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {r : ℕ} {σ : c.F →+* ℂ}
     {U : Formalism.L2.PjFree.Unf Xo c σ r} (Uw : UnfWit U) (hσ : Formalism.L2.PjFree.GoodEmb c σ) (hU : Formalism.L2.PjFree.IsUnf U)
@@ -225,10 +230,10 @@ theorem point_bound {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Reci
     rcases h with ⟨a, rfl, rfl⟩ | ⟨a, rfl, rfl, d⟩
     · rw [if_neg (by omega)]
       unfold Formalism.L2.PjFree.perFr
-      rw [dif_pos a, dif_pos hn]
+      rw [dite_eq_left a, dite_eq_left hn]
     · rw [if_pos (by omega)]
       unfold Formalism.L2.PjFree.perFr
-      rw [dif_neg a, dif_pos (show conjEmb (Formalism.L2.PjFree.relab c σ (e j).1) ∈ (U.X k).Ψ from hτ), dif_pos hn]
+      rw [dite_eq_right a, dite_eq_left (show conjEmb (Formalism.L2.PjFree.relab c σ (e j).1) ∈ (U.X k).Ψ from hτ), dite_eq_left hn]
       rfl
   have hinj : ∀ j j', (e j).1 = (e j').1 → ((e j).2 : ℕ) = (e j').2 → j = j' := by
     intro j j' h1 h2

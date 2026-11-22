@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PlaceAtIff
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlippedFiniteTensorSumProdLocalPureTensorsStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LocalPureTensorProductExpansionAllPlacesStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowTestCombinationDependsOnProductFunctionStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnfoldedVacuaAreRealDatumLargeDepthStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PlaceAtIff
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlippedFiniteTensorSumProdLocalPureTensorsStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LocalPureTensorProductExpansionAllPlacesStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowTestCombinationDependsOnProductFunctionStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnfoldedVacuaAreRealDatumLargeDepthStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,9 +23,9 @@ namespace GlobalTheory.LocAsm
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
 
+
 set_option maxHeartbeats 1600000 in
 open Classical in
-
 theorem locAt_of_placeAt : Big fun ch => ∀ s, PlaceAt ch s → ConLin ch → LocAt ch s := by
   refine big_mono ?_ (Big.and GlobalTheory.T.flippedFiniteTensor_sum_prod_local_pure_tensors (Big.and GlobalTheory.T.localPureTensor_product_expansion_all_places (Big.and GlobalTheory.T.unfoldedVacuaAreRealDatum_largeDepth GlobalTheory.T.rowTest_combination_depends_on_product_function)))
   intro D Γ _ _ Pl0 T A Ks _ _ _ R ch h s hP hcon
@@ -53,7 +57,8 @@ theorem locAt_of_placeAt : Big fun ch => ∀ s, PlaceAt ch s → ConLin ch → L
       have e1 : ∀ {ι : Type} (G' : ι → ℂ) (ν : ι →₀ ℂ), Finsupp.linearCombination ℂ G' ν = ν.sum fun k x => x * G' k :=
         fun G' ν => by rw [Finsupp.linearCombination_apply]; rfl
       have e2 : ∑ i ∈ μ.support, μ i * G i = Finsupp.linearCombination ℂ G μ := by rw [e1]; rfl
-      rw [e2, hμ, map_sub, map_sum, Finsupp.linearCombination_mapDomain, e1]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [e2, hμ, map_sub, map_sum, Finsupp.linearCombination_mapDomain, e1]
       congr 1
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [map_smul, e1, smul_eq_mul]
@@ -63,7 +68,16 @@ theorem locAt_of_placeAt : Big fun ch => ∀ s, PlaceAt ch s → ConLin ch → L
       rcases Finset.mem_union.1 (Finsupp.support_sub hi) with h1 | h2
       · obtain ⟨d, hd, rfl⟩ := Finset.mem_image.1 (Finsupp.mapDomain_support h1)
         exact ⟨fun j => ⟨((hτe d hd).1 j).2.1, (hc d hd).1 j⟩, fun n => ⟨((hτe d hd).2 n).2.1, (hc d hd).2 n⟩⟩
-      · obtain ⟨a, ha, hi'⟩ := Finset.mem_biUnion.1 (Finsupp.support_finset_sum h2)
+      · have hex : ∃ a ∈ SA, i ∈ (xA a • σ a).support := by
+          by_contra hn
+          push_neg at hn
+          have hz : (∑ a ∈ SA, xA a • σ a) i = 0 := by
+            simp only [Finset.sum_apply']
+            apply Finset.sum_eq_zero
+            intro a ha
+            exact Finsupp.notMem_support_iff.mp (hn a ha)
+          exact (Finsupp.mem_support_iff.mp h2) hz
+        obtain ⟨a, ha, hi'⟩ := hex
         exact hσ1 a ha i (Finsupp.support_smul hi')
     have hzero := hC t e he (PureDat ch.G t × Combs ch.G) μ.support μ Prod.fst Prod.snd hsupp (fun u' y' hu hy => by
       rw [hL]

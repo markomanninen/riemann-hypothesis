@@ -1,5 +1,9 @@
-import Formalism.ZeroFreeRegion.SmallHeightLogDeriv
-import Formalism.ZetaNonvanishing.MellinSgen
+module
+
+public import Formalism.ZeroFreeRegion.SmallHeightLogDeriv
+public import Formalism.ZetaNonvanishing.MellinSgen
+
+@[expose] public section
 
 open Complex MeasureTheory Set Filter Topology ArithmeticFunction
 open scoped LSeries.notation
@@ -27,19 +31,6 @@ lemma perron_Sz_eq_zero_of_le_one {x : ℝ} (hx : x ≤ 1) : Formalism.Sz x = 0 
     omega
   subst hn1
   simp [ArithmeticFunction.vonMangoldt_apply_one]
-
-lemma perron_Sz_eq_sum_range {N : ℕ} {x : ℝ} (hx : x < N) :
-    Formalism.Sz x = ∑ n ∈ Finset.range N, Λ n * Formalism.mxS n x := by
-  rw [perron_Sz_eq_Sa, Formalism.Sa_eq_tsum _ (by simp)]
-  refine tsum_eq_sum (fun n hn => ?_)
-  rw [Finset.mem_range, not_lt] at hn
-  have hxn : x < n := lt_of_lt_of_le hx (by exact_mod_cast hn)
-  refine Formalism.a_mxS_eq_zero _ (by simp) x n ?_
-  rw [Finset.mem_Icc]
-  rintro ⟨h1, h2⟩
-  have hx1 : 1 ≤ x := Nat.floor_pos.mp (by omega)
-  have : (n : ℝ) ≤ x := (Nat.cast_le.mpr h2).trans (Nat.floor_le (by linarith))
-  linarith
 
 lemma perron_continuous_mxS (n : ℕ) : Continuous (Formalism.mxS n) := by
   show Continuous (fun x : ℝ => max (x / n - 1) 0)
@@ -98,7 +89,7 @@ lemma perron_Sz_continuousAt (y : ℝ) : ContinuousAt (fun x => (Formalism.Sz x 
     push_cast
     linarith
   have hg : Continuous (fun x : ℝ => ((∑ n ∈ Finset.range (⌊y⌋₊ + 2), Λ n * max (x / n - 1) 0 : ℝ) : ℂ)) :=
-    Complex.continuous_ofReal.comp (continuous_finset_sum _ fun n _ =>
+    Complex.continuous_ofReal.comp (continuous_finsetSum _ fun n _ =>
       continuous_const.mul (((continuous_id.div_const _).sub continuous_const).max continuous_const))
   refine hg.continuousAt.congr ?_
   filter_upwards [Iio_mem_nhds hyN] with x hx

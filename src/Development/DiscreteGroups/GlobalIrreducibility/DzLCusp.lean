@@ -1,8 +1,12 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.DzLcFin
-import Development.DiscreteGroups.GlobalIrreducibility.DzLcPerm
-import Development.DiscreteGroups.GlobalIrreducibility.DzLcIso
-import Development.DiscreteGroups.GlobalIrreducibility.DzTypeCut
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.DzLcFin
+public import Development.DiscreteGroups.GlobalIrreducibility.DzLcPerm
+public import Development.DiscreteGroups.GlobalIrreducibility.DzLcIso
+public import Development.DiscreteGroups.GlobalIrreducibility.DzTypeCut
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,8 @@ theorem twKer_twoBlocks_eq_top (i : ℚ_[g] ≃+* k) (hi : Continuous i) {n a : 
     have hsum : ∑ u : GlobalTheory.FiniteGL.unipRadical (ZMod g) (GlobalTheory.FiniteGL.twoBlocks n a),
         (φ w - φ (τ.ρ (u : Gn g n) w)) =
           (Fintype.card (GlobalTheory.FiniteGL.unipRadical (ZMod g) (GlobalTheory.FiniteGL.twoBlocks n a)) : ℂ) • φ w := by
-      rw [Finset.sum_sub_distrib, ← map_sum φ (fun u : GlobalTheory.FiniteGL.unipRadical (ZMod g) (GlobalTheory.FiniteGL.twoBlocks n a) => τ.ρ (u : Gn g n) w),
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finset.sum_sub_distrib, ← map_sum φ (fun u : GlobalTheory.FiniteGL.unipRadical (ZMod g) (GlobalTheory.FiniteGL.twoBlocks n a) => τ.ρ (u : Gn g n) w),
         ← LinearMap.sum_apply Finset.univ
           (fun u : GlobalTheory.FiniteGL.unipRadical (ZMod g) (GlobalTheory.FiniteGL.twoBlocks n a) => τ.ρ (u : Gn g n)) w, hfin, LinearMap.zero_apply, map_zero,
         sub_zero, Finset.sum_const, Finset.card_univ, Nat.cast_smul_eq_nsmul]
@@ -111,9 +116,5 @@ end DiscreteGroups.sglob.DzLc
 namespace DiscreteGroups.sglob.DzType
 
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
-theorem lCusp : LCusp := by
-  intro E _ _ w g _ i hi n hn τ hτ σ hs
-  exact GlobalTheory.LocGL.IrrGL.isCusp_of.2 ⟨hn, DiscreteGroups.sglob.DzLc.isCuspidal_of_inflates i hi τ hτ σ hs⟩
 
 end DiscreteGroups.sglob.DzType

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusFactorisation.PullT
-import BuildAid.D3
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusFactorisation.PullT
+public import Lean.LibrarySuggestions.Basic
+public import Lean.Elab.Command
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 

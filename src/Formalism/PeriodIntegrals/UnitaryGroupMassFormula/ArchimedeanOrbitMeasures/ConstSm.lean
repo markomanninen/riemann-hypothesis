@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ConstCut
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PushLF
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ConstCut
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PushLF
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ theorem isClosed_hermR [T2Space (R ⊗[F] E)] (σ : E →ₐ[F] E) (n : ℕ) :
   have : ((HermR R σ n : AddSubgroup (Matrix (Fin n) (Fin n) (R ⊗[F] E))) :
       Set (Matrix (Fin n) (Fin n) (R ⊗[F] E))) =
       ⋂ a, ⋂ b, {S : Matrix (Fin n) (Fin n) (R ⊗[F] E) | sigR R σ (S b a) = S a b} := by
-    ext S; simp [HermR]; exact Iff.rfl
+    ext S; simp [HermR]
   rw [this]
   refine isClosed_iInter fun a => isClosed_iInter fun b => isClosed_eq ?_ ?_
   · exact (continuous_sigR R σ).comp ((continuous_apply a).comp (continuous_apply b))

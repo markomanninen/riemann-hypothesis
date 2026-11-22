@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinMapsOfForall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FromBlocksMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemTensorLatticeAtPlaceIffFrameCoordinatesIntegr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitEqNormCompletionTensorOfIsInertAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FromBlocksMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemTensorLatticeAtPlaceIffFrameCoordinatesIntegr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitEqNormCompletionTensorOfIsInertAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped TensorProduct Matrix
 
 noncomputable section
@@ -14,7 +19,7 @@ namespace GlobalTheory.InertSph.Scal
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem disc_sub_sq_notMem (v : Pl F) (b c t : 𝓞 F) (h2 : (2 : 𝓞 F) ∉ v.asIdeal)
+theorem disc_sub_sq_notMem (v : Pl (F := F)) (b c t : 𝓞 F) (h2 : (2 : 𝓞 F) ∉ v.asIdeal)
     (hroot : ∀ r : 𝓞 F, r ^ 2 + b * r + c ∉ v.asIdeal) : t ^ 2 - (b ^ 2 - 4 * c) ∉ v.asIdeal := by
   intro h
   obtain ⟨s, a, ha, hs⟩ := v.isMaximal.exists_inv h2
@@ -29,7 +34,7 @@ theorem disc_sub_sq_notMem (v : Pl F) (b c t : 𝓞 F) (h2 : (2 : 𝓞 F) ∉ v.
     exact add_mem h (Ideal.mul_mem_right _ _ ha)
   exact ((v.isPrime.mem_or_mem ((v.isPrime.mem_or_mem h4).resolve_left h2)).resolve_left h2)
 
-theorem exists_delta (σ : E →ₐ[F] E) (hσ : IsCMExt F E σ) (v : Pl F) (w : HeightOneSpectrum (𝓞 E))
+theorem exists_delta (σ : E →ₐ[F] E) (hσ : IsCMExt F E σ) (v : Pl (F := F)) (w : HeightOneSpectrum (𝓞 E))
     (hin : Formalism.UG.IsInertAt F E v w) (h2 : (2 : 𝓞 F) ∉ v.asIdeal) :
     ∃ (δ : 𝓞 E) (D : 𝓞 F), σ (δ : E) = -(δ : E) ∧ (δ : E) * δ = algebraMap F E (D : F) ∧ D ∉ v.asIdeal ∧
       1 - D ∉ v.asIdeal := by
@@ -40,7 +45,7 @@ theorem exists_delta (σ : E →ₐ[F] E) (hσ : IsCMExt F E σ) (v : Pl F) (w :
   have hδ : ((2 * a + algebraMap (𝓞 F) (𝓞 E) b : 𝓞 E) : E) = 2 * (a : E) + algebraMap F E (b : F) := rfl
   have hD : ((b ^ 2 - 4 * c : 𝓞 F) : F) = (b : F) ^ 2 - 4 * (c : F) := rfl
   refine ⟨2 * a + algebraMap (𝓞 F) (𝓞 E) b, b ^ 2 - 4 * c, ?_, ?_, ?_, ?_⟩
-  · rw [hδ, map_add, map_mul, map_ofNat, AlgHom.commutes, hc]
+  · rw [hδ, map_add (f := _), map_mul, map_ofNat, AlgHom.commutes, hc]
     ring
   · rw [hδ, hD, map_sub, map_mul, map_pow, map_ofNat]
     linear_combination 4 * hq
@@ -49,7 +54,7 @@ theorem exists_delta (σ : E →ₐ[F] E) (hσ : IsCMExt F E σ) (v : Pl F) (w :
     simpa using neg_mem h
   · simpa using disc_sub_sq_notMem v b c 1 h2 hroot
 
-theorem exists_inv (v : Pl F) (D : 𝓞 F) (hD : D ∉ v.asIdeal) :
+theorem exists_inv (v : Pl (F := F)) (D : 𝓞 F) (hD : D ∉ v.asIdeal) :
     ∃ c : Fv F v, c ∈ v.adicCompletionIntegers F ∧ c * algebraMap F (Fv F v) (D : F) = 1 := by
   have h1 : Valued.v (algebraMap F (Fv F v) (D : F)) = 1 := by
     have h := HeightOneSpectrum.valuedAdicCompletion_eq_valuation' v (D : F)
@@ -63,12 +68,12 @@ theorem exists_inv (v : Pl F) (D : 𝓞 F) (hD : D ∉ v.asIdeal) :
   refine ⟨(algebraMap F (Fv F v) (D : F))⁻¹, ?_, inv_mul_cancel₀ h0⟩
   rw [HeightOneSpectrum.mem_adicCompletionIntegers, map_inv₀, h1, inv_one]
 
-theorem smul_eq_of_at {M : Type} [AddCommGroup M] [Module (AF F) M] {v : Pl F} {z : M} (hz : At (evFin F v) z)
+theorem smul_eq_of_at {M : Type} [AddCommGroup M] [Module (AF F) M] {v : Pl (F := F)} {z : M} (hz : At (evFin F v) z)
     {a : AF F} (ha : evFin F v a = 1) : a • z = z := by
   have h := hz (a - 1) (by rw [map_sub, map_one, ha, sub_self])
   rwa [sub_smul, one_smul, sub_eq_zero] at h
 
-theorem at_of_mem_latAt {d : ℕ} (W : Spc F E d) (v : Pl F) {z : Fin d → AE F E} (hz : z ∈ latAt W v) :
+theorem at_of_mem_latAt {d : ℕ} (W : Spc F E d) (v : Pl (F := F)) {z : Fin d → AE F E} (hz : z ∈ latAt W v) :
     At (evFin F v) z := by
   induction hz using AddSubgroup.closure_induction with
   | mem z hz =>
@@ -79,7 +84,7 @@ theorem at_of_mem_latAt {d : ℕ} (W : Spc F E d) (v : Pl F) {z : Fin d → AE F
   | add x y _ _ hx hy => intro u hu; rw [smul_add, hx u hu, hy u hu, add_zero]
   | neg x _ hx => intro u hu; rw [smul_neg, hx u hu, neg_zero]
 
-theorem lift_smul_mem {d : ℕ} (W : Spc F E d) (v : Pl F) {c : Fv F v} (hc : c ∈ v.adicCompletionIntegers F)
+theorem lift_smul_mem {d : ℕ} (W : Spc F E d) (v : Pl (F := F)) {c : Fv F v} (hc : c ∈ v.adicCompletionIntegers F)
     (o : 𝓞 E) {z : Fin d → AE F E} (hz : z ∈ latAt W v) :
     (GlobalTheory.LatVac.liftV v c • inclR (F := F) (AF F) (o : E)) • z ∈ latAt W v :=
   GlobalTheory.InertLocFrame.Lat.smul_mem_latAt W (AddSubgroup.subset_closure
@@ -89,10 +94,10 @@ end GlobalTheory.InertSph.Scal
 
 namespace GlobalTheory.InertSph
 
-open GlobalTheory.InertSph.Scal GlobalTheory.LatVac in
 
+open GlobalTheory.InertSph.Scal GlobalTheory.LatVac in
 theorem exists_traceZero_unit : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E),
-    B.IsGood σ → ∀ (d : ℕ) (W : Spc F E d) (v : Pl F) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w →
+    B.IsGood σ → ∀ (d : ℕ) (W : Spc F E d) (v : Pl (F := F)) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w →
     ∃ β b up um : AE F E, At (evFin F v) β ∧ cA σ β = -β ∧ ∀ z ∈ GlobalTheory.InertSph.latAt W v,
       β • z ∈ GlobalTheory.InertSph.latAt W v ∧ b • z ∈ GlobalTheory.InertSph.latAt W v ∧ up • z ∈ GlobalTheory.InertSph.latAt W v ∧
       um • z ∈ GlobalTheory.InertSph.latAt W v ∧ (β * b) • z = z ∧ ((1 + β) * up) • z = z ∧ ((1 - β) * um) • z = z := by
@@ -107,7 +112,7 @@ theorem exists_traceZero_unit : ∀ (F E : Type) [Field F] [NumberField F] [Fiel
     rw [hx, ← map_mul, hsq, ← IsScalarTower.algebraMap_apply]
     exact (Algebra.TensorProduct.includeRight : E →ₐ[F] AE F E).commutes _
   have hp : inclR (F := F) (AF F) ((1 + δ : 𝓞 E) : E) = 1 + x := by
-    rw [show ((1 + δ : 𝓞 E) : E) = 1 + (δ : E) from rfl, map_add, map_one]
+    rw [show ((1 + δ : 𝓞 E) : E) = 1 + (δ : E) from rfl, map_add (f := _), map_one]
   have hm : inclR (F := F) (AF F) ((1 - δ : 𝓞 E) : E) = 1 - x := by
     rw [show ((1 - δ : 𝓞 E) : E) = 1 - (δ : E) from rfl, map_sub, map_one]
   have he : liftV v (1 : Fv F v) * liftV v c' = liftV v c' :=

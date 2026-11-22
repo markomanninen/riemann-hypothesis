@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.CmpGlMemMIff
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.NrmAMemAdForms
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TiePtOne
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.BlockRationalityField
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.RecAct
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.CmpGlMemMIff
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.NrmAMemAdForms
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TiePtOne
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.BlockRationalityField
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.RecAct
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 variable {D : D7} {u : D.what₂.Word} {C : ColumnChain D.R D.what₂.Tau (D.hcW u)} {A : ColumnsAtT D.R C} {P : PeriodMap D.R C}
   (M : MemberForms D.what₂.LL D.what₂.embLL D.what₂.places D.what₂.Tau (D.hcW u) C A P) {p : ℕ}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 structure StepIn (i : ℕ) (hi : i ≤ D.R.m) (G : GAtP p) where
   T : ℕ
   bad : Set (HeightOneSpectrum (𝓞 D.host.F))
@@ -65,9 +69,9 @@ def embN (β : S.Ch) : (M.lat i).V →ₛₗ[D.what₂.embLL] ({c // S.chOf c = 
     have h : S.raw β (x + y) = S.raw β x + S.raw β y := by
       funext cl z
       unfold raw
-      rw [map_add]
+      rw [map_add (f := _)]
       rfl
-    rw [h, map_add, smul_add]
+    rw [h, map_add (f := _), smul_add]
   map_smul' a x := by
     have h : S.raw β (a • x) = D.what₂.embLL a • S.raw β x := by
       funext cl z
@@ -118,8 +122,8 @@ theorem adExt (β : S.Ch) : AdExt (S.K β).lev (embT D) D.what₂.embLL (S.embN 
 
 def ChRat (β : S.Ch) : Prop := ∀ cl, ∃ r : D.what₂.LL, D.what₂.embLL r = ((S.tw β).ch ((S.K β).y cl) : ℂ)
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem evRatRep (β : S.Ch) (hr : S.ChRat β)
     (hb : BlockRational G.P (S.loc β).rk S.pos (gramC (gramN D i hi) (embT D)) (crdB (embT D) (S.loc β).B) D.what₂.embLL (M.lam i)) :
     EvRatRep (embT D) D.what₂.embLL (S.charts.gat β) (S.loc β) S.pos (S.embN β) := by
@@ -134,8 +138,8 @@ theorem evRatRep (β : S.Ch) (hr : S.ChRat β)
   congr 2
   exact (detF_fnOf_one (D.R.N_pos i) _ (M.lam i) (cTw D i) Pp z).symm
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 structure Core (e : D.what₂.LL →+* G.Kf) (β : S.Ch) : Prop where
 
   good : LocGood (sigD D) (gramN D i hi) (S.loc β)
@@ -182,18 +186,20 @@ theorem Core.blk {e : D.what₂.LL →+* G.Kf} {β : S.Ch} (H : S.Core e β) (hS
   exact (tEL_emb D τ _).symm
 
 theorem Core.toHyp {e : D.what₂.LL →+* G.Kf} {β : S.Ch} (H : S.Core e β) (hS : BlockRationalityField) :
-    S.charts.Hyp e S.pos (tEL D) β where
-  std := H.std
-  actB := H.actB
-  gamU := H.gamU
-  away := awayEx_of H.good (S.K β).lev H.gam
-  ex := valEx_of_rep' (tEL D) (tEL_emb D) (embT_conj D) H.std (S.adExt β)
-    (ptEx_of H.good (S.K β).lev (S.K β).y (S.K β).y_bij.2) (ptOne_of (S.K β).lev H.int H.hypP H.bad_p)
-    (S.evRatRep β H.chRat (H.blk hS)) H.chiRat
-  pos_emb := H.pos_emb
-  chi := H.chi
-  ptEx := ptEx_of H.good (S.K β).lev (S.K β).y (S.K β).y_bij.2
-  ptAll := ptAll_of H.good (S.K β).lev (S.K β).y H.comp
+    S.charts.Hyp e S.pos (tEL D) β := by
+  exact {
+    std := H.std
+    actB := H.actB
+    gamU := H.gamU
+    away := awayEx_of H.good (S.K β).lev H.gam
+    ex := valEx_of_rep' (tEL D) (tEL_emb D) (embT_conj D) H.std (S.adExt β)
+      (ptEx_of H.good (S.K β).lev (S.K β).y (S.K β).y_bij.2) (ptOne_of (S.K β).lev H.int H.hypP H.bad_p)
+      (S.evRatRep β H.chRat (H.blk hS)) H.chiRat
+    pos_emb := H.pos_emb
+    chi := H.chi
+    ptEx := ptEx_of H.good (S.K β).lev (S.K β).y (S.K β).y_bij.2
+    ptAll := ptAll_of H.good (S.K β).lev (S.K β).y H.comp
+  }
 
 variable (S)
 

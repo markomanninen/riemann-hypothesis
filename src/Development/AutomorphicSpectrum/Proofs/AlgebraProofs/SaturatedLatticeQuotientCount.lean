@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsEqNsmulOfForallDvdOfBijective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsEqNsmulOfForallDvdOfBijective
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Flat
 
@@ -79,14 +83,14 @@ theorem mem_of_forall_card_mul_eq_pow :
     have ha' : a' = w' + N • b' := by rw [← hb']; abel
     have hww := hTpair w w' hp
     have hexp : B (↑w + N • b) (↑w' + N • b') = B w w' + N * (B w b' + B b w' + N * B b b') := by
-      simp only [map_add, LinearMap.add_apply, map_nsmul, LinearMap.smul_apply, nsmul_eq_mul]
+      simp only [map_add (f := _), LinearMap.add_apply, map_nsmul, LinearMap.smul_apply, nsmul_eq_mul]
       ring
     rw [ha, ha', hexp]
     exact dvd_add hww (dvd_mul_right _ _)
   have h5 : ∀ a' p', R a' p' → (N : ℤ) ∣ B x a' := by
     rintro a' p' ⟨w', -, b', hb'⟩
     have ha' : a' = w' + N • b' := by rw [← hb']; abel
-    rw [ha', map_add, map_nsmul, hx w' w'.2, zero_add]
+    rw [ha', map_add (f := _), map_nsmul, hx w' w'.2, zero_add]
     exact ⟨B x b', nsmul_eq_mul _ _⟩
   obtain ⟨p, w, -, b, hwb⟩ :=
     GlobalTheory.exists_rel_of_forall_dvd_of_card_mul Λ B hB N hN _ T R h1 h2 h3 hcard h4 x h5

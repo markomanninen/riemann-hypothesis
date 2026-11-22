@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TCoefMInMMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TCoefMInMMul
+
+@[expose] public section
+
 open MvPolynomial GlobalTheory.PsCo.Pc1 GlobalTheory.PsCo.Pc1.A
 
 noncomputable section
@@ -7,7 +12,8 @@ noncomputable section
 namespace GlobalTheory.PsCo.HomotDeriv
 
 theorem ev_rP {n : ℕ} (ε : Fin n → Bool) (g : Mat n) : ev g (rP ε) = ((rM ε g : ℝ) : ℂ) := by
-  simp only [rP, rM, map_sum, map_mul, ev, MvPolynomial.eval_X, Sum.elim_inl, Sum.elim_inr]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [rP, rM, map_sum, map_mul, ev, MvPolynomial.eval_X, Sum.elim_inl, Sum.elim_inr]
   push_cast
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [Complex.star_def, Complex.mul_conj, Complex.normSq_eq_norm_sq]
@@ -84,7 +90,8 @@ theorem famF_hasDerivAt : ∀ {n : ℕ} (ε : Fin n → Bool) (G : ℝ → ℝ) 
       ∑ x, (ev g (dM ε x (q x j)) + ev g (dM ε x (rP ε)) * ev g (prev (q x) j)) := by
     intro j
     have := congrArg (ev g) (hrec j)
-    simpa only [map_sum, map_add, map_mul, ev_rP, map_natCast, map_one] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [map_sum, map_add (f := _), map_mul, ev_rP, map_natCast, map_one] using this
   rw [sum_shift (nMode ε) a (fun k => ev g (p k)) (rM ε g : ℂ) (by simp [hp (nMode ε + 1) (Nat.lt_succ_self _)])]
   simp only [hA, hR, Finset.mul_sum]
   rw [Finset.sum_comm]

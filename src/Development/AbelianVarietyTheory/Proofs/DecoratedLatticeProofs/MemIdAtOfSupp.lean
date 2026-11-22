@@ -1,21 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsTransportAdelicCorrection
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilCharacterSplitPlaceExistsContinuousNontrivia
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsInjectiveModel
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisOFinsetSum
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CompIncAAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsAtTypeAndOrd
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSelfDualLatticeWithPrescribedSplitComponen
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemLevelIffSymmetricPositionEntryPatternStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceHermitianFramePropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsGLEmbeddingUnitaryAdelicSplitPlaceBasisStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsFiniteAdeleProjectionIntegralReductionStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatticeCompletionAtPlacesMemCompletedHermitianLaStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemLatticeCompletionAtPlacesOfFinPartMemHatLattiStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PadOneMemSecondBlockTriangular
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilDatumPowersUnramifiedEtaTilde
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsTransportAdelicCorrection
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilCharacterSplitPlaceExistsContinuousNontrivia
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsInjectiveModel
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisOFinsetSum
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CompIncAAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsAtTypeAndOrd
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSelfDualLatticeWithPrescribedSplitComponen
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemLevelIffSymmetricPositionEntryPatternStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceHermitianFramePropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsGLEmbeddingUnitaryAdelicSplitPlaceBasisStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsFiniteAdeleProjectionIntegralReductionStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatticeCompletionAtPlacesMemCompletedHermitianLaStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemLatticeCompletionAtPlacesOfFinPartMemHatLattiStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PadOneMemSecondBlockTriangular
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilDatumPowersUnramifiedEtaTilde
+
+@[expose] public section
 
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
@@ -51,7 +55,7 @@ theorem mem_idAt_of_supp {a : AE D} (h : (q.e + cA D q.e) * a = a) : a ∈ idAt 
   exact ((GlobalTheory.T.placeIdempotent_acts_on_supportedAndOff D q.v ε hε).1 a).2 (hs ▸ h)
 
 theorem place_facts {PP : Formalism.L2.DIV.Pl D.host.E} (h : IsIdemAt q.e PP) :
-    q.v = PP.under (𝓞 D.host.F) ∧ (∀ a, (ofSplit q).pr a ∈ 𝒪[k] ↔ IntAt PP a) ∧ DenseRange (ofSplit q).pr := by
+    q.v = (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP) ∧ (∀ a, (ofSplit q).pr a ∈ 𝒪[k] ↔ IntAt PP a) ∧ DenseRange (ofSplit q).pr := by
   obtain ⟨k₀, _, _, _, _, q₀, he, hv, hi, hd⟩ := GlobalTheory.LocMod.SplitCompl.exists_place D PP q.e h
   refine ⟨?_, fun a => ?_, ?_⟩
   · rw [← hv]
@@ -125,19 +129,6 @@ theorem continuous_idl : Continuous (idl q) :=
   Units.continuous_iff.2 ⟨(q.cont_sec.comp Units.continuous_val).add continuous_const,
     (q.cont_sec.comp Units.continuous_coe_inv).add continuous_const⟩
 
-theorem unram_idl {χ : (AE D)ˣ →* Circle} (hχ : UnramEverywhere D χ) (x : kˣ) (hx : valuation k (x : k) = 1) : χ (idl q x) = 1 := by
-  have one : finPart D 1 ∈ intAE D := by
-    rw [map_one]
-    exact AddSubgroup.subset_closure ⟨1, fun v => by simp, 1, rfl⟩
-  have key : ∀ y : k, valuation k y ≤ 1 → finPart D (q.sec y + (1 - q.e)) ∈ intAE D := fun y hy => by
-    rw [RingHom.map_add, RingHom.map_sub, ← sec_one]
-    exact add_mem ((q.int_iff y).1 hy) (sub_mem one ((q.int_iff 1).1 (one_mem _)))
-  refine hχ _ ?_ (key _ hx.le) (key _ (by simp [hx]))
-  have h1 : infPart D (q.sec x) = 0 := (GlobalTheory.FrameGlob.sec_mem_idAt q x).1
-  have h2 : infPart D q.e = 0 := (GlobalTheory.FrameGlob.e_mem_idAt q).1
-  change infPart D (q.sec x + (1 - q.e)) = 1
-  rw [RingHom.map_add, RingHom.map_sub, h1, h2, RingHom.map_one, zero_add, sub_zero]
-
 theorem res_idl {PP : Formalism.L2.DIV.Pl D.host.E} (h : IsIdemAt q.e PP) {χ : (AE D)ˣ →* Circle} {H : Formalism.L2.Host.HChar D.host.E}
     {c : (Formalism.L2.DIV.kP PP)ˣ →* ℂˣ} (hχ : Formalism.IndefR.Links.ChrEq χ H) (hr : Formalism.IndefR.Links.IsRes H PP c) (x : kˣ)
     (hx : valuation k ((x : k) - 1) < 1) : χ (idl q x) = 1 := by
@@ -185,25 +176,6 @@ theorem res_idl {PP : Formalism.L2.DIV.Pl D.host.E} (h : IsIdemAt q.e PP) {χ : 
   have := Valuation.map_add_lt (valuation k) ha2 hx
   simpa using this
 
-theorem tame_comp {c : GlobalTheory.ChainOnto.Com D} (hc : c.Is) {PP : Formalism.L2.DIV.Pl D.host.E} (hP : PP ∈ c.Pg) (h : IsIdemAt q.e PP)
-    {j : ℕ} (h1 : 1 ≤ j) (h2 : j ≤ D.R.m) {μ : kˣ →* ℂˣ} (hμ : (ofSplit q).IsComp (c.chS j)⁻¹ μ) : IsTame μ := by
-  intro x hx
-  have hv : valuation k (x : k) = 1 := by simpa using Valuation.map_one_add_of_lt (valuation k) hx
-  obtain ⟨i, rfl⟩ : ∃ i, j = i + 1 := ⟨j - 1, by omega⟩
-  obtain ⟨H, hH, hr⟩ := hc.res ⟨i, h2⟩
-  have e1 := res_idl q h hH (hr PP hP) x hx
-  have e2 := unram_idl q hc.chars.2.1 x hv
-  have e3 : c.chS (i + 1) (idl q x) = 1 := by
-    unfold GlobalTheory.ChainOnto.Com.chS Formalism.IndefR.Lift.chrStep
-    split_ifs
-    · change c.μ (i + 1) (idl q x) * (c.η (idl q x))⁻¹ = 1
-      rw [e2, inv_one, mul_one]
-      exact e1
-    · exact e1
-  refine Units.ext ((hμ x (idl q x) rfl).trans ?_)
-  rw [MonoidHom.inv_apply, e3]
-  simp
-
 theorem exists_unif {PP : Formalism.L2.DIV.Pl D.host.E} (h : IsIdemAt q.e PP) {ψ : AddChar k Circle} (hψ : HasConductor ψ 1)
     {ψ₀ : AddChar (Formalism.L2.DIV.kP PP) ℂ} (h₀ : ψ₀ ≠ 1) : ∃ ϖ : kˣ, GlobalTheory.IndefiniteRowSideFullHecke.FramePositiveSum.IsUnif ϖ ∧
       ∀ z : 𝓞 D.host.E, (ψ (((ϖ⁻¹ : kˣ) : k) * prO q z) : ℂ) = ψ₀ (Ideal.Quotient.mk _ z) := by
@@ -227,7 +199,7 @@ theorem exists_unif {PP : Formalism.L2.DIV.Pl D.host.E} (h : IsIdemAt q.e PP) {�
     { toFun := fun u => ψ (t⁻¹ * prO q (l u))
       map_zero_eq_one' := by rw [wd _ 0 (by rw [hl, map_zero])]; simp
       map_add_eq_mul' := fun a b => by
-        rw [wd _ (l a + l b) (by rw [map_add, hl, hl, hl]), map_add, mul_add, AddChar.map_add_eq_mul, Circle.coe_mul] }
+        rw [wd _ (l a + l b) (by rw [map_add (f := _), hl, hl, hl]), map_add (f := _), mul_add, AddChar.map_add_eq_mul, Circle.coe_mul] }
   have hα : ∀ z, α (Ideal.Quotient.mk _ z) = ψ (t⁻¹ * prO q z) := fun z => congrArg (fun c : Circle => (c : ℂ)) (wd _ z (hl _))
   haveI := PP.isMaximal
   letI := Ideal.Quotient.field PP.asIdeal
@@ -272,36 +244,6 @@ theorem exists_unif {PP : Formalism.L2.DIV.Pl D.host.E} (h : IsIdemAt q.e PP) {�
     simp
     ring
 
-theorem exists_latFrame (S : HSp D) (L : GlobalTheory.FinPl.Lat S) (hL : IsSelfDualC S L) (Y : Type) [Fintype Y] [DecidableEq Y]
-    (e : Y ≃ Fin S.rank) : ∃ F : GlobalTheory.LocMod.Frame k S.rank Y, ∀ y : Y → k, (∀ i, y i ∈ 𝒪[k]) ↔
-      (fun i => q.sec ((F.β *ᵥ y) i)) ∈ latV S L (· = q.v) := by
-  obtain ⟨gl, h1, h2⟩ := GlobalTheory.T.exists_GL_embedding_unitaryAdelic_splitPlace_basis D k q S (Fin S.rank) 1 1 (mul_one _) (mul_one _)
-  obtain ⟨Λ, hΛ, hl, -⟩ := (GlobalTheory.T.splitPlaceHermitianFrame_properties D k q S _ ⟨1, 1, mul_one _, mul_one _, gl, h1, h2⟩).2.2.2.1 L hL
-  let b := (Module.finBasisOfFinrankEq 𝒪[k] Λ (Submodule.IsLattice.finrank_of_pi k Λ)).reindex
-    ((finCongr (Fintype.card_fin _)).trans e.symm)
-  let b' := b.extendOfIsLattice k
-  have hkey : ∀ c : Y → 𝒪[k], b'.equivFun.symm (fun i => (c i : k)) = ((∑ i, c i • b i : Λ) : _ → k) := by
-    intro c
-    rw [Module.Basis.equivFun_symm_apply, Submodule.coe_sum]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    rw [Module.Basis.extendOfIsLattice_apply]
-    rfl
-  refine ⟨⟨LinearMap.toMatrix' b'.equivFun.symm.toLinearMap, LinearMap.toMatrix' b'.equivFun.toLinearMap, ?_, ?_⟩, fun y => ?_⟩
-  · rw [← LinearMap.toMatrix'_comp]; simp
-  · rw [← LinearMap.toMatrix'_comp]; simp
-  have h3 := hl (b'.equivFun.symm y)
-  simp only [one_mulVec] at h3
-  simp only [LinearMap.toMatrix'_mulVec, LinearEquiv.coe_coe]
-  rw [← h3]
-  refine ⟨fun h => ?_, fun h => ?_⟩
-  · have h2 : b'.equivFun.symm y = _ := hkey fun i => ⟨y i, h i⟩
-    rw [h2]
-    exact Subtype.property _
-  · have h1 := hkey (b.repr ⟨_, h⟩)
-    rw [b.sum_repr] at h1
-    rw [← b'.equivFun.symm.injective h1]
-    exact fun i => (b.repr ⟨_, h⟩ i).2
-
 theorem exists_topFrame {PP : Formalism.L2.DIV.Pl D.host.E} (h : IsIdemAt q.e PP) (S : HSp D) (L : GlobalTheory.FinPl.Lat S)
     (β : GL (Fin S.rank) (Lev.EAf D)) (hβ : Formalism.L2.DIV.IsFrame β L) : ∃ B : GL (Fin S.rank) k, MovedTo (ofSplit q) S 1 β B.val ∧
       ∀ y : Fin S.rank → k, (fun i => q.sec (y i)) ∈ latV S L (· = q.v) ↔ ∀ i, ((B⁻¹).val *ᵥ y) i ∈ 𝒪[k] := by
@@ -318,7 +260,8 @@ theorem exists_topFrame {PP : Formalism.L2.DIV.Pl D.host.E} (h : IsIdemAt q.e PP
   have h4 : ∀ j, (1 - toEAf D q.e) * toEAf D (q.sec (y j)) = 0 := fun j => by
     rw [sub_mul, one_mul, ← map_mul, ← GlobalTheory.FrameGlob.sec_eq_mul, sub_self]
   rw [h2, ← map_inv]
-  simp only [mulVec, dotProduct, Finset.mul_sum, mul_left_comm (1 - toEAf D q.e), h4, mul_zero, Finset.sum_const_zero, zero_mem,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mulVec, dotProduct, Finset.mul_sum, mul_left_comm (1 - toEAf D q.e), h4, mul_zero, Finset.sum_const_zero, zero_mem,
     true_and, map_sum, map_mul, h1, q.pr_sec]
   rfl
 
@@ -371,14 +314,14 @@ variable (S : SymData k s κ) {O : Type} [CommRing O] {I : Ideal O} (pr : O →+
   (e : Fin κ ⊕ Fin (s + 1) ≃ Fin r) (he : ∀ a, (e a).val = framePos _ _ a) {π : Equiv.Perm (Fin r)} (hπ : IsSymOrd S.ρ κ π)
   (g g' : GL (Fin r) (O ⧸ I)) (hg : ∀ i j, g'.val i j = g.val (π i) (π j))
 
-include h1 h2 he hπ hg in
 
+include h1 h2 he hπ hg in
 theorem sym_grp : (∃ x : S.P.J, ∀ a b z, Ideal.Quotient.mk I z = g.val (e a) (e b) →
     valuation k ((x : GL (Fin κ ⊕ Fin (s + 1)) k).val a b - pr z) < 1) ↔ g' ∈ unipSym (O ⧸ I) r S.ρ κ := by
   choose l hl using Ideal.Quotient.mk_surjective (I := I)
   have one : ∀ a b, (1 : Matrix _ _ k) a b = pr ((1 : Matrix _ _ O) a b) ∧
       (1 : Matrix _ _ (O ⧸ I)) (π.symm (e a)) (π.symm (e b)) = Ideal.Quotient.mk I ((1 : Matrix _ _ O) a b) := fun a b => by
-    by_cases h : a = b <;> simp [one_apply, h]
+    by_cases h : a = b <;> simp [Matrix.one_apply, h]
   rw [mem_unipSym]
   constructor
   · rintro ⟨x, hx⟩ i j hij
@@ -414,8 +357,8 @@ theorem sym_grp : (∃ x : S.P.J, ∀ a b z, Ideal.Quotient.mk I z = g.val (e a)
     refine hx a b _ ?_
     rw [← (one a b).2, ← h _ _ ((sym_order S.odd e he hπ a b).1.1 hab), hg, Equiv.apply_symm_apply, Equiv.apply_symm_apply]
 
-include he hπ hg in
 
+include he hπ hg in
 theorem sym_chr (ψ₀ : AddChar (O ⧸ I) ℂ) (hψ : ∀ z, (S.ψ (((S.ϖ⁻¹ : kˣ) : k) * pr z) : ℂ) = ψ₀ (Ideal.Quotient.mk _ z))
     (x : S.P.J) (hx : ∀ a b z, Ideal.Quotient.mk I z = g.val (e a) (e b) →
       valuation k ((x : GL (Fin κ ⊕ Fin (s + 1)) k).val a b - pr z) < 1) :
@@ -423,9 +366,11 @@ theorem sym_chr (ψ₀ : AddChar (O ⧸ I) ℂ) (hψ : ∀ z, (S.ψ (((S.ϖ⁻¹
   classical
   choose l hl using Ideal.Quotient.mk_surjective (I := I)
   have h3 : edgeSum (symEdge S.ρ κ) g' = Ideal.Quotient.mk I (∑ a, ∑ b, if Edge a b then l (g.val (e a) (e b)) else 0) := by
-    rw [edgeSum, ← (e.trans π.symm).sum_comp, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [edgeSum, ← (e.trans π.symm).sum_comp, map_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
-    rw [← (e.trans π.symm).sum_comp, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← (e.trans π.symm).sum_comp, map_sum]
     refine Finset.sum_congr rfl fun b _ => ?_
     simp only [Equiv.trans_apply, (sym_order S.odd e he hπ a b).2, hg, Equiv.apply_symm_apply]
     split_ifs
@@ -439,10 +384,12 @@ theorem sym_chr (ψ₀ : AddChar (O ⧸ I) ℂ) (hψ : ∀ z, (S.ψ (((S.ϖ⁻¹
   refine congrArg (fun c : Circle => (c : ℂ)) ?_
   rw [← mul_inv_eq_one, ← AddChar.map_neg_eq_inv, ← AddChar.map_add_eq_mul, ← sub_eq_add_neg, ← mul_sub]
   refine (S.cond 1).2 (by simp) _ ?_
-  rw [map_mul, Units.val_inv_eq_inv_val, map_inv₀, map_one, inv_mul_le_one₀ (by simp [zero_lt_iff]), ← S.unif, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_mul, Units.val_inv_eq_inv_val, map_inv₀, map_one, inv_mul_le_one₀ (by simp [zero_lt_iff]), ← S.unif, map_sum,
     ← Finset.sum_sub_distrib]
   refine Valuation.map_sum_lt _ one_ne_zero fun a _ => ?_
-  rw [map_sum, ← Finset.sum_sub_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← Finset.sum_sub_distrib]
   refine Valuation.map_sum_lt _ one_ne_zero fun b _ => ?_
   split_ifs
   · exact hx a b _ (hl _)

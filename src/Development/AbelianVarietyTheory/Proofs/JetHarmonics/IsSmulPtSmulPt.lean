@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueIsPointOfDualNumber
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.GtActIffEqGtSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueIsPointOfDualNumber
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.GtActIffEqGtSmul
+
+@[expose] public section
 
 noncomputable section
 
@@ -122,9 +126,14 @@ theorem exists_isSmulPt (a : O) (g : GtPt D T) : ∃ g', IsSmulPt oa a g g' := b
       apply Additive.ofMul.injective
       simp only [ofMul_mul, ofMul_inv]
       abel) (fun y J hJ => by
-      have C : IsCub (th D (T := T) y J) := isCub_cubV D.cub hJ
+      have face (x y' : T ⟶ D.P.A) : th D y J 1 x y' = 1 := by
+        have e := val_corr hJ (D.cub.face 0) (lift x y').left
+        rw [val_one] at e
+        refine Eq.trans ?_ e
+        refine Eq.trans ?_ (val_cub D.cub (lift x y') hJ (pzero D.P.A _) (x2 D.P.A 0) (x2 D.P.A 1)).symm
+        congr 1 <;> simp [x2, pzero, Hom.one_def]
       have e := (rosGen_add hG oa a hJ 1 1 g.b).1
-      rw [_root_.mul_one, MonObj.one_comp, C.face, C.face, _root_.mul_one, _root_.one_mul] at e
+      rw [_root_.mul_one, MonObj.one_comp, face, face, _root_.mul_one, _root_.one_mul] at e
       refine (vv 0 y J hJ).trans ?_
       rw [smul_zero, cPoint_zero, mul_eq_left.1 e.symm, _root_.mul_one, cv_zero g hJ]) (fun χ χ' y J hJ => by
       have e₁ := congrArg Additive.ofMul (rosGen_add hG oa a hJ (cP D _ χ) (cP D _ χ') g.b).1
@@ -209,8 +218,8 @@ def Represents {H : Over (Spec (CommRingCat.of R))} [GrpObj H] (Φ : ∀ T, (T �
     GtPt.IsPull k.left (Φ T x) (Φ T' (k ≫ x))) ∧
   ∀ (T : Over (Spec (CommRingCat.of R))) (x x' : T ⟶ H), GtPt.IsAdd (Φ T x) (Φ T x') (Φ T (x * x'))
 
-include hG in
 
+include hG in
 theorem exists_ringAct {H : Over (Spec (CommRingCat.of R))} [GrpObj H] [IsCommMonObj H]
     {Φ : ∀ T, (T ⟶ H) ≃ GtPt D T} (h : Represents Φ) :
     ∃ ρ : RingAct H O, ∀ (a : O) (T) (x : T ⟶ H), IsSmulPt oa a (Φ T x) (Φ T (x ≫ ρ.act a)) := by

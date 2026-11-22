@@ -1,5 +1,9 @@
-import Mathlib.AlgebraicGeometry.Morphisms.Etale
-import Development.EtaleCohomology.EtaleSheaves.SHSectionPf
+module
+
+public import Mathlib.AlgebraicGeometry.Morphisms.Etale
+public import Development.EtaleCohomology.EtaleSheaves.SHSectionPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry

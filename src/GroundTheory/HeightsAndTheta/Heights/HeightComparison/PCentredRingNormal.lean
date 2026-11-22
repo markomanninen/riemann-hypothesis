@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightCentredRingNormal
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.PSubringPrimeMaximal
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightCentredRingNormal
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.PSubringPrimeMaximal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -11,8 +16,8 @@ namespace CentredRingNormal
 
 variable {L : Type} [Field L] [NumberField L]
 
-omit [NumberField L] in
 
+omit [NumberField L] in
 theorem isIntegral_of_comp {R R' : Type*} [CommRing R] [CommRing R'] [Algebra R L] [Algebra R' L]
     (f : R →+* R') (hf : (algebraMap R' L).comp f = algebraMap R L) {x : L}
     (hx : IsIntegral R x) : IsIntegral R' x := by

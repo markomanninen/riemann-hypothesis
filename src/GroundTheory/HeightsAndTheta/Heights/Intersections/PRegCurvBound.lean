@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StRegCurvBound
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StTorusInvLevi
-import GroundTheory.HeightsAndTheta.Heights.Intersections.RegularizedCurvature
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StRegCurvBound
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StTorusInvLevi
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.RegularizedCurvature
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -27,9 +32,9 @@ theorem RegCurvBound.proof (hB : TorusInvLevi.Statement) : RegCurvBound.Statemen
     have hcn : ∀ k, ‖c k‖ ≠ 0 := fun k => norm_ne_zero_iff.mpr (hc k)
     have hF : ∀ k, F k (fun p => c p.1 * z p) = Real.log ‖c k‖ + F k z := by
       intro k
-      show Real.log ((fsMetric (ι k)).ρ (c k • fun i => z ⟨k, i⟩)) =
-        Real.log ‖c k‖ + Real.log ((fsMetric (ι k)).ρ (fun i => z ⟨k, i⟩))
-      rw [(fsMetric (ι k)).smul, Real.log_mul (hcn k) (rho_pos hz k).ne']
+      show Real.log ((fsMetric (ι := ι k)).ρ (c k • fun i => z ⟨k, i⟩)) =
+        Real.log ‖c k‖ + Real.log ((fsMetric (ι := ι k)).ρ (fun i => z ⟨k, i⟩))
+      rw [(fsMetric (ι := ι k)).smul, Real.log_mul (hcn k) (rho_pos hz k).ne']
     have hh : Real.log (E.h (fun p => c p.1 * z p)) =
         ∑ k, (E.a k : ℝ) * Real.log ‖c k‖ + Real.log (E.h z) := by
       rw [E.smul c z hc, Real.log_mul (Finset.prod_ne_zero_iff.mpr fun k _ => zpow_ne_zero _ (hcn k))
@@ -44,7 +49,7 @@ theorem RegCurvBound.proof (hB : TorusInvLevi.Statement) : RegCurvBound.Statemen
   obtain ⟨C, hC⟩ := hB K ι u (fun z hz => (hu2 z hz).contDiffWithinAt) hinv
 
   have hΦ : ∀ z : (Σ k, ι k) → ℂ, (∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) → ∀ w,
-      leviForm (fun y => ∑ k, Real.log ((fsMetric (ι k)).ρ (fun i => y ⟨k, i⟩))) z w =
+      leviForm (fun y => ∑ k, Real.log ((fsMetric (ι := ι k)).ρ (fun i => y ⟨k, i⟩))) z w =
         ∑ k, ReciprocityTheory.AnForm.levi (F k) z w := by
     intro z hz w
     have h := (levi_add_sum (fun _ => (0 : ℝ)) F (fun _ => 1) contDiffAt_const (contDiffAt_F hz) w
@@ -101,10 +106,10 @@ theorem RegCurvBound.proof (hB : TorusInvLevi.Statement) : RegCurvBound.Statemen
   have hs := levi_add_sum (fun y => Real.log (E.h y) + 1 * Real.log (R.h y)) F (fun _ => (N : ℝ)) hΦ1
     (contDiffAt_F hz) v Finset.univ
   have hev : (fun y => Real.log (((E.tensor R).tensor
-      (HermLine.ofMetrics (fun k => fsMetric (ι k)) (fun _ => (N : ℤ)))).h y)) =ᶠ[𝓝 z]
+      (HermLine.ofMetrics (fun k => fsMetric (ι := ι k)) (fun _ => (N : ℤ)))).h y)) =ᶠ[𝓝 z]
       fun y => (Real.log (E.h y) + 1 * Real.log (R.h y)) + ∑ k, (N : ℝ) * F k y := by
     filter_upwards [hUo.mem_nhds hz] with y hy
-    show Real.log ((E.h y * R.h y) * ∏ k, (fsMetric (ι k)).ρ (fun i => y ⟨k, i⟩) ^ ((N : ℤ))) = _
+    show Real.log ((E.h y * R.h y) * ∏ k, (fsMetric (ι := ι k)).ρ (fun i => y ⟨k, i⟩) ^ ((N : ℤ))) = _
     rw [Real.log_mul (mul_pos (E.pos y hy) (R.pos y hy)).ne'
         (Finset.prod_pos fun k _ => zpow_pos (rho_pos hy k) _).ne',
       Real.log_mul (E.pos y hy).ne' (R.pos y hy).ne',

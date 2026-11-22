@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.JetMatrixAlgebra
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.WspanLeOpCl
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FockRAddRight
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.JetMatrixAlgebra
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.WspanLeOpCl
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FockRAddRight
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -47,7 +51,7 @@ theorem map_OpCl {R R' : Type} [CommRing R] [CommRing R'] (φ : R →+* R') {n' 
     rw [smul_eq_C_mul, map_mul, map_C, ← smul_eq_C_mul]
     exact Submodule.smul_mem _ _ (Submodule.mem_span_singleton_self _)
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx =>
     rw [smul_eq_C_mul, map_mul, map_C, ← smul_eq_C_mul]
     exact Submodule.smul_mem _ _ hx

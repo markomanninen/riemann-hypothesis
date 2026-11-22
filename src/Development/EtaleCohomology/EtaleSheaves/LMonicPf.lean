@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.HensIdemCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.HensIdemCut
+
+@[expose] public section
 
 noncomputable section
 open Polynomial

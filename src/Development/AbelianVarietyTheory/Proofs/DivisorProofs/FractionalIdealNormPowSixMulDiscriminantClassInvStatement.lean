@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FractionalIdealNormPowSixMulDiscriminantClassInv
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LatticeNormTransport
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FractionalIdealNormPowSixMulDiscriminantClassInv
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LatticeNormTransport
+
+@[expose] public section
+
 open NumberField GlobalTheory.CMVal GlobalTheory.IndefiniteRowSideFullHecke.LatticeNormTransport
 open scoped nonZeroDivisors
 set_option maxHeartbeats 1000000 in

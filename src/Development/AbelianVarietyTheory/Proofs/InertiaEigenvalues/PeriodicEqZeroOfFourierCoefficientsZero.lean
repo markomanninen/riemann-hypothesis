@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnipotentBlockColumnIndex
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfCoefficientsSeparatingCharactersEqZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFundamentalDomainMassOneCocompactLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SetIntegralFundamentalDomainEqMassMulAverageStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnipotentBlockColumnIndex
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfCoefficientsSeparatingCharactersEqZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFundamentalDomainMassOneCocompactLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SetIntegralFundamentalDomainEqMassMulAverageStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,14 +20,15 @@ theorem dot_add_right (ξ : ι → E) (x y : ι → Ad E) : dot ξ (x + y) = dot
   simp only [dot, Pi.add_apply, mul_add, Finset.sum_add_distrib]
 
 theorem dot_add_left (ξ η : ι → E) (x : ι → Ad E) : dot (ξ + η) x = dot ξ x + dot η x := by
-  simp only [dot, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [dot, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem dot_zero_left (x : ι → Ad E) : dot (0 : ι → E) x = 0 := by
   simp [dot]
 
 theorem dot_rat (ξ c : ι → E) :
     dot ξ (fun t => algebraMap E (Ad E) (c t)) = algebraMap E (Ad E) (∑ t, ξ t * c t) := by
-  simp only [dot, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dot, map_sum, map_mul]
 
 theorem dot_single [DecidableEq ι] (t : ι) (c : E) (x : ι → Ad E) :
     dot (Pi.single t c) x = algebraMap E (Ad E) c * x t := by

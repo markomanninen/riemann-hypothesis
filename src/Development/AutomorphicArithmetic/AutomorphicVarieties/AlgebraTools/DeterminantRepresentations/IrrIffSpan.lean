@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.IrreducibleSpans.Burnside
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IrrIffSpan
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.IrreducibleSpans.Burnside
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IrrIffSpan
+
+@[expose] public section
 
 open Polynomial Matrix
 

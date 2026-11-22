@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
 
@@ -35,7 +40,8 @@ theorem coordB_embV (h : TraceMapNormalisation D) (cc : Ideal (𝓞 D.host.K)) (
   rw [h2] at h1
   have h3 : coordB D (tor0 D cc δ) b j (embV D (tor0 D cc δ) (b k)) =
       ∑ τ, embT D τ (∑ i, ∑ i', b k i i' * D.host.conj (b j i i')) := by
-    simp only [coordB, embV, tor0, map_sum, map_mul, emb_conj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [coordB, embV, tor0, map_sum, map_mul, emb_conj]
   rw [h3, h1]
   by_cases hjk : j = k
   · subst hjk; simp
@@ -49,7 +55,8 @@ theorem coordB_sum (T : Tor D) {a d r : ℕ} (b : Fin r → Matrix (Fin d) (Fin 
       map_add' := fun x y => by simp [coordB, add_mul, Finset.sum_add_distrib]
       map_smul' := fun c x => by simp [coordB, Finset.mul_sum, mul_assoc] }
   change L _ = ∑ k, c k * L (v k)
-  simp [map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul]
 
 theorem embV_mem_span (h : GL3Theta.InducedCMType D) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) {a d r : ℕ}
     {b : Fin r → Matrix (Fin d) (Fin a) D.host.E} (hb : Submodule.span D.host.K (Set.range b) = ⊤)
@@ -59,7 +66,8 @@ theorem embV_mem_span (h : GL3Theta.InducedCMType D) (cc : Ideal (𝓞 D.host.K)
   obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun _).1 hA
   refine (Submodule.mem_span_range_iff_exists_fun _).2 ⟨fun k => D.host.φ₀ (c k : D.host.E), ?_⟩
   funext τ i j
-  simp only [embV, tor0, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Matrix.sum_apply, Matrix.smul_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [embV, tor0, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Matrix.sum_apply, Matrix.smul_apply, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [← h τ, ← map_mul]
   rfl
@@ -89,10 +97,12 @@ theorem span_eq_top (h : GL3Theta.InducedCMType D) (cc : Ideal (𝓞 D.host.K)) 
         · simp [hj, Ne.symm hj]
       · simp [hi, Ne.symm hi]
     rw [h2] at h1
-    simpa [map_sum, map_smul, mul_comm] using h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, map_smul, mul_comm] using h1
   refine LinearMap.ext fun z => ?_
   rw [hz z]
-  simp [map_sum, map_smul, he]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul, he]
 
 theorem orthonormal_coord : ∀ (D : D7), admG1 D → ∀ (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (N N' r : ℕ) (b : Fin r → Matrix (Fin N') (Fin N) D.host.E), OnB D b → (∀ i j, coordB D (tor0 D cc δ) b i (embV D (tor0 D cc δ) (b j)) = if i = j then 1 else 0) ∧ ∀ z : VC D N N', z = ∑ j, coordB D (tor0 D cc δ) b j z • embV D (tor0 D cc δ) (b j) := by
   intro D h cc δ N N' r b hb

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.PathWeight.FixedSymbolFactorIntegral
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PathWeight.FixedSymbolFactorIntegral
+
+@[expose] public section
 
 noncomputable section
 

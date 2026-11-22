@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotZeroChi
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTLawAt
+
+@[expose] public section
+
 open GlobalTheory.KZ GlobalTheory.Ord2 UpperTheory.V.HV Formalism.ConjugateSelfDual PowerSeries
 
 noncomputable section
@@ -33,9 +38,6 @@ theorem cg_trans {n : ℕ} {a b d : Qbar l} (h1 : Cg n a b) (h2 : Cg n b d) : Cg
   calc ‖a - d‖ = ‖(a - b) + (b - d)‖ := by ring_nf
     _ ≤ max ‖a - b‖ ‖b - d‖ := IsUltrametricDist.norm_add_le_max _ _
     _ ≤ _ := max_le h1 h2
-
-theorem cg_symm {n : ℕ} {a b : Qbar l} (h : Cg n a b) : Cg n b a := by
-  unfold Cg at *; rwa [norm_sub_rev]
 
 theorem cg_mono {k n : ℕ} {a b : Qbar l} (h : Cg n a b) (hk : k ≤ n) : Cg k a b :=
   le_trans h (norm_lpow_anti hk)

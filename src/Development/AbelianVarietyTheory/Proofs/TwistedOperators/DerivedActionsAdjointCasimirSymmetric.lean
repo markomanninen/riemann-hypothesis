@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SameBlockOfPosC
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SameBlockOfPosC
+
+@[expose] public section
 
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible
 
@@ -28,12 +32,13 @@ theorem derived_adjoint_and_casimir (p q : ℕ) (T : GrpData p q) (πU : URep T)
     intro Z x y
     obtain ⟨X, hX, Y, hY, rfl⟩ := exists_upq_add Z
     rw [adjZ_add, adjZ_smul, (mem_upq_iff X).1 hX, (mem_upq_iff Y).1 hY]
-    simp only [map_add, map_smul, map_neg, LinearMap.add_apply, LinearMap.smul_apply,
+    simp only [map_add (f := _), map_smul, map_neg, LinearMap.add_apply, LinearMap.smul_apply,
       LinearMap.neg_apply, inner_add_left, inner_add_right, inner_smul_left, inner_smul_right,
       inner_neg_right, hreal X hX, hreal Y hY]
     rfl
   refine ⟨hZ, fun x y => ?_⟩
-  simp only [casimir, LinearMap.sum_apply, map_sum, sum_inner, inner_sum, Module.End.mul_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [casimir, LinearMap.sum_apply, map_sum, sum_inner, inner_sum, Module.End.mul_apply]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rw [hZ, hZ, adjZ_Eab, adjZ_Eab]
   simp only [map_smul, LinearMap.smul_apply, inner_smul_right]

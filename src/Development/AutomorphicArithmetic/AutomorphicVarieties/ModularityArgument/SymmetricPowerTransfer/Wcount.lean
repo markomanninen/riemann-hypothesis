@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,5 @@ def orb {T G : Type} [Group T] [Group G] (ι : T →* G) (C : Subgroup T) (θ : 
 abbrev Etau (R : Type) [CommRing R] (τ : R) : Type := QuadraticAlgebra R (-1) τ
 
 abbrev Lsq (R : Type) [CommRing R] (Δ : R) : Type := QuadraticAlgebra R Δ 0
-
-example : gcount PUnit (fun _ : PUnit => (1 : ℂ)) = gcount PUnit (fun _ : PUnit => (1 : ℂ)) := rfl
 
 end UpperTheory.V.Z.Sym

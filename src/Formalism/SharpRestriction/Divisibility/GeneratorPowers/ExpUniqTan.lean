@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpUniqLoc
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpUniqLoc
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -25,7 +29,7 @@ private theorem sub_C_mem_lemma {κ : Type} (r : MvPolynomial κ R) : r - C (con
     simp
   · intro p q hp hq
     have e : p + q - C (constantCoeff (p + q)) = (p - C (constantCoeff p)) + (q - C (constantCoeff q)) := by
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       ring
     rw [e]
     exact add_mem hp hq
@@ -44,7 +48,7 @@ private theorem aug_mk_lemma_2 {κ : Type} (r : MvPolynomial κ R) :
   · intro a
     simp
   · intro p q hp hq
-    simp only [map_add, hp, hq]
+    simp only [map_add (f := _), hp, hq]
   · intro p i _
     simp
 
@@ -98,7 +102,8 @@ theorem eq_zero_of_tan {κ : Type} [Fintype κ] [DecidableEq κ] (p : Jet R κ (
   have ha : ∀ i, (jetAug : Jet R κ (0 + 1) →ₐ[R] R) (c i) = 0 := by
     intro ℓ
     have h := ht ℓ
-    simp only [map_sum, map_mul, AlgHom.commutes, jetTan_alt, mul_ite, mul_zero, Finset.sum_ite_eq',
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, AlgHom.commutes, jetTan_alt, mul_ite, mul_zero, Finset.sum_ite_eq',
       Finset.mem_univ, if_true] at h
     first
       | (rw [← Algebra.smul_def] at h; simpa using congrArg TrivSqZeroExt.snd h)

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.CuspCritAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.NslMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.NslMdiffPos
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.CuspCritAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.NslMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.NslMdiffPos
+
+@[expose] public section
 
 open CongruenceSubgroup UpperTheory.V.Af.Nf
 open UpperHalfPlane hiding I
@@ -13,7 +17,7 @@ private lemma aux {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.IsArithmetic] {k : ℤ} (
     rw [← Subgroup.mem_strictPeriods_iff, Subgroup.strictPeriods_SL2Z]
     exact AddSubgroup.mem_zmultiples _
   obtain ⟨N, hN, -, hm⟩ := Subgroup.exists_pow_mem_of_relIndex_ne_zero
-    (Subgroup.IsArithmetic.is_commensurable (𝒢 := Γ)).1 h1
+    (Subgroup.IsArithmetic.is_commensurable (𝒢 := Γ)).1.relIndex_ne_zero h1
   have hP : (N : ℝ) ∈ Γ.strictPeriods := by
     rw [Subgroup.mem_strictPeriods_iff]
     have := (Subgroup.mem_inf.mp hm).1

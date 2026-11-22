@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsLatBasisZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpanPeriodLatticeComplexSemiAbelianEqTopStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsLatBasisZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpanPeriodLatticeComplexSemiAbelianEqTopStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -36,7 +40,7 @@ theorem eq_zero_of_rip_self {v : Fin g → ℂ} (h : rip v v = 0) : v = 0 := by
 
 theorem continuous_rip : Continuous fun q : (Fin g → ℂ) × (Fin g → ℂ) => rip q.1 q.2 := by
   simp only [rip_apply]
-  refine continuous_finset_sum _ fun k _ => Complex.continuous_re.comp ?_
+  refine continuous_finsetSum _ fun k _ => Complex.continuous_re.comp ?_
   exact ((continuous_apply k).comp continuous_snd).mul
     (Complex.continuous_conj.comp ((continuous_apply k).comp continuous_fst))
 
@@ -51,7 +55,8 @@ theorem det_gram_ne_zero {l : Fin r → Fin g → ℂ} (hl : LinearIndependent �
   have hs : ∀ a, rip (l a) (∑ i, v i • l i) = 0 := by
     intro a
     have := congrFun hv0 a
-    simpa [Matrix.vecMul, dotProduct, gram, map_sum] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [Matrix.vecMul, dotProduct, gram, map_sum] using this
   have hz : (∑ i, v i • l i) = 0 := by
     apply eq_zero_of_rip_self
     calc rip (∑ i, v i • l i) (∑ i, v i • l i) = ∑ a, rip (∑ i, v i • l i) (v a • l a) := map_sum _ _ _
@@ -66,7 +71,8 @@ theorem coord_eq {l y : Fin r → Fin g → ℂ} (hl : LinearIndependent ℝ l) 
     (hy : ∀ j, y j = ∑ i, c j i • l i) : coord l y = c := by
   have : pair l y = c * gram l := by
     ext j a
-    simp [pair, gram, Matrix.mul_apply, hy j, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [pair, gram, Matrix.mul_apply, hy j, map_sum]
   rw [coord, this]
   exact Matrix.mul_nonsing_inv_cancel_right _ _ (isUnit_iff_ne_zero.2 (det_gram_ne_zero hl))
 
@@ -186,7 +192,7 @@ theorem continuous_of_act {T : Type*} [TopologicalSpace T] {l y : T → Fin r �
   exact ((IsLocallyConstant.desc M GLZ.mat hlc GLZ.mat_injective)).continuous
 
 theorem continuous_act (m : Matrix (Fin r) (Fin r) ℤ) : Continuous (act m : (Fin r → Fin g → ℂ) → _) :=
-  continuous_pi fun j => continuous_finset_sum _ fun i _ => (continuous_apply i).const_smul (m j i)
+  continuous_pi fun j => continuous_finsetSum _ fun i _ => (continuous_apply i).const_smul (m j i)
 
 variable {n : ℕ}
 

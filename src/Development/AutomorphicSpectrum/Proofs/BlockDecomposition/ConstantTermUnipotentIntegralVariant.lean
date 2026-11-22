@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OneMemGoodCT
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCuspidalLieActionOfIsCuspForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartUnipotentFderivContinuousOn
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OneMemGoodCT
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCuspidalLieActionOfIsCuspForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartUnipotentFderivContinuousOn
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ open scoped ContDiff
 
 namespace GlobalTheory.CompanionTheory.CTSmooth
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a r : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a r : ℕ}
 
 def LO (φ : Sm E a) : Prop :=
   (∀ (γ : GL (Fin a) E) (g : GA E a), φ.1 (ratGL E a γ * g) = φ.1 g) ∧ IsOpen {k | finRep E a k φ = φ}
@@ -127,7 +131,8 @@ theorem fderiv_chart_eq (φ : Sm E a) (h : GA E a) {y : Lie E a} (hy : y ∈ inv
       fderiv ℝ (chart φ.1 (h * infGL E a u)) (oneL E a) (bs E a i) := fun i => chart_val _ _ _
   simp only [h2]
   rw [lieD]
-  conv_lhs => rw [← (bs E a).sum_repr X, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← (bs E a).sum_repr X, map_sum]
   simp only [map_smul, hX]
   exact Finset.sum_congr rfl fun i _ => rfl
 
@@ -154,13 +159,13 @@ theorem fderiv_fun (φ : Sm E a) (g : GA E a) {y : Lie E a} (hy : y ∈ invSet E
 theorem integrable_fderiv {φ : Sm E a} (hφ : LO φ) (g : GA E a) {y : Lie E a} (hy : y ∈ invSet E a) :
     Integrable (fun x : BlockIx a r → Ad E => fderiv ℝ (chart φ.1 (unip x * g)) y) ν := by
   rw [fderiv_fun φ g hy]
-  exact integrable_finset_sum _ fun i _ =>
+  exact integrable_finsetSum _ fun i _ =>
     ContinuousLinearMap.integrable_comp _ (integrable_chart ν (lo_lie hφ _) g hy)
 
 theorem integral_fderiv {φ : Sm E a} (hφ : LO φ) (g : GA E a) {y : Lie E a} (hy : y ∈ invSet E a) :
     ∫ x : BlockIx a r → Ad E, fderiv ℝ (chart φ.1 (unip x * g)) y ∂ν = ∑ i : Ix E a,
       ContinuousLinearMap.smulRightL ℝ (Lie E a) ℂ (coordL i (invL y)) (ct ν (lie E a (bs E a i) φ) g y) := by
-  rw [fderiv_fun φ g hy, integral_finset_sum _ fun i _ =>
+  rw [fderiv_fun φ g hy, integral_finsetSum _ fun i _ =>
     ContinuousLinearMap.integrable_comp _ (integrable_chart ν (lo_lie hφ _) g hy)]
   exact Finset.sum_congr rfl fun i _ =>
     ContinuousLinearMap.integral_comp_comm _ (integrable_chart ν (lo_lie hφ _) g hy)
@@ -232,7 +237,7 @@ theorem chart_ctFun (φ : Sm E a) (g : GA E a) :
 
 end Integral
 
-theorem ct_smooth : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a r : ℕ) (φ : Sm E a), (∀ (γ : GL (Fin a) E) (g : GA E a), φ.1 (ratGL E a γ * g) = φ.1 g) → IsOpen {k | finRep E a k φ = φ} → ∀ [MeasurableSpace (BlockIx a r → Ad E)] [BorelSpace (BlockIx a r → Ad E)] (μ : Measure (BlockIx a r → Ad E)) (𝓕 : Set (BlockIx a r → Ad E)), μ.IsAddHaarMeasure → IsAddFundamentalDomain (ratN E a r) 𝓕 μ → ∃ F : Sm E a, (∀ g, F.1 g = ∫ x in 𝓕, φ.1 (unip x * g) ∂μ) ∧ ∀ (X : Lie E a) (g : GA E a), (lie E a X F).1 g = ∫ x in 𝓕, (lie E a X φ).1 (unip x * g) ∂μ := by
+theorem ct_smooth : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a r : ℕ) (φ : Sm E a), (∀ (γ : GL (Fin a) E) (g : GA E a), φ.1 (ratGL E a γ * g) = φ.1 g) → IsOpen {k | finRep E a k φ = φ} → ∀ [MeasurableSpace (BlockIx a r → Ad E)] [BorelSpace (BlockIx a r → Ad E)] (μ : Measure (BlockIx a r → Ad E)) (𝓕 : Set (BlockIx a r → Ad E)), μ.IsAddHaarMeasure → IsAddFundamentalDomain (ratN E a r) 𝓕 μ → ∃ F : Sm E a, (∀ g, F.1 g = ∫ x in 𝓕, φ.1 (unip x * g) ∂μ) ∧ ∀ (X : Lie E a) (g : GA E a), (lie E a X F).1 g = ∫ x in 𝓕, (lie E a X φ).1 (unip x * g) ∂μ := by
   intro E _ _ _ a r φ hl ho _ _ μ 𝓕 hμ hF
   haveI := hμ
   have hfin := GlobalTheory.CuspRep.covol_lt_top μ 𝓕 hF

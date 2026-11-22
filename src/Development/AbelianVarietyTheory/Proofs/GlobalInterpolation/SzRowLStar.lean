@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ScalePolynomialQuantitiesComparisonStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExplicitRanksBasicBoundsLargeScaleStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ScalePolynomialQuantitiesComparisonStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExplicitRanksBasicBoundsLargeScaleStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.LevelStarExponents Formalism.MainNotions Formalism.MainNotions.Inhab GlobalTheory.EX NumberField
 
@@ -105,7 +109,11 @@ theorem szRow_lStar : SzRow (fun _ D L => (L.sc.b' + L.Sc + L.etaSz + L.sc.b / l
   have hm1 : (1 : ℝ) ≤ D.R.m := by
     have := D.R.two_le_m
     exact_mod_cast (by omega : 1 ≤ D.R.m)
-  have hn0 : (0 : ℝ) < D.R.n := by unfold Ranks.n; positivity
+  have hn0 : (0 : ℝ) < D.R.n := by
+    have hm := D.R.two_le_m
+    have hf := D.R.m_le_f
+    have hn : 0 < D.R.n := by unfold Ranks.n; omega
+    exact_mod_cast hn
   have ht0 : (0 : ℝ) < D.R.t := by
     have := D.R.three_m_lt_t
     exact_mod_cast (by omega : 0 < D.R.t)

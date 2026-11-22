@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsMahler
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsMahler
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -40,8 +45,8 @@ theorem formsIn_ne_top {W : Ideal (MvPolynomial (Fin n) ℂ)} (hW : IsRelevant W
 
 end AdmissibleAE
 
-open AdmissibleAE in
 
+open AdmissibleAE in
 theorem AdmissibleAE.proof : AdmissibleAE.Statement := by
   intro n Z hrel
   unfold IsAdmissible

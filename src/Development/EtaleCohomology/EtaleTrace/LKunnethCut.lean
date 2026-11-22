@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleTrace.LadicH0LocallyConstant
-import Development.EtaleCohomology.KummerTheory.InjSlice
+module
+
+public import Development.EtaleCohomology.EtaleTrace.LadicH0LocallyConstant
+public import Development.EtaleCohomology.KummerTheory.InjSlice
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC
@@ -14,11 +18,11 @@ theorem bilin_ext_one_tmul (l : ℕ) [Fact l.Prime] {M N W : Type 1} [AddCommGro
   refine TensorProduct.ext' fun u v => ?_
   induction u using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => rw [TensorProduct.add_tmul, map_add, map_add, ha, hb]
+  | add a b ha hb => rw [TensorProduct.add_tmul, map_add (f := _), map_add (f := _), ha, hb]
   | tmul a x =>
     induction v using TensorProduct.induction_on with
     | zero => simp
-    | add c d hc hd => rw [TensorProduct.tmul_add, map_add, map_add, hc, hd]
+    | add c d hc hd => rw [TensorProduct.tmul_add, map_add (f := _), map_add (f := _), hc, hd]
     | tmul b y =>
       have e1 : (a ⊗ₜ[ℤ_[l]] x : ℚ_[l] ⊗[ℤ_[l]] M) = a • ((1 : ℚ_[l]) ⊗ₜ[ℤ_[l]] x) := by
         rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one]
@@ -42,16 +46,6 @@ theorem kun_bijective_of_kunIso (l : ℕ) [Fact l.Prime] {k : Type} [Field k] {X
     rfl
   rw [e]
   exact κ.bijective
-
-theorem LKunneth_of (hR : LRing) (hK : LateralTheory.KummerTheory.GOAL) : LKunneth := by
-  intro hB l _ k _ _ hl d e X Y p q hp hq n
-  have hc := (hR hB l).1
-  obtain ⟨⟨-, a2, -, -, -, a6n, a6r, -, -, a7, a8, a9, a10, a11⟩, ⟨b1, b2, b3, -, -⟩, -, ⟨-, e2, e3, e4, -, -⟩⟩ := hB
-  obtain ⟨hp1, hp2⟩ := hp
-  obtain ⟨hq1, -⟩ := hq
-  have : Smooth p := SmoothOfRelativeDimension.smooth d p
-  exact kun_bijective_of_kunIso l p q n (hc _)
-    (hK a2 a6n a6r a7 a8 a9 a10 a11 b1 b2 b3 e2 e3 e4 l k (isUnit_iff_ne_zero.2 hl) p q n 0)
 
 end LateralTheory.EtaleTrace
 

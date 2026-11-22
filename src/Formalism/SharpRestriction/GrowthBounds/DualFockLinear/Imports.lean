@@ -1,2 +1,6 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.DgFalseDiag
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.ThAllMonomial
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.DgFalseDiag
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.ThAllMonomial
+
+@[expose] public section

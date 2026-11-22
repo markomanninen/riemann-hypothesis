@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.HermitianForms.PrkSmul
+module
+
+public import Formalism.LocalToGlobal.HermitianForms.PrkSmul
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,8 +57,8 @@ abbrev FrP : Type := Frames (gramC (gramP D) (embT D))
 
 variable {D}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 structure ClsPTied (u : D.what₂.Word) where
 
   lev : StepLevel D.host.F D.host.E (sigD D) (gramP D) 1 D.R.f (badG D)
@@ -79,8 +83,8 @@ structure ClsPTied (u : D.what₂.Word) where
 def sgT (u : D.what₂.Word) : D.what₂.Tau → DomWeight (D.R.N D.R.m - 1) :=
   fun τ => shW ((D.fm u).sg τ) ((D.R.m * (D.R.t + 1) / 2 : ℕ) : ℤ)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 structure ValPTied (u : D.what₂.Word) (K : ClsPTied u) where
 
   sg : ∀ τ (i : Fin (D.R.N D.R.m - 1)),
@@ -104,8 +108,8 @@ structure ValPTied (u : D.what₂.Word) (K : ClsPTied u) where
       ∃ P ∈ IntSpan D w (D.fm u).sg, eW ((D.fm u).ptEmb x) c =
         fnOf _ (shiftOf (sgT u)) (atInf (embT D) (B⁻¹ : GL (Fin (D.R.N D.R.m - 1)) D.host.E).1) P
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 structure TilTied (u : D.what₂.Word) (A : AtTTied u) (K : ClsPTied u) (P : LvTied u A D.R.m le_rfl) where
   z0 : Fin (D.R.N D.R.m) → D.host.E
   lastCoordinateUniformizerVector_spans_orthogonal_line : ∃ a : D.host.E, z0 = a • zc D
@@ -117,14 +121,14 @@ structure TilTied (u : D.what₂.Word) (A : AtTTied u) (K : ClsPTied u) (P : LvT
     (r : D.host.E) = hform (sigD D : D.host.E →+* D.host.E) (gramN D D.R.m le_rfl) z0 ((ga c).1.1 *ᵥ x.1) →
     (D.fm u).fv D.R.m v ((D.fm u).til c) (P.pr v _ x) = A.res v r
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 def TilBaseLat {u : D.what₂.Word} {A : AtTTied u} {K : ClsPTied u} {P : LvTied u A D.R.m le_rfl}
     (Tl : TilTied u A K P) (Km : ClsTied u D.R.m le_rfl) : Prop :=
   Km.lev.Lb = K.lev.Lb.map ((iXc D).restrictScalars (𝓞 D.host.E)) ⊔ Submodule.span (𝓞 D.host.E) {Tl.z0}
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 def TilBaseFv {u : D.what₂.Word} {A : AtTTied u} {K : ClsPTied u} {P : LvTied u A D.R.m le_rfl}
     (Tl : TilTied u A K P) (Km : ClsTied u D.R.m le_rfl)
     (fMe : ∀ v, Km.lev.fM (A.eV v).1 (A.eV v).2 ≃+ (D.mem u).A.Fv v) : Prop :=
@@ -136,8 +140,8 @@ def TilBaseFv {u : D.what₂.Word} {A : AtTTied u} {K : ClsPTied u} {P : LvTied 
     (r : D.host.E) = hform (sigD D : D.host.E →+* D.host.E) (gramN D D.R.m le_rfl) Tl.z0 x →
     fMe v (Km.lev.fT (A.eV v).1 (A.eV v).2 t) = A.res v r
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 structure TilAd {u : D.what₂.Word} {A : AtTTied u} {K : ClsPTied u} {P : LvTied u A D.R.m le_rfl}
     (Tl : TilTied u A K P) (Km : ClsTied u D.R.m le_rfl) where
   ka : (D.fm u).clsP → Km.lev.U
@@ -146,8 +150,8 @@ structure TilAd {u : D.what₂.Word} {A : AtTTied u} {K : ClsPTied u} {P : LvTie
     bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) (Tl.ga c).1 * (Km.y ((D.fm u).til c)).1 =
       g * (ka c).1
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 def FrExt {u : D.what₂.Word} (z0 : Fin (D.R.N D.R.m) → D.host.E) {K : ClsPTied u} {Km : ClsTied u D.R.m le_rfl}
     {G : GLoc D.host.F D.host.E (sigD D) D.host.g} {a t nb sk fc a' t' nb' sk' fc' : ℕ} {zl zl' : Bool}
     (Lm : GLev Km.lev G a t nb sk fc zl) (Lp : GLev K.lev G a' t' nb' sk' fc' zl') : Prop :=

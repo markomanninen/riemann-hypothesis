@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.AlgebraMapEq
-import Mathlib.RingTheory.PowerSeries.Evaluation
-import Mathlib.RingTheory.MvPowerSeries.LinearTopology
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.AlgebraMapEq
+public import Mathlib.RingTheory.PowerSeries.Evaluation
+public import Mathlib.RingTheory.MvPowerSeries.LinearTopology
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 open scoped TensorProduct

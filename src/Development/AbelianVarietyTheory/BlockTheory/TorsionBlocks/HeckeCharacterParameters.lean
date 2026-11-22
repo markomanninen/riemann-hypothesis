@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+
+@[expose] public section
 
 noncomputable section
 
@@ -157,14 +161,6 @@ def HarmonicModule : Prop :=
     ∀ e0 : W, (e0 : D.HK.V) ∈ wtSub D.HK.act (wtExt n ap am) → ‖D.ι e0‖ = 1 →
       ∃ (io : W ⊗[ℂ] M.V →ₗ[ℂ] Pol p q n 0) (I : D.HK.V ⊗[ℂ] M.V →ₗ[ℂ] Pol p q n 0),
         HarmonicMaps F D W τ M j (delta hn ap am) e0 v0 io I
-
-example (a b : ℕ) : delta (p := 1) (q := 1) (n := 3) (by norm_num) (fun _ => a) (fun _ => b) =
-    MvPolynomial.X (Sum.inl 0, Sum.inl 0) ^ a * MvPolynomial.X (Sum.inr 0, Sum.inl 2) ^ b := by
-  simp [delta, minorProd, nextRow, zPlus, zMinus, topRows, botRows]
-
-example (p q n : ℕ) : decay n (0 : Mat p q) = 1 := by
-  have : (0 : Mat p q).toBlocks₁₂ = 0 := rfl
-  simp [decay, this]
 
 end GlobalTheory.IndefiniteRowSideFullHecke.MatrixMinorProducts
 

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgVanish
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemHGPIffParabolic
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MvecLeviMulUv
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousMirabolicEmbedding
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgVanish
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemHGPIffParabolic
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MvecLeviMulUv
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousMirabolicEmbedding
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
+
+@[expose] public section
 
 open Matrix GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.BZMir GlobalTheory.BZMir.Leib GlobalTheory.RgGu.Leib GlobalTheory.CompanionTheory.BZPhiPG
 open scoped TensorProduct
@@ -36,9 +40,44 @@ theorem hgp_cocompact : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSp
     (GlobalTheory.BZMir.mirabolicProjection k ((i + 1) + t) g)
   refine ⟨g * (GlobalTheory.BZMir.levi k _ w)⁻¹, ?_, GlobalTheory.BZMir.levi k _ w, ⟨w, hw, rfl⟩,
     (inv_mul_cancel_right g _).symm⟩
-  rw [GlobalTheory.CompanionTheory.GPMem.mem_mirabolicParabolic_iff_mirabolicProj_mem_parabolic]
+  have hmem : ∀ (g : Mir k ((i + 1) + t)),
+      g ∈ MirabolicParabolic k (i + 1) t ↔
+        mirabolicProjection k ((i + 1) + t) g ∈ parab k (two (stdSum (rfl : (i + 1) + t = (i + 1) + t))) := by
+    intro g
+    have hlast : ((g : GL (Fin ((i + 1) + t + 1)) k) : Matrix (Fin ((i + 1) + t + 1)) (Fin ((i + 1) + t + 1)) k)
+        (Fin.last ((i + 1) + t)) = GlobalTheory.BZMir.eLast k ((i + 1) + t) :=
+      (GlobalTheory.BZMir.mem_Mir_iff k (g : GL (Fin ((i + 1) + t + 1)) k)).1 g.2
+    have hproj : ∀ a b : Fin ((i + 1) + t),
+        ((mirabolicProjection k ((i + 1) + t) g : GL (Fin ((i + 1) + t)) k) : Matrix _ _ k) a b =
+          ((g : GL (Fin ((i + 1) + t + 1)) k) : Matrix _ _ k) (Fin.castSucc a) (Fin.castSucc b) := fun _ _ => rfl
+    simp only [GlobalTheory.BZMir.Leib.MirabolicParabolic, GlobalTheory.BZMir.Leib.eGP, Subgroup.mem_comap,
+      Subgroup.coe_subtype, GlobalTheory.SmGL.mem_parab_two, hproj]
+    constructor
+    · intro h b a
+      convert h (Fin.castSucc b) a using 2 <;> apply Fin.ext <;>
+        simp [GlobalTheory.SmGL.stdSum_inl, GlobalTheory.SmGL.stdSum_inr]
+    · intro h b a
+      induction b using Fin.lastCases with
+      | last =>
+        have h0 : ((g : GL (Fin ((i + 1) + t + 1)) k) : Matrix _ _ k)
+            (Fin.last ((i + 1) + t))
+            (Fin.castSucc (GlobalTheory.SmGL.stdSum (rfl : (i + 1) + t = (i + 1) + t) (Sum.inl a))) = 0 := by
+          rw [hlast]
+          simp only [GlobalTheory.BZMir.eLast, Pi.single_apply]
+          rw [if_neg (Fin.castSucc_lt_last _).ne]
+        convert h0 using 2 <;> apply Fin.ext <;>
+          simp [GlobalTheory.SmGL.stdSum_inl, GlobalTheory.SmGL.stdSum_inr]
+      | cast b =>
+        convert h b a using 2 <;> apply Fin.ext <;>
+          simp [GlobalTheory.SmGL.stdSum_inl, GlobalTheory.SmGL.stdSum_inr]
+  rw [hmem]
+  have hlevi : mirabolicProjection k ((i + 1) + t) (levi k _ w) = w := by
+    apply Units.ext
+    ext a b
+    show GlobalTheory.BZMir.glEmbMat k _ (w : Matrix _ _ k) (Fin.castSucc a) (Fin.castSucc b) = _
+    simp [GlobalTheory.BZMir.glEmbMat]
   have hproj : GlobalTheory.BZMir.mirabolicProjection k ((i + 1) + t) (g * (GlobalTheory.BZMir.levi k _ w)⁻¹) = p := by
-    rw [map_mul, map_inv, GlobalTheory.CompanionTheory.MirLevi.mirProj_levi, hx, mul_inv_cancel_right]
+    rw [map_mul, map_inv, hlevi, hx, mul_inv_cancel_right]
   rw [hproj]
   exact p.2
 

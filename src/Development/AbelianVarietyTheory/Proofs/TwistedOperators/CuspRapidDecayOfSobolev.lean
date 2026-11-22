@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameOfHeisDer
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegrableOnOfRapidDec
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntegrationByPartsRightDerivativeAdelicQuotient
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOpenLevelFixingThetaFunction
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSmoothFunctionsOfClosedRightDerivatives
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameOfHeisDer
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegrableOnOfRapidDec
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntegrationByPartsRightDerivativeAdelicQuotient
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOpenLevelFixingThetaFunction
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSmoothFunctionsOfClosedRightDerivatives
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,9 +30,11 @@ theorem thetaKO_om (g g₀ : GA D V) (h h₀ : GA D W) (f : WO V W → ℂ) :
 
 theorem sobO_smul_measure (c : ℝ≥0) (μ : Measure (WO V W)) (𝓓 : Set (WO V W)) (d : ℕ) (f : WO V W → ℂ) :
     sobO ψ θ (c • μ) 𝓓 d f = (c ^ (2 : ℝ≥0∞).toReal⁻¹ : ℝ≥0) * sobO ψ θ μ 𝓓 d f := by
-  simp only [sobO, wordSum, l2O, Measure.restrict_smul, eLpNorm_smul_measure_of_ne_top' ENNReal.ofNat_ne_top,
-    Finset.mul_sum]
-  rfl
+  by_cases hc : c = 0
+  · simp [hc, sobO, wordSum, l2O]
+  · simp only [sobO, wordSum, l2O, Measure.restrict_smul, eLpNorm_smul_measure_of_ne_zero' hc,
+      Finset.mul_sum]
+    rfl
 
 theorem kernel_le (H : KernelBound V W A d) (hθ : IsInfFam θ) (hω : IsWeilDatumO ψ V W χS χT ω)
     {μ : Measure (WO V W)} {𝓓 : Set (WO V W)} (hμ : μ.IsAddHaarMeasure) (h𝓓 : IsAddFundamentalDomain (ratL W V) 𝓓 μ)
@@ -201,7 +207,7 @@ theorem lift_add_smul (hG : ThetaGrowth D) (hθ : IsInfFam θ) (hω : IsWeilDatu
     ((integrableOn_of_rapidDec hG hθ hω hf' hν h𝓕 hF g).const_mul c)
   rw [integral_const_mul] at this
   refine Eq.trans ?_ this
-  simp only [lift, Lift.liftInt, thetaKO, map_add, map_smul, Pi.add_apply, Pi.smul_apply, smul_eq_mul, add_mul, mul_assoc]
+  simp only [lift, Lift.liftInt, thetaKO, map_add (f := _), map_smul, Pi.add_apply, Pi.smul_apply, smul_eq_mul, add_mul, mul_assoc]
 
 theorem growthSob_lift_le (hG : ThetaGrowth D) (H : KernelBound V W A d) (hθ : IsInfFam θ)
     (hω : IsWeilDatumO ψ V W χS χT ω) (hν : ν.IsHaarMeasure) (h𝓕 : IsFundamentalDomain (GQ W) 𝓕 ν) (k : ℕ)
@@ -215,7 +221,9 @@ theorem growthSob_lift_le (hG : ThetaGrowth D) (H : KernelBound V W A d) (hθ : 
   choose c hc using fun l => (tame_word ht l).2
   obtain ⟨C, hC⟩ := growthSize_lift_le H hθ hω hμ h𝓓 hU
   refine ⟨C * ∑ n ∈ Finset.range (k + 1), ∑ a : Fin n → _, c (List.ofFn a), fun f hf F hF => ?_⟩
-  simp only [growthSob, wordSum, ENNReal.coe_mul, ENNReal.coe_finset_sum, Finset.mul_sum, Finset.sum_mul]
+  simp only [growthSob, wordSum, ENNReal.coe_mul, Finset.mul_sum, Finset.sum_mul]
+  push_cast
+  simp only [Finset.sum_mul]
   refine Finset.sum_le_sum fun n hn => Finset.sum_le_sum fun a _ => ?_
   have e := (wordAct_rel (A := glDer θ V) (R := fun φ x => φ = lift ω ν 𝓕 x F ∧ IsThetaFunO ψ V W x) (List.ofFn a)
     (fun i _ φ x h => ⟨by
@@ -273,18 +281,8 @@ theorem liftPropsRapid_of_growth (D : D7) (hG : ThetaGrowth D) : LiftPropsRapid 
     exact ne_top_of_le_ne_top (ENNReal.mul_ne_top (ENNReal.mul_ne_top ENNReal.coe_ne_top
       (sobO_ne_top hω.std hθ hμ.1 hμ.2.1 hf _)) (hdec F hF A)) (hC f hl F hF.rapidDec)
 
-theorem cuspRapidDecay_of_sobolev (hP : GlobalTheory.Published.CuspDecaySobolev) : GlobalTheory.Published.CuspRapidDecay := by
-  intro D θ hθ V e he φ ha hs hg hc
-  have R := (GlobalTheory.T.adelicUnitary_realPoints_structure_realPlaces D).2 θ hθ V
-  obtain rfl := GlobalTheory.SmoothForms.eq_expInf R he
-  exact ((rapidDec_iff_isRapidDecay hθ).1 (rapidDec_of_cuspDecaySobolev hP hθ ha
-    ((GlobalTheory.SmoothForms.smooth_iff R φ).2 hs) (unifModGrowth_of_isUnifModerate hθ hg) hc)).2.2
-
 theorem liftProps_of_rapidDecay (hP : GlobalTheory.Published.CuspRapidDecay) (D : D7) (hG : ThetaGrowth D) : LiftProps D :=
   liftProps_of_rapid hP (liftPropsRapid_of_growth D hG)
-
-theorem liftProps_of_growth (hP : GlobalTheory.Published.CuspDecaySobolev) (D : D7) (hG : ThetaGrowth D) : LiftProps D :=
-  liftProps_of_rapidDecay (cuspRapidDecay_of_sobolev hP) D hG
 
 end GlobalTheory.Chain.LiftReg
 

@@ -1,6 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSegreFlagCutTools
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSegreClosureNumber
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagCut
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSegreFlagCutTools
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSegreClosureNumber
+import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsVerticalDivOfIsVerticalDivisor
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -114,7 +121,7 @@ theorem SegreFlagClosureCut.proof (hC3 : CutByEffectiveDivisor.Statement.{0})
         refine Finset.sum_congr rfl fun i _ => ?_
         ring
       rw [e1, ← hBs₀.expansion]
-      simp only [hy', map_mul, map_add, rename_X]
+      simp only [hy', map_mul, map_add (f := _), rename_X]
       ring
     · simp only [Pi.add_apply, hE1, hE2, Nat.add_sub_cancel]
       refine IsHomogeneous.add (IsHomogeneous.add ?_ ?_) ?_
@@ -190,7 +197,8 @@ theorem SegreFlagClosureCut.proof (hC3 : CutByEffectiveDivisor.Statement.{0})
       have hc' : cls' ζi + cls' xi = fun o => (cs o : ℤ) - ch o := by
         rw [hdeg, hcls', hζi, hxi, closureDeg_zero, closureDeg_natAdd, hki, Fin.append_left]
       rw [hc']
-      exact pairNum_cut_section hC3 hϖ hM1' cls cls' F3 G3 hv3 hs hh hsP hhP hgen' (by omega) hBs₀ Q'
+      exact pairNum_cut_section hC3 hϖ hM1' cls cls' F3 G3 hv3 hs hh hsP hhP
+        (by simpa only [← FlagTypings.divCycle_eq] using hgen') (by omega) hBs₀ Q'
         (by rw [hQlen]; omega)
   rw [hT3]
 

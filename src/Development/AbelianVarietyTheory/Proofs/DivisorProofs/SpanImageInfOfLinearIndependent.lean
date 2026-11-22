@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MapSpanBaseChangeEquivSubmoduleOf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MapSpanBaseChangeEquivSubmoduleOf
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -20,7 +24,8 @@ theorem span_image_inf_of_linearIndependent {K V W ι : Type} [Field K] [AddComm
     have := B.constr_basis ℂ (fun k => j (b k)) k
     rwa [Algebra.TensorProduct.basis_apply] at this
   have hJ : ∀ v, J (1 ⊗ₜ v) = j v := fun v => by
-    rw [← b.sum_repr v, TensorProduct.tmul_sum, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr v, TensorProduct.tmul_sum, map_sum, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [TensorProduct.tmul_smul, map_smulₛₗ j, ← hJb, ← map_smul,
       ← algebraMap_smul ℂ (b.repr v k)]

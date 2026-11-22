@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.KummerBasic
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.KummerBasic
+
+@[expose] public section
 
 namespace GroundTheory.ProfCoh
 
@@ -35,15 +39,15 @@ section Finite
 variable (K : Type*) [Field K] (n : ℕ) [NeZero n] [HasEnoughRootsOfUnity K n]
 variable (L : Type*) [Field L] [Algebra K L]
 
-omit [NeZero n] [HasEnoughRootsOfUnity K n] in
 
+omit [NeZero n] [HasEnoughRootsOfUnity K n] in
 lemma kummerGroup_pow_eq_one (x : kummerGroup K n L) : x ^ n = 1 :=
   Subtype.ext (UnitsModPow.pow_eq_one K n x.1)
 
 variable {K n L}
 
-omit [NeZero n] [HasEnoughRootsOfUnity K n] in
 
+omit [NeZero n] [HasEnoughRootsOfUnity K n] in
 lemma exists_eigenvector_of_character [FiniteDimensional K L] (χ : Gal(L/K) →* Kˣ) :
     ∃ β : Lˣ, ∀ σ : Gal(L/K), σ (β : L) = algebraMap K L (χ σ : K) * β := by
   let f : Gal(L/K) → Lˣ := fun σ => Units.map (algebraMap K L : K →* L) (χ σ)
@@ -60,8 +64,8 @@ lemma exists_eigenvector_of_character [FiniteDimensional K L] (χ : Gal(L/K) →
     f] at this
   rw [← this, div_mul_cancel₀ _ β.ne_zero]
 
-omit [NeZero n] [HasEnoughRootsOfUnity K n] in
 
+omit [NeZero n] [HasEnoughRootsOfUnity K n] in
 lemma exists_kummer_eigenvector [FiniteDimensional K L] [IsGalois K L]
     (hexp : Monoid.exponent Gal(L/K) ∣ n) (χ : Gal(L/K) →* Kˣ) :
     ∃ a : Kˣ, ∃ β : L, β ^ n = algebraMap K L a ∧
@@ -156,60 +160,10 @@ theorem kummerPairingLeft_bijective [FiniteDimensional K L] [IsGalois K L]
   rw [IsGalois.card_aut_eq_finrank, ← card_kummerGroup K n L hexp]
   exact (card_monoidHom_rootsOfUnity (kummerGroup K n L) (kummerGroup_pow_eq_one K n L)).symm
 
-theorem kummerPairingRight_bijective [FiniteDimensional K L] [IsGalois K L]
-    [IsMulCommutative Gal(L/K)] (hexp : Monoid.exponent Gal(L/K) ∣ n) :
-    Function.Bijective (kummerPairingRight K n L) := by
-  let _ : CommGroup Gal(L/K) :=
-    { (inferInstance : Group Gal(L/K)) with
-      mul_comm := fun a b => (IsMulCommutative.is_comm (M := Gal(L/K))).comm a b }
-  have := finite_monoidHom_rootsOfUnity (K := K) (n := n) Gal(L/K)
-  rw [Nat.bijective_iff_injective_and_card]
-  refine ⟨kummerPairingRight_injective K n L, ?_⟩
-  rw [card_kummerGroup K n L hexp, ← IsGalois.card_aut_eq_finrank]
-  exact (card_monoidHom_rootsOfUnity Gal(L/K) (Monoid.exponent_dvd_iff_forall_pow_eq_one.mp hexp)).symm
-
 noncomputable def galEquivDual [FiniteDimensional K L] [IsGalois K L]
     [IsMulCommutative Gal(L/K)] (hexp : Monoid.exponent Gal(L/K) ∣ n) :
     Gal(L/K) ≃* (kummerGroup K n L →* rootsOfUnity n K) :=
   MulEquiv.ofBijective _ (kummerPairingLeft_bijective K n L hexp)
-
-noncomputable def kummerGroupEquivDual [FiniteDimensional K L] [IsGalois K L]
-    [IsMulCommutative Gal(L/K)] (hexp : Monoid.exponent Gal(L/K) ∣ n) :
-    kummerGroup K n L ≃* (Gal(L/K) →* rootsOfUnity n K) :=
-  MulEquiv.ofBijective _ (kummerPairingRight_bijective K n L hexp)
-
-@[simp] lemma galEquivDual_apply [FiniteDimensional K L] [IsGalois K L]
-    [IsMulCommutative Gal(L/K)] (hexp : Monoid.exponent Gal(L/K) ∣ n) (σ : Gal(L/K))
-    (x : kummerGroup K n L) : galEquivDual K n L hexp σ x = kummerPairing K n L σ x := rfl
-
-@[simp] lemma kummerGroupEquivDual_apply [FiniteDimensional K L] [IsGalois K L]
-    [IsMulCommutative Gal(L/K)] (hexp : Monoid.exponent Gal(L/K) ∣ n) (x : kummerGroup K n L)
-    (σ : Gal(L/K)) : kummerGroupEquivDual K n L hexp x σ = kummerPairing K n L σ x := rfl
-
-theorem kummerField_kummerGroup [FiniteDimensional K L] [IsGalois K L]
-    [IsMulCommutative Gal(L/K)] (hexp : Monoid.exponent Gal(L/K) ∣ n) :
-    kummerField K n L (kummerGroup K n L) = ⊤ := by
-  set E := kummerField K n L (kummerGroup K n L)
-  have hbot : E.fixingSubgroup = ⊥ := by
-    rw [eq_bot_iff]
-    intro σ hσ
-    rw [Subgroup.mem_bot]
-    apply kummerPairingLeft_injective K n L hexp
-    rw [map_one]
-    ext x : 1
-    obtain ⟨a, ha, α, hα⟩ := exists_rep x
-    have hαE : α ∈ E := IntermediateField.subset_adjoin _ _ ⟨a, ha ▸ x.2, hα⟩
-    rw [kummerPairingLeft_apply, MonoidHom.one_apply]
-    exact (kummerPairing_eq_one_iff σ x ha hα).mpr (hσ ⟨α, hαE⟩)
-  rw [← IsGalois.fixedField_fixingSubgroup E, hbot, IntermediateField.fixedField_bot]
-
-theorem adjoin_nthRoots_eq_top [FiniteDimensional K L] [IsGalois K L]
-    [IsMulCommutative Gal(L/K)] (hexp : Monoid.exponent Gal(L/K) ∣ n) :
-    IntermediateField.adjoin K {α : L | α ≠ 0 ∧ α ^ n ∈ Set.range (algebraMap K L)} = ⊤ := by
-  rw [eq_top_iff, ← kummerField_kummerGroup K n L hexp]
-  apply IntermediateField.adjoin.mono
-  rintro α ⟨a, -, hα⟩
-  exact ⟨ne_zero_of_pow_eq_algebraMap hα, a, hα.symm⟩
 
 end Finite
 

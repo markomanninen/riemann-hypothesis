@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularUFDSerre
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularSmooth
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMProjDimCriterion
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StAuslanderBuchsbaumDepthLower
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StAuslanderBuchsbaumProjDimUpper
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegularSequenceLengthLeDim
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMHeightAddDim
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularUFDSerre
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularSmooth
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMProjDimCriterion
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StAuslanderBuchsbaumDepthLower
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StAuslanderBuchsbaumProjDimUpper
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegularSequenceLengthLeDim
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMHeightAddDim
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

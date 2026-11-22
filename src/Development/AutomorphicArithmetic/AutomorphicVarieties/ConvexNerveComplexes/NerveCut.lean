@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.NerveFaceClosed
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.NerveFaceClosed
+
+@[expose] public section
 
 open Set UpperTheory.V.ConeExtensionAcyclic
 
@@ -32,7 +36,7 @@ theorem UpperTheory.V.ConeExtensionAcyclic.nerve_cut :
           ring
         refine ⟨((f y - u) / (f y - f x)) • x + ((u - f x) / (f y - f x)) • y,
           ⟨hX hx hy ha0 hb0 hab, ?_⟩, fun j => hA _ (ht j) (ht' j) ha0 hb0 hab⟩
-        rw [map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
+        rw [map_add (f := _), map_smul, map_smul, smul_eq_mul, smul_eq_mul]
         field_simp
         ring
       · exact ⟨x, ⟨hx, le_antisymm h1 (h2.trans hd)⟩, ht⟩

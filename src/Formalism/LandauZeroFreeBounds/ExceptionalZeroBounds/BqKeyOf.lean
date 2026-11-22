@@ -1,4 +1,8 @@
-import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.IteratedDerivLseriesAlternatingNonneg
+module
+
+public import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.IteratedDerivLseriesAlternatingNonneg
+
+@[expose] public section
 
 open Complex
 open scoped ComplexOrder Nat

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.HostRank
-import Formalism.LocalToGlobal.ProjectiveLattices.HostInt
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.HostRank
+public import Formalism.LocalToGlobal.ProjectiveLattices.HostInt
+
+@[expose] public section
 
 noncomputable section
 

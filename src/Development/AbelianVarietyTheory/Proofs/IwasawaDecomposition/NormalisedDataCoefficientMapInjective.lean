@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCastMap
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ModelSame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCastMap
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ModelSame
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option synthInstance.maxHeartbeats 200000
@@ -56,7 +60,8 @@ theorem inj_of_li {L K I W : Type} [Field L] [CharZero L] [Field K] [Fintype I] 
     (hli : LinearIndependent ℂ fun i => cL (bVV L lam i)) : Function.Injective cK := by
   have hL : ∀ u : VV L lam, cL u = 0 → u = 0 := fun u hu => by
     have e := (bVV L lam).sum_repr u
-    rw [← e, map_sum] at hu
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← e, map_sum] at hu
     simp only [LinearMap.map_smulₛₗ] at hu
     have := Fintype.linearIndependent_iff.1 hli _ hu
     exact (bVV L lam).repr.injective (Finsupp.ext fun i => by
@@ -81,8 +86,8 @@ theorem normalisedData_coefficientMap_injective {D : D7} {G : Type} [Group G] [F
   obtain ⟨g, r, c0L, hT, hbc⟩ := hO.lift.c0
   exact inj_of_li (lamV D i) O.jL sj hbc (hT.mapL i).2.1
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem omOver_of_isBCOf (X X' : Stages) (hP : X'.B.toPre = X.B.toPre)
     {G : Type} [Group G] [Fintype G] {Pl0 T0 Pl0' T0' : Type} {A : FamIn X.toD7.what₂.LL G Pl0 T0 X.toD7.R.m}
     {A' : FamIn X'.toD7.what₂.LL G Pl0' T0' X'.toD7.R.m} (T : CoreJ X.toD7) [Algebra T.Q.c.F X.toD7.what₂.LL]

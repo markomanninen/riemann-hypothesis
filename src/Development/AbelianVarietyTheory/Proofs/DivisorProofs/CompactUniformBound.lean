@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
-import GroundTheory.AutomorphicForms.MultiplicityOne.Injective
-import Development.AbelianVarietyTheory.Definitions.Divisors.KerInfIntegrableOfMemRspan
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import GroundTheory.AutomorphicForms.MultiplicityOne.Injective
+public import Development.AbelianVarietyTheory.Definitions.Divisors.KerInfIntegrableOfMemRspan
+
+@[expose] public section
 
 namespace GlobalTheory.CompactUniformHeightBound
 

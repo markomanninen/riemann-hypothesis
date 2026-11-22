@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,10 +60,12 @@ theorem split {m : ℕ} (E : Fin n → Fin n → Module.End ℂ M) (col : Fin m 
     have hh := hsym (-c) hcs.neg_left hci.neg_left
     rwa [show (c - xJ E i) * (c - xJ E j) = (xJ E i + -c) * (xJ E j + -c) by noncomm_ring]
   let S : Set (Module.End ℂ (TV n M (Fin m))) := Set.range (xJ E)
-  have hcomm : ∀ a ∈ S, ∀ b ∈ S, a * b = b * a := by
-    rintro _ ⟨k, rfl⟩ _ ⟨l, rfl⟩
-    exact (hc k l).eq
-  letI : CommRing (Algebra.adjoin ℂ S) := Algebra.adjoinCommRingOfComm ℂ hcomm
+  have hcomm : S.Pairwise Commute := by
+    rintro _ ⟨k, rfl⟩ _ ⟨l, rfl⟩ _
+    exact hc k l
+  let _ : IsMulCommutative (Algebra.adjoin ℂ S) := Algebra.isMulCommutative_adjoin ℂ hcomm
+  let _ : CommRing (Algebra.adjoin ℂ S) :=
+    open scoped IsMulCommutative in inferInstance
   let x' : Fin m → Algebra.adjoin ℂ S := fun k => ⟨xJ E k, Algebra.subset_adjoin ⟨k, rfl⟩⟩
   let F : Fin m → Fin m → Algebra.adjoin ℂ S := fun p q =>
     if p < q ∧ col p = col q then x' p - x' q + 1 else 1
@@ -79,17 +85,7 @@ theorem split {m : ℕ} (E : Fin n → Fin n → Module.End ℂ M) (col : Fin m 
     | nil => exact hcoe_one
     | cons a l ih => rw [List.prod_cons, List.map_cons, List.prod_cons, hcoe_mul, ih]
   have hcolD : colD E col = ((∏ q, ∏ p, F p q : Algebra.adjoin ℂ S) : Module.End ℂ _) := by
-    simp only [← List.prod_ofFn]
-    rw [hlist, List.map_ofFn]
-    unfold colD
-    congr 1
-    congr 1
-    funext q
-    simp only [Function.comp_apply, hlist, List.map_ofFn, Function.comp_def]
-    congr 1
-    congr 1
-    funext p
-    exact (hF p q).symm
+    simp only [colD, ← List.prod_ofFn, hlist, List.map_ofFn, Function.comp_def, hF]
   have hjmem : j ∈ (Finset.univ : Finset (Fin m)).erase i :=
     Finset.mem_erase.mpr ⟨hne.symm, Finset.mem_univ _⟩
   have hsplit : ∀ g : Fin m → Algebra.adjoin ℂ S,

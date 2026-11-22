@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.JetFieldLeKR
-import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.ComplexMultiplication.ExtEmbEquivComp
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.PeriodLatticeFinitelyGenerated
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.JetFieldLeKR
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.ComplexMultiplication.ExtEmbEquivComp
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.PeriodLatticeFinitelyGenerated
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -10,26 +14,6 @@ noncomputable section
 namespace Formalism.L2.Ker
 
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Th1.H Formalism.MainNotions
-
-theorem mem_rangeIF {K : Type} [Field K] [NumberField K] (σ : K →+* ℂ) (z : ℂ) : z ∈ rangeIF σ ↔ ∃ k : K, σ k = z := by
-  unfold rangeIF
-  rw [AlgHom.mem_fieldRange]
-  rfl
-
-theorem withK_embC {X : Fields} (A : Amb X) (M : IntermediateField ℚ ℂ) [NumberField M] [StarRing M] (hM : ∀ τ x, X.embC A.σ₀ τ x ∈ M) :
-    (fieldsWithK X M fun τ => (X.embC A.σ₀ τ).codRestrict M (hM τ)).embC (A.withK M hM).σ₀ = X.embC A.σ₀ := by
-  funext τ
-  exact RingHom.ext fun x => rfl
-
-theorem withK_thInd {X : Fields} (A : Amb X) (M : IntermediateField ℚ ℂ) [NumberField M] [StarRing M] (hM : ∀ τ x, X.embC A.σ₀ τ x ∈ M)
-    {a b : ℕ} (Sall : Finset (HeightOneSpectrum (𝓞 X.E))) (N : Submodule (𝓞 X.E) (Sp X.E a)) (N' : Submodule (𝓞 X.E) (Sp X.E b)) (c : ℕ) (x : HomE X.E a b) :
-    (A.withK M hM).thInd Sall N N' c x = A.thInd Sall N N' c x := by
-  have h := withK_embC A M hM
-  unfold Amb.thInd
-  rw [h]
-  rfl
-
-theorem jets_rational_of_degree_form : JetsRatDegOf := fun _ _ _ _ _ _ _ h N N' c x hr m _ => h N N' c x hr m
 
 theorem evG_id_map {K : Type} [Field K] {ι : Type} [Fintype ι] {a : ℕ} {Y : Type} (fr : Y → ι → Matrix (Fin a) (Fin a) ℂ) (sh : ι → ℤ) (σ : K →+* ℂ)
     (P : DIV.Pol K ι a) : evG fr sh (RingHom.id ℂ) (MvPolynomial.map σ P) = evG fr sh σ P := by
@@ -53,7 +37,7 @@ theorem aeval_scale_monomial {σ : Type} (u : σ → K) (s : σ →₀ ℕ) (c :
   rw [h, monomial_eq, C_mul, algebraMap_eq, mul_assoc]
 
 theorem coeff_scale {σ : Type} (u : σ → K) (R : MvPolynomial σ K) (s : σ →₀ ℕ) :
-    coeff s (aeval (fun i => C (u i) * X i : σ → MvPolynomial σ K) R) = coeff s R * s.prod fun i k => u i ^ k := by
+    AddMonoidAlgebra.coeff (aeval (fun i => C (u i) * X i : σ → MvPolynomial σ K) R) s = AddMonoidAlgebra.coeff R s * s.prod fun i k => u i ^ k := by
   classical
   induction R using MvPolynomial.induction_on' with
   | monomial m c =>
@@ -61,7 +45,7 @@ theorem coeff_scale {σ : Type} (u : σ → K) (R : MvPolynomial σ K) (s : σ �
     split_ifs with h
     · subst h; rfl
     · simp
-  | add f g hf hg => rw [map_add, coeff_add, coeff_add, hf, hg, add_mul]
+  | add f g hf hg => rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hf, hg, add_mul]
 
 open Classical in
 theorem degAt_eq (m : DVar ι a b →₀ ℕ) (τ : ι) : degAt m τ = ∑ k : DVar ι a b, if k.1 = τ then m k else 0 := by
@@ -71,8 +55,8 @@ theorem degAt_eq (m : DVar ι a b →₀ ℕ) (τ : ι) : degAt m τ = ∑ k : D
   have : m k = 0 := by simpa using hk
   rw [this]; simp
 
-open Classical in
 
+open Classical in
 def scU (a b : ℕ) (τ : ι) (x : K) : ((ι × Fin b × Fin b) ⊕ DVar ι a b) → K := Sum.elim (fun _ => 1) (fun k => if k.1 = τ then x else 1)
 
 open Classical in
@@ -83,8 +67,8 @@ theorem scale_prod (τ : ι) (x : K) (s : ((ι × Fin b × Fin b) ⊕ DVar ι a 
   refine Finset.prod_congr rfl fun k _ => ?_
   split_ifs <;> simp
 
-open Classical in
 
+open Classical in
 def bSc (a : ℕ) (τ : ι) (x : K) : ι → Matrix (Fin a) (Fin a) K := fun τ' => Matrix.diagonal fun _ => if τ' = τ then x else 1
 
 open Classical in
@@ -117,15 +101,17 @@ theorem subD_colSub_bSc (τ : ι) (x : K) (Q : Pol K ι a) :
     rw [AlgHom.comp_apply, AlgHom.comp_apply, colSub_bSc_X, map_mul]
     simp only [subD, aeval_X, aeval_C, algebraMap_eq]
     by_cases hb : v.2.2.1 < b
-    · simp only [dif_pos hb, map_sum, map_mul, aeval_X, scU, Sum.elim_inl, Sum.elim_inr, C_1, one_mul, Finset.mul_sum]
-      exact Finset.sum_congr rfl fun β _ => by ring
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [dif_pos hb, map_sum, map_mul, aeval_X, scU, Sum.elim_inl, Sum.elim_inr, C_1, one_mul, Finset.mul_sum]
+        exact Finset.sum_congr rfl fun β _ => by simp only [mul_assoc, mul_comm, mul_left_comm]
     · simp only [dif_neg hb, mul_zero, map_zero]
   exact AlgHom.congr_fun e Q
 
 theorem jetLin_congr (J J' : (DVar ι a b →₀ ℕ) → K) (R : MvPolynomial ((ι × Fin b × Fin b) ⊕ DVar ι a b) K)
     (h : ∀ s ∈ R.support, J (s.comapDomain Sum.inr Sum.inr_injective.injOn) = J' (s.comapDomain Sum.inr Sum.inr_injective.injOn)) :
     jetLin J R = jetLin J' R := by
-  rw [R.as_sum, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [R.as_sum, map_sum, map_sum]
   refine Finset.sum_congr rfl fun s hs => ?_
   rw [jetLin_monomial, jetLin_monomial, h s hs]
 
@@ -138,9 +124,9 @@ theorem deg_of_wt [Infinite K] {ν : ι → Fin a → ℕ} {Q : Pol K ι a} (hQ 
   have h1 := hQ (bSc a τ x) (isBor_bSc τ hx)
   have h2 := subD_colSub_bSc (b := b) τ x Q
   rw [h1, map_smul] at h2
-  have h3 := congrArg (coeff s) h2
+  have h3 := congrArg (AddMonoidAlgebra.coeff · s) h2
   rw [coeff_scale, scale_prod, coeff_smul, smul_eq_mul, mul_comm] at h3
-  have hc : coeff s (subD K ι a b Q) ≠ 0 := mem_support_iff.1 hs
+  have hc : AddMonoidAlgebra.coeff (subD K ι a b Q) s ≠ 0 := mem_support_iff.1 hs
   have h4 := mul_left_cancel₀ hc h3
   rw [← h4]
   have h5 : (∏ τ', ∏ r, bSc a τ x τ' r r ^ ν τ' r) = x ^ ∑ r, ν τ r := by

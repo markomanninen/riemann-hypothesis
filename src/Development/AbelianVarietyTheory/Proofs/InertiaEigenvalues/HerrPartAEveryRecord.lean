@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.ClassMapInjectiveBijectiveNorms
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HerrAAndNatural
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.ClassMapInjectiveBijectiveNorms
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HerrAAndNatural
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 
 namespace GlobalTheory.HerrFull

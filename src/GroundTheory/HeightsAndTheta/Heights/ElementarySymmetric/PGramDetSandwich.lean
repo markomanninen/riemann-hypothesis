@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.GramDetSandwich
-import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.DetIneq
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.GramDetSandwich
+public import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.DetIneq
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NineStatements

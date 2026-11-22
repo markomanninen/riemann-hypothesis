@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.FixedRel
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.ZhatIntegralHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.SkewSolve
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.ResFin
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SplitRow
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IdentityCellTrace.TraceOneHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaModuloX.PositiveWeightHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.ResFinAlt
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.FixedRel
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.ZhatIntegralHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.SkewSolve
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.ResFin
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SplitRow
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IdentityCellTrace.TraceOneHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaModuloX.PositiveWeightHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.ResFinAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,12 +71,12 @@ section D7
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-theorem zhat_cs (D : D7) {T T' : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T')
+theorem zhat_cs (D : D7) {T T' : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T')
     (c : Fin D.R.rS) (b : Fin (D.R.rS + 1)) :
     ZhatL (lf D F0) F' (Fin.castSucc c) b = (VS D).hT (F0.e c) (frame F' b) := by
   simp [ZhatL, Zhat, brS, frame, FlagG.fvec, lf]
 
-theorem zhat_last (D : D7) {T T' : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T')
+theorem zhat_last (D : D7) {T T' : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T')
     (b : Fin (D.R.rS + 1)) :
     ZhatL (lf D F0) F' (Fin.last D.R.rS) b = (VS D).hT F0.z (frame F' b) := by
   simp [ZhatL, Zhat, brS, frame, FlagG.fvec, lf]
@@ -127,11 +131,11 @@ theorem fixedZhat_of (hH : HeisOp) (hSk : SkewSolve) (hS : ShortFin) (hRD : Rows
     have := (D.mem u).A.T_prime.pos
     exact_mod_cast this.ne'
 
-  let yv : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) → (VS D).V := fun y => ∑ b, v b • frame y b
-  let ι2 : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) → (VS D).V :=
+  let yv : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E) → (VS D).V := fun y => ∑ b, v b • frame y b
+  let ι2 : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E) → (VS D).V :=
     fun y => ((nd * nv : ℕ) : D.host.E) • piL F0.e f (yv y)
-  let hz : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) → D.host.E := fun y => (VS D).hT F0.z (ι2 y)
-  let xf : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) → (VS D).V :=
+  let hz : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E) → D.host.E := fun y => (VS D).hT F0.z (ι2 y)
+  let xf : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E) → (VS D).V :=
     fun y => ((Tu D u : ℕ) : D.host.E) • ι2 y + hz y • F0.z
 
   have hβy : ∀ y ∈ Y, ∀ c b, (VS D).hT (F0.e c) (frame y.1 b) = β c b := by
@@ -146,15 +150,19 @@ theorem fixedZhat_of (hH : HeisOp) (hSk : SkewSolve) (hS : ShortFin) (hRD : Rows
     exact frame_mem D Λ y.1 hX hlift.1 b
   have hyve : ∀ y ∈ Y, ∀ c, (VS D).hT (F0.e c) (yv y.1) = 0 := by
     intro y hy c
-    simp only [yv, map_sum, map_smul, smul_eq_mul, hβy y hy]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [yv, map_sum, map_smul, smul_eq_mul, hβy y hy]
     rw [← hv c]
     exact Finset.sum_congr rfl fun b _ => mul_comm _ _
   have hpie : ∀ c x, (VS D).hT (F0.e c) (piL F0.e f x) = (VS D).hT (F0.e c) x := fun c x => by
-    simp [piL_apply, map_sub, map_sum, F0.e_iso]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [piL_apply, map_sub, map_sum, F0.e_iso]
   have hpif : ∀ c x, (VS D).hT (f c) (piL F0.e f x) = 0 := fun c x => by
-    simp [piL_apply, map_sub, map_sum, hfe]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [piL_apply, map_sub, map_sum, hfe]
   have hpiz : ∀ x, (VS D).hT F0.z (piL F0.e f x) = (VS D).hT F0.z x := fun x => by
-    simp [piL_apply, map_sub, map_sum, hze]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [piL_apply, map_sub, map_sum, hze]
   have hι2 : ∀ y : Carrier (PD D Λ (lf D F0) u'), ι2 y.1 ∈ Λ := by
     intro y
     let lam : (VS D).V := ∑ b, ((nv : D.host.E) * v b) • frame y.1 b
@@ -175,17 +183,20 @@ theorem fixedZhat_of (hH : HeisOp) (hSk : SkewSolve) (hS : ShortFin) (hRD : Rows
     exact Λ.sub_mem (hnat nd _ hlam) (Λ.sum_mem fun c _ => hmemE _ _ (hfint _ hlam c) (he c))
   have hhz : ∀ y ∈ Y, hz y.1 = ((nd * nv : ℕ) : D.host.E) * ∑ b, v b * Z (Fin.last D.R.rS) b := by
     intro y hy
-    simp only [hz, ι2, map_smul, smul_eq_mul, hpiz, yv, map_sum, hzy y hy]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hz, ι2, map_smul, smul_eq_mul, hpiz, yv, map_sum, hzy y hy]
 
-  have hyvn : ∀ y : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E),
+  have hyvn : ∀ y : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E),
       (VS D).hT (yv y) (yv y) = (VS D).hT (yv y0.1) (yv y0.1) := by
     intro y
-    simp only [yv, map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [yv, map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul,
       smul_eq_mul, gram_frame]
   have hpin : ∀ y ∈ Y, (VS D).hT (piL F0.e f (yv y.1)) (piL F0.e f (yv y.1)) = (VS D).hT (yv y.1) (yv y.1) := by
     intro y hy
     have h1 : ∀ c, (VS D).hT (yv y.1) (F0.e c) = 0 := fun c => by rw [← herm_star, hyve y hy c]; simp
-    simp [piL_apply, map_sub, map_sum, LinearMap.sub_apply, LinearMap.sum_apply, LinearMap.map_smulₛₗ,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [piL_apply, map_sub, map_sum, LinearMap.sub_apply, LinearMap.sum_apply, LinearMap.map_smulₛₗ,
       hyve y hy, h1, F0.e_iso]
   set hzc : D.host.E := ((nd * nv : ℕ) : D.host.E) * ∑ b, v b * Z (Fin.last D.R.rS) b with hzc_def
   set K : D.host.E := ((Tu D u : ℕ) : D.host.E) ^ 2 * ((((nd * nv : ℕ) : D.host.E)) ^ 2 *
@@ -198,7 +209,7 @@ theorem fixedZhat_of (hH : HeisOp) (hSk : SkewSolve) (hS : ShortFin) (hRD : Rows
         star_natCast, hpin y hy, hyvn]
       ring
     have hzz : (VS D).hT F0.z F0.z = -((Tu D u : ℕ) : D.host.E) := F0.z_norm
-    simp only [xf, map_add, LinearMap.add_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul,
+    simp only [xf, map_add (f := _), LinearMap.add_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul,
       smul_eq_mul, starRingEnd_apply, star_natCast, hιz, hιι, hzz]
     have hh : hz y.1 = hzc := hhz y hy
     rw [show (VS D).hT F0.z (ι2 y.1) = hz y.1 from rfl, hh]
@@ -217,19 +228,20 @@ theorem fixedZhat_of (hH : HeisOp) (hSk : SkewSolve) (hS : ShortFin) (hRD : Rows
     have ht : ∀ c, t c = 0 := by
       intro c
       have := LinearMap.mem_ker.1 ((Submodule.mem_iInf _).1 hxf c)
-      simpa [map_sum, hfe] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum, hfe] using this
     simp [ht]
   have hxP : ∀ y ∈ Y, xf y.1 ∈ P := by
     intro y hy
     refine Submodule.mem_inf.2 ⟨mem_orth_Xplus (lf D F0) _ (fun a => ?_) ?_, (Submodule.mem_iInf _).2 fun c => ?_⟩
     · show (VS D).hT (F0.e a) (xf y.1) = 0
-      simp [xf, ι2, map_add, map_smul, hpie, hyve y hy, F0.z_orth]
+      simp [xf, ι2, map_add (f := _), map_smul, hpie, hyve y hy, F0.z_orth]
     · show (VS D).hT F0.z (xf y.1) = 0
-      simp only [xf, map_add, map_smul, smul_eq_mul, F0.z_norm]
+      simp only [xf, map_add (f := _), map_smul, smul_eq_mul, F0.z_norm]
       change ((Tu D u : ℕ) : D.host.E) * hz y.1 + hz y.1 * -((Tu D u : ℕ) : D.host.E) = 0
       ring
     · rw [LinearMap.mem_ker]
-      simp [xf, ι2, map_add, map_smul, hpif, hfz]
+      simp [xf, ι2, map_add (f := _), map_smul, hpif, hfz]
   have hxΛ : ∀ y : Carrier (PD D Λ (lf D F0) u'), xf y.1 ∈ Λ := fun y =>
     Λ.add_mem (hnat _ _ (hι2 y)) (hmemE _ _ (hint _ hz0 _ (hι2 y)) hz0)
 

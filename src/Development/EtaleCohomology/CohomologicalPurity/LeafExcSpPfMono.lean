@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafExcSpPfCone
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafExcSpPfCone
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits Opposite GlobalTheory.EtC
@@ -14,7 +18,7 @@ theorem free_mono (R : Type) [CommRing R] {A B : PSh} (g : A ⟶ B) [Mono g] : M
     change Function.Injective ((ModuleCat.free (ULift.{1} R)).map (uliftFunctor.{1}.map (g.app U))).hom
     have hu : Function.Injective (uliftFunctor.{1}.map (g.app U)) := by
       intro a b h
-      exact ULift.ext _ _ (hg (congrArg ULift.down h))
+      exact ULift.ext (hg (congrArg ULift.down h))
     exact Finsupp.mapDomain_injective hu
   change Mono ((presheafToSheaf _ _).map ((freeP R).map g))
   infer_instance

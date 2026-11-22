@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.Bracket
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.PairFacts
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.WtBound
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.KeptBlocksOfSLine
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.Bracket
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.PairFacts
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.WtBound
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.KeptBlocksOfSLine
+
+@[expose] public section
 
 noncomputable section
 
@@ -144,7 +148,7 @@ variable {s r A : ℕ} {Ai Ci : Fin s → ℕ} {mu : Fin (2 * s + 1 + 1) → Fin
 theorem pfa_rho_eq [NeZero r] (i : Fin s) : pairRho mu i.val = wbK mu (2 * i.val + 2) 0 := by
   have hr : 0 < r := Nat.pos_of_ne_zero (NeZero.ne r)
   unfold pairRho wbK
-  rw [finPos_eq (2 * s + 1) (2 * i.val + 2) (by omega), dif_pos ⟨by omega, hr⟩]
+  rw [finPos_eq (2 * s + 1) (2 * i.val + 2) (by omega), dite_eq_left ⟨by omega, hr⟩]
   rfl
 
 theorem pfa_odd_nonneg (hP : IsPair A Ai Ci mu lam) (hr : 2 * s + 1 ≤ r) (i : ℕ) (hi : i ≤ s) :
@@ -238,7 +242,7 @@ theorem pair_first_weight_bounds (hP : IsPair A Ai Ci mu lam) (hr : 2 * s + 1 �
 theorem pfa_n_nonneg (hP : IsPair A Ai Ci mu lam) (hr : 2 * s + 1 ≤ r) (i : Fin s) :
     0 ≤ pairN (s := s) lam i.val := by
   unfold pairN
-  rw [dif_pos (by omega)]
+  rw [dite_eq_left (by omega)]
   have hi := i.2
   obtain ⟨i1, i2⟩ := hP.2 ⟨r - s + i.val, by omega⟩
   have hsh := wb_shape hP hr s le_rfl

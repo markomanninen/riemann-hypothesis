@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -17,7 +22,7 @@ theorem localMult_eq_one_of_isRadical {A : Type*} [CommRing A] {J W : Ideal A} (
     (hW : W ∈ J.minimalPrimes) : localMult J W = 1 := by
   have hWp : W.IsPrime := hW.1.1
   unfold localMult
-  rw [dif_pos hWp, map_eq_maximalIdeal_of_isRadical hJ hW]
+  rw [dite_eq_left hWp, map_eq_maximalIdeal_of_isRadical hJ hW]
   have : IsSimpleModule (Localization.AtPrime W)
       (Localization.AtPrime W ⧸ IsLocalRing.maximalIdeal (Localization.AtPrime W)) :=
     isSimpleModule_iff_isCoatom.mpr (Ideal.isMaximal_def.mp (IsLocalRing.maximalIdeal.isMaximal _))

@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.RelSerreSections
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.AcyclicLeray
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.QcqsPushforward
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ChowProduct
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.RelSerreSections
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.AcyclicLeray
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.QcqsPushforward
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ChowProduct
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -101,7 +106,8 @@ theorem exists_relativeSerre {A : Type u} [CommRing A] [IsNoetherianRing A] {X X
   · have hVaff : ∀ (m : ℕ) (s : Fin (m + 1) → ι), IsAffineOpen (⨅ a, V (s a)) := fun m s =>
       IsAffineOpen.iInf fun a => hVaff1 (s a)
     refine ⟨HLinearEquivPushforwardOfAcyclic ψ A V hV hVaff (ProjScheme.twist i G n)
-      (fun m s q => ?_) p⟩
+      ?_ p⟩
+    intro m s q
     have h1 := (hnS (Finset.univ.image s) (Finset.univ_nonempty.image s) n (hle _)).1 q
     rw [← hWtuple] at h1
     exact h1

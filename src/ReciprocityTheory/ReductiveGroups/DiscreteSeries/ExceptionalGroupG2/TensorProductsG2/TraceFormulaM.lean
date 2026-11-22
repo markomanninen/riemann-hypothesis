@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.TensorProductsG2.TraceFormulaL
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.StdGap
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.AnyDec
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.DataGenSubIrred
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.HasGelfandCharSigLam
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.TensorProductsG2.TraceFormulaL
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.StdGap
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.AnyDec
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.DataGenSubIrred
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.ExistenceG2.HasGelfandCharSigLam
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,13 +38,13 @@ theorem tf_datum2 (dual : Bool) {lam lam' : Fin n → ℝ} (hσ : IsURepOn (UJse
         (v : tfL2n ε) = tfPh dual ε σ (y : H) (fun c => ((ι x c : D) : H))) := by
   obtain ⟨Φ, hΦ, hΦE⟩ := tf_phi dual hσ hD hsm hgap hV hc hVK hW hy
   obtain ⟨q, hq⟩ := Submodule.exists_isCompl (tensSub (n := n) (genSub E V))
-  let π := Submodule.linearProjOfIsCompl _ q hq
+  let π := Submodule.projectionOnto _ q hq
   let Ψ : D →ₗ[ℂ] smD ε (tfRdiag ε) := Φ ∘ₗ π ∘ₗ ι
   have hΨ : ∀ x (hx : x ∈ genSub E V'), Ψ x = Φ ⟨ι x, hι.1 x hx⟩ := by
     intro x hx
     show Φ (π (ι x)) = _
     congr 1
-    exact Submodule.linearProjOfIsCompl_apply_left hq ⟨ι x, hι.1 x hx⟩
+    exact Submodule.projectionOnto_apply_left hq ⟨ι x, hι.1 x hx⟩
   have hΨc : ∀ x ∈ genSub E V', (Ψ x : tfL2n ε) = tfPh dual ε σ (y : H) (fun c => ((ι x c : D) : H)) :=
     fun x hx => by rw [hΨ x hx, hΦ]
   have hΨE : ∀ a b, ∀ x ∈ genSub E V', Ψ (E a b x) = smE ε (tfRdiag ε) a b (Ψ x) := by
@@ -59,7 +63,8 @@ theorem tf_datum2 (dual : Bool) {lam lam' : Fin n → ℝ} (hσ : IsURepOn (UJse
   · rintro _ ⟨x, hx, rfl⟩
     have hxG := hV'le hx
     have e : casimir (smE ε (tfRdiag ε)) (Ψ x) = Ψ (casimir E x) := by
-      simp only [casimir, LinearMap.sum_apply, Module.End.mul_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [casimir, LinearMap.sum_apply, Module.End.mul_apply, map_sum]
       refine sum_congr rfl fun a _ => sum_congr rfl fun b _ => ?_
       rw [hΨE a b _ (tset_genSub_E E V' b a hxG), hΨE b a x hxG]
     rw [e, hc' x hx, map_smul]

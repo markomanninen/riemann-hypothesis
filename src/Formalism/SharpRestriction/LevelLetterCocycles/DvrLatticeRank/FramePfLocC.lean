@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfPt
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelFPfA
-import Formalism.SharpRestriction.LevelLetterCocycles.MapCompZero
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfPt
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelFPfA
+public import Formalism.SharpRestriction.LevelLetterCocycles.MapCompZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -149,7 +153,7 @@ theorem framepf_levB_neg (i : ZMod n)
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [ιV, AlgebraTensorModule.map_tmul, LinearMap.lTensor_tmul]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   exact hinj (by rw [← h1, map_zero])
 
 theorem framepf_Qpow_mem {p : W.DD T} {m₀ m : ℕ} (h : W.Q ^ m₀ • p ∈ W.N T) (hm : m₀ ≤ m) :
@@ -158,8 +162,8 @@ theorem framepf_Qpow_mem {p : W.DD T} {m₀ m : ℕ} (h : W.Q ^ m₀ • p ∈ W
   rw [pow_add, mul_comm, mul_smul]
   exact Submodule.smul_mem _ _ h
 
-include Ct in
 
+include Ct in
 theorem framepf_span_vanish (hc : IsCrys PD T.ρ) (c : ZMod n) (ζ : LL) (hζ : IsPrimitiveRoot ζ PD.p)
     (hQ0 : PowerSeries.constantCoeff (W.lev c ζ W.Q) = 0)
     (hneg : ∀ (x : ↥(W.N T)) (k : ℤ), k < 0 → W.levN T (c - 1) 1 x k = 0) {p : W.DD T}
@@ -192,7 +196,7 @@ theorem framepf_span_vanish (hc : IsCrys PD T.ρ) (c : ZMod n) (ζ : LL) (hζ : 
     have hN : W.Q ^ m • (x + y) ∈ W.N T := by rw [smul_add]; exact (W.N T).add_mem a₁ a₂
     refine ⟨hN, fun i hi => ?_⟩
     have : (⟨_, hN⟩ : ↥(W.N T)) = ⟨_, a₁⟩ + ⟨_, a₂⟩ := Subtype.ext (smul_add _ _ _)
-    rw [this, map_add, Pi.add_apply, b₁ i hi, b₂ i hi, add_zero]
+    rw [this, map_add (f := _), Pi.add_apply, b₁ i hi, b₂ i hi, add_zero]
   | smul s x _ hx =>
     obtain ⟨m₁, h₁⟩ := hx
     refine ⟨m₁, fun m hm => ?_⟩
@@ -203,8 +207,8 @@ theorem framepf_span_vanish (hc : IsCrys PD T.ρ) (c : ZMod n) (ζ : LL) (hζ : 
     rw [this, ModelFPf.levN_eq_serMul, framepf_serMul_congr _ 0 (fun j hj => by omega) _ (fun _ => 0) m
       b₁ i (by omega), framepf_serMul_zero]
 
-include Ct in
 
+include Ct in
 theorem framepf_loc_core (hc : IsCrys PD T.ρ) (c : ZMod n) (ζ : LL) (hζ : IsPrimitiveRoot ζ PD.p)
     (hQ0 : PowerSeries.constantCoeff (W.lev c ζ W.Q) = 0)
     (hQ1 : PowerSeries.coeff 1 (W.lev c ζ W.Q) ≠ 0)
@@ -241,7 +245,8 @@ theorem framepf_loc_core (hc : IsCrys PD T.ρ) (c : ZMod n) (ζ : LL) (hζ : IsP
     (min m₁ 0) (fun r hr => hm₁ r (by omega))
     (fun r hr => Finset.sum_eq_zero fun j _ => framepf_serC_neg _ _ _ (by omega)) (k + R)
     (fun r hr => ?_) i hi
-  rw [← ModelFPf.levN_eq_serMul, heq, map_add, map_sum, Pi.add_apply, Finset.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← ModelFPf.levN_eq_serMul, heq, map_add (f := _), map_sum, Pi.add_apply, Finset.sum_apply,
     framepf_serMul_sum, ModelFPf.levN_eq_serMul W T c ζ g,
     framepf_serMul_congr _ R hg _ (fun _ => 0) ((d + k : ℕ) : ℤ) hp0 r (by push_cast; omega),
     framepf_serMul_zero, add_zero]
@@ -254,8 +259,8 @@ theorem framepf_loc_core (hc : IsCrys PD T.ρ) (c : ZMod n) (ζ : LL) (hζ : IsP
   congr 1
   ring
 
-include Ct in
 
+include Ct in
 theorem framepf_valAt_mod (hc : IsCrys PD T.ρ) (c : ZMod n) (ζ : LL) (hζ : IsPrimitiveRoot ζ PD.p)
     (hQ0 : PowerSeries.constantCoeff (W.lev c ζ W.Q) = 0)
     (hQ1 : PowerSeries.coeff 1 (W.lev c ζ W.Q) ≠ 0)
@@ -279,14 +284,14 @@ theorem framepf_valAt_mod (hc : IsCrys PD T.ρ) (c : ZMod n) (ζ : LL) (hζ : Is
         obtain rfl : j = 0 := by omega
         rw [PowerSeries.coeff_zero_eq_constantCoeff_apply, hπ]) _ (fun _ => 0) 0 (hneg w) 0 (by omega),
       framepf_serMul_zero]
-  rw [hv, hv, e', map_add, Pi.add_apply, h0, add_zero, map_nsmul, Pi.smul_apply, map_nsmul, map_nsmul]
+  rw [hv, hv, e', map_add (f := _), Pi.add_apply, h0, add_zero, map_nsmul, Pi.smul_apply, map_nsmul, map_nsmul]
 
 theorem framepf_lev_π_one (i : ZMod n) : PowerSeries.constantCoeff (W.lev i 1 letπ) = 0 := by
   obtain ⟨E, hE1, -, hE⟩ := W.lev_π i 1 ⟨0, by rw [pow_zero]; exact IsPrimitiveRoot.one⟩
   simpa [hE1] using congrArg PowerSeries.constantCoeff hE
 
-include Ct in
 
+include Ct in
 theorem framepf_locC (hc : IsCrys PD T.ρ) (hs : W.s = 1) (c : ZMod n) (ζ : LL)
     (hζ : IsPrimitiveRoot ζ PD.p)
     (hneg : ∀ (x : ↥(W.N T)) (k : ℤ), k < 0 → W.levN T (c - 1) 1 x k = 0)
@@ -320,10 +325,11 @@ theorem framepf_locC (hc : IsCrys PD T.ρ) (hs : W.s = 1) (c : ZMod n) (ζ : LL)
     | tmul e ℓ =>
       have : smulLA W T π' c b (e ⊗ₜ ℓ) = (algebraMap (LetA O n) W.EE b * e) ⊗ₜ ℓ := rfl
       rw [this, hΨ, hΨ, mul_smul, algebraMap_smul]
-    | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, smul_add]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), smul_add]
   have hΛ : Eπ ^ h' • Ψ x =
       ∑ j, ((letE c : LetA O n) * a j) • W.φD T (hh (mkL W T π' c (z j) (hz j))) := by
-    rw [← hsm, hrep, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hsm, hrep, map_sum]
     exact Finset.sum_congr rfl fun j _ => by rw [hΨ, algebraMap_smul]
   have hmid : ∀ ℓ (r : ℤ), 1 ≤ r → r < (4 * h' : ℕ) → Ct.levB T (c - 1) 1 ⟨hh ℓ, hN ℓ⟩ r = 0 := by
     intro ℓ r h1 h2

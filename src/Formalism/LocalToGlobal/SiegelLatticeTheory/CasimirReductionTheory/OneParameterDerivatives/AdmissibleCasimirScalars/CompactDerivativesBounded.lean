@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCPX
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCPX
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Topology
 open scoped InnerProductSpace

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProdNonnegReal
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockMatrixApplyInrInr
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFinsetIntOff
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProdNonnegReal
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockMatrixApplyInrInr
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFinsetIntOff
+
+@[expose] public section
 
 noncomputable section
 
@@ -121,7 +125,7 @@ theorem eisMeas : IdemEx → BumpEx → Major → FixW → FixTh → ThProd → 
         have hnn := GlobalTheory.CompanionTheory.EisE.prod_nonneg_real Finset.univ _ hre
         refine ⟨hnn.1, hnn.2, ?_⟩
         rw [norm_prod]
-        refine Finset.prod_le_one (fun i _ => norm_nonneg _) (fun i _ => ?_)
+        refine Finset.prod_le_one₀ (fun i _ => norm_nonneg _) (fun i _ => ?_)
         obtain ⟨h0, h1, h2⟩ := (hη i).2.2.2.1 (y.submatrix (fun _ => i) id)
         have h3 : η i (y.submatrix (fun _ => i) id) = ((η i (y.submatrix (fun _ => i) id)).re : ℂ) :=
           Complex.ext (by simp) (by simp [h2])

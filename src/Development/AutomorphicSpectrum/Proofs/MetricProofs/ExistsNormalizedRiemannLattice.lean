@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.BigZe
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannLatticeEigenProjectionStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BigZe
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannLatticeEigenProjectionStatement
+
+@[expose] public section
+
 open NumberField Matrix MeasureTheory Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GroundTheory.Heights₂.Heights.FiniteCovolume
 open scoped ENNReal InnerProductSpace
 open scoped ComplexOrder
@@ -48,7 +53,8 @@ theorem sum_ip_smul (hc : ∀ i i', R.ip (c i) (c i') = if i = i' then 1 else 0)
     rw [Fintype.linearIndependent_iff]
     intro a ha k
     have h := congrArg (ipLin R (c k)) ha
-    rw [map_zero, map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zero, map_sum] at h
     simp only [map_smul, ← ip_eq_ipLin, hc, smul_eq_mul] at h
     simpa using h
   have hspan : Submodule.span ℂ (Set.range c) = ⊤ :=
@@ -57,14 +63,16 @@ theorem sum_ip_smul (hc : ∀ i i', R.ip (c i) (c i') = if i = i' then 1 else 0)
   obtain ⟨a, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun ℂ).1 hz
   refine Finset.sum_congr rfl fun i _ => ?_
   congr 1
-  rw [ip_eq_ipLin, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ip_eq_ipLin, map_sum]
   simp only [map_smul, ← ip_eq_ipLin, hc, smul_eq_mul]
   simp
 
 theorem sum_ip_mul_conj (hc : ∀ i i', R.ip (c i) (c i') = if i = i' then 1 else 0) (u v : Fin g → ℂ) :
     ∑ i, R.ip (c i) u * starRingEnd ℂ (R.ip (c i) v) = R.ip v u := by
   conv_rhs => rw [← sum_ip_smul R e c hc u]
-  rw [ip_eq_ipLin, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ip_eq_ipLin, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, ← ip_eq_ipLin, conj_ip, smul_eq_mul]
 
@@ -76,7 +84,8 @@ theorem ip_act (hc : ∀ i i', R.ip (c i) (c i') = if i = i' then 1 else 0) (s :
     have h' := LinearMap.mem_ker.1 h
     simpa [sub_eq_zero] using h'
   conv_lhs => rw [← sum_ip_smul R e c hc z]
-  rw [map_sum, ip_eq_ipLin, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ip_eq_ipLin, map_sum]
   simp only [map_smul, hB, ← ip_eq_ipLin, hc, smul_eq_mul]
   simp [mul_comm]
 

@@ -1,15 +1,19 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.JoinCoordMidVar
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ExSubAlt
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyBridgeFull
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.JoinCoordMidVar
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ExSubAlt
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyBridgeFull
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
 
 open MvPolynomial
 open ReciprocityTheory.ChartRestriction.G.AI.I1 (IFamily IsFieldIntersection)
-open IndefiniteRowSideFullHecke.NumbersDVR.Bundles (IsVertDiv mcIdeal joinCoord fnField midDeg midVar ptCoord noCoord ptIdx noIdx
-  ptFlagModel)
+open IndefiniteRowSideFullHecke.NumbersDVR.Bundles (IsVertDiv mcIdeal joinCoord fnField midDeg midVar)
 
 def PairNumberJoinRight.Statement : Prop :=
   ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (Ω : Type) [Field Ω]

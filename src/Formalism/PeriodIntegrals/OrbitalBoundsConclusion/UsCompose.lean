@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementU
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.Development
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.DegPderivMul
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.Expand
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementU
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.Development
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.DegPderivMul
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.Expand
+
+@[expose] public section
 
 theorem differential_operator_compose : Formalism.FourierDecayAlt.U.ComposeDD :=
   PI.UnitaryGroupMassFormula.UsCompose.composeDD_of (fun _ X q => PI.UnitaryGroupMassFormula.UsCompose.degDP X q)

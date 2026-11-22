@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ExistsUnitaryBasisSameFlag
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MmatUnitary
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ExistsUnitaryBasisSameFlag
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MmatUnitary
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -22,7 +26,8 @@ private theorem hermC_finset_sum_left' {r : ℕ} (τ : E →+* ℂ) (G : Matrix 
 private theorem hermC_finset_sum_right_of_conj_symm {r : ℕ} (τ : E →+* ℂ) {G : Matrix (Fin r) (Fin r) E}
     (hG : ∀ a b, cc (G a b) = G b a) {ι : Type} (s : Finset ι) (u : Fin r → ℂ)
     (v : ι → Fin r → ℂ) : hermC τ G u (∑ i ∈ s, v i) = ∑ i ∈ s, hermC τ G u (v i) := by
-  rw [← hermC_conj τ hG _ u, hermC_finset_sum_left', map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hermC_conj τ hG _ u, hermC_finset_sum_left', map_sum]
   exact Finset.sum_congr rfl (fun i _ => hermC_conj τ hG _ _)
 
 private theorem hermC_sub_right_of_conj_symm {r : ℕ} (τ : E →+* ℂ) {G : Matrix (Fin r) (Fin r) E}
@@ -42,7 +47,8 @@ private theorem ppos_self_adjoint_hermC {r : ℕ} (X : Data E r) (x : Frame X.Ψ
   have hM := hH.inv
   simp only [Data.ppos]
   rw [hermC_finset_sum_left', hermC_finset_sum_right_of_conj_symm _ X.Gm_herm]
-  simp only [hermC_smul_left, hermC_smul_right, Finset.sum_mul, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hermC_smul_left, hermC_smul_right, Finset.sum_mul, map_sum, map_mul]
   conv_rhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl (fun a _ => Finset.sum_congr rfl (fun b _ => ?_))
   rw [hermC_conj _ X.Gm_herm, starRingEnd_apply, hM.apply]

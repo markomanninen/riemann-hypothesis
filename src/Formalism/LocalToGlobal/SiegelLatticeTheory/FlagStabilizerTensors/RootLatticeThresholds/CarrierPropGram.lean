@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HermitianCurvature.HeisenbergConjugationMeasurePreserving
-import Formalism.HermitianCurvature.StatementTop
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.HeisenbergConjugationMeasurePreserving
+public import Formalism.HermitianCurvature.StatementTop
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.AdIndexEq
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FiniteAdelicComparison.MemLocFrom
+module
+
+public import Formalism.PeriodIntegrals.AdIndexEq
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FiniteAdelicComparison.MemLocFrom
+
+@[expose] public section
 
 noncomputable section
 

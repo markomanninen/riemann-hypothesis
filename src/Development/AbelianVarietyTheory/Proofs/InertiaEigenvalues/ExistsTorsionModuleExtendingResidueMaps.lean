@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.H1MapSubgroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.H1MapSubgroup
+
+@[expose] public section
 
 open CategoryTheory GlobalTheory.SelFun
 
@@ -68,7 +72,7 @@ theorem exists_torsion_extension (Λ : Type) [CommRing Λ] [IsLocalRing Λ] [IsN
         · intro r hr z _
           rw [map_smul, residue_smul_eq_zero r hr]
         · intro a b ha hb
-          rw [map_add, ha, hb, add_zero]
+          rw [map_add (f := _), ha, hb, add_zero]
       simp [this]
     obtain ⟨u, hu⟩ := exists_factor_of_injective hJ _ _ hker
     have hu2 : ∀ p, (u ∘ₗ K.mkQ) p ∈ powTorsion m J := fun p =>

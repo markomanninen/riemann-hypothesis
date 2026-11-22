@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HarishChandraRegularity
-import GroundTheory.AutomorphicForms.ArchimedeanWhittaker.Density
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HarishChandraRegularity
+public import GroundTheory.AutomorphicForms.ArchimedeanWhittaker.Density
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -75,7 +79,7 @@ theorem rightUAction_coeffFun (ℓ : E →L[ℂ] ℂ) (u : UniversalEnvelopingAl
   | mul a b iha ihb =>
     rw [map_mul, map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, ihb, iha]
   | add a b iha ihb =>
-    rw [map_add, map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, iha, ihb]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, iha, ihb]
     exact ((h.coeffLin π ℓ).map_add _ _).symm
 
 noncomputable def laplacianElt {ι : Type*} [Fintype ι] (bL : Module.Basis ι ℝ h.lieSubalgebra) :
@@ -84,7 +88,8 @@ noncomputable def laplacianElt {ι : Type*} [Fintype ι] (bL : Module.Basis ι �
 
 theorem rightUAction_laplacianElt {ι : Type*} [Fintype ι] (bL : Module.Basis ι ℝ h.lieSubalgebra) :
     h.rightUAction (F := ℂ) (h.laplacianElt bL) = h.laplacian bL := by
-  simp only [laplacianElt, laplacian, map_sum, map_mul, rightUAction_ι]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [laplacianElt, laplacian, map_sum, map_mul, rightUAction_ι]
 
 theorem comp_aeval_eq {V W : Type*} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
     (Φ : V →ₗ[ℂ] W) {A : Module.End ℂ V} {B : Module.End ℂ W} (hAB : Φ ∘ₗ A = B ∘ₗ Φ) (P : ℂ[X]) :
@@ -97,7 +102,7 @@ theorem comp_aeval_eq {V W : Type*} [AddCommGroup V] [Module ℂ V] [AddCommGrou
       rw [pow_succ, pow_succ, Module.End.mul_eq_comp, Module.End.mul_eq_comp, ← LinearMap.comp_assoc,
         ih, LinearMap.comp_assoc, hAB, LinearMap.comp_assoc]
   induction P using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, map_add, LinearMap.comp_add, LinearMap.add_comp, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), LinearMap.comp_add, LinearMap.add_comp, hp, hq]
   | monomial k c =>
     rw [aeval_monomial, aeval_monomial]
     ext v

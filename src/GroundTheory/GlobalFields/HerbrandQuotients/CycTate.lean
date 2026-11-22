@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.TateCohomology.HerbrandAbstract
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.HerbrandAbstract
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -16,11 +20,6 @@ noncomputable def kerModRangeEquivOfSurjective {f g : A →+ A} (φ : f.ker →+
       ext a
       rw [AddMonoidHom.mem_ker, hk, AddSubgroup.mem_addSubgroupOf])).trans
     (QuotientAddGroup.quotientKerEquivOfSurjective φ hs)
-
-theorem kerModRangeEquivOfSurjective_mk {f g : A →+ A} (φ : f.ker →+ B)
-    (hs : Function.Surjective φ) (hk : ∀ a : f.ker, φ a = 0 ↔ (a : A) ∈ g.range) (a : f.ker) :
-    kerModRangeEquivOfSurjective φ hs hk (QuotientAddGroup.mk a : KerModRange f g) = φ a :=
-  rfl
 
 theorem addEquiv_symm_apply_comm {f : A →+ A} {f' : B →+ B} (e : A ≃+ B)
     (hf : ∀ a, e (f a) = f' (e a)) (b : B) :
@@ -41,12 +40,6 @@ noncomputable def kerModRangeCongr {fA gA : A →+ A} {fB gB : B →+ B} (e : A 
     induction x using QuotientAddGroup.induction_on with
     | H a => exact congrArg QuotientAddGroup.mk (Subtype.ext (e.apply_symm_apply (a : B)))
   map_add' := map_add _
-
-theorem kerModRangeCongr_mk {fA gA : A →+ A} {fB gB : B →+ B} (e : A ≃+ B)
-    (hf : ∀ a, e (fA a) = fB (e a)) (hg : ∀ a, e (gA a) = gB (e a)) (a : fA.ker) :
-    kerModRangeCongr e hf hg (QuotientAddGroup.mk a : KerModRange fA gA) =
-      QuotientAddGroup.mk (kerMap e.toAddMonoidHom hf a) :=
-  rfl
 
 noncomputable def kerModRangePiEquiv {ι : Type*} {A : ι → Type*} [∀ i, AddCommGroup (A i)]
     (F G : (∀ i, A i) →+ (∀ i, A i)) (f g : ∀ i, A i →+ A i) (hF : ∀ x i, F x i = f i (x i))
@@ -81,14 +74,6 @@ noncomputable def kerModRangePiEquiv {ι : Type*} {A : ι → Type*} [∀ i, Add
         refine (KerModRange.mk_eq_zero_iff _).2 (AddMonoidHom.mem_range.2 ⟨y i, ?_⟩)
         show g i (y i) = (x : ∀ i, A i) i
         rw [← hG, hy])
-
-theorem kerModRangePiEquiv_mk {ι : Type*} {A : ι → Type*} [∀ i, AddCommGroup (A i)]
-    (F G : (∀ i, A i) →+ (∀ i, A i)) (f g : ∀ i, A i →+ A i) (hF : ∀ x i, F x i = f i (x i))
-    (hG : ∀ x i, G x i = g i (x i)) (x : F.ker) (i : ι) :
-    kerModRangePiEquiv F G f g hF hG (QuotientAddGroup.mk x : KerModRange F G) i =
-      QuotientAddGroup.mk (⟨(x : ∀ i, A i) i, by
-        rw [AddMonoidHom.mem_ker, ← hF, AddMonoidHom.mem_ker.1 x.2, Pi.zero_apply]⟩ : (f i).ker) :=
-  rfl
 
 end KerModRange
 
@@ -220,11 +205,6 @@ def piRep (ρ : ∀ i, Representation k G (V i)) : Representation k G (∀ i, V 
   toFun g := LinearMap.pi fun i => (ρ i g).comp (LinearMap.proj i)
   map_one' := by ext; simp
   map_mul' g h := by ext; simp
-
-@[simp]
-theorem piRep_apply (ρ : ∀ i, Representation k G (V i)) (g : G) (x : ∀ i, V i) (i : ι) :
-    piRep ρ g x i = ρ i g (x i) :=
-  rfl
 
 theorem cycSubOne_piRep_apply (ρ : ∀ i, Representation k G (V i)) (σ : G) (x : ∀ i, V i)
     (i : ι) : cycSubOne (piRep ρ) σ x i = cycSubOne (ρ i) σ (x i) :=

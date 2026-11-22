@@ -1,34 +1,39 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussTop
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussPoissonDual
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussSqrt
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussPoissonBound
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussLatticeIsLattice
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussLatticeCovolume
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussLatticeCoords
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussFourierSelf
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussDualMin
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussDetFactor
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussShellSum
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussShell
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussPacking
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussTermBound
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussConstant
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PThetaTop
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PThetaMean
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PThetaInnerMean
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PThetaSummandNorm
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PThetaCubeParseval
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PThetaCharIntegral
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PThetaNormMajorant
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PThetaFirstCoordSplit
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PThetaConstants
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCauchyBinet
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PPlueckerNormSq
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PHadamardPSD
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PPlueckerUnitBound
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PPlueckerKernel
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PRootsOfUnityDense
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussTop
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussPoissonDual
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussSqrt
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussPoissonBound
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussLatticeIsLattice
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussLatticeCovolume
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussLatticeCoords
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussFourierSelf
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussDualMin
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussDetFactor
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussShellSum
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussShell
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussPacking
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussTermBound
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGaussConstant
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PThetaTop
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PThetaMean
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PThetaInnerMean
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PThetaSummandNorm
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PThetaCubeParseval
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PThetaCharIntegral
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PThetaNormMajorant
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PThetaFirstCoordSplit
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PThetaConstants
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCauchyBinet
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PPlueckerNormSq
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PHadamardPSD
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PPlueckerUnitBound
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PPlueckerKernel
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PRootsOfUnityDense
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementTBB
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.VectorVanishesBigCell
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactCoefficientAppend
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementTBB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VectorVanishesBigCell
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactCoefficientAppend
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Filter Topology MeasureTheory
 
@@ -12,7 +16,7 @@ theorem vec_bigPt_eq_bessel : ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerP
   refine ⟨fun hn => ?_, fun ⟨hd, hlt⟩ => ?_⟩
   · show D.vecV p.T.base p.ν' p.m₀ H (TBB.bigPt P.r c) = 0
     unfold D.vecV
-    rw [dif_neg]
+    rw [dite_eq_right]
     rintro ⟨hl, hG⟩
     refine hn ⟨fun a => ?_, Formalism.FourierDecayAlt.P.PBM.zeta_big _ c hG⟩
     exact (hl.1 (1, c a) (List.mem_ofFn.2 ⟨a, rfl⟩)).2

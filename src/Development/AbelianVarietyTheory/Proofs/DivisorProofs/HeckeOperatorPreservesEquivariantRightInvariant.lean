@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinPtHomApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeOperatorTestFamilyPreservesLevelForms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinPtHomApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeOperatorTestFamilyPreservesLevelForms
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.BCT.TraceBlocks
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -14,7 +19,7 @@ def leftEqv {G H V : Type} [Group G] [Group H] [AddCommGroup V] [Module ℂ V] (
   carrier := {φ | ∀ h x, φ (ι h * x) = ρ h (φ x)}
   add_mem' := by
     intro a b ha hb h x
-    simp only [Pi.add_apply, ha h x, hb h x, map_add]
+    simp only [Pi.add_apply, ha h x, hb h x, map_add (f := _)]
   zero_mem' := fun _ _ => by simp
   smul_mem' := by
     intro c a ha h x

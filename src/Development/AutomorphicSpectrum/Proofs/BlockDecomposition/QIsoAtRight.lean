@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -32,7 +36,7 @@ theorem qIsoAt_comp (hf₂ : ∀ x, f₂ (a₁ x) = b₁ (f₁ x)) (hg₀ : ∀ 
     obtain ⟨x, y', hx, hy'⟩ := hf.2 w hw
     refine ⟨x, y + g₀ y', hx, ?_⟩
     have e : f₁ x = w + b₀ y' := by rw [← hy']; abel
-    rw [hk, e, map_add, hg₀, map_add, ← hy]
+    rw [hk, e, map_add (f := _), hg₀, map_add (f := _), ← hy]
     abel
 
 theorem qIsoAt_right (hf₀ : ∀ x, f₁ (a₀ x) = b₀ (f₀ x)) (hf₂ : ∀ x, f₂ (a₁ x) = b₁ (f₁ x))
@@ -42,7 +46,7 @@ theorem qIsoAt_right (hf₀ : ∀ x, f₁ (a₀ x) = b₀ (f₀ x)) (hf₂ : ∀
   refine ⟨fun x hx ⟨y, hy⟩ ↦ ?_, fun z hz ↦ ?_⟩
   · obtain ⟨u, v, hu, hv⟩ := hf.2 x hx
     have e : f₁ u = x + b₀ v := by rw [← hv]; abel
-    obtain ⟨w, hw⟩ := hK.1 u hu ⟨y + g₀ v, by rw [hk, e, map_add, map_add, hg₀, hy]⟩
+    obtain ⟨w, hw⟩ := hK.1 u hu ⟨y + g₀ v, by rw [hk, e, map_add (f := _), map_add (f := _), hg₀, hy]⟩
     refine ⟨f₀ w - v, ?_⟩
     rw [map_sub, ← hf₀, hw, e]
     abel

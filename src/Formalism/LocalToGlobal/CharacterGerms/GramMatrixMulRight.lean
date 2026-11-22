@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTieMemC
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieMemC
+
+@[expose] public section
 
 noncomputable section
 
@@ -113,7 +117,8 @@ theorem back_subG (inj : Function.Injective fun x : Orb × ZMod 2 => tau x.1 x.2
       AlgHom.id C _ := by
     apply MvPolynomial.algHom_ext
     intro y
-    rw [AlgHom.comp_apply, subG_X, map_sum, AlgHom.id_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [AlgHom.comp_apply, subG_X, map_sum, AlgHom.id_apply]
     simp only [map_mul, MvPolynomial.aeval_X, MvPolynomial.aeval_C, MvPolynomial.algebraMap_eq]
     have hs : ∀ col, (∑ x, MvPolynomial.C (coS r tau gm plc (lam r tau plc ((eW r tau N y).1, col)) x) *
         (MvPolynomial.X x : MvPolynomial (Fin N × WVO fun o (_ : Fin 2) => IIs r tau o) C)) =
@@ -127,7 +132,8 @@ theorem back_subG (inj : Function.Injective fun x : Orb × ZMod 2 => tau x.1 x.2
             MvPolynomial (Fin N × WVO fun o (_ : Fin 2) => IIs r tau o) C))) =
         MvPolynomial.C (if g = (eW r tau N y).2 then 1 else 0) * MvPolynomial.X ((eW r tau N).symm ((eW r tau N y).1, g)) := by
       intro g
-      rw [← gram_matrix_mul_right gm_hyp (eW r tau N y).1 (eW r tau N y).2 g, map_sum, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← gram_matrix_mul_right gm_hyp (eW r tau N y).1 (eW r tau N y).2 g, map_sum, Finset.sum_mul]
       refine Finset.sum_congr rfl fun col _ => ?_
       rw [map_mul]; ring
     simp only [h2]

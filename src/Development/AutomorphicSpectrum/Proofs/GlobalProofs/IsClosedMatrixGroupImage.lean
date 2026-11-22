@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IsClosedEmbeddingOfLocallyCompact
-import GroundTheory.AutomorphicForms.DixmierMalliavin
-import GroundTheory.AutomorphicForms.HarishChandraRegularity.ExpHaar
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsSmoothLogMemLieAlg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IsClosedEmbeddingOfLocallyCompact
+public import GroundTheory.AutomorphicForms.DixmierMalliavin
+public import GroundTheory.AutomorphicForms.HarishChandraRegularity.ExpHaar
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsSmoothLogMemLieAlg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 open scoped Manifold ContDiff Topology
 open MeasureTheory Set GroundTheory.Automorphic
@@ -91,7 +96,7 @@ theorem isClosedEmbedding_jHom (e : n ⊕ n ≃ Fin m) : Topology.IsClosedEmbedd
 def dLin (e : n ⊕ n ≃ Fin m) : Matrix n n ℂ →ₗ[ℝ] Matrix (Fin m) (Fin m) ℂ where
   toFun X := blk e (X, -Xᵀ)
   map_add' X Y := by
-    rw [← map_add]
+    rw [← map_add (f := _)]
     simp [Matrix.transpose_add, add_comm]
   map_smul' r X := by
     ext i j

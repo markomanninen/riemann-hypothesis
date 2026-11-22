@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LinCombTrivG
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LinCombTrivG
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
@@ -110,14 +115,6 @@ structure ThetaFam (n : ℕ) {N' : ℕ} {b : TBase o (N' ^ 2)} (em : o →+* ℂ
   unram : ∀ (K : Type) [Field K] (x : Sp (DualNumber K) ⟶ MM) (t : TObj g (N' ^ 2) J b (x ≫ s)),
     x ≫ s = constPt x ≫ s → TMap t univ x → TMap t univ (constPt x) → x = constPt x
 
-def TBase.complex (k : ℕ) (hk : k ≠ 0) : TBase ℂ k where
-  ζ := Units.mk0 (Complex.exp (2 * Real.pi * Complex.I / k)) (Complex.exp_ne_zero _)
-  unit := (Nat.cast_ne_zero.2 hk : (k : ℂ) ≠ 0).isUnit
-  prim := fun _ _ β => (Complex.isPrimitiveRoot_exp k hk).map_of_injective β.injective
-
-theorem TBase.complex_ζ (k : ℕ) (hk : k ≠ 0) :
-    ((TBase.complex k hk).ζ : ℂ) = Complex.exp (2 * Real.pi * Complex.I / k) := rfl
-
 def TObj.zero (k : ℕ) (J : Type) (b : TBase o k) (s : S ⟶ Sp o) : TObj 0 k J b s where
   A := (Out.Inh.zeroPolAV S).A
   grp := (Out.Inh.zeroPolAV S).grp
@@ -136,14 +133,5 @@ def TObj.zero (k : ℕ) (J : Type) (b : TBase o k) (s : S ⟶ Sp o) : TObj 0 k J
   act := fun _ => 𝟙 _
   hom := fun _ => inferInstance
 
-example (k : ℕ) (J : Type) (b : TBase o k) (s : S ⟶ Sp o) : (TObj.zero k J b s).pol = Out.Inh.zeroPolAV S := rfl
-
-example (t : TObj g k J b s) (w w' : J) (h : t.Prim w w') : lift (t.act w) (t.act w') ≫ μ[t.A] = 𝟙 t.A := h.1
-
-example (n N' : ℕ) {R : Type} [CommRing R] (q : Ideal R) (hq : q ≠ ⊤) : Coset (g := g) n N' (fun _ => (1 : R)) q :=
-  fun _ => ⟨0, fun h => hq ((Ideal.eq_top_iff_one q).2 h)⟩
-
-example (n N' : ℕ) {R : Type} [CommRing R] (q : Ideal R) : ¬ Coset (g := g) n N' (fun _ => (0 : R)) q :=
-  fun h => (h 0).elim fun _ hc => hc q.zero_mem
 end GlobalTheory.ZM
 end

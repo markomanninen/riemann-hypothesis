@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ConjEMemHostFIff
-import Formalism.LocalToGlobal.KernelLattices.ColumnData
-import Formalism.LocalRingCardinality.DataHost
-import Formalism.LocalRingCardinality.Params
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AdjoinSqrtEqRatSpan
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IntegralQuadraticHalfInt
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ConjEMemHostFIff
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData
+public import Formalism.LocalRingCardinality.DataHost
+public import Formalism.LocalRingCardinality.Params
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AdjoinSqrtEqRatSpan
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IntegralQuadraticHalfInt
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.IntegralClosureCriterion.be :
     Formalism.L2.Ker.Car → ℂ :=
@@ -24,7 +28,7 @@ theorem UpperTheory.Reformulated.B.IntegralClosureCriterion.okc_of :
     ((u : D.host.K) : D.host.E) (u : D.host.K).2
   have hval : D.host.φ₀ ((u : D.host.K) : D.host.E)
       = (a : ℂ) + (b : ℂ) * (Complex.I * ((Real.sqrt (D.host.d : ℝ) : ℝ) : ℂ)) := by
-    rw [hab, map_add, map_mul, map_ratCast, map_ratCast, hφ]
+    rw [hab, map_add (f := _), map_mul, map_ratCast, map_ratCast, hφ]
   have hint : IsIntegral ℤ (D.host.φ₀ ((u : D.host.K) : D.host.E)) :=
     (u.isIntegral_coe).map
       (D.host.φ₀.comp (algebraMap D.host.K D.host.E)).toIntAlgHom

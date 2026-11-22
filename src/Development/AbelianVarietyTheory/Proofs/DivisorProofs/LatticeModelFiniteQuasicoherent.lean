@@ -1,8 +1,13 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.CechFam
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.FiniteCohPushforwardIffOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSubsingletonCohTwistTensLbPow
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFrameOfForallExists
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CechFam
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.FiniteCohPushforwardIffOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSubsingletonCohTwistTensLbPow
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFrameOfForallExists
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.LogDR
@@ -20,7 +25,8 @@ theorem val_linearCombination (L : LatModel M F) {U W : X.Opens} (h : W ≤ U)
     (hW : genericPoint X ∈ W) {m : ℕ} (e : Fin m → Γ(F, U)) (a : Fin m → Γ(X, W)) :
     L.val W hW (Fintype.linearCombination Γ(X, W) (fun i => Twist.resM F h (e i)) a) =
       ∑ i, fnOf W hW (a i) • L.val U (h hW) (e i) := by
-  simp only [Fintype.linearCombination_apply, map_sum, L.smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Fintype.linearCombination_apply, map_sum, L.smul]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [← L.res U W h hW (e i)]
 
@@ -86,6 +92,6 @@ theorem isFiniteQC_of_latModel : ∀ (X : Scheme.{0}) [IsIntegral X] {V : Type} 
   refine QCoh.IsFiniteQC.of_restrict (fun y => (U y).ι) (fun x => ⟨x, by simpa using hy x⟩)
     fun y => ?_
   have hf := (VB.isFrame_restrict_iff (U y).ι _).2 ((he y).res ((U y).ι_image_le ⊤))
-  exact hf.isVB.isFiniteQC
+  exact (VB.IsFrame.isVB hf).isFiniteQC
 
 end GlobalTheory.LogDR.LatFinite

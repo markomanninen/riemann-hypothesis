@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.RightOfFd
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ConjugateSubgroup
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.RightOfFd
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ConjugateSubgroup
+
+@[expose] public section
 
 noncomputable section
 

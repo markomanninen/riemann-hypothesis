@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.FrameMatching.HeckeWordBounds.HeckeLevelWordBase
+module
+
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.FrameMatching.HeckeWordBounds.HeckeLevelWordBase
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ private theorem val_one_of_ordL {E : Type} [Field E] [NumberField E] {w : Pl E} 
     (hu : ordL (u : w.adicCompletion E) = 0) : Valued.v (u : w.adicCompletion E) = 1 := by
   have h1 : Valued.v (u : w.adicCompletion E) ≠ 0 := (Valuation.ne_zero_iff _).mpr u.ne_zero
   unfold ordL at hu
-  rw [dif_neg h1] at hu
+  rw [dite_eq_right h1] at hu
   rw [← WithZero.coe_unzero h1]
   have e : Multiplicative.toAdd (WithZero.unzero h1) = 0 := by omega
   have e' : WithZero.unzero h1 = 1 := by

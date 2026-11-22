@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.FourierWhittaker (whittaker)
@@ -64,7 +68,7 @@ theorem UpperTheory.V.Af.Smo.schTensor :
         intro p
         simp only [l1, l2, ContinuousLinearMap.comp_apply, ContinuousLinearMap.inl_apply,
           ContinuousLinearMap.inr_apply]
-        rw [← map_add]
+        rw [← map_add (f := _)]
         congr 1
         ext <;> simp
       have htg : Function.HasTemperateGrowth (fun y : M => ((l2 y : ℝ) : ℂ)) := by

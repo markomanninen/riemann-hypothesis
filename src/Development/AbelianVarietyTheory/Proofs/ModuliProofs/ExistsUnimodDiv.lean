@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DvdMulOfIdem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DvdMulOfIdem
+
+@[expose] public section
 
 open scoped nonZeroDivisors
 
@@ -61,7 +65,7 @@ theorem mem_of_orth {M : Type} [AddCommGroup M] [Module.Free ℤ M] [Module.Fini
   let D : AddSubgroup M :=
     { carrier := {x | ∀ y ∈ C, (m : ℤ) ∣ B x y}
       add_mem' := fun {a b} ha hb y hy => by
-        rw [map_add, AddMonoidHom.add_apply]; exact (ha y hy).add (hb y hy)
+        rw [map_add (f := _), AddMonoidHom.add_apply]; exact (ha y hy).add (hb y hy)
       zero_mem' := fun y _ => by simp
       neg_mem' := fun {a} ha y hy => by
         rw [map_neg, AddMonoidHom.neg_apply]; exact (ha y hy).neg_right }
@@ -83,7 +87,7 @@ theorem mem_of_orth {M : Type} [AddCommGroup M] [Module.Free ℤ M] [Module.Fini
       choose t ht using h1
       have hm' : (m : ℤ) ≠ 0 := Int.natCast_ne_zero.2 hm
       obtain ⟨z, hz⟩ := hB.2 (AddMonoidHom.mk' t fun a b => mul_left_cancel₀ hm' (by
-        rw [← ht, map_add, ht, ht, mul_add]))
+        rw [← ht, map_add (f := _), ht, ht, mul_add]))
       refine ⟨z, hB.1 (AddMonoidHom.ext fun y => ?_)⟩
       rw [ht, nsmulAddMonoidHom_apply, map_nsmul, hz]
       simp
@@ -119,10 +123,10 @@ theorem exists_unimod_div {R : Type} [CommRing R] {M : Type} [AddCommGroup M] [M
   choose t ht using fun x y : C => hiso x x.2 y y.2
   let B' : C →+ C →+ ℤ := AddMonoidHom.mk'
     (fun x => AddMonoidHom.mk' (t x) fun a b => mul_left_cancel₀ hm' (by
-      rw [mul_add, ← ht, ← ht, ← ht, Submodule.coe_add, map_add]))
+      rw [mul_add, ← ht, ← ht, ← ht, Submodule.coe_add, map_add (f := _)]))
     fun a b => AddMonoidHom.ext fun y => mul_left_cancel₀ hm' (by
       change m * t (a + b) y = m * (t a y + t b y)
-      rw [mul_add, ← ht, ← ht, ← ht, Submodule.coe_add, map_add, AddMonoidHom.add_apply])
+      rw [mul_add, ← ht, ← ht, ← ht, Submodule.coe_add, map_add (f := _), AddMonoidHom.add_apply])
   have hB' : ∀ x y : C, B x y = m * B' x y := ht
   refine ⟨B', ⟨fun x y => mul_left_cancel₀ hm' ?_, fun a x y => mul_left_cancel₀ hm' ?_, ?_, fun f => ?_⟩, hB'⟩
   · rw [mul_neg, ← hB', ← hB', h.skew]

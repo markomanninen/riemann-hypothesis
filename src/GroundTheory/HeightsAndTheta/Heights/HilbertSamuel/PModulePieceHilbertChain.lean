@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.TwoBlockModule
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ExistsMPrimeFiltration
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.TwoBlockModule
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ExistsMPrimeFiltration
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -188,11 +193,15 @@ theorem modPieceCard_chain (a : K → ℕ) (J₁ : Ideal (MRing ι)) :
       (∀ j, IsMultiHomog (f j) (c j) ∧ F j.succ = F j.castSucc ⊔ Ideal.span {f j} ∧
         ∀ g, g ∈ q j ↔ g * f j ∈ F j.castSucc) →
       (∀ j k, c j k ≤ a k) →
-      modPieceCard J₁ (F 0) a = ∏ j, Nat.card (mPiece (q j) (a - c j))
-  | 0, F, f, c, q, _, hl, _, _ => by
+      modPieceCard J₁ (F 0) a = ∏ j, Nat.card (mPiece (q j) (a - c j)) := by
+  intro N
+  induction N with
+  | zero =>
+    intro F f c q _ hl _ _
     have : F 0 = J₁ := hl
     rw [Finset.univ_eq_empty, Finset.prod_empty, this, modPieceCard_self]
-  | N + 1, F, f, c, q, h0, hl, hs, ha => by
+  | succ N ih =>
+    intro F f c q h0 hl hs ha
     obtain ⟨hf0, hF1, hq0⟩ := hs 0
     rw [Fin.castSucc_zero] at hF1 hq0
     have h0' : IsMultiHomogIdeal (F (Fin.succ 0)) := by
@@ -201,7 +210,7 @@ theorem modPieceCard_chain (a : K → ℕ) (J₁ : Ideal (MRing ι)) :
     have hs' : ∀ j : Fin N, IsMultiHomog (f j.succ) (c j.succ) ∧
         F j.succ.succ = F j.succ.castSucc ⊔ Ideal.span {f j.succ} ∧
         ∀ g, g ∈ q j.succ ↔ g * f j.succ ∈ F j.succ.castSucc := fun j => hs j.succ
-    have ih := modPieceCard_chain a J₁ N (fun i => F i.succ) (fun j => f j.succ) (fun j => c j.succ)
+    have htail := ih (fun i => F i.succ) (fun j => f j.succ) (fun j => c j.succ)
       (fun j => q j.succ) h0' (by simp only [Fin.succ_last]; exact hl)
       (fun j => by
         obtain ⟨x1, x2, x3⟩ := hs' j
@@ -223,7 +232,7 @@ theorem modPieceCard_chain (a : K → ℕ) (J₁ : Ideal (MRing ι)) :
     have key := AddSubgroup.relIndex_mul_relIndex _ _ _ hA hB
     have step := relIndex_piece_step h0 hf0 hq0 (ha 0)
     rw [← hF1] at step
-    rw [Fin.prod_univ_succ, ← ih, ← step, modPieceCard, modPieceCard]
+    rw [Fin.prod_univ_succ, ← htail, ← step, modPieceCard, modPieceCard]
     exact key.symm
 
 end Pieces
@@ -239,24 +248,26 @@ theorem length_loc_rel (P : Ideal R) [P.IsPrime] : ∀ (N : ℕ) (F : Fin (N + 1
     (∀ j, q j ≤ P → q j = P) →
     Module.length (Localization.AtPrime P) (LocalizedModule P.primeCompl (R ⧸ F 0)) =
       Module.length (Localization.AtPrime P) (LocalizedModule P.primeCompl (R ⧸ F (Fin.last N))) +
-        ((∑ j : Fin N, if q j = P then 1 else 0 : ℕ) : ℕ∞)
-  | 0, F, f, q, _, _ => by
+        ((∑ j : Fin N, if q j = P then 1 else 0 : ℕ) : ℕ∞) := by
+  intro N
+  induction N with
+  | zero =>
+    intro F f q _ _
     simp
-  | N + 1, F, f, q, hj, hmin => by
-    have ih := length_loc_rel P N (fun j => F j.succ) (fun j => f j.succ) (fun j => q j.succ)
-      (fun j => by
-        have h := hj j.succ
-        rwa [← Fin.succ_castSucc] at h)
+  | succ N ih =>
+    intro F f q hj hmin
+    have htail := ih (fun j => F j.succ) (fun j => f j.succ) (fun j => q j.succ)
+      (fun j => by simpa only [Fin.castSucc_succ] using hj j.succ)
       (fun j => hmin j.succ)
     obtain ⟨h1, _, h3⟩ := hj 0
     rw [Fin.castSucc_zero] at h1 h3
-    rw [length_loc_step (F 0) (q 0) (f 0) h3 P, ← h1, ih, Fin.sum_univ_succ]
+    rw [length_loc_step (F 0) (q 0) (f 0) h3 P, ← h1, htail, Fin.sum_univ_succ]
     simp only [Fin.succ_last]
     by_cases hq : q 0 = P
-    · rw [if_pos hq, hq, length_loc_quot_self]
+    · rw [ite_eq_left hq, hq, length_loc_quot_self]
       push_cast
       ring
-    · rw [if_neg hq, length_loc_quot_eq_zero _ _ (fun h => hq (hmin 0 h))]
+    · rw [ite_eq_right hq, length_loc_quot_eq_zero _ _ (fun h => hq (hmin 0 h))]
       simp
 
 end Lengths
@@ -282,7 +293,7 @@ theorem multAt_sub_eq_count {J₁ J₂ : Ideal (MRing ι)} (hJ₁ : IsMultiHomog
   rw [h0', ← hlast] at e1
   rw [e1, h0] at e2
   unfold multAt
-  rw [dif_pos hWp, dif_pos hWp, e2, ← hlast, e1, ← Nat.cast_add, ENat.toNat_natCast, ENat.toNat_natCast]
+  rw [dite_eq_left hWp, dite_eq_left hWp, e2, ← hlast, e1, ← Nat.cast_add, ENat.toNat_natCast, ENat.toNat_natCast]
   push_cast
   ring
 

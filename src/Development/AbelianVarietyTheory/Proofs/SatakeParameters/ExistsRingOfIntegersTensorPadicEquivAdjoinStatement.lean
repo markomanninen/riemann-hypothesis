@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRingOfIntegersTensorPadicEquivAdjoin
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentreCompat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRingOfIntegersTensorPadicEquivAdjoin
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentreCompat
+
+@[expose] public section
+
 open NumberField GlobalTheory.LKInvGood
 open scoped TensorProduct
 set_option maxHeartbeats 1000000 in

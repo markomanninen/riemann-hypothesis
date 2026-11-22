@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.MemPolKIff
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.MemPolKIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -146,7 +150,7 @@ private lemma coeff_dg_eq_mul_coeff {σ : Type} (f : (σ →₀ ℕ) → K) (F :
     · subst h
       ring
     · simp
-  | add F G hF hG => rw [map_add, coeff_add, coeff_add, hF, hG, mul_add]
+  | add F G hF hG => rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hF, hG, mul_add]
 
 theorem cge_dg {σ : Type} {a b : ℝ} {f : (σ →₀ ℕ) → K} {F : MvPolynomial σ K}
     (hf : ∀ α, vge v a (f α)) (hF : cge v b F) : cge v (a + b) (dg f F) := by
@@ -246,13 +250,13 @@ theorem v_natCast (hD : DVRHyp v p) {n : ℕ} (hn : n ≠ 0) :
   have hm0 : m ≠ 0 := by
     rintro rfl
     exact hm (dvd_zero p)
-  rw [padicValNat.mul (pow_ne_zero _ hD.prime.ne_zero) hm0, padicValNat.prime_pow,
-    padicValNat.eq_zero_of_not_dvd hm, add_zero, Nat.cast_mul, Nat.cast_pow, v.map_mul,
+  rw [(show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (pow_ne_zero _ hD.prime.ne_zero) hm0, Nat.padicValNat_def, padicValNat.prime_pow,
+    Nat.padicValNat_def, padicValNat.eq_zero_of_not_dvd hm, add_zero, Nat.cast_mul, Nat.cast_pow, v.map_mul,
     v_p_pow hD, v_natCast_of_not_dvd hD hm, add_zero]
 
 theorem vN_eq (hD : DVRHyp v p) (n : ℕ) : vN v n = padicValNat p n := by
   rcases eq_or_ne n 0 with rfl | hn
-  · simp [vN]
+  · simp [vN, Nat.padicValNat_def]
   · unfold vN
     rw [v_natCast hD hn, WithTop.untopD_coe, Rat.cast_natCast]
 
@@ -269,13 +273,13 @@ theorem vle_vN (hD : DVRHyp v p) {n : ℕ} (hn : n ≠ 0) : vle v (vN v n) (n : 
   rw [v_natCast hD hn, WithTop.untopD_coe, WithTop.map_coe]
 
 theorem vN_one (hD : DVRHyp v p) : vN v 1 = 0 := by
-  rw [vN_eq hD]
+  rw [vN_eq hD, Nat.padicValNat_def]
   simp
 
 theorem vN_mul (hD : DVRHyp v p) {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0) :
     vN v (m * n) = vN v m + vN v n := by
   haveI := Fact.mk hD.prime
-  rw [vN_eq hD, vN_eq hD, vN_eq hD, padicValNat.mul hm hn]
+  rw [vN_eq hD, vN_eq hD, vN_eq hD, (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) hm hn]
   push_cast
   ring
 
@@ -306,6 +310,7 @@ theorem vN_choose_le (hD : DVRHyp v p) (n k : ℕ) : vN v (n.choose k) ≤ Nat.l
   rw [vN_eq hD]
   have := @Nat.factorization_choose_le_log p n k
   rw [Nat.factorization_def _ hD.prime] at this
+  rw [Nat.padicValNat_def]
   exact_mod_cast this
 
 end DVR
@@ -461,7 +466,7 @@ theorem multinomial_fact_le {ι : Type*} (q : ℕ) (f : ι → ℕ) (s : Finset 
 
 theorem vN_multinomial_le (hD : DVRHyp v p) {r : ℕ} (f : Fin r → ℕ) :
     vN v (Nat.multinomial univ f) ≤ (r : ℝ) * (Nat.log p (∑ a, f a) : ℝ) := by
-  rw [vN_eq hD, ← Nat.factorization_def _ hD.prime]
+  rw [vN_eq hD, Nat.padicValNat_def, ← Nat.factorization_def _ hD.prime]
   have := multinomial_fact_le p f Finset.univ
   rw [Finset.card_univ, Fintype.card_fin] at this
   exact_mod_cast this

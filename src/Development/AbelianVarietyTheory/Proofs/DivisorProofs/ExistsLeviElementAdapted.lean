@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+
+@[expose] public section
+
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
@@ -26,7 +31,8 @@ theorem lev_mulVec (J : Matrix (Fin n) (Fin n) R) (X Y : Fin n → R) (s r : R) 
 
 theorem fm_skew (hc : ∀ x, c (c x) = x) (J : Matrix (Fin n) (Fin n) R) (hJ : ∀ i j, c (J j i) = -J i j)
     (p q : Fin n → R) : fm c J p q = -c (fm c J q p) := by
-  simp only [fm, dotProduct, Matrix.mulVec, map_sum, map_mul, hc, Finset.mul_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [fm, dotProduct, Matrix.mulVec, map_sum, map_mul, hc, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm, ← Finset.sum_neg_distrib]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [← Finset.sum_neg_distrib]
@@ -148,7 +154,7 @@ theorem cA_invol {σ : E →ₐ[F] E} (h : ∀ x, σ (σ x) = x) (x : AE F E) : 
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a e => simp [cA, Algebra.TensorProduct.map_tmul, h]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem cA_inclR (σ : E →ₐ[F] E) (e : E) : cA σ (inclR (F := F) (AF F) e) = inclR (F := F) (AF F) (σ e) := by
   simp [cA, inclR, Algebra.TensorProduct.map_tmul]
@@ -158,47 +164,9 @@ theorem cAr_inclR (σ : E →ₐ[F] E) (e : E) :
 
 theorem fm_inc (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (x y : Fin n → E) :
     fm (cA σ).toRingHom (incM F J) (incV F x) (incV F y) = inclR (F := F) (AF F) (form σ J x y) := by
-  simp only [fm, form, incV, incM, dotProduct, Matrix.mulVec, Matrix.map_apply, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [fm, form, incV, incM, dotProduct, Matrix.mulVec, Matrix.map_apply, map_sum, map_mul,
     AlgHom.coe_toRingHom, cAr_inclR, cA_inclR]
 
 end GlobalTheory.LeviPlane
 
-open GlobalTheory.LeviPlane in
-
-theorem GlobalTheory.LeviPlane.levi_exists : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (a a' : ℕ) (G : Geo σ a a') (X : Chars F E) (om : Rep σ G.V G.W) (om' : Rep σ G.V' G.W), IsTriple B G X om om' → ∀ (d₁ : ℕ) (W₁ : Spc F E d₁) (H' : Plane E (a + a') d₁) (i₀ i₁ : ℕ), H'.IsAdapted σ B G.W W₁ i₀ i₁ → ∀ t : (AE F E)ˣ, ∃ m : UA σ G.W.J, IsLevi (W₁ := W₁) H' t 1 m := by
-  intro F E _ _ _ _ _ σ B a a' G X om om' hT d₁ W₁ H' i₀ i₁ hH t
-  set c : AE F E →+* AE F E := (cA σ).toRingHom with hcdef
-  have hσ := sigma_invol hT.base.cm
-  have hc : ∀ x, c (c x) = x := fun x => cA_invol hσ x
-  have hJ : ∀ i j, c (incM F G.W.J j i) = -incM F G.W.J i j := by
-    intro i j
-    simp only [hcdef, incM, Matrix.map_apply, cAr_inclR, hT.geo.hW.skew, map_neg]
-  have hxx : fm c (incM F G.W.J) (incV F H'.x) (incV F H'.x) = 0 := by rw [fm_inc, hH.xx, map_zero]
-  have hyy : fm c (incM F G.W.J) (incV F H'.y) (incV F H'.y) = 0 := by rw [fm_inc, hH.yy, map_zero]
-  have hxy : fm c (incM F G.W.J) (incV F H'.x) (incV F H'.y) = 1 := by rw [fm_inc, hH.xy, map_one]
-  have hι : ∀ j, fm c (incM F G.W.J) (fun i => incM F H'.ι i j) (incV F H'.x) = 0 ∧
-      fm c (incM F G.W.J) (fun i => incM F H'.ι i j) (incV F H'.y) = 0 := by
-    intro j
-    have hcol : (fun i => incM F H'.ι i j) = incV F (H'.ι *ᵥ Pi.single j 1) := by
-      ext i; simp [incV, incM, Matrix.mulVec_single_one]
-    rw [hcol, fm_inc, fm_inc, (hH.orth _).1, (hH.orth _).2, map_zero]; exact ⟨rfl, rfl⟩
-  let L : AE F E → AE F E → Matrix (Fin (a + a')) (Fin (a + a')) (AE F E) :=
-    fun s r => lev c (incM F G.W.J) (incV F H'.x) (incV F H'.y) s r
-  have hmul : ∀ s r s' r', L s r * L s' r' = L (s * s') (r * r') := fun s r s' r' =>
-    lev_mul hc hJ hxx hyy hxy s r s' r'
-  have h1 : L 1 1 = 1 := lev_one hc hJ hxx hyy hxy
-  let g : GL (Fin (a + a')) (AE F E) :=
-    ⟨L (t : AE F E) (cA σ ((t⁻¹ : (AE F E)ˣ) : AE F E)), L ((t⁻¹ : (AE F E)ˣ) : AE F E) (cA σ (t : AE F E)),
-      by rw [hmul, ← map_mul, Units.mul_inv, Units.inv_mul, map_one, h1],
-      by rw [hmul, ← map_mul, Units.inv_mul, Units.mul_inv, map_one, h1]⟩
-  have hg : g ∈ GlobalTheory.WeilM.UG (cA σ) (incM F G.W.J) := by
-    show (L _ _)ᵀ * incM F G.W.J * (L _ _).map (cA σ) = incM F G.W.J
-    have := lev_unitary hc hJ hxx hyy hxy (t : AE F E) (cA σ ((t⁻¹ : (AE F E)ˣ) : AE F E))
-      (by show (t : AE F E) * cA σ (cA σ _) = 1; rw [cA_invol hσ, Units.mul_inv])
-    exact this
-  refine ⟨⟨g, hg⟩, ?_, ?_, ?_⟩
-  · exact lev_X hxx hxy _ _
-  · exact lev_Y hc hJ hxx hyy hxy _ _
-  · have : mat (1 : UA σ W₁.J) = 1 := rfl
-    rw [this, Matrix.mul_one]
-    exact lev_mul_ι _ hι _ _

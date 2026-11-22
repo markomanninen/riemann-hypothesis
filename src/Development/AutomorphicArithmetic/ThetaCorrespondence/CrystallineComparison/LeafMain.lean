@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.JOCZero
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.JOCBounded
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.JOCZero
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.JOCBounded
+
+@[expose] public section
 
 noncomputable section
 

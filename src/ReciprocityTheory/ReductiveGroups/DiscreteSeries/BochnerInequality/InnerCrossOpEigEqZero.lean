@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.Weights
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.BigCas
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.KUnitB
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.Numerics
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.Weights
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.BigCas
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.KUnitB
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.Numerics
+
+@[expose] public section
 
 noncomputable section
 

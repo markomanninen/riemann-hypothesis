@@ -1,7 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SpecialLinearGeneratedByTransvections
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsSelfDualLatticeAtPlaceLatticeCompletion
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ExistsNatSmulSingle
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SpecialLinearGeneratedByTransvections
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsSelfDualLatticeAtPlaceLatticeCompletion
+
+@[expose] public section
+
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil ValuativeRel IsLocalRing GlobalTheory.FinPl
@@ -73,7 +79,8 @@ theorem idAt_eq_zero_of_AA (hAA : D.host.AA = 0) {V V₀ W W₀ : HSp D} {ρ : �
   have hp : IsPlaceIdem D v (pairA D.host.F 0 (singleV D.host.F v 1)) :=
     ⟨_, rfl, GlobalTheory.LatAlmostStd.evalV_single_same v 1, fun w hw => GlobalTheory.LatAlmostStd.evalV_single_ne v 1 hw⟩
   set ε := pairA D.host.F 0 (singleV D.host.F v 1) with hεdef
-  obtain ⟨N, hN, -, hNL⟩ := GlobalTheory.LatAlmostStd.exists_commensurable LV hsdV.1
+  obtain ⟨N, hN, -, hNL⟩ := GlobalTheory.LatAlmostStd.exists_commensurable LV
+    (Formalism.IndefR.Fin.PDA.selfDual_isFullLattice V LV hsdV)
   obtain ⟨b, hb⟩ := IsLocalization.exist_integer_multiples_of_finite (nonZeroDivisors (𝓞 D.host.E))
     (fun k => dV.e k i)
   choose o ho using hb
@@ -99,7 +106,11 @@ theorem idAt_eq_zero_of_AA (hAA : D.host.AA = 0) {V V₀ W W₀ : HSp D} {ρ : �
     rw [mul_smul_comm, mul_comm (dV.e k i)]
   have hW := latA_eq_zero hAA ((hC i c hc).1 hyc)
   have hc0 : c = 0 := by
-    have h1 := congrFun (congrFun dW.pX_jX i) i
+    have hpX : dW.pX * dW.jX = 1 := by
+      change (dW.e'ᴴ * W.gram).map (incA D) * dW.e.map (incA D) = 1
+      rw [← Matrix.map_mul, dW.e'e]
+      exact Matrix.map_one _ (map_zero (incA D)) (map_one (incA D))
+    have h1 := congrFun (congrFun hpX i) i
     rw [Matrix.one_apply_eq, Matrix.mul_apply] at h1
     rw [← mul_one c, ← h1, Finset.mul_sum]
     refine Finset.sum_eq_zero fun k _ => ?_
@@ -116,8 +127,8 @@ theorem idAt_eq_zero_of_AA (hAA : D.host.AA = 0) {V V₀ W W₀ : HSp D} {ρ : �
 
 end GlobalTheory.FinPl.RatioAA
 
-open GlobalTheory.FinPl.RatioAA in
 
+open GlobalTheory.FinPl.RatioAA in
 theorem GlobalTheory.FinPl.ratio_of_colsAt : ∀ (D : D7) (V V₀ W W₀ : HSp D) (ρ : ℕ) (dV : HypDec V V₀ ρ) (dW : HypDec W W₀ ρ) (LV : Lat V) (LV₀ : Lat V₀) (LW : Lat W) (LW₀ : Lat W₀) (v : Pl D), Tame D v → IsSelfDualC V LV → IsSelfDualC W LW → MonoAt dV LV LV₀ v → MonoAt dW LW LW₀ v → ColsAt dV dW.jX LV LW v → ∀ (i j : Fin ρ) (r : AE D), r ∈ idAt D (· = v) → (∀ a : AE D, colMul dV.jX j a ∈ latV V LV (· = v) → colMul dV.jX i (r * a) ∈ latV V LV (· = v)) → ∀ a ∈ idAt D (· = v), colMul dW.jX j a ∈ latV W LW (· = v) → colMul dW.jX i (r * a) ∈ latV W LW (· = v) := by
   intro D V V₀ W W₀ ρ dV dW LV LV₀ LW LW₀ v _ hsdV _ _ _ hC i j r hr H a ha hja
   by_cases hAA : D.host.AA = 0
@@ -137,6 +148,6 @@ theorem GlobalTheory.FinPl.ratio_of_colsAt : ∀ (D : D7) (V V₀ W W₀ : HSp D
         rw [colMul_mul] at h5
         convert h5 using 2
         rw [map_mul]; ring
-      · rw [map_add, add_mul, colMul_add]; exact add_mem hx hy
+      · rw [map_add (f := _), add_mul, colMul_add]; exact add_mem hx hy
     have := key 1 (by rw [mul_inv_cancel₀ hAA]; exact FractionalIdeal.one_mem_one _)
     simpa using this

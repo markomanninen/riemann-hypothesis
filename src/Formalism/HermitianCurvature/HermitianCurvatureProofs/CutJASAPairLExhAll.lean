@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACBump
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACInt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACHaarPos
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACInv
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACBump
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACInt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACHaarPos
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACInv
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA.SA
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ConjugateNeSelf
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraicWeightPolyMatrixMultiplicativeStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpanRationalPointOrbitAlgebraicWeightStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ConjugateNeSelf
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraicWeightPolyMatrixMultiplicativeStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpanRationalPointOrbitAlgebraicWeightStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,8 +29,8 @@ theorem tauPt_mul (τ : L →+* ℂ) (A B : GL (Fin n) ℂ) :
   · simp [_root_.mul_inv_rev, Matrix.transpose_mul]
   · simp
 
-open Classical in
 
+open Classical in
 def tauSubst (τ : L →+* ℂ) : (L →+* ℂ) × Fin n × Fin n →
     MvPolynomial ((Fin n × Fin n) ⊕ (Fin n × Fin n)) ℂ := fun p =>
   if p.1 = τ then MvPolynomial.X (Sum.inl (p.2.1, p.2.2))
@@ -43,7 +47,7 @@ theorem eval_evPt (τ : L →+* ℂ) (Q : MvPolynomial ((L →+* ℂ) × Fin n �
   show MvPolynomial.eval _ Q = MvPolynomial.eval _ Q
   congr 2
   funext p
-  simp only [evPt, tauSubst]
+  simp only [evPt_eq_upt, upt, tauPt, tauSubst]
   split_ifs <;> simp [Matrix.one_apply, *]
 
 theorem isPolyRep_evPt (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ) (a : AlgWt L n) (ι : Type)

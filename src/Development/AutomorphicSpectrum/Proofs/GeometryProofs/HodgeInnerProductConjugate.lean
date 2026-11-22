@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
@@ -14,9 +18,6 @@ theorem cc_cc : cc ≫ cc = 𝟙 (Sp ℂ) := by
   rw [← Spec.map_comp, ← Spec.map_id]
   exact congrArg Spec.map (CommRingCat.hom_ext (RingHom.ext fun a => by simp))
 
-@[reassoc] theorem cc_cc_assoc' {Y : Scheme.{0}} (f : Sp ℂ ⟶ Y) : cc ≫ cc ≫ f = f := by
-  rw [← Category.assoc, cc_cc, Category.id_comp]
-
 abbrev tw (T : Over (Sp ℂ)) : Over (Sp ℂ) := Over.mk (T.hom ≫ cc)
 
 def twEquiv (A T : Over (Sp ℂ)) : (T ⟶ tw A) ≃ (tw T ⟶ A) where
@@ -30,8 +31,6 @@ def twEquiv (A T : Over (Sp ℂ)) : (T ⟶ tw A) ≃ (tw T ⟶ A) where
     rw [← Category.assoc, this, Category.assoc, cc_cc, Category.comp_id])
   left_inv _ := by ext; rfl
   right_inv _ := by ext; rfl
-
-@[simp] theorem twEquiv_left {A T : Over (Sp ℂ)} (x : T ⟶ tw A) : (twEquiv A T x).left = x.left := rfl
 
 abbrev twF (A : Over (Sp ℂ)) [GrpObj A] : (Over (Sp ℂ))ᵒᵖ ⥤ GrpCat.{0} :=
   (Over.map cc).op ⋙ yonedaGrpObj A
@@ -70,7 +69,7 @@ theorem pc_one {A : Over (Sp ℂ)} [GrpObj A] : pc (1 : 𝟙_ (Over (Sp ℂ)) �
 
 theorem pc_injective {A : Over (Sp ℂ)} : Function.Injective (pc (A := A)) := fun s t h => by
   have h1 := congrArg (fun r => cc ≫ r.left) h
-  simp only [pc_left, cc_cc_assoc'] at h1
+  simp only [pc_left, ← Category.assoc, cc_cc, Category.id_comp] at h1
   exact Over.OverMorphism.ext h1
 
 theorem pc_surjective {A : Over (Sp ℂ)} : Function.Surjective (pc (A := A)) := fun r => by
@@ -81,7 +80,7 @@ theorem pc_surjective {A : Over (Sp ℂ)} : Function.Surjective (pc (A := A)) :=
     simpa [cc_cc] using h2
   refine ⟨Over.homMk (cc ≫ r.left) (by simp [hr, cc_cc]), Over.OverMorphism.ext ?_⟩
   rw [pc_left]
-  simp [cc_cc_assoc']
+  simp [← Category.assoc, cc_cc, Category.id_comp]
 
 def ccIso : Sp ℂ ≅ Sp ℂ := ⟨cc, cc, cc_cc, cc_cc⟩
 
@@ -90,12 +89,12 @@ theorem isGrpPullback_tw {X : Scheme.{0}} {G : Over X} [GrpObj G] {A : Over (Sp 
     IsGrpPullback (tw A) G (cc ≫ z) φ := by
   refine ⟨?_, fun T x y x₀ y₀ hx hy => ?_⟩
   · exact h.1.of_iso (Iso.refl _) (Iso.refl _) ccIso (Iso.refl _) (by simp) (by simp [ccIso]) (by simp)
-      (by simp [ccIso, cc_cc_assoc'])
+      (by simp [ccIso, ← Category.assoc, cc_cc, Category.id_comp])
   · let e : Over.mk ((tw T).hom ≫ z) ⟶ Over.mk (T.hom ≫ cc ≫ z) := Over.homMk (𝟙 _) (by simp)
     have h1 := h.2 (tw T) (twEquiv A T x) (twEquiv A T y) (e ≫ x₀) (e ≫ y₀)
-      (by simpa [e] using hx) (by simpa [e] using hy)
+      (by simpa [e, twEquiv] using hx) (by simpa [e, twEquiv] using hy)
     rw [← comp_mul, ← twEquiv_mul] at h1
-    simpa [e] using h1
+    simpa [e, twEquiv] using h1
 
 theorem spMap_inv {R : Type} [CommRing R] (ψ : R →+* R) (hψ : ∀ a, ψ (ψ a) = a) :
     spMap ψ ≫ spMap ψ = 𝟙 _ := by
@@ -130,9 +129,9 @@ theorem valAt'_cc {Y : Scheme.{0}} (x : Sp ℂ ⟶ Y) (U : Y.Opens) (f : Γ(Y, U
   have hi := top_le_inv (starRingEnd ℂ) (fun a => by simp) (x := x) (U := U)
   unfold valAt'
   by_cases h : ⊤ ≤ x ⁻¹ᵁ U
-  · rw [dif_pos h, dif_pos (hi.2 h)]
+  · rw [dite_eq_left h, dite_eq_left (hi.2 h)]
     exact val_spMap _ x U h _ f
-  · rw [dif_neg h, dif_neg (fun h' => h (hi.1 h')), map_zero]
+  · rw [dite_eq_right h, dite_eq_right (fun h' => h (hi.1 h')), map_zero]
 
 section Analysis
 
@@ -178,7 +177,8 @@ theorem fderiv_conj (F : (Fin g → ℂ) → ℂ) (x w : Fin g → ℂ) :
 theorem form_conj (Hm : Matrix (Fin g) (Fin g) ℂ) (a b : Fin g → ℂ) :
     a ⬝ᵥ (Hm.map (starRingEnd ℂ)).mulVec (star b) =
       starRingEnd ℂ (star a ⬝ᵥ Hm.mulVec (star (star b))) := by
-  simp [dotProduct, Matrix.mulVec, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [dotProduct, Matrix.mulVec, map_sum, map_mul]
 
 end Analysis
 
@@ -279,7 +279,7 @@ theorem isAH_cjU (u : HolUnif A L g) {Hm : Matrix (Fin g) (Fin g) ℂ} {χ : u.�
     show starRingEnd ℂ (u.fr i (star z)) = starRingEnd ℂ (χ ⟨star l.1, l.2⟩) * _ *
       starRingEnd ℂ (u.fr i (star (z + l.1)))
     rw [e, star_add, map_mul, map_mul, ← Complex.exp_conj, form_conj, form_conj]
-    simp only [map_add, map_mul, Complex.conj_conj, Complex.conj_ofReal, map_div₀, Complex.conj_ofNat,
+    simp only [map_add (f := _), map_mul, Complex.conj_conj, Complex.conj_ofReal, map_div₀, Complex.conj_ofNat,
       star_star]
 
 def cjV (v : epsR ℂ ⟶ A) : epsR ℂ ⟶ tw A :=

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordProportionality
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordProportionality
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Toroidal GlobalTheory.ShFam GlobalTheory.ProjVar GlobalTheory.FlagBundle GlobalTheory.GoodMetric
 
 namespace GlobalTheory.GoodMetric.DiscrDvd
@@ -7,7 +12,7 @@ namespace GlobalTheory.GoodMetric.DiscrDvd
 theorem irreducible_X_sub_X {σ : Type} {a b : σ} (h : a ≠ b) :
     Irreducible (X a - X b : MvPolynomial σ ℝ) := by
   classical
-  have hc : coeff (Finsupp.single a 1) (X a - X b : MvPolynomial σ ℝ) = 1 := by
+  have hc : AddMonoidAlgebra.coeff (X a - X b : MvPolynomial σ ℝ) (Finsupp.single a 1) = 1 := by
     have : ¬ (Finsupp.single b 1 = Finsupp.single a 1) := fun e =>
       h (Finsupp.single_left_injective one_ne_zero e).symm
     simp [coeff_X, this]

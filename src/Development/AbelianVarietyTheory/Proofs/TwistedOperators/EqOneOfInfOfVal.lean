@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DenseRangeUnits
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DenseRangeUnits
+
+@[expose] public section
 
 open NumberField IsDedekindDomain NumberField.mixedEmbedding Classical
 open scoped ContDiff

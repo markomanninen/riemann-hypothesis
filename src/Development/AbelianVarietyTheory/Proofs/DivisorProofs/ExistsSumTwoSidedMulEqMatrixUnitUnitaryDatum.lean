@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntBTmulBasis
-import GroundTheory.Brauer.TensorSimple
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntBTmulBasis
+public import GroundTheory.Brauer.TensorSimple
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount IsDedekindDomain GlobalTheory.AdicSpan
 open scoped TensorProduct Classical
 
@@ -61,7 +66,7 @@ theorem exists_sum_mul_mul_eq_matrixUnit (n : ℕ) (hn : 0 < n) (hC : Module.fin
       rw [hΦ, hΦ, ← mul_assoc, hcomm _ _ a.2 s.2, mul_assoc, mul_assoc, mul_assoc]
     | add t u ht hu =>
       intro s x
-      simp only [map_add, LinearMap.add_apply, ht, hu, mul_add]
+      simp only [map_add (f := _), LinearMap.add_apply, ht, hu, mul_add]
   let W : Submodule F (Module.End F C) :=
     { carrier := {f | ∀ (s : S) (x : C), f ((s : C) * x) = (s : C) * f x}
       add_mem' := by
@@ -135,7 +140,8 @@ theorem exists_sum_mul_mul_eq_matrixUnit (n : ℕ) (hn : 0 < n) (hC : Module.fin
     apply LinearMap.ext
     intro x
     obtain ⟨c, hc, -⟩ := he x
-    rw [hc, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hc, map_sum]
     have hfW := f.2
     simp only [W, Submodule.mem_mk, AddSubmonoid.mem_mk, AddSubsemigroup.mem_mk, Set.mem_setOf_eq] at hfW
     simp only [ZeroMemClass.coe_zero, LinearMap.zero_apply]

@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubNatCompSubIncl
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubNatCompSubIncl
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits Opposite GlobalTheory.QcSub
 
 namespace GlobalTheory.QcSub.Local
@@ -33,7 +38,7 @@ theorem adjoin_mem_of_away {R A R' A' : Type} [CommRing R] [CommRing A] [CommRin
       obtain ⟨m2, s2, hs2, e2⟩ := hy
       refine ⟨m1 + m2, algebraMap R A g ^ m2 * s1 + algebraMap R A g ^ m1 * s2,
         add_mem (mul_mem (hgen _) hs1) (mul_mem (hgen _) hs2), ?_⟩
-      rw [map_add, map_mul, map_mul, map_pow, map_pow, ← e1, ← e2]
+      rw [map_add (f := _), map_mul, map_mul, map_pow, map_pow, ← e1, ← e2]
       ring
     | mul x y _ _ hx hy =>
       obtain ⟨m1, s1, hs1, e1⟩ := hx

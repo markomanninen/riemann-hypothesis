@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFibreSectionsCovering
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFibreSectionsCovering
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -141,7 +146,7 @@ theorem FibreSectionsCovering.proof : FibreSectionsCovering.Statement := by
     have heq : Set.range (fun i => G i w) = {x' | x' ∈ X ∧ A *ᵥ x' = w} := by
       refine ((Set.finite_of_encard_eq_coe hFw).subset hsub).eq_of_subset_of_encard_le hsub ?_
       rw [hFw]
-      refine le_trans ?_ hinj.encard_range
+      rw [hinj.encard_range]
       simp
     have hxmem : (x : Fin n → ℂ) ∈ Set.range (fun i => G i w) := by
       rw [heq]

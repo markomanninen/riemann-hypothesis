@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ExistsPerpHermitianReduction
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajPos
-import ReciprocityTheory.SemistableReduction.LatAll
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ExistsPerpHermitianReduction
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajPos
+public import ReciprocityTheory.SemistableReduction.LatAll
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.IsotropicIndexSums
 
@@ -21,7 +25,7 @@ private lemma hermC_add_left_eq_add (u v w : Fin r → ℂ) :
 
 private lemma hermC_add_right_eq_add (u v w : Fin r → ℂ) :
     hermC τ G u (v + w) = hermC τ G u v + hermC τ G u w := by
-  simp only [hermC, Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [hermC, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 private lemma hermC_const_smul_left (c : ℂ) (u w : Fin r → ℂ) :
     hermC τ G (c • u) w = c * hermC τ G u w := by
@@ -110,7 +114,8 @@ lemma isotropicIndex_bounds {ξ : Fin r → E} (hξ : herm X.Gm ξ ξ = 0) (hne 
   have hw0 : w ≠ 0 := emb_ne hne τ.1
   have hww : hermC τ.1 X.Gm w w = 0 := by
     have e : hermC τ.1 X.Gm w w = τ.1 (herm X.Gm ξ ξ) := by
-      simp only [hw, hermC, herm, Data.emb, map_sum, map_mul, cc, IsCMField.complexEmbedding_complexConj]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hw, hermC, herm, Data.emb, map_sum, map_mul, cc, IsCMField.complexEmbedding_complexConj]
     rw [e, hξ, map_zero]
 
   set z : Fin r → ℂ := P⁻¹ *ᵥ w with hz
@@ -167,7 +172,7 @@ variable (X : Data E r)
 lemma embV_add_smul (v : Fin r → E) (e : E) (ξ : Fin r → E) (τ : X.Ψ) :
     X.embV (v + e • ξ) τ = X.embV v τ + τ.1 e • Data.emb τ.1 ξ := by
   funext a
-  simp only [Data.embV, Data.emb, Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add, map_mul]
+  simp only [Data.embV, Data.emb, Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add (f := _), map_mul]
 
 lemma ucomp_apply (x : Frame X.Ψ r) (ξ : Fin r → E) (U : X.Ψ → Fin r → ℂ) (τ : X.Ψ) :
     X.ucomp x ξ U τ = U τ - (X.Hf x τ (U τ) (Data.emb τ.1 ξ) /

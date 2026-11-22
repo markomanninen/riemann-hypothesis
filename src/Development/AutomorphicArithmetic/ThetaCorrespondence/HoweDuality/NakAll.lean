@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.FactorApply
-import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.RadFin
-import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.Nak
-import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.SlotBasic
-import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.PartStable
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TensorEqTopOrLeKerFiniteLengthModulesStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.FactorApply
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.RadFin
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.Nak
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.SlotBasic
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.PartStable
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TensorEqTopOrLeKerFiniteLengthModulesStatement
+
+@[expose] public section
+
 open scoped TensorProduct
 open UpperTheory.Lit.HoweDuality
 

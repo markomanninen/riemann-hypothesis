@@ -1,34 +1,38 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteSupport
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LowestKTypesJointShapeBlockUnitary
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GluingLawHolds
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFockPolynomialIsoUnitaryPair
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiscreteSeriesPureInnerProductsTensorProduct
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubstitutionTotalDegreeLe
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MultTEqZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmPureTensorOOfFinite
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NoIntertwinerSmallerFockToDiscreteSeries
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EquivariantMapCarriesGelfandInvariantToFunction
-import Development.AbelianVarietyTheory.Statements.HaarFundamentalDomain.ExistsHaarFundDom
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ScalarOfComm
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemRangeMapSubtypeOfContr
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.KerLeFinset
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InclTprodUpdate
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsKActOfStable
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AbsIrrOfEquiv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsUnitaryImage
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteSupportOfAdmissible
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqZeroOfContr
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CoverKerOfDown
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LocKerOfCoverKer
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEmbeddingSkew
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsCuspGrowOfMemSpan
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegrableOfContinuous
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SignBlockDeterminantNeZeroOfMemMaxCompact
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.KMeanMemKFinOfCoefFam
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegrableOnMulRight
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ItEqSumKMean
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteSupport
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LowestKTypesJointShapeBlockUnitary
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GluingLawHolds
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFockPolynomialIsoUnitaryPair
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiscreteSeriesPureInnerProductsTensorProduct
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubstitutionTotalDegreeLe
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MultTEqZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmPureTensorOOfFinite
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NoIntertwinerSmallerFockToDiscreteSeries
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EquivariantMapCarriesGelfandInvariantToFunction
+public import Development.AbelianVarietyTheory.Statements.HaarFundamentalDomain.ExistsHaarFundDom
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ScalarOfComm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemRangeMapSubtypeOfContr
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.KerLeFinset
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InclTprodUpdate
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsKActOfStable
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AbsIrrOfEquiv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsUnitaryImage
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteSupportOfAdmissible
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqZeroOfContr
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CoverKerOfDown
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LocKerOfCoverKer
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEmbeddingSkew
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsCuspGrowOfMemSpan
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegrableOfContinuous
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SignBlockDeterminantNeZeroOfMemMaxCompact
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.KMeanMemKFinOfCoefFam
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegrableOnMulRight
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ItEqSumKMean
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,12 +50,12 @@ section Algebra
 variable {ι : Type} {P Y K : ι → Type} [∀ i, AddCommGroup (P i)] [∀ i, Module ℂ (P i)] [∀ i, AddCommGroup (Y i)]
   [∀ i, Module ℂ (Y i)] [∀ i, AddCommGroup (K i)] [∀ i, Module ℂ (K i)] {Z : Type} [AddCommGroup Z] [Module ℂ Z]
 
-def slice (B : MultilinearMap ℂ P (MultilinearMap ℂ Y Z)) (i : ι) (p : ∀ j, P j) (y : ∀ j, Y j) :
+def slice (B : (Π j, P j) →ₘₗ[ℂ] (Π j, Y j) →ₘₗ[ℂ] Z) (i : ι) (p : ∀ j, P j) (y : ∀ j, Y j) :
     P i →ₗ[ℂ] Y i →ₗ[ℂ] Z :=
   LinearMap.mk₂ ℂ (fun x z => B (Function.update p i x) (Function.update y i z)) (fun _ _ _ => by simp)
     (fun _ _ _ => by simp) (fun _ _ _ => by simp) fun _ _ _ => by simp
 
-theorem slice_apply (B : MultilinearMap ℂ P (MultilinearMap ℂ Y Z)) (i : ι) (p : ∀ j, P j) (y : ∀ j, Y j) (x : P i)
+theorem slice_apply (B : (Π j, P j) →ₘₗ[ℂ] (Π j, Y j) →ₘₗ[ℂ] Z) (i : ι) (p : ∀ j, P j) (y : ∀ j, Y j) (x : P i)
     (z : Y i) : slice B i p y x z = B (Function.update p i x) (Function.update y i z) := rfl
 
 def IsContr (i : ι) (L : (⨂[ℂ] j, K j) →ₗ[ℂ] K i) : Prop := ∀ f : Module.End ℂ (K i), L ∘ₗ intersection_update_fsHerm_neg_one i f = f ∘ₗ L
@@ -70,8 +74,8 @@ theorem eq_zero_of_isContr (i : ι) {x : ⨂[ℂ] j, K j} (h : ∀ L, IsContr i 
   exact MultilinearMap.map_coord_zero _ i this
 
 theorem exists_factor {G : ι → Type} (c : ∀ i, G i → Module.End ℂ (P i)) (a : ∀ i, G i → Module.End ℂ (K i))
-    (ha : ∀ i, AbsIrr (a i)) (I : MultilinearMap ℂ P (MultilinearMap ℂ Y (⨂[ℂ] j, K j)))
-    (B : MultilinearMap ℂ P (MultilinearMap ℂ Y Z)) (h0 : ∃ p y, I p y ≠ 0)
+    (ha : ∀ i, AbsIrr (a i)) (I : (Π j, P j) →ₘₗ[ℂ] (Π j, Y j) →ₘₗ[ℂ] (⨂[ℂ] j, K j))
+    (B : (Π j, P j) →ₘₗ[ℂ] (Π j, Y j) →ₘₗ[ℂ] Z) (h0 : ∃ p y, I p y ≠ 0)
     (he : ∀ i g p y, I (Function.update p i (c i g (p i))) y = intersection_update_fsHerm_neg_one i (a i g) (I p y))
     (hk : ∀ i L, IsContr i L → ∀ p y, (slice I i p y).compr₂ L ≠ 0 →
       (∀ L', IsContr i L' → ∀ p' y', KerLe (fun x z => (slice I i p y).compr₂ L x z)
@@ -100,7 +104,8 @@ theorem exists_factor {G : ι → Type} (c : ∀ i, G i → Module.End ℂ (P i)
   obtain ⟨hs, hf⟩ := GlobalTheory.Chain.IoLift.Factor.factor ι K P Y A hAs
   obtain ⟨T, hT⟩ := hf Z B fun i => (hk i (L i) (hL i) p₀ y₀ (hA i)).2
   obtain ⟨Φ, hΦ⟩ := hf _ I fun i p y n x z h => eq_zero_of_isContr i fun L' hL' => by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact (hk i (L i) (hL i) p₀ y₀ (hA i)).1 L' hL' p y n x z h
   obtain ⟨r, hr⟩ := GlobalTheory.Chain.IoLift.Scal.scalar_of_comm ι K G a ha Φ fun i g => by
     refine LinearMap.ext_on hs ?_
@@ -211,9 +216,9 @@ theorem mem_span_of_average {P Z : Type} [AddCommGroup P] [Module ℂ P] [AddCom
       · rw [Function.update_of_ne e]; exact hv ρ (by simp [e, hρ])
   induction x using PiTensorProduct.induction_on with
   | smul_tprod r v => rw [map_smul]; exact Submodule.smul_mem _ _ (key Finset.univ φ v (by simp))
-  | add a b ha hb => rw [map_add]; exact add_mem ha hb
+  | add a b ha hb => rw [(G φ).map_add]; exact add_mem ha hb
 
-def glueM (D : D7) (a b : ℕ) : MultilinearMap ℂ (fun _ : D.what₂.Tau => LPol b a) (PolF D b a) :=
+def glueM (D : D7) (a b : ℕ) : (D.what₂.Tau → LPol b a) →ₘₗ[ℂ] PolF D b a :=
   (MultilinearMap.mkPiAlgebra ℂ D.what₂.Tau (PolF D b a)).compLinearMap fun τ =>
     (MvPolynomial.rename (fun s => (τ, s)) : LPol b a →ₐ[ℂ] PolF D b a).toLinearMap
 
@@ -225,7 +230,7 @@ theorem srcOp_glue (τ : D.what₂.Tau) (aT : ℚ) (X : Matrix (Fin V.rank) (Fin
   simp only [srcOp, sOp, LinearMap.add_apply, LinearMap.smul_apply, Module.End.one_apply,
     ((GlueProof.glueLaw D _ _).2 τ _ _ p).1]
   simp only [← glueM_apply, MultilinearMap.map_update_add,
-    MultilinearMap.map_update_smul, Function.update_eq_self]
+    MultilinearMap.map_update_smul, RingHom.id_apply, Function.update_eq_self]
 
 theorem tgtOp_glue (τ : D.what₂.Tau) (aS : ℚ) (Y : Matrix (Fin W.rank) (Fin W.rank) ℂ)
     (p : D.what₂.Tau → LPol W.rank V.rank) :
@@ -233,10 +238,10 @@ theorem tgtOp_glue (τ : D.what₂.Tau) (aS : ℚ) (Y : Matrix (Fin W.rank) (Fin
   simp only [tgtOp, tOp, LinearMap.add_apply, LinearMap.smul_apply, Module.End.one_apply,
     ((GlueProof.glueLaw D _ _).2 τ _ _ p).2]
   simp only [← glueM_apply, MultilinearMap.map_update_add,
-    MultilinearMap.map_update_smul, Function.update_eq_self]
+    MultilinearMap.map_update_smul, RingHom.id_apply, Function.update_eq_self]
 
 def multi {Z : Type} [AddCommGroup Z] [Module ℂ Z] (A : PolF D W.rank V.rank →ₗ[ℂ] KT M' →ₗ[ℂ] Z) :
-    MultilinearMap ℂ (fun _ : D.what₂.Tau => LPol W.rank V.rank) (MultilinearMap ℂ (fun τ => kFin M' τ) Z) :=
+    (D.what₂.Tau → LPol W.rank V.rank) →ₘₗ[ℂ] (Π τ, kFin M' τ) →ₘₗ[ℂ] Z :=
   (PiTensorProduct.lift.symm.toLinearMap ∘ₗ A).compMultilinearMap (glueM D _ _)
 
 theorem multi_apply {Z : Type} [AddCommGroup Z] [Module ℂ Z] (A : PolF D W.rank V.rank →ₗ[ℂ] KT M' →ₗ[ℂ] Z)
@@ -300,20 +305,21 @@ theorem exists_factor_kFin (hdec : GlobalTheory.Published.CuspDecaySobolev) {θ 
       simp only [LinearMap.compr₂_apply, slice_apply, multi_apply, s1, hIs τ X hX, hL']
       exact (ha τ).skew X hX _ _
     · simp only [LinearMap.compr₂_apply, slice_apply, multi_apply, s2, s3]
-      rw [← map_add, hIt τ Y hY, map_zero]
+      rw [← map_add (f := _), hIt τ Y hY, map_zero]
   have pB : ∀ τ p y, IsLocPair M M' τ (aS τ) (aT τ) (a' τ) ((slice (multi B) τ p y).compr₂ E) := fun τ p y => by
     refine ⟨fun X hX P P' z z' => ?_, fun Y hY P z => ?_⟩
     · simp only [LinearMap.compr₂_apply, slice_apply, multi_apply, s1, hBs τ X hX]
       exact hE τ X hX _ _ (hBg _ _) (hBg _ _) (hBs τ X hX _ _ ▸ hBg _ _) (hBs τ X hX _ _ ▸ hBg _ _)
     · simp only [LinearMap.compr₂_apply, slice_apply, multi_apply, s2, s3]
-      rw [← map_add, hBt τ Y hY, map_zero]
+      rw [← map_add (f := _), hBt τ Y hY, map_zero]
   obtain ⟨⟨T, hT⟩, hs⟩ := exists_factor (fun τ (X : lieAt V τ) => sOp M M' τ (aT τ) X) _ hirr (multi I) (multi B)
     (by by_contra hn; exact h0 (span_multi I fun p y => by_contra fun h => hn ⟨p, y, h⟩))
     (fun τ X p y => by rw [multi_apply, multi_apply, ← srcOp_glue, hIs τ X X.2])
     fun τ L hL p y hne => ⟨fun L' hL' p' y' => hker τ _ _ _ _ (pI τ L hL p y) (pI τ L' hL' p' y') hne,
       fun p' y' n x z h => by
         refine (hE0 _ (GlobalTheory.Chain.CuspGrowSpace.isCuspGrow_of_mem_span D θ V _ (sum_mem fun i _ => Submodule.subset_span (hBg _ _)))).2 ?_
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         exact hker τ _ _ _ _ (pI τ L hL p y) (pB τ p' y') hne n x z h⟩
   refine ⟨⟨T, fun φ y => ?_⟩, eq_top_iff.2 (hs ▸ Submodule.span_mono ?_)⟩
   · have := span_multi (I.compr₂ T - B) fun p y => sub_eq_zero.2 (hT p y)
@@ -361,7 +367,7 @@ theorem exists_mult (hG : GlobalTheory.IndefiniteRowSideFullHecke.KTypeExtension
       obtain ⟨φ, y, h0⟩ := h0
       exact h0 (by rw [← hI, e]; simp)) hIs'
     (fun τ Y hY φ y => inj (by
-      rw [map_add, hI, hI, map_zero]
+      rw [map_add (f := _), hI, hI, map_zero]
       exact hIt τ Y hY φ _ _ ((GlobalTheory.Chain.IoLift.FinTensor.kFinTensor D W S' M' τ h').2.1 _ (ha' τ) Y hY _)))
     (fun φ y => hBg _ _) (fun τ X hX φ y => hBs τ X hX _ _) fun τ Y hY φ y => by
       rw [LinearMap.compl₂_apply, LinearMap.compl₂_apply, position_tprod, inclK_update, inclK_tprod]
@@ -377,18 +383,18 @@ theorem exists_mult (hG : GlobalTheory.IndefiniteRowSideFullHecke.KTypeExtension
     | add _ _ _ _ a b => intro c; rw [smul_add]; exact h3 _ _ (a c) (b c)
     | smul a _ _ h => intro c; rw [smul_smul]; exact h _
   have hg : ∀ x, IsCuspGrow θ V (T x) := fun x => GlobalTheory.Chain.CuspGrowSpace.isCuspGrow_of_mem_span D θ V _ (hind (fun x => T x ∈ _)
-    (fun φ y => Submodule.subset_span (hT φ y ▸ hBg _ _)) (fun x y a b => by rw [map_add]; exact add_mem a b) x)
+    (fun φ y => Submodule.subset_span (hT φ y ▸ hBg _ _)) (fun x y a b => by rw [T.map_add]; exact add_mem a b) x)
   obtain ⟨μ, 𝓕, hμ, h𝓕⟩ := GlobalTheory.Ker.HypModel.exists_haar_fundDom D V
   obtain ⟨E, hE0, -⟩ := GlobalTheory.Chain.CuspL2.exists_embedding_skew hdec D θ V μ 𝓕 hθ hμ h𝓕
   obtain ⟨U, ⟨hU, hUe⟩, -⟩ := hG θ hθ V S M J χ μ 𝓕 hμ h𝓕 (T.compMultilinearMap (PiTensorProduct.tprod ℂ))
     ⟨fun u => (hg _).1, fun u => (hg _).2.1, fun u => (hg _).2.2.1, fun u => (hE0 _ (hg _)).1, fun u => (hg _).2.2.2,
       fun u => hind (fun x => ∀ k ∈ J, ∀ g, T x (g * k) = χ k * T x g) (fun φ y => hT φ y ▸ hlev _ _)
-        (fun x y a b k hk g => by simp only [map_add, Pi.add_apply, a k hk g, b k hk g, mul_add]) _,
+        (fun x y a b k hk g => by simp only [map_add (f := _), Pi.add_apply, a k hk g, b k hk g, mul_add]) _,
       fun τ k hk u w hw => by
         obtain rfl : w = kOp M τ hk (u τ) := Subtype.ext hw
         rw [LinearMap.compMultilinearMap_apply, ← position_tprod]
         refine hind (fun x => T (intersection_update_fsHerm_neg_one τ (kOp M τ hk) x) = rTr V (atTau θ V τ k) (T x)) (fun φ y => ?_)
-          (fun x y a b => by rw [map_add, map_add, map_add, a, b]; rfl) _
+          (fun x y a b => by rw [map_add (f := _), map_add (f := _), map_add (f := _), a, b]; rfl) _
         obtain ⟨φ', -, h2⟩ := hK τ φ k hk
         rw [hT, ← (h2 _).2, ← hT]
         refine congrArg T (inj ((tensorLaw D V S M).inj ?_))
@@ -398,7 +404,7 @@ theorem exists_mult (hG : GlobalTheory.IndefiniteRowSideFullHecke.KTypeExtension
         rw [LinearMap.compMultilinearMap_apply, ← position_tprod]
         refine hind (fun x => T (intersection_update_fsHerm_neg_one τ (a τ X) x) = Rder θ V τ X (T x)) (fun φ y => ?_)
           (fun x y a b => by
-            rw [map_add, map_add, map_add, a, b, (GlobalTheory.Mem.AutSpace.linOnSm_Rder hX).add _ (hg _).2.1 _ (hg _).2.1]) _
+            rw [map_add (f := _), map_add (f := _), map_add (f := _), a, b, (GlobalTheory.Mem.AutSpace.linOnSm_Rder hX).add _ (hg _).2.1 _ (hg _).2.1]) _
         rw [← hIs' τ X hX, hT, hT, hBs τ X hX]⟩
   refine ⟨PiTensorProduct.lift U, ⟨U, Submodule.subset_span hU, rfl⟩, fun φ y => ?_⟩
   have e : PiTensorProduct.lift U ∘ₗ inclK h = T := PiTensorProduct.ext (MultilinearMap.ext fun u => by
@@ -430,19 +436,19 @@ theorem exists_trilinear {G H S P Ds : Type} [MeasurableSpace H] [AddCommGroup S
   let b : P → Ds → C →ₗ[ℂ] (G → ℂ) := fun φ v =>
     { toFun := fun F g => I fun h => th g h (pt φ) * (F : Ds →ₗ[ℂ] (H → ℂ)) v h
       map_add' := fun F F' => funext fun g => by
-        rw [Pi.add_apply, ← map_add]; congr 1; funext h; simp [mul_add]
+        rw [Pi.add_apply, ← map_add (f := _)]; congr 1; funext h; simp [mul_add]
       map_smul' := fun c F => funext fun g => by
         rw [Pi.smul_apply, ← map_smul]; congr 1; funext h; simp [mul_left_comm] }
   refine ⟨LinearMap.mk₂ ℂ b ?_ ?_ ?_ ?_, fun φ v F => funext fun g => hI _ (hint F φ v g)⟩
   · refine fun φ φ' v => LinearMap.ext fun F => funext fun g => ?_
     show I _ = I _ + I _
-    rw [← map_add]; congr 1; funext h; simp [add_mul]
+    rw [← map_add (f := _)]; congr 1; funext h; simp [add_mul]
   · refine fun c φ v => LinearMap.ext fun F => funext fun g => ?_
     show I _ = c • I _
     rw [← map_smul]; congr 1; funext h; simp [mul_assoc]
   · refine fun φ v v' => LinearMap.ext fun F => funext fun g => ?_
     show I _ = I _ + I _
-    rw [← map_add]; congr 1; funext h; simp [mul_add]
+    rw [← map_add (f := _)]; congr 1; funext h; simp [mul_add]
   · refine fun c φ v => LinearMap.ext fun F => funext fun g => ?_
     show I _ = c • I _
     rw [← map_smul]; congr 1; funext h; simp [mul_left_comm]
@@ -458,7 +464,7 @@ theorem ioExists_of_forall {G H S P Ds Dt : Type} [MeasurableSpace H] [AddCommGr
   choose u hu he using hex
   refine ⟨LinearMap.codRestrict C' ⟨⟨u, fun F F' => ?_⟩, fun c F => ?_⟩ hu, hint, fun F φ v g => ?_⟩
   · refine sub_eq_zero.1 (hun _ (sub_mem (hu _) (add_mem (hu _) (hu _))) fun φ v => ?_)
-    simp only [LinearMap.sub_apply, LinearMap.add_apply, he, map_add, sub_self]
+    simp only [LinearMap.sub_apply, LinearMap.add_apply, he, map_add (f := _), sub_self]
   · refine sub_eq_zero.1 (hun _ (sub_mem (hu _) (C'.smul_mem _ (hu _))) fun φ v => ?_)
     simp only [LinearMap.sub_apply, LinearMap.smul_apply, he, map_smul, RingHom.id_apply, sub_self]
   · exact congrFun ((hB φ v F).symm.trans (he F φ v).symm) g

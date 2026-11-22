@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.BlockSplitAll
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.BlockSplitAll
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +24,8 @@ theorem val_col_lt {n : Type} [Fintype n] [DecidableEq n] {h g : GL n k} (hh : h
   exact Valuation.map_sum_lt _ one_ne_zero fun c _ => by
     rw [map_mul]; exact Right.mul_lt_one_of_le_of_lt (val_le_one_of_mem_KO hh a c) (hg c)
 
-variable (k) in
 
+variable (k) in
 def blockGrp (r t : ℕ) : Subgroup (GL (Fin (r + t)) k) where
   carrier := {h | h ∈ KO k (Fin (r + t)) ∧
     ∀ (a : Fin (r + t)) (j : Fin r), valuation k ((h.val - 1) a (Fin.castAdd t j)) < 1}
@@ -41,15 +45,15 @@ def blockGrp (r t : ℕ) : Subgroup (GL (Fin (r + t)) k) where
     rw [e, Matrix.neg_apply, Valuation.map_neg]
     exact val_col_lt ((KO k _).inv_mem hh) _ (fun c => h1 c j) a
 
-open Classical in
 
+open Classical in
 def blockChar {r t : ℕ} (χ : kˣ →* ℂˣ) (h : GL (Fin (r + t)) k) : ℂ :=
   if hd : (h.val.submatrix (Fin.natAdd r) (Fin.natAdd r)).det = 0 then 0 else (χ (Units.mk0 _ hd) : ℂ)
 
 theorem blockChar_eq {r t : ℕ} (χ : kˣ →* ℂˣ) (h : GL (Fin (r + t)) k) (u : kˣ)
     (hu : (u : k) = (h.val.submatrix (Fin.natAdd r) (Fin.natAdd r)).det) : blockChar χ h = χ u := by
   have hd : (h.val.submatrix (Fin.natAdd r) (Fin.natAdd r)).det ≠ 0 := hu ▸ u.ne_zero
-  rw [blockChar, dif_neg hd]
+  rw [blockChar, dite_eq_right hd]
   congr 2
   ext; simp [hu]
 

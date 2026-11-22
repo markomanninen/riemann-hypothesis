@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.AllCoreOf
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DenseSplitFrobInvAway
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.AllCoreOf
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DenseSplitFrobInvAway
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,34 +17,34 @@ attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalDat
 
 namespace UpperTheory.Gal.TP
 
-open Sub
+open _root_.UpperTheory.Gal.TP.Sub
 
 variable {E Ω : Type} [Field E] [NumberField E] [IsCMField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] {l : ℕ} [Fact l.Prime]
 
-variable (Ω l) in
 
+variable (Ω l) in
 structure GoodGuard (Q : HeightOneSpectrum (𝓞 E) → Prop) : Prop where
   split : ∀ w, Q w → IsSplitAt w
   dense : ∀ S : Set (HeightOneSpectrum (𝓞 E)), S.Finite →
     Dense {g : G E Ω | ∃ w : HeightOneSpectrum (𝓞 E), w ∉ S ∧ Q w ∧ ((l : ℕ) : 𝓞 E) ∉ w.asIdeal ∧
       ∃ A : ValuationSubring Ω, IsPlaceOver A w ∧ IsFrob A (normV w) g⁻¹}
 
-variable (Ω) in
 
+variable (Ω) in
 def CoreAtQ (Q : HeightOneSpectrum (𝓞 E) → Prop) (ι : Qbar l ≃+* ℂ) (m : ℕ) : Prop :=
   ∀ U : Submodule ℂ (UA E m → ℂ), IsAutRepU U → ∀ lam : (E →+* ℂ) → DomWeight m, (∀ τ, HasWeightAt U τ (lam τ)) →
     ∃ r : G E Ω →* GL (Fin m) (Qbar l), Continuous r ∧ IsSSRep r ∧
       ∀ w B, Q w → GlobalTheory.Row9.SatU U w B → ∀ c, GlobalTheory.Row9.SphG c ι r w B fun τ => infOfWeight (lam τ)
 
-omit [IsAlgClosure E Ω] in
 
+omit [IsAlgClosure E Ω] in
 def WeakQ (Q : HeightOneSpectrum (𝓞 E) → Prop) (ι : Qbar l ≃+* ℂ) {a : ℕ} (U : Submodule ℂ (UA E a → ℂ))
     (r : G E Ω →* GL (Fin a) (Qbar l)) : Prop :=
   Continuous r ∧ IsSSRep r ∧ ∀ᶠ w : HeightOneSpectrum (𝓞 E) in Filter.cofinite,
     Q w → ∀ B, SatU U w B → FrobEig ι r w (algSat a (normV w) B)
 
-variable (Ω) in
 
+variable (Ω) in
 def RowQ (Q : HeightOneSpectrum (𝓞 E) → Prop) (ι : Qbar l ≃+* ℂ) (a : ℕ) : Prop :=
   ∀ (U : Submodule ℂ (UA E a → ℂ)), IsAutRepU U → ∀ lam : (E →+* ℂ) → DomWeight a, (∀ τ, HasWeightAt U τ (lam τ)) →
     (∃ r : G E Ω →* GL (Fin a) (Qbar l), WeakQ Q ι U r) ∧
@@ -78,12 +82,13 @@ theorem frobIdQ (hDI : DenseId) (hCp : CpFacts) (hQ : GoodGuard Ω l Q) (ι : Qb
     intro s e hs
     have h := (hs A hA).2 g⁻¹ hF
     rw [inv_inv] at h
-    rw [cp, h, Multiset.map_add, Multiset.prod_add, Multiset.map_map]
-    rfl
+    rw [cp, h, Multiset.map_add (f := _), Multiset.prod_add, Multiset.map_map,
+      Finset.prod_map_val]
+    simp only [Function.comp_apply]
   apply Polynomial.map_injective ι.toRingHom ι.injective
   rw [Polynomial.map_mul, Polynomial.map_mul, cp_map r c h1, cp_map r' c' h2, lin_map a' c' h4,
     lin_map a c h3]
-  ring
+  exact mul_right_comm _ _ _
 
 theorem weakIsoQ (hA : SatAE) (hQ : GoodGuard Ω l Q) (ι : Qbar l ≃+* ℂ) {a : ℕ} (U : Submodule ℂ (UA E a → ℂ)) (hU : IsAutRepU U)
     (r r' : G E Ω →* GL (Fin a) (Qbar l)) (hr : WeakQ Q ι U r) (hr' : WeakQ Q ι U r') : RepIso r r' := by
@@ -150,7 +155,6 @@ theorem atPlaceQ (hCE : CharEx) (hSat : SatAE) (hDI : DenseId) (hCp : CpFacts) (
         (fun τ => (GlobalTheory.GalDef.jumpsOf ι lam τ).map (· + m (ι.toRingHom.comp τ))) τ +
           Finset.univ.val.map fun i => (fun i τ => -p₁ i (ι.toRingHom.comp τ)) i τ := by
       funext τ
-      simp only [jumpsOf_eq]
       exact h1.inf _
     rw [hj] at c1
     have c2 := hcl w _ (fun i => (((ψ₁ i).val w : ℂˣ) : ℂ)) _ (fun i τ => -p₁ i (ι.toRingHom.comp τ))

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntAFSmulMemLatOF
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatD
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntAFSmulMemLatOF
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+
+@[expose] public section
 
 noncomputable section
 

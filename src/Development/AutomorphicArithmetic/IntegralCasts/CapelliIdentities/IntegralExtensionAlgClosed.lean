@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.IntegralExtensionAlgClosed.exists_ringHom_extension_of_integral :
     ∀ (R S K : Type) [inst : CommRing R] [inst_1 : CommRing S]
@@ -24,7 +28,11 @@ theorem UpperTheory.Reformulated.B.IntegralExtensionAlgClosed.exists_ringHom_ext
   haveI : Module.IsTorsionFree (R ⧸ RingHom.ker b) K :=
     Module.isTorsionFree_iff_faithfulSMul.2 inferInstance
   haveI : Algebra.IsAlgebraic (R ⧸ RingHom.ker b) (S ⧸ Q) := Algebra.IsIntegral.isAlgebraic
-  let ψ : (S ⧸ Q) →ₐ[R ⧸ RingHom.ker b] K := IsAlgClosed.lift
+  let ψ : (S ⧸ Q) →ₐ[R ⧸ RingHom.ker b] K := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨ψ.toRingHom.comp (Ideal.Quotient.mk Q), ?_⟩
   ext x
   exact ψ.commutes (Ideal.Quotient.mk (RingHom.ker b) x)

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationLift.NormRepStepOfTrace
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscrB
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationLift.NormRepStepOfTrace
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscrB
+
+@[expose] public section
 
 noncomputable section
 

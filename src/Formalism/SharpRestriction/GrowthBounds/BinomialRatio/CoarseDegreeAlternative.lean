@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FamilyFourthBound
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ThresholdLowerBounds
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FamilyFourthBound
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ThresholdLowerBounds
+
+@[expose] public section
 
 noncomputable section
 

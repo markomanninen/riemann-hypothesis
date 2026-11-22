@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StOrdFiniteNonZeroDivisor
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.CurveNormalisationFiniteLemmas
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StOrdFiniteNonZeroDivisor
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.CurveNormalisationFiniteLemmas
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -45,7 +50,7 @@ theorem OrdFiniteNonZeroDivisor.proof : OrdFiniteNonZeroDivisor.Statement := by
     inferInstanceAs (Algebra.IsIntegral (curveLocalRing I q)
       (integralClosure (curveLocalRing I q) (FractionRing (curveLocalRing I q))))
   obtain ⟨Q, -, hQ, hQp⟩ := Ideal.exists_ideal_over_prime_of_isIntegral p (⊥ : Ideal (curveNormalisation I q))
-    (by rw [← RingHom.ker_eq_comap_bot, (RingHom.injective_iff_ker_eq_bot _).1
+    (by rw [Ideal.under_def, ← RingHom.ker_eq_comap_bot, (RingHom.injective_iff_ker_eq_bot _).1
       (algebraMap_curveNormalisation_injective I q)]; exact bot_le)
   obtain ⟨P, hPm, hQP⟩ := Ideal.exists_le_maximal Q hQ.ne_top
   apply hord ⟨P, hPm⟩
@@ -55,9 +60,9 @@ theorem OrdFiniteNonZeroDivisor.proof : OrdFiniteNonZeroDivisor.Statement := by
   set Q' := Q.map (algebraMap (curveNormalisation I q) (Localization.AtPrime P)) with hQ'def
   have : Q'.IsPrime := IsLocalization.isPrime_of_isPrime_disjoint P.primeCompl _ Q hQ hd
   have hQ'u : Q'.under _ = Q := IsLocalization.under_map_of_isPrime_disjoint P.primeCompl _ hQ hd
-  have hle : Ideal.span {algebraMap (curveNormalisation I q) (Localization.AtPrime P)
+  have hle : Ideal.span {(algebraMap (curveNormalisation I q) (Localization.AtPrime P)
       (algebraMap (curveLocalRing I q) (curveNormalisation I q)
-        (algebraMap (MvPolynomial (Fin n) ℂ) (curveLocalRing I q) f))} ≤ Q' := by
+        (algebraMap (MvPolynomial (Fin n) ℂ) (curveLocalRing I q) f)))} ≤ Q' := by
     rw [Ideal.span_singleton_le_iff_mem]
     refine Ideal.mem_map_of_mem _ ?_
     rw [← hQp] at hxp
@@ -77,6 +82,6 @@ theorem OrdFiniteNonZeroDivisor.proof : OrdFiniteNonZeroDivisor.Statement := by
   apply hpmax
   rw [← hQp]
   have : Q.IsMaximal := hQeq ▸ hPm
-  exact Ideal.isMaximal_comap_of_isIntegral_of_isMaximal Q
+  exact Ideal.isMaximal_under_of_isIntegral_of_isMaximal Q
 
 end GroundTheory.Heights₂.Heights

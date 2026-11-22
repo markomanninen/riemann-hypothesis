@@ -1,4 +1,8 @@
-import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohCmpA
+module
+
+public import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohCmpA
+
+@[expose] public section
 
 open CategoryTheory GroundTheory.ProfCoh ReciprocityTheory.Gal ValuativeRel
 
@@ -120,7 +124,7 @@ theorem gc0 : Sgc0 := by
       rw [Subsingleton.elim s default]
       exact (e.apply_symm_apply _).symm)
   refine ⟨AddEquiv.ofBijective f ⟨?_, hs⟩, fun m x h => hf m x (funext h)⟩
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro z hz
   obtain ⟨x, hx⟩ := hex z
   rw [hf z x hx, pi_zero_eq_zero_iff, hx] at hz

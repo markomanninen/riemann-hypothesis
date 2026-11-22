@@ -1,5 +1,9 @@
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.WeightCompApply
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.FischerAdjointnessHolds
+module
+
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.WeightCompApply
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.FischerAdjointnessHolds
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.PW
 
@@ -103,12 +107,13 @@ private theorem le_iSup_gS_highestWeight_of_stable_of_finW {K V : Type} [Field K
   have hv2W : G.comp μ (G.cprod cs v) ∈ W := G.graded_of hW μ _ (G.cprod_mem hW cs hvW)
   have hv2wt : G.IsWt μ (G.comp μ (G.cprod cs v)) := by
     show G.comp μ (G.comp μ _) = _
-    rw [G.idem, if_pos rfl]
+    rw [G.idem, ite_eq_left rfl]
   have hv2hw : ∀ a b, a < b → G.E a b (G.comp μ (G.cprod cs v)) = 0 := by
     intro a b hab
     have hsh := G.shift a b (μ + dl a b) (G.cprod cs v)
     rw [add_sub_cancel_right] at hsh
-    rw [← hsh, G.E_cprod, ← hf2 a b hab, Finsupp.sum, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hsh, G.E_cprod, ← hf2 a b hab, Finsupp.sum, map_sum, map_sum]
     refine Finset.sum_eq_zero fun i hi => ?_
     have hi1 := hf1 a b i
     have hCasi : G.Cas (f a b i) = ((GlW.casI i.2.2.2.choose : ℤ) : K) • f a b i :=
@@ -260,7 +265,7 @@ theorem projection_lattice_holds : ProjP := by
     intro la mu hla hmu x hx y hy
     have hne : ∃ c ∈ Cs, la c ≠ mu c := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       exact hmu ((hT la mu hcon).mp hla)
     exact orthogonal_isomorphism_holds p N r LL j Cs la mu hne x hx y hy
   have hAB : A ≤ perpS B := by
@@ -309,17 +314,17 @@ theorem projection_lattice_holds : ProjP := by
       exact Submodule.mem_top
     obtain ⟨h1, hh1, h2, hh2, rfl⟩ := Submodule.mem_sup.mp hH
     have e1 : A.projectionOnto B hcompl h1 = ⟨h1, hh1⟩ :=
-      Submodule.linearProjOfIsCompl_apply_left hcompl ⟨h1, hh1⟩
+      Submodule.projectionOnto_apply_of_mem_left hcompl hh1
     have e2 : A.projectionOnto B hcompl h2 = 0 :=
-      Submodule.linearProjOfIsCompl_apply_right hcompl ⟨h2, hh2⟩
+      Submodule.projectionOnto_apply_of_mem_right hcompl hh2
     refine ⟨h1, hh1, h2, hh2, rfl, ?_⟩
-    rw [LinearMap.comp_apply, map_add, e1, e2, add_zero]
+    rw [LinearMap.comp_apply, map_add (f := _), e1, e2, add_zero]
     rfl
   refine ⟨A.subtype ∘ₗ A.projectionOnto B hcompl, ⟨?_, ?_, ?_⟩, ?_⟩
   · ext x
-    simp only [LinearMap.comp_apply, Submodule.coe_subtype, Submodule.linearProjOfIsCompl_apply_left]
-  · rw [LinearMap.range_comp, Submodule.linearProjOfIsCompl_range, Submodule.map_subtype_top]
-  · rw [LinearMap.ker_comp, Submodule.ker_subtype, Submodule.comap_bot, Submodule.linearProjOfIsCompl_ker]
+    simp only [LinearMap.comp_apply, Submodule.coe_subtype, Submodule.projectionOnto_apply_left]
+  · rw [LinearMap.range_comp, Submodule.range_projectionOnto, Submodule.map_subtype_top]
+  · rw [LinearMap.ker_comp, Submodule.ker_subtype, Submodule.comap_bot, Submodule.ker_projectionOnto]
   · intro F G
     obtain ⟨f1, hf1, f2, hf2, rfl, hPF⟩ := hdec F
     obtain ⟨g1, hg1, g2, hg2, rfl, hPG⟩ := hdec G

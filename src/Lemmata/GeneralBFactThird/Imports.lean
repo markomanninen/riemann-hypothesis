@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 universe u_1
 
@@ -7,7 +11,7 @@ namespace Bl.general_b_fact_third
 theorem goal1 :
   ∀ {K : Type u_1} [inst : NormedField.{u_1} K] [IsUltrametricDist.{u_1} K] (P : Polynomial.{u_1} K),
   Polynomial.Monic.{u_1} P →
-    (∀ (i : Nat), LE.le.{0} (Norm.norm.{u_1} (Polynomial.coeff.{u_1} P i)) 1) →
+    (∀ (i : Nat), LE.le.{0} (Norm.norm.{u_1} (P.coeff i)) 1) →
       ∀ (x : K), Eq.{u_1 + 1} (Polynomial.eval.{u_1} x P) 0 → LE.le.{0} (Norm.norm.{u_1} x) 1 := by
   intro K _ _ P hP hc x hx
   by_contra h

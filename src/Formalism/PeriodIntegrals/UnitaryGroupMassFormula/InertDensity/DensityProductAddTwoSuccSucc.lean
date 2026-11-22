@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.SiegelMassRatios.DensExact
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertDensity.AnisoPeelAlt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertDensity.DensExactInertOf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.SiegelMassRatios.DensExact
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertDensity.AnisoPeelAlt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertDensity.DensExactInertOf
+
+@[expose] public section
 
 open Finset
 
@@ -10,12 +14,6 @@ noncomputable section
 namespace DensInertW
 
 def arF (q i : ℕ) : ℝ := 1 - (-1 : ℝ) ^ i * ((q : ℝ) ^ i)⁻¹
-
-theorem ar_densProd_eq (q n m c : ℕ) :
-    Formalism.L2.SG.DensExact.densProd q (-1) n m c = ∏ i ∈ Icc (n + 1 - (m + c)) n, arF q i := rfl
-
-theorem ar_f_zero (q : ℕ) : arF q 0 = 0 := by
-  simp [arF]
 
 theorem ar_valN (q n : ℕ) (hq : 0 < q) :
     ((valN q (n + 1) : ℤ) : ℝ) = (q : ℝ) ^ (2 * n + 1) * arF q (n + 1) := by

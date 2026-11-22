@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.DatDatum
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
-import GroundTheory.GlobalFields.LocalFieldAtPlace
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.DatDatum
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+public import GroundTheory.GlobalFields.LocalFieldAtPlace
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -9,7 +13,7 @@ open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalS
 theorem UpperTheory.locGL_eq_localEmbedding_and_KGL_eq_integralGL :
     ∀ (E : Type) [Field E] [NumberField E] (n : ℕ) (w : HeightOneSpectrum (𝓞 E)),
           (∀ g, GlobalTheory.CuspRep.locGL E n w g = AdelicGLn.localEmbedding w g) ∧
-          GlobalTheory.LFun.KGL w n = GLnLocal.integralGL (w.adicCompletion E) n := by
+          GlobalTheory.LFun.KGL w (n := n) = GLnLocal.integralGL (w.adicCompletion E) n := by
   intro E _ _ n w
   refine ⟨fun g => ?_, ?_⟩
   · obtain ⟨-, h1, h2, -⟩ := UpperTheory.ConvolutionTheory.Tf.locEmb E n w

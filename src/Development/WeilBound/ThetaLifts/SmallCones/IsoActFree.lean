@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
-import Development.WeilBound.ThetaLifts.SmallCones.ConeLawAB
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
+public import Development.WeilBound.ThetaLifts.SmallCones.ConeLawAB
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 

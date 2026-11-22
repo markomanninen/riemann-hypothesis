@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormPrimitiveRootPrimePowSubOnePadicComplex
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateDecompositionCompletedCyclotomicIntegers
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsTateOperatorLevelComplement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormPowSubOneLe
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormPrimitiveRootPrimePowSubOnePadicComplex
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateDecompositionCompletedCyclotomicIntegers
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsTateOperatorLevelComplement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormPowSubOneLe
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.Cyc
 
@@ -13,13 +17,6 @@ namespace GlobalTheory.CycPerturb
 section Abstract
 
 variable {C : Type} [NormedField C] [IsUltrametricDist C]
-
-theorem norm_mulVec_le {r : ℕ} (B : Matrix (Fin r) (Fin r) C) {c : ℝ} (hc : 0 ≤ c)
-    (hB : ∀ a b, ‖B a b‖ ≤ c) (v : Fin r → C) (a : Fin r) : ‖B.mulVec v a‖ ≤ c * ‖v‖ := by
-  simp only [Matrix.mulVec, dotProduct]
-  refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (by positivity) fun b _ => ?_
-  rw [norm_mul]
-  exact mul_le_mul (hB a b) (norm_le_pi_norm v b) (norm_nonneg _) hc
 
 omit [IsUltrametricDist C] in
 theorem mulVec_mem {r : ℕ} (X : AddSubgroup C) (B : Matrix (Fin r) (Fin r) C)
@@ -112,15 +109,15 @@ theorem surj_of_lattice [CompleteSpace C] {r : ℕ} (X : AddSubgroup C) (hX : Is
           = ∑ b, π * B a b * g (P n b) + π * (-π) ^ n * u (n + 1) a := by
         rw [h2, Finset.mul_sum, ← Finset.sum_add_distrib]
         refine Finset.sum_congr rfl fun b _ => ?_
-        rw [e, map_add, map_mul, map_pow, map_neg, hgπ]; ring
-      rw [h3, e, map_add, map_mul, map_pow, map_neg, hgπ]
+        rw [e, map_add (f := _), map_mul, map_pow, map_neg, hgπ]; ring
+      rw [h3, e, map_add (f := _), map_mul, map_pow, map_neg, hgπ]
       linear_combination ih a + (-π) ^ n * h1
   refine ⟨y, fun a => hX.mem_of_tendsto (hP a) (Filter.Eventually.of_forall fun n =>
     X.sum_mem fun k _ => hpow k _ (hS _ (huX k a)).1), fun a => ?_⟩
   have t1 : Filter.Tendsto (fun n => g (P n a) - P n a + p * ∑ b, π * B a b * g (P n b))
       Filter.atTop (nhds (g (y a) - y a + p * ∑ b, π * B a b * g (y b))) :=
     (((hgc.tendsto _).comp (hP a)).sub (hP a)).add
-      ((tendsto_finset_sum _ fun b _ => ((hgc.tendsto _).comp (hP b)).const_mul _).const_mul p)
+      ((tendsto_finsetSum _ fun b _ => ((hgc.tendsto _).comp (hP b)).const_mul _).const_mul p)
   have t0 : Filter.Tendsto (fun n : ℕ => (-π) ^ n * u n a) Filter.atTop (nhds 0) :=
     squeeze_zero_norm (fun n => hbd n _ (huX n a))
       (tendsto_pow_atTop_nhds_zero_of_lt_one (norm_nonneg π) hπ)
@@ -296,7 +293,7 @@ theorem act_fix {act : GQ l →* (PadicComplex l ≃+* PadicComplex l)} (hact : 
 
 theorem norm_le_one_of_mem_Ohat {K : FinExt l} {x : PadicComplex l} (hx : x ∈ Ohat K) :
     ‖x‖ ≤ 1 :=
-  closure_minimal (t := {y : PadicComplex l | ‖y‖ ≤ 1}) (fun _ h => h.2)
+  closure_minimal (s := intC (Kinf K)) (t := {y : PadicComplex l | ‖y‖ ≤ 1}) (fun _ h => h.2)
     (isClosed_le continuous_norm continuous_const) hx
 
 theorem perturbation : ∀ (l : ℕ) [Fact l.Prime] (act : GQ l →* (PadicComplex l ≃+* PadicComplex l)) (χ : GQ l →* ℚ_[l]ˣ), IsActC act → IsCyc χ → ∀ (K : FinExt l), ∀ j : ℕ, Lev l j → ∀ g, IsGen χ K j g → ∀ (r : ℕ) (U : GQ l → Matrix (Fin r) (Fin r) (PadicComplex l)), (∀ a b, U g a b ∈ intC (Ks K j)) → (∀ a b, ‖(U g - 1) a b‖ < rho1 l) → ∀ i : ℤ, (∀ y : Fin r → PadicComplex l, (∀ a, y a ∈ Xj K j) → twAct act χ i U g y = y → y = 0) ∧ ∀ ζ : PadicComplex l, IsPrimitiveRoot ζ l → ∀ w : Fin r → PadicComplex l, (∀ a, w a ∈ Xj K j) → ∃ y : Fin r → PadicComplex l, (∀ a, y a ∈ Xj K j) ∧ twAct act χ i U g y - y = (ζ - 1) • w := by

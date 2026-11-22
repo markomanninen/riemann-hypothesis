@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianTraceFormVanishing
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianTraceFormVanishing
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -253,7 +257,7 @@ theorem trace_int (hr : 0 < r) (c : 𝓞 E) :
       obtain ⟨m2, hm2⟩ := h2 a
       refine ⟨m1 + m2, ?_⟩
       push_cast
-      rw [mul_add, mul_add, map_add, hm1, hm2]
+      rw [mul_add, mul_add, map_add (f := _), hm1, hm2]
     | smul b c _ h =>
       intro a
       obtain ⟨m, hm⟩ := h (a * b)

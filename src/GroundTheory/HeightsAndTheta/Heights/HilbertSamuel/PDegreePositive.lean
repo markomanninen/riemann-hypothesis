@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsDegreePositive
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PHilbertDimZero
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PIntersectionRecursion
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.OfSteps
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsDegreePositive
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PHilbertDimZero
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PIntersectionRecursion
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.OfSteps
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -40,7 +45,7 @@ theorem ringKrullDim_of_mem_minimalPrimes (q W : Ideal (MRing (fun _ : Unit => �
   have hht : W'.height ≤ 1 := Ideal.map_height_le_one_of_mem_minimalPrimes hmin
   have hquot : ringKrullDim (B ⧸ W') = ringKrullDim (MRing (fun _ : Unit => ι₀) F ⧸ W) :=
     ringKrullDim_eq_of_ringEquiv (DoubleQuot.quotQuotEquivQuotOfLE hIW)
-  have hform := GroundTheory.Arith.Abelian.Jacobian.height_add_ringKrullDim_quotient F W'
+  have hform := GroundTheory.Arith.Abelian.Jacobian.height_add_ringKrullDim_quotient (k := F) W'
   have hdrop := GroundTheory.Arith.Abelian.Jacobian.ringKrullDim_quotient_add_one_le W' hW'ne
   rw [hquot] at hform hdrop
   change ringKrullDim B = _ at hdim
@@ -67,8 +72,8 @@ theorem ringKrullDim_of_mem_minimalPrimes (q W : Ideal (MRing (fun _ : Unit => �
   subst this
   rfl
 
-omit [Fintype ι₀] in
 
+omit [Fintype ι₀] in
 theorem isRelevant_of_ringKrullDim (W : Ideal (MRing (fun _ : Unit => ι₀) F)) [W.IsPrime] (e : ℕ)
     (hW : ringKrullDim (MRing (fun _ : Unit => ι₀) F ⧸ W) = ((e + 1 : ℕ) : WithBot ℕ∞)) :
     IsRelevant W := by
@@ -88,7 +93,7 @@ theorem isRelevant_of_ringKrullDim (W : Ideal (MRing (fun _ : Unit => ι₀) F))
     | add p r hp hr =>
       obtain ⟨a, ha⟩ := hp
       obtain ⟨b, hb⟩ := hr
-      exact ⟨a + b, by rw [map_add, ha, hb, map_add]⟩
+      exact ⟨a + b, by rw [map_add (f := _), ha, hb, map_add (f := _)]⟩
     | mul_X p v _ =>
       refine ⟨0, ?_⟩
       rw [map_zero, map_mul, Ideal.Quotient.eq_zero_iff_mem.mpr (hX v), mul_zero]
@@ -97,8 +102,8 @@ theorem isRelevant_of_ringKrullDim (W : Ideal (MRing (fun _ : Unit => ι₀) F))
   have : e + 1 ≤ 0 := by exact_mod_cast hle
   omega
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem hilbFn_pos (q : Ideal (MRing (fun _ : Unit => ι₀) F)) (hq : IsMultiProjPrime q) (n : ℕ) :
     0 < hilbFn q (fun _ => (n : ℤ)) := by
   obtain ⟨i, hi⟩ := hq.relevant ()
@@ -127,8 +132,8 @@ theorem hilbFn_pos (q : Ideal (MRing (fun _ : Unit => ι₀) F)) (hq : IsMultiPr
   have hpos : 0 < Module.finrank F (gradedPiece q (fun _ : Unit => n)) := Module.finrank_pos
   exact_mod_cast hpos
 
-omit [Fintype ι₀] in
 
+omit [Fintype ι₀] in
 theorem le_ker_constantCoeff (q : Ideal (MRing (fun _ : Unit => ι₀) F)) (hq : IsMultiProjPrime q) :
     q ≤ RingHom.ker (constantCoeff : MRing (fun _ : Unit => ι₀) F →+* F) := by
   intro p hp
@@ -140,7 +145,7 @@ theorem le_ker_constantCoeff (q : Ideal (MRing (fun _ : Unit => ι₀) F)) (hq :
     intro h'
     have := congrFun h' ()
     simp [blockWeight] at this)] at h0
-  have hu : IsUnit (C (coeff 0 p) : MRing (fun _ : Unit => ι₀) F) :=
+  have hu : IsUnit (C (AddMonoidAlgebra.coeff p 0) : MRing (fun _ : Unit => ι₀) F) :=
     (isUnit_iff_ne_zero.mpr (by rwa [← constantCoeff_eq])).map C
   exact hq.isPrime.ne_top (Ideal.eq_top_of_isUnit_mem _ h0 hu)
 
@@ -185,13 +190,13 @@ theorem pos (D : ℕ) : ∀ q : Ideal (MRing (fun _ : Unit => ι₀) F), IsMulti
       intro W hW
       unfold divCycle at hW ⊢
       by_cases hc : W ∈ J.minimalPrimes ∧ IsRelevant W
-      · rw [dif_pos hc] at hW ⊢
+      · rw [dite_eq_left hc] at hW ⊢
         have hWp : W.IsPrime := hc.1.1.1
         have hWd := ringKrullDim_of_mem_minimalPrimes q W x hX (D + 1) hd hc.1
         have hWq : IsMultiProjPrime W :=
           ⟨hWp, MinimalPrimeMultiHomog.full F Unit (fun _ => ι₀) J W hJh hc.1, hc.2⟩
         exact ⟨lt_of_le_of_ne (by positivity) (Ne.symm hW), ih W hWq hWd⟩
-      · rw [dif_neg hc] at hW
+      · rw [dite_eq_right hc] at hW
         exact absurd rfl hW
     have hfin := DivCycleFiniteSupport.full F Unit (fun _ => ι₀) q x
     rw [finsum_eq_sum_of_support_subset _
@@ -214,7 +219,7 @@ theorem pos (D : ℕ) : ∀ q : Ideal (MRing (fun _ : Unit => ι₀) F), IsMulti
     have hrel := isRelevant_of_ringKrullDim W D hWd
     have hne : divCycle q x W ≠ 0 := by
       unfold divCycle
-      rw [dif_pos ⟨hmin, hrel⟩]
+      rw [dite_eq_left ⟨hmin, hrel⟩]
       have htop := length_localizedQuot_ne_top J W hmin
       have hzero : multAt J W ≠ 0 := by
         unfold multAt

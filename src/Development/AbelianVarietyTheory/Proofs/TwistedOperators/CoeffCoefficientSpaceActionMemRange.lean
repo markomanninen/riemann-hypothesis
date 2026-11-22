@@ -1,25 +1,30 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.CoefMod
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ReprMemOfCoeff
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.CoefMod
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ReprMemOfCoeff
+
+@[expose] public section
+
 open Formalism.L2.DIV MvPolynomial
 
 namespace GlobalTheory.RowRho
 
-theorem coeff_rhoVr_mem_range : ∀ {ι : Type} [Fintype ι] {n : ℕ} {E : Type} [Field E] (emb : ι → E →+* ℂ) {L : Type} [Field L] (κ : L →+* ℂ), (∀ (τ : ι) (x : E), emb τ x ∈ Set.range κ) → ∀ (lam : ι → Formalism.BasicNotions.DomWeight n) (g : GL (Fin n) E) (v : VV ℂ lam), (∀ m, MvPolynomial.coeff m v.1 ∈ Set.range κ) → ∀ m, MvPolynomial.coeff m ((rhoVr emb lam g) v).1 ∈ Set.range κ := by
+theorem coeff_rhoVr_mem_range : ∀ {ι : Type} [Fintype ι] {n : ℕ} {E : Type} [Field E] (emb : ι → E →+* ℂ) {L : Type} [Field L] (κ : L →+* ℂ), (∀ (τ : ι) (x : E), emb τ x ∈ Set.range κ) → ∀ (lam : ι → Formalism.BasicNotions.DomWeight n) (g : GL (Fin n) E) (v : VV ℂ lam), (∀ m, AddMonoidAlgebra.coeff v.1 m ∈ Set.range κ) → ∀ m, AddMonoidAlgebra.coeff ((rhoVr emb lam g) v).1 m ∈ Set.range κ := by
   classical
   intro ι _ n E _ emb L _ κ hA0 lam γE v hv0 m
   set A : Subfield ℂ := κ.fieldRange with hAdef
   have hA : ∀ τ x, emb τ x ∈ A := fun τ x => RingHom.mem_fieldRange.2 (hA0 τ x)
-  have hv : ∀ m, coeff m (v : Formalism.L2.DIV.Pol ℂ ι n) ∈ A := fun m => RingHom.mem_fieldRange.2 (hv0 m)
+  have hv : ∀ m, AddMonoidAlgebra.coeff (v : Formalism.L2.DIV.Pol ℂ ι n) m ∈ A := fun m => RingHom.mem_fieldRange.2 (hv0 m)
   rw [← RingHom.coe_fieldRange]
-  show coeff m ((rhoVr emb lam γE v : VV ℂ lam) : Formalism.L2.DIV.Pol ℂ ι n) ∈ A
+  show AddMonoidAlgebra.coeff ((rhoVr emb lam γE v : VV ℂ lam) : Formalism.L2.DIV.Pol ℂ ι n) m ∈ A
   let R₀ : Subring (Formalism.L2.DIV.Pol ℂ ι n) := (MvPolynomial.map A.subtype).range
-  have memR : ∀ F : Formalism.L2.DIV.Pol ℂ ι n, F ∈ R₀ ↔ ∀ m, coeff m F ∈ A := by
+  have memR : ∀ F : Formalism.L2.DIV.Pol ℂ ι n, F ∈ R₀ ↔ ∀ m, AddMonoidAlgebra.coeff F m ∈ A := by
     intro F
     constructor
     · rintro ⟨F', rfl⟩ m
       rw [coeff_map]
-      exact (coeff m F').2
+      exact (AddMonoidAlgebra.coeff F' m).2
     · intro h
       obtain ⟨F', hF'⟩ := (mem_range_map_iff_coeffs_subset (f := A.subtype)).2 (fun c hc => by
         obtain ⟨m, -, rfl⟩ := mem_coeffs_iff.1 hc
@@ -34,7 +39,7 @@ theorem coeff_rhoVr_mem_range : ∀ {ι : Type} [Fintype ι] {n : ℕ} {E : Type
       rw [map_C, Formalism.GradedWeylDivisibility.blockAct, aeval_C]
       exact ⟨C a, by rw [map_C]; rfl⟩
     | add p q hp hq =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact add_mem hp hq
     | mul_X p w hp =>
       rw [map_mul, map_mul, map_X]
@@ -61,7 +66,7 @@ theorem coeff_rhoVr_mem_range : ∀ {ι : Type} [Fintype ι] {n : ℕ} {E : Type
     exact zpow_mem (hdet τ) _
   have htr : Formalism.L2.DIV.trAct (invTrK (embGL emb γE)) (v : Formalism.L2.DIV.Pol ℂ ι n) ∈ R₀ :=
     hblock _ (fun τ a b => hent τ b a) _ ((memR _).2 hv)
-  show coeff m (Formalism.L2.DIV.actP lam (invTrK (embGL emb γE)) (v : Formalism.L2.DIV.Pol ℂ ι n)) ∈ A
+  show AddMonoidAlgebra.coeff (Formalism.L2.DIV.actP lam (invTrK (embGL emb γE)) (v : Formalism.L2.DIV.Pol ℂ ι n)) m ∈ A
   rw [Formalism.L2.DIV.actP, LinearMap.smul_apply, coeff_smul, smul_eq_mul]
   exact mul_mem hdt ((memR _).1 htr m)
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RestrictedTensorBasePointNormSq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsArchEquivEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RestrictedTensorBasePointNormSq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsArchEquivEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ theorem tens_comp (φ : R'' →ₐ[F] R) (j : R →ₗ[F] R') (hj : ∀ a b, j (
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a e => simp [h]
-  | add x y hx hy => simp only [map_add, hx, hy, mul_add]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, mul_add]
 
 theorem mat_ext_ext_map (φ : R'' →ₐ[F] R) (j : R →ₗ[F] R') (hj : ∀ a b, j (a * b) = j a * j b) (k : R' →ₗ[F] R'')
     (hk : ∀ a b, k (a * b) = k a * k b) (h : ∀ a, k (j (φ a)) = k (j 1) * a) (g : HA R'' σ J) :
@@ -34,7 +38,7 @@ theorem mat_ext_ext_map (φ : R'' →ₐ[F] R) (j : R →ₗ[F] R') (hj : ∀ a 
   refine Matrix.ext fun r s => ?_
   have e1 : tensNU (E := E) k hk (tensNU (E := E) j hj 1) = k (j 1) ⊗ₜ[F] (1 : E) := by
     rw [Algebra.TensorProduct.one_def, tensNU_tmul, tensNU_tmul]
-  rw [mat_extH, mat_extH, mat_mapH, map_add, tens_comp φ j hj k hk h, Matrix.add_apply, Matrix.smul_apply,
+  rw [mat_extH, mat_extH, mat_mapH, map_add (f := _), tens_comp φ j hj k hk h, Matrix.add_apply, Matrix.smul_apply,
     Matrix.smul_apply, smul_eq_mul, smul_eq_mul]
   by_cases e : r = s
   · subst e

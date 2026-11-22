@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantLattices
-import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantLattices
+public import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+
+@[expose] public section
 
 noncomputable section
 

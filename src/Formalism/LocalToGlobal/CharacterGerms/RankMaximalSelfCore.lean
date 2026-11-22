@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.CharacterGerms.UncurryLinearCombination
-import Formalism.LocalToGlobal.CharacterGerms.ConstantZeroFirstThenZero
-import Formalism.LocalToGlobal.CharacterGerms.ConstantZeroDoubleMultiplicationPair
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePAddCvSelf
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelfCuts
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.UncurryLinearCombination
+public import Formalism.LocalToGlobal.CharacterGerms.ConstantZeroFirstThenZero
+public import Formalism.LocalToGlobal.CharacterGerms.ConstantZeroDoubleMultiplicationPair
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePAddCvSelf
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelfCuts
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -96,8 +100,8 @@ theorem first_vanishing_of_unit_smul (Y : FBChart C V O dd) {c : C} (hc : ¬ V.M
 
 end SelfAdjointTop
 
-open SelfAdjointTop MaximalIdealCongruence in
 
+open SelfAdjointTop MaximalIdealCongruence in
 theorem rank_maximal_self_core (hV1 : FirstVanishingCore) (hFE : FunEqCoreSt) (hC0 : CurveLinearTermCondition) (hNL : NoLinSelfSt) :
     RankMaximalSelfOfNondegenerate := by
   intro C _ _ V O _ _ dd Y d _ I0 _ p hN hrk Hc hAlt g a hbig w x hG hc0 c
@@ -157,15 +161,15 @@ theorem rank_maximal_self_core (hV1 : FirstVanishingCore) (hFE : FunEqCoreSt) (h
   obtain ⟨col, hcolU⟩ : ∃ col, ¬ V.MM (p.gm a0 col g) := by
     by_contra hall
     push Not at hall
-    apply not_mm_one (V := V)
+    apply SelfAdjointTop.not_mm_one (V := V)
     rw [← SelfData.gm_pair Y p a0 g]
     exact mm_sum _ _ fun r _ => mm_mul_ge (hall r) (hgI _ _ _)
   have hV1U : ∀ r, Y.FirstVanishingAt (U r) := fun r => hV1 C V O dd Y (γc r) (U r) (hcv r) (hLg r)
-  have hV1u : Y.FirstVanishingAt u0 := first_vanishing_of_unit_smul Y hcolU (hgI _ _ _) (hV1U col)
+  have hV1u : Y.FirstVanishingAt u0 := SelfAdjointTop.first_vanishing_of_unit_smul Y hcolU (hgI _ _ _) (hV1U col)
   have heig : ∀ β, linAct (Y.B.A.act β) u0 = p.em a0 β • u0 := by
     intro β
     show linAct (Y.B.A.act β) (fun i => ∑ c : I0, w c * p.e c i) = _
-    rw [linAct_comb]
+    rw [SelfAdjointTop.linAct_comb]
     funext i
     show ∑ c : I0, w c * linAct (Y.B.A.act β) (p.e c) i = p.em a0 β * ∑ c : I0, w c * p.e c i
     rw [Finset.mul_sum]
@@ -179,20 +183,22 @@ theorem rank_maximal_self_core (hV1 : FirstVanishingCore) (hFE : FunEqCoreSt) (h
   have hlink : ∀ q : I0, V.MM (∑ r, Y.aLin (U r) (fun i => p.gm (p.ty0 q) r (1 - g) * p.e q i)) := by
     intro q
     have hq := congrArg (PowerSeries.coeff V.l) (hfil q)
-    rw [tyS_coeff_l hl, map_add, map_sub, map_sum] at hq
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [SelfAdjointTop.tyS_coeff_l hl, map_add (f := _), map_sub, map_sum] at hq
     have hz : ∑ c : I0, PowerSeries.coeff V.l (if (Y.rawSelf p).ty g c = (Y.rawSelf p).ty (1 - g) q then
         (Y.rawSelf p).sg1 ((Y.rawSelf p).u g c) ((Y.rawSelf p).u (1 - g) q) • tyS V.l (fun s => x s (Sum.inl c))
         else 0) = 0 := by
       refine Finset.sum_eq_zero fun c' _ => ?_
       split_ifs
-      · rw [map_smul, tyS_coeff_l hl, h1 c', smul_zero]
+      · rw [map_smul, SelfAdjointTop.tyS_coeff_l hl, h1 c', smul_zero]
       · rw [map_zero]
     rw [hz, add_zero] at hq
     have hsg : alongCv γ ((Y.rawSelf p).sg ((Y.rawSelf p).u (1 - g) q)) =
         ∑ r, alongCv (γc r) (un1 (Y.sgP fun i => p.gm (p.ty0 q) r (1 - g) * p.e q i)) := by
       rw [Y.rawSelf_sg p, Fin.sum_univ_two, Fin.sum_univ_two, ← hcol, ← hcol, Y.rawCol_sg, Y.rawCol_sg]
       exact MvPowerSeries.subst_add (MvPowerSeries.hasSubst_of_constantCoeff_zero hγ0) _ _
-    rw [hsg, map_sum] at hq
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsg, map_sum] at hq
     have hc := hc0 q
     have hc' : V.MM ((V.l : C) * x 1 (Sum.inr q)) := hc
     rw [hq] at hc'
@@ -209,7 +215,7 @@ theorem rank_maximal_self_core (hV1 : FirstVanishingCore) (hFE : FunEqCoreSt) (h
       rw [Finset.sum_sub_distrib, ← Finset.mul_sum]
       ring
     rw [e]
-    exact mm_sub (mm_sub (mm_l_mul ((hlam q).2 _)) hc') (mm_sum _ _ fun r _ => hL r)
+    exact MaximalIdealCongruence.mm_sub (MaximalIdealCongruence.mm_sub (MaximalIdealCongruence.mm_l_mul ((hlam q).2 _)) hc') (mm_sum _ _ fun r _ => hL r)
   have hnl := hNL C V O dd Y d I0 p g a0 u0 hu0I heig hV1u hlink
 
   have hfun : (fun i => PowerSeries.coeff 1 (γc col i)) = U col :=
@@ -217,8 +223,8 @@ theorem rank_maximal_self_core (hV1 : FirstVanishingCore) (hFE : FunEqCoreSt) (h
   obtain ⟨b, hb, hbc⟩ := first_step_second_half C V Y.algClosed dd Y.B.G Y.intF (Y.aOf (U col)) (Y.chartLinearTerm (U col))
     (intS_aOf Y (first_unit_series_integral C V O dd Y) _ (hUI col)) (intS_c2lin Y _ (hUI col))
     (fun j => by
-      rw [coeff_aOf_smul Y (p.gm a0 col g) u0, ← aLin_single]
-      refine mm_mul_ge' ((hgI _ _ _).pow _) (hnl _ fun i => ?_)
+      rw [SelfAdjointTop.coeff_aOf_smul Y (p.gm a0 col g) u0, ← SelfAdjointTop.aLin_single]
+      refine MaximalIdealCongruence.mm_mul_ge' ((hgI _ _ _).pow _) (hnl _ fun i => ?_)
       by_cases hij : i = j
       · subst hij; rw [Pi.single_eq_same]; exact VF.Ge.one
       · rw [Pi.single_eq_of_ne hij]; exact VF.Ge.zero 0)
@@ -228,7 +234,7 @@ theorem rank_maximal_self_core (hV1 : FirstVanishingCore) (hFE : FunEqCoreSt) (h
     push Not at hall
     apply hwc
     have hall' : ∀ i, V.MM (U col i) := fun i => by rw [← congrFun hfun i]; exact hall i
-    have hu0M : ∀ i, V.MM (u0 i) := fun i => mm_of_unit_mul hcolU (hgI _ _ _) (hall' i)
+    have hu0M : ∀ i, V.MM (u0 i) := fun i => SelfAdjointTop.mm_of_unit_mul hcolU (hgI _ _ _) (hall' i)
     obtain ⟨wd, hwd, hsat⟩ := p.e_sat
     have e : w c = ∑ i, u0 i * wd i c := by
       show w c = ∑ i, (∑ c' : I0, w c' * p.e c' i) * wd i c

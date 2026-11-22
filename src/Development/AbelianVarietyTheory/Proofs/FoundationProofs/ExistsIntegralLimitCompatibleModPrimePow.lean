@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EqZeroOfForallNormLe
+module
+
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EqZeroOfForallNormLe
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2
 open scoped Matrix
 
@@ -23,7 +28,7 @@ theorem isCompact_coef (c : Coef l) : IsCompact (c.O : Set (Qbar l)) := by
         funext a; exact IsScalarTower.algebraMap_apply ℤ_[l] ℚ_[l] (Qbar l) a
       rw [this]
       exact (continuous_algebraMap ℚ_[l] (Qbar l)).comp continuous_subtype_val
-    exact continuous_finset_sum _ fun i _ => (ha.comp (continuous_apply i)).mul continuous_const
+    exact continuous_finsetSum _ fun i _ => (ha.comp (continuous_apply i)).mul continuous_const
   have heq : (c.O : Set (Qbar l)) = Set.range f := by
     ext x
     constructor
@@ -32,7 +37,7 @@ theorem isCompact_coef (c : Coef l) : IsCompact (c.O : Set (Qbar l)) := by
       obtain ⟨v, hv⟩ := (Submodule.mem_span_range_iff_exists_fun ℤ_[l]).1 hmem
       refine ⟨v, ?_⟩
       have := congrArg (fun y : c.O => (y : Qbar l)) hv
-      simp only [AddSubmonoidClass.coe_finset_sum] at this
+      simp only [AddSubmonoidClass.coe_finsetSum] at this
       rw [← this]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [← Algebra.smul_def]

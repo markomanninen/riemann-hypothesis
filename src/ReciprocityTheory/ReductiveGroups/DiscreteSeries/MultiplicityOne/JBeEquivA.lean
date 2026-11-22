@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDiagExists
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.UHMulInv
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDiagExists
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.UHMulInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,15 +16,6 @@ namespace ReciprocityTheory.ChartRestriction.DS.Mult1.BeEquiv
 open Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.B2
 
 variable {k r : ℕ}
-
-theorem measurable_rmul_mt (a : Mat k r) :
-    @Measurable (Mt k r) (Mt k r) _ _ (fun x => (Matrix.of x * a : Mat k r)) := by
-  apply measurable_pi_lambda
-  intro i
-  apply measurable_pi_lambda
-  intro j
-  simp only [Matrix.mul_apply, Matrix.of_apply]
-  fun_prop
 
 theorem measurable_lmul_mt (a : Mat k r) :
     @Measurable (Mt k r) (Mt k r) _ _ (fun x => (a * Matrix.of x : Mat k r)) := by

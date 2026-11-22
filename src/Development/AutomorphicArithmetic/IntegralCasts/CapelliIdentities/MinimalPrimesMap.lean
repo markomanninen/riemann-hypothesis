@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 private lemma UpperTheory.Reformulated.B.MinimalPrimesMap.map_lt_map {A : Type} [CommRing A] {P I J : Ideal A}
     (hI : P ≤ I) (h : I < J) :

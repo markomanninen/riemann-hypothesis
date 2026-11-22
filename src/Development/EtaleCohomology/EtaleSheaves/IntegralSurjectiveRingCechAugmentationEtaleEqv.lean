@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.CechSqPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.CechSqPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.E.t_E3Cut LateralTheory.E.StalkCut LateralTheory.E.DescIntPf LateralTheory.E.CechSqPf
@@ -215,9 +219,4 @@ theorem cechConerve_levelwise : LevelP := by
   intro n
   exact Q n.len
 
-theorem CechSq_full : CechSq :=
-  CechSq_of integral_surjective_ring_cech_augmentation_etale_eqv BaseChange_of LevelPush_of cechConerve_levelwise (Level0_of LevelPush_of)
-
 end LateralTheory.E.CechSqPf
-
-theorem LateralTheory.E.CechSqPf2.CechSq_of : LateralTheory.E.DescIntPf.CechSq := LateralTheory.E.CechSqPf.CechSq_full

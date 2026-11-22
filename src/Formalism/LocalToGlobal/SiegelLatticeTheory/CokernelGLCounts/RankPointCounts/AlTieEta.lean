@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.AlTieFD
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocModel
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.AlpBoundHolds
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.AlTieFD
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocModel
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.AlpBoundHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,7 +105,10 @@ theorem prime_of_not_two (𝔭 : Ideal (𝓞 D.host.F)) [h𝔭 : 𝔭.IsMaximal]
       rw [Ideal.mem_comap, Ideal.mem_map_of_equiv]
       constructor
       · intro hx
-        exact ⟨algebraMap (𝓞 D.host.F) (𝓞 D.host.E) x, by rw [← Ideal.mem_comap, hP0c]; exact hx, sigO_alg x⟩
+        exact ⟨algebraMap (𝓞 D.host.F) (𝓞 D.host.E) x, by
+          change x ∈ Ideal.under (𝓞 D.host.F) P0
+          rw [hP0c]
+          exact hx, sigO_alg x⟩
       · rintro ⟨y, hy, hyx⟩
         have : y = algebraMap (𝓞 D.host.F) (𝓞 D.host.E) x := by
           rw [← sigO_alg x] at hyx; exact sigO.injective hyx
@@ -117,36 +124,12 @@ theorem prime_of_not_two (𝔭 : Ideal (𝓞 D.host.F)) [h𝔭 : 𝔭.IsMaximal]
   rw [hfac, he1, pow_one]
   exact hP0max.isPrime
 
-def LocGlobIdem : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (v : HeightOneSpectrum (𝓞 F)),
-    IdemNT (v.adicCompletion F ⊗[F] E) ↔
-      ∃ P Q : Ideal (𝓞 E), P ≠ Q ∧ P.IsPrime ∧ Q.IsPrime ∧
-        P.comap (algebraMap (𝓞 F) (𝓞 E)) = v.asIdeal ∧ Q.comap (algebraMap (𝓞 F) (𝓞 E)) = v.asIdeal
-
 theorem twoOver_iff (p : PlF D) :
     TwoOver p.asIdeal ↔ ¬ (p.asIdeal.map (algebraMap (𝓞 D.host.F) (𝓞 D.host.E))).IsPrime := by
   have : p.asIdeal.IsMaximal := p.isMaximal
   exact ⟨fun h hp => not_two_of_prime _ p.ne_bot hp h, fun h => by_contra fun hn => h (prime_of_not_two _ p.ne_bot hn)⟩
 
 variable (X : HidaSetting D)
-
-theorem etaV_eq_etaF (hLG : LocGlobIdem) (v : HeightOneSpectrum (𝓞 X.B.I.F)) :
-    ((Formalism.L2.SG.LocVol.etaV (E := X.B.I.E) v : ℤ) : ℝ) =
-      Formalism.HermitianLattices.Ext.L3.etaF D.host.E D.host.F (plEquiv X v).asIdeal := by
-  have hjk : ∀ a : X.B.I.F, X.ιE (algebraMap X.B.I.F X.B.I.E a) =
-      algebraMap D.host.F D.host.E (Formalism.L2.GlobalTheoryTheory.AFTransport.iotaF X a) :=
-    fun a => (Formalism.L2.GlobalTheoryTheory.AFTransport.iotaF_coe X a).symm
-  have h1 := idemNT_iff (Formalism.L2.GlobalTheoryTheory.AFTransport.iotaF X) X.ιE hjk v
-  have h2 := hLG D.host.F D.host.E (plEquiv X v)
-  have hiff : IdemNT (v.adicCompletion X.B.I.F ⊗[X.B.I.F] X.B.I.E) ↔
-      ¬ ((plEquiv X v).asIdeal.map (algebraMap (𝓞 D.host.F) (𝓞 D.host.E))).IsPrime :=
-    (h1.trans h2).trans (twoOver_iff (plEquiv X v))
-  unfold Formalism.L2.SG.LocVol.etaV Formalism.HermitianLattices.Ext.L3.etaF
-  split_ifs with ha hb hb
-  · exact absurd hb (hiff.1 ha)
-  · simp
-  · simp
-  · exact absurd (hiff.2 hb) ha
 
 def EtaF : Prop :=
   ∀ v : HeightOneSpectrum (𝓞 X.B.I.F), ((Formalism.L2.SG.LocVol.etaV (E := X.B.I.E) v : ℤ) : ℝ) =
@@ -164,8 +147,8 @@ def maxEquiv : HeightOneSpectrum (𝓞 X.B.I.F) ≃ {𝔭 : Ideal (𝓞 D.host.F
     show ((plEquiv X) ((plEquiv X).symm _)).asIdeal = 𝔭.1
     rw [Equiv.apply_symm_apply]
 
-variable {X} in
 
+variable {X} in
 theorem summable_absNorm_inv (i : ℕ) (hi : 2 ≤ i) :
     Summable (fun p : PlF D => (((Ideal.absNorm p.asIdeal : ℕ) : ℝ))⁻¹ ^ i) := by
   have hP := Formalism.L2.SG.Pf.placesOver_holds D
@@ -251,7 +234,7 @@ theorem t_factor_product_of_eta (hη : EtaF X) (u : D.what₂.Word) : Formalism.
       1 - Formalism.HermitianLattices.Ext.L3.etaF D.host.E D.host.F 𝔭.1 ^ D.R.k * (Ideal.absNorm 𝔭.1 : ℝ) ^ (-(D.R.k : ℤ)) else 1
     with hhdef
   have hfin : Multipliable f := by
-    apply multipliable_of_finite_mulSupport
+    apply multipliable_of_hasFiniteMulSupport
     refine (Formalism.L2.SG.TypedSets.finite_over X.B.I.F ((D.mem u).A.T) (D.mem u).A.T_prime.ne_zero).subset ?_
     intro v hv
     by_contra hc
@@ -273,8 +256,5 @@ theorem t_factor_product_of_eta (hη : EtaF X) (u : D.what₂.Word) : Formalism.
 
 theorem fieldDict_of_eta (hη : EtaF X) (u u' : D.what₂.Word) : Formalism.L2.SG.Pf.NcVal.FieldDict X u u' :=
   Formalism.L2.SG.Pf.AlTieFD.field_dictionary_of_leaves X u u' (euler_product_of_eta X hη) (t_factor_product_of_eta X hη u) Formalism.L2.SG.Pf.AlTieFD.discriminant_sq_relation
-
-theorem fieldDict_of_locGlob (hLG : LocGlobIdem) (u u' : D.what₂.Word) : Formalism.L2.SG.Pf.NcVal.FieldDict X u u' :=
-  fieldDict_of_eta X (fun v => etaV_eq_etaF X hLG v) u u'
 
 end Formalism.L2.SG.Pf.AlTieEta

@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BejjSmulLeft
-import Formalism.MahlerMeasure.MahlerMeasureProofs.MeanGam
-import Formalism.MahlerMeasure.CoarseLevelSlackInequalities
-import Formalism.MahlerMeasure.FinalD
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BejjSmulLeft
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.MeanGam
+public import Formalism.MahlerMeasure.CoarseLevelSlackInequalities
+public import Formalism.MahlerMeasure.FinalD
+
+@[expose] public section
 
 noncomputable section
 

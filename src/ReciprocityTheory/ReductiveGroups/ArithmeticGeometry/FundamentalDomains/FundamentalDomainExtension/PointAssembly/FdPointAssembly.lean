@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainExtension.PointAssembly.DivLeExpOfAbsLogSubLe
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainExtension.PointAssembly.Frames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainExtension.PointAssembly.FourierJacobiDifferentiable
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainExtension.PointAssembly.DivLeExpOfAbsLogSubLe
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainExtension.PointAssembly.Frames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainExtension.PointAssembly.FourierJacobiDifferentiable
+
+@[expose] public section
 
 open PIW.FdPA in
 theorem fd_point_assembly {E : Type} [Field E] [NumberField E] [NumberField.IsCMField E] : ReciprocityTheory.ChartRestriction.G.FD.ShortVectorBound (E := E) → ReciprocityTheory.ChartRestriction.G.FD.OrthonormalFlagTranslate (E := E) → ReciprocityTheory.ChartRestriction.G.FD.OrthonormalChartNormControl (E := E) → ReciprocityTheory.ChartRestriction.G.FD.NearSupremumTransference (E := E) → ReciprocityTheory.ChartRestriction.G.FD.SchwarzLemmaBall → ReciprocityTheory.ChartRestriction.G.FD.OrthonormalShortVectorBound (E := E) → ReciprocityTheory.ChartRestriction.G.FD.IsotropicCoefficientSplitting (E := E) → ReciprocityTheory.ChartRestriction.G.FD.NoShortVectorLowerBound (E := E) → ReciprocityTheory.ChartRestriction.G.FD.UnitaryUnipotentMove (E := E) → ReciprocityTheory.ChartRestriction.G.FD.FundamentalDomainPointBound (E := E) :=

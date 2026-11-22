@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdFormula
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.LayerBot
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.CardImgOneDvd
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.MemRam
+module
+
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdFormula
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.LayerBot
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.CardImgOneDvd
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.MemRam
+
+@[expose] public section
 
 open UpperTheory.HF
 

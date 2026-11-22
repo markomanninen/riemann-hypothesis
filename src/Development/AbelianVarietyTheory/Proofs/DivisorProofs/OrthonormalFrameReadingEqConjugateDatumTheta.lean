@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PerCEmb
-import Formalism.LocalToGlobal.IndefiniteReal.ThPinsR
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.MemImageConjugate
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaKernelOrthonormalFrameInDomainPeriodLinear
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicZakThetaExistsUnique
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.StdCharFinitePartRationalEqExpTrace
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameMulTriangularOrthonormal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CompactEntryBounds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainExtension.PointAssembly.Frames
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PerCEmb
+public import Formalism.LocalToGlobal.IndefiniteReal.ThPinsR
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.MemImageConjugate
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaKernelOrthonormalFrameInDomainPeriodLinear
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicZakThetaExistsUnique
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.StdCharFinitePartRationalEqExpTrace
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameMulTriangularOrthonormal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CompactEntryBounds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainExtension.PointAssembly.Frames
+
+@[expose] public section
 
 open NumberField Matrix Complex MeasureTheory IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Dict GlobalTheory.AdTh
@@ -55,9 +59,11 @@ theorem sg_submatrix {p q : ℕ} (π : Fin r ≃ Fin r) (h : ∀ i, ((π i : ℕ
     (sg r p).submatrix π π = -sg r q := by
   rw [submatrix_diagonal_equiv, diagonal_neg]
   congr 1
-  funext a
-  simp only [Function.comp_apply, sgn, h]
-  split_ifs <;> simp
+  funext i
+  by_cases hi : (i : ℕ) < q
+  · have hπ : ¬ (π i : ℕ) < p := fun h' => (h i).1 h' hi
+    simp [Function.comp_apply, sgn, hi, hπ]
+  · simp [Function.comp_apply, sgn, hi, (h i).2 hi]
 
 theorem sg_sq (p : ℕ) : sg r p * sg r p = 1 := by
   rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
@@ -95,7 +101,7 @@ theorem free_neg (X : Data E r) (γ : GL (Fin r) E) (hγ : γ ∈ X.Γ) (x : Fra
     (hx : x ∈ GG X.Ψ (-X.Gm) (r - X.p0)) (b : Frame X.Ψ r) (hb : b ∈ Bor X.Ψ r) (h : lact γ x = rmul x b) :
     γ = 1 := by
   have hG : ∀ a b, cc ((-X.Gm) a b) = (-X.Gm) b a := fun a b => by
-    rw [neg_apply, neg_apply, ← X.Gm_herm a b, cc, cc, map_neg]
+    rw [Matrix.neg_apply, Matrix.neg_apply, ← X.Gm_herm a b, cc, cc, map_neg]
   choose b0 h0 h1 h2 using fun τ : X.Ψ => GlobalTheory.UnitFrames.exists_upper_conj_eq_signature (r - X.p0) _
     (gram_isHermitian τ.1 hG (mat x τ)) (hx τ).2
   simp only [← FrameDegreeData.gram_mul] at h2
@@ -135,7 +141,7 @@ def negData (X : Data E r) : Data E r where
   Ψ := X.Ψ
   cmType := X.cmType
   Gm := -X.Gm
-  Gm_herm a b := by rw [neg_apply, neg_apply, ← X.Gm_herm a b, cc, cc, map_neg]
+  Gm_herm a b := by rw [Matrix.neg_apply, Matrix.neg_apply, ← X.Gm_herm a b, cc, cc, map_neg]
   Gm_det := by
     rw [det_neg]
     exact mul_ne_zero (pow_ne_zero _ (neg_ne_zero.2 one_ne_zero)) X.Gm_det
@@ -204,7 +210,8 @@ theorem coord_conj {τ : E →+* ℂ} {G : Matrix (Fin r) (Fin r) E} {p q : ℕ}
       (FD.col ((P.submatrix id π).map (starRingEnd ℂ)) i) (fun a => conj (u a)) =
       -conj (hermC τ G (FD.col P (π i)) u) := by
     rw [hermC_neg]
-    simp [hermC, FD.col, ComplexEmbedding.conjugate_coe_eq, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hermC, FD.col, ComplexEmbedding.conjugate_coe_eq, map_sum]
   have h3 : (((P.submatrix id π).map (starRingEnd ℂ))⁻¹ *ᵥ fun a => conj (u a)) i = conj ((P⁻¹ *ᵥ u) (π i)) := by
     rw [GlobalTheory.Ker.ONBasis.inv_map_conj (isUnit_iff_ne_zero.2 (det_submatrix_ne hd π))]
     have := Matrix.inv_submatrix_equiv P (Equiv.refl _) π
@@ -255,7 +262,7 @@ variable {D : D7} {V W : HSp D} {X : Data D.host.E W.rank}
 theorem realM_tauE (θ : InfFam D) {m n : ℕ} (w : Mx D m n) (ρ : D.what₂.Tau) :
     realM θ w (tauE D ρ) = compAt θ ρ w := by
   have h : ∃ ρ', tauE D ρ = tauE D ρ' := ⟨ρ, rfl⟩
-  rw [realM, dif_pos h, ← GlobalTheory.StdRat.tauE_injective D h.choose_spec]
+  rw [realM, dite_eq_left h, ← GlobalTheory.StdRat.tauE_injective D h.choose_spec]
 
 theorem gram_model (hM : IsMod W rfl X) (ρ : D.what₂.Tau) (z : Matrix (Fin W.rank) (Fin W.rank) ℂ) :
     FD.gram (tauE D ρ) X.Gm z = -(zᴴ * gramAt D W ρ * z)ᵀ := by
@@ -409,8 +416,8 @@ end Junction
 
 end GlobalTheory.AdTh.ToKer
 
-open GlobalTheory.AdTh.ToKer GlobalTheory.Ker.ConjDatum in
 
+open GlobalTheory.AdTh.ToKer GlobalTheory.Ker.ConjDatum in
 theorem GlobalTheory.AdTh.reads_iff_eq_th : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (V W : HSp D) (g : ℕ) (X : Data D.host.E W.rank) (bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.Λ) (idx : Fin g ≃ X.Ψ × Fin W.rank) (hstd : IsStdChar D ψ (-1)) (hinf : IsInfFam θ) (he : Even V.rank), V.gram = 1 → IsMod W rfl X → IsSympl X bas → ∃ (X' : Data D.host.E W.rank) (m : GlobalTheory.Ker.Match V W X') (hq' : X'.p0 + X.p0 = W.rank) (hq : X.p0 + X'.p0 = W.rank) (bas' : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X'.Λ) (idx' : Fin g ≃ X'.Ψ × Fin W.rank) (hs : IsSympl X' bas'), X'.Λ = X.Λ ∧ (∀ a, (bas' a : Fin W.rank → D.host.E) = bas a) ∧ (∀ u v, EF X' u v = EF X u v) ∧ (∀ (y : Matrix (Fin V.rank) (Fin W.rank) D.host.E) (φ : TF V.rank g), heisG X' bas' y φ = heisG X bas y φ) ∧ (∀ j (a : Fin W.rank) (k : Fin X'.p0 ⊕ Fin X.p0), (idx j).2 = rowIdx hq k → ((idx' j).2 : ℕ) = Sum.elim (fun i : Fin X'.p0 => (i : ℕ)) (fun i : Fin X.p0 => X'.p0 + (i : ℕ)) k) ∧ (∀ j, (idx' j).1.1 = ComplexEmbedding.conjugate (idx j).1.1) ∧ ∀ x : Frame X.Ψ W.rank, IsONFr X x → (∃ B, IsBasOf W rfl X hq x B) ∧ ∀ B, IsBasOf W rfl X hq x B → let C : GlobalTheory.Ker.Ctx V W := ⟨ψ, hstd, θ, hinf, X', m, g, X.p0, hq', bas', idx', hs, he⟩; C.IsB B ∧ IsInvOf W rfl X x (C.sB B) ∧ (∀ s, IsInvOf W rfl X x s → s = C.sB B) ∧ (∀ w, C.zOf (C.xB B) w = zOf θ V W rfl X idx x w) ∧ (∀ v, pv X' idx' (C.xB B) v = pv X idx x v) ∧ (∀ z z', hx X' bas' idx' (C.xB B) z z' = hx X bas idx x z z') ∧ (∀ φ : TF V.rank g, thA X' bas' idx' φ (C.xB B) = thA X bas idx φ x) ∧ (∀ u : GA D W, IsONFr X (frMove θ W rfl X u x) ∧ IsBasOf W rfl X hq (frMove θ W rfl X u x) (C.mvB u B)) ∧ ∀ (f : WO V W → ℂ) (φ : TF V.rank g), GlobalTheory.SW.IsSB φ → ((IsThetaFunO ψ V W f ∧ Reads θ V W rfl X bas idx f φ x) ↔ f = C.Th (C.xB B) φ) := by
   intro D ψ θ V W g X bas idx hstd hinf he hV hM hS
   have hf : Function.Bijective fun ρ : D.what₂.Tau => (⟨tauE D ρ, (hM.psi _).2 ⟨ρ, rfl⟩⟩ : X.Ψ) :=

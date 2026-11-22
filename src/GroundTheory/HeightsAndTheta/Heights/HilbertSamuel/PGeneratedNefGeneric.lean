@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRat
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGeneratedNefGeneric
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPerturb
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGeneratedRestrict
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGeneratedProductNonneg
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRat
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGeneratedNefGeneric
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPerturb
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGeneratedRestrict
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGeneratedProductNonneg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

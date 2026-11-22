@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.MoriwakiBigness.MoriwakiRankBounds.Development
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.MoriwakiBigness.MoriwakiRankBounds.Development
+
+@[expose] public section
 
 namespace PositivityTheory.Pf1.MbRank
 

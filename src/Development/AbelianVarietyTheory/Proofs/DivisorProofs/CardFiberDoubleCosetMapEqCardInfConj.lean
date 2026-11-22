@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped Pointwise
 
 namespace GlobalTheory
@@ -23,7 +28,7 @@ theorem doubleCoset_fibre_card {G : Type} [Group G] (T Γ K' : Subgroup G) (x : 
         DoubleCoset.mk T K' (Quotient.out q)
   have hland : ∀ t : T, DoubleCoset.mk (Γ ⊓ T) K' ((t : G) * x) ∈ F ⁻¹' {DoubleCoset.mk T K' x} := by
     intro t
-    obtain ⟨h, k, hh, hk, he⟩ := DoubleCoset.mk_out_eq_mul (Γ ⊓ T) K' ((t : G) * x)
+    obtain ⟨h, hh, k, hk, he⟩ := DoubleCoset.mk_out_eq_mul (Γ ⊓ T) K' ((t : G) * x)
     simp only [Set.mem_preimage, Set.mem_singleton_iff, F]
     rw [eq_comm, DoubleCoset.eq]
     refine ⟨h * t, T.mul_mem (Subgroup.mem_inf.mp hh).2 t.2, k, hk, ?_⟩
@@ -50,7 +55,7 @@ theorem doubleCoset_fibre_card {G : Type} [Group G] (T Γ K' : Subgroup G) (x : 
       induction q using Quotient.inductionOn with | h b => ?_
       have h1 : DoubleCoset.mk (Γ ⊓ T) K' ((a : G) * x) = DoubleCoset.mk (Γ ⊓ T) K' ((b : G) * x) :=
         congrArg Subtype.val hpq
-      obtain ⟨h, hh, k, hk, he⟩ := (DoubleCoset.eq _ _ _ _).mp h1
+      obtain ⟨h, hh, k, hk, he⟩ := (@DoubleCoset.eq _ _ _ _ _ _).mp h1
       have hhT : h ∈ T := (Subgroup.mem_inf.mp hh).2
       have huT : (a : G)⁻¹ * h⁻¹ * b ∈ T :=
         T.mul_mem (T.mul_mem (T.inv_mem a.2) (T.inv_mem hhT)) b.2
@@ -69,11 +74,11 @@ theorem doubleCoset_fibre_card {G : Type} [Group G] (T Γ K' : Subgroup G) (x : 
         group
     · rintro ⟨q, hq⟩
       simp only [Set.mem_preimage, Set.mem_singleton_iff, F] at hq
-      obtain ⟨s, hs, k, hk, he⟩ := (DoubleCoset.eq _ _ _ _).mp hq
+      obtain ⟨s, hs, k, hk, he⟩ := (@DoubleCoset.eq _ _ _ _ _ _).mp hq
       refine ⟨Quotient.mk _ ⟨s⁻¹, T.inv_mem hs⟩, ?_⟩
       apply Subtype.ext
       show DoubleCoset.mk (Γ ⊓ T) K' (s⁻¹ * x) = q
-      conv_rhs => rw [← DoubleCoset.out_eq' _ _ q]
+      conv_rhs => rw [← DoubleCoset.out_eq' q]
       rw [DoubleCoset.eq]
       refine ⟨1, Subgroup.one_mem _, k⁻¹, K'.inv_mem hk, ?_⟩
       rw [he]; group

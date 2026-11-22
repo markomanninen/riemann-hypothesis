@@ -1,4 +1,9 @@
-import Formalism.RealPlaceAnalysis.SmoothOnGVIff
+module
+
+public import Formalism.RealPlaceAnalysis.SmoothOnGVIff
+
+@[expose] public section
+
 open MeasureTheory Matrix
 open Formalism.REAL (UJ KG toM toMK muK expG inG Jm Kset)
 
@@ -33,7 +38,7 @@ lemma comm_Qm {n : ℕ} {ε : Fin n → Bool} {a : Matrix (Fin n) (Fin n) ℂ}
 
 lemma sum_sq_norm_eq_trace {n : ℕ} (M : Matrix (Fin n) (Fin n) ℂ) :
     ((∑ i, ∑ j, ‖M i j‖ ^ 2 : ℝ) : ℂ) = trace (Mᴴ * M) := by
-  simp only [trace, diag, mul_apply, conjTranspose_apply]
+  simp only [trace, diag, Matrix.mul_apply, conjTranspose_apply]
   push_cast
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_

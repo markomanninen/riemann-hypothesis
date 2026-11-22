@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,9 +57,6 @@ def indSnd (e : a ⊕ b ≃ n) (τ : Representation ℂ (Γ × (GL a k × GL b k
     rw [← Module.End.mul_apply, ← map_mul, mul_assoc]
     simp))
 
-theorem indSnd_apply (e : a ⊕ b ≃ n) (τ : Representation ℂ (Γ × (GL a k × GL b k)) W) (γ : Γ)
-    (h x : GL n k) (f) : (indSnd e τ (γ, h) f).1.1 x = τ (γ, 1) (f.1.1 (x * h)) := rfl
-
 theorem indSnd_inr (e : a ⊕ b ≃ n) (τ : Representation ℂ (Γ × (GL a k × GL b k)) W) (h : GL n k) :
     indSnd e τ (1, h) = ind₂ e (τ.comp (MonoidHom.inr Γ _)) h :=
   LinearMap.ext fun f => Subtype.ext (Subtype.ext (funext fun x => by
@@ -81,8 +82,8 @@ theorem act_mul (x : Matrix b a k) (γ δ : GL a k × GL b k) : act x (γ * δ) 
 theorem continuous_act (γ : GL a k × GL b k) : Continuous fun x : Matrix b a k => act x γ :=
   (continuous_const.matrix_mul continuous_id).matrix_mul continuous_const
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem rank_act (x : Matrix b a k) (γ : GL a k × GL b k) : (act x γ).rank = x.rank := by
   unfold act
   rw [rank_mul_eq_left_of_isUnit_det _ _ ((isUnit_iff_isUnit_det _).1 γ.1.isUnit),
@@ -97,37 +98,27 @@ def omChar (μ : kˣ →* ℂˣ) : GL a k × GL b k →* ℂˣ :=
 def omega (μ : kˣ →* ℂˣ) : Representation ℂ (GL a k × GL b k) (SB (Matrix b a k)) :=
   twist (sbRep act act_one act_mul continuous_act) (omChar a b μ)
 
-variable (k) in
 
+variable (k) in
 abbrev RankIn (s : Set ℕ) : Type := {x : Matrix b a k // x.rank ∈ s}
 
-def omegaOn (μ : kˣ →* ℂˣ) (s : Set ℕ) : Representation ℂ (GL a k × GL b k) (SB (RankIn k a b s)) :=
+def omegaOn (μ : kˣ →* ℂˣ) (s : Set ℕ) : Representation ℂ (GL a k × GL b k) (SB (RankIn (k := k) (a := a) (b := b) s)) :=
   twist (sbRep (fun x γ => ⟨act x.1 γ, by rw [rank_act]; exact x.2⟩)
     (fun x => Subtype.ext (act_one x.1)) (fun x γ δ => Subtype.ext (act_mul x.1 γ δ))
     (fun γ => ((continuous_act γ).comp continuous_subtype_val).subtype_mk _)) (omChar a b μ)
 
 variable {a b}
 
-theorem omega_eq_om (μ : kˣ →* ℂˣ) (g : GL a k) (h : GL b k) (Φ : SB (Matrix b a k)) :
-    (omega a b μ (g, h) Φ).1 = om μ⁻¹ g h Φ.1 := by
-  funext x
-  have h1 : ((Fintype.card b : ℂ) / 2) = (((Fintype.card b : ℝ) / 2 : ℝ) : ℂ) := by push_cast; rfl
-  have h2 : (-(Fintype.card a : ℂ) / 2) = ((-(Fintype.card a : ℝ) / 2 : ℝ) : ℂ) := by push_cast; rfl
-  show (omChar a b μ (g, h) : ℂ) * Φ.1 (act x (g, h)) = _
-  simp only [omChar, om, act, MonoidHom.mul_apply, MonoidHom.comp_apply, detChar_apply, Units.val_mul, h1, h2,
-    val_absPow_ofReal, MonoidHom.inv_apply, inv_inv, MonoidHom.coe_fst, MonoidHom.coe_snd]
-  ring
-
-theorem omegaOn_apply (μ : kˣ →* ℂˣ) (s : Set ℕ) (γ : GL a k × GL b k) (Φ : SB (RankIn k a b s))
-    (x : RankIn k a b s) :
+theorem omegaOn_apply (μ : kˣ →* ℂˣ) (s : Set ℕ) (γ : GL a k × GL b k) (Φ : SB (RankIn (k := k) (a := a) (b := b) s))
+    (x : RankIn (k := k) (a := a) (b := b) s) :
     (omegaOn a b μ s γ Φ).1 x =
       (omChar a b μ γ : ℂ) * Φ.1 ⟨act x.1 γ, by rw [rank_act]; exact x.2⟩ := rfl
 
-variable (a b) in
 
+variable (a b) in
 def filt (μ : kˣ →* ℂˣ) (s : Set ℕ) (κ : ℕ) : Subrepresentation (omegaOn a b μ s) where
   toSubmodule :=
-    { carrier := {Φ | ∀ x : RankIn k a b s, x.1.rank < κ → Φ.1 x = 0}
+    { carrier := {Φ | ∀ x : RankIn (k := k) (a := a) (b := b) s, x.1.rank < κ → Φ.1 x = 0}
       add_mem' := fun {f g} hf hg x hx => by
         show f.1 x + g.1 x = 0
         rw [hf x hx, hg x hx, add_zero]
@@ -138,66 +129,13 @@ def filt (μ : kˣ →* ℂˣ) (s : Set ℕ) (κ : ℕ) : Subrepresentation (ome
   apply_mem_toSubmodule γ Φ hΦ x hx := by
     rw [omegaOn_apply, hΦ _ (by rwa [rank_act]), mul_zero]
 
-variable (k a) in
 
-def biReg : Representation ℂ (GL a k × GL a k) (SB (GL a k)) :=
-  sbRep (fun y γ => γ.2⁻¹ * y * γ.1) (fun y => by simp) (fun y γ δ => by simp [mul_assoc])
-    (fun γ => by fun_prop)
-
-variable (a b) in
-
-def openDatum (μ : kˣ →* ℂˣ) : Representation ℂ (GL a k × (GL a k × GL b k)) (SB (GL a k)) :=
-  twist ((biReg k a).comp ((MonoidHom.id _).prodMap (MonoidHom.fst _ _)))
-    ((detChar b μ).comp ((MonoidHom.snd _ _).comp (MonoidHom.snd _ _)))
 
 end Model
 
 section Statement
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-
-def OpenClosedSeq (a t : ℕ) (μ : kˣ →* ℂˣ) : Prop :=
-  ∃ (i : (omegaOn (Fin a) (Fin (a + t)) μ {a}).IntertwiningMap (omega (Fin a) (Fin (a + t)) μ))
-    (r : (omega (Fin a) (Fin (a + t)) μ).IntertwiningMap (omegaOn (Fin a) (Fin (a + t)) μ (Set.Iio a))),
-    (∀ Φ x, (i Φ).1 x = if h : x.rank = a then Φ.1 ⟨x, h⟩ else 0) ∧
-    (∀ Φ x, (r Φ).1 x = Φ.1 x.1) ∧
-    Function.Injective i ∧ Function.Exact i r ∧ Function.Surjective r
-
-def RankFiltration (a t : ℕ) (μ : kˣ →* ℂˣ) : Prop :=
-  filt (Fin a) (Fin (a + t)) μ (Set.Iio a) 0 = ⊤ ∧ filt (Fin a) (Fin (a + t)) μ (Set.Iio a) a = ⊥ ∧
-  ∀ (κ : ℕ) (hκ : κ < a),
-    filt (Fin a) (Fin (a + t)) μ (Set.Iio a) (κ + 1) ≤ filt (Fin a) (Fin (a + t)) μ (Set.Iio a) κ ∧
-    (∃ j : (omegaOn (Fin a) (Fin (a + t)) μ (Set.Ico κ a)).Equiv
-        (filt (Fin a) (Fin (a + t)) μ (Set.Iio a) κ).toRepresentation,
-      ∀ Φ x, (j Φ).1.1 x = if h : κ ≤ x.1.rank then Φ.1 ⟨x.1, h, x.2⟩ else 0) ∧
-    ∃ q : (subQuot (filt (Fin a) (Fin (a + t)) μ (Set.Iio a) κ)
-        (filt (Fin a) (Fin (a + t)) μ (Set.Iio a) (κ + 1))).Equiv (omegaOn (Fin a) (Fin (a + t)) μ {κ}),
-      ∀ Φ x, (q (Submodule.Quotient.mk Φ)).1 x = Φ.1.1 ⟨x.1, lt_of_eq_of_lt x.2 hκ⟩
-
-def LowerStrata (a t : ℕ) (μ : kˣ →* ℂˣ) : Prop :=
-  ∀ (κ β : ℕ) (h : κ + β = a), 1 ≤ β →
-    ∃ (W : Type) (_ : AddCommGroup W) (_ : Module ℂ W) (R : Representation ℂ (GL (Fin κ) k) W),
-      IsSmooth R ∧
-      Nonempty (Representation.Equiv
-        ((omegaOn (Fin a) (Fin (a + t)) μ {κ}).comp (MonoidHom.inl _ _))
-        (ind₂Lower (stdSum h)
-          (extTensor R (detRep (Fin β) (μ⁻¹ * absPow k (((t : ℂ) + β) / 2))))))
-
-def OpenStratum (a t : ℕ) (μ : kˣ →* ℂˣ) : Prop :=
-  Nonempty ((omegaOn (Fin a) (Fin (a + t)) μ {a}).Equiv
-    (indSnd (stdSum (rfl : a + t = a + t)) (openDatum (Fin a) (Fin t) μ)))
-
-def RankStrata : Prop :=
-  ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    (a t : ℕ), 1 ≤ a → 1 ≤ t → ∀ μ : kˣ →* ℂˣ, IsSmoothChar μ → IsUnitaryChar μ →
-      (OpenClosedSeq a t μ ∧ RankFiltration a t μ) ∧ LowerStrata a t μ ∧ OpenStratum a t μ
-
-example (a t : ℕ) (μ : kˣ →* ℂˣ) : filt (Fin a) (Fin (a + t)) μ (Set.Iio a) 0 = ⊤ :=
-  eq_top_iff.2 fun _ _ _ hx => absurd hx (Nat.not_lt_zero _)
-
-example (a t : ℕ) (μ : kˣ →* ℂˣ) : filt (Fin a) (Fin (a + t)) μ (Set.Iio a) a = ⊥ :=
-  Subrepresentation.toSubmodule_injective <|
-    eq_bot_iff.2 fun _ hΦ => Subtype.ext (funext fun x => hΦ x x.2)
 
 end Statement
 

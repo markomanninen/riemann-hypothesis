@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.RadXDual
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.RadClMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.RadClKer
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.RadXDual
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.RadClMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.RadClKer
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum
 
@@ -39,7 +43,42 @@ theorem UpperTheory.V.Kum.reflMap :
   obtain ⟨hex, huniq⟩ := radXDual F Ω K U n N ζ hU hζ
   have hn : n ≠ 0 := NeZero.ne n
   obtain ⟨hmul, -, hpow⟩ := radClMul K (∅ : Set (HeightOneSpectrum (𝓞 K))) n hn
-  have hker := radClKer K (∅ : Set (HeightOneSpectrum (𝓞 K))) n hn
+  have hker : ∀ a ∈ SelK (∅ : Set (HeightOneSpectrum (𝓞 K))) n,
+      radCl n a = 1 → a ∈ (∅ : Set (HeightOneSpectrum (𝓞 K))).unit K ⊔ powK K n := by
+    intro a ha h
+    have hf : {v : HeightOneSpectrum (𝓞 K) | ordv v a / n ≠ 0}.Finite :=
+      ((clProd K).2.2.1 a).subset fun v hv hv0 => hv (by simp [hv0])
+    set I : FractionalIdeal (nonZeroDivisors (𝓞 K)) K :=
+      ∏ᶠ v : HeightOneSpectrum (𝓞 K), (v.asIdeal : FractionalIdeal (nonZeroDivisors (𝓞 K)) K) ^ (ordv v a / n) with hI
+    have hI0 : I ≠ 0 := by
+      rw [hI]
+      refine finprod_induction (fun J => J ≠ 0) one_ne_zero (fun _ _ => mul_ne_zero) fun v => ?_
+      exact zpow_ne_zero _ (FractionalIdeal.coeIdeal_ne_zero.2 v.ne_bot)
+    have hc : ∀ v, FractionalIdeal.count K v I = ordv v a / n := fun v =>
+      FractionalIdeal.count_finprod K v _ (by simpa [Filter.eventually_cofinite] using hf)
+    have h3 : ClassGroup.mk K (Units.mk0 I hI0) = 1 := by
+      rw [(clProd K).1, ← h]
+      exact finprod_congr fun v => by rw [Units.val_mk0, hc]
+    obtain ⟨b, hb⟩ := (FractionalIdeal.isPrincipal_iff _).1 (ClassGroup.mk_eq_one_iff.1 h3)
+    rw [Units.val_mk0] at hb
+    have hb0 : b ≠ 0 := by
+      rintro rfl
+      exact hI0 (by rw [hb, FractionalIdeal.spanSingleton_zero])
+    let b' : Kˣ := Units.mk0 b hb0
+    have hb' : ∀ v, ordv v b' = ordv v a / n := fun v => by
+      rw [← (clProd K).2.1, Units.val_mk0, ← hb, hc]
+    refine Subgroup.mem_sup.2 ⟨a * (b' ^ n)⁻¹, ?_, b' ^ n, ⟨b', rfl⟩, by simp⟩
+    have hunit : ∀ (u : Kˣ), u ∈ (∅ : Set (HeightOneSpectrum (𝓞 K))).unit K ↔
+        ∀ v ∉ (∅ : Set (HeightOneSpectrum (𝓞 K))), ordv v u = 0 := by
+      intro u
+      change (∀ v ∉ (∅ : Set (HeightOneSpectrum (𝓞 K))), v.valuation K (u : K) = 1) ↔ _
+      refine forall₂_congr fun v _ => ?_
+      rw [← HeightOneSpectrum.valuationOfNeZero_eq, ← WithZero.coe_one, WithZero.coe_inj, ordv, neg_eq_zero, toAdd_eq_zero]
+    apply (hunit _).2
+    intro v hv
+    rw [ordv_mul, ordv_inv]
+    have hp : ordv v (b' ^ n) = n * ordv v b' := by simp [ordv]
+    rw [hp, hb', Int.mul_ediv_cancel' (ha v hv), add_neg_cancel]
   have hbot : clSub (∅ : Set (HeightOneSpectrum (𝓞 K))) = ⊥ := by simp [clSub]
   have hζ' : IsPrimitiveRoot (algebraMap K Ω ζ) n := hζ.map_of_injective (algebraMap K Ω).injective
   have hex' : ∀ φ : XDual N U (ZMod n) (ZMod n), ∃ (β : Ω) (a : Kˣ), IsRad (algebraMap K Ω ζ) U φ.1 β ∧
@@ -102,6 +141,5 @@ theorem UpperTheory.V.Kum.reflMap :
         exact (ZMod.val_eq_zero _).1 (Nat.eq_zero_of_dvd_of_lt h4 (ZMod.val_lt _))
       exact Multiplicative.toAdd.injective (Subtype.ext h0)
     · intro x
-      refine ⟨_, (hker _ (hsel (Multiplicative.toAdd x).1)).1 ?_, hj x⟩
-      rw [hbot, Subgroup.mem_bot]
+      refine ⟨_, hker _ (hsel (Multiplicative.toAdd x).1) ?_, hj x⟩
       exact (Multiplicative.toAdd x).2

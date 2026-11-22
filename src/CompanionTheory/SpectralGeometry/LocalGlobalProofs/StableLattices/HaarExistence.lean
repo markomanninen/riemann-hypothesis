@@ -1,7 +1,19 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.HaarExists
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.KeepsMul
+
+@[expose] public section
 
 open MeasureTheory Matrix
+
+namespace CompanionTheory.RgExh.Dec.L
+
+def HaarExists : Prop :=
+  ∀ (n : ℕ) (ε : Fin n → Bool) (A : Matrix (Fin n) (Fin n) ℂ),
+    IsGrad ε A → ∃ ν : Measure (PSub ε A), ν.IsHaarMeasure
+
+end CompanionTheory.RgExh.Dec.L
 
 namespace GlobalTheory.CompanionTheory.ParabolicHaar
 
@@ -44,7 +56,7 @@ theorem isClosed_keeps (ε : Fin n → Bool) (S : Submodule ℂ (Fin n → ℂ))
   refine isClosed_biInter fun v _ => ?_
   have hS : IsClosed (S : Set (Fin n → ℂ)) := S.closed_of_finiteDimensional
   have hc : Continuous fun g : S7.UJ ε => S7.toM g *ᵥ v :=
-    Continuous.matrix_mulVec (Units.continuous_val.comp continuous_subtype_val) continuous_const
+    (S7.continuous_toM ε).matrix_mulVec continuous_const
   exact IsClosed.preimage hc hS
 
 theorem isClosed_pSub (ε : Fin n → Bool) (A : Matrix (Fin n) (Fin n) ℂ) :
@@ -58,8 +70,11 @@ theorem haar_pSub_isHaar (ε : Fin n → Bool) (A : Matrix (Fin n) (Fin n) ℂ) 
     (Measure.haar : Measure (PSub ε A)).IsHaarMeasure := by
   infer_instance
 
-theorem haarExists : CompanionTheory.RgExh.Dec.L.HaarExists := by
-  intro n ε A _
+theorem haarExists (n : ℕ) (ε : Fin n → Bool) (A : Matrix (Fin n) (Fin n) ℂ)
+    (_ : IsGrad ε A) : ∃ ν : Measure (PSub ε A), ν.IsHaarMeasure := by
   exact ⟨Measure.haar, haar_pSub_isHaar ε A⟩
 
 end GlobalTheory.CompanionTheory.ParabolicHaar
+
+theorem GlobalTheory.T.HaarExistence : CompanionTheory.RgExh.Dec.L.HaarExists :=
+  GlobalTheory.CompanionTheory.ParabolicHaar.haarExists

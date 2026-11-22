@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,12 +66,12 @@ theorem mInt_congr {e : ℕ} {X : Type} [TopologicalSpace X] (A : FinHolAtlas e 
     (hg : ∀ x, g x = g' x) : mInt A Φ g = mInt A Φ' g' := by
   unfold ReciprocityTheory.AnForm.M.mInt
   by_cases h : Nonempty (ChartPartition A)
-  · rw [dif_pos h, dif_pos h]
+  · rw [dite_eq_left h, dite_eq_left h]
     unfold ReciprocityTheory.AnForm.M.integralWith
     refine Finset.sum_congr rfl fun j _ => ?_
     refine MeasureTheory.setIntegral_congr_fun (A.chart j).open_target.measurableSet fun y hy => ?_
     simp only [hg, hΦ j y hy]
-  · rw [dif_neg h, dif_neg h]
+  · rw [dite_eq_right h, dite_eq_right h]
 
 theorem locDens_cons_congr {e : ℕ} {X : Type} [TopologicalSpace X] (A : FinHolAtlas (e + 1) X)
     {Q Q' : LocPot X} (Φ : Fin e → LocPot X)
@@ -125,22 +129,5 @@ theorem smooth_diag (R : AnLogRes P J e) {B : HermLine ι} (hB : IsSmoothHerm B)
   change Real.log (B.h (R.lift ((R.A.chart j).symm y') ((R.A.chart j).symm y'))) =
     Real.log (B.h (R.lift ((R.A.chart j).symm y) ((R.A.chart j).symm y')))
   rw [h_eq_of_sameOrbit hB0 (R.compat _ _ _ ⟨R.mem_U _, hy'.2.2⟩)]
-
-theorem potOf_germ (R : AnLogRes P J e) {B : HermLine ι} (hB0 : B.a = 0) (j : Fin R.A.n)
-    (y : Fin e → ℂ) (hy : y ∈ (R.A.chart j).target) :
-    (fun y' => (potOf R B).φ ((R.A.chart j).symm y) ((R.A.chart j).symm y')) =ᶠ[𝓝 y]
-      fun y' => (LocPot.ofFun fun x => Real.log (B.h (R.lift x x))).φ ((R.A.chart j).symm y)
-        ((R.A.chart j).symm y') := by
-  have hev : ∀ᶠ y' in 𝓝 y, (R.A.chart j).symm y' ∈ R.U ((R.A.chart j).symm y) :=
-    ((R.A.chart j).continuousAt_symm hy).preimage_mem_nhds
-      ((R.isOpen_U _).mem_nhds (R.mem_U _))
-  filter_upwards [hev] with y' hy'
-  change Real.log (B.h (R.lift ((R.A.chart j).symm y) ((R.A.chart j).symm y'))) =
-    Real.log (B.h (R.lift ((R.A.chart j).symm y') ((R.A.chart j).symm y')))
-  rw [h_eq_of_sameOrbit hB0 (R.compat _ _ _ ⟨hy', R.mem_U _⟩)]
-
-def PotOfPotentialStatement : Prop :=
-  ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (P J : Ideal (MRing ι)) (e : ℕ)
-    (R : AnLogRes P J e) (L : HermLine ι), IsSmoothHerm L → IsPotential R.A (potOf R L)
 
 end ReciprocityTheory.ChartRestriction.G.Geo

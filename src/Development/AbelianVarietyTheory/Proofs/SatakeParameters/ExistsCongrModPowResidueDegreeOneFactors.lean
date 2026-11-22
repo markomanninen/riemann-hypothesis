@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.DegOneIffSurjective
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRepsCoprimeOutsideModulus
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ResidueDegreeOneOfLinearMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.DegOneIffSurjective
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRepsCoprimeOutsideModulus
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ResidueDegreeOneOfLinearMem
+
+@[expose] public section
 
 open NumberField IsDedekindDomain HeckeValGen GlobalTheory.HeckeSplit
 
@@ -24,7 +28,7 @@ theorem exists_shift_mod_pow_degOne : ∀ (F E : Type) [Field F] [NumberField F]
   · intro P hmP hk
     have hPmax : P.asIdeal.IsMaximal := P.isMaximal
     have hpmax : (P.asIdeal.comap (algebraMap (𝓞 F) (𝓞 E))).IsMaximal :=
-      Ideal.isMaximal_comap_of_isIntegral_of_isMaximal P.asIdeal
+      Ideal.isMaximal_under_of_isIntegral_of_isMaximal P.asIdeal
     have hmNp : ¬ m ^ N ≤ P.asIdeal.comap (algebraMap (𝓞 F) (𝓞 E)) := fun h =>
       hmP (hpmax.isPrime.le_of_pow_le h)
     have hD : algebraMap (𝓞 F) (𝓞 E) D ∉ P.asIdeal := by

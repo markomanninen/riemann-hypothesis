@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.DifferentIdeal.LineR
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.DifferentIdeal.LineR
+
+@[expose] public section
 
 noncomputable section
 

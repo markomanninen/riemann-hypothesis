@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField.Herbrand
 
@@ -116,8 +120,8 @@ theorem exists_delta (h : SES DA NA DB NB DC NC f g) :
       refine rel_unique h (Classical.choose_spec (exists_rel h (c + c'))) ?_
       obtain ⟨b, hb, ha⟩ := Classical.choose_spec (exists_rel h c)
       obtain ⟨b', hb', ha'⟩ := Classical.choose_spec (exists_rel h c')
-      exact ⟨b + b', by rw [map_add, hb, hb']; rfl, by
-        rw [map_add, ← ha, ← ha', ← map_add]; rfl⟩)
+      exact ⟨b + b', by rw [map_add (f := _), hb, hb']; rfl, by
+        rw [map_add (f := _), ← ha, ← ha', ← map_add (f := _)]; rfl⟩)
   have hδ0 : ∀ (c : DC.ker) (a : NA.ker), Rel DB f g c a → δ0 c = QuotientAddGroup.mk a :=
     fun c a hca => rel_unique h (Classical.choose_spec (exists_rel h c)) hca
   refine ⟨QuotientAddGroup.lift _ δ0 ?_, fun c a hca => ?_⟩

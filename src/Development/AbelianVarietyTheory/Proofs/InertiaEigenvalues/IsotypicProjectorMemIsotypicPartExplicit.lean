@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DiagScaleApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DiagScaleApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ variable {O K : Type} [CommRing O] [NormedField K] [IsUltrametricDist K] [Algebr
   [IsUnitBall O K] {l e a : ℕ} {ι : Type} [Fintype ι] [DecidableEq ι]
   [Fact l.Prime] [NormedAlgebra ℚ_[l] K] [NeZero e] [NeZero a] [TameDescentExponentData K l e a]
 
-omit [NeZero e] in
 
+omit [NeZero e] in
 theorem act_inertia_diagScale {P : PhiMod O K l e a ι} (Δ : Descent P) (ξ : rootsOfUnity e K)
     (s : ZMod a → K) (w : Vec K a ι) :
     Δ.act (TameGal.inertia ξ) (diagScale K a ι s w) =
@@ -34,7 +38,8 @@ theorem isoProj_mem_isotypic {P : PhiMod O K l e a ι} (Δ : Descent P) (c : ZMo
   rw [LinearMap.smul_apply]
   refine Submodule.smul_mem _ _ ?_
   intro ξ τ
-  simp only [LinearMap.sum_apply, LinearMap.comp_apply, map_sum, act_inertia_diagScale,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.sum_apply, LinearMap.comp_apply, map_sum, act_inertia_diagScale,
     Finset.sum_apply, diagScale_apply, Finset.smul_sum]
   refine Fintype.sum_equiv (Equiv.mulLeft ξ) _ _ fun ζ => ?_
   rw [Equiv.coe_mulLeft, ← Module.End.mul_apply, ← map_mul, ← map_mul, smul_smul]

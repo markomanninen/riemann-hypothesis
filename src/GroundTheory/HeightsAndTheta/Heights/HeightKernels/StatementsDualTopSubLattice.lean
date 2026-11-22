@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ScaledExample
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLatticeBasisExists
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualEmbBijective
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ScaledExample
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLatticeBasisExists
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualEmbBijective
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -51,16 +56,6 @@ theorem twiceStandardExample_le :
     simp [twoVecExample, Algebra.smul_def, map_ofNat]
   rw [h]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨0, rfl⟩)
-
-example : ∃ (T : Type) (_ : Fintype T) (_ : DecidableEq T)
-    (b' : Module.Basis T ℤ (dualLattice HermLattice.twiceStandardExample)),
-    Function.Bijective (Matrix.mulVecLin (dualEmbMatrix b')) ∧
-      Function.Bijective (Matrix.mulVecLin
-        (dualEmbMatrix (F := HermLattice.standard ℚ 1) dualBasisStandard)) ∧
-      HermLattice.twiceStandardExample.lattice ≤ (HermLattice.standard ℚ 1).lattice ∧ 1 ≤ 1 := by
-  obtain ⟨T, hT, hdT, ⟨b'⟩⟩ := DualLatticeBasisExists.proof ℚ 1 HermLattice.twiceStandardExample
-  exact ⟨T, hT, hdT, b', DualEmbBijective.proof ℚ 1 _ T b', dualEmbMatrix_standard_bijective,
-    twiceStandardExample_le, le_rfl⟩
 
 end
 

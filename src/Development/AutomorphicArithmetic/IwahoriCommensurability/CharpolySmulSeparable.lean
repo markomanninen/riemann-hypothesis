@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CharpolySmul
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CharpolySmul
+
+@[expose] public section
 
 open Polynomial
 

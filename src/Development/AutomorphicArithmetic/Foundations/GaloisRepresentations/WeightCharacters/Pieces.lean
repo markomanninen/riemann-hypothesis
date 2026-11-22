@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.WeightCharacters.DeltaNear
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.WeightCharacters.DeltaNear
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ private theorem pev_map {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) {a : �
   induction P' using MvPolynomial.induction_on with
   | C c => simp [pev]
   | add p q hp hq =>
-    simp only [pev, map_add] at hp hq ⊢
+    simp only [pev, map_add (f := _)] at hp hq ⊢
     rw [hp, hq]
   | mul_X p i hp =>
     simp only [pev, map_mul, MvPolynomial.map_X, MvPolynomial.eval_X] at hp ⊢

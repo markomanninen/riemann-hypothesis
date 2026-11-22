@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PSpecB
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PSpecB
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,12 +87,12 @@ theorem jacobian_le_exp {ε : Fin n → Bool} (z : PCoord ε → ℂ) (f : ℝ �
       f (pev z a - pev z b)) := by
   unfold Jac
   rw [Real.exp_sum]
-  apply Finset.prod_le_prod
+  apply Finset.prod_le_prod₀
   · intro a _
     exact Finset.prod_nonneg (fun b _ => le_trans zero_le_one (shc_bounds _).1)
   · intro a _
     rw [Real.exp_sum]
-    apply Finset.prod_le_prod
+    apply Finset.prod_le_prod₀
     · intro b _
       exact le_trans zero_le_one (shc_bounds _).1
     · intro b _
@@ -101,11 +105,11 @@ theorem jac_ge_one {ε : Fin n → Bool} (z : PCoord ε → ℂ) : 1 ≤ Jac z :
     intro a
     have h1 : ∏ _b ∈ univ.filter (fun b : Fin n => a < b), (1 : ℝ)
         ≤ ∏ b ∈ univ.filter (fun b : Fin n => a < b), shc (pev z a - pev z b) :=
-      Finset.prod_le_prod (fun _ _ => zero_le_one) (fun b _ => (shc_bounds _).1)
+      Finset.prod_le_prod₀ (fun _ _ => zero_le_one) (fun b _ => (shc_bounds _).1)
     simpa using h1
   have h2 : ∏ _a : Fin n, (1 : ℝ)
       ≤ ∏ a : Fin n, ∏ b ∈ univ.filter (fun b : Fin n => a < b), shc (pev z a - pev z b) :=
-    Finset.prod_le_prod (fun _ _ => zero_le_one) (fun a _ => h a)
+    Finset.prod_le_prod₀ (fun _ _ => zero_le_one) (fun a _ => h a)
   simpa using h2
 
 private theorem sum_pev_sq_le_hs_pmat {ε : Fin n → Bool} (z : PCoord ε → ℂ) :
@@ -138,7 +142,8 @@ private theorem sum_pev_sq_le_hs_pmat {ε : Fin n → Bool} (z : PCoord ε → �
       = ∑ i : Fin n, ∑ j : Fin n, A i j * star (A i j) := by
     rw [← hAA, hAA2, hD]
   have hre := congrArg (fun w : ℂ => RCLike.re w) hmain
-  simp only [map_sum, RCLike.star_def, RCLike.mul_conj] at hre
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, RCLike.star_def, RCLike.mul_conj] at hre
   simp only [← RCLike.ofReal_pow, RCLike.ofReal_re] at hre
   simp only [hpev]
   unfold S7.hs

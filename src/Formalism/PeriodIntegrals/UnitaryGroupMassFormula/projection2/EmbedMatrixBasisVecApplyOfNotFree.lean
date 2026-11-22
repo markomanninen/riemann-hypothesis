@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.projection2.GaStep
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.projection2.GaStep
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,8 +33,8 @@ theorem embedMatrix_basisVec_apply_of_not_free (xj : (Fin n' → k) →ₗ[k] (F
   rw [he]
   unfold xx1
   rw [key, Matrix.of_apply,
-    dif_neg (show ¬ IsFree n' n c l.1 (⟨n' + i, hs⟩ : Fin (n' + (c + 1))).1 from hf),
-    dif_neg (show ¬ ((⟨n' + i, hs⟩ : Fin (n' + (c + 1))).1 < n') by show ¬ (n' + i < n'); omega)]
+    dite_eq_right (show ¬ IsFree n' n c l.1 (⟨n' + i, hs⟩ : Fin (n' + (c + 1))).1 from hf),
+    dite_eq_right (show ¬ ((⟨n' + i, hs⟩ : Fin (n' + (c + 1))).1 < n') by show ¬ (n' + i < n'); omega)]
   show (if l.1 = n + (n' + i - n') then (1 : k) else 0) = _
   rw [Nat.add_sub_cancel_left]
 

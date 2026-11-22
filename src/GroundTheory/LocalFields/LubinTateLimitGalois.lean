@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.LocalFields.LubinTateTowerMaps
-import GroundTheory.LocalFields.ExamplesLaurent
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.LubinTateTowerMaps
+public import GroundTheory.LocalFields.ExamplesLaurent
+
+@[expose] public section
 
 noncomputable section
 
@@ -105,8 +109,8 @@ variable {Ω : Type*} [Field Ω] [ValuativeRel Ω] [TopologicalSpace Ω] [IsValu
   [Algebra K Ω] [ValuativeExtension K Ω] [Algebra.IsAlgebraic K Ω]
 variable {π : 𝒪[K]} (hπ : Irreducible π) {f g : PowerSeries 𝒪[K]}
 
-variable (Ω) in
 
+variable (Ω) in
 def lubinTateLimit (hπ : Irreducible π) : IntermediateField K Ω :=
   ⨆ n, lubinTateField Ω hπ (isLubinTateSeries_ltPoly π) n
 
@@ -301,9 +305,6 @@ def lubinTateLimitGalEquiv (hf : IsLubinTateSeries π f) :
         ← mem_fixingSubgroup_restrict_iff]
       exact hσ }
 
-theorem lubinTateLimitGalEquiv_apply' (hf : IsLubinTateSeries π f) (u : 𝒪[K]ˣ) :
-    lubinTateLimitGalEquiv (Ω := Ω) hπ hf u = lubinTateLimitAut hπ hf u := rfl
-
 theorem lubinTateChar_lubinTateLimitGalEquiv (hf : IsLubinTateSeries π f) (u : 𝒪[K]ˣ) (n : ℕ) :
     lubinTateChar hπ hf n (lubinTateField_le_lubinTateLimit hπ hf n)
       (lubinTateLimitGalEquiv (Ω := Ω) hπ hf u) = unitsMk π n u :=
@@ -311,32 +312,11 @@ theorem lubinTateChar_lubinTateLimitGalEquiv (hf : IsLubinTateSeries π f) (u : 
 
 theorem lubinTateLimitGalEquiv_apply (hf : IsLubinTateSeries π f) (u : 𝒪[K]ˣ) {n : ℕ}
     {x : IdealPoint Ω (lubinTateFormalGroup hπ hf)} (hx : x ∈ lubinTateTorsion Ω hf n) :
-    ((lubinTateLimitGalEquiv hπ hf u
+    ((lubinTateLimitGalEquiv (Ω := Ω) hπ hf u
       ⟨x.val, lubinTateField_le_lubinTateLimit hπ hf n (val_mem_lubinTateField hπ hf hx)⟩ :
         lubinTateLimit Ω hπ) : Ω) = ((u : 𝒪[K]) • x).val :=
   lubinTateChar_spec hπ hf _ _ hx (u : 𝒪[K]) (by
     rw [lubinTateChar_lubinTateLimitGalEquiv, coe_unitsMk])
-
-theorem lubinTateLimitGalEquiv_eq_iff (hf : IsLubinTateSeries π f) (u : 𝒪[K]ˣ)
-    (σ : lubinTateLimit Ω hπ ≃ₐ[K] lubinTateLimit Ω hπ) :
-    lubinTateLimitGalEquiv hπ hf u = σ ↔
-      ∀ (n : ℕ) (x : IdealPoint Ω (lubinTateFormalGroup hπ hf)) (hx : x ∈ lubinTateTorsion Ω hf n),
-        ((σ ⟨x.val, lubinTateField_le_lubinTateLimit hπ hf n (val_mem_lubinTateField hπ hf hx)⟩ :
-          lubinTateLimit Ω hπ) : Ω) = ((u : 𝒪[K]) • x).val := by
-  constructor
-  · rintro rfl n x hx
-    exact lubinTateLimitGalEquiv_apply hπ hf u hx
-  · intro h
-    refine lubinTateLimit_ext hπ hf fun n => Units.ext ?_
-    rw [lubinTateChar_lubinTateLimitGalEquiv, coe_unitsMk,
-      lubinTateChar_eq_of_apply hπ hf _ σ _ fun x hx => h n x hx]
-
-theorem lubinTateLimitGalEquiv_eq (hf : IsLubinTateSeries π f) (hg : IsLubinTateSeries π g) :
-    lubinTateLimitGalEquiv (Ω := Ω) hπ hf = lubinTateLimitGalEquiv hπ hg := by
-  ext u : 1
-  refine lubinTateLimit_ext hπ hg fun n => ?_
-  rw [← lubinTateChar_eq hπ hf hg (lubinTateField_le_lubinTateLimit hπ hf n),
-    lubinTateChar_lubinTateLimitGalEquiv, lubinTateChar_lubinTateLimitGalEquiv]
 
 end Limit
 

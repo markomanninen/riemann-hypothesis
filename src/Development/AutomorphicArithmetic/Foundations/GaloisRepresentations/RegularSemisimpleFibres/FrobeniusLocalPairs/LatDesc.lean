@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobeniusTwistedHilbertNinetyAlt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobFacts
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.InflFacts
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FinAct
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.Descent
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalField
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobeniusTwistedHilbertNinetyAlt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobFacts
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.InflFacts
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FinAct
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.Descent
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalField
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,7 +87,8 @@ private theorem cp_fix (t : R →+* R) (c b : Matrix (Fin n) (Fin n) R) (hb : c 
 private theorem sum_fix (t : R →+* R) (d : ℕ) (ht : t ^ d = 1) (Y : Matrix (Fin n) (Fin n) R) :
     (∑ i ∈ Finset.range d, Y.map (t ^ i)).map t = ∑ i ∈ Finset.range d, Y.map (t ^ i) := by
   have h1 : (∑ i ∈ Finset.range d, Y.map (t ^ i)).map t = ∑ i ∈ Finset.range d, Y.map (t ^ (i + 1)) := by
-    rw [← RingHom.mapMatrix_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← RingHom.mapMatrix_apply, map_sum]
     exact Finset.sum_congr rfl fun i _ => map_map_pow t Y i
   have h2 := Finset.sum_range_succ (fun i => Y.map (t ^ i)) d
   rw [Finset.sum_range_succ', ht, pow_zero] at h2
@@ -94,7 +99,8 @@ private theorem lift_red (r : R →+* S) (τ : R →+* R) (t : S →+* S) (hr : 
     (c x : Matrix (Fin n) (Fin n) R) (b : Matrix (Fin n) (Fin n) S) (a : S) (d : ℕ)
     (hb : c.map r * b.map t = b) (ha : ∑ i ∈ Finset.range d, (t ^ i) a = 1) (hx : x.map r = a • b) :
     (∑ i ∈ Finset.range d, cp τ c i * x.map (τ ^ i)).map r = b := by
-  rw [← RingHom.mapMatrix_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← RingHom.mapMatrix_apply, map_sum]
   have h1 : ∀ i, r.mapMatrix (cp τ c i * x.map (τ ^ i)) = (t ^ i) a • b := by
     intro i
     have h2 : (x.map (τ ^ i)).map r = (t ^ i) a • b.map (t ^ i) := by
@@ -130,7 +136,8 @@ private theorem trace_one (σ : F₁ ≃ₐ[F₀] F₁) (d : ℕ) (hG : UpperThe
     have h2 := Finset.sum_range_succ (fun j => (σ ^ j) r) d
     rw [Finset.sum_range_succ', hG.pow, pow_zero] at h2
     have h3 := add_right_cancel h2
-    simp only [T, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [T, map_sum]
     rw [← h3]
     exact Finset.sum_congr rfl fun j _ => by rw [pow_succ', AlgEquiv.mul_apply]
   have hTj : ∀ r j, (σ ^ j) (T r) = T r := by
@@ -157,7 +164,7 @@ private theorem fin_desc (σ : F₁ ≃ₐ[F₀] F₁) (d : ℕ) (hG : UpperTheo
   let S : (Fin n → F₁) →ₗ[F₀] (Fin n → F₁) :=
     { toFun := fun v => c *ᵥ (fun i => σ (v i))
       map_add' := fun v w => by
-        simp only [Pi.add_apply, map_add]
+        simp only [Pi.add_apply, map_add (f := _)]
         exact Matrix.mulVec_add c _ _
       map_smul' := fun a v => by
         simp only [Pi.smul_apply, map_smul, RingHom.id_apply]
@@ -194,9 +201,8 @@ private theorem fin_desc (σ : F₁ ≃ₐ[F₀] F₁) (d : ℕ) (hG : UpperTheo
     intro m _
     obtain ⟨z, rfl⟩ := hsurj m
     induction z with
-    | zero => simp
     | add a b ha hb =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem (ha (Submodule.mem_top)) (hb (Submodule.mem_top))
     | tmul r w =>
       simp only [TensorProduct.lift.tmul]
@@ -331,7 +337,8 @@ private theorem lat_main [IsGalois k K] {F₀ F₁ : Type} [Field F₀] [Fintype
   let H : Matrix (Fin n) (Fin n) K := G * B.map ι
   have hH : H = ∑ i ∈ Finset.range (Module.finrank k K), (G * x.map ι).map (s' ^ i) := by
     simp only [H, B]
-    rw [← RingHom.mapMatrix_apply, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← RingHom.mapMatrix_apply, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [RingHom.mapMatrix_apply, Matrix.map_mul, ← Matrix.mul_assoc, hcp, Matrix.map_mul]
     congr 1

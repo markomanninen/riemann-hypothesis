@@ -1,7 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveTotalOfColumns
-import Development.AutomorphicArithmetic.CommutativeAlgebra.RedShDefs
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveTotalOfColumns
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.RedShDefs
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -35,17 +39,26 @@ private theorem coneAt_of_graded (hA : IsFilt dA gA FA rA) (hB : IsFilt dB gB FB
   intro n₀ n₁ n₃ h01 h12 h23
   obtain ⟨N1, hN1⟩ := hA.bot n₂
   obtain ⟨N2, hN2⟩ := hB.bot n₁
+  have leInd (a : ℤ) (P : ℤ → Prop) (base : P a)
+      (step : ∀ n, a ≤ n → P n → P (n + 1)) : ∀ n, a ≤ n → P n := by
+    intro n
+    induction n using Int.inductionOn' (b := a) with
+    | zero => exact fun _ => base
+    | succ n hn ih => exact fun _ => step n hn (ih hn)
+    | pred n hn ih => intro h; omega
   have key : ∀ p, min (min N1 N2) 0 ≤ p → p ≤ 0 → ∀ (x : A n₂) (y : B n₁), x ∈ FA p n₂ →
       y ∈ FB p n₁ → dA n₂ n₃ x = 0 → Φ n₂ x = dB n₁ n₂ y →
       ∃ (v : A n₁) (w : B n₀), x = dA n₁ n₂ v ∧ y = Φ n₁ v + dB n₀ n₁ w := by
     intro p hNp
-    induction p, hNp using Int.le_induction with
-    | base =>
+    refine leInd (min (min N1 N2) 0) (fun p => p ≤ 0 → ∀ (x : A n₂) (y : B n₁),
+      x ∈ FA p n₂ → y ∈ FB p n₁ → dA n₂ n₃ x = 0 → Φ n₂ x = dB n₁ n₂ y →
+      ∃ (v : A n₁) (w : B n₀), x = dA n₁ n₂ v ∧ y = Φ n₁ v + dB n₀ n₁ w) ?_ ?_ p hNp
+    ·
       intro _ x y hxF hyF _ _
       have hx0 : x = 0 := hN1 x (hA.mono _ N1 n₂ (by omega) hxF)
       have hy0 : y = 0 := hN2 y (hB.mono _ N2 n₁ (by omega) hyF)
       exact ⟨0, 0, by simp [hx0], by simp [hy0]⟩
-    | succ q hNq ih =>
+    · intro q hNq ih
       intro hq x y hxF hyF hx hxy
       have ih' := ih (by omega)
       have hpq : q + 1 - 1 = q := by ring
@@ -75,9 +88,9 @@ private theorem coneAt_of_graded (hA : IsFilt dA gA FA rA) (hB : IsFilt dB gB FB
         rw [map_sub, map_sub, map_sub, hd n₁ n₂ h12 v, hxy, hB.dd, sub_zero]
       obtain ⟨v', w', hv', hw'⟩ := ih' _ _ hx'F hy'F hx'c hx'r
       refine ⟨v + v', w + w', ?_, ?_⟩
-      · rw [map_add, ← hv']
+      · rw [map_add (f := _), ← hv']
         abel
-      · rw [map_add, map_add]
+      · rw [map_add (f := _), map_add (f := _)]
         rw [sub_sub, sub_eq_iff_eq_add] at hw'
         rw [hw']
         abel
@@ -141,7 +154,7 @@ private theorem coneAt_of_conn {K L I : Cx R} (g : K ⟶ L) (M : ℤ)
   simp only [Cocycle.mk_coe] at hw
   refine ⟨v' + u, -w, ?_, ?_⟩
   · rw [δ_add, hv', Cocycle.δ_eq_zero, add_zero]
-  · rw [map_add, δ_neg, hw]
+  · rw [map_add (f := _), δ_neg, hw]
     abel
 
 private theorem conn_of_coneAt {K L I : Cx R} (g : K ⟶ L) (M : ℤ)
@@ -149,7 +162,7 @@ private theorem conn_of_coneAt {K L I : Cx R} (g : K ⟶ L) (M : ℤ)
     (∀ n, n < M → Function.Bijective (cpull g I n)) ∧ Function.Injective (cpull g I M) := by
   have inj : ∀ n, n ≤ M → Function.Injective (cpull g I n) := by
     intro n hn
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro c hc
     obtain ⟨x, rfl⟩ := CohomologyClass.mk_surjective c
     have hpx : δ n (n + 1) (pre g I n x) = 0 := by

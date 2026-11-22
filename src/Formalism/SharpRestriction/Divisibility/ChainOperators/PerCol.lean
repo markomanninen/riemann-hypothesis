@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.WeightDegreeSizes
+module
+
+public import Formalism.SharpRestriction.Divisibility.WeightDegreeSizes
+
+@[expose] public section
 
 noncomputable section
 

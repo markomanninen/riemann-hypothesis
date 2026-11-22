@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qi48.exists_psi :
     ∀ (L T : Type) [inst : Field L] [IsAlgClosed L] [inst_2 : CommRing T]

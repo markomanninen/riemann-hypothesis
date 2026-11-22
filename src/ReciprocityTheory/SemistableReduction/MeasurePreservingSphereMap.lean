@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+module
+
+public import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,9 @@ theorem measurePreserving_sphereMap {n : ℕ}
     MeasurePreserving (sphereMap U) (sphereProb n) (sphereProb n) := by
   refine ⟨(continuous_sphereMap U).measurable, ?_⟩
   unfold sphereProb ProbabilityTheory.cond
-  rw [Measure.restrict_univ, Measure.map_smul, toSphere_map_sphereMap]
+  have hmeas : AEMeasurable (sphereMap U) (volume.toSphere) :=
+    (continuous_sphereMap U).measurable.aemeasurable
+  rw [Measure.restrict_univ, Measure.map_smul _ hmeas, toSphere_map_sphereMap]
 
 def rotCL {n : ℕ} (u : EuclideanSpace ℂ (Fin n)) (t : ℂ) :
     EuclideanSpace ℂ (Fin n) →L[ℂ] EuclideanSpace ℂ (Fin n) :=

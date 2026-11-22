@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.CurveSemiAbelianConjecture
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.SeparableFormGroupElementFixesUniquePositiveLine
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.EigenProjectorsSplitActionStatement
-import Development.WeilBound.CoreStatements.HodgeTatePoints.LieValAtBase
-import Development.WeilBound.CoreStatements.HodgeTatePoints.EigFrob
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.CurveSemiAbelianConjecture
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.SeparableFormGroupElementFixesUniquePositiveLine
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.EigenProjectorsSplitActionStatement
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.LieValAtBase
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.EigFrob
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -22,6 +26,19 @@ theorem span_values [IsCommMonObj G] (hξ : IsCptGen ξ) (hs : Smooth G.hom) (M 
     [CommRing R] [IsLocalRing R] (z : Spec (CommRingCat.of R) ⟶ X) (h : genPt ξ ⤳ centre z) {ER : Type}
     [AddCommGroup ER] [Module R ER] (MR : LieModel G z ER) :
     Submodule.span R {v | ∃ e, M.ValAt z e (MR.pt v)} = ⊤ := by
+  have exists_base {S : Scheme.{0}} {G : Over S} [GrpObj G] {A R : Type} [CommRing A] [CommRing R] (φ : A →+* R)
+      (x : Spec (CommRingCat.of A) ⟶ S) (z : Spec (CommRingCat.of R) ⟶ S)
+      (hz : Spec.map (CommRingCat.ofHom φ) ≫ x = z) {E F : Type} [AddCommGroup E] [Module A E] [AddCommGroup F]
+      [Module R F] (M : LieModel G x E) (N : LieModel G z F) :
+      ∃ j : E →+ F, (∀ e, (N.pt (j e)).left = Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap φ)) ≫ (M.pt e).left) ∧
+        (∀ (a : A) e, j (a • e) = φ a • j e) ∧
+        (Smooth G.hom → ∀ (n : ℕ) (b : Module.Basis (Fin n) A E),
+          ∃ b' : Module.Basis (Fin n) R F, ∀ k, b' k = j (b k)) := by
+    subst hz
+    letI := φ.toAlgebra
+    obtain ⟨j, h1, h2, h3⟩ := PositivityTheory.HtPt.Htat.lie_bc S G A R x E F M N
+    refine ⟨j, h1, h2, fun hs n b => ?_⟩
+    exact ⟨Module.Basis.mk (h3 hs n b).1 (h3 hs n b).2.ge, fun k => Module.Basis.mk_apply _ _ _⟩
   obtain ⟨EA, _, _, ⟨MA⟩⟩ := lieModel_exists X G (X.presheaf.stalk (centre z)) (X.fromSpecStalk (centre z))
   obtain ⟨j, hj, -, hjb⟩ := exists_base (A := X.presheaf.stalk (centre z)) (Scheme.stalkClosedPointTo z).hom _ z
     (LieTangent.spec_centre z) MA MR
@@ -32,19 +49,23 @@ theorem span_values [IsCommMonObj G] (hξ : IsCptGen ξ) (hs : Smooth G.hom) (M 
   obtain ⟨bz, hbz⟩ := hjb hs _ (Module.finBasis _ EA)
   refine top_le_iff.1 (bz.span_eq.symm.le.trans (Submodule.span_mono ?_))
   rintro _ ⟨k, rfl⟩
-  refine ⟨i (Module.finBasis _ EA k), (M.valAt_iff _ _ _).2 ⟨h, MA.pt _,
-    (M.extends_iff _ _ _).2 ⟨MA.tan _, hi _⟩, ?_⟩⟩
-  rw [hbz, hj]
+  refine ⟨i (Module.finBasis _ EA k), h, MA.pt (Module.finBasis _ EA k), ⟨MA.tan _, ?_⟩, ?_⟩
+  · exact hi _
+  · rw [hbz, hj]
 
 theorem lieValAt_end {M : LieModel G ξ V} {R : Type} [CommRing R] [IsLocalRing R]
     {z : Spec (CommRingCat.of R) ⟶ X} {f : G ⟶ G} [IsMonHom f] {A : V →ₗ[Ω] V} (hA : M.IsDiffOf f A) {e : V}
     {w : epsAt z ⟶ G} (h : M.ValAt z e w) : M.ValAt z (A e) (w ≫ f) := by
-  rw [LieModel.valAt_iff] at h ⊢
-  obtain ⟨hc, v, hv, rfl⟩ := h
-  rw [LieModel.extends_iff] at hv
-  refine ⟨hc, v ≫ f, (M.extends_iff _ _ _).2 ⟨?_, ?_⟩, Category.assoc _ _ _⟩
+  obtain ⟨hc, v, hv, hw⟩ := h
+  refine ⟨hc, v ≫ f, ⟨?_, ?_⟩, ?_⟩
   · rw [LieTangent.isTanAt_iff, ← Category.assoc, (LieTangent.isTanAt_iff _).1 hv.1, MonObj.one_comp]
-  · rw [hA e, hv.2, Category.assoc]
+  · change (M.pt (A e)).left = _
+    rw [hA e]
+    change (M.pt e).left ≫ f.left = _ ≫ (v.left ≫ f.left)
+    rw [hv.2, Category.assoc]
+  · change w.left ≫ f.left = _
+    change w.left ≫ f.left = _ ≫ (v.left ≫ f.left)
+    rw [hw, Category.assoc]
 
 theorem lieValAt_smul {M : LieModel G ξ V} {R : Type} [CommRing R] [IsLocalRing R]
     {z : Spec (CommRingCat.of R) ⟶ X} {ER : Type} [AddCommGroup ER] [Module R ER] {MR : LieModel G z ER} {e : V}
@@ -106,7 +127,8 @@ theorem eig_val : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : Spec (CommRi
     induction hv using Submodule.iSup_induction' with
     | mem t x hx =>
       have h1 : e s x = algebraMap k K (if t = s then 1 else 0) • x := by
-        rw [← hc t, hes, LinearMap.sum_apply, map_sum, Finset.sum_smul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← hc t, hes, LinearMap.sum_apply, map_sum, Finset.sum_smul]
         refine Finset.sum_congr rfl fun j _ => ?_
         rw [LinearMap.smul_apply, mem_eig.1 (hU t hx) (a j), map_mul, mul_smul]
       rw [h1]

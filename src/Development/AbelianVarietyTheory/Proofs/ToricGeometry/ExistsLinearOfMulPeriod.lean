@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EntireApplyEqOfPeriodicOfSpanReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EntireApplyEqOfPeriodicOfSpanReal
+
+@[expose] public section
 
 open Complex Filter Topology
 
@@ -153,8 +157,8 @@ theorem exists_functional {ι : Type*} (δ : ι → R) (hδ : ∃ i, δ i ≠ 0)
   refine ⟨lam, ⟨i, hlam⟩, fun j r hr => ?_⟩
   exact hker (Submodule.subset_span ⟨r, hr, j, rfl⟩)
 
-omit [IsLocalRing R] in
 
+omit [IsLocalRing R] in
 theorem differentiableOn_mul {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {S : Set E} {F G : E → R}
     (hF : ∀ lam : R →ₗ[ℂ] ℂ, DifferentiableOn ℂ (fun z => lam (F z)) S)
     (hG : ∀ lam : R →ₗ[ℂ] ℂ, DifferentiableOn ℂ (fun z => lam (G z)) S) (lam : R →ₗ[ℂ] ℂ) :
@@ -165,7 +169,8 @@ theorem differentiableOn_mul {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ
       ∑ j, ∑ i, b.coord i (F z) * b.coord j (G z) * lam (b i * b j) := by
     funext z
     conv_lhs => rw [← b.sum_repr (F z), ← b.sum_repr (G z)]
-    simp only [Finset.sum_mul, Finset.mul_sum, smul_mul_smul_comm, map_sum, map_smul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.sum_mul, Finset.mul_sum, smul_mul_smul_comm, map_sum, map_smul,
       smul_eq_mul, Module.Basis.coord_apply]
   rw [key]
   refine DifferentiableOn.fun_sum fun j _ => DifferentiableOn.fun_sum fun i _ => ?_

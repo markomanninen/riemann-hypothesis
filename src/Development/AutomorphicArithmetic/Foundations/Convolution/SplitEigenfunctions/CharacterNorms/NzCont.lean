@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.IdeleNormEmbeddingNegOneReal
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.IdeleNormEmbeddingNegOneReal
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,12 +75,12 @@ theorem contOn_curve : ContinuousOn (fun p : ℝ × ℝ => em E (aE (iy p.1) * r
 theorem cont_n : Continuous fun q : A E => gl (nU q) := by
   refine Units.continuous_iff.2 ⟨?_, ?_⟩
   · refine continuous_matrix fun i j => ?_
-    fin_cases i <;> fin_cases j <;> simp <;> fun_prop
+    fin_cases i <;> fin_cases j <;> simp [nU] <;> fun_prop
   · have e : ∀ q : A E, (gl (nU q))⁻¹ = gl (nU (-q)) := fun q =>
       inv_eq_of_mul_eq_one_right (by rw [← n_add, add_neg_cancel, nU_zero, gl_one])
     simp only [e]
     refine continuous_matrix fun i j => ?_
-    fin_cases i <;> fin_cases j <;> simp <;> fun_prop
+    fin_cases i <;> fin_cases j <;> simp [nU] <;> fun_prop
 
 theorem cont_psi : Continuous (ψ (F := ℚ)) := continuous_subtype_val.comp continuous_adelicChar
 

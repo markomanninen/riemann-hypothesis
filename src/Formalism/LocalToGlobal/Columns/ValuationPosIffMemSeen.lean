@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.HermitianFormLastCoordinateUniformizerVectorSelf
-import Formalism.LocalToGlobal.Columns.TiedLv
+module
+
+public import Formalism.LocalToGlobal.Columns.HermitianFormLastCoordinateUniformizerVectorSelf
+public import Formalism.LocalToGlobal.Columns.TiedLv
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Matrix
 open scoped TensorProduct
@@ -16,14 +20,14 @@ section Gen
 
 variable {X : Fields} {Pr : Primes X} (hX : X.Ok) (hPr : Pr.Ok) (u : Pr.Word)
 
-open Classical in
 
+open Classical in
 theorem th_pull_tauOf (w : HeightOneSpectrum (𝓞 X.K)) (hw : (Pr.T u : 𝓞 X.K) ∈ w.asIdeal) (P : {P // P ∈ Pr.vT u}) :
     pullW (tauOfR hX hPr u w P) w = if seenC Pr u w then P.1 else conjPrime₂ P.1 := by
   have := hX.nonempty_Tau
   have e : tauOfR hX hPr u w P = tauOfC w P.1 := by
     unfold tauOfR
-    rw [dif_pos hw]
+    rw [dite_eq_left hw]
     rfl
   rw [e]
   by_cases hs : seenC Pr u w

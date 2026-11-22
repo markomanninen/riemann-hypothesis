@@ -1,17 +1,22 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowup
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
-import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupChart
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.CoordinateSubstitution
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.CoordinateBlowupChart
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheaf
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowup
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
+public import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupChart
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.CoordinateSubstitution
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.CoordinateBlowupChart
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheaf
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry
@@ -232,10 +237,6 @@ def coordEvalHom (B : BlowupChart π c S s) :
   MvPolynomial.eval₂Hom (π.appLE U B.domain B.domain_le).hom
     (fun i : ULift.{u} (Fin m) => B.chart.coord i.down)
 
-theorem coordEvalHom_def (B : BlowupChart π c S s) :
-    B.coordEvalHom = MvPolynomial.eval₂Hom (π.appLE U B.domain B.domain_le).hom
-      (fun i : ULift.{u} (Fin m) => B.chart.coord i.down) := rfl
-
 theorem coordEvalHom_C (B : BlowupChart π c S s) (a : Γ(X, U)) :
     B.coordEvalHom (MvPolynomial.C a) = (π.appLE U B.domain B.domain_le).hom a := by
   simp [coordEvalHom]
@@ -377,7 +378,7 @@ private theorem affineSpaceFin_globalSections_hom_ext (k : Type u) [Field k] (m 
       w (fun a => ?_) (fun q r hq hr => ?_) (fun q i hq => ?_)
     · rw [mvPolynomialIsoGlobalSectionsAffineSpace_hom_C]
       exact hτ _
-    · simp only [map_add]
+    · simp only [map_add (f := _)]
       rw [hq, hr]
     · obtain ⟨j⟩ := i
       simp only [map_mul]

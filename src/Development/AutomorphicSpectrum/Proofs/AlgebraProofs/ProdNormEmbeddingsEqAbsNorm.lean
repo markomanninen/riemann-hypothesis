@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 
 namespace GlobalTheory.CompanionTheory.Ar.Flat
@@ -14,10 +19,9 @@ theorem norm_finite_embedding_eq_zpow (F : Type) [Field F] [NumberField F]
     (v : HeightOneSpectrum (𝓞 F)) (α : F) (k : ℤ)
     (h : v.valuation F α = WithZero.exp (-k)) :
     ‖FinitePlace.embedding v α‖ = (Ideal.absNorm v.asIdeal : ℝ) ^ (-k) := by
-  rw [FinitePlace.norm_def', h, WithZeroMulInt.toNNReal_neg_apply _ (WithZero.exp_ne_zero (a := -k))]
-  have hk : Multiplicative.toAdd (WithZero.unzero (WithZero.exp_ne_zero (a := -k))) = -k := rfl
-  rw [hk, NNReal.coe_zpow]
-  rfl
+  rw [FinitePlace.norm_embedding', h,
+    WithZeroMulInt.toNNReal_neg_apply _ (WithZero.exp_ne_zero (a := -k)),
+    WithZero.log_exp, NNReal.coe_zpow, NNReal.coe_natCast]
 
 theorem sum_log_embeddings_eq (F : Type) [Field F] [NumberField F]
     (n : HeightOneSpectrum (𝓞 F) →₀ ℤ) (α : F) (hα : α ≠ 0)

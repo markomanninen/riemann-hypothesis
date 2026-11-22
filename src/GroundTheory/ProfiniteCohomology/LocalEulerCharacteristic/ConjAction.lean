@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.InnerConj
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.InnerConj
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -32,7 +37,6 @@ theorem cohomologyConj_mul_apply (n : ℕ) (g h : G) (x : cohomology (Rep.res N.
   rw [cohomologyConj_mul]
   rfl
 
-@[reassoc]
 theorem cohomologyConj_naturality {B : Rep.{u} k G} [IsDiscreteRep B] (f : A ⟶ B) (n : ℕ) (g : G) :
     cohomologyMap ((Rep.resFunctor N.subtype).map f) n ≫ cohomologyConj B N n g =
       cohomologyConj A N n g ≫ cohomologyMap ((Rep.resFunctor N.subtype).map f) n := by
@@ -54,7 +58,6 @@ noncomputable def conjShortComplexMor (S : ShortComplex (Rep.{u} k G)) (g : G) :
     ext a
     exact (Rep.hom_comm_apply S.g g a)
 
-@[reassoc]
 theorem δ_comp_cohomologyConj {S : ShortComplex (Rep.{u} k G)} [IsDiscreteRep S.X₁]
     [IsDiscreteRep S.X₂] [IsDiscreteRep S.X₃] (hS : S.ShortExact) (i j : ℕ) (hij : i + 1 = j)
     (g : G) :
@@ -109,7 +112,6 @@ section CompactGroup
 
 variable [CompactSpace G]
 
-@[reassoc]
 theorem cohomologyRes_comp_cohomologyConj (n : ℕ) (g : G) :
     cohomologyRes A N n ≫ cohomologyConj A N n g = cohomologyRes A N n := by
   conv_rhs => rw [← Category.id_comp (cohomologyRes A N n), ← cohomologyInnerConj_eq_id n A g]

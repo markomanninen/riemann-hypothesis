@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 
@@ -83,8 +87,8 @@ theorem gauss_indep_of_le_trdeg {E C : Type} [Field E] [Field C] [Algebra E C] {
 
 theorem gauss_card_arith {a b : Cardinal} {s d : ℕ} (h : ((s + d : ℕ) : Cardinal) ≤ a + b)
     (ha : a ≤ d) (hb : b ≤ s) : a = d ∧ b = s := by
-  obtain ⟨a', rfl⟩ := Cardinal.lt_aleph0.1 (ha.trans_lt (Cardinal.nat_lt_aleph0 d))
-  obtain ⟨b', rfl⟩ := Cardinal.lt_aleph0.1 (hb.trans_lt (Cardinal.nat_lt_aleph0 s))
+  obtain ⟨a', rfl⟩ := Cardinal.lt_aleph0.1 (ha.trans_lt Cardinal.natCast_lt_aleph0)
+  obtain ⟨b', rfl⟩ := Cardinal.lt_aleph0.1 (hb.trans_lt Cardinal.natCast_lt_aleph0)
   have h' : s + d ≤ a' + b' := by exact_mod_cast h
   have ha' : a' ≤ d := by exact_mod_cast ha
   have hb' : b' ≤ s := by exact_mod_cast hb

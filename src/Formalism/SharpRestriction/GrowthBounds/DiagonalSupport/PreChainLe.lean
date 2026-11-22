@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PosULeIff
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PosULeIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -294,7 +298,8 @@ private theorem sDegs_rename_subset_sDegs_preimage {R : Type} [CommRing R] {ι �
   by_contra hcon
   push_neg at hcon
   apply hk
-  rw [B.as_sum, map_sum, coeff_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [B.as_sum, map_sum, coeff_sum]
   simp only [rename_monomial, coeff_monomial]
   have hs : ∀ (s : Finset ((ι × Fin n) →₀ ℕ)) (F : ((ι × Fin n) →₀ ℕ) → GLLaurent R n),
       (∑ x ∈ s, F x).coeff k = ∑ x ∈ s, (F x).coeff k := by

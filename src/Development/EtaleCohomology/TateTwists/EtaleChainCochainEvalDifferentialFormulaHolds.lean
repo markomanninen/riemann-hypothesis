@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleCochainEvaluationCoboundaryFormula
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleCochainEvaluationCoboundaryFormula
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -34,7 +38,6 @@ lemma chains_d (E : Spc) (p : ℕ) : (chainsXIso R E (p+1)).inv ≫ ((chains R).
     HomologicalComplex.extend_d_eq _ _ rfl rfl
   have h2 : ((chainsN R).obj E).d (p+1) p = ∑ i : Fin (p + 2), (-1 : ℤ) ^ (i : ℕ) • (free R).map (E.δ i) := by
     simp [chainsN]
-    rfl
   rw [h1, h2, Iso.inv_hom_id_assoc]
   rfl
 

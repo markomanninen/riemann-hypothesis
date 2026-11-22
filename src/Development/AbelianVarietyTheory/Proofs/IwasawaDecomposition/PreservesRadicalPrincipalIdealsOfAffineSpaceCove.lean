@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValRSpMapFromSpecStalk
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValRSpMapFromSpecStalk
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -14,12 +18,13 @@ theorem C_dvd_of_C_dvd_pow {A σ : Type} [CommRing A] {g : A} (hg : ∀ (x : A) 
   rw [MvPolynomial.C_dvd_iff_map_hom_eq_zero _ g hq] at h ⊢
   rw [map_pow] at h
   have hn := (MvPolynomial.isNilpotent_iff).1 ⟨n, h⟩
-  ext i
+  apply MvPolynomial.ext
+  intro i
   obtain ⟨k, hk⟩ := hn i
   rw [MvPolynomial.coeff_map] at hk ⊢
   rw [← map_pow, hq] at hk
-  rw [MvPolynomial.coeff_zero, hq]
-  exact hg _ _ hk
+  change Ideal.Quotient.mk (Ideal.span {g}) (P.coeff i) = 0
+  exact (hq _).2 (hg _ _ hk)
 
 theorem exists_div_of_mem_O {o Ω : Type} [CommRing o] [Field Ω] [Algebra o Ω] {M : RatModel o Ω}
     {V : M.Z.Opens} (hV : IsAffineOpen V) {z : M.Z} (hz : z ∈ V) {x : Ω} (hx : x ∈ M.O z) :
@@ -52,7 +57,7 @@ theorem keepsRad_of_affCover (F Ω Ω' : Type) [Field F] [Field Ω] [Algebra F �
   let A := (M.O (f z')).toSubring
   let ψ : MvPolynomial (Fin r) A →+* Ω' := MvPolynomial.eval₂Hom ((φ : Ω →+* Ω').comp A.subtype) t
   have hψ : Function.Injective ψ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro P hP
     have := hinj (MvPolynomial.map A.subtype P) (by rw [MvPolynomial.eval₂_map]; exact hP)
     exact (map_eq_zero_iff _ (MvPolynomial.map_injective _ A.subtype_injective)).1 this

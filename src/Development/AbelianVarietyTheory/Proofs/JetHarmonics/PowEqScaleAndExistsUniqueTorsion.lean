@@ -1,10 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.ThmASt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FormallyUnramifiedOfTangentMapInjective
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.EqOneOfPowEqOneOfCompEqOne
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.AlWellDefSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.NonzeroLocus
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FormallyUnramifiedOfTangentMapInjective
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.EqOneOfPowEqOneOfCompEqOne
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
@@ -26,8 +31,8 @@ theorem ptMap_id' (A : Type) [CommRing A] [Algebra O A] : ptMap (AlgHom.id O A) 
   ext1
   exact Spec.map_id _
 
-variable (O) in
 
+variable (O) in
 noncomputable abbrev scale (a : R) : specO O (DualNumber R) ⟶ specO O (DualNumber R) :=
   ptMap ((TrivSqZeroExt.map (a • (LinearMap.id : R →ₗ[R] R))).restrictScalars O)
 
@@ -44,14 +49,14 @@ theorem scale_zero : scale O (0 : R) =
   refine AlgHom.ext fun x => ?_
   ext <;> simp
 
-variable (O) in
 
+variable (O) in
 noncomputable abbrev toTwo (l : R →ₗ[R] R × R) :
     specO O (TrivSqZeroExt R (R × R)) ⟶ specO O (DualNumber R) :=
   ptMap ((TrivSqZeroExt.map l).restrictScalars O)
 
-variable (O) in
 
+variable (O) in
 noncomputable abbrev ofTwo (l : R × R →ₗ[R] R) :
     specO O (DualNumber R) ⟶ specO O (TrivSqZeroExt R (R × R)) :=
   ptMap ((TrivSqZeroExt.map l).restrictScalars O)

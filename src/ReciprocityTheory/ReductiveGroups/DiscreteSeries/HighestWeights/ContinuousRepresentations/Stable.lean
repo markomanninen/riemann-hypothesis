@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.DerivExistsAllPosStatement
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.SingleMulJmComm
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.DerivExistsAllPosStatement
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.SingleMulJmComm
+
+@[expose] public section
 
 noncomputable section
 
@@ -119,7 +123,7 @@ theorem KRep.dτ_stable_of_stable {ε : Fin n → Bool} (R : KRep ε)
         (-Complex.I / 2) • (Complex.I • (Matrix.single a b (1 : ℂ) + Matrix.single b a 1)) := by
     rw [smul_smul, hI]
     module
-  rw [hdec, map_add, map_smul, map_smul, _root_.add_apply,
+  rw [hdec, map_add (f := _), map_smul, map_smul, _root_.add_apply,
     _root_.smul_apply, _root_.smul_apply]
   exact W.add_mem (W.smul_mem _ (hK _ hX1 v hv)) (W.smul_mem _ (hK _ hX2 v hv))
 
@@ -132,7 +136,8 @@ theorem KRep.stable_of_dτ_stable {ε : Fin n → Bool} (R : KRep ε) (W : Submo
   refine exp_mem_of_stable W (R.dτ Y) ?_ v hv
   intro w hw
   rw [Matrix.matrix_eq_sum_single Y]
-  simp only [map_sum, FunLike.coe_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, FunLike.coe_sum, Finset.sum_apply]
   refine W.sum_mem fun a _ => W.sum_mem fun b _ => ?_
   by_cases hab : ε a = ε b
   · rw [show Matrix.single a b (Y a b) = Y a b • Matrix.single a b 1 by

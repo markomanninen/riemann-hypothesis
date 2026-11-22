@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianFormPrimitiveVectorPairingStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HypOneZeroZero
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HermitianMatricesLocallyCompactBorel
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.WittExtensionArtinianRingStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LinearlyIndependentFramesOpen
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianFormPrimitiveVectorPairingStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HypOneZeroZero
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HermitianMatricesLocallyCompactBorel
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.WittExtensionArtinianRingStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LinearlyIndependentFramesOpen
+
+@[expose] public section
 
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
@@ -23,7 +27,7 @@ theorem hform_add_right (x y z : Fin n → A) :
 
 theorem hform_add_left (x y z : Fin n → A) :
     hform s J (x + y) z = hform s J x z + hform s J y z := by
-  simp only [hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hform_smul_right (t : A) (x y : Fin n → A) :
     hform s J x (t • y) = t * hform s J x y := by
@@ -52,7 +56,7 @@ theorem exists_hyperbolic_partner {F E : Type} [Field F] [NumberField F] [Field 
   have hyx : hR R σ J y x = 1 := by rw [← herm, hxy, map_one]
   set c : R ⊗[F] E := algebraMap F (R ⊗[F] E) (1 / 2) with hc
   have hcc : c + c = 1 := by
-    rw [hc, ← map_add, ← map_one (algebraMap F (R ⊗[F] E))]
+    rw [hc, ← map_add (f := _), ← map_one (algebraMap F (R ⊗[F] E))]
     norm_num
   have hsc : sigR R σ c = c := AlgHom.commutes (Algebra.TensorProduct.map (AlgHom.id F R) σ) _
   set q := hR R σ J y y with hq

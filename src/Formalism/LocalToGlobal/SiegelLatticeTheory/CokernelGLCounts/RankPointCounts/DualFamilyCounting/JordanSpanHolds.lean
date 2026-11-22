@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.SplitAtOf
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.SplitAtOf
+
+@[expose] public section
 
 open NumberField Module
 
@@ -28,9 +32,17 @@ theorem local_span_holds : LocSpan := by
     refine Submodule.sum_mem _ fun i _ => smul_mem_loc hPp (hd i) ?_
     exact Formalism.HermitianLatticesTheory.locBasic_le_locS _ _ (Submodule.subset_span ⟨i, rfl⟩)
 
-theorem jordan_span_holds : JordSpan := by
+theorem jordan_span_holds :
+    ∀ (K F V : Type) [Field K] [NumberField K] [StarRing K] [Field F] [NumberField F]
+      [Algebra F K] [AddCommGroup V] [Module K V] [FiniteDimensional K V]
+      [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
+      (L : Submodule (𝓞 K) V), Submodule.IsFullLattice K L → ∀ 𝔭 : Ideal (𝓞 F),
+      𝔭.IsMaximal → ∀ (n : ℕ) (b : Fin n → V),
+      locF 𝔭 (Submodule.span (𝓞 K) (Set.range b)) = locF 𝔭 L →
+        Submodule.span K (Set.range b) = ⊤ := by
   intro K F V _ _ _ _ _ _ _ _ _ _ _ L hL 𝔭 h𝔭 n b hb
-  rw [eq_top_iff, ← hL.span_eq_top, Submodule.span_le]
+  letI : Submodule.IsFullLattice K L := hL
+  rw [eq_top_iff, ← Submodule.IsFullLattice.span_eq_top (A := K) (M := L), Submodule.span_le]
   intro x hx
   have hx' : x ∈ locF 𝔭 (Submodule.span (𝓞 K) (Set.range b)) := by
     rw [hb]

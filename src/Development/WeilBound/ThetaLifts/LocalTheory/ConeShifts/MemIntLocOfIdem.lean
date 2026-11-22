@@ -1,9 +1,13 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ExistsPowIdem
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.Vaceigen
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.Inertof
-import Development.WeilBound.CoreStatements.LocalThetaKernels.IwasAd
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IdeleCharacterEqOneIntegralUnitsUnramifiedAdelic
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Tjcosets
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ExistsPowIdem
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.Vaceigen
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.Inertof
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.IwasAd
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IdeleCharacterEqOneIntegralUnitsUnramifiedAdelic
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Tjcosets
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,8 +61,8 @@ theorem mem_latW_loc (W : Spc F E n) (y : Fin n → AE F E) :
   refine sub_eq_zero.1 (eq_zero_of_at (v := v) (at_sub (fun u hu => congrFun (hy.1 u hu) i) (at_sgE _)) ?_)
   rw [map_sub, comp_sgE]; exact sub_self _
 
-variable (v) in
 
+variable (v) in
 def Pres (X : Spc F E n) : Subring (Matrix (Fin n) (Fin n) (AE F E)) where
   carrier := {M | ∀ y ∈ latW X v, M *ᵥ y ∈ latW X v}
   one_mem' y hy := by rwa [Matrix.one_mulVec]
@@ -67,8 +71,8 @@ def Pres (X : Spc F E n) : Subring (Matrix (Fin n) (Fin n) (AE F E)) where
   mul_mem' ha hb y hy := by rw [← Matrix.mulVec_mulVec]; exact ha _ (hb y hy)
   neg_mem' ha y hy := by rw [Matrix.neg_mulVec]; exact neg_mem (ha y hy)
 
-variable (v) in
 
+variable (v) in
 def fr (a : GL (Fin n) (Fv F v ⊗[F] E)) : Matrix (Fin n) (Fin n) (AE F E) →+* Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E) where
   toFun M := (a⁻¹).1 * M.map (compFin F E v) * a.1
   map_one' := by rw [Matrix.map_one _ (map_zero _) (map_one _), Matrix.mul_one, Units.inv_mul]
@@ -86,8 +90,9 @@ theorem fr_smul (a : GL (Fin n) (Fv F v ⊗[F] E)) (z : AE F E) (M) : fr v a (z 
   congr 2
   ext i j; simp
 
-theorem exists_fr (X : Spc F E n) (hL : X.L.IsLattice E) : ∃ a : GL (Fin n) (Fv F v ⊗[F] E),
+theorem exists_fr (X : Spc F E n) (hL : Submodule.IsFullLattice E X.L) : ∃ a : GL (Fin n) (Fv F v ⊗[F] E),
     ∀ M, M ∈ Pres v X ↔ ∃ N : Matrix (Fin n) (Fin n) (intLoc F E v), (intLoc F E v).subtype.mapMatrix N = fr v a M := by
+  letI := hL
   obtain ⟨P, h1, h2⟩ := Frames.exists_rational_frame X.L v
   have ha := Frames.frame_of_rational P h1 h2
   set a : GL (Fin n) (Fv F v ⊗[F] E) := bc (inclR (F := F) (Fv F v)) P
@@ -119,7 +124,7 @@ theorem exists_fr (X : Spc F E n) (hL : X.L.IsLattice E) : ∃ a : GL (Fin n) (F
     rwa [fr_apply, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, ← Matrix.mul_assoc, ← Matrix.mul_assoc, Units.mul_inv,
       Matrix.one_mul, Matrix.mul_assoc, Units.mul_inv, Matrix.mul_one, ← mv] at this
 
-theorem smul_mem_Pres {X : Spc F E n} (hL : X.L.IsLattice E) {z : AE F E} (hz : compFin F E v z ∈ intLoc F E v) {M}
+theorem smul_mem_Pres {X : Spc F E n} (hL : Submodule.IsFullLattice E X.L) {z : AE F E} (hz : compFin F E v z ∈ intLoc F E v) {M}
     (hM : M ∈ Pres v X) : z • M ∈ Pres v X := by
   obtain ⟨a, ha⟩ := exists_fr (v := v) X hL
   obtain ⟨N, hN⟩ := (ha M).1 hM
@@ -148,7 +153,7 @@ theorem eq_ext {z : AE F E} (hz : At (evFin F v) (z - 1)) : z = 1 - sgE E v 1 + 
     exact at_sub (at_add hz (at_sgE _)) (at_sgE _)
   · simp [comp_sgE]
 
-theorem chi_det {X : Spc F E n} (hL : X.L.IsLattice E) (χ : Chr F E)
+theorem chi_det {X : Spc F E n} (hL : Submodule.IsFullLattice E X.L) (χ : Chr F E)
     (hχ : ∀ w : HeightOneSpectrum (𝓞 E), w.under (𝓞 F) = v → UnrAt χ w) (t : GL (Fin n) (AE F E))
     (h1 : t.1 ∈ Pres v X) (h2 : (t⁻¹).1 ∈ Pres v X) (h3 : At (evFin F v) (t.1 - 1)) :
     χ (Matrix.GeneralLinearGroup.det t) = 1 := by
@@ -188,7 +193,7 @@ theorem mem_intLoc_of_idem {y : Fv F v ⊗[F] E} (hy : y * y = y) : y ∈ intLoc
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a x => rfl
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have hi : sgE E v y * sgE E v y = sgE E v y := by
     refine sub_eq_zero.1 (eq_zero_of_at (v := v) (at_sub (at_mul_l (at_sgE _) _) (at_sgE _)) ?_)
     simp [comp_sgE, hy]
@@ -288,14 +293,14 @@ theorem exists_eta (hσ : IsCMExt F E σ) (τ : E →ₐ[F] Fv F v) :
     simp [comp_sgE, hy]
   · have e : sgE E v y = sg v 2⁻¹ ⊗ₜ[F] 1 + sg v (2 * τ ξ)⁻¹ ⊗ₜ[F] ξ := by simp [y, sgE]
     have e2 : cA σ (sgE E v y) = sg v 2⁻¹ ⊗ₜ[F] 1 - sg v (2 * τ ξ)⁻¹ ⊗ₜ[F] ξ := by
-      rw [e, map_add]
+      rw [e, map_add (f := _)]
       change _ ⊗ₜ[F] σ 1 + _ ⊗ₜ[F] σ ξ = _
       rw [map_one, hc, TensorProduct.tmul_neg, ← sub_eq_add_neg]; rfl
-    rw [e2, e, add_add_sub_cancel, ← TensorProduct.add_tmul, ← map_add]
+    rw [e2, e, add_add_sub_cancel, ← TensorProduct.add_tmul, ← map_add (f := _)]
     norm_num
     rfl
 
-theorem exists_beta {B : Base F E} (hB : B.IsGood σ) {X : Spc F E n} (hL : X.L.IsLattice E) (k : UA σ X.J)
+theorem exists_beta {B : Base F E} (hB : B.IsGood σ) {X : Spc F E n} (hL : Submodule.IsFullLattice E X.L) (k : UA σ X.J)
     (h0 : At (evFin F v) (mat k - 1)) (h1 : mat k ∈ Pres v X) (h2 : mat k⁻¹ ∈ Pres v X) :
     ∃ b b' f', Adj (cA σ) (incM F X.J) b b' ∧ Adj (cA σ) (incM F X.J) b' b ∧ b + b' = -1 ∧ b ∈ Pres v X ∧ f' ∈ Pres v X ∧
       (1 + (1 - mat k) * b) * f' = 1 := by
@@ -303,7 +308,7 @@ theorem exists_beta {B : Base F E} (hB : B.IsGood σ) {X : Spc F E n} (hL : X.L.
   have hm : At (evFin F v) (1 - mat k) := by simpa using at_sub at_zero h0
   have hk : mat k * mat k⁻¹ = 1 := k.1.mul_inv
   set h : AE F E := algebraMap (AF F) (AE F E) ⅟(2 : AF F) with hh
-  have hh2 : h + h = 1 := by rw [hh, ← map_add, invOf_two_add_invOf_two, map_one]
+  have hh2 : h + h = 1 := by rw [hh, ← map_add (f := _), invOf_two_add_invOf_two, map_one]
   have ch : cA σ h = h := (cA σ).commutes _
   have ce : cA σ (eps v) = eps v := (cA σ).commutes _
   rcases isEmpty_or_nonempty (E →ₐ[F] Fv F v) with he | ⟨⟨τ⟩⟩
@@ -319,7 +324,7 @@ theorem exists_beta {B : Base F E} (hB : B.IsGood σ) {X : Spc F E n} (hL : X.L.
         ((toCompl_bijective hw hu).1 ?_))
       · rw [← map_smul, at_sgE y u hu, map_zero]
       · change piE hu _ = _
-        rw [map_add, piE_cA hc, pδ, map_sub, hcc, map_zero]; ring
+        rw [map_add (f := _), piE_cA hc, pδ, map_sub, hcc, map_zero]; ring
     have iδ : compFin F E v δ ∈ intLoc F E v := (mem_intLoc_iff hw hu _).2 (by
       change piE hu δ ∈ _
       rw [pδ]; exact (HeightOneSpectrum.mem_adicCompletionIntegers _ _ _).2 hx1.le)
@@ -345,7 +350,7 @@ theorem exists_beta {B : Base F E} (hB : B.IsGood σ) {X : Spc F E n} (hL : X.L.
     have hNN : N' * N = 1 := inj (by rw [map_mul, hN, hN', ← map_mul, mul_eq_one_comm.1 hk, map_one, map_one])
     obtain ⟨m, hm'⟩ := exists_det_ne (k := r.mapMatrix N) (k' := r.mapMatrix N') (h := r ⟨_, ih⟩) (δ := r ⟨_, iδ⟩)
       (by rw [← map_mul, hNN, map_one])
-      (by rw [← map_add, ← map_one r]; congr 1; exact Subtype.ext (by change _ + _ = 1; rw [← map_add, hh2, map_one]))
+      (by rw [← map_add (f := _), ← map_one r]; congr 1; exact Subtype.ext (by change _ + _ = 1; rw [← map_add (f := _), hh2, map_one]))
       ((un _).2 (HeightOneSpectrum.adicCompletionIntegers.isUnit_iff_valued_eq_one.2 (by
         change Valued.v (piE hu δ) = 1
         rw [pδ, hx1])))
@@ -361,7 +366,7 @@ theorem exists_beta {B : Base F E} (hB : B.IsGood σ) {X : Spc F E n} (hL : X.L.
     have hfu : IsUnit fN.det := by
       have : r fN.det ≠ 0 := by
         rw [RingHom.map_det]
-        simpa only [fN, map_add, map_mul, map_sub, map_one, map_pow, ms, map_neg] using hm'
+        simpa only [fN, map_add (f := _), map_mul, map_sub, map_one, map_pow, ms, map_neg] using hm'
       obtain ⟨u, hu'⟩ := ((un _).1 this).exists_right_inv
       obtain ⟨z, hz⟩ := (toCompl_bijective hw hu).2 u.1
       refine IsUnit.of_mul_eq_one ⟨z, (mem_intLoc_iff hw hu _).2 (hz ▸ u.2)⟩ (Subtype.ext ((toCompl_bijective hw hu).1 ?_))
@@ -371,7 +376,7 @@ theorem exists_beta {B : Base F E} (hB : B.IsGood σ) {X : Spc F E n} (hL : X.L.
     have xp : x ∈ Pres v X := add_mem (add_mem (add_mem (one_mem _) (one_mem _)) h1) h2
     obtain ⟨f', hf', e⟩ := exists_inv ha (f := 1 + (1 - mat k) * ((-h) • 1 + δ • (1 - x ^ m))) (N := fN)
       (by rw [add_sub_cancel_left]; exact at_mul_left hm _) (by
-        simp only [fN, hxd, map_add, map_mul, map_sub, map_one, map_pow, ms, fr_smul, map_neg, hN, hN']
+        simp only [fN, hxd, map_add (f := _), map_mul, map_sub, map_one, map_pow, ms, fr_smul, map_neg, hN, hN']
         rfl) hfu
     refine ⟨(-h) • 1 + δ • (1 - x ^ m), (-h) • 1 + (-δ) • (1 - x ^ m), f',
       (Adj.one.smul (by rw [map_neg, ch])).add (ap.smul (by rw [map_neg, cδ, neg_neg])),
@@ -387,9 +392,9 @@ theorem exists_beta {B : Base F E} (hB : B.IsGood σ) {X : Spc F E n} (hL : X.L.
       have : (1 - eps v : AE F E) • (1 - mat k) = 0 := by rw [sub_smul, one_smul, eps_smul hm, sub_self]
       rw [Matrix.mul_smul, Matrix.mul_one, neg_smul, hθ, add_smul, mul_comm, mul_smul, this, smul_zero, add_zero]
     refine ⟨(-θ) • 1, (-cA σ θ) • 1, 1 - η • (1 - mat k⁻¹), Adj.one.smul (by rw [map_neg, cc]), Adj.one.smul (map_neg _ _), ?_,
-      smul_mem_Pres hL (by rw [map_neg, hθ, map_add, map_mul, map_sub, map_one, c1, sub_self, zero_mul, add_zero]; exact neg_mem iη)
+      smul_mem_Pres hL (by rw [map_neg, hθ, map_add (f := _), map_mul, map_sub, map_one, c1, sub_self, zero_mul, add_zero]; exact neg_mem iη)
         (one_mem _), sub_mem (one_mem _) (smul_mem_Pres hL iη (sub_mem (one_mem _) h2)), ?_⟩
-    · rw [← add_smul, ← neg_add, neg_smul, hθ, map_add, map_mul, map_sub, map_one, ce, ch,
+    · rw [← add_smul, ← neg_add, neg_smul, hθ, map_add (f := _), map_mul, map_sub, map_one, ce, ch,
         show η + (1 - eps v) * h + (cA σ η + (1 - eps v) * h) = 1 by linear_combination a3 + (1 - eps v) * hh2, one_smul]
     · rw [e1, Matrix.add_mul, Matrix.one_mul, Matrix.neg_mul, Matrix.mul_sub, Matrix.mul_one, Matrix.smul_mul, Matrix.mul_smul,
         smul_smul, a2, Matrix.sub_mul, Matrix.one_mul, Matrix.mul_sub, Matrix.mul_one, hk]

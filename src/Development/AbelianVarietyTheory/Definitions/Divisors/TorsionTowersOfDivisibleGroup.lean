@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToBaseChangePtsBijective
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LeftEqIffLieVecSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToBaseChangePtsBijective
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LeftEqIffLieVecSmul
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -102,8 +106,8 @@ theorem gmCoord_ext {x y : SpAlg O B ⟶ Gm (Sp O)} (h : gmCoord x = gmCoord y) 
   exact Diag.charVal_ext fun k =>
     congrArg (fun g : Multiplicative ℤ →* Bˣ => (g (Multiplicative.ofAdd k.down) : B)) e
 
-variable (O) in
 
+variable (O) in
 def gmPoint (u : Bˣ) : SpAlg O B ⟶ Gm (Sp O) :=
   Diag.ofVal _ ((Units.coeHom B).comp ((zpowersHom Bˣ u).comp
     (AddMonoidHom.toMultiplicative (AddEquiv.ulift : ULift.{0} ℤ ≃+ ℤ).toAddMonoidHom)))
@@ -143,8 +147,8 @@ variable (p O) [Fact p.Prime]
 def muIncl (n : ℕ) : SpAlg O ((mu p O).A n) ⟶ Gm (Sp O) :=
   gmPoint O (Units.ofPowEqOne (muT O (p ^ n)) (p ^ n) (muT_pow_self O _) (NeZero.ne _))
 
-variable {p O} in
 
+variable {p O} in
 theorem gmCoord_muIncl {n : ℕ} {B : Type} [CommRing B] [Algebra O B]
     (φ : (mu p O).A n →ₐ[O] B) : gmCoord (spOver φ ≫ muIncl p O n) = φ (muT O (p ^ n)) := by
   rw [gmCoord_comp, muIncl, gmCoord_gmPoint]; rfl
@@ -165,8 +169,8 @@ def muTower : (mu p O).TorsionTower (Gm (Sp O)) where
     rw [gmCoord_muIncl, muIncl, gmCoord_gmPoint]
     exact muRes_muT p O n
 
-variable {p O} in
 
+variable {p O} in
 theorem gmCoord_muTower {n : ℕ} {B : Type} [CommRing B] [Algebra O B]
     (φ : (mu p O).A n →ₐ[O] B) :
     gmCoord (spOver φ ≫ (muTower p O).y n) = φ (muT O (p ^ n)) := gmCoord_muIncl φ
@@ -184,8 +188,8 @@ variable (t : G.TorsionTower A) (n : ℕ) (B : Type) [CommRing B] [Algebra O B]
 def pts : WithConv (G.A n →ₐ[O] B) →* (SpAlg O B ⟶ A) :=
   MonoidHom.mk' (fun φ => spOver φ.ofConv ≫ t.y n) (t.mul n B)
 
-variable {B} in
 
+variable {B} in
 @[simp] theorem pts_apply (φ : WithConv (G.A n →ₐ[O] B)) :
     t.pts n B φ = spOver φ.ofConv ≫ t.y n := rfl
 
@@ -200,11 +204,6 @@ theorem exists_iff (z : SpAlg O B ⟶ A) :
   rintro ⟨φ, rfl⟩
   rw [← ofConv_toConv φ, ← pts_apply, ← map_pow, G.pts_pow_self, map_one]
 
-variable (B) in
-
-theorem range_pts : Set.range (t.pts n B) = {z | z ^ p ^ n = 1} :=
-  Set.ext fun z => Iff.trans ⟨fun ⟨φ, h⟩ => ⟨φ.ofConv, h⟩, fun ⟨φ, h⟩ => ⟨toConv φ, h⟩⟩
-    (t.exists_iff n z)
 
 theorem y_pow : t.y n ^ p ^ n = 1 :=
   (t.exists_iff n _).1 ⟨AlgHom.id O _, by rw [spOver_id, Category.id_comp]⟩
@@ -229,27 +228,6 @@ theorem mulBy_y (k : ℕ) :
 theorem mulP_y : spOver (G.mulP n : G.A n →ₐ[O] G.A (n + 1)) ≫ t.y n = t.y (n + 1) ^ p := by
   rw [← t.res n, ← Category.assoc, spOver_comp, ← t.mulBy_y, ← G.mulP_comp_res]
   rfl
-
-def ofIso (e : H ≅ G) : H.TorsionTower A where
-  y n := spOver (e.hom.app n : G.A n →ₐ[O] H.A n) ≫ t.y n
-  mul n B _ _ φ ψ := by
-    simp only [← Category.assoc, spOver_comp]
-    exact (congrArg (t.pts n B) (map_mul (pointsMap B (e.hom.app n)) φ ψ)).trans (map_mul _ _ _)
-  inj n B _ _ φ ψ h := by
-    simp only [← Category.assoc, spOver_comp] at h
-    refine AlgHom.ext fun a => ?_
-    have h1 := DFunLike.congr_fun (t.inj n B _ _ h) (e.inv.app n a)
-    have h2 : e.hom.app n (e.inv.app n a) = a :=
-      DFunLike.congr_fun (congrArg (Hom.app · n) e.hom_inv_id) a
-    exact (congrArg φ h2).symm.trans (h1.trans (congrArg ψ h2))
-  surj n B _ _ z hz := ⟨(t.lift n z hz).comp (e.inv.app n), by
-    rw [← Category.assoc, spOver_comp]
-    refine Eq.trans (congrArg (spOver · ≫ t.y n) (AlgHom.ext fun a => ?_)) (t.lift_y n z hz)
-    exact congrArg (t.lift n z hz) (DFunLike.congr_fun (congrArg (Hom.app · n) e.inv_hom_id) a)⟩
-  res n := by
-    rw [← t.res n, ← Category.assoc, ← Category.assoc, spOver_comp, spOver_comp]
-    congr 2
-    exact AlgHom.ext (res_app e.hom n)
 
 end Basic
 
@@ -335,8 +313,12 @@ theorem semiOf_semiOf {τ : O' →+* O''} {υ : O →+* O''} {G'' : PDivGroup p 
     (h' : ∀ n, spMap (s'.app n).toRingHom ≫ (t'.y n).left = (t''.y n).left ≫ ψ)
     (h'' : ∀ n, spMap (s''.app n).toRingHom ≫ (t.y n).left = (t''.y n).left ≫ ψ ≫ φ)
     (n : ℕ) (a : G.A n) : s''.app n a = s'.app n (s.app n a) :=
-  RingHom.congr_fun (t.ringHom_ext (g := (s'.app n).toRingHom.comp (s.app n).toRingHom) (by
-    rw [Cris.spMap_comp, Category.assoc, h, h'', ← Category.assoc, ← Category.assoc, h'])) a
+  RingHom.congr_fun (t.ringHom_ext (f := (s''.app n).toRingHom)
+    (g := (s'.app n).toRingHom.comp (s.app n).toRingHom) (by
+      calc
+        _ = (t''.y n).left ≫ ψ ≫ φ := h'' n
+        _ = (spMap (s'.app n).toRingHom ≫ (t'.y n).left) ≫ φ := by rw [h' n, Category.assoc]
+        _ = _ := by simp only [Cris.spMap_comp, Category.assoc, h n])) a
 
 end Semi
 
@@ -356,7 +338,7 @@ theorem map_y (f : A ⟶ A₁) [IsMonHom f] (n : ℕ) :
 
 theorem hom_ext_y {g g' : G ⟶ H} (h : ∀ n, spOver (g.app n : H.A n →ₐ[O] G.A n) ≫ t₁.y n =
     spOver (g'.app n : H.A n →ₐ[O] G.A n) ≫ t₁.y n) : g = g' :=
-  hom_ext fun n => BialgHom.coe_toAlgHom_injective (t₁.inj n _ _ _ (h n))
+  Hom.ext (funext fun n => BialgHom.coe_toAlgHom_injective (t₁.inj n _ _ _ (h n)))
 
 theorem eq_map_iff (f : A ⟶ A₁) [IsMonHom f] (g : G ⟶ H) :
     g = t.map t₁ f ↔ ∀ n, spOver (g.app n : H.A n →ₐ[O] G.A n) ≫ t₁.y n = t.y n ≫ f :=
@@ -386,87 +368,11 @@ theorem map_one [IsMonHom (1 : A ⟶ A₁)] : t.map t₁ 1 = 0 :=
   ((t.eq_map_iff t₁ _ _).2 fun n => by
     rw [MonObj.comp_one]; exact _root_.map_one (t₁.pts n _)).symm
 
-@[simps] def mapIso (e : A ≅ A₁) [IsMonHom e.hom] [IsMonHom e.inv] : G ≅ H where
-  hom := t.map t₁ e.hom
-  inv := t₁.map t e.inv
-  hom_inv_id := by rw [← map_comp, t.map_congr t e.hom_inv_id, map_id]
-  inv_hom_id := by rw [← map_comp, t₁.map_congr t₁ e.inv_hom_id, map_id]
-
-@[simps] def uniqueIso (t' : H.TorsionTower A) : G ≅ H where
-  hom := t.map t' (𝟙 A)
-  inv := t'.map t (𝟙 A)
-  hom_inv_id := by rw [← map_comp, t.map_congr t (Category.comp_id _), map_id]
-  inv_hom_id := by rw [← map_comp, t'.map_congr t' (Category.comp_id _), map_id]
-
-theorem existsUnique_iso (t' : H.TorsionTower A) : ∃! e : G ≅ H,
-    ∀ n, spOver (e.hom.app n : H.A n →ₐ[O] G.A n) ≫ t'.y n = t.y n :=
-  ⟨t.uniqueIso t', fun n => (t.map_y t' _ n).trans (Category.comp_id _), fun _ h =>
-    Iso.ext ((t.eq_map_iff t' _ _).2 fun n => (h n).trans (Category.comp_id _).symm)⟩
-
-theorem semi_map {σ : O →+* O'} {G' H' : PDivGroup p O'} {A' A₁' : Over (Sp O')} [GrpObj A']
-    [GrpObj A₁'] (t' : G'.TorsionTower A') (t₁' : H'.TorsionTower A₁') {φ : A'.left ⟶ A.left}
-    {φ₁ : A₁'.left ⟶ A₁.left} {s : SemiHom σ G' G} {s₁ : SemiHom σ H' H}
-    (h : ∀ n, spMap (s.app n).toRingHom ≫ (t.y n).left = (t'.y n).left ≫ φ)
-    (h₁ : ∀ n, spMap (s₁.app n).toRingHom ≫ (t₁.y n).left = (t₁'.y n).left ≫ φ₁)
-    (f : A ⟶ A₁) (f' : A' ⟶ A₁') [IsMonHom f] [IsMonHom f'] (e : φ ≫ f.left = f'.left ≫ φ₁)
-    (n : ℕ) (a : H.A n) :
-    s.app n ((t.map t₁ f).app n a) = (t'.map t₁' f').app n (s₁.app n a) := by
-  refine RingHom.congr_fun (t₁.ringHom_ext
-    (f := (s.app n).toRingHom.comp ((t.map t₁ f).app n : H.A n →+* G.A n))
-    (g := ((t'.map t₁' f').app n : H'.A n →+* G'.A n).comp (s₁.app n).toRingHom) ?_) a
-  have h2 : spMap ((t.map t₁ f).app n : H.A n →+* G.A n) ≫ (t₁.y n).left =
-    (t.y n).left ≫ f.left := congrArg Over.Hom.left (t.map_y t₁ f n)
-  have h3 : spMap ((t'.map t₁' f').app n : H'.A n →+* G'.A n) ≫ (t₁'.y n).left =
-    (t'.y n).left ≫ f'.left := congrArg Over.Hom.left (t'.map_y t₁' f' n)
-  rw [Cris.spMap_comp, Cris.spMap_comp, Category.assoc, Category.assoc, h2, h₁, reassoc_of% h,
-    reassoc_of% h3, e]
-
 variable [Fact p.Prime]
 
 theorem map_pow_id (k : ℕ) [IsMonHom (𝟙 A ^ k)] : t.map t (𝟙 A ^ k) = (k : ℤ_[p]) • 𝟙 G :=
   ((t.eq_map_iff t _ _).2 fun n => by
     rw [natCast_smul_id_app, mulBy_y, MonObj.comp_pow, Category.comp_id]).symm
-
-def ringAct [IsCommMonObj A] {Λ : Type} [Ring Λ] (a : RingAct A Λ) : Action Λ G :=
-  RingHom.mk'
-    { toFun x := haveI := a.hom x; t.map t (a.act x)
-      map_one' := haveI := a.hom 1; (t.map_congr t a.map_one).trans t.map_id
-      map_mul' x y := by
-        have := a.hom
-        exact (t.map_congr t (a.map_mul x y)).trans (t.map_comp t t _ _) }
-    fun x y ↦ by
-      have := a.hom
-      have e : a.act (x + y) = a.act x * a.act y := a.map_add x y
-      have : IsMonHom (a.act x * a.act y) := e ▸ a.hom _
-      exact (t.map_congr t e).trans (t.map_mul t _ _)
-
-theorem ringAct_apply [IsCommMonObj A] {Λ : Type} [Ring Λ] (a : RingAct A Λ) (x : Λ)
-    [IsMonHom (a.act x)] : t.ringAct a x = t.map t (a.act x) := rfl
-
-def act {Λ : Type} [CommRing Λ] (a : OAct Λ A) : Action Λ G :=
-  RingHom.mk'
-    { toFun x := haveI := a.hom x; t.map t (a.act x)
-      map_one' := haveI := a.hom 1; (t.map_congr t a.one).trans t.map_id
-      map_mul' x y := by
-        have := a.hom
-        exact (t.map_congr t ((congrArg a.act (mul_comm x y)).trans (a.mul y x))).trans
-          (t.map_comp t t _ _) }
-    fun x y ↦ by
-      have := a.hom
-      have : IsMonHom (a.act x * a.act y) := a.add x y ▸ a.hom _
-      exact (t.map_congr t (a.add x y)).trans (t.map_mul t _ _)
-
-theorem act_apply {Λ : Type} [CommRing Λ] (a : OAct Λ A) (x : Λ) [IsMonHom (a.act x)] :
-    t.act a x = t.map t (a.act x) := rfl
-
-def _root_.GlobalTheory.PDivGroup.Action.padicExtend {Λ : Type} [Ring Λ] (ρ : Action Λ G) :
-    Action (ℤ_[p] ⊗[ℤ] Λ) G :=
-  letI : Algebra ℤ (End G) := Ring.toIntAlgebra _
-  (Algebra.TensorProduct.lift (algebraMap ℤ_[p] (End G)).toIntAlgHom (RingHom.toIntAlgHom ρ)
-    fun r _ ↦ Algebra.commutes r _).toRingHom
-
-@[simp] theorem _root_.GlobalTheory.PDivGroup.Action.padicExtend_tmul {Λ : Type} [Ring Λ] (ρ : Action Λ G)
-    (c : ℤ_[p]) (x : Λ) : ρ.padicExtend (c ⊗ₜ x) = c • ρ x := (Algebra.smul_def c (ρ x)).symm
 
 end Map
 
@@ -529,27 +435,12 @@ theorem semiHom_baseChange :
   (((t.baseChange h).eq_semiOf_iff t (grpMor_of_isGrpPullback h) (G.toBase O')).2
     (t.toBase_y h)).symm
 
-def baseChangeIso {G' : PDivGroup p O'} (t' : G'.TorsionTower A') : G' ≅ G.baseChange O' :=
-  t'.uniqueIso (t.baseChange h)
-
-theorem baseChangeIso_hom {G' : PDivGroup p O'} (t' : G'.TorsionTower A') :
-    (t.baseChangeIso h t').hom = (t'.semiHom t (grpMor_of_isGrpPullback h)).lift := by
-  refine baseChange_hom_ext fun n a => ?_
-  rw [SemiHom.lift_app, one_smul]
-  have h1 : ∀ n, spMap ((SemiHom.ofHom (t.baseChangeIso h t').hom).app n).toRingHom ≫
-      ((t.baseChange h).y n).left = (t'.y n).left ≫ 𝟙 _ := fun n =>
-    congrArg Over.Hom.left (t'.map_y (t.baseChange h) (𝟙 A') n)
-  have h2 : ∀ n, spMap ((t'.semiHom t (grpMor_of_isGrpPullback h)).app n).toRingHom ≫
-      (t.y n).left = (t'.y n).left ≫ 𝟙 _ ≫ φ := fun n => by
-    rw [Category.id_comp]; exact t'.semiOf_y t _ n
-  exact ((t.baseChange h).semiOf_semiOf t t' (t.toBase_y h) h1 h2 n a).symm
-
 end BaseChange
 
 section Lie
 
-variable (O) in
 
+variable (O) in
 def _root_.GlobalTheory.PDiv.epsTo (B : Type) [CommRing B] [Algebra O B] :
     DualNumber O →ₐ[O] DualNumber B :=
   { ReciprocityTheory.ChartRestriction.G.Chart.dualMapR (algebraMap O B) with
@@ -562,12 +453,12 @@ def _root_.GlobalTheory.PDiv.epsTo (B : Type) [CommRing B] [Algebra O B] :
 @[simp] theorem _root_.GlobalTheory.PDiv.snd_epsTo (B : Type) [CommRing B] [Algebra O B]
     (z : DualNumber O) : (epsTo O B z).snd = algebraMap O B z.snd := zero_add _
 
-variable (p O) in
 
+variable (p O) in
 abbrev _root_.GlobalTheory.PDiv.ModPow (n : ℕ) : Type := O ⧸ Ideal.span {(p : O) ^ n}
 
-variable (p) in
 
+variable (p) in
 abbrev _root_.GlobalTheory.PDiv.epsRedPow {A : Over (Sp O)} (n : ℕ) (v : epsR O ⟶ A) :
     SpAlg O (DualNumber (ModPow p O n)) ⟶ A := spOver (epsTo O (ModPow p O n)) ≫ v
 
@@ -592,7 +483,7 @@ variable (t : G.TorsionTower A) (t₁ : H.TorsionTower A₁)
 def LieCorr (x : G.Lie) (v : epsR O ⟶ A) : Prop :=
   IsTangent v ∧ ∀ n, ∃ ψ : G.A n →ₐ[O] DualNumber (ModPow p O n),
     spOver ψ ≫ t.y n = epsRedPow p n v ∧
-      ∀ (w : G.omega) (a : G.A n), dUnit O a = w.1 n → Ideal.Quotient.mk _ (x w) = (ψ a).snd
+      ∀ (w : G.omega) (a : G.A n), dUnit (R := O) a = w.1 n → Ideal.Quotient.mk _ (x w) = (ψ a).snd
 
 variable {v v' : epsR O ⟶ A}
 
@@ -616,7 +507,7 @@ def tanDer (hv : IsTangent v) (n : ℕ) : Cot O (G.A n) →ₗ[O] ModPow p O n :
     fun a b => by simp [t.fst_tanPt hv, Algebra.smul_def, mul_comm]
 
 @[simp] theorem tanDer_d (hv : IsTangent v) (n : ℕ) (a : G.A n) :
-    t.tanDer hv n (dUnit O a) = (t.tanPt hv n a).snd := AugCot.lift_d ..
+    t.tanDer hv n (dUnit (R := O) a) = (t.tanPt hv n a).snd := AugCot.lift_d ..
 
 theorem lieCorr_iff (hv : IsTangent v) (x : G.Lie) : t.LieCorr x v ↔
     ∀ (n : ℕ) (w : G.omega), Ideal.Quotient.mk _ (x w) = t.tanDer hv n (w.1 n) := by
@@ -634,40 +525,6 @@ theorem lieCorr_zero : t.LieCorr 0 1 :=
     ⟨(1 : WithConv (G.A n →ₐ[O] DualNumber (ModPow p O n))).ofConv, (_root_.map_one (t.pts n _)).trans (MonObj.comp_one _).symm, fun w a _ => by
       rw [LinearMap.zero_apply, map_zero]; rfl⟩⟩
 
-theorem LieCorr.add (h : t.LieCorr x v) (h' : t.LieCorr x' v') : t.LieCorr (x + x') (v * v') := by
-  have hv : IsTangent (v * v') := (GrpTangent.isTangent_iff _).2 (by
-    rw [MonObj.comp_mul, (GrpTangent.isTangent_iff _).1 h.1, (GrpTangent.isTangent_iff _).1 h'.1,
-      _root_.mul_one])
-  refine ⟨hv, fun n => ⟨(toConv (t.tanPt h.1 n) * toConv (t.tanPt h'.1 n)).ofConv, by
-    rw [t.mul, tanPt_y, tanPt_y, ← MonObj.comp_mul], fun w a ha => ?_⟩⟩
-  rw [LinearMap.add_apply, map_add, (t.lieCorr_iff h.1 x).1 h, (t.lieCorr_iff h'.1 x').1 h', ← ha,
-    tanDer_d, tanDer_d, AlgHom.convMul_apply]
-  have e1 := congrArg (t.tanPt h.1 n) (congrArg (TensorProduct.rid O _) (lTensor_counit_comul a))
-  have e2 := congrArg (t.tanPt h'.1 n) (congrArg (TensorProduct.lid O _) (rTensor_counit_comul a))
-  rw [TensorProduct.rid_tmul, one_smul] at e1
-  rw [TensorProduct.lid_tmul, one_smul] at e2
-  rw [← e1, ← e2]
-  generalize comul (R := O) a = c
-  induction c with
-  | zero => simp
-  | add c d hc hd => simp only [map_add, TrivSqZeroExt.snd_add, ← hc, ← hd]; abel
-  | tmul b c =>
-    rw [Algebra.TensorProduct.lift_tmul, LinearMap.lTensor_tmul, LinearMap.rTensor_tmul,
-      TensorProduct.rid_tmul, TensorProduct.lid_tmul, map_smul, map_smul, DualNumber.snd_mul,
-      ofConv_toConv, ofConv_toConv, fst_tanPt, fst_tanPt, TrivSqZeroExt.snd_smul,
-      TrivSqZeroExt.snd_smul, Algebra.smul_def, Algebra.smul_def]
-    ring
-
-theorem LieCorr.smul (h : t.LieCorr x v) (c : O) :
-    t.LieCorr (c • x) (GrpTangent.epsScale c ≫ v) := by
-  refine ⟨GrpTangent.isTangent_epsScale c h.1, fun n => ?_⟩
-  obtain ⟨ψ, h1, h2⟩ := h.2 n
-  refine ⟨((TrivSqZeroExt.map (c • LinearMap.id)).restrictScalars O).comp ψ, ?_, fun w a ha => ?_⟩
-  · rw [← spOver_comp, Category.assoc, h1, epsScale_eq, epsRedPow, epsRedPow,
-      ← Category.assoc, ← Category.assoc, spOver_comp, spOver_comp]
-    exact congrArg (spOver · ≫ v) (AlgHom.ext fun z => by ext <;> simp [Algebra.smul_def])
-  · simp [h2 w a ha, Algebra.smul_def]
-
 theorem LieCorr.map [Fact p.Prime] (h : t.LieCorr x v) (f : A ⟶ A₁) [IsMonHom f] :
     t₁.LieCorr (lieMap G H (t.map t₁ f) x) (v ≫ f) := by
   refine ⟨GrpTangent.isTangent_comp h.1 f, fun n => ?_⟩
@@ -676,56 +533,14 @@ theorem LieCorr.map [Fact p.Prime] (h : t.LieCorr x v) (f : A ⟶ A₁) [IsMonHo
   · rw [← spOver_comp, Category.assoc, map_y, ← Category.assoc, h1, Category.assoc]
   · exact h2 _ _ (by rw [omegaMap_val, ← ha, cotMap_d]; rfl)
 
-theorem LieCorr.semi_mod {σ : O →+* O'} {G' : PDivGroup p O'} {A' : Over (Sp O')} [GrpObj A']
-    {t' : G'.TorsionTower A'} {φ : A'.left ⟶ A.left} {s : SemiHom σ G' G}
-    (hs : ∀ n, spMap (s.app n).toRingHom ≫ (t.y n).left = (t'.y n).left ≫ φ)
-    {x' : G'.Lie} {v' : epsR O' ⟶ A'} (h : t.LieCorr x v) (h' : t'.LieCorr x' v')
-    (e : v'.left ≫ φ = spMap (ReciprocityTheory.ChartRestriction.G.Chart.dualMapR σ) ≫ v.left) (w : G.omega) (n : ℕ) :
-    (Ideal.Quotient.mk _ (x' (s.omega w)) : ModPow p O' n) = Ideal.Quotient.mk _ (σ (x w)) := by
-  obtain ⟨ψ, h1, h2⟩ := h.2 n
-  obtain ⟨ψ', h1', h2'⟩ := h'.2 n
-  obtain ⟨a, ha⟩ := AugCot.d_surjective _ (w.1 n)
-  let τ : ModPow p O n →+* ModPow p O' n := Ideal.quotientMap _ σ (by
-    rw [Ideal.span_singleton_le_iff_mem, Ideal.mem_comap, map_pow, map_natCast]
-    exact Ideal.mem_span_singleton_self _)
-  have k1 : spMap (ψ : G.A n →+* DualNumber (ModPow p O n)) ≫ (t.y n).left =
-    spMap (epsTo O (ModPow p O n)).toRingHom ≫ v.left := congrArg Over.Hom.left h1
-  have k2 : spMap (ψ' : G'.A n →+* DualNumber (ModPow p O' n)) ≫ (t'.y n).left =
-    spMap (epsTo O' (ModPow p O' n)).toRingHom ≫ v'.left := congrArg Over.Hom.left h1'
-  have k := t.ringHom_ext
-    (f := (ψ' : G'.A n →+* DualNumber (ModPow p O' n)).comp (s.app n).toRingHom)
-    (g := (ReciprocityTheory.ChartRestriction.G.Chart.dualMapR τ).comp (ψ : G.A n →+* DualNumber (ModPow p O n))) (by
-      rw [Cris.spMap_comp, Cris.spMap_comp, Category.assoc, Category.assoc, hs, k1,
-        reassoc_of% k2, e, ← Category.assoc, ← Category.assoc, ← Cris.spMap_comp,
-        ← Cris.spMap_comp]
-      refine congrArg (spMap · ≫ v.left) (RingHom.ext fun z => TrivSqZeroExt.ext ?_ ?_)
-      · exact (fst_epsTo ..).trans ((congrArg _ (add_zero _)).trans
-          ((add_zero _).trans (congrArg τ (fst_epsTo _ z))).symm)
-      · exact (snd_epsTo ..).trans ((congrArg _ (zero_add _)).trans
-          ((zero_add _).trans (congrArg τ (snd_epsTo _ z))).symm))
-  rw [h2' _ (s.app n a) (by rw [SemiHom.omega_val, ← ha, SemiBialgHom.cot_d])]
-  exact (congrArg TrivSqZeroExt.snd (RingHom.congr_fun k a)).trans
-    ((zero_add _).trans (congrArg τ (h2 w a ha).symm))
-
-theorem LieCorr.semi {σ : O →+* O'} [IsHausdorff (Ideal.span {(p : O')}) O'] {G' : PDivGroup p O'}
-    {A' : Over (Sp O')} [GrpObj A'] {t' : G'.TorsionTower A'} {φ : A'.left ⟶ A.left}
-    {s : SemiHom σ G' G}
-    (hs : ∀ n, spMap (s.app n).toRingHom ≫ (t.y n).left = (t'.y n).left ≫ φ)
-    {x' : G'.Lie} {v' : epsR O' ⟶ A'} (h : t.LieCorr x v) (h' : t'.LieCorr x' v')
-    (e : v'.left ≫ φ = spMap (ReciprocityTheory.ChartRestriction.G.Chart.dualMapR σ) ≫ v.left) (w : G.omega) :
-    x' (s.omega w) = σ (x w) :=
-  sub_eq_zero.1 <| IsHausdorff.haus' (I := Ideal.span {(p : O')}) _ fun n => by
-    rw [SModEq.zero, smul_eq_mul, Ideal.mul_top, Ideal.span_singleton_pow, ← Ideal.Quotient.eq]
-    exact h.semi_mod hs h' e w n
-
 theorem LieCorr.unique_left [IsHausdorff (Ideal.span {(p : O)}) O] (h : t.LieCorr x v)
     (h' : t.LieCorr x' v) : x = x' :=
   LinearMap.ext fun w => sub_eq_zero.1 <| IsHausdorff.haus' (I := Ideal.span {(p : O)}) _ fun n => by
     rw [SModEq.zero, smul_eq_mul, Ideal.mul_top, Ideal.span_singleton_pow, ← Ideal.Quotient.eq,
       (t.lieCorr_iff h.1 x).1 h, (t.lieCorr_iff h.1 x').1 h']
 
-variable (t) in
 
+variable (t) in
 theorem tanDer_succ (hv : IsTangent v) (n : ℕ) (w : Cot O (G.A (n + 1))) (c : O)
     (hc : Ideal.Quotient.mk _ c = t.tanDer hv (n + 1) w) :
     Ideal.Quotient.mk _ c = t.tanDer hv n (cotMap (G.res n) w) := by
@@ -749,8 +564,8 @@ theorem tanDer_succ (hv : IsTangent v) (n : ℕ) (w : Cot O (G.A (n + 1))) (c : 
   exact ((congrArg TrivSqZeroExt.snd (DFunLike.congr_fun e a)).trans
     ((snd_epsTo ..).trans (congrArg π hc.symm))).symm
 
-variable (t) in
 
+variable (t) in
 theorem existsUnique_lieCorr [IsAdicComplete (Ideal.span {(p : O)}) O] (hv : IsTangent v) :
     ∃! x : G.Lie, t.LieCorr x v := by
   have hm : ∀ (n : ℕ) (a b : O), a ≡ b [SMOD (Ideal.span {(p : O)} ^ n • ⊤ : Submodule O O)] ↔
@@ -772,7 +587,7 @@ theorem existsUnique_lieCorr [IsAdicComplete (Ideal.span {(p : O)}) O] (hv : IsT
         fun n => SModEq.zero.2 (SModEq.sub_mem.1 ((hm n a b).2 (h n)))
   let x : G.Lie :=
     { toFun := L
-      map_add' := fun w w' => hu _ _ fun n => by rw [map_add, hL, hL, hL, ← map_add]; rfl
+      map_add' := fun w w' => hu _ _ fun n => by rw [map_add (f := _), hL, hL, hL, ← map_add (f := _)]; rfl
       map_smul' := fun c w => hu _ _ fun n => by
         rw [RingHom.id_apply, smul_eq_mul, _root_.map_mul, hL, hL]
         exact (map_smul (t.tanDer hv n) c (w.1 n)).trans (Algebra.smul_def _ _) }
@@ -786,36 +601,6 @@ end TorsionTower
 section Values
 
 variable (p O) [Fact p.Prime]
-
-theorem lieCorr_muLieGen [IsAdicComplete (Ideal.span {(p : O)}) O] :
-    (muTower p O).LieCorr (muLieGen p O) (Diag.lieVec
-      ((Int.castAddHom O).comp (AddEquiv.ulift : ULift.{0} ℤ ≃+ ℤ).toAddMonoidHom)) := by
-  refine ((muTower p O).lieCorr_iff (Diag.isTangent_lieVec _) _).2 fun n w => ?_
-  obtain ⟨c, rfl⟩ := (toSpanSingleton_dlogT_bijective p O).2 w
-  rw [LinearMap.toSpanSingleton_apply, map_smul, muLieGen_dlogT, smul_eq_mul, _root_.mul_one]
-  refine Eq.trans ?_ (map_smul ((muTower p O).tanDer _ n) c (dUnit O (muT O (p ^ n)))).symm
-  rw [TorsionTower.tanDer_d, ← gmCoord_muTower, TorsionTower.tanPt_y, gmCoord_comp, gmCoord,
-    Diag.charVal_lieVec, snd_epsTo]
-  simp [Algebra.smul_def, show AddEquiv.ulift (ULift.up (1 : ℤ)) = 1 from rfl]
-
-example (k : ℕ) [IsMonHom (𝟙 (Gm (Sp O)) ^ k)] :
-    (muTower p O).map (muTower p O) (𝟙 _ ^ k) = (k : ℤ_[p]) • 𝟙 (mu p O) :=
-  (muTower p O).map_pow_id k
-
-example [IsHausdorff (Ideal.span {(p : O)}) O] (v : epsR O ⟶ Gm (Sp O))
-    (h : (muTower p O).LieCorr 0 v) : v = 1 := by
-  obtain ⟨c, rfl⟩ := (Diag.isTangent_iff_exists v).1 h.1
-  refine gmCoord_ext ?_
-  have h0 : c ⟨1⟩ = 0 := IsHausdorff.haus' (I := Ideal.span {(p : O)}) _ fun n => by
-    have h1 := ((muTower p O).lieCorr_iff h.1 0).1 h n (dlogT p O)
-    have h2 : (dlogT p O).1 n = dUnit O (muT O (p ^ n)) := rfl
-    rw [h2, TorsionTower.tanDer_d, ← gmCoord_muTower, TorsionTower.tanPt_y, gmCoord_comp, gmCoord,
-      Diag.charVal_lieVec, snd_epsTo] at h1
-    rw [SModEq.zero, smul_eq_mul, Ideal.mul_top, Ideal.span_singleton_pow,
-      ← Ideal.Quotient.eq_zero_iff_mem]
-    simpa using h1.symm
-  rw [gmCoord, gmCoord, Diag.charVal_lieVec, Diag.charVal_one, h0]
-  simp
 
 end Values
 

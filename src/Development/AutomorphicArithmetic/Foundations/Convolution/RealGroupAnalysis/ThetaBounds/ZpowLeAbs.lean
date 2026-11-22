@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
-import GroundTheory.AutomorphicForms.GL2.GJGlobalLattice
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
+public import GroundTheory.AutomorphicForms.GL2.GJGlobalLattice
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -48,7 +52,7 @@ private theorem lint_cover {G ι : Type} [CommGroup G] [TopologicalSpace G] [IsT
     (hs : ∀ a, f a ≠ 0 → ∃ k : ι → ℤ, ∃ c ∈ C, a = (∏ i, ρ i ^ k i) * c)
     (hb : ∀ k : ι → ℤ, ∀ c ∈ C, f ((∏ i, ρ i ^ k i) * c) ≤ A * ∏ i, g (k i)) : ∫⁻ a, f a ∂μ < ⊤ := by
   set T : (ι → ℤ) → Set G := fun k => ((∏ i, ρ i ^ k i) * ·) '' C with hT
-  have hTm : ∀ k, MeasurableSet (T k) := fun k => (hC.image (continuous_mul_left _)).measurableSet
+  have hTm : ∀ k, MeasurableSet (T k) := fun k => (hC.image (continuous_const_mul _)).measurableSet
   have hμ : ∀ k, μ (T k) = μ C := fun k => by
     simp only [hT]
     rw [Set.image_mul_left]; exact measure_preimage_mul _ _ _
@@ -279,7 +283,7 @@ private theorem h_bound {B : ℝ} {n : ℕ} (hB1 : 1 ≤ B) (hb : ∀ i : Infini
     exact Finset.prod_congr rfl fun i _ => (_root_.inv_zpow _ _).symm
   rw [e1, mul_inv, e2, e3, mul_comm (∏ i, (ab (rho i))⁻¹ ^ k i), mul_assoc, ← Finset.prod_mul_distrib]
   refine mul_le_mul_of_nonneg_left ?_ (inv_pos.2 hc0).le
-  refine Finset.prod_le_prod (fun i _ => by have := hp i; positivity) fun v _ => ?_
+  refine Finset.prod_le_prod₀ (fun i _ => by have := hp i; positivity) fun v _ => ?_
   have hx := hom_tau (nuH v) rho k c
   rw [tau_nu] at hx
   have hcp := nu_pos v c

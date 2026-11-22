@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix Complex
 open scoped ComplexConjugate
@@ -25,9 +29,11 @@ def haarAt (R : ℕ) (φ : Matrix κ ι K → ℂ) : ℂ :=
   ((R : ℂ) ^ (Module.finrank ℚ K * (Fintype.card κ * Fintype.card ι)))⁻¹ *
     ∑ᶠ q : Matrix κ ι K ⧸ perSub K κ ι R, φ q.out
 
-open Classical in
 
-def haar (φ : Matrix κ ι K → ℂ) : ℂ := if h : IsSB φ then haarAt h.choose φ else 0
+open Classical in
+def haar (φ : Matrix κ ι K → ℂ) : ℂ := by
+  classical
+  exact if h : IsSB φ then haarAt h.choose φ else 0
 
 def ip (φ ψ : Matrix κ ι K → ℂ) : ℂ := haar fun x => φ x * conj (ψ x)
 

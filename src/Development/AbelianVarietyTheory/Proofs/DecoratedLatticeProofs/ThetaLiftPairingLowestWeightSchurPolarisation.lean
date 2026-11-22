@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockCoefficientExtremalEqDiscreteSeries
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ThetaPairingInvariant
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsArchimedeanLiftUnitaryGroupProduct
+module
+
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockCoefficientExtremalEqDiscreteSeries
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ThetaPairingInvariant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsArchimedeanLiftUnitaryGroupProduct
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
@@ -21,7 +26,7 @@ theorem sesq_eq_of_diag {E : Type*} [AddCommGroup E] [Module ℂ E]
   intro x y
   have h1 := h0 (x + y)
   have h2 := h0 (x + Complex.I • y)
-  simp only [map_add, LinearMap.add_apply, LinearMap.map_smulₛₗ,
+  simp only [map_add (f := _), LinearMap.add_apply, LinearMap.map_smulₛₗ,
     LinearMap.smul_apply, smul_eq_mul, h0, Complex.conj_I, mul_zero, add_zero, zero_add] at h1 h2
   have hI := Complex.I_sq
   linear_combination (-(Complex.I) / 2 * Complex.I) * h1 + (Complex.I / 2) * h2 + ((F - G) x y) * hI
@@ -38,7 +43,8 @@ theorem schur_sesq {G : Type*} [Group G] {E : Type*} [NormedAddCommGroup E] [Inn
   have hA : ∀ x y, B x y = ⟪y, A x⟫_ℂ := by
     intro x y
     conv_lhs => rw [← b.sum_repr' y]
-    simp [A, map_sum, inner_sum, inner_smul_right, inner_conj_symm, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [A, map_sum, inner_sum, inner_smul_right, inner_conj_symm, mul_comm]
   have hcomm : ∀ h x, A (ρ h x) = ρ h (A x) := by
     intro h x
     apply ext_inner_left ℂ
@@ -102,14 +108,14 @@ noncomputable def thetaForm (hW : IsWeilDatumO ψ S T χS χT om) (hC : IsCovolO
     E →ₗ[ℂ] E →ₗ⋆[ℂ] ℂ :=
   LinearMap.mk₂'ₛₗ (RingHom.id ℂ) (starRingEnd ℂ) (fun x y => l2 μ 𝓧 (a x) (b y))
     (fun x x' y => by
-      simp only [map_add, l2, Lift.pet, Pi.add_apply, add_mul]
+      simp only [map_add (f := _), l2, Lift.pet, Pi.add_apply, add_mul]
       exact integral_add (integrable_mul_conj hW hC (ha x) (hb y))
         (integrable_mul_conj hW hC (ha x') (hb y)))
     (fun c x y => by
       simp only [map_smul, l2, Lift.pet, Pi.smul_apply, smul_eq_mul, RingHom.id_apply, mul_assoc]
       exact integral_const_mul c _)
     (fun x y y' => by
-      simp only [map_add, l2, Lift.pet, Pi.add_apply, mul_add]
+      simp only [map_add (f := _), l2, Lift.pet, Pi.add_apply, mul_add]
       exact integral_add (integrable_mul_conj hW hC (ha x) (hb y))
         (integrable_mul_conj hW hC (ha x) (hb y')))
     (fun c x y => by

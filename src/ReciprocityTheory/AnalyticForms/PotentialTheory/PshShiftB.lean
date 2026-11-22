@@ -1,5 +1,9 @@
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialPullbackStatement
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+module
+
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialPullbackStatement
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.M
 
@@ -88,7 +92,7 @@ theorem plurisubharmonicShift_proof : PshShiftStatement := by
       Metric.isOpen_ball
   obtain ⟨t, ht⟩ := isCompact_univ.elim_finite_subcover
     (fun q => (A.chart (jq q)).source ∩ A.chart (jq q) ⁻¹' Metric.ball (A.chart (jq q) q) (r q))
-    hVo (fun q _ => Set.mem_iUnion.2 ⟨q, hjq q, Metric.mem_ball_self (hr q)⟩)
+    hVo (fun q _ => Set.mem_iUnion.2 ⟨q, hjq q, Set.mem_preimage.mpr (Metric.mem_ball_self (hr q))⟩)
   refine ⟨∑ q ∈ t, |m q|, ?_⟩
   intro x k y hy u
   show 0 ≤ levi ((fun z => w z + (∑ q ∈ t, |m q|) * Ω.φ x z) ∘ (A.chart k).symm) y u

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RatMuOfRowTest
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RatMuOfRowTest
+
+@[expose] public section
 
 open Module NumberField
 open scoped InnerProductSpace

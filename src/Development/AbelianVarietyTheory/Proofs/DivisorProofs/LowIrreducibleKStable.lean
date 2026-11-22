@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EabIsKCInr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockOperatorsLieRepresentationCommute
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EabIsKCInr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockOperatorsLieRepresentationCommute
+
+@[expose] public section
 
 open MvPolynomial Formalism.BasicNotions.TH
 
@@ -11,7 +15,7 @@ theorem X_mul_pderiv_totalDegree_le {σ : Type} (u v : σ) (g : MvPolynomial σ 
   classical
   have key : ∀ m ∈ (pderiv v g).support, (m.sum fun _ e => e) + 1 ≤ g.totalDegree := by
     intro m hm
-    have hc : coeff (m + Finsupp.single v 1) g ≠ 0 := by
+    have hc : AddMonoidAlgebra.coeff g (m + Finsupp.single v 1) ≠ 0 := by
       rw [mem_support_iff, coeff_pderiv] at hm
       intro h
       rw [h, zero_mul] at hm
@@ -46,7 +50,8 @@ theorem omE_mem_restrictTotalDegree {P Q R S : ℕ} (D : ℕ) (u v : Ln P Q R S)
 theorem fockAct2_apply_eq {P Q R S : ℕ} (Z : Mat R S) (g : Pol P Q R S) :
     fockAct2 P Q R S Z g = ∑ c, ∑ d, Z c d • ∑ a, omE (a, c) (a, d) g := by
   conv_lhs => rw [Matrix.matrix_eq_sum_single Z]
-  simp only [map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply]
   refine Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun d _ => ?_
   have : Matrix.single c d (Z c d) = Z c d • (Eab c d : Mat R S) := by
     rw [Eab, Matrix.smul_single, smul_eq_mul, mul_one]

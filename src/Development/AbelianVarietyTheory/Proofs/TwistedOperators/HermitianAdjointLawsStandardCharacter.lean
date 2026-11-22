@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GramMulInv
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousAlg
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFinitePlaceIdempotentBaseChangeAdeles
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GramMulInv
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousAlg
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFinitePlaceIdempotentBaseChangeAdeles
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,8 @@ theorem hO_eq (S T : HSp D) (x y : WO S T) : hO S T x y = Matrix.trace (adjO T S
 theorem hO_herm (S T : HSp D) (x y : WO S T) : cA D (hO S T x y) = hO S T y x := by
   rw [hO_eq, hO_eq]
   have e : cA D (Matrix.trace (adjO T S y * x)) = Matrix.trace (((adjO T S y * x).map (cA D))ᵀ) := by
-    rw [Matrix.trace_transpose]; simp only [Matrix.trace, Matrix.diag, map_sum, Matrix.map_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.trace_transpose]; simp only [Matrix.trace, Matrix.diag, map_sum, Matrix.map_apply]
   rw [e, conjT_mul, adjO_eq, conjT_mul, conjT_mul, conjT_conjT, GlobalTheory.OrientedAdjoint.gram_conj, gramI_conj,
     adjO_eq, Matrix.trace_mul_comm]
   simp only [Matrix.mul_assoc]
@@ -88,9 +93,6 @@ theorem mt_one (V : HSp D) : mt V 1 = 1 := by simp [Formalism.L2.Theta.mt]
 
 theorem mt_mul_inv (V : HSp D) (g : GA D V) : mt V g * mt V g⁻¹ = 1 := by
   rw [← mt_mul, mul_inv_cancel, mt_one]
-
-theorem mt_inv_mul (V : HSp D) (g : GA D V) : mt V g⁻¹ * mt V g = 1 := by
-  rw [← mt_mul, inv_mul_cancel, mt_one]
 
 theorem conjT_gram (V : HSp D) (g : GA D V) :
     ((mt V g).map (cA D))ᵀ * ((HSpace.gram V).map (incA D)) = ((HSpace.gram V).map (incA D)) * mt V g⁻¹ := by
@@ -153,7 +155,8 @@ theorem adj_infPart (S T : HSp D) (u : WO T S) (hu : u.map (infPart D) = 0) : (a
     simpa only [Matrix.map_apply, Matrix.zero_apply] using this
   refine Matrix.ext fun i j => ?_
   show infPart D (adjO S T u i j) = 0
-  simp only [adjO_eq, Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [adjO_eq, Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul,
     GlobalTheory.PlaceIdem.infPart_cA, h0, map_zero, mul_zero, zero_mul, Finset.sum_const_zero]
 
 set_option synthInstance.maxHeartbeats 400000 in
@@ -163,7 +166,8 @@ theorem adj_finPart (S T : HSp D) (u : WO T S) (hu : u.map (finPart D) = 0) : (a
     simpa only [Matrix.map_apply, Matrix.zero_apply] using this
   refine Matrix.ext fun i j => ?_
   show finPart D (adjO S T u i j) = 0
-  simp only [adjO_eq, Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [adjO_eq, Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul,
     GlobalTheory.PlaceIdem.finPart_cA, h0, map_zero, mul_zero, zero_mul, Finset.sum_const_zero]
 
 def adjHom (S T : HSp D) : WO T S →+ WO S T := AddMonoidHom.mk' (adjO S T) (adj_add S T)
@@ -179,7 +183,7 @@ theorem adj_heis (ψ : AddChar (AF D.host.F) ℂ) (hψ : ∀ x, ‖ψ x‖ = 1) 
   simp only [heisO, dag, map_mul, adj_add, symplOH_adj, conj_psi ψ hψ, neg_neg]
 
 theorem adj_theta (ψ : AddChar (AF D.host.F) ℂ) (hψ : ∀ x, ‖ψ x‖ = 1) (S T : HSp D) (f : WO S T → ℂ)
-    (hf : IsThetaFunO ψ S T f) : IsThetaFunO ψ T S (dag S T f) where
+    (hf : IsThetaFunO ψ S T f) : IsThetaFunO ψ T S (dag S T f) := {
   quasi γ w := by
     simp only [dag]
     rw [adj_add, adj_ratW, hf.quasi, map_mul, conj_psi ψ hψ, ← adj_ratW, symplOH_adj]
@@ -197,7 +201,7 @@ theorem adj_theta (ψ : AddChar (AF D.host.F) ℂ) (hψ : ∀ x, ‖ψ x‖ = 1)
         fun t => Complex.conjCLE (f (adjO S T w + (adjHom S T).comp L t)) := by
       funext t; simp [dag, adj_add, adjHom]
     rw [e]
-    exact Complex.conjCLE.contDiff.comp h
+    exact Complex.conjCLE.contDiff.comp h }
 
 theorem adjLaw : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ S T : HSp D, AdjLaw ψ S T := by
   intro D ψ hψ S T

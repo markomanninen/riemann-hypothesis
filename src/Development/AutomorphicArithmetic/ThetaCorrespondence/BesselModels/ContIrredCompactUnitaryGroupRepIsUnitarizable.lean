@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselFrameTranslatedPerpOfIsFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselFrameTranslatedPerpOfIsFrame
+
+@[expose] public section
+
 open Matrix GlobalTheory.RealBessel GlobalTheory.BesselMapOne Formalism.L2.Theta GlobalTheory.SmVec
 
 open MeasureTheory
@@ -17,7 +22,7 @@ theorem continuousOn_of_dual {X F : Type} [TopologicalSpace X] [NormedAddCommGro
     funext x
     exact (b.sum_repr (f x)).symm
   rw [e]
-  exact continuousOn_finset_sum _ fun i _ => (h (b.coord i)).smul continuousOn_const
+  exact continuousOn_finsetSum _ fun i _ => (h (b.coord i)).smul continuousOn_const
 
 theorem exists_invariant_core_of_equiv {G W E : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
     [MeasurableSpace G] [BorelSpace G] (μ : Measure G) [μ.IsHaarMeasure]
@@ -54,7 +59,7 @@ theorem exists_invariant_core_of_equiv {G W E : Type} [Group G] [TopologicalSpac
       add_left := fun x y z => by
         show ∫ g, F (x + y) z g ∂μ = ∫ g, F x z g ∂μ + ∫ g, F y z g ∂μ
         rw [← integral_add (hI x z) (hI y z)]
-        simp only [F, A, map_add, inner_add_left]
+        simp only [F, A, map_add (f := _), inner_add_left]
       smul_left := fun x y a => by
         show ∫ g, F (a • x) y g ∂μ = conj a * ∫ g, F x y g ∂μ
         rw [← integral_const_mul]

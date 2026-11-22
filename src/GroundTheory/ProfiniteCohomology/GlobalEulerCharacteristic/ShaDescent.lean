@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.MackeyFormula.CompactSupport
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.InnerConj
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Descent
-import GroundTheory.ProfiniteCohomology.PoitouTate.PtCompactDualMapEqZeroOfPtCompactToGlobalEqZero
-import GroundTheory.ProfiniteCohomology.PoitouTate.PoitouTateInfinite.DescentMaps
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.MackeyFormula.CompactSupport
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.InnerConj
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Descent
+public import GroundTheory.ProfiniteCohomology.PoitouTate.PtCompactDualMapEqZeroOfPtCompactToGlobalEqZero
+public import GroundTheory.ProfiniteCohomology.PoitouTate.PoitouTateInfinite.DescentMaps
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -24,7 +29,7 @@ def shaSubmodule (A : Rep.{u} k G) [IsDiscreteRep A] (n : ℕ) : Submodule k (co
   carrier := {x | ∀ v, (cohomologyMapAlong (φ v).toMonoidHom (continuous_toMonoidHom (φ v)) (𝟙 _) n).hom x = 0}
   add_mem' {x y} hx hy v := by
     change (cohomologyMapAlong (φ v).toMonoidHom (continuous_toMonoidHom (φ v)) (𝟙 _) n).hom (x + y) = 0
-    rw [map_add, hx v, hy v, add_zero]
+    rw [map_add (f := _), hx v, hy v, add_zero]
   zero_mem' v := map_zero _
   smul_mem' c x hx v := by
     change (cohomologyMapAlong (φ v).toMonoidHom (continuous_toMonoidHom (φ v)) (𝟙 _) n).hom (c • x) = 0
@@ -126,8 +131,8 @@ theorem cohomologyMap_mackeyTranslateMor_injective (p : MackeyIndex V φ) (n : �
   rw [← ModuleCat.comp_apply, ← cohomologyMap_comp, h, cohomologyMap_id]
   rfl
 
-omit [∀ v, CompactSpace (Hv v)] in
 
+omit [∀ v, CompactSpace (Hv v)] in
 theorem cohomologyMapAlong_mackeyFamily_cohomologyRes (p : MackeyIndex V φ) (n : ℕ) (y : cohomology A n) :
     (cohomologyMapAlong (mackeyFamily V φ p).toMonoidHom (continuous_toMonoidHom (mackeyFamily V φ p)) (𝟙 _) n).hom
         ((cohomologyRes A (V : Subgroup G) n).hom y) =
@@ -181,8 +186,8 @@ theorem cohomologyMapAlong_mackeyFamily_cohomologyRes (p : MackeyIndex V φ) (n 
 
 variable [(V : Subgroup G).Normal]
 
-omit [IsTopologicalGroup G] [CompactSpace G] in
 
+omit [IsTopologicalGroup G] [CompactSpace G] in
 theorem index_mackeySubgroup_dvd {H : Type u} [Group H] (ψ : H →* G) (x : G) :
     (mackeySubgroup (V : Subgroup G) ψ x).index ∣ (V : Subgroup G).index := by
   rw [mackeySubgroup, Subgroup.index_comap]

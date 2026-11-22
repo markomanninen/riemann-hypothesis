@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.SemiDegSt
+module
+
+public import ReciprocityTheory.SemistableReduction.SemiDegSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem sdd_quad_eig {n : ℕ} {D : Matrix (Fin n) (Fin n) ℂ} (hD : D.IsHermit
 theorem sdd_det_abs_le_one {n : ℕ} {D : Matrix (Fin n) (Fin n) ℂ} (hD : D.IsHermitian)
     (h : ∀ w : Fin n → ℂ, ‖star w ⬝ᵥ (D *ᵥ w)‖ ≤ (star w ⬝ᵥ w).re) : ‖D.det‖ ≤ 1 := by
   rw [hD.det_eq_prod_eigenvalues, norm_prod]
-  apply Finset.prod_le_one (fun i _ => norm_nonneg _)
+  apply Finset.prod_le_one₀ (fun i _ => norm_nonneg _)
   intro i _
   have hi := h (hD.eigenvectorBasis i)
   rwa [sdd_quad_eig hD i, sdd_star_self_eig hD i, Complex.one_re] at hi
@@ -58,7 +62,7 @@ theorem sdd_det_ge_one {n : ℕ} {D : Matrix (Fin n) (Fin n) ℂ} (hD : D.IsHerm
   rw [hdet, Complex.ofReal_re]
   refine ⟨rfl, ?_⟩
   calc (1 : ℝ) = ∏ _i : Fin n, (1 : ℝ) := by simp
-    _ ≤ _ := Finset.prod_le_prod (fun _ _ => zero_le_one) (fun i _ => hev i)
+    _ ≤ _ := Finset.prod_le_prod₀ (fun _ _ => zero_le_one) (fun i _ => hev i)
 
 theorem sdd_congr {n : ℕ} (B X : Matrix (Fin n) (Fin n) ℂ) (hu : IsUnit B.det) :
     X = Bᴴ * ((B⁻¹)ᴴ * X * B⁻¹) * B ∧

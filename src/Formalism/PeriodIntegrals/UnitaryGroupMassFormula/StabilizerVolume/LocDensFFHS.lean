@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensFF
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensFF
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ def IsSq.lin (hs : IsSq σ h) (x : V) : V →ₗ[K] K where
 theorem IsSq.lin_apply (hs : IsSq σ h) (x y : V) : hs.lin x y = h x y := rfl
 
 theorem IsSq.add_left (hs : IsSq σ h) (x y z : V) : h (x + y) z = h x z + h y z := by
-  rw [hs.herm z (x + y), hs.add_right, map_add, ← hs.herm z x, ← hs.herm z y]
+  rw [hs.herm z (x + y), hs.add_right, map_add (f := _), ← hs.herm z x, ← hs.herm z y]
 
 theorem IsSq.smul_left (hs : IsSq σ h) (c : K) (x y : V) : h (c • x) y = σ c * h x y := by
   rw [hs.herm y (c • x), hs.smul_right, map_mul, ← hs.herm y x]
@@ -116,7 +120,8 @@ theorem linIndep_orth (hs : IsSq σ h) {n : ℕ} (f : Fin n → V)
   rw [Fintype.linearIndependent_iff]
   intro g hg i
   have := congrArg (hs.lin (f i)) hg
-  rw [map_sum, map_zero, Finset.sum_eq_single i] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero, Finset.sum_eq_single i] at this
   · rw [map_smul, IsSq.lin_apply, smul_eq_mul] at this
     exact (mul_eq_zero.1 this).resolve_right (h2 i)
   · intro j _ hji

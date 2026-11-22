@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdFormula
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.LayerBot
+module
+
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdFormula
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.LayerBot
+
+@[expose] public section
 
 open UpperTheory.HF
 

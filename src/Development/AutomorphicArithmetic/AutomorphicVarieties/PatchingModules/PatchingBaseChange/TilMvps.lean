@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.AlgebraMapEq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.AlgebraMapEq
+
+@[expose] public section
+
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 open scoped TensorProduct
 
@@ -27,7 +32,8 @@ private def sw : PowerSeries (MvPowerSeries σ A) →ₐ[K] MvPowerSeries σ (Po
   map_mul' f g := by
     classical
     ext n k
-    simp only [coeff_swF, PowerSeries.coeff_mul, MvPowerSeries.coeff_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [coeff_swF, PowerSeries.coeff_mul, MvPowerSeries.coeff_mul, map_sum]
     exact Finset.sum_comm
   map_zero' := by
     ext n k
@@ -174,7 +180,7 @@ theorem UpperTheory.V.Pa.BC.til_mvps :
       intro x
       induction x using TensorProduct.induction_on with
       | zero => simp
-      | add x y hx hy => rw [map_add, map_add, hx, hy]; split_ifs <;> simp
+      | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]; split_ifs <;> simp
       | tmul o r =>
         rw [Algebra.TensorProduct.map_tmul, cf_tmul]
         split_ifs with hn <;> simp [MvPowerSeries.algebraMap_apply, MvPowerSeries.coeff_C, hn]
@@ -188,7 +194,7 @@ theorem UpperTheory.V.Pa.BC.til_mvps :
     generalize Til.coeff O O' _ k a = x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
     | tmul o r =>
       rw [Algebra.TensorProduct.map_tmul, cf_tmul, hc]
       rfl

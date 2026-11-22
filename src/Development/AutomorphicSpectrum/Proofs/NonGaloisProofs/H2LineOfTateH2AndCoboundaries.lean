@@ -1,10 +1,18 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.ChainRows
-import Development.AutomorphicSpectrum.Definitions.NonGaloisLines.TopLine
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.GoodOAdicCompleteCompactBasisStatement
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.ExistsDualLatticesStatement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+public import Formalism.SharpRestriction.LevelLetterCocycles.PairedCharacterCondition
+public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
+public import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CrysOnCond
+public import Development.AutomorphicSpectrum.Definitions.NonGaloisLines.TopLine
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.GoodOAdicCompleteCompactBasisStatement
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.ExistsDualLattices
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism Formalism.ConjugateSelfDual Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations Module GlobalTheory.CompanionTheory.LocDual
 
@@ -49,7 +57,7 @@ theorem exists_mul_of_linear (T : Submodule O LL) (hT : T = LinearMap.range (Alg
     | zero => simp [hy0]
     | succ n ih =>
       have h2 : p ^ (n + 1) * u (n + 1) = p ^ n * u n + p ^ n * (p * u (n + 1) - u n) := by ring
-      rw [h2, ih, ← ho n, hys, map_add, map_mul, map_pow, ← hp]
+      rw [h2, ih, ← ho n, hys, map_add (f := _), map_mul, map_pow, ← hp]
       ring
   have hI : ∀ m, ((Ideal.span {ϖ}) ^ m • ⊤ : Submodule O O) = Ideal.span {ϖ ^ m} := by
     intro m
@@ -203,26 +211,5 @@ theorem topLine_at [TopologicalSpace LL] [IsTopologicalRing LL] [IsDomain O] [Is
   exact h3
 
 end Red
-
-theorem h2_line_of_tate_h2_and_coboundaries : ∀ (D : D7) (l : ℕ) [Fact l.Prime] (K : FinExt l),
-    LocalTateTopDegree ((D.loc l).PD K) → CobLO ((D.loc l).PD K) → TopLine ((D.loc l).PD K) := by
-  intro D l _ K hT hC LL _ _ _ O _ _ hO z z' hz hz' hd hd' hn
-  obtain ⟨L1, hL1⟩ := (GlobalTheory.T.exists_dual_lattices D l K).1 LL O hO
-  obtain ⟨⟨hD, hDVR, hFrac⟩, -, -, htr, hopen⟩ := id hO
-  haveI := hD
-  haveI := hDVR
-  haveI := hFrac
-  haveI := htr
-  obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible O
-  have hc := (GlobalTheory.T.goodO_adic_complete_compact_basis l LL O hO ϖ hϖ).1
-  have hop : IsOpen (L1.T : Set LL) := by
-    have : (L1.T : Set LL) = Set.range (algebraMap O LL) := by
-      rw [hL1]
-      ext x
-      simp [LinearMap.mem_range]
-    rw [this]
-    exact hopen
-  obtain ⟨φ⟩ := hT LL O hO L1 hL1
-  exact topLine_at L1 hL1 hop hϖ hc φ (hC LL O hO L1 hL1) hz hz' hd hd' hn
 
 end GlobalTheory.CompanionTheory.LocDual.Top

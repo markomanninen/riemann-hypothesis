@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.CharZeroOfIsPrimitiveRoot
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TxCosetCriterion
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaConstantTermRepresentativeDependenceStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.CharZeroOfIsPrimitiveRoot
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TxCosetCriterion
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaConstantTermRepresentativeDependenceStatement
+
+@[expose] public section
+
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.Ex
 open scoped BigOperators
 
@@ -23,7 +28,7 @@ theorem twRel_mul {a b : N.QT l} {a' b' : (N.twist β u).QT l} (ha : TwRel β u 
     congrArg₂ (fun s t : N.A => s * t) a2 b2, fun z => ?_⟩
   change a'.1.2.s z * b'.1.2.s z / N.θ (N.c z) a'.1.2.b b'.1.2.b =
     a.1.2.s z * b.1.2.s z / N.θ (N.c z) a.1.2.b b.1.2.b * r ^ β.be (a.1.1.toAdd + b.1.1.toAdd) z
-  rw [a2, b2, a3, b3, map_add, LinearMap.add_apply, zpow_add]
+  rw [a2, b2, a3, b3, map_add (f := _), LinearMap.add_apply, zpow_add]
   apply Additive.ofMul.injective
   simp only [ofMul_mul, ofMul_div]; abel
 
@@ -39,7 +44,7 @@ theorem twRel_qEq (hr : r ^ l = u) {a b : N.QT l} {a' b' : (N.twist β u).QT l} 
     exact congrArg (fun s : N.A => s * N.c z) a2.symm
   · change b'.1.2.s w = a'.1.2.s w * (N.twist β u).τ z w / N.θ (N.c w) a'.1.2.b (N.c z)
     have e : r ^ ((l : ℤ) * β.be z w) = u ^ β.be z w := by rw [zpow_mul, zpow_natCast, hr]
-    rw [b3, a3, a2, N.twist_τ, h1, h2, NumD.Gt.mul_s, NumD.io_s, NumD.io_b, map_add, LinearMap.add_apply, map_nsmul,
+    rw [b3, a3, a2, N.twist_τ, h1, h2, NumD.Gt.mul_s, NumD.io_s, NumD.io_b, map_add (f := _), LinearMap.add_apply, map_nsmul,
       LinearMap.smul_apply, nsmul_eq_mul, zpow_add, e]
     apply Additive.ofMul.injective
     simp only [ofMul_mul, ofMul_div]; abel
@@ -59,18 +64,35 @@ theorem exists_twRel_of_eq_one (r : Oˣ) (h : (N.twist β u).QT l) (h1 : h.1.1 =
 variable {La : Type} [AddCommGroup La] {q : La → N.QT l}
 
 theorem qEq_zero (hq : ∀ a b, N.QEq (q a * q b) (q (a + b))) : N.QEq (q 0) 1 := by
-  have := TateInh.qEq_mul N (hq 0 0) ((N.qEq_equivalence l).refl (q 0)⁻¹)
+  have E : Equivalence (N.QEq (k := l)) := by
+    exact {
+      refl := fun p => ⟨0, by simp, by simp⟩
+      symm := by
+        rintro p p' ⟨z, h, h'⟩
+        exact ⟨-z, by rw [h, smul_neg, add_neg_cancel_right], by rw [h', N.io_neg, mul_inv_cancel_right]⟩
+      trans := by
+        rintro p p' p'' ⟨z, h, h'⟩ ⟨w, e, e'⟩
+        exact ⟨z + w, by rw [e, h, smul_add, add_assoc], by rw [e', h', N.io_add, _root_.mul_assoc]⟩ }
+  have := TateInh.qEq_mul N (hq 0 0) (E.refl (q 0)⁻¹)
   rwa [add_zero, mul_inv_cancel_right, mul_inv_cancel] at this
 
 theorem qEq_nsmul (hq : ∀ a b, N.QEq (q a * q b) (q (a + b))) (a : La) (e : ℕ) : N.QEq (q a ^ e) (q (e • a)) := by
-  have E := N.qEq_equivalence l
+  have E : Equivalence (N.QEq (k := l)) := by
+    exact {
+      refl := fun p => ⟨0, by simp, by simp⟩
+      symm := by
+        rintro p p' ⟨z, h, h'⟩
+        exact ⟨-z, by rw [h, smul_neg, add_neg_cancel_right], by rw [h', N.io_neg, mul_inv_cancel_right]⟩
+      trans := by
+        rintro p p' p'' ⟨z, h, h'⟩ ⟨w, e, e'⟩
+        exact ⟨z + w, by rw [e, h, smul_add, add_assoc], by rw [e', h', N.io_add, _root_.mul_assoc]⟩ }
   induction e with
   | zero => rw [pow_zero, zero_smul]; exact E.symm (qEq_zero hq)
   | succ e ih => rw [pow_succ, succ_nsmul]; exact E.trans (TateInh.qEq_mul N ih (E.refl _)) (hq _ _)
 
 theorem qEq_pow {a b : N.QT l} (h : N.QEq a b) (e : ℕ) : N.QEq (a ^ e) (b ^ e) := by
   induction e with
-  | zero => rw [pow_zero, pow_zero]; exact (N.qEq_equivalence l).refl _
+  | zero => rw [pow_zero, pow_zero]; exact ⟨0, by simp, by simp⟩
   | succ e ih => rw [pow_succ, pow_succ]; exact TateInh.qEq_mul N ih h
 
 theorem eq_zero_of_pow_nsmul {n : ℕ} (hn : ∀ a : La, n • a = 0 → a = 0) (e : ℕ) (a : La) (h : n ^ e • a = 0) :
@@ -81,12 +103,20 @@ theorem eq_zero_of_pow_nsmul {n : ℕ} (hn : ∀ a : La, n • a = 0 → a = 0) 
 
 end GlobalTheory.TwistCoset
 
-open GlobalTheory.TwistCoset in
 
+open GlobalTheory.TwistCoset in
 theorem GlobalTheory.twist_tx_coset_norm_ge : ∀ (C : Type) [NontriviallyNormedField C] [IsUltrametricDist C] [CompleteSpace C] [IsAlgClosed C] (N : NumD C) (k : ℕ) (β : N.Form k) (u r : Cˣ) (qf : QuadraticMap ℤ N.X ℝ) (n g j : ℕ), n.Prime → Odd n → ‖(n : C)‖ = 1 → 1 ≤ j → ‖(u : C)‖ < 1 → r ^ ((n ^ j) ^ 2) = u → (N.twist β u).Int qf → (∀ y, qf y = -Real.log ‖(u : C)‖ * ((β.be y y : ℝ) / 2)) → N.Tors n g → ∀ (La : Type) [AddCommGroup La] (q : La → N.QT ((n ^ j) ^ 2)), (∀ a : La, n • a = 0 → a = 0) → (∀ a b, N.QEq (q a * q b) (q (a + b))) → (∀ a b, N.QEq (q a) (q b) ↔ ∃ e, a = b + (n ^ j) ^ 2 • e) → (∀ p, ∃ a, N.QEq (q a) p) → ∀ p : La → (N.twist β u).QT ((n ^ j) ^ 2), (∀ x, TwRel β u r (q x) (p x)) → (∃ x, 1 ≤ ‖(N.twist β u).tx (n ^ j) (p x)‖) ∧ ∀ x, ∃ h, ‖(u : C)‖ ^ (β.be (q x).1.1.toAdd (q x).1.1.toAdd).toNat ≤ ‖(N.twist β u).tx (n ^ j) (p (x + n ^ (j - 1) • h))‖ := by
   intro C _ _ _ _ N k β u r qf n g j hp ho hn hj hu hr hI hqf hT La _ q htf hadd hker honto p hpq
   have hm : Odd (n ^ j) := ho.pow
-  have E := N.qEq_equivalence ((n ^ j) ^ 2)
+  have E : Equivalence (N.QEq (k := (n ^ j) ^ 2)) := by
+    exact {
+      refl := fun p => ⟨0, by simp, by simp⟩
+      symm := by
+        rintro p p' ⟨z, h, h'⟩
+        exact ⟨-z, by rw [h, smul_neg, add_neg_cancel_right], by rw [h', N.io_neg, mul_inv_cancel_right]⟩
+      trans := by
+        rintro p p' p'' ⟨z, h, h'⟩ ⟨w, e, e'⟩
+        exact ⟨z + w, by rw [e, h, smul_add, add_assoc], by rw [e', h', N.io_add, _root_.mul_assoc]⟩ }
   have hP : qf.PosDef := GlobalTheory.CosetCrit.posDef_of_tendsto (X := N.X) hI.pos
   have key : ∀ (x : La) (χ₀ : N.X), (∀ χ : N.X, qf ((q x).1.1.toAdd + n ^ j • χ₀) ≤ qf ((q x).1.1.toAdd + n ^ j • χ)) →
       ∃ e, Real.exp (-(qf ((q x).1.1.toAdd + n ^ j • χ₀) / ((n ^ j : ℕ) : ℝ) ^ 2)) ≤

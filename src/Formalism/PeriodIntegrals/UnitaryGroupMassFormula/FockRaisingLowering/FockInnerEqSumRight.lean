@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.JointBlockShapes.MinusPart
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockRaisingLowering.SameSign
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.JointBlockShapes.MinusPart
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockRaisingLowering.SameSign
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ variable {σ : Type*}
 def wt (α : σ →₀ ℕ) : ℂ := α.prod (fun _ k => (k.factorial : ℂ))
 
 theorem fockInner_eq_support (P Q : MvPolynomial σ ℂ) :
-    fockInner P Q = ∑ α ∈ P.support, (starRingEnd ℂ) (coeff α P) * coeff α Q * wt α := by
+    fockInner P Q = ∑ α ∈ P.support, (starRingEnd ℂ) (AddMonoidAlgebra.coeff P α) * AddMonoidAlgebra.coeff Q α * wt α := by
   unfold FockH1Action.fockInner
   refine Finset.sum_congr rfl (fun α _ => ?_)
   rw [Finset.sum_eq_single α]
@@ -22,32 +26,32 @@ theorem fockInner_eq_support (P Q : MvPolynomial σ ℂ) :
   · intro β _ hβ
     rw [if_neg (Ne.symm hβ), mul_zero]
   · intro hα
-    have h : coeff α Q = 0 := by simpa [MvPolynomial.mem_support_iff] using hα
+    have h : AddMonoidAlgebra.coeff Q α = 0 := by simpa [MvPolynomial.mem_support_iff] using hα
     rw [h]
     simp
 
 theorem fockInner_eq_sum (P Q : MvPolynomial σ ℂ) (S : Finset (σ →₀ ℕ))
-    (hS : ∀ α, α ∉ S → (starRingEnd ℂ) (coeff α P) * coeff α Q = 0) :
-    fockInner P Q = ∑ α ∈ S, (starRingEnd ℂ) (coeff α P) * coeff α Q * wt α := by
+    (hS : ∀ α, α ∉ S → (starRingEnd ℂ) (AddMonoidAlgebra.coeff P α) * AddMonoidAlgebra.coeff Q α = 0) :
+    fockInner P Q = ∑ α ∈ S, (starRingEnd ℂ) (AddMonoidAlgebra.coeff P α) * AddMonoidAlgebra.coeff Q α * wt α := by
   classical
   rw [fockInner_eq_support]
-  have h1 : (∑ α ∈ P.support, (starRingEnd ℂ) (coeff α P) * coeff α Q * wt α) =
-      ∑ α ∈ P.support ∪ S, (starRingEnd ℂ) (coeff α P) * coeff α Q * wt α := by
+  have h1 : (∑ α ∈ P.support, (starRingEnd ℂ) (AddMonoidAlgebra.coeff P α) * AddMonoidAlgebra.coeff Q α * wt α) =
+      ∑ α ∈ P.support ∪ S, (starRingEnd ℂ) (AddMonoidAlgebra.coeff P α) * AddMonoidAlgebra.coeff Q α * wt α := by
     refine Finset.sum_subset (fun x hx => Finset.mem_union_left _ hx) (fun α _ hα => ?_)
-    have h : coeff α P = 0 := by simpa [MvPolynomial.mem_support_iff] using hα
+    have h : AddMonoidAlgebra.coeff P α = 0 := by simpa [MvPolynomial.mem_support_iff] using hα
     rw [h]
     simp
-  have h2 : (∑ α ∈ S, (starRingEnd ℂ) (coeff α P) * coeff α Q * wt α) =
-      ∑ α ∈ P.support ∪ S, (starRingEnd ℂ) (coeff α P) * coeff α Q * wt α := by
+  have h2 : (∑ α ∈ S, (starRingEnd ℂ) (AddMonoidAlgebra.coeff P α) * AddMonoidAlgebra.coeff Q α * wt α) =
+      ∑ α ∈ P.support ∪ S, (starRingEnd ℂ) (AddMonoidAlgebra.coeff P α) * AddMonoidAlgebra.coeff Q α * wt α := by
     refine Finset.sum_subset (fun x hx => Finset.mem_union_right _ hx) (fun α _ hα => ?_)
     rw [hS α hα, zero_mul]
   rw [h1, h2]
 
 theorem fockInner_eq_sum_left (P Q : MvPolynomial σ ℂ) (S : Finset (σ →₀ ℕ))
     (hS : P.support ⊆ S) :
-    fockInner P Q = ∑ α ∈ S, (starRingEnd ℂ) (coeff α P) * coeff α Q * wt α := by
+    fockInner P Q = ∑ α ∈ S, (starRingEnd ℂ) (AddMonoidAlgebra.coeff P α) * AddMonoidAlgebra.coeff Q α * wt α := by
   refine fockInner_eq_sum P Q S (fun α hα => ?_)
-  have h : coeff α P = 0 := by
+  have h : AddMonoidAlgebra.coeff P α = 0 := by
     by_contra h'
     exact hα (hS (MvPolynomial.mem_support_iff.mpr h'))
   rw [h]
@@ -55,9 +59,9 @@ theorem fockInner_eq_sum_left (P Q : MvPolynomial σ ℂ) (S : Finset (σ →₀
 
 theorem fockInner_eq_sum_right (P Q : MvPolynomial σ ℂ) (S : Finset (σ →₀ ℕ))
     (hS : Q.support ⊆ S) :
-    fockInner P Q = ∑ α ∈ S, (starRingEnd ℂ) (coeff α P) * coeff α Q * wt α := by
+    fockInner P Q = ∑ α ∈ S, (starRingEnd ℂ) (AddMonoidAlgebra.coeff P α) * AddMonoidAlgebra.coeff Q α * wt α := by
   refine fockInner_eq_sum P Q S (fun α hα => ?_)
-  have h : coeff α Q = 0 := by
+  have h : AddMonoidAlgebra.coeff Q α = 0 := by
     by_contra h'
     exact hα (hS (MvPolynomial.mem_support_iff.mpr h'))
   rw [h, mul_zero]
@@ -75,7 +79,7 @@ theorem fockInner_add_right (P Q₁ Q₂ : MvPolynomial σ ℂ) :
   rw [fockInner_eq_support P (Q₁ + Q₂), fockInner_eq_support P Q₁,
     fockInner_eq_support P Q₂, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl (fun α _ => ?_)
-  rw [coeff_add]
+  rw [MvPolynomial.coeff_add]
   ring
 
 theorem fockInner_smul_right (P Q : MvPolynomial σ ℂ) (c : ℂ) :
@@ -97,7 +101,7 @@ theorem fockInner_sub_right (P Q₁ Q₂ : MvPolynomial σ ℂ) :
   rw [sub_eq_add_neg, fockInner_add_right, fockInner_neg_right, ← sub_eq_add_neg]
 
 private theorem fockInner_eq_sum_support_right (P Q : MvPolynomial σ ℂ) :
-    FockH1Action.fockInner P Q = ∑ α ∈ Q.support, (starRingEnd ℂ) (coeff α P) * coeff α Q * wt α :=
+    FockH1Action.fockInner P Q = ∑ α ∈ Q.support, (starRingEnd ℂ) (AddMonoidAlgebra.coeff P α) * AddMonoidAlgebra.coeff Q α * wt α :=
   fockInner_eq_sum_right P Q Q.support (Finset.Subset.refl _)
 
 theorem fockInner_add_left (P₁ P₂ Q : MvPolynomial σ ℂ) :
@@ -105,7 +109,7 @@ theorem fockInner_add_left (P₁ P₂ Q : MvPolynomial σ ℂ) :
   rw [fockInner_eq_sum_support_right (P₁ + P₂) Q, fockInner_eq_sum_support_right P₁ Q,
     fockInner_eq_sum_support_right P₂ Q, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl (fun α _ => ?_)
-  rw [coeff_add, map_add]
+  rw [MvPolynomial.coeff_add, map_add (f := _)]
   ring
 
 theorem fockInner_smul_left (P Q : MvPolynomial σ ℂ) (c : ℂ) :
@@ -149,7 +153,8 @@ theorem wt_conj (α : σ →₀ ℕ) : (starRingEnd ℂ) (wt α) = wt α := by
 
 theorem fockInner_swap (P Q : MvPolynomial σ ℂ) :
     fockInner Q P = (starRingEnd ℂ) (fockInner P Q) := by
-  rw [fockInner_eq_support Q P, fockInner_eq_sum_support_right P Q, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [fockInner_eq_support Q P, fockInner_eq_sum_support_right P Q, map_sum]
   refine Finset.sum_congr rfl (fun α _ => ?_)
   rw [map_mul, map_mul, Complex.conj_conj, wt_conj]
   ring
@@ -214,7 +219,7 @@ theorem fockInner_X_mul (l : σ) (P Q : MvPolynomial σ ℂ) :
         Finsupp.single_eq_same]
       push_cast
       ring
-  · rw [map_add, fockInner_add_right, fockInner_add_right, h₁, h₂]
+  · rw [map_add (f := _), fockInner_add_right, fockInner_add_right, h₁, h₂]
 
 theorem fockInner_mul_X (l : σ) (P Q : MvPolynomial σ ℂ) :
     fockInner P (X l * Q) = fockInner (pderiv l P) Q := by

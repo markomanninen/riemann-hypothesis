@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.Params
-import Formalism.ThetaLiftIndependence.Statement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.Params
+public import Formalism.ThetaLiftIndependence.Statement
+
+@[expose] public section
 
 namespace Formalism.BasicNotions
 
@@ -95,10 +99,6 @@ def twist (C : ColumnChain R ι hc) (T : TupleData C) : ColumnChain R ι hc :=
 def ownData (C : ColumnChain R ι hc) : TupleData C :=
   ⟨C.rhoDet, C.rhoDet', C.rho_norm, C.rho'_norm, C.unf⟩
 
-noncomputable def colTw (C : ColumnChain R ι hc) (T : TupleData C) (φ : C.cls 0 → C.Y 0 → ℂ) :
-    C.cls R.m → C.Y R.m → ℂ :=
-  (C.twist T).col φ
-
 end ColumnChain
 
 structure ColumnsAtT (R : Ranks) {ι : Type} [Fintype ι] {hc : ι → HCParam R}
@@ -150,9 +150,6 @@ noncomputable def Mram : Submodule ℂ (C.cls 0 → C.Y 0 → ℂ) :=
   A.Mu0 ⊓ ⨅ v, LinearMap.ker (A.Nm v)
 
 noncomputable def du : ℕ := Module.finrank ℂ A.Mram
-
-noncomputable def gauss (v : A.vT) : (C.cls 0 → C.Y 0 → ℂ) →ₗ[ℂ] (C.cls 0 → C.Y 0 → ℂ) :=
-  Formalism.ThetaLiftIndependence.gaussOp (A.psiT v) (A.rhoT v)
 
 noncomputable def Xu : ℝ := (A.Dstar / A.duStar) ^ ((1 : ℝ) / (R.f * R.k))
 

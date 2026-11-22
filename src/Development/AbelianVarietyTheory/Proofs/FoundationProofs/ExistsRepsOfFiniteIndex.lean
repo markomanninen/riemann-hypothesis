@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ThPinsR
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
-import Formalism.LocalToGlobal.ProjectiveLattices.ThClassPinsRec
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MovedOfSplitPl
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsRepSuppSplit
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSplitIdempotentsOfRelTraceOneModTwo
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsPrincipalLevelSubgroupOpen
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSplitAt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EvalVAlgebraMapMem
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinCongMemLevEnv
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ThPinsR
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThClassPinsRec
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MovedOfSplitPl
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsRepSuppSplit
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSplitIdempotentsOfRelTraceOneModTwo
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsPrincipalLevelSubgroupOpen
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSplitAt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EvalVAlgebraMapMem
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinCongMemLevEnv
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links
 open scoped TensorProduct Matrix
@@ -91,7 +95,8 @@ theorem finCong_mono {V : HSp D} {M N : ℕ} (hd : M ∣ N) {k : GA D V} (hk : G
 theorem idem_eq_sum (e : Af D.host.F) (he : e * e = e) (S : Finset (HeightOneSpectrum (𝓞 D.host.F)))
     (hS : ∀ v, v ∈ S ↔ evalV D.host.F v e ≠ 0) : e = ∑ v ∈ S, singleV D.host.F v 1 := by
   refine af_ext _ fun w => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   by_cases hw : w ∈ S
   · rw [Finset.sum_eq_single w (fun v _ hv => evalV_singleV_ne _ v _ hv.symm) (fun h => absurd hw h),
       evalV_singleV_same]
@@ -118,7 +123,8 @@ theorem splitOffBad_of_suppSplit (V : HSp D) (N : ℕ) (h : GA D V) (hh : h ∈ 
     Subtype.ext (HeightOneSpectrum.ext (by rw [← hco, ← hco, hvw]))
   have hsum : ∑ v, ev v + cA D (∑ v, ev v) = fj D e₀ := by
     refine Eq.trans ?_ (congrArg (fj D) (idem_eq_sum e₀ h1 h2.toFinset (fun v => h2.mem_toFinset))).symm
-    rw [map_sum, map_sum, ← Finset.sum_add_distrib,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum, ← Finset.sum_add_distrib,
       ← Finset.sum_coe_sort h2.toFinset]
     exact Finset.sum_congr rfl fun v _ => (hsp v).2.2
   refine ⟨hh, ∑ v, ev v, Finset.univ.image Pv, ⟨⟨Function.extend Pv ev 0, ?_, ?_⟩, ?_⟩, ?_, ?_⟩
@@ -128,7 +134,8 @@ theorem splitOffBad_of_suppSplit (V : HSp D) (N : ℕ) (h : GA D V) (hh : h ∈ 
     exact hid v
   · rw [Finset.sum_image fun v _ w _ hvw => hinj hvw]
     exact Finset.sum_congr rfl fun v _ => (hinj.extend_apply _ _ v).symm
-  · rw [map_sum, Finset.sum_mul_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_mul_sum]
     refine Finset.sum_eq_zero fun v _ => Finset.sum_eq_zero fun w _ => ?_
     by_cases hvw : v = w
     · subst hvw; exact (hsp v).2.1

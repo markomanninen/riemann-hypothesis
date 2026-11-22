@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.LocalThetaKernels.LocpairAlg
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDictAd
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GlobalUnitScalingHaarProductFormula
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.BoxFunMemSB
+module
+
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.LocpairAlg
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDictAd
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GlobalUnitScalingHaarProductFormula
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.BoxFunMemSB
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,8 +90,8 @@ theorem tens_inj {r : (κ → AF F) → ℂ} (hr : ∀ x z, At (evFin F v) z →
   change φ (evA κ v (putA v x₀ y)) * r (putA v x₀ y) = φ' (evA κ v (putA v x₀ y)) * r (putA v x₀ y) at this
   rwa [ev_put (evA_inA v), inv_putA v hr, h₁, mul_one, mul_one] at this
 
-variable (v) in
 
+variable (v) in
 def IsLocOm {G : Type} [Monoid G] (om : G →* Module.End ℂ ((κ → AF F) → ℂ))
     (omv : G →* Module.End ℂ ((κ → Fv F v) → ℂ)) : Prop :=
   ∀ g, ∀ φ ∈ SB _, omv g φ ∈ SB _ ∧ Acts (evFin F v) (om g) φ (omv g φ)
@@ -117,9 +121,13 @@ theorem putA_zero (x : κ → AF F) : putA v x 0 = (1 - atPlace v (1 : Fv F v)) 
 theorem arg_eq (a : κ → Fv F v) (w : (κ → AF F) × (κ → AF F)) :
     inA κ v a ⬝ᵥ w.2 + ⅟(2 : AF F) * (w.1 ⬝ᵥ w.2 - putA v w.1 0 ⬝ᵥ putA v w.2 0) =
       atPlace v (a ⬝ᵥ (locW v w).2 + ⅟(2 : Fv F v) * ((locW v w).1 ⬝ᵥ (locW v w).2)) := by
+  have evFin_invOf_two : evFin F v (⅟(2 : AF F)) = ⅟(2 : Fv F v) := by
+    refine (invOf_eq_right_inv ?_).symm
+    have h : evFin F v (2 * ⅟(2 : AF F)) = 1 := by rw [mul_invOf_self, map_one]
+    rwa [map_mul, map_ofNat] at h
   refine extF v ?_ ?_
-  · rw [evFin_atPlace, map_add, map_mul, map_sub, ev_dot, ev_dot, ev_dot, evA_inA, ev_put (evA_inA v),
-      GlobalTheory.VacAny.evFin_invOf_two, zero_dotProduct, sub_zero]
+  · rw [evFin_atPlace, map_add (f := _), map_mul, map_sub, ev_dot, ev_dot, ev_dot, evA_inA, ev_put (evA_inA v),
+      evFin_invOf_two, zero_dotProduct, sub_zero]
     rfl
   · have e : ∀ i, awF v (inA κ v a i) = 0 := fun i => awF_at v _
     simp [awF_at, putA_zero, dotProduct, e]

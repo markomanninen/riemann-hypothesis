@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsSpan
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlobApprox
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelicUnitaryCongruenceTopology
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsSpan
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlobApprox
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelicUnitaryCongruenceTopology
+
+@[expose] public section
 
 open MeasureTheory Formalism.MainNotions.S NumberField Matrix
 open scoped TensorProduct
@@ -50,7 +54,7 @@ theorem exists_approx (hO : ∀ o : O, algebraMap O A o ∈ S)
   | add x y _ _ hx hy =>
     obtain ⟨l, z, hz, rfl⟩ := hx
     obtain ⟨l', z', hz', rfl⟩ := hy
-    exact ⟨l + l', z + z', add_mem hz hz', by rw [map_add, smul_add]; abel⟩
+    exact ⟨l + l', z + z', add_mem hz hz', by rw [map_add (f := _), smul_add]; abel⟩
   | smul s x _ hx =>
     obtain ⟨l, z, hz, rfl⟩ := hx
     obtain ⟨o, w, hw, e⟩ := hS s s.2
@@ -104,7 +108,7 @@ theorem congr_of_end (g : ℕ) (x y : GL n A)
     refine ⟨((y⁻¹ : GL n A) : Matrix n n A) *ᵥ (ι (θ l) + z - z'),
       (inv_mem hy _).1 (sub_mem (add_mem (Submodule.subset_span ⟨_, rfl⟩) hz) hz'), ?_⟩
     have e2 : (x : Matrix n n A) *ᵥ ι l - (y : Matrix n n A) *ᵥ ι l = (g : A) • (ι (θ l) + z - z') := by
-      rw [e, e', hθ, LinearMap.add_apply, LinearMap.smul_apply, map_add, map_nsmul,
+      rw [e, e', hθ, LinearMap.add_apply, LinearMap.smul_apply, map_add (f := _), map_nsmul,
         ← Nat.cast_smul_eq_nsmul A, smul_sub, smul_add]
       abel
     rw [← Matrix.mulVec_smul, ← e2, Matrix.mulVec_sub, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec,
@@ -188,7 +192,7 @@ theorem measure_Kset_le : ∀ (I : AutInst) (μf : Measure I.Gf) [μf.IsHaarMeas
   have hS : ∀ s ∈ IntAf I.F I.E, ∃ o : 𝓞 I.E, ∃ w ∈ IntAf I.F I.E,
       s = algebraMap _ (I.E ⊗[I.F] Af I.F) o + (g : I.E ⊗[I.F] Af I.F) * w := by
     intro s hs
-    obtain ⟨x, hx, w, hw, e⟩ := Formalism.UG.P.csSpan_approx Formalism.UG.P.csGlob_intAdApprox (g : 𝓞 I.F)
+    obtain ⟨x, hx, w, hw, e⟩ := Formalism.UG.P.csSpan_approx (F := I.F) (E := I.E) Formalism.UG.P.csGlob_intAdApprox (g : 𝓞 I.F)
       (Nat.cast_ne_zero.2 (by omega)) hs
     refine ⟨⟨x, hx⟩, w, hw, ?_⟩
     rw [e, ← Formalism.UG.P.adelstab_incl_C, map_natCast, map_natCast]

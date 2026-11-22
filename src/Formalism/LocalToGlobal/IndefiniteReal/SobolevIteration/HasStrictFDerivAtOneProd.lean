@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.HasStrictFDerivAtCay
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.HasStrictFDerivAtCay
+
+@[expose] public section
 
 noncomputable section
 

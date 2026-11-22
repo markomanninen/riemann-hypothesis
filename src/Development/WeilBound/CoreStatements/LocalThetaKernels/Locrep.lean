@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.InertDef
-import Development.WeilBound.CoreStatements.LocalThetaKernels.LocrepAd
-import Development.WeilBound.CoreStatements.LocalThetaKernels.LinearIndependentOfNotMem
-import Development.WeilBound.CoreStatements.LocalThetaKernels.ExistsSmallSubgroups
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardTraceAdelicAddCharLocalComponentNeOne
+module
+
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.InertDef
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.LocrepAd
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.LinearIndependentOfNotMem
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.ExistsSmallSubgroups
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardTraceAdelicAddCharLocalComponentNeOne
+
+@[expose] public section
 
 noncomputable section
 

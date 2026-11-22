@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.RowLat
-import Formalism.QuotientMetricDivisors.DivIntoDualShift
-import Formalism.QuotientMetricDivisors.ScalarLiftLowerBoundFull
-import Formalism.ThetaSupremumBounds.DivIneqExplicit6
-import Formalism.ThetaSupremumBounds.StatementCB
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.RowLat
+public import Formalism.QuotientMetricDivisors.DivIntoDualShift
+public import Formalism.QuotientMetricDivisors.ScalarLiftLowerBoundFull
+public import Formalism.ThetaSupremumBounds.DivIneqExplicit6
+public import Formalism.ThetaSupremumBounds.StatementCB
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder
@@ -383,90 +387,5 @@ def shiftZ (sg : HeightOneSpectrum (𝓞 K) → ℝ) : HeightOneSpectrum (𝓞 K
 def shiftLat {d : ℕ} (Nu : Submodule (𝓞 K) (Fin d → K)) (sg : HeightOneSpectrum (𝓞 K) → ℝ) :
     Submodule (𝓞 K) (Fin d → K) :=
   Formalism.HermitianLatticesTheory.idealSmul (shiftIdeal (shiftZ sg) : Submodule (𝓞 K) K) Nu
-
-structure DivInputs0 {Pl : Type} [Fintype Pl] [DecidableEq Pl] (P : IndefCore Df0 Df1 Dc Sp N) (R : RecNums Bs.J Pl)
-    (u : Dc.Mem) (Nu : Submodule (𝓞 K) (Fin (Dc.a u) → K)) (sg : HeightOneSpectrum (𝓞 K) → ℝ) where
-
-  Nu_lat : Submodule.IsLattice K Nu
-
-  sg_fin : (Function.support (shiftZ sg)).Finite
-
-  Xc_unit : ∀ v, IsUnit (Dc.Xc u v).det
-
-  a_pos : 0 < Dc.a u
-
-  X0 : InfinitePlace K → Matrix (Fin (Df1.nV Bs.μ0)) (Fin (Df1.nV Bs.μ0)) ℂ
-
-  base_matrix_det_unit : ∀ v, IsUnit (X0 v).det ∧ ((X0 v)⁻¹).conjTranspose * (X0 v)⁻¹ = (Df1.HV Bs.μ0).map v.embedding
-
-  ch : ColChain Dc u
-
-  hn : HtNums R (InfinitePlace K)
-
-  nP : ∀ v, Formalism.HN.opNormAt (Pi.basisFun K (Fin (ch.c (Fin.last ch.mm)))) (ch.X (Fin.last ch.mm))
-    (Pi.basisFun K (Fin (Df1.nV Bs.μ0))).dualBasis (Formalism.HN.dualFrame X0) v ch.PtL ^ 2 ≤ Real.exp hn.hPn
-
-  cb : CBData ch.X ch.Kj
-
-  nKcb : ∀ j v, Real.log (cb.sq j v) ≤ ∑ l ∈ Finset.univ.filter (fun l => ch.lf l = j), hn.sz l v
-
-  eig6 : ∑ j, R.hX j ≤ ∑ j, N.l6 j
-
-  eb : ∀ t, HeightOneSpectrum (𝓞 K) → Fin (Df0.dQ t) → Fin (Df0.dQ t) → K
-
-  heb : ∀ t w, IsLocBasis (Df0.abelian₂ t) w (eb t w)
-
-  Sy : Finset (HeightOneSpectrum (𝓞 K))
-
-  Sy_tw : P.base.Tw ⊆ Sy
-
-  G0 : ∀ y, y ∉ Sy → vw y (Df0.Gm eb (P.base.μ y) y) = 0
-
-  LG : ℝ
-
-  E3 : ℝ
-
-  E2 : Bs.J → ℝ
-
-  gy : HeightOneSpectrum (𝓞 K) → ℝ
-
-  ηy : HeightOneSpectrum (𝓞 K) → Bs.J → ℝ
-
-  bi : ∀ y ∈ Sy, (vw y (Df0.Gm eb (P.base.μ y) y) : ℝ) ≤ (P.base.D : ℝ) * gy y
-
-  bLG : ∑ y ∈ Sy, lw y * gy y ≤ LG
-
-  biv : ∀ y ∈ P.base.Tw, ∀ j, (jw (Df0.HT j (P.base.μ y)) y (Df0.Tl j (P.base.μ y)) : ℝ) ≤
-    ((ramw y : ℝ) * N.J0 (P.base.μ y) y j) * (P.base.D : ℝ) + ηy y j
-
-  borderedMinorImage : ∀ j, ∑ y ∈ P.base.Tw, lw y * ηy y j / (P.base.D : ℝ) ≤ E2 j
-
-  twisted_third_sum_le : ∑ y ∈ Sy, lw y * (2 / ellw y ^ 2) ≤ E3
-
-  El3 : ℝ
-
-  L3main : ∑ j, N.l3 j ≤ (∑ j, ∑ ρ, R.pq j * R.w j ρ * R.logOm) + El3
-
-  errB : El3 + LG + (∑ j, (N.E1 j + E2 j)) + E3 ≤ R.errB
-
-  Q : ℝ
-
-  de0 : 0 ≤ N.de
-
-  deQ : 3 * N.de * Q ≤ 1
-
-  Q1 : 1 ≤ Q
-
-  Qb : boundB P LG E3 E2 + N.hh + 28 * N.la ≤ Q
-
-  la_le : N.la ≤ R.lam0
-
-  constant_ge_twenty_eight : 28 ≤ R.C0
-
-structure DivInputs {Pl : Type} [Fintype Pl] [DecidableEq Pl] (P : IndefCore Df0 Df1 Dc Sp N) (R : RecNums Bs.J Pl)
-    (u : Dc.Mem) (Nu : Submodule (𝓞 K) (Fin (Dc.a u) → K)) (sg : HeightOneSpectrum (𝓞 K) → ℝ) extends DivInputs0 P R u Nu sg where
-
-  val2 : ∀ w, ∀ φ ∈ Nu, ∀ F ∈ Df1.Mt (P.cols.μ w),
-    Dc.Pt u (P.cols.μ w) φ F = 0 ∨ sg w ≤ (vw w (Dc.Pt u (P.cols.μ w) φ F) : ℝ)
 
 end Formalism.L2.DIV

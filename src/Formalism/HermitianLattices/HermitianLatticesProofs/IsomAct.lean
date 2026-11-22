@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.HermitianLattices.StatementLat
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.StatementLat
+
+@[expose] public section
 
 open Module
 
@@ -41,8 +45,16 @@ theorem isomAct_lattice (g : V ≃ₗ[K] V) (L : Submodule R V) (hL : Submodule.
     ext x
     simp [gmap]
   refine ⟨hL.fg.map _, ?_⟩
-  rw [e, Submodule.span_image, hL.span_eq_top, Submodule.map_top]
-  exact LinearEquiv.range g
+  rw [e]
+  intro s hs hli
+  change s ⊆ ⇑g '' _ at hs
+  have hpre := Set.preimage_mono (f := ⇑g) hs
+  rw [Set.preimage_image_eq _ g.injective] at hpre
+  rw [← Set.image_preimage_eq s g.surjective] at hli ⊢
+  exact (linearIndepOn_id_imageₛ_iff (f := g.toLinearMap) g.injective.injOn).2
+    (hL.linearIndepOn _ hpre
+      ((linearIndepOn_id_imageₛ_iff (f := g.toLinearMap.restrictScalars R)
+        g.injective.injOn).1 hli))
 
 theorem isomAct_mem_locS {W : Type*} [AddCommGroup W] [Module R W] (S : Submonoid R)
     (L : Submodule R W) (x : W) : x ∈ locS S L ↔ ∃ s ∈ S, s • x ∈ L := Iff.rfl

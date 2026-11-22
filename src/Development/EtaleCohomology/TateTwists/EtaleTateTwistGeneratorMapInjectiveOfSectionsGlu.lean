@@ -1,8 +1,12 @@
-import Development.EtaleCohomology.TateTwists.EtaleTateTwistGeneratorMapIsIsoOfInjSurj
-import Development.EtaleCohomology.TateTwists.EtaleTateTwistSectionsLocallyGenerated
-import Development.EtaleCohomology.TateTwists.EtaleLocalPropertyBasicClosure
-import Development.EtaleCohomology.TateTwists.EtaleSheafSectionsSeparatedAndGlue
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.SelmerDuality.ZModInj
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleTateTwistGeneratorMapIsIsoOfInjSurj
+public import Development.EtaleCohomology.TateTwists.EtaleTateTwistSectionsLocallyGenerated
+public import Development.EtaleCohomology.TateTwists.EtaleLocalPropertyBasicClosure
+public import Development.EtaleCohomology.TateTwists.EtaleSheafSectionsSeparatedAndGlue
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.SelmerDuality.ZModInj
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 open scoped TensorProduct DirectSum
@@ -96,8 +100,8 @@ theorem sgl_smul_eq_zero {q : ℕ} {F : Shv (ZMod q)} {U : Scheme.{0}} (c : ℕ)
 
 end LateralTheory.EtaleFoundations.GenIsoInj
 
-open LateralTheory.EtaleFoundations.GenIsoInj LateralTheory.EtaleFoundations.TwMulPf in
 
+open LateralTheory.EtaleFoundations.GenIsoInj LateralTheory.EtaleFoundations.TwMulPf in
 theorem LateralTheory.EtaleFoundations.etale_tate_twist_generator_map_injective_of_sections_glue (hts : LateralTheory.EtaleFoundations.EtaleTateTwistSectionsLocallyGenerated)
     (hlb : LateralTheory.EtaleFoundations.EtaleLocalPropertyBasicClosure) (hsg : LateralTheory.EtaleFoundations.EtaleSheafSectionsSeparatedAndGlue) :
     LateralTheory.EtaleFoundations.EtaleTateTwistGeneratorMapSectionsInjective := by
@@ -105,13 +109,13 @@ theorem LateralTheory.EtaleFoundations.etale_tate_twist_generator_map_injective_
   intro q _ i j k T μ hμ hk φ hφ U a ha
   have nt : ∀ (l : ℤ) (W : Scheme.{0}) [Nonempty W] (ζ : Prim q Γ(W, ⊤)) (c : ℕ),
       c • Sec.map (sglι (tw q l)) (twGen l ζ) = 0 → q ∣ c :=
-    fun l W _ ζ c h => (hts q l).2.2.1 W ζ c (sgl_smul_eq_zero c _ h)
+    fun l W _ ζ c h => (hts q l).2.2.1 W ζ c (LateralTheory.EtaleFoundations.GenIsoInj.sgl_smul_eq_zero c _ h)
   refine hlb.2.2.2.2.1 U _ (hlb.2.1 U _ _ ((hts q k).1 U a) ?_)
   rintro V g (h0 | ⟨ζ, c, hc⟩)
-  · exact hlb.1 V _ fun W h => by rw [res_comp, h0, sr_zero]
+  · exact hlb.1 V _ fun W h => by rw [LateralTheory.EtaleFoundations.GenIsoInj.res_comp, h0, LateralTheory.EtaleFoundations.GenIsoInj.sr_zero]
   · have h1 : c • μ.mul V 0 0 0 (add_zero 0) (Sec.map (sglι _) (twGen i ζ))
         (Sec.map (sglι _) (twGen j ζ)) = 0 := by
-      rw [← hφ V ζ, ← sm_nsmul, ← sm_nsmul, ← hc, ← sec_res_map, ha, sr_zero, sm_zero]
+      rw [← hφ V ζ, ← LateralTheory.EtaleFoundations.GenIsoInj.sm_nsmul, ← LateralTheory.EtaleFoundations.GenIsoInj.sm_nsmul, ← hc, ← LateralTheory.EtaleFoundations.TwMulPf.sec_res_map, ha, LateralTheory.EtaleFoundations.GenIsoInj.sr_zero, LateralTheory.EtaleFoundations.GenIsoInj.sm_zero]
     let x : Tens (sgl (tw q i)) (sgl (tw q j)) V 0 :=
       DirectSum.lof (ULift.{1} (ZMod q)) {p : ℤ × ℤ // p.1 + p.2 = 0}
         (fun p => Sec ((sgl (tw q i)).X p.1.1) V ⊗[ULift.{1} (ZMod q)] Sec ((sgl (tw q j)).X p.1.2) V)
@@ -127,9 +131,9 @@ theorem LateralTheory.EtaleFoundations.etale_tate_twist_generator_map_injective_
         ⟨(0, 0), rfl⟩) hW
       simpa [x, Tens.res, DirectSum.component.lof_self] using this
     show Sec.res (h ≫ g) a = 0
-    rw [res_comp, hc, sr_nsmul]
+    rw [LateralTheory.EtaleFoundations.GenIsoInj.res_comp, hc, LateralTheory.EtaleFoundations.GenIsoInj.sr_nsmul]
     by_cases hne : Nonempty W
-    · rw [sec_res_map, sec_res_map, (hts q i).2.2.2.1, (hts q j).2.2.2.1] at hW'
-      exact q_smul c (dvd_of_tmul _ _ (nt i W _) (nt j W _) c hW') _
+    · rw [LateralTheory.EtaleFoundations.TwMulPf.sec_res_map, LateralTheory.EtaleFoundations.TwMulPf.sec_res_map, (hts q i).2.2.2.1, (hts q j).2.2.2.1] at hW'
+      exact LateralTheory.EtaleFoundations.GenIsoInj.q_smul c (LateralTheory.EtaleFoundations.GenIsoInj.dvd_of_tmul _ _ (nt i W _) (nt j W _) c hW') _
     · have : IsEmpty W := not_nonempty_iff.1 hne
       exact (hsg (ZMod q) (tw q k) W).1 _ _ (hlb.2.2.2.2.2.2 W _)

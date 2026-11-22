@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qh34.aux1.{u_1} :
     ∀ (K : Type u_1) [inst : Field K] [inst_1 : NumberField K],
@@ -24,7 +28,7 @@ theorem UpperTheory.Reformulated.B.Qh34.aux2.{u_1} :
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun w _ => ?_
   have h : (x + y) w = x w + y w := rfl
-  rw [h, map_add, Complex.add_re, mul_add]
+  rw [h, map_add (f := _), Complex.add_re, mul_add]
 
 noncomputable def UpperTheory.Reformulated.B.Qh34.infiniteTrace.{u_1} :
     (K : Type u_1) → [inst : Field K] → [NumberField K] → NumberField.InfiniteAdeleRing K →+ ℝ :=

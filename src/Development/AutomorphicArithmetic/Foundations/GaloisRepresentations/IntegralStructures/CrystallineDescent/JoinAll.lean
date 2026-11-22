@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.CrystallineDescent.PatchOneAlt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.CoreAtQIffRowQ
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsSplitAtOfDegOne
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.CrystallineDescent.PatchOneAlt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.CoreAtQIffRowQ
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsSplitAtOfDegOne
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -21,7 +26,10 @@ theorem goodGuard_usPl (h1 : OneUs) (E Ω : Type) [Field E] [NumberField E] [IsC
   refine (hD.preimage (Homeomorph.inv (G E Ω)).isOpenMap).mono ?_
   rintro g ⟨v, hv, hdeg, A, hA, hσ⟩
   simp only [Set.mem_union, Set.mem_setOf_eq, not_or, not_not] at hv
-  exact ⟨v, hv.1, hv.2.1 (((GlobalTheory.absNorm_prime_iff_inertiaDeg_eq_one_and_finite_ramified E).1 v).2 hdeg), hv.2.2, A, hA, hσ⟩
+  have hp : (normV v).Prime := by
+    simpa only [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply] using
+      (((GlobalTheory.absNorm_prime_iff_inertiaDeg_eq_one_and_finite_ramified E).1 v).2 hdeg)
+  exact ⟨v, hv.1, hv.2.1 hp, hv.2.2, A, hA, hσ⟩
 
 theorem joinAll_of (h1 : OneUs) (hS : SubtractQ) : JoinAll := by
   intro hT hU E Ω _ _ _ _ _ _ l _ ι hF hI d hd hsq n hn

@@ -1,32 +1,36 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
-import Development.AbelianVarietyTheory.Definitions.Degenerations.ExistsGenPullTriv
-import Development.AbelianVarietyTheory.Definitions.Degenerations.MorAlgSt
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import Development.AbelianVarietyTheory.Definitions.Uniformization.WCompat
-import Development.AbelianVarietyTheory.Definitions.Degenerations.ToATotal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SABBaseChangeSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocalC
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsCPMapCompCancel
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.EvenCubicUnitEqOne
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ConnectedSpaceOfSection
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ConnectedSpaceSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueAlgEquivOfCompatibleQuotient
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsGtCoordOfTorusQuotient
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.NonemptyFormalUniformisationTowerStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.NonemptyAlgebraisationFormalTowerAmpleStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsAdditiveWeightPointsOfTorusTowerStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CubicalBundleRelAmpleOfAmpleFibresStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.KTrivOfClosedFibreLocalRingStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TorusCoordinatesCompatOfTorusCompatStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.ExistsGenPullTriv
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.MorAlgSt
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.WCompat
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.ToATotal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SABBaseChangeSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocalC
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsCPMapCompCancel
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.EvenCubicUnitEqOne
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ConnectedSpaceOfSection
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ConnectedSpaceSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueAlgEquivOfCompatibleQuotient
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsGtCoordOfTorusQuotient
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.NonemptyFormalUniformisationTowerStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.NonemptyAlgebraisationFormalTowerAmpleStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsAdditiveWeightPointsOfTorusTowerStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CubicalBundleRelAmpleOfAmpleFibresStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.KTrivOfClosedFibreLocalRingStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TorusCoordinatesCompatOfTorusCompatStatement
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -203,8 +207,8 @@ section Vals
 variable {S S' : Scheme.{0}} {f : S' ⟶ S} {G : Over S'} {H B : Over S} [GrpObj G] [IsCommMonObj G] [GrpObj H]
   [IsCommMonObj H] [GrpObj B] [IsCommMonObj B]
 
-omit [GrpObj G] [IsCommMonObj G] [IsCommMonObj H] in
 
+omit [GrpObj G] [IsCommMonObj G] [IsCommMonObj H] in
 theorem cubV_toBase {L : RigLB H} (c : CubicalStr H L) (F : (Over.map f).obj G ⟶ H)
     (hF : (show G.left ⟶ H.left from F.left) ≫ H.hom = G.hom ≫ f) {T : Over S'} (z : T.left) (J)
     (x y u : T ⟶ G) :
@@ -268,15 +272,15 @@ theorem sym_of_cp {S : Scheme.{0}} {B : Over S} [GrpObj B] [IsCommMonObj B] (M :
     fin_cases k
     exacts [rfl, (Category.comp_id _).symm]) M.sym M.sym_gen⟩
 
-omit [IsDomain R] in
 
+omit [IsDomain R] in
 theorem isLocalRing_quot (hI : I ≠ ⊤) (e : ℕ) : IsLocalRing (R ⧸ I ^ (e + 1)) := by
   have : Nontrivial (R ⧸ I ^ (e + 1)) := Ideal.Quotient.nontrivial_iff.2 fun h =>
     hI (top_le_iff.1 (h ▸ Ideal.pow_le_self (Nat.succ_ne_zero e)))
   exact IsLocalRing.of_surjective' _ Ideal.Quotient.mk_surjective
 
-omit [IsDomain R] [IsLocalRing R] [IsCommMonObj G] in
 
+omit [IsDomain R] [IsLocalRing R] [IsCommMonObj G] in
 theorem isGrpPullback_thickMap (e : ℕ) :
     IsGrpPullback (thickObj R I e G) (thickObj R I (e + 1) G) (thickTrans R I e) (thickMap R I e G) :=
   (isGrpPullback_pullback G (thick R I (e + 1))).cancel
@@ -340,16 +344,16 @@ end Assemble
 section Principal
 variable {R : Type} [CommRing R] [IsDomain R] [IsLocalRing R] {I : Ideal R}
 
-omit [IsDomain R] in
 
+omit [IsDomain R] in
 theorem isAdicComplete_quot [IsNoetherianRing R] (h : IsAdicComplete (IsLocalRing.maximalIdeal R) R) (J : Ideal R)
     [IsLocalRing (R ⧸ J)] : IsAdicComplete (IsLocalRing.maximalIdeal (R ⧸ J)) (R ⧸ J) := by
   have := GlobalTheory.isAdicComplete_map_of_finite (IsLocalRing.maximalIdeal R) (R ⧸ J)
   rwa [show algebraMap R (R ⧸ J) = Ideal.Quotient.mk J from rfl,
     IsLocalRing.map_maximalIdeal_of_surjective _ Ideal.Quotient.mk_surjective] at this
 
-omit [IsDomain R] in
 
+omit [IsDomain R] in
 theorem kTriv_closedFibre {J : Ideal R} (hJ : J ≠ ⊤) {B : Over (Sp R)} [GrpObj B] {B₀ : Over (Sp (R ⧸ J))} [GrpObj B₀]
     {b : B₀.left ⟶ B.left} (hb : IsGrpPullback B₀ B (spMap (Ideal.Quotient.mk J)) b) {M : LB B.left} {M₀ : LB B₀.left}
     (hM : M.IsLB) (hM₀ : M₀.IsLB) {v : LB.Iso M₀ (M.pull b)} (hv : v.IsGen) (hK : KTriv B₀ M₀) :

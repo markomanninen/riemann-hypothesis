@@ -1,14 +1,19 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.BijectiveSmulChartSec
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsQuasicoherentOfForallExistsAffine
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSumSmulSeparatingInertia
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsActionOfIsPullback
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSmulApplyEqOfEqOnInvariants
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.BijectiveSmulChartSec
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsQuasicoherentOfForallExistsAffine
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSumSmulSeparatingInertia
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsActionOfIsPullback
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSmulApplyEqOfEqOnInvariants
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct Pointwise
@@ -31,7 +36,8 @@ theorem exists_trace_ne_zero {Γ B A K : Type} [Group Γ] [Fintype Γ] [CommRing
     simp only [H, mul_zero, Finset.sum_const_zero]
   have h2 : ∑ j, ev (f (d j)) * ev (∑ g : Γ, g • (f (c j) * x)) =
       ∑ g : Γ, ev (f (∑ j, d j * g • c j)) * ev (g • x) := by
-    simp only [map_sum, Finset.mul_sum, Finset.sum_mul, smul_mul', map_mul, hf, _root_.mul_assoc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Finset.mul_sum, Finset.sum_mul, smul_mul', map_mul, hf, _root_.mul_assoc]
     rw [Finset.sum_comm]
   have h3 : ∀ g : Γ, ev (f (∑ j, d j * g • c j)) * ev (g • x) =
       if g ∈ (RingHom.ker (ev.comp f)).inertia Γ then ev (f s) * ev x else 0 := by
@@ -164,17 +170,17 @@ theorem le_pull_chart {L : LB X} (φ : Y ⟶ X) (O : X.Opens) (i : L.ι) :
     ((φ.preimage_mono inf_le_right).trans (pull_U φ (fun _ => i)).ge)
 
 theorem exists_descent {Γ : Type} [Group Γ] [Fintype Γ] {Y' : Scheme.{0}} (τ : Γ →* Aut Y)
-    (φ : Y ⟶ Y') (hφ : ∀ g, (τ g).hom ≫ φ = φ)
+    (φ : Y ⟶ Y') (hφ : ∀ g, (τ g).asIso.hom ≫ φ = φ)
     (hq : ∀ V : Y'.Opens, Function.Injective (φ.app V).hom ∧ ∀ f : Γ(Y, φ ⁻¹ᵁ V),
-      (∀ g (h : φ ⁻¹ᵁ V ≤ (τ g).hom ⁻¹ᵁ (φ ⁻¹ᵁ V)), ((τ g).hom.appLE _ _ h).hom f = f) →
+      (∀ g (h : φ ⁻¹ᵁ V ≤ (τ g).asIso.hom ⁻¹ᵁ (φ ⁻¹ᵁ V)), ((τ g).asIso.hom.appLE _ _ h).hom f = f) →
         f ∈ Set.range (φ.app V).hom)
     {L : LB Y'} (O : Y'.Opens) (s : Γ(toMod (L.pull φ), φ ⁻¹ᵁ O)) :
     ∃ t : Γ(toMod L, O), ∀ i, (φ.app (O ⊓ L.U i)).hom (coord t i) =
-      ∑ g : Γ, ((τ g⁻¹).hom.appLE _ _ (preimage_le_of_invariant τ φ hφ _ _)).hom
+      ∑ g : Γ, ((τ g⁻¹).asIso.hom.appLE _ _ (preimage_le_of_invariant τ φ hφ _ _)).hom
         (resG Y (le_pull_chart φ O i :
           φ ⁻¹ᵁ (O ⊓ L.U i) ≤ φ ⁻¹ᵁ O ⊓ (L.pull φ).U (fun _ => i)) (coord s (fun _ => i))) := by
   have H (i : L.ι) (u : Γ(Y, φ ⁻¹ᵁ (O ⊓ L.U i))) :
-      (∑ g : Γ, ((τ g⁻¹).hom.appLE _ _ (preimage_le_of_invariant τ φ hφ _ _)).hom u) ∈
+      (∑ g : Γ, ((τ g⁻¹).asIso.hom.appLE _ _ (preimage_le_of_invariant τ φ hφ _ _)).hom u) ∈
         Set.range (φ.app (O ⊓ L.U i)).hom := by
     refine (hq _).2 _ fun k _ => ?_
     let := sectionsAction τ _ (preimage_le_of_invariant τ φ hφ (O ⊓ L.U i))
@@ -182,7 +188,7 @@ theorem exists_descent {Γ : Type} [Group Γ] [Fintype Γ] {Y' : Scheme.{0}} (τ
       rw [Finset.smul_sum]
       simp only [← mul_smul]
       exact Equiv.sum_comp (Equiv.mulLeft k⁻¹) (fun g => g • u)
-    have e' : ((τ k⁻¹⁻¹).hom.appLE _ _ (preimage_le_of_invariant τ φ hφ _ _)).hom
+    have e' : ((τ k⁻¹⁻¹).asIso.hom.appLE _ _ (preimage_le_of_invariant τ φ hφ _ _)).hom
       (∑ g : Γ, g • u) = ∑ g : Γ, g • u := e
     simp only [inv_inv] at e'
     exact e'
@@ -195,9 +201,10 @@ theorem exists_descent {Γ : Type} [Group Γ] [Fintype Γ] {Y' : Scheme.{0}} (τ
   have lj : O ⊓ L.U i ⊓ L.U j ≤ O ⊓ L.U j := inf_le_inf_right _ inf_le_left
   have key (k : L.ι) (lk : O ⊓ L.U i ⊓ L.U j ≤ O ⊓ L.U k) :
       (φ.app _).hom (resG Y' lk (t k)) = ∑ g : Γ,
-        ((τ g⁻¹).hom.appLE _ _ (preimage_le_of_invariant τ φ hφ (O ⊓ L.U i ⊓ L.U j) _)).hom
+        ((τ g⁻¹).asIso.hom.appLE _ _ (preimage_le_of_invariant τ φ hφ (O ⊓ L.U i ⊓ L.U j) _)).hom
           (resG Y ((φ.preimage_mono lk).trans (l k)) (coord s (fun _ => k))) := by
-    rw [Scheme.Hom.app_eq_appLE, appLE_resG, ← resG_app, ht k, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Scheme.Hom.app_eq_appLE, appLE_resG, ← resG_app, ht k, map_sum]
     refine Finset.sum_congr rfl fun g _ => ?_
     rw [resG_appLE, appLE_resG, appLE_resG]
   rw [map_mul, key i li, key j lj, Finset.mul_sum]
@@ -234,16 +241,16 @@ theorem evalAt_appLE {k : Type} [Field k] (ζ : Sp k ⟶ Y) (f : Y ⟶ X) (U : X
     RingHom.comp_apply]
 
 theorem mem_inertia_iff {Γ k : Type} [Group Γ] [Field k] (ρ : Γ →* Aut X) {W : X.Opens}
-    (hW : IsAffineOpen W) (hst : ∀ g, W ≤ (ρ g).hom ⁻¹ᵁ W) (ξ : Sp k ⟶ X) (h : ⊤ ≤ ξ ⁻¹ᵁ W)
+    (hW : IsAffineOpen W) (hst : ∀ g, W ≤ (ρ g).asIso.hom ⁻¹ᵁ W) (ξ : Sp k ⟶ X) (h : ⊤ ≤ ξ ⁻¹ᵁ W)
     (g : Γ) :
     letI := sectionsAction ρ W hst
-    g⁻¹ ∈ (RingHom.ker (evalAt ξ W h)).inertia Γ ↔ ξ ≫ (ρ g).hom = ξ := by
+    g⁻¹ ∈ (RingHom.ker (evalAt ξ W h)).inertia Γ ↔ ξ ≫ (ρ g).asIso.hom = ξ := by
   let := sectionsAction ρ W hst
-  have e (b : Γ(X, W)) : g⁻¹ • b = ((ρ g).hom.appLE W W (hst g)).hom b := by
-    have : g⁻¹ • b = ((ρ g⁻¹⁻¹).hom.appLE W W (hst _)).hom b := rfl
+  have e (b : Γ(X, W)) : g⁻¹ • b = ((ρ g).asIso.hom.appLE W W (hst g)).hom b := by
+    have : g⁻¹ • b = ((ρ g⁻¹⁻¹).asIso.hom.appLE W W (hst _)).hom b := rfl
     simpa only [inv_inv] using this
   refine ⟨fun hg => ?_, fun hg b => ?_⟩
-  · have e1 : ξ.appLE _ ⊤ h = (ρ g).hom.appLE _ _ (hst _) ≫ ξ.appLE _ ⊤ h := by
+  · have e1 : ξ.appLE _ ⊤ h = (ρ g).asIso.hom.appLE _ _ (hst _) ≫ ξ.appLE _ ⊤ h := by
       rw [← cancel_mono (Scheme.ΓSpecIso (.of k)).hom]
       ext b
       have : evalAt ξ W h (g⁻¹ • b - b) = 0 := hg b
@@ -267,15 +274,15 @@ theorem nonvanishing_pullSec {L : LB X} (φ : Y ⟶ X) {O : X.Opens} (t : Γ(toM
 
 theorem exists_descent_nonvanishing {Γ : Type} [Group Γ] [Finite Γ] {X' G G' : Scheme.{0}}
     (ρ : Γ →* Aut X) (π : X ⟶ X') (p : G ⟶ X) (p' : G' ⟶ X') (φ : G ⟶ G') (τ : Γ →* Aut G)
-    (hπ : ∀ g, (ρ g).hom ≫ π = π) (w : φ ≫ p' = p ≫ π) (hφ : ∀ g, (τ g).hom ≫ φ = φ)
-    (hp : ∀ g, (τ g).hom ≫ p = p ≫ (ρ g).hom)
+    (hπ : ∀ g, (ρ g).asIso.hom ≫ π = π) (w : φ ≫ p' = p ≫ π) (hφ : ∀ g, (τ g).asIso.hom ≫ φ = φ)
+    (hp : ∀ g, (τ g).asIso.hom ≫ p = p ≫ (ρ g).asIso.hom)
     (hq : ∀ V : G'.Opens, Function.Injective (φ.app V).hom ∧ ∀ f : Γ(G, φ ⁻¹ᵁ V),
-      (∀ g (h : φ ⁻¹ᵁ V ≤ (τ g).hom ⁻¹ᵁ (φ ⁻¹ᵁ V)), ((τ g).hom.appLE _ _ h).hom f = f) →
+      (∀ g (h : φ ⁻¹ᵁ V ≤ (τ g).asIso.hom ⁻¹ᵁ (φ ⁻¹ᵁ V)), ((τ g).asIso.hom.appLE _ _ h).hom f = f) →
         f ∈ Set.range (φ.app V).hom)
     (htame : ∀ (k : Type) [Field k] [IsAlgClosed k] (x : Sp k ⟶ X),
-      (Nat.card {g // x ≫ (ρ g).hom = x} : k) ≠ 0)
-    (hfib : ∀ (k : Type) [Field k] [IsAlgClosed k] (x : Sp k ⟶ X) g, x ≫ (ρ g).hom = x →
-      pullback.fst p x ≫ (τ g).hom = pullback.fst p x)
+      (Nat.card {g // x ≫ (ρ g).asIso.hom = x} : k) ≠ 0)
+    (hfib : ∀ (k : Type) [Field k] [IsAlgClosed k] (x : Sp k ⟶ X) g, x ≫ (ρ g).asIso.hom = x →
+      pullback.fst p x ≫ (τ g).asIso.hom = pullback.fst p x)
     {L : LB G'} {V : X'.Opens} (hW : IsAffineOpen (π ⁻¹ᵁ V))
     (s : Γ(toMod (L.pull φ), φ ⁻¹ᵁ p' ⁻¹ᵁ V)) (u : G) (hs : ∃ j, u ∈ G.basicOpen (coord s j)) :
     ∃ (t : Γ(toMod L, p' ⁻¹ᵁ V)) (i : L.ι), φ u ∈ G'.basicOpen (coord t i) := by
@@ -305,8 +312,8 @@ theorem exists_descent_nonvanishing {Γ : Type} [Group Γ] [Finite Γ] {X' G G' 
   have hI (g : Γ) := mem_inertia_iff ρ hW hst (ζ ≫ p) h2 g
   let z : Sp k := default
   obtain ⟨c, hc⟩ := exists_trace_ne_zero (Γ := Γ) (p.appLE _ _ hA).hom (fun g b => by
-      change (p.appLE _ _ hA).hom (((ρ g⁻¹).hom.appLE _ _ (hst _)).hom b) =
-        ((τ g⁻¹).hom.appLE _ _ (hst' _)).hom ((p.appLE _ _ hA).hom b)
+      change (p.appLE _ _ hA).hom (((ρ g⁻¹).asIso.hom.appLE _ _ (hst _)).hom b) =
+        ((τ g⁻¹).asIso.hom.appLE _ _ (hst' _)).hom ((p.appLE _ _ hA).hom b)
       simp only [← RingHom.comp_apply, ← CommRingCat.hom_comp, Scheme.Hom.appLE_comp_appLE, hp])
     (evalAt ζ _ h1) (by
       rw [hev]
@@ -316,7 +323,7 @@ theorem exists_descent_nonvanishing {Γ : Type} [Group Γ] [Finite Γ] {X' G G' 
       rw [hev, ← inv_inv g, hI] at hg
       have := pullback.lift ζ (𝟙 _) (Category.id_comp _).symm ≫= hfib k (ζ ≫ p) _ hg
       rw [pullback.lift_fst_assoc, pullback.lift_fst] at this
-      exact evalAt_appLE ζ (τ g⁻¹).hom _ _ h1 (hst' _) _ ζ this h1)
+      exact evalAt_appLE ζ (τ g⁻¹).asIso.hom _ _ h1 (hst' _) _ ζ this h1)
     (by
       rw [evalAt_ne_zero _ _ _ _ z, hζ, mem_basicOpen_resG]
       exact ⟨hu, hj⟩)
@@ -336,7 +343,7 @@ namespace GlobalTheory
 open DescTheta GlobalTheory.LB
 
 theorem exists_secOn_nonvanishing_of_tame_quotient :
-    ∀ (Γ : Type) [Group Γ] [Finite Γ] (X X' : Scheme.{0}) (ρ : Γ →* Aut X) (π : X ⟶ X') (G : Over X) (G' : Over X') (φ : G.left ⟶ G'.left) (τ : Γ →* Aut G.left) (L : LB G.left) (L' : LB G'.left), (IsAffineHom π ∧ (∀ g, (ρ g).hom ≫ π = π) ∧ ∀ V : X'.Opens, Function.Injective (π.app V).hom ∧ ∀ f : Γ(X, π ⁻¹ᵁ V), (∀ g (h : π ⁻¹ᵁ V ≤ (ρ g).hom ⁻¹ᵁ (π ⁻¹ᵁ V)), ((ρ g).hom.appLE _ _ h).hom f = f) → f ∈ Set.range (π.app V).hom) → IsPullback φ G.hom G'.hom π → Flat G'.hom → (∀ g, (τ g).hom ≫ φ = φ ∧ (τ g).hom ≫ G.hom = G.hom ≫ (ρ g).hom) → (∀ (k : Type) [Field k] [IsAlgClosed k] (x : Sp k ⟶ X), (Nat.card {g // x ≫ (ρ g).hom = x} : k) ≠ 0) → (∀ (k : Type) [Field k] [IsAlgClosed k] (x : Sp k ⟶ X) g, x ≫ (ρ g).hom = x → pullback.fst G.hom x ≫ (τ g).hom = pullback.fst G.hom x) → L.IsLB → L'.IsLB → LBIso L (L'.pull φ) → PushInvertible G L → (∀ x : X', ∃ V : X'.Opens, x ∈ V ∧ ∃ θ ∈ secOn L' (G'.hom ⁻¹ᵁ V), ∀ y ∈ V, ∃ (g : G'.left) (i : L'.ι), G'.hom g = y ∧ g ∈ G'.left.basicOpen (θ i)) := by
+    ∀ (Γ : Type) [Group Γ] [Finite Γ] (X X' : Scheme.{0}) (ρ : Γ →* Aut X) (π : X ⟶ X') (G : Over X) (G' : Over X') (φ : G.left ⟶ G'.left) (τ : Γ →* Aut G.left) (L : LB G.left) (L' : LB G'.left), (IsAffineHom π ∧ (∀ g, (ρ g).asIso.hom ≫ π = π) ∧ ∀ V : X'.Opens, Function.Injective (π.app V).hom ∧ ∀ f : Γ(X, π ⁻¹ᵁ V), (∀ g (h : π ⁻¹ᵁ V ≤ (ρ g).asIso.hom ⁻¹ᵁ (π ⁻¹ᵁ V)), ((ρ g).asIso.hom.appLE _ _ h).hom f = f) → f ∈ Set.range (π.app V).hom) → IsPullback φ G.hom G'.hom π → Flat G'.hom → (∀ g, (τ g).asIso.hom ≫ φ = φ ∧ (τ g).asIso.hom ≫ G.hom = G.hom ≫ (ρ g).asIso.hom) → (∀ (k : Type) [Field k] [IsAlgClosed k] (x : Sp k ⟶ X), (Nat.card {g // x ≫ (ρ g).asIso.hom = x} : k) ≠ 0) → (∀ (k : Type) [Field k] [IsAlgClosed k] (x : Sp k ⟶ X) g, x ≫ (ρ g).asIso.hom = x → pullback.fst G.hom x ≫ (τ g).asIso.hom = pullback.fst G.hom x) → L.IsLB → L'.IsLB → LBIso L (L'.pull φ) → PushInvertible G L → (∀ x : X', ∃ V : X'.Opens, x ∈ V ∧ ∃ θ ∈ secOn L' (G'.hom ⁻¹ᵁ V), ∀ y ∈ V, ∃ (g : G'.left) (i : L'.ι), G'.hom g = y ∧ g ∈ G'.left.basicOpen (θ i)) := by
   intro Γ _ _ X X' ρ π G G' φ τ L L' hQ H hflat hτ htame hfib hL hL' ⟨w, hw⟩ hP x'
   obtain ⟨-, hφ, hq⟩ := (quotient_flat_baseChange Γ X X' _ _ ρ π φ G.hom G'.hom hQ H hflat).2 τ hτ
   obtain ⟨-, hsurj, -, -, hopen⟩ := quotient_isIntegral_surjective_orbits Γ X X' ρ π hQ
@@ -360,11 +367,11 @@ theorem exists_secOn_nonvanishing_of_tame_quotient :
       ∃ i, φ y ∈ G'.left.basicOpen (coord t i) := by
     rw [← nonvanishing_iso hL hM w hw, hs', nonvanishing_pullSec]
   obtain ⟨U, -, hxU, hU⟩ := exists_nhds_nonvanishing hP e.ge s' u hx ((key u).2 ht)
-  obtain ⟨V', hV'⟩ := hopen (⨆ g, (ρ g).hom ⁻¹ᵁ U) fun g => by
-    have (h : Γ) : (ρ g).hom ⁻¹ᵁ (ρ h).hom ⁻¹ᵁ U = (ρ (h * g)).hom ⁻¹ᵁ U := by
+  obtain ⟨V', hV'⟩ := hopen (⨆ g, (ρ g).asIso.hom ⁻¹ᵁ U) fun g => by
+    have (h : Γ) : (ρ g).asIso.hom ⁻¹ᵁ (ρ h).asIso.hom ⁻¹ᵁ U = (ρ (h * g)).asIso.hom ⁻¹ᵁ U := by
       rw [map_mul]; rfl
     simp only [Scheme.Hom.preimage_iSup, this]
-    exact Equiv.iSup_comp (g := fun h => (ρ h).hom ⁻¹ᵁ U) (Equiv.mulRight g)
+    exact Equiv.iSup_comp (g := fun h => (ρ h).asIso.hom ⁻¹ᵁ U) (Equiv.mulRight g)
   have hle : G'.hom ⁻¹ᵁ (V ⊓ V') ≤ G'.hom ⁻¹ᵁ V := G'.hom.preimage_mono inf_le_left
   refine ⟨V ⊓ V', ⟨hx, hV'.ge (TopologicalSpace.Opens.mem_iSup.2 ⟨1, ?_⟩)⟩, _,
     coord_mem ((toMod L').presheaf.map (homOfLE hle).op t), fun y hy => ?_⟩

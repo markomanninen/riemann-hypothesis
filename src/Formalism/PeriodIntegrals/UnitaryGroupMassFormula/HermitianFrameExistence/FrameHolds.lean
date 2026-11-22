@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ScPiExists
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianFrameExistence.FrameCore
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianFrameExistence.Transfer
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ScPiExists
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianFrameExistence.FrameCore
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianFrameExistence.Transfer
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,9 +1,13 @@
-import Formalism.AdmissibleDesigns.NonemptyPl
-import Formalism.SharpRestriction.LevelLetterCocycles.ExistsInertiaCharpolyFactorOfTameType
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FiniteExtensionTopology.AddPreservesExpCongruence
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FiniteExtensionTopology.ExpCongruenceExtendsToSum
-import Formalism.AdicCompletionExports.AdicCompleteRingEquiv.IsAdicCompleteOfRingEquiv
-import Development.AutomorphicArithmetic.CyclotomicBounds.FactorizationConductorLeLocalLevel
+module
+
+public import Formalism.AdmissibleDesigns.NonemptyPl
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExistsInertiaCharpolyFactorOfTameType
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FiniteExtensionTopology.AddPreservesExpCongruence
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FiniteExtensionTopology.ExpCongruenceExtendsToSum
+public import Formalism.AdicCompletionExports.AdicCompleteRingEquiv.IsAdicCompleteOfRingEquiv
+public import Development.AutomorphicArithmetic.CyclotomicBounds.FactorizationConductorLeLocalLevel
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -64,7 +68,7 @@ theorem algebraMap_openEmb (hA : IsAdic (IsLocalRing.maximalIdeal O)) :
     rintro _ ⟨z, hz, rfl⟩
     rw [hm] at hz
     show f (x + z) - f x ∈ PI.UnitaryGroupMassFormula.FinExtTop.fracB (unif O) i
-    rw [map_add, add_sub_cancel_left]
+    rw [map_add (f := _), add_sub_cancel_left]
     exact PI.UnitaryGroupMassFormula.FinExtTop.algebraMap_mem_fracB.2 hz
   have hopen : IsOpenMap f := by
     refine IsOpenMap.of_nhds_le fun x => ?_
@@ -76,7 +80,7 @@ theorem algebraMap_openEmb (hA : IsAdic (IsLocalRing.maximalIdeal O)) :
     refine ⟨x + c * unif O ^ n, hn ⟨c * unif O ^ n, ?_, rfl⟩, ?_⟩
     · rw [hm]
       exact Dvd.intro_left c rfl
-    · rw [map_add, ← hc, add_sub_cancel]
+    · rw [map_add (f := _), ← hc, add_sub_cancel]
   exact Topology.IsOpenEmbedding.of_continuous_injective_isOpenMap hcont
     (IsFractionRing.injective O (FractionRing O)) hopen
 
@@ -126,7 +130,7 @@ theorem rTop_constSMul (R' : Subalgebra O (X' → Matrix d d (FractionRing O))) 
     letI := rTopology O R'; ContinuousConstSMul O R' := by
   letI := rTopology O R'
   haveI := rTop_smul O R'
-  infer_instance
+  exact ContinuousSMul.continuousConstSMul
 
 theorem rTop_fgTop (R' : Subalgebra O (X' → Matrix d d (FractionRing O))) [IsTopologicalRing O] [T2Space O]
     (hfin : Module.Finite O R') : letI := rTopology O R'; IsFGTop O R' := by
@@ -205,7 +209,8 @@ theorem int_R' (hD : RingDef O T r₀ π χ₁ ε g₀ eB e₁ s Dd) :
   intro a ha x' i j
   obtain ⟨S, c, -, rfl⟩ := (h8 a).1 ha
   refine ⟨∑ g ∈ S, c g x' * r₀ g (Dd.p x') i j, ?_⟩
-  simp only [Finset.sum_apply, Matrix.sum_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_apply, Matrix.sum_apply, map_sum, map_mul]
   refine Finset.sum_congr rfl fun g _ => ?_
   have := h7 g x'
   simp only [RingHom.toMonoidHom_eq_coe, MonoidHom.coe_comp, MonoidHom.coe_coe, Function.comp_apply] at *
@@ -252,6 +257,7 @@ theorem continuous_of_entries (ℓ : ℕ) (R' : Subalgebra O (X' → Matrix d d 
   have := hR.csmul
   have := hR.fg
   have := t2Space_fractionRing_of_padicCoeff ℓ hO hF
+  haveI : ContinuousAdd R' := ‹IsTopologicalAddGroup R'›.toContinuousAdd
   obtain ⟨n, f, hf⟩ := Module.Finite.exists_fin' O R'
   have hfc : Continuous f := LinearMap.continuous_on_pi f
   have hq : Topology.IsQuotientMap f := Topology.IsQuotientMap.of_surjective_continuous hf hfc
@@ -325,7 +331,7 @@ theorem compact_O : CompactSpace (D.nd.O i) := by
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [Algebra.smul_def]
     rw [this]
-    exact continuous_finset_sum _ fun k _ =>
+    exact continuous_finsetSum _ fun k _ =>
       ((continuous_alg i).comp (continuous_apply k)).mul continuous_const
   exact hf.compactSpace hc
 
@@ -351,13 +357,8 @@ theorem t2Space_nd_O : T2Space (D.nd.O i) := by
   haveI : T1Space (D.nd.O i) := IsTopologicalAddGroup.t1Space _ this
   infer_instance
 
-theorem padicCoeff_O : PadicCoeff (D.nd.l i) (D.nd.O i) where
-  ring := D.nd.trO i
-  compact := compact_O i
-  t2 := t2Space_nd_O i
-  adic := D.nd.O_adic i
-  p_mem := l_mem_max i
-  p_ne := l_ne_zero i
+theorem padicCoeff_O : PadicCoeff (D.nd.l i) (D.nd.O i) :=
+  ⟨D.nd.trO i, compact_O i, t2Space_nd_O i, D.nd.O_adic i, l_mem_max i, l_ne_zero i⟩
 
 theorem fracTop_O : letI := fracTopology (D.nd.O i); FracTop (D.nd.O i) :=
   fracTop_open (D.nd.O i) (D.nd.O_adic i)

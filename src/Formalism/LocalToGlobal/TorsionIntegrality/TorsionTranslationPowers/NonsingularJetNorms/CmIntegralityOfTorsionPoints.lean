@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementC
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.CubeThreeR
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementC
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.CubeThreeR
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,7 @@ theorem nonsing (hΔ : (curveL l L ι).Δ ≠ 0) (t : ℂ) (ht : t ∉ L.lattice
 theorem ptOf_notMem (hΔ : (curveL l L ι).Δ ≠ 0) (t : ℂ) (ht : t ∉ L.lattice) :
     ptOf l L ι t = .some _ _ (nonsing l L ι hΔ t ht) := by
   unfold ptOf
-  rw [dif_pos ⟨ht, nonsing l L ι hΔ t ht⟩]
+  rw [dite_eq_left ⟨ht, nonsing l L ι hΔ t ht⟩]
 
 theorem px_ptOf (hΔ : (curveL l L ι).Δ ≠ 0) (t : ℂ) (ht : t ∉ L.lattice) :
     px (curveL l L ι) (ptOf l L ι t) = ι (L.weierstrassP t) := by
@@ -84,8 +88,8 @@ theorem py_ptOf (hΔ : (curveL l L ι).Δ ≠ 0) (t : ℂ) (ht : t ∉ L.lattice
 
 end ScaledModelNorms
 
-open Formalism.L2.Th1 in
 
+open Formalism.L2.Th1 in
 theorem cm_integrality_of_torsion_points (hP : PtOfInt) : CMIntegrality := by
   intro L l _ hl ι lam hlam h2 h3 hD z N hN hlN hNz hz
   have hμ0 : ι.symm lam ≠ 0 := by simpa using hlam
@@ -114,11 +118,5 @@ theorem cm_integrality_of_torsion_points (hP : PtOfInt) : CMIntegrality := by
   rw [ScaledModelNorms.py_ptOf l _ ι hΔ _ hcz, ScaledModelNorms.dwp_scale L _ hc, norm_div, ScaledModelNorms.norm_two l hl, div_one,
     map_mul, map_inv₀, map_pow, hιc, inv_pow, inv_inv] at hy
   exact ⟨hx, hy⟩
-
-theorem cm_integrality_of_halves : CMTorsionValuesOfIntegralAndUnramified := by
-  intro hI hK d L hd hd4 hcm l _ hl hld ι lam hlam hk2 hk3 h2 h3 hD z N hN hlN hNz hz
-  obtain ⟨a, b⟩ := hK d L hd hd4 hcm l hl hld ι lam hlam hk2 hk3 h2 h3 hD z N hN hlN hNz hz
-  obtain ⟨c, e⟩ := hI L l hl ι lam hlam h2 h3 hD z N hN hlN hNz hz
-  exact ⟨a, b, c, e⟩
 
 end Formalism.L2.Th1.E

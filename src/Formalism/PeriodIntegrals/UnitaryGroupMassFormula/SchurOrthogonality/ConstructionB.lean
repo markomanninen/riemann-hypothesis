@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SchurOrthogonality.InstMeasurableSpaceMat
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SchurOrthogonality.InstMeasurableSpaceMat
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,14 +73,14 @@ theorem unitary_haar_measure : HaarU := by
     exact Filter.Eventually.of_forall fun y => y.2
   · intro u hu f hf
     have hs : AEStronglyMeasurable (fun x => f (x * u)) (Measure.map Subtype.val μG) :=
-      (hf.comp (continuous_mul_right u)).aestronglyMeasurable
+      (hf.comp (continuous_mul_const u)).aestronglyMeasurable
     rw [integral_map hm.aemeasurable hs, integral_map hm.aemeasurable hf.aestronglyMeasurable]
     have h1 := integral_mul_right_eq_self (μ := μG)
       (fun y : Matrix.unitaryGroup (Fin N) ℂ => f (y : Matrix (Fin N) (Fin N) ℂ)) ⟨u, hu⟩
     simpa using h1
   · intro u hu f hf
     have hs : AEStronglyMeasurable (fun x => f (u * x)) (Measure.map Subtype.val μG) :=
-      (hf.comp (continuous_mul_left u)).aestronglyMeasurable
+      (hf.comp (continuous_const_mul u)).aestronglyMeasurable
     rw [integral_map hm.aemeasurable hs, integral_map hm.aemeasurable hf.aestronglyMeasurable]
     have h1 := integral_mul_left_eq_self (μ := μG)
       (fun y : Matrix.unitaryGroup (Fin N) ℂ => f (y : Matrix (Fin N) (Fin N) ℂ)) ⟨u, hu⟩

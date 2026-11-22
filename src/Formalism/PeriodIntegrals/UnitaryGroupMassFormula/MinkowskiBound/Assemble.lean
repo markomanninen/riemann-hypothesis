@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.Minkowski
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MinkowskiBound.PowerSumStep
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.Minkowski
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MinkowskiBound.PowerSumStep
+
+@[expose] public section
 
 namespace PI.Mk
 
@@ -15,8 +19,9 @@ theorem padicValNat_pow_mul_factorial (N ℓ : ℕ) (hℓ : ℓ.Prime) :
   set m := N / (ℓ - 1) with hm
   have hmN : m ≤ N := Nat.div_le_self _ _
   have hlog : Nat.log ℓ m < N + 1 := lt_of_le_of_lt (Nat.log_le_self _ _) (Nat.lt_succ_of_le hmN)
-  rw [padicValNat.mul (pow_ne_zero _ hℓ.ne_zero) (Nat.factorial_ne_zero _), padicValNat.prime_pow,
-    padicValNat_factorial hlog]
+  rw [Nat.padicValNat_def,
+    Nat.multiplicity_mul (pow_ne_zero _ hℓ.ne_zero) (Nat.factorial_ne_zero _),
+    Nat.multiplicity_prime_pow, _root_.multiplicity_factorial hlog]
   unfold PI.minkowskiExp
   simp_rw [term_eq, ← hm]
   rw [Finset.range_eq_Ico, Finset.sum_eq_sum_Ico_succ_bot (Nat.succ_pos N)]
@@ -56,7 +61,7 @@ theorem minkowskiBound_of (h : PGroupStep) : PI.MinkowskiBound := by
     mul_ne_zero (pow_ne_zero _ hℓ.ne_zero) (Nat.factorial_ne_zero _)
   have hle : k ≤ PI.minkowskiExp N ℓ := by
     rw [← padicValNat_pow_mul_factorial N ℓ hℓ]
-    exact (padicValNat_dvd_iff_le hne).1 hdvd
+    exact ((by simpa only [_root_.Nat.padicValNat_def] using @_root_.multiplicity_dvd_iff_le : ∀ {p : _root_.Nat} [hp : _root_.Fact (_root_.Nat.Prime p)] {a n : _root_.Nat} (ha : a ≠ 0), p ^ n ∣ a ↔ n ≤ _root_.padicValNat p a) hne).1 hdvd
   exact (pow_dvd_pow ℓ hle).trans (pow_minkowskiExp_dvd N ℓ hℓ)
 
 end PI.Mk

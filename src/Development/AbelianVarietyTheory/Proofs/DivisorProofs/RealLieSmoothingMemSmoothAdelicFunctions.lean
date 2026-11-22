@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfMemSpanK
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfMemSpanK
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,10 +12,10 @@ open scoped ContDiff
 
 namespace GlobalTheory.AutGrowth
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem contDiff_lmul_uncurry : ContDiff ℝ ∞ fun q : Lie E a × Lie E a => lmul q.1 q.2 := by
   have e : (fun q : Lie E a × Lie E a => lmul q.1 q.2) = fun q i j => ∑ k, q.1 i k * q.2 k j := by
     funext q i j
@@ -42,7 +46,7 @@ theorem contDiffOn_smoothing_integrand {α : Lie E a → ℂ} (hα : IsTest (inv
     filter_upwards [h2] with q hq
     simp [hq]
 
-theorem smoothing_mem_Sm (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ)
+theorem smoothing_mem_Sm (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ)
     (ν : Measure (Lie E a)) [ν.IsAddHaarMeasure] (α : Lie E a → ℂ) (hα : IsTest (invSet E a) α)
     (ψ : GA E a → ℂ) (hψ : ψ ∈ Sm E a) : smoothing ν α ψ ∈ Sm E a := by
   intro g

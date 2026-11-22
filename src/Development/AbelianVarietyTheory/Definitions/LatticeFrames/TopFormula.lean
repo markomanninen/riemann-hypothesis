@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
-import Formalism.LocalToGlobal.HermitianForms.TiedSym
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Formalism.LocalToGlobal.HermitianForms.TiedSym
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,8 +25,8 @@ def HasMat (h : GA D D.sp.X')
 def TopLev (K : ClsPTied u) (J : Set (GA D D.sp.X')) (χ : GA D D.sp.X' → ℂ) : Prop :=
   (∀ h, h ∈ J ↔ ∃ κ : K.lev.U, HasMat h κ.1) ∧ ∀ h (κ : K.lev.U), HasMat h κ.1 → χ h = star ((K.lev.chi κ : ℂˣ) : ℂ)
 
-open Classical in
 
+open Classical in
 structure IsJ (u : D.what₂.Word) {S : D.what₂.Tau → SPar} (M : DSModel D.sp.X' S) (j : SmT M →ₗ[ℂ] (FrP D → ℂ)) : Prop where
   inj : Function.Injective j
   range : LinearMap.range j = ValC (gramC (gramP D) (embT D)) (sgT u)
@@ -30,12 +34,6 @@ structure IsJ (u : D.what₂.Word) {S : D.what₂.Tau → SPar} (M : DSModel D.s
     ∀ y y' : FrP D, IsTr (Function.update (fun _ => 1) τ (g.reindex (finCongr (rankP D)) (finCongr (rankP D)))) y' y →
       j (PiTensorProduct.tprod ℂ (Function.update v τ w)) y = j (PiTensorProduct.tprod ℂ v) y'
 
-open Classical in
-
-def TopFormula {K : ClsPTied u} (V : ValPTied u K) {S : D.what₂.Tau → SPar} (M : DSModel D.sp.X' S) (j : SmT M →ₗ[ℂ] (FrP D → ℂ))
-    (eT : (D.mem u).P.Mt → SmT M →ₗ[ℂ] (GA D D.sp.X' → ℂ)) : Prop :=
-  ∀ (F : (D.mem u).P.Mt) (c : (D.fm u).clsP) (v : SmT M) (h : GA D D.sp.X'), HasMat h (K.y c).1 →
-    eT F v h = (Nat.card ((D.fm u).stabilizer₂ c) : ℂ) * (D.mem u).P.period (V.eW.symm (Pi.single c (j v))) F
 
 end GlobalTheory.Core.Rk.Top
 

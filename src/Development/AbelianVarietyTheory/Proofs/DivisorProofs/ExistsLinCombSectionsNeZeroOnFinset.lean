@@ -1,21 +1,26 @@
-import ReciprocityTheory.L2DbarEstimates.Imports
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSignHolds
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.L2ExtensionLogCanonical
-import Development.AbelianVarietyTheory.Definitions.Divisors.EtaleEmpty
+module
+
+public import ReciprocityTheory.L2DbarEstimates.Imports
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSignHolds
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.L2ExtensionLogCanonical
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EtaleEmpty
+
+@[expose] public section
+
 open MeasureTheory Filter Topology Metric ReciprocityTheory.L2DbarEstimates ReciprocityTheory.L2DbarEstimates.Y GlobalTheory.OTY GlobalTheory.Published.L2Extension
 open scoped ENNReal ContDiff
 
 namespace GlobalTheory.OTY.LinComb
 
-open Polynomial in
 
+open Polynomial in
 theorem exists_pow_ne_zero {Y : Type} (N : ℕ) (T : Finset Y) (v : Y → Fin N → ℂ)
     (hv : ∀ P ∈ T, v P ≠ 0) : ∃ x : ℂ, ∀ P ∈ T, ∑ k : Fin N, x ^ (k : ℕ) * v P k ≠ 0 := by
   classical
   let q : Y → ℂ[X] := fun P => ∑ k : Fin N, C (v P k) * X ^ (k : ℕ)
   have hcoeff : ∀ P (k : Fin N), (q P).coeff k = v P k := by
     intro P k
-    simp only [q, finset_sum_coeff, coeff_C_mul_X_pow, Fin.val_inj]
+    simp only [q, finsetSum_coeff, coeff_C_mul_X_pow, Fin.val_inj]
     simp
   have hq : ∀ P ∈ T, q P ≠ 0 := by
     intro P hP h0
@@ -29,7 +34,7 @@ theorem exists_pow_ne_zero {Y : Type} (N : ℕ) (T : Finset Y) (v : Y → Fin N 
   rw [Finset.mem_biUnion]
   refine ⟨P, hP, ?_⟩
   rw [Multiset.mem_toFinset, mem_roots (hq P hP), IsRoot.def]
-  simp only [q, eval_finset_sum, eval_mul, eval_C, eval_pow, eval_X]
+  simp only [q, eval_finsetSum, eval_mul, eval_C, eval_pow, eval_X]
   rw [← h]
   exact Finset.sum_congr rfl fun k _ => mul_comm _ _
 

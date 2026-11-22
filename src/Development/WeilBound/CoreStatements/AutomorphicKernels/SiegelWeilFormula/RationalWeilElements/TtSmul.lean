@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WeylTheta.TWeylOf
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.DarbouxCharts.DarbouxAnti
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WeylTheta.TWeylOf
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.DarbouxCharts.DarbouxAnti
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,12 +65,12 @@ theorem upTo_of (hU : Uniq) : UpTo := by
   have key : X * (incM F d.b.1.toCols₂)ᵀ * (mat2 w⁻¹)ᵀ =
       (((ε : ℤ) : AE F E) • X) * (incM F d.b.1.toCols₁)ᵀ := by
     rw [Matrix.mul_assoc, ← Matrix.transpose_mul, hw2, Matrix.transpose_smul, Matrix.mul_smul, Matrix.smul_mul]
-  rw [l_rho_om h w _ hΦ, key]
+  erw [l_rho_om h w (X * (incM F d.b.1.toCols₂)ᵀ) hΦ, key]
   have hm : d.dd.rho d.B.ψ ((((ε : ℤ) : AE F E) • X) * (incM F d.b.1.toCols₁)ᵀ) Φ ∈ d.sch :=
     GlobalTheory.HeisSchA.schr_mem_schA _ hψ _ Φ hΦ
   have e1 := hC _ hm
   simp only [LinearMap.comp_apply] at e1
-  rw [e1]
+  erw [e1]
   congr 1
   refine integral_congr_ae (Filter.Eventually.of_forall fun Z => ?_)
   simp only

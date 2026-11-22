@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafCmpPfNb
-import Development.EtaleCohomology.CohomologicalPurity.LeafCmpPfId
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafCmpPfNb
+public import Development.EtaleCohomology.CohomologicalPurity.LeafCmpPfId
+
+@[expose] public section
 
 namespace LateralTheory.CohomologicalPurity.Cl
 

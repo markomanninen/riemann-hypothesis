@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.HermitianLattices.FinalNeighbourConstruct
-import Formalism.HermitianLattices.HermitianLatticesProofs.ClassSetAssembly
-import Formalism.HermitianLattices.HermitianLatticesProofs.GenusCovolBound
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.FinalNeighbourConstruct
+public import Formalism.HermitianLattices.HermitianLatticesProofs.ClassSetAssembly
+public import Formalism.HermitianLattices.HermitianLatticesProofs.GenusCovolBound
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory

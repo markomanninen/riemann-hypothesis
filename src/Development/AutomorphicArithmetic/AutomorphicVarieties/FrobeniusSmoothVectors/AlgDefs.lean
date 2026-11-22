@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,8 +37,6 @@ def lauSub : Subalgebra C (AddMonoidAlgebra K ℤ) where
       exact Submodule.smul_mem _ _ (SetLike.one_mem_graded P)
     · exact zero_mem _
 
-theorem mem_lauSub {p : AddMonoidAlgebra K ℤ} : p ∈ lauSub P ↔ ∀ j, p.coeff j ∈ P j := Iff.rfl
-
 theorem single_mem_lauSub {j : ℤ} {x : K} (hx : x ∈ P j) : AddMonoidAlgebra.single j x ∈ lauSub P := by
   classical
   intro i
@@ -50,13 +52,13 @@ structure HasVertex : Prop where
   zero : ∀ x ∈ P 0, ∃ c : C, algebraMap C K c = x
   cross : ∀ j, j ≠ 0 → ∀ x ∈ P j, ∀ y ∈ P (-j), ∃ c ∈ maximalIdeal C, algebraMap C K c = x * y
 
-variable {P} in
 
+variable {P} in
 def vertex (h : HasVertex P) : Ideal (lauSub P) where
   carrier := {p | ∃ c ∈ maximalIdeal C, algebraMap C K c = p.1.coeff 0}
   add_mem' := by
     rintro p q ⟨c, h1, h2⟩ ⟨d, h3, h4⟩
-    exact ⟨c + d, add_mem h1 h3, by rw [map_add, h2, h4]; rfl⟩
+    exact ⟨c + d, add_mem h1 h3, by rw [map_add (f := _), h2, h4]; rfl⟩
   zero_mem' := ⟨0, zero_mem _, map_zero _⟩
   smul_mem' := by
     rintro q p ⟨c, h1, h2⟩
@@ -73,7 +75,8 @@ def vertex (h : HasVertex P) : Ideal (lauSub P) where
 
 variable {P} in
 theorem mem_vertex (h : HasVertex P) {p : lauSub P} :
-    p ∈ vertex h ↔ ∃ c ∈ maximalIdeal C, algebraMap C K c = p.1.coeff 0 := Iff.rfl
+    p ∈ UpperTheory.V.Fr.vertex (P := P) h ↔
+      ∃ c ∈ maximalIdeal C, algebraMap C K c = p.1.coeff 0 := Iff.rfl
 
 end Lau
 

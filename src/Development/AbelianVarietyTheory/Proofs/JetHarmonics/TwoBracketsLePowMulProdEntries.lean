@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.InterlacedShiftedDistanceBracketBound
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Finset
 
 namespace GlobalTheory
@@ -161,7 +165,7 @@ private lemma bracket_product_le_of_neg_between_lemma (k r l : ℕ) (b c Y : ℝ
       rw [card_union_of_disjoint hLR, Nat.card_Icc, Nat.card_Ico, Nat.card_Ico] at h1
       omega
     calc _ ≤ ∏ s ∈ Icc 1 (k + 2 * r + 1) \ (Ico 1 (l - 1) ∪ Ico (l + 1) k), b ^ 4 :=
-          prod_le_prod (fun s _ => hA0 s) (fun s hs => hA s (mem_sdiff.mp hs).1)
+          prod_le_prod₀ (fun s _ => hA0 s) (fun s hs => hA s (mem_sdiff.mp hs).1)
       _ = (b ^ 4) ^ (Icc 1 (k + 2 * r + 1) \ (Ico 1 (l - 1) ∪ Ico (l + 1) k)).card := prod_const _
       _ ≤ (b ^ 4) ^ (2 * r + 4) := pow_le_pow_right₀ (one_le_pow₀ hb1) hcard
       _ = b ^ (4 * (2 * r + 4)) := (pow_mul b 4 _).symm
@@ -238,7 +242,7 @@ private lemma bracket_product_le_of_neg_between_lemma (k r l : ℕ) (b c Y : ℝ
       calc (1:ℝ) = ∏ i ∈ Icc 1 k \ (Ico 1 (l - 1) ∪ Ico (l + 2) (k + 1)), (1:ℝ) :=
             prod_const_one.symm
         _ ≤ _ := by
-          apply prod_le_prod (fun _ _ => zero_le_one)
+          apply prod_le_prod₀ (fun _ _ => zero_le_one)
           intro i hi
           simp only [mem_sdiff, mem_union, mem_Ico, mem_Icc] at hi
           rw [abs_mul]
@@ -274,8 +278,8 @@ private lemma bracket_product_le_of_neg_between_lemma (k r l : ℕ) (b c Y : ℝ
     _ ≤ b ^ (11 * (2 * r + 2)) * ∏ i ∈ Finset.Icc 1 k, |(Y + 1 / 2 + u i) * (Y + 1 / 2 + u' i)| :=
         mul_le_mul (pow_le_pow_right₀ hb1 (by omega)) hPQ (mul_nonneg hLn hRn) (pow_nonneg hb0 _)
 
-open Finset in
 
+open Finset in
 theorem _root_.GlobalTheory.two_brackets_le_pow_mul_prod_entries : ∀ (k r l : ℕ) (b c Y : ℝ) (lam u u' : ℕ → ℝ), 1 ≤ l → l ≤ k → 1 ≤ c → c + 2 ≤ b → (k : ℝ) ≤ b → |u l| ≤ b → |u' l| ≤ b → (∀ s ∈ Finset.Icc 1 (k + 2 * r + 1), |lam s| ≤ b) → (∀ s : ℕ, 1 ≤ s → s + 1 ≤ k - 1 → lam (s + 1) + 2 * c ≤ lam s) → (∀ s : ℕ, 1 ≤ s → s + 1 ≤ k → (s ≠ l → lam s + 1 / 2 ≤ u s) ∧ (s + 1 ≠ l → u (s + 1) + 1 / 2 ≤ lam s)) → (∀ s : ℕ, 1 ≤ s → s + 1 ≤ k → (s ≠ l → lam s + 1 / 2 ≤ u' s) ∧ (s + 1 ≠ l → u' (s + 1) + 1 / 2 ≤ lam s)) → (∀ i : ℕ, 1 ≤ i → i ≤ k - 1 → u (i + 1) ≤ u i - 1 ∧ u' (i + 1) ≤ u' i - 1 ∧ u (i + 1) ≤ u' i - 1 ∧ u' (i + 1) ≤ u i - 1) → ((u l + 2 ≤ -Y ∧ -Y ≤ u' l - 2) ∨ (u' l + 2 ≤ -Y ∧ -Y ≤ u l - 2)) → (∏ s ∈ Finset.Icc 1 (k + 2 * r + 1), (|Y + lam s| + c)) * (∏ s ∈ Finset.Icc 1 (k + 2 * r + 1), (|Y + 1 + lam s| + c)) ≤ b ^ (11 * (2 * r + 2)) * ∏ i ∈ Finset.Icc 1 k, |(Y + 1 / 2 + u i) * (Y + 1 / 2 + u' i)| := by
   intro k r l b c Y lam u u' h1l hlk hc hcb hkb hul hu'l hlam hsp hint hint' hdec hY
   rcases hY with hY | hY

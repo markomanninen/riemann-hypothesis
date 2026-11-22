@@ -1,5 +1,9 @@
-import Formalism.AdmissibleDesigns.H1MapMemLcH1
-import Formalism.AdmissibleDesigns.HigherColumnInvariantsBound
+module
+
+public import Formalism.AdmissibleDesigns.H1MapMemLcH1
+public import Formalism.AdmissibleDesigns.HigherColumnInvariantsBound
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -92,7 +96,7 @@ variable {D : D7} (i : D.nd.Loc) (r : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV)
 
 def toKOG : blockRestrictedRepresentationType (RepresentationBoundsCohomology.blk D.R) Dd.ρk 0 →ₗ[D.nd.O i] KOG (D.nd.O i) D.R.r where
   toFun m := (kogEq D.R.r).symm (fun a => m (e0 a))
-  map_add' a b := by rw [← map_add]; rfl
+  map_add' a b := by rw [← map_add (f := _)]; rfl
   map_smul' c a := by rw [RingHom.id_apply, ← map_smul]; rfl
 
 theorem toKOG_injective : Function.Injective (toKOG i Dd) := by

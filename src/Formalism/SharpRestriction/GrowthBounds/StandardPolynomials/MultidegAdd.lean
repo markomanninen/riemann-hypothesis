@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.RestRawTail1Of
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LiftSubstitutionCoeffDivisible
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.RestRawTail1Of
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LiftSubstitutionCoeffDivisible
+
+@[expose] public section
 
 noncomputable section
 
@@ -92,7 +96,7 @@ def liftSub : Submodule O (RHH O X) where
     rintro P Q ⟨r, h1, h2⟩ ⟨r', k1, k2⟩
     refine ⟨r + r', (cleanSub X O w 1 o).add_mem h1 k1, ?_⟩
     have e : lift1 X O w (r + r') - (P + Q) = (lift1 X O w r - P) + (lift1 X O w r' - Q) := by
-      rw [map_add]; abel
+      rw [map_add (f := _)]; abel
     rw [e]
     exact Submodule.add_mem _ h2 k2
   zero_mem' := ⟨0, (cleanSub X O w 1 o).zero_mem, by simp⟩
@@ -157,7 +161,8 @@ theorem TCls.mul {w : O} {d d' : X.TT × Bool → ℕ} {o o' c c' : ℕ} {P Q : 
         w ^ (max c (ndM X x.1 - o) + max c' (ndM X x.2 - o')) * (a * b) by ring, hk, pow_add]
       ring
     choose! f hf using key
-    rw [Finset.sum_congr rfl hf, ← map_sum, ← Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_congr rfl hf, ← map_sum, ← Finset.mul_sum]
     exact ⟨_, rfl⟩
 
 theorem TCls.pow {w : O} {d : X.TT × Bool → ℕ} {o c : ℕ} {P : RHH O X} (hP : TCls w d o c P) (u : ℕ) :

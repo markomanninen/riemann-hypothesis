@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.ThickFrames.MarkedLow
-import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ExplicitFormulaErrorOfHostConditions
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
-import Development.AutomorphicArithmetic.ThickFrames.topsGroup
+module
+
+public import Development.AutomorphicArithmetic.ThickFrames.MarkedLow
+public import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ExplicitFormulaErrorOfHostConditions
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+public import Development.AutomorphicArithmetic.ThickFrames.topsGroup
+
+@[expose] public section
 
 open Finset UpperTheory.BernoulliSumsFrobeniusOrbits Formalism.G0
 

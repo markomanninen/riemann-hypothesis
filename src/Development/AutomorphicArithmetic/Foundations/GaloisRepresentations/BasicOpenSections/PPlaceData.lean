@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.BasicOpenSections.PlaceData
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.AllHolds
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PowSubMem
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.BasicOpenSections.PlaceData
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.AllHolds
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PowSubMem
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.Et NumberField IsDedekindDomain TensorProduct
 open GlobalTheory.GalV (HTower Htot hop galV Splits IsCorrOp IsGalois pullTot)

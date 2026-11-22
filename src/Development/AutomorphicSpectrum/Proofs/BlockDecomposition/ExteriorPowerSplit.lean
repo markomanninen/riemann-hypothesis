@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsDetEquivOfSubsingleton
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsDetEquivOfSubsingleton
+
+@[expose] public section
 
 open TensorProduct Module Function
 
@@ -10,8 +14,8 @@ open GlobalTheory.TopExt
 variable {R F H L : Type*} [CommRing R] [AddCommGroup F] [Module R F] [AddCommGroup H] [Module R H]
   [AddCommGroup L] [Module R L]
 
-variable (R F) in
 
+variable (R F) in
 noncomputable def gradeProj (n : ℕ) : ExteriorAlgebra R F →ₗ[R] ⋀[R]^n F :=
   DirectSum.component R ℕ (fun k => ⋀[R]^k F) n ∘ₗ
     (DirectSum.decomposeLinearEquiv (fun k : ℕ => ⋀[R]^k F)).toLinearMap
@@ -97,10 +101,9 @@ theorem wedgeSum_injective {i : F →ₗ[R] H} {s : L →ₗ[R] H} {r : H →ₗ
         TensorProduct.map (gradeProj R F a' ∘ₗ (⋀[R]^a F).subtype)
           (gradeProj R L b' ∘ₗ (⋀[R]^b L).subtype) t := by
     intro a b a' b' t
-    induction t using TensorProduct.induction_on with
-    | zero => simp
+    induction t using TensorProduct.inductionOn with
     | add x y hx hy =>
-      simp only [map_add, Submodule.coe_add] at hx hy ⊢
+      simp only [map_add (f := _), Submodule.coe_add] at hx hy ⊢
       rw [hx, hy]
     | tmul x y =>
       rw [hΨ, TensorProduct.map_tmul]
@@ -108,7 +111,8 @@ theorem wedgeSum_injective {i : F →ₗ[R] H} {s : L →ₗ[R] H} {r : H →ₗ
   have hl : ∀ t (a' : Fin (c + 1)),
       Ψ a' (c - a') (wedgeSum i s c t : ExteriorAlgebra R H) = t a' := by
     intro t a'
-    rw [coe_wedgeSum, map_sum, Finset.sum_eq_single a']
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [coe_wedgeSum, map_sum, Finset.sum_eq_single a']
     · rw [key]
       have h₁ : gradeProj R F a' ∘ₗ (⋀[R]^(a' : ℕ) F).subtype = LinearMap.id :=
         LinearMap.ext gradeProj_same

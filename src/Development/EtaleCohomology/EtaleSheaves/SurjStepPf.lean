@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.ZarIndPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ZarIndPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E2Cut LateralTheory.E.ZLGPf LateralTheory.E.ZarIndPf
@@ -8,8 +12,6 @@ namespace LateralTheory.E.SurjStepPf
 set_option linter.unusedSimpArgs false
 
 variable {X S : Scheme.{0}}
-
-example (q : ℕ) (E : Spc) (n i : ℤ) : Ht q E n i = H (ZMod q) E (tw q i) n := rfl
 
 theorem pc {R : Type} [CommRing R] {A B C : Scheme.{0}} (f : A ⟶ B) (g : B ⟶ C) (F : Shv R) (n : ℤ) (x : H R (sch.obj C) F n) :
     pull R (sch.map (f ≫ g)) F n x = pull R (sch.map f) F n (pull R (sch.map g) F n x) := by

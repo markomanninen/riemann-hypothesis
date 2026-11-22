@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.CalcSteps
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Lap
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FunctionalCalculusJointCurve
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevOperatorFacts
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevIntegrationByParts
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SectionNormBound
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.CalcSteps
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Lap
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FunctionalCalculusJointCurve
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevOperatorFacts
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevIntegrationByParts
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SectionNormBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -178,11 +182,6 @@ theorem lap_apply (hu : Uniq μ V) {f : Mat n → V} (hf : Sob μ f) :
   congr 1
   refine Finset.sum_congr rfl fun p _ => ?_
   rw [Module.End.mul_apply, X_cls hu p hf, X_cls hu p (sob_bs p hf)]
-
-theorem sob_Lap_iter (j : ℕ) {f : Mat n → V} (hf : Sob μ f) : Sob μ (Lap^[j] f) := by
-  induction j generalizing f with
-  | zero => exact hf
-  | succ j ih => exact ih (sob_Lap hf)
 
 theorem pow_apply (hu : Uniq μ V) (j : ℕ) {f : Mat n → V} (hf : Sob μ f) :
     (((-∑ i, X hu i * X hu i) ^ j) ⟨cls μ f, cls_mem hf⟩ : Msob μ V).1 = cls μ (Lap^[j] f) := by

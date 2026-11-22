@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU Filter Topology
 open scoped Matrix
@@ -17,7 +22,8 @@ theorem UpperTheory.Gal.W2.killsMat_of :
   have hsum : ∀ x, P₀ (q.sum fun i b => a b • (ga ^ i) x) =
       (q.sum fun i b => ρ (a b) * H ^ i) *ᵥ P₀ x := by
     intro x
-    simp only [Polynomial.sum_def, map_sum, Matrix.sum_mulVec]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Polynomial.sum_def, map_sum, Matrix.sum_mulVec]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [hP.1, hpow, Matrix.mulVec_mulVec]
   constructor

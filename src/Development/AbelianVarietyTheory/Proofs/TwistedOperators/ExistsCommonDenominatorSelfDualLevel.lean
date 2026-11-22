@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.DepthPays
-import Formalism.LocalToGlobal.Columns.AdelicLemmas
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsNsmulMemOfSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.DepthPays
+public import Formalism.LocalToGlobal.Columns.AdelicLemmas
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsNsmulMemOfSpan
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.Grow
 open GlobalTheory.IndefiniteRowSideFullHecke.LevelPlusSubgroup (coefPlus Cols SizeRows)
@@ -83,8 +88,42 @@ namespace GlobalTheory.LevelDenom
 
 theorem exists_denom_congLev : ∀ (D : D7) (V : HSp D) (Λ : Lat V), IsSelfDualC V Λ → ∃ b : ℕ, 0 < b ∧ ∀ k ∈ congLev D.sp.cm V.gram Λ ⊤, ∀ i j, (b : Lev.EAf D) * k.1 i j ∈ Formalism.L2.Herm.intAf D.host.F D.host.E := by
   intro D V Λ hΛ
+  classical
   haveI := hΛ.1
-  exact exists_denom_stab D.sp.cm V.gram Λ (Submodule.IsLattice.fg (A := D.host.E))
-    (Submodule.IsLattice.span_eq_top (A := D.host.E))
+  obtain ⟨c, hc, hcΛ⟩ := exists_nsmul_le_std Λ (Submodule.IsLattice.fg D.host.E Λ)
+  have hsp : Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E)) = ⊤ := by
+    apply top_unique
+    intro y _
+    let t : Fin V.rank → D.host.E := fun i => ∑ j, V.gram i j * y j
+    obtain ⟨d, hd, hdt⟩ := GlobalTheory.LatSandwich.exists_nsmul_mem_stdLat t
+    have hy : (c * d) • y ∈ Λ := by
+      apply (hΛ.2 _).2
+      intro x hx
+      have hcx := (GlobalTheory.LatSandwich.mem_stdLat_iff _).1 (hcΛ x hx)
+      have hdt' := (GlobalTheory.LatSandwich.mem_stdLat_iff _).1 hdt
+      have hint : IsIntegral ℤ (∑ i, star ((c • x) i) * (d • t) i) := by
+        apply IsIntegral.sum
+        intro i _
+        exact ((hcx i).map (starRingEnd D.host.E).toIntAlgHom).mul (hdt' i)
+      refine ⟨⟨_, hint⟩, ?_⟩
+      change (∑ i, star ((c • x) i) * (d • t) i) = _
+      simp only [t, Pi.smul_apply, nsmul_eq_mul, Nat.cast_mul, star_mul, star_natCast,
+        Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro i _
+      apply Finset.sum_congr rfl
+      intro j _
+      ring
+    have hm : (c * d) • y ∈ Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E)) :=
+      Submodule.subset_span hy
+    have hn : (c * d : D.host.E) ≠ 0 := by
+      exact mul_ne_zero (Nat.cast_ne_zero.mpr (Nat.ne_of_gt hc))
+        (Nat.cast_ne_zero.mpr (Nat.ne_of_gt hd))
+    have hm' : (c * d : D.host.E) • y ∈ Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E)) := by
+      simpa [Nat.cast_mul, ← Nat.cast_smul_eq_nsmul D.host.E] using hm
+    have := Submodule.smul_mem (Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E))) (c * d : D.host.E)⁻¹ hm'
+    simpa only [smul_smul, inv_mul_cancel₀ hn, one_smul] using this
+  exact exists_denom_stab D.sp.cm V.gram Λ (Submodule.IsLattice.fg D.host.E Λ)
+    hsp
 
 end GlobalTheory.LevelDenom

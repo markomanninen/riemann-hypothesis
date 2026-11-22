@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LinMulti
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ISmulOneMemUnitaryLie
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LinMulti
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ISmulOneMemUnitaryLie
+
+@[expose] public section
 
 noncomputable section
 
@@ -237,9 +241,9 @@ theorem contDiff_oneProd : ∀ {d : ℕ} (Y : Fin d → Matrix (Fin n) (Fin n) �
     have hexp : ContDiff ℝ ∞ (NormedSpace.exp : Matrix (Fin n) (Fin n) ℂ → Matrix (Fin n) (Fin n) ℂ) :=
       contDiff_iff_contDiffAt.2 fun x => (NormedSpace.exp_analytic (𝕂 := ℝ) x).contDiffAt
     have h1 : ContDiff ℝ ∞ fun t : Fin (d + 1) → ℝ => NormedSpace.exp (t 0 • Y 0) :=
-      hexp.comp ((contDiff_apply ℝ ℝ (0 : Fin (d + 1))).smul contDiff_const)
+      hexp.comp ((contDiff_apply ℝ (fun _ => ℝ) (0 : Fin (d + 1))).smul contDiff_const)
     have h2 : ContDiff ℝ ∞ fun t : Fin (d + 1) → ℝ => oneProd (fun i => Y i.succ) (fun i => t i.succ) :=
-      (ih _).comp (contDiff_pi.2 fun i => contDiff_apply ℝ ℝ i.succ)
+      (ih _).comp (contDiff_pi.2 fun i => contDiff_apply ℝ (fun _ => ℝ) i.succ)
     exact h1.mul h2
 
 theorem chart (G : Matrix (Fin n) (Fin n) ℂ) (hG : IsUnit G) :

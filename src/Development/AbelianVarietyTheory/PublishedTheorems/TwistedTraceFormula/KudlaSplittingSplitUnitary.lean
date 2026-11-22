@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,15 +87,15 @@ def heisFun (ψ : AddChar F ℂ) (Q : Matrix α α E) (w : Matrix α (ν ⊕ ν)
 omit [DecidableEq α] in
 theorem hTens_eq (Q : Matrix α α E) (w w' : Matrix α (ν ⊕ ν) E) :
     hTens c Q (stdJ ν E) w w' = ∑ i, ∑ k, Q i k * (w * stdJ ν E * (w'.map c)ᵀ) i k := by
-  simp only [hTens, mul_apply, transpose_apply, map_apply, Finset.sum_mul, Finset.mul_sum]
+  simp only [hTens, Matrix.mul_apply, transpose_apply, map_apply, Finset.sum_mul, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun j _ => by ring
 
-omit [DecidableEq α] in
 
+omit [DecidableEq α] in
 theorem form_mul (Q : Matrix α α E) (g : UG c (stdJ ν E)) (w w' : Matrix α (ν ⊕ ν) E) :
     form c Q (w * ((g : GL (ν ⊕ ν) E) : Matrix (ν ⊕ ν) (ν ⊕ ν) E)) (w' * ((g : GL (ν ⊕ ν) E) : Matrix (ν ⊕ ν) (ν ⊕ ν) E)) =
       form c Q w w' := by
@@ -103,19 +107,20 @@ theorem form_mul (Q : Matrix α α E) (g : UG c (stdJ ν E)) (w w' : Matrix α (
 omit [DecidableEq α] in
 theorem form_add_left (Q : Matrix α α E) (w₁ w₂ w' : Matrix α (ν ⊕ ν) E) :
     form c Q (w₁ + w₂) w' = form c Q w₁ w' + form c Q w₂ w' := by
-  simp only [form, hTens, Matrix.add_apply, add_mul, Finset.sum_add_distrib, map_add, mul_add]
+  simp only [form, hTens, Matrix.add_apply, add_mul, Finset.sum_add_distrib, map_add (f := _), mul_add]
 
 omit [DecidableEq α] in
 theorem form_add_right (Q : Matrix α α E) (w w₁ w₂ : Matrix α (ν ⊕ ν) E) :
     form c Q w (w₁ + w₂) = form c Q w w₁ + form c Q w w₂ := by
-  simp only [form, hTens, Matrix.add_apply, Finset.sum_add_distrib, map_add, mul_add]
+  simp only [form, hTens, Matrix.add_apply, Finset.sum_add_distrib, map_add (f := _), mul_add]
 
 theorem form_swap (hc : ∀ z, c (c z) = z) {Q : Matrix α α E} (hQ : IsHerm c Q) (w w' : Matrix α (ν ⊕ ν) E) :
     form c Q w' w = -form c Q w w' := by
   have hJ : ∀ j l, c (stdJ ν E j l) = -stdJ ν E l j := by
-    rintro (j | j) (l | l) <;> simp [stdJ, one_apply, eq_comm]
+    rintro (j | j) (l | l) <;> by_cases h : j = l <;> simp [stdJ, one_apply, h, eq_comm, map_one, map_zero]
   have h : hTens c Q (stdJ ν E) w' w = -c (hTens c Q (stdJ ν E) w w') := by
-    simp only [hTens, map_sum, map_mul, hc, hJ, hQ.1, ← Finset.sum_neg_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hTens, map_sum, map_mul, hc, hJ, hQ.1, ← Finset.sum_neg_distrib]
     simp only [← Finset.sum_product', Finset.univ_product_univ]
     exact Fintype.sum_equiv ⟨fun p => (p.2.2.1, p.2.2.2, p.1, p.2.1), fun p => (p.2.2.1, p.2.2.2, p.1, p.2.1),
       fun _ => rfl, fun _ => rfl⟩ _ _ fun p => by simp only [Equiv.coe_fn_mk]; ring
@@ -123,54 +128,16 @@ theorem form_swap (hc : ∀ z, c (c z) = z) {Q : Matrix α α E} (hQ : IsHerm c 
     Algebra.trace_eq_of_algEquiv (AlgEquiv.ofAlgHom c c (AlgHom.ext hc) (AlgHom.ext hc)) z
   rw [form, form, h, map_neg, ht, mul_neg]
 
-omit [DecidableEq α] in
 
+omit [DecidableEq α] in
 theorem form_left_left (Q : Matrix α α E) (x x' : Matrix α ν E) : form c Q (fromCols x 0) (fromCols x' 0) = 0 := by
   simp [form, hTens, stdJ, Fintype.sum_sum_type]
 
-omit [DecidableEq α] in
 
+omit [DecidableEq α] in
 theorem form_right_right (Q : Matrix α α E) (y y' : Matrix α ν E) : form c Q (fromCols 0 y) (fromCols 0 y') = 0 := by
   simp [form, hTens, stdJ, Fintype.sum_sum_type]
 
-theorem heisFun_heisFun [CharZero F] (hc : ∀ z, c (c z) = z) (ψ : AddChar F ℂ) {Q : Matrix α α E} (hQ : IsHerm c Q)
-    (w w' : Matrix α (ν ⊕ ν) E) (φ : Matrix α ν E → ℂ) :
-    heisFun c ψ Q w (heisFun c ψ Q w' φ) = ψ (2⁻¹ * form c Q w w') • heisFun c ψ Q (w + w') φ := by
-  have e1 : ∀ x x' : Matrix α ν E, fromCols (x + x') (0 : Matrix α ν E) = fromCols x 0 + fromCols x' 0 := fun x x' => by
-    ext i (j | j) <;> simp
-  have e2 : ∀ y y' : Matrix α ν E, fromCols (0 : Matrix α ν E) (y + y') = fromCols 0 y + fromCols 0 y' := fun x x' => by
-    ext i (j | j) <;> simp
-  have e3 : ∀ u : Matrix α (ν ⊕ ν) E, u = fromCols u.toCols₁ 0 + fromCols 0 u.toCols₂ := fun u => by
-    ext i (j | j) <;> simp
-  have e4 : form c Q w w' = form c Q (fromCols w.toCols₁ 0) (fromCols 0 w'.toCols₂) -
-      form c Q (fromCols w'.toCols₁ 0) (fromCols 0 w.toCols₂) := by
-    conv_lhs => rw [e3 w, e3 w']
-    rw [form_add_left, form_add_right, form_add_right, form_left_left, form_right_right,
-      form_swap c hc hQ (fromCols w'.toCols₁ 0)]
-    ring
-  funext x
-  rw [Pi.smul_apply, heisFun, heisFun, heisFun, show (w + w').toCols₁ = w.toCols₁ + w'.toCols₁ from rfl,
-    show (w + w').toCols₂ = w.toCols₂ + w'.toCols₂ from rfl, smul_eq_mul, ← mul_assoc, ← mul_assoc,
-    ← AddChar.map_add_eq_mul, ← AddChar.map_add_eq_mul, add_assoc x, e4]
-  congr 2
-  simp only [e1, e2, form_add_left, form_add_right]
-  ring
-
-omit [DecidableEq α] in
-
-theorem heisFun_levi (hc : ∀ z, c (c z) = z) (ψ : AddChar F ℂ) (Q : Matrix α α E) (a : GL ν E) (w : Matrix α (ν ⊕ ν) E)
-    (φ : Matrix α ν E → ℂ) :
-    heisFun c ψ Q w (fun x => φ (x * (a : Matrix ν ν E))) =
-      fun x => heisFun c ψ Q (w * ((levi c hc a : GL (ν ⊕ ν) E) : Matrix (ν ⊕ ν) (ν ⊕ ν) E)) φ (x * (a : Matrix ν ν E)) := by
-  have e : ∀ x y : Matrix α ν E, fromCols x y * ((levi c hc a : GL (ν ⊕ ν) E) : Matrix (ν ⊕ ν) (ν ⊕ ν) E) =
-      fromCols (x * (a : Matrix ν ν E)) (y * (((a⁻¹ : GL ν E) : Matrix ν ν E).map c)ᵀ) := fun x y => by
-    rw [levi_val, fromCols_mul_fromBlocks]; simp
-  have f : ∀ x y : Matrix α ν E, form c Q (fromCols (x * (a : Matrix ν ν E)) 0)
-      (fromCols 0 (y * (((a⁻¹ : GL ν E) : Matrix ν ν E).map c)ᵀ)) = form c Q (fromCols x 0) (fromCols 0 y) := fun x y => by
-    rw [← form_mul c Q (levi c hc a) (fromCols x 0), e, e, Matrix.zero_mul, Matrix.zero_mul]
-  funext x
-  conv_rhs => rw [← fromCols_toCols w, e]
-  simp only [heisFun, toCols₁_fromCols, toCols₂_fromCols, f, Matrix.add_mul]
 
 end Group
 
@@ -184,9 +151,10 @@ theorem continuous_form_left (Q : Matrix α α E) (w' : Matrix α (ν ⊕ ν) E)
     Continuous fun x : Matrix α ν E => form c Q (fromCols x 0) w' := by
   have h : ∀ e : E, Continuous fun z : E => Algebra.trace F E (z * e) := fun e =>
     IsModuleTopology.continuous_of_linearMap ((Algebra.trace F E).comp (LinearMap.mulRight F e))
-  simp only [form, hTens, map_sum, mul_assoc]
-  refine continuous_const.mul (continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
-    continuous_finset_sum _ fun k _ => continuous_finset_sum _ fun l _ => (h _).comp ?_)
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [form, hTens, map_sum, mul_assoc]
+  refine continuous_const.mul (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
+    continuous_finsetSum _ fun k _ => continuous_finsetSum _ fun l _ => (h _).comp ?_)
   rcases j with j | j
   · exact continuous_id.matrix_elem i j
   · exact continuous_const

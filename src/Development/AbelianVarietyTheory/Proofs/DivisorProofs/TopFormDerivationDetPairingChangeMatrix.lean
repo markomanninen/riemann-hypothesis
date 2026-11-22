@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatFrameApply
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatFrameApply
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.BasicNotions
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -32,7 +37,8 @@ theorem topPair_change_matrix : ∀ {k A : Type} [CommRing k] [CommRing A] (α :
     rw [mul_comm, ← Matrix.det_mul]
     congr 1
     ext i j
-    simp only [Matrix.of_apply, Matrix.mul_apply, hD j, map_sum, map_smul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.of_apply, Matrix.mul_apply, hD j, map_sum, map_smul,
       LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul]
     refine Finset.sum_congr rfl fun l _ => ?_
     ring

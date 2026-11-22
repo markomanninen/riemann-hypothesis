@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.EvStmt
-import Development.WeilBound.ThetaLifts.LeviDeterminants.EvChange
-import Development.WeilBound.ThetaLifts.LeviDeterminants.LagrangianUniqueness.GeoLeaves
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.EvStmt
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.EvChange
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.LagrangianUniqueness.GeoLeaves
+
+@[expose] public section
 
 noncomputable section
 

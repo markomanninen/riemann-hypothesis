@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGAnalytic
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.FlagExtensionRegularity
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NinfGClosed
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.WeilIndicatorMeasures.MeasurableUnitMulIndicator
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Formalism.SharpRestriction.CuspSpanNormBounds.RootMeasBig
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGAnalytic
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.FlagExtensionRegularity
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NinfGClosed
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.WeilIndicatorMeasures.MeasurableUnitMulIndicator
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RootMeasBig
+
+@[expose] public section
 
 noncomputable section
 
@@ -286,7 +290,9 @@ theorem ptEntry_inj {K : Type*} [Zero K] : ∀ (bs cs : List (K × ℕ)) (i : �
           exact absurd e0 ht.1
       · rw [if_neg h1, if_neg (by omega)] at e0
         exact absurd e0 ht.1
-    obtain ⟨rfl, rfl⟩ := hss
+    rcases hss with ⟨hs, htEq⟩
+    subst s'
+    subst t'
     congr 1
     refine ptEntry_inj bs cs (i - s) (fun b hb' => hb b (List.mem_cons_of_mem _ hb')) (by omega)
       (fun b hb' => hc b (List.mem_cons_of_mem _ hb')) (by omega) (fun a b ha hb2 => ?_)
@@ -303,6 +309,7 @@ end PtInj
 section Pin
 
 open Formalism.L2.SG.RealObj Formalism.L2.SG.HidaSetting
+open Matrix
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -314,10 +321,29 @@ def PinHaarEx : Prop :=
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word)
 
+def stCoordV (u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1)) (γ : X.B.I.Ginf) (v : InfinitePlace X.B.I.F)
+    (y : Formalism.REAL.UJ (X.B.I.ε v)) : FreeE w → ℂ :=
+  fun p => ((D.host.rdE : ℂ) ^ (D.R.rS - p.1.1.1)) *
+    hJ (X.B.I.ε v) (rv X.B.I v (X.fR ⟨p.1.1.1, by have := p.2.1; omega⟩))
+      (uMat ((γ v)⁻¹ * y * γ v) *ᵥ frm X u' D.host.rdE v p.1.2)
+
+theorem stCoord_eq (u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1)) (γ : X.B.I.Ginf) :
+    stCoord X u' w γ = fun y v => stCoordV X u' w γ v (y v) := rfl
+
+private theorem measurable_stCoordV (w : Point D.host.E (D.R.rS + 1)) (γ : X.B.I.Ginf)
+    (v : InfinitePlace X.B.I.F) : Measurable (stCoordV X u' w γ v) := by
+  apply Continuous.measurable
+  unfold stCoordV hJ
+  have hu : Continuous fun y : Formalism.REAL.UJ (X.B.I.ε v) => uMat ((γ v)⁻¹ * y * γ v) :=
+    (Units.continuous_val.comp continuous_subtype_val).comp
+      ((continuous_const.mul continuous_id).mul continuous_const)
+  refine continuous_pi fun p => continuous_const.mul ?_
+  exact continuous_const.dotProduct (continuous_const.matrix_mulVec (hu.matrix_mulVec continuous_const))
+
 theorem isPtRep_gamW {w : Point D.host.E (D.R.rS + 1)} (h : ∃ γ, IsPtRep X u u' w γ) :
     IsPtRep X u u' w (gamW X u u' w) := by
   unfold gamW
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem pt_eq_of_rep {w w' : Point D.host.E (D.R.rS + 1)} {γ : X.B.I.Ginf} (h : IsPtRep X u u' w γ)
@@ -373,31 +399,22 @@ theorem pin_reg (hP : PinHaarEx) {w : Point D.host.E (D.R.rS + 1)} (hw : ∃ γ,
     intro h0; apply hne; rw [hμ, h0, zero_smul]
   have hat : μ {1} ≠ ⊤ := ne_top_of_le_ne_top (measure_spanningSets_lt_top μ _).ne
     (measure_mono (Set.singleton_subset_iff.2 (mem_spanningSetsIndex μ 1)))
-  rw [hμ, Measure.map_smul] at hmap
+  have hf : AEMeasurable (stCoord X u' w (gamW X u u' w)) (Measure.dirac 1) := aemeasurable_dirac
+  rw [hμ, Measure.map_smul _ hf] at hmap
   set m := (Measure.dirac (1 : X.B.I.Ginf)).map (stCoord X u' w (gamW X u u' w)) with hm
   have hm' : m = (μ {1})⁻¹ • c • muStab X w := by
     rw [← hmap, smul_smul, ENNReal.inv_mul_cancel ha0 hat, one_smul]
-  by_cases hf : AEMeasurable (stCoord X u' w (gamW X u u' w)) (Measure.dirac 1)
-  · have h1 : m Set.univ = 1 := by
-      rw [hm, Measure.map_apply_of_aemeasurable hf MeasurableSet.univ, Set.preimage_univ, measure_univ]
-    have h2 := congrArg (fun n : Measure _ => n Set.univ) hmap
-    simp only [Measure.smul_apply, smul_eq_mul, h1, mul_one] at h2
-    have h3 : muStab X w Set.univ = 1 := by
-      rcases muStab_univ X w with h | h | h
-      · rw [h, mul_zero] at h2; exact absurd h2 ha0
-      · exact h
-      · rw [h, ENNReal.mul_top hc0] at h2; exact absurd h2 hat
-    rw [h3, mul_one] at h2
-    rw [hm', ← h2, smul_smul, ENNReal.inv_mul_cancel ha0 hat, one_smul]
-  · have h0 : m = 0 := Measure.map_of_not_aemeasurable hf
-    rw [h0, smul_zero] at hmap
-    rw [h0]
-    ext s hs
-    have h4 := congrArg (fun n : Measure _ => n s) hmap
-    simp only [Measure.coe_zero, Pi.zero_apply, Measure.smul_apply, smul_eq_mul] at h4 ⊢
-    rcases mul_eq_zero.1 h4.symm with h | h
-    · exact absurd h hc0
-    · exact h.symm
+  have h1 : m Set.univ = 1 := by
+    rw [hm, Measure.map_apply_of_aemeasurable hf MeasurableSet.univ, Set.preimage_univ, measure_univ]
+  have h2 := congrArg (fun n : Measure _ => n Set.univ) hmap
+  simp only [Measure.smul_apply, smul_eq_mul, h1, mul_one] at h2
+  have h3 : muStab X w Set.univ = 1 := by
+    rcases muStab_univ X w with h | h | h
+    · rw [h, mul_zero] at h2; exact absurd h2 ha0
+    · exact h
+    · rw [h, ENNReal.mul_top hc0] at h2; exact absurd h2 hat
+  rw [h3, mul_one] at h2
+  rw [hm', ← h2, smul_smul, ENNReal.inv_mul_cancel ha0 hat, one_smul]
 
 end Pin
 
@@ -434,8 +451,12 @@ theorem pinned_at (hP : PinHaarEx) {w : Point D.host.E (D.R.rS + 1)} (hw : ∃ �
     simpa [smul_smul, ENNReal.mul_inv_cancel hc0 hct] using h2
   · rw [Measure.smul_apply, hcon, smul_zero]
   · intro s hs
-    rw [Measure.map_smul, hinv s hs]
-  · rw [Measure.map_smul, hmap, smul_smul, ENNReal.inv_mul_cancel hc0 hct, one_smul]
+    rw [Measure.map_smul _ (measurable_const_mul s).aemeasurable, hinv s hs]
+  · have hf : Measurable (stCoord X u' w (gamW X u u' w)) := by
+      rw [stCoord_eq]
+      exact Measurable.of_eval fun v =>
+        (measurable_stCoordV X u' w _ v).comp (measurable_pi_apply v)
+    rw [Measure.map_smul _ hf.aemeasurable, hmap, smul_smul, ENNReal.inv_mul_cancel hc0 hct, one_smul]
 
 theorem exists_at (hP : PinHaarEx) (γ : X.B.I.Ginf) :
     ∃ ν : Measure X.B.I.Ginf, (RegX X u u' γ → ν = Formalism.L2.SG.ProjRows.muInf X.B.I) ∧
@@ -504,15 +525,6 @@ theorem stInf_eq_pi (u u' : D.what₂.Word) (γ : X.B.I.Ginf) : StInf X u u' γ 
   · intro h
     exact ⟨fun v => (h v).1, fun v => (h v).2⟩
 
-def stCoordV (u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1)) (γ : X.B.I.Ginf) (v : InfinitePlace X.B.I.F)
-    (y : Formalism.REAL.UJ (X.B.I.ε v)) : FreeE w → ℂ :=
-  fun p => ((D.host.rdE : ℂ) ^ (D.R.rS - p.1.1.1)) *
-    hJ (X.B.I.ε v) (rv X.B.I v (X.fR ⟨p.1.1.1, by have := p.2.1; omega⟩))
-      (uMat ((γ v)⁻¹ * y * γ v) *ᵥ frm X u' D.host.rdE v p.1.2)
-
-theorem stCoord_eq (u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1)) (γ : X.B.I.Ginf) :
-    stCoord X u' w γ = fun y v => stCoordV X u' w γ v (y v) := rfl
-
 def PlaceHaar : Prop :=
   ∀ (D : D7) (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word) (w : Point D.host.E (D.R.rS + 1))
     (γ : X.B.I.Ginf), IsPtRep X u u' w γ → ∀ v : InfinitePlace X.B.I.F,
@@ -563,7 +575,7 @@ private theorem pi_map_lemma_3 {ι : Type*} [Fintype ι] {α β : ι → Type*} 
     [∀ i, SigmaFinite (ν i)] (f : ∀ i, α i → β i) (hf : ∀ i, AEMeasurable (f i) (μ i))
     (h : ∀ i, (μ i).map (f i) = ν i) : (Measure.pi μ).map (fun x i => f i (x i)) = Measure.pi ν := by
   have hF : AEMeasurable (fun x : ∀ i, α i => fun i => f i (x i)) (Measure.pi μ) :=
-    aemeasurable_pi_lambda _ fun i => (hf i).comp_quasiMeasurePreserving (Measure.quasiMeasurePreserving_eval μ i)
+    AEMeasurable.of_eval fun i => (hf i).comp_quasiMeasurePreserving (Measure.quasiMeasurePreserving_eval μ i)
   symm
   refine Measure.pi_eq fun s hs => ?_
   rw [Measure.map_apply_of_aemeasurable hF (MeasurableSet.univ_pi hs)]
@@ -579,20 +591,8 @@ theorem pinHaarEx_of_place (hP : PlaceHaar) : PinHaarEx := by
   have hrep : IsPtRep X u u' w γ := isPtRep_gamW X u u' hw
   choose μv cv hH hc0 hct hmap using hP D X u u' w γ hrep
   have hsf : ∀ v, SigmaFinite (μv v) := fun v => (hH v).1
-  have hvol0 : Measure.pi (fun _ : FreeE w => (volume : Measure ℂ)) ≠ 0 := by
-    rw [← Measure.measure_univ_ne_zero, Measure.pi_univ]
-    exact Finset.prod_ne_zero_iff.2 fun _ _ => by
-      rw [measure_univ_of_isAddLeftInvariant]; exact ENNReal.top_ne_zero
-  have hae : ∀ v, AEMeasurable (stCoordV X u' w γ v) (μv v) := by
-    intro v
-    by_contra h
-    have h2 := hmap v
-    rw [Measure.map_of_not_aemeasurable h] at h2
-    have h3 := congrArg (fun m : Measure _ => m Set.univ) h2.symm
-    simp only [Measure.smul_apply, smul_eq_mul, Measure.coe_zero, Pi.zero_apply] at h3
-    rcases mul_eq_zero.1 h3 with h4 | h4
-    · exact hc0 v h4
-    · exact hvol0 (Measure.measure_univ_eq_zero.1 h4)
+  have hae : ∀ v, AEMeasurable (stCoordV X u' w γ v) (μv v) :=
+    fun v => (measurable_stCoordV X u' w γ v).aemeasurable
   obtain ⟨K, hK0, hKt, hK⟩ := muStab_eq X w
   haveI hsf2 : ∀ v, SigmaFinite (cv v • Measure.pi (fun _ : FreeE w => (volume : Measure ℂ))) :=
     fun v => sf_smul _ (hct v)

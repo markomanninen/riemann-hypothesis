@@ -1,14 +1,18 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Archimedean
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.LeftTranslate
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Height
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.ArchSliceUAction
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.HasModerateGrowthZero
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Uniform
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.ConstantTerm
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Translation
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.SmoothKZ
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStructure
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Archimedean
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.LeftTranslate
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Height
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.ArchSliceUAction
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.HasModerateGrowthZero
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Uniform
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.ConstantTerm
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Translation
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.SmoothKZ
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStructure
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter Set MeasureTheory
 open scoped NumberField.AdeleRing
@@ -36,18 +40,12 @@ theorem archCompact_eq_image :
   · rintro ⟨k, hk, rfl⟩
     exact archPart_mem_archCompact hk
 
-variable (K n) in
 
+variable (K n) in
 theorem isCompact_archCompact : IsCompact (archCompact K n : Set (archGroup K n)) := by
   rw [archCompact_eq_image]
   exact isCompact_maxCompact.image ((archEquiv K n).continuous.comp
     (continuous_fst.comp (AdelicGLn.prodEquiv K n).continuous))
-
-theorem isArchSmooth_one : IsArchSmooth (1 : AdelicGLn.AdelicGL K n → ℂ) := fun _ => by
-  letI := (isExpLieAlgebra K n).chartedSpace
-  exact contMDiff_const
-
-def oneSmooth : archSmooth K n := ⟨1, isArchSmooth_one⟩
 
 theorem unipMeasure_unipFundamentalDomain (r : ℕ) :
     unipMeasure K n r (unipFundamentalDomain K n r) = 1 := by

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SrcHalf
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SrcHalf
+
+@[expose] public section
 
 noncomputable section
 

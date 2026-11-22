@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 universe u_1 u_2 u_3
 
@@ -13,7 +17,7 @@ private theorem freeAlgebra_lift_intertwine {K : Type u_1} {F : Type u_2} {V : T
   | grade0 c => intro v; simp [AlgHom.commutes, Module.algebraMap_end_apply]
   | grade1 k => intro v; simp [FreeAlgebra.lift_ι_apply, hT]
   | mul a b ha hb => intro v; simp only [map_mul, Module.End.mul_apply]; rw [ha, hb]
-  | add a b ha hb => intro v; simp only [map_add, LinearMap.add_apply]; rw [ha, hb]
+  | add a b ha hb => intro v; simp only [map_add (f := _), LinearMap.add_apply]; rw [ha, hb]
 
 theorem exists_intertwining_functional {K : Type u_1} {F : Type u_2} {V : Type u_3}
     [AddCommGroup F] [Module ℂ F] [AddCommGroup V] [Module ℂ V]
@@ -162,7 +166,7 @@ theorem exists_intertwining_functional {K : Type u_1} {F : Type u_2} {V : Type u
   let ψ : S →ₗ[ℂ] V :=
     { toFun := fun x => φ₀ ⟨x.1, (memSA x.1).mp x.2⟩
       map_add' := fun x y => by
-        rw [← map_add]
+        rw [← map_add (f := _)]
         rfl
       map_smul' := fun c x => by
         have h1 : (⟨c • x.1, (memSA _).mp (S.smul_mem c x.2)⟩ : SA) =

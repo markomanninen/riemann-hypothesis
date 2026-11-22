@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
-import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
-import Formalism.LocalToGlobal.BesselHermitianTheta.MinfDensity
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DoubleCosetsMassLevel
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GenusMassStdAll
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+public import Formalism.LocalToGlobal.BesselHermitianTheta.MinfDensity
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DoubleCosetsMassLevel
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GenusMassStdAll
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.L2.Host GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Top NumberField IsDedekindDomain
 

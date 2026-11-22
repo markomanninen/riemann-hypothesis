@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.MainNotions.ShortIntervalPrimes GlobalTheory.RayZeta
@@ -8,17 +12,17 @@ open scoped nonZeroDivisors
 namespace GlobalTheory.ZetaDenom
 variable {F : Type} [Field F] [NumberField F]
 
-open Classical in
 
+open Classical in
 def cls (I : Ideal (𝓞 F)) : ClassGroup (𝓞 F) := if h : I ∈ (Ideal (𝓞 F))⁰ then ClassGroup.mk0 ⟨I, h⟩ else 1
 
-open Classical in
 
+open Classical in
 def wideInd (C : ClassGroup (𝓞 F)) : Ideal (𝓞 F) → ℚ := fun I => if cls I = C then 1 else 0
 
 theorem cls_of_ne_bot {I : Ideal (𝓞 F)} (h : I ≠ ⊥) :
     cls I = ClassGroup.mk0 ⟨I, mem_nonZeroDivisors_of_ne_zero h⟩ := by
-  rw [cls, dif_pos]
+  rw [cls, dite_eq_left]
 
 theorem cls_mul {I J : Ideal (𝓞 F)} (hI : I ≠ ⊥) (hJ : J ≠ ⊥) : cls (I * J) = cls I * cls J := by
   rw [cls_of_ne_bot hI, cls_of_ne_bot hJ, cls_of_ne_bot (mul_ne_zero hI hJ), ← map_mul]

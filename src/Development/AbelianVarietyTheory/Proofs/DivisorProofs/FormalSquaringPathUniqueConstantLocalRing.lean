@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatPath
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalSquaringPathUniqueOfAgreeLowDegreesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatPath
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalSquaringPathUniqueOfAgreeLowDegreesStatement
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -26,15 +30,13 @@ theorem unitSec_comp_sqr {S : Scheme.{0}} (G : Over S) [GrpObj G] : unitSec G �
   exact congrArg (·.left) this
 
 theorem triv_isPath {S : Scheme.{0}} (G : Over S) [GrpObj G] {R : Type} [CommRing R] (c : R) (b : Sp R ⟶ S) :
-    IsPath G c b (triv G b) where
-  base := triv_over G b
-  zero := by
-    rw [triv, ← Category.assoc, spMap, spMap, ← Spec.map_comp]
+    IsPath G c b (triv G b) := by
+  refine { base := triv_over G b, zero := ?_, scale := ?_ }
+  · rw [triv, ← Category.assoc, spMap, spMap, ← Spec.map_comp]
     have : (CommRingCat.ofHom (PowerSeries.C (R := R)) ≫ CommRingCat.ofHom (PowerSeries.constantCoeff (R := R))) = 𝟙 _ := by
       ext x; simp
     rw [this, Spec.map_id, Category.id_comp]
-  scale := by
-    rw [triv, ← Category.assoc, spMap, spMap, ← Spec.map_comp]
+  · rw [triv, ← Category.assoc, spMap, spMap, ← Spec.map_comp]
     have : (CommRingCat.ofHom (PowerSeries.C (R := R)) ≫ CommRingCat.ofHom (PowerSeries.rescale c)) = CommRingCat.ofHom (PowerSeries.C (R := R)) := by
       ext x n; simp only [CommRingCat.hom_comp, CommRingCat.hom_ofHom, RingHom.coe_comp, Function.comp_apply, PowerSeries.coeff_rescale, PowerSeries.coeff_C]
       split_ifs with h <;> simp [h]

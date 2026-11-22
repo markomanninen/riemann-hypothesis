@@ -1,5 +1,9 @@
-import Formalism.FlagUnipotentLattices.UnipotentStabiliserCharacterisation
-import Formalism.FormalDegreeBessel.FinalDS
+module
+
+public import Formalism.FlagUnipotentLattices.UnipotentStabiliserCharacterisation
+public import Formalism.FormalDegreeBessel.FinalDS
+
+@[expose] public section
 
 namespace Formalism.HermitianLatticeCounting.P
 
@@ -25,32 +29,6 @@ end G4
 
 section G5
 open Finset
-
-theorem degree_ratio_minus_bound : Formalism.HermitianLatticeCounting.ExpansionTerms.DegRatioMinus := by
-  intro n μ s hμ hint hinj
-  have hadd : (μ - Pi.single s 1) + Pi.single s 1 = μ := sub_add_cancel _ _
-  have hint' : ∀ a b, ∃ m : ℤ, (μ - Pi.single s 1 : Fin n → ℝ) a - (μ - Pi.single s 1 : Fin n → ℝ) b = (m : ℝ) := by
-    intro a b
-    obtain ⟨m, hm⟩ := hint a b
-    by_cases ha : a = s <;> by_cases hb : b = s
-    · refine ⟨m, ?_⟩; subst ha; subst hb; simp only [Pi.sub_apply]; linarith
-    · refine ⟨m - 1, ?_⟩
-      rw [ha] at hm
-      simp only [Pi.sub_apply, Pi.single_apply, ha, hb, if_true, if_false]; push_cast; linarith
-    · refine ⟨m + 1, ?_⟩
-      rw [hb] at hm
-      simp only [Pi.sub_apply, Pi.single_apply, ha, hb, if_true, if_false]; push_cast; linarith
-    · refine ⟨m, ?_⟩
-      simp only [Pi.sub_apply, Pi.single_apply, ha, hb, if_false]; linarith
-  have h := Formalism.QuantumDeterminants.fdegRatio n (μ - Pi.single s 1) s hinj hint' (by rw [hadd]; exact hμ)
-  rw [hadd] at h
-  rw [← inv_div, h, ← Finset.prod_inv_distrib]
-  apply Finset.prod_congr rfl
-  intro s' hs'
-  have hne : s' ≠ s := Finset.ne_of_mem_erase hs'
-  rw [inv_div]
-  simp only [Pi.sub_apply, Pi.single_eq_same, Pi.single_apply, hne, if_false]
-  congr 1 <;> ring
 
 lemma prod_succ_div_nat_le_card_succ (S : Finset ℕ) : (∀ y ∈ S, 1 ≤ y) →
     ∏ y ∈ S, (((y : ℝ) + 1) / (y : ℝ)) ≤ (S.card : ℝ) + 1 := by
@@ -90,7 +68,7 @@ lemma prod_succ_div_injective_pos_bounds {ι : Type} (I : Finset ι) (y : ι →
   constructor
   · calc (1:ℝ) = ∏ i ∈ I, (1:ℝ) := by simp
       _ ≤ ∏ i ∈ I, (((y i : ℝ) + 1) / (y i : ℝ)) := by
-          refine Finset.prod_le_prod (fun _ _ => zero_le_one) (fun i hi => ?_)
+          refine Finset.prod_le_prod₀ (fun _ _ => zero_le_one) (fun i hi => ?_)
           have hy : (0:ℝ) < y i := by exact_mod_cast h1 i hi
           rw [le_div_iff₀ hy]
           linarith
@@ -352,7 +330,7 @@ lemma paired_sum_exp_bound {ι κ : Type} [DecidableEq ι] [DecidableEq κ] (I I
   have e1 : ∏ i ∈ I, N i = (∏ i ∈ I \ I', N i) * ∏ i ∈ I', N i := (Finset.prod_sdiff hsub).symm
   have e2 : ∏ i ∈ I \ I', N i ≤ B ^ c := by
     calc ∏ i ∈ I \ I', N i ≤ ∏ _i ∈ I \ I', B :=
-          Finset.prod_le_prod (fun i hi => hN i (Finset.sdiff_subset hi)) hB
+          Finset.prod_le_prod₀ (fun i hi => hN i (Finset.sdiff_subset hi)) hB
       _ = B ^ (I \ I').card := by rw [Finset.prod_const]
       _ ≤ B ^ c := pow_le_pow_right₀ hB1 hc
   have h1 : ∀ a ∈ J, 1 ≤ Real.exp (t a) * D a := fun a ha =>
@@ -363,10 +341,10 @@ lemma paired_sum_exp_bound {ι κ : Type} [DecidableEq ι] [DecidableEq κ] (I I
     exact hφ i hi
   have e3 : ∏ i ∈ I', N i ≤ ∏ a ∈ J, (Real.exp (t a) * D a) := by
     calc ∏ i ∈ I', N i ≤ ∏ i ∈ I', (Real.exp (t (φ i)) * D (φ i)) :=
-          Finset.prod_le_prod (fun i hi => hN i (hsub hi)) hp
+          Finset.prod_le_prod₀ (fun i hi => hN i (hsub hi)) hp
       _ = ∏ a ∈ I'.image φ, (Real.exp (t a) * D a) := (Finset.prod_image (f := fun a => Real.exp (t a) * D a) hinj).symm
       _ ≤ ∏ a ∈ J, (Real.exp (t a) * D a) :=
-          Finset.prod_le_prod_of_subset_of_one_le him
+          Finset.prod_le_prod_of_subset_of_one_le₀ him
             (fun a ha => le_trans zero_le_one (h1 a (him ha))) (fun a ha _ => h1 a ha)
   have e4 : ∏ a ∈ J, (Real.exp (t a) * D a) = Real.exp (∑ a ∈ J, t a) * ∏ a ∈ J, D a := by
     rw [Finset.prod_mul_distrib, Real.exp_sum]

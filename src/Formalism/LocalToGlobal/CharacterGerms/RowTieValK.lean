@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.LinearCoeffExponentialEqIte
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.LinearCoeffExponentialEqIte
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,11 +23,11 @@ private theorem coeff_single_one_mul' (t : Fin 1 × Fin dd) (x y : PS C 1 dd) :
         MvPowerSeries.constantCoeff x * MvPowerSeries.coeff (Finsupp.single t 1) y := by
   first
   | (have key : ∀ g : PS C 1 dd, MvPowerSeries.coeff (Finsupp.single t 1) g =
-        MvPowerSeries.constantCoeff (MvPowerSeries.pderiv C t g) := by
+        MvPowerSeries.constantCoeff (MvPowerSeries.pderiv (R := C) t g) := by
       intro g
       rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, MvPowerSeries.coeff_pderiv]
       simp
-     rw [key, key, key, Derivation.leibniz, map_add, smul_eq_mul, smul_eq_mul, map_mul, map_mul]
+     rw [key, key, key, Derivation.leibniz, map_add (f := _), smul_eq_mul, smul_eq_mul, map_mul, map_mul]
      ring)
   | (rw [MvPowerSeries.coeff_mul, Finsupp.antidiagonal_single]
      simp [Finset.Nat.antidiagonal_succ]

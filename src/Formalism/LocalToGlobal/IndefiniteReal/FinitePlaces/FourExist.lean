@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FourModel
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FourModel
+
+@[expose] public section
 
 set_option linter.style.haveILetI false
 
@@ -321,10 +325,9 @@ theorem coef_smul (Φ : W → ℂ) (c : ℂ) (a y : W) : coef χ L X (c • Φ) 
       rw [← mul_finsum _ c]
       ring
     · have hex' : ¬ ∃ k, 0 < k ∧ IsInv k (L ⊓ X) (fun t => c * g t) := by rw [hpred]; exact hex
-      rw [dif_neg hex', dif_neg hex, mul_zero]
+      rw [dite_eq_right hex', dite_eq_right hex, mul_zero]
 
 include hχl hχr hχ0 hLL hdY hoY hfinX in
-
 theorem coef_ne_zero {Φ : W → ℂ} (h : IsSB L X Φ) {k : ℕ} (hk : 0 < k) (hi : ∀ u ∈ L ⊓ X, ∀ t, Φ (t + k • u) = Φ t)
     {a y : W} (hy : y ∈ Y) (hc : coef χ L X Φ a y ≠ 0) : (∃ t ∈ L ⊓ X, Φ (a + t) ≠ 0) ∧ k • y ∈ L := by
   unfold coef at hc
@@ -333,7 +336,7 @@ theorem coef_ne_zero {Φ : W → ℂ} (h : IsSB L X Φ) {k : ℕ} (hk : 0 < k) (
   unfold integ at hc
   by_cases hex : ∃ K, 0 < K ∧ IsInv K (L ⊓ X) G
   swap
-  · rw [dif_neg hex] at hc; exact absurd rfl hc
+  · rw [dite_eq_right hex] at hc; exact absurd rfl hc
   rw [dif_pos hex] at hc
   have hK := hex.choose_spec.1
   have hI := hex.choose_spec.2

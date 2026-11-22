@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.AlWellDefSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.IsLocallyConstantRankAtStalkEigenSub
-import Development.AbelianVarietyTheory.Definitions.Divisors.KerIdealCompOfSurjective
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsWeilFunction
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.WeilIsGrpPullbackIff
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.AlWellDefSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.IsLocallyConstantRankAtStalkEigenSub
+public import Development.AbelianVarietyTheory.Definitions.Divisors.KerIdealCompOfSurjective
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsWeilFunction
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.WeilIsGrpPullbackIff
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -41,6 +45,10 @@ namespace Tate
 
 def lev (t : Tate p M) (n : ℕ) : M := (Additive.toMul (α := tateSeq p M) t).1 n
 
+theorem ext {s t : Tate p M} (h : ∀ n, s.lev n = t.lev n) : s = t := by
+  change Additive.toMul (α := tateSeq p M) s = Additive.toMul (α := tateSeq p M) t
+  exact Subtype.ext (funext h)
+
 def mk (s : ℕ → M) (h : ∀ n, s n ^ p ^ n = 1 ∧ s (n + 1) ^ p = s n) : Tate p M :=
   Additive.ofMul (α := tateSeq p M) ⟨s, h⟩
 
@@ -50,8 +58,6 @@ def mk (s : ℕ → M) (h : ∀ n, s n ^ p ^ n = 1 ∧ s (n + 1) ^ p = s n) : Ta
 theorem lev_pow (t : Tate p M) (n : ℕ) : t.lev n ^ p ^ n = 1 := ((Additive.toMul (α := tateSeq p M) t).2 n).1
 
 theorem lev_succ (t : Tate p M) (n : ℕ) : t.lev (n + 1) ^ p = t.lev n := ((Additive.toMul (α := tateSeq p M) t).2 n).2
-
-@[ext] theorem ext {s t : Tate p M} (h : ∀ n, s.lev n = t.lev n) : s = t := Additive.toMul.injective (Subtype.ext (funext h))
 
 @[simp] theorem lev_add (s t : Tate p M) (n : ℕ) : (s + t).lev n = s.lev n * t.lev n := rfl
 
@@ -81,8 +87,8 @@ instance : Module ℤ_[p] (Tate p M) where
   add_smul a b t := ext fun n => pow_digit_add (t.lev_pow n) a b
   zero_smul t := ext fun n => by rw [lev_smul, digit_zero, pow_zero, lev_zero]
 
-variable (p) in
 
+variable (p) in
 def map {M' : Type} [CommGroup M'] (f : M →* M') : Tate p M →ₗ[ℤ_[p]] Tate p M' where
   toFun t := mk (fun n => f (t.lev n)) fun n =>
     ⟨by rw [← map_pow, lev_pow, map_one], by rw [← map_pow, lev_succ]⟩
@@ -91,9 +97,6 @@ def map {M' : Type} [CommGroup M'] (f : M →* M') : Tate p M →ₗ[ℤ_[p]] Ta
 
 @[simp] theorem lev_map {M' : Type} [CommGroup M'] (f : M →* M') (t : Tate p M) (n : ℕ) :
     (map p f t).lev n = f (t.lev n) := rfl
-
-theorem map_injective {M' : Type} [CommGroup M'] {f : M →* M'} (hf : Function.Injective f) :
-    Function.Injective (map p f) := fun s t h => Tate.ext fun n => hf (by simpa using congrArg (fun u => Tate.lev u n) h)
 
 theorem map_smul_of_isHausdorff {T O : Type} [AddCommGroup T] [Module ℤ_[p] T] [CommRing O]
     [Algebra ℤ_[p] O] [IsHausdorff (Ideal.span {(p : O)}) O] (f : T →+ O) (a : ℤ_[p]) (t : T) :
@@ -106,8 +109,8 @@ theorem map_smul_of_isHausdorff {T O : Type} [AddCommGroup T] [Module ℤ_[p] T]
   have e1 : ∀ (m : ℕ) (x : T), f ((m : ℤ_[p]) • x) = (m : O) * f x := fun m x => by
     rw [Nat.cast_smul_eq_nsmul, map_nsmul, nsmul_eq_mul]
   have key : f (a • t) - a • f t = (p : O) ^ n * (f (b • t) - algebraMap ℤ_[p] O b * f t) := by
-    rw [ha, add_smul, map_add, mul_smul, e1, e1, Algebra.smul_def]
-    simp only [map_add, map_mul, map_pow, map_natCast, Nat.cast_pow]
+    rw [ha, add_smul, map_add (f := _), mul_smul, e1, e1, Algebra.smul_def]
+    simp only [map_add (f := _), map_mul, map_pow, map_natCast, Nat.cast_pow]
     ring
   rw [SModEq.sub_mem, sub_zero, key, smul_eq_mul, Ideal.mul_top]
   exact Ideal.mul_mem_right _ _ (Ideal.pow_mem_pow (Ideal.mem_span_singleton_self _) n)
@@ -344,7 +347,9 @@ def actPts (T : Over S) (a : Λ) : (T ⟶ G) →* (T ⟶ G) :=
   MonoidHom.mk' (fun x => x ≫ α.act a) fun x y => MonObj.mul_comp x y _
 
 theorem actPts_add (T : Over S) (a b : Λ) (x : T ⟶ G) :
-    x ≫ α.act (a + b) = (x ≫ α.act a) * (x ≫ α.act b) := by rw [α.map_add]; exact MonObj.comp_mul _ _ _
+    x ≫ α.act (a + b) = (x ≫ α.act a) * (x ≫ α.act b) := by
+  rw [α.map_add a b]
+  exact MonObj.comp_mul _ _ _
 
 def actTate (p : ℕ) [Fact p.Prime] (T : Over S) : Λ →+* Module.End ℤ_[p] (Tate p (T ⟶ G)) :=
   RingHom.mk' (MonoidHom.mk (OneHom.mk (fun a => Tate.map p (actPts α T a))

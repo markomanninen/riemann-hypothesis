@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.InfinitesimalDecay.DecBoundOfCompact
-import Formalism.HermitianCurvature.BesselNonvanishingReduction
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.ZhatNormLinearBound
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.AdmissibleOfIwasawa
-import CompanionTheory.AutomorphicTheory.KFiniteVectors.KDecay
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.InfinitesimalDecay.DecBoundOfCompact
+public import Formalism.HermitianCurvature.BesselNonvanishingReduction
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.ZhatNormLinearBound
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.AdmissibleOfIwasawa
+public import CompanionTheory.AutomorphicTheory.KFiniteVectors.KDecay
+
+@[expose] public section
 
 open Matrix Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData ReciprocityTheory.ChartRestriction.DS
 open scoped InnerProductSpace

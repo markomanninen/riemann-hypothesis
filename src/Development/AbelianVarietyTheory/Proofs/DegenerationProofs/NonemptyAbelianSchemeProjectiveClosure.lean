@@ -1,24 +1,29 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.BaseFacts
-import Development.AbelianVarietyTheory.Definitions.Degenerations.IsAffineSplitTorusLeft
-import Development.AbelianVarietyTheory.Definitions.Degenerations.CompanionTheory
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.UTorsSt
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsHomOpenPart
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ImmByOfSpans
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsProjBundleClosureStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsInvertibleMatrixChangeOfSpanEq
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsIntegralOfSmoothFieldOfConnectedSpace
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsHomSpecOfLeRingOnStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsFunctionFieldOfIsDominantStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DivIffMemNonzeroLocusStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ClosedImmersionBaseChangeProjChartStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsIsLBGenTrivOfRatiosStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GenericTrivialisationSectionAndPullbackStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsClosedImmersionOfCoordinateDivisibilityStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsIsPullbackOfProjChartStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HomogeneousCoordinatesMulVecOfGenericValueStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.BaseFacts
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.IsAffineSplitTorusLeft
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.CompanionTheory
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.UTorsSt
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsHomOpenPart
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ImmByOfSpans
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsProjBundleClosureStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsInvertibleMatrixChangeOfSpanEq
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsIntegralOfSmoothFieldOfConnectedSpace
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsHomSpecOfLeRingOnStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsFunctionFieldOfIsDominantStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DivIffMemNonzeroLocusStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ClosedImmersionBaseChangeProjChartStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsIsLBGenTrivOfRatiosStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GenericTrivialisationSectionAndPullbackStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsClosedImmersionOfCoordinateDivisibilityStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsIsPullbackOfProjChartStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HomogeneousCoordinatesMulVecOfGenericValueStatement
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -205,7 +210,57 @@ theorem nonempty_clos : GlobalTheory.UT.LL → ∀ (o Ω : Type) [CommRing o] [F
     rw [ha₁, Category.comp_id]
     exact IsPullback.of_hasPullback _ _
   obtain ⟨t, ht⟩ := CrdCalc.crd_exists hH ρ.s (N.pt ≫ a)
-  obtain ⟨hdiv, hval⟩ := GlobalTheory.T.div_iff_mem_nonzeroLocus_and_crd_ratio o Ω' N _ a _ _ ρ.s t hH (by simpa using himm.1) ht
+  have hs : ⨆ j, nonzeroLocus (ρ.s j) = ⊤ := by simpa using himm.1
+  have hratio : ∀ {k : S.J} {z : N.Z}, a z ∈ nonzeroLocus (ρ.s k) →
+      t k ≠ 0 ∧ ∀ (j : S.J) (r : Γ((baseOver (Sp S.R) ⊗ ρ.P.A).left, nonzeroLocus (ρ.s k))), IsRatio (ρ.s j) (ρ.s k) _ r →
+        valF N.pt (a ⁻¹ᵁ nonzeroLocus (ρ.s k)) (a.app _ r) = t j / t k := by
+    intro k z hz
+    have h : ⊤ ≤ (N.pt ≫ a) ⁻¹ᵁ nonzeroLocus (ρ.s k) :=
+      N.top_le_preimage_pt (U := a ⁻¹ᵁ nonzeroLocus (ρ.s k)) ⟨z, hz⟩
+    have hk : t k ≠ 0 := ((CrdCalc.crd_isUnit_iff k ht).2 h).ne_zero
+    refine ⟨hk, fun j r hr => ?_⟩
+    rw [eq_div_iff hk, CrdCalc.crd_ratio ht hr h, valR_comp]
+    rfl
+  have hdiv_of_mem : ∀ {k : S.J} {z : N.Z}, a z ∈ nonzeroLocus (ρ.s k) → N.Div t k z := by
+    intro k z hz
+    obtain ⟨hk, h⟩ := hratio hz
+    refine ⟨hk, fun j => ?_⟩
+    obtain ⟨r, hr, -⟩ := GlobalTheory.SecRatio.existsUnique_isRatio hH (ρ.s j) (ρ.s k) _ le_rfl
+    exact ⟨a ⁻¹ᵁ nonzeroLocus (ρ.s k), a.app _ r, hz, h j r hr⟩
+  have hcrd : ∀ {K : Type} [Field K] {x : Sp K ⟶ N.Z} {v : S.J → K} {k : S.J},
+      Crd (LPow ρ.P.A ρ.P.L (↑S.N) (baseOver (Sp S.R))) ρ.s (x ≫ a) v → a (x (IsLocalRing.closedPoint K)) ∈ nonzeroLocus (ρ.s k) →
+      v k ≠ 0 ∧ ∀ j, v j = N.val x (t j / t k) * v k := by
+    intro K _ x v k hv hz
+    have hx : ⊤ ≤ x ⁻¹ᵁ (a ⁻¹ᵁ nonzeroLocus (ρ.s k)) := (le_preimage_iff x _).2 hz
+    have h : ⊤ ≤ (x ≫ a) ⁻¹ᵁ nonzeroLocus (ρ.s k) := hx
+    refine ⟨((CrdCalc.crd_isUnit_iff k hv).2 h).ne_zero, fun j => ?_⟩
+    obtain ⟨r, hr, -⟩ := GlobalTheory.SecRatio.existsUnique_isRatio hH (ρ.s j) (ρ.s k) _ le_rfl
+    rw [RatModel.val_eq ((top_le_preimage_iff _ _).1 hx) ((hratio hz).2 j r hr), CrdCalc.crd_ratio hv hr h,
+      valR_comp]
+    rfl
+  have hmem_pt : ∀ {K : Type} [Field K] (x : Sp K ⟶ N.Z) {i : S.J},
+      N.Div t i (x (IsLocalRing.closedPoint K)) → a (x (IsLocalRing.closedPoint K)) ∈ nonzeroLocus (ρ.s i) := by
+    intro K _ x i hi
+    have hm : a (x (IsLocalRing.closedPoint K)) ∈ ⨆ j, nonzeroLocus (ρ.s j) := by rw [hs]; trivial
+    obtain ⟨k, hk⟩ := TopologicalSpace.Opens.mem_iSup.1 hm
+    obtain ⟨v, hv⟩ := CrdCalc.crd_exists hH ρ.s (x ≫ a)
+    obtain ⟨h0, h1⟩ := hcrd hv hk
+    have hd := hdiv_of_mem hk
+    have hu := (RatModel.val_ne_zero_iff (RatModel.range_eq_singleton x _) _).2 ((hd.div_iff_isUnit i).1 hi)
+    have hvi : IsUnit (v i) := isUnit_iff_ne_zero.2 (by rw [h1 i]; exact mul_ne_zero hu h0)
+    exact (le_preimage_iff (x ≫ a) _).1 ((CrdCalc.crd_isUnit_iff i hv).1 hvi)
+  have hdiv : ∀ (i : S.J) (z : N.Z), N.Div t i z ↔ a z ∈ nonzeroLocus (ρ.s i) := by
+    intro i z
+    refine ⟨fun hi => ?_, hdiv_of_mem⟩
+    let x : Sp (N.Z.residueField z) ⟶ N.Z := N.Z.fromSpecResidueField z
+    have e : x (IsLocalRing.closedPoint (N.Z.residueField z)) = z := Scheme.fromSpecResidueField_apply _ _
+    have h := hmem_pt x (i := i) (by rw [e]; exact hi)
+    rwa [e] at h
+  have hval : ∀ (K : Type) [Field K] (x : Sp K ⟶ N.Z) (v : S.J → K) (k : S.J),
+      Crd (LPow ρ.P.A ρ.P.L (↑S.N) (baseOver (Sp S.R))) ρ.s (x ≫ a) v → N.Div t k (x (IsLocalRing.closedPoint K)) →
+      v k ≠ 0 ∧ ∀ j, v j = N.val x (t j / t k) * v k := by
+    intro K _ x v k hv hk
+    exact hcrd hv (hmem_pt x hk)
   have hchN := GlobalTheory.T.closedImmersionBaseChange_projChart o Ω M Ω' φ N U₀ _ _ _ u₀ a _ _ _ ρ.s t hpb hN himm ht hdiv
   obtain ⟨W₀, hW₀, hz₀, hle₀⟩ := exists_isAffineOpen_mem_and_subset (U := U₀) hne.some_mem
   obtain ⟨ht0, htop⟩ := (hchN W₀ hle₀ hW₀ ⟨_, hz₀⟩).closure_eq_top hN ⟨_, hz₀⟩

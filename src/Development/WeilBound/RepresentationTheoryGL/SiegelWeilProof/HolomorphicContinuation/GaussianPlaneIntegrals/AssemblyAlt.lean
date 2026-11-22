@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.SmoothOnGVIff
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.NullSec
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.SmoothOnGVIff
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.NullSec
+
+@[expose] public section
 
 noncomputable section
 

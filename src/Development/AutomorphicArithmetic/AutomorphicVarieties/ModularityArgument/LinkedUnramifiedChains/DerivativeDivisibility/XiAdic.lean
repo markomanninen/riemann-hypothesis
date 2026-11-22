@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.LinkedUnlOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.LocCFTAll
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.LinkedUnlOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.LocCFTAll
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,8 +34,8 @@ private theorem xi_adic {Γ R S : Type} [TopologicalSpace Γ] [CommRing R] [Comm
     exact Ideal.pow_right_mono h1 N
   have hc := (h N).comp (Ideal.quotientMap (maximalIdeal S ^ N) φ hle)
   convert hc using 1
-  funext g
-  simp only [Function.comp_apply, Ideal.quotientMap_mk]
+  ext g
+  rfl
 
 private theorem xi_key {O A O₁ : Type} [CommRing O] [IsLocalRing O] [CommRing A] [IsLocalRing A]
     [CommRing O₁] [IsLocalRing O₁] [IsNoetherianRing O₁] [IsAdicComplete (maximalIdeal O₁) O₁]

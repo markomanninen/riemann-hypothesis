@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.LocVol
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.LocVol
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,7 +108,7 @@ theorem rhoE_sig : (rhoE I v).comp (Formalism.UG.sigR I.cm.sig (Af I.F)) =
       simp [Formalism.UG.sigR], rhoE_tmul, rhoE_tmul]
     simp [sigR]
   | add x y hx hy =>
-    simp only [RingHom.comp_apply, map_add] at *
+    simp only [RingHom.comp_apply, map_add (f := _)] at *
     rw [hx, hy]
 
 theorem bc_rhoE_mem (x : I.Gf) :
@@ -219,7 +223,7 @@ theorem rhoE_int (t : I.E ⊗[I.F] Af I.F) (ht : t ∈ Formalism.MainNotions.S.I
     simpa using hy
   | add x z _ _ hx hz =>
     intro y hy
-    rw [map_add, add_smul]
+    rw [map_add (f := _), add_smul]
     exact add_mem (hx y hy) (hz y hy)
   | neg x _ hx =>
     intro y hy

@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.GapAbsOf
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.TjcosetsFF
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.GapAbsOf
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.TjcosetsFF
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairL
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGroupAdjPair
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnTrSmooth
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLZero
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairL
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGroupAdjPair
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnTrSmooth
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLZero
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 

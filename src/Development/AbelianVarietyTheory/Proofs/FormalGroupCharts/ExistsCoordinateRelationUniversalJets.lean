@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.AdditionLawSecondIdentity
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpChartJet
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GaugeUniqB
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpUniqLoc
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermFunPf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.AdditionLawSecondIdentity
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpChartJet
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GaugeUniqB
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpUniqLoc
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermFunPf
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section

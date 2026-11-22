@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothVectorsModerateGrowthSmoothFrechetRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothVectorsModerateGrowthSmoothFrechetRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem contDiff_facs (Xs : Fin k → Mx n) :
   obtain ⟨i, rfl⟩ := List.mem_ofFn.1 hf
   have he : ContDiff ℝ ∞ (NormedSpace.exp : Mx n → Mx n) :=
     contDiff_iff_contDiffAt.2 fun x => (NormedSpace.exp_analytic (𝕂 := ℝ) x).contDiffAt
-  exact he.comp ((contDiff_apply ℝ ℝ i).smul contDiff_const)
+  exact he.comp ((contDiff_apply ℝ (fun _ => ℝ) i).smul contDiff_const)
 
 def ctL : Mx n →ₗ[ℝ] Mx n where
   toFun M := Mᴴ
@@ -119,7 +123,7 @@ theorem hasFDerivAt_of_partials :
         ((hc 0).comp continuous_cons_pair)
     have cf₂ : Continuous ↿f₂ := by
       show Continuous fun p : ℝ × (Fin k → ℝ) => ∑ j, (ContinuousLinearMap.proj j : (Fin k → ℝ) →L[ℝ] ℝ).smulRight (d j.succ (Fin.cons p.1 p.2))
-      refine continuous_finset_sum _ fun j _ => ?_
+      refine continuous_finsetSum _ fun j _ => ?_
       exact (ContinuousLinearMap.smulRightL ℝ (Fin k → ℝ) E
         (ContinuousLinearMap.proj j)).continuous.comp ((hc j.succ).comp continuous_cons_pair)
     let ι : (Fin (k+1) → ℝ) →L[ℝ] ℝ × (Fin k → ℝ) :=
@@ -165,8 +169,8 @@ theorem prod_update (Xs : Fin k → Mx n) (t : Fin k → ℝ) (i : Fin k) (s : �
     congr 1
     funext j
     simp only [Function.comp_apply, Function.update_apply]
-    split_ifs with hj
-    · subst hj; rfl
+    split_ifs with h
+    · subst j; rfl
     · rfl
   rw [e, List.prod_set, if_pos (by simp [facs]), List.map_drop]
 
@@ -220,7 +224,8 @@ theorem famSmooth : ∀ (n : ℕ) (ε : Fin n → Bool) (H : Type) [NormedAddCom
     have e2 := map_der_eq hb 1 (adInv hB Y) u []
     simp only [ContinuousLinearMap.one_apply] at e2
     show σ _ (σ (NormedSpace.exp (t i • Xs i)) (σ (B i t) ((der σ (adInv hB Y) u).1 []))) = _
-    rw [e2, ← sigma_mul hσ hA (exp_mem_UJ (hX i) (t i)),
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e2, ← sigma_mul hσ hA (exp_mem_UJ (hX i) (t i)),
       ← sigma_mul hσ (mul_mem_UJ hA (exp_mem_UJ (hX i) (t i))) hB, ← eP, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     exact (σ (P t)).map_smul_of_tower _ _

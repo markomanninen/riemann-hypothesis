@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsPrimitiveRootTopZeta
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EdgeClassEqKummerCharacterOfChosenRootFunctionFi
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsAlgebraicOfJKMem
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsMapConstEqOfIsAlgClosed
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemRingOfIntegersOfHol
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteDimensionalLevStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerCupProductCoboundaryTheoremStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsPrimitiveRootTopZeta
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EdgeClassEqKummerCharacterOfChosenRootFunctionFi
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsAlgebraicOfJKMem
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsMapConstEqOfIsAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemRingOfIntegersOfHol
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteDimensionalLevStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerCupProductCoboundaryTheoremStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,8 +27,6 @@ variable {F K Ω : Type} [Field F] [Field K] [Field Ω] [Algebra F K] [Algebra F
 def toK : geo F K Ω →* (Ω ≃ₐ[K] Ω) :=
   MonoidHom.mk' (fun g => { (g : Ω ≃ₐ[F] Ω).toRingEquiv with commutes' := (TopW.mem_geo _).1 g.2 })
     (fun _ _ => AlgEquiv.ext fun _ => rfl)
-
-theorem toK_apply (g : geo F K Ω) (z : Ω) : toK g z = (g : Ω ≃ₐ[F] Ω) z := rfl
 
 theorem continuous_toK [Algebra.IsAlgebraic F Ω] : Continuous (toK : geo F K Ω →* (Ω ≃ₐ[K] Ω)) := by
   apply continuous_of_continuousAt_one
@@ -177,23 +179,5 @@ namespace GlobalTheory.K4
 open GlobalTheory.KZ
 
 attribute [local instance] algMdl
-
-theorem wkTop_spec : ∀ {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] {ε : Ω →+* ℂ} (X : Tower Ω ε)
-    (l n r N : ℕ) (x : ZMod N) (c d : ℕ), l.Prime → 0 < N → 1 ≤ r + n → Nat.Coprime l N → 1 < c → 1 < d →
-    Nat.Coprime c (6 * l * N) → Nat.Coprime d (6 * l * N) →
-    (∃ η, IsTopEta X (l ^ (r + n) * N) (topChar X (l ^ (r + n) * N) l n (topU X l (r + n) N x c))
-      (topChar X (l ^ (r + n) * N) l n (topV X l (r + n) N d)) η) ∧
-    ∀ σ ∈ fixMu Ω (l ^ (r + n) * N),
-      IsTopW (K := topL X (l ^ (r + n) * N)) (topZeta X (l ^ (r + n) * N) l n)
-        (topChar X (l ^ (r + n) * N) l n (topU X l (r + n) N x c))
-        (topChar X (l ^ (r + n) * N) l n (topV X l (r + n) N d))
-        (topEta X (l ^ (r + n) * N) (topChar X (l ^ (r + n) * N) l n (topU X l (r + n) N x c))
-          (topChar X (l ^ (r + n) * N) l n (topV X l (r + n) N d)))
-        (topLift X (l ^ (r + n) * N) σ)⁻¹ ⟨wkTop X l n r N x c d σ, wkTop_mem X l n r N x c d σ⟩ := by
-  intro Ω _ _ _ ε X l n r N x c d hl hN hs hlN hc1 hd1 hc hd
-  obtain ⟨hu, hv⟩ := TopUnits.isTopUnit_topU_topV X x hl hN hs hlN hc1 hd1 hc hd
-  obtain ⟨h1, h2⟩ := TopEta.spec_of_units X (mul_ne_zero (pow_ne_zero _ hl.ne_zero) hN.ne') hl.ne_zero
-    (pow_dvd_topLevel l n r N) hu hv
-  exact ⟨h1, fun σ _ => h2 _⟩
 
 end GlobalTheory.K4

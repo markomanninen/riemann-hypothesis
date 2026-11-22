@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.A9OfA0A1EigenbasisA6
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.A9OfA0A1EigenbasisA6
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory AlgebraicGeometry GlobalTheory.EtC Polynomial IsLocalRing

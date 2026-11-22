@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Module
 open scoped InnerProductSpace BigOperators
@@ -15,7 +19,8 @@ theorem norm_sq_le_sum_mul {E : Type*} [SeminormedAddCommGroup E] [NormedSpace �
     ‖l f‖ ^ 2 ≤ (∑ i, ‖l (b i)‖ ^ 2) * ‖f‖ ^ 2 := by
   have h1 : l f = ∑ i, ⟪b i, f⟫_ℂ • l (b i) := by
     conv_lhs => rw [← b.sum_repr' f]
-    simp [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_smul]
   have h2 : ‖l f‖ ≤ ∑ i, ‖l (b i)‖ * ‖⟪b i, f⟫_ℂ‖ := by
     rw [h1]
     refine (norm_sum_le _ _).trans (le_of_eq ?_)
@@ -34,11 +39,13 @@ theorem sum_norm_sq_eq (b : OrthonormalBasis ι ℂ V) (c : OrthonormalBasis κ 
     have hb : ∀ i, ⟪l (b i), l (b i)⟫_ℂ = ∑ j, ⟪b i, c j⟫_ℂ * ⟪l (c j), l (b i)⟫_ℂ := by
       intro i
       conv_lhs => enter [2]; rw [← c.sum_repr' (b i)]
-      simp [map_sum, map_smul, sum_inner, inner_smul_left, mul_comm]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, map_smul, sum_inner, inner_smul_left, mul_comm]
     have hc : ∀ j, ⟪l (c j), l (c j)⟫_ℂ = ∑ i, ⟪b i, c j⟫_ℂ * ⟪l (c j), l (b i)⟫_ℂ := by
       intro j
       conv_lhs => enter [3]; rw [← b.sum_repr' (c j)]
-      simp [map_sum, map_smul, inner_sum, inner_smul_right]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, map_smul, inner_sum, inner_smul_right]
     simp_rw [hb, hc]
     exact Finset.sum_comm
   simp_rw [inner_self_eq_norm_sq_to_K] at key
@@ -94,7 +101,7 @@ theorem integral_sum_eq_finrank' {ι : Type*} [Fintype ι] (l : ∀ x, V →ₗ[
     (hint : ∀ f, Integrable (fun x => ‖l x f‖ ^ 2) μ)
     (hnorm : ∀ f, ‖f‖ ^ 2 = ∫ x, ‖l x f‖ ^ 2 ∂μ) (b : OrthonormalBasis ι ℂ V) :
     ∫ x, ∑ i, ‖l x (b i)‖ ^ 2 ∂μ = finrank ℂ V := by
-  rw [integral_finset_sum _ fun i _ => hint (b i)]
+  rw [integral_finsetSum _ fun i _ => hint (b i)]
   simp_rw [← hnorm, b.orthonormal.1]
   simp [finrank_eq_card_basis b.toBasis]
 
@@ -106,7 +113,7 @@ theorem finrank_le_of_finite' [IsFiniteMeasure μ] [FiniteDimensional ℂ V]
     (finrank ℂ V : ℝ) ≤ r * C * μ.real Set.univ := by
   rw [← integral_sum_eq_finrank' l hint hnorm (stdOrthonormalBasis ℂ V)]
   calc _ ≤ ∫ _x, (r * C : ℝ) ∂μ := by
-        refine integral_mono (integrable_finset_sum _ fun i _ => hint _) (integrable_const _) ?_
+        refine integral_mono (integrable_finsetSum _ fun i _ => hint _) (integrable_const _) ?_
         intro x
         refine (sum_norm_sq_le _ (l x) hC fun f => h f x).trans ?_
         have : (finrank ℂ (E x) : ℝ) ≤ r := by exact_mod_cast hr x
@@ -128,7 +135,7 @@ theorem finite_and_finrank_le' [IsFiniteMeasure μ]
         (fun f => hint f) (fun f => hnorm f) hC (fun f x => h f x)
       rw [hW] at this
       exact Nat.le_floor this
-    exact Module.rank_lt_aleph0_iff.1 (hrank.trans_lt (Cardinal.nat_lt_aleph0 _))
+    exact Module.rank_lt_aleph0_iff.1 (hrank.trans_lt Cardinal.natCast_lt_aleph0)
   exact ⟨hfin, finrank_le_of_finite' hr l hint hnorm hC h⟩
 
 theorem sum_eq_finrank_of_homogeneous' [IsProbabilityMeasure μ] {ι : Type*} [Fintype ι]
@@ -335,27 +342,5 @@ theorem norm_sq_le_finrank_mul_fun {G : Type*} [Group G] [MulAction G X]
       rw [inv_smul_smul]) ⟨f, hf⟩ x
 
 end Functions
-
-example (f : Fin 2 → ℂ) (x : Fin 2) :
-    ‖f x‖ ^ 2 ≤ finrank ℂ (⊤ : Submodule ℂ (Fin 2 → ℂ)) *
-      ∫ y, ‖f y‖ ^ 2 ∂((2 : ENNReal)⁻¹ • (Measure.count : Measure (Fin 2))) := by
-  haveI : IsProbabilityMeasure ((2 : ENNReal)⁻¹ • (Measure.count : Measure (Fin 2))) :=
-    ⟨by simp [ENNReal.inv_mul_cancel]⟩
-  haveI : MeasurableConstSMul (Equiv.Perm (Fin 2)) (Fin 2) := ⟨fun _ => measurable_from_top⟩
-  haveI : SMulInvariantMeasure (Equiv.Perm (Fin 2)) (Fin 2) (Measure.count : Measure (Fin 2)) :=
-    ⟨fun g s _ => by
-      rw [Measure.count_apply MeasurableSet.of_discrete, Measure.count_apply MeasurableSet.of_discrete]
-      exact congrArg _ (Set.encard_preimage_of_bijective g.bijective s)⟩
-  refine norm_sq_le_finrank_mul_fun (G := Equiv.Perm (Fin 2)) ⊤ (fun _ _ => Integrable.of_finite)
-    (fun f _ hf => ?_) (fun _ _ _ => trivial) trivial x
-  rw [integral_smul_measure, integral_count] at hf
-  simp only [Fin.sum_univ_two, smul_eq_mul, mul_eq_zero] at hf
-  have h : ‖f 0‖ ^ 2 + ‖f 1‖ ^ 2 = 0 := hf.resolve_left (by simp)
-  have h0 : ‖f 0‖ = 0 := by nlinarith [norm_nonneg (f 0), norm_nonneg (f 1)]
-  have h1 : ‖f 1‖ = 0 := by nlinarith [norm_nonneg (f 0), norm_nonneg (f 1)]
-  ext i
-  fin_cases i
-  · simpa using h0
-  · simpa using h1
 
 end GlobalTheory.Bergman

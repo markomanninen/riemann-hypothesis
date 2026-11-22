@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.NormFderivLeOfClosedBallSubset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.NormFderivLeOfClosedBallSubset
+
+@[expose] public section
 
 open scoped nonZeroDivisors
 open Metric Complex
@@ -51,7 +55,7 @@ theorem norm_eisTerm_zero_le_of_near {F : Type} [Field F] [NumberField F] {z z�
     Finset.prod_pos fun τ _ => norm_pos_iff.2 (latPt_ne_zero hz₀ hp τ)
   have hAB : ∏ τ, ‖latPt z₀ p τ‖ ≤ 2 ^ Fintype.card (Emb F) * ∏ τ, ‖latPt z p τ‖ := by
     rw [← Finset.card_univ, ← Finset.prod_const, ← Finset.prod_mul_distrib]
-    exact Finset.prod_le_prod (fun τ _ => norm_nonneg _) fun τ _ => norm_latPt_le_two_mul_of_near hr hz p τ
+    exact Finset.prod_le_prod₀ (fun τ _ => norm_nonneg _) fun τ _ => norm_latPt_le_two_mul_of_near hr hz p τ
   have h2 : (0 : ℝ) < 2 ^ Fintype.card (Emb F) := by positivity
   have hB : 0 < ∏ τ, ‖latPt z p τ‖ := by
     by_contra h

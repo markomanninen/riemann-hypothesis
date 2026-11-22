@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ModularCharacterEqOneOnExpHermitian
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelicUnitaryCongruenceTopology
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsOrthogonalBasisDotProductApplyEq
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ModularCharacterEqOneOnExpHermitian
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelicUnitaryCongruenceTopology
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsOrthogonalBasisDotProductApplyEq
+
+@[expose] public section
 
 open MeasureTheory Formalism.MainNotions.S NumberField
 open scoped InnerProductSpace
@@ -62,7 +66,8 @@ omit [DecidableEq n] in
 theorem hform_symm (hσ : ∀ x, σ (σ x) = x) (hJ : cT σ J = J) (x y : n → B) :
     σ (hform σ J x y) = hform σ J y x := by
   have : ∀ i j, σ (J i j) = J j i := fun i j => congrFun (congrFun hJ j) i
-  simp only [hform, map_sum, map_mul, hσ, this]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hform, map_sum, map_mul, hσ, this]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
@@ -267,9 +272,9 @@ theorem eventually_isUnit {x y z α β γ : B} (h : IsUnit (α * x + β * y + γ
     let p : Polynomial (B ⧸ m.asIdeal) :=
       Polynomial.C (π x) * Polynomial.X ^ 2 + Polynomial.C (π y) * Polynomial.X + Polynomial.C (π z)
     have hp : p ≠ 0 := fun h0 => by
-      have h2 : π x = 0 := by simpa [p] using congrArg (Polynomial.coeff · 2) h0
-      have h1 : π y = 0 := by simpa [p] using congrArg (Polynomial.coeff · 1) h0
-      have h3 : π z = 0 := by simpa [p] using congrArg (Polynomial.coeff · 0) h0
+      have h2 : π x = 0 := by simpa [p] using congrArg (AddMonoidAlgebra.coeff · 2) h0
+      have h1 : π y = 0 := by simpa [p] using congrArg (AddMonoidAlgebra.coeff · 1) h0
+      have h3 : π z = 0 := by simpa [p] using congrArg (AddMonoidAlgebra.coeff · 0) h0
       have := (h.map π).ne_zero
       simp [h1, h2, h3] at this
     refine ((Polynomial.finite_setOf_isRoot hp).preimage
@@ -295,15 +300,15 @@ theorem generic_of_semilocal {σ : B →+* B} {δ : B} (hδ : IsUnit δ) (hσδ 
     (by convert ((h2.mul h2).mul (hδ.pow 2)).mul hq using 1; ring))))).exists
   obtain ⟨r, hr⟩ := h3.exists_left_inv
   have hr' := congrArg σ hr
-  simp only [zero_mul, one_mul, zero_add, map_mul, map_add, map_neg, map_natCast, hσδ, neg_neg, map_one]
+  simp only [zero_mul, one_mul, zero_add, map_mul, map_add (f := _), map_neg, map_natCast, hσδ, neg_neg, map_one]
     at hr hr' h1 h3
   refine ⟨r * (t + δ), ?_, ?_, ?_⟩
-  · rw [map_mul, map_add, map_natCast, hσδ]
+  · rw [map_mul, map_add (f := _), map_natCast, hσδ]
     linear_combination σ r * (t + δ) * hr + hr'
-  · rw [map_mul, map_add, map_natCast, hσδ, ← h1.mul_left_iff]
+  · rw [map_mul, map_add (f := _), map_natCast, hσδ, ← h1.mul_left_iff]
     convert h4 using 1
     linear_combination (-(t - δ) * b) * hr'
-  · rw [map_mul, map_add, map_natCast, hσδ, ← h1.mul_left_iff, ← h3.mul_left_iff]
+  · rw [map_mul, map_add (f := _), map_natCast, hσδ, ← h1.mul_left_iff, ← h3.mul_left_iff]
     convert h5 using 1
     linear_combination (-(t - δ) ^ 2 * b) * hr' - (t + δ) ^ 2 * σ b * hr
 
@@ -452,11 +457,11 @@ theorem modular_involution (T : G →* G) (hc : Continuous T) (hT : ∀ x, T (T 
   let μ : Measure G := Measure.haar
   haveI : (μ.map T).IsHaarMeasure := e.isHaarMeasure_map μ hc hc
   refine smul_inj (μ := μ.map T) ?_
-  rw [← map_mul_right_eq, ← Measure.map_smul, ← map_mul_right_eq,
+  rw [← map_mul_right_eq, ← Measure.map_smul _ hc.measurable.aemeasurable, ← map_mul_right_eq,
     Measure.map_map (measurable_mul_const _) hc.measurable, Measure.map_map hc.measurable (measurable_mul_const _)]
   congr 1
   funext x
-  simp
+  exact (T.map_mul x g).symm
 
 theorem modular_compact (K : Subgroup G) (ho : IsOpen (K : Set G)) (hc : IsCompact (K : Set G)) {k : G}
     (hk : k ∈ K) : Measure.modularCharacter k = 1 := by
@@ -479,7 +484,7 @@ theorem map_inv_eq (μ : Measure G) [μ.IsHaarMeasure] [μ.IsMulRightInvariant] 
   set c : ℝ≥0 := Measure.haarScalarFactor μ.inv μ
   have h1 : (c ^ 2) • μ = (1 : ℝ≥0) • μ := by
     rw [one_smul]
-    conv_rhs => rw [← Measure.inv_inv μ, hc, Measure.inv_def, Measure.map_smul, ← Measure.inv_def, hc, smul_smul]
+    conv_rhs => rw [← Measure.inv_inv μ, hc, Measure.inv_def, Measure.map_smul _ continuous_inv.measurable.aemeasurable, ← Measure.inv_def, hc, smul_smul]
     rw [pow_two]
   rw [hc, (pow_eq_one_iff_of_nonneg zero_le two_ne_zero).1 (smul_inj h1), one_smul]
 
@@ -542,7 +547,7 @@ theorem exists_split (a : Af F) : ∃ (R : Type) (_ : CommRing R) (_ : Algebra F
   let s : (∀ v : S, v.1.adicCompletion F) → Af F := fun y =>
     ⟨fun v => if h : v ∈ S then y ⟨v, h⟩ else 0, by
       filter_upwards [hS.compl_mem_cofinite] with v hv
-      rw [dif_neg hv]
+      rw [dite_eq_right hv]
       exact zero_mem _⟩
   have hs : ∀ y, p (s y) = y := fun y => funext fun v => dif_pos v.2
   have hs1 : ∀ v, s 1 v = if v ∈ S then 1 else 0 := fun v => by
@@ -570,7 +575,7 @@ theorem sigR_sigR {σ : E →ₐ[F] E} (hσ : ∀ x, σ (σ x) = x) (R : Type) [
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [sigR, hσ]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem exists_split_tensor (σ : E →ₐ[F] E) {δ : E} (hδ : δ ≠ 0) (hσδ : σ δ = -δ) {κ : Type} [Fintype κ]
     (x : κ → E ⊗[F] Af F) : ∃ (B : Type) (_ : CommRing B) (σ' : B →+* B) (π : E ⊗[F] Af F →+* B)
@@ -594,7 +599,7 @@ theorem exists_split_tensor (σ : E →ₐ[F] E) {δ : E} (hδ : δ ≠ 0) (hσ�
   · induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [sigR]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   · simp [hpe, Algebra.TensorProduct.one_def]
   · have hy' : y ∈ RingHom.ker (Algebra.TensorProduct.map (AlgHom.id F E) p) := hy
     rw [Algebra.TensorProduct.lTensor_ker _ hp] at hy'
@@ -624,12 +629,13 @@ theorem mulVec_mem {A : Type} [CommRing A] {n : Type} [Fintype n] [DecidableEq n
     (hu : ∀ w : n → A, (∀ i, w i ∈ R) → (fun i => (u : A) * w i) ∈ Λ) (hv : ∀ w ∈ Λ, ∀ i, (v : A) * w i ∈ R)
     {k X : Matrix n n A} {c : A} (hk : k - 1 = c • X)
     (hX : ∀ i j, c * (((u⁻¹ : Aˣ) : A) * ((v⁻¹ : Aˣ) : A) * X i j) ∈ R) {y : n → A} (hy : y ∈ Λ) : k *ᵥ y ∈ Λ := by
-  have h := hu _ fun i => sum_mem fun j (_ : j ∈ Finset.univ) => mul_mem (hX i j) (hv y hy j)
+  have h : (fun i => (u : A) * ∑ j : n, (c * (((u⁻¹ : Aˣ) : A) * ((v⁻¹ : Aˣ) : A) * X i j)) * ((v : A) * y j)) ∈ Λ :=
+    hu _ fun i => sum_mem fun j (_ : j ∈ Finset.univ) => mul_mem (hX i j) (hv y hy j)
   rw [sub_eq_iff_eq_add.1 hk, add_mulVec, one_mulVec]
   refine add_mem ?_ hy
   convert h using 1
-  funext i
-  simp only [mulVec, dotProduct, Finset.mul_sum, Matrix.smul_apply, smul_eq_mul]
+  ext i
+  simp only [Matrix.mulVec, dotProduct, Matrix.smul_apply, smul_eq_mul, Finset.mul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   linear_combination (-c * X i j * y j) * u.mul_inv - (c * X i j * y j * u * ((u⁻¹ : Aˣ) : A)) * v.mul_inv
 
@@ -650,8 +656,8 @@ theorem finite_unimodular (I : AutInst) (μf : Measure I.Gf) [μf.IsHaarMeasure]
     unfold AutInst.Lf lamAf Formalism.UG.latS
     rw [Set.image_eq_range]
     rfl
-  obtain ⟨c, hc0, hlow⟩ := Formalism.UG.P.adelstabL_lower (F := I.F) I.L I.L_span
-  obtain ⟨d, hd0, hup⟩ := Formalism.UG.P.adelstabL_upper (F := I.F) I.L (Module.Finite.iff_fg.2 I.L_fg)
+  obtain ⟨c, hc0, hlow⟩ := Formalism.UG.P.adelstabL_lower (F := I.F) (E := I.E) I.L I.L_span
+  obtain ⟨d, hd0, hup⟩ := Formalism.UG.P.adelstabL_upper (F := I.F) (E := I.E) I.L (Module.Finite.iff_fg.2 I.L_fg)
   rw [← hL] at hlow hup
   have hun : ∀ g : ℕ, 1 ≤ g → IsUnit (g : I.E ⊗[I.F] Af I.F) := fun g hg => by
     have : (g : I.E) ≠ 0 := Nat.cast_ne_zero.2 (by omega)

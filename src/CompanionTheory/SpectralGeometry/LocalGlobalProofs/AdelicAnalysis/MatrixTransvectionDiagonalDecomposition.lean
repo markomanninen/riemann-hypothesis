@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.SWXSDefs
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.SWXSDefs
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+
+@[expose] public section
+
 open MeasureTheory Topology Matrix
 open scoped ENNReal NNReal
 
@@ -31,13 +36,13 @@ lemma liftT_toMatrix (e : K ≃+* ∀ m, F m) (m : M) (t : TransvectionStruct ι
 
 lemma mapMatrix_liftT_same (e : K ≃+* ∀ m, F m) (m : M) (t : TransvectionStruct ι (F m)) :
     (coord e m).mapMatrix (liftT e m t).toMatrix = t.toMatrix := by
-  rw [liftT_toMatrix, map_add, map_one, mapMatrix_single, coord_symm_single, Pi.single_eq_same]
+  rw [liftT_toMatrix, map_add (f := _), map_one, mapMatrix_single, coord_symm_single, Pi.single_eq_same]
   rfl
 
 lemma mapMatrix_liftT_ne (e : K ≃+* ∀ m, F m) {m m' : M} (h : m' ≠ m)
     (t : TransvectionStruct ι (F m)) :
     (coord e m').mapMatrix (liftT e m t).toMatrix = 1 := by
-  rw [liftT_toMatrix, map_add, map_one, mapMatrix_single, coord_symm_single,
+  rw [liftT_toMatrix, map_add (f := _), map_one, mapMatrix_single, coord_symm_single,
     Pi.single_eq_of_ne h, single_zero, add_zero]
 
 lemma mapMatrix_prod_same (e : K ≃+* ∀ m, F m) (m : M) (T : List (TransvectionStruct ι (F m))) :

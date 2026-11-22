@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.QiCoreDefs
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.CompLmulMapId
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.QiIdem
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.QiStab
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.QiCharP
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.QiCartier
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.QiCoreDefs
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.CompLmulMapId
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.QiIdem
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.QiStab
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.QiCharP
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.QiCartier
+
+@[expose] public section
 
 set_option autoImplicit false
 

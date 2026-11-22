@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.Statements
-import GroundTheory.ArithmeticGeometry.ToricVarieties.KrullDomain
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.Statements
+public import GroundTheory.ArithmeticGeometry.ToricVarieties.KrullDomain
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Model

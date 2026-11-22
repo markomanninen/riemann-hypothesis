@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.GenInPf
+module
+
+public import Development.EtaleCohomology.EtaleTrace.GenInPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry MvPolynomial
@@ -72,7 +76,8 @@ theorem eval₂_mul_pow {σ R L : Type} [CommSemiring R] [CommRing L] (F : R →
     eval₂ F a g * t ^ m = eval₂ F b g := by
   conv_lhs => rw [g.as_sum]
   conv_rhs => rw [g.as_sum]
-  rw [← coe_eval₂Hom, map_sum, ← coe_eval₂Hom, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← coe_eval₂Hom, map_sum, ← coe_eval₂Hom, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun s hs => ?_
   have hd := hg (mem_support_iff.mp hs)
   simp only [coe_eval₂Hom, eval₂_monomial, Finsupp.prod]

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.StatementsPointHeight
-import GroundTheory.HeightsAndTheta.Theta.EisensteinZeta.MirabolicInduction.LinearFormEqZeroOfIntegers
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.StatementsPointHeight
+public import GroundTheory.HeightsAndTheta.Theta.EisensteinZeta.MirabolicInduction.LinearFormEqZeroOfIntegers
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -24,7 +29,8 @@ theorem latticeValue_smul {K K' : Type*} [Field K] [Field K'] [Algebra K K'] {m 
 theorem latticeValue_algebraMap {K K' : Type*} [Field K] [Field K'] [Algebra K K'] {m N : ℕ}
     (φ : Fin (N + 1) → Fin m → K) (w : Fin m → K) (b : Fin (N + 1)) :
     latticeValue φ (fun j ↦ algebraMap K K' (w j)) b = algebraMap K K' (φ b ⬝ᵥ w) := by
-  simp [latticeValue, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [latticeValue, dotProduct, map_sum, map_mul]
 
 theorem proof : LineIdealDual.Statement := by
   intro K _ _ r N F φ hφ K' _ _ _ v a
@@ -88,7 +94,8 @@ theorem proof : LineIdealDual.Statement := by
       have e : ∀ j, ∑ i, algebraMap K K' (g i j) * x j * algebraMap K K' (f i k) =
           x j * algebraMap K K' (if j = k then 1 else 0) := by
         intro j
-        rw [← hKid j k, map_sum, Finset.mul_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← hKid j k, map_sum, Finset.mul_sum]
         exact Finset.sum_congr rfl fun i _ ↦ by rw [map_mul]; ring
       simp only [e, apply_ite (algebraMap K K'), map_one, map_zero, mul_ite, mul_one, mul_zero,
         Finset.sum_ite_eq', Finset.mem_univ, if_true]
@@ -98,7 +105,8 @@ theorem proof : LineIdealDual.Statement := by
     have hcoef : ∑ j, algebraMap K K' (g i j) * (a • v) j =
         algebraMap (𝓞 K') K' (∑ b, (c i b : 𝓞 K') * y b) := by
       rw [← hc i]
-      simp only [Finset.sum_apply, Pi.smul_apply, zsmul_eq_mul, map_sum, map_mul, map_intCast, hy,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Finset.sum_apply, Pi.smul_apply, zsmul_eq_mul, map_sum, map_mul, map_intCast, hy,
         latticeValue, smul_eq_mul, Finset.mul_sum, Finset.sum_mul]
       rw [Finset.sum_comm]
       exact Finset.sum_congr rfl fun b _ ↦ Finset.sum_congr rfl fun j _ ↦ by

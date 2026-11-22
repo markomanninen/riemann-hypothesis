@@ -1,6 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.KdMeasImageProd
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.IntMuCD
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.ConjTransposeEqOfInG
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.KdMeasImageProd
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.IntMuCD
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.ConjTransposeEqOfInG
+
+@[expose] public section
 
 noncomputable section
 
@@ -152,36 +157,24 @@ theorem polarSet_product_eq {ε : Fin n → Bool} (B : Set (KCo ε)) (C : Set (P
 theorem polar_measure_product_eq {ε : Fin n → Bool} {B : Set (KCo ε)} {C : Set (PCoord ε → ℂ)}
     (hA : MeasurableSet (expImageOfCompact B)) (hC : MeasurableSet C) :
     muPolar ε (polSet (B ×ˢ C)) = (∫⁻ z in C, ENNReal.ofReal (Jac z)) * dk ε (expImageOfCompact B) := by
-  have hemb : MeasurableEmbedding (intMuCD_pM ε) :=
+  let R := expImageOfCompact B ×ˢ C
+  have hpolar : MeasurableEmbedding (intMuCD_pM ε) :=
     (show Topology.IsClosedEmbedding (intMuCD_pM ε) from polarM_isClosedEmbedding ε).measurableEmbedding
-  set T := intMuCD_pM ε '' (expImageOfCompact B ×ˢ C) with hTdef
-  have hT : MeasurableSet T := hemb.measurableSet_image.2 (hA.prod hC)
-  have hc : Continuous (intMuCD_eM ε) := continuous_toM ε
-  have hm : Measurable (intMuCD_eM ε) := hc.measurable
-  have hmem : ∀ k z, intMuCD_pM ε (k, z) ∈ T ↔ k ∈ expImageOfCompact B ∧ z ∈ C := fun k z =>
-    (show Function.Injective (intMuCD_pM ε) from polarM_injective ε).mem_set_image
-  have hJ : Measurable (fun z : PCoord ε → ℂ => ENNReal.ofReal (Jac z)) :=
-    ENNReal.measurable_ofReal.comp (jac_continuous ε).measurable
-  rw [polarSet_product_eq, ← lintegral_indicator_one (hm hT)]
-  have e1 : ∀ g : UJ ε, ((intMuCD_eM ε) ⁻¹' T).indicator 1 g =
-      T.indicator (1 : (Fin n → Fin n → ℂ) → ENNReal) (toM g) := fun g => rfl
-  simp_rw [e1]
-  rw [lintegral_muPolar ε _ (measurable_one.indicator hT)]
-  have e2 : ∀ k : KG ε, (∫⁻ z, T.indicator (1 : (Fin n → Fin n → ℂ) → ENNReal) (intMuCD_pM ε (k, z)) *
-      ENNReal.ofReal (Jac z)) = (expImageOfCompact B).indicator (fun _ => ∫⁻ z in C, ENNReal.ofReal (Jac z)) k := by
-    intro k
-    by_cases hk : k ∈ expImageOfCompact B
-    · rw [Set.indicator_of_mem hk, ← lintegral_indicator hC]
-      refine lintegral_congr fun z => ?_
-      by_cases hz : z ∈ C
-      · have : intMuCD_pM ε (k, z) ∈ T := (hmem k z).2 ⟨hk, hz⟩
-        rw [Set.indicator_of_mem this, Set.indicator_of_mem hz, Pi.one_apply, one_mul]
-      · have : intMuCD_pM ε (k, z) ∉ T := fun h => hz ((hmem k z).1 h).2
-        rw [Set.indicator_of_notMem this, Set.indicator_of_notMem hz, zero_mul]
-    · rw [Set.indicator_of_notMem hk]
-      refine (lintegral_congr fun z => ?_).trans lintegral_zero
-      have : intMuCD_pM ε (k, z) ∉ T := fun h => hk ((hmem k z).1 h).1
-      rw [Set.indicator_of_notMem this, zero_mul]
-  exact (lintegral_congr fun k => e2 k).trans (lintegral_indicator_const hA _)
+  have htoM : MeasurableEmbedding (intMuCD_eM ε) :=
+    (show Topology.IsClosedEmbedding (intMuCD_eM ε) from isClosedEmbedding_toM ε).measurableEmbedding
+  have hT : MeasurableSet (intMuCD_pM ε '' R) := hpolar.measurableSet_image.2 (hA.prod hC)
+  have hrange : intMuCD_pM ε '' R ⊆ Set.range (intMuCD_eM ε) := by
+    rintro _ ⟨kz, _, rfl⟩
+    change polarM kz ∈ Set.range (fun g : UJ ε => toM g)
+    rw [range_toM]
+    exact polarM_inUJ kz
+  rw [polarSet_product_eq]
+  change Measure.comap (β := Fin n → Fin n → ℂ) (intMuCD_eM ε) (muPolarMat ε)
+    ((intMuCD_eM ε) ⁻¹' (intMuCD_pM ε '' R)) = _
+  rw [htoM.comap_apply, Set.image_preimage_eq_of_subset hrange]
+  change (Measure.map (β := Fin n → Fin n → ℂ) (intMuCD_pM ε) ((dk ε).prod
+    (volume.withDensity fun z => ENNReal.ofReal (Jac z)))) (intMuCD_pM ε '' R) = _
+  rw [Measure.map_apply hpolar.measurable hT, Set.preimage_image_eq _ hpolar.injective,
+    show R = expImageOfCompact B ×ˢ C from rfl, Measure.prod_prod, withDensity_apply _ hC, mul_comm]
 
 end ReciprocityTheory.ChartRestriction.DS

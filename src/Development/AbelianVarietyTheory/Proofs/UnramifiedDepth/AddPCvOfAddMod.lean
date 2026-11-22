@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CubWeilOfInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CubWeilOfInjective
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section

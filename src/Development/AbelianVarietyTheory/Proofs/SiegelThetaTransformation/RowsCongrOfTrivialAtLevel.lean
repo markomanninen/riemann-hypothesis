@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CompletedTensorLatticeStrongApproxOpenCompact
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsDenominatorPrimesPrescribed
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OneEqSumPlaceIdempotentsOverTwoAddTwoMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CompletedTensorLatticeStrongApproxOpenCompact
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsDenominatorPrimesPrescribed
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OneEqSumPlaceIdempotentsOverTwoAddTwoMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -115,7 +119,7 @@ omit [NumberField E] in
 theorem tmul_smul_mem {N N' : Set (Fin r → E)} {a : Af F} (ha : a ∈ intAf F) {c : E} (hc : ∀ x ∈ N, c • x ∈ N')
     {u : Fin r → Af F ⊗[F] E} (hu : u ∈ latHat F E N) : (a ⊗ₜ[F] c) • u ∈ latHat F E N' := by
   suffices hsub : latHat F E N ≤ (latHat F E N').comap
-      (DistribMulAction.toAddMonoidHom (Fin r → Af F ⊗[F] E) (a ⊗ₜ[F] c)) from hsub hu
+      (DistribSMul.toAddMonoidHom (Fin r → Af F ⊗[F] E) (a ⊗ₜ[F] c)) from hsub hu
   refine (AddSubgroup.closure_le _).2 ?_
   rintro _ ⟨a', ha', x, hx, rfl⟩
   show (a ⊗ₜ[F] c) • (fun i => a' ⊗ₜ[F] x i) ∈ latHat F E N'
@@ -271,8 +275,8 @@ theorem exists_smul_mem (I : Ideal (𝓞 F)) {α : Af F}
     TensorProduct.tmul_smul, TensorProduct.smul_tmul', TensorProduct.smul_tmul', ← TensorProduct.add_tmul, h1,
     Algebra.smul_def, mul_one]
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem tmul_mem_of_mov {m : Matrix (Fin r) (Fin r) (Af F ⊗[F] E)} {L L' : Set (Fin r → E)}
     (hm : ∀ u, u ∈ latHat F E L' ↔ ∃ u₀ ∈ latHat F E L, u = m *ᵥ u₀) {α : Af F} (hα : α ∈ intAf F)
     (h1 : (α ⊗ₜ[F] (1 : E)) • m = (α ⊗ₜ[F] (1 : E)) • (1 : Matrix (Fin r) (Fin r) (Af F ⊗[F] E)))
@@ -333,8 +337,8 @@ theorem col_mem {n : ℕ} {Λ : Lt E n} {L L₀ : Lt E r} {𝔪 : Ideal (𝓞 E)
       latHat F E ((𝔪 • L₀ : Lt E r) : Set (Fin r → E))
     convert h1 using 1
     funext a
-    simp only [Pi.smul_apply, smul_eq_mul, HatLat.fT_apply, finG_pairA_zero_tmul, Algebra.TensorProduct.tmul_mul_tmul,
-      Matrix.vecMulVec_apply]
+    simp only [HatLat.fT_apply, finG_pairA_zero_tmul, Matrix.vecMulVec_apply,
+      Pi.smul_apply, smul_eq_mul, Algebra.TensorProduct.tmul_mul_tmul, mul_one]
     congr 1 <;> ring
   exact key hy
 
@@ -373,7 +377,8 @@ theorem exists_idem (I : Ideal (𝓞 D.host.F)) (hI : I ≠ ⊥) : ∃ α ∈ in
   have hev : ∀ w, evalV D.host.F w (∑ v ∈ hfin.toFinset, singleV D.host.F v 1) =
       if w ∈ hfin.toFinset then 1 else 0 := by
     intro w
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     rw [Finset.sum_congr rfl (g := fun v => if w = v then (1 : Fv D.host.F w) else 0)]
     · exact Finset.sum_ite_eq _ _ _
     · intro v _

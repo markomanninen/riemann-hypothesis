@@ -1,19 +1,22 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RowDict
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowDictCore
-import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
-import Formalism.SharpRestriction.CuspSpanNormBounds.StandingHypothesesHoldFamily
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.NcardPrimesOverOfSplitsCompl
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.ConcreteLevelAdelicSubset
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.GoodRecipPf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.ReductionConjugacy
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.ReductionExists
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RConvFExistsPf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalDegreeSquareIntegrable.Closed
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuDecayAll
-import Formalism.LocalToGlobal.SiegelLatticeTheory.BesselDiscreteSeries.CoefLocG
-import Formalism.LocalRingCardinality.DataTies
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RowDict
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowDictCore
+public import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
+public import Formalism.SharpRestriction.CuspSpanNormBounds.StandingHypothesesHoldFamily
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.NcardPrimesOverOfSplitsCompl
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.ConcreteLevelAdelicSubset
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.ReductionConjugacy
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.ReductionExists
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RConvFExistsPf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalDegreeSquareIntegrable.Closed
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuDecayAll
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.BesselDiscreteSeries.CoefLocG
+public import Formalism.LocalRingCardinality.DataTies
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,20 +52,6 @@ theorem f_eq : X.B.I.f = D.R.f := by
   rw [e3] at e2
   unfold AutInst.f
   omega
-
-theorem rd_eq : X.B.I.rd = D.host.rdE := by
-  have hd : discr X.B.I.E = discr D.host.E := NumberField.discr_eq_discr_of_algEquiv X.B.I.E X.ιE.toRatAlgEquiv
-  have e1 : Module.finrank ℚ X.B.I.E = Module.finrank ℚ D.host.E :=
-    (X.ιE.toRatAlgEquiv).toLinearEquiv.finrank_eq
-  have e2 : Module.finrank ℚ X.B.I.F * Module.finrank X.B.I.F X.B.I.E = Module.finrank ℚ X.B.I.E :=
-    Module.finrank_mul_finrank ℚ X.B.I.F X.B.I.E
-  have e3 : Module.finrank X.B.I.F X.B.I.E = 2 := X.B.I.cm.deg2
-  have e4 : (Module.finrank ℚ D.host.E : ℝ) = 2 * (X.B.I.f : ℝ) := by
-    unfold AutInst.f
-    have : Module.finrank ℚ D.host.E = 2 * Module.finrank ℚ X.B.I.F := by rw [← e1, ← e2, e3, mul_comm]
-    rw [this]; push_cast; ring
-  unfold AutInst.rd Host.rdE
-  rw [hd, e4]
 
 section Real
 
@@ -304,15 +293,15 @@ theorem eg_mul (x : X.B.I.Gf) {k : X.B.I.Gf} (hk : k ∈ X.B.I.Kg X.B.g) : eg X 
       funext fun γ => propext (goodAt_mul X hx hk γ)
     by_cases hE : ∃ γ, GoodAt X x γ
     · have hE' : ∃ γ, GoodAt X (x * k) γ := by rw [hpred]; exact hE
-      rw [dif_pos ⟨hxk, hE'⟩, dif_pos ⟨hx, hE⟩, choose_congr hpred hE' hE]
+      rw [dite_eq_left ⟨hxk, hE'⟩, dite_eq_left ⟨hx, hE⟩, choose_congr hpred hE' hE]
     · have hE' : ¬ ∃ γ, GoodAt X (x * k) γ := by rw [hpred]; exact hE
-      rw [dif_neg (fun h => hE' h.2), dif_neg (fun h => hE h.2)]
+      rw [dite_eq_right (fun h => hE' h.2), dite_eq_right (fun h => hE h.2)]
   · have hxk : x * k ∉ X.B.I.Kset := by
       intro h
       apply hx
       have := K_mul _ h (K_inv _ hk.1)
       rwa [mul_inv_cancel_right] at this
-    rw [dif_neg (fun h => hxk h.1), dif_neg (fun h => hx h.1)]
+    rw [dite_eq_right (fun h => hxk h.1), dite_eq_right (fun h => hx h.1)]
 
 theorem level_ne_zero : X.B.g ≠ 0 := by
   rw [X.g_eq]
@@ -349,7 +338,7 @@ theorem integrable_eg : Integrable (eg X) X.B.μf := by
     hc.continuousOn.integrableOn_compact' hK (isOpen_Kset X).measurableSet
   refine hon.integrable_of_forall_notMem_eq_zero fun x hx => ?_
   unfold eg
-  rw [dif_neg (fun h => hx h.1)]
+  rw [dite_eq_right (fun h => hx h.1)]
 
 theorem goodOp_exists (hR : RConvFExists) : Nonempty (GoodOp X) := by
   have hFR := Formalism.L2.SG.Pf.foldReady_holds X.B.I
@@ -367,26 +356,6 @@ def DstarIdx : Prop :=
 def DstarVol : Prop :=
   (∏ v, X.dv v) * X.B.I.vol X.B.μf X.B.fund / (X.B.μf X.B.I.Kset).toReal =
     Formalism.MainNotions.StandardLattice.volY0 D * ∏ ρ, D.dsig ρ
-
-theorem chi2_apply_one : X.chi2 1 = 1 := by
-  obtain ⟨h1, hmul, -, hχ, hn⟩ := Formalism.L2.SG.Closed.level_subgroup_is_group X
-  have e := hχ 1 h1 1 h1
-  rw [one_mul] at e
-  have hne : X.chi2 1 ≠ 0 := by
-    intro h0
-    have := hn 1 h1
-    rw [h0, norm_zero] at this
-    exact zero_ne_one this
-  have : X.chi2 1 * (X.chi2 1 - 1) = 0 := by rw [mul_sub, mul_one, ← e, sub_self]
-  rcases mul_eq_zero.1 this with h | h
-  · exact absurd h hne
-  · exact sub_eq_zero.1 h
-
-theorem e_one : X.B.e 1 = 1 / (X.volK2 : ℂ) := by
-  have h1 := (Formalism.L2.SG.Closed.level_subgroup_is_group X).1
-  rw [X.e_eq 1, if_pos (show (1 : X.B.I.Gf) ∈ K2set X.B.I X.B.g X.e0 X.z0 X.bw from h1)]
-  change star (X.chi2 1) / (X.volK2 : ℂ) = _
-  rw [chi2_apply_one, star_one]
 
 end Dstar
 
@@ -469,8 +438,8 @@ theorem schur_orthogonality_discrete_series : DSSchurOrth := by
 
 variable {D : D7} (X : HidaSetting D)
 
-variable [Fact Formalism.L2.SG.SplitPrimeNormLemmas.CoefWeightedLoc] in
 
+variable [Fact Formalism.L2.SG.SplitPrimeNormLemmas.CoefWeightedLoc] in
 theorem hint_of_gap (hG : Formalism.L2.SG.ConcreteSettingExists.GapHyp D) (v : InfinitePlace X.B.I.F) :
     Integrable (Formalism.L2.SG.ProjRows.phLoc (ε := X.B.I.ε v) (X.B.σ v) (X.B.w v)
       (fdegOf (Formalism.REAL.muG (X.B.I.ε v)) (X.B.σ v) (X.B.w v))) (Formalism.REAL.muG (X.B.I.ε v)) := by
@@ -480,8 +449,8 @@ theorem hint_of_gap (hG : Formalism.L2.SG.ConcreteSettingExists.GapHyp D) (v : I
     Complex.conjCLE.toContinuousLinearMap.integrable_comp h
   exact h2.const_mul _
 
-variable [Fact Formalism.L2.SG.SplitPrimeNormLemmas.CoefWeightedLoc] in
 
+variable [Fact Formalism.L2.SG.SplitPrimeNormLemmas.CoefWeightedLoc] in
 theorem finiteDimensional_HHX_of_gap (hHC : Formalism.L2.SG.RowsDef.RowsFinDim) (hG : Formalism.L2.SG.ConcreteSettingExists.GapHyp D) :
     FiniteDimensional ℂ (HHX X) :=
   finiteDimensional_HHX_of_hypotheses X hHC schur_orthogonality_discrete_series (hint_of_gap X hG)
@@ -523,9 +492,6 @@ theorem dv_eq (hT : Formalism.BasicNotions.dsigTie D) (v : InfinitePlace X.B.I.F
 def DstarVolV : Prop :=
   X.B.I.vol X.B.μf X.B.fund / (X.B.μf X.B.I.Kset).toReal *
       ∏ _v : InfinitePlace X.B.I.F, (D.s.cdScale _ (epsSH D.R) : ℝ) = Formalism.MainNotions.StandardLattice.volY0 D
-
-def DstarVolCore : Prop :=
-  ∀ (D : D7) (X : HidaSetting D), Formalism.MainNotions.StandardLattice.VolTie D → Formalism.BasicNotions.cdScaleTie D → DstarVolV X
 
 theorem dstarVol_of (hT : Formalism.BasicNotions.dsigTie D) (hV : DstarVolV X) : DstarVol X := by
   unfold DstarVol

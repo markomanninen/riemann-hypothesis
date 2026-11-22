@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocPhi
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocAdd
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocalSquareIntegrableTransfer
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocPhi
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocAdd
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocalSquareIntegrableTransfer
+
+@[expose] public section
 
 noncomputable section
 

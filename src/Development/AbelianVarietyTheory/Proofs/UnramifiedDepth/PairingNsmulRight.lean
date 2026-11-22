@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.EvenTwoEvaluationSign
-import ReciprocityTheory.DualLattices.IsPairingValueAddRight
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.EvenTwoEvaluationSign
+public import ReciprocityTheory.DualLattices.IsPairingValueAddRight
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Matrix ReciprocityTheory.PGsh ReciprocityTheory.PGsh.Up ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Be2
 
@@ -105,13 +109,14 @@ lemma pairing_ptOf (D : Dat p g B Tw Dt Oe σ cp) (s t : TT p g) :
   choose k hk hpair using fun i j => D.L.E_spec i j 0
   simp only [zero_add, pow_one] at hpair
   refine ⟨∑ i, (∑ j, k i j * (red p g t j).val) * (red p g s i).val, ?_, ?_⟩
-  · simp only [pair, dotProduct, mulVec, map_sum, map_mul, Nat.cast_sum, Nat.cast_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [pair, dotProduct, mulVec, map_sum, map_mul, Nat.cast_sum, Nat.cast_mul,
       ZMod.natCast_zmod_val, red]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    rw [mul_comm]
-    congr 1
-    refine Finset.sum_congr rfl fun j _ => ?_
-    rw [toZMod_eq_of_q _ _ (hk i j)]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [mul_comm]
+      congr 1
+      refine Finset.sum_congr rfl fun j _ => ?_
+      rw [toZMod_eq_of_q _ _ (hk i j)]
   · rw [← Finset.prod_pow_eq_pow_sum]
     refine pairing_sum_left B _ p _ _ _ (D.pt_p _) fun i => ?_
     rw [pow_mul]

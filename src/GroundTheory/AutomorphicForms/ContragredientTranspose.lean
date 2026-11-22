@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.ContragredientTranspose.GelfandKazhdan
-import GroundTheory.AutomorphicForms.ContragredientTranspose.Character
-import GroundTheory.AutomorphicForms.WhittakerLocal
-import GroundTheory.PowerSubgroups.CountableNeighbourhoods.MapThetaTInvariant
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.ContragredientTranspose.GelfandKazhdan
+public import GroundTheory.AutomorphicForms.ContragredientTranspose.Character
+public import GroundTheory.AutomorphicForms.WhittakerLocal
+public import GroundTheory.PowerSubgroups.CountableNeighbourhoods.MapThetaTInvariant
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.ContragredientTranspose
 
@@ -45,8 +49,8 @@ theorem nonempty_equiv_contragredient {V : Type*} [AddCommGroup V] [Module ℂ V
   have hc' : Continuous (thetaT : GL (Fin n) F ≃* GL (Fin n) F).symm := continuous_thetaT
   have := isIrreducible_contragredient hπ
   have := isIrreducible_comp π (thetaT : GL (Fin n) F ≃* GL (Fin n) F)
-  refine nonempty_equiv_of_distChar_eq (μ := μ) (isAdmissible_contragredient hπ)
-    (isAdmissible_comp _ hc hc' hπ) ?_
+  apply nonempty_equiv_of_distChar_eq (μ := μ) (isAdmissible_contragredient hπ)
+    (isAdmissible_comp _ hc hc' hπ)
   refine LinearMap.ext fun f => ?_
   rw [distChar_contragredient, distChar_comp μ _ hc hc' (map_thetaT_eq μ) hπ]
   have e : compHomeoL (mulEquivHomeo (thetaT : GL (Fin n) F ≃* GL (Fin n) F) hc hc').symm f =
@@ -62,8 +66,8 @@ theorem longestWeyl_mul_self : (longestWeyl : GL (Fin n) F) * longestWeyl = 1 :=
   have : (Fin.revPerm (n := n)) * Fin.revPerm = 1 := Equiv.ext fun i => by simp
   rw [this, map_one]
 
-omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 
+omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 theorem thetaT_eq_longestWeyl (g : GL (Fin n) F) :
     thetaT g = longestWeyl * theta g * longestWeyl := by
   have hs : sigma g = longestWeyl * transposeGL g * longestWeyl :=

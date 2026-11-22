@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.MapGenBChar
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.Ratprod
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.Primmap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.Primmem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.Denupper
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.BNzC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.Parity
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.MapGenBChar
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.Ratprod
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.Primmap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.Primmem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.Denupper
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.BNzC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.Parity
+
+@[expose] public section
 
 open Finset UpperTheory.V.Bern
 
@@ -26,7 +30,7 @@ theorem UpperTheory.V.Bern.b_prodint :
   have hint' : IsIntegral ℤ q := by
     have : (q : ℂ) = algebraMap ℚ ℂ q := rfl
     rw [this] at hint
-    exact (isIntegral_algebraMap_iff (algebraMap ℚ ℂ).injective).mp hint
+    exact (isIntegral_algebraMap_iff ).mp hint
   obtain ⟨M, hM⟩ := IsIntegrallyClosed.isIntegral_iff.mp hint'
   have hM' : (M : ℚ) = q := by simpa using hM
   subst hM'
@@ -44,7 +48,7 @@ theorem UpperTheory.V.Bern.b_prodint :
   · have hle : |(M : ℝ)| ≤ bnd N k ^ (charSet ℂ P).ncard := by
       have h1 : |(M : ℝ)| = ‖(M : ℂ)‖ := by simp
       rw [h1, ← hC', norm_prod, Set.ncard_eq_toFinset_card _ hfin, ← Finset.prod_const]
-      exact Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun χ _ => (b_denupper k χ).2.1
+      exact Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun χ _ => (b_denupper k χ).2.1
     rw [← Real.log_pow]
     exact Real.log_le_log (abs_pos.mpr (Int.cast_ne_zero.mpr hM0)) hle
   · rw [hq Ω]; simp

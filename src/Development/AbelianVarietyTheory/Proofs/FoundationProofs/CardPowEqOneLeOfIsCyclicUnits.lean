@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.CyclotomicNorms.StatementI
+module
+
+public import Mathlib
+public import Formalism.CyclotomicNorms.StatementI
+
+@[expose] public section
 
 namespace GlobalTheory
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.SplitLevelConjugates.IsPrincipalCongruenceAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSplitReductionStandardFrameConj
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.G0LiftUnitaryCentralFrame
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ConjugateSplitPlaceUnitaryLocEqTransposeInv
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.SplitLevelConjugates.IsPrincipalCongruenceAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSplitReductionStandardFrameConj
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.G0LiftUnitaryCentralFrame
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ConjugateSplitPlaceUnitaryLocEqTransposeInv
+
+@[expose] public section
 
 noncomputable section
 set_option maxHeartbeats 1000000
@@ -79,17 +83,49 @@ private theorem red_one {V : TH.HSp D} {n : ℕ} (hn : V.rank = n) {hF : D.host.
     Formalism.L2.DIV.redFn β PP (Formalism.IndefR.Lev.finE V (P.ψ κ)) = 1 := by
   by_cases ho : NG.OverPl PP s.v
   · have hk := hK ho
-    rcases GlobalTheory.SplitConjPlace.eq_or_eq_conjPlE s.w PP (Eq.trans ho s.w_under.symm) with e | e
+    have hconj (x : 𝓞 D.host.E) : x ∈ (GlobalTheory.TypeTame.conjSP s).w.asIdeal ↔
+        IsCMField.ringOfIntegersComplexConj D.host.E x ∈ s.w.asIdeal := by
+      show Valued.v ((GlobalTheory.TypeTame.conjSP s).i (x : D.host.E)) < 1 ↔
+        Valued.v (s.i ((IsCMField.ringOfIntegersComplexConj D.host.E x : 𝓞 D.host.E) : D.host.E)) < 1
+      rw [IsCMField.coe_ringOfIntegersComplexConj]
+      rfl
+    have hor : PP = s.w ∨ PP = (GlobalTheory.TypeTame.conjSP s).w := by
+      by_contra hne
+      push Not at hne
+      have nle : ∀ Q : PlE D.host, PP ≠ Q → ¬ PP.asIdeal ≤ Q.asIdeal := fun Q h hle =>
+        h (HeightOneSpectrum.ext (PP.isMaximal.eq_of_le Q.isPrime.ne_top hle))
+      obtain ⟨a, ha, haP⟩ := Set.not_subset.mp (nle _ hne.1)
+      obtain ⟨b, hb, hbQ⟩ := Set.not_subset.mp (nle _ hne.2)
+      have key : ∃ x ∈ PP.asIdeal, x ∉ s.w.asIdeal ∧ x ∉ (GlobalTheory.TypeTame.conjSP s).w.asIdeal := by
+        by_cases haQ : a ∈ (GlobalTheory.TypeTame.conjSP s).w.asIdeal
+        · by_cases hbP : b ∈ s.w.asIdeal
+          · refine ⟨a + b, PP.asIdeal.add_mem ha hb, fun h => haP ?_, fun h => hbQ ?_⟩
+            · simpa using s.w.asIdeal.sub_mem h hbP
+            · simpa using (GlobalTheory.TypeTame.conjSP s).w.asIdeal.sub_mem h haQ
+          · exact ⟨b, hb, hbP, hbQ⟩
+        · exact ⟨a, ha, haP, haQ⟩
+      obtain ⟨x, hx, hxP, hxQ⟩ := key
+      rw [hconj] at hxQ
+      let cO := IsCMField.ringOfIntegersComplexConj D.host.E
+      have hc (x : 𝓞 D.host.E) : cO (cO x) = x := by
+        apply RingOfIntegers.ext
+        rw [IsCMField.coe_ringOfIntegersComplexConj, IsCMField.coe_ringOfIntegersComplexConj]
+        exact IsCMField.complexConj_apply_apply D.host.E (x : D.host.E)
+      have hfix : cO (x * cO x) = x * cO x := by rw [map_mul, hc, mul_comm]
+      obtain ⟨y, hy⟩ := (IsCMField.ringOfIntegersComplexConj_eq_self_iff D.host.E _).1 hfix
+      have hyw : y ∈ PP.asIdeal.comap (algebraMap (𝓞 (maximalRealSubfield D.host.E)) (𝓞 D.host.E)) := by
+        rw [Ideal.mem_comap, hy]; exact PP.asIdeal.mul_mem_right _ hx
+      rw [Eq.trans ho s.w_under.symm, Ideal.mem_comap, hy] at hyw
+      rcases s.w.isPrime.mem_or_mem hyw with h | h
+      · exact hxP h
+      · exact hxQ h
+    rcases hor with e | e
     · rw [e]
       exact red_of_comp hn hP hB s hU fun y hy φ hφ => map_eq_one s hk hy φ hφ
-    · have e' : PP = (GlobalTheory.TypeTame.conjSP s).w := by
-        rw [e]
-        refine HeightOneSpectrum.ext (Ideal.ext fun x => ?_)
-        exact (GlobalTheory.SplitConjPlace.mem_conj_w s x).symm
-      rw [e']
+    · rw [e]
       exact red_of_comp hn hP hB _ hU fun y hy φ hφ => map_eq_one_conj s hU hk hy φ hφ
   · have hS := (GlobalTheory.FinZeta.LevelOff.finE_mem_St_iff hB (P.into κ)).2 ((hP.2 κ).1 hU)
-    refine GlobalTheory.FinZeta.LevelOff.redFn_eq_one_of_proj β {PP.under (𝓞 D.host.F)} hS (fun u hu => ?_) (Finset.mem_singleton_self _)
+    refine GlobalTheory.FinZeta.LevelOff.redFn_eq_one_of_proj β {(_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP)} hS (fun u hu => ?_) (Finset.mem_singleton_self _)
     rw [Finset.mem_singleton.1 hu]
     exact GlobalTheory.NonSplitLevel.projV_eq_one hP κ PP (hT _ fun e => ho (congrArg HeightOneSpectrum.asIdeal e))
 
@@ -105,7 +141,7 @@ theorem UpperTheory.One.M.B.levSplit :
   have hred : ∀ PP, PP ∈ (Formalism.IndefR.RecTie.datVP z.R.toRealDat i (Y.tupT (w.st Z).toD7.what₂.mu0)
         (z.R.toRealDat.levR z.F.lv2 false)).Pg ∨
       PP ∈ (Formalism.IndefR.RecTie.datVP z.R.toRealDat i (Y.tupT (w.st Z).toD7.what₂.mu0) (z.R.toRealDat.levR z.F.lv2 false)).Q →
-      Formalism.L2.DIV.redFn (z.R.toRealDat.βV i) PP (Formalism.IndefR.Lev.finE _ (P.ψ κ)) = 1 := by
+      Formalism.L2.DIV.redFn (z.R.toRealDat.βV i) PP (Formalism.IndefR.Lev.finE (Formalism.IndefR.Links.Vc (w.st Z).toD7 i) (P.ψ κ)) = 1 := by
     intro PP hPP
     rcases hPP with h | h
     · obtain ⟨k, hk⟩ := (hlev.Pg PP).1 h

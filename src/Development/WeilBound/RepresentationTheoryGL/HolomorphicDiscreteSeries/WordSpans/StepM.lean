@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.WordSpans.ModelWalkOfInputs
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.WordSpans.ModelWalkOfInputs
+
+@[expose] public section
 
 namespace PositivityTheory.RgHe.SM
 

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.QdfFrameRatio
-import Formalism.LocalToGlobal.Columns.CoefColLemmas
+module
+
+public import Formalism.LocalToGlobal.Columns.QdfFrameRatio
+public import Formalism.LocalToGlobal.Columns.CoefColLemmas
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix
 open scoped TensorProduct
@@ -29,16 +33,16 @@ theorem qdf_at_inv (q : QLoc hc n Q Θ) (P : Q) (x : GL (Fin n) (E ⊗[F] Formal
   show bc _ (bc _ x⁻¹) = _
   rw [map_inv, map_inv]
 
-theorem qdf_levUQ_le (H : Subgroup (GLG E n SG)) (q : QLoc hc n Q Θ) : levUQ hc n ST SG Q H q ≤ levU hc n ST SG H := inf_le_left
+theorem qdf_levUQ_le (H : Subgroup (GLG (E := E) (n := n) (SG := SG))) (q : QLoc hc n Q Θ) : levUQ hc n ST SG Q H q ≤ levU hc n ST SG H := inf_le_left
 
-theorem qdf_levUQ_at (H : Subgroup (GLG E n SG)) (q : QLoc hc n Q Θ) {κ : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)}
+theorem qdf_levUQ_at (H : Subgroup (GLG (E := E) (n := n) (SG := SG))) (q : QLoc hc n Q Θ) {κ : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)}
     (h : κ ∈ levUQ hc n ST SG Q H q) (P : Q) : q.at P κ ∈ q.U P :=
   (Subgroup.mem_iInf.1 h.2) P
 
 theorem qdf_ratio_val (p p' : DecoF E n ST SG Q) (γ : Sp E n ≃ₗ[E] Sp E n) (hN : p'.deco.1.N = gmap γ p.deco.1.N) (P : Q) :
     (qdRatio p p' γ hN P).1 = (p'.fr P)⁻¹ * γ * p.fr P := rfl
 
-variable (H : Subgroup (GLG E n SG))
+variable (H : Subgroup (GLG (E := E) (n := n) (SG := SG)))
 
 theorem qdf_orbit_of_rel (q : QLoc hc n Q Θ) {x x' : UAd hc n} {p p' : DecoF E n ST SG Q}
     (hx : FrOver q x.1 p) (hx' : FrOver q x'.1 p') (γ : URat hc n) (κ : levUQ hc n ST SG Q H q)

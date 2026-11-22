@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.SkodaWeights.SkodaWeightStatement
+module
+
+public import ReciprocityTheory.L2DbarEstimates.SkodaWeights.SkodaWeightStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.H
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUnifOfIsMumfordOf
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelStructurePullback
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ZbLeftWhiskerRight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCharacter
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUnifOfIsMumfordOf
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelStructurePullback
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ZbLeftWhiskerRight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCharacter
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -22,10 +26,13 @@ def Root {S T : Scheme.{0}} (A : Over S) [GrpObj A] (P : LB (G2 A).left) (t : T 
 theorem Root.comp {S T T' : Scheme.{0}} {A : Over S} [GrpObj A] (hA : IsAbelianScheme A) {P : LB (G2 A).left}
     {t : T ⟶ S} (h : Root A P t) (σ : T' ⟶ T) : Root A P (σ ≫ t) := by
   obtain ⟨A', _, _, β, β₂, hβ, hsq, L, hL, H⟩ := h
-  have hA' : IsAbelianScheme A' := GlobalTheory.PolPull.isAbelianScheme_of_isGrpPullback hA hβ
   obtain ⟨B', _, φ, hφ⟩ := GlobalTheory.FlagTan.exists_isGrpPullback A' σ
-  have hB' : IsAbelianScheme B' := GlobalTheory.PolPull.isAbelianScheme_of_isGrpPullback hA' hφ
-  haveI : IsCommMonObj B' := hB'.comm
+  haveI : IsCommMonObj B' := by
+    rw [isCommMonObj_iff_isMulCommutative]
+    intro T
+    refine ⟨⟨fun x y => Over.OverMorphism.ext (hφ.1.hom_ext ?_ (by rw [Over.w, Over.w]))⟩⟩
+    rw [← hφ.2 T x y (pushPt hφ.1.w x) (pushPt hφ.1.w y) rfl rfl,
+      ← hφ.2 T y x (pushPt hφ.1.w y) (pushPt hφ.1.w x) rfl rfl, _root_.mul_comm]
   let V := lift (pushPt hφ.1.w (fst B' B')) (pushPt hφ.1.w (snd B' B'))
   have hV : IsSquare φ V.left := GlobalTheory.LamPull.exists_isSquare hφ.1.w
   refine ⟨B', inferInstance, inferInstance, φ ≫ β, V.left ≫ β₂, hφ.comp hβ,

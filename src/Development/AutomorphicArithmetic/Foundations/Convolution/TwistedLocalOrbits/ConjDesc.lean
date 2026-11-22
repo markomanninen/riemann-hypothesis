@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ConjSep
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Match
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ConjSep
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Match
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.IndefiniteRowSideFullHecke.IwahoriDoubleCosets PositivityTheory.Rg.Tf.Loc UpperTheory.ConvolutionTheory.Loc
 

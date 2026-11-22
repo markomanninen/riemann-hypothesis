@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataExtra
-import Formalism.LocalRingCardinality.DataRRMetric
-import Formalism.LocalToGlobal.LatticeGeometry.DegFlLApply
-import Formalism.LocalToGlobal.LatticeGeometry.CmTypeMeetsConjugatePair
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataExtra
+public import Formalism.LocalRingCardinality.DataRRMetric
+public import Formalism.LocalToGlobal.LatticeGeometry.DegFlLApply
+public import Formalism.LocalToGlobal.LatticeGeometry.CmTypeMeetsConjugatePair
+
+@[expose] public section
 
 noncomputable section
 

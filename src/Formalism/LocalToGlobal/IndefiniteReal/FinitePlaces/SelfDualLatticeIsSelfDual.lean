@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,12 +22,10 @@ def l0s (V : HSp D) : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E) :=
 theorem mem_self_dual_lattice_set (V : HSp D) (x : Fin V.rank → D.host.E) : x ∈ l0s V ↔ x ∈ L0c D V := by
   simp [l0s, crd, L0c, Module.Basis.equivFun_symm_apply]
 
-theorem coe_self_dual_lattice_set (V : HSp D) : (l0s V : Set (Fin V.rank → D.host.E)) = L0c D V := by
-  ext x; exact mem_self_dual_lattice_set V x
-
 theorem hT_crd (V : HSp D) (x y : Fin V.rank → D.host.E) :
     V.hT (crd V x) (crd V y) = ∑ i, ∑ j, star (x i) * V.gram i j * y j := by
-  simp only [crd, Module.Basis.equivFun_symm_apply, map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [crd, Module.Basis.equivFun_symm_apply, map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply,
     LinearMap.smul_apply, smul_eq_mul, Finset.mul_sum, Formalism.BasicNotions.HSpace.gram]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -44,7 +46,22 @@ theorem self_dual_lattice_is_self_dual (V : HSp D) : Datum.IsSelfDualC V (l0s V)
     refine ⟨hL.fg.map _, ?_⟩
     have hc : (↑(Submodule.map (f.toLinearMap.restrictScalars (𝓞 D.host.E)) V.L0) : Set (Fin V.rank → D.host.E)) =
         f.toLinearMap '' (V.L0 : Set V.V) := by ext; simp
-    rw [hc, Submodule.span_image, hL.span_eq_top, Submodule.map_top, LinearEquiv.range]
+    rw [hc]
+    intro s hs hi
+    have hi' : LinearIndependent (𝓞 D.host.E) (fun x : s => f.symm x) := by
+      simpa only [Function.comp_def, id_eq, LinearMap.restrictScalars_apply, LinearEquiv.coe_coe] using
+        hi.map' (f.symm.toLinearMap.restrictScalars (𝓞 D.host.E))
+          (LinearMap.ker_eq_bot.mpr f.symm.injective)
+    have hm : ∀ x : s, f.symm x ∈ V.L0 := by
+      intro x
+      obtain ⟨z, hz, hze⟩ := hs x.property
+      change f z = x at hze
+      rw [← hze, LinearEquiv.symm_apply_apply]
+      exact hz
+    let _ := hL
+    have hk := Submodule.IsLattice.linearIndependent D.host.E V.L0 hm hi'
+    simpa only [LinearIndepOn, Function.comp_def, id_eq, LinearEquiv.coe_coe, LinearEquiv.apply_symm_apply] using
+      hk.map' f.toLinearMap (LinearMap.ker_eq_bot.mpr f.injective)
   · have key : ∀ b : 𝓞 D.host.E, LinearMap.toSpanSingleton (𝓞 D.host.E) D.host.E 1 b = (b : D.host.E) := fun b => by
       simp [LinearMap.toSpanSingleton_apply, Algebra.smul_def]
     have hU := V.baseLattice_isUnimodular

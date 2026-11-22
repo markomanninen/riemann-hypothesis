@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PatternGroupSubgroupOrderCharacterStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotypicTraceEqOfOneDoubleCosetStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PatternGroupSubgroupOrderCharacterStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotypicTraceEqOfOneDoubleCosetStatement
+
+@[expose] public section
 
 open Polynomial Formalism.MainNotions.ArithmeticCylinders GlobalTheory.GLq GlobalTheory.GLm
 open scoped Classical
@@ -83,8 +87,8 @@ def patChar (ψ : AddChar (ZMod g) ℂ) (E : Fin N → Fin N → Prop) (hE : ∀
 
 theorem patChar_val (ψ : AddChar (ZMod g) ℂ) (E : Fin N → Fin N → Prop) (hE : ∀ a, ¬ E a a) (H : Subgroup (Gn g N))
     (hm) (x : H) : (patChar ψ E hE H hm x : ℂ) = ψ (sumAt E ((x : Gn g N) : Mt g N)) := rfl
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem tr_ePat (ψ : AddChar (ZMod g) ℂ) (Φ E : Fin N → Fin N → Prop) (H : Subgroup (Gn g N))
     (hH : ∀ x, x ∈ H ↔ InPat Φ (x : Mt g N)) (χ : Gn g N → ℂ) :
     tr (ePat g N Φ E ψ) χ =

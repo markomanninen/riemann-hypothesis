@@ -1,10 +1,14 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.AlgebraMapAEEqZero
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.RestrictedBlockMemBlockTriangular
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.InfPartOfSplitIdem
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SplitOrInertP
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceFinal
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatSelf
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SplitLinF
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.AlgebraMapAEEqZero
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.TameAtOne
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.InfPartOfSplitIdem
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SplitOrInertP
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceFinal
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatSelf
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SplitLinF
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,8 @@ variable {P : Finset (Formalism.L2.DIV.Pl D.host.E)} {e : AE D} {es : Formalism.
 
 theorem algebraMap_epsP (hes : ∀ PP ∈ P, Formalism.L2.NTheta.IsIdemAt (es PP) PP) (he : e = ∑ PP ∈ P, es PP) :
     algebraMap (AF D.host.F) (AE D) (epsP P) = e + cA D e := by
-  rw [epsP, map_sum, he, map_sum, ← Finset.sum_add_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [epsP, map_sum, he, map_sum, ← Finset.sum_add_distrib]
   exact Finset.sum_congr rfl fun PP hPP => (below_of_idemAt (hes PP hPP)).symm
 
 open Classical in
@@ -65,11 +70,6 @@ variable {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D} {χS χT : (AE D)ˣ →*
   {ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)} {ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)}
   {βS : GL (Fin S.rank) (Lev.EAf D)} {βT : GL (Fin T.rank) (Lev.EAf D)}
   {P : Finset (Formalism.L2.DIV.Pl D.host.E)} {e : AE D} {es : Formalism.L2.DIV.Pl D.host.E → AE D}
-
-def facAt (χS χT : (AE D)ˣ →* Circle) (es : Formalism.L2.DIV.Pl D.host.E → AE D) {S T : HSp D} (g : GA D S) (h : GA D T)
-    (PP : Formalism.L2.DIV.Pl D.host.E) : ℂ :=
-  (splitFacO χS χT (detAt (es PP) S (resG S (sA (belowPl PP) 1) g)) (detAt (es PP) T (resG T (sA (belowPl PP) 1) h)) :
-    ℂ)
 
 end Chain
 

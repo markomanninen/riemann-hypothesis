@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.TwistedConjugationNorms.LocalMatchingOfAssemblyHypotheses
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistedIwahoriContractionHolds
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriFactorization
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriAndMaximalCompactCriteria
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsDiagUnit
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.TwistedConjugationNorms.LocalMatchingOfAssemblyHypotheses
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistedIwahoriContractionHolds
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriFactorization
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriAndMaximalCompactCriteria
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsDiagUnit
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,8 +29,8 @@ theorem mem_iwGL_iff (w : Pl E) (n : ℕ) (g : GLw n w) :
   rw [GlobalTheory.CompanionTheory.TfLoc.Iw.mem_unitGL_iff, and_assoc]
   simp only [GlobalTheory.CompanionTheory.IwEntries.rel_le_one_iff, GlobalTheory.CompanionTheory.IwEntries.rel_lt_one_iff]
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem v_le_of_ordL_eq_one (w : Pl E) {ϖ x : w.adicCompletion E} (h0 : ϖ ≠ 0) (h1 : ordL ϖ = 1)
     (hx : Valued.v x < 1) : Valued.v x ≤ Valued.v ϖ := by
   have h0' : Valued.v ϖ ≠ 0 := (Valuation.ne_zero_iff _).2 h0
@@ -47,8 +51,8 @@ theorem v_le_of_ordL_eq_one (w : Pl E) {ϖ x : w.adicCompletion E} (h0 : ϖ ≠ 
     omega
   exact_mod_cast this
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem v_lt_one_of_ordL_eq_one (w : Pl E) {ϖ : w.adicCompletion E} (h0 : ϖ ≠ 0) (h1 : ordL ϖ = 1) :
     Valued.v ϖ < 1 := by
   have h0' : Valued.v ϖ ≠ 0 := (Valuation.ne_zero_iff _).2 h0
@@ -62,8 +66,8 @@ theorem v_lt_one_of_ordL_eq_one (w : Pl E) {ϖ : w.adicCompletion E} (h0 : ϖ �
     omega
   exact_mod_cast this
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem torusO_subset_TO (w : Pl E) (n : ℕ) (t : GLw n w)
     (ht : t ∈ PositivityTheory.Rg.Tf.Loc.torusO (n := n) (w.adicCompletion E)) : t ∈ TO n w := by
   obtain ⟨hu, hd⟩ := ht

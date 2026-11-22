@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsLieDataCircle
+module
+
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsLieDataCircle
+
+@[expose] public section
 
 namespace GlobalTheory.PowEntryCommutator
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HeckeTateFunctionalEquationCM
-import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
-import GroundTheory.GlobalFields.AnalyticClassNumber.HeckeContinued
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HeckeTateFunctionalEquationCM
+public import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
+public import GroundTheory.GlobalFields.AnalyticClassNumber.HeckeContinued
+
+@[expose] public section
 
 noncomputable section
 

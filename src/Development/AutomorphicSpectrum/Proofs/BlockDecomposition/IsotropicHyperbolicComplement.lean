@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicSplitTorusIwasawaUnitaryGroup
-import Development.AutomorphicSpectrum.Proofs.JetProofs.ScalarOnComplement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicSplitTorusIwasawaUnitaryGroup
+public import Development.AutomorphicSpectrum.Proofs.JetProofs.ScalarOnComplement
+
+@[expose] public section
 
 open Matrix
 

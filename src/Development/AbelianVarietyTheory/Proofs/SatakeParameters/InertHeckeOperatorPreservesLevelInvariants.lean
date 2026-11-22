@@ -1,12 +1,17 @@
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteDimensionalForms
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDoubleCosetsDefiniteUnitaryMaximalLevelStatement
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.ExistsCharacterEigenvectorOfCommutingRepresentat
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvMemDoubleCosetAndComm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryDoubleCosetFiniteLeftCosetsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemMaxCompactOfTrivOutsideLocalIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteInertHeckeSupportCosetsStatement
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteDimensionalForms
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDoubleCosetsDefiniteUnitaryMaximalLevelStatement
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.ExistsCharacterEigenvectorOfCommutingRepresentat
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvMemDoubleCosetAndComm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryDoubleCosetFiniteLeftCosetsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemMaxCompactOfTrivOutsideLocalIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteInertHeckeSupportCosetsStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain Polynomial GlobalTheory.HeightCounting GlobalTheory.RowTie GlobalTheory.SplitRead GlobalTheory.NPin
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open Formalism.UG
@@ -63,7 +68,7 @@ theorem compAt_conjAL (x : AL L) :
   | zero => simp
   | tmul a b =>
     simp [conjAL, compAt, Formalism.UG.sigR, Algebra.TensorProduct.map_tmul]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem loc_mem_GU (Dv : InertDatum L n v w) (z : GAf L n) : Dv.loc z ∈ Formalism.UG.GU Dv.σw n := by
   set φ : AL L →+* w.adicCompletion L :=
@@ -127,7 +132,7 @@ theorem hval_mul_KU (Dv : InertDatum L n v w) (h : Formalism.UG.GU Dv.σw n → 
   by_cases hm : m ∈ Formalism.UG.GU Dv.σw n
   · have hm' : (k₁ : GL (Fin n) (w.adicCompletion L)) * m * k₂ ∈ Formalism.UG.GU Dv.σw n :=
       mul_mem (mul_mem k₁.2 hm) k₂.2
-    rw [dif_pos hm', dif_pos hm]
+    rw [dite_eq_left hm', dite_eq_left hm]
     have := hbi ⟨k₁, hk₁⟩ ⟨k₂, hk₂⟩ ⟨m, hm⟩
     exact this
   · have hm' : (k₁ : GL (Fin n) (w.adicCompletion L)) * m * k₂ ∉ Formalism.UG.GU Dv.σw n := by
@@ -138,7 +143,7 @@ theorem hval_mul_KU (Dv : InertDatum L n v w) (h : Formalism.UG.GU Dv.σw n → 
         simp [mul_assoc]
       rw [e]
       exact mul_mem (mul_mem (k₁⁻¹).2 h') (k₂⁻¹).2
-    rw [dif_neg hm', dif_neg hm]
+    rw [dite_eq_right hm', dite_eq_right hm]
 
 end GlobalTheory.InertInvar
 
@@ -173,7 +178,7 @@ theorem GlobalTheory.heckeFunI_rt_invariant : ∀ (L : Type) [Field L] [NumberFi
       have hc' : ∃ y : GAf L n, (y : GAf L n ⧸ U) = (MulAction.toPerm a : GAf L n ⧸ U ≃ GAf L n ⧸ U) c ∧
           TrivOutside {v} y :=
         ⟨a * x0, by rw [hac, ← hx0, MulAction.Quotient.smul_mk, smul_eq_mul], trivOutside_mul hat hx0t⟩
-      rw [dif_pos hc, dif_pos hc']
+      rw [dite_eq_left hc, dite_eq_left hc']
       set x := hc.choose with hxdef
       set y := hc'.choose with hydef
       have hx := hc.choose_spec
@@ -205,7 +210,7 @@ theorem GlobalTheory.heckeFunI_rt_invariant : ∀ (L : Type) [Field L] [NumberFi
           rw [MulAction.Quotient.smul_mk, smul_eq_mul]
         rw [e, hy1, hac]
         exact inv_smul_smul a c
-      rw [dif_neg hc, dif_neg hc']
+      rw [dite_eq_right hc, dite_eq_right hc']
   funext g
   show heckeFunI L n U Dv h f (g * (a * b)) = heckeFunI L n U Dv h f g
   rw [h1, h2]

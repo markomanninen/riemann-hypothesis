@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Alternates
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.FrobeniusOrbits.HostCorollaries
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Alternates
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.FrobeniusOrbits.HostCorollaries
+
+@[expose] public section
+
 open GlobalTheory.HTW Formalism.BasicNotions Formalism.FrobeniusOrbits
 
 namespace GlobalTheory.HTW
@@ -13,7 +18,7 @@ theorem size_not_thick : ∀ {D : D7} (L : SizeData₂ D) (C : ℝ) (g : D.R.GG)
   have hj : j.1 + 1 ≤ D.R.m := j.2
   have hw : wj D (j.1 + 1) ρ = (((D.hc ρ).e j : ℚ) : ℝ) := by
     have hj' : j.1 + 1 - 1 < D.R.m := by have := j.2; omega
-    rw [wj, dif_pos hj']
+    rw [wj, dite_eq_left hj']
     have : (⟨j.1 + 1 - 1, hj'⟩ : Fin D.R.m) = j := Fin.ext (by simp)
     rw [this]
   obtain ⟨z, hz⟩ := (D.hc ρ).e_int j

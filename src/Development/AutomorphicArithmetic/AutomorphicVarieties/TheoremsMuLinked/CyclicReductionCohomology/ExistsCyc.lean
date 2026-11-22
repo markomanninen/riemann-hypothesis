@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.DualPair
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.FixCnt
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.OmegaConstruction
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsCyclic
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.DualPair
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.FixCnt
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.OmegaConstruction
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsCyclic
+
+@[expose] public section
 
 open IsLocalRing Matrix Filter NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.HV UpperTheory.V.Th GlobalTheory.GalOfCusp
 
@@ -19,7 +23,7 @@ private theorem cols_zero {O : Type} [CommRing O] [IsDomain O] {n : ℕ} (A W : 
   have hv : W * vandermonde al = 0 := by
     ext i k
     have := congrFun (hk k) i
-    simpa [mul_apply, vandermonde_apply, mulVec, dotProduct] using this
+    simpa [Matrix.mul_apply, vandermonde_apply, mulVec, dotProduct] using this
   have hd : (vandermonde al).det ≠ 0 := det_vandermonde_ne_zero_iff.mpr ha
   have h2 : W * vandermonde al * adjugate (vandermonde al) = 0 := by rw [hv, Matrix.zero_mul]
   rw [Matrix.mul_assoc, mul_adjugate, Matrix.mul_smul, Matrix.mul_one] at h2
@@ -53,7 +57,7 @@ theorem UpperTheory.V.Th.h0qO :
         map_add' := fun a b => by simp [add_mulVec]
         map_smul' := fun c a => by simp [smul_mulVec] }
     have hf : Function.Injective f := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro Y e
       apply Subtype.ext
       refine hv Y.1 ?_ e

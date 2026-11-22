@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.ComapMaximalIdealParDVR
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.ComapMaximalIdealParDVR
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -40,8 +45,8 @@ theorem ResidueAlgIndep.proof : ResidueAlgIndep.Statement := by
     exact hp
   rw [parPrime, MvPolynomial.mem_map_C_iff] at hq
   ext m
-  rw [coeff_map, coeff_zero]
-  exact Ideal.algebraMap_residueField_eq_zero.mpr (hq m)
+  simpa only [coeff_map, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] using
+    Ideal.algebraMap_residueField_eq_zero.mpr (hq m)
 
 end
 

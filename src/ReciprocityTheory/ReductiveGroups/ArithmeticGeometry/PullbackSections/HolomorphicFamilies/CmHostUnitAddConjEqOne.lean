@@ -1,6 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.ChartValueIntegralGood
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
+public import Formalism.LocalToGlobal.ProjectiveLattices.ChartDirectionsIntegral
+public import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -80,7 +86,7 @@ theorem bar_rt : H.bar H.rt = -H.rt := by
 
 theorem cmHostUnit_add_conj_eq_one : H.w0 + H.bar H.w0 = 1 := by
   have hb := congrArg H.bar H.two_weight_eq_one_add_root
-  rw [map_mul, map_add, map_one, bar_rt, map_ofNat] at hb
+  rw [map_mul, map_add (f := _), map_one, bar_rt, map_ofNat] at hb
   have h2 : (2 : 𝓞 E) * (H.w0 + H.bar H.w0) = 2 * 1 := by
     linear_combination H.two_weight_eq_one_add_root + hb
   exact mul_left_cancel₀ two_ne_zero h2
@@ -145,7 +151,8 @@ theorem harm_rename [Fintype T] {k : Type} [Field k] (cc : T → T) (isX : T →
     intro b
     show pderiv (lEq ⟨τ, i, b⟩) (pderiv (lEq ⟨cc τ, i', b⟩) (rename lEq P)) = _
     rw [pderiv_rename lEq.injective, pderiv_rename lEq.injective]
-  simp only [e, ← map_sum, h3, map_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [e, ← map_sum, h3, map_zero]
 
 end Letters
 

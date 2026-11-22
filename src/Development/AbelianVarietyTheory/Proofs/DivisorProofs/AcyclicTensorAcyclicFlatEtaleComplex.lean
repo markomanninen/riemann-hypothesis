@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRules
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSheafShortComplexExactIffLocallyStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorFlatEtaleSheafPreservesLocalExactnessStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRules
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSheafShortComplexExactIffLocallyStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorFlatEtaleSheafPreservesLocalExactnessStatement
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex
@@ -58,7 +62,7 @@ theorem Pair.lift_tensD {I J K : Cx R} (μ : Pair I J K) (U : Scheme.{0}) (w : �
     | tmul a b =>
       have e := Tens.d_of_tmul I J U w p a b
       simp only [Tens.of, DirectSum.lof_eq_of] at e
-      rw [e, map_add, map_zsmul]
+      rw [e, map_add (f := _), map_zsmul]
       have e1 := μ.lift_of_tmul U (w + 1) ⟨(p.1.1 + 1, p.1.2), by have := p.2; simp only at this ⊢; omega⟩
         (Sec.map (I.d p.1.1 (p.1.1 + 1)) a) b
       have e2 := μ.lift_of_tmul U (w + 1) ⟨(p.1.1, p.1.2 + 1), by have := p.2; simp only at this ⊢; omega⟩
@@ -66,8 +70,8 @@ theorem Pair.lift_tensD {I J K : Cx R} (μ : Pair I J K) (U : Scheme.{0}) (w : �
       have e3 := μ.lift_of_tmul U w p a b
       simp only [Tens.of, DirectSum.lof_eq_of] at e1 e2 e3
       rw [e1, e2, e3, μ.leibniz U p.1.1 p.1.2 w p.2 a b, Units.smul_def]
-    | add y z hy hz => simp only [map_add, hy, hz]
-  | add x y hx hy => simp only [map_add, hx, hy]
+    | add y z hy hz => simp only [map_add (f := _), hy, hz]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem Pair.lift_tensRes {I J K : Cx R} (μ : Pair I J K) {V U : Scheme.{0}} (g : V ⟶ U) (w : ℤ) (x : Tens I J U w) :
     μ.lift V w (Tens.res g w x) = Sec.res g (μ.lift U w x) := by
@@ -82,8 +86,8 @@ theorem Pair.lift_tensRes {I J K : Cx R} (μ : Pair I J K) {V U : Scheme.{0}} (g
       simp only [Tens.of, DirectSum.lof_eq_of] at e3 e4
       rw [e3, μ.nat g, ← e4, ← DirectSum.lof_eq_of (ULift.{1} R), ← DirectSum.lof_eq_of (ULift.{1} R), Tens.res, DirectSum.lmap_lof]
       rfl
-    | add y z hy hz => simp only [map_add, hy, hz]
-  | add x y hx hy => simp only [map_add, hx, hy]
+    | add y z hy hz => simp only [map_add (f := _), hy, hz]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem Tens.res_of_tmul (I J : Cx R) {V U : Scheme.{0}} (g : V ⟶ U) (w : ℤ) (p : {p : ℤ × ℤ // p.1 + p.2 = w})
     (a : Sec (I.X p.1.1) U) (b : Sec (J.X p.1.2) U) :
@@ -108,15 +112,15 @@ theorem Tens.res_d (I J : Cx R) {V U : Scheme.{0}} (g : V ⟶ U) (w : ℤ) (x : 
       have e1 := Tens.d_of_tmul I J U w p a b
       have e2 := Tens.d_of_tmul I J V w p (Sec.res g a) (Sec.res g b)
       simp only [Tens.of, DirectSum.lof_eq_of] at e e1 e2
-      rw [e, e1, e2, map_add, map_zsmul, ← DirectSum.lof_eq_of (ULift.{1} R), ← DirectSum.lof_eq_of (ULift.{1} R),
+      rw [e, e1, e2, map_add (f := _), map_zsmul, ← DirectSum.lof_eq_of (ULift.{1} R), ← DirectSum.lof_eq_of (ULift.{1} R),
         Tens.res, DirectSum.lmap_lof, DirectSum.lmap_lof]
       simp only [TensorProduct.map_tmul, DirectSum.lof_eq_of]
       have h1 := Sec.res_map (I.d p.1.1 (p.1.1 + 1)) g a
       have h2 := Sec.res_map (J.d p.1.2 (p.1.2 + 1)) g b
       simp only [Sec.res] at h1 h2
       rw [h1, h2]
-    | add y z hy hz => simp only [map_add, hy, hz]
-  | add x y hx hy => simp only [map_add, hx, hy]
+    | add y z hy hz => simp only [map_add (f := _), hy, hz]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 end GlobalTheory.EtC
 
@@ -144,12 +148,12 @@ theorem Tens.d_d (I J : Cx R) (U : Scheme.{0}) (w : ℤ) (x : Tens I J U w) :
       have e2 := Tens.d_of_tmul I J U (w + 1) ⟨(p.1.1, p.1.2 + 1), by have := p.2; simp only at this ⊢; omega⟩
         a (Sec.map (J.d p.1.2 (p.1.2 + 1)) b)
       simp only [Tens.of, DirectSum.lof_eq_of] at e e1 e2
-      rw [e, map_add, map_zsmul, e1, e2]
+      rw [e, map_add (f := _), map_zsmul, e1, e2]
       simp only [Sec.map_d_d, TensorProduct.zero_tmul, TensorProduct.tmul_zero, map_zero, zero_add, smul_zero, add_zero,
         smul_add, Int.negOnePow_succ, Units.val_neg, neg_smul, smul_smul]
       simp
-    | add y z hy hz => simp only [map_add, hy, hz, add_zero]
-  | add x y hx hy => simp only [map_add, hx, hy, add_zero]
+    | add y z hy hz => simp only [map_add (f := _), hy, hz, add_zero]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, add_zero]
 
 end GlobalTheory.EtC
 
@@ -197,7 +201,7 @@ theorem Tens.d_upper_low (I J : Cx R) (U : Scheme.{0}) (w n : ℤ) (x : Tens I J
       · intro h; subst h; simp at hq; omega
       · intro h; subst h; simp at hq; omega
     · simp
-  | add x y hx hy => rw [Tens.upper_add, map_add, DFinsupp.add_apply, hx, hy, add_zero]
+  | add x y hx hy => rw [Tens.upper_add, map_add (f := _), DFinsupp.add_apply, hx, hy, add_zero]
 
 theorem Tens.d_upper_edge (I J : Cx R) (U : Scheme.{0}) (w n s : ℤ) (h : s + n = w) (x : Tens I J U w) :
     Tens.d I J U w (Tens.upper n x) ⟨(s + 1, n), by simp only; omega⟩ =
@@ -220,7 +224,7 @@ theorem Tens.d_upper_edge (I J : Cx R) (U : Scheme.{0}) (w n s : ℤ) (h : s + n
           · intro e; simp at e; simp at hb hp; omega
         · simp
       · intro e; simp at e; omega
-  | add x y hx hy => rw [Tens.upper_add, map_add, DFinsupp.add_apply, hx, hy, DFinsupp.add_apply, map_add]
+  | add x y hx hy => rw [Tens.upper_add, map_add (f := _), DFinsupp.add_apply, hx, hy, DFinsupp.add_apply, map_add (f := _)]
 
 end GlobalTheory.EtC
 
@@ -265,7 +269,7 @@ theorem rTensor_res_comm {B C M : Shv R} (g : B ⟶ C) {V U : Scheme.{0}} (k : V
     have h := Sec.res_map g k a
     simp only [Sec.res, Sec.map] at h
     simp only [TensorProduct.map_tmul, LinearMap.rTensor_tmul, h]
-  | add y z hy hz => simp only [map_add, hy, hz]
+  | add y z hy hz => simp only [map_add (f := _), hy, hz]
 
 theorem Tens.cycle_loc_boundary {C J : Cx R} (a b : ℤ) [C.IsStrictlyGE a] [J.IsStrictlyGE b]
     (hJ : ∀ t, FlatS (J.X t)) (hC : C.Acyclic) (w : ℤ) (U : Scheme.{0}) (x : Tens C J U (w + 1))
@@ -335,7 +339,7 @@ theorem Tens.cycle_loc_boundary {C J : Cx R} (a b : ℤ) [C.IsStrictlyGE a] [J.I
     refine L_mono _ _ _ (ih V x' hx'u hx'd) ?_
     rintro W m ⟨z, hz⟩
     refine ⟨z + Tens.res m w y, ?_⟩
-    rw [map_add, hz, Tens.res_comp, ← Tens.res_d]
+    rw [map_add (f := _), hz, Tens.res_comp, ← Tens.res_d]
     simp only [x', map_sub, sub_add_cancel]
   have hall : ∀ k : ℕ, P (w + 2 - a - k) := by
     intro k
@@ -375,6 +379,5 @@ theorem acyclic_of_isTensor : ∀ (R : Type) [CommRing R] {C J T : Cx R} (a b : 
   change Sec.map (T.d w (w + 1)) (τ.lift W' w y) = _
   rw [← Pair.lift_tensD, hy, Pair.lift_tensRes, Pair.lift_tensRes, hx]
   simp [Sec.res, op_comp, Functor.map_comp]
-  rfl
 
 end GlobalTheory.EtC

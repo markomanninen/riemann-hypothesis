@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,14 +61,14 @@ def scaled (Z : LocDat D) (p : PlF D) (f : Fin (D.R.rS + 1) → (VS D).V) : Fin 
   fun a => frFac Z.δ p a • baseChange₂ D p (f a)
 
 def locU (Z : LocDat D) (p : PlF D) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E}
-    (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') (Tn T'n : ℕ) : Loc.Term (Vp D p) (Z.M p) D.R.rS where
+    (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') (Tn T'n : ℕ) : Loc.Term (Vp D p) (Z.M p) D.R.rS where
   abelian₂ := lattice₂ D Z.M p Λ
   f a := frFac Z.δ p a • baseChange₂ D p (frame F a)
   f' b := frFac Z.δ p b • baseChange₂ D p (frameAct (frame F') (admXi D Λ F F')⁻¹ b)
   T := (Tn : (D.s.atP p).Fp)
   T' := (T'n : (D.s.atP p).Fp)
 
-def AtBase (Z : LocDat D) (p : PlF D) {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T')
+def AtBase (Z : LocDat D) (p : PlF D) {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T')
     (Tn T'n : ℕ) (P : LocNG.FPair (locH Z p) D.R.rS) : Prop :=
   P.A.f = scaled Z p (frame F) ∧ P.B.f = scaled Z p (frame F') ∧
     P.A.T = (Tn : (D.s.atP p).Fp) ∧ P.B.T = (T'n : (D.s.atP p).Fp)

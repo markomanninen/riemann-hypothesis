@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticFormTwoTwo.InLieW
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticFormTwoTwo.InLieW
+
+@[expose] public section
 
 open Matrix Finset Filter Topology
 open scoped ContDiff
@@ -143,7 +147,7 @@ def svSub (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (π : Mx k r → (Wp →
     exact differentiableAt_const _
   add_mem' := by
     intro x y hx hy h hh X hX
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact (hx h hh X hX).add (hy h hh X hX)
   smul_mem' := by
     intro c x hx h hh X hX
@@ -180,7 +184,7 @@ theorem sv_dRep_lin (hall : ∀ v : Wp, v ∈ SmVec k r z π) {X : Mx k r} (hX :
   constructor
   · intro x y
     unfold dRep
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact deriv_add (sv_dRep_diff hall hX x) (sv_dRep_diff hall hX y)
   · intro c x
     unfold dRep
@@ -195,7 +199,7 @@ theorem sv_ecRep_lin (hall : ∀ v : Wp, v ∈ SmVec k r z π) {Z : Mx k r}
   constructor
   · intro x y
     unfold EcRep
-    rw [l1.map_add, l2.map_add, smul_add]
+    rw [l1.map_add (f := _), l2.map_add (f := _), smul_add]
     abel
   · intro c x
     unfold EcRep
@@ -324,7 +328,7 @@ theorem sv_qmF_lin {X : Type*} [AddCommGroup X] [Module ℂ X] {n t : ℕ} (Eop 
     have hl := hE (a (σ j)) (b j)
     constructor
     · intro x y
-      split_ifs <;> simp only [hl.map_add, smul_add] <;> abel
+      split_ifs <;> simp only [hl.map_add (f := _), smul_add] <;> abel
     · intro c x
       split_ifs <;> simp only [hl.map_smul, smul_add, zero_add, smul_comm c]
   constructor

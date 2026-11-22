@@ -1,12 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsCharZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLinearCanonicalMapPrimitiveDeRhamRigExt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCanForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsCharZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorsionTowersOfDivisibleGroup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLinearCanonicalMapPrimitiveDeRhamRigExt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCanForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfPow
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct WithConv
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Sp spMap epsR IsTangent IsGrpPullback)
 open ReciprocityTheory.ChartRestriction.G.Semi (IsAbelianScheme LB RigLB CubicalStr Theta thφ thε thK x3)
@@ -16,8 +22,10 @@ attribute [local instance] Over.cartesianMonoidalCategory
 set_option autoImplicit false
 
 theorem GlobalTheory.PtExt.exists_hodge_to_omega : ∀ (p : ℕ) [Fact p.Prime] (R : Type) [CommRing R] (N : ℕ), (p : R) ^ N = 0 →
-    ∀ (A : Over (Sp R)) [GrpObj A], IsAbelianScheme A → ∀ (G : PDivGroup p R) (t : G.TorsionTower A),
-    ∃ ψ : PrimitiveSubmodule A →ₗ[R] G.omega, ∀ c : PrimitiveSubmodule A, IsCan t c.1 (G.rigOfOmega (ψ c)) := by
+    ∀ (A : Over (Sp R)) [GrpObj A], IsAbelianScheme A →
+    ∀ (G : PDivGroup p R) (t : GlobalTheory.PDivGroup.TorsionTower G A),
+    ∃ ψ : PrimitiveSubmodule A →ₗ[R] G.omega,
+      ∀ c : PrimitiveSubmodule A, GlobalTheory.PtExt.IsCan t c.1 (G.rigOfOmega (ψ c)) := by
   intro p _ R _ N hN A _ hA G t
   obtain ⟨L, hL⟩ := GlobalTheory.PtExt.exists_canMap R A p G t hA
   have hinj := GlobalTheory.PDivGroup.rigOfOmega_injective_of_pow p R N hN G
@@ -34,6 +42,5 @@ theorem GlobalTheory.PtExt.exists_hodge_to_omega : ∀ (p : ℕ) [Fact p.Prime] 
   refine ⟨(LinearEquiv.ofInjective G.rigOfOmega hinj).symm ∘ₗ
     (L ∘ₗ (PrimitiveSubmodule A).subtype).codRestrict (LinearMap.range G.rigOfOmega) hmem, fun c ↦ ?_⟩
   rw [hL]
-  have := (LinearEquiv.ofInjective G.rigOfOmega hinj).apply_symm_apply
-    ((L ∘ₗ (PrimitiveSubmodule A).subtype).codRestrict (LinearMap.range G.rigOfOmega) hmem c)
-  exact (congrArg Subtype.val this).symm
+  exact (LinearEquiv.ofInjective_symm_apply G.rigOfOmega (h := hinj)
+    ((L ∘ₗ (PrimitiveSubmodule A).subtype).codRestrict (LinearMap.range G.rigOfOmega) hmem c)).symm

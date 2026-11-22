@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.RhoWApply
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.RhoWApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -115,10 +119,6 @@ theorem hkOp_spec [Fintype ι] {e : ι → ℕ} {c : K} (hE : HkEx pts mapR borR
 def HeckeStabW [Fintype ι] {e : ι → ℕ} {c : K} (hE : HkEx pts mapR borR hkIdx quotR e c)
     (hD : PtsDetect pts mapR borR e) (hF : HkFin pts hkIdx) (W : Submodule K (secW pts mapR borR e)) : Prop :=
   ∀ f ∈ W, hkOp hE hD hF f ∈ W
-
-def HeckeStabSet [Fintype ι] {e : ι → ℕ} {c : K} (hE : HkEx pts mapR borR hkIdx quotR e c)
-    (hD : PtsDetect pts mapR borR e) (hF : HkFin pts hkIdx) (M : Set (secW pts mapR borR e)) : Prop :=
-  ∀ f ∈ M, hkOp hE hD hF f ∈ M
 
 end Hecke
 

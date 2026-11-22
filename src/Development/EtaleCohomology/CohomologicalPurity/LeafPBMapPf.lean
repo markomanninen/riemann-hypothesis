@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafPBPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafPBPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -186,8 +190,10 @@ theorem eMap_bij (N : ℕ) (R : Type) [CommRing R] (n : ℕ) (A : Type) [CommRin
     · exact (k1 x).trans ((conv_congr hx2 (pb_gl x) (fun _ => rfl)).trans (conv_back _))
     · exact (k2 x).trans hx1
 
-theorem LeafPBMap_of : LeafPBMap := fun N R _ =>
-  ⟨cstV N (sp R), prod.lift (fMap N (sp R)) (pullback.fst _ _), prod.lift_snd _ _,
-    by rw [prod.lift_fst_assoc]; exact fMap_line N (sp R), fun n A _ => eMap_bij N R n A⟩
+theorem LeafPBMap_of : LeafPBMap := by
+  set_option synthInstance.maxHeartbeats 100000 in
+    exact fun N R _ =>
+      ⟨cstV N (sp R), prod.lift (fMap N (sp R)) (pullback.fst _ _), prod.lift_snd _ _,
+        by rw [prod.lift_fst_assoc]; exact fMap_line N (sp R), fun n A _ => eMap_bij N R n A⟩
 
 end LateralTheory.CohomologicalPurity.Thom

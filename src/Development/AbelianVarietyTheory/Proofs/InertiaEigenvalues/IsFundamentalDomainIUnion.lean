@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DifferentiableAtChart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DifferentiableAtChart
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,7 +101,7 @@ theorem integral_unfold {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] [
   have hr : ∀ i, (r i • 𝓕 : Set G) = e (1, i) • 𝓕 := fun i => by
     rw [Subgroup.smul_def, he]; simp
   refine ⟨?_, ⟨AEStronglyMeasurable.tsum hmi, ?_⟩, hI, ?_⟩
-  · filter_upwards [ae_lt_top' (AEMeasurable.ennreal_tsum fun i => (hmi i).enorm) hfin] with g hg
+  · filter_upwards [ae_lt_top' (AEMeasurable.tsum fun i => (hmi i).enorm) hfin] with g hg
     have := ENNReal.summable_toReal hg.ne
     simpa using this
   · exact lt_of_le_of_lt (lintegral_mono fun x => enorm_tsum_le_tsum_enorm) hfin.lt_top
@@ -143,7 +147,8 @@ theorem vecMul_ratGL_mul (ξ : Fin a → E) (γ : GL (Fin a) E) (g : GA E a) :
   rw [Units.val_mul, ← Matrix.vecMul_vecMul]
   congr 1
   ext j
-  simp [ratGL, Matrix.vecMul, dotProduct, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [ratGL, Matrix.vecMul, dotProduct, map_sum]
 
 theorem ratGL_injective : Function.Injective (ratGL E a) := fun _ _ h => by
   ext i j
@@ -220,9 +225,6 @@ theorem integral_tsum_vecMul {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ
   simpa only [vecMul_ratGL_mul, hF, hγ] using this
 
 end Stabiliser
-
-theorem continuous_vecMul (y : Fin a → Ad E) : Continuous fun g : GA E a => y ᵥ* g.val :=
-  continuous_const.matrix_vecMul Units.continuous_val
 
 end Concrete
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.AffineCharacterGenerators.Generators
-import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.MatrixEntryAbsSumUnitaryLieCoordinatesSplit
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.AffineCharacterGenerators.Generators
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.MatrixEntryAbsSumUnitaryLieCoordinatesSplit
+
+@[expose] public section
 
 open MvPolynomial Filter Topology PositivityTheory.Rg.Fx
 
@@ -38,7 +42,7 @@ private theorem FXRep.add {p q c d e} (h : FXRep φ m p e c) (h' : FXRep φ m q 
   obtain ⟨G', h1', h2', h3'⟩ := h'
   refine ⟨fun β => G β + G' β, ?_, ?_, fun β => (totalDegree_add _ _).trans (max_le (h3 β) (h3' β))⟩
   · rw [h1, h1', ← Finset.sum_add_distrib]
-    simp only [map_add, add_mul]
+    simp only [map_add (f := _), add_mul]
   · refine (Finset.sum_le_sum fun β _ => nrm_add _ _).trans ?_
     rw [Finset.sum_add_distrib]
     linarith
@@ -96,7 +100,7 @@ private theorem vieta (n : ℕ) (j : Fin n) :
   have h := congrArg (Polynomial.eval (-(X j : MvPolynomial (Fin n) ℂ)))
     (MvPolynomial.prod_C_add_X_eq_sum_esymm ℂ (Fin n))
   rw [Polynomial.eval_prod, Finset.prod_eq_zero (Finset.mem_univ j) (by simp),
-    Polynomial.eval_finset_sum, Fintype.card_fin, Finset.sum_range_succ',
+    Polynomial.eval_finsetSum, Fintype.card_fin, Finset.sum_range_succ',
     Finset.sum_range] at h
   simp only [Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X,
     esymm_zero, one_mul, Nat.sub_zero] at h
@@ -131,7 +135,8 @@ private theorem step (τ : Type) [Fintype τ] [DecidableEq τ] (n : ℕ) (u : τ
     exact (FXRep.basis _).mono (by linarith [Nat.cast_nonneg (α := ℝ) n]) (Nat.zero_le _)
   · have hn : (β u : ℕ) + 1 = n := by have := (β u).2; omega
     have hv := congrArg (rename (fun j => (u.1, j))) (vieta n u.2)
-    simp only [map_pow, rename_X, map_sum, map_mul, Prod.mk.eta, rename_C] at hv
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_pow, rename_X, map_sum, map_mul, Prod.mk.eta, rename_C] at hv
     rw [hn, hv, Finset.sum_mul]
     have key := FXRep.sum (φ := aeval (fun ti : τ × Fin n =>
         rename (fun j => (ti.1, j)) (esymm (Fin n) ℂ (ti.2 + 1))))
@@ -165,7 +170,7 @@ theorem UpperTheory.ConvolutionTheory.FX.reduce :
       (fun u => ⟨0, u.2.pos⟩)
     simpa using this
   | single_add a b f _ _ ih =>
-    rw [monomial_single_add, map_add, Finsupp.degree_single, pow_add]
+    rw [monomial_single_add, map_add (f := _), Finsupp.degree_single, pow_add]
     clear * - ih hK
     induction b with
     | zero => simpa using ih

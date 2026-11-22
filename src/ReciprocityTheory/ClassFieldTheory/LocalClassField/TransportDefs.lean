@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.NeutralLocalFields.Reciprocity
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecDefs
+module
+
+public import Mathlib
+public import ReciprocityTheory.NeutralLocalFields.Reciprocity
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecDefs
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 

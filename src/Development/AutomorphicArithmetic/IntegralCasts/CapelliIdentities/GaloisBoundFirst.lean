@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Filter Topology in
 theorem UpperTheory.Reformulated.B.GaloisBoundFirst.main :

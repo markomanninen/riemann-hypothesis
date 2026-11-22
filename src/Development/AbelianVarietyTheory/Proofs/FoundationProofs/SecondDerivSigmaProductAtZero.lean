@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.WeierstrassPAddOfNeOfDerivNeZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.JetRelOfWeierstrassSystem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.WeierstrassPAddOfNeOfDerivNeZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.JetRelOfWeierstrassSystem
+
+@[expose] public section
 
 open Filter Topology PeriodPair
 

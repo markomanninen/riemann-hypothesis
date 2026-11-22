@@ -1,8 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.InfinitesimalCharacterGlue
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfIsOpenStab
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteInterCompact
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.InfinitesimalCharacterGlue
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfIsOpenStab
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteInterCompact
+
+@[expose] public section
+
 open scoped Classical
 open NumberField IsDedekindDomain Matrix MeasureTheory Filter Topology
 open GlobalTheory.CuspRep GlobalTheory.UnitaryBC PositivityTheory.Rg.Rs PositivityTheory.Rg.BcB.SpectralAccumulation
@@ -13,8 +18,7 @@ namespace GlobalTheory.CompanionTheory.FinDisc
 
 theorem memLp_two_of_lintegral_ne_top {X : Type*} [MeasurableSpace X] {ν : Measure X} {f : X → ℂ}
     (hm : AEStronglyMeasurable f ν) (hf : ∫⁻ x, ‖f x‖ₑ ^ 2 ∂ν ≠ ⊤) : MemLp f 2 ν := by
-  refine ⟨hm, ?_⟩
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)]
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hm]
   have h2 : ∀ x, ‖f x‖ₑ ^ ((2 : ENNReal).toReal) = ‖f x‖ₑ ^ (2 : ℕ) := by
     intro x
     rw [ENNReal.toReal_ofNat, ← ENNReal.rpow_natCast]
@@ -24,7 +28,7 @@ theorem memLp_two_of_lintegral_ne_top {X : Type*} [MeasurableSpace X] {ν : Meas
 
 theorem ofReal_integral_sq {X : Type*} [MeasurableSpace X] {ν : Measure X} {f : X → ℂ} (hf : MemLp f 2 ν) :
     ENNReal.ofReal (∫ x, ‖f x‖ ^ 2 ∂ν) = ∫⁻ x, ‖f x‖ₑ ^ 2 ∂ν := by
-  have hi : Integrable (fun x => ‖f x‖ ^ 2) ν := (memLp_two_iff_integrable_sq_norm hf.1).1 hf
+  have hi : Integrable (fun x => ‖f x‖ ^ 2) ν := (memLp_two_iff_integrable_sq_norm hf.aestronglyMeasurable).1 hf
   rw [ofReal_integral_eq_lintegral_ofReal hi (ae_of_all _ fun x => by positivity)]
   congr 1
   funext x
@@ -59,7 +63,8 @@ private theorem orth_sum_lemma {X : Type*} [MeasurableSpace X] {ν : Measure X} 
     have e1 : ∀ x, (((‖∑ i, c i * ψ i x‖ ^ 2 : ℝ)) : ℂ) =
         ∑ i, ∑ j, (c i * (starRingEnd ℂ) (c j)) * (ψ i x * (starRingEnd ℂ) (ψ j x)) := by
       intro x
-      rw [Complex.ofReal_pow, ← Complex.mul_conj', map_sum, Finset.sum_mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Complex.ofReal_pow, ← Complex.mul_conj', map_sum, Finset.sum_mul_sum]
       refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
       simp only [map_mul]
       ring

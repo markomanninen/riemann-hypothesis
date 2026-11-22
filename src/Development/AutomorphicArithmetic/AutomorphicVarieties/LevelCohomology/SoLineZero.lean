@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoLine
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoCobIndex
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoLine
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoCobIndex
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.X
 

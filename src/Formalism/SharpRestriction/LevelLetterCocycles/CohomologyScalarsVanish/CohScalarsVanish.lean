@@ -1,4 +1,8 @@
-import ReciprocityTheory.GaloisValuations.SeparatedDvrSecondCohomologyMem
+module
+
+public import ReciprocityTheory.GaloisValuations.SeparatedDvrSecondCohomologyMem
+
+@[expose] public section
 
 noncomputable section
 

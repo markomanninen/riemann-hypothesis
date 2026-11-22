@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementG
+module
+
+public import Formalism.HermitianCurvature.StatementG
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -227,9 +231,6 @@ theorem hessian_determinant : Formalism.FourierDecayAlt.G.HessDet := by
   rw [hJ, Matrix.det_one_add_replicateCol_mul_replicateRow]
   simp [dotProduct]
   ring
-
-theorem gradient_small_near_critical : Formalism.FourierDecayAlt.G.GradSmall :=
-  ⟨6, fun m D' hD x hx η hη hη' h => gradSmall6 m D' hD x hx η hη hη' h⟩
 
 theorem gradient_lower_bound : Formalism.FourierDecayAlt.G.GradLower := by
   intro m Kc hK h0 δ hδ

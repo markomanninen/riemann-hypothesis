@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
-import Development.AbelianVarietyTheory.Definitions.Divisors.DatumEquiv
-import Development.AbelianVarietyTheory.Definitions.Divisors.VdmSplit
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.Clause1
-import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.Weyl
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DatumEquiv
+public import Development.AbelianVarietyTheory.Definitions.Divisors.VdmSplit
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.Clause1
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.Weyl
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,7 +92,8 @@ theorem exists_type (hCp : CptCase) (hSch : SchurOne)
     rw [trace_eq_of_mem B ⊤ (fun _ => trivial) hc, h1, hs, pow_zero, ← hSch n ε _ X D hT]
     refine integral_congr_ae (Filter.Eventually.of_forall fun k => ?_)
     dsimp only
-    rw [hpd, mul_one, hP (toMK k) k.2, trK]
+    rw [hpd, mul_one, hP (toMK k) k.2]
+    delta trK
     congr 1
     exact LinearMap.trace_restrict_eq_of_forall_mem ⊤ _ fun _ => trivial
   · obtain ⟨W, i1, i2, i3, T, h1, h2, h3, h4⟩ := supTrace n ε lam h X D hD hHC hh hthr (by omega) (by omega)
@@ -119,7 +124,9 @@ theorem stKData_of (hBF : BlockForm) (hOm : OmDet) (hCP : CoefPoly) (hTP : TrPol
   have hsq : ((-1 : ℂ) ^ sDeg ε) * (-1) ^ sDeg ε = 1 := by rw [← mul_pow]; simp
   have htop : ∀ k ∈ Formalism.REAL.Kset ε, ev k (topP ε M R) = (-1) ^ sDeg ε * (ev k P * physDet ε k) := by
     intro k hk
-    rw [topP, map_mul, ← hRe k hk, ← hQ k hk, map_mul, map_mul, show ev k (MvPolynomial.C _) = _ from MvPolynomial.eval_C _]
+    change ev k (detbP r ^ M * R * (OmP ε).det) = _
+    rw [map_mul, ← hRe k hk, ← hQ k hk, map_mul, map_mul,
+      show ev k (MvPolynomial.C _) = _ from MvPolynomial.eval_C _]
     ring
   have hscale : ∀ (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
       (A : KG ε → (H →L[ℂ] H)) (B : H →L[ℂ] H) (c : ℂ),

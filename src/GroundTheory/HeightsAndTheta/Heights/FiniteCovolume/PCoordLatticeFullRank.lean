@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StCoordLatticeFullRank
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StCoordLatticeFullRank
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -15,9 +19,8 @@ theorem CoordLatticeFullRank.proof (v : Basis ι E W) : CoordLatticeFullRank.Sta
   set f : W →ₗ[E] ι → E := (v.equivFun : W →ₗ[E] ι → E) with hf
   refine ⟨?_, ?_⟩
   · classical
-    obtain ⟨s, hs⟩ := hL.fg
-    refine ⟨s.image f.toAddMonoidHom, ?_⟩
-    rw [Finset.coe_image, ← AddMonoidHom.map_closure, hs]
+    letI := hL.fg
+    infer_instance
   set S : Set (ι → E) := ((La.map f.toAddMonoidHom : AddSubgroup (ι → E)) : Set (ι → E)) with hS
   set T : Submodule ℚ (ι → E) := Submodule.span ℚ S with hT
 

@@ -1,5 +1,9 @@
-import Formalism.EisensteinCokernelLengths.CokernelLengthBoundOfLifts
-import Formalism.FrobeniusContraction.FrobeniusContractionProofs.LenBound
+module
+
+public import Formalism.EisensteinCokernelLengths.CokernelLengthBoundOfLifts
+public import Formalism.FrobeniusContraction.FrobeniusContractionProofs.LenBound
+
+@[expose] public section
 
 namespace Formalism.ZetaNonvanishing.EisensteinCokernelLengthsFacts.FactorialValuationBoundsFacts
 open Formalism.WachCohomologyFacts

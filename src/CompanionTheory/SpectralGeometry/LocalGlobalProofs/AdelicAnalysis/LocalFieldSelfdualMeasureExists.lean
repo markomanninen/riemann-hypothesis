@@ -1,6 +1,11 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import GroundTheory.LocalFields.LocalFourier
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import GroundTheory.LocalFields.LocalFourier
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

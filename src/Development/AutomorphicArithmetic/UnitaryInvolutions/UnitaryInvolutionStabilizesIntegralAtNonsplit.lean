@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.OrbitNormCounting.NormCount
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralProperties
-import Development.AutomorphicArithmetic.UnitaryInvolutions.ExistsLocalQuadraticGaloisDataAtNonsplitPlace
-import Development.AutomorphicArithmetic.UnitaryInvolutions.TwistedConjOfCharpolyMulGalConjEqOfSeparable
-import Development.AutomorphicArithmetic.UnitaryInvolutions.NormInOfFreeAlgebraOfCompleteQuadratic
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.OrbitNormCounting.NormCount
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralProperties
+public import Development.AutomorphicArithmetic.UnitaryInvolutions.ExistsLocalQuadraticGaloisDataAtNonsplitPlace
+public import Development.AutomorphicArithmetic.UnitaryInvolutions.TwistedConjOfCharpolyMulGalConjEqOfSeparable
+public import Development.AutomorphicArithmetic.UnitaryInvolutions.NormInOfFreeAlgebraOfCompleteQuadratic
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC GlobalTheory.BCT
 open scoped Classical TensorProduct
@@ -22,11 +27,11 @@ theorem UpperTheory.unitary_involution_stabilizes_integral_at_nonsplit :
         (∀ g, thE E n g = u * UpperTheory.ConvolutionTheory.D.th (IsCMField.complexConj E) g * u⁻¹) →
         u * UpperTheory.ConvolutionTheory.D.th (IsCMField.complexConj E) u = 1 → ∀ w : Pl E, ¬ IsSplitAt w →
         (∀ g : GLw n w, (thL n w g).val = u.val.map (algebraMap E _) * ((g⁻¹ : GLw n w).val.map (cj w))ᵀ * (u⁻¹ : GL (Fin n) E).val.map (algebraMap E _)) →
-        GeneralLinearGroup.map (algebraMap E (w.adicCompletion E)) u ∈ GlobalTheory.LFun.KGL w n →
-        GeneralLinearGroup.map (algebraMap E (w.adicCompletion E)) δ ∈ GlobalTheory.LFun.KGL w n →
+        GeneralLinearGroup.map (algebraMap E (w.adicCompletion E)) u ∈ GlobalTheory.LFun.KGL w (n := n) →
+        GeneralLinearGroup.map (algebraMap E (w.adicCompletion E)) δ ∈ GlobalTheory.LFun.KGL w (n := n) →
         (∀ Q : (Ov E w)[X], Q.map (Ov E w).subtype = atPl w (UpperTheory.ConvolutionTheory.G3.gpol δ) → Q.Separable) →
-        ∀ y ∈ GlobalTheory.LFun.KGL w n, UpperTheory.ConvolutionTheory.G3.lpol w y = atPl w (UpperTheory.ConvolutionTheory.G3.gpol δ) →
-          ∃ k ∈ GlobalTheory.LFun.KGL w n, y = k⁻¹ * locEl n w δ * thL n w k := by
+        ∀ y ∈ GlobalTheory.LFun.KGL w (n := n), UpperTheory.ConvolutionTheory.G3.lpol w y = atPl w (UpperTheory.ConvolutionTheory.G3.gpol δ) →
+          ∃ k ∈ GlobalTheory.LFun.KGL w (n := n), y = k⁻¹ * locEl n w δ * thL n w k := by
   intro E _ _ _ hU n u δ hT hu w hw hL huK hδK hQ y hyK hy
   obtain ⟨k, _, _, _, c, ϖ, ω, hG, hc, hcϖ, hϖ, hcomp, hsep, hfin, hω⟩ := UpperTheory.exists_local_quadratic_galois_data_at_nonsplit_place E hU w hw
   have core := UpperTheory.twistedConj_of_charpoly_mul_galConj_eq_of_separable k (Ov E w) c hG
@@ -39,7 +44,7 @@ theorem UpperTheory.unitary_involution_stabilizes_integral_at_nonsplit :
       (by
         show a.val.map (Ov E w).subtype = b.val.map (Ov E w).subtype
         rw [← hιv, ← hιv, e]))
-  have hK : ∀ x ∈ GlobalTheory.LFun.KGL w n, ∃ a, ι a = x := by
+  have hK : ∀ x ∈ GlobalTheory.LFun.KGL w (n := n), ∃ a, ι a = x := by
     intro x hx
     rw [hιdef]
     exact hx

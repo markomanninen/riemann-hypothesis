@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.FormulaAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.FormulaAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest Formalism.IndefR.WeilFull GlobalTheory.RowClaim
 open MeasureTheory GlobalTheory.SplitFlip GlobalTheory.SplitWeil
@@ -112,7 +117,7 @@ theorem integral_eq_sum [MeasurableSpace X] [OpensMeasurableSpace X] [Measurable
   refine ⟨T.image Quotient.out, ?_⟩
   rw [Finset.sum_image (fun a _ b _ h => Quotient.out_injective h)]
   conv_lhs => rw [hdec]
-  rw [integral_finset_sum]
+  rw [integral_finsetSum]
   · rw [Finset.sum_mul]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [integral_indicator_const _ (hmeas c)]

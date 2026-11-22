@@ -1,6 +1,10 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.GraphAlgebra
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.GraphAlgebraStandardSmooth
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.GraphAlgebra
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.GraphAlgebraStandardSmooth
+
+@[expose] public section
 
 universe u
 

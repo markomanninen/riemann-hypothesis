@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorisationThroughAbelianSubvarietyStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFiniteIffFiniteKer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyDimLeOfFiniteAndOfSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsogenyCompIffAndDegreeMul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsoIffDegEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyIntCastSmulIsogenyDegree
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyFiniteHomKernelKilledByNat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsogenyFlatFinrank
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorisationThroughAbelianSubvarietyStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFiniteIffFiniteKer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyDimLeOfFiniteAndOfSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsogenyCompIffAndDegreeMul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsoIffDegEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyIntCastSmulIsogenyDegree
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyFiniteHomKernelKilledByNat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsogenyFlatFinrank
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -28,13 +33,13 @@ theorem eq_one_of_coprime {A B : AbVar K} (f : A ⟶ B) (hf : IsIsogeny f) (m : 
   obtain ⟨C, q, i, hq, hi, hqi⟩ := GlobalTheory.T.exists_factorisation_through_abelianSubvariety K A (prod B A) (prodLift f ((m : ℤ) • 𝟙 A))
   have h1 : q ≫ (i ≫ prodFst B A) = f := by
     rw [← Category.assoc, hqi]
-    apply AbVar.hom_ext
-    simp [prodLift, prodFst]
+    apply Subtype.ext
+    change (prodLift f ((m : ℤ) • 𝟙 A)).hom ≫ (prodFst B A).hom = f.hom
     exact lift_fst _ _
   have h2 : q ≫ (i ≫ prodSnd B A) = (m : ℤ) • 𝟙 A := by
     rw [← Category.assoc, hqi]
-    apply AbVar.hom_ext
-    simp [prodLift, prodSnd]
+    apply Subtype.ext
+    change (prodLift f ((m : ℤ) • 𝟙 A)).hom ≫ (prodSnd B A).hom = ((m : ℤ) • 𝟙 A).hom
     exact lift_snd _ _
   have hfin : Finite (ptMap f).ker := (isFinite_iff_finite_ker K A B f).1 hf.1
   have hqfin : IsFinite q.hom.left := by
@@ -101,9 +106,5 @@ theorem kernel_killed_of_deg_ne_zero (K : Type) [Field K] (A B : AbVar K) (f : A
   · subst hp0
     haveI : CharZero K := CharP.charP_to_charZero K
     exact ⟨n0, by exact_mod_cast hn0.ne', hkill⟩
-
-example : ∀ (K : Type) [Field K] (A B : AbVar K) (f : A ⟶ B), IsIsogeny f → ((deg f : ℕ) : K) ≠ 0 →
-    ∃ n : ℕ, (n : K) ≠ 0 ∧ ∀ (T : Over (Sp K)) (x : T ⟶ A.X), x ≫ f.hom = 1 → x ^ n = 1 :=
-  kernel_killed_of_deg_ne_zero
 
 end GlobalTheory.AV.KerInv

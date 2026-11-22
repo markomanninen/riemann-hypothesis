@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdmissibleIntegralBasisChangeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdmissibleIntegralBasisChangeOne
+
+@[expose] public section
 
 open scoped IntermediateField Polynomial RatFunc
 open GlobalTheory.Nef
@@ -34,15 +38,15 @@ theorem deriv_comp_m (π : B →+* A) (ε : A →+* B) (m : A →+* A) (β : B �
     refine Submodule.mul_induction_on hx (fun a ha b hb => ?_) (fun a b ha hb => ?_)
     · rw [RingHom.mem_ker] at ha hb
       rw [hE, ha, hb]; simp
-    · rw [map_add, ha, hb, add_zero]
+    · rw [map_add (f := _), ha, hb, add_zero]
   have hk : f - π (ε f) ∈ RingHom.ker ε := by
     rw [RingHom.mem_ker, map_sub, ← RingHom.comp_apply ε π, hεπ, RingHom.id_apply, sub_self]
   have h1 : m f = π (ε f) + (m (f - π (ε f)) - 2 * (f - π (ε f))) + (f - π (ε f)) + (f - π (ε f)) := by
     have : m (π (ε f)) = π (ε f) := by rw [← RingHom.comp_apply m π, hmπ]
     rw [map_sub, this]; ring
   have h2 : f = π (ε f) + (f - π (ε f)) := by ring
-  rw [h1, map_add, map_add, map_add, hEπ, hsq _ (hm2 _ hk)]
-  conv_rhs => rw [h2, map_add, hEπ]
+  rw [h1, map_add (f := _), map_add (f := _), map_add (f := _), hEπ, hsq _ (hm2 _ hk)]
+  conv_rhs => rw [h2, map_add (f := _), hEπ]
   ring
 
 end GlobalTheory.Nef.PathJet

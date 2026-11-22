@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GoodChi
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCharpoly
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GoodTupleConditionOfIdempotentZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTameGenAtOfValuationSubring
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GoodChi
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCharpoly
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GoodTupleConditionOfIdempotentZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTameGenAtOfValuationSubring
+
+@[expose] public section
 
 noncomputable section
 open Formalism.BasicNotions GlobalTheory.Mem GlobalTheory.MemN NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial
@@ -87,30 +91,16 @@ theorem exists_char {A : Type} [Ring A] [Algebra ℂ A] [Module.Finite ℂ A] (z
     Module.Finite.of_injective (Subalgebra.center ℂ A).val.toLinearMap Subtype.val_injective
   haveI : Module.Finite ℂ (Subalgebra.center ℂ A ⧸ M) :=
     Module.Finite.of_surjective (Ideal.Quotient.mkₐ ℂ M).toLinearMap (Ideal.Quotient.mkₐ_surjective ℂ M)
-  let l : (Subalgebra.center ℂ A ⧸ M) →ₐ[ℂ] ℂ := IsAlgClosed.lift
+  let l : (Subalgebra.center ℂ A ⧸ M) →ₐ[ℂ] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨l.comp (Ideal.Quotient.mkₐ ℂ M), ?_⟩
   exact (congrArg l (Ideal.Quotient.eq_zero_iff_mem.2 (hle (Ideal.mem_span_singleton_self z)))).trans (map_zero l)
 
-def twoChar {Z A : Type} [Ring Z] [Algebra ℂ Z] [Ring A] [Algebra ℂ A] (ω₁ ω₀ : Z →ₐ[ℂ] ℂ) (e : A)
-    (he : e * e = e) : Z →ₐ[ℂ] A where
-  toFun z := ω₁ z • e + ω₀ z • (1 - e)
-  map_one' := by simp
-  map_mul' x y := by
-    simp only [map_mul, add_mul, mul_add, smul_mul_smul_comm, mul_sub, sub_mul, mul_one, one_mul, he, sub_self,
-      smul_zero, add_zero, zero_add, sub_zero]
-  map_zero' := by simp
-  map_add' x y := by
-    simp only [map_add, add_smul]
-    abel
-  commutes' c := by
-    rw [AlgHom.commutes, AlgHom.commutes, Algebra.algebraMap_self, RingHom.id_apply, ← smul_add, add_sub_cancel,
-      Algebra.algebraMap_eq_smul_one]
-
-theorem twoChar_apply {Z A : Type} [Ring Z] [Algebra ℂ Z] [Ring A] [Algebra ℂ A] (ω₁ ω₀ : Z →ₐ[ℂ] ℂ) (e : A)
-    (he : e * e = e) (z : Z) : twoChar ω₁ ω₀ e he z = ω₁ z • e + ω₀ z • (1 - e) := rfl
 
 open Classical in
-
 theorem good_sum {I : Type} [Fintype I] {Γ : I → Type} [∀ i, Group (Γ i)] [∀ i, Finite (Γ i)]
     {P : I → Type} [∀ i, Finite (P i)] (E : ∀ i, P i → MonoidAlgebra ℂ (Γ i)) (good : (∀ i, P i) → Prop)
     (e : MonoidAlgebra ℂ (∀ i, Γ i))
@@ -189,40 +179,6 @@ theorem not_good_unip (T : NTypes A) : ¬ T.goodTuple (fun _ _ => (X - 1) ^ R.r)
   rw [pow_one] at h3
   omega
 
-theorem exists_tie (T : NTypes A) (hs : ∀ k f, f.Monic ∧ f.natDegree = R.r ∧ f.coeff 0 ≠ 0 → T.eSer k f ≠ 0)
-    (h : (∃ f, T.goodTuple f) ∨ ((∀ μ, what₂.eOp μ = 0) ∧ ∀ μ j, what₂.eMt μ j = 0)) :
-    ∃ T' : NTypes A, T'.IdempotentMatchesAction ∧ T'.e0 = T.e0 := by
-  haveI : ∀ k, NeZero (H.g k) := fun k => ⟨(H.g_prime k).ne_zero⟩
-  haveI : ∀ k, Fact (H.g k).Prime := fun k => ⟨H.g_prime k⟩
-  obtain ⟨hc, hm⟩ := goodTupleIdempotent_central_and_action T hs
-  obtain ⟨t, ht, -, ht0⟩ := hm (fun _ _ => (X - 1) ^ R.r) fun k _ =>
-    ⟨(GaloisStage.monic_unip _).1, (GaloisStage.monic_unip _).2, GaloisStage.unip_coeff_zero _ _⟩
-  obtain ⟨ω₀, h0⟩ := exists_char ⟨T.e0, hc⟩ ht (ht0 (not_good_unip T))
-  obtain ⟨ω₁, h1, h2⟩ : ∃ ω₁ : Subalgebra.center ℂ (MonoidAlgebra ℂ (G0g N)) →ₐ[ℂ] ℂ,
-      (∀ μ, ω₁ ⟨T.e0, hc⟩ • what₂.eOp μ = what₂.eOp μ) ∧ ∀ μ j, ω₁ ⟨T.e0, hc⟩ • what₂.eMt μ j = what₂.eMt μ j := by
-    rcases h with ⟨f, hf⟩ | ⟨h1, h2⟩
-    · obtain ⟨s, hs0, hs1, -⟩ := hm f fun k v => (hf k).1.1 v
-      obtain ⟨ω₁, h1⟩ := exists_char (1 - ⟨T.e0, hc⟩) hs0 (by
-        change (1 - T.e0) * s = 0
-        rw [sub_mul, one_mul, hs1 hf, sub_self])
-      rw [map_sub, map_one, sub_eq_zero] at h1
-      exact ⟨ω₁, fun μ => by rw [← h1, one_smul], fun μ j => by rw [← h1, one_smul]⟩
-    · exact ⟨ω₀, fun μ => by rw [h1, smul_zero], fun μ j => by rw [h2, smul_zero]⟩
-  let T' : NTypes A :=
-    { T with
-      cenAmb := fun μ => twoChar ω₁ ω₀ (what₂.eOp μ) (what₂.eOp_idem μ)
-      cenMt := fun μ j => twoChar ω₁ ω₀ (what₂.eMt μ j) (what₂.eMt_idem μ j) }
-  have he : T'.e0 = T.e0 := rfl
-  refine ⟨T', ⟨fun μ => ?_, fun μ j => ?_⟩, he⟩
-  · rw [he, NTypes.onAmb, dif_pos hc]
-    change _ = twoChar ω₁ ω₀ (what₂.eOp μ) (what₂.eOp_idem μ) _
-    rw [twoChar_apply, h0, zero_smul, add_zero]
-    exact (h1 μ).symm
-  · rw [he, NTypes.onMt, dif_pos hc]
-    change _ = twoChar ω₁ ω₀ (what₂.eMt μ j) (what₂.eMt_idem μ j) _
-    rw [twoChar_apply, h0, zero_smul, add_zero]
-    exact (h2 μ j).symm
-
 theorem goodTupleIdempotent_coeff_mem_subring (T : NTypes A) (S : Subring ℂ) (hS : ∀ k f x, (T.eSer k f).coeff x ∈ S) (x : G0g N) :
     T.e0.coeff x ∈ S := by
   haveI : ∀ k, NeZero (H.g k) := fun k => ⟨(H.g_prime k).ne_zero⟩
@@ -232,8 +188,8 @@ theorem goodTupleIdempotent_coeff_mem_subring (T : NTypes A) (S : Subring ℂ) (
   · exact prod_mem fun _ _ => hS _ _ _
   · exact zero_mem S
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def types0 [IsEmpty N.Loc] (hl : ∀ k w (p : A.LP w), A.items₂ k w p = (X - 1) ^ A.lpDim p)
     (hi : ∀ w (p : A.LP w) σ, A.inePol p σ = (X - 1) ^ A.lpDim p)
     (hc : ∀ k, H.g k % (H.QS * H.q * H.d) = 1)
@@ -311,40 +267,5 @@ theorem adjoin_le (B : Base) : ∀ z ∈ IntermediateField.adjoin ℚ
     obtain ⟨z, hz, hz'⟩ := B.roots_Ks _ List.mem_cons_self
     exact ⟨z, B.Ks_le hz, hz'⟩
   exact fun z hz => h3 hz
-
-theorem exists_goodTuple {B : Base} {C : Cols B} {W : RowsRest B C} {χ : Chi B.toPre}
-    {nd : NData B.R B.host W.what₂} {A : NAut nd} (T : NTypes A) (hχ : HasChi nd χ) (hg : GoodChi B.toPre χ) :
-    ∃ f, T.goodTuple f := by
-  obtain ⟨f, hf⟩ := hg
-  obtain ⟨ε, hε⟩ := hχ
-  refine ⟨fun k v => f k (ε k v), fun k => ?_⟩
-  haveI : Fact (B.host.g k).Prime := ⟨B.host.g_prime k⟩
-  have h : nd.chiT k = fun v => χ k (ε k v) := funext (hε k)
-  have h1 := isGood_comp (ε k) (hf k).1
-  have h2 := isGood_comp (ε k) (hf k).2
-  rw [← h] at h1
-  simp only [← hε] at h2
-  exact ⟨h1, h2⟩
-
-theorem exists_nTypes : ∀ (B : Base) (C : Cols B) (W : RowsRest B C) (χ : Chi B.toPre)
-    (nd : NData B.R B.host W.what₂) (A : NAut nd), IsEmpty nd.Loc → HasChi nd χ →
-    (∀ k w (p : A.LP w), A.items₂ k w p = (X - 1) ^ A.lpDim p) →
-    (∀ w (p : A.LP w) σ, A.inePol p σ = (X - 1) ^ A.lpDim p) →
-    (GoodChi B.toPre χ ∨ ((∀ μ, W.eOp μ = 0) ∧ ∀ μ j, W.eMt μ j = 0)) →
-    ∃ T : NTypes A, T.IdempotentMatchesAction ∧ ∀ x, ∃ y : ↥B.LL0, B.embLL (y : B.LL) = T.e0.coeff x := by
-  intro B C W χ nd A hE hχ hl hi hg
-  choose tg htg using fun (k : Fin 2) (v : nd.PlG k) =>
-    GlobalTheory.TameInertiaGen.exists_tameGenAt B.host.E nd.Om (A.plGw k v) (nd.plOm.1 (A.plGw k v)) (nd.plOm.2 _)
-  choose e he using fun k : Fin 2 => SerInhab.exists_isSer B.R.r (B.host.g k) B.toPre.restRowsFiniteGroupCard (B.host.g_prime k)
-    B.toPre.restRowsFiniteGroupCard_pos ((dvd_pow_self _ (GaloisStage.f_pos B.R).ne').trans
-      (Finset.dvd_prod_of_mem (fun k : Fin 2 => (Nat.card (GL (Fin B.R.r) (ZMod (B.host.g k)))) ^ B.R.f)
-        (Finset.mem_univ k)))
-  obtain ⟨T, hT⟩ : ∃ T : NTypes A, T.eSer = e := ⟨types0 hl hi B.g_cond B.BB_disj tg htg e he, rfl⟩
-  subst hT
-  obtain ⟨T', h1, h2⟩ := exists_tie T (fun k f hf h0 => ((he k).zero f).1 h0 hf)
-    (hg.imp_left (exists_goodTuple T hχ))
-  refine ⟨T', h1, fun x => ?_⟩
-  obtain ⟨y, hy, hy'⟩ := goodTupleIdempotent_coeff_mem_subring T _ (fun k f x => adjoin_le B _ ((he k).rat f x)) x
-  exact ⟨⟨y, hy⟩, by rw [h2]; exact hy'⟩
 
 end GlobalTheory.MemN.TypesInhab

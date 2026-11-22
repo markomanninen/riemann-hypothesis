@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.StatementD
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LieDecompositionLocal
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeadingTermIdentity
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+module
+
+public import Formalism.HermitianCurvature.StatementD
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LieDecompositionLocal
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeadingTermIdentity
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ComplexConjugate
@@ -278,14 +282,14 @@ theorem poly_AAop (m : ℕ) (hm : m ≤ r) (f : Wsm (E := E) U₀) (g₀ : Mat k
   refine ⟨fun l => if h : l < m then (B ⟨l, h⟩ f).1 g₀ else
     (Matrix.of fun a b : Fin m => xi0 g₀ (Fin.castLE hm a) (C3.xR k r m hm b)).det • f.1 g₀, by simp, fun u => ?_⟩
   beta_reduce
-  rw [AAop_eq U₀ hU₀ m hm u f g₀ hg hgG, hB u, Finset.sum_range_succ, dif_neg (lt_irrefl m)]
+  rw [AAop_eq U₀ hU₀ m hm u f g₀ hg hgG, hB u, Finset.sum_range_succ, dite_eq_right (lt_irrefl m)]
   simp only [LinearMap.add_apply, Module.algebraMap_end_apply, LinearMap.sum_apply, Module.End.mul_apply,
     Submodule.coe_add, Submodule.coe_smul, Submodule.coe_sum, Pi.add_apply, Pi.smul_apply, Finset.sum_apply]
   rw [add_comm, Finset.sum_range (fun l => u ^ l • if h : l < m then (B ⟨l, h⟩ f).1 g₀ else _)]
   congr 1
   · apply Finset.sum_congr rfl
     intro l _
-    rw [dif_pos l.isLt]
+    rw [dite_eq_left l.isLt]
   · rw [smul_smul]
 
 include hU₀ in
@@ -298,14 +302,14 @@ theorem poly_AAvop (m : ℕ) (hm : m ≤ r) (f : Wsm (E := E) U₀) (g₀ : Mat 
   refine ⟨fun l => if h : l < m then (B ⟨l, h⟩ f).1 g₀ else
     (Matrix.of fun a b : Fin m => y0 g₀ (Fin.castLE hm a) (C3.sR k r m hm b)).det • f.1 g₀, by simp, fun u => ?_⟩
   beta_reduce
-  rw [AAvop_eq U₀ hU₀ m hm u f g₀ hg hgG, hB u, Finset.sum_range_succ, dif_neg (lt_irrefl m)]
+  rw [AAvop_eq U₀ hU₀ m hm u f g₀ hg hgG, hB u, Finset.sum_range_succ, dite_eq_right (lt_irrefl m)]
   simp only [LinearMap.add_apply, Module.algebraMap_end_apply, LinearMap.sum_apply, Module.End.mul_apply,
     Submodule.coe_add, Submodule.coe_smul, Submodule.coe_sum, Pi.add_apply, Pi.smul_apply, Finset.sum_apply]
   rw [add_comm, Finset.sum_range (fun l => u ^ l • if h : l < m then (B ⟨l, h⟩ f).1 g₀ else _)]
   congr 1
   · apply Finset.sum_congr rfl
     intro l _
-    rw [dif_pos l.isLt]
+    rw [dite_eq_left l.isLt]
   · rw [smul_smul]
 
 end letters
@@ -323,7 +327,7 @@ theorem det_upper_minor_eq_minor (z z' : Fin (2 * r + k + 1) → ℂ) (g₀ : Ma
   congr 1
   ext a b
   simp only [Matrix.of_apply, Matrix.submatrix_apply, Zhat, fvec, xi0, C3.xR]
-  rw [dif_pos (by simp; omega), dif_pos (by simp; omega)]
+  rw [dite_eq_left (by simp; omega), dite_eq_left (by simp; omega)]
   rfl
 
 theorem det_lower_minor_eq_conj (z z' : Fin (2 * r + k + 1) → ℂ) (g₀ : Mat k r) (hg : g₀ ∈ GV k r) (m : ℕ) (hm : m ≤ r) :

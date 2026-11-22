@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemUnitOff
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ValOUnramifiedDegreeOne
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PredMemGamRanks
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMatrixBasisLatticeUpToDenominatorNotMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMulMemSpan
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsUnimodularLatticeLocalMatch
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnimodularLatticeLocalConjSymm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemUnitOff
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ValOUnramifiedDegreeOne
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PredMemGamRanks
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMatrixBasisLatticeUpToDenominatorNotMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMulMemSpan
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsUnimodularLatticeLocalMatch
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnimodularLatticeLocalConjSymm
+
+@[expose] public section
 
 noncomputable section
 
@@ -133,9 +137,10 @@ theorem mem_std {T : ℕ} {P : HeightOneSpectrum (𝓞 E)} (h : Unif T P) (x : F
   (LevModel.mem_std (Lc := locF h) x).trans (forall_congr' fun i => (intAt_iff P (x i)).symm)
 
 theorem exists_frame {T : ℕ} {P : HeightOneSpectrum (𝓞 E)} (h : Unif T P) {M : Submodule (𝓞 E) (Fin n → E)}
-    (hM : Submodule.IsLattice E M) : ∃ g, (locF h).IsFrame n g (locO P M) := by
+    (hM : Submodule.IsLattice E M)
+    (hspan : Submodule.span E (M : Set (Fin n → E)) = ⊤) : ∃ g, (locF h).IsFrame n g (locO P M) := by
   obtain ⟨g, hg, t, ht, h1, h2⟩ :=
-    GlobalTheory.LatticeLocBasis.exists_matrix_up_to_notMem E (Fin n) M P hM.fg hM.span_eq_top
+    GlobalTheory.LatticeLocBasis.exists_matrix_up_to_notMem E (Fin n) M P hM.fg hspan
   refine ⟨Matrix.GeneralLinearGroup.mkOfDetNeZero g hg.ne_zero, fun x => ?_⟩
   rw [mem_std]
   show g *ᵥ x ∈ localization₂ P.asIdeal M ↔ _
@@ -157,15 +162,27 @@ theorem exists_frame {T : ℕ} {P : HeightOneSpectrum (𝓞 E)} (h : Unif T P) {
       ((memLoc P M _).2 ⟨t, ht, by rw [← algebraMap_smul E t]; exact h2 j⟩)
 
 theorem exists_lattice [StarRing E] {T : ℕ} {P : HeightOneSpectrum (𝓞 E)} (h : Unif T P) (p : LocF.PP (locF h) n) :
-    ∃ M : Submodule (𝓞 E) (Fin n → E), Submodule.IsLattice E M ∧ ∀ x, x ∈ localization₂ P.asIdeal M ↔ x ∈ p.1.L := by
+    ∃ M : Submodule (𝓞 E) (Fin n → E), Submodule.IsFullLattice E M ∧ ∀ x, x ∈ localization₂ P.asIdeal M ↔ x ∈ p.1.L := by
   obtain ⟨g, hg⟩ := p.2.lat
   let e : (Fin n → E) ≃ₗ[E] (Fin n → E) :=
     LinearMap.GeneralLinearGroup.generalLinearEquiv E (Fin n → E) (Matrix.GeneralLinearGroup.toLin g)
   have he : ∀ x, e x = (g : Matrix (Fin n) (Fin n) E) *ᵥ x := fun x => rfl
-  refine ⟨gmap e (stdLat E n), gmap_lattice e _ stdLat_lattice, fun x => ?_⟩
-  obtain ⟨y, rfl⟩ := e.surjective x
-  rw [mem_localization_gmap, e.symm_apply_apply, mem_localization_standardLattice, he]
-  exact ((hg y).trans (mem_std h y)).symm
+  have hspan : Submodule.span E (stdLat E n : Set (Fin n → E)) = ⊤ := by
+    rw [stdLat_eq_span, Submodule.span_span_of_tower]
+    convert (Pi.basisFun E (Fin n)).span_eq using 1
+    congr 2
+    ext i
+    exact congrFun (Pi.basisFun_apply E (Fin n) i).symm _
+  have hmap : ((gmap e (stdLat E n) : Submodule (𝓞 E) (Fin n → E)) : Set (Fin n → E)) =
+      (e : (Fin n → E) →ₗ[E] (Fin n → E)) '' (stdLat E n : Set (Fin n → E)) := by
+    ext x
+    simp [gmap]
+  refine ⟨gmap e (stdLat E n), { toIsLattice := gmap_lattice e _ stdLat_lattice, span_eq_top := ?_ }, fun x => ?_⟩
+  · rw [hmap, ← Submodule.map_span, hspan, Submodule.map_top]
+    exact LinearEquiv.range e
+  · obtain ⟨y, rfl⟩ := e.surjective x
+    rw [mem_localization_gmap, e.symm_apply_apply, mem_localization_standardLattice, he]
+    exact ((hg y).trans (mem_std h y)).symm
 
 theorem f_osmul {P : HeightOneSpectrum (𝓞 E)} {M : Submodule (𝓞 E) (Fin n → E)} {f : (Fin n → E) → Res P}
     (hs : ∀ (a : 𝓞 E), ∀ x ∈ localization₂ P.asIdeal M, f (a • x) = Ideal.Quotient.mk P.asIdeal a * f x)
@@ -179,8 +196,8 @@ theorem f_osmul {P : HeightOneSpectrum (𝓞 E)} {M : Submodule (𝓞 E) (Fin n 
 theorem toO_smul (P : HeightOneSpectrum (𝓞 E)) (r : 𝓞 E) (x : Fin n → E) : toO P r • x = r • x :=
   algebraMap_smul E r x
 
-open Classical in
 
+open Classical in
 def redL (M : Submodule (𝓞 E) (Fin n → E)) (P : HeightOneSpectrum (𝓞 E)) (x : Fin n → E) : TDat.Red M P :=
   if h : ∃ s : 𝓞 E, s ∉ P.asIdeal ∧ s • x ∈ M then
     (Ideal.Quotient.mk P.asIdeal h.choose : Res P)⁻¹ • Submodule.Quotient.mk (⟨_, h.choose_spec.2⟩ : M) else 0
@@ -194,7 +211,7 @@ theorem redL_spec {x : Fin n → E} {s : 𝓞 E} (hs : s ∉ P.asIdeal) (hx : s 
     (Ideal.Quotient.mk P.asIdeal s : Res P) • redL M P x = Submodule.Quotient.mk (⟨_, hx⟩ : M) := by
   have h : ∃ s : 𝓞 E, s ∉ P.asIdeal ∧ s • x ∈ M := ⟨s, hs, hx⟩
   unfold redL
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   have ht : (Ideal.Quotient.mk P.asIdeal h.choose : Res P) ≠ 0 := mk_ne_zero h.choose_spec.1
   rw [smul_comm, inv_smul_eq_iff₀ ht, mk_smul_mk, mk_smul_mk]
   congr 1
@@ -224,6 +241,7 @@ theorem redL_smul (a : valO P) {x : Fin n → E} (hx : x ∈ localization₂ P.a
   refine (show ∀ (r : 𝓞 E), ∀ x ∈ localization₂ P.asIdeal M,
     redL M P (r • x) = (Ideal.Quotient.mk P.asIdeal r : Res P) • redL M P x from ?_) |> fun H => ?_
   · obtain ⟨r, s, hs', h⟩ := (intAt_iff P _).2 a.2
+    letI : Module.IsTorsionFree (Res P) (TDat.Red M P) := DivisionSemiring.to_moduleIsTorsionFree
     apply smul_right_injective _ (show (Ideal.Quotient.mk P.asIdeal s : Res P) ≠ 0 from mk_ne_zero hs')
     show (Ideal.Quotient.mk P.asIdeal s : Res P) • _ = (Ideal.Quotient.mk P.asIdeal s : Res P) • _
     rw [← H s _ ((locO P M).smul_mem a hx), smul_eq_of a h, H r x hx, smul_smul]
@@ -275,7 +293,7 @@ theorem extF_of_mem (g : Module.Dual (Res P) (TDat.Red M P)) {x : Fin n → E} (
       g (Submodule.Quotient.mk z) = Ideal.Quotient.mk P.asIdeal s * a :=
     ⟨g (redL M P x), s, hs, ⟨_, hx'⟩, rfl, by rw [← redL_spec hs hx', map_smul]; rfl⟩
   unfold TDat.extF
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   obtain ⟨t, ht, ⟨z, hz⟩, e, h2⟩ := h.choose_spec
   obtain rfl : z = t • x := e
   apply mul_left_cancel₀ (mk_ne_zero ht)
@@ -285,7 +303,7 @@ theorem extF_of_mem (g : Module.Dual (Res P) (TDat.Red M P)) {x : Fin n → E} (
 theorem extF_of_notMem (g : Module.Dual (Res P) (TDat.Red M P)) {x : Fin n → E} (hx : x ∉ localization₂ P.asIdeal M) :
     TDat.extF M P g x = 0 := by
   unfold TDat.extF
-  rw [dif_neg]
+  rw [dite_eq_right]
   rintro ⟨_, s, hs, z, e, -⟩
   exact hx ((memLoc P M _).2 ⟨s, hs, e ▸ z.2⟩)
 
@@ -338,16 +356,76 @@ theorem TAt.ne (h : TAt T ST) (P : ST) : conjPrime₂ P.1 ≠ P.1 := (h.st P P).
 theorem TAt.move (h : TAt T ST) (P : ST) : MoveHyp ST ∅ P :=
   ⟨h.ne P, h.st P, fun w => absurd w.2 (Finset.notMem_empty _)⟩
 
-variable (ST) in
 
+variable (ST) in
 def OffT (w : HeightOneSpectrum (𝓞 E)) : Prop := ∀ P : ST, w ≠ P.1 ∧ w ≠ conjPrime₂ P.1
 
-variable (ST) in
 
+variable (ST) in
 def AgreeOff (N N' : Submodule (𝓞 E) (Sp E n)) : Prop := ∀ w, OffT ST w → localization₂ w.asIdeal N = localization₂ w.asIdeal N'
 
+theorem span_eq_top_of_unimodular (N : Submodule (𝓞 E) (Sp E n))
+    (hN : Submodule.IsLattice E N) (hU : IsUnimodular (hStd E n) N) :
+    Submodule.span E (N : Set (Sp E n)) = ⊤ := by
+  classical
+  by_contra hspan
+  obtain ⟨φ, hφ₀, hφ⟩ := Submodule.exists_le_ker_of_lt_top _ (lt_top_iff_ne_top.mpr hspan)
+  let μ : Sp E n := fun j => star (φ (Pi.single j 1))
+  have hμ : ∀ v, hStd E n μ v = φ v := by
+    intro v
+    change (∑ j, star (μ j) * v j) = φ v
+    conv_rhs => rw [pi_eq_sum_univ' v, map_sum]
+    refine Finset.sum_congr rfl fun j _ => ?_
+    rw [map_smul, smul_eq_mul, mul_comm]
+    simp [μ]
+  have hμ₀ : μ ≠ 0 := by
+    intro h
+    apply hφ₀
+    apply LinearMap.ext
+    intro y
+    simpa [h, hStd] using (hμ y).symm
+  have hline (a : E) : a • μ ∈ N := by
+    rw [← hU]
+    change a • μ ∈ Formalism.E.hdual (hStd E n) N
+    simp only [Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap, LinearMap.restrictScalars_apply]
+    intro y hy
+    have hy₀ := LinearMap.mem_ker.mp (hφ (Submodule.subset_span hy))
+    change (∑ i, star (y i) * (a • μ) i) ∈ (1 : Submodule (𝓞 E) E)
+    have hz : (∑ i, star (y i) * μ i) = 0 := by
+      have := congrArg star (hμ y)
+      simpa [hStd, map_sum, map_mul, mul_comm, hy₀] using this
+    have heq : (∑ i, star (y i) * (a • μ) i) = (∑ i, star (y i) * μ i) * a := by
+      rw [Finset.sum_mul]
+      apply Finset.sum_congr rfl
+      intro i _
+      simp [Pi.smul_apply, smul_eq_mul, mul_comm, mul_left_comm, mul_assoc]
+    rw [heq, hz, zero_mul]
+    exact zero_mem _
+  obtain ⟨ψ, hψ, -⟩ := Submodule.exists_le_ker_of_notMem
+    (show μ ∉ (⊥ : Submodule E (Sp E n)) by simpa using hμ₀)
+  let f := ψ.restrictScalars (𝓞 E)
+  have hmap (x : E) : x ∈ N.map f := by
+    refine ⟨(x / ψ μ) • μ, hline _, ?_⟩
+    change ψ ((x / ψ μ) • μ) = x
+    rw [map_smul, smul_eq_mul, div_mul_cancel₀ _ hψ]
+  obtain ⟨d, hd₀, hd⟩ := FractionalIdeal.isFractional_of_fg
+    (S := nonZeroDivisors (𝓞 E)) (hN.fg.map f)
+  have hinj := IsFractionRing.injective (𝓞 E) E
+  have hne {a : 𝓞 E} (ha : a ≠ 0) : algebraMap (𝓞 E) E a ≠ 0 :=
+    fun h => ha (hinj (h.trans (map_zero _).symm))
+  have hinteger (x : E) : IsLocalization.IsInteger (𝓞 E) x := by
+    have hx := hd _ (hmap ((algebraMap (𝓞 E) E d)⁻¹ * x))
+    rwa [Algebra.smul_def, ← mul_assoc, mul_inv_cancel₀ (hne (nonZeroDivisors.ne_zero hd₀)),
+      one_mul] at hx
+  apply RingOfIntegers.not_isField E
+  refine ⟨⟨0, 1, zero_ne_one⟩, mul_comm, ?_⟩
+  intro a ha
+  obtain ⟨b, hb⟩ := hinteger ((algebraMap (𝓞 E) E a)⁻¹)
+  refine ⟨b, hinj ?_⟩
+  rw [map_mul, hb, map_one, mul_inv_cancel₀ (hne ha)]
+
 def pair {P : ST} (h : Unif T P.1) (d : Deco E n ST SG) (hd : d.Ok) : LocF.PP (locF h) n :=
-  ⟨⟨locO P.1 d.N, d.f P⟩, exists_frame h hd.lat, hd.f_add P, fun a _ hx => f_osmul (hd.f_smul P) a hx, hd.f_off P,
+  ⟨⟨locO P.1 d.N, d.f P⟩, exists_frame h hd.lat (span_eq_top_of_unimodular d.N hd.lat hd.uni), hd.f_add P, fun a _ hx => f_osmul (hd.f_smul P) a hx, hd.f_off P,
     (hd.f_ne P).imp fun _ hx => hx.2⟩
 
 theorem mem_pair_L {P : ST} (h : Unif T P.1) (d : Deco E n ST SG) (hd : d.Ok) (x : Sp E n) :
@@ -465,7 +543,7 @@ theorem exists_deco (h : TAt T ST) {N : Submodule (𝓞 E) (Sp E n)} (hN : Submo
     | insert P s _ ih =>
       obtain ⟨N₁, a1, a2, a3, a4⟩ := ih
       obtain ⟨M, hM, hMp⟩ := exists_lattice (h.unif P) (p P)
-      obtain ⟨N₂, b1, b2, b3, b4⟩ := GlobalTheory.GO.SplitGlue.exists_selfDual_prescribed E n N₁ M P.1 (h.ne P) a1 a2 hM
+      obtain ⟨N₂, b1, b2, b3, b4⟩ := GlobalTheory.GO.SplitGlue.exists_selfDual_prescribed E n N₁ M P.1 (h.ne P) { toIsLattice := a1, span_eq_top := span_eq_top_of_unimodular N₁ a1 a2 } a2 hM
       refine ⟨N₂, b1, b2, fun w hw => (a3 w hw).trans (b4 w (hw P).1 (hw P).2).symm, fun Q hQ x => ?_⟩
       by_cases e : Q = P
       · subst e; rw [b3]; exact hMp x

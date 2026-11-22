@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.LatticeFlagExists
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.CoordLInjective
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.LatticeFlagExists
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.CoordLInjective
+
+@[expose] public section
 
 open NumberField Module Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.BasicNotions Formalism.L2.SG.CntLocal
 open Classical
@@ -69,7 +73,8 @@ private theorem hs_lemma_2 (x z : (VS D).V) : star ((VS D).hT x z) = (VS D).hT z
 
 private theorem hT_eq_hT_vPr_right_add_sum (x z : (VS D).V) : (VS D).hT x z =
     (VS D).hT x (vPr D F0 f z) + ∑ b, (VS D).hT (F0.e b) z * (VS D).hT x (f b) := by
-  simp [vPr, map_sub, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [vPr, map_sub, map_sum, map_smul]
 
 private theorem hT_eq_hT_vPr_left_add_sum (x z : (VS D).V) : (VS D).hT x z =
     (VS D).hT (vPr D F0 f x) z + ∑ a, star ((VS D).hT (F0.e a) x) * (VS D).hT (f a) z := by
@@ -86,7 +91,8 @@ private theorem mem_perpS_X_of_hT_e_eq_zero (z : (VS D).V) (hz : ∀ b, (VS D).h
 
 private theorem hT_e_vPr_eq_zero_of_partnerOK (hf : PartnerOK D F0 f) (z : (VS D).V) (b : Fin D.R.rS) :
     (VS D).hT (F0.e b) (vPr D F0 f z) = 0 := by
-  simp [vPr, map_sub, map_sum, map_smul, hf.1]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [vPr, map_sub, map_sum, map_smul, hf.1]
 
 theorem rs_lam_le_dual (hf : PartnerOK D F0 f) (hM : IsGlueLat (hWb D F0) (zbar D F0) M) :
     lamC D F0 f M ≤ Formalism.HermitianLatticesTheory.dual (VS D).hT (lamC D F0 f M) := by
@@ -178,11 +184,13 @@ theorem rs_dual_le_lam (hf : PartnerOK D F0 f) (hM : IsGlueLat (hWb D F0) (zbar 
     have ht1 : ∀ b, (VS D).hT (F0.e b) t = 0 := by
       intro b
       rw [ht]
-      simp [map_sub, map_sum, map_smul, F0.e_iso, hT_X_perp D F0 (heX b) u'.2]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sub, map_sum, map_smul, F0.e_iso, hT_X_perp D F0 (heX b) u'.2]
     have ht3 : ∀ b, (VS D).hT (f b) t = 0 := by
       intro b
       rw [ht]
-      simp [map_sub, map_sum, map_smul, hfe]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sub, map_sum, map_smul, hfe]
     have htP : t ∈ perpS (VS D) F0.X := mem_perpS_X_of_hT_e_eq_zero t ht1
     have hvt : vPr D F0 f t = t := by simp [vPr, ht1]
     have hq : (Submodule.Quotient.mk ⟨t, htP⟩ : WbQ D F0) = Submodule.Quotient.mk u' := by

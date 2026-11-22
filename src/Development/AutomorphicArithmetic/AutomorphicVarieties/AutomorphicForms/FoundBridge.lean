@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.AutomorphicFormsLeSm
-import GroundTheory.AutomorphicForms.TensorProductTheorem.CuspidalRep
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.AutomorphicFormsLeSm
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.CuspidalRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,6 @@ variable (E : Type) [Field E] [NumberField E] [IsTotallyReal E] (a : ℕ)
 def ofCusp : cuspForms E a →ₗ[ℂ] TR.Sm E a := Submodule.inclusion cuspForms_le_Sm
 
 variable {E a}
-
-@[simp] theorem coe_ofCusp (ψ : cuspForms E a) : (ofCusp E a ψ).1 = ψ.1 := rfl
 
 theorem ofCusp_injective : Function.Injective (ofCusp E a) := Submodule.inclusion_injective _
 
@@ -40,37 +42,9 @@ theorem ofCusp_τ (k : GL (Fin a) (Af E)) (ψ : cuspForms E a) :
     ofCusp E a (finRepCusp E a k ψ) = TR.act (.fin k) (ofCusp E a ψ) :=
   Subtype.ext (funext fun g => congrArg (fun f : GL (Fin a) (Af E) →* GA E a => ψ.1 (g * f k)) finEmb_eq)
 
-theorem isStable_range : TR.IsStable (LinearMap.range (ofCusp E a)) := by
-  rintro o _ ⟨ψ, rfl⟩
-  cases o with
-  | fin k => exact ⟨_, ofCusp_τ k ψ⟩
-  | cpt k => exact ⟨_, ofCusp_σ k ψ⟩
-  | lie X => exact ⟨_, ofCusp_ρ X ψ⟩
 
-theorem isCuspForm_act (o : TR.Op E a) {φ : TR.Sm E a} (h : TR.IsCuspForm φ) : TR.IsCuspForm (TR.act o φ) :=
-  mem_range_ofCusp.1 (isStable_range o φ (mem_range_ofCusp.2 h))
-
-variable (E a) in
-
-def ofKZ : smoothKZ E a →ₗ[ℂ] TR.Sm E a := (smEq E a).symm.toLinearMap ∘ₗ toArchSmooth
-
-@[simp] theorem coe_ofKZ (ψ : smoothKZ E a) : (ofKZ E a ψ).1 = ψ.1 := rfl
-
-theorem ofKZ_ρ (X : TR.Lie E a) (ψ : smoothKZ E a) :
-    ofKZ E a ((gkModule E a).ρ (lieEq E a X) ψ) = TR.lie E a X (ofKZ E a ψ) := by
-  rw [← uTR_ι]
-  rfl
-
-theorem ofKZ_σ (k : TR.Kinf E a) (ψ : smoothKZ E a) :
-    ofKZ E a ((gkModule E a).σ (cptEq E a k) ψ) = TR.cptRep E a k (ofKZ E a ψ) :=
-  Subtype.ext (funext fun g => congrArg (fun x => ψ.1 (g * x)) (infEmb_cptEq k))
-
-theorem ofKZ_τ (k : GL (Fin a) (Af E)) (ψ : smoothKZ E a) :
-    ofKZ E a (finRepKZ E a k ψ) = TR.finRep E a k (ofKZ E a ψ) :=
-  Subtype.ext (funext fun g => congrArg (fun f : GL (Fin a) (Af E) →* GA E a => ψ.1 (g * f k)) finEmb_eq)
 
 omit [IsTotallyReal E] in
-
 structure Stab (U : Submodule ℂ (cuspForms E a)) : Prop where
   ρ : ∀ X, ∀ φ ∈ U, (gkModuleCusp E a).ρ X φ ∈ U
   σ : ∀ k, ∀ φ ∈ U, (gkModuleCusp E a).σ k φ ∈ U
@@ -99,8 +73,8 @@ theorem stab_comap {V : Submodule ℂ (TR.Sm E a)} (h : TR.IsStable V) : Stab (V
   · rw [Submodule.mem_comap, ofCusp_τ]
     exact h _ _ hψ
 
-omit [IsTotallyReal E] in
 
+omit [IsTotallyReal E] in
 theorem Stab.isIrreducible_iff {U : Submodule ℂ (cuspForms E a)} (h : Stab U) :
     (cuspSubmodule E a U h.ρ h.σ h.τ).IsIrreducible ↔ U ≠ ⊥ ∧ ∀ W ≤ U, Stab W → W = ⊥ ∨ W = U := by
   refine ⟨fun hi => ?_, fun hi => isIrreducible_cuspSubmodule_of U h.ρ h.σ h.τ hi.1
@@ -139,33 +113,6 @@ theorem map_carrier (π : TR.CuspSub E a) : (carrier π).map (ofCusp E a) = π.V
 
 theorem stab_carrier (π : TR.CuspSub E a) : Stab (carrier π) := stab_comap π.stable
 
-abbrev toModule (π : TR.CuspSub E a) : AdelicGKModule E a (carrier π) :=
-  cuspSubmodule E a (carrier π) (stab_carrier π).ρ (stab_carrier π).σ (stab_carrier π).τ
-
-theorem isIrreducible_toModule (π : TR.CuspSub E a) : (toModule π).IsIrreducible := by
-  refine (stab_carrier π).isIrreducible_iff.2 ⟨fun e => π.ne_bot (by rw [← map_carrier, e, Submodule.map_bot]),
-    fun W hW hst => ?_⟩
-  refine (π.irred _ ((Submodule.map_mono hW).trans (map_carrier π).le) hst.map).imp (fun e => ?_) fun e => ?_
-  · exact Submodule.map_injective_of_injective ofCusp_injective (e.trans (Submodule.map_bot _).symm)
-  · exact Submodule.map_injective_of_injective ofCusp_injective (e.trans (map_carrier π).symm)
-
-theorem isAdmissible_toModule (π : TR.CuspSub E a) : (toModule π).IsAdmissible :=
-  UnitaryAdmissible.isAdmissible_cuspSubmodule _ _ _ _ (isIrreducible_toModule π)
-
-def carrierEq (π : TR.CuspSub E a) : carrier π ≃ₗ[ℂ] π.V :=
-  (Submodule.equivMapOfInjective _ ofCusp_injective _).trans (LinearEquiv.ofEq _ _ (map_carrier π))
-
-@[simp] theorem coe_carrierEq (π : TR.CuspSub E a) (ψ : carrier π) : (carrierEq π ψ).1 = ofCusp E a ψ.1 := rfl
-
-theorem carrierEq_ρ (π : TR.CuspSub E a) (X : TR.Lie E a) (ψ : carrier π) :
-    carrierEq π ((toModule π).gk.ρ (lieEq E a X) ψ) = π.op (.lie X) (carrierEq π ψ) := Subtype.ext (ofCusp_ρ X ψ.1)
-
-theorem carrierEq_σ (π : TR.CuspSub E a) (k : TR.Kinf E a) (ψ : carrier π) :
-    carrierEq π ((toModule π).gk.σ (cptEq E a k) ψ) = π.op (.cpt k) (carrierEq π ψ) := Subtype.ext (ofCusp_σ k ψ.1)
-
-theorem carrierEq_τ (π : TR.CuspSub E a) (k : GL (Fin a) (Af E)) (ψ : carrier π) :
-    carrierEq π ((toModule π).τ k ψ) = π.op (.fin k) (carrierEq π ψ) := Subtype.ext (ofCusp_τ k ψ.1)
-
 def ofIrr (U : Submodule ℂ (cuspForms E a)) (h : Stab U) (hi : (cuspSubmodule E a U h.ρ h.σ h.τ).IsIrreducible) :
     TR.CuspSub E a where
   V := U.map (ofCusp E a)
@@ -184,9 +131,6 @@ def ofIrr (U : Submodule ℂ (cuspForms E a)) (h : Stab U) (hi : (cuspSubmodule 
 theorem carrier_ofIrr (U : Submodule ℂ (cuspForms E a)) (h : Stab U) (hi) : carrier (ofIrr U h hi) = U :=
   Submodule.comap_map_eq_of_injective ofCusp_injective U
 
-theorem ofIrr_carrier (π : TR.CuspSub E a) : ofIrr _ (stab_carrier π) (isIrreducible_toModule π) = π :=
-  TR.CuspSub.ext (map_carrier π)
-
 theorem centralZ_eq :
     UnitaryAdmissible.centralZ E a = UnitaryAdmissible.centralExp E a • lieEq E a (TR.oneL E a) :=
   Subtype.ext (by rw [UnitaryAdmissible.coe_centralZ, Algebra.algebraMap_eq_smul_one, ← lieEq_oneL]; rfl)
@@ -201,18 +145,7 @@ theorem mem_centralCuspForms_of {ψ : cuspForms E a} (h : TR.lie E a (TR.oneL E 
   rw [Reduction.centralSection_mul_comm, UnitaryAdmissible.apply_mul_centralSection h2 x s]
   simp
 
-def toRep (π : TR.CuspSub E a) (h : carrier π ≤ centralCuspForms E a) : CuspidalAutomorphicRepresentation E a :=
-  .ofIrreducible (carrier π) h _ _ _ (isIrreducible_toModule π)
-
-def ofRep (π : CuspidalAutomorphicRepresentation E a) : TR.CuspSub E a :=
-  ofIrr π.carrier ⟨π.stable_ρ, π.stable_σ, π.stable_τ⟩ π.isIrreducible
-
 theorem carrier_le_central (π : TR.CuspSub E a) (h : ∀ φ ∈ π.V, TR.lie E a (TR.oneL E a) φ = 0) :
     carrier π ≤ centralCuspForms E a := fun _ hψ => mem_centralCuspForms_of (h _ hψ)
-
-def trivRep (ha : a ≤ 1) : CuspidalAutomorphicRepresentation E a :=
-  toRep (TR.CuspSub.triv E ha) (carrier_le_central _ fun φ hφ => by
-    obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hφ
-    rw [map_smul, TR.lie_oneFn, smul_zero])
 
 end UpperTheory.V.Fb

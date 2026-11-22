@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPFContractedDim
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPFContractedDim
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -41,7 +46,7 @@ theorem component_blockDeg_of_isMultiHomog {p : MRing ι F} {b : K → ℕ} (hp 
     weightedHomogeneousComponent (blockDeg k) n p = if b k = n then p else 0 := by
   ext d
   rw [coeff_weightedHomogeneousComponent, weight_blockDeg]
-  by_cases hd : coeff d p = 0
+  by_cases hd : AddMonoidAlgebra.coeff p d = 0
   · split_ifs <;> simp [hd]
   · have hw : Finsupp.weight (blockWeight ι) d = b := hp hd
     rw [hw]
@@ -49,7 +54,8 @@ theorem component_blockDeg_of_isMultiHomog {p : MRing ι F} {b : K → ℕ} (hp 
 
 theorem blockDeg_component_mem {I : Ideal (MRing ι F)} (hI : IsMultiHomogIdeal I) (k : K) (n : ℕ)
     {r : MRing ι F} (hr : r ∈ I) : weightedHomogeneousComponent (blockDeg k) n r ∈ I := by
-  rw [← sum_weightedHomogeneousComponent (blockWeight ι) r,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← sum_weightedHomogeneousComponent (blockWeight ι) r,
     finsum_eq_sum _ (weightedHomogeneousComponent_finsupp r), map_sum]
   refine Ideal.sum_mem _ fun b _ => ?_
   rw [component_blockDeg_of_isMultiHomog (weightedHomogeneousComponent_isWeightedHomogeneous b r)]
@@ -64,13 +70,13 @@ theorem isMultiHomogIdeal_of_blockDeg [Fintype K] {I : Ideal (MRing ι F)}
   intro r hr b
   let G : Finset K → MRing ι F := fun T =>
     ∑ d ∈ r.support.filter (fun d => ∀ k ∈ T, Finsupp.weight (blockWeight ι) d k = b k),
-      monomial d (coeff d r)
-  have hG : ∀ T d, coeff d (G T) =
-      if ∀ k ∈ T, Finsupp.weight (blockWeight ι) d k = b k then coeff d r else 0 := by
+      monomial d (AddMonoidAlgebra.coeff r d)
+  have hG : ∀ T d, AddMonoidAlgebra.coeff (G T) d =
+      if ∀ k ∈ T, Finsupp.weight (blockWeight ι) d k = b k then AddMonoidAlgebra.coeff r d else 0 := by
     intro T d
     simp only [G, coeff_sum, coeff_monomial, Finset.sum_ite_eq', Finset.mem_filter,
       mem_support_iff]
-    by_cases hc : coeff d r = 0 <;> simp [hc]
+    by_cases hc : AddMonoidAlgebra.coeff r d = 0 <;> simp [hc]
   have hmem : ∀ T, G T ∈ I := by
     intro T
     induction T using Finset.induction_on with

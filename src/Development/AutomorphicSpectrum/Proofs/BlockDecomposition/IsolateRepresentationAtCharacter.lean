@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SubOfNonNil
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HkMemFixed
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinsumOutTranslate
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsSmulEqOnFinset
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IrreducibleHomFixedVectorsStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IrreducibleSmoothAdmissibleGL
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SubOfNonNil
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HkMemFixed
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinsumOutTranslate
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsSmulEqOnFinset
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IrreducibleHomFixedVectorsStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IrreducibleSmoothAdmissibleGL
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.SmGL GlobalTheory.PRep PositivityTheory.Rg.BcN.F2
 
@@ -30,7 +34,7 @@ variable {K : Subgroup (GL ι F)} {V : Type} [AddCommGroup V] [Module ℂ V]
 theorem hk_add_right {e : GL ι F → ℂ} (he : IsHk K e) (v w : V) :
     hk ρ K e (v + w) = hk ρ K e v + hk ρ K e w := by
   obtain ⟨A, hA⟩ := exists_finset he
-  simp only [hk_eq_sum ρ K e _ A hA, map_add, smul_add, Finset.sum_add_distrib]
+  simp only [hk_eq_sum ρ K e _ A hA, map_add (f := _), smul_add, Finset.sum_add_distrib]
 
 theorem hk_smul_right {e : GL ι F → ℂ} (he : IsHk K e) (c : ℂ) (v : V) :
     hk ρ K e (c • v) = c • hk ρ K e v := by
@@ -84,8 +88,8 @@ theorem isHk_smul {K : Subgroup (GL ι F)} {e : GL ι F → ℂ} (c : ℂ) (h : 
       simp [h0]), fun k₁ hk₁ k₂ hk₂ g => by
     simp [h.2.2.2 k₁ hk₁ k₂ hk₂ g]⟩
 
-open Classical in
 
+open Classical in
 def unitFn (K : Subgroup (GL ι F)) (g : GL ι F) : ℂ := if g ∈ K then 1 else 0
 
 theorem isHk_unitFn {K : Subgroup (GL ι F)} (hKo : IsOpen (K : Set (GL ι F)))
@@ -200,7 +204,7 @@ theorem exists_hk_avg {K : Subgroup (GL ι F)} (hKo : IsOpen (K : Set (GL ι F))
     refine ⟨hKo, hKc, ?_, ?_⟩
     · refine HasCompactSupport.of_support_subset_isCompact
         (K := ⋃ q, (fun y => a q * y) '' (K : Set (GL ι F)))
-        (isCompact_iUnion fun q => hKc.image (continuous_mul_left _)) ?_
+        (isCompact_iUnion fun q => hKc.image (continuous_const_mul _)) ?_
       intro x hx
       obtain ⟨q, hq⟩ := hsupp x hx
       exact Set.mem_iUnion.2 ⟨q, _, hq, by simp⟩
@@ -290,7 +294,7 @@ theorem stable_top {K : Subgroup (GL ι F)} (hKo : IsOpen (K : Set (GL ι F))) (
       obtain ⟨L₁, h₁, hx⟩ := hx
       obtain ⟨L₂, h₂, hy⟩ := hy
       refine ⟨L₁ ⊓ L₂, IsOpen.inter h₁ h₂, fun L hLo hL _ => ?_⟩
-      simp only [map_add, Finset.sum_add_distrib]
+      simp only [map_add (f := _), Finset.sum_add_distrib]
       exact S.add_mem (hx L hLo (hL.trans inf_le_left)) (hy L hLo (hL.trans inf_le_right))
     | smul c x _ hx =>
       obtain ⟨L₁, h₁, hx⟩ := hx
@@ -347,8 +351,8 @@ def hkFix {X : Type} [AddCommGroup X] [Module ℂ X] (σ : Representation ℂ (G
   map_add' v w := Subtype.ext (hk_add_right σ he v w)
   map_smul' c v := Subtype.ext (hk_smul_right σ he c v)
 
-variable (K) in
 
+variable (K) in
 def heckeAlg (hKo : IsOpen (K : Set (GL ι F))) (hKc : IsCompact (K : Set (GL ι F))) :
     Subalgebra ℂ (∀ i, Module.End ℂ (fixed (ρ i) K)) where
   carrier := {T | ∃ e, IsHk K e ∧ ∀ i (x : fixed (ρ i) K), ((T i x : fixed (ρ i) K) : Y i) = hk (ρ i) K e x}

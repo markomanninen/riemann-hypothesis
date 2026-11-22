@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.Inputs
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.UnimodGenus
-import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.FinalW
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.Inputs
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.UnimodGenus
+public import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.FinalW
+
+@[expose] public section
 
 noncomputable section
 

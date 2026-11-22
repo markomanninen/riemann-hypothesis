@@ -1,10 +1,14 @@
-import Formalism.LocalToGlobal.AlgebraicTheory.StatementB
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.AnalyticTransOfAdd
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.AnaSys
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.FinalA
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.PhNormFromDatum
-import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OneLetterGaussSharpTranslateHolds
-import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.ThmBGaussOrthOf
+module
+
+public import Formalism.LocalToGlobal.AlgebraicTheory.StatementB
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.AnalyticTransOfAdd
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.AnaSys
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.FinalA
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.PhNormFromDatum
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OneLetterGaussSharpTranslateHolds
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.ThmBGaussOrthOf
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -40,7 +44,7 @@ theorem jets_in_iff_factorial_coeff (R : Subring K) (f : PowerSeries K) :
     exact h n
 
 theorem jet_derivative (f : PowerSeries K) (n : ℕ) :
-    ((n.factorial : ℕ) : K) * coeff n (derivative K f) =
+    ((n.factorial : ℕ) : K) * coeff n (derivative f) =
       (((n + 1).factorial : ℕ) : K) * coeff (n + 1) f := by
   rw [coeff_derivative, Nat.factorial_succ]
   push_cast
@@ -48,7 +52,7 @@ theorem jet_derivative (f : PowerSeries K) (n : ℕ) :
 
 theorem jetsIn_derivative {R : Subring K} {f : PowerSeries K}
     (hf : JetsIn R (f : MvPowerSeries Unit K)) :
-    JetsIn R ((derivative K f : PowerSeries K) : MvPowerSeries Unit K) := by
+    JetsIn R ((derivative f : PowerSeries K) : MvPowerSeries Unit K) := by
   rw [jets_in_iff_factorial_coeff] at hf ⊢
   intro n
   rw [jet_derivative]
@@ -69,36 +73,36 @@ theorem subst_e_l {l e : PowerSeries K} (h : IsLogPair l e) (F : PowerSeries K) 
   exact X_subst F
 
 private theorem derivative_subst_eq_subst_Dinv {l e : PowerSeries K} (h : IsLogPair l e) (g : PowerSeries K) :
-    derivative K (subst e g) = subst e (Formalism.L2.Th1.C.Dinv l g) := by
+    derivative (subst e g) = subst e (Formalism.L2.Th1.C.Dinv l g) := by
   obtain ⟨-, hl1, he0, -, hel⟩ := h
   have hse : HasSubst e := HasSubst.of_constantCoeff_zero' he0
-  have hc : constantCoeff (derivative K l) ≠ 0 := by
+  have hc : constantCoeff (derivative l) ≠ 0 := by
     rw [← coeff_zero_eq_constantCoeff_apply, coeff_derivative]
     simp [hl1]
-  have h1 : subst e (derivative K l) * derivative K e = 1 := by
+  have h1 : subst e (derivative l) * derivative e = 1 := by
     rw [← derivative_subst hse, hel, derivative_X]
-  have h2 : subst e ((derivative K l)⁻¹) * subst e (derivative K l) = 1 := by
+  have h2 : subst e ((derivative l)⁻¹) * subst e (derivative l) = 1 := by
     rw [← coe_substAlgHom hse, ← map_mul, PowerSeries.inv_mul_cancel _ hc, map_one]
-  have h3 : derivative K e = subst e ((derivative K l)⁻¹) := by
-    calc derivative K e
-        = (subst e ((derivative K l)⁻¹) * subst e (derivative K l)) * derivative K e := by
+  have h3 : derivative e = subst e ((derivative l)⁻¹) := by
+    calc derivative e
+        = (subst e ((derivative l)⁻¹) * subst e (derivative l)) * derivative e := by
           rw [h2, one_mul]
-      _ = subst e ((derivative K l)⁻¹) * (subst e (derivative K l) * derivative K e) := by ring
-      _ = subst e ((derivative K l)⁻¹) := by rw [h1, mul_one]
+      _ = subst e ((derivative l)⁻¹) * (subst e (derivative l) * derivative e) := by ring
+      _ = subst e ((derivative l)⁻¹) := by rw [h1, mul_one]
   rw [derivative_subst hse, h3]
   unfold Formalism.L2.Th1.C.Dinv
   rw [← coe_substAlgHom hse, map_mul]
   ring
 
 private theorem iterate_derivative_subst_eq_subst_iterate {l e : PowerSeries K} (h : IsLogPair l e) (n : ℕ) (g : PowerSeries K) :
-    (derivative K)^[n] (subst e g) = subst e ((Formalism.L2.Th1.C.Dinv l)^[n] g) := by
+    (derivative (R := K))^[n] (subst e g) = subst e ((Formalism.L2.Th1.C.Dinv l)^[n] g) := by
   induction n generalizing g with
   | zero => rfl
   | succ n ih =>
     rw [Function.iterate_succ_apply, Function.iterate_succ_apply, derivative_subst_eq_subst_Dinv h, ih]
 
 private theorem factorial_mul_coeff_eq_constantCoeff_iterate (n : ℕ) (g : PowerSeries K) :
-    ((n.factorial : ℕ) : K) * coeff n g = constantCoeff ((derivative K)^[n] g) := by
+    ((n.factorial : ℕ) : K) * coeff n g = constantCoeff ((derivative (R := K))^[n] g) := by
   induction n generalizing g with
   | zero => simp [coeff_zero_eq_constantCoeff_apply]
   | succ n ih => rw [Function.iterate_succ_apply, ← ih, jet_derivative]
@@ -110,7 +114,7 @@ private theorem factorial_mul_coeff_subst_eq_jet {l e : PowerSeries K} (h : IsLo
   rfl
 
 theorem jetsIn_subst_int {R : Subring K} {l e V : PowerSeries K} (h : IsLogPair l e)
-    (hu : IsOneUnit R (derivative K l)) (hV : IntPS R V) :
+    (hu : IsOneUnit R (derivative l)) (hV : IntPS R V) :
     JetsIn R ((subst e V : PowerSeries K) : MvPowerSeries Unit K) := by
   rw [jets_in_iff_factorial_coeff]
   intro n
@@ -161,7 +165,7 @@ theorem norm_jets {f : PowerSeries K} (hf : JetsIn (Formalism.G.unitBall K) (f :
   exact (jets_in_iff_factorial_coeff _ f).mp hf n
 
 theorem core_zero {l e ph Fz G : PowerSeries K} (h : IsLogPair l e)
-    (hu : IsOneUnit (Formalism.G.unitBall K) (derivative K l)) (h0 : constantCoeff ph = 0)
+    (hu : IsOneUnit (Formalism.G.unitBall K) (derivative l)) (h0 : constantCoeff ph = 0)
     (hj : ∀ i, 1 ≤ i → jet l ph i ∈ Formalism.G.unitBall K)
     (hG : G = Formalism.L2.Th1.B.fExp ph * subst l Fz) (ε : K) (hε : ‖ε‖ ≤ 1) (hGe : G = C ε * X) :
     ∀ n, ‖((n.factorial : ℕ) : K) * coeff n Fz‖ ≤ 1 := by
@@ -198,7 +202,7 @@ theorem core_zero {l e ph Fz G : PowerSeries K} (h : IsLogPair l e)
   exact fun n => norm_jets hFz n
 
 theorem core_pow (h2 : LogDerJets) (h3 : PowLogDer) {l e ph Fz G V : PowerSeries K} (h : IsLogPair l e)
-    (hu : IsOneUnit (Formalism.G.unitBall K) (derivative K l)) (h0 : constantCoeff ph = 0)
+    (hu : IsOneUnit (Formalism.G.unitBall K) (derivative l)) (h0 : constantCoeff ph = 0)
     (hj : ∀ i, 1 ≤ i → jet l ph i ∈ Formalism.G.unitBall K)
     (hG : G = Formalism.L2.Th1.B.fExp ph * subst l Fz) (hF0 : ‖constantCoeff Fz‖ ≤ 1)
     (c : K) (hc : c ≠ 0) (M : ℕ) (hM : 0 < M) (hV0 : constantCoeff V = 1)
@@ -227,20 +231,20 @@ theorem core_pow (h2 : LogDerJets) (h3 : PowLogDer) {l e ph Fz G V : PowerSeries
     rw [hEdef, hEidef, ← subst_mul hs, Formalism.L2.Th1.B.ParO.fExp_mul_neg h0, subst_one' hs]
   have hWW : Vz * Wz = 1 := by
     rw [hVzdef, hWzdef, ← subst_mul hs, hVinv, subst_one' hs]
-  have hd : derivative K Gz = derivative K E * Fz + E * derivative K Fz := by
+  have hd : derivative Gz = derivative E * Fz + E * derivative Fz := by
     rw [hGz, Derivation.leibniz, smul_eq_mul, smul_eq_mul]
     ring
   rw [hd, hGz] at hPL
   have hMM : C (M : K) * C ((M : K)⁻¹) = 1 := by
     rw [← map_mul, mul_inv_cancel₀ hMne, map_one]
-  set a : PowerSeries K := C ((M : K)⁻¹) * (derivative K Vz * Wz) - derivative K E * Ei with hadef
-  have hFa : derivative K Fz = a * Fz := by
+  set a : PowerSeries K := C ((M : K)⁻¹) * (derivative Vz * Wz) - derivative E * Ei with hadef
+  have hFa : derivative Fz = a * Fz := by
     rw [hadef]
     linear_combination (C ((M : K)⁻¹) * Ei * Wz) * hPL
-      - (derivative K Fz + derivative K E * Ei * Fz) * hMM
-      - (derivative K Fz + derivative K E * Ei * Fz) * (C (M : K) * C ((M : K)⁻¹)) * hWW
-      + (C ((M : K)⁻¹) * derivative K Vz * Wz * Fz
-          - derivative K Fz * (C (M : K) * C ((M : K)⁻¹)) * (Vz * Wz)) * hEE
+      - (derivative Fz + derivative E * Ei * Fz) * hMM
+      - (derivative Fz + derivative E * Ei * Fz) * (C (M : K) * C ((M : K)⁻¹)) * hWW
+      + (C ((M : K)⁻¹) * derivative Vz * Wz * Fz
+          - derivative Fz * (C (M : K) * C ((M : K)⁻¹)) * (Vz * Wz)) * hEE
   have h0' : constantCoeff (-ph) = 0 := by rw [map_neg, h0, neg_zero]
   have hJE : JetsIn (Formalism.G.unitBall K) (E : MvPowerSeries Unit K) :=
     jetsIn_subst_fExp h h0 (jetsIn_subst_ph h h0 hj)
@@ -248,15 +252,15 @@ theorem core_pow (h2 : LogDerJets) (h3 : PowLogDer) {l e ph Fz G V : PowerSeries
     refine jetsIn_subst_fExp h h0' ?_
     rw [subst_neg' hs]
     exact Formalism.L2.Th1.G.jetsIn_neg (jetsIn_subst_ph h h0 hj)
-  have hJ1 : JetsIn (Formalism.G.unitBall K) ((derivative K Vz * Wz : PowerSeries K) : MvPowerSeries Unit K) :=
+  have hJ1 : JetsIn (Formalism.G.unitBall K) ((derivative Vz * Wz : PowerSeries K) : MvPowerSeries Unit K) :=
     Formalism.L2.Th1.G.jetsIn_mul (jetsIn_derivative (jetsIn_subst_int h hu hVi)) (jetsIn_subst_int h hu hWi)
-  have hJ2 : JetsIn (Formalism.G.unitBall K) ((derivative K E * Ei : PowerSeries K) : MvPowerSeries Unit K) :=
+  have hJ2 : JetsIn (Formalism.G.unitBall K) ((derivative E * Ei : PowerSeries K) : MvPowerSeries Unit K) :=
     Formalism.L2.Th1.G.jetsIn_mul (jetsIn_derivative hJE) hJEi
   have ha : ∀ n : ℕ, ‖((n.factorial : ℕ) : K) * coeff n a‖ ≤ ‖(M : K)‖⁻¹ := by
     intro n
     have e1 : ((n.factorial : ℕ) : K) * coeff n a =
-        (M : K)⁻¹ * (((n.factorial : ℕ) : K) * coeff n (derivative K Vz * Wz)) -
-          ((n.factorial : ℕ) : K) * coeff n (derivative K E * Ei) := by
+        (M : K)⁻¹ * (((n.factorial : ℕ) : K) * coeff n (derivative Vz * Wz)) -
+          ((n.factorial : ℕ) : K) * coeff n (derivative E * Ei) := by
       rw [hadef, map_sub, coeff_C_mul]
       ring
     rw [e1, sub_eq_add_neg]

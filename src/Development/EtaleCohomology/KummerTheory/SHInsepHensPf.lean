@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.KummerTheory.SHInsepPf
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteMaximalSpectrumOfFiniteOfIsLocalRing
+module
+
+public import Development.EtaleCohomology.KummerTheory.SHInsepPf
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteMaximalSpectrumOfFiniteOfIsLocalRing
+
+@[expose] public section
 
 noncomputable section
 open scoped TensorProduct

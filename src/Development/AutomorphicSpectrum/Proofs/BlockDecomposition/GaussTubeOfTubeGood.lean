@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.StripEntire
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.StripEntire
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,17 +60,17 @@ theorem gauss_bound {T : Type} [TopologicalSpace T] {F : ℂ × ℂ → T → X}
     _ ≤ Real.exp B * |M| * Real.exp (-(l.1.im ^ 2 + l.2.im ^ 2)) := by gcongr
 
 theorem gaussTube_of_tubeGood {T : Type} [TopologicalSpace T] {F : ℂ × ℂ → T → X} {Ω : Set (ℝ × ℝ)}
-    (h : TubeGood F Ω) (g : T) : GaussTube (gauss (F · g)) Ω where
-  hol p v := by
+    (h : TubeGood F Ω) (g : T) : GaussTube (gauss (F · g)) Ω := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro p v
     have h1 : Differentiable ℂ fun τ : ℂ => Complex.exp ((p + τ • v).1 ^ 2 + (p + τ • v).2 ^ 2) := by
       simp only [Prod.fst_add, Prod.snd_add, Prod.smul_fst, Prod.smul_snd, smul_eq_mul]
       fun_prop
     exact h1.differentiableOn.smul (h.hol g p v)
-  cont := by
-    have h1 : ContinuousOn (fun l : ℂ × ℂ => F l g) (tube Ω) :=
+  · have h1 : ContinuousOn (fun l : ℂ × ℂ => F l g) (tube Ω) :=
       h.cont.comp (f := fun l : ℂ × ℂ => (l, g)) (by fun_prop) fun l hl => ⟨hl, trivial⟩
     exact ContinuousOn.smul (by fun_prop) h1
-  decay C hC hc := by
+  · intro C hC hc
     obtain ⟨U, hU, M, hM⟩ := gauss_bound h hC hc g
     exact ⟨M, fun l hl => hM g (mem_of_mem_nhds hU) l hl⟩
 

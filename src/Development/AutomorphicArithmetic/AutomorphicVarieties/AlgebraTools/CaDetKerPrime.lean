@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CotInd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DetLocus
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDetChartPrime
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CotInd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DetLocus
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDetChartPrime
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.AlgebraTools
 
@@ -55,7 +59,8 @@ theorem UpperTheory.V.AlgebraTools.genKer_isPrime :
   have e : MvPolynomial.C ((z.mulVec m) i) =
       ((z.map MvPolynomial.C).mulVec (lam P c)) i * MvPolynomial.C (m c) +
         ∑ j, MvPolynomial.C (z i j) * (MvPolynomial.C (m j) - lam P c j * MvPolynomial.C (m c)) := by
-    simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul, Finset.sum_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul, Finset.sum_mul,
       mul_sub, Finset.sum_sub_distrib, mul_assoc]
     ring
   rw [e]

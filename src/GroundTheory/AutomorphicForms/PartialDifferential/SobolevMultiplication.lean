@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.PartialDifferential.SobolevRellich
-import GroundTheory.AutomorphicForms.PartialDifferential.SobolevEmbedding
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.PartialDifferential.SobolevRellich
+public import GroundTheory.AutomorphicForms.PartialDifferential.SobolevEmbedding
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.Sobolev
 
@@ -47,10 +51,15 @@ theorem lintegral_conv_sq_le_mul {K G : E → ℝ≥0∞} (hK : Measurable K) (h
     _ = _ := by rw [lintegral_const_mul _ (hG.pow_const 2)]; ring
 
 theorem eLpNorm_le_of_le_conv {h g : E → ℂ} {K : E → ℝ≥0∞} (hK : Measurable K)
-    (hg : Measurable g) (hh : ∀ ξ, ‖h ξ‖ₑ ≤ ∫⁻ η, K (ξ - η) * ‖g η‖ₑ) :
+    (hg : Measurable g) (hh_meas : AEStronglyMeasurable h volume)
+    (hh : ∀ ξ, ‖h ξ‖ₑ ≤ ∫⁻ η, K (ξ - η) * ‖g η‖ₑ) :
     eLpNorm h 2 volume ≤ (∫⁻ ζ, K ζ) * eLpNorm g 2 volume := by
+  have h2₀ : (2 : ℝ≥0∞) ≠ 0 := by norm_num
+  have h2₁ : (2 : ℝ≥0∞) ≠ ⊤ := by simp
   have hsq : eLpNorm h 2 volume ^ 2 ≤ ((∫⁻ ζ, K ζ) * eLpNorm g 2 volume) ^ 2 := by
-    rw [L2Kernel.eLpNorm_two_sq, mul_pow, L2Kernel.eLpNorm_two_sq]
+    simp only [eLpNorm_eq_eLpNorm' h2₀ h2₁ hh_meas,
+      eLpNorm_eq_eLpNorm' h2₀ h2₁ hg.aestronglyMeasurable, ENNReal.toReal_ofNat, mul_pow,
+      L2Kernel.eLpNorm_two_sq]
     calc ∫⁻ ξ, ‖h ξ‖ₑ ^ 2 ≤ ∫⁻ ξ, (∫⁻ η, K (ξ - η) * ‖g η‖ₑ) ^ 2 :=
           lintegral_mono fun ξ ↦ by gcongr; exact hh ξ
       _ ≤ _ := lintegral_conv_sq_le_mul hK hg.enorm
@@ -249,7 +258,9 @@ theorem norm_ofSchwartz_smulLeft_le (r : ℝ) (φ : 𝓢(E, ℂ)) :
     ‖SobolevSpace.ofSchwartz r (SchwartzMap.smulLeftCLM ℂ (χ : E → ℂ) φ)‖ ≤
       2 ^ (|r| / 2) * wInt (|r| / 2) (𝓕 χ) * ‖SobolevSpace.ofSchwartz r φ‖ := by
   have h := eLpNorm_le_of_le_conv (((measurable_wK (|r| / 2) (𝓕 χ)).const_mul _))
-    (measurable_weight_mul_fourier r φ) (enorm_weight_mul_fourier_smulLeft_le χ r φ)
+    (measurable_weight_mul_fourier r φ)
+    (measurable_weight_mul_fourier r (SchwartzMap.smulLeftCLM ℂ (χ : E → ℂ) φ)).aestronglyMeasurable
+    (enorm_weight_mul_fourier_smulLeft_le χ r φ)
   rw [lintegral_const_mul _ (measurable_wK _ _), lintegral_wK,
     ← ENNReal.ofReal_mul (by positivity)] at h
   rw [norm_ofSchwartz_eq, norm_ofSchwartz_eq]
@@ -347,7 +358,9 @@ theorem norm_ofSchwartz_commRem_le (r a : ℝ) (φ : 𝓢(E, ℂ)) :
       commConst r a * wInt ((|a| + |r - 1| + 1) / 2) (𝓕 χ) *
         ‖SobolevSpace.ofSchwartz (r + a - 1) φ‖ := by
   have h := eLpNorm_le_of_le_conv (((measurable_wK _ (𝓕 χ)).const_mul _))
-    (measurable_weight_mul_fourier (r + a - 1) φ) (enorm_weight_mul_fourier_commRem_le χ r a φ)
+    (measurable_weight_mul_fourier (r + a - 1) φ)
+    (measurable_weight_mul_fourier (r + a) (commRem χ r φ)).aestronglyMeasurable
+    (enorm_weight_mul_fourier_commRem_le χ r a φ)
   rw [lintegral_const_mul _ (measurable_wK _ _), lintegral_wK,
     ← ENNReal.ofReal_mul (commConst_nonneg r a)] at h
   rw [norm_ofSchwartz_eq, norm_ofSchwartz_eq]
@@ -359,15 +372,16 @@ theorem norm_ofSchwartz_commRem_le (r a : ℝ) (φ : 𝓢(E, ℂ)) :
         rw [ENNReal.toReal_mul, ENNReal.toReal_ofReal
           (mul_nonneg (commConst_nonneg r a) (wInt_nonneg _ _))]
 
-open Classical in
 
-def sob (s : ℝ) (u : 𝓢'(E, ℂ)) : ℝ≥0∞ :=
-  if h : MemSobolev s 2 u then ‖(SobolevSpace.mk u h : SobolevSpace E ℂ s)‖ₑ else ⊤
+open Classical in
+def sob (s : ℝ) (u : 𝓢'(E, ℂ)) : ℝ≥0∞ := by
+  classical
+  exact if h : MemSobolev s 2 u then ‖(SobolevSpace.mk u h : SobolevSpace E ℂ s)‖ₑ else ⊤
 
 theorem sob_of_mem {s : ℝ} {u : 𝓢'(E, ℂ)} (h : MemSobolev s 2 u) :
-    sob s u = ‖(SobolevSpace.mk u h : SobolevSpace E ℂ s)‖ₑ := by rw [sob, dif_pos h]
+    sob s u = ‖(SobolevSpace.mk u h : SobolevSpace E ℂ s)‖ₑ := by rw [sob, dite_eq_left h]
 
-theorem sob_of_not_mem {s : ℝ} {u : 𝓢'(E, ℂ)} (h : ¬ MemSobolev s 2 u) : sob s u = ⊤ := by rw [sob, dif_neg h]
+theorem sob_of_not_mem {s : ℝ} {u : 𝓢'(E, ℂ)} (h : ¬ MemSobolev s 2 u) : sob s u = ⊤ := by rw [sob, dite_eq_right h]
 
 theorem mk_toDistribution {s : ℝ} (v : SobolevSpace E ℂ s) (h) :
     SobolevSpace.mk (SobolevSpace.toDistribution v) h = v :=
@@ -573,7 +587,7 @@ theorem sob_mulPrin_le (χ : 𝓢(E, ℂ)) {M : ℝ} (hM0 : 0 ≤ M) (hM : ∀ x
       ENNReal.ofReal M * eLpNorm (SchwartzMap.fourierMultiplierCLM ℂ (weight r) φ) 2 volume := by
     have := eLpNorm_le_nnreal_smul_eLpNorm_of_ae_le_mul (p := 2) (μ := (volume : Measure E))
       (f := g) (g := SchwartzMap.fourierMultiplierCLM ℂ (weight r) φ) (c := M.toNNReal)
-      (ae_of_all _ fun x ↦ ?_)
+      g.continuous.aestronglyMeasurable (ae_of_all _ fun x ↦ ?_)
     · rw [ENNReal.ofReal]; exact this
     · rw [← NNReal.coe_le_coe, NNReal.coe_mul, coe_nnnorm, coe_nnnorm, Real.coe_toNNReal _ hM0]
       simp only [g, SchwartzMap.smulLeftCLM_apply_apply χ.hasTemperateGrowth, smul_eq_mul, norm_mul]

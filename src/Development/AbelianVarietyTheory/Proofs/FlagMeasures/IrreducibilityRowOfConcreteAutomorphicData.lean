@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SerFixOne
-import Formalism.UnipotentAdelicQuotients.SiegelWeilUnitaryConvergent
-import Formalism.LocalToGlobal.HilbertRowConditions.AllJoin
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.STiesR
-import Formalism.LocalToGlobal.ThresholdSelection
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuDecayAll
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.RowsDef
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCountE
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.GapClosed
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CountConstantsOfSiegelWeil
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CountClausesClosed
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AllRowsAtRecord
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SerFixOne
+public import Formalism.UnipotentAdelicQuotients.SiegelWeilUnitaryConvergent
+public import Formalism.LocalToGlobal.HilbertRowConditions.AllJoin
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.STiesR
+public import Formalism.LocalToGlobal.ThresholdSelection
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuDecayAll
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.RowsDef
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCountE
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.GapClosed
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CountConstantsOfSiegelWeil
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CountClausesClosed
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AllRowsAtRecord
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formalism.MainNotions.ArithmeticCylinders Formalism.L2.GlobalTheoryTheory.ConcN Formalism.L2.GlobalTheoryTheory.AllJoin Formalism.L2.SG.HidaSetting Formalism.L2.SG.RowDict Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.PackageTie2
 
 namespace GlobalTheory.IrrRowConcrete
@@ -32,10 +37,9 @@ theorem irr_row_closed : HeckeCharacterZeroLocus.SiegelWeilU.SiegelWeilUnitaryCo
   obtain ⟨x2, hx2⟩ := hev
   obtain ⟨y, hy⟩ := hg hc
   refine ⟨max (max x1 x2) (max y (Fm.x1 + 1)), fun x hxge i => ?_⟩
-  have hb : max (max x1 x2) (max y (Fm.x1 + 1)) ≤ x := hxge
-  simp only [max_le_iff] at hb
-  obtain ⟨⟨b1, b2⟩, b3, b4⟩ := hb
-  obtain ⟨X, G, ι, hA, hR, hLab⟩ := hx1 x (by linarith) b1 i
+  obtain ⟨⟨b1, b2⟩, b3, b4⟩ := (max_le_iff.mp hxge).imp max_le_iff.mp max_le_iff.mp
+  have hxlt : Fm.x1 < x := (lt_add_of_pos_right _ zero_lt_one).trans_le b4
+  obtain ⟨X, G, ι, hA, hR, hLab⟩ := hx1 x hxlt b1 i
   obtain ⟨hpar, h4⟩ := hx2 x b2 i
   exact GlobalTheory.AllRowsAtRecord.allRows_at_record hRF (Fm.D x i) (Fm.L x i) X G ι (c30 Fm.cOut).n0 (c30 Fm.cOut).A (c30 Fm.cOut).C
     (c30 Fm.cOut).c (c30 Fm.cOut).cb cIc hcI (hcle Fm) (hy x b3 i) hA hR hLab (fun P => (hP P Fm).2.2 x i) hpar h4

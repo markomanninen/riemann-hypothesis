@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StBranchSheetAE
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRankDeficientFibreInfinite
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDiscriminantSheetCover
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetOnlyNull
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.NullZero
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StBranchSheetAE
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRankDeficientFibreInfinite
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDiscriminantSheetCover
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetOnlyNull
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.NullZero
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -70,7 +75,7 @@ theorem BranchSheetAE.proof (h₁ : IndefiniteRowSideFullHecke.ComplexSets.RankD
       (SheetOnlyNull.injective_iff_det_ne_zero _).1 hinj
         (by rw [← ReciprocityTheory.AnForm.A.det_jacC]; exact hall v hv)
     have hinf : (γ.toFun '' {t | t ∈ Δ ∧ τ t = y}).Infinite :=
-      (Set.infinite_image_iff (γ.injOn.mono fun t ht => ht.1)).2 hy
+      (Set.infinite_image_iff (γ.injOn.mono fun t (ht : t ∈ {t | t ∈ Δ ∧ τ t = y}) => ht.1)).2 hy
     refine hinf ((h₂ n d J A hJ hdim hA y).2.1.subset ?_)
     rintro _ ⟨t, ⟨htΔ, hty⟩, rfl⟩
     exact ⟨γ.mapsTo htΔ, hty⟩

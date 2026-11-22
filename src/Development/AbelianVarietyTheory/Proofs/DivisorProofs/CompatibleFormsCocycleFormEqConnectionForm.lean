@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFormsMapOfDividedPowerDerivationStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFormsMapOfDividedPowerDerivationStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -72,7 +76,7 @@ theorem deRhamAlgebraMap_sends_sectionOneForm (ρ : DR R (diagExt R B).C →+ DR
     congr 2
     exact hα b
   | h0 => simp
-  | ha x y hx hy => rw [map_add, map_add, map_add, hx, hy, map_add, map_add]
+  | ha x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]
 
 end
 
@@ -104,7 +108,7 @@ theorem form_eq_connForm : ∀ (R : Type) [CommRing R] (X : Scheme.{0}) (s : X �
   have r2 := deRhamAlgebraMap_sends_sectionOneForm ρh hmul halg hD' a'.φ (fst_derSec _) (AddMonoidHom.id _) (fun b c ↦ by
     show b • D R B c = b • TrivSqZeroExt.snd (diagSec R B c)
     rw [snd_derSec])
-  simp only [map_sub, map_add, r1, r2, hD', AddMonoidHom.zero_apply, AddMonoidHom.id_apply, map_zero,
+  simp only [map_sub, map_add (f := _), r1, r2, hD', AddMonoidHom.zero_apply, AddMonoidHom.id_apply, map_zero,
     zero_add] at e1 e2
   rw [← hκ, Submodule.Quotient.eq]
   change ι1 _ ∈ rel R (dp0 B)

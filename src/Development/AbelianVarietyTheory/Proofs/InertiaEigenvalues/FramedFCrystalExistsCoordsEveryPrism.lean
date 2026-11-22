@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,8 @@ theorem exists_basis {A B M N : Type} [CommRing A] [CommRing B] [AddCommGroup M]
   let Q : (Fin d → B) →ₗ[B] N := Fintype.linearCombination B fun i => u (e i)
   have hQ : Q.comp S = LinearMap.id := h.hom_ext fun x => by
     rw [LinearMap.comp_apply, hS, LinearMap.id_apply, Fintype.linearCombination_apply]
-    conv_rhs => rw [← e.sum_repr x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← e.sum_repr x, map_sum]
     exact Finset.sum_congr rfl fun i _ => (u.map_smulₛₗ _ _).symm
   have hv : ∀ i, S (u (e i)) = Pi.single i 1 := fun i => by
     rw [hS]

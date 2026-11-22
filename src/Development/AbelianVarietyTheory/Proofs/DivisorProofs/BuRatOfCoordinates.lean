@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataBu
-import Formalism.SharpRestriction.Divisibility.WeightDegreeSizes
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpanRangeInfKerLeOfBasis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRationalOrthogonalProjectionSemilinearStatement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataBu
+public import Formalism.SharpRestriction.Divisibility.WeightDegreeSizes
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpanRangeInfKerLeOfBasis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRationalOrthogonalProjectionSemilinearStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Matrix
 open scoped InnerProductSpace
 

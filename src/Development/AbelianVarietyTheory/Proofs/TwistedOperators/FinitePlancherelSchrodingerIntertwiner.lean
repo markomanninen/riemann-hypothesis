@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SuppInd
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HalfLinearCocycle
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.LocalIntegralGL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SuppInd
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HalfLinearCocycle
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.LocalIntegralGL
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
@@ -71,7 +76,7 @@ theorem finite_plancherel_schrodinger_intertwiner :
     obtain ⟨y, hHd, hy, hne⟩ := hwit (rep (c - d)) (by rw [hrep]; exact sub_ne_zero.mpr hcd)
     refine ⟨y, hHd, hy, fun heq => hne ?_⟩
     have h1 := hχ y hy (rep (c - d) + rep d)
-    have hr : red (rep (c - d) + rep d) = c := by rw [map_add, hrep, hrep, sub_add_cancel]
+    have hr : red (rep (c - d) + rep d) = c := by rw [map_add (f := _), hrep, hrep, sub_add_cancel]
     rw [hr, AddSubgroup.coe_add, hB, AddChar.map_add_eq_mul, ← hχd y d, heq] at h1
     have h0 : χ y d ≠ 0 := fun h => by simpa [h] using hχnorm y hy d
     exact mul_right_cancel₀ h0 (h1.trans (one_mul _).symm)
@@ -80,7 +85,7 @@ theorem finite_plancherel_schrodinger_intertwiner :
     apply hSB
     · intro t ht
       by_contra hmem
-      exact ht (by rw [hind, dif_neg hmem])
+      exact ht (by rw [hind, dite_eq_right hmem])
     · intro t u hu
       have hnu : Fintype.card G • u ∈ Λc := Λc.nsmul_mem hu _
       by_cases ht : t ∈ Λc
@@ -88,24 +93,23 @@ theorem finite_plancherel_schrodinger_intertwiner :
         have he : red ⟨t + Fintype.card G • u, ht'⟩ = red ⟨t, ht⟩ := by
           have : (⟨t + Fintype.card G • u, ht'⟩ : Λc) = ⟨t, ht⟩ + Fintype.card G • ⟨u, hu⟩ :=
             Subtype.ext (by simp)
-          rw [this, map_add, map_nsmul, card_nsmul_eq_zero, add_zero]
-        rw [hind, hind, dif_pos ht, dif_pos ht', he]
+          rw [this, map_add (f := _), map_nsmul, card_nsmul_eq_zero, add_zero]
+        rw [hind, hind, dite_eq_left ht, dite_eq_left ht', he]
       · have ht' : t + Fintype.card G • u ∉ Λc := fun h => ht (by simpa using Λc.sub_mem h hnu)
-        rw [hind, hind, dif_neg ht, dif_neg ht']
+        rw [hind, hind, dite_eq_right ht, dite_eq_right ht']
   have hmodg : ∀ y, Hd y → (∀ k : Λc, red k = 0 → ψ (B k y) = 1) → ∀ c,
       hs y (g c) = χ y c • g c := by
     intro y hHd hy c
     rw [hg, ← hmod (ind c) (hSBind c) y hHd, ← map_smul]
     congr 1
     funext t
-    simp only [Pi.smul_apply, smul_eq_mul]
-    rw [hind]
+    simp only [Pi.smul_apply, smul_eq_mul, hind]
     by_cases ht : t ∈ Λc
-    · rw [dif_pos ht]
+    · rw [dite_eq_left ht]
       by_cases hr : red ⟨t, ht⟩ = c
-      · rw [if_pos hr, mul_one, mul_one, ← hr]; exact hχ y hy ⟨t, ht⟩
-      · rw [if_neg hr]; simp
-    · rw [dif_neg ht]; simp
+      · rw [ite_eq_left hr, mul_one, mul_one, ← hr]; exact hχ y hy ⟨t, ht⟩
+      · rw [ite_eq_right hr]; simp
+    · rw [dite_eq_right ht]; simp
   have htrg : ∀ c, hs (rep c) (g c) = g 0 := by
     intro c
     rw [hg, hg, ← htr (ind c) (hSBind c) (rep c) (rep c).2]
@@ -116,11 +120,11 @@ theorem finite_plancherel_schrodinger_intertwiner :
     · have ht' : t + (rep c : X) ∈ Λc := Λc.add_mem ht (rep c).2
       have he : red ⟨t + rep c, ht'⟩ = red ⟨t, ht⟩ + c := by
         have : (⟨t + rep c, ht'⟩ : Λc) = ⟨t, ht⟩ + rep c := Subtype.ext (by simp)
-        rw [this, map_add, hrep]
-      rw [dif_pos ht, dif_pos ht', he]
+        rw [this, map_add (f := _), hrep]
+      rw [dite_eq_left ht, dite_eq_left ht', he]
       simp
     · have ht' : t + (rep c : X) ∉ Λc := fun h => ht (by simpa using Λc.sub_mem h (rep c).2)
-      rw [dif_neg ht, dif_neg ht']
+      rw [dite_eq_right ht, dite_eq_right ht']
   have hTh0 : Th 0 := by simpa using hThlin (-1) f₀ f₀ hThf₀ hThf₀
   have hThsmul : ∀ a f, Th f → Th (a • f) := fun a f hf => by simpa using hThlin a f 0 hf hTh0
   have hhs0 : ∀ w, hs w 0 = 0 := fun w => by simpa using hslin w 1 0 0
@@ -142,7 +146,8 @@ theorem finite_plancherel_schrodinger_intertwiner :
   have hf0sum : f₀ = ∑ c, g c := by
     rw [← hf₀]
     simp only [hg]
-    rw [← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum]
     congr 1
     funext t
     rw [Finset.sum_apply]
@@ -152,7 +157,8 @@ theorem finite_plancherel_schrodinger_intertwiner :
     · simp [ht]
   have hΦsum : (T fun t => if h : t ∈ Λc then Gd (red ⟨t, h⟩) else 0) = ∑ c, Gd c • g c := by
     simp only [hg, ← map_smul]
-    rw [← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum]
     congr 1
     funext t
     rw [Finset.sum_apply]

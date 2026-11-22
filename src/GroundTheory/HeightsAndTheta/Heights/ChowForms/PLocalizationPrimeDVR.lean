@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsSectionOrder
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsSectionOrder
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -14,7 +19,7 @@ theorem LocalizationPrimeDVR.proof : LocalizationPrimeDVR.Statement := by
       congrArg (Ideal.map (algebraMap R O)) hp, Ideal.map_span, Set.image_singleton]
   have hprin : (maximalIdeal O).IsPrincipal := ⟨⟨algebraMap R O q, hmax⟩⟩
   have hPID : IsPrincipalIdealRing O :=
-    ((tfae_of_isNoetherianRing_of_isLocalRing_of_isDomain O).out 4 0).mp hprin
+    ((tfae_of_isNoetherianRing_of_isLocalRing_of_isDomain O).out 5 1).mp hprin
   have hq0 : algebraMap R O q ≠ 0 := by
     intro h
     have hinj : Function.Injective (algebraMap R O) :=

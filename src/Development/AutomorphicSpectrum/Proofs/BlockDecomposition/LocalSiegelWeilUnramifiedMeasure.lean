@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GramNear
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EMatMulNegCol
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FibreMassEq
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralOrderDataExistAtPlaceStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactSetContainedInLatticeStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalLatticeVolumeOrderDataStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalLatticeGaussSumEstimateStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalLatticeQuadraticIntegralStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalLatticeCharacterIntegralStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalOrderConjugationStableStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalScalingVolumeByUnitStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalOrderStableIntegralStructureStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalScalingMeasureByUnitStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalFibreMeasureUnramifiedFormulaStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DensityBoundByRecursionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalFibreMeasureUnramifiedVolumeStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GramNear
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EMatMulNegCol
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FibreMassEq
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralOrderDataExistAtPlaceStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactSetContainedInLatticeStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalLatticeVolumeOrderDataStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalLatticeGaussSumEstimateStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalLatticeQuadraticIntegralStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalLatticeCharacterIntegralStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalOrderConjugationStableStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalScalingVolumeByUnitStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalOrderStableIntegralStructureStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalScalingMeasureByUnitStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalFibreMeasureUnramifiedFormulaStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DensityBoundByRecursionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalFibreMeasureUnramifiedVolumeStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,7 +88,7 @@ theorem GlobalTheory.CompanionTheory.AvgFree.scale_density : ∀ (F E : Type) [F
     intro g
     refine continuous_pi fun a => continuous_pi fun i => ?_
     unfold GlobalTheory.CompanionTheory.SW.rmul
-    exact continuous_finset_sum _ fun c _ =>
+    exact continuous_finsetSum _ fun c _ =>
       (continuous_apply_apply c i).mul continuous_const
   have hgm : ∀ Y' : Set (HermR (Fv F v) σ n), MeasurableSet Y' →
       MeasurableSet (gramIn (Fv F v) σ J (n := n) Y') := by
@@ -98,7 +102,7 @@ theorem GlobalTheory.CompanionTheory.AvgFree.scale_density : ∀ (F E : Type) [F
     rw [h1]
     haveI : BorelSpace (HermR (Fv F v) σ n) := ⟨rfl⟩
     have hbs := (Subtype.borelSpace (α := Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E))
-      ((HermR (Fv F v) σ n : AddSubgroup _) : Set _)).measurable_eq
+      (fun x => x ∈ ((HermR (Fv F v) σ n : AddSubgroup _) : Set _))).measurable_eq
     have hY3 : @MeasurableSet {x // x ∈ ((HermR (Fv F v) σ n : AddSubgroup _) : Set (Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)))} Subtype.instMeasurableSpace Y' := by
       rw [hbs]
       exact hY'
@@ -205,7 +209,7 @@ theorem GlobalTheory.CompanionTheory.AvgFree.bad_density : ∀ (F E : Type) [Fie
     fun j => ∑ p ∈ S, (n : ℝ≥0) * (θ p ^ (M - 2 * n)) ^ j, ?_, ?_, ?_⟩
   · have h1 : Filter.Tendsto (fun j : ℕ => ∑ p ∈ S, (n : ℝ≥0) * (θ p ^ (M - 2 * n)) ^ j) Filter.atTop
         (nhds (∑ p ∈ S, (n : ℝ≥0) * 0)) :=
-      tendsto_finset_sum _ fun p hpS => tendsto_const_nhds.mul
+      tendsto_finsetSum _ fun p hpS => tendsto_const_nhds.mul
         (NNReal.tendsto_pow_atTop_nhds_zero_of_lt_one (pow_lt_one₀ zero_le' (hθ p hpS).1 (by omega)))
     simpa using h1
   · intro j
@@ -375,7 +379,7 @@ theorem GlobalTheory.CompanionTheory.AvgFree.exhaust_density : ∀ (F E : Type) 
       calc _ ≤ (α j i : ℝ≥0∞) * ((C : ℝ≥0∞) * ((β j i : ℝ≥0∞) * GlobalTheory.CompanionTheory.SW.coordHerm (Fv F v) σ b lv n Y)) := by gcongr
         _ = _ := by push_cast; ring
     refine le_trans (Finset.sum_le_sum h1) ?_
-    rw [← Finset.sum_mul, ← Finset.mul_sum, ← ENNReal.coe_finset_sum]
+    rw [← Finset.sum_mul, ← Finset.mul_sum, ← ENNReal.ofNNReal_finsetSum]
     have h3 : ((∑ i ∈ I j, α j i * β j i : ℝ≥0) : ℝ≥0∞) ≤ (ρ j : ℝ≥0∞) := by exact_mod_cast (hs j).1
     push_cast
     push_cast at h3

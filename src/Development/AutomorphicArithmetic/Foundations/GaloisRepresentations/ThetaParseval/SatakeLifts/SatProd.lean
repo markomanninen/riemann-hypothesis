@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SatakeLifts.PairOfLiftAlt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrincipalSeriesSatakeParameters
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SatakeLifts.PairOfLiftAlt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrincipalSeriesSatakeParameters
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.ThetaGL UpperTheory.Gal.TP.Loc
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -27,7 +32,7 @@ private theorem hasSat_pair {K : Type} [Field K] [NumberField K] (w : HeightOneS
     GlobalTheory.LFun.HasSatGL w (prod₂ (π 0) (π 1)) (S 0 + S 1) := by
   obtain ⟨E⟩ := GlobalTheory.LocGL.nonempty_prod₂_equiv_multiProd (Fin.sum_univ_two d) π
   refine GlobalTheory.PrinSat.hasSatGL_of_equiv E ?_
-  have hKO : ∀ m, GlobalTheory.LFun.KGL w m = KO (w.adicCompletion K) (Fin m) :=
+  have hKO : ∀ m, GlobalTheory.LFun.KGL w (n := m) = KO (w.adicCompletion K) (Fin m) :=
     fun m => (SphCompletion.KO_completion w m).symm
   constructor
   · choose x hx using fun a => (hS a).exists_vec

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.TensorActionApplyDual
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.TensorActionApplyDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem wOp_mapDomain_cons (E : Fin n → Fin n → Module.End ℂ M) (p : Fin n
     wOp E (Finsupp.mapDomain (p :: ·) L) = E p.1 p.2 * wOp E L := by
   induction L using Finsupp.induction_linear with
   | zero => simp
-  | add x y hx hy => rw [Finsupp.mapDomain_add, map_add, map_add, hx, hy, mul_add]
+  | add x y hx hy => rw [Finsupp.mapDomain_add, map_add (f := _), map_add (f := _), hx, hy, mul_add]
   | single w r =>
     rw [Finsupp.mapDomain_single]
     simp [wOp, Finsupp.linearCombination_single, wordE_cons_mul]
@@ -35,7 +39,7 @@ theorem wOp_mapDomain_letter (E : Fin n → Fin n → Module.End ℂ M) (w : Lis
     wOp E (Finsupp.mapDomain (· :: w) l) = lOp E l * wordE E w := by
   induction l using Finsupp.induction_linear with
   | zero => simp
-  | add x y hx hy => rw [Finsupp.mapDomain_add, map_add, map_add, hx, hy, add_mul]
+  | add x y hx hy => rw [Finsupp.mapDomain_add, map_add (f := _), map_add (f := _), hx, hy, add_mul]
   | single q r =>
     rw [Finsupp.mapDomain_single]
     simp [wOp, lOp, Finsupp.linearCombination_single, wordE_cons_mul]
@@ -50,7 +54,7 @@ theorem wOp_adLW (E : Fin n → Fin n → Module.End ℂ M) (hE : IsGlRep E) (a 
     ∀ w, wOp E (adLW a b w) = E a b * wordE E w - wordE E w * E a b
   | [] => by simp [adLW, wordE]
   | p :: w => by
-    rw [adLW, map_add, wOp_mapDomain_letter, wOp_mapDomain_cons, wOp_adLW E hE a b w, lOp_adL E hE,
+    rw [adLW, map_add (f := _), wOp_mapDomain_letter, wOp_mapDomain_cons, wOp_adLW E hE a b w, lOp_adL E hE,
       wordE_cons_mul]
     noncomm_ring
 
@@ -86,7 +90,7 @@ theorem sT_Bc (c : Fin n) (v : V) (L : List (Fin n × Fin n) →₀ ℂ) :
     sT E V (Bc V c v L) = Pi.single c (wOp E L v) := by
   induction L using Finsupp.induction_linear with
   | zero => simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, LinearMap.add_apply, Pi.single_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), LinearMap.add_apply, Pi.single_add]
   | single w r =>
     rw [Bc_single, sT_single]
     simp [wOp, Finsupp.linearCombination_single, Pi.single_smul]
@@ -96,7 +100,7 @@ theorem sθ_Bc (EM : Fin n → Fin n → Module.End ℂ MM) (φ : MM) (ℓ : V �
     sθ V EM φ ℓ (Bc V c v L) = Pi.single c (ℓ v • wOp EM L φ) := by
   induction L using Finsupp.induction_linear with
   | zero => simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, LinearMap.add_apply, smul_add, Pi.single_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), LinearMap.add_apply, smul_add, Pi.single_add]
   | single w r =>
     rw [Bc_single, sθ_single]
     simp [wOp, Finsupp.linearCombination_single, Pi.single_smul, smul_smul, mul_comm]
@@ -112,10 +116,10 @@ theorem sT_sA (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ M) (
     sT E V (sA ε E V hV a b x) = tensV E a b (sT E V x) := by
   induction x using Finsupp.induction_linear with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | single p v =>
     obtain ⟨w, c⟩ := p
-    rw [sA_single, dif_pos hab, map_add, map_add, sT_Bc, wOp_adLW E hE, sT_single, sT_single]
+    rw [sA_single, dif_pos hab, map_add (f := _), map_add (f := _), sT_Bc, wOp_adLW E hE, sT_single, sT_single]
     clear hE
     by_cases hcb : c = b
     on_goal 1 => subst hcb; rw [if_pos rfl, sT_single]
@@ -135,10 +139,10 @@ theorem sθ_sA (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ M) 
       tensV EM a a (sθ V EM φ ℓ x) + ((Λ a - ν a : ℝ) : ℂ) • sθ V EM φ ℓ x := by
   induction x using Finsupp.induction_linear with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy, smul_add]; abel
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, smul_add]; abel
   | single p v =>
     obtain ⟨w, c⟩ := p
-    rw [sA_single, dif_pos rfl, map_add, map_add, sθ_Bc, wOp_adLW EM hEM, sθ_single, sθ_single]
+    rw [sA_single, dif_pos rfl, map_add (f := _), map_add (f := _), sθ_Bc, wOp_adLW EM hEM, sθ_single, sθ_single]
     have hl : ℓ ((E a a).restrict (fun v hv => hV a a rfl v hv) v) = ((Λ a : ℝ) : ℂ) * ℓ v :=
       hℓ a v _ rfl
     rw [hl]
@@ -160,7 +164,7 @@ theorem sES_Bc (c : Fin n) (v : V) (L : List (Fin n × Fin n) →₀ ℂ) :
     sES V (Bc V c v L) = ∑ d : Fin n, Bc V d v (Finsupp.mapDomain ((c, d) :: ·) L) := by
   induction L using Finsupp.induction_linear with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy, Finsupp.mapDomain_add, Finset.sum_add_distrib]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, Finsupp.mapDomain_add, Finset.sum_add_distrib]
   | single w r => simp only [Bc_single, sES_single, Finsupp.mapDomain_single]
 
 theorem adLW_cons (a b : Fin n) (p : Fin n × Fin n) (w : List (Fin n × Fin n)) :
@@ -184,8 +188,9 @@ theorem sA_comm_sES (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End �
   apply Finsupp.lhom_ext
   rintro ⟨w, c⟩ v
   simp only [Module.End.mul_apply]
-  rw [sES_single, map_sum, sA_single, dif_pos hab, map_add, map_add, sES_Bc, sES_single]
-  simp only [sA_single, dif_pos hab, adLW_cons, map_add, Bc_adL, Finset.sum_add_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [sES_single, map_sum, sA_single, dif_pos hab, map_add (f := _), map_add (f := _), sES_Bc, sES_single]
+  simp only [sA_single, dif_pos hab, adLW_cons, map_add (f := _), Bc_adL, Finset.sum_add_distrib]
   by_cases hcb : c = b
   · subst hcb
     simp [sES_single, Finset.sum_sub_distrib, Finset.sum_ite_eq']
@@ -218,7 +223,7 @@ theorem kap_single_right (l : Fin n × Fin n →₀ ℂ) (w : List (Fin n × Fin
     kap l (Finsupp.single w 1) = Finsupp.mapDomain (· :: w) l := by
   induction l using Finsupp.induction_linear with
   | zero => simp
-  | add x y hx hy => rw [map_add, LinearMap.add_apply, hx, hy, Finsupp.mapDomain_add]
+  | add x y hx hy => rw [map_add (f := _), LinearMap.add_apply, hx, hy, Finsupp.mapDomain_add]
   | single q r => simp [kap_single_left, Finsupp.mapDomain_single]
 
 theorem kap_single_single (p : Fin n × Fin n) (w : List (Fin n × Fin n)) (r s : ℂ) :
@@ -233,11 +238,11 @@ theorem TW_kap (a b : Fin n) (l : Fin n × Fin n →₀ ℂ) (L : List (Fin n ×
     TW a b (kap l L) = kap (tL a b l) L + kap l (TW a b L) := by
   induction l using Finsupp.induction_linear with
   | zero => simp
-  | add x y hx hy => simp only [map_add, LinearMap.add_apply, hx, hy]; abel
+  | add x y hx hy => simp only [map_add (f := _), LinearMap.add_apply, hx, hy]; abel
   | single p r =>
     induction L using Finsupp.induction_linear with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]; abel
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]; abel
     | single w s =>
       rw [kap_single_single, TW_single, tL_single, TW_single, adLW_cons', map_smul, LinearMap.smul_apply,
         map_smul]
@@ -258,7 +263,7 @@ theorem tL_rel (a b c d : Fin n) (l : Fin n × Fin n →₀ ℂ) :
   induction l using Finsupp.induction_linear with
   | zero => simp
   | add x y hx hy =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     have e : ∀ x1 x2 y1 y2 : Fin n × Fin n →₀ ℂ, x1 + y1 - (x2 + y2) = (x1 - x2) + (y1 - y2) := by
       intros; abel
     rw [e, hx, hy]
@@ -270,15 +275,16 @@ theorem tL_rel (a b c d : Fin n) (l : Fin n × Fin n →₀ ℂ) :
 
 theorem TW_rel_word (a b c d : Fin n) : ∀ w : List (Fin n × Fin n),
     TW a b (TW c d (Finsupp.single w 1)) - TW c d (TW a b (Finsupp.single w 1)) =
-      (if b = c then TW a d (Finsupp.single w 1) else 0) - (if d = a then TW c b (Finsupp.single w 1) else 0)
-  | [] => by simp [TW_single, adLW]
-  | p :: w => by
+      (if b = c then TW a d (Finsupp.single w 1) else 0) - (if d = a then TW c b (Finsupp.single w 1) else 0) := by
+  intro w
+  induction w with
+  | nil => simp [TW_single, adLW]
+  | cons p w ih =>
     have hw : Finsupp.single (p :: w) (1 : ℂ) = kap (Finsupp.single p 1) (Finsupp.single w 1) := by
       rw [kap_single_single, mul_one]
-    have ih := TW_rel_word a b c d w
     have hl := tL_rel a b c d (Finsupp.single p 1)
     rw [hw]
-    simp only [TW_kap, map_add]
+    simp only [TW_kap, map_add (f := _)]
     have e : ∀ (l : Fin n × Fin n →₀ ℂ) (L : List (Fin n × Fin n) →₀ ℂ),
         kap (tL a b (tL c d l)) L + kap (tL c d l) (TW a b L) +
             (kap (tL a b l) (TW c d L) + kap l (TW a b (TW c d L))) -
@@ -290,23 +296,6 @@ theorem TW_rel_word (a b c d : Fin n) : ∀ w : List (Fin n × Fin n),
       abel
     rw [e, ih, hl]
     split_ifs <;> simp <;> abel
-
-theorem TW_rel (a b c d : Fin n) (L : List (Fin n × Fin n) →₀ ℂ) :
-    TW a b (TW c d L) - TW c d (TW a b L) =
-      (if b = c then TW a d L else 0) - (if d = a then TW c b L else 0) := by
-  induction L using Finsupp.induction_linear with
-  | zero => simp
-  | add x y hx hy =>
-    simp only [map_add]
-    have e : ∀ x1 x2 y1 y2 : List (Fin n × Fin n) →₀ ℂ, x1 + y1 - (x2 + y2) = (x1 - x2) + (y1 - y2) := by
-      intros; abel
-    rw [e, hx, hy]
-    split_ifs <;> abel
-  | single w r =>
-    rw [← Finsupp.smul_single_one w r]
-    simp only [map_smul]
-    rw [← smul_sub, TW_rel_word]
-    split_ifs <;> simp [smul_sub]
 
 def Dm (a b : Fin n) : Module.End ℂ (KS (n := n) V) :=
   Finsupp.lsum ℂ fun p =>
@@ -334,18 +323,11 @@ theorem Gm_single (a b : Fin n) (w : List (Fin n × Fin n)) (c : Fin n) (v : V) 
   simp only [Gm, Finsupp.lsum_single]
   split_ifs <;> simp
 
-theorem Bc_smul_v (c : Fin n) (v : V) (r : ℂ) (L : List (Fin n × Fin n) →₀ ℂ) :
-    Bc V c (r • v) L = r • Bc V c v L := by
-  induction L using Finsupp.induction_linear with
-  | zero => simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy, smul_add]
-  | single w s => simp [Bc_single, Finsupp.smul_single, smul_smul, mul_comm]
-
 theorem Dm_Bc (a b c : Fin n) (v : V) (L : List (Fin n × Fin n) →₀ ℂ) :
     Dm V a b (Bc V c v L) = Bc V c v (TW a b L) := by
   induction L using Finsupp.induction_linear with
   | zero => simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, map_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]
   | single w r =>
     rw [Bc_single, ← Finsupp.smul_single, map_smul, Dm_single, ← Finsupp.smul_single_one w r, map_smul,
       map_smul]
@@ -354,14 +336,14 @@ theorem Fm_Bc (a b c : Fin n) (v : V) (L : List (Fin n × Fin n) →₀ ℂ) :
     Fm V ε E hV a b (Bc V c v L) = Bc V c (eV V ε E hV a b v) L := by
   induction L using Finsupp.induction_linear with
   | zero => simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _)]
   | single w r => simp [Bc_single, Fm_single, map_smul]
 
 theorem Gm_Bc (a b c : Fin n) (v : V) (L : List (Fin n × Fin n) →₀ ℂ) :
     Gm V a b (Bc V c v L) = if c = b then Bc V a v L else 0 := by
   induction L using Finsupp.induction_linear with
   | zero => simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy]; split_ifs <;> simp
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]; split_ifs <;> simp
   | single w r => rw [Bc_single, Gm_single, Bc_single]
 
 theorem sA_eq (a b : Fin n) : sA ε E V hV a b = Dm V a b + Fm V ε E hV a b + Gm V a b := by

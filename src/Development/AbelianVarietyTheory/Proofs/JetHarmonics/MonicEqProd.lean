@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.MonicSeparableProduct
 
@@ -51,7 +55,7 @@ theorem exists_sep {F : Type} [Field F] [IsAlgClosed F] (W : ValuationSubring F)
   set s : A := ((M.filter (fun r => IsUnit r)).map (fun r => t - algebraMap W A r)).prod with hs
   set g : A := ((M.filter (fun r => ¬ IsUnit r)).map (fun r => t - algebraMap W A r)).prod with hg
   have hsg : s * g = 0 := by
-    rw [hs, hg, ← Multiset.prod_add, ← Multiset.map_add, Multiset.filter_add_not, h0]
+    rw [hs, hg, ← Multiset.prod_add, ← Multiset.map_add (f := _), Multiset.filter_add_not, h0]
   have hcop : IsCoprime s g := by
     rw [hs]
     refine Multiset.prod_induction (fun x => IsCoprime x g) _
@@ -128,7 +132,7 @@ theorem main : ∀ (F : Type) [inst : Field F] [IsAlgClosed F] (W : ValuationSub
           exact ⟨y, hy, rfl⟩
         | zero => simp [τ]
         | add y z _ _ hy hz =>
-          have : τ (y + z) = τ y + τ z := by simp only [τ, map_add]; ring
+          have : τ (y + z) = τ y + τ z := by simp only [τ, map_add (f := _)]; ring
           rw [this]; exact add_mem hy hz
         | smul c y _ hy =>
           have : τ (c • y) = algebraMap W A c * τ y := by

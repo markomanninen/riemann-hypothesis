@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalToGlobal.Divisibility.Tuples
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsProdUnifMulUnitIdl
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqIffConjPl
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmEmbeddingProperties
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalToGlobal.Divisibility.Tuples
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsProdUnifMulUnitIdl
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqIffConjPl
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmEmbeddingProperties
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ namespace GlobalTheory.Mem.Chr.KDVal
 
 variable {L : Type} [Field L] [NumberField L] (F : Type) [Field F] [NumberField F] [Algebra F L]
 
-open Classical in
 
+open Classical in
 theorem valAt_locF (w : HeightOneSpectrum (𝓞 L)) (v : HeightOneSpectrum (𝓞 F)) (k : Fˣ) :
     valAt w (locF (L := L) F v k) =
       if w.under (𝓞 F) = v then WithZero.exp (-ordF w (upF F k)) else 1 := by
@@ -71,7 +75,7 @@ theorem mem_sup_of_balanced
       have hex : ∃ w' : HeightOneSpectrum (𝓞 L), w'.under (𝓞 F) = w.under (𝓞 F) := ⟨w, rfl⟩
       have hm : m (w.under (𝓞 F)) = -WithZero.log (valAt w a) := by
         simp only [m]
-        rw [dif_pos hex, ha w hex.choose hex.choose_spec]
+        rw [dite_eq_left hex, ha w hex.choose hex.choose_spec]
       rw [hm]
       simp only [smul_eq_mul, mul_neg, neg_neg, mul_one]
       exact WithZero.exp_log (valAt_ne_zero w a)
@@ -86,9 +90,9 @@ theorem mem_sup_of_balanced
 
 end GlobalTheory.Mem.Chr.KDVal
 
+
 open GlobalTheory.Mem.Chr.KDVal in
 open Classical in
-
 theorem GlobalTheory.Mem.Chr.mem_KD_sup_unitIdl_iff : ∀ (R : Ranks) (H : Formalism.BasicNotions.Host R) (a : Ideles H.E), a ∈ KD H ⊔ unitIdl H.E ↔ ∀ w w', IsConjPl H w w' → Valued.v ((a : AdeleRing (𝓞 H.E) H.E).2 w) = Valued.v ((a : AdeleRing (𝓞 H.E) H.E).2 w') := by
   intro R H a
   obtain ⟨c, hc, hcm, hu, -⟩ := GlobalTheory.Mem.HostCM.host_cm R H

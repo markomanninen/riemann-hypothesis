@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SplittingProjection
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OverLatticeIffSelfDualOverBase
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemLocLatOverLat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SplittingProjection
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OverLatticeIffSelfDualOverBase
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemLocLatOverLat
+
+@[expose] public section
 
 namespace GlobalTheory.OverObj
 

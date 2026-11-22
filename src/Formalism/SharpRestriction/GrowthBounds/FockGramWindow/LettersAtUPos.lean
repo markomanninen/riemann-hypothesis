@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.NormFockLe
-import Formalism.MahlerMeasure.MahlerMeasureProofs.GamLead
-import Formalism.MahlerMeasure.MahlerMeasureProofs.SSDirect
-import Formalism.ThetaLogCoordinates.BihomogeneousPairs.LetterChainEmbeddings.SmulMemOfNorm
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.NormFockLe
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.GamLead
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.SSDirect
+public import Formalism.ThetaLogCoordinates.BihomogeneousPairs.LetterChainEmbeddings.SmulMemOfNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,8 +94,9 @@ theorem lettersAt_uPos (hB : G.BlockOK) (j : Fin G.T.t → ℕ) (jp : ℕ) :
   obtain ⟨-, hpos, -, -⟩ := hB
   have hz : (∑ i : Fin G.T.t, if (G.uPos : ℕ) = G.T.pos i ∨ (G.uPos : ℕ) = G.T.pos i + 1 then j i else 0) = 0 :=
     Finset.sum_eq_zero fun i _ => if_neg (by have := hpos i; omega)
+  change (List.map (fun i : Fin G.T.t => if (G.uPos : ℕ) = G.T.pos i ∨ (G.uPos : ℕ) = G.T.pos i + 1 then j i else 0) (List.finRange G.T.t)).sum = 0 at hz
   unfold M.BlockData.lettersAt
-  simp [hz]
+  simp only [hz, ite_true, Nat.sub_zero]
 
 theorem Ljj_biHom (hB : G.BlockOK) (j : Fin G.T.t → ℕ) (jp : ℕ) (v : MvPolynomial (M.BVar N r G.T.t) ℚ_[p])
     (hv : v ∈ Ljj p (r := r) G j jp) :

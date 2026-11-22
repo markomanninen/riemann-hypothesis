@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.LemmaJ
-import Formalism.SharpRestriction.CuspSpanNormBounds.FamilyDoubleCosetBesselBoundOfGap
-import Formalism.HermitianCurvature.FiniteOrderIntersectionInSmooth
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.LemmaJ
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FamilyDoubleCosetBesselBoundOfGap
+public import Formalism.HermitianCurvature.FiniteOrderIntersectionInSmooth
+
+@[expose] public section
 
 set_option linter.dupNamespace false
 
@@ -73,10 +77,6 @@ def AmpKF : Prop :=
       (⟪l v, ξ⟫_ℂ * ⟪ξ', l' v'⟫_ℂ) • ampJ νR 1 (fun g => l (L.σ g w0)) (fun g => l' (L.σ g w0)) γ =
         ((PI.BesselPeriodGGP.fdegH μG L.σ w0 : ℂ)⁻¹) • OrbInt L (coefF L v v' ξ ξ') γ ν
 
-def AmpKFOfSteps : Prop :=
-  Formalism.FourierDecayAlt.ThreeDimData.SchurH → Formalism.FourierDecayAlt.ThreeDimData.NormInv → Formalism.FourierDecayAlt.ThreeDimData.GrowthG → Formalism.FourierDecayAlt.ThreeDimData.DecDD →
-    Formalism.FourierDecayAlt.ThreeDimData.BeConv → RStabInv → AmpKF
-
 def KDense : Prop :=
   ∀ (k r : ℕ) (ε : Fin (2 * r + k + 1) → Bool) (lam : Fin (2 * r + k + 1) → ℝ)
     (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
@@ -133,10 +133,5 @@ def NVHyp (D : D7) (large₂ : SizeData₂ D) (C' Cl Cg cb Cu cT CT C0 Cn : ℝ)
       (∃ x ∈ Formalism.FourierDecayAlt.ThreeDimData.DDsp A.σ w0, ∃ y ∈ Formalism.FourierDecayAlt.ThreeDimData.DDsp A.σ w0,
         Formalism.FourierDecayAlt.ThreeDimData.be W.z' (toBessel D τ w w' θ W lam' A hW hA hT hT').c W.π' A.σ W.μW'
           (toBessel D τ w w' θ W lam' A hW hA hT hT').μN x y ≠ 0)
-
-def AmpOrbOfAmpDD (D : D7) (large₂ : SizeData₂ D) (C' Cl Cg cb Cu cT CT C0 Cn : ℝ) : Prop :=
-  Formalism.FourierDecayAlt.ThreeDimData.Inputs → Formalism.FourierDecayAlt.ThreeDimData.DDFormOne → Formalism.FourierDecayAlt.ThreeDimData.AtFormAdmOne → KDense → NzKF → AmpKF → CellConv →
-    (1000 ≤ Cl → Cn ≤ Cl → GapOfHyp0 D large₂ C' Cl Cg cb Cu cT CT C0 Cn) → NVHyp D large₂ C' Cl Cg cb Cu cT CT C0 Cn →
-    Formalism.MainNotions.S.Pv.LemmaJ.AmpOrb D large₂ C' Cl Cg cb Cu cT CT C0 Cn
 
 end Formalism.MainNotions.S.Pv.AmpDD

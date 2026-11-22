@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.FourierWhittaker
-import GroundTheory.AutomorphicForms.MacdonaldWhittakerHecke
-import GroundTheory.LocalFields.LocalZeta
-import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
-import Formalism.RealPlaceAnalysis.StatementE
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.FourierWhittaker
+public import GroundTheory.AutomorphicForms.MacdonaldWhittakerHecke
+public import GroundTheory.LocalFields.LocalZeta
+public import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
+public import Formalism.RealPlaceAnalysis.StatementE
+
+@[expose] public section
 
 noncomputable section
 
@@ -191,13 +195,6 @@ structure WhA (V : Submodule ℂ (G3 → ℂ)) : Prop where
 def Vor (W : G3 → ℂ) : Prop :=
   ∑' a : ℚˣ, W (dia (dg a 1 1)) = ∑' b : ℚˣ, ∫ u, W (dia (dg 1 1 b) * cyc u) ∂adeleMeasure ℚ
 
-def ConvA : Prop :=
-  ∀ V, ∀ hV : WhA V, (∀ W ∈ V, Vor W) → ∃ U : V →ₗ[ℂ] archSmooth ℚ 3,
-    (∀ W : V, IsLeftInvariant (U W : G3 → ℂ) ∧ HasModerateGrowth (U W : G3 → ℂ) ∧ IsCuspidal (U W : G3 → ℂ) ∧
-      FourierWhittaker.whittaker (U W : G3 → ℂ) = W) ∧
-    (∀ (W : V) h g, (U ⟨fun x => W.1 (x * h), hV.stable _ W.2 h⟩ : G3 → ℂ) g = (U W : G3 → ℂ) (g * h)) ∧
-    ∀ (W : V) i j, U ⟨_, hV.lie _ W.2 i j⟩ = EA i j (U W)
-
 def Mellin : Prop :=
   ∀ f₁ f₂ : IdeleGroup ℚ → ℂ, Continuous f₁ → Continuous f₂ →
     (∃ U : OpenSubgroup (FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ, ∀ u ∈ U, ∀ x, f₁ (x * IdeleGroup.ofFinite u) = f₁ x ∧ f₂ (x * IdeleGroup.ofFinite u) = f₂ x) →
@@ -225,9 +222,9 @@ def Good (D : Dat) (V : Submodule ℂ (G3 → ℂ)) (hV : WhA V) : Prop :=
 
 def Glob : Prop := LocF → LocU → LocR → Mellin → ∀ D, An D → ∃ V hV, Good D V hV
 
+
 open UpperHalfPlane CongruenceSubgroup in
 open scoped MatrixGroups ModularForm in
-
 structure IsForm (k N : ℕ) (χ : DirichletCharacter ℂ N) (f : CuspForm (Gamma1 N) (k : ℤ)) (a : ℕ → ℂ) : Prop where
   char : ∀ γ : SL(2, ℤ), γ ∈ Gamma0 N → (f : ℍ → ℂ) ∣[(k : ℤ)] γ = χ ((γ 1 1 : ℤ) : ZMod N) • (f : ℍ → ℂ)
   exp : ∀ τ : ℍ, HasSum (fun n : ℕ => a n * Complex.exp (2 * Real.pi * Complex.I * n * τ)) (f τ)
@@ -235,55 +232,6 @@ structure IsForm (k N : ℕ) (χ : DirichletCharacter ℂ N) (f : CuspForm (Gamm
 def IsEig (k N : ℕ) (χ : DirichletCharacter ℂ N) (a : ℕ → ℂ) : Prop :=
   a 0 = 0 ∧ a 1 = 1 ∧ ∀ p n : ℕ, p.Prime → a p * a n = a (p * n) + if p ∣ n then χ p * (p : ℂ) ^ (k - 1) * a (n / p) else 0
 
-def Shim : Prop :=
-  ∀ (k N M : ℕ) [NeZero N] [NeZero M] (hM : N ∣ M), 4 ∣ M → 3 ≤ k → ∀ (χ : DirichletCharacter ℂ N) f a, IsForm k N χ f a →
-    ∀ c : DirichletCharacter ℂ M, ∃ Λ : ℂ → ℂ, DifferentiableOn ℂ Λ {s | 1 / 4 < s.re} ∧ Ord Λ (1 / 3) ∧
-      ∀ s : ℂ, 2 < s.re → Λ s = (s - 1) * DirichletCharacter.LFunction (c ^ 2) (2 * s) *
-        LSeries (fun n => (c * DirichletCharacter.changeLevel hM χ⁻¹) n * a (n ^ 2)) (s + k - 1)
-
 def pOf (v : Pl) : ℕ := Ideal.absNorm v.asIdeal
-
-def SatOf (N : ℕ) (χ : DirichletCharacter ℂ N) (a : ℕ → ℂ) (D : Dat) : Prop :=
-  (∀ v, v ∈ D.bad ↔ pOf v ∣ N) ∧ ∀ v ∉ D.bad, ∃ α β : ℂˣ, (α : ℂ) + β = a (pOf v) ∧
-    (α : ℂ) * β = χ (pOf v) * (pOf v : ℂ) ^ (D.k - 1) ∧ D.ν v (unifUnit (Qv v)) = α / β
-
-def Pure (k N : ℕ) (χ : DirichletCharacter ℂ N) (a : ℕ → ℂ) : Prop :=
-  ∀ p : ℕ, p.Prime → ¬ p ∣ N → ∀ α β : ℂ, α + β = a p → α * β = χ p * (p : ℂ) ^ (k - 1) → ‖α‖ = ‖β‖
-
-def Dih (a : ℕ → ℂ) : Prop :=
-  ∃ η : HeckeCharacter ℚ, η ≠ 1 ∧ η ^ 2 = 1 ∧ ∀ᶠ v : Pl in cofinite, IsUnramifiedChar (localChar η v) ∧
-    (localChar η v (unifUnit (Qv v)) = 1 ∨ a (pOf v) = 0)
-
-def FE (a : ℕ → ℂ) (D : Dat) : Prop :=
-  ∀ c δ S, admitted D c δ S → ∀ Λ Λ', Cont D c S 1 Λ → Cont D c⁻¹ S 1 Λ' →
-    (∀ s : ℂ, 1 / 4 < s.re → s.re < 3 / 4 → -s * Λ s = (s - 1) * gamS D c δ S s * Λ' (1 - s)) ∧ (Dih a ∨ Λ 1 = 0)
-
-def RS : Prop :=
-  ∀ (k N : ℕ) [NeZero N], 3 ≤ k → ∀ χ : DirichletCharacter ℂ N, χ.IsPrimitive → ∀ f a, IsForm k N χ f a → IsEig k N χ a →
-    Pure k N χ a → ∃ D : Dat, D.k = k ∧ SatOf N χ a D ∧ FE a D
-
-def EulOf : Prop :=
-  Shim → ∀ (N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N) (D : Dat) f a, IsForm D.k N χ f a → IsEig D.k N χ a → SatOf N χ a D →
-    ∀ c δ S, admitted D c δ S → ∃ Λ, Cont D c S 1 Λ
-
-def AnOf : Prop :=
-  ∀ a D, FE a D → (∀ c δ S, admitted D c δ S → ∃ Λ, Cont D c S 1 Λ) → Dih a ∨ An D
-
-def AdForm : Prop :=
-  ∀ (k N : ℕ) [NeZero N], 3 ≤ k → ∀ χ : DirichletCharacter ℂ N, χ.IsPrimitive → ∀ f a, IsForm k N χ f a → IsEig k N χ a →
-    Pure k N χ a → Dih a ∨ ∃ D : Dat, D.k = k ∧ SatOf N χ a D ∧ ∃ V hV, Good D V hV ∧ ∃ U : V →ₗ[ℂ] archSmooth ℚ 3,
-    (∀ W : V, IsLeftInvariant (U W : G3 → ℂ) ∧ HasModerateGrowth (U W : G3 → ℂ) ∧ IsCuspidal (U W : G3 → ℂ) ∧
-      FourierWhittaker.whittaker (U W : G3 → ℂ) = W) ∧
-    (∀ (W : V) h g, (U ⟨fun x => W.1 (x * h), hV.stable _ W.2 h⟩ : G3 → ℂ) g = (U W : G3 → ℂ) (g * h)) ∧
-    ∀ (W : V) i j, U ⟨_, hV.lie _ W.2 i j⟩ = EA i j (U W)
-
-theorem adForm_of (h1 : LocF) (h2 : LocU) (h3 : LocR) (h4 : Mellin) (h5 : Glob) (h6 : ConvA) (h7 : Shim) (h8 : RS)
-    (h9 : EulOf) (h10 : AnOf) : AdForm := by
-  intro k N _ hk χ hχ f a hf ha hp
-  obtain ⟨D, rfl, hs, hfe⟩ := h8 k N hk χ hχ f a hf ha hp
-  rcases h10 a D hfe (h9 h7 N χ D f a hf ha hs) with h | h
-  · exact Or.inl h
-  obtain ⟨V, hV, hg⟩ := h5 h1 h2 h3 h4 D h
-  exact Or.inr ⟨D, rfl, hs, V, hV, hg, h6 V hV hg.1⟩
 
 end Ad3

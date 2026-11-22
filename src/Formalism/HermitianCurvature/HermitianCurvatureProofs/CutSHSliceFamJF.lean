@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowVLift
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AsmCastVCastV
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsNormBoundThreeFamilies
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowVLift
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AsmCastVCastV
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsNormBoundThreeFamilies
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ComplexConjugate
@@ -31,7 +35,7 @@ private theorem liftVec_injective_apply {k i r' : ℕ} {v w : Fin (2 * r' + k + 
   funext q
   have hq := congrFun h ⟨q.1 + i, by omega⟩
   simp only [liftVec] at hq
-  rw [dif_pos ⟨by simp, by simp; omega⟩, dif_pos ⟨by simp, by simp; omega⟩] at hq
+  rw [dite_eq_left ⟨by simp, by simp; omega⟩, dite_eq_left ⟨by simp, by simp; omega⟩] at hq
   simpa using hq
 
 private theorem castM_castM_eq_castM_trans {k a b c : ℕ} (h1 : a = b) (h2 : b = c) (h3 : a = c) (g : B.Mat k a) :

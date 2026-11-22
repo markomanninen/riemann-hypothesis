@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSystemOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStableComplBot
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSystemOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStableComplBot
+
+@[expose] public section
+
 open NumberField IsDedekindDomain TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR GlobalTheory.UnitaryBC GlobalTheory.FrameAut Formalism.CohomologicalDescent.DepthNonnegative
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -28,7 +33,7 @@ private theorem norm_le_of_int {D : D7} {l : ℕ} [Fact l.Prime]
     exact mul_le_one₀ (h a ha) (norm_nonneg _) h2
   | zero => rw [RingHom.map_zero, norm_zero]; exact zero_le_one
   | add x y _ _ hx hy =>
-    rw [RingHom.map_add]
+    rw [RingHom.map_add (f := _)]
     exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
   | neg x _ hx => rw [RingHom.map_neg, norm_neg]; exact hx
 
@@ -65,7 +70,7 @@ private theorem finPart_cA {D : D7} (w : AE D) :
     finPart D (cA D w) = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F) D.sp.cm.sig (finPart D w) := by
   induction w using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul a e => rfl
 
 private theorem placeIdem {D : D7} {v : HeightOneSpectrum (𝓞 D.host.F)} {ε : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF D.host.F}
@@ -102,7 +107,7 @@ theorem UpperTheory.eval_localElement_matrix_eq_one_of_prime_not_dvd :
         (fun a ha => by
           change ‖ev (a ⊗ₜ[D.host.F] D.sp.cm.sig 1)‖ ≤ 1
           rw [map_one]; exact h a ha) P hP e h1 h2
-      rw [RingHom.map_add, RingHom.map_add, a1, finPart_cA, zero_add]
+      rw [RingHom.map_add (f := _), RingHom.map_add (f := _), a1, finPart_cA, zero_add]
       exact a2
     · refine ev_idem ev h P hP f ?_ h2
       rw [h1, ← RingHom.map_mul, placeIdem hε]

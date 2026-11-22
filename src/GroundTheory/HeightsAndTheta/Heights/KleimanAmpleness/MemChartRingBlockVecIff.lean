@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsBisTail
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerFurther
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsBisTail
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerFurther
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -59,7 +64,8 @@ theorem BlockGenTransfer.proof (hk : ChartKernel.Statement) : BlockGenTransfer.S
     ring
   have hR2 : aeval (fun p => y p / y ⟨p.1, c p.1⟩)
       (∑ b, X ⟨k, b⟩ * rename φ (P (c k) b) - 1) = 0 := by
-    simp only [map_sub, map_sum, map_mul, map_one, aeval_X, φ, aeval_rename_blockRatio, hck₀, hP]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_mul, map_one, aeval_X, φ, aeval_rename_blockRatio, hck₀, hP]
     rw [sub_eq_zero, ← hsum]
     refine Finset.sum_congr rfl fun b _ => ?_
     field_simp
@@ -72,7 +78,8 @@ theorem BlockGenTransfer.proof (hk : ChartKernel.Statement) : BlockGenTransfer.S
     rw [← h1]
     ring
   · have h2 := hk S K ι Ω y Ω' y' hle c hc _ hR2
-    simp only [map_sub, map_sum, map_mul, map_one, aeval_X, φ, aeval_rename_blockRatio, hck₀,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_mul, map_one, aeval_X, φ, aeval_rename_blockRatio, hck₀,
       sub_eq_zero] at h2
     rw [← h2]
     refine Finset.sum_congr rfl fun b _ => ?_

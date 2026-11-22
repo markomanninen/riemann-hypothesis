@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasLenOfLatLen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasLenOfLatLen
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,7 +75,7 @@ theorem form_eq_of (hσσ : ∀ x, σ (σ x) = x) {M : Matrix (Fin (N + 2)) (Fin
     · rw [if_neg e, if_neg fun e' => e e'.symm]
   · exact h1 i
   · have := congrArg σ (h1 j)
-    simp only [map_add, hσσ, map_zero] at this
+    simp only [map_add (f := _), hσσ, map_zero] at this
     linear_combination this
   · exact h2
 
@@ -134,7 +138,7 @@ theorem Heisenberg₂ : Heis := by
       rwa [form_last_last hs, antiJ_eq, if_neg (by rw [Fin.rev_last]; exact last_ne_zero)] at this
     have hr : ∀ j, rowOf u j = -σ (colOf u j.rev) := fun j => by
       have := congrArg σ (h1 j)
-      simp only [map_add, hσσ, map_zero] at this
+      simp only [map_add (f := _), hσσ, map_zero] at this
       linear_combination this
     refine ⟨hr, ?_, ?_⟩
     · simp only [dotProduct, hr, neg_mul, Finset.sum_neg_distrib]

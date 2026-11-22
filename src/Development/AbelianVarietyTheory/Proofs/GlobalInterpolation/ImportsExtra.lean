@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.PrimeOrderModule
 
@@ -22,7 +26,7 @@ theorem exists_character (S M : Type) [CommRing S] [AddCommGroup M] [Module S M]
       map_one' := by simp
       map_mul' := fun a b => by rw [mul_smul, key]
       map_zero' := by simp
-      map_add' := fun a b => by rw [add_smul, map_add] }
+      map_add' := fun a b => by rw [add_smul, map_add (f := _)] }
   refine ⟨χ, fun a m h => ?_⟩
   apply e.injective
   have h' : e (a • e.symm 1) = 0 := h

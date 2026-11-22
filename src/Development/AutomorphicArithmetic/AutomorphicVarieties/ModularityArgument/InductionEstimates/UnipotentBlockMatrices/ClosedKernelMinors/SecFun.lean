@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecCrit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecStr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.TensInterp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.UnipBlocks
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PkLaws
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.AdMeas
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecCrit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecStr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.TensInterp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.UnipBlocks
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PkLaws
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.AdMeas
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -63,12 +67,12 @@ private theorem height_blk {K : Type} [Field K] [NumberField K] (a b : AdelicGLn
   have h1 : ∏ w : InfinitePlace K, locHeight (infAt w g) ^ w.mult ≤
       (∏ w : InfinitePlace K, locHeight (infAt w a) ^ w.mult) * ∏ w : InfinitePlace K, locHeight (infAt w b) ^ w.mult := by
     rw [← Finset.prod_mul_distrib]
-    refine Finset.prod_le_prod (fun w _ => (pow_pos (locHeight_pos _) _).le) fun w _ => ?_
+    refine Finset.prod_le_prod₀ (fun w _ => (pow_pos (locHeight_pos _) _).le) fun w _ => ?_
     rw [← mul_pow, ei]
     exact pow_le_pow_left₀ (locHeight_pos _).le (locHeight_blk _ _) _
   have fa := finite_mulSupport_locHeight_finAt a
   have fb := finite_mulSupport_locHeight_finAt b
-  have h2 := finprod_le_finprod (finite_mulSupport_locHeight_finAt g) (fun v => (locHeight_pos _).le)
+  have h2 := finprod_le_finprod₀ (finite_mulSupport_locHeight_finAt g) (fun v => (locHeight_pos _).le)
     ((fa.union fb).subset (Function.mulSupport_mul _ _)) fun v => by
       rw [ef]; exact locHeight_blk _ _
   rw [finprod_mul_distrib fa fb] at h2
@@ -170,20 +174,20 @@ private theorem ht_bound {K : Type} [Field K] [NumberField K] (R : ℝ) : ∃ M 
 
 private theorem cusp_sum {K : Type} [Field K] [NumberField K] {μ₂ : Measure (G1 K 2)} {τ : Submodule ℂ (L2 μ₂)} {a b : ℕ}
     (φ : Fin a → G1 K 2 → ℂ) (hφ : ∀ i, Rd τ (φ i)) (c : Fin b → Fin a → ℂ) (m : G1 K 2) :
-    ∫ Y in unipFundamentalDomain K 2 1, ∑ j, ∑ i, c j i * φ i (unipOne K 2 1 Y * m) ∂unipMeasure K 2 1 = 0 := by
+    ∫ Y in unipFundamentalDomain K 2 1, ∑ j, ∑ i, c j i * φ i (unipOne (K := _) (n := _) 1 Y * m) ∂unipMeasure K 2 1 = 0 := by
   obtain ⟨D, hD, hsub⟩ := exists_isCompact_superset_unipFundamentalDomain (K := K) (n := 2) (r := 1)
-  have hi : ∀ j i, Integrable (fun Y => c j i * φ i (unipOne K 2 1 Y * m))
+  have hi : ∀ j i, Integrable (fun Y => c j i * φ i (unipOne (K := _) (n := _) 1 Y * m))
       ((unipMeasure K 2 1).restrict (unipFundamentalDomain K 2 1)) := fun j i =>
     ((continuous_const.mul ((hφ i).cont.comp ((continuous_unipOne 1).mul continuous_const))).continuousOn.integrableOn_compact
       hD).mono_set hsub
-  rw [integral_finset_sum _ fun j _ => integrable_finset_sum _ fun i _ => hi j i]
+  rw [integral_finsetSum _ fun j _ => integrable_finsetSum _ fun i _ => hi j i]
   refine Finset.sum_eq_zero fun j _ => ?_
-  rw [integral_finset_sum _ fun i _ => hi j i]
+  rw [integral_finsetSum _ fun i _ => hi j i]
   refine Finset.sum_eq_zero fun i _ => ?_
   rw [integral_const_mul, (hφ i).cusp, mul_zero]
 
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.secFun :
-    ∀ {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] (μ₂ : Measure (G1 K 2)) [μ₂.IsHaarMeasure] (τ₁ τ₂ : Submodule ℂ (L2 μ₂)) (D : TypeDat K (2 + 2)), CuspIrr μ₂ τ₁ → CuspIrr μ₂ τ₂ → ∀ f : G1 K (2 + 2) → ℂ, IsSec τ₁ τ₂ f → D.Fix f → SFun f := by
+    ∀ {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (μ₂ : Measure (G1 K 2)) [μ₂.IsHaarMeasure] (τ₁ τ₂ : Submodule ℂ (L2 μ₂)) (D : TypeDat K (2 + 2)), CuspIrr μ₂ τ₁ → CuspIrr μ₂ τ₂ → ∀ f : G1 K (2 + 2) → ℂ, IsSec τ₁ τ₂ f → D.Fix f → SFun f := by
   intro K _ _ _ μ₂ _ τ₁ τ₂ D h₁ h₂ f hf hD
   obtain ⟨hc, ⟨B, hB⟩, hu, hr, hs⟩ := (secCrit μ₂ τ₁ τ₂ D h₁ h₂ f hD).1 hf
   obtain ⟨E₁, E₂, i₁, i₂, r₁, r₂, hE⟩ := secStr μ₂ τ₁ τ₂ D h₁ h₂

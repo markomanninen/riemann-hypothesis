@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineSCShortExact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralSubOfIsForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GlueMeasUnivNeTopOfCompactStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineSCShortExact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralSubOfIsForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GlueMeasUnivNeTopOfCompactStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,7 +31,7 @@ theorem loc_smul (c : ℂ) (α : A.Fld) (i : A.ι) (v : V n) : A.loc (c • α) 
   · exact (smul_zero c).symm
 
 theorem dens_add (x y : Alt n) : dens (x + y) = dens x + dens y := by
-  simp only [dens, map_add, Finsupp.add_apply, add_div]
+  simp only [dens, map_add (f := _), Finsupp.add_apply, add_div]
 
 theorem dens_smul (c : ℂ) (x : Alt n) : dens (c • x) = c * dens x := by
   simp only [dens, map_smul, Finsupp.smul_apply, smul_eq_mul, mul_div_assoc]

@@ -1,11 +1,15 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.ClozelCohomologicalOf
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.ArchimedeanWhittakerDerivatives.ExistsUpperUnitary
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.ArchimedeanWhittakerDerivatives.HasDerivAtOfMulHom
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.ArchimedeanWhittakerDerivatives.HasDerivAtOfIntRel
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.ArchimedeanWhittakerDerivatives.ConjSingleApply
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.ArchimedeanWhittakerDerivatives.ContinuousAtEmb
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsStandardAdelicAddChar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsMirabolicWhittakerStageOfIsCuspForm
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.ClozelCohomologicalOf
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.ArchimedeanWhittakerDerivatives.ExistsUpperUnitary
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.ArchimedeanWhittakerDerivatives.HasDerivAtOfMulHom
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.ArchimedeanWhittakerDerivatives.HasDerivAtOfIntRel
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.ArchimedeanWhittakerDerivatives.ConjSingleApply
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.ArchimedeanWhittakerDerivatives.ContinuousAtEmb
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsStandardAdelicAddChar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsMirabolicWhittakerStageOfIsCuspForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ namespace PositivityTheory.Rg.Cz
 
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.CuspGeneric GlobalTheory.CuspRep.Generic GlobalTheory.GKCoh GlobalTheory.WigAlg Formalism.REAL
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 def dpsi (ψ : AddChar (Ad E) ℂ) (Z : Cinf E) : ℂ := deriv (fun t : ℝ => ψ (sInf E (t • Z))) 0
 
@@ -22,7 +26,7 @@ theorem hasDerivAt_dpsi {ψ : AddChar (Ad E) ℂ} (hψ : StdPsi ψ) (Z : Cinf E)
   obtain ⟨c, hc⟩ := hasDerivAt_of_mulHom (fun t : ℝ => ψ (sInf E (t • Z)))
     (hψ.cont.comp (continuous_sInf'.comp (continuous_id.smul continuous_const)))
     (by simp only [zero_smul, map_zero, AddChar.map_zero_eq_one])
-    (fun s t => by simp only [add_smul, map_add, AddChar.map_add_eq_mul])
+    (fun s t => by simp only [add_smul, map_add (f := _), AddChar.map_add_eq_mul])
   have h := hc 0
   simp only [zero_smul, map_zero, AddChar.map_zero_eq_one, mul_one] at h
   rw [dpsi, h.deriv]
@@ -86,7 +90,7 @@ theorem whitLie_holds : WhitLie := by
       have hβ0 : β p q ≠ 0 := (hu.map (coord τ)).ne_zero
       exact wirtinger_ne_zero (fun z => ψ (sInf E (atEmb τ z)))
         (hψ.cont.comp (continuous_sInf'.comp (continuous_atEmb τ)))
-        (fun z w => by simp only [atEmb_add, map_add, AddChar.map_add_eq_mul]) (fun z => hψ.norm _)
+        (fun z w => by simp only [atEmb_add, map_add (f := _), AddChar.map_add_eq_mul]) (fun z => hψ.norm _)
         (psi_nontriv hψ τ) (fun z => dpsi ψ (atEmb τ z))
         (fun z => by simpa only [atEmb_real_mul] using hasDerivAt_dpsi hψ (atEmb τ z)) _ hβ0
     · beta_reduce

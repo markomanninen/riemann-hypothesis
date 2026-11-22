@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableInvCube
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBBLiftV
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableInvCube
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBBLiftV
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBC
 

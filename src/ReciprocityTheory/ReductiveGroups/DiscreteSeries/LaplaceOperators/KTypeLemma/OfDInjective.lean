@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.QuotientHighestWeightTensorStandard
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JDichoA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.QuotientHighestWeightTensorStandard
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JDichoA
+
+@[expose] public section
 
 noncomputable section
 
@@ -164,7 +168,7 @@ def ofDL : D →ₛₗ[starRingEnd ℂ] cjSub D where
 
 def cjEnd (A : Module.End ℂ D) : Module.End ℂ (cjSub D) where
   toFun x := ofD (A (toD x))
-  map_add' x y := by rw [toD_add, map_add, ofD_add]
+  map_add' x y := by rw [toD_add, map_add (f := _), ofD_add]
   map_smul' c x := by
     show ofD (A (toD (c • x))) = c • ofD (A (toD x))
     rw [toD_smul, A.map_smul, ofD_smul]

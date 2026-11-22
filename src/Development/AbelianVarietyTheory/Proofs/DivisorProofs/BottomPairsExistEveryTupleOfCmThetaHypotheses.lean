@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.FunKit
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHeckeUNuInv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBetaInvHeckeU
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHeckeUAlphaH
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapFinPartILocFEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitaryOfOrderDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBottomPairBigMemberTwistedTupleStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBottomPairSmallMemberTwistedTupleStatement
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.FunKit
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHeckeUNuInv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBetaInvHeckeU
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHeckeUAlphaH
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapFinPartILocFEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitaryOfOrderDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBottomPairBigMemberTwistedTupleStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBottomPairSmallMemberTwistedTupleStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,8 +75,6 @@ theorem botExT_holds (hI : ∀ D, GlobalTheory.NormSum.Inp D) : BotExT := by
   obtain ⟨P₁, h1, h2, h3, h4, h5⟩ := GlobalTheory.T.exists_bottomPair_bigMember_twisted_tuple (hI D) hL hq hq' G t P.crv P.pt0 i j χβ hβ χν hν hw
   obtain ⟨P₂, h1', h2', h3', h4', h5'⟩ := GlobalTheory.T.exists_bottomPair_smallMember_twisted_tuple (hI D) hL hq hq' G t P.crv P.pt0 i j χα hα χν hν hw
   exact ⟨P₁, P₂, ⟨⟨h1, h1', h2, h2'.trans h2.symm⟩, h3, h3', h4, h4', ⟨h5, h5'⟩⟩⟩
-
-example : (∀ D, GlobalTheory.NormSum.Inp D) → BotExT := botExT_holds
 
 end GlobalTheory.SqTop
 

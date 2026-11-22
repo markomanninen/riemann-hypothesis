@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RbUVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.FerreroWashington
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RbUVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.FerreroWashington
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws UpperTheory.V.Two
 open scoped Classical
@@ -43,7 +47,7 @@ private theorem emb_twist {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ
       map_one' := j.injective (by rw [hφ, map_one, map_one])
       map_mul' := fun x y => j.injective (by rw [hφ, map_mul, map_mul, hφ, hφ])
       map_zero' := j.injective (by rw [hφ, map_zero, map_zero])
-      map_add' := fun x y => j.injective (by rw [hφ, map_add, map_add, hφ, hφ]) }
+      map_add' := fun x y => j.injective (by rw [hφ, map_add (f := _), map_add (f := _), hφ, hφ]) }
   let hA : Ω →ₐ[ℚ] Ω := h0.toRatAlgHom
   have hb : Function.Bijective hA := Algebra.IsAlgebraic.algHom_bijective hA
   exact ⟨AlgEquiv.ofBijective hA hb, fun x => hφ x⟩

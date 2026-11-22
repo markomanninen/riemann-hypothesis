@@ -1,10 +1,13 @@
-import Formalism.LagrangeIdealLifts.CocyclePolynomialDivision.LagrangeIdeal
-import Formalism.LagrangeIdealLifts.CocyclePolynomialDivision.LagrangeIdealCyc
-import Formalism.LagrangeIdealLifts.CocyclePolynomialDivision.Graded
-import Formalism.LagrangeIdealLifts.CocyclePolynomialDivision.CompsOfMemMap
-import Formalism.LagrangeIdealLifts.CocyclePolynomialDivision.UClaim
-import Formalism.LagrangeIdealLifts.CocyclePolynomialDivision.UChase
-import Formalism.LagrangeIdealLifts.CocyclePolynomialDivision.CoeffSumXPowMulExpand
+module
+
+public import Formalism.LagrangeIdealLifts.CocyclePolynomialDivision.LagrangeIdeal
+public import Formalism.LagrangeIdealLifts.CocyclePolynomialDivision.LagrangeIdealCyc
+public import Formalism.LagrangeIdealLifts.CocyclePolynomialDivision.Graded
+public import Formalism.LagrangeIdealLifts.Statement
+public import Formalism.LagrangeIdealLifts.CocyclePolynomialDivision.UClaim
+public import Formalism.LagrangeIdealLifts.CocyclePolynomialDivision.UChase
+
+@[expose] public section
 
 namespace Formalism.LIFT
 

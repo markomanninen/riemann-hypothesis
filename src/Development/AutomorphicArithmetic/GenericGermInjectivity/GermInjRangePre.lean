@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.GenericGermInjectivity.CoverGeneric
-import Development.AutomorphicArithmetic.CommutativeAlgebra.FunctionFieldOfFiniteEtaleCover
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SchemeCechComparisonNaturalRefinementStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteEtaleFunctionFieldIntegralClosureDifferentStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.GenericGermInjectivity.CoverGeneric
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.FunctionFieldOfFiniteEtaleCover
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SchemeCechComparisonNaturalRefinementStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteEtaleFunctionFieldIntegralClosureDifferentStatement
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry KaehlerDifferential GlobalTheory GlobalTheory.PD GlobalTheory.CechDR GlobalTheory.HodgeCoh ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
@@ -124,11 +128,17 @@ theorem cmp_trace (d : ℕ) (Z : Scheme.{0}) [IsIntegral Z] (p : Z ⟶ Sp ℂ) [
     ((cechHEquivCoh ℂ hU.cover (cover_biInf hU) ((Scheme.Modules.pushforward c).obj (Omega p' a)) b).symm
       ((coh.pushforwardEquiv ℂ (appTop_algebraMap hc) (Omega p' a) b).symm z))
   have hs := gp_spec (p := p) (U := U) (B' := B') p' d hc hinst' hU' a
-  obtain ⟨-, -, h2, -⟩ := GlobalTheory.T.cechHomologyEquivFamAlt ℂ ι (DR ℂ Y.functionField)
-    (fun I => omB ℂ Y.functionField (B' I) a)
-    (cechCube ℂ ((Scheme.Modules.pushforward c).obj (Omega p' a)) ⊤ U)
-    (gp p' hc hinst' hU' a) hs.1 hs.2.1 hs.2.2 b
-  obtain ⟨w, hw⟩ := h2 z1
+  let w : (GlobalTheory.PD.cech fun I => omB ℂ Y.functionField (B' I) a).Z (b : ℤ) :=
+    ⟨GlobalTheory.CechFam.famMap (gp p' hc hinst' hU' a) (b + 1) z1.1,
+      by
+        refine Submodule.mem_inf.2 ⟨GlobalTheory.CechFam.famMap_mem hs.2.1 b z1.1, ?_⟩
+        rw [LinearMap.mem_ker]
+        change deltaL ℂ ι (DR ℂ Y.functionField) (GlobalTheory.CechFam.famMap (gp p' hc hinst' hU' a) (b + 1) z1.1) = 0
+        rw [← GlobalTheory.CechFam.famMap_d hs.2.2, LinearMap.mem_ker.1 z1.2, map_zero]⟩
+  have hw : ∀ t : {s : Finset ι // s.card = b + 1},
+      (w : Finset ι → DR ℂ Y.functionField) t.1 = gp p' hc hinst' hU' a t.1 (z1.1 t) := by
+    intro t
+    exact GlobalTheory.CechFam.famMap_of_eq _ _ t.2
   have hle : ∀ s : Finset ι, cechOpen ⊤ (fun i => c ⁻¹ᵁ U i) s ≤ c ⁻¹ᵁ cechOpen ⊤ U s :=
     fun s => (preimage_cech s).ge
   have hne : ∀ t : {s : Finset ι // s.card = b + 1}, t.1.Nonempty := fun t =>

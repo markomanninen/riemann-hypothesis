@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.MatchIndOf
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.MatchIndOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,9 +13,6 @@ open scoped Classical
 
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
-
-open private normV_absNorm absNorm_pow exists_over finite_above pick pick_spec sat_unique sat_card bound_cx unr_cancel
-  cnt_congr cnt_zero cnt_zero_of_unr exists_bad unrAt_iff from Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.MatchIndOf
 
 namespace UpperTheory.V.Z.Gam
 
@@ -55,17 +56,31 @@ private theorem exists_key (sat : HeightOneSpectrum (𝓞 K) → Multiset ℂˣ 
   obtain rfl : w.under (𝓞 K) = u := under_eq ⟨w, hw⟩
   have hgood := not_not.1 fun h => hu ⟨w, h, rfl⟩
   refine hgood _ ?_
-  rw [normV_absNorm, normV_absNorm]
-  exact absNorm_pow w
+  have hnorm : ∀ {F : Type} [Field F] [NumberField F] (p : HeightOneSpectrum (𝓞 F)),
+      normV p = Ideal.absNorm p.asIdeal := fun p => by
+    rw [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
+  have : w.asIdeal.LiesOver (w.under (𝓞 K)).asIdeal := ⟨rfl⟩
+  have := w.isMaximal
+  have := (w.under (𝓞 K)).isMaximal
+  rw [hnorm, hnorm]
+  change Ideal.absNorm w.asIdeal = Ideal.absNorm (w.under (𝓞 K)).asIdeal ^
+    (w.under (𝓞 K)).asIdeal.inertiaDeg' w.asIdeal
+  rw [Ideal.inertiaDeg'_eq_inertiaDeg, Ideal.absNorm_pow_inertiaDeg]
 
 private theorem Key.sat {sat : HeightOneSpectrum (𝓞 K) → Multiset ℂˣ → Prop}
     {satL : HeightOneSpectrum (𝓞 L) → Multiset ℂˣ → Prop} {u : HeightOneSpectrum (𝓞 K)} (h : Key sat satL u) :
     ∃ B, sat u B := by
-  obtain ⟨w, rfl⟩ := exists_over (M := L) u
-  obtain ⟨B, hB, -⟩ := h ⟨w, ⟨rfl⟩⟩
+  have := u.isMaximal
+  obtain ⟨Q, hQm, hQl⟩ := Ideal.exists_maximal_ideal_liesOver_of_isIntegral (S := 𝓞 L) u.asIdeal
+  have hQ0 : Q ≠ ⊥ := by
+    rintro rfl
+    apply u.ne_bot
+    rw [hQl.over]
+    exact Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective _ _)
+  obtain ⟨B, hB, -⟩ := h ⟨⟨Q, hQm.isPrime, hQ0⟩, hQl⟩
   exact ⟨B, hB⟩
 
-private theorem key_twist [IsTotallyComplex K] [IsTotallyComplex L] {n : ℕ} {π : CuspSub K n} {P : CuspSub L n}
+private theorem key_twist [_root_.NumberField.IsTotallyComplex K] [_root_.NumberField.IsTotallyComplex L] {n : ℕ} {π : CuspSub K n} {P : CuspSub L n}
     (χ : HChar K) (ξ : HChar L) {u : HeightOneSpectrum (𝓞 K)}
     (hξ : ∀ w : PlacesOver L u, ξ.UnrAt w.1 ∧ ξ.val w.1 = χ.val u ^ fdeg w)
     (hu : χ.UnrAt u) (h : Key (CG.mk π).HasSat (CG.mk P).HasSat u) :
@@ -80,7 +95,7 @@ private theorem key_twist [IsTotallyComplex K] [IsTotallyComplex L] {n : ℕ} {�
   convert h using 2
   simp [mul_pow]
 
-private theorem core [IsTotallyComplex K] [IsTotallyComplex L] (hOps : PairGOps) (hCross : CrossG) (hSide : SideG)
+private theorem core [_root_.NumberField.IsTotallyComplex K] [_root_.NumberField.IsTotallyComplex L] (hOps : PairGOps) (hCross : CrossG) (hSide : SideG)
     (hSupp : SuppFacts) (hReg : RegroupBC) {d : ℕ} (hd : d.Prime) {n : ℕ} (hn : 2 ≤ n) (π : CuspSub K n) (P : CuspSub L n)
     (η : HChar K) (S : Finset (HeightOneSpectrum (𝓞 K)))
     (hkey : ∀ u ∉ S, Key (CG.mk π).HasSat (CG.mk P).HasSat u)
@@ -89,21 +104,31 @@ private theorem core [IsTotallyComplex K] [IsTotallyComplex L] (hOps : PairGOps)
     (hK : GroundTheory.Automorphic.GJStandardL.ramifiedPlaces K ⊆ S)
     (hL : ∀ w ∈ GroundTheory.Automorphic.GJStandardL.ramifiedPlaces L, w.under (𝓞 K) ∈ S)
     (v : HeightOneSpectrum (𝓞 K)) (hv : v ∈ S)
-    (sK : ∀ u : HeightOneSpectrum (𝓞 K), Multiset (IrrGL (u.adicCompletion K)))
-    (sL : ∀ w : HeightOneSpectrum (𝓞 L), Multiset (IrrGL (w.adicCompletion L)))
+    (sK : ∀ u : HeightOneSpectrum (𝓞 K), Multiset (IrrGL (k := u.adicCompletion K)))
+    (sL : ∀ w : HeightOneSpectrum (𝓞 L), Multiset (IrrGL (k := w.adicCompletion L)))
     (hsK : ∀ u, SuppAt π u (sK u)) (hsL : ∀ w, SuppAt P w (sL w))
     (zK : ∀ u ∈ S, u ≠ v → ∀ j < d, cnt (sK u) ((η ^ j).loc u) = 0)
     (zL : ∀ w : HeightOneSpectrum (𝓞 L), w.under (𝓞 K) ∈ S → w.under (𝓞 K) ≠ v → cnt (sL w) 1 = 0) :
     ∑ j ∈ Finset.range d, cnt (sK v) ((η ^ j).loc v) = ∑ w : PlacesOver L v, fdeg w * cnt (sL w.1) 1 := by
   obtain ⟨c₀, hc₀⟩ := satBd K n π
-  have hfin := finite_above (M := L) (S : Set (HeightOneSpectrum (𝓞 K))) S.finite_toSet
+  have hfin : {w : HeightOneSpectrum (𝓞 L) | w.under (𝓞 K) ∈ S}.Finite := by
+    have hsub : {w : HeightOneSpectrum (𝓞 L) | w.under (𝓞 K) ∈ S} ⊆
+        ⋃ p ∈ (S : Set (HeightOneSpectrum (𝓞 K))),
+          HeightOneSpectrum.asIdeal ⁻¹' p.asIdeal.primesOver (𝓞 L) := by
+      intro w hw
+      exact Set.mem_biUnion hw ⟨w.isPrime, ⟨rfl⟩⟩
+    refine (S.finite_toSet.biUnion fun p _ => ?_).subset hsub
+    have := p.isMaximal
+    exact (IsDedekindDomain.primesOver_finite p.asIdeal (𝓞 L)).preimage
+      (fun _ _ _ _ h => HeightOneSpectrum.ext h)
   obtain ⟨SL, memSL⟩ : ∃ SL : Finset (HeightOneSpectrum (𝓞 L)), ∀ w, w ∈ SL ↔ w.under (𝓞 K) ∈ S :=
     ⟨hfin.toFinset, fun w => by rw [Set.Finite.mem_toFinset]; rfl⟩
-  obtain ⟨BK, satK⟩ : ∃ BK : HeightOneSpectrum (𝓞 K) → Multiset ℂˣ, ∀ p ∉ S, (CG.mk π).HasSat p (BK p) :=
-    ⟨pick (CG.mk π).HasSat, fun p hp => pick_spec (hkey p hp).sat.choose_spec⟩
-  obtain ⟨BL, satL⟩ : ∃ BL : HeightOneSpectrum (𝓞 L) → Multiset ℂˣ, ∀ w ∉ SL, (CG.mk P).HasSat w (BL w) :=
-    ⟨pick (CG.mk P).HasSat, fun w hw =>
-      pick_spec (hkey _ (fun h => hw ((memSL w).2 h)) ⟨w, ⟨rfl⟩⟩).choose_spec.2⟩
+  choose! BK satK using fun p hp => (hkey p hp).sat
+  have hsatL : ∀ w ∉ SL, ∃ B, (CG.mk P).HasSat w B := by
+    intro w hw
+    obtain ⟨B, -, hB⟩ := hkey (w.under (𝓞 K)) (fun h => hw ((memSL w).2 h)) ⟨w, ⟨rfl⟩⟩
+    exact ⟨_, hB⟩
+  choose! BL satL using hsatL
   have hq : 1 < Ideal.absNorm v.asIdeal := NumberField.HeightOneSpectrum.one_lt_absNorm v
   have side : ∀ j, ∃ β Q : ℂ[X], j < d → β ≠ 0 ∧ Q.eval 0 = 1 ∧ Q.natDegree = cnt (sK v) ((η ^ j).loc v) ∧
       PairG (eulerL K (fun p => (cx BK p).map (· * ((η.val p : ℂˣ) : ℂ) ^ j)) S)
@@ -133,17 +158,26 @@ private theorem core [IsTotallyComplex K] [IsTotallyComplex L] (hOps : PairGOps)
     (fun w => v.asIdeal.inertiaDeg' w.asIdeal) hq fun w hw => ⟨hsL w, fun h => by
       have e : w.under (𝓞 K) = v := not_not.1 fun e => h (zL w ((memSL w).1 hw) e)
       rw [← e]
-      exact absNorm_pow w⟩
+      have : w.asIdeal.LiesOver (w.under (𝓞 K)).asIdeal := ⟨rfl⟩
+      have := w.isMaximal
+      have := (w.under (𝓞 K)).isMaximal
+      rw [Ideal.inertiaDeg'_eq_inertiaDeg, Ideal.absNorm_pow_inertiaDeg]⟩
   obtain ⟨c, hc⟩ := hReg K L d (S : Set (HeightOneSpectrum (𝓞 K))) (SL : Set (HeightOneSpectrum (𝓞 L))) (cx BK) (cx BL)
     (fun p => ((η.val p : ℂˣ) : ℂ)) c₀ n hd (fun w => by simpa using memSL w)
     (fun p hp => by
       have hp' : p ∉ S := by simpa using hp
       have hs := satK p hp'
-      refine ⟨by simp [cx, sat_card π hs], bound_cx p le_rfl (hc₀ p _ hs), fun w => ⟨?_, ((hη p hp').2 w).2, ?_⟩⟩
+      have hcard := GlobalTheory.LFun.HasSatGL.card ((CG.hasSat_mk π p _).1 hs)
+      refine ⟨by simp [cx, hcard], ?_, fun w => ⟨?_, ((hη p hp').2 w).2, ?_⟩⟩
+      · intro b hb
+        obtain ⟨b₀, hb₀, rfl⟩ := Multiset.mem_map.1 hb
+        simpa only [Units.val_inv_eq_inv_val] using hc₀ p _ hs b₀ hb₀
       · exact IsPrimitiveRoot.coe_units_iff.2 ((hη p hp').2 w).1
       · obtain ⟨B, h1, h2⟩ := hkey p hp' w
         have s2 := satL w.1 fun h => hp' (under_eq w ▸ (memSL w.1).1 h)
-        rw [cx, cx, sat_unique P s2 h2, sat_unique π hs h1, Multiset.map_map, Multiset.map_map]
+        have eK := GlobalTheory.LFun.HasSatGL.unique ((CG.hasSat_mk π p _).1 hs) ((CG.hasSat_mk π p _).1 h1)
+        have eL := GlobalTheory.LFun.HasSatGL.unique ((CG.hasSat_mk P w.1 _).1 s2) ((CG.hasSat_mk P w.1 _).1 h2)
+        rw [cx, cx, eL, eK, Multiset.map_map, Multiset.map_map]
         exact Multiset.map_congr rfl fun b _ => by simp)
   have pK' := hOps.2.2.1 _ _ _ _ _ _ _ c pK (fun s hs => (Finset.prod_apply ..).trans ((hc s).1 hs))
     (fun s hs => (Finset.prod_apply ..).trans ((hc s).2 hs))
@@ -181,7 +215,12 @@ private theorem norm_units [IsGalois K L] (hd : (Module.finrank K L).Prime) :
       (fun _ _ => Nat.zero_le _) (Finset.mem_univ w))
   rw [← hc] at hpos
   obtain ⟨j, hj⟩ := Finset.card_pos.1 hpos
-  exact unr_cancel ((unrAt_iff _ u).1 (unrAt_pow hu.1 j)) (mul_comm θ _ ▸ (Finset.mem_filter.1 hj).2)
+  intro x hx
+  haveI : (Valued.v : Valuation (u.adicCompletion K) (WithZero (Multiplicative ℤ))).Compatible :=
+    Valuation.Compatible.ofValuation _
+  have hx' := (ValuativeRel.isEquiv (ValuativeRel.valuation (u.adicCompletion K)) Valued.v).eq_one_iff_eq_one.1 hx
+  have hjx := (Finset.mem_filter.1 hj).2 x hx
+  rwa [MonoidHom.mul_apply, unrAt_pow hu.1 j x hx', mul_one] at hjx
 
 end BaseChangeTwists
 
@@ -198,8 +237,19 @@ theorem matchBCOf : MatchBCOf := by
   have FL := hSupp L n (by omega) P
   choose sK hsK using fun u => (FK u).1
   choose sL hsL using fun w => (FL w).1
-  choose bK hbK using fun u => exists_bad (sK u)
-  choose bL hbL using fun w => exists_bad (sL w)
+  have hexists_bad : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
+      [IsNonarchimedeanLocalField k] (s : Multiset (IrrGL (k := k))),
+      ∃ T : Finset (kˣ →* ℂˣ), ∀ ζ hζ, IrrGL.ofChar ζ hζ ∈ s → ζ ∈ T := by
+    intro k _ _ _ _ s
+    let charOf (y : IrrGL (k := k)) : kˣ →* ℂˣ :=
+      if h : ∃ ζ hζ, y = IrrGL.ofChar ζ hζ then h.choose else 1
+    refine ⟨s.toFinset.image charOf, fun ζ hζ hy => Finset.mem_image.2 ⟨_, Multiset.mem_toFinset.2 hy, ?_⟩⟩
+    have h : ∃ ζ' hζ', IrrGL.ofChar ζ hζ = IrrGL.ofChar ζ' hζ' := ⟨ζ, hζ, rfl⟩
+    dsimp only [charOf]
+    rw [dite_eq_left h]
+    exact (IrrGL.ofChar_inj.1 h.choose_spec.choose_spec).symm
+  choose bK hbK using fun u => hexists_bad (sK u)
+  choose bL hbL using fun w => hexists_bad (sL w)
   obtain ⟨S₀, hS₀⟩ : ∃ S₀ : Finset (HeightOneSpectrum (𝓞 K)), ∀ u, u ∈ S₀ ↔ u = v ∨ u ∈ S₁ ∨ u ∈ T ∨ u ∈ R ∨
       u ∈ GroundTheory.Automorphic.GJStandardL.ramifiedPlaces K ∨
       ∃ w ∈ GroundTheory.Automorphic.GJStandardL.ramifiedPlaces L, w.under (𝓞 K) = u :=
@@ -215,6 +265,33 @@ theorem matchBCOf : MatchBCOf := by
   have k₀ : ∀ u ∉ S₀, Key (CG.mk π).HasSat (CG.mk P).HasSat u :=
     fun u hu => hkey u fun h => hu ((hS₀ _).2 (Or.inr (Or.inl h)))
   have r₀ : ∀ u ∉ S₀, u ∉ R := fun u hu h => hu ((hS₀ _).2 (by tauto))
+  have hunrAt : ∀ (ψ : HChar K) (u : HeightOneSpectrum (𝓞 K)), ψ.UnrAt u ↔ IsUnram (ψ.loc u) := by
+    intro ψ u
+    haveI : (Valued.v : Valuation (u.adicCompletion K) (WithZero (Multiplicative ℤ))).Compatible :=
+      Valuation.Compatible.ofValuation _
+    refine forall_congr' fun x => imp_congr_left ?_
+    exact (ValuativeRel.isEquiv (ValuativeRel.valuation (u.adicCompletion K)) Valued.v).eq_one_iff_eq_one.symm
+  have hunr_cancel : ∀ {k : Type} [Field k] [ValuativeRel k] {a b : kˣ →* ℂˣ},
+      IsUnram a → IsUnram (a * b) → IsUnram b := by
+    intro k _ _ a b ha hab x hx
+    have h := hab x hx
+    rwa [MonoidHom.mul_apply, ha x hx, one_mul] at h
+  have hcnt_zero : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
+      [IsNonarchimedeanLocalField k] (s : Multiset (IrrGL (k := k))) (a : kˣ →* ℂˣ),
+      (∀ ζ hζ, IrrGL.ofChar ζ hζ ∈ s → ¬ IsUnram (ζ * a)) → cnt s a = 0 := by
+    intro k _ _ _ _ s a h
+    unfold cnt
+    rw [Multiset.card_eq_zero, Multiset.filter_eq_nil]
+    rintro y hy ⟨ζ, hζ, rfl, hu⟩
+    exact h ζ hζ hy hu
+  have hcnt_zero_of_unr : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
+      [IsNonarchimedeanLocalField k] (s : Multiset (IrrGL (k := k))) (a : kˣ →* ℂˣ),
+      (∀ y ∈ s, y.IsUnramChar) → ¬ IsUnram a → cnt s a = 0 := by
+    intro k _ _ _ _ s a hs ha
+    refine hcnt_zero s a fun ζ hζ hy hu => ?_
+    obtain ⟨μ, hμ, e⟩ := hs _ hy
+    rw [IrrGL.ofChar_inj.1 e] at hu
+    exact ha (hunr_cancel hμ hu)
   have main := core hOps hCross hSide hSupp hReg hd hn (π.twist χ) (P.twist ξ) η S
     (fun u hu => by
       have hur : χ.UnrAt u := not_not.1 fun h => hu ((hS _).2 (Or.inr h))
@@ -226,29 +303,41 @@ theorem matchBCOf : MatchBCOf := by
     (fun u hu hne j hj => by
       rw [(htK u).2.1]
       by_cases h0 : u ∈ S₀
-      · refine cnt_zero _ _ fun ζ hζ hy => ?_
+      · refine hcnt_zero _ _ fun ζ hζ hy => ?_
         rw [mul_comm (χ.loc u), ← mul_assoc]
         exact (hχ u h0 hne).1 _ (Finset.mem_image.2 ⟨(ζ, j),
           Finset.mem_product.2 ⟨hbK u ζ hζ hy, Finset.mem_range.2 hj⟩, rfl⟩)
       · obtain ⟨B, hB⟩ := (k₀ u h0).sat
-        refine cnt_zero_of_unr _ _ ((FK _).2.2.2.1 _ B (hsK _) hB)
-          fun h => ((hS _).1 hu).resolve_left h0 ((unrAt_iff χ _).2 ?_)
+        refine hcnt_zero_of_unr _ _ ((FK _).2.2.2.1 _ B (hsK _) hB)
+          fun h => ((hS _).1 hu).resolve_left h0 ((hunrAt χ _).2 ?_)
         rw [mul_comm] at h
-        exact unr_cancel ((unrAt_iff _ u).1 (unrAt_pow (hR u (r₀ u h0)).1 j)) h)
+        exact hunr_cancel ((hunrAt _ u).1 (unrAt_pow (hR u (r₀ u h0)).1 j)) h)
     (fun w hu hne => by
       rw [(htL w).2.1, mul_one, (hξ (w.under (𝓞 K)) ⟨w, ⟨rfl⟩⟩).1]
       by_cases h0 : w.under (𝓞 K) ∈ S₀
-      · exact cnt_zero _ _ fun ζ hζ hy => (hχ _ h0 hne).2 ⟨w, ⟨rfl⟩⟩ ζ (hbL w ζ hζ hy)
+      · exact hcnt_zero _ _ fun ζ hζ hy => (hχ _ h0 hne).2 ⟨w, ⟨rfl⟩⟩ ζ (hbL w ζ hζ hy)
       · obtain ⟨B, -, hB⟩ := k₀ _ h0 ⟨w, ⟨rfl⟩⟩
-        exact cnt_zero_of_unr _ _ ((FL _).2.2.2.1 _ _ (hsL _) hB)
-          fun h => ((hS _).1 hu).resolve_left h0 ((unrAt_iff χ _).2
+        exact hcnt_zero_of_unr _ _ ((FL _).2.2.2.1 _ _ (hsL _) hB)
+          fun h => ((hS _).1 hu).resolve_left h0 ((hunrAt χ _).2
             (hT _ (fun h' => h0 ((hS₀ _).2 (by tauto))) _ _ (GlobalTheory.HeckeComp.smooth_loc χ _) h)))
+  have hcnt_congr : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
+      [IsNonarchimedeanLocalField k] (s : Multiset (IrrGL (k := k))) {a b : kˣ →* ℂˣ},
+      IsUnram (a * b⁻¹) → cnt s a = cnt s b := by
+    intro k _ _ _ _ s a b h
+    have e : ∀ x : kˣ, ValuativeRel.valuation k (x : k) = 1 → a x = b x := fun x hx => by
+      have h' := h x hx
+      rwa [MonoidHom.mul_apply, MonoidHom.inv_apply, mul_inv_eq_one] at h'
+    unfold cnt
+    congr 1
+    refine Multiset.filter_congr fun y _ => exists_congr fun ζ => exists_congr fun hζ => and_congr_right fun _ => ?_
+    refine forall_congr' fun x => forall_congr' fun hx => ?_
+    rw [MonoidHom.mul_apply, MonoidHom.mul_apply, e x hx]
   refine Eq.trans (Finset.sum_congr rfl fun j _ => ?_) (main.trans (Finset.sum_congr rfl fun w _ => ?_))
   · rw [(htK v).2.1, (FK v).2.1 _ _ (hsK v) hs]
-    refine (cnt_congr _ ?_).symm
+    refine (hcnt_congr _ ?_).symm
     rwa [mul_inv, mul_mul_mul_comm, mul_inv_cancel, mul_one]
   · rw [(htL w.1).2.1, mul_one, (hξ v w).1, (FL w.1).2.1 _ _ (hsL w.1) (hs' w)]
     congr 1
-    exact cnt_congr _ (hnm v w _ hχv)
+    exact hcnt_congr _ (hnm v w _ hχv)
 
 end UpperTheory.V.Z.Gam

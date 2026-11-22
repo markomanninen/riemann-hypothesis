@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ToralCohomology.ParZero
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreLM
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ToralCohomology.ParZero
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreLM
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,12 +41,12 @@ theorem upq_split {r s : ℕ} (Y : Mat r s) : ∃ Y₁ ∈ upq r s, ∃ Y₂ ∈
   have e1 : ∀ Z : Mat r s, Z * Jm r s * Jm r s = Z := fun Z => by rw [Matrix.mul_assoc, Jm_sq, Matrix.mul_one]
   have e2 : ∀ Z : Mat r s, Jm r s * (Jm r s * Z) = Z := fun Z => by rw [← Matrix.mul_assoc, Jm_sq, Matrix.one_mul]
   refine ⟨(1 / 2 : ℂ) • (Y - Jm r s * Yᴴ * Jm r s), ?_, (-Complex.I / 2) • (Y + Jm r s * Yᴴ * Jm r s), ?_, ?_⟩
-  · simp only [upq, Set.mem_setOf_eq, Matrix.conjTranspose_smul, Matrix.conjTranspose_sub, Matrix.conjTranspose_mul, Jm_star,
+  · simp only [upq, Set.mem_ofPred_eq, Matrix.conjTranspose_smul, Matrix.conjTranspose_sub, Matrix.conjTranspose_mul, Jm_star,
       Matrix.conjTranspose_conjTranspose, Matrix.smul_mul, Matrix.mul_smul, Matrix.sub_mul, Matrix.mul_sub,
       Matrix.mul_assoc, Jm_sq, Matrix.mul_one, e2]
     rw [show star (1 / 2 : ℂ) = 1 / 2 by simp]
     module
-  · simp only [upq, Set.mem_setOf_eq, Matrix.conjTranspose_smul, Matrix.conjTranspose_add, Matrix.conjTranspose_mul, Jm_star,
+  · simp only [upq, Set.mem_ofPred_eq, Matrix.conjTranspose_smul, Matrix.conjTranspose_add, Matrix.conjTranspose_mul, Jm_star,
       Matrix.conjTranspose_conjTranspose, Matrix.smul_mul, Matrix.mul_smul, Matrix.add_mul, Matrix.mul_add,
       Matrix.mul_assoc, Jm_sq, Matrix.mul_one, e2]
     rw [show star (-Complex.I / 2 : ℂ) = Complex.I / 2 by simp]
@@ -72,7 +76,7 @@ theorem ker_stable {ι V : Type} [AddCommGroup V] [Module ℂ V] {r s : ℕ} (L 
     (N N' : Submodule ℂ V) (h : ∀ Y, (∀ w, Y w ∈ upq r s) → ∀ x ∈ N, L Y x ∈ N') (Y) : ∀ x ∈ N, L Y x ∈ N' := by
   choose Y₁ h₁ Y₂ h₂ e using fun w => upq_split (Y w)
   intro x hx
-  rw [show Y = Y₁ + Complex.I • Y₂ from funext e, map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply]
+  rw [show Y = Y₁ + Complex.I • Y₂ from funext e, map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply]
   exact add_mem (h _ h₁ x hx) (N'.smul_mem _ (h _ h₂ x hx))
 
 theorem exists_act {A V M : Type} [AddCommGroup A] [Module ℂ A] [AddCommGroup V] [Module ℂ V] [AddCommGroup M] [Module ℂ M]
@@ -196,7 +200,7 @@ theorem exists_mod (hD : Dic) {B : Base F E} {a a' : ℕ} {G : Geo σ a a'} {X :
       refine Eq.trans ?_ this
       simp only [LinearMap.comp_apply, MultilinearMap.toLinearMap_apply]
       congr 3
-      simp only [a1, act1, chiTr, LinearMap.sub_apply, LinearMap.add_apply, LinearMap.smul_apply, Module.End.one_apply,
+      simp only [a1, act1, chiTr, LinearMap.add_apply, LinearMap.smul_apply, one_apply_eq_self,
         LinearMap.smulRight_apply, Matrix.traceLinearMap_apply, smul_eq_mul, sub_eq_add_neg, ← neg_smul]
       congr 2
       push_cast; ring)

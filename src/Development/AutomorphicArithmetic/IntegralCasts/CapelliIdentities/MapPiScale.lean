@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory in
 theorem UpperTheory.Reformulated.B.MapPiScale.map_pi_scale :

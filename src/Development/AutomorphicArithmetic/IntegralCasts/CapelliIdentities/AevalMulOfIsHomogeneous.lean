@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qh65.aeval_mul_of_isHomogeneous :
     ∀ {σ R : Type} [Fintype σ]

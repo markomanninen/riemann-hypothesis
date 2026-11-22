@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IncreasingRowChoicePerColumn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IncreasingRowChoicePerColumn
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -65,12 +69,14 @@ theorem dual_bases_colProd : (∀ (N : ℕ) (Y : YoungDiagram) (hY : Y.colLen 0 
     (Formalism.GradedWeylDivisibility.fockQPos _ _ _).1.trans (hbd k j)
   have hdC : ∀ j J, Formalism.GradedWeylDivisibility.fockQ (d j) (C J) = (c J j : ℚ) * Nc := by
     intro j J
-    rw [hcQ J, ← fockQRight_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hcQ J, ← fockQRight_apply, map_sum]
     simp only [map_smul, fockQRight_apply, hdb, smul_eq_mul, mul_ite, mul_zero, Finset.sum_ite_eq',
       Finset.mem_univ, if_true]
   have hgi : ∀ i k, Formalism.GradedWeylDivisibility.fockQ (b i) (g k) = ∑ J, (c J k : ℚ) * Formalism.GradedWeylDivisibility.fockQ (b i) (C J) := by
     intro i k
-    rw [← fockQRight_apply, hg, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← fockQRight_apply, hg, map_sum]
     simp only [map_smul, fockQRight_apply, smul_eq_mul]
   have key : ∀ i k, Formalism.GradedWeylDivisibility.fockQ (b i) (g k) = if i = k then Nc else 0 := by
     intro i k
@@ -78,7 +84,8 @@ theorem dual_bases_colProd : (∀ (N : ℕ) (Y : YoungDiagram) (hY : Y.colLen 0 
       rw [GlobalTheory.StdDual.dualWeyl_eq]
       exact Submodule.span_le_restrictScalars ℤ ℚ _ (hb ▸ Submodule.subset_span ⟨i, rfl⟩)
     have h1 := congrArg (fockQRight (d k)) (H' (b i) hmem)
-    rw [map_sum, map_smul] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_smul] at h1
     simp only [map_smul, fockQRight_apply, smul_eq_mul, hdC] at h1
     rw [hdb] at h1
     rw [hgi]
@@ -108,7 +115,8 @@ theorem dual_bases_colProd : (∀ (N : ℕ) (Y : YoungDiagram) (hY : Y.colLen 0 
     have h0 : Formalism.GradedWeylDivisibility.fockQ (g k - d k) (g k - d k) = 0 := by
       rw [← fockQRight_apply]
       nth_rewrite 2 [← ha]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_eq_zero fun i _ => ?_
       rw [map_zsmul, fockQRight_apply, horth, smul_zero]
     by_contra hne

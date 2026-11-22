@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqAevalOfCommuteOfSeparable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqAevalOfCommuteOfSeparable
+
+@[expose] public section
 
 namespace GlobalTheory.CentralizerSeparable
 

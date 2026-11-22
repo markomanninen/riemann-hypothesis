@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.SumNegOnePowFinrankEqZero
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.PushComparisonBijectiveOfIsClosedEmbedding
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.SubsingletonOfSheafPullback
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RestrictPullbackIsoHomAppPullbackSections
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.TopologicalKrullDimLeOfIrreducibleCloseds
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.PreservesFiniteColimitsTwistFunctor
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsMvPolynomialOfIteratedBackwardDifferenceVa
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.SumNegOnePowFinrankEqZero
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.PushComparisonBijectiveOfIsClosedEmbedding
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.SubsingletonOfSheafPullback
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RestrictPullbackIsoHomAppPullbackSections
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.TopologicalKrullDimLeOfIrreducibleCloseds
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.PreservesFiniteColimitsTwistFunctor
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsMvPolynomialOfIteratedBackwardDifferenceVa
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -36,8 +40,11 @@ variable {F G : X.Modules}
 theorem chi_def (F : X.Modules) : chi k F = ∑ᶠ n, (-1 : ℤ) ^ n * hdim k F n := rfl
 
 theorem chi_eq_sum_range (N : ℕ) (hN : ∀ n, N ≤ n → Subsingleton (coh F n)) :
-    chi k F = ∑ n ∈ Finset.range N, (-1 : ℤ) ^ n * hdim k F n :=
-  finsum_neg_one_pow_hdim_eq_sum k F N hN
+    chi k F = ∑ n ∈ Finset.range N, (-1 : ℤ) ^ n * hdim k F n := by
+  refine finsum_eq_sum_of_support_subset _ fun n hn ↦ ?_
+  by_contra h
+  have := hN n (by simpa using h)
+  exact hn (by simp [hdim_eq_zero_of_subsingleton])
 
 theorem chi_eq_hdim_zero (h : ∀ n, 0 < n → Subsingleton (coh F n)) : chi k F = hdim k F 0 := by
   rw [chi_eq_sum_range k 1 h]; simp
@@ -64,20 +71,17 @@ variable {k}
 namespace FiniteCoh
 
 theorem of_linearEquiv [Algebra k Γ(Y, ⊤)] {H : Y.Modules} (h : FiniteCoh k F)
-    (e : ∀ n, coh F n ≃ₗ[k] coh H n) : FiniteCoh k H where
-  finite n := have := h.finite n; Module.Finite.equiv (e n)
-  eventually_zero :=
-    have ⟨N, hN⟩ := h.eventually_zero
-    ⟨N, fun n hn ↦ have := hN n hn; (e n).symm.injective.subsingleton⟩
+    (e : ∀ n, coh F n ≃ₗ[k] coh H n) : FiniteCoh k H := by
+  refine ⟨fun n ↦ ?_, ?_⟩
+  · have := h.finite n
+    exact Module.Finite.equiv (e n)
+  · obtain ⟨N, hN⟩ := h.eventually_zero
+    refine ⟨N, fun n hn ↦ ?_⟩
+    have := hN n hn
+    exact (e n).symm.injective.subsingleton
 
 theorem of_iso (h : FiniteCoh k F) (e : F ≅ G) : FiniteCoh k G :=
   h.of_linearEquiv fun n ↦ cohOn.mapIso k ⊤ n e
-
-theorem of_subsingleton (h : ∀ n, Subsingleton (coh F n)) : FiniteCoh k F :=
-  ⟨fun n ↦ have := h n; inferInstance, 0, fun n _ ↦ h n⟩
-
-theorem of_isZero (h : IsZero F) : FiniteCoh k F :=
-  of_subsingleton fun n ↦ cohOn.subsingleton_of_isZero h ⊤ n
 
 theorem of_acyclic (h₀ : Module.Finite k (coh F 0)) (h : ∀ n, 0 < n → Subsingleton (coh F n)) :
     FiniteCoh k F where
@@ -86,44 +90,15 @@ theorem of_acyclic (h₀ : Module.Finite k (coh F 0)) (h : ∀ n, 0 < n → Subs
     | n + 1 => have := h (n + 1) n.succ_pos; inferInstance
   eventually_zero := ⟨1, h⟩
 
-theorem finite_support (h : FiniteCoh k F) :
-    (Function.support fun n ↦ (-1 : ℤ) ^ n * hdim k F n).Finite := by
-  obtain ⟨N, hN⟩ := h.eventually_zero
-  refine (Finset.range N).finite_toSet.subset fun n hn ↦ ?_
-  by_contra h'
-  have := hN n (by simpa using h')
-  exact hn (by simp [hdim_eq_zero_of_subsingleton])
-
 variable {S : ShortComplex X.Modules}
 
-theorem of_shortExact₂ (hS : S.ShortExact) (h₁ : FiniteCoh k S.X₁) (h₃ : FiniteCoh k S.X₃) :
-    FiniteCoh k S.X₂ where
-  finite := cohOn.forall_finite₂ k hS ⊤ h₁.finite h₃.finite
-  eventually_zero :=
-    have ⟨N₁, h₁⟩ := h₁.eventually_zero
-    have ⟨N₃, h₃⟩ := h₃.eventually_zero
-    ⟨max N₁ N₃, fun n hn ↦ cohOn.subsingleton₂ hS ⊤ n (h₁ n (by omega)) (h₃ n (by omega))⟩
-
 theorem of_shortExact₃ (hS : S.ShortExact) (h₁ : FiniteCoh k S.X₁) (h₂ : FiniteCoh k S.X₂) :
-    FiniteCoh k S.X₃ where
-  finite := cohOn.forall_finite₃ k hS ⊤ h₁.finite h₂.finite
-  eventually_zero :=
-    have ⟨N₁, h₁⟩ := h₁.eventually_zero
-    have ⟨N₂, h₂⟩ := h₂.eventually_zero
-    ⟨max N₁ N₂, fun n hn ↦ cohOn.subsingleton₃ hS ⊤ n (h₂ n (by omega)) (h₁ (n + 1) (by omega))⟩
-
-theorem of_shortExact₁ (hS : S.ShortExact) (h₂ : FiniteCoh k S.X₂) (h₃ : FiniteCoh k S.X₃) :
-    FiniteCoh k S.X₁ where
-  finite := cohOn.forall_finite₁ k hS ⊤ h₂.finite h₃.finite
-  eventually_zero := by
-    obtain ⟨N₂, h₂⟩ := h₂.eventually_zero
-    obtain ⟨N₃, h₃⟩ := h₃.eventually_zero
-    refine ⟨max N₂ N₃ + 1, fun n hn ↦ ?_⟩
-    obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by omega⟩
-    exact cohOn.subsingleton₁ hS ⊤ m (h₃ m (by omega)) (h₂ (m + 1) (by omega))
-
-theorem biprod (hF : FiniteCoh k F) (hG : FiniteCoh k G) : FiniteCoh k (F ⊞ G) :=
-  of_shortExact₂ (ShortComplex.Splitting.ofHasBinaryBiproduct F G).shortExact hF hG
+    FiniteCoh k S.X₃ := by
+  refine ⟨cohOn.forall_finite₃ k hS ⊤ h₁.finite h₂.finite, ?_⟩
+  obtain ⟨N₁, hN₁⟩ := h₁.eventually_zero
+  obtain ⟨N₂, hN₂⟩ := h₂.eventually_zero
+  exact ⟨max N₁ N₂, fun n hn ↦
+    cohOn.subsingleton₃ hS ⊤ n (hN₂ n (by omega)) (hN₁ (n + 1) (by omega))⟩
 
 end FiniteCoh
 
@@ -135,56 +110,23 @@ theorem chi_shortExact (hS : S.ShortExact) (h₁ : FiniteCoh k S.X₁) (h₃ : F
     chi k S.X₂ = chi k S.X₁ + chi k S.X₃ :=
   finsum_neg_one_pow_hdim_eq_add k hS h₁.finite h₃.finite h₁.eventually_zero h₃.eventually_zero
 
-theorem chi_shortExact₃ (hS : S.ShortExact) (h₁ : FiniteCoh k S.X₁) (h₂ : FiniteCoh k S.X₂) :
-    chi k S.X₃ = chi k S.X₂ - chi k S.X₁ := by
-  rw [chi_shortExact hS h₁ (h₁.of_shortExact₃ hS h₂)]; ring
-
-theorem chi_shortExact₁ (hS : S.ShortExact) (h₂ : FiniteCoh k S.X₂) (h₃ : FiniteCoh k S.X₃) :
-    chi k S.X₁ = chi k S.X₂ - chi k S.X₃ := by
-  rw [chi_shortExact hS (h₂.of_shortExact₁ hS h₃) h₃]; ring
-
 end ShortExact
-
-theorem chi_biprod (hF : FiniteCoh k F) (hG : FiniteCoh k G) :
-    chi k (F ⊞ G) = chi k F + chi k G :=
-  have := chi_shortExact (ShortComplex.Splitting.ofHasBinaryBiproduct F G).shortExact hF hG
-  this
 
 section Pi
 
 variable {ι : Type*} [Fintype ι] {E : ι → X.Modules}
 
-theorem exists_forall_subsingleton_coh (h : ∀ i, FiniteCoh k (E i)) :
-    ∃ N, ∀ i n, N ≤ n → Subsingleton (coh (E i) n) := by
-  choose N hN using fun i ↦ (h i).eventually_zero
-  exact ⟨Finset.univ.sup N, fun i n hn ↦ hN i n ((Finset.le_sup (Finset.mem_univ i)).trans hn)⟩
-
-theorem FiniteCoh.pi (h : ∀ i, FiniteCoh k (E i)) : FiniteCoh k (∏ᶜ E) where
-  finite n := have := fun i ↦ (h i).finite n; cohOn.finite_pi k E ⊤ n
-  eventually_zero :=
-    have ⟨N, hN⟩ := exists_forall_subsingleton_coh h
-    ⟨N, fun n hn ↦ have := fun i ↦ hN i n hn; (cohOn.piEquiv k ⊤ n E).injective.subsingleton⟩
-
-theorem chi_pi (h : ∀ i, FiniteCoh k (E i)) : chi k (∏ᶜ E) = ∑ i, chi k (E i) := by
-  obtain ⟨N, hN⟩ := exists_forall_subsingleton_coh h
-  rw [chi_eq_sum_range k N fun n hn ↦
-      have := fun i ↦ hN i n hn; (cohOn.piEquiv k ⊤ n E).injective.subsingleton,
-    Finset.sum_congr rfl fun i _ ↦ chi_eq_sum_range k N (hN i), Finset.sum_comm]
-  refine Finset.sum_congr rfl fun n _ ↦ ?_
-  have := fun i ↦ (h i).finite n
-  rw [hdim_pi, Nat.cast_sum, Finset.mul_sum]
-
 end Pi
 
-variable (k F) in
 
+variable (k F) in
 theorem finiteCoh_of_isAffine_of_finite [IsAffine X] [Module.Finite k Γ(X, ⊤)]
     [QCoh.IsFiniteQC F] : FiniteCoh k F :=
   have : Module.Finite Γ(X, ⊤) (coh F 0) := Module.Finite.equiv (coh.zeroEquiv F).symm
   .of_acyclic (Module.Finite.trans Γ(X, ⊤) _) fun _ hn ↦ coh.subsingleton_of_isAffine F hn
 
-variable (k X) in
 
+variable (k X) in
 theorem chi_structureModule_of_isAffine [IsAffine X] :
     chi k (structureModule X) = Module.finrank k Γ(X, ⊤) := by
   rw [chi_eq_hdim_zero k fun _ hn ↦ coh.subsingleton_of_isAffine _ hn, hdim_def,
@@ -219,7 +161,7 @@ def cohPushMap (hf : ∀ r : R, f.appTop (algebraMap R Γ(X, ⊤) r) = algebraMa
     (H : Y.Modules) (U : X.Opens) (n : ℕ) :
     cohOn ((Scheme.Modules.pushforward f).obj H) U n →ₗ[R] cohOn H (f ⁻¹ᵁ U) n where
   toFun x := (cohOn.toH' H _ n).symm (pushH' f H U n (cohOn.toH' _ U n x))
-  map_add' x y := by simp only [map_add]
+  map_add' x y := by simp only [map_add (f := _)]
   map_smul' r x := by
     apply (cohOn.toH' H _ n).injective
     rw [RingHom.id_apply, cohOn.toH'_smul, cohOn.toH'_smul, AddEquiv.apply_symm_apply,
@@ -262,10 +204,6 @@ theorem chi_pushforward_of_bijective (h : ∀ n, Function.Bijective (cohPushMap 
 include hf
 
 variable (H)
-
-theorem finiteCoh_pushforward_iff_of_isClosedImmersion [IsClosedImmersion f] :
-    FiniteCoh k ((Scheme.Modules.pushforward f).obj H) ↔ FiniteCoh k H :=
-  finiteCoh_pushforward_iff_of_bijective hf (cohPushMap_bijective_of_isClosedImmersion k f hf H ⊤)
 
 theorem chi_pushforward_of_isClosedImmersion [IsClosedImmersion f] :
     chi k ((Scheme.Modules.pushforward f).obj H) = chi k H :=
@@ -326,8 +264,8 @@ def lbProd (L : ι → LB X) (n : ι → ℤ) : LB X where
   g j j' := ∏ i, res (inf_le_inf (prodChart_le L j i) (prodChart_le L j' i))
     ((L i).g (j i) (j' i)) ^ n i
 
-open scoped Classical in
 
+open scoped Classical in
 def lbInvProd (L : ι → LB X) (S : Finset ι) : LB X :=
   lbProd L fun i ↦ if i ∈ S then -1 else 0
 
@@ -348,7 +286,7 @@ theorem gm_lbProd_g (L : ι → LB X) (n : ι → ℤ) (r : Y ⟶ X) (y : Y) (j 
 
 variable {L : ι → LB X}
 
-theorem isLB_lbProd (hL : ∀ i, (L i).IsLB) (n : ι → ℤ) : (lbProd L n).IsLB where
+theorem isLB_lbProd (hL : ∀ i, (L i).IsLB) (n : ι → ℤ) : (lbProd L n).IsLB := {
   cover := top_le_iff.1 fun x _ ↦ by
     choose j hj using fun i ↦ Semi.LB.mem_of_cover (hL i) x
     exact Opens.mem_iSup.2 ⟨j, mem_prodChart.2 hj⟩
@@ -358,7 +296,7 @@ theorem isLB_lbProd (hL : ∀ i, (L i).IsLB) (n : ι → ℤ) : (lbProd L n).IsL
     refine (congrArg₂ (· * ·) (res_lbProd_g L n j j' _) (res_lbProd_g L n j' j'' _)).trans
       (Eq.trans ?_ (res_lbProd_g L n j j'' _).symm)
     rw [← Finset.prod_mul_distrib]
-    exact Finset.prod_congr rfl fun i _ ↦ by rw [← mul_zpow, Semi.LB.res_cocycle (hL i)]
+    exact Finset.prod_congr rfl fun i _ ↦ by rw [← mul_zpow, Semi.LB.res_cocycle (hL i)] }
 
 theorem isLB_lbInvProd (hL : ∀ i, (L i).IsLB) (S : Finset ι) : (lbInvProd L S).IsLB :=
   isLB_lbProd hL _
@@ -392,7 +330,8 @@ theorem cls_lbProd (hL : ∀ i, (L i).IsLB) (n : ι → ℤ) (h : (lbProd L n).I
     ext i
     simp [Finset.sum_apply, Pi.single_apply]
   change c n = _
-  rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   refine Finset.sum_congr rfl fun i _ ↦ ?_
   rw [map_zsmul, ← e]
   exact congrArg _ (cls_lbProd_single hL i)
@@ -440,12 +379,12 @@ def chiPic (F : X.Modules) : Pic X → ℤ :=
 
 variable {F G : X.Modules} {M N : LB X}
 
-variable (F) in
 
+variable (F) in
 @[simp] theorem chiPic_cls (hM : M.IsLB) : chiPic k F (cls M hM) = chi k (twist F M) := rfl
 
-variable (F) in
 
+variable (F) in
 @[simp] theorem chiPic_zero : chiPic k F 0 = chi k F := (chi_congr k (Twist.trivIso F)).symm
 
 theorem chiPic_congr (e : F ≅ G) : chiPic k F = chiPic k G := by
@@ -453,15 +392,15 @@ theorem chiPic_congr (e : F ≅ G) : chiPic k F = chiPic k G := by
   obtain ⟨M, hM, rfl⟩ := cls_surj c
   exact chi_congr k ((twistFunctor M).mapIso e)
 
-variable (F) in
 
+variable (F) in
 theorem chiPic_twist (hM : M.IsLB) (c : Pic X) :
     chiPic k (twist F M) c = chiPic k F (cls M hM + c) := by
   obtain ⟨N, hN, rfl⟩ := cls_surj c
   exact (nonempty_twist_twist_iso_of_cls_eq F hM hN (isLB_tens hM hN) rfl).elim (chi_congr k)
 
-variable (F) in
 
+variable (F) in
 theorem chi_twistZ (hM : M.IsLB) (n : ℤ) : chi k (twistZ F M n) = chiPic k F (n • cls M hM) := by
   rw [← cls_lbZPow hM n (Twist.isLB_lbZPow hM n), chiPic_cls]
 
@@ -479,27 +418,16 @@ theorem twist (h : FiniteCohTwists k F) (hM : M.IsLB) : FiniteCohTwists k (twist
   fun N hN ↦ (nonempty_twist_twist_iso_of_cls_eq F hM hN (isLB_tens hM hN) rfl).elim
     fun e ↦ (h _ (isLB_tens hM hN)).of_iso e.symm
 
-theorem of_isZero (h : IsZero F) : FiniteCohTwists k F :=
-  fun _ hM ↦ .of_isZero ((Twist.isZero_twist_iff hM).2 h)
-
 variable {S : ShortComplex X.Modules}
-
-theorem of_shortExact₂ (hS : S.ShortExact) (h₁ : FiniteCohTwists k S.X₁)
-    (h₃ : FiniteCohTwists k S.X₃) : FiniteCohTwists k S.X₂ :=
-  fun M hM ↦ FiniteCoh.of_shortExact₂ (Twist.shortExact_map hM hS) (h₁ M hM) (h₃ M hM)
 
 theorem of_shortExact₃ (hS : S.ShortExact) (h₁ : FiniteCohTwists k S.X₁)
     (h₂ : FiniteCohTwists k S.X₂) : FiniteCohTwists k S.X₃ :=
   fun M hM ↦ FiniteCoh.of_shortExact₃ (Twist.shortExact_map hM hS) (h₁ M hM) (h₂ M hM)
 
-theorem of_shortExact₁ (hS : S.ShortExact) (h₂ : FiniteCohTwists k S.X₂)
-    (h₃ : FiniteCohTwists k S.X₃) : FiniteCohTwists k S.X₁ :=
-  fun M hM ↦ FiniteCoh.of_shortExact₁ (Twist.shortExact_map hM hS) (h₂ M hM) (h₃ M hM)
-
 end FiniteCohTwists
 
-variable (k F) in
 
+variable (k F) in
 theorem finiteCohTwists_of_isAffine_of_finite [IsAffine X] [Module.Finite k Γ(X, ⊤)]
     [QCoh.IsFiniteQC F] : FiniteCohTwists k F := fun _ hM ↦
   have := Twist.isFiniteQC_twist (F := F) hM
@@ -547,11 +475,6 @@ theorem chiPic_pushforward_of_isAffineHom [IsAffineHom f] [H.IsQuasicoherent] :
   exact chi_twist_pushforward_of_isAffineHom hf H hM
 
 variable {H}
-
-theorem FiniteCohTwists.pushforward_of_isClosedImmersion [IsClosedImmersion f]
-    (h : FiniteCohTwists k H) : FiniteCohTwists k ((Scheme.Modules.pushforward f).obj H) :=
-  fun M hM ↦ ((finiteCoh_pushforward_iff_of_isClosedImmersion hf _).2
-    (h _ (pull_isLB hM f))).of_iso (Twist.projIso M f H)
 
 theorem FiniteCohTwists.pushforward_of_isAffineHom [IsAffineHom f] [H.IsQuasicoherent]
     (h : FiniteCohTwists k H) : FiniteCohTwists k ((Scheme.Modules.pushforward f).obj H) :=
@@ -601,21 +524,21 @@ theorem interNumRed_def (Z : Closeds X) (L : ι → LB X) :
 theorem topSelf_def (M : LB X) (d : ℕ) :
     topSelfIntersection k M d = interNum k (structureModule X) fun _ : Fin d ↦ M := rfl
 
-variable (F) in
 
+variable (F) in
 theorem interNum_eq_multiDiff (hL : ∀ i, (L i).IsLB) :
     interNum k F L = multiDiff (fun i ↦ cls (L i) (hL i)) (chiPic k F) 0 :=
   Finset.sum_congr rfl fun S _ ↦ by
     rw [zero_sub, ← cls_lbInvProd hL S (isLB_lbInvProd hL S), chiPic_cls, smul_eq_mul]
 
-variable (F) in
 
+variable (F) in
 theorem interNum_twist_eq_multiDiff (hL : ∀ i, (L i).IsLB) (hM : M.IsLB) :
     interNum k (twist F M) L = multiDiff (fun i ↦ cls (L i) (hL i)) (chiPic k F) (cls M hM) := by
   rw [interNum_eq_multiDiff k _ hL, funext (chiPic_twist k F hM), multiDiff_translate, add_zero]
 
-variable (F) in
 
+variable (F) in
 theorem interNum_lbZPow_eq_multiDiff (hM : M.IsLB) (a : ι → ℤ) :
     interNum k F (fun i ↦ lbZPow M (a i)) = multiDiff a (fun n ↦ chi k (twistZ F M n)) 0 := by
   have e := congrFun (multiDiff_comap (zmultiplesHom _ (cls M hM)) a (chiPic k F)) 0
@@ -628,33 +551,33 @@ theorem interNum_congr (e : F ≅ G) (L : ι → LB X) : interNum k F L = interN
   Finset.sum_congr rfl fun S _ ↦
     congrArg (_ * ·) (chi_congr k ((twistFunctor (lbInvProd L S)).mapIso e))
 
-variable (F) in
 
+variable (F) in
 theorem interNum_congr_cls (hL : ∀ i, (L i).IsLB) (hL' : ∀ i, (L' i).IsLB)
     (h : ∀ i, cls (L i) (hL i) = cls (L' i) (hL' i)) : interNum k F L = interNum k F L' := by
   rw [interNum_eq_multiDiff k F hL, interNum_eq_multiDiff k F hL', funext h]
 
-variable (F) in
 
+variable (F) in
 theorem interNum_congr_lbIso (hL : ∀ i, (L i).IsLB) (hL' : ∀ i, (L' i).IsLB)
     (h : ∀ i, LBIso (L i) (L' i)) : interNum k F L = interNum k F L' :=
   interNum_congr_cls k F hL hL' fun i ↦ (cls_eq_iff _ _).2 (h i)
 
-variable (F) in
 
+variable (F) in
 theorem interNum_comp_equiv (hL : ∀ i, (L i).IsLB) (e : κ ≃ ι) :
     interNum k F (L ∘ e) = interNum k F L := by
   rw [interNum_eq_multiDiff k F hL, interNum_eq_multiDiff k F (L := L ∘ e) fun i ↦ hL (e i),
     ← multiDiff_comp_equiv e]
   rfl
 
-variable (F) in
 
+variable (F) in
 theorem interNum_comp_perm (hL : ∀ i, (L i).IsLB) (σ : Equiv.Perm ι) :
     interNum k F (L ∘ σ) = interNum k F L := interNum_comp_equiv k F hL σ
 
-variable (F) in
 
+variable (F) in
 @[simp] theorem interNum_of_isEmpty [IsEmpty ι] (L : ι → LB X) : interNum k F L = chi k F := by
   rw [interNum_eq_multiDiff k F isEmptyElim, multiDiff_of_isEmpty, chiPic_zero]
 
@@ -693,7 +616,9 @@ theorem interNum_cons (hM : M.IsLB) (hP : ∀ i, (P i).IsLB) :
 theorem interNum_twist_cons (hM : M.IsLB) (hP : ∀ i, (P i).IsLB) :
     interNum k (twist F M) (Fin.cons M P : Fin (d + 1) → LB X) =
       interNum k (twist F M) P - interNum k F P := by
-  rw [interNum_cons k _ hM hP, interNum_congr k (Twist.twistTwistZNegOneIso F hM)]
+  have ⟨e⟩ := nonempty_twist_twist_iso_of_cls_eq F hM (Twist.isLB_lbZPow hM (-1))
+    (LB.isLB_triv X) (by rw [cls_triv, cls_lbZPow hM, neg_one_zsmul, add_neg_cancel])
+  rw [interNum_cons k _ hM hP, interNum_congr k (e ≪≫ (Twist.trivIso F).symm)]
 
 theorem interNum_cons_of_cls_eq_add (hM : M.IsLB) (hA : A.IsLB) (hB : B.IsLB)
     (hP : ∀ i, (P i).IsLB) (h : cls M hM = cls A hA + cls B hB) :
@@ -715,24 +640,24 @@ theorem interNum_one (hM : M.IsLB) :
 
 end Cons
 
-variable (F) in
 
+variable (F) in
 theorem interNum_eq_zero_of_cls_eq_zero (hL : ∀ i, (L i).IsLB) (i : ι)
     (h : cls (L i) (hL i) = 0) : interNum k F L = 0 := by
   rw [interNum_eq_multiDiff k F hL, multiDiff_eq_shiftAct,
     Finset.prod_eq_zero (Finset.mem_univ i) (by rw [h, diffElt_zero]), map_zero]
   rfl
 
-variable (F) in
 
+variable (F) in
 theorem interNum_const_eq_multiDiff (hM : M.IsLB) :
     interNum k F (fun _ : ι ↦ M) = multiDiff (fun _ : ι ↦ 1) (fun n ↦ chi k (twistZ F M n)) 0 := by
   rw [← interNum_lbZPow_eq_multiDiff k F hM]
   exact interNum_congr_cls k F (fun _ ↦ hM) (fun _ ↦ Twist.isLB_lbZPow hM 1)
     fun _ ↦ by rw [cls_lbZPow hM, one_zsmul]
 
-variable (F) in
 
+variable (F) in
 theorem interNum_const_eq_sum (hM : M.IsLB) (d : ℕ) :
     interNum k F (fun _ : Fin d ↦ M) = ∑ j ∈ Finset.range (d + 1),
       (-1 : ℤ) ^ j * d.choose j * chi k (twistZ F M (-j)) := by
@@ -744,8 +669,8 @@ theorem interNum_const_eq_sum (hM : M.IsLB) (d : ℕ) :
   rw [e]
   exact Finset.sum_congr rfl fun j _ ↦ by ring
 
-variable (F) in
 
+variable (F) in
 theorem interNum_lbZPow_of_polynomial (hM : M.IsLB) {d : ℕ} (p : Polynomial ℚ)
     (hp : p.natDegree ≤ d) (h : ∀ n : ℤ, (chi k (twistZ F M n) : ℚ) = p.eval (n : ℚ))
     (a : Fin d → ℤ) :
@@ -758,8 +683,8 @@ theorem interNum_lbZPow_of_polynomial (hM : M.IsLB) {d : ℕ} (p : Polynomial �
   rw [e₃, e₂, Function.comp_apply, multiDiff_polynomial_eval _ p hp] at e₁
   exact e₁.symm
 
-variable (F) in
 
+variable (F) in
 theorem interNum_const_of_polynomial (hM : M.IsLB) {d : ℕ} (p : Polynomial ℚ)
     (hp : p.natDegree ≤ d) (h : ∀ n : ℤ, (chi k (twistZ F M n) : ℚ) = p.eval (n : ℚ)) :
     (interNum k F (fun _ : Fin d ↦ M) : ℚ) = d.factorial * p.coeff d := by
@@ -814,11 +739,6 @@ theorem interNum_shortExact₃ (hS : S.ShortExact) (hL : ∀ i, (L i).IsLB)
     (h₁ : FiniteCohTwists k S.X₁) (h₂ : FiniteCohTwists k S.X₂) :
     interNum k S.X₃ L = interNum k S.X₂ L - interNum k S.X₁ L := by
   rw [interNum_shortExact hS hL h₁ (h₁.of_shortExact₃ hS h₂)]; ring
-
-theorem interNum_shortExact₁ (hS : S.ShortExact) (hL : ∀ i, (L i).IsLB)
-    (h₂ : FiniteCohTwists k S.X₂) (h₃ : FiniteCohTwists k S.X₃) :
-    interNum k S.X₁ L = interNum k S.X₂ L - interNum k S.X₃ L := by
-  rw [interNum_shortExact hS hL (h₂.of_shortExact₁ hS h₃) h₃]; ring
 
 end ShortExact
 
@@ -880,13 +800,13 @@ theorem chi_structureModule_Spec : chi k (structureModule (Spec A)) = Module.fin
   rw [chi_eq_hdim_zero k fun _ hn ↦ coh.subsingleton_of_isAffine _ hn, hdim_def,
     ((coh.zeroUnitSpecEquiv A).restrictScalars k).finrank_eq]
 
-omit [Algebra k Γ(Spec A, ⊤)] [IsScalarTower k A Γ(Spec A, ⊤)] in
 
+omit [Algebra k Γ(Spec A, ⊤)] [IsScalarTower k A Γ(Spec A, ⊤)] in
 abbrev algebraΓSpecOf : Algebra k Γ(Spec A, ⊤) :=
   ((algebraMap A Γ(Spec A, ⊤)).comp (algebraMap k A)).toAlgebra
 
-omit [Algebra k Γ(Spec A, ⊤)] [IsScalarTower k A Γ(Spec A, ⊤)] in
 
+omit [Algebra k Γ(Spec A, ⊤)] [IsScalarTower k A Γ(Spec A, ⊤)] in
 theorem isScalarTower_algebraΓSpecOf :
     letI := algebraΓSpecOf k A
     IsScalarTower k A Γ(Spec A, ⊤) :=
@@ -896,28 +816,6 @@ theorem isScalarTower_algebraΓSpecOf :
 end FiniteAlgebra
 
 section Examples
-
-example : letI := algebraΓSpecOf ℝ (.of (Polynomial ℝ))
-    interNumOn ℝ (Spec.map (CommRingCat.ofHom (Polynomial.aeval (R := ℝ) Complex.I).toRingHom))
-      (![] : Fin 0 → LB (Spec (.of (Polynomial ℝ)))) = 2 := by
-  letI := algebraΓSpecOf ℝ (.of (Polynomial ℝ))
-  letI := algebraΓSpecOf ℝ (.of ℂ)
-  have := isScalarTower_algebraΓSpecOf ℝ (.of ℂ)
-  rw [interNumOn_eq_interNum_pull ?_ isEmptyElim, interNum_of_isEmpty, chi_structureModule_Spec]
-  · exact congrArg _ Complex.finrank_real_complex
-  · intro r
-    have := ConcreteCategory.congr_hom (Scheme.ΓSpecIso_inv_naturality
-      (CommRingCat.ofHom (Polynomial.aeval (R := ℝ) Complex.I).toRingHom)) (algebraMap ℝ _ r)
-    refine this.symm.trans ?_
-    exact congrArg (Scheme.ΓSpecIso (.of ℂ)).inv ((Polynomial.aeval Complex.I).commutes r)
-
-example {X : Scheme.{0}} (k : Type) [Field k] [Algebra k Γ(X, ⊤)] (F : X.Modules) {M : LB X}
-    (hM : M.IsLB) (a b : ℤ) (h : ∀ n : ℤ, chi k (twistZ F M n) = a * n + b) :
-    interNum k F ![M] = a ∧ interNum k F (fun _ : Fin 1 ↦ lbZPow M (-1)) = -a := by
-  constructor
-  · rw [interNum_one k F hM, chi_congr k (Twist.twistZZeroIso F hM), h, h]; ring
-  · rw [interNum_lbZPow_eq_multiDiff k F hM, multiDiff_const]
-    simp [bwdDiff_apply, h]
 
 end Examples
 

@@ -1,9 +1,21 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.SelmerRankVanishing
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
+module
 
-open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.BlochKatoReduction GlobalTheory.IndefiniteRowSideFullHecke.LengthValuationTwists
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.GaloisCohomology.Statement
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+public import ReciprocityTheory.GaloisValuations.ContinuousConstSMulQuotient
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.BlochKatoReduction
 
 namespace GlobalTheory.BKDimNoInv
 
@@ -57,7 +69,8 @@ theorem localGaloisRep_invariants_from_fractionRing [IsDomain O] {m : ℕ} (r : 
     funext a
     apply φ.injective
     rw [hx₀, ← congrFun h1 a]
-    simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply, hφ, hx₀]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply, hφ, hx₀]
   rw [Submodule.mem_bot]
   funext a
   rw [← hx₀, h0]
@@ -82,8 +95,9 @@ noncomputable def grepOf {m : ℕ} (r : ↥Gw →* GL (Fin m) O)
     ρ := Bw.rep r
     cont := rep_continuous Bw r hr }
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
+set_option synthInstance.maxHeartbeats 100000 in
 theorem finrank_h1f_no_invariants [IsDomain O] (P : LocPrime l) {m : ℕ} (r : ↥Gw →* GL (Fin m) O)
     (hr : Continuous fun g => ((r g : GL (Fin m) O) : Matrix (Fin m) (Fin m) O))
     (hBK : Formalism.MainNotions.LocalSituation.bkADim (P.PD Bw.Kw)) (hdR : Bw.IsdRW P r)

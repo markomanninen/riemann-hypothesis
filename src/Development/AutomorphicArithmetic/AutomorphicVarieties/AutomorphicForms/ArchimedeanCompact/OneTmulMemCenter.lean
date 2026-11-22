@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ArchimedeanCompact.GrpEqMemArchCompact
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.MultiCentre
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.SLApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.LieDecomp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ArchimedeanCompact.GrpEqMemArchCompact
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.MultiCentre
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.SLApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.LieDecomp
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ namespace UpperTheory.V.Cm
 
 attribute [local instance 100] LieRing.ofAssociativeRing
 
-variable (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ)
+variable (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ)
 
 theorem sm_eq : Sm E a = archSmooth E a :=
   le_antisymm (fun _ h => isArchSmooth_of_mem h) fun _ h => mem_Sm_of h
@@ -85,7 +89,8 @@ theorem ιC_eq_sum (X : Lie E a) : ιC E a X = ∑ τ : E →+* ℂ, ∑ i, ∑ 
   AlgRepEndIrreducible.lieDecomp E a _ (ιC E a) (Matrix.of X)
 
 theorem lie_eq_sum (X : Lie E a) : lie E a X = ∑ τ : E →+* ℂ, ∑ i, ∑ j, coord τ (X i j) • Eop τ i j := by
-  simp only [← uC_ιC, ιC_eq_sum, map_sum, map_smul, uC_genC]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← uC_ιC, ιC_eq_sum, map_sum, map_smul, uC_genC]
 
 theorem adjoin_genC : Algebra.adjoin ℂ {x : UC E a | ∃ τ i j, x = genC τ i j} = ⊤ := by
   set S := Algebra.adjoin ℂ {x : UC E a | ∃ τ i j, x = genC τ i j}
@@ -156,17 +161,16 @@ theorem Zalg_eq_map : Zalg E a = (Subalgebra.center ℂ (UC E a)).map (uC E a) :
   · rintro ⟨_, ⟨τ, u, rfl⟩, rfl⟩
     exact ⟨τ, u, uC_capC τ u⟩
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem one_tmul_mem_center {z : UEnv E a} (hz : z ∈ (isExpLieAlgebra E a).centerU) :
     (1 : ℂ) ⊗ₜ[ℝ] z ∈ Subalgebra.center ℂ (UC E a) := by
   refine Subalgebra.mem_center_iff.2 fun w => ?_
   induction w with
-  | zero => rw [zero_mul, mul_zero]
   | tmul c x => simp only [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul, Subalgebra.mem_center_iff.1 hz x]
   | add x y hx hy => rw [add_mul, mul_add, hx, hy]
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem exists_re_im_center {w : UC E a} (hw : w ∈ Subalgebra.center ℂ (UC E a)) :
     ∃ p ∈ (isExpLieAlgebra E a).centerU, ∃ q ∈ (isExpLieAlgebra E a).centerU, w = (1 : ℂ) ⊗ₜ p + Complex.I ⊗ₜ q :=
   Fb.exists_re_im w fun _ => Subalgebra.mem_center_iff.1 hw _

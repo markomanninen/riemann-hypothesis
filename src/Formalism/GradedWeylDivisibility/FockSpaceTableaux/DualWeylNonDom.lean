@@ -1,5 +1,9 @@
-import Formalism.GradedWeylDivisibility.StatementA
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LNondomLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.StatementA
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LNondomLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -28,9 +32,9 @@ lemma ndEv_pderiv_colAddGen (l j : Fin n) (g : MvPolynomial (Fin r × Fin n) R) 
     ndEv R r n (pderiv none (colAddGen R l j g)) = ndE R r n l j g := by
   induction g using MvPolynomial.induction_on with
   | C a => simp [colAddGen, derivation_C]
-  | add p q hp hq => rw [map_add, map_add, map_add, hp, hq, map_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq, map_add (f := _)]
   | mul_X p v hp =>
-    rw [map_mul, Derivation.leibniz, Derivation.leibniz, map_add, smul_eq_mul, smul_eq_mul,
+    rw [map_mul, Derivation.leibniz, Derivation.leibniz, map_add (f := _), smul_eq_mul, smul_eq_mul,
       map_mul, map_mul, hp, ndEv_colAddGen, ndEv_colAddGen, smul_eq_mul, smul_eq_mul]
     congr 1
     simp only [ndE, mkDerivation_X, colAddGen, aeval_X]
@@ -40,7 +44,7 @@ lemma nd_pderiv_none_rename (g : MvPolynomial (Fin r × Fin n) R) :
     pderiv none (rename (some : Fin r × Fin n → Option (Fin r × Fin n)) g) = 0 := by
   induction g using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => rw [map_add, map_add, hp, hq, add_zero]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, add_zero]
   | mul_X p v hp => simp [Derivation.leibniz, hp, pderiv_X]
 
 lemma ndE_eq_zero {l j : Fin n} {f : MvPolynomial (Fin r × Fin n) R}

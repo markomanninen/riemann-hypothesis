@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
-import Formalism.PeriodIntegrals.QuotInv
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
-import Formalism.LocalRingCardinality.DataCD
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ClosedMatrixSubgroupTheoremStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DensityInChartStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
+public import Formalism.PeriodIntegrals.QuotInv
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Formalism.LocalRingCardinality.DataCD
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ClosedMatrixSubgroupTheoremStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DensityInChartStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,7 +87,7 @@ theorem inner_rl {m : ℕ} (X Y : Matrix (Fin m) (Fin m) ℂ) : ⟪rl m X, rl m 
 
 def cj {m : ℕ} (A B : Matrix (Fin m) (Fin m) ℂ) : EE m →ₗ[ℝ] EE m where
   toFun x := rl m (A * unrealify x * B)
-  map_add' x y := by rw [← rl_symm, ← rl_symm, ← rl_symm, map_add, Matrix.mul_add, Matrix.add_mul, map_add]
+  map_add' x y := by rw [← rl_symm, ← rl_symm, ← rl_symm, map_add (f := _), Matrix.mul_add, Matrix.add_mul, map_add (f := _)]
   map_smul' t x := by
     rw [← rl_symm, ← rl_symm, map_smul, Matrix.mul_smul, Matrix.smul_mul, map_smul]; rfl
 

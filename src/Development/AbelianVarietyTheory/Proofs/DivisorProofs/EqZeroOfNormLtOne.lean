@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalDegreeLower
-import Formalism.HermitianLattices.FinalMass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalDegreeLower
+public import Formalism.HermitianLattices.FinalMass
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH MeasureTheory NumberField IsDedekindDomain
 open GlobalTheory.IndefiniteRowSideFullHecke.MatrixMinorProducts GlobalTheory.BlockSizes
 
@@ -21,7 +26,7 @@ theorem eq_zero_of_norm_lt_one (z : 𝓞 E) (h : ∀ φ : E →+* ℂ, ‖φ (z 
     calc ∏ σ : E →ₐ[ℚ] ℂ, ‖σ (z : E)‖ ≤ ‖τ.toRatAlgHom (z : E)‖ := by
           rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ τ.toRatAlgHom)]
           exact mul_le_of_le_one_right (norm_nonneg _)
-            (Finset.prod_le_one (fun _ _ => norm_nonneg _) fun σ _ => (h σ.toRingHom).le)
+            (Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) fun σ _ => (h σ.toRingHom).le)
       _ < 1 := h τ
   rw [← h2] at h3
   simp only [eq_ratCast, Rat.cast_intCast, Complex.norm_intCast] at h3
@@ -68,14 +73,15 @@ theorem coord_of_mem {n : ℕ} {x : Fin n → E} (hx : x ∈ Formalism.MainNotio
     obtain ⟨a, ha⟩ := hx
     exact ⟨r * a, by simp [← ha, Algebra.smul_def]⟩
 
-theorem isLattice_std (n : ℕ) : Submodule.IsLattice E (Formalism.MainNotions.StandardLattice.stdLat E n) where
-  fg := Submodule.fg_span (Set.finite_range _)
-  span_eq_top := by
-    rw [eq_top_iff, ← (Pi.basisFun E (Fin n)).span_eq]
-    refine Submodule.span_mono ?_
-    rintro _ ⟨j, rfl⟩
-    rw [Pi.basisFun_apply]
-    exact Submodule.subset_span ⟨j, rfl⟩
+theorem isLattice_std (n : ℕ) : Submodule.IsFullLattice E (Formalism.MainNotions.StandardLattice.stdLat E n) := by
+  have : Submodule.IsLattice E (Formalism.MainNotions.StandardLattice.stdLat E n) :=
+    Submodule.IsLattice.of_fg E (Submodule.fg_span (Set.finite_range _))
+  refine { span_eq_top := ?_ }
+  rw [eq_top_iff, ← (Pi.basisFun E (Fin n)).span_eq]
+  refine Submodule.span_mono ?_
+  rintro _ ⟨j, rfl⟩
+  rw [Pi.basisFun_apply]
+  exact Submodule.subset_span ⟨j, rfl⟩
 
 variable [StarRing E]
 
@@ -83,7 +89,8 @@ omit [NumberField E] in
 theorem re_form (hφ : ∀ (φ : E →+* ℂ) (a : E), φ (star a) = starRingEnd ℂ (φ a)) {n : ℕ} (x : Fin n → E)
     (τ : E →+* ℂ) : (τ (Formalism.MainNotions.StandardLattice.stdForm E n x x)).re = ∑ i, Complex.normSq (τ (x i)) := by
   change (τ (∑ i, star (x i) * x i)).re = _
-  rw [map_sum, Complex.re_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Complex.re_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, hφ, ← Complex.normSq_eq_conj_mul_self, Complex.ofReal_re]
 
@@ -107,12 +114,13 @@ theorem isSymm_std (n : ℕ) : (Formalism.MainNotions.StandardLattice.stdForm E 
   constructor
   intro x y
   change starRingEnd _ (∑ i, star (x i) * y i) = ∑ i, star (y i) * x i
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [starRingEnd_apply, star_mul, star_star]
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem norm_entry_le (hφ : ∀ (φ : E →+* ℂ) (a : E), φ (star a) = starRingEnd ℂ (φ a)) {n : ℕ}
     {g : (Fin n → E) ≃ₗ[E] (Fin n → E)} (hg : g ∈ Formalism.HermitianLatticesTheory.isom (Formalism.MainNotions.StandardLattice.stdForm E n)) (j i : Fin n)
     (τ : E →+* ℂ) : ‖τ (g (Pi.single j 1) i)‖ ≤ 1 := by

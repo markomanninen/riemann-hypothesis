@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BirationalOfTranscendenceDegree
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FunctionFieldRatioGenerators
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BirationalOfTranscendenceDegree
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FunctionFieldRatioGenerators
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory NumberField Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -46,13 +50,13 @@ theorem trdeg_eq_of_ringKrullDim [∀ k, Fintype (J k)] [CharZero Ω] (y : (Σ k
       ((d + Fintype.card K : ℕ) : ℕ∞) := by
     generalize (Algebra.trdeg ℤ Ω + (Fintype.card K : Cardinal)).toENat = e at h1
     cases e using ENat.recTopCoe with
-    | top => exact absurd h1 (by rw [top_add]; exact (ENat.coe_ne_top _).symm)
+    | top => exact absurd h1 (by rw [top_add]; exact (ENat.natCast_ne_top _).symm)
     | coe e =>
       have h3 : e + 1 = d + 1 + Fintype.card K := by exact_mod_cast h1
       have h4 : e = d + Fintype.card K := by omega
       rw [h4]
   have h5 : Algebra.trdeg ℤ Ω + (Fintype.card K : Cardinal) = ((d + Fintype.card K : ℕ) : Cardinal) :=
-    Cardinal.toENat_eq_nat.mp h2
+    Cardinal.toENat_eq_natCast.mp h2
   rw [Nat.cast_add] at h5
   exact (Cardinal.add_nat_inj _).mp h5
 

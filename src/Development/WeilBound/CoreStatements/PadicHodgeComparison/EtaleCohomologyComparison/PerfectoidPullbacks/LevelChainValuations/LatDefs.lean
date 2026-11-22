@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,19 +21,20 @@ def dpowC (h : DPClosed ι δ) (n : ℕ) (x : A) : A := by
   classical exact if hx : ι x ∈ J then Classical.choose (h x hx n) else 0
 
 theorem dpowC_spec (h : DPClosed ι δ) {n : ℕ} {x : A} (hx : ι x ∈ J) : ι (dpowC h n x) = δ.dpow n (ι x) := by
-  rw [dpowC, dif_pos hx]; exact Classical.choose_spec (h x hx n)
+  rw [dpowC, dite_eq_left hx]; exact Classical.choose_spec (h x hx n)
 
 def dpComap (hι : Function.Injective ι) (h : DPClosed ι δ) : DividedPowers (J.comap ι) where
   dpow := dpowC h
-  dpow_null {n x} hx := by rw [dpowC, dif_neg (show ¬ ι x ∈ J from hx)]
+  dpow_null {n x} hx := by rw [dpowC, dite_eq_right (show ¬ ι x ∈ J from hx)]
   dpow_zero {x} hx := hι (by rw [dpowC_spec h hx, δ.dpow_zero hx, map_one])
   dpow_one {x} hx := hι (by rw [dpowC_spec h hx, δ.dpow_one hx])
   dpow_mem {n x} hn hx := by
     show ι _ ∈ J
     rw [dpowC_spec h hx]; exact δ.dpow_mem hn hx
   dpow_add {n x y} hx hy := hι (by
-    have hxy : ι (x + y) ∈ J := by rw [map_add]; exact J.add_mem hx hy
-    rw [dpowC_spec h hxy, map_add, δ.dpow_add hx hy, map_sum]
+    have hxy : ι (x + y) ∈ J := by rw [map_add (f := _)]; exact J.add_mem hx hy
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [dpowC_spec h hxy, map_add (f := _), δ.dpow_add hx hy, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_mul, dpowC_spec h hx, dpowC_spec h hy])
   dpow_mul {n a x} hx := hι (by
@@ -65,8 +70,6 @@ theorem ι_injective : Function.Injective (ι f ξ l M) := Subtype.val_injective
 
 def ofW : W →+* A f ξ l M := f.codRestrict (sub f ξ l M) fun w => Subring.subset_closure (Or.inl ⟨w, rfl⟩)
 
-instance : Algebra W (A f ξ l M) := (ofW f ξ l M).toAlgebra
-
 theorem ι_ofW (w : W) : ι f ξ l M (ofW f ξ l M w) = f w := rfl
 
 def dpA (i : ℕ) : A f ξ l M := ⟨dpE f ξ l M i, Subring.subset_closure (Or.inr ⟨i, rfl⟩)⟩
@@ -83,8 +86,6 @@ def γ (h : DPClosed (ι f ξ l M) (γB f ξ)) : DividedPowers (I f ξ l M) := d
 
 theorem ι_γ (h : DPClosed (ι f ξ l M) (γB f ξ)) {n : ℕ} {x : A f ξ l M} (hx : x ∈ I f ξ l M) :
     ι f ξ l M ((γ f ξ l M h).dpow n x) = (γB f ξ).dpow n (ι f ξ l M x) := dpComap_dpow _ h hx
-
-def mapM {M M' : ℕ} (h : sub f ξ l M ≤ sub f ξ l M') : A f ξ l M →+* A f ξ l M' := Subring.inclusion h
 
 structure Hyp (m : ℕ) : Prop where
   one_le : 1 ≤ m

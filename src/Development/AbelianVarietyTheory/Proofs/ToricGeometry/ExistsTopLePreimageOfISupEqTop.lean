@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
-import ReciprocityTheory.ThetaQuasiPeriods.Transl
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+module
+
+public import Mathlib
+public import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
+public import ReciprocityTheory.ThetaQuasiPeriods.Transl
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,8 +59,8 @@ theorem hom_ext_of_points {X Y : Over (Sp ℂ)}
 
 end TorusEnd
 
-open TorusEnd in
 
+open TorusEnd in
 theorem exists_isMonHom_of_map_periodLattice :
     (∀ (X : Over (Sp ℂ)), IsReduced X.left → LocallyOfFiniteType X.hom → ∀ (U : X.left.Opens) (f f'
         : Γ(X.left, U)), (∀ x : (𝟙_ (Over (Sp ℂ)) ⟶
@@ -158,7 +162,7 @@ theorem exists_isMonHom_of_map_periodLattice :
     obtain ⟨w, hw⟩ := hsurj (y ≫ snd X X)
     have hy : y = lift (ex z) (ex w) := by
       ext1 <;> simp [hz, hw]
-    rw [hy, ← Category.assoc, ← Hom.mul_def, ← hadd, ← hfe, map_add, hadd, Hom.mul_def, ← Category.assoc, lift_map,
+    rw [hy, ← Category.assoc, ← Hom.mul_def, ← hadd, ← hfe, map_add (f := _), hadd, Hom.mul_def, ← Category.assoc, lift_map,
       ← hfe, ← hfe]
 
 end GlobalTheory

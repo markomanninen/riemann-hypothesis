@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.SummableRationalSchwartz
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.HatSt
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.SummableRationalSchwartz
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.HatSt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -12,7 +16,7 @@ private theorem measurable_tsum_complex {ι X : Type} [Countable ι] [Measurable
     (hf : ∀ i, Measurable (f i)) : Measurable fun x => ∑' i, f i x := by
   have hS : MeasurableSet {x | Summable fun i => f i x} := by
     have hm : Measurable fun x => ∑' i, (‖f i x‖₊ : ENNReal) :=
-      Measurable.ennreal_tsum fun i => (hf i).nnnorm.coe_nnreal_ennreal
+      Measurable.tsum fun i => (hf i).nnnorm.coe_nnreal_ennreal
     have : {x | Summable fun i => f i x} = (fun x => ∑' i, (‖f i x‖₊ : ENNReal)) ⁻¹' Set.Iio ⊤ := by
       ext x
       simp only [Set.mem_setOf_eq, Set.mem_preimage, Set.mem_Iio, lt_top_iff_ne_top]
@@ -33,7 +37,7 @@ private theorem measurable_tsum_complex {ι X : Type} [Countable ι] [Measurable
   · simp [Set.indicator, hx, tsum_eq_zero_of_not_summable hx, tendsto_const_nhds]
 
 theorem UpperTheory.ConvolutionTheory.R2.Ff.thMeas :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E] (D : Dat F E) (W : Weil D), ThMeas W := by
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (D : Dat F E) (W : Weil D), ThMeas W := by
   intro F E _ _ _ _ _ _ _ D W φ
   haveI : Countable F := Finsupp.Countable.of_moduleFinite (R := ℚ)
   have hpt : ∀ v, Measurable fun g => (W.Om g φ).1 v := fun v =>

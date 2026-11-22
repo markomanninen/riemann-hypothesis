@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GeoAbs
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GlueBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.PushTest
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.QuotAny
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.QuotFin
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GeoAbs
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GlueBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.PushTest
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.QuotAny
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.QuotFin
+
+@[expose] public section
 
 open MeasureTheory PositivityTheory.Rg.Tf.Loc PositivityTheory.Rg.Tf.Geo
 open scoped ENNReal
@@ -16,12 +20,12 @@ private theorem prod_ofFn_single {G : Type*} [Monoid G] : ∀ (n : ℕ) (f : Fin
   | 0, _, k, _ => k.elim0
   | n + 1, f, k, h => by
     rw [List.ofFn_succ, List.prod_cons]
-    refine Fin.cases (fun h => ?_) (fun k h => ?_) k h
-    · rw [List.prod_eq_one, mul_one]
-      intro x hx
-      obtain ⟨i, rfl⟩ := List.mem_ofFn.1 hx
-      exact h _ (Fin.succ_ne_zero i)
-    · rw [h 0 (Fin.succ_ne_zero k).symm, one_mul,
+    cases k using Fin.cases with
+    | zero =>
+      rw [List.prod_eq_one, mul_one]
+      exact List.forall_mem_ofFn_iff.2 fun i => h _ (Fin.succ_ne_zero i)
+    | succ k =>
+      rw [h 0 (Fin.succ_ne_zero k).symm, one_mul,
         prod_ofFn_single n (fun i => f i.succ) k fun i hi => h _ fun h' => hi (Fin.succ_injective _ h')]
 
 private theorem transport (X Y T : Type) [Group X] [TopologicalSpace X] [IsTopologicalGroup X] [LocallyCompactSpace X]
@@ -38,7 +42,7 @@ private theorem transport (X Y T : Type) [Group X] [TopologicalSpace X] [IsTopol
       refine ⟨hρ.1.comp e.continuous.measurable, fun x => ?_⟩
       have := hρ.2 (e x)
       simpa only [id, he, hj] using this
-    rw [quotAny X T μ ν i hi _ _ hΦ hinv h' (hfin _ h'), quotInt, dif_pos h, integral_smul_measure,
+    rw [quotAny X T μ ν i hi _ _ hΦ hinv h' (hfin _ h'), quotInt, dite_eq_left h, integral_smul_measure,
       e.measurableEmbedding.integral_map, ENNReal.toReal_ofReal hc]
     simp
   · have h' : ¬ ∃ ρ, IsNormAlong id i ν ρ := by
@@ -47,7 +51,7 @@ private theorem transport (X Y T : Type) [Group X] [TopologicalSpace X] [IsTopol
       obtain ⟨x, rfl⟩ := e.surjective y
       have := hρ.2 x
       simpa only [id, hj, ← he, e.symm_apply_apply] using this
-    rw [quotInt, dif_neg h, quotInt, dif_neg h', mul_zero]
+    rw [quotInt, dite_eq_right h, quotInt, dite_eq_right h', mul_zero]
 
 private theorem invInv {T : Type} [Group T] [TopologicalSpace T] [IsTopologicalGroup T] [LocallyCompactSpace T]
     [SecondCountableTopology T] [MeasurableSpace T] [BorelSpace T] (h : ∀ a b : T, a * b = b * a) (ν : Measure T)

@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.StepOne
-import Lemmata.PartialDerivativeDegree.PderivTdSuccLe
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.StepOne
+public import Lemmata.PartialDerivativeDegree.PderivTdSuccLe
+
+@[expose] public section
 
 open Matrix MvPolynomial
 
@@ -18,22 +22,22 @@ theorem deg_CX {σ : Type*} (a : ℂ) (v : σ) : (C a * X v : MvPolynomial σ �
 
 theorem deg_lin {N : ℕ} (X : Matrix (Fin N) (Fin N) ℂ) (i : Vr N) : (lin X i).totalDegree ≤ 1 := by
   rcases i with x | x
-  · exact (totalDegree_finset_sum _ _).trans (Finset.sup_le fun c _ => deg_CX _ _)
-  · exact (totalDegree_finset_sum _ _).trans (Finset.sup_le fun c _ => deg_CX _ _)
+  · exact (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun c _ => deg_CX _ _)
+  · exact (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun c _ => deg_CX _ _)
 
 theorem degDP {N : ℕ} (X : Matrix (Fin N) (Fin N) ℂ) (q : MvPolynomial (Vr N) ℂ) :
     (dP X q).totalDegree ≤ q.totalDegree :=
-  (totalDegree_finset_sum _ _).trans (Finset.sup_le fun i _ => deg_pderiv_mul i q _ (deg_lin X i))
+  (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun i _ => deg_pderiv_mul i q _ (deg_lin X i))
 
 theorem deg_det {σ : Type*} {n : ℕ} (M : Matrix (Fin n) (Fin n) (MvPolynomial σ ℂ))
     (hM : ∀ a b, (M a b).totalDegree ≤ 1) : M.det.totalDegree ≤ n := by
   rw [Matrix.det_apply']
-  refine (totalDegree_finset_sum _ _).trans (Finset.sup_le fun τ _ => ?_)
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun τ _ => ?_)
   refine (totalDegree_mul _ _).trans ?_
   have h1 : ((Equiv.Perm.sign τ : ℤ) : MvPolynomial σ ℂ).totalDegree = 0 := by
     rcases Int.units_eq_one_or (Equiv.Perm.sign τ) with h | h <;> rw [h] <;> simp
   have h2 : (∏ i, M (τ i) i).totalDegree ≤ n := by
-    refine (totalDegree_finset_prod _ _).trans ?_
+    refine (MvPolynomial.totalDegree_finsetProd _ _).trans ?_
     calc ∑ i, (M (τ i) i).totalDegree ≤ ∑ _i : Fin n, 1 := Finset.sum_le_sum fun i _ => hM _ _
       _ = n := by simp
   omega

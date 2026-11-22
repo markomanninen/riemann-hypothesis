@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementA
-import Formalism.FormalGroupLog.FormalGroupLogProofs.ChainRule
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementA
+public import Formalism.FormalGroupLog.FormalGroupLogProofs.ChainRule
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,15 +20,15 @@ theorem psubst_one {ι : Type} {a : MvPowerSeries ι K} (ha : HasSubst a) :
     (1 : PowerSeries K).subst a = 1 := by
   rw [← coe_substAlgHom ha, map_one]
 
-theorem one_add_X_mul_deriv_log : (1 + X : PowerSeries K) * derivative K (log K) = 1 := by
-  have hd : ∀ n : ℕ, coeff n (derivative K (log K)) = (-1 : K) ^ n := by
+theorem one_add_X_mul_deriv_log : (1 + X : PowerSeries K) * derivative (R := K) (log K) = 1 := by
+  have hd : ∀ n : ℕ, coeff n (derivative (R := K) (log K)) = (-1 : K) ^ n := by
     intro n
     rw [PowerSeries.coeff_derivative]
     simp [PowerSeries.log]
     field_simp
     ring
   ext n
-  rw [add_mul, one_mul, map_add]
+  rw [add_mul, one_mul, map_add (f := _)]
   rcases n with _ | n
   · simp [hd]
   · rw [coeff_succ_X_mul, hd, hd, coeff_one]
@@ -32,10 +36,10 @@ theorem one_add_X_mul_deriv_log : (1 + X : PowerSeries K) * derivative K (log K)
 
 theorem one_add_X_subst {ι : Type} {a : MvPowerSeries ι K} (ha : HasSubst a) :
     (1 + X : PowerSeries K).subst a = 1 + a := by
-  rw [← coe_substAlgHom ha, map_add, map_one, coe_substAlgHom, subst_X ha]
+  rw [← coe_substAlgHom ha, map_add (f := _), map_one, coe_substAlgHom, subst_X ha]
 
 theorem one_add_mul_deriv_log_subst {ι : Type} {a : MvPowerSeries ι K} (ha : HasSubst a) :
-    (1 + a) * (derivative K (log K)).subst a = 1 := by
+    (1 + a) * (derivative (R := K) (log K)).subst a = 1 := by
   have h := congrArg (PowerSeries.substAlgHom ha) (one_add_X_mul_deriv_log (K := K))
   rw [map_mul, map_one, coe_substAlgHom, one_add_X_subst ha] at h
   exact h
@@ -56,14 +60,14 @@ private theorem constantCoeff_log_eq_zero' : constantCoeff (log K) = 0 := by
   rw [← coeff_zero_eq_constantCoeff_apply]
   simp [PowerSeries.log]
 
-private theorem derivative_exp_eq_exp : derivative K (exp K) = exp K := by
+private theorem derivative_exp_eq_exp : derivative (R := K) (exp K) = exp K := by
   ext n
   rw [PowerSeries.coeff_derivative]
   simp [coeff_exp, Nat.factorial_succ]
   field_simp
 
 private theorem derivative_eq_pderiv_unit (f : PowerSeries K) :
-    derivative K f = MvPowerSeries.pderiv K () f := by
+    derivative (R := K) f = MvPowerSeries.pderiv (R := K) () f := by
   ext n
   rw [PowerSeries.coeff_derivative]
   change _ = MvPowerSeries.coeff (Finsupp.single () n) _
@@ -72,7 +76,7 @@ private theorem derivative_eq_pderiv_unit (f : PowerSeries K) :
 
 private theorem derivative_subst_eq_chain_rule {g : PowerSeries K} (hg : constantCoeff g = 0)
     (φ : PowerSeries K) :
-    derivative K (φ.subst g) = (derivative K φ).subst g * derivative K g := by
+    derivative (R := K) (φ.subst g) = (derivative (R := K) φ).subst g * derivative (R := K) g := by
   have h := Formalism.G.LogCR.pderiv_psubst (R := K) (τ := Unit) (a := g) hg φ ()
   simp only [derivative_eq_pderiv_unit]
   exact h
@@ -97,14 +101,14 @@ theorem constantCoeff_exp_subst {ι : Type} {f : MvPowerSeries ι K}
   simp
 
 private theorem eq_zero_of_one_add_X_mul_derivative_eq_self {F : PowerSeries K}
-    (h : (1 + X) * derivative K F = F) (h0 : constantCoeff F = 0) : F = 0 := by
+    (h : (1 + X) * derivative (R := K) F = F) (h0 : constantCoeff F = 0) : F = 0 := by
   ext n
   rw [map_zero]
   induction n with
   | zero => simpa using h0
   | succ n ih =>
     have hn := congrArg (coeff n) h
-    rw [add_mul, one_mul, map_add, PowerSeries.coeff_derivative] at hn
+    rw [add_mul, one_mul, map_add (f := _), PowerSeries.coeff_derivative] at hn
     rcases n with _ | m
     · rw [coeff_zero_X_mul] at hn
       simpa [ih] using hn
@@ -114,18 +118,18 @@ private theorem eq_zero_of_one_add_X_mul_derivative_eq_self {F : PowerSeries K}
 
 theorem exp_subst_log : (exp K).subst (log K) = 1 + X := by
   have hl : constantCoeff (log K) = 0 := constantCoeff_log_eq_zero'
-  have hE : derivative K ((exp K).subst (log K)) =
-      (exp K).subst (log K) * derivative K (log K) := by
+  have hE : derivative (R := K) ((exp K).subst (log K)) =
+      (exp K).subst (log K) * derivative (R := K) (log K) := by
     rw [derivative_subst_eq_chain_rule hl, derivative_exp_eq_exp]
   rw [← sub_eq_zero]
   apply eq_zero_of_one_add_X_mul_derivative_eq_self
-  · rw [map_sub, hE, map_add, Derivation.map_one_eq_zero, derivative_X, zero_add, mul_sub, mul_one,
+  · rw [map_sub, hE, map_add (f := _), Derivation.map_one_eq_zero, derivative_X, zero_add, mul_sub, mul_one,
       mul_left_comm, one_add_X_mul_deriv_log, mul_one]
   · rw [map_sub, constantCoeff_powerSeries_subst_eq _ hl]
     simp
 
 private theorem eq_zero_of_forall_pderiv_eq_self {σ : Type} {u : MvPowerSeries σ K}
-    (hu : ∀ i, MvPowerSeries.pderiv K i u = u) (h0 : MvPowerSeries.constantCoeff u = 0) :
+    (hu : ∀ i, MvPowerSeries.pderiv (R := K) i u = u) (h0 : MvPowerSeries.constantCoeff u = 0) :
     u = 0 := by
   classical
   suffices H : ∀ N : ℕ, ∀ n : σ →₀ ℕ, n.degree = N → MvPowerSeries.coeff n u = 0 by
@@ -158,7 +162,7 @@ private theorem eq_zero_of_forall_pderiv_eq_self {σ : Type} {u : MvPowerSeries 
         omega
       · omega
     have hadd : (m + Finsupp.single i 1).degree = m.degree + 1 := by
-      rw [map_add, Finsupp.degree_single]
+      rw [map_add (f := _), Finsupp.degree_single]
     have hdeg : m.degree = N := by
       rw [← hnm] at hadd
       omega
@@ -169,7 +173,7 @@ private theorem eq_zero_of_forall_pderiv_eq_self {σ : Type} {u : MvPowerSeries 
 
 private theorem pderiv_exp_subst_eq_mul_pderiv {ι : Type} [Finite ι] (i : ι) {f : MvPowerSeries ι K}
     (hf : MvPowerSeries.constantCoeff f = 0) :
-    MvPowerSeries.pderiv K i ((exp K).subst f) = (exp K).subst f * MvPowerSeries.pderiv K i f := by
+    MvPowerSeries.pderiv (R := K) i ((exp K).subst f) = (exp K).subst f * MvPowerSeries.pderiv (R := K) i f := by
   rw [Formalism.G.LogCR.pderiv_psubst hf, derivative_exp_eq_exp]
 
 theorem exp_biv :
@@ -265,7 +269,7 @@ theorem mul_pd_fLog [Finite ι] (i : ι) {g : MvPowerSeries ι K}
   have e : (1 : MvPowerSeries ι K) + (g - 1) = g := by ring
   rw [e] at hL
   unfold fLog
-  show g * MvPowerSeries.pderiv K i (PowerSeries.subst (g - 1) (log K)) = MvPowerSeries.pderiv K i g
+  show g * MvPowerSeries.pderiv (R := K) i (PowerSeries.subst (g - 1) (log K)) = MvPowerSeries.pderiv (R := K) i g
   rw [hD, ← mul_assoc, hL, one_mul, map_sub, Derivation.map_one_eq_zero, sub_zero]
 
 theorem subst_fExp {κ : Type} [Finite ι] {φ : ι → MvPowerSeries κ K}
@@ -296,11 +300,5 @@ theorem constantCoeff_prim (f : PowerSeries K) : constantCoeff (prim f) = 0 := b
   simp [prim]
 
 end Rules
-
-theorem expLogIdentities : ExpLogRules := by
-  intro K _ _ ι
-  exact ⟨fun f g hf hg => fExp_add hf hg,
-    fun f hf => ⟨constantCoeff_fExp hf, fLog_fExp hf⟩,
-    fun g hg => ⟨constantCoeff_fLog hg, fExp_fLog hg⟩⟩
 
 end Formalism.L2.Th1.B

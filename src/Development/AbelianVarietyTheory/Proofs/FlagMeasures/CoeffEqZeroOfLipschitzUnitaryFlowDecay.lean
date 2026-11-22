@@ -1,30 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
-import Formalism.RealPlaceAnalysis.FinalF
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EqZeroOfExpDecayOfFourierEqZeroOnHalfLine
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralNonnegOfSums
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CauchySchwarz
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
+public import Formalism.RealPlaceAnalysis.FinalF
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EqZeroOfExpDecayOfFourierEqZeroOnHalfLine
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralNonnegOfSums
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CauchySchwarz
+
+@[expose] public section
+
 open MeasureTheory NumberField Matrix Finset
 open scoped InnerProductSpace ComplexOrder ContDiff
 
 namespace GlobalTheory.LipFlow
-
-theorem herm {V : Type} [AddCommGroup V] [Module ℂ V] (I : V →ₗ⋆[ℂ] V →ₗ[ℂ] ℂ)
-    (h : ∀ x, 0 ≤ I x x) (x y : V) : (starRingEnd ℂ) (I y x) = I x y := by
-  have him : ∀ x, (I x x).im = 0 := fun x => ((Complex.le_def.1 (h x)).2).symm
-  have h1 := him (x + y)
-  have h2 := him (x + Complex.I • y)
-  have hx := him x
-  have hy := him y
-  simp only [map_add, LinearMap.add_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply,
-    smul_eq_mul, RingHom.id_apply, Complex.conj_I, Complex.add_im, Complex.add_re, Complex.mul_im,
-    Complex.mul_re, Complex.I_re, Complex.I_im, Complex.neg_re, Complex.neg_im] at h1 h2
-  apply Complex.ext
-  · simp only [Complex.conj_re]; linarith
-  · simp only [Complex.conj_im]; linarith
 
 theorem cauchy {V : Type} [AddCommGroup V] [Module ℂ V] (I : V →ₗ⋆[ℂ] V →ₗ[ℂ] ℂ)
     (h : ∀ x, 0 ≤ I x x) (x y : V) : ‖I x y‖ ^ 2 ≤ (I x x).re * (I y y).re := by
@@ -109,9 +100,11 @@ theorem coeff_eq_zero : ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (I : V �
       I (∑ i, z i • U (t i) v) (U r (∑ i, z i • U (t i) v))
         = ∑ i, ∑ j, star (z i) * z j * φ (r + (t j - t i)) := by
     intro k t z r
-    rw [map_sum (U r), map_sum I, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum (U r), map_sum I, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     have : I (U (t i) v) (U r (U (t j) v)) = φ (r + (t j - t i)) := by
       simp only [hφ]

@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DefsTw
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExSummand
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.TwCls
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.TwUnitary
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.GalCentral
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DefsTw
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExSummand
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.TwCls
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.TwUnitary
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.GalCentral
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace

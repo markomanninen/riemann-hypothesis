@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.FormalGroupIdeal
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.FormalGroupIdeal
+
+@[expose] public section
 
 namespace GroundTheory.Arith.Abelian
 
@@ -128,7 +132,7 @@ theorem wVal_zero : wVal W 0 = 0 := by
 
 omit [IsFractionRing 𝒪 K] in
 theorem pointE_zero : pointE K W 0 = 0 := by
-  rw [pointE, zwPoint, dif_neg]
+  rw [pointE, zwPoint, dite_eq_right]
   rintro ⟨-, h⟩
   apply h
   rw [MaxIdealPoint.val_zero, wVal_zero, map_zero]
@@ -149,17 +153,17 @@ theorem pointE_eq_zero_iff {x : MaxIdealPoint (formalGroup W)} : pointE K W x = 
   constructor
   · intro h
     by_contra hx
-    exact pointE_ne_zero K W (fun h0 => hx (MaxIdealPoint.ext h0)) h
+    exact pointE_ne_zero K W (fun h0 => hx (Subtype.ext h0)) h
   · rintro rfl; exact pointE_zero K W
 
 theorem pointE_injective : Function.Injective (pointE K W) := by
   intro x y h
   by_cases hx : x.val = 0
-  · have hx' : x = 0 := MaxIdealPoint.ext hx
+  · have hx' : x = 0 := Subtype.ext hx
     rw [hx', pointE_zero, eq_comm, pointE_eq_zero_iff] at h
     rw [hx', h]
   by_cases hy : y.val = 0
-  · have hy' : y = 0 := MaxIdealPoint.ext hy
+  · have hy' : y = 0 := Subtype.ext hy
     rw [hy', pointE_zero, pointE_eq_zero_iff] at h
     exact absurd h (fun h' => hx (by rw [h']; rfl))
   set ι := algebraMap 𝒪 K
@@ -172,8 +176,8 @@ theorem pointE_injective : Function.Injective (pointE K W) := by
   have e : wVal W x.val = wVal W y.val := by
     have := congrArg (fun t => -t⁻¹) h2
     simpa [div_eq_mul_inv] using this
-  rw [e, div_left_inj' hwy] at h1
-  exact MaxIdealPoint.ext (hι h1)
+  rw [e, div_left_inj₀ hwy] at h1
+  exact Subtype.ext (hι h1)
 
 theorem val_neg_eq (x : MaxIdealPoint (formalGroup W)) :
     (-x).val = psEvalAt (invSeries W) (fun _ : Unit => x.val) := by
@@ -181,7 +185,7 @@ theorem val_neg_eq (x : MaxIdealPoint (formalGroup W)) :
 
 theorem pointE_neg (x : MaxIdealPoint (formalGroup W)) : pointE K W (-x) = -pointE K W x := by
   by_cases hx : x.val = 0
-  · have hx' : x = 0 := MaxIdealPoint.ext hx
+  · have hx' : x = 0 := Subtype.ext hx
     rw [hx', neg_zero, pointE_zero]
     rfl
   set ι := algebraMap 𝒪 K
@@ -259,10 +263,10 @@ theorem pointE_add_of_ne {x y : MaxIdealPoint (formalGroup W)} (hx : x.val ≠ 0
     have := congrArg ι rb; rwa [map_mul, map_secantB, map_one] at this
   have hz₃' : ι z₃ = -ι x.val - ι y.val - secantA V (ι l) (ι n) * ι b := by
     rw [rz₃, map_sub, map_sub, map_neg, map_mul, map_secantA]
-  have hw₃' : ι w₃ = ι l * ι z₃ + ι n := by rw [rw₃, map_add, map_mul]
+  have hw₃' : ι w₃ = ι l * ι z₃ + ι n := by rw [rw₃, map_add (f := _), map_mul]
   obtain ⟨h₃, hw₃0, hsum⟩ := secant_spec V (zwPoly_wVal_map K W x.val_mem)
-    (zwPoly_wVal_map K W y.val_mem) hw₁ hw₂ (by rw [rl₁, map_add, map_mul])
-    (by rw [rl₂, map_add, map_mul]) hb' hxy hz₃' hw₃'
+    (zwPoly_wVal_map K W y.val_mem) hw₁ hw₂ (by rw [rl₁, map_add (f := _), map_mul])
+    (by rw [rl₂, map_add (f := _), map_mul]) hb' hxy hz₃' hw₃'
   have he' : (1 - V.a₁ * ι z₃ - V.a₃ * ι w₃) * ι e = 1 := by
     have := congrArg ι re
     rwa [map_mul, map_sub, map_sub, map_mul, map_mul, map_one] at this
@@ -280,8 +284,8 @@ theorem pointE_add_of_ne {x y : MaxIdealPoint (formalGroup W)} (hx : x.val ≠ 0
 theorem pointE_add_of_ne' {x y : MaxIdealPoint (formalGroup W)} (hx : x ≠ 0) (hy : y ≠ 0)
     (h₁ : y ≠ x) (h₂ : y ≠ -x) : pointE K W (x + y) = pointE K W x + pointE K W y := by
   classical
-  have hx' : x.val ≠ 0 := fun h => hx (MaxIdealPoint.ext h)
-  have hy' : y.val ≠ 0 := fun h => hy (MaxIdealPoint.ext h)
+  have hx' : x.val ≠ 0 := fun h => hx (Subtype.ext h)
+  have hy' : y.val ≠ 0 := fun h => hy (Subtype.ext h)
   refine pointE_add_of_ne K W hx' hy' ?_
   intro hxy
   have hι := IsFractionRing.injective 𝒪 K
@@ -356,8 +360,8 @@ theorem zwPoly_of_equation {X Y : K} (h : (W.map (algebraMap 𝒪 K)).toAffine.E
     unfold zwPoly; field_simp; ring
   rw [key, h, sub_self, zero_div]
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem mem_range_pointE_iff (P : (W.map (algebraMap 𝒪 K)).toAffine.Point) :
     P ∈ Set.range (pointE K W) ↔ ∀ (x y : K)
       (h : (W.map (algebraMap 𝒪 K)).toAffine.Nonsingular x y),
@@ -367,7 +371,7 @@ theorem mem_range_pointE_iff (P : (W.map (algebraMap 𝒪 K)).toAffine.Point) :
     rintro ⟨z, rfl⟩ x y h hP ⟨r, hr⟩
     have hz : z.val ≠ 0 := by
       intro h0
-      have : z = 0 := MaxIdealPoint.ext h0
+      have : z = 0 := Subtype.ext h0
       rw [this, pointE_zero] at hP
       exact WeierstrassCurve.Affine.Point.some_ne_zero h hP.symm
     rw [pointE_of_ne_zero K W hz] at hP
@@ -408,7 +412,7 @@ theorem mem_range_pointE_iff (P : (W.map (algebraMap 𝒪 K)).toAffine.Point) :
       rintro ⟨u, hu⟩
       have key : (algebraMap 𝒪 K) (u ^ 2 * t + W.a₁ * u * t + W.a₃ * u * t ^ 2 -
           (1 + W.a₂ * t + W.a₄ * t ^ 2 + W.a₆ * t ^ 3)) = 0 := by
-        simp only [map_sub, map_add, map_mul, map_pow, map_one, hu, ht]
+        simp only [map_sub, map_add (f := _), map_mul, map_pow, map_one, hu, ht]
         simp only [WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₂, WeierstrassCurve.map_a₃,
           WeierstrassCurve.map_a₄, WeierstrassCurve.map_a₆] at hE
         field_simp
@@ -462,13 +466,6 @@ def E1 : AddSubgroup (W.map (algebraMap 𝒪 K)).toAffine.Point :=
     (h : (W.map (algebraMap 𝒪 K)).toAffine.Nonsingular x y),
     P = .some x y h → x ∉ Set.range (algebraMap 𝒪 K)}
     (by ext P; rw [Set.mem_ofPred_eq, ← mem_range_pointE_iff]; rfl)
-
-theorem E1_eq_range : E1 K W = (pointEHom K W).range :=
-  AddSubgroup.copy_eq _ _ _
-
-def e1Equiv : MaxIdealPoint (formalGroup W) ≃+ E1 K W :=
-  (AddMonoidHom.ofInjective (f := pointEHom K W) (pointE_injective K W)).trans
-    (AddEquiv.addSubgroupCongr (E1_eq_range K W).symm)
 
 end Points
 

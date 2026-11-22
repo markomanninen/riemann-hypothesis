@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.CplIs
-import Mathlib.RingTheory.AdicCompletion.RingHom
-import Mathlib.RingTheory.Nakayama
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LevelOfCongruence
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.CplIs
+public import Mathlib.RingTheory.AdicCompletion.RingHom
+public import Mathlib.RingTheory.Nakayama
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LevelOfCongruence
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.CA ReciprocityTheory.CA
 

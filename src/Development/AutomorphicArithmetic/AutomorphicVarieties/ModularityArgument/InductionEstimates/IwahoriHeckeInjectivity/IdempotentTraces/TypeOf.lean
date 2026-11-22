@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.HeckeInj
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.HeckeInj
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -37,7 +41,7 @@ private theorem pushT (m : A × B →* G) (hm : Continuous m) (κ : Measure A) [
     ∃ ν : Measure G, IsProbabilityMeasure ν ∧ (∀ᵐ k ∂ν, k ∈ m.range) ∧ (∀ k ∈ m.range, MeasurePreserving (k * ·) ν ν) ∧
       ∀ (F : G → ℂ) (f : A → ℂ), Continuous F → (∀ p, F (m p) = f p.1) → ∫ k, F k ∂ν = ∫ a, f a ∂κ := by
   have hmm : Measurable m := hm.measurable
-  refine ⟨(κ.prod l).map m, Measure.isProbabilityMeasure_map hmm.aemeasurable, ?_, ?_, fun F f hF h => ?_⟩
+  refine ⟨(κ.prod l).map m, inferInstance, ?_, ?_, fun F f hF h => ?_⟩
   · refine (ae_map_iff hmm.aemeasurable ?_).2 (Eventually.of_forall fun p => ⟨p, rfl⟩)
     exact (isCompact_range hm).isClosed.measurableSet
   · rintro _ ⟨p, rfl⟩
@@ -219,7 +223,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.typeOf :
     · simp [tens, hc]
     have ht : ∀ x, tens β φ x = kbar β (infPart K n (x : AdelicGLn.AdelicGL K n)) *
         φ (CuspidalSpectrum.finPart K n (x : AdelicGLn.AdelicGL K n)) := fun x => by
-      rw [tens, dif_pos hc]
+      rw [tens, dite_eq_left hc]
       rfl
     have c1 : Continuous fun k : G1 K n => ε k * tens β φ (k⁻¹ * g) := hε.mul (hcc.comp (continuous_inv.mul continuous_const))
     have c2 : Continuous fun k : G1 K n => tens β φ (g * k⁻¹) * ε k := (hcc.comp (continuous_const.mul continuous_inv)).mul hε

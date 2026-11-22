@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsStrict
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsRingActionOfIsPullDeg
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsRootOfIsAlgClosed
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ArcWitPsiOnBasicOpen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsStrict
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsRingActionOfIsPullDeg
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsRootOfIsAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ArcWitPsiOnBasicOpen
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -48,14 +52,14 @@ theorem exists_match_rescale : GlobalFnsSt → ∀ (E : Type) [Field E] [NumberF
   obtain ⟨inst, o', hs, ho⟩ := exists_oAct_of_isPullDeg hG O' R f a.D₀ D' hD (𝓞 E) a.oa
   have hw := TauTwist.halfUnit_add_star H
   have ht : TauTwist.IsScalarForm (𝓞 E) fun y x : D'.X => uK ^ a.be (hD.xe y) (hD.xe x) :=
-    ⟨fun y x x' => by rw [map_add, map_add, zpow_add], fun y x => by rw [a.be_symm],
+    ⟨fun y x x' => by rw [map_add (f := _), map_add (f := _), zpow_add], fun y x => by rw [a.be_symm],
       fun r y x => by rw [hs, hs, a.be_adj]; rfl⟩
   obtain rfl : q = fun y => uK ^ a.be (hD.xe y) (hD.xe (H.w0 • y)) := funext fun y => by
     have h₁ : a.be (hD.xe y) (H.bar H.w0 • hD.xe y) = a.be (hD.xe y) (H.w0 • hD.xe y) := by
       rw [← a.be_adj, a.be_symm]
     have h₂ : a.be (hD.xe y) ((H.w0 + H.bar H.w0) • hD.xe y) = a.be (hD.xe y) (hD.xe y) := by
       rw [show H.w0 + H.bar H.w0 = 1 from hw, one_smul]
-    rw [add_smul, map_add, h₁] at h₂
+    rw [add_smul, map_add (f := _), h₁] at h₂
     rw [hq, hs, ← h₂]
     congr 1
     omega

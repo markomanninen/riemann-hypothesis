@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsInvertibleIdealIndex
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsOrderIdealIndexExtension
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLocallyPrincipalCoprime
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ExistsSmulMemOfSpanEqTop
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesLineDegree
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsInvertibleIdealIndex
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsOrderIdealIndexExtension
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLocallyPrincipalCoprime
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ExistsSmulMemOfSpanEqTop
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesLineDegree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -178,8 +183,8 @@ theorem card_subring_eq_zero [NumberField L] (B : Subring L) : Nat.card B.toAddS
 
 end InvertibleIdealIndexAlt
 
-open InvertibleIdealIndexAlt in
 
+open InvertibleIdealIndexAlt in
 theorem InvertibleIdealIndex.proof (h1 : OrderIdealIndexExtension.Statement)
     (h2 : LocallyPrincipalCoprime.Statement) : InvertibleIdealIndex.Statement := by
   intro L _ _ B M ι _ a hB hBM haM hden hloc

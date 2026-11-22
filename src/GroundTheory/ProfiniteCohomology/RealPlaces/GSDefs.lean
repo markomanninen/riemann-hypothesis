@@ -1,16 +1,21 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RealPlaces.ConeDefs
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeMackey
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalInvariants
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RealPlaces.ConeDefs
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeMackey
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalInvariants
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open NumberField IsDedekindDomain GroundTheory.Global
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
   (ιr : ∀ v : {v : InfinitePlace K.1 // v.IsReal}, ℚ̄ →ₐ[K.1] AlgebraicClosure v.1.Completion)

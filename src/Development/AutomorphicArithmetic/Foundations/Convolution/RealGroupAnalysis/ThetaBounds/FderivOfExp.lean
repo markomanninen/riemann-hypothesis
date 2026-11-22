@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.ExValCont
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ArchimedeanCompact.GrpEqMemArchCompact
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.ExValCont
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ArchimedeanCompact.GrpEqMemArchCompact
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -59,7 +63,7 @@ private theorem fderiv_of_exp {V : Type*} [NormedAddCommGroup V] [NormedSpace �
 
 section
 open GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 private theorem exp_eq (Y : Lie E 2) : toL (NormedSpace.exp (Matrix.of Y)) =
     (Cm.archEq E 2).symm (NormedSpace.exp (Cm.archEq E 2 Y)) := by
@@ -129,7 +133,7 @@ private theorem ex_cont : Continuous fun Y : Lie E 2 => ex Y 1 := by
 end
 
 theorem UpperTheory.ConvolutionTheory.R2.Ff.smFre :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E], SmFre E := by
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E], SmFre E := by
   intro E _ _ _ Φ T hc hd g
   let G : Lie E 2 → Lie E 2 →L[ℝ] ℂ := fun Y =>
     LinearMap.toContinuousLinearMap ((LinearMap.proj (g * infGL E 2 (ex Y 1))) ∘ₗ T)

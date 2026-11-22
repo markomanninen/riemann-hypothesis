@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CGTrue
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRecTLocRecT
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CGTrue
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRecTLocRecT
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalDat
 
 def GoodAll {R : Ranks} {H : Formalism.BasicNotions.Host R} {a : ℕ} (π : HostCGu H a) : Prop :=
   haveI := host_isCMField H
-  ∀ w : HeightOneSpectrum (𝓞 H.E), UpperTheory.Zero.LLC.Good (⟨a, ParLaws.toCl (π.1.loc w)⟩ : GlobalTheory.LocGL.IrrGL (w.adicCompletion H.E))
+  ∀ w : HeightOneSpectrum (𝓞 H.E), UpperTheory.Zero.LLC.Good (⟨a, ParLaws.toCl (π.1.loc w)⟩ : GlobalTheory.LocGL.IrrGL (k := w.adicCompletion H.E))
 
 structure CGTrueT (hT : UpperTheory.Zero.LLC.RecTExists) (D : D7) (T : GlobalTheory.RowTie.WDTie D.nd D.naut) where
   e : ∀ a, D.naut.CG a ↪ HostCGu D.host a

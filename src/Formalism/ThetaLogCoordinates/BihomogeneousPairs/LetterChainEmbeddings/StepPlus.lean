@@ -1,4 +1,8 @@
-import Formalism.ThetaLogCoordinates.BihomogeneousPairs.LetterChainEmbeddings.PairStep
+module
+
+public import Formalism.ThetaLogCoordinates.BihomogeneousPairs.LetterChainEmbeddings.PairStep
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.KP.LL
 

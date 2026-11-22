@@ -1,5 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.TCNumDef
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PolyUpperBoundDelta
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.TCNumDef
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PolyUpperBoundDelta
+
+@[expose] public section
+
 set_option maxHeartbeats 4000000
 
 noncomputable section
@@ -90,13 +95,12 @@ theorem tcx_room (St : Std C0 Cde CE1 CE2 1 X) (hc : 1 ≤ X.c) (j : Fin (numSeg
     (i : Fin (segS X.TT j)) :
     (X.c : ℝ) * (ka1 X + 2 * X.Q + 3 * X.k) + 4 ≤
       X.de C0 Cde / 4 * (coarseA X.p (X.seg C0 CE1 CE2 j) b i : ℝ) := by
-  have H := segHyp_of St j
   obtain ⟨hP0, -, -, hQ, hPQ⟩ := St.levels j i
   have hcb := coarse_bounds (X.bT (segPos X.TT j i)) (X.p ^ (segG X.TT j - (segDists X.TT j).get i)) (b.rz i)
     (fun c => (hdig.1 i c).1) (hdig.2.1 i).1 (hdig.2.1 i).2
   have hAP : (X.bT (segPos X.TT j i) : ℝ) - X.k * ((X.p ^ (segG X.TT j - (segDists X.TT j).get i) : ℕ) : ℝ) <
       (coarseA X.p (X.seg C0 CE1 CE2 j) b i : ℝ) * ((X.p ^ (segG X.TT j - (segDists X.TT j).get i) : ℕ) : ℝ) := hcb.2
-  have hbT : X.b' * (1 - _root_.Formalism.MainNotions.ColumnSystems.Pf.be X C0) ≤ (X.bT (segPos X.TT j i) : ℝ) := (H.bT i).1
+  have hbT : X.b' * (1 - _root_.Formalism.MainNotions.ColumnSystems.Pf.be X C0) ≤ (X.bT (segPos X.TT j i) : ℝ) := (St.winB _ (pos_mem X.TT j i).1).1
   have hc1 : (1 : ℝ) ≤ (X.c : ℝ) := by exact_mod_cast hc
   exact tcx_roomR St.bpos hAP hbT St.be18 St.eps0 St.de6 St.forty_epsilon_le_delta St.eps_ge St.k5 St.Q1 hP0 (hPQ.trans hQ) St.N1k
     St.N2 St.Y1 St.Hc hc1 (Nat.cast_nonneg _) (Nat.cast_nonneg _) rfl

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaModuloX.Skeleton
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Lemmas
-import Formalism.HermitianLattices.HermitianLatticesProofs.AutFinite
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaModuloX.Skeleton
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Lemmas
+public import Formalism.HermitianLattices.HermitianLatticesProofs.AutFinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem hXz (F' : LFlag S r T') : ∀ x ∈ Xsp F', S.hT x F'.fl.z = 0 := by
     obtain ⟨j, rfl⟩ := hy
     exact F'.fl.z_orth j
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, LinearMap.add_apply, hx, hy, add_zero]
+  | add x y _ _ hx hy => rw [map_add (f := _), LinearMap.add_apply, hx, hy, add_zero]
   | smul a x _ hx => rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hx, smul_zero]
 
 theorem hzX (F' : LFlag S r T') : ∀ x ∈ Xsp F', S.hT F'.fl.z x = 0 := by
@@ -45,9 +49,9 @@ abbrev Qt (F' : LFlag S r T') : Type := (Uo F') ⧸ (Pk F')
 def hV (F' : LFlag S r T') (c : E) : S.V →ₗ⋆[E] S.V →ₗ[E] E :=
   LinearMap.mk₂'ₛₗ (starRingEnd E) (RingHom.id E)
     (fun a b => S.hT a b + c * (S.hT a F'.fl.z * S.hT F'.fl.z b))
-    (fun a a' b => by simp only [map_add, LinearMap.add_apply]; ring)
+    (fun a a' b => by simp only [map_add (f := _), LinearMap.add_apply]; ring)
     (fun t a b => by simp only [LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul]; ring)
-    (fun a b b' => by simp only [map_add]; ring)
+    (fun a b b' => by simp only [map_add (f := _)]; ring)
     (fun t a b => by simp only [map_smul, smul_eq_mul, RingHom.id_apply]; ring)
 
 theorem hV_apply (F' : LFlag S r T') (c : E) (a b : S.V) :

@@ -1,6 +1,10 @@
-import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.PointShiftStOfPlaceShiftSt
+module
+
+public import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.PointShiftStOfPlaceShiftSt
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl
 open scoped ComplexOrder
@@ -96,8 +100,8 @@ def orb (m : Ideal R) : Set (Ideal R) := {m, starI m}
 theorem orb_starI (m : Ideal R) : orb (starI m) = orb m := by
   rw [orb, orb, starI_starI, Set.pair_comm]
 
-open Classical in
 
+open Classical in
 noncomputable def wit (G : Matrix I I R) (S : Set (Ideal R)) : I → R := Classical.epsilon fun x => ∀ n ∈ S, hf G x x ∉ n
 
 theorem wit_spec [Nonempty I] (G : Matrix I I R) (hG : Gᴴ = -G) (hdet : IsUnit G.det) (m : Ideal R)
@@ -295,7 +299,7 @@ theorem unitCoord [Finite (MaximalSpectrum R)] {n : ℕ} (x : Fin (n + 1) → R)
 theorem mul_conj_apply {I : Type} [Fintype I] [DecidableEq I] (T G : Matrix I I R) (i j : I) :
     (T * G * Tᴴ) i j = hf G (T i) (T j) := by
   rw [hf_expand]
-  simp only [mul_apply, conjTranspose_apply, Finset.sum_mul]
+  simp only [Matrix.mul_apply, conjTranspose_apply, Finset.sum_mul]
   rw [Finset.sum_comm]
 
 theorem step {n : ℕ} (G : Matrix (Fin (n + 1)) (Fin (n + 1)) R) (hG : Gᴴ = -G) (x : Fin (n + 1) → R)
@@ -486,16 +490,18 @@ theorem PositivityTheory.Xgf.exists_not_mem_sub_conj : ∀ (E : Type) [Field E] 
 namespace PositivityTheory.Xgf.LocGen
 
 theorem natCast_not_unit (F : Type) [Field F] [NumberField F] (p : Nat.Primes) : ¬ IsUnit ((p : ℕ) : 𝓞 F) := by
+  rcases p with ⟨p, hp⟩
   intro h
   rw [NumberField.isUnit_iff_norm] at h
-  have h1 : ((RingOfIntegers.norm ℚ ((p : ℕ) : 𝓞 F) : 𝓞 ℚ) : ℚ) = ((p : ℕ) : ℚ) ^ Module.finrank ℚ F := by
-    rw [RingOfIntegers.coe_norm]
-    have : (((p : ℕ) : 𝓞 F) : F) = algebraMap ℚ F ((p : ℕ) : ℚ) := by simp
+  change |((NumberField.RingOfIntegers.norm ℚ (p : 𝓞 F) : 𝓞 ℚ) : ℚ)| = 1 at h
+  have h1 : ((NumberField.RingOfIntegers.norm ℚ (p : 𝓞 F) : 𝓞 ℚ) : ℚ) = (p : ℚ) ^ Module.finrank ℚ F := by
+    rw [NumberField.RingOfIntegers.coe_norm]
+    have : ((p : 𝓞 F) : F) = algebraMap ℚ F (p : ℚ) := by simp
     rw [this, Algebra.norm_algebraMap]
   rw [h1, abs_pow, pow_eq_one_iff_of_nonneg (abs_nonneg _) Module.finrank_pos.ne'] at h
-  have h2 : (1 : ℚ) < |((p : ℕ) : ℚ)| := by
+  have h2 : (1 : ℚ) < |(p : ℚ)| := by
     rw [Nat.abs_cast]
-    exact_mod_cast p.2.one_lt
+    exact_mod_cast hp.one_lt
   linarith
 
 theorem norm_natCast_cp (p : Nat.Primes) (n : ℕ) (hn : ¬ (p : ℕ) ∣ n) : ‖(n : ℂ_[p])‖ = 1 := by
@@ -510,7 +516,7 @@ private theorem norm_le_one_lemma (p : Nat.Primes) (y : ℂ_[(p : ℕ)]) (f : Po
   by_contra hlt
   push_neg at hlt
   rw [hmon.as_sum] at hf
-  simp only [Polynomial.eval₂_add, Polynomial.eval₂_pow, Polynomial.eval₂_X, Polynomial.eval₂_finset_sum,
+  simp only [Polynomial.eval₂_add, Polynomial.eval₂_pow, Polynomial.eval₂_X, Polynomial.eval₂_finsetSum,
     Polynomial.eval₂_mul, Polynomial.eval₂_C, Int.coe_castRingHom] at hf
   have hd : f.natDegree ≠ 0 := by
     intro h0

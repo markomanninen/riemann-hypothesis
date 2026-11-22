@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.InterpolationHolds
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.LowestInvariantLeDelta
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.InterpolationHolds
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.LowestInvariantLeDelta
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -63,8 +67,8 @@ theorem delta_zero_eq_twisted_delta (hinj : Function.Injective (algebraMap O Kf)
 
 variable (g : ∀ v, Matrix (Fin (P.m + 1)) (Fin (P.m + 1)) (P.Qq v)) (hg : ∀ v, IsUnit (g v).det)
 
-include hg in
 
+include hg in
 theorem htupW_le (hinj : Function.Injective (algebraMap O Kf)) (T : Submodule O P.Xsp)
     (hT : ∀ F : GlobalTheory P → MvPolynomial (Fin (P.m + 1) × Fin (P.m + 1)) Kf,
       (∀ b, F b ∈ deltaL O Kf (P.m + 1) (nuB P b) (gam P g b)) → sB P g • ∏ b, rename (emP P b) (F b) ∈ T) :
@@ -137,8 +141,8 @@ theorem htupW_le (hinj : Function.Injective (algebraMap O Kf)) (T : Submodule O 
   rw [e]
   exact hT (fun b => H b.1 b.2) (fun b => hH b.1 b.2)
 
-include hg in
 
+include hg in
 theorem mem_htupW (hinj : Function.Injective (algebraMap O Kf)) (F : GlobalTheory P → MvPolynomial (Fin (P.m + 1) × Fin (P.m + 1)) Kf)
     (hF : ∀ b, F b ∈ deltaL O Kf (P.m + 1) (nuB P b) (gam P g b)) :
     sB P g • ∏ b, rename (emP P b) (F b) ∈ P.HtupW (fun v => colSpan (P.W v) (g v)) := by

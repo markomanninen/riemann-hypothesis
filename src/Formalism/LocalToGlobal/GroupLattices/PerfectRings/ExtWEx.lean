@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.PerfectRings.CharZeroWittQuadratic
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.PerfectRings.CharZeroWittQuadratic
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,11 @@ theorem exists_emb (w : HeightOneSpectrum (𝓞 LL)) (hw : (p : 𝓞 LL) ∈ w.a
     charZero_of_injective_algebraMap (algebraMap (KO p n) (Om p n)).injective
   by_contra hno
   push_neg at hno
-  let τ0 : LL →ₐ[ℚ] Om p n := IsAlgClosed.lift
+  let τ0 : LL →ₐ[ℚ] Om p n := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
 
   have hav : ¬ ((w.asIdeal : Set (𝓞 LL)) ⊆ ⋃ σ ∈ ((Finset.univ : Finset (LL →ₐ[ℚ] Om p n)) :
       Set (LL →ₐ[ℚ] Om p n)), ((placeIdeal σ.toRingHom : Ideal (𝓞 LL)) : Set (𝓞 LL))) := by
@@ -132,14 +140,6 @@ theorem exists_emb (w : HeightOneSpectrum (𝓞 LL)) (hw : (p : 𝓞 LL) ∈ w.a
   rw [key]
   have hmI : IsIntegral (OO p n) ((m : ℤ) : Om p n) := (integralClosure (OO p n) (Om p n)).intCast_mem m
   exact hmI.mul (hN_eq ▸ hint)
-
-theorem exists_ringAt (w : HeightOneSpectrum (𝓞 LL)) (hw : (p : 𝓞 LL) ∈ w.asIdeal) :
-    ∃ τ : LL →+* Om p n, ∀ x : LL,
-      w.valuation LL x ≤ 1 ↔ embL τ x ∈ Set.range (algebraMap (Ot τ) (Lt τ)) := by
-  obtain ⟨τ, hτ⟩ := exists_emb (p := p) (n := n) w hw
-  refine ⟨τ, fun x => ?_⟩
-  have := induces (τ := τ) x
-  rwa [hτ] at this
 
 def tauAt (p : ℕ) [Fact p.Prime] (n : ℕ) (w : HeightOneSpectrum (𝓞 LL)) (hw : (p : 𝓞 LL) ∈ w.asIdeal) :
     LL →+* Om p n := (exists_emb (p := p) (n := n) w hw).choose

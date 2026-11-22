@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.BoxSecX
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.BoxSecX
+
+@[expose] public section
 
 noncomputable section
 

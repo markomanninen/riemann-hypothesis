@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.TorIsoId
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SmulCommClassGalIntegers
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.AddMonoidHomEqZeroOfEventually
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GalStarComplexMultiplicationPoints
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TendstoCoeffZero
-open NumberField IsDedekindDomain Polynomial GlobalTheory.CMRam GlobalTheory.FieldSize
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.FiniteDimensionalOfSz
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SmulCommClassGalIntegers
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.AddMonoidHomEqZeroOfEventually
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GalStarComplexMultiplicationPoints
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TendstoCoeffZero
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Polynomial GlobalTheory.FieldSize
 
 set_option autoImplicit false
 

@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.AlgebraicityGalois
-import GroundTheory.GlobalFields.ComplexMultiplication.DualDescent
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.AlgebraicityGalois
+public import GroundTheory.GlobalFields.ComplexMultiplication.DualDescent
+
+@[expose] public section
 
 namespace GroundTheory.Global
 namespace Elliptic
@@ -90,21 +94,21 @@ section Lattice
 
 variable {K : Type*} [Field K] [NumberField K] (σ₀ : K →+* ℂ)
 
-theorem idealLattice_one_mul_lattice (L : PeriodPair) (hL : latticeEnd L = cmRing σ₀) :
+theorem idealLattice_one_mul_lattice (L : PeriodPair) (hL : periodLatticeEnd L = cmRingOfEmbedding σ₀) :
     idealLattice σ₀ 1 * L.lattice = L.lattice := by
   apply le_antisymm
   · rw [Submodule.mul_le]
     intro m hm l hl
     obtain ⟨x, hx, rfl⟩ := (mem_idealLattice σ₀).1 hm
     obtain ⟨a, rfl⟩ := (FractionalIdeal.mem_one_iff _).1 hx
-    have ha : σ₀ (algebraMap (𝓞 K) K a) ∈ latticeEnd L := hL ▸ (mem_cmRing σ₀).2 ⟨a, rfl⟩
+    have ha : σ₀ (algebraMap (𝓞 K) K a) ∈ periodLatticeEnd L := hL ▸ (mem_cmRing σ₀).2 ⟨a, rfl⟩
     exact ha l hl
   · intro l hl
     have h1 : (1 : ℂ) ∈ idealLattice σ₀ 1 :=
       (mem_idealLattice σ₀).2 ⟨1, (FractionalIdeal.mem_one_iff _).2 ⟨1, map_one _⟩, map_one σ₀⟩
     simpa using Submodule.mul_mem_mul h1 hl
 
-variable (hK : finrank ℚ K = 2) [IsTotallyComplex K]
+variable (hK : finrank ℚ K = 2) [_root_.NumberField.IsTotallyComplex K]
 
 theorem homConstSet_pair_of_smul {E E' : CMCurve K} {𝔞 : (FractionalIdeal (𝓞 K)⁰ K)ˣ}
     (h : (ellMulAction σ₀ hK).smul (ClassGroup.mk K 𝔞) E.toEll = E'.toEll) :
@@ -125,8 +129,8 @@ theorem homConstSet_pair_of_smul {E E' : CMCurve K} {𝔞 : (FractionalIdeal (�
   rw [homConstSet_weierstrassCurve, latticeHom_eq_idealLattice σ₀ hK L' L hL' 𝔞 hLL] at hset'
   exact ⟨d⁻¹, inv_ne_zero hd, eq_image_mul_inv hd hset, eq_image_mul_inv (inv_ne_zero hd) hset'⟩
 
-include hK in
 
+include hK in
 theorem homConstSet_symm {E E' : CMCurve K} {𝔞 : (FractionalIdeal (𝓞 K)⁰ K)ˣ} {b : ℂ} (hb : b ≠ 0)
     (hset : (homConstSet E.curve E'.curve : Set ℂ) = (b * ·) '' idealLattice σ₀ ↑𝔞⁻¹) :
     (homConstSet E'.curve E.curve : Set ℂ) = (b⁻¹ * ·) '' idealLattice σ₀ ↑𝔞 := by
@@ -216,10 +220,10 @@ end Prime
 section Degree
 
 variable {K : Type*} [Field K] [NumberField K] (σ₀ : K →+* ℂ) (hK : finrank ℚ K = 2)
-  [IsTotallyComplex K]
+  [_root_.NumberField.IsTotallyComplex K]
+
 
 include hK in
-
 theorem degree_eq_absNorm {E E' : CMCurve K} (v : HeightOneSpectrum (𝓞 K))
     (hv : (Ideal.absNorm v.asIdeal).Prime) (φ : Isogeny E.curve E'.curve)
     (hφ : (homConstSet E.curve E'.curve : Set ℂ) =
@@ -313,8 +317,8 @@ theorem degree_eq_absNorm {E E' : CMCurve K} (v : HeightOneSpectrum (𝓞 K))
     rw [σ₀.injective hx'] at hx
     exact inv_absNorm_notMem_inv v hK hv hx
 
-include hK in
 
+include hK in
 theorem exists_isogeny_homConstSet_eq {E E' : CMCurve K} (v : HeightOneSpectrum (𝓞 K))
     (h : (ellMulAction σ₀ hK).smul
       (ClassGroup.mk0 ⟨v.asIdeal, mem_nonZeroDivisors_of_ne_zero v.ne_bot⟩) E.toEll = E'.toEll) :

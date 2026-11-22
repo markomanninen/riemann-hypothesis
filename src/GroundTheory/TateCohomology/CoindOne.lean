@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.GroupCoh
@@ -13,9 +18,6 @@ noncomputable def coindOneRep : Representation k G (G → X) where
   toFun g := LinearMap.funLeft k X (· * g)
   map_one' := by ext; simp
   map_mul' g h := by ext; simp [mul_assoc]
-
-@[simp]
-lemma coindOneRep_apply (g : G) (F : G → X) (x : G) : coindOneRep k G X g F x = F (x * g) := rfl
 
 noncomputable abbrev coindOne : Rep k G := Rep.of (coindOneRep k G X)
 
@@ -70,6 +72,7 @@ noncomputable def resCoindOneIso :
         simp only
         rw [cosetPart_out_mul, mk_out_mul] }
     (fun t => LinearMap.ext fun F => funext fun s => funext fun c => by
+      change F ((c.out * s) * t) = F (c.out * ((s * t : S) : G))
       simp [mul_assoc])
 
 noncomputable def quotientToInvariantsCoindOneIso [S.Normal] :
@@ -77,9 +80,11 @@ noncomputable def quotientToInvariantsCoindOneIso [S.Normal] :
   Rep.mkIso <| Representation.Equiv.mk
     { toFun := fun F c => Quotient.liftOn' c F.1 fun x y hxy => by
         have h := congrFun (F.2 ⟨x⁻¹ * y, QuotientGroup.leftRel_apply.1 hxy⟩) x
+        change F.1 (x * (x⁻¹ * y)) = F.1 x at h
         simpa using h.symm
       invFun := fun F => ⟨fun x => F x, fun s => funext fun x => by
-        simp⟩
+        change F (↑(x * (s : G)) : G ⧸ S) = F (x : G ⧸ S)
+        exact congrArg F (QuotientGroup.eq.2 (by simp))⟩
       map_add' := fun F F' => funext fun c => by
         induction c using QuotientGroup.induction_on; rfl
       map_smul' := fun r F => funext fun c => by

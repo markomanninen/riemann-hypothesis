@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TheoremOfSquareCechPicardTranslates
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMumfordBundlePullbackGrpPullback
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SectionsDimAdditionGraphPrincipalPolarisation
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EqOneOfUnimodular
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TheoremOfSquareCechPicardTranslates
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMumfordBundlePullbackGrpPullback
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SectionsDimAdditionGraphPrincipalPolarisation
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EqOneOfUnimodular
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg
@@ -191,7 +196,8 @@ theorem fibre_iso_keeps_lam : ∀ W : Matrix (Fin 8) (Fin 8) ℤ, IsE8 W → ∀
         GlobalTheory.CechPic.pull (z ≫ lamPts (pr k.1.1) (pr k.1.2) k.2 ≫ pullback.fst Q.B.hom (spMap ρ))
           (GlobalTheory.CechPic.cls Q.M.L Q.M.isLB) := by
     intro X z
-    rw [(GlobalTheory.CechPic.cls_eq_iff D.P.isLB hLC).2 ⟨w, hw⟩, GlobalTheory.CechPic.cls_linComb Q.M.isLB, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [(GlobalTheory.CechPic.cls_eq_iff D.P.isLB hLC).2 ⟨w, hw⟩, GlobalTheory.CechPic.cls_linComb Q.M.isLB, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_zsmul, ← GlobalTheory.CechPic.pull_comp]
   have e0 : GlobalTheory.CechPic.pull (pullback.fst D.P.A.hom (spMap ev)) (GlobalTheory.CechPic.cls D.P.L D.P.isLB) =

@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
-import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsometryOfConjSplit
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitLatOfOneOne
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsComplexLinearOfPureTypes
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HermitianLatticeSignatureSplitOfDefinite
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsSplitPureTypePeriodOfSignatureSplit
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.PermutesPeriodSpacesIdOfFixesCmCurveTorsion
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CoefficientFieldAlgClosedInFunctionFieldsOfPerio
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CmModuliConsequenceOfAbelianSchemeLaws
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
+public import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsometryOfConjSplit
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitLatOfOneOne
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsComplexLinearOfPureTypes
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HermitianLatticeSignatureSplitOfDefinite
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsSplitPureTypePeriodOfSignatureSplit
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.PermutesPeriodSpacesIdOfFixesCmCurveTorsion
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CoefficientFieldAlgClosedInFunctionFieldsOfPerio
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CmModuliConsequenceOfAbelianSchemeLaws
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.PureType
@@ -63,7 +67,7 @@ theorem congr_of_section (F : FamilyUnif Xo σ ty) (τ : ℂ ≃+* ℂ) {i i' : 
   rw [← h1, tu, ← Category.assoc, hu, ← tu, h2] at key
   have e : F.ex i' P' ((n : ℂ)⁻¹ • P' x') = F.ex i' P' ((n : ℂ)⁻¹ • P' w) := Over.OverMorphism.ext key
   have e' := F.ex_add i' P' hP' ((n : ℂ)⁻¹ • P' (w - x')) ((n : ℂ)⁻¹ • P' x')
-  rw [← smul_add, ← map_add, sub_add_cancel, e] at e'
+  rw [← smul_add, ← map_add (f := _), sub_add_cancel, e] at e'
   obtain ⟨y, hy⟩ := (F.ex_ker i' P' hP' _).1 (mul_eq_right.1 e'.symm)
   refine ⟨y, ?_⟩
   rw [← sub_eq_iff_eq_add']
@@ -107,15 +111,15 @@ theorem conj_point_eq (F : FamilyUnif Xo σ ty) (hD : 1 ≤ D.p + D.q) (hσ : σ
         fun v => congr_of_section F τ hP' hu.symm l.A_pos _ (F.ex_etaA i P hP v) (F.ex_etaA i' P' hP' v)
           (key _ l.A_pos (Nat.dvd_lcm_right _ _) _), hL⟩).symm
 
-open Polynomial GlobalTheory.CompRat.FixedConst in
 
+open Polynomial GlobalTheory.CompRat.FixedConst in
 theorem fnAlgClosed_of_fixed_points (F : FamilyUnif Xo (algebraMap (KA l) ℂ) ty) (h1 : 1 ≤ D.p + D.q)
     (hty : IsTypeFn H D.p D.q ty) (c : Coeff l)
     (hfix : ∀ τ : ℂ ≃+* ℂ, (∀ x ∈ c.F, τ x = x) → ∀ i, ∃ P, IsPeriod (F.Di i) ty P ∧
-      spMap (τ : ℂ →+* ℂ) ≫ F.u i P = F.u i P) : FnAlgClosed Xo c := by
+      spMap (τ : ℂ →+* ℂ) ≫ F.u i P = F.u i P) : FnAlgClosed (Xo := Xo) (c := c) := by
   intro Z a ha
   obtain ⟨r, rfl⟩ := GlobalTheory.GeomIrr.mem_range_of_isAlgebraic_ratFun a (ha.tower_top (kap Z))
-  have hr : IsIntegral c.F r := (isIntegral_algebraMap_iff (algebraMap (kap Z) (Om Z)).injective).1 ha.isIntegral
+  have hr : IsIntegral c.F r := (isIntegral_algebraMap_iff ).1 ha.isIntegral
   suffices h : r ∈ (algebraMap c.F (kap Z)).range by
     obtain ⟨k, hk⟩ := h
     exact ⟨k, by rw [← hk, ← IsScalarTower.algebraMap_apply]⟩
@@ -185,7 +189,7 @@ theorem fnAlgClosed_of_fixed_points (F : FamilyUnif Xo (algebraMap (KA l) ℂ) t
   exact (ev_conj x' (τ : ℂ →+* ℂ) f).symm.trans (by rw [hx'])
 
 theorem fnAlgClosed_of_curveOver (Xo : Moduli D l) (c : Coeff l) (hD : 1 ≤ D.p + D.q)
-    (h1 : ∃ D₁ : Datum H, D₁.p = 1 ∧ D₁.q = 0) (hC : CurveOver H c.F l.M') : FnAlgClosed Xo c := by
+    (h1 : ∃ D₁ : Datum H, D₁.p = 1 ∧ D₁.q = 0) (hC : CurveOver H c.F l.M') : FnAlgClosed (Xo := Xo) (c := c) := by
   have hex : ∃ (g : ℕ) (ty : Fin g → (E →+* ℂ)), IsTypeFn H D.p D.q ty := by
     classical
     let m : (E →+* ℂ) → ℕ := fun τ => if τ (H.rt : E) = H.rt0 then D.p else D.q

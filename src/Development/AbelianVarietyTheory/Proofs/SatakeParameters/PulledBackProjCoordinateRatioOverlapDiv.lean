@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XMemOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XMemOne
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -70,13 +74,13 @@ theorem rat_eq_germ {Z : Scheme.{0}} [IsIntegral Z] (φ : Z ⟶ PSpace ℂ d) (k
     (hk : genericPoint Z ∈ φ ⁻¹ᵁ chart d k) :
     rat φ k l = φ.stalkMap (genericPoint Z) ((PSpace ℂ d).presheaf.germ (chart d k) _ hk (ratioSec d k l)) := by
   unfold rat
-  rw [dif_pos hk]
+  rw [dite_eq_left hk]
   exact (Scheme.Hom.germ_stalkMap_apply φ _ _ hk _).symm
 
 end Overlap
 
-open Overlap in
 
+open Overlap in
 theorem rat_overlap : ∀ (d : ℕ) (Z : Scheme.{0}) [IsIntegral Z] (φ : Z ⟶ PSpace ℂ d) (a i j : Fin (d + 1)),
     genericPoint Z ∈ φ ⁻¹ᵁ chart d a → genericPoint Z ∈ φ ⁻¹ᵁ chart d i →
       rat φ a i ≠ 0 ∧ rat φ i j = rat φ a j / rat φ a i := by

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelPlace
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StBranchLift
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelPlace
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StBranchLift
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -19,9 +24,6 @@ def NormalCurveBranchOrder.Statement : Prop :=
         Ring.ord (pointLocalRing M.ideal w)
             (algebraMap (MvPolynomial (Fin n ⊕ Fin M.m) ℂ) (pointLocalRing M.ideal w) g) =
           analyticOrderAt (fun τ : ℂ ↦ eval (φ fun _ ↦ τ) g) 0
-
-def NormalCurveBranchOrder.diagonalDisc : (Fin 1 → ℂ) → Fin 1 ⊕ Fin IndefiniteRowSideFullHecke.ComplexSets.lineDiagonalModel.m → ℂ :=
-  fun t _ ↦ t 0
 
 end
 

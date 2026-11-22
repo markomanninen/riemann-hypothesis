@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.FiltPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.FiltPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.TruncationPieces LateralTheory.E.FiltPf

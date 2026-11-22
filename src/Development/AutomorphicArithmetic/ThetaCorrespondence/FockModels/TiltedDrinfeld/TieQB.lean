@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.PeriodRingBases.PeriodRingUnits.DieudonneManinBasisModification
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.MaximalIdealEqSpanT
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.PeriodRingBases.PeriodRingUnits.DieudonneManinBasisModification
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.MaximalIdealEqSpanT
+
+@[expose] public section
 
 noncomputable section
 

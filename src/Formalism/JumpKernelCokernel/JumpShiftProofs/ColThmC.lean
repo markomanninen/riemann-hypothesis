@@ -1,5 +1,9 @@
-import Formalism.JumpKernelCokernel.Statement
-import Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.ColAssembly
+module
+
+public import Formalism.JumpKernelCokernel.Statement
+public import Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.ColAssembly
+
+@[expose] public section
 
 noncomputable section
 

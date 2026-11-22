@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocInd
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocGen
-import Formalism.LocalToGlobal.GlobalTheory.CoefficientMapSurjective
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocInd
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocGen
+public import Formalism.LocalToGlobal.GlobalTheory.CoefficientMapSurjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,8 @@ theorem hform_mulVec (σ : K →+* K) (J M : Matrix (Fin n) (Fin n) K) (v y : Fi
   rw [hform_eq]
   have e1 : (fun i => σ ((M *ᵥ v) i)) = M.map σ *ᵥ fun a => σ (v a) := by
     funext i
-    simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply]
   rw [e1, dotProduct_comm, Matrix.dotProduct_mulVec, dotProduct_comm, ← Matrix.mulVec_transpose, Matrix.mulVec_mulVec]
   rfl
 
@@ -160,7 +165,7 @@ theorem mem_intSpanAt_iff_map (w : D.what₂.places.Pl) {n : ℕ} (lam : D.what�
       obtain ⟨r, f, hr, hf, rfl⟩ := hq
       exact AddSubgroup.subset_closure ⟨r, f, hr, hf, map_gen D r f⟩
     | zero => rw [map_zero]; exact AddSubgroup.zero_mem _
-    | add q q' _ _ h1 h2 => rw [map_add]; exact AddSubgroup.add_mem _ h1 h2
+    | add q q' _ _ h1 h2 => rw [map_add (f := _)]; exact AddSubgroup.add_mem _ h1 h2
     | neg q _ h1 => rw [map_neg]; exact AddSubgroup.neg_mem _ h1
   · intro hp
     have hle : Formalism.L2.Forms.IntSpan D w lam ≤

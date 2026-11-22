@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlkEquivInl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TransposeMulIncl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FundamentalDomainMeasureFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralFundamentalDomainUnipotent
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteDimensionalSpaceAutomorphicSmoothing
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CommuteCapOfCommuteEop
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfIsOpenStab
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantTermAutomorphicFormIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantTermIntegralLeftInvariantStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantTermModerateGrowthStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarishChandraCapelliUniformDiagonalBlocksStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalSlowlyIncreasingKilledCapelliPoStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlkEquivInl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TransposeMulIncl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FundamentalDomainMeasureFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralFundamentalDomainUnipotent
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteDimensionalSpaceAutomorphicSmoothing
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CommuteCapOfCommuteEop
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfIsOpenStab
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantTermAutomorphicFormIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantTermIntegralLeftInvariantStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantTermModerateGrowthStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarishChandraCapelliUniformDiagonalBlocksStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalSlowlyIncreasingKilledCapelliPoStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ open Formalism.REAL (qdet)
 
 namespace GlobalTheory.GLSlice
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a b : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a b : ℕ}
 
 theorem qdet_eq_cap (τ : E →+* ℂ) (u : ℂ) : qdet (Eop (a := a) τ) u = cap τ (u - ((a : ℂ) - 1) / 2) := by
   rw [cap, sub_add_cancel]
@@ -33,7 +37,7 @@ theorem commute_aeval_rt (τ : E →+* ℂ) (u : ℂ) (P : ℂ[X]) (h : GA E a) 
     rw [qdet_eq_cap, ← infGL_mul_finGL h, map_mul]
     exact (GlobalTheory.CapAdInv.cap_commute_rt_infGL E a τ _ _).mul_right (commute_cap_finRep τ _ _)
   induction P using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add]; exact hp.add_left hq
+  | add p q hp hq => rw [map_add (f := _)]; exact hp.add_left hq
   | monomial n c =>
     rw [aeval_monomial]
     exact (Algebra.commute_algebraMap_left _ _).mul_left (h1.pow_left n)
@@ -77,8 +81,8 @@ theorem span_props (L : Subgroup (GL (Fin a) (Af E))) (W : Submodule ℂ (Kinf E
     rw [hR, mul_comm, map_mul, Module.End.mul_apply, ← key, h4, map_zero]
   | zero => exact ⟨fun _ _ => rfl, fun _ _ => map_zero _, zero_mem _, fun _ _ => map_zero _⟩
   | add x y _ _ hx hy =>
-    exact ⟨fun γ g => congrArg₂ (· + ·) (hx.1 γ g) (hy.1 γ g), fun k hk => by rw [map_add, hx.2.1 k hk, hy.2.1 k hk],
-      add_mem hx.2.2.1 hy.2.2.1, fun τ u => by rw [map_add, hx.2.2.2, hy.2.2.2, add_zero]⟩
+    exact ⟨fun γ g => congrArg₂ (· + ·) (hx.1 γ g) (hy.1 γ g), fun k hk => by rw [map_add (f := _), hx.2.1 k hk, hy.2.1 k hk],
+      add_mem hx.2.2.1 hy.2.2.1, fun τ u => by rw [map_add (f := _), hx.2.2.2, hy.2.2.2, add_zero]⟩
   | smul c x _ hx =>
     exact ⟨fun γ g => congrArg (c * ·) (hx.1 γ g), fun k hk => by rw [map_smul, hx.2.1 k hk],
       Submodule.smul_mem _ c hx.2.2.1, fun τ u => by rw [map_smul, hx.2.2.2, smul_zero]⟩
@@ -120,7 +124,7 @@ theorem infGL_unip {r : ℕ} (x : BlockIx a r → Cinf E) : infGL E a (unip x) =
   change (1 : Matrix (Fin a) (Fin a) (Ad E)) i j - sInf E ((1 : Matrix (Fin a) (Fin a) (Cinf E)) i j) +
     sInf E ((1 : Matrix (Fin a) (Fin a) (Cinf E)) i j + nilM x i j) =
     (1 : Matrix (Fin a) (Fin a) (Ad E)) i j + nilM (fun p => sInf E (x p)) i j
-  rw [map_add, ← add_assoc, sub_add_cancel]
+  rw [map_add (f := _), ← add_assoc, sub_add_cancel]
   simp only [nilM, Matrix.of_apply]
   split_ifs <;> simp
 
@@ -289,12 +293,12 @@ theorem exists_slice_space (f : Fin b ↪ Fin a)
   · rw [cap, aeval_qdet_slice]
     exact Subtype.ext (funext fun m => h5 τ _ m)
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem ratGL_blkGL {r : ℕ} (hr : r ≤ a) (γ : GL (Fin r) E × GL (Fin (a - r)) E) :
     ratGL E a (blkGL hr γ) = blkGL hr (ratGL E r γ.1, ratGL E (a - r) γ.2) :=
   map_blkGL hr (algebraMap E (Ad E)) γ
 
-theorem slice_fst : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), (∀ a' : ℕ, a' < a → ∀ (L' : Subgroup (GL (Fin a') (Af E))), IsOpen (L' : Set (GL (Fin a') (Af E))) → ∀ W' : Submodule ℂ (Kinf E a' → ℂ), FiniteDimensional ℂ W' → ∀ X' : Set (Module.End ℂ (Sm E a') → ℂ), X'.Finite → ∀ N' : ℕ, FiniteDimensional ℂ (Submodule.span ℂ (GlobalTheory.HCF.formsGL E a' L' W' X' N'))) → ∀ (L : Subgroup (GL (Fin a) (Af E))), IsOpen (L : Set (GL (Fin a) (Af E))) → ∀ W : Submodule ℂ (Kinf E a → ℂ), FiniteDimensional ℂ W → ∀ X : Set (Module.End ℂ (Sm E a) → ℂ), X.Finite → ∀ N : ℕ, ∀ (r : ℕ), 0 < r → ∀ (hr : r < a), ∀ [MeasurableSpace (BlockIx a r → Ad E)] [BorelSpace (BlockIx a r → Ad E)] (μ : Measure (BlockIx a r → Ad E)) (𝓕 : Set (BlockIx a r → Ad E)), μ.IsAddHaarMeasure → IsAddFundamentalDomain (ratN E a r) 𝓕 μ → μ 𝓕 = 1 → ∀ (t : GL (Fin a) (Af E)) (κ : Kinf E a), ∃ V₁ : Submodule ℂ (GA E r → ℂ), FiniteDimensional ℂ V₁ ∧ ∀ φ ∈ Submodule.span ℂ (GlobalTheory.HCF.formsGL E a L W X N), ∀ m₂ : GA E (a - r), (fun m₁ : GA E r => ∫ x in 𝓕, φ.1 (unip x * (GlobalTheory.LeviGA.blkGL hr.le (m₁, m₂) * finGL E a t * infGL E a (Unitary.toUnits κ))) ∂μ) ∈ V₁ := by
+theorem slice_fst : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), (∀ a' : ℕ, a' < a → ∀ (L' : Subgroup (GL (Fin a') (Af E))), IsOpen (L' : Set (GL (Fin a') (Af E))) → ∀ W' : Submodule ℂ (Kinf E a' → ℂ), FiniteDimensional ℂ W' → ∀ X' : Set (Module.End ℂ (Sm E a') → ℂ), X'.Finite → ∀ N' : ℕ, FiniteDimensional ℂ (Submodule.span ℂ (GlobalTheory.HCF.formsGL E a' L' W' X' N'))) → ∀ (L : Subgroup (GL (Fin a) (Af E))), IsOpen (L : Set (GL (Fin a) (Af E))) → ∀ W : Submodule ℂ (Kinf E a → ℂ), FiniteDimensional ℂ W → ∀ X : Set (Module.End ℂ (Sm E a) → ℂ), X.Finite → ∀ N : ℕ, ∀ (r : ℕ), 0 < r → ∀ (hr : r < a), ∀ [MeasurableSpace (BlockIx a r → Ad E)] [BorelSpace (BlockIx a r → Ad E)] (μ : Measure (BlockIx a r → Ad E)) (𝓕 : Set (BlockIx a r → Ad E)), μ.IsAddHaarMeasure → IsAddFundamentalDomain (ratN E a r) 𝓕 μ → μ 𝓕 = 1 → ∀ (t : GL (Fin a) (Af E)) (κ : Kinf E a), ∃ V₁ : Submodule ℂ (GA E r → ℂ), FiniteDimensional ℂ V₁ ∧ ∀ φ ∈ Submodule.span ℂ (GlobalTheory.HCF.formsGL E a L W X N), ∀ m₂ : GA E (a - r), (fun m₁ : GA E r => ∫ x in 𝓕, φ.1 (unip x * (GlobalTheory.LeviGA.blkGL hr.le (m₁, m₂) * finGL E a t * infGL E a (Unitary.toUnits κ))) ∂μ) ∈ V₁ := by
   intro E _ _ _ a hind L hL W hW X hX N r _ hr _ _ μ 𝓕 hμ h𝓕 h1 t κ
   obtain ⟨L', W', q, hL', hW', hq, h⟩ := exists_translated hL hW hX N hr.le hμ h𝓕 h1 t κ
   obtain ⟨V, hV, hs⟩ := exists_slice_space (fstIx hr.le) (hind r hr) hL' hW' q hq

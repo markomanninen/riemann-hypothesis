@@ -1,6 +1,10 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Statements
-import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.ConclusionOfSmooth
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Statements
+public import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.ConclusionOfSmooth
+
+@[expose] public section
 
 noncomputable section
 

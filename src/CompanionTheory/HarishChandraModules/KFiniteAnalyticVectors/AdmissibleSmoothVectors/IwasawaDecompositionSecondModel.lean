@@ -1,4 +1,8 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.IwaAll
+module
+
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.IwaAll
+
+@[expose] public section
 
 namespace CompanionTheory.D.gk.admitted
 

@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LZProperCut
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteMaximalSpectrumOfFiniteOfIsLocalRing
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LZProperCut
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteMaximalSpectrumOfFiniteOfIsLocalRing
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory AlgebraicGeometry
@@ -54,7 +58,8 @@ theorem LZHensFinite_of_lift (hL : HensIdemLift) : LateralTheory.E.LZProperCut.L
   have hle : ∀ M : Ideal B, M.IsMaximal → I ≤ M := by
     intro M hM
     rw [hI, Ideal.map_le_iff_le_comap]
-    have : (M.comap (algebraMap A B)).IsMaximal := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal M
+    have : (M.comap (algebraMap A B)).IsMaximal :=
+      Ideal.isMaximal_under_of_isIntegral_of_isMaximal M
     exact (IsLocalRing.eq_maximalIdeal this).ge
   have htriv : ∀ e : B ⧸ I, IsIdempotentElem e → e = 0 ∨ e = 1 := by
     intro e he

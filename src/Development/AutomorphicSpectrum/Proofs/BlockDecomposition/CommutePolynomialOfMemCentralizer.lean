@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MulEqOfRangeLe
-import GroundTheory.AutomorphicForms.AnisotropicHeight
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MeasurableSdot
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OnlyStableSubspaces
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MulEqOfRangeLe
+public import GroundTheory.AutomorphicForms.AnisotropicHeight
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MeasurableSdot
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OnlyStableSubspaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem comm_rm_aeval (x : Matrix (Fin n) (Fin n) (Ad E)) (γ : Matrix (Fin n) (
     rw [aeval_C, rm_algebraMap]
     exact (Algebra.commutes _ x).symm
   | add p q hp hq =>
-    rw [map_add, rm_add, mul_add, add_mul, hp, hq]
+    rw [map_add (f := _), rm_add, mul_add, add_mul, hp, hq]
   | monomial m a h =>
     have e : aeval γ (C a * X ^ (m + 1)) = aeval γ (C a * X ^ m) * γ := by
       simp only [map_mul, map_pow, aeval_X, pow_succ, mul_assoc]

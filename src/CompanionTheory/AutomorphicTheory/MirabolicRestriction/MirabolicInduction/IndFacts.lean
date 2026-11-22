@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.BlockTriangularOfSubOne
-import Formalism.MirabolicMackeyTheory.MirabolicIsMackey
-import CompanionTheory.AutomorphicTheory.MirabolicRestriction.MirabolicInduction.IndIrr
-import CompanionTheory.AutomorphicTheory.MirabolicRestriction.MirabolicInduction.IndDim
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.BlockTriangularOfSubOne
+public import Formalism.MirabolicMackeyTheory.MirabolicIsMackey
+public import CompanionTheory.AutomorphicTheory.MirabolicRestriction.MirabolicInduction.IndIrr
+public import CompanionTheory.AutomorphicTheory.MirabolicRestriction.MirabolicInduction.IndDim
+
+@[expose] public section
 
 noncomputable section
 

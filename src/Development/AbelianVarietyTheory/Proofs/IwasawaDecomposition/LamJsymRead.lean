@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.LevGSym
-import Formalism.LocalToGlobal.HermitianForms.DefsSym
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CongruenceLevelEqDepthSucc
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PhiTopTargetSym
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.JoinForms
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.LevGSym
+public import Formalism.LocalToGlobal.HermitianForms.DefsSym
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CongruenceLevelEqDepthSucc
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PhiTopTargetSym
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.JoinForms
+
+@[expose] public section
 
 open Formalism.L2.Col
 
@@ -70,7 +74,8 @@ theorem lamJsym_read (κ κ' K : Type) [CommRing κ] [Field κ'] [Field K] (e : 
   rw [hrS]
   congr 1
   · congr 1
-    rw [sum_skip h (by omega) _ (fun i j => e (A i j)) fun i j => by rw [hA]; rfl, map_add, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [sum_skip h (by omega) _ (fun i j => e (A i j)) fun i j => by rw [hA]; rfl, map_add (f := _), map_sum, map_sum]
   · refine Finset.prod_congr rfl fun s hs => ?_
     rw [Finset.mem_range] at hs
     rw [← hχ s hs, GlobalTheory.TopLaw.blkDet_eq_dB (coarse r (List.replicate m t)) (s + 1) (r + s * t) t (GlobalTheory.DatumLaw.blk_le hs hn)

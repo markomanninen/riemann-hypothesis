@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.Lemma4ElementZero
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FockRLinDual
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.Lemma4ElementZero
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FockRLinDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,8 @@ theorem nd_move (r : ℕ) (mm : TV n' k →₀ ℕ) (v v' : TV n' k) :
 theorem nd_op (r T : ℕ) (v v' : TV n' k) {P : MvPolynomial (TV n' k) R} (hP : P ∈ NDsub R n' k r T) :
     X v * pderiv v' P ∈ NDsub R n' k r (T + 1) := by
   rw [mem_NDsub] at hP
-  rw [P.as_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [P.as_sum, map_sum, Finset.mul_sum]
   refine Submodule.sum_mem _ fun mm hmm => ?_
   rw [pderiv_monomial, ← pow_one (X v), ← monomial_single_add, mem_NDsub]
   intro mm' hmm'
@@ -144,7 +149,7 @@ theorem nd_OpCl (N N' : Fin n' → Matrix (Fin k) (Fin k) R) (h : ∀ s, N s * N
     obtain ⟨f0, hf0, l, h1, h2, rfl⟩ := hy
     exact NDsub_mono (Nat.add_le_add_left (word_length TT c l h1 h2) T) (nd_word N N' h r T (hM f0 hf0) l)
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx => rw [map_smul]; exact Submodule.smul_mem _ _ hx
 
 end ND

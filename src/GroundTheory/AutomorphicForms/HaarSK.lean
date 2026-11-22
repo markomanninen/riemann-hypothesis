@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Measure Topology Set Function TopologicalSpace
 open scoped ENNReal NNReal
@@ -76,10 +80,6 @@ theorem lift_mulMap {u : S → ℝ} (hu : ∀ s, ∀ m ∈ inter S K, u (s * m) 
     hq.symm
   change u q.1 = u p.1
   rw [he, hu _ _ hm]
-
-theorem lift_mul {u : S → ℝ} (hu : ∀ s, ∀ m ∈ inter S K, u (s * m) = u s) (s : S) (k : K) :
-    lift hSK u ((s : G) * k) = u s :=
-  lift_mulMap hu (s, k)
 
 theorem lift_add (u w : S → ℝ) : lift hSK (u + w) = lift hSK u + lift hSK w := rfl
 

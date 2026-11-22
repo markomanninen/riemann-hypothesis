@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.Weilfun
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.HTChartExists
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TwoWeightEqOneAddRoot
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.Weilfun
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.HTChartExists
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TwoWeightEqOneAddRoot
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct NumberField GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.BT GlobalTheory.CompanionTheory.Ar.HT ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
@@ -71,8 +75,5 @@ theorem weil_regular_of_fun (hW : type_of% @PositivityTheory.HtPt.Weilfun.weil_f
     congr 1
   rw [e, hw, val_unitOn]
   rfl
-
-theorem weil_regular : type_of% (weil_regular_of_fun @PositivityTheory.HtPt.Weilfun.weil_fun) :=
-  weil_regular_of_fun @PositivityTheory.HtPt.Weilfun.weil_fun
 
 end PositivityTheory.HtPt.Weilreg

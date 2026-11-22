@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -10,9 +14,8 @@ variable {n : ℕ} {A E : Type} [CommRing A] [Ring E] [Algebra A E] (D : Det n A
 private theorem map_eq_lTensor (S : Type) [CommRing S] [Algebra A S] (z : S ⊗[A] E) :
     Algebra.TensorProduct.map (AlgHom.id S S) f z = f.toLinearMap.lTensor S z := by
   induction z with
-  | zero => simp
   | tmul s x => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 private theorem map_surj (hf : Function.Surjective f) (S : Type) [CommRing S] [Algebra A S] :
     Function.Surjective (Algebra.TensorProduct.map (AlgHom.id S S) f) := by
@@ -32,12 +35,11 @@ private theorem eq_of_map_eq (hf : Function.Surjective f) (hk : ∀ x, f x = 0 �
       D.D S (y + (LinearMap.ker f.toLinearMap).subtype.lTensor S w) = D.D S y := by
     intro w
     induction w with
-    | zero => simp
     | tmul s k =>
       intro y
       have := (D.mem_ker.1 (hk k.1 k.2)) S y (s ⊗ₜ 1) 1
       simpa using this
-    | add a b ha hb => intro y; rw [LinearMap.map_add, ← add_assoc, hb, ha]
+    | add a b ha hb => intro y; rw [LinearMap.map_add (f := _), ← add_assoc, hb, ha]
   rw [← key w y, hw, add_sub_cancel]
 
 private theorem map_map_swap (B B' : Type) [CommRing B] [Algebra A B] [CommRing B'] [Algebra A B'] (g : B →ₐ[A] B')
@@ -45,9 +47,8 @@ private theorem map_map_swap (B B' : Type) [CommRing B] [Algebra A B] [CommRing 
     Algebra.TensorProduct.map (AlgHom.id B' B') f (Algebra.TensorProduct.map g (AlgHom.id A E) x) =
       Algebra.TensorProduct.map g (AlgHom.id A E') (Algebra.TensorProduct.map (AlgHom.id B B) f x) := by
   induction x with
-  | zero => simp
   | tmul s x => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 end
 

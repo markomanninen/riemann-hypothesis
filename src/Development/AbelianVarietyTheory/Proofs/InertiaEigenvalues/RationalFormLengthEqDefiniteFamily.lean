@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.RowsExhaust
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConcreteProjectorEqOrthogonalProjectionStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMtTieCoord
-import Formalism.LocalToGlobal.Divisibility.LiftLatLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.RowsExhaust
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConcreteProjectorEqOrthogonalProjectionStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMtTieCoord
+public import Formalism.LocalToGlobal.Divisibility.LiftLatLemmas
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.DIV Formalism.L2.Indef NumberField IsDedekindDomain GlobalTheory.EtaJoin
 
 noncomputable section
@@ -27,8 +32,8 @@ theorem length_quot_map {R M M' : Type} [CommRing R] [AddCommGroup M] [Module R 
     subst this
     exact ⟨⟨x, hx'⟩, hxQ, rfl⟩
 
-open scoped Formalism.L2.Col in
 
+open scoped Formalism.L2.Col in
 theorem lenUW_map {K : Type} [Field K] [NumberField K] {V V' : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) V]
     [IsScalarTower (𝓞 K) K V] [AddCommGroup V'] [Module K V'] [Module (𝓞 K) V'] [IsScalarTower (𝓞 K) K V']
     (φ : V →ₗ[K] V') (hφ : Function.Injective φ) (w : HeightOneSpectrum (𝓞 K)) (A B : Submodule (𝓞 K) V) :
@@ -61,7 +66,8 @@ theorem lat_eq_map (D : D7) (μ : D.what₂.Tup) (j : ℕ) {n : ℕ} (e : (Fin n
     choose! g hg using D.what₂.MtLat_sub μ j
     have hx' : e x = ∑ v ∈ (D.what₂.MtLat μ j).gen, (c v) • g v := by
       apply GlobalTheory.Mem.LiftForms.jMt_injective μ j
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       have hc' : D.what₂.jMt μ j (e x) = ∑ v ∈ (D.what₂.MtLat μ j).gen, D.what₂.embLL (c v : D.what₂.LL) • v := hc
       rw [hc']
       refine Finset.sum_congr rfl fun v hv => ?_

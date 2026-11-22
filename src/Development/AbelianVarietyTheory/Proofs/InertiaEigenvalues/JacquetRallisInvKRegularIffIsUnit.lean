@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.UniNilp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.UniNilp
+
+@[expose] public section
 
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
@@ -31,7 +35,8 @@ variable {r : ℕ} {τ : K}
 theorem trace_mul_eq_sum (bb : Module.Basis (Fin r) F K) (hb : ∀ i, bb i = τ ^ (i : ℕ)) (x a : K) :
     Algebra.trace F K (x * a) = ∑ j, bb.repr x j * Algebra.trace F K (τ ^ (j : ℕ) * a) := by
   conv_lhs => rw [← bb.sum_repr x]
-  simp [Finset.sum_mul, smul_mul_assoc, map_sum, hb]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Finset.sum_mul, smul_mul_assoc, map_sum, hb]
 
 end Gen
 
@@ -119,7 +124,8 @@ theorem invK_regular_iff_isUnit :
   have hH : ∀ v : Fin r → F, hankel (A.invK τ p lam a) *ᵥ v = Ψ (a * bb.equivFun.symm v) := by
     intro v
     funext i
-    simp only [hankel, Matrix.mulVec, dotProduct, Matrix.of_apply, hmom, hΨ,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hankel, Matrix.mulVec, dotProduct, Matrix.of_apply, hmom, hΨ,
       Module.Basis.equivFun_symm_apply, hb, Finset.mul_sum, map_sum, mul_smul_comm, map_smul, smul_eq_mul]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [pow_add]; ring_nf

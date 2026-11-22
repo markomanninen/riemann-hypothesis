@@ -1,5 +1,9 @@
-import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.PolyStep
-import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.PolyMax
+module
+
+public import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.PolyStep
+public import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.PolyMax
+
+@[expose] public section
 
 namespace ReciprocityTheory.CA
 

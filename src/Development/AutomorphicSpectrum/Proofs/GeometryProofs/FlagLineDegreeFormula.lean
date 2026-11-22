@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocRatio
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GrGenOfIsFlagVBOn
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GradedDegreeFormulaStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagLabelBasesExistStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordDegreeBoundGenericStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordDegreeBoundCharZeroStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordDegreeBoundOfFlagStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HermitianLineMetricBoundStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LogCardQuotientBoundStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocalRatioProductFormulaStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordsAtComplexEmbeddingStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ValAtComplexEmbeddingStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelValueLiftStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GramDetNeZeroOfIndepStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocRatio
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GrGenOfIsFlagVBOn
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GradedDegreeFormulaStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagLabelBasesExistStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordDegreeBoundGenericStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordDegreeBoundCharZeroStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordDegreeBoundOfFlagStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HermitianLineMetricBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LogCardQuotientBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocalRatioProductFormulaStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordsAtComplexEmbeddingStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ValAtComplexEmbeddingStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelValueLiftStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GramDetNeZeroOfIndepStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem gram_eq {X : Scheme.{0}} {Ω : Type} [Field Ω] {ξ : Sp Ω ⟶ X} {K : 
     (h : LieMetric M y) {L : Type} [Field L] [NumberField L] {z : Sp (𝓞 L) ⟶ X} {B : HermitianBundle.{0} L}
     {MB : LieModel G z B.carrier} (hfib : IsFibre (fun z v w c => c = h.ip z v w) z B MB) (σ : L →+* ℂ) {n : ℕ}
     (g : Fin n → B.carrier) (v : Fin n → (epsAt (spMap (σ.comp (algebraMap (𝓞 L) L)) ≫ z) ⟶ G))
-    (hl : ∀ a, MB.Lifts (σ.comp (algebraMap (𝓞 L) L)) (𝟙 G.left) (g a) (v a)) :
+    (hl : ∀ a, ((v a).left ≫ (𝟙 G.left) = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap (σ.comp (algebraMap (𝓞 L) L))) ≫ (MB.pt (g a)).left)) :
     B.gramDet σ g = (gramAt h _ v).det := by
   unfold HermitianBundle.gramDet gramAt
   congr 1
@@ -230,7 +234,7 @@ theorem isDegOn_inr (Fl : 𝔐.Flag) {a : CMType H × Fin (D.p + D.q) → K → 
   have hi : rootIdx D (τ, Fin.natAdd D.p i) = ⟨.inr τ, i.rev⟩ := by
     have h2 := i.2
     simp only [rootIdx, Fin.val_natAdd]
-    rw [dif_neg (by omega)]
+    rw [dite_eq_right (by omega)]
     congr 1
     apply Fin.ext
     simp [Fin.val_rev]

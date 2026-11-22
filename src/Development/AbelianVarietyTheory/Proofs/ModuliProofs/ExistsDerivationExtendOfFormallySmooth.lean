@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSymm
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSymm
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct ContDiff
@@ -11,22 +16,9 @@ open GlobalTheory.KS
 
 namespace GlobalTheory.KS
 
-theorem exists_ringHom_lift_of_formallySmooth (R B E C : Type) [CommRing R] [CommRing B]
-    [CommRing E] [CommRing C] [Algebra R B] [Algebra.FormallySmooth R B]
-    (φ : B →+* C) (ψ : R →+* E) (π : E →+* C) (hπ : Function.Surjective π)
-    (hn : IsNilpotent (RingHom.ker π)) (hc : ∀ r, π (ψ r) = φ (algebraMap R B r)) :
-    ∃ l : B →+* E, (∀ b, π (l b) = φ b) ∧ ∀ r, l (algebraMap R B r) = ψ r := by
-  letI : Algebra R E := ψ.toAlgebra
-  letI : Algebra R C := (φ.comp (algebraMap R B)).toAlgebra
-  let f : B →ₐ[R] C := { φ with commutes' := fun _ => rfl }
-  let g : E →ₐ[R] C := { π with commutes' := fun r => hc r }
-  refine ⟨(Algebra.FormallySmooth.liftOfSurjective f g hπ hn).toRingHom, fun b => ?_, fun r => ?_⟩
-  · exact Algebra.FormallySmooth.liftOfSurjective_apply f g hπ hn b
-  · exact (Algebra.FormallySmooth.liftOfSurjective f g hπ hn).commutes r
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField in
 open scoped CategoryTheory.Obj TensorProduct ContDiff in
-
 theorem _root_.GlobalTheory.KS.exists_derivation_extend_of_formallySmooth :
     ∀ (R B C : Type) [CommRing R] [CommRing B] [CommRing C] [Algebra R B] [Algebra.FormallySmooth R B] (φ : B →+* C) (D : R → C), (∀ a b, D (a + b) = D a + D b) → (∀ a b, D (a * b) = φ (algebraMap R B a) * D b + φ (algebraMap R B b) * D a) → ∃ d : B → C, (∀ a b, d (a + b) = d a + d b) ∧ (∀ a b, d (a * b) = φ a * d b + φ b * d a) ∧ ∀ r, d (algebraMap R B r) = D r := by
   intro R B C _ _ _ _ _ φ D hadd hmul

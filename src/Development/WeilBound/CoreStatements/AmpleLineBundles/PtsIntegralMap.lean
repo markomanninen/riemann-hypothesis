@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AmpleLineBundles.HeightRecRFull
+module
+
+public import Development.WeilBound.CoreStatements.AmpleLineBundles.HeightRecRFull
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem homog_ren {g : MRing ι} {a : K → ℕ} (hg : IsMultiHomog g a) : IsMul
   have h1 : ∀ i : ι' k, Finsupp.mapDomain (Equiv.sigmaCongrRight e) m0 ⟨k, i⟩ = m0 ⟨k, (e k).symm i⟩ := by
     intro i
     have : (⟨k, i⟩ : Σ k, ι' k) = Equiv.sigmaCongrRight e ⟨k, (e k).symm i⟩ := by simp
-    rw [this, Finsupp.mapDomain_apply (Equiv.sigmaCongrRight e).injective]
+    rw [this, Finsupp.mapDomain_apply_of_injective (Equiv.sigmaCongrRight e).injective]
   simp only [h1]
   rw [Equiv.sum_comp (e k).symm (fun j => m0 ⟨k, j⟩)]
   exact hg m0 hm0 k
@@ -85,10 +89,10 @@ theorem multAt_map (J V : Ideal (MRing ι)) : multAt (J.map (ren e)) (V.map (ren
   unfold multAt
   by_cases hV : V.IsPrime
   · have hV' : (V.map (ren e)).IsPrime := (isPrime_map_ringEquiv_iff (ren e) V).2 hV
-    rw [dif_pos hV, dif_pos hV']
+    rw [dite_eq_left hV, dite_eq_left hV']
     exact congrArg ENat.toNat (length_localizedModule_quotient_map (ren e) J V)
   · have hV' : ¬ (V.map (ren e)).IsPrime := fun h' => hV ((isPrime_map_ringEquiv_iff (ren e) V).1 h')
-    rw [dif_neg hV, dif_neg hV']
+    rw [dite_eq_right hV, dite_eq_right hV']
 
 def chartId (V : Ideal (MRing ι)) (c : ∀ k, ι k) : Ideal (MRing ι) :=
   V ⊔ Ideal.span (Set.range fun k => (X ⟨k, c k⟩ : MRing ι) - 1)
@@ -110,12 +114,12 @@ theorem geoNum_map (V : Ideal (MRing ι)) (hV : IsRelevant V) (a b : Fin 0 → K
   have hV' := (relevant_iff e V).2 hV
   have h1 : geoNum 0 V b = ((Module.length ℤ (MRing ι ⧸ chartId V fun k => (hV k).choose)).toNat : ℤ) := by
     simp only [geoNum]
-    rw [dif_pos hV]
+    rw [dite_eq_left hV]
     rfl
   have h2 : geoNum 0 (V.map (ren e)) a =
       ((Module.length ℤ (MRing ι' ⧸ chartId (V.map (ren e)) fun k => (hV' k).choose)).toNat : ℤ) := by
     simp only [geoNum]
-    rw [dif_pos hV']
+    rw [dite_eq_left hV']
     rfl
   obtain ⟨φ⟩ := hc (fun k => (hV' k).choose) (fun k => e k (hV k).choose) (fun k => (hV' k).choose_spec)
     (fun k => by
@@ -213,8 +217,8 @@ theorem ptsIntegral_map [Nonempty K] (V : Ideal (MRing ι)) (hV : IsMultiHomogId
           have h0 := z'.2.2 t (hVS ▸ Ideal.subset_span ht)
           change eval _ (map _ t) = 0
           rw [eval_map, eval₂_eq'] at h0 ⊢
-          have : ∀ m ∈ t.support, (Int.castRingHom ℂ) (coeff m t) * ∏ p : Σ k, ι' k, (c p.1 * z'.1 p) ^ m p =
-              (∏ k, c k ^ a k) * ((Int.castRingHom ℂ) (coeff m t) * ∏ p, z'.1 p ^ m p) := by
+          have : ∀ m ∈ t.support, (Int.castRingHom ℂ) (AddMonoidAlgebra.coeff t m) * ∏ p : Σ k, ι' k, (c p.1 * z'.1 p) ^ m p =
+              (∏ k, c k ^ a k) * ((Int.castRingHom ℂ) (AddMonoidAlgebra.coeff t m) * ∏ p, z'.1 p ^ m p) := by
             intro m hm
             have h1 : ∏ p : Σ k, ι' k, c p.1 ^ m p = ∏ k, c k ^ a k := by
               rw [Fintype.prod_sigma]

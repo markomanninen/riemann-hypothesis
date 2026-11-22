@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.GenericUnlinkedGL.UnlinkedRealize
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.GenericUnlinkedGL.UnlinkedRealize
+
+@[expose] public section
+
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.RgGu
 open scoped TensorProduct
 
@@ -17,6 +22,7 @@ theorem rank_piTensorProduct_le_one {α : Type} [Fintype α] (M : α → Type)
     refine ⟨r * ∏ a, c a, ?_⟩
     have hf : f = fun a => c a • v₀ a := funext fun a => (hc a).symm
     rw [hf, MultilinearMap.map_smul_univ, mul_smul]
+    simp only [RingHom.id_apply]
   · rintro x y ⟨r, hr⟩ ⟨s, hs⟩
     exact ⟨r + s, by rw [add_smul, hr, hs]⟩
 

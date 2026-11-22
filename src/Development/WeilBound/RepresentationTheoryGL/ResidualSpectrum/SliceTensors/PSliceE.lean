@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.ConstantTermZeroEq
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.ConstantTermZeroEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,7 +11,7 @@ open GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm
 
 namespace PositivityTheory.Rg.Rs.SliceClasses
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem exp_left (hD : Dict) (hT : FinTr) {r s : ℕ} (hr : 0 < r) (hs : 0 < s) (φ : Sm E (r + s)) (hφ : IsAutForm φ)
     (τs : Finset ℝ) (a : ℝ → ℂ) (F : GA E (r + s) → ℂ)

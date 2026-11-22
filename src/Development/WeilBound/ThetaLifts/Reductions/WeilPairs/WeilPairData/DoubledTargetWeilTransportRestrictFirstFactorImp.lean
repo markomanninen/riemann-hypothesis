@@ -1,1 +1,5 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DeltaTApply
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DeltaTApply
+
+@[expose] public section

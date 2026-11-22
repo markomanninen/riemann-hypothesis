@@ -1,19 +1,37 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitOff
-import Formalism.LocalToGlobal.InertKernelTheory.DefsInt
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JetKapIff
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsUnitScalarFourier
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EntireEqOfMonomialDerivationsAtZeroEq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VacuumVectorMovedPairStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockVacuumRealRestrictionGaussianEntireStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockMonomialAtOriginGaussianEntireOrthonormalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilDatumRealPlacesFockVacuumCharacterStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnramifiedHeckeCharHalfExponentRestrictQuaStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NatCastMemPrimeOf
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplittingHeckeCharExistsArchimedeanExponent
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MoveRationalInvariant
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VacuumCharacterPositiveDefiniteSource
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterInfinityExponentGroupLaws
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitOff
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsInt
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JetKapIff
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsUnitScalarFourier
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EntireEqOfMonomialDerivationsAtZeroEq
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.TwistPlacesOffPrimeQZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ToricSymbols
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FrT
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SrcLat
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatticeOrbitVectorsMovedPair
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CompAtMtOfMemGfC
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MovedWeilVacuumEqVacuumOfMovedLattices
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockVacuumRealRestrictionGaussianEntireStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockMonomialAtOriginGaussianEntireOrthonormalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilDatumRealPlacesFockVacuumCharacterStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnramifiedHeckeCharHalfExponentRestrictQuaStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NatCastMemPrimeOf
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplittingHeckeCharExistsArchimedeanExponent
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MoveRationalInvariant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VacuumCharacterPositiveDefiniteSource
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterInfinityExponentGroupLaws
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.RowClaim
 open Formalism.L2.Host (HChar)
@@ -465,119 +483,9 @@ private theorem arith {N N' : ℕ} (U : Matrix.unitaryGroup (Fin N) D.host.E) (U
   refine ⟨⟨(hc (algebraMap Qbar ℂ)).1, fun σ => (hc σ).2⟩, (hc (algebraMap Qbar ℂ)).2, fun M M' q _ a1 a2 a3 a4 lam => ?_⟩
   obtain ⟨h3, h4⟩ := h ℂ_[q] lam (fun τ => normOne_emb lam _ _ (norm_det_padic U a1 a3))
     fun τ => normOne_emb lam _ _ (norm_det_padic U' a2 a4)
-  rw [lamC, dif_pos h3]
+  rw [lamC, dite_eq_left h3]
   exact h4
-
-private theorem jetTh_rat : GlobalTheory.FunPr.Hypotheses₂ → (∀ D, GlobalTheory.NormSum.Inp D) → ∀ {D : D7} {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 T : Type}
-    {A : FamIn D.what₂.LL Γ Pl0 T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] {R : RealDat D A Ks}
-    (ch : Choice R), ch.Is → ∀ (p : Pair T), DefPair D.R.m p → ∀ (x : FinPt ch.G p.small) (y : FinPt ch.G p.big)
-    (Θ : VC D (ch.G.pS p).rank (ch.G.pT p).rank → ℂ), Differentiable ℂ Θ → GlobalTheory.RatMoveJets.JetTh ch p x y Θ →
-    ∀ (r : FinPt ch.G p.small) (r' : FinPt ch.G p.big) (U : Matrix.unitaryGroup (Fin (ch.G.V p.small).rank) D.host.E)
-      (U' : Matrix.unitaryGroup (Fin (ch.G.V p.big).rank) D.host.E),
-    GlobalTheory.RatMoveJets.RatCoord _ (ch.S.N.fr p.small) r U → GlobalTheory.RatMoveJets.RatCoord _ (ch.S.N.fr p.big) r' U' →
-    ∃ ε : ℂ, Mod1All ε ∧ (∀ (q : ℕ) [Fact q.Prime],
-        EqAt D q (GlobalTheory.SumSize.latAt ch.S.toGridChoice p.small x) (stdL D _) → EqAt D q (GlobalTheory.SumSize.latAt ch.S.toGridChoice p.big y) (stdL D _) →
-        EqAt D q (GlobalTheory.SumSize.latAt ch.S.toGridChoice p.small (r * x)) (stdL D _) → EqAt D q (GlobalTheory.SumSize.latAt ch.S.toGridChoice p.big (r' * y)) (stdL D _) →
-        GlobalTheory.MovedKappaEx.UnitAt q ε) ∧
-      GlobalTheory.RatMoveJets.JetTh ch p (r * x) (r' * y) (fun z => ε * Θ (Formalism.L2.KerInert.tPull D (tor0 D D.host.ccK ch.S.Z.δ) (GlobalTheory.RatMoveJets.srcU p U U').1 (GlobalTheory.RatMoveJets.tgtU p U U').1 z)) := by
-  intro hP hI D Γ _ _ Pl0 T A Ks _ _ _ R ch hch p hp x y Θ hΘ hJ r r' U U' hU hU'
-  have hθ := ch.W.θ_is
-  have hv := GlobalTheory.T.vacuum_vector_moved_pair hP hI ch hch p hp x y
-  have hv' := GlobalTheory.T.vacuum_vector_moved_pair hP hI ch hch p hp (r * x) (r' * y)
-  have hlx := latAt_rat ch.S.toGridChoice _ r U hU x
-  have hly := latAt_rat ch.S.toGridChoice _ r' U' hU' y
-  obtain ⟨γ, g1, g2, g3, g4, g5⟩ := coord_data hθ hU
-  obtain ⟨γ', h1, h2, h3, h4, h5⟩ := coord_data hθ hU'
-  rw [hlx, hly]
-  unfold JetTh at hJ ⊢
-  rw [mul_assoc r, mul_assoc r'] at hv' ⊢
-  generalize x * ch.S.N.u p.small = a at hv hv' hJ ⊢
-  generalize y * ch.S.N.u p.big = b at hv hv' hJ ⊢
-  generalize ch.S.Z.vac p = f at hv hv' hJ ⊢
-  cases p with
-  | mu t i j => exact absurd hp id
-  | core i => exact absurd hp id
-  | top t j =>
-    have hj1 : j + 1 ≤ D.R.m := hp
-    have hS := ch.S.N.fr_on (.top j) (by show j ≤ D.R.m; omega)
-    have hT := ch.S.N.fr_on (.top (j + 1)) hj1
-    have cS := ch.W.cart_is (.top j) (by show j ≤ D.R.m; omega)
-    have cT := ch.W.cart_is (.top (j + 1)) hj1
-    have eS := GlobalTheory.FockPos.cart_one _ hS cS
-    have eT := GlobalTheory.FockPos.cart_one _ hT cT
-    have hW := ch.W.om_is (.top t j) hj1
-    change IsVacO _ _ _ _ (ch.W.cart (.top j)) (ch.W.cart (.top (j + 1))) _ _ _ at hv hv'
-    change ∀ k, pureTensorO _ _ _ _ (ch.W.cart (.top j)) (ch.W.cart (.top (j + 1))) _ _ _ _ _ = _ at hJ
-    change ∃ ε : ℂ, _ ∧ _ ∧ ∀ k, pureTensorO _ _ _ _ (ch.W.cart (.top j)) (ch.W.cart (.top (j + 1))) _ _ _ _ _ = _
-    rw [eS] at hv hv' hJ cS ⊢
-    rw [eT] at hv hv' hJ cT ⊢
-    obtain ⟨c, hc, hn⟩ := move_fin hθ hW (Or.inl rfl) cS cT g1 r.2 g2 h1 r'.2 h2 hv.2.theta hv'.2.theta hv'.2.fock
-    have hn' := fun (F : Type) [NormedField F] (lam : Qbar →+* F) (a1 : ∀ τ, NormOne lam (tauE D τ U.1.det))
-      (a2 : ∀ τ, NormOne lam (tauE D τ U'.1.det)) => NormOne.inv' (hn F lam (fun τ => (g5 τ).symm ▸ a1 τ) (fun τ => (h5 τ).symm ▸ a2 τ))
-    obtain ⟨m1, m2, m3⟩ := arith U U' hn'
-    have hc0 : c ≠ 0 := by rintro rfl; simp at m2
-    exact ⟨c⁻¹, m1, fun q _ => m3 _ _ q, jets_subst _ _ hS hT hv hv' U U' hc0 h4 g3 hc _ _ _ hΘ hJ⟩
-  | chi i j =>
-    obtain ⟨hi, rfl⟩ := hp
-    have hS := ch.S.N.fr_on (.grid (i + 1) D.R.m) ⟨hi, rfl⟩
-    have hT := ch.S.N.fr_on (.grid i D.R.m) ⟨by omega, rfl⟩
-    have cS := ch.W.cart_is (.grid (i + 1) D.R.m) ⟨hi, le_rfl⟩
-    have cT := ch.W.cart_is (.grid i D.R.m) ⟨by omega, le_rfl⟩
-    have eS := GlobalTheory.FockPos.cart_one _ hS cS
-    have eT := GlobalTheory.FockPos.cart_one _ hT cT
-    have hW := ch.W.om_is (.chi i D.R.m) ⟨hi, le_rfl⟩
-    have hj := fun f => GlobalTheory.T.fockVector_negHermitianSpace_conj_monomial ch.W.ψ ch.W.θ (ch.G.V (.grid (i + 1) D.R.m)) (ch.G.V (.grid i D.R.m))
-      (ch.W.cart (.grid (i + 1) D.R.m)) (ch.W.cart (.grid i D.R.m)) (ch.S.N.frC (.grid (i + 1) D.R.m))
-      (ch.S.N.frC (.grid i D.R.m)) f ch.W.ψ_std hθ
-    change IsVacO _ _ (negSp (ch.G.V (.grid (i + 1) D.R.m))) (ch.G.V (.grid i D.R.m)) (fun τ => -ch.W.cart (.grid (i + 1) D.R.m) τ) (ch.W.cart (.grid i D.R.m)) _ _ _ at hv hv'
-    change ∀ k, pureTensorO _ _ (negSp (ch.G.V (.grid (i + 1) D.R.m))) (ch.G.V (.grid i D.R.m))
-      (fun τ => -ch.W.cart (.grid (i + 1) D.R.m) τ) (ch.W.cart (.grid i D.R.m)) _ _ _ _ _ = _ at hJ
-    change ∃ ε : ℂ, _ ∧ _ ∧ ∀ k, pureTensorO _ _ (negSp (ch.G.V (.grid (i + 1) D.R.m))) (ch.G.V (.grid i D.R.m))
-      (fun τ => -ch.W.cart (.grid (i + 1) D.R.m) τ) (ch.W.cart (.grid i D.R.m)) _ _ _ _ _ = _
-    rw [eS] at hv hv' hJ cS hj ⊢
-    rw [eT] at hv hv' hJ cT hj ⊢
-    have hγ : negGA _ γ' ∈ GQ (negSp (ch.G.V (.grid (i + 1) D.R.m))) := by
-      obtain ⟨x, hx, e⟩ := Subgroup.mem_map.1 (Subgroup.mem_subgroupOf.1 h1)
-      refine Subgroup.mem_subgroupOf.2 (Subgroup.mem_map.2 ⟨x, ?_, e⟩)
-      have hx' : Formalism.UG.cT _ (x : Matrix _ _ _) * (ch.G.V (.grid (i + 1) D.R.m)).gram * (x : Matrix _ _ _) =
-        (ch.G.V (.grid (i + 1) D.R.m)).gram := hx
-      show Formalism.UG.cT _ (x : Matrix _ _ _) * (-(ch.G.V (.grid (i + 1) D.R.m)).gram) * (x : Matrix _ _ _) =
-        -(ch.G.V (.grid (i + 1) D.R.m)).gram
-      rw [Matrix.mul_neg, Matrix.neg_mul, hx']
-    obtain ⟨c, hc, hn⟩ := move_fin (r := negGA _ r'.1) (g := negGA _ b.1) (r' := r.1) (h := a.1) (f := f) hθ hW (Or.inr rfl)
-      (fun τ => isCartanInv_neg (cS τ)) cT hγ r'.2 h2 g1 r.2 g2 hv.2.theta hv'.2.theta hv'.2.fock
-    have hn' := fun (F : Type) [NormedField F] (lam : Qbar →+* F) (a1 : ∀ τ, NormOne lam (tauE D τ U.1.det))
-      (a2 : ∀ τ, NormOne lam (tauE D τ U'.1.det)) => hn F lam (fun τ => (h5 τ).symm ▸ a2 τ) (fun τ => (g5 τ).symm ▸ a1 τ)
-    obtain ⟨m1, m2, m3⟩ := arith U U' hn'
-    have hc0 : c ≠ 0 := by rintro rfl; simp at m2
-    have hcc : (starRingEnd ℂ c)⁻¹ = c := by
-      refine inv_eq_of_mul_eq_one_left ?_
-      rw [Complex.mul_conj', m2]; simp
-    refine ⟨c, m1, fun q _ => m3 _ _ q, fun k => ?_⟩
-    have key := jets_subst _ _ hS hT (GlobalTheory.T.isVacuum_conj_of_negHermitianSpace _ _ _ _ (fun _ => 1) _ _ _ _ hv) (GlobalTheory.T.isVacuum_conj_of_negHermitianSpace _ _ _ _ (fun _ => 1) _ _ _ _ hv') U' U
-      ((_root_.map_ne_zero (starRingEnd ℂ)).2 hc0) g4 h3 (fun w => by rw [← map_mul]; exact congrArg _ (hc w)) D.host.ccK ch.S.Z.δ
-      (starRingEnd ℂ (ch.S.Z.c0 (.chi i D.R.m) : ℂ)) hΘ (fun k => by
-        have e := congrArg (starRingEnd ℂ) ((hj _ k 0).symm.trans (hJ k))
-        rw [Complex.conj_conj, map_mul] at e
-        exact e.trans (congrArg _ (Complex.conj_conj _))) k
-    rw [hcc] at key
-    refine (hj _ k 0).trans ((congrArg (starRingEnd ℂ) key).trans ?_)
-    rw [map_mul, Complex.conj_conj]
-    rfl
 
 end GlobalTheory.RatMoveFock
 
 end
-
-theorem _root_.GlobalTheory.T.differentiable_theta_local_sum : GlobalTheory.FunPr.Hypotheses₂ → (∀ D, GlobalTheory.NormSum.Inp D) → ∀ {D : D7} {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 T : Type}
-    {A : FamIn D.what₂.LL Γ Pl0 T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] {R : RealDat D A Ks}
-    (ch : Choice R), ch.Is → ∀ (p : Pair T), DefPair D.R.m p → ∀ (x : FinPt ch.G p.small) (y : FinPt ch.G p.big)
-    (Θ : VC D (ch.G.pS p).rank (ch.G.pT p).rank → ℂ), Differentiable ℂ Θ → GlobalTheory.RatMoveJets.JetTh ch p x y Θ →
-    ∀ (r : FinPt ch.G p.small) (r' : FinPt ch.G p.big) (U : Matrix.unitaryGroup (Fin (ch.G.V p.small).rank) D.host.E)
-      (U' : Matrix.unitaryGroup (Fin (ch.G.V p.big).rank) D.host.E),
-    GlobalTheory.RatMoveJets.RatCoord _ (ch.S.N.fr p.small) r U → GlobalTheory.RatMoveJets.RatCoord _ (ch.S.N.fr p.big) r' U' →
-    ∃ ε : ℂ, Mod1All ε ∧ (∀ (q : ℕ) [Fact q.Prime],
-        EqAt D q (GlobalTheory.SumSize.latAt ch.S.toGridChoice p.small x) (stdL D _) → EqAt D q (GlobalTheory.SumSize.latAt ch.S.toGridChoice p.big y) (stdL D _) →
-        EqAt D q (GlobalTheory.SumSize.latAt ch.S.toGridChoice p.small (r * x)) (stdL D _) → EqAt D q (GlobalTheory.SumSize.latAt ch.S.toGridChoice p.big (r' * y)) (stdL D _) →
-        GlobalTheory.MovedKappaEx.UnitAt q ε) ∧
-      GlobalTheory.RatMoveJets.JetTh ch p (r * x) (r' * y) (fun z => ε * Θ (Formalism.L2.KerInert.tPull D (tor0 D D.host.ccK ch.S.Z.δ) (GlobalTheory.RatMoveJets.srcU p U U').1 (GlobalTheory.RatMoveJets.tgtU p U U').1 z)) := GlobalTheory.RatMoveFock.jetTh_rat

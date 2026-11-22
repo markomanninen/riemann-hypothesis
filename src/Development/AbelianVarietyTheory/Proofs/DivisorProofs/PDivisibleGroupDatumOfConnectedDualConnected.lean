@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocalRingOfIntegers
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToLinTransposeDot
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DatumTransport
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocalRingOfSubsingletonPoints
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegrallyClosedOfIntegers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocalRingOfIntegers
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToLinTransposeDot
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DatumTransport
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocalRingOfSubsingletonPoints
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegrallyClosedOfIntegers
+
+@[expose] public section
 
 open CategoryTheory Opposite Matrix GlobalTheory GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 

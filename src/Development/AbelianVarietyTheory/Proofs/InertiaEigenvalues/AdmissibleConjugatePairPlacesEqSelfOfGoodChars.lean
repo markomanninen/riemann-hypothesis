@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsScalar
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsScalar
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum IsDedekindDomain NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.ExportSeries GlobalTheory.SeriesTie
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -9,7 +14,11 @@ namespace GlobalTheory.AdmSelf
 theorem not_mem_placesOver_of_normV {D : D7} {l M : ℕ} (hM : 0 < M) {P : Pl D.host.E}
     (h : normV P % (2 * l ^ M) = 1) : P ∉ placesOver D.host.E l := by
   intro hl
-  have hmem : ((normV P : ℕ) : 𝓞 D.host.E) ∈ P.asIdeal := Ideal.absNorm_mem P.asIdeal
+  have hmem : ((normV P : ℕ) : 𝓞 D.host.E) ∈ P.asIdeal := by
+    have hn : normV P = Ideal.absNorm P.asIdeal := by
+      rw [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
+    rw [hn]
+    exact Ideal.absNorm_mem P.asIdeal
   have hl' : ((l : ℕ) : 𝓞 D.host.E) ∈ P.asIdeal := hl
   have hdm := Nat.div_add_mod (normV P) (2 * l ^ M)
   rw [h] at hdm

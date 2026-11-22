@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoeffZeroNeOfMonicIrr
-import Formalism.PadicSubsetSums.CentralIdempotents.HCDisjointO
-import Formalism.PadicSubsetSums.CentralIdempotents.GaloisConjCentralIdempotent
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.DetCharacterMemPrincipalCongruenceFixedVectors
+module
+
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoeffZeroNeOfMonicIrr
+public import Formalism.PadicSubsetSums.CentralIdempotents.HCDisjointO
+public import Formalism.PadicSubsetSums.CentralIdempotents.GaloisConjCentralIdempotent
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.DetCharacterMemPrincipalCongruenceFixedVectors
+
+@[expose] public section
 
 open Formalism.IrreducibleCountingLemmas.TYPES Formalism.L2.NT
 open Polynomial CategoryTheory

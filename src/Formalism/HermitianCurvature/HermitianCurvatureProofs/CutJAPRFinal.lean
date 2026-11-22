@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRRest
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRCPDecomp
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRCPWordAsm
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRRest
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRCPDecomp
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRCPWordAsm
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.Core.TC.PR
 

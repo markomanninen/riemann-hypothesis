@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.StandardMaximalParabolic
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumRepSubgroupEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOfValILeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.StandardMaximalParabolic
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumRepSubgroupEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOfValILeOne
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.IndefiniteRowSideFullHecke.StandardMaximalParabolic
 
@@ -28,7 +32,8 @@ theorem sum_typeIdem_translate {G Q W : Type} [Group G] [MeasurableSpace G] (μ 
   · obtain ⟨g, rfl⟩ : ∃ g' : K, (g' : G) = g := ⟨⟨g, hg⟩, rfl⟩
     have h0 := GlobalTheory.NoFixedCharSum.noFixedSum Q W τ H hH 1 (red g)
     simp only [← Subgroup.coe_mul, GlobalTheory.Orb.typeIdem_coe, map_mul red, hκ]
-    rw [← Finset.mul_sum, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.mul_sum, ← map_sum]
     simp only [one_mul] at h0
     have h1 : ∑ v : H, τ.character ((v : Q) * red g) = 0 := h0
     rw [h1, map_zero, mul_zero]

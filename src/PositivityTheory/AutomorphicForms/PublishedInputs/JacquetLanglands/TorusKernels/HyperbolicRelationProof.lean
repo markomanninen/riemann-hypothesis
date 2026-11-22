@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem pInf_alg (x : F) (v : InfinitePlace F) :
       ((InfinitePlace.Completion.ringEquivRealOfIsReal (IsTotallyReal.isReal w)).symm
         (InfinitePlace.embedding_of_isReal (IsTotallyReal.isReal w) x))
     rw [RingEquiv.apply_symm_apply]
-    exact InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe (IsTotallyReal.isReal w) _
+    simp
   change (TR.infEq F).symm (algebraMap F (InfiniteAdeleRing F) x) v = _
   rw [h, RingEquiv.symm_apply_apply]
 

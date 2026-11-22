@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.SmoothKZ
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.SmoothKZ
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter Set
 open scoped NumberField.AdeleRing
@@ -26,7 +30,7 @@ theorem mem_of_hasDerivAt {X : Type*} (W : Submodule ℂ (X → ℂ)) [FiniteDim
         map_add' := fun _ _ => rfl
         map_smul' := fun _ _ => rfl }
     have hR : IsClosed ((W.map ev : Submodule ℂ _) : Set (T → ℂ)) :=
-      Submodule.closed_of_finiteDimensional _
+      Submodule.isClosed_of_finiteDimensional _
     have hder : HasDerivAt (fun t => ev (c t)) (ev d) 0 :=
       hasDerivAt_pi.2 fun x => hd x
     have hlim := hasDerivAt_iff_tendsto_slope.1 hder
@@ -60,14 +64,14 @@ theorem smoothKZ_le_archSmooth : smoothKZ K n ≤ archSmooth K n := fun _ hφ =>
 
 def toArchSmooth : smoothKZ K n →ₗ[ℂ] archSmooth K n := Submodule.inclusion smoothKZ_le_archSmooth
 
-@[simp] theorem coe_toArchSmooth (φ : smoothKZ K n) :
-    ((toArchSmooth φ : archSmooth K n) : AdelicGLn.AdelicGL K n → ℂ) = φ := rfl
 
 variable (K n) in
-
 def uActionKZ : UEnv K n →ₐ[ℝ] Module.End ℂ (smoothKZ K n) where
   toFun u := LinearMap.codRestrict (smoothKZ K n)
-    ((archSmooth K n).subtype ∘ₗ uAction u ∘ₗ toArchSmooth) fun φ => φ.2.uAction u
+    ((archSmooth K n).subtype ∘ₗ uAction u ∘ₗ toArchSmooth) fun φ => by
+      have hφ : IsSmoothKZ (φ : AdelicGLn.AdelicGL K n → ℂ) := φ.2
+      exact ⟨IsLeftInvariant.uAction hφ.isLeftInvariant u, hφ.isSmooth_uAction u,
+        hφ.isKFinite_uAction u, hφ.isZFinite.uAction u⟩
   map_one' := LinearMap.ext fun φ => Subtype.ext (by
     show ((uAction 1 (toArchSmooth φ) : archSmooth K n) : AdelicGLn.AdelicGL K n → ℂ) = φ
     rw [map_one]; rfl)
@@ -80,7 +84,7 @@ def uActionKZ : UEnv K n →ₐ[ℝ] Module.End ℂ (smoothKZ K n) where
     rw [map_zero]; rfl)
   map_add' u v := LinearMap.ext fun φ => Subtype.ext (by
     show ((uAction (u + v) (toArchSmooth φ) : archSmooth K n) : AdelicGLn.AdelicGL K n → ℂ) = _
-    rw [map_add]; rfl)
+    rw [map_add (f := _)]; rfl)
   commutes' r := LinearMap.ext fun φ => Subtype.ext (by
     show ((uAction (algebraMap ℝ (UEnv K n) r) (toArchSmooth φ) : archSmooth K n) :
       AdelicGLn.AdelicGL K n → ℂ) = _
@@ -90,58 +94,73 @@ def uActionKZ : UEnv K n →ₐ[ℝ] Module.End ℂ (smoothKZ K n) where
     ((uActionKZ K n u φ : smoothKZ K n) : AdelicGLn.AdelicGL K n → ℂ) =
       ((uAction u (toArchSmooth φ) : archSmooth K n) : AdelicGLn.AdelicGL K n → ℂ) := rfl
 
+private theorem coe_uAction_of_rightTranslate (a : archGroup K n) (u : UEnv K n)
+    (φ ψ : archSmooth K n)
+    (hψ : (ψ : AdelicGLn.AdelicGL K n → ℂ) = rightTranslate (infEmb K n a) φ) :
+    (uAction u ψ : AdelicGLn.AdelicGL K n → ℂ) =
+      rightTranslate (infEmb K n a) (uAction ((isExpLieAlgebra K n).AdU a⁻¹ u) φ :
+        AdelicGLn.AdelicGL K n → ℂ) := by
+  funext g
+  have hslice : sliceL g ψ = (isExpLieAlgebra K n).rightTranslateEnd a (sliceL g φ) := by
+    apply Subtype.ext
+    simpa only [coe_sliceL, IsExpLieAlgebra.coe_rightTranslateEnd, hψ] using
+      archSlice_rightTranslate_infEmb (φ : AdelicGLn.AdelicGL K n → ℂ) g a
+  have hAction := LinearMap.congr_fun
+    ((isExpLieAlgebra K n).rightUAction_comp_rightTranslate (F := ℂ) a u) (sliceL g φ)
+  have hEval := congrArg (fun f : (isExpLieAlgebra K n).smoothFuns (F := ℂ) =>
+    (f : archGroup K n → ℂ) 1) hAction
+  simp only [mul_apply_eq_comp, IsExpLieAlgebra.coe_rightTranslateEnd, rightTranslate,
+    one_mul] at hEval
+  have hTranslate := congrFun (archSlice_uAction ((isExpLieAlgebra K n).AdU a⁻¹ u) φ g) a
+  rw [archSlice_apply] at hTranslate
+  change ((isExpLieAlgebra K n).rightUAction u (sliceL g ψ) : archGroup K n → ℂ) 1 = _
+  rw [hslice, hEval]
+  exact hTranslate.symm
+
 variable (K n) in
-
-def finRepKZ : Representation ℂ (AdelicGLn.FiniteAdelicGL K n) (smoothKZ K n) where
-  toFun h := (rightTranslateL (finEmb K n h)).restrict fun _ hφ => hφ.rightTranslate_finEmb h
-  map_one' := LinearMap.ext fun φ => Subtype.ext (funext fun g => by
-    simp [GroundTheory.Automorphic.rightTranslate])
-  map_mul' h₁ h₂ := LinearMap.ext fun φ => Subtype.ext (funext fun g => by
-    show (φ : AdelicGLn.AdelicGL K n → ℂ) (g * finEmb K n (h₁ * h₂)) =
-      (φ : AdelicGLn.AdelicGL K n → ℂ) (g * finEmb K n h₁ * finEmb K n h₂)
-    rw [map_mul, mul_assoc])
-
-variable (K n) in
-
 def archCompactRepKZ : Representation ℂ (archCompact K n) (smoothKZ K n) where
-  toFun k := (rightTranslateL (infEmb K n k)).restrict fun _ hφ => hφ.rightTranslate_infEmb k.2
+  toFun k := (rightTranslateL (infEmb K n k)).restrict fun φ hφ => by
+    have hφ : IsSmoothKZ φ := hφ
+    have hArch (f : archSmooth K n) :
+        IsArchSmooth (rightTranslate (infEmb K n k) f) := by
+      intro g
+      rw [archSlice_rightTranslate_infEmb]
+      exact (isExpLieAlgebra K n).isSmoothFun_rightTranslate (f.2 g) k
+    let T : Module.End ℂ (archSmooth K n) :=
+      (rightTranslateL (infEmb K n k)).restrict fun f hf => hArch ⟨f, hf⟩
+    let φs : archSmooth K n := ⟨φ, hφ.isSmooth.1⟩
+    have hSmooth : IsSmooth (rightTranslate (infEmb K n k) φ) :=
+      ⟨hArch φs, fun g => hφ.isSmooth.eventually_mul_finEmb_mul g (infEmb K n k)⟩
+    have hZ : IsZFinite (T φs) := by
+      have hle : Submodule.span ℂ ((fun z => uAction z (T φs)) ''
+          ((isExpLieAlgebra K n).centerU : Set (UEnv K n))) ≤
+          (Submodule.span ℂ ((fun z => uAction z φs) ''
+            ((isExpLieAlgebra K n).centerU : Set (UEnv K n)))).map T := by
+        refine Submodule.span_le.2 ?_
+        rintro _ ⟨z, hz, rfl⟩
+        refine ⟨_, Submodule.subset_span ⟨_, (isExpLieAlgebra K n).AdU_mem_centerU
+          (k : archGroup K n)⁻¹ hz, rfl⟩, ?_⟩
+        exact Subtype.ext (coe_uAction_of_rightTranslate k z φs (T φs) rfl).symm
+      have : IsZFinite φs := hφ.isZFinite
+      unfold IsZFinite at this ⊢
+      exact Submodule.finiteDimensional_of_le hle
+    exact ⟨hφ.isLeftInvariant.translate _, hSmooth,
+      hφ.isKFinite.rightTranslate_of_mem_maxCompact k.2, hZ⟩
   map_one' := LinearMap.ext fun φ => Subtype.ext (funext fun g => by
-    simp [GroundTheory.Automorphic.rightTranslate])
+    simp [rightTranslateL, GroundTheory.Automorphic.rightTranslate])
   map_mul' k₁ k₂ := LinearMap.ext fun φ => Subtype.ext (funext fun g => by
     show (φ : AdelicGLn.AdelicGL K n → ℂ) (g * infEmb K n ((k₁ * k₂ : archCompact K n) : archGroup K n)) =
       (φ : AdelicGLn.AdelicGL K n → ℂ) (g * infEmb K n k₁ * infEmb K n k₂)
     rw [Subgroup.coe_mul, map_mul, mul_assoc])
 
-@[simp] theorem coe_finRepKZ (h : AdelicGLn.FiniteAdelicGL K n) (φ : smoothKZ K n) :
-    ((finRepKZ K n h φ : smoothKZ K n) : AdelicGLn.AdelicGL K n → ℂ) =
-      rightTranslate (finEmb K n h) (φ : AdelicGLn.AdelicGL K n → ℂ) := rfl
-
-@[simp] theorem coe_archCompactRepKZ (k : archCompact K n) (φ : smoothKZ K n) :
-    ((archCompactRepKZ K n k φ : smoothKZ K n) : AdelicGLn.AdelicGL K n → ℂ) =
-      rightTranslate (infEmb K n k) (φ : AdelicGLn.AdelicGL K n → ℂ) := rfl
-
-theorem uActionKZ_finRepKZ (u : UEnv K n) (h : AdelicGLn.FiniteAdelicGL K n) (φ : smoothKZ K n) :
-    uActionKZ K n u (finRepKZ K n h φ) = finRepKZ K n h (uActionKZ K n u φ) := by
-  apply Subtype.ext
-  have := congrArg Subtype.val (uAction_rtFin u h (toArchSmooth φ))
-  exact this
-
 theorem archCompactRepKZ_uActionKZ (k : archCompact K n) (u : UEnv K n) (φ : smoothKZ K n) :
     archCompactRepKZ K n k (uActionKZ K n u φ) =
       uActionKZ K n ((isExpLieAlgebra K n).AdU (k : archGroup K n) u) (archCompactRepKZ K n k φ) := by
   apply Subtype.ext
-  have := congrArg Subtype.val (uAction_rtInf ((isExpLieAlgebra K n).AdU (k : archGroup K n) u)
-    (k : archGroup K n) (toArchSmooth φ))
-  rw [IsExpLieAlgebra.AdU_inv_apply] at this
-  exact this.symm
-
-theorem archCompactRepKZ_finRepKZ (k : archCompact K n) (h : AdelicGLn.FiniteAdelicGL K n)
-    (φ : smoothKZ K n) :
-    archCompactRepKZ K n k (finRepKZ K n h φ) = finRepKZ K n h (archCompactRepKZ K n k φ) := by
-  apply Subtype.ext
-  funext g
-  simp only [coe_finRepKZ, coe_archCompactRepKZ, GroundTheory.Automorphic.rightTranslate, mul_assoc,
-    infEmb_mul_finEmb_comm]
+  have hAction := coe_uAction_of_rightTranslate k ((isExpLieAlgebra K n).AdU (k : archGroup K n) u)
+    (toArchSmooth φ) (toArchSmooth (archCompactRepKZ K n k φ)) rfl
+  rw [IsExpLieAlgebra.AdU_inv_apply] at hAction
+  exact hAction.symm
 
 theorem exists_linearMap_eval_eq (W : Submodule ℂ (smoothKZ K n)) [FiniteDimensional ℂ W]
     (φ : Module.Dual ℂ (smoothKZ K n)) :
@@ -168,7 +187,7 @@ theorem exists_linearMap_eval_eq (W : Submodule ℂ (smoothKZ K n)) [FiniteDimen
 
 theorem continuous_archSlice {φ : AdelicGLn.AdelicGL K n → ℂ} (hφ : IsArchSmooth φ)
     (g : AdelicGLn.AdelicGL K n) : Continuous (archSlice φ g) := by
-  letI := (isExpLieAlgebra K n).chartedSpace
+  let := (isExpLieAlgebra K n).chartedSpace
   exact (hφ g).continuous
 
 theorem finiteDimensional_span_archCompactRepKZ (v : smoothKZ K n) :
@@ -262,12 +281,12 @@ section GK
 
 attribute [local instance 100] LieRing.ofAssociativeRing
 
-variable (K n) in
 
+variable (K n) in
 def gkModule : (isExpLieAlgebra K n).GKModule (archCompact K n) (smoothKZ K n) where
   ρ :=
     { toFun := fun X => uActionKZ K n (UniversalEnvelopingAlgebra.ι ℝ X)
-      map_add' := fun X Y => by rw [map_add, map_add]
+      map_add' := fun X Y => by rw [map_add (f := _), map_add (f := _)]
       map_smul' := fun r X => by rw [map_smul, map_smul]; rfl
       map_lie' := fun {X Y} => by
         rw [LieHom.map_lie, Ring.lie_def, Ring.lie_def, map_sub, map_mul, map_mul] }
@@ -276,22 +295,6 @@ def gkModule : (isExpLieAlgebra K n).GKModule (archCompact K n) (smoothKZ K n) w
   hasContinuousCoeff := hasContinuousCoeff_archCompactRepKZ
   hasDerivAt_coeff X hX φ v := hasDerivAt_archCompactRepKZ X hX φ v
   map_ρ k X v := archCompactRepKZ_uActionKZ_ι k X v
-
-@[simp] theorem gkModule_ρ_apply (X : (isExpLieAlgebra K n).lieSubalgebra) (v : smoothKZ K n) :
-    (gkModule K n).ρ X v = uActionKZ K n (UniversalEnvelopingAlgebra.ι ℝ X) v := rfl
-
-@[simp] theorem gkModule_σ_apply (k : archCompact K n) (v : smoothKZ K n) :
-    (gkModule K n).σ k v = archCompactRepKZ K n k v := rfl
-
-theorem gkModule_ρ_finRepKZ (X : (isExpLieAlgebra K n).lieSubalgebra)
-    (h : AdelicGLn.FiniteAdelicGL K n) (v : smoothKZ K n) :
-    (gkModule K n).ρ X (finRepKZ K n h v) = finRepKZ K n h ((gkModule K n).ρ X v) :=
-  uActionKZ_finRepKZ _ h v
-
-theorem gkModule_σ_finRepKZ (k : archCompact K n) (h : AdelicGLn.FiniteAdelicGL K n)
-    (v : smoothKZ K n) :
-    (gkModule K n).σ k (finRepKZ K n h v) = finRepKZ K n h ((gkModule K n).σ k v) :=
-  archCompactRepKZ_finRepKZ k h v
 
 end GK
 

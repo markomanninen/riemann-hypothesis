@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JacobianCommutation.CkDefs
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JacobianCommutation.CkDefs
+
+@[expose] public section
 
 open Filter Topology Asymptotics
 
@@ -96,9 +100,9 @@ theorem partials_continuous_differentiable : PartialsContinuousDifferentiable :=
           fun s => F (p + t • Pi.single i (1 : ℝ) + (s - t) • Pi.single i (1 : ℝ)) := by
         funext s
         congr 1
-        funext l
-        simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
-        ring
+        ext j
+        simp only [Pi.add_apply, Pi.smul_apply, Pi.single_apply]
+        split_ifs <;> ring
       have h3 : HasDerivAt (fun s : ℝ => F (p + s • Pi.single i (1 : ℝ)))
           (D i (p + t • Pi.single i (1 : ℝ))) t := by
         rw [hfun]

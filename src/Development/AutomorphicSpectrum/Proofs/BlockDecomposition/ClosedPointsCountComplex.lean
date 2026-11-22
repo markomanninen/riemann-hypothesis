@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsPresents
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsFiniteSubsetNonzeroLocus
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenericResidueLinearIndependence
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyAndIsPreconnected
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.InterNumEqSumLengthMulInterNumRed
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GoodStalks
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsPresents
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsFiniteSubsetNonzeroLocus
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenericResidueLinearIndependence
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyAndIsPreconnected
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.InterNumEqSumLengthMulInterNumRed
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GoodStalks
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
-open GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts GlobalTheory.Published.ArDegreeModel GlobalTheory.QCoh
+open GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts GlobalTheory.QCoh
 open IsLocalRing
 open GlobalTheory.CompanionTheory.KoszulCount
 namespace GlobalTheory.CompanionTheory.KoszulCount
@@ -56,6 +61,6 @@ theorem ncard_cxPts_over_closed : ∀ (Y : Var ℂ) (Z : Set Y.X), (∀ x ∈ Z,
       obtain ⟨y, rfl⟩ := exists_cxPts_pt_eq Y.str (hZ x hx)
       exact ⟨y, hx, rfl⟩
   conv_rhs => rw [← him]
-  exact (Set.ncard_image_of_injOn fun _ _ _ _ h => cxPts_eq_of_pt_eq h).symm
+  exact (Set.InjOn.ncard_image fun _ _ _ _ h => cxPts_eq_of_pt_eq h).symm
 
 end GlobalTheory.CompanionTheory.KoszulCount

@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ZetaActRefl
-import Development.AbelianVarietyTheory.Definitions.Foundations.MemRingOfInR
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModQPrin
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModJTau
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ZetaActRefl
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MemRingOfInR
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModQPrin
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModJTau
+
+@[expose] public section
+
 open scoped UpperHalfPlane MatrixGroups ModularForm Manifold BigOperators
 open GlobalTheory.QFam GlobalTheory.WpFam GlobalTheory.KZ GlobalTheory.FN
 open ReciprocityTheory.ChartRestriction.L1 (DD jT IsMF)
@@ -17,7 +22,7 @@ theorem hs_props : ∀ (Ω : Type) [Field Ω] (ε : Ω →+* ℂ), (∀ (C C' : 
   · intro C φ ψ h h' hφ hψ
     refine ⟨fun z hz => ?_, fun z hz => ?_⟩
     · have := (hφ z hz).add (hψ z hz)
-      simpa [HahnSeries.coeff_add, map_add, add_mul] using this
+      simpa [HahnSeries.coeff_add, map_add (f := _), add_mul] using this
     · have := (hφ z hz).sub (hψ z hz)
       simpa [HahnSeries.coeff_sub, map_sub, sub_mul] using this
   · intro C r c z _

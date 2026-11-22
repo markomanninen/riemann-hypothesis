@@ -1,4 +1,9 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+
+@[expose] public section
+
 open PositivityTheory.JacquetShalikaLocal
 open MeasureTheory ValuativeRel
 

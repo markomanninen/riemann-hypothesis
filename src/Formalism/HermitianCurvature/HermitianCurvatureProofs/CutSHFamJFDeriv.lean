@@ -1,13 +1,17 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHFamJFOK
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHFamDeriv
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHCellTie
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LUFactorOrbitBounds
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaConjOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfBetaAdjCOfLemmaBNorm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GNConjTranspose
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHFamJFOK
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHFamDeriv
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHCellTie
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LUFactorOrbitBounds
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaConjOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfBetaAdjCOfLemmaBNorm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GNConjTranspose
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ContDiff
@@ -90,7 +94,7 @@ private theorem continuous_psi_of_matrix {k r : ℕ} (z : Fin (2 * r + k + 1) �
   unfold psi ell
   refine Complex.continuous_exp.comp (continuous_const.mul (Complex.continuous_ofReal.comp
     (Complex.continuous_re.comp (continuous_const.mul ?_))))
-  refine continuous_finset_sum _ fun a _ => ?_
+  refine continuous_finsetSum _ fun a _ => ?_
   split_ifs
   · fun_prop
   · simp only [Matrix.mulVec, dotProduct, Matrix.of_apply]

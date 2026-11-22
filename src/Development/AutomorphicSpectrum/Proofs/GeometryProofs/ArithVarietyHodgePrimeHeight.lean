@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HTChartExistsHoldsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArithVarietyPrimeTorsionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelActionSubalgebraStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualLatticeBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FullTorsionInjectiveSubalgebraStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HTChartExistsHoldsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArithVarietyPrimeTorsionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelActionSubalgebraStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualLatticeBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FullTorsionInjectiveSubalgebraStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointIdeal segreVec IsFlagFrame IsFlagPair SameGenericFibre IsModelOver divCycle)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg fnField)
@@ -132,7 +137,7 @@ theorem chartPack_exists : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
   have hform : ∀ (b : 𝓞 E) (w : Module.Dual (CR O y c') L), j (w ∘ₗ ρ b) = j w ∘ₗ 𝔐.ρ b := by
     intro b w
     ext e
-    refine hbc.inductionOn e (fun e => j (w ∘ₗ ρ b) e = (j w ∘ₗ 𝔐.ρ b) e) (by simp) ?_ ?_ ?_
+    refine hbc.inductionOn e ?_ ?_ ?_
     · intro v
       simp only [LinearMap.comp_apply]
       rw [hj, ← hρ, hj]
@@ -140,17 +145,17 @@ theorem chartPack_exists : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
     · intro s n hn
       simp only [map_smul, hn]
     · intro n₁ n₂ h₁ h₂
-      simp only [map_add, h₁, h₂]
+      simp only [map_add (f := _), h₁, h₂]
   have hact' : ∀ (a : 𝓞 E) (u : Module.Dual Ω 𝔐.Li), Dh.ρΩ a u = u ∘ₗ 𝔐.ρ (H.bar a) := by
     intro a u
-    refine hjbc.inductionOn u (fun u => Dh.ρΩ a u = u ∘ₗ 𝔐.ρ (H.bar a)) (by simp) ?_ ?_ ?_
+    refine hjbc.inductionOn u ?_ ?_ ?_
     · intro w
       rw [hHT.2.1, hbar, hform]
     · intro s n hn
       rw [map_smul, hn]
       rfl
     · intro n₁ n₂ h₁ h₂
-      rw [map_add, h₁, h₂]
+      rw [map_add (f := _), h₁, h₂]
       rfl
   exact ⟨{ x := x, x_gen := hx, L := L, fin := hfin, proj := hproj, M := M, ρ := ρ, act := hact, toLi := toLi, toLi_bc := hbc,
            toLi_pt := hpt, j := j, j_bc := hjbc, j_apply := hj, Γ₁ := Γ₁, i₁ := i₁, tors₁ := ht₁, pts₁ := hp₁,

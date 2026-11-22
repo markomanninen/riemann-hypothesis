@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SqMap
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianQuotientLineBundleGauge
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AdjointRelationGeneratorCorrStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FormalGermJetLiftStatement
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermFunPf
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SqMap
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianQuotientLineBundleGauge
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AdjointRelationGeneratorCorrStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FormalGermJetLiftStatement
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermFunPf
+
+@[expose] public section
 
 noncomputable section
 

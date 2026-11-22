@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameOnOne
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemCompletedHomLatticeIffFrameStabiliserActionStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEqMulOfResSNeOne
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OmVacuumEqSplitFacSmulSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexNeZeroOfFinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameOnOne
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemCompletedHomLatticeIffFrameStabiliserActionStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEqMulOfResSNeOne
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OmVacuumEqSplitFacSmulSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexNeZeroOfFinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,8 +94,8 @@ theorem det_mul_det_inv (V : HSp D) (g : GA D V) :
   unfold Formalism.L2.Theta.mt
   rw [← Matrix.det_mul, ← Units.val_mul, ← map_mul, mul_inv_cancel, map_one, Units.val_one, Matrix.det_one]
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem exists_detAt {χ : (AE D)ˣ →* Circle} {P : Finset (Pl D.host.E)} {es : Pl D.host.E → AE D}
     (hes : ∀ PP ∈ P, Formalism.L2.NTheta.IsIdemAt (es PP) PP) {e : AE D} {c : ∀ PP : Pl D.host.E, (kP PP)ˣ →* ℂˣ}
     (hχ : TameOn χ e P c) {V : HSp D} {β : GL (Fin V.rank) (Lev.EAf D)} {g : GA D V} (hg : finE V g ∈ St β)
@@ -105,14 +109,14 @@ theorem exists_detAt {χ : (AE D)ˣ →* Circle} {P : Finset (Pl D.host.E)} {es 
     GlobalTheory.IdemRes.toEAf_mem_of_finPart (GlobalTheory.AdIdem.idempotent_mem_intAE D _ (by rw [← RingHom.map_mul, ha]))
   have hint : ∀ d : AE D, toEAf D d ∈ Formalism.L2.Herm.intAf D.host.F D.host.E →
       toEAf D (a * d + (1 - a)) ∈ Formalism.L2.Herm.intAf D.host.F D.host.E := fun d hd => by
-    rw [RingHom.map_add, RingHom.map_mul, RingHom.map_sub, RingHom.map_one]
+    rw [RingHom.map_add (f := _), RingHom.map_mul, RingHom.map_sub, RingHom.map_one]
     exact mem_aux hai hd
   obtain ⟨x, hx, hx'⟩ := exists_unit ha (det_mul_det_inv V g)
   have i1 : toEAf D (x : AE D) ∈ Formalism.L2.Herm.intAf D.host.F D.host.E := by rw [hx]; exact hint _ h1
   have i2 : toEAf D ((x⁻¹ : (AE D)ˣ) : AE D) ∈ Formalism.L2.Herm.intAf D.host.F D.host.E := by rw [hx']; exact hint _ h2
   refine ⟨x, hx, hχ x ?_ i1 i2 (mul_of_orth hx hc)
     (fun PP => Matrix.GeneralLinearGroup.det (redFn β PP (finE V g))) fun PP hPP => ?_⟩
-  · rw [hx, RingHom.map_add, RingHom.map_mul, RingHom.map_sub, RingHom.map_one, hinf, zero_mul, zero_add, sub_zero]
+  · rw [hx, RingHom.map_add (f := _), RingHom.map_mul, RingHom.map_sub, RingHom.map_one, hinf, zero_mul, zero_add, sub_zero]
   · have k : es PP * (Formalism.L2.Theta.mt V g).det = es PP * (x : AE D) := by
       rcases hP PP hPP with h | ⟨k1, k2⟩
       · rw [h]; exact (mul_of_idem hx ha).symm
@@ -138,7 +142,8 @@ theorem split_cases {a : AE D} (ha : IsSplitIdem D a) {v : HeightOneSpectrum (�
 
 theorem cA_sum_mul {P : Finset (Pl D.host.E)} {es : Pl D.host.E → AE D} {a : AE D}
     (h : ∀ PP ∈ P, cA D (es PP) * a = 0) : cA D (∑ PP ∈ P, es PP) * a = 0 := by
-  rw [map_sum (cA D), Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum (cA D), Finset.sum_mul]
   exact Finset.sum_eq_zero h
 
 theorem unramAt_of_tame {χ : (AE D)ˣ →* Circle} {P : Finset (Pl D.host.E)} {es : Pl D.host.E → AE D}

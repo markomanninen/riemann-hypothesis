@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.RhsWLim
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.VolumeLieE
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.HaarUniq
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.RhsHaar
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.RhsWLim
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.VolumeLieE
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.HaarUniq
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.RhsHaar
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,9 @@ theorem nu_conc (hD : WbData k r z z' μW μW' a a' μsec) :
   have := hD.haarW'.1
   rw [nuR, Measure.map_apply (meas_chartF hD.sec) (s := {x : Mt k r | Matrix.of x ∉ UWb k r})
     HU.amb_closed.isOpen_compl.measurableSet]
-  exact measure_mono_null (fun q hq hg => hq (mem_chart hD hg)) (src_null hD)
+  apply measure_mono_null _ (src_null hD)
+  intro q hq hg
+  exact hq (mem_chart hD hg)
 
 theorem rhsWInv_of (hD : DescUniq) (hR : RInvNu) (hO : OrbInv) : RhsWInv := by
   intro k r z z' μW μW' a a' μsec hd s hs φ hφ
@@ -76,8 +82,9 @@ theorem rhsWInv_of (hD : DescUniq) (hR : RInvNu) (hO : OrbInv) : RhsWInv := by
   have hC1 : ((nuR k r z z' μW μW' μsec).map (lmulM s)) {x | Matrix.of x ∉ UWb k r} = 0 := by
     rw [Measure.map_apply hl (s := {x : Mt k r | Matrix.of x ∉ UWb k r})
       HU.amb_closed.isOpen_compl.measurableSet]
-    refine measure_mono_null (fun x (hx : Matrix.of (lmulM s x) ∉ UWb k r) (hx' : Matrix.of x ∈ UWb k r) =>
-      hx (HU.uwb_mul hs hx')) (nu_conc hd)
+    apply measure_mono_null _ (nu_conc hd)
+    intro x hx hx'
+    exact hx (HU.uwb_mul hs hx')
   have hR1 : ∀ b ∈ UWset k r z', ((nuR k r z z' μW μW' μsec).map (lmulM s)).map (rmulM b) =
       (nuR k r z z' μW μW' μsec).map (lmulM s) := by
     intro b hb

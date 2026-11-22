@@ -1,10 +1,17 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.Hurwitz
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.HurwitzB
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.InverseEndoIntegralHolds
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.CurveFormalFirstLevelHolds
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.Several
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.Kernel
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.ConstantCoeffCMulSqSum
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.Hurwitz
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.HurwitzB
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.InverseEndoIntegralHolds
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.CurveFormalFirstLevelHolds
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.Several
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.StatementK
+public import Formalism.GaussJetBounds.FinalB
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.FirstLevelFromUniversalLaw
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.CurveSecondLogDerivative
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.ConstantCoeffCMulSqSum
+
+@[expose] public section
 
 namespace Formalism.L2.Th1.G
 
@@ -24,10 +31,5 @@ theorem curveRamified : CurveRamified := CurveRamified_of_shape ramifiedShape ad
 theorem eigenSplit : EigenSplit := eigen_split_holds
 theorem shapeCong : ShapeCong := shape_congruence_holds
 theorem shapeOrth : ShapeOrth := shape_orthogonal_holds
-theorem intAtD : IntAtD := IntAtD_of shapeOrth
-
-theorem kernelShape : KernelShape := KernelShape_of shapeOrth shapeCong
-theorem kernelThmB : KernelThmB := KernelThmB_of kernelShape
-theorem kernelThmBGauss : KernelThmBGauss := KernelThmBGauss_of kernelShape
 
 end Formalism.L2.Th1.G

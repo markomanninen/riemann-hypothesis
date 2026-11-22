@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.StatementE
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.StatementE
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,13 +36,6 @@ def Pre.HasWt (Ξ : Pre n) (ν : Fin n → ℂ) : Prop :=
 
 def Pre.IsTop (Ξ : Pre n) (ν : Fin n → ℕ) (v : Fin Ξ.d → ℂ) : Prop :=
   ∀ b : Matrix (Fin n) (Fin n) ℂ, (∀ i j, j < i → b i j = 0) → Ξ.mat b *ᵥ v = (∏ k, b k k ^ ν k) • v
-
-def Pre.std (n : ℕ) : Pre n where
-  d := n
-  mat := MonoidHom.id _
-  poly i j := ⟨MvPolynomial.X (i, j), fun g => by simp⟩
-
-instance : Inhabited (Pre n) := ⟨Pre.std n⟩
 
 abbrev Pol (n : ℕ) : Type := MvPolynomial (Fin n × Fin n) ℂ
 

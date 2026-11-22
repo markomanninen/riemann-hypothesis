@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.Transport
-import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifRiem
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsometryPreservesHermitianAndAction
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FamilyPeriodRiemannLattice
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.Transport
+public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifRiem
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsometryPreservesHermitianAndAction
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FamilyPeriodRiemannLattice
+
+@[expose] public section
 
 namespace RootFieldNumerics
 

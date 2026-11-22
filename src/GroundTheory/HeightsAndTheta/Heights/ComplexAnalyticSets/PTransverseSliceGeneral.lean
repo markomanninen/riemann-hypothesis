@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StTransverseSliceGeneral
-import GroundTheory.HeightsAndTheta.Heights.Intersections.JacMinorC
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsExpansion
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StTransverseSliceGeneral
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.JacMinorC
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsExpansion
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -42,7 +47,8 @@ theorem mem_sq_of_gradAt_eq_zero (q : Fin n → ℂ) (p : MvPolynomial (Fin n) �
   obtain ⟨c, hc⟩ := exists_expansion q p
   rw [hp, map_zero, zero_add] at hc
   have hgrad : gradAt q p = ∑ i, eval q (c i) • (Pi.single i 1 : Fin n → ℂ) := by
-    rw [hc, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hc, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [gradAt_mul_of_eval_eq_zero q _ _ (by simp), gradAt_X_sub_C]
   have hcj : ∀ j, eval q (c j) = 0 := by
@@ -61,7 +67,7 @@ theorem exists_mul_mem_of_le_sup_sq (q : Fin n → ℂ) (I : Ideal (MvPolynomial
     rw [Submodule.map_le_iff_le_comap]
     intro x hx
     obtain ⟨i, hi, y, hy, rfl⟩ := Submodule.mem_sup.1 (h hx)
-    rw [Submodule.mem_comap, map_add, Submodule.mkQ_apply,
+    rw [Submodule.mem_comap, map_add (f := _), Submodule.mkQ_apply,
       (Submodule.Quotient.mk_eq_zero I).2 hi, zero_add, ← Submodule.map_smul'']
     rw [sq, ← Ideal.smul_eq_mul] at hy
     exact Submodule.mem_map_of_mem hy
@@ -90,10 +96,11 @@ theorem gradSpace_sliceIdeal (W : Ideal (MvPolynomial (Fin n) ℂ)) (L : Matrix 
   refine le_antisymm ?_ (sup_le ?_ ?_)
   · rintro _ ⟨x, hx, rfl⟩
     obtain ⟨w, hw, y, hy, rfl⟩ := Submodule.mem_sup.1 hx
-    rw [map_add]
+    rw [map_add (f := _)]
     refine Submodule.add_mem_sup ⟨w, hw, rfl⟩ ?_
     obtain ⟨c, rfl⟩ := Ideal.mem_span_range_iff_exists_fun.1 hy
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [gradAt_mul_of_eval_eq_zero q _ _ (by rw [map_sub, eval_linPoly, eval_C, sub_self]),
       gradAt_linPoly_sub]
@@ -190,7 +197,7 @@ theorem isOpen_dense_sup_span_rows (V : Submodule ℂ (Fin n → ℂ)) (hV : n �
       map_add' := fun L L' => by
         ext k i
         show Ψ (L i + L' i) k = Ψ (L i) k + Ψ (L' i) k
-        rw [map_add]
+        rw [map_add (f := _)]
         rfl
       map_smul' := fun c L => by
         ext k i

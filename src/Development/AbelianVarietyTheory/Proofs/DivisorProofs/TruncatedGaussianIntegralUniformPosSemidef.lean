@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.L2DbarEstimates.IsLocalHomeomorph
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralExpNegHermitianFormPosDefStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.L2DbarEstimates.IsLocalHomeomorph
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralExpNegHermitianFormPosDefStatement
+
+@[expose] public section
+
 open Filter Topology MeasureTheory Metric ReciprocityTheory.L2DbarEstimates
 open scoped ComplexOrder
 

@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MetaplecticLowRank.LowC
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCentralContract
+module
+
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MetaplecticLowRank.LowC
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCentralContract
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,26 @@ theorem lowC_central_contract : ∀ (k : Type) [Field k] [ValuativeRel k] [Topol
     intro i j
     exact (h i j).2
   have h0W : (0 : k) ∈ W := mem_of_mem_nhds hW
-  rw [leviEmb_blockScalar]
+  have hdiag : leviEmb k e (blockScalar hc0 (GlobalTheory.DepthZeroJac.expo s 1)) =
+      GlobalTheory.DepthZeroJac.dia e hc0 (GlobalTheory.DepthZeroJac.expo s 1) := by
+    refine Units.ext ?_
+    rw [GlobalTheory.DepthZeroJac.dia_val]
+    ext i j
+    obtain ⟨⟨a, i'⟩, rfl⟩ := e.surjective i
+    obtain ⟨⟨b, j'⟩, rfl⟩ := e.surjective j
+    by_cases h : a = b
+    · subst h
+      rw [leviEmb_apply_same]
+      show ((c ^ GlobalTheory.DepthZeroJac.expo s 1 a) •
+        (1 : Matrix (Fin (d a)) (Fin (d a)) k)) i' j' = _
+      by_cases h2 : i' = j'
+      · subst h2
+        simp
+      · rw [Matrix.smul_apply, Matrix.one_apply_ne h2, smul_zero, Matrix.diagonal_apply_ne]
+        simpa using h2
+    · rw [leviEmb_apply_ne k e _ h, Matrix.diagonal_apply_ne]
+      exact fun h' => h (congrArg Sigma.fst (e.injective h'))
+  rw [hdiag]
   refine hVU (hWV _ fun i j => ?_)
   have hentry : (((GlobalTheory.DepthZeroJac.dia e hc0 (GlobalTheory.DepthZeroJac.expo s 1))⁻¹ * g *
       GlobalTheory.DepthZeroJac.dia e hc0 (GlobalTheory.DepthZeroJac.expo s 1) : GL (Fin n) k) : Matrix (Fin n) (Fin n) k) i j

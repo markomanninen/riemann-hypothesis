@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsTwiceDifferentiableAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.CompRightEqZero
-import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
-import ReciprocityTheory.AnalyticForms.PotentialTheory.Partition
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MongeAmpereChartDensityIntegralStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsTwiceDifferentiableAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.CompRightEqZero
+public import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Partition
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MongeAmpereChartDensityIntegralStatement
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights
 open scoped ComplexOrder
 
@@ -13,8 +18,8 @@ section
 
 variable {e : ℕ} {X : Type} [TopologicalSpace X] [CompactSpace X] [T2Space X]
 
-omit [CompactSpace X] [T2Space X] in
 
+omit [CompactSpace X] [T2Space X] in
 theorem chartPartition_norm_le_one (A : FinHolAtlas e X) (Q : ChartPartition A) (j : Fin A.n)
     (x : X) : ‖Q.χ j x‖ ≤ 1 := by
   have h : Q.χ j x ≤ ∑ k, Q.χ k x :=
@@ -141,7 +146,7 @@ theorem integrableOn_hasSum_paramCover : ∀ (e : ℕ) (X : Type) [TopologicalSp
   have hne : Nonempty (ChartPartition A) := existsPartition A
   have hm : mInt A P g = ∑ j, ∫ y in (A.chart j).target,
       hne.some.χ j ((A.chart j).symm y) * g ((A.chart j).symm y) * locDens A P j y := by
-    rw [mInt, dif_pos hne, integralWith]
+    rw [mInt, dite_eq_left hne, integralWith]
   have hj := fun j => chartTerm_hasSum A V B Φ P g hne.some hc hC2 hg j
   have hpt : ∀ n z, g (Φ n z) * paramDens P (Φ n) z =
       ∑ j, hne.some.χ j (Φ n z) * g (Φ n z) * paramDens P (Φ n) z := by
@@ -160,7 +165,7 @@ theorem integrableOn_hasSum_paramCover : ∀ (e : ℕ) (X : Type) [TopologicalSp
         fun n => ∑ j, ∫ z in B n, hne.some.χ j (Φ n z) * g (Φ n z) * paramDens P (Φ n) z := by
       funext n
       rw [hfun n]
-      exact integral_finset_sum _ fun j _ => (hj j).1 n
+      exact integral_finsetSum _ fun j _ => (hj j).1 n
     rw [hEq]
     exact hs
 

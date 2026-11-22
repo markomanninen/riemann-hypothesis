@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.ChainInstY
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.ChainInstY
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -26,9 +30,9 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Ch
   (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
   (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu)) (L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K)))
 
-variable {sel mu} in
 
-def liftQ (hQ : QE sel (mu : Chr X.F X.E X.K) = ∅) {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))} (p : DecoSet X.E n ST SG) :
+variable {sel mu} in
+def liftQ (hQ : QE sel (mu : Chr X.F X.E X.K) = ∅) {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))} (p : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) :
     DecoF X.E n ST SG (QE sel (mu : Chr X.F X.E X.K)) :=
   ⟨(p, fun _ => 1), fun P _ => absurd (hQ ▸ P.2 : P.1 ∈ (∅ : Finset (HeightOneSpectrum (𝓞 X.E)))) (Finset.notMem_empty _)⟩
 
@@ -38,11 +42,6 @@ def XiRef {u : Pr.Word} (m2 : ℕ) (al : ∀ j, j ≤ m2 + 1 → L.β j) (i : �
   else if h' : i = m2 then XiCpl1 Ch sel mu cst L i (al i (by omega)) p p' (p'.deco.1.y0 R.k) x
   else if i = m2 + 1 then XiTop Ch sel mu cst i p (p.deco.1.y0 R.k) p' x
   else 0
-
-def refK {u : Pr.Word} {m2 : ℕ} (T : ChTh W sel mu u m2) (al : ∀ j, j ≤ m2 + 1 → L.β j) (i : ℕ) (p : ChPt (R := R) sel mu u i) (p' : ChPt (R := R) sel mu u (i + 1)) :
-    (colValF W sel mu u i).V →ₗ[X.K] (colValF W sel mu u (i + 1)).V :=
-  kerOf (T.th i) (Sall sel mu u) (cAof sel mu cst) (cBof sel mu cst u) p.deco.1.N (frsF sel mu p)
-    p'.deco.1.N (frsF sel mu p') (XiRef Ch sel mu cst L m2 al i p p')
 
 end Ref
 

@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
-import Development.AutomorphicArithmetic.PrimeDiscriminants.SlopeTestRemainingChoices
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdLe
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.inertQ
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.InertD
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+public import Development.AutomorphicArithmetic.PrimeDiscriminants.SlopeTestRemainingChoices
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdLe
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.inertQ
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.InertD
+
+@[expose] public section
 
 open UpperTheory.HF
 
@@ -15,7 +19,7 @@ theorem UpperTheory.cmDatum_discriminantDepth_bounds :
       ∀ p : ℕ, H.vdH p = (padicValInt p (discr H.E) : ℝ) / (Module.finrank ℚ H.E : ℝ) := by
   intro φ H
   have hQ : (1 : ℝ) ≤ H.QS := by exact_mod_cast H.QS_pos
-  refine ⟨fun l hl => ?_, ?_, (UpperTheory.HF.inert_d H).2.2.1.le, Real.logb_nonneg one_lt_two hQ, fun p => rfl⟩
+  refine ⟨fun l hl => ?_, ?_, (UpperTheory.HF.inert_d H).2.2.1.le, Real.logb_nonneg one_lt_two hQ, fun p => by simp only [HostRaw.vdH]; push_cast; simp [padicValInt, Nat.padicValNat_def]⟩
   · obtain ⟨hp, hd⟩ := H.mem_small_iff.1 hl
     have hq : l ≠ H.q := fun h => H.q_notMem_small (h ▸ hl)
     have hdd : l ≠ H.d := fun h => H.d_notMem_small (h ▸ hl)
@@ -28,11 +32,11 @@ theorem UpperTheory.cmDatum_discriminantDepth_bounds :
         Nat.factorization_eq_zero_of_not_dvd (n := H.d)
           (fun h => hdd ((Nat.prime_dvd_prime_iff_eq hp H.d_prime).1 h)),
         Nat.factorization_def _ hp]
-      rfl
+      simp [Nat.padicValNat_def]
     refine ⟨(UpperTheory.HF.vd_le H hp).2.trans (by exact_mod_cast hfac ▸ hle), ?_⟩
     rw [Real.le_logb_iff_rpow_le one_lt_two (by linarith), Real.rpow_natCast]
     have h1 : 2 ^ padicValNat l H.QS ≤ H.QS :=
-      (Nat.pow_le_pow_left hp.two_le _).trans (Nat.le_of_dvd H.QS_pos pow_padicValNat_dvd)
+      (Nat.pow_le_pow_left hp.two_le _).trans (Nat.le_of_dvd H.QS_pos (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _)))
     exact_mod_cast h1
   · obtain ⟨-, -, h1, h2, -⟩ := UpperTheory.HF.inert_q H
     by_cases h : H.q ∈ H.ram

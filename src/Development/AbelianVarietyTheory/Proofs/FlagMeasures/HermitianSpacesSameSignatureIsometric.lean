@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsCongrIffTraceFormsIsometricCm
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasseNormTheoremQuadraticExtension
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsPositiveAdd
-import Formalism.LocalToGlobal.ProjectiveLattices.UnramBridgeHolds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsCongrIffTraceFormsIsometricCm
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasseNormTheoremQuadraticExtension
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsPositiveAdd
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnramBridgeHolds
+
+@[expose] public section
 
 open NumberField Matrix
 
@@ -106,6 +110,45 @@ theorem sameKindIsometric : SameKindIsometric := by
     simp only [Matrix.mul_assoc]
   obtain ⟨Λ, hΛl, hΛm⟩ := hΛ
   obtain ⟨Λ', hΛl', hΛm'⟩ := hΛ'
+  have hspan : ∀ (M : Matrix (Fin n) (Fin n) E) (L : Submodule (𝓞 E) (Fin n → E)),
+      Submodule.IsLattice E L →
+      (∀ x, x ∈ L ↔ ∀ y ∈ L, star y ⬝ᵥ (M *ᵥ x) ∈ (algebraMap (𝓞 E) E).range) →
+      Submodule.span E (L : Set (Fin n → E)) = ⊤ := by
+    intro M L hl hm
+    classical
+    obtain ⟨s, hs⟩ := hl.fg
+    apply eq_top_iff.mpr
+    intro z _
+    obtain ⟨d, hd⟩ := IsLocalization.exist_integer_multiples_of_finset (nonZeroDivisors (𝓞 E))
+      (s.image fun y => star y ⬝ᵥ (M *ᵥ z))
+    have hd0 : (algebraMap (𝓞 E) E d) ≠ 0 :=
+      (IsFractionRing.injective (𝓞 E) E).ne (nonZeroDivisors.ne_zero d.2)
+    have hdz : (algebraMap (𝓞 E) E d) • z ∈ L := by
+      apply (hm _).2
+      intro y hy
+      rw [← hs] at hy
+      induction hy using Submodule.span_induction with
+      | mem y hy =>
+        obtain ⟨a, ha⟩ := hd _ (Finset.mem_image.mpr ⟨y, hy, rfl⟩)
+        refine ⟨a, ?_⟩
+        rw [Matrix.mulVec_smul, dotProduct_smul]
+        simpa only [smul_eq_mul, Algebra.smul_def] using ha
+      | zero => simp
+      | add x y hx hy ihx ihy =>
+        simpa [star_add, add_dotProduct] using add_mem ihx ihy
+      | smul a x hx ih =>
+        have ha : star (algebraMap (𝓞 E) E a) ∈ (algebraMap (𝓞 E) E).range := by
+          rw [hcc]
+          exact ⟨IsCMField.ringOfIntegersComplexConj E a, by simp [cc]⟩
+        have he : star (a • x) = star (algebraMap (𝓞 E) E a) • star x := by
+          ext i
+          simp [Algebra.smul_def]
+        rw [he, smul_dotProduct]
+        simpa only [smul_eq_mul] using mul_mem ha ih
+    have hz : z = (algebraMap (𝓞 E) E d)⁻¹ • ((algebraMap (𝓞 E) E d) • z) := by
+      rw [smul_smul, inv_mul_cancel₀ hd0, one_smul]
+    rw [hz]
+    exact Submodule.smul_mem _ _ (Submodule.subset_span hdz)
   obtain ⟨P, hPd, hP⟩ := GlobalTheory.SelfDualGenus.congr_of_modular
     (GlobalTheory.LocalQuad.landherr_of_hasseNormSt GlobalTheory.QNorm.hasseNormSt) GlobalTheory.QNorm.hasseNormSt
     (by
@@ -115,7 +158,8 @@ theorem sameKindIsometric : SameKindIsometric := by
         exact ⟨1, map_one _⟩
       rw [h, FractionalIdeal.mem_zero_iff] at h1
       exact one_ne_zero h1) hc (hherm J hJ) (hherm J' hJ') (by rwa [Matrix.det_transpose])
-    (by rwa [Matrix.det_transpose]) ⟨hΛl.fg, hΛl.span_eq_top⟩ ⟨hΛl'.fg, hΛl'.span_eq_top⟩
+    (by rwa [Matrix.det_transpose]) ⟨hΛl.fg, hspan J Λ hΛl hΛm⟩
+    ⟨hΛl'.fg, hspan J' Λ' hΛl' hΛm'⟩
     (hmod J Λ hΛm) (hmod J' Λ' hΛm') hs
   refine ⟨Matrix.GeneralLinearGroup.mkOfDetNeZero P hPd, ?_⟩
   have hT := congrArg Matrix.transpose hP

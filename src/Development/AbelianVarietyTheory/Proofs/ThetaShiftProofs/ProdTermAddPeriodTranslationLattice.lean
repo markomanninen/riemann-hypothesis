@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.DegeneratingToriPeriodMapEqBaseOfYEqZero
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HasSumLocallyUniformlyOnTerm
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FormalThetaSumShiftPeriodDiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.DegeneratingToriPeriodMapEqBaseOfYEqZero
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HasSumLocallyUniformlyOnTerm
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FormalThetaSumShiftPeriodDiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,10 +17,13 @@ open ReciprocityTheory.ChartRestriction.G.Geo.Tor (hermForm eTwoPi)
 
 theorem summable_norm_pi_prod_and_tsum {R X : Type} [NormedField R] [CompleteSpace R] :
     ∀ (n : ℕ) (f : Fin n → X → R), (∀ i, Summable fun x => ‖f i x‖) →
-      (Summable fun m : Fin n → X => ‖∏ i, f i (m i)‖) ∧ ∑' m : Fin n → X, ∏ i, f i (m i) = ∏ i, ∑' x, f i x
-  | 0, f, _ => ⟨Summable.of_finite, by simp⟩
-  | n + 1, f, hf => by
-    obtain ⟨h1, h2⟩ := summable_norm_pi_prod_and_tsum n (fun i => f i.succ) fun i => hf i.succ
+      (Summable fun m : Fin n → X => ‖∏ i, f i (m i)‖) ∧ ∑' m : Fin n → X, ∏ i, f i (m i) = ∏ i, ∑' x, f i x := by
+  intro n
+  induction n with
+  | zero => exact fun _ _ => ⟨Summable.of_finite, by simp⟩
+  | succ n ih =>
+    intro f hf
+    obtain ⟨h1, h2⟩ := ih (fun i => f i.succ) fun i => hf i.succ
     let e : X × (Fin n → X) ≃ (Fin (n + 1) → X) := Fin.consEquiv fun _ => X
     have he : ∀ p : X × (Fin n → X), ∏ i, f i (e p i) = f 0 p.1 * ∏ i, f i.succ (p.2 i) := fun p => by
       rw [Fin.prod_univ_succ]; rfl
@@ -56,18 +63,19 @@ def prodCoeff (α : A.X) (z : Fin A.gB → ℂ) : ℂ :=
 
 theorem prodTerm_eq_mul_char (m : Fin n → A.X) (v : A.V) :
     A.prodTerm th w a m v = A.prodTerm th w a m (0, v.2) * eTwoPi (v.1 (∑ i, m i)) := by
-  rw [map_sum, e_sum, prodTerm, prodTerm, ← Finset.prod_mul_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, e_sum, prodTerm, prodTerm, ← Finset.prod_mul_distrib]
   refine Finset.prod_congr rfl fun i _ => ?_
   simp only [term, Prod.fst_add, Prod.snd_add, AddMonoidHom.add_apply, zero_add, one_smul, e_add]
   ring
 
-variable {a} in
 
+variable {a} in
 theorem prodTerm_add_Pw_y (ha : ∑ i, a i = 0) (m : Fin n → A.X) (y : A.X) (v : A.V) :
     A.prodTerm th w a (fun i => m i + y) v =
       (A.psi y * eTwoPi (v.1 y) * eTwoPi (w * A.q y)) ^ n * A.prodTerm th w a m (v + A.Pw w (La.mk y 0 0)) := by
   have h1 : ∏ i, eTwoPi ((a i).1 y) = 1 := by
-    rw [← e_sum, ← AddMonoidHom.finset_sum_apply, ← Prod.fst_sum, ha]; simp
+    rw [← e_sum, ← AddMonoidHom.finsetSum_apply, ← Prod.fst_sum, ha]; simp
   have h2 : ∀ i, A.term 1 0 th (m i + y) (v + a i) * eTwoPi (w * A.exponent 1 0 (m i + y)) =
       eTwoPi ((a i).1 y) * ((A.psi y * eTwoPi (v.1 y) * eTwoPi (w * A.q y)) *
         (A.term 1 0 th (m i) (v + A.Pw w (La.mk y 0 0) + a i) * eTwoPi (w * A.exponent 1 0 (m i)))) := fun i => by
@@ -77,8 +85,8 @@ theorem prodTerm_add_Pw_y (ha : ∑ i, a i = 0) (m : Fin n → A.X) (y : A.X) (v
   rw [Finset.prod_mul_distrib, h1, one_mul, Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ,
     Fintype.card_fin]
 
-variable {a th} in
 
+variable {a th} in
 theorem prodTerm_add_periodTranslation_lattice (h : th ∈ A.Theta 1 0) (ha : ∑ i, a i = 0) (m : Fin n → A.X) (l : A.abelian₂) (v : A.V) :
     A.prodTerm th w a m (v + A.P0 (La.mk 0 0 l)) = A.ah l v.2 ^ n * A.prodTerm th w a m v := by
   have h0 : ∀ s : Finset (Fin n), ∑ i ∈ s, A.H (a i).2 l = A.H (∑ i ∈ s, (a i).2) l := fun s => by
@@ -98,8 +106,8 @@ theorem prodTerm_add_periodTranslation_lattice (h : th ∈ A.Theta 1 0) (ha : �
   rw [Finset.prod_mul_distrib, h1, one_mul, Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ,
     Fintype.card_fin]
 
-variable {a} in
 
+variable {a} in
 theorem term_prodCoeff (ha : ∑ i, a i = 0) (α μ : A.X) (v : A.V) :
     A.term n α (A.prodCoeff th w a α) μ v * eTwoPi (w * A.exponent n α μ) =
       ∑' m : {m : Fin n → A.X // ∑ i, m i = α + n • μ}, A.prodTerm th w a m v := by
@@ -133,10 +141,10 @@ theorem locally_normal_prodTerm (v : A.V) :
     ∃ t ∈ 𝓝 v, ∃ u : (Fin n → A.X) → ℝ, Summable u ∧ ∀ m, ∀ v' ∈ t, ‖A.prodTerm th w a m v'‖ ≤ u m := by
   choose t ht u hu hb using fun i => locally_normal_right hT one_ne_zero h hw (v + a i)
   refine ⟨⋂ i, (fun v' => v' + a i) ⁻¹' t i, iInter_mem.2 fun i =>
-    (continuous_add_right (a i)).continuousAt (ht i), fun m => ∏ i, u i (m i),
+    (continuous_add_const (a i)).continuousAt (ht i), fun m => ∏ i, u i (m i),
     (summable_norm_pi_prod_and_tsum n u fun i => (hu i).norm).1.of_norm, fun m v' hv' => ?_⟩
   rw [prodTerm, norm_prod]
-  exact Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun i _ => hb i _ _ (Set.mem_iInter.1 hv' i)
+  exact Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun i _ => hb i _ _ (Set.mem_iInter.1 hv' i)
 
 variable {a}
 
@@ -204,17 +212,13 @@ theorem exists_translates_ne_zero (h0 : th ≠ 0) {j : ℕ} (hj : 2 ≤ j) (v : 
   · rw [Fin.sum_univ_succ]; simp [Nat.cast_smul_eq_nsmul]
   · exact Fin.cases hx2 (fun _ => hx1) i
 
-omit hT h hw in
 
+omit hT h hw in
 theorem exists_Sum_ne_zero_at (A : AnArc O) {T₀ : ℝ} (hT : A.IsConvLine T₀) {th₁ : (Fin A.gB → ℂ) → ℂ}
     (h : th₁ ∈ A.Theta 1 0) (h0 : th₁ ≠ 0) {w : ℂ} (hw : T₀ < w.im) {j : ℕ} (hj : 2 ≤ j) (v : A.V) :
     ∃ α, ∃ th ∈ A.Theta j α, A.Sum j α th w v ≠ 0 := by
   obtain ⟨a, ha, hv⟩ := exists_translates_ne_zero hT h hw h0 hj v
   exact exists_Sum_ne_zero_of_prod_ne_zero hT h hw (by omega) ha (Finset.prod_ne_zero_iff.2 fun i _ => hv i)
-
-example (τ₀ w : ℂ) (hw : -τ₀.im / 2 < w.im) (v : (tate τ₀).V) :
-    ∃ α, ∃ th ∈ (tate τ₀).Theta 2 α, (tate τ₀).Sum 2 α th w v ≠ 0 :=
-  exists_Sum_ne_zero_at _ ((tate_isConvLine_iff τ₀ _).2 le_rfl) (tate_one_mem_Theta τ₀ 1 _) one_ne_zero hw le_rfl v
 
 end AnArc
 

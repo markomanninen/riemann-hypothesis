@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AnalyticSeries.AnalyticAtTsum
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AnalyticSeries.AnalyticAtTsum
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,11 +64,11 @@ theorem re_swap (x y : X) (σ : ℝ) :
   refine congrArg _ (tsum_congr fun p => ?_)
   have h : conj ((q p.1 : ℂ) ^ (-(σ : ℂ))) = (q p.1 : ℂ) ^ (-(σ : ℂ)) := by
     rw [Common0Aux.cpow_real, Complex.conj_ofReal]
-  simp only [lterm, map_div₀, map_mul, map_pow, h, Complex.conj_conj, map_add, map_natCast, map_one]
+  simp only [lterm, map_div₀, map_mul, map_pow, h, Complex.conj_conj, map_add (f := _), map_natCast, map_one]
   ring
 
-open Classical in
 
+open Classical in
 theorem exp_re (hS : Sys q X d A) (x y : X) (F : ℂ → ℂ) (σ₀ : ℝ) (hF : ∀ σ : ℝ, 0 < σ → AnalyticAt ℂ F σ)
     (he : ∀ σ : ℝ, σ₀ < σ → F σ = (if x = y then (σ : ℂ) - 1 else 1) * eul q (A x) (A y) σ) (σ : ℝ) (hσ : 1 < σ) :
     ‖F σ‖ = (if x = y then σ - 1 else 1) * Real.exp (∑' p, lterm q (A x) (A y) σ p).re := by
@@ -76,8 +80,8 @@ theorem exp_re (hS : Sys q X d A) (x y : X) (F : ℂ → ℂ) (σ₀ : ℝ) (hF 
   · rw [← Complex.ofReal_one, ← Complex.ofReal_sub, Complex.norm_real, Real.norm_of_nonneg (by linarith)]
   · rw [norm_one]
 
-open Classical in
 
+open Classical in
 theorem ne_zero_one (hS : Sys q X d A) (x y : X) (F : ℂ → ℂ) (σ₀ : ℝ) (hF : ∀ σ : ℝ, 0 < σ → AnalyticAt ℂ F σ)
     (he : ∀ σ : ℝ, σ₀ < σ → F σ = (if x = y then (σ : ℂ) - 1 else 1) * eul q (A x) (A y) σ) : F 1 ≠ 0 := by
   intro h0

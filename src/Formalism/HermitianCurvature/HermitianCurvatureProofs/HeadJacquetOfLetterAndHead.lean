@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadJOf
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActOneVariableSmul
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WordInd
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZOnly
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocOfSmoothOnH
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadJOf
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActOneVariableSmul
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WordInd
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZOnly
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocOfSmoothOnH
+
+@[expose] public section
 
 noncomputable section
 

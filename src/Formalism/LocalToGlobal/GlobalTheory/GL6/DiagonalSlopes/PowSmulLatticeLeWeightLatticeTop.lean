@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLcInt
-import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.CharacterFiniteLevelZeroOfForms
-import Formalism.LocalToGlobal.GlobalTheory.GL6.RamifiedLatticePropsOfModel
-import Formalism.LocalToGlobal.GlobalTheory.GL6.SecondBranchInclLengthOfLengths
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocGlob
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLcInt
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.CharacterFiniteLevelZeroOfForms
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.RamifiedLatticePropsOfModel
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.SecondBranchInclLengthOfLengths
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocGlob
+
+@[expose] public section
 
 noncomputable section
 
@@ -115,9 +119,9 @@ section SpecU
 open Formalism.MainNotions.product_first_zeroth_parts Formalism.L2.Forms Classical
 open scoped Matrix
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem bwL_lcInt0 (D : D7) (u : D.what₂.Word) (Tt : Forms0 D u) (i : ℕ) (hi : i ≤ D.R.m) (h0 : i = 0)
     (c : (D.mem u).C.cls i) : clsCrd D u i hi c ≤ Ld D u i hi c := by
   intro x hx

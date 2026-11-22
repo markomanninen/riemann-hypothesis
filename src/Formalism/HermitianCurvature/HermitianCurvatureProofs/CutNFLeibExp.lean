@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFLeib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointLeibnizExpansion
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HomogeneityNaturalDegree
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFLeib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointLeibnizExpansion
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HomogeneityNaturalDegree
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP.LeibExp
 

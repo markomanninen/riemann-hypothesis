@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.LimitPf
+module
+
+public import Development.EtaleCohomology.KummerTheory.LimitPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -27,13 +31,13 @@ theorem lex_ext_add_left (q : ℕ) {X Y S : Scheme.{0}} (pX : X ⟶ S) (pY : Y �
     (x x' : Ht q (sch.obj X) a i) (y : Ht q (sch.obj Y) (n - a) 0) :
     ext q pX pY a n i (x + x') y = ext q pX pY a n i x y + ext q pX pY a n i x' y := by
   unfold ext
-  rw [map_add, map_add, AddMonoidHom.add_apply, lex_cast_add]
+  rw [map_add (f := _), map_add (f := _), AddMonoidHom.add_apply, lex_cast_add]
 
 theorem lex_ext_add_right (q : ℕ) {X Y S : Scheme.{0}} (pX : X ⟶ S) (pY : Y ⟶ S) (a n i : ℤ)
     (x : Ht q (sch.obj X) a i) (y y' : Ht q (sch.obj Y) (n - a) 0) :
     ext q pX pY a n i x (y + y') = ext q pX pY a n i x y + ext q pX pY a n i x y' := by
   unfold ext
-  rw [map_add, map_add, lex_cast_add]
+  rw [map_add (f := _), map_add (f := _), lex_cast_add]
 
 theorem lex_ext_nsmul_left (q : ℕ) {X Y S : Scheme.{0}} (pX : X ⟶ S) (pY : Y ⟶ S) (a n i : ℤ) (m : ℕ)
     (x : Ht q (sch.obj X) a i) (y : Ht q (sch.obj Y) (n - a) 0) :

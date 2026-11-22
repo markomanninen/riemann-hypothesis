@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,7 +21,7 @@ theorem wickVanish_of_half : GE.HalfSt → G2.WickOperatorVanishing := by
   have hY' : FB.expS k (m • q) = 1 + q * Y := by
     rw [hY]
     simp
-  rw [hY', mul_add, mul_one, GE.dpolyOf_add_f, map_add,
+  rw [hY', mul_add, mul_one, GE.dpolyOf_add_f, map_add (f := _),
     show G * (q * Y) = (G * Y) * q by ring, hH k d F ι u c q hc hq0 hq1 hq2 P (G * Y), hP,
     GE.dpolyOf_zero_P, map_zero, mul_zero, add_zero]
 

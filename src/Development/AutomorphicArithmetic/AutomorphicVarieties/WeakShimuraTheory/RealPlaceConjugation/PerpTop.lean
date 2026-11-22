@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RbUVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.FerreroWashington
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RbUVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.FerreroWashington
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws UpperTheory.V.Two
 open scoped Classical
@@ -12,8 +16,10 @@ private theorem cup_product_injective_comp {R Γ D M : Type} [CommRing R] [Topol
     Function.Injective (cupH1H1TwistedDual χ ρ φ hρ) := by
   subst e
   have e1 : (twDual χ ρ).comp φ = (twDual (χ.comp φ) (ρ.comp φ)).comp (MonoidHom.id D) := by
-    refine MonoidHom.ext fun g => LinearMap.ext fun y => TDual.ext fun m => ?_
-    simp only [MonoidHom.comp_apply, MonoidHom.id_apply, twDual_apply, map_inv φ]
+    refine MonoidHom.ext fun g => LinearMap.ext fun y => LinearMap.ext fun m => ?_
+    change ((χ (φ g) : Rˣ) : R) * y (ρ ((φ g)⁻¹) m) =
+      ((χ (φ g) : Rˣ) : R) * y (ρ (φ g⁻¹) m)
+    rw [map_inv φ g]
   have gen : ∀ (σ σ' : Representation R D (TDual R M)) (_ : σ = σ') h1 h2,
       Function.Injective (cupProductH1H1 σ' (ρ.comp φ) ((charRep χ).comp φ) evalPair.flip
         continuous_of_discreteTopology h2 hρ) →

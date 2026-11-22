@@ -1,24 +1,29 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
-import Development.WeilBound.CoreStatements.HodgeTatePoints.MbLCentre
-import Development.WeilBound.CoreStatements.HodgeTatePoints.GenfibMap
-import Development.WeilBound.CoreStatements.HodgeTatePoints.FinClosure
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntegralClosureChartSpanStatement
-import Development.WeilBound.CoreStatements.HodgeTatePoints.MbLMorph
-import Development.WeilBound.CoreStatements.HodgeTatePoints.MbLNormChart
-import Development.WeilBound.CoreStatements.HodgeTatePoints.MaBase
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ProjectiveModelNonemptyStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntegralOverLocalizationScaledStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocalSubringIntegralClosureMaxStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MaximalIdealMembershipOfLocalStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PrimeMemIffNotUnitLocalizationStatement
-import Development.WeilBound.CoreStatements.HodgeTatePoints.MbLCentreUnique
-import Development.WeilBound.CoreStatements.HodgeTatePoints.MbLFracExt
-import Development.WeilBound.CoreStatements.HodgeTatePoints.MbLFiniteExt
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DominatingModelChartCompatStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.MbLCentre
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.GenfibMap
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.FinClosure
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntegralClosureChartSpanStatement
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.MbLMorph
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.MbLNormChart
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.MaBase
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ProjectiveModelNonemptyStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntegralOverLocalizationScaledStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocalSubringIntegralClosureMaxStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MaximalIdealMembershipOfLocalStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PrimeMemIffNotUnitLocalizationStatement
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.MbLCentreUnique
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.MbLFracExt
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.MbLFiniteExt
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DominatingModelChartCompatStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory GlobalTheory.CompanionTheory.Ar NumberField
 
 noncomputable section
@@ -34,7 +39,7 @@ theorem int_trans {o K : Type} [CommRing o] [Field K] [Algebra o K] (A B : Subal
   haveI : IsScalarTower A B K := IsScalarTower.of_algebraMap_eq fun _ => rfl
   haveI : Algebra.IsIntegral A B := ⟨fun b => by
     have := hB b b.2
-    exact (isIntegral_algebraMap_iff (A := B) (B := K) (x := b) Subtype.val_injective).1 this⟩
+    exact (isIntegral_algebraMap_iff (A := B) (B := K) (x := b) ).1 this⟩
   exact isIntegral_trans a ha
 
 theorem mem_of_isIntegral_loc {o K : Type} [CommRing o] [Field K] [Algebra o K] (A : Subalgebra o K) (D : Subring K)
@@ -153,8 +158,8 @@ variable {o : Type} [CommRing o] {Ω : Type} [Field Ω] [Algebra o Ω] {κ : Typ
   (M : PModel o x) (Ω' : Type) [Field Ω'] [Algebra Ω Ω'] [Algebra o Ω'] [IsScalarTower o Ω Ω']
   {κ' : Type} [Finite κ'] {y : κ' → Ω'} (M' : PModel o y) (f : M'.X ⟶ M.X) (e : κ → κ')
 
-variable {M Ω' M' f} in
 
+variable {M Ω' M' f} in
 theorem dom_of_eq (hD : Dominates M'.ξ M.ξ f (algebraMap Ω Ω')) {p : Cpt M.ξ} {p' : Cpt M'.ξ} (h : f p'.1 = p.1) :
     (∀ a ∈ regAt M.ξ p, algebraMap Ω Ω' a ∈ regAt M'.ξ p') ∧
       ∀ a ∈ regAt M.ξ p, unitAt M'.ξ p' (algebraMap Ω Ω' a) → unitAt M.ξ p a := by
@@ -237,15 +242,14 @@ variable {o : Type} [CommRing o] {Ω : Type} [Field Ω] [Algebra o Ω] {κ : Typ
   (M : PModel o x) (Ω' : Type) [Field Ω'] [Algebra Ω Ω'] [Algebra o Ω'] [IsScalarTower o Ω Ω']
   {κ' : Type} [Finite κ'] {y : κ' → Ω'} (M' : PModel o y) (f : M'.X ⟶ M.X) (e : κ → κ')
 
-local notation "i₀" => algebraMap Ω Ω'
-local notation "A₀" => chRing o (fun k => algebraMap Ω Ω' (x k))
-
 theorem normAt_of_charts (hD : Dominates M'.ξ M.ξ f (algebraMap Ω Ω'))
     (hy : ∀ c, x c ≠ 0 → y (e c) ≠ 0)
     (hB : ∀ c, x c ≠ 0 → ∀ a : Ω', a ∈ chRing o y (e c) ↔ IsIntegral (chRing o (fun k => algebraMap Ω Ω' (x k)) c) a)
     (hC : ∀ c, x c ≠ 0 → ∀ p' : Cpt M'.ξ, (∀ j, algebraMap Ω Ω' (x j) / algebraMap Ω Ω' (x c) ∈ regAt M'.ξ p') →
       InChart M'.ξ y (e c) p')
     (hN : Flat.NormalCpt M'.ξ) (p : Cpt M.ξ) : NormAt M'.ξ f (algebraMap Ω Ω') p := by
+  let i₀ := algebraMap Ω Ω'
+  let A₀ := fun c => chRing o (fun k => algebraMap Ω Ω' (x k)) c
   obtain ⟨c, hp⟩ := M.tie.cover p
   have hc := hp.1
   have hr := PositivityTheory.HtPt.Ma.regat_loc o Ω κ x M c p hp
@@ -386,7 +390,7 @@ theorem exists_normalisation : ∀ (o : Type) [CommRing o] [Algebra.EssFiniteTyp
 
 end PositivityTheory.HtPt.Mb.LNormExists.NormEx
 
-open AlgebraicGeometry CategoryTheory GlobalTheory.CompanionTheory.Ar NumberField in
 
+open AlgebraicGeometry CategoryTheory GlobalTheory.CompanionTheory.Ar NumberField in
 theorem PositivityTheory.HtPt.Mb.norm_exists : ∀ (o : Type) [CommRing o] [Algebra.EssFiniteType ℤ o] (Ω : Type) [Field Ω] [Algebra o Ω] (κ : Type) [Finite κ] (x : κ → Ω) (M : PModel o x) (Ω' : Type) [Field Ω'] [Algebra Ω Ω'] [FiniteDimensional Ω Ω'] [Algebra o Ω'] [IsScalarTower o Ω Ω'], ∃ (κ' : Type) (_ : Finite κ') (y : κ' → Ω') (M' : PModel o y) (f : M'.X ⟶ M.X), Dominates M'.ξ M.ξ f (algebraMap Ω Ω') ∧ Flat.NormalCpt M'.ξ ∧ IsFinite f ∧ ∀ p : Cpt M.ξ, NormAt M'.ξ f (algebraMap Ω Ω') p :=
   @PositivityTheory.HtPt.Mb.LNormExists.NormEx.exists_normalisation

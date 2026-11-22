@@ -1,33 +1,38 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsCoreLat
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.EisRegularAtOfEisPoleLE
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.WeilSiegelFormulaUnitary
-import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.SiegelWeilUnitaryConvergent
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqExistsIffDsExists
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticFormUnitaryPairAction
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNsmulIntMemLatO
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SymplOSmulHalf
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DivisiblePontryaginAnnihilatorDuality
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.StandardLatticeHalfEqDoubleAnnihilator
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FiniteQuotientAnnihilatorStandardLatticeConjHalf
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsFiniteRepsHalfStandardHomModNsmul
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulMemLatO
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilRepresentationVacuumCosetVectorsGrid
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsNsmulMemStdHom
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsCoreLat
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.EisRegularAtOfEisPoleLE
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.WeilSiegelFormulaUnitary
+public import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.SiegelWeilUnitaryConvergent
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqExistsIffDsExists
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticFormUnitaryPairAction
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNsmulIntMemLatO
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SymplOSmulHalf
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DivisiblePontryaginAnnihilatorDuality
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.StandardLatticeHalfEqDoubleAnnihilator
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FiniteQuotientAnnihilatorStandardLatticeConjHalf
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsFiniteRepsHalfStandardHomModNsmul
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulMemLatO
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilRepresentationVacuumCosetVectorsGrid
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsNsmulMemStdHom
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.Grow
 open GlobalTheory.IndefiniteRowSideFullHecke.LevelPlusSubgroup (coefPlus Cols SizeRows)
@@ -40,7 +45,7 @@ namespace GlobalTheory.AnnSum
 
 theorem latO_comm {D : D7} (S T : HSp D) {A A' : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)}
     {B B' : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)} (hA : A.FG) (hB : B.FG)
-    (hA' : Submodule.IsLattice D.host.E A') (hB' : Submodule.IsLattice D.host.E B') : ∃ N : ℕ, 0 < N ∧
+    (hA' : Submodule.IsFullLattice D.host.E A') (hB' : Submodule.IsFullLattice D.host.E B') : ∃ N : ℕ, 0 < N ∧
     ∀ y ∈ latO S T (A : Set (Fin S.rank → D.host.E)) (B : Set (Fin T.rank → D.host.E)) (fun _ => True),
       N • y ∈ latO S T (A' : Set (Fin S.rank → D.host.E)) (B' : Set (Fin T.rank → D.host.E)) (fun _ => True) := by
   obtain ⟨M, hM, hden⟩ := GlobalTheory.PlaceDatum.exists_den_latO (S := S) (T := T) hA hB
@@ -63,7 +68,9 @@ theorem std_le_hat {D : D7} (S T : HSp D) {A : Submodule (𝓞 D.host.E) (Fin S.
     {𝔪 : Ideal (𝓞 D.host.E)} (h𝔪 : 𝔪 ≠ ⊥) : ∃ N : ℕ, 0 < N ∧ ∀ u ∈ GlobalTheory.AdForm.stdHom S T,
       N • u ∈ GlobalTheory.ChiGrid.hatMx (𝔪 • GlobalTheory.ChiGrid.homLat A B) := by
   obtain ⟨M, hM, h1⟩ := latO_comm S T (Formalism.L2.Col.stdLat_lattice (E := D.host.E) (n := S.rank)).fg
-    (Formalism.L2.Col.stdLat_lattice (E := D.host.E) (n := T.rank)).fg hA.1 hB.1
+    (Formalism.L2.Col.stdLat_lattice (E := D.host.E) (n := T.rank)).fg
+    (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull S A hA)
+    (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull T B hB)
   obtain ⟨K, hK, h2⟩ := GlobalTheory.GridWeil.exists_nsmul_latO (T := T) (ΛT := B) hA h𝔪
   refine ⟨K * M, Nat.mul_pos hK hM, fun u hu => ?_⟩
   rw [mul_smul]
@@ -74,18 +81,29 @@ theorem hat_le_std {D : D7} (S T : HSp D) {A : Submodule (𝓞 D.host.E) (Fin S.
     {B : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)} (hA : IsSelfDualC S A) (hB : IsSelfDualC T B)
     (𝔪 : Ideal (𝓞 D.host.E)) : ∃ N : ℕ, 0 < N ∧ ∀ v ∈ GlobalTheory.ChiGrid.hatMx (𝔪 • GlobalTheory.ChiGrid.homLat A B),
       N • v ∈ GlobalTheory.AdForm.stdHom S T := by
+  have hstd (n : ℕ) : Submodule.IsFullLattice D.host.E (Formalism.L2.Col.stdLat D.host.E n) := by
+    haveI := Formalism.L2.Col.stdLat_lattice (E := D.host.E) (n := n)
+    refine ⟨?_⟩
+    apply top_unique
+    intro v _
+    have hv : v = ∑ i, v i • (Pi.single i (1 : D.host.E) : Fin n → D.host.E) := by
+      funext j
+      simp [Finset.sum_apply, Pi.single_apply]
+    rw [hv]
+    exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _
+      (Submodule.subset_span (by simpa using Formalism.L2.Col.single_mem_stdLat (E := D.host.E) i 1))
   obtain ⟨K, hK, h⟩ := GlobalTheory.GridWeil.exists_nsmul_hatMx (S := S) (T := T)
-    (Formalism.L2.Col.stdLat_lattice (E := D.host.E) (n := S.rank)) (Formalism.L2.Col.stdLat_lattice (E := D.host.E) (n := T.rank))
-    (GlobalTheory.ChiGrid.homLat A B) (Module.Finite.iff_fg.1 (homLat_fg hA.1 hB.1.fg))
+    (hstd S.rank) (hstd T.rank)
+    (GlobalTheory.ChiGrid.homLat A B) (Module.Finite.iff_fg.1 (homLat_fg (GlobalTheory.PlaceVec.selfDual_isFullLattice S A hA) hB.1.fg))
   refine ⟨K, hK, fun v hv => ?_⟩
   rw [stdHom_eq]
   refine h _ (AddSubgroup.closure_mono ?_ hv)
   rintro _ ⟨α, hα, x, hx, rfl⟩
   exact ⟨α, hα, x, Submodule.smul_le_right hx, rfl⟩
 
+
 set_option maxHeartbeats 800000 in
 set_option synthInstance.maxHeartbeats 200000 in
-
 theorem act_le_std (D : D7) (S T : HSp D) (g : GA D T) : ∃ N : ℕ, 0 < N ∧
     ∀ u ∈ GlobalTheory.AdForm.stdHom S T, N • actO S T 1 g u ∈ GlobalTheory.AdForm.stdHom S T := by
   obtain ⟨M, hM, hden⟩ := GlobalTheory.PlaceDatum.exists_den_latO (S := S) (T := T)
@@ -102,15 +120,19 @@ theorem act_le_std (D : D7) (S T : HSp D) (g : GA D T) : ∃ N : ℕ, 0 < N ∧
     rw [h1, Matrix.mul_one, Matrix.mul_apply]
   rw [mul_smul]
   refine hKm _ (Matrix.ext fun i j => ?_) fun i j => ?_
-  · rw [Matrix.map_apply, Matrix.smul_apply, nsmul_eq_mul, RingHom.map_mul, hact, map_sum, Finset.sum_eq_zero,
-      mul_zero, Matrix.zero_apply]
-    intro k _
-    rw [RingHom.map_mul, GlobalTheory.LatVac.infPart_of_mem hu k j, mul_zero]
-  · rw [Matrix.smul_apply, nsmul_eq_mul, RingHom.map_mul, map_natCast, hact, map_sum, Finset.mul_sum]
-    refine sum_mem fun k _ => ?_
-    have h3 := mul_mem (h' i k) (hden u hu k j)
-    rw [Matrix.map_apply, mul_mul_mul_comm, ← Nat.cast_mul, ← RingHom.map_mul] at h3
-    exact h3
+  set_option synthInstance.maxHeartbeats 100000 in
+    · have hz : ∑ k, (infPart D) (mt T g i k * u k j) = 0 := by
+        apply Finset.sum_eq_zero
+        intro k _
+        rw [RingHom.map_mul, GlobalTheory.LatVac.infPart_of_mem hu k j, mul_zero]
+      rw [Matrix.map_apply, Matrix.smul_apply, nsmul_eq_mul, RingHom.map_mul, hact, map_sum, hz,
+        mul_zero, Matrix.zero_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [Matrix.smul_apply, nsmul_eq_mul, RingHom.map_mul, map_natCast, hact, map_sum, Finset.mul_sum]
+      refine sum_mem fun k _ => ?_
+      have h3 := mul_mem (h' i k) (hden u hu k j)
+      rw [Matrix.map_apply, mul_mul_mul_comm, ← Nat.cast_mul, ← RingHom.map_mul] at h3
+      exact h3
 
 end GlobalTheory.AnnSum
 
@@ -145,9 +167,9 @@ theorem nsmul_smul_comm' {m n : ℕ} (k : ℕ) (c : AE D) (v : Mx D m n) : k •
   simp only [Matrix.smul_apply, smul_eq_mul, nsmul_eq_mul]
   ring
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 200000 in
-
 theorem ann_sum_gen (ψ : AddChar (AF D.host.F) ℂ) (hψ : IsStdChar D ψ (-1)) (S T : HSp D)
     (Q : Finset (Formalism.L2.DIV.Pl D.host.E)) (e : AE D) (he : IsIdemSum e Q) (g : GA D T) (Mh : AddSubgroup (WO S T))
     (NA NB NC : ℕ) (hNA : 0 < NA) (hNB : 0 < NB) (hNC : 0 < NC)
@@ -160,7 +182,12 @@ theorem ann_sum_gen (ψ : AddChar (AF D.host.F) ℂ) (hψ : IsStdChar D ψ (-1))
     ∃ a ∈ Mh, ∃ b ∈ Mh, Z = e • a + actO S T 1 g (e • b) := by
   classical
   have hee : e * e = e := GlobalTheory.PlaceVec.idemSum_mul_self he
-  have hχ := GlobalTheory.PlaceModel.isBichar_symplO S T ψ
+  have hχ : GlobalTheory.PlaceModel.IsBichar (fun x y : WO S T => ψ (symplO S T x y)) := by
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · intro a b y; rw [GlobalTheory.PlaceModel.symplO_add_left, AddChar.map_add_eq_mul]
+    · intro a b y; rw [GlobalTheory.PlaceModel.symplO_add_right, AddChar.map_add_eq_mul]
+    · intro y; rw [GlobalTheory.PlaceModel.symplO_zero_left, AddChar.map_zero_eq_one]
+    · intro y; rw [GlobalTheory.PlaceModel.symplO_zero_right, AddChar.map_zero_eq_one]
   let f1 : WO S T →+ WO S T := AddMonoidHom.mk' (fun v => e • v) (fun a b => smul_add e a b)
   let f2 : WO S T →+ WO S T := AddMonoidHom.mk' (fun v => actO S T 1 g (e • v))
     (fun a b => by rw [smul_add, GlobalTheory.CosDual.actO_add])

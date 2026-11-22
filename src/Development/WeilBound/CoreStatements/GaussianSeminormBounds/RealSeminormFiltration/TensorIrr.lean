@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.FockAct1FockAct2Commute
-import Formalism.LocalToGlobal.ThetaOperatorCommutation.RealTh
-import ReciprocityTheory.ThetaSummability.RealCoinvariants.Numbers
-import Mathlib.LinearAlgebra.PiTensorProduct
+module
+
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.FockAct1FockAct2Commute
+public import Formalism.LocalToGlobal.ThetaOperatorCommutation.RealTh
+public import ReciprocityTheory.ThetaSummability.RealCoinvariants.Numbers
+public import Mathlib.LinearAlgebra.PiTensorProduct
+
+@[expose] public section
 
 noncomputable section
 

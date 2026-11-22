@@ -1,4 +1,8 @@
-import Formalism.GaloisIrreducibility.NoSolvableOf
+module
+
+public import Formalism.GaloisIrreducibility.NoSolvableOf
+
+@[expose] public section
 
 namespace Formalism.GaloisIrreducibility
 
@@ -57,7 +61,7 @@ theorem lemmaAOf_statement : LemmaAOf := by
   have hsplit : M₂ = M₁ + (M₂ - M₁) := (add_tsub_cancel_of_le hB1).symm
   have hmap : (M₂ - M₁).map (fun x : K => x ^ q) = M₂ - M₁ := by
     have h := congrArg (Multiset.map (fun x : K => x ^ q)) hsplit
-    rw [Multiset.map_add, hB2, hA2] at h
+    rw [Multiset.map_add (f := _), hB2, hA2] at h
     have h' : M₁ + (M₂ - M₁) = M₁ + Multiset.map (fun x : K => x ^ q) (M₂ - M₁) :=
       hsplit.symm.trans h
     exact (add_left_cancel h').symm

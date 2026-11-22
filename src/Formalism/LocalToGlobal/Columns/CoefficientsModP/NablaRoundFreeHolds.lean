@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.NablaIndependenceHolds
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.TauLatticeLatticeHolds
+module
+
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.NablaIndependenceHolds
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.TauLatticeLatticeHolds
+
+@[expose] public section
 
 open MvPolynomial NumberField IsDedekindDomain
 open scoped Matrix
@@ -20,10 +24,6 @@ section Tensor
 
 variable {K : Type} [Field K] {ι : Type} [Fintype ι] {n : ℕ}
 
-def rdSq (lam : DomWeight n) (g : GL (Fin n) K) :
-    MvPolynomial (Fin n × Fin n) K →ₗ[K] MvPolynomial (Fin n × Fin n) K :=
-  detPow K n g lam.detShift • (Formalism.GradedWeylDivisibility.rowAct K (n := n) (g : Matrix (Fin n) (Fin n) K)ᵀ).toLinearMap
-
 theorem rd_rowAct_one (f : MvPolynomial (Fin n × Fin n) K) :
     Formalism.GradedWeylDivisibility.rowAct K (1 : Matrix (Fin n) (Fin n) K) f = f := by
   have h : Formalism.GradedWeylDivisibility.rowAct K (n := n) (1 : Matrix (Fin n) (Fin n) K) = AlgHom.id K _ := by
@@ -36,10 +36,6 @@ theorem rd_rowAct_one (f : MvPolynomial (Fin n × Fin n) K) :
       simp [Ne.symm hb]
     · simp
   rw [h]; rfl
-
-theorem rd_rowAct_rowAct (g h : Matrix (Fin n) (Fin n) K) (f : MvPolynomial (Fin n × Fin n) K) :
-    Formalism.GradedWeylDivisibility.rowAct K g (Formalism.GradedWeylDivisibility.rowAct K h f) = Formalism.GradedWeylDivisibility.rowAct K (h * g) f := by
-  rw [← Formalism.GradedWeylDivisibility.rowActMul K n n g h]; rfl
 
 end Tensor
 

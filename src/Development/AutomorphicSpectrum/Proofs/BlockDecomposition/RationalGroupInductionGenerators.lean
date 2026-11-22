@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockMatrixMul
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockMatrixMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,17 +57,17 @@ theorem mA_isUnit_det (σ : F₀ →+* F₀) {a : Matrix (Fin n) (Fin n) F₀} (
   have h1 : a * a⁻¹ = 1 := Matrix.mul_nonsing_inv _ ha
   have h2 : (cT σ a)⁻¹ * cT σ a = 1 := Matrix.nonsing_inv_mul _ (isUnit_det_cT σ ha)
   rw [mA, submatrix_fromBlocks_mul]
-  simp [h1, h2, block_matrix_one]
+  simp only [Matrix.mul_zero, Matrix.zero_mul, zero_add, add_zero, h1, h2, block_matrix_one]
 
 theorem nB_isUnit_det (b : Matrix (Fin n) (Fin n) F₀) : IsUnit (nB b).det := by
   refine Matrix.isUnit_det_of_right_inverse (B := blk4 1 (-b) 0 1) ?_
   rw [nB, submatrix_fromBlocks_mul]
-  simp [block_matrix_one]
+  simp only [Matrix.one_mul, Matrix.mul_one, Matrix.zero_mul, Matrix.mul_zero, zero_add, add_zero, add_neg_cancel, neg_mul, neg_neg, neg_zero, neg_add_cancel, block_matrix_one]
 
 theorem Jm_isUnit_det : IsUnit (EC.Jm F₀ n).det := by
   refine Matrix.isUnit_det_of_right_inverse (B := blk4 0 (-1) 1 0) ?_
   rw [EC.Jm, submatrix_fromBlocks_mul]
-  simp [block_matrix_one]
+  simp only [Matrix.one_mul, Matrix.mul_one, Matrix.zero_mul, Matrix.mul_zero, zero_add, add_zero, add_neg_cancel, neg_mul, neg_neg, neg_zero, neg_add_cancel, block_matrix_one]
 
 theorem mA_isUnitary {σ : F₀ →+* F₀} (hσ : ∀ x, σ (σ x) = x) {a : Matrix (Fin n) (Fin n) F₀} (ha : IsUnit a.det) :
     IsUnitary σ (EC.Jm F₀ n) (mA σ a) := by
@@ -73,18 +77,18 @@ theorem mA_isUnitary {σ : F₀ →+* F₀} (hσ : ∀ x, σ (σ x) = x) {a : Ma
     rwa [cT_mul, cT_cT hσ, cT_one] at h
   unfold IsUnitary EC.Jm mA
   rw [cT_blk4, submatrix_fromBlocks_mul, submatrix_fromBlocks_mul]
-  simp [cT_zero, h1, h2]
+  simp only [cT_zero, Matrix.mul_zero, Matrix.zero_mul, Matrix.mul_one, Matrix.one_mul, zero_add, add_zero, neg_mul, mul_neg, neg_neg, neg_zero, neg_add_cancel, h1, h2]
 
 theorem nB_isUnitary {σ : F₀ →+* F₀} {b : Matrix (Fin n) (Fin n) F₀} (hb : cT σ b = b) :
     IsUnitary σ (EC.Jm F₀ n) (nB b) := by
   unfold IsUnitary EC.Jm nB
   rw [cT_blk4, submatrix_fromBlocks_mul, submatrix_fromBlocks_mul]
-  simp [cT_zero, cT_one, hb]
+  simp only [cT_zero, cT_one, hb, Matrix.mul_zero, Matrix.zero_mul, Matrix.mul_one, Matrix.one_mul, zero_add, add_zero, neg_mul, mul_neg, neg_neg, neg_zero, neg_add_cancel, add_neg_cancel]
 
 theorem Jm_isUnitary (σ : F₀ →+* F₀) : IsUnitary σ (EC.Jm F₀ n) (EC.Jm F₀ n) := by
   unfold IsUnitary EC.Jm
   rw [cT_blk4, submatrix_fromBlocks_mul, submatrix_fromBlocks_mul]
-  simp [cT_zero, cT_one, cT_neg]
+  simp only [cT_zero, cT_one, cT_neg, Matrix.mul_zero, Matrix.zero_mul, Matrix.mul_one, Matrix.one_mul, zero_add, add_zero, neg_mul, mul_neg, neg_neg, neg_zero, neg_add_cancel]
 
 theorem isUnitary_mul {σ : F₀ →+* F₀} {N : ℕ} {J g h : Matrix (Fin N) (Fin N) F₀} (hg : IsUnitary σ J g)
     (hh : IsUnitary σ J h) : IsUnitary σ J (g * h) := by
@@ -108,20 +112,22 @@ theorem cT_sig_eq {a b : ℕ} (M : Matrix (Fin a) (Fin b) D.host.E) :
 theorem map_mA (a : Matrix (Fin n) (Fin n) D.host.E) :
     (mA (D.sp.cm.sig : D.host.E →+* D.host.E) a).map (incA D) =
       blk4 (rat a) 0 0 (adj (rat a⁻¹)) := by
-  rw [mA, block_matrix_map, cT_sig_eq, ← Matrix.conjTranspose_nonsing_inv, ← rat_conjTranspose]
+  change (blk4 a 0 0 (cT (D.sp.cm.sig : D.host.E →+* D.host.E) a)⁻¹).map (incA D) = _
+  rw [block_matrix_map, cT_sig_eq, ← Matrix.conjTranspose_nonsing_inv, ← rat_conjTranspose]
   simp only [Matrix.map_zero _ (map_zero (incA D))]
   rfl
 
 theorem map_nB (b : Matrix (Fin n) (Fin n) D.host.E) :
     (nB b).map (incA D) = blk4 1 (rat b) 0 1 := by
-  rw [nB, block_matrix_map]
+  change (blk4 1 b 0 1).map (incA D) = _
+  rw [block_matrix_map]
   show blk4 (rat 1) (rat b) (rat 0) (rat 1) = _
   rw [rat_one, rat_zero]
 
 theorem map_Jm : (EC.Jm D.host.E n).map (incA D) = blk4 0 1 (-1) 0 := by
   rw [EC.Jm, block_matrix_map]
   show blk4 (rat 0) (rat 1) (rat (-1)) (rat 0) = _
-  rw [rat_zero, rat_one, rat_neg, rat_one]
+  simp only [rat_zero, rat_one, rat_neg]
 
 theorem ratPts_transfer : RatPts → ∀ (D : D7) (n : ℕ), FieldGen D.host.E (D.sp.cm.sig : D.host.E →+* D.host.E) n → ∀ S : G D n → Prop, (∀ g h, S g → S h → S (g * h)) → (∀ (g : G D n) (a : GL (Fin n) (AE D)), mat g = blk4 a.1 0 0 (adj (a⁻¹).1) → S g) → (∀ (g : G D n) (b : Mx D n n), adj b = b → mat g = blk4 1 b 0 1 → S g) → (∀ g : G D n, mat g = blk4 0 1 (-1) 0 → S g) → ∀ γ ∈ GF D n, S γ := by
   intro hR D n hF S hmul hm hn hw γ hγ

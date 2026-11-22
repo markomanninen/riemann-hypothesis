@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.HensCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.HensCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits GlobalTheory.EtC

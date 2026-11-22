@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Rc5.exists_reps :
     ∀ {α : Type} (r : α → α → Prop),

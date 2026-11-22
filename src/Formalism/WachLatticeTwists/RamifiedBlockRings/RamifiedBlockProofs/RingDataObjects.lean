@@ -1,5 +1,9 @@
-import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.CharpolyRevMap
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.IdemNormalForm
+module
+
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.CharpolyRevMap
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.IdemNormalForm
+
+@[expose] public section
 
 open Finset Classical
 

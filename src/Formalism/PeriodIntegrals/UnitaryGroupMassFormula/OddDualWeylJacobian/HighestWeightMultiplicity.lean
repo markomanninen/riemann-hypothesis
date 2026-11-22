@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.JacRev
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.JacRev
+
+@[expose] public section
 
 open MvPolynomial Matrix
 
@@ -101,12 +105,12 @@ theorem good_rowGen_X (a b : Fin k) (hδ : ∀ s, wt (a, s) = wt (b, s) + δ) (v
 theorem good_rowGen (a b : Fin k) (hδ : ∀ s, wt (a, s) = wt (b, s) + δ) {d : ℤ}
     {f : MvPolynomial (Fin k × Fin k) R} (hf : IsWeightedHomogeneous wt f d) :
     Good wt δ d (rowGen R a b f) := by
-  have key : ∀ m ∈ f.support, Good wt δ d (rowGen R a b (monomial m (coeff m f))) := by
+  have key : ∀ m ∈ f.support, Good wt δ d (rowGen R a b (monomial m (AddMonoidAlgebra.coeff f m))) := by
     intro m hm
     have hw : Finsupp.weight wt m = d := hf (mem_support_iff.mp hm)
     rw [monomial_eq, map_mul, Finsupp.prod, map_prod]
-    have h1 : Good wt δ 0 (rowGen R a b (C (coeff m f))) := by
-      have hC : rowGen R a b (C (coeff m f) : MvPolynomial (Fin k × Fin k) R) = Polynomial.C (C (coeff m f) : MvPolynomial (Fin k × Fin k) R) := by
+    have h1 : Good wt δ 0 (rowGen R a b (C (AddMonoidAlgebra.coeff f m))) := by
+      have hC : rowGen R a b (C (AddMonoidAlgebra.coeff f m) : MvPolynomial (Fin k × Fin k) R) = Polynomial.C (C (AddMonoidAlgebra.coeff f m) : MvPolynomial (Fin k × Fin k) R) := by
         simp [rowGen, Polynomial.algebraMap_apply]
       rw [hC]
       exact good_C (isWeightedHomogeneous_C wt _)
@@ -115,9 +119,10 @@ theorem good_rowGen (a b : Fin k) (hδ : ∀ s, wt (a, s) = wt (b, s) + δ) {d :
     refine good_congr ?_ (good_mul h1 h2)
     rw [← hw, Finsupp.weight_apply, Finsupp.sum]
     simp [nsmul_eq_mul]
-  rw [f.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [f.as_sum, map_sum]
   intro i
-  rw [Polynomial.finset_sum_coeff, ← mem_weightedHomogeneousSubmodule]
+  rw [Polynomial.finsetSum_coeff, ← mem_weightedHomogeneousSubmodule]
   refine Submodule.sum_mem _ fun m hm => ?_
   rw [mem_weightedHomogeneousSubmodule]
   exact key m hm i
@@ -210,10 +215,11 @@ theorem rowGen_diag (a : Fin k) {d : ℕ} {f : MvPolynomial (Fin k × Fin k) R}
     rowGen R a a f = (1 + Polynomial.X) ^ d * Polynomial.C f := by
   conv_lhs => rw [f.as_sum]
   conv_rhs => rw [f.as_sum]
-  rw [map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
   have hw : Finsupp.weight (rowW a) m = d := hf (mem_support_iff.mp hm)
-  have hC : rowGen R a a (C (coeff m f) : MvPolynomial (Fin k × Fin k) R) = Polynomial.C (C (coeff m f) : MvPolynomial (Fin k × Fin k) R) := by
+  have hC : rowGen R a a (C (AddMonoidAlgebra.coeff f m) : MvPolynomial (Fin k × Fin k) R) = Polynomial.C (C (AddMonoidAlgebra.coeff f m) : MvPolynomial (Fin k × Fin k) R) := by
     simp [rowGen, Polynomial.algebraMap_apply]
   rw [monomial_eq, map_mul, Finsupp.prod, map_prod, map_mul, map_prod, hC]
   simp_rw [map_pow, rowGen_diag_X, mul_pow, Finset.prod_mul_distrib, ← pow_mul,

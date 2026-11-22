@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsLastRest
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ExistsSumEqOneOfMulEqOne
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PGraphClosedLocal
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PAmpleAffineGen
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsLastRest
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ExistsSumEqOneOfMulEqOne
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PGraphClosedLocal
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PAmpleAffineGen
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -55,9 +60,6 @@ theorem le_locInV (A : Subalgebra S Ω) (p : Ideal A) [hp : p.IsPrime] {a : Ω} 
 def locAlg (A : Subalgebra S Ω) (p : Ideal A) [p.IsPrime] : Subalgebra S Ω :=
   { (IndefiniteRowSideFullHecke.Kleiman2.locIn A p).toSubsemiring with
     algebraMap_mem' := fun r => le_locInV A p (A.algebraMap_mem r) }
-
-theorem mem_locAlg {A : Subalgebra S Ω} {p : Ideal A} [p.IsPrime] {z : Ω} :
-    z ∈ locAlg A p ↔ z ∈ IndefiniteRowSideFullHecke.Kleiman2.locIn A p := Iff.rfl
 
 def locMax (A : Subalgebra S Ω) (p : Ideal A) [hp : p.IsPrime] : Ideal (locAlg A p) where
   carrier := {z | ∃ a b : A, a ∈ p ∧ b ∉ p ∧ (z : Ω) = a / b}

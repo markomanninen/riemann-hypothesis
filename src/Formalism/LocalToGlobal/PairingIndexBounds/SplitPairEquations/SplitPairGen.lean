@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.CMTraceOnto
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.CMTraceOnto
+
+@[expose] public section
 
 noncomputable section
 open NumberField Matrix

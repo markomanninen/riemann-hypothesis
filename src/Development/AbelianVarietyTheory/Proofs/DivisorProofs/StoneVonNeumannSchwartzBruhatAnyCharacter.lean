@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StoneVonNeumannSchwartzBruhatTransverseLagrangiaStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalCharacterConductorExists
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StoneVonNeumannSchwartzBruhatTransverseLagrangiaStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalCharacterConductorExists
+
+@[expose] public section
+
 open Matrix
 
 noncomputable section
@@ -73,7 +78,7 @@ theorem stoneVonNeumann_any_char :
       obtain ⟨Y, z, h⟩ := hsurj (scaleSnd c w)
       refine ⟨Y, c⁻¹ • z, ?_⟩
       simp only [AddMonoidHom.comp_apply]
-      rw [hS, smul_inv_smul₀ hc, ← map_add, h]
+      rw [hS, smul_inv_smul₀ hc, ← map_add (f := _), h]
       exact Prod.ext rfl (inv_smul_smul₀ hc _))
   refine ⟨ι, hbij, fun Y φ hφ => ?_, fun z φ hφ => ?_⟩
   · have := h1 Y φ hφ

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsPointVertRSteps
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLogCardLength
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsPointVertRSteps
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLogCardLength
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

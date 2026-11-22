@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
+module
+
+public import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,7 +121,8 @@ lemma exists_factor {X : Type} (F : Finset X) (k : X → X → ℂ) (h : IsPSD F
   simp only [Matrix.of_apply, Matrix.mul_apply, Matrix.star_eq_conjTranspose,
     Matrix.conjTranspose_apply] at h1
   have h2 := congrArg conj h1
-  rw [Complex.conj_conj, map_sum] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Complex.conj_conj, map_sum] at h2
   rw [h2]
   refine Finset.sum_congr rfl fun j _ => ?_
   simp

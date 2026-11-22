@@ -1,25 +1,30 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LiftQMk
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedGaloisRepCharacterBlocks
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedDualFamiliesContinuous
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteDimensionalKsOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUniformiser
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExtendUnramEmb
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsTwistRepTwist
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistMRepVCont
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrysWpRTw
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IncLocChiEpsUZpow
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChiTContIsCrysMultV
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JTilShiftBlock
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ReflSBlockJIff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ScaleRootsProdIcc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LiftQMk
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedGaloisRepCharacterBlocks
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedDualFamiliesContinuous
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteDimensionalKsOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUniformiser
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExtendUnramEmb
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsTwistRepTwist
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistMRepVCont
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrysWpRTw
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IncLocChiEpsUZpow
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChiTContIsCrysMultV
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JTilShiftBlock
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ReflSBlockJIff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ScaleRootsProdIcc
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations GlobalTheory.Pass GlobalTheory.Cut GlobalTheory.UseLoc Module Classical
 
 noncomputable section
 namespace GlobalTheory.UseLocInst
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_setC : ∀ (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (i : D.nd.Loc)
     (r : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV) (D.nd.O i))) (ρ : D.nd.X i → (GE D.nd →* GL (Fin D.R.r) (D.nd.O i)))
     (π : D.nd.X i), tableLineDegreeTwo.adm20 D HW F → AdmissibleParameterJ.ConclusionJa D → GoodR D.nd i r → π ∈ D.nd.Z i → TruncatedSeriesCountingIdentities.admG2 i r ρ π →

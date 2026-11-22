@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.GeneratedWeightLemmaOfFormulas
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.DescendingProdEqFactorialChoose
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.GeneratedWeightLemmaOfFormulas
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.DescendingProdEqFactorialChoose
+
+@[expose] public section
 
 namespace Formalism.MainNotions.G.GLWeightTheory
 

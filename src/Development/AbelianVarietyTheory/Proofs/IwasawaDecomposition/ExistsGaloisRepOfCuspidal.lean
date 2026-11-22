@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExponentAndTwistData
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CharpolyFinOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenKerOfInfConn
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BijectiveCmType
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LocalInvariantsMatchSemisimple
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NotMemPlacesOverOfNe
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AbsPowOneNotIsAlgRat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExponentAndTwistData
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CharpolyFinOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenKerOfInfConn
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BijectiveCmType
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LocalInvariantsMatchSemisimple
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NotMemPlacesOverOfNe
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AbsPowOneNotIsAlgRat
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX GlobalTheory.HeightCounting NumberField IsDedekindDomain Polynomial
 
 noncomputable section
@@ -34,14 +39,17 @@ theorem exists_isRepOf_tw : GlobalTheory.Published.GlobalArtinReciprocity → �
   have hν := GlobalTheory.HeckeGal.Model.absPow_isAbsPow D.host.E (-(D.R.t : ℝ) / 2)
   have hψu : (cf.eta⁻¹ * GlobalTheory.HeckeGal.Model.absPow D.host.E (-(D.R.t : ℝ) / 2)).UnrAt w := by
     intro x hx
-    rw [HChar.loc_mul, hU x hx, hν.1 w x hx, one_mul]
+    change (cf.eta⁻¹).loc w x * (GlobalTheory.HeckeGal.Model.absPow D.host.E
+      (-(D.R.t : ℝ) / 2)).loc w x = 1
+    rw [hU x hx, hν.1 w x hx, one_mul]
   have hμv := hμ.frob_unr ha (Or.inl hwl') hψu hB hσ
   set u : ℂ := (((cf.eta⁻¹ * GlobalTheory.HeckeGal.Model.absPow D.host.E (-(D.R.t : ℝ) / 2)).val w : ℂˣ) : ℂ)⁻¹ with hu_def
   have hu1 : D.naut.frobEig (D.naut.lpTw (D.naut.locG D.naut.etaTinv w) (-(D.R.t : ℝ) / 2)) = {u} := by
     rw [D.naut.frobEig_tw _ _ hue, hf, Multiset.map_singleton]
     congr 1
     rw [hu_def, HChar.val_mul, HChar.val_inv, Units.val_mul, hν.2.1 w]
-    have hn' : (Ideal.absNorm w.asIdeal : ℕ) = normV w := rfl
+    have hn' : (Ideal.absNorm w.asIdeal : ℕ) = normV w := by
+      simp [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
     rw [hn', mul_inv, Units.val_inv_eq_inv_val, Complex.cpow_neg, inv_inv]
   have hχu : ι ((μ σ : (Qbar l)ˣ) : Qbar l) = u := by
     rw [hμv, map_inv₀, ι.apply_symm_apply]

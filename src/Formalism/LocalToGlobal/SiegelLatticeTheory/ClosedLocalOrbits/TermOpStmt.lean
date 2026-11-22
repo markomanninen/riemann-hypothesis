@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermOp
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermOp
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,41 +22,41 @@ variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u u' : D.what
   {what₂ rows' : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
   (TR : TypedRed X) (cs : ColSys X u what₂) (cs' : ColSys X u' rows') (FdN FdN' : Set X.B.I.Ginf)
 
-variable (F0 F0') in
 
+variable (F0 F0') in
 def KExpansion (hK : X.LevelSubgroupCharacter) (Dt Dt' : Set X.B.I.GA) : Prop :=
   ∃ K : CM cs' →L[ℂ] CM cs,
     HasSum (fun t : GTerm X u u' F0 F0' what₂ rows' => aTerm cs cs' FdN FdN' t) K ∧
     ∀ (T : Cu X u hK) (T' : Cu X u' hK),
       Kform X u u' hK Dt Dt' FdN FdN' T T' = inner ℂ (K (sharp hK cs' T')) (sharp hK cs T)
 
-variable (F0 F0') in
 
+variable (F0 F0') in
 def AbsConvT : Prop := (tOf F0 F0' TR cs cs' FdN FdN').AbsConv
 
-variable (F0 F0') in
 
+variable (F0 F0') in
 def LemmaV : Prop :=
   ∀ t : GTerm X u u' F0 F0' what₂ rows', ¬ t.relevant → aTerm cs cs' FdN FdN' t = 0
 
-variable (F0 F0') in
 
+variable (F0 F0') in
 def NormExpSat : Prop :=
   (tOf F0 F0' TR cs cs' FdN FdN').NormExpansionOn
       (tOf F0 F0' TR cs cs' FdN FdN').genSet ∧
     (tOf F0 F0' TR cs cs' FdN FdN').NormExpansionOn
       (tOf F0 F0' TR cs cs' FdN FdN').ngSet
 
-variable (F0 F0') in
 
+variable (F0 F0') in
 def ChiNIndep : Prop :=
   ∀ (t : GTerm X u u' F0 F0' what₂ rows') (ρ : cs.Cl) (ρ' : cs'.Cl), cs.lamOf ρ = t.lam → cs'.lamOf ρ' = t.lam' →
     kOf X u u' (cs.h ρ : X.B.I.Gf) (cs'.h ρ' : X.B.I.Gf) t.pt ∈ X.K2 →
       chiN X (kOf X u u' (cs.h ρ : X.B.I.Gf) (cs'.h ρ' : X.B.I.Gf) t.pt) =
         chiN X (kOf X u u' (cs.h (cs.base t.lam) : X.B.I.Gf) (cs'.h (cs'.base t.lam') : X.B.I.Gf) t.pt)
 
-variable (F0 F0') in
 
+variable (F0 F0') in
 def AmpWellDef : Prop :=
   ∀ (ρ : cs.Cl) (ρ' : cs'.Cl) (p q : GCar X u u' F0 F0' (cs.lamOf ρ) (cs'.lamOf ρ')),
     GRel X u u' F0 F0' (cs.lamOf ρ) (cs'.lamOf ρ') p q →
@@ -74,8 +78,8 @@ def AmpWellDef : Prop :=
           chiN X (kOf X u u' (cs.h ρ : X.B.I.Gf) (cs'.h ρ' : X.B.I.Gf) q.1.1) •
             OO (Formalism.L2.SG.ProjRows.muInf X.B.I) Ωq (X.Wu u) (X.Wu u') q.1.1.1))
 
-variable (F0 F0') in
 
+variable (F0 F0') in
 def IdCellOff : Prop :=
   u ≠ u' → HasSum (fun t : {t : GTerm X u u' F0 F0' what₂ rows' // t.isId} =>
     aTerm cs cs' FdN FdN' t.1) 0
@@ -158,8 +162,8 @@ variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u : D.what₂
   {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)} {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
   (cs : ColSys X u what₂) (FdN : Set X.B.I.Ginf)
 
-variable (F0) in
 
+variable (F0) in
 def IdCellDiag : Prop :=
   Formalism.L2.SG.HidaSetting.IsSFund X.B.I (NOinf X u) FdN →
   HasSum (fun t : {t : GTerm X u u F0 F0 what₂ what₂ // t.isId} => aTerm cs cs FdN FdN t.1)

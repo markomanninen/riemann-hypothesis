@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory.CompanionTheory.Ggeo.DerivFree
@@ -31,7 +36,8 @@ theorem iter_sum (D : Derivation k R R) (n : ℕ) {ι : Type} (s : Finset ι) (f
   | zero => simp
   | succ n ih =>
     simp only [Function.iterate_succ_apply']
-    rw [ih, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ih, map_sum]
 
 theorem iter_sub (D : Derivation k R R) (n : ℕ) (a b : R) :
     (⇑D)^[n] (a - b) = (⇑D)^[n] a - (⇑D)^[n] b := by
@@ -195,7 +201,8 @@ theorem finrank_and_vanishing : ∀ (k : Type) [Field k] (p : ℕ) [Fact p.Prime
     intro a
     obtain ⟨b, rfl⟩ := hbij.2 a
     have h2 : coeffMap p D z b = ∑ i, (b i : R) * z ^ (i : ℕ) := rfl
-    rw [h2, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, map_sum]
     simp only [LinearMap.zero_apply]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [hmul, hpow, hker _ (b i).2]

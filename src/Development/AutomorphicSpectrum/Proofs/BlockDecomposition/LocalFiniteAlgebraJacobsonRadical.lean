@@ -1,4 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.Development
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.IntegralUnitBaseChange.Development
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory.CompanionTheory.LocalFinite
@@ -17,7 +22,7 @@ theorem map_maximalIdeal_le_jacobson_and_pow_le :
     rintro M ⟨-, hM⟩
     refine Ideal.map_le_iff_le_comap.mpr ?_
     haveI : (Ideal.comap (algebraMap O R) M).IsMaximal :=
-      Ideal.isMaximal_comap_of_isIntegral_of_isMaximal M
+      Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := O) M
     exact (IsLocalRing.eq_maximalIdeal this).ge
   · have hle : m ≤ Ideal.comap (algebraMap O R) I := Ideal.le_comap_map
     let f : (O ⧸ m) →+* (R ⧸ I) := Ideal.quotientMap I (algebraMap O R) hle

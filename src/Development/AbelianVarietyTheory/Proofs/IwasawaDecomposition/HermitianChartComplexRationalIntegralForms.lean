@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevOkTwists
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExtUHInjective
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBasisAtOfIsLocBasis
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPointOfRationalUnitaryAdelicMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevOkTwists
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExtUHInjective
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBasisAtOfIsLocBasis
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPointOfRationalUnitaryAdelicMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -159,13 +163,13 @@ theorem map_mem_RatPol (lam : ι → DomWeight n) {F : MvPolynomial (ι × Fin n
       rw [← Formalism.GradedWeylDivisibility.lclosedeq_applyWord_map, Formalism.GradedWeylDivisibility.lclosedeq_hw_map, ← Formalism.GradedWeylDivisibility.lclosedeq_applyWord_map,
         Formalism.GradedWeylDivisibility.lclosedeq_hw_map]
      | zero => rw [map_zero]; exact AddSubgroup.zero_mem _
-     | add y z _ _ hy hz => rw [map_add]; exact AddSubgroup.add_mem _ hy hz
+     | add y z _ _ hy hz => rw [map_add (f := _)]; exact AddSubgroup.add_mem _ hy hz
      | smul c y _ hy =>
       rw [MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.map_C, ← MvPolynomial.smul_eq_C_mul]
       exact smul_mem_RatPol s lam c hy
     exact key _ h2
   | zero => rw [map_zero]; exact AddSubgroup.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact AddSubgroup.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact AddSubgroup.add_mem _ hx hy
   | smul c x _ hx =>
     rw [MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.map_C, ← MvPolynomial.smul_eq_C_mul]
     exact smul_mem_RatPol s lam c hx
@@ -196,7 +200,7 @@ theorem mem_fiC_iff (S : StepLevel F E σ J T f bad) (emb : ι → E →+* ℂ) 
       x.1 = bc (inclE (F := F) (FiniteAdeleRing (𝓞 F) F)) γ.1 * (y c0).1 * κ.1 := by
     intro x
     obtain ⟨c0, hc0⟩ := hy.2 (Quotient.mk'' x)
-    obtain ⟨h, hh, k, hk, e⟩ := (DoubleCoset.eq _ _ (y c0) x).1 hc0
+    obtain ⟨h, hh, k, hk, e⟩ := (@DoubleCoset.eq _ _ _ _ (y c0) x).1 hc0
     have hh' : (h : GL (Fin n) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) ∈
         (UJ (σ : E →+* E) J).map (bc (inclE (F := F) (FiniteAdeleRing (𝓞 F) F))) := Subgroup.mem_subgroupOf.1 hh
     have hk' : (k : GL (Fin n) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) ∈ S.U := Subgroup.mem_subgroupOf.1 hk
@@ -228,7 +232,7 @@ theorem mem_fiC_iff (S : StepLevel F E σ J T f bad) (emb : ι → E →+* ℂ) 
         rw [Subgroup.mem_subgroupOf]
         exact (κ1 * κ2⁻¹).2
       refine hy.1 (show (Quotient.mk'' (y c1) : Cls S) = Quotient.mk'' (y c2) from
-        (DoubleCoset.eq _ _ (y c1) (y c2)).2 ⟨r, hrR, kk, hkK, ?_⟩)
+        (@DoubleCoset.eq _ _ _ _ (y c1) (y c2)).2 ⟨r, hrR, kk, hkK, ?_⟩)
       simp only [r]
       group
     subst hc
@@ -305,8 +309,8 @@ theorem exists_embF_iff (h : (S.fam emb lam).Ok) (φ : S.Cl → GlobalTheory.Mem
 variable {F : Type} [Field F] [NumberField F] [Algebra F E] {sg : E →ₐ[F] E} {J : Matrix (Fin n) (Fin n) E} {T f : ℕ}
   {bad : Set (HeightOneSpectrum (𝓞 F))}
 
-omit [StarRing E] [NumberField K] [StarRing K] in
 
+omit [StarRing E] [NumberField K] [StarRing K] in
 theorem stab_inv_iff (c : S.Cl) (lev : StepLevel F E sg J T f bad) {e : ι → E →+* ℂ} (he : e = embAt σ emb)
     (y : GL (Fin n) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) (st : S.Stab c → UJ (sg : E →+* E) J)
     (hst : ∀ s, (st s).1 = S.gam c.1 s.1)
@@ -373,8 +377,8 @@ variable {X : Formalism.L2.Col.Fields} {n : ℕ} {ST SG Q : Finset (HeightOneSpe
 
 theorem lev_part_smul (Λ : LevFam X.E X.K n SG) (Θ : LevQFam X.E X.K n Q) (s : FrmG Λ Θ) (p : DecoF X.E n ST SG Q)
     (h : FrmG.incl Λ Θ s • p = p) :
-    FrmG.incl Λ Θ (1, s.2) • p = ((s.1⁻¹, 1, 1) : UF X.E n × GLG X.E n SG × GLQ X.E n Q) • p := by
-  have e : FrmG.incl Λ Θ (1, s.2) = ((s.1⁻¹, 1, 1) : UF X.E n × GLG X.E n SG × GLQ X.E n Q) * FrmG.incl Λ Θ s :=
+    FrmG.incl Λ Θ (1, s.2) • p = ((s.1⁻¹, 1, 1) : UF X.E n × GLG (E := X.E) (n := n) (SG := SG) × GLQ X.E n Q) • p := by
+  have e : FrmG.incl Λ Θ (1, s.2) = ((s.1⁻¹, 1, 1) : UF X.E n × GLG (E := X.E) (n := n) (SG := SG) × GLQ X.E n Q) * FrmG.incl Λ Θ s :=
     Prod.ext (inv_mul_cancel s.1).symm (one_mul _).symm
   rw [e, mul_smul, h]
 
@@ -389,8 +393,8 @@ attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Ho
 
 open GlobalTheory.Mem.Col2.BwLat GlobalTheory.LvT.Built.ValLat Formalism.HermitianLatticesTheory GlobalTheory.Mem.Col2.ValTie
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem val_tied : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.Pins B X → ∀ (l : I.Laws) (Z : TC.Later B (I.cols l)), ∀ (u : B.Word) (a : I.ι) (i : ℕ) (hi : i ≤ B.R.m) (bad : Set (HeightOneSpectrum (𝓞 B.host.F))) (Ch : Type) (chOf : (I.stp u a i).Cl → Ch) (K : ∀ β : Ch, LevelChart (I.rec7 l Z) (B.T u) bad i hi (fun c : {c // chOf c = β} => (I.chain l u a).stab i c.1) (fun c => latCrd (I.rec7 l Z) i hi (I.latAt u a i c.1))) (eY : (I.chain l u a).Y i ≃ Formalism.L2.Forms.Fr (I.rec7 l Z) i hi), I.ReadsK l Z u a i hi chOf K → I.IdY l Z u a i hi eY → ValuationCompatibleChart (D := (I.rec7 l Z)) (I.fm l u a) eY (fun _ => True) chOf (lat := fun c => latCrd (I.rec7 l Z) i hi (I.latAt u a i c)) K := by
   intro B X I hI hP l Z u a i hi bad Ch chOf K eY hK hY
   obtain ⟨k, hR⟩ := hK
@@ -477,7 +481,7 @@ theorem val_tied : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.P
       ((I.rec7 l Z).mem_locW_iff w _ x).trans
         (mem_localization_latticeOf (I.stp u a i) B.fields.emb (GlobalTheory.Mem.Col2.lamT (B.hcW u) i) ((l.fmL u a).fam i) _ w x)
     refine h1.trans (forall_congr' fun c => ?_)
-    have l1 := ((I.stp u a i).rep c).1.1.deco.2.Lsh_lattice
+    have l1 := ((I.stp u a i).rep c).1.1.deco.2.Lsh_full_lattice
     have hbel : ∀ τ, (((I.rec7 l Z).what₂.places.resChar w : ℕ) : 𝓞 B.fields.E) ∈ (bcBelow (B.fields.emb τ) w).asIdeal := fun τ => by
       show bcO (B.fields.emb τ) _ ∈ w.asIdeal
       rw [map_natCast]
@@ -490,7 +494,7 @@ theorem val_tied : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.P
           fnOf _ (shiftOf (lamTG (D := I.rec7 l Z) (I.fm l u a) i))
             (atInf (Formalism.L2.Forms.embT (I.rec7 l Z)) (Bm⁻¹ : GL (Fin (B.R.N i)) B.host.E).1) P (eY z)) := by
       intro Bm hB
-      refine (mem_localization_delAtr_fn B.fields.emb B.embLL (GlobalTheory.Mem.Col2.lamT (B.hcW u) i) w l1 (fun _ => Bm)
+      refine (mem_localization_delAtr_fn B.fields.emb B.embLL (GlobalTheory.Mem.Col2.lamT (B.hcW u) i) w (by first | exact l1 | exact l1.toIsLattice) (fun _ => Bm)
         (fun τ => isBasisAt_of_isLocBasis hp _ (hbel τ) hB) (x.1 c)).trans ?_
       constructor
       · rintro ⟨z, hz, e⟩
@@ -505,8 +509,41 @@ theorem val_tied : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.P
       rw [hd c] at hB
       exact (key Bm hB).1 h
     · intro h
-      have : Fact ((I.rec7 l Z).what₂.places.resChar w).Prime := ⟨hp⟩
-      obtain ⟨Bm, hB⟩ := Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.LocB.exists_isLocBasis ((I.rec7 l Z).what₂.places.resChar w) B.host.E _ l1.fg l1.span_eq_top
+      have : Fact ((_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).what₂.places.resChar w).Prime := ⟨hp⟩
+      have hfull : ∀ {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ}
+          {L : Submodule (𝓞 E) (Sp E n)}, Submodule.IsLattice E L →
+          IsUnimodular (hStd E n) L → Submodule.span E (L : Set (Sp E n)) = ⊤ := by
+        intro E _ _ _ n L hL hu
+        let W := Submodule.span E (L : Set (Sp E n))
+        change W = ⊤
+        by_contra h
+        let e : Sp E n ≃ₗ⋆[E] Sp E n := starLinearEquiv E
+        let g : Sp E n →ₗ[E] Module.Dual E W :=
+          (LinearMap.domRestrict' W).comp ((hStd E n).comp e.toLinearMap)
+        have hdim : Module.finrank E (Module.Dual E W) < Module.finrank E (Sp E n) := by
+          rw [Subspace.dual_finrank_eq]
+          exact Submodule.finrank_lt h
+        obtain ⟨x, hx, hx₀⟩ :=
+          Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+        have hsmul (a : E) : a • e x ∈ L := by
+          rw [← hu, dualBasic_mem_dual]
+          intro y hy
+          apply hStd_mem_one_symm
+          have hxy : hStd E n (e x) y = 0 :=
+            congrArg (fun f : Module.Dual E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+          simp [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hxy]
+        let j : E →ₗ[𝓞 E] L :=
+          ((LinearMap.toSpanSingleton E _ (e x)).restrictScalars (𝓞 E)).codRestrict L hsmul
+        let : Module.Finite (𝓞 E) L := Module.Finite.iff_fg.mpr hL.fg
+        let : Module.Finite (𝓞 E) E := Module.Finite.of_injective j fun a b hab =>
+          smul_left_injective E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+        exact RingOfIntegers.not_isField E
+          (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
+      have hspan : Submodule.span B.host.E (((I.stp u a i).rep c).1.1.deco.1.Lsh : Set (Sp B.host.E (B.R.N i))) = ⊤ := by
+        apply top_unique
+        rw [← hfull ((I.stp u a i).rep c).1.1.deco.2.lat ((I.stp u a i).rep c).1.1.deco.2.uni]
+        exact Submodule.span_mono ((I.stp u a i).rep c).1.1.deco.2.N_le_Lsh
+      obtain ⟨Bm, hB⟩ := Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.LocB.exists_isLocBasis ((_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).what₂.places.resChar w) B.host.E _ l1.fg hspan
       exact (key Bm hB).2 (h Bm (by rw [hd c]; exact hB))
 
 end GlobalTheory.Mem.Col2.TC

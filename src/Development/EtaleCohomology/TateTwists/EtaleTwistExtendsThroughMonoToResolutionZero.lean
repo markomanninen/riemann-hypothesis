@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleKummerTriangleExists
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleKummerTriangleExists
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 namespace LateralTheory.EtaleFoundations
@@ -29,7 +33,7 @@ theorem etale_kummer_torsor_class_exists_of_tors_and_ext (h1 : EtaleKummerSectio
     show Sec.map e (s U w) = Sec.map e (s U v) + _
     rw [hs2 U ζ v w h]
     show (e.hom.app (op U)).hom (_ + _) = _
-    rw [map_add]
+    rw [map_add (f := _)]
     congr 1
     unfold resGen
     rw [← he]

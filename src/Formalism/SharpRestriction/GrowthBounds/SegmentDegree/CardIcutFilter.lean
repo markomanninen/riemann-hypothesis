@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.MemColRangeOfLeEntry
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LeIffLtColH
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.MemColRangeOfLeEntry
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LeIffLtColH
+
+@[expose] public section
 
 noncomputable section
 

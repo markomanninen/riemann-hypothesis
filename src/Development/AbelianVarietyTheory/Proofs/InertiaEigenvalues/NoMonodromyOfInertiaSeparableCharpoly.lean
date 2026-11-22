@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsAttachedHodge
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsAttachedHodge
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal NumberField IsDedekindDomain Polynomial Formalism.L2.Host GlobalTheory.Pst GlobalTheory.GalOfCusp GlobalTheory.TripleLocal GlobalTheory.TypeLeaf
 
@@ -39,7 +43,7 @@ theorem eq_zero_of_commute_of_separable {V : Type*} [AddCommGroup V] [Module ℂ
   have hv : v ∈ ⨆ μ, f.maxGenEigenspace μ := by
     rw [Module.End.iSup_maxGenEigenspace_eq_top]; trivial
   exact Submodule.iSup_induction _ (motive := fun v => N v = 0) hv hline (map_zero N)
-    (fun x y hx hy => by rw [map_add, hx, hy, add_zero])
+    (fun x y hx hy => by rw [map_add (f := _), hx, hy, add_zero])
 
 end GlobalTheory.WeilDeligne
 
@@ -58,3 +62,5 @@ theorem GlobalTheory.WeilDeligne.WD.noMonodromy_of_inertia_separable_charpoly (E
     simp only [WD.mono0, WD.inePol, WD.charPol, dif_pos hw, Quotient.lift_mk, WDRep.Mono0]
     intro hs
     exact eq_zero_of_commute_of_separable hs hcomm a.nilpotent
+
+end

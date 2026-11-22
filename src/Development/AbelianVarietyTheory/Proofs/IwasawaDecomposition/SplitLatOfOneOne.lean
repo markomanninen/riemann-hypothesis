@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.PermutesRefl
-import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsSplitLatticeDatumEverySignature
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HermitianLatticeSignatureSplitOfIndefinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.PermutesRefl
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsSplitLatticeDatumEverySignature
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HermitianLatticeSignatureSplitOfIndefinite
+
+@[expose] public section
 
 open NumberField Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompRat GlobalTheory.HermModel GlobalTheory.SplitGenus
@@ -38,7 +42,7 @@ theorem exists_isotropic (h1 : ∃ D₁ : Datum H, D₁.p = 1 ∧ D₁.q = 0) (D
     DatumSum.sumForm_apply D₁.EF (CM.ConjDatum.conj D₁).EF (s • v) v
   have e2 : D₁.EF (s • x) x + D₁.EF (H.bar s • x) x = 0 := by
     have h := D₁.alt (x + H.bar s • x)
-    simp only [map_add, LinearMap.add_apply, D₁.alt] at h
+    simp only [map_add (f := _), LinearMap.add_apply, D₁.alt] at h
     rw [D₁.adj]
     linarith
   rw [← map_smul, ← hEF, e, e2, smul_zero, herm_zero_left]

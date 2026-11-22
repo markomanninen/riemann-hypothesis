@@ -1,6 +1,10 @@
-import Formalism.PadicSubsetSums.CentralIdempotents.SchurOrthogonalityCompact
-import Lemmata.FirstBlockLemmaG.Imports
-import Lemmata.MiscLemmasA.Imports
+module
+
+public import Formalism.PadicSubsetSums.CentralIdempotents.SchurOrthogonalityCompact
+public import Lemmata.FirstBlockLemmaG.Imports
+public import Lemmata.MiscLemmasA.Imports
+
+@[expose] public section
 
 namespace Formalism.IrreducibleCountingLemmas.Z
 

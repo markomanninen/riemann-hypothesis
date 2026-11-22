@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.LossesSmallShares
-import Formalism.LocalToGlobal.GlobalTheory.SuppSat
-import Formalism.SizeWindowBrackets.PrimeClassLossHypothesesSatisfiable
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.LossesSmallShares
+public import Formalism.LocalToGlobal.GlobalTheory.SuppSat
+public import Formalism.SizeWindowBrackets.PrimeClassLossHypothesesSatisfiable
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,15 +22,6 @@ def LossSettingFamily : Prop :=
 
 def ThickDensitySizeWindowsForAllFamilies : Prop :=
   ∀ (eps : ℝ) (Fm : FamP eps), ChosenTT Fm → ChosenBadp Fm → LinkG Fm → Lnk.LossesSmallShares Fm
-
-def StLoss7W : Prop :=
-  ∀ (eps : ℝ) (Fm : FamP eps), ChosenTT Fm → ChosenBadp Fm → ChosenW Fm → LinkG Fm → Lnk.LossF Fm 0
-
-def SmallShareWeightExists : Prop :=
-  ∀ (eps : ℝ) (Fm : FamP eps), LinkG Fm → ChosenW Fm
-
-def StOld7 : Prop :=
-  ∀ (eps : ℝ) (Fm : FamP eps) (C0 CH : ℝ), ChosenE Fm C0 CH → LinkG Fm → Fm.CoverAll → WeightVectorSmallSharesSeven Fm C0 CH
 
 end Formalism.L2.GlobalTheoryTheory.Loss7
 

@@ -1,4 +1,8 @@
-import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.LogTwoLeLogAnalyticConductor
+module
+
+public import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.LogTwoLeLogAnalyticConductor
+
+@[expose] public section
 
 open Complex
 

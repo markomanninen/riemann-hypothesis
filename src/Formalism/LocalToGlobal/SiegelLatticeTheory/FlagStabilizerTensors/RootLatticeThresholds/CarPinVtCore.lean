@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PackageTie
-import Formalism.HermitianCurvature.StatementB
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PackageTie
+public import Formalism.HermitianCurvature.StatementB
+
+@[expose] public section
 
 noncomputable section
 

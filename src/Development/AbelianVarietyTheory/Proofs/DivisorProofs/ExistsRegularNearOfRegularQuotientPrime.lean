@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsRegularLocalRingOfRegularQuotient
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMinimalLocalGeneratorsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsRegularLocalRingOfRegularQuotient
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMinimalLocalGeneratorsStatement
+
+@[expose] public section
 
 open IsLocalRing TensorProduct
 
@@ -73,8 +77,8 @@ private lemma height_add_ringKrullDim_quotient_le' (A : Type) [CommRing A] (I : 
   norm_cast
   exact le_iSup (fun a : PrimeSpectrum A => Order.height a + Order.coheight a) P
 
-open IsLocalRing TensorProduct in
 
+open IsLocalRing TensorProduct in
 theorem _root_.GlobalTheory.RegularAscent.exists_regular_near_of_regular_quotient (B : Type) [CommRing B]
     [IsNoetherianRing B] (p : Ideal B) [p.IsPrime]
     (hp : IsRegularLocalRing (Localization.AtPrime p)) :
@@ -151,7 +155,7 @@ theorem _root_.GlobalTheory.RegularAscent.exists_regular_near_of_regular_quotien
   have hTcard : (T.card : WithBot ℕ∞) ≤ (p.map (algebraMap B (Localization.AtPrime q))).height := by
     have h1 : (p.map (algebraMap B (Localization.AtPrime q))).height = p.height := by
       rw [← IsLocalization.height_under q.primeCompl,
-        IsLocalization.comap_map_of_isPrime_disjoint q.primeCompl _ ‹_› hdisj]
+        IsLocalization.under_map_of_isPrime_disjoint q.primeCompl _ ‹_› hdisj]
     have h2 : (p.height : WithBot ℕ∞) = (maximalIdeal (Localization.AtPrime p)).spanFinrank := by
       rw [← IsLocalization.AtPrime.ringKrullDim_eq_height p (Localization.AtPrime p),
         hp.spanFinrank_maximalIdeal]

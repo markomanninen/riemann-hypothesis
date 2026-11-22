@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreimageTrQ
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreimageTrQ
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -20,7 +25,7 @@ theorem valR_pbT_le {A : Type} [CommRing A] {X Z : Scheme.{0}} (w : Sp A ⟶ Z) 
     valR w U' (pbT T f U') = valR (w ≫ T) U f := by
   have h' : ⊤ ≤ (w ≫ T) ⁻¹ᵁ U := h.trans (w.preimage_mono hU)
   unfold valR
-  rw [dif_pos h, dif_pos h', GlobalTheory.KS.pbT_of_le T hU]
+  rw [dite_eq_left h, dite_eq_left h', GlobalTheory.KS.pbT_of_le T hU]
   rw [← Scheme.Hom.appLE_comp_appLE w T U U' ⊤ hU h]
   rfl
 

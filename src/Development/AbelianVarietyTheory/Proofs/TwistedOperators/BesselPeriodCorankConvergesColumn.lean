@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.FormulaAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsAllTiedPerTied
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousCoeffBlockAct
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.FormulaAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsAllTiedPerTied
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousCoeffBlockAct
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.RowClaim MeasureTheory
@@ -112,7 +116,7 @@ theorem pairVec_cont (hθ : IsInfFam θ) (ξ : Module.Dual ℂ (coefPlus G θ).W
     Continuous (pairVec (coefPlus G θ) ξ Ψ) := by
   obtain ⟨_, _, _, _, _, _, _⟩ := GlobalTheory.Mem.AdelicGroupTop.adelic_unitary_topology D (G.V (.top 0))
   have hV := G.isV (X := .top 0) (Nat.zero_le _) (fun j e => by cases e)
-  have hU := (congLev_open_compact (G.V (.top 0)) hV.sd.1 (G.pl.modul_ne_bot sc)).1
+  have hU := (congLev_open_compact (G.V (.top 0)) (Formalism.IndefR.Fin.PDA.selfDual_isFullLattice _ _ hV.sd) (G.pl.modul_ne_bot sc)).1
   refine continuous_iff_continuousAt.2 fun h0 => ?_
   have hn : h0 • (((G.Kplus).comap (Lev.finE (G.V (.top 0))) : Subgroup _) : Set (GA D (G.V (.top 0)))) ∈ nhds h0 :=
     (hU.leftCoset h0).mem_nhds ⟨1, one_mem _, mul_one h0⟩
@@ -131,7 +135,7 @@ theorem pairVec_isAutFun (hθ : IsInfFam θ) (ξ : Module.Dual ℂ (coefPlus G �
     IsAutFun (G.V (.top 0)) (pairVec (coefPlus G θ) ξ Ψ) := by
   have hV := G.isV (X := .top 0) (Nat.zero_le _) (fun j e => by cases e)
   exact ⟨fun γ hγ g => pairVec_left G θ ξ hΨ hγ g,
-    ⟨_, (congLev_open_compact (G.V (.top 0)) hV.sd.1 (G.pl.modul_ne_bot sc)).1,
+    ⟨_, (congLev_open_compact (G.V (.top 0)) (Formalism.IndefR.Fin.PDA.selfDual_isFullLattice _ _ hV.sd) (G.pl.modul_ne_bot sc)).1,
       fun k hk hkf g => pairVec_right G θ ξ hΨ hk hkf g⟩, pairVec_cont G θ hθ ξ hΨ⟩
 
 end Col
@@ -149,7 +153,24 @@ theorem bplusConv_col : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G
   have hι := (G.rowDec 0 (by have := D.R.two_le_m; omega)).isom
   have hs : ∀ h, EmbRel _ _ (G.rowDec 0 (by have := D.R.two_le_m; omega)).ι (embTop G h) h :=
     fun h => (embRel_iff _ h _).2 rfl
-  have hQ := bes_inv W.ψ_std hι G.besTop hs hφ hF
+  have hQ : IsRatInv (G.rowDec 0 (by have := D.R.two_le_m; omega)).ι G.besTop.e
+      (fun h n => star (star (pairVec _ ξ Ψ) h) * F (n * embTop G h * (G.besTop.y : GA D _)) *
+        star (besChar W.ψ G.besTop n)) := by
+    refine ⟨?_, ?_, ?_⟩
+    · intro δ γ h n hn
+      exact (GlobalTheory.BesselChar.besChar_conj W.ψ G.besTop δ γ h n hn).1
+    · intro g n hn γ hγ hq
+      rw [GlobalTheory.BesselChar.besChar_mul W.ψ G.besTop γ n hγ hn,
+        GlobalTheory.BesselChar.besChar_rat W.ψ W.ψ_std.1 G.besTop γ hγ hq, one_mul,
+        mul_assoc γ, mul_assoc γ, hF.left γ hq]
+    · intro g n hn γ hγ δ hδ
+      obtain ⟨s₀, -, hrel, hq⟩ := GlobalTheory.Mem.UnitaryEmb.exists_embHom D _ _ _ hι
+      have he : embTop G = s₀ := funext fun h => (hrel h _).1 (hs h)
+      have hc : F (δ * n * δ⁻¹ * embTop G (γ * g) * G.besTop.y) =
+          F (n * embTop G g * G.besTop.y) := by
+        rw [he, (hrel _ _).1 hδ, ← hF.left _ (hq γ hγ) (n * s₀ g * G.besTop.y)]
+        simp only [map_mul, mul_assoc, inv_mul_cancel_left]
+      rw [(GlobalTheory.BesselChar.besChar_conj W.ψ G.besTop δ γ hδ n hn).2, hc, hφ.left γ hγ]
   obtain ⟨hμ, h𝓕⟩ := hM.top.haar_fund
   obtain ⟨-, -, -, -, _, -, -⟩ := GlobalTheory.Mem.AdelicGroupTop.adelic_unitary_topology D (G.V (.grid D.R.m 0))
   have H := integrable_of_haar hQ G.besTop.e_iso hι hA

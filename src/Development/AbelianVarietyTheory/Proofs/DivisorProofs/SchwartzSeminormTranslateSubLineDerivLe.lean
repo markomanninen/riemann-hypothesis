@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped SchwartzMap ContDiff
 
@@ -25,7 +29,7 @@ private theorem fderiv_iteratedFDeriv_apply_eq_iteratedFDeriv_fderiv {V : Type} 
       ext w
       rw [fderiv_clm_apply ((hg1.differentiable (by simp)) y) (differentiableAt_const _)]
       simp
-      have h2le : minSmoothness ℝ 2 ≤ ∞ := by simp; exact WithTop.coe_le_coe.mpr le_top
+      have h2le : minSmoothness ℝ 2 ≤ ∞ := by simp
       exact (ContDiffAt.isSymmSndFDerivAt (hg.contDiffAt (x := y)) h2le) w a
     simp_rw [iteratedFDeriv_succ_apply_right]
     rw [fderiv_clm_apply ((hdiff x).continuousMultilinear_apply_const _) (differentiableAt_const _)]

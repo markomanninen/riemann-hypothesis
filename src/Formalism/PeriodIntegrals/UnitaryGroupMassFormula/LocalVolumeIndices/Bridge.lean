@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.MassDataInst
-import Formalism.PeriodIntegrals.AdBridgeSteps
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.BridgeFinK
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.MassDataInst
+public import Formalism.PeriodIntegrals.AdBridgeSteps
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.BridgeFinK
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,10 +33,10 @@ theorem Bridge_tens_eq (t : AF I.F ⊗[I.F] I.E) :
   | zero => simp
   | tmul a e =>
     simp [tensMap, tauF, swapE, Algebra.TensorProduct.lift_tmul, Algebra.TensorProduct.tmul_mul_tmul]
-  | add s u hs hu => rw [map_add, map_add, map_add, hs, hu]
+  | add s u hs hu => rw [map_add (f := _), map_add (f := _), map_add (f := _), hs, hu]
+
 
 variable {I} in
-
 theorem Bridge_HA_ext {R : Type} [CommRing R] [Algebra I.F R] (g h : HA R I.cm.sig I.J)
     (e : ((HA.mat R I.cm.sig I.J g : GL (Fin I.n) (R ⊗[I.F] I.E)) : Matrix (Fin I.n) (Fin I.n) (R ⊗[I.F] I.E)) =
       ((HA.mat R I.cm.sig I.J h : GL (Fin I.n) (R ⊗[I.F] I.E)) : Matrix (Fin I.n) (Fin I.n) (R ⊗[I.F] I.E))) :
@@ -66,7 +70,7 @@ theorem Bridge_tf_surjective : Function.Surjective (tf I hb) := by
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul a e => simp [φ, swapE, sigR, Formalism.UG.sigR]
-    | add s u hs hu => simp only [map_add] at hs hu ⊢; rw [hs, hu]
+    | add s u hs hu => simp only [map_add (f := _)] at hs hu ⊢; rw [hs, hu]
   have hJ : (JR (Af I.F) I.J).map φ = I.J.map (Formalism.UG.inclE (F := I.F) (Af I.F)) := by
     ext i j
     simp [φ, swapE, JR, inclR, Formalism.UG.inclE]

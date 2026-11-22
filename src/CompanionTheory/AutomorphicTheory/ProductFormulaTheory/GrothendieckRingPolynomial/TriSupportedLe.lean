@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.GrothendieckRingPolynomial.ProdList
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.GrothendieckRingPolynomial.ProdList
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -76,7 +80,7 @@ theorem tri_bij {σ : Type*} (w : σ → ℕ) (ψ : MvPolynomial σ ℤ →+* Mv
       apply MvPolynomial.algHom_ext
       intro s
       show ψ (φ (X s)) = X s
-      rw [hφX, map_add, map_zsmul, hψ, hqψ, smul_add, smul_smul, ← Units.val_mul, Int.units_mul_self, Units.val_one, one_smul,
+      rw [hφX, map_add (f := _), map_zsmul, hψ, hqψ, smul_add, smul_smul, ← Units.val_mul, Int.units_mul_self, Units.val_one, one_smul,
         add_neg_cancel_right]
     intro x
     exact AlgHom.congr_fun hAlg x
@@ -152,7 +156,8 @@ theorem uni_exists {M I C : Type*} (L : M ≃ I) (c : M → C) (w : M → ℕ) (
       rw [Finsupp.sum, ← Finset.add_sum_erase _ _
         (Finsupp.mem_support_iff.2 (by rw [h1]; exact one_ne_zero)), h1]
       simp_rw [Finsupp.smul_single_one]
-    rw [map_sub, map_sum, Finsupp.linearCombination_single, one_smul, hs]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum, Finsupp.linearCombination_single, one_smul, hs]
     exact (eq_sub_of_add_eq hsplit.symm).symm
 
 theorem uni_bij {M I C : Type*} (L : M ≃ I) (c : M → C) (w : M → ℕ) (b : C → ℕ) (f : M → I →₀ ℤ)
@@ -164,7 +169,7 @@ theorem uni_bij {M I C : Type*} (L : M ≃ I) (c : M → C) (w : M → ℕ) (b :
   refine Finsupp.induction_linear y ?_ ?_ ?_
   · exact ⟨0, map_zero _⟩
   · rintro y z ⟨a, ha⟩ ⟨a', ha'⟩
-    exact ⟨a + a', by rw [map_add, ha, ha']⟩
+    exact ⟨a + a', by rw [map_add (f := _), ha, ha']⟩
   · intro i r
     obtain ⟨a, -, ha⟩ := uni_exists L c w b f hb h1 hlt (L.symm i)
     exact ⟨r • a, by rw [map_smul, ha, L.apply_symm_apply, Finsupp.smul_single_one]⟩

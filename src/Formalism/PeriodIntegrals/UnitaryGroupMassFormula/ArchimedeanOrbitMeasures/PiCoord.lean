@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,9 +81,9 @@ theorem measurePreserving_of_normSq {ι V : Type} [Fintype ι] [Fintype V] {α :
           rw [Equiv.apply_symm_apply]
           rfl
         rw [this]
-        exact measurable_pi_lambda _ fun v =>
+        exact Measurable.of_eval fun v =>
           (PiLp.volume_preserving_toLp (α v)).measurable.comp
-            (measurable_pi_lambda _ fun a => (measurable_pi_apply _).comp (PiLp.volume_preserving_ofLp _).measurable) }
+            (Measurable.of_eval fun a => (measurable_pi_apply _).comp (PiLp.volume_preserving_ofLp _).measurable) }
   have hFe : MeasurePreserving Fe (Measure.pi fun v => volume) volume := hF
   have key := hFe.symm.comp hGe
   convert key using 1
@@ -93,29 +97,28 @@ def piProdEquiv {V : Type} (A B : V → Type) [∀ v, MeasurableSpace (A v)] [�
   invFun p v := (p.1 v, p.2 v)
   left_inv _ := rfl
   right_inv _ := rfl
-  measurable_toFun := (measurable_pi_lambda _ fun v => measurable_fst.comp (measurable_pi_apply v)).prodMk
-    (measurable_pi_lambda _ fun v => measurable_snd.comp (measurable_pi_apply v))
-  measurable_invFun := measurable_pi_lambda _ fun v =>
+  measurable_toFun := (Measurable.of_eval fun v => measurable_fst.comp (measurable_pi_apply v)).prodMk
+    (Measurable.of_eval fun v => measurable_snd.comp (measurable_pi_apply v))
+  measurable_invFun := Measurable.of_eval fun v =>
     ((measurable_pi_apply v).comp measurable_fst).prodMk ((measurable_pi_apply v).comp measurable_snd)
 
 theorem measurePreserving_piProdEquiv {V : Type} [Fintype V] (A B : V → Type) [∀ v, MeasurableSpace (A v)]
     [∀ v, MeasurableSpace (B v)] (μ : ∀ v, Measure (A v)) (ν : ∀ v, Measure (B v)) [∀ v, SigmaFinite (μ v)]
     [∀ v, SigmaFinite (ν v)] :
     MeasurePreserving (piProdEquiv A B) (Measure.pi fun v => (μ v).prod (ν v))
-      ((Measure.pi fun v => μ v).prod (Measure.pi fun v => ν v)) where
-  measurable := (piProdEquiv A B).measurable
-  map_eq := by
-    refine (Measure.FiniteSpanningSetsIn.ext ?_ (isPiSystem_pi.prod isPiSystem_pi)
-      ((Measure.FiniteSpanningSetsIn.pi fun i ↦ (μ i).toFiniteSpanningSetsIn).prod
-      (Measure.FiniteSpanningSetsIn.pi (fun i ↦ (ν i).toFiniteSpanningSetsIn))) ?_).symm
-    · refine (generateFrom_eq_prod generateFrom_pi generateFrom_pi ?_ ?_).symm
-      · exact (Measure.FiniteSpanningSetsIn.pi (fun i ↦ (μ i).toFiniteSpanningSetsIn)).isCountablySpanning
-      · exact (Measure.FiniteSpanningSetsIn.pi (fun i ↦ (ν i).toFiniteSpanningSetsIn)).isCountablySpanning
-    · rintro _ ⟨s, ⟨s, _, rfl⟩, ⟨_, ⟨t, _, rfl⟩, rfl⟩⟩
-      rw [MeasurableEquiv.map_apply]
-      rw [show (piProdEquiv A B) ⁻¹' (Set.univ.pi s ×ˢ Set.univ.pi t) =
-          (Set.univ.pi fun i ↦ s i ×ˢ t i) by
-          ext; simp [Set.mem_pi, forall_and, piProdEquiv]]
-      simp_rw [Measure.pi_pi, Measure.prod_prod, Measure.pi_pi, Finset.prod_mul_distrib]
+      ((Measure.pi fun v => μ v).prod (Measure.pi fun v => ν v)) := by
+  refine ⟨(piProdEquiv A B).measurable, ?_⟩
+  refine (Measure.FiniteSpanningSetsIn.ext ?_ (isPiSystem_pi.prod isPiSystem_pi)
+    ((Measure.FiniteSpanningSetsIn.pi fun i ↦ (μ i).toFiniteSpanningSetsIn).prod
+    (Measure.FiniteSpanningSetsIn.pi (fun i ↦ (ν i).toFiniteSpanningSetsIn))) ?_).symm
+  · refine (generateFrom_eq_prod generateFrom_pi generateFrom_pi ?_ ?_).symm
+    · exact (Measure.FiniteSpanningSetsIn.pi (fun i ↦ (μ i).toFiniteSpanningSetsIn)).isCountablySpanning
+    · exact (Measure.FiniteSpanningSetsIn.pi (fun i ↦ (ν i).toFiniteSpanningSetsIn)).isCountablySpanning
+  · rintro _ ⟨s, ⟨s, _, rfl⟩, ⟨_, ⟨t, _, rfl⟩, rfl⟩⟩
+    rw [MeasurableEquiv.map_apply]
+    rw [show (piProdEquiv A B) ⁻¹' (Set.univ.pi s ×ˢ Set.univ.pi t) =
+        (Set.univ.pi fun i ↦ s i ×ˢ t i) by
+        ext; simp [Set.mem_pi, forall_and, piProdEquiv]]
+    simp_rw [Measure.pi_pi, Measure.prod_prod, Measure.pi_pi, Finset.prod_mul_distrib]
 
 end PI.AprimeInfG

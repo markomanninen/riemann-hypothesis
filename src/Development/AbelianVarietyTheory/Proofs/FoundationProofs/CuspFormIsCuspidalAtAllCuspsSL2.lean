@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SlashToGLSmul
+module
+
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SlashToGLSmul
+
+@[expose] public section
+
 open GlobalTheory.HeckeFamilyMatrices UpperHalfPlane CongruenceSubgroup
 open scoped MatrixGroups ModularForm Manifold
 

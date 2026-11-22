@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FlatCalcB
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.MeasurableSetImageOfIsLocalHomeomorph
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FlatCalcB
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.MeasurableSetImageOfIsLocalHomeomorph
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 

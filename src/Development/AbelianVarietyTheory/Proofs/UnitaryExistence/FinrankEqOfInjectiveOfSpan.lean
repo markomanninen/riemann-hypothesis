@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+
+@[expose] public section
 
 open NumberField Matrix
 open scoped nonZeroDivisors
@@ -8,9 +12,9 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.G
 
 namespace GlobalTheory.HermModel
 
+
 open NumberField Matrix in
 open scoped nonZeroDivisors in
-
 theorem _root_.GlobalTheory.HermModel.finrank_eq_of_injective_of_span {R K M V : Type} [CommRing R] [IsDomain R]
     [Field K] [Algebra R K] [IsFractionRing R K] [AddCommGroup M] [Module R M] [AddCommGroup V]
     [Module R V] [Module K V] [IsScalarTower R K V] (f : M →ₗ[R] V) (hf : Function.Injective f)
@@ -41,10 +45,10 @@ section Trace
 
 variable {E : Type} [Field E] [NumberField E]
 
+
 open NumberField Matrix in
 open scoped nonZeroDivisors in
 variable {E : Type} [Field E] [NumberField E] in
-
 theorem _root_.GlobalTheory.HermModel.eq_zero_of_trace_mul_integer {t : E}
     (ht : ∀ a : 𝓞 E, Algebra.trace ℚ E (t * a) = 0) : t = 0 := by
   classical
@@ -80,7 +84,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} in
 theorem _root_.GlobalTheory.HermModel.herm_add_right (G : Matrix (Fin r) (Fin r) E) (x y y' : Fin r → E) :
     _root_.ReciprocityTheory.ChartRestriction.G.FD.herm G x (y + y') = _root_.ReciprocityTheory.ChartRestriction.G.FD.herm G x y + _root_.ReciprocityTheory.ChartRestriction.G.FD.herm G x y' := by
   unfold _root_.ReciprocityTheory.ChartRestriction.G.FD.herm _root_.ReciprocityTheory.ChartRestriction.G.FD.cc
-  simp only [Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 open NumberField Matrix in
 open scoped nonZeroDivisors in
@@ -99,10 +103,10 @@ theorem _root_.GlobalTheory.HermModel.herm_zero_right (G : Matrix (Fin r) (Fin r
   unfold _root_.ReciprocityTheory.ChartRestriction.G.FD.herm _root_.ReciprocityTheory.ChartRestriction.G.FD.cc
   simp
 
+
 open NumberField Matrix in
 open scoped nonZeroDivisors in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} in
-
 theorem _root_.GlobalTheory.HermModel.eq_zero_of_herm_eq_zero {G : Matrix (Fin r) (Fin r) E}
     (hG : G.det ≠ 0) {w : Fin r → E} (hw : ∀ u, _root_.ReciprocityTheory.ChartRestriction.G.FD.herm G w u = 0) : w = 0 := by
   refine Matrix.eq_zero_of_vecMul_eq_zero hG (funext fun b => ?_)
@@ -178,7 +182,7 @@ theorem _root_.GlobalTheory.HermModel.rank_integral_selfDual (E : Type) [Field E
       · choose n hn using hv
         let ℓ : D.La →+ ℤ := AddMonoidHom.mk' n fun y y' => by
           apply Int.cast_injective (α := ℚ)
-          rw [Int.cast_add, ← hn, ← hn, ← hn, map_add, _root_.GlobalTheory.HermModel.herm_add_right, mul_add,
+          rw [Int.cast_add, ← hn, ← hn, ← hn, map_add (f := _), _root_.GlobalTheory.HermModel.herm_add_right, mul_add,
             map_add]
         obtain ⟨x, hx⟩ := D.unimod.2 ℓ.toIntLinearMap
         have htr : ∀ y, Algebra.trace ℚ E (ξ * _root_.ReciprocityTheory.ChartRestriction.G.FD.herm Gm (v - φ x) (φ y)) = 0 := by

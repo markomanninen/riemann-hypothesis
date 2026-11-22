@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsUnifAt
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.WtTieOf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsUnifAt
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.WtTieOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,8 +29,8 @@ theorem wG_succ_eq_shift (R : Ranks) (z : ℤ) (j : ℕ) :
   push_cast
   ring
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem fillAt_of_comp : Sites (fun {D L hT Gi Gl Kc Dx cX ex u μ w hg Lv I H X} [Fact (D.what₂.places.resChar w).Prime] {std t J} S =>
     ∀ j (hj : j < D.R.m), (sysS H X std).Lv.comp (j + 1) → FillAt (hT := hT) (H := H) (X := X) std j hj) := by
   intro D L hT Gi Gl Kc Dx cX ex u μ w hg Lv I H X _ std t J S hD hS j hj c
@@ -49,12 +53,12 @@ theorem fillAt_of_comp : Sites (fun {D L hT Gi Gl Kc Dx cX ex u μ w hg Lv I H X
   have hq : ((D.gat u w hg).P.m + 1 + j * ((Gl.Fl u w hg).t + 1) - D.R.k) / (D.R.t + 1) = j := by
     rw [← hk, ← ht, Nat.add_sub_cancel_left]; exact Nat.mul_div_cancel _ (Nat.succ_pos _)
   simp only [finCongr_apply, Fin.coe_cast] at h0
-  rw [dif_neg hi] at h0
+  rw [dite_eq_right hi] at h0
   simp only [hq] at h0
   have hL : ((Gl.Fl u w hg).Pj (j + 1)).lam0 v s ⟨_, hlt⟩ = -((Gl.Fl u w hg).w v (j + 1) s) := by
     show liftWt (Gl.Fl u w hg).t (D.gat u w hg).P.m ((D.gat u w hg).P.lam0 v s) (fun a => (Gl.Fl u w hg).w v a s) (j + 1) ⟨_, hlt⟩ = _
     unfold liftWt
-    rw [dif_neg (Nat.not_lt.mpr (Nat.le_add_right _ _))]
+    rw [dite_eq_right (Nat.not_lt.mpr (Nat.le_add_right _ _))]
     congr 2
     simp only [Nat.add_sub_cancel_left]
     rw [Nat.mul_div_cancel _ (Nat.succ_pos _)]

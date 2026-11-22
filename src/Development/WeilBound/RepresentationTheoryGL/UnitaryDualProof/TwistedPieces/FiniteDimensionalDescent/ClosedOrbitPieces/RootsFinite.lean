@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.ClosedOrbitPieces.PieceTop
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.ClosedOrbitPieces.PieceTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,9 +54,9 @@ theorem root_of_nil {N : ℕ} {Z : Subalgebra k (Matrix (Fin N) (Fin N) k)} (hZ 
     · exact hxc
     · exact hxc.symm
     · rfl
-  letI : CommRing (Algebra.adjoin k ({x, c} : Set (Matrix (Fin N) (Fin N) k))) :=
-    Algebra.adjoinCommRingOfComm k hcomm
   let A := Algebra.adjoin k ({x, c} : Set (Matrix (Fin N) (Fin N) k))
+  haveI : IsMulCommutative A := Algebra.isMulCommutative_adjoin k (fun a ha b hb _ => hcomm a ha b hb)
+  letI : CommRing A := { (inferInstance : Ring A) with mul_comm := fun a b => mul_comm' a b }
   let xa : A := ⟨x, Algebra.subset_adjoin (by simp)⟩
   let ca : A := ⟨c, Algebra.subset_adjoin (by simp)⟩
   have hna : IsNilpotent (xa - ca) := (IsNilpotent.map_iff (f := A.val) Subtype.val_injective).1 hn
@@ -73,8 +77,8 @@ theorem root_of_nil {N : ℕ} {Z : Subalgebra k (Matrix (Fin N) (Fin N) k)} (hZ 
   have h7 := congrArg Subtype.val h6
   rwa [Polynomial.aeval_subalgebra_coe] at h7
 
-variable (k) in
 
+variable (k) in
 theorem pieceGood_of (hF : PositivityTheory.PfBern.Frob.FrobeniusReciprocity) (hS : Sect k) (hP : PieceTop k) (hD : Dich k)
     (hT : Transfer k) : PieceGood k := by
   classical

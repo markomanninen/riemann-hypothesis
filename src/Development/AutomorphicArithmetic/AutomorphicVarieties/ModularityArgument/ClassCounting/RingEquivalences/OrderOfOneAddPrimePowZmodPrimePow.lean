@@ -1,18 +1,22 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.MinusLenLeOfCl
-import Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.CycMemPrincIff
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.CycRange
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GalQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.FnCycMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ZmodToQZ
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ClMapBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ClProd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ClSubUniv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.LenOfCard
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.PullMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.ShaLenEqShaInv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.NonemptyH0GlobalEquivGaloisImage
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.MinusLenLeOfCl
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.CycMemPrincIff
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.CycRange
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GalQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.FnCycMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ZmodToQZ
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ClMapBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ClProd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ClSubUniv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.LenOfCard
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.PullMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.ShaLenEqShaInv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.NonemptyH0GlobalEquivGaloisImage
+
+@[expose] public section
 
 section
 
@@ -38,28 +42,6 @@ def ClInj : Prop :=
       Function.Injective f
 
 def ShaAsm : Prop := LayEx → ClInj → SSha
-
-def ShaMono : Prop :=
-  ∀ (L L' : Type) [Field L] [NumberField L] [Field L'] [NumberField L'] [Algebra L L'] (l j E : ℕ) [Fact l.Prime]
-    [IsCyclotomicExtension {l ^ j} L L'], HasMuQ l L → 1 ≤ E → shaInv L l E ≤ shaInv L' l E
-
-def LayDisc : Prop :=
-  ∀ (L L' : Type) [Field L] [NumberField L] [Field L'] [NumberField L'] [Algebra L L'] (q : ℕ) [NeZero q]
-    [IsCyclotomicExtension {q} L L'],
-    (discr L').natAbs ≤ (discr L).natAbs ^ Module.finrank L L' * q ^ Module.finrank ℚ L'
-
-def LayField : Prop :=
-  ∀ (L : Type) [Field L] [NumberField L] (l E : ℕ) [Fact l.Prime], HasMuQ l L → 1 ≤ E →
-    ∃ (L' : Type) (_ : Field L') (_ : NumberField L') (_ : Algebra L L') (c : ℕ) (_ : IsCyclotomicExtension {l ^ c} L L'),
-      IsTotallyComplex L' ∧ TopRoot l c L' ∧ 2 * E + 1 < l ^ c ∧ 2 * E + 1 < nrComplexPlaces L' ∧
-      Module.finrank L L' ≤ (Module.finrank ℚ L + 1) * (4 * E + 4) ∧ l ^ c ≤ 2 * Module.finrank ℚ L'
-
-def LocalH0Terms : Prop :=
-  ∀ (l : ℕ) [Fact l.Prime] (L Ω : Type) [Field L] [NumberField L] [Field Ω] [Algebra L Ω] [IsAlgClosure L Ω]
-    (D : LData L Ω l), HasMuQ l L → ∀ e : ℕ, 1 ≤ e → ∀ w : D.S, ∃ t : ℕ,
-      Module.length ℤ_[l] (H0 ((qzTw D (e : ℤ)).comp (locFam D.S D.A w))) = t ∧ l ^ t ≤ 4 * Module.finrank ℚ L * e
-
-def FinalAsm : Prop := LocalH0Terms → SFinal
 
 end PositivityTheory.QuaternionShaBounds
 
@@ -88,7 +70,7 @@ theorem orderOf_one_add_prime_pow_zmod_prime_pow (l c k : ℕ) (hl : l.Prime) (h
     have h1 := Int.eq_one_of_dvd_one (Int.natCast_nonneg l) h
     have : l = 1 := by exact_mod_cast h1
     exact hl.one_lt.ne' this
-  have := ZMod.orderOf_one_add_mul_prime_pow hl c (by omega) hlc 1 hnd k
+  have := ZMod.orderOf_one_add_mul_prime_pow hl c hlc 1 hnd k
   simpa using this
 
 theorem unit_aux (l c : ℕ) [Fact l.Prime] (hc : 1 ≤ c) :
@@ -190,7 +172,7 @@ theorem PositivityTheory.QuaternionShaBounds.LayEx_holds : PositivityTheory.Quat
       refine minpoly.dvd L ζ ?_
       simp [map_pow, hi]
     have := Polynomial.natDegree_le_of_dvd hdvd hne
-    rwa [Polynomial.natDegree_X_pow_sub_C] at this
+    rwa [Polynomial.natDegree_X_pow_sub_C _] at this
   have hgen : Subgroup.zpowers γ = ⊤ := by
     refine Subgroup.eq_top_of_le_card _ ?_
     rw [Nat.card_zpowers, hord, IsGalois.card_aut_eq_finrank]
@@ -293,7 +275,8 @@ theorem ClInj_holds : ClInj := by
     · have hfin := (Kum.clProd K).2.2.1 α
       rw [finsum_eq_sum_of_support_subset (s := hfin.toFinset) _ ?_]
       · apply hιinj
-        rw [map_zero, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_zero, map_sum]
         have h1 : ∀ P, ι ((ordP P α : ZMod (l ^ ν)) * F θ P) = Kum.ordv P α • θ.1.1 (Kum.primeCl P) := by
           intro P
           rw [ordP_eq_ordv, ← zsmul_eq_mul, map_zsmul, hF]

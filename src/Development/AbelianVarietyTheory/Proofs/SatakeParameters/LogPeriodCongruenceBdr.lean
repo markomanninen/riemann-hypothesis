@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LMulBeta
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ImportsBis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LMulBeta
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ImportsBis
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Polynomial GlobalTheory.Pst GlobalTheory.MemLoc GlobalTheory.Pst.StLat GlobalTheory.Pst.NoLog
 open scoped Formalism.Per
 
@@ -132,7 +137,7 @@ theorem log_trunc_pow : ∀ (l : ℕ) [Fact l.Prime] (ϖ : Per.Fl l), Per.kerP l
       rwa [map_natCast] at this
     have hqT : q T = 0 := Ideal.Quotient.eq_zero_iff_mem.2 hT
     have hs2 := congrArg q hsum
-    simp only [map_add, map_mul, map_pow, map_natCast, hqT, add_zero] at hs2
+    simp only [map_add (f := _), map_mul, map_pow, map_natCast, hqT, add_zero] at hs2
     have hun := hu n
     apply hunit.mul_left_cancel
     rw [mul_zero]

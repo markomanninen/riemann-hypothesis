@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.TensTopRing
-import ReciprocityTheory.GeneralLinearIntegers.AlgebraMapIntMemOint
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.TensTopRing
+public import ReciprocityTheory.GeneralLinearIntegers.AlgebraMapIntMemOint
+
+@[expose] public section
 
 noncomputable section
 

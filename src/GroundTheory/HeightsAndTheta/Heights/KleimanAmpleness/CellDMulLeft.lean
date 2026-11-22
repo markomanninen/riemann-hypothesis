@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CellLocSys
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CellLocSys
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -32,7 +37,7 @@ theorem CellLocGlue.proof : CellLocGlue.Statement := by
       add_mem' := by
         rintro a b ⟨ta, hta, ha⟩ ⟨tb, htb, hb⟩
         refine ⟨ta + tb, Submodule.add_mem _ hta htb, ?_⟩
-        rw [map_add, ha, hb]
+        rw [map_add (f := _), ha, hb]
         funext I
         simp [add_mul]
       zero_mem' := ⟨0, Submodule.zero_mem _, by funext I; simp⟩

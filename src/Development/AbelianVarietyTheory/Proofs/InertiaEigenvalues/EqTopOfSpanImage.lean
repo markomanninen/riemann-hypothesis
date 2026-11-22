@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.MainNotions.LocalSituation GlobalTheory.Cyc TensorProduct
 
@@ -34,7 +38,8 @@ theorem eq_top_of_span_image {E R D M : Type} [CommRing E] [CommRing R] [AddComm
   have hsp : ⊤ ≤ Submodule.span R (Set.range fun i => j (b i)) := by
     rw [← hspan, Submodule.span_le]
     rintro _ ⟨x, rfl⟩
-    rw [← b.sum_repr x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr x, map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [hj]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -47,7 +52,8 @@ theorem eq_top_of_span_image {E R D M : Type} [CommRing E] [CommRing R] [AddComm
   have hF : ∀ x, F (j x) = q (f x) := by
     intro x
     rw [← b.sum_repr x]
-    simp only [map_sum, hj, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, hj, map_smul]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [← hc, Module.Basis.constr_basis, Algebra.smul_def, Algebra.smul_def, map_mul]
     rfl
@@ -113,7 +119,7 @@ theorem mem_radical_of_mem {O E : Type} [CommRing O] [IsNoetherianRing O] [CommR
     rw [PowerSeries.isUnit_iff_constantCoeff]
     simpa using hk
   have he := PowerSeries.eq_shift_mul_X_pow_add_trunc k f
-  rw [he, map_add] at hf
+  rw [he, map_add (f := _)] at hf
   have h3 := m.sub_mem hf ht
   rw [add_sub_cancel_right, map_mul, map_pow] at h3
   exact hm (Ideal.eq_top_of_isUnit_mem _ h3 ((hu.map ψ).mul (hX.pow k)))
@@ -138,7 +144,8 @@ theorem map_maximal_ne_top {O E R : Type} [CommRing O] [IsNoetherianRing O] [Com
       funext k
       simp [letE, Finset.sum_apply, Pi.single_apply]
     have := m.sum_mem (t := Finset.univ) fun i _ => h i
-    rw [← map_sum, h1, map_one] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, h1, map_one] at this
     exact hm.ne_top ((Ideal.eq_top_iff_one _).2 this)
   let ψ : PowerSeries O →+* E := a.comp (Pi.constRingHom (ZMod n) (PowerSeries O))
   have hψ : ∀ f : LetA O n, a (letE i) * a f = a (letE i) * ψ (f i) := by
@@ -209,9 +216,9 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     [IsScalarTower K₀ K BdR] [IsScalarTower Qp K₀ BdR]
     {PD : PeriodData G Qp K₀ K B BdR} {LL O : Type} [Field LL] [Algebra Qp LL]
     [CommRing O] [Algebra O LL] [TopologicalSpace LL] {v : AddValuation LL (WithTop ℚ)} {n : ℕ}
-    {W : LocWach PD LL O v n} {RA RW : Type} [CommRing RA] [CommRing RW] [Algebra O RA]
+    {W : Formalism.BasicNotions.LocWach PD LL O v n} {RA RW : Type} [CommRing RA] [CommRing RW] [Algebra O RA]
     [Algebra O RW] {inclR : RA →ₐ[O] RW} {φR : RW →ₐ[O] RW} {gR : G → (RW →ₐ[O] RW)} {πA : RA}
-    (E : EtTie W RA RW inclR φR gR πA)
+    (E : Formalism.BasicNotions.EtTie W RA RW inclR φR gR πA)
 
 def latMap {T T' : LocLat G Qp LL O} (f : LatHom T.L T'.L) : ↥T.L.T →ₗ[O] ↥T'.L.T :=
   (f.f.restrictScalars O).restrict f.T_le
@@ -253,7 +260,7 @@ theorem ioE_injective : Function.Injective E.ioE := by
     exact not_subsingleton _ ((Module.finrank_eq_zero_iff_of_free O _).1 h1.symm)
   let b := Module.Free.chooseBasis W.EE (W.DD W.one)
   obtain ⟨i⟩ := b.index_nonempty
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   have h1 : x • b i = 0 := by
     apply E.jD_inj
@@ -306,7 +313,7 @@ theorem exact_of_tie (hm : ∀ m : Ideal W.EE, m.IsMaximal → m.map E.ioE.toRin
   have hιR : Function.Injective ((latMap ι).baseChange RW) := by
     obtain ⟨s, hs⟩ := (latMap π).exists_rightInverse_of_surjective (LinearMap.range_eq_top.2 hπ)
     obtain ⟨r, hr⟩ : ∃ r, r ∘ₗ latMap ι = LinearMap.id :=
-      ((hex.split_tfae hι hπ).out 0 1).1 (show ∃ s, latMap π ∘ₗ s = LinearMap.id from ⟨s, hs⟩)
+      ((hex.split_tfae hι hπ).out 1 2).1 (show ∃ s, latMap π ∘ₗ s = LinearMap.id from ⟨s, hs⟩)
     refine Function.LeftInverse.injective (g := r.baseChange RW) fun x => ?_
     rw [← LinearMap.comp_apply, ← LinearMap.baseChange_comp, hr, LinearMap.baseChange_id]
     rfl
@@ -340,7 +347,7 @@ theorem exact_of_tie (hm : ∀ m : Ideal W.EE, m.IsMaximal → m.map E.ioE.toRin
       rw [hmap, Submodule.comap_top, sup_eq_left.2 hk] at this
       exact this.symm
     obtain ⟨_, ⟨t, rfl⟩, _, ⟨z, rfl⟩, rfl⟩ := Submodule.mem_sup.1 (htop ▸ Submodule.mem_top (x := y))
-    rw [map_add, hcomp, hs', zero_add] at hy
+    rw [map_add (f := _), hcomp, hs', zero_add] at hy
     exact ⟨t, by rw [hy, map_zero, add_zero]⟩
   · rintro ⟨x, rfl⟩
     exact hcomp x
@@ -412,16 +419,25 @@ theorem sep_RW (LL : FinExt l) (x : RW LL) (hx : ∀ k : ℕ, (l : RW LL) ^ k �
   let e := TensorProduct.equivFinsuppOfBasisLeft (N := WCb l)
     (Module.Free.chooseBasis ℤ_[l] ↥(OL LL))
   apply e.injective
-  rw [map_zero]
+  rw [e.map_zero]
   ext i : 1
   refine sep_WCb _ fun k => ?_
   obtain ⟨y, hy⟩ := hx k
   refine ⟨e y i, ?_⟩
-  rw [hy, ← Nat.cast_pow, ← nsmul_eq_mul, map_nsmul, Finsupp.smul_apply, nsmul_eq_mul, Nat.cast_pow]
+  have hsmul : e (l ^ k • y) = l ^ k • e y :=
+    e.toLinearMap.toAddMonoidHom.map_nsmul (l ^ k) y
+  rw [hy, ← Nat.cast_pow, ← nsmul_eq_mul, hsmul, Finsupp.smul_apply, nsmul_eq_mul, Nat.cast_pow]
 
 end Concrete
 
-theorem DD_exact : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW), adm9 D HW F → ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let S := sit D.loc HW l (D.locA l) K s LL h; let E : S.Comparison₂ := ((F l).E K s LL h).tie; ∀ (T Yt Z : LocLat S.G S.Qp S.LL S.O) (ι : LatHom T.L Yt.L) (π : LatHom Yt.L Z.L), IsSESLat (Qp := S.Qp) ι π → Function.Injective (S.W.map ι) ∧ Function.Exact (S.W.map ι) (S.W.map π) ∧ Function.Surjective (S.W.map π) := by
+theorem DD_exact :
+    ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW),
+    adm9 D HW F → ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL),
+    let S := sit D.loc HW l (D.locA l) K s LL h
+    let E : S.Comparison₂ := ((F l).E K s LL h).tie
+    ∀ (T Yt Z : LocLat S.G S.Qp S.LL S.O) (ι : LatHom T.L Yt.L) (π : LatHom Yt.L Z.L),
+    IsSESLat (Qp := S.Qp) ι π → Function.Injective (S.W.map ι) ∧
+      Function.Exact (S.W.map ι) (S.W.map π) ∧ Function.Surjective (S.W.map π) := by
   intro D HW F _ l _ K s LL h S E T Yt Z ι π hses
   haveI := finite_OL LL
   haveI : IsNoetherianRing ↥(OL LL) := IsNoetherianRing.of_finite ℤ_[l] ↥(OL LL)

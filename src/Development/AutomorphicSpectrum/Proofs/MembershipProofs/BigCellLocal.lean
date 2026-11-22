@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MembershipCriteria.GoodChar
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ExistsSkewOfDiagonal
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MembershipCriteria.GoodChar
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ExistsSkewOfDiagonal
+
+@[expose] public section
 
 open GlobalTheory.CompanionTheory.VacLoc GlobalTheory.CompanionTheory.FinHeis GlobalTheory.WeilM MeasureTheory Matrix
 
@@ -101,7 +105,7 @@ theorem exists_skew [IsLocalRing A] (hσ : ∀ z, σ (σ z) = z) {w : A} (hw : w
   · have e : (Matrix.of fun i j => w * f (s j i) - σ (w * f (s i j))).map π = sᵀ := by
       ext i j
       have h5 : τ (s i j) = - s j i := congrFun (congrFun hs1 j) i
-      have h6 : π w + τ (π w) = 1 := by rw [hc, ← map_add, hw, map_one]
+      have h6 : π w + τ (π w) = 1 := by rw [hc, ← map_add (f := _), hw, map_one]
       have hf' : ∀ x, π (f x) = x := hf
       simp only [map_apply, of_apply, map_sub, ← hc, map_mul, hf', h5, transpose_apply]
       linear_combination s j i * h6

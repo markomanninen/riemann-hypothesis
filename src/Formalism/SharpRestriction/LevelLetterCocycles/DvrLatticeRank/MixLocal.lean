@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.TmulMkLMemInvLOfValAtMemFilC
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.TmulMkLMemInvLOfValAtMemFilC
+
+@[expose] public section
 
 noncomputable section
 
@@ -229,7 +233,8 @@ theorem mix_local [IsDomain O] (hinj : Function.Injective (algebraMap O LL))
     have hy2 : ∀ j, W.map F (y' j) ∈ NcS W T₂ (c - 1) := fun j => u3downPf_map_NcS W F hc1 hc2 _ (hy' j)
     have hmap : ∀ o : Fin m → O, W.map F (∑ j, o j • y' j) = ∑ j, o j • W.map F (y' j) := by
       intro o
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun j _ => LinearMap.map_smul_of_tower _ _ _
     have hsumN : ∀ o : Fin m → O, ∑ j, o j • y' j ∈ NcS W T₁ (c - 1) := fun o =>
       Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (hy' j)

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.NearIdentityColengthStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.NearIdentityColengthStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.PGsh
 
@@ -52,7 +56,7 @@ theorem gaussCongruence : GaussCongruenceStatement := by
     rw [← Ideal.Quotient.eq_zero_iff_mem]
     have h : (Ideal.Quotient.mk m c) ^ p = 0 := by
       have e : Ideal.Quotient.mk m c = Ideal.Quotient.mk m (1 + c) - 1 := by
-        rw [map_add, map_one]; ring
+        rw [map_add (f := _), map_one]; ring
       rw [e, sub_pow_char, one_pow, ← map_pow, hζ, map_one, sub_self]
     exact pow_eq_zero_iff (Fact.out : p.Prime).ne_zero |>.mp h
 
@@ -90,7 +94,8 @@ theorem gaussCongruence : GaussCongruenceStatement := by
   set t : F → ℕ := fun a => (Algebra.trace (ZMod p) F a).val with ht
   refine ⟨1 + ∑ a : F, ω⁻¹ a * (t a : O) + c * ∑ a : F, ω⁻¹ a * r (t a), ?_, ?_⟩
   · refine Ideal.add_mem _ ?_ (Ideal.mul_mem_right _ _ hc)
-    rw [← Ideal.Quotient.eq_zero_iff_mem, map_add, map_one, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Ideal.Quotient.eq_zero_iff_mem, map_add (f := _), map_one, map_sum]
     have e : ∀ a : F, Ideal.Quotient.mk m (ω⁻¹ a * (t a : O)) =
         ι (a⁻¹ * algebraMap (ZMod p) F (Algebra.trace (ZMod p) F a)) := by
       intro a
@@ -98,7 +103,8 @@ theorem gaussCongruence : GaussCongruenceStatement := by
         ZMod.natCast_val]
       rfl
     simp_rw [e]
-    rw [← map_sum, sum_inv_mul_trace p F, map_neg, map_one, add_neg_cancel]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, sum_inv_mul_trace p F, map_neg, map_one, add_neg_cancel]
   · calc ∑ a : F, ω⁻¹ a * (1 + c) ^ t a
         = ∑ a : F, (ω⁻¹ a + c * (ω⁻¹ a * (t a : O) + c * (ω⁻¹ a * r (t a)))) :=
           Finset.sum_congr rfl fun a _ => by rw [hr]; ring

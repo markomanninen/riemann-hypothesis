@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.HasFDerivAtNmat
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.HasFDerivAtNmat
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -56,15 +60,15 @@ theorem embF_lmulL (w : V (nd X)) (τ : X.Ψ) (v : V (nd X)) (x c : Fin r) :
   have hL : ∀ k c' : Fin r, Lin X τ v k c' = embF X (vecOf X v) τ k c' := fun _ _ => rfl
   rw [Matrix.mul_apply]
   by_cases h : c < x
-  · rw [embF, dif_pos h, hl]
+  · rw [embF, dite_eq_left h, hl]
     rfl
   ·
-    rw [embF, dif_neg h]
+    rw [embF, dite_eq_right h]
     symm
     refine Finset.sum_eq_zero fun k _ => ?_
     by_cases hk : c < k
     · rw [ninv_lower X w τ x k (lt_of_le_of_lt (not_lt.mp h) hk), zero_mul]
-    · rw [hL, embF, dif_neg hk, mul_zero]
+    · rw [hL, embF, dite_eq_right hk, mul_zero]
 
 def vecL : V (nd X) ≃ₗ[ℂ] (Ent X → ℂ) :=
   (WithLp.linearEquiv 2 ℂ (Fin (nd X) → ℂ)).trans

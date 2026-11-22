@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SplitRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SplitRep
+
+@[expose] public section
+
 open Formalism.ConjugateSelfDual Formalism.MainNotions.N Polynomial
 
 noncomputable section

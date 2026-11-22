@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiCasA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.KFacts
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiCasA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.KFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,17 +28,6 @@ lemma isOpen_omega : IsOpen (OmegaSet n) := by
   rw [e]
   exact isOpen_iInter_of_finite fun i =>
     isOpen_ne_fun (contDiff_lead (m := 0) _).continuous continuous_const
-
-lemma contDiffOn_phiM_two (μ : Fin n → ℤ) : ContDiffOn ℂ 2 (PhiM μ) (OmegaSet n) :=
-  fun _ hz => (contDiffAt_phiM μ hz (m := 2)).contDiffWithinAt
-
-lemma continuousOn_fderiv_phiM_alt (μ : Fin n → ℤ) : ContinuousOn (fderiv ℂ (PhiM μ)) (OmegaSet n) :=
-  (contDiffOn_phiM_two μ).continuousOn_fderiv_of_isOpen isOpen_omega (by norm_num)
-
-lemma continuousOn_second_fderiv_phiM (μ : Fin n → ℤ) :
-    ContinuousOn (fderiv ℂ (fderiv ℂ (PhiM μ))) (OmegaSet n) :=
-  ((contDiffOn_phiM_two μ).fderiv_of_isOpen isOpen_omega (m := 1) (by norm_num)).continuousOn_fderiv_of_isOpen
-    isOpen_omega le_rfl
 
 lemma continuous_toMK : Continuous fun k : KG ε => toMK k :=
   (continuous_toM ε).comp continuous_subtype_val

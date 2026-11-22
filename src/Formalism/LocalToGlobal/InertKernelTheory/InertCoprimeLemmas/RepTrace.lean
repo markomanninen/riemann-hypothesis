@@ -1,9 +1,13 @@
-import Formalism.LocalToGlobal.InertKernelTheory.DefsRepFrame
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntBasis
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.FrLocB
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PHfTrace
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThU
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.BaseEx
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsRepFrame
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntBasis
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.FrLocB
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PHfTrace
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThU
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.BaseEx
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,12 +88,6 @@ end Rank
 variable {p : ℕ} [Fact p.Prime] (X : Formalism.MainNotions.FormalGroupSystem.Sys p) (hfin : ∀ j c, (X.Lv.lev j c).FinClasses) (D : D7)
     (large₂ : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj j).m + 1) → D.host.E))
     (Lg' : ∀ j, X.Lt j → X.Lt (j + 1) → Submodule (𝓞 D.host.E) (Fin ((X.Pj (j + 1)).m + 1) → D.host.E))
-
-theorem rankTie_of (hadm : ∀ j (L0 : X.Lt j), L0 ∈ Formalism.L2.G.Pend.repOf X.Lv hfin j → ∀ La' : X.Lt (j + 1),
-      (X.Pj (j + 1)).IsLatTup La'.2 → Formalism.MainNotions.TaylorLogMetric.admitted D _ _ (large₂ j L0 La') (Lg' j L0 La')) :
-    RankTie X hfin D large₂ Lg' :=
-  fun j L0 hL0 La' hLa' _ b hb =>
-    rank_of_locBasis _ _ (hadm j L0 hL0 La' hLa').2.2.1 (hadm j L0 hL0 La' hLa').2.2.2 b hb
 
 section Witness
 

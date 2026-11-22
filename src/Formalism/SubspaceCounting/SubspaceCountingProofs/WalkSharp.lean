@@ -1,4 +1,8 @@
-import Formalism.SubspaceCounting.Statement
+module
+
+public import Formalism.SubspaceCounting.Statement
+
+@[expose] public section
 
 noncomputable section
 

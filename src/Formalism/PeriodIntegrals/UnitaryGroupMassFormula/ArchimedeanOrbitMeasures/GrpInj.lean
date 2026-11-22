@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.GrpParts
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.EqOneOfToHAFin
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.GrpParts
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.EqOneOfToHAFin
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,8 +37,8 @@ theorem injOn_nhds_of_strict {E F : Type} [NormedAddCommGroup E] [NormedSpace �
   have : ‖x - y‖ = 0 := le_antisymm (by linarith [norm_nonneg (x - y)]) (norm_nonneg _)
   exact sub_eq_zero.1 (norm_eq_zero.1 this)
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem exp_mul_injOn {ι V : Type} [Fintype ι] [Fintype V] {n : ℕ}
     (L : EuclideanSpace ℝ ι →ₗ[ℝ] (V → Matrix (Fin n) (Fin n) ℂ)) (P : V → Matrix (Fin n) (Fin n) ℂ)
     (hker : ∀ x, (∀ v, L x v * P v = 0) → x = 0) :
@@ -47,6 +51,8 @@ theorem exp_mul_injOn {ι V : Type} [Fintype ι] [Fintype V] {n : ℕ}
     ContinuousLinearMap.pi fun v => (R v).comp ((ContinuousLinearMap.proj v).comp Lc)
   have hf' : ∀ x v, f' x v = L x v * P v := fun x v => rfl
   have hd : HasStrictFDerivAt (fun x => fun v => NormedSpace.exp (L x v) * P v) f' 0 := by
+    letI : NormedAddCommGroup (Matrix (Fin n) (Fin n) ℂ) := Matrix.linftyOpNormedAddCommGroup
+    letI : NormedSpace ℝ (Matrix (Fin n) (Fin n) ℂ) := Matrix.linftyOpNormedSpace
     rw [hasStrictFDerivAt_pi]
     intro v
     have h0 : HasStrictFDerivAt (fun x : EuclideanSpace ℝ ι => L x v)
@@ -56,11 +62,11 @@ theorem exp_mul_injOn {ι V : Type} [Fintype ι] [Fintype V] {n : ℕ}
         (1 : Matrix (Fin n) (Fin n) ℂ →L[ℝ] Matrix (Fin n) (Fin n) ℂ) (L 0 v) := by
       rw [map_zero]
       exact hasStrictFDerivAt_exp_zero
-    have h2 := (R v).hasStrictFDerivAt.comp 0 (he.comp 0 h0)
-    convert h2 using 1
-    · funext x
-      rfl
-    · exact ContinuousLinearMap.ext fun x => rfl
+    have h2 : HasStrictFDerivAt (fun x => (R v) (NormedSpace.exp (L x v)))
+        ((R v).comp ((1 : Matrix (Fin n) (Fin n) ℂ →L[ℝ] Matrix (Fin n) (Fin n) ℂ).comp
+          ((ContinuousLinearMap.proj v).comp Lc))) 0 :=
+      (R v).hasStrictFDerivAt.comp 0 (he.comp 0 h0)
+    convert h2 using 1 <;> rfl
   have hinj : Function.Injective f' := by
     intro x y hxy
     have : x - y = 0 := hker (x - y) fun v => by

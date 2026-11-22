@@ -1,7 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Places
-import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.Galois
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Places
+public import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.Galois
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Polynomial
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Global GroundTheory.Global.SemiLocal GroundTheory.Global.AdeleBaseChange
 open PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Loc PositivityTheory.Rg.Tf.Geo
@@ -29,8 +34,11 @@ private theorem galAd_apply (σ : E ≃ₐ[F] E) (y : 𝔸[E]) : galAd σ y = σ
 private theorem continuous_infMap {M M' : Type} [Field M] [NumberField M] [Field M']
     [NumberField M'] (τ : M ≃+* M') (w' : InfinitePlace M') :
     Continuous (infiniteCompletionMap τ w') := by
+  open scoped NumberField.LiesOver in
   let _ : Algebra M M' := (τ : M →+* M').toAlgebra
-  exact NumberField.LiesOver.continuous_completionMap
+  change Continuous (algebraMap (w'.comap (algebraMap M M')).Completion w'.Completion)
+  rw [AbsoluteValue.Completion.algebraMap_eq_of_liesOver]
+  exact AbsoluteValue.Completion.continuous_map _ _
 
 private theorem norm_algebraMap_of_smul_eq (σ : E ≃ₐ[F] E) (u w : HeightOneSpectrum (𝓞 E))
     (h : σ • u = w) (l : E) :
@@ -50,13 +58,18 @@ private theorem norm_finMap (σ : E ≃ₐ[F] E) (w : HeightOneSpectrum (𝓞 E)
 
 private theorem norm_algebraMap_completion (w : InfinitePlace E) (x : E) :
     ‖algebraMap E w.Completion x‖ = w x :=
-  InfinitePlace.Completion.norm_coe w (WithAbs.toAbs _ x)
+  by
+    rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply]
+    simpa using InfinitePlace.Completion.norm_coe w (WithAbs.toAbs _ x)
 
 private theorem norm_infMap (σ : E ≃ₐ[F] E) (w : InfinitePlace E)
     (y : (w.comap ((σ : E ≃+* E) : E →+* E)).Completion) :
     ‖infiniteCompletionMap (σ : E ≃+* E) w y‖ = ‖y‖ := by
   refine InfinitePlace.Completion.induction_on _ y
     (isClosed_eq (continuous_norm.comp (continuous_infMap _ w)) continuous_norm) fun a => ?_
+  have ha : algebraMap E (w.comap ((σ : E ≃+* E) : E →+* E)).Completion a.ofAbs = (a : (w.comap ((σ : E ≃+* E) : E →+* E)).Completion) := by
+    rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply, Algebra.algebraMap_self_apply]
+  rw [← ha]
   change ‖infiniteCompletionMap (σ : E ≃+* E) w (algebraMap E _ a.ofAbs)‖ =
     ‖algebraMap E (w.comap ((σ : E ≃+* E) : E →+* E)).Completion a.ofAbs‖
   rw [infiniteCompletionMap_algebraMap, norm_algebraMap_completion, norm_algebraMap_completion,

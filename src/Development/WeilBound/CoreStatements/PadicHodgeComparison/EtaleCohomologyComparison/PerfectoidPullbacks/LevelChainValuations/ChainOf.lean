@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.ToBSurj
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.OneSTr
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.MapUgAlgebraMap
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.GalOCOkToOC
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.ToBSurj
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.OneSTr
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.MapUgAlgebraMap
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.GalOCOkToOC
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 set_option autoImplicit false
@@ -24,8 +28,8 @@ abbrev QA : ObjectProperty (Thick (nlFun L.γ 0 M.X M.p (κA (OK l K) L.I))) := 
 
 abbrev QB : ObjectProperty (Thick (nlFun L.γB 0 M.gen M.q (κA K L.IB))) := TS L.γB M.q 1 s {⊤}
 
-variable {L} in
 
+variable {L} in
 def nmB (hL : L.Good) : NMor L.γ M.p (κA (OK l K) L.I) L.γB M.q (κA K L.IB) L.ι where
   hI := hL.ι_dp
   u := pullback.fst _ _
@@ -36,14 +40,14 @@ def nmB (hL : L.Good) : NMor L.γ M.p (κA (OK l K) L.I) L.γB M.q (κA K L.IB) 
     rw [hL.ι_I, Ideal.mem_comap, map_sub, hL.ι_O] at h1
     exact Ideal.Quotient.eq.2 h1
 
-variable {L} in
 
+variable {L} in
 def smB (hL : L.Good) (hQ : ∀ T, QB L M s T → QA L M s (((nmB M hL).mor 0).obj T)) :
     SMor (sP (QA L M s)) (sP (QB L M s)) L.ι :=
   (nmB M hL).smor (QA L M s) (QB L M s) hQ
 
-variable {L} in
 
+variable {L} in
 def bMap (hL : L.Good) (hQ : ∀ T, QB L M s T → QA L M s (((nmB M hL).mor 0).obj T)) (j : ℕ) :
     HO (QA L M s) j →ₛₗ[L.ι] HO (QB L M s) j :=
   (smB M s hL hQ).o.pull j

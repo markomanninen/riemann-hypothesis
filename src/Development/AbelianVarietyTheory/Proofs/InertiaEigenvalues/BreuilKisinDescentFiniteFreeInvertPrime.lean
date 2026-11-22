@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ImagePolynomialAction
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WeierstrassDivisionEisensteinPowIntegralStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ImagePolynomialAction
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WeierstrassDivisionEisensteinPowIntegralStatement
+
+@[expose] public section
+
 open PowerSeries GlobalTheory.BK
 open scoped NormedField Valued
 
@@ -53,8 +58,8 @@ variable {O K : Type} [CommRing O] [NormedField K] [IsUltrametricDist K] [Comple
   [IsUnitBall O K] {l e a : ℕ} {ι : Type} [Fintype ι] [DecidableEq ι] [Fact l.Prime]
   [NormedAlgebra ℚ_[l] K] [NeZero e] [NeZero a]
 
-variable (K l e a ι) in
 
+variable (K l e a ι) in
 def gen (η : ℕ) (p : ZMod a × ι × Fin (e * η)) : Vec K a ι :=
   Pi.single p.1 (Pi.single p.2.1 (Ezpow K l e (-η) * X ^ (p.2.2 : ℕ)))
 
@@ -176,8 +181,8 @@ theorem mem_Zl_iff {η H : ℕ} (D : BKDat O K l e a ι η H) (w : D.Pol) :
 
 end GlobalTheory.ZFin
 
-open GlobalTheory.ZFin in
 
+open GlobalTheory.ZFin in
 theorem GlobalTheory.ZFin.finiteFree_and_localisation : ∀ (O K : Type) [CommRing O] [NormedField K] [IsUltrametricDist K]
     [CompleteSpace K] [Algebra O K] [IsUnitBall O K] (l e a : ℕ) (ι : Type) [Fintype ι] [DecidableEq ι]
     [Fact l.Prime] [NormedAlgebra ℚ_[l] K] [NeZero e] [NeZero a] [TameDescentExponentData K l e a] (η H : ℕ)

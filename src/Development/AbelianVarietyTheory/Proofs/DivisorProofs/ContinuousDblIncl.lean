@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DblCol
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchActionReadingsCompatible
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductFunctionOnSumCoordsMemAdelicSchwartzSpace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DblCol
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchActionReadingsCompatible
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductFunctionOnSumCoordsMemAdelicSchwartzSpace
+
+@[expose] public section
 
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels Matrix Classical
 open NumberField Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.BasicNotions.TH GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.FockAlg GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.RealLift GlobalTheory.RealLift.Dbl
@@ -65,6 +69,7 @@ theorem sumPl_tprod (L : ι → Module.End ℂ V) (v : V) (μ : ι → ℂ) (h :
     · subst hi; simp [h]
     · simp [Function.update_of_ne hi]
   rw [e, MultilinearMap.map_update_smul, Function.update_eq_self]
+  rfl
 
 end Tensor
 
@@ -84,8 +89,8 @@ def firstCopy (R S : ℕ) : Ix (R + S) (S + R) → ℂ :=
 def genDbl (R S : ℕ) (w₀ : InfinitePlace F) (w : InfinitePlace F) : Mat (R + S) (S + R) :=
   Matrix.diagonal fun j => if w = w₀ then firstCopy R S j else 0
 
-theorem lines_dbl {JB : Matrix β β (AE F E)} {γ : Multiplicative ℝ →* UG (cA σ) JB} (hγ : γ ∈ RLines σ JB) :
-    (dblIncl (cA σ) JB).comp γ ∈ RLines σ (dbl JB) := by
+theorem lines_dbl {JB : Matrix β β (AE F E)} {γ : Multiplicative ℝ →* UG (cA σ) JB} (hγ : γ ∈ RLines (σ := σ) JB) :
+    (dblIncl (cA σ) JB).comp γ ∈ RLines (σ := σ) (dbl JB) := by
   refine ⟨(continuous_dblIncl (cA σ) JB).comp hγ.1, fun t => ?_⟩
   have h := hγ.2 t
   have e : ((((dblIncl (cA σ) JB).comp γ) t : UG (cA σ) (dbl JB)) : GL (β ⊕ β) (AE F E)).1 - 1 =
@@ -94,7 +99,9 @@ theorem lines_dbl {JB : Matrix β β (AE F E)} {γ : Multiplicative ℝ →* UG 
     ext i j
     rcases i with a | a <;> rcases j with b | b <;> simp [Matrix.one_apply]
   intro u hu
-  rw [e, Matrix.fromBlocks_smul, h u hu]
+  change u • (((((dblIncl (cA σ) JB).comp γ) t : UG (cA σ) (dbl JB)) : GL (β ⊕ β) (AE F E)).1 - 1) = 0
+  have h' : u • (((γ t : UG (cA σ) JB) : GL β (AE F E)).1 - 1) = 0 := h u hu
+  rw [e, Matrix.fromBlocks_smul, h']
   simp
 
 theorem gen_dbl (τ : ∀ w : InfinitePlace F, EmbOver E w) {JB : Matrix β β (AE F E)} (C : InfinitePlace F → Matrix β (Ix R S) ℂ)
@@ -106,6 +113,7 @@ theorem gen_dbl (τ : ∀ w : InfinitePlace F, EmbOver E w) {JB : Matrix β β (
   have e1 : ((((dblIncl (cA σ) JB).comp γ) (Multiplicative.ofAdd t) : UG (cA σ) (dbl JB)) : GL (β ⊕ β) (AE F E)).1 =
       Matrix.fromBlocks ((z t : AE F E) • (1 : Matrix β β (AE F E))) 0 0 1 := by
     rw [MonoidHom.comp_apply, dblIncl_val, ← hz t]
+  change ((((((dblIncl (cA σ) JB).comp γ) (Multiplicative.ofAdd t) : UG (cA σ) (dbl JB)) : GL (β ⊕ β) (AE F E)).1).map (piInf (τ w))) * dblM (C w) = dblM (C w) * NormedSpace.exp (t • genDbl R S w₀ w)
   rw [e1, genDbl, ← Matrix.diagonal_smul, Matrix.exp_diagonal]
   have e2 : (Matrix.fromBlocks ((z t : AE F E) • (1 : Matrix β β (AE F E))) (0 : Matrix β β (AE F E)) 0
       (1 : Matrix β β (AE F E))).map (piInf (τ w)) =
@@ -216,7 +224,7 @@ theorem conjS_apply {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] (f : S
 theorem compare_of (hcen : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (β : Type)
     [Fintype β] [DecidableEq β] (R S : ℕ) (τ : ∀ w : InfinitePlace F, EmbOver E w) (J : Matrix β β (AE F E))
     (C : InfinitePlace F → Matrix β (Ix R S) ℂ) (w₀ : InfinitePlace F), IsCMExt F E σ →
-    ∃ z : ℝ → (AE F E)ˣ, ∃ γ ∈ RLines σ J,
+    ∃ z : ℝ → (AE F E)ˣ, ∃ γ ∈ RLines (σ := σ) J,
       IsGen τ C γ (fun w => if w = w₀ then Complex.I • (1 : Mat R S) else 0) ∧
       (∀ t : ℝ, ((γ (Multiplicative.ofAdd t)).1 : Matrix β β (AE F E)) = (z t : AE F E) • (1 : Matrix β β (AE F E))) ∧
       (∀ t : ℝ, At (evI F) ((z t : AE F E) - 1)) ∧
@@ -296,6 +304,7 @@ theorem compare_of (hcen : ∀ (F E : Type) [Field F] [NumberField F] [Field E] 
     rw [hbox, map_smul, hres (γ (Multiplicative.ofAdd t)) (((dblIncl (cA σ) JB).comp γ) (Multiplicative.ofAdd t)) rfl
       φ₁ hφ₁ φ₂ hφ₂]
     simp only [boxFun, Pi.smul_apply, smul_eq_mul, hxl, hxr]
+  change HasDerivAt (fun t : ℝ => omd (((dblIncl (cA σ) JB).comp γ) (Multiplicative.ofAdd t)) (pureA F fd G) xd) (pureA F (lamd • fd) G xd) 0 at hB'
   rw [hfun] at hB'
   have hB'' := (hA'.mul_const (φ₂ x₁)).const_mul z0
   have heq := hB''.unique hB'

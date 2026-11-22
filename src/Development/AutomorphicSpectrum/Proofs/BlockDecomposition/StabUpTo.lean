@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,8 +32,8 @@ def wt {r : ℕ} (m : ℕ) (t : Fin r → ℝ) : Idx r m → ℝ
 def bd {ι A : Type} [Zero A] (b : ι → ℤ) (M : Matrix ι ι A) : Matrix ι ι A :=
   Matrix.of fun u v => if b u = b v then M u v else 0
 
-open Classical in
 
+open Classical in
 def deep {r : ℕ} (t₁ : ℝ) (t : Fin r → ℝ) : Finset (Fin r) :=
   Finset.univ.filter fun j => t₁ < t j ∧ ∀ j' : Fin r, j'.val = j.val + 1 → t₁ * t j' < t j
 

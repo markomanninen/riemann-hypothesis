@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ theorem minor_ne_zero {m n : ℕ} (τ : D.what₂.Tau) (a b k : ℕ) (ha : a + k
     have hc : a + (β : ℕ) < m ∧ b + (α : ℕ) < n := ⟨by omega, by omega⟩
     simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, Matrix.one_apply]
     unfold varF
-    rw [dif_pos hc, MvPolynomial.eval_X]
+    rw [dite_eq_left hc, MvPolynomial.eval_X]
     dsimp only
     split_ifs with h1 h2 h2
     · rfl
@@ -89,8 +93,8 @@ theorem fock_self_pos {σ : Type*} (P : MvPolynomial σ ℂ) (hP : P ≠ 0) :
 
 end GlobalTheory.FockDelta
 
-open GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues in
 
+open GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues in
 theorem GlobalTheory.FockDelta.fock_deltaAtEmb_pos :
     ∀ (D : D7) (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), ∃ a : ℝ, 0 < a ∧
       Formalism.E.fock (GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues.deltaAtEmb D i σ) (GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues.deltaAtEmb D i σ) = (a : ℂ) := by

@@ -1,6 +1,10 @@
-import Formalism.RealPlaceAnalysis.SmoothOnGVIff
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.HalfSumRootsStandard
+module
+
+public import Formalism.RealPlaceAnalysis.SmoothOnGVIff
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.HalfSumRootsStandard
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ContDiff
@@ -37,8 +41,7 @@ private lemma conjTranspose_Jm {n : ℕ} (ε : Fin n → Bool) : (Jm ε)ᴴ = Jm
   rw [Jm, Matrix.diagonal_conjTranspose]
   congr 1
   funext a
-  simp only [Pi.star_apply]
-  split_ifs <;> simp
+  split_ifs <;> simp_all
 
 private lemma Jm_mul_conjTranspose_smul_mul_Jm {n : ℕ} (ε : Fin n → Bool) (c : ℂ) (Z : Matrix (Fin n) (Fin n) ℂ) :
     Jm ε * (c • Z)ᴴ * Jm ε = star c • (Jm ε * Zᴴ * Jm ε) := by

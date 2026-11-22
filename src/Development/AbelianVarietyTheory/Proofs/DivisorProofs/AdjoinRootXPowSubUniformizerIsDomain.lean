@@ -1,12 +1,17 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open IsLocalRing
 set_option synthInstance.maxHeartbeats 400000
 set_option maxHeartbeats 1000000
 
 namespace GlobalTheory
 
-open Polynomial in
 
+open Polynomial in
 theorem adjoinRoot_X_pow_sub_C_uniformizer_isDomain :
     ∀ (R : Type) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R] (π : R) (e : ℕ),
       Irreducible π → 0 < e → IsDomain (AdjoinRoot (Polynomial.X ^ e - Polynomial.C π : Polynomial R)) := by
@@ -14,7 +19,7 @@ theorem adjoinRoot_X_pow_sub_C_uniformizer_isDomain :
   have hπp : Prime π := hπ.prime
   have hP : (Ideal.span {π}).IsPrime := (Ideal.span_singleton_prime hπp.ne_zero).2 hπp
   have hmon : (X ^ e - C π : R[X]).Monic := monic_X_pow_sub_C _ he.ne'
-  have hdeg : (X ^ e - C π : R[X]).natDegree = e := natDegree_X_pow_sub_C
+  have hdeg : (X ^ e - C π : R[X]).natDegree = e := natDegree_X_pow_sub_C _
   have hirr : Irreducible (X ^ e - C π : R[X]) := by
     refine Polynomial.IsEisensteinAt.irreducible ⟨?_, ?_, ?_⟩ hP hmon.isPrimitive (by rw [hdeg]; exact he)
     · rw [hmon.leadingCoeff]

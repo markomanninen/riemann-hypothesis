@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeColumns.InGMulInt
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeColumns.InGMulInt
+
+@[expose] public section
 
 noncomputable section
 
@@ -233,8 +237,8 @@ theorem bwd_coords (hW : WClause X hb u p θ Q) (x : KvH X u p.1) (Bo : Matrix (
     rw [hsum, neg_neg]
     exact hG2 s
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem bwd_col (hLB : LatBasis X p θ (reindex₂ X p Q)) (hε : θ (epsP X p) = (1, 0))
     (hW : WClause X hb u p θ Q) (x : KvH X u p.1) (Bo : Matrix (Fin D.R.k) (Fin D.R.k) (Op X p))
     (hYc : ∀ v, crd X p θ Q ((Ymat X u p x : Matrix (Fin X.B.I.n) (Fin X.B.I.n) (TpX X p)) *ᵥ v) =
@@ -263,7 +267,8 @@ theorem bwd_col (hLB : LatBasis X p θ (reindex₂ X p Q)) (hε : θ (epsP X p) 
   have hpr2v : ∀ j, pr2 θ (PI.FinKW.vecV X.B.I p.1 (X.bw j)) = 0 := fun j => secondProj_weight_vector_zero X p θ hε j
   have hpr2y : pr2 θ y = 0 := secondProj_mulVec_zero X p θ _ _ (hpr2v i)
   have hpr2z : pr2 θ z = 0 := by
-    rw [hz, map_sub, map_sum, secondProj_mulVec_zero X p θ _ _ hpr2y, zero_sub, neg_eq_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hz, map_sub, map_sum, secondProj_mulVec_zero X p θ _ _ hpr2y, zero_sub, neg_eq_zero]
     refine Finset.sum_eq_zero fun j _ => ?_
     rw [LinearMap.map_smul_of_tower, secondProj_mulVec_zero X p θ _ _ (hpr2v j), smul_zero]
   have hzw : z = gO • w' := by

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.SiegelOneDescent.Descend2
-import GroundTheory.IdeleRoots.TorusPowers.HeckeIdem
-import GroundTheory.GlobalFields.TateThesis.Nonvanishing
-import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.EllipticTorusNorm
-import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceTensorProductFiniteExtension
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.SiegelOneDescent.Descend2
+public import GroundTheory.IdeleRoots.TorusPowers.HeckeIdem
+public import GroundTheory.GlobalFields.TateThesis.Nonvanishing
+public import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.EllipticTorusNorm
+public import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceTensorProductFiniteExtension
+
+@[expose] public section
 
 open PositivityTheory.RgEis PositivityTheory.RgEis.So
 open NumberField
@@ -14,7 +18,7 @@ namespace GlobalTheory.CompanionTheory.RgEisSo.Hd
 theorem blg_of_dict : Dict → BLg := by
   intro hD F E _ _ _ _ _ σ χ c hσ _ _ _
   obtain ⟨-, -, -, -, h5⟩ := hD F E
-  have key : ∀ x : (IndefiniteRowSideFullHecke.WeilTensorModels.AE F E)ˣ, (adCM σ χ).lg x =
+  have key : ∀ x : (IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))ˣ, (adCM σ χ).lg x =
       Real.log (GlobalTheory.Doubling.absE F E x : ℝ) := fun x => by
     show Real.log (GroundTheory.Global.IdeleGroup.ideleModule E (Units.map (eqv F E).toRingHom.toMonoidHom x) : ℝ) = _
     rw [h5]

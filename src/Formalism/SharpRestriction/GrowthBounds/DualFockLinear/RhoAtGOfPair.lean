@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.RestCloudBOfTop
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideEdge
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.RestCloudBOfTop
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideEdge
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem HL_refl {p n' : ℕ} {W Qq O Kf : Type} [CommRing W] [IsDomain W] [IsDis
     | add a b _ _ ha hb =>
       obtain ⟨a', ha'⟩ := ha
       obtain ⟨b', hb'⟩ := hb
-      exact ⟨a' + b', by rw [map_add, map_add, ha', hb']⟩
+      exact ⟨a' + b', by rw [map_add (f := _), map_add (f := _), ha', hb']⟩
     | smul t a _ ha =>
       obtain ⟨a', ha'⟩ := ha
       exact ⟨t * a', by rw [LinearMap.map_smul_of_tower, ← ha', map_mul, Algebra.smul_def]⟩
@@ -69,8 +73,8 @@ theorem HL_refl {p n' : ℕ} {W Qq O Kf : Type} [CommRing W] [IsDomain W] [IsDis
   rw [← ha, algebraMap_smul]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem rhoAtG_of_pair (D : Formalism.BasicNotions.D7) {p n' : ℕ} {W Qq O Kf : Type} [CommRing W] [IsDomain W]
     [IsDiscreteValuationRing W] [Field Qq] [Algebra W Qq] [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Field Kf]
     [Algebra O Kf] {ι : Qq →+* Kf} {σ : Qq ≃+* Qq} {j : W →+* O} {w : O} (h : HidaSetting p n' W Qq O Kf ι σ j w) {m : ℕ}
@@ -212,7 +216,7 @@ theorem rhoAtG_of_pair (D : Formalism.BasicNotions.D7) {p n' : ℕ} {W Qq O Kf :
       | add a b _ _ ha hb =>
         obtain ⟨a', ha'⟩ := ha
         obtain ⟨b', hb'⟩ := hb
-        exact ⟨a' + b', by rw [map_add, map_add, be_add_right, ha', hb']⟩
+        exact ⟨a' + b', by rw [map_add (f := _), map_add (f := _), be_add_right, ha', hb']⟩
       | smul t a _ ha =>
         obtain ⟨a', ha'⟩ := ha
         exact ⟨t * a', by rw [← algebraMap_smul Kf t a, map_smul, be_smulK_right, ← ha', map_mul]⟩

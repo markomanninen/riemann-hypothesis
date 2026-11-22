@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.InertKernelTheory.StatementLoc
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ theorem degree_mapDomain (f : κ → ι) (n : κ →₀ ℕ) : (n.mapDomain f).d
   refine Finsupp.induction n ?_ ?_
   · simp
   · intro a b g _ _ ih
-    rw [Finsupp.mapDomain_add, Finsupp.mapDomain_single, map_add, map_add, Finsupp.degree_single,
+    rw [Finsupp.mapDomain_add, Finsupp.mapDomain_single, map_add (f := _), map_add (f := _), Finsupp.degree_single,
       Finsupp.degree_single, ih]
 
 def resFam (f : κ → ι) (i : ι) : MvPowerSeries κ R := by
@@ -28,11 +32,11 @@ theorem resFam_apply {f : κ → ι} (hf : Function.Injective f) (k : κ) :
     resFam (R := R) f (f k) = MvPowerSeries.X k := by
   have h : ∃ k', f k' = f k := ⟨k, rfl⟩
   unfold resFam
-  rw [dif_pos h, hf h.choose_spec]
+  rw [dite_eq_left h, hf h.choose_spec]
 
 theorem resFam_off (f : κ → ι) (i : ι) (hi : ∀ k, f k ≠ i) : resFam (R := R) f i = 0 := by
   unfold resFam
-  rw [dif_neg]
+  rw [dite_eq_right]
   rintro ⟨k, hk⟩
   exact hi k hk
 
@@ -117,7 +121,8 @@ theorem resV_sub (f : κ → ι) (a b : MvPowerSeries ι R) : resV f (a - b) = r
 theorem resV_sum {α : Type} (f : κ → ι) (s : Finset α) (a : α → MvPowerSeries ι R) :
     resV f (∑ x ∈ s, a x) = ∑ x ∈ s, resV f (a x) := by
   ext n
-  simp only [resV_coeff, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [resV_coeff, map_sum]
 
 theorem cc_resV (f : κ → ι) (a : MvPowerSeries ι R) :
     MvPowerSeries.constantCoeff (resV f a) = MvPowerSeries.constantCoeff a := by
@@ -176,13 +181,6 @@ theorem resV_subst_diag [Finite ι] {f : κ → ι} (hf : Function.Injective f) 
     rw [resFam_apply hf, MvPowerSeries.subst_X ha', h1]
   · push_neg at hi
     rw [resFam_off f i hi, h0 i hi, ← MvPowerSeries.coe_substAlgHom ha', map_zero]
-
-theorem subst_psubst {σ τ : Type} {b : σ → MvPowerSeries τ R} (hb : MvPowerSeries.HasSubst b)
-    {c : MvPowerSeries σ R} (hc : MvPowerSeries.constantCoeff c = 0) (L : PowerSeries R) :
-    MvPowerSeries.subst b (PowerSeries.subst c L) = PowerSeries.subst (MvPowerSeries.subst b c) L := by
-  have hc' : MvPowerSeries.HasSubst (fun _ : Unit => c) :=
-    MvPowerSeries.hasSubst_of_constantCoeff_zero (fun _ => hc)
-  rw [PowerSeries.subst, PowerSeries.subst, MvPowerSeries.subst_comp_subst_apply hc' hb]
 
 private theorem cc_psubst_lemma {τ : Type} {c : MvPowerSeries τ R} (hc : MvPowerSeries.constantCoeff c = 0)
     {L : PowerSeries R} (hL : PowerSeries.constantCoeff L = 0) :

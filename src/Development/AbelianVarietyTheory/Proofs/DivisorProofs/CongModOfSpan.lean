@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ThetaSetupStructureMapComp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmoothConeInteriorDefiniteBalancedFormStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CongruentTupleUnimodularImageOrLargeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeadingTermUniqueSupportedBalancedConeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightedLatticeQuadraticSumGeDiagonalStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ThetaSetupStructureMapComp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmoothConeInteriorDefiniteBalancedFormStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CongruentTupleUnimodularImageOrLargeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeadingTermUniqueSupportedBalancedConeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightedLatticeQuadraticSumGeDiagonalStatement
+
+@[expose] public section
 
 noncomputable section
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory IsLocalRing
@@ -26,7 +30,7 @@ theorem rho {A K : Type} [CommRing A] [IsLocalRing A] [IsNoetherianRing A] [Norm
     induction hh using Submodule.span_induction with
     | mem x hx => exact NNReal.coe_le_coe.2 (Finset.le_sup (f := F) hx)
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
     | smul r x _ hx =>
       rw [smul_eq_mul, map_mul, norm_mul]; exact (mul_le_of_le_one_left (norm_nonneg _) (h1 r)).trans hx
 
@@ -91,7 +95,7 @@ theorem congMod_of_span {X : Type} [AddCommGroup X] (N : ℕ) (g : X →+ X) {m 
   | zero => exact ⟨0, by simp⟩
   | add y z _ _ hy hz =>
     obtain ⟨w, hw⟩ := hy; obtain ⟨w', hw'⟩ := hz
-    exact ⟨w + w', by rw [map_add, hw, hw', smul_add]; abel⟩
+    exact ⟨w + w', by rw [map_add (f := _), hw, hw', smul_add]; abel⟩
   | smul n y _ hy =>
     obtain ⟨w, hw⟩ := hy
     exact ⟨n • w, by rw [map_zsmul, hw, smul_add, smul_comm]⟩
@@ -106,7 +110,7 @@ theorem unimod_comp (O : Type) [CommRing O] {X₀ X : Type} [AddCommGroup X₀] 
     obtain ⟨w', hw'⟩ := hk1 c (g x)
     refine ⟨k w + w', ?_⟩
     simp only [LinearMap.comp_apply]
-    rw [hw, map_add, map_nsmul, hw', smul_add]; abel
+    rw [hw, map_add (f := _), map_nsmul, hw', smul_add]; abel
   · rw [← LinearMap.comp_assoc, LinearMap.det_comp]
     obtain ⟨u, hu⟩ := hε
     obtain ⟨v, hv⟩ := h2
@@ -123,8 +127,8 @@ theorem qW_single {s : ℕ} (W : Matrix (Fin (s + 1)) (Fin (s + 1)) ℤ) {X : Ty
   simp
 end GlobalTheory.Poinc.LinearValuationCongruences
 
-open GlobalTheory.Poinc.LinearValuationCongruences in
 
+open GlobalTheory.Poinc.LinearValuationCongruences in
 theorem GlobalTheory.Poinc.approx_of_fpre : ∀ (O : Type) [CommRing O] [Module.Finite ℤ O] (bar : O → O), BddAct bar → ∀ (q : ℕ) (φ : InvFun O), IsPolFan bar q φ → ∀ d₀, HasSupports bar q φ d₀ → ∀ (s : ℕ) (W : Matrix (Fin (s + 1)) (Fin (s + 1)) ℤ), PosW W → ∀ (N₁ p : ℕ) [Fact p.Prime], 3 ≤ N₁ → ∀ (A : Type) [CommRing A] [IsLocalRing A] [IsNoetherianRing A] (Φ : FPre bar q p A), Φ.abelian₂ → Φ.Four W N₁ → Φ.Approx φ ((W 0 0).toNat * d₀) := by
   intro O _ _ bar hB q φ hφ d₀ hS s W hW N₁ p _ hN₁ A _ _ _ Φ hLam hFour y₀ e
   obtain ⟨cW, hcW0, hcW⟩ := GlobalTheory.T.weightedLatticeQuadraticSum_ge_diagonal (s + 1) W hW
@@ -214,7 +218,7 @@ theorem GlobalTheory.Poinc.approx_of_fpre : ∀ (O : Type) [CommRing O] [Module.
       Real.exp (-(Φ.sc y * ∑ i, (qW W (Φ.β y) (fun u => μ (i, u)) : ℝ))) := by
     intro y μ
     rw [norm_prod, Finset.mul_sum, ← Finset.sum_neg_distrib, Real.exp_sum]
-    exact Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun i _ => hTle y _ _
+    exact Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun i _ => hTle y _ _
   refine ⟨f, ?_, fun y => ?_⟩
   · obtain ⟨h₁, hh₁, hf₁⟩ := hf y₀
     obtain ⟨S, hSo, hSout, hSa⟩ := hf₁ (E₀ / 2) (by positivity)

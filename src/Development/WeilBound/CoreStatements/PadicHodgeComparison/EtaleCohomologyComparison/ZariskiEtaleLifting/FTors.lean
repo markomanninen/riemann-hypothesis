@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.XSmulSucc
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.GamDat
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.FKstep
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.XSmulSucc
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.GamDat
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.FKstep
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Polynomial CrystallineSemistableComparison CrystallineSemistableComparison.CH CrystallineSemistableComparison.B
@@ -97,38 +101,39 @@ def torsStep (L : Line j U) {e : ℕ} {S : C} (g : Gam e →* End S) : Gam (e + 
   (MonoidHom.noncommCoprod ((L.Ξ.mapEnd S).comp (g.comp (torsPi e))) ((powersHom (End (L.Ξ.obj S)) (End.of (L.γ.app S))).comp (torsLast e))
     (fun a b => by
       refine Commute.pow_right ?_ _
-      show L.γ.app S ≫ L.Ξ.map (g (torsPi e a)) = L.Ξ.map (g (torsPi e a)) ≫ L.γ.app S
+      apply End.ext
+      show L.γ.app S ≫ L.Ξ.map (g (torsPi e a)).asHom = L.Ξ.map (g (torsPi e a)).asHom ≫ L.γ.app S
       exact (L.γ.naturality _).symm)).comp ((MonoidHom.id _).prod (MonoidHom.id _))
 
 theorem torsStep_apply (L : Line j U) {e : ℕ} {S : C} (g : Gam e →* End S) (a : Gam (e + 1)) :
-    (torsStep L g a : L.Ξ.obj S ⟶ L.Ξ.obj S) =
-      (torsGp L S (Multiplicative.toAdd a (Fin.last e)) : L.Ξ.obj S ⟶ L.Ξ.obj S) ≫ L.Ξ.map (g (torsPi e a)) :=
+    (torsStep L g a).asHom =
+      (torsGp L S (Multiplicative.toAdd a (Fin.last e))).asHom ≫ L.Ξ.map (g (torsPi e a)).asHom :=
   rfl
 
 theorem tors_i_pow (L : Line j U) (S : C) (m : ℕ) :
-    L.i.app S ≫ (torsGp L S m : L.Ξ.obj S ⟶ L.Ξ.obj S) = L.i.app S := by
+    L.i.app S ≫ (torsGp L S m).asHom = L.i.app S := by
   have h1 : L.i.app S ≫ L.γ.app S = L.i.app S := by
     have := congrArg (fun t => NatTrans.app t S) L.iγ
     simpa using this
   induction m with
   | zero => exact Category.comp_id _
   | succ m ih =>
-    rw [torsGp, pow_succ, End.mul_def, ← Category.assoc, h1, ← torsGp, ih]
+    rw [torsGp, pow_succ, End.mul_asHom, ← Category.assoc, h1, ← torsGp, ih]
 
 theorem tors_pow_η (L : Line j U) (S : C) (m : ℕ) :
-    U.map (torsGp L S m : L.Ξ.obj S ⟶ L.Ξ.obj S) (L.η S) = U.q _ ^ m * L.η S := by
+    U.map (torsGp L S m).asHom (L.η S) = U.q _ ^ m * L.η S := by
   induction m with
   | zero => rw [pow_zero, one_mul]; exact U.map_id _ _
   | succ m ih =>
-    rw [torsGp, pow_succ, End.mul_def, U.map_comp, L.γη, map_mul, ← torsGp, ih, U.map_q, pow_succ', mul_assoc]
+    rw [torsGp, pow_succ, End.mul_asHom, U.map_comp, L.γη, map_mul, ← torsGp, ih, U.map_q, pow_succ', mul_assoc]
 
 theorem tors_istep (L : Line j U) {e : ℕ} {S : C} (g : Gam e →* End S) (a : Gam (e + 1)) :
-    L.i.app S ≫ (torsStep L g a : L.Ξ.obj S ⟶ L.Ξ.obj S) = (g (torsPi e a) : S ⟶ S) ≫ L.i.app S := by
+    L.i.app S ≫ (torsStep L g a).asHom = (g (torsPi e a)).asHom ≫ L.i.app S := by
   rw [torsStep_apply, ← Category.assoc, tors_i_pow]
   exact (L.i.naturality _).symm
 
 theorem torsStep_gen (L : Line j U) {e : ℕ} {S : C} (g : Gam e →* End S) :
-    (torsStep L g (gen (Fin.last e)) : L.Ξ.obj S ⟶ L.Ξ.obj S) = L.γ.app S := by
+    (torsStep L g (gen (Fin.last e))).asHom = L.γ.app S := by
   have hp : torsPi e (gen (Fin.last e)) = 1 := by
     funext k
     exact Pi.single_eq_of_ne (Fin.castSucc_ne_last k) _
@@ -147,8 +152,8 @@ theorem tors_tower {R : Type} [CommRing R] {C : Type u} [Category.{v} C] {C' : T
     (F : C ⥤ ModuleCat.{w} R) (j : C' ⥤ C) (U : UF C) (L : Line j U) (s : R) (n : ℕ)
     (hA : ∀ T, Acyc1 s (F.map (L.i.app T)).hom (F.map (L.γ.app T)).hom) (T : C) :
     ∀ e : ℕ, ∃ (S : C) (ir : T ⟶ S) (η : Fin e → U.U S) (g : Gam e →* End S),
-      (∀ a, ir ≫ (g a : S ⟶ S) = ir) ∧
-      (∀ a k, U.map (g a : S ⟶ S) (η k) = U.q S ^ (Multiplicative.toAdd a k) * η k) ∧
+      (∀ a, ir ≫ (g a).asHom = ir) ∧
+      (∀ a k, U.map (g a).asHom (η k) = U.q S ^ (Multiplicative.toAdd a k) * η k) ∧
       (∀ (t' : C') (φ : T ⟶ j.obj t') (b : Fin e → U.U (j.obj t')),
         ∃! ψ : S ⟶ j.obj t', ir ≫ ψ = φ ∧ ∀ k, U.map ψ (η k) = b k) ∧
       torsRLe (cx (SingleObj.functor g ⋙ F)) (s ^ (e * (2 * n + 5))) n
@@ -197,7 +202,7 @@ theorem tors_tower {R : Type} [CommRing R] {C : Type u} [Category.{v} C] {C' : T
           simp only [Functor.map_comp, ModuleCat.hom_comp, LinearMap.comp_apply] at h
           exact h.symm) s
         (by
-          change Acyc1 s (F.map (L.i.app S)).hom (F.map (torsStep L g (gen (Fin.last e)))).hom
+          change Acyc1 s (F.map (L.i.app S)).hom (F.map (torsStep L g (gen (Fin.last e))).asHom).hom
           rw [torsStep_gen]
           exact hA S) (n + 1)
       have ht := torsRLe.transfer _ (hk 0 (Nat.zero_le _)).1 (fun k hk' => (hk k hk').2) h4
@@ -226,13 +231,13 @@ theorem CrystallineSemistableComparison.B.P.tors : ∀ d n : ℕ, ∃ N : ℕ, �
     have h4' := h4.mul s
     rw [← pow_succ] at h4'
     refine ⟨S, A.act η (c₀ ≫ ir), ir, g, fun a => ?_, h1, fun t' c φ => ?_, h4'.2.1, h4'.2.2.1, h4'.2.2.2⟩
-    · have e1 : A.act η (c₀ ≫ ir) ≫ (g a : S ⟶ S) =
+    · have e1 : A.act η (c₀ ≫ ir) ≫ (g a).asHom =
           A.act (fun k => U.q S ^ (Multiplicative.toAdd a k)) (A.act η (c₀ ≫ ir)) := by
         rw [A.act_comp, Category.assoc, h1, ← A.act_mul]
         congr 1
         funext k
         exact h2 a k
-      have e2 : (A.γ a : D ⟶ D) ≫ A.act η (c₀ ≫ ir) =
+      have e2 : (A.γ a).asHom ≫ A.act η (c₀ ≫ ir) =
           A.act (fun k => U.q S ^ (Multiplicative.toAdd a k)) (A.act η (c₀ ≫ ir)) := by
         show A.act (fun k => U.q D ^ (Multiplicative.toAdd a k)) (𝟙 D) ≫ _ = _
         rw [A.act_comp, Category.id_comp]

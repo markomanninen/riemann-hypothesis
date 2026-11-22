@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
-import Formalism.LocalToGlobal.HermitianForms.TiedStep
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SplitPlaceLatticeComponentsStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralExtensionFiniteAdelesBasicPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FirstComponentsBasisLocalLatticeSplitStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLocalLevelUnitriangularIffStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
+public import Formalism.LocalToGlobal.HermitianForms.TiedStep
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SplitPlaceLatticeComponentsStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralExtensionFiniteAdelesBasicPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FirstComponentsBasisLocalLatticeSplitStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLocalLevelUnitriangularIffStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.UG Formalism.L2.Forms NumberField IsDedekindDomain Matrix GlobalTheory.St.G
 open scoped TensorProduct
 
@@ -33,7 +38,7 @@ def resChar {R : Type} [CommRing R] [IsLocalRing R] (f : R → ℂ) (hadd : ∀ 
     exact hm 0 (Ideal.zero_mem _)
   map_add_eq_mul' x y := by
     rw [← hadd]
-    exact res_key f hadd hm _ _ (by rw [map_add, res_surjInv, res_surjInv, res_surjInv])
+    exact res_key f hadd hm _ _ (by rw [map_add (f := _), res_surjInv, res_surjInv, res_surjInv])
 
 theorem resChar_residue {R : Type} [CommRing R] [IsLocalRing R] (f : R → ℂ) (hadd : ∀ a b, f (a + b) = f a * f b)
     (hm : ∀ a ∈ IsLocalRing.maximalIdeal R, f a = 1) (a : R) :
@@ -74,7 +79,8 @@ theorem hR_snd_zero (hsig : ∀ x, sp (sigR σ (v.adicCompletion F) x) = swapR _
     (J : Matrix (Fin n) (Fin n) E) (x y : Fin n → E ⊗[F] v.adicCompletion F) (hx : ∀ a, (sp (x a)).1 = 0) :
     (sp (hR σ J (v.adicCompletion F) x y)).2 = 0 := by
   unfold hR hform
-  simp only [map_sum, map_mul, Prod.snd_sum, Prod.snd_mul, hsig]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, Prod.snd_sum, Prod.snd_mul, hsig]
   simp [swapR, hx]
 
 theorem fst_mulVec {n : ℕ} (y : GL (Fin n) (E ⊗[F] v.adicCompletion F))
@@ -91,7 +97,8 @@ theorem fst_mulVec {n : ℕ} (y : GL (Fin n) (E ⊗[F] v.adicCompletion F))
   rw [Matrix.mul_apply, Matrix.mul_apply] at hV
   simp only [hfr, Matrix.of_apply] at hV
   rw [hV]
-  simp only [Matrix.mulVec, dotProduct, map_sum, Prod.fst_sum, map_mul, Prod.fst_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, map_sum, Prod.fst_sum, map_mul, Prod.fst_mul]
   apply Finset.sum_congr rfl
   intro d _
   simp [bc]
@@ -109,7 +116,7 @@ theorem fst_dual (e : E ⊗[F] v.adicCompletion F) (he : sp e = (1, 0)) (P : Pro
     (hx : x - (if P then e else 0) = (c : E ⊗[F] v.adicCompletion F) * s) :
     (sp x).1 = (if P then 1 else 0) + (c : v.adicCompletion F) * (sp s).1 := by
   rw [sub_eq_iff_eq_add] at hx
-  rw [hx, map_add, map_mul, map_natCast, Prod.fst_add, Prod.fst_mul, Prod.fst_natCast]
+  rw [hx, map_add (f := _), map_mul, map_natCast, Prod.fst_add, Prod.fst_mul, Prod.fst_natCast]
   split_ifs
   · rw [he]; ring
   · rw [map_zero]; simp
@@ -147,7 +154,7 @@ theorem local_frame_first_factor : ∀ (F E : Type) [Field F] [NumberField F] [F
   have hFadd : ∀ x y, Fk (x + y) = Fk x * Fk y := by
     intro x y
     simp only [Fk]
-    rw [← hpsi_add, ← map_add, ← mul_add, ← map_add, Prod.mk_add_mk, add_zero]
+    rw [← hpsi_add, ← map_add (f := _), ← mul_add, ← map_add (f := _), Prod.mk_add_mk, add_zero]
   have hFg : ∀ w ∈ v.adicCompletionIntegers F, Fk ((g : v.adicCompletion F) * w) = 1 := by
     intro w hw
     simp only [Fk]
@@ -223,7 +230,8 @@ theorem local_frame_first_factor : ∀ (F E : Type) [Field F] [NumberField F] [F
       apply sp.injective
       rw [RingEquiv.apply_symm_apply]
       unfold supSum
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Prod.ext ?_ ?_
       · rw [Prod.fst_sum, hR0, hW0, Finset.mul_sum, ← Finset.sum_add_distrib]
         refine Finset.sum_congr rfl fun i _ => ?_
@@ -252,7 +260,8 @@ theorem local_frame_first_factor : ∀ (F E : Type) [Field F] [NumberField F] [F
         if (x : ℕ) + 1 = y ∧ (y : ℕ) < n ∧ (y : ℕ) ≠ n then redM F v M x y else 0) =
         IsLocalRing.residue _ (⟨R0, hR0i⟩ : v.adicCompletionIntegers F) := by
       have hsub : (⟨R0, hR0i⟩ : v.adicCompletionIntegers F) = ∑ i, ⟨_, hr i⟩ := Subtype.ext (by simp [hR0])
-      rw [hsub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hsub, map_sum]
       refine Finset.sum_congr rfl fun x _ => ?_
       by_cases hx : x.1 + 1 < n
       · rw [Finset.sum_eq_single ⟨x.1 + 1, hx⟩]

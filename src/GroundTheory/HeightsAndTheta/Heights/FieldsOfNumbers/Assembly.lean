@@ -1,36 +1,40 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PGradedFinite
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PHilbExactDivide
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPolyOfDiffs
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.HilbEventuallyPolyQualified
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPrimeFiltration
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PEventuallyPolyUnique
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PEventuallyPolyShift
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PHilbIrrelevantZero
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PRelevantPrimeDimGe
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PHilbDegreeBound
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PMixedDiffConst
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumSymm
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumAdd
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumZeroSlot
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumBase
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PMultEqualsCoeff
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PCutRegular
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PCutRational
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PDivPrincipalDegree
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PExistsForm
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PDivCycleSupport
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumUnique
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumBaseChange
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPFContracted
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPFDegree
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PHilbAddBlock
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPNProduct
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PRenameMultiHomog
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PRenameHilbFn
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PRenameIntNum
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PRenameMultiProjPrime
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PSplitRelDeg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PGradedFinite
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PHilbExactDivide
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPolyOfDiffs
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.HilbEventuallyPolyQualified
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPrimeFiltration
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PEventuallyPolyUnique
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PEventuallyPolyShift
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PHilbIrrelevantZero
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PRelevantPrimeDimGe
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PHilbDegreeBound
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PMixedDiffConst
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumSymm
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumAdd
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumZeroSlot
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumBase
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PMultEqualsCoeff
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PCutRegular
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PCutRational
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PDivPrincipalDegree
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PExistsForm
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PDivCycleSupport
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumUnique
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumBaseChange
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPFContracted
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPFDegree
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PRenameMultiHomog
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PRenameHilbFn
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PRenameIntNum
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PRenameMultiProjPrime
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PSplitRelDeg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -86,9 +90,6 @@ theorem CutRegular.full : CutRegular.Statement.{u} :=
 theorem CutRational.full : CutRational.Statement.{u} :=
   CutRational.proof CutRegular.full IntNumAdd.full
 
-theorem DivPrincipalDegree.full : DivPrincipalDegree.Statement.{u} :=
-  DivPrincipalDegree.proof CutRational.full IntNumBase.full IntNumZeroSlot.full
-
 theorem ExistsForm.full : ExistsForm.Statement.{u} := ExistsForm.proof
 
 theorem DivCycleSupport.full : DivCycleSupport.Statement.{u} := DivCycleSupport.proof
@@ -96,29 +97,15 @@ theorem DivCycleSupport.full : DivCycleSupport.Statement.{u} := DivCycleSupport.
 theorem IntNumUnique.full : IntNumUnique.Statement.{u} :=
   IntNumUnique.proof CutRational.full IntNumBase.full ExistsForm.full DivCycleSupport.full
 
-theorem IntNumBaseChange.full : IntNumBaseChange.Statement := IntNumBaseChange.intersectionNumber_baseChange
-
 theorem ProjectionFormulaContracted.full : ProjectionFormulaContracted.Statement.{u} :=
   PFContracted.proof MixedDiffConst.full CutRational.full
-
-theorem HilbAddBlock.full : HilbAddBlock.Statement.{u} := HilbAddBlock.proof
-
-theorem ProductWithProjectiveSpace.full : ProductWithProjectiveSpace.Statement.{u} :=
-  ProductWithProjectiveSpace.proof MixedDiffConst.full HilbAddBlock.full
 
 theorem ProjectionFormulaDegree.of_divPushForward (h : DivPushForward.Statement.{u}) :
     ProjectionFormulaDegree.Statement.{u} :=
   ProjectionFormulaDegree.proof CutRational.full IntNumBase.full ProjectionFormulaContracted.full h
 
-theorem RenameMultiHomog.full : RenameMultiHomog.Statement.{u} := RenameMultiHomog.proof
-
 theorem RenameHilbFn.full : RenameHilbFn.Statement.{u} := RenameHilbFn.proof
 
 theorem RenameIntNum.full : RenameIntNum.Statement.{u} := RenameIntNum.proof RenameHilbFn.full
-
-theorem RenameMultiProjPrime.full : RenameMultiProjPrime.Statement.{u} :=
-  RenameMultiProjPrime.proof
-
-theorem SplitRelDeg.full : SplitRelDeg.Statement.{u} := SplitRelDeg.proof
 
 end GroundTheory.Heights₂.Heights.FieldNumbers

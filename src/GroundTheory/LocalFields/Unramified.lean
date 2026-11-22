@@ -1,10 +1,14 @@
-import Mathlib
-import GroundTheory.LocalFields.Interface
-import GroundTheory.LocalFields.Integers
-import GroundTheory.LocalFields.Uniqueness
-import GroundTheory.LocalFields.IntermediateField
-import GroundTheory.LocalFields.UnramifiedDefs
-import GroundTheory.LocalFields.UnramifiedHensel
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.Interface
+public import GroundTheory.LocalFields.Integers
+public import GroundTheory.LocalFields.Uniqueness
+public import GroundTheory.LocalFields.IntermediateField
+public import GroundTheory.LocalFields.UnramifiedDefs
+public import GroundTheory.LocalFields.UnramifiedHensel
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,6 +49,8 @@ variable (K L : Type*) [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarc
 theorem map_maximalIdeal_eq_iff :
     (maximalIdeal 𝒪[K]).map (algebraMap 𝒪[K] 𝒪[L]) = maximalIdeal 𝒪[L] ↔ IsUnramified K L := by
   rw [map_maximalIdeal K L, isUnramified_iff]
+  change maximalIdeal 𝒪[L] ^ ramificationIndex K L = maximalIdeal 𝒪[L] ↔
+    ramificationIndex K L = 1
   constructor
   · intro h
     have hpos := ramificationIndex_pos K L
@@ -70,22 +76,9 @@ variable (K L : Type*) [Field K] [ValuativeRel K] [Field L] [ValuativeRel L]
 def maximalUnramified : IntermediateField K L :=
   sSup {E : IntermediateField K L | IsUnramified K E}
 
-theorem le_maximalUnramified (E : IntermediateField K L) [IsUnramified K E] :
-    E ≤ maximalUnramified K L :=
-  le_sSup (show IsUnramified K E from inferInstance)
-
 variable [TopologicalSpace K] [IsNonarchimedeanLocalField K] [TopologicalSpace L]
   [IsNonarchimedeanLocalField L] [FiniteDimensional K L]
 
-variable {K L} in
-
-theorem IsUnramified.of_le {E F : IntermediateField K L} (h : E ≤ F) [IsUnramified K F] :
-    IsUnramified K E := by
-  let : Algebra E F := (IntermediateField.inclusion h).toRingHom.toAlgebra
-  have : IsScalarTower K E F := IsScalarTower.of_algebraMap_eq fun _ ↦ rfl
-  have : ValuativeExtension E F := valuativeExtension_algHom (K := K) (IntermediateField.inclusion h)
-  have : FiniteDimensional E F := Module.Finite.of_restrictScalars_finite K E F
-  exact IsUnramified.of_tower_left K E F
 
 theorem exists_generator_of_isUnramified (E : IntermediateField K L) [IsUnramified K E] :
     ∃ (γ : 𝒪[L]) (P : 𝒪[K][X]), P.Monic ∧ aeval γ P = 0 ∧ IsUnit (aeval γ (derivative P)) ∧
@@ -103,7 +96,7 @@ theorem exists_generator_of_isUnramified (E : IntermediateField K L) [IsUnramifi
 theorem exists_maximalUnramified_eq :
     ∃ (β : 𝒪[L]) (P : 𝒪[K][X]), P.Monic ∧ aeval β P = 0 ∧ IsUnit (aeval β (derivative P)) ∧
       maximalUnramified K L = K⟮(β : L)⟯ ∧ IsUnramified K K⟮(β : L)⟯ ∧
-      Module.finrank K K⟮(β : L)⟯ = residueDegree K L ∧ residueDegree K⟮(β : L)⟯ L = 1 := by
+      Module.finrank K K⟮(β : L)⟯ = ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) ∧ ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K⟮(β : L)⟯])) = 1 := by
   obtain ⟨β, P, hPm, hβ, hsep, hunr, hdeg, h1⟩ := exists_unramified_adjoin K L
   refine ⟨β, P, hPm, hβ, isUnit_aeval_derivative_of_separable K L P hsep β hβ, ?_, hunr, hdeg, h1⟩
   refine le_antisymm (sSup_le fun E hE ↦ ?_) (le_sSup hunr)
@@ -112,24 +105,11 @@ theorem exists_maximalUnramified_eq :
   rw [hE']
   exact IntermediateField.adjoin_simple_le_iff.2 (mem_of_residueDegree_eq_one K L _ h1 Q hQ γ hγ hd)
 
-instance isUnramified_maximalUnramified : IsUnramified K (maximalUnramified K L) := by
-  obtain ⟨β, P, -, -, -, heq, hunr, -, -⟩ := exists_maximalUnramified_eq K L
-  rw [heq]
-  exact hunr
-
 theorem finrank_maximalUnramified :
-    Module.finrank K (maximalUnramified K L) = residueDegree K L := by
+    Module.finrank K (maximalUnramified K L) = ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) := by
   obtain ⟨β, P, -, -, -, heq, -, hdeg, -⟩ := exists_maximalUnramified_eq K L
   rw [heq]
   exact hdeg
-
-theorem IsUnramified.sup (E F : IntermediateField K L) [IsUnramified K E] [IsUnramified K F] :
-    IsUnramified K (E ⊔ F : IntermediateField K L) :=
-  IsUnramified.of_le (sup_le (le_maximalUnramified K L E) (le_maximalUnramified K L F))
-
-theorem IsUnramified.iSup {ι : Type*} (E : ι → IntermediateField K L)
-    [∀ i, IsUnramified K (E i)] : IsUnramified K (⨆ i, E i : IntermediateField K L) :=
-  IsUnramified.of_le (iSup_le fun i ↦ le_maximalUnramified K L (E i))
 
 end Maximal
 
@@ -181,9 +161,9 @@ theorem maximalUnramified_le_fixedField :
 variable [IsGalois K L]
 
 theorem inertiaSubgroup_counting :
-    Nat.card (inertiaSubgroup K L) = ramificationIndex K L ∧
-      Nat.card (residueAlgEquiv K L).range = residueDegree K L ∧
-      Module.finrank K (IntermediateField.fixedField (inertiaSubgroup K L)) = residueDegree K L := by
+    Nat.card (inertiaSubgroup K L) = (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) ∧
+      Nat.card (residueAlgEquiv K L).range = ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) ∧
+      Module.finrank K (IntermediateField.fixedField (inertiaSubgroup K L)) = ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) := by
   set I := inertiaSubgroup K L
   set F := IntermediateField.fixedField I
   have hn := ramificationIndex_mul_residueDegree K L
@@ -193,20 +173,20 @@ theorem inertiaSubgroup_counting :
   have hG : Nat.card (L ≃ₐ[K] L) = Module.finrank K L := IsGalois.card_aut_eq_finrank K L
   have hIdx : Nat.card I * I.index = Nat.card (L ≃ₐ[K] L) := Subgroup.card_mul_index I
   have hind : I.index = Nat.card (residueAlgEquiv K L).range := Subgroup.index_ker _
-  have hrange : Nat.card (residueAlgEquiv K L).range ≤ residueDegree K L := by
+  have hrange : Nat.card (residueAlgEquiv K L).range ≤ ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) := by
     calc Nat.card (residueAlgEquiv K L).range ≤ Nat.card (𝓀[L] ≃ₐ[𝓀[K]] 𝓀[L]) :=
           Subgroup.card_le_card_group _
       _ = Module.finrank 𝓀[K] 𝓀[L] := IsGalois.card_aut_eq_finrank _ _
-      _ = residueDegree K L := (residueDegree_eq_finrank K L).symm
+      _ = ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) := (residueDegree_eq_finrank K L).symm
   have hFK : Module.finrank K F * Module.finrank F L = Module.finrank K L :=
     Module.finrank_mul_finrank K F L
-  have hTF : residueDegree K L ≤ Module.finrank K F := by
+  have hTF : ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) ≤ Module.finrank K F := by
     rw [← finrank_maximalUnramified K L]
     exact IntermediateField.finrank_le_of_le_right (maximalUnramified_le_fixedField K L)
   set a := Nat.card I
   set r := Nat.card (residueAlgEquiv K L).range
-  set e := ramificationIndex K L
-  set f := residueDegree K L
+  set e := (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K)))
+  set f := ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K]))
   set d := Module.finrank K F
   rw [hind, hG, ← hn] at hIdx
   rw [hFL, ← hn] at hFK
@@ -226,7 +206,7 @@ theorem inertiaSubgroup_counting :
   · rw [hae, mul_comm e f] at hFK
     exact Nat.eq_of_mul_eq_mul_right he hFK
 
-theorem card_inertiaSubgroup : Nat.card (inertiaSubgroup K L) = ramificationIndex K L :=
+theorem card_inertiaSubgroup : Nat.card (inertiaSubgroup K L) = (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) :=
   (inertiaSubgroup_counting K L).1
 
 end Galois

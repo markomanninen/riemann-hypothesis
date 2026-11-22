@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+
+@[expose] public section
 
 noncomputable section
 open Matrix Formalism.UG GlobalTheory.IndefiniteRowSideFullHecke.CentralizerTensorForms
@@ -11,7 +15,7 @@ variable {A : Type} [Field A] {n : Type} [Fintype n] [DecidableEq n]
 
 theorem hform_add_left (σ : A →+* A) (J : Matrix n n A) (x y z : n → A) :
     hform σ J (x + y) z = hform σ J x z + hform σ J y z := by
-  simp only [hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hform_add_right (σ : A →+* A) (J : Matrix n n A) (x y z : n → A) :
     hform σ J x (y + z) = hform σ J x y + hform σ J x z := by
@@ -36,7 +40,8 @@ theorem herm_apply (σ : A →+* A) {J : Matrix n n A} (hH : IsHerm σ J) (i j :
 
 theorem sigma_hform (σ : A →+* A) (hσ : ∀ x, σ (σ x) = x) {J : Matrix n n A} (hH : IsHerm σ J)
     (x y : n → A) : σ (hform σ J x y) = hform σ J y x := by
-  simp only [hform, map_sum, map_mul, hσ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hform, map_sum, map_mul, hσ]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [herm_apply σ hH]; ring
@@ -61,7 +66,8 @@ theorem proj_mulVec (σ : A →+* A) (J : Matrix n n A) (v x : n → A) :
 theorem cT_proj (σ : A →+* A) (hσ : ∀ x, σ (σ x) = x) {J : Matrix n n A} (hH : IsHerm σ J)
     (v : n → A) : cT σ (proj σ J v) = vecMulVec (J *ᵥ v) (fun i => σ (v i)) := by
   ext i k
-  simp only [cT, proj, rowv, transpose_apply, map_apply, vecMulVec_apply, vecMul, dotProduct,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [cT, proj, rowv, transpose_apply, map_apply, vecMulVec_apply, vecMul, dotProduct,
     mulVec, map_mul, map_sum, hσ, herm_apply σ hH]
   rw [mul_comm]
   congr 1

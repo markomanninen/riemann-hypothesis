@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Divisibility.CoefMod
-import Formalism.QuotientMetricDivisors.RatHermLcvTwist
+module
+
+public import Formalism.LocalToGlobal.Divisibility.CoefMod
+public import Formalism.QuotientMetricDivisors.RatHermLcvTwist
+
+@[expose] public section
 
 open NumberField
 open Formalism.BasicNotions Formalism.L2.DIV
@@ -18,8 +22,8 @@ def sumLat (lam : ι → DomWeight n) (e : Fin N ≃ C × VVIdx lam) (T : C → 
     Submodule (𝓞 K) (Fin N → K) :=
   ⨅ c, (T c).comap ((valAt lam e c).restrictScalars (𝓞 K))
 
-open Classical in
 
+open Classical in
 def sumGram [StarRing K] (lam : ι → DomWeight n) (e : Fin N ≃ C × VVIdx lam) (G : ι → Matrix (Fin n) (Fin n) K) :
     Matrix (Fin N) (Fin N) K :=
   Matrix.of fun a b => if (e a).1 = (e b).1 then pairK lam G (bVV K lam (e a).2) (bVV K lam (e b).2) else 0

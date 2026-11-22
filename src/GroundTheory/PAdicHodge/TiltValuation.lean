@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.PAdicHodge.PerfectoidField
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.PerfectoidField
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -21,8 +26,8 @@ theorem mem_span_singleton_iff_norm_le {a x : normInteger K'} :
 
 end Integers
 
-omit [Fact p.Prime] [IsPerfectoidField K p] in
 
+omit [Fact p.Prime] [IsPerfectoidField K p] in
 theorem mk_eq_mk_iff_norm_sub_le {a b : normInteger K} :
     Ideal.Quotient.mk (Ideal.span {(p : normInteger K)}) a =
         Ideal.Quotient.mk (Ideal.span {(p : normInteger K)}) b ↔
@@ -30,8 +35,8 @@ theorem mk_eq_mk_iff_norm_sub_le {a b : normInteger K} :
   rw [Ideal.Quotient.eq, mem_span_singleton_iff_norm_le]
   simp
 
-omit [Fact p.Prime] [IsPerfectoidField K p] in
 
+omit [Fact p.Prime] [IsPerfectoidField K p] in
 theorem mk_eq_zero_iff_norm_le {a : normInteger K} :
     Ideal.Quotient.mk (Ideal.span {(p : normInteger K)}) a = 0 ↔ ‖(a : K)‖ ≤ ‖(p : K)‖ := by
   rw [← map_zero (Ideal.Quotient.mk (Ideal.span {(p : normInteger K)})),
@@ -92,8 +97,8 @@ theorem norm_untilt_le_one (x : PreTilt (normInteger K) p) :
     ‖((x.untilt : normInteger K) : K)‖ ≤ 1 :=
   mem_normInteger.1 (x.untilt).2
 
-variable (K p) in
 
+variable (K p) in
 def tiltNorm : MulRingNorm (PreTilt (normInteger K) p) where
   toFun x := ‖((x.untilt : normInteger K) : K)‖
   map_zero' := by simp
@@ -106,24 +111,22 @@ def tiltNorm : MulRingNorm (PreTilt (normInteger K) p) where
 
 instance normedCommRing_preTilt : NormedCommRing (PreTilt (normInteger K) p) where
   __ := RingNorm.toNormedRing
-    { tiltNorm K p with mul_le' := fun x y => (map_mul (tiltNorm K p) x y).le }
+    { tiltNorm (K := K) (p := p) with
+      mul_le' := fun x y => (map_mul (tiltNorm (K := K) (p := p)) x y).le }
   mul_comm := mul_comm
 
 theorem preTilt_norm_def (x : PreTilt (normInteger K) p) :
     ‖x‖ = ‖((x.untilt : normInteger K) : K)‖ := rfl
 
-theorem nnnorm_eq_val (x : PreTilt (normInteger K) p) :
-    ‖x‖₊ = PreTilt.val K NormedField.valuation (normInteger K) normInteger_integers p x := by
-  rw [val_eq_nnnorm_untilt]; rfl
-
 instance : NormMulClass (PreTilt (normInteger K) p) :=
-  ⟨fun x y => map_mul (tiltNorm K p) x y⟩
+  ⟨fun x y => map_mul (tiltNorm (K := K) (p := p)) x y⟩
 
 instance : NormOneClass (PreTilt (normInteger K) p) :=
-  ⟨map_one (tiltNorm K p)⟩
+  ⟨map_one (tiltNorm (K := K) (p := p))⟩
 
 instance : IsUltrametricDist (PreTilt (normInteger K) p) :=
-  IsUltrametricDist.isUltrametricDist_of_forall_norm_add_le_max_norm norm_untilt_add_le
+  IsUltrametricDist.isUltrametricDist_of_forall_norm_add_le_max_norm fun x y => by
+    simpa only [preTilt_norm_def] using norm_untilt_add_le x y
 
 theorem preTilt_norm_le_one (x : PreTilt (normInteger K) p) : ‖x‖ ≤ 1 :=
   norm_untilt_le_one x
@@ -276,12 +279,6 @@ theorem ker_untiltModHom (ϖ' : PreTilt (normInteger K) p) (ϖ : normInteger K)
   rw [RingHom.mem_ker, untiltModHom_apply, Ideal.Quotient.eq_zero_iff_mem,
     mem_span_singleton_iff_norm_le, Ideal.mem_span_singleton, preTilt_dvd_iff_norm_le, ← h]
   rfl
-
-def tiltQuotientEquiv (ϖ' : PreTilt (normInteger K) p) (ϖ : normInteger K)
-    (h : ‖((ϖ'.untilt : normInteger K) : K)‖ = ‖(ϖ : K)‖) (hp : ‖(p : K)‖ ≤ ‖(ϖ : K)‖) :
-    PreTilt (normInteger K) p ⧸ Ideal.span {ϖ'} ≃+* normInteger K ⧸ Ideal.span {ϖ} :=
-  (Ideal.quotEquivOfEq (ker_untiltModHom ϖ' ϖ h hp).symm).trans
-    (RingHom.quotientKerEquivOfSurjective (untiltModHom_surjective ϖ hp))
 
 theorem exists_norm_untilt_eq (a : normInteger K) (ha : ‖(p : K)‖ < ‖(a : K)‖) :
     ∃ x : PreTilt (normInteger K) p, ‖((x.untilt : normInteger K) : K)‖ = ‖(a : K)‖ := by

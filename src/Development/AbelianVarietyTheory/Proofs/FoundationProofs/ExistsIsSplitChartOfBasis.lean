@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
-import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
+public import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -143,8 +147,8 @@ theorem Tj_shift_self (O : Subring K) (ϖ : Kˣ) (g : GL (Fin n) K) :
   refine if_congr ?_ rfl rfl
   simp only [e, mul_right_inj]
 
-include hO in
 
+include hO in
 theorem Tj_invT (ϖ : Kˣ) {j : ℕ} (hj : j ≤ n) (g : GL (Fin n) K) :
     Tj ℂ n O' (c ϖ) j (invT c n g) = Tj ℂ n O ϖ (n - j) (dGL n ϖ n * g) := by
   classical
@@ -180,8 +184,8 @@ theorem map_mem_Ov_iff (a : w.adicCompletion E) : c a ∈ Ov E w' ↔ a ∈ Ov E
   change Valued.v (c a) ≤ 1 ↔ Valued.v a ≤ 1
   rw [hc]
 
-include hc in
 
+include hc in
 theorem isSatVecGL_invT (hq : qV E w' = qV E w) {ρ : Representation ℂ (GL (Fin n) (w.adicCompletion E)) V} {x : V}
     {B : Multiset ℂˣ} (hx : IsSatVecGL w ρ x B) :
     IsSatVecGL w' (ρ.comp (invT c n).symm.toMonoidHom) x (B.map (·⁻¹)) := by
@@ -382,14 +386,8 @@ theorem eq_map_inv_of_isParamVec (hE : IsCMExt F E σ) (hJ : IsHermND σ J) (hL 
     (hx' : IsParamVec σ J L h' ρ x B') : B' = B.map (·⁻¹) :=
   hx'.unique_of_isSplit (isSplit_of_ne hne h h') (isParamVec_conj hE hJ hL hne h h' hx)
 
-theorem eq_map_inv_of_hasParam (hE : IsCMExt F E σ) (hJ : IsHermND σ J) (hL : IsSelfDualAt σ J L v) (hne : w ≠ w')
-    {h : w.under (𝓞 F) = v} {h' : w'.under (𝓞 F) = v} (hρ : HasParam σ J L h ρ B)
-    (hρ' : HasParam σ J L h' ρ B') : B' = B.map (·⁻¹) := by
-  obtain ⟨x, hx⟩ := hρ.exists_vec
-  exact eq_map_inv_of_isParamVec hE hJ hL hne hx (hρ'.isParamVec hx.mem_fixed hx.ne_zero)
-
 theorem bcParam_map_inv (n : ℕ) (α : Fin (n / 2) → ℂˣ) : (bcParam n α).map (·⁻¹) = bcParam n α := by
-  simp only [bcParam, Multiset.map_add, Multiset.map_map, Function.comp_def, inv_inv, Multiset.map_replicate, inv_one]
+  simp only [bcParam, Multiset.map_add (f := _), Multiset.map_map, Function.comp_def, inv_inv, Multiset.map_replicate, inv_one]
   rw [add_comm (Multiset.map _ _)]
 
 theorem map_inv_of_isParamVec (hw : IsInertAt F E v w) {h : w.under (𝓞 F) = v} (hx : IsParamVec σ J L h ρ x B) :
@@ -397,20 +395,6 @@ theorem map_inv_of_isParamVec (hw : IsInertAt F E v w) {h : w.under (𝓞 F) = v
   rcases hx with ⟨hv, -⟩ | ⟨-, c, ϖ, e, α, -, -, -, rfl⟩
   · exact absurd hv (not_isSplit_of_isInertAt hw)
   · exact bcParam_map_inv n α
-
-theorem map_inv_of_hasParam (hw : IsInertAt F E v w) {h : w.under (𝓞 F) = v} (hρ : HasParam σ J L h ρ B) :
-    B.map (·⁻¹) = B := hρ.exists_vec.elim fun _ hx => map_inv_of_isParamVec hw hx
-
-theorem param_conj_place (hE : IsCMExt F E σ) (hJ : IsHermND σ J) (hL : IsSelfDualAt σ J L v)
-    (h : w.under (𝓞 F) = v) (ρ : Representation ℂ (GLoc σ J v) V) (B : Multiset ℂˣ) :
-    (∀ (w' : HeightOneSpectrum (𝓞 E)) (h' : w'.under (𝓞 F) = v), w ≠ w' →
-      (∀ x, IsParamVec σ J L h ρ x B → IsParamVec σ J L h' ρ x (B.map (·⁻¹))) ∧
-      (HasParam σ J L h ρ B → HasParam σ J L h' ρ (B.map (·⁻¹)))) ∧
-    (IsInertAt F E v w → (∀ x, IsParamVec σ J L h ρ x B → B.map (·⁻¹) = B) ∧
-      (HasParam σ J L h ρ B → B.map (·⁻¹) = B)) ∧
-    ∀ α : Fin (n / 2) → ℂˣ, (bcParam n α).map (·⁻¹) = bcParam n α :=
-  ⟨fun _ h' hne => ⟨fun _ => isParamVec_conj hE hJ hL hne h h', hasParam_conj hE hJ hL hne h h'⟩,
-    fun hw => ⟨fun _ => map_inv_of_isParamVec hw, map_inv_of_hasParam hw⟩, bcParam_map_inv n⟩
 
 theorem exists_isSplitChart_of_basis (hE : IsCMExt F E σ) (hJ : IsHermND σ J) (hL : IsSelfDualAt σ J L v)
     (h : w.under (𝓞 F) = v) {τ : E →ₐ[F] Fv F v} (hτ : splitPrime τ = w) {β : GL (Fin n) (Fv F v)}
@@ -422,17 +406,6 @@ theorem exists_isSplitChart_of_basis (hE : IsCMExt F E σ) (hJ : IsHermND σ J) 
   · rw [mem_GLint_iff, mem_GLint_iff]
     exact (and_congr (forall₂_congr fun _ _ => complEquiv_mem_iff hE h hτ _)
       (forall₂_congr fun _ _ => complEquiv_mem_iff hE h hτ _)).symm
-
-example (hE : IsCMExt F E σ) (α : Fin n → ℂˣ) :
-    ∃ (v : HeightOneSpectrum (𝓞 F)) (w w' : HeightOneSpectrum (𝓞 E)) (h : w.under (𝓞 F) = v)
-      (h' : w'.under (𝓞 F) = v) (ρ : Representation ℂ (GLoc σ (1 : Matrix (Fin n) (Fin n) E) v) (psSpaceGL w α)),
-      w ≠ w' ∧ HasParam σ 1 (stdLattice E n) h ρ (Finset.univ.val.map α) ∧
-        HasParam σ 1 (stdLattice E n) h' ρ ((Finset.univ.val.map α).map (·⁻¹)) := by
-  obtain ⟨v, τ, hJ, hL, hβ⟩ := exists_split_data hE n
-  have hne := (splitPrime_comp_ne hE τ).symm
-  obtain ⟨e, he⟩ := exists_isSplitChart_of_basis hE hJ hL (splitPrime_under τ) rfl hβ
-  have H := hasParam_psFunGL (isSplit_of_ne hne (splitPrime_under _) (splitPrime_under _)) he α
-  exact ⟨v, _, _, splitPrime_under τ, splitPrime_under _, _, hne, H, hasParam_conj hE hJ hL hne _ _ H⟩
 
 end GlobalTheory.LFun.ConjPlace
 

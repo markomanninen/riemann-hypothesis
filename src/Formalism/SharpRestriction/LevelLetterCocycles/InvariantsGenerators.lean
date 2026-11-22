@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.ClassMapInjectiveBijectiveNorms
-import Formalism.SharpRestriction.LevelLetterCocycles.TableLineDegreeTwo
-import Formalism.SharpRestriction.LevelLetterCocycles.ExtensionClauses
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.ClassMapInjectiveBijectiveNorms
+public import Formalism.SharpRestriction.LevelLetterCocycles.TableLineDegreeTwo
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExtensionClauses
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,10 +77,6 @@ def LitSub (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop :=
 def HerrExtensionEtale (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop :=
   ∀ (l : ℕ) [Fact l.Prime] (K LL : FinExt l) (hA : CaseA K LL),
     Formalism.MainNotions.tableLineDegreeTwo.HerrExt ((HW l).W K 1 LL hA.2.2) ((F l).E K 1 LL hA.2.2).tie
-
-def AdmExtT (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := Formalism.MainNotions.HerrComplexNaturality.FN D HW F ∧ Formalism.MainNotions.LocalSituation.ClassMapInjectiveBijectiveNorms D HW F
-
-def HerrExtensionEtaleTheorem (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := AdmExtT D HW F → HerrExtensionEtale D HW F
 
 def HerrLatticeFurtherConditions (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := Formalism.MainNotions.tableLineDegreeTwo.adm17 D HW F
 

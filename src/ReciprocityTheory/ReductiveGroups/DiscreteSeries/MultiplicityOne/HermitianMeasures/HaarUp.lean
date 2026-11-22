@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.HermitianMeasures.OrbitIntegralAbsConvergent
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JHaarSF
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.HermitianMeasures.OrbitIntegralAbsConvergent
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JHaarSF
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,9 +21,15 @@ theorem haarUp (hSF : HaarUniqueSF) {k r : ℕ} {U : Set (Mat k r)} {μ₀ μ : 
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · rw [Measure.smul_apply, h₀.conc, smul_zero]
   · intro a ha
-    rw [Measure.map_smul, h₀.left a ha]
+    have hcont : Continuous (lmulM a : Mt k r → Mt k r) := by
+      unfold lmulM
+      exact Continuous.matrix_mul continuous_const continuous_id
+    rw [Measure.map_smul c hcont.measurable.aemeasurable, h₀.left a ha]
   · intro a ha
-    rw [Measure.map_smul, h₀.right a ha]
+    have hcont : Continuous (rmulF a : Mt k r → Mt k r) := by
+      unfold rmulF
+      exact Continuous.matrix_mul continuous_id continuous_const
+    rw [Measure.map_smul c hcont.measurable.aemeasurable, h₀.right a ha]
   · intro K hK
     rw [Measure.smul_apply, ENNReal.smul_def, smul_eq_mul]
     exact ENNReal.mul_lt_top ENNReal.coe_lt_top (h₀.finite_compact K hK)
@@ -35,11 +45,6 @@ theorem haarUp_N (hSF : HaarUniqueSF) (hCN : ClosedN) (hHN : HaarNExists) {k r :
     {μN : Measure (Mt k r)} (hμ : Formalism.MainNotions.S.IsHaarOn (Nset k r) μN) : Formalism.FourierDecayAlt.B.IsHaarOn (Nset k r) μN := by
   obtain ⟨μ₀, h₀⟩ := hHN k r
   exact haarUp hSF (hCN k r) h₀ hμ
-
-theorem haarUp_G (hSF : HaarUniqueSF) (hCG : ClosedG) (hHG : HaarGExists) {k r : ℕ}
-    {μG : Measure (Mt k r)} (hμ : Formalism.MainNotions.S.IsHaarOn (UH (Hpk k r)) μG) : Formalism.FourierDecayAlt.B.IsHaarOn (GV k r) μG := by
-  obtain ⟨μ₀, h₀⟩ := hHG k r
-  exact haarUp hSF (hCG k r) h₀ hμ
 
 theorem haar_measure_univ_lt_infinity_of_compactW (hCpW : CompactW) {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} {μW : Measure (Mt k r)}
     (hz : inWb k r z) (hT : 0 < Tz k r z) (hμ : Formalism.FourierDecayAlt.B.IsHaarOn (UWset k r z) μW) : μW Set.univ < ∞ := by

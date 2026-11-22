@@ -1,5 +1,9 @@
-import Formalism.FilteredPoleLength.ReducedBasisBounds.BetaSesquilinearity
-import Formalism.LogFactorialIndices.LogProductFormula
+module
+
+public import Formalism.FilteredPoleLength.ReducedBasisBounds.BetaSesquilinearity
+public import Formalism.LogFactorialIndices.LogProductFormula
+
+@[expose] public section
 
 noncomputable section
 

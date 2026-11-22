@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleClassGroup.IdeleClassMapIdeleClassMap
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles
-import GroundTheory.LocalFields.AbstractLocalReciprocity.ExistsOpenSubgroupMemFixedModule
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleClassGroup.IdeleClassMapIdeleClassMap
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.ExistsOpenSubgroupMemFixedModule
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -53,11 +57,6 @@ def map (σ : ℚ̄ ≃ₐ[ℚ] ℚ̄) (F : FiniteSubfield) : FiniteSubfield :=
 
 def mapEquiv (σ : ℚ̄ ≃ₐ[ℚ] ℚ̄) (F : FiniteSubfield) : F.1 ≃+* (map σ F).1 :=
   (IntermediateField.equivMap F.1 (σ : ℚ̄ →ₐ[ℚ] ℚ̄)).toRingEquiv
-
-@[simp]
-theorem coe_mapEquiv (σ : ℚ̄ ≃ₐ[ℚ] ℚ̄) (F : FiniteSubfield) (x : F.1) :
-    ((mapEquiv σ F x : (map σ F).1) : ℚ̄) = σ x :=
-  rfl
 
 theorem map_mono (σ : ℚ̄ ≃ₐ[ℚ] ℚ̄) {F E : FiniteSubfield} (h : F ≤ E) : map σ F ≤ map σ E :=
   IntermediateField.map_mono _ (show F.1 ≤ E.1 from h)
@@ -126,9 +125,6 @@ instance : MulDistribMulAction (ℚ̄ ≃ₐ[ℚ] ℚ̄) IdeleClassLimit where
   mul_smul := galoisHom_mul
   smul_one σ := map_one (galoisHom σ)
   smul_mul σ := map_mul (galoisHom σ)
-
-theorem smul_def (σ : ℚ̄ ≃ₐ[ℚ] ℚ̄) (z : IdeleClassLimit) : σ • z = galoisHom σ z :=
-  rfl
 
 theorem smul_of (σ : ℚ̄ ≃ₐ[ℚ] ℚ̄) (F : FiniteSubfield) (c : IdeleClassGroup F.1) :
     σ • of F c = of (map σ F) (ideleClassEquiv (mapEquiv σ F) c) :=

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementK
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FlowTwoTorsionWp
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementK
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FlowTwoTorsionWp
+
+@[expose] public section
 
 open PowerSeries
 
@@ -38,10 +42,6 @@ theorem cW_eq {K : Type} [Field K] (g2 g3 : K) (k : ℕ) :
   rw [Nat.strongRecOn_eq]
   simp only [dite_eq_ite]
   rfl
-
-theorem cW_zero {K : Type} [Field K] (g2 g3 : K) : cW g2 g3 0 = 0 := by
-  rw [cW_eq]
-  simp
 
 theorem cW_succ (hS : WpShape.{0}) (hR : WpRecursion.{0}) {K : Type} [Field K] [CharZero K]
     (W : WeierstrassCurve K) (k : ℕ) :
@@ -103,15 +103,6 @@ theorem cW_succ (hS : WpShape.{0}) (hR : WpRecursion.{0}) {K : Type} [Field K] [
       rw [div_mul_eq_mul_div, div_eq_iff (mul_ne_zero hne1 hne2)]
       linear_combination -hrec
 
-theorem coeff_X_mul_derivative' {K : Type} [Field K] (f : K⟦X⟧) (n : ℕ) :
-    coeff n (X * derivative K f) = (n : K) * coeff n f := by
-  cases n with
-  | zero => simp
-  | succ k =>
-    rw [coeff_succ_X_mul, coeff_derivative]
-    push_cast
-    ring
-
 end BridgeK
 
 open BridgeK Formalism.L2.Th1.CM in
@@ -122,7 +113,7 @@ theorem wpNumEq_of (hS : WpShape.{0}) (hR : WpRecursion.{0}) : WpNumEq := by
   constructor
   · ext n
     unfold wpNum
-    rw [coeff_mk, map_add, coeff_one, coeff_X_pow_mul']
+    rw [coeff_mk, map_add (f := _), coeff_one, coeff_X_pow_mul']
     obtain ⟨j, rfl | rfl⟩ := Nat.even_or_odd' n
     · rcases Nat.lt_or_ge j 1 with hj | hj
       · interval_cases j
@@ -140,7 +131,7 @@ theorem wpNumEq_of (hS : WpShape.{0}) (hR : WpRecursion.{0}) : WpNumEq := by
       · rfl
   · ext n
     unfold wpDen
-    rw [coeff_mk, map_sub, coeff_one, mul_assoc (C (1 / 2 : K)) (X ^ 3) (derivative K (wpReg W)),
+    rw [coeff_mk, map_sub, coeff_one, mul_assoc (C (1 / 2 : K)) (X ^ 3) (derivative (wpReg W)),
       coeff_C_mul, coeff_X_pow_mul']
     obtain ⟨j, rfl | rfl⟩ := Nat.even_or_odd' n
     · rcases Nat.lt_or_ge j 2 with hj | hj
@@ -162,14 +153,6 @@ theorem wpNumEq_of (hS : WpShape.{0}) (hR : WpRecursion.{0}) : WpNumEq := by
         ring
       · ring
 
-theorem wpRegInv_of (hS : WpShape.{0}) (hR : WpRecursion.{0}) : WpRegInv := by
-  unfold WpRegInv
-  intro K _ _ W W' h2 h3
-  ext n
-  obtain ⟨k, rfl | rfl⟩ := Nat.even_or_odd' n
-  · rw [← BridgeK.cW_succ hS hR W k, ← BridgeK.cW_succ hS hR W' k, h2, h3]
-  · rw [(hS K W).2.2.1 _ (odd_two_mul_add_one k), (hS K W').2.2.1 _ (odd_two_mul_add_one k)]
-
 theorem uSerEq_of (hS : WpShape.{0}) (hR : WpRecursion.{0}) : USerEq := by
   intro K _ _ g2 g3
   obtain ⟨hb, hg2, hg3, -⟩ := short_weierstrass_inverse K g2 g3
@@ -187,20 +170,20 @@ theorem uSerEq_of (hS : WpShape.{0}) (hR : WpRecursion.{0}) : USerEq := by
 
   have hrel : toL (expSer W) * dL (wpL W) = -2 * wpL W := by
     rw [hd, hx]; linear_combination 2 * hfl
-  rw [hshape, map_add, dL_uPow, dL_toL] at hrel
+  rw [hshape, map_add (f := _), dL_uPow, dL_toL] at hrel
   have h3 : (uPow (-2 - 1) : LaurentSeries K) * toL (X ^ 3) = 1 := by
     rw [← uPow_natCast]; exact uPow_neg_mul 3
   have h2 : (uPow (-2) : LaurentSeries K) * toL (X ^ 3) = toL X := by
     rw [← uPow_natCast, ← uPow_add, ← uPow_one]; norm_num
   have hC : (HahnSeries.C (((-2 : ℤ)) : K) : LaurentSeries K) = toL (C (-2 : K)) := by
     rw [toL_C]; norm_num
-  have hps : expSer W * (C (-2 : K) + X ^ 3 * derivative K (wpReg W)) =
+  have hps : expSer W * (C (-2 : K) + X ^ 3 * derivative (wpReg W)) =
       C (-2 : K) * (X + X ^ 3 * wpReg W) := by
     apply toL_injective
     have hm2 : (toL (C (-2 : K)) : LaurentSeries K) = -2 := by
       rw [map_neg C, map_neg toL]; congr 1
       rw [map_ofNat C, map_ofNat toL]
-    simp only [map_mul, map_add]
+    simp only [map_mul, map_add (f := _)]
     rw [hC] at hrel
     linear_combination toL (X ^ 3) * hrel - toL (expSer W) * toL (C (-2 : K)) * h3 - 2 * h2
       - (toL X + toL (X ^ 3) * toL (wpReg W)) * hm2

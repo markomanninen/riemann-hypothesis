@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.CoinvReduction
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.CoinvReduction
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.RestTerms
@@ -87,13 +92,6 @@ def CoinvAboveTopGeneral.Statement : Prop :=
     Fintype.card β * (Fintype.card ι * (Fintype.card ι - 1) / 2) < d →
     ∃ Q : ℕ → β → MvPolynomial (β × ι) K, (∀ m b, (Q m b).IsHomogeneous (d - m)) ∧
       H = ∑ m ∈ Finset.Icc 1 (Fintype.card ι), ∑ b : β, (∑ i : ι, X (b, i) ^ m) * Q m b
-
-def CoinvAtTopGeneral.Statement : Prop :=
-  ∀ (K : Type) [Field K] [CharZero K] (β ι : Type) [Fintype β] [DecidableEq β] [Fintype ι]
-    [DecidableEq ι] (o : ι ≃ Fin (Fintype.card ι)) (H : MvPolynomial (β × ι) K),
-    H.IsHomogeneous (Fintype.card β * (Fintype.card ι * (Fintype.card ι - 1) / 2)) →
-    ∃ c : K, H - C c * ∏ b : β, ∏ i : ι, X (b, i) ^ (o i : ℕ) ∈
-      Ideal.span {P | ∃ (m : ℕ) (b : β), 1 ≤ m ∧ m ≤ Fintype.card ι ∧ P = ∑ i : ι, X (b, i) ^ m}
 
 def VandermondeOfHomogeneous.Statement : Prop :=
   ∀ (σ R : Type) [CommRing R] (m : ℕ) (v : Fin m → MvPolynomial σ R),

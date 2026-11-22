@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairInfApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairInfApply
+
+@[expose] public section
+
 open MeasureTheory
 
 open Metric Set Filter Topology Convolution
@@ -188,8 +193,6 @@ theorem contDiff_of_func_eq (c : ℝ → ℂ) (E : ℝ → ℝ → ℂ) (U : Set
   have hF0' : ContDiffAt ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun t => c (t₀ + t)) ((fun x : ℝ => x - t₀) t₀) := by
     simpa using hF0
   have h9 := ContDiffAt.comp (f := fun x : ℝ => x - t₀) t₀ hF0' hsub
-  convert h9 using 1
-  funext x
-  simp
+  simpa [Function.comp_def, add_sub_cancel_left] using h9
 
 end GlobalTheory.FuncEqSmooth

@@ -1,7 +1,11 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegrablePowerNormCompact
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddEquivAddHaarCharMulVecArtinianReduced
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DensInfSS
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhitGenOf
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegrablePowerNormCompact
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddEquivAddHaarCharMulVecArtinianReduced
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DensInfSS
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhitGenOf
+
+@[expose] public section
 
 noncomputable section
 

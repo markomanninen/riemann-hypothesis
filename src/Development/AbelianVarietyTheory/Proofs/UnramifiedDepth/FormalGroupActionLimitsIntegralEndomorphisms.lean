@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.RowTieFB
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieFB
+
+@[expose] public section
 
 noncomputable section
 

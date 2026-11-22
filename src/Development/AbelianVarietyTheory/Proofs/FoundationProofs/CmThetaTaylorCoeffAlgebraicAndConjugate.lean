@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsRingEquivOfIsTranscendenceBasis
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIntegerMapEqHalfOneAddSqrt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmThetaComplexConjugationCompatibleStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ConjugateCurveDatumLatticeIsCurveLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GaloisConjTaylorThetaTranslateStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralJAndAlgebraicDataStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GalStarComplexMultiplicationPointsStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeInvariantsPeriodPairDictionary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsRingEquivOfIsTranscendenceBasis
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIntegerMapEqHalfOneAddSqrt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmThetaComplexConjugationCompatibleStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ConjugateCurveDatumLatticeIsCurveLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GaloisConjTaylorThetaTranslateStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralJAndAlgebraicDataStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GalStarComplexMultiplicationPointsStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeInvariantsPeriodPairDictionary
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
 
@@ -72,7 +77,7 @@ theorem latticeTranslationOperator_add_exists_const (Λ : AddSubgroup ℂ) (t ω
   simp only [U1]
   rw [← add_assoc, mul_assoc (G _), ← Complex.exp_add, mul_left_comm, ← Complex.exp_add]
   congr 2
-  rw [map_add]
+  rw [map_add (f := _)]
   ring
 
 theorem evenTheta_add_lattice_mem {Λ : AddSubgroup ℂ} (h : IsLat Λ) (t : ℂ) {ω : ℂ} (hω : ω ∈ Λ) :
@@ -183,7 +188,7 @@ theorem thetaTranslate_conjugateLattice (Λ : AddSubgroup ℂ) (t : ℂ) (G : �
     U1 (Λ.map (starRingEnd ℂ).toAddMonoidHom) ((starRingEnd ℂ) t) (starRingEnd ℂ ∘ G ∘ starRingEnd ℂ) =
       starRingEnd ℂ ∘ U1 Λ t G ∘ starRingEnd ℂ := by
   funext z
-  simp only [U1, area_conj, Function.comp, map_mul, map_add, ← Complex.exp_conj, map_sub, map_div₀,
+  simp only [U1, area_conj, Function.comp, map_mul, map_add (f := _), ← Complex.exp_conj, map_sub, map_div₀,
     map_neg, Complex.conj_ofReal, Complex.conj_conj, map_ofNat]
 
 theorem IsLat.conj {Λ : AddSubgroup ℂ} (h : IsLat Λ) : IsLat (Λ.map (starRingEnd ℂ).toAddMonoidHom) := by

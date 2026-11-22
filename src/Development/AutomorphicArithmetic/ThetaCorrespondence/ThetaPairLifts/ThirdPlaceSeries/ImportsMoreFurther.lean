@@ -1,7 +1,11 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqOfOverTwo
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CharacterChoiceData
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqOfOverTwo
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CharacterChoiceData
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -13,8 +17,8 @@ theorem main_alt_alt : GlobalTheory.Published.AutomorphicFormsFiniteGL → ∀ (
     GlobalTheory.HubX.MuUnr D := by
   intro _ hL D P i hl w hw
   have hj := D.nd.j_range i
-  let j : Fin D.R.m := ⟨D.nd.j i - 1, by omega⟩
-  have hjj : j.1 + 1 = D.nd.j i := by simp only [j]; omega
+  let j : Fin D.R.m := ⟨D.nd.j i - 1, lt_of_lt_of_le (Nat.sub_lt hj.1 Nat.zero_lt_one) hj.2⟩
+  have hjj : j.1 + 1 = D.nd.j i := Nat.sub_add_cancel hj.1
   have hlp : (D.nd.l i).Prime := (D.nd.lPrime i).out
   rw [P.chr.unr_iff, P.chr.tw, P.chr.muC i j hjj, P.chr.etaTinv]
   refine GlobalTheory.MuTameQS.unrAt_mul ?_ (unrAt_inv (P.cf.isEta.unr w))

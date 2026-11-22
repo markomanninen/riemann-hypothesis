@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GalMapMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GalMapMul
+
+@[expose] public section
+
 open GlobalTheory.EtC
 
 namespace GlobalTheory

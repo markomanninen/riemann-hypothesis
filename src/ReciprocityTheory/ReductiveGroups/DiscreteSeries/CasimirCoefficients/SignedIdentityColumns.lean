@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedEmbeddingToM
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedEmbeddingToM
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ abbrev SgIxV (ε : Fin n → Bool) (s : Bool) : Type := {a : Fin n // ε a = s}
 
 lemma hs_contVG : Continuous (hs : Matrix (Fin n) (Fin n) ℂ → ℝ) := by
   unfold hs
-  exact continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+  exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
     (continuous_id.matrix_elem i j).norm.pow 2
 
 lemma hs_nonnegVG (A : Matrix (Fin n) (Fin n) ℂ) : 0 ≤ hs A := by
@@ -87,7 +91,9 @@ lemma ballFiniteVG (ε : Fin n → Bool) (ν : Measure (UJ ε)) [ν.IsHaarMeasur
   let K : Set (Matrix (Fin n) (Fin n) ℂ) := {M | inUJ ε M ∧ hs M ≤ R}
   have hKc : IsCompact K := by
     apply Metric.isCompact_of_isClosed_isBounded
-    · apply IsClosed.inter
+    · change IsClosed ({M : Matrix (Fin n) (Fin n) ℂ | Mᴴ * Jm ε * M = Jm ε} ∩
+        {M : Matrix (Fin n) (Fin n) ℂ | hs M ≤ R})
+      apply IsClosed.inter
       · exact isClosed_eq ((continuous_id.matrix_conjTranspose.matrix_mul continuous_const).matrix_mul
           continuous_id) continuous_const
       · exact isClosed_le hs_contVG continuous_const
@@ -145,7 +151,7 @@ def signedIdentityColumns (ε : Fin n → Bool) (s : Bool) : Matrix (Fin n) (SgI
 
 lemma hsRV_cont {Q : Type} [Fintype Q] : Continuous (hsRV : Matrix (Fin n) Q ℂ → ℝ) := by
   unfold hsRV
-  exact continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+  exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
     (continuous_id.matrix_elem i j).norm.pow 2
 
 lemma hsRV_entry_le {Q : Type} [Fintype Q] (g : Matrix (Fin n) Q ℂ) (i : Fin n) (j : Q) : ‖g i j‖ ^ 2 ≤ hsRV g := by
@@ -184,8 +190,7 @@ lemma hs_le_colsV {ε : Fin n → Bool} (s : Bool) {g : Matrix (Fin n) (Fin n) �
     unfold Jm
     congr 1
     funext a
-    simp only [σ]
-    split_ifs <;> simp
+    by_cases ha : ε a = true <;> simp [σ, ha]
   have hterm : ∀ i j, g i j * ((σ j : ℝ) : ℂ) * star (g i j) = ((σ j * ‖g i j‖ ^ 2 : ℝ) : ℂ) := by
     intro i j
     rw [mul_comm (g i j), mul_assoc, Complex.star_def, Complex.mul_conj']

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -44,29 +48,10 @@ theorem repr_scale (s t : ℂ) (α : Alt n) (S : Finset (Fin (n + n))) :
     (bas n).repr (scale n s t α) S =
       (s ^ (S.filter (·.val < n)).card * t ^ (S.filter (n ≤ ·.val)).card) * (bas n).repr α S := by
   conv_lhs => rw [← (bas n).sum_repr α]
-  simp only [map_sum, map_smul, scale_bas, Module.Basis.repr_self, Finsupp.finset_sum_apply, Finsupp.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, scale_bas, Module.Basis.repr_self, Finsupp.finsetSum_apply, Finsupp.smul_apply,
     Finsupp.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
   ring
-
-theorem isType_iff (p q : ℕ) (α : Alt n) :
-    IsType p q α ↔ scale n 2 1 α = (2 : ℂ) ^ p • α ∧ scale n 1 2 α = (2 : ℂ) ^ q • α := by
-  have h2 {a b : ℕ} (h : (2 : ℂ) ^ a = 2 ^ b) : a = b := by
-    have : (2 : ℕ) ^ a = 2 ^ b := by exact_mod_cast h
-    exact Nat.pow_right_injective le_rfl this
-  constructor
-  · intro h
-    constructor <;> refine (bas n).ext_elem fun S => ?_ <;>
-      rw [repr_scale, map_smul, Finsupp.smul_apply, smul_eq_mul] <;>
-      by_cases hS : (bas n).repr α S = 0
-    · simp [hS]
-    · simp [(h S hS).1]
-    · simp [hS]
-    · simp [(h S hS).2]
-  · rintro ⟨h₁, h₂⟩ S hS
-    have e₁ := congrArg (fun β => (bas n).repr β S) h₁
-    have e₂ := congrArg (fun β => (bas n).repr β S) h₂
-    simp only [repr_scale, map_smul, Finsupp.smul_apply, smul_eq_mul, one_pow, mul_one, one_mul] at e₁ e₂
-    exact ⟨h2 (mul_right_cancel₀ hS e₁), h2 (mul_right_cancel₀ hS e₂)⟩
 
 theorem scale_pull (L : V n →L[ℂ] V m) (s t : ℂ) (α : Alt m) :
     scale n s t (pull L α) = pull L (scale m s t α) := by
@@ -77,11 +62,5 @@ theorem scale_pull (L : V n →L[ℂ] V m) (s t : ℂ) (α : Alt m) :
 end GlobalTheory.CxForm.PullType
 
 namespace GlobalTheory.CxForm
-
-theorem isType_pull_linear (n m : ℕ) (L : V n →L[ℂ] V m) (p q : ℕ) (α : Alt m) (h : IsType p q α) :
-    IsType p q (pull L α) := by
-  rw [PullType.isType_iff] at h ⊢
-  rw [PullType.scale_pull, PullType.scale_pull, h.1, h.2, map_smul, map_smul]
-  exact ⟨rfl, rfl⟩
 
 end GlobalTheory.CxForm

@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.Inertia
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.LamZl
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.LamFactor
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LocallyConstantOfOpenSet
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.Inertia
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.LamZl
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.LamFactor
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LocallyConstantOfOpenSet
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.W
 
@@ -100,10 +104,10 @@ private theorem lam_res (l : ℕ) [Fact l.Prime] {O R ι : Type} [CommRing O] [I
 private theorem lam_push {l : ℕ} [Fact l.Prime] {F : GFrame l} {O : Type} [CommRing O] [IsLocalRing O]
     [Algebra ℤ_[l] O] {n : ℕ} {r : Resid F O n} {R R' : Type} [CommRing R] [Algebra O R] [IsCO O R]
     [CommRing R'] [Algebra O R'] [IsCO O R'] (f : R →ₐ[O] R') {v : F.Vl} {i : Fin n} {ψ : F.Gv v →* Rˣ}
-    (h : r.IsPsi v i ψ) : r.IsPsi v i (pushCh (f : R →+* R') ψ) where
-  cont := lam_cont f _ h.cont
-  red g := (res_map f _).trans (h.red g)
-  mu g := (congrArg f (h.mu g)).trans (f.commutes _)
+    (h : r.IsPsi v i ψ) : r.IsPsi v i (pushCh (f : R →+* R') ψ) := by
+  refine ⟨lam_cont f _ h.cont, fun g => ?_, fun g => ?_⟩
+  · exact (res_map f _).trans (h.red g)
+  · exact (congrArg f (h.mu g)).trans (f.commutes _)
 
 private def lam_fst (l : ℕ) [Fact l.Prime] (d : ℕ) :
     Multiplicative ((Fin d → ℤ_[l]) × ℤ_[l]) →* Multiplicative (Fin d → ℤ_[l]) where
@@ -179,7 +183,7 @@ theorem UpperTheory.V.W.lam_ex_free :
   have hu : ∀ s : σ, IsUnit (1 + MvPowerSeries.X s : P) := fun s => by
     rw [MvPowerSeries.isUnit_iff_constantCoeff]; simp
   have hu1 : ∀ s : σ, res O P ((hu s).unit : Pˣ) = 1 := fun s => by
-    rw [IsUnit.unit_spec, map_add, map_one, (res_eq_zero_iff O P _).2 (hX s), add_zero]
+    rw [IsUnit.unit_spec, map_add (f := _), map_one, (res_eq_zero_iff O P _).2 (hX s), add_zero]
   choose χ hχ using fun v i => (lam_zl l O P (Fin (d v)) (fun j => (hu ⟨v, i, j⟩).unit) fun j => hu1 _).exists
   have hχ1 : ∀ v i j, ((χ v i (Multiplicative.ofAdd (Pi.single j 1)) : Pˣ) : P) = 1 + MvPowerSeries.X ⟨v, i, j⟩ :=
     fun v i j => congrArg Units.val ((hχ v i).2 j)
@@ -209,7 +213,7 @@ theorem UpperTheory.V.W.lam_ex_free :
             (lam_zl l O R (Fin (d v)) (fun j => χ' v i (Multiplicative.ofAdd (Pi.single j 1)))
               fun j => h2 v i _).unique ⟨lam_cont G _ (hχ v i).1, fun j => Units.ext (by
                 show G ((χ v i _ : Pˣ) : P) = _
-                rw [hχ1, map_add, map_one, hG]
+                rw [hχ1, map_add (f := _), map_one, hG]
                 simp)⟩ ⟨h1 v i, fun j => rfl⟩
           rw [key, this, ← h3]
         · rintro ⟨v, i, j⟩
@@ -220,7 +224,7 @@ theorem UpperTheory.V.W.lam_ex_free :
           have h6 : H ((χ v i (lam_fst l _ ((A v).a g)) : Pˣ) : P) = χ' v i (lam_fst l _ ((A v).a g)) :=
             congrArg Units.val h5
           have h7 : lam_fst l _ ((A v).a g) = Multiplicative.ofAdd (Pi.single j 1) := by rw [hg]; rfl
-          rw [h7, hχ1, map_add, map_one] at h6
+          rw [h7, hχ1, map_add (f := _), map_one] at h6
           rw [← h6]
           simp }
   refine ⟨⟨L⟩, fun Λ => ?_⟩
@@ -230,4 +234,4 @@ theorem UpperTheory.V.W.lam_ex_free :
   have h7 : lam_fst l _ ((A v).a g) = Multiplicative.ofAdd (Pi.single j 1) := by rw [hg]; rfl
   rw [← he]
   show e' (algebraMap O P (ψ₀ v i g) * ((χ v i (lam_fst l _ ((A v).a g)) : Pˣ) : P)) = _
-  rw [h7, hχ1, map_mul, map_add, map_one, AlgEquiv.commutes]
+  rw [h7, hχ1, map_mul, map_add (f := _), map_one, AlgEquiv.commutes]

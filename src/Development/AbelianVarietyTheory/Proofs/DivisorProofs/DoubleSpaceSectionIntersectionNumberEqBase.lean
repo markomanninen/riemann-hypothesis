@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.InterNumConsEqCokernel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechPicardPullbackCartierDivisorBundleEq
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsDominantOfSection
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.InterNumConsEqCokernel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechPicardPullbackCartierDivisorBundleEq
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsDominantOfSection
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace MvPolynomial
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.ZH GlobalTheory.CechPic GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.FlagBundle GlobalTheory.GoodMetric GlobalTheory.FlagPush
@@ -21,8 +26,8 @@ theorem interNumRed_section : ∀ (F : Type) [Field F] (Y : Var F) (W : Dbl Y), 
     rfl
   show interNumRed F _ _ = _
   rw [InterModel.interNumRed_eq_interNumOn F W.δ _ hcl, interNumOn_eq_interNum_pull hf fun i => isLB_toLB (y i)]
-  refine (Var.inter_eq_of_toPic_eq (fun i => LB.isLB_pull (isLB_toLB (y i)) _) fun i => ?_).symm
-  rw [cls_pull (isLB_toLB (y i)), toPic_apply]
+  refine (interNum_congr_cls F _ (fun i => isLB_toLB (e i)) (fun i => LB.isLB_pull (isLB_toLB (y i)) _) fun i => ?_).symm
+  rw [cls_pull (isLB_toLB (y i))]
   rcases h i with h | h
   · rw [← PullPres.pull_cls_toLB _ _ W.p₁ _ _ h, ← CechPic.pull_comp, W.δ₁, CechPic.pull_id]
   · rw [← PullPres.pull_cls_toLB _ _ W.p₂ _ _ h, ← CechPic.pull_comp, W.δ₂, CechPic.pull_id]

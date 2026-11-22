@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResV
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusInvariantLiftAddInvariantCombination
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsKSSymmAbLocus
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpMapDualMapCompEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDlogAddCoboundaryAbLocus
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHeatV
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResV
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusInvariantLiftAddInvariantCombination
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsKSSymmAbLocus
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpMapDualMapCompEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDlogAddCoboundaryAbLocus
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHeatV
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj

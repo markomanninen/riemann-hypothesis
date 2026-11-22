@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchPowAlt
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchPowAlt
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace GroundTheory.Automorphic.AutomorphicForm
@@ -15,13 +19,13 @@ theorem UpperTheory.Gal.InertialTypesAlt.G.levEx :
   have h1 : ∀ x : G, ∃ V : Subgroup G, IsOpen (V : Set G) ∧ ∀ a ∈ V, f (a * x) = f x := by
     intro x
     have hopen : IsOpen ((fun a : G => a * x) ⁻¹' (f ⁻¹' {f x})) :=
-      (hlc.isOpen_fiber (f x)).preimage (continuous_mul_right x)
+      (hlc.isOpen_fiber (f x)).preimage (continuous_mul_const x)
     obtain ⟨V, hV, hVs⟩ := hN _ (hopen.mem_nhds (by simp))
     exact ⟨V, hV, fun a ha => by simpa using hVs (SetLike.mem_coe.2 ha)⟩
   choose V hVo hVc using h1
   obtain ⟨t, -, hcov⟩ := hcs.isCompact.elim_nhds_subcover
     (fun x => (fun y : G => y * x⁻¹) ⁻¹' (V x : Set G))
-    (fun x _ => ((hVo x).preimage (continuous_mul_right x⁻¹)).mem_nhds (by simp [one_mem]))
+    (fun x _ => ((hVo x).preimage (continuous_mul_const x⁻¹)).mem_nhds (by simp [one_mem]))
   have hz : ∀ y, (∀ x ∈ t, y * x⁻¹ ∉ V x) → f y = 0 := by
     intro y hy
     by_contra h

@@ -1,12 +1,16 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabilizerLatticeCoordinatesOf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabIntPfLat
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LeadingMinorIntegrality
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FinrankLeOfMapLe
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PeriodLatticeFactsSplitOfGeneral
-import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
-import Formalism.SharpRestriction.CuspSpanNormBounds.BlockEstimateWords
-import Formalism.SharpRestriction.CuspSpanNormBounds.OscillatoryIntegralBounds
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.FamilySeparationBound
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabilizerLatticeCoordinatesOf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabIntPfLat
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LeadingMinorIntegrality
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FinrankLeOfMapLe
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PeriodLatticeFactsSplitOfGeneral
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BlockEstimateWords
+public import Formalism.SharpRestriction.CuspSpanNormBounds.OscillatoryIntegralBounds
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.FamilySeparationBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -275,7 +279,7 @@ theorem recov_eq {ι Q K : Type} [Field K] (φ : ι → (K →+* ℂ)) (v0 : ι)
     (ha : ∀ v, x v q = φ v a) : recov φ x q = a := by
   unfold recov
   have hex : ∃ a : K, ∀ v, x v q = φ v a := ⟨a, ha⟩
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact (φ v0).injective ((hex.choose_spec v0).symm.trans (ha v0))
 
 theorem recov_congr {ι Q K : Type} [Field K] (φ : ι → (K →+* ℂ)) (x x' : ι → Q → ℂ) (q : Q)
@@ -333,7 +337,7 @@ theorem stabilizer_lattice_twisted_prod : Formalism.L2.SG.NGCut.StabilizerCovolu
         have hv := congrFun he v
         change 1 * Formalism.L2.SG.Pf.VolPinAsm.phiV X v l = y v p -
           Formalism.L2.SG.Pf.VolPinAsm.phiV X v (τA w p (recov (Formalism.L2.SG.Pf.VolPinAsm.phiV X) y)) at hv
-        rw [map_add]
+        rw [map_add (f := _)]
         linear_combination -hv
       have hzv : ∀ p v, y v p = Formalism.L2.SG.Pf.VolPinAsm.phiV X v (recov (Formalism.L2.SG.Pf.VolPinAsm.phiV X) y p) := by
         intro p v

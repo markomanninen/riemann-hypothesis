@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FockRLinDual
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FockRLinDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ def fockL {τ K : Type} [CommRing K] (Q : MvPolynomial τ K) : MvPolynomial τ K
 
 theorem fockR_add_right {τ K : Type} [CommRing K] (g f f' : MvPolynomial τ K) :
     fockR g (f + f') = fockR g f + fockR g f' := by
-  simp only [Formalism.L2.G.Model.TS.fockR, coeff_add, mul_add, add_mul, Finset.sum_add_distrib]
+  simp only [Formalism.L2.G.Model.TS.fockR, MvPolynomial.coeff_add, mul_add, add_mul, Finset.sum_add_distrib]
 
 section Pair
 
@@ -108,15 +112,16 @@ theorem int_pair (p κ : ℕ) (hMD : MultDiv O p κ (k := m + 1) d) (G : MvPolyn
       exact ⟨w, fun _ => hw⟩
     · exact ⟨0, fun h => absurd h hμ⟩
   choose w hw using hw
-  refine ⟨∑ μ ∈ G.support, coeff μ G * coeff μ E * w μ, ?_⟩
-  rw [fockR_eq_sum _ _ G.support (support_map_subset _ _), Finset.mul_sum, map_sum]
+  refine ⟨∑ μ ∈ G.support, AddMonoidAlgebra.coeff G μ * AddMonoidAlgebra.coeff E μ * w μ, ?_⟩
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [fockR_eq_sum _ _ G.support (support_map_subset _ _), Finset.mul_sum, map_sum]
   refine Finset.sum_congr rfl ?_
   intro μ hμ
   have h := congrArg (algebraMap O Kf) (hw μ hμ)
   simp only [map_mul, map_pow, map_natCast] at h
   simp only [coeff_map, map_mul]
   rw [div_mul_eq_mul_div, div_eq_iff hD0]
-  linear_combination (algebraMap O Kf (coeff μ G) * algebraMap O Kf (coeff μ E)) * h
+  linear_combination (algebraMap O Kf (AddMonoidAlgebra.coeff G μ) * algebraMap O Kf (AddMonoidAlgebra.coeff E μ)) * h
 
 theorem sandwich (hm : 1 ≤ m)
     (hthK : ∀ P, ((thK P : ↥(Vsp Kf (flW (m := m) d))) : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf) =

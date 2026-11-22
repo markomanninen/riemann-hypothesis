@@ -1,12 +1,16 @@
-import Formalism.HarderNarasimhan.StatementPl
-import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SlopeIneq
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.TwistFinrankEq
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.RescaleCovol
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.ShiftInvariance
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HNSlopes
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.MuChar
+module
+
+public import Formalism.HarderNarasimhan.StatementPl
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SlopeIneq
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.TwistFinrankEq
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.RescaleCovol
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.ShiftInvariance
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HNSlopes
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.MuChar
+
+@[expose] public section
 
 open Module NumberField
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ArchActOne
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OneParameterOperatorUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ArchActOne
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OneParameterOperatorUnique
+
+@[expose] public section
 
 noncomputable section
 

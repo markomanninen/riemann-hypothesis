@@ -1,5 +1,9 @@
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsNormEmbId
-import Development.WeilBound.CoreStatements.BranchingTraces.HilbertSchmidtTraces.HsTrace
+module
+
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsNormEmbId
+public import Development.WeilBound.CoreStatements.BranchingTraces.HilbertSchmidtTraces.HsTrace
+
+@[expose] public section
 
 noncomputable section
 

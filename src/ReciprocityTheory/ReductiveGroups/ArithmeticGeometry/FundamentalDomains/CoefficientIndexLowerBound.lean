@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.QuadraticCoefficientForms
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.QuadraticCoefficientForms
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -14,7 +18,7 @@ private lemma card_le_sum_of_one_le_prod {ι : Type} [Fintype ι] [Nonempty ι] 
     rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]; field_simp
   have key := Real.geom_mean_le_arith_mean_weighted Finset.univ (fun _ => 1 / (Fintype.card ι : ℝ)) z
     (fun i _ => by positivity) hw (fun i _ => (hz i).le)
-  rw [Real.finset_prod_rpow _ _ (fun i _ => (hz i).le), ← Finset.mul_sum] at key
+  rw [Real.finsetProd_rpow _ _ (fun i _ => (hz i).le), ← Finset.mul_sum] at key
   have h2 : 1 ≤ (∏ i, z i) ^ (1 / (Fintype.card ι : ℝ)) := Real.one_le_rpow h1 (by positivity)
   have h3 := h2.trans key
   rw [one_div, inv_mul_eq_div, le_div_iff₀ hn] at h3
@@ -27,7 +31,7 @@ private lemma prod_le_one_of_sum_le_card {ι : Type} [Fintype ι] [Nonempty ι] 
     rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]; field_simp
   have key := Real.geom_mean_le_arith_mean_weighted Finset.univ (fun _ => 1 / (Fintype.card ι : ℝ)) v
     (fun i _ => by positivity) hw (fun i _ => (hv i).le)
-  rw [Real.finset_prod_rpow _ _ (fun i _ => (hv i).le), ← Finset.mul_sum] at key
+  rw [Real.finsetProd_rpow _ _ (fun i _ => (hv i).le), ← Finset.mul_sum] at key
   have h3 : 1 / (Fintype.card ι : ℝ) * ∑ i, v i ≤ 1 := by
     rw [one_div, inv_mul_le_iff₀ hn]; linarith
   by_contra hgt

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.TiedGlLoc
-import Formalism.LocalToGlobal.Columns.LevGCount
+module
+
+public import Formalism.LocalToGlobal.Columns.TiedGlLoc
+public import Formalism.LocalToGlobal.Columns.LevGCount
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix
 open scoped TensorProduct
@@ -34,7 +38,7 @@ theorem gco_red_map {k : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)} (hk : k �
   have hm : ((bc (gloPhi v spl) (bc (prV (E := E) v) k) : GL (Fin n) (v.adicCompletion F)) :
       Matrix (Fin n) (Fin n) (v.adicCompletion F)) i j ∈ v.adicCompletionIntegers F := by
     rw [e]; exact gloPhi_int v spl halg _ (afsplit_prV_int v _ (y i j).2)
-  rw [dif_pos hm]
+  rw [dite_eq_left hm]
   congr 1
   exact Subtype.ext e.symm
 
@@ -76,8 +80,8 @@ theorem gco_mem_levLoc (w : SG) (hw : ∀ a ∈ w.1.asIdeal, gloRho v spl halg (
     · rw [rll_put_red n v x _ w'.1 hw']
       exact Subgroup.one_mem _
 
-include halg in
 
+include halg in
 theorem gco_fr_lat (hT : v ∉ plUnder F ST) (x : Fin n → v.adicCompletion F) :
     (∃ y ∈ latS (F := F) (v.adicCompletion F) (Formalism.BasicNotions.intV E v) (baseLb E n ST), ∀ b, gloPhi v spl (y b) = x b) ↔
       ∀ b, (((1 : GL (Fin n) (v.adicCompletion F))⁻¹ : GL (Fin n) (v.adicCompletion F)) :
@@ -97,18 +101,6 @@ theorem gco_fr_lat (hT : v ∉ plUnder F ST) (x : Fin n → v.adicCompletion F) 
       exact ⟨hx b, zero_mem _⟩
     · show (spl (spl.symm (x b, 0))).1 = x b
       rw [RingEquiv.apply_symm_apply]
-
-theorem gco_chi_unit (H : Subgroup (GLG E n SG)) (lam : H →* ℂˣ) (x : levU hc n ST SG H) :
-    ‖((levTyp lam x : ℂˣ) : ℂ)‖ = 1 := by
-  have hfin : Finite (GLG E n SG) := inferInstance
-  have hfo : IsOfFinOrder (levRed hc n ST SG H x) := isOfFinOrder_of_finite _
-  obtain ⟨N, hN, hpow⟩ := hfo.exists_pow_eq_one
-  have h1 : (levTyp lam x) ^ N = 1 := by
-    show ((lam (levRed hc n ST SG H x))⁻¹) ^ N = 1
-    rw [inv_pow, ← map_pow, hpow, map_one, inv_one]
-  have h2 : ((levTyp lam x : ℂˣ) : ℂ) ^ N = 1 := by
-    rw [← Units.val_pow_eq_pow_val, h1, Units.val_one]
-  exact Complex.norm_eq_one_of_pow_eq_one h2 hN.ne'
 
 end Core
 

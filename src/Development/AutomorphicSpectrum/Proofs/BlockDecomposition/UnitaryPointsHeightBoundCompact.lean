@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CvecSurjective
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CvecSurjective
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 
@@ -15,7 +19,7 @@ namespace GlobalTheory.CompanionTheory.RedCov.MahlerU
 
 theorem exists_isCompact_centralizer_reduction_set {K : Type*} [Field K] [NumberField K] {n : ℕ} {m : Type*}
     [Finite m] (L : m → Matrix (Fin n) (Fin n) K)
-    (G : Set (AdelicGLn.AdelicGL K n)) (hG1 : ∀ g ∈ G, g ∈ Reduction.normOneGL K n)
+    (G : Set (AdelicGLn.AdelicGL K n)) (hG1 : ∀ g ∈ G, g ∈ Reduction.normOneGL (K := K) (n := n))
     (hGL : ∀ g ∈ G, g ∈ adelicCentralizer L) {ε : ℝ} (hε : 0 < ε)
     (hh : ∀ g ∈ G, ∀ x : Fin n → K, x ≠ 0 → ε ≤ Reduction.height g x) :
     ∃ C : Set (AdelicGLn.AdelicGL K n), IsCompact C ∧ ∀ g ∈ G, ∃ γ : GL (Fin n) K,
@@ -87,7 +91,7 @@ theorem exists_isCompact_trHom_set {d : ℕ} (b : Module.Basis (Fin d) K E) (hH 
   classical
   let G : Set (AdelicGLn.AdelicGL K (Fintype.card (ι × Fin d))) :=
     (fun u : unitaryPoints K E H 𝔸[K] => trHom b 𝔸[K] (u : GL ι (𝔸[K] ⊗[K] E))) '' Y
-  have hG1 : ∀ g ∈ G, g ∈ Reduction.normOneGL K (Fintype.card (ι × Fin d)) := by
+  have hG1 : ∀ g ∈ G, g ∈ Reduction.normOneGL (K := K) (n := (Fintype.card (ι × Fin d))) := by
     rintro _ ⟨u, -, rfl⟩
     rw [Reduction.mem_normOneGL]
     set a := AdelicGLn.det K (Fintype.card (ι × Fin d)) (trHom b 𝔸[K] (u : GL ι (𝔸[K] ⊗[K] E)))
@@ -247,14 +251,14 @@ theorem exists_isCompact_unitary_set (hH : IsUnit H.det)
     set D := (unitaryCoords H 𝔸[K] b) ⁻¹' (F '' (Units.val '' C₃)) with hD
     have hDc : IsCompact D := (isClosedEmbedding_unitaryCoords H 𝔸[K] b hH).isCompact_preimage
       ((hC₃.image Units.continuous_val).image hFc)
-    have hsub : Ω ⊆ D⁻¹ := by
+    have hsub : Ω ⊆ Inv.inv '' D := by
       intro v hv
-      show v⁻¹ ∈ D
+      refine ⟨v⁻¹, ?_, inv_inv v⟩
       refine ⟨_, ⟨_, hv, rfl⟩, ?_⟩
       funext p
       simp only [F, trHom_val, readoff_resHom, transpose_transpose]
       rfl
-    exact hDc.inv.of_isClosed_subset hΩcl hsub
+    exact (hDc.image continuous_inv).of_isClosed_subset hΩcl hsub
   · intro u huY
     obtain ⟨M, hM⟩ := hred u huY
     obtain ⟨δ, hδT, hηδ, -⟩ := hT u u.2 (diagGL α M) ⟨M, rfl⟩

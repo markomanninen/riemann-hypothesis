@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OverExtAlgebraMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OverExtAlgebraMap
+
+@[expose] public section
+
 open GlobalTheory.UnitLemma GlobalTheory.UnitLemma.Unr Polynomial
 
 noncomputable section
@@ -77,12 +82,14 @@ theorem exists_key (h : IsUnrExt K K' d φ) :
   have hbm : b m = 1 := IsFractionRing.injective K.O K.E (by rw [hb, div_self ham, map_one])
   set s : K'.O := ∑ k, ι (b k) * w' k with hs
   have hsum : ∑ k, φ (a k) * algebraMap K'.O K'.E (w' k) = φ (a m) * algebraMap K'.O K'.E s := by
-    rw [hs, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hs, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_mul, hι, hb, map_div₀, ← mul_assoc, mul_div_cancel₀ _ ((map_ne_zero φ).2 ham)]
   have hres : residue K'.O s ≠ 0 := by
     have e1 : residue K'.O s = ∑ k, residue K.O (b k) • bk k := by
-      rw [hs, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hs, map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_mul, hw', Algebra.smul_def, RingHom.algebraMap_toAlgebra, ResidueField.map_residue]
     rw [e1]; intro h0

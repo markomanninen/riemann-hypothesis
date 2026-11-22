@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LineHeightBoundedUnitStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AmpleHeightBoundsStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.WeightedFlagDegreeLowerBoundStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.OrthogonalFlagDegreeComparisonStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalNormOutsideFiniteSet
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FieldChange
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LineHeightBoundedUnitStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AmpleHeightBoundsStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.WeightedFlagDegreeLowerBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.OrthogonalFlagDegreeComparisonStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalNormOutsideFiniteSet
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FieldChange
+
+@[expose] public section
 
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo NumberField GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Top GlobalTheory.CompanionTheory.Ar.Small GlobalTheory.CompanionTheory.Ar.Cmp GlobalTheory.CompanionTheory.Ar.Ht
 open GroundTheory.Heights₂.Heights

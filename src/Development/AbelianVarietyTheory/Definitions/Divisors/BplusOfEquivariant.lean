@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
-import Development.AbelianVarietyTheory.Definitions.Divisors.BasePlaceNotMemChiGridBadPlaces
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.EmbRelExistsUnique
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnitOfCocompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GridFirstColumnSpaceRankSignatureSelfDual
-import Development.AbelianVarietyTheory.Definitions.Divisors.NatCastSmulMemHatL
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BasePlaceNotMemChiGridBadPlaces
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.EmbRelExistsUnique
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnitOfCocompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GridFirstColumnSpaceRankSignatureSelfDual
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NatCastSmulMemHatL
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,11 +29,11 @@ def levCol (L : LevCh D T) (t : T) (j : ℕ) : Subgroup (GL (Fin (columnBlock L 
 
 theorem levCol_lt (L : LevCh D T) (t : T) {j : ℕ} (h : j + 1 < D.R.m) : HEq (levCol L t j)
     (Formalism.L2.DIV.lev D.sp.cm (Yc D (j + 1)).gram (L.βY (j + 1)) (L.datYt t (j + 1) L.triv)) := by
-  rw [levCol, dif_pos h]; exact cast_heq _ _
+  rw [levCol, dite_eq_left h]; exact cast_heq _ _
 
 theorem levCol_top (L : LevCh D T) (t : T) {j : ℕ} (h : ¬ j + 1 < D.R.m) : HEq (levCol L t j)
     (Formalism.L2.DIV.lev D.sp.cm D.sp.X'.gram L.βX (L.datXt t)) := by
-  rw [levCol, dif_neg h]; exact cast_heq _ _
+  rw [levCol, dite_eq_right h]; exact cast_heq _ _
 
 def levJ (G : GridData L sc) (t : T) : ∀ X : Node, Subgroup (GL (Fin (G.V X).rank) (Lev.EAf D))
   | .grid i 0 => G.levCong (.grid i 0)
@@ -89,8 +93,8 @@ theorem node_isV (G : GridData L sc) {μ0 : T} (hL : L.Is μ0) {X : Node} (h : X
 theorem levJ_open_compact (G : GridData L sc) {μ0 : T} (hL : L.Is μ0) (t : T) {X : Node} (h : X.InRange D.R.m) :
     IsOpen (((levJ G t X).comap (Lev.finE (G.V X)) : Subgroup (GA D (G.V X))) : Set (GA D (G.V X))) ∧
       IsCompact ((Lev.levA (G.V X) (levJ G t X) : Subgroup (GA D (G.V X))) : Set (GA D (G.V X))) := by
-  have hc := congLev_open_compact _ (node_isV G hL h).sd.1 (G.pl.modul_ne_bot sc)
-  have hm := congLev_open_compact _ (node_isV G hL h).sd.1 (𝔪 := ⊤) top_ne_bot
+  have hc := congLev_open_compact _ (Formalism.IndefR.Fin.PDA.selfDual_isFullLattice _ _ (node_isV G hL h).sd) (G.pl.modul_ne_bot sc)
+  have hm := congLev_open_compact _ (Formalism.IndefR.Fin.PDA.selfDual_isFullLattice _ _ (node_isV G hL h).sd) (𝔪 := ⊤) top_ne_bot
   have key : ∀ (Y : LSp D) (V : HSp D) Λ β (d : Formalism.L2.DIV.LevDat D.host.E ℂ V.rank)
       (K : Subgroup (GL (Fin Y.sp.rank) (Lev.EAf D))), Y = ⟨V, Λ⟩ → HEq K (Formalism.L2.DIV.lev D.sp.cm V.gram β d) →
       IsOpen ((K.comap (Lev.finE Y.sp) : Subgroup (GA D Y.sp)) : Set (GA D Y.sp)) ∧
@@ -274,8 +278,8 @@ theorem embRel_iff {A B : HSp D} {c : ℕ} {ε : D.host.E} (d : HermitianOrthogo
   have H := (GlobalTheory.AutFunCounterexample.embRel_existsUnique B A d.ι d.isom h).choose_spec
   ⟨H.2 g, fun e => e ▸ H.1⟩
 
-variable (G) in
 
+variable (G) in
 def embTop : GA D (G.V (.top 0)) → GA D (G.V (.grid D.R.m 0)) :=
   stabilizerEmbedding (G.rowDec 0 (by have := D.R.two_le_m; omega))
 
@@ -305,17 +309,6 @@ theorem Bplus_smul (c c' : ℂ) (φ : Fn G (.top 0)) (F : Fn G (.grid D.R.m 0)) 
   have e : ∀ h n, besInt W (c • φ) (c' • F) h n = c * c' * besInt W φ F h n := fun h n => by
     simp only [besInt, Pi.smul_apply, smul_eq_mul]; ring
   simp only [Bplus, e, integral_const_mul]
-
-theorem Bplus_of_equivariant (hM : M.νN M.fdN = 1) (φ : Fn G (.top 0)) (F : Fn G (.grid D.R.m 0))
-    (hψ : ∀ n ∈ NFlag _ G.besTop.e, ‖besChar W.ψ G.besTop n‖ = 1)
-    (hF : ∀ n ∈ NFlag _ G.besTop.e, ∀ g, F (n * g) = besChar W.ψ G.besTop n * F g) :
-    Bplus W M φ F = ∫ h in M.fd (.top 0), φ h * F (embTop G h) ∂M.ν (.top 0) := by
-  have e : ∀ h n, besInt W φ F h n = φ h * F (embTop G h) := fun h n => by
-    have h1 := Complex.mul_conj' (besChar W.ψ G.besTop (n : GA D _))
-    rw [hψ _ n.2] at h1
-    rw [besInt, hF _ n.2]
-    linear_combination (norm := (simp; ring_nf)) φ h * F (embTop G h) * h1
-  simp [Bplus, e, Measure.real, hM]
 
 def pairVec {V : HSp D} (c : CoefA V) (ξ : Module.Dual ℂ c.W) : (Bridge.Gf V → c.W) →ₗ[ℂ] (GA D V → ℂ) :=
   ξ.compLeft _ ∘ₗ c.ext
@@ -349,12 +342,6 @@ theorem fPsiPhi_add {ρ : G.RealVec} {c : CoefA (G.V (.top 0))} {ξ : Module.Dua
   refine integral_congr_ae (.of_forall fun x => ?_)
   simp only [e2]
   exact integral_add (h.2.1 x) (h'.2.1 x)
-
-example (t : T) : (givenPath t 2).arrows = [.down t 0 1, .down t 0 0, .right 0 0, .right 1 0] ∧
-    (oppPath t 2).arrows = [.right 0 2, .right 1 2, .down t 2 1, .down t 2 0] := ⟨rfl, rfl⟩
-
-example (f : ∀ i : Fin 2, Sch G (.right i 0)) (u : Fn G (.grid 0 0)) :
-    liftP W M (rowPath T 0 2) (rowFam 0 2 f) u = liftA W M (.right 1 0) (f 1) (liftA W M (.right 0 0) (f 0) u) := rfl
 
 end GlobalTheory.FunObj
 

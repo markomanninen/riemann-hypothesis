@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.KernelLattices.KerStd
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.StdOK
-import Formalism.LocalToGlobal.GlobalTheory.GL3.LinkThetaStatementFamily
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.IntegralSquareRoots.ZeroInjectionMemFourthPower
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.KerStd
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.StdOK
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.LinkThetaStatementFamily
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.IntegralSquareRoots.ZeroInjectionMemFourthPower
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -76,7 +80,7 @@ theorem th_comap (hI : IsIsom H H' (g : V →ₗ[ℂ] W)) {Λ' : AddSubgroup W} 
     have h := hG2' (g x) hx' (g z)
     simp only [Formalism.L2.Th1.H.opU] at h ⊢
     rw [hI' z x, hI' x x] at h
-    rw [map_add]
+    rw [map_add (f := _)]
     exact h
 
 theorem relIdx_comap (Λ₁ Λ₂ : AddSubgroup W) :
@@ -124,7 +128,8 @@ theorem matH_hSc (sc : ℝ) (a b : ℕ) (x y : DVar X.Tau a b → ℂ) :
 
 theorem herm_hSc (sc : ℝ) (a b : ℕ) : IsHerm (matH (hSc X.Tau a b sc)) := by
   intro x y
-  rw [matH_hSc, matH_hSc, map_mul, Complex.conj_ofReal, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [matH_hSc, matH_hSc, map_mul, Complex.conj_ofReal, map_sum]
   congr 1
   exact Finset.sum_congr rfl fun k _ => by rw [map_mul, Complex.conj_conj, mul_comm]
 
@@ -144,8 +149,8 @@ section Lat
 
 variable {D : D7} {X : Fields} (s : Seam D X) {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (B : Base D cc δ)
 
-include B in
 
+include B in
 theorem sc_pos : 0 < (TaylorLogMetric.area (TaylorLogMetric.lamOf D cc δ))⁻¹ := by
   rw [show TaylorLogMetric.area (TaylorLogMetric.lamOf D cc δ) = Formalism.L2.Th1.F.area B.L from B.areaOK]
   exact inv_pos.2 (Formalism.L2.Th1.F.areaPos_thm B.L)

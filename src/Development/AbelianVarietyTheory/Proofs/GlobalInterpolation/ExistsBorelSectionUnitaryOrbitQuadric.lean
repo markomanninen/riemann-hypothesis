@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataCD
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.PerpendicularEmbedding
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpqLocallyCompactGroup
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataCD
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.PerpendicularEmbedding
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpqLocallyCompactGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -116,8 +120,8 @@ theorem _root_.GlobalTheory.QuadricSection.measurable_qf {P Q : ℕ} :
   unfold _root_.GlobalTheory.IndefiniteRowSideFullHecke.PerpendicularEmbedding.qf
   fun_prop
 
-open Classical in
 
+open Classical in
 def sectMat {P Q : ℕ} (β : ℝ) (x₀ y : Sp P Q) : Matrix (Fin P ⊕ Fin Q) (Fin P ⊕ Fin Q) ℂ :=
   if qf y = β then
     (if coef (Formalism.UG.Jpq P Q) x₀ y = 0 then -qrefl (Formalism.UG.Jpq P Q) x₀ (-y)
@@ -200,8 +204,8 @@ theorem _root_.GlobalTheory.QuadricSection.measurable_sectMat {P Q : ℕ} (β : 
   · exact ((_root_.GlobalTheory.QuadricSection.measurable_qrefl _ x₀ i j).comp measurable_neg).neg
   · exact _root_.GlobalTheory.QuadricSection.measurable_qrefl _ x₀ i j
 
-open MeasureTheory Matrix in
 
+open MeasureTheory Matrix in
 theorem _root_.GlobalTheory.QuadricSection.exists_isSection : ∀ (P Q : ℕ) (β : ℝ) (x₀ : _root_.GlobalTheory.IndefiniteRowSideFullHecke.PerpendicularEmbedding.Sp P Q), β ≠ 0 →
     _root_.GlobalTheory.IndefiniteRowSideFullHecke.PerpendicularEmbedding.qf x₀ = β →
     ∃ s : _root_.GlobalTheory.IndefiniteRowSideFullHecke.PerpendicularEmbedding.Sp P Q → _root_.Formalism.BasicNotions.UpqT P Q, _root_.GlobalTheory.IndefiniteRowSideFullHecke.PerpendicularEmbedding.IsSection β x₀ s := by
@@ -237,7 +241,7 @@ theorem _root_.GlobalTheory.QuadricSection.exists_isSection : ∀ (P Q : ℕ) (�
     haveI : BorelSpace (Matrix (Fin P ⊕ Fin Q) (Fin P ⊕ Fin Q) ℂ) :=
       inferInstanceAs (BorelSpace (Fin P ⊕ Fin Q → Fin P ⊕ Fin Q → ℂ))
     apply (_root_.GlobalTheory.UpqTopology.isClosedEmbedding_mat.measurableEmbedding.measurable_comp_iff).mp
-    refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+    refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
     exact _root_.GlobalTheory.QuadricSection.measurable_sectMat β x₀ i j
   · intro y hy
     exact (hspec y).2 hy

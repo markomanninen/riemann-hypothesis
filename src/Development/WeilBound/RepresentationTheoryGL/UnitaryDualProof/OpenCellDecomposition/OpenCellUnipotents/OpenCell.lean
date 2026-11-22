@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.OpenCellDecomposition.OpenCellUnipotents.ValuationLeOneOfNabsLt
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.OpenCellDecomposition.OpenCellUnipotents.ValuationLeOneOfNabsLt
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,8 +11,8 @@ open Matrix GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.
 
 namespace PositivityTheory.RgUd.CellA
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem openCell (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] :
     PositivityTheory.RgUd.OpenCell k := by
   intro ψ hψ _ r m V W _ _ _ _ A x ω hA hx hgA hgx hxω z hz
@@ -28,7 +32,11 @@ theorem openCell (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsN
   · have := (equiv_mem_twKer φ _ _ (φ.symm F)).2 hmem
     rw [e] at this
     exact this
-  · rw [← equiv_mem_twKer φ, map_sub, map_smul, equiv_apply, e]
+  · rw [← equiv_mem_twKer φ]
+    change φ.toIntertwiningMap _ ∈ _
+    rw [map_sub, map_smul]
+    change φ _ - _ • φ _ ∈ _
+    rw [equiv_apply, e]
     exact hi i
 
 end PositivityTheory.RgUd.CellA

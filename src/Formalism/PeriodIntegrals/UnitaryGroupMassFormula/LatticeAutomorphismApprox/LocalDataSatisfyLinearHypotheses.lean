@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.SecondCoordinateVectorMemSpan
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismApprox.SecondCoordinateVectorMemSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -149,7 +153,7 @@ theorem local_data_satisfy_linear_hypotheses : BridgeA := by
     refine ⟨p1 (PI.FinKW.psiV I v q), (adaptedProjection_psiV_mem_integers_of_mem_intAf I v _ p1 hp q hqI).1, ?_⟩
     rw [pr_vec, ← psiV_hA]
     have h2 := congrArg (fun y => p1 (PI.FinKW.psiV I v y)) hq
-    simp only [map_add, map_one, map_mul, map_natCast] at h2
+    simp only [map_add (f := _), map_one, map_mul, map_natCast] at h2
     exact h2
 
 end PI.UnitaryGroupMassFormula.ScXuExists.BrA

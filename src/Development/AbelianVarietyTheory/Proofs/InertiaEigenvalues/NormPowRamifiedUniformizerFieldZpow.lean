@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedKur
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModLocB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedKur
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModLocB
+
+@[expose] public section
 
 noncomputable section
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
@@ -103,15 +107,20 @@ theorem norm_pow_field (l : ℕ) [Fact l.Prime] (a e : ℕ) [NeZero a] [NeZero e
     simpa [h] using hi0 i (Finset.mem_univ _)
   have hpos : 0 < ‖t i0‖ := norm_pos_iff.2 ht0
   have hrest : ‖∑ i ∈ Finset.univ.erase i0, t i‖ < ‖t i0‖ := by
-    obtain ⟨i, hi, hle⟩ := IsUltrametricDist.exists_norm_finset_sum_le (Finset.univ.erase i0) t
-    rcases (Finset.univ.erase i0).eq_empty_or_nonempty with hs | hs
-    · rw [hs, Finset.sum_empty, norm_zero]; exact hpos
-    have him := hi hs
-    refine lt_of_le_of_lt hle ?_
-    by_cases hti : t i = 0
-    · rw [hti, norm_zero]; exact hpos
-    refine lt_of_le_of_ne (hi0 i (Finset.mem_univ _)) fun h => ?_
-    exact (Finset.mem_erase.1 him).1 (hdist i i0 hti ht0 h)
+    have hterm : ∀ i ∈ Finset.univ.erase i0, ‖t i‖ < ‖t i0‖ := by
+      intro i hi
+      by_cases hti : t i = 0
+      · rw [hti, norm_zero]; exact hpos
+      refine lt_of_le_of_ne (hi0 i (Finset.mem_univ _)) fun h => ?_
+      exact (Finset.mem_erase.1 hi).1 (hdist i i0 hti ht0 h)
+    generalize Finset.univ.erase i0 = s at hterm ⊢
+    induction s using Finset.induction_on with
+    | empty => simpa using hpos
+    | @insert i s hi ih =>
+      rw [Finset.sum_insert hi]
+      exact lt_of_le_of_lt (IsUltrametricDist.norm_add_le_max _ _)
+        (max_lt (hterm i (Finset.mem_insert_self _ _))
+          (ih (fun j hj => hterm j (Finset.mem_insert_of_mem hj))))
   have hy2 : ‖y‖ = ‖t i0‖ := by
     rw [hyt, ← Finset.add_sum_erase _ _ (Finset.mem_univ i0),
       IsUltrametricDist.norm_add_eq_max_of_norm_ne_norm hrest.ne', max_eq_left hrest.le]

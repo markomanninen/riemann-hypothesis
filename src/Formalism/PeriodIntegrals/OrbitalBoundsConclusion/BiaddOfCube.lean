@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.BiaddOfCube
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BiadditiveCubes.ConstantCoeffLogEqZero
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.BiaddOfCube
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BiadditiveCubes.ConstantCoeffLogEqZero
+
+@[expose] public section
 
 theorem biadditiveOfCube_holds : PI.BiaddOfCube.Target := by
   intro p _ l ex ph hex h hC

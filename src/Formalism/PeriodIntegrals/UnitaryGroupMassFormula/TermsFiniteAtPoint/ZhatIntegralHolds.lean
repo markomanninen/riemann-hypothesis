@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.ZhatRed
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SesquilinearRowSplitting.AdjointActionReduction
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.ZhatRed
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SesquilinearRowSplitting.AdjointActionReduction
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,11 +41,11 @@ theorem one_le_ddS_zpow (D : D7) (k : ℕ) :
         _ = 1 := one_mul 1
   have hne : ddS D ^ k ≠ 0 := pow_ne_zero _ (PI.SRW.ddS_ne D)
   rw [zpow_neg, zpow_natCast]
-  have := FractionalIdeal.inv_anti_mono hne one_ne_zero hk
+  have := FractionalIdeal.inv_anti_mono hne hk
   simpa using this
 
 theorem e_mem_of_XS (D : D7) {T : D.host.E} (Λ : Submodule (𝓞 D.host.E) (VS D).V)
-    (F : LFlag (VS D) D.R.rS T) (hX : XLam Λ F = XS D F.fl) (a : Fin D.R.rS) : F.fl.e a ∈ Λ := by
+    (F : LFlag (D.sp.Y 0) D.R.rS T) (hX : XLam Λ F = XS D F.fl) (a : Fin D.R.rS) : F.fl.e a ∈ Λ := by
   have hmem : F.fl.e a ∈ XS D F.fl := by
     refine Submodule.subset_span ⟨a, 1, ?_, by simp⟩
     have h := one_le_ddS_zpow D (D.R.rS - a)
@@ -54,7 +58,7 @@ theorem e_mem_of_XS (D : D7) {T : D.host.E} (Λ : Submodule (𝓞 D.host.E) (VS 
   exact hmem.1
 
 theorem frame_mem (D : D7) {T : D.host.E} (Λ : Submodule (𝓞 D.host.E) (VS D).V)
-    (F : LFlag (VS D) D.R.rS T) (hX : XLam Λ F = XS D F.fl) (hz : F.fl.z ∈ Λ) (a : Fin (D.R.rS + 1)) :
+    (F : LFlag (D.sp.Y 0) D.R.rS T) (hX : XLam Λ F = XS D F.fl) (hz : F.fl.z ∈ Λ) (a : Fin (D.R.rS + 1)) :
     frame F a ∈ Λ := by
   refine Fin.lastCases ?_ (fun i => ?_) a
   · simpa [frame, FlagG.fvec] using hz

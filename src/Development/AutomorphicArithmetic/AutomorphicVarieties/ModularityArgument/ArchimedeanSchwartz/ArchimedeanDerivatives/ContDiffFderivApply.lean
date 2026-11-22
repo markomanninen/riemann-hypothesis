@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ShiftOf
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumPermOfNotInjective
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TowerBaseChange
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ShiftOf
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumPermOfNotInjective
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TowerBaseChange
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,7 +61,7 @@ private theorem map_eDir (L : Lie K n →L[ℝ] ℂ) (τ : K →+* ℂ) (a b : F
     change (Matrix.single a b (atEmb τ z) : Matrix (Fin n) (Fin n) (Cinf K)) =
       z.re • Matrix.single a b (atEmb τ 1) + z.im • Matrix.single a b (atEmb τ Complex.I)
     rw [atEmb_eq τ z, Matrix.single_add, ← Matrix.smul_single, ← Matrix.smul_single]
-  rw [h, map_add, map_smul, map_smul, Complex.real_smul, Complex.real_smul]
+  rw [h, map_add (f := _), map_smul, map_smul, Complex.real_smul, Complex.real_smul]
 
 private theorem pd_eq (τ : K →+* ℂ) (i j : Fin n) (F : Lie K n → ℂ) (x : Lie K n) :
     pd τ i j F x = (1 / 2 : ℂ) * (fderiv ℝ F x (eDir τ i j 1) - Complex.I * fderiv ℝ F x (eDir τ i j Complex.I)) := rfl
@@ -68,7 +72,8 @@ private theorem rd_eq (τ : K →+* ℂ) (i j : Fin n) (F : Lie K n → ℂ) (x 
 
 private theorem rd_eq_sum (τ : K →+* ℂ) (a b : Fin n) (F : Lie K n → ℂ) (y : Lie K n) :
     rd τ a b F y = ∑ k, coordC τ k a y * pd τ k b F y := by
-  rw [rd_eq, rmul_eDir, rmul_eDir, map_sum, map_sum, Finset.mul_sum, ← Finset.sum_sub_distrib, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [rd_eq, rmul_eDir, rmul_eDir, map_sum, map_sum, Finset.mul_sum, ← Finset.sum_sub_distrib, Finset.mul_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [pd_eq, coordC_apply, map_eDir _ τ k b (_ * 1), map_eDir _ τ k b (_ * Complex.I)]
   generalize coord τ (y k a) = c
@@ -111,8 +116,6 @@ private def dirOp (w : Lie K n) : Module.End ℂ (Smth K n) where
 private def dOp (τ : K →+* ℂ) (a b : Fin n) : Module.End ℂ (Smth K n) :=
   (1 / 2 : ℂ) • (dirOp (eDir τ a b 1) - Complex.I • dirOp (eDir τ a b Complex.I))
 
-private theorem dOp_val (τ : K →+* ℂ) (a b : Fin n) (F : Smth K n) : (dOp τ a b F).1 = pd τ a b F.1 := rfl
-
 private theorem fderiv_fderiv_apply {F : Lie K n → ℂ} (hF : ContDiff ℝ ∞ F) (x u w : Lie K n) :
     fderiv ℝ (fun y => fderiv ℝ F y w) x u = fderiv ℝ (fderiv ℝ F) x u w := by
   have hd : DifferentiableAt ℝ (fderiv ℝ F) x :=
@@ -129,7 +132,7 @@ private theorem dir_comm (u w : Lie K n) : Commute (dirOp u) (dirOp w) := by
   refine LinearMap.ext fun F => Subtype.ext (funext fun y => ?_)
   change fderiv ℝ (fun z => fderiv ℝ F.1 z w) y u = fderiv ℝ (fun z => fderiv ℝ F.1 z u) y w
   rw [fderiv_fderiv_apply (cd_of F), fderiv_fderiv_apply (cd_of F)]
-  exact ((cd_of F).contDiffAt.isSymmSndFDerivAt (by simp; exact WithTop.coe_le_coe.2 le_top)) _ _
+  exact ((cd_of F).contDiffAt.isSymmSndFDerivAt (by simp)) _ _
 
 private theorem d_comm (τ : K →+* ℂ) (a b c e : Fin n) : Commute (dOp τ a b) (dOp τ c e) := by
   have h : ∀ u : Lie K n, Commute (dirOp u) (dOp τ c e) := fun u =>

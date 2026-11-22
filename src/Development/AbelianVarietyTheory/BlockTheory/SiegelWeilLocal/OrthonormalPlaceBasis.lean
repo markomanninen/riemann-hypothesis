@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.MemUnitaryGroupIffMulConjTranspose
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.MemUnitaryGroupIffMulConjTranspose
+
+@[expose] public section
 
 open NumberField Matrix
 
@@ -39,8 +43,8 @@ variable (B : RowsAut)
 
 abbrev gInf : Type := ∀ v : InfinitePlace B.I.F, gLie (B.I.ε v)
 
-open Classical in
 
+open Classical in
 def atPlace (v : InfinitePlace B.I.F) (X : gLie (B.I.ε v)) : gInf B := Pi.single v X
 
 def orbit (E : gInf B) (w : B.Hs) (t : ℝ) : B.Hs := B.σs (fun v => expU (t • E v)) w
@@ -69,19 +73,15 @@ def StepBoundAt (b : ℝ) (P : ℕ) : Prop :=
     ‖dAct B E w‖ ≤ Real.sqrt B.I.f * Real.sqrt (∑ v, Formalism.REAL.hs (E v).1) * beP B.I.n b P * ‖w‖) ∧
   ∀ (E : gInf B), ∀ w ∈ VP B P, dAct B E w ∈ VP B (P + 1)
 
-def StepBound : Prop :=
-  ∀ (B : RowsAut) (d : InfinitePlace B.I.F → ℝ) (b : ℝ), GlobalTheory.Count.IsDSData B d →
-    (∀ v a, |B.lam v a| ≤ b ^ 2) → ∀ P : ℕ, StepBoundAt B b P
-
 open NumberField Matrix in
 variable (B : _root_.Formalism.MainNotions.S.RowsAut) in
 theorem _root_.GlobalTheory.IndefiniteRowSideFullHecke.OrthonormalPlaceBasis.stepSpan_mono {P Q : ℕ} (h : P ≤ Q) :
     _root_.GlobalTheory.IndefiniteRowSideFullHecke.OrthonormalPlaceBasis.VP B P ≤ _root_.GlobalTheory.IndefiniteRowSideFullHecke.OrthonormalPlaceBasis.VP B Q :=
   Submodule.span_mono fun _ ⟨l, u, hl, hu, hy⟩ => ⟨l, u, hl.trans h, hu, hy⟩
 
+
 open NumberField Matrix in
 variable (B : _root_.Formalism.MainNotions.S.RowsAut) in
-
 theorem _root_.GlobalTheory.IndefiniteRowSideFullHecke.OrthonormalPlaceBasis.tens_w_mem {d : InfinitePlace B.I.F → ℝ}
     (h : _root_.GlobalTheory.Count.IsDSData B d) (P : ℕ) :
     B.tens B.w ∈ _root_.GlobalTheory.IndefiniteRowSideFullHecke.OrthonormalPlaceBasis.VP B P ∧ ‖B.tens B.w‖ = 1 := by
@@ -102,26 +102,5 @@ theorem _root_.GlobalTheory.IndefiniteRowSideFullHecke.OrthonormalPlaceBasis.ten
   have hsq : ‖B.tens B.w‖ ^ 2 = 1 := by
     rw [← inner_self_eq_norm_sq (𝕜 := ℂ), hinner, RCLike.one_re]
   exact (pow_eq_one_iff_of_nonneg (norm_nonneg _) two_ne_zero).1 hsq
-
-example (ε : Fin 1 → Bool) : ∃ E : Fin 1 → gLie ε, IsONBasis E := by
-  have hm : ∀ t : ℝ, Formalism.REAL.inG ε (!![(t : ℂ) * Complex.I]) := by
-    intro t
-    ext i j
-    fin_cases i; fin_cases j
-    by_cases h : ε 0 = true <;> simp [Formalism.REAL.Jm, Matrix.mul_apply, h]
-  refine ⟨fun _ => ⟨!![((1 : ℝ) : ℂ) * Complex.I], hm 1⟩, ?_, ?_⟩
-  · intro i j
-    fin_cases i; fin_cases j
-    simp [Matrix.trace, Matrix.vecMul, dotProduct]
-  · rw [eq_top_iff]
-    rintro ⟨X, hX⟩ -
-    have h0 : (X 0 0).re = 0 := by
-      have := congrArg Complex.re (congrFun (congrFun hX 0) 0)
-      by_cases h : ε 0 = true <;> simp [Formalism.REAL.Jm, Matrix.mul_apply, h] at this <;> linarith
-    rw [Submodule.mem_span_range_iff_exists_fun]
-    refine ⟨fun _ => (X 0 0).im, ?_⟩
-    ext i j
-    fin_cases i; fin_cases j
-    simp [Complex.ext_iff, h0]
 
 end GlobalTheory.IndefiniteRowSideFullHecke.OrthonormalPlaceBasis

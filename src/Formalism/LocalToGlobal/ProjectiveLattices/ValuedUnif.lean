@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.RealPt
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.SecPtRed
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,10 +71,10 @@ def kapA : Kp (xplus X E hM) la G.N →+* T.Fr :=
   (phiAt ζ T.Fr ι h hι).comp (algebraMap (Kp (xplus X E hM) la G.N) (OsK (xplus X E hM) la G.w))
 
 theorem kapA_Op (y : Op (xplus X E hM) la G.N) :
-    kapA h ζ T ι hι (algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) y) =
+    kapA h ζ T ι hι (@algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) _ _ _ y) =
       algebraMap T.V T.Fr (ι (algebraMap (Op (xplus X E hM) la G.N) (Loc ζ) y)) := by
   show phiAt ζ T.Fr ι h hι (algebraMap (Kp (xplus X E hM) la G.N) (OsK (xplus X E hM) la G.w)
-    (algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) y)) = _
+    (@algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) _ _ _ y)) = _
   rw [← IsScalarTower.algebraMap_apply (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) (OsK (xplus X E hM) la G.w)]
   have e : algebraMap (Op (xplus X E hM) la G.N) (OsK (xplus X E hM) la G.w) y =
       ((algebraMap (Op (xplus X E hM) la G.N) ↥(As (Op (xplus X E hM) la G.N) (OsK (xplus X E hM) la G.w)) y :
@@ -84,7 +88,7 @@ theorem unifO_irr : Irreducible (unifO (xplus X E hM) la G.N) :=
   Op.irreducible_map _ _ _ (Classical.choose_spec (IsDiscreteValuationRing.exists_irreducible ((xplus X E hM).Ol la)))
 
 theorem vV_kapA_Op (y : Op (xplus X E hM) la G.N) (k : ℕ) (hk : IsDiscreteValuationRing.addVal _ y = k) :
-    vV T.V (kapA h ζ T ι hι (algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) y)) =
+    vV T.V (kapA h ζ T ι hι (@algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) _ _ _ y)) =
       ((ep (unifO (xplus X E hM) la G.N) ζ * k : ℕ) : ℤ) := by
   have hϖ := unifO_irr (E := E) (hM := hM) (G := G) (la := la)
   have hy : y ≠ 0 := by
@@ -128,7 +132,7 @@ theorem overLa_kapA : OverLa la T.V ((kapA h ζ T ι hι).comp ((algebraMap ((xp
         rw [IsUnit.unit_spec]; rfl
       erw [e, IsDiscreteValuationRing.addVal_def' _ (unifO_irr (E := E) (hM := hM) (G := G) (la := la)) n]
       exact hm.symm
-    have e1 : io (algebraMap (𝓞 B.KO) B.KO x) = kapA h ζ T ι hι (algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N)
+    have e1 : io (algebraMap (𝓞 B.KO) B.KO x) = kapA h ζ T ι hι (@algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) _ _ _
         (algebraMap ((xplus X E hM).Ol la) (Op (xplus X E hM) la G.N) o)) := by
       show kapA h ζ T ι hι (algebraMap ((xplus X E hM).Kl la) (Kp (xplus X E hM) la G.N) ((o : (xplus X E hM).Ol la) : (xplus X E hM).Kl la)) = _
       rw [show ((o : (xplus X E hM).Ol la) : (xplus X E hM).Kl la) = algebraMap ((xplus X E hM).Ol la) ((xplus X E hM).Kl la) o from rfl,

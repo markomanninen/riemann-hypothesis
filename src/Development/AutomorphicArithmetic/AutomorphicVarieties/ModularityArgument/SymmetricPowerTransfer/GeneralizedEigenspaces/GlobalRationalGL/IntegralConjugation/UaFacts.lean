@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.EStar
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.OpenLevelSubgroups.SecSpec
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceUnitaryLocalPointsEquivGL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemKGLIffVal
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RingEquivPlaceCorrespondencePlaceUnder
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.EStar
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.OpenLevelSubgroups.SecSpec
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceUnitaryLocalPointsEquivGL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemKGLIffVal
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RingEquivPlaceCorrespondencePlaceUnder
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.SplitWeil Formalism.BasicNotions Matrix
 open UpperTheory.V UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Dict UpperTheory.V.Z.Sym.Dict.Br UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob
@@ -43,7 +47,7 @@ private theorem inf_of_cLoc {k : UA L n} (h : ∀ u : Plc L, cLoc u k = 1) : k �
 private noncomputable def fp (x : UA L n) : UA L n :=
   ⟨finGL L n (GeneralLinearGroup.map (pFin L) x.1), finGL_mem_UA _ fun u => comp_eq x u⟩
 
-private theorem fp_fin (x : UA L n) : fp x ∈ finU L n := pInf_finGL _
+private theorem fp_fin (x : UA L n) : fp x ∈ finU (E := L) (n := n) := pInf_finGL _
 
 private theorem cLoc_fp (u : Plc L) (x : UA L n) : cLoc u (fp x) = cLoc u x :=
   (cLoc_finGL u _ _).trans (cLoc_eq u x).symm
@@ -58,7 +62,7 @@ private theorem under_iff (w u : Plc L) : un u = un w ↔ u = w ∨ u = conjSrc 
   · rfl
   · exact (key _).2 (Or.inr (conjPl_self_conjSrc w))
 
-private theorem cut (w : Plc L) (x : UA L n) (hx : x ∈ finU L n) :
+private theorem cut (w : Plc L) (x : UA L n) (hx : x ∈ finU (E := L) (n := n)) :
     ∃ a ∈ locU n w, ∀ u, un u = un w → cLoc u a = cLoc u x := by
   classical
   set T : Finset (Plc L) := {w, conjSrc (conjE L) w} with hT
@@ -89,8 +93,8 @@ private theorem cut (w : Plc L) (x : UA L n) (hx : x ∈ finU L n) :
   · rw [hc, if_neg (fun h => hu ((memT u).1 h))]
   · rw [hc, if_pos ((memT u).2 hu)]
 
-private theorem K_conj (x : UA L n) (u : Plc L) (h : cLoc (conjSrc (conjE L) u) x ∈ GlobalTheory.LFun.KGL (conjSrc (conjE L) u) n) :
-    cLoc u x ∈ GlobalTheory.LFun.KGL u n := by
+private theorem K_conj (x : UA L n) (u : Plc L) (h : cLoc (conjSrc (conjE L) u) x ∈ GlobalTheory.LFun.KGL (conjSrc (conjE L) u) (n := n)) :
+    cLoc u x ∈ GlobalTheory.LFun.KGL u (n := n) := by
   have hv := (GlobalTheory.EulerTwKU.mem_KGL_iff_val _).1 h
   set g := cLoc (conjSrc (conjE L) u) x with hg
   set c := conjLoc (conjE L) u with hc

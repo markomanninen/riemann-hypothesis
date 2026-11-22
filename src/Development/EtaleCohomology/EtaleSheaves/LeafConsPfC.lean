@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafConsPfB
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafConsPfB
+
+@[expose] public section
 
 namespace LateralTheory.E.LeafConsPfC
 

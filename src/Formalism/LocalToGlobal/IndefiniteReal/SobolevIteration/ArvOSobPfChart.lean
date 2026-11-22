@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.HasStrictFDerivAtOneProd
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.HasStrictFDerivAtOneProd
+
+@[expose] public section
 
 noncomputable section
 

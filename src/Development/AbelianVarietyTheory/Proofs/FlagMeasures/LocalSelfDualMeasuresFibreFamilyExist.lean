@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.LocVol
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.Volumes
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.SiegelWeilNarrowOfWide
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.Assembly
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsTupleGramDetNeZero
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.LocVol
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.Volumes
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.SiegelWeilNarrowOfWide
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.Assembly
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsTupleGramDetNeZero
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.SG.Sub Formalism.L2.SG.Measures
 open scoped TensorProduct ENNReal
@@ -27,17 +31,17 @@ theorem dX_dT_omFam :
   have hH : ∃ ν, SdHerm F E σ (Fv F v) (psiV F ψ v) a ν := ⟨_, hνv v⟩
   have hdX : SdW F E σ n J (Fv F v) (psiV F ψ v) a (Formalism.L2.SG.LocVol.dX σ J ψ v a) := by
     unfold Formalism.L2.SG.LocVol.dX
-    rw [dif_pos hX]
+    rw [dite_eq_left hX]
     exact hX.choose_spec
   have hdT : SdHerm F E σ (Fv F v) (psiV F ψ v) a (Formalism.L2.SG.LocVol.dT σ ψ v a) := by
     unfold Formalism.L2.SG.LocVol.dT
-    rw [dif_pos hH]
+    rw [dite_eq_left hH]
     exact hH.choose_spec
   have hO : ∃ fib, Formalism.L2.SG.LocVol.IsOm σ J ψ v a fib :=
     hV F E σ hE n J hJ ha hc a ha1 ha2 X0 hT hdet ψ hψ v _ hdX _ hdT
   refine ⟨hdX.1, hdT.1, ?_⟩
   unfold Formalism.L2.SG.LocVol.omFam
-  rw [dif_pos hO]
+  rw [dite_eq_left hO]
   exact hO.choose_spec
 
 end GlobalTheory.LocalFibre

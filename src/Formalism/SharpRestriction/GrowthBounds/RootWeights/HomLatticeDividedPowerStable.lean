@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightProjectionPreservesLattice
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightProjectionPreservesLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,8 @@ theorem homLattice_binomial_stable [CharZero (KK O)] [FiniteDimensional (KK O) W
     simp only [LinearMap.sum_apply, LinearMap.comp_apply]
     have : ∀ mu' ∈ s', ∑ mu ∈ s, π' mu' (f (π mu x)) = π' mu' (f x) := by
       intro mu' _
-      rw [← map_sum, ← map_sum, h5]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, ← map_sum, h5]
     rw [Finset.sum_congr rfl this, h5']
   have hwt : ∀ mu' mu, (π' mu' ∘ₗ f ∘ₗ π mu) ∈ weightSp (homRepresentation (restrictRepresentation E L hL) E) (mu' - mu) := by
     intro mu' mu
@@ -51,9 +56,11 @@ theorem homLattice_binomial_stable [CharZero (KK O)] [FiniteDimensional (KK O) W
       rw [this]
       exact weightProjection_preserves_lattice E hE M hM mu (π' mu) (h1' mu) _ hx
     exact weightProjection_preserves_lattice E hE M hM mu' (π' mu') (h1' mu') _ (hf _ hx1)
-  rw [hdec, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hdec, map_sum]
   refine Submodule.sum_mem _ fun mu' _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Submodule.sum_mem _ fun mu _ => ?_
   rw [binomial_diagonal_apply_weight _ a (mu' - mu) _ (hwt mu' mu) k]
   exact int_smul_mem_lattice _ _ (hmem mu' mu)
@@ -72,7 +79,8 @@ theorem mem_homLattice_iff_basis (M : Submodule O W) (L : Submodule (KK O) W) {d
     have hx' : x = ∑ i, b.coord i x • b i := by
       simp only [Module.Basis.coord_apply]
       exact (b.sum_repr x).symm
-    rw [hx', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx', map_sum]
     refine M.sum_mem fun i _ => ?_
     rw [map_smul, ho i, algebraMap_smul]
     exact M.smul_mem (o i) (hf i)

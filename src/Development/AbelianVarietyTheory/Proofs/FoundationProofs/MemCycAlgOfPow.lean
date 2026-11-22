@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTLawAt
-import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
-import Development.AbelianVarietyTheory.Definitions.Foundations.CosetTrace
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsTrDataGaussianIntOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTLawAt
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CosetTrace
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsTrDataGaussianIntOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ def fixA (A : ValuationSubring Ω) : Subring A where
   zero_mem' := fun s _ => by simp
   add_mem' := fun {a b} ha hb s hs => by
     show s ((a : Ω) + (b : Ω)) = (a : Ω) + (b : Ω)
-    rw [map_add, ha s hs, hb s hs]
+    rw [map_add (f := _), ha s hs, hb s hs]
   neg_mem' := fun {a} ha s hs => by
     show s (-(a : Ω)) = -(a : Ω)
     rw [map_neg, ha s hs]
@@ -45,8 +49,8 @@ theorem mem_ineCyc {l : ℕ} [Fact l.Prime] {A : ValuationSubring Ω} {s : G ℚ
 
 abbrev FracA (A : ValuationSubring Ω) : Type := Ω ⧸ LinearMap.range (Algebra.linearMap A Ω)
 
-omit [Algebra ℚ Ω] in
 
+omit [Algebra ℚ Ω] in
 theorem mem_of_pow_mem (A : ValuationSubring Ω) {x : Ω} {n : ℕ} (hn : n ≠ 0)
     (h : x ^ n ∈ A) : x ∈ A := by
   rw [← A.valuation_le_one_iff] at h ⊢

@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFShiftZeroIff
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HasSumLocallyUniformlyOnTerm
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.EqZeroOfForallExistsLsumETwoPi
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFShiftZeroIff
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HasSumLocallyUniformlyOnTerm
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.EqZeroOfForallExistsLsumETwoPi
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,8 @@ theorem exists_coeff_mem_subfield {k L V ι : Type*} [Field k] [Field L] [Algebr
   refine ⟨fun i => π (r i), fun i => (π (r i)).2, fun v => ?_⟩
   have h1 : π (f v) = ⟨f v, hf v⟩ := LinearMap.congr_fun hπ ⟨f v, hf v⟩
   have h2 : π (f v) = ∑ i, π (r i) * ⟨g i v, hg i v⟩ := by
-    rw [h v, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h v, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     have : r i * g i v = (⟨g i v, hg i v⟩ : K) • r i := by
       rw [mul_comm]; rfl

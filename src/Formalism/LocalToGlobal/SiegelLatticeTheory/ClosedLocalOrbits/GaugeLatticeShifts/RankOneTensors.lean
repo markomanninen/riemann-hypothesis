@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.InfCut
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.InfCut
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,8 +84,8 @@ variable {ι : Type*} [Fintype ι] {G : ι → Type*} [∀ v, Group (G v)] [∀ 
   (Wt : (∀ v, G v) → Vt) (Wt' : (∀ v, G v) → Vt') (hWt : Continuous Wt) (hWt' : Continuous Wt')
   (hten : ∀ x, Wt x = T fun v => W v (x v)) (hten' : ∀ x, Wt' x = T' fun v => W' v (x v))
 
-include hT hT' hS hW hW' hWt hWt' hten hten' in
 
+include hT hT' hS hW hW' hWt hWt' hten hten' in
 theorem oo_factor (γ : ∀ v, G v) (y : ∀ v, V' v) :
     haveI : ∀ v, CompleteSpace (V v) := fun v => FiniteDimensional.complete ℂ (V v)
     haveI := FiniteDimensional.complete ℂ Vt

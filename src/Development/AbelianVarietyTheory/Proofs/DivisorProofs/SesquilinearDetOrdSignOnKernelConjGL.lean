@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CTUnitsLeft
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CTUnitsLeft
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.UnitaryClasses
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -14,7 +19,7 @@ theorem ordL_mul_of_ne [Valued K (WithZero (Multiplicative ℤ))] {x y : K} (hx 
   have hy' : Valued.v y ≠ 0 := (Valuation.ne_zero_iff _).2 hy
   have hxy' : Valued.v (x * y) ≠ 0 := (Valuation.ne_zero_iff _).2 (mul_ne_zero hx hy)
   unfold ordL
-  rw [dif_neg hx', dif_neg hy', dif_neg hxy']
+  rw [dite_eq_right hx', dite_eq_right hy', dite_eq_right hxy']
   have : WithZero.unzero hxy' = WithZero.unzero hx' * WithZero.unzero hy' := by
     apply WithZero.coe_injective
     rw [WithZero.coe_unzero, WithZero.coe_mul, WithZero.coe_unzero, WithZero.coe_unzero, Valuation.map_mul]

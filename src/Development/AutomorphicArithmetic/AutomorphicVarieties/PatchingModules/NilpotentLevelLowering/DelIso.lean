@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.ActUVariableEqPow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwIwQuot
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.ActUVariableEqPow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwIwQuot
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.N ValuativeRel IsLocalRing
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil
@@ -33,8 +37,10 @@ private theorem di_card (l : ℕ) [hl : Fact l.Prime] (G : Type) [CommGroup G] [
   obtain ⟨k, hk⟩ := hQ.exists_card_eq
   have hpos : Nat.card (ellC l G) ≠ 0 := Nat.card_pos.ne'
   rw [hk, Subgroup.card_eq_card_quotient_mul_card_subgroup (ellC l G), hk,
-    padicValNat.mul (pow_ne_zero _ hl'.ne_zero) hpos, padicValNat.prime_pow,
-    padicValNat.eq_zero_of_not_dvd hC, add_zero]
+    (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (pow_ne_zero _ hl'.ne_zero) hpos, (show padicValNat l (l ^ k) = k from by
+      simpa only [← Nat.padicValNat_def] using Nat.multiplicity_prime_pow (p := l) k),
+    (show padicValNat l (Nat.card (ellC l G)) = 0 from by
+      simpa only [← Nat.padicValNat_def] using multiplicity_eq_zero_of_not_dvd hC), add_zero]
 
 private theorem di_cyc (l : ℕ) [Fact l.Prime] (G : Type) [CommGroup G] [Finite G] (x : G)
     (hx : Subgroup.zpowers x ⊔ ellC l G = ⊤) (a : ℕ) (ha : a = padicValNat l (Nat.card G)) :

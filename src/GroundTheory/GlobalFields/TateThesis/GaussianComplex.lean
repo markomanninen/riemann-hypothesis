@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.Gaussian
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.Gaussian
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

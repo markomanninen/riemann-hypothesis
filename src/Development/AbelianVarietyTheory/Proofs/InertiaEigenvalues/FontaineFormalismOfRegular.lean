@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FontaineFormalismTensorEquiv
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinExt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BdRPlusIsDomainBdRIsField
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearIndepOnOfFixed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FontaineFormalismTensorEquiv
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinExt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BdRPlusIsDomainBdRIsField
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearIndepOnOfFixed
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,14 +61,14 @@ theorem sig_smul (ρ : Representation LL G V) (g : G) (b : B) (w : B ⊗[Qp] V) 
   induction w using TensorProduct.induction_on with
   | zero => simp
   | tmul c v => simp [sig_tmul, TensorProduct.smul_tmul']
-  | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+  | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
 
 theorem comm_sig (ρ : Representation LL G V) (g : G) (w : B ⊗[Qp] V) :
     TensorProduct.comm Qp B V (sig PD ρ g w) = actVB PD ρ g (TensorProduct.comm Qp B V w) := by
   induction w using TensorProduct.induction_on with
   | zero => simp
   | tmul c v => simp [sig_tmul, actVB]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem mem_DcrisK₀ (ρ : Representation LL G V) (w : B ⊗[Qp] V) :
     w ∈ DcrisK₀ PD ρ ↔ ∀ g, sig PD ρ g w = w := by
@@ -164,7 +168,8 @@ theorem span_eq_top_of_invariant (hu : LineUnit PD) [FiniteDimensional Qp V] (ρ
     ext j
     have := congrFun hc0 j
     simp only [Matrix.mulVec, dotProduct, A, Basis.toMatrix_apply, Pi.zero_apply] at this
-    simp only [map_sum, map_smul, Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Finset.sum_apply', Finsupp.smul_apply,
       smul_eq_mul, map_zero, Finsupp.zero_apply]
     rw [← this]
     exact Finset.sum_congr rfl fun k _ => mul_comm _ _
@@ -172,7 +177,8 @@ theorem span_eq_top_of_invariant (hu : LineUnit PD) [FiniteDimensional Qp V] (ρ
       ∑ j, algebraMap Qp B (v.repr (ρ g (v j)) k) * PD.actB g (e.repr w j) := by
     intro g w k
     conv_lhs => rw [← e.sum_repr w]
-    simp only [map_sum, sig_smul, map_smul, Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, sig_smul, map_smul, Finset.sum_apply', Finsupp.smul_apply,
       smul_eq_mul]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [mul_comm]
@@ -223,8 +229,8 @@ theorem comparison_bijective (hf : FracInv PD) (hu : LineUnit PD) [FiniteDimensi
   rw [← LinearMap.range_eq_top, comparison, LinearMap.range_liftBaseChange, Submodule.range_subtype,
     (isCrys_iff_span PD hf hu ρ).1 h]
 
-omit [IsDomain B] in
 
+omit [IsDomain B] in
 theorem baseChange_mem {ρ : Representation LL G V} {ρ' : Representation LL G V'} {f : V →ₗ[LL] V'}
     (hf : IsEquivariant ρ ρ' f) (x : B ⊗[Qp] V) (hx : x ∈ DcrisK₀ PD ρ) :
     (f.restrictScalars Qp).baseChange B x ∈ DcrisK₀ PD ρ' := by
@@ -234,7 +240,7 @@ theorem baseChange_mem {ρ : Representation LL G V} {ρ' : Representation LL G V
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul v b => simp [sig_tmul, hf g]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   rw [mem_DcrisK₀] at hx ⊢
   intro g
   rw [← hm, hx]
@@ -285,20 +291,20 @@ theorem tensorCrys (hf : FracInv PD) (hu : LineUnit PD) : TensorCrys PD LL := by
   rw [isCrys_iff_span PD hf hu]
   set S := Submodule.span B (DcrisK₀ PD (ρ.tprod ρ') : Set (B ⊗[Qp] (V ⊗[LL] V')))
   let c := (TensorProduct.comm Qp B (V ⊗[LL] V')).symm
-  have hcm : ∀ (b : B) z, c (mB LL b z) = b • c z := fun b z => by
+  have hcm : ∀ (b : B) z, c (mB (LL := LL) b z) = b • c z := fun b z => by
     apply (TensorProduct.comm Qp B (V ⊗[LL] V')).injective
     rw [comm_smulB (LL := LL), LinearEquiv.apply_symm_apply, LinearEquiv.apply_symm_apply]
   have key : ∀ (x : V ⊗[Qp] B) (y : V' ⊗[Qp] B), c (prodB (LL := LL) (x ⊗ₜ[LL] y)) ∈ S := by
     intro x y
     induction x using cmp_ind PD hc with
     | h0 => simp
-    | hadd x x' hx hx' => rw [add_tmul, map_add, map_add]; exact S.add_mem hx hx'
+    | hadd x x' hx hx' => rw [add_tmul, map_add (f := _), map_add (f := _)]; exact S.add_mem hx hx'
     | hb b d =>
       rw [prod_mB_left, hcm]
       refine S.smul_mem _ ?_
       induction y using cmp_ind PD hc' with
       | h0 => simp
-      | hadd x x' hx hx' => rw [tmul_add, map_add, map_add]; exact S.add_mem hx hx'
+      | hadd x x' hx hx' => rw [tmul_add, map_add (f := _), map_add (f := _)]; exact S.add_mem hx hx'
       | hb b' d' =>
         rw [prod_mB_right, hcm]
         refine S.smul_mem _ (Submodule.subset_span ?_)
@@ -314,8 +320,8 @@ theorem tensorCrys (hf : FracInv PD) (hu : LineUnit PD) : TensorCrys PD LL := by
     rw [prodB_tmul, mul_one] at this
     exact this
 
-omit [IsDomain B] in
 
+omit [IsDomain B] in
 theorem exists_dual_equiv (V : Type) [AddCommGroup V] [Module LL V] [Module Qp V] [IsScalarTower Qp LL V]
     [FiniteDimensional LL V] : ∃ (lam : LL →ₗ[Qp] Qp) (e : Dual LL V ≃ₗ[Qp] Dual Qp V),
       ∀ f v, e f v = lam (f v) := by
@@ -327,7 +333,7 @@ theorem exists_dual_equiv (V : Type) [AddCommGroup V] [Module LL V] [Module Qp V
       map_add' := fun f f' => by ext; simp
       map_smul' := fun c f => by ext; simp }
   have hφ : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro f h0
     by_contra hne
     apply hlam
@@ -355,11 +361,11 @@ theorem dualCrys (hf : FracInv PD) (hu : LineUnit PD) : DualCrys PD LL := by
     intro g x y
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add a a' ha ha' => simp only [map_add, LinearMap.add_apply, ha, ha']
+    | add a a' ha ha' => simp only [map_add (f := _), LinearMap.add_apply, ha, ha']
     | tmul b f =>
       induction y using TensorProduct.induction_on with
       | zero => simp
-      | add a a' ha ha' => simp only [map_add, ha, ha']
+      | add a a' ha ha' => simp only [map_add (f := _), ha, ha']
       | tmul c v =>
         rw [sig_tmul, sig_tmul, hΦ, hΦ, map_mul, map_mul, IsScalarTower.algebraMap_apply Qp K₀ B (lam (f v)),
           AlgEquiv.commutes, ← IsScalarTower.algebraMap_apply]
@@ -391,11 +397,11 @@ theorem tensorB_eq (f : V →ₗ[LL] V') (x : V ⊗[Qp] B) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [tensorB]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
+
 
 omit [IsDomain B] [FiniteDimensional Qp LL] in
 variable {LL} in
-
 theorem left_exact {V₀ : Type} [AddCommGroup V₀] [Module LL V₀] [Module Qp V₀] [IsScalarTower Qp LL V₀]
     {ρ₀ : Representation LL G V₀} {ρ : Representation LL G V} {ρ' : Representation LL G V'}
     {i : V₀ →ₗ[LL] V} {p : V →ₗ[LL] V'} (hi : IsEquivariant ρ₀ ρ i) (hp : IsEquivariant ρ ρ' p)
@@ -415,7 +421,7 @@ theorem left_exact {V₀ : Type} [AddCommGroup V₀] [Module LL V₀] [Module Qp
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul v b => simp [actVB, hi g]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   refine ⟨fun x y h => Subtype.ext (hinj ?_), fun x => ⟨fun h => ?_, ?_⟩⟩
   · rw [← hci, ← hci, h]
   · obtain ⟨y, hy⟩ := (hex x).1 (by rw [← hcp, h]; rfl)
@@ -463,8 +469,8 @@ theorem dcrisExact (hf : FracInv PD) : DcrisExact PD LL := by
   rw [← h5, mul_add] at c₁
   omega
 
-omit [FiniteDimensional Qp LL] in
 
+omit [FiniteDimensional Qp LL] in
 theorem exists_pow_sigma (hc : Nat.card (K₀ →ₐ[Qp] LL) = finrank Qp K₀) (τ τ' : K₀ →ₐ[Qp] LL) :
     ∃ n : ℕ, ∀ c, τ' c = τ (PD.σ^[n] c) := by
   haveI := PD.finK₀
@@ -490,9 +496,9 @@ theorem exists_pow_sigma (hc : Nat.card (K₀ →ₐ[Qp] LL) = finrank Qp K₀) 
   rw [AlgEquiv.coe_pow]
   rfl
 
+
 omit [IsDomain B] [FiniteDimensional Qp LL] in
 variable {LL} in
-
 theorem letter_le (ρ : Representation LL G V) [Module.Finite LL ↥(Dcris PD ρ)] (τ τ' : K₀ →ₐ[Qp] LL)
     (h : ∀ c, τ' c = τ (PD.σ c)) : finrank LL ↥(DcrisL PD ρ τ') ≤ finrank LL ↥(DcrisL PD ρ τ) := by
   haveI : Module.Finite LL ↥(DcrisL PD ρ τ) := Submodule.finiteDimensional_of_le inf_le_left
@@ -501,14 +507,14 @@ theorem letter_le (ρ : Representation LL G V) [Module.Finite LL ↥(Dcris PD ρ
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul v b => simp [actVB, φVB, PD.φ_comm]
-    | add a b ha hb => simp only [map_add, ha, hb]
-  have h2 : ∀ (c : K₀) (x : V ⊗[Qp] B), φVB PD (LL := LL) (mB LL (algebraMap K₀ B c) x) =
-      mB LL (algebraMap K₀ B (PD.σ c)) (φVB PD (LL := LL) x) := by
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
+  have h2 : ∀ (c : K₀) (x : V ⊗[Qp] B), φVB PD (LL := LL) (mB (LL := LL) (algebraMap K₀ B c) x) =
+      mB (LL := LL) (algebraMap K₀ B (PD.σ c)) (φVB PD (LL := LL) x) := by
     intro c x
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul v b => simp [mB, φVB, PD.φ_K₀]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have h3 : ∀ x ∈ DcrisL PD ρ τ', φVB PD (LL := LL) x ∈ DcrisL PD ρ τ := by
     intro x hx
     rw [mem_DcrisL, mem_Dcris] at hx ⊢
@@ -520,9 +526,9 @@ theorem letter_le (ρ : Representation LL G V) [Module.Finite LL ↥(Dcris PD ρ
   exact LinearMap.finrank_le_finrank_of_injective (f := (φVB PD (LL := LL)).restrict h3)
     fun x y hxy => Subtype.ext (h4 (congrArg Subtype.val hxy))
 
+
 omit [IsDomain B] [FiniteDimensional Qp LL] in
 variable {LL} in
-
 theorem finrank_eq_sum_letters [FiniteDimensional Qp K₀] [Fintype (K₀ →ₐ[Qp] LL)]
     (hc : Fintype.card (K₀ →ₐ[Qp] LL) = finrank Qp K₀) {M : Type} [AddCommGroup M] [Module LL M]
     (m : K₀ → M →ₗ[LL] M) (hadd : ∀ a b x, m (a + b) x = m a x + m b x)
@@ -555,14 +561,16 @@ theorem finrank_eq_sum_letters [FiniteDimensional Qp K₀] [Fintype (K₀ →ₐ
     intro c x
     let f : K₀ →+ M := AddMonoidHom.mk' (fun a => m a x) fun a b => hadd a b x
     change f c = _
-    conv_lhs => rw [← v.sum_repr c, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← v.sum_repr c, map_sum]
     rw [hμ]
     refine Finset.sum_congr rfl fun i _ => ?_
     change m _ x = _
     rw [Algebra.smul_def, hmul, hq]
   have hev : ∀ (c : K₀) τ, A.mulVecLin (fun i => algebraMap Qp LL (v.repr c i)) τ = τ c := by
     intro c τ
-    conv_rhs => rw [← v.sum_repr c, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← v.sum_repr c, map_sum]
     change ∑ i, τ (v i) * algebraMap Qp LL (v.repr c i) = _
     exact Finset.sum_congr rfl fun i _ => by rw [map_smul, Algebra.smul_def, mul_comm]
   choose e he using fun τ : K₀ →ₐ[Qp] LL => hsurj (Pi.single τ 1)
@@ -571,9 +579,11 @@ theorem finrank_eq_sum_letters [FiniteDimensional Qp K₀] [Fintype (K₀ →ₐ
     have h1 : ∑ τ, e τ = fun i => algebraMap Qp LL (v.repr 1 i) := by
       apply hinj
       funext τ
-      rw [hev, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hev, map_sum]
       simp [he, Pi.single_apply]
-    rw [← LinearMap.sum_apply, ← map_sum, h1, ← hsum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← LinearMap.sum_apply, ← map_sum, h1, ← hsum]
     simpa using hq 1 x
   have heig : ∀ τ c x, m c (μ (e τ) x) = τ c • μ (e τ) x := by
     intro τ c x
@@ -581,7 +591,8 @@ theorem finrank_eq_sum_letters [FiniteDimensional Qp K₀] [Fintype (K₀ →ₐ
       apply hinj
       funext τ'
       have h2 : ∑ i, τ' (v i) * e τ i = (Pi.single τ 1 : _ → LL) τ' := congrFun (he τ) τ'
-      rw [map_sum, map_smul, he]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_smul, he]
       simp only [map_smul, Finset.sum_apply, Pi.smul_apply, hev, map_mul, smul_eq_mul]
       have h3 : ∑ i, e τ i * (τ' c * τ' (v i)) = τ' c * ∑ i, τ' (v i) * e τ i := by
         rw [Finset.mul_sum]
@@ -590,7 +601,8 @@ theorem finrank_eq_sum_letters [FiniteDimensional Qp K₀] [Fintype (K₀ →ₐ
       by_cases h : τ' = τ
       · rw [h]
       · simp [h]
-    rw [← LinearMap.smul_apply, ← map_smul, ← h1, map_sum, LinearMap.sum_apply, hμ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← LinearMap.smul_apply, ← map_smul, ← h1, map_sum, LinearMap.sum_apply, hμ, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, map_smul, LinearMap.smul_apply, ← hsum, hmul]
   have hon : ∀ τ τ', ∀ x ∈ L τ', μ (e τ) x = (Pi.single τ 1 : _ → LL) τ' • x := by
@@ -613,7 +625,8 @@ theorem finrank_eq_sum_letters [FiniteDimensional Qp K₀] [Fintype (K₀ →ₐ
       refine ⟨⟨∑ τ, (y τ : M), D.sum_mem fun τ _ => ((hL τ _).1 (y τ).2).1⟩, ?_⟩
       funext τ
       apply Subtype.ext
-      rw [hF, map_sum, Finset.sum_congr rfl fun τ' _ => hon τ τ' _ (y τ').2]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hF, map_sum, Finset.sum_congr rfl fun τ' _ => hon τ τ' _ (y τ').2]
       simp [Pi.single_apply]
   haveI : ∀ τ, Module.Finite LL (L τ) := fun τ =>
     Submodule.finiteDimensional_of_le (S₂ := D) fun x hx => ((hL τ x).1 hx).1
@@ -640,15 +653,15 @@ theorem letterDim (hf : FracInv PD) : LetterDim PD LL := by
     obtain ⟨n', hn'⟩ := exists_pow_sigma PD LL hc τ' τ
     exact le_antisymm (hle n _ _ hn) (hle n' _ _ hn')
   rw [Nat.card_eq_fintype_card] at hc
-  have hs := finrank_eq_sum_letters hc (fun c => mB LL (algebraMap K₀ B c))
-    (fun a b x => by rw [map_add, mB_add]) (fun a b x => by rw [map_mul, mB_mul])
+  have hs := finrank_eq_sum_letters hc (fun c => mB (LL := LL) (algebraMap K₀ B c))
+    (fun a b x => by rw [map_add (f := _), mB_add]) (fun a b x => by rw [map_mul, mB_mul])
     (fun q (x : V ⊗[Qp] B) => by
       induction x using TensorProduct.induction_on with
       | zero => simp
       | tmul v b =>
         rw [← IsScalarTower.algebraMap_apply, algebraMap_smul, ← tmul_smul, Algebra.smul_def]
         rfl
-      | add a b ha hb => simp only [map_add, smul_add, ha, hb])
+      | add a b ha hb => simp only [map_add (f := _), smul_add, ha, hb])
     (Dcris PD ρ) (fun a x hx => (mK PD ρ a ⟨x, hx⟩).2) (DcrisL PD ρ) (mem_DcrisL PD ρ)
   simp only [heq, Finset.sum_const, Finset.card_univ, smul_eq_mul, hc] at hs
   unfold IsCrys at h
@@ -735,9 +748,5 @@ theorem fontaineFormalism_of_regular (l : ℕ) [Fact l.Prime] (P : LocPrime l) (
 theorem fontaineFormalism (hF : GlobalTheory.Published.FontaineBcris) (l : ℕ) [Fact l.Prime] (P : LocPrime l)
     (AI : LocAinf l P) (hs : GlobalTheory.Per.IsStd P AI) : FontaineFormalism l P :=
   fontaineFormalism_of_regular l P AI (fun C => ⟨hF.tensorInj C, hF.regular C⟩) hs
-
-theorem fontaineFormalismTensor (hF : GlobalTheory.Published.FontaineBcris) (l : ℕ) [Fact l.Prime] (P : LocPrime l)
-    (AI : LocAinf l P) (hs : GlobalTheory.Per.IsStd P AI) : FontaineFormalismTensor l P :=
-  (fontaineFormalismTensor_equiv l P).2 ((fontaineFormalism_equiv l P).1 (fontaineFormalism hF l P AI hs))
 
 end GlobalTheory.RegularRing

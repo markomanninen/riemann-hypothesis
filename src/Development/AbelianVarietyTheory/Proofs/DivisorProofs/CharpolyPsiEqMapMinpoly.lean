@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.Brauer.TensorSimple
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+module
+
+public import Mathlib
+public import GroundTheory.Brauer.TensorSimple
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+
+@[expose] public section
 
 noncomputable section
 

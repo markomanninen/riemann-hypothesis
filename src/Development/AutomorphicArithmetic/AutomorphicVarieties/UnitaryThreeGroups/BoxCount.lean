@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsDecompositionFieldFrobeniusData
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.CohomologyOfFiniteRepresentation
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.LocalEulerCharacteristicOfPrimeNotMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.GlobalEulerCharacteristicOdd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.GlobalEulerCharRatOfNeTwo
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FrameCount
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TateFin
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsDecompositionFieldFrobeniusData
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.CohomologyOfFiniteRepresentation
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.LocalEulerCharacteristicOfPrimeNotMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.GlobalEulerCharacteristicOdd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.GlobalEulerCharRatOfNeTwo
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FrameCount
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TateFin
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc Matrix IsLocalRing Module
 open UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.Alg UpperTheory.V.U3
@@ -103,14 +107,14 @@ theorem UpperTheory.V.U3.box_count (hI : CohInp) (Ω : Type) [Field Ω] [CharZer
       fun v => if h : v = v₀ then h ▸ x' else y ⟨v, h⟩
     refine ⟨z, Prod.ext (funext fun _ => ?_) (funext fun q => ?_)⟩
     · have h0 := hz v₀
-      rw [dif_pos rfl] at h0
+      rw [dite_eq_left rfl] at h0
       have h1 : _ = x' := h0
       refine Eq.trans ?_ hx'
       rw [← h1]
       induction z using Submodule.Quotient.induction_on with
       | H c => rfl
     · have h0 := hz q.1
-      rw [dif_neg q.2] at h0
+      rw [dite_eq_right q.2] at h0
       exact h0
   obtain ⟨-, c2, c3⟩ := frame_count k _ M ρ hρ F (fun q n hn => hN4 q n hn) g1 g2 (fun _ => ⟨l1, l2⟩)
     fun q => ⟨(hq q).1, (hq q).2.1⟩

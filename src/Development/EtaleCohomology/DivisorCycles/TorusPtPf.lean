@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.DivisorCycles.OpenCoset
+module
+
+public import Development.EtaleCohomology.DivisorCycles.OpenCoset
+
+@[expose] public section
 
 open Matrix PositivityTheory.AutomorphicGaloisHodgeTate.Div
 namespace LateralTheory.DivDb.TorusPtPf
@@ -53,12 +57,10 @@ lemma entry_exp {N n : ℕ} {p : Fin n → Mat C N} (hp : Sys p) (e : Fin n → 
     (PowerSeries.mk fun k => ((k.factorial : C)⁻¹ • (∑ i, e i • p i) ^ k) a b) =
       ∑ j, PowerSeries.C (p j a b) * E (e j) := by
   ext k
-  simp only [PowerSeries.coeff_mk, map_sum, PowerSeries.coeff_C_mul, coeff_E, pow_sys hp, Matrix.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [PowerSeries.coeff_mk, map_sum, PowerSeries.coeff_C_mul, coeff_E, pow_sys hp, Matrix.smul_apply,
     Matrix.sum_apply, smul_eq_mul, Finset.mul_sum]
   refine Finset.sum_congr rfl fun j _ => by ring
-
-noncomputable def F {N n : ℕ} (p : Fin n → Mat C N) (f : MP C N) : MvPolynomial (Fin n) C :=
-  MvPolynomial.bind₁ (fun ab : Fin N × Fin N => ∑ j, MvPolynomial.C (p j ab.1 ab.2) * MvPolynomial.X j) f
 
 noncomputable def bin {n : ℕ} (q : Finset (Fin n) × Finset (Fin n) × C) : MvPolynomial (Fin n) C :=
   (∏ i ∈ q.1, MvPolynomial.X i) ^ q.2.1.card - MvPolynomial.C q.2.2 * (∏ i ∈ q.2.1, MvPolynomial.X i) ^ q.1.card

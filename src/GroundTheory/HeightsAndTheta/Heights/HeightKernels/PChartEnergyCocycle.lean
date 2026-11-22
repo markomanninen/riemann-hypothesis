@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartEnergyCocycle
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartEnergySymm
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PChartEnergyIntegrable
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PHermFormCompare
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PChartHessCompare
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NotLtLtOfMemMinimalPrimes
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartEnergyCocycle
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartEnergySymm
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PChartEnergyIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PHermFormCompare
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PChartHessCompare
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NotLtLtOfMemMinimalPrimes
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -183,8 +188,8 @@ theorem chartMixedEnergy_eq (X Y : Matrix (Fin (e + 1)) (Fin (e + 1)) ℂ) (k : 
 
 end ChartEnergyCocycleAlt
 
-open ChartEnergyCocycleAlt in
 
+open ChartEnergyCocycleAlt in
 theorem ChartEnergyCocycle.proof (hS : ChartEnergySymm.Statement) : ChartEnergyCocycle.Statement := by
   intro e M N P hM hN hP
   have hb := blocks_posDef hM hN hP
@@ -213,8 +218,7 @@ theorem ChartEnergyCocycle.proof (hS : ChartEnergySymm.Statement) : ChartEnergyC
     rw [chartMixedEnergy_eq, hg]
     congr 1
     funext s
-    simp only [blocks, zero_add]
-    split_ifs <;> first | rfl | omega
+    simp [blocks]
   have tele : ∀ k ∈ Finset.range (e + 1),
       pairing M N (blocks M N P k 0) - pairing M N (blocks M N P k (e - k)) =
         -∑ j ∈ Finset.range (e - k), (g (k + 1) j - g k (j + 1)) := by

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,7 +91,7 @@ theorem exists_delta (c : E ≃ₐ[F] E) (h2 : Module.finrank F E = 2) (hc : c �
     have h' := congrArg c hst
     have hsm : ∀ (p : F) (x : E), c (p • x) = p • c x := fun p x => by
       rw [Algebra.smul_def, Algebra.smul_def, map_mul, c.commutes]
-    rw [map_add, hsm, hsm, map_one, hcδ, map_zero, smul_neg] at h'
+    rw [map_add (f := _), hsm, hsm, map_one, hcδ, map_zero, smul_neg] at h'
     have ht : t • δ = 0 := by
       have : (2 : E) * (t • δ) = 0 := by linear_combination hst - h'
       simpa using this
@@ -109,7 +113,7 @@ theorem eq_or_conj (c : E ≃ₐ[F] E) (hτ : ∀ (τ : E →+* ℂ) x, τ (c x)
   have hp : ∀ p, τ (algebraMap F E p) = τ' (algebraMap F E p) := fun p => RingHom.congr_fun h p
   obtain ⟨p, q, hpq⟩ := hs (δ * δ)
   have h' := congrArg c hpq
-  rw [map_mul, map_add, map_mul, hc, c.commutes, c.commutes] at h'
+  rw [map_mul, map_add (f := _), map_mul, hc, c.commutes, c.commutes] at h'
   have hsq : δ * δ = algebraMap F E p := by linear_combination (hpq + h') / 2
   have : τ δ * τ δ = τ' δ * τ' δ := by rw [← map_mul, ← map_mul, hsq, hp]
   rcases mul_self_eq_mul_self_iff.1 this with e | e
@@ -179,7 +183,7 @@ theorem bijective [IsTotallyReal F] (c : E ≃ₐ[F] E) (h2 : Module.finrank F E
       ⟨r _ (a (InfinitePlace.mk (τ.comp (algebraMap F E)))),
         r _ (b (InfinitePlace.mk (τ.comp (algebraMap F E)))) * (τ δ).im⟩ := by
     intro τ a b
-    rw [map_add, hθ, hθ, ext_eq_ofReal, ext_eq_ofReal, map_one, mul_one]
+    rw [map_add (f := _), hθ, hθ, ext_eq_ofReal, ext_eq_ofReal, map_one, mul_one]
     apply Complex.ext
     · simp only [Complex.add_re, Complex.ofReal_re, Complex.re_ofReal_mul, hre, mul_zero, add_zero, r]
     · simp only [Complex.add_im, Complex.ofReal_im, Complex.im_ofReal_mul, zero_add, r]
@@ -229,6 +233,6 @@ theorem infAdele_tensor_bijective : ∀ (F E : Type) [Field F] [NumberField F] [
       simp only [sg, Algebra.TensorProduct.map_tmul, AlgHom.coe_id, id, hθ', map_mul, conj_ext]
       rw [← hτ]
       rfl
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 end GlobalTheory.InfAdeleCM

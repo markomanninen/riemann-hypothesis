@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.GoodCoverEigenspaces.CubeCechEquivalences.CechCubeBaseChange.BcSumSingle
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.OmegaPullSCompRight
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.GoodCoverEigenspaces.Leaves
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsAlgHomOfIsBaseChange
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.GoodCoverEigenspaces.CubeCechEquivalences.CechCubeBaseChange.BcSumSingle
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.OmegaPullSCompRight
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.GoodCoverEigenspaces.Leaves
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsAlgHomOfIsBaseChange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -63,7 +67,7 @@ theorem jHForms : P_forms := by
     induction ω using ind1 with
     | h b c => rw [hα.oneFormMap_smul_semilinear, hα.m1_D, map_smul, map_D]; rfl
     | h0 => simp
-    | ha x y hx hy => simp only [map_add, hx, hy]
+    | ha x y hx hy => simp only [map_add (f := _), hx, hy]
   let pull : Om k B j →ₗ[B] Om k' B' j :=
     { toFun := hα.mOm j
       map_add' := map_add _

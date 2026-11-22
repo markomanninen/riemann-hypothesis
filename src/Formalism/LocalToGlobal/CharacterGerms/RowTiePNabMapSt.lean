@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTieDesc
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePGaugeMapSt
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieDesc
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePGaugeMapSt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,7 +20,7 @@ theorem constantCoeff_eval_single {n : ℕ} (a : Pt K n d) (ha : ∀ i, constant
   cc_ev_eq _ (by intro j i; fin_cases j; simp [ha]) f
 
 theorem map_pderiv {σ : Type} (x : σ) (f : MvPowerSeries σ K) :
-    MvPowerSeries.map φ (pderiv K x f) = pderiv C x (MvPowerSeries.map φ f) := by
+    MvPowerSeries.map φ (pderiv x f) = pderiv x (MvPowerSeries.map φ f) := by
   ext n
   simp [coeff_pderiv, coeff_map]
 
@@ -24,7 +28,8 @@ theorem map_DofN (F : Fin d → PS K 2 d) {n : ℕ} (b : Fin n) (u : Fin d → K
     MvPowerSeries.map φ (DofN F b u f) =
       DofN (fun j => MvPowerSeries.map φ (F j)) b (fun i => φ (u i)) (MvPowerSeries.map φ f) := by
   unfold DofN
-  simp only [map_sum, map_mul, MvPowerSeries.map_C,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, MvPowerSeries.map_C,
     map_ev2 φ (pt K d b) 0 (fun i => cc_pt b i) zc_zero, mpt_pt, mpt_zero, map_pderiv]
 
 theorem map_iter_DofN (F : Fin d → PS K 2 d) {n : ℕ} (b : Fin n) (u : Fin d → K) (m : ℕ) (f : PS K n d) :
@@ -49,7 +54,8 @@ theorem map_DpolyN (F : Fin d → PS K 2 d) {n : ℕ} {ι : Type} [Fintype ι] (
       DpolyN (fun j => MvPowerSeries.map φ (F j)) cp (fun l i => φ (u l i)) (MvPolynomial.map φ P)
         (MvPowerSeries.map φ f) := by
   unfold DpolyN
-  rw [map_sum, MvPolynomial.support_map_of_injective P φ.injective]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, MvPolynomial.support_map_of_injective P φ.injective]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [map_mul, MvPowerSeries.map_C, MvPolynomial.coeff_map, map_DmonN]
 
@@ -86,12 +92,14 @@ theorem map_nabValN [Algebra ℚ K] [Algebra ℚ C] {O : Type} [CommRing O] [Sta
   have hcb : ∀ b : Fin n, constantCoeff (ev (n := n) ![pt K d b] (B.hL K h w0)) = 0 := fun b => by
     rw [constantCoeff_eval_single (pt K d b) (cc_pt (R := K) (d := d) b), hcL]
   have hcs : constantCoeff ((m : K) • ∑ b : Fin n, ev (n := n) ![pt K d b] (B.hL K h w0)) = 0 := by
-    rw [Nat.cast_smul_eq_nsmul, map_nsmul, map_sum, Finset.sum_eq_zero fun b _ => hcb b, smul_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Nat.cast_smul_eq_nsmul, map_nsmul, map_sum, Finset.sum_eq_zero fun b _ => hcb b, smul_zero]
   have hsum : ∑ b : Fin n, MvPowerSeries.map φ (ev (n := n) ![pt K d b] (B.hL K h w0)) =
       ∑ b : Fin n, ev (n := n) ![pt C d b] (B'.hL C (MvPowerSeries.map φ h) w0) :=
     Finset.sum_congr rfl fun b _ => by
       rw [map_ev1 φ (pt K d b) (cc_pt (R := K) (d := d) b), mpt_pt, hL]
-  rw [e1, e2, map_DpolyN, map_mul, map_expS' φ _ hcs, Nat.cast_smul_eq_nsmul, Nat.cast_smul_eq_nsmul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e1, e2, map_DpolyN, map_mul, map_expS' φ _ hcs, Nat.cast_smul_eq_nsmul, Nat.cast_smul_eq_nsmul,
     map_nsmul, map_sum, hsum]
 
 end Formalism.L2.FormalSeriesBounds.MapFB

@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.HermitianLattices.HermitianLatticesProofs.UnimodUnramUnique
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.HermitianLatticesProofs.UnimodUnramUnique
+
+@[expose] public section
+
 open NumberField TensorProduct
 
 namespace PositivityTheory.UnitarySelfGeneration
@@ -8,23 +13,22 @@ open IsLocalRing Polynomial
 
 theorem semi_complete {A : Type} [CommRing A] [IsNoetherianRing A] [IsLocalRing A]
     [IsAdicComplete (maximalIdeal A) A] (M : Type) [AddCommGroup M] [Module A M] [Module.Finite A M] :
-    IsAdicComplete (maximalIdeal A) M where
-  toIsHausdorff := inferInstance
-  toIsPrecomplete := by
-    rw [← AdicCompletion.of_surjective_iff]
-    intro y
-    obtain ⟨t, rfl⟩ := AdicCompletion.ofTensorProduct_surjective_of_finite (maximalIdeal A) M y
-    induction t using TensorProduct.induction_on with
-    | zero => exact ⟨0, by simp⟩
-    | tmul r x =>
-      obtain ⟨r, rfl⟩ := AdicCompletion.of_surjective (maximalIdeal A) A r
-      refine ⟨r • x, ?_⟩
-      rw [AdicCompletion.ofTensorProduct_tmul, map_smul]
-      exact (algebraMap_smul (AdicCompletion (maximalIdeal A) A) r _).symm
-    | add x y hx hy =>
-      obtain ⟨a, ha⟩ := hx
-      obtain ⟨b, hb⟩ := hy
-      exact ⟨a + b, by rw [map_add, map_add, ha, hb]⟩
+    IsAdicComplete (maximalIdeal A) M := by
+  refine
+    { toIsHausdorff := inferInstance
+      toIsPrecomplete := AdicCompletion.of_surjective_iff.mp ?_ }
+  intro y
+  obtain ⟨t, rfl⟩ := AdicCompletion.ofTensorProduct_surjective_of_finite (maximalIdeal A) M y
+  induction t using TensorProduct.inductionOn with
+  | tmul r x =>
+    obtain ⟨r, rfl⟩ := AdicCompletion.of_surjective (maximalIdeal A) A r
+    refine ⟨r • x, ?_⟩
+    rw [AdicCompletion.ofTensorProduct_tmul, map_smul]
+    exact (algebraMap_smul (AdicCompletion (maximalIdeal A) A) r _).symm
+  | add x y hx hy =>
+    obtain ⟨a, ha⟩ := hx
+    obtain ⟨b, hb⟩ := hy
+    exact ⟨a + b, by rw [map_add (f := _), map_add (f := _), ha, hb]⟩
 
 theorem semi_unit_or_nil {Q : Type} [CommRing Q] [Finite Q] (h : ∀ e : Q, e * e = e → e = 0 ∨ e = 1) (x : Q) :
     IsUnit x ∨ IsNilpotent x := by
@@ -48,7 +52,7 @@ theorem semi_unit_or_nil {Q : Type} [CommRing Q] [Finite Q] (h : ∀ e : Q, e * 
 theorem semi_hensel {S : Type} [CommRing S] [Nontrivial S] (I : Ideal S) [hI : HenselianRing S I] [Finite (S ⧸ I)]
     (h : ∀ e : S, e * e = e → e = 0 ∨ e = 1) :
     ∃ _ : HenselianLocalRing S, Finite (ResidueField S) := by
-  have hloc : IsLocalHom (Ideal.Quotient.mk I) := isLocalHom_of_le_jacobson_bot I hI.jac
+  have hloc : IsLocalHom (Ideal.Quotient.mk I) := isLocalHom_of_le_jacobson hI.jac
   have hQ : ∀ e : S ⧸ I, e * e = e → e = 0 ∨ e = 1 := by
     intro e he
     obtain ⟨e, rfl⟩ := Ideal.Quotient.mk_surjective e
@@ -74,7 +78,7 @@ theorem semi_hensel {S : Type} [CommRing S] [Nontrivial S] (I : Ideal S) [hI : H
     (hun a).imp_right fun hn => IsUnit.of_map (Ideal.Quotient.mk I) _ (by
       rw [map_sub, map_one]; exact hn.isUnit_one_sub)
   have hle : I ≤ maximalIdeal S := by
-    rw [← jacobson_eq_maximalIdeal ⊥ bot_ne_top]; exact hI.jac
+    rw [← IsLocalRing.ringJacobson_eq_maximalIdeal S]; exact hI.jac
   have hnt : Nontrivial (S ⧸ I) :=
     Ideal.Quotient.nontrivial_iff.2 fun h => (maximalIdeal.isMaximal S).ne_top (top_le_iff.1 (h ▸ hle))
   have hnil : ∀ x : S, IsNilpotent (Ideal.Quotient.mk I x) → x ∈ maximalIdeal S := fun x hx hu =>
@@ -133,7 +137,8 @@ theorem semi_congr {Z R : Type} [CommRing Z] [CommRing R] [Algebra Z R] (σ : R 
   have h2 : ∀ i j, Ideal.Quotient.mk J (σ (g i j)) = Ideal.Quotient.mk J (σ (g' i j)) := fun i j =>
     Ideal.Quotient.eq.2 (by rw [← map_sub]; exact hJ _ (h i j))
   rw [← Ideal.Quotient.eq]
-  simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul, h1, h2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul, h1, h2]
 
 theorem semi_main (p : ℕ) [Fact p.Prime] (R : Type) [CommRing R] [Algebra ℤ_[p] R]
     [Module.Finite ℤ_[p] R] (σ : R →ₐ[ℤ_[p]] R) (hσ : ∀ r, σ (σ r) = r) (hθ : ∃ θ : R, IsUnit (θ - σ θ))
@@ -152,7 +157,7 @@ theorem semi_main (p : ℕ) [Fact p.Prime] (R : Type) [CommRing R] [Algebra ℤ_
       intro u hu x hx
       obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hx
       obtain ⟨r, rfl⟩ := Ideal.mem_span_singleton'.1 hb
-      have : σ (a + r * u) = (σ a + σ r * (σ u - u)) + σ r * u := by rw [map_add, map_mul]; ring
+      have : σ (a + r * u) = (σ a + σ r * (σ u - u)) + σ r * u := by rw [map_add (f := _), map_mul]; ring
       rw [this]
       exact Submodule.add_mem_sup (add_mem (hI a ha) (Ideal.mul_mem_left I _ hu)) (Ideal.mem_span_singleton'.2 ⟨_, rfl⟩)
     have hgt : ∀ u : R, u ∉ I → I < I ⊔ Ideal.span {u} := fun u hu =>
@@ -208,7 +213,8 @@ theorem semi_main (p : ℕ) [Fact p.Prime] (R : Type) [CommRing R] [Algebra ℤ_
     refine ⟨Matrix.of G, fun i j => ?_⟩
     have := congrFun (congrFun hg i) j
     rw [← Ideal.Quotient.eq]
-    simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, Matrix.of_apply, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, Matrix.of_apply, map_sum, map_mul,
       ← hG, hτ] at this ⊢
     rw [this, Matrix.one_apply, Matrix.one_apply]
     split_ifs <;> simp

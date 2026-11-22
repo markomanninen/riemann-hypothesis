@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalFixedOpenSubgroupGLw
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalFixedOpenSubgroupGLw
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ private theorem trOn_of_id {V : Type} [AddCommGroup V] [Module ℂ V] (M : Submo
     ext v
     simp [LinearMap.restrict_apply, hL v.1 v.2]
   unfold trOn
-  rw [dif_pos h, hid]
+  rw [dite_eq_left h, hid]
   exact LinearMap.trace_id ℂ _
 
 private theorem finFn_one {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} (S : Set (Pl E))
@@ -55,7 +59,7 @@ private theorem finFn_one {E : Type} [Field E] [NumberField E] [IsCMField E] {n 
   rfl
 
 private theorem ind_hecke {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} (w : Pl E)
-    (M N' : Subgroup (GLw n w)) (ho : IsOpen (M : Set (GLw n w))) (hM : M ≤ KGL w n) (hN : N' ≤ M) :
+    (M N' : Subgroup (GLw n w)) (ho : IsOpen (M : Set (GLw n w))) (hM : M ≤ KGL w (n := n)) (hN : N' ≤ M) :
     IsHecke N' ((M : Set (GLw n w)).indicator 1) := by
   have hcl : IsClosed (M : Set (GLw n w)) := M.isClosed_of_isOpen ho
   have hcomp : IsCompact (M : Set (GLw n w)) :=
@@ -71,7 +75,7 @@ theorem levelTr_pf : UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.admitted → Z
   obtain ⟨hne, d₀, hd₀, hd⟩ := hZ E n S Z N hSec hSp hG π y τ hτ
   have hc : ∀ w ∈ Z, ∃ c : ℂ, c ≠ 0 ∧ ∀ φ₁ φ₂ : ∀ w : Pl E, LF n 0 w, (∀ b, IsHecke (N w) (two φ₁ φ₂ w b)) →
       GlobalTheory.BCT.trOn (fixed (τ w).ρ (N w)) (Lv (τ w).ρ (N w) (two φ₁ φ₂ w false) * Lv (τ w).ρ (N w) (two φ₁ φ₂ w true)) =
-        c * trc (τ w).ρ (KGL w n) fun g => seen φ₁ φ₂ w (g, 1) :=
+        c * trc (τ w).ρ (KGL w (n := n)) fun g => seen φ₁ φ₂ w (g, 1) :=
     fun w hw => hSeen E n w (hSp w hw).2 (τ w) (N w) (hG w).1 (hG w).2.1
   choose! c hc0 hc using hc
   refine ⟨?_, d₀ * ∏ w ∈ Z, c w, mul_ne_zero hd₀ (Finset.prod_ne_zero_iff.2 hc0), ?_⟩
@@ -97,7 +101,7 @@ theorem levelTr_pf : UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.admitted → Z
     have hP : ∀ w ∈ Z, GlobalTheory.BCT.trOn (fixed (τ w).ρ (N w))
         (Lv (τ w).ρ (N w) (two (intersection_update_fsHerm_neg_one Z ∅ φ₁ e₁) (intersection_update_fsHerm_neg_one Z ∅ φ₂ e₂) w false) *
           Lv (τ w).ρ (N w) (two (intersection_update_fsHerm_neg_one Z ∅ φ₁ e₁) (intersection_update_fsHerm_neg_one Z ∅ φ₂ e₂) w true)) =
-        c w * trc (τ w).ρ (KGL w n) fun g => seen φ₁ φ₂ w (g, 1) := by
+        c w * trc (τ w).ρ (KGL w (n := n)) fun g => seen φ₁ φ₂ w (g, 1) := by
       intro w hw
       rw [hF w hw, hF w hw]
       exact hc w hw φ₁ φ₂ (hφ w hw)

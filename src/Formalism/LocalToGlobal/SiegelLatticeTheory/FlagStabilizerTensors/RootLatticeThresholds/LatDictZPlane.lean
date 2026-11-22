@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDictZAbs
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDictZAbs
+
+@[expose] public section
 
 noncomputable section
 
@@ -213,9 +217,9 @@ theorem plane_prim {S : Subring K} (hS : IsHermSemilocal S) (B : V →ₗ⋆[K] 
 
 def planeForm (h : V →ₗ⋆[K] V →ₗ[K] K) (z : V) (b : K) : V →ₗ⋆[K] V →ₗ[K] K :=
   LinearMap.mk₂'ₛₗ (starRingEnd K) (RingHom.id K) (fun x y => h x y - b * h x z * h z y)
-    (by intros; simp only [map_add, LinearMap.add_apply]; ring)
+    (by intros; simp only [map_add (f := _), LinearMap.add_apply]; ring)
     (by intros; simp only [map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul]; ring)
-    (by intros; simp only [map_add]; ring)
+    (by intros; simp only [map_add (f := _)]; ring)
     (by intros; simp only [map_smul, smul_eq_mul, RingHom.id_apply]; ring)
 
 theorem planeForm_apply (h : V →ₗ⋆[K] V →ₗ[K] K) (z : V) (b : K) (x y : V) :
@@ -354,9 +358,9 @@ theorem primitive_plane_local : Z0.PrimPlaneLoc := by
     ((locRing p).neg_mem (hqint f₀ hf₀N f₀ hf₀N)) (by rw [star_neg, hqsym])
   have hfN : f₀ + c₁ • e ∈ N := N.add_mem hf₀N (hN.smul_mem c₁ hc₁S e heN)
   have hqef : q e (f₀ + c₁ • e) = 1 := by
-    rw [map_add, map_smul, smul_eq_mul, hqee, mul_zero, add_zero, hef₀]
+    rw [map_add (f := _), map_smul, smul_eq_mul, hqee, mul_zero, add_zero, hef₀]
   have hqff : q (f₀ + c₁ • e) (f₀ + c₁ • e) = 0 := by
-    simp only [map_add, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
+    simp only [map_add (f := _), map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
       starRingEnd_apply, hqee, hef₀, hf₀e]
     linear_combination hc₁
   generalize f₀ + c₁ • e = f at hfN hqef hqff
@@ -397,10 +401,10 @@ theorem primitive_plane_local : Z0.PrimPlaneLoc := by
     have hXN : s • g + a • e + d • f ∈ N :=
       N.add_mem (N.add_mem (hN.smul_mem s hs' g hgN) (hN.smul_mem a ha e heN)) (hN.smul_mem d hd f hfN)
     have hzX : h z (s • g + a • e + d • f) = s * h z g + a * h z e + d * h z f := by
-      simp only [map_add, map_smul, smul_eq_mul]
+      simp only [map_add (f := _), map_smul, smul_eq_mul]
     have hqX : q (s • g + a • e + d • f) (s • g + a • e + d • f) = 0 := by
       rw [← hn]
-      simp only [map_add, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
+      simp only [map_add (f := _), map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
         starRingEnd_apply, RingHom.id_apply, hqee, hqff, hqef, hqfe, hqeg, hqge, hqfg, hqgf]
       ring
     refine ⟨(s * h z g + a * h z e + d * h z f)⁻¹ • (s • g + a • e + d • f),

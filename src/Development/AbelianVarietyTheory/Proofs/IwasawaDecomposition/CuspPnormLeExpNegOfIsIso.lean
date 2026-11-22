@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsPosLowerBoundNearMax
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsPosLowerBoundNearMax
+
+@[expose] public section
 
 open NumberField Complex Filter ReciprocityTheory.ChartRestriction.G.FD
 open scoped ComplexConjugate Topology Real
@@ -111,7 +115,7 @@ theorem cusp_pnorm_le_exp_neg_of_isIso (E : Type) [Field E] [NumberField E] [IsC
         exact Real.rpow_le_rpow (le_trans hqpos.le (le_max_left _ _))
           (max_le (by linarith) hinv) (by linarith)
       calc _ ≤ ∏ τ : X.Ψ, (2 : ℝ) ^ (X.spread la τ / 2) :=
-            Finset.prod_le_prod (fun τ _ => Real.rpow_nonneg (le_trans (by
+            Finset.prod_le_prod₀ (fun τ _ => Real.rpow_nonneg (le_trans (by
               have h := htt τ
               have hT : 0 < X.ttV e z0 τ := by linarith
               have : t / X.ttV e z0 τ ≤ 1 / 2 := by rw [div_le_iff₀ hT]; linarith

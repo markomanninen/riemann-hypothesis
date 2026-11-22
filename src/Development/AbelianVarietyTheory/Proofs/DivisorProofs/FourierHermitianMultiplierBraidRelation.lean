@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnipVal
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSelfDualBicharacterPairingOfSymmBilinFormStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianMatrixColumnPairingAlgebraicPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryCharacterAbsScalarBasicPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuadExtTopologyStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilFormulaFourierQuadraticCharacterStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnipVal
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSelfDualBicharacterPairingOfSymmBilinFormStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianMatrixColumnPairingAlgebraicPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryCharacterAbsScalarBasicPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuadExtTopologyStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilFormulaFourierQuadraticCharacterStatement
+
+@[expose] public section
 
 open MeasureTheory Matrix GlobalTheory.KSp GlobalTheory.SplitUnitary
 open GlobalTheory.WeilM (UG IsQuad IsHerm ResEtaPow)
@@ -44,7 +48,7 @@ theorem braid_relation : ∀ (F : Type) [Field F] [CharZero F] [ValuativeRel F] 
       have h3 : β (u * b⁻¹) (y * b) = β y u := by
         rw [← hbb, Matrix.mul_assoc, hi, Matrix.mul_one, hs]
       rw [Matrix.add_mul, Matrix.mul_assoc u, hi, Matrix.mul_one]
-      simp only [map_add, LinearMap.add_apply, h3]
+      simp only [map_add (f := _), LinearMap.add_apply, h3]
       ring) (by simpa only [hpr] using hG) φ hφ
   funext x
   have hL : parFun c ψ χ Q (fromBlocks 1 b 0 1) (fou c ψ Q μ φ) =
@@ -61,7 +65,7 @@ theorem braid_relation : ∀ (F : Type) [Field F] [CharZero F] [ValuativeRel F] 
   rw [← mul_assoc, ← mul_assoc, ← AddChar.map_add_eq_mul, ← AddChar.map_add_eq_mul]
   congr 2
   have h4 : β (z * b⁻¹) x = β (x * b⁻¹) z := by rw [hbi, hs]
-  simp only [Matrix.add_mul, Matrix.mul_neg, map_add, map_neg, LinearMap.add_apply, LinearMap.neg_apply, h4, ← hbi z z]
+  simp only [Matrix.add_mul, Matrix.mul_neg, map_add (f := _), map_neg, LinearMap.add_apply, LinearMap.neg_apply, h4, ← hbi z z]
   ring
 
 end GlobalTheory.KSp

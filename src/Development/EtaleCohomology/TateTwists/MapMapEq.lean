@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.columnPf
+module
+
+public import Development.EtaleCohomology.TateTwists.columnPf
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex GlobalTheory.EtC
 open scoped TensorProduct
@@ -36,7 +40,8 @@ theorem LateralTheory.EtaleFoundations.columnPf.lift_of (hK : kerLoc) : lift := 
   let x' : Sec F V ⊗[ULift.{1} R] P.obj (op V) := ∑ i ∈ S.attach, (F.obj.map g.op).hom i.1.1 ⊗ₜ p i.1 i.2
   have h1 : TensorProduct.map LinearMap.id (φ.app (op V)).hom x' =
       TensorProduct.map (F.obj.map g.op).hom (M.obj.map g.op).hom x := by
-    rw [hS, map_sum, map_sum, ← Finset.sum_attach S]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hS, map_sum, map_sum, ← Finset.sum_attach S]
     refine Finset.sum_congr rfl fun i _ => ?_
     simp only [TensorProduct.map_tmul, LinearMap.id_apply]
     rw [hp i.1 i.2]

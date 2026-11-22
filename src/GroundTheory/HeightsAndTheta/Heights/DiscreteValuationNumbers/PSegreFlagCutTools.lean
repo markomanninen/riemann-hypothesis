@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagCut
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PGenericProjClosureDivisor
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PPairCocycle
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PPairNumSectionCut
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagCut
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PGenericProjClosureDivisor
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PPairCocycle
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PPairNumSectionCut
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -39,7 +44,7 @@ theorem isMultiHomog_liftPairForm [DecidableEq K] {f : MRing ι O} {b : K → �
   rcases o with _ | _ | k <;> simp [Finsupp.sum, Finset.sum_apply, blockWeight, Pi.single_apply, vdeg]
 
 theorem aeval_liftPairForm {y : (Σ k, ι k) → Ω} {pt : (Σ o, bundleIdx (bundleIdx ι M) M' o) → Φ}
-    (hpt : ∀ p : Σ k, ι k, pt ⟨some (some p.1), p.2⟩ = algebraMap Ω Φ (y p)) (f : MRing ι O) :
+    (hpt : ∀ p : Σ k, ι k, pt ⟨some (some p.1), p.2⟩ = algebraMap Ω Φ (y p)) (f : ReciprocityTheory.ChartRestriction.G.Geo.MRingOver O ι) :
     aeval pt (liftPairForm M M' f) = algebraMap Ω Φ (aeval y f) := by
   unfold liftPairForm
   have e : pt ∘ (fun p : Σ k, ι k => (⟨some (some p.1), p.2⟩ : Σ o, bundleIdx (bundleIdx ι M) M' o)) =
@@ -54,7 +59,7 @@ variable {K : Type} {ι : K → Type} {O : Type} [CommRing O] {Ω : Type} [Field
   {M M' : ℕ} {Φ : Type} [Field Φ] [Algebra Ω Φ] [Algebra O Φ] [IsScalarTower O Ω Φ]
 
 theorem pointConeMap_liftPairForm {y : (Σ k, ι k) → Ω} {pt : (Σ o, bundleIdx (bundleIdx ι M) M' o) → Φ}
-    (hpt : ∀ p : Σ k, ι k, pt ⟨some (some p.1), p.2⟩ = algebraMap Ω Φ (y p)) (f : MRing ι O) :
+    (hpt : ∀ p : Σ k, ι k, pt ⟨some (some p.1), p.2⟩ = algebraMap Ω Φ (y p)) (f : ReciprocityTheory.ChartRestriction.G.Geo.MRingOver O ι) :
     pointConeMap O pt (liftPairForm M M' f) =
       rename (fun k : K => some (some k)) (MvPolynomial.map (algebraMap Ω Φ) (pointConeMap O y f)) := by
   induction f using MvPolynomial.induction_on with
@@ -62,14 +67,14 @@ theorem pointConeMap_liftPairForm {y : (Σ k, ι k) → Ω} {pt : (Σ o, bundleI
     simp only [liftPairForm, rename_C, pointConeMap, aeval_C, MvPolynomial.algebraMap_apply, map_C]
     rw [IsScalarTower.algebraMap_apply O Ω Φ]
   | add p q hp hq =>
-    simp only [liftPairForm, map_add] at hp hq ⊢
+    simp only [liftPairForm, map_add (f := _)] at hp hq ⊢
     rw [hp, hq]
   | mul_X p v hp =>
     simp only [liftPairForm, pointConeMap] at hp ⊢
     simp only [map_mul, rename_X, aeval_X, map_X, map_C, rename_C, hpt, hp]
 
 theorem liftPairForm_mem_iff {y : (Σ k, ι k) → Ω} {pt : (Σ o, bundleIdx (bundleIdx ι M) M' o) → Φ}
-    (hpt : ∀ p : Σ k, ι k, pt ⟨some (some p.1), p.2⟩ = algebraMap Ω Φ (y p)) (f : MRing ι O) :
+    (hpt : ∀ p : Σ k, ι k, pt ⟨some (some p.1), p.2⟩ = algebraMap Ω Φ (y p)) (f : ReciprocityTheory.ChartRestriction.G.Geo.MRingOver O ι) :
     liftPairForm M M' f ∈ pointIdeal O pt ↔ f ∈ pointIdeal O y := by
   unfold pointIdeal
   rw [RingHom.mem_ker, RingHom.mem_ker]
@@ -137,8 +142,8 @@ theorem IsVerticalDivisor.restrict {P H : Ideal (MRing ι O)} {ϖ : O} {b : K �
 
 variable [IsDomain O] [IsDiscreteValuationRing O] [Fintype K] [∀ k, Fintype (ι k)]
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem ratDiv_eq_of_sub_mem {P : Ideal (MRing ι O)} [P.IsPrime] {f g f' g' : MRing ι O} (hf : f ∉ P)
     (hg : g ∉ P) (hf' : f' ∉ P) (hg' : g' ∉ P) (h : f * g' - f' * g ∈ P) :
     ratDiv P f g = ratDiv P f' g' := by

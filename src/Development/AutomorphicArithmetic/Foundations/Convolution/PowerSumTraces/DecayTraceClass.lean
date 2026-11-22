@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.DecayTraceClassAlt
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.DecayTraceClassAlt
+import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspCompact
+
+@[expose] public section
 
 open MeasureTheory NumberField GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum PositivityTheory.Rg.Tf.Core UpperTheory.ConvolutionTheory.C
@@ -21,7 +26,7 @@ private theorem adjoint_rop (f : CC K n) :
     ContinuousLinearMap.adjoint (Rop μ f) = Rop μ (CuspidalProjection.ccStar f) := by
   have := isInvInvariant_of_isMulRightInvariant μ
   exact ((rightRegularRep (Gam K n) μ).adjoint_integrated μ (UnitaryRep.ccToL1 μ f)).trans
-    (congrArg _ (CuspidalProjection.ccToL1_ccStar μ f).symm)
+    (congrArg _ (CuspidalProjection.ccToL1_ccStar (μ := μ) f).symm)
 
 private theorem adjoint_rop_star (f : CC K n) :
     ContinuousLinearMap.adjoint (Rop μ (CuspidalProjection.ccStar f)) = Rop μ f := by
@@ -35,15 +40,35 @@ private theorem pc_comm (f : CC K n) : Pc μ ∘L Rop μ f = Rop μ f ∘L Pc μ
 private theorem hs_of_decay (f : CC K n) (h : PositivityTheory.Rg.Tf.Core.CuspDecay μ f) :
     IsHilbertSchmidt (Rop μ f ∘L Pc μ) := by
   obtain ⟨C, hC⟩ := h 0
-  have hT := CuspidalProjection.isHilbertSchmidt_cuspRep_of_bound μ f C
-    (fun φ hφ x => by simpa using hC φ hφ x)
-  have e : Rop μ f ∘L Pc μ = (cuspidalL2 μ).subtypeL ∘L
-      ((cuspRep μ).integrated μ (UnitaryRep.ccToL1 μ f)) ∘L
-        (cuspidalL2 μ).orthogonalProjectionOnto := by
-    rw [← ContinuousLinearMap.comp_assoc, subtypeL_comp_integrated μ _]
-    rfl
-  rw [e]
-  exact (hT.comp_right _).comp_left _
+  have := isFiniteMeasure_quotientMeasure (K := K) (n := n) μ
+  let T := Rop μ f ∘L (cuspidalL2 μ).subtypeL
+  let e : RightCosetSpace (Gam K n) → StrongDual ℂ (cuspidalL2 μ) := fun q =>
+    (rconvCLM (Gam K n) μ f (Quotient.out q)).comp (cuspidalL2 μ).subtypeL
+  have he : ∀ q, ‖e q‖ ≤ max C 0 := by
+    intro q
+    refine ContinuousLinearMap.opNorm_le_bound _ (le_max_right _ _) fun w => ?_
+    change ‖rconv (Gam K n) μ f (w : L2 μ) (Quotient.out q)‖ ≤ _
+    have hb : ‖rconv (Gam K n) μ f (w : L2 μ) (Quotient.out q)‖ ≤ C * ‖(w : L2 μ)‖ := by
+      simpa using hC w w.2 (Quotient.out q)
+    refine hb.trans ?_
+    rw [Submodule.coe_norm]
+    exact mul_le_mul_of_nonneg_right (le_max_left _ _) (norm_nonneg _)
+  have hout : ∀ (φ : L2 μ) (q : RightCosetSpace (Gam K n)),
+      rconvQ (Gam K n) μ f φ q = rconv (Gam K n) μ f φ (Quotient.out q) := by
+    intro φ q
+    obtain ⟨a, rfl⟩ := mk_surjective (Gam K n) q
+    obtain ⟨γ, hγ⟩ := (mk_eq_mk_iff (Γ := Gam K n)).1 (Quotient.out_eq (mk (Gam K n) a))
+    rw [rconvQ_mk, ← hγ]
+    exact (rconv_mul_left (Gam K n) μ f φ γ.2 a).symm
+  have hae : ∀ w, T w =ᵐ[quotientMeasure (Gam K n) μ] fun q => e q w := by
+    intro w
+    filter_upwards [integrated_ae_eq_rconvQ (Gam K n) μ f (w : L2 μ)] with q hq
+    exact hq.trans (hout _ q)
+  have hT : IsHilbertSchmidt T := isHilbertSchmidt_of_ae_eq_dual T e (max C 0) he hae
+  have hcomp := hT.comp_right (cuspidalL2 μ).orthogonalProjectionOnto
+  convert hcomp using 1
+  ext v
+  rfl
 
 end
 

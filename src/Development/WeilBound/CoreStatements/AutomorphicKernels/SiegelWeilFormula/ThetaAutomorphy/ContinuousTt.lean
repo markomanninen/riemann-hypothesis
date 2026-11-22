@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaAutomorphy.CountableMat
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaAutomorphy.CountableMat
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,8 +34,27 @@ theorem meas_tr (d : SD σ) {f : Mx F E d.m d.n → ℂ} (hf : f ∈ d.schM) (X 
 
 theorem tbdd (hS : GlobalTheory.Published.SiegelSetUnitary) (d : SD σ) {f : Mx F E d.m d.n → ℂ} (hf : f ∈ d.schM) :
     ∃ K : ℝ, ∀ g : UA σ d.A.J, Summable (fun X => ‖f (tr d g X)‖) ∧ ∑' X, ‖f (tr d g X)‖ ≤ K := by
-  obtain ⟨K, hK⟩ := Kdil.thetaBdd_of hS F E σ d f hf
-  exact ⟨K, hK⟩
+  open Kdil.Tb in
+  obtain ⟨Ω, hΩ, cov⟩ := (cpt hS d).cov
+  obtain ⟨u, hu, hb⟩ := bound_cpt d f hf Ω hΩ
+  refine ⟨∑' ξ, u ξ, fun h => ?_⟩
+  obtain ⟨γ, hγ, hγΩ⟩ := cov h
+  obtain ⟨e, he⟩ := reindex d f γ hγ
+  have key : (fun X => ‖f (mat h⁻¹ * incM F X)‖) = (fun Y => ‖f (mat (γ * h)⁻¹ * incM F Y)‖) ∘ e := by
+    funext X
+    exact congrArg norm (he h X).symm
+  have hs : Summable (fun Y => ‖f (mat (γ * h)⁻¹ * incM F Y)‖) :=
+    Summable.of_nonneg_of_le (fun _ => norm_nonneg _) (fun Y => hb _ hγΩ Y) ((xi d).summable_iff.2 hu)
+  change Summable (fun X => ‖f (mat h⁻¹ * incM F X)‖) ∧
+    ∑' X, ‖f (mat h⁻¹ * incM F X)‖ ≤ ∑' ξ, u ξ
+  refine ⟨?_, ?_⟩
+  · rw [key]; exact e.summable_iff.2 hs
+  · rw [key]
+    show ∑' X, ‖f (mat (γ * h)⁻¹ * incM F (e X))‖ ≤ _
+    rw [e.tsum_eq (fun Y => ‖f (mat (γ * h)⁻¹ * incM F Y)‖)]
+    calc ∑' Y, ‖f (mat (γ * h)⁻¹ * incM F Y)‖ ≤ ∑' Y, u (xi d Y) :=
+          hs.tsum_le_tsum (fun Y => hb _ hγΩ Y) ((xi d).summable_iff.2 hu)
+      _ = ∑' ξ, u ξ := (xi d).tsum_eq u
 
 theorem pt_bdd (d : SD σ) {f : Mx F E d.m d.n → ℂ} (g : UA σ d.A.J) (s : Set (Matrix (Fin d.m) (Fin d.n) E)) {K : ℝ}
     (hsum : Summable (fun X => ‖f (tr d g X)‖)) (hle : ∑' X, ‖f (tr d g X)‖ ≤ K) :

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PadicContinuousEvaluationExistsUniqueSubstNaturaStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PadicContinuousEvaluationExistsUniqueSubstNaturaStatement
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 open TensorProduct
 
@@ -80,7 +85,7 @@ theorem exists_series_of_compatible : ∀ (p : ℕ) (O σ : Type) [CommRing O] [
   let Q : MvPowerSeries σ O := fun α => if hα : α.degree < N then q α hα else 0
   have hQ : ∀ α (hα : α.degree < N), coeff α Q = q α hα := fun α hα => by
     show (if hα : α.degree < N then q α hα else 0) = q α hα
-    rw [dif_pos hα]
+    rw [dite_eq_left hα]
   let R := μ - h (m + N + n) - (p : O) ^ m • Q
   have hR : ∀ α : σ →₀ ℕ, α.degree < N → coeff α R = 0 := by
     intro α hα
@@ -88,7 +93,7 @@ theorem exists_series_of_compatible : ∀ (p : ℕ) (O σ : Type) [CommRing O] [
   have hER := hN R hR
   have hsplit : E n μ - t n = E n R + (p : A n) ^ m * E n Q := by
     have hμeq : μ = h (m + N + n) + ((p : O) ^ m • Q + R) := by simp only [R]; abel
-    rw [hμeq, map_add, map_add, hj, map_smul, Algebra.smul_def, map_pow, map_natCast]
+    rw [hμeq, map_add (f := _), map_add (f := _), hj, map_smul, Algebra.smul_def, map_pow, map_natCast]
     ring
   rw [hsplit]
   exact dvd_add hER (dvd_mul_right _ _)

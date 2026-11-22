@@ -1,8 +1,16 @@
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
-import Development.DiscreteGroups.GlobalIrreducibility.DzGalTR
-import Development.DiscreteGroups.GlobalIrreducibility.DzIneEq
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.FinrankK
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.TameRecAll
+module
+
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.DzMatchCut
+public import Development.DiscreteGroups.GlobalIrreducibility.DzGalRes
+public import Development.DiscreteGroups.GlobalIrreducibility.DzTame
+public import Development.DiscreteGroups.GlobalIrreducibility.DzNormV
+public import Development.DiscreteGroups.GlobalIrreducibility.DzIneEq
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.FinrankK
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.TameRecAll
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +67,7 @@ private theorem range_sub {κ K : Type} [Field κ] [Field K] (ι : K →+* κ) (
     (ι.range : Set κ) = ((X ^ q - X : κ[X]).roots.toFinset : Set κ) := by
   have : Finite K := Nat.finite_of_card_ne_zero (by omega)
   have := Fintype.ofFinite K
-  have hne : (X ^ q - X : κ[X]) ≠ 0 := FiniteField.X_pow_card_sub_X_ne_zero κ hq
+  have hne : (X ^ q - X : κ[X]) ≠ 0 := Polynomial.X_pow_sub_X_ne_zero hq
   have hsub : (ι.range : Set κ) ⊆ ((X ^ q - X : κ[X]).roots.toFinset : Set κ) := by
     rintro _ ⟨y, rfl⟩
     simp only [Finset.mem_coe, Multiset.mem_toFinset, mem_roots hne, IsRoot.def, eval_sub, eval_pow, eval_X]
@@ -69,7 +77,7 @@ private theorem range_sub {κ K : Type} [Field κ] [Field K] (ι : K →+* κ) (
     rw [RingHom.coe_range, ← Set.image_univ, Set.ncard_image_of_injective _ ι.injective, Set.ncard_univ, hc]
   rw [h1, Set.ncard_coe_finset]
   refine (Multiset.toFinset_card_le _).trans ((card_roots' _).trans ?_)
-  rw [FiniteField.X_pow_card_sub_X_natDegree_eq κ hq]
+  rw [Polynomial.natDegree_X_pow_sub_X (R := κ) hq]
 
 private theorem exists_equiv {κ K K' : Type} [Field κ] [Field K] [Field K'] (ι : K →+* κ) (ι' : K' →+* κ) (q : ℕ) (hq : 1 < q)
     (hc : Nat.card K = q) (hc' : Nat.card K' = q) : ∃ e : K ≃+* K', ∀ y, ι' (e y) = ι y := by

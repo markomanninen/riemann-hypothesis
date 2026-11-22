@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MatrixCoefficientIntegrableSquare
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsNormEmbId
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MatrixCoefficientIntegrableSquare
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsNormEmbId
+
+@[expose] public section
+
 open MeasureTheory GlobalTheory.CompanionTheory.UnitaryFramesMetricPeriods
 open scoped InnerProductSpace
 set_option maxHeartbeats 1000000 in

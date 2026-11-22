@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoUpperBoundSmallDepth
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoUpperBoundSmallDepth
+
+@[expose] public section
 
 noncomputable section
 

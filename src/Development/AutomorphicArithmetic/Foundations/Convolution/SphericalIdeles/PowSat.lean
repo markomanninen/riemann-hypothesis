@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SphConj
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PowTwist
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SphConj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PowTwist
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,8 @@ private theorem ideleModule_localIdele (v : HeightOneSpectrum (𝓞 K)) (x : (v.
 private theorem norm_eq_zpow (v : HeightOneSpectrum (𝓞 K)) (x : v.adicCompletion K) (n : ℤ)
     (h : Valued.v x = WithZero.exp n) : ‖x‖ = (Ideal.absNorm v.asIdeal : ℝ) ^ n := by
   rw [FinitePlace.norm_def, h, WithZeroMulInt.toNNReal_neg_apply _ WithZero.exp_ne_zero]
-  simp [WithZero.exp]
+  change (Ideal.absNorm v.asIdeal : ℝ) ^ (WithZero.exp n).log = _
+  rw [WithZero.log_exp]
 
 private theorem loc_eq {χ : HChar K} {s : ℂ} (h : UpperTheory.ConvolutionTheory.T.IsPow χ s)
     (v : HeightOneSpectrum (𝓞 K)) (x : (v.adicCompletion K)ˣ) :

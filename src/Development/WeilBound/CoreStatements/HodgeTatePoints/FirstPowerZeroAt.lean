@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.CcBase
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.CcBase
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem first_power_add_at {x z w : Pt R l d} (hx : Z x) (hz : Z z) (hw : Z w) (
   induction m with
   | zero => rw [act_zero_at, second_form_zero_left_at B hz hw, first_power_zero, ev_one, ev_one, ev_one]; simp
   | succ m ih =>
-    have hm : Z (comp1 (B.A.act (m : O)) x) := by ztac
+    have hm : Z (comp1 (B.A.act (m : O)) x) := Z_comp1 (Z_act B.A (m : O)) hx
     rw [first_power_succ_at B m hx hz, first_power_succ_at B m hx hw, first_power_succ_at B m hx (Z_add _ hz hw), act_succ_at B m hx,
       pow_succ]
     have h1 := interchange_at B hm hx hz hw
@@ -46,8 +50,8 @@ theorem pow_inter_at {x z : Pt R l d} (hx : Z x) (hz : Z z) (m n : ℕ) :
   induction n with
   | zero => rw [act_zero_at, first_power_zero_at B hx, second_power_zero, ev_one, ev_one]; simp
   | succ n ih =>
-    have hn : Z (comp1 (B.A.act (n : O)) z) := by ztac
-    have hm : Z (comp1 (B.A.act (m : O)) x) := by ztac
+    have hn : Z (comp1 (B.A.act (n : O)) z) := Z_comp1 (Z_act B.A (n : O)) hz
+    have hm : Z (comp1 (B.A.act (m : O)) x) := Z_comp1 (Z_act B.A (m : O)) hx
     rw [second_power_succ_at B n hx hz, second_power_succ_at B n hm hz, act_succ_at B n hz, pow_succ, mul_pow]
     have h1 := first_power_add_at B hx hn hz m
     linear_combination (-ev ![x, z] (pow2 B n) ^ m) * h1 +

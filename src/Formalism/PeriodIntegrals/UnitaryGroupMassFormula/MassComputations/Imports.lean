@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.FmatInvMul
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.FmatInvMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,69 @@ theorem core {c : ℕ} (hc : Nat.Coprime c X.B.g)
           (c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • (X.f0 b - incl X.B.I (X.fR b)) := by
       rw [← smul_sub, sub_sub_cancel]
     rw [h]; exact sub_mem (sm X.B.I hcI (X.vectorsInLattice.1 b).2) (hmLL (hfc b))
-  have hc3 : Nat.Coprime (c * c * c) X.B.g := Nat.Coprime.mul (Nat.Coprime.mul hc hc) hc
+  have hsig : starRingEnd X.B.I.E = (X.B.I.cm.sig : X.B.I.E →+* X.B.I.E) := by
+    exact RingHom.ext fun _ => rfl
+  have hpair (a b : Fin D.R.rS) :
+      hA X.B.I (incl X.B.I (X.eR a)) (incl X.B.I (X.fR b)) = if a = b then 1 else 0 := by
+    rw [hA_incl, hsig]
+    change Formalism.UG.inclE (F := X.B.I.F) (Af X.B.I.F)
+      (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.hE X.B.I.cm.sig X.B.I.J
+        (crdOf X.B.I X.ιE X.bas (X.eX a)) (crdOf X.B.I X.ιE X.bas (X.fY b))) = _
+    rw [MassDataLevelSSteps.FrameW.hE_crdOf X, X.ef]
+    split_ifs <;> simp
+  have hpair_rev (b a : Fin D.R.rS) :
+      hA X.B.I (incl X.B.I (X.fR b)) (incl X.B.I (X.eR a)) = if b = a then 1 else 0 := by
+    let : StarRing D.host.E := D.host.cmStar
+    rw [hA_incl, hsig]
+    change Formalism.UG.inclE (F := X.B.I.F) (Af X.B.I.F)
+      (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.hE X.B.I.cm.sig X.B.I.J
+        (crdOf X.B.I X.ιE X.bas (X.fY b)) (crdOf X.B.I X.ιE X.bas (X.eX a))) = _
+    rw [MassDataLevelSSteps.FrameW.hE_crdOf X,
+      ← LinearMap.isSymm_def.1 (VS D).herm (X.eX a) (X.fY b), X.ef]
+    by_cases hab : a = b
+    · subst hab; simp
+    · simp [hab, Ne.symm hab]
+  have hclear {d : ℕ} {s : Set (Fin D.R.rS)} {w : VA X.B.I}
+      (hw : w ∈ Submodule.span (X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) ((fun b => incl X.B.I (X.eR b)) '' s))
+      (hdw : (d : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • w ∈ X.B.I.Lf) :
+      ((c * d * c : ℕ) : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • w ∈
+        Submodule.span (IntAf X.B.I.F X.B.I.E) (X.e0 '' s) ⊔ mL X.B.I X.B.g := by
+    classical
+    obtain ⟨l, hls, rfl⟩ := (Finsupp.mem_span_image_iff_linearCombination _).1 hw
+    have hsum : Finsupp.linearCombination (X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) (fun b => incl X.B.I (X.eR b)) l =
+        ∑ b, l b • incl X.B.I (X.eR b) := by
+      rw [Finsupp.linearCombination_apply, Finsupp.sum_fintype]
+      intro i
+      exact zero_smul _ _
+    rw [hsum] at hdw ⊢
+    have hcoef (b : Fin D.R.rS) :
+        ((c * d : ℕ) : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) * l b ∈ IntAf X.B.I.F X.B.I.E := by
+      have h := hA_int X.B.I _ (hfL b) _ hdw
+      rw [hA_nat_left, hA_smul_right, hA_sum_right] at h
+      simp only [hA_smul_right, hpair_rev, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq,
+        Finset.mem_univ, ite_true] at h
+      convert h using 1
+      push_cast
+      ring
+    rw [Finset.smul_sum]
+    refine Submodule.sum_mem _ fun b _ => ?_
+    by_cases hb : l b = 0
+    · rw [hb, zero_smul, smul_zero]
+      exact zero_mem _
+    have hbs : b ∈ s := hls (Finsupp.mem_support_iff.2 hb)
+    have heq : ((c * d * c : ℕ) : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • (l b • incl X.B.I (X.eR b)) =
+        (((c * d : ℕ) : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) * l b) • ((c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • X.e0 b) -
+        (((c * d : ℕ) : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) * l b) •
+          ((c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • (X.e0 b - incl X.B.I (X.eR b))) := by
+      rw [← smul_sub, ← smul_sub, sub_sub_cancel]
+      simp only [smul_smul]
+      congr 1
+      push_cast
+      ring
+    rw [heq]
+    refine sub_mem (Submodule.mem_sup_left ?_) (Submodule.mem_sup_right (sm X.B.I (hcoef b) (hec b)))
+    exact sm X.B.I (hcoef b) (sm X.B.I hcI (Submodule.subset_span ⟨b, hbs, rfl⟩))
+  have hc3 : Nat.Coprime (c * c * c) X.B.g := Nat.Coprime.mul_left (Nat.Coprime.mul_left hc hc) hc
   refine ⟨fun a => ?_, ?_, fun i => ?_⟩
   ·
     have hv := hTL _ (X.vectorsInLattice.1 a).1
@@ -76,7 +142,7 @@ theorem core {c : ℕ} (hc : Nat.Coprime c X.B.g)
     have hw := hspan _ _ (hN1 a)
     have hdw : (c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • (Ai *ᵥ ((By - 1) *ᵥ incl X.B.I (X.eR a))) ∈ X.B.I.Lf := by
       rw [← mulVec_smul, ← mulVec_smul]; exact hWL _ (heL a)
-    have hk := key X hfL hec hw hdw
+    have hk := hclear hw hdw
     unfold InMod
     refine close X.B.I le_sup_right hv hsplit hc hc3 hk ?_
     rw [← Tm_smul]; exact hTmL _ (hec a)
@@ -97,7 +163,7 @@ theorem core {c : ℕ} (hc : Nat.Coprime c X.B.g)
       rw [← hAq, ← mulVec_smul]; exact hAL _ hcq
     have hdw : (c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • (Ai *ᵥ ((By - 1) *ᵥ zz)) ∈ X.B.I.Lf := by
       rw [← mulVec_smul, ← mulVec_smul]; exact hWL _ hcz
-    have hk := key X hfL hec hw hdw
+    have hk := hclear hw hdw
     rw [Set.image_univ] at hk
     unfold InMod
     refine close X.B.I le_sup_right hv hsplit hc hc3 hk ?_
@@ -111,8 +177,8 @@ theorem core {c : ℕ} (hc : Nat.Coprime c X.B.g)
     have horth : ∀ a, hA X.B.I (incl X.B.I (X.eR a)) t' = 0 := by
       intro a
       rw [← ht', hA_sub_right, hA_sum_right]
-      simp only [hA_smul_right, hA_e_f, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ,
-        if_true, sub_self]
+      simp only [hA_smul_right, hpair, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ,
+        ite_true, sub_self]
     have hsplit : Tm Ai By A (X.bw i) = Ai *ᵥ ((By - 1) *ᵥ t') +
         ∑ b, hA X.B.I (incl X.B.I (X.eR b)) t • (Ai *ᵥ ((By - 1) *ᵥ incl X.B.I (X.fR b))) := by
       have h : t = t' + ∑ b, hA X.B.I (incl X.B.I (X.eR b)) t • incl X.B.I (X.fR b) := by
@@ -163,12 +229,12 @@ theorem core {c : ℕ} (hc : Nat.Coprime c X.B.g)
       refine sub_mem (sm X.B.I (natCast_int X.B.I _) htL) (Submodule.sum_mem _ fun b _ => ?_)
       rw [hterm]
       exact hmLL (sm X.B.I (hτI b) (smul_mem_mL X.B.I X.B.g (hfL b)))
-    have hk := key X hfL hec hw hdw
+    have hk := hclear hw hdw
     have hle : Submodule.span (IntAf X.B.I.F X.B.I.E) (X.e0 '' Set.univ) ⊔ mL X.B.I X.B.g ≤
         Submodule.span (IntAf X.B.I.F X.B.I.E) (Set.range X.e0 ∪ X.bw '' {j | j.1 < i.1}) ⊔ mL X.B.I X.B.g :=
       sup_le_sup_right (Submodule.span_mono (by rw [Set.image_univ]; exact Set.subset_union_left)) _
-    have hcc : Nat.Coprime (c * c) X.B.g := Nat.Coprime.mul hc hc
-    have hc4 : Nat.Coprime (c * (c * c) * c) X.B.g := Nat.Coprime.mul (Nat.Coprime.mul hc hcc) hc
+    have hcc : Nat.Coprime (c * c) X.B.g := Nat.Coprime.mul_left hc hc
+    have hc4 : Nat.Coprime (c * (c * c) * c) X.B.g := Nat.Coprime.mul_left (Nat.Coprime.mul_left hc hcc) hc
     unfold InMod
     exact close X.B.I le_sup_right hv hsplit hcc hc4 (hle hk) hr
 

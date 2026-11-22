@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.NotIsPrimeMapOfSplit
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.NotIsPrimeMapOfSplit
+
+@[expose] public section
 
 namespace Formalism.HermitianLattices.Ext.L3.SplitPrimeIdeals
 
@@ -74,7 +78,7 @@ private theorem card_quotient_comap_sq_eq_card_quotient_of_involution (hσ : ∀
     · rintro ⟨a, b⟩ ⟨a', b'⟩ h
       simp only [f] at h
       have h2 := congrArg sb h
-      simp only [map_add, map_mul, hsbφ] at h2
+      simp only [map_add (f := _), map_mul, hsbφ] at h2
       have hb : φ b = φ b' := by
         have h3 : (φ b - φ b') * (th - sb th) = 0 := by linear_combination h - h2
         rcases mul_eq_zero.1 h3 with h4 | h4
@@ -151,7 +155,7 @@ theorem map_comap_of_inert (hσ : ∀ x, σ (σ x) = x) (hfix : ∀ x, σ x = x 
     rw [e]
     exact P.sub_mem (P.add_mem hi (hσP i hi)) (P.mul_mem_left _ (hσP i hi))
   have hT : ∀ w ∈ P, w + σ w ∈ (P.comap ι).map ι := fun w hw =>
-    hmem _ (by rw [map_add, hσ, add_comm]) (P.add_mem hw (hσP w hw))
+    hmem _ (by rw [map_add (f := _), hσ, add_comm]) (P.add_mem hw (hσP w hw))
   have e : y = y * j + ((y * θ + σ (y * θ)) - σ θ * (y + σ y)) * (v * (θ - σ θ)) := by
     rw [hj, map_mul]
     ring

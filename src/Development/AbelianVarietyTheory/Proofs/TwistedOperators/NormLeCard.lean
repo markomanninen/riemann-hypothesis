@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasBoundedSumsOne
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwasawaBlockTriangular
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantModulus
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasBoundedSumsOne
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwasawaBlockTriangular
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantModulus
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,8 @@ theorem norm_le_card {ι : Type} {π : Representation ℂ G V} (hπ : IsUnitaris
 theorem sum_fixed (ρ : Representation ℂ G X) (K : Subgroup G) {w : X} (hw : ∀ x ∈ K, ρ x w = w)
     (S : Finset (G ⧸ K)) (hS : ∀ x ∈ K, ∀ c ∈ S, x • c ∈ S) (x : G) (hx : x ∈ K) :
     ρ x (∑ c ∈ S, ρ c.out w) = ∑ c ∈ S, ρ c.out w := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_nbij' (fun c => x • c) (fun c => x⁻¹ • c) (hS x hx) (hS _ (inv_mem hx))
     (fun c _ => by simp) (fun c _ => by simp) fun c _ => ?_
   have h1 : x • c = ((x * c.out : G) : G ⧸ K) := by
@@ -65,7 +70,8 @@ theorem exists_vector [TopologicalSpace G] [IsTopologicalGroup G] {ρ : Represen
     (fun x hx => by rw [map_sub, sum_fixed ρ K hz S hS x hx, map_smul, hz x hx])
     (by rw [map_sub, map_sum, map_smul, hEz, smul_eq_mul, mul_one, sub_self])
   have h2 := congrArg f (sub_eq_zero.1 h1)
-  rw [map_sum, map_smul] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_smul] at h2
   rw [← h2]
   exact Finset.sum_congr rfl fun c _ => (f.isIntertwining _ _ _ _).symm
 

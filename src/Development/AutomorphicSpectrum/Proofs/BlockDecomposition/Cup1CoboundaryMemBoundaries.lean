@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -89,17 +93,7 @@ theorem val_dl {n : ℕ} (i : Fin (n + 1 + 1)) (t : Fin (n + 1)) :
   · exact absurd h₂ h₁
   · rfl
 
-theorem val_fr (n : ℕ) (t : Fin (1 + 1)) : ((fr n t : Fin (n + 1 + 1)) : ℕ) = t.1 := rfl
-
 theorem cst_apply {n : ℕ} (m : ℕ) (i : Fin (n + 1)) (t : Fin (m + 1)) : cst m i t = i := rfl
-
-macro "fin_order" : tactic =>
-  `(tactic| (apply Fin.ext; simp only [OrderHom.comp_coe, Function.comp_apply, val_dl, val_fr, cst_apply,
-    Fin.val_succ, Fin.val_zero, Fin.val_one]; grind))
-
-theorem face_projection_cup1 {n m : ℕ} (e : Fin (n + 2) →o Fin (m + 1)) (x : Cn F 1) (z : Cn F n) :
-    pr F e (cup1 F n x z) = pr F (e.comp (fr n)) x * pr F (e.comp (dl 0)) z := by
-  rw [cup1_apply, map_mul, pr_pr, pr_pr]
 
 theorem coboundary_cup1 (n : ℕ) {x : Cn F 1} (hx : dn F 1 x = 0) (z : Cn F n) :
     dn F (n + 1) (cup1 F n x z) = -cup1 F (n + 1) x (dn F n z) := by
@@ -108,7 +102,7 @@ theorem coboundary_cup1 (n : ℕ) {x : Cn F 1} (hx : dn F 1 x = 0) (z : Cn F n) 
       + pr F (fr (n + 1)) x = 0 := by
     have h0 := congrArg (pr F E) hx
     rw [dn_eq, Fin.sum_univ_three, map_zero] at h0
-    simp only [map_add, map_smul, pr_pr] at h0
+    simp only [map_add (f := _), map_smul, pr_pr] at h0
     have e0 : pr F (E.comp (dl 0)) x = pr F ((dl (0 : Fin (n + 3))).comp (fr n)) x := pr_congr (fun i ↦ by
       fin_cases i <;> rfl) x
     have e1 : pr F (E.comp (dl 1)) x = pr F ((dl (1 : Fin (n + 3))).comp (fr n)) x := pr_congr (fun i ↦ by
@@ -117,14 +111,31 @@ theorem coboundary_cup1 (n : ℕ) {x : Cn F 1} (hx : dn F 1 x = 0) (z : Cn F n) 
       fin_cases i <;> rfl) x
     rw [e0, e1, e2] at h0
     simpa [sub_eq_add_neg] using h0
-  rw [dn_eq (n + 1), dn_eq n, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [dn_eq (n + 1), dn_eq n, map_sum]
   simp only [map_smul, map_mul, cup1_apply, pr_pr]
   have e1 : pr F ((dl (1 : Fin (n + 3))).comp (dl 0)) z = pr F ((dl (0 : Fin (n + 3))).comp (dl 0)) z :=
-    pr_congr (fun i ↦ by fin_order) z
+    pr_congr (fun i ↦ by
+      apply Fin.ext
+      simp only [OrderHom.comp, OrderHom.coe_mk, Function.comp_apply, val_dl, cst_apply]
+      simp only [fr, OrderEmbedding.toOrderHom, OrderHom.coe_mk, Fin.coe_castLEOrderEmb, Fin.val_castLE, val_dl, Fin.val_succ, Fin.val_zero, Fin.val_one]
+      try simp only [Nat.not_lt_zero, if_false, Nat.zero_lt_succ, if_true]
+      try fin_cases i
+      all_goals simp_all [val_dl, Fin.coe_succAboveOrderEmb, Fin.succAbove, Fin.lt_def] <;> (first | omega | (split_ifs <;> omega))) z
   have e2 : ∀ j : Fin (n + 1), pr F ((dl j.succ.succ).comp (fr n)) x = pr F (fr (n + 1)) x := fun j ↦
-    pr_congr (fun i ↦ by fin_order) x
+    pr_congr (fun i ↦ by
+      fin_cases i <;> apply Fin.ext <;>
+        simp only [OrderHom.comp, OrderHom.coe_mk, Function.comp_apply, val_dl, fr, OrderEmbedding.toOrderHom, Fin.coe_castLEOrderEmb, Fin.val_castLE, Fin.val_succ, Fin.val_zero, Fin.val_one] <;>
+        simp only [Fin.coe_succAboveOrderEmb, Fin.succAbove, Fin.lt_def, Fin.val_castSucc, Fin.val_castLE, Fin.val_succ, Fin.val_zero, Fin.val_one] <;>
+        split_ifs <;> simp_all <;> omega) x
   have e3 : ∀ j : Fin (n + 1), pr F ((dl j.succ.succ).comp (dl 0)) z = pr F ((dl 0).comp (dl j.succ)) z := fun j ↦
-    pr_congr (fun i ↦ by fin_order) z
+    pr_congr (fun i ↦ by
+      apply Fin.ext
+      simp only [OrderHom.comp, OrderHom.coe_mk, Function.comp_apply, val_dl, cst_apply]
+      simp only [fr, OrderEmbedding.toOrderHom, OrderHom.coe_mk, Fin.coe_castLEOrderEmb, Fin.val_castLE, val_dl, Fin.val_succ, Fin.val_zero, Fin.val_one]
+      try simp only [Nat.not_lt_zero, if_false, Nat.zero_lt_succ, if_true]
+      try fin_cases i
+      all_goals simp_all [val_dl, Fin.coe_succAboveOrderEmb, Fin.succAbove, Fin.lt_def] <;> (first | omega | (split_ifs <;> omega))) z
   have hs : ∑ j : Fin (n + 1), ((-1 : R) ^ (j.succ.succ : ℕ)) • (pr F ((dl j.succ.succ).comp (fr n)) x *
         pr F ((dl j.succ.succ).comp (dl 0)) z) =
       -∑ j : Fin (n + 1), ((-1 : R) ^ (j.succ : ℕ)) • (pr F (fr (n + 1)) x * pr F ((dl 0).comp (dl j.succ)) z) := by
@@ -140,14 +151,32 @@ theorem coboundary_cup0 (n : ℕ) (β : Cn F 0) (z : Cn F n) :
     dn F n (cup0 F n β z) = cup1 F n (dn F 0 β) z + cup0 F (n + 1) β (dn F n z) := by
   have e1 : pr F (fr n) (dn F 0 β) = pr F ((dl (0 : Fin (n + 2))).comp (cst 0 0)) β - pr F (cst 0 0) β := by
     rw [dn_eq, Fin.sum_univ_two]
-    simp only [map_add, map_smul, pr_pr, Fin.val_zero, pow_zero, one_smul, Fin.val_one, pow_one, neg_smul, map_neg]
+    simp only [map_add (f := _), map_smul, pr_pr, Fin.val_zero, pow_zero, one_smul, Fin.val_one, pow_one, neg_smul, map_neg]
     rw [sub_eq_add_neg]
     congr 1
-    · exact pr_congr (fun i ↦ by fin_order) β
+    · exact pr_congr (fun i ↦ by
+      apply Fin.ext
+      simp only [OrderHom.comp, OrderHom.coe_mk, Function.comp_apply, val_dl, cst_apply]
+      simp only [fr, OrderEmbedding.toOrderHom, OrderHom.coe_mk, Fin.coe_castLEOrderEmb, Fin.val_castLE, val_dl, Fin.val_succ, Fin.val_zero, Fin.val_one]
+      try simp only [Nat.not_lt_zero, if_false, Nat.zero_lt_succ, if_true]
+      try fin_cases i
+      all_goals simp_all [val_dl, Fin.coe_succAboveOrderEmb, Fin.succAbove, Fin.lt_def] <;> (first | omega | (split_ifs <;> omega))) β
     · congr 1
-      exact pr_congr (fun i ↦ by fin_order) β
+      exact pr_congr (fun i ↦ by
+      apply Fin.ext
+      simp only [OrderHom.comp, OrderHom.coe_mk, Function.comp_apply, val_dl, cst_apply]
+      simp only [fr, OrderEmbedding.toOrderHom, OrderHom.coe_mk, Fin.coe_castLEOrderEmb, Fin.val_castLE, val_dl, Fin.val_succ, Fin.val_zero, Fin.val_one]
+      try simp only [Nat.not_lt_zero, if_false, Nat.zero_lt_succ, if_true]
+      try fin_cases i
+      all_goals simp_all [val_dl, Fin.coe_succAboveOrderEmb, Fin.succAbove, Fin.lt_def] <;> (first | omega | (split_ifs <;> omega))) β
   have e2 : ∀ j : Fin (n + 1), pr F ((dl j.succ).comp (cst 0 0)) β = pr F (cst 0 0) β := fun j ↦
-    pr_congr (fun i ↦ by fin_order) β
+    pr_congr (fun i ↦ by
+      apply Fin.ext
+      simp only [OrderHom.comp, OrderHom.coe_mk, Function.comp_apply, val_dl, cst_apply]
+      simp only [fr, OrderEmbedding.toOrderHom, OrderHom.coe_mk, Fin.coe_castLEOrderEmb, Fin.val_castLE, val_dl, Fin.val_succ, Fin.val_zero, Fin.val_one]
+      try simp only [Nat.not_lt_zero, if_false, Nat.zero_lt_succ, if_true]
+      try fin_cases i
+      all_goals simp_all [val_dl, Fin.coe_succAboveOrderEmb, Fin.succAbove, Fin.lt_def] <;> (first | omega | (split_ifs <;> omega))) β
   rw [cup1_apply, e1, dn_eq n (cup0 F n β z), dn_eq n z, cup0_apply, cup0_apply]
   simp only [map_mul, pr_pr, map_smul, Finset.mul_sum, mul_smul_comm]
   rw [Fin.sum_univ_succ]
@@ -246,13 +275,10 @@ theorem pulln_mul (m : CoefMap (RingHom.id R) F G) (n : ℕ) (f f' : Cn F n) :
   funext c
   exact map_mul (m.α (c.obj (Fin.last n))) _ _
 
-theorem pulln_one (m : CoefMap (RingHom.id R) F G) (n : ℕ) : pulln m n (1 : Cn F n) = 1 := by
-  funext c
-  exact map_one (m.α (c.obj (Fin.last n)))
-
 theorem pulln_dn (m : CoefMap (RingHom.id R) F G) (n : ℕ) (f : Cn F n) :
     pulln m (n + 1) (dn F n f) = dn G n (pulln m n f) := by
-  rw [dn_eq, dn_eq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [dn_eq, dn_eq, map_sum]
   refine Finset.sum_congr rfl fun i _ ↦ ?_
   rw [map_smul, pulln_pr]
 
@@ -332,7 +358,7 @@ theorem tmap_tmap {A A' A'' B B' B'' : Type} [CommRing A] [CommRing A'] [CommRin
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul x y => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem mp_push {l : ℕ} (c : Fin (l + 1) ⥤ C) {i j k : Fin (l + 1)} (h₁ : i ≤ j) (h₂ : j ≤ k) :
     (mp F (c.map (homOfLE h₂))).comp (mp F (c.map (homOfLE h₁))) = mp F (c.map (homOfLE (h₁.trans h₂))) :=
@@ -418,7 +444,7 @@ theorem pure_induction {I : Type} [Finite I] (V : I → Type) [∀ i, AddCommGro
   induction t using TensorProduct.induction_on with
   | zero => simpa using h0
   | tmul f m => rw [piLeft_pure]; exact hp f m
-  | add x y hx hy => rw [map_add]; exact ha _ _ hx hy
+  | add x y hx hy => rw [map_add (f := _)]; exact ha _ _ hx hy
 
 def Con {p : ℕ} [Finite (Fin (p + 1) ⥤ C)] (Ξ : Cn F p →ₗ[R] R) (q : ℕ) : Bi F p q →ₗ[R] Cn F q :=
   LinearMap.pi fun b ↦ con (fun a : Fin (p + 1) ⥤ C ↦ F.obj (a.obj (Fin.last p))) (F.obj (b.obj (Fin.last q))) Ξ ∘ₗ

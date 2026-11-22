@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FWTie
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FWTie
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,8 @@ section Gen
 variable {K L : Type} [Field K] [Field L] [Algebra K L] {C : Type} [AddCommGroup C] [Module K C] {n : ℕ}
   {H : Type} [AddCommGroup H] [Module ℂ H] {X : Type} [AddCommGroup X] [Module ℂ X]
 
-variable (L) in
 
+variable (L) in
 def crd (b : Basis (Fin n) K C) : C →ₗ[K] (Fin n → L) :=
   (Algebra.linearMap K L).compLeft (Fin n) ∘ₗ b.equivFun.toLinearMap
 
@@ -41,7 +45,8 @@ theorem extB_apply (σ : L →+* ℂ) (w : Fin n → H) (x : Fin n → L) : extB
 theorem extB_crd (σ : L →+* ℂ) (b : Basis (Fin n) K C) (jK : C →ₛₗ[σ.comp (algebraMap K L)] H) (f : C) :
     extB σ (fun k => jK (b k)) (crd L b f) = jK f := by
   conv_rhs => rw [← b.sum_repr f]
-  rw [map_sum, extB_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, extB_apply]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_smulₛₗ, crd_apply]
   rfl
@@ -60,8 +65,8 @@ theorem extB_injective (σ : L →+* ℂ) {w : Fin n → H} (hw : LinearIndepend
   have h1 : (fun k => σ (x k)) = fun k => σ (y k) := LinearMap.ker_eq_bot.1 (lc_ker hw) h
   exact funext fun k => σ.injective (congrFun h1 k)
 
-variable (K C) in
 
+variable (K C) in
 abbrev HasB (n : ℕ) : Prop := Nonempty (Basis (Fin n) K C)
 
 theorem hasB_finrank [FiniteDimensional K C] : HasB K C (finrank K C) := ⟨Module.finBasis K C⟩
@@ -70,14 +75,14 @@ theorem hasB_iff : HasB K C n ↔ FiniteDimensional K C ∧ n = finrank K C :=
   ⟨fun ⟨b⟩ => ⟨Module.Finite.of_basis b, by rw [finrank_eq_card_basis b, Fintype.card_fin]⟩,
     fun ⟨_, h⟩ => h ▸ hasB_finrank⟩
 
-variable (K L C) in
-open Classical in
 
+open Classical in
+variable (K L C) in
 def crdOr (n : ℕ) : C →ₗ[K] (Fin n → L) := if h : HasB K C n then crd L h.some else 0
 
-variable (K C) in
-open Classical in
 
+open Classical in
+variable (K C) in
 def bOr (n : ℕ) : Fin n → C := if h : HasB K C n then h.some else 0
 
 theorem crdOr_eq (h : HasB K C n) : crdOr K L C n = crd L h.some := dif_pos h
@@ -86,9 +91,9 @@ theorem bOr_eq (h : HasB K C n) : bOr K C n = h.some := dif_pos h
 
 theorem crdOr_injective (h : HasB K C n) : Function.Injective (crdOr K L C n) := crdOr_eq (L := L) h ▸ crd_injective _
 
-variable (K L C) in
-open Classical in
 
+open Classical in
+variable (K L C) in
 def secOr (n : ℕ) : LinearMap.range (crdOr K L C n) →ₗ[K] C :=
   if h : Function.Injective (crdOr K L C n) then (LinearEquiv.ofInjective _ h).symm.toLinearMap else 0
 
@@ -104,8 +109,8 @@ theorem extB_crdOr (h : HasB K C n) (σ : L →+* ℂ) (jK : C →ₛₗ[σ.comp
 
 def EvEx (σ : K →+* ℂ) (ev : H → X) (φ : C → X) : Prop := ∃ j : C →ₛₗ[σ] H, ∀ f, ev (j f) = φ f
 
-open Classical in
 
+open Classical in
 def evOr (σ : K →+* ℂ) (ev : H → X) (φ : C → X) : C →ₛₗ[σ] H := if h : EvEx σ ev φ then h.choose else 0
 
 theorem evOr_spec {σ : K →+* ℂ} {ev : H → X} {φ : C → X} (h : EvEx σ ev φ) (f : C) : ev (evOr σ ev φ f) = φ f := by
@@ -117,7 +122,7 @@ variable {G : Type} [Group G] {WL : Type} [AddCommGroup WL] [Module L WL]
 def resK [Module K WL] [IsScalarTower K L WL] (σ : L →+* ℂ) (j : WL →ₛₗ[σ] H) (ι : C →ₗ[K] WL) :
     C →ₛₗ[σ.comp (algebraMap K L)] H where
   toFun f := j (ι f)
-  map_add' f g := by rw [map_add, map_add]
+  map_add' f g := by rw [map_add (f := _), map_add (f := _)]
   map_smul' a f := by
     rw [LinearMap.map_smul, ← algebraMap_smul L a, map_smulₛₗ]
     rfl
@@ -126,8 +131,8 @@ def RhoIs (σ : L →+* ℂ) (j : WL →ₛₗ[σ] H) (e : H →ₗ[ℂ] X) (act
     (ρ : G →* (WL →ₗ[L] WL)) : Prop :=
   ∀ g x, e (j (ρ g x)) = σ ((chi g : Lˣ) : L) • act g (e (j x))
 
-open Classical in
 
+open Classical in
 def rhoOr (σ : L →+* ℂ) (j : WL →ₛₗ[σ] H) (e : H →ₗ[ℂ] X) (act : G → X →ₗ[ℂ] X) (chi : G →* Lˣ) :
     G →* (WL →ₗ[L] WL) :=
   if h : ∃ ρ, RhoIs σ j e act chi ρ then h.choose else 1
@@ -142,8 +147,8 @@ theorem RhoIs.unique {σ : L →+* ℂ} {j : WL →ₛₗ[σ] H} {e : H →ₗ[�
     (h : RhoIs σ j e act chi ρ) (h' : RhoIs σ j e act chi ρ') : ρ = ρ' :=
   MonoidHom.ext fun g => LinearMap.ext fun x => hj (he ((h g x).trans (h' g x).symm))
 
-variable (L) in
 
+variable (L) in
 def rhoB (b : Basis (Fin n) K C) (ρC : G →* (C →ₗ[K] C)) : G →* ((Fin n → L) →ₗ[L] (Fin n → L)) where
   toFun g := Matrix.toLin' ((LinearMap.toMatrix b b (ρC g)).map (algebraMap K L))
   map_one' := by
@@ -168,7 +173,8 @@ theorem rhoIs_rhoB (σ : L →+* ℂ) (b : Basis (Fin n) K C) (jK : C →ₛₗ[
     simp only [crd_basis]
     exact pi_eq_sum_univ' x
   rw [hx]
-  simp only [map_sum, map_smulₛₗ, Finset.smul_sum, RingHom.id_apply, rhoB_crd, extB_crd, h]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smulₛₗ, Finset.smul_sum, RingHom.id_apply, rhoB_crd, extB_crd, h]
   exact Finset.sum_congr rfl fun k _ => smul_comm _ _ _
 
 end Gen
@@ -199,7 +205,7 @@ theorem exists_ext_of_isKsForm (F : FormsL L K WL W G) (h : F.IsKsForm) (e : C �
     | zero => intro _; rw [map_zero, show (⟨0, _⟩ : F.WK) = 0 from rfl, map_zero, map_zero]
     | add x y hx hy ihx ihy =>
       intro _
-      rw [map_add, ihx (h2.le hx), ihy (h2.le hy), ← map_add, ← map_add]
+      rw [map_add (f := _), ihx (h2.le hx), ihy (h2.le hy), ← map_add (f := _), ← map_add (f := _)]
       rfl
     | smul a x hx ih =>
       intro _
@@ -220,12 +226,13 @@ theorem finrank_of_isKsForm {m : ℕ} (F : FormsL L K (Fin m → L) W G) (h : F.
 variable {Rg : Type} [CommRing Rg] [Algebra K Rg] [Algebra (𝓞 K) Rg] [IsScalarTower (𝓞 K) K Rg]
 
 def FullLat (Cs : Submodule K Rg) (Vs : HeightOneSpectrum (𝓞 K) → Set (Rg → EReal)) (hV : ∀ la, ∀ v ∈ Vs la, IsVal la v) : Prop :=
-  Submodule.IsLattice K (latOf Cs Vs hV)
+  Submodule.IsFullLattice K (latOf Cs Vs hV)
 
 theorem mkFull_of [Fintype G] [Module (𝓞 K) WL] [IsScalarTower (𝓞 K) K WL] (F : FormsL L K WL W G) {Cs : Submodule K Rg}
     {Vs : HeightOneSpectrum (𝓞 K) → Set (Rg → EReal)} {hV : ∀ la, ∀ v ∈ Vs la, IsVal la v} (ι : Cs →ₗ[K] WL)
     (hW : F.WK = LinearMap.range ι) (hM : ∀ x, x ∈ F.MK ↔ ∃ f : Cs, (∀ la, ∀ v ∈ Vs la, 0 ≤ v (f : Rg)) ∧ ι f = x)
     (h : FullLat Cs Vs hV) : F.MKFull := by
+  letI : Submodule.IsFullLattice K (latOf Cs Vs hV) := h
   have e : F.MK = (latOf Cs Vs hV).map (ι.restrictScalars (𝓞 K)) := by
     ext x
     rw [hM, Submodule.mem_map]
@@ -233,7 +240,7 @@ theorem mkFull_of [Fintype G] [Module (𝓞 K) WL] [IsScalarTower (𝓞 K) K WL]
   refine ⟨e ▸ h.fg.map _, ?_⟩
   rw [e, hW]
   show Submodule.span K (ι '' (latOf Cs Vs hV : Set Cs)) = _
-  rw [Submodule.span_image, h.span_eq_top, Submodule.map_top]
+  rw [Submodule.span_image, Submodule.IsFullLattice.span_eq_top, Submodule.map_top]
 
 end Ext
 
@@ -277,7 +284,8 @@ theorem nrmM_add (f g : T.R j) : T.nrmM j la y (f + g) ≤ max (T.nrmM j la y f)
 theorem nrmM_smul (a : T.Q.c.F) (f : T.R j) : T.nrmM j la y (a • f) = FinitePlace.mk la a * T.nrmM j la y f := by
   have hv := isVal_valSet la y.1 y.2
   by_cases ha : a = 0
-  · rw [ha, zero_smul, nrmM_zero, map_zero, zero_mul]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [ha, zero_smul, nrmM_zero, map_zero, zero_mul]
   · rw [Core.nrmM, hv.smul a f ha]
     exact nrmOf_smul la ha (hv.ne_bot f)
 
@@ -305,8 +313,8 @@ def chiC (i : Fin D.R.m) (g : G) : ℂˣ :=
 def ChiIs (i : Fin D.R.m) (chi : G →* D.what₂.LLˣ) : Prop :=
   ∀ g, D.what₂.embLL ((chi g : D.what₂.LLˣ) : D.what₂.LL) = (chiC R i g : ℂ)
 
-open Classical in
 
+open Classical in
 def chiTop (i : Fin D.R.m) : G →* D.what₂.LLˣ := if h : ∃ chi, ChiIs R i chi then h.choose else 1
 
 def ChiVal : Prop :=
@@ -314,31 +322,6 @@ def ChiVal : Prop :=
 
 theorem chiC_mul (i : Fin D.R.m) (g g' : G) : chiC R i (g * g') = chiC R i g * chiC R i g' := by
   simp only [chiC, map_mul, Pi.mul_apply, Finset.prod_mul_distrib]
-
-theorem chiIs_chiTop (h : ChiVal R) (i : Fin D.R.m) : ChiIs R i (chiTop R i) := by
-  have h1 : ∀ g, ∃ a, D.what₂.embLL a = (chiC R i g : ℂ) := fun g => by
-    have : ((chiC R i g : ℂˣ) : ℂ) ∈ D.what₂.embLL.fieldRange := by
-      rw [chiC, Units.coe_prod]
-      exact prod_mem fun PP _ => h i PP.1 PP.2 _
-    exact this
-  choose a ha using h1
-  have hne : ∀ g, a g ≠ 0 := fun g h0 => (chiC R i g).ne_zero (by rw [← ha, h0, map_zero])
-  have hex : ∃ chi, ChiIs R i chi :=
-    ⟨MonoidHom.mk' (fun g => Units.mk0 (a g) (hne g)) fun g g' => Units.ext (D.what₂.embLL.injective (by
-      simp only [Units.val_mk0, Units.val_mul, map_mul, ha, chiC_mul])), ha⟩
-  rw [chiTop, dif_pos hex]
-  exact hex.choose_spec
-
-theorem chiVal_of_roots (h : ∀ PP ∈ R.Pg, ∃ z : D.what₂.LL, IsPrimitiveRoot z (Nat.card (kP PP)ˣ))
-    (hf : ∀ PP ∈ R.Pg, Finite (kP PP)) : ChiVal R := by
-  intro i PP hPP x
-  obtain ⟨z, hz⟩ := h PP hPP
-  have := hf PP hPP
-  have : NeZero (Nat.card (kP PP)ˣ) := ⟨Nat.card_pos.ne'⟩
-  have h1 : ((R.chi ((i : ℕ) + 1) PP x : ℂˣ) : ℂ) ^ Nat.card (kP PP)ˣ = 1 := by
-    rw [← Units.val_pow_eq_pow_val, ← map_pow, pow_card_eq_one', map_one, Units.val_one]
-  obtain ⟨k, -, hk⟩ := (hz.map_of_injective D.what₂.embLL.injective).eq_pow_of_pow_eq_one h1
-  exact ⟨z ^ k, by rw [map_pow, hk]⟩
 
 def RhoTie : Prop :=
   ∀ i, (∃ ρ, RhoIs (sg0 D A) ((R.FW i).j (sg0 D A)) (R.HW i _).e (actW R i _) (R.FW i).chi ρ) →
@@ -426,8 +409,8 @@ def JEvBarAt (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ) (hV : T.V ((i : ℕ) 
 def JEvBar : Prop :=
   ∀ i σ, ¬ GoodEmb T.Q.c (res T σ) → ∀ hV, JEvBarAt T R κ i σ hV
 
-open Classical in
 
+open Classical in
 def jTop (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ) : Cu T κ i →ₛₗ[res T σ] (R.HW i σ).H :=
   if GoodEmb T.Q.c (res T σ) then
     if hV : T.V ((i : ℕ) + 1) (res T σ) = Wc D i then
@@ -469,7 +452,7 @@ def formsN (i : Fin D.R.m) (n : ℕ) : FormsL D.what₂.LL T.Q.c.F (Fin n → D.
   nrm la y w := T.nrmM ((i : ℕ) + 1) la y (secOr T.Q.c.F D.what₂.LL (Cu T κ i) n w : T.R ((i : ℕ) + 1))
   nrm_nonneg la _ _ := nrmOf_nonneg la _
   nrm_zero la y := by rw [map_zero]; exact nrmM_zero T.toCore _ la y
-  nrm_add la y w w' := by rw [map_add]; exact nrmM_add T.toCore _ la y _ _
+  nrm_add la y w w' := by rw [map_add (f := _)]; exact nrmM_add T.toCore _ la y _ _
   nrm_smul la y a w := by
     rw [LinearMap.map_smul]
     exact nrmM_smul T.toCore _ la y a _
@@ -478,22 +461,11 @@ def formsN (i : Fin D.R.m) (n : ℕ) : FormsL D.what₂.LL T.Q.c.F (Fin n → D.
   chi := chiTop R i
   j := jL T R κ v₀ i n
 
-def formsOfTop (i : Fin D.R.m) : FormsL D.what₂.LL T.Q.c.F (Fin (R.nW i) → D.what₂.LL) (fun σ => (R.HW i σ).H) G :=
-  formsN T R κ v₀ i (R.nW i)
-
 abbrev topN (n : Fin D.R.m → ℕ) : RealDat D A T.Q.c.F := updFW R n fun i => formsN T R κ v₀ i (n i)
 
 abbrev topR : RealDat D A T.Q.c.F := topN T R κ v₀ (nTop T κ)
 
-def FWEq : Prop := ∀ i, R.FW i = formsOfTop T R κ v₀ i
-
-theorem fwEq_topN (n : Fin D.R.m → ℕ) : FWEq T (topN T R κ v₀ n) κ v₀ := fun _ => rfl
-
 def DimMatch : Prop := ∀ i, R.nW i = nTop T κ i
-
-def FormsExist : Prop := Nonempty (FWTie T (topN T R κ v₀ R.nW) κ v₀)
-
-def FormsExistTop : Prop := Nonempty (FWTie T (topR T R κ v₀) κ v₀)
 
 theorem isKsForm_formsN {i : Fin D.R.m} {m : ℕ} (hb : HasB T.Q.c.F (Cu T κ i) m) : (formsN T R κ v₀ i m).IsKsForm := by
   have e : crdOr T.Q.c.F D.what₂.LL (Cu T κ i) m = crd D.what₂.LL hb.some := crdOr_eq hb
@@ -521,8 +493,8 @@ def KapIs : Prop :=
     (∀ k : Fin (D.R.sigW ((i : ℕ) + 1)).2,
       (κ i).aM τ k = aMi D i ((Wc D i).sig (tauE D τ)).1 ((Wc D i).sig (tauE D τ)).2 τ k) ∧ (κ i).n = D.R.nV
 
-variable (D) in
 
+variable (D) in
 def KapDom : Prop :=
   (∀ (i : Fin D.R.m) (τ : D.what₂.Tau),
     (Antitone fun k : Fin (D.R.sigW ((i : ℕ) + 1)).1 => aPl D i ((Wc D i).sig (tauE D τ)).1 τ k) ∧
@@ -559,8 +531,8 @@ theorem kapDom : KapDom D := by
     have := D.R.two_le_m
     exact ⟨a + b + c, by simp only [Ranks.nV, Ranks.r]; omega⟩
 
-variable (D) in
 
+variable (D) in
 def kapTop (i : Fin D.R.m) : WeightFamilies.Wt D ((i : ℕ) + 1) :=
   ⟨_, _, fun τ => ((kapDom D).1 i τ).1, fun τ => ((kapDom D).1 i τ).2, D.R.nV, (kapDom D).2⟩
 
@@ -615,12 +587,6 @@ def tieN (n : Fin D.R.m → ℕ) (h : TieIn T R κ v₀) (hb : ∀ i, HasB T.Q.c
     (congrArg (evAt R i σ (v₀ i σ)) (jL_crdOr T R κ v₀ (hb i) σ f)).trans
       (jTop_good T R κ v₀ hσ hV ⟨resK σ hj.choose (crdOr T.Q.c.F D.what₂.LL (Cu T κ i) (n i)), hj.choose_spec⟩ f)
 
-theorem formsExistTop_of (h : TieIn T R κ v₀) : FormsExistTop T R κ v₀ :=
-  ⟨tieN T R κ v₀ _ h (hasB_nTop T h.laws κ)⟩
-
-theorem formsExist_of (h : TieIn T R κ v₀) (hd : DimMatch T R κ) : FormsExist T R κ v₀ :=
-  ⟨tieN T R κ v₀ _ h fun i => hd i ▸ hasB_nTop T h.laws κ i⟩
-
 theorem tieIn_top (h : LawsJ T) (ha : AlgTie T) (hs : ∀ i σ, LowSm (R.MW i σ)) (hc : ChiR T R) (hb : IsBaseClassLevelAdapted T R) :
     TieIn T R (kapTop D) (v0 R) :=
   ⟨h, ha, kapIs_kapTop D, fun i σ => extremal_vector_is_chosen R i σ (hs i σ), hc, hb⟩
@@ -661,8 +627,8 @@ theorem FWTie.mem_MK (t : FWTie T R κ v₀) (i : Fin D.R.m) (f : Cu T κ i) :
     refine ⟨(t.e i f).2, fun la y => ?_⟩
     exact (t.nrm_eq i la y f).trans_le ((T.nrmM_le_one_iff _ la _ _).2 (h la _))
 
-variable (T R v₀) in
 
+variable (T R v₀) in
 def EvInj : Prop := ∀ i σ, GoodEmb T.Q.c (res T σ) → Function.Injective (evAt R i σ (v₀ i σ))
 
 theorem FWTie.jK_eq (t : FWTie T R κ v₀) (ht : t.Evaluates) (h : EvInj T R v₀) {i : Fin D.R.m} {σ : D.what₂.LL →+* ℂ}
@@ -681,11 +647,6 @@ section Rows
 variable (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (R : RealDat D A T.Q.c.F) (κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1))
   (v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec) (n : Fin D.R.m → ℕ)
 
-theorem rhoTie_topN : RhoTie (topN T R κ v₀ n) := fun _ h => rhoOr_spec h
-
-theorem chiW_topN (h : ChiVal R) : (topN T R κ v₀ n).grp_chiW := fun i g =>
-  (chiIs_chiTop R h i g).trans (Units.coe_prod _ _)
-
 theorem barTie_tieN (hl : TieIn T R κ v₀) (hb : ∀ i, HasB T.Q.c.F (Cu T κ i) (n i)) :
     BarTie (tieN T R κ v₀ n hl hb) := fun i σ hσ hV => by
   refine ⟨fun h => ?_, fun h => jL_eq_zero T R κ v₀ (n i) (top_lift_vanishes_off_good_embeddings T R κ v₀ hσ hV h)⟩
@@ -694,19 +655,6 @@ theorem barTie_tieN (hl : TieIn T R κ v₀) (hb : ∀ i, HasB T.Q.c.F (Cu T κ 
 
 def IntAll {i : Fin D.R.m} (f : Cu T κ i) : Prop :=
   ∀ la (y : T.PtM ((i : ℕ) + 1) la), 0 ≤ y.1 (f : T.R ((i : ℕ) + 1))
-
-theorem mem_MK_formsN {i : Fin D.R.m} {m : ℕ} (hb : HasB T.Q.c.F (Cu T κ i) m) (x : Fin m → D.what₂.LL) :
-    x ∈ (formsN T R κ v₀ i m).MK ↔ ∃ f, IntAll T κ f ∧ crdOr T.Q.c.F D.what₂.LL (Cu T κ i) m f = x := by
-  have key : ∀ f la y, (formsN T R κ v₀ i m).nrm la y ⟨crdOr T.Q.c.F D.what₂.LL (Cu T κ i) m f, f, rfl⟩ ≤ 1 ↔
-      0 ≤ y.1 (f : T.R ((i : ℕ) + 1)) := fun f la y =>
-    (congrArg (fun g : Cu T κ i => T.nrmM ((i : ℕ) + 1) la y (g : T.R ((i : ℕ) + 1)) ≤ 1) (secOr_apply hb f)).to_iff.trans
-      (T.nrmM_le_one_iff _ la y _)
-  rw [FormsL.mem_MK]
-  constructor
-  · rintro ⟨⟨f, rfl⟩, h⟩
-    exact ⟨f, fun la y => (key f la y).1 (h la y), rfl⟩
-  · rintro ⟨f, h, rfl⟩
-    exact ⟨⟨f, rfl⟩, fun la y => (key f la y).2 (h la y)⟩
 
 def JUnif : Prop :=
   ∀ i σ, (∀ (m : ℕ) (b : Fin m → Cu T κ i), LinearIndependent T.Q.c.F b →
@@ -751,52 +699,10 @@ theorem lUnif_topN (hb : ∀ i, HasB T.Q.c.F (Cu T κ i) (n i)) (he : R.models_H
     rw [← rho_formsN T R κ v₀ hu he (hb i) h] at h1
     exact h1
 
-theorem mkStable_formsN (hu : JUnif T R κ v₀) (he : R.models_HW) (hg : GeoAct T R κ v₀) {i : Fin D.R.m} {m : ℕ}
-    (hb : HasB T.Q.c.F (Cu T κ i) m) : (formsN T R κ v₀ i m).MKStable := fun g x => by
-  obtain ⟨ρC, h⟩ := hg i
-  have h1 : ∀ f, (formsN T R κ v₀ i m).ρ g (crdOr T.Q.c.F D.what₂.LL (Cu T κ i) m f) =
-      crdOr T.Q.c.F D.what₂.LL (Cu T κ i) m (ρC g f) := fun f => by
-    rw [rho_formsN T R κ v₀ hu he hb h, crdOr_eq hb]
-    exact rhoB_crd _ ρC g f
-  constructor
-  · rintro ⟨f, rfl⟩
-    exact ⟨_, (h1 f).symm⟩
-  · intro hx
-    obtain ⟨f, hf, rfl⟩ := (mem_MK_formsN T R κ v₀ hb x).1 hx
-    exact (mem_MK_formsN T R κ v₀ hb _).2 ⟨_, h.2 g f hf, (h1 f).symm⟩
-
-theorem mkFull_formsN (hl : LatFull T κ) {i : Fin D.R.m} {m : ℕ} (hb : HasB T.Q.c.F (Cu T κ i) m) :
-    (formsN T R κ v₀ i m).MKFull :=
-  mkFull_of _ (crdOr T.Q.c.F D.what₂.LL (Cu T κ i) m) rfl (fun x => (mem_MK_formsN T R κ v₀ hb x).trans
-    (exists_congr fun _ => and_congr ⟨fun h la v hv => h la ⟨v, hv⟩, fun h la y => h la y.1 y.2⟩ Iff.rfl)) (hl i)
-
-theorem lIntegral_topN (hb : ∀ i, HasB T.Q.c.F (Cu T κ i) (n i)) (he : R.models_HW) (hu : JUnif T R κ v₀)
-    (hg : GeoAct T R κ v₀) (hl : LatFull T κ) : (topN T R κ v₀ n).LIntegral := fun i =>
-  ⟨isKsForm_formsN T R κ v₀ (hb i), mkFull_formsN T R κ v₀ hl (hb i), mkStable_formsN T R κ v₀ hu he hg (hb i)⟩
-
-def FormsExistAll : Prop :=
-  ∃ t : FWTie T (topR T R κ v₀) κ v₀, RhoTie (topR T R κ v₀) ∧ BarTie t ∧ (topR T R κ v₀).grp_chiW
-
-theorem formsExistAll_of (h : TieIn T R κ v₀) (hc : ChiVal R) : FormsExistAll T R κ v₀ :=
-  ⟨tieN T R κ v₀ _ h (hasB_nTop T h.laws κ), rhoTie_topN T R κ v₀ _, barTie_tieN T R κ v₀ _ h _, chiW_topN T R κ v₀ _ hc⟩
-
-theorem formsExistTop_iff : FormsExistTop T R κ v₀ ↔ TieIn T R κ v₀ :=
-  ⟨fun ⟨t⟩ => ⟨t.laws, t.alg_eq, t.kap, t.hv₀, t.chiR, t.x0⟩, formsExistTop_of T R κ v₀⟩
-
-theorem evaluates_tieN_iff (h : TieIn T R κ v₀) (hb : ∀ i, HasB T.Q.c.F (Cu T κ i) (n i)) :
-    (tieN T R κ v₀ n h hb).Evaluates ↔ JEvExists T R κ v₀ :=
-  ⟨fun ht => (tieN T R κ v₀ n h hb).jEvExists ht, fun hj => (tieN T R κ v₀ n h hb).evaluates hj⟩
-
 theorem FWTie.dimMatch {T : CoreJ D} [Algebra T.Q.c.F D.what₂.LL] {R : RealDat D A T.Q.c.F}
     {κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1)} {v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec}
     (t : FWTie T R κ v₀) : DimMatch T R κ := fun i =>
   (finrank_of_isKsForm (R.FW i) (t.ks i)).trans (t.e i).finrank_eq.symm
-
-theorem tie_of_fwEq (h : TieIn T R κ v₀) (hd : DimMatch T R κ) (hf : FWEq T R κ v₀) : Nonempty (FWTie T R κ v₀) := by
-  have h1 : ∀ FW, FW = (fun i => formsN T R κ v₀ i (R.nW i)) → Nonempty (FWTie T (updFW R R.nW FW) κ v₀) := by
-    rintro _ rfl
-    exact formsExist_of T R κ v₀ h hd
-  exact h1 R.FW (funext hf)
 
 end Rows
 

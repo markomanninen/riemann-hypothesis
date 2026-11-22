@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColLieApply
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColLieOperatorEqSumColUnitaryActionBddDegreeStatement
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsJointIntEigenvectorOfStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColLieApply
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColLieOperatorEqSumColUnitaryActionBddDegreeStatement
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsJointIntEigenvectorOfStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,7 +71,8 @@ theorem diag_monomial (t : ι) (k : Fin n) (s : ι × Fin m × Fin n →₀ ℕ)
 theorem X_mul_pderiv_mem {σ : Type} (d : ℕ) (a b : σ) (P : MvPolynomial σ ℂ)
     (hP : P ∈ restrictTotalDegree σ ℂ d) : X a * pderiv b P ∈ restrictTotalDegree σ ℂ d := by
   classical
-  rw [P.as_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [P.as_sum, map_sum, Finset.mul_sum]
   refine Submodule.sum_mem _ fun s hs => ?_
   rw [pderiv_monomial]
   by_cases h : s b = 0
@@ -80,7 +85,7 @@ theorem X_mul_pderiv_mem {σ : Type} (d : ℕ) (a b : σ) (P : MvPolynomial σ �
       conv_rhs => rw [← h2]
       rw [Finsupp.sum_add_index' (fun _ => rfl) (fun _ _ _ => rfl), Finsupp.sum_single_index rfl]
     refine (totalDegree_mul _ _).trans ?_
-    have h4 := totalDegree_monomial_le (s - Finsupp.single b 1) (coeff s P * (s b : ℂ))
+    have h4 := totalDegree_monomial_le (s - Finsupp.single b 1) (AddMonoidAlgebra.coeff P s * (s b : ℂ))
     rw [totalDegree_X]
     have h5 : ((s - Finsupp.single b 1).sum fun _ => id) = (s - Finsupp.single b 1).sum fun _ e => e := rfl
     omega
@@ -94,7 +99,8 @@ theorem exists_bound {σ X : Type} [AddCommGroup X] [Module ℂ X] [FiniteDimens
     (Φ : X →ₗ[ℂ] MvPolynomial σ ℂ) : ∃ d, ∀ x, Φ x ∈ restrictTotalDegree σ ℂ d := by
   let b := Module.finBasis ℂ X
   refine ⟨Finset.univ.sup fun i => (Φ (b i)).totalDegree, fun x => ?_⟩
-  rw [← b.sum_repr x, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← b.sum_repr x, map_sum]
   refine Submodule.sum_mem _ fun i _ => ?_
   rw [map_smul]
   refine Submodule.smul_mem _ _ ?_
@@ -103,8 +109,8 @@ theorem exists_bound {σ X : Type} [AddCommGroup X] [Module ℂ X] [FiniteDimens
 
 end ColHigh
 
-open ColHigh in
 
+open ColHigh in
 theorem exists_colHighest (ι : Type) [Fintype ι] (m n : ℕ) (X : Type) [AddCommGroup X] [Module ℂ X]
     [FiniteDimensional ℂ X] (U : Submodule ℂ (X →ₗ[ℂ] Pol ι m n)) (hU0 : U ≠ ⊥)
     (hU : ∀ Φ ∈ U, ∀ τ g, colSub m τ g ∘ₗ Φ ∈ U) :
@@ -145,9 +151,10 @@ theorem exists_colHighest (ι : Type) [Fintype ι] (m n : ℕ) (X : Type) [AddCo
       rw [eq_top_iff]
       intro Φ _
       let b := Module.finBasis ℂ X
-      have : Φ = ∑ i, ∑ s ∈ (Φ (b i)).support, (b.coord i).smulRight (monomial s (coeff s (Φ (b i)))) := by
+      have : Φ = ∑ i, ∑ s ∈ (Φ (b i)).support, (b.coord i).smulRight (monomial s (AddMonoidAlgebra.coeff (Φ (b i)) s)) := by
         refine LinearMap.ext fun x => ?_
-        conv_lhs => rw [← b.sum_repr x, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          conv_lhs => rw [← b.sum_repr x, map_sum]
         simp only [LinearMap.sum_apply, LinearMap.smulRight_apply, ← Finset.smul_sum, map_smul,
           ← as_sum, Module.Basis.coord_apply]
       rw [this]

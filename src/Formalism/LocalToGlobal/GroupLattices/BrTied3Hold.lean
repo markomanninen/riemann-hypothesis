@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.ServJointF
-import Formalism.LocalToGlobal.HilbertRowConditions.ColumnsFunctionAtSubspaces
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ServJointF
+public import Formalism.LocalToGlobal.HilbertRowConditions.ColumnsFunctionAtSubspaces
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open Formalism.BasicNotions Formalism.BasicNotions.DV Formalism.MainNotions.G Formalism.MainNotions.WeilJacquetShalikaLaw Formalism.L2.DIV Formalism.L2.Indef
@@ -10,16 +14,6 @@ namespace Formalism.L2.G.ServJointF
 
 variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst D L} {Gl : Formalism.MainNotions.G.LatInst D} {K : Formalism.MainNotions.G.Consts}
   {Y : DivX D} {cX : ExtraC} {ex : Extra D L hT Gi Gl K Y cX}
-
-def brOf3 (P : Formalism.L2.Rows.RowSideFamily ex) : ColBrF D where
-  Bs := P.A3.fam3.base3
-  Df1 := P.A3.side3 P.Ps P.ψs P.Zs
-  Dc := P.Dc
-  wU := P.I.wU
-  eNu := fun u x => P.I.eNu u x
-  tup := P.I.tup
-  eV := fun t F => P.I.jA t ((rV0 D P.A3.A P.Ps P.ψs t).mulVec F)
-  tz := (P.A3.indefDown P.S0).μ
 
 section Gen
 
@@ -33,18 +27,21 @@ theorem brTied_of {Zs : DefSub A3.fam3.amb3} {S0 : IndefData (A3.side3 P0 ψ0 Zs
     (hdc : ∀ (u : D.what₂.Word) (t : A3.fam3.base3.Tup) (x : Fin (Dc.a (I.wU u)) → D.what₂.LL) (F : Fin ((A3.side3 Ps ψs Zs).nV t) → D.what₂.LL),
       D.what₂.embLL (Dc.Pt (I.wU u) t x F) = D.what₂.perCol u (I.tup t) (D.jN u (I.eNu u x)) (I.jA t ((rV0 D A3.A Ps ψs t).mulVec F))) :
     (ColBrF.mk A3.fam3.base3 (A3.side3 Ps ψs Zs) Dc I.wU (fun u x => I.eNu u x) I.tup
-      (fun t F => I.jA t ((rV0 D A3.A Ps ψs t).mulVec F)) S1.μ).Tied where
-  mu := fun w => by rw [hT.mu1]; exact hT.tup.muAt w
-  v0 := fun t F _ => by
+      (fun t F => I.jA t ((rV0 D A3.A Ps ψs t).mulVec F)) S1.μ).Tied := by
+  refine ⟨?_, ?_, ?_, hdc⟩
+  · intro w
+    change D.what₂.muAt w = I.tup (S1.μ (D.plEq w))
+    rw [hT.mu1]
+    exact hT.tup.muAt w
+  · intro t F _
     obtain ⟨s0, hOk⟩ := hok
     refine ⟨I.jA t ((rV0 D A3.A Ps ψs t).mulVec F), ?_⟩
     have h1 := (hT.sharp.forms t).op_eq ((rV0 D A3.A Ps ψs t).mulVec F)
     rw [ServJoint.level_operator_fixes_image hOk Ps ψs (A3.fam3.toSub2 Zs) t F] at h1
     exact h1
-  gen := fun t F hF => by
+  · intro t F hF
     obtain ⟨s0, hOk⟩ := hok
     exact ((hT.sharp.Mtilde t).2 _).1 ((ServJoint.image_mem_nabla_iff hOk Ps ψs (A3.fam3.toSub2 Zs) t F).2 hF)
-  dcPt := hdc
 
 end Gen
 

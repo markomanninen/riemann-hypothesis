@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -43,26 +48,27 @@ theorem singleV_mul_of_ne {v w : HeightOneSpectrum (𝓞 F)} (h : v ≠ w) (x : 
     | zero => simp
     | tmul a' b' =>
       simp [singleV, Algebra.TensorProduct.tmul_mul_tmul, singleF_mul_of_ne h]
-    | add y y' hy hy' => rw [map_add, mul_add, hy, hy', add_zero]
-  | add x x' hx hx' => rw [map_add, add_mul, hx, hx', add_zero]
+    | add y y' hy hy' => rw [map_add (f := _), mul_add, hy, hy', add_zero]
+  | add x x' hx hx' => rw [map_add (f := _), add_mul, hx, hx', add_zero]
 
 theorem compAt_singleV_same (v : HeightOneSpectrum (𝓞 F)) (x : Kv E v) :
     compAt E v (singleV E v x) = x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [compAt, singleV, evalAt_singleF_same]
-  | add x x' hx hx' => rw [map_add, map_add, hx, hx']
+  | add x x' hx hx' => rw [map_add (f := _), map_add (f := _), hx, hx']
 
 theorem compAt_singleV_ne {u v : HeightOneSpectrum (𝓞 F)} (h : u ≠ v) (x : Kv E v) :
     compAt E u (singleV E v x) = 0 := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [compAt, singleV, evalAt_singleF_ne h]
-  | add x x' hx hx' => rw [map_add, map_add, hx, hx', add_zero]
+  | add x x' hx hx' => rw [map_add (f := _), map_add (f := _), hx, hx', add_zero]
 
 theorem compAt_restrictTo (S : Finset (HeightOneSpectrum (𝓞 F))) (v : HeightOneSpectrum (𝓞 F))
     (a : AE F E) : compAt E v (restrictTo E S a) = if v ∈ S then compAt E v a else 0 := by
-  rw [restrictTo, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [restrictTo, map_sum]
   split_ifs with hv
   · rw [Finset.sum_eq_single_of_mem v hv (fun w _ hw => compAt_singleV_ne hw.symm _),
       compAt_singleV_same]
@@ -77,7 +83,7 @@ theorem compAt_sigA (c : E ≃ₐ[F] E) (v : HeightOneSpectrum (𝓞 F)) (a : AE
   induction a using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [compAt, sigA, sigV]
-  | add x x' hx hx' => rw [map_add, map_add, hx, hx', map_add, map_add]
+  | add x x' hx hx' => rw [map_add (f := _), map_add (f := _), hx, hx', map_add (f := _), map_add (f := _)]
 
 theorem map_compAt_mem_SU (c : E ≃ₐ[F] E) (v : HeightOneSpectrum (𝓞 F)) {N : ℕ}
     (J : Matrix (Fin N) (Fin N) E) {x : Matrix (Fin N) (Fin N) (AE F E)}
@@ -141,12 +147,12 @@ theorem Truncation.proof (hLoc : LocalInClosure.Statement) : Truncation.Statemen
   refine ⟨?_, ?_, part3, ?_⟩
   · intro v hv
     ext i j
-    simp only [trunc, Matrix.map_apply, Matrix.add_apply, map_add, compAt_restrictTo, if_pos hv,
+    simp only [trunc, Matrix.map_apply, Matrix.add_apply, map_add (f := _), compAt_restrictTo, if_pos hv,
       Matrix.sub_apply, map_sub]
     abel
   · intro v hv
     ext i j
-    simp only [trunc, Matrix.map_apply, Matrix.add_apply, map_add, compAt_restrictTo, if_neg hv,
+    simp only [trunc, Matrix.map_apply, Matrix.add_apply, map_add (f := _), compAt_restrictTo, if_neg hv,
       add_zero]
     rw [Matrix.one_apply, Matrix.one_apply]
     split_ifs <;> simp

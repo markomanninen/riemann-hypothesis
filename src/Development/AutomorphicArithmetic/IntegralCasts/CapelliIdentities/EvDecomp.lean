@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qf39.ev_decomp :
     ∀ {O σ : Type} [inst : CommRing O] [inst_1 : Fintype σ]
@@ -39,7 +43,8 @@ theorem UpperTheory.Reformulated.B.Qf39.ev_decomp :
       exact hle (Finsupp.single_le_iff.2 (Nat.one_le_iff_ne_zero.2 (hc₂ m i hi)))
   refine ⟨h, ?_, fun i => ?_⟩
   · ext m
-    rw [map_add, map_sum, MvPowerSeries.coeff_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), map_sum, MvPowerSeries.coeff_C]
     simp only [hX]
     by_cases hm : m = 0
     · subst hm

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GaussValuationBounds.Statement
+module
+
+public import Mathlib
+public import Formalism.GaussValuationBounds.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,11 +32,5 @@ def GaussC : Prop :=
 def GaussUnit : Prop :=
   ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (x : ℝ), 0 ≤ x →
     ∀ u : PowerSeries O, IsUnit u → gaussV x u = 0
-
-def GaussEis : Prop :=
-  ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (ϖ : O), Irreducible ϖ →
-    ∀ (x : ℝ), 0 ≤ x → ∀ (E : Polynomial O) (N : ℕ), 1 ≤ N →
-      E.IsEisensteinAt (Ideal.span {ϖ}) → E.natDegree = N →
-      gaussV x (E : PowerSeries O) = ENNReal.ofReal (min 1 (x * N))
 
 end Formalism.NOK

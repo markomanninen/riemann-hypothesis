@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped ContDiff

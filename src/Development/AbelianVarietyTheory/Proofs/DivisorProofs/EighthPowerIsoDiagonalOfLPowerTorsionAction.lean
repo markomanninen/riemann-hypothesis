@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FinitePointsOfIsOpenImmersion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FinitePointsOfIsOpenImmersion
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -18,13 +22,11 @@ variable {C : Type*} [Category C] [CartesianMonoidalCategory C]
 
 theorem isMonHom_of_points {X Y : C} [MonObj X] [MonObj Y] (f : X ⟶ Y)
     (h1 : ∀ T : C, (1 : T ⟶ X) ≫ f = 1)
-    (hm : ∀ (T : C) (x y : T ⟶ X), (x * y) ≫ f = (x ≫ f) * (y ≫ f)) : IsMonHom f where
-  one_hom := by
-    rw [MonObj.one_eq_one X, MonObj.one_eq_one Y]
-    exact h1 _
-  mul_hom := by
-    rw [MonObj.mul_eq_mul X, MonObj.mul_eq_mul Y, hm, MonObj.comp_mul]
-    simp
+    (hm : ∀ (T : C) (x y : T ⟶ X), (x * y) ≫ f = (x ≫ f) * (y ≫ f)) : IsMonHom f := by
+  refine ⟨?_, ?_⟩
+  · simpa only [MonObj.one_eq_one] using h1 (𝟙_ C)
+  · simpa only [MonObj.mul_eq_mul, MonObj.comp_mul, tensorHom_fst, tensorHom_snd] using
+      hm (X ⊗ X) (fst X X) (snd X X)
 
 theorem exists_sections {G H : C} [MonObj G] [MonObj H] {n : Type} [DecidableEq n]
     (p : n → (G ⟶ H)) (hp : ∀ a, IsMonHom (p a))

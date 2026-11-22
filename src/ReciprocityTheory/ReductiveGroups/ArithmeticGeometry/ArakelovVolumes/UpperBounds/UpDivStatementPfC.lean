@@ -1,6 +1,10 @@
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ExtNull
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ImportsAlt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.UpDivStatementPfB
+module
+
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ExtNull
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ImportsAlt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.UpDivStatementPfB
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up
 

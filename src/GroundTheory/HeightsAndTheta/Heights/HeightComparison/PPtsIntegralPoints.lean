@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightPtsIntegralPoints
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCurve
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightPtsIntegralPoints
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCurve
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -16,16 +21,16 @@ variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
 theorem rel_equivalence (P : Ideal (Geo.MRing ι)) :
     Equivalence (fun z z' : Geo.mcPts P ↦
-      ∃ c : K → ℂ, (∀ k, c k ≠ 0) ∧ (z' : (Σ k, ι k) → ℂ) = fun p ↦ c p.1 * (z : (Σ k, ι k) → ℂ) p) where
-  refl z := ⟨fun _ ↦ 1, fun _ ↦ one_ne_zero, by funext p; simp⟩
-  symm := by
-    rintro z z' ⟨c, hc, h⟩
+      ∃ c : K → ℂ, (∀ k, c k ≠ 0) ∧ (z' : (Σ k, ι k) → ℂ) = fun p ↦ c p.1 * (z : (Σ k, ι k) → ℂ) p) := by
+  constructor
+  · intro z
+    exact ⟨fun _ ↦ 1, fun _ ↦ one_ne_zero, by funext p; simp⟩
+  · rintro z z' ⟨c, hc, h⟩
     refine ⟨fun k ↦ (c k)⁻¹, fun k ↦ inv_ne_zero (hc k), ?_⟩
     funext p
     rw [h]
     exact (inv_mul_cancel_left₀ (hc p.1) _).symm
-  trans := by
-    rintro z z' z'' ⟨c, hc, h⟩ ⟨d, hd, h'⟩
+  · rintro z z' z'' ⟨c, hc, h⟩ ⟨d, hd, h'⟩
     refine ⟨fun k ↦ d k * c k, fun k ↦ mul_ne_zero (hd k) (hc k), ?_⟩
     funext p
     rw [h', h, mul_assoc]
@@ -48,7 +53,7 @@ theorem sheetDensity_eq (P : Ideal (Geo.MRing ι))
     refine ⟨fun _ ↦ z, rfl, Filter.Eventually.of_forall fun y' ↦ ⟨differentiableAt_const _, hz, ?_⟩⟩
     rw [Subsingleton.elim y' y]
     exact hΨ
-  rw [Geo.sheetDensity, dif_pos hex]
+  rw [Geo.sheetDensity, dite_eq_left hex]
   obtain ⟨hseg, hev⟩ := hex.choose_spec
   have hmem : hex.choose y ∈ Geo.mcPts P := hev.self_of_nhds.2.1
   obtain ⟨c, hc, hcz⟩ := Geo.sameOrbit_of_segre (z := z) hmem.1 1 one_ne_zero (by rw [one_smul, hseg])
@@ -162,32 +167,12 @@ theorem homogProof : HomogStatement := by
   intro K _ _ ι _ P g hP hfin hg
   have hex : ∃ Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (0 + 1) → ℂ), Geo.IsGoodProj P Ψ :=
     exists_isGoodProj P hfin
-  rw [Geo.ptsIntegral, dif_pos hex]
+  rw [Geo.ptsIntegral, dite_eq_left hex]
   exact ptsIntegralAt_eq P hP g hg _ hex.choose_spec
-
-example : Geo.IsMultiHomogIdeal (ι := blockIdx (fun _ : Unit ↦ 1)) (orbitIdeal samplePoint) ∧
-    Finite (projPts (ι := blockIdx (fun _ : Unit ↦ 1)) (orbitIdeal samplePoint)) ∧
-    ∀ (c : Unit → ℂ) (z : Coord (fun _ : Unit ↦ 1) → ℂ), (∀ k, c k ≠ 0) →
-      z ∈ Geo.mcPts (ι := blockIdx (fun _ : Unit ↦ 1)) (orbitIdeal samplePoint) →
-      (fun w : Coord (fun _ : Unit ↦ 1) → ℂ ↦ ‖w ⟨(), 0⟩‖ / ‖w ⟨(), 1⟩‖) (fun p ↦ c p.1 * z p) =
-        (fun w : Coord (fun _ : Unit ↦ 1) → ℂ ↦ ‖w ⟨(), 0⟩‖ / ‖w ⟨(), 1⟩‖) z := by
-  refine ⟨OrbitCurve.isMultiHomogIdeal_orbitIdeal samplePoint,
-    (Nat.card_pos_iff.mp (OrbitDegree.full Unit _ samplePoint samplePoint_blockNonzero)).2,
-    fun c z hc _ ↦ ?_⟩
-  simp only [norm_mul]
-  exact mul_div_mul_left _ _ (norm_ne_zero_iff.mpr (hc ()))
 
 section Dependence
 
 open MvPolynomial
-
-noncomputable def affPtIdeal : Ideal (Geo.MRing (fun _ : Unit ↦ Fin 2)) :=
-  Ideal.span {X ⟨(), 0⟩ - 2, X ⟨(), 1⟩ - 1}
-
-noncomputable def affPt : (Σ _ : Unit, Fin 2) → ℂ := fun p ↦ if p.2 = 0 then 2 else 1
-
-noncomputable def affProj (s : ℂ) : (((k : Unit) → Fin 2) → ℂ) →ₗ[ℂ] (Fin (0 + 1) → ℂ) :=
-  s • LinearMap.pi fun _ ↦ LinearMap.proj fun _ ↦ 0
 
 end Dependence
 

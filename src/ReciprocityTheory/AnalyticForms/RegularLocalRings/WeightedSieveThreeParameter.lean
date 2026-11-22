@@ -1,5 +1,9 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ContinuousOnOfCharts
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsClosedOfChartIdeal
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ContinuousOnOfCharts
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsClosedOfChartIdeal
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 

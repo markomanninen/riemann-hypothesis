@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormRankFour
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsFrameTwo
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormRankFour
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsFrameTwo
+
+@[expose] public section
 
 open Matrix Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.P.QrD
 

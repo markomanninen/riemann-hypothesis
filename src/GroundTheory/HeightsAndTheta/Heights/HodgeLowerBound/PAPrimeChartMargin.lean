@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StAPrimeChartLevi
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StChartVelLift
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StAPrimeChartLevi
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StChartVelLift
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

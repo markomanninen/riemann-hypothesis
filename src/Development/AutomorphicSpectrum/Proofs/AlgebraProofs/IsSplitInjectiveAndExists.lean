@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsSplitGaussChars
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GapCondExample
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsSplitGaussChars
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GapCondExample
+
+@[expose] public section
 
 open TensorProduct
 
@@ -26,7 +30,7 @@ theorem isSplit_injective_and_exists (O k S : Type) [CommRing O] [Field k] [Fint
       induction y using TensorProduct.induction_on with
       | zero => simp
       | tmul a x => rw [hv, hv, hst]
-      | add u v hu hv' => simp [map_add, hu, hv']
+      | add u v hu hv' => simp [map_add (f := _), hu, hv']
     have h1 := key y
     rw [hy] at h1
     simp [Pi.single_apply, Ne.symm hne] at h1
@@ -36,12 +40,14 @@ theorem isSplit_injective_and_exists (O k S : Type) [CommRing O] [Field k] [Fint
     choose y hy using fun s => h.2 (Pi.single s (1 : k))
     have hsum : ∑ s, y s = 1 := by
       apply h.1
-      rw [map_sum, map_one]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_one]
       simp only [hy]
       ext t
       simp [Finset.sum_apply, Pi.single_apply]
     have hne : ∑ s, Ψ (y s) ≠ 0 := by
-      rw [← map_sum, hsum, map_one]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, hsum, map_one]
       exact one_ne_zero
     obtain ⟨s, -, hs⟩ := Finset.exists_ne_zero_of_sum_ne_zero hne
     refine ⟨s, ?_⟩

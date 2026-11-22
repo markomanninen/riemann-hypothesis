@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.JrTeichEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UnitaryHeckeData
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.CLocConj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TDenseU
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.OrdCoreH
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AuTeichEx
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.JrTeichEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UnitaryHeckeData
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.CLocConj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TDenseU
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.OrdCoreH
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AuTeichEx
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -104,9 +108,10 @@ private theorem jr_abs {l : ℕ} [Fact l.Prime] {F : GFrame l} {O : Type} [CommR
           F.oEl v (fun j => pushCh (f i : B.B ⧸ J →+* K) (B.psiT J v j)) g := by
         unfold GFrame.oEl
         rw [map_list_prod, List.map_ofFn]
-        congr 2
+        apply congrArg (fun terms => (List.ofFn terms).prod)
         funext j
-        simp only [Function.comp_apply, map_sub, MonoidAlgebra.mapRingHom_single, map_one]
+        simp only [Function.comp_apply, map_sub, MonoidAlgebra.mapRingHom_single, map_one,
+          pushCh, MonoidHom.comp_apply, Units.coe_map]
         rfl
       rw [h1]
       exact UpperTheory.V.AlgebraTools.Det.oElRep F O K n (ρ i) v _ (hflag i v) g
@@ -159,8 +164,8 @@ private theorem jr_surj {l : ℕ} [Fact l.Prime] {F : GFrame l} {O : Type} [Comm
         (e.symm : T →+* B.B ⧸ RingHom.ker f).comp (algebraMap Λ.Λ T) := by
       refine RingHom.ext fun b => ?_
       change _ = e.symm (algebraMap Λ.Λ T b)
-      rw [AlgEquiv.eq_symm_apply, ← hlam]
-      rfl
+      rw [AlgEquiv.eq_symm_apply]
+      exact (Ideal.quotientKerAlgEquivOfSurjective_mk hsurj _).trans (hlam b)
     rw [he]
     exact (RingHom.Finite.of_surjective _ e.symm.surjective).comp hfin
   · intro a ha b hb
@@ -168,7 +173,6 @@ private theorem jr_surj {l : ℕ} [Fact l.Prime] {F : GFrame l} {O : Type} [Comm
     rw [← hlam, ← map_mul]
     exact hb
 end Abstract
-attribute [-instance] UpperTheory.V.GradeZeroInterpolatingElement.instIsLocalRingSubtypePadicAlgClMemSubalgebraPadicIntO in
 theorem UpperTheory.V.Hi.ring_props_of_is_j_unitary_hecke_data :
     _root_.UpperTheory.V.Af.HypothesesH' → ∀ (l : ℕ) [Fact l.Prime] (L Ω : Type) [Field L] [NumberField L] [IsCMField L] [Field Ω] [Algebra L Ω] [IsAlgClosure L Ω] (s : HidaSetting l L Ω) (n : ℕ), 1 ≤ n →
     ∀ (V : s.Lev) (Q : QData V) (c : Coef l), ∀ (r : Resid V.frame c.O n) (ι : Qbar l ≃+* ℂ), ∀ (B : UniversalOrdinaryDeterminantRing r) (Λ : LamObj r) (R : _root_.UpperTheory.V.Hi.CaseU.UnitaryHeckeData Q ι Λ) (K : (hset Q R.τ₀).Lev), V.S' = s.S → ∀ J : Ideal B.B, R.IsJ B K J → B.RingProps Λ J := by
@@ -177,13 +181,17 @@ theorem UpperTheory.V.Hi.ring_props_of_is_j_unitary_hecke_data :
   · refine jr_abs B Λ ⊤ (ι := Empty) (Qbar l) Empty.elim (fun i => i.elim) (fun _ _ => trivial) Empty.elim (fun i => i.elim)
       (fun i => i.elim) (fun i => i.elim) (fun i => i.elim) (fun _ i => i.elim) (jr_isTeich c r) ?_ fun _ _ _ _ => trivial
     exact RingHom.Finite.of_surjective _ fun b => ⟨0, Subsingleton.elim _ _⟩
-  have hAx := _root_.UpperTheory.V.Hi.axU_s hP.litN l L Ω s n hn V Q c _ R.τ₀
-  obtain ⟨hdom, hden⟩ := _root_.UpperTheory.V.Hi.isDomain_and_denseWt_of_isTheta hP.litN l L Ω s n hn V Q c _ R.τ₀ r Λ R.θ R.theta
-  obtain ⟨-, hfin, htf, -⟩ := hiAlg L Ω l n c _ hAx Λ.Λ R.θ R.isWt R.a K hne
+  have hAx := _root_.UpperTheory.V.Hi.axU_s hP.litN l L Ω s n hn V Q c R.m R.τ₀
+  obtain ⟨hdom, hden⟩ := _root_.UpperTheory.V.Hi.isDomain_and_denseWt_of_isTheta hP.litN l L Ω s n hn V Q c R.m R.τ₀ r Λ R.θ R.theta
+  obtain ⟨-, hfin, htf, -⟩ := hiAlg L Ω l n c (hset Q R.τ₀) hAx Λ.Λ R.θ R.isWt R.a K hne
   let lam : Wt L l n := fun _ => ⟨0, fun _ _ _ => le_rfl⟩
-  have hout := _root_.UpperTheory.V.Z.Ord.core_hecke_of_automorphic_hecke_dense_weight hP.litN L Ω l n c _ hAx Λ.Λ R.θ R.isWt ι _ (_root_.UpperTheory.V.Hi.automorphicHeckeSet_unitaryPointProperties_of_typeFor hP l L Ω s n hn V Q c r ι _ R.τ₀ R.type) lam trivial
+  have hAut := _root_.UpperTheory.V.Hi.automorphicHeckeSet_unitaryPointProperties_of_typeFor
+    hP l L Ω s n hn V Q c r ι R.m R.τ₀ R.type
+  have hLam : lam ∈ (hset Q R.τ₀).admitted := Set.mem_univ _
+  have hout := _root_.UpperTheory.V.Z.Ord.core_hecke_of_automorphic_hecke_dense_weight
+    hP.litN L Ω l n c (hset Q R.τ₀) hAx Λ.Λ R.θ R.isWt ι _ hAut lam hLam
     (hden lam) R.a K _ _ hmap
-  refine jr_surj B Λ f hsurj hlam (Qbar l) _ (hout.sep lam trivial (hden lam)) (fun x hx => ?_) (jr_isTeich c r) hfin (htf hdom)
-  obtain ⟨ρ, hc, -, hPU, hD, hfl⟩ := hout.pt lam trivial x hx.2.1
+  refine jr_surj B Λ f hsurj hlam (Qbar l) _ (hout.sep lam hLam (hden lam)) (fun x hx => ?_) (jr_isTeich c r) hfin (htf hdom)
+  obtain ⟨ρ, hc, -, hPU, hD, hfl⟩ := hout.pt lam hLam x hx.2.1
   exact ⟨ρ, hD, hPU.form, fun v => (hfl hx v).1, hPU.type, fun h h' => point_rep_unramified_at_auxiliary_place hn B h _ _ hc h'⟩
 end

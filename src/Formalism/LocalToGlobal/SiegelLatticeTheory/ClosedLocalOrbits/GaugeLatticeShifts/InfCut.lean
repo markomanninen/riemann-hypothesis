@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.RealObj
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.RealObj
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,15 +23,6 @@ def HaarDisintegrationReal : Prop :=
 def StepReal : Prop :=
   ∀ (D : D7) (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word) (sc : ℝ), 0 < sc →
     ∀ c ∈ Good X u u', ∃ γ, HasDiag X u u' sc c γ
-
-def StepInt : Prop :=
-  ∀ (D : D7) (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word) (sc : ℝ), 0 < sc →
-    ∀ c ∈ Good X u u', ∀ γ, HasDiag X u u' sc c γ →
-      TermOp.OOInt (Formalism.L2.SG.ProjRows.muInf X.B.I) Set.univ (X.Wu u) (X.Wu u') γ
-
-def StepEnergy : Prop :=
-  ∀ (D : D7) (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word) (sc : ℝ), 0 < sc →
-    DisintegrationConstantPositive X u u' sc → CoordOK X u u' sc → intOOe X u u' sc ≤ ENNReal.ofReal (1 / degX X)
 
 def StepDiagDC : Prop :=
   ∀ (D : D7) (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what₂.Word) (sc : ℝ),
@@ -271,17 +266,14 @@ theorem dl_cont {r : ℕ} (l : ℕ) : Continuous (fun Z : Matrix (Fin (r + 1)) (
 
 theorem wt_cont (u u' : D.what₂.Word) : Continuous (wt X u u') := by
   unfold wt
-  refine continuous_finset_prod _ fun v _ => ?_
+  refine continuous_finsetProd _ fun v _ => ?_
   have hd : Continuous (fun c : Cinf X => Matrix.diagonal (c v)) := (continuous_apply v).matrix_diagonal
   have hD : ∀ l, Continuous (fun c : Cinf X => Dl (Matrix.diagonal (c v)) l) := fun l => (dl_cont l).comp hd
   refine Continuous.mul ?_ ?_
   · unfold Gv
     exact ((((hD _).norm.pow 2).sub (continuous_const.mul ((hD _).norm.pow 2)))).pow _
   · unfold JacV modC
-    exact continuous_finset_prod _ fun l _ => ((hD l).norm.pow 2).pow 2
-
-theorem inNuX (u u' : D.what₂.Word) (sc : ℝ) : InNuX X u u' sc :=
-  inNuX_of_meas X u u' sc (wt_cont X u u').measurable
+    exact continuous_finsetProd _ fun l _ => ((hD l).norm.pow 2).pow 2
 
 end Conc
 

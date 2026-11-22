@@ -1,7 +1,11 @@
-import Formalism.PeriodIntegrals.QmDefs
-import Formalism.PeriodIntegrals.QmMove
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.GeneratorCommutatorQuantumDet
+module
+
+public import Formalism.PeriodIntegrals.QmDefs
+public import Formalism.PeriodIntegrals.QmMove
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.GeneratorCommutatorQuantumDet
+
+@[expose] public section
 
 open Finset Formalism.REAL
 

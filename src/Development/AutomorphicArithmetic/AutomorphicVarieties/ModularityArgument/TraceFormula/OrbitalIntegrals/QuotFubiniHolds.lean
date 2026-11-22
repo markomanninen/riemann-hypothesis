@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubiniOf
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.OrbProper
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubiniOf
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.OrbProper
+
+@[expose] public section
 
 namespace UpperTheory.V.Z.Tf.Orb
 
@@ -20,8 +24,6 @@ theorem quotIndep_holds : QuotIndep := quotIndep_of
 theorem normEx_holds : NormEx := normEx_of
 
 theorem quotInt_holds : QuotInt := quotInt_of
-
-theorem convTest_holds : ConvTest := convTest_of
 
 theorem untwist_holds : Untwist := untwist_of
 

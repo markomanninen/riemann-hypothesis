@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualMapCompDualMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualMapCompDualMap
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.CechKS
@@ -28,7 +33,7 @@ def diffDer (hJ : J ^ 2 = 0) (ρ₁ ρ₂ : B →ₐ[R] C) (hd : ∀ b, ρ₁ b 
     Derivation R B C :=
   letI : Algebra B C := (ρ₂ : B →+* C).toAlgebra
   { toFun := fun b ↦ ρ₁ b - ρ₂ b
-    map_add' := fun a b ↦ by simp only [map_add]; ring
+    map_add' := fun a b ↦ by simp only [map_add (f := _)]; ring
     map_smul' := fun r b ↦ by
       simp only [map_smul, RingHom.id_apply, smul_sub]
     map_one_eq_zero' := by simp
@@ -60,7 +65,7 @@ theorem diffLam_mem (m : Ω[B⁄R]) : diffLam hJ ρ₁ ρ₂ hd m ∈ J := by
   induction m using GlobalTheory.CechDR.ind1 with
   | h b c => rw [diffLam_smul, diffLam_D]; exact J.mul_mem_left _ (hd c)
   | h0 => rw [map_zero]; exact J.zero_mem
-  | ha x y hx hy => rw [map_add]; exact J.add_mem hx hy
+  | ha x y hx hy => rw [map_add (f := _)]; exact J.add_mem hx hy
 
 end Alg
 
@@ -73,11 +78,11 @@ def diagLift : TrivSqZeroExt B Ω[B⁄R] →ₐ[R] C where
   toFun c := ρ₂ c.fst + diffLam hJ ρ₁ ρ₂ hd c.snd
   map_one' := by simp
   map_zero' := by simp
-  map_add' a b := by simp only [TrivSqZeroExt.fst_add, TrivSqZeroExt.snd_add, map_add]; ring
+  map_add' a b := by simp only [TrivSqZeroExt.fst_add, TrivSqZeroExt.snd_add, map_add (f := _)]; ring
   map_mul' a b := by
     have h0 := mul_eq_zero_of_sq hJ (diffLam_mem hJ ρ₁ ρ₂ hd a.snd) (diffLam_mem hJ ρ₁ ρ₂ hd b.snd)
     have e : (MulOpposite.op b.fst • a.snd : Ω[B⁄R]) = b.fst • a.snd := rfl
-    simp only [TrivSqZeroExt.fst_mul, TrivSqZeroExt.snd_mul, map_mul, map_add, e, diffLam_smul]
+    simp only [TrivSqZeroExt.fst_mul, TrivSqZeroExt.snd_mul, map_mul, map_add (f := _), e, diffLam_smul]
     linear_combination -h0
   commutes' r := by
     simp [TrivSqZeroExt.algebraMap_eq_inl']
@@ -211,7 +216,8 @@ theorem ev_idLift_sub_eq_sum : ∀ (R : Type) [CommRing R] (X : Scheme.{0}) (s :
   have hc : (ev ω.1 ((diagExt R (CechDR.Sec s U)).secHom hx (diagExt R (CechDR.Sec s U)).i fun _ ↦ rfl) -
       ev ω.1 ((diagExt R (CechDR.Sec s U)).secHom hx (diagSec R (CechDR.Sec s U)) (fst_derSec _))).snd =
       connForm ω.1 (CechDR.affPt s ⟨U, hU⟩) hx := rfl
-  rw [hc, hΩ, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hc, hΩ, map_sum]
   refine Finset.sum_congr rfl fun k _ ↦ ?_
   rw [diffLam_smul, diffLam_D]
   exact (congrArg₂ (fun a b ↦ a * b) (valR_eq_valHom y₂ hy₂ h₂ (r k))

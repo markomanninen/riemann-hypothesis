@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.WeberFunction
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.WeberFunction
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Global
@@ -8,17 +13,11 @@ open WeierstrassCurve OnePoint ShortWeierstrass
 
 variable {F : Type*} [Field F]
 
+
 open scoped Classical in
-
-noncomputable def automorphismOrder (W : WeierstrassCurve F) : ℕ :=
-  if W.a₆ = 0 then 4 else if W.a₄ = 0 then 6 else 2
-
-theorem automorphismOrder_of_a₆_eq_zero {W : WeierstrassCurve F} (hb : W.a₆ = 0) : automorphismOrder W = 4 := by
-  simp [automorphismOrder, hb]
-
-theorem automorphismOrder_of_a₄_eq_zero {W : WeierstrassCurve F} (ha : W.a₄ = 0) (hb : W.a₆ ≠ 0) :
-    automorphismOrder W = 6 := by
-  simp [automorphismOrder, ha, hb]
+noncomputable def automorphismOrder (W : WeierstrassCurve F) : ℕ := by
+  classical
+  exact if W.a₆ = 0 then 4 else if W.a₄ = 0 then 6 else 2
 
 def automorphismScale (W : WeierstrassCurve F) :
     MulAction.stabilizer (VariableChange F) W →* Fˣ where
@@ -37,14 +36,6 @@ variable [CharZero F] {W : WeierstrassCurve F}
 theorem automorphism_rst_eq_zero (hW : IsShortForm W)
     (ξ : MulAction.stabilizer (VariableChange F) W) : ξ.1.r = 0 ∧ ξ.1.s = 0 ∧ ξ.1.t = 0 :=
   variableChange_rst_eq_zero hW ((MulAction.mem_stabilizer_iff.mp ξ.2).symm ▸ hW)
-
-theorem automorphismScale_injective (hW : IsShortForm W) :
-    Function.Injective (automorphismScale W) := by
-  intro ξ η h
-  obtain ⟨hr, hs, ht⟩ := automorphism_rst_eq_zero hW ξ
-  obtain ⟨hr', hs', ht'⟩ := automorphism_rst_eq_zero hW η
-  apply Subtype.ext
-  exact VariableChange.ext h (hr.trans hr'.symm) (hs.trans hs'.symm) (ht.trans ht'.symm)
 
 theorem mem_range_automorphismScale (hW : IsShortForm W) (u : Fˣ) :
     u ∈ (automorphismScale W).range ↔
@@ -69,8 +60,8 @@ theorem mem_range_automorphismScale (hW : IsShortForm W) (u : Fˣ) :
 
 variable [W.IsElliptic]
 
-omit [CharZero F] in
 
+omit [CharZero F] in
 theorem scale_conditions_iff (hW : IsShortForm W) (w : F) :
     (w⁻¹ ^ 4 * W.a₄ = W.a₄ ∧ w⁻¹ ^ 6 * W.a₆ = W.a₆) ↔ w ^ automorphismOrder W = 1 := by
   have key : ∀ (k : ℕ) (c : F), c ≠ 0 → (w⁻¹ ^ k * c = c ↔ w ^ k = 1) := by
@@ -103,22 +94,6 @@ theorem scale_conditions_iff (hW : IsShortForm W) (w : F) :
       · rw [show w ^ 4 = (w ^ 2) ^ 2 by ring, h, one_pow]
       · rw [show w ^ 6 = (w ^ 2) ^ 3 by ring, h, one_pow]
 
-theorem range_automorphismScale (hW : IsShortForm W) :
-    (automorphismScale W).range = rootsOfUnity (automorphismOrder W) F := by
-  ext u
-  rw [mem_range_automorphismScale hW, mem_rootsOfUnity', Units.val_inv_eq_inv_val]
-  exact scale_conditions_iff hW _
-
-noncomputable def automorphismEquivRootsOfUnity (hW : IsShortForm W) :
-    MulAction.stabilizer (VariableChange F) W ≃* rootsOfUnity (automorphismOrder W) F :=
-  (MonoidHom.ofInjective (automorphismScale_injective hW)).trans
-    (MulEquiv.subgroupCongr (range_automorphismScale hW))
-
-@[simp]
-theorem automorphismEquivRootsOfUnity_apply (hW : IsShortForm W)
-    (ξ : MulAction.stabilizer (VariableChange F) W) :
-    ((automorphismEquivRootsOfUnity hW ξ : Fˣ)) = ξ.1.u := rfl
-
 theorem weberFunction_automorphismPoint (hW : IsShortForm W)
     (ξ : MulAction.stabilizer (VariableChange F) W) (P : W.toAffine.Point) :
     weberFunction W (automorphismPoint ξ P) = weberFunction W P :=
@@ -130,8 +105,8 @@ section Fibres
 
 variable [CharZero F] {W : WeierstrassCurve F} [W.IsElliptic]
 
-omit [CharZero F] [W.IsElliptic] in
 
+omit [CharZero F] [W.IsElliptic] in
 theorem IsShortForm.sq_eq (hW : IsShortForm W) {x y : F} (h : W.toAffine.Nonsingular x y) :
     y ^ 2 = x ^ 3 + W.a₄ * x + W.a₆ := by
   have := h.1
@@ -181,8 +156,8 @@ theorem exists_scale_of_weberValue_eq [IsAlgClosed F] (hW : IsShortForm W) {x₁
     have h : x₁ = x₂ := mul_left_cancel₀ hc hx
     exact ⟨1, one_ne_zero, by simp, by simp, by simp [h]⟩
 
-omit [W.IsElliptic] in
 
+omit [W.IsElliptic] in
 theorem exists_automorphismPoint_of_scale (hW : IsShortForm W) {v x₁ y₁ x₂ y₂ : F} (hv : v ≠ 0)
     (h4 : v ^ 4 * W.a₄ = W.a₄) (h6 : v ^ 6 * W.a₆ = W.a₆) (hx : v ^ 2 * x₁ = x₂)
     (hy : v ^ 3 * y₁ = y₂) (h₁ : W.toAffine.Nonsingular x₁ y₁)
@@ -209,10 +184,10 @@ theorem weberFunction_eq_iff [IsAlgClosed F] (hW : IsShortForm W) (P Q : W.toAff
     | zero =>
       cases Q with
       | zero => exact ⟨1, rfl⟩
-      | some x y h => simp at hPQ
+      | some x y h => simp [weberFunction] at hPQ
     | some x₁ y₁ h₁ =>
       cases Q with
-      | zero => simp at hPQ
+      | zero => simp [weberFunction] at hPQ
       | some x₂ y₂ h₂ =>
         simp only [weberFunction_some] at hPQ
         have hx : weberValue W x₁ = weberValue W x₂ := Option.some_injective _ hPQ

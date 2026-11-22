@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.MultiplicityOne.StableBlockGA
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.MultiplicityOne.StableBlockGA
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,10 +60,10 @@ def ZTrA : Prop := ForLev fun E _ _ _ n S Z N => ∀ π (y : Yd π (Lev S N)) (�
       d * ∏ w ∈ Z, GlobalTheory.BCT.trOn (fixed (τ w).ρ (N w)) (Lv (τ w).ρ (N w) (F w false) * Lv (τ w).ρ (N w) (F w true))
 
 def SeenTrA : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E), IsSplitAt w → ∀ (τ : SmIrr (GLw n w))
-  (N : Subgroup (GLw n w)), IsOpen (N : Set (GLw n w)) → N ≤ KGL w n → ∀ φ₁ φ₂ : ∀ w : Pl E, LF n 0 w,
+  (N : Subgroup (GLw n w)), IsOpen (N : Set (GLw n w)) → N ≤ KGL w (n := n) → ∀ φ₁ φ₂ : ∀ w : Pl E, LF n 0 w,
     (∀ b, IsHecke N (two φ₁ φ₂ w b)) →
       GlobalTheory.BCT.trOn (fixed τ.ρ N) (Lv τ.ρ N (two φ₁ φ₂ w false) * Lv τ.ρ N (two φ₁ φ₂ w true)) =
-        ((N.relIndex (KGL w n) : ℕ) : ℂ) ^ 2 * trc τ.ρ (KGL w n) fun g => seen φ₁ φ₂ w (g, 1)
+        ((N.relIndex (KGL w (n := n)) : ℕ) : ℂ) ^ 2 * trc τ.ρ (KGL w (n := n)) fun g => seen φ₁ φ₂ w (g, 1)
 
 def ToYdA : Prop := ForLev fun E _ _ _ n S _ N => ∀ (π : CuspSub E n) (u : GL (Fin n) E), IsTransl u →
   (∀ k ∈ Lev S N, thetaF E n k ∈ Lev S N) ∧
@@ -73,15 +77,15 @@ def ToYdA : Prop := ForLev fun E _ _ _ n S _ N => ∀ (π : CuspSub E n) (u : GL
 def LevelTrA : Prop := ForLev fun E _ _ _ n S Z N => ∀ π (y : Yd π (Lev S N)) (B : Pl E → Multiset ℂˣ) (τ : ∀ w : Pl E, SmIrr (GLw n w)),
   (∀ w, Off Z w → (CG.mk π).HasSat w (B w)) → (∀ w ∈ Z, π.IsLocComp w (τ w)) →
     (∃ φ : ∀ w : Pl E, LF n 0 w, (∀ w ∈ Z, ∀ N' ≤ N w, ∀ b, IsHecke N' (two φ φ w b)) ∧
-      (∏ w ∈ Z, trc (τ w).ρ (KGL w n) fun g => seen φ φ w (g, 1)) ≠ 0) ∧
-    ∃ d : ℂ, ‖d‖ = ∏ w ∈ Z, (((N w).relIndex (KGL w n) : ℕ) : ℝ) ^ 2 ∧ ∀ φ₁ φ₂ : ∀ w : Pl E, LF n 0 w, (∀ w ∈ Z, ∀ b, IsHecke (N w) (two φ₁ φ₂ w b)) →
+      (∏ w ∈ Z, trc (τ w).ρ (KGL w (n := n)) fun g => seen φ φ w (g, 1)) ≠ 0) ∧
+    ∃ d : ℂ, ‖d‖ = ∏ w ∈ Z, (((N w).relIndex (KGL w (n := n)) : ℕ) : ℝ) ^ 2 ∧ ∀ φ₁ φ₂ : ∀ w : Pl E, LF n 0 w, (∀ w ∈ Z, ∀ b, IsHecke (N w) (two φ₁ φ₂ w b)) →
       ∀ T : Finset (Pl E), Disjoint T Z → ∀ e₁ e₂, TEv S T e₂ →
         IsHecke (Lev S N) (fun g => finFn S (intersection_update_fsHerm_neg_one Z T φ₁ e₁) (intersection_update_fsHerm_neg_one Z T φ₂ e₂) (g, 1)) ∧
         LinearMap.trace ℂ y.Y (y.r (fun g => finFn S (intersection_update_fsHerm_neg_one Z T φ₁ e₁) (intersection_update_fsHerm_neg_one Z T φ₂ e₂) (g, 1)) * y.A) =
-          d * (∏ w ∈ Z, trc (τ w).ρ (KGL w n) fun g => seen φ₁ φ₂ w (g, 1)) * val T e₁ e₂ B 0
+          d * (∏ w ∈ Z, trc (τ w).ρ (KGL w (n := n)) fun g => seen φ₁ φ₂ w (g, 1)) * val T e₁ e₂ B 0
 
 def LevIdx : Prop := ForLev fun E _ _ _ n S Z N => Lev S N ≤ Kf E n ∧
-  (Lev S N).relIndex (Kf E n) = ∏ w ∈ Z, (N w).relIndex (KGL w n) ^ 2
+  (Lev S N).relIndex (Kf E n) = ∏ w ∈ Z, (N w).relIndex (KGL w (n := n)) ^ 2
 
 def VolIdx : Prop := ∀ (Γ : Type) [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [MeasurableSpace Γ] [BorelSpace Γ]
   (μ : Measure Γ) [μ.IsHaarMeasure] (K K' : Subgroup Γ), IsOpen (K' : Set Γ) → IsCompact (K : Set Γ) → K' ≤ K →

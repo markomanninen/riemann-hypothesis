@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnipVal
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierTransformInversionLocalFieldPi
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnipVal
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierTransformInversionLocalFieldPi
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
+
+@[expose] public section
 
 open MeasureTheory Matrix GlobalTheory.KSp GlobalTheory.SplitUnitary ValuativeRel
 open GlobalTheory.WeilM (UG IsQuad IsHerm ResEtaPow)
@@ -63,7 +67,8 @@ theorem isPair_addChar_form : ∀ (F : Type) [Field F] [CharZero F] [ValuativeRe
     intro y hy
     apply hnd y
     intro x
-    rw [← b.sum_repr x, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr x, map_sum, LinearMap.sum_apply]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [map_smul, LinearMap.smul_apply, show β (b i) y = 0 from congrFun hy i, smul_zero]
   have hbij : Function.Bijective f₂ :=
@@ -71,7 +76,8 @@ theorem isPair_addChar_form : ∀ (F : Type) [Field F] [CharZero F] [ValuativeRe
   let e₂ : V ≃ₗ[F] (Fin (Module.finrank F V) → F) := LinearEquiv.ofBijective f₂ hbij
   have key : ∀ u y, β (e₁.symm u) y = u ⬝ᵥ e₂ y := by
     intro u y
-    simp [e₁, e₂, f₂, Module.Basis.equivFun_symm_apply, map_sum, map_smul, dotProduct]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [e₁, e₂, f₂, Module.Basis.equivFun_symm_apply, map_sum, map_smul, dotProduct]
   have cont : ∀ g : V ≃ₗ[F] (Fin (Module.finrank F V) → F), Continuous g ∧ Continuous g.symm := fun g =>
     ⟨IsModuleTopology.continuous_of_linearMap g.toLinearMap,
       IsModuleTopology.continuous_of_linearMap g.symm.toLinearMap⟩
@@ -81,7 +87,7 @@ theorem isPair_addChar_form : ∀ (F : Type) [Field F] [CharZero F] [ValuativeRe
     exact mem_box_of_forall_dot ψ hT s fun u hu => by rw [← key]; exact h u hu
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro x x' y
-    rw [map_add, LinearMap.add_apply, AddChar.map_add_eq_mul]
+    rw [map_add (f := _), LinearMap.add_apply, AddChar.map_add_eq_mul]
   · intro x y
     rw [hs]
   · intro x y

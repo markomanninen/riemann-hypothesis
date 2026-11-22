@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.LeviCartan
-import GroundTheory.AutomorphicForms.LeviStagesInduction
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.LeviCartan
+public import GroundTheory.AutomorphicForms.LeviStagesInduction
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -106,8 +111,8 @@ theorem levi_blockDiag {m : GL (Fin n) F} (hm : m ∈ levi F n β) :
     ∀ i j, β i ≠ β j → (m : Matrix (Fin n) (Fin n) F) i j = 0 :=
   mem_levi.1 hm
 
-variable (F) in
 
+variable (F) in
 def leviBlock (m : levi F n β) (a : Set.range β) : GL (Fiber β a) F where
   val := blocks β F ((m : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) a
   inv := blocks β F (((m⁻¹ : levi F n β) : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) a
@@ -122,8 +127,8 @@ theorem coe_leviBlock (m : levi F n β) (a : Set.range β) :
     ((leviBlock F m a : GL (Fiber β a) F) : Matrix (Fiber β a) (Fiber β a) F) =
       blocks β F ((m : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) a := rfl
 
-variable (F) in
 
+variable (F) in
 def leviAssemble (x : ∀ a : Set.range β, GL (Fiber β a) F) : levi F n β :=
   ⟨⟨blockAssemble β F fun a => (x a : Matrix (Fiber β a) (Fiber β a) F),
       blockAssemble β F fun a => (((x a)⁻¹ : GL (Fiber β a) F) : Matrix (Fiber β a) (Fiber β a) F),
@@ -138,10 +143,6 @@ def leviAssemble (x : ∀ a : Set.range β, GL (Fiber β a) F) : levi F n β :=
         funext a
         exact Units.inv_mul (x a)⟩,
     mem_levi.2 fun _ _ h => blockAssemble_apply_of_ne _ h⟩
-
-theorem coe_leviAssemble (x : ∀ a : Set.range β, GL (Fiber β a) F) :
-    (((leviAssemble F x : levi F n β) : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) =
-      blockAssemble β F fun a => (x a : Matrix (Fiber β a) (Fiber β a) F) := rfl
 
 theorem continuous_blockAssemble_apply {X : Type*} [TopologicalSpace X]
     {f : X → ∀ a : Set.range β, Matrix (Fiber β a) (Fiber β a) F}
@@ -160,8 +161,8 @@ theorem continuous_blockAssemble_apply {X : Type*} [TopologicalSpace X]
     rw [e]
     exact continuous_const
 
-variable (F β) in
 
+variable (F β) in
 def leviEquivBlocks : levi F n β ≃ₜ* (∀ a : Set.range β, GL (Fiber β a) F) where
   toFun m a := leviBlock F m a
   invFun := leviAssemble F
@@ -183,10 +184,6 @@ def leviEquivBlocks : levi F n β ≃ₜ* (∀ a : Set.range β, GL (Fiber β a)
       continuous_blockAssemble_apply fun a i j =>
         (Units.continuous_coe_inv.matrix_elem i j).comp (continuous_apply a)⟩) _
 
-theorem leviEquivBlocks_apply (m : levi F n β) (a : Set.range β) :
-    ((leviEquivBlocks F β m a : GL (Fiber β a) F) : Matrix (Fiber β a) (Fiber β a) F) =
-      fun i j => (m : GL (Fin n) F) i.1 j.1 := rfl
-
 end Blocks
 
 section Numbering
@@ -207,27 +204,12 @@ variable {n : ℕ} {α : Type*} [LinearOrder α] (β : Fin n → α)
 
 def blockSize (a : Set.range β) : ℕ := Fintype.card (Fiber β a)
 
-theorem sum_blockSize : ∑ a : Set.range β, blockSize β a = n := by
-  rw [show ∑ a : Set.range β, blockSize β a = Fintype.card (Σ a : Set.range β, Fiber β a) from
-    (Fintype.card_sigma).symm]
-  rw [Fintype.card_congr (Equiv.sigmaFiberEquiv (blockOf β)), Fintype.card_fin]
-
 theorem blockSize_pos (a : Set.range β) : 0 < blockSize β a := by
   obtain ⟨i, hi⟩ := a.2
   exact Fintype.card_pos_iff.2 ⟨⟨i, Subtype.ext hi⟩⟩
 
-theorem blockSize_lt (hβ : ∃ i j, β i ≠ β j) (a : Set.range β) : blockSize β a < n := by
-  obtain ⟨i, j, hij⟩ := hβ
-  have hout : ∃ k, blockOf β k ≠ a := by
-    by_contra hall
-    push Not at hall
-    exact hij ((congrArg Subtype.val (hall i)).trans (congrArg Subtype.val (hall j)).symm)
-  obtain ⟨k, hk⟩ := hout
-  have := Fintype.card_subtype_lt (p := fun i => blockOf β i = a) hk
-  rwa [Fintype.card_fin] at this
 
 variable (F) in
-
 def leviEquivPi : levi F n β ≃ₜ* (∀ a : Set.range β, GL (Fin (blockSize β a)) F) :=
   (leviEquivBlocks F β).trans
     { toMulEquiv := MulEquiv.piCongrRight fun a =>
@@ -258,10 +240,6 @@ theorem leviEquivPi_apply (m : levi F n β) (a : Set.range β) (k l : Fin (block
     ((leviEquivPi F β m a : GL (Fin (blockSize β a)) F) : Matrix _ _ F) k l =
       (m : GL (Fin n) F) (fiberFin β a k).1 (fiberFin β a l).1 := rfl
 
-theorem fiberFin_symm_apply_blockOf (i : Fin n) :
-    (fiberFin β (blockOf β i) ((fiberFin β (blockOf β i)).symm ⟨i, rfl⟩)).1 = i := by
-  rw [Equiv.apply_symm_apply]
-
 theorem mem_blockUpper_iff_leviEquivPi {α' : Type*} [LinearOrder α'] (γ : Fin n → α')
     (m : levi F n β) :
     (m : GL (Fin n) F) ∈ blockUpper F n γ ↔
@@ -285,14 +263,6 @@ theorem mem_blockUpper_iff_leviEquivPi {α' : Type*} [LinearOrder α'] (γ : Fin
       rw [leviEquivPi_apply, hk, hl] at this
       exact this
     · exact mem_levi.1 m.2 i j hb
-
-theorem mem_levi_iff_leviEquivPi {α' : Type*} [LinearOrder α'] (γ : Fin n → α')
-    (m : levi F n β) :
-    (m : GL (Fin n) F) ∈ levi F n γ ↔
-      ∀ a, leviEquivPi F β m a ∈ levi F (blockSize β a) (restrictFun β γ a) := by
-  show (m : GL (Fin n) F) ∈ blockUpper F n γ ⊓ blockUpper F n (OrderDual.toDual ∘ γ) ↔ _
-  rw [Subgroup.mem_inf, mem_blockUpper_iff_leviEquivPi, mem_blockUpper_iff_leviEquivPi]
-  exact ⟨fun h a => ⟨h.1 a, h.2 a⟩, fun h => ⟨fun a => (h a).1, fun a => (h a).2⟩⟩
 
 theorem mem_unipotentRadical_iff_leviEquivPi {α' : Type*} [LinearOrder α'] (γ : Fin n → α')
     (m : levi F n β) :

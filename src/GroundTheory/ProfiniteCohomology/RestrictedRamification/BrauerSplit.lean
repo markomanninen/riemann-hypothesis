@@ -1,23 +1,28 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BrauerLocalDefs
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalRestriction
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.Splitting
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.SumInvariants
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.RealPlaces
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalDegrees
-import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMapAlongResSubgroupOfHom
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.CupDecompositionGlobal
-import GroundTheory.ProfiniteCohomology.InflationRestriction
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BrauerSplitLayers
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BrauerLocalDefs
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalRestriction
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.Splitting
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.SumInvariants
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.RealPlaces
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalDegrees
+public import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMapAlongResSubgroupOfHom
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.CupDecompositionGlobal
+public import GroundTheory.ProfiniteCohomology.InflationRestriction
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BrauerSplitLayers
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory NumberField IsDedekindDomain IntermediateField GroundTheory.Global
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 section TowerInfl
 
@@ -29,7 +34,7 @@ theorem cohomologyMapAlong_restrictNormalHom_two_injective :
       (InfiniteGalois.restrictNormalHom_continuous M) (unitsRestrictHom M) 2).hom := by
   have : Algebra.IsSeparable k M := Algebra.isSeparable_tower_bot_of_isSeparable k M L
   have : IsGalois k M := ⟨⟩
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨E, y, rfl⟩ := exists_unitsInflation_eq (K := k) (L := M) 2 x
   let E₀ : IntermediateField k M := E.toIntermediateField
@@ -121,10 +126,10 @@ theorem gsRestrict_comp_galToFixing :
   exact (gsRestrict_apply K S (galToFixing K σ) y).trans
     (AlgEquiv.restrictNormal_commutes σ (maxUnramifiedOutside K.1 ℚ̄ S) y).symm
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem gsBrauerInfl_injective : Function.Injective (gsBrauerInfl K S 2).hom := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨x', rfl⟩ :=
     (cohomologyULiftIntAddEquiv (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S)) 2).surjective x
@@ -171,8 +176,8 @@ theorem gsBrauerInfl_comp_unitsLocalRes (n : ℕ) :
 
 end Local
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem brauerLocal_gsBrauerInfl_inr (ιs : LocalEmbeddings K) (v : HeightOneSpectrum (𝓞 K.1))
     (x : cohomology (uliftIntToIntRep (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S))) 2) :
     brauerLocal ιs ((gsBrauerInfl K S 2).hom x) (.inr v) = (gsLocalRes S (ιs.fin v) 2).hom x := by
@@ -233,13 +238,13 @@ instance isDiscreteRep_quotientToInvariants_fixingSubgroupOf :
     IsDiscreteRep ((unitsLimitRep K).quotientToInvariants (fixingSubgroupOf K E)) :=
   isDiscreteRep_quotientToInvariants_of_normal _ _
 
-variable (E) in
 
+variable (E) in
 abbrev unitsInvariantsOf :=
   Representation.invariants ((unitsLimitRep K).ρ.comp (fixingSubgroupOf K E).subtype)
 
-omit [IsGalois K.1 E.1] in
 
+omit [IsGalois K.1 E.1] in
 theorem mem_of_mem_invariants (hE : ∀ x ∈ E.1, x ∈ maxUnramifiedOutside K.1 ℚ̄ S)
     (a : unitsInvariantsOf K E) :
     (((Additive.toMul (a : Additive ℚ̄ˣ)) : ℚ̄ˣ) : ℚ̄) ∈ maxUnramifiedOutside K.1 ℚ̄ S := by
@@ -266,12 +271,6 @@ theorem coe_invariantsToMaxUnitsFun (hE : ∀ x ∈ E.1, x ∈ maxUnramifiedOuts
     (a : unitsInvariantsOf K E) :
     ((((Additive.toMul (invariantsToMaxUnitsFun K S hE a)) : (maxUnramifiedOutside K.1 ℚ̄ S)ˣ) :
       maxUnramifiedOutside K.1 ℚ̄ S) : ℚ̄) = (((Additive.toMul (a : Additive ℚ̄ˣ)) : ℚ̄ˣ) : ℚ̄) :=
-  rfl
-
-theorem coe_quotientToInvariants_mk (σ : K.1.fixingSubgroup) (a : unitsInvariantsOf K E) :
-    (((Additive.toMul ((((unitsLimitRep K).ρ.quotientToInvariants (fixingSubgroupOf K E))
-      (QuotientGroup.mk σ) a : unitsInvariantsOf K E) : Additive ℚ̄ˣ)) : ℚ̄ˣ) : ℚ̄) =
-      (σ : ℚ̄ ≃ₐ[ℚ] ℚ̄) (((Additive.toMul (a : Additive ℚ̄ˣ)) : ℚ̄ˣ) : ℚ̄) :=
   rfl
 
 theorem invariantsToMaxUnitsFun_smul (hE : ∀ x ∈ E.1, x ∈ maxUnramifiedOutside K.1 ℚ̄ S)

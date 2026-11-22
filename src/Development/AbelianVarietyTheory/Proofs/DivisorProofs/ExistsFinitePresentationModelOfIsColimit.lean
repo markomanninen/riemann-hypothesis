@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZModTorsorIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZModTorsorIff
+
+@[expose] public section
+
 open CategoryTheory Limits TensorProduct
 
 namespace GlobalTheory.FpDescent
@@ -9,7 +14,7 @@ theorem exists_finitePresentation_model_of_isColimit :
     IsColimit c → ∀ (D : Type) [CommRing D] [Algebra c.pt D], Algebra.FinitePresentation c.pt D →
     ∃ (j : J) (A : Type) (_ : CommRing A) (_ : Algebra (F.obj j) A)
       (_ : Algebra.FinitePresentation (F.obj j) A),
-      letI : Algebra (F.obj j) c.pt := (c.ι.app j).hom.toAlgebra;
+      letI : Algebra (F.obj j) c.pt := (c.ι.app j).hom.toAlgebra
       Nonempty (c.pt ⊗[F.obj j] A ≃ₐ[c.pt] D) := by
   intro J _ _ F c hc D _ _ hD
   classical

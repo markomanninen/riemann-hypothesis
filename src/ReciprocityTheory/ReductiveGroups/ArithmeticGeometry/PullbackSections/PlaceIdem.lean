@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -6,8 +10,9 @@ open NumberField
 
 namespace ReciprocityTheory.ChartRestriction.G.PullbackSections
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def PlaceIdemSt : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] (V : Type) [CommRing V] [IsDomain V] [IsDiscreteValuationRing V]
     [IsAdicComplete (IsLocalRing.maximalIdeal V) V] (k : Type) [Field k] [Algebra V k] [IsFractionRing V k]

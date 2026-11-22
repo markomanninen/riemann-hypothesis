@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TranslationInvariantSchwartzUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzMapBarrelledSpace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzCompactSupportDenseStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzPairingContinuousFunctionalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealCompactPartitionUnityStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TranslationIsometrySchwartzOperatorStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TranslationInvariantSchwartzUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzMapBarrelledSpace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzCompactSupportDenseStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzPairingContinuousFunctionalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealCompactPartitionUnityStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TranslationIsometrySchwartzOperatorStatement
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped SchwartzMap
@@ -40,7 +44,8 @@ def evS (x : V) : 𝓢(V, ℂ) →L[ℂ] ℂ :=
 theorem evS_apply (x : V) (f : 𝓢(V, ℂ)) : evS x f = f x := rfl
 
 theorem sum_apply {ι : Type} (s : Finset ι) (F : ι → 𝓢(V, ℂ)) (x : V) : (∑ i ∈ s, F i) x = ∑ i ∈ s, F i x := by
-  rw [← evS_apply x, map_sum]; rfl
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← evS_apply x, map_sum]; rfl
 
 theorem trans_apply (a : V) (f : 𝓢(V, ℂ)) (x : V) : SchwartzMap.compSubConstCLM ℂ a f x = f (x - a) := by
   simp

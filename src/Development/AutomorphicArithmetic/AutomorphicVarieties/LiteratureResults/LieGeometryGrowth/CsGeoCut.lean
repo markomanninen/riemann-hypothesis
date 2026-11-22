@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.CsStmt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.CsStmt
+
+@[expose] public section
 
 open UpperTheory.V.Lit.Geo.Cs
 open scoped ContDiff Topology
@@ -25,8 +29,8 @@ theorem UpperTheory.V.Lit.Geo.Cs.geoCut :
     · refine ⟨G.Y ∩ Φ s ⁻¹' Set.Ioi R, (hΦ.1 s).continuousOn.isOpen_inter_preimage G.isOpen isOpen_Ioi,
         ⟨hp, hR⟩, ?_⟩
       have hsm : ContDiffOn ℝ ∞ (fun x => χ (Φ s x) • η s x) (G.Y ∩ (G.Y ∩ Φ s ⁻¹' Set.Ioi R)) :=
-        ((hχc.comp_contDiffOn (hΦ.1 s)).mono (fun x hx => hx.1)).smul
-          ((hη s).mono (fun x hx => ⟨hx.2.1, hx.2.2⟩))
+        ((hχc.comp_contDiffOn (hΦ.1 s)).mono (fun x (hx : x ∈ G.Y ∩ (G.Y ∩ Φ s ⁻¹' Set.Ioi R)) => hx.1)).smul
+          ((hη s).mono (fun x (hx : x ∈ G.Y ∩ (G.Y ∩ Φ s ⁻¹' Set.Ioi R)) => ⟨hx.2.1, hx.2.2⟩))
       refine hsm.congr (fun x hx => ?_)
       have hx' : x ∈ G.Y ∧ R < Φ s x := ⟨hx.2.1, hx.2.2⟩
       simp only [f, if_pos hx']

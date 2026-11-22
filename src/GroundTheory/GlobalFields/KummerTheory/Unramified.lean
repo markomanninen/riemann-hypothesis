@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -82,7 +86,7 @@ theorem isUnramifiedAt_of_pow_eq {n : ℕ} (a : Kˣ) {α : M} (hα : α ^ n = al
     minpoly.isIntegrallyClosed_dvd hyint (by simp [hyb])
   have hder : aeval y (derivative (minpoly (𝓞 K) y)) * aeval y g = (n : 𝓞 M) * y ^ (n - 1) := by
     have := congrArg (fun p => aeval y (derivative p)) hg
-    simp only [derivative_mul, derivative_sub, derivative_X_pow, derivative_C, sub_zero, map_add,
+    simp only [derivative_mul, derivative_sub, derivative_X_pow, derivative_C, sub_zero, map_add (f := _),
       map_mul, minpoly.aeval, zero_mul, add_zero] at this
     rw [← this]
     simp

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qe54.exists_of_li :
     ∀ {Q ι : Type} [inst : AddCommGroup Q]

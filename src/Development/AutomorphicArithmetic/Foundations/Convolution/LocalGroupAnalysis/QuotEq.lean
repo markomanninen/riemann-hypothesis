@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotStage
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotStage
+
+@[expose] public section
 
 open MeasureTheory Topology
 open scoped ENNReal
@@ -92,4 +96,4 @@ theorem UpperTheory.ConvolutionTheory.G.quotEq :
     exact hq
   refine ⟨h2.trans (integrable_iff hp hF h).symm, h2, ?_⟩
   have hex : ∃ ρ, IsNrm j ν ρ := ⟨ρ, h⟩
-  rw [qI, dif_pos hex, int_eq hp hF hex.choose_spec, int_eq hp hF h, map_eq hp hF hi hex.choose_spec h]
+  rw [qI, dite_eq_left hex, int_eq hp hF hex.choose_spec, int_eq hp hF h, map_eq hp hF hi hex.choose_spec h]

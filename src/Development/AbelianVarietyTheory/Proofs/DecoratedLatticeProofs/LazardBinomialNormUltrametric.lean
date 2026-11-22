@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EndOmega
+module
+
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EndOmega
+
+@[expose] public section
+
 open PowerSeries GlobalTheory.Honda
 
 namespace GlobalTheory.Honda.Lazard

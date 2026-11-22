@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LinkExactAff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.HomologicalStability.LinkExactnessStability.SeqChainExactAtMapIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LinkExactAff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.HomologicalStability.LinkExactnessStability.SeqChainExactAtMapIff
+
+@[expose] public section
 
 open GlobalTheory.SeqCx Matrix
 
@@ -11,12 +15,12 @@ noncomputable def emb (R : Type) [CommRing R] (m : ℕ) : (Fin m → R) →ₗ[R
 
 theorem emb_apply_val {R : Type} [CommRing R] {m : ℕ} (v : Fin m → R) (k : Fin m) :
     emb R m v (k : ℕ) = v k := by
-  simp [emb, Finsupp.mapDomain_apply Fin.val_injective]
+  simp [emb, Finsupp.mapDomain_apply_of_injective Fin.val_injective]
 
 theorem emb_apply_of_le {R : Type} [CommRing R] {m : ℕ} (v : Fin m → R) (n : ℕ) (h : m ≤ n) :
     emb R m v n = 0 := by
   simp only [emb, LinearMap.comp_apply, Finsupp.lmapDomain_apply, LinearEquiv.coe_coe]
-  apply Finsupp.mapDomain_notin_range
+  apply Finsupp.mapDomain_of_notMem_range
   rintro ⟨k, hk⟩
   have hk2 := k.isLt
   omega
@@ -51,9 +55,10 @@ theorem emb_form {R : Type} [CommRing R] {m : ℕ} (f : (ℕ →₀ R) →ₗ[R]
     by_cases hj : j = k
     · subst hj
       simp
-    · simp [Pi.single_apply, hj]
+    · simp [hj]
   conv_rhs => rw [← Finset.univ_sum_single v]
-  simp only [map_sum, hs, map_smul, smul_eq_mul, dotProduct]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, hs, map_smul, smul_eq_mul, dotProduct]
   refine Finset.sum_congr rfl ?_
   intro k _
   ring
@@ -61,7 +66,7 @@ theorem emb_form {R : Type} [CommRing R] {m : ℕ} (f : (ℕ →₀ R) →ₗ[R]
 theorem link_eq (R : Type) [CommRing R] (m : ℕ) :
     linkIn (uniM R (ℕ →₀ R)) (low R m) [] = List.map (emb R m) '' uniSeq R m := by
   ext w
-  simp only [linkIn, Set.mem_setOf_eq, List.nil_append, Set.mem_image]
+  simp only [linkIn, Set.mem_ofPred_eq, List.nil_append, Set.mem_image]
   constructor
   · rintro ⟨hw, f, hf⟩
     refine ⟨w.map (fun x (k : Fin m) => x k), ⟨fun i k => f (Fin.cast (by simp) i) (emb R m (Pi.single k 1)), ?_⟩, ?_⟩
@@ -98,7 +103,7 @@ private theorem exactAt_of_exactAt_image_injective {V U : Type} (e : V → U) (h
       apply Finsupp.lhom_ext'
       intro l
       apply LinearMap.ext_ring
-      simp [bd, Finsupp.mapDomain_finset_sum, Finsupp.mapDomain_smul, Finsupp.mapDomain_single, List.eraseIdx_map]
+      simp [bd, map_sum, Finsupp.lmapDomain_apply, Finsupp.mapDomain_smul, Finsupp.mapDomain_single, List.eraseIdx_map]
     exact LinearMap.congr_fun E c
   intro c hc hbc
   have hc' : Finsupp.mapDomain (List.map e) c ∈ chains (List.map e '' F) q := by

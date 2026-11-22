@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowMemSpanCoeffPeriodPowStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AinfAdicTopologicalBasisOverBreuilKisinStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowMemSpanCoeffPeriodPowStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AinfAdicTopologicalBasisOverBreuilKisinStatement
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
 open Matrix
@@ -10,13 +15,16 @@ open Matrix
 namespace GlobalTheory.BSP.HeightAprime
 
 theorem dvd_of_dvd_prime_pow_mul {R : Type} [CommRing R] [IsDomain R] {p a b : R} (hp : Prime p)
-    (ha : ¬ p ∣ a) : ∀ n : ℕ, a ∣ p ^ n * b → a ∣ b
-  | 0, h => by simpa using h
-  | n + 1, h => by
+    (ha : ¬ p ∣ a) : ∀ n : ℕ, a ∣ p ^ n * b → a ∣ b := by
+  intro n
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    intro h
     obtain ⟨x, hx⟩ := h
     have hpx : p ∣ a * x := ⟨p ^ n * b, by rw [← hx]; ring⟩
     obtain ⟨y, rfl⟩ := (hp.dvd_or_dvd hpx).resolve_left ha
-    refine dvd_of_dvd_prime_pow_mul hp ha n ⟨y, mul_left_cancel₀ hp.ne_zero ?_⟩
+    refine ih ⟨y, mul_left_cancel₀ hp.ne_zero ?_⟩
     linear_combination hx
 
 theorem C_dvd_iff {R : Type} [CommRing R] (p : R) (f : R⟦X⟧) :

@@ -1,13 +1,18 @@
-import Mathlib
-import Formalism.TameInertiaTowers.StatementGroup
-import Formalism.TameInertiaTowers.CentralOrderTwo.TwoAdic
+module
+
+public import Mathlib
+public import Formalism.TameInertiaTowers.StatementGroup
+public import Formalism.TameInertiaTowers.CentralOrderTwo.TwoAdic
+
+@[expose] public section
 
 namespace Formalism.TwoAdicCyclotomicDecomposition
 
 lemma pv24 : padicValInt 2 ((5:ℤ) ^ 2 - 1) = 3 := by
   have h : ((5:ℤ) ^ 2 - 1) = ((2 ^ 3 * 3 : ℕ) : ℤ) := by norm_num
-  rw [h, padicValInt.of_nat, padicValNat.mul (show 2 ^ 3 ≠ 0 by norm_num) (show 3 ≠ 0 by norm_num),
-    padicValNat.prime_pow, padicValNat.eq_zero_of_not_dvd (show ¬ 2 ∣ 3 by norm_num)]
+  rw [h, padicValInt.of_nat, Nat.multiplicity_mul (show 2 ^ 3 ≠ 0 by norm_num)
+    (show 3 ≠ 0 by norm_num), Nat.multiplicity_prime_pow,
+    multiplicity_eq_zero_of_not_dvd (show ¬ 2 ∣ 3 by norm_num), add_zero]
 
 lemma five_unit_coe_int (n : ℕ) : ((u5 n : (ZMod (2 ^ n))ˣ) : ZMod (2 ^ n)) = ((5 : ℤ) : ZMod (2 ^ n)) := by simp [u5, ZMod.coe_unitOfCoprime]
 
@@ -32,8 +37,6 @@ lemma ord5 (m : ℕ) : orderOf (u5 (m + 2)) = 2 ^ m := by
       have h8 : (8:ℤ) ∣ 2 ^ (k + 1 + 2) := ⟨2 ^ k, by ring⟩
       have h3 := h8.trans h2
       omega
-
-lemma five_unit_coe_nat (n : ℕ) : ((u5 n : (ZMod (2 ^ n))ˣ) : ZMod (2 ^ n)) = ((5 : ℕ) : ZMod (2 ^ n)) := by simp [u5, ZMod.coe_unitOfCoprime]
 
 lemma unitsMap_five {a b : ℕ} (h : 2 ^ b ∣ 2 ^ a) : ZMod.unitsMap h (u5 a) = u5 b := by
   ext

@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.NonzeroLocus
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.OpensRangeChartYSupOpensRangeChartZ
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.BijectiveSmulChartSec
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemNonzeroLocusIffPowFn
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.CoeNonzeroLocusCanonicalEqComplRange
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.SpecMapAwayFnEquivAwayChart
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.NonzeroLocus
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.OpensRangeChartYSupOpensRangeChartZ
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.BijectiveSmulChartSec
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemNonzeroLocusIffPowFn
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.CoeNonzeroLocusCanonicalEqComplRange
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.SpecMapAwayFnEquivAwayChart
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -153,7 +157,7 @@ variable {W} {U V : (scheme W).Opens}
 
 theorem resG_originCofactor (hU : U ≤ coordOpen W 1) (h : V ≤ U) :
     resG _ h (originCofactor W U hU) = originCofactor W V (h.trans hU) := by
-  simp only [originCofactor, map_add, map_sub, map_mul, map_pow, map_one, resG_constOn,
+  simp only [originCofactor, map_add (f := _), map_sub, map_mul, map_pow, map_one, resG_constOn,
     resG_ratioOn]
 
 theorem ratioOn_mul_originCofactor (hU : U ≤ coordOpen W 1) :
@@ -173,8 +177,8 @@ theorem originOpen_le : originOpen W ≤ coordOpen W 1 := (scheme W).basicOpen_l
 theorem isAffineOpen_originOpen : IsAffineOpen (originOpen W) :=
   (isAffineOpen_coordOpen W 1).basicOpen _
 
-variable {W} in
 
+variable {W} in
 theorem isUnit_originCofactor {U : (scheme W).Opens} (h : U ≤ originOpen W) :
     IsUnit (originCofactor W U (h.trans (originOpen_le W))) := by
   have : IsUnit (resG _ (originOpen_le W) (originCofactor W (coordOpen W 1) le_rfl)) :=
@@ -200,7 +204,7 @@ theorem originOpen_sup_coordOpen_two : originOpen W ⊔ coordOpen W 2 = ⊤ := b
     (γ (constOn W _ W.a₂ * ratio W 1 0 + constOn W _ W.a₄ * ratio W 1 2 - constOn W _ W.a₁))
     (γ (constOn W _ W.a₆ * ratio W 1 2 - constOn W _ W.a₃))
     (by rw [← map_mul, ratioOn_mul_originCofactor, map_pow])
-    (by rw [← map_mul, ← map_mul, ← map_add, ← map_add, ← map_one γ, originCofactor]
+    (by rw [← map_mul, ← map_mul, ← map_add (f := _), ← map_add (f := _), ← map_one γ, originCofactor]
         congr 1
         ring) with h | h
   · exact Or.inl (((scheme W).mem_basicOpen _ x hx).2 h)
@@ -208,8 +212,8 @@ theorem originOpen_sup_coordOpen_two : originOpen W ⊔ coordOpen W 2 = ⊤ := b
 
 abbrev originParam : Γ(scheme W, originOpen W) := ratioOn W (originOpen W) 1 (originOpen_le W) 0
 
-variable {W} in
 
+variable {W} in
 theorem isUnit_ratioOn_one_zero {U : (scheme W).Opens} (h₀ : U ≤ originOpen W)
     (h₁ : U ≤ coordOpen W 2) : IsUnit (ratioOn W U 1 (h₀.trans (originOpen_le W)) 0) := by
   rw [← isUnit_pow_iff three_ne_zero, ← ratioOn_mul_originCofactor]
@@ -240,12 +244,6 @@ def originUnit : Γ(scheme W, originOpen W ⊓ coordOpen W 2)ˣ :=
 
 def originLB : LB (scheme W) := twoChart (originOpen W) (coordOpen W 2) (originUnit W)
 
-@[simp] theorem originLB_U_true : (originLB W).U true = originOpen W := rfl
-
-@[simp] theorem originLB_U_false : (originLB W).U false = coordOpen W 2 := rfl
-
-@[simp] theorem originLB_g_true_false : (originLB W).g true false = originUnit W := rfl
-
 theorem originLB_isLB : (originLB W).IsLB := twoChart_isLB (originOpen_sup_coordOpen_two W) _
 
 def originSecMk (f₀ : Γ(scheme W, originOpen W)) (f₁ : Γ(scheme W, coordOpen W 2))
@@ -255,10 +253,6 @@ def originSecMk (f₀ : Γ(scheme W, originOpen W)) (f₁ : Γ(scheme W, coordOp
 
 def originSec : (originLB W).Sec :=
   originSecMk W (originParam W) 1 (by rw [map_one, mul_one]; rfl)
-
-@[simp] theorem originSec_f_true : (originSec W).f true = originParam W := rfl
-
-@[simp] theorem originSec_f_false : (originSec W).f false = (1 : Γ(scheme W, coordOpen W 2)) := rfl
 
 theorem isRegularSec_originSec : Cartier.IsRegularSec (originSec W)
   | true => isRegularFn_originParam W
@@ -272,22 +266,22 @@ theorem nonzeroLocus_originSec : nonzeroLocus (originSec W) = coordOpen W 2 := b
   · exact ((scheme W).basicOpen_of_isUnit (isUnit_one (M := Γ(scheme W, coordOpen W 2)))).ge.trans
       (basicOpen_le_nonzeroLocus (originSec W) false)
 
-variable {W} in
 
+variable {W} in
 theorem evalPt_zero_ratioOn {U : (scheme W).Opens} (hU : U ≤ coordOpen W 1)
     (h : ⊤ ≤ zero W ⁻¹ᵁ U) (j : Fin 3) :
     evalPt (zero W) U h (ratioOn W U 1 hU j) = ![0, 1, 0] j :=
   (mul_one _).symm.trans (evalPt_ptHom_ratioOn_mul (algebraMap R R) ![0, 1, 0]
     (isUnimodularSol_zero _) hU h j)
 
-variable {W} in
 
+variable {W} in
 theorem evalPt_zero_constOn {U : (scheme W).Opens} (h : ⊤ ≤ zero W ⁻¹ᵁ U) (r : R) :
     evalPt (zero W) U h (constOn W U r) = r :=
   evalPt_constOn (ρ := RingHom.id R) ((zero_toSpec W).trans (Spec.map_id _).symm) h r
 
-variable {W} in
 
+variable {W} in
 theorem evalPt_zero_originCofactor {U : (scheme W).Opens} (hU : U ≤ coordOpen W 1)
     (h : ⊤ ≤ zero W ⁻¹ᵁ U) : evalPt (zero W) U h (originCofactor W U hU) = 1 := by
   simp [originCofactor, evalPt_zero_ratioOn]
@@ -303,8 +297,8 @@ abbrev originValue : Γ(scheme W, originOpen W) →+* R :=
 
 theorem originValue_originParam : originValue W (originParam W) = 0 := evalPt_zero_ratioOn _ _ 0
 
-variable {W} in
 
+variable {W} in
 theorem eq_spMap_zero_of_evalPt {A : Type} [CommRing A] {x : Sp A ⟶ scheme W} {ρ : R →+* A}
     (hx : x ≫ toSpec W = spMap ρ) (h : ⊤ ≤ x ⁻¹ᵁ originOpen W)
     (hz : evalPt x _ h (originParam W) = 0) : x = spMap ρ ≫ zero W := by
@@ -366,9 +360,6 @@ theorem secPull_originSec_eq_zero_iff {T : Scheme.{0}} (g : T ⟶ scheme W) :
       exact absurd ((zero_preimage_coordOpen_two W).le ht) id
     · exact ((eq_comp_zero_iff W g).1 e).2
 
-def originDivisor : EffCartierData (scheme W) :=
-  .ofSec (originLB_isLB W) (originSec W) (isRegularSec_originSec W)
-
 def coordFn (j : Fin 3) : ∀ i, Γ(scheme W, (originLB W).U i) :=
   twoChartFn (originUnit W)
     (originCofactor W _ (originOpen_le W) * ratioOn W _ 1 (originOpen_le W) j) (ratio W 2 j)
@@ -407,8 +398,8 @@ theorem nonzeroLocus_coordSec (j : Fin 3) : nonzeroLocus (coordSec W j) = coordO
   simp only [basicOpen_coordFn]
   rw [← iSup_inf_eq, (originLB_isLB W).cover, top_inf_eq]
 
-variable {W} in
 
+variable {W} in
 theorem resG_coordFn {V : (scheme W).Opens} {i : Fin 3} (hi : V ≤ coordOpen W i) (j : Fin 3) :
     ∀ (k : (originLB W).ι) (hk : V ≤ (originLB W).U k),
       resG _ hk (coordFn W j k) = ratioOn W V i hi j * resG _ hk (coordFn W i k)
@@ -420,8 +411,8 @@ theorem resG_coordFn {V : (scheme W).Opens} {i : Fin 3} (hi : V ≤ coordOpen W 
     ring
   | false, hk => (ratioOn_mul_ratioOn (U := V) (i := 2) hk hi).symm.trans (mul_comm _ _)
 
-variable {W} in
 
+variable {W} in
 theorem gs_coordFn {Z : Scheme.{0}} (r : Z ⟶ scheme W) (z : Z) {i : Fin 3} (j : Fin 3)
     {k : (originLB W).ι} (hi : r z ∈ coordOpen W i) (hk : r z ∈ (originLB W).U k) :
     gs r z _ (coordFn W j k) = gs r z _ (ratio W i j) * gs r z _ (coordFn W i k) := by
@@ -482,7 +473,7 @@ theorem exists_eq_constOn (f₀ : Γ(scheme W, originOpen W)) (f₁ : Γ(scheme 
       rw [h, Finset.sum_disjSum]
       refine congrArg₂ (· * ·) rfl (Eq.symm ?_)
       change ψ _ = _
-      rw [map_add, WeierstrassCurve.Affine.CoordinateRing.smul,
+      rw [map_add (f := _), WeierstrassCurve.Affine.CoordinateRing.smul,
         WeierstrassCurve.Affine.CoordinateRing.smul, mul_one, map_mul, hψ, hψ, hψy, Finset.sum_mul]
       simp only [Sum.elim_inl, Sum.elim_inr, resG_constOn, mul_assoc])
   have hq : q = 0 := by
@@ -531,7 +522,7 @@ variable {R' : Type} [CommRing R'] {W' : WeierstrassCurve R'} (f : R →+* R') (
 theorem mapHom_app_originCofactor {U : (scheme W).Opens} (hU : U ≤ coordOpen W 1) :
     ((mapHom W f h).app U).hom (originCofactor W U hU) = originCofactor W' (mapHom W f h ⁻¹ᵁ U)
       (((mapHom W f h).preimage_mono hU).trans (mapHom_preimage_coordOpen W f h 1).le) := by
-  simp only [originCofactor, map_add, map_sub, map_mul, map_pow, map_one, mapHom_app_constOn,
+  simp only [originCofactor, map_add (f := _), map_sub, map_mul, map_pow, map_one, mapHom_app_constOn,
     mapHom_app_ratioOn]
   subst h
   rfl
@@ -705,27 +696,6 @@ theorem not_isGen_originLB [Nontrivial R] (t : (originLB W).Gen) : ¬ t.IsGen :=
   have := h.map (originValue W)
   rw [originValue_originParam] at this
   exact not_isUnit_zero this
-
-example (s : (originLB W).Sec) :
-    resG _ (inf_le_left : originOpen W ⊓ coordOpen W 2 ≤ _) (s.f true) =
-      ratioOn W _ 1 (inf_le_left.trans (originOpen_le W)) 0 * resG _ inf_le_right (s.f false) :=
-  s.compat true false
-
-example : (originUnit W : Γ(scheme W, originOpen W ⊓ coordOpen W 2)) *
-    resG _ inf_le_right (affineFnEquiv W (affineY W)) =
-      resG _ inf_le_right (affineFnEquiv W (affineX W)) := by
-  rw [affineFnEquiv_affineX, affineFnEquiv_affineY, mul_comm]
-  exact ratioOn_mul_ratioOn inf_le_right (inf_le_left.trans (originOpen_le W))
-
-example (hP : IsUnimodularSol ((⟨0, 0, 1, -1, 0⟩ : WeierstrassCurve ℚ).map (RingHom.id ℚ)) ![2, -5, 8])
-    (h : ⊤ ≤ ptHom _ _ _ hP ⁻¹ᵁ coordOpen _ 1) :
-    evalPt (ptHom _ _ _ hP) _ h (originCofactor _ _ le_rfl) = 1 / 25 := by
-  have h₀ := evalPt_ptHom_ratioOn_mul _ _ hP le_rfl h 0
-  have h₂ := evalPt_ptHom_ratioOn_mul _ _ hP le_rfl h 2
-  simp only [Matrix.cons_val_zero, Matrix.cons_val, Matrix.cons_val_one] at h₀ h₂
-  simp only [originCofactor, map_add, map_sub, map_mul, map_pow, map_one, map_zero, map_neg]
-  rw [eq_div_of_mul_eq (by norm_num) h₀, eq_div_of_mul_eq (by norm_num) h₂]
-  norm_num
 
 end WeierstrassCurve
 

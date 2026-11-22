@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GermComp1ZeroPointLeft
-import Development.WeilBound.CoreStatements.HodgeTatePoints.CoeffEvPowOne
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GermComp1ZeroPointLeft
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.CoeffEvPowOne
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Conj
 

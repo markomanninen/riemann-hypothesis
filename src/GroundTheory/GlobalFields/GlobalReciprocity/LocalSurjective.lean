@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.NormResidueSymbol.FunctorialFinite
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.NormResidueSymbol.FunctorialFinite
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -39,8 +43,8 @@ theorem exists_localSymbol_eq (w : PlacesOver L v) {τ : L ≃ₐ[K] L}
     (normResidueSymbol (v.adicCompletion K) (w.1.adicCompletion L) x)) : L ≃ₐ[K] L) = τ
   rw [hx, MulEquiv.symm_apply_apply]
 
-omit [IsGalois K L] [IsMulCommutative (L ≃ₐ[K] L)] in
 
+omit [IsGalois K L] [IsMulCommutative (L ≃ₐ[K] L)] in
 theorem mk_finiteEmbedding_normUnits (w : PlacesOver L v) (z : (w.1.adicCompletion L)ˣ) :
     IdeleClassGroup.mk K (finiteEmbedding v
         (LocalField.normUnits (v.adicCompletion K) (w.1.adicCompletion L) z)) =

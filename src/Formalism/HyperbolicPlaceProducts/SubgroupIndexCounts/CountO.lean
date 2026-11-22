@@ -1,4 +1,8 @@
-import Formalism.HyperbolicPlaceProducts.Statement
+module
+
+public import Formalism.HyperbolicPlaceProducts.Statement
+
+@[expose] public section
 
 open Module NumberField
 

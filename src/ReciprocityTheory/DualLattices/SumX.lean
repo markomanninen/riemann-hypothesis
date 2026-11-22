@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.ThetaQSurj
+module
+
+public import ReciprocityTheory.DualLattices.ThetaQSurj
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,8 @@ theorem u7F3 : FrobeniusLengthBoundStatement := by
         rw [← U.εL_sum, Matrix.sum_apply]
       simp [h1, Matrix.one_apply]
     have hθ : thetaL U τ l = (p : R) • thetaL U τ w' := by
-      rw [← hl_sum, map_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hl_sum, map_sum,
         Finset.sum_eq_single τ (fun i _ hi => theta_kill U hi l) (by simp), hw', map_smul]
     rw [hθ]
     exact redP_pP ((mem_pP _).2 ⟨_, rfl⟩)
@@ -82,7 +87,8 @@ theorem u7F3 : FrobeniusLengthBoundStatement := by
       simpa [sumX] using hsub0
     rw [hf0]
     have hzero : thetaQ U τ (H.φ (sumX D (c0 - (c : Ix g → R)))) = 0 := by
-      rw [hsx, map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hsx, map_sum, map_sum]
       apply Finset.sum_eq_zero
       intro k _
       rw [map_smul, map_smul]

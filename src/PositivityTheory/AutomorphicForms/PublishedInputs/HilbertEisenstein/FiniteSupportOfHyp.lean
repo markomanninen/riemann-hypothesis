@@ -1,8 +1,12 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
-import GroundTheory.GlobalFields.TateThesis.TateThetaDecay
-import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenIdeleSubgroupContainsCongruenceUnits
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
+public import GroundTheory.GlobalFields.TateThesis.TateThetaDecay
+public import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenIdeleSubgroupContainsCongruenceUnits
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,8 +45,8 @@ theorem exists_int_of_val (x : F)
   obtain ⟨s, hs⟩ := HeightOneSpectrum.mem_integers_of_valuation_le_one F x h'
   exact ⟨s, hs.symm⟩
 
-omit [IsTotallyReal F] in
 
+omit [IsTotallyReal F] in
 theorem exists_den_compact {ι : Type} [Finite ι] {C : Set (Ideles F)} (hC : IsCompact C)
     (f : ι → Ideles F → Af F) (hf : ∀ i, Continuous (f i)) :
     ∃ d : 𝓞 F, d ≠ 0 ∧ ∀ a ∈ C, ∀ i, ∀ w : HeightOneSpectrum (𝓞 F),
@@ -81,9 +85,6 @@ theorem scalar_mul_mul_inv (g : GA F 2) (a : Ideles F) :
 omit [IsTotallyReal F] in
 theorem pFin_algebraMap (x : F) : pFin F (algebraMap F (Ad F) x) = algebraMap F (Af F) x := rfl
 
-omit [IsTotallyReal F] in
-theorem pFin_units (a : Ideles F) :
-    pFin F ((a : Ideles F) : Ad F) = ((IdeleGroup.toFinite F a : (Af F)ˣ) : Af F) := rfl
 
 theorem exists_den_row (c : HeightOneSpectrum (𝓞 F) → ℕ) (g : GA F 2) {C : Set (Ideles F)} (hC : IsCompact C) :
     ∃ d : 𝓞 F, d ≠ 0 ∧ ∀ a ∈ C, ∀ ξ : Fin 2 → F,
@@ -119,12 +120,14 @@ theorem exists_den_row (c : HeightOneSpectrum (𝓞 F) → ℕ) (g : GA F 2) {C 
       (pFin F (((g⁻¹ : GA F 2) : Matrix (Fin 2) (Fin 2) (Ad F)) j i) *
         ((IdeleGroup.toFinite F a⁻¹ : (Af F)ˣ) : Af F)) := by
     have h2 := congrArg (fun v => pFin F (v i)) hrow
-    simp only [Matrix.vecMul, dotProduct, coe_Mcol_apply', map_sum, map_mul] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.vecMul, dotProduct, coe_Mcol_apply', map_sum, map_mul] at h2
     rw [← pFin_algebraMap]
     exact h2
   apply exists_int_of_val
   intro w
-  rw [map_mul, hx, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_mul, hx, Finset.mul_sum, map_sum]
   apply val_sum_two_le
   intro j
   rw [mul_left_comm, map_mul, Valuation.map_mul]
@@ -210,7 +213,8 @@ theorem exists_den_col (c : HeightOneSpectrum (𝓞 F) → ℕ) (hc : {w | c w �
   have hx : algebraMap F (Af F) (ξ i) = ∑ j, (((IdeleGroup.toFinite F a : (Af F)ˣ) : Af F) *
       pFin F (((g : GA F 2) : Matrix (Fin 2) (Fin 2) (Ad F)) i j)) * pFin F (col j) := by
     have h2 := congrArg (fun v => pFin F (v i)) hcol
-    simp only [Matrix.mulVec, dotProduct, coe_Mrow_apply', map_sum, map_mul] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, coe_Mrow_apply', map_sum, map_mul] at h2
     rw [← pFin_algebraMap]
     exact h2
   apply exists_int_of_val
@@ -223,7 +227,8 @@ theorem exists_den_col (c : HeightOneSpectrum (𝓞 F) → ℕ) (hc : {w | c w �
     refine Finset.sum_congr rfl fun j _ => ?_
     ring
   have e2 : (((d * e : 𝓞 F)) : F) = (d : F) * (e : F) := by push_cast; ring
-  rw [e2, e1, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e2, e1, map_sum]
   apply val_sum_two_le
   intro j
   rw [map_mul, Valuation.map_mul]

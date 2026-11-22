@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.QuotTransSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.QuotTransSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -56,7 +61,8 @@ theorem d_one_d_zero
       ρ K.1 J.1 h (w K) = ρ K'.1 J.1 h' (w K') := by
     rintro K _ h h' rfl; rfl
   rw [Cech.d_apply]
-  simp only [Cech.d_apply, map_sum, map_zsmul, hρ, Finset.smul_sum, smul_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Cech.d_apply, map_sum, map_zsmul, hρ, Finset.smul_sum, smul_smul]
   rw [Pi.zero_apply, Finset.sum_sigma']
   refine Finset.sum_involution
     (fun p _ => ⟨⟨p.2.1, Finset.mem_of_mem_erase p.2.2⟩,
@@ -110,7 +116,7 @@ theorem subsingleton_H_one_of_exact {A B C : Cell U → Type v}
     exact hinj J.1 ((congrFun h2 J).trans (map_zero (ι J.1)).symm)
   obtain ⟨v, hv⟩ := hA g hdg
   refine ⟨w + Cech.mapC (R := R) (G := A) (G' := B) ι 0 v, ?_⟩
-  rw [map_add, ← hιd, hv, hg', add_sub_cancel]
+  rw [map_add (f := _), ← hιd, hv, hg', add_sub_cancel]
 
 end CechFacts
 

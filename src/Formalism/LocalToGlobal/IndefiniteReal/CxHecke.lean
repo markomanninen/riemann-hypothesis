@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.CxLemmas
-import Formalism.LocalToGlobal.IndefiniteForms.PairingConditionOfInverseMatrixIdentity
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.CxLemmas
+public import Formalism.LocalToGlobal.IndefiniteForms.PairingConditionOfInverseMatrixIdentity
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder InnerProductSpace
@@ -34,7 +38,8 @@ theorem relMat_op_key (σ : K →+* ℂ) {E : Type} [AddCommGroup E] [Module ℂ
     exact h.choose_spec
   have hc : cpt σ ((kMat σ (relMat f (S ∘ₗ f))).mulVec x) = (relMat f (S ∘ₗ f)).mulVec (cpt σ x) := by
     funext i
-    simp only [cpt, Matrix.mulVec, dotProduct, kMat, Matrix.map_apply, map_sum, map_mul, hk]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [cpt, Matrix.mulVec, dotProduct, kMat, Matrix.map_apply, map_sum, map_mul, hk]
   rw [hc]
   have hv : ∀ v : Fin D → ℂ, v = ∑ k, v k • (Pi.single k (1 : ℂ) : Fin D → ℂ) := fun v => by
     ext j
@@ -50,8 +55,10 @@ theorem relMat_op_key (σ : K →+* ℂ) {E : Type} [AddCommGroup E] [Module ℂ
     funext i
     simp only [Matrix.mulVec, dotProduct, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
     exact Finset.sum_congr rfl fun k _ => mul_comm _ _
-  rw [hM, map_sum]
-  conv_rhs => rw [hv (cpt σ x), map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hM, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [hv (cpt σ x), map_sum, map_sum]
   simp only [map_smul, hcol]
 
 theorem eig_transport (σ : K →+* ℂ) {E : Type} [AddCommGroup E] [Module ℂ E] {D : ℕ} {H : Type}

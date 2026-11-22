@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Formalism.GaloisCohomology.LocalTateDualityK
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Formalism.GaloisCohomology.LocalTateDualityK
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct Module
 open ReciprocityTheory.Gal
 
@@ -19,8 +24,8 @@ variable {l : ℕ} [Fact l.Prime] {K : FinExt l} {LL : Type} [Field LL] [Algebra
   (hlam : ∀ a : LL, (∀ b : O, ∃ u : ℤ_[l], lam (a * algebraMap O LL b) = (u : ℚ_[l])) ↔
       ∃ b : O, algebraMap O LL b = a)
 
-include h2 hlam in
 
+include h2 hlam in
 theorem norm_le_one (x : ↥LA.T) (y : ↥LA'.T) : ‖lam (m x y)‖ ≤ 1 := by
   obtain ⟨a, ha⟩ := (h2 y).1 y.2 x x.2
   obtain ⟨u, hu⟩ := (hlam (m x y)).2 ⟨a, ha.symm⟩ 1
@@ -76,9 +81,6 @@ theorem toZModPow_natPow_mul (r : ℕ) (u : ℤ_[l]) :
     PadicInt.toZModPow r ((l : ℤ_[l]) ^ r * u) = 0 := by
   rw [map_mul, map_pow, map_natCast, ← Nat.cast_pow, ZMod.natCast_self, zero_mul]
 
-abbrev lr (r : ℕ) {V : Type} [AddCommGroup V] [Module O V] (T : Submodule O V) : Submodule O ↥T :=
-  Ideal.span {((l : ℕ) : O) ^ r} • ⊤
-
 theorem mem_lr {r : ℕ} {V : Type} [AddCommGroup V] [Module O V] {T : Submodule O V} {x : ↥T}
     (hx : x ∈ (Ideal.span {((l : ℕ) : O) ^ r} • ⊤ : Submodule O ↥T)) :
     ∃ x' : ↥T, (((l : ℕ) : O) ^ r) • x' = x := by
@@ -89,7 +91,7 @@ theorem mem_lr {r : ℕ} {V : Type} [AddCommGroup V] [Module O V] {T : Submodule
 def pr (r : ℕ) (y : ↥LA'.T) : ↥LA.T →+ ZMod (l ^ r) where
   toFun x := PadicInt.toZModPow r (uv h2 hlam x y)
   map_zero' := by rw [uv_zero_left, map_zero]
-  map_add' a b := by rw [uv_add_left, map_add]
+  map_add' a b := by rw [uv_add_left, map_add (f := _)]
 
 def psi0 (r : ℕ) (y : ↥LA'.T) :
     (↥LA.T ⧸ (Ideal.span {((l : ℕ) : O) ^ r} • ⊤ : Submodule O ↥LA.T)) →+ ZMod (l ^ r) :=
@@ -120,7 +122,7 @@ theorem tracePairingLevelDual_apply (y : ↥LA'.T) (x : ↥LA.T) :
 theorem tracePairingLevelDual_ext {φ φ' : TDual (ZMod (l ^ r)) M}
     (h : ∀ x : ↥LA.T, φ (e (Submodule.Quotient.mk x)) = φ' (e (Submodule.Quotient.mk x))) :
     φ = φ' := by
-  apply TDual.ext
+  apply LinearMap.ext
   intro z
   obtain ⟨q, rfl⟩ := e.surjective z
   obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ q
@@ -168,7 +170,7 @@ theorem psiQ_injective : Function.Injective (psiQ h2 hlam e) := by
     apply hl0
     have h' : algebraMap ℚ_[l] LL (l : ℚ_[l]) = 0 := by rw [map_natCast]; exact h
     exact (map_eq_zero_iff _ (algebraMap ℚ_[l] LL).injective).1 h'
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro q hq
   obtain ⟨y, hyq⟩ := Submodule.Quotient.mk_surjective
     (Ideal.span {((l : ℕ) : O) ^ r} • ⊤ : Submodule O ↥LA'.T) q
@@ -292,8 +294,8 @@ end GlobalTheory.TraceLevel
 
 namespace GlobalTheory
 
-open TraceLevel in
 
+open TraceLevel in
 theorem tracePairing_levelMap : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (K : FinExt l) (LL : Type) [Field LL] [Algebra ℚ_[l] LL] [TopologicalSpace LL] (O : Type) [CommRing O] [Algebra O LL] (A A' : GRep ↥(GK K) ℚ_[l] LL O) (LA : Lattice (O := O) A.ρ) (LA' : Lattice (O := O) A'.ρ) (m : A.V →ₗ[LL] A'.V →ₗ[LL] LL), IsDualLat1 (P.PD K) LA LA' m → ∀ (lam : LL →ₗ[ℚ_[l]] ℚ_[l]), (∀ a : LL, (∀ b : O, ∃ u : ℤ_[l], lam (a * algebraMap O LL b) = (u : ℚ_[l])) ↔ ∃ b : O, algebraMap O LL b = a) → ∀ (r : ℕ) (hI : StableSub LA (Ideal.span {((l : ℕ) : O) ^ r} • ⊤ : Submodule O ↥LA.T)) (hI' : StableSub LA' (Ideal.span {((l : ℕ) : O) ^ r} • ⊤ : Submodule O ↥LA'.T)), (∀ g : ↥(GK K), ∃ u : ℤ_[l], (((P.PD K).χ g : ℚ_[l]ˣ) : ℚ_[l]) = (u : ℚ_[l]) ∧ (PadicInt.toZModPow r u : ZMod (l ^ r)) = ((Formalism.GaloisCohomology.cycK l K.1 r (IntermediateField.fixingSubgroupEquiv K.1 g) : (ZMod (l ^ r))ˣ) : ZMod (l ^ r))) → ∀ (M : Type) [AddCommGroup M] [Module (ZMod (l ^ r)) M] (e : (↥LA.T ⧸ (Ideal.span {((l : ℕ) : O) ^ r} • ⊤ : Submodule O ↥LA.T)) ≃+ M) (rho : Representation (ZMod (l ^ r)) (Formalism.GaloisCohomology.GK l K.1) M), (∀ g x, rho g (e x) = e (actQ LA _ hI ((IntermediateField.fixingSubgroupEquiv K.1).symm g) x)) → ∃ Ψ : (↥LA'.T ⧸ (Ideal.span {((l : ℕ) : O) ^ r} • ⊤ : Submodule O ↥LA'.T)) →+ ReciprocityTheory.Gal.TDual (ZMod (l ^ r)) M, Function.Injective Ψ ∧ ∀ g y, Ψ (actQ LA' _ hI' ((IntermediateField.fixingSubgroupEquiv K.1).symm g) y) = ReciprocityTheory.Gal.twDual (Formalism.GaloisCohomology.cycK l K.1 r) rho g (Ψ y) := by
   intro l _ P K LL _ _ _ O _ _ A A' LA LA' m hm lam hlam r hI hI' hchi M _ _ e rho hrho
   have hc : ∀ g : ↥(GK K), ∃ w : ℤ_[l],

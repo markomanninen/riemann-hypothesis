@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LocProdFormula
-import Formalism.PeriodIntegrals.ProdFormulaE
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LocProdFormula
+public import Formalism.PeriodIntegrals.ProdFormulaE
+
+@[expose] public section
 
 namespace PI.LocProdFormulaW
 

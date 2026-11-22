@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.WignerVanishingGL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.WignerVanishingGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -249,21 +253,21 @@ theorem commute_mat (Ξ : AlgRep E a) (Z : Matrix (Fin Ξ.d) (Fin Ξ.d) ℂ) (hZ
 
 end Diff
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 def expDiag (δ : Fin a → Cinf E) : GL (Fin a) (Cinf E) :=
   ⟨diagonal fun l w => Complex.exp (δ l w), diagonal fun l w => Complex.exp (-δ l w),
     by rw [diagonal_mul_diagonal, ← diagonal_one]; congr; funext l w; simp [← Complex.exp_add],
     by rw [diagonal_mul_diagonal, ← diagonal_one]; congr; funext l w; simp [← Complex.exp_add]⟩
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem expDiag_add (δ δ' : Fin a → Cinf E) : expDiag (δ + δ') = expDiag δ * expDiag δ' := Units.ext (by
   change diagonal _ = diagonal _ * diagonal _
   rw [diagonal_mul_diagonal]; congr; funext l w; simp [Complex.exp_add])
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem expDiag_zero : expDiag (0 : Fin a → Cinf E) = 1 := Units.ext (by
   change diagonal _ = 1
   rw [← diagonal_one]; congr; funext l w; simp)
@@ -279,7 +283,7 @@ theorem hasDerivAt_expDiag (δ : Fin a → Cinf E) :
 def expChar (p : ℤ × ℤ) : Multiplicative ℂ →* ℂ where
   toFun z := Complex.exp (p.1 * z.toAdd + p.2 * starRingEnd ℂ z.toAdd)
   map_one' := by simp
-  map_mul' x y := by rw [← Complex.exp_add]; congr 1; simp only [toAdd_mul, map_add]; ring
+  map_mul' x y := by rw [← Complex.exp_add]; congr 1; simp only [toAdd_mul, map_add (f := _)]; ring
 
 def laurent : Submodule ℂ (Multiplicative ℂ → ℂ) :=
   Submodule.span ℂ ((fun f : Multiplicative ℂ →* ℂ => (f : Multiplicative ℂ → ℂ)) '' Set.range expChar)
@@ -298,8 +302,8 @@ theorem laurent_mul {f g : Multiplicative ℂ → ℂ} (hf : f ∈ laurent) (hg 
   simp only [expChar, Pi.mul_apply, MonoidHom.coe_mk, OneHom.coe_mk, ← Complex.exp_add, Prod.fst_add, Prod.snd_add]
   congr 1; push_cast; ring
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem exists_coord_exp (τ τ' : E →+* ℂ) : ∃ p : ℤ × ℤ, ∀ z : Multiplicative ℂ,
     coord τ' (fun w => Complex.exp (atEmb τ z.toAdd w)) = expChar p z := by
   classical
@@ -315,12 +319,12 @@ theorem exists_coord_exp (τ τ' : E →+* ℂ) : ∃ p : ℤ × ℤ, ∀ z : Mu
     unfold coord atEmb
     split_ifs <;> simp [expChar, Pi.single_eq_of_ne hw]
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 def torus (τ : E →+* ℂ) (k : Fin a) (z : ℂ) : GL (Fin a) (Cinf E) := expDiag (Pi.single k (atEmb τ z))
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem reg_torus (τ : E →+* ℂ) (k : Fin a) {f : GL (Fin a) (Cinf E) → ℂ} (hf : f ∈ regFun E a) :
     (fun z : Multiplicative ℂ => f (torus τ k z.toAdd)) ∈ laurent := by
   have h1 : (1 : Multiplicative ℂ → ℂ) ∈ laurent := by
@@ -436,7 +440,7 @@ def dualL (Ξ : AlgRep E a) (i j : Fin a) : Cinf E →ₗ[ℝ] Matrix (Fin Ξ.d)
   map_add' x y := by
     have h : toL (Matrix.single i j (x + y)) = toL (Matrix.single i j x) + toL (Matrix.single i j y) :=
       congrArg toL (Matrix.single_add i j x y)
-    simp only [dualS, h, map_add, Matrix.transpose_add, neg_add]
+    simp only [dualS, h, map_add (f := _), Matrix.transpose_add, neg_add]
   map_smul' c x := by
     have h : toL (Matrix.single i j (c • x)) = c • toL (Matrix.single i j x) :=
       congrArg toL (Matrix.smul_single c i j x).symm
@@ -485,7 +489,7 @@ theorem glRel_dualE (Ξ : AlgRep E a) (τ : E →+* ℂ) : Formalism.REAL.GlRel 
   simp only [atEmb_mul, one_mul, mul_one, e, map_neg, dualE, ← dualL_apply]
   congr 1 <;> split_ifs <;> first | rfl | (match_scalars <;> ring)
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 theorem dualE_comm (Ξ : AlgRep E a) {τ τ' : E →+* ℂ} (h : τ ≠ τ') (i j k l : Fin a) :
     dualE Ξ τ i j * dualE Ξ τ' k l = dualE Ξ τ' k l * dualE Ξ τ i j := by
@@ -527,7 +531,7 @@ theorem commute_dmat (Ξ : AlgRep E a) (Z : Matrix (Fin Ξ.d) (Fin Ξ.d) ℂ)
       match_scalars
       · linear_combination Complex.I_mul_I
       · ring
-    rw [atEmb_eq, map_add, map_smul, map_smul, e1, e2]
+    rw [atEmb_eq, map_add (f := _), map_smul, map_smul, e1, e2]
     exact (((h _ _ _).add_right (h _ _ _)).smul_right _).add_right
       ((((h _ _ _).sub_right (h _ _ _)).smul_right _).smul_right _)
   have h2 : ∀ i j x, Commute Z (dualL Ξ i j x) := by
@@ -538,17 +542,20 @@ theorem commute_dmat (Ξ : AlgRep E a) (Z : Matrix (Fin Ξ.d) (Fin Ξ.d) ℂ)
       unfold atEmb
       rw [if_pos (by rw [InfinitePlace.mk_embedding])]
       congr 1 <;> simp
-    rw [e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum]
     exact Commute.sum_right _ _ _ fun w _ => h1 _ _ _ _
   have e : X = ∑ i, ∑ j, toL (Matrix.single i j (X i j)) := Matrix.matrix_eq_sum_single (Matrix.of X)
-  rw [e, map_sum, Matrix.transpose_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum, Matrix.transpose_sum]
   refine Commute.sum_right _ _ _ fun i _ => ?_
-  rw [map_sum, Matrix.transpose_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Matrix.transpose_sum]
   refine Commute.sum_right _ _ _ fun j _ => ?_
   simpa [dualL_apply, dualS] using (h2 i j (X i j)).neg_right
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem exists_scalar (Ξ : AlgRep E a) (Z : Matrix (Fin Ξ.d) (Fin Ξ.d) ℂ) (h : ∀ y, Z * Ξ.mat y = Ξ.mat y * Z) :
     ∃ c : ℂ, Z = c • (1 : Matrix (Fin Ξ.d) (Fin Ξ.d) ℂ) := by
   haveI : Nonempty (Fin Ξ.d) := ⟨⟨0, Ξ.pos⟩⟩
@@ -570,7 +577,7 @@ theorem qdet_scalar (Ξ : AlgRep E a) (τ : E →+* ℂ) (u : ℂ) :
     simpa [Matrix.transpose_mul] using h.symm)
   exact ⟨c, by simpa using congrArg Matrix.transpose hc⟩
 
-theorem exists_dualInfChar (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (Ξ : AlgRep E a)
+theorem exists_dualInfChar (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (Ξ : AlgRep E a)
     (τ : E →+* ℂ) : ∃ m : Multiset ℂ, HasDualInfChar Ξ τ m ∧ m.Nodup ∧
       ∀ z ∈ m, ∃ n : ℤ, z = (n : ℂ) + ((a : ℂ) - 1) / 2 := by
   haveI : Nonempty (Fin Ξ.d) := ⟨⟨0, Ξ.pos⟩⟩

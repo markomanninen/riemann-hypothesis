@@ -1,9 +1,13 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafKillCut
-import Development.EtaleCohomology.EtaleSheaves.LeafTwInjPf
-import Development.EtaleCohomology.EtaleSheaves.LeafTwSurjPf
-import Development.EtaleCohomology.EtaleSheaves.PullMonoPf
-import Development.EtaleCohomology.EtaleSheaves.LocSecPfC
-import Development.EtaleCohomology.EtaleSheaves.ClassSecPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafKillCut
+public import Development.EtaleCohomology.EtaleSheaves.LeafTwInjPf
+public import Development.EtaleCohomology.EtaleSheaves.LeafTwSurjPf
+public import Development.EtaleCohomology.EtaleSheaves.PullMonoPf
+public import Development.EtaleCohomology.EtaleSheaves.LocSecPfC
+public import Development.EtaleCohomology.EtaleSheaves.ClassSecPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC

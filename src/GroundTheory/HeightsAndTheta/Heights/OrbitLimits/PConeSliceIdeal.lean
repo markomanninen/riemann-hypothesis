@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StConeSliceIdeal
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChartHomogenise
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PGoodChartZeroSet
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StConeSliceIdeal
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChartHomogenise
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PGoodChartZeroSet
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

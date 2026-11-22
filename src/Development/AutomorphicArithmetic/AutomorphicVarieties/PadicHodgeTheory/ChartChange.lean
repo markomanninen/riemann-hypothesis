@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MemSpanX
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MemSpanX
+
+@[expose] public section
+
 open UpperTheory.V.Loc UpperTheory.V.Alg IsLocalRing MvPowerSeries
 
 private theorem mem_span_X {O σ : Type} [CommRing O] [Fintype σ] (f : MvPowerSeries σ O)
@@ -19,7 +24,8 @@ private theorem lin_part {E : Type} [Field E] {n : ℕ} (f : MvPowerSeries (Fin 
   obtain ⟨g, hg⟩ := mem_span_X f hf
   have hc : ∀ j, coeff (Finsupp.single j 1) f = constantCoeff (g j) := by
     intro j
-    rw [hg, map_sum, Finset.sum_eq_single j]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hg, map_sum, Finset.sum_eq_single j]
     · rw [MvPowerSeries.X, coeff_monomial_mul, if_pos le_rfl, one_mul, tsub_self,
         coeff_zero_eq_constantCoeff_apply]
     · intro i _ hij
@@ -40,7 +46,7 @@ private theorem inj_of_surj {A : Type} [CommRing A] [IsNoetherianRing A] (s : A 
     rw [RingHom.mem_ker] at ha ⊢
     rw [pow_succ', RingHom.mul_def, RingHom.comp_apply, ha, map_zero]⟩
   obtain ⟨N, hN⟩ := monotone_stabilizes_iff_noetherian.2 (inferInstance : IsNoetherian A A) K
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   have hsN : Function.Surjective (s ^ N) := by
     rw [RingHom.coe_pow]; exact hs.iterate N

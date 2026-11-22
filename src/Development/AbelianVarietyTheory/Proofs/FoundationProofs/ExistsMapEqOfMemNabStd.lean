@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSelfDualE
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.PairingNondegenerateHolds
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
-import Formalism.GradedWeylDivisibility.StatementE
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Formalism.QuotientMetricDivisors.ReductionLemmaZero
-import Formalism.QuotientMetricDivisors.ProdFormula
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LeafBounds.MeanMaxLeaf.LeafMMFree
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.DivIntoDual
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSelfDualE
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.PairingNondegenerateHolds
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
+public import Formalism.GradedWeylDivisibility.StatementE
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Formalism.QuotientMetricDivisors.ReductionLemmaZero
+public import Formalism.QuotientMetricDivisors.ProdFormula
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LeafBounds.MeanMaxLeaf.LeafMMFree
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.DivIntoDual
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MvPolynomial Formalism.BasicNotions Formalism.L2.DIV Formalism.DivisionValues GlobalTheory.TestLat Formalism.L2.Indef.Tree.ArchimedeanLeafBounds.Cuts
 open scoped Matrix ComplexOrder
@@ -50,7 +54,7 @@ theorem exists_map_eq_of_mem_nabStd {ι : Type} [Fintype ι] {n : ℕ} (lam : ι
   simp only [Formalism.GradedWeylDivisibility.blockEmb]
   exact map_rename _ _ _
 
-theorem localIntegrality : ∀ (K : Type) [Field K] [NumberField K] [StarRing K], (∀ a : K, (∀ w : HeightOneSpectrum (𝓞 K), 0 ≤ vw w a) → a ∈ (algebraMap (𝓞 K) K).range) ∧ ∀ (ι : Type) [Fintype ι] (n : ℕ) (lam : ι → DomWeight n) (w : HeightOneSpectrum (𝓞 K)) (F : Pol K ι n), F ∈ Formalism.HermitianLatticesTheory.localization₂ w.asIdeal (nabStd K lam) → ∀ mo, 0 ≤ vw w (coeff mo F) := by
+theorem localIntegrality : ∀ (K : Type) [Field K] [NumberField K] [StarRing K], (∀ a : K, (∀ w : HeightOneSpectrum (𝓞 K), 0 ≤ vw w a) → a ∈ (algebraMap (𝓞 K) K).range) ∧ ∀ (ι : Type) [Fintype ι] (n : ℕ) (lam : ι → DomWeight n) (w : HeightOneSpectrum (𝓞 K)) (F : Pol K ι n), F ∈ Formalism.HermitianLatticesTheory.localization₂ w.asIdeal (nabStd K lam) → ∀ mo, 0 ≤ vw w (AddMonoidAlgebra.coeff F mo) := by
   intro K _ _ _
   refine ⟨fun a h => ?_, fun ι _ n lam w F hF mo => ?_⟩
   · by_cases ha : a = 0
@@ -59,19 +63,19 @@ theorem localIntegrality : ∀ (K : Type) [Field K] [NumberField K] [StarRing K]
     · exact DualLatticeDivisor.mem_range_of_vw_nonneg a ha h
   · obtain ⟨s, hs, hsF⟩ := hF
     obtain ⟨Q, hQ⟩ := exists_map_eq_of_mem_nabStd lam hsF
-    by_cases hc : coeff mo F = 0
+    by_cases hc : AddMonoidAlgebra.coeff F mo = 0
     · rw [hc, ValuationRepresentative.vw_zero]
     have hs' : s ∉ w.asIdeal := hs
     have hs0 : (s : K) ≠ 0 := by
       intro h0
       have : s = 0 := RingOfIntegers.ext h0
       exact hs' (this ▸ w.asIdeal.zero_mem)
-    have hco : (s : K) * coeff mo F = ((coeff mo Q : 𝓞 K) : K) := by
-      have h1 := congrArg (coeff mo) hQ
+    have hco : (s : K) * AddMonoidAlgebra.coeff F mo = ((AddMonoidAlgebra.coeff Q mo : 𝓞 K) : K) := by
+      have h1 := congrArg (AddMonoidAlgebra.coeff · mo) hQ
       rw [coeff_smul] at h1
-      have h2 : coeff mo (toK K _ Q) = ((coeff mo Q : 𝓞 K) : K) := coeff_map _ _ _
+      have h2 : AddMonoidAlgebra.coeff (toK K _ Q) mo = ((AddMonoidAlgebra.coeff Q mo : 𝓞 K) : K) := coeff_map _ _ _
       rw [← h2, h1, Algebra.smul_def]
-    have h3 := ValuationRepresentative.vw_int_nonneg w (coeff mo Q)
+    have h3 := ValuationRepresentative.vw_int_nonneg w (AddMonoidAlgebra.coeff Q mo)
     rwa [← hco, ValuationRepresentative.vw_mul w _ _ hs0 hc, vw_eq_zero_of_notMem w hs', zero_add] at h3
 
 end GlobalTheory.LocInt

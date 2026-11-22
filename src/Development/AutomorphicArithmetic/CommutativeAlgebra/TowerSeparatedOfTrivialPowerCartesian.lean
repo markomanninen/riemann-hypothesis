@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -23,7 +27,7 @@ private theorem kn_conj {p : ℕ} [Fact p.Prime] {D : Datum p} {G : HTGroup p} (
     refine ⟨w₂ + w₃, add_mem hw₂ hw₃, ?_⟩
     have hgg : L.actG g (L.actG g⁻¹ v) = v := by
       rw [← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply]
-    rw [map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, h₂, map_add, hgg, map_nsmul, h₃,
+    rw [map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, h₂, map_add (f := _), hgg, map_nsmul, h₃,
       one_smul]
   have hk' : L.CongOne 1 k ∧ L.CongOne 1 k⁻¹ := hk
   have hu' : L.CongOne N u ∧ L.CongOne N u⁻¹ := hu

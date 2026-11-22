@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.ElevenLe
-import Formalism.LocalRingCardinality.KernelPlaceMeanBound
-import Formalism.LocalRingCardinality.DataParams
-import Formalism.SharpRestriction.ParConsts
-import Formalism.SharpRestriction.ParamsHeightRankConstant
-import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.FourMulQLeCondN
+module
+
+public import Formalism.SharpRestriction.ElevenLe
+public import Formalism.LocalRingCardinality.KernelPlaceMeanBound
+public import Formalism.LocalRingCardinality.DataParams
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.SharpRestriction.ParamsHeightRankConstant
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.FourMulQLeCondN
+
+@[expose] public section
 
 noncomputable section
 
@@ -586,9 +590,9 @@ theorem sigPar_step (τ : D.what₂.Tau) (i : ℕ) (hi : i + 1 < D.R.k - 1 + D.R
   have hm2 := D.R.two_le_m
   by_cases h1 : i + 1 < D.R.k - 1
   · have e1 : Formalism.BasicNotions.DV.sigPar D τ i = (D.hc τ).v ⟨i, by omega⟩ := by
-      unfold Formalism.BasicNotions.DV.sigPar; rw [dif_pos (by omega)]
+      unfold Formalism.BasicNotions.DV.sigPar; rw [dite_eq_left (by omega)]
     have e2 : Formalism.BasicNotions.DV.sigPar D τ (i + 1) = (D.hc τ).v ⟨i + 1, h1⟩ := by
-      unfold Formalism.BasicNotions.DV.sigPar; rw [dif_pos h1]
+      unfold Formalism.BasicNotions.DV.sigPar; rw [dite_eq_left h1]
     have a1 := (D.hc τ).u_gt_v ⟨i + 1, h1⟩
     have a2 := (D.hc τ).v_gt_u ⟨i, by omega⟩
     have lt : (D.hc τ).v ⟨i + 1, h1⟩ < (D.hc τ).v ⟨i, by omega⟩ := lt_trans a1 a2
@@ -603,9 +607,9 @@ theorem sigPar_step (τ : D.what₂.Tau) (i : ℕ) (hi : i + 1 < D.R.k - 1 + D.R
   · by_cases h2 : i + 1 = D.R.k - 1
     · have hk2 : 2 ≤ D.R.k := by omega
       have e1 : Formalism.BasicNotions.DV.sigPar D τ i = (D.hc τ).v ⟨i, by omega⟩ := by
-        unfold Formalism.BasicNotions.DV.sigPar; rw [dif_pos (by omega)]
+        unfold Formalism.BasicNotions.DV.sigPar; rw [dite_eq_left (by omega)]
       have e2 : Formalism.BasicNotions.DV.sigPar D τ (i + 1) = -(D.hc τ).b ⟨0, by omega⟩ := by
-        unfold Formalism.BasicNotions.DV.sigPar; rw [dif_neg (by omega), dif_pos (by omega)]
+        unfold Formalism.BasicNotions.DV.sigPar; rw [dite_eq_right (by omega), dite_eq_left (by omega)]
         congr 2; ext; simp; omega
       have a2 := (D.hc τ).v_gt_u ⟨i, by omega⟩
       have a3 := (D.hc τ).u_last_gt (by omega) (by omega)
@@ -622,9 +626,9 @@ theorem sigPar_step (τ : D.what₂.Tau) (i : ℕ) (hi : i + 1 < D.R.k - 1 + D.R
       push_cast
       exact_mod_cast this
     · have e1 : Formalism.BasicNotions.DV.sigPar D τ i = -(D.hc τ).b ⟨i - (D.R.k - 1), by omega⟩ := by
-        unfold Formalism.BasicNotions.DV.sigPar; rw [dif_neg (by omega), dif_pos (by omega)]
+        unfold Formalism.BasicNotions.DV.sigPar; rw [dite_eq_right (by omega), dite_eq_left (by omega)]
       have e2 : Formalism.BasicNotions.DV.sigPar D τ (i + 1) = -(D.hc τ).b ⟨i - (D.R.k - 1) + 1, by omega⟩ := by
-        unfold Formalism.BasicNotions.DV.sigPar; rw [dif_neg (by omega), dif_pos (by omega)]
+        unfold Formalism.BasicNotions.DV.sigPar; rw [dite_eq_right (by omega), dite_eq_left (by omega)]
         congr 2; ext; simp; omega
       have g1 := (D.hc τ).gap_be ⟨i - (D.R.k - 1), by omega⟩
       have g2 := (D.hc τ).gap_eb ⟨i - (D.R.k - 1), by omega⟩ (by simp; omega)
@@ -688,12 +692,12 @@ theorem aPlus_diff (j : ℕ) (ρ : D.what₂.Tau) (i l : ℕ) :
 theorem sigPar_at_last (ρ : D.what₂.Tau) (j : ℕ) (hj1 : 1 ≤ j) (hjm : j ≤ D.R.m) (hk : 1 ≤ D.R.k) :
     Formalism.BasicNotions.DV.sigPar D ρ (D.R.k + j - 2) = -(D.hc ρ).b ⟨j - 1, by omega⟩ := by
   unfold Formalism.BasicNotions.DV.sigPar
-  rw [dif_neg (by omega), dif_pos (by omega)]
+  rw [dite_eq_right (by omega), dite_eq_left (by omega)]
   congr 2; ext; simp; omega
 
 theorem eQ_eq (ρ : D.what₂.Tau) (j : ℕ) (hj1 : 1 ≤ j) (hjm : j ≤ D.R.m) :
     Formalism.BasicNotions.DV.eQ D j ρ = (D.hc ρ).e ⟨j - 1, by omega⟩ := by
-  unfold Formalism.BasicNotions.DV.eQ; rw [dif_pos ⟨hj1, hjm⟩]
+  unfold Formalism.BasicNotions.DV.eQ; rw [dite_eq_left ⟨hj1, hjm⟩]
 
 theorem sigPar_abs (hN : SizeN L) (hK : SizeK L) (hLa : SizeLa L) (hBot : SizeBot L) (hEta : SizeEta L)
     (hDel : SizeDel L) (ρ : D.what₂.Tau) (i : ℕ) :

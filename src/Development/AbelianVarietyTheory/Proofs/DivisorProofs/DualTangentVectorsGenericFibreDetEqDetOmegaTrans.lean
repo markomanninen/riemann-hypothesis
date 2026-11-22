@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnifAlong
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpMapGermFromSpec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AppLESecEpsZeroEpsFn
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsoToBidualOfLocalFrames
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnifAlong
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpMapGermFromSpec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AppLESecEpsZeroEpsFn
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsoToBidualOfLocalFrames
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.KeyCl GlobalTheory.Ex GlobalTheory.KeyEven
@@ -65,15 +70,18 @@ theorem exists_matrix {g : ℕ} {e e' : Fin g → Γ(omega G, ⊤)} (he : IsFram
     simp only [dualApp_smul, LinearMap.smul_apply, smul_eq_mul, LB.resG_self]
     rw [Finset.sum_congr rfl fun m _ => congrArg (cst R _ * ·) (hv' m k)]
     simp
-  · have hc (j : Fin g) : tangent (v j) = he.coord j := he.dual_ext le_rfl fun k => by
-      rw [he.dualApp_coord_frame, resM_self]
-      exact (hv j k).trans (by simp only [eq_comm])
+  · have hc (j : Fin g) : dualApp (tangent (v j)) le_rfl = (he.basis le_rfl).coord j := by
+      apply (he.basis le_rfl).ext
+      intro k
+      have hb : (he.basis le_rfl) k = e k := by rw [he.basis_apply, resM_self]
+      rw [hb, hv, ← hb, Module.Basis.coord_apply, Module.Basis.repr_self, Finsupp.single_apply]
+      simp only [eq_comm]
     rw [IsFrame.val_detUnit, Module.Basis.det_apply]
     refine Eq.trans ?_ (RingHom.map_det (Scheme.ΓSpecIso (.of R)).hom.hom _).symm
     congr 1
     ext j m
-    rw [hc, RingHom.mapMatrix_apply, Matrix.map_apply, Module.Basis.toMatrix_apply, resM_self]
-    rfl
+    rw [RingHom.mapMatrix_apply, Matrix.map_apply, Module.Basis.toMatrix_apply, resM_self]
+    exact congrArg _ (congrFun (congrArg DFunLike.coe (hc j)) (e' m))
 
 end Lie
 

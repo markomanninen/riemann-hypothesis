@@ -1,7 +1,11 @@
-import CompanionTheory.AutomorphicTheory.PlaceSeparation.IsOpenQuotientMapArt0
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemConnectedComponentOfOneOfPos
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenKerOfInfConn
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PrincipalIdealSt
+module
+
+public import CompanionTheory.AutomorphicTheory.PlaceSeparation.IsOpenQuotientMapArt0
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemConnectedComponentOfOneOfPos
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenKerOfInfConn
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PrincipalIdealSt
+
+@[expose] public section
 
 namespace PositivityTheory.Stage1.PM
 

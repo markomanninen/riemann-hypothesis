@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.Common
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.Common
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,12 +25,6 @@ theorem cornerM_castSucc_right (c : R) (a : Fin (r + 1)) (b : Fin r) :
 
 theorem cornerM_last (c : R) : cornerM r c (Fin.last r) (Fin.last r) = c := by
   simp [cornerM]
-
-theorem cornerM_map {S : Type} [CommRing S] (f : R →+* S) (c : R) :
-    (cornerM r c).map f = cornerM r (f c) := by
-  ext a b
-  simp only [cornerM, Matrix.map_apply, Matrix.of_apply]
-  split_ifs <;> simp
 
 theorem head_add_cornerM (A : Matrix (Fin (r + 1)) (Fin (r + 1)) R) (c : R) :
     (A + cornerM r c).submatrix Fin.castSucc Fin.castSucc = A.submatrix Fin.castSucc Fin.castSucc := by
@@ -107,8 +105,8 @@ theorem card_isoMbe_shift (Z₁ Z₂ : Matrix (Fin (r + 1)) (Fin (r + 1)) R) (c 
   · have k : (mbeShift Z₁ c).symm (eCl Z₁) = eCl (Z₁ + cornerM r c) := by
       rw [LinearEquiv.symm_apply_eq, he₁]
     simp only [LinearEquiv.trans_apply, k, γ.2.2, he₂]
-  · simp only [LinearEquiv.trans_apply, hb₁, map_add, map_smul, δ.2.1, δ.2.2]
-    rw [← map_smul, ← map_add, LinearEquiv.symm_apply_eq, hb₂]
+  · simp only [LinearEquiv.trans_apply, hb₁, map_add (f := _), map_smul, δ.2.1, δ.2.2]
+    rw [← map_smul, ← map_add (f := _), LinearEquiv.symm_apply_eq, hb₂]
   · simp only [LinearEquiv.trans_apply, he₁, δ.2.2]
     rw [LinearEquiv.symm_apply_eq, he₂]
   · intro γ

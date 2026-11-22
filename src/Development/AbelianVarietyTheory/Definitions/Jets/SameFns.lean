@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementTL
-import Formalism.HermitianCurvature.ActualZetaSmooth
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementTL
+public import Formalism.HermitianCurvature.ActualZetaSmooth
+
+@[expose] public section
 
 namespace GlobalTheory.HatNF
 

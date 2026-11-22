@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.JetsOnCopiesCompatibleFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
-import Development.AbelianVarietyTheory.Definitions.Jets.SurjectiveAppTopSqCube
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ValCongr
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.TruncationFramesLocalSeriesStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsPref
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.GsSpMapGermAt
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UniversalJetsReindexFin
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ProdSumReindex
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ConstantCoeffEv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.JetsOnCopiesCompatibleFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+public import Development.AbelianVarietyTheory.Definitions.Jets.SurjectiveAppTopSqCube
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ValCongr
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.TruncationFramesLocalSeriesStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsPref
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.GsSpMapGermAt
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UniversalJetsReindexFin
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ProdSumReindex
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ConstantCoeffEv
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open ReciprocityTheory.ChartRestriction.G.DVR ReciprocityTheory.ChartRestriction.G.DVR.QForm Formalism.MainNotions.ModuliIntegralCharts.H1 Formalism.MainNotions.ModuliIntegralCharts.H1.ExpBijectiveUniformisation Formalism.MainNotions.ModuliIntegralCharts.H1.GSt
@@ -52,7 +57,8 @@ theorem psJet_map {R R' : Type} [CommRing R] [CommRing R'] (f : R →+* R') {κ 
   rw [Ideal.Quotient.lift_mk, RingHom.comp_apply]
   congr 1
   unfold psTrunc
-  simp [map_sum, MvPolynomial.map_monomial, MvPowerSeries.coeff_map]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, MvPolynomial.map_monomial, MvPowerSeries.coeff_map]
 
 theorem germA_comb {V : Type} [CommRing V] [IsDomain V] {I : Ideal V} {D : DegData V I}
     {A : PolAV (Spec (CommRingCat.of (FractionRing V)))} {G : Over (Sp V)} [GrpObj G] [IsCommMonObj G]

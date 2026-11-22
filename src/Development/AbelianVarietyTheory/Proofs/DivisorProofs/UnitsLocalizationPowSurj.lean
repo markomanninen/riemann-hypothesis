@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitsLocalizationStrictHenselianEqConstMulUnitStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitPowEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitsLocalizationStrictHenselianEqConstMulUnitStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitPowEq
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory.LocAcycUnits
@@ -26,7 +31,7 @@ theorem units_localization_pow_surj : ∀ (T O : Type) [CommRing T] [IsDomain T]
   have root : ∀ x : T, x ≠ 0 → ∃ y : T, y ≠ 0 ∧ y ^ q = x := by
     intro x hx
     obtain ⟨y, hy⟩ := hroot (X ^ q - C x) (monic_X_pow_sub_C _ hq0.ne')
-      (by rw [natDegree_X_pow_sub_C]; exact hq0)
+      (by rw [natDegree_X_pow_sub_C _]; exact hq0)
     have hyq : y ^ q = x := by simpa [sub_eq_zero] using hy
     refine ⟨y, ?_, hyq⟩
     rintro rfl; exact hx (by rw [← hyq, zero_pow hq0.ne'])

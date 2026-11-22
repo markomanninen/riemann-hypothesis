@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBin
+
+@[expose] public section
 
 open PowerSeries GlobalTheory.CycFr
 
@@ -159,7 +163,8 @@ theorem associated_trace_and_lvl_dvd {l : ℕ} [Fact l.Prime] {O : Type} [CommRi
         algebraMap ℤ_[l] O (∑ δ ∈ D, Ring.choose (δ : ℤ_[l]) k) := by
       intro k hk
       have e : (1 - (l : O⟦X⟧)) = C (1 - (l : O)) := by simp
-      rw [e, map_add, coeff_C, if_neg hk, zero_add, map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [e, map_add (f := _), coeff_C, if_neg hk, zero_add, map_sum, map_sum]
       refine Finset.sum_congr rfl fun δ _ => ?_
       rw [binomialSeries_coeff, Algebra.smul_def, mul_one]
     obtain ⟨g, hg⟩ : (X : O⟦X⟧) ^ (l - 1) ∣ 1 - (l : O⟦X⟧) + ∑ δ ∈ D, bin O (δ : ℤ_[l]) := by

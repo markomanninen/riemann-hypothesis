@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.IwahoriDoubleCosets
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelCasselmanHolds
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantOrbit
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BlockTriangularOneAddMat
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.ExistsCharacterEigenvectorOfCommutingRepresentat
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NontrivialOfIrreducible
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ValuationDetOfMemKO
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.IwahoriDoubleCosets
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelCasselmanHolds
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantOrbit
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BlockTriangularOneAddMat
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.ExistsCharacterEigenvectorOfCommutingRepresentat
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NontrivialOfIrreducible
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ValuationDetOfMemKO
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,10 +39,10 @@ theorem trace_eq_add_quot {V : Type} [AddCommGroup V] [Module ℂ V] [FiniteDime
       (Submodule.Quotient.mk_eq_zero _).2 (Submodule.mem_span_singleton_self v)
     simp [s, P, hc, hg, h0]
   conv_lhs => rw [h1]
-  rw [map_add, map_smul, LinearMap.trace_comp_comm', h2, LinearMap.trace_smulRight, hl, smul_eq_mul, mul_one]
+  rw [map_add (f := _), map_smul, LinearMap.trace_comp_comm', h2, LinearMap.trace_smulRight, hl, smul_eq_mul, mul_one]
+
 
 open scoped Classical in
-
 theorem exists_exponents {G : Type} [CommGroup G] (d : ℕ) : ∀ (V : Type) [AddCommGroup V] [Module ℂ V]
     [FiniteDimensional ℂ V] (ρ : Representation ℂ G V), Module.finrank ℂ V = d →
     ∃ E : Multiset (G →* ℂˣ), (∀ χ, (E.count χ : ℕ∞) = jhMult (ofChar χ) ρ) ∧
@@ -100,8 +104,9 @@ theorem exists_setOp (μ : Measure G) [IsFiniteMeasureOnCompacts μ] {π : Repre
     have hf := ((IwahoriInj.isLocallyConstant_orbit hπ v).comp_continuous (f := fun h : D => (h : G))
       continuous_subtype_val).range_finite
     refine ⟨∑ u ∈ hf.toFinset, (∫ g in D, (if π g v = u then 1 else 0 : ℂ) ∂μ) • u, fun l => ?_⟩
-    simp only [map_sum, map_smul, smul_eq_mul, ← integral_mul_const]
-    rw [← integral_finset_sum _ fun u _ => hint v fun x => (if x = u then 1 else 0 : ℂ) * l u]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul, ← integral_mul_const]
+    rw [← integral_finsetSum _ fun u _ => hint v fun x => (if x = u then 1 else 0 : ℂ) * l u]
     refine setIntegral_congr_fun hm fun g hg => ?_
     have : π g v ∈ hf.toFinset := hf.mem_toFinset.2 ⟨⟨g, hg⟩, rfl⟩
     simp [this]
@@ -112,7 +117,7 @@ theorem exists_setOp (μ : Measure G) [IsFiniteMeasureOnCompacts μ] {π : Repre
     rw [map_sub, h l, sub_self]
   refine ⟨⟨⟨a, fun x y => hsep _ _ fun l => ?_⟩, fun c x => hsep _ _ fun l => ?_⟩,
     fun v l => ⟨hint v l, ha v l⟩⟩
-  · simp only [map_add, ha]
+  · simp only [map_add (f := _), ha]
     exact integral_add (hint x l) (hint y l)
   · simp only [map_smul, ha, RingHom.id_apply]
     exact integral_smul _ _
@@ -165,8 +170,8 @@ theorem hasTrace_indicator (μ : Measure G) [IsFiniteMeasureOnCompacts μ] [μ.I
   let q : fixed π I →ₗ[ℂ] LinearMap.range A := A.rangeRestrict ∘ₗ (fixed π I).subtype
   exact LinearMap.trace_comp_comm' j q
 
-open scoped ENNReal in
 
+open scoped ENNReal in
 theorem measure_mul_eq [SecondCountableTopology G] (μ : Measure G) [SFinite μ] [μ.IsMulLeftInvariant]
     {N I : Subgroup G} [MeasurableSpace N] [BorelSpace N] (ν : Measure N) [SFinite ν] [ν.IsMulLeftInvariant]
     (hI : IsOpen (I : Set G)) {t : G} (ht : ∀ u ∈ N, t⁻¹ * u * t ∈ N)
@@ -346,6 +351,7 @@ theorem measure_iwahoriCoset [MeasurableSpace (GL n k)] [BorelSpace (GL n k)] (�
   have h2 := UnipHaar.haar_conj_eq_modulus_mul k n n (fun _ => Unit) (points n) ν (leviTorus k n t) _
     ho.measurableSet
   rw [← deltaB_eq_modulus] at h2
+  simp only [diagT, MonoidHom.comp_apply] at h1
   have h3 := (congrArg (· * μ (iwahoriCoset t)) h2).symm.trans h1
   rw [mul_right_comm, ENNReal.mul_left_inj (ho.measure_pos ν ⟨1, one_mem (iwahori k n)⟩).ne' hc.measure_lt_top.ne] at h3
   rw [measureReal_def, measureReal_def, ← h3, ENNReal.toReal_mul, ENNReal.toReal_ofReal (deltaB_pos t).le,
@@ -367,7 +373,9 @@ theorem traceFormula (h : GlobalTheory.Published.BorelCasselman) : TraceFormula 
       (twKer π (unipB k n) 1).mkQ _ hb (jacBUFixed π t) fun g hg v => by
         obtain ⟨u, hu, -, i, hi, rfl⟩ := (mem_iwahoriCoset ht g).1 hg
         rw [map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, IwahoriInj.mem_fixed.1 v.2 i hi]
-        exact (Submodule.Quotient.eq _).2 (IwahoriInj.sub_mem_twKer hu _)
+        apply (Submodule.Quotient.eq _).2
+        simpa only [diagT, MonoidHom.comp_apply, MonoidHom.id_apply, Submodule.subtype_apply] using
+          (IwahoriInj.sub_mem_twKer hu (π (diagT k n t) v))
     rwa [measure_iwahoriCoset μ ht, Complex.ofReal_mul, Complex.ofReal_inv] at h1
   obtain ⟨E, h1, h2⟩ := exists_exponents _ _ (jacBUFixed π) rfl
   refine ⟨hfd, key, E, ⟨fun χ hχ s hs => ?_, h1⟩, fun t ht => h2 t ▸ key t ht⟩

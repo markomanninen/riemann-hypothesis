@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsE8WeightedBundle
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.GoodClass
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.ExistsArBaseAway
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBPull
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsE8WeightedBundle
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.GoodClass
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.ExistsArBaseAway
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBPull
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg
@@ -34,7 +39,8 @@ theorem lam_mul_left (M : RigLB B) (cub : CubicalStr B M) {T : Over S} (x x' y :
     (fun ψ => Multiplicative.ofAdd (FreeAbelianGroup.of ψ))
   have e' := congrArg (fun u => FreeAbelianGroup.lift (fun ψ => GlobalTheory.CechPic.pull ψ (GlobalTheory.CechPic.cls M.L M.isLB))
     (Multiplicative.toAdd u)) e
-  simp only [toAdd_prod, toAdd_zpow, toAdd_ofAdd, toAdd_mul, toAdd_inv, map_sum, map_zsmul, map_add, map_neg,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [toAdd_prod, toAdd_zpow, toAdd_ofAdd, toAdd_mul, toAdd_inv, map_sum, map_zsmul, map_add (f := _), map_neg,
     FreeAbelianGroup.lift_apply_of] at e'
   have e'' := e'.symm.trans h0
   simp only [lam, pt]
@@ -126,7 +132,8 @@ theorem cechPicard_pullback_e8Bundle_class (W : Matrix (Fin 8) (Fin 8) ℤ) {A :
     (L : LB A.left) (hL : L.IsLB) (M : RigLB B) (h : IsE8WeightedBundle W pr L M.L) {T : Over S} (s : T ⟶ A) :
     GlobalTheory.CechPic.pull s.left (GlobalTheory.CechPic.cls L hL) =
       bil (GlobalTheory.CechPic.cls M.L M.isLB) W (fun a => s ≫ pr a) (fun b => s ≫ pr b) := by
-  rw [(GlobalTheory.CechPic.cls_eq_iff hL (LB.isLB_linComb M.isLB (K := (Fin 8 × Fin 8) × Fin 4)
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [(GlobalTheory.CechPic.cls_eq_iff hL (LB.isLB_linComb M.isLB (K := (Fin 8 × Fin 8) × Fin 4)
     (fun k => lamPts (pr k.1.1) (pr k.1.2) k.2) (fun k => -(W k.1.1 k.1.2 * negε k.2)))).2 h,
     GlobalTheory.CechPic.cls_linComb M.isLB, map_sum]
   have hm : ∀ x y : A ⟶ B, s.left ≫ (x * y).left = ((s ≫ x) * (s ≫ y)).left := fun x y => by

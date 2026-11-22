@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.StatementB
+module
+
+public import Formalism.GradedWeylDivisibility.StatementB
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -102,10 +106,11 @@ theorem lhwin_rowDiv_shift (R : Type*) [CommRing R] {r n : ℕ} (H : ℤ) (a b :
     (f : MvPolynomial (Fin r × Fin n) R) (hf : IsWeightedHomogeneous (lhwinHt r n) f H) :
     IsWeightedHomogeneous (lhwinHt r n) (rowDiv R a b k f) (H + k * ((a.val : ℤ) - b.val)) := by
   unfold rowDiv
-  conv => enter [2, 1, 2]; rw [f.as_sum]
-  rw [map_sum, Polynomial.finsetSum_coeff]
+  conv_lhs => rw [f.as_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Polynomial.finsetSum_coeff]
   refine IsWeightedHomogeneous.sum _ _ _ fun d hd => ?_
-  have := lhwinShift_rowGen_monomial R a b d (coeff d f) k
+  have := lhwinShift_rowGen_monomial R a b d (AddMonoidAlgebra.coeff f d) k
   rwa [hf (mem_support_iff.mp hd)] at this
 
 theorem lhwin_weight_ht {r n : ℕ} (d : Fin r × Fin n →₀ ℕ) :
@@ -115,7 +120,7 @@ theorem lhwin_weight_ht {r n : ℕ} (d : Fin r × Fin n →₀ ℕ) :
   induction d using Finsupp.induction_linear with
   | zero => simp
   | add f g hf hg =>
-    simp only [map_add, Pi.add_apply, Nat.cast_add, mul_add, Finset.sum_add_distrib, hf, hg]
+    simp only [map_add (f := _), Pi.add_apply, Nat.cast_add, mul_add, Finset.sum_add_distrib, hf, hg]
   | single v c =>
     simp [Finsupp.weight_apply, lhwinHt, rowW, Pi.single_apply, Finsupp.sum_single_index, mul_comm]
 
@@ -142,8 +147,8 @@ theorem lhwin_exists_killed (h2 : RowDivClosedGraded) {r n : ℕ}
       h2 r n M hM f hfM _, ?_, ?_⟩
     · intro h
       apply hd
-      have := congrArg (coeff d) h
-      rwa [coeff_weightedHomogeneousComponent, if_pos rfl, coeff_zero] at this
+      have := congrArg (AddMonoidAlgebra.coeff · d) h
+      simpa only [coeff_weightedHomogeneousComponent, if_pos rfl, if_true, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] using this
     · intro e he
       rw [coeff_weightedHomogeneousComponent] at he
       split_ifs at he with hμ

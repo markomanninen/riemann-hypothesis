@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex
@@ -73,7 +77,7 @@ theorem semi_factor {I : Cx R} {J : Cx S} (σ : SemiMap I J)
 theorem zmod_semilinear {Q q : ℕ} [NeZero Q] (h : q ∣ Q) {I : Cx (ZMod Q)} {J : Cx (ZMod q)} (σ : SemiMap I J)
     (U : Scheme.{0}) (s : ℤ) (r : ULift.{1} (ZMod Q)) (a : Sec (I.X s) U) :
     σ.app U s (r • a) = liftHom (ZMod.castHom h (ZMod q)) r • σ.app U s a := by
-  have hr : r = ((r.down.val : ℕ) : ULift.{1} (ZMod Q)) := ULift.ext _ _ (by
+  have hr : r = ((r.down.val : ℕ) : ULift.{1} (ZMod Q)) := ULift.ext (by
     first
     | rw [ULift.natCast_down, ZMod.natCast_zmod_val]
     | rw [ULift.down_natCast, ZMod.natCast_zmod_val])

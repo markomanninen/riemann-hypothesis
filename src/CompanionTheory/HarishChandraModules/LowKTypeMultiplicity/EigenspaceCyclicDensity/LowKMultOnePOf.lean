@@ -1,5 +1,9 @@
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
 
 open Matrix Finset
 open scoped InnerProductSpace
@@ -28,7 +32,7 @@ theorem evd_eig (F : Fin n → Module.End ℂ V) (τ : Fin n → ℂ) (x : V) (h
     rfl
   · simp only [CompanionTheory.D.LK.evd, FreeAlgebra.lift_ι_apply, h]
   · rw [map_mul, Module.End.mul_apply, hb, map_smul, ha, map_mul, smul_smul, mul_comm]
-  · rw [map_add, LinearMap.add_apply, ha, hb, map_add, add_smul]
+  · rw [map_add (f := _), LinearMap.add_apply, ha, hb, map_add (f := _), add_smul]
 
 theorem mem_cyc {E : Fin n → Fin n → Module.End ℂ V} {v w : V} : w ∈ Cyc E v ↔ ∃ a, ev E a v = w := by
   unfold CompanionTheory.D.LK.Cyc
@@ -227,7 +231,8 @@ theorem lowKMultOneP_of (hM : MultAlg) (hE : KModExists) (hD : CycDense) (hO : O
     · rw [← Module.End.mul_apply, commute_E_cas_of_glRel E hGl a b, Module.End.mul_apply, hv.2 a b hab h, map_zero]
   have hcc : Cas E v ∈ Cyc E v := by
     refine mem_cyc.2 ⟨∑ a, ∑ b, FreeAlgebra.ι ℂ (a, b) * FreeAlgebra.ι ℂ (b, a), ?_⟩
-    simp only [CompanionTheory.D.LK.ev, map_sum, map_mul, FreeAlgebra.lift_ι_apply, Formalism.REAL.Cas]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [CompanionTheory.D.LK.ev, map_sum, map_mul, FreeAlgebra.lift_ι_apply, Formalism.REAL.Cas]
   obtain ⟨c, hc⟩ := hmult _ hcv hcc
   have hdense := hD N ε H σ D E hUR hIR hK v c hv0 hc
   set u : D := inner ℂ v v • v' - inner ℂ v v' • v with hu_def

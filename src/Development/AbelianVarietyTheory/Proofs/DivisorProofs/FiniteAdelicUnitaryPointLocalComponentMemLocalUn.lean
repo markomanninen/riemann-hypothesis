@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
@@ -37,7 +41,7 @@ theorem eq_cj_of_ext (w u : Pl E) (hu : u = w) (f : u.adicCompletion E →+* w.a
       ∀ x : E, s (algebraMap E _ x) = algebraMap E _ (IsCMField.complexConj E x) := ⟨f, hf, hext⟩
   have hcj : cj u = hex.choose := by
     unfold cj
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
   have hfs : (f : u.adicCompletion E → u.adicCompletion E) = hex.choose :=
     (HeightOneSpectrum.denseRange_algebraMap E u).equalizer hf hex.choose_spec.1
       (funext fun k => by simp only [Function.comp_apply, hext, hex.choose_spec.2])
@@ -52,10 +56,10 @@ theorem cj_pLoc_pFin (w : Pl E) (hw : ¬ IsSplitAt w) (a : Ad E) :
 
 end GlobalTheory.BCT.LocMem
 
-open GlobalTheory.BCT.LocMem in
 
+open GlobalTheory.BCT.LocMem in
 theorem GlobalTheory.BCT.cLoc_mem_UL : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E → ∀ n : ℕ,
-    ∀ (w : Pl E) (x : finU E n), cLoc w (x : UA E n) ∈ UL n w := by
+    ∀ (w : Pl E) (x : finU (E := E) (n := n)), cLoc w (x : UA E n) ∈ UL n w := by
   intro E _ _ _ _ n w x
   unfold UL
   split_ifs with hs

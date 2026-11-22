@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvDer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvariantDerivationFormalGroupLawIsLinearStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvariantDerivationFormalGroupLawLeibnizStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvDer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvariantDerivationFormalGroupLawIsLinearStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvariantDerivationFormalGroupLawLeibnizStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -32,9 +36,9 @@ private lemma iterate_mul_eq_sum_antidiagonal_choose {A : Type} [CommRing A] (D 
     simp only [Function.iterate_succ_apply']
     rw [add_comm]
 
+
 open MvPowerSeries in
 set_option autoImplicit false in
-
 theorem _root_.GlobalTheory.LawDer.constantCoeff_iterate_invDer_mul : ∀ (p : ℕ) [Fact p.Prime] (R : Type)
     [CommRing R] (d : ℕ) (μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) R),
     (∀ i, constantCoeff (μ i) = 0) →
@@ -44,7 +48,8 @@ theorem _root_.GlobalTheory.LawDer.constantCoeff_iterate_invDer_mul : ∀ (p : �
       ∃ r : R, constantCoeff ((_root_.GlobalTheory.LawDer.invDer μ u)^[p] (F * G)) = p * r := by
   intro p hp R _ d μ hμ hid u F G hF hG
   have hlin := _root_.GlobalTheory.LawDer.Linear.invDer_linear R d μ hμ u
-  rw [iterate_mul_eq_sum_antidiagonal_choose _ hlin.1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [iterate_mul_eq_sum_antidiagonal_choose _ hlin.1
     (_root_.GlobalTheory.LawDer.invDer_mul R d μ hμ hid u), map_sum]
   refine Finset.dvd_sum fun ij hij => ?_
   rw [Finset.HasAntidiagonal.mem_antidiagonal] at hij

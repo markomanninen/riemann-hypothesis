@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutMP2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaCutoffLimit
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WordKeyIdentity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellOpenDomain
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointLeibnizExpansion
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutMP2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaCutoffLimit
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WordKeyIdentity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellOpenDomain
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointLeibnizExpansion
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 open scoped ContDiff
@@ -130,7 +134,7 @@ theorem cutoff_transport_to_model : CutTr := by
     ring
   have hR : (trJ S T v e (B.JF (T v).base (f v)) ρ) = ⟨u, hu⟩ := by
     unfold trJ MA.toSm
-    rw [dif_pos hu]
+    rw [dite_eq_left hu]
   rw [hL]
   show _ = MA.toSm (D.parOf S v) (fun q => ((c.sc ε 1 (MA.Gq (D.parOf S v) q) : ℝ) : ℂ) *
     (trJ S T v e (B.JF (T v).base (f v)) ρ).1 q)

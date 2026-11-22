@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ExistsChosenExtremalVector
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExtremalNegativeSets
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemUJsetOfKset
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsKStableOfMemLowKSub
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ExistsChosenExtremalVector
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExtremalNegativeSets
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemUJsetOfKset
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsKStableOfMemLowKSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -244,9 +248,9 @@ theorem exists_extremal_same_image : ∀ (n : ℕ) (H : Type) [NormedAddCommGrou
       rw [hnm, ← p2] at p1
       exact (mul_self_inj_of_nonneg (norm_nonneg _) zero_le_one).1 p1
     · intro θ hθ
-      rw [map_add, hw2 θ hθ, isWtOn_smul hwu _ θ hθ, smul_add]
+      rw [map_add (f := _), hw2 θ hθ, isWtOn_smul hwu _ θ hθ, smul_add]
     · have h1 : φ (((‖E v‖ / ‖u‖ : ℝ) : ℂ) • u) = 0 := hm.2
-      rw [map_add, hφ1, h1, add_zero]
+      rw [map_add (f := _), hφ1, h1, add_zero]
 
 end GlobalTheory.ExtRep
 

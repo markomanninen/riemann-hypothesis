@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.FiltrationCocycleLiftCriterion
-import Formalism.LandauZeroFreeBounds.Statement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PerronIntegralShiftPrimitiveLFunctionStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FiniteBox
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TruncatedPerronPsi
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.FiltrationCocycleLiftCriterion
+public import Formalism.LandauZeroFreeBounds.Statement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PerronIntegralShiftPrimitiveLFunctionStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FiniteBox
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TruncatedPerronPsi
+
+@[expose] public section
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory
 
 namespace GlobalTheory.ExplicitFormula

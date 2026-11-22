@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.DivisorModule
-import GroundTheory.ProfiniteCohomology.CupProducts.Cocycles
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.DivisorModule
+public import GroundTheory.ProfiniteCohomology.CupProducts.Cocycles
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -16,7 +21,7 @@ variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [Compa
 theorem finite_divFunEval_ne_zero (n : ℕ) (x : cohomology (divFunRep φ A) n) :
     {i | (cohomologyMapAlong (φ i) (hφ i) (divFunEval φ A i) n).hom x ≠ 0}.Finite := by
   obtain ⟨z, rfl⟩ := cohomologyπ_surjective (divFunRep φ A) n x
-  set c := cochainOf (divFunRep φ A) (cocycleι (divFunRep φ A) n z) with hc
+  set c := cochainOf (A := divFunRep φ A) (cocycleι (A := divFunRep φ A) (p := n) z) with hc
   have hfin : (Set.range c).Finite := (isLocallyConstant_cochainOf _).range_finite
   have hT : (⋃ f ∈ Set.range c, {i | ((f : divFun φ A) : I → G → A) i ≠ 0}).Finite :=
     hfin.biUnion fun f _ => (f : divFun φ A).2.1

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.MemWeightSpaceIffDiagonalRep
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.HwvLoweringSpanLower
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsotypicStableOperator
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.MemWeightSpaceIffDiagonalRep
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.HwvLoweringSpanLower
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsotypicStableOperator
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem hwv_lowering_span_stable {E : GLOps n K V} (hE : IsGLRep E) (mu : Fin n 
     exact lowering_word_hwv_operator_mem hE mu hv hu c d
   | zero => simp
   | add x y hx1 hy1 hx2 hy2 =>
-    rw [map_add]; exact Submodule.add_mem _ (hx2 hx1) (hy2 hy1)
+    rw [map_add (f := _)]; exact Submodule.add_mem _ (hx2 hx1) (hy2 hy1)
   | smul c x hx1 hx2 => rw [map_smul]; exact Submodule.smul_mem _ _ (hx2 hx1)
 
 theorem isotypic_le_lowering_span {E : GLOps n K V} (hE : IsGLRep E) (mu : Fin n → ℤ) : isoSub E mu ≤ hwvLoweringSpan E mu := by
@@ -104,7 +108,7 @@ theorem hwv_orthogonal_lowering_span [CharZero K] {E : GLOps n K V} (B : V →�
       rw [Module.End.mul_apply, ← hB d c v (y w), hv.2.2 d c hcd]
       simp
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
   | smul c x _ hx => rw [map_smul, hx, smul_zero]
 
 theorem contravariant_orthogonality_holds : ContravariantIsotypicOrthogonal := by
@@ -126,7 +130,7 @@ theorem contravariant_orthogonality_holds : ContravariantIsotypicOrthogonal := b
       rw [hB]
       exact ih _ (isotypic_stable_operator E mu _ _ hy)
   | zero => intro y _; simp
-  | add x y _ _ hx hy => intro z hz; rw [map_add, LinearMap.add_apply, hx z hz, hy z hz, add_zero]
+  | add x y _ _ hx hy => intro z hz; rw [map_add (f := _), LinearMap.add_apply, hx z hz, hy z hz, add_zero]
   | smul c x _ hx => intro z hz; rw [map_smul, LinearMap.smul_apply, hx z hz, smul_zero]
 
 end Formalism.MainNotions.G.GLWeightTheory

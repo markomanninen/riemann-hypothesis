@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SelfDualOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LatticeModelVacuumTranslateClassesIndependent
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.Gam0
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SelfDualOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LatticeModelVacuumTranslateClassesIndependent
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.Gam0
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory.Hk3
@@ -18,7 +23,7 @@ theorem one_add_maximal_inv_int (L : Type) [Field L] [Valued L (WithZero (Multip
     rw [IsLocalRing.residue_eq_zero_iff]
     exact (Valuation.mem_maximalIdeal_iff L v).2 (hX i j)
   have h1 : (IsLocalRing.residue O).mapMatrix (1 + Y) = 1 := by
-    rw [map_add, map_one]
+    rw [map_add (f := _), map_one]
     have : (IsLocalRing.residue O).mapMatrix Y = 0 := by
       ext i j; exact hY i j
     rw [this, add_zero]
@@ -28,7 +33,7 @@ theorem one_add_maximal_inv_int (L : Type) [Field L] [Valued L (WithZero (Multip
   obtain ⟨u, hu⟩ := (Matrix.isUnit_iff_isUnit_det _).2 hd
   refine ⟨Units.map (O.subtype.mapMatrix : Matrix (Fin n) (Fin n) O →+* _).toMonoidHom u, ?_, ?_⟩
   · show O.subtype.mapMatrix (u : Matrix (Fin n) (Fin n) O) = _
-    rw [hu, map_add, map_one]
+    rw [hu, map_add (f := _), map_one]
     rfl
   · intro i j
     rw [← map_inv]

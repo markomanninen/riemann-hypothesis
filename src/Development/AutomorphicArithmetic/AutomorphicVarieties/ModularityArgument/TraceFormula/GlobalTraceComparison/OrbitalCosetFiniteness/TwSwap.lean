@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.OrbitalCosetFiniteness.CvGelfandAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.CvHecke
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralTwistedConjInvariant
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.OrbitalCosetFiniteness.CvGelfandAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.CvHecke
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralTwistedConjInvariant
+
+@[expose] public section
 
 namespace UpperTheory.V.Z.Tf.GlobalTraceComparison.Th
 
@@ -43,7 +47,7 @@ private noncomputable def orbOf (T K : Subgroup G) (d : DoubleCoset.Quotient (T 
 
 private theorem orbOf_mk (T K : Subgroup G) (x : G) :
     orbOf T K (DoubleCoset.mk T K x) = Quotient.mk'' (x : G ⧸ K) := by
-  obtain ⟨t, k, ht, hk, h⟩ := DoubleCoset.mk_out_eq_mul T K x
+  obtain ⟨t, ht, k, hk, h⟩ := DoubleCoset.mk_out_eq_mul T K x
   unfold orbOf
   rw [h, orb_iff]
   refine ⟨⟨t, ht⟩, ?_⟩
@@ -55,7 +59,7 @@ private theorem orbOf_bij (T K : Subgroup G) : Function.Bijective (orbOf T K) :=
   · obtain ⟨t, ht⟩ := (orb_iff T K _ _).1 h
     rw [smul_mk, QuotientGroup.eq] at ht
     have e : DoubleCoset.mk T K (Quotient.out d') = DoubleCoset.mk T K (Quotient.out d) :=
-      (DoubleCoset.eq T K _ _).2 ⟨t, t.2, _, ht, by group⟩
+      (@DoubleCoset.eq _ _ T K _ _).2 ⟨t, t.2, _, ht, by group⟩
     rw [DoubleCoset.out_eq', DoubleCoset.out_eq'] at e
     exact e.symm
   · rw [orbOf_mk, QuotientGroup.out_eq', Quotient.out_eq']
@@ -271,7 +275,7 @@ theorem twSwap : OrbFub → TwSwap := by
     rintro o ⟨y, hy⟩
     have h1 : f ((Quotient.out o : G ⧸ K).out⁻¹ * y.out) ≠ 0 := left_ne_zero_of_mul hy
     have h2 : g (y.out⁻¹ * δ * θ (Quotient.out o : G ⧸ K).out) ≠ 0 := right_ne_zero_of_mul hy
-    obtain ⟨t, k, ht, hk, hd⟩ := DoubleCoset.mk_out_eq_mul T K (Quotient.out o : G ⧸ K).out
+    obtain ⟨t, ht, k, hk, hd⟩ := DoubleCoset.mk_out_eq_mul T K (Quotient.out o : G ⧸ K).out
     refine ⟨DoubleCoset.mk T K (Quotient.out o : G ⧸ K).out, ?_, ?_⟩
     · rw [Set.mem_setOf_eq, hd]
       generalize (Quotient.out o : G ⧸ K).out = x at h1 h2

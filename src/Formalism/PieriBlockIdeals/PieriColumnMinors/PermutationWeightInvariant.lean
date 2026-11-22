@@ -1,5 +1,9 @@
-import Formalism.PieriBlockIdeals.StatementLC
-import Formalism.PieriBlockIdeals.PieriColumnMinors.BinaryFormsExample
+module
+
+public import Formalism.PieriBlockIdeals.StatementLC
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.BinaryFormsExample
+
+@[expose] public section
 
 namespace Formalism.CohomologicalDescent.LC
 
@@ -145,20 +149,20 @@ theorem exchange' : Exchange := by
   have hjj' : j ≠ j' := by
     intro e; have := congrArg Fin.val e; simp [hj'] at this
   refine ⟨?_, fun l => ?_⟩
-  · rw [map_add, map_smul, hz.1, lc_c_eig (commute_casimir_zero EM s fun a b => permSecond_commute_onModule K _ _) hz.1]
+  · rw [map_add (f := _), map_smul, hz.1, lc_c_eig (commute_casimir_zero EM s fun a b => permSecond_commute_onModule K _ _) hz.1]
     module
   · by_cases hl : l = j
     · subst hl
-      rw [Function.comp_apply, Equiv.swap_apply_left, map_add, map_smul, e2, hz.2 l]
+      rw [Function.comp_apply, Equiv.swap_apply_left, map_add (f := _), map_smul, e2, hz.2 l]
       have e : b * ((c l : ℤ) : K) - 1 = ((c j' : ℤ) : K) * b := by linear_combination hb
       calc _ = ((c j' : ℤ) : K) • s z + (b * ((c l : ℤ) : K) - 1) • z := by module
         _ = _ := by rw [e]; module
     · by_cases hl' : l = j'
-      · rw [hl', Function.comp_apply, Equiv.swap_apply_right, map_add, map_smul, e1, hz.2 j']
+      · rw [hl', Function.comp_apply, Equiv.swap_apply_right, map_add (f := _), map_smul, e1, hz.2 j']
         have e : 1 + b * ((c j' : ℤ) : K) = ((c j : ℤ) : K) * b := by linear_combination (-1 : K) * hb
         calc _ = ((c j : ℤ) : K) • s z + (1 + b * ((c j' : ℤ) : K)) • z := by module
           _ = _ := by rw [e]; module
-      · rw [Function.comp_apply, Equiv.swap_apply_of_ne_of_ne hl hl', map_add, map_smul, hz.2 l,
+      · rw [Function.comp_apply, Equiv.swap_apply_of_ne_of_ne hl hl', map_add (f := _), map_smul, hz.2 l,
           lc_c_eig (hH.2 l hl hl') (hz.2 l)]
         module
 
@@ -179,7 +183,7 @@ theorem good_swap_exists : GoodSwap := by
     have := LinearMap.congr_fun hss z
     simpa using this
   have e : s z' - b • z' = (1 - b * b) • z := by
-    rw [hz'def, map_add, map_smul, hssz]
+    rw [hz'def, map_add (f := _), map_smul, hssz]
     module
   have t3 : (1 - b * b) • toSym K z = 0 := by
     rw [← map_smul, ← e, map_sub, map_smul, t1, t2]; simp

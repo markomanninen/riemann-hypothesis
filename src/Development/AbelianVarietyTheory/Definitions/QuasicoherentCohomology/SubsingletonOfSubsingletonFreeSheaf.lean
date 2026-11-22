@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open CategoryTheory Opposite Limits Abelian
 
@@ -14,9 +18,6 @@ variable {C : Type u} [Category.{v} C] (J : GrothendieckTopology C)
 abbrev freeSheaf : C ⥤ Sheaf J AddCommGrpCat.{v} :=
   yoneda ⋙ (Functor.whiskeringRight _ _ _).obj AddCommGrpCat.free ⋙ presheafToSheaf _ _
 
-def tautSection (U : C) : ((freeSheaf J).obj U).obj.obj (op U) :=
-  (toSheafify J (yoneda.obj U ⋙ AddCommGrpCat.free)).app (op U) (FreeAbelianGroup.of (𝟙 U))
-
 variable {J}
 
 def freeSheafHomEquiv (U : C) (F : Sheaf J AddCommGrpCat.{v}) :
@@ -28,30 +29,6 @@ def freeSheafHomEquiv (U : C) (F : Sheaf J AddCommGrpCat.{v}) :
 lemma freeSheafHomEquiv_comp (U : C) {F G : Sheaf J AddCommGrpCat.{v}}
     (φ : (freeSheaf J).obj U ⟶ F) (f : F ⟶ G) :
     freeSheafHomEquiv U G (φ ≫ f) = f.hom.app (op U) (freeSheafHomEquiv U F φ) := rfl
-
-lemma freeSheaf_map_tautSection {U V : C} (i : V ⟶ U) :
-    ((freeSheaf J).map i).hom.app (op V) (tautSection J V) =
-      ((freeSheaf J).obj U).obj.map i.op (tautSection J U) := by
-  have h₁ := ConcreteCategory.congr_hom (NatTrans.congr_app
-    (toSheafify_naturality J (Functor.whiskerRight (yoneda.map i) AddCommGrpCat.free.{v})) (op V))
-    (FreeAbelianGroup.of (𝟙 V))
-  have h₂ := ConcreteCategory.congr_hom
-    ((toSheafify J (yoneda.obj U ⋙ AddCommGrpCat.free.{v})).naturality i.op)
-    (FreeAbelianGroup.of (𝟙 U))
-  refine h₁.symm.trans (Eq.trans ?_ h₂)
-  change (toSheafify J (yoneda.obj U ⋙ AddCommGrpCat.free.{v})).app (op V)
-      (FreeAbelianGroup.of (𝟙 V ≫ i)) =
-    (toSheafify J (yoneda.obj U ⋙ AddCommGrpCat.free.{v})).app (op V)
-      (FreeAbelianGroup.of (i ≫ 𝟙 U))
-  rw [Category.id_comp, Category.comp_id]
-
-lemma freeSheafHomEquiv_map_comp {U V : C} (i : V ⟶ U) {F : Sheaf J AddCommGrpCat.{v}}
-    (φ : (freeSheaf J).obj U ⟶ F) :
-    freeSheafHomEquiv V F ((freeSheaf J).map i ≫ φ) =
-      F.obj.map i.op (freeSheafHomEquiv U F φ) := by
-  change φ.hom.app (op V) (((freeSheaf J).map i).hom.app (op V) (tautSection J V)) = _
-  rw [freeSheaf_map_tautSection]
-  exact ConcreteCategory.congr_hom (φ.hom.naturality i.op) _
 
 def freePresheafIsoConst {T : C} (hT : IsTerminal T) :
     yoneda.obj T ⋙ AddCommGrpCat.free.{v} ≅
@@ -88,11 +65,6 @@ lemma extEquiv_map {F G : Sheaf J AddCommGrpCat.{v}} (f : F ⟶ G) (n : ℕ) (U 
     (x : F.H' n U) :
     extEquiv G n U (map f n U x) = (extEquiv F n U x).comp (Ext.mk₀ f) (add_zero n) := rfl
 
-lemma extEquiv_res (F : Sheaf J AddCommGrpCat.{v}) (n : ℕ) {U V : C} (i : V ⟶ U)
-    (x : F.H' n U) :
-    extEquiv F n V (res F n i x) =
-      (Ext.mk₀ ((freeSheaf J).map i)).comp (extEquiv F n U x) (zero_add n) := rfl
-
 instance cohomologyPresheafFunctor_additive (n : ℕ) :
     (Sheaf.cohomologyPresheafFunctor.{w} J n).Additive where
   map_add {F G f g} := by
@@ -120,15 +92,6 @@ lemma zeroEquiv_map {F G : Sheaf J AddCommGrpCat.{v}} (f : F ⟶ G) (U : C) (x :
   congr 1
   apply (extEquiv G 0 U).injective
   rw [extEquiv_map, AddEquiv.apply_symm_apply, AddEquiv.apply_symm_apply, Ext.mk₀_comp_mk₀]
-
-lemma zeroEquiv_res (F : Sheaf J AddCommGrpCat.{v}) {U V : C} (i : V ⟶ U) (x : F.H' 0 U) :
-    zeroEquiv F V (res F 0 i x) = F.obj.map i.op (zeroEquiv F U x) := by
-  obtain ⟨y, rfl⟩ := (extEquiv F 0 U).symm.surjective x
-  obtain ⟨φ, rfl⟩ := (Ext.mk₀_bijective _ _).surjective y
-  rw [zeroEquiv_mk₀, ← freeSheafHomEquiv_map_comp, ← zeroEquiv_mk₀]
-  congr 1
-  apply (extEquiv F 0 V).injective
-  rw [extEquiv_res, AddEquiv.apply_symm_apply, AddEquiv.apply_symm_apply, Ext.mk₀_comp_mk₀]
 
 def terminalEquiv (F : Sheaf J AddCommGrpCat.{v}) (n : ℕ) {T : C} (hT : IsTerminal T) :
     F.H' n T ≃+ F.H n :=
@@ -163,17 +126,5 @@ lemma equiv₀_terminalEquiv (F : Sheaf J AddCommGrpCat.{v}) {T : C} (hT : IsTer
     (toSheafify_naturality J (freePresheafIsoConst hT).hom) (op T))
     (FreeAbelianGroup.of (𝟙 T))
   exact congrArg (ψ.hom.app (op T)) h₁
-
-instance subsingleton_of_injective (F : Sheaf J AddCommGrpCat.{v}) [Injective F] (n : ℕ) (U : C) :
-    Subsingleton (F.H' (n + 1) U) :=
-  subsingleton_of_forall_eq 0 fun _ ↦
-    (extEquiv F (n + 1) U).injective ((Ext.eq_zero_of_injective _).trans (map_zero _).symm)
-
-lemma subsingleton_of_subsingleton_freeSheaf (F : Sheaf J AddCommGrpCat.{v}) (n : ℕ) (U : C)
-    [Subsingleton (((freeSheaf J).obj U).obj.obj (op U))] : Subsingleton (F.H' n U) := by
-  have h : 𝟙 ((freeSheaf J).obj U) = 0 :=
-    (freeSheafHomEquiv U _).injective (Subsingleton.elim _ _)
-  refine subsingleton_of_forall_eq 0 fun x ↦ (extEquiv F n U).injective ?_
-  rw [← Ext.mk₀_id_comp (extEquiv F n U x), h, Ext.mk₀_zero, Ext.zero_comp, map_zero]
 
 end GlobalTheory.SiteCoh

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -126,10 +130,10 @@ theorem quot (h : IsDer δ) (I : Ideal A) (hI : ∀ x ∈ I, δ x ∈ I) :
   refine ⟨fun q => Ideal.Quotient.mk I (δ (s q)), ⟨fun a b => ?_, fun a b => ?_⟩, key⟩
   · obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective a
     obtain ⟨y, rfl⟩ := Ideal.Quotient.mk_surjective b
-    rw [← map_add, key, key, key, h.add, map_add]
+    rw [← map_add (f := _), key, key, key, h.add, map_add (f := _)]
   · obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective a
     obtain ⟨y, rfl⟩ := Ideal.Quotient.mk_surjective b
-    rw [← map_mul, key, key, key, h.mul, map_add, map_mul, map_mul]
+    rw [← map_mul, key, key, key, h.mul, map_add (f := _), map_mul, map_mul]
 
 theorem ofLoc {B : Type*} [CommRing B] [Algebra A B] (S : Submonoid A) [IsLocalization S B] (d : A → B)
     (hadd : ∀ x y, d (x + y) = d x + d y)

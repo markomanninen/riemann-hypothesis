@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.IsolateSpec
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.IsolateSpec
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Gal.TranscendenceTraces
 
@@ -43,6 +47,7 @@ theorem UpperTheory.Gal.TranscendenceTraces.splitCover_of :
       RingHom.ker (φ.comp (algebraMap A C)) = ⊥ → RingHom.ker φ = ⊥ := by
     intro Ω _ φ h
     apply Ideal.eq_bot_of_comap_eq_bot (R := A)
+    change Ideal.comap (algebraMap A C) (RingHom.ker φ) = ⊥
     rw [RingHom.comap_ker]
     exact h
   refine ⟨Spec (CommRingCat.of C), Spec.map (CommRingCat.ofHom (algebraMap A C)), (B →ₐ[A] C),
@@ -53,7 +58,7 @@ theorem UpperTheory.Gal.TranscendenceTraces.splitCover_of :
   · refine ⟨fun p => ?_⟩
     have hp : p.asIdeal.IsPrime := p.isPrime
     obtain ⟨Q, -, hQ, hQc⟩ := Ideal.exists_ideal_over_prime_of_isIntegral (S := C) p.asIdeal ⊥ (by
-      rw [Ideal.comap_bot_of_injective _ hinj]
+      rw [(show Ideal.under _ ⊥ = ⊥ from Ideal.comap_bot_of_injective _ hinj)]
       exact bot_le)
     exact ⟨⟨Q, hQ⟩, PrimeSpectrum.ext hQc⟩
   · intro j

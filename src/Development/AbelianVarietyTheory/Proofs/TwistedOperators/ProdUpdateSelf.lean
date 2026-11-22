@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteSupport
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteSupport
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,20 +28,20 @@ theorem prod_update_mem [d : DecidableEq ι] (φ : ∀ j, K j →ₗ[ℂ] ℂ) (
     prod_update_self φ (s.erase j) j (Finset.notMem_erase j s) v x]
 
 def contrM (φ : ∀ j, K j →ₗ[ℂ] ℂ) (s : Finset ι) (i : ι) (hi : i ∉ s) (hs : ∀ j, j ≠ i → j ∈ s) :
-    MultilinearMap ℂ K (K i) where
+    (∀ j, K j) →ₘₗ[ℂ] K i where
   toFun v := (∏ k ∈ s, φ k (v k)) • v i
   map_update_add' v j x y := by
     by_cases h : j = i
     · subst h
       simp only [prod_update_self φ s j hi, Function.update_self, smul_add]
-    · simp only [prod_update_mem φ s j (hs j h), Function.update_of_ne (Ne.symm h), map_add, add_mul, add_smul]
+    · simp only [prod_update_mem φ s j (hs j h), Function.update_of_ne (Ne.symm h), map_add (f := _), add_mul, add_smul]
   map_update_smul' v j c x := by
     by_cases h : j = i
     · subst h
-      simp only [prod_update_self φ s j hi, Function.update_self]
+      simp only [prod_update_self φ s j hi, Function.update_self, RingHom.id_apply]
       rw [smul_comm]
     · simp only [prod_update_mem φ s j (hs j h), Function.update_of_ne (Ne.symm h), map_smul, smul_eq_mul,
-        mul_assoc, mul_smul]
+        RingHom.id_apply, mul_assoc, mul_smul]
 
 def contrL (φ : ∀ j, K j →ₗ[ℂ] ℂ) (i : ι) : (⨂[ℂ] j, K j) →ₗ[ℂ] K i :=
   PiTensorProduct.lift (contrM φ (Finset.univ.erase i) i (Finset.notMem_erase _ _)

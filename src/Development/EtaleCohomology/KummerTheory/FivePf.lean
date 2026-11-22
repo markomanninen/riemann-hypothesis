@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.ContCut
+module
+
+public import Development.EtaleCohomology.KummerTheory.ContCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits
@@ -55,7 +59,7 @@ theorem five_succ [IsFiltered J] (X U V W : ℤ → K ⥤ AddCommGrpCat.{1}) (S 
     obtain ⟨j3, w0, hw0⟩ := (hW m).1 w
     obtain ⟨k4, g3, g4, -⟩ := IsFilteredOrEmpty.cocone_objs k2 j3
     refine ⟨k4, ((X (m + 1)).map (D.map g3)).hom x' + ((X (m + 1)).map (D.map g4)).hom (((S.δ m).app (D.obj j3)).hom w0), ?_⟩
-    rw [map_add, push, push, ← natι (S.δ m), hw0, hw, ← hxi]
+    rw [map_add (f := _), push, push, ← natι (S.δ m), hw0, hw, ← hxi]
     exact add_sub_cancel _ _
   · intro j y hy
     have hfy : ((U (m + 1)).map (c.ι.app j)).hom (((S.f (m + 1)).app (D.obj j)).hom y) = 0 := by

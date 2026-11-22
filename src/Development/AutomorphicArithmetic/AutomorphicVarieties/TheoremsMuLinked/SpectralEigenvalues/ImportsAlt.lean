@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing Polynomial
 
@@ -18,7 +22,7 @@ theorem UpperTheory.V.Th.Sp.der :
     · intro σ hσ n _
       rw [hlam, (RingHom.mem_ker).1 hσ, zero_mul]
     · intro y z hy hz
-      rw [map_add, hy, hz, add_zero]
+      rw [map_add (f := _), hy, hz, add_zero]
   have hΦK : ∀ a, x a = 0 → ∀ m ∈ (RingHom.ker th • ⊤ : Submodule S M), Φ ((t * a) • m) = 0 := by
     intro a ha m hm
     refine Submodule.smul_induction_on (p := fun m => Φ ((t * a) • m) = 0) hm ?_ ?_
@@ -26,7 +30,7 @@ theorem UpperTheory.V.Th.Sp.der :
       rw [← smul_comm σ (t * a) n, hΦ, (RingHom.mem_ker).1 hσ, zero_smul, zero_add,
         hlamK _ (hker a ha n), zero_smul]
     · intro y z hy hz
-      rw [smul_add, map_add, hy, hz, add_zero]
+      rw [smul_add, map_add (f := _), hy, hz, add_zero]
   have hx0 : ∀ a, x (a - algebraMap O T (x a)) = 0 := by
     intro a
     rw [map_sub, AlgHom.commutes, Algebra.algebraMap_self_apply, sub_self]
@@ -51,7 +55,7 @@ theorem UpperTheory.V.Th.Sp.der :
         show (a - algebraMap O T (x a)) * (b - algebraMap O T (x b)) * (t * t) = (t * (a - algebraMap O T (x a))) * (t * (b - algebraMap O T (x b))) by ring,
         mul_smul]
       exact hΦK _ (hx0 a) _ (hker _ (hx0 b) v)
-    rw [h, add_smul, add_smul, map_add, map_add, hz, zero_add, mul_smul (algebraMap O T (x a)), mul_smul (algebraMap O T (x b)), ← hO, ← hO, hΦO, hΦO]
+    rw [h, add_smul, add_smul, map_add (f := _), map_add (f := _), hz, zero_add, mul_smul (algebraMap O T (x a)), mul_smul (algebraMap O T (x b)), ← hO, ← hO, hΦO, hΦO]
   · intro τ σ hτσ hxτ
     show Φ ((τ - algebraMap O T (x τ)) • m0) = lam m0 • ell σ
     rw [sub_smul, hτσ, hxτ, ← hO, ← sub_smul, hΦ, map_sub th, AlgHom.commutes, Algebra.algebraMap_self_apply, sub_self,

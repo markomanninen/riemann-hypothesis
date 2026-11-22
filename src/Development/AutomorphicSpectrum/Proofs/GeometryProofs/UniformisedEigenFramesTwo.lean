@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.UniformisedEigenFrameOneStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PeriodEigenFrame
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.PeriodHermitianTypeCompatibilityStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FcHoloDetDifferentiableAt
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DifferentiableOnExponentialFrameMatrix
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ContinuousOnThetaFrameValueHolomorphicFamily
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolomorphicHomDetermined
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.UniformisedEigenFrameOneStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PeriodEigenFrame
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PeriodHermitianTypeCompatibilityStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FcHoloDetDifferentiableAt
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DifferentiableOnExponentialFrameMatrix
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ContinuousOnThetaFrameValueHolomorphicFamily
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolomorphicHomDetermined
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl GlobalTheory.CompanionTheory.Ar.Flat Filter Topology Metric
 
@@ -101,8 +106,8 @@ end GlobalTheory.CompanionTheory.Ar.Flat.AnHol
 
 namespace GlobalTheory.CompanionTheory.Ar.Flat
 
-open GlobalTheory.CompanionTheory.Ar.Flat.AnHol in
 
+open GlobalTheory.CompanionTheory.Ar.Flat.AnHol in
 theorem anHol : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (Xo : Moduli D l) (c : Coeff l) (τ τ' : E →+* ℂ) (σ : c.F →+* ℂ) (g : ℕ) (ty : Fin g → (E →+* ℂ)) (FU : FamilyUnif Xo (σ.comp (IntermediateField.inclusion c.le).toRingHom) ty), IsTypeFn H D.p D.q ty → τ' (H.rt : E) = H.rt0 → (∀ a : 𝓞 E, σ (tauIn c τ a) = τ' (a : E)) → ∀ (e : ∀ i : Fin FU.n, Fin D.p ⊕ Fin D.q → (FU.Di i).La) (ρ : Fin FU.n → ℂ) (Φ : CFn Xo c), (∀ i, LinearIndependent (𝓞 E) (e i)) → (∀ i, IsFlatAn Set.univ τ τ' σ Φ FU i (e i) (ρ i)) → ∀ (R : Type) [CommRing R] (x : Sp R ⟶ Xo.XF c) (vR : Fin D.p → (epsAt (under x) ⟶ Xo.univ.t.G)) (wR : Fin D.q → (epsAt (under x) ⟶ Xo.univ.t.G)) (m : ℕ) (B : Set (Fin m → ℂ)) (ψ : (Fin m → ℂ) → (R →+* ℂ)) (v : ∀ b, Vecs (spMap (ψ b) ≫ x) D.p) (w : ∀ b, Vecs (spMap (ψ b) ≫ x) D.q), IsOpen B → (∀ r, DifferentiableOn ℂ (fun b => ψ b r) B) → (∀ b ∈ B, IsFramed Set.univ τ σ (spMap (ψ b) ≫ x) (v b) (w b) ∧ (∀ a, (v b a).left = spMap (dualMap (ψ b)) ≫ (vR a).left) ∧ ∀ j, (w b j).left = spMap (dualMap (ψ b)) ≫ (wR j).left) → DifferentiableOn ℂ (fun b => Φ (spMap (ψ b) ≫ x) (v b) (w b)) B := by
   intro E _ _ _ H D l Xo c τ τ' σ g ty FU hty hrt hτ e ρ Φ he hflat R _ x vR wR m B ψ v w hB hψ hfr b₀ hb₀
   classical
@@ -154,20 +159,20 @@ theorem anHol : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host
   have hVd : ∀ a, DifferentiableAt ℂ (fun b => (xx b).1 a) b₀ := fun a =>
     GlobalTheory.HolFrameMatrix.differentiableAt_coord FU i (vR a).left ψ hB' hP (fun b => (xx b).1 a) (fun b hb => by
       have := (hxx b hb).1 a
-      rw [(hfr b (hsub hb)).2.1 a, dualMap_eq] at this
+      rw [(hfr b (hsub hb)).2.1 a, AnHol.dualMap_eq] at this
       exact this) hb' hev
   have hWd : ∀ a, DifferentiableAt ℂ (fun b => (xx b).2.1 a) b₀ := fun a =>
     GlobalTheory.HolFrameMatrix.differentiableAt_coord FU i (wR a).left ψ hB' hP (fun b => (xx b).2.1 a) (fun b hb => by
       have := (hxx b hb).2.1 a
-      rw [(hfr b (hsub hb)).2.2 a, dualMap_eq] at this
+      rw [(hfr b (hsub hb)).2.2 a, AnHol.dualMap_eq] at this
       exact this) hb' hev
   have hPd : ∀ n, DifferentiableAt ℂ (fun b => P b (e i n)) b₀ := fun n =>
     (hP.2 (e i n)).differentiableAt (hB'.mem_nhds hb')
 
   have hBd : ∀ j n, DifferentiableAt ℂ (fun b => (xx b).2.2.2.1 j n) b₀ := fun j n =>
-    coef_differentiableAt (fun b => (xx b).2.1)
+    AnHol.coef_differentiableAt (fun b => (xx b).2.1)
       (fun b n => tyPart ty (ComplexEmbedding.conjugate τ') (P b (e i n))) (fun b => (xx b).2.2.2.1) b₀ hWd
-      (fun n => tyPart_differentiableAt ty _ _ b₀ (hPd n)) (hVW b₀ hb').2.2
+      (fun n => AnHol.tyPart_differentiableAt ty _ _ b₀ (hPd n)) (hVW b₀ hb').2.2
       (by filter_upwards [hnb] with b hb n using (hxx b hb).2.2.1 n) j n
   obtain ⟨Hm, hHh, -, hHi⟩ := id (hP.1 b₀ hb').2.2.2.2
   obtain ⟨-, -, hd⟩ := GlobalTheory.T.period_hermitian_type_compatibility E H (FU.Di i) g ty (P b₀) Hm (hP.1 b₀ hb') hHh hHi
@@ -199,13 +204,13 @@ theorem anHol : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host
     (Submodule.mem_span_range_iff_exists_fun ℂ).1 ((hVW b hb).2.1 (P b (e i n)))
   let Am : (Fin m → ℂ) → Matrix (Fin D.p) (Fin D.p ⊕ Fin D.q) ℂ := fun b => Matrix.of fun k n => A b n k
   have hAd : ∀ k n, DifferentiableAt ℂ (fun b => Am b k n) b₀ := fun k n =>
-    coef_differentiableAt (fun b => (xx b).1) (fun b n => tyPart ty τ' (P b (e i n))) Am b₀ hVd
-      (fun n => tyPart_differentiableAt ty _ _ b₀ (hPd n)) (hVW b₀ hb').1
+    AnHol.coef_differentiableAt (fun b => (xx b).1) (fun b n => tyPart ty τ' (P b (e i n))) Am b₀ hVd
+      (fun n => AnHol.tyPart_differentiableAt ty _ _ b₀ (hPd n)) (hVW b₀ hb').1
       (by filter_upwards [hnb] with b hb n using (hA b hb n).symm) k n
   have hexp : ∀ b ∈ B', ∀ (C : Matrix (Fin D.p) (Fin D.p ⊕ Fin D.q) ℂ) (a : Fin D.p),
       tyPart ty τ' (∑ m, C a m • P b (e i m)) = ∑ k, (Am b * C.transpose) k a • (xx b).1 k := by
     intro b hb C a
-    rw [tyPart_sum_smul]
+    rw [AnHol.tyPart_sum_smul]
     simp_rw [← hA b hb, Finset.smul_sum, smul_smul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun k _ => ?_
@@ -227,7 +232,7 @@ theorem anHol : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host
     exact DifferentiableAt.fun_sum fun n _ => (hAd k n).mul_const _
   have hM0' : (M b₀).det ≠ 0 := by simp [M, hM0]
   have hMe := (fcHolo_det_differentiableAt M b₀ hMd).continuousAt.eventually_ne hM0'
-  have hMi := inv_differentiableAt M b₀ hMd hM0'
+  have hMi := AnHol.inv_differentiableAt M b₀ hMd hM0'
   let Cb : (Fin m → ℂ) → Matrix (Fin D.p) (Fin D.p ⊕ Fin D.q) ℂ := fun b => (C₀.transpose * (M b)⁻¹).transpose
   have hCd : ∀ a n, DifferentiableAt ℂ (fun b => Cb b a n) b₀ := fun a n => by
     simp only [Cb, Matrix.transpose_apply, Matrix.mul_apply]

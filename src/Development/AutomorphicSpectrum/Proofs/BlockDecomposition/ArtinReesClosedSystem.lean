@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PowSubSuccLe
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubobjectLeIffAffineSections
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.QuasicoherentSupSections
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubobjectPullbackSections
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecsMapArrow
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IdealPowerSubobjectSections
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ArtinReesSubobjectStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProperInfIdealSheavesStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PowSubSuccLe
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubobjectLeIffAffineSections
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.QuasicoherentSupSections
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubobjectPullbackSections
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecsMapArrow
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IdealPowerSubobjectSections
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ArtinReesSubobjectStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProperInfIdealSheavesStatement
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry GroundTheory.Arith.SchemeCoh GlobalTheory.CompanionTheory.GE
 
 set_option autoImplicit false
@@ -177,7 +182,7 @@ lemma map_pow_le (hE : E.IsQuasicoherent) {D : Subobject E} (hD : QC D) (n : ℕ
     rw [Scheme.Modules.Hom.app_smul]
     exact Submodule.smul_mem_smul hr trivial
   · intro a b ha hb
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem ha hb
 
 variable {I} {S : ℕ → Subobject E}
@@ -249,10 +254,8 @@ lemma qc_restrict (hS : ClosedSys I E S) (hE : E.IsQuasicoherent) (hD : QC D) (c
 lemma closedSys_restrict (hS : ClosedSys I E S) (hE : E.IsQuasicoherent) (hD : QC D)
     {c k : ℕ} (hc : ∀ e, S (e + c) ≤ D ⊔ powSub I E (e + 1))
     (ar : ∀ n, D ⊓ powSub I E (n + k) ≤ (Subobject.map D.arrow).obj (powSub I (D : X.Modules) n)) :
-    ClosedSys I (D : X.Modules) (restrictSys I D S k) where
-  qcoh := qc_restrict hS hE hD k
-  pow_le _ := le_sup_right
-  succ := restrict_succ hS hE hD hc ar
+    ClosedSys I (D : X.Modules) (restrictSys I D S k) :=
+  ⟨qc_restrict hS hE hD k, fun _ => le_sup_right, restrict_succ hS hE hD hc ar⟩
 
 lemma secs_sys_univ (hS : ClosedSys I E S) (hE : E.IsQuasicoherent) {U : X.Opens} (hU : IsAffineOpen U)
     (h0 : secs (S 0) U = Set.univ) (n : ℕ) : secs (S n) U = Set.univ := by

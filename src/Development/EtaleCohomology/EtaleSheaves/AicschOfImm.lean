@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.AICAcycPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.AICAcycPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E2Cut

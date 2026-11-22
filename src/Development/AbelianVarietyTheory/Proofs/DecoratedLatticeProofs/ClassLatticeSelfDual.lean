@@ -1,16 +1,21 @@
-import Mathlib
-import Formalism.LocalToGlobal.HermitianForms.FormsTied
-import Formalism.LocalToGlobal.Columns.TiedValLatG
-import Formalism.LocalToGlobal.Columns.TiedValNorm
-import Formalism.LocalToGlobal.Columns.TiedValRat
-import Formalism.LocalToGlobal.Columns.CoefModAt
-import Formalism.LocalRingCardinality.PosOfIsomEmb
-import Formalism.QuotientMetricDivisors.ReductionLemmaZero
-import Formalism.QuotientMetricDivisors.FinalW
-import Formalism.LocalToGlobal.Divisibility.FramesLemmas
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SlopeStepG
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HtPsiLeIffExists
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointLatticeIntersectionSelfDualProperties
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.HermitianForms.FormsTied
+public import Formalism.LocalToGlobal.Columns.TiedValLatG
+public import Formalism.LocalToGlobal.Columns.TiedVal
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkMapInitMinor
+public import Formalism.LocalToGlobal.Columns.TiedValRat
+public import Formalism.LocalToGlobal.Columns.CoefModAt
+public import Formalism.LocalRingCardinality.PosOfIsomEmb
+public import Formalism.QuotientMetricDivisors.ReductionLemmaZero
+public import Formalism.QuotientMetricDivisors.FinalW
+public import Formalism.LocalToGlobal.Divisibility.FramesLemmas
+public import Formalism.LocalRingCardinality.DataArith
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HtPsiLeIffExists
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointLatticeIntersectionSelfDualProperties
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.DIV Formalism.L2.Forms
 open scoped Matrix ComplexOrder
@@ -25,8 +30,8 @@ open scoped TensorProduct
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   {n : Type} [Fintype n] [DecidableEq n]
 
-omit [NumberField F] [DecidableEq n] [Fintype n] in
 
+omit [NumberField F] [DecidableEq n] [Fintype n] in
 theorem mem_span_of_mem_latS (R : Type) [CommRing R] [Algebra F R] [Nontrivial R] (S : Subring (E ⊗[F] R))
     (L : Submodule (𝓞 E) (n → E)) (x : n → E)
     (hx : (fun i => inclE (F := F) R (x i)) ∈ latS (F := F) R S L) :
@@ -113,7 +118,7 @@ theorem classLattice_selfDual : ∀ (D : D7) (u : D.what₂.Word) (K : ClsPTied 
     have := K.lev.Lb_dual x hx
     rwa [Nat.cast_one, one_smul] at this
   rw [e]
-  exact ⟨Formalism.UG.P.csGlob_lattice (F := D.host.F) _ K.lev.Lb_fin K.lev.Lb_span _,
+  exact ⟨(Formalism.UG.P.csGlob_lattice (F := D.host.F) _ K.lev.Lb_fin K.lev.Lb_span _).toIsLattice,
     fun y => GlobalTheory.PointLattice.globLat_selfDual (sigD D) (gramP D) _ hdual K.lev.Lb_fin K.lev.Lb_span _ (K.y c).2 y⟩
 
 end GlobalTheory.ClassLatticeSelfDual

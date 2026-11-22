@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.CMDeterminantIdeals.DetIdeal
-import Formalism.LocalToGlobal.CMDeterminantIdeals.CMIdealValuations.ValuationLeOfEqAlgebraMap
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.DetIdeal
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.CMIdealValuations.ValuationLeOfEqAlgebraMap
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 open scoped nonZeroDivisors
 

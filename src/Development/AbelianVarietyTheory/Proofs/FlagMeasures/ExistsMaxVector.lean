@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.Mass Formalism.HermitianLatticesTheory
 open scoped ENNReal Classical
 
@@ -26,8 +31,6 @@ def biInt : Subring K where
     rintro a ⟨a1, a2⟩
     exact ⟨by simpa using a1, by simpa using a2⟩
 
-theorem mem_biInt {k : K} : k ∈ biInt v ↔ v k ≤ 1 ∧ v (star k) ≤ 1 := Iff.rfl
-
 theorem bound_of_span (h : V →ₗ⋆[K] V →ₗ[K] K) (T : Set V) (m : Γ)
     (hT : ∀ x ∈ T, ∀ y ∈ T, v (h x y) ≤ m) :
     ∀ x ∈ Submodule.span (biInt v) T, ∀ y ∈ Submodule.span (biInt v) T, v (h x y) ≤ m := by
@@ -36,7 +39,7 @@ theorem bound_of_span (h : V →ₗ⋆[K] V →ₗ[K] K) (T : Set V) (m : Γ)
     induction hy using Submodule.span_induction with
     | mem y hy => exact hT x hx y hy
     | zero => simp
-    | add a b _ _ ha hb => rw [map_add]; exact v.map_add_le ha hb
+    | add a b _ _ ha hb => rw [map_add (f := _)]; exact v.map_add_le ha hb
     | smul r a _ ha =>
       rw [Subring.smul_def, map_smul, smul_eq_mul, map_mul]
       exact (mul_le_mul' r.2.1 ha).trans (by simp)
@@ -44,7 +47,7 @@ theorem bound_of_span (h : V →ₗ⋆[K] V →ₗ[K] K) (T : Set V) (m : Γ)
   induction hx using Submodule.span_induction with
   | mem x hx => exact h1 x hx y hy
   | zero => simp
-  | add a b _ _ ha hb => rw [map_add, LinearMap.add_apply]; exact v.map_add_le ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _), LinearMap.add_apply]; exact v.map_add_le ha hb
   | smul r a _ ha =>
     rw [Subring.smul_def, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, map_mul]
     exact (mul_le_mul' r.2.2 ha).trans (by simp)
@@ -75,7 +78,7 @@ theorem exists_max_vector (h : V →ₗ⋆[K] V →ₗ[K] K) (hs : h.IsSymm) (θ
       Submodule.smul_mem _ (⟨c, hc⟩ : biInt v) hy'
     have e : c * h x y + star c * star (h x y) =
         h (x + c • y) (x + c • y) - h x x - h (c • y) (c • y) := by
-      simp only [map_add, LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
+      simp only [map_add (f := _), LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
         RingHom.id_apply, hyx, starRingEnd_apply]
       ring
     rw [e]
@@ -286,19 +289,19 @@ theorem mem_locR_iff (w : HeightOneSpectrum (𝓞 K)) (k : K) :
 
 end NumberField
 
-theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (h : V →ₗ⋆[K] V →ₗ[K] K), IsCMUnram K → h.IsSymm → h.Nondegenerate → ∀ (M : Submodule (𝓞 K) V), Submodule.IsLattice K M → ∀ P : Ideal (𝓞 K), P.IsMaximal → ∃ b : Module.Basis (Fin (Module.finrank K V)) K V, (∀ i l, i ≠ l → h (b i) (b l) = 0) ∧ ∀ x, x ∈ loc (K := K) P M ↔ ∀ i, b.repr x i ∈ locR (K := K) P := by
+theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (h : V →ₗ⋆[K] V →ₗ[K] K), IsCMUnram K → h.IsSymm → h.Nondegenerate → ∀ (M : Submodule (𝓞 K) V), Submodule.IsFullLattice K M → ∀ P : Ideal (𝓞 K), P.IsMaximal → ∃ b : Module.Basis (Fin (Module.finrank K V)) K V, (∀ i l, i ≠ l → h (b i) (b l) = 0) ∧ ∀ x, x ∈ loc (K := K) P M ↔ ∀ i, b.repr x i ∈ locR (K := K) P := by
   intro K V _ _ _ _ _ _ _ _ h hK hs hnd M hM P hP
   let w : IsDedekindDomain.HeightOneSpectrum (𝓞 K) :=
     ⟨P, hP.isPrime, Ring.ne_bot_of_isMaximal_of_not_isField hP (RingOfIntegers.not_isField K)⟩
   obtain ⟨θ, t, ht, hθ⟩ := hK.2.2 P hP
   obtain ⟨S, hS⟩ := hM.fg
-  have hsp := hM.span_eq_top
   let Λ : Submodule (biInt (w.valuation K)) V := Submodule.span _ (S : Set V)
   have hΛ : ∀ x, x ∈ loc (K := K) P M ↔ x ∈ Λ := fun x => by
     rw [← hS]; exact mem_loc_span_iff w _ x
   have htop : Submodule.span K (Λ : Set V) = ⊤ := by
-    rw [eq_top_iff, ← hsp]
-    refine Submodule.span_mono fun x hx => (hΛ x).1 ⟨1, Submonoid.one_mem _, by simpa using hx⟩
+    apply top_unique
+    rw [← hM.span_eq_top, ← hS, Submodule.span_span_of_tower]
+    exact Submodule.span_mono (fun _ hx => Submodule.subset_span hx)
   obtain ⟨m, e, he1, he2, he3⟩ := exists_orth_gens (w.valuation K) h hs (algebraMap (𝓞 K) K θ)
     (int_mem_biInt w θ) (by
       rw [← ht, ← map_sub]; exact w.valuation_eq_one_iff_notMem.2 hθ) _ Λ

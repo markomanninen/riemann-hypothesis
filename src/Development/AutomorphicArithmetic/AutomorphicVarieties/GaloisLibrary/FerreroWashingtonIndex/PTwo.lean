@@ -1,16 +1,22 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
+
+@[expose] public section
 
 open UpperTheory.V.FW
 
 theorem UpperTheory.V.FW.pTwo :
-    ∀ (C : Type) [CommGroup C] [Finite C] (J : C →* C), (∀ x, J (J x) = x) → (powR C 2).index ≤ ((difR J).relIndex (minK J) * Nat.card (difR J ⊓ torK C 2 : Subgroup C)) ^ 2 := by
+    ∀ (C : Type) [CommGroup C] [Finite C] (J : C →* C), (∀ x, J (J x) = x) →
+      (powR (C := C) 2).index ≤
+        ((difR J).relIndex (minK J) * Nat.card (difR J ⊓ torK (C := C) 2 : Subgroup C)) ^ 2 := by
   intro C _ _ J hJ
   classical
   have hcard : ∀ {G H : Type} [Group G] [Group H] (f : G →* H),
       Nat.card G = Nat.card f.ker * Nat.card f.range := by
     intro G H _ _ f
     rw [← f.ker.card_mul_index, Subgroup.index_ker]
-  set T := torK C 2 with hT
+  set T := torK (C := C) 2 with hT
   set D := difR J with hD
   set K := minK J with hK
   have memT : ∀ x : C, x ∈ T ↔ x ^ 2 = 1 := fun x => by simp [hT, torK]
@@ -20,11 +26,12 @@ theorem UpperTheory.V.FW.pTwo :
     intro x hx
     obtain ⟨y, rfl⟩ := (memD x).1 hx
     rw [memK, map_div, hJ, div_mul_div_comm, mul_comm (J y) y, div_self']
-  have h1 : (powR C 2).index = Nat.card T := by
+  have h1 : (powR (C := C) 2).index = Nat.card T := by
     have e1 := hcard (powMonoidHom 2 : C →* C)
-    have e2 := (powR C 2).card_mul_index
-    have hpos : 0 < Nat.card (powR C 2) := Nat.card_pos
-    have e3 : Nat.card (powR C 2) * (powR C 2).index = Nat.card (powR C 2) * Nat.card T := by
+    have e2 := (powR (C := C) 2).card_mul_index
+    have hpos : 0 < Nat.card (powR (C := C) 2) := Nat.card_pos
+    have e3 : Nat.card (powR (C := C) 2) * (powR (C := C) 2).index =
+        Nat.card (powR (C := C) 2) * Nat.card T := by
       rw [e2, mul_comm]
       exact e1
     exact Nat.eq_of_mul_eq_mul_left hpos e3

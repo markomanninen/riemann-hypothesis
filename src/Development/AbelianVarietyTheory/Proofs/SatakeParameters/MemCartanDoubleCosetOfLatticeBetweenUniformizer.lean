@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RpowNegLeNormOfComponent
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GlMapStandardLatticeEqIffMemGLintAdicStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GlMapDiagUniformizerElementarySublatticeStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ImportsMore
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RpowNegLeNormOfComponent
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GlMapStandardLatticeEqIffMemGLintAdicStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GlMapDiagUniformizerElementarySublatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ImportsMore
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,19 +59,27 @@ theorem antitone_zero_one {n j : ℕ} (a : Fin n → ℤ) (ha : Antitone a)
     (h01 : ∀ i, a i = 0 ∨ a i = 1)
     (hS : (Finset.univ.filter fun i => a i = 1).card = j) (i : Fin n) :
     a i = 1 ↔ (i : ℕ) < j := by
-  first
-  | exact @_root_.GlobalTheory.ClosedSubgroupCriterion.main
-  | exact _root_.GlobalTheory.ClosedSubgroupCriterion.main
-  | (apply _root_.GlobalTheory.ClosedSubgroupCriterion.main <;> assumption)
-  | (intros; apply _root_.GlobalTheory.ClosedSubgroupCriterion.main <;> assumption)
-  | (intros; apply @_root_.GlobalTheory.ClosedSubgroupCriterion.main <;> first | assumption | infer_instance)
-  | (intros; exact _root_.GlobalTheory.ClosedSubgroupCriterion.main ..)
+  rw [← hS]
+  refine (Fin.lt_card_filter_univ_iff_apply_of_imp (fun k => a k = 1) ?_).symm
+  intro k l hlk hk
+  have hle := ha hlk
+  rcases h01 l with hl | hl <;> omega
 
 end Adic
 
-theorem mem_doubleCoset_of_subElem : ∀ (E : Type) [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) (n : ℕ) (ϖ : w.adicCompletion E), IsUnifV E w ϖ → ∀ (j : ℕ), j ≤ n → ∀ (g : GL (Fin n) (w.adicCompletion E)), haveI := GlobalTheory.RowSatakeBound.finite_residue w; glMap g (std (w.adicCompletionIntegers E) (w.adicCompletion E) n).1 ∈ Subtype.val '' subElem j (std (w.adicCompletionIntegers E) (w.adicCompletion E) n) → ∃ a ∈ GLint (Fin n) (Ov E w), ∃ b ∈ GLint (Fin n) (Ov E w), (g : Matrix (Fin n) (Fin n) (w.adicCompletion E)) = (a : Matrix (Fin n) (Fin n) (w.adicCompletion E)) * diagJ n ϖ j * (b : Matrix (Fin n) (Fin n) (w.adicCompletion E)) := by
+theorem mem_doubleCoset_of_subElem :
+    ∀ (E : Type) [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E))
+      (n : ℕ) (ϖ : w.adicCompletion E), IsUnifV E w ϖ →
+      ∀ (j : ℕ), j ≤ n → ∀ (g : GL (Fin n) (w.adicCompletion E)),
+        (haveI := GlobalTheory.RowSatakeBound.finite_residue w
+         glMap g (std (w.adicCompletionIntegers E) (w.adicCompletion E) n).1 ∈
+           Subtype.val '' subElem j (std (w.adicCompletionIntegers E) (w.adicCompletion E) n) →
+         ∃ a ∈ GLint (Fin n) (Ov E w), ∃ b ∈ GLint (Fin n) (Ov E w),
+           (g : Matrix (Fin n) (Fin n) (w.adicCompletion E)) =
+             (a : Matrix (Fin n) (Fin n) (w.adicCompletion E)) * diagJ n ϖ j *
+               (b : Matrix (Fin n) (Fin n) (w.adicCompletion E))) := by
   intro E _ _ w n ϖ hϖ j _ g hg
-  haveI := GlobalTheory.RowSatakeBound.finite_residue w
+  have := GlobalTheory.RowSatakeBound.finite_residue w
   obtain ⟨M₀, hM, hMg⟩ := hg
   set L := std (w.adicCompletionIntegers E) (w.adicCompletion E) n with hLdef
   set M : Lat (w.adicCompletionIntegers E) (w.adicCompletion E) n := M₀ with hMdef
@@ -88,7 +100,7 @@ theorem mem_doubleCoset_of_subElem : ∀ (E : Type) [Field E] [NumberField E] (w
     rw [smul_def, glLat_val, hMg, hDdef, glMap_mul, glMap_mul, hs₂]
   have hMD : k₁⁻¹ • M ∈ subElem j L := by
     have h := (smul_mem_subElem_iff k₁⁻¹ j M L).2 hM
-    have hL : k₁⁻¹ • L = L := GlobalTheory.LatHecke.Lat.ext (by rw [smul_def, glLat_val, hs₁])
+    have hL : k₁⁻¹ • L = L := Subtype.ext (by rw [smul_def, glLat_val, hs₁])
     rwa [hL] at h
   obtain ⟨⟨hle, hidx⟩, hmax⟩ := hMD
   rw [← hDL] at hle hidx hmax
@@ -151,8 +163,8 @@ theorem mem_doubleCoset_of_subElem : ∀ (E : Type) [Field E] [NumberField E] (w
   congr 1
   funext i
   by_cases hi : (i : ℕ) < j
-  · rw [if_pos hi, (hkey i).2 hi, zpow_one]
-  · rw [if_neg hi]
+  · rw [ite_eq_left hi, (hkey i).2 hi, zpow_one]
+  · rw [ite_eq_right hi]
     have : a i = 0 := (h01 i).resolve_right fun h => hi ((hkey i).1 h)
     rw [this, zpow_zero]
 

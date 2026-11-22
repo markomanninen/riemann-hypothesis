@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FockTranslateSchwartzMajorant
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FockTranslateSchwartzMajorant
+
+@[expose] public section
 
 noncomputable section
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct Topology
@@ -65,7 +69,7 @@ theorem pr_split {b : HermE D (r + s)} {br : HermE D r} {bs : HermE D s} (h : Is
   rfl
 
 theorem halfTr_add (u v : AE D) : halfTr (u + v) = halfTr u + halfTr v := by
-  simp only [halfTr, trA, map_add, mul_add]
+  simp only [halfTr, trA, map_add (f := _), mul_add]
 
 theorem npow_half_mul (x : ℝ≥0) (hx : x ≠ 0) :
     npow x ((r : ℂ) / 2) * npow x ((s : ℂ) / 2) = npow x (((r + s : ℕ) : ℂ) / 2) := by
@@ -119,7 +123,7 @@ theorem prodTh_of_schwTensor : SchwTensor → ProdTh := by
       (rowHomeo (D := D) (r := r) (s := s) (p := p)).measurableEmbedding
     rw [hemb.integral_map, hr.weyl g hg h, hs.weyl g hg h, ← integral_prod_mul]
     refine integral_congr_ae (Eventually.of_forall fun z => ?_)
-    simp only [rowT_rowJ, rowB_rowJ, pr_split hb, Matrix.trace_add, map_add, AddChar.map_add_eq_mul]
+    simp only [rowT_rowJ, rowB_rowJ, pr_split hb, Matrix.trace_add, map_add (f := _), AddChar.map_add_eq_mul]
     ring
 
 end GlobalTheory.CompanionTheory.ThTot.ProductTheta

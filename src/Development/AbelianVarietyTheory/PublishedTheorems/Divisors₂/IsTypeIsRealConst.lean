@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiagValExtTraceNonneg
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.InterPolyProdSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopologicalKrullDimEqSucc
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiagValExtTraceNonneg
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.InterPolyProdSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopologicalKrullDimEqSucc
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -77,7 +81,8 @@ theorem swap_dz (a : Fin n) : swap (dz a) = dzb a ∧ swap (dzb a) = dz a := by
 
 theorem pull_dz (L : V n →L[ℂ] V m) (a : Fin m) : pull L (dz a) = ∑ b, L (coordVec b) a • dz b ∧
     pull L (dzb a) = ∑ b, conj (L (coordVec b) a) • dzb b := by
-  simp only [dz, dzb, ← map_smul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dz, dzb, ← map_smul, ← map_sum]
   constructor <;> refine (ExteriorAlgebra.map_apply_ι _ _).trans (congrArg _ (funext ?_)) <;> rintro (b | b) <;>
     simp [Pi.single_apply, Finset.sum_apply]
 
@@ -121,54 +126,10 @@ theorem dens_vol (n : ℕ) : dens (vol n : Alt n) = 1 := by
   obtain ⟨c, hc, e⟩ := vol_eq n
   exact div_self (by simpa [e] using hc)
 
-theorem isType_isReal_const (t : ℝ) : IsType 0 0 (algebraMap ℂ (Alt n) t) ∧ IsReal (algebraMap ℂ (Alt n) t) := by
-  refine ⟨fun S hS => ?_, fun S => ?_⟩
-  · obtain rfl : ∅ = S := by
-      by_contra h
-      simp [Algebra.algebraMap_eq_smul_one, ← bas_empty, h, -Complex.coe_smul] at hS
-    simp
-  · rw [AlgHom.commutes]
-    by_cases h : ∅ = S <;>
-      simp [Algebra.algebraMap_eq_smul_one, ← bas_empty, Finsupp.single_apply, h, -Complex.coe_smul]
-
-theorem isReal_I_smul_sym (a : Fin n) : IsReal (Complex.I • (dz a * dzb a)) := fun S => by
-  obtain ⟨ε, h⟩ := bas_mul (S := {finSumFinEquiv (.inl a)}) (T := {finSumFinEquiv (.inr a)})
-    (Finset.disjoint_singleton.2 (finSumFinEquiv.injective.ne Sum.inl_ne_inr))
-  rw [map_smul, map_mul, (swap_dz a).1, (swap_dz a).2, dz, dzb,
-    eq_neg_of_add_eq_zero_right (ExteriorAlgebra.ι_add_mul_swap _ _), ← bas_singleton, ← bas_singleton, h,
-    Units.smul_def, ← Int.cast_smul_eq_zsmul ℂ]
-  simp only [map_smul, map_neg, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.neg_apply, Finsupp.single_apply]
-  split_ifs <;> simp
-
 theorem coefwise_smul {T : (V n → ℂ) → ℂ} (hT : T (fun _ => 0) = 0) (u : V n → ℂ) (S : Finset (Fin (n + n))) :
     coefwise T (fun x => u x • bas n S) = T u • bas n S := by
   rw [coefwise, Finset.sum_eq_single S (fun S' _ h => by simp [Finsupp.single_apply, h.symm, hT]) (by simp)]
   simp
-
-theorem delAt_dbarAt_fun {u : V n → ℝ} {v : V n} (hu : ContDiffAt ℝ 2 u v) :
-    kappa • delAt (dbarAt fun x => algebraMap ℂ (Alt n) (u x)) v = ofValues (ddc u v) := by
-  have h₁ (x : V n) (S) : (bas n).repr (dbarAt (fun x => algebraMap ℂ (Alt n) (u x)) x) S =
-      ∑ b, if S = {finSumFinEquiv (.inr b)} then dbar (fun x => (u x : ℂ)) x (coordVec b) else 0 := by
-    simp only [dbarAt, Algebra.algebraMap_eq_smul_one, ← bas_empty]
-    rw [map_sum, Finsupp.finset_sum_apply]
-    refine Finset.sum_congr rfl fun b _ => ?_
-    rw [coefwise_smul (by simp), bas_empty, mul_smul_comm, mul_one, dzb, ← bas_singleton]
-    simp [Finsupp.single_apply, eq_comm]
-  have h₂ (a : Fin n) : coefwise (fun f => del f v (coordVec a)) (dbarAt fun x => algebraMap ℂ (Alt n) (u x)) =
-      ∑ b, leviForm u v (coordVec a) (coordVec b) • dzb b := by
-    refine (bas n).ext_elem fun S => ?_
-    simp only [coefwise, h₁, map_sum, map_smul, Module.Basis.repr_self, Finsupp.finset_sum_apply, Finsupp.smul_apply,
-      Finsupp.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true, dzb,
-      ← bas_singleton]
-    by_cases h : ∃ b, S = {finSumFinEquiv (.inr b)}
-    · obtain ⟨b, rfl⟩ := h
-      simp only [Finset.singleton_inj, EmbeddingLike.apply_eq_iff_eq, Sum.inr.injEq, Finset.sum_ite_eq,
-        Finset.sum_ite_eq', Finset.mem_univ, if_true, leviForm]
-      exact (ddbar_eq_del_dbar (contDiffAt_ofReal_comp hu) _ _).symm
-    · push_neg at h
-      simp [h, fun b => (h b).symm, -finSumFinEquiv_apply_right]
-  simp only [delAt, h₂, ofValues, ddc, Finset.mul_sum, Finset.smul_sum, mul_smul_comm, smul_smul,
-    AddSubmonoidClass.coe_finset_sum, Subalgebra.coe_smul, sym]
 
 end Point
 
@@ -189,31 +150,24 @@ variable {M M' : Type} [TopologicalSpace M] [TopologicalSpace M'] {n n' : ℕ} (
 def std (n : ℕ) : HolAtlas (V n) n :=
   ⟨Unit, fun _ => .refl _, fun _ => ⟨(), trivial⟩, fun _ _ => differentiableOn_id⟩
 
-def ofFin (B : ReciprocityTheory.AnForm.M.FinHolAtlas n M) : HolAtlas M n where
-  ι := Fin B.n
-  e j := (B.chart j).transHomeomorph (EuclideanSpace.equiv (Fin n) ℂ).symm.toHomeomorph
-  cover := B.cover
-  holo i j := (EuclideanSpace.equiv (Fin n) ℂ).symm.differentiable.comp_differentiableOn
-    ((B.holo i j).differentiableOn.comp (EuclideanSpace.equiv (Fin n) ℂ).differentiableOn fun _ hv => hv)
-
 def Pt : Type := {x : A.ι × M // x.2 ∈ (A.e x.1).source}
 
-variable {A} in
 
+variable {A} in
 abbrev Pt.pt (x : A.Pt) : M := x.1.2
 
-variable {A} in
 
+variable {A} in
 abbrev Pt.ch (x : A.Pt) : OpenPartialHomeomorph M (V n) := A.e x.1.1
 
-variable {A} in
 
+variable {A} in
 abbrev Pt.crd (x : A.Pt) : V n := x.ch x.pt
 
 abbrev Fld : Type := A.Pt → Alt n
 
-open Classical in
 
+open Classical in
 def loc (α : A.Fld) (i : A.ι) (v : V n) : Alt n :=
   if h : v ∈ (A.e i).target then α ⟨(i, (A.e i).symm v), (A.e i).map_target h⟩ else 0
 
@@ -257,7 +211,7 @@ def part [MeasurableSpace M] (α : A.Fld) (ε : ℤˣ) : Measure M :=
 def integral [MeasurableSpace M] (α : A.Fld) : ℝ := (A.part α 1).real univ - (A.part α (-1)).real univ
 
 theorem loc_crd (α : A.Fld) (x : A.Pt) : A.loc α x.1.1 x.crd = α x := by
-  rw [loc, dif_pos (x.ch.map_source x.2)]
+  rw [loc, dite_eq_left (x.ch.map_source x.2)]
   exact congrArg α (Subtype.ext (Prod.ext rfl (x.ch.left_inv x.2)))
 
 theorem isForm_fn {u : M → ℝ} (hu : A.SmoothOn univ fun y => u y) : A.IsForm (A.fn u) := by
@@ -318,30 +272,6 @@ def IsSplit (T : HermSeq A r s) : Prop :=
   ∀ a, ∃ t : M → Matrix (Fin r) (Fin s) ℂ, (∀ i j, A.HolOn (T.U a) fun y => t y i j) ∧
     ∀ y ∈ T.U a, chg (fromBlocks 1 (t y) 0 1) (T.mid a y) = fromBlocks (T.sub a y) 0 0 (T.quot a y)
 
-theorem isPull_self (T : HermSeq A r s) : T.IsPull T id :=
-  ⟨T.g, T.holo, fun a b y ha hb => ⟨T.tri a b y ⟨ha, hb⟩, fun a' h => T.g_mul a' a b y ⟨⟨h, ha⟩, hb⟩,
-    fun b' h => T.g_mul a b b' y ⟨⟨ha, hb⟩, h⟩, T.trans a b y ⟨ha, hb⟩⟩⟩
-
-def ofGram (H : V n → Matrix (Fin r ⊕ Fin s) (Fin r ⊕ Fin s) ℂ) (h : IsPosFrame univ H) : HermSeq (.std n) r s where
-  κ := Unit
-  U _ := univ
-  isOpen _ := isOpen_univ
-  cover _ := ⟨(), trivial⟩
-  g _ _ _ := 1
-  holo _ _ _ _ _ := differentiableOn_const _
-  tri _ _ _ _ := by ext; simp [toBlocks₂₁]
-  g_self _ _ _ := rfl
-  g_mul _ _ _ _ _ := mul_one _
-  sub _ y := subGram (H y)
-  mid _ := H
-  quot _ y := quotGram (H y)
-  smooth _ := ⟨fun i j _ => (h.sub.smooth i j).mono (subset_univ _), fun i j _ => (h.smooth i j).mono (subset_univ _),
-    fun i j _ => (h.quot.smooth i j).mono (subset_univ _)⟩
-  posDef _ y _ := ⟨h.sub.posDef y trivial, h.posDef y trivial, h.quot.posDef y trivial⟩
-  trans _ _ _ _ := by
-    refine ⟨?_, (chg_one _).symm, ?_⟩ <;> rw [← fromBlocks_one]
-    exacts [(chg_one _).symm, (chg_one _).symm]
-
 end HermSeq
 
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -353,17 +283,6 @@ variable {k : Type} [CommRing k] {X : Scheme.{0}} {p : X ⟶ Sp k} {D : ℕ}
 structure IsRegVar (p : X ⟶ Sp k) (D : ℕ) : Prop extends IsArithVar p D where
 
   regular : ∀ x, IsRegularLocalRing (X.presheaf.stalk x)
-
-theorem IsRegVar.of_smooth {p : X ⟶ Sp ℤ} [Smooth p] (h : IsArithVar p D) : IsRegVar p D := by
-  refine ⟨h, fun x => ?_⟩
-  have := ExtendRig.isRegularRing_stalk isRegularRing_of_smooth ℤ p x
-  exact .of_isRegularRing_of_isLocalRing _
-
-theorem isRegVar_proj (N : ℕ) : IsRegVar (PSpace.str ℤ N) N :=
-  have : Smooth (PSpace.str ℤ N) := SmoothOfRelativeDimension.smooth N _
-  .of_smooth (ProjSpace.isArithVar_int N)
-
-theorem isRegVar_int : IsRegVar (𝟙 (Sp ℤ)) 0 := .of_smooth ArithBase.isArithVar_int
 
 namespace IsRegVar
 
@@ -393,16 +312,6 @@ theorem smoothOn {σ : k →+* ℂ} {m : Type} {U : Set (CxPts p σ)} {G : CxPts
   erw [c.e.right_inv hv.1] at this
   exact this.contDiffWithinAt
 
-theorem isArForm_fn {u : ∀ σ : k →+* ℂ, CxPts p σ → ℝ} (hu : ∀ σ y, CInfAt (u σ) y)
-    (hc : ∀ σ σ', (Weight.ofFun (u σ)).IsConj (Weight.ofFun (u σ'))) :
-    h.IsArForm 0 fun σ => (h.atlas σ).fn (u σ) := by
-  refine ⟨fun σ => ⟨HolAtlas.isForm_fn _ (h.smoothOn (G := fun y (_ _ : Unit) => (u σ y : ℂ)) (fun y _ _ _ =>
-    (vInfAt_iff_cInfAt.2 (hu σ y)).comp_contDiff Complex.ofRealCLM.contDiff) () ()), fun _ => isType_isReal_const _⟩,
-    fun σ σ' x x' e _ => ?_⟩
-  rw [pow_zero, one_smul]
-  refine (AlgHom.commutes _ _).trans ?_
-  exact congrArg (fun t : ℝ => algebraMap ℂ _ t) (hc σ σ' PUnit.unit _ _ e mem_ptsIn_top)
-
 def seq {S : ShortComplex X.Modules} (hS : S.ShortExact) {r s : ℕ} {h₁ : VMetric p S.X₁ r} {h₂ : VMetric p S.X₂ (r + s)}
     {h₃ : VMetric p S.X₃ s} (H₁ : h₁.IsCInf) (H₂ : h₂.IsCInf) (H₃ : h₃.IsCInf) (σ : k →+* ℂ) :
     HermSeq (h.atlas σ) r s where
@@ -426,15 +335,5 @@ def seq {S : ShortComplex X.Modules} (hS : S.ShortExact) {r s : ℕ} {h₁ : VMe
     exacts [(h₁.met σ).trans a.sub b.sub y hy.1, (h₃.met σ).trans a.quot b.quot y hy.1]
 
 end IsRegVar
-
-def lineSeq : HermSeq ((isRegVar_proj 1).atlas (Int.castRingHom ℂ)) 1 1 :=
-  (isRegVar_proj 1).seq (ShortComplex.Splitting.ofHasBinaryBiproduct _ _).shortExact
-    (HermVB.ofLB (ProjSpace.hermitianTwistingSheaf ℤ 1)).cInf ProjSpace.hermSum.cInf (HermVB.ofLB (ProjSpace.hermitianTwistingSheaf ℤ 1)).dual.cInf _
-
-theorem isSplit_ofGram_one (n r s : ℕ) : (HermSeq.ofGram (n := n) (r := r) (s := s) (fun _ => 1)
-    ⟨isOpen_univ, fun _ _ => contDiffOn_const, fun _ _ => PosDef.one⟩).IsSplit := fun _ =>
-  ⟨0, fun _ _ _ => differentiableOn_const (0 : ℂ), fun _ _ => by
-    simp only [HermSeq.ofGram, Pi.zero_apply, fromBlocks_one, chg_one, subGram, quotGram]
-    ext (i | i) (j | j) <;> simp [toBlocks₁₁, toBlocks₂₂, toBlocks₂₁, one_apply, mul_apply]⟩
 
 end GlobalTheory.CxForm

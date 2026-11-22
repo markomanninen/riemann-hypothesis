@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing MvPolynomial
 
@@ -40,7 +44,7 @@ noncomputable def genKer [IsLocalRing P] (z : Matrix ι ι P) (m : ι → P) (c 
     have hp : ((maximalIdeal P).map (C : P →+* MvPolynomial ι P)).IsPrime :=
       isPrime_map_C _
     refine ⟨s * t, fun h => (hp.mem_or_mem h).elim hs ht, ?_⟩
-    have : s * t * C (a + b) = t * (s * C a) + s * (t * C b) := by rw [map_add]; ring
+    have : s * t * C (a + b) = t * (s * C a) + s * (t * C b) := by rw [map_add (f := _)]; ring
     rw [this]
     exact Ideal.add_mem _ (Ideal.mul_mem_left _ _ ha) (Ideal.mul_mem_left _ _ hb)
   smul_mem' := by

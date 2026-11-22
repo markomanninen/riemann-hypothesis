@@ -1,10 +1,38 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittDecompSymplInclIsotropicInclAnisotropic
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsBesPosOfBesselTied
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BesselCharacterGenericCharacterLaws
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsUnitriGlEquiv
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittDecompSymplInclIsotropicInclAnisotropic
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsBesPosOfBesselTied
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BesselCharacterGenericCharacterLaws
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsUnitriGlEquiv
+
+namespace I195MixedCoordinates_14b5fd3aa93c7f4842f1a892
+
+open Formalism.BasicNotions Formalism.BasicNotions.TH
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
+open Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.MixModel MeasureTheory
+attribute [local instance] Formalism.BasicNotions.Host.cmStar
+
+public noncomputable abbrev source
+    {D : D7} {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) (T : HSp D)
+    (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D T.rank ρ))
+    (𝓕 : Set (Mx D T.rank ρ)) (f : WO S T → ℂ) (x : Mx D T.rank ρ) : WO S₀ T → ℂ :=
+  fun w₀ => ∫ a in 𝓕, heisO ψ S T (a * d.pY)
+    (heisO ψ S T (x * d.pX) (heisO ψ S T (w₀ * d.p0) f)) 0 ∂μ
+
+public noncomputable abbrev target
+    {D : D7} {T T₀ : HSp D} {ρ : ℕ} (d : HypDec T T₀ ρ) (S : HSp D)
+    (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D ρ S.rank))
+    (𝓕 : Set (Mx D ρ S.rank)) (f : WO S T → ℂ) (y : Mx D S.rank ρ) : WO S T₀ → ℂ :=
+  fun w₀ => ∫ ξ in 𝓕, heisO ψ S T (d.jX * ξ)
+    (heisO ψ S T (d.jY * (incA D (-D.host.xi0⁻¹) • (adj y * gA S)))
+      (heisO ψ S T (d.j0 * w₀) f)) 0 ∂μ
+
+end I195MixedCoordinates_14b5fd3aa93c7f4842f1a892
+
+@[expose] public section
 
 noncomputable section
 
@@ -142,10 +170,6 @@ end JacS
 
 abbrev Om (S T : HSp D) : Type := GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)
 
-def thetaJT (ψ : AddChar (AF D.host.F) ℂ) {W W₀ L : HSp D} {ρ : ℕ} (dW : HypDec W W₀ ρ) (ζ : Fin L.rank → D.host.E)
-    (omz : Om L W₀) (Φz : WO L W₀ → ℂ) (n : GA D W) (h : GA D W₀) : ℂ :=
-  jacT ψ dW L (yZero L ρ ζ) n (omz (1, h) Φz) 0
-
 def thetaJS (ψ : AddChar (AF D.host.F) ℂ) {V V₀ L' : HSp D} {ρ : ℕ} (dV : HypDec V V₀ ρ) (ζ' : Fin L'.rank → D.host.E)
     (omz : Om V₀ L') (Φ₀ : WO V₀ L' → ℂ) (n : GA D V) (h : GA D V₀) : ℂ :=
   jacS ψ dV L' (zEll L' ρ ζ') n (omz (h, 1) Φ₀) 0
@@ -185,14 +209,6 @@ end Bessel
 section FJT
 
 variable (ψ : AddChar (AF D.host.F) ℂ) {W W₀ V₀ A L : HSp D} {ρ : ℕ} (dW : HypDec W W₀ ρ)
-
-def fjFun (ζ : Fin L.rank → D.host.E) (omz : Om L W₀) (φ' : GA D W₀ → ℂ) (G' : GA D W → ℂ) (Φz : WO L W₀ → ℂ)
-    (h : GA D W₀) (n : flagN dW) : ℂ :=
-  φ' h * G' (n.1 * dW.emb0 h) * thetaJT ψ dW ζ omz Φz n.1 h * star (psiFlag ψ dW n.1)
-
-def fjPer (ζ : Fin L.rank → D.host.E) (omz : Om L W₀) (μ : Measure (GA D W₀)) (𝓕 : Set (GA D W₀))
-    (ν : Measure (flagN dW)) (𝓝 : Set (flagN dW)) (φ' : GA D W₀ → ℂ) (G' : GA D W → ℂ) (Φz : WO L W₀ → ℂ) : ℂ :=
-  ∫ h in 𝓕, ∫ n in 𝓝, fjFun ψ dW ζ omz φ' G' Φz h n ∂ν ∂μ
 
 variable (o : OrthDec V₀ A L) (ζ : Fin L.rank → D.host.E) (om : Om V₀ W₀)
 
@@ -241,17 +257,13 @@ def contractT {T A B : HSp D} (o : OrthDec T A B) (S : HSp D) (μ : Measure (WO 
     (Φ₀ : WO S B → ℂ) : WO S A → ℂ :=
   fun w => thPair μ 𝓕 (fun v => F ((o.resT S).symm (w, v))) Φ₀
 
-def contractS {S A B : HSp D} (o : OrthDec S A B) (T : HSp D) (μ : Measure (WO B T)) (𝓕 : Set (WO B T)) (F : WO S T → ℂ)
-    (Φ₀ : WO B T → ℂ) : WO A T → ℂ :=
-  fun w => thPair μ 𝓕 (fun v => F ((o.resS T).symm (w, v))) Φ₀
-
 section Flat
 
 variable (ψ : AddChar (AF D.host.F) ℂ) {V V₀ W W₀ : HSp D} {ρ σ : ℕ} (dV : HypDec V V₀ ρ) (dW : HypDec W W₀ σ)
   (μS : Measure (Mx D W.rank ρ)) (𝓕S : Set (Mx D W.rank ρ)) (μT : Measure (Mx D σ V₀.rank)) (𝓕T : Set (Mx D σ V₀.rank))
 
 def evalAt (Ψ : WO V W → ℂ) (x : Mx D W.rank ρ) (y : Mx D V₀.rank σ) : WO V₀ W₀ → ℂ :=
-  dW.mixT V₀ ψ μT 𝓕T (dV.mixS W ψ μS 𝓕S Ψ x) y
+  (_root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.target dW) V₀ ψ μT 𝓕T ((_root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.source dV) W ψ μS 𝓕S Ψ x) y
 
 def flatFun (x : Mx D W.rank ρ) (y : Mx D V₀.rank σ) (Ψ : WO V W → ℂ) (w : WO V₀ W₀) (u : UX D ρ) : ℂ :=
   star (psiUni ψ u.1) * evalAt ψ dV dW μS 𝓕S μT 𝓕T Ψ (x ⬝ u.1.1) y w
@@ -287,21 +299,12 @@ def flatLast (νU : Measure (UX D (σ + 1))) (Ψ : WO V W → ℂ) : WO V₀ W�
 
 variable (μL : Measure (WO V₀ L')) (𝓕L : Set (WO V₀ L'))
 
-def flatPairFun (Ψ : WO V W → ℂ) (Φ₀ : WO V₀ L' → ℂ) (w : WO V₀ W₁) (u : UX D (σ + 1)) : ℂ :=
-  star (psiUni ψ u.1) *
-    contractT o' V₀ μL 𝓕L (evalAt ψ dV dW μS 𝓕S μT 𝓕T Ψ (xLast dW (vecB o' ζ') ⬝ u.1.1) 0) Φ₀ w
-
-def flatPair (νU : Measure (UX D (σ + 1))) (Ψ : WO V W → ℂ) (Φ₀ : WO V₀ L' → ℂ) : WO V₀ W₁ → ℂ :=
-  fun w => ∫ u, flatPairFun ψ dV dW o' ζ' μS 𝓕S μT 𝓕T μL 𝓕L Ψ Φ₀ w u ∂νU
-
-def stabLast : Subgroup (GA D W) := fixer W (xLast dW (vecB o' ζ'))
-
 end FlatFJ
 
 theorem psiE_zero (ψ : AddChar (AF D.host.F) ℂ) : psiE ψ 0 = 1 := by rw [psiE, map_zero, AddChar.map_zero_eq_one]
 
 theorem psiE_add (ψ : AddChar (AF D.host.F) ℂ) (x y : AE D) : psiE ψ (x + y) = psiE ψ x * psiE ψ y := by
-  rw [psiE, map_add, AddChar.map_add_eq_mul]; rfl
+  rw [psiE, map_add (f := _), AddChar.map_add_eq_mul]; rfl
 
 theorem upSum_one (ρ : ℕ) : upSum (1 : Mx D ρ ρ) = 0 :=
   Finset.sum_eq_zero fun i _ => Finset.sum_eq_zero fun j _ => by
@@ -494,38 +497,6 @@ theorem isIsoSub_e : IsIsoSub V d.e :=
     have := congrArg (d.qX *ᵥ ·) h
     simpa only [Matrix.mulVec_mulVec, qX_e, Matrix.one_mulVec] using this, d.ee⟩
 
-def toBesDat (hζ : IsLineVec L ζ) {θ : D.host.E} (hθ : θ ≠ 0) (ι : A.V →ₗ[D.host.E] V.V)
-    (hι : frameMat V A ι = d.i₀ * o.iA) : BesDat A V ι where
-  ρ := ρ
-  codim := by have := d.rank_add; have := o.rank_add; have := hζ.1; omega
-  e := d.e
-  e_iso := isIsoSub_e d
-  e_perp := by
-    rw [cT_sig, hι, conjTranspose_mul, Matrix.mul_assoc o.iAᴴ, Matrix.mul_assoc o.iAᴴ, d.i₀e, Matrix.mul_zero]
-  z := d.i₀ *ᵥ vecB o ζ
-  z_perpA := by
-    change (_ : Matrix _ _ D.host.E) *ᵥ _ = 0
-    rw [cT_sig, hι, conjTranspose_mul, vecB, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, Matrix.mul_assoc o.iAᴴ,
-      Matrix.mul_assoc o.iAᴴ, d.iso, o.orth', Matrix.zero_mulVec]
-  z_perpE := by
-    change (_ : Matrix _ _ D.host.E) *ᵥ _ = 0
-    have h := congrArg conjTranspose d.i₀e
-    rw [conjTranspose_mul, conjTranspose_mul, conjTranspose_conjTranspose, gram_conjTranspose, conjTranspose_zero,
-      ← Matrix.mul_assoc] at h
-    rw [cT_sig, Matrix.mulVec_mulVec, h, Matrix.zero_mulVec]
-  z_ne := by
-    have h : ∀ x : Fin V.rank → D.host.E,
-        Formalism.UG.hform (D.sp.cm.sig : D.host.E →+* D.host.E) V.gram x x = star x ⬝ᵥ V.gram *ᵥ x := fun x => by
-      simp only [Formalism.UG.hform, dotProduct, Matrix.mulVec, Finset.mul_sum, mul_assoc]
-      rfl
-    rw [h, vecB, Matrix.mulVec_mulVec, Matrix.star_mulVec, ← dotProduct_mulVec, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec,
-      conjTranspose_mul, Matrix.mul_assoc o.iBᴴ, Matrix.mul_assoc o.iBᴴ, ← Matrix.mul_assoc _ d.i₀, d.iso,
-      ← Matrix.mul_assoc, o.isoB]
-    exact hζ.2
-  c _ := θ
-  c_ne _ := hθ
-  y := 1
-
 theorem superSum_const (t : AE D) (T : Mx D ρ ρ) (b : Fin ρ → AE D) :
     superSum (fun _ => t) T b = t * (upSum T + ell D ρ ⬝ᵥ b) := by
   simp only [superSum, upSum, ell, dotProduct, mul_add, Finset.mul_sum, mul_ite, ite_mul, mul_zero, zero_mul, one_mul]
@@ -541,21 +512,6 @@ theorem upSum_add (T T' : Mx D ρ ρ) : upSum (T + T') = upSum T + upSum T' := b
 
 variable (ψ : AddChar (AF D.host.F) ℂ) (hζ : IsLineVec L ζ) {θ : D.host.E} (hθ : θ ≠ 0) (ι : A.V →ₗ[D.host.E] V.V)
   (hι : frameMat V A ι = d.i₀ * o.iA)
-
-theorem besChar_toBesDat {n : GA D V} (hn : n ∈ flagN d) :
-    besChar ψ (toBesDat d o hζ hθ ι hι) n = psiBes ψ d θ (vecB o ζ) n := by
-  obtain ⟨T, b, -, h1, h2⟩ := GlobalTheory.BesselChar.exists_coords (toBesDat d o hζ hθ ι hι) n hn
-  rw [GlobalTheory.BesselChar.besChar_eq ψ _ n T b h1 h2]
-  have e1 : mt V n ⬝ d.jX = d.jX + d.jX ⬝ (show Mx D ρ ρ from T) := h1
-  have e2 : mt V n *ᵥ ratV (d.i₀ *ᵥ vecB o ζ) = ratV (d.i₀ *ᵥ vecB o ζ) + d.jX *ᵥ (show Fin ρ → AE D from b) := h2
-  have e3 : blockX d n = 1 + (show Mx D ρ ρ from T) := by
-    rw [blockX, e1, Matrix.mul_add, d.pX_jX, cancel₂ d.pX_jX, Matrix.one_mul]
-  have e4 : coefX d (vecB o ζ) n = b := by
-    rw [ratV_mulVec] at e2
-    rw [coefX, ← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, HypDec.j0, e2, Matrix.mulVec_add, Matrix.mulVec_mulVec,
-      Matrix.mulVec_mulVec, ← HypDec.j0, d.pX_j0, d.pX_jX, Matrix.zero_mulVec, Matrix.one_mulVec, zero_add]
-  rw [psiBes, simpleSum, e3, e4, upSum_add, upSum_one, zero_add]
-  exact congrArg (psiE ψ) (superSum_const (incA D θ) T b)
 
 end Compare
 
@@ -603,27 +559,6 @@ theorem psiFlag_mul {n n' : GA D S} (hn : n ∈ flagN d) (hn' : n' ∈ flagN d) 
   simp only [psiFlag_eq, psiBes_mul d ψ 1 0 hn hn']
 
 end Struct
-
-example (D : D7) : IsLineVec (diagSp D 1 ![true] 0 1) (fun _ => 1) := by
-  refine ⟨rfl, ?_⟩
-  rw [diagSp_gram]
-  change ∑ i : Fin 1, star (1 : D.host.E) * ∑ j : Fin 1, Matrix.diagonal (fun i => Examples₂.sgn (![true] i)) i j * 1 ≠ 0
-  simp [Examples₂.sgn]
-
-example (ψ : AddChar (AF D.host.F) ℂ) {S S₀ : HSp D} (d : HypDec S S₀ 0) (θ z n) : psiBes ψ d θ z n = 1 := by
-  rw [psiBes, simpleSum, upSum, dotProduct, Finset.sum_of_isEmpty, Finset.sum_of_isEmpty, add_zero, mul_zero, psiE_zero]
-
-example (ψ : AddChar (AF D.host.F) ℂ) {S S₀ : HSp D} (d : HypDec S S₀ 1) (z) (b : Mx D 1 S₀.rank) :
-    psiBes ψ d 1 z (d.nB b) = psiE ψ ((b *ᵥ ratV z) 0) := by
-  rw [psiBes_nB, map_one, one_mul, dotProduct, Fin.sum_univ_one, show ell D 1 0 = 1 from rfl, one_mul]
-
-example (T : Mx D 2 2) : upSum T = T 0 1 := by simp [upSum, Fin.sum_univ_two]
-
-example (ψ : AddChar (AF D.host.F) ℂ) {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) (T : HSp D) (x : Mx D T.rank ρ)
-    (c : skewA D ρ) (f : WO S₀ T → ℂ) : jacS ψ d T x (d.nC c) f = ψ (d.qS T c x) • f := by
-  have h := ptS_nB_mul_nC d T x 0 c
-  rw [d.nB_zero, one_mul, Matrix.mul_zero] at h
-  rw [jacS, h, cenS_nC, heisO_zero]
 
 end GlobalTheory.MixPer
 

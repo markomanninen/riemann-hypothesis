@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalPrimitiveFrame.StepsTop
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalPrimitiveFrame.StepsTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,8 @@ def Assemble_bc (ψ : (Fin n → E) →ₗ[E] E) :
 theorem Assemble_bc_ratV (ψ : (Fin n → E) →ₗ[E] E) (y : Fin n → E) :
     Assemble_bc v ψ (ratV (F := F) (Fv F v) y) = inclR (F := F) (Fv F v) (ψ y) := by
   conv_rhs => rw [LinearMap.pi_apply_eq_sum_univ ψ y]
-  simp only [Assemble_bc, LinearMap.sum_apply, LinearMap.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Assemble_bc, LinearMap.sum_apply, LinearMap.smul_apply,
     LinearMap.coe_proj, Function.eval, ratV, smul_eq_mul, map_sum, map_mul]
   exact Finset.sum_congr rfl fun i _ => mul_comm _ _
 
@@ -186,7 +191,8 @@ theorem primitiveOfDualFunctionals : Assemble := by
         (∑ a : Fin r, c (Fin.castSucc a) * sc (E := E) v ((dV v)⁻¹ ^ (r - (a : ℕ))) *
           inclR (F := F) (Fv F v) (ψ (e a))) + c (Fin.last r) * inclR (F := F) (Fv F v) (ψ z) := by
       intro ψ
-      rw [map_sum, Fin.sum_univ_castSucc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Fin.sum_univ_castSucc]
       simp only [map_smul, locF, smul_eq_mul, hX, Assemble_ratTup_castSucc, Assemble_ratTup_last,
         Assemble_alp_castSucc, Assemble_alp_last, Assemble_sc_one, one_mul, Assemble_bc_ratV, mul_assoc]
     induction i using Fin.lastCases with

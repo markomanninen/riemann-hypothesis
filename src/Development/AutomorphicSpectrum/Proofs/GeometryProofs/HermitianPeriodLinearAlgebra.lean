@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannFormPeriodDeterminantBoundStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannFormPeriodDeterminantBoundStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl GlobalTheory.CompanionTheory.Ar.Flat Filter Topology Metric
 
@@ -14,21 +19,19 @@ namespace GlobalTheory.CompanionTheory.Ar.LinFlat
 open Matrix
 open scoped ComplexOrder
 
-local notation "HF" => ReciprocityTheory.ChartRestriction.G.Geo.Tor.hermForm
-
 theorem hermForm_sum_left {g : ℕ} {κ : Type*} [Fintype κ] (Hm : Matrix (Fin g) (Fin g) ℂ)
     (c : κ → ℂ) (V : κ → Fin g → ℂ) (w : Fin g → ℂ) :
-    HF Hm (∑ i, c i • V i) w = ∑ i, c i * HF Hm (V i) w := by
+    hermForm Hm (∑ i, c i • V i) w = ∑ i, c i * hermForm Hm (V i) w := by
   simp [ReciprocityTheory.ChartRestriction.G.Geo.Tor.hermForm, sum_dotProduct, smul_dotProduct]
 
 theorem hermForm_sum_right {g : ℕ} {κ : Type*} [Fintype κ] (Hm : Matrix (Fin g) (Fin g) ℂ)
     (c : κ → ℂ) (V : κ → Fin g → ℂ) (z : Fin g → ℂ) :
-    HF Hm z (∑ i, c i • V i) = ∑ i, star (c i) * HF Hm z (V i) := by
+    hermForm Hm z (∑ i, c i • V i) = ∑ i, star (c i) * hermForm Hm z (V i) := by
   simp [ReciprocityTheory.ChartRestriction.G.Geo.Tor.hermForm, star_sum, Matrix.mulVec_sum, dotProduct_sum,
     Matrix.mulVec_smul, dotProduct_smul]
 
 theorem star_hermForm {g : ℕ} {Hm : Matrix (Fin g) (Fin g) ℂ} (hH : Hm.IsHermitian)
-    (z w : Fin g → ℂ) : star (HF Hm z w) = HF Hm w z := by
+    (z w : Fin g → ℂ) : star (hermForm Hm z w) = hermForm Hm w z := by
   unfold ReciprocityTheory.ChartRestriction.G.Geo.Tor.hermForm
   rw [← star_dotProduct_star, Matrix.star_mulVec, star_star, hH.eq, Matrix.dotProduct_mulVec]
 
@@ -62,7 +65,7 @@ theorem eq_zero_of_vecMul_eq_zero {q : ℕ} {κ : Type*} [Fintype κ]
     simp only [Module.finrank_fintype_fun_eq_card, Fintype.card_fin] at h0
     exact Submodule.finrank_eq_zero.mp (by omega)
   have hm : y ∈ LinearMap.ker Fᵀ.mulVecLin := by
-    simp [Matrix.mulVec_transpose, hy]
+    simp [hy]
   rw [hk] at hm
   simpa using hm
 
@@ -122,8 +125,8 @@ theorem det_fromRows_eq {p q : ℕ} (A C C' : Matrix (Fin p) (Fin p ⊕ Fin q) �
 
 theorem gram_expand {g r : ℕ} {κ : Type*} [Fintype κ] (Hm : Matrix (Fin g) (Fin g) ℂ)
     (V : Fin r → Fin g → ℂ) (A : Matrix (Fin r) κ ℂ) (m n : κ) :
-    (Aᵀ * (Matrix.of fun a b => HF Hm (V a) (V b)) * A.map star) m n =
-      HF Hm (∑ i, A i m • V i) (∑ i, A i n • V i) := by
+    (Aᵀ * (Matrix.of fun a b => hermForm Hm (V a) (V b)) * A.map star) m n =
+      hermForm Hm (∑ i, A i m • V i) (∑ i, A i n • V i) := by
   rw [hermForm_sum_left]
   simp_rw [hermForm_sum_right]
   simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.of_apply, Matrix.map_apply,
@@ -133,9 +136,9 @@ theorem gram_expand {g r : ℕ} {κ : Type*} [Fintype κ] (Hm : Matrix (Fin g) (
   ring
 
 theorem gram_posDef {r g : ℕ} (Hm : Matrix (Fin g) (Fin g) ℂ) (hH : Hm.IsHermitian)
-    (hpos : ∀ z : Fin g → ℂ, z ≠ 0 → 0 < (HF Hm z z).re)
+    (hpos : ∀ z : Fin g → ℂ, z ≠ 0 → 0 < (hermForm Hm z z).re)
     (V : Fin r → Fin g → ℂ) (hV : LinearIndependent ℂ V) :
-    (Matrix.of fun a b => HF Hm (V a) (V b)).PosDef := by
+    (Matrix.of fun a b => hermForm Hm (V a) (V b)).PosDef := by
   refine Matrix.PosDef.of_dotProduct_mulVec_pos ?_ fun x hx => ?_
   · ext a b
     simp [Matrix.conjTranspose_apply, star_hermForm hH]
@@ -145,8 +148,8 @@ theorem gram_posDef {r g : ℕ} (Hm : Matrix (Fin g) (Fin g) ℂ) (hH : Hm.IsHer
       apply hx
       ext a
       simpa using this a
-    have key : star x ⬝ᵥ ((Matrix.of fun a b => HF Hm (V a) (V b)) *ᵥ x) =
-        HF Hm (∑ a, star (x a) • V a) (∑ a, star (x a) • V a) := by
+    have key : star x ⬝ᵥ ((Matrix.of fun a b => hermForm Hm (V a) (V b)) *ᵥ x) =
+        hermForm Hm (∑ a, star (x a) • V a) (∑ a, star (x a) • V a) := by
       rw [hermForm_sum_left]
       simp_rw [hermForm_sum_right]
       simp only [dotProduct, Matrix.mulVec, Pi.star_apply, Matrix.of_apply, Finset.mul_sum, star_star]
@@ -195,8 +198,8 @@ theorem flatSection_linearAlgebra : ∀ (p q g : ℕ) (T T' : (Fin g → ℂ) �
   have hA : ∀ n, ∑ i, A i n • V i = T (π n) := ha
   have hB : ∀ n, ∑ j, B j n • W j = T' (π n) := hb
   clear_value A B
-  have hrel' : Aᵀ * (Matrix.of fun i j => HF Hm (V i) (V j)) * A.map star -
-      (Bᵀ * (Matrix.of fun i j => HF Hm (W i) (W j)) * B.map star)ᵀ = (2 * Complex.I) • S := by
+  have hrel' : Aᵀ * (Matrix.of fun i j => hermForm Hm (V i) (V j)) * A.map star -
+      (Bᵀ * (Matrix.of fun i j => hermForm Hm (W i) (W j)) * B.map star)ᵀ = (2 * Complex.I) • S := by
     ext m n
     rw [Matrix.sub_apply, Matrix.transpose_apply, gram_expand, gram_expand, hA, hA, hB, hB,
       ← star_hermForm hH (T' (π m)) (T' (π n)), hrel m n]

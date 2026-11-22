@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.NormResidueSymbol.RangeIdeleNormLeKerIdeleSymbol
-import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms.CompletionsOverBasisRepr
-import GroundTheory.GlobalFields.NormResidueSymbol.RestrictNormalInfiniteLocalSymbol
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.NormResidueSymbol.RangeIdeleNormLeKerIdeleSymbol
+public import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms.CompletionsOverBasisRepr
+public import GroundTheory.GlobalFields.NormResidueSymbol.RestrictNormalInfiniteLocalSymbol
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -47,8 +51,8 @@ theorem ideleNorm_infiniteEmbedding (v' : InfinitePlace K') (a : v'.Completionˣ
 variable {L L' : Type*} [Field L] [NumberField L] [Field L'] [NumberField L'] [Algebra K L]
   [Algebra K L'] [Algebra K' L'] [Algebra L L'] [IsScalarTower K K' L'] [IsScalarTower K L L']
 
-omit [NumberField K] [NumberField K'] [NumberField L] [NumberField L'] in
 
+omit [NumberField K] [NumberField K'] [NumberField L] [NumberField L'] in
 theorem restrictNormal_restrictScalars_conjAt [IsGalois K L] [IsGalois K' L']
     (u' : InfinitePlace L') (hv : (u'.comap (algebraMap K' L')).IsReal) :
     ((conjAt K' u').restrictScalars K).restrictNormal L = conjAt K (u'.comap (algebraMap L L')) := by
@@ -68,9 +72,9 @@ theorem restrictNormal_restrictScalars_conjAt [IsGalois K L] [IsGalois K' L']
 variable [IsGalois K L] [IsMulCommutative (L ≃ₐ[K] L)] [IsGalois K' L']
   [IsMulCommutative (L' ≃ₐ[K'] L')]
 
+
 omit [NumberField K] [NumberField K'] [NumberField L] [NumberField L'] [IsGalois K L]
   [IsMulCommutative (L ≃ₐ[K] L)] [IsGalois K' L'] [IsMulCommutative (L' ≃ₐ[K'] L')] in
-
 theorem restrictNormal_restrictScalars_one [Normal K L] :
     ((1 : L' ≃ₐ[K'] L').restrictScalars K).restrictNormal L = 1 := by
   ext l
@@ -78,8 +82,8 @@ theorem restrictNormal_restrictScalars_one [Normal K L] :
   rw [AlgEquiv.restrictNormal_commutes, AlgEquiv.restrictScalars_apply, AlgEquiv.one_apply,
     AlgEquiv.one_apply]
 
-omit [NumberField K] [NumberField K'] in
 
+omit [NumberField K] [NumberField K'] in
 theorem extensionEmbeddingOfIsReal_normUnits (v' : InfinitePlace K') (hv' : v'.IsReal)
     (a : v'.Completionˣ) :
     extensionEmbeddingOfIsReal (hv'.comap (algebraMap K K'))
@@ -105,7 +109,7 @@ theorem restrictNormal_infiniteLocalSymbol_norm (v' : InfinitePlace K') (a : v'.
         (LocalField.normUnits (v'.comap (algebraMap K K')).Completion v'.Completion a) := by
   by_cases hv' : v'.IsReal
   · have hv := hv'.comap (algebraMap K K')
-    obtain ⟨u'⟩ := IdeleNorm.nonempty_infinitePlacesOver L' v'
+    obtain ⟨u'⟩ := IdeleNorm.nonempty_infinitePlacesOver (L := L') v'
     have hu'v' : (u' : InfinitePlace L').comap (algebraMap K' L') = v' :=
       (GroundTheory.Global.InfinitePlace.liesOver_iff_comap_eq v' _).1 u'.2
     have hu : ((u' : InfinitePlace L').comap (algebraMap L L')).LiesOver
@@ -121,7 +125,7 @@ theorem restrictNormal_infiniteLocalSymbol_norm (v' : InfinitePlace K') (a : v'.
   · rw [infiniteLocalSymbol_of_not_isReal L' v' hv', MonoidHom.one_apply,
       restrictNormal_restrictScalars_one]
     by_cases hv : (v'.comap (algebraMap K K')).IsReal
-    · obtain ⟨u⟩ := IdeleNorm.nonempty_infinitePlacesOver L (v'.comap (algebraMap K K'))
+    · obtain ⟨u⟩ := IdeleNorm.nonempty_infinitePlacesOver (L := L) (v'.comap (algebraMap K K'))
       rw [infiniteLocalSymbol_apply L _ hv u, if_neg]
       rw [not_lt, LocalField.coe_normUnits, GroundTheory.Global.InfinitePlace.extensionEmbeddingOfIsReal_norm
         hv (not_isReal_iff_isComplex.1 hv')]

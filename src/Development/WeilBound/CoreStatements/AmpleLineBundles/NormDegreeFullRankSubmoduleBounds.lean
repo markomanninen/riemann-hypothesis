@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AmpleLineBundles.NormDegreeLeOfMetricBoundedMap
+module
+
+public import Development.WeilBound.CoreStatements.AmpleLineBundles.NormDegreeLeOfMetricBoundedMap
+
+@[expose] public section
 
 open GroundTheory.Heights₂.Heights NumberField TensorProduct ComplexAt GlobalTheory.CompanionTheory.Ar Matrix
 open scoped BigOperators ComplexOrder
@@ -99,7 +103,7 @@ private theorem index_ne_zero_and_le_of_smul_mem {K : Type} [Field K] [NumberFie
     rw [mul_smul, Int.cast_smul_eq_zsmul]
     exact F.smul_mem c (hdF x)
   have hTU : I • S ≤ I • (⊤ : Submodule (𝓞 K) E.carrier) := Submodule.smul_mono le_rfl le_top
-  set f := DistribMulAction.toLinearMap (𝓞 K) E.carrier (d : 𝓞 K) with hfdef
+  set f := DistribSMul.toLinearMap (𝓞 K) E.carrier (d : 𝓞 K) with hfdef
   have hfinj : Function.Injective f := smul_right_injective E.carrier hd'
   have hmapS : (I • S).toAddSubgroup = S.toAddSubgroup.map f.toAddMonoidHom := by
     rw [hIdef, Submodule.ideal_span_singleton_smul, Submodule.pointwise_smul_toAddSubgroup]

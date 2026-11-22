@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorBasic
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorHensel
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorSub
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorBasic
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorHensel
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorSub
+
+@[expose] public section
 
 noncomputable section
 open scoped Classical

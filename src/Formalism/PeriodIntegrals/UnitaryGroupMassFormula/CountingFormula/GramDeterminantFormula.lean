@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DifferentIdealPowers
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DifferentIdealPowers
+
+@[expose] public section
 
 open Matrix Polynomial
 
@@ -113,14 +117,14 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem leadMinorE_full (D : Formalism.BasicNotions.D7) (Z : MatZ D) : leadMinorE Z (D.R.rS + 1) = Z.det := by
   unfold leadMinorE
-  rw [dif_pos le_rfl]
+  rw [dite_eq_left le_rfl]
   rfl
 
 theorem leadMinorE_r (D : Formalism.BasicNotions.D7) (Z : MatZ D) :
     leadMinorE Z D.R.rS = Z.adjugate (Fin.last D.R.rS) (Fin.last D.R.rS) := by
   rw [adjugate_last]
   unfold leadMinorE
-  rw [dif_pos (Nat.le_succ _)]
+  rw [dite_eq_left (Nat.le_succ _)]
   rfl
 
 theorem gram_determinant_formula_alt : DetGa := by

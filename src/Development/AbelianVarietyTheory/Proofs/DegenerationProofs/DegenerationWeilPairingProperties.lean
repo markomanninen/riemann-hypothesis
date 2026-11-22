@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.SepticCharacterInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.SepticCharacterInjective
+
+@[expose] public section
+
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Ex
 open scoped BigOperators
 
@@ -7,9 +12,9 @@ namespace GlobalTheory.Ex.WpPairing
 
 variable {O : Type} [CommRing O] (N : NumD O)
 
+
 open scoped BigOperators in
 variable {O : Type} [CommRing O] (N : _root_.GlobalTheory.Ex.NumD O) in
-
 theorem _root_.GlobalTheory.Ex.WpPairing.s_nsmul (g : N.Gt) (n : ℕ) (y : N.X) : g.s (n • y) * _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.cubN N.θ n 1 (N.c y) g.b = g.s y ^ n := by
   induction n with
   | zero => simp [_root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.cubN, _root_.GlobalTheory.Ex.NumD.Gt.s_zero]
@@ -19,17 +24,6 @@ theorem _root_.GlobalTheory.Ex.WpPairing.s_nsmul (g : N.Gt) (n : ℕ) (y : N.X) 
     simp only [_root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.cubN, Finset.prod_range_succ, one_mul]
     rw [← N.c_nsmul, ← mul_assoc, mul_right_comm, hm]
     exact mul_right_comm _ _ _
-
-theorem tk_mul_left {k : ℕ} (p p' p'' : N.QT k) :
-    N.tk (p * p') p'' * N.θ p''.1.2.b p.1.2.b p'.1.2.b ^ k = N.tk p p'' * N.tk p' p'' := by
-  have e := N.cub.N_add k 1 p''.1.2.b p.1.2.b p'.1.2.b
-  rw [N.cub.face, mul_one, one_mul, N.QT_pow_b] at e
-  change (p.1.2 * p'.1.2).s p''.1.1.toAdd * cubN N.θ k 1 p''.1.2.b (p.1.2.b * p'.1.2.b) * _ = _
-  rw [NumD.Gt.mul_s, NumD.tk, NumD.tk]
-  apply Additive.ofMul.injective
-  replace e := congrArg Additive.ofMul e
-  simp only [ofMul_mul, ofMul_div] at e ⊢
-  linear_combination (norm := abel) e
 
 open scoped BigOperators in
 variable {O : Type} [CommRing O] (N : _root_.GlobalTheory.Ex.NumD O) in
@@ -56,9 +50,9 @@ private lemma cubN_one_mul_mul_pow_eq {A U : Type} [CommGroup A] [CommGroup U] {
     simp only [ofMul_mul, ofMul_pow] at ih' c1' c2' c3' c4' ⊢
     linear_combination (norm := abel) ih' + c2' + c3' - c1' - c4'
 
+
 open scoped BigOperators in
 variable {O : Type} [CommRing O] (N : _root_.GlobalTheory.Ex.NumD O) in
-
 theorem _root_.GlobalTheory.Ex.WpPairing.wp_mul_left {k : ℕ} (p p' p'' : N.QT k) : N.wp (p * p') p'' = N.wp p p'' * N.wp p' p'' := by
   have hθ := N.cub
   set g := (p : Multiplicative N.X × N.Gt).2 with hg
@@ -114,24 +108,24 @@ theorem _root_.GlobalTheory.Ex.WpPairing.wp_mul_left {k : ℕ} (p p' p'' : N.QT 
   simp only [ofMul_mul, ofMul_pow, ofMul_div, ofMul_one] at hm' hadd' hmid' ⊢
   linear_combination (norm := abel) hadd' - hmid' - hm'
 
+
 open scoped BigOperators in
 variable {O : Type} [CommRing O] (N : _root_.GlobalTheory.Ex.NumD O) in
-
 theorem _root_.GlobalTheory.Ex.WpPairing.wp_mul_right {k : ℕ} (p p' p'' : N.QT k) : N.wp p (p' * p'') = N.wp p p' * N.wp p p'' := by
   rw [N.wp_swap (p' * p'') p, _root_.GlobalTheory.Ex.WpPairing.wp_mul_left, mul_inv, ← N.wp_swap p' p, ← N.wp_swap p'' p]
 
 noncomputable def wpHom {k : ℕ} (q : N.QT k) : N.QT k →* Oˣ :=
   MonoidHom.mk' (fun p => N.wp p q) fun p p' => wp_mul_left N p p' q
 
+
 open scoped BigOperators in
 variable {O : Type} [CommRing O] (N : _root_.GlobalTheory.Ex.NumD O) in
-
 theorem _root_.GlobalTheory.Ex.WpPairing.wp_pow_left {k : ℕ} (p q : N.QT k) (n : ℕ) : N.wp (p ^ n) q = N.wp p q ^ n :=
   map_pow (_root_.GlobalTheory.Ex.WpPairing.wpHom N q) p n
 
+
 open scoped BigOperators in
 variable {O : Type} [CommRing O] (N : _root_.GlobalTheory.Ex.NumD O) in
-
 theorem _root_.GlobalTheory.Ex.WpPairing.wp_qTriv {k : ℕ} (z : N.X) (q : N.QT k) : N.wp (N.qTriv k z) q = 1 := by
   have hq := N.mem_QT.mp q.2
   have h1 := _root_.GlobalTheory.Ex.WpPairing.s_nsmul N
@@ -144,16 +138,16 @@ theorem _root_.GlobalTheory.Ex.WpPairing.wp_qTriv {k : ℕ} (z : N.X) (q : N.QT 
     _root_.GlobalTheory.Ex.NumD.io_b, toAdd_ofAdd, div_eq_one]
   rw [h1, h2]
 
+
 open scoped BigOperators in
 variable {O : Type} [CommRing O] (N : _root_.GlobalTheory.Ex.NumD O) in
-
 theorem _root_.GlobalTheory.Ex.WpPairing.wp_congr_left {k : ℕ} {p p' : N.QT k} (h : N.QEq p p') (q : N.QT k) : N.wp p q = N.wp p' q := by
   obtain ⟨z, rfl⟩ := (N.qEq_iff p p').mp h
   rw [_root_.GlobalTheory.Ex.WpPairing.wp_mul_left, _root_.GlobalTheory.Ex.WpPairing.wp_qTriv, mul_one]
 
+
 open scoped BigOperators in
 variable {O : Type} [CommRing O] (N : _root_.GlobalTheory.Ex.NumD O) in
-
 theorem _root_.GlobalTheory.Ex.WpPairing.wp_pairing : ∀ (O : Type) [CommRing O] (N : _root_.GlobalTheory.Ex.NumD O), ∀ (k : ℕ) (p p' p'' : N.QT k), N.wp (p * p') p'' = N.wp p p'' * N.wp p' p'' ∧ N.wp p p = 1 ∧ N.wp p p' * N.wp p' p = 1 ∧ N.wp p p' ^ k = 1 ∧ (N.QEq p p' → N.wp p p'' = N.wp p' p'') ∧ (p.1.1 = 1 → p.1.2.b = 1 → N.wp p p' = p.1.2.s p'.1.1.toAdd) ∧ (p.1.1 = 1 → p'.1.1 = 1 → N.wp p p' = N.weil k p.1.2.b p'.1.2.b) := by
   intro O _ N k p p' p''
   refine ⟨_root_.GlobalTheory.Ex.WpPairing.wp_mul_left N p p' p'', N.wp_self p, ?_, ?_,

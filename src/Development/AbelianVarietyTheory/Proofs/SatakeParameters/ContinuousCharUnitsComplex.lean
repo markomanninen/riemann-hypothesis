@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -53,7 +57,7 @@ theorem continuous_char_units_complex : ∀ ψ : ℂˣ →* ℂˣ, Continuous ψ
   have hunit : (z : ℂ) / ‖(z : ℂ)‖ = Complex.exp (Complex.arg z * Complex.I) := by
     rw [div_eq_iff hnz, mul_comm]
     exact (Complex.norm_mul_exp_arg_mul_I (z : ℂ)).symm
-  rw [← hEz, hL, hEz, hunit, ← Complex.exp_int_mul, ← Complex.exp_add, hlog, map_add, map_smul, map_smul,
+  rw [← hEz, hL, hEz, hunit, ← Complex.exp_int_mul, ← Complex.exp_add, hlog, map_add (f := _), map_smul, map_smul,
     hLI, Complex.real_smul, Complex.real_smul]
   congr 1
   ring

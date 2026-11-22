@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -159,7 +163,6 @@ def twAct (ρ : Representation ℂ G V) (N : Subgroup G) (θ : N →* ℂˣ) {M 
   map_mul' a b := by
     ext v
     simp
-    rfl
 
 end Twisted
 

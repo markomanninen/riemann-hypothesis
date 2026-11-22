@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL4.PColInf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.PColInf
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain MvPolynomial
 open scoped Matrix
@@ -77,8 +81,8 @@ theorem gram_lattice_block_diagonal (Z : ZBasis ((D.fm u).lam 0)) (v : InfiniteP
       rw [if_neg hcc, nfAll_zero_left]
     · rw [if_neg h, nfAll_zero_right]
 
-include hTV in
 
+include hTV in
 theorem col_mu (Z : ZBasis ((D.fm u).lam 0)) [Nonempty Z.J0] :
     ((Fintype.card Z.J0 : ℝ) * Fintype.card ((D.mem u).C.cls 0)) * ((D.fm u).lat 0).mu =
       -((Fintype.card ((D.mem u).C.cls 0) : ℝ) * Real.log (gramZ ((D.fm u).lam 0) Z).det) +

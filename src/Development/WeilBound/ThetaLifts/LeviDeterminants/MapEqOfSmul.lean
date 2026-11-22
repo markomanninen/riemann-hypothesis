@@ -1,9 +1,13 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.EvChange
-import Development.WeilBound.ThetaLifts.LeviDeterminants.EvStmt
-import Development.WeilBound.ThetaLifts.LeviDeterminants.ExistsAdaptedModelTwoPlanes
-import Development.WeilBound.ThetaLifts.LeviDeterminants.EigenIntertwinerTwoPlanes
-import Development.WeilBound.ThetaLifts.LeviDeterminants.EigenIntertwinerSkewPlaneUnique
-import Development.WeilBound.ThetaLifts.TowerModels.PlaneHerm
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.EvChange
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.EvStmt
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.ExistsAdaptedModelTwoPlanes
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.EigenIntertwinerTwoPlanes
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.EigenIntertwinerSkewPlaneUnique
+public import Development.WeilBound.ThetaLifts.TowerModels.PlaneHerm
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem incM_one {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
 
-theorem vac_mem_SB {B : Base F E} {n d : ℕ} {X : Spc F E n} {W : Spc F E d} {M : Model σ X W} (hM : M.IsGood B.ψ) (v : Pl F) :
+theorem vac_mem_SB {B : Base F E} {n d : ℕ} {X : Spc F E n} {W : Spc F E d} {M : Model σ X W} (hM : M.IsGood B.ψ) (v : Pl (F := F)) :
     M.vac v ∈ SB _ :=
   (hM.vac v).1
 
@@ -29,7 +33,7 @@ theorem isEv_comp {B : Base F E} {n d n₁ d₁ : ℕ} {X : Spc F E n} {W : Spc 
     {M Ma : Model σ X W} {M₁ : Model σ X₁ W₁} {ι : Matrix (Fin n) (Fin n₁) E} {ι' : Matrix (Fin d) (Fin d₁) E}
     {I : Set (Matrix (Fin n) (Fin d) (AE F E))} {e₁ : Fn F n d →ₗ[ℂ] Fn F n d} {e₂ : Fn F n d →ₗ[ℂ] Fn F n₁ d₁}
     (h₁ : IsEv B M Ma 1 1 ∅ e₁) (ei₁ : SInf F (Fin n × Fin d) →L[ℂ] SInf F (Fin n × Fin d))
-    (ev₁ : ∀ v : Pl F, ((Fin n × Fin d → Fv F v) → ℂ) →ₗ[ℂ] (Fin n × Fin d → Fv F v) → ℂ)
+    (ev₁ : ∀ v : Pl (F := F), ((Fin n × Fin d → Fv F v) → ℂ) →ₗ[ℂ] (Fin n × Fin d → Fv F v) → ℂ)
     (hs : Function.Surjective ei₁) (hv₁ : ∀ v, ev₁ v (M.vac v) = Ma.vac v ∧ (SB _).map (ev₁ v) = SB _)
     (hl₁ : ∀ f φ, (∀ v, φ v ∈ SB _) → (∀ᶠ v in cofinite, φ v = M.vac v) → e₁ (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ) = GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (ei₁ f) fun v => ev₁ v (φ v))
     (h₂ : IsEv B Ma M₁ ι ι' I e₂) : IsEv B M M₁ ι ι' I (e₂ ∘ₗ e₁) := by
@@ -61,7 +65,7 @@ theorem isEv_comp {B : Base F E} {n d n₁ d₁ : ℕ} {X : Spc F E n} {W : Spc 
 theorem polData_map (B : Base F E) {n d n₁ d₁ : ℕ} {X : Spc F E n} {W : Spc F E d} {X₁ : Spc F E n₁} {W₁ : Spc F E d₁}
     (M : Model σ X W) (M₁ : Model σ X₁ W₁) (hM : ∀ v, M.vac v ∈ SB _) (e : Fn F n d →ₗ[ℂ] Fn F n₁ d₁)
     (ei : SInf F (Fin n × Fin d) →L[ℂ] SInf F (Fin n₁ × Fin d₁))
-    (ev : ∀ v : Pl F, ((Fin n × Fin d → Fv F v) → ℂ) →ₗ[ℂ] (Fin n₁ × Fin d₁ → Fv F v) → ℂ)
+    (ev : ∀ v : Pl (F := F), ((Fin n × Fin d → Fv F v) → ℂ) →ₗ[ℂ] (Fin n₁ × Fin d₁ → Fv F v) → ℂ)
     (hP : (M.Pol B.ψ B.emb).map (ei : SInf F (Fin n × Fin d) →ₗ[ℂ] SInf F (Fin n₁ × Fin d₁)) = M₁.Pol B.ψ B.emb)
     (hv : ∀ v, ev v (M.vac v) = M₁.vac v ∧ (SB _).map (ev v) = SB _)
     (hl : ∀ f φ, (∀ v, φ v ∈ SB _) → (∀ᶠ v in cofinite, φ v = M.vac v) → e (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ) = GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (ei f) fun v => ev v (φ v)) :
@@ -85,7 +89,7 @@ theorem polData_map (B : Base F E) {n d n₁ d₁ : ℕ} {X : Spc F E n} {W : Sp
       rw [← (hv v).2] at this
       exact this
     classical
-    let φ : ∀ v : Pl F, (Fin n × Fin d → Fv F v) → ℂ := fun v => if φ' v = M₁.vac v then M.vac v else (hpre v).choose
+    let φ : ∀ v : Pl (F := F), (Fin n × Fin d → Fv F v) → ℂ := fun v => if φ' v = M₁.vac v then M.vac v else (hpre v).choose
     have hφ : ∀ v, φ v ∈ SB _ := fun v => by
       by_cases h : φ' v = M₁.vac v
       · simp only [φ, if_pos h]; exact hM v

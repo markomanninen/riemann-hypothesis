@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLLieG
-import Development.WeilBound.ThetaLifts.Reductions.RealSmulL2Coe
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLLieG
+public import Development.WeilBound.ThetaLifts.Reductions.RealSmulL2Coe
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,7 @@ theorem scalar_lie {𝔸 : Type} [NormedRing 𝔸] [NormedAlgebra ℝ 𝔸] [Com
   have uniq : ∀ (Z : 𝔤) (c : ℂ),
       HasDerivAt (fun t : ℝ => T0 (A (ex (t • Z)) f0)) (T0 (quad (ρ Z) f0 + c • f0)) 0 → z Z = c := fun Z c h => by
     have := (hz Z T0 f0).unique h
-    simp only [map_add, map_smul, add_right_inj, smul_eq_mul] at this
+    simp only [map_add (f := _), map_smul, add_right_inj, smul_eq_mul] at this
     exact mul_right_cancel₀ hT0 this
   have hsm : ∀ (r : ℝ) (Z : 𝔤), z (r • Z) = r • z Z := fun r Z => uniq _ _ (by
     have h1 := hz Z T0 f0
@@ -87,7 +91,7 @@ theorem scalar_lie {𝔸 : Type} [NormedRing 𝔸] [NormedAlgebra ℝ 𝔸] [Com
       simp only [map_mul]
       refine this.congr_deriv ?_
       have e : quad (ρ (-(X + Y) : 𝔤)) = -(quad (ρ X) + quad (ρ Y)) := by
-        rw [Submodule.coe_neg, Submodule.coe_add, map_neg, map_add, ← neg_one_smul ℝ, quad_smul, quad_add]
+        rw [Submodule.coe_neg, Submodule.coe_add, map_neg, map_add (f := _), ← neg_one_smul ℝ, quad_smul, quad_add]
         simp [add_comm]
       rw [← map_smul, e]
       congr 1
@@ -235,7 +239,8 @@ theorem mid2 (hL : LocalLift) (K : W → Matrix β β ℂ) (hK : ∀ w, (K w)ᴴ
   have hZ : Z ∈ LG K := funext hZw
   have e : ∀ t, (γ t).1 = expU (t • Z) := fun t => Units.ext (funext fun w => (hγ t w).trans (hpi (t • Z) w).symm)
   have b : ζ Z = ∑ w, c w * (Z w).trace := by
-    conv_lhs => rw [← Finset.univ_sum_single Z, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← Finset.univ_sum_single Z, map_sum]
     exact Finset.sum_congr rfl fun w _ => hc w _ (hZw w)
   refine ⟨fun t => e t ▸ hS' _ ((LG K).smul_mem t hZ), ?_⟩
   simp only [e, ← b]
@@ -259,7 +264,7 @@ theorem main2 (hLL : LocalLift) (h : IsCMExt F E σ) {ψ : AddChar (AF F) ℂ} (
     (hKJ : ∀ w (g : Matrix β β ℂ), gᴴ * K w * g = K w ↔ gᵀ * JB.map (piInf (τ w)) * g.map star = JB.map (piInf (τ w)))
     {om : UG (cA σ) JB →* Module.End ℂ ((κ → AF F) → ℂ)} (hom : IsUSplitting (adeleClass F) ψ d (actB (cA σ)) om)
     {D} (hD : IsD d D) :
-    ∃ c : InfinitePlace F → ℂ, ∀ γ ∈ RLines σ JB, ∀ Z : InfinitePlace F → Matrix β β ℂ,
+    ∃ c : InfinitePlace F → ℂ, ∀ γ ∈ RLines (σ := σ) JB, ∀ Z : InfinitePlace F → Matrix β β ℂ,
       (∀ (t : ℝ) w, ((γ (Multiplicative.ofAdd t)).1 : Matrix β β (AE F E)).map (piInf (τ w)) = NormedSpace.exp (t • Z w)) →
       ∀ (ι : Type) [Fintype ι] (u v : ι → Matrix α β (AE F E)), (∀ j, At (evI F) (u j)) → (∀ j, At (evI F) (v j)) →
         (∀ x, At (evI F) x → ∀ w, x.map (piInf (τ w)) * (Z w)ᵀ = ∑ j, sB σ JA JB (v j) x • (u j).map (piInf (τ w))) →
@@ -273,7 +278,7 @@ theorem main2 (hLL : LocalLift) (h : IsCMExt F E σ) {ψ : AddChar (AF F) ℂ} (
   let E0 : (InfinitePlace F → Matrix α β ℂ) →ₗ[ℝ] (Fin n ⊕ Fin n → ℝ) :=
     { toFun := fun z => c.vec (d.e (L z))
       map_add' := fun z z' => by
-        rw [← c.vec_add, ← map_add]
+        rw [← c.vec_add, ← map_add (f := _)]
         congr 2
         refine ext_at h τ (At.sub' (hL _) fun a ha => by rw [smul_add, hL _ a ha, hL _ a ha, add_zero]) fun w => ?_
         rw [Matrix.map_add _ (map_add _), hL', hL', hL']
@@ -388,7 +393,8 @@ theorem main2 (hLL : LocalLift) (h : IsCMExt F E σ) {ψ : AddChar (AF F) ℂ} (
     MonoidHom.pi fun w => (piInf (τ w)).mapMatrix.toMonoidHom
   let γ0 : ℝ → SG K := fun t => ⟨Units.map mp (γ (Multiplicative.ofAdd t)).1, funext fun w => (hKJ w _).2 (by
     have := congrArg (fun X : Matrix β β (AE F E) => X.map (piInf (τ w))) (γ (Multiplicative.ofAdd t)).2
-    simp only [map_form h] at this
+    change (((γ (Multiplicative.ofAdd t)).1.1)ᵀ * JB * ((γ (Multiplicative.ofAdd t)).1.1).map (cA σ)).map (piInf (τ w)) = JB.map (piInf (τ w)) at this
+    rw [map_form h (τ w)] at this
     exact this)⟩
   have e0 : ∀ t, γ (Multiplicative.ofAdd t) = ι (γ0 t) := fun t => Subtype.ext (Units.ext (ext_at h τ (by
     have := At.sub' (hγ.2 (Multiplicative.ofAdd t)) (hι (γ0 t))
@@ -397,7 +403,8 @@ theorem main2 (hLL : LocalLift) (h : IsCMExt F E σ) {ψ : AddChar (AF F) ℂ} (
     obtain ⟨x, hx, rfl⟩ := hsurj w
     simp only [sympl_e]
     rw [← hE0 x hx, hρ]
-    simp only [huv x hx, ← hE0 _ (hu _), ← map_smul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [huv x hx, ← hE0 _ (hu _), ← map_smul, ← map_sum]
     congr 1
     funext w
     simp [Finset.sum_apply]
@@ -407,7 +414,8 @@ theorem main2 (hLL : LocalLift) (h : IsCMExt F E σ) {ψ : AddChar (AF F) ℂ} (
   refine (this.congr_deriv ?_).congr_of_eventuallyEq (.of_forall fun t => ?_)
   · rw [ContinuousLinearMap.comp_apply, hq]
     congr 1
-    simp only [ContinuousLinearMap.smul_apply, ContinuousLinearMap.sum_apply, ContinuousLinearMap.add_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [ContinuousLinearMap.smul_apply, ContinuousLinearMap.sum_apply, ContinuousLinearMap.add_apply,
       ContinuousLinearMap.mul_apply, map_add, map_smul, map_sum, hD.P c (hu _), hD.P c (hv _), c.P_P']
   · show l (om (γ (Multiplicative.ofAdd t)) _) = T (c.P (A0 ⟨(γ0 t).1, hγ0 t⟩ (c.P' f)))
     rw [← hT, ← hA0 _ _ gf hgf, c.P_P', e0]

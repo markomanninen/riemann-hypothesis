@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.VolStabFromSWS
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.VolStabFromSWS
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,19 +28,16 @@ theorem crd_map {R S : Type} [CommRing R] [Algebra F R] [CommRing S] [Algebra F 
     simp [crd, Algebra.TensorProduct.basis_repr_tmul, Algebra.TensorProduct.map_tmul]
   | add x y hx hy =>
     simp only [crd] at hx hy ⊢
-    rw [map_add, map_add, Finsupp.add_apply, hx, hy, map_add, Finsupp.add_apply, map_add]
+    rw [map_add (f := _), map_add (f := _), Finsupp.add_apply, hx, hy, map_add (f := _), Finsupp.add_apply, map_add (f := _)]
 
 theorem crd_incl (R : Type) [CommRing R] [Algebra F R] (x : E) (k : Fin d) :
     crd b R (inclR R x) k = algebraMap F R (b.repr x k) := by
   simp [crd, inclR, Algebra.TensorProduct.basis_repr_tmul]
 
-theorem crd_add (R : Type) [CommRing R] [Algebra F R] (y z : R ⊗[F] E) (k : Fin d) :
-    crd b R (y + z) k = crd b R y k + crd b R z k := by
-  simp [crd]
-
 theorem crd_sum (R : Type) [CommRing R] [Algebra F R] {ι : Type} (s : Finset ι) (y : ι → R ⊗[F] E)
     (k : Fin d) : crd b R (∑ i ∈ s, y i) k = ∑ i ∈ s, crd b R (y i) k := by
-  simp [crd, map_sum, Finsupp.finsetSum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [crd, map_sum, Finsupp.finsetSum_apply]
 
 theorem eq_sum_crd (R : Type) [CommRing R] [Algebra F R] (y : R ⊗[F] E) :
     y = ∑ i, crd b R y i • ((1 : R) ⊗ₜ[F] b i) := by
@@ -74,7 +75,8 @@ theorem norm_crd_mulVec_le {R K : Type} [CommRing R] [Algebra F R] [NormedField 
     (hC : ∀ p q k, ‖φ (algebraMap F R (b.repr (b p * b q) k))‖ ≤ C) (i : Fin M) (k : Fin d) :
     ‖φ (crd b R ((m.mulVec y) i) k)‖ ≤ M * (d * (d * (A * B * C))) := by
   rw [crd_mulVec]
-  simp only [map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul]
   have hterm : ∀ j p q, ‖φ (crd b R (m i j) p) * φ (crd b R (y j) q) *
       φ (algebraMap F R (b.repr (b p * b q) k))‖ ≤ A * B * C := by
     intro j p q
@@ -96,7 +98,8 @@ theorem norm_crd_mulVec_le_one {R K : Type} [CommRing R] [Algebra F R] [NormedFi
     (hC : ∀ p q k, ‖φ (algebraMap F R (b.repr (b p * b q) k))‖ ≤ 1) (i : Fin M) (k : Fin d) :
     ‖φ (crd b R ((m.mulVec y) i) k)‖ ≤ 1 := by
   rw [crd_mulVec]
-  simp only [map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul]
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one fun j _ => ?_
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one fun p _ => ?_
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one fun q _ => ?_
@@ -161,7 +164,9 @@ theorem continuous_piW_inf (w : InfinitePlace F) :
 
 theorem norm_piW_algebraMap (w : InfinitePlace F) (x : F) : ‖piW F w (algebraMap F (AF F) x)‖ = w x := by
   rw [AlgHom.commutes]
-  exact InfinitePlace.Completion.norm_coe w _
+  rw [AbsoluteValue.Completion.algebraMap_def, AbsoluteValue.Completion.norm_coe]
+  simp [WithAbs.algebraMap_right_apply]
+  rfl
 
 theorem norm_piV_algebraMap (v : HeightOneSpectrum (𝓞 F)) (x : F) :
     ‖piV F v (algebraMap F (AF F) x)‖ = ‖FinitePlace.embedding v x‖ := by

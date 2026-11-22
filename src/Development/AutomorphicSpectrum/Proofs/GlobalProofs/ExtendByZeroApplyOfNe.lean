@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.SmoothOnGVIff
-import Formalism.FormalDegreeBessel.StatementG
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.SmoothOnGVIff
+public import Formalism.FormalDegreeBessel.StatementG
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory.CompanionTheory.EichlerTransf

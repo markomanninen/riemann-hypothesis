@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAdmissibleSubTop
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.SubquotientNontrivial
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.MeasurePreservingMulRight
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.Smooth
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactTypeInCompactStableSubmodule
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAdmissibleSubTop
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.SubquotientNontrivial
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.MeasurePreservingMulRight
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.Smooth
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactTypeInCompactStableSubmodule
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ def rep (π : Formalism.REAL.UJ ε →* (X →L[ℂ] X)) (x : Matrix (Fin n) (Fi
 
 theorem rep_mat (π : Formalism.REAL.UJ ε →* (X →L[ℂ] X)) (g : Formalism.REAL.UJ ε) : rep ε π (mat ε g) = π g := by
   have h : ∃ g', mat ε g' = mat ε g := ⟨g, rfl⟩
-  rw [rep, dif_pos h, mat_injective ε h.choose_spec]
+  rw [rep, dite_eq_left h, mat_injective ε h.choose_spec]
 
 theorem range_mat : Set.range (mat ε) = Formalism.MainNotions.S.UJset ε := (Formalism.REAL.isClosedEmbeddingMatrix n ε).2
 
@@ -204,7 +208,7 @@ theorem typesIn_fd (ε : Fin n → Bool) {H : Type} [NormedAddCommGroup H] [Inne
   have hσ' : Formalism.MainNotions.S.IsURepOn (Formalism.MainNotions.S.UJset ε) σ := by
     rw [mir_isURepOn_iff, mir_UJset_eq]; exact hσ
   have hadm := GlobalTheory.PsCo.TrAdm.isAdmissibleSub_top n ε H σ hσ' hirr
-  haveI : Finite A := hA.to_subtype
+  have : Finite A := hA.to_subtype
   have : ∀ μ : A,
       FiniteDimensional ℂ (sSup {S : Submodule ℂ H | S ≤ ⊤ ∧ Formalism.MainNotions.S.IsKTypeOf ε σ μ S} : Submodule ℂ H) :=
     fun μ => hadm μ

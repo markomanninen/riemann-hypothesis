@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.GermSCCols
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.SecondColumnOperator
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LemmaH
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.GermSCCols
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.SecondColumnOperator
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LemmaH
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -61,8 +65,8 @@ def combine (f : Fin n → (ι →₀ ℕ)) : ι × Fin n →₀ ℕ :=
 theorem combine_apply (f : Fin n → (ι →₀ ℕ)) (l : ι) (b : Fin n) : combine f (l, b) = f b l := by
   classical
   unfold combine
-  rw [Finsupp.finset_sum_apply, Finset.sum_eq_single b]
-  · exact Finsupp.mapDomain_apply (fun x y h => (Prod.mk.inj h).1) (f b) l
+  rw [Finsupp.finsetSum_apply, Finset.sum_eq_single b]
+  · exact Finsupp.mapDomain_apply_of_injective (fun x y h => (Prod.mk.inj h).1) (f b) l
   · intro b' _ hb'
     apply Finsupp.mapDomain_notin_range
     rintro ⟨l', hl'⟩
@@ -96,21 +100,23 @@ theorem prodQ_monomial (f : Fin n → (ι →₀ ℕ)) (a : Fin n → k) :
 
 theorem Mf_prodQ (R : Fin n → MvPolynomial ι k) : Mf mu (prodQ R) = ∏ b, mu b (R b) := by
   classical
-  have hR : ∀ b, colE b (R b) = ∑ α ∈ (R b).support, colE b (monomial α (coeff α (R b))) := by
+  have hR : ∀ b, colE b (R b) = ∑ α ∈ (R b).support, colE b (monomial α (AddMonoidAlgebra.coeff (R b) α)) := by
     intro b
     conv_lhs => rw [as_sum (R b)]
-    rw [map_sum]
-  have hmu : ∀ b, mu b (R b) = ∑ α ∈ (R b).support, coeff α (R b) * mu b (monomial α 1) := by
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
+  have hmu : ∀ b, mu b (R b) = ∑ α ∈ (R b).support, AddMonoidAlgebra.coeff (R b) α * mu b (monomial α 1) := by
     intro b
     conv_lhs => rw [as_sum (R b)]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun α _ => by
-      rw [show monomial α (coeff α (R b)) = coeff α (R b) • monomial α (1 : k) by
+      rw [show monomial α (AddMonoidAlgebra.coeff (R b) α) = AddMonoidAlgebra.coeff (R b) α • monomial α (1 : k) by
         rw [smul_monomial, smul_eq_mul, mul_one], map_smul, smul_eq_mul]
   rw [prodQ, Finset.prod_congr rfl (fun b _ => hR b), Finset.prod_univ_sum, Mf_sum,
     Finset.prod_congr rfl (fun b _ => hmu b), Finset.prod_univ_sum]
   refine Finset.sum_congr rfl fun x _ => ?_
-  have hp := prodQ_monomial x (fun b => coeff (x b) (R b))
+  have hp := prodQ_monomial x (fun b => AddMonoidAlgebra.coeff (R b) (x b))
   simp only [prodQ] at hp
   rw [hp, Mf_monomial, Finset.prod_mul_distrib]
   simp only [colM_combine]
@@ -163,7 +169,8 @@ theorem colAlg (κ : ι → ι → k) (lam : Fin n → (ι →₀ ℕ) → k)
   have hE : ∀ b α, (monomial α (1 : k)).totalDegree ≤ N →
       lam b α = mu b (E1 κ 1 N (monomial α 1)) := by
     intro b α hα
-    rw [hlm, E1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hlm, E1, map_sum]
     refine Finset.sum_subset (Finset.range_subset_range.2 (Nat.succ_le_succ hα)) (fun i hi hi' => ?_) |>.trans ?_
     · rw [so_iter_eq_zero κ i _ (by simp only [Finset.mem_range] at hi'; omega), smul_zero, map_zero]
     · refine Finset.sum_congr rfl fun i _ => ?_
@@ -196,7 +203,8 @@ theorem colAlg (κ : ι → ι → k) (lam : Fin n → (ι →₀ ℕ) → k)
       (algebraMap ℚ k ((i.factorial : ℚ)⁻¹) * 1 ^ i) * Mf mu ((secondOrder k cc)^[i] P) := by
     intro i
     conv_rhs => rw [as_sum P]
-    rw [iter_linear, map_sum, Mf_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [iter_linear, map_sum, Mf_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun mo _ => ?_
     rw [show monomial mo (P.coeff mo) = P.coeff mo • monomial mo (1 : k) by
       rw [smul_monomial, smul_eq_mul, mul_one], map_smul, Mf_smul, ← iter_linear]
@@ -216,7 +224,7 @@ def valL {R : Type} [CommRing R] {d : ℕ} {O : Type} [CommRing O] [StarRing O] 
     [Algebra ℚ k] [Algebra R k] (B : FB R d O) {ι : Type} [Fintype ι] (u : ι → Fin d → k) (g : PS k 1 d) :
     MvPolynomial ι k →ₗ[k] k where
   toFun Q := MvPowerSeries.constantCoeff (DpolyOf (B.FK k) u Q g)
-  map_add' P Q := by rw [GE.dpolyOf_add_P, map_add]
+  map_add' P Q := by rw [GE.dpolyOf_add_P, map_add (f := _)]
   map_smul' a Q := by
     rw [GE.dpolyOf_smul_P, map_mul, MvPowerSeries.constantCoeff_C, RingHom.id_apply, smul_eq_mul]
 

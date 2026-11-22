@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.HeckeGal GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Base UpperTheory.V.Sd
 
@@ -31,9 +36,9 @@ private theorem casimir {V : Type} [AddCommGroup V] [Module â„‚ V] (E : Fin 2 â†
     conv_lhs => rw [ha]
     simp
   rw [qdet2]
-  simp only [LinearMap.sub_apply, Module.End.mul_apply, LinearMap.add_apply, Module.algebraMap_end_apply, map_add,
+  simp only [LinearMap.sub_apply, Module.End.mul_apply, LinearMap.add_apply, Module.algebraMap_end_apply, map_add (f := _),
     map_smul, hd, map_neg, r2, r3, r1]
-  simp only [hc, ha, map_add, map_smul, map_sub]
+  simp only [hc, ha, map_add (f := _), map_smul, map_sub]
   match_scalars <;> ring_nf <;> simp [Complex.I_sq] <;> ring_nf
 
 theorem UpperTheory.V.Sd.Hm.zfinof :

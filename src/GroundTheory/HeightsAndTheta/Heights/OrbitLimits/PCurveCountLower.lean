@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveCountLower
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveDegreeVert
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveVertIndex
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveIndexLinear
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveBoxCount
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ExistsIsSheetFinZero
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveCountLower
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveDegreeVert
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveVertIndex
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveIndexLinear
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveBoxCount
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ExistsIsSheetFinZero
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets

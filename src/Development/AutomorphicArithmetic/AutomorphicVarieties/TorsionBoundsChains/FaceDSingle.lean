@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open CategoryTheory
 
@@ -73,39 +77,14 @@ noncomputable def faceCx (G : Type) [Group G] (X : ℕ → Type) [∀ p, MulActi
   d_equiv p g f := by
     induction f using Finsupp.induction_linear with
     | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | single x c => simp only [perm_single, faceD_single, map_sum, map_smul, h]
   ε_equiv g f := by
     induction f using Finsupp.induction_linear with
     | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | single x c => simp
 
-def Chain (P : Type) [Preorder P] (p : ℕ) : Type := {f : Fin (p + 1) → P // StrictMono f}
-
-def Chain.face (P : Type) [Preorder P] (p : ℕ) (i : Fin (p + 2)) (c : Chain P (p + 1)) :
-    Chain P p :=
-  ⟨fun j => c.1 (i.succAbove j), c.2.comp (Fin.strictMono_succAbove i)⟩
-
-instance Chain.mulAction (G P : Type) [Group G] [Preorder P] [MulAction G P]
-    [CovariantClass G P (· • ·) (· < ·)] (p : ℕ) : MulAction G (Chain P p) where
-  smul g c := ⟨fun j => g • c.1 j, fun _ _ hab =>
-    CovariantClass.elim (μ := fun (g : G) (x : P) => g • x) (r := (· < ·)) g (c.2 hab)⟩
-  one_smul c := Subtype.ext (funext fun j => one_smul G (c.1 j))
-  mul_smul g h c := Subtype.ext (funext fun j => mul_smul g h (c.1 j))
-
-theorem Chain.smul_val {G P : Type} [Group G] [Preorder P] [MulAction G P]
-    [CovariantClass G P (· • ·) (· < ·)] {p : ℕ} (g : G) (c : Chain P p) (j : Fin (p + 1)) :
-    (g • c).1 j = g • c.1 j := rfl
-
-theorem Chain.face_smul {G P : Type} [Group G] [Preorder P] [MulAction G P]
-    [CovariantClass G P (· • ·) (· < ·)] (p : ℕ) (i : Fin (p + 2)) (g : G)
-    (c : Chain P (p + 1)) : Chain.face P p i (g • c) = g • Chain.face P p i c := rfl
-
-def OrdExactTo (P : Type) [Preorder P] (m : ℕ) : Prop := FaceExactTo (Chain P) (Chain.face P) m
-
 def bound (m A s b : ℕ) : ℕ := b ^ A * s ^ (m * A * s ^ m)
-
-instance : Inhabited (Chain Unit 0) := ⟨⟨fun _ => (), fun a b h => absurd h (by omega)⟩⟩
 
 end UpperTheory.V.KH

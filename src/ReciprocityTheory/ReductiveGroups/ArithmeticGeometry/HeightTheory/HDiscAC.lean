@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
-import ReciprocityTheory.SemistableReduction.AlgAll
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
+public import ReciprocityTheory.SemistableReduction.AlgAll
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -12,14 +16,46 @@ variable {O F L : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [F
   [Algebra.IsSeparable F L] [Algebra O L] [IsScalarTower O F L]
   [IsDedekindDomain (integralClosure O L)] [IsFractionRing (integralClosure O L) L]
 
+
 variable (O F) in
 include F in
-
 theorem addv_eq_of_mem {w : AddValuation L (WithTop ℤ)} (hw : w ∈ PlacesOver O L) :
     ∃ v : HeightOneSpectrum (integralClosure O L), w = addv L v := by
-  obtain ⟨e, he⟩ := placesOver_bij O F L
-  refine ⟨e.symm ⟨w, hw⟩, ?_⟩
-  rw [← he, Equiv.apply_symm_apply]
+  have hnonneg (s : integralClosure O L) :
+      0 ≤ w (algebraMap (integralClosure O L) L s) := by
+    letI : Algebra O (vRing w) :=
+      ((algebraMap O L).codRestrict (vRing w) (fun x => (hw.2 x).1)).toAlgebra
+    haveI : IsScalarTower O (vRing w) L := IsScalarTower.of_algebraMap_eq (fun _ => rfl)
+    have hs : IsIntegral O (algebraMap (integralClosure O L) L s) := s.2
+    have hs' : IsIntegral (vRing w) (algebraMap (integralClosure O L) L s) := hs.tower_top
+    obtain ⟨y, hy⟩ := IsIntegrallyClosed.isIntegral_iff.1 hs'
+    rw [← hy]
+    exact y.2
+  let f : integralClosure O L →+* vRing w :=
+    (algebraMap (integralClosure O L) L).codRestrict _ hnonneg
+  let Q := (IsLocalRing.maximalIdeal (vRing w)).comap f
+  have hprime : Q.IsPrime := Ideal.IsPrime.comap f
+  have hmem (s : integralClosure O L) :
+      0 < w (algebraMap (integralClosure O L) L s) ↔ s ∈ Q := by
+    change _ ↔ f s ∈ IsLocalRing.maximalIdeal (vRing w)
+    exact (Valuation.mem_maximalIdeal_iff L w (a := f s)).symm
+  have hne : Q ≠ ⊥ := by
+    intro hQ
+    have hzero (s : integralClosure O L) (hs : s ≠ 0) :
+        w (algebraMap (integralClosure O L) L s) = 0 := by
+      refine le_antisymm (le_of_not_gt fun h => hs ?_) (hnonneg s)
+      have hsQ := (hmem s).1 h
+      rwa [hQ, Ideal.mem_bot] at hsQ
+    obtain ⟨π, hπ⟩ := hw.1.2
+    obtain ⟨a, b, hb, hab⟩ := IsFractionRing.div_surjective (integralClosure O L) π
+    have ha : a ≠ 0 := by
+      intro ha
+      rw [ha, map_zero, zero_div] at hab
+      rw [← hab, AddValuation.map_zero] at hπ
+      simp at hπ
+    rw [← hab, AddValuation.map_div, hzero a ha, hzero b (nonZeroDivisors.ne_zero hb)] at hπ
+    simp at hπ
+  exact ⟨⟨Q, hprime, hne⟩, eq_addv _ w hw.1 hnonneg hmem⟩
 
 variable (O F) in
 include F in
@@ -95,8 +131,8 @@ theorem addv_mem (v : HeightOneSpectrum (integralClosure O L)) : addv L v ∈ Pl
           have h2 : (0 : ℤ) < -WithZero.log (v.valuation L (algebraMap O L x)) := by omega
           exact_mod_cast h2
 
-omit [IsFractionRing O F] [FiniteDimensional F L] [Algebra.IsSeparable F L] [IsScalarTower O F L] in
 
+omit [IsFractionRing O F] [FiniteDimensional F L] [Algebra.IsSeparable F L] [IsScalarTower O F L] in
 theorem addv_nonneg_iff (v : HeightOneSpectrum (integralClosure O L)) {y : L} (hy : y ≠ 0) :
     0 ≤ addv L v y ↔ v.valuation L y ≤ 1 := by
   have hv : v.valuation L y ≠ 0 := by simpa using hy
@@ -144,13 +180,39 @@ theorem mem_integralClosure_iff (y : L) :
       rw [← hb]
       exact b.2
 
+
 variable (O F) in
 include F in
-
 theorem exists_val_eq (n : AddValuation L (WithTop ℤ) → ℤ) :
     ∃ g : L, g ≠ 0 ∧ ∀ w ∈ PlacesOver O L, w g = n w := by
   classical
-  obtain ⟨_, _, _, _, hmax, _⟩ := ReciprocityTheory.MultiplicativeHeights.Closed.dedekindRank O F L
+  obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible O
+  let b := algebraMap O (integralClosure O L) ϖ
+  have hmax : {Q : Ideal (integralClosure O L) | Q.IsMaximal}.Finite := by
+    by_cases hb : b = 0
+    · have hbot : (⊥ : Ideal (integralClosure O L)).IsMaximal := by
+        apply Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := O)
+        have heq : (⊥ : Ideal (integralClosure O L)).under O = IsLocalRing.maximalIdeal O := by
+          apply le_antisymm (IsLocalRing.le_maximalIdeal_of_isPrime _)
+          rw [hϖ.maximalIdeal_eq, Ideal.span_singleton_le_iff_mem, Ideal.under_def, Ideal.mem_comap]
+          exact Ideal.mem_bot.2 hb
+        rw [heq]
+        infer_instance
+      refine (Set.finite_singleton (⊥ : Ideal (integralClosure O L))).subset ?_
+      intro Q hQ
+      exact Set.mem_singleton_iff.2 (hbot.eq_of_le (show Q.IsMaximal from hQ).ne_top bot_le).symm
+    · have hspan : (Ideal.span {b} : Ideal (integralClosure O L)) ≠ 0 := by
+        rwa [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
+      refine ((Ideal.finite_factors hspan).image HeightOneSpectrum.asIdeal).subset ?_
+      intro Q hQ
+      change Q.IsMaximal at hQ
+      have hmem : b ∈ Q := by
+        change ϖ ∈ Q.under O
+        rw [IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_under_of_isIntegral_of_isMaximal Q)]
+        exact (IsLocalRing.mem_maximalIdeal ϖ).2 hϖ.not_isUnit
+      have hQ0 : Q ≠ ⊥ := fun h => hb (Ideal.mem_bot.1 (h ▸ hmem))
+      exact ⟨⟨Q, hQ.isPrime, hQ0⟩,
+        Ideal.dvd_iff_le.2 ((Ideal.span_singleton_le_iff_mem Q).2 hmem), rfl⟩
   haveI : IsPrincipalIdealRing (integralClosure O L) := IsPrincipalIdealRing.of_finite_maximals hmax
   haveI := hmax.to_subtype
   haveI : Finite (HeightOneSpectrum (integralClosure O L)) := by

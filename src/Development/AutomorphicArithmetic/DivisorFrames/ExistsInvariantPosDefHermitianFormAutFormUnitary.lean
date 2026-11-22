@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSystemOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStableComplBot
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHeckeHermitianPairing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSystemOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStableComplBot
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHeckeHermitianPairing
+
+@[expose] public section
+
 open NumberField IsDedekindDomain TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR GlobalTheory.UnitaryBC GlobalTheory.FrameAut Formalism.CohomologicalDescent.DepthNonnegative
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -11,7 +16,7 @@ theorem UpperTheory.exists_invariant_posDef_hermitian_form_autForm_unitary :
     ∀ (D : D7) [IsCMField D.host.E] (V : HSp D), V.SigOK → V.IsPosDef → ∀ (j : UA D.host.E V.rank ≃ₜ* GA D V),
         (∀ x, x ∈ ratU D.host.E V.rank ↔ j x ∈ GQ V) →
         ∃ B : (UA D.host.E V.rank → ℂ) →ₗ⋆[ℂ] (UA D.host.E V.rank → ℂ) →ₗ[ℂ] ℂ, (∀ φ, IsAutFormU φ → φ ≠ 0 → 0 < (B φ φ).re) ∧
-          ∀ k ∈ finU D.host.E V.rank, ∀ φ ψ, IsAutFormU φ → IsAutFormU ψ →
+          ∀ k ∈ finU (E := D.host.E) (n := V.rank), ∀ φ ψ, IsAutFormU φ → IsAutFormU ψ →
             B (RU D.host.E V.rank k φ) (RU D.host.E V.rank k ψ) = B φ ψ := by
   intro D _ V hs hp j hj
   classical
@@ -51,30 +56,30 @@ theorem UpperTheory.exists_invariant_posDef_hermitian_form_autForm_unitary :
   let B : (UA D.host.E V.rank → ℂ) →ₗ⋆[ℂ] (UA D.host.E V.rank → ℂ) →ₗ[ℂ] ℂ :=
     LinearMap.mk₂'ₛₗ (starRingEnd ℂ) (RingHom.id ℂ) F
     (fun x x' y => by
-      simp only [F, map_add, Submodule.coe_add]
+      simp only [F, map_add (f := _), Submodule.coe_add]
       rw [← integral_add (hI _ (hPN x) _ (hPN y)) (hI _ (hPN x') _ (hPN y))]
       congr 1
       funext g
-      simp only [Pi.add_apply, star_add, add_mul])
+      simp only [Pi.add_apply, star_add, add_mul, mul_add])
     (fun c x y => by
       simp only [F, map_smul, Submodule.coe_smul]
       rw [smul_eq_mul, ← integral_const_mul]
       congr 1
       funext g
-      simp only [Pi.smul_apply, smul_eq_mul, star_mul', starRingEnd_apply]
+      simp only [Pi.smul_apply, smul_eq_mul, star_mul, RingHom.id_apply, starRingEnd_apply]
       ring)
     (fun x y y' => by
-      simp only [F, map_add, Submodule.coe_add]
+      simp only [F, map_add (f := _), Submodule.coe_add]
       rw [← integral_add (hI _ (hPN x) _ (hPN y)) (hI _ (hPN x) _ (hPN y'))]
       congr 1
       funext g
-      simp only [Pi.add_apply, mul_add])
+      simp only [Pi.add_apply, star_add, add_mul, mul_add])
     (fun c x y => by
       simp only [F, map_smul, Submodule.coe_smul]
       rw [smul_eq_mul, ← integral_const_mul]
       congr 1
       funext g
-      simp only [Pi.smul_apply, smul_eq_mul, RingHom.id_apply]
+      simp only [Pi.smul_apply, smul_eq_mul, star_mul, RingHom.id_apply, starRingEnd_apply]
       ring)
   have hB : ∀ x ∈ N, ∀ y ∈ N, B x y = ∫ g in 𝓕, star (x (j.symm g)) * y (j.symm g) ∂μ := by
     intro x hx y hy

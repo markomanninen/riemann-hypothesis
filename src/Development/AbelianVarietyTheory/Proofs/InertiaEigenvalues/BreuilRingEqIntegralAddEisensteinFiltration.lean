@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ImagePolynomialAction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ImagePolynomialAction
+
+@[expose] public section
+
 open PowerSeries GlobalTheory.BK
 
 noncomputable section
@@ -27,8 +32,8 @@ theorem norm_choose_mul_le (q k : ℕ) :
       (mul_nonneg (norm_nonneg _) (norm_nonneg _))
   · simp [Nat.choose_eq_zero_of_lt hkq]
 
-variable (K) in
 
+variable (K) in
 def beta (e : ℕ) (c : K) (m k : ℕ) : K :=
   c * (((m / e).choose k : K) * (k.factorial : K) * (-(l : K)) ^ (m / e - k))
 
@@ -93,7 +98,8 @@ theorem low_eq (e j Q : ℕ) (b : ℕ → ℕ → K) :
       ∑ k ∈ Finset.range j, ∑ r ∈ Finset.range e,
         C (∑ q ∈ Finset.range Q, b (q * e + r) k) * X ^ r * Ediv K l e k := by
   rw [sum_range_mul]
-  simp_rw [map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [map_sum, Finset.sum_mul]
   calc _ = ∑ q ∈ Finset.range Q, ∑ r ∈ Finset.range e, ∑ k ∈ Finset.range j,
         C (b (q * e + r) k) * X ^ r * Ediv K l e k :=
       Finset.sum_congr rfl fun q _ => Finset.sum_congr rfl fun r hr => Finset.sum_congr rfl
@@ -108,7 +114,8 @@ theorem low_eq (e j Q : ℕ) (b : ℕ → ℕ → K) :
 
 theorem coeff_head (f : K⟦X⟧) (M m : ℕ) :
     coeff m (∑ m' ∈ Finset.range M, C (coeff m' f) * X ^ m') = if m < M then coeff m f else 0 := by
-  simp_rw [map_sum, coeff_C_mul_X_pow]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [map_sum, coeff_C_mul_X_pow]
   rw [Finset.sum_ite_eq]
   simp
 

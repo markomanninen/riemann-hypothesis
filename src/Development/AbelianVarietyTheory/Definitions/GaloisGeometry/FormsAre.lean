@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
-import Formalism.LocalToGlobal.HermitianForms.TiedTwGen
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.JetLL
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
+public import Formalism.LocalToGlobal.HermitianForms.TiedTwGen
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.JetLL
+
+@[expose] public section
 
 noncomputable section
 

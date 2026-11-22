@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BinaryMassMeans.MeanVal
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelDensities.Pieces
-import GroundTheory.GlobalFields.TateThesis.IdeleMeasureQuotient
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BinaryMassMeans.MeanVal
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelDensities.Pieces
+public import GroundTheory.GlobalFields.TateThesis.IdeleMeasureQuotient
+
+@[expose] public section
 
 noncomputable section
 

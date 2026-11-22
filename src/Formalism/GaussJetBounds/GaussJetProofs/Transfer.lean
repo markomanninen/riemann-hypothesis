@@ -1,4 +1,8 @@
-import Formalism.GaussJetBounds.FrameJetEval
+module
+
+public import Formalism.GaussJetBounds.FrameJetEval
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -56,7 +60,8 @@ theorem map_letterLog (l : ℕ) (x : V2 d) :
   rw [MvPowerSeries.coeff_map]
   change φ (letterLog (K := F) l x n) = letterLog (K := K) l x n
   simp only [letterLog]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun e _ => ?_
   split_ifs <;> simp
 
@@ -78,7 +83,8 @@ theorem map_entLog {N0 N1 : ℕ} (l : ℕ) (x : ZV d N0 N1) :
   rw [MvPowerSeries.coeff_map]
   change φ (entLog (K := F) l x n) = entLog (K := K) l x n
   simp only [entLog]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun e _ => ?_
   split_ifs <;> simp
 

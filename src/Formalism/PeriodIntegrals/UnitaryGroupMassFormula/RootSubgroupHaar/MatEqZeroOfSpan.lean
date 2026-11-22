@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupBasics.NegOnePowMulSelf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupJacobian.ContinuousRootCoords
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.ReverseCauchySchwarzHolds
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupBasics.NegOnePowMulSelf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupJacobian.ContinuousRootCoords
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.ReverseCauchySchwarzHolds
+
+@[expose] public section
 
 open Matrix
 
@@ -58,7 +62,7 @@ theorem fvec_high {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (a : Fin (
 
 theorem fvec_cs (z : Fin (2 * r + k + 1) → ℂ) (c : Fin r) : fvec k r z (Fin.castSucc c) = bvec (eI k r c) := by
   unfold fvec
-  rw [dif_pos (show (Fin.castSucc c).val < r from c.isLt)]
+  rw [dite_eq_left (show (Fin.castSucc c).val < r from c.isLt)]
   rfl
 
 theorem nset_fix {a : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (ha : a ∈ Nset k r)
@@ -104,10 +108,10 @@ theorem fm_low (z' : Fin (2 * r + k + 1) → ℂ) (x : Fin (2 * r + k + 1) → �
   have hc : ∀ c : Fin r, (if h : (Fin.castSucc c).val < r then x (eI k r ⟨(Fin.castSucc c).val, h⟩) else 0)
       = x (eI k r c) := by
     intro c
-    rw [dif_pos (show (Fin.castSucc c).val < r from c.isLt)]
+    rw [dite_eq_left (show (Fin.castSucc c).val < r from c.isLt)]
     rfl
   have hl : (if h : (Fin.last r).val < r then x (eI k r ⟨(Fin.last r).val, h⟩) else 0) = 0 := by
-    rw [dif_neg (show ¬ (Fin.last r).val < r from lt_irrefl r)]
+    rw [dite_eq_right (show ¬ (Fin.last r).val < r from lt_irrefl r)]
   simp only [Matrix.mulVec, dotProduct]
   rw [Fin.sum_univ_castSucc]
   simp only [hc, hl, mul_zero, add_zero, Fm, Matrix.of_apply, fvec_cs, bvec]
@@ -317,11 +321,11 @@ theorem flagZ_eq {z z' : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hz' : i
   rw [Matrix.add_apply]
   simp only [vM, rootCoords]
   by_cases hq : (i, j) ∈ rootPat p
-  · rw [dif_pos hq]
+  · rw [dite_eq_left hq]
     have hij : i ≠ j := ne_of_lt (mem_rootPat.mp hq).1
     rw [Matrix.one_apply_ne hij, zero_add]
     rfl
-  · rw [dif_neg hq, add_zero]
+  · rw [dite_eq_right hq, add_zero]
     by_cases hji : j ≤ i
     · rw [flagMat_lower ha.1 i j hji, Matrix.one_apply]
     · have hij : i < j := not_le.mp hji

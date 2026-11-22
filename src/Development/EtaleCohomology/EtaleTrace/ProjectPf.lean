@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.LCoverCut
+module
+
+public import Development.EtaleCohomology.EtaleTrace.LCoverCut
+
+@[expose] public section
 
 noncomputable section
 open MvPolynomial

@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.JuxtDefs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityPosStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WordOccursOfSubquotientStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ShuffleOfPermStatement
-import CompanionTheory.AutomorphicTheory.HeckeStandardModules.EqZeroOfCompAt
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.JuxtDefs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityPosStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WordOccursOfSubquotientStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ShuffleOfPermStatement
+public import CompanionTheory.AutomorphicTheory.HeckeStandardModules.EqZeroOfCompAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,12 +58,12 @@ end Comb
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-theorem decW_single (ρ : IrrGL k) (hρ : ρ.IsCusp) : decW (Segment.single ρ hρ) = [ρ] := by
+theorem decW_single (ρ : IrrGL (k := k)) (hρ : ρ.IsCusp) : decW (Segment.single ρ hρ) = [ρ] := by
   simp [decW, Segment.single, Segment.term]
 
-theorem words_of_subq (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hW : ShlP k) (σ b : IrrGL k) (Δ : Segment k)
-    (hb : IsLSeg Δ b.rep) (hσ : SubqL σ [nxt Δ, b]) (l : List (IrrGL k)) (hl : ∀ ρ ∈ l, ρ.IsCusp) (he : EmbL σ l) :
-    ∃ P Q : List (IrrGL k), decW Δ = P ++ Q ∧ l = P ++ nxt Δ :: Q := by
+theorem words_of_subq (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hW : ShlP k) (σ b : IrrGL (k := k)) (Δ : Segment k)
+    (hb : IsLSeg Δ b.rep) (hσ : SubqL σ [nxt Δ, b]) (l : List (IrrGL (k := k))) (hl : ∀ ρ ∈ l, ρ.IsCusp) (he : EmbL σ l) :
+    ∃ P Q : List (IrrGL (k := k)), decW Δ = P ++ Q ∧ l = P ++ nxt Δ :: Q := by
   obtain ⟨hd1, hsub⟩ := hσ
   obtain ⟨hd2, f, hf⟩ := he
   have := GlobalTheory.SmGL.Model.nontrivial_of_isIrreducible σ.2.rep.irr

@@ -1,7 +1,11 @@
-import Formalism.MahlerMeasure.MahlerMeasureProofs.DeterminantBlockLeadingTerm
-import Formalism.MahlerMeasure.MahlerMeasureProofs.TrueRing
-import Formalism.MahlerMeasure.MahlerMeasureProofs.Mahler
-import Mathlib
+module
+
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.DeterminantBlockLeadingTerm
+public import Formalism.MahlerMeasure.Statement
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.Mahler
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.GM.Top
 open Formalism.GM

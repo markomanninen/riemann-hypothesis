@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJfSSymbolW
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJfSSymbolW
+
+@[expose] public section
 
 open Matrix Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -59,7 +63,7 @@ theorem dmin_eq (z z' : Fin (2 * r + k + 1) → ℂ) (g : B.Mat k r) (a : ℕ) (
   simp only [Matrix.submatrix_apply, Zhat, fvec, Fin.val_castLE, Mblk]
   have hi : (i : ℕ) < a := i.isLt
   have hj : (j : ℕ) < a := j.isLt
-  rw [dif_pos (show i.val < r by omega), dif_pos (show j.val < r by omega)]
+  rw [dite_eq_left (show i.val < r by omega), dite_eq_left (show j.val < r by omega)]
 
 theorem dlem_i (z z' : Fin (2 * r + k + 1) → ℂ) (g : B.Mat k r) (a : ℕ) (ha : a ≤ r)
     (hD : Dmin k r z z' g ⟨a, by omega⟩ ≠ 0) (y : Fin (2 * r + k + 1) → ℂ) (hy : Flt a y)

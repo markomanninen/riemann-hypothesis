@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.ZMemPerp
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaModuloX.IotaSurjectiveHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ScalarPairOrthogonal.XLeOrthXplus
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.ZMemPerp
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaModuloX.IotaSurjectiveHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ScalarPairOrthogonal.XLeOrthXplus
+
+@[expose] public section
 
 open NumberField Module Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.BasicNotions Formalism.L2.SG.CntLocal
 open Classical
@@ -81,11 +85,66 @@ theorem Mof_span (D : D7) {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (Λ : Subm
 
 theorem Mof_isLattice (D : D7) {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (Λ : Submodule (𝓞 D.host.E) (VS D).V)
     (hL : Submodule.IsLattice D.host.E Λ) : Submodule.IsLattice D.host.E (Mof D F0 Λ) :=
-  ⟨Mof_fg D F0 Λ hL.fg, Mof_span D F0 Λ hL.span_eq_top⟩
+  Submodule.IsLattice.of_fg D.host.E (Mof_fg D F0 Λ hL.fg)
 
 theorem Mof_unimod (D : D7) {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (Λ : Submodule (𝓞 D.host.E) (VS D).V)
     (hL : Submodule.IsLattice D.host.E Λ) (hU : Formalism.HermitianLatticesTheory.IsUnimodular (VS D).hT Λ) :
     Formalism.HermitianLatticesTheory.IsUnimodular (hWb D F0) (Mof D F0 Λ) := by
+  have hsp : Submodule.span D.host.E (Λ : Set (VS D).V) = ⊤ := by
+    by_contra hspan
+    obtain ⟨φ, hφ₀, hφ⟩ := Submodule.exists_le_ker_of_lt_top _ (lt_top_iff_ne_top.mpr hspan)
+    obtain ⟨bs, hbs⟩ := Formalism.HermitianLatticesTheory.dualLattice_dualBasis (VS D).hT (VS D).nondeg (VS D).frame
+    let μ := ∑ j, star (φ ((VS D).frame j)) • bs j
+    have hμ : ∀ v, (VS D).hT μ v = φ v := by
+      have key : (VS D).hT μ = φ := by
+        apply (VS D).frame.ext
+        intro i
+        dsimp [μ]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, LinearMap.sum_apply]
+        have hs : ∀ j, (VS D).hT (star (φ ((VS D).frame j)) • bs j) ((VS D).frame i) =
+            φ ((VS D).frame j) * (if i = j then 1 else 0) := by
+          intro j
+          rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, star_star]
+          congr 1
+          rw [← (VS D).herm.eq ((VS D).frame i) (bs j), hbs]
+          split_ifs <;> simp
+        simp only [hs, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      intro v
+      rw [key]
+    have hμ₀ : μ ≠ 0 := by
+      intro h
+      apply hφ₀
+      ext y
+      simpa [h] using (hμ y).symm
+    have hline (a : D.host.E) : a • μ ∈ Λ := by
+      rw [← hU]
+      rw [Formalism.HermitianLatticesTheory.dualBasic_mem_dual]
+      intro y hy
+      have hy₀ := LinearMap.mem_ker.mp (hφ (Submodule.subset_span hy))
+      simp [← (VS D).herm.eq (a • μ) y, LinearMap.map_smulₛₗ, hμ, hy₀]
+    obtain ⟨ψ, hψ, -⟩ := Submodule.exists_le_ker_of_notMem
+      (show μ ∉ (⊥ : Submodule D.host.E (VS D).V) by simpa using hμ₀)
+    let f := ψ.restrictScalars (𝓞 D.host.E)
+    have hmap (x : D.host.E) : x ∈ Λ.map f := by
+      refine ⟨(x / ψ μ) • μ, hline _, ?_⟩
+      change ψ ((x / ψ μ) • μ) = x
+      rw [map_smul, smul_eq_mul, div_mul_cancel₀ _ hψ]
+    obtain ⟨d, hd₀, hd⟩ := FractionalIdeal.isFractional_of_fg
+      (S := nonZeroDivisors (𝓞 D.host.E)) (hL.fg.map f)
+    have hinj := IsFractionRing.injective (𝓞 D.host.E) D.host.E
+    have hne {a : 𝓞 D.host.E} (ha : a ≠ 0) : algebraMap (𝓞 D.host.E) D.host.E a ≠ 0 :=
+      fun h => ha (hinj (h.trans (map_zero _).symm))
+    have hinteger (x : D.host.E) : IsLocalization.IsInteger (𝓞 D.host.E) x := by
+      have hx := hd _ (hmap ((algebraMap (𝓞 D.host.E) D.host.E d)⁻¹ * x))
+      rwa [Algebra.smul_def, ← mul_assoc, mul_inv_cancel₀ (hne (nonZeroDivisors.ne_zero hd₀)),
+        one_mul] at hx
+    apply RingOfIntegers.not_isField D.host.E
+    refine ⟨⟨0, 1, zero_ne_one⟩, mul_comm, ?_⟩
+    intro a ha
+    obtain ⟨b, hb⟩ := hinteger ((algebraMap (𝓞 D.host.E) D.host.E a)⁻¹)
+    refine ⟨b, hinj ?_⟩
+    rw [map_mul, hb, map_one, mul_inv_cancel₀ (hne ha)]
   have hU' : Formalism.HermitianLatticesTheory.dual (VS D).hT Λ = Λ := hU
   show Formalism.HermitianLatticesTheory.dual (hWb D F0) (Mof D F0 Λ) = Mof D F0 Λ
   apply le_antisymm
@@ -102,7 +161,7 @@ theorem Mof_unimod (D : D7) {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (Λ : Su
     let f : Λ →ₗ[𝓞 D.host.E] D.host.E :=
       ((VS D).hT (a : (VS D).V)).restrictScalars (𝓞 D.host.E) ∘ₗ Λ.subtype ∘ₗ ρ
     obtain ⟨w, hw⟩ := PI.UnitaryGroupMassFormula.BetaModX.Iota.riesz (VS D).hT (VS D).herm (VS D).nondeg Λ hL.fg
-      hL.span_eq_top f
+      hsp f
 
     have hwΛ : w ∈ Λ := by
       rw [← hU', Formalism.HermitianLatticesTheory.dualBasic_mem_dual]
@@ -114,7 +173,7 @@ theorem Mof_unimod (D : D7) {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (Λ : Su
 
     have hwv : ∀ v ∈ perpS (VS D) F0.X, (VS D).hT (w - (a : (VS D).V)) v = 0 := by
       intro v hv
-      obtain ⟨d, hd, hdm⟩ := PI.UnitaryGroupMassFormula.BetaModX.Iota.exists_smul_mem Λ hL.span_eq_top v
+      obtain ⟨d, hd, hdm⟩ := PI.UnitaryGroupMassFormula.BetaModX.Iota.exists_smul_mem Λ hsp v
       have hdE : algebraMap (𝓞 D.host.E) D.host.E d ≠ 0 :=
         (map_ne_zero_iff _ (IsFractionRing.injective (𝓞 D.host.E) D.host.E)).mpr hd
       have hdp : d • v ∈ perpS (VS D) F0.X := by

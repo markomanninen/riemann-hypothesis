@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DifferentiableAtChart
-import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
-import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.GJGlobalModulus
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DifferentiableAtChart
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
+public import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.GJGlobalModulus
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +24,8 @@ theorem vecMul_map_inv {R S : Type} [CommRing R] [CommRing S] (ρ : R →+* S) (
   rw [vecMul_vecMul, ← Matrix.map_mul, ← Units.val_mul, mul_inv_cancel, Units.val_one,
     Matrix.map_one _ (map_zero ρ) (map_one ρ), vecMul_one]
 
-theorem comp_vecMul_mem (h : GL (Fin n) 𝔸[K]) {F : (Fin n → 𝔸[K]) → ℂ} (hF : F ∈ schwartzBruhatPi K (Fin n)) :
-    (fun x => F (x ᵥ* (h : Matrix (Fin n) (Fin n) 𝔸[K]))) ∈ schwartzBruhatPi K (Fin n) := by
+theorem comp_vecMul_mem (h : GL (Fin n) 𝔸[K]) {F : (Fin n → 𝔸[K]) → ℂ} (hF : F ∈ schwartzBruhatPi (K := K) (ι := Fin n)) :
+    (fun x => F (x ᵥ* (h : Matrix (Fin n) (Fin n) 𝔸[K]))) ∈ schwartzBruhatPi (K := K) (ι := Fin n) := by
   let q : 𝔸[K] →+* mixedEmbedding.mixedSpace K :=
     (InfiniteAdeleRing.ringEquiv_mixedSpace K).toRingHom.comp (RingHom.fst (InfiniteAdeleRing K) 𝔸ᶠ[K])
   let p : 𝔸[K] →+* 𝔸ᶠ[K] := RingHom.snd (InfiniteAdeleRing K) 𝔸ᶠ[K]
@@ -74,7 +78,7 @@ theorem adelicFourierPi_comp_vecMul (h : GL (Fin n) 𝔸[K]) (F : (Fin n → �
   simp only [adelicFourierPi, hp]
   exact hm.symm
 
-theorem poisson_vecMul (h : GL (Fin n) 𝔸[K]) {F : (Fin n → 𝔸[K]) → ℂ} (hF : F ∈ schwartzBruhatPi K (Fin n)) :
+theorem poisson_vecMul (h : GL (Fin n) 𝔸[K]) {F : (Fin n → 𝔸[K]) → ℂ} (hF : F ∈ schwartzBruhatPi (K := K) (ι := Fin n)) :
     Summable (fun ξ : Fin n → K =>
       ‖F ((fun i => algebraMap K 𝔸[K] (ξ i)) ᵥ* (h : Matrix (Fin n) (Fin n) 𝔸[K]))‖) ∧
     Summable (fun ξ : Fin n → K => ‖adelicFourierPi K F
@@ -93,7 +97,7 @@ end General
 
 section Complex
 
-variable (E : Type) [Field E] [NumberField E] [IsTotallyComplex E]
+variable (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 def toMixedRing : Cinf E ≃+* mixedEmbedding.mixedSpace E :=
   (infEq E).trans (InfiniteAdeleRing.ringEquiv_mixedSpace E)
@@ -182,7 +186,8 @@ theorem adelicChar_sInf_sum (x u : Fin n → Cinf E) :
   have h1 : ∀ v : Fin n → Cinf E, infPartPi (fun i => sInf E (v i)) = fun i => toMixed E (v i) := fun v => rfl
   simp only [h0, h1, mixedPairingPi, mixedTraceForm_toMixed, Pi.zero_apply, mul_zero, Finset.sum_const_zero,
     AddChar.map_zero_eq_one, Circle.coe_one, mul_one] at h
-  rw [← h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← h, map_sum]
   simp only [map_mul]
 
 def toMixedSch (f : 𝓢(Fin n → Cinf E, ℂ)) : 𝓢(Fin n → mixedEmbedding.mixedSpace E, ℂ) :=
@@ -200,8 +205,8 @@ theorem mixedFourierPi_toMixedSch (f : 𝓢(Fin n → Cinf E, ℂ)) (u : Fin n �
     ContinuousLinearEquiv.symm_apply_apply, Circle.smul_def, smul_eq_mul]
   exact mul_comm _ _
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 def latt (n : ℕ) (J : (FractionalIdeal (𝓞 E)⁰ E)ˣ) : Set (Fin n → Af E) := {z | ∀ i, z i ∈ idealFiniteAdeles J}
 
 def thetaFn (f : (Fin n → Cinf E) → ℂ) (J : (FractionalIdeal (𝓞 E)⁰ E)ˣ) (η : Fin n → Af E)
@@ -221,12 +226,12 @@ theorem thetaFn_eq (f : 𝓢(Fin n → Cinf E, ℂ)) (J : (FractionalIdeal (𝓞
   rfl
 
 theorem thetaFn_mem (f : 𝓢(Fin n → Cinf E, ℂ)) (J : (FractionalIdeal (𝓞 E)⁰ E)ˣ) (η : Fin n → Af E) :
-    thetaFn f J η ∈ schwartzBruhatPi E (Fin n) := by
+    thetaFn f J η ∈ schwartzBruhatPi (K := E) (ι := Fin n) := by
   rw [thetaFn_eq]
   exact schwartzBruhatTensorPi_mem _ (finiteTensor_mem fun i => cosetIndicator_mem_finiteSchwartzBruhat J (η i))
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem finiteMeasurePi_latt (J : (FractionalIdeal (𝓞 E)⁰ E)ˣ) :
     (finiteMeasurePi E (latt n J)).toReal = (finiteAdeleMeasure E (idealFiniteAdeles J)).toReal ^ n := by
   have : latt n J = Set.univ.pi fun _ => (idealFiniteAdeles J : Set (Af E)) := by
@@ -249,11 +254,6 @@ theorem adelicFourierPi_thetaFn (f : 𝓢(Fin n → Cinf E, ℂ)) (J : (Fraction
     if ∀ i, pFin E (y i) ∈ idealFiniteAdeles (traceDualIdeal E J) then 1 else 0)) = _
   ring
 
-omit [IsTotallyComplex E] in
-variable (E) in
-
-def differentUnit : (FractionalIdeal (𝓞 E)⁰ E)ˣ :=
-  FractionalIdeal.mk0 E ⟨differentIdeal ℤ (𝓞 E), mem_nonZeroDivisors_of_ne_zero (differentIdeal_ne_bot (A := ℤ))⟩
 
 end Complex
 

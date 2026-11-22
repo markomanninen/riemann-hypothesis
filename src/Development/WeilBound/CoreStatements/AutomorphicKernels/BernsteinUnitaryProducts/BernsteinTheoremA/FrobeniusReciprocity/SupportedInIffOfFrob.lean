@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.FrobeniusReciprocity.PullHomeoApply
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.FrobeniusReciprocity.PullHomeoApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,11 +22,11 @@ def FrobeniusReciprocity : Prop :=
     ∀ (hp : ∀ (g : G) (x : X), p (g • x) = g • p x)
       (χ : G →* ℂˣ), Continuous (fun g => (χ g : ℂ)) →
     ∀ (μG : Measure G) [IsHaarMeasure μG] (μH : Measure H) [IsHaarMeasure μH],
-    ∃ Fr : eqv X χ ≃ₗ[ℂ] eqvF hp (χ.comp H.subtype),
-      (∀ (ξ : eqv X χ) (C : Set X), IsClosed C → (∀ (g : G), ∀ x ∈ C, g • x ∈ C) →
+    ∃ Fr : eqv (X := X) χ ≃ₗ[ℂ] eqvF hp (χ.comp H.subtype),
+      (∀ (ξ : eqv (X := X) χ) (C : Set X), IsClosed C → (∀ (g : G), ∀ x ∈ C, g • x ∈ C) →
         (SupportedIn (ξ : Distr X) C ↔
           SupportedIn ((Fr ξ : eqvF hp _) : Distr (Fib p)) (Subtype.val ⁻¹' C))) ∧
-      (∀ (ξ : eqv X χ) (α : SB G) (φ : SB (Fib p)) (f : SB X),
+      (∀ (ξ : eqv (X := X) χ) (α : SB G) (φ : SB (Fib p)) (f : SB X),
         (∀ (g : G) (z : Fib p), (f : X → ℂ) (g • z.1) =
             ∫ h, (α : G → ℂ) (g * (h : G)) * (φ : Fib p → ℂ) (fibSmul hp h⁻¹ z) ∂μH) →
         (ξ : Distr X) f =

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCombIn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCombIn
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
 namespace GlobalTheory
@@ -26,7 +31,7 @@ theorem algHom_eq_mul_pow_of_eq_localizationAway :
     have hle : n x ≤ N := Finset.single_le_sum (fun _ _ => Nat.zero_le _) hxs
     rw [← Nat.sub_add_cancel hle, pow_add, mul_assoc, mul_assoc, hn x]
   | algebraMap r => rw [AlgHom.commutes, AlgHom.commutes]
-  | add x y _ _ hx hy => rw [map_add, map_add, mul_add, mul_add, hx, hy]
+  | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _), mul_add, mul_add, hx, hy]
   | mul x y _ _ hx hy =>
     rw [map_mul, map_mul]
     calc g ^ N * (χ₁ x * χ₁ y) = χ₁ x * (g ^ N * χ₁ y) := by ring

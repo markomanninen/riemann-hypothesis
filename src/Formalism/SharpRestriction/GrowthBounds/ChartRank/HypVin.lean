@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.IntAtJIffN
-import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.WeylLatticeDescentHolds
-import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.SelfDualCongr
-import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.ColSpanMulUnit
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.IntAtJIffN
+public import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.WeylLatticeDescentHolds
+public import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.SelfDualCongr
+public import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.ColSpanMulUnit
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,9 +18,9 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem le_dual_chart {T : ℕ} {bad : Set (HeightOneSpectrum (𝓞 D.host.F))} {i : ℕ} {hi : i ≤ D.R.m} {cl : Type}
     {stab : cl → Type} [∀ c, Group (stab c)] {lat : cl → Submodule (𝓞 D.host.E) (Fin (D.R.N i) → D.host.E)}
     (K : LevelChart D T bad i hi stab lat) (c : cl) :
@@ -36,13 +40,13 @@ theorem le_dual_chart {T : ℕ} {bad : Set (HeightOneSpectrum (𝓞 D.host.F))} 
   rw [Int.cast_one, one_mul] at h
   exact Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.bwL_descent _ _ _ h
 
-open Formalism.L2.GlobalTheoryTheory.LocalLatticeBases Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.LocB in
 
+open Formalism.L2.GlobalTheoryTheory.LocalLatticeBases Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.LocB in
 theorem exB_of_lat {i : ℕ} (hi : i ≤ D.R.m) (q : ℕ) [Fact q.Prime] (L : Submodule (𝓞 D.host.E) (Fin (D.R.N i) → D.host.E))
-    (hL : Submodule.IsLattice D.host.E L) :
+    (hL : Submodule.IsFullLattice D.host.E L) :
     ∃ B' : GL (Fin (D.R.N i)) D.host.E, IsLocBasis q (dualSet (sigD D : D.host.E →+* D.host.E) (gramN D i hi) L) B' := by
   obtain ⟨d, hd, hle⟩ := dual_le_bnd (sigD D : D.host.E →+* D.host.E) (gramN D i hi) (bwB_gramN_det D i hi) _ hL
-  have hsp := dual_span (sigD D : D.host.E →+* D.host.E) (gramN D i hi) _ hL
+  have hsp := dual_span (sigD D : D.host.E →+* D.host.E) (gramN D i hi) _ hL.toIsLattice
   obtain ⟨B, hB⟩ := exists_isLocBasis q _ _ (fg_of_le_bnd hd hle) hsp
   refine ⟨B, ?_⟩
   have e : ((Submodule.span (𝓞 D.host.E) (dualSet (sigD D : D.host.E →+* D.host.E) (gramN D i hi) L) :
@@ -64,12 +68,12 @@ structure LatIn (S : StepIn M i hi G) (w : D.what₂.places.Pl) (β : S.Ch) : Pr
     (∃ x ∈ Formalism.L2.Herm.locL ((S.loc β).pl v).1 (S.K β).lev.Lb, ∀ a, ((S.loc β).spl v (x a)).1 = t a) ↔
       ∀ a, (((bc ((S.loc β).phE v) (S.loc β).B)⁻¹ : GL (Fin (D.R.N i)) (((S.loc β).pl v).1.adicCompletion D.host.F)) :
         Matrix (Fin (D.R.N i)) (Fin (D.R.N i)) _).mulVec t a ∈ ((S.loc β).pl v).1.adicCompletionIntegers D.host.F
-  lat : ∀ cl : {c // S.chOf c = β}, Submodule.IsLattice D.host.E (S.lat cl.1)
+  lat : ∀ cl : {c // S.chOf c = β}, Submodule.IsFullLattice D.host.E (S.lat cl.1)
   chi : ∀ κ : (S.K β).lev.U, ∃ r ∈ intW D.what₂.places w, r⁻¹ ∈ intW D.what₂.places w ∧
     D.what₂.embLL r = ((S.K β).lev.chi κ : ℂ)
 
-set_option maxHeartbeats 8000000 in
 
+set_option maxHeartbeats 8000000 in
 theorem valIntN_of (S : StepIn M i hi G) (e : D.what₂.LL →+* G.Kf) (w : D.what₂.places.Pl)
     (H : ∀ β, S.Core e β) (hS : BlockRationalityField) (hfrac : IsFractionRing G.O G.Kf)
     (hR0 : ∀ x, x ∈ intW D.what₂.places w ↔ e x ∈ Set.range (algebraMap G.O G.Kf))
@@ -79,9 +83,17 @@ theorem valIntN_of (S : StepIn M i hi G) (e : D.what₂.LL →+* G.Kf) (w : D.wh
   have hpw := (L β).resChar
   subst hpw
   have : Fact (D.what₂.places.resChar w).Prime := ⟨D.what₂.places.resChar_prime w⟩
+  have hblk : BlockRational G.P (S.loc β).rk S.pos (gramC (gramN D i hi) (embT D))
+      (crdB (embT D) (S.loc β).B) D.what₂.embLL (M.lam i) := by
+    refine hS G.P (S.loc β).rk S.pos _ _ D.what₂.embLL (M.lam i) (H β).wt fun τ => ⟨bc (tEL D τ) ((S.loc β).B)⁻¹, ?_⟩
+    ext a b
+    exact (tEL_emb D τ _).symm
   exact valIntAt_of (S := (S.K β).lev) (emb := embT D) (embLL := D.what₂.embLL) (G := S.charts.gat β)
     (e := e) (A := S.loc β) (pos := S.pos) (embV := S.embN β) (yc := (S.K β).y) weylLatticeDescent_holds hfrac (tEL D) (tEL_emb D)
-    (intW D.what₂.places w) hR0 (M.lam i) (H β).wt ((H β).toHyp hS).ex
+    (intW D.what₂.places w) hR0 (M.lam i) (H β).wt (valEx_of_rep' (tEL D) (tEL_emb D) (embT_conj D) (H β).std (S.adExt β)
+      (ptEx_of (H β).good (S.K β).lev (S.K β).y (S.K β).y_bij.2)
+      (ptOne_of (S.K β).lev (H β).int (H β).hypP (H β).bad_p)
+      (S.evRatRep β (H β).chRat hblk) (H β).chiRat)
     (fun cl B' => IsLocBasis (D.what₂.places.resChar w)
       (dualSet (sigD D : D.host.E →+* D.host.E) (gramN D i hi) (S.lat cl.1)) B')
     (fun cl => exB_of_lat hi (D.what₂.places.resChar w) (S.lat cl.1) ((L β).lat cl))

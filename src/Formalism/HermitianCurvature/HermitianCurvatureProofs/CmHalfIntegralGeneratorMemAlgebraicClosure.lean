@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ComplexConjugate ENNReal NNReal
@@ -261,8 +265,8 @@ lemma Hpk_unit (k r : ℕ) : IsUnit (Hpk k r).det := by
   exact isUnit_iff_ne_zero.mpr (fun h0 => by rw [h0, zero_mul] at h; exact zero_ne_one h)
 
 lemma herm_self_im (k r : ℕ) (y : Fin (2 * r + k + 1) → ℂ) : (herm (Hpk k r) y y).im = 0 := (Complex.conj_eq_iff_im).mp (herm_conj (Hpk k r) (Hpk_herm k r) y y)
-open scoped ComplexOrder in
 
+open scoped ComplexOrder in
 lemma herm_nondeg (k r : ℕ) (y : Fin (2 * r + k + 1) → ℂ) (h : ∀ x, herm (Hpk k r) x y = 0) : y = 0 := by
   have h1 : star y ᵥ* Hpk k r = 0 := by
     funext j
@@ -834,8 +838,6 @@ variable {k r' : ℕ}
 section
 variable {ι : Type*} [Fintype ι] (H : Matrix ι ι ℂ)
 
-lemma al_herm_zero_right (u : ι → ℂ) : herm H u 0 = 0 := by
-  simp [herm]
 lemma al_herm_zero_left (u : ι → ℂ) : herm H 0 u = 0 := by
   simp [herm]
 lemma al_herm_neg_left (u v : ι → ℂ) : herm H (-u) v = - herm H u v := by
@@ -897,7 +899,7 @@ lemma heis_mem (x : HPar k r') : heis0 k r' x ∈ GV k (1 + r') := by
   simp only [herm_add_left, herm_add_right, herm_smul_left, herm_smul_right]
   have h1 := herm_conj (Hpk k r') (Hpk_herm k r') (mid v) x.1
   have h2 := hb_add_conj (k := k) x.1 x.2
-  simp only [map_add, map_sub, map_mul]
+  simp only [map_add (f := _), map_sub, map_mul]
   linear_combination (-(cL u)) * h1 + (cL u * (starRingEnd ℂ) (cL v)) * h2
 
 lemma cmHalfIntegralGenerator_mem_algebraicClosure (c : ℂ) (hc : c ≠ 0) : w0 k r' c ∈ GV k (1 + r') := by
@@ -1253,7 +1255,7 @@ lemma cf_heis_Ψt (x₀ : HPar k r') (p : ℂ × HPar k r') (h1 : p.1 ≠ 0) :
     have e3 : conj (herm (Hpk k r') y y₀) = herm (Hpk k r') y₀ y := herm_conj _ (Hpk_herm k r') _ _
     simp only [herm_add_left, herm_add_right, herm_smul_left, herm_smul_right]
     rw [hB]
-    simp only [map_add, map_sub, map_mul, Complex.conj_conj, Complex.conj_ofReal, e3]
+    simp only [map_add (f := _), map_sub, map_mul, Complex.conj_conj, Complex.conj_ofReal, e3]
     rw [hnorm]
     linear_combination e1 + c * conj c * e2
   have him : B.im = s - (conj c * herm (Hpk k r') y y₀).im + ‖c‖ ^ 2 * s₀ := by
@@ -1422,84 +1424,6 @@ open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Fo
 section dj
 variable {k r : ℕ}
 
-lemma dj_conjM_cont (a : Mat k r) : Continuous (conjM a : Mt k r → Mt k r) := by
-  unfold conjM
-  exact ((continuous_const (y := a)).matrix_mul (continuous_id (X := Mat k r))).matrix_mul continuous_const
-
-lemma dj_mulM_cont : Continuous (mulM : Mt k r × Mt k r → Mt k r) := by
-  unfold mulM
-  exact Continuous.matrix_mul (A := fun p : Mt k r × Mt k r => (Matrix.of p.1 : Mat k r))
-    (B := fun p : Mt k r × Mt k r => (Matrix.of p.2 : Mat k r)) continuous_fst continuous_snd
-
-lemma dj_levM_cont (k r' : ℕ) : Continuous (levM k r') := by
-  refine continuous_pi fun p => continuous_pi fun q => ?_
-  unfold levM ιLev
-  by_cases hp : 1 ≤ p.val ∧ p.val < 2 * r' + k + 1 + 1
-  · by_cases hq : 1 ≤ q.val ∧ q.val < 2 * r' + k + 1 + 1
-    · simp only [hp, hq, dif_pos, and_self]
-      exact (continuous_apply _).comp (continuous_apply _)
-    · simp only [hp, hq, dif_pos, dif_neg, and_self, not_false_eq_true]
-      exact continuous_const
-  · simp only [hp, dif_neg, not_false_eq_true]
-    exact continuous_const
-
-lemma dj_aDil_unit (k r : ℕ) (t : ℝ) (ht : t ≠ 0) : IsUnit (aDil k r t).det := by
-  unfold aDil
-  rw [Matrix.det_diagonal, isUnit_iff_ne_zero, Finset.prod_ne_zero_iff]
-  intro i _
-  split_ifs
-  · exact_mod_cast pow_ne_zero _ ht
-  · exact one_ne_zero
-  · exact_mod_cast inv_ne_zero (pow_ne_zero _ ht)
-
-lemma dj_conj_mul (a : Mat k r) (ha : IsUnit a.det) (p : Mt k r × Mt k r) :
-    conjM a (mulM p) = mulM (conjM a p.1, conjM a p.2) := by
-  unfold conjM mulM
-  show a * (Matrix.of p.1 * Matrix.of p.2) * a⁻¹ = (a * Matrix.of p.1 * a⁻¹) * (a * Matrix.of p.2 * a⁻¹)
-  have h : a⁻¹ * a = 1 := Matrix.nonsing_inv_mul a ha
-  calc a * (Matrix.of p.1 * Matrix.of p.2) * a⁻¹ = a * Matrix.of p.1 * 1 * Matrix.of p.2 * a⁻¹ := by
-        simp only [Matrix.mul_assoc, Matrix.one_mul]
-    _ = (a * Matrix.of p.1 * a⁻¹) * (a * Matrix.of p.2 * a⁻¹) := by
-        rw [← h]; simp only [Matrix.mul_assoc]
-
-lemma dj_sigmaFinite {U : Set (Mat k r)} {μ : Measure (Mt k r)} (h : IsHaarOn U μ) : SigmaFinite μ := by
-  have : IsFiniteMeasureOnCompacts μ := ⟨fun K hK => h.finite_compact K hK⟩
-  infer_instance
-
-lemma dj_step (hU : HaarUnique) (hN : ClosedN) (hRec : NRecHaar) (hLev : DilLev) (hH : DilHeisMeas) (hK : KapRec)
-    (k r' : ℕ) (μ' : Measure (Mt k r')) (hμ' : IsHaarOn (Nset k r') μ')
-    (ih : ∀ t : ℝ, 0 < t → μ'.map (conjM (aDil k r' t)) = ENNReal.ofReal ((t ^ kap k r')⁻¹) • μ')
-    (μN : Measure (Mt k (1 + r'))) (hμN : IsHaarOn (Nset k (1 + r')) μN) (t : ℝ) (ht : 0 < t) :
-    μN.map (conjM (aDil k (1 + r') t)) = ENNReal.ofReal ((t ^ kap k (1 + r'))⁻¹) • μN := by
-  have := dj_sigmaFinite hμ'
-  have hvol : SFinite (volume : Measure (HPar k r')) := by rw [Measure.volume_eq_prod]; infer_instance
-  have : SFinite (μHeis k r') := by
-    unfold μHeis
-    exact @MeasureTheory.Measure.instSFiniteMap _ _ _ _ _ _ hvol
-  have hν := hRec k r' μ' hμ'
-  obtain ⟨c, hc⟩ := hU k (1 + r') (Nset k (1 + r')) _ μN (hN _ _) hν hμN.conc hμN.left hμN.finite_compact
-  have hca := (dj_conjM_cont (aDil k (1 + r') t)).measurable
-  have hca' := (dj_conjM_cont (aDil k r' t)).measurable
-  have hlev := (dj_levM_cont k r').measurable
-  have hmul := (dj_mulM_cont (k := k) (r := 1 + r')).measurable
-  have key : (((μHeis k r').prod (μ'.map (levM k r'))).map mulM).map (conjM (aDil k (1 + r') t)) =
-      ENNReal.ofReal ((t ^ kap k (1 + r'))⁻¹) • ((μHeis k r').prod (μ'.map (levM k r'))).map mulM := by
-    have h1 : (conjM (aDil k (1 + r') t) ∘ mulM : Mt k (1 + r') × Mt k (1 + r') → Mt k (1 + r')) =
-        mulM ∘ Prod.map (conjM (aDil k (1 + r') t)) (conjM (aDil k (1 + r') t)) := by
-      funext p
-      exact dj_conj_mul _ (dj_aDil_unit _ _ _ ht.ne') p
-    have h2 : (μ'.map (levM k r')).map (conjM (aDil k (1 + r') t)) =
-        ENNReal.ofReal ((t ^ kap k r')⁻¹) • μ'.map (levM k r') := by
-      rw [Measure.map_map hca hlev]
-      have : (conjM (aDil k (1 + r') t) ∘ levM k r') = levM k r' ∘ conjM (aDil k r' t) := by
-        funext x
-        exact hLev k r' t ht.ne' (Matrix.of x)
-      rw [this, ← Measure.map_map hlev hca', ih t ht, Measure.map_smul]
-    rw [Measure.map_map hca hmul, h1, ← Measure.map_map hmul (hca.prodMap hca), ← Measure.map_prod_map _ _ hca hca,
-      h2, hH k r' t ht, Measure.prod_smul_left, Measure.prod_smul_right, Measure.map_smul, Measure.map_smul, smul_smul,
-      hK k r', pow_add, mul_inv, ENNReal.ofReal_mul (by positivity)]
-  rw [hc, Measure.map_smul, key, smul_comm]
-
 end dj
 
 end Formalism.FourierDecayAlt.P.B2x8
@@ -1507,33 +1431,5 @@ end Formalism.FourierDecayAlt.P.B2x8
 namespace Formalism.FourierDecayAlt.P
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.B2 Formalism.FourierDecayAlt.P.B2x8
-
-theorem dilation_jacobian_of_parts : Formalism.FourierDecayAlt.B2.AssembleDilJac := by
-  intro hU hN hRec _ hEx hLev hH hK
-  have raw : DilJacRaw := by
-    intro k r
-    induction r with
-    | zero =>
-      intro μN _ t _
-      have h1 : aDil k 0 t = 1 := by
-        unfold aDil
-        rw [← Matrix.diagonal_one]
-        congr 1
-        funext i
-        have := i.isLt
-        rw [if_neg (by omega), if_pos (by omega)]
-      have h2 : (conjM (1 : Mat k 0) : Mt k 0 → Mt k 0) = id := by
-        funext x
-        simp [conjM]
-        rfl
-      have h3 : kap k 0 = 0 := by simp [kap]
-      rw [h1, h2, h3]
-      simp
-    | succ r' ih =>
-      rw [Nat.add_comm r' 1]
-      intro μN hμN t ht
-      obtain ⟨μ', hμ'⟩ := hEx k r'
-      exact dj_step hU hN hRec hLev hH hK k r' μ' hμ' (ih μ' hμ') μN hμN t ht
-  exact ⟨raw, fun k r Wp Wq _ _ _ _ D t ht => raw k r D.μN D.haarN t ht⟩
 
 end Formalism.FourierDecayAlt.P

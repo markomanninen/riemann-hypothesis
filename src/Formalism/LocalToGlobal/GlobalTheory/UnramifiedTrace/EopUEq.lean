@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.UnramifiedTrace.NatTr0Sum
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.UnramifiedTrace.NatTr0Sum
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,8 +67,8 @@ def DUFib0F (T : Forms0 D u) : Prop :=
           ∀ δ, IsDia T.cls0.lev (T.atT.eV v).1 (T.atT.eV v).2 k δ →
           G (T.cls0.y c * hcomp T (η q.1.1) (κ q.1.1) (Mu q.1.1 q.2)) = G (T.cls0.y c * δ))
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem dopU_eq (T : Forms0 D u) (v : (D.mem u).A.vT) (ψ : Fn D u 0)
     {G : UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F) → Fr D 0 (Nat.zero_le _) → ℂ}
     (hG : G ∈ AdFun T.cls0.lev (embT D))
@@ -92,8 +96,8 @@ theorem dopU_eq (T : Forms0 D u) (v : (D.mem u).A.vT) (ψ : Fn D u 0)
   obtain ⟨-, h2, h3⟩ := hmv g.1 hg0
   exact congrFun (dnU_term T v ψ hG hψ c g.1 (γ g.1) (η g.1) (κ g.1) h2 h3 (Mu g.1) (hMu g.1)) s
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem eopU_eq (T : Forms0 D u) (v : (D.mem u).A.vT) (ψ : Fn D u 0)
     {G : UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F) → Fr D 0 (Nat.zero_le _) → ℂ}
     (hG : G ∈ AdFun T.cls0.lev (embT D))

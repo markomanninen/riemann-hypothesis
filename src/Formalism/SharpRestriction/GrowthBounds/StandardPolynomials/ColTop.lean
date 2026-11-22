@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.MonomialSumEqProd
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.IoDChain
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColXNum
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColXPH
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColXSum
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.MonomialSumEqProd
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.IoDChain
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColXNum
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColXPH
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColXSum
+
+@[expose] public section
 
 noncomputable section
 

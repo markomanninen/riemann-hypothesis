@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BlockTriangularOneAddMat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BlockTriangularOneAddMat
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.PRep GlobalTheory.LGrp ValuativeRel
 open scoped NNReal
@@ -25,8 +29,7 @@ private theorem isSubquotient_smInd_congr {G V W : Type} [Group G] [TopologicalS
 open MeasureTheory ValuativeRel in
 open scoped NNReal in
 private theorem blk_points (n : Type) (j : n) :
-    _root_.GlobalTheory.SmGL.blk (_root_.GlobalTheory.SmGL.points n) j = j :=
-  _root_.GlobalTheory.SmGL.blk_apply (_root_.GlobalTheory.SmGL.points n) j ()
+    _root_.GlobalTheory.SmGL.blk (_root_.GlobalTheory.SmGL.points n) j = j := rfl
 
 open MeasureTheory ValuativeRel in
 open scoped NNReal in
@@ -128,12 +131,13 @@ private theorem borelGL_s_eq_leviEmb_points_leviTorus (k : Type) [Field k] [Topo
     [IsTopologicalRing k] [T2Space k] (n : Type) [Fintype n] [DecidableEq n] [LinearOrder n]
     (t : n → kˣ) :
     (_root_.GlobalTheory.LGrp.borelGL k n).s t =
-      _root_.GlobalTheory.SmGL.leviEmb k (_root_.GlobalTheory.SmGL.points n) (_root_.GlobalTheory.SmGL.leviTorus k n t) := by
+      _root_.GlobalTheory.SmGL.leviEmb k (_root_.GlobalTheory.SmGL.points n)
+        (_root_.GlobalTheory.SmGL.leviTorus k n t) := by
   ext i j
   change ((_root_.GlobalTheory.LGrp.diagHom k n t : GL n k) : Matrix n n k) i j = _
   rw [_root_.GlobalTheory.LGrp.diagHom_val]
   simp [_root_.GlobalTheory.SmGL.leviEmb, _root_.GlobalTheory.SmGL.leviTorus, _root_.GlobalTheory.SmGL.points]
-  by_cases h : i = j <;> simp [Matrix.diagonal_apply, h]
+  by_cases h : i = j <;> simp [h]
 
 open MeasureTheory ValuativeRel in
 open scoped NNReal in
@@ -148,11 +152,11 @@ private theorem borelGL_deltaHalf_eq_smGL_deltaHalf_leviTorus (k : Type) [Field 
     modulus_leviEmb_eq_smGL_modulus k (_root_.GlobalTheory.SmGL.points n) _
       (borelGL_U_eq_unipRad_points k n) _ _ _ (borelGL_s_eq_leviEmb_points_leviTorus k n _)]
 
+
 open MeasureTheory ValuativeRel in
 open scoped NNReal in
 variable (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
   (n : Type) [Fintype n] [DecidableEq n] [LinearOrder n] in
-
 theorem _root_.GlobalTheory.LGrp.SatakeCompare.isSubquot_ps_iff {V : Type} [AddCommGroup V] [Module ℂ V]
     (π : Representation ℂ (GL n k) V) (α : n → ℂˣ) :
     _root_.GlobalTheory.LGrp.IsSubquot π (_root_.GlobalTheory.LGrp.psGL k α) ↔
@@ -170,11 +174,11 @@ theorem _root_.GlobalTheory.LGrp.SatakeCompare.isSubquot_ps_iff {V : Type} [AddC
   simp [_root_.GlobalTheory.SmGL.torusChar_apply, _root_.GlobalTheory.LGrp.unrTorus_apply,
     _root_.GlobalTheory.LGrp.unrChar_eq]
 
+
 open MeasureTheory ValuativeRel in
 open scoped NNReal in
 variable (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
   (n : Type) [Fintype n] [DecidableEq n] [LinearOrder n] in
-
 theorem _root_.GlobalTheory.LGrp.SatakeCompare.hasSatakeGL_iff : ∀ (k : Type) [Field k] [ValuativeRel k]
     [TopologicalSpace k] [IsNonarchimedeanLocalField k] (n V : Type) [Fintype n] [DecidableEq n]
     [LinearOrder n] [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL n k) V)

@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsLiftGraphPoints
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBlockImageInverse
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PThmIUnique
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.NatCardEqPowLength
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsLiftGraphPoints
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBlockImageInverse
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PThmIUnique
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.NatCardEqPowLength
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets
@@ -38,14 +43,14 @@ theorem eval_map_int {σ : Type} (z : σ → ℂ) (f : MvPolynomial σ ℤ) :
   rw [eval_map, aeval_def, algebraMap_int_eq]
 
 def homogAt (c : ∀ k, ι k) (M : ℕ) (F : MRing ι) : MRing ι :=
-  ∑ m ∈ F.support, monomial m (coeff m F) * ∏ k, (X ⟨k, c k⟩ : MRing ι) ^ (M - ∑ i, m ⟨k, i⟩)
+  ∑ m ∈ F.support, monomial m (AddMonoidAlgebra.coeff F m) * ∏ k, (X ⟨k, c k⟩ : MRing ι) ^ (M - ∑ i, m ⟨k, i⟩)
 
 theorem homogAt_isMultiHomog (c : ∀ k, ι k) (M : ℕ) (F : MRing ι)
     (hM : ∀ m ∈ F.support, ∀ k, ∑ i, m ⟨k, i⟩ ≤ M) : IsMultiHomog (homogAt c M F) (fun _ => M) := by
   classical
   intro m' hm' k
   obtain ⟨m, hm, hm'⟩ := Finset.mem_biUnion.mp (support_sum hm')
-  have h := Inter.ThmIUnique.isMultiHomog_mul' (ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.isMultiHomog_monomial m (coeff m F))
+  have h := Inter.ThmIUnique.isMultiHomog_mul' (ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.isMultiHomog_monomial m (AddMonoidAlgebra.coeff F m))
     (Inter.ThmIUnique.isMultiHomog_coordMonomial c (fun k => M - ∑ i, m ⟨k, i⟩)) m' hm' k
   simp only [Pi.add_apply] at h
   have := hM m hm k
@@ -55,7 +60,8 @@ theorem homogAt_isMultiHomog (c : ∀ k, ι k) (M : ℕ) (F : MRing ι)
 theorem aeval_homogAt {S : Type} [CommRing S] (c : ∀ k, ι k) (M : ℕ) (F : MRing ι)
     (x : (Σ k, ι k) → S) (hx : ∀ k, x ⟨k, c k⟩ = 1) : aeval x (homogAt c M F) = aeval x F := by
   conv_rhs => rw [F.as_sum]
-  simp only [homogAt, map_sum, map_mul, map_prod, map_pow, aeval_X, hx, one_pow, Finset.prod_const_one, mul_one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [homogAt, map_sum, map_mul, map_prod, map_pow, aeval_X, hx, one_pow, Finset.prod_const_one, mul_one]
 
 theorem aeval_ratio_eq_zero {Ω : Type} [Field Ω] {y : (Σ k, ι k) → Ω} {w : (Σ k, ι k) → ℂ}
     (hw : w ∈ mcPts (mCoordIdeal y)) (c : ∀ k, ι k) (hyc : ∀ k, y ⟨k, c k⟩ ≠ 0)
@@ -81,8 +87,8 @@ theorem aeval_ratio_eq_zero {Ω : Type} [Field Ω] {y : (Σ k, ι k) → Ω} {w 
 
 end LiftGraphPoints
 
-open LiftGraphPoints in
 
+open LiftGraphPoints in
 theorem LiftGraphPoints.proof : LiftGraphPoints.Statement := by
   classical
   intro K _ ι _ Ω _ y n r v hv hgen w hw
@@ -114,7 +120,8 @@ theorem LiftGraphPoints.proof : LiftGraphPoints.Statement := by
       by_contra hcon
       push Not at hcon
       have hF : aeval (fun p => y p / y ⟨p.1, c p.1⟩) (∑ j, U j * Q j - 1) = 0 := by
-        simp only [map_sub, map_sum, map_mul, hU, hQ, map_one, hsum, sub_self]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sub, map_sum, map_mul, hU, hQ, map_one, hsum, sub_self]
       have h1 := aeval_ratio_eq_zero hw c hyc hwc hF
       have hσ0 : ∀ j, aeval (fun p => w p / w ⟨p.1, c p.1⟩) (Q j) = 0 := fun j => hcon j
       simp [hσ0] at h1
@@ -169,7 +176,7 @@ theorem LiftGraphPoints.proof : LiftGraphPoints.Statement := by
             show w ⟨k, i⟩ = w ⟨k, c k⟩ * (w ⟨k, i⟩ / w ⟨k, c k⟩)
             field_simp [hwc k]), h2, mul_zero]
     | zero => simp
-    | add x₁ x₂ _ _ h₁ h₂ => simp [map_add, h₁, h₂]
+    | add x₁ x₂ _ _ h₁ h₂ => simp [map_add (f := _), h₁, h₂]
     | smul a x _ hx => simp [smul_eq_mul, map_mul, hx]
 
 end

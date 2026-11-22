@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SmoothTranslationMeasure.Development
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SmoothTranslationMeasure.Development
+
+@[expose] public section
 
 open Matrix
 open scoped ContDiff

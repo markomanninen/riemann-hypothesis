@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ variable {F M} {M' : Type} [AddCommGroup M'] [Module k M']
 theorem strY_map (f : M →ₗ[k] M') {y : F.G0 → M} (hy : y ∈ F.strY M) : (fun g => f (y g)) ∈ F.strY M' := by
   obtain ⟨h1, h2, h3, h4, h5⟩ := hy
   refine ⟨h1.comp f, fun g h => ?_, congrArg f h3, fun v => ?_, fun v => ?_⟩
-  · simp only [h2, map_add, map_smul]
+  · simp only [h2, map_add (f := _), map_smul]
   · obtain ⟨α, hα⟩ := h4 v
     exact ⟨f α, fun s => by simp only [hα, map_smul]⟩
   · obtain ⟨β, hβ⟩ := h5 v
@@ -64,7 +68,7 @@ theorem strY_map (f : M →ₗ[k] M') {y : F.G0 → M} (hy : y ∈ F.strY M) : (
 theorem strS_map (f : M →ₗ[k] M') {a : F.G0 → M} (ha : a ∈ F.strS M) : (fun g => f (a g)) ∈ F.strS M' := by
   obtain ⟨h1, h2, h3, h4⟩ := ha
   refine ⟨h1.comp f, fun g h => ?_, fun g => congrArg f (h3 g), fun v => ?_⟩
-  · simp only [h2, map_add, map_smul]
+  · simp only [h2, map_add (f := _), map_smul]
   · obtain ⟨γ, hγ⟩ := h4 v
     exact ⟨f γ, fun s => by simp only [hγ, map_smul]⟩
 

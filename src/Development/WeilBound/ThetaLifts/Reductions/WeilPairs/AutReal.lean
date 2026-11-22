@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutDef
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutRealA
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutRealB
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutDef
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutRealA
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutRealB
+
+@[expose] public section
 
 noncomputable section
 

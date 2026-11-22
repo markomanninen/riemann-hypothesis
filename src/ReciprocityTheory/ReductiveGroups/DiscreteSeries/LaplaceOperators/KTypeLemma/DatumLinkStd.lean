@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.PsiDatum
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.PsiDatum
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,9 +24,8 @@ theorem psiDatum_std {n : ℕ} (ε : Fin n → Bool) (lam : Fin n → ℝ) (h : 
       (∀ k' ∈ Kset ε, ∀ v ∈ V, ∃ w ∈ V, (w : H) = σ k' v) ∧
       ∀ g ∈ UJset ε, ∀ v v' : V,
         ⟪((v' : D) : H), σ g ((v : D) : H)⟫_ℂ = ⟪ι v', S7.PsiM T μ g (ι v)⟫_ℂ := by
-  have hP := S7.isPsiFor_psiM ε lam h T μ hlam hμ hgap hq h8
-  set Ψ := S7.PsiM T μ with hΨ
-  replace hP : IsPsiFor ε lam T Ψ := by first | exact hP | exact hP.1
+  let Ψ := S7.PsiM T μ
+  have hP : IsPsiFor ε lam T Ψ := (S7.isPsiFor_psiM ε lam h T μ hlam hμ hgap hq h8).1
   have hv₀ : T.w ≠ 0 := fun h0 => by
     have h1 := T.w_norm
     rw [h0, norm_zero] at h1
@@ -102,8 +105,8 @@ theorem datum_link_std {n : ℕ} {ε : Fin n → Bool} {lam : Fin n → ℝ} {h 
     show (1 : Matrix (Fin n) (Fin n) ℂ)ᴴ * Jm ε * 1 = Jm ε
     simp
   have hcoef : ∀ g ∈ UJset ε, ∀ v v' : V, ⟪((v' : D) : H), σ g ((v : D) : H)⟫_ℂ =
-      ⟪(e.trans ι₂) v', S7.PsiM T μ g ((e.trans ι₂) v)⟫_ℂ := fun g hgm v v' => by
-    rw [← hU g hgm v v', hco g hgm]; rfl
+      ⟪(e.trans ι₂) v', S7.PsiM T μ g ((e.trans ι₂) v)⟫_ℂ := fun g hgm v v' =>
+    (hU g hgm v v').symm.trans (hco g hgm (φ v) (φ v'))
   have hiso : ∀ v v' : V, ⟪(e.trans ι₂) v', (e.trans ι₂) v⟫_ℂ =
       ⟪((v' : D) : H), ((v : D) : H)⟫_ℂ := fun v v' => by
     have := hcoef 1 h1J v v'

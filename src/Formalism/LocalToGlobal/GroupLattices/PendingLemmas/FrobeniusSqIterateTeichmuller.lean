@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+
+@[expose] public section
 
 noncomputable section
 
@@ -121,7 +125,8 @@ theorem core (m : ℕ) : ∃ om omS : Fin (m + 1) → WW p,
     simp only [Equiv.coe_addRight, add_sub_cancel_right]
     calc ∑ j : Fin (m + 1), v (j + 1) ^ (r : ℕ) * sig2 p (B j s)
         = sig2 p (∑ j : Fin (m + 1), v j ^ (r : ℕ) * B j s) := by
-          rw [map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum]
           simp only [map_mul, map_pow, hshift]
       _ = sig2 p (if r = s then 1 else 0) := by rw [hBe]
       _ = if r = s then 1 else 0 := by split_ifs <;> simp

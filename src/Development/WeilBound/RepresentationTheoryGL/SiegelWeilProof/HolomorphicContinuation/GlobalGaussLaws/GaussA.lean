@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.GaussSt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.GaussSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,8 @@ variable {m n : ℕ}
 
 theorem evX_Qb (ε : Fin m → Bool) (b : Bool) (i j : Fin n) (u : Fin m → Fin n → ℂ) :
     evX (Qb ε b i j) u = ∑ a ∈ Finset.univ.filter (fun a => ε a = b), star (u a i) * u a j := by
-  simp [evX, Qb, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [evX, Qb, map_sum]
 
 theorem gramB_apply (ε : Fin m → Bool) (b : Bool) (u : Fin m → Fin n → ℂ) (i j : Fin n) :
     gramB ε b u i j = ∑ a ∈ Finset.univ.filter (fun a => ε a = b), star (u a i) * u a j := evX_Qb ε b i j u
@@ -31,7 +36,7 @@ theorem gramX_eq (ε : Fin m → Bool) (u : Fin m → Fin n → ℂ) :
 private theorem gramB_eq_conjTranspose_diagonal_mul (ε : Fin m → Bool) (b : Bool) (u : Fin m → Fin n → ℂ) :
     gramB ε b u = (Matrix.of u)ᴴ * diagonal (fun a => if ε a = b then (1 : ℂ) else 0) * Matrix.of u := by
   ext i j
-  simp [gramB_apply, mul_apply, diagonal_apply, Finset.sum_filter, conjTranspose_apply]
+  simp [gramB_apply, Matrix.mul_apply, diagonal_apply, Finset.sum_filter, conjTranspose_apply]
 
 theorem gramB_mul (ε : Fin m → Bool) (b : Bool) (u : Fin m → Fin n → ℂ) (a : Matrix (Fin n) (Fin n) ℂ) :
     gramB ε b (Matrix.of u * a) = aᴴ * gramB ε b u * a := by

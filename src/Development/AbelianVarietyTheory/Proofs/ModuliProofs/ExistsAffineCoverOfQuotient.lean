@@ -1,13 +1,18 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.ExistsIsAffineOpenOfFiniteOpensProj
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsSecNonzeroLocusEqOfLbIso
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.PolarizedAbelianEmbeddingBySections
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSmulApplyEqOfEqOnInvariants
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.ExistsIsAffineOpenOfFiniteOpensProj
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsSecNonzeroLocusEqOfLbIso
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.PolarizedAbelianEmbeddingBySections
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSmulApplyEqOfEqOnInvariants
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct Pointwise
@@ -49,12 +54,12 @@ theorem eq_of_gs (h : IsAffineQuotient ρ π) {W : Y.Opens} {a b : Γ(Y, W)}
     (((Category.id_comp π).symm ▸ e x hx :).trans (gs_pull (𝟙 X) π x W hx b).symm))
 
 theorem exists_norm [Fintype G] (h : IsAffineQuotient ρ π) {W : Y.Opens} {D : X.Opens}
-    (hD : ∀ g, π ⁻¹ᵁ W ≤ (ρ g).hom ⁻¹ᵁ D) (r : Γ(X, D)) :
-    ∃ a : Γ(Y, W), ∀ x, π x ∈ W → gs π x W a = ∏ g, gs (ρ g).hom x D r := by
-  obtain ⟨a, ha⟩ := h.mem_range_app W (∏ g, (ρ g).hom.appLE D _ (hD g) r) fun k => ⟨h.preimage_le W k, by
+    (hD : ∀ g, π ⁻¹ᵁ W ≤ (ρ g).asIso.hom ⁻¹ᵁ D) (r : Γ(X, D)) :
+    ∃ a : Γ(Y, W), ∀ x, π x ∈ W → gs π x W a = ∏ g, gs (ρ g).asIso.hom x D r := by
+  obtain ⟨a, ha⟩ := h.mem_range_app W (∏ g, (ρ g).asIso.hom.appLE D _ (hD g) r) fun k => ⟨h.preimage_le W k, by
     rw [map_prod]
     refine Fintype.prod_equiv (Equiv.mulRight k) _ _ fun g => ?_
-    have : (ρ (g * k)).hom = (ρ k).hom ≫ (ρ g).hom := by rw [map_mul]; rfl
+    have : (ρ (g * k)).asIso.hom = (ρ k).asIso.hom ≫ (ρ g).asIso.hom := by rw [map_mul]; rfl
     simp only [Equiv.coe_mulRight, ← CommRingCat.comp_apply, Scheme.Hom.appLE_comp_appLE, this]⟩
   refine ⟨a, fun x hx => ?_⟩
   have e := gs_pull (𝟙 X) π x W hx a
@@ -64,24 +69,24 @@ theorem exists_norm [Fintype G] (h : IsAffineQuotient ρ π) {W : Y.Opens} {D : 
   exact (gs_eq (𝟙 X) x (π ⁻¹ᵁ W) hx _).symm.trans ((gs_appLE _ D _ (hD g) (𝟙 X) x hx r).trans (by rw [Category.id_comp]))
 
 theorem exists_affine_cover_of_quotient :
-    ∀ (Γ : Type) [Group Γ] [Finite Γ] (X X' : Scheme.{0}) (ρ : Γ →* Aut X) (π : X ⟶ X'), (IsAffineHom π ∧ (∀ g, (ρ g).hom ≫ π = π) ∧ ∀ V : X'.Opens, Function.Injective (π.app V).hom ∧ ∀ f : Γ(X, π ⁻¹ᵁ V), (∀ g (h : π ⁻¹ᵁ V ≤ (ρ g).hom ⁻¹ᵁ (π ⁻¹ᵁ V)), ((ρ g).hom.appLE _ _ h).hom f = f) → f ∈ Set.range (π.app V).hom) → X.IsSeparated → ∀ (L : LB X) (n : ℕ) (σ : Fin n → LB.Sec L), L.IsLB → (∀ i, IsAffineOpen (Out.nonzeroLocus (σ i))) → (∀ x : X, ∃ i, ∀ g, (ρ g).hom x ∈ Out.nonzeroLocus (σ i)) → (∃ (L : LB X') (n : ℕ) (σ : Fin n → LB.Sec L), L.IsLB ∧ (∀ i, IsAffineOpen (Out.nonzeroLocus (σ i))) ∧ ⨆ i, Out.nonzeroLocus (σ i) = ⊤) := by
+    ∀ (Γ : Type) [Group Γ] [Finite Γ] (X X' : Scheme.{0}) (ρ : Γ →* Aut X) (π : X ⟶ X'), (IsAffineHom π ∧ (∀ g, (ρ g).asIso.hom ≫ π = π) ∧ ∀ V : X'.Opens, Function.Injective (π.app V).hom ∧ ∀ f : Γ(X, π ⁻¹ᵁ V), (∀ g (h : π ⁻¹ᵁ V ≤ (ρ g).asIso.hom ⁻¹ᵁ (π ⁻¹ᵁ V)), ((ρ g).asIso.hom.appLE _ _ h).hom f = f) → f ∈ Set.range (π.app V).hom) → X.IsSeparated → ∀ (L : LB X) (n : ℕ) (σ : Fin n → LB.Sec L), L.IsLB → (∀ i, IsAffineOpen (Out.nonzeroLocus (σ i))) → (∀ x : X, ∃ i, ∀ g, (ρ g).asIso.hom x ∈ Out.nonzeroLocus (σ i)) → (∃ (L : LB X') (n : ℕ) (σ : Fin n → LB.Sec L), L.IsLB ∧ (∀ i, IsAffineOpen (Out.nonzeroLocus (σ i))) ∧ ⨆ i, Out.nonzeroLocus (σ i) = ⊤) := by
   rintro G _ _ X Y ρ π H _ L n σ - haff hcov
   classical
   have := Fintype.ofFinite G
   obtain ⟨-, hsurj, -, -, hst⟩ := quotient_isIntegral_surjective_orbits G X Y ρ π H
   have h : IsAffineQuotient ρ π :=
     ⟨H.2.1, H.1, fun W => (H.2.2 W).1, fun W s hs => (H.2.2 W).2 s fun g _ => (hs g).2⟩
-  let W : Fin n → X.Opens := fun i => ⨅ g, (ρ g).hom ⁻¹ᵁ Out.nonzeroLocus (σ i)
-  have hW (i x) : x ∈ W i ↔ ∀ g, (ρ g).hom x ∈ Out.nonzeroLocus (σ i) := by
+  let W : Fin n → X.Opens := fun i => ⨅ g, (ρ g).asIso.hom ⁻¹ᵁ Out.nonzeroLocus (σ i)
+  have hW (i x) : x ∈ W i ↔ ∀ g, (ρ g).asIso.hom x ∈ Out.nonzeroLocus (σ i) := by
     change x ∈ ((W i : X.Opens) : Set X) ↔ _
     simp only [W, Opens.coe_iInf, Set.mem_iInter]
     rfl
   choose V hV using fun i => hst (W i) fun k => by
     ext x
-    change (ρ k).hom x ∈ W i ↔ x ∈ W i
+    change (ρ k).asIso.hom x ∈ W i ↔ x ∈ W i
     simp only [hW, ← aut_map_mul_apply]
     exact ⟨fun e g => by simpa using e (g * k⁻¹), fun e g => e _⟩
-  have hm (i x) : π x ∈ V i ↔ ∀ g, (ρ g).hom x ∈ Out.nonzeroLocus (σ i) := by
+  have hm (i x) : π x ∈ V i ↔ ∀ g, (ρ g).asIso.hom x ∈ Out.nonzeroLocus (σ i) := by
     rw [← hW, ← hV]; rfl
   choose r hr using fun i j => AmpleSpan.exists_isRatio (σ j) (σ i)
   choose a ha using fun i j => exists_norm h (W := V i) (D := Out.nonzeroLocus (σ i)) (fun g x hx => (hm i x).1 hx g) (r i j)
@@ -120,6 +125,6 @@ theorem exists_affine_cover_of_quotient :
   rw [hσ']
   refine h.isAffineOpen_of_preimage ?_
   rw [hV]
-  exact IsAffineOpen.iInf fun g => (haff i).preimage (show X ≅ X from ρ g).hom
+  exact IsAffineOpen.iInf fun g => (haff i).preimage (ρ g).asIso.hom
 
 end GlobalTheory.QuotientNorm

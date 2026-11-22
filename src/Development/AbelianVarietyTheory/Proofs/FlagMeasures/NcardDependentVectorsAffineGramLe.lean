@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PrimOfIsUnitDet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PrimOfIsUnitDet
+
+@[expose] public section
 
 open GlobalTheory.GramCount
 open scoped Classical
@@ -38,7 +42,7 @@ theorem dep_unit_or_idem (c : B →+* B) (hc : ∀ u, c (c u) = u) {ω : B} (hω
     exact hu (isUnit_of_mul_isUnit_left (hf _ (by rw [map_mul, hc, mul_comm]) h))
   have h2 : a + c a ≠ 0 := fun h =>
     hu (dep_isUnit_of_skew c hc hω hf (by linear_combination h) h0)
-  have h3 : c (a + c a) = a + c a := by rw [map_add, hc, add_comm]
+  have h3 : c (a + c a) = a + c a := by rw [map_add (f := _), hc, add_comm]
   obtain ⟨b, hb⟩ := (hf _ h3 h2).exists_left_inv
   have hb' : c b * (a + c a) = 1 := by
     have := congrArg c hb
@@ -112,7 +116,7 @@ theorem ncard_depSet_idem_le [Fintype B] (c : B →+* B) (hc : ∀ u, c (c u) = 
   let F : depSet c x g ε × (Fin k → B) → (Fin k → B) × (Fin n → {t : B // c t = t}) :=
     fun p => (fun i => c (ε * ip c p.1.1 (d i)) + ε * p.2 i,
       fun l => ⟨(c ε • p.1.1 + ∑ j, (c ε * p.2 j) • d j) l +
-        c ((c ε • p.1.1 + ∑ j, (c ε * p.2 j) • d j) l), by rw [map_add, hc, add_comm]⟩)
+        c ((c ε • p.1.1 + ∑ j, (c ε * p.2 j) • d j) l), by rw [map_add (f := _), hc, add_comm]⟩)
   have hF : Function.Injective F := by
     rintro ⟨⟨y, hy, s, hs⟩, r⟩ ⟨⟨y', hy', s', hs'⟩, r'⟩ h
     obtain ⟨hA, hB⟩ := Prod.ext_iff.1 h
@@ -126,7 +130,7 @@ theorem ncard_depSet_idem_le [Fintype B] (c : B →+* B) (hc : ∀ u, c (c u) = 
         linear_combination this)
       (fun l => by
         have := congrArg Subtype.val (congrFun hB l)
-        simp only [F, Pi.add_apply, map_add] at this
+        simp only [F, Pi.add_apply, map_add (f := _)] at this
         simp only [smul_sub, mul_sub, sub_smul, Finset.sum_sub_distrib, Pi.add_apply,
           Pi.sub_apply, map_add, map_sub]
         linear_combination this)

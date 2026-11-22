@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.ThetaBasic
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.SquareIntegrableCovers.SetLIntegralLeOfCover
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.ThetaBasic
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.SquareIntegrableCovers.SetLIntegralLeOfCover
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem admissible_le_holds : AdmLe := by
       intro hk
       have h1 := h (i.1 + k + 1)
       unfold An.sr at h1
-      rw [dif_pos ⟨by omega, by omega⟩] at h1
+      rw [dite_eq_left ⟨by omega, by omega⟩] at h1
       have h2 := ih (by omega)
       have e : (⟨i.1 + k + 1 - 1, by omega⟩ : Fin n) = ⟨i.1 + k, by omega⟩ := Fin.ext (by simp)
       rw [e] at h1
@@ -78,7 +82,7 @@ theorem cellCover_of (h1 : Cover) (h2 : ConjCpt) : CellCover := by
       simp only [← mul_assoc]
       rw [← e2, mul_inv_cancel, one_mul]
 
-theorem discrete_range (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) :
+theorem discrete_range (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) :
     DiscreteTopology (ratGL E n).range :=
   DiscreteTopology.of_continuous_injective (β := latticeGL E n) (f := Subgroup.inclusion le_sup_left)
     (continuous_subtype_val.subtype_mk _) (Subgroup.inclusion_injective _)

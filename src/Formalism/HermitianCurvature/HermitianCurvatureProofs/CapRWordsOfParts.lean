@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChartEqsOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChartEqsOfParts
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField Matrix
 open scoped ContDiff
@@ -93,10 +97,10 @@ def FExpSymb : Prop :=
 
 def DetShiftCoeff : Prop :=
   ∀ (t : ℕ) (M : Matrix (Fin t) (Fin t) ℂ) (j : ℕ), j ≤ t →
-    MvPolynomial.coeff (Finsupp.single (0 : Fin 2) (t - j) + Finsupp.single (1 : Fin 2) j)
-      (∑ σ : Equiv.Perm (Fin t), ((Equiv.Perm.sign σ : ℤ) : MvPolynomial (Fin 2) ℂ) *
+    AddMonoidAlgebra.coeff (∑ σ : Equiv.Perm (Fin t), ((Equiv.Perm.sign σ : ℤ) : MvPolynomial (Fin 2) ℂ) *
         ∏ i : Fin t, ((if σ i = i then MvPolynomial.X 0 - MvPolynomial.C ((i : ℕ) : ℂ) else 0) +
-          MvPolynomial.X 1 * MvPolynomial.C (M (σ i) i))) =
+          MvPolynomial.X 1 * MvPolynomial.C (M (σ i) i)))
+      (Finsupp.single (0 : Fin 2) (t - j) + Finsupp.single (1 : Fin 2) j) =
       (-1) ^ j * M.charpoly.coeff (t - j)
 
 def CoeffInterp : Prop :=

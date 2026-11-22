@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsHermRingRat
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsHermRingRat
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -22,7 +26,8 @@ theorem dual_mulVec (v : HeightOneSpectrum (𝓞 F)) (A : Matrix (Fin n) (Fin r)
     (z : Fin n → Fv F v ⊗[F] E) (i : Fin r) :
     ((cT (σ : E →+* E) A * J).map (inclR (F := F) (Fv F v)) *ᵥ z) i
       = hR (Fv F v) σ J (colV v A i) z := by
-  simp only [hR, Formalism.UG.hform, colV, JR, sigR_inclR, mulVec, dotProduct, map_apply, Matrix.mul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hR, Formalism.UG.hform, colV, JR, sigR_inclR, mulVec, dotProduct, map_apply, Matrix.mul_apply,
     cT, transpose_apply, map_sum, map_mul, Finset.sum_mul, RingHom.coe_coe]
   rw [Finset.sum_comm]
 
@@ -38,7 +43,8 @@ theorem hR_colV (v : HeightOneSpectrum (𝓞 F)) (A : Matrix (Fin n) (Fin r) E)
       = inclR (F := F) (Fv F v) ((cT (σ : E →+* E) A * J * B) i j) := by
   rw [← dual_mulVec]
   conv_rhs => rw [Matrix.mul_apply]
-  simp only [mulVec, dotProduct, map_apply, colV, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mulVec, dotProduct, map_apply, colV, map_sum, map_mul]
 
 theorem sigma_sigma (hCM : IsCMExt F E σ) (x : E) : σ (σ x) = x := by
   obtain ⟨τ⟩ : Nonempty (E →+* ℂ) := inferInstance

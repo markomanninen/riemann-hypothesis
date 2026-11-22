@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreIsolFinite
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PVanishNearPoint
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFiniteMapOpen
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreIsolFinite
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PVanishNearPoint
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFiniteMapOpen
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

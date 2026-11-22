@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.FrameB
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SplitOrInertK
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.FrameB
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SplitOrInertK
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -18,7 +22,7 @@ theorem inD_mem_k {B : Base F E} (hB : _root_.UpperTheory.TP.W.GoodK σ B) {w : 
   set Z := inclR (F := F) (Fv F v) z
   have key : ∀ y ∈ intLoc F E v, y * Z + sigR _ σ (y * Z) ∈ intLoc F E v := fun y hy => by
     refine intLoc_induction (p := fun y => y * Z + sigR _ σ (y * Z) ∈ intLoc F E v) (fun a ha x => ?_) (by simp)
-      (fun _ _ h h' => by convert add_mem h h' using 1; simp only [add_mul, map_add]; ring)
+      (fun _ _ h h' => by convert add_mem h h' using 1; simp only [add_mul, map_add (f := _)]; ring)
       (fun _ h => by convert neg_mem h using 1; simp only [neg_mul, map_neg]; ring) hy
     convert tmul_mem_intLoc (mul_mem ha (trace_mem hB.std (hB.inert v w hw).2.2 (hz.mul x))) 1 using 1
     rw [show a ⊗ₜ[F] (x : E) * Z = a ⊗ₜ[F] (z * x) from (Algebra.TensorProduct.tmul_mul_tmul a 1 _ z).trans (by rw [mul_one, mul_comm])]
@@ -42,7 +46,7 @@ theorem exists_loc_k {B : Base F E} (hB : _root_.UpperTheory.TP.W.GoodK σ B) {Y
       (∀ y, (∀ i, y i ∈ intLoc F E v) ↔ a.1 *ᵥ y ∈ latLoc F Y.L v) ∧ a.1 = l.1 • g.1 ∧ Uni σ v Y.J g := by
   have hc := hB.cm
   have hσ := cm_conj_conj hc
-  have hL : Y.L.IsLattice E := hY.elim (·.lat) (·.lat)
+  haveI hL : Y.L.IsFullLattice E := hY.elim (·.lat) (·.lat)
   obtain ⟨P, h1, h2⟩ := Frames.exists_rational_frame Y.L v
   let ι := inclR (F := F) (E := E) (Fv F v)
   set G := P.1ᵀ * Y.J * P.1.map σ with hG
@@ -97,7 +101,7 @@ theorem exists_ad_k {B : Base F E} (hB : _root_.UpperTheory.TP.W.GoodK σ B) {Y 
       (∀ v, (∃ l : (Fv F v ⊗[F] E)ˣ, (bc (compFin F E v) a).1 = l.1 • (bc (compFin F E v) g).1) ∧ Uni σ v Y.J (bc (compFin F E v) g)) ∧
       ∀ w, bc (piInf (B.emb w)) g = c w := by
   classical
-  have hL : Y.L.IsLattice E := hY.elim (·.lat) (·.lat)
+  haveI hL : Y.L.IsFullLattice E := hY.elim (·.lat) (·.lat)
   obtain ⟨S, hS⟩ := Frames.exists_finset_latLoc_eq (F := F) Y.L
   have h0 : ∀ᶠ v : Pl F in cofinite, v ∉ S ∧ ∀ i j, LocInt v (Y.J i j) ∧ LocInt v (Y.J⁻¹ i j) :=
     S.eventually_cofinite_notMem.and (eventually_all.2 fun i => eventually_all.2 fun j => (ae_locInt _).and (ae_locInt _))

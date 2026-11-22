@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.IsIsoTermComparisonRestrictScalars
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.IsIsoTermComparisonRestrictScalars
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,16 +21,16 @@ def delta (c : Finset ι → E) : Finset ι → E :=
 def Dtot (d : E →+ E) (c : Finset ι → E) : Finset ι → E :=
   fun t => delta c t + (-1 : ℤ) ^ t.card • d (c t)
 
-omit [LinearOrder ι] in
 
+omit [LinearOrder ι] in
 def InCech (N : Finset ι → AddSubgroup E) (m : ℕ) (c : Finset ι → E) : Prop :=
   c ∅ = 0 ∧ (∀ s, c s ∈ N s) ∧ ∀ s, s.card ≠ m → c s = 0
 
 def CechZero (N : Finset ι → AddSubgroup E) (b : ℕ) : Prop :=
   ∀ c, InCech N (b + 1) c → delta c = 0 → ∃ y, InCech N b y ∧ delta y = c
 
-omit [LinearOrder ι] in
 
+omit [LinearOrder ι] in
 def InTot (T : ℕ → Finset ι → AddSubgroup E) (m : ℕ) (c : Finset ι → E) : Prop :=
   c ∅ = 0 ∧ (∀ q s, q + s.card = m → c s ∈ T q s) ∧ ∀ s, m < s.card → c s = 0
 
@@ -61,8 +65,8 @@ def forms (B : Set K) (L : Set V) (q : ℕ) : AddSubgroup (ExteriorAlgebra K V) 
 
 variable {ι : Type} [LinearOrder ι]
 
-omit [LinearOrder ι] in
 
+omit [LinearOrder ι] in
 structure IsDatum (p : ℕ) (d : ExteriorAlgebra K V →+ ExteriorAlgebra K V) (f : ι → V →+ V)
     (h : ι → ι → V →+ K) : Prop where
   f_smul : ∀ i (c : K) v, f i (c • v) = c ^ p • f i v
@@ -79,8 +83,8 @@ def Lop (f : ι → V →+ V) (h : ι → ι → V →+ K) (v : V) (y : Finset �
         h (t.min' ht) ((t.erase (t.min' ht)).min' h2) v • y (t.erase (t.min' ht)) else 0)
   else 0
 
-omit [LinearOrder ι] in
 
+omit [LinearOrder ι] in
 def oneC : Finset ι → ExteriorAlgebra K V := fun t => if t.card = 1 then 1 else 0
 
 def prodL (f : ι → V →+ V) (h : ι → ι → V →+ K) (vs : List V) : Finset ι → ExteriorAlgebra K V :=

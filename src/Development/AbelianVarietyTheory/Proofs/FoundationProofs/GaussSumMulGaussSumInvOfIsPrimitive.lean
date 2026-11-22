@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.TupleConstantsNeZero
-import Formalism.QuotientMetricDivisors.ReductionLemmaZero
-import Formalism.QuotientMetricDivisors.ProdFormula
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.TupleConstantsNeZero
+public import Formalism.QuotientMetricDivisors.ReductionLemmaZero
+public import Formalism.QuotientMetricDivisors.ProdFormula
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Finset GlobalTheory.Square
 open Formalism.DivisionValues (vw conjPl)
 open Formalism.PairingDivisionLocalBalance (Pl wt)

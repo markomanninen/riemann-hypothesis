@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.DYdc4.main :
     ∀ (n a : ℕ) (G : Finset (Fin n)),

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsRedKerA
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsRedKerA
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,9 +20,8 @@ variable (I : AutInst)
 abbrev sg : I.E ⊗[I.F] Af I.F →+* I.E ⊗[I.F] Af I.F := Formalism.UG.sigR I.cm.sig (Af I.F)
 
 theorem sg_sg (x : I.E ⊗[I.F] Af I.F) : sg I (sg I x) = x := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  induction x using TensorProduct.inductionOn with
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   | tmul e b =>
     show (I.cm.sig (I.cm.sig e)) ⊗ₜ[I.F] b = e ⊗ₜ[I.F] b
     have : I.cm.sig (I.cm.sig e) = e := star_star e
@@ -39,7 +42,8 @@ theorem hhat_conj (x y : Fin I.n → I.E ⊗[I.F] Af I.F) : sg I (hhat I x y) = 
     rw [← starRingEnd_apply]
     simpa [Formalism.UG.cT] using this
   unfold hhat Formalism.UG.hform
-  simp only [map_sum, map_mul, sg_sg, hJ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, sg_sg, hJ]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring
@@ -217,10 +221,6 @@ theorem congW_intCast (c : ℤ) : CongW (w := w) p (c : I.E ⊗[I.F] Af I.F) (c 
 
 theorem congW_natCast (c : ℕ) : CongW (w := w) p (c : I.E ⊗[I.F] Af I.F) (c : ZMod p) :=
   ⟨c, by simp, by simp⟩
-
-theorem congW_val [NeZero p] {t : I.E ⊗[I.F] Af I.F} {m : ZMod p}
-    (h : t - ((m.val : ℕ) : I.E ⊗[I.F] Af I.F) ∈ Wq I w) : CongW (w := w) p t m :=
-  ⟨m.val, by simp, by simpa using h⟩
 
 theorem congW_add {t t' : I.E ⊗[I.F] Af I.F} {m m' : ZMod p} (h : CongW (w := w) p t m)
     (h' : CongW (w := w) p t' m') : CongW (w := w) p (t + t') (m + m') := by

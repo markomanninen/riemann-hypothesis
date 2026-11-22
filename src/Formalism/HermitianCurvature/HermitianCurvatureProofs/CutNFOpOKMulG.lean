@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopDom
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopDom
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP
 

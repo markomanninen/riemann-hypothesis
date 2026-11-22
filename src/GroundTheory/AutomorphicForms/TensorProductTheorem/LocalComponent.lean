@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.TensorProductTheorem.Window
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.Window
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ variable {L : Type*} [Group L] [TopologicalSpace L] [IsTopologicalGroup L]
 
 section General
 
-variable (σ) in
 
+variable (σ) in
 def genSubrep (N : Submodule ℂ V) : Subrepresentation σ where
   toSubmodule := ⨆ g : L, N.map (σ g)
   apply_mem_toSubmodule g x hx := by
@@ -48,7 +52,7 @@ variable (hσ : IsSmooth σ) {K : Subgroup L} (hKc : IsCompact (K : Set L))
 def genKernel : Submodule ℂ (genSubrep σ N).toSubmodule where
   carrier := {u | ∀ g, fixedProj σ hσ hKc hKo (σ g u) = 0}
   add_mem' {a b} ha hb g := by
-    simp only [mem_setOf_eq, Submodule.coe_add, map_add, ha g, hb g, add_zero]
+    simp only [mem_setOf_eq, Submodule.coe_add, map_add (f := _), ha g, hb g, add_zero]
   zero_mem' g := by simp
   smul_mem' c a ha g := by
     simp only [mem_setOf_eq, Submodule.coe_smul, map_smul, ha g, smul_zero]
@@ -98,8 +102,8 @@ section Simple
 variable (hNK : N ≤ fixedVectors σ K)
   (hNst : ∀ g, ∀ n ∈ N, (fixedProj σ hσ hKc hKo (σ g n) : V) ∈ N)
 
-include hNK hNst in
 
+include hNK hNst in
 theorem mem_of_mem_genSubrep_fixed {u : V} (hu : u ∈ (genSubrep σ N).toSubmodule)
     (huK : u ∈ fixedVectors σ K) : u ∈ N := by
   have h1 : (fixedProj σ hσ hKc hKo u : V) = u := fixedProj_apply_of_mem hσ hKc hKo huK
@@ -127,8 +131,8 @@ theorem genQuotMk_injective : Function.Injective (genQuotMk hσ hKc hKo N) := by
   rw [this]
   rfl
 
-include hNK in
 
+include hNK in
 theorem genQuotMk_mem_fixedVectors (n : N) :
     genQuotMk hσ hKc hKo N n ∈ fixedVectors (genQuotRep hσ hKc hKo N) K := by
   intro k hk
@@ -137,8 +141,8 @@ theorem genQuotMk_mem_fixedVectors (n : N) :
   congr 1
   exact Subtype.ext (hNK n.2 k hk)
 
-include hNK hNst in
 
+include hNK hNst in
 theorem isIrreducible_genQuotRep (hN0 : N ≠ ⊥)
     (hNmin : ∀ N₁ : Submodule ℂ V, N₁ ≤ N → N₁ ≠ ⊥ →
       (∀ g, ∀ n ∈ N₁, (fixedProj σ hσ hKc hKo (σ g n) : V) ∈ N₁) → N₁ = N) :

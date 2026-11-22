@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RestrictsSelf
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeilDeligneParamAboveLIndependentLocalEmbedding
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormVZpowDegEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RestrictsSelf
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeilDeligneParamAboveLIndependentLocalEmbedding
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormVZpowDegEq
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -50,9 +55,11 @@ theorem toRes_ofRes (x : ↥(Dpst P (GlobalTheory.Pst.resTo ρ hle))) : toRes P 
 theorem ofRes_toRes (x : ↥(Dpst P ρ)) : ofRes P ρ hle (toRes P ρ hle x) = x := rfl
 
 theorem toRes_smul (a : ↥LL.1) (x : ↥(Dpst P ρ)) :
-    toRes P ρ hle (a • x) = (RingHom.id _ a) • toRes P ρ hle x := rfl
+    toRes P ρ hle ((Dpst P ρ).module.toSMul.smul a x) =
+      (Dpst P (GlobalTheory.Pst.resTo ρ hle)).module.toSMul.smul (RingHom.id _ a) (toRes P ρ hle x) := rfl
 theorem ofRes_smul (a : ↥LL.1) (x : ↥(Dpst P (GlobalTheory.Pst.resTo ρ hle))) :
-    ofRes P ρ hle (a • x) = (RingHom.id _ a) • ofRes P ρ hle x := rfl
+    ofRes P ρ hle ((Dpst P (GlobalTheory.Pst.resTo ρ hle)).module.toSMul.smul a x) =
+      (Dpst P ρ).module.toSMul.smul (RingHom.id _ a) (ofRes P ρ hle x) := rfl
 
 theorem toRes_mulD (c : ↥(MaximalUnramifiedExtension l)) (x : ↥(Dpst P ρ)) :
     toRes P ρ hle (mulD P ρ c x) = mulD P (GlobalTheory.Pst.resTo ρ hle) c (toRes P ρ hle x) := rfl

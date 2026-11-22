@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+
+@[expose] public section
 
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI GlobalTheory.Shin SemidirectProduct
 open scoped Classical
@@ -92,7 +96,8 @@ theorem galoisDescent_semilinear_bijective : ∀ (F F' : Type) [Field F] [Field 
     have hk : ∀ k : ℕ, ∑ i, (s ^ k) (b i) • (v i : V) = ∑ i, (s ^ k) (b i) • (w i : V) := by
       intro k
       have h := congrArg (T ^ k) hvw
-      simpa only [map_sum, hTk, hfix] using h
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa only [map_sum, hTk, hfix] using h
     have expand : ∀ (u : ι → LinearMap.ker (T - 1)) (j : ι), (u j : V) =
         ∑ k : Fin n, (s ^ (k : ℕ)) (d j) • ∑ i, (s ^ (k : ℕ)) (b i) • (u i : V) := by
       intro u j
@@ -109,7 +114,8 @@ theorem galoisDescent_semilinear_bijective : ∀ (F F' : Type) [Field F] [Field 
     have hQ : ∀ u, Q u ∈ LinearMap.ker (T - 1) := by
       intro u
       simp only [Q]
-      rw [LinearMap.mem_ker, LinearMap.sub_apply, Module.End.one_apply, sub_eq_zero, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [LinearMap.mem_ker, LinearMap.sub_apply, Module.End.one_apply, sub_eq_zero, map_sum]
       rw [Fin.sum_univ_eq_sum_range (fun k => T ((T ^ k) u)),
         Fin.sum_univ_eq_sum_range (fun k => (T ^ k) u)]
       have hs1 : ∀ k : ℕ, T ((T ^ k) u) = (T ^ (k + 1)) u := fun k => by

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.XApply
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.XApply
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -6,7 +10,7 @@ open UpperTheory.ConvolutionTheory.R2 UpperTheory.ConvolutionTheory.R2.Fo
 open scoped Classical
 
 private theorem slice_mem {F : Type} [Field F] [NumberField F] {f : V4 F → ℂ}
-    (hf : f ∈ schwartzBruhatPi F (Fin 4)) :
+    (hf : f ∈ schwartzBruhatPi (K := F) (ι := Fin 4)) :
     (fun y : Fin 4 → FiniteAdeleRing (𝓞 F) F => f fun i => ((0, y i) : A F)) ∈
       finiteSchwartzBruhatPi F (ι := Fin 4) := by
   induction hf using Submodule.span_induction with
@@ -26,7 +30,7 @@ private theorem slice_mem {F : Type} [Field F] [NumberField F] {f : V4 F → ℂ
 private theorem gauss_fin {F : Type} [Field F] [NumberField F] [IsTotallyReal F] (δ : F)
     (y : Fin 4 → FiniteAdeleRing (𝓞 F) F) : gauss δ (fun i => ((0, y i) : A F)) = 1 := by
   have key : ∀ a : V4 F, (∀ i, TR.pInf F (a i) = 0) → gauss δ a = 1 := fun a h => by
-    simp only [gauss, map_add, map_sub, map_mul, map_pow, h]
+    simp only [gauss, map_add (f := _), map_sub, map_mul, map_pow, h]
     simp
   exact key _ fun i => map_zero (TR.infEq F).symm
 

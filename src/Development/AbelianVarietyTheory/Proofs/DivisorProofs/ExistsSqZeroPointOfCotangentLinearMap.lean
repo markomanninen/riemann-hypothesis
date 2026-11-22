@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.Definitions.Divisors.HopfLaurent
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuasiCompactZeroSec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsoToBidualOfLocalFrames
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentSurjective
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.MulEqZeroOfAppEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HopfLaurent
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuasiCompactZeroSec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsoToBidualOfLocalFrames
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentSurjective
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.MulEqZeroOfAppEqZero
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -152,8 +156,8 @@ variable {O : Type} [CommRing O] {M : Type} [AddCommGroup M] [Module O M] [Modul
   [IsCentralScalar O M] {A : Over (Sp O)} [GrpObj A]
   (D : Der A.hom (unitSec A) (pushO O M))
 
-variable (O M A) in
 
+variable (O M A) in
 def VanD (D : Der A.hom (unitSec A) (pushO O M)) : Prop :=
   ∀ (W : A.left.Opens) (V : (Sp O).Opens) (h : V ≤ unitSec A ⁻¹ᵁ W) (f : Γ(A.left, W)),
     (toBase (O := O) (M := M)).app V (D.app h f) = 0
@@ -184,7 +188,7 @@ def psiM (W : A.left.Opens) : Γ(A.left, W) →+* Γ((TM O M).left, (TM O M).hom
     linear_combination -hm
   map_zero' := by simp only [map_zero, toFn_zero, add_zero]
   map_add' f g := by
-    simp only [map_add, toFn_add]
+    simp only [map_add (f := _), toFn_add]
     abel
 
 theorem psiM_apply (W : A.left.Opens) (f : Γ(A.left, W)) : psiM D hD W f =
@@ -194,7 +198,7 @@ theorem psiM_apply (W : A.left.Opens) (f : Γ(A.left, W)) : psiM D hD W f =
 theorem psiM_nat (W W' : A.left.Opens) (h : W' ≤ W) (f : Γ(A.left, W)) :
     psiM D hD W' (resG A.left h f) =
       resG (TM O M).left ((TM O M).hom.preimage_mono ((unitSec A).preimage_mono h)) (psiM D hD W f) := by
-  rw [psiM_apply, psiM_apply, map_add, D.app_res, ← D.res_app le_rfl ((unitSec A).preimage_mono h),
+  rw [psiM_apply, psiM_apply, map_add (f := _), D.app_res, ← D.res_app le_rfl ((unitSec A).preimage_mono h),
     toFn_resM, GlobalTheory.DualPull.resG_appLE, GlobalTheory.DualPull.appLE_resG (unitSec A),
     ← GlobalTheory.DualPull.resG_appLE (unitSec A) ((unitSec A).preimage_mono h) le_rfl,
     GlobalTheory.DualPull.appLE_resG (TM O M).hom]
@@ -239,7 +243,7 @@ theorem deformM_comp : deformM D hD ≫ A.hom = (TM O M).hom := by
 theorem zeroSec_psiM {W : A.left.Opens} (k : unitSec A ⁻¹ᵁ W ≤
       sec (zeroSec O M) ⁻¹ᵁ (TM O M).hom ⁻¹ᵁ unitSec A ⁻¹ᵁ W) (f : Γ(A.left, W)) :
     (sec (zeroSec O M)).appLE _ _ k (psiM D hD W f) = (unitSec A).appLE W _ le_rfl f := by
-  rw [psiM_apply, map_add, appLE_base (sec_hom (zeroSec O M)) _ _ le_rfl, resG_self]
+  rw [psiM_apply, map_add (f := _), appLE_base (sec_hom (zeroSec O M)) _ _ le_rfl, resG_self]
   have h0 : (sec (zeroSec O M)).appLE _ _ k (toFn (D.app (le_refl (unitSec A ⁻¹ᵁ W)) f)) = 0 :=
     hD _ _ le_rfl f
   rw [h0, add_zero]
@@ -287,13 +291,13 @@ theorem centerFn_app_zero {W : (TM O M).left.Opens} {V : (Sp O).Opens}
     (sec (zeroSec O M)).app _ (centerFn h b) = 0 := by
   rw [app_zeroSec_eq, centerFn_van, map_zero]
 
-variable (O M) in
 
+variable (O M) in
 def centerDer : Der (TM O M).hom (sec (zeroSec O M)) (pushO O M) where
   app {W V} h := AddMonoidHom.mk' (fun b => ofFn (centerFn h b)) fun a b => by
     rw [← ofFn_add]
     congr 1
-    simp only [centerFn, map_add]
+    simp only [centerFn, map_add (f := _)]
     abel
   res_app {W V V'} h h' b := by
     change ofFn (resG (TM O M).left _ (centerFn h b)) = ofFn (centerFn (h'.trans h) b)
@@ -327,8 +331,8 @@ theorem toFn_centerDer {W : (TM O M).left.Opens} {V : (Sp O).Opens}
     (h : V ≤ sec (zeroSec O M) ⁻¹ᵁ W) (b : Γ((TM O M).left, W)) :
     toFn ((centerDer O M).app h b) = centerFn h b := rfl
 
-variable (O M) in
 
+variable (O M) in
 def rhoM : conormal (sec (zeroSec O M)) ⟶ pushO O M := (centerDer O M).lift
 
 theorem rhoM_d {W : (TM O M).left.Opens} {V : (Sp O).Opens}
@@ -395,7 +399,7 @@ theorem exists_Phi_eq_of_linearMap : ∀ (O : Type) [CommRing O] (A : Over (Sp O
     { toFun := fun w => ofFn (ofT (TrivSqZeroExt.inr (l' w)))
       map_add' := fun w w' => by
         refine (congrArg (fun m => ofFn (ofT (TrivSqZeroExt.inr m))) (hl'add w w')).trans ?_
-        rw [TrivSqZeroExt.inr_add, map_add, ofFn_add]
+        rw [TrivSqZeroExt.inr_add, map_add (f := _), ofFn_add]
       map_smul' := fun r w => by
         obtain ⟨a, rfl⟩ : ∃ a, r = cst O a := ⟨toO O r, (Iso.hom_inv_id_apply _ _).symm⟩
         have e : l' (cst O a • w) = a • l' w := hl'smul a w

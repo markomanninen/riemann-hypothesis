@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits DirectSum MvPolynomial TensorProduct GlobalTheory
 
 namespace GlobalTheory
@@ -37,26 +42,26 @@ theorem isBaseChange_gradedPiece : ∀ (R₀ R : Type) [CommRing R₀] [CommRing
           rw [hp]
           exact decompose_of_mem_ne 𝒩 (hdeg j y y.2) hj
         rw [h1, h2, map_zero]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   let L : R ⊗[R₀] 𝒩₀ n →ₗ[R] 𝒩 n := LinearMap.liftBaseChange R θ
   have hL1 : ∀ x, L (p₀.baseChange R x) = p (h.equiv x) := by
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul r y => simp [L, hcomm]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have hL2 : ∀ x, (L x : N) = h.equiv ((𝒩₀ n).subtype.baseChange R x) := by
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul r y => simp [L, hθ]
-    | add a b ha hb => simp only [map_add, Submodule.coe_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), Submodule.coe_add, ha, hb]
   have hret : ∀ x, p₀.baseChange R ((𝒩₀ n).subtype.baseChange R x) = x := by
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul r y => simp [hp₀i]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have hbij : Function.Bijective L := by
     constructor
     · intro a b hab

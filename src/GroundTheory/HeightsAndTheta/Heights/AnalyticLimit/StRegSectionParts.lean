@@ -1,6 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StRegSection
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.ConvergenceStatements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StRegSection
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.ConvergenceRate
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.HessCIsHermitian
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ProjectiveLinePartitionContinuousCoe
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Telescoping
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit
@@ -151,7 +160,6 @@ def BdComparison.Statement : Prop :=
 section Inhabitants
 
 open ReciprocityTheory.AnForm.M (p1 holoOn_const)
-open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Regular (projLineChartData)
 
 end Inhabitants
 

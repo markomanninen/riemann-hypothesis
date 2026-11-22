@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPairDefs
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.Kummer
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPairDefs
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.Kummer
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -32,7 +36,7 @@ theorem zmodToQZ_intCast (n : ℕ) [NeZero n] (m : ℤ) :
 
 theorem zmodToQZ_injective (n : ℕ) [NeZero n] : Injective (zmodToQZ n) := by
   have hn : (n : ℚ) ≠ 0 := Nat.cast_ne_zero.2 (NeZero.ne n)
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   obtain ⟨m, rfl⟩ := ZMod.intCast_surjective a
   rw [zmodToQZ_intCast, mk_eq_zero_QZ] at ha
@@ -56,7 +60,7 @@ theorem cycK_eq_one {n : ℕ} [NeZero n] (hμ : ∀ ζ : PadicAlgCl p, ζ ^ n = 
     cycK p K n g = 1 := by
   obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot (PadicAlgCl p) n
   have h1 : g ζ = ζ := g.commutes ⟨ζ, hμ ζ hζ.pow_eq_one⟩
-  rw [cycN_spec g ζ hζ.pow_eq_one] at h1
+  rw [cycN_spec (K := K) (L := PadicAlgCl p) (n := n) g ζ hζ.pow_eq_one] at h1
   have h2 : ζ ^ ((cycK p K n g : (ZMod n)ˣ) : ZMod n).val = ζ ^ (1 % n) := by
     rw [← pow_eq_pow_mod 1 hζ.pow_eq_one, pow_one]
     exact h1
@@ -82,7 +86,7 @@ theorem card_character_n_torsion {n : ℕ} (hn : 0 < n) (hμ : ∀ ζ : PadicAlg
   let Φ : Z1 (charRep (cycK p K n)) → {χ : charGrp (GK p K) // n • χ = 0} := fun f =>
     ⟨⟨AddMonoidHom.mk' (fun a : Additive (GK p K) => zmodToQZ n (f.1 a.toMul)) fun a b => by
         show zmodToQZ n (f.1 (a.toMul * b.toMul)) = _
-        rw [f.2.2, hrho, map_add],
+        rw [f.2.2, hrho, map_add (f := _)],
       ((IsLocallyConstant.iff_continuous _).2 f.2.1).comp (zmodToQZ n)⟩,
      Subtype.ext (AddMonoidHom.ext fun a => by
         show n • zmodToQZ n (f.1 a.toMul) = 0
@@ -102,7 +106,7 @@ theorem card_character_n_torsion {n : ℕ} (hn : 0 < n) (hμ : ∀ ζ : PadicAlg
         rw [this]
         exact χ.2
       refine ⟨⟨f, hlc.continuous, fun g h => zmodToQZ_injective n ?_⟩, ?_⟩
-      · rw [hrho, map_add, hf, hf, hf]
+      · rw [hrho, map_add (f := _), hf, hf, hf]
         exact map_add χ.1 (Additive.ofMul g) (Additive.ofMul h)
       · exact Subtype.ext (Subtype.ext (AddMonoidHom.ext fun a => hf a.toMul))
   rw [← Nat.card_congr (Equiv.ofBijective Φ hΦ), ← Nat.card_congr (Submodule.quotEquivOfEqBot _ hbot).toEquiv,

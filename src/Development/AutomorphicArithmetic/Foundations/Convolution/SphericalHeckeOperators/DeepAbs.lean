@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.CvSmulRight
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.NonVan
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.MemSuppMono
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymAlg
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.DcoShape
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.CvSmulRight
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.NonVan
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.MemSuppMono
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymAlg
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.DcoShape
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.Spherical GroundTheory.Automorphic.GLnLocal GroundTheory.Automorphic.Iwasawa UpperTheory.ConvolutionTheory.H
 
@@ -81,7 +85,7 @@ private theorem clause_span {n l : ℕ} (Y M M' : LaurentRing n) (P : Finset (La
     obtain ⟨h1, ⟨r, hr, e⟩, r', hr', e'⟩ := hx
     obtain ⟨g1, ⟨s, hs, f⟩, s', hs', f'⟩ := hy
     refine ⟨by rw [mul_add]; exact sdom_add h1 g1, ⟨r + s, dom_add hr hs, by rw [mul_add, mul_add, e, f]⟩,
-      r' + s', dom_add hr' hs', by rw [mul_add, map_add, mul_add, e', f']⟩
+      r' + s', dom_add hr' hs', by rw [mul_add, map_add (f := _), mul_add, e', f']⟩
   | smul c x _ hx =>
     obtain ⟨h1, ⟨r, hr, e⟩, r', hr', e'⟩ := hx
     refine ⟨by rw [mul_smul_comm]; exact sdom_smul c h1, ⟨c • r, dom_smul c hr, by rw [mul_smul_comm, mul_smul_comm, e]⟩,
@@ -96,16 +100,16 @@ private theorem thP_bc {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F
   rfl
 
 private theorem range_Y {n : ℕ} (t : ℂ) (a : Fin n → ℤ) (ha : ∀ i, 0 ≤ a i) :
-    symSum (monomial a * dPol n t) ∈ (polyEmb n).range := by
-  have h1 : (monomial a : LaurentRing n) ∈ (polyEmb n).range := by
+    symSum (monomial a * dPol n t) ∈ (polyEmb (n := n)).range := by
+  have h1 : (monomial a : LaurentRing n) ∈ (polyEmb (n := n)).range := by
     refine mem_range_polyEmb fun b hb i => ?_
     rw [AddMonoidAlgebra.coeff_single] at hb
     have : b = a := by simpa using Finsupp.support_single_subset hb
     rw [this]
     exact ha i
-  have hv : ∀ i : Fin n, (varL i : LaurentRing n) ∈ (polyEmb n).range := fun i =>
+  have hv : ∀ i : Fin n, (varL i : LaurentRing n) ∈ (polyEmb (n := n)).range := fun i =>
     AlgHom.mem_range _ |>.2 ⟨MvPolynomial.X i, polyEmb_X i⟩
-  have h2 : dPol n t ∈ (polyEmb n).range :=
+  have h2 : dPol n t ∈ (polyEmb (n := n)).range :=
     Subalgebra.prod_mem _ fun p _ => Subalgebra.sub_mem _ (hv _) (Subalgebra.smul_mem _ (hv _) _)
   obtain ⟨Q, hQ⟩ := AlgHom.mem_range _ |>.1 (Subalgebra.mul_mem _ h1 h2)
   refine Subalgebra.sum_mem _ fun σ _ => ?_
@@ -118,8 +122,8 @@ theorem UpperTheory.ConvolutionTheory.H.deepAbs :
       ∀ [MeasurableSpace (GL (Fin n) E)] [BorelSpace (GL (Fin n) E)] [MeasurableSpace (GL (Fin n) k)] [BorelSpace (GL (Fin n) k)]
         (μE : Measure (GL (Fin n) E)) (μk : Measure (GL (Fin n) k)) [μE.IsHaarMeasure] [μk.IsHaarMeasure],
       μE (integralGL E n : Set (GL (Fin n) E)) = 1 → μk (integralGL k n : Set (GL (Fin n) k)) = 1 →
-      ∀ P : Finset (LaurentRing n), (∀ p ∈ P, p ∈ symmetricLaurent n) → ∀ z : Fin n → ℂˣ,
-      ∃ g ∈ symmetricLaurent n, g ∈ (polyEmb n).range ∧ evalAt z g ≠ 0 ∧ ∀ p ∈ Submodule.span ℂ (P : Set (LaurentRing n)),
+      ∀ P : Finset (LaurentRing n), (∀ p ∈ P, p ∈ symmetricLaurent (n := n)) → ∀ z : Fin n → ℂˣ,
+      ∃ g ∈ symmetricLaurent (n := n), g ∈ (polyEmb (n := n)).range ∧ evalAt z g ≠ 0 ∧ ∀ p ∈ Submodule.span ℂ (P : Set (LaurentRing n)),
         ∀ (h : SphericalHecke μE (F := E) (n := n)) (f : SphericalHecke μk (F := k) (n := n)),
           satakeTransform μE h = g * p → satakeTransform μk f = bc l (g * p) →
           ∀ (ΛE : (GL (Fin n) E → ℂ) → ℂ) (Λk : (GL (Fin n) k → ℂ) → ℂ),
@@ -147,8 +151,8 @@ theorem UpperTheory.ConvolutionTheory.H.deepAbs :
   intro p hp h f hSh hSf ΛE Λk hlE hzE hlk hzk hth
   obtain ⟨hSD, ⟨r, hr, hyr⟩, r', hr', hyr'⟩ := clause_span (l := l) (monomial a * dPol n (t ^ l)) (monomial ν * dPol n (t ^ l))
     (monomial ν' * dPol n t) P (fun p hp => hm a hgap p hp) p hp
-  have hps : p ∈ symmetricLaurent n := by
-    have : Submodule.span ℂ (P : Set (LaurentRing n)) ≤ Subalgebra.toSubmodule (symmetricLaurent n) :=
+  have hps : p ∈ symmetricLaurent (n := n) := by
+    have : Submodule.span ℂ (P : Set (LaurentRing n)) ≤ Subalgebra.toSubmodule (symmetricLaurent (n := n)) :=
       Submodule.span_le.2 fun x hx => hP x hx
     exact this hp
   obtain ⟨-, hb, hmul, -, -⟩ := symAlg n l (monomial a * dPol n (t ^ l))

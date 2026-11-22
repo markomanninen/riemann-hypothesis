@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.FWExist
-import Formalism.LocalToGlobal.IndefiniteReal.RhoGeo
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspFormsFiniteDimensionalOf
-import Formalism.LocalToGlobal.ProjectiveLattices.ThProps
-import Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteGroupActionPreservesPrincipalFlagMultiplic
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EvalInjective
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.FWExist
+public import Formalism.LocalToGlobal.IndefiniteReal.RhoGeo
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspFormsFiniteDimensionalOf
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThProps
+public import Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteGroupActionPreservesPrincipalFlagMultiplic
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EvalInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem actW_apply {i : Fin D.R.m} {σ : D.what₂.LL →+* ℂ} {g : G}
     (h : GA D (Wc D i)) : actW R i σ g x v h = x v (h * hk.choose) := by
   show Lev.actG0 (Wc D i) (R.βW i) (R.datWp i R.triv) (R.eG g) (x v) h = _
   unfold Lev.actG0
-  rw [dif_pos hk]
+  rw [dite_eq_left hk]
   simp only [levChi_flag, inv_one, one_mul]
 
 theorem actW_mem (hθ : IsInfFam R.θ) {i : Fin D.R.m} {σ : D.what₂.LL →+* ℂ} (g : G) {x : MMap (R.MW i σ)}
@@ -69,16 +73,16 @@ theorem equiv_of_values (hθ : IsInfFam R.θ) (he : R.models_HW) {i : Fin D.R.m}
 
 theorem chiIs_of_values {i : Fin D.R.m} (h1 : ∀ g, ∃ a, D.what₂.embLL a = (chiC R i g : ℂ)) : ChiIs R i (chiTop R i) := by
   choose a ha using h1
-  have hne : ∀ g, a g ≠ 0 := fun g h0 => (chiC R i g).ne_zero (by rw [← ha, h0, map_zero])
+  have hne : ∀ g : G, a g ≠ 0 := fun g h0 => (chiC R i g).ne_zero (by rw [← ha, h0, map_zero])
   have hex : ∃ chi, ChiIs R i chi :=
     ⟨MonoidHom.mk' (fun g => Units.mk0 (a g) (hne g)) fun g g' => Units.ext (D.what₂.embLL.injective (by
       simp only [Units.val_mk0, Units.val_mul, map_mul, ha, chiC_mul])), ha⟩
-  rw [chiTop, dif_pos hex]
+  rw [chiTop, dite_eq_left hex]
   exact hex.choose_spec
 
 theorem coe_chiC (i : Fin D.R.m) (g : G) : (chiC R i g : ℂ) =
     ∏ PP : R.Pg, ((R.chi ((i : ℕ) + 1) PP.1 (Matrix.GeneralLinearGroup.det (R.eG g PP)) : ℂˣ) : ℂ) := by
-  rw [chiC, Units.coe_prod]
+  simp only [chiC, Units.coe_prod]
 
 end
 
@@ -98,7 +102,7 @@ theorem reading_equivariant : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0
   intro D G _ _ Pl0 T0 A T _ R κ v₀ O hθ he ht i hl hq ρC hρ σ hσ g f
   have hV : T.V ((i : ℕ) + 1) (res T σ) = Wc D i := ht.laws.spaceW _ (inR i) _ hσ
   by_cases hj : JEvAt T R κ v₀ i σ hV
-  · have hq' := hq _ hσ hV
+  · have hq' : EqAt T R κ (O i) (res T σ) hV (T.cE ((i : ℕ) + 1) (res T σ)) := hq (res T σ) hσ hV
     have hc : ChiIs R i (chiTop R i) := chiIs_of_values R fun g' => by
       obtain ⟨-, y, hy, -⟩ := hq' g' _ (hl g').choose_spec 0 (zero_mem _)
       exact ⟨_, hy.trans (coe_chiC R i g').symm⟩

@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LbIsoCubeLBOfWeilIsAdjoint
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SeesawTrivialityOnDenseFibresProductAbelianStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LbIsoCubeLBOfWeilIsAdjoint
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SeesawTrivialityOnDenseFibresProductAbelianStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,8 +20,8 @@ open scoped CategoryTheory.Obj TensorProduct
 
 namespace GlobalTheory
 
-open AdjointOfPairing in
 
+open AdjointOfPairing in
 theorem lbIso_cubeLB_of_pairing_adjoint : Out.Laws → ∀ (k : Type) [Field k] [IsAlgClosed k] [CharZero k] (P : Out.PolAV (Sp k)) (a a' : P.A ⟶ P.A), IsMonHom a → IsMonHom a' → (∀ (n : ℕ) (x y : 𝟙_ (Over (Sp k)) ⟶ P.A) (c : Γ((𝟙_ (Over (Sp k))).left, ⊤)ˣ), 0 < n → x ^ n = 1 → y ^ n = 1 → Out.WeilIs P.A P.L n (x ≫ a) y c → Out.WeilIs P.A P.L n x (y ≫ a') c) → LBIso (cubeLB P.A ![fst P.A P.A ≫ a, snd P.A P.A] P.L) (cubeLB P.A ![fst P.A P.A, snd P.A P.A ≫ a'] P.L) := by
   intro hl k _ _ _ P a a' ha ha' H
   have := P.isAb.comm
@@ -32,9 +36,12 @@ theorem lbIso_cubeLB_of_pairing_adjoint : Out.Laws → ∀ (k : Type) [Field k] 
       apply Additive.ofMul.injective
       simp only [ofMul_mul, ofMul_inv, ofMul_one]
       abel))
-    ((TorsionDense.dense_torsion P hl.irred hl.kerPow).mono (Set.biUnion_subset_biUnion_left
-      fun x hx => hx.elim fun n hx => out _ (exists_gen_fibre hl P a a' n (Nat.cast_ne_zero.2 hx.1.ne') x hx.2
-        fun y c hy => H n x y c hx.1 hx.2 hy)))
+    ((TorsionDense.dense_torsion P hl.irred hl.kerPow).mono (by
+      intro z hz
+      simp only [Set.mem_iUnion] at hz ⊢
+      obtain ⟨x, ⟨n, hn, hxn⟩, q, rfl⟩ := hz
+      exact ⟨x, out _ (exists_gen_fibre hl P a a' n (Nat.cast_ne_zero.2 hn.ne') x hxn
+        fun y c hy => H n x y c hn hxn hy), q, rfl⟩))
     (out _ (exists_gen_of_formEq_zero P.isLB fun U _ h => by
       rw [prod_ros, MonObj.one_comp, _root_.mul_one, _root_.mul_one]
       apply Additive.ofMul.injective

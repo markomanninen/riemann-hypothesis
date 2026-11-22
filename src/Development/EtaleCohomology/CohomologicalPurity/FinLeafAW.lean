@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafAWCutFin
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafAWCutFin
+
+@[expose] public section
 
 namespace LateralTheory.Fin.LeafAW
 theorem etale_purity_aw : LateralTheory.CohomologicalPurity.LeafAW := by

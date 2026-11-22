@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.SecondPropositionEveryLocalisation
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.ThickExists
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.SecondPropositionEveryLocalisation
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.ThickExists
+
+@[expose] public section
 
 noncomputable section
 

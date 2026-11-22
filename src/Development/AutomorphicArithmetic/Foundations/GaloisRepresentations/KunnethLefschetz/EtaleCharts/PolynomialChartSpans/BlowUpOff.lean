@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FinCover
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProper
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupIsoOffCenter
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FinCover
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProper
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupIsoOffCenter
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry
 
@@ -18,7 +22,7 @@ theorem UpperTheory.Gal.KunnethLefschetz.G.blOff :
   have hsupp : ((Scheme.Hom.ker (Over.Hom.left (UpperTheory.Gal.KunnethLefschetz.G.dg Z))).support : Set _) =
       Set.range (Over.Hom.left (UpperTheory.Gal.KunnethLefschetz.G.dg Z)) := by
     rw [Scheme.Hom.support_ker]
-    exact (IsClosedImmersion.base_closed (Over.Hom.left (UpperTheory.Gal.KunnethLefschetz.G.dg Z))).isClosed_range.closure_eq
+    exact (Scheme.Hom.isClosedEmbedding (Over.Hom.left (UpperTheory.Gal.KunnethLefschetz.G.dg Z))).isClosed_range.closure_eq
   refine ⟨FunctorialResolution.Blowup.isProper_of_isBlowupAlongIdealSheaf hπ, ?_, ?_⟩
   · change IsClosedImmersion (pullback.fst (Over.Hom.left π) (Over.Hom.left (UpperTheory.Gal.KunnethLefschetz.G.dg Z)))
     infer_instance

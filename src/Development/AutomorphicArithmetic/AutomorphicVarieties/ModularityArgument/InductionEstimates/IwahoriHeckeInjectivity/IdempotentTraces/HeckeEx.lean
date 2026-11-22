@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.RepsSmul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.LevLaws
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.PiHomExt
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.RepsSmul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.LevLaws
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.PiHomExt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -183,6 +187,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.heckeEx :
   have hAadd : ∀ f f' : G1 K (2 + 2) → ℂ, Continuous f → Continuous f' → FixA κ e f → FixA κ e f' → ∀ c : ℂ,
       FixA κ e (f + c • f') := by
     intro f f' hc hc' hf hf' c g
+    set_option synthInstance.maxHeartbeats 200000 in
     have hi : ∀ f₁ : G1 K (2 + 2) → ℂ, Continuous f₁ → Integrable (fun k => e k * f₁ (g * arc1 k)) κ := fun f₁ h₁ =>
       (he.cont.mul (h₁.comp (continuous_const.mul hac))).integrable_of_hasCompactSupport
         (HasCompactSupport.of_compactSpace _)
@@ -214,7 +219,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.heckeEx :
     intro a b
     have h1 := hfadd (A.sec a) (A.sec b) 1
     rw [one_smul, one_smul] at h1
-    rw [map_add, h1]
+    rw [map_add (f := _), h1]
   have hTs : ∀ (c : ℂ) (a : Eu d), flat 0 (A.sec (c • a)) = c • flat 0 (A.sec a) := by
     intro c a
     funext x
@@ -262,13 +267,13 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.heckeEx :
       intro g hg
       by_cases hc : Continuous (tensFun b φ) ∧ HasCompactSupport (tensFun b φ)
       · have h1 : tens b φ g = tensFun b φ g := by
-          rw [tens, dif_pos hc]
+          rw [tens, dite_eq_left hc]
           rfl
         rw [h1, tensFun, hφ] at hg
         by_contra hn
         exact hg (by rw [Set.indicator_of_notMem (show _ ∉ (levOn S U : Set (FA K (2 + 2))) from hn), mul_zero])
       · have h1 : tens b φ g = 0 := by
-          rw [tens, dif_neg hc]
+          rw [tens, dite_eq_right hc]
           rfl
         exact absurd h1 hg
     have hAB := hAct.2.2 0
@@ -282,7 +287,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.heckeEx :
     have hint : ∀ c : FA K (2 + 2) ⧸ levOn S U, Integrable (fun g => tens b φ g * flat 0 (A.sec v) (x * fin1 c.out * g)) μ :=
       fun c => ((tens b φ).continuous.mul ((hTc v).comp (continuous_const.mul continuous_id))).integrable_of_hasCompactSupport
         (tens b φ).hasCompactSupport.mul_right
-    rw [← integral_finset_sum _ fun c _ => hint c]
+    rw [← integral_finsetSum _ fun c _ => hint c]
     refine integral_congr_ae (Eventually.of_forall fun g => ?_)
     by_cases hg : tens b φ g = 0
     · simp [hg]

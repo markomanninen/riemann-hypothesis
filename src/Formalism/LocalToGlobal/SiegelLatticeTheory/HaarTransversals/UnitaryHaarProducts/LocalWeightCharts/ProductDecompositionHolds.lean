@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.HaarWN
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.SubgroupHypothesisHolds
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.HaarWN
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.SubgroupHypothesisHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ lemma lmul_meas (a : Mx k r) : Measurable (lmulM (k := k) (r := r) a) := by
     unfold Formalism.QuantumDeterminants.lmulM
     refine continuous_pi fun i => continuous_pi fun j => ?_
     simp only [Matrix.mul_apply, Matrix.of_apply]
-    exact continuous_finset_sum _ fun l _ => by fun_prop
+    exact continuous_finsetSum _ fun l _ => by fun_prop
   exact hc.measurable
 
 lemma mulP_meas : Measurable (mulP : Mt k r × Mt k r → Mt k r) := by
@@ -41,7 +45,7 @@ lemma mulP_meas : Measurable (mulP : Mt k r × Mt k r → Mt k r) := by
     unfold WlocSk.mulP
     refine continuous_pi fun i => continuous_pi fun j => ?_
     simp only [Matrix.mul_apply, Matrix.of_apply]
-    exact continuous_finset_sum _ fun l _ => by fun_prop
+    exact continuous_finsetSum _ fun l _ => by fun_prop
   exact hc.measurable
 
 theorem s_closed (z : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (hT : 0 < Tz k r z) :
@@ -129,7 +133,7 @@ theorem prod_haar (z : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (hT : 0 < 
   have hρ0 : (μW.prod μN).map mulP ≠ 0 := by
     intro h0
     have h1 := congrArg (fun ν : Measure (Mt k r) => ν Set.univ) h0
-    simp only [Measure.map_apply hm MeasurableSet.univ, Measure.coe_zero, Pi.zero_apply] at h1
+    simp only [Measure.map_apply hm MeasurableSet.univ, FunLike.coe_zero, Pi.zero_apply] at h1
     rw [Set.preimage_univ, ← Set.univ_prod_univ, Measure.prod_prod, mul_eq_zero] at h1
     rcases h1 with h | h
     · exact hW0 (Measure.measure_univ_eq_zero.mp h)

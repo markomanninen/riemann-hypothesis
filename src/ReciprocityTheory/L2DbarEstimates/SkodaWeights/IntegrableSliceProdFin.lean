@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.SkodaWeights.WeightedIntegralEqLintegral
+module
+
+public import ReciprocityTheory.L2DbarEstimates.SkodaWeights.WeightedIntegralEqLintegral
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.H.SkodaOperators
 
@@ -104,7 +108,7 @@ private theorem vol_prod_fin_apply_eq_sum_preimage (z : M → V n) (hz : IsLocal
 private theorem vol_prod_fin_eq_sum_map_prodMk (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ) :
     vol n (fun q : M × Fin p => z q.1) = ∑ i : Fin p, (vol n z).map (fun x => (x, i)) := by
   ext A hA
-  rw [vol_prod_fin_apply_eq_sum_preimage z hz p A hA, Measure.coe_finset_sum, Finset.sum_apply]
+  rw [vol_prod_fin_apply_eq_sum_preimage z hz p A hA, MeasureTheory.Measure.coe_finsetSum, Finset.sum_apply]
   exact Finset.sum_congr rfl fun i _ => (Measure.map_apply measurable_prodMk_right hA).symm
 
 private theorem map_prodMk_right_vol_le_vol_prod_fin (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ) (i : Fin p) :
@@ -142,9 +146,9 @@ theorem wint_G_le (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ) (g : Fin 
     ∫⁻ q, ENNReal.ofReal (‖h q‖ ^ 2 * Real.exp (-φ q.1)) ∂vol n (fun q : M × Fin p => z q.1)
   have hFm : Measurable (fun q : M × Fin p => ENNReal.ofReal (‖h q‖ ^ 2 * Real.exp (-φ q.1))) :=
     ((hh.norm.pow_const 2).mul (hφ.comp measurable_fst).neg.exp).ennreal_ofReal
-  rw [vol_prod_fin_eq_sum_map_prodMk z hz p, lintegral_finset_sum_measure,
+  rw [vol_prod_fin_eq_sum_map_prodMk z hz p, MeasureTheory.lintegral_finsetSum_measure,
     Finset.sum_congr rfl fun i _ => lintegral_map hFm measurable_prodMk_right,
-    ← lintegral_finset_sum (f := fun i a => ENNReal.ofReal (‖h (a, i)‖ ^ 2 *
+    ← MeasureTheory.lintegral_finsetSum (f := fun i a => ENNReal.ofReal (‖h (a, i)‖ ^ 2 *
       Real.exp (-φ (a, i).1))) _ fun i _ => hFm.comp measurable_prodMk_right]
   refine lintegral_mono fun x => ?_
   beta_reduce
@@ -176,9 +180,9 @@ theorem wint_Gs_eq (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ) (g : Fin
     refine (((((hw.comp measurable_fst).mul (Complex.continuous_conj.measurable.comp hg2)).div
       (Complex.continuous_ofReal.measurable.comp (hvs.comp measurable_fst))).norm.pow_const 2).mul
       (hφ.comp measurable_fst).neg.exp).ennreal_ofReal
-  rw [vol_prod_fin_eq_sum_map_prodMk z hz p, lintegral_finset_sum_measure,
+  rw [vol_prod_fin_eq_sum_map_prodMk z hz p, MeasureTheory.lintegral_finsetSum_measure,
     Finset.sum_congr rfl fun i _ => lintegral_map hFm measurable_prodMk_right,
-    ← lintegral_finset_sum (f := fun i a => ENNReal.ofReal
+    ← MeasureTheory.lintegral_finsetSum (f := fun i a => ENNReal.ofReal
       (‖w (a, i).1 * (starRingEnd ℂ) (g (a, i).2 (a, i).1) / ((vsq (gv g (a, i).1) : ℝ) : ℂ)‖ ^ 2 *
         Real.exp (-φ (a, i).1))) _ fun i _ => hFm.comp measurable_prodMk_right]
   refine lintegral_congr fun x => ?_
@@ -186,16 +190,6 @@ theorem wint_Gs_eq (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ) (g : Fin
   rw [← ENNReal.ofReal_sum_of_nonneg fun i _ => by positivity]
   congr 1
   exact pt_Gs (gv g x) (w x) (φ x) (hN x)
-
-def opG {M : Type*} {p : ℕ} (g : Fin p → M → ℂ) (f : M × Fin p → ℂ) : M → ℂ :=
-  fun x => ∑ i, g i x * f (x, i)
-
-def opS {M : Type*} {p : ℕ} (g : Fin p → M → ℂ) (w : M → ℂ) : M × Fin p → ℂ :=
-  fun q => w q.1 * (starRingEnd ℂ) (g q.2 q.1) / ((vsq (gv g q.1) : ℝ) : ℂ)
-
-def adjK {M : Type*} {p : ℕ} (g : Fin p → M → ℂ) (φ : M → ℝ) (w : M → ℂ) (f : M × Fin p → ℂ) :
-    M × Fin p → ℂ :=
-  fun q => (Real.exp (-φ q.1) : ℂ) * ((starRingEnd ℂ) (opS g w q) * f q)
 
 end
 

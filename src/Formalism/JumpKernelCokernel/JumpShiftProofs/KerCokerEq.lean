@@ -1,4 +1,8 @@
-import Formalism.JumpKernelCokernel.KerCokerEq
+module
+
+public import Formalism.JumpKernelCokernel.KerCokerEq
+
+@[expose] public section
 
 namespace Formalism.KernelCokernelLengths.KernelCokernelEqualityLemmas
 

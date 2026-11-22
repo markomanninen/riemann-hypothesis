@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.InterlacingEquivariance
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SplitLastBlockActX
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.InterlacingEquivariance
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SplitLastBlockActX
+
+@[expose] public section
+
 open MvPolynomial NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.DIV Formalism.L2.Col GlobalTheory.IndefiniteRowSideFullHecke.InterlacingEquivariance GlobalTheory.BranchFormula
 
 namespace GlobalTheory.BranchBasis

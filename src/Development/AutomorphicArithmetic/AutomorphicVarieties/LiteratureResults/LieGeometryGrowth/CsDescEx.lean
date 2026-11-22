@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.CsStmt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.EvK
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.CsStmt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.EvK
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,4 +39,4 @@ theorem UpperTheory.V.Lit.Geo.Cs.descEx :
   obtain ⟨k, hk⟩ := exists_unitary hp.choose_spec.symm
   obtain ⟨u, hu⟩ := QuotientGroup.mk_out_eq_mul U x
   beta_reduce
-  rw [dif_pos hp, hk, pt_mul, hf.f_cpt, hu, pt, pt, map_mul (finGL E a), ← mul_assoc, hf.f_lev _ u.2]
+  rw [dite_eq_left hp, hk, pt_mul, hf.f_cpt, hu, pt, pt, map_mul (finGL E a), ← mul_assoc, hf.f_lev _ u.2]

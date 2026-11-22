@@ -1,13 +1,17 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceIntegralJacobianFactor
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHB2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbWords
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowVLift
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadicalUnipotentFirstBasisEqOne
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AsmCastMCastM
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Tower
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.VLetZeroNear
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftFubiniOfCore
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceIntegralJacobianFactor
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHB2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbWords
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowVLift
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadicalUnipotentFirstBasisEqOne
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AsmCastMCastM
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Tower
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VLetZeroNear
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftFubiniOfCore
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
+
+@[expose] public section
 
 open Matrix MeasureTheory
 
@@ -71,7 +75,7 @@ theorem slice_eq {k r : ℕ} (z z' : Fin (2 * r + k + 1) → ℂ) (H : B.Mat k r
         (D.castF e H) (fun a => a.elim0) := by
   funext y
   unfold D.castF
-  rw [Formalism.FourierDecayAlt.P.Dx2.MN.castM_rfl, D.sliceAt, dif_pos hle]
+  rw [Formalism.FourierDecayAlt.P.Dx2.MN.castM_rfl, D.sliceAt, dite_eq_left hle]
   rfl
 
 theorem mMap_castM {k j a b : ℕ} (h : a = b) (Z : Matrix (Fin j) (Fin j) ℂ) (g : B.Mat k a) :

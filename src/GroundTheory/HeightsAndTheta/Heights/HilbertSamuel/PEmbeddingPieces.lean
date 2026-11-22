@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEmbeddingPieces
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPiecesAdditive
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPieceDegree
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PEmbeddingWeight
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PRFormula
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEmbeddingPieces
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPiecesAdditive
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPieceDegree
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PEmbeddingWeight
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PRFormula
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

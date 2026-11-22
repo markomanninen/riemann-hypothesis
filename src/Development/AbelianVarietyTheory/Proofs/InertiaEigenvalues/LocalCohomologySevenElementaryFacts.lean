@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.TraceFormulas.LatDefs
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValuationLtOneIff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicIntegersFiniteExtGoodCoefficientRing
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.TraceFormulas.LatDefs
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValuationLtOneIff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicIntegersFiniteExtGoodCoefficientRing
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,10 +52,10 @@ theorem mulSub_open {p : ℕ} {O : Type} [CommRing O] [IsDomain O] [IsDiscreteVa
   let f : (s → O) →ₗ[O] M := Fintype.linearCombination O (fun i : s => (i : M))
   have hfc : Continuous f := by
     show Continuous fun v : s → O => ∑ i, v i • (i : M)
-    exact continuous_finset_sum _ fun i _ => (continuous_apply i).smul continuous_const
+    exact continuous_finsetSum _ fun i _ => (continuous_apply i).smul continuous_const
   have hfs : Function.Surjective f := by
     rw [← LinearMap.range_eq_top, Fintype.range_linearCombination, Subtype.range_coe_subtype,
-      Finset.setOf_mem, hs]
+      Finset.setOfPred_mem, hs]
   have hq : Topology.IsQuotientMap f :=
     (hfc.isClosedMap).isQuotientMap hfc hfs
 
@@ -107,7 +111,7 @@ theorem cup_eq_zero_of_coboundary {O : Type} [CommRing O] {Γ : Type} [Group Γ]
   funext q
   obtain ⟨g, h⟩ := q
   have e := hcz g h
-  simp only [d1_apply, Submodule.coe_subtype, cupCocycleZ1Z1_apply, map_sub, map_neg, ← hbe, x.2.2 g h, t.2.2 g h, map_add,
+  simp only [d1_apply, Submodule.coe_subtype, cupCocycleZ1Z1_apply, map_sub, map_neg, ← hbe, x.2.2 g h, t.2.2 g h, map_add (f := _),
     LinearMap.add_apply]
   have e' : ρP g (c h) = b (ρM g (x.1 h)) (t.1 g) + c (g * h) - c g := by rw [e]; abel
   rw [e']
@@ -151,13 +155,8 @@ theorem isOpen_integers {l : ℕ} [Fact l.Prime] (LL : Formalism.BasicNotions.Lo
     IsOpen (Set.range (algebraMap ↥(Formalism.BasicNotions.Loc.OL LL) ↥LL.1)) :=
   (GlobalTheory.LitGood.litGoodO l LL).2.2.2.2
 
-theorem elem : ReciprocityTheory.ChartRestriction.T2.Elem where
-  padicInt := padicInt_coeff
-  mulSub := @fun _ _ _ _ _ _ _ _ _ _ _ hM hO _ ha => mulSub_open hM hO ha
-  contQuot := fun h T hT => contAction_quotient h T hT
-  swapCob := fun D x t c hc hcz => pr_eq_zero_of_coboundary D x t c hc hcz
-  shapeEquiv := fun Hc F Hc' F' d e h => quotShape_of_equiv Hc F Hc' F' d e h
-  memOL := fun LL x => mem_integers_iff_norm_le_one LL x
-  openOL := fun LL => isOpen_integers LL
+theorem elem : ReciprocityTheory.ChartRestriction.T2.Elem :=
+  ⟨@padicInt_coeff, @mulSub_open, @contAction_quotient, @pr_eq_zero_of_coboundary,
+    @quotShape_of_equiv, @mem_integers_iff_norm_le_one, @isOpen_integers⟩
 
 end GlobalTheory.LocElem

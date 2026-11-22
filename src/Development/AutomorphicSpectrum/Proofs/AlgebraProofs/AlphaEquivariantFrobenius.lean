@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GermComp1ZeroPointLeft
-import Development.WeilBound.CoreStatements.HodgeTatePoints.CbAlpha
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GermComp1ZeroPointLeft
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.CbAlpha
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.VolStabFromSWS
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.VolStabFromSWS
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
+
+@[expose] public section
 
 noncomputable section
 
@@ -160,7 +164,7 @@ theorem um_rightInv (Γ : Subgroup G) [Countable Γ] (μ : Measure G) [IsHaarMea
   set c := haarScalarFactor (map (· * g) μ) μ with hcdef
   have hc : map (· * g) μ = c • μ := um_eq_smul_of_sigmaCompact _ _
   have hqmp : QuasiMeasurePreserving (· * g) μ μ :=
-    ⟨measurable_mul_const g, by rw [hc]; exact smul_absolutelyContinuous⟩
+    ⟨(measurable_mul_const g).aemeasurable, by rw [hc]; exact smul_absolutelyContinuous⟩
   have h𝓕' : IsFundamentalDomain Γ ((· * g) ⁻¹' 𝓕) μ :=
     h𝓕.preimage_of_equiv hqmp (e := id) Function.bijective_id
       (fun γ x => by simp [Subgroup.smul_def, mul_assoc])

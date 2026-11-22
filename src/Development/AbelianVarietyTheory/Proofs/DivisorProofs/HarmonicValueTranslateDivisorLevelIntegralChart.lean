@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HarmonicValueTranslateAny
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NormalizedPullbackConjugateTranslateEqTranslateL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HarmonicValueTranslateAny
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NormalizedPullbackConjugateTranslateEqTranslateL
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -172,8 +176,8 @@ theorem alphaForm_at_point_dvd : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
   rw [hch, ← _root_.mul_assoc, ← _root_.mul_assoc, ← map_mul, ← map_mul, totalDegree_harm c hP h0,
     mul_right_comm, nrm_mul_nrm Dw c a α _ l.M hαβ, mul_inv_cancel₀ (pow_ne_zero _ hM), map_one, _root_.one_mul]
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem harmonicValue_translate_dvd_unit : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l), letI := H.starRing; ∀ (nab : NabV Xo c), IsNab Xo c nab → ∀ (T : CDVR) (io : c.F →+* T.Fr) (y : IntFr Xo c T io) (C : IntegralChartA3 Xo c T io y) (P : PELUnif (maximalIdeal T.V) C.I.G), P.TorsionIso → ∀ (ϖ : T.V), Irreducible ϖ → ∀ (F : Type) [Field F] [IsAlgClosed F] [CharZero F] [Algebra T.Fr F] [Algebra T.V F] [IsScalarTower T.V T.Fr F] (v : AddValuation F (WithTop ℚ)), ValOver ϖ F v → ∀ (n : ℕ) (D' : DegData T.V (maximalIdeal T.V)) (A' : PolAV (Spec (CommRingCat.of T.Fr))) (G' : Over (Sp T.V)) [GrpObj G'] [IsCommMonObj G'] (pD : IsPowDeg D'.toPre P.D.toPre n) (pA : IsPowPolAV A' P.A n) (pG : IsPowGrp G' C.I.G.G n) (U' : Unif (maximalIdeal T.V) D' A' G') (PU : UnifPowOf3 pD pA pG U' P.U) [Module (𝓞 E) D'.toPre.X] (oD' : D'.toPre.OAct (𝓞 E)), (∀ (a : 𝓞 E) (x : D'.toPre.X) (i : Fin n), pD.xe (a • x) i = a • pD.xe x i) → (∀ (a : 𝓞 E) (i : Fin n), oD'.onB.act a ≫ pD.pw.pr i = pD.pw.pr i ≫ P.oD.onB.act a) → ∀ (α : 𝓞 E) (N : ℕ), N ∣ l.M → α * star α = (N : 𝓞 E) → l.Mb ≤ Ideal.span {star α} → ∀ (θ : Fam D'.toPre F 1) (θα : Fam D'.toPre F (1 * N)), ThFrame D' ϖ F θ → PullAl D' F oD' α 1 N θ θα → ∀ (p : QkPt D'.toPre F (1 * N)) (w : LB.Gen (LB.LinComb D'.toPre.P.L (DegPre.lineφ D'.toPre F p.g.b) (DegPre.lineε (1 * N)))) (ζ : F) (x : TFK (R := T.V) F ⟶ A'.A) (t₀ t : Fam D'.toPre F (1 * N)) (q : ℕ) (e : 1 * N = q) (_ : N = q) (σ' : U'.toUnifPre.SecGF F q) (h : PS F n (chD C.ch)), w.IsGen → FinOrd D' F (1 * N) p w ζ → QkToAkU U'.toUnifPre F (1 * N) p x → PhiRel D'.toPre F (1 * N) p w θα t₀ → Fam.IsSmul D'.toPre F ζ t₀ t → U'.toUnifPre.ExpandsG F q σ' (PowGerm.famCast (Dp := D'.toPre) (F := F) e t) → IsGermN P C.xT C.actT C.eT C.wPT pG PU.toUnifPowOf F q σ' h → (∀ k, x ≫ pA.pr k ≫ P.oA.act (star α) = 1) → letI := io.toAlgebra; ∃ (xx : Fin n → Dw.La) (u : F), v u = 0 ∧ ∀ (a : ((E →+* ℂ) × ℕ → ℕ)) (Pp : MvPolynomial (LtN Dw n) c.F), Pp ∈ harmA c a n → ∀ f, IsThRule Xo c nab xx Pp f → nabValN C.ch.B F (MvPowerSeries.map (algebraMap T.Fr F) C.ch.h) H.w0 q h (fun ℓ : LtN Dw n => ℓ.2.2) (fun (ℓ : LtN Dw n) i => algebraMap T.Fr F (C.ch.uvec ⟨ℓ.1, ℓ.2.1⟩ i)) (MvPolynomial.map ((algebraMap T.Fr F).comp io) Pp) = u * algebraMap T.Fr F (io (nrm Dw c a α) * evI y f) := by
   intro E _ _ _ H Dw l Xo c
   letI := H.starRing
@@ -215,8 +219,50 @@ theorem harmonicValue_translate_dvd_unit : ∀ (E : Type) [Field E] [NumberField
     have hj' : psJet m h = psJet m (∑ _i : Fin 1, (u * ∏ i, u₁ i) • boxSer f₀) := by
       rw [GermBasic.psJet_sum, Fin.sum_univ_one, BoxGerm.psJet_boxSer, hj]
       simp only [ha, hf₀, map_mul, AlgHom.commutes, Finset.prod_mul_distrib, map_prod, _root_.mul_assoc]
-    have h1 := harmonic_value_at E H Dw l Xo c nab hnab T io y C P τ hEL F φ hφ yF hyF N n m σ₀ hs f₀ htie
-      (fun i => by rw [hf₀]; exact ha₀ i) a Pp hPp le_rfl
+    have h1 : (∑ j ∈ Pp.support, algebraMap c.F F (Pp.coeff j) * ∏ i, nab yF (N : ℤ) (hs i) (colOf j i)) =
+        nabValN C.ch.B F (MvPowerSeries.map (algebraMap T.Fr F) C.ch.h) H.w0 N (boxSer f₀)
+          (fun ℓ : LtN Dw n => ℓ.2.2) (fun (ℓ : LtN Dw n) i => algebraMap T.Fr F (C.ch.uvec ⟨ℓ.1, ℓ.2.1⟩ i))
+          (MvPolynomial.map (algebraMap c.F F) Pp) := by
+      open GlobalTheory.GermValuationJetHarmonics GlobalTheory.ChartPush in
+      obtain ⟨x', e', h₁, h₂, h₃, h₄, h₅⟩ := exists_chart_baseChange φ hyF C.ch
+      rw [hφ] at h₁ h₂ h₃ h₄ h₅
+      have hg := RawChartBaseChange.isCanonGauge_mapFB (algebraMap T.Fr F) C.ch.B C.ch.h C.ch.gauge
+      let CF : ChartAt Xo c yF := ⟨C.ch.d, FBMap.mapFB (algebraMap T.Fr F) C.ch.B, fun ℓ j => algebraMap T.Fr F (C.ch.uvec ℓ j),
+        x', e', C.ch.wP, MvPowerSeries.map (algebraMap T.Fr F) C.ch.h, h₁, h₂, C.ch.prim, hg, h₃⟩
+      have hG : ∀ i, JetD yF CF.d CF.x CF.B.A.act CF.e CF.wP N (hs i) m (f₀ i) := fun i =>
+        jet_of_val ((isChart_iff yF _ _ _ _ _).1 h₁) h₂.gen C.ch.prim.1 m
+          fun z J hJ => by
+            have hf : JetAt P.U.toUnifPre m (C.xT m) (τ m) F N (σ₀ i) (psJet m (f₀ i)) := by rw [hf₀]; exact ha₀ i
+            obtain ⟨p, p₀, p₁, p₂, hp⟩ := frames_tied C m (spMap (jetCoef (algebraMap T.Fr F) (Fin 1 × Fin (chD C.ch)) m))
+            obtain ⟨zF, z₁, z₂, hz⟩ := hf
+            have hLG : P.U.LG.L.IsLB := P.U.LG.isLB
+            obtain ⟨J₂, hJ₂⟩ := DegPull.exists_good' hLG z
+            obtain ⟨J', hJ'⟩ := DegPull.exists_good' C.I.t'.PP.isLB z
+            obtain ⟨J₃, hJ₃, hv, hw⟩ := exists_good_cast (L' := C.I.t'.PP.L) (Φ := C.I.m2.φ)
+              (congrArg RigLB.L P.bundle).symm z J₂ hJ₂
+            obtain ⟨A, k₁, k₂⟩ := hp z J J₃ J' hJ hJ₃ hJ'
+            have ec : spMap (jetCoef (algebraMap T.Fr F) (Fin 1 × Fin (chD C.ch)) m) ≫
+                spMap (jetCoef (algebraMap T.V T.Fr) (Fin 1 × Fin (chD C.ch)) m) =
+                spMap (jetCoef (algebraMap T.V F) (Fin 1 × Fin (chD C.ch)) m) := by
+              rw [spMap_spMap, jetCoef_comp, ← IsScalarTower.algebraMap_eq]
+            rw [ec] at p₂ k₂
+            obtain ⟨b₁, b₂⟩ := ptSec_base (t := Xo.univ.t) m (x' m)
+            have key := (htie i).2 _ p zF _ (z₂.trans p₂.symm) (b₁.trans ((h₄ m).trans p₁.symm)) (z₁.trans b₂.symm) (by
+                rw [← Category.assoc, p₀]
+                refine (congrArg (· ≫ spMap (algebraMap T.Fr F)) b₂).trans ?_
+                exact RawChartGermBC.spMap_comp_eq _ _ _ _
+                  (RingHom.ext fun s => (jetBC_algebraMap (algebraMap T.Fr F) _ m s).symm))
+              z J J₂ (J' p) hJ hJ₂ (hJ' p)
+            rw [hw] at key
+            have k₃ := (val_corr hJ₂ (corr_of_val hLG (hEL m))
+              (spMap (jetCoef (algebraMap T.V F) (Fin 1 × Fin (chD C.ch)) m))).trans ((hv _ _ _ _).trans k₂)
+            exact (alg_tie key (hz z J₂ hJ₂) k₁ k₃).trans
+              (congrArg (fun v => gs (𝟙 _) z ⊤ (toΓ _ (psJet m (f₀ i))) * (v ^ N).val) (h₅ m z J hJ).symm)
+      have hh := GlobalTheory.OrderGerm.ord_holds E H Dw l Xo c nab hnab F yF CF N n m hs f₀ hG a Pp hPp
+        (fun j hj => (MvPolynomial.le_totalDegree hj).trans le_rfl)
+      refine hh.symm.trans ?_
+      exact (nabValN_columns (algebraMap c.F F) C.ch.B _ (HarmCopies.const_eq_zero hg) N n f₀
+        (fun ℓ j => algebraMap T.Fr F (C.ch.uvec ℓ j)) Pp).symm
     have h2 := hal a Pp hPp
     have h3 : algebraMap T.Fr F (evI y f) = thExpr Xo c nab yF Pp Fs := by
       first
@@ -240,8 +286,8 @@ theorem val_nonneg_of_isIntegral {F : Type} [Field F] (v : AddValuation F (WithT
     0 ≤ v x :=
   (Valuation.integer.integers (AddValuation.toValuation v)).mem_of_integral hx.tower_top
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem harmonicValue_translate_dvd : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H) (Xo : Moduli Dw l) (c : Coeff l), letI := H.starRing; ∀ (nab : NabV Xo c), IsNab Xo c nab → ∀ (T : CDVR) (io : c.F →+* T.Fr) (y : IntFr Xo c T io) (C : IntegralChartA3 Xo c T io y), FrTrunc C.I.G (𝟙 (Sp T.V)) (chD C.ch) C.xT C.eT → ∀ (P : PELUnif (IsLocalRing.maximalIdeal T.V) C.I.G), P.TorsionIso → CharZero (IsLocalRing.ResidueField T.V) → ∀ (ϖ : T.V), Irreducible ϖ → ∀ (Q : P.D.toPre.X → ℤ), IsQ P.D.toPre ϖ Q → ∀ (F : Type) [Field F] [IsAlgClosed F] [CharZero F] [Algebra T.Fr F] [Algebra T.V F] [IsScalarTower T.V T.Fr F] (v : AddValuation F (WithTop ℚ)), ValOver ϖ F v → ∀ (n : ℕ) (D' : DegData T.V (IsLocalRing.maximalIdeal T.V)) (A' : PolAV (Spec (CommRingCat.of T.Fr))) (G' : Over (Sp T.V)) [GrpObj G'] [IsCommMonObj G'] (pD : IsPowDeg D'.toPre P.D.toPre n) (pA : IsPowPolAV A' P.A n) (pG : IsPowGrp G' C.I.G.G n) (U' : Unif (IsLocalRing.maximalIdeal T.V) D' A' G') (PU : UnifPowOf3 pD pA pG U' P.U) [Module (𝓞 E) D'.toPre.X] (oD' : D'.toPre.OAct (𝓞 E)), (∀ (a : 𝓞 E) (x : D'.toPre.X) (i : Fin n), pD.xe (a • x) i = a • pD.xe x i) → (∀ (a : 𝓞 E) (i : Fin n), oD'.onB.act a ≫ pD.pw.pr i = pD.pw.pr i ≫ P.oD.onB.act a) → ∀ (α : 𝓞 E) (N : ℕ), N ∣ l.M → α * star α = (N : 𝓞 E) → l.Mb ≤ Ideal.span {star α} → ∀ (θ : Fam D'.toPre F 1) (θα : Fam D'.toPre F (1 * N)), ThFrame D' ϖ F θ → PullAl D' F oD' α 1 N θ θα → ∀ (p : QkPt D'.toPre F (1 * N)) (w : LB.Gen (LB.LinComb D'.toPre.P.L (DegPre.lineφ D'.toPre F p.g.b) (DegPre.lineε (1 * N)))) (ζ : F) (x : TFK (R := T.V) F ⟶ A'.A) (t₀ t : Fam D'.toPre F (1 * N)) (σ' : U'.toUnifPre.SecGF F (1 * N)) (h : PS F n (chD C.ch)), w.IsGen → ζ ≠ 0 → FinOrd D' F (1 * N) p w ζ → QkToAkU U'.toUnifPre F (1 * N) p x → PhiRel D'.toPre F (1 * N) p w θα t₀ → Fam.IsSmul D'.toPre F ζ t₀ t → U'.toUnifPre.ExpandsG F (1 * N) σ' t → IsGermN P C.xT C.actT C.eT C.wPT pG PU.toUnifPowOf F (1 * N) σ' h → (∀ k, x ≫ pA.pr k ≫ P.oA.act (star α) = 1) → letI := io.toAlgebra; ∀ (a : (E →+* ℂ) × ℕ → ℕ) (Pp : MvPolynomial (LtN Dw n) c.F), Pp ∈ harmA c a n → ∃ (xx : Fin n → Dw.La) (u : F), 0 ≤ v u ∧ ∀ f, IsThRule Xo c nab xx Pp f → nabValN C.ch.B F (MvPowerSeries.map (algebraMap T.Fr F) C.ch.h) H.w0 (1 * N) h (fun ℓ : LtN Dw n => ℓ.2.2) (fun (ℓ : LtN Dw n) i => algebraMap T.Fr F (C.ch.uvec ⟨ℓ.1, ℓ.2.1⟩ i)) (MvPolynomial.map ((algebraMap T.Fr F).comp io) Pp) = u * algebraMap T.Fr F (evI y f) := by
   intro E _ _ _ H Dw l Xo c
   letI := H.starRing

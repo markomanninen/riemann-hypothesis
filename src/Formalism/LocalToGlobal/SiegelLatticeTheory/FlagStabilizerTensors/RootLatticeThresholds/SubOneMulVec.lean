@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.ContinuousCw
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.ContinuousCw
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem hgap_w : 1 - ((Tw u : ℝ) : ℂ) * (Tw u' : ℝ) *
     intro h0
     have hD : Dl Z (D.R.rS + 1) = Z.det := by
       unfold Formalism.L2.SG.RealObj.Dl
-      rw [dif_pos le_rfl]
+      rw [dite_eq_left le_rfl]
       congr 1
     have hnn : (0 : ℝ) ≤ (Tw u : ℝ) * (Tw u' : ℝ) * ‖Dl Z D.R.rS‖ ^ 2 :=
       mul_nonneg (mul_nonneg (Formalism.L2.SG.RealObj.InfCut.ProductExactness.Tw_pos (D := D) u).le

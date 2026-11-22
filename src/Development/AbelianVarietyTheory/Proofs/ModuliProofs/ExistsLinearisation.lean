@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -109,17 +113,17 @@ theorem exists_const {k : Type} [Field k] [IsAlgClosed k] {F : Scheme.{0}} [IsIn
   simp only [Function.comp_apply, Polynomial.eval₂_sub, Polynomial.eval₂_X, Polynomial.eval₂_C] at ha
   exact ⟨_, (sub_eq_zero.1 ha).symm⟩
 
-theorem exists_linearisation : ∀ (Γ : Type) [Group Γ] [Finite Γ] (X : Scheme.{0}) (P : Over X) (e : X ⟶ P.left) (ρ : Γ →* Aut X) (τ : Γ →* Aut P.left) (L : LB P.left), e ≫ P.hom = 𝟙 X → GeometricallyIntegral P.hom → (∀ (V : X.Opens) (u : Γ(P.left, P.hom ⁻¹ᵁ V)) (h : V ≤ e ⁻¹ᵁ (P.hom ⁻¹ᵁ V)), (e.appLE _ V h).hom u = 1 → u = 1) → (∀ g, (τ g).hom ≫ P.hom = P.hom ≫ (ρ g).hom ∧ e ≫ (τ g).hom = (ρ g).hom ≫ e) → (∀ (k : Type) [Field k] [IsAlgClosed k] (x : Sp k ⟶ X) g, x ≫ (ρ g).hom = x → pullback.fst P.hom x ≫ (τ g).hom = pullback.fst P.hom x) → L.IsLB → (∃ r : (L.pull e).Gen, r.IsGen) → (∀ g, LBIso L (L.pull (τ g).hom)) → ∃ u : ∀ g, LB.Gen (LB.LinComb L (K := Fin 2) ![𝟙 P.left, (τ g).hom] ![1, -1]), (∀ g, (u g).IsGen) ∧ (∀ g h, LB.Gen.Corr L _ _ _ _ (u (h * g)) (LB.mulGen L _ _ _ _ (u g) (LB.pullGen L _ _ (u h) (τ g).hom))) ∧ ∀ (k : Type) [Field k] [IsAlgClosed k] (y : Sp k ⟶ P.left) g, y ≫ (τ g).hom = y → LB.Gen.Corr L _ _ _ _ (LB.pullGen L _ _ (u g) y) (LB.oneGen L) := by
+theorem exists_linearisation : ∀ (Γ : Type) [Group Γ] [Finite Γ] (X : Scheme.{0}) (P : Over X) (e : X ⟶ P.left) (ρ : Γ →* Aut X) (τ : Γ →* Aut P.left) (L : LB P.left), e ≫ P.hom = 𝟙 X → GeometricallyIntegral P.hom → (∀ (V : X.Opens) (u : Γ(P.left, P.hom ⁻¹ᵁ V)) (h : V ≤ e ⁻¹ᵁ (P.hom ⁻¹ᵁ V)), (e.appLE _ V h).hom u = 1 → u = 1) → (∀ g, (τ g).asIso.hom ≫ P.hom = P.hom ≫ (ρ g).asIso.hom ∧ e ≫ (τ g).asIso.hom = (ρ g).asIso.hom ≫ e) → (∀ (k : Type) [Field k] [IsAlgClosed k] (x : Sp k ⟶ X) g, x ≫ (ρ g).asIso.hom = x → pullback.fst P.hom x ≫ (τ g).asIso.hom = pullback.fst P.hom x) → L.IsLB → (∃ r : (L.pull e).Gen, r.IsGen) → (∀ g, LBIso L (L.pull (τ g).asIso.hom)) → ∃ u : ∀ g, LB.Gen (LB.LinComb L (K := Fin 2) ![𝟙 P.left, (τ g).asIso.hom] ![1, -1]), (∀ g, (u g).IsGen) ∧ (∀ g h, LB.Gen.Corr L _ _ _ _ (u (h * g)) (LB.mulGen L _ _ _ _ (u g) (LB.pullGen L _ _ (u h) (τ g).asIso.hom))) ∧ ∀ (k : Type) [Field k] [IsAlgClosed k] (y : Sp k ⟶ P.left) g, y ≫ (τ g).asIso.hom = y → LB.Gen.Corr L _ _ _ _ (LB.pullGen L _ _ (u g) y) (LB.oneGen L) := by
   intro Γ _ _ X P e ρ τ L he hgi hrig hcomm hfix hL ⟨r, hr⟩ hiso
-  choose u hu hn using fun g => exists_normalised hL P.hom e he (ρ g).hom (τ g).hom (hcomm g).2 r hr (hiso g)
+  choose u hu hn using fun g => exists_normalised hL P.hom e he (ρ g).asIso.hom (τ g).asIso.hom (hcomm g).2 r hr (hiso g)
   have rig : ∀ c : Γ(P.left, ⊤), (e.app ⊤).hom c = 1 → c = 1 := fun c hc =>
     hrig ⊤ c le_top (by
       have : e.appLE (P.hom ⁻¹ᵁ ⊤) ⊤ le_top = e.app ⊤ := (e.app_eq_appLE (U := ⊤)).symm
       rw [this]; exact hc)
-  have τm : ∀ g h, (τ (h * g)).hom = (τ g).hom ≫ (τ h).hom := fun g h => by rw [map_mul]; rfl
-  have ρm : ∀ g h, (ρ (h * g)).hom = (ρ g).hom ≫ (ρ h).hom := fun g h => by rw [map_mul]; rfl
+  have τm : ∀ g h, (τ (h * g)).asIso.hom = (τ g).asIso.hom ≫ (τ h).asIso.hom := fun g h => by rw [map_mul]; rfl
+  have ρm : ∀ g h, (ρ (h * g)).asIso.hom = (ρ g).asIso.hom ≫ (ρ h).asIso.hom := fun g h => by rw [map_mul]; rfl
   have coc : ∀ g h (Z : Scheme.{0}) (s : Z ⟶ P.left) (z : Z) (J), Good L z J → val (u (h * g)) s z J =
-      val (LB.mulGen L _ _ _ _ (u g) (LB.pullGen L _ _ (u h) (τ g).hom)) s z J := fun g h =>
+      val (LB.mulGen L _ _ _ _ (u g) (LB.pullGen L _ _ (u h) (τ g).asIso.hom)) s z J := fun g h =>
     val_eq_of_rigid hL (fun U _ k => by
         simp only [Fintype.prod_sum_type, Sum.elim_inl, Sum.elim_inr, Fin.prod_univ_two,
           Matrix.cons_val_zero, Matrix.cons_val_one, τm, Category.comp_id]
@@ -127,12 +131,12 @@ theorem exists_linearisation : ∀ (Γ : Type) [Group Γ] [Finite Γ] (X : Schem
       (DVR.mulGen_isGen _ _ _ _ _ _ _ (hu g) (DVR.pullGen_isGen _ _ _ _ (hu h) _)) (fun y J hJ => by
         have a₁ := hn (h * g) X (𝟙 X) y J hJ
         have a₂ := hn g X (𝟙 X) y J hJ
-        have a₃ := hn h X (ρ g).hom y J hJ
+        have a₃ := hn h X (ρ g).asIso.hom y J hJ
         simp only [Category.id_comp] at a₁ a₂
         rw [val_mul hJ, val_pull hJ, (hcomm g).2, a₁, a₂, a₃, ρm]
         simp)
   refine ⟨u, hu, fun g h => corr_of_val hL fun y J hJ => coc g h _ _ y J hJ, fun k _ _ y g hy => ?_⟩
-  have hx : (y ≫ P.hom) ≫ (ρ g).hom = y ≫ P.hom := by
+  have hx : (y ≫ P.hom) ≫ (ρ g).asIso.hom = y ≫ P.hom := by
     rw [Category.assoc, ← (hcomm g).1, ← Category.assoc, hy]
   have hf := hfix k _ g hx
   have : IsIntegral (pullback P.hom (y ≫ P.hom)) :=
@@ -145,11 +149,11 @@ theorem exists_linearisation : ∀ (Γ : Type) [Group Γ] [Finite Γ] (X : Schem
   have hc' : ∀ (Z : Scheme.{0}) (s : Z ⟶ pullback P.hom (y ≫ P.hom)) (z : Z) (J), Good L z J →
       (val (u g) (s ≫ pullback.fst _ _) z J).val = gs s z ⊤ c := fun Z s z J hJ => by
     rw [← hc Z s z J hJ, val_pull hJ, val_one, inv_one, _root_.mul_one]
-  have pw : ∀ (Z : Scheme.{0}) (s : Z ⟶ P.left) (z : Z) (J), Good L z J → s ≫ (τ g).hom = s →
+  have pw : ∀ (Z : Scheme.{0}) (s : Z ⟶ P.left) (z : Z) (J), Good L z J → s ≫ (τ g).asIso.hom = s →
       val (u g) s z J ^ orderOf g = 1 := fun Z s z J hJ hs => by
     have one : val (u 1) s z J = 1 := by
       have := coc 1 1 Z s z J hJ
-      rw [val_mul hJ, val_pull hJ, _root_.mul_one, show s ≫ (τ 1).hom = s by rw [map_one]; exact Category.comp_id s] at this
+      rw [val_mul hJ, val_pull hJ, _root_.mul_one, show s ≫ (τ 1).asIso.hom = s by rw [map_one]; exact Category.comp_id s] at this
       exact mul_eq_left.1 this.symm
     have all : ∀ n : ℕ, val (u (g ^ n)) s z J = val (u g) s z J ^ n := fun n => by
       induction n with

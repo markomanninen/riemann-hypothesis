@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
 set_option autoImplicit false
@@ -75,9 +80,15 @@ theorem eq_zero_of_le (n : Fin d →₀ ℕ) (c : (Fin d →₀ ℕ) → M)
     exact smul_eq_zero_of_not_dvd hu hp.out hd h
 
 theorem not_dvd_prod (f : Fin d → ℕ) (h : ∀ k, ¬ p ∣ f k) : ¬ p ∣ ∏ k, f k := by
-  intro hd
-  obtain ⟨k, -, hk⟩ := (Prime.dvd_finset_prod_iff hp.out.prime f).1 hd
-  exact h k hk
+  classical
+  have aux : ∀ s : Finset (Fin d), ¬ p ∣ s.prod f := by
+    intro s
+    induction s using Finset.induction_on with
+    | empty => simpa using hp.out.not_dvd_one
+    | @insert a s ha ih =>
+      rw [Finset.prod_insert ha]
+      exact fun hd => (hp.out.dvd_mul.mp hd).elim (h a) ih
+  exact aux Finset.univ
 
 theorem eq_zero_of_atoms (n : Fin d →₀ ℕ) (c : (Fin d →₀ ℕ) → M)
     (hu : ∀ k : ℕ, Nat.Coprime k p → Function.Bijective fun m : M => k • m) (hrel : IsRel n c)

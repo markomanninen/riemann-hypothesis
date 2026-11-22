@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.AdelicUnitaryGroups
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ImportsBis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.AdelicUnitaryGroups
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ImportsBis
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.BasicNotions
 open scoped TensorProduct
 
@@ -8,19 +13,19 @@ namespace GlobalTheory.LatticeLocalGlobal
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-omit [NumberField F] [NumberField E] in
 
+omit [NumberField F] [NumberField E] in
 theorem repr_map {R R' ι : Type} [CommRing R] [Algebra F R] [CommRing R'] [Algebra F R']
     (φ : R →ₐ[F] R') (b : Module.Basis ι F E) (z : R ⊗[F] E) (k : ι) :
     (Algebra.TensorProduct.basis R' b).repr (Algebra.TensorProduct.map φ (AlgHom.id F E) z) k =
       φ ((Algebra.TensorProduct.basis R b).repr z k) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
   | tmul a e => simp [Algebra.TensorProduct.basis_repr_tmul]
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem ext_components (z z' : Af F ⊗[F] E)
     (h : ∀ v : HeightOneSpectrum (𝓞 F),
       Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F v) (AlgHom.id F E) z =
@@ -83,7 +88,7 @@ theorem mem_latHat_iff :
       simp only [Pi.zero_apply, map_zero]
       exact zero_mem _
     | add y z _ _ hy hz =>
-      simp only [Pi.add_apply, map_add]
+      simp only [Pi.add_apply, map_add (f := _)]
       exact add_mem hy hz
     | neg y _ hy =>
       simp only [Pi.neg_apply, map_neg]
@@ -98,7 +103,8 @@ theorem mem_latHat_iff :
       funext i
       apply ext_components
       intro v
-      rw [ea v i, Finset.sum_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [ea v i, Finset.sum_apply, map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [Algebra.TensorProduct.map_tmul, hA]
       rfl

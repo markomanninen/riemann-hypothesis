@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,8 +34,7 @@ theorem notMem_support_of_flat {B D M N : Type} [CommRing B] [CommRing D] [Algeb
         Q.asIdeal := by
     intro z
     induction z with
-    | zero => simp
-    | add a b ha hb => rw [map_add, map_add]; exact Q.asIdeal.add_mem ha hb
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _)]; exact Q.asIdeal.add_mem ha hb
     | tmul d r =>
       have hr : algebraMap B D r.1 ∈ Q.asIdeal := by
         by_contra h
@@ -41,8 +44,8 @@ theorem notMem_support_of_flat {B D M N : Type} [CommRing B] [CommRing D] [Algeb
   rw [hz] at this
   exact hf (by simpa using this)
 
-attribute [local instance] Algebra.TensorProduct.rightAlgebra in
 
+attribute [local instance] Algebra.TensorProduct.rightAlgebra in
 theorem mem_etaleLocus_of_flat {A B C : Type} [CommRing A] [CommRing B] [CommRing C] [Algebra A B] [Algebra A C]
     [Module.Flat A C] (Q : PrimeSpectrum (C ⊗[A] B)) (hQ : Q ∈ Algebra.etaleLocus C (C ⊗[A] B)) :
     PrimeSpectrum.comap (algebraMap B (C ⊗[A] B)) Q ∈ Algebra.etaleLocus A B := by
@@ -56,8 +59,7 @@ theorem mem_etaleLocus_of_flat {A B C : Type} [CommRing A] [CommRing B] [CommRin
           (Algebra.IsPushout.cancelBaseChange A C B (C ⊗[A] B) Ω[B⁄A]).symm := by
       funext z
       induction z with
-      | zero => simp
-      | add x y hx hy => simp only [Function.comp_apply, map_add] at hx hy ⊢; rw [hx, hy]
+      | add x y hx hy => simp only [Function.comp_apply, map_add (f := _)] at hx hy ⊢; rw [hx, hy]
       | tmul s m =>
         rw [KaehlerDifferential.tensorKaehlerEquivBase_tmul, Function.comp_apply,
           Algebra.IsPushout.cancelBaseChange_symm_tmul, LinearMap.liftBaseChange_tmul, algebraMap_smul]
@@ -69,8 +71,7 @@ theorem mem_etaleLocus_of_flat {A B C : Type} [CommRing A] [CommRing B] [CommRin
           (Algebra.IsPushout.cancelBaseChange A C B (C ⊗[A] B) (Algebra.H1Cotangent A B)).symm := by
       funext z
       induction z with
-      | zero => simp
-      | add x y hx hy => simp only [Function.comp_apply, map_add] at hx hy ⊢; rw [hx, hy]
+      | add x y hx hy => simp only [Function.comp_apply, map_add (f := _)] at hx hy ⊢; rw [hx, hy]
       | tmul s m =>
         rw [Algebra.tensorH1CotangentOfFlat_tmul, Function.comp_apply, Algebra.IsPushout.cancelBaseChange_symm_tmul,
           LinearMap.liftBaseChange_tmul, algebraMap_smul]
@@ -78,8 +79,8 @@ theorem mem_etaleLocus_of_flat {A B C : Type} [CommRing A] [CommRing B] [CommRin
     rw [hc] at hi
     exact hi.of_comp_right (LinearEquiv.surjective _)
 
-attribute [local instance] Algebra.TensorProduct.rightAlgebra in
 
+attribute [local instance] Algebra.TensorProduct.rightAlgebra in
 theorem exists_etale_spec {A B C : Type} [CommRing A] [CommRing B] [CommRing C] [Algebra A B] [Algebra A C]
     [Module.Flat A C] [Algebra.FinitePresentation A B] (W : (Spec (.of (C ⊗[A] B))).Opens)
     (p : Spec (.of (C ⊗[A] B))) (hp : p ∈ W)

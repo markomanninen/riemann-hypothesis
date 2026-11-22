@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.AllPositions
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaFunctionProductsSlicesOrthogonalDecompositi
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ProdFnMemSB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.AllPositions
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaFunctionProductsSlicesOrthogonalDecompositi
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ProdFnMemSB
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory Matrix ValuativeRel GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.SeeSaw GlobalTheory.LocMod
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -25,12 +30,13 @@ theorem ι_mul (x : k) (b : AE D) : p.ι x * b = p.ι (x * p.π b) := by
 theorem map_ι_mul {a b c : Type} [Fintype b] (M : Matrix a b k) (N : Matrix b c (AE D)) :
     M.map p.ι * N = (M * N.map p.π).map p.ι := by
   ext i j
-  simp only [Matrix.mul_apply, Matrix.map_apply, map_sum, ι_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mul_apply, Matrix.map_apply, map_sum, ι_mul]
+
 
 omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
-
 theorem frame_card {N : ℕ} {Y : Type} [Fintype Y] [DecidableEq Y] (F : Frame k N Y) : Fintype.card Y = N := by
-  have e : (Y → k) ≃ₗ[k] (Fin N → k) := LinearEquiv.ofLinear (Matrix.toLin' F.β) (Matrix.toLin' F.γ)
+  have e : (Y → k) ≃ₗ[k] (Fin N → k) := LinearEquiv.ofLinearMap (Matrix.toLin' F.β) (Matrix.toLin' F.γ)
     (by rw [← Matrix.toLin'_mul, F.βγ, Matrix.toLin'_one]) (by rw [← Matrix.toLin'_mul, F.γβ, Matrix.toLin'_one])
   simpa using e.finrank_eq
 
@@ -94,7 +100,8 @@ theorem beta_eq (h : p.IsCoreFrame B s FA F₀) (hL : ∀ r, FL.β r () = s * p.
   · exact h.1 r a
   · cases u
     rw [h.2 r, fromCols_apply_inr, Matrix.mul_apply]
-    simp only [vecB, Matrix.mulVec, dotProduct, Place.pr, map_sum, map_mul, Matrix.map_apply, hL, RingHom.comp_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [vecB, Matrix.mulVec, dotProduct, Place.pr, map_sum, map_mul, Matrix.map_apply, hL, RingHom.comp_apply,
       Finset.mul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     ring
@@ -172,7 +179,8 @@ theorem slice_line : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k] [Topolog
     have hcol : ∀ r, F₀.β r (Sum.inr ()) = 0 := by
       intro r
       rw [h.2 r]
-      simp only [vecB, Matrix.mulVec, dotProduct, Place.pr, map_sum, map_mul, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [vecB, Matrix.mulVec, dotProduct, Place.pr, map_sum, map_mul, Finset.mul_sum]
       refine Finset.sum_eq_zero fun j _ => ?_
       have := hz j
       simp only [Place.pr] at this
@@ -195,7 +203,34 @@ theorem slice_line : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k] [Topolog
     (LinearMap.funLeft ℂ ℂ (fun w : WO B.L S => (B.o.resS S).symm (u₀, w))).comp (T₀.comp (box Ξ))
   have hT' : ∀ c w, T' c w = T₀ (box Ξ c) ((B.o.resS S).symm (u₀, w)) := fun _ _ => rfl
   refine ⟨T', ⟨fun Φ => ?_, fun x Φ Φ' hΦ => ?_, fun y hy Φ Φ' hΦ => ?_⟩, fun c Ψ hΨ w => ?_⟩
-  · exact GlobalTheory.BoxSlice.isThetaFunO_slice_right B.o (hT.theta (box Ξ Φ)) u₀
+  · let f := T₀ (box Ξ Φ)
+    have hf : IsThetaFunO ψ B.V₀ S f := hT.theta (box Ξ Φ)
+    let e := (B.o.resS S).symm
+    let incl : WO B.L S →+ WO B.V₀ S := sandwich (1 : Mx D S.rank S.rank) B.o.pB
+    have he (v : WO B.L S) : incl v = e (0, v) := by
+      rw [sandwich_apply, Matrix.one_mul, resS_symm_apply, Matrix.zero_mul, zero_add]
+    have hadd (w v : WO B.L S) : e (u₀, w + v) = e (u₀, w) + incl v := by
+      rw [he, ← map_add e, Prod.mk_add_mk, add_zero]
+    have hslice : IsThetaFunO ψ B.L S (fun w => f (e (u₀, w))) := by
+      refine ⟨?_, ?_, hf.cont.comp ((B.o.continuous_resS_symm S).comp
+        (continuous_const.prodMk continuous_id)), ?_⟩
+      · intro γ w
+        have hrat : e (0, ratW S B.L γ) = ratW S B.V₀ (γ * B.o.qB) := by
+          rw [resS_symm_apply, Matrix.zero_mul, zero_add, ratW_eq, ratW_eq, rat_mul]; rfl
+        rw [add_comm (ratW S B.L γ) w, hadd, he, add_comm (e (u₀, w)), hrat, hf.quasi,
+          ← hrat, B.o.symplOH_resS, AddEquiv.apply_symm_apply, AddEquiv.apply_symm_apply,
+          GlobalTheory.MixModel.symplOH_zero_left, zero_add]
+      · obtain ⟨U, hU, hlevel⟩ := hf.level
+        refine ⟨U.comap incl, hU.preimage (continuous_sandwich _ _), fun v hv hzero => ?_⟩
+        funext w
+        have h := congrFun (hlevel (incl v) hv (map_sandwich _ _ _ hzero)) (e (u₀, w))
+        rw [he, heis_slice] at h
+        exact h
+      · intro m L hL hzero w
+        simp only [hadd]
+        exact hf.smooth m (incl.comp L) ((continuous_sandwich _ _).comp hL)
+          (fun t => map_sandwich _ _ _ (hzero t)) _
+    exact hslice
   · have e := hT.trans (fromCols 0 x) (box Ξ Φ) (box Ξ Φ') (fun t => by
       rw [box_apply, box_apply, hΦ, (toCols_add t x).1, (toCols_add t x).2])
     funext w

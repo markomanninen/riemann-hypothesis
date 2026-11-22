@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHasCls
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHasCls
+
+@[expose] public section
 
 open MeasureTheory Set Filter Polynomial NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -21,7 +25,7 @@ theorem sigR_map {A : Type} [Field A] [Algebra F A] (τ : A →ₐ[F] A) (z : k 
       Algebra.TensorProduct.map ψ (AlgHom.id F A) (sigR k τ z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a e => simp [sigR]
 
 theorem mapH_diagH' {A : Type} [Field A] [Algebra F A] (τ : A →ₐ[F] A) {m : ℕ} (G : Matrix (Fin m) (Fin m) A)
@@ -34,7 +38,7 @@ variable {A : Type} [CommRing A] {ι : Type} [Fintype ι] (s : A →+* A) (G : M
 
 theorem hform_add_left (u u' v : ι → A) :
     Formalism.UG.hform s G (u + u') v = Formalism.UG.hform s G u v + Formalism.UG.hform s G u' v := by
-  simp only [Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hform_add_right (u v v' : ι → A) :
     Formalism.UG.hform s G u (v + v') = Formalism.UG.hform s G u v + Formalism.UG.hform s G u v' := by
@@ -104,7 +108,7 @@ variable {k k' : Type} [CommRing k] [Algebra F k] [CommRing k'] [Algebra F k'] (
 theorem coordF_map (y : k ⊗[F] Fld P) : coordF P k' (mapL P ψ y) = fun i => mapE ψ (coordF P k y i) := by
   induction y using TensorProduct.induction_on with
   | zero => funext i; simp
-  | add y y' hy hy' => funext i; simp only [map_add, hy, hy', Pi.add_apply]
+  | add y y' hy hy' => funext i; simp only [map_add (f := _), hy, hy', Pi.add_apply]
   | tmul a l => funext i; simp [coordF_tmul]
 
 end GlobalTheory.TrEll.BaseChg
@@ -151,14 +155,14 @@ theorem exists_natural (φ : (k ⊗[F] Fld P) ≃ₗ[k ⊗[F] E] (Fin n → k �
 theorem trBase_map (z : k ⊗[F] Fld P) : trBase P k' (mapL P ψ z) = mapE ψ (trBase P k z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a l => simp [trBase]
 
 theorem trBase_tmul_one_mul (a : k') (z : k' ⊗[F] Fld P) :
     trBase P k' ((a ⊗ₜ 1) * z) = (a ⊗ₜ 1) * trBase P k' z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [mul_add, map_add, hx, hy]
+  | add x y hx hy => simp only [mul_add, map_add (f := _), hx, hy]
   | tmul b l => simp [trBase, Algebra.TensorProduct.tmul_mul_tmul]
 
 theorem hx_map (x y y' : k ⊗[F] Fld P) :
@@ -169,7 +173,8 @@ theorem hx_map (x y y' : k ⊗[F] Fld P) :
 theorem map_hform (J : Matrix (Fin n) (Fin n) E) (u v : Fin n → k ⊗[F] E) :
     mapE ψ (Formalism.UG.hform (sigR k σ) (JR k J) u v) =
       Formalism.UG.hform (sigR k' σ) (JR k' J) (fun i => mapE ψ (u i)) (fun i => mapE ψ (v i)) := by
-  simp only [Formalism.UG.hform, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.UG.hform, map_sum, map_mul]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [← sigR_map]
   congr 2
@@ -200,12 +205,12 @@ theorem isIsom_map {J : Matrix (Fin n) (Fin n) E} {x : k ⊗[F] Fld P}
   induction y using TensorProduct.induction_on with
   | zero => simp [hx, hform_zero_right]
   | add y₁ y₂ h₁ h₂ =>
-    rw [map_add, hform_add_right, h₁, h₂]; simp only [hx, add_mul, mul_add, map_add]
+    rw [map_add (f := _), hform_add_right, h₁, h₂]; simp only [hx, add_mul, mul_add, map_add (f := _)]
   | tmul a l =>
     induction y' using TensorProduct.induction_on with
     | zero => simp [hx, hform_zero_left]
     | add y₁ y₂ h₁ h₂ =>
-      rw [map_add, hform_add_left, h₁, h₂]; simp only [hx, add_mul, mul_add, map_add]
+      rw [map_add (f := _), hform_add_left, h₁, h₂]; simp only [hx, add_mul, mul_add, map_add (f := _)]
     | tmul a' l' =>
       rw [tmul_eq_smul P a l, tmul_eq_smul P a' l', map_smul, map_smul, hform_smul_left, hform_smul_right, base]
       simp only [hx, Algebra.smul_def, RingHom.algebraMap_toAlgebra]

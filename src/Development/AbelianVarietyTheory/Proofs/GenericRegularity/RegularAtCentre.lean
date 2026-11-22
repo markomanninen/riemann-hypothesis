@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.SCharts
-import Formalism.LocalToGlobal.ProjectiveLattices.RegModelC
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.SCharts
+public import Formalism.LocalToGlobal.ProjectiveLattices.RegModelC
+
+@[expose] public section
 
 noncomputable section
 

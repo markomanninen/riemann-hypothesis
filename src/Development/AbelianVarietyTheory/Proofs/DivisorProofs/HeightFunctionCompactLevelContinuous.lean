@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LocallyCompactSpaceAxis
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EisensteinResidueLine
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAHEqOfMemRatPts
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LocallyCompactSpaceAxis
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EisensteinResidueLine
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAHEqOfMemRatPts
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+
+@[expose] public section
+
 open scoped TensorProduct NNReal ENNReal Matrix
 open NumberField MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet GlobalTheory.StdPar GlobalTheory.ResLine
 open GlobalTheory.Doubling (absE)
@@ -16,6 +21,7 @@ namespace GlobalTheory.ResLine.HtCont
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin n) (Fin n) E}
 
+omit [NumberField E] in
 theorem inv_eigen {x : Matrix (Fin n) (Fin 1) E} {p : GAd σ J} {l : (AF F ⊗[F] E)ˣ}
     (hp : (matHom _ σ J p).1 * adMat F x = l.1 • adMat F x) :
     (matHom _ σ J p⁻¹).1 * adMat F x = (l⁻¹).1 • adMat F x := by
@@ -26,21 +32,23 @@ theorem inv_eigen {x : Matrix (Fin n) (Fin 1) E} {p : GAd σ J} {l : (AF F ⊗[F
   calc _ = ((l⁻¹).1 * l.1) • ((matHom _ σ J p⁻¹).1 * adMat F x) := by rw [Units.inv_mul, one_smul]
     _ = _ := by rw [← smul_smul, h2]
 
+omit [NumberField F] in
 theorem exists_col_ne {r : ℕ} {X Y : Matrix (Fin n) (Fin (r + 1)) E} (hW : IsWittFrame σ J X Y) :
     ∃ i, col X i 0 ≠ 0 := by
   by_contra hc
-  push_neg at hc
+  push Not at hc
   have h0 : ∀ j, X j 0 = 0 := fun j => hc j
   have := congrFun (congrFun hW.xy 0) 0
   simp [Matrix.mul_apply, Formalism.UG.cT, h0] at this
 
+set_option linter.style.haveILetI false in
 theorem isCompact_and_continuous : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (n : ℕ)
     (J : Matrix (Fin n) (Fin n) E) (r : ℕ) (X Y : Matrix (Fin n) (Fin (r + 1)) E) (L : Submodule (𝓞 E) (Fin n → E))
     (a : GL (Fin n) (AF F ⊗[F] E)) (h : GAd σ J → ℝ), Data σ J X Y L a h →
     IsCompact (levelAll σ J L a : Set (GAd σ J)) ∧ Continuous h := by
   intro F E _ _ _ _ _ σ n J r X Y L a h hS
   obtain ⟨hCM, -, -, hW, hA, hI1, hI2⟩ := hS
-  haveI := hA.lat
+  let _ : Submodule.IsFullLattice E L := hA.lat
   haveI := GlobalTheory.Doubling.isTopologicalRing_tens (F := F) (E := E) (R := AF F)
   haveI := GlobalTheory.AdelicUnitaryTop.t2Space_adeleRing_numberField F
   haveI := GlobalTheory.Doubling.t2Space_tensorProduct_finiteExtension (F := F) (E := E) (R := AF F)

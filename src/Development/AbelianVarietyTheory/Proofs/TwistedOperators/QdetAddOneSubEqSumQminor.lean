@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
+
 open Formalism.REAL Finset
 
 namespace GlobalTheory.CapelliDiff
@@ -38,7 +43,7 @@ theorem prod_ofFn_sub {A : Type*} [Ring A] [Algebra ℂ A] :
 theorem Tm_add_one {A : Type*} [Ring A] [Algebra ℂ A] {n : ℕ} (E : Fin n → Fin n → A) (v : ℂ) (a b : Fin n) :
     Tm E (v + 1) a b = Tm E v a b + algebraMap ℂ A (if a = b then 1 else 0) := by
   unfold Tm
-  split_ifs <;> simp [map_add]; abel
+  split_ifs <;> simp [map_add (f := _)]; abel
 
 def extAt {m : ℕ} (k : Fin (m + 1)) (τ : Equiv.Perm (Fin m)) : Equiv.Perm (Fin (m + 1)) :=
   Equiv.Perm.ofSubtype ((finSuccAboveEquiv k).permCongr τ)

@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
+
+@[expose] public section
 
 open CompanionTheory.Rg.FlB
 
@@ -12,7 +16,7 @@ variable {L : Type} [NontriviallyNormedField L] [IsUltrametricDist L]
 
 theorem herm_add_left {s : L →+* L} {h : V → V → L} (hh : IsHerm s h) (x y z : V) :
     h (x + y) z = h x z + h y z := by
-  rw [hh.2.2.1 z (x + y), hh.1, map_add, ← hh.2.2.1 z x, ← hh.2.2.1 z y]
+  rw [hh.2.2.1 z (x + y), hh.1, map_add (f := _), ← hh.2.2.1 z x, ← hh.2.2.1 z y]
 
 def hLin {s : L →+* L} {h : V → V → L} (hh : IsHerm s h) (z : V) : V →ₗ[L] L where
   toFun := h z
@@ -24,7 +28,8 @@ theorem herm_eq_sum {s : L →+* L} {h : V → V → L} (hh : IsHerm s h) {ι : 
   calc h z y = hLin hh z y := rfl
     _ = hLin hh z (∑ j, b.repr y j • b j) := by rw [b.sum_repr]
     _ = ∑ j, b.repr y j * h z (b j) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_smul]
       rfl
@@ -159,7 +164,8 @@ theorem exists_scale {s : L →+* L} {h : V → V → L} (hh : IsHerm s h) (B : 
   refine ⟨c, norm_pos_iff.1 hc0, fun x hxB i => ?_⟩
   have hr : b.repr x i = ∑ k, h (b k) x * b.repr (w k) i := by
     conv_lhs => rw [hx x]
-    simp [map_sum, Finsupp.finset_sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, Finsupp.finsetSum_apply]
   have hbound : ‖b.repr x i‖ ≤ B * C := by
     rw [hr]
     refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (by positivity) fun k _ => ?_

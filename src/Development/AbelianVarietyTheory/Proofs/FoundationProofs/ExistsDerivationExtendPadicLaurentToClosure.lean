@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
+
+@[expose] public section
 
 open GlobalTheory.K5
 
@@ -34,8 +38,8 @@ theorem exists_extend_of_formallySmooth {R S : Type} [CommRing R] [CommRing S] [
             map_zero, zero_add]
       map_add' := fun a b ↦ by
         ext
-        · simp only [TrivSqZeroExt.fst_add, TrivSqZeroExt.fst_inl, TrivSqZeroExt.fst_inr, map_add, add_zero]
-        · simp only [TrivSqZeroExt.snd_add, TrivSqZeroExt.snd_inl, TrivSqZeroExt.snd_inr, map_add, zero_add] }
+        · simp only [TrivSqZeroExt.fst_add, TrivSqZeroExt.fst_inl, TrivSqZeroExt.fst_inr, map_add (f := _), add_zero]
+        · simp only [TrivSqZeroExt.snd_add, TrivSqZeroExt.snd_inl, TrivSqZeroExt.snd_inr, map_add (f := _), zero_add] }
   have hg : ∀ r, (g r).fst = algebraMap R S r ∧ (g r).snd = algebraMap R S (D r) := fun r ↦ by
     constructor
     · change (TrivSqZeroExt.inl (algebraMap R S r) + TrivSqZeroExt.inr (algebraMap R S (D r)) :
@@ -64,7 +68,7 @@ theorem exists_extend_of_formallySmooth {R S : Type} [CommRing R] [CommRing S] [
     exact ⟨l, fun s ↦ AlgHom.congr_fun (Algebra.FormallySmooth.comp_liftOfSurjective (AlgHom.id R S) π hs hk) s,
       fun r ↦ l.commutes r⟩
   refine ⟨Derivation.mk' (AddMonoidHom.toIntLinearMap
-    { toFun := fun s ↦ (l s).snd, map_zero' := by simp, map_add' := fun x y ↦ by rw [map_add]; rfl }) fun a b ↦ ?_,
+    { toFun := fun s ↦ (l s).snd, map_zero' := by simp, map_add' := fun x y ↦ by rw [map_add (f := _)]; rfl }) fun a b ↦ ?_,
     fun r ↦ ?_⟩
   · change (l (a * b)).snd = a • (l b).snd + b • (l a).snd
     rw [map_mul, TrivSqZeroExt.snd_mul, h1, h1]

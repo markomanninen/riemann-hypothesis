@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.EfRankSum
+module
+
+public import Formalism.PeriodIntegrals.EfRankSum
+
+@[expose] public section
 
 namespace PI.UnitaryGroupMassFormula.EfRankSum
 
@@ -50,7 +54,7 @@ theorem isLocalizedModule_as (O : Type) [CommRing O] [IsDomain O] [IsDiscreteVal
     refine ⟨?_, ?_⟩
     · intro x y hxy
       simp only [Module.algebraMap_end_apply] at hxy
-      exact htf (isRegular_of_ne_zero (nonZeroDivisors.ne_zero s.2)) hxy
+      exact htf (IsRegular.of_ne_zero (nonZeroDivisors.ne_zero s.2)) hxy
     · intro y
       refine ⟨(algebraMap O K s)⁻¹ • y, ?_⟩
       simp only [Module.algebraMap_end_apply]

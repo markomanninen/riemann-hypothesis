@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.AlternatingFormStandardHermitian
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThCLeftStab
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.AlternatingFormStandardHermitian
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThCLeftStab
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2.Ker
 
 noncomputable section
@@ -16,7 +21,7 @@ def cocR (x y : Formalism.L2.Col.HomE E a b) : ℝ :=
 
 theorem cocR_add_left (x y z : Formalism.L2.Col.HomE E a b) :
     cocR emb δ d sc (x + y) z = cocR (ι := ι) emb δ d sc x z + cocR emb δ d sc y z := by
-  simp only [cocR, Formalism.L2.Th1.H.altE, map_add, LinearMap.add_apply, Complex.add_re, Complex.add_im]; ring
+  simp only [cocR, Formalism.L2.Th1.H.altE, map_add (f := _), LinearMap.add_apply, Complex.add_re, Complex.add_im]; ring
 
 theorem cocR_zero_left (z : Formalism.L2.Col.HomE E a b) : cocR (ι := ι) emb δ d sc 0 z = 0 := by
   simp [cocR, Formalism.L2.Th1.H.altE]
@@ -36,7 +41,8 @@ theorem cocR_smul (hconj : ∀ τ x, emb τ (star x) = starRingEnd ℂ (emb τ x
 theorem semiChar_twO : ∀ (E : Type) [Field E] [NumberField E] [StarRing E] (ι : Type) [Fintype ι] [Nonempty ι] (a b : ℕ) (emb : ι → E →+* ℂ) (δ : ℂ) (d : ℕ) (sc : ℝ) (M : Submodule (𝓞 E) (Formalism.L2.Col.HomE E a b)) (c : ℕ) (e : HeightOneSpectrum (𝓞 E) → ℤ), δ ≠ 0 → (∀ (τ : ι) (x : E), emb τ (star x) = starRingEnd ℂ (emb τ x)) → 0 < c → (∀ Q, e (Formalism.L2.Col.conjPrime₂ Q) = -e Q) → (∀ Q, e Q = 1 ∨ e Q = 0 ∨ e Q = -1) → Formalism.L2.Th1.H.IsSelfDual (HV sc) (laV emb δ M) → Formalism.L2.Th1.H.IsSemiChar (HV sc) (laV emb δ M) (alV d sc) → Formalism.L2.Th1.H.IsSemiChar (HV sc) (laV emb δ (twist₂ M c e)) (alV d sc) := by
   intro E _ _ _ ι _ _ a b emb δ d sc M c e _ hconj hc he _ _ hM
   have hH : Formalism.L2.Th1.H.IsHerm (HV (ι := ι) (a := a) (b := b) sc) := fun x y => by
-    simp [Formalism.L2.Ker.HV, map_sum, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Formalism.L2.Ker.HV, map_sum, mul_comm]
   have h0 : ∀ x ∈ M, ∀ y ∈ M, ∃ n : ℤ, cocR emb δ d sc x y = n := fun x hx y hy =>
     (GlobalTheory.KerLaw.semi_iff hH (Real.sqrt d) _).1 hM (embH emb δ x) ⟨x, hx, rfl⟩ (embH emb δ y) ⟨y, hy, rfl⟩
   refine (GlobalTheory.KerLaw.semi_iff hH (Real.sqrt d) _).2 ?_

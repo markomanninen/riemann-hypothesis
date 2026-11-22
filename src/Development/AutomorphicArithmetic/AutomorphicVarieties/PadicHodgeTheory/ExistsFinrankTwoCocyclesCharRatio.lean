@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsFirstOrderDeformationOfRZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TateRat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DecEmb
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PtCont
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsFirstOrderDeformationOfRZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TateRat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DecEmb
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PtCont
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
+
+@[expose] public section
+
 open Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.HV UpperTheory.V.Base IsLocalRing
 
 private theorem finrank_Z1_chRep_eq_two_of_ne_one_ne_cyc (hP : LocalPublishedTheorems) {l : ℕ} [Fact l.Prime] {H : Type} [Group H] [TopologicalSpace H]
@@ -28,7 +33,7 @@ private theorem finrank_Z1_chRep_eq_two_of_ne_one_ne_cyc (hP : LocalPublishedThe
   have hB : finrank E ↥(ReciprocityTheory.Gal.B1 (chRep κ)) = 1 := by
     unfold ReciprocityTheory.Gal.B1
     rw [LinearMap.finrank_range_of_inj, finrank_self]
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     exact fun m hm => hz m (congrFun hm g)
   have hD : H0dual ((cycA l l E).comp φ) (chRep κ) = ⊥ := by
     obtain ⟨s, hs⟩ := h2
@@ -68,7 +73,11 @@ private theorem dec_iso {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ �
 theorem UpperTheory.exists_finrank_two_cocycles_char_ratio :
     LocalPublishedTheorems → ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l} (D : Raw Ω c) (hD : D.Good) (E : Type) [Field E] [Algebra ℚ_[l] E] [Module.Finite ℚ_[l] E] [Algebra ↥c.O E] [Algebra ℤ_[l] E] [IsScalarTower ℤ_[l] ↥c.O E] [IsScalarTower ℤ_[l] ℚ_[l] E] [IsFractionRing ↥c.O E] (a b : Fin 4), a < b → ∃ T : Submodule E (D.Gp l → E), (∀ z, z ∈ T ↔ QCont l z ∧ ∀ g h : D.Gp l, z (g * h) = z g + algebraMap c.O E ((D.ps a g * (D.ps b g)⁻¹ : c.Oˣ) : c.O) * z h) ∧ finrank E ↥T = 2 := by
   intro hP Ω _ _ _ l _ c D hD E _ _ _ _ _ _ _ _ a b hab
-  obtain ⟨-, F2, -, F4, -, -, F7, -, -, -, LargeParameterEstimates, -⟩ := UpperTheory.V.GradeZeroInterpolatingElement.facts D hD
+  have facts := UpperTheory.V.GradeZeroInterpolatingElement.facts D hD
+  have F2 := facts.2.1
+  have F4 := facts.2.2.2.1
+  have F7 := facts.2.2.2.2.2.2.1
+  have LargeParameterEstimates := facts.2.2.2.2.2.2.2.2.2.2.1
   obtain ⟨φ, hφ, hr, hcy⟩ := dec_iso l (D.pl l) (hD.pl_over l Fact.out)
   letI : TopologicalSpace E := moduleTopology ℚ_[l] E
   haveI : IsModuleTopology ℚ_[l] E := ⟨rfl⟩

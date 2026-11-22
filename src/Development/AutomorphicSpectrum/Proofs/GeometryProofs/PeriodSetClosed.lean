@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,9 @@ theorem mem_per_of_frequently : ∀ (R : Type) [CommRing R] (G : Over (Sp R)) [G
   have hη : IsClosedImmersion η[G].left := by
     have : IsClosedImmersion (η[G].left ≫ G.hom) := by rw [hid]; infer_instance
     exact IsClosedImmersion.of_comp _ G.hom
-  let V : G.left.Opens := ⟨(Set.range η[G].left)ᶜ, hη.base_closed.isClosed_range.isOpen_compl⟩
+  let V : G.left.Opens := ⟨(Set.range η[G].left)ᶜ, by
+    letI := hη
+    exact η[G].left.isClosedEmbedding.isClosed_range.isOpen_compl⟩
   have hV₀ : ⊤ ≤ (e.ex b₀ (s b₀)).left ⁻¹ᵁ V := by
     intro p _
     show (e.ex b₀ (s b₀)).left p ∉ Set.range η[G].left

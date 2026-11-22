@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IntegralChartFormalBiext
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IntegralChartDirectionsAreEigenvectors
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IntegralChartFormalBiext
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IntegralChartDirectionsAreEigenvectors
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,7 +31,7 @@ theorem constantCoeff_gauge {R K O : Type} [CommRing R] [CommRing K] [Algebra �
   have hdec : h = MvPowerSeries.C c + (h - MvPowerSeries.C c) := by ring
   have hrest : MvPowerSeries.constantCoeff (h - MvPowerSeries.C c) = 0 := by simp [hc]
   have key := congrArg MvPowerSeries.constantCoeff hh.ax0
-  rw [ev, hdec, MvPowerSeries.subst_add hsub, map_add,
+  rw [ev, hdec, MvPowerSeries.subst_add hsub, map_add (f := _),
     MvPowerSeries.constantCoeff_subst_eq_zero hsub hz hrest] at key
   simpa using key
 
@@ -45,8 +49,8 @@ theorem nabValN_congr {R R' K O : Type} [CommRing R] [CommRing R'] [CommRing K] 
 
 end GlobalTheory.ChartBiext
 
-open GlobalTheory.ChartBiext in
 
+open GlobalTheory.ChartBiext in
 theorem GlobalTheory.PlaceInt.integralBiext_gauge_eig_bound : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) [StarRing (𝓞 E)], (∀ a : 𝓞 E, star a = H.bar a) → ∀ (T : CDVR) (io : c.F →+* T.Fr) (y : IntFr Xo c T io) (C : IntegralChartA3 Xo c T io y), ∃ B : FB T.V (chD C.ch) (𝓞 E), IsBT C B ∧ ∀ B : FB T.V (chD C.ch) (𝓞 E), IsBT C B → B.IsCanonGauge T.Fr (gaugeOf C) ∧ MvPowerSeries.constantCoeff (gaugeOf C) = 0 ∧ (letI := io.toAlgebra; (∀ (ℓ : Lt1 Dw) (a : 𝓞 E), (dAct T.Fr B a).mulVec (C.ch.uvec ℓ) = io (embK c ℓ.1 a) • C.ch.uvec ℓ) ∧ ∀ (e : ℕ) (ρ : ℝ) (w : (E →+* ℂ) × ℕ → ℕ) (n : ℕ), ChBound C e ρ w n → ∀ (k : ℕ) (P : MvPolynomial (LtN Dw n) T.Fr), P ∈ FFV (Dw := Dw) T w n → ∀ g : PS T.V n (chD C.ch), ((-ρ : ℝ) : EReal) ≤ nval T.V e (nabValN B T.Fr (gaugeOf C) H.w0 k (FB.toK T.Fr g) (fun ℓ : LtN Dw n => ℓ.2.2) (fun ℓ => C.ch.uvec ⟨ℓ.1, ℓ.2.1⟩) P)) := by
   intro E _ _ _ H Dw l Xo c inst hstar T io y C
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialDifferentialWords.KappaRight
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialDifferentialWords.KappaCoeff
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialDifferentialWords.KappaRight
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialDifferentialWords.KappaCoeff
+
+@[expose] public section
 
 open MvPolynomial Finsupp
 
@@ -14,28 +18,29 @@ theorem symbolMapInjective : KappaInj := by
     intro g
     apply Subtype.ext
     ext m
-    have h1 := congrArg (coeff (Finsupp.sumElim m g)) h
+    have h1 := congrArg (AddMonoidAlgebra.coeff · (Finsupp.sumElim m g)) h
     rw [coeff_kappa, coeff_kappa] at h1
     exact mul_left_cancel₀ (invFact_ne_zero g) h1
   apply LinearMap.ext
   intro F
-  rw [eq_sum_mono F, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [eq_sum_mono F, map_sum, map_sum]
   refine Finset.sum_congr rfl fun g _ => ?_
   rw [map_smul, map_smul, hmono g]
 
 theorem symbolMapBihomogeneous : KappaBihom := by
   intro K _ _ k d A
   show kappa K k d A ∈ weightedHomogeneousSubmodule K (wx k) d ⊓ weightedHomogeneousSubmodule K (wxi k) d
-  have key : ∀ m g : Fin k →₀ ℕ, coeff (Finsupp.sumElim m g) (kappa K k d A) ≠ 0 →
+  have key : ∀ m g : Fin k →₀ ℕ, AddMonoidAlgebra.coeff (kappa K k d A) (Finsupp.sumElim m g) ≠ 0 →
       m.degree = d ∧ g.degree = d := by
     intro m g h
     rw [coeff_kappa] at h
-    have h2 : coeff m (A (mono K k d g) : MvPolynomial (Fin k) K) ≠ 0 := right_ne_zero_of_mul h
+    have h2 : AddMonoidAlgebra.coeff (A (mono K k d g) : MvPolynomial (Fin k) K) m ≠ 0 := right_ne_zero_of_mul h
     refine ⟨degree_of_coeff_ne _ h2, ?_⟩
     by_contra hg
     have h0 : mono K k d g = 0 := by
       unfold mono
-      rw [dif_neg hg]
+      rw [dite_eq_right hg]
     rw [h0, map_zero] at h2
     simp at h2
   refine Submodule.mem_inf.2 ⟨?_, ?_⟩ <;> rw [mem_weightedHomogeneousSubmodule] <;> intro n hn <;>
@@ -47,16 +52,17 @@ theorem symbolMapBihomogeneous : KappaBihom := by
 
 theorem symbolMapMulLeft : KappaLeft := by
   intro K _ _ k d a b A
-  rw [kappa_apply, kappa_apply, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [kappa_apply, kappa_apply, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun g _ => ?_
-  rw [Module.End.mul_apply, Ed_val, Derivation.map_smul, mul_smul_comm]
+  rw [mul_apply_eq_comp, Ed_val, Derivation.map_smul, mul_smul_comm]
   congr 1
-  simp only [Derivation.leibniz, pderiv_inl_xi, smul_zero, zero_add, add_zero, smul_eq_mul]
+  simp only [Derivation.leibniz, pderiv_inl_xi, smul_eq_mul]
   rw [pderiv_rename Sum.inl_injective, map_mul, rename_X]
   ring
 
 private theorem coeff_pderiv_eq_coeff_add_single_mul_multinomial_depth {σ : Type} {K : Type} [Field K] (i : σ) (P : MvPolynomial σ K)
-    (n : σ →₀ ℕ) : coeff n (pderiv i P) = coeff (n + Finsupp.single i 1) P * ((n i : K) + 1) := by
+    (n : σ →₀ ℕ) : AddMonoidAlgebra.coeff (pderiv i P) n = AddMonoidAlgebra.coeff P (n + Finsupp.single i 1) * ((n i : K) + 1) := by
   classical
   induction P using MvPolynomial.induction_on'
   next u c =>
@@ -64,7 +70,7 @@ private theorem coeff_pderiv_eq_coeff_add_single_mul_multinomial_depth {σ : Typ
     by_cases h : u = n + Finsupp.single i 1
     · subst h
       simp
-    · rw [if_neg h, zero_mul]
+    · rw [ite_eq_right h, zero_mul]
       split_ifs with h2
       · have hu : u i = 0 := by
           by_contra hne
@@ -75,17 +81,17 @@ private theorem coeff_pderiv_eq_coeff_add_single_mul_multinomial_depth {σ : Typ
         simp [hu]
       · rfl
   next p q hp hq =>
-    rw [map_add, coeff_add, coeff_add, hp, hq, add_mul]
+    rw [map_add (f := _), AddMonoidAlgebra.coeff_add, AddMonoidAlgebra.coeff_add, Finsupp.add_apply, Finsupp.add_apply, hp, hq, add_mul]
 
 theorem symbolMapMulRight : KappaRight := by
   intro K _ _ k d a b A
   apply pol_ext
   intro m g
-  rw [coeff_kappa, Module.End.mul_apply, Ed_mono, map_smul, Submodule.coe_smul, coeff_smul, coeff_X_mul']
+  rw [coeff_kappa, mul_apply_eq_comp, Ed_mono, map_smul, Submodule.coe_smul, coeff_smul, coeff_X_mul']
   by_cases hb : g b = 0
-  · rw [if_neg (by simp [hb])]
+  · rw [ite_eq_right (by simp [hb])]
     simp [hb]
-  · rw [if_pos (by simp [hb]), sumElim_sub_single_inr, coeff_pderiv_eq_coeff_add_single_mul_multinomial_depth, sumElim_add_single_inr, coeff_kappa]
+  · rw [ite_eq_left (by simp [hb]), sumElim_sub_single_inr, coeff_pderiv_eq_coeff_add_single_mul_multinomial_depth, sumElim_add_single_inr, coeff_kappa]
     simp only [Finsupp.sumElim_apply, Sum.elim_inr]
     have h1 := invFact_add_single (K := K) (g - single b 1) a
     have h2 := invFact_add_single (K := K) (g - single b 1) b
@@ -99,11 +105,11 @@ theorem symbolMapMulRight : KappaRight := by
         omega
       exact_mod_cast h4
     rw [h3] at h2
-    linear_combination (coeff m (A (mono K k d (g - single b 1 + single a 1)) : MvPolynomial (Fin k) K)) * h2 -
-      (coeff m (A (mono K k d (g - single b 1 + single a 1)) : MvPolynomial (Fin k) K)) * h1
+    linear_combination (AddMonoidAlgebra.coeff (A (mono K k d (g - single b 1 + single a 1)) : MvPolynomial (Fin k) K) m) * h2 -
+      (AddMonoidAlgebra.coeff (A (mono K k d (g - single b 1 + single a 1)) : MvPolynomial (Fin k) K) m) * h1
 
 private theorem coeff_sumElim_tt_pow (K : Type) [Field K] (k d : ℕ) (m g : Fin k →₀ ℕ) :
-    coeff (Finsupp.sumElim m g) (tt K k ^ d) =
+    AddMonoidAlgebra.coeff (tt K k ^ d) (Finsupp.sumElim m g) =
       if m = g ∧ g.degree = d then ((Nat.multinomial Finset.univ ⇑g : ℕ) : K) else 0 := by
   classical
   have hprod : ∀ f : Fin k → ℕ, ∏ i, (X (Sum.inl i) * X (Sum.inr i) : Pol K k) ^ f i =
@@ -116,10 +122,10 @@ private theorem coeff_sumElim_tt_pow (K : Type) [Field K] (k d : ℕ) (m g : Fin
     mul_one, mul_zero]
   by_cases h : m = g ∧ g.degree = d
   · obtain ⟨hmg, hd⟩ := h
-    rw [if_pos ⟨hmg, hd⟩, Finset.sum_eq_single (⇑g)]
+    rw [ite_eq_left ⟨hmg, hd⟩, Finset.sum_eq_single (⇑g)]
     · simp [hmg]
     · intro f _ hf
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨_, h2⟩
       apply hf
       rw [← h2]
@@ -130,9 +136,9 @@ private theorem coeff_sumElim_tt_pow (K : Type) [Field K] (k d : ℕ) (m g : Fin
       rw [Finset.mem_piAntidiag]
       refine ⟨?_, fun i _ => Finset.mem_univ i⟩
       rw [← hd, Finsupp.degree_eq_sum]
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     refine Finset.sum_eq_zero fun f hf => ?_
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h1, h2⟩
     apply h
     refine ⟨h1.symm.trans h2, ?_⟩
@@ -144,10 +150,10 @@ theorem symbolMapOne : KappaId := by
   intro K _ _ k d
   apply pol_ext
   intro m g
-  rw [coeff_kappa, Module.End.one_apply, mono_val, coeff_smul, smul_eq_mul, coeff_sumElim_tt_pow]
+  rw [coeff_kappa, one_apply_eq_self, mono_val, coeff_smul, smul_eq_mul, coeff_sumElim_tt_pow]
   by_cases h : m = g ∧ g.degree = d
   · obtain ⟨hmg, hd⟩ := h
-    rw [if_pos hd, if_pos ⟨hmg, hd⟩, coeff_monomial, if_pos hmg.symm, mul_one]
+    rw [ite_eq_left hd, ite_eq_left ⟨hmg, hd⟩, coeff_monomial, ite_eq_left hmg.symm, mul_one]
     have hspec := Nat.multinomial_spec (Finset.univ : Finset (Fin k)) ⇑g
     have hsum : ∑ i, g i = d := by rw [← hd, Finsupp.degree_eq_sum]
     rw [hsum] at hspec
@@ -160,9 +166,9 @@ theorem symbolMapOne : KappaId := by
       exact (Nat.cast_ne_zero.2 (Nat.factorial_ne_zero d)) hcast
     unfold invFact
     rw [prodFact_fintype, hcast, mul_inv, mul_assoc, inv_mul_cancel₀ hM, mul_one]
-  · rw [if_neg h, mul_zero]
+  · rw [ite_eq_right h, mul_zero]
     split_ifs with hd
-    · rw [coeff_monomial, if_neg (fun hgm => h ⟨hgm.symm, hd⟩), mul_zero]
-    · rw [coeff_zero, mul_zero]
+    · rw [coeff_monomial, ite_eq_right (fun hgm => h ⟨hgm.symm, hd⟩), mul_zero]
+    · simp
 
 end PI.OpWords

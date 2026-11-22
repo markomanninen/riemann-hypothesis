@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.NumericalIdentityScalar
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.NumericalIdentityScalar
+
+@[expose] public section
 
 open MvPolynomial
 

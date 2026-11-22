@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
@@ -51,7 +56,7 @@ theorem complexExtend_diagonal {O : Type} [CommRing O] {g : ℕ}
     by_cases h : i = j
     · subst h; simp
     · simp [h]
-  | add x y hx hy => simp only [map_add, hx, hy, Matrix.diagonal_add]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, Matrix.diagonal_add]
 
 theorem differentiableOn_complexExtend {O : Type} [CommRing O] {g m : ℕ}
     {B : Set (Fin m → ℂ)} (F : (Fin m → ℂ) → (O →+* Matrix (Fin g) (Fin g) ℂ))
@@ -63,7 +68,7 @@ theorem differentiableOn_complexExtend {O : Type} [CommRing O] {g m : ℕ}
     simp only [complexExtend_tmul, Matrix.smul_apply, smul_eq_mul]
     exact (hF a i j).const_mul c
   | add x y hx hy =>
-    simp only [map_add, Matrix.add_apply]
+    simp only [map_add (f := _), Matrix.add_apply]
     exact hx.add hy
 
 theorem holomorphic_diagonalisation :

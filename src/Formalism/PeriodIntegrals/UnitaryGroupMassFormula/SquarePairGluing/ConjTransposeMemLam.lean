@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SplitPairGen
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SplitPairGen
+
+@[expose] public section
 
 noncomputable section
 open NumberField Matrix
@@ -20,9 +24,6 @@ def lam (L' L'' : Submodule (𝓞 E) (Fin N → E)) : Subring (Matrix (Fin N) (F
   zero_mem' := ⟨fun y _ => by simp, fun y _ => by simp⟩
   neg_mem' {a} ha := ⟨fun y hy => by rw [neg_mulVec]; exact L'.neg_mem (ha.1 y hy),
     fun y hy => by rw [neg_mulVec]; exact L''.neg_mem (ha.2 y hy)⟩
-
-theorem mem_lam {L' L'' : Submodule (𝓞 E) (Fin N → E)} {e : Matrix (Fin N) (Fin N) E} :
-    e ∈ lam L' L'' ↔ (∀ y ∈ L', e *ᵥ y ∈ L') ∧ (∀ y ∈ L'', e *ᵥ y ∈ L'') := Iff.rfl
 
 theorem stdHG_eq_dot (x y : Fin N → E) : stdHG E N x y = star x ⬝ᵥ y := rfl
 
@@ -93,9 +94,6 @@ def yg (L' L'' : Submodule (𝓞 E) (Fin N → E)) (n : 𝓞 E) : AddSubgroup (F
   neg_mem' := by
     rintro _ ⟨m, h, h', rfl⟩
     exact ⟨-m, L'.neg_mem h, L''.neg_mem h', (smul_neg _ _).symm⟩
-
-theorem mem_yg {L' L'' : Submodule (𝓞 E) (Fin N → E)} {n : 𝓞 E} {x : Fin N → E} :
-    x ∈ yg L' L'' n ↔ ∃ m, m ∈ L' ∧ m ∈ L'' ∧ x = (n : E) • m := Iff.rfl
 
 theorem mem_of_local {V : Type*} [AddCommGroup V] (Y : AddSubgroup V) (x : V)
     (h : ∀ p : ℕ, p.Prime → ∃ t : ℤ, ¬ (p : ℤ) ∣ t ∧ t • x ∈ Y) : x ∈ Y := by

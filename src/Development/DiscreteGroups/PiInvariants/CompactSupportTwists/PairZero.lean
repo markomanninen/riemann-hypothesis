@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.TsumEnormEq
+module
+
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.TsumEnormEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem pair_zero (hr : X.μ.IsMulRightInvariant) (hb : KerBasic) (hl2 : KernelL
     ∫ x, starRingEnd ℂ (h x) * ∫ y, ker X.Γ φ x y * f y ∂X.ν ∂X.ν = 0 := by
   haveI := hr
   haveI : SigmaFinite X.ν := by unfold Ctx.ν; infer_instance
-  have hfm : AEStronglyMeasurable f X.μ := aesm_of_inv X hinv hf.1
+  have hfm : AEStronglyMeasurable f X.μ := aesm_of_inv X hinv hf.aestronglyMeasurable
   have hνμ : X.ν ≪ X.μ := Measure.absolutelyContinuous_of_le (Measure.restrict_le_self : X.μ.restrict X.F ≤ X.μ)
   have hin : ∀ x, ∫ y, ker X.Γ φ x y * f y ∂X.ν = ∫ z, φ z * f (x * z) ∂X.μ := fun x => by
     rw [(unfold X hb hl2 hφ hinv hf x).2, ← integral_mul_left_eq_self (fun y => φ (x⁻¹ * y) * f y) x]
@@ -29,7 +33,7 @@ theorem pair_zero (hr : X.μ.IsMulRightInvariant) (hb : KerBasic) (hl2 : KernelL
   set Fc : X.G → X.G → ℂ := fun x z => starRingEnd ℂ (h x) * (φ z * f (x * z)) with hFc
   have hFm : AEStronglyMeasurable (Function.uncurry Fc) (X.ν.prod X.μ) := by
     have h1 : AEStronglyMeasurable (fun p : X.G × X.G => starRingEnd ℂ (h p.1)) (X.ν.prod X.μ) :=
-      Complex.continuous_conj.comp_aestronglyMeasurable hh.1.comp_fst
+      Complex.continuous_conj.comp_aestronglyMeasurable hh.aestronglyMeasurable.comp_fst
     have h2 : AEStronglyMeasurable (fun p : X.G × X.G => φ p.2) (X.ν.prod X.μ) :=
       (hφ.1.comp continuous_snd).aestronglyMeasurable
     have h3 : AEStronglyMeasurable (fun p : X.G × X.G => f (p.1 * p.2)) (X.ν.prod X.μ) := by
@@ -37,9 +41,9 @@ theorem pair_zero (hr : X.μ.IsMulRightInvariant) (hb : KerBasic) (hl2 : KernelL
       exact this.mono_ac (hνμ.prod Measure.AbsolutelyContinuous.rfl)
     exact h1.mul (h2.mul h3)
   have eh : eLpNorm h 2 X.ν = (∫⁻ x, ‖h x‖ₑ ^ (2:ℝ) ∂X.ν) ^ (1 / (2:ℝ)) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm two_ne_zero ENNReal.ofNat_ne_top, ENNReal.toReal_ofNat]
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top hh.aestronglyMeasurable, ENNReal.toReal_ofNat]
   have ef : eLpNorm f 2 X.ν = (∫⁻ x, ‖f x‖ₑ ^ (2:ℝ) ∂X.ν) ^ (1 / (2:ℝ)) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm two_ne_zero ENNReal.ofNat_ne_top, ENNReal.toReal_ofNat]
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top hf.aestronglyMeasurable, ENNReal.toReal_ofNat]
   have hz_bd : ∀ z, ∫⁻ x, ‖Fc x z‖ₑ ∂X.ν ≤ ‖φ z‖ₑ * (eLpNorm h 2 X.ν * eLpNorm f 2 X.ν) := fun z => by
     have e : ∀ x, ‖Fc x z‖ₑ = ‖φ z‖ₑ * (‖h x‖ₑ * ‖f (x * z)‖ₑ) := fun x => by
       simp only [hFc, enorm_mul, enorm_conj']
@@ -49,7 +53,7 @@ theorem pair_zero (hr : X.μ.IsMulRightInvariant) (hb : KerBasic) (hl2 : KernelL
     gcongr
     have hfz : AEStronglyMeasurable (fun x => f (x * z)) X.ν :=
       (hfm.comp_measurePreserving (measurePreserving_mul_right X.μ z)).mono_ac hνμ
-    have hol := ENNReal.lintegral_mul_le_Lp_mul_Lq X.ν Real.HolderConjugate.two_two hh.1.enorm hfz.enorm
+    have hol := ENNReal.lintegral_mul_le_Lp_mul_Lq X.ν Real.HolderConjugate.two_two hh.aestronglyMeasurable.enorm hfz.enorm
     have hrt := lint_rt X hr (g := fun y => ‖f y‖ₑ ^ (2:ℝ)) (fun γ y => by simp only [hinv γ y]) z
     simp only [Pi.mul_apply] at hol
     rw [hrt] at hol

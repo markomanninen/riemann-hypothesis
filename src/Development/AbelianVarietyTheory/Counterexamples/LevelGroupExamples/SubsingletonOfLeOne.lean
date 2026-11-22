@@ -1,20 +1,24 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.BetaAddRight
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.PsiCoordExistsUniqueUpToUnitLocal
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.BetaAtAddLeftAndDiagEqTwoOrder
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsGoodIntegral
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsProperOfSubsingleton
-import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.BetaAtClosedPoint
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.PeriodFormAdditiveBalancedPosDefBoundedRank
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.BetaAddRight
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.PsiCoordExistsUniqueUpToUnitLocal
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.BetaAtAddLeftAndDiagEqTwoOrder
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsGoodIntegral
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsProperOfSubsingleton
+public import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.BetaAtClosedPoint
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.PeriodFormAdditiveBalancedPosDefBoundedRank
+
+@[expose] public section
 
 noncomputable section
 
 namespace GlobalTheory.PointLawsEdge
 
-open Filter Topology Matrix in
 
+open Filter Topology Matrix in
 theorem real_pos_of_int_ge {ι : Type} [Fintype ι] (M : ι → ι → ℝ) (hs : ∀ i k, M i k = M k i) {c : ℝ} (hc : 0 < c)
     (hM : ∀ z : ι → ℤ, z ≠ 0 → c ≤ ∑ i, ∑ k, (z i : ℝ) * z k * M i k) (x : ι → ℝ) (hx : x ≠ 0) :
     0 < ∑ i, ∑ k, x i * x k * M i k := by
@@ -57,7 +61,7 @@ theorem real_pos_of_int_ge {ι : Type} [Fintype ι] (M : ι → ι → ℝ) (hs 
     ext i k
     simp [hs i k]
   refine (hR x).lt_of_ne fun h0 => ?_
-  have hker : (Matrix.of M) *ᵥ x = 0 := (hpsd.dotProduct_mulVec_zero_iff x).1 ((hform x).trans h0.symm)
+  have hker : (Matrix.of M) *ᵥ x = 0 := (hpsd.dotProduct_mulVec_zero_iff).1 ((hform x).trans h0.symm)
   have hker' : x ᵥ* (Matrix.of M) = 0 := by
     ext k
     have := congrFun hker k
@@ -120,13 +124,13 @@ theorem exists_radius {R C : Type} [CommRing R] [IsLocalRing R] [IsNoetherianRin
   induction ha using Submodule.span_induction with
   | mem a ha => exact h2 a ha
   | zero => simpa using h0.le
-  | add a b _ _ ha hb => rw [map_add]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ha hb)
+  | add a b _ _ ha hb => rw [map_add (f := _)]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ha hb)
   | smul r a _ ha =>
     rw [smul_eq_mul, map_mul, norm_mul]
     exact (mul_le_of_le_one_left (norm_nonneg _) (hle r)).trans ha
 
-open IsLocalRing Matrix GlobalTheory.ToricRank in
 
+open IsLocalRing Matrix GlobalTheory.ToricRank in
 theorem right_inverse_local {R : Type} [CommRing R] [IsLocalRing R] (e : ℕ) {m n : Type}
     [Fintype m] [DecidableEq m] [Fintype n] (C : Matrix m n R)
     (hC : ∀ u, u ᵥ* C.map (Ideal.Quotient.mk (maximalIdeal R ^ (e + 1))) = 0 → u = 0) :
@@ -174,8 +178,8 @@ open Formalism.MainNotions.DIV.Cons GlobalTheory.ToricRank GlobalTheory.PeriodLa
 open ReciprocityTheory.ChartRestriction.G.Chart (prodPts)
 open scoped CategoryTheory.Obj
 
-open IsLocalRing ReciprocityTheory.ChartRestriction.G.Out in
 
+open IsLocalRing ReciprocityTheory.ChartRestriction.G.Out in
 theorem matrix_level_local {R : Type} [CommRing R] [IsDomain R] [IsLocalRing R]
     {D : DegData R (maximalIdeal R)} {P : PolAV (Sp (FractionRing R))} {G : Over (Sp R)} [GrpObj G] [IsCommMonObj G]
     (U : UnifPre (maximalIdeal R) D P G) {O : Type} [CommRing O] [StarRing O] [Module O D.toPre.X] {oD : D.OAct O}
@@ -220,8 +224,8 @@ theorem matrix_level_local {R : Type} [CommRing R] [IsDomain R] [IsLocalRing R]
   refine h₂.trans ?_
   simp [Matrix.mul_apply, vecMul, dotProduct, Diag.dualBasis_apply]
 
-open IsLocalRing ReciprocityTheory.ChartRestriction.G.Out in
 
+open IsLocalRing ReciprocityTheory.ChartRestriction.G.Out in
 theorem finrank_le_local {R : Type} [CommRing R] [IsDomain R] [IsLocalRing R] [IsNoetherianRing R]
     {D : DegData R (maximalIdeal R)} {P : PolAV (Sp (FractionRing R))} {G : Over (Sp R)} [GrpObj G] [IsCommMonObj G]
     (U : UnifPre (maximalIdeal R) D P G) {O : Type} [CommRing O] [IsDomain O] [StarRing O] [Module.Finite ℤ O]
@@ -279,7 +283,8 @@ theorem finrank_le_local {R : Type} [CommRing R] [IsDomain R] [IsLocalRing R] [I
   · obtain ⟨C, D', hCD, hC⟩ := matrix_level_local U hl hv hρ b n
     refine ⟨C.map f, D'.map f, by rw [← Matrix.map_mul, hCD]; simp, fun a k j => ?_⟩
     have := hpow _ _ (hC a k j)
-    simpa [Matrix.mul_apply, map_sum] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [Matrix.mul_apply, map_sum] using this
 
 end Geometry
 
@@ -342,7 +347,8 @@ theorem betaPosDef (Y : Model Xo c β) {p : ℕ} (hp : 1 < p) : BetaPosDef Y p :
   have hne : ∑ i, z i • b i ≠ 0 := fun h => hz (funext (Fintype.linearIndependent_iff.1 b.linearIndependent z h))
   refine (hlow _ hne).trans_eq ?_
   rw [← A.beLin_apply (betaAdd Y p)]
-  simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, zsmul_eq_mul, DatAt.beLin_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, zsmul_eq_mul, DatAt.beLin_apply]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Finset.mul_sum]
@@ -379,7 +385,7 @@ theorem rank_le {Y : Model Xo c β} {p : ℕ} {C : SCF p} {P : PointsOfFlagModel
     rw [← map_pow, H.rt_sq] at h2
     exact H.d_prime.ne_zero (by simpa using h2)
   refine ⟨Module.finrank (𝓞 E) A.U.D.toPre.X, ?_, ?_⟩
-  · have h1 := Module.finrank_mul_finrank ℚ (maximalRealSubfield E) E
+  · have h1 := (letI : Module.Free (maximalRealSubfield E) E := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank ℚ (maximalRealSubfield E) E)
     rw [Algebra.IsQuadraticExtension.finrank_eq_two (maximalRealSubfield E) E] at h1
     rw [ToricRank.finrank_int_eq E]
     congr 1
@@ -388,14 +394,5 @@ theorem rank_le {Y : Model Xo c β} {p : ℕ} {C : SCF p} {P : PointsOfFlagModel
     · exact ⟨key _ _ h₀ ((hdet _).1 h), key _ _ h₁ ((hdet _).2 (by rw [e₁, ← h]; exact hne))⟩
     · have h' : -τ₀ H.rt = b.hom (baseKA l).ρ := by rw [h, neg_neg]
       exact ⟨key _ _ h₁ ((hdet _).1 (e₁.trans h')), key _ _ h₀ ((hdet _).2 (by rw [← h']; exact hne.symm))⟩
-
-theorem ylRank (Y : Model Xo c β) (p : ℕ) : YlRank Y p (Dw.p + Dw.q) Dw.p ∧ YlRank Y p (Dw.p + Dw.q) Dw.q :=
-  ⟨fun _ _ A => (rank_le A).imp fun _ h => ⟨h.1, fun _ _ => by omega⟩,
-    fun _ _ A => (rank_le A).imp fun _ h => ⟨h.1, fun _ _ => by omega⟩⟩
-
-theorem main (Y : Model Xo c β) {p : ℕ} (hp : 1 < p) :
-    Formalism.L2.Pj.BetaAdd Y p ∧ BetaBal Y p (IsCMField.complexConj E) ∧ BetaPosDef Y p ∧
-      YlRank Y p (Dw.p + Dw.q) Dw.p :=
-  ⟨betaAdd Y p, betaBal Y p, betaPosDef Y hp, (ylRank Y p).1⟩
 
 end GlobalTheory.PointLawsEdge

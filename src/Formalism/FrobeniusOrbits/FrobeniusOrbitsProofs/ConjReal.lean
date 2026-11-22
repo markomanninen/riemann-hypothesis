@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.FrobeniusOrbits.Statement
-import Formalism.TameInertiaTowers.TowerFieldFoundations
-import Formalism.TameInertiaTowers.CentralOrderTwo.ConjEqInvOfPowEqOne
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.JumpSets
+module
+
+public import Mathlib
+public import Formalism.FrobeniusOrbits.Statement
+public import Formalism.TameInertiaTowers.TowerFieldFoundations
+public import Formalism.TameInertiaTowers.CentralOrderTwo.ConjEqInvOfPowEqOne
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.JumpSets
+
+@[expose] public section
 
 open NumberField IntermediateField
 

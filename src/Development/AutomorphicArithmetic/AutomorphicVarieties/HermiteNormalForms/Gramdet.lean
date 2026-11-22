@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Blockdet
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Blockdet
+
+@[expose] public section
 
 open NumberField Matrix UpperTheory.V UpperTheory.V.KT
 open scoped ComplexOrder
 
 @[to_additive]
-private theorem UpperTheory.V.KT.prod_emb (L : Type) [Field L] [NumberField L] [IsTotallyComplex L]
+private theorem UpperTheory.V.KT.prod_emb (L : Type) [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L]
     {M : Type} [CommMonoid M] (f : (L →+* ℂ) → M) :
     ∏ φ, f φ = ∏ w : InfinitePlace L, (f w.embedding * f (ComplexEmbedding.conjugate w.embedding)) := by
   classical
@@ -47,7 +51,7 @@ private theorem UpperTheory.V.KT.det_emb (L : Type) [Field L] [NumberField L] :
   rw [Int.cast_natCast, Complex.ofReal_natCast]
 
 theorem UpperTheory.V.KT.gramdet :
-    ∀ (L : Type) [Field L] [NumberField L] [IsTotallyComplex L] (N : ℕ) (h : HS L N),
+    ∀ (L : Type) [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (N : ℕ) (h : HS L N),
     2 ^ dd L N * (gram h).det = (absD L : ℝ) ^ N * (∏ w, (mat h w).det.re) ^ 2 := by
   intro L _ _ _ N h
   classical
@@ -77,7 +81,8 @@ theorem UpperTheory.V.KT.gramdet :
     simp only [of_apply]
     rw [Equiv.sum_comp (equivReindex L).symm (fun φ => star (φ (RingOfIntegers.basis L s.2 : L)) *
       A φ s.1 t.1 * φ (RingOfIntegers.basis L t.2 : L)), UpperTheory.V.KT.sum_emb L]
-    simp only [hA1, hA2, RingHom.mapMatrix_apply, map_apply, Matrix.smul_apply, gram, of_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hA1, hA2, RingHom.mapMatrix_apply, map_apply, Matrix.smul_apply, gram, of_apply,
       smul_eq_mul, Finset.mul_sum, map_sum, Complex.ofRealHom_eq_coe]
     refine Finset.sum_congr rfl fun w _ => ?_
     rw [← Complex.add_conj]

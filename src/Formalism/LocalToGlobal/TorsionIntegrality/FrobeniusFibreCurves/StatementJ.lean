@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementX
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.CMQuasiPeriodConst
-import Formalism.EllipticTorsion.FormalGroupPointsTorsionFree
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementI
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementX
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.CMQuasiPeriodConst
+public import Formalism.EllipticTorsion.FormalGroupPointsTorsionFree
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementI
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -58,15 +62,5 @@ def ThetaZeroTwoAnalytic : Prop :=
     (∀ z, α * z - ω₀ / 2 ∈ L.lattice → ‖px W (ptW 2 L ι W z)‖ ≤ 1) →
     Simeq (ι := Unit) (evenSigmaLogAtTwoTorsion W (ι (Formalism.L2.Th1.F.s2 L)) (px W (ptW 2 L ι W (ω₀ / 2)))) 0 ∧
       OneUnit (inW 2 ι W (Formalism.L2.Th1.F.th0 L (ω₀ / 2)))
-
-def PointsIntTwo : Prop :=
-  ∀ (l : ℕ) [Fact l.Prime] (L : PeriodPair) (ι : ℂ ≃+* ℂ_[l]) (W : WeierstrassCurve ℂ_[l]),
-    Unif l L ι W → IntCurve W → ∀ (α α' t0 t' t'' : ℂ),
-    (∀ t, Formalism.ELL.InFormalGroupPoints (ptW l L ι W t) → Formalism.ELL.InFormalGroupPoints (ptW l L ι W (α * t))) →
-    (∀ t, Formalism.ELL.InFormalGroupPoints (ptW l L ι W t) → Formalism.ELL.InFormalGroupPoints (ptW l L ι W (α' * t))) →
-    (∀ t, Formalism.ELL.InFormalGroupPoints (ptW l L ι W t) → α * t ∈ L.lattice → t ∈ L.lattice) →
-    t0 = t' + t'' → α' * t' ∈ L.lattice → α' * t'' - t'' ∈ L.lattice → t'' ∉ L.lattice →
-    α * t'' ∈ L.lattice →
-    ‖px W (ptW l L ι W t0)‖ ≤ 1 ∧ ∀ Q, α * Q - t0 ∈ L.lattice → ‖px W (ptW l L ι W Q)‖ ≤ 1
 
 end Formalism.L2.Th1.B

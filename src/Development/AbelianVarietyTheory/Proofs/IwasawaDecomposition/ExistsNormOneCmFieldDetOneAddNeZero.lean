@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField Matrix
 
 namespace GlobalTheory
@@ -49,7 +54,7 @@ theorem exists_normOne_det_one_add_ne_zero : ∀ (L : Type) [Field L] [NumberFie
   let a : ℚ → L := fun t => ((t : L) + μ) / ((t : L) + c μ)
   have hca : ∀ t, c (a t) = ((t : L) + c μ) / ((t : L) + μ) := by
     intro t
-    simp only [a, map_div₀, map_add, map_ratCast, hcc]
+    simp only [a, map_div₀, map_add (f := _), map_ratCast, hcc]
   have hnorm : ∀ t, a t * c (a t) = 1 := by
     intro t
     rw [hca]

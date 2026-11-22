@@ -1,5 +1,9 @@
-import Formalism.ThetaLogCoordinates.DualWeylCoordinates.DualWeylProofs.TransposeVariables
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQHW
+module
+
+public import Formalism.ThetaLogCoordinates.DualWeylCoordinates.DualWeylProofs.TransposeVariables
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQHW
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -10,7 +14,7 @@ namespace Formalism.InvariantFactorPaths.ColumnFamilies
 open Formalism.GradedWeylDivisibility
 
 theorem qn_coeff_X_pderiv {σ : Type*} (i : σ) (f : MvPolynomial σ ℚ) (m : σ →₀ ℕ) :
-    coeff m (X i * pderiv i f) = (m i : ℚ) * coeff m f := by
+    AddMonoidAlgebra.coeff (X i * pderiv i f) m = (m i : ℚ) * AddMonoidAlgebra.coeff f m := by
   classical
   induction f using MvPolynomial.induction_on' with
   | monomial s c =>
@@ -25,12 +29,12 @@ theorem qn_coeff_X_pderiv {σ : Type*} (i : σ) (f : MvPolynomial σ ℚ) (m : �
     split_ifs with hsm
     · rw [hsm]
     · simp
-  | add p q hp hq => rw [map_add, mul_add, coeff_add, coeff_add, hp, hq, mul_add]
+  | add p q hp hq => rw [map_add (f := _), mul_add, MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, mul_add]
 
 def qn_wt {n : ℕ} (m : Fin n × Fin n →₀ ℕ) : Fin n → ℤ := fun a => ((∑ l : Fin n, m (l, a) : ℕ) : ℤ)
 
 theorem qn_coeff_E (n : ℕ) (a : Fin n) (f : MvPolynomial (Fin n × Fin n) ℚ) (m : Fin n × Fin n →₀ ℕ) :
-    coeff m (glOps ℚ n (rowLetters n) Set.univ a a f) = (qn_wt m a : ℚ) * coeff m f := by
+    AddMonoidAlgebra.coeff (glOps ℚ n (rowLetters n) Set.univ a a f) m = (qn_wt m a : ℚ) * AddMonoidAlgebra.coeff f m := by
   rw [qn_E_eq, qn_D_apply, coeff_sum]
   simp only [qn_coeff_X_pderiv]
   rw [← Finset.sum_mul]
@@ -55,19 +59,19 @@ theorem qn_monomial_mem (n : ℕ) (m : Fin n × Fin n →₀ ℕ) (c : ℚ) :
 
 theorem qn_weightSp_coeff (n : ℕ) (w : Fin n → ℤ) (z : MvPolynomial (Fin n × Fin n) ℚ)
     (hz : z ∈ weightSp (glOps ℚ n (rowLetters n) Set.univ) w) (m : Fin n × Fin n →₀ ℕ) (hm : qn_wt m ≠ w) :
-    coeff m z = 0 := by
+    AddMonoidAlgebra.coeff z m = 0 := by
   rw [qn_mem_weightSp] at hz
   by_contra hne
   apply hm
   funext a
-  have h := congrArg (coeff m) (hz a)
+  have h := congrArg (AddMonoidAlgebra.coeff · m) (hz a)
   rw [qn_coeff_E, coeff_smul, smul_eq_mul] at h
   have := mul_right_cancel₀ hne h
   exact_mod_cast this
 
 theorem qn_otherWts_coeff (n : ℕ) (lam : Fin n → ℤ) (z : MvPolynomial (Fin n × Fin n) ℚ)
     (hz : z ∈ otherWts (glOps ℚ n (rowLetters n) Set.univ) lam) (m : Fin n × Fin n →₀ ℕ) (hm : qn_wt m = lam) :
-    coeff m z = 0 := by
+    AddMonoidAlgebra.coeff z m = 0 := by
   have hle : otherWts (glOps ℚ n (rowLetters n) Set.univ) lam ≤ LinearMap.ker (lcoeff ℚ m) := by
     unfold otherWts
     refine iSup₂_le fun mu hmu => ?_
@@ -86,10 +90,10 @@ theorem qn_mem_otherWts (n : ℕ) (lam : Fin n → ℤ) (g : MvPolynomial (Fin n
 
 theorem qn_swap_apply {n : ℕ} (m : Fin n × Fin n →₀ ℕ) (a l : Fin n) :
     (Finsupp.mapDomain Prod.swap m) (a, l) = m (l, a) :=
-  Finsupp.mapDomain_apply Prod.swap_injective m (l, a)
+  Finsupp.mapDomain_apply_of_injective Prod.swap_injective m (l, a)
 
 theorem coeff_transposeVariables (n : ℕ) (g : MvPolynomial (Fin n × Fin n) ℚ) (m : Fin n × Fin n →₀ ℕ) :
-    coeff (Finsupp.mapDomain Prod.swap m) (transposeVariables ℚ n g) = coeff m g :=
+    AddMonoidAlgebra.coeff (transposeVariables ℚ n g) (Finsupp.mapDomain Prod.swap m) = AddMonoidAlgebra.coeff g m :=
   coeff_rename_mapDomain Prod.swap Prod.swap_injective g m
 
 theorem qn_mem_otherWts' (n : ℕ) (ν : Fin n → ℕ) (g : MvPolynomial (Fin n × Fin n) ℚ)
@@ -97,7 +101,7 @@ theorem qn_mem_otherWts' (n : ℕ) (ν : Fin n → ℕ) (g : MvPolynomial (Fin n
     g ∈ otherWts (glOps ℚ n (rowLetters n) Set.univ) (fun a => (ν a : ℤ)) := by
   classical
   refine qn_mem_otherWts n _ g fun m hm hwt => ?_
-  have h1 := congrArg (coeff (Finsupp.mapDomain Prod.swap m)) hg
+  have h1 := congrArg (AddMonoidAlgebra.coeff · (Finsupp.mapDomain Prod.swap m)) hg
   have hw : Finsupp.weight (rowW n n) (Finsupp.mapDomain Prod.swap m) = ν := by
     funext a
     rw [lehw_weight_rowW, rowDeg]
@@ -105,12 +109,12 @@ theorem qn_mem_otherWts' (n : ℕ) (ν : Fin n → ℕ) (g : MvPolynomial (Fin n
     have := congrFun hwt a
     simp only [qn_wt] at this
     exact_mod_cast this
-  rw [coeff_weightedHomogeneousComponent, if_pos hw, coeff_transposeVariables, coeff_zero] at h1
-  exact (mem_support_iff.mp hm) h1
+  rw [coeff_weightedHomogeneousComponent, if_pos hw, coeff_transposeVariables] at h1
+  exact (mem_support_iff.mp hm) (by simpa using h1)
 
 theorem qn_otherWts_coeff' (n : ℕ) (ν : Fin n → ℕ) (z : MvPolynomial (Fin n × Fin n) ℚ)
     (hz : z ∈ otherWts (glOps ℚ n (rowLetters n) Set.univ) (fun a => (ν a : ℤ))) :
-    coeff (lhwline_mnu (le_refl n) ν) (transposeVariables ℚ n z) = 0 := by
+    AddMonoidAlgebra.coeff (transposeVariables ℚ n z) (lhwline_mnu (le_refl n) ν) = 0 := by
   classical
   have h := coeff_transposeVariables n (transposeVariables ℚ n z) (lhwline_mnu (le_refl n) ν)
   rw [transposeVariables_involutive] at h
@@ -131,7 +135,7 @@ theorem qn_rowNu (n : ℕ) (ν : Fin n → ℕ) : rowNu (r := n) ν = ν := by
 
 theorem qn_eval_eq_coeff (n : ℕ) (ν : Fin n → ℕ) (F : MvPolynomial (Fin n × Fin n) ℚ)
     (hF : IsWeightedHomogeneous (colW n n) F ν) :
-    eval (idFrame ℚ n n) F = coeff (lhwline_mnu (le_refl n) ν) F := by
+    eval (idFrame ℚ n n) F = AddMonoidAlgebra.coeff F (lhwline_mnu (le_refl n) ν) := by
   have hD : ∀ (a : Fin n) (j : Fin n), a.val ≠ j.val → idFrame ℚ n n (a, j) = 0 := by
     intro a j h
     simp [idFrame, h]
@@ -162,13 +166,13 @@ theorem qn_comp (n : ℕ) (ν : Fin n → ℕ) (hν : Antitone ν) (F : MvPolyno
     (fun a b hab k hk => lehw_kill (le_refl n) ν hν G hG hGh a b hab k hk)
   have hHW := hwRowWeight ℚ n n (le_refl n) ν hν
   rw [qn_rowNu] at hHW
-  have hH1 : coeff (lhwline_mnu (le_refl n) ν) (hw ℚ (le_refl n) ν) = 1 := by
+  have hH1 : AddMonoidAlgebra.coeff (hw ℚ (le_refl n) ν) (lhwline_mnu (le_refl n) ν) = 1 := by
     rw [← qn_eval_eq_coeff n ν _ (qn_colHom ℚ n ν _ (hwMem ℚ n n (le_refl n) ν hν))]
     exact lehw_eval_idFrame_hw (le_refl n) ν
   have hwt : Finsupp.weight (rowW n n) (lhwline_mnu (le_refl n) ν) = ν :=
     hHW (by rw [hH1]; exact one_ne_zero)
-  have h1 : coeff (lhwline_mnu (le_refl n) ν) F = c := by
-    have e : coeff (lhwline_mnu (le_refl n) ν) F = coeff (lhwline_mnu (le_refl n) ν) G := by
+  have h1 : AddMonoidAlgebra.coeff F (lhwline_mnu (le_refl n) ν) = c := by
+    have e : AddMonoidAlgebra.coeff F (lhwline_mnu (le_refl n) ν) = AddMonoidAlgebra.coeff G (lhwline_mnu (le_refl n) ν) := by
       rw [hGdef, coeff_weightedHomogeneousComponent, if_pos hwt]
     rw [e, hc, coeff_smul, hH1, smul_eq_mul, mul_one]
   rw [qn_eval_eq_coeff n ν F (qn_colHom ℚ n ν F hF), h1, hc]

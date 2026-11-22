@@ -1,4 +1,8 @@
-import Formalism.MahlerMeasure.IsIntegral
+module
+
+public import Formalism.MahlerMeasure.IsIntegral
+
+@[expose] public section
 
 namespace Formalism.GM.M.PhiIntegrality
 
@@ -56,7 +60,8 @@ theorem bnd_linear (T : MvPolynomial σ ℚ_[p] →ₗ[ℚ_[p]] MvPolynomial σ 
 
   have e : T u = ∑ v ∈ u.support, u.coeff v • T (monomial v 1) := by
     conv_lhs => rw [u.as_sum]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun v _ => ?_
     rw [← map_smul, MvPolynomial.smul_monomial, smul_eq_mul, mul_one]
   rw [e]
@@ -85,11 +90,11 @@ theorem pderiv_comm' (i j : σ) (f : MvPolynomial σ ℚ_[p]) :
   classical
   induction f using MvPolynomial.induction_on with
   | C a => simp
-  | add f g hf hg => simp only [map_add, hf, hg]
+  | add f g hf hg => simp only [map_add (f := _), hf, hg]
   | mul_X f k ih =>
     have h0 : ∀ a b : σ, pderiv a ((Pi.single b (1 : MvPolynomial σ ℚ_[p]) : σ → MvPolynomial σ ℚ_[p]) k) = 0 := by
       intro a b; rw [Pi.single_apply]; split_ifs <;> simp
-    simp only [Derivation.leibniz, map_add, pderiv_X, smul_eq_mul, ih, h0]
+    simp only [Derivation.leibniz, map_add (f := _), pderiv_X, smul_eq_mul, ih, h0]
     ring
 
 theorem commute_pderiv (i j : σ) :
@@ -243,8 +248,8 @@ end
 
 open MvPolynomial Finset
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem phi_integrality : PhiInt := by
 
   intro p hp σ r w e hw he hwe hr o n z u hu

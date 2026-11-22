@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col
 
@@ -7,8 +11,8 @@ namespace GlobalTheory.FrameDeco
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ}
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem exists_inv_mod (P : HeightOneSpectrum (𝓞 E)) {s : 𝓞 E} (hs : s ∉ P.asIdeal) :
     ∃ a p : 𝓞 E, p ∈ P.asIdeal ∧ a * s + p = 1 := by
   obtain ⟨a, p, hp, h⟩ := P.isMaximal.exists_inv hs
@@ -43,7 +47,7 @@ theorem redV_osmul (P : HeightOneSpectrum (𝓞 E)) (a : 𝓞 E) {x : Sp E n}
   funext i
   exact redP_osmul a ((mem_localization_standardLattice _ _).1 hx _)
 
-theorem exists_deco_of_frames : ∀ (E : Type) [Field E] [NumberField E] [StarRing E] (n : ℕ) (ST SG : Finset (HeightOneSpectrum (𝓞 E))) (d : DecoSet E n ST ∅) (f : SG → (Sp E n ≃ₗ[E] Sp E n)), (∀ (w : SG) (x : Sp E n), f w x ∈ d.1.at w.1 ↔ x ∈ stdAt E n w.1) → ∃ d' : DecoSet E n ST SG, d'.1.N = d.1.N ∧ d'.1.f = d.1.f ∧ ∀ w : SG, ∀ x ∈ stdAt E n w.1, d'.1.be w (f w x) = redV w.1 x := by
+theorem exists_deco_of_frames : ∀ (E : Type) [Field E] [NumberField E] [StarRing E] (n : ℕ) (ST SG : Finset (HeightOneSpectrum (𝓞 E))) (d : DecoSet (E := E) (n := n) (ST := ST) (SG := ∅)) (f : SG → (Sp E n ≃ₗ[E] Sp E n)), (∀ (w : SG) (x : Sp E n), f w x ∈ d.1.at w.1 ↔ x ∈ stdAt E n w.1) → ∃ d' : DecoSet (E := E) (n := n) (ST := ST) (SG := SG), d'.1.N = d.1.N ∧ d'.1.f = d.1.f ∧ ∀ w : SG, ∀ x ∈ stdAt E n w.1, d'.1.be w (f w x) = redV w.1 x := by
   classical
   intro E _ _ _ n ST SG d f hf
   have hf' : ∀ (w : SG) (y : Sp E n), y ∈ d.1.at w.1 → (f w).symm y ∈ stdAt E n w.1 := by
@@ -70,7 +74,7 @@ theorem exists_deco_of_frames : ∀ (E : Type) [Field E] [NumberField E] [StarRi
         intro w x hx y hy
         replace hx : x ∈ d.1.at w.1 := hx
         replace hy : y ∈ d.1.at w.1 := hy
-        rw [hbe w _ (Submodule.add_mem _ hx hy), hbe w _ hx, hbe w _ hy, map_add,
+        rw [hbe w _ (Submodule.add_mem _ hx hy), hbe w _ hx, hbe w _ hy, map_add (f := _),
           redV_add _ (hf' w x hx) (hf' w y hy)]
       be_smul := hsm
       be_off := fun w x hx => if_neg hx
@@ -112,7 +116,8 @@ theorem exists_deco_of_frames : ∀ (E : Type) [Field E] [NumberField E] [StarRi
         have h5 : s • y ∈ w.1.asIdeal • d.1.at w.1 := by
           have : s • y = f w (s • (f w).symm y) := by
             rw [equiv_osmul, LinearEquiv.apply_symm_apply]
-          rw [this, h4, map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [this, h4, map_sum]
           refine Submodule.sum_mem _ fun i _ => ?_
           rw [equiv_osmul]
           exact Submodule.smul_mem_smul (hmem i)

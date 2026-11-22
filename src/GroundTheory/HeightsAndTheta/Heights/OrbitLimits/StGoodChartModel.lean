@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.SegreChartProjObjects
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsGenericCount
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.SegreChartProjObjects
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsGenericCount
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

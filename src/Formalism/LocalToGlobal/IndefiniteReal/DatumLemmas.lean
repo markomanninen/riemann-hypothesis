@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+
+@[expose] public section
 
 noncomputable section
 
@@ -139,7 +143,7 @@ theorem trace_cA (a : AE D) :
     induction a using TensorProduct.induction_on with
     | zero => simp
     | tmul r e => simp [f, cA, sigR]
-    | add a b ha hb => rw [map_add, map_add, ha, hb]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
   have hff : f.comp f = AlgHom.id _ _ := AlgHom.ext fun a => by
     rw [AlgHom.comp_apply, hf, hf, cA_cA]; rfl
   let g : AE D ≃ₐ[AF D.host.F] AE D := AlgEquiv.ofAlgHom f f hff hff

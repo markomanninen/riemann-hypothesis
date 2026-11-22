@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyLocalToGlobalRingMapIndEtaleStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistFinitaryStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIndEtaleAlgebraOfStrictlyHenselianEtaleStalkAf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyEquivStrictHenselianLinePointStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyLocalToGlobalRingMapIndEtaleStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistFinitaryStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIndEtaleAlgebraOfStrictlyHenselianEtaleStalkAf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyEquivStrictHenselianLinePointStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC TensorProduct
 
 noncomputable section
@@ -87,7 +92,7 @@ theorem affineLine_localAcyclicity_of_strictHenselian_points (core : ∀ (q : �
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul o b => simp [Algebra.smul_def]
-  | add x y hx hy => simp only [map_add] at hx hy ⊢; rw [hx, hy]
+  | add x y hx hy => simp only [map_add (f := _)] at hx hy ⊢; rw [hx, hy]
 
 end GlobalTheory.EtC.LineAcyc
 

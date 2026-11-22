@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConvergenceInfimum
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankPosOfLeaves
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConvergenceInfimum
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankPosOfLeaves
+
+@[expose] public section
+
 open GlobalTheory.CompanionTheory.EGlue
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.convergence_infimum : GlobalTheory.CompanionTheory.EGlue.DiscInf → GlobalTheory.CompanionTheory.EGlue.TopInf → GlobalTheory.CompanionTheory.EGlue.ConvInf := by

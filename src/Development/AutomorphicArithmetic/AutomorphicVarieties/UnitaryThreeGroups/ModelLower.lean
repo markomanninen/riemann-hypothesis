@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.Rigid0
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.EntInMulRight
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DefNorm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DefCob
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.AdRepBaseLiftApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSqz
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.Rigid0
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.EntInMulRight
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DefNorm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DefCob
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.AdRepBaseLiftApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSqz
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.HV
 
@@ -18,7 +22,7 @@ section Cont
 variable {Γ R : Type} [TopologicalSpace Γ] [CommRing R] {I : Ideal R}
 
 private theorem ac_add {f g : Γ → R} (hf : AdicCont I f) (hg : AdicCont I g) : AdicCont I fun x => f x + g x :=
-  fun N => by simp only [map_add]; exact (hf N).add (hg N)
+  fun N => by simp only [map_add (f := _)]; exact (hf N).add (hg N)
 
 private theorem ac_sub {f g : Γ → R} (hf : AdicCont I f) (hg : AdicCont I g) : AdicCont I fun x => f x - g x :=
   fun N => by simp only [map_sub]; exact (hf N).sub (hg N)
@@ -42,7 +46,7 @@ section Base
 variable {O : Type} [CommRing O] {Γ : Type} [Group Γ] (η : Γ →* ℤˣ) (Ψ : Γ →* Oˣ)
   (R : Type) [CommRing R] [Algebra O R]
 
-private abbrev rb : Γ →* GG 3 R := (GG.map (algebraMap O R)).comp (r0 η Ψ)
+private abbrev rb : Γ →* GG (m := 3) (R := R) := (GG.map (algebraMap O R)).comp (r0 η Ψ)
 
 private theorem rb_mat (g : Γ) :
     (rb η Ψ R g).mat = Matrix.diagonal fun i => algebraMap O R ((Ψ g ^ wt1 i : Oˣ) : O) := by
@@ -70,7 +74,7 @@ private theorem mul_rb (g : Γ) (X : Matrix (Fin 3) (Fin 3) R) (a b : Fin 3) :
 
 variable {η Ψ R}
 
-private theorem deform_mat {γ : Γ → Matrix (Fin 3) (Fin 3) R} {r : Γ →* GG 3 R} (h : IsDeform (rb η Ψ R) γ r)
+private theorem deform_mat {γ : Γ → Matrix (Fin 3) (Fin 3) R} {r : Γ →* GG (m := 3) (R := R)} (h : IsDeform (rb η Ψ R) γ r)
     (g : Γ) (a b : Fin 3) :
     (r g).mat a b = algebraMap O R ((r0 η Ψ g).mat a b) + ((Ψ g ^ wt1 b : Oˣ) : O) • γ g a b := by
   rw [(h g).2, Matrix.add_mul, Matrix.one_mul, Matrix.add_apply, mul_rb]
@@ -157,7 +161,7 @@ private theorem ex_lift (hΨ : ∀ j : ℤ, AdicCont (maximalIdeal O) fun g => (
     refine SemidirectProduct.ext (Units.ext (Matrix.ext fun a b => ?_)) (hr g).1
     show res O _ ((r g).mat a b) = res O O ((r0 η Ψ g).mat a b)
     have h0 : res O (TrivSqZeroExt O Q) ((γ g).map inr a b) = 0 := (res_eq_zero_iff O _ _).2 (inr_mem (γ g a b))
-    rw [deform_mat hr, map_add, map_smul, h0, smul_zero, add_zero, AlgHom.commutes]
+    rw [deform_mat hr, map_add (f := _), map_smul, h0, smul_zero, add_zero, AlgHom.commutes]
     exact ((res O O).commutes _).symm
 
 private theorem ex_der {P : GCond O η Ψ} (U : Univ P) (x : U.R →ₐ[O] O) (hx : IsBase η Ψ U.r.hom x)
@@ -348,7 +352,7 @@ private theorem main_der (S : SRing N hι U I cc g₁) (M : Model S K) (hc : Ψ 
     · have h1 := deform_mat hF₁ h i j
       refine (congrArg (TrivSqZeroExt.map (Algebra.linearMap O (O ⧸ Ideal.span {a}))) h1).trans ?_
       refine Eq.trans ?_ (deform_mat hr (ι h) i j).symm
-      rw [map_add, map_smul, AlgHom.commutes, Matrix.map_apply, Matrix.map_apply, TrivSqZeroExt.map_inr, ← hred]
+      rw [map_add (f := _), map_smul, AlgHom.commutes, Matrix.map_apply, Matrix.map_apply, TrivSqZeroExt.map_inr, ← hred]
       rfl
     · show TrivSqZeroExt.map _ (F₁ f) = 0
       rw [hFI hf, map_zero]
@@ -383,7 +387,7 @@ theorem UpperTheory.V.U3.model_lower :
   choose D hD hDe hl using fun μ => main_der S M hm.Ψc hU hΨ hN ha (γ μ) (hγ μ)
   have hadd : ∀ μ ν, D (μ + ν) = D μ + D ν := fun μ ν =>
     der_uniq S M.x₀ (hD _) (add_mem (hD μ) (hD ν)) fun g i j => by
-      rw [LinearMap.add_apply, hDe, hDe, hDe, map_add, Pi.add_apply, Matrix.add_apply, smul_add]
+      rw [LinearMap.add_apply, hDe, hDe, hDe, map_add (f := _), Pi.add_apply, Matrix.add_apply, smul_add]
   refine hM O M.A ℤ M.𝒜 M.x (-1) (M.wring.fixed _ (by decide)) _ M.Q.F M.Q.hF a ha MM
     (AddMonoidHom.mk' (fun μ => (D μ).comp M.q.toLinearMap) fun μ ν => by rw [hadd, LinearMap.add_comp])
     ((injective_iff_map_eq_zero _).2 fun μ h => hinj ?_) (fun μ i => ?_) hl

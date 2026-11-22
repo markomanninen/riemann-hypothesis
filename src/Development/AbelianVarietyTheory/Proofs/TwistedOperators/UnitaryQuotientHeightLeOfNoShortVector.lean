@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VsizeNonneg
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AdelicVectorSizeSeenOrthogonalSummandLe
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeAdelicVectorSizeProductMulUnitaryQuotientHeigh
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicUnitaryEveryPointHasCuspScale
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicPointNearCuspScale
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.QuantitativeMahlerCriterionUnitaryGroup
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitaryGroupTwoModelsRationalRealUnipotentDictio
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VsizeNonneg
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AdelicVectorSizeSeenOrthogonalSummandLe
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeAdelicVectorSizeProductMulUnitaryQuotientHeigh
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicUnitaryEveryPointHasCuspScale
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicPointNearCuspScale
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.QuantitativeMahlerCriterionUnitaryGroup
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitaryGroupTwoModelsRationalRealUnipotentDictio
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Matrix
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -42,14 +46,14 @@ theorem vsize_seen_mul_le (V : HSp D) (a b : GA D V) {ξ : Fin V.rank → D.host
   have hprodI : (∏ w, vInf w (M *ᵥ x)) ≤ ((V.rank : ℝ≥0) + 1) ^ Fintype.card (InfinitePlace D.host.F) *
       (∏ w, hI w) * ∏ w, vInf w x := by
     calc (∏ w, vInf w (M *ᵥ x)) ≤ ∏ w, (((V.rank : ℝ≥0) + 1) * hI w * vInf w x) :=
-          Finset.prod_le_prod (fun _ _ => zero_le) (fun w _ => hIle w)
+          Finset.prod_le_prod₀ (fun _ _ => zero_le) (fun w _ => hIle w)
       _ = _ := by rw [Finset.prod_mul_distrib, Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ]
   have hsuppF : (Function.mulSupport hF).Finite := finite_mulSupport_htFin D.host.F (matHom V b⁻¹)
   have hsuppx : (Function.mulSupport fun v => vFin v x).Finite := Filter.eventually_cofinite.mp hfx
   have hsuppy : (Function.mulSupport fun v => vFin v (M *ᵥ x)).Finite := Filter.eventually_cofinite.mp hfy
   have hprodF : (∏ᶠ v, vFin v (M *ᵥ x)) ≤ (∏ᶠ v, hF v) * ∏ᶠ v, vFin v x := by
     rw [← finprod_mul_distrib hsuppF hsuppx]
-    exact finprod_le_finprod hsuppy (fun _ => zero_le) ((hsuppF.union hsuppx).subset (Function.mulSupport_mul _ _))
+    exact finprod_le_finprod₀ hsuppy (fun _ => zero_le) ((hsuppF.union hsuppx).subset (Function.mulSupport_mul _ _))
       (fun v => hFle v)
   have key : (∏ w, vInf w (M *ᵥ x)) * (∏ᶠ v, vFin v (M *ᵥ x)) ≤
       ((V.rank : ℝ≥0) + 1) ^ Fintype.card (InfinitePlace D.host.F) * ((∏ w, hI w) * ∏ᶠ v, hF v) *
@@ -87,7 +91,7 @@ theorem vFin_seen_le_one (V : HSp D) {a : GA D V} (ha : a ∈ GinfC V) {u : Fin 
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul c x => simp [compFin, evFin]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have hent : ∀ i j, compFin D.host.F D.host.E v (Formalism.L2.Theta.mt V a⁻¹ i j) =
       (1 : Matrix (Fin V.rank) (Fin V.rank) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv D.host.F v ⊗[D.host.F] D.host.E)) i j := by
     intro i j
@@ -97,7 +101,8 @@ theorem vFin_seen_le_one (V : HSp D) {a : GA D V} (ha : a ∈ GinfC V) {u : Fin 
   refine Finset.sup_le fun i _ => ?_
   have hx : compFin D.host.F D.host.E v (seen V a u i) = (1 : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv D.host.F v) ⊗ₜ[D.host.F] u i := by
     unfold seen
-    rw [GlobalTheory.SeenSize.mulVec_apply', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [GlobalTheory.SeenSize.mulVec_apply', map_sum]
     simp only [map_mul, hent, GlobalTheory.SeenSize.compFin_incA]
     simp [Matrix.one_apply]
   rw [hx]
@@ -121,7 +126,7 @@ private theorem infEmb_compInf_eq_theta (V : HSp D) (fr : UI.Frames D V) (w : In
     simp only [compInf, evInf, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, Algebra.TensorProduct.map_tmul,
       AlgHom.coe_id, id_eq, infEmb_tmul]
     rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 private theorem map_mt_brg_inv_eq_conj_uMat (V : HSp D) (fr : UI.Frames D V) (y : (UI.instV fr).Ginf)
     (w : InfinitePlace D.host.F) (θ : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF D.host.F ⊗[D.host.F] D.host.E →+* ℂ) (hθ : θ = Formalism.L2.SG.AdBridge.thetaV (UI.instV fr) w) :
@@ -214,7 +219,7 @@ theorem exists_vsize_le (V : HSp D) (fr : UI.Frames D V) (B : ℝ) : ∃ A : ℝ
       (fun v => vFin_seen_le_one V ha hu v)
   have hinf : (∏ w, (vInf w (seen V a u) : ℝ)) ≤ Q * r ^ Fintype.card (InfinitePlace D.host.F) := by
     calc (∏ w, (vInf w (seen V a u) : ℝ)) ≤ ∏ w, ((∑ i, ∑ j, ‖fr.P w i j‖) * r) :=
-          Finset.prod_le_prod (fun _ _ => NNReal.coe_nonneg _) (fun w _ => vInf_seen_le V fr y u w)
+          Finset.prod_le_prod₀ (fun _ _ => NNReal.coe_nonneg _) (fun w _ => vInf_seen_le V fr y u w)
       _ = Q * r ^ Fintype.card (InfinitePlace D.host.F) := by
           rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ]
   have hcard : Fintype.card (InfinitePlace D.host.F) ≠ 0 := Fintype.card_ne_zero

@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 
 noncomputable section

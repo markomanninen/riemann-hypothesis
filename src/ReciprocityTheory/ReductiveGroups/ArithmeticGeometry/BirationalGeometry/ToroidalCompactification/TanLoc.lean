@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsUnivRingBc
-import Lemmata.MiscLemmasQ.Imports
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsUnivRingBc
+public import Lemmata.MiscLemmasQ.Imports
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -38,8 +42,8 @@ section Lin
 
 variable [Module B A] [IsScalarTower S B A] (hsm : ∀ (b : B) (a : A), b • a = e b * a)
 
-include hsm in
 
+include hsm in
 def derOf (h : B →ₐ[S] DualNumber A) (hh : IsTanAt e h) : Derivation S B A where
   toFun b := (h b).snd
   map_add' a b := by simp
@@ -53,15 +57,15 @@ def derOf (h : B →ₐ[S] DualNumber A) (hh : IsTanAt e h) : Derivation S B A w
 
 theorem derOf_apply (h : B →ₐ[S] DualNumber A) (hh : IsTanAt e h) (b : B) : derOf e hsm h hh b = (h b).snd := rfl
 
-include hsm in
 
+include hsm in
 def ofLin (g : Ω[B⁄S] →ₗ[B] A) : B →ₐ[S] DualNumber A where
   toFun b := TrivSqZeroExt.inl (e b) + TrivSqZeroExt.inr (g (KaehlerDifferential.D S B b))
   map_one' := by ext <;> simp
   map_mul' a b := by
     ext
     · simp
-    · simp only [map_mul, Derivation.leibniz, map_add, map_smul, hsm, TrivSqZeroExt.snd_add, TrivSqZeroExt.snd_inl,
+    · simp only [map_mul, Derivation.leibniz, map_add (f := _), map_smul, hsm, TrivSqZeroExt.snd_add, TrivSqZeroExt.snd_inl,
         TrivSqZeroExt.snd_inr, TrivSqZeroExt.snd_mul, TrivSqZeroExt.fst_add, TrivSqZeroExt.fst_inl,
         TrivSqZeroExt.fst_inr, smul_eq_mul, MulOpposite.smul_eq_mul_unop, MulOpposite.unop_op]
       ring

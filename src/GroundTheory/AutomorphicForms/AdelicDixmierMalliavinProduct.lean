@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.DixmierMalliavin
-import GroundTheory.AutomorphicForms.TraceFormulaConvolution
-import GroundTheory.AutomorphicForms.GKModules.Garding
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.DixmierMalliavin
+public import GroundTheory.AutomorphicForms.TraceFormulaConvolution
+public import GroundTheory.AutomorphicForms.GKModules.Garding
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 

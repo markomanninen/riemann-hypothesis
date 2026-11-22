@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTLawAt
-import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIndexStabilizer
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFixedCongrAxLemmaOddPrimeStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsPolynomialInPrimitiveRootOfInertiaFixedStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTLawAt
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIndexStabilizer
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFixedCongrAxLemmaOddPrimeStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsPolynomialInPrimitiveRootOfInertiaFixedStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ
 open scoped Matrix
 
@@ -97,7 +102,8 @@ theorem trace_mem {Ω : Type} [Field Ω] [Algebra ℚ Ω] (A : ValuationSubring 
   choose e he using fun d : ℕ => geom_sum_root N (ζ ^ d) (by rw [← pow_mul, mul_comm, pow_mul, hζ, one_pow])
   refine ⟨∑ d ∈ Finset.range (Q.natDegree + 1), Q.coeff d * ζ' ^ d * e d,
     sum_mem fun d _ => mul_mem (mul_mem (hQ d).1 (pow_mem hζ'A d)) (natCast_mem A _), ?_⟩
-  simp only [Polynomial.eval_eq_sum_range, map_sum, map_mul, map_pow, hj, hfix _ (hQ _).2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Polynomial.eval_eq_sum_range, map_sum, map_mul, map_pow, hj, hfix _ (hQ _).2]
   rw [Finset.sum_comm, Finset.mul_sum]
   refine Finset.sum_congr rfl fun d _ => ?_
   have : ∀ j : ℕ, Q.coeff d * (ζ ^ j * ζ') ^ d = Q.coeff d * ζ' ^ d * (ζ ^ d) ^ j := fun j => by ring

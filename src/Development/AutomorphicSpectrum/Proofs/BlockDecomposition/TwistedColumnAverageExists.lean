@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,8 @@ theorem exists_weak_integral {X V : Type} [TopologicalSpace X] [T2Space X] [Meas
   have hint : ∀ s, s ⊆ Λ → ∀ g : X → ℂ, Continuous g → IntegrableOn g s ν := fun s hs g hg =>
     (hg.continuousOn.integrableOn_compact hc).mono_set hs
   conv_rhs => rw [hU]
-  rw [integral_biUnion_finset _ (fun v _ => hmeas v) hdisj
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [integral_biUnion_finset _ (fun v _ => hmeas v) hdisj
     (fun v _ => hint _ Set.inter_subset_left _ (hcont l)), map_sum]
   refine Finset.sum_congr rfl fun v _ => ?_
   rw [map_smul, smul_eq_mul, ← integral_mul_const]

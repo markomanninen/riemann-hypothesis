@@ -1,23 +1,27 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.RegularClassTraces.RegClassFin
-import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
-import Development.WeilBound.ThetaLifts.Reductions.SiegelOfCore
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConstantTermVanishing
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointRadical
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspidalNoRadicalFixed
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.StandardMaximalParabolic
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ParabolicLeviDecomposition
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.IwahoriSubgroup
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KernelLocallyFiniteContinuous
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegrableDescendOfCover
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SiegelCompactTranslateBound
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsIsoFrameFirstCols
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteLatticePointsInSiegelSetBoundStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RegularSemisimpleConjugateUnipotentTranslateStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemParabolicOfFlagPreservingStatement
-import Development.WeilBound.RepresentationTheoryGL.LimitMultiplicityWeights.RegularClassIntegrals.DecayFinal
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeIntegralFiniteLargeExponentStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.RegularClassTraces.RegClassFin
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelOfCore
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConstantTermVanishing
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspidalNoRadicalFixed
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.StandardMaximalParabolic
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.IwahoriSubgroup
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KernelLocallyFiniteContinuous
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegrableDescendOfCover
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SiegelCompactTranslateBound
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsIsoFrameFirstCols
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteLatticePointsInSiegelSetBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RegularSemisimpleConjugateUnipotentTranslateStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemParabolicOfFlagPreservingStatement
+public import Development.WeilBound.RepresentationTheoryGL.LimitMultiplicityWeights.RegularClassIntegrals.DecayFinal
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeIntegralFiniteLargeExponentStatement
+
+@[expose] public section
+
 open MeasureTheory Set Filter NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.OpTrace GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary GlobalTheory.AutMult Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR.Mult
@@ -70,14 +74,14 @@ theorem le_pow_of_root {t : Fin r → ℝ} (ht : ∀ i, 0 < t i) {ρ : ℝ} (hρ
     | zero =>
       intro i hi
       have h1 := h i
-      rw [root, dif_neg (by have := i.2; omega)] at h1
+      rw [root, dite_eq_right (by have := i.2; omega)] at h1
       simpa using h1
     | succ k ih =>
       intro i hi
       have hlt : i.val + 1 < r := by have := i.2; omega
       have h1 := ih ⟨i.val + 1, hlt⟩ (by simp only; omega)
       have h2 := h i
-      rw [root, dif_pos hlt, div_le_iff₀ (ht _)] at h2
+      rw [root, dite_eq_left hlt, div_le_iff₀ (ht _)] at h2
       calc t i ≤ ρ * t ⟨i.val + 1, hlt⟩ := h2
         _ ≤ ρ * ρ ^ (k + 1) := by gcongr
         _ = ρ ^ (k + 1 + 1) := by ring
@@ -88,12 +92,12 @@ theorem le_pow_of_root {t : Fin r → ℝ} (ht : ∀ i, 0 < t i) {ρ : ℝ} (hρ
 theorem prod_max_le {t : Fin r → ℝ} (ht : ∀ i, 0 < t i) {ρ : ℝ} (hρ : 1 ≤ ρ) (h : ∀ j, root t j ≤ ρ) :
     ∏ i, max (t i) 1 ≤ ρ ^ (r * r) := by
   calc ∏ i, max (t i) 1 ≤ ∏ _i : Fin r, ρ ^ r :=
-        Finset.prod_le_prod (fun i _ => by positivity) fun i _ =>
+        Finset.prod_le_prod₀ (fun i _ => by positivity) fun i _ =>
           max_le (le_pow_of_root ht hρ h i) (one_le_pow₀ hρ)
     _ = ρ ^ (r * r) := by simp [pow_mul]
 
 theorem one_le_prod_max (t : Fin r → ℝ) : 1 ≤ ∏ i, max (t i) 1 := by
-  have := Finset.prod_le_prod (s := Finset.univ) (f := fun _ : Fin r => (1 : ℝ)) (g := fun i => max (t i) 1)
+  have := Finset.prod_le_prod₀ (s := Finset.univ) (f := fun _ : Fin r => (1 : ℝ)) (g := fun i => max (t i) 1)
     (fun _ _ => zero_le_one) fun i _ => le_max_right _ _
   simpa using this
 
@@ -103,7 +107,7 @@ theorem inv_pow_le_prod {t : Fin r → ℝ} (ht : ∀ i, 0 < t i) {ρ : ℝ} (h�
   calc ρ⁻¹ ^ (r * r * m) = ∏ _i : Fin r, ((ρ ^ r)⁻¹) ^ m := by
         simp only [Finset.prod_const, Finset.card_univ, Fintype.card_fin, inv_pow, ← pow_mul]
         congr 2; ring
-    _ ≤ ∏ i, (t i)⁻¹ ^ m := Finset.prod_le_prod (fun i _ => by positivity) fun i _ => by
+    _ ≤ ∏ i, (t i)⁻¹ ^ m := Finset.prod_le_prod₀ (fun i _ => by positivity) fun i _ => by
         gcongr
         · exact ht i
         · exact le_pow_of_root ht hρ h i
@@ -237,9 +241,9 @@ theorem regSS_of_conj {γ δ : GF V} (h : IsConj γ δ) (hγ : IsRegSS γ.1.1) :
 theorem conj_id {G : Type} [Group G] (a ω d n : G) :
     (a * ω)⁻¹ * (d * n) * (a * ω) = ω⁻¹ * (a⁻¹ * d * a) * (a⁻¹ * n * a) * ω := by group
 
+
 set_option maxHeartbeats 1000000 in
 open GlobalTheory.SiegelSet in
-
 theorem class_bound {X Y : Matrix (Fin V.rank) (Fin r) D.host.E} (hW : IsWittFrame D.sp.cm.sig V.gram X Y)
     {K : Subgroup (GA D V)} {Ω : Set (GA D V)} {c : ℝ} (hK : IsCompact (K : Set (GA D V))) (hΩ : IsCompact Ω)
     (hΩP : Ω ⊆ minParOne D.sp.cm.sig V.gram X) (hc : 0 < c)
@@ -329,7 +333,7 @@ theorem class_bound {X Y : Matrix (Fin V.rank) (Fin r) D.host.E} (hW : IsWittFra
     have hall : ∀ i, root t i ≤ ρ := fun i => hjmax i (Finset.mem_univ _)
     have hc1 : t1 < t j := by
       by_cases hl : j.val + 1 < r
-      · have e : ρ = t j / t ⟨j.val + 1, hl⟩ := by rw [hρ, root, dif_pos hl]
+      · have e : ρ = t j / t ⟨j.val + 1, hl⟩ := by rw [hρ, root, dite_eq_left hl]
         have hp := tpos ⟨j.val + 1, hl⟩
         have h2 : R₀ * t ⟨j.val + 1, hl⟩ < t j := by
           rw [e, lt_div_iff₀ hp] at hρR; exact hρR
@@ -339,12 +343,12 @@ theorem class_bound {X Y : Matrix (Fin V.rank) (Fin r) D.host.E} (hW : IsWittFra
           exact mul_le_mul hRt' h3 hc₀.le this
         rw [div_mul_cancel₀ _ hc₀.ne'] at h4
         linarith
-      · have e : ρ = t j := by rw [hρ, root, dif_neg hl]
+      · have e : ρ = t j := by rw [hρ, root, dite_eq_right hl]
         rw [← e]; linarith
     have hc2 : ∀ j' : Fin r, j'.val = j.val + 1 → t1 * t j' < t j := by
       intro j' hj'
       have hl : j.val + 1 < r := hj' ▸ j'.2
-      have e : ρ = t j / t ⟨j.val + 1, hl⟩ := by rw [hρ, root, dif_pos hl]
+      have e : ρ = t j / t ⟨j.val + 1, hl⟩ := by rw [hρ, root, dite_eq_left hl]
       have e' : j' = ⟨j.val + 1, hl⟩ := Fin.ext hj'
       have hp := tpos j'
       rw [e', ] at hp ⊢
@@ -406,8 +410,8 @@ theorem class_bound {X Y : Matrix (Fin V.rank) (Fin r) D.host.E} (hW : IsWittFra
 end MainStatements.WeightKernel.RegInt
 
 namespace MainStatements.WeightKernel.RegInt
-open GlobalTheory.SiegelSet in
 
+open GlobalTheory.SiegelSet in
 theorem regClassInt : PositivityTheory.ThKR.SiegelCore → MainStatements.RegularCuspidalTrace.RegClassInt := by
   intro hcore D V μ _ f hf hcusp γ hreg
   have hknown := PositivityTheory.ThKR.siegel_of_core hcore

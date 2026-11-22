@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.GramDetMul
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.GramDetMul
+
+@[expose] public section
+
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up MeasureTheory Topology
 open scoped ComplexOrder ENNReal Matrix
 
@@ -54,7 +59,8 @@ theorem exists_common_integral_refinement {V ι : Type} [AddCommGroup V] [Module
         simpa [Matrix.mulVec, dotProduct] using this
       have hb' : ∑ a, (((A a b * v a : 𝓞 E)) : E) = 0 := by
         have := congrArg (algebraMap (𝓞 E) E) hb
-        rw [map_sum, map_zero] at this
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, map_zero] at this
         exact this
       rw [hb', zero_smul]
     funext a

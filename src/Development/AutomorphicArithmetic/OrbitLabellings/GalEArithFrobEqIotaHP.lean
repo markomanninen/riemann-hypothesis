@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
-import Formalism.LocalRingCardinality.HostCls
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+public import Formalism.LocalRingCardinality.HostCls
+
+@[expose] public section
 
 open scoped BigOperators
 open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Classical

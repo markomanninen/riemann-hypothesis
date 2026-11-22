@@ -1,11 +1,16 @@
-import Mathlib
-import Formalism.PeriodIntegrals.BetaLUniq
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Skeleton
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Lemmas
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.EqZeroOfNormLtOne
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.FlagVectorMemLocalization
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.WAniso
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.CMNorm
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.BetaLUniq
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Skeleton
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Lemmas
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.EqZeroOfNormLtOne
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.FlagVectorMemLocalization
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.WAniso
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.CMNorm
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardBaseFlagComplementIntegralLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +71,7 @@ theorem eigenOne_gen (Λ : Submodule (𝓞 E) S.V) {g r : ℕ} {T T' : E} {F : L
     have e1 : S.hT x₀ v = 0 := (mem_orth S).mp hvo x₀ hx₀X
     have e2 : S.hT v x₀ = 0 := by rw [hT_swap, e1, star_zero]
     have e3 : S.hT x₀ x₀ = 0 := hT_X F' hx₀X hx₀X
-    simp only [map_add, LinearMap.add_apply, hT_smul_left, hT_smul_right, e1, e2, e3] at h1
+    simp only [map_add (f := _), LinearMap.add_apply, hT_smul_left, hT_smul_right, e1, e2, e3] at h1
     have h2 : (star μ * μ - 1) * S.hT v v = 0 := by linear_combination h1
     rcases mul_eq_zero.mp h2 with h | h
     · exact sub_eq_zero.mp h
@@ -92,7 +97,7 @@ theorem eigenOne_gen (Λ : Submodule (𝓞 E) S.V) {g r : ℕ} {T T' : E} {F : L
     intro y hy
     obtain ⟨a, ha, x, hx, rfl⟩ := Submodule.mem_sup.mp hy
     obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.mp ha
-    have : π (c • v + x) = c := by rw [map_add, map_smul, hπv, hπX x hx, smul_eq_mul]; ring
+    have : π (c • v + x) = c := by rw [map_add (f := _), map_smul, hπv, hπX x hx, smul_eq_mul]; ring
     rw [this]; simpa using hx
   have hWeq : ∀ y ∈ W, y = π y • v + (y - π y • v) := fun y _ => by abel
   have hvW : v ∈ W := Submodule.mem_sup_left (Submodule.mem_span_singleton_self v)
@@ -102,11 +107,11 @@ theorem eigenOne_gen (Λ : Submodule (𝓞 E) S.V) {g r : ℕ} {T T' : E} {F : L
     have h1 := hWeq y hy
     have h2 : γ y = (π y * μ) • v + (π y • x₀ + γ (y - π y • v)) := by
       conv_lhs => rw [h1]
-      rw [map_add, map_smul, hγv, smul_add, smul_smul]; abel
+      rw [map_add (f := _), map_smul, hγv, smul_add, smul_smul]; abel
     constructor
     · rw [h2]
       exact W.add_mem (W.smul_mem _ hvW) (hXW (X'.add_mem (X'.smul_mem _ hx₀X) (hγX _ (hdec y hy))))
-    · rw [h2, map_add, map_smul, hπv, map_add, map_smul, hπX _ hx₀X, hπX _ (hγX _ (hdec y hy))]
+    · rw [h2, map_add (f := _), map_smul, hπv, map_add (f := _), map_smul, hπX _ hx₀X, hπX _ (hγX _ (hdec y hy))]
       simp only [smul_eq_mul]; ring
   have hWo : W ≤ orth S X' := by
     apply sup_le
@@ -125,7 +130,11 @@ theorem eigenOne_gen (Λ : Submodule (𝓞 E) S.V) {g r : ℕ} {T T' : E} {F : L
     rw [Submodule.map_comap_subtype] at h1
     exact h1.map _
   have hI0 : I ≠ ⊥ := by
-    obtain ⟨a, ha, haΛ⟩ := exists_smul_mem S Λ hL v
+    have hfull : Submodule.IsFullLattice E Λ :=
+      { toIsLattice := hL
+        span_eq_top := GlobalTheory.LoopC.Base.span_eq_top_of_unimodular
+          S.hT S.herm S.nondeg hL hU }
+    obtain ⟨a, ha, haΛ⟩ := exists_smul_mem S Λ hfull v
     intro hbot
     have : π (a • v) ∈ I := (hmemI _).mpr ⟨a • v, haΛ, W.smul_of_tower_mem a hvW, rfl⟩
     rw [hbot, Submodule.mem_bot, smulO, map_smul, hπv, smul_eq_mul, mul_one] at this
@@ -159,7 +168,7 @@ theorem eigenOne_gen (Λ : Submodule (𝓞 E) S.V) {g r : ℕ} {T T' : E} {F : L
             rw [smulO, map_natCast, smul_smul, inv_mul_cancel₀ hg0, one_smul]
           rw [this]; exact W.smul_mem _ hgl
         · have h1 : π ((g : 𝓞 E) • l) = π (s • (γ y - y)) := by
-            rw [← hz, map_add, hπX w hw.2, add_zero]
+            rw [← hz, map_add (f := _), hπX w hw.2, add_zero]
           rw [smulO, smulO, map_smul, map_smul, map_sub, (hγW y hyW).2, map_natCast,
             smul_eq_mul, smul_eq_mul] at h1
           field_simp

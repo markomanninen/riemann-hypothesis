@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.FactorFields.TensorCompl
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.FactorFields.PClsNorm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousInvolutiveLocalTransposeInverse
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.FactorFields.TensorCompl
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.FactorFields.PClsNorm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousInvolutiveLocalTransposeInverse
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem psi_X (ρ : B →+* Matrix (Fin n) (Fin n) k) (s : k) : psi ρ s X = s �
 
 theorem psi_P (ρ : B →+* Matrix (Fin n) (Fin n) k) (s : k) (u v : B) :
     psi ρ s (C u + X * C v) = ρ u + s • ρ v := by
-  rw [map_add, map_mul, psi_C, psi_X, psi_C, Matrix.smul_mul, Matrix.one_mul]
+  rw [map_add (f := _), map_mul, psi_C, psi_X, psi_C, Matrix.smul_mul, Matrix.one_mul]
 
 theorem psi_Q (ρ : B →+* Matrix (Fin n) (Fin n) k) (s : k) (u v : B) :
     psi ρ s (C u - X * C v) = ρ u - s • ρ v := by
@@ -34,7 +38,7 @@ theorem psi_rel {d : B} {ρ : B →+* Matrix (Fin n) (Fin n) k} {s : k} (hd : ρ
 
 theorem psi_eq {d : B} {ρ : B →+* Matrix (Fin n) (Fin n) k} {s : k} (hd : ρ d = (s ^ 2) • (1 : Matrix (Fin n) (Fin n) k))
     (F G H : B[X]) (h : F = G + (X ^ 2 - C d) * H) : psi ρ s F = psi ρ s G := by
-  rw [h, map_add, map_mul, psi_rel hd, zero_mul, add_zero]
+  rw [h, map_add (f := _), map_mul, psi_rel hd, zero_mul, add_zero]
 
 theorem GA {d : B} {ρ : B →+* Matrix (Fin n) (Fin n) k} {s : k} (hd : ρ d = (s ^ 2) • (1 : Matrix (Fin n) (Fin n) k))
     (u v a : B) : (ρ u + s • ρ v) * ρ a * (ρ u - s • ρ v) = ρ ((u ^ 2 - d * v ^ 2) * a) := by

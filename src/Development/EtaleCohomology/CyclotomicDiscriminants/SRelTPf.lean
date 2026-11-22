@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
-import Development.EtaleCohomology.CyclotomicDiscriminants.SZcTPf
-import Development.EtaleCohomology.CyclotomicDiscriminants.SChainPf
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
+public import Development.EtaleCohomology.CyclotomicDiscriminants.SZcTPf
+public import Development.EtaleCohomology.CyclotomicDiscriminants.SChainPf
+
+@[expose] public section
 
 noncomputable section
 namespace LateralTheory.Q.SRelT
@@ -80,7 +84,8 @@ theorem Gen.rel {M : Type} [AddCommGroup M] {r : ℕ} (h : Gen M r) (l : ℕ) (h
   obtain ⟨m, t, h1, h2⟩ := key _ n rfl ht hn
   refine ⟨m, t, h1, ?_⟩
   have := congrArg f h2
-  simpa [map_sum, hy] using this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [map_sum, hy] using this
 
 theorem exists_prim {k : Type} [CommRing k] {q : ℕ} [NeZero q] (F : ZMod q → k) (hF : ∑ j, F j = 0) :
     ∃ E : ZMod q → k, ∀ j, E (j + 1) - E j = F j := by
@@ -291,12 +296,14 @@ theorem rel_bd (k G : Type) [CommRing k] [Group G] (m r l : ℕ) (hl : 2 ≤ l)
   obtain ⟨y, hy⟩ := (ShortComplex.moduleCat_exact_iff _).1 ex (∑ i, n i • c i) (by
     refine Eq.trans ?_ h2
     show (π A (m + 1)).hom (∑ i, n i • c i) = ∑ i, n i • (π A (m + 1)).hom (c i)
-    simp only [map_sum, map_zsmul])
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul])
   refine ⟨y, ?_⟩
   rw [← d_eq_bd, ← HomologicalComplex.toCycles_i]
   have hy' : (toCycles A (m + 2) (m + 1)).hom y = ∑ i, n i • c i := hy
   show (iCycles A (m + 1)).hom ((toCycles A (m + 2) (m + 1)).hom y) = _
-  rw [hy', map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hy', map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_zsmul, Int.cast_smul_eq_zsmul]
   exact congrArg _ (hc i)

@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.CompatFub
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.InfinitesimalCharacterGL.BridgeSt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CenterActsByScalarOnEigenformsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactConjugateRationalEntriesBounded
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.CompatFub
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.InfinitesimalCharacterGL.BridgeSt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CenterActsByScalarOnEigenformsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactConjugateRationalEntriesBounded
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ end Eig
 
 section Tc
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem along_smul' (w : InfinitePlace E) (g : GA E a) (c : ℂ) (φ : GA E a → ℂ) :
     along w g (c • φ) = c • along w g φ := by
@@ -122,7 +126,7 @@ theorem infinitePart_le (A : Matrix (Fin a) (Fin a) (Ad E)) (B : ℝ) (hB : 1 �
     have hB2 : 1 ≤ |B ^ 2| := by
       rw [abs_of_nonneg (sq_nonneg B)]
       nlinarith
-    calc _ ≤ Real.posLog (B ^ 2) := Real.monotoneOn_posLog h0 (sq_nonneg B) hle
+    calc _ ≤ Real.posLog (B ^ 2) := Real.monotoneOn_posLog (by simp; linarith) (by simp; nlinarith [sq_nonneg B]) hle
       _ = Real.log (B ^ 2) := Real.posLog_eq_log hB2
       _ = 2 * Real.log B := by rw [Real.log_pow]; norm_num
   calc infP A ≤ ∑ _v : InfinitePlace E, 2 * Real.log B := Finset.sum_le_sum fun v _ => key v
@@ -130,7 +134,8 @@ theorem infinitePart_le (A : Matrix (Fin a) (Fin a) (Ad E)) (B : ℝ) (hB : 1 �
 
 theorem cV_mul (v : InfinitePlace E) (A B : Matrix (Fin a) (Fin a) (Ad E)) (i j : Fin a) :
     cV v ((A * B) i j) = ∑ k, cV v (A i k) * cV v (B k j) := by
-  rw [Matrix.mul_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.mul_apply, map_sum]
   simp only [map_mul]
 
 theorem cV_infGL (v : InfinitePlace E) (y : GL (Fin a) (Cinf E)) (k j : Fin a) :
@@ -156,8 +161,9 @@ theorem finP_mul_infGL (g : GA E a) (y : GL (Fin a) (Cinf E)) :
   refine finsum_congr fun w => ?_
   congr 2
   funext p
-  simp only [cW, RingHom.comp_apply]
+  change ‖pLoc E w (pFin E ((g * infGL E a y).val p.1 p.2))‖ = _
   rw [pFin_mul_infGL]
+  rfl
 
 theorem finP_inv_mul_infGL (g : GA E a) (y : GL (Fin a) (Cinf E)) :
     finP ((g * infGL E a y)⁻¹).val = finP (g⁻¹).val := by
@@ -165,8 +171,9 @@ theorem finP_inv_mul_infGL (g : GA E a) (y : GL (Fin a) (Cinf E)) :
   refine finsum_congr fun w => ?_
   congr 2
   funext p
-  simp only [cW, RingHom.comp_apply]
+  change ‖pLoc E w (pFin E (((g * infGL E a y)⁻¹).val p.1 p.2))‖ = _
   rw [pFin_inv_mul_infGL]
+  rfl
 
 theorem logSize_mul_infGL (g : GA E a) : ∃ D : ℝ, ∀ y : GL (Fin a) (Cinf E),
     logSize (g * infGL E a y) ≤ D + 4 * Fintype.card (InfinitePlace E) * Real.log (height y) := by
@@ -306,7 +313,7 @@ theorem hasInf_span (S : Set (Sm E a)) (τ : E →+* ℂ) (m : Multiset ℂ) (hm
   induction hψ using Submodule.span_induction with
   | mem x hx => exact (h x hx).2 u x (Submodule.mem_span_singleton_self x)
   | zero => rw [map_zero, smul_zero]
-  | add x y _ _ hx hy => rw [map_add, hx, hy, smul_add]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, smul_add]
   | smul c x _ hx => rw [map_smul, hx, smul_comm]
 
 theorem isAutForm_of (hB : BridgeSt) (φ : Sm E a) (K : Subgroup (GL (Fin a) (Af E)))

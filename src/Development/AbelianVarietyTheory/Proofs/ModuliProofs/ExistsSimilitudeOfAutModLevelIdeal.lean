@@ -1,13 +1,20 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.AuxiliaryInertOddPrime
-import Development.AbelianVarietyTheory.Statements.HeckeInFamilies.GenericMemChart
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFormEqOne
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModNOfDvdModulus
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.AuxiliaryInertOddPrime
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.OneAddZeta21PowSevenAddPowFourteenEqZero
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ToMatrixTrFormBaseChange
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFormEqOne
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModNOfDvdModulus
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -17,21 +24,6 @@ open GlobalTheory.Models
 namespace GlobalTheory.SimMb
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} (D : Datum H) (l : Level H)
-
-theorem bar_bar (a : 𝓞 E) : H.bar (H.bar a) = a := by
-  apply RingOfIntegers.ext
-  have h1 := H.bar_eq (H.bar a)
-  have h2 := H.bar_eq a
-  exact h1.trans (by rw [h2, IsCMField.complexConj_apply_apply])
-
-theorem bar_mem {a : 𝓞 E} (ha : a ∈ l.Mb) : H.bar a ∈ l.Mb.map (H.bar : 𝓞 E →+* 𝓞 E) :=
-  Ideal.mem_map_of_mem (H.bar : 𝓞 E →+* 𝓞 E) ha
-
-theorem M_mem : (l.M : 𝓞 E) ∈ l.Mb := by
-  have h : (l.M : 𝓞 E) ∈ l.Mb * l.Mb.map (H.bar : 𝓞 E →+* 𝓞 E) := by
-    rw [l.prod]
-    exact Ideal.mem_span_singleton_self _
-  exact (Ideal.mem_inf.mp (Ideal.mul_le_inf h)).1
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField in
 open scoped CategoryTheory.Obj TensorProduct Pointwise in
@@ -61,11 +53,11 @@ private theorem level_Mb_ne_bot : l.Mb ≠ ⊥ := by
   norm_cast at h1
   omega
 
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField in
 open scoped CategoryTheory.Obj TensorProduct Pointwise in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} (D : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Datum H)
   (l : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H) in
-
 theorem _root_.GlobalTheory.SimMb.exists_left_inv (g : D.La →ₗ[𝓞 E] D.La)
     (hg : ∀ x, g x ∈ l.Mb • (⊤ : Submodule (𝓞 E) D.La) → x ∈ l.Mb • (⊤ : Submodule (𝓞 E) D.La)) :
     ∃ h : D.La →ₗ[𝓞 E] D.La, ∀ x, h (g x) - x ∈ l.Mb • (⊤ : Submodule (𝓞 E) D.La) := by
@@ -200,7 +192,7 @@ theorem _root_.GlobalTheory.exists_sim_of_aut_mod : ∀ (E : Type) [Field E] [Nu
     obtain ⟨z, hz⟩ := exists_smul_eq_level_smul_of_mem_map_bar_Mb D l hbe (hh b)
     have : (H.bar e * e') • h (g b) = (H.bar e * e') • b + e' • (((l.M : ℕ) : NumberField.RingOfIntegers E) • z) := by
       rw [← hz, smul_smul, mul_comm e' (H.bar e), ← smul_add, add_sub_cancel]
-    rw [this, map_add, add_sub_cancel_left]
+    rw [this, map_add (f := _), add_sub_cancel_left]
     rw [smul_comm]
     exact level_dvd_EF_level_smul D l _ _
   have hF : ∀ a b, (l.M : ℤ) ∣ D.EF (f1 a) (f1 b) - D.EF a b := by
@@ -228,7 +220,7 @@ theorem _root_.GlobalTheory.exists_sim_of_aut_mod : ∀ (E : Type) [Field E] [Nu
           - (-D.EF (e' • g a) (e • u b) - -D.EF (e' • a) (e • b)) := by
       have hab : D.EF a b = D.EF (e • a + e' • a) (e • b + e' • b) := by rw [← ha, ← hb]
       rw [hab]
-      simp only [hf1, LinearMap.add_apply, LinearMap.smul_apply, map_add, LinearMap.add_apply]
+      simp only [hf1, LinearMap.add_apply, LinearMap.smul_apply, map_add (f := _), LinearMap.add_apply]
       ring
     rw [hexp]
     exact dvd_sub (dvd_add (dvd_sub (dvd_sub (dvd_add hgg huu) hee1) hee2) hca) hcb
@@ -239,7 +231,7 @@ theorem _root_.GlobalTheory.exists_sim_of_aut_mod : ∀ (E : Type) [Field E] [Nu
     intro a b
     obtain ⟨k, hk⟩ := hF a b
     refine ⟨s * t * (D.EF a (f1 b) + D.EF (f1 a) b - 2 * D.EF a b) + t ^ 2 * A * k, ?_⟩
-    simp only [hf0, LinearMap.add_apply, LinearMap.smul_apply, LinearMap.id_apply, map_add,
+    simp only [hf0, LinearMap.add_apply, LinearMap.smul_apply, LinearMap.id_apply, map_add (f := _),
       map_zsmul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul]
     push_cast
     linear_combination (t ^ 2 * (A : ℤ) ^ 2) * hk + D.EF a b * (t * A + s * l.M + 1) * hst

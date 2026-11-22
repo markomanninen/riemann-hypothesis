@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartTransportSt
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.IntChartSt
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExistsTruncatedIntegralChart
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartTransportSt
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.IntChartSt
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExistsTruncatedIntegralChart
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -15,9 +19,9 @@ open Formalism.L2.Pj.SaturatedCharts (toT prodPts_of_combAt combAt_of_prodPts ch
 
 attribute [local instance] Over.cartesianMonoidalCategory
 
+
 set_option maxHeartbeats 1000000 in
 open ReciprocityTheory.ChartRestriction.G.Chart (tcoord) in
-
 theorem exists_intChart_frTrunc : IntChartStatement → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) [StarRing (𝓞 E)], (∀ a : 𝓞 E, star a = H.bar a) → ChartTransportSt Xo c → ∀ (T : CDVR) (io : c.F →+* T.Fr) (y : IntFr Xo c T io), ∃ C : IntegralChartA3 Xo c T io y, FrTrunc C.I.G (𝟙 (Sp T.V)) (chD C.ch) C.xT C.eT := by
   intro hIC E _ _ _ H Dw l Xo c _ hstar hTr T io y
   have I : IntData Xo c T io y.1 := Classical.choice (by

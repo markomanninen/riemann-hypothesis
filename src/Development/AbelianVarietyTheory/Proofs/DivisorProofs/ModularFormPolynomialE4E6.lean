@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModQPrin
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModJTau
-import ReciprocityTheory.DualLattices.QExpansionMonoWCoeffZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModQPrin
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModJTau
+public import ReciprocityTheory.DualLattices.QExpansionMonoWCoeffZero
+
+@[expose] public section
 
 open scoped UpperHalfPlane MatrixGroups ModularForm Manifold BigOperators
 open ReciprocityTheory.ChartRestriction.L1 (IsMF)
@@ -10,8 +14,8 @@ open ModularForm (E₄ E₆)
 
 namespace GlobalTheory.QFam
 
-open ReciprocityTheory.PGsh in
 
+open ReciprocityTheory.PGsh in
 theorem isMF_eq_sum_monomials :
     ∀ (w : ℕ) (F : ℍ → ℂ), IsMF w F → ∃ (s : Finset (ℕ × ℕ)) (c : ℕ × ℕ → ℂ),
       (∀ p ∈ s, 4 * p.1 + 6 * p.2 = w) ∧

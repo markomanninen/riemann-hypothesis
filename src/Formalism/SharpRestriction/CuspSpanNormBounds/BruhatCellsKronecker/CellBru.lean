@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.CellDef
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUpUniMul
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.CellDef
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUpUniMul
+
+@[expose] public section
 
 noncomputable section
 

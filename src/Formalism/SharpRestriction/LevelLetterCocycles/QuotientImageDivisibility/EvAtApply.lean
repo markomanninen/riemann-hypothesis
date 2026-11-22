@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.EvROnePow
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.EvROnePow
+
+@[expose] public section
 
 noncomputable section
 open Classical

@@ -1,4 +1,8 @@
-import Formalism.RealPlaceAnalysis.SmoothOnG
+module
+
+public import Formalism.RealPlaceAnalysis.SmoothOnG
+
+@[expose] public section
 
 open Matrix
 open scoped ContDiff

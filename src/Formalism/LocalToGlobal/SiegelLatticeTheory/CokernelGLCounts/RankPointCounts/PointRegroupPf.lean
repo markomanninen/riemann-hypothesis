@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RowFrameCoherence
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RowsAbsPt
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AtPtRel
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RowFrameCoherence
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RowsAbsPt
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AtPtRel
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,7 @@ theorem ptOfList_lst (w : Point D.host.E (D.R.rS + 1)) :
   have hL : Formalism.L2.S.IsPtL (Formalism.L2.SG.DataInst.signPt D.R.rS (lst w)) (D.R.rS + 1) := by
     rw [h]; exact Formalism.L2.S.ptList_isPtL w
   unfold Formalism.L2.SG.DataInst.ptOfList
-  rw [dif_pos hL]
+  rw [dite_eq_left hL]
   congr 1
   apply (Formalism.L2.S.ptEquiv D.host.E (D.R.rS + 1)).injective
   rw [Equiv.apply_symm_apply]

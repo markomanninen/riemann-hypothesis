@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.KernelLattices.XiIndCClass
-import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.XiIndCClass
+public import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+
+@[expose] public section
 
 noncomputable section
 

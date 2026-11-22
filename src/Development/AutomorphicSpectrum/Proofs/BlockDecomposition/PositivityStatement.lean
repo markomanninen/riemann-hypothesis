@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JpUnif
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JpUnif
+
+@[expose] public section
 
 noncomputable section
 
@@ -338,7 +342,8 @@ theorem sum_eq (ψ₀ : AddChar k ℂ) (β : Matrix (Fin n) (Fin n) k) (r m : �
           rw [Finset.sum_comm]
           refine Finset.sum_congr rfl fun g _ => ?_
           unfold hC
-          rw [map_sum, Finset.sum_mul]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum, Finset.sum_mul]
           refine Finset.sum_congr rfl fun Y _ => ?_
           simp only [map_mul, map_pow, Complex.conj_conj, map_natCast, hq]
           ring
@@ -388,8 +393,8 @@ theorem hC_wM_pos (ψ₀ : AddChar k ℂ) (β : Matrix (Fin n) (Fin n) k) (a : �
 
 end GlobalTheory.CompanionTheory.Jp.Pos
 
-open GlobalTheory.CompanionTheory.Jp.Pos in
 
+open GlobalTheory.CompanionTheory.Jp.Pos in
 theorem GlobalTheory.CompanionTheory.Jp.Pos.jpPos : GlobalTheory.CompanionTheory.Jp.JpPos := by
   intro k _ _ n r m ψ₀ _ β hr hm
   classical

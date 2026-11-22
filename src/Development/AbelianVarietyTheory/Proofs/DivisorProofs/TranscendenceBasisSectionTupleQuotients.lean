@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+
+@[expose] public section
 
 open Filter Topology MvPolynomial GlobalTheory.HSAmp
 
@@ -13,7 +17,7 @@ theorem isAlgebraic_div_of_mem {s : Set K} {a b : K} (ha : a ∈ Algebra.adjoin 
     (hb : b ∈ Algebra.adjoin ℤ s) (hb0 : b ≠ 0) : IsAlgebraic (Algebra.adjoin ℤ s) (a / b) := by
   refine ⟨Polynomial.C (⟨b, hb⟩ : Algebra.adjoin ℤ s) * Polynomial.X - Polynomial.C ⟨a, ha⟩, ?_, ?_⟩
   · intro h
-    have h1 := congrArg (Polynomial.coeff · 1) h
+    have h1 := congrArg (fun p : Polynomial (Algebra.adjoin ℤ s) => p.coeff 1) h
     simp at h1
     exact hb0 (congrArg Subtype.val h1)
   · simp [mul_div_cancel₀ _ hb0]

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoLowerBoundOfEdgeCount
-import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoLowerBoundOfEdgeCount
+public import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,16 +80,12 @@ theorem be_smulK_left (c : R.Kf) (F : Vsp R.Kf lam0) (G : Module.Dual R.Kf (Vsp 
   unfold be
   rw [smul_comm, map_smul, smul_eq_mul]
 
-theorem be_add_left (F F' : Vsp R.Kf lam0) (G : Module.Dual R.Kf (Vsp R.Kf lam0)) :
-    be p 1 lam0 (F + F') G = be p 1 lam0 F G + be p 1 lam0 F' G := by
-  unfold be
-  rw [smul_add, map_add]
-
 theorem be_sum_left {ι : Type*} (s : Finset ι) (c : ι → R.Kf) (F : ι → Vsp R.Kf lam0)
     (G : Module.Dual R.Kf (Vsp R.Kf lam0)) :
     be p 1 lam0 (∑ i ∈ s, c i • F i) G = ∑ i ∈ s, c i * be p 1 lam0 (F i) G := by
   unfold be
-  rw [Finset.smul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.smul_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [smul_comm, map_smul, smul_eq_mul]
 

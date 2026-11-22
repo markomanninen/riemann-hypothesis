@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistedModelAdmissibleCocycles
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.OnePlusPowerAssembly
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistedModelAdmissibleCocycles
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.OnePlusPowerAssembly
+
+@[expose] public section
 
 open GlobalTheory.PhiGam GlobalTheory.AdmLoc GlobalTheory.Models
 open scoped LaurentSeries PowerSeries
@@ -14,7 +18,7 @@ theorem isHom_comp {A B C : Ob k G} {f : (Fin A.m → k) →ₗ[k] (Fin B.m → 
 
 theorem isHom_add {A B : Ob k G} {f g : (Fin A.m → k) →ₗ[k] (Fin B.m → k)}
     (hf : IsHom A B f) (hg : IsHom A B g) : IsHom A B (f + g) :=
-  fun s x => by simp only [LinearMap.add_apply, map_add]; rw [hf, hg]
+  fun s x => by simp only [LinearMap.add_apply, map_add (f := _)]; rw [hf, hg]
 
 theorem exists_sum (A B : Ob k G) : ∃ (C : Ob k G) (i : (Fin A.m → k) →ₗ[k] (Fin C.m → k))
     (j : (Fin B.m → k) →ₗ[k] (Fin C.m → k)), IsHom A C i ∧ IsHom B C j ∧ Function.Bijective (i.coprod j) := by
@@ -43,7 +47,7 @@ theorem exists_proj {A B C : Ob k G} {i : (Fin A.m → k) →ₗ[k] (Fin C.m →
   have h2 : ∀ x, i (e.symm x).1 + j (e.symm x).2 = x := fun x => by
     exact e.apply_symm_apply x
   have h3 : ∀ g x, e.symm (C.ρ g x) = (A.ρ g (e.symm x).1, B.ρ g (e.symm x).2) := fun g x => by
-    rw [← h1, hi, hj, ← map_add, h2]
+    rw [← h1, hi, hj, ← map_add (f := _), h2]
   refine ⟨LinearMap.fst k _ _ ∘ₗ e.symm.toLinearMap, LinearMap.snd k _ _ ∘ₗ e.symm.toLinearMap,
     fun g x => ?_, fun g x => ?_, fun x => ?_, fun x => ?_, fun x => ?_, fun x => ?_, fun x => h2 x⟩
   · simp [h3]
@@ -91,7 +95,7 @@ theorem model_sup : ∀ {k G : Type} [Field k] [Group G] {l n : ℕ} [Fact l.Pri
     intro x hx
     have h1 := congrArg π hx
     have h2 := congrArg π' hx
-    simp only [LinearMap.add_apply, LinearMap.comp_apply, map_add, e1, e2, e3, e4, map_zero, add_zero,
+    simp only [LinearMap.add_apply, LinearMap.comp_apply, map_add (f := _), e1, e2, e3, e4, map_zero, add_zero,
       zero_add] at h1 h2
     have h1' : q x = 0 := hji (by simpa using h1)
     have h2' : q' x = 0 := hji' (by simpa using h2)
@@ -122,11 +126,11 @@ theorem model_sup : ∀ {k G : Type} [Field k] [Group G] {l n : ℕ} [Fact l.Pri
       change F.map B C i t u + F.map B' C i' t u' = _ at h
       have h1 := congrArg (F.map C B π t) h
       have h2 := congrArg (F.map C B' π' t) h
-      rw [map_add, map_comp_apply F (h := LinearMap.id) oB oC oB hi hπ e1,
+      rw [map_add (f := _), map_comp_apply F (h := LinearMap.id) oB oC oB hi hπ e1,
         map_comp_apply F (h := 0) oB' oC oB hi' hπ e2, F.map_id B oB, map_zero' F oB' oB,
         map_comp_apply F (h := j ∘ₗ q) oS oC oB hJ hπ (fun x => by simp [e1, e2]),
         ← map_comp_apply F oS o1 oB hq hj (fun _ => rfl), add_zero, LinearMap.id_apply] at h1
-      rw [map_add, map_comp_apply F (h := LinearMap.id) oB' oC oB' hi' hπ' e4,
+      rw [map_add (f := _), map_comp_apply F (h := LinearMap.id) oB' oC oB' hi' hπ' e4,
         map_comp_apply F (h := 0) oB oC oB' hi hπ' e3, F.map_id B' oB', map_zero' F oB oB',
         map_comp_apply F (h := j' ∘ₗ q') oS oC oB' hJ hπ' (fun x => by simp [e3, e4]),
         ← map_comp_apply F oS o2 oB' hq' hj' (fun _ => rfl), zero_add, LinearMap.id_apply] at h2

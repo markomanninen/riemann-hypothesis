@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.TateCohomology.TateTheorem
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.IntScalars
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.TateTheorem
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.IntScalars
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

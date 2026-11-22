@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.AdelicThetaPoissonSummation
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.AdelicThetaPoissonSummation
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,7 +98,7 @@ theorem exists_isom_scale' (hs : h.IsSymm) {z : V} (hz : h z z ≠ 0) {b : K} (h
   have hψv' : ψ v = (h z v * (h z z)⁻¹) • (b • z) + (v - (h z v * (h z z)⁻¹) • z) := by
     have e : v = (h z v * (h z z)⁻¹) • z + (v - (h z v * (h z z)⁻¹) • z) := by abel
     conv_lhs => rw [e]
-    rw [map_add, map_smul, hψz, hψv _ hdec]
+    rw [map_add (f := _), map_smul, hψz, hψv _ hdec]
   constructor
   · intro hv
     rw [hψv']
@@ -231,7 +235,7 @@ theorem sd_main' [FiniteDimensional K V] (hS : IsHermSemilocal S) (hπ : IsUnif 
       fun v => by abel
     have hgdec : ∀ v, g v = g (v - (h x v * (h x x)⁻¹) • x) + (h x v * (h x x)⁻¹) • X := fun v => by
       conv_lhs => rw [hdec v]
-      rw [map_add, map_smul, hgx]
+      rw [map_add (f := _), map_smul, hgx]
     refine ⟨g, hg, fun v hv => ?_, fun v => ?_⟩
     · rw [hgv v (fun w hw => hv w (mem_cutW.1 hw).1), hφ₁v v hv]
     have hxvX : h X (g v) = h x v := by

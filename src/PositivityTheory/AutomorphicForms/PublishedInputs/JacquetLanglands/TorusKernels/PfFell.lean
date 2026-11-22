@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+
+@[expose] public section
 
 noncomputable section
 
@@ -202,7 +206,7 @@ theorem pf_Fell : UpperTheory.Esk.C4 → UpperTheory.Esk.E0a → UpperTheory.Esk
             simp only [u, hell, if_true] at hI'
             exact hI'
         · simp [hell]
-    · rw [Set.indicator_of_notMem hpR, Set.indicator_of_notMem (fun h => hpR h.1)]
+    · rw [Set.indicator_of_notMem hpR, Set.indicator_of_notMem (by exact fun h => hpR h.1)]
   have h1 : HasSum ((Set.range f).indicator g') (∫ y, (fun p : (D.Cj × D.Om) × D.Xs => b (p.1.2, p.2)) y •
       (fun p : (D.Cj × D.Om) × D.Xs => u (D.el p.1.1) (p.1.2, p.2)) y ∂(Measure.count.prod volume)) :=
     (hasSum_subtype_iff_indicator (f := g')).1 hsum

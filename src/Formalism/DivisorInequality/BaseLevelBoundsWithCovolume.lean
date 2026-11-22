@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.DivisorInequality.DivisorInequalityProofs.BaseLevelBoundsWithCovolumeHolds
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.YoungDiagramTopExact
+module
+
+public import Mathlib
+public import Formalism.DivisorInequality.DivisorInequalityProofs.BaseLevelBoundsWithCovolumeHolds
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.YoungDiagramTopExact
+
+@[expose] public section
 
 namespace Formalism.DivisorInequality
 

@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.CasimirResolventProjection
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.PoinOp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.HdHd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.InclFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.CasimirResolventProjection
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.PoinOp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.HdHd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.InclFacts
+
+@[expose] public section
 
 open NumberField Matrix MeasureTheory Filter Topology Formalism.L2.Host GlobalTheory.CuspRep GlobalTheory.GKCoh GlobalTheory.UnitaryBC UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible
 open UpperTheory.V.Lit UpperTheory.V.Lit.Geo UpperTheory.V.Lit.Bor UpperTheory.V.Lit.Dr
@@ -21,7 +25,7 @@ private theorem fLim_add {w w' : ℕ → G.Om q} (h : FLim G w) (h' : FLim G w')
 private theorem fLim_zsmul (n : ℤ) {w : ℕ → G.Om q} (h : FLim G w) : FLim G fun j => n • w j := by
   intro s K hK hKc
   have h1 := (uniformContinuous_id.const_smul n).comp_tendstoUniformlyOn (h s K hK hKc)
-  convert h1 using 1
+  convert (preTransparency := .reducible) h1 using 1
   · funext k x
     simp
   · funext x
@@ -106,7 +110,8 @@ theorem UpperTheory.V.Cj.H.zigLim :
           G.dOm q (hd (fun x => K (G.ρ (x.headD 1) p) (u j x)) x) = 0 := by
         intro j x hx
         have h0 := (hcoc j).2 x hx
-        simp only [hd, map_sum, map_zsmul] at h0 ⊢
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [hd, map_sum, map_zsmul] at h0 ⊢
         rw [← h0]
         refine Finset.sum_congr rfl fun i hi => ?_
         rw [hK1 _ (hpt _) _ (hcl j _ (hlen x i hx hi))]

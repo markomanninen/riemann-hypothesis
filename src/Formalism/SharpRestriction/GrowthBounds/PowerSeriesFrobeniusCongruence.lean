@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MixedCoefficientClosed
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MixedCoefficientClosed
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineBundleGlobalSectionsDimCongrPicardClass
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeightIffOfDegreeEq
-import Development.AbelianVarietyTheory.Definitions.Divisors.LinearIndependentPullChart
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAffineOpenPreimageOfIsPullback
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineBundleGlobalSectionsDimCongrPicardClass
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeightIffOfDegreeEq
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LinearIndependentPullChart
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAffineOpenPreimageOfIsPullback
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -41,9 +45,6 @@ variable (T : HermSys F)
 def weight (hb : T.BasePointFree) (hh : T.Hermitian) (σ : F →+* ℂ) : Weight T.str σ T.L :=
   Weight.fsBasis T.str σ T.isLB T.b hb (T.A σ) (hh σ)
 
-theorem isSmooth_weight (hb : T.BasePointFree) (hh : T.Hermitian) {σ : F →+* ℂ} {D : ℕ} (R : AnRead T.str σ D) :
-    (T.weight hb hh σ).IsSmooth R := Weight.isSmooth_fsBasis _ _ _ _ _
-
 theorem weight_φ (hb : T.BasePointFree) (hh : T.Hermitian) (σ : F →+* ℂ) (i : T.L.ι) (y : CxPts T.str σ) :
     (T.weight hb hh σ).φ i y = Real.log (archSize (T.A σ) (fun j => secVal T.str σ (T.b j) i y) ^ 2) := by
   rw [archSize, Real.sq_sqrt (Finset.sum_nonneg fun _ _ => sq_nonneg _)]
@@ -62,7 +63,7 @@ theorem IsAlgebraicData.baseChange (h : T.IsAlgebraicData) : (T.baseChange E).Is
     induction hu using Submodule.span_induction with
     | mem _ h => obtain ⟨k, rfl⟩ := h; exact Submodule.subset_span ⟨k, rfl⟩
     | zero => simp only [Pi.zero_apply, map_zero]; exact zero_mem _
-    | add a b _ _ ha hb => simp only [Pi.add_apply, map_add]; exact add_mem ha hb
+    | add a b _ _ ha hb => simp only [Pi.add_apply, map_add (f := _)]; exact add_mem ha hb
     | smul c a _ ha => simp only [Pi.smul_apply, smul_eq_mul, map_mul]; exact Submodule.smul_mem _ _ ha
   refine top_le_iff.1 fun (u : Fin T.N → E) _ => ?_
   rw [pi_eq_sum_univ' u]
@@ -82,10 +83,8 @@ def baseChange : Tuple E where
   j₀ := T.j₀
   th := GlobalTheory.chartSec (chartPullZPow (GlobalTheory.chartPullPull T.L (T.bcFst E)) T.j₀) T.th
 
-theorem U_baseChange : (T.baseChange E).U = T.bcFst E ⁻¹ᵁ T.U := rfl
 
 variable {T} in
-
 theorem IsGeometric.baseChange (h : T.IsGeometric) : (T.baseChange E).IsGeometric := by
   refine ⟨h.alg.baseChange E, fun e => h.bd_ne (top_le_iff.1 fun y _ => ?_)⟩
   have : Surjective (spMap (algebraMap F E)) := ⟨Function.surjective_to_subsingleton _⟩
@@ -93,8 +92,8 @@ theorem IsGeometric.baseChange (h : T.IsGeometric) : (T.baseChange E).IsGeometri
   obtain ⟨z, rfl⟩ := (T.bcFst E).surjective y
   exact e.ge (Set.mem_univ z)
 
-variable {T} in
 
+variable {T} in
 theorem IsGeometric.nonempty_U (h : T.IsGeometric) : (T.U : Set T.Y).Nonempty :=
   Set.nonempty_compl.2 fun e => h.bd_ne (Closeds.ext e)
 
@@ -152,11 +151,6 @@ instance smooth : SmoothOfRelativeDimension G.D G.str := G.geom.alg.variety.smoo
 
 instance isIntegral : IsIntegral G.Y := G.geom.alg.variety.isIntegral
 
-instance compactSpace (σ : F →+* ℂ) : CompactSpace (CxPts G.str σ) := CxPts.compactSpace σ G.geom.alg.variety.proj
-
-instance secondCountableTopology (σ : F →+* ℂ) : SecondCountableTopology (CxPts G.str σ) :=
-  secondCountableTopology_of_isProjOver σ G.geom.alg.variety.proj
-
 theorem one_le_n : 1 ≤ G.n := by
   obtain ⟨j, -⟩ := Opens.mem_iSup.1 (G.geom.alg.bpf.ge (Set.mem_univ (genericPoint G.Y)))
   by_contra h
@@ -172,9 +166,6 @@ def φ (σ : F →+* ℂ) : Weight G.str σ G.L := G.weight G.geom.alg.bpf G.her
 def φ₂ (σ : F →+* ℂ) : Weight G.str σ G.L₂ := G.second.weight G.alg₂.bpf G.herm₂ σ
 
 def φTw (m : ℤ) (σ : F →+* ℂ) : Weight G.str σ (tw G.L₂ G.L m) := (G.φ₂ σ).tens ((G.φ σ).zpow m)
-
-theorem isSmooth_φTw (m : ℤ) {σ : F →+* ℂ} (R : AnRead G.str σ G.D) : (G.φTw m σ).IsSmooth R :=
-  (G.second.isSmooth_weight _ _ R).tens ((G.isSmooth_weight _ _ R).zpow m)
 
 abbrev adj (j : ℕ) : LB G.Y := tw (tens G.K.bundle G.LA) G.L j
 
@@ -209,26 +200,6 @@ def mulE (j : ℕ) : H0 G.str (G.adj₂ j) ⊤ →ₗ[F] G.Sec j :=
 
 theorem mulE_mem_global (j : ℕ) (f : H0 G.str (G.adj₂ j) ⊤) : G.mulE j f ∈ G.global j := ⟨_, rfl⟩
 
-theorem mulE_apply (j : ℕ) (f : H0 G.str (G.adj₂ j) ⊤) :
-    G.mulE j f = Vanishing.mulE G.K G.isLB G.isLBA G.isLB₂ G.e rfl (H0.restr le_top f) :=
-  (ProdChart.restr_mul _ _ _ _).trans (by rw [H0.restr_ofSec]; rfl)
-
-theorem mulE_injective (j : ℕ) : Function.Injective (G.mulE j) := fun f f' h => by
-  rw [mulE_apply, mulE_apply] at h
-  exact G.restr_injective _ ((ProdChart.bijective_mul _ fun y hy i hi => by
-    rw [H0.germ_ofSec, isUnit_ger_iff]; exact G.U_le hy).1 h)
-
-def sqInt (j : ℕ) (σ : F →+* ℂ) (f : (G.adj₂ j).ι → CxPts G.str σ → ℂ) : ℝ≥0∞ :=
-  (AnRead.all G.str σ G.D).topInt G.K (G.φTw (j + G.D) σ) (assocVal f)
-
-theorem sqInt_eq (j : ℕ) {σ : F →+* ℂ} (R : AnRead G.str σ G.D) (f : (G.adj₂ j).ι → CxPts G.str σ → ℂ) :
-    G.sqInt j σ f = R.topInt G.K (G.φTw (j + G.D) σ) (assocVal f) := AnRead.topInt_eq _ _ _ _ _
-
-theorem sqInt_lt_top (j : ℕ) (σ : F →+* ℂ) {ι : Type*} [Fintype ι] (c : ι → ℂ) (f : ι → H0 G.str (G.adj₂ j) ⊤) :
-    G.sqInt j σ (∑ i, c i • cval σ (f i)) < ⊤ :=
-  AnRead.topInt_lt_top _ (G.isSmooth_φTw _ _) (assocVal_mem_holSec
-    (Submodule.sum_mem _ fun _ _ => Submodule.smul_mem _ _ (cval_mem_holSec σ _ _)))
-
 variable (s : Fin G.D → Fin G.N → F)
 
 abbrev sec : Fin G.D → G.L.Sec := fun i => G.comb (s i)
@@ -247,8 +218,8 @@ abbrev SecOn (j : ℕ) : Type := sectionsOnClosedSubscheme G.str (tw G.L₂ G.L 
 
 variable {G s} (hs : G.IsGood s)
 
-include hs in
 
+include hs in
 theorem IsGood.suppIn_e : SuppIn (nonzeroLocus G.e) (G.ideal s) := fun y hy => G.U_le (hs.inU y hy)
 
 def IsGood.res (j : ℕ) : G.Sec j →ₗ[F] G.SecOn s j :=
@@ -273,9 +244,6 @@ def weightOn (s : Fin G.D → Fin G.N → F) (j : ℕ) (σ : F →+* ℂ) :
   (G.φTw j σ).pull _ rfl
 
 def IsGood.normOn (j : ℕ) : HermFam F (G.SecOn s j) := pointHerm hs.finite hs.etale (weightOn s j)
-
-theorem IsGood.nrm_normOn_sq (j : ℕ) (σ : F →+* ℂ) (g : G.SecOn s j) :
-    (hs.normOn j).nrm σ g ^ 2 = ∑ᶠ y, (weightOn s j σ).nsq (cval σ g) y := nrm_pointHerm_sq _ _ _ σ g
 
 variable (G) (E : Type) [Field E] [NumberField E] [Algebra F E]
 
@@ -326,8 +294,8 @@ theorem extSpace_global (j : ℕ) : extSpace (G.toExt E j) (G.global j) = (G.bas
   rw [global, LinearMap.coe_range, ← Set.range_comp, ← Set.range_comp]
   exact congrArg _ (funext fun f => restr_pullChart _ _ _ _ _ _ f)
 
-variable {G E} in
 
+variable {G E} in
 theorem isGood_baseChange_iff {s : Fin G.D → Fin G.N → E} : (G.baseChange E).IsGood s ↔ G.IsGoodSection E s :=
   ⟨fun h => ⟨⟨h.finite, h.etale⟩, h.inU⟩, fun h => ⟨h.finiteEtale.finite, h.finiteEtale.etale, h.inOpen⟩⟩
 
@@ -381,8 +349,6 @@ structure Positivity : Prop where
 
 def logRho (C h : ℝ) : ℝ := Real.log G.abelian₂ + C * Real.log (G.theta h)
 
-def rho (C h : ℝ) : ℝ := Real.exp (G.logRho C h)
-
 def g : ℝ := ((G.D : ℝ) + 1) * (Real.log G.n + 1) / 2 + 1
 
 def Ra (a : ℕ) : ℕ := (a + G.D - 1).choose (G.D - 1)
@@ -420,12 +386,6 @@ def HasBoundedPoles : Prop :=
   ∀ j ≤ X.T, ∃ (P : LB X.Y) (hP : P.IsLB) (t : P.Sec) (ht : X.U ≤ nonzeroLocus t),
     X.V j ≤ polar X.str (X.adj j) hP (X.isLB_adj j) t ht
 
-def inclE {j : ℕ} (hj : j ≤ X.T) : H0 X.str (X.adj₂ j) ⊤ →ₗ[F] X.V j :=
-  (X.mulE j).codRestrict _ fun f => X.global_le j hj (X.mulE_mem_global j f)
-
-def resLat {s : Fin X.D → Fin X.N → F} (hs : X.IsGood s) : Submodule (𝓞 F) (X.SecOn s 0) :=
-  (X.M 0).map ((hs.res 0 ∘ₗ (X.V 0).subtype).restrictScalars (𝓞 F))
-
 def degM (j : ℕ) : ℝ := deg (X.nm j) (X.M j)
 
 section BaseChange
@@ -456,13 +416,6 @@ def baseChange : Data E where
 
 def toExtV (j : ℕ) : X.V j →ₛₗ[algebraMap F E] (X.baseChange E).V j := extMap (X.toExt E j) (X.V j)
 
-theorem nrm_toExtV (j : ℕ) (τ : E →+* ℂ) (x : X.V j) :
-    ((X.baseChange E).nm j).nrm τ (X.toExtV E j x) = (X.nm j).nrm (τ.comp (algebraMap F E)) x :=
-  nrm_extend (X.isExtension_extMap E j) _ τ x
-
-theorem finrank_V_baseChange (j : ℕ) : Module.finrank E ((X.baseChange E).V j) = Module.finrank F (X.V j) :=
-  (X.isExtension_extMap E j).finrank_eq
-
 end BaseChange
 
 def MulStable : Prop :=
@@ -477,71 +430,9 @@ def MulBoundAt (σ : F →+* ℂ) (β : ℝ) : Prop :=
     (∀ k i, (g (k, i) : X.Sec (j + 1)) = X.mulW j (Pi.single k 1) (f i)) →
       cnrm (X.nm (j + 1)) σ (fun t => u t.1 * c t.2) g ≤ Real.sqrt β * frameNorm (X.A σ) u * cnrm (X.nm j) σ c f
 
-def IntegralBound (β κ : (F →+* ℂ) → ℝ) : Prop :=
-  ∀ j (hj : j ≤ X.T) σ (m : ℕ) (c : Fin m → ℂ) (f : Fin m → H0 X.str (X.adj₂ j) ⊤),
-    csq (X.nm j) σ c (fun i => X.inclE hj (f i)) ≤
-      κ σ * β σ ^ (X.D + j + 1) * (X.sqInt j σ (∑ i, c i • cval σ (f i))).toReal
-
 def ShortFamily (j : ℕ) (Λ : ℝ) : Prop :=
   ∃ v : Fin (latRank F (X.M j)) → X.V j, (∀ i, v i ∈ X.M j) ∧ LinearIndependent F v ∧
     ∀ i σ, (X.nm j).nrm σ (v i) ≤ Λ
-
-def ShortFamilyMean (j : ℕ) (Λ : ℝ) : Prop :=
-  ∃ v : Fin (latRank F (X.M j)) → X.V j, (∀ i, v i ∈ X.M j) ∧ LinearIndependent F v ∧
-    ∀ i, meanLog F (fun σ => (X.nm j).nrm σ (v i)) ≤ Real.log Λ
-
-def ResidueDegree (J : ℝ) : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [Algebra F E] (s : Fin X.D → Fin X.N → E),
-    (∀ i, s i ∈ X.latticeOver E) → ∀ hs : (X.baseChange E).IsGood s,
-      IsFull ((X.baseChange E).resLat hs) ∧
-        -(X.del * J) - (X.D + 3) * X.cycleHeight E (X.linSection E s) ≤
-          deg (hs.normOn 0) ((X.baseChange E).resLat hs)
-
-structure Hyp : Prop where
-
-  totallyComplex : IsTotallyComplex F
-
-  pos : X.Positivity
-
-  mulStable : X.MulStable
-
-  mulBound : X.MulBound fun _ => X.beta
-
-  integralBound : X.IntegralBound (fun _ => X.beta) fun _ => 1
-
-  shortW : X.ShortGenerators
-
-  shortD : X.ShortFamily X.D X.LamD
-
-  shortT : X.ShortFamily X.T X.LamT
-
-  residueDegree : X.ResidueDegree X.J
-
-structure MeanHyp (β κ : (F →+* ℂ) → ℝ) : Prop where
-
-  totallyComplex : IsTotallyComplex F
-
-  beta_pos : ∀ σ, 0 < β σ
-
-  kappa_pos : ∀ σ, 0 < κ σ
-
-  log_beta : Real.log X.beta = max 0 (meanLog F β)
-
-  pos : X.Positivity
-
-  mulStable : X.MulStable
-
-  mulBound : X.MulBound β
-
-  integralBound : X.IntegralBound β κ
-
-  shortW : X.ShortGenerators
-
-  shortD : X.ShortFamilyMean X.D X.LamD
-
-  shortT : X.ShortFamilyMean X.T X.LamT
-
-  residueDegree : X.ResidueDegree X.J
 
 def d : ℕ := latRank F (X.M X.T)
 
@@ -553,23 +444,6 @@ def z : ℝ := 1 - X.R * X.del / X.d
 
 theorem d_eq_finrank : X.d = Module.finrank F (X.V X.T) := (X.full _).latRank_eq
 
-theorem a₀_add : X.a₀ + X.D + 1 = X.T := by have := X.le_T; rw [a₀]; omega
-
-theorem sum_Ra : ∑ a ∈ Finset.range (X.a₀ + 1), X.Ra a = X.R := by
-  obtain ⟨k, hk⟩ := Nat.exists_eq_add_of_le' X.geom.alg.variety.one_le
-  simp only [R, ← X.a₀_add, Geo.Ra, hk, ← add_assoc, Nat.add_sub_cancel]
-  exact Nat.sum_range_add_choose _ _
-
-theorem R_pos : 0 < X.R := Nat.choose_pos (by have := X.le_T; omega)
-
-theorem d_baseChange (E : Type) [Field E] [NumberField E] [Algebra F E] : (X.baseChange E).d = X.d := by
-  rw [d_eq_finrank, d_eq_finrank]
-  exact X.finrank_V_baseChange E _
-
-theorem z_baseChange (E : Type) [Field E] [NumberField E] [Algebra F E] : (X.baseChange E).z = X.z := by
-  rw [z, z, d_baseChange, ← FieldChangeInter.del_baseChange F E _ X.geom.alg.variety.proj]
-  rfl
-
 variable {X}
 
 theorem MulStable.mem (h : X.MulStable) {j : ℕ} (hj : j < X.T) (u : Fin X.N → F) (f : X.V j) :
@@ -579,43 +453,6 @@ theorem MulStable.mem (h : X.MulStable) {j : ℕ} (hj : j < X.T) (u : Fin X.N �
       obtain ⟨g, -, e⟩ := h j hj w (Submodule.subset_span hw) f hf
       exact (Submodule.Quotient.mk_eq_zero _).2 (e ▸ g.2 :)
   exact (Submodule.Quotient.mk_eq_zero _).1 (LinearMap.congr_fun₂ this u f)
-
-theorem MulStable.mulBound (h : X.MulStable) {β : (F →+* ℂ) → ℝ} (hb : ∀ σ, X.MulBoundAt σ (β σ)) :
-    X.MulBound β := fun j hj σ w _ f _ g e => by
-  have := hb σ j hj (fun k => σ (w k)) 1 (fun _ => σ 1) (fun _ => f)
-    (fun t => ⟨_, h.mem hj (Pi.single t.1 1) f⟩) fun _ _ => rfl
-  simp only [← map_mul, cnrm_map, mul_one, one_smul, Fin.sum_univ_one] at this
-  refine le_of_eq_of_le (congrArg _ ?_) this
-  refine Subtype.ext (e.trans ?_)
-  conv_lhs => rw [pi_eq_sum_univ' w]
-  simp [Fintype.sum_prod_type, LinearMap.sum_apply]
-
-theorem meanLog_const (c : ℝ) : meanLog F (fun _ => c) = Real.log c := by
-  rw [meanLog, Finset.sum_const, Finset.card_univ, Embeddings.card, nsmul_eq_mul,
-    mul_div_cancel_left₀ _ (Nat.cast_ne_zero.2 Module.finrank_pos.ne')]
-
-theorem ShortFamily.mean {j : ℕ} {Λ : ℝ} (h : X.ShortFamily j Λ) : X.ShortFamilyMean j Λ := by
-  obtain ⟨v, h₁, h₂, h₃⟩ := h
-  refine ⟨v, h₁, h₂, fun i => meanLog_const (F := F) Λ ▸ div_le_div_of_nonneg_right
-    (Finset.sum_le_sum fun σ _ => Real.log_le_log (nrm_pos _ σ (h₂.ne_zero i)) (h₃ i σ)) (Nat.cast_nonneg _)⟩
-
-theorem Hyp.meanHyp (h : X.Hyp) : X.MeanHyp (fun _ => X.beta) fun _ => 1 :=
-  ⟨h.1, fun _ => one_pos.trans_le X.one_le_beta, fun _ => one_pos,
-    by rw [meanLog_const, max_eq_right (Real.log_nonneg X.one_le_beta)], h.2, h.3, h.4, h.5, h.6, h.7.mean,
-    h.8.mean, h.9⟩
-
-theorem MeanHyp.isAdelic {β κ : (F →+* ℂ) → ℝ} (h : X.MeanHyp β κ) : X.IsAdelic :=
-  ⟨X.geom, h.pos.bir, X.herm, X.conj, h.shortW⟩
-
-theorem MeanHyp.two_le_theta {β κ : (F →+* ℂ) → ℝ} (h : X.MeanHyp β κ) (hd : 0 < X.del) (t : ℝ) :
-    2 ≤ X.theta t := by
-  have h₁ : (1 : ℝ) ≤ X.n := Nat.one_le_cast.2 X.one_le_n
-  have h₂ : (1 : ℝ) ≤ X.D := Nat.one_le_cast.2 X.geom.alg.variety.one_le
-  have h₃ : (1 : ℝ) ≤ X.j₀ := Nat.one_le_cast.2 h.pos.bir.one_le
-  have h₄ : (1 : ℝ) ≤ X.del := by exact_mod_cast hd
-  have h₅ := Real.log_nonneg h.shortW.one_le
-  exact (by linarith [abs_nonneg t] : 2 ≤ 2 + |t| + Real.log X.abelian₂).trans (le_mul_of_one_le_left (by positivity)
-    (one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le h₁ h₂) h₃) h₄))
 
 end Data
 
@@ -710,8 +547,8 @@ theorem positivity : (geo F hM).Positivity := by
   rw [show (tuple F M).th = 0 from h] at this
   exact nonzeroLocus_secZero.le this
 
-omit hM in
 
+omit hM in
 theorem cls_adj {Y : Scheme.{0}} {K L : LB Y} (hK : K.IsLB) (hL : L.IsLB) (M j : ℕ) (h₁ h₂ h₃) :
     cls (tw (tens K (tens L (tw L L M))) L j) h₁ = cls (tens K (lbPow L (M + 1))) h₂ + cls (lbPow L (j + 1)) h₃ := by
   have h := isLB_tens hL (isLB_tw hL hL M)
@@ -738,19 +575,5 @@ theorem d_pos (T : ℕ) (hT : M + 1 ≤ T) : 0 < (data F hM T hT).d :=
   (finrank_global_pos F hM T).trans_eq (data F hM T hT).d_eq_finrank.symm
 
 end Proj
-
-example : ∃ X : Data (CyclotomicField 4 ℚ), X.U ≠ ⊤ ∧ 0 < X.d ∧ X.Positivity ∧ X.HasBoundedPoles ∧
-    X.ShortFamily X.D X.LamD ∧ X.ShortFamily X.T X.LamT :=
-  ⟨Proj.data _ le_rfl 3 (by norm_num), fun h => AmpleModel.coord_ne_top _ ((Proj.U_eq _ 1).symm.trans h),
-    Proj.d_pos _ le_rfl _ _, Proj.positivity _ le_rfl, Geo.hasBoundedPoles_globalData _ _, Geo.shortFamily_globalData _ _ _,
-    Geo.shortFamily_globalData _ _ _⟩
-
-example : (Proj.data ℚ one_le_two 5 (by norm_num)).a₀ = 2 ∧ (Proj.data ℚ one_le_two 5 (by norm_num)).R = 6 ∧
-    (Proj.data ℚ one_le_two 5 (by norm_num)).Ra 2 = 3 := ⟨rfl, rfl, rfl⟩
-
-example : (Proj.geo ℚ le_rfl).g = Real.log 2 + 2 := by
-  change (((1 : ℕ) : ℝ) + 1) * (Real.log ((1 + 1 : ℕ) : ℝ) + 1) / 2 + 1 = _
-  norm_num
-  ring
 
 end GlobalTheory.HilbertSamuel

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField IsDedekindDomain UniqueFactorizationMonoid
 
 namespace GlobalTheory.CompanionTheory.Ggeo

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthShapeOne
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementN
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthShapeOne
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementN
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

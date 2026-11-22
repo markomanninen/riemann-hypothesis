@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultOfNotMem
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultOfNotMem
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Toroidal GlobalTheory.ShFam GlobalTheory.ProjVar GlobalTheory.FlagBundle GlobalTheory.GoodMetric GlobalTheory.LieBase
 open Classical
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts GlobalTheory.ChartGlue GlobalTheory.FlagBundle GlobalTheory.HermFrame
@@ -34,7 +39,8 @@ theorem chernPoly_conj_subst : ∀ {n r : ℕ} (F : ReciprocityTheory.L2DbarEsti
     rw [← Matrix.map_mul, Matrix.nonsing_inv_mul _ hS, Matrix.map_one _ (map_zero _) (map_one _)]
   have hA : curvPoly F v = (S⁻¹).map C * (curvPoly F v').map φ * S.map C := by
     refine Matrix.ext fun i j => ?_
-    simp only [curvPoly, h, Matrix.of_apply, Matrix.mul_apply, Matrix.map_apply, Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul, map_sum, map_mul, aeval_C, aeval_X, hφ, MvPolynomial.algebraMap_eq, Finset.mul_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [curvPoly, h, Matrix.of_apply, Matrix.mul_apply, Matrix.map_apply, Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul, map_sum, map_mul, aeval_C, aeval_X, hφ, MvPolynomial.algebraMap_eq, Finset.mul_sum, Finset.sum_mul]
     conv_rhs => enter [2, q, 2, p, 2, c]; rw [Finset.sum_comm]
     conv_rhs => enter [2, q, 2, p]; rw [Finset.sum_comm]
     conv_rhs => enter [2, q]; rw [Finset.sum_comm]

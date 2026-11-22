@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.CompletionAtPlace.Degree
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.CompletionAtPlace.Degree
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,8 +106,8 @@ theorem adicCompletionRingHomOf_algebraMap (σ : L ≃ₐ[K] L) (hσ : σ • w.
   rw [UniformSpace.Completion.mapRingHom_coe]
   rfl
 
-variable (w) in
 
+variable (w) in
 theorem ringHom_ext_adicCompletion {f g : w.adicCompletion L →+* w.adicCompletion L}
     (hf : Continuous f) (hg : Continuous g)
     (h : ∀ x : L, f (algebraMap L _ x) = g (algebraMap L _ x)) : f = g :=
@@ -136,8 +140,8 @@ variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Alge
   [ContinuousSMul (v.adicCompletion K) (w.adicCompletion L)]
   [IsScalarTower K (v.adicCompletion K) (w.adicCompletion L)]
 
-omit [w.asIdeal.LiesOver v.asIdeal] in
 
+omit [w.asIdeal.LiesOver v.asIdeal] in
 theorem adicCompletionRingHomOf_algebraMap_adicCompletion (σ : L ≃ₐ[K] L)
     (hσ : σ • w.asIdeal = w.asIdeal) (c : v.adicCompletion K) :
     adicCompletionRingHomOf w σ hσ (algebraMap (v.adicCompletion K) (w.adicCompletion L) c) =
@@ -151,8 +155,8 @@ theorem adicCompletionRingHomOf_algebraMap_adicCompletion (σ : L ≃ₐ[K] L)
     rw [← IsScalarTower.algebraMap_apply, IsScalarTower.algebraMap_apply K L (w.adicCompletion L),
       adicCompletionRingHomOf_algebraMap, AlgEquiv.commutes]
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem smul_asIdeal_of_mem_stabilizer (σ : MulAction.stabilizer Gal(L/K) w.asIdeal) :
     (σ : Gal(L/K)) • w.asIdeal = w.asIdeal :=
   MulAction.mem_stabilizer_iff.1 σ.2
@@ -189,14 +193,14 @@ theorem continuous_decompositionAlgEquiv (σ : MulAction.stabilizer Gal(L/K) w.a
     Continuous (decompositionAlgEquiv v w σ) :=
   continuous_adicCompletionRingHomOf σ.1 (smul_asIdeal_of_mem_stabilizer w σ)
 
-omit [w.asIdeal.LiesOver v.asIdeal] in
 
+omit [w.asIdeal.LiesOver v.asIdeal] in
 theorem valued_decompositionAlgEquiv (σ : MulAction.stabilizer Gal(L/K) w.asIdeal)
     (y : w.adicCompletion L) : Valued.v (decompositionAlgEquiv v w σ y) = Valued.v y :=
   valued_adicCompletionRingHomOf σ.1 (smul_asIdeal_of_mem_stabilizer w σ) y
 
-omit [w.asIdeal.LiesOver v.asIdeal] in
 
+omit [w.asIdeal.LiesOver v.asIdeal] in
 theorem algEquiv_ext_adicCompletion {f g : w.adicCompletion L ≃ₐ[v.adicCompletion K]
     w.adicCompletion L} (hf : Continuous f) (hg : Continuous g)
     (h : ∀ x : L, f (algebraMap L _ x) = g (algebraMap L _ x)) : f = g :=
@@ -220,8 +224,8 @@ theorem decompositionToLocal_algebraMap (σ : MulAction.stabilizer Gal(L/K) w.as
       algebraMap L (w.adicCompletion L) ((σ : Gal(L/K)) x) :=
   decompositionAlgEquiv_algebraMap v w σ x
 
-omit [w.asIdeal.LiesOver v.asIdeal] in
 
+omit [w.asIdeal.LiesOver v.asIdeal] in
 theorem decompositionToLocal_injective : Function.Injective (decompositionToLocal v w) := by
   rw [injective_iff_map_eq_one]
   intro σ hσ
@@ -240,21 +244,19 @@ section Galois
 variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
   [IsGalois K L]
   (v : HeightOneSpectrum (𝓞 K)) (w : HeightOneSpectrum (𝓞 L)) [w.asIdeal.LiesOver v.asIdeal]
-  [Algebra (v.adicCompletion K) (w.adicCompletion L)]
-  [ContinuousSMul (v.adicCompletion K) (w.adicCompletion L)]
-  [IsScalarTower K (v.adicCompletion K) (w.adicCompletion L)]
 
-omit [Algebra (v.adicCompletion K) (w.adicCompletion L)]
-  [ContinuousSMul (v.adicCompletion K) (w.adicCompletion L)]
-  [IsScalarTower K (v.adicCompletion K) (w.adicCompletion L)] in
+
 include v in
-
 theorem card_decompositionGroup :
     Nat.card (MulAction.stabilizer Gal(L/K) w.asIdeal) =
       w.asIdeal.ramificationIdx (𝓞 K) * w.asIdeal.inertiaDeg (𝓞 K) := by
   rw [Ideal.card_stabilizer_eq v.asIdeal w.asIdeal,
     Ideal.ramificationIdxIn_eq_ramificationIdx v.asIdeal w.asIdeal Gal(L/K),
     Ideal.inertiaDegIn_eq_inertiaDeg v.asIdeal w.asIdeal Gal(L/K)]
+
+variable [Algebra (v.adicCompletion K) (w.adicCompletion L)]
+  [ContinuousSMul (v.adicCompletion K) (w.adicCompletion L)]
+  [IsScalarTower K (v.adicCompletion K) (w.adicCompletion L)]
 
 theorem decompositionToLocal_bijective : Function.Bijective (decompositionToLocal v w) := by
   refine (decompositionToLocal_injective v w).bijective_of_nat_card_le ?_

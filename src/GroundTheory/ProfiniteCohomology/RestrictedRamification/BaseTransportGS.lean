@@ -1,7 +1,15 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseTransport
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChange
-import GroundTheory.ProfiniteCohomology.PoincarePairs.IsDiscreteRepResHomCoindRes
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseTransport
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeDefs
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeModules
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangePlaces
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeMackey
+public import GroundTheory.ProfiniteCohomology.PoincarePairs.IsDiscreteRepResHomCoindRes
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -23,13 +31,9 @@ def zmodRepResIso (n : ℕ) : Rep.res θ.toMulEquiv.toMonoidHom (zmodRep.{u} G' 
   hom := Rep.ofHom ⟨LinearMap.id, fun _ => rfl⟩
   inv := Rep.ofHom ⟨LinearMap.id, fun _ => rfl⟩
 
-omit [IsTopologicalGroup G] [IsTopologicalGroup G'] in
-theorem zmodRepResIso_hom_apply (n : ℕ) (a : ULift.{u} (ZMod n)) :
-    (zmodRepResIso θ n).hom.hom (a : zmodRep.{u} G' n) = (a : zmodRep.{u} G n) :=
-  rfl
+
 
 omit [IsTopologicalGroup G] [IsTopologicalGroup G'] in
-
 theorem zmodMulPairingRight_res (n : ℕ) {D' : Rep.{u} (ULift.{u} ℤ) G'} {D : Rep.{u} (ULift.{u} ℤ) G}
     (hD' : ∀ d : D', n • d = 0) (hD : ∀ d : D, n • d = 0) (f : Rep.res θ.toMulEquiv.toMonoidHom D' ⟶ D) :
     (Rep.resFunctor θ.toMulEquiv.toMonoidHom).map (zmodMulPairingRight n D' hD') ≫ f =
@@ -68,8 +72,8 @@ theorem gsMackeyEmbeddings_mackeyPlaceEquiv
     gsMackeyEmbeddings hL ιs (mackeyPlaceEquiv S hL ιs p) = gsLocalEmbeddingOver hL ιs p.1 p.2.out :=
   Equiv.piCongrLeft_apply_apply _ _ _ _
 
-omit [NumberField F] [Algebra F Ω] [IsScalarTower F L Ω] [IsGalois F Ω] in
 
+omit [NumberField F] [Algebra F Ω] [IsScalarTower F L Ω] [IsGalois F Ω] in
 theorem gsFinFamily_apply_of_eq {ιs' : ∀ w : (placesOver S : Set (HeightOneSpectrum (𝓞 L))),
       Ω →ₐ[L] AlgebraicClosure ((w : HeightOneSpectrum (𝓞 L)).adicCompletion L)}
     {w : (placesOver S : Set (HeightOneSpectrum (𝓞 L)))}

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.TateMain
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.TateMain
+
+@[expose] public section
 
 open NumberField Topology Filter Complex Set
 open scoped NumberField.AdeleRing

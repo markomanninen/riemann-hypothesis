@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.GoodModelAll
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.IsotropicVanish
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.GoodModelAll
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.IsotropicVanish
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.NormLeInvOfLtOne
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.NormLeInvOfLtOne
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -127,7 +131,7 @@ theorem cc_ps_gen {τ : Type} {a : MvPowerSeries τ K} (ha : constantCoeff a = 0
   have e : f = PowerSeries.C (PowerSeries.constantCoeff f) +
       (f - PowerSeries.C (PowerSeries.constantCoeff f)) := by ring
   conv_lhs => rw [e]
-  rw [PowerSeries.subst_add hs, PowerSeries.subst_C, map_add, Pair.cc_ps ha (by simp), add_zero,
+  rw [PowerSeries.subst_add hs, PowerSeries.subst_C, map_add (f := _), Pair.cc_ps ha (by simp), add_zero,
     constantCoeff_C]
 
 theorem cob_hom {F FE : MvPowerSeries (Fin 2) K} {θ : PowerSeries K}

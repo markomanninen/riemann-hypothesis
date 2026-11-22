@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.TrivOfLe
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.T2SpaceFiniteAdeleRing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteAdelicUnitaryPointEqOfSectionComponentsEq
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.TrivOfLe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.T2SpaceFiniteAdeleRing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteAdelicUnitaryPointEqOfSectionComponentsEq
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKGeo GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.CuspRep GlobalTheory.UnitaryBC Formalism.UG
 open UpperTheory.Gal.CertificateRingHomMap (GUf Plc comp lev GLw IsCen mat sim)
 open UpperTheory.Gal.W2.Seed UpperTheory.Gal.Int.Geo UpperTheory.Gal.Int.Geo.Pl UpperTheory.Gal.Spc
@@ -14,7 +19,7 @@ theorem UpperTheory.Gal.W2.Seed.pLevSec :
   have hn : 0 < n := S.facts.pos
   obtain ⟨m, hm⟩ := Ideal.exists_maximal (𝓞 E)
   let w₀ : Plc E := ⟨m, hm.isPrime, Ring.ne_bot_of_isMaximal_of_not_isField hm (RingOfIntegers.not_isField E)⟩
-  have hsim : ∀ g : GUf E n, (∀ u, comp u g ∈ GlobalTheory.LFun.KGL u n) → sim g ∈ UpperTheory.Gal.CertificateRingHomMap.ZU :=
+  have hsim : ∀ g : GUf E n, (∀ u, comp u g ∈ GlobalTheory.LFun.KGL u (n := n)) → sim g ∈ UpperTheory.Gal.CertificateRingHomMap.ZU :=
     fun g h => (hIC E n g w₀ hn).2.1 h
   have hcj : ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → (p : 𝓞 E) ∈ (UpperTheory.Gal.CertificateRingHomMap.cj w).asIdeal := by
     intro w hw
@@ -28,7 +33,7 @@ theorem UpperTheory.Gal.W2.Seed.pLevSec :
   · obtain ⟨hs, hK, hR⟩ := UpperTheory.Gal.CertificateRingHomMap.mem_lev.1 hk
     have hoff : ∀ w : Plc E, (p : 𝓞 E) ∉ w.asIdeal → comp w (T.sec (T.j k)) = comp w k :=
       (T.j_eq _ _).1 (T.j_sec _)
-    have hover : ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w k ∈ GlobalTheory.LFun.KGL w n := fun w hw =>
+    have hover : ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w k ∈ GlobalTheory.LFun.KGL w (n := n) := fun w hw =>
       hR w (fun h => hS w h hw) (fun h => hS _ h (hcj w hw))
     have hq : sim ((T.sec (T.j k))⁻¹ * k) ∈ UpperTheory.Gal.CertificateRingHomMap.ZU := by
       refine hsim _ fun u => ?_
@@ -50,7 +55,7 @@ theorem UpperTheory.Gal.W2.Seed.pLevSec :
         exact one_mem _
       · rw [hoff w hu]
         exact hR w hw hcw
-  · have hall : ∀ u, comp u k ∈ GlobalTheory.LFun.KGL u n := fun u => by
+  · have hall : ∀ u, comp u k ∈ GlobalTheory.LFun.KGL u (n := n) := fun u => by
       by_cases hu : (p : 𝓞 E) ∈ u.asIdeal
       · exact h2 u hu
       · rw [h1 u hu]; exact one_mem _

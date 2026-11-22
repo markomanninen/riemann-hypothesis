@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.MainNotions.UnusedSlot80.UGen
 
@@ -37,7 +41,7 @@ private theorem mkQ_mem_span_of_mem_sup_lemma {R V ι : Type*} [CommRing R] [Add
   obtain ⟨a, ha, p, hp, rfl⟩ := Submodule.mem_sup.mp hx
   have hp0 : P.mkQ p = 0 := by
     rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]; exact hp
-  rw [map_add, hp0, add_zero]
+  rw [map_add (f := _), hp0, add_zero]
   have hle : (Submodule.span R (Set.range u)).map P.mkQ ≤
       Submodule.span R (Set.range fun i => P.mkQ (u i)) := by
     rw [Submodule.map_span_le]
@@ -115,7 +119,8 @@ theorem gen_of_killer {R V : Type*} [CommRing R] [IsDomain R] [IsPrincipalIdealR
   · apply hIM
     exact Isub.sub_mem hf (Isub.sum_mem fun i _ => Isub.smul_mem _ (hJI i))
   · have h0 : ((lR ^ K * t) • Psub.mkQ) (f - ∑ i, o i • J i) = 0 := by
-      rw [map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum]
       simp only [map_smul, hJw]
       rw [ho, sub_self]
     rw [LinearMap.smul_apply, ← map_smul] at h0

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.CubeTheorem.LBSpreads
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsProjOverOfIsProjOverBase
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CubeTheorem
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.FirstCohomologyVanishesOfIsoOfIsGen
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdIso
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FlatBCSec
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniformBaseChange.Transport
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.CubeTheorem.LBSpreads
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsProjOverOfIsProjOverBase
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CubeTheorem
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.FirstCohomologyVanishesOfIsoOfIsGen
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdIso
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FlatBCSec
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniformBaseChange.Transport
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -124,7 +128,8 @@ theorem perf_of_iso : ∀ {R : Type} [CommRing R] {Y : Scheme.{0}} (f : Y ⟶ Sp
     have r := rel_on w π hrel (P.ch i) j hO
     have hl : π ⁻¹ᵁ (P.W i ⊓ M.U j) ≤ π ⁻¹ᵁ P.W i := fun _ hy => hy.1
     have hv := congrArg (rs X' hl) (hE v i)
-    simp only [GlobalTheory.AbLaw.rs_rs, map_sum, map_mul, rs_cst, rs_app π inf_le_left hl] at hv
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [GlobalTheory.AbLaw.rs_rs, map_sum, map_mul, rs_cst, rs_app π inf_le_left hl] at hv
     have haa : (π.app (P.W i ⊓ M.U j)).hom (rs Y hO ((w.s (P.ch i, j))⁻¹).val) *
         (π.app (P.W i ⊓ M.U j)).hom (rs Y hO (w.s (P.ch i, j)).val) = 1 := by
       rw [← map_mul]

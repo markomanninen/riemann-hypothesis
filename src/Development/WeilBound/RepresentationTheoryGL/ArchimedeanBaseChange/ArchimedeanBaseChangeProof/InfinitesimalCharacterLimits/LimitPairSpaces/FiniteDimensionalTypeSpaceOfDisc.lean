@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LimitPairSpaces.TypeBOfMemTypSp
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PTypes
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LimitPairSpaces.TypeBOfMemTypSp
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PTypes
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,7 +89,10 @@ theorem finiteDimensional_type_space_of_disc (hA : AdmDisc) {N : ℕ} (K : Subgr
       intro φ hφ
       have hf : φ ∈ (Tr.node t₁ t₂).space := typSp_le _ _ _ hφ
       rw [Tr.space] at hf
-      exact memInd2_of_span (Submodule.span_mono (fun φ h => h.1) hf)
+      apply memInd2_of_span
+      apply Submodule.span_mono _ hf
+      intro φ h
+      exact h.1
     have key : ∀ φ ∈ X, ∀ t ∈ T, ∀ k : Kinf E (r + s),
         (fun m : GA E r × GA E s =>
           φ.1 (lev (Ad E) r s m * (infGL E (r + s) (Unitary.toUnits k) * finGL E (r + s) t))) ∈ Y := by

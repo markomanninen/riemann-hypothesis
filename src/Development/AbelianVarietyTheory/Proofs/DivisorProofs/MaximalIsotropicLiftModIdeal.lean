@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -15,7 +19,7 @@ theorem isotropic_summand_lift : ∀ (R : Type) [CommRing R] (I : Ideal R) (D : 
       simp only [map_smul, LinearMap.smul_apply, smul_eq_mul]
       exact I.mul_mem_right _ hr
     · intro x z hx hz
-      simp only [map_add, LinearMap.add_apply]
+      simp only [map_add (f := _), LinearMap.add_apply]
       exact I.add_mem hx hz
   have hφII : ∀ a ∈ I • (⊤ : Submodule R D), ∀ b ∈ I • (⊤ : Submodule R D), φ a b = 0 := by
     intro a ha b hb
@@ -25,7 +29,7 @@ theorem isotropic_summand_lift : ∀ (R : Type) [CommRing R] (I : Ideal R) (D : 
       have : φ m b ∈ I := by rw [hskew]; exact I.neg_mem (hφI b hb m)
       exact hII r hr _ this
     · intro x z hx hz
-      simp only [map_add, LinearMap.add_apply, hx, hz, add_zero]
+      simp only [map_add (f := _), LinearMap.add_apply, hx, hz, add_zero]
   have hsmul0 : ∀ r ∈ I, ∀ w ∈ I • (⊤ : Submodule R D), r • w = 0 := by
     intro r hr w hw
     refine Submodule.smul_induction_on (p := fun w => r • w = 0) hw ?_ ?_
@@ -66,16 +70,18 @@ theorem isotropic_summand_lift : ∀ (R : Type) [CommRing R] (I : Ideal R) (D : 
     · intro r hr m _
       rw [map_smul]; exact hsmul0 r hr _ (hTr m)
     · intro x w hx hw
-      rw [map_add, hx, hw, add_zero]
+      rw [map_add (f := _), hx, hw, add_zero]
   have hTT : ∀ y, T (T y) = 0 := fun y => hTI _ (hTr y)
   have hkey0 : ∀ x y, φ x (T y) = -c * B x y := by
     intro x y
     have hBx : B x y = ∑ i, s x i * B (e i) y := by
       conv_lhs => rw [hexp x]
-      simp [map_sum, LinearMap.sum_apply, smul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, LinearMap.sum_apply, smul_eq_mul]
     have h0 : ∑ i, B (e i) y * (s x i - φ x (z i)) = 0 :=
       Finset.sum_eq_zero fun i _ => hII _ (hBI _ _) _ (hz' i x)
-    rw [hT, map_sum, hBx]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hT, map_sum, hBx]
     simp only [map_smul, smul_eq_mul]
     rw [Finset.mul_sum]
     have h1 : ∑ i, -c * (s x i * B (e i) y) - ∑ i, -c * (B (e i) y * φ x (z i)) = 0 := by
@@ -95,7 +101,7 @@ theorem isotropic_summand_lift : ∀ (R : Type) [CommRing R] (I : Ideal R) (D : 
   · exact (Submodule.orderIsoMapComap u).isCompl hFN
   · rintro _ ⟨x, hx, rfl⟩ _ ⟨y, hy, rfl⟩
     show φ (u x) (u y) = 0
-    rw [hu, hu, map_add, map_add, LinearMap.add_apply, LinearMap.add_apply]
+    rw [hu, hu, map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply]
     have h1 := hkey x hx y hy
     have h2' := hkey y hy x hx
     have h3 := hskew (T x) y

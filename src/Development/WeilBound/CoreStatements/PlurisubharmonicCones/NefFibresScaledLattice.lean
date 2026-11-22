@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.MetricsProjectionFormulaNef
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SpecializesOfUnits
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.UnitSectionDivisorEq
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PGeoNumCut
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.MetricsProjectionFormulaNef
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SpecializesOfUnits
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.UnitSectionDivisorEq
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PGeoNumCut
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory MvPolynomial
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
@@ -98,7 +102,16 @@ theorem geoNum_eq_zero (y : (Σ k, J k) → Ω) (lam : Ω) (hl : lam ≠ 0) (b :
       have := hd k; have := hd' k; simp only [Pi.add_apply]; omega
     rw [mem_coord_iff y (homog_sub (homog_mul hG' hF) (e ▸ homog_mul hF' hG)), map_sub, map_mul, map_mul, hFG, hFG']
     ring
-  obtain ⟨hs, hm, -⟩ := Flat.cycles_eq_of_isUnitSec K J W F G hu
+  have hs : divSupp W F = divSupp W G :=
+    Set.Subset.antisymm (GlobalTheory.CompanionTheory.Ar.Flat.divSupp_subset_of_isUnitSec hu)
+      (GlobalTheory.CompanionTheory.Ar.Flat.divSupp_subset_of_isUnitSec
+        (GlobalTheory.CompanionTheory.Ar.Flat.IsUnitSec.symm hu))
+  have hm : ∀ U ∈ divSupp W F, multAt (W ⊔ Ideal.span {F}) U =
+      multAt (W ⊔ Ideal.span {G}) U := by
+    rintro U ⟨hmin, hrel⟩
+    have hUp : U.IsPrime := hmin.1.1
+    obtain ⟨s, t, hs, ht, hst⟩ := hu U hUp (le_sup_left.trans hmin.1.2) hrel
+    exact GlobalTheory.CompanionTheory.Ar.Flat.multAt_sup_span_eq_of_sub_mem hUp hs ht hst
   have hp := PB.prime_charOf_of_ne_zero hW.1 hch
   have hD : ∀ (d : K → ℕ) (s : MRing J), IsMultiHomog s d → s ∉ W →
       geoNum 1 W (fun _ => fun k => (d k : ℤ)) =

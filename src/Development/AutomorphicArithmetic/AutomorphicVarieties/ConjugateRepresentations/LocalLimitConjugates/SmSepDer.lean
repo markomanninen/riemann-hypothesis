@@ -1,12 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.CasimirResolventProjection
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.InfAbs
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualInfinitesimalCharacterRegular
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.CasimirResolventProjection
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.InfAbs
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualInfinitesimalCharacterRegular
+
+@[expose] public section
+
 open NumberField Matrix MeasureTheory Filter Topology Formalism.L2.Host GlobalTheory.CuspRep GlobalTheory.GKCoh GlobalTheory.UnitaryBC UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible
 open UpperTheory.V.Lit UpperTheory.V.Lit.Geo UpperTheory.V.Lit.Bor UpperTheory.V.Lit.Dr
 open scoped TensorProduct GlobalTheory.CuspRep.CuspidalL2GL
 open UpperTheory.V.Cj UpperTheory.V.Cj.H
 
-private theorem sm_sepDer (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (Ξ : AlgRep E a) :
+private theorem sm_sepDer (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (Ξ : AlgRep E a) :
     SepDer (smK Ξ) (smLie Ξ) := by
   intro k Z h0 hk m' hm
   have h1 : ∃ j, Bor.cmp j m' ≠ 0 := by
@@ -20,7 +25,7 @@ private theorem sm_sepDer (E : Type) [Field E] [NumberField E] [IsTotallyComplex
   obtain ⟨g, hg⟩ := Function.ne_iff.1 h2
   let l : Sm E a ⊗[ℂ] (Fin Ξ.d → ℂ) →ₗ[ℂ] ℂ :=
     { toFun := fun m => (Bor.cmp j m).1 g
-      map_add' := fun x y => by rw [map_add]; rfl
+      map_add' := fun x y => by rw [map_add (f := _)]; rfl
       map_smul' := fun c x => by rw [map_smul]; rfl }
   have hl : ∀ (φ : Sm E a) (v : Fin Ξ.d → ℂ), l (φ ⊗ₜ v) = φ.1 g * v j := fun φ v => by
     change (Bor.cmp j (φ ⊗ₜ v)).1 g = _
@@ -30,7 +35,7 @@ private theorem sm_sepDer (E : Type) [Field E] [NumberField E] [IsTotallyComplex
   refine ⟨l, hg, fun m => ?_⟩
   induction m using TensorProduct.induction_on with
   | zero => simpa only [map_zero] using hasDerivAt_const (0 : ℝ) (0 : ℂ)
-  | add x y hx hy => simpa only [map_add] using hx.fun_add hy
+  | add x y hx hy => simpa only [map_add (f := _)] using hx.fun_add hy
   | tmul φ v =>
     have h3 := GlobalTheory.CuspRep.hasDerivAt_curve φ g (fun t => Unitary.toUnits (k t)) (toL Z) hc0 hk
     have h4 := HasDerivAt.fun_sum (u := Finset.univ) fun i _ =>
@@ -38,7 +43,7 @@ private theorem sm_sepDer (E : Type) [Field E] [NumberField E] [IsTotallyComplex
     have h5 := h3.fun_mul h4
     simp only [h0, map_one, mul_one] at h5
     have h7 : smLie Ξ (toL Z) (φ ⊗ₜ v) = lie E a (toL Z) φ ⊗ₜ v + φ ⊗ₜ (Ξ.dmat (toL Z) *ᵥ v) := rfl
-    simp only [smK, h7, TensorProduct.map_tmul, map_add, hl, Matrix.toLin'_apply]
+    simp only [smK, h7, TensorProduct.map_tmul, map_add (f := _), hl, Matrix.toLin'_apply]
     have h6 : ∑ i, (1 : Matrix (Fin Ξ.d) (Fin Ξ.d) ℂ) j i * v i = v j := congrFun (Matrix.one_mulVec v) j
     rw [h6] at h5
     exact h5

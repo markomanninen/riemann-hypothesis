@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMulPEqOfTranslInvariant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMulPEqOfTranslInvariant
+
+@[expose] public section
+
 open TensorProduct Coalgebra Bialgebra CategoryTheory WithConv GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup
 
 set_option autoImplicit false
@@ -12,10 +17,10 @@ namespace PDivGroup
 
 variable {p : ℕ} {R : Type} [CommRing R] (G : PDivGroup p R)
 
+
 open TensorProduct Coalgebra Bialgebra CategoryTheory WithConv in
 set_option autoImplicit false in
 variable {p : ℕ} {R : Type} [CommRing R] (G : _root_.GlobalTheory.PDivGroup p R) in
-
 theorem _root_.GlobalTheory.PDivGroup.transl_eq_of_cobOne_eq_pullTwo (n : ℕ) (x : G.A (n + 1))
     (t : G.A n ⊗[R] G.A n)
     (h : _root_.GlobalTheory.PDiv.cobOne R _ x = _root_.GlobalTheory.PDiv.pullbackTwo (G.mulP n) t)
@@ -46,11 +51,11 @@ theorem _root_.GlobalTheory.PDivGroup.transl_eq_of_cobOne_eq_pullTwo (n : ℕ) (
   have hzero : TensorProduct.map (f : G.A n →ₗ[R] G.A (n + 1))
       (counit : _ →ₗ[R] R) t = 0 := by
     have := congrArg (LinearMap.lTensor _ (counit : _ →ₗ[R] R)) hcomul
-    rw [Coalgebra.lTensor_counit_comul, map_add, map_add, LinearMap.lTensor_tmul,
+    rw [Coalgebra.lTensor_counit_comul, map_add (f := _), map_add (f := _), LinearMap.lTensor_tmul,
       LinearMap.lTensor_tmul, hε, counit_one, ← LinearMap.comp_apply, LinearMap.lTensor_comp_map,
       hεf, tmul_zero, add_zero] at this
     simpa using this
-  rw [_root_.GlobalTheory.PDivGroup.transl_apply, hcomul, map_add, map_add, LinearMap.lTensor_tmul,
+  rw [_root_.GlobalTheory.PDivGroup.transl_apply, hcomul, map_add (f := _), map_add (f := _), LinearMap.lTensor_tmul,
     LinearMap.lTensor_tmul, ← LinearMap.comp_apply, LinearMap.lTensor_comp_map, hρf,
     ← LinearMap.lTensor_comp_map, LinearMap.comp_apply, hzero, map_zero, add_zero]
   have h1' : G.resOne n x = 0 := h1
@@ -58,9 +63,9 @@ theorem _root_.GlobalTheory.PDivGroup.transl_eq_of_cobOne_eq_pullTwo (n : ℕ) (
 
 end PDivGroup
 
+
 open TensorProduct Coalgebra Bialgebra CategoryTheory WithConv in
 set_option autoImplicit false in
-
 theorem _root_.GlobalTheory.cocycle_mem_range_cob_of_pullback_mulP :
     ∀ {p : ℕ} [Fact p.Prime] {R : Type} [CommRing R] (G : _root_.GlobalTheory.PDivGroup p R)
       (c : G.cocycles) (B : G.funs),

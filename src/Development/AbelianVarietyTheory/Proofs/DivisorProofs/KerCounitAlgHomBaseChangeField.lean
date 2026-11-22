@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open TensorProduct
 
@@ -17,8 +21,7 @@ theorem ker_counitAlgHom_baseChange_field (O B κ : Type) [CommRing O] [CommRing
         (Algebra.TensorProduct.map (AlgHom.id O κ) (Bialgebra.counitAlgHom O B) x) := by
     intro x
     induction x with
-    | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul c b => simp [TensorProduct.counit_tmul]
   ext x
   rw [RingHom.mem_ker, RingHom.mem_ker, key, map_eq_zero_iff _ (AlgEquiv.injective _)]

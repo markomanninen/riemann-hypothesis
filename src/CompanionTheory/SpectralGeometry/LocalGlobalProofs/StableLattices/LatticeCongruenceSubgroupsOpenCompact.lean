@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.InhabitedFinite
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsTerLast
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.InhabitedFinite
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsTerLast
+
+@[expose] public section
 
 noncomputable section
 

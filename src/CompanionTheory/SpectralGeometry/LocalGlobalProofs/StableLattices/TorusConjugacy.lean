@@ -1,8 +1,12 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.BesselOrbitBounds.BesselMapUniqueness.BesselMapUniqGap
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothCyc
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.PhMeas
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.IwaCore
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.BesselOrbitBounds.BesselMapUniqueness.BesselMapUniqGap
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothCyc
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.PhMeas
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.IwaCore
+
+@[expose] public section
 
 open Matrix Formalism.QuantumDeterminants
 open scoped ComplexConjugate
@@ -84,7 +88,7 @@ theorem uw_row (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (h : Matrix (Fin (2
   have hr : ∀ j', Hpk k r p j' = if j' = q then 1 else 0 := hpk_row k r p q hpq hor
   have hU : hᴴ * Hpk k r * h = Hpk k r := hh.1
   have hx := congrFun (congrFun hU p) j
-  simp only [mul_apply, conjTranspose_apply, hc, hr] at hx
+  simp only [Matrix.mul_apply, conjTranspose_apply, hc, hr] at hx
   simpa [Finset.sum_ite_eq, Finset.sum_ite_eq', ite_mul, hr] using hx
 
 theorem torConj : CompanionTheory.Bmu.TorConj := by

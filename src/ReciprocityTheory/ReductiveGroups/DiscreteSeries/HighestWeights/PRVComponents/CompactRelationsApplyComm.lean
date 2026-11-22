@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.IsInfUnitary
-import Formalism.RealPlaceAnalysis.StatementKT
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.IsInfUnitary
+public import Formalism.RealPlaceAnalysis.StatementKT
+
+@[expose] public section
 
 noncomputable section
 

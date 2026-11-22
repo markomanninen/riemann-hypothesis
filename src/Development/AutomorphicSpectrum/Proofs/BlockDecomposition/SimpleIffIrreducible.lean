@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HarishChandraLabels.Basics
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HarishChandraLabels.Basics
+
+@[expose] public section
 
 open CategoryTheory ReciprocityTheory.Ty.Fin PI.GreenHCLabel
 

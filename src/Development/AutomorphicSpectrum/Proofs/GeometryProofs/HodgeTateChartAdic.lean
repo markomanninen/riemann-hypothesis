@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.HTChartExists
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TwoWeightEqOneAddRoot
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFunctionalBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelBaseChangeMapStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteProjectiveStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelIsBaseChangeStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.HTChartExists
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TwoWeightEqOneAddRoot
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFunctionalBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelBaseChangeMapStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteProjectiveStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelIsBaseChangeStatement
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct NumberField GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.BT GlobalTheory.CompanionTheory.Ar.HT ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
 noncomputable section
@@ -20,14 +25,13 @@ variable {A B : Type} [CommRing A] [CommRing B] [Algebra A B]
 
 theorem dual_ext (hg : IsBaseChange B g) {y y' : Module.Dual B N} (h : ∀ m, y (g m) = y' (g m)) : y = y' := by
   refine LinearMap.ext fun n => ?_
-  refine hg.inductionOn n (fun n => y n = y' n) (by simp) h ?_ ?_
+  refine hg.inductionOn n h ?_ ?_
   · intro s n hn; simp [hn]
   · intro a b ha hb; simp [ha, hb]
 
 theorem span_range_eq_top (hg : IsBaseChange B g) : Submodule.span B (Set.range g) = ⊤ := by
   refine eq_top_iff.2 fun n _ => ?_
-  refine hg.inductionOn n (fun n => n ∈ Submodule.span B (Set.range g)) (Submodule.zero_mem _)
-    (fun m => Submodule.subset_span ⟨m, rfl⟩) ?_ ?_
+  refine hg.inductionOn n (fun m => Submodule.subset_span ⟨m, rfl⟩) ?_ ?_
   · intro s n hn; exact Submodule.smul_mem _ _ hn
   · intro a b ha hb; exact Submodule.add_mem _ ha hb
 
@@ -49,7 +53,8 @@ theorem exists_dualBasis (A M : Type) [CommRing A] [AddCommGroup M] [Module A M]
   have h1 : s m = ∑ i, (s m i) • (Pi.single i 1 : Fin n → A) := by
     ext j; simp [Finset.sum_apply, Pi.single_apply]
   have h2 : t (s m) = m := LinearMap.congr_fun hs m
-  conv_rhs => rw [← h2, h1, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [← h2, h1, map_sum]
   simp
 
 theorem isBaseChange_dual [Module.Finite A M] [Module.Projective A M] (hg : IsBaseChange B g) :
@@ -64,12 +69,13 @@ theorem isBaseChange_dual [Module.Finite A M] [Module.Projective A M] (hg : IsBa
     intro z
     induction z using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => rw [map_add, map_add, ha, hb]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
     | tmul b w =>
       have hw : ∑ i, w (e i) • f i = w := by
         refine LinearMap.ext fun m => ?_
         have := congrArg w (hef m)
-        simp only [map_sum, map_smul, smul_eq_mul] at this
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_smul, smul_eq_mul] at this
         simp only [LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul]
         rw [← this]
         exact Finset.sum_congr rfl fun i _ => _root_.mul_comm _ _
@@ -86,8 +92,10 @@ theorem isBaseChange_dual [Module.Finite A M] [Module.Projective A M] (hg : IsBa
     show Φ (∑ i, y (g (e i)) • ((1 : B) ⊗ₜ[A] f i)) (g m) = _
     have h3 : y (g m) = ∑ i, algebraMap A B (f i m) * y (g (e i)) := by
       conv_lhs => rw [← hef m]
-      simp [map_sum, Algebra.smul_def, ← IsScalarTower.algebraMap_smul B]
-    rw [h3, map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, Algebra.smul_def, ← IsScalarTower.algebraMap_smul B]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h3, map_sum, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun i _ => ?_
     simp [Φ, _root_.mul_comm]
   exact IsBaseChange.of_equiv (LinearEquiv.ofBijective Φ
@@ -153,7 +161,7 @@ theorem injective_of_isBaseChange {R K L Ω : Type} [CommRing R] [IsDomain R] [F
     [IsFractionRing R K] [AddCommGroup L] [Module R L] [AddCommGroup Ω] [Module K Ω] [Module R Ω]
     [IsScalarTower R K Ω] {j : Module.Dual R L →ₗ[R] Ω} (hj : IsBaseChange K j) : Function.Injective j := by
   haveI := (isLocalizedModule_iff_isBaseChange (nonZeroDivisors R) K j).2 hj
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro w hw
   obtain ⟨c, hc⟩ := (IsLocalizedModule.eq_zero_iff (nonZeroDivisors R) j).1 hw
   refine LinearMap.ext fun e => ?_
@@ -212,7 +220,6 @@ theorem reducesTo_of_isHTChartOf : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Fiel
   obtain ⟨β₀, hβ₀, hβs, -⟩ := GlobalTheory.T.lie_model_base_change_map S G R O x L L' M M'
   let β : L →ₗ[R] L' := { toFun := β₀, map_add' := β₀.map_add, map_smul' := fun a e => hβs a e }
   have hβ : IsBaseChange O β := GlobalTheory.T.lie_model_isBaseChange S G R O x L L' M M' β (fun e => by
-    unfold LieModel.Lifts
     rw [Category.comp_id]
     exact hβ₀ e)
   obtain ⟨hLf, hLp⟩ := GlobalTheory.T.lie_model_finite_projective S G R x L M
@@ -286,7 +293,7 @@ theorem reducesTo_of_isHTChartOf : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Fiel
       rw [hl]
       congr 1
       show Units.map (algebraMap R O : R →* O) (χ (π (Multiplicative.ofAdd z'))) = _
-      rw [hχ, map_pow, hz, he, pow_val_intCast hζn, map_add, map_nsmul, zpow_add, nsmul_eq_mul,
+      rw [hχ, map_pow, hz, he, pow_val_intCast hζn, map_add (f := _), map_nsmul, zpow_add, nsmul_eq_mul,
         zpow_mul, zpow_natCast, hζn, one_zpow, _root_.mul_one]
     obtain ⟨y, hy, hyeq⟩ := hhtP n (∑ k, z k • u k) _ _ hf hder
     refine ⟨-y, P.om.neg_mem hy, ?_⟩
@@ -303,6 +310,6 @@ theorem reducesTo_of_isHTChartOf : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Fiel
       have := congrArg (Int.cast : ℤ → C) hq
       push_cast at this
       exact this
-    rw [h2, map_add, map_mul, map_pow, map_natCast, map_natCast, map_intCast]
+    rw [h2, map_add (f := _), map_mul, map_pow, map_natCast, map_natCast, map_intCast]
 
 end GlobalTheory.CompanionTheory.Ar.HT.ChartRed

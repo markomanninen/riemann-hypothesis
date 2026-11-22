@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.CompAdd
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.CompAdd
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -60,7 +64,8 @@ theorem conv_mul {B : Type} [CommRing B] (c c' : ℕ → B) (h0 : c 0 = 1)
             ring
   have := congrArg (Algebra.TensorProduct.productMap (liftL c h0 hm) (liftL c' h0' hm')) (key m n)
   subst hiL hiR
-  simpa [map_sum, map_mul, map_natCast, liftL_bL] using this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [map_sum, map_mul, map_natCast, liftL_bL] using this
 
 end Pre
 
@@ -102,7 +107,7 @@ theorem dp_split' : ∀ (B : Type) [CommRing B] (J : Ideal B) (δ : DividedPower
   have hS : ∀ n, ∀ b ∈ J, ∀ a ∈ 𝔞, γ n (algebraMap B P b + a) =
       ∑ k ∈ Finset.HasAntidiagonal.antidiagonal n, algebraMap B P (δ.dpow k.1 b) * η.dpow k.2 a := by
     intro n b hb a ha
-    have h1 : ε (algebraMap B P b + a) = b := by rw [map_add, hεf, hεa a ha, add_zero]
+    have h1 : ε (algebraMap B P b + a) = b := by rw [map_add (f := _), hεf, hεa a ha, add_zero]
     rw [hγ, h1, if_pos hb, add_sub_cancel_left]
   have hB : ∀ n, ∀ b ∈ J, γ n (algebraMap B P b) = algebraMap B P (δ.dpow n b) := by
     intro n b hb
@@ -166,7 +171,7 @@ theorem dp_split' : ∀ (B : Type) [CommRing B] (J : Ideal B) (δ : DividedPower
     obtain ⟨b', hb', a', ha', rfl⟩ := hdec q hq
     have e : algebraMap B P b + a + (algebraMap B P b' + a') =
         algebraMap B P (b + b') + (a + a') := by
-      rw [map_add]
+      rw [map_add (f := _)]
       ring
     have ser : ∀ (c : B) (d : P) (k : ℕ),
         ∑ i ∈ Finset.HasAntidiagonal.antidiagonal k, algebraMap B P (δ.dpow i.1 c) * η.dpow i.2 d =
@@ -181,7 +186,8 @@ theorem dp_split' : ∀ (B : Type) [CommRing B] (J : Ideal B) (δ : DividedPower
       ext k
       rw [PowerSeries.coeff_mul]
       simp only [PowerSeries.coeff_mk]
-      rw [δ.dpow_add hb hb', map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [δ.dpow_add hb hb', map_sum]
       simp only [map_mul]
     have hY : (PowerSeries.mk fun j => η.dpow j (a + a')) =
         (PowerSeries.mk fun j => η.dpow j a) * PowerSeries.mk fun j => η.dpow j a' :=

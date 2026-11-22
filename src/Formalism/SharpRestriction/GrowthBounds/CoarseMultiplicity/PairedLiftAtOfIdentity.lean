@@ -1,6 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Beyond44OfRestRawTail
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.TestFlat
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SegFormZeroRight
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Lemma44IdentityOfRawTail
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PolyUpperBoundDelta
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.TestFlat
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SegFormZeroRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -143,7 +148,7 @@ theorem srcHalf1_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cm Ct Cc H : ℝ} (hCm : 13 ≤
       refine ⟨a + w ^ X.c * b, ?_⟩
       have e1 := congrArg (fun P => P) (sub_add_cancel (liftSubst X.p X.n' O w 1 (hhLetters X.TT) g F)
         (symFam (KK O) X.p C0 CE1 CE2 X β s))
-      rw [pow_zero, one_mul, map_add, ← ha]
+      rw [pow_zero, one_mul, map_add (f := _), ← ha]
       have : (dvrOfStd hS).w = w := rfl
       rw [this] at hb
       rw [← hb, ← MvPolynomial.coeff_add, add_sub_cancel]

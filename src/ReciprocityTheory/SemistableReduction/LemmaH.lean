@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.TorsionNonvanishStatement
+module
+
+public import ReciprocityTheory.SemistableReduction.TorsionNonvanishStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 
@@ -86,10 +90,10 @@ theorem lemmaH_holds : LemmaHStatement := by
     nlinarith [norm_nonneg (b s i i)]
   have hprod : ‖∏ s, triChar (a s) (b s)‖ ≤ R ^ (∑ s, ∑ i, a s i) := by
     rw [norm_prod, ← Finset.prod_pow_eq_pow_sum]
-    apply Finset.prod_le_prod (fun _ _ => norm_nonneg _)
+    apply Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _)
     intro s _
     rw [triChar, norm_prod, ← Finset.prod_pow_eq_pow_sum]
-    apply Finset.prod_le_prod (fun _ _ => norm_nonneg _)
+    apply Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _)
     intro i _
     rw [norm_pow]
     exact pow_le_pow_left₀ (norm_nonneg _) (hbR s i) _

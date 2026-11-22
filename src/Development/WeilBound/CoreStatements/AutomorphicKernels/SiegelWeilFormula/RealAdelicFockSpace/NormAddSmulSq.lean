@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RealAdelicFockSpace.FinRealAdSmulAlt
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RealAdelicFockSpace.LrhoPf
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RealAdelicFockSpace.FinRealAdSmulAlt
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RealAdelicFockSpace.LrhoPf
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem T_vline (hH : THeis) (R : RD d) {g : Yf d → ℂ} {Ω : d.Fn} (hΩ : Ω
     ← mul_assoc, ← mul_assoc, ← Complex.exp_add, ← Complex.exp_add]
   congr 2
   rw [inner_add_right, inner_smul_right, real_inner_self_eq_norm_sq, norm_add_smul_sq]
-  simp only [map_add, map_sub, map_mul, map_ofNat, Complex.conj_I, Complex.conj_ofReal]
+  simp only [map_add (f := _), map_sub, map_mul, map_ofNat, Complex.conj_I, Complex.conj_ofReal]
   push_cast
   ring
 

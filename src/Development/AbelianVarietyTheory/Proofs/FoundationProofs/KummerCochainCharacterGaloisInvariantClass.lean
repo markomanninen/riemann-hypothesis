@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerExponentOfGaloisElementIsKummerCharacterStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CochainCoboundaryProdHomIdentitiesStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerGeneratorOfCharStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerExponentOfGaloisElementIsKummerCharacterStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CochainCoboundaryProdHomIdentitiesStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerGeneratorOfCharStatement
+
+@[expose] public section
+
 open GlobalTheory.NeedB Polynomial
 
 namespace GlobalTheory
@@ -13,7 +18,7 @@ theorem kum_eq_of_apply {K Ω : Type} [Field K] [Field Ω] [Algebra K Ω] {N : �
   haveI : NeZero N := ⟨hN.ne'⟩
   have hex : ∃ j : ZMod N, g θ = ζ ^ j.val * θ := ⟨i, hg⟩
   unfold kum
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   have h1 := hex.choose_spec
   have h2 : ζ ^ i.val = ζ ^ hex.choose.val := mul_right_cancel₀ hθ (hg.symm.trans h1)
   have h3 := (hζ.pow_inj (ZMod.val_lt _) (ZMod.val_lt _)) h2
@@ -60,7 +65,7 @@ theorem eta_kummer_galoisInvariant : ∀ (K Ω : Type) [Field K] [CharZero K] [F
         · exact h1
         · exact h2
       | algebraMap r => exact g.commutes r
-      | add u v _ _ hu hv => rw [map_add, hu, hv]
+      | add u v _ _ hu hv => rw [map_add (f := _), hu, hv]
       | inv u _ hu => rw [map_inv₀, hu]
       | mul u v _ _ hu hv => rw [map_mul, hu, hv]
   have kα0 : ∀ g ∈ E.fixingSubgroup, kum (N := N) ζ α g = 0 := fun g hg => (hαker g).2 ((memH g).1 hg).1

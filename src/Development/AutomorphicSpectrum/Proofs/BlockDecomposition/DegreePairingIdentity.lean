@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.LogAbsBasic
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.LogAbsBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -181,8 +185,8 @@ theorem sz_nonneg {K ι κ : Type} [NormedField K] (g : Matrix ι κ K) : 0 ≤ 
 
 theorem posLog_sz_le {K : Type} [NormedField K] {n : ℕ} (g : Matrix (Fin n) (Fin n) K) :
     Real.posLog (sz g ^ 2) ≤ Real.posLog (⨆ p : Fin n × Fin n, ‖g p.1 p.2‖ ^ 2) :=
-  Real.monotoneOn_posLog (Set.mem_Ici.2 (by positivity))
-    (Set.mem_Ici.2 (Real.iSup_nonneg fun _ => by positivity)) (sz_sq_le g)
+  Real.monotoneOn_posLog (Set.mem_Ici.2 (le_trans (by norm_num) (sq_nonneg _)))
+    (Set.mem_Ici.2 (le_trans (by norm_num) (Real.iSup_nonneg fun _ => sq_nonneg _))) (sz_sq_le g)
 
 theorem sum_bound {P Q : Type} [Fintype P] (π : Equiv.Perm Q) (b L : ℝ)
     (ci Si Fi Gi : P → ℝ) (cf Sf Ff Gf : Q → ℝ)

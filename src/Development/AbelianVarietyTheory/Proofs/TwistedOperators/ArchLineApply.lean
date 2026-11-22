@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,14 +18,16 @@ def archLine (cS : Matrix (Fin n) (Fin d) (AE D) ≃+ WO S X) (u : Matrix (Fin n
   toFun t := cS (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.realAd D.host.F t • u)
   map_zero' := by
     have h : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.realAd D.host.F 0 = 0 := by
-      unfold GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.realAd; simp only [map_zero]; rfl
+      unfold GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.realAd
+      simp only [map_zero]
     show cS (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.realAd D.host.F 0 • u) = 0
     rw [h, zero_smul]
     exact map_zero cS
   map_add' s t := by
     have h : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.realAd D.host.F (s + t) =
         GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.realAd D.host.F s + GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.realAd D.host.F t := by
-      unfold GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.realAd; simp only [map_add]; rfl
+      unfold GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.realAd
+      simp only [map_add (f := _)]
     show cS (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.realAd D.host.F (s + t) • u) =
       cS (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.realAd D.host.F s • u) + cS (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.realAd D.host.F t • u)
     rw [h, add_smul]

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.ExpFactIoExp
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.ExpFactIoExp
+
+@[expose] public section
 
 noncomputable section
 
@@ -124,7 +128,8 @@ theorem factAt_of {D : Formalism.BasicNotions.D7} (h52 : Formalism.MainNotions.C
   have hg : algebraMap O (KK O) (gEv T qO μ) =
       ((∑ ν ∈ T, q ν * ((ν.prod fun k i => (μ k).choose i : ℕ) : ℚ) : ℚ) : KK O) := by
     unfold gEv
-    rw [map_sum, Rat.cast_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Rat.cast_sum]
     refine Finset.sum_congr rfl fun ν hν => ?_
     rw [map_mul, ← hqO ν hν, map_natCast, Rat.cast_mul, Rat.cast_natCast]
   have heqK := congrArg (fun x : ℚ => (x : KK O)) heq
@@ -144,7 +149,7 @@ theorem factAt_of {D : Formalism.BasicNotions.D7} (h52 : Formalism.MainNotions.C
   have hW : (algebraMap O (KK O) (w ^ X.c)) ^ 2 = (X.p : KK O) ^ X.c := by
     rw [← map_pow, ← pow_mul, mul_comm, pow_mul, h2, map_pow, map_natCast]
   have hk := hκ μ hμ
-  rw [expFact_ioExp, hg, hmu, map_add, map_one, map_mul, map_mul, Nat.cast_mul, Nat.cast_prod]
+  rw [expFact_ioExp, hg, hmu, map_add (f := _), map_one, map_mul, map_mul, Nat.cast_mul, Nat.cast_prod]
   rw [hsplit] at heqK
   linear_combination (zSeg (KK O) X j * (X.p : KK O) ^ padicValNat X.p (Nblk C0 CE1 CE2 X j b) *
       (Rblk C0 CE1 CE2 X j b : KK O)) * heqK +

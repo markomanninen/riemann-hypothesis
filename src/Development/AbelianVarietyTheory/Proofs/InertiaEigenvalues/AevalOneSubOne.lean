@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsPlaceOverMoveValCc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IndexSpanMatrixEqValDet
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSubgroupIsUnit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsPlaceOverMoveValCc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IndexSpanMatrixEqValDet
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSubgroupIsUnit
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,9 +56,8 @@ theorem specU_rTensor (A : Module.End (X.O i) (Y.Fm i j b)) (Q : Finset (PlE D.h
     (w : Y.Fm i j b ⊗[X.O i] AddMonoidAlgebra (X.O i) (DelQM D.host (X.l i) Q M)) :
     specU Y i j b Q M k χ (A.rTensor _ w) = A.baseChange (X.Ok i k) (specU Y i j b Q M k χ w) := by
   induction w with
-  | zero => simp
   | tmul v g => simp [specU]
-  | add v w hv hw => simp only [map_add, hv, hw]
+  | add v w hv hw => simp only [map_add (f := _), hv, hw]
 
 theorem exists_coord {Ball : Submodule (X.O i) (Y.Fm i j b)}
     (hA : Ball.map A ≤ Submodule.span (X.O i) (Set.range bs)) {ι : Type} [Fintype ι] (P : ι → PlE D.host)
@@ -108,18 +111,20 @@ theorem Coord.step {P : PlE D.host} {t : ℕ → Matrix (Fin n) (Fin n) (X.O i)}
   intro a
   have hc : ∀ w, A.baseChange (X.Ok i k) (PqF Y i j b k P y w) = PqF Y i j b k P y (A.baseChange (X.Ok i k) w) := by
     intro w
-    simp only [PqF, LinearMap.add_apply, Module.End.one_apply, LinearMap.sum_apply, LinearMap.smul_apply, map_add,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [PqF, LinearMap.add_apply, Module.End.one_apply, LinearMap.sum_apply, LinearMap.smul_apply, map_add (f := _),
       map_sum, map_smul]
     congr 1
     refine Finset.sum_congr rfl fun m hm => ?_
     rw [← LinearMap.comp_apply, ← LinearMap.baseChange_comp, hA m hm, LinearMap.baseChange_comp, LinearMap.comp_apply]
-  rw [hrel, hc, ← map_smul, h a, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hrel, hc, ← map_smul, h a, map_sum]
   simp only [map_smul, pqF_basis ht, Finset.smul_sum, smul_smul, Matrix.mul_apply, Finset.sum_smul]
   rw [Finset.sum_comm]
   simp only [mul_comm]
 
-open Classical in
 
+open Classical in
 def Rel (Y : NExp D.R D.host D.what₂ D.LL0 N X) (i : X.Tw) (j : ℕ) (b : Bool) (ch : Set (PlE D.host)) (sg : Bool) : Prop :=
   ∀ (M : ℕ) d (Q : Finset (PlE D.host)) (a : Y.Dat i j b), IsCoord Y i M d → QOk X i Q →
     ClsQ (D := D) Q → Disjoint Q (Y.lev i j b a) →
@@ -137,8 +142,8 @@ def Rel (Y : NExp D.R D.host D.what₂ D.LL0 N X) (i : X.Tw) (j : ℕ) (b : Bool
 def sgnProd {ι B : Type} [Fintype ι] [CommGroup B] {n : ℕ} (sg : Bool) (u : ι → B) (x : ι → ZMod n) : B :=
   if sg then ∏ q, u q ^ (x q).val else (∏ q, u q ^ (x q).val)⁻¹
 
-open Classical in
 
+open Classical in
 theorem det_factor {ch : Set (PlE D.host)} {sg : Bool} (hrel : Rel Y i j b ch sg)
     {Ball : Submodule (X.O i) (Y.Fm i j b)} (hbs : LinearIndependent (X.O i) bs)
     (hAB : Ball.map A ≤ Submodule.span (X.O i) (Set.range bs)) {t : ℕ → PlE D.host → Matrix (Fin n) (Fin n) (X.O i)}
@@ -189,8 +194,8 @@ theorem det_factor {ch : Set (PlE D.host)} {sg : Bool} (hrel : Rel Y i j b ch sg
       rw [hχ, hχ']
       refine Finset.prod_congr rfl fun q' _ => ?_
       by_cases h1 : P q' ∈ (Q.erase (P' q)).erase Pb
-      · rw [dif_pos h1, dif_pos (Finset.mem_of_mem_erase (Finset.mem_of_mem_erase h1))]
-      · rw [dif_neg h1, hJ₀ q' fun h => h1 ((hQ'.mem_iff hA.2.1 q').2 (Finset.mem_union_right _ h))]
+      · rw [dite_eq_left h1, dite_eq_left (Finset.mem_of_mem_erase (Finset.mem_of_mem_erase h1))]
+      · rw [dite_eq_right h1, hJ₀ q' fun h => h1 ((hQ'.mem_iff hA.2.1 q').2 (Finset.mem_union_right _ h))]
         simp
     have hy : psiAt sg χ' (Y.delU i ((Q.erase (P' q)).erase Pb) M (σ q)) =
         sgnProd sg u fun q' => Multiplicative.toAdd (d (P q') (σ q)) := by
@@ -198,9 +203,9 @@ theorem det_factor {ch : Set (PlE D.host)} {sg : Bool} (hrel : Rel Y i j b ch sg
           ∏ q', u q' ^ (Multiplicative.toAdd (d (P q') (σ q))).val := by
         refine (hχ' (Multiplicative.toAdd _)).trans (Finset.prod_congr rfl fun q' _ => ?_)
         by_cases h1 : P q' ∈ (Q.erase (P' q)).erase Pb
-        · rw [dif_pos h1, ← hd _ hQ'.conjCl _ h1]
+        · rw [dite_eq_left h1, ← hd _ hQ'.conjCl _ h1]
           rfl
-        · rw [dif_neg h1, hJ₀ q' fun h => h1 ((hQ'.mem_iff hA.2.1 q').2 (Finset.mem_union_right _ h)), one_pow]
+        · rw [dite_eq_right h1, hJ₀ q' fun h => h1 ((hQ'.mem_iff hA.2.1 q').2 (Finset.mem_union_right _ h)), one_pow]
       cases sg <;> simp [psiAt, sgnProd, this]
     have hstep := Coord.step (fun m hm => ht m _ (hidx m hm)) (fun m hm => hAc m _ (hidx m hm))
       (fun a => hrel M d Q (e a) hd a1 a2 (a3.mono_right (hlev a)) a4 (P' q) Pb hm1 (hQ.conjCl _ hm1 _ hPb)
@@ -288,7 +293,7 @@ theorem residue_prod_det {O k ι κ : Type} [CommRing O] [Field k] [Fintype κ] 
     refine Finset.prod_congr rfl fun a _ => ?_
     have e : (MvPolynomial.map (σ := ι) ρ).comp MvPolynomial.C = MvPolynomial.C.comp ρ := by ext1 r; simp
     rw [← hdet, map_det_polyMat, e]
-    simp only [polyMat, Matrix.map_map, map_pow, map_add, map_one, MvPolynomial.map_X, RingHom.coe_comp]
+    simp only [polyMat, Matrix.map_map, map_pow, map_add (f := _), map_one, MvPolynomial.map_X, RingHom.coe_comp]
 
 theorem propABCD_of_rel : ∀ (D : Formalism.BasicNotions.D7) (N : NData D.R D.host D.what₂) (X : NTw D.R D.host D.what₂ D.LL0 N)
     (Y : NExp D.R D.host D.what₂ D.LL0 N X), ThURel Y → HeckeLaws Y → AllGood Y → Formalism.MainNotions.BlochKatoReduction.Gen.adm8 X Y → PropABCD Y := by
@@ -333,7 +338,7 @@ theorem propABCD_of_rel : ∀ (D : Formalism.BasicNotions.D7) (N : NData D.R D.h
   obtain ⟨m₀, hm₀⟩ : ∃ m₀ : Matrix (Fin n) (Fin n) (X.O i), ∀ a, x • th a = ∑ c, m₀ c a • bs c := by
     obtain ⟨mp, hmp⟩ := exists_coord (A := F.A j b) (e := e) (x := x) hABle (fun q : Empty => q.elim) ∅ 0
       fun a => hx 0 ∅ (by simp) (by simp [ClsQ]) (by simp) a (by simp)
-    refine ⟨mp.map (MvPolynomial.coeff 0), fun a => one_tmul_injective 0 ?_⟩
+    refine ⟨mp.map (AddMonoidAlgebra.coeff · 0), fun a => one_tmul_injective 0 ?_⟩
     have := hmp 0 1 1 (fun x => by rw [Fintype.prod_empty]; rfl) a
     rw [h0, LinearMap.baseChange_tmul, algebraMap_smul, ← TensorProduct.tmul_smul] at this
     rw [this, TensorProduct.tmul_sum]
@@ -432,7 +437,8 @@ theorem propABCD_of_rel : ∀ (D : Formalism.BasicNotions.D7) (N : NData D.R D.h
           have h2 := hHu _ _ (hP' (.inl a)) hv.1 hv.2.2.2.1 (hS.1 a) s
           rw [← IsLocalRing.residue_ne_zero_iff_isUnit] at h2 ⊢
           convert h2 using 1
-          simp only [map_add, map_sum, map_mul]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [map_add (f := _), map_sum, map_mul]
           congr 1
           refine Finset.sum_congr rfl fun m hm => ?_
           have h3 := (IsLocalRing.residue_eq_zero_iff _).2 (hs m _ (hidx m hm))
@@ -447,7 +453,7 @@ theorem propABCD_of_rel : ∀ (D : Formalism.BasicNotions.D7) (N : NData D.R D.h
   · intro k u χ hu hχ hne T hT hw
     have hχ' : IsChi P Q u χ := fun y => by
       rw [hχ]
-      exact Finset.prod_congr rfl fun q _ => by rw [dif_pos]
+      exact Finset.prod_congr rfl fun q _ => by rw [dite_eq_left]
     have : Module.Finite (X.O i) (X.Ok i k) := X.Ok_fin i k
     have : FaithfulSMul (X.O i) (X.Ok i k) := (faithfulSMul_iff_algebraMap_injective _ _).2 (X.Ok_inj i k)
     have : IsLocalHom (algebraMap (X.O i) (X.Ok i k)) := Algebra.IsIntegral.isLocalHom _ _

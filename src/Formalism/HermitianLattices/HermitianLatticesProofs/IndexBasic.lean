@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.HermitianLattices.StatementLat
-import Formalism.HermitianLattices.HermitianLatticesProofs.LocBasic
-import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.StatementLat
+public import Formalism.HermitianLattices.HermitianLatticesProofs.LocBasic
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
+
+@[expose] public section
 
 open Module
 
@@ -84,7 +88,8 @@ theorem indexBasic_finLen [IsNoetherianRing R] [Ring.KrullDimLE 1 R] (p : Ideal 
     obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun R).mp hx
     refine ⟨fun i => Submodule.Quotient.mk (c i), ?_⟩
     have hx' : x = ∑ i, c i • (⟨g i, hgX i⟩ : ↥X) := Subtype.ext (by simp [hc])
-    rw [hx', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx', map_sum]
     simp only [F, m]
     rw [LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun i _ => ?_
@@ -257,7 +262,8 @@ theorem indexBasic_dual_le_fg {R K V : Type*} [CommRing R] [Field K] [StarRing K
   have hψ : ∀ y, ψ y = φ y := fun y => LinearEquiv.ofBijective_apply φ y
   have hx' : x = ∑ j, (algebraMap R K (r j)) • ψ.symm (Pi.single j 1) := by
     apply ψ.injective
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smul, LinearEquiv.apply_symm_apply]
     ext i
     rw [hψ]
@@ -266,7 +272,19 @@ theorem indexBasic_dual_le_fg {R K V : Type*} [CommRing R] [Field K] [StarRing K
   simp_rw [algebraMap_smul]
   exact Submodule.sum_mem _ (fun j _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩))
 
-theorem indexBasic : IndexBasic := by
+theorem indexBasic :
+    ∀ (R K V : Type) [CommRing R] [IsDedekindDomain R] [Field K] [StarRing K] [Algebra R K]
+      [IsFractionRing R K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module R V]
+      [IsScalarTower R K V] (h : V →ₗ⋆[K] V →ₗ[K] K), h.IsSymm → h.Nondegenerate →
+      (∀ r : R, star (algebraMap R K r) ∈ Set.range (algebraMap R K)) →
+      ∀ (p : Ideal R) [p.IsMaximal] (A B C : Submodule R V),
+        Submodule.IsFullLattice K A → Submodule.IsFullLattice K B → Submodule.IsFullLattice K C →
+        lidx p A A = 0 ∧ lidx p A B = -lidx p B A ∧
+        lidx p A C = lidx p A B + lidx p B C ∧
+        (B ≤ A → lidx p A B = locLen p A B) ∧
+        (IsUnimodular h A → jIdx h p A = 0) ∧
+        (IsIntegralLat h A →
+          jIdx h p A ≤ 0 ∧ (jIdx h p A = 0 ↔ localization₂ p (dual h A) = localization₂ p A)) := by
   intro R K V _ _ _ _ _ _ _ _ _ _ _ h hs hnd hstar p _ A B C hA hB hC
   have hfin : ∀ X Y : Submodule R V, X.FG → locS (nonZeroDivisors R) Y = ⊤ →
       Module.length R (↥(localization₂ p X) ⧸ (localization₂ p Y).comap (localization₂ p X).subtype) ≠ ⊤ := by
@@ -274,12 +292,12 @@ theorem indexBasic : IndexBasic := by
     obtain ⟨d, hd, hdY⟩ :=
       indexBasic_denom (nonZeroDivisors R) X Y hX (by rw [hY]; exact le_top)
     exact Module.length_ne_top_iff.mpr (indexBasic_finLen p X Y hX hd hdY)
-  have hAt := indexBasic_locS_top (K := K) A (Submodule.IsLattice.span_eq_top (self := hA))
-  have hBt := indexBasic_locS_top (K := K) B (Submodule.IsLattice.span_eq_top (self := hB))
-  have hCt := indexBasic_locS_top (K := K) C (Submodule.IsLattice.span_eq_top (self := hC))
-  have hAfg : A.FG := Submodule.IsLattice.fg (self := hA)
-  have hBfg : B.FG := Submodule.IsLattice.fg (self := hB)
-  have hCfg : C.FG := Submodule.IsLattice.fg (self := hC)
+  have hAt := indexBasic_locS_top (K := K) A hA.span_eq_top
+  have hBt := indexBasic_locS_top (K := K) B hB.span_eq_top
+  have hCt := indexBasic_locS_top (K := K) C hC.span_eq_top
+  have hAfg : A.FG := hA.toIsLattice.fg
+  have hBfg : B.FG := hB.toIsLattice.fg
+  have hCfg : C.FG := hC.toIsLattice.fg
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
   · unfold lidx
     exact sub_self _
@@ -315,8 +333,7 @@ theorem indexBasic : IndexBasic := by
       intro y hy
       exact hI y hy x hx
     have hDfg : (dual h A).FG := by
-      obtain ⟨F, hF, hDF⟩ :=
-        indexBasic_dual_le_fg h hnd A (Submodule.IsLattice.span_eq_top (self := hA))
+      obtain ⟨F, hF, hDF⟩ := indexBasic_dual_le_fg h hnd A hA.span_eq_top
       exact hF.of_le hDF
     have hDfin := hfin (dual h A) A hDfg hAt
     unfold jIdx lidx

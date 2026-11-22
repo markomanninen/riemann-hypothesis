@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsMoreFurther
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CechHcSubsingletonOfBlock
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsRestBis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgCechSt
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PQuotPartGraded
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsVerticalDivOfIsVerticalDivisorAlt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsMoreFurther
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CechHcSubsingletonOfBlock
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsRestBis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgCechSt
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PQuotPartGraded
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsVerticalDivOfIsVerticalDivisorAlt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -21,8 +26,8 @@ variable {F : Type} [Field F] {K : Type} [Fintype K] [LinearOrder K] {ι : K →
 
 attribute [local instance] MvPolynomial.weightedGradedAlgebra
 
-omit [LinearOrder K] [∀ k, Fintype (ι k)] [∀ k, LinearOrder (ι k)] in
 
+omit [LinearOrder K] [∀ k, Fintype (ι k)] [∀ k, LinearOrder (ι k)] in
 theorem snapper_component_mul_X [DecidableEq K] (f : MvPolynomial (Σ k, ι k) F) (b : K → ℕ) (v : Σ k, ι k) :
     weightedHomogeneousComponent (NumbersDVR.blockWeight ι) (b + NumbersDVR.blockWeight ι v) (f * X v) =
       weightedHomogeneousComponent (NumbersDVR.blockWeight ι) b f * X v := by
@@ -36,8 +41,8 @@ theorem snapper_component_mul_X [DecidableEq K] (f : MvPolynomial (Σ k, ι k) F
   rw [key, key] at h
   exact h
 
-omit [LinearOrder K] [∀ k, Fintype (ι k)] [∀ k, LinearOrder (ι k)] in
 
+omit [LinearOrder K] [∀ k, Fintype (ι k)] [∀ k, LinearOrder (ι k)] in
 theorem snapper_colon_X [DecidableEq K] {J : Ideal (MvPolynomial (Σ k, ι k) F)} (hJ : NumbersDVR.IsMultiHomogIdeal J)
     (v : Σ k, ι k) : NumbersDVR.IsMultiHomogIdeal (J.colon (Ideal.span {(X v : MvPolynomial (Σ k, ι k) F)})) := by
   intro f hf b
@@ -45,8 +50,8 @@ theorem snapper_colon_X [DecidableEq K] {J : Ideal (MvPolynomial (Σ k, ι k) F)
   rw [← snapper_component_mul_X]
   exact hJ _ hf _
 
-omit [Fintype K] [LinearOrder K] in
 
+omit [Fintype K] [LinearOrder K] in
 theorem snapper_eval_shift (p : MvPolynomial K ℚ) (e m : K → ℤ) :
     eval (fun k => ((m - e) k : ℚ)) p =
       eval (fun k => (m k : ℚ)) (bind₁ (fun j => X j - C ((e j : ℤ) : ℚ)) p) := by
@@ -104,7 +109,7 @@ theorem EulerPoly.proof (hS : ReciprocityTheory.ChartRestriction.G.ArakelovGeome
       obtain ⟨p1, hp1⟩ := ih _ (lt_of_le_of_ne hle (Ne.symm hne)) (snapper_colon_X hJ v)
       obtain ⟨p2, hp2⟩ := ih _ (hlt2 v hvJ) (hSup v)
       refine ⟨bind₁ (fun j => X j - C (((Pi.single v.1 1 : K → ℤ) j : ℤ) : ℚ)) p1 + p2, fun m => ?_⟩
-      rw [hE F K ι J v hJ (hfin J hJ) (hfin _ (snapper_colon_X hJ v)) (hfin _ (hSup v)) m, hp1, hp2, map_add,
+      rw [hE F K ι J v hJ (hfin J hJ) (hfin _ (snapper_colon_X hJ v)) (hfin _ (hSup v)) m, hp1, hp2, map_add (f := _),
         ← snapper_eval_shift]
     · push Not at hA
       by_cases hB : ∃ k, ∀ i, (X ⟨k, i⟩ : MvPolynomial (Σ k, ι k) F) ∈ J

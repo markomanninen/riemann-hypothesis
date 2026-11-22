@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpCapLOfOf
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpCapLOfOf
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField Matrix
 open scoped ContDiff

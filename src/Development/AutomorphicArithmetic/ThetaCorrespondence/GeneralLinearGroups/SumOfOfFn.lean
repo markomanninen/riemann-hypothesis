@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FDecompL
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FDecompR
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.ExistsCovByRelJacD
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FFirstProd
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FRedTimesZ
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FSsEmb
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FZfirst
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HasSupportOfIsSubquotientProdIrr
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ParabolicInductionInStagesProductOfProducts
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIrreducibleSubquotientTwoBlockConstituents
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FDecompL
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FDecompR
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.ExistsCovByRelJacD
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FFirstProd
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FRedTimesZ
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FSsEmb
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FZfirst
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HasSupportOfIsSubquotientProdIrr
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ParabolicInductionInStagesProductOfProducts
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIrreducibleSubquotientTwoBlockConstituents
+
+@[expose] public section
 
 open Filter Topology GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult UpperTheory.Lit.Cas UpperTheory.Lit.Red
 
@@ -50,30 +54,30 @@ private theorem EB.two {r t N : ℕ} (e : r + t = N) {A A' : BR k r} {C C' : BR 
   embeds_ind₂ e (σ := A.ρ) (σ' := A'.ρ) (ρ := C.ρ) (ρ' := C'.ρ) h h'
 
 unseal GlobalTheory.ProdFlatten.pr GlobalTheory.ProdFlatten.mp GlobalTheory.ProdFlatten.one in
-private theorem EB_pr {p q N : ℕ} {x : Fin p → IrrGL k} {y : Fin q → IrrGL k} (hx : ∑ a, (x a).1 = N)
+private theorem EB_pr {p q N : ℕ} {x : Fin p → IrrGL (k := k)} {y : Fin q → IrrGL (k := k)} (hx : ∑ a, (x a).1 = N)
     (hy : ∑ a, (y a).1 = N) : EB (pr x hx) (pr y hy) ↔ Embeds (prodIrr x hx) (prodIrr y hy) := Iff.rfl
 
 attribute [irreducible] EB
 
-private def PE {p q : ℕ} (x : Fin p → IrrGL k) (y : Fin q → IrrGL k) : Prop :=
+private def PE {p q : ℕ} (x : Fin p → IrrGL (k := k)) (y : Fin q → IrrGL (k := k)) : Prop :=
   ∑ a, (x a).1 = ∑ a, (y a).1 ∧
     ∀ (N : ℕ) (hx : ∑ a, (x a).1 = N) (hy : ∑ a, (y a).1 = N), EB (pr x hx) (pr y hy)
 
-private theorem PE.refl {p : ℕ} (x : Fin p → IrrGL k) : PE x x :=
+private theorem PE.refl {p : ℕ} (x : Fin p → IrrGL (k := k)) : PE x x :=
   ⟨rfl, fun _ _ _ => .of_iso (iso_refl _)⟩
 
-private theorem PE.trans {p q r : ℕ} {x : Fin p → IrrGL k} {y : Fin q → IrrGL k} {z : Fin r → IrrGL k}
+private theorem PE.trans {p q r : ℕ} {x : Fin p → IrrGL (k := k)} {y : Fin q → IrrGL (k := k)} {z : Fin r → IrrGL (k := k)}
     (h : PE x y) (h' : PE y z) : PE x z :=
   ⟨h.1.trans h'.1, fun N hx hz => (h.2 N hx (h.1.symm.trans hx)).trans (h'.2 N _ hz)⟩
 
 omit [ValuativeRel k] [IsNonarchimedeanLocalField k] in
-private theorem sum_of_ofFn {p q c : ℕ} {x : Fin p → IrrGL k} {y : Fin q → IrrGL k} {w : Fin c → IrrGL k}
+private theorem sum_of_ofFn {p q c : ℕ} {x : Fin p → IrrGL (k := k)} {y : Fin q → IrrGL (k := k)} {w : Fin c → IrrGL (k := k)}
     (hw : List.ofFn w = List.ofFn x ++ List.ofFn y) : ∑ a, (w a).1 = ∑ a, (x a).1 + ∑ a, (y a).1 := by
   have := congrArg (fun l => (l.map Sigma.fst).sum) hw
   simpa [List.map_ofFn, List.sum_ofFn] using this
 
-private theorem PE.glue {p q c p' q' c' : ℕ} {x : Fin (p + 1) → IrrGL k} {y : Fin q → IrrGL k} {w : Fin c → IrrGL k}
-    {x' : Fin (p' + 1) → IrrGL k} {y' : Fin q' → IrrGL k} {w' : Fin c' → IrrGL k} (h : PE x x') (h' : PE y y')
+private theorem PE.glue {p q c p' q' c' : ℕ} {x : Fin (p + 1) → IrrGL (k := k)} {y : Fin q → IrrGL (k := k)} {w : Fin c → IrrGL (k := k)}
+    {x' : Fin (p' + 1) → IrrGL (k := k)} {y' : Fin q' → IrrGL (k := k)} {w' : Fin c' → IrrGL (k := k)} (h : PE x x') (h' : PE y y')
     (hw : List.ofFn w = List.ofFn x ++ List.ofFn y) (hw' : List.ofFn w' = List.ofFn x' ++ List.ofFn y') :
     PE w w' := by
   have s := sum_of_ofFn hw
@@ -84,7 +88,7 @@ private theorem PE.glue {p q c p' q' c' : ℕ} {x : Fin (p + 1) → IrrGL k} {y 
   have E' := pr_append x' y' w' hw' (Or.inl p'.succ_ne_zero) h.1.symm h'.1.symm hy e
   exact ((EB.of_iso E).trans (EB.two e (h.2 _ rfl h.1.symm) (h'.2 _ rfl h'.1.symm))).trans (.of_iso (iso_symm E'))
 
-private theorem PE.of_embeds {c : ℕ} {x : IrrGL k} {w : Fin c → IrrGL k} (hd : ∑ a, (w a).1 = x.1)
+private theorem PE.of_embeds {c : ℕ} {x : IrrGL (k := k)} {w : Fin c → IrrGL (k := k)} (hd : ∑ a, (w a).1 = x.1)
     (hf : Embeds x.rep (prodIrr w hd)) : PE (fun _ : Fin 1 => x) w := by
   have h1 : ∑ _ : Fin 1, x.1 = x.1 := by simp
   refine ⟨h1.trans hd.symm, fun N hx hy => ?_⟩
@@ -92,7 +96,7 @@ private theorem PE.of_embeds {c : ℕ} {x : IrrGL k} {w : Fin c → IrrGL k} (hd
   have φ := (nonempty_equiv_prodIrr_one x hx).some
   exact (EB_pr _ _).2 ((Embeds.of_equiv φ.symm).trans hf)
 
-private theorem PE.of_embeds' {c : ℕ} {x : IrrGL k} {w : Fin c → IrrGL k} (hd : ∑ a, (w a).1 = x.1)
+private theorem PE.of_embeds' {c : ℕ} {x : IrrGL (k := k)} {w : Fin c → IrrGL (k := k)} (hd : ∑ a, (w a).1 = x.1)
     (hf : Embeds (prodIrr w hd) x.rep) : PE w (fun _ : Fin 1 => x) := by
   have h1 : ∑ _ : Fin 1, x.1 = x.1 := by simp
   refine ⟨hd.trans h1.symm, fun N hy hx => ?_⟩
@@ -100,27 +104,27 @@ private theorem PE.of_embeds' {c : ℕ} {x : IrrGL k} {w : Fin c → IrrGL k} (h
   have φ := (nonempty_equiv_prodIrr_one x hx).some
   exact (EB_pr _ _).2 (hf.trans (Embeds.of_equiv φ))
 
-private theorem PE.of_emb {x y z : IrrGL k} (h : Emb x y z) : PE (fun _ : Fin 1 => x) ![y, z] :=
+private theorem PE.of_emb {x y z : IrrGL (k := k)} (h : Emb x y z) : PE (fun _ : Fin 1 => x) ![y, z] :=
   h.elim fun hd hf => PE.of_embeds hd hf
 
-private theorem exists_cls {c : ℕ} (w : Fin c → IrrGL k) (hi : (prodIrr w rfl).IsIrreducible) :
-    ∃ (x : IrrGL k) (hd : ∑ a, (w a).1 = x.1), Embeds (prodIrr w hd) x.rep ∧ IsSubquotient x.rep (prodIrr w hd) := by
+private theorem exists_cls {c : ℕ} (w : Fin c → IrrGL (k := k)) (hi : (prodIrr w rfl).IsIrreducible) :
+    ∃ (x : IrrGL (k := k)) (hd : ∑ a, (w a).1 = x.1), Embeds (prodIrr w hd) x.rep ∧ IsSubquotient x.rep (prodIrr w hd) := by
   have φ := IrrGL.equivOf (prodIrr w rfl) (isSmooth_prodIrr w rfl) hi
   exact ⟨IrrGL.of (prodIrr w rfl) (isSmooth_prodIrr w rfl) hi, rfl, .of_equiv φ,
     .of_injective φ.symm.toIntertwiningMap φ.symm.toLinearEquiv.injective⟩
 
-private theorem supp_pair {x y z : IrrGL k} {A B : Multiset (IrrGL k)} (hA : HasSupport y.rep A)
+private theorem supp_pair {x y z : IrrGL (k := k)} {A B : Multiset (IrrGL (k := k))} (hA : HasSupport y.rep A)
     (hB : HasSupport z.rep B) (hd : ∑ a, (![y, z] a).1 = x.1) (h : IsSubquotient x.rep (prodIrr ![y, z] hd)) :
     HasSupport x.rep (A + B) := by
   have := GlobalTheory.CompanionTheory.Hypotheses₂.TD.hasSupport_of_isSubquotient_prodIrr (y := ![y, z]) (hd := hd) (t := ![A, B])
     (Fin.forall_fin_two.2 ⟨hA, hB⟩) x.2.rep.irr h
   rwa [Fin.sum_univ_two] at this
 
-private theorem Emb_sub {x y z : IrrGL k} (h : Emb x y z) :
+private theorem Emb_sub {x y z : IrrGL (k := k)} (h : Emb x y z) :
     ∃ hd : ∑ a, (![y, z] a).1 = x.1, IsSubquotient x.rep (prodIrr ![y, z] hd) :=
   h.elim fun hd hf => ⟨hd, hf.elim fun f hf => .of_injective f hf⟩
 
-private theorem PE.chain {x z x₁ s x₂ p x₃ : IrrGL k} (e1 : Emb x x₁ s) (e2 : Emb s x₂ p)
+private theorem PE.chain {x z x₁ s x₂ p x₃ : IrrGL (k := k)} (e1 : Emb x x₁ s) (e2 : Emb s x₂ p)
     (e3 : PE ![p, z] (fun _ : Fin 1 => x₃)) : PE ![x, z] ![x₁, x₂, x₃] := by
   have a1 : PE ![x, z] ![x₁, s, z] := (PE.of_emb e1).glue (PE.refl ![z]) (by simp) (by simp)
   have a2 : PE ![s, z] ![x₂, p, z] := (PE.of_emb e2).glue (PE.refl ![z]) (by simp) (by simp)
@@ -131,7 +135,7 @@ private theorem PE.chain {x z x₁ s x₂ p x₃ : IrrGL k} (e1 : Emb x x₁ s) 
 end
 
 theorem UpperTheory.Lit.Full.topZ :
-    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → GlobalTheory.Published.ZelevinskyPolynomialRing → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (Δ : Segment k) (x z : IrrGL k) (N : ℕ) (hd : ∑ a, (![x, z] a).1 = N), IsUnitarisable x.rep → IsUnitarisable z.rep → IsZSeg Δ z.rep → (prodIrr ![x, z] hd).IsIrreducible := by
+    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → GlobalTheory.Published.ZelevinskyPolynomialRing → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (Δ : Segment k) (x z : IrrGL (k := k)) (N : ℕ) (hd : ∑ a, (![x, z] a).1 = N), IsUnitarisable x.rep → IsUnitarisable z.rep → IsZSeg Δ z.rep → (prodIrr ![x, z] hd).IsIrreducible := by
   intro hG hB hZ k _ _ _ _ Δ x z N hd hx hz hΔ
   have d1 := UpperTheory.Lit.Full.decompR hG hB k x (up Δ.first)
   obtain ⟨x₁, s, e1, l1, As, hAs, hAJ⟩ := d1

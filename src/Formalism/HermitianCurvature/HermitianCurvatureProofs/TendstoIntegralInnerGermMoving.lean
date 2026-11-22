@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermFibreKernels
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermFibreKernels
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBK
 
@@ -110,9 +114,11 @@ theorem tendsto_integral_inner_germ_moving {α : Type} {l : Filter α} (μ : Mea
   have hδ : 0 < δ := by positivity
   have he' : ∀ᶠ x in l, ∫ D, e x D ^ 2 ∂μ < ε * t / 2 := he0.eventually (gt_mem_nhds (by positivity))
   filter_upwards [hF, he, he', hG, hloc K hKc h0K δ hδ] with x hFx hex he2 hGx hlx
-  obtain ⟨hFx, hFB⟩ := hFx
+  have hFmem : MemLp (F x) 2 μ := hFx.1
+  have hFB := hFx.2
   rw [dist_zero_right]
-  have hF2 : Integrable (fun D => ‖F x D‖ ^ 2) μ := (memLp_two_iff_integrable_sq_norm hFx.1).1 hFx
+  have hF2 : Integrable (fun D => ‖F x D‖ ^ 2) μ :=
+    (memLp_two_iff_integrable_sq_norm hFmem.aestronglyMeasurable).1 hFmem
   have he2i : Integrable (fun D => e x D ^ 2) μ := hex.integrable_sq
   have hIc : Integrable (Kᶜ.indicator (fun D => g D ^ 2)) μ := hg2.indicator hKmeas.compl
   have i1 : Integrable (fun D => t * ‖F x D‖ ^ 2) μ := hF2.const_mul t

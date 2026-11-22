@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.GLinkQuot
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.GLinkQuot
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module UpperTheory.V UpperTheory.V.Fr UpperTheory.V.GC
 
@@ -67,7 +71,7 @@ private theorem H2_map_surjective_of_H3_subsingleton [TopologicalSpace G] [Conti
       hc.comp (f := fun g : Fin 3 → G => (g 0, Φ (g 1, g 2))) (by fun_prop)
     exact ((h0.sub (by fun_prop)).add (by fun_prop)).sub (by fun_prop)
   have hqc : ∀ g, q (c g) = 0 := fun g => by
-    simp only [c, map_sub, map_add, hq, hqΦ]
+    simp only [c, map_sub, map_add (f := _), hq, hqΦ]
     exact f.2.2 _ _ _
   let r : M → N := Function.invFun i
   have hr : ∀ g, i (r (c g)) = c g := fun g => Function.invFun_eq ((hex _).1 (hqc g))
@@ -78,7 +82,7 @@ private theorem H2_map_surjective_of_H3_subsingleton [TopologicalSpace G] [Conti
         ⟨g 0, g 1, g 2, g 3, by funext j; fin_cases j <;> rfl⟩
       apply hinj
       rw [dn_three]
-      simp only [map_add, map_sub, hi, hr, Pi.zero_apply, map_zero]
+      simp only [map_add (f := _), map_sub, hi, hr, Pi.zero_apply, map_zero]
       simp [c, mul_assoc]
       abel)
   have hb' : Continuous fun p : G × G => i (b ![p.1, p.2]) :=
@@ -86,7 +90,7 @@ private theorem H2_map_surjective_of_H3_subsingleton [TopologicalSpace G] [Conti
   refine ⟨Submodule.Quotient.mk ⟨fun p => Φ p - i (b ![p.1, p.2]), hΦ.sub hb', fun x y z => ?_⟩, ?_⟩
   · have e := congrArg i (congrFun hbc ![x, y, z])
     rw [dn_two] at e
-    simp only [map_add, map_sub, hi, hr] at e
+    simp only [map_add (f := _), map_sub, hi, hr] at e
     simp only [c, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.tail_cons, Matrix.head_cons] at e
     simp only [map_sub]
     rw [← sub_eq_zero.2 e.symm]

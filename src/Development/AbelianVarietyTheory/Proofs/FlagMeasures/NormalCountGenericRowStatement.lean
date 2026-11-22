@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormalCountGenericRow
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MainEqWire
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormalCountGenericRow
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MainEqWire
+
+@[expose] public section
+
 open Formalism.L2.SG.Pf.MainEqSteps
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.normalCount_genericRow : StepNormalsG := by

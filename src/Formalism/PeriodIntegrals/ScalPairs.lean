@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermDef
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ def Unram (E : Type) [Field E] [NumberField E] (p : ℕ) : Prop :=
 def ScalarEquivG : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [StarRing E] (S : HSpace E) (r k g : ℕ),
     finrank E S.V = k + 2 * r + 1 →
-    ∀ Λ : Submodule (𝓞 E) S.V, Submodule.IsLattice E Λ →
+    ∀ Λ : Submodule (𝓞 E) S.V, Submodule.IsFullLattice E Λ →
     ∀ (T T' : E), T ≠ 0 → T' ≠ 0 → ∀ F : LFlag S r T, IsLift Λ F →
       Equivalence (fun x y : {F' : LFlag S r T' // IsLift Λ F' ∧ Gval F F' ≠ 0} => ScalRel Λ g k F x.1 y.1)
 
@@ -38,10 +42,6 @@ def ScalRelD {u : D.what₂.Word} (u' : D.what₂.Word) (F0 : FlagG (VS D) D.R.r
     (Λ : Submodule (𝓞 D.host.E) (VS D).V)
     (x y : {x : Carrier (PD D Λ (lf D F0) u') // Gval (lf D F0) x.1 ≠ 0}) : Prop :=
   ScalRel Λ (gS D) D.R.k (lf D F0) x.1.1 y.1.1
-
-def ScalarEquiv (u u' : D.what₂.Word) : Prop :=
-  ∀ (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)) (Λ : Submodule (𝓞 D.host.E) (VS D).V),
-    IsRowLat D F0 Λ → Equivalence (ScalRelD D u' F0 Λ)
 
 def BetaL (u u' : D.what₂.Word) : Prop :=
   (∀ i, 3 ≤ D.host.g i ∧ Unram D.host.E (D.host.g i)) →

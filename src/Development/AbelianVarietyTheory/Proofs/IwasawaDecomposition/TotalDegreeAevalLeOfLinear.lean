@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.AevalTotalDegreeLinear
 
@@ -10,15 +14,16 @@ theorem totalDegree_aeval_le_of_linear {κ : Type} (f : κ → MvPolynomial κ �
       ≤ MvPolynomial.totalDegree P := by
   classical
   conv_lhs => rw [P.as_sum]
-  rw [map_sum]
-  refine (totalDegree_finset_sum _ _).trans ?_
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans ?_
   refine Finset.sup_le fun s hs => ?_
   rw [aeval_monomial]
   refine (totalDegree_mul _ _).trans ?_
   rw [algebraMap_eq, totalDegree_C, zero_add]
   have hprod : totalDegree (s.prod fun i k => f i ^ k) ≤ s.sum fun _ k => k := by
     rw [Finsupp.prod, Finsupp.sum]
-    refine (totalDegree_finset_prod _ _).trans ?_
+    refine (MvPolynomial.totalDegree_finsetProd _ _).trans ?_
     refine Finset.sum_le_sum fun i _ => ?_
     refine (totalDegree_pow _ _).trans ?_
     calc s i * totalDegree (f i) ≤ s i * 1 := Nat.mul_le_mul_left _ (hf i)

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsTop
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PowerSums
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsTop
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PowerSums
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -25,14 +30,14 @@ theorem OtherFactorBound.coeff_bound (hS : SchurSignCoefficient.Statement)
       ∑ nu ∈ partitionsOf r k,
         C ((numStandardTable (fun i => a + nu i) : ℕ) : ℚ) *
           aeval (fun i : Fin (r + a) => C c.sign * X i) (schur (Fin (r + a)) nu)) :
-    |coeff (Finsupp.single (⟨k - 1, by omega⟩ : Fin (r + a)) 1) S| ≤
+    |S.coeff (Finsupp.single (⟨k - 1, by omega⟩ : Fin (r + a)) 1)| ≤
       (Nat.choose (r * a + k) k : ℚ) * 2 ^ (k - 1) * numStandardTable (rectangle r a) / k := by
   set e := Finsupp.single (⟨k - 1, by omega⟩ : Fin (r + a)) 1 with he
   have hs : c.sign = 1 ∨ c.sign = -1 := by cases c <;> simp [SmallBlock.sign]
   have hex : ∀ nu : Fin r → ℕ, ∃ T : MvPolynomial (Fin (r + a)) ℚ, nu ∈ partitionsOf r k →
       powerSumHom (r + a) T = aeval (fun i : Fin (r + a) => C c.sign * X i)
           (schur (Fin (r + a)) nu) ∧
-        coeff e T = c.sign ^ k * if ∀ i : Fin r, (i : ℕ) ≠ 0 → nu i ≤ 1 then
+        AddMonoidAlgebra.coeff T e = c.sign ^ k * if ∀ i : Fin r, (i : ℕ) ≠ 0 → nu i ≤ 1 then
           (-1 : ℚ) ^ ((Finset.univ.filter fun i : Fin r => (i : ℕ) ≠ 0 ∧ nu i = 1).card) / k
         else 0 := by
     intro nu
@@ -47,13 +52,14 @@ theorem OtherFactorBound.coeff_bound (hS : SchurSignCoefficient.Statement)
   have hSsum : S = ∑ nu ∈ partitionsOf r k,
       C ((numStandardTable (fun i => a + nu i) : ℕ) : ℚ) * T nu := by
     apply Flag.powerSumHom_injective
-    rw [hSeq, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hSeq, map_sum]
     refine Finset.sum_congr rfl fun nu hnu => ?_
     rw [map_mul, (hT nu hnu).1]
     congr 1
     simp [powerSumHom]
   have hterm : ∀ nu ∈ partitionsOf r k,
-      |((numStandardTable (fun i => a + nu i) : ℕ) : ℚ) * coeff e (T nu)| =
+      |((numStandardTable (fun i => a + nu i) : ℕ) : ℚ) * (T nu).coeff e| =
         (if ∀ i : Fin r, (i : ℕ) ≠ 0 → nu i ≤ 1 then
           ((numStandardTable (fun i => a + nu i) : ℕ) : ℚ) else 0) / k := by
     intro nu hnu
@@ -63,13 +69,13 @@ theorem OtherFactorBound.coeff_bound (hS : SchurSignCoefficient.Statement)
     split_ifs
     · rw [abs_div, abs_pow, abs_neg, abs_one, one_pow, Nat.abs_cast]; ring
     · simp
-  calc |coeff e S|
+  calc |S.coeff e|
       = |∑ nu ∈ partitionsOf r k,
-          ((numStandardTable (fun i => a + nu i) : ℕ) : ℚ) * coeff e (T nu)| := by
+          ((numStandardTable (fun i => a + nu i) : ℕ) : ℚ) * (T nu).coeff e| := by
         rw [hSsum, coeff_sum]
         simp only [coeff_C_mul]
     _ ≤ ∑ nu ∈ partitionsOf r k,
-          |((numStandardTable (fun i => a + nu i) : ℕ) : ℚ) * coeff e (T nu)| :=
+          |((numStandardTable (fun i => a + nu i) : ℕ) : ℚ) * (T nu).coeff e| :=
         Finset.abs_sum_le_sum_abs _ _
     _ = (∑ nu ∈ (partitionsOf r k).filter (fun nu => ∀ i : Fin r, (i : ℕ) ≠ 0 → nu i ≤ 1),
           |((numStandardTable (fun i => a + nu i) : ℕ) : ℚ)|) / k := by
@@ -112,7 +118,7 @@ theorem OtherFactorBound.proof (hO : OtherFactorFormula.Statement)
       simp only [List.mem_cons, List.mem_replicate] at hq
       omega)
   rw [hTk, hJ]
-  set y := coeff (Finsupp.single (⟨k - 1, by omega⟩ : Fin (r + a)) 1) S
+  set y := AddMonoidAlgebra.coeff S (Finsupp.single (⟨k - 1, by omega⟩ : Fin (r + a)) 1)
   set z := symmetricGroupCharacter (rectangle r a) ((k - 1) :: List.replicate (r * a - (k - 1)) 1)
   set P : ℚ := (numStandardTable (rectangle r a) : ℚ) with hPdef
   obtain ⟨g, rfl⟩ : ∃ g, f = g + 2 := ⟨f - 2, by omega⟩

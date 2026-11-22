@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAdeleRingTensorEquivInfiniteProdFinite
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ContinuousSymmFinite
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsLocalNonnormOfNonsquareAdicCompletion
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFinitePlaceIdempotentBaseChangeAdeles
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsProdInfMulFinPart
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqIffConjPl
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemNormGroupIffEverywhereNorm
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAdeleRingTensorEquivInfiniteProdFinite
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ContinuousSymmFinite
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsLocalNonnormOfNonsquareAdicCompletion
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFinitePlaceIdempotentBaseChangeAdeles
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsProdInfMulFinPart
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqIffConjPl
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemNormGroupIffEverywhereNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,12 +28,12 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 
 section Idele
 
-variable (F E) in
 
+variable (F E) in
 def infTens : AF F ⊗[F] E →+* Ainf F ⊗[F] E := (Algebra.TensorProduct.map (fstA F) (AlgHom.id F E)).toRingHom
 
-variable (F E) in
 
+variable (F E) in
 def finTens : AF F ⊗[F] E →+* Af F ⊗[F] E := (Algebra.TensorProduct.map (sndA F) (AlgHom.id F E)).toRingHom
 
 theorem tens_ext {x y : AF F ⊗[F] E} (h1 : infTens F E x = infTens F E y) (h2 : finTens F E x = finTens F E y) :
@@ -41,20 +45,20 @@ theorem infTens_extZero (y : Af F ⊗[F] E) : infTens F E (extZero F E y) = 0 :=
   induction y using TensorProduct.induction_on with
   | zero => rw [map_zero, map_zero]
   | tmul a x => exact TensorProduct.zero_tmul _ _
-  | add a b ha hb => rw [map_add, map_add, ha, hb, add_zero]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, add_zero]
 
 theorem finTens_extZero (y : Af F ⊗[F] E) : finTens F E (extZero F E y) = y := by
   induction y using TensorProduct.induction_on with
   | zero => rw [map_zero, map_zero]
   | tmul a x => rfl
-  | add a b ha hb => rw [map_add, map_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
 
 theorem coe_locIdele (w : HeightOneSpectrum (𝓞 E)) (y : (w.adicCompletion E)ˣ) :
     (locIdele F w y : AF F ⊗[F] E) = 1 - extZero F E 1 + extZero F E ((finAdEquiv F E).symm (Neutral.B1.finiteSingle E w y)) := rfl
 
 theorem infTens_locIdele (w : HeightOneSpectrum (𝓞 E)) (y : (w.adicCompletion E)ˣ) :
     infTens F E (locIdele F w y) = 1 := by
-  rw [coe_locIdele, map_add, map_sub, map_one, infTens_extZero, infTens_extZero, sub_zero, add_zero]
+  rw [coe_locIdele, map_add (f := _), map_sub, map_one, infTens_extZero, infTens_extZero, sub_zero, add_zero]
 
 theorem finTens_locIdele (w : HeightOneSpectrum (𝓞 E)) (y : (w.adicCompletion E)ˣ) :
     finAdEquiv F E (finTens F E (locIdele F w y)) = (GlobalTheory.CMVal.single w y : (Af E)ˣ) := by
@@ -92,7 +96,7 @@ theorem mem_int_iff (y : Af F ⊗[F] E) :
         rw [show finAdEquiv F E (a ⊗ₜ[F] (x : E)) = _ from toFinAd_tmul a (x : E)]
         exact mul_mem (GlobalTheory.AdeleBaseChange.adMap_int ha) (GlobalTheory.AdeleBaseChange.algebraMap_int_mem x)
       | zero => rw [map_zero]; exact zero_mem _
-      | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
+      | add x y _ _ hx hy => rw [RingEquiv.map_add]; exact add_mem hx hy
       | neg x _ hx => rw [map_neg]; exact neg_mem hx
     exact this
   · intro hy
@@ -102,7 +106,8 @@ theorem mem_int_iff (y : Af F ⊗[F] E) :
       exact hy)
     obtain ⟨m, g, hg⟩ := Module.Finite.exists_fin (R := ℤ) (M := 𝓞 E)
     obtain ⟨r, hr, e⟩ := Formalism.UG.P.levelaf_decomp g hg h1
-    rw [← c.symm_apply_apply y, e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← c.symm_apply_apply y, e, map_sum]
     exact sum_mem fun i _ => AddSubgroup.subset_closure ⟨r i, hr i, g i, rfl⟩
 
 theorem continuous_finAdEquiv_symm : Continuous (finAdEquiv F E).symm :=
@@ -177,8 +182,8 @@ theorem unrAt_of_unramEverywhere (h : UnramEverywhere D c) (w : HeightOneSpectru
 
 variable {χ : HChar D.host.E}
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem locChar_eq_of_chrEq (h : ChrEq c χ) (w : HeightOneSpectrum (𝓞 D.host.E)) : locChar c w = χ.loc w := by
   obtain ⟨e, he, h0, h1, h2⟩ := GlobalTheory.PlaceIdem.exists_isPlIdem D (finAdEquiv D.host.F D.host.E)
     (fun x => (toFinAd_tmul 1 x).trans (by rw [map_one, one_mul])) mem_int_iff (fun a k P n ha => by
@@ -187,12 +192,12 @@ theorem locChar_eq_of_chrEq (h : ChrEq c χ) (w : HeightOneSpectrum (𝓞 D.host
   have key : ∀ k : D.host.Eˣ, locU he.1 k = locIdele D.host.F w (atFin w k) := fun k => by
     refine eq_locIdele ?_ (FiniteAdeleRing.ext _ fun P => ?_)
     · change infPart D (1 + e * (incA D k - 1)) = 1
-      rw [RingHom.map_add, RingHom.map_mul, h0, zero_mul, add_zero, RingHom.map_one]
+      rw [RingHom.map_add (f := _), RingHom.map_mul, h0, zero_mul, add_zero, RingHom.map_one]
     · have e1 : finAdEquiv D.host.F D.host.E (finPart D (incA D k)) = algebraMap D.host.E _ (k : D.host.E) :=
         (toFinAd_tmul 1 (k : D.host.E)).trans (by rw [map_one, one_mul])
       change finAdEquiv D.host.F D.host.E (finPart D (1 + e * (incA D k - 1))) P =
         Neutral.B1.finiteSingle D.host.E w (algebraMap D.host.E _ (k : D.host.E)) P
-      rw [RingHom.map_add, RingHom.map_mul, RingHom.map_sub, RingHom.map_one, RingEquiv.map_add, RingEquiv.map_mul,
+      rw [RingHom.map_add (f := _), RingHom.map_mul, RingHom.map_sub, RingHom.map_one, RingEquiv.map_add (e := _), RingEquiv.map_mul,
         RingEquiv.map_sub, RingEquiv.map_one, e1]
       change 1 + finAdEquiv D.host.F D.host.E (finPart D e) P * (algebraMap D.host.E _ (k : D.host.E) - 1) = _
       by_cases hP : P = w
@@ -241,8 +246,7 @@ theorem valuation_up (h : w.under (𝓞 F) = v) (x : F) :
     w.valuation E (algebraMap F E x) = v.valuation F x ^ w.asIdeal.ramificationIdx (𝓞 F) := by
   subst h
   have : w.asIdeal.LiesOver (w.under (𝓞 F)).asIdeal := ⟨rfl⟩
-  rw [← HeightOneSpectrum.valuation_liesOver E (w.under (𝓞 F)) w x,
-    Ideal.ramificationIdx'_eq_ramificationIdx _ _ (w.under (𝓞 F)).ne_bot]
+  rw [← HeightOneSpectrum.valuation_liesOver E (w.under (𝓞 F)) w x]
 
 theorem valued_complMap (h : w.under (𝓞 F) = v) {a : Fv F v} (ha : a ≠ 0) :
     Valued.v (complMap h a) = Valued.v a ^ w.asIdeal.ramificationIdx (𝓞 F) := by
@@ -324,7 +328,7 @@ theorem isSquare_of_isSplit (h0 : b 0 = 1) (h1 : b 1 * b 1 = algebraMap F E δ) 
   generalize (Algebra.TensorProduct.basis (Fv F v) b).repr z 0 = p at h6
   generalize (Algebra.TensorProduct.basis (Fv F v) b).repr z 1 = q at h6
   subst h6
-  rw [map_add, toCompl_tmul, toCompl_tmul, map_one, mul_one] at e1 e2
+  rw [map_add (f := _), toCompl_tmul, toCompl_tmul, map_one, mul_one] at e1 e2
   have hq : q ≠ 0 := by
     rintro rfl
     rw [map_zero, zero_mul, add_zero] at e1 e2
@@ -348,7 +352,7 @@ theorem ramificationIdx_eq_one_of_isSquare (h0 : b 0 = 1) (h1 : b 1 * b 1 = alge
   obtain ⟨a, ha⟩ : ∃ a, algebraMap E (w.adicCompletion E) π = complMap h a := by
     refine ⟨algebraMap F _ (b.repr π 0) + algebraMap F _ (b.repr π 1) * s, ?_⟩
     conv_lhs => rw [← b.sum_repr π]
-    rw [Fin.sum_univ_two, h0, Algebra.smul_def, Algebra.smul_def, mul_one, map_add, map_mul, hs, map_add, map_mul,
+    rw [Fin.sum_univ_two, h0, Algebra.smul_def, Algebra.smul_def, mul_one, map_add (f := _), map_mul, hs, map_add (f := _), map_mul,
       complMap_algebraMap, complMap_algebraMap]
   rw [← valued_alg, ha] at hπ
   have ha0 : a ≠ 0 := by
@@ -394,8 +398,8 @@ theorem mem_normGroup_of_isSplit (h2 : Module.finrank F E = 2) (hv : IsSplit (E 
   field_simp
   ring
 
-open scoped WithZeroTopology in
 
+open scoped WithZeroTopology in
 theorem not_mem_normGroup_of_inert (h2 : Module.finrank F E = 2) (hv : ¬ IsSplit (E := E) v)
     (hu : IsUnram (E := E) v) {x : (Fv F v)ˣ} (hx : IsUnifAt v x) : x ∉ normGroup F E (Fv F v) := by
   obtain ⟨σ, δ, b, hσ, -, h0, hb, h1⟩ := exists_conj_basis h2
@@ -534,11 +538,6 @@ theorem IsEta.val_eq (h2 : Module.finrank F E = 2) (h : IsEta F E η) (hu : IsUn
   split_ifs with hv
   · exact h.loc_of_mem h2 (mem_normGroup_of_isSplit h2 hv _)
   · exact h.loc_of_not_mem h2 (not_mem_normGroup_of_inert h2 hv hu (unif_spec v))
-
-theorem IsHeckeF.pow (h : IsHeckeF F η) (k : ℕ) : IsHeckeF F (η ^ k) :=
-  ⟨h.1.pow k, fun a => by rw [MonoidHom.pow_apply, h.2 a, one_pow]⟩
-
-theorem loc_pow (χ : HChar F) (k : ℕ) (x : (Fv F v)ˣ) : (χ ^ k).loc v x = χ.loc v x ^ k := rfl
 
 variable {μ : (AF F ⊗[F] E)ˣ →* Circle} {k : ℕ}
 

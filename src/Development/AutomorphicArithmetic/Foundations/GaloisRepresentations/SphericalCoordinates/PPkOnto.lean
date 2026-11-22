@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PFrameEx
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.PFrameEx
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
@@ -38,7 +42,7 @@ private theorem pairL_add {G : HTGroup p} (a b b' : Loc G) : pairL a (b + b') = 
   unfold pairL
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun w _ => ?_
-  rw [Pi.add_apply, dotProduct_add, map_add]
+  rw [Pi.add_apply, dotProduct_add, map_add (f := _)]
 
 private theorem pair_small {G : HTGroup p} (t : Loc G) {e : ℝ} (he : 0 < e) :
     ∃ d : ℝ, 0 < d ∧ ∀ b : Loc G, (∀ w i, ‖(b w i : PadicAlgCl p)‖ < d) → ‖pairL t b‖ ≤ e := by
@@ -87,7 +91,7 @@ private theorem dense_top (K : IntermediateField ℚ_[p] (PadicAlgCl p)) {n : �
     rw [Fintype.linearIndependent_iff]
     intro c hc
     by_contra hne
-    push_neg at hne
+    push Not at hne
     obtain ⟨i0, hi0⟩ := hne
     obtain ⟨j, -, hj⟩ := Finset.exists_max_image Finset.univ
       (fun i => ‖(c i : PadicAlgCl p)‖) ⟨i0, Finset.mem_univ _⟩
@@ -147,7 +151,7 @@ private theorem T_span (A : PFrame L β) (s₀ : Finset (VQ D)) (hs : Submodule.
       rw [map_zero]
       exact W.zero_mem
     | add x y _ _ hx hy =>
-      rw [map_add, Pi.add_apply]
+      rw [map_add (f := _), Pi.add_apply]
       exact W.add_mem hx hy
     | smul q x _ hx =>
       rw [map_rat_smul, Pi.smul_apply]
@@ -202,7 +206,7 @@ private theorem rep_mem (hFI : FInt) {M : AddSubgroup (VQ D)} (hM : IsPLat D M) 
     rw [← hc', L.rep_F]
     exact hO _ y hy
   obtain ⟨m', hm', hm'y⟩ := (hMs _).1 key
-  refine (hMs _).2 ⟨m' * m, Nat.Coprime.mul hm' hmc, ?_⟩
+  refine (hMs _).2 ⟨m' * m, Nat.Coprime.mul_left hm' hmc, ?_⟩
   rw [mul_smul]
   exact hm'y
 

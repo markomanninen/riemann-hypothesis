@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeilQuotientHaar.HaarExist
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeilQuotientHaar.HaarExist
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,7 +90,7 @@ theorem haar_measure_uniqueness : HaarUniq := by
     obtain ⟨c, hK0⟩ : ∃ c : ℝ≥0∞, ρ' = c • Measure.haarMeasure K₀ :=
       ⟨_, Measure.haarMeasure_unique ρ' K₀⟩
     have hρ : ρ = c • (Measure.haarMeasure K₀).map Subtype.val := by
-      rw [← hback, hK0, Measure.map_smul]
+      rw [← hback, hK0, Measure.map_smul c hme.measurable.aemeasurable]
     refine ⟨c, ?_, ?_, hρ⟩
     · intro hz
       apply h0

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FactAbs
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.IoBlockMonomial
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Kummer
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FactAbs
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.IoBlockMonomial
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Kummer
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,10 +31,10 @@ theorem rat_int {O K : Type} [CommRing O] [IsLocalRing O] [Field K] [CharZero K]
       rw [x.reduced.gcd_eq_one] at h2
       exact hp.one_lt.ne' (Nat.dvd_one.mp h2)
     have h0 : padicValInt p x.num = 0 := padicValInt.eq_zero_of_not_dvd hnum
-    have h1 : 1 ≤ padicValNat p x.den := one_le_padicValNat_of_dvd x.den_nz hd
+    have h1 : 1 ≤ multiplicity p x.den := one_le_padicValNat_of_dvd x.den_nz hd
     rw [h0] at hv'
     omega
-  have hpv0 : padicValNat p x.den = 0 := padicValNat.eq_zero_of_not_dvd hden
+  have hpv0 : multiplicity p x.den = 0 := padicValNat.eq_zero_of_not_dvd hden
   rw [hpv0] at hv'
   have hdvd : (p : ℤ) ^ c ∣ x.num := by
     have := (padicValInt_dvd_iff (p := p) c x.num).mpr (Or.inr (by omega))
@@ -117,8 +121,8 @@ theorem baseExp_odd (C0 CE1 CE2 : ℝ) (X : Loc) (j : Fin (numSeg X.TT)) (b : Se
     exact hi (hinj (congrArg (fun y => y.1.1) h))
   rw [baseExp, Finsupp.add_apply]
   congr 1
-  · rw [Finsupp.finset_sum_apply, Finset.sum_eq_single i0]
-    · rw [Finsupp.finset_sum_apply, Finset.sum_eq_single c0]
+  · rw [Finsupp.finsetSum_apply, Finset.sum_eq_single i0]
+    · rw [Finsupp.finsetSum_apply, Finset.sum_eq_single c0]
       · rw [Finsupp.add_apply, Finsupp.single_apply, Finsupp.single_apply]
         cases β0 <;> simp
       · intro c _ hc
@@ -131,14 +135,14 @@ theorem baseExp_odd (C0 CE1 CE2 : ℝ) (X : Loc) (j : Fin (numSeg X.TT)) (b : Se
       · intro h
         exact absurd (Finset.mem_univ c0) h
     · intro i _ hi
-      rw [Finsupp.finset_sum_apply]
+      rw [Finsupp.finsetSum_apply]
       refine Finset.sum_eq_zero fun c _ => ?_
       rw [Finsupp.add_apply, Finsupp.single_apply, Finsupp.single_apply, if_neg (hne i true c hi),
         if_neg (hne i false c hi)]
       rfl
     · intro h
       exact absurd (Finset.mem_univ i0) h
-  · rw [Finsupp.finset_sum_apply, Finset.sum_eq_single i0]
+  · rw [Finsupp.finsetSum_apply, Finset.sum_eq_single i0]
     · rw [hite]
       by_cases h1 : (i0 : ℕ) < (X.seg C0 CE1 CE2 j).sigma
       · by_cases hc : c0 = 0
@@ -170,6 +174,6 @@ theorem baseExp_end (C0 CE1 CE2 : ℝ) (X : Loc) (j : Fin (numSeg X.TT)) (b : Se
       (if Q then f else 0) y = if Q then f y else 0 := by
     intro Q _ f y
     split_ifs <;> rfl
-  simp [baseExp, Finsupp.finset_sum_apply, Finsupp.single_apply, topOdd_ne_end, hite]
+  simp [baseExp, Finsupp.finsetSum_apply, Finsupp.single_apply, topOdd_ne_end, hite]
 
 end Formalism.MainNotions.ColumnSystems.Pf

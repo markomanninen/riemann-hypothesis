@@ -1,12 +1,18 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.TwTan
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GrIsGenAt
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkMap
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.TwTan
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GrIsGenAt
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkMap
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar
+open GlobalTheory.CompanionTheory.Ar (dualMap)
 
 noncomputable section
 
@@ -274,8 +280,8 @@ variable {Ω₀ Ω₀' Ω Ω' : Type} [Field Ω₀] [Field Ω₀'] [Field Ω] [F
 
 theorem finrank_adjoin_pull (fn : Ω₀ →+* Ω) (fn' : Ω₀' →+* Ω') (ψ : Ω₀ ≃+* Ω₀') (i : Ω →+* Ω')
     (hc : fn'.comp ψ.toRingHom = i.comp fn) {T : Type} (w : T → Ω) :
-    letI := fn.toAlgebra
-    letI := fn'.toAlgebra
+    letI := fn.toAlgebra;
+    letI := fn'.toAlgebra;
     Module.finrank (IntermediateField.adjoin Ω₀' (Set.range fun q => i (w q))) Ω' =
       Module.finrank i.fieldRange Ω' * Module.finrank (IntermediateField.adjoin Ω₀ (Set.range w)) Ω := by
   letI := fn.toAlgebra
@@ -333,7 +339,7 @@ theorem finrank_adjoin_pull (fn : Ω₀ →+* Ω) (fn' : Ω₀' →+* Ω') (ψ :
       exact ⟨a, Subtype.ext ha⟩⟩
   have h1 : Module.finrank A Ω = Module.finrank A' i.fieldRange :=
     Algebra.finrank_eq_of_equiv_equiv e₁ e₂ (by ext x; rfl)
-  rw [← Module.finrank_mul_finrank A' i.fieldRange Ω', h1, mul_comm]
+  rw [← (letI : Module.Free i.fieldRange Ω' := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank A' i.fieldRange Ω'), h1, mul_comm]
 
 theorem genericFlag_pull (fn : Ω₀ →+* Ω) (fn' : Ω₀' →+* Ω') (ψ : Ω₀ ≃+* Ω₀') (i : Ω →+* Ω')
     (hc : fn'.comp ψ.toRingHom = i.comp fn) {E F F' : Type} [AddCommGroup E] [Module Ω₀ E] [Module Ω₀' E]
@@ -342,7 +348,7 @@ theorem genericFlag_pull (fn : Ω₀ →+* Ω) (fn' : Ω₀' →+* Ω') (ψ : Ω
     (V' : S → Submodule Ω₀' E) (hV : ∀ s e, e ∈ V' s ↔ e ∈ V s) (b : ∀ s, Fin (r s) → F) (d : ℕ)
     [FiniteDimensional i.fieldRange Ω']
     (h : letI := fn.toAlgebra; IsGenericFlag (Ω' := Ω) j₀ V b d) :
-    letI := fn'.toAlgebra
+    letI := fn'.toAlgebra;
     IsGenericFlag (Ω' := Ω') (j.comp j₀) V' (fun s k => j (b s k)) (Module.finrank i.fieldRange Ω' * d) := by
   letI := fn.toAlgebra
   letI := fn'.toAlgebra
@@ -381,12 +387,13 @@ theorem genericFlag_pull (fn : Ω₀ →+* Ω) (fn' : Ω₀' →+* Ω') (ψ : Ω
   · exact hj.2 _ _ (hb σ)
   · simp [hd1]
   · simp [hup σ l k hlk]
-  · rw [show (fun k => ∑ l, ((u σ).map i) l k • (j.comp j₀) (c σ l)) =
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [show (fun k => ∑ l, ((u σ).map i) l k • (j.comp j₀) (c σ l)) =
         fun k => j (∑ l, u σ l k • j₀ (c σ l)) by
       funext k
       rw [map_sum]
       exact Finset.sum_congr rfl fun l _ => (hjs _ _).symm]
-    exact flagStep_map_eq hj.1 (hfl σ) s
+      exact flagStep_map_eq hj.1 (hfl σ) s
   · exact hai.ringHom_of_comp_eq ψ i ψ.surjective i.injective hc
   · exact Nat.mul_pos Module.finrank_pos hd0
   · have := finrank_adjoin_pull fn fn' ψ i hc (fun q : Σ σ, Fin (r σ) × Fin (r σ) => u q.1 q.2.1 q.2.2)

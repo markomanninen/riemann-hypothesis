@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qn11.derivation_mem_pow_of_mem_pow_succ :
     ∀ {R : Type} [inst : CommRing R]
@@ -18,5 +22,5 @@ theorem UpperTheory.Reformulated.B.Qn11.derivation_mem_pow_of_mem_pow_succ :
       rw [pow_succ, mul_comm b]
       exact Ideal.mul_mem_mul (ih ha) hb
     · intro x y hx hy
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Ideal.add_mem _ hx hy

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HermCoord
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CoordPair
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniqueSelfDualHaarMeasureInfiniteAdeles
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniqueSelfDualMeasuresFinitePlace
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HermitianCoordinatesHomeomorph
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HermCoord
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CoordPair
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniqueSelfDualHaarMeasureInfiniteAdeles
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniqueSelfDualMeasuresFinitePlace
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HermitianCoordinatesHomeomorph
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.GaugeEx
 open scoped TensorProduct NNReal ENNReal
@@ -56,11 +60,5 @@ namespace GlobalTheory.HermSD
 end GlobalTheory.HermSD
 
 namespace GlobalTheory.HermSD
-
-theorem isHermND_one {F E : Type} [Field F] [Field E] [Algebra F E] (σ : E →ₐ[F] E) :
-    IsHermND σ (1 : Matrix (Fin 1) (Fin 1) E) := by
-  refine ⟨fun i j => ?_, by simp⟩
-  rw [Subsingleton.elim i 0, Subsingleton.elim j 0]
-  simp
 
 end GlobalTheory.HermSD

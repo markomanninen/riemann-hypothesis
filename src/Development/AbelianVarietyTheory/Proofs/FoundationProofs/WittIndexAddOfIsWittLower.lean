@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.MemL2OfBoundedContinuousInvariant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MemL2OfBoundedContinuousInvariant
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta MeasureTheory GlobalTheory.AutomorphicL2Unitary GlobalTheory.Mem.Th GlobalTheory.Cusp
 open GlobalTheory.IndefiniteRowSideFullHecke.AdelicUnitaryGroups (perp)
@@ -28,10 +32,12 @@ private theorem perp_eq_ker_pi_hT_finBasis (A : Submodule E V.V) :
       simpa using congrFun h k
     have hx' : x = ∑ k, (Module.finBasis E A).repr ⟨x, hx⟩ k • ((Module.finBasis E A k : A) : V.V) := by
       have e := congrArg A.subtype ((Module.finBasis E A).sum_repr ⟨x, hx⟩)
-      simp only [map_sum, map_smul, Submodule.subtype_apply] at e
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, Submodule.subtype_apply] at e
       exact e.symm
     rw [hx']
-    simp [map_sum, hk]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, hk]
 
 private theorem pi_hT_finBasis_range_surjective (A : Submodule E V.V) :
     LinearMap.range (LinearMap.pi fun k : Fin (finrank E A) =>
@@ -50,7 +56,8 @@ private theorem pi_hT_finBasis_range_surjective (A : Submodule E V.V) :
       calc _ = ∑ k, V.hT ((Module.finBasis E A k : A) : V.V) y *
             (φ fun j => if k = j then (1 : E) else 0) := Finset.sum_congr rfl fun k _ => mul_comm _ _
         _ = 0 := h1
-    rw [map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply]
     simp only [LinearMap.map_smulₛₗ, LinearMap.smul_apply, starRingEnd_apply, star_star, smul_eq_mul]
     exact h2
   have h0 := V.nondeg.1 _ hw

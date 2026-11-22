@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.JointCmpEmbeddingY
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NatCastMemOfPlace
-import Formalism.LocalToGlobal.InertKernelTheory.SubBSplit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.JointCmpEmbeddingY
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NatCastMemOfPlace
+public import Formalism.LocalToGlobal.InertKernelTheory.SubBSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +24,8 @@ variable {D : D7}
 
 def tay {a b : ℕ} (G : TaylorLogMetric.VC D a b → ℂ) : MvPowerSeries (D.what₂.Tau × Fin b × Fin a) ℂ := fun α => TaylorLogMetric.taylor D G α
 
-open Classical in
 
+open Classical in
 def pullMat {a b : ℕ} (e : Matrix (Fin a) (Fin a) D.host.E) (e' : Matrix (Fin b) (Fin b) D.host.E)
     (x y : D.what₂.Tau × Fin b × Fin a) : ℂ :=
   if x.1 = y.1 then (starRingEnd ℂ) (TaylorLogMetric.embT D x.1 (e' y.2.1 x.2.1)) * TaylorLogMetric.embT D x.1 (e y.2.2 x.2.2) else 0
@@ -38,8 +42,8 @@ def reframe (fd : FData X D) (ρ : ∀ v : X.Pl, D.host.E →+* X.G.P.Qq v)
 variable {L : SizeData₂ D} {hT : GatTies D} {Gi : G.Inst D L} {Gl : G.LatInst D} {Kc : G.Consts} {Dx : DivX D} {cX : ExtraC}
   {ex : Extra D L hT Gi Gl Kc Dx cX}
 
-open Classical in
 
+open Classical in
 def thCl (t : KerEntTied ex) (u : D.what₂.Word) (μ : D.what₂.Tup) (cls : ∀ j, X.Lv.comp j → (X.Pj j).Tup → (D.chTw u μ).cls j)
     (j : ℕ) (La : X.Lt j) (La' : X.Lt (j + 1)) : TaylorLogMetric.VC D ((X.Pj j).m + 1) ((X.Pj (j + 1)).m + 1) → ℂ :=
   if h : (X.Pj j).m + 1 = D.R.N j ∧ (X.Pj (j + 1)).m + 1 = D.R.N (j + 1) then
@@ -52,8 +56,8 @@ def TieOpS {Y : Pend X} (t : KerEntTied ex) (u : D.what₂.Word) (μ : D.what₂
     (e : GL3Theta.Idx D (D.R.N j) (D.R.N (j + 1)) → X.ZA j)
     (Φ₀ : MvPolynomial (GL3Theta.FrV D (D.R.N (j + 1))) ℂ →ₛₗ[ι] XspC (X.Pj (j + 1)) Y.Kc) : Prop :=
   ∀ La ∈ Y.Rep j, ∀ (x : ((ex.tw.fm u μ).lat j).V) Q, K2.SharpQ t ex.tw u μ j x Q → ∀ n : X.ZA j →₀ ℕ,
-    MvPolynomial.coeff n (polDel X Y.Kc j (Gm j La x)) =
-      sO j La • MvPolynomial.coeff n (trDY X Y.Kc j D e Φ₀ (polDY D (t.O u μ).dgen (Q (cls j La.1 La.2)) (N' := D.R.N (j + 1))))
+    AddMonoidAlgebra.coeff (polDel X Y.Kc j (Gm j La x)) n =
+      sO j La • AddMonoidAlgebra.coeff (trDY X Y.Kc j D e Φ₀ (polDY D (t.O u μ).dgen (Q (cls j La.1 La.2)) (N' := D.R.N (j + 1)))) n
 
 end Gen
 
@@ -65,9 +69,9 @@ variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : G.Inst D L} {Gl : G
   {Lv : Levels (Gl.Fl u w hg)} {I : CmpJIn ex.tw u μ w hg Lv} {H : CmpJHyp ex.cmp I} {X : LabIn I}
   [Fact (D.what₂.places.resChar w).Prime] {t : KerEntTied ex} (J : Joint t H X) (std : Lt.StdAtW D Gl u w hg)
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure Dec where
   gam : ∀ j (_ : j ≤ D.R.m), (sysS H X std).Lt j → GL (Fin (D.R.N j)) D.host.E
   kap : ∀ j (hj : j ≤ D.R.m) (La : (sysS H X std).Lt j), ((J.St j hj).K (J.chart std j hj La)).lev.U
@@ -81,8 +85,8 @@ def gMat (j : ℕ) (hj : j ≤ D.R.m) (γ : GL (Fin (D.R.N j)) D.host.E) : Matri
 
 variable {J std} (d : Dec J std)
 
-open Classical in
 
+open Classical in
 def Dec.eM (j : ℕ) (La : (sysS H X std).Lt j) :
     Matrix (Fin (((sysS H X std).Pj j).m + 1)) (Fin (((sysS H X std).Pj j).m + 1)) D.host.E :=
   if h : j ≤ D.R.m ∧ ((sysS H X std).Pj j).m + 1 = D.R.N j then

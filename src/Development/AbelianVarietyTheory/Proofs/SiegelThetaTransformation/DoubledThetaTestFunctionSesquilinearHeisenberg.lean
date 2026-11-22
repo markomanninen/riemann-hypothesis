@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DblZMemHn
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ConjKappa
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SummableNormSiegelThetaSeriesTerms
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DoubledHermitianTestFunctionSpecStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianHeisenbergOperatorLawsStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianThetaSummableAndDeterminesTestFnStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RationalSchwartzBruhatAlgebraIntegralLinearStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ConjugateConjugate
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DblZMemHn
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ConjKappa
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SummableNormSiegelThetaSeriesTerms
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DoubledHermitianTestFunctionSpecStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianHeisenbergOperatorLawsStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianThetaSummableAndDeterminesTestFnStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RationalSchwartzBruhatAlgebraIntegralLinearStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ConjugateConjugate
+
+@[expose] public section
 
 open Matrix Complex NumberField MeasureTheory GlobalTheory GlobalTheory.SW GlobalTheory.ThFr ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD
 open scoped ComplexConjugate ComplexOrder Real Classical
@@ -48,7 +52,7 @@ theorem conj_hD (hW : W.IsHermitian) (u u' q q' : Fin N → ℂ) :
     have := star_dotProduct_star (W *ᵥ c) a
     rw [star_mulVec, hW.eq, ← dotProduct_mulVec] at this
     exact this.symm
-  rw [hD, map_add, h, h, star_star, star_star, hD]
+  rw [hD, map_add (f := _), h, h, star_star, star_star, hD]
 
 theorem hD_sub_conj (hW : W.IsHermitian) (h1 : W * imH Z = 1) (d b d' b' : Fin N → ℂ) :
     hD W (star b' + Z *ᵥ star d') (b' + d' ᵥ* Z) (star b + Z *ᵥ star d) (b + d ᵥ* Z) -
@@ -130,8 +134,8 @@ theorem lin_eq_zero (hs : IsSympl X bas) {x₁ x₂ : Frame X.Ψ r} (h₁ : x₁
   · rw [key, e1]; simp
   · rw [key, star_eq_zero.1 e2]; simp
 
-variable (X) in
 
+variable (X) in
 noncomputable def cz (x₁ x₂ : Frame X.Ψ r) (τ : X.Ψ) :
     ((Fin g → ℂ) × (Fin g → ℂ)) →ₗ[ℂ] (Fin r → ℂ) where
   toFun p := (-(τ.1 X.κ0 / 2)) • (X.Gm.map τ.1 *ᵥ (aAnti X x₁ x₂ τ)⁻¹ *ᵥ fun a =>
@@ -143,8 +147,8 @@ noncomputable def cz (x₁ x₂ : Frame X.Ψ r) (τ : X.Ψ) :
     rw [RingHom.id_apply, smul_comm c, ← mulVec_smul _ c, ← mulVec_smul _ c]
     congr 3; funext a; simp only [Pi.smul_apply, Prod.smul_fst, Prod.smul_snd]; split_ifs <;> rfl
 
-variable (X) in
 
+variable (X) in
 noncomputable def cz' (x₁ x₂ : Frame X.Ψ r) (τ : X.Ψ) :
     ((Fin g → ℂ) × (Fin g → ℂ)) →ₗ[ℂ] (Fin r → ℂ) where
   toFun p := (τ.1 X.κ0 / 2) • (((aLin X x₁ x₂ τ)⁻¹ *ᵥ fun a =>
@@ -162,8 +166,8 @@ theorem dblz_row {n : ℕ} (x₁ x₂ : Frame X.Ψ r) (z w : Fin n → Fin g →
 theorem dblz'_row {n : ℕ} (x₁ x₂ : Frame X.Ψ r) (z w : Fin n → Fin g → ℂ) (τ : X.Ψ) (k : Fin n) :
     dblz' X idx x₁ x₂ z w τ k = cz' X idx x₁ x₂ τ (z k, w k) := rfl
 
-variable (X) in
 
+variable (X) in
 noncomputable def bv (a₁ a₂ : Fin r → E) : Fin r → E := (X.κ0 / 4) • ((a₁ + a₂) ᵥ* X.Gm)
 
 theorem cz_per (hs : IsSympl X bas) {x₁ x₂ : Frame X.Ψ r} (h₁ : x₁ ∈ X.dom) (h₂ : x₂ ∈ X.dom)
@@ -177,7 +181,7 @@ theorem cz_per (hs : IsSympl X bas) {x₁ x₂ : Frame X.Ψ r} (h₁ : x₁ ∈ 
   rw [DblPer.cols, toCols₁_fromCols, toCols₂_fromCols] at e e'
   refine ⟨(congrFun (e τ) 0).trans ?_, congrFun (e' τ) 0⟩
   funext a
-  simp only [Matrix.add_apply, Pi.add_apply, mul_apply, mulVec, dotProduct, mul_comm (dblZ _ _ _ _ _ _)]
+  simp only [Matrix.add_apply, Pi.add_apply, Matrix.mul_apply, mulVec, dotProduct, mul_comm (dblZ _ _ _ _ _ _)]
   rfl
 
 theorem trace_pair (b d : Fin r → E) : ((Algebra.trace ℚ E (∑ a, b a * cc (d a)) : ℚ) : ℂ) =
@@ -210,7 +214,7 @@ theorem hD_eq (hs : IsSympl X bas) {x₁ x₂ : Frame X.Ψ r} (h₁ : x₁ ∈ X
         (hermForm (Hm X bas idx x₁) p.1 (per X x₁ y₁ ∘ idx) +
           hermForm (Hm X bas idx x₂) (per X x₂ y₂ ∘ idx) (star p.2))
       map_add' := fun p q => by
-        simp only [hD, hermForm, map_add, star_star, Prod.fst_add, Prod.snd_add, mulVec_add,
+        simp only [hD, hermForm, map_add (f := _), star_star, Prod.fst_add, Prod.snd_add, mulVec_add,
           dotProduct_add, add_dotProduct, Finset.sum_add_distrib]
         ring
       map_smul' := fun c p => by
@@ -222,7 +226,8 @@ theorem hD_eq (hs : IsSympl X bas) {x₁ x₂ : Frame X.Ψ r} (h₁ : x₁ ∈ X
       hD_sub_conj _ _ (hZ τ).inv.isHermitian (nonsing_inv_mul _ (hZ τ).det_pos.ne'.isUnit)
         (Data.emb τ.1 (y₁ - y₂)) (Data.emb τ.1 (bv X y₁ y₂))
         (Data.emb τ.1 (a₁ - a₂)) (Data.emb τ.1 (bv X a₁ a₂))
-    rw [Finset.sum_sub_distrib, ← map_sum, sub_conj, ← Finset.mul_sum, Finset.sum_sub_distrib,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_sub_distrib, ← map_sum, sub_conj, ← Finset.mul_sum, Finset.sum_sub_distrib,
       ← trace_pair, ← trace_pair, trace_bv, trace_bv] at e
     have e2 : -(1 / 2) * EF X (y₁ + y₂) (a₁ - a₂) - -(1 / 2) * EF X (a₁ + a₂) (y₁ - y₂) =
         EF X a₁ y₁ + EF X y₂ a₂ := by
@@ -277,7 +282,7 @@ theorem expo_row (hs : IsSympl X bas) {x₁ x₂ : Frame X.Ψ r} (h₁ : x₁ �
   simp only [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun τ _ => ?_
   rw [← Prod.mk_add_mk]
-  simp only [map_add, map_smul, (cz_per idx hs h₁ h₂ _ _ _).1, (cz_per idx hs h₁ h₂ _ _ _).2]
+  simp only [map_add (f := _), map_smul, (cz_per idx hs h₁ h₂ _ _ _).1, (cz_per idx hs h₁ h₂ _ _ _).2]
   exact gauss_per _ _ (nonsing_inv_mul _ (hZ τ).det_pos.ne'.isUnit) _ _ _ _
 
 theorem thA_add (hs : IsSympl X bas) {x : Frame X.Ψ r} (hx : x ∈ X.dom) {φ ψ : TF n g}
@@ -299,8 +304,8 @@ theorem thA_smul (x : Frame X.Ψ r) (c : ℂ) (φ : TF n g) (z : Fin n → Fin g
   simp only [Pi.smul_apply, smul_eq_mul, mul_assoc c, tsum_mul_left]
   ring
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem thH_smul {Ψ : Finset (E →+* ℂ)} {N : ℕ} (c : ℂ) (φ : Matrix (Fin n) (Fin N) E → ℂ)
     (Z : CM Ψ N N) (z z' : CM Ψ n N) : thH Ψ (c • φ) Z z z' = c * thH Ψ φ Z z z' := by
   unfold thH
@@ -331,16 +336,16 @@ theorem isDbl_heis (hs : IsSympl X bas) (hn : Even n) {φ₁ φ₂ : TF n g} (h�
         (((X.κ0 / 4) • ((y₁ + y₂) * X.Gm)).map τ.1).map conj +
         ((y₁ - y₂).map τ.1).map conj * (dblZ X x₁ x₂ τ)ᵀ := by
     funext τ k
-    rw [dblz_row, ← Prod.mk_add_mk, map_add, (cz_per idx hs h₁ h₂ _ _ _).1, ← add_assoc]
+    rw [dblz_row, ← Prod.mk_add_mk, map_add (f := _), (cz_per idx hs h₁ h₂ _ _ _).1, ← add_assoc]
     funext a
-    simp only [Matrix.add_apply, Pi.add_apply, mul_apply, mulVec, dotProduct,
+    simp only [Matrix.add_apply, Pi.add_apply, Matrix.mul_apply, mulVec, dotProduct,
       mul_comm (dblZ _ _ _ _ _ _)]
     rfl
   have a2 : dblz' X idx x₁ x₂ (fun k => z k + per X x₁ (y₁ k) ∘ idx)
       (fun k => w k + star (per X x₂ (y₂ k) ∘ idx)) = fun τ => dblz' X idx x₁ x₂ z w τ +
         ((X.κ0 / 4) • ((y₁ + y₂) * X.Gm)).map τ.1 + (y₁ - y₂).map τ.1 * dblZ X x₁ x₂ τ := by
     funext τ k
-    rw [dblz'_row, ← Prod.mk_add_mk, map_add, (cz_per idx hs h₁ h₂ _ _ _).2, ← add_assoc]
+    rw [dblz'_row, ← Prod.mk_add_mk, map_add (f := _), (cz_per idx hs h₁ h₂ _ _ _).2, ← add_assoc]
     rfl
   have a3 : (fun k i => conj ((w k + star (per X x₂ (y₂ k) ∘ idx)) i)) =
       fun k => (fun i => conj (w k i)) + per X x₂ (y₂ k) ∘ idx := by
@@ -356,7 +361,8 @@ theorem isDbl_heis (hs : IsSympl X bas) (hn : Even n) {φ₁ φ₂ : TF n g} (h�
   congr 2
   have e := Finset.sum_congr (s₁ := Finset.univ) rfl fun (k : Fin n) _ =>
     expo_row idx hs h₁ h₂ (y₁ k) (y₂ k) (z k) (w k)
-  simp only [Finset.sum_add_distrib (s := (Finset.univ : Finset (Fin n))), ← Finset.mul_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_add_distrib (s := (Finset.univ : Finset (Fin n))), ← Finset.mul_sum,
     hermForm_Hm, ← map_sum, ← Rat.cast_sum] at e
   simp only [← Finset.mul_sum, map_neg, map_mul, conj_ofReal, expo]
   simp only [Finset.sum_comm (s := (Finset.univ : Finset X.Ψ))]
@@ -379,7 +385,7 @@ theorem dbl_lin : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : �
     refine ((ex _ _ hφ₁ (GlobalTheory.T.rationalSchwartzBruhat_algebra_integral_linear _ _ _ _ _ hφ₂ hψ).1).2.2 _ (GlobalTheory.T.rationalSchwartzBruhat_algebra_integral_linear _ _ _ _ _ s s').1
       fun x₁ h₁ x₂ h₂ z w => ?_).symm
     obtain ⟨hΨ, hZ, -⟩ := dblZ_mem_Hn E r X x₁ h₁ x₂ h₂
-    rw [thA_add idx hs h₂ hφ₂ hψ, thH_add hΨ s s' hZ, map_add, mul_add, mul_add, d x₁ h₁ x₂ h₂,
+    rw [thA_add idx hs h₂ hφ₂ hψ, thH_add hΨ s s' hZ, map_add (f := _), mul_add, mul_add, d x₁ h₁ x₂ h₂,
       d' x₁ h₁ x₂ h₂]
   · refine ((ex _ _ ((GlobalTheory.T.rationalSchwartzBruhat_algebra_integral_linear _ _ _ _ _ hφ₁ hφ₁).2.1 a)
       ((GlobalTheory.T.rationalSchwartzBruhat_algebra_integral_linear _ _ _ _ _ hφ₂ hφ₂).2.1 b)).2.2 _ ((GlobalTheory.T.rationalSchwartzBruhat_algebra_integral_linear _ _ _ _ _ s s).2.1 _)

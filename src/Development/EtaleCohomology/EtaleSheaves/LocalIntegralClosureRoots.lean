@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.IntegralNormalization.NormAICOf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.IntegralNormalization.NormAICOf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry LateralTheory.E.t_E2Cut Polynomial

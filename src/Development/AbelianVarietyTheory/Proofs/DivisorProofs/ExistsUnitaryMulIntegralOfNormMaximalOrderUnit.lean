@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.Statement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMatLat
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqMulIntegralClosureOfSeparableInvolutionAlgebra
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.Statement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMatLat
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqMulIntegralClosureOfSeparableInvolutionAlgebra
+
+@[expose] public section
 
 noncomputable section
 
@@ -204,7 +208,7 @@ theorem exists_unitary_mul_integral : ∀ {O K A : Type} [CommRing O] [IsDomain 
       (a * τ a + b * τ b - a - b - τ a - τ b + 2) * heg
   have hτT : τ T = S := by
     rw [hT, hS, hf]
-    simp only [map_add, map_sub, map_mul, map_one, hτ]
+    simp only [map_add (f := _), map_sub, map_mul, map_one, hτ]
     ring
   have ie : IsIntegral O e := isIntegral_of_mul_self_eq hee
   have ig : IsIntegral O (τ e) := isIntegral_of_mul_self_eq hgg

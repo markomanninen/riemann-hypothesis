@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsVertRIndexSteps
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCurveCharts
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PVertRIndex
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PSectionIndexNorm
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsVertRIndexSteps
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCurveCharts
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PVertRIndex
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PSectionIndexNorm
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -15,8 +20,8 @@ namespace SectionQuotientFinite
 
 variable {T : Type} [Fintype T] {K' : Type} [Field K'] [NumberField K'] (y : (Σ _ : Unit, T) → K')
 
-omit [Fintype T] in
 
+omit [Fintype T] in
 theorem mem_blockFnField_of_mem_chartRingZ (t : T) {b : K'} (hb : b ∈ chartRingZ y (fun _ => t)) :
     b ∈ blockFnField y := by
   induction hb using Algebra.adjoin_induction with
@@ -79,8 +84,8 @@ theorem fg_sectionMod (hy : IsArithVar (mCoordIdeal y) 1) : AddGroup.FG (section
   have hfin : Module.Finite ℤ (sectionMod y) := Module.Finite.of_injective f.toIntLinearMap hinj
   exact Module.Finite.iff_addGroup_fg.mp hfin
 
-omit [NumberField K'] in
 
+omit [NumberField K'] in
 theorem aeval_ne_zero {s : MRing (fun _ : Unit => T)} (hs : IsMultiHomog s (fun _ => 1))
     (hsP : s ∉ mCoordIdeal y) : aeval y s ≠ 0 := by
   intro h0
@@ -122,8 +127,8 @@ theorem isTorsion (hy : IsArithVar (mCoordIdeal y) 1) {s : MRing (fun _ : Unit =
 
 end SectionQuotientFinite
 
-open SectionQuotientFinite in
 
+open SectionQuotientFinite in
 theorem SectionQuotFinite.closed : SectionQuotFinite.Statement := by
   intro T _ K' _ _ y s hy hs hsP
   have hfg : AddGroup.FG (sectionQuot y (aeval y s)) :=
@@ -137,9 +142,6 @@ theorem SectionQuotFinite.closed : SectionQuotFinite.Statement := by
   change ((n : ℤ)) • q = 0
   rw [natCast_zsmul]
   exact hnq
-
-theorem SectionQuotFinite.proof (_hC : CurveCharts.Statement) : SectionQuotFinite.Statement :=
-  SectionQuotFinite.closed
 
 end
 

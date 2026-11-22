@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.ReductionMap
-import GroundTheory.GlobalFields.ComplexMultiplication.ReductionLift
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.DualIsogeny
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.ReductionMap
+public import GroundTheory.GlobalFields.ComplexMultiplication.ReductionLift
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.DualIsogeny
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

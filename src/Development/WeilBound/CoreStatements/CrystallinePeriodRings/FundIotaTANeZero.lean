@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.ExistsMapEqOfPowMul
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.FrobAinfMapFrobenius
-import GroundTheory.PAdicHodge.FundamentalSeqFixed
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.ExistsMapEqOfPowMul
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.FrobAinfMapFrobenius
+public import GroundTheory.PAdicHodge.FundamentalSeqFixed
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,7 @@ theorem fund_iota_tA_ne_zero : ACris.iota ℂ_[l] l (Per6.tA l) ≠ 0 :=
   fund_iota_tA (l := l) ▸ fontaineT_ne_zero untilt_epsilon untilt_frobeniusEquiv_symm_epsilon_ne_one
 
 theorem fund_core {y : ACris.ACris ℂ_[l] l} {m n : ℕ} {z : Per6.BdRp l}
-    (hy : ACris.phi ℂ_[l] l y = (l : ACris.ACris ℂ_[l] l) ^ n * y)
+    (hy : ACris.phi (K := ℂ_[l]) (p := l) y = (l : ACris.ACris ℂ_[l] l) ^ n * y)
     (hz : ACris.iota ℂ_[l] l y = ACris.iota ℂ_[l] l (l : ACris.ACris ℂ_[l] l) ^ m *
       ACris.iota ℂ_[l] l (Per6.tA l) ^ n * z) :
     ∃ q : ℚ_[l], z = algebraMap ℚ_[l] (Per6.BdRp l) q := by

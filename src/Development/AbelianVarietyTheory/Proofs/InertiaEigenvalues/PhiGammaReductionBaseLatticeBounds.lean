@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GammaActionReductionStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachDeltaInvariantsReductionIsLatticeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GammaActionReductionStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachDeltaInvariantsReductionIsLatticeStatement
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.BaseABC
@@ -40,11 +44,11 @@ theorem X_dvd_of {l : ℕ} [Fact l.Prime] [CharP k l] {R : RingPG k l} {ι : k�
   set s : k⟦X⟧ := PowerSeries.mk fun n => PowerSeries.coeff (n + 1) c
   obtain ⟨t, ht⟩ := h2 s
   have ha : (c : k⸨X⸩) = vv k * (s : k⸨X⸩) + algebraMap k k⸨X⸩ (PowerSeries.constantCoeff c) := by
-    conv_lhs => rw [PowerSeries.eq_X_mul_shift_add_const c, map_add, map_mul, ← vv_eq_coe_X]
+    conv_lhs => rw [PowerSeries.eq_X_mul_shift_add_const c, map_add (f := _), map_mul, ← vv_eq_coe_X]
     rfl
   have hb' : b = (u : k⟦X⟧) * PowerSeries.X ^ (l - 1) * t + PowerSeries.C (PowerSeries.constantCoeff c) := by
     apply coe_inj
-    rw [← h, ha, map_add ι, map_mul ι, AlgHom.commutes, hu, ht, vv_eq_coe_X, map_add, map_mul, map_mul, map_pow]
+    rw [← h, ha, map_add ι, map_mul ι, AlgHom.commutes, hu, ht, vv_eq_coe_X, map_add (f := _), map_mul, map_mul, map_pow]
     rfl
   have h0 : PowerSeries.constantCoeff c = 0 := by
     rw [hb'] at hb
@@ -84,14 +88,16 @@ def trA (a : LetA O n₀) : LetA O n₀ := fun t => tr₀ W (a t)
 
 def trD (T : LocLat G Qp LL O) : W.DD T →+ ↥(DΔ W T) :=
   AddMonoidHom.codRestrict (∑ δ ∈ W.DelF, W.γD T δ).toAddMonoidHom (DΔ W T) (fun z δ hδ => by
-    simp only [LinearMap.toAddMonoidHom_coe, LinearMap.sum_apply, map_sum, ← W.γD_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.toAddMonoidHom_coe, LinearMap.sum_apply, map_sum, ← W.γD_mul]
     exact sum_shift W (fun g => W.γD T g z) hδ)
 
 theorem trD_coe (T : LocLat G Qp LL O) (z : W.DD T) : (trD W T z : W.DD T) = ∑ δ ∈ W.DelF, W.γD T δ z := by
   exact LinearMap.sum_apply _ _ _
 
 theorem tr₀_inv (b : O⟦X⟧) {δ : W.Gam} (hδ : δ ∈ W.DelF) : W.γ₀ δ (tr₀ W b) = tr₀ W b := by
-  simp only [tr₀, map_sum, ← AlgHom.mul_apply, ← map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [tr₀, map_sum, ← AlgHom.mul_apply, ← map_mul]
   exact sum_shift W (fun g => W.γ₀ g b) hδ
 
 theorem γD_smulA (T : LocLat G Qp LL O) (g : W.Gam) (a : LetA O n₀) (x : W.DD T) :
@@ -127,15 +133,15 @@ theorem span_ind {A D V : Type} [CommRing A] [AddCommGroup D] [Module A D] [AddC
     induction hz using Submodule.span_induction with
     | mem s hs => exact hS s hs
     | zero => intro a; simp
-    | add x y _ _ hx hy => intro a; rw [smul_add, map_add]; exact M.add_mem (hx a) (hy a)
+    | add x y _ _ hx hy => intro a; rw [smul_add, map_add (f := _)]; exact M.add_mem (hx a) (hy a)
     | smul r x _ hx => intro a; rw [smul_smul, mul_assoc]; exact hx _
   simpa using this 1
 
 variable {k : Type} [Field k] [Algebra O k] {l : ℕ} [Fact l.Prime] [CharP k l] {n : ℕ} {R : RingPG k l}
   {ι : k⸨X⸩ →ₐ[k] k⸨X⸩}
 
-variable (k l) in
 
+variable (k l) in
 def DelAct : Prop :=
   ∃ e : {δ // δ ∈ W.DelF} ≃ {z : ℤ_[l] // z ^ (l - 1) = 1}, ∀ δ a,
     PowerSeries.map (algebraMap O k) (W.γ₀ δ.1 a) =
@@ -159,7 +165,8 @@ theorem tr_of (hι : GlobalTheory.IndefiniteRowSideFullHecke.OnePlusPowerCharact
   have h1 := (hι.2.2.1 _).2 ⟨c, h⟩
   have h2 : PowerSeries.map (algebraMap O k) (tr₀ W b) =
       (W.DelF.card : k⟦X⟧) * PowerSeries.map (algebraMap O k) b := by
-    rw [tr₀, map_sum, ← nsmul_eq_mul, ← Finset.sum_const]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [tr₀, map_sum, ← nsmul_eq_mul, ← Finset.sum_const]
     refine Finset.sum_congr rfl fun δ hδ => ?_
     rw [he ⟨δ, hδ⟩, h1 _ (e ⟨δ, hδ⟩).2]
   rw [h2, map_mul, map_mul, map_mul, h, map_natCast, map_natCast]
@@ -183,7 +190,7 @@ theorem exists_lift (hι : GlobalTheory.IndefiniteRowSideFullHecke.OnePlusPowerC
   haveI : CharP k⟦X⟧ l := charP_of_injective_algebraMap (algebraMap k k⟦X⟧).injective l
   have hq : PowerSeries.map (algebraMap O k) W.q₀ = PowerSeries.X ^ (l - 1) := by
     have := congrArg (PowerSeries.map (algebraMap O k)) W.q₀_def
-    rw [hp, map_mul, map_sub, map_pow, map_add, map_one, PowerSeries.map_X, add_pow_char, one_pow,
+    rw [hp, map_mul, map_sub, map_pow, map_add (f := _), map_one, PowerSeries.map_X, add_pow_char, one_pow,
       add_sub_cancel_left] at this
     apply mul_left_cancel₀ (PowerSeries.X_ne_zero (R := k))
     rw [this, ← pow_succ']
@@ -249,7 +256,7 @@ theorem condB (hι : GlobalTheory.IndefiniteRowSideFullHecke.OnePlusPowerCharact
     induction hs' using Submodule.span_induction with
     | mem s hs => exact Submodule.subset_span ⟨s, hs, rfl⟩
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+    | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
     | smul a b _ hb => rw [φD_smulA]; exact Submodule.smul_mem _ _ hb
   refine span_ind ((p.j T A q i).comp (trD W T)) (pull ((F.D A).φ i) (N (i - 1))).toAddSubgroup _ _ ?_
     (hsp (h x hx))
@@ -278,7 +285,8 @@ theorem condC (hι : GlobalTheory.IndefiniteRowSideFullHecke.OnePlusPowerCharact
   have := j_tr p hq i _ ⟨s, hs.2⟩ c hc
   obtain ⟨c', rfl⟩ := X_dvd_of hι c _ hc (by
     have h0 : PowerSeries.constantCoeff (tr₀ W ((letπ * a : LetA O n₀) (τ i))) = 0 := by
-      rw [tr₀, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [tr₀, map_sum]
       refine Finset.sum_eq_zero fun δ _ => ?_
       rw [Pi.mul_apply, map_mul, map_mul, letπ, (W.γ₀_X δ).1, zero_mul]
     rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, PowerSeries.coeff_map,

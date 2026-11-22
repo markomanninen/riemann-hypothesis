@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.DivisorCycles.FinPolyPf
+module
+
+public import Development.EtaleCohomology.DivisorCycles.FinPolyPf
+
+@[expose] public section
 
 namespace LateralTheory.Fin.FinPoly
 theorem charpoly_eq_of_annihilating_poly_etale_instance : LateralTheory.DivDb.FinPoly := by

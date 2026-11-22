@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MulEqZeroIff
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MulEqZeroIff
+
+@[expose] public section
 
 open NumberField Module
 
@@ -23,12 +27,13 @@ theorem isIntegralLat_smul {h : V →ₗ⋆[K] V →ₗ[K] K} {L : Submodule (�
 
 theorem akCount_smul (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F)
     {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hd : IsTotPosDef h) {L : Submodule (𝓞 K) V}
-    (hL : Submodule.IsLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) {𝔭 : Ideal (𝓞 F)}
+    (hL : Submodule.IsFullLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) {𝔭 : Ideal (𝓞 F)}
     (h𝔭 : 𝔭.IsMaximal) {c : 𝓞 F} (hc : c ≠ 0) {k : ℕ} (hk : vF 𝔭 c ≤ k) :
     akCount (algebraMap F K (c : F) • h) L 𝔭 k =
       Ideal.absNorm 𝔭 ^ (2 * vF 𝔭 c * finrank K V ^ 2) * akCount h L 𝔭 (k - vF 𝔭 c) := by
   have : Fact (IsFixF K F) := ⟨hF⟩
-  obtain ⟨b, H, D, hb, hH, -⟩ := localValuationFiltration.exists_local_data hF hs hd hL hLi h𝔭
+  obtain ⟨b, hbL, hb⟩ := LocalSpans.exists_basis_locF hL h𝔭
+  obtain ⟨H, hH, _⟩ := LocF.exists_gram hLi b hbL
   have hH' : ∀ i j, algebraMap (𝓞 K) K ((algebraMap (𝓞 F) (𝓞 K) c • H) i j) =
       (algebraMap F K (c : F) • h) (b i) (b j) := by
     intro i j
@@ -39,12 +44,13 @@ theorem akCount_smul (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : 
 
 theorem nkCount_smul (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F)
     {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hd : IsTotPosDef h) {L : Submodule (𝓞 K) V}
-    (hL : Submodule.IsLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) {𝔭 : Ideal (𝓞 F)}
+    (hL : Submodule.IsFullLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) {𝔭 : Ideal (𝓞 F)}
     (h𝔭 : 𝔭.IsMaximal) {c : 𝓞 F} (hc : c ≠ 0) (n : 𝓞 F) {k : ℕ} (hk : vF 𝔭 c ≤ k) :
     nkCount (algebraMap F K (c : F) • h) L 𝔭 k (c * n) =
       Ideal.absNorm 𝔭 ^ (2 * vF 𝔭 c * finrank K V) * nkCount h L 𝔭 (k - vF 𝔭 c) n := by
   have : Fact (IsFixF K F) := ⟨hF⟩
-  obtain ⟨b, H, D, hb, hH, -⟩ := localValuationFiltration.exists_local_data hF hs hd hL hLi h𝔭
+  obtain ⟨b, hbL, hb⟩ := LocalSpans.exists_basis_locF hL h𝔭
+  obtain ⟨H, hH, _⟩ := LocF.exists_gram hLi b hbL
   have hH' : ∀ i j, algebraMap (𝓞 K) K ((algebraMap (𝓞 F) (𝓞 K) c • H) i j) =
       (algebraMap F K (c : F) • h) (b i) (b j) := by
     intro i j
@@ -87,9 +93,28 @@ theorem discrIdeal_smul_le_iff {h : V →ₗ⋆[K] V →ₗ[K] K} {L : Submodule
     unfold discrIdeal
     rw [Ideal.span_le]
     rintro z ⟨x, hx, ez⟩
-    apply idealPowerSpanBounds.mem_of_mul_mem h𝔭 (pow_notMem h𝔭 (localValuationFiltration.notMem_pow_vF h𝔭 hc) (finrank K V))
-    apply hle
-    exact Ideal.subset_span ⟨x, hx, by rw [gram_smul, map_mul, ez]⟩
+    let d := c ^ finrank K V
+    let v := finrank K V * vF 𝔭 c
+    have hd : d ∉ 𝔭 ^ (v + 1) :=
+      pow_notMem h𝔭 (localValuationFiltration.notMem_pow_vF h𝔭 hc) (finrank K V)
+    have hz : algebraMap (𝓞 F) (𝓞 K) d * z ∈ extP K 𝔭 ^ (v + e) := by
+      apply hle
+      exact Ideal.subset_span ⟨x, hx, by rw [gram_smul, map_mul, ez]⟩
+    have hspan : extP K 𝔭 ^ v ≤
+        Ideal.span {algebraMap (𝓞 F) (𝓞 K) d} ⊔ extP K 𝔭 ^ (v + e) := by
+      have h := idealPowerSpanBounds.pow_le_span_sup h𝔭.isPrime (idealPowerSpanBounds.ne_bot h𝔭) hd (v + e)
+      simpa only [extP, Ideal.map_pow, Ideal.map_sup, Ideal.map_span, Set.image_singleton] using
+        (Ideal.map_mono (f := algebraMap (𝓞 F) (𝓞 K)) h)
+    have hmul : extP K 𝔭 ^ v * Ideal.span {z} ≤ extP K 𝔭 ^ (v + e) := by
+      refine (Ideal.mul_mono_left hspan).trans ?_
+      rw [Ideal.sup_mul, Ideal.span_singleton_mul_span_singleton]
+      exact sup_le ((Ideal.span_singleton_le_iff_mem _).mpr hz) Ideal.mul_le_left
+    have hne : extP K 𝔭 ^ v ≠ 0 :=
+      pow_ne_zero _ (idealPowerSpanBounds.map_ne_bot_of_isMaximal (K := K) h𝔭)
+    have hdiv : extP K 𝔭 ^ v * extP K 𝔭 ^ e ∣ extP K 𝔭 ^ v * Ideal.span {z} := by
+      rw [← pow_add]
+      exact Ideal.dvd_iff_le.mpr hmul
+    exact Ideal.dvd_span_singleton.mp ((mul_dvd_mul_iff_left hne).mp hdiv)
   · intro hle
     unfold discrIdeal
     rw [Ideal.span_le]
@@ -101,7 +126,8 @@ theorem discrIdeal_smul_le_iff {h : V →ₗ⋆[K] V →ₗ[K] K} {L : Submodule
       rw [ez, gram_smul, map_mul, hdet]
     have h1 : g.det ∈ extP K 𝔭 ^ e := hle (Ideal.subset_span ⟨x, hx, hdet⟩)
     have h2 : algebraMap (𝓞 F) (𝓞 K) (c ^ finrank K V) ∈ extP K 𝔭 ^ (finrank K V * vF 𝔭 c) := by
-      apply localizedQuotients.ι_mem_pow
+      rw [extP, ← Ideal.map_pow]
+      apply Ideal.mem_map_of_mem
       rw [mul_comm, pow_mul]
       exact Ideal.pow_mem_pow (localValuationFiltration.mem_pow_vF h𝔭 hc) _
     show z ∈ _
@@ -110,15 +136,24 @@ theorem discrIdeal_smul_le_iff {h : V →ₗ⋆[K] V →ₗ[K] K} {L : Submodule
 
 theorem vd_smul (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F)
     {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hd : IsTotPosDef h) {L : Submodule (𝓞 K) V}
-    (hL : Submodule.IsLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) {𝔭 : Ideal (𝓞 F)}
+    (hL : Submodule.IsFullLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) {𝔭 : Ideal (𝓞 F)}
     (h𝔭 : 𝔭.IsMaximal) {c : 𝓞 F} (hc : c ≠ 0) :
     vd (algebraMap F K (c : F) • h) L 𝔭 = vd h L 𝔭 + finrank K V * vF 𝔭 c := by
-  have hD := LocF.discrIdeal_ne_bot (LocF.aniso_of_totPosDef hd) hL hLi
+  have hD : discrIdeal h L ≠ ⊥ := by
+    obtain ⟨b, hbL, _⟩ := LocalSpans.exists_basis_locF hL h𝔭
+    obtain ⟨g, _, hdet⟩ := LocF.exists_gram hLi b hbL
+    intro hbot
+    have hmem : g.det ∈ discrIdeal h L := Ideal.subset_span ⟨b, hbL, hdet⟩
+    rw [hbot, Ideal.mem_bot] at hmem
+    apply LocF.gram_det_ne_zero h (LocF.aniso_of_totPosDef hd) b b.linearIndependent
+    rw [← hdet, hmem, map_zero]
   have hE : extP K 𝔭 ≠ ⊤ := by
     intro e
     apply h𝔭.ne_top
-    rw [Ideal.eq_top_iff_one, ← pow_one 𝔭, ← idealPowerSpanBounds.mem_pow_iff (K := K), pow_one, e]
-    trivial
+    have h : Ideal.comap (algebraMap (𝓞 F) (𝓞 K)) (extP K 𝔭) = 𝔭 :=
+      Ideal.comap_map_eq_self_of_faithfullyFlat 𝔭
+    rw [e, Ideal.comap_top] at h
+    exact h.symm
   have hb : BddAbove {e : ℕ | discrIdeal h L ≤ extP K 𝔭 ^ e} := by
     by_contra hnb
     rw [not_bddAbove_iff] at hnb

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.StableEigenspaces.InterpolationL2Bound
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEqColGenMulBlkU
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.StableEigenspaces.InterpolationL2Bound
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEqColGenMulBlkU
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open GlobalTheory.CuspRep
@@ -14,6 +18,10 @@ variable {E : Type} [Field E] [NumberField E] {N : ℕ}
 
 theorem finite_range_inter (C : Set (GA E N)) (hC : IsCompact C) :
     (C ∩ ((ratGL E N).range : Set (GA E N))).Finite := by
+  have : T2Space (GA E N) := by
+    have := GlobalTheory.AdelicUnitaryTop.t2Space_adeleRing_numberField E
+    exact Units.isEmbedding_embedProduct.t2Space
+  have : T1Space (GA E N) := T2Space.t1Space
   have hd : DiscreteTopology ((ratGL E N).range) := GlobalTheory.MirTower.discrete_of_le_range le_rfl
   have hcl : IsClosed (((ratGL E N).range : Subgroup (GA E N)) : Set (GA E N)) :=
     Subgroup.isClosed_of_discrete

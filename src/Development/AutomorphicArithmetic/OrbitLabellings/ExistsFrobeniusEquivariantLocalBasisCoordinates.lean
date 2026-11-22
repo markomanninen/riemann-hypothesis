@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.StdBases
-import Formalism.LocalRingCardinality.DataForced
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.SingleLetterBiextensionRelation
-import Formalism.LocalRingCardinality.FactDelDualNabla
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.TransportFirstLevel
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PHfTrace
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThU
-import Formalism.GaussJetBounds.GaussJetProofs.NormNatCastEqPowPadicValNat
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormLeOneOfValuationLeOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TauPlBijective
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PrimeOfLiesOver
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NormPadicEmbeddingLeOneOfMemInverseHalfDifferent
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsKurFrobTauEmbPosPl
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.StdBases
+public import Formalism.LocalRingCardinality.DataForced
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.SingleLetterBiextensionRelation
+public import Formalism.LocalRingCardinality.FactDelDualNabla
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.TransportFirstLevel
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PHfTrace
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThU
+public import Formalism.GaussJetBounds.GaussJetProofs.NormNatCastEqPowPadicValNat
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormLeOneOfValuationLeOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TauPlBijective
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PrimeOfLiesOver
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NormPadicEmbeddingLeOneOfMemInverseHalfDifferent
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsKurFrobTauEmbPosPl
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formalism.MainNotions.TaylorLogMetric GlobalTheory.KerStd Classical
 open Formalism.L2.Th1.CM (MaximalUnramifiedExtension)
@@ -177,7 +181,8 @@ private theorem cols_of_trace (D : D7) {p : ℕ} [Fact p.Prime] (lam : Qbar →+
       = ∑ τ : D.what₂.Tau, lam (embQ τ Y) := by
         rw [Fintype.sum_prod_type]
         refine Finset.sum_congr rfl fun τ _ => ?_
-        simp only [lamB, lamBc, hl, hY, map_sum, map_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [lamB, lamBc, hl, hY, map_sum, map_mul]
         exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
     _ = lam (∑ τ : D.what₂.Tau, embQ τ Y) := (map_sum lam _ _).symm
     _ = if i = i' then 1 else 0 := by
@@ -328,18 +333,20 @@ private theorem frob_moves_coords : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (lam :
   have hPc := hP.2.1 hcl
   have hP'c := hP'.2.1 hcl
   refine ⟨fun z a b₀ i => ?_, fun w a b₀ i => ?_⟩
-  · simp only [gK, hK, hfun, map_sum, map_mul]
-    refine Finset.sum_congr rfl fun b₁ _ => Finset.sum_congr rfl fun a₁ _ => ?_
-    rw [hs, hs, conj_conj, hinv, K1 P hPc z]
-    have e2 := congrFun (congrFun (K2 P' hP'c z) b₁) b₀
-    simp only [Matrix.map_apply, Matrix.transpose_apply] at e2 ⊢
-    rw [e2]; ring
-  · simp only [gK, hK, hfun, map_sum, map_mul]
-    refine Finset.sum_congr rfl fun b₁ _ => Finset.sum_congr rfl fun a₁ _ => ?_
-    rw [hs, hs, hinv, K1 P' hP'c w]
-    have e2 := congrFun (congrFun (K2 P hPc w) a₁) a
-    simp only [Matrix.map_apply, Matrix.transpose_apply] at e2 ⊢
-    rw [e2]; ring
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [gK, hK, hfun, map_sum, map_mul]
+      refine Finset.sum_congr rfl fun b₁ _ => Finset.sum_congr rfl fun a₁ _ => ?_
+      rw [hs, hs, conj_conj, hinv, K1 P hPc z]
+      have e2 := congrFun (congrFun (K2 P' hP'c z) b₁) b₀
+      simp only [Matrix.map_apply, Matrix.transpose_apply] at e2 ⊢
+      rw [e2]; ring
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [gK, hK, hfun, map_sum, map_mul]
+      refine Finset.sum_congr rfl fun b₁ _ => Finset.sum_congr rfl fun a₁ _ => ?_
+      rw [hs, hs, hinv, K1 P' hP'c w]
+      have e2 := congrFun (congrFun (K2 P hPc w) a₁) a
+      simp only [Matrix.map_apply, Matrix.transpose_apply] at e2 ⊢
+      rw [e2]; ring
 
 private theorem sum_bilin {R : Type*} [CommRing R] {ι κ μ : Type*} [Fintype ι] [Fintype κ] [Fintype μ]
     (F : κ → R) (G : μ → R) (X : ι → κ → R) (Y : ι → μ → R) :
@@ -433,7 +440,7 @@ private theorem lamB_sum_gK : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (lam : Qbar 
         (tauEmb D lam τ (P' τ b₁ b₀) * ((P τ).map (tauEmb D lam τ))⁻¹ a a₁) := by
     intro i
     rw [gK, ← hτ]
-    simp only [AddSubmonoidClass.coe_finset_sum, MulMemClass.coe_mul, coe_rhoK D lam σ hσ hcl, hinv, mul_assoc, ← hτ]
+    simp only [AddSubmonoidClass.coe_finsetSum, MulMemClass.coe_mul, coe_rhoK D lam σ hσ hcl, hinv, mul_assoc, ← hτ]
     rfl
   simp_rw [hg, Finset.mul_sum]
   rw [Finset.sum_comm]
@@ -495,7 +502,7 @@ private theorem IntIn.smul {e : D.host.E} (he : ‖ρ e‖ ≤ 1) {B : Matrix (F
 
 private theorem IntIn.add {B C : Matrix (Fin N') (Fin N) D.host.E} (hB : IntIn ρ Q' P B) (hC : IntIn ρ Q' P C) :
     IntIn ρ Q' P (B + C) := fun b a => by
-  rw [Matrix.mul_add, Matrix.add_mul, Matrix.add_apply, map_add]
+  rw [Matrix.mul_add, Matrix.add_mul, Matrix.add_apply, map_add (f := _)]
   exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hB b a) (hC b a))
 
 private theorem IntIn.zero : IntIn ρ Q' P (0 : Matrix (Fin N') (Fin N) D.host.E) := fun b a => by
@@ -566,7 +573,8 @@ private theorem norm_hK_le_one : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (lam : Qb
   have e : hK D lam P P' b w a b₀ i = ρ (((P' τ)⁻¹ * b i * P τ) b₀ a) := by
     unfold hK
     rw [← hτ, hρK, hinv]
-    simp only [Matrix.mul_apply, Matrix.map_apply, map_sum, map_mul, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.map_apply, map_sum, map_mul, Finset.sum_mul]
     rw [Finset.sum_comm]
   show ‖((hK D lam P P' b w a b₀ i : MaximalUnramifiedExtension p) : ℂ_[p])‖ ≤ 1
   rw [e, hρC]

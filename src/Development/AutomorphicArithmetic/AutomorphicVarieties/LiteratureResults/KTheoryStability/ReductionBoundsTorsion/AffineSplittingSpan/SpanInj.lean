@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.AffineSplittingSpan.SpanLevel
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.AffineSplittingSpan.SpanLevel
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,14 +33,6 @@ theorem WData.comm_range (g : P) (_hg : g ∈ Set.range W.ι) : g * W.t = W.t * 
 theorem WData.pr_mul (g : P) (hg : g ∈ Set.range W.ι) (z : P) : W.pr (g * z) = g * W.pr z := by
   obtain ⟨g', rfl⟩ := hg
   simp [WData.pr, W.ρι]
-
-theorem WData.ps_mul (g : P) (hg : g ∈ Set.range W.ι) (z : P) : W.ps (g * z) = g * W.ps z := by
-  obtain ⟨g', rfl⟩ := hg
-  have h1 : W.t⁻¹ * W.ι g' = W.ι g' * W.t⁻¹ := by
-    have := W.tc (W.ι g')
-    rw [inv_mul_eq_iff_eq_mul, ← mul_assoc, this, mul_inv_cancel_right]
-  simp only [WData.ps, map_mul, W.ρι]
-  rw [← mul_assoc, h1, mul_assoc]
 
 theorem WData.inv_univ {n : ℕ} (F : (Fin n → P) → ℝ) (hS : InvS (Set.range W.ι) F)
     (ht : ∀ y, F (fun i => W.t * y i) = F y) : InvS Set.univ F := by
@@ -143,9 +139,9 @@ theorem WData.inj (m : ℕ) (c : (Fin (m + 2) → P) → ℝ) (hc : InvS Set.uni
       rw [prism_inv W.pr S W.pr_mul v hvS g hg y]
     set lev : P → ℤ := fun z => W.ℓ (Additive.ofMul z) with hlevdef
     have hlev : ∀ z, lev (W.t * z) = lev z + 1 := by
-      intro z; simp only [hlevdef, ofMul_mul, map_add, W.ℓt]; ring
+      intro z; simp only [hlevdef, ofMul_mul, map_add (f := _), W.ℓt]; ring
     have hlevS : ∀ g ∈ S, ∀ z, lev (g * z) = lev z := by
-      rintro g ⟨g', rfl⟩ z; simp only [hlevdef, ofMul_mul, map_add, W.ℓι, zero_add]
+      rintro g ⟨g', rfl⟩ z; simp only [hlevdef, ofMul_mul, map_add (f := _), W.ℓι, zero_add]
     set w' := levSum W.t lev w with hw'def
     have hw'S : InvS S w' := levSum_inv W.t lev S hlevS W.comm_range w hwS
     have hw'w : (fun y => w' (fun i => W.t * y i)) - w' = w := by

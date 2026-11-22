@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.VacuumIwasawa.SchwartzOfConstantPolynomialOne
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.VacuumIwasawa.SchwartzOfConstantPolynomialOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -109,7 +113,7 @@ theorem vac_K' (hT : TAll) (hF : FockMem) (hO : LocOpEx) (hI : LocInst) (hA : Fi
         have : d.T 0 = 0 := (Tl d).map_zero
         rw [this]; exact zero_mem _⟩
       add_mem' := fun {a b} ha hb => ⟨add_mem ha.1 hb.1, fun k hk => by
-        rw [map_add]
+        rw [map_add (f := _)]
         have : d.T (d.om k a + d.om k b) = d.T (d.om k a) + d.T (d.om k b) := (Tl d).map_add _ _
         rw [this]; exact add_mem (ha.2 k hk) (hb.2 k hk)⟩
       smul_mem' := fun c a ha => ⟨Submodule.smul_mem _ c ha.1, fun k hk => by

@@ -1,10 +1,15 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.CountData
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleTopologyStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.StandardAdelicCharacterStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ThetaFunctionGrowthBoundStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LatticeFundamentalDomainVolumeStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicHaarMeasureScalingStatement
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.CountData
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleTopologyStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.StandardAdelicCharacterStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ThetaFunctionGrowthBoundStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LatticeFundamentalDomainVolumeStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicHaarMeasureScalingStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology GlobalTheory.CompanionTheory.SW.Core
 open scoped ENNReal NNReal MatrixGroups
 
@@ -131,7 +136,7 @@ theorem cosets_of_multiples : ∀ (F : Type) [Field F] [NumberField F] (N : ℕ)
       rw [← hr]
       abel
     refine ⟨z - algebraMap F (A F) (r : F), hOsub _ _ hz ((hOint _).2 ⟨r, rfl⟩), ?_⟩
-    rw [h2, map_add, map_mul, hNal, mul_sub, ← hbz]
+    rw [h2, map_add (f := _), map_mul, hNal, mul_sub, ← hbz]
     ring
   · rintro q q' ⟨w, ⟨z, hz, rfl⟩, w', ⟨z', hz', rfl⟩, h⟩
     have h1 : algebraMap F (A F) (q.out - q'.out) = (N : A F) * (z' - z) := by
@@ -298,7 +303,7 @@ theorem fourier_coeff_eis : ∀ (F : Type) [Field F] [NumberField F] [Measurable
     intro b h hh
     obtain ⟨r, rfl⟩ := (hHmem h).1 hh
     have : al (b + (N : F) * (r : F)) = al b + (N : A F) * al (r : F) := by
-      rw [map_add, map_mul, hNal]
+      rw [map_add (f := _), map_mul, hNal]
     rw [this]
     exact hper _ (hOr r) _
   have hterm : ∀ (x : InfinitePlace F → ℝ) (b : F),
@@ -306,7 +311,7 @@ theorem fourier_coeff_eis : ∀ (F : Type) [Field F] [NumberField F] [Measurable
     intro x b
     simp only [eiTerm, hcdef]
     congr 2
-    funext w
+    ext w
     simp only [Pi.add_apply, hj]
     push_cast
     ring

@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MonomialFrameSpan.NablaSpanC
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MonomialFrameSpan.NablaSpanC
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,9 +21,9 @@ theorem stepBack : StepBack := by
   rw [Finsupp.sum, MvPolynomial.coeff_sum]
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hC fun J _ => ?_
   rw [MvPolynomial.coeff_smul, MvPolynomial.coeff_map, smul_eq_mul, norm_mul]
-  have h1 : ‖(Int.castRingHom ℂ_[l]) (MvPolynomial.coeff m (nablaX N0 nu J))‖ ≤ 1 := by
-    simpa using IsUltrametricDist.norm_intCast_le_one ℂ_[l] (MvPolynomial.coeff m (nablaX N0 nu J))
-  calc ‖c J‖ * ‖(Int.castRingHom ℂ_[l]) (MvPolynomial.coeff m (nablaX N0 nu J))‖
+  have h1 : ‖(Int.castRingHom ℂ_[l]) (AddMonoidAlgebra.coeff (nablaX N0 nu J) m)‖ ≤ 1 := by
+    simpa using IsUltrametricDist.norm_intCast_le_one ℂ_[l] (AddMonoidAlgebra.coeff (nablaX N0 nu J) m)
+  calc ‖c J‖ * ‖(Int.castRingHom ℂ_[l]) (AddMonoidAlgebra.coeff (nablaX N0 nu J) m)‖
       ≤ (l : ℝ) ^ (-B) * 1 := mul_le_mul (hc J) h1 (norm_nonneg _) hC
     _ = _ := mul_one _
 

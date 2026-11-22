@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.FformSmulRight
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.FformSmulRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem pderiv_mem_supported {S : Set (Fin m × Fin n × Bool)} {g : PX m n} (hg
     · simp only [Pi.single_eq_same]; exact Subalgebra.one_mem _
     · rw [Pi.single_eq_of_ne h]; exact Subalgebra.zero_mem _
   | algebraMap r => simp [Subalgebra.zero_mem]
-  | add x y _ _ hx hy => rw [map_add]; exact Subalgebra.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Subalgebra.add_mem _ hx hy
   | mul x y hx' hy' hx hy =>
     rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
     have hx'' : x ∈ supported ℂ S := by rw [supported_eq_adjoin_X]; exact hx'

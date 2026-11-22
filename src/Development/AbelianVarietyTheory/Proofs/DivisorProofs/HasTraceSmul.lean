@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndefiniteUnitaryLieAlgebraMemIffEntriesStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousExpGAndToMInv
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HaarRinvUJ
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndefiniteUnitaryLieAlgebraMemIffEntriesStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousExpGAndToMInv
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HaarRinvUJ
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,14 +1,18 @@
-import Mathlib
-import GroundTheory.GlobalFields.GlobalReciprocity.RangeDiagonalLeKerIdeleSymbol
-import GroundTheory.GlobalFields.NormResidueSymbol.Functorial
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.GlobalReciprocity.RangeDiagonalLeKerIdeleSymbol
+public import GroundTheory.GlobalFields.NormResidueSymbol.Functorial
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
 open IsDedekindDomain NumberField IntermediateField IdeleGroup AdeleBaseChange
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 namespace FiniteSubfield
 
@@ -42,24 +46,24 @@ variable {K K' L L' : Type*} [Field K] [NumberField K] [Field K'] [NumberField K
   [NumberField L] [Field L'] [NumberField L'] [Algebra K K'] [Algebra K L] [Algebra K L']
   [Algebra K' L'] [Algebra L L'] [IsScalarTower K K' L'] [IsScalarTower K L L']
 
-omit [NumberField K] [NumberField K'] in
 
+omit [NumberField K] [NumberField K'] in
 theorem finrank_eq_one_of_bijective (hK : Function.Bijective (algebraMap K K')) :
     Module.finrank K K' = 1 :=
   (AlgEquiv.ofBijective (Algebra.ofId K K') hK).toLinearEquiv.finrank_eq.symm.trans
     (Module.finrank_self K)
 
+
 omit [Algebra K L] [Algebra K L'] [Algebra K' L'] [Algebra L L'] [IsScalarTower K K' L']
   [IsScalarTower K L L'] in
-
 theorem ideleNorm_ideleEmbedding_of_bijective (hK : Function.Bijective (algebraMap K K'))
     (x : IdeleGroup K) : ideleNorm K K' (ideleEmbedding K K' x) = x := by
   rw [ideleNorm_ideleEmbedding, finrank_eq_one_of_bijective hK, pow_one]
 
 variable [IsGalois K L]
 
-omit [NumberField K] [NumberField K'] [NumberField L] [NumberField L'] in
 
+omit [NumberField K] [NumberField K'] [NumberField L] [NumberField L'] in
 theorem restrictNormal_restrictScalars_eq_one (hL : Function.Bijective (algebraMap L L'))
     {σ : L' ≃ₐ[K'] L'} (h : (σ.restrictScalars K).restrictNormal L = 1) : σ = 1 := by
   refine AlgEquiv.ext fun y ↦ ?_
@@ -180,13 +184,13 @@ theorem ker_ideleSymbol : (ideleSymbol K L).ker = (diagonal K).range ⊔ (ideleN
   le_antisymm ideleSymbol_diagonal_and_ker_le.2
     (sup_le diagonal_range_le_ker_ideleSymbol (range_ideleNorm_le_ker_ideleSymbol L))
 
-omit [IsGalois K L] [IsMulCommutative (L ≃ₐ[K] L)] in
 
+omit [IsGalois K L] [IsMulCommutative (L ≃ₐ[K] L)] in
 instance ideleClassNorm_range_normal : (ideleClassNorm K L).range.Normal :=
   ⟨fun n hn g ↦ by rwa [mul_comm g n, mul_inv_cancel_right]⟩
 
-variable (K L) in
 
+variable (K L) in
 def reciprocityMap : IdeleClassGroup K →* (L ≃ₐ[K] L) :=
   QuotientGroup.lift _ (ideleSymbol K L) diagonal_range_le_ker_ideleSymbol
 
@@ -231,16 +235,11 @@ theorem reciprocityMap_surjective : Function.Surjective (reciprocityMap K L) := 
   let ⟨x, hx⟩ := ideleSymbol_surjective (K := K) (L := L) σ
   ⟨IdeleClassGroup.mk K x, hx⟩
 
-variable (K L) in
 
+variable (K L) in
 def reciprocityMapEquiv : IdeleClassGroup K ⧸ (ideleClassNorm K L).range ≃* (L ≃ₐ[K] L) :=
   (QuotientGroup.quotientMulEquivOfEq (ker_reciprocityMap (K := K) (L := L)).symm).trans
     (QuotientGroup.quotientKerEquivOfSurjective _ reciprocityMap_surjective)
-
-@[simp]
-theorem reciprocityMapEquiv_mk (x : IdeleGroup K) :
-    reciprocityMapEquiv K L (QuotientGroup.mk (IdeleClassGroup.mk K x)) = ideleSymbol K L x :=
-  rfl
 
 theorem index_range_ideleClassNorm_eq_finrank_of_isMulCommutative : (ideleClassNorm K L).range.index = Module.finrank K L := by
   rw [Subgroup.index, Nat.card_congr (reciprocityMapEquiv K L).toEquiv, IsGalois.card_aut_eq_finrank]

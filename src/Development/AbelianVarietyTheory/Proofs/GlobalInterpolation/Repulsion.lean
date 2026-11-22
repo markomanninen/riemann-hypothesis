@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ZerosDisc
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IteratedDerivLogDerivDirichletLViaNearbyZeros
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SumIccThreeQuartersPowLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ZerosDisc
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IteratedDerivLogDerivDirichletLViaNearbyZeros
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SumIccThreeQuartersPowLe
+
+@[expose] public section
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology GlobalTheory.Lin
 open scoped Classical
 
@@ -191,7 +196,7 @@ theorem exists_list : ∃ C : ℝ, 0 < C ∧ ∀ (q : ℕ) [NeZero q] (χ : Diri
       induction hfin.toFinset using Finset.induction_on with
       | empty => simp
       | insert a s ha ih =>
-        rw [Finset.sum_insert ha, Finset.sum_insert ha, Multiset.map_add, Multiset.sum_add, ih]
+        rw [Finset.sum_insert ha, Finset.sum_insert ha, Multiset.map_add (f := _), Multiset.sum_add, ih]
         simp [div_eq_mul_inv]
     rw [e]
     have h' := (Complex.re_le_norm _).trans h
@@ -336,7 +341,7 @@ theorem repulsion : ∃ c : ℝ, 0 < c ∧ ∀ (q : ℕ) [NeZero q] (χ₁ χ : 
         (V2 + V3).map (fun w => 1 / ((2 : ℂ) + t * I - w)))).sum =
         powSum W0 0 (k + 1) + powSum V1 0 (k + 1) + powSum V2 t (k + 1) + powSum V3 t (k + 1) := by
       unfold powSum
-      simp only [Multiset.map_add, Multiset.sum_add, Multiset.map_map, Function.comp_def]
+      simp only [Multiset.map_add (f := _), Multiset.sum_add, Multiset.map_map, Function.comp_def]
       ring
     rw [e]
     have hp := der_pos χ₁ χ hsq k t

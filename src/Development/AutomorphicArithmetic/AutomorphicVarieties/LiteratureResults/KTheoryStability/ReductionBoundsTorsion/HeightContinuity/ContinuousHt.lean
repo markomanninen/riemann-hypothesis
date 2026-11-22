@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.HeightContinuity.MatrixTupleDistortionPos
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.HeightContinuity.MatrixTupleDistortionPos
+
+@[expose] public section
 
 open NumberField Matrix UpperTheory.V.KT
 open scoped ComplexOrder
@@ -26,7 +30,8 @@ theorem lm_comp (B : InfinitePlace L → Matrix (Fin N) (Fin N) ℂ) (γ : Gm L 
     rw [← Matrix.mulVec_mulVec]
     congr 1
     ext i
-    simp [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul]
   have hinv : ∀ y : Fin N → 𝓞 L, ((γ⁻¹ : Gm L N) : Matrix (Fin N) (Fin N) (𝓞 L)) *ᵥ
       ((γ : Matrix (Fin N) (Fin N) (𝓞 L)) *ᵥ y) = y := by
     intro y
@@ -152,7 +157,7 @@ theorem det_smul_hB (t : ℝ) (B : InfinitePlace L → Matrix (Fin N) (Fin N) �
     Complex.star_def, Complex.conj_mul', ← Complex.ofReal_pow, ← Complex.ofReal_pow,
     ← Complex.ofReal_mul, Complex.ofReal_re]
 
-theorem lm_prod_le [IsTotallyComplex L] (hN : 1 ≤ N) (x : Gp L N) :
+theorem lm_prod_le [_root_.NumberField.IsTotallyComplex L] (hN : 1 ≤ N) (x : Gp L N) :
     lm (iv x) * lm (tp x) ≤ max 1 ((I0 L N : ℝ) ^ 2) := by
   have ha := lm_iv_pos hN x
   have hb := lm_tp_pos hN x
@@ -180,7 +185,7 @@ theorem lm_prod_le [IsTotallyComplex L] (hN : 1 ≤ N) (x : Gp L N) :
   · exact le_max_of_le_left hab
   · exact le_max_of_le_right ((le_self_pow₀ hab.le hk0).trans key)
 
-theorem ht_lower [IsTotallyComplex L] (hN : 1 ≤ N) :
+theorem ht_lower [_root_.NumberField.IsTotallyComplex L] (hN : 1 ≤ N) :
     ∃ c, 0 < c ∧ ∀ x : Gp L N, c ≤ ht x := by
   refine ⟨(max 1 ((I0 L N : ℝ) ^ 2))⁻¹, by positivity, fun x => ?_⟩
   have ha := lm_iv_pos hN x
@@ -188,7 +193,7 @@ theorem ht_lower [IsTotallyComplex L] (hN : 1 ≤ N) :
   rw [ht_eq_inv_lm_iv_mul_lm_tp]
   exact inv_anti₀ (mul_pos ha hb) (lm_prod_le hN x)
 
-theorem ht_mul_le [IsTotallyComplex L] (hN : 1 ≤ N) (x g : Gp L N) :
+theorem ht_mul_le [_root_.NumberField.IsTotallyComplex L] (hN : 1 ≤ N) (x g : Gp L N) :
     ht (x * g) ≤ (dist1 (fun w => ((g w : GL (Fin N) ℂ) : Matrix (Fin N) (Fin N) ℂ)) *
       dist1 (tp g⁻¹)) * ht x := by
   have h1 := lm_iv_le hN x g
@@ -206,7 +211,7 @@ theorem ht_mul_le [IsTotallyComplex L] (hN : 1 ≤ N) (x g : Gp L N) :
         mul_le_mul h1 h2 hb.le (by positivity)
     _ = _ := by ring
 
-theorem ht_pos [IsTotallyComplex L] (hN : 1 ≤ N) (x : Gp L N) : 0 < ht x := by
+theorem ht_pos [_root_.NumberField.IsTotallyComplex L] (hN : 1 ≤ N) (x : Gp L N) : 0 < ht x := by
   rw [ht_eq_inv_lm_iv_mul_lm_tp]
   exact inv_pos.mpr (mul_pos (lm_iv_pos hN x) (lm_tp_pos hN x))
 
@@ -234,7 +239,7 @@ private theorem dist1_pos {ι : Type} [Fintype ι] (f : ι → Matrix (Fin N) (F
   unfold dist1
   positivity
 
-theorem continuous_ht [IsTotallyComplex L] (hN : 1 ≤ N) : Continuous (ht : Gp L N → ℝ) := by
+theorem continuous_ht [_root_.NumberField.IsTotallyComplex L] (hN : 1 ≤ N) : Continuous (ht : Gp L N → ℝ) := by
   have hEc := continuous_dist1_mul_dist1_tp_inv (L := L) (N := N)
   rw [continuous_iff_continuousAt]
   intro x
@@ -269,7 +274,7 @@ theorem continuous_ht [IsTotallyComplex L] (hN : 1 ≤ N) : Continuous (ht : Gp 
     rw [mul_inv_cancel_left] at h
     exact h
 
-theorem ht_compact [IsTotallyComplex L] (hN : 1 ≤ N) (K : Set (Gp L N)) (hK : IsCompact K) :
+theorem ht_compact [_root_.NumberField.IsTotallyComplex L] (hN : 1 ≤ N) (K : Set (Gp L N)) (hK : IsCompact K) :
     ∃ C, ∀ g ∈ K, ∀ x, ht (x * g) ≤ C * ht x := by
   obtain ⟨C, hC⟩ := hK.bddAbove_image (continuous_dist1_mul_dist1_tp_inv (L := L) (N := N)).continuousOn
   refine ⟨C, fun g hg x => ?_⟩

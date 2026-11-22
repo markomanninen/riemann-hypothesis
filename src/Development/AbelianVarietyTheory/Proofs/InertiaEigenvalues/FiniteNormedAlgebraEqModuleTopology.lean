@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+
+@[expose] public section
+
 open GlobalTheory.JR MeasureTheory Filter Topology
 
 namespace GlobalTheory
 
-open MeasureTheory Filter Topology in
 
+open MeasureTheory Filter Topology in
 theorem _root_.GlobalTheory.isOpenUnits_and_eventually_sq_normed (F : Type) [NontriviallyNormedField F]
     [CompleteSpace F] [CharZero F] (R : Type) [NormedCommRing R] [NormedAlgebra F R]
     [Module.Finite F R] :
@@ -28,8 +33,8 @@ theorem _root_.GlobalTheory.isOpenUnits_and_eventually_sq_normed (F : Type) [Non
   rw [← hmap, Filter.eventually_map]
   exact Filter.Eventually.of_forall fun s => ⟨s, rfl⟩
 
-open MeasureTheory Filter Topology in
 
+open MeasureTheory Filter Topology in
 theorem _root_.GlobalTheory.finiteNormedAlgebra_eq_moduleTopology (F : Type) [NontriviallyNormedField F]
     [CompleteSpace F] (R : Type) [N : NormedCommRing R] [NormedAlgebra F R]
     [Module.Finite F R] :
@@ -38,8 +43,8 @@ theorem _root_.GlobalTheory.finiteNormedAlgebra_eq_moduleTopology (F : Type) [No
   haveI : IsModuleTopology F R := isModuleTopologyOfFiniteDimensional
   exact eq_moduleTopology F R
 
-open MeasureTheory Filter Topology in
 
+open MeasureTheory Filter Topology in
 theorem _root_.GlobalTheory.isOpenUnits_and_eventually_sq (F : Type) [NontriviallyNormedField F]
     [CompleteSpace F] [CharZero F] (R : Type) [CommRing R] [Algebra F R] [Module.Finite F R]
     [τ : TopologicalSpace R] [IsModuleTopology F R] :

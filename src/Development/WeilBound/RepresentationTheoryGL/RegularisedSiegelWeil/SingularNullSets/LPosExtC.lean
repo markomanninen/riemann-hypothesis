@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LPosExtA
-import Mathlib.Analysis.Convex.Cone.Extension
-import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LPosExtA
+public import Mathlib.Analysis.Convex.Cone.Extension
+public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ def reL (A : Submodule ℂ (X → ℂ)) (L : A →ₗ[ℂ] ℂ) : AR A →ₗ[�
   toFun f := (L ⟨f.1, f.2.1⟩).re
   map_add' f g := by
     have : (⟨(f + g).1, (f + g).2.1⟩ : A) = ⟨f.1, f.2.1⟩ + ⟨g.1, g.2.1⟩ := rfl
-    simp only [this, map_add, Complex.add_re]
+    simp only [this, map_add (f := _), Complex.add_re]
   map_smul' c f := by
     have : (⟨(c • f).1, (c • f).2.1⟩ : A) = (c : ℂ) • ⟨f.1, f.2.1⟩ := by
       apply Subtype.ext; ext x; simp [Complex.real_smul]

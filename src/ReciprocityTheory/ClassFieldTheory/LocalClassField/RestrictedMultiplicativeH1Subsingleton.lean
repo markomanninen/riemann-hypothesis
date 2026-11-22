@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.NeutralLocalFields.Duality
-import ReciprocityTheory.GroupCohomology.InfRes
-import ReciprocityTheory.GroupCohomology.FiveTerm
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.KbarRepContAction
+module
+
+public import Mathlib
+public import ReciprocityTheory.NeutralLocalFields.Duality
+public import ReciprocityTheory.GroupCohomology.InfRes
+public import ReciprocityTheory.GroupCohomology.FiveTerm
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.KbarRepContAction
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -76,7 +80,8 @@ theorem exists_units_of_cocycle {K L : Type*} [Field K] [Field L] [Algebra K L] 
       rfl
     calc b = ∑ s, a (m s) * (m s).1 c := (hmbij.sum_comp (fun s => a s * s.1 c)).symm
       _ = f h * (h : L ≃ₐ[K] L) b := by
-        rw [hb, map_sum, Finset.mul_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hb, map_sum, Finset.mul_sum]
         refine Finset.sum_congr rfl fun s _ => ?_
         rw [hma, hm1, map_mul, mul_assoc]
   refine ⟨(Units.mk0 b hcne)⁻¹, fun h => ?_⟩
@@ -188,7 +193,7 @@ theorem multiplicative_inflation_h2_injective (N : Subgroup (GK p K)) [N.Normal]
   have hs := restricted_multiplicative_h1_subsingleton p K N
   obtain ⟨tg, -, hex⟩ := fiveTerm_holds ℤ (GK p K) (kbarT p K) N hN Q P hP ⊤
     (fun x => ⟨fun _ s c _ _ => Subsingleton.elim _ _, fun _ => Submodule.mem_top⟩)
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro y hy
   obtain ⟨x, rfl⟩ := (hex y).1 hy
   have hx : x = 0 := Subsingleton.elim _ _

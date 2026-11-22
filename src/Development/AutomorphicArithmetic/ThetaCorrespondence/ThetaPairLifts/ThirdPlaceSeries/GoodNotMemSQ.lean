@@ -1,7 +1,17 @@
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GoodPlaceAvoidsBadSets
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CharacterChoiceData
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsUniqueVec
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExistsInertiaCharpolyFactorOfTameType
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TendstoOneOfSummable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTwistPlacesAboveK
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CharacterChoiceData
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -39,16 +49,16 @@ theorem good_not_mem_S_Q_alt : GlobalTheory.Published.AutomorphicFormsFiniteGL �
     have h15 : 15 ∣ D.nd.l i ^ a := by
       refine (hd.ine w hw (D.nd.l i ^ a)).1 fun x hx => ?_
       have h1 : δ.loc w x * ψ.loc w x = 1 := (hmul x).symm.trans (hunr x hx)
-      have h2 : ψ.loc w x ^ (D.nd.l i ^ a) = 1 := by
-        have := congrArg (fun ξ : HChar D.host.E => ξ.loc w x) ha
-        simpa [HChar.loc] using this
+      have h2 : ψ.loc w x ^ (D.nd.l i ^ a) = 1 :=
+        (MonoidHom.pow_apply ..).symm.trans
+          (congrArg (fun ξ : HChar D.host.E => ξ.loc w x) ha)
       have h3 : (δ.loc w x * ψ.loc w x) ^ (D.nd.l i ^ a) = 1 := by rw [h1, one_pow]
       rwa [mul_pow, h2, mul_one] at h3
     have hl : (D.nd.l i).Prime := (D.nd.lPrime i).out
-    have h3 : 3 = D.nd.l i := (Nat.prime_dvd_prime_iff_eq Nat.prime_three hl).1
-      (Nat.prime_three.dvd_of_dvd_pow (dvd_trans (by norm_num) h15))
-    have h5 : 5 = D.nd.l i := (Nat.prime_dvd_prime_iff_eq (by norm_num) hl).1
-      ((show (5 : ℕ).Prime by norm_num).dvd_of_dvd_pow (dvd_trans (by norm_num) h15))
+    have h3 : 3 = D.nd.l i :=
+      Nat.prime_eq_prime_of_dvd_pow Nat.prime_three hl (dvd_trans (by norm_num) h15)
+    have h5 : 5 = D.nd.l i :=
+      Nat.prime_eq_prime_of_dvd_pow Nat.prime_five hl (dvd_trans (by norm_num) h15)
     omega
   have hng : ∀ k : Fin 2, w ∉ placesOver D.host.E (D.host.g k) := by
     intro k hw

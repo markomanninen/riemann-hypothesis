@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.TraceMixedEmbedding.trace_mixedEmbedding :
     ∀ {F : Type} [inst : Field F] [inst_1 : NumberField F] (y : F),

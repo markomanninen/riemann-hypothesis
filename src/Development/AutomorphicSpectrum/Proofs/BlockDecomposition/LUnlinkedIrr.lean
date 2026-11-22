@@ -1,24 +1,30 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.SegmentDerivatives.CuspPairSubGeneric
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.GenericProdIff
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.GeometricLemmaFiltration
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.LUnlinkedComm
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyExhaustion.PropsExh
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityPos
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetSubLeftOfAdmissible
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicitySubquotientLe
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductIrreducibleFiniteLength
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SegmentProductJacquetShuffleCountStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityTransitiveLe
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnlinkedProductIrreducible
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StandardQuotientGenericOfIrreducible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NontrivialTwJacquetOfSurjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIrreducibleSmoothQuotient
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParabolicProductHasFiniteLengthGL
-import CompanionTheory.AutomorphicTheory.HeckeStandardModules.EqZeroOfCompAt
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.SegmentDerivatives.CuspPairSubGeneric
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.GenericProdIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.GeometricLemmaFiltration
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.LUnlinkedComm
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyExhaustion.PropsExh
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityPos
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetSubLeftOfAdmissible
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicitySubquotientLe
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductIrreducibleFiniteLength
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SegmentProductJacquetShuffleCountStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityTransitiveLe
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnlinkedProductIrreducible
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.SegmentCuspLines.CuspStdSubGeneric
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.LSegJacquet
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilTensorLiftConclusion
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIrreducibleSmoothQuotient
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NontrivialTwJacquetOfSurjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParabolicProductHasFiniteLengthGL
+public import CompanionTheory.AutomorphicTheory.HeckeStandardModules.EqZeroOfCompAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,16 +104,16 @@ end Lists
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-theorem nu_nat_add (x : IrrGL k) (a b : ℕ) : (x.nu (a : ℂ)).nu (b : ℂ) = x.nu ((a + b : ℕ) : ℂ) := by
+theorem nu_nat_add (x : IrrGL (k := k)) (a b : ℕ) : (x.nu (a : ℂ)).nu (b : ℂ) = x.nu ((a + b : ℕ) : ℂ) := by
   rw [IrrGL.nu_nu]
   push_cast
   rfl
 
-def top (Γ : Segment k) : IrrGL k := Γ.first.nu ((Γ.len - 1 : ℕ) : ℂ)
+def top (Γ : Segment k) : IrrGL (k := k) := Γ.first.nu ((Γ.len - 1 : ℕ) : ℂ)
 
 theorem top_pos (Γ : Segment k) : 0 < (top Γ).1 := (Γ.isCusp_first.nu _).1
 
-theorem mem_decWord {Γ : Segment k} {w : IrrGL k} : w ∈ decWord Γ ↔ ∃ a : ℕ, a < Γ.len ∧ Γ.first.nu (a : ℂ) = w := by
+theorem mem_decWord {Γ : Segment k} {w : IrrGL (k := k)} : w ∈ decWord Γ ↔ ∃ a : ℕ, a < Γ.len ∧ Γ.first.nu (a : ℂ) = w := by
   simp only [decWord, List.mem_reverse, List.mem_ofFn]
   constructor
   · rintro ⟨a, rfl⟩
@@ -159,7 +165,7 @@ theorem linked_of (Γ Γ' : Segment k) {e : ℕ} (he : Γ'.first = Γ.first.nu (
     have := (IrrGL.nu_natCast_inj hpos).1 hx
     omega
 
-theorem step {h : ℕ} (Δ : Fin h → Segment k) (hun : ∀ i j, ¬ (Δ i).Linked (Δ j)) (u : List (IrrGL k))
+theorem step {h : ℕ} (Δ : Fin h → Segment k) (hun : ∀ i j, ¬ (Δ i).Linked (Δ j)) (u : List (IrrGL (k := k)))
     (H1 : ∀ w ∈ u, ∃ i, w ∈ decWord (Δ i) ∧ top (Δ i) ∈ u)
     (H2 : ∀ w ∈ u, ∃ j, w.nu 1 ∈ decWord (Δ j) ∧ ∃ t ∈ u, t.nu 1 = (Δ j).first)
     (i : Fin h) (hi : top (Δ i) ∈ u) : ∃ m, top (Δ m) ∈ u ∧ ∃ n : ℕ, 0 < n ∧ top (Δ m) = (top (Δ i)).nu (n : ℂ) := by
@@ -188,7 +194,7 @@ theorem step {h : ℕ} (Δ : Fin h → Segment k) (hun : ∀ i j, ¬ (Δ i).Link
   congr 3
   omega
 
-theorem false_of_shift {h : ℕ} (Δ : Fin h → Segment k) (hun : ∀ i j, ¬ (Δ i).Linked (Δ j)) (u : List (IrrGL k))
+theorem false_of_shift {h : ℕ} (Δ : Fin h → Segment k) (hun : ∀ i j, ¬ (Δ i).Linked (Δ j)) (u : List (IrrGL (k := k)))
     (hu : u ≠ []) (H1 : ∀ w ∈ u, ∃ i, w ∈ decWord (Δ i) ∧ top (Δ i) ∈ u)
     (H2 : ∀ w ∈ u, ∃ j, w.nu 1 ∈ decWord (Δ j) ∧ ∃ t ∈ u, t.nu 1 = (Δ j).first) : False := by
   obtain ⟨w, hw⟩ := List.exists_mem_of_ne_nil u hu
@@ -197,7 +203,7 @@ theorem false_of_shift {h : ℕ} (Δ : Fin h → Segment k) (hun : ∀ i j, ¬ (
   let r : S → S → Prop := fun a b => ∃ n : ℕ, 0 < n ∧ top (Δ a.1) = (top (Δ b.1)).nu (n : ℂ)
   haveI : IsTrans S r := ⟨fun a b c ⟨n, hn, e⟩ ⟨n', hn', e'⟩ =>
     ⟨n' + n, by omega, by rw [e, e', nu_nat_add]⟩⟩
-  haveI : IsIrrefl S r := ⟨fun a ⟨n, hn, e⟩ => by
+  haveI : Std.Irrefl r := ⟨fun a ⟨n, hn, e⟩ => by
     have e' : (top (Δ a.1)).nu ((0 : ℕ) : ℂ) = (top (Δ a.1)).nu (n : ℂ) := by
       rw [← e]
       simp
@@ -208,14 +214,14 @@ theorem false_of_shift {h : ℕ} (Δ : Fin h → Segment k) (hun : ∀ i j, ¬ (
   obtain ⟨m, hm, n, hn, e⟩ := step Δ hun u H1 H2 a.1 a.2
   exact hmin ⟨m, hm⟩ trivial ⟨n, hn, e⟩
 
-theorem deg_of_one_le {W : List (IrrGL k)} {N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V]
+theorem deg_of_one_le {W : List (IrrGL (k := k))} {N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V]
     {π : Representation ℂ (GL (Fin N) k) V} (h : 1 ≤ jmL W π) : ∑ a, (W.get a).1 = N := by
   by_contra hc
-  rw [jmL, dif_neg hc] at h
+  rw [jmL, dite_eq_right hc] at h
   simp at h
 
-theorem one_le_jmL_append (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (y : Fin 2 → IrrGL k) {N : ℕ}
-    (hy : ∑ b, (y b).1 = N) (A B : List (IrrGL k)) {V : Type} [AddCommGroup V] [Module ℂ V]
+theorem one_le_jmL_append (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (y : Fin 2 → IrrGL (k := k)) {N : ℕ}
+    (hy : ∑ b, (y b).1 = N) (A B : List (IrrGL (k := k))) {V : Type} [AddCommGroup V] [Module ℂ V]
     (π : Representation ℂ (GL (Fin N) k) V) (hs : IsSmooth π) (hf : HasFiniteLength π) (h : 1 ≤ jm y hy π)
     (hA' : 1 ≤ jmL A (y 0).rep) (hB : 1 ≤ jmL B (y 1).rep) : 1 ≤ jmL (A ++ B) π := by
   have hst := GlobalTheory.CompanionTheory.CsStages.jm_mul_prod_jmL_le hA y hy ![A, B] π hs hf (by
@@ -231,14 +237,14 @@ theorem one_le_jmL_append (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) 
   calc (1 : ℕ∞) = 1 * (1 * 1) := by simp
     _ ≤ _ := mul_le_mul' h (mul_le_mul' hA' hB)
 
-theorem one_le_jm_of_injective (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {h N : ℕ} (x : Fin h → IrrGL k)
+theorem one_le_jm_of_injective (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {h N : ℕ} (x : Fin h → IrrGL (k := k))
     (hd : ∑ a, (x a).1 = N) {V : Type} [AddCommGroup V] [Module ℂ V] [Nontrivial V]
     (τ : Representation ℂ (GL (Fin N) k) V) (hτ : IsSmooth τ) (f : τ.IntertwiningMap (prodIrr x hd))
     (hf : Function.Injective f) : 1 ≤ jm x hd τ := by
   obtain ⟨v, hv⟩ := exists_ne (0 : V)
   exact GlobalTheory.CompanionTheory.FrobJm.one_le_jm hA x hd τ hτ f ⟨v, fun e => hv (hf (e.trans (map_zero f).symm))⟩
 
-theorem one_le_jmL_single (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (ρ : IrrGL k) : 1 ≤ jmL [ρ] ρ.rep := by
+theorem one_le_jmL_single (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (ρ : IrrGL (k := k)) : 1 ≤ jmL [ρ] ρ.rep := by
   have hd : ∑ a : Fin 1, ((fun _ : Fin 1 => ρ) a).1 = ρ.1 := by simp
   obtain ⟨φ⟩ := nonempty_equiv_prodIrr_one ρ hd
   rw [GlobalTheory.CompanionTheory.CsStages.jmL_eq_jm [ρ] (fun _ : Fin 1 => ρ) (by simp) hd ρ.rep]
@@ -258,10 +264,10 @@ theorem exists_intertwiningMap_ne_zero {G V W : Type} [Group G] [Subsingleton G]
   rw [Subsingleton.elim g 1, map_one, map_one]
   exact LinearMap.ext fun _ => rfl
 
-theorem one_le_jmL_nil (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (z : IrrGL k) (hz : z.1 = 0) : 1 ≤ jmL [] z.rep := by
+theorem one_le_jmL_nil (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (z : IrrGL (k := k)) (hz : z.1 = 0) : 1 ≤ jmL [] z.rep := by
   obtain ⟨d, c⟩ := z
   obtain rfl : d = 0 := hz
-  let e : Fin 0 → IrrGL k := Fin.elim0
+  let e : Fin 0 → IrrGL (k := k) := Fin.elim0
   have hd : ∑ a, (e a).1 = 0 := by simp
   rw [GlobalTheory.CompanionTheory.CsStages.jmL_eq_jm [] e (by simp) hd _]
   haveI := nontrivial_of_irreducible c.rep.irr
@@ -270,16 +276,16 @@ theorem one_le_jmL_nil (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (z 
   obtain ⟨f, hf⟩ := exists_intertwiningMap_ne_zero c.rep.ρ (prodIrr e hd)
   exact GlobalTheory.CompanionTheory.FrobJm.one_le_jm hA e hd _ c.rep.smooth f hf
 
-theorem one_le_jmL_cons (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (X : IrrGL k) (z : Fin 2 → IrrGL k)
+theorem one_le_jmL_cons (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (X : IrrGL (k := k)) (z : Fin 2 → IrrGL (k := k))
     (hz : ∑ a, (z a).1 = X.1) (g : X.rep.IntertwiningMap (prodIrr z hz)) (hg : Function.Injective g)
-    (W : List (IrrGL k)) (hW : 1 ≤ jmL W (z 1).rep) : 1 ≤ jmL (z 0 :: W) X.rep := by
+    (W : List (IrrGL (k := k))) (hW : 1 ≤ jmL W (z 1).rep) : 1 ≤ jmL (z 0 :: W) X.rep := by
   haveI := nontrivial_of_irreducible X.2.rep.irr
   have hfl : HasFiniteLength X.rep :=
     GlobalTheory.ProdLength.hasFiniteLength_of_injective g hg (GlobalTheory.CompanionTheory.ProdFL.hasFiniteLength_prodIrr hA z hz)
   exact one_le_jmL_append hA z hz [z 0] W X.rep X.2.rep.smooth hfl
     (one_le_jm_of_injective hA z hz X.rep X.2.rep.smooth g hg) (one_le_jmL_single hA _) hW
 
-theorem exists_nu_embedding (x : IrrGL k) (y : Fin 2 → IrrGL k) (hd : ∑ a, (y a).1 = x.1)
+theorem exists_nu_embedding (x : IrrGL (k := k)) (y : Fin 2 → IrrGL (k := k)) (hd : ∑ a, (y a).1 = x.1)
     (f : x.rep.IntertwiningMap (prodIrr y hd)) (hf : Function.Injective f) (s : ℂ) :
     ∃ g : (x.nu s).rep.IntertwiningMap (prodIrr (fun a => (y a).nu s)
       (show ∑ a, ((y a).nu s).1 = (x.nu s).1 from hd)), Function.Injective g := by
@@ -289,8 +295,8 @@ theorem exists_nu_embedding (x : IrrGL k) (y : Fin 2 → IrrGL k) (hd : ∑ a, (
   intro a b e
   exact φ₁.symm.injective (hf (φ₂.injective e))
 
-theorem exists_word (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (n : ℕ) : ∀ x : IrrGL k, x.1 = n →
-    ∃ W : List (IrrGL k), (∀ w ∈ W, w.IsCusp) ∧ ∀ s : ℂ, 1 ≤ jmL (W.map fun w => w.nu s) (x.nu s).rep := by
+theorem exists_word (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (n : ℕ) : ∀ x : IrrGL (k := k), x.1 = n →
+    ∃ W : List (IrrGL (k := k)), (∀ w ∈ W, w.IsCusp) ∧ ∀ s : ℂ, 1 ≤ jmL (W.map fun w => w.nu s) (x.nu s).rep := by
   induction n using Nat.strong_induction_on with
   | _ n ih =>
   intro x hx
@@ -318,7 +324,7 @@ theorem exists_colouring {α : Type*} {h : ℕ} {W : List α} {D : Fin h → Lis
   exact ⟨c, (Finset.mem_filter.1 hc).2⟩
 
 theorem isGeneric_of_isSubquotient (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hJ : LSegJacquet k)
-    (hNu : GlobalTheory.BZSeg.NuPair k) {h N : ℕ} (Δ : Fin h → Segment k) (x : Fin h → IrrGL k) (hd : ∑ a, (x a).1 = N)
+    (hNu : GlobalTheory.BZSeg.NuPair k) {h N : ℕ} (Δ : Fin h → Segment k) (x : Fin h → IrrGL (k := k)) (hd : ∑ a, (x a).1 = N)
     (hun : ∀ i j, ¬ (Δ i).Linked (Δ j)) (hL : ∀ i, IsLSeg (Δ i) (x i).rep) {V : Type} [AddCommGroup V] [Module ℂ V]
     (ω : Representation ℂ (GL (Fin N) k) V) (hs : IsSmooth ω) (hi : ω.IsIrreducible)
     (hsq : IsSubquotient ω (prodIrr x hd)) : IsGeneric ω := by
@@ -329,7 +335,7 @@ theorem isGeneric_of_isSubquotient (hA : GlobalTheory.Published.IrreducibleAdmis
   obtain ⟨v₂, hv₂, hv₂'⟩ := exists_word hA _ β' rfl
   have hP := isSmooth_prodIrr x hd
   have hfl := GlobalTheory.CompanionTheory.ProdFL.hasFiniteLength_prodIrr hA x hd
-  have w₀ : ∀ (y : IrrGL k) (W : List (IrrGL k)),
+  have w₀ : ∀ (y : IrrGL (k := k)) (W : List (IrrGL (k := k))),
       (∀ s : ℂ, 1 ≤ jmL (W.map fun w => w.nu s) (y.nu s).rep) → 1 ≤ jmL W y.rep := by
     intro y W hW
     have h0 := hW 0
@@ -374,8 +380,8 @@ theorem isGeneric_of_isSubquotient (hA : GlobalTheory.Published.IrreducibleAdmis
 
 end GlobalTheory.CompanionTheory.BZSeg.NuPairIrr
 
-open GlobalTheory.CompanionTheory.BZSeg.NuPairIrr in
 
+open GlobalTheory.CompanionTheory.BZSeg.NuPairIrr in
 theorem GlobalTheory.CompanionTheory.BZSeg.NuPairIrr.lUnlinkedIrr : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k], GlobalTheory.Published.IrreducibleAdmissibleGL → Zc.LSegJacquet k →
     GlobalTheory.Published.GeometricLemmaFiltration → GlobalTheory.BZSeg.NuPair k → GlobalTheory.BZSeg.WhitRankStd k →

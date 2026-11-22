@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.HasTemperateGrowthEvalPoly
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.RealParExplicit
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.ConvRight
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.HasTemperateGrowthEvalPoly
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.RealParExplicit
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.ConvRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem tens_fP_add {m : ℕ} (θ : InfFam D) (τ : D.what₂.Tau) (fr : Matrix 
     (Ψ : Mx D m n → ℂ) (P Q : PX m n) :
     tens θ τ fr (fP c (P + Q)) Ψ = tens θ τ fr (fP c P) Ψ + tens θ τ fr (fP c Q) Ψ := by
   funext x
-  simp only [tens, fP, evX, map_add, Pi.add_apply]
+  simp only [tens, fP, evX, map_add (f := _), Pi.add_apply]
   ring
 
 theorem tens_fP_smul {m : ℕ} (θ : InfFam D) (τ : D.what₂.Tau) (fr : Matrix (Fin m) (Fin m) ℂ) (c : ℝ)
@@ -58,7 +62,7 @@ theorem linSec_of : ThLin → LinSec := by
   refine ⟨{ toFun := fun P => secF ω τ fr (cLoc l τ) Ψ P
             map_add' := fun P Q => by
               funext g
-              simp only [secF, hadd, map_add, Submodule.coe_add, Pi.add_apply]
+              simp only [secF, hadd, map_add (f := _), Submodule.coe_add, Pi.add_apply]
             map_smul' := fun a P => by
               funext g
               simp only [secF, hsmul, map_smul, Submodule.coe_smul, Pi.smul_apply, smul_eq_mul, RingHom.id_apply] },

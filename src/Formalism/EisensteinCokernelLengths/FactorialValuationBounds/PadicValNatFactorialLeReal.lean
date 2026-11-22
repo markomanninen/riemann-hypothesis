@@ -1,6 +1,10 @@
-import Formalism.EisensteinCokernelLengths.ExponentChainBound
-import Formalism.LagrangeIdealLifts.LiftLagrangeIdealInt
-import Formalism.WindowSums.PowerSeriesRelationList
+module
+
+public import Formalism.EisensteinCokernelLengths.ExponentChainBound
+public import Formalism.LagrangeIdealLifts.LiftLagrangeIdealInt
+public import Formalism.WindowSums.PowerSeriesRelationList
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,17 +15,18 @@ open Polynomial
 lemma sum_range_padicValNat_succ (ℓ : ℕ) [Fact ℓ.Prime] (n : ℕ) :
     ∑ k ∈ Finset.range n, padicValNat ℓ (k + 1) = padicValNat ℓ n.factorial := by
   induction n with
-  | zero => simp
+  | zero => simp [Nat.padicValNat_def]
   | succ n ih =>
     rw [Finset.sum_range_succ, ih, Nat.factorial_succ,
-      padicValNat.mul (Nat.succ_ne_zero n) (Nat.factorial_ne_zero n), add_comm]
+      (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (Nat.succ_ne_zero n) (Nat.factorial_ne_zero n), add_comm]
 
 lemma padicValNat_factorial_le_real (ℓ : ℕ) [hℓ : Fact ℓ.Prime] (n : ℕ) :
     (padicValNat ℓ n.factorial : ℝ) ≤ (n : ℝ) / ((ℓ : ℝ) - 1) := by
   have h2 : (2 : ℝ) ≤ ℓ := by exact_mod_cast hℓ.out.two_le
   have hpos : (0 : ℝ) < (ℓ : ℝ) - 1 := by linarith
   rw [le_div_iff₀ hpos]
-  have h := sub_one_mul_padicValNat_factorial (p := ℓ) n
+  have h : (ℓ - 1) * padicValNat ℓ n.factorial = n - (Nat.digits ℓ n).sum := by
+    simpa only [Nat.padicValNat_def] using (Nat.Prime.sub_one_mul_multiplicity_factorial (n := n) hℓ.out)
   have h' : (ℓ - 1) * padicValNat ℓ n.factorial ≤ n := by rw [h]; exact Nat.sub_le _ _
   have h'' : (((ℓ - 1) * padicValNat ℓ n.factorial : ℕ) : ℝ) ≤ n := by exact_mod_cast h'
   rw [Nat.cast_mul, Nat.cast_sub hℓ.out.one_le, Nat.cast_one] at h''
@@ -42,6 +47,7 @@ lemma sum_padicValInt_le_factorial (ℓ : ℕ) [Fact ℓ.Prime] (A : Finset ℤ)
         refine Finset.sum_congr rfl fun t ht => ?_
         have := hA t ht
         unfold padicValInt
+        rw [Nat.padicValNat_def]
         congr 1
         omega
     _ ≤ ∑ k ∈ Finset.range n, padicValNat ℓ (k + 1) := by
@@ -156,7 +162,7 @@ lemma kill_of_mem_span {R : Type} [CommRing R] {V : Type} [AddCommGroup V] [Modu
     (h2 : aeval T P₂ x = 0) : r • x = 0 := by
   obtain ⟨a, b, hab⟩ := Ideal.mem_span_pair.mp h
   have h3 : aeval T (C r) x = 0 := by
-    rw [← hab, map_add, map_mul, map_mul, LinearMap.add_apply, Module.End.mul_apply,
+    rw [← hab, map_add (f := _), map_mul, map_mul, LinearMap.add_apply, Module.End.mul_apply,
       Module.End.mul_apply, h1, h2, map_zero, map_zero, add_zero]
   rwa [aeval_C, Module.algebraMap_end_apply] at h3
 

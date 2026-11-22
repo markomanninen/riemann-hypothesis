@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.NatActRVtupR
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.FramesTr
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CastGLSymmApply
-import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.JPMemAwayP
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.NatActRVtupR
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.FramesTr
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CastGLSymmApply
+public import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.JPMemAwayP
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,8 +55,8 @@ theorem sec_off (X : ∀ v : Fin G.P.nV, GL (Fin n) ((A.pl v).1.adicCompletion F
     bc (prV (E := E) w) (H.sec X : GL (Fin n) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) = 1 :=
   bc_secAll_off F E σ J (fun v => (A.pl v).1) (pl_inj A) w (fun v h => hw (h ▸ (A.pl v).2)) _
 
-include H in
 
+include H in
 theorem eq_one_of_ph (v : Fin G.P.nV) (x : GL (Fin n) (E ⊗[F] (A.pl v).1.adicCompletion F))
     (hx : x ∈ UPts σ J ((A.pl v).1.adicCompletion F)) (h1 : bc (A.ph v) x = 1) : x = 1 := by
   have h2 : H.uGL v ⟨x, hx⟩ = 1 := by rw [H.uGL_apply]; exact h1
@@ -123,7 +127,7 @@ theorem ptEx_of (H : LocGood σ J A) (S : StepLevel F E σ J T f bad) (yc : cls 
   set x : UPts σ J (FiniteAdeleRing (𝓞 F) F) := ⟨A.yG i, H.yG_mem i⟩ * H.sec (fun v => bc (A.phE v) A.B *
       bc ((A.eQ v : G.P.Qq v →+* (A.pl v).1.adicCompletion F)) (castGL A.rk (G.P.Qq v) (g v)) * (bc (A.phE v) A.B)⁻¹) with hx
   obtain ⟨c, hc⟩ := hs (Quotient.mk'' x)
-  obtain ⟨h, hh, k, hk, e⟩ := (DoubleCoset.eq _ _ (yc c) x).1 hc
+  obtain ⟨h, hh, k, hk, e⟩ := (@DoubleCoset.eq _ _ _ _ (yc c) x).1 hc
   obtain ⟨γ, hγ, eγ⟩ := Subgroup.mem_map.1 (Subgroup.mem_subgroupOf.1 hh)
   refine ⟨c, γ, ⟨k.1, Subgroup.mem_subgroupOf.1 hk⟩, hγ, ?_⟩
   have e2 : bc (inclE (F := F) (FiniteAdeleRing (𝓞 F) F)) γ * (yc c).1 * k.1 = x.1 := by

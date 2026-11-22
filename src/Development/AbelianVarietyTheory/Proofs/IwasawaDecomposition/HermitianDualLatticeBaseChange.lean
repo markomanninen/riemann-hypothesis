@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.QuotientMetricDivisors.Statement
-import Formalism.HermitianLattices.StatementLat
-import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
+module
+
+public import Mathlib
+public import Formalism.QuotientMetricDivisors.Statement
+public import Formalism.HermitianLattices.StatementLat
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 
 noncomputable section
@@ -10,16 +15,16 @@ namespace GlobalTheory.Mem.DualBC
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K]
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem mem_dual_iff {d : ℕ} (H : Matrix (Fin d) (Fin d) K) (A : Submodule (𝓞 K) (Fin d → K)) (x : Fin d → K) :
     x ∈ Formalism.HermitianLatticesTheory.dual (Formalism.DivisionValues.hform H) A ↔
       ∀ y ∈ A, ∃ c : 𝓞 K, algebraMap (𝓞 K) K c = Formalism.DivisionValues.hform H y x := by
   simp only [Formalism.HermitianLatticesTheory.dual, Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap,
     LinearMap.restrictScalars_apply, Submodule.mem_one]
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem hform_eq {d : ℕ} (H : Matrix (Fin d) (Fin d) K) (x y : Fin d → K) :
     Formalism.DivisionValues.hform H x y = ∑ j, star (x j) * (H.mulVec y) j := by
   simp only [Formalism.DivisionValues.hform, Matrix.toLinearMapₛₗ₂'_apply, starRingEnd_apply, RingHom.id_apply,
@@ -28,13 +33,13 @@ theorem hform_eq {d : ℕ} (H : Matrix (Fin d) (Fin d) K) (x y : Fin d → K) :
   simp only [smul_eq_mul]
   ring
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem star_int (c : 𝓞 K) : algebraMap (𝓞 K) K (Formalism.DivisionValues.cO K c) = star (algebraMap (𝓞 K) K c) := rfl
 
-omit [StarRing K] in
 
-theorem exists_extend {d : ℕ} (A : Submodule (𝓞 K) (Fin d → K)) (hA : Submodule.IsLattice K A)
+omit [StarRing K] in
+theorem exists_extend {d : ℕ} (A : Submodule (𝓞 K) (Fin d → K)) (hA : Submodule.IsFullLattice K A)
     (f : A →ₗ[𝓞 K] 𝓞 K) :
     ∃ F : (Fin d → K) →ₗ[K] K, ∀ x : A, F x = algebraMap (𝓞 K) K (f x) := by
   classical
@@ -62,7 +67,7 @@ theorem exists_extend {d : ℕ} (A : Submodule (𝓞 K) (Fin d → K)) (hA : Sub
   exact mul_left_cancel₀ (by simpa using hc0) hzF
 
 theorem exists_family {d : ℕ} (H : Matrix (Fin d) (Fin d) K) (hH : IsUnit H.det)
-    (A : Submodule (𝓞 K) (Fin d → K)) (hA : Submodule.IsLattice K A) :
+    (A : Submodule (𝓞 K) (Fin d → K)) (hA : Submodule.IsFullLattice K A) :
     ∃ (n : ℕ) (a b : Fin n → Fin d → K), (∀ i, a i ∈ A) ∧ (∀ i, b i ∈ Formalism.HermitianLatticesTheory.dual (Formalism.DivisionValues.hform H) A) ∧
       ∀ y, y = ∑ i, Formalism.DivisionValues.hform H (a i) y • b i := by
   classical
@@ -73,7 +78,8 @@ theorem exists_family {d : ℕ} (H : Matrix (Fin d) (Fin d) K) (hH : IsUnit H.de
   have hFcoord : ∀ i (y : Fin d → K), F i y = ∑ j, y j * F i (Pi.single j 1) := by
     intro i y
     conv_lhs => rw [← Finset.univ_sum_single y]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [show (Pi.single j (y j) : Fin d → K) = y j • Pi.single j 1 by
       ext k; by_cases hk : k = j <;> simp [hk], map_smul, smul_eq_mul]
@@ -112,9 +118,11 @@ theorem exists_family {d : ℕ} (H : Matrix (Fin d) (Fin d) K) (hH : IsUnit H.de
     refine ⟨Formalism.DivisionValues.cO K (f i ⟨y, hy⟩), ?_⟩
     rw [star_int, hw, hF i ⟨y, hy⟩]
   · refine (sub_eq_zero.1 (hnd _ fun u => ?_)).symm
-    rw [map_sub, sub_eq_zero, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, sub_eq_zero, map_sum]
     conv_rhs => rw [hexp u]
-    rw [map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, map_smulₛₗ, LinearMap.smul_apply, hw, smul_eq_mul, smul_eq_mul,
       starRingEnd_apply, mul_comm]
@@ -122,7 +130,7 @@ theorem exists_family {d : ℕ} (H : Matrix (Fin d) (Fin d) K) (hH : IsUnit H.de
 theorem dual_baseChange : ∀ (K K' : Type) [Field K] [NumberField K] [StarRing K] [Field K'] [NumberField K'] [StarRing K'] (φ : K →+* K') (d d' : ℕ)
   (G : Matrix (Fin d') (Fin d) K'), Function.Bijective G.mulVec → ∀ (H : Matrix (Fin d) (Fin d) K) (H' : Matrix (Fin d') (Fin d') K'),
   (∀ x y : Fin d → K, Formalism.DivisionValues.hform H' (Matrix.mulVec G fun k => φ (x k)) (Matrix.mulVec G fun k => φ (y k)) = φ (Formalism.DivisionValues.hform H x y)) →
-  IsUnit H.det → ∀ A : Submodule (𝓞 K) (Fin d → K), Submodule.IsLattice K A →
+  IsUnit H.det → ∀ A : Submodule (𝓞 K) (Fin d → K), Submodule.IsFullLattice K A →
     Formalism.HermitianLatticesTheory.dual (Formalism.DivisionValues.hform H')
       (Submodule.span (𝓞 K') ((fun x : Fin d → K => Matrix.mulVec G fun k => φ (x k)) '' (A : Set (Fin d → K)))) =
     Submodule.span (𝓞 K') ((fun x : Fin d → K => Matrix.mulVec G fun k => φ (x k)) ''
@@ -132,7 +140,7 @@ theorem dual_baseChange : ∀ (K K' : Type) [Field K] [NumberField K] [StarRing 
   set ι : (Fin d → K) → (Fin d' → K') := fun x => Matrix.mulVec G fun k => φ (x k) with hι
   have ι_add : ∀ x y, ι (x + y) = ι x + ι y := by
     intro x y
-    simp only [hι, Pi.add_apply, map_add]
+    simp only [hι, Pi.add_apply, map_add (f := _)]
     rw [← Matrix.mulVec_add]
     rfl
   have ι_smul : ∀ (c : K) x, ι (c • x) = φ c • ι x := by
@@ -142,7 +150,8 @@ theorem dual_baseChange : ∀ (K K' : Type) [Field K] [NumberField K] [StarRing 
     rfl
   have ι_sum : ∀ {m : ℕ} (v : Fin m → Fin d → K), ι (∑ i, v i) = ∑ i, ι (v i) := by
     intro m v
-    simp only [hι, Finset.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hι, Finset.sum_apply, map_sum]
     rw [← Matrix.mulVec_sum]
     congr 1
     ext k
@@ -199,7 +208,7 @@ theorem dual_baseChange : ∀ (K K' : Type) [Field K] [NumberField K] [StarRing 
     | add y₁ y₂ _ _ h₁ h₂ =>
       obtain ⟨c₁, hc₁⟩ := h₁
       obtain ⟨c₂, hc₂⟩ := h₂
-      exact ⟨c₁ + c₂, by rw [map_add, map_add, LinearMap.add_apply, hc₁, hc₂]⟩
+      exact ⟨c₁ + c₂, by rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, hc₁, hc₂]⟩
     | smul r y _ h =>
       obtain ⟨c, hc⟩ := h
       refine ⟨Formalism.DivisionValues.cO K' r * c, ?_⟩

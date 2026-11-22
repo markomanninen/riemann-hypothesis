@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.acycPf
+module
+
+public import Development.EtaleCohomology.TateTwists.acycPf
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex GlobalTheory.EtC
 open scoped TensorProduct
@@ -28,11 +32,6 @@ theorem loc_bind {U : Scheme.{0}} {P : ∀ V : Scheme.{0}, (V ⟶ U) → Prop} {
     (fun V g hg => hT V g (hP V g hg)), ?_⟩
   rintro W _ ⟨V, k, g, hg, hk, rfl⟩
   exact hQ V g (hP V g hg) W k hk
-
-theorem loc_pull {U V : Scheme.{0}} {P : ∀ W : Scheme.{0}, (W ⟶ U) → Prop} (h : Loc U P) (g : V ⟶ U) :
-    Loc V fun W k => P W (k ≫ g) := by
-  obtain ⟨S, hS, hP⟩ := h
-  exact ⟨S.pullback g, Scheme.etaleTopology.pullback_stable g hS, fun W k hk => hP W _ hk⟩
 
 theorem loc_finset {ι : Type*} (s : Finset ι) {U : Scheme.{0}} {P : ι → ∀ V : Scheme.{0}, (V ⟶ U) → Prop}
     (h : ∀ i ∈ s, Loc U (P i)) : Loc U fun V g => ∀ i ∈ s, P i V g := by
@@ -114,7 +113,8 @@ theorem LateralTheory.EtaleFoundations.columnPf.kill_of : kill := by
   intro W k hk
   choose y hy using hk
   refine ⟨∑ i ∈ S.attach, y i.1 i.2 ⊗ₜ (P.map k.op).hom i.1.2, ?_⟩
-  rw [map_sum, ← hw, hS, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← hw, hS, map_sum, map_sum]
   rw [← Finset.sum_attach S]
   refine Finset.sum_congr rfl fun i _ => ?_
   simp only [TensorProduct.map_tmul, LinearMap.rTensor_tmul, LinearMap.id_apply]

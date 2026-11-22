@@ -1,7 +1,11 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SideRationalCharacterData
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.Chi1LocIsGal
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SideRationalCharacterData
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.Chi1LocIsGal
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -35,7 +39,9 @@ theorem chi_one_tameGen_alt : GlobalTheory.Published.GlobalArtinReciprocity → 
   have hloc : ∀ x, IsUnitAt (D.naut.plGw k v) x →
       (GlobalTheory.GalChar.block (cf.mu0 j' * cf.delAt (X.nd.l i)) cf.eta D.R.r).loc (D.naut.plGw k v) x =
         (cf.mu0 j').loc (D.naut.plGw k v) x := fun x hx => by
-    rw [GlobalTheory.GalChar.block_loc (cf.isEta.unr _) hx, HChar.loc_mul, hdel x hx, mul_one]
+    rw [GlobalTheory.GalChar.block_loc (cf.isEta.unr _) hx]
+    change (cf.mu0 j').loc _ x * (cf.delAt (X.nd.l i)).loc _ x = _
+    rw [hdel x hx, mul_one]
   have hI := (hG.ine_pow_iff ha (Or.inl hwl) hA (D.host.g k - 1)).2 fun x hx => by
     rw [hloc x hx, ← hN]
     exact (GlobalTheory.Mem.WildChar.orders_on_units _ _ _).1 ((cf.isMu0 j').tame _) x hx

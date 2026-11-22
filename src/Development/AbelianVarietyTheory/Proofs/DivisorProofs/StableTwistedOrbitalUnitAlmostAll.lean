@@ -1,15 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseChangeLevelFamilyIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralSphericalUnitStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KappaConstantMulOfCoprimeEllipticPolynomialsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralProperties
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnramifiedQuadraticDatumAtInertPlace
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsNormEqFixedUnitHenselian
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsNormEqXModMonicOfAdicCompleteInvolution
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CyclicVectorOfSeparableCharpolyField
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CyclicVectorSemilocalOfCyclicVectorField
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsMulCommutativeCentRealUJ
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseChangeLevelFamilyIff
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralTwistedConjInvariant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyBezoutSeparableDerivativeAdicIntegersStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMaxCompactGLOfCommuteEtaleCharpolyBoundedStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralConjEtaleMemCentralizerMulIntegralGLStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InertIntegralTwistedConjugatesTwistedCentralizerStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KappaConstantMulOfCoprimeEllipticPolynomialsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralProperties
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnramifiedQuadraticDatumAtInertPlace
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsNormEqFixedUnitHenselian
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsNormEqXModMonicOfAdicCompleteInvolution
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CyclicVectorOfSeparableCharpolyField
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CyclicVectorSemilocalOfCyclicVectorField
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsMulCommutativeCentRealUJ
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Polynomial Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC
 open scoped Classical TensorProduct
@@ -22,8 +33,8 @@ section Ring
 
 variable {O : Type} [CommRing O] {n : ℕ}
 
-open GlobalTheory.ClassParam in
 
+open GlobalTheory.ClassParam in
 theorem exists_cyclic [IsLocalRing O] (M : Matrix (Fin n) (Fin n) O) (hs : M.charpoly.Separable) :
     ∃ v, IsUnit (krylov M v) := by
   haveI : Subsingleton (MaximalSpectrum O) := ⟨fun a b =>
@@ -52,8 +63,8 @@ theorem conj_of_charpoly [IsLocalRing O] (a b : GL (Fin n) O) (hs : a.val.charpo
   calc b = kb * (kb⁻¹ * b * kb) * kb⁻¹ := by group
     _ = _ := by rw [← h3]; group
 
-open GlobalTheory.ClassParam in
 
+open GlobalTheory.ClassParam in
 theorem commute_of_commute [IsLocalRing O] (M s t : Matrix (Fin n) (Fin n) O) (hs : M.charpoly.Separable)
     (h1 : Commute M s) (h2 : Commute M t) : Commute s t := by
   obtain ⟨v, k, hk⟩ := exists_cyclic M hs
@@ -194,35 +205,6 @@ section Group
 
 variable {G : Type} [Group G]
 
-theorem exists_rep (θ : G →* G) (y : G) : ∃ g, TwCl.rep (θ := θ) (Quot.mk _ y) = g⁻¹ * y * θ g := by
-  have he : Equivalence fun x y : G => ∃ g, y = g⁻¹ * x * θ g :=
-    ⟨fun x => ⟨1, by simp⟩, fun ⟨g, h⟩ => ⟨g⁻¹, by rw [h, map_inv]; group⟩,
-      fun ⟨g, h⟩ ⟨k, h'⟩ => ⟨g * k, by rw [h', h, map_mul]; group⟩⟩
-  exact he.eqvGen_iff.1 (Quot.eqvGen_exact (Quot.out_eq (Quot.mk _ y)).symm)
-
-theorem clSum_eq_one [TopologicalSpace G] (θ : G →* G) (K : Subgroup G) (S : Set G) (f : G → ℂ)
-    (hS : ∀ g, ∀ y ∈ S, g⁻¹ * y * θ g ∈ S)
-    (hf : ∀ y ∈ S, twOrb θ K y f = if ∃ g, g⁻¹ * y * θ g ∈ K then 1 else 0)
-    (hex : ∃ y ∈ S, y ∈ K) (hun : ∀ y ∈ S, ∀ z ∈ S, y ∈ K → z ∈ K → ∃ g, z = g⁻¹ * y * θ g) :
-    clSum θ K S 1 f = 1 := by
-  obtain ⟨y, hyS, hyK⟩ := hex
-  obtain ⟨g, hg⟩ := exists_rep θ y
-  rw [clSum, finsum_eq_single (α := TwCl θ) _ (Quot.mk _ y)]
-  · have h1 := hS g y hyS
-    rw [hg, if_pos h1, hf _ h1, if_pos ⟨g⁻¹, by
-      have : g⁻¹⁻¹ * (g⁻¹ * y * θ g) * θ g⁻¹ = y := by rw [map_inv]; group
-      rwa [this]⟩]
-    simp
-  · intro c hc
-    split_ifs with h1
-    · rw [hf _ h1, if_neg, mul_zero]
-      rintro ⟨k, hk⟩
-      obtain ⟨l, hl⟩ := hun _ (hS k _ h1) y hyS hk hyK
-      apply hc
-      rw [← Quot.out_eq c]
-      exact Quot.sound ⟨k * l, by rw [hl, map_mul]; simp only [TwCl.rep]; group⟩
-    · rfl
-
 end Group
 
 variable {E : Type} [Field E] [NumberField E]
@@ -250,7 +232,7 @@ theorem eventually_separable (P : E[X]) (hP : P.Separable) : ∀ᶠ w : Pl E in 
   obtain ⟨u, v, huv⟩ := hP
   filter_upwards [eventually_lift u, eventually_lift v] with w ⟨u', hu⟩ ⟨v', hv⟩ q hq
   refine ⟨u', v', Polynomial.map_injective (algebraMap _ (w.adicCompletion E)) Subtype.val_injective ?_⟩
-  rw [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_mul, ← Polynomial.derivative_map, hq, hu, hv,
+  rw [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_mul, ← Polynomial.derivative_map, hq, hu, hv,
     Polynomial.derivative_map, ← Polynomial.map_mul, ← Polynomial.map_mul, ← Polynomial.map_add, huv,
     Polynomial.map_one, Polynomial.map_one]
 
@@ -265,7 +247,7 @@ theorem mem_int {L : Type} [Field L] {n : ℕ} (O : Subring L) (g : GL (Fin n) L
     exact g.inv_mul
 
 theorem eventually_mem_KGL {n : ℕ} (g : GL (Fin n) E) : ∀ᶠ w : Pl E in cofinite,
-    GeneralLinearGroup.map (algebraMap E (w.adicCompletion E)) g ∈ GlobalTheory.LFun.KGL w n := by
+    GeneralLinearGroup.map (algebraMap E (w.adicCompletion E)) g ∈ GlobalTheory.LFun.KGL w (n := n) := by
   have h : ∀ g : GL (Fin n) E, ∀ᶠ w : Pl E in cofinite, ∀ i j,
       algebraMap E (w.adicCompletion E) (g.val i j) ∈ w.adicCompletionIntegers E := fun g => by
     simp only [Filter.eventually_all]; exact fun i j => eventually_int _
@@ -274,17 +256,10 @@ theorem eventually_mem_KGL {n : ℕ} (g : GL (Fin n) E) : ∀ᶠ w : Pl E in cof
 
 variable [IsCMField E]
 
-theorem exists_isSection : ∃ S : Set (Pl E), IsSection S := by
-  let f : Pl E → HeightOneSpectrum (𝓞 (maximalRealSubfield E)) := fun w => w.under _
-  let s : Setoid (Pl E) := Setoid.ker f
-  refine ⟨Set.range fun q : Quotient s => q.out, fun w => ⟨(Quotient.mk s w).out, ⟨⟨_, rfl⟩, Quotient.mk_out (s := s) w⟩, ?_⟩⟩
-  rintro _ ⟨⟨u, rfl⟩, hu⟩
-  rw [← Quotient.sound (s := s) hu, Quotient.out_eq]
-
 theorem twConj_of_mem (hU : Unr E) (n : ℕ) (w : Pl E) (Q : (w.adicCompletion E)[X])
     (hQ : ∀ q : (w.adicCompletionIntegers E)[X], q.map (algebraMap _ (w.adicCompletion E)) = Q → q.Separable)
     (y z : GLw n w) (hy : (nrmL n w y).val.charpoly = Q) (hz : (nrmL n w z).val.charpoly = Q)
-    (hyK : y ∈ GlobalTheory.LFun.KGL w n) (hzK : z ∈ GlobalTheory.LFun.KGL w n) : ∃ g, z = g⁻¹ * y * thL n w g := by
+    (hyK : y ∈ GlobalTheory.LFun.KGL w (n := n)) (hzK : z ∈ GlobalTheory.LFun.KGL w (n := n)) : ∃ g, z = g⁻¹ * y * thL n w g := by
   let ι := algebraMap (w.adicCompletionIntegers E) (w.adicCompletion E)
   have hι : Function.Injective ι := Subtype.val_injective
   obtain ⟨y', rfl⟩ : ∃ y' : GL (Fin n) (w.adicCompletionIntegers E), GeneralLinearGroup.map ι y' = y := hyK
@@ -331,26 +306,5 @@ theorem twConj_of_mem (hU : Unr E) (n : ℕ) (w : Pl E) (Q : (w.adicCompletion E
         _ = _ := by rw [hk, map_mul]; group
     refine ⟨GeneralLinearGroup.map ι (k * g), ?_⟩
     rw [thL, if_neg hw, ← hmap, ← map_inv, ← map_mul, ← map_mul, ← hz']
-
-theorem stTw_unit : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E → ∀ (n : ℕ) (P : E[X]), P ∈ Ell E n →
-    ∀ᶠ w in (cofinite : Filter (Pl E)),
-      stTw n w (atPl w P) ((GlobalTheory.LFun.KGL w n : Set (GLw n w)).indicator 1) = 1 := by
-  intro E _ _ _ hU n P hP
-  obtain ⟨S, hS⟩ := exists_isSection (E := E)
-  obtain ⟨-, ⟨δ, hδ⟩, -⟩ := GlobalTheory.T.kappaConstant_mul_of_coprime_ellipticPolynomials E hU n 0 P 1 hP
-    ⟨monic_one, natDegree_one, separable_one, fun τ z hz => by simp at hz⟩ isCoprime_one_right
-  filter_upwards [GlobalTheory.T.twisted_orbital_integral_spherical_unit E hU n S hS P hP, eventually_separable P hP.2.2.1, eventually_mem_KGL δ,
-    eventually_mem_KGL (δ * thE E n δ)] with w h1 h2 h3 h4
-  refine clSum_eq_one _ _ _ _ (fun g y hy => ?_) h1 ⟨locEl n w δ, ?_, ?_⟩
-    fun y hy z hz => twConj_of_mem hU n w _ h2 y z hy hz
-  · change _ = _
-    rw [ThBasic.nrmL_twist hU, Units.val_mul, Units.val_mul, Matrix.coe_units_inv, Matrix.charpoly_units_conj']
-    exact hy
-  · change _ = _
-    rw [ThBasic.charpoly_nrmL hU, hδ]
-  · unfold locEl
-    split_ifs
-    · exact h4
-    · exact h3
 
 end GlobalTheory.BCT.UnitStable

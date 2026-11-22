@@ -1,4 +1,9 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
+
+@[expose] public section
+
 open Matrix Finset
 open scoped InnerProductSpace
 open PositivityTheory.RgBcC PositivityTheory.RgBcC.Real PositivityTheory.RgBcC.RealD GlobalTheory.CompanionTheory.RealCount
@@ -35,10 +40,6 @@ noncomputable def sandwich {W H : Type} [AddCommGroup W] [Module ℂ W]
   map_add' f g := by ext v; simp
   map_smul' c f := by ext v; simp
 
-@[simp] theorem sandwich_apply {W H : Type} [AddCommGroup W] [Module ℂ W]
-    [AddCommGroup H] [Module ℂ H] (a : H →ₗ[ℂ] H) (b : W →ₗ[ℂ] W) (f : W →ₗ[ℂ] H) :
-    sandwich a b f = a ∘ₗ f ∘ₗ b := rfl
-
 theorem trace_sandwich {W H : Type} [AddCommGroup W] [Module ℂ W]
     [AddCommGroup H] [Module ℂ H] [FiniteDimensional ℂ W] [FiniteDimensional ℂ H]
     (a : H →ₗ[ℂ] H) (b : W →ₗ[ℂ] W) :
@@ -51,7 +52,7 @@ theorem trace_sandwich {W H : Type} [AddCommGroup W] [Module ℂ W]
     apply TensorProduct.ext'
     intro φ h
     ext v
-    simp [e, M, dualTensorHomEquiv, dualTensorHomEquivOfBasis_apply, dualTensorHom_apply,
+    simp [e, M, sandwich, dualTensorHomEquiv, dualTensorHomEquivOfBasis_apply, dualTensorHom_apply,
       Module.Dual.transpose_apply]
   have hconj : e.conj M = sandwich a b := by
     rw [LinearEquiv.conj_apply]

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardBaseFlagComplementIntegralLatticeStatement
-import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ImportsExtra
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardBaseFlagComplementIntegralLatticeStatement
+public import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ImportsExtra
+
+@[expose] public section
+
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -40,6 +45,70 @@ theorem exists_smul_mem {E W : Type} [Field E] [NumberField E] [AddCommGroup W] 
   | (intros; apply _root_.GlobalTheory.ClearingDenominatorsInOrder.main <;> assumption)
   | (intros; apply @_root_.GlobalTheory.ClearingDenominatorsInOrder.main <;> first | assumption | infer_instance)
   | (intros; exact _root_.GlobalTheory.ClearingDenominatorsInOrder.main ..)
+
+variable {E : Type} [Field E] [NumberField E] [StarRing E]
+
+theorem exists_vec (S : HSpace E) (φ : S.V →ₗ[E] E) : ∃ w, ∀ x, φ x = S.hT w x := by
+  let G : S.V →ₗ[E] (Fin S.rank → E) := LinearMap.pi fun i => S.hT (S.frame i)
+  have hG : Function.Injective G := by
+    rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']
+    intro y hy
+    apply S.nondeg.2 y
+    intro x
+    have : S.hT.flip y = 0 := S.frame.ext fun i => congrFun hy i
+    exact LinearMap.congr_fun this x
+  have hs : Function.Surjective G :=
+    (LinearMap.injective_iff_surjective_of_finrank_eq_finrank (by simp [S.rank_eq])).1 hG
+  obtain ⟨w, hw⟩ := hs fun i => star (φ (S.frame i))
+  refine ⟨w, fun x => LinearMap.congr_fun (S.frame.ext fun i => ?_ : φ = S.hT w) x⟩
+  have h1 : S.hT (S.frame i) w = star (φ (S.frame i)) := congrFun hw i
+  have h2 : star (S.hT (S.frame i) w) = S.hT w (S.frame i) := S.herm.eq _ _
+  rw [← h2, h1, star_star]
+
+
+theorem span_eq_top_of_unimodular {S : HSpace E} (L : Submodule (𝓞 E) S.V)
+    (hL : Submodule.IsLattice E L)
+    (hU : Formalism.HermitianLatticesTheory.IsUnimodular S.hT L) :
+    Submodule.span E (L : Set S.V) = ⊤ := by
+  by_contra hspan
+  obtain ⟨φ, hφ₀, hφ⟩ := Submodule.exists_le_ker_of_lt_top _ (lt_top_iff_ne_top.mpr hspan)
+  obtain ⟨μ, hμ⟩ := exists_vec S φ
+  have hμ₀ : μ ≠ 0 := by
+    intro h
+    apply hφ₀
+    ext y
+    simpa [h] using hμ y
+  have hline (a : E) : a • μ ∈ L := by
+    rw [← hU]
+    change a • μ ∈ Formalism.E.hdual S.hT L
+    simp only [Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap,
+      LinearMap.restrictScalars_apply]
+    intro y hy
+    have hy₀ := LinearMap.mem_ker.mp (hφ (Submodule.subset_span hy))
+    simp [← S.herm.eq (a • μ) y, LinearMap.map_smulₛₗ, ← hμ, hy₀]
+  obtain ⟨ψ, hψ, -⟩ := Submodule.exists_le_ker_of_notMem
+    (show μ ∉ (⊥ : Submodule E S.V) by simpa using hμ₀)
+  let f := ψ.restrictScalars (𝓞 E)
+  have hmap (x : E) : x ∈ L.map f := by
+    refine ⟨(x / ψ μ) • μ, hline _, ?_⟩
+    change ψ ((x / ψ μ) • μ) = x
+    rw [map_smul, smul_eq_mul, div_mul_cancel₀ _ hψ]
+  obtain ⟨d, hd₀, hd⟩ := FractionalIdeal.isFractional_of_fg
+    (S := nonZeroDivisors (𝓞 E)) (hL.fg.map f)
+  have hinj := IsFractionRing.injective (𝓞 E) E
+  have hne {a : 𝓞 E} (ha : a ≠ 0) : algebraMap (𝓞 E) E a ≠ 0 :=
+    fun h => ha (hinj (h.trans (map_zero _).symm))
+  have hinteger (x : E) : IsLocalization.IsInteger (𝓞 E) x := by
+    have hx := hd _ (hmap ((algebraMap (𝓞 E) E d)⁻¹ * x))
+    rwa [Algebra.smul_def, ← mul_assoc, mul_inv_cancel₀ (hne (nonZeroDivisors.ne_zero hd₀)),
+      one_mul] at hx
+  apply RingOfIntegers.not_isField E
+  refine ⟨⟨0, 1, zero_ne_one⟩, mul_comm, ?_⟩
+  intro a ha
+  obtain ⟨b, hb⟩ := hinteger ((algebraMap (𝓞 E) E a)⁻¹)
+  refine ⟨b, hinj ?_⟩
+  rw [map_mul, hb, map_one, mul_inv_cancel₀ (hne ha)]
+
 
 theorem mem_perpE (D : D7) (P : LatW D) (v : (D.sp.X 0).V) :
     v ∈ perpE D P ↔ ∀ p ∈ P, (D.sp.X 0).hT p v = 0 := by
@@ -189,8 +258,25 @@ theorem main : ∀ (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ : LatV D),
     rw [← (hw b).2 σ hσ.2]
     have huni : Formalism.HermitianLatticesTheory.dual (hS D).hT Λ = Λ := hrow.2.1.2.1
     exact (mem_dual _ _ _).1 (huni.symm ▸ hfΛ b) _ (iXY_mem D F0 Λ hb.1 hsp σ hσ.1)
-  · obtain ⟨c, hc, hcw⟩ := exists_smul_mem (L0X D Λ (lf D F0)) (w b)
-      (by rw [hlat.span_eq_top]; trivial)
+  · obtain ⟨c, hc, hcΛ⟩ := exists_smul_mem Λ (D.sp.iXY 0 (w b))
+      (by rw [span_eq_top_of_unimodular Λ hrow.2.1.1 hrow.2.1.2.1]; trivial)
+    have hworth : D.sp.iXY 0 (w b) ∈ orth (hS D) (Xplus (lf D F0)) :=
+      hW.1.le (Submodule.mem_sup_left ⟨w b, rfl⟩)
+    have hcorth : D.sp.iXY 0 (c • w b) ∈ orth (hS D) (Xplus (lf D F0)) := by
+      rw [← algebraMap_smul D.host.E c, map_smul]
+      exact (orth (hS D) (Xplus (lf D F0))).smul_mem _ hworth
+    have hcΛ' : D.sp.iXY 0 (c • w b) ∈ Λ := by
+      rw [← algebraMap_smul D.host.E c, map_smul, algebraMap_smul]
+      exact hcΛ
+    have hcX : D.sp.iXY 0 (c • w b) ∈ orth (hS D) (Xsp (lf D F0)) := by
+      apply (mem_orth (hS D) _ _).2
+      intro x hx
+      exact (mem_orth (hS D) _ _).1 hcorth x (Submodule.mem_sup_left hx)
+    have hcz : (hS D).hT F0.z (D.sp.iXY 0 (c • w b)) = 0 :=
+      (mem_orth (hS D) _ _).1 hcorth _
+        (Submodule.mem_sup_right (Submodule.mem_span_singleton_self _))
+    have hcw : c • w b ∈ L0X D Λ (lf D F0) := by
+      exact ⟨⟨Submodule.mem_sup_left ⟨hcΛ', hcX⟩, hcX⟩, hcz⟩
     have hc1 : algebraMap (𝓞 D.host.E) D.host.E c ≠ 0 := by simpa using hc
     have hm : c • w b ∈ perpW D (L0X D Λ (lf D F0)) P :=
       ⟨hcw, ((perpE D P).restrictScalars (𝓞 D.host.E)).smul_mem c (hw b).1⟩
@@ -209,7 +295,8 @@ theorem main : ∀ (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ : LatV D),
     have hE : ∀ a, (hS D).hT (F0.e a) om = 0 := fun a => by
       have h := congrFun (Formalism.HermitianLatticeCounting.Final.LatticeSumBounds.kernelRowSpace _ _
         ((Zhat F0 F'.fl).submatrix Fin.castSucc id)).1 a
-      rw [hom, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hom, map_sum]
       simp only [map_smul, smul_eq_mul]
       rw [← hκ] at h
       simpa [Matrix.mulVec, dotProduct, Zhat, brS, FlagG.fvec, mul_comm] using h
@@ -229,7 +316,7 @@ theorem main : ∀ (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ : LatV D),
         rw [map_sub, map_smul, F0.z_norm, hζ, smul_eq_mul]
         field_simp
         ring
-      rw [map_add, LinearMap.add_apply, h1, h2, add_zero]
+      rw [map_add (f := _), LinearMap.add_apply, h1, h2, add_zero]
     rw [← hW.1] at hperp
     obtain ⟨_, ⟨y, rfl⟩, x, hx, hyx⟩ := Submodule.mem_sup.1 hperp
     have hWp : ∀ (σ : (D.sp.X 0).V), ∀ v ∈ Xplus (lf D F0), (hS D).hT v (D.sp.iXY 0 σ) = 0 := fun σ =>
@@ -238,13 +325,14 @@ theorem main : ∀ (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ : LatV D),
     have hdec : om = x + D.sp.iXY 0 y + ζ • F0.z := by
       rw [add_comm x, hyx]; abel
     have hσom : ∀ σ, (hS D).hT (D.sp.iXY 0 σ) om = (D.sp.X 0).hT σ y := fun σ => by
-      rw [hdec, map_add, map_add, map_smul, hT_zero _ (hWp σ x (Submodule.mem_sup_left hx)),
+      rw [hdec, map_add (f := _), map_add (f := _), map_smul, hT_zero _ (hWp σ x (Submodule.mem_sup_left hx)),
         hT_zero _ (hWp σ _ hzp), hiso]
       simp
     have hyP : y ∈ perpE D P := by
       refine (mem_perpE D P y).2 fun p hp => ?_
       have h1 : (hS D).hT (D.sp.iXY 0 p + φ ⟨p, hp⟩) om = 0 := by
-        rw [hom, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hom, map_sum]
         refine Finset.sum_eq_zero fun b _ => ?_
         rw [map_smul, horth ⟨p, hp⟩ b, smul_zero]
       rwa [map_add, LinearMap.add_apply, hXom _ (hφ ⟨p, hp⟩).2, add_zero, hσom] at h1
@@ -253,7 +341,8 @@ theorem main : ∀ (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ : LatV D),
         sub_mem hyP (Submodule.sum_mem _ fun b _ => Submodule.smul_mem _ _ (hw b).1)
       refine sub_eq_zero.1 (han _ ?_)
       have h1 : ∀ σ ∈ perpE D P, (D.sp.X 0).hT σ (y - ∑ b, κ b • w b) = 0 := fun σ hσ => by
-        rw [map_sub, ← hσom, hom, map_sum, map_sum, sub_eq_zero]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sub, ← hσom, hom, map_sum, map_sum, sub_eq_zero]
         refine Finset.sum_congr rfl fun b _ => ?_
         rw [map_smul, map_smul, ← (hw b).2 σ hσ]
       exact h1 _ hd

@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.BiextensionRelation
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.HomotheticLatticeIntegralS2
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.CurveJetsUnitBall
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.EisensteinRecursion
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.BiextensionRelation
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.HomotheticLatticeIntegralS2
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.CurveJetsUnitBall
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.EisensteinRecursion
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -20,8 +24,8 @@ section Alg
 variable {K K' : Type} [Field K] [Field K'] (φ : K →+* K')
 
 theorem map_derivative (f : PowerSeries K) :
-    PowerSeries.map φ (PowerSeries.derivative K f) =
-      PowerSeries.derivative K' (PowerSeries.map φ f) := by
+    PowerSeries.map φ (PowerSeries.derivative (R := K) f) =
+      PowerSeries.derivative (R := K') (PowerSeries.map φ f) := by
   ext n
   simp [PowerSeries.coeff_derivative]
 
@@ -104,7 +108,8 @@ theorem endoCurve_of_endoZ [CharZero K] [CharZero K'] (W : WeierstrassCurve K) {
     apply mul_left_cancel₀ h2'
     linear_combination h4
   apply PowerSeries.map_injective φ φ.injective
-  rw [map_mul, PowerSeries.map_C, map_pow, map_rescale, h3, map_add, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_mul, PowerSeries.map_C, map_pow, map_rescale, h3, map_add (f := _), map_sum]
   simp only [map_sub, PowerSeries.map_C, Finset.sum_sub_distrib]
   rw [hsum]
 
@@ -384,7 +389,7 @@ theorem NRDense_of (hSq : SqrtKur) : NRDense := by
   have hNK : α * σ α = (Fintype.card S : MaximalUnramifiedExtension l) + 1 := by
     apply Subtype.ext
     have h := congrArg ι hprod
-    simp only [map_mul, map_add, map_sub, map_intCast, map_natCast, map_one] at h
+    simp only [map_mul, map_add (f := _), map_sub, map_intCast, map_natCast, map_one] at h
     rw [hσα, hαw, Fintype.card_coe]
     push_cast
     rw [hwc]
@@ -400,7 +405,8 @@ theorem NRDense_of (hSq : SqrtKur) : NRDense := by
   have hs : α * (α - σ α) * s2 = ∑ P, xP P := by
     apply Subtype.ext
     have h := congrArg ι hs2C
-    simp only [map_mul, map_add, map_sub, map_intCast, map_one, map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_mul, map_add (f := _), map_sub, map_intCast, map_one, map_sum] at h
     rw [hσα, hαw]
     push_cast
     rw [hwc, hs2, h]

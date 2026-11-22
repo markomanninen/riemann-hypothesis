@@ -1,14 +1,18 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafMonoPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafPushPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafGoodPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafDeltaPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafExactPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafGenPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafImgHomPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafImgPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafBdCut
-import Development.EtaleCohomology.CohomologicalPurity.PresSheafify
-import Development.EtaleCohomology.CohomologicalPurity.FreePMapMk
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafMonoPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafPushPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafGoodPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafDeltaPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafExactPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafGenPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafImgHomPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafImgPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafBdCut
+public import Development.EtaleCohomology.CohomologicalPurity.PresSheafify
+public import Development.EtaleCohomology.CohomologicalPurity.FreePMapMk
+
+@[expose] public section
 
 namespace LateralTheory.Fin.LeafBd
 theorem etale_boundary_monomorphism_of_thom_isomorphism : LateralTheory.CohomologicalPurity.Bd.LeafMono := by

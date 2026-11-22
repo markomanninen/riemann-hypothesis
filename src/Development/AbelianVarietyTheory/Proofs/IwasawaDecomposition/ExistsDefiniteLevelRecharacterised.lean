@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CenUsedOfCenReal
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SettingsFormsExistList
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.OmPinsTr
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SideTw
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleTwistOfTwistingCharacter
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.KeepSideBMtVPlaces
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SideBTies
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.YsOfFi
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLevelGroupWithCharacterAtTypePlaces
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CenUsedOfCenReal
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SettingsFormsExistList
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.OmPinsTr
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SideTw
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleTwistOfTwistingCharacter
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.KeepSideBMtVPlaces
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SideBTies
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.YsOfFi
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLevelGroupWithCharacterAtTypePlaces
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.N Formalism.MainNotions.StandardLattice Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2 Formalism.L2.Host Formalism.L2.DIV Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.NX GlobalTheory.HeightCounting GlobalTheory.TwInputs GlobalTheory.SeriesTie GlobalTheory.ExportSeries NumberField IsDedekindDomain
 open Formalism.MainNotions.IntegralHeckeForms (TwOK HkIdx)
 open scoped TensorProduct
@@ -25,8 +30,8 @@ section Loc
 variable {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ} {R : Type} [CommRing R]
   {v : HeightOneSpectrum (𝓞 (maximalRealSubfield L))}
 
-open Classical in
 
+open Classical in
 def dU (v : HeightOneSpectrum (𝓞 (maximalRealSubfield L))) (red : v.adicCompletionIntegers (maximalRealSubfield L) →+* R)
     (r : ℕ) (x : Matrix (Fin n) (Fin n) (v.adicCompletion (maximalRealSubfield L))) : Rˣ :=
   if h : IsUnit (red (NX.intLift v (NX.detT r x))) then h.unit else 1
@@ -36,14 +41,14 @@ theorem isUnit_red (red : v.adicCompletionIntegers (maximalRealSubfield L) →+*
     IsUnit (red (NX.intLift v (NX.detT r x))) := by
   have hix : NX.detT r x ∈ v.adicCompletionIntegers (maximalRealSubfield L) := by
     rw [HeightOneSpectrum.mem_adicCompletionIntegers, hdx]
-  have ex : NX.intLift v (NX.detT r x) = ⟨_, hix⟩ := by rw [NX.intLift, dif_pos hix]
+  have ex : NX.intLift v (NX.detT r x) = ⟨_, hix⟩ := by rw [NX.intLift, dite_eq_left hix]
   rw [ex]; exact (isUnit_int hdx hix).map red
 
 theorem dU_eq (red : v.adicCompletionIntegers (maximalRealSubfield L) →+* R) (r : ℕ)
     (x : Matrix (Fin n) (Fin n) (v.adicCompletion (maximalRealSubfield L)))
     (h : IsUnit (red (NX.intLift v (NX.detT r x)))) : dU v red r x = h.unit := by
   unfold dU
-  rw [dif_pos h]
+  rw [dite_eq_left h]
 
 theorem dU_mul (red : v.adicCompletionIntegers (maximalRealSubfield L) →+* R)
     (hred : ∀ z : v.adicCompletionIntegers (maximalRealSubfield L),
@@ -56,8 +61,8 @@ theorem dU_mul (red : v.adicCompletionIntegers (maximalRealSubfield L) →+* R)
     rw [HeightOneSpectrum.mem_adicCompletionIntegers, hdx]
   have hiy : NX.detT r y ∈ v.adicCompletionIntegers (maximalRealSubfield L) := by
     rw [HeightOneSpectrum.mem_adicCompletionIntegers, hdy]
-  have ex : NX.intLift v (NX.detT r x) = ⟨_, hix⟩ := by rw [NX.intLift, dif_pos hix]
-  have ey : NX.intLift v (NX.detT r y) = ⟨_, hiy⟩ := by rw [NX.intLift, dif_pos hiy]
+  have ex : NX.intLift v (NX.detT r x) = ⟨_, hix⟩ := by rw [NX.intLift, dite_eq_left hix]
+  have ey : NX.intLift v (NX.detT r y) = ⟨_, hiy⟩ := by rw [NX.intLift, dite_eq_left hiy]
   have hxy : red (NX.intLift v (NX.detT r (x * y))) =
       red (NX.intLift v (NX.detT r x)) * red (NX.intLift v (NX.detT r y)) := by
     rw [ex, ey, ← map_mul]
@@ -112,7 +117,7 @@ theorem gVal_rechar (D : D7) (i : D.ntw.Tw) (k : ℕ) (b : Bool) (kv : Σ k : Fi
       NX.toKk D i k (((τ' (dU s.v red D.R.r x) * (τ (dU s.v red D.R.r x))⁻¹ : (FractionRing (D.ntw.O i))ˣ)) :
         FractionRing (D.ntw.O i)) := by
   unfold NX.gVal
-  rw [dif_pos hu, dif_pos hu, dU_eq red _ x hu]
+  rw [dite_eq_left hu, dite_eq_left hu, dU_eq red _ x hu]
   exact mul_ringHom_units_ratio _ _ _ _
 
 theorem exists_rechar : ∀ (D : D7) (i : D.ntw.Tw) (j : ℕ) (b : Bool) (k : ℕ) (Q : Finset (PlE D.host)) (ψ : Formalism.ConjugateSelfDual.G D.host.E D.nd.Om →* (D.ntw.Ok i k)ˣ) (e : ℤ) (W₀ : Type) [AddCommGroup W₀] [Module (FractionRing (D.ntw.O i)) W₀] (ρ₀ : Representation (FractionRing (D.ntw.O i)) (ReciprocityTheory.Aut.GQ D.host.E D.R.nV) W₀) (τ τ' : ∀ kv : (Σ kk : Fin 2, D.nd.PlG kk), (ZMod (D.host.g kv.1))ˣ →* (FractionRing (D.ntw.O i))ˣ) (M : NX.MtVReal D i j b k Q ψ e W₀ ρ₀ τ), ∃ χ' : M.J →* (NX.Kk D i k)ˣ, (∃ N : ℕ, 0 < N ∧ ∀ κ, NG.Cong D.host.E D.R.nV N κ → ∃ h : κ ∈ M.J, χ' ⟨κ, h⟩ = 1) ∧ NX.HypOutsideF M.J χ' (NX.badV D i Q) ∧ ∀ κ (h : κ ∈ M.J), ((χ' ⟨κ, h⟩ : (NX.Kk D i k)ˣ) : NX.Kk D i k) = (∏ kv : (Σ kk : Fin 2, D.nd.PlG kk), NX.gVal D i k b kv (M.sp (NX.pG D kv)) (M.redG kv) (τ' kv) (NX.locM (M.sp (NX.pG D kv)) κ)) * (∏ P ∈ M.QP, NX.ofOk D i k (NX.tameVal ψ P e (NX.resRep (M.sp P) P (NX.detT D.R.r (NX.locM (M.sp P) κ)))).1) * (∏ P ∈ M.DP, NX.ofO0 D i k (NX.tameVal (D.ntw.delta i) P (if b then e else -e) (NX.resRep (M.sp P) P (NX.detT D.R.r (NX.locM (M.sp P) κ)))).1) := by

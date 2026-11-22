@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesE
-import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldC
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EmbBar
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesE
+public import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldC
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EmbBar
+
+@[expose] public section
+
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl
@@ -28,13 +33,16 @@ theorem card_bounded_conjugates_le :
     have hx : canonicalEmbedding E (β : E) = ∑ j, ((b.repr β j : ℤ) : ℂ) • B j := by
       have h0 : (β : E) = ∑ j, ((b.repr β j : ℤ) : E) * ((b j : 𝓞 E) : E) := by
         conv_lhs => rw [← b.sum_repr β]
-        simp [map_sum, zsmul_eq_mul]
-      rw [h0, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp [map_sum, zsmul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [h0, map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       ext τ
       simp [B, b, canonicalEmbedding.latticeBasis_apply, integralBasis_apply]
     change B.coord i _ = _
-    rw [hx, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx, map_sum]
     simp [Module.Basis.coord_apply, Finsupp.single_apply]
   have hbound : ∀ (R : ℝ), 1 ≤ R → ∀ β : 𝓞 E, (∀ τ : E →+* ℂ, ‖τ (β : E)‖ ≤ R) →
       ∀ i, |((b.repr β i : ℤ) : ℝ)| ≤ C₀ * R := by

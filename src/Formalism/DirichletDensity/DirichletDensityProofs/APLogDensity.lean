@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.DirichletDensity.Statement
+module
+
+public import Mathlib
+public import Formalism.DirichletDensity.Statement
+
+@[expose] public section
 
 open Filter Topology ArithmeticFunction ArithmeticFunction.vonMangoldt Complex LSeries
 
@@ -98,8 +102,8 @@ lemma apld_prime_part_eq (a : ZMod q) (x : ℝ) (n : ℕ) :
 
 end Formalism.HF.P
 
-open Formalism.HF.P in
 
+open Formalism.HF.P in
 theorem Formalism.HF.apLogDensity : Formalism.HF.APLogDensity := by
   intro N _ a ha
   unfold Formalism.HF.LogDensity

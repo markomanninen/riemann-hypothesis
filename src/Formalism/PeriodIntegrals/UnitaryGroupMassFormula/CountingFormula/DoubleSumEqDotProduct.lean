@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DensGSC
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DensGSC
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,8 @@ private theorem hermSp_h_sum_left {M : Loc.Model F E} {V : Type} [AddCommGroup V
 private theorem hermSp_h_sum_right' {M : Loc.Model F E} {V : Type} [AddCommGroup V] [Module E V]
     (H : Loc.HermSp M V) {ι : Type} (s : Finset ι) (f : ι → V) (x : V) :
     H.h x (∑ i ∈ s, f i) = ∑ i ∈ s, H.h x (f i) := by
-  rw [H.h_herm, hermSp_h_sum_left, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [H.h_herm, hermSp_h_sum_left, map_sum]
   exact Finset.sum_congr rfl (fun i _ => (H.h_herm (f i) x).symm)
 
 private theorem hermSp_h_smul_right {M : Loc.Model F E} {V : Type} [AddCommGroup V] [Module E V]
@@ -55,7 +60,8 @@ theorem form_fst {M : Loc.Model F E} {V : Type} [AddCommGroup V] [Module E V] (H
     (e : E ≃ₐ[F] F × F) (he : ∀ x, e (M.L.cj x) = (e x).swap) {n : ℕ} (β : Module.Basis (Fin n) E V)
     (x y : V) : (e (H.h x y)).1 = (sig e β x).1 ⬝ᵥ (amat H e β *ᵥ (sig e β y).2) := by
   conv_lhs => rw [← β.sum_repr x, ← β.sum_repr y]
-  simp only [hermSp_h_sum_left, hermSp_h_sum_right', H.h_smul_left, hermSp_h_smul_right, map_sum, map_mul, Prod.fst_sum, Prod.fst_mul, he,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hermSp_h_sum_left, hermSp_h_sum_right', H.h_smul_left, hermSp_h_smul_right, map_sum, map_mul, Prod.fst_sum, Prod.fst_mul, he,
     Prod.fst_swap]
   simp only [amat, sig, dotProduct, Matrix.mulVec, Finset.mul_sum]
   rw [Finset.sum_comm]
@@ -68,7 +74,8 @@ theorem form_snd {M : Loc.Model F E} {V : Type} [AddCommGroup V] [Module E V] (H
   have hs : ∀ k l, (e (H.h (β k) (β l))).2 = (e (H.h (β l) (β k))).1 := fun k l => by
     rw [H.h_herm (β l) (β k), he]; rfl
   conv_lhs => rw [← β.sum_repr x, ← β.sum_repr y]
-  simp only [hermSp_h_sum_left, hermSp_h_sum_right', H.h_smul_left, hermSp_h_smul_right, map_sum, map_mul, Prod.snd_sum, Prod.snd_mul, he,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hermSp_h_sum_left, hermSp_h_sum_right', H.h_smul_left, hermSp_h_smul_right, map_sum, map_mul, Prod.snd_sum, Prod.snd_mul, he,
     Prod.snd_swap, hs]
   simp only [amat, sig, dotProduct, Matrix.mulVec, Finset.mul_sum]
   refine Finset.sum_congr rfl (fun k _ => Finset.sum_congr rfl (fun l _ => ?_))

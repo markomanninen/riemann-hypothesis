@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.MemLoc
 open scoped Formalism.Per
@@ -36,7 +40,7 @@ theorem exists_algEquiv_rootOfUnity_eq_pow (V K : Type) [CommRing V] [IsDomain V
       fun g => congrArg Subtype.val (hb g)
     have hint : IsIntegral V k := by
       have h2 : IsIntegral V (algebraMap K Ω k) := hk ▸ b.2
-      exact (isIntegral_algebraMap_iff (algebraMap K Ω).injective).1 h2
+      exact (isIntegral_algebraMap_iff ).1 h2
     obtain ⟨v, hv⟩ := IsIntegrallyClosed.isIntegral_iff.1 hint
     refine ⟨v, Subtype.ext ?_⟩
     rw [← hk, ← hv, ← IsScalarTower.algebraMap_apply]

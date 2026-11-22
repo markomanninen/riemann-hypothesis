@@ -1,6 +1,10 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.JoinModelPointsProject
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNeZeroForallComplexPointExtend
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.JoinModelPointsProject
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNeZeroForallComplexPointExtend
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem exists_spec {B Ω σ : Type} [CommRing B] [IsDomain B] [IsNoetherianRing
   let I : Ideal (MvPolynomial σ B) := RingHom.ker (eval₂Hom j u)
   have : I.IsPrime := RingHom.ker_isPrime _
   have hinj : Function.Injective (algebraMap B (MvPolynomial σ B ⧸ I)) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro b hb
     have h1 : Ideal.Quotient.mk I (C b) = 0 := hb
     have h2 : eval₂Hom j u (C b) = 0 := Ideal.Quotient.eq_zero_iff_mem.mp h1

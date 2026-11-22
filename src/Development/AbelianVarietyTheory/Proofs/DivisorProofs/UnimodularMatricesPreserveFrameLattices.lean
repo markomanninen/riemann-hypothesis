@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LamGApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinIndMapRangeField
-import Formalism.PieriBlockIdeals.PieriColumnMinors.RealLocalDeltaNabla
-import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LamGApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinIndMapRangeField
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.RealLocalDeltaNabla
+public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+
+@[expose] public section
 
 set_option autoImplicit false
 

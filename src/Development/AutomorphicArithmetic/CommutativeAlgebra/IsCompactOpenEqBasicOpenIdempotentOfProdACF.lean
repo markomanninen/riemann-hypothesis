@@ -1,5 +1,9 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.BuildCut
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.BuildCut
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry TopologicalSpace LateralTheory.E.BuildCut
 

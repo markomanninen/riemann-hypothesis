@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSelfDualE
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.PairingNondegenerateHolds
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
-import Formalism.GradedWeylDivisibility.StatementE
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Formalism.QuotientMetricDivisors.ReductionLemmaZero
-import Formalism.QuotientMetricDivisors.ProdFormula
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LeafBounds.MeanMaxLeaf.LeafMMFree
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSelfDualE
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.PairingNondegenerateHolds
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
+public import Formalism.GradedWeylDivisibility.StatementE
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Formalism.QuotientMetricDivisors.ReductionLemmaZero
+public import Formalism.QuotientMetricDivisors.ProdFormula
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LeafBounds.MeanMaxLeaf.LeafMMFree
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MvPolynomial Formalism.BasicNotions Formalism.L2.DIV Formalism.DivisionValues GlobalTheory.TestLat Formalism.L2.Indef.Tree.ArchimedeanLeafBounds.Cuts
 open scoped Matrix ComplexOrder
 
@@ -32,22 +37,25 @@ theorem smul_mem_of_integral {K : Type} [Field K] {n : ℕ} (M : Submodule (𝓞
   M.smul_mem (⟨c, hc⟩ : 𝓞 K) hv
 
 theorem isLocalizedModule_subtype {E : Type} [Field E] [NumberField E] {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E))
-    (hL : Submodule.IsLattice E L) : IsLocalizedModule (nonZeroDivisors (𝓞 E)) L.subtype where
-  map_units s := by
+    (hL : Submodule.IsFullLattice E L) : IsLocalizedModule (nonZeroDivisors (𝓞 E)) L.subtype := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro s
     have := isLocalizedModule_id (nonZeroDivisors (𝓞 E)) (Fin n → E) E
     exact IsLocalizedModule.map_units (S := nonZeroDivisors (𝓞 E))
       (LinearMap.id : (Fin n → E) →ₗ[𝓞 E] (Fin n → E)) s
-  surj y := by
+  · intro y
     have hy : y ∈ Submodule.span E (L : Set (Fin n → E)) := by rw [hL.span_eq_top]; trivial
     obtain ⟨s, hs⟩ := multiple_mem_span_of_mem_localization_span (nonZeroDivisors (𝓞 E)) E (L : Set (Fin n → E)) y hy
     rw [Submodule.span_eq] at hs
     exact ⟨(⟨_, hs⟩, s), rfl⟩
-  exists_of_eq h := ⟨1, by rw [Subtype.ext h]⟩
+  · intro x₁ x₂ h
+    exact ⟨1, by rw [Subtype.ext h]⟩
 
 theorem exists_dual_family {E : Type} [Field E] [NumberField E] {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E))
-    (hL : Submodule.IsLattice E L) :
+    (hL : Submodule.IsFullLattice E L) :
     ∃ (m : ℕ) (x φ : Fin m → Fin n → E), (∀ i, x i ∈ L) ∧ (∀ i, ∀ y ∈ L, IsIntegral ℤ (φ i ⬝ᵥ y)) ∧
       ∀ a b, ∑ i, x i a * φ i b = if a = b then 1 else 0 := by
+  have : Module.Finite (𝓞 E) L := Submodule.IsLattice.finite E L
   have : Module.FinitePresentation (𝓞 E) L := Module.finitePresentation_of_finite _ _
   have : Module.Projective (𝓞 E) L := Module.Flat.projective_of_finitePresentation
   have := isLocalizedModule_subtype L hL
@@ -65,7 +73,8 @@ theorem exists_dual_family {E : Type} [Field E] [NumberField E] {n : ℕ} (L : S
   have hdot : ∀ i y, (fun b => f i (Pi.single b 1)) ⬝ᵥ y = f i y := by
     intro i y
     conv_rhs => rw [pi_eq_sum_univ' y]
-    simp only [map_sum, map_smul, smul_eq_mul, dotProduct, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul, dotProduct, mul_comm]
   have key : ∀ y, ∑ i, f i y • x i = y := by
     have : (∑ i, (f i).smulRight (x i)) = LinearMap.id := by
       apply LinearMap.ext_on hL.span_eq_top
@@ -73,7 +82,8 @@ theorem exists_dual_family {E : Type} [Field E] [NumberField E] {n : ℕ} (L : S
       have h1 : π (s ⟨y, hy⟩) = ⟨y, hy⟩ := LinearMap.congr_fun hs ⟨y, hy⟩
       have h2 : (π (s ⟨y, hy⟩) : Fin n → E) = y := by rw [h1]
       rw [pi_eq_sum_univ' (s ⟨y, hy⟩)] at h2
-      simp only [map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul] at h2
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul] at h2
       simp only [LinearMap.sum_apply, LinearMap.smulRight_apply, LinearMap.id_apply]
       refine Eq.trans (Finset.sum_congr rfl fun i _ => ?_) h2
       rw [hf i ⟨y, hy⟩, algebraMap_smul]
@@ -98,7 +108,8 @@ theorem expand_left {E K : Type} [Field E] [Field K] (f : E →+* K) {n m : ℕ}
   have : ∀ a, ∑ i, f (x i a) * v a * f (φ i b) = if a = b then v a else 0 := by
     intro a
     have h1 := congrArg f (h a b)
-    rw [map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h1
     calc _ = v a * ∑ i, f (x i a * φ i b) := by
           rw [Finset.mul_sum]; refine Finset.sum_congr rfl fun i _ => ?_; rw [map_mul]; ring
       _ = _ := by rw [h1]; split_ifs <;> simp
@@ -128,27 +139,31 @@ theorem tauLatLattice : TauLatLattice := by
   classical
   intro E K _ _ _ _ ι n emb τ L hL
   obtain ⟨m, x, φ, hx, hφ, h⟩ := exists_dual_family L hL
-  have hmem : ∀ i, (fun a => emb τ (x i a)) ∈ tauLat emb τ L := fun i => Submodule.subset_span ⟨x i, hx i, rfl⟩
-  constructor
-  · refine ⟨(Finset.univ.image fun i => fun a => emb τ (x i a)), le_antisymm ?_ ?_⟩
+  have hmem (i : Fin m) : (fun a => emb τ (x i a)) ∈ tauLat emb τ L :=
+    Submodule.subset_span ⟨x i, hx i, rfl⟩
+  have : Submodule.IsLattice K (tauLat emb τ L) := by
+    apply Submodule.IsLattice.of_fg K
+    let s : Finset (Fin n → K) := Finset.univ.image fun i => fun a => emb τ (x i a)
+    have hs (i : Fin m) : (fun a => emb τ (x i a)) ∈ (s : Set (Fin n → K)) := by
+      exact Finset.mem_image.mpr ⟨i, Finset.mem_univ i, rfl⟩
+    refine ⟨s, le_antisymm ?_ ?_⟩
     · rw [Submodule.span_le]
       intro v hv
-      simp only [Finset.coe_image, Set.mem_image] at hv
-      obtain ⟨i, -, rfl⟩ := hv
+      obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hv
       exact hmem i
     · unfold tauLat
       rw [Submodule.span_le]
       rintro _ ⟨y, hy, rfl⟩
-      beta_reduce
-      rw [SetLike.mem_coe, expand_right (emb τ) h (fun a => emb τ (y a))]
-      refine Submodule.sum_mem _ fun i _ => smul_mem_of_integral _ ?_ (Submodule.subset_span ?_)
-      · rw [← map_dot]
-        exact integral_map _ (hφ i y hy)
-      · simp
-  · rw [eq_top_iff]
-    intro v _
-    rw [expand_right (emb τ) h v]
-    exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span (hmem i))
+      change (fun a => emb τ (y a)) ∈ Submodule.span (𝓞 K) (s : Set (Fin n → K))
+      rw [expand_right (emb τ) h (fun a => emb τ (y a))]
+      refine Submodule.sum_mem _ fun i _ => smul_mem_of_integral _ ?_ (Submodule.subset_span (hs i))
+      rw [← map_dot]
+      exact integral_map _ (hφ i y hy)
+  refine { span_eq_top := ?_ }
+  rw [eq_top_iff]
+  intro v _
+  rw [expand_right (emb τ) h v]
+  exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span (hmem i))
 
 theorem tauLatDual : TauLatDual := by
   intro E K _ _ _ _ _ ι n emb cE τ hc J L L' hJ hL hL'
@@ -207,7 +222,8 @@ theorem roundLat : RoundLat := by
   have hherm : ∀ a b, cE (J a b) = J b a := fun a b => congrFun (congrFun hH b) a
   have hform' : ∀ u y : Fin n → E, Formalism.UG.hform cE J u y = cE ((Jᵀ *ᵥ fun a => cE (y a)) ⬝ᵥ u) := by
     intro u y
-    simp only [Formalism.UG.hform, dotProduct, Matrix.mulVec, Matrix.transpose_apply, map_sum, map_mul, hc, hherm,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Formalism.UG.hform, dotProduct, Matrix.mulVec, Matrix.transpose_apply, map_sum, map_mul, hc, hherm,
       Finset.sum_mul]
     refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
     ring

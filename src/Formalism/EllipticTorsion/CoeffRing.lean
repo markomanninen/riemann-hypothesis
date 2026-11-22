@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.EllipticTorsion.WChordSeries
+module
+
+public import Mathlib
+public import Formalism.EllipticTorsion.WChordSeries
+
+@[expose] public section
 
 open PowerSeries
 

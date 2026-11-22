@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsApprox
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergFinitePointReadsClassicalTranslation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndexStandardInfSkewThetaLatticeEqAbsNormPow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjSmulConjSmul
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AdmissibleAtOfIrreducibleTame
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulMemLatO
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentSumInfPartIntegralOneSubMem
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FirstStandardPairMemberHasThetaFunction
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RationalFinitePartMemHomLatticeCompletionIff
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FinPartDetAtInvInt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsApprox
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergFinitePointReadsClassicalTranslation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndexStandardInfSkewThetaLatticeEqAbsNormPow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjSmulConjSmul
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AdmissibleAtOfIrreducibleTame
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulMemLatO
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentSumInfPartIntegralOneSubMem
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FirstStandardPairMemberHasThetaFunction
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RationalFinitePartMemHomLatticeCompletionIff
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FinPartDetAtInvInt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped Classical Pointwise
@@ -48,8 +52,8 @@ theorem mem_of_oToS {I : Ideal (𝓞 D.host.E)} (hI : I ≠ ⊥) {b : 𝓞 D.hos
     exact Ideal.Quotient.eq_zero_iff_mem.2 h
   exact Ideal.Quotient.eq_zero_iff_mem.1 (cmpS_inj I hI h1)
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_near_idem {e : AE D} {𝔪 : Ideal (𝓞 D.host.E)} (h : GoodMod e 𝔪) {N : ℕ} (hN : 0 < N)
     (hNm : (N : 𝓞 D.host.E) ∈ 𝔪) :
     ∃ (μ : 𝓞 D.host.E) (s : AE D), finPart D s ∈ intAE D ∧
@@ -75,7 +79,7 @@ theorem exists_near_idem {e : AE D} {𝔪 : Ideal (𝓞 D.host.E)} (h : GoodMod 
   have h2 : toEAf D (incA D (μ : D.host.E)) = toEAf D (e + (N : AE D) * s) := by
     have := congrArg Subtype.val hs'
     simp only [Subring.coe_mul, AddSubgroupClass.coe_sub, SubringClass.coe_natCast] at this
-    rw [toEAf_incA, RingHom.map_add, RingHom.map_mul, map_natCast, hs]
+    rw [toEAf_incA, RingHom.map_add (f := _), RingHom.map_mul, map_natCast, hs]
     linear_combination -this
   have h3 : finPart D (incA D (μ : D.host.E)) = finPart D (e + (N : AE D) * s) :=
     (Algebra.TensorProduct.comm D.host.F (Af D.host.F) D.host.E).injective h2
@@ -105,7 +109,7 @@ theorem exists_near_idem {e : AE D} {𝔪 : Ideal (𝓞 D.host.E)} (h : GoodMod 
       rw [hid, Ideal.mem_span_singleton']
       refine ⟨⟨_, heO⟩ * ⟨_, hc s hs1⟩ + ⟨_, hs1⟩ * ⟨_, hc e heO⟩ + N * (⟨_, hs1⟩ * ⟨_, hc s hs1⟩), Subtype.ext ?_⟩
       rw [map_mul, Subring.coe_mul _ (oToS _ _ μ), ← toEAf_incA, ← toEAf_incA, h2, h5]
-      simp only [Subring.coe_mul, Subring.coe_add, SubringClass.coe_natCast, RingHom.map_add, RingHom.map_mul, map_natCast]
+      simp only [Subring.coe_mul, Subring.coe_add, SubringClass.coe_natCast, RingHom.map_add (f := _), RingHom.map_mul, map_natCast]
       linear_combination -h6
     obtain ⟨k, hk⟩ := Ideal.mem_span_singleton.1 h7
     exact ⟨k, hk⟩
@@ -136,7 +140,7 @@ variable {S T : HSp D}
 theorem isSelfDualC_of_sd {V : HSp D} (hV : V.gram = 1) {L : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)}
     (hL : Formalism.MainNotions.StandardLatticesGL3.SD D L) : IsSelfDualC V L := by
   have hL' : IsSDLat D.host.E V.rank L := hL
-  refine ⟨⟨hL'.1, hL'.2.1⟩, fun y => ?_⟩
+  refine ⟨Submodule.IsLattice.of_fg D.host.E hL'.1, fun y => ?_⟩
   rw [hL'.2.2 y]
   refine forall₂_congr fun x _ => ?_
   have e : ∑ i, ∑ j, star (x i) * V.gram i j * y j = stdH D.host.E V.rank x y := by
@@ -214,8 +218,8 @@ theorem mul_mem_idGrp {I : Ideal (𝓞 D.host.E)} {c : EAf D} (hc : c ∈ Formal
     {b : 𝓞 D.host.E} (hb : b ∈ I) : c * toEAf D (incA D (b : D.host.E)) ∈ idGrp I :=
   ⟨⟨c, hc⟩ * oToS D.host.F D.host.E b, Ideal.mul_mem_left _ _ (Ideal.mem_map_of_mem _ hb), rfl⟩
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem inId_of_mem (hc : D.host.ccK = ⊤) (hS : S.gram = 1) {e : AE D} {𝔪 : Ideal (𝓞 D.host.E)} (h : GoodMod e 𝔪)
     {u : WO S T} (hu : u ∈ latO S T (stdL D S.rank : Set (Fin S.rank → D.host.E))
       (skewLat D 𝔪 T.rank : Set (Fin T.rank → D.host.E)) fun _ => True) (i : Fin T.rank) (j : Fin S.rank) :
@@ -240,7 +244,8 @@ theorem inId_of_mem (hc : D.host.ccK = ⊤) (hS : S.gram = 1) {e : AE D} {𝔪 :
       mul_div_cancel₀ _ hn0] at h2
     obtain ⟨m, hm, hme⟩ := (FractionalIdeal.mem_coeIdeal _).1 h2
     have hme' : (m : D.host.E) = (β : D.host.E) * M i j := hme
-    rw [he, Finset.sum_mul, show toEAf D (∑ P ∈ SS, es P * finTens α M i j) = ∑ P ∈ SS, toEAf D (es P * finTens α M i j) from
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [he, Finset.sum_mul, show toEAf D (∑ P ∈ SS, es P * finTens α M i j) = ∑ P ∈ SS, toEAf D (es P * finTens α M i j) from
       map_sum (toEAf D).toAddMonoidHom _ SS]
     refine sum_mem fun P hP => ?_
     have hβ0 : β ≠ 0 := fun hh => hβP P hP (hh ▸ zero_mem _)
@@ -261,11 +266,11 @@ theorem inId_of_mem (hc : D.host.ccK = ⊤) (hS : S.gram = 1) {e : AE D} {𝔪 :
     rw [← RingHom.map_mul, ← RingHom.map_mul, mul_right_comm, mul_assoc (es P), h7, mul_assoc, mul_comm (incA D _), ← h6] at h5
     exact h5
   · rw [Matrix.zero_apply, mul_zero, RingHom.map_zero]; exact zero_mem _
-  · intro x y hx hy; rw [Matrix.add_apply, mul_add, RingHom.map_add]; exact add_mem hx hy
+  · intro x y hx hy; rw [Matrix.add_apply, mul_add, RingHom.map_add (f := _)]; exact add_mem hx hy
   · intro x hx; rw [Matrix.neg_apply, mul_neg, RingHom.map_neg]; exact neg_mem hx
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem mem_of_inId (hc : D.host.ccK = ⊤) (hS : S.gram = 1) {I : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E}
     {LT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)} (hLT : ∀ x, x ∈ LT ↔ ∀ i, x i ∈ I)
     {𝔪 : Ideal (𝓞 D.host.E)} (hI : (𝔪 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) ≤ I) {u : WO S T}
@@ -301,7 +306,7 @@ theorem mem_of_inId (hc : D.host.ccK = ⊤) (hS : S.gram = 1) {I : FractionalIde
     | add x y _ _ hx hy =>
       obtain ⟨a, ha, ha', hb⟩ := hx
       obtain ⟨b, hc, hc', hd⟩ := hy
-      exact ⟨a + b, by rw [RingHom.map_add, ha, hc, add_zero], by rw [RingHom.map_add, ha', hc', Subring.coe_add],
+      exact ⟨a + b, by rw [RingHom.map_add (f := _), ha, hc, add_zero], by rw [RingHom.map_add (f := _), ha', hc', Subring.coe_add],
         by rw [Matrix.single_add]; exact add_mem hb hd⟩
     | smul c x _ hx =>
       obtain ⟨a, ha, ha', hb⟩ := hx
@@ -328,8 +333,8 @@ theorem mem_of_char_rat {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (
     rw [← sub_eq_zero]
     apply eq_zero_of_parts
     · have h2 : infPart D (finTens 1 M i j) = 0 := infPart_pair _ _
-      rw [Matrix.add_apply, RingHom.map_sub, RingHom.map_add, hu, h2, infPart_of_mem hu₀, add_zero, sub_zero]
-    · rw [Matrix.add_apply, RingHom.map_sub, RingHom.map_add, hM, sub_eq_zero]
+      rw [Matrix.add_apply, RingHom.map_sub, RingHom.map_add (f := _), hu, h2, infPart_of_mem hu₀, add_zero, sub_zero]
+    · rw [Matrix.add_apply, RingHom.map_sub, RingHom.map_add (f := _), hM, sub_eq_zero]
       rfl
   rw [e]
   refine add_mem (finTens_mem_latO (one_mem_intAf _) ?_) hu₀

@@ -1,7 +1,11 @@
-import Formalism.PeriodIntegrals.OrbAddOne
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitPowerSeriesCoefficients.JetRen
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitJetLogarithm.ProdMonomialOne
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitJetLogarithm.ApplyAt0EqZeroOfOrder
+module
+
+public import Formalism.PeriodIntegrals.OrbAddOne
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitPowerSeriesCoefficients.JetRen
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitJetLogarithm.ProdMonomialOne
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitJetLogarithm.ApplyAt0EqZeroOfOrder
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,7 +73,8 @@ theorem constantCoeff_jet_series (N0 N1 : ℕ) (ep sg : ℂ_[p]) (be : MvPowerSe
 theorem rename_jet_series (D : D7) (z : Pl D) (N0 N1 : ℕ) (ep sg : ℂ_[p]) (be : MvPowerSeries (ZMod 2) ℂ_[p]) :
     rename (pEmb (ptE D z) (Fin N0 × Fin N1)) (f1 N0 N1 ep sg be) =
       (sg / 2) • ∑ a : Fin N0, ∑ b : Fin N1, subst (gSub ep (z, a, b)) be := by
-  simp only [f1, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [f1, map_smul, map_sum]
   congr 1
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rw [rename_subst' _ (hs_gSub _ _)]

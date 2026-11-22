@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.LevConstOfEv
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelFPfB
-import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusPowUniformizerFactorisation
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.LevConstOfEv
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelFPfB
+public import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusPowUniformizerFactorisation
+
+@[expose] public section
 
 noncomputable section
 
@@ -159,7 +163,7 @@ theorem ev_aeval_twA (c : ZMod n) (ζ : LL) (Eπ : LetA O n) (h' : ℕ)
   have hzero : ev W c ζ Eπ h' 0 i = 0 := by
     unfold ev; split_ifs <;> simp
   have hadd : ∀ x y : LetA O n, ev W c ζ Eπ h' (x + y) i = ev W c ζ Eπ h' x i + ev W c ζ Eπ h' y i := by
-    intro x y; unfold ev; split_ifs <;> simp [map_add, add_mul]
+    intro x y; unfold ev; split_ifs <;> simp [map_add (f := _), add_mul]
   have hsmul : ∀ (r : O) (x : LetA O n),
       ev W c ζ Eπ h' (r • x) i = algebraMap O LL r * ev W c ζ Eπ h' x i := by
     intro r x
@@ -212,7 +216,8 @@ theorem EE_aeval (Eπ : LetA O n) (h' : ℕ) (uE uE' : LetA O n) (huu : uE' * uE
             rw [h2]; rfl
         _ = algebraMap (LetA O n) W.EE (W.γA W.gam ((twA W uE' h' ^ k) a) * uE' ^ h') := by
             rw [map_mul, mul_comm]
-  rw [aeval_end_apply, aeval_end_apply, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [aeval_end_apply, aeval_end_apply, Finset.mul_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [mul_smul_comm, hk i, Algebra.smul_def, Algebra.smul_def, map_mul,
     ← IsScalarTower.algebraMap_apply]

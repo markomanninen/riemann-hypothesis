@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -38,8 +43,5 @@ def CodimOnePrimeAvoid.Statement : Prop :=
   ∀ (k B : Type) [Field k] [CommRing B] [IsDomain B] [Algebra k B] [Algebra.FiniteType k B] (h : B),
     h ≠ 0 → 1 ≤ ringKrullDim B →
       ∃ N : Ideal B, N.IsPrime ∧ h ∉ N ∧ ringKrullDim (B ⧸ N) + 1 = ringKrullDim B
-
-def two : HeightOneSpectrum ℤ :=
-  ⟨Ideal.span {2}, (Ideal.span_singleton_prime (by norm_num)).mpr Int.prime_two, by simp⟩
 
 end GroundTheory.Heights₂.Heights.Vertical

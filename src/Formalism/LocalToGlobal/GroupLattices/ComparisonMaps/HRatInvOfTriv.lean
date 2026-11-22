@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.MRatSpanOfWeak
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.MRatSpanOfWeak
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -28,7 +32,7 @@ theorem jdI_apply (i : G.comp) (L0 : G.P.Tup) (γ : (G.lev i).Γ) (ξ : G.P.Xsp)
   classical
   unfold Formalism.MainNotions.G.LatticeSystems.delta
   have hex : ∃ γ' : (G.lev i).Γ, (G.lev i).smul γ L0 = (G.lev i).smul γ' L0 := ⟨γ, rfl⟩
-  rw [dif_pos hex, if_pos rfl]
+  rw [dite_eq_left hex, if_pos rfl]
   have hspec : (G.lev i).smul γ L0 = (G.lev i).smul hex.choose L0 := hex.choose_spec
   have hstab : (G.lev i).smul (γ⁻¹ * hex.choose) L0 = L0 := by
     rw [Formalism.MainNotions.G.LatticeSystems.jd_smul_mul, ← hspec, ← Formalism.MainNotions.G.LatticeSystems.jd_smul_mul, inv_mul_cancel,

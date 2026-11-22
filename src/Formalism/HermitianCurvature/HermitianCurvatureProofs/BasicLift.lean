@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CommuteAvrBvrOfCommuteSiteOps
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LagrangeExtraction
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CommuteAvrBvrOfCommuteSiteOps
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LagrangeExtraction
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.TL
 
@@ -102,7 +106,7 @@ theorem PT.prod (ε Y : ℂ) (l : List (A × A × A)) :
     · simp only [List.map_cons, List.prod_cons, Matrix.mul_apply, Fin.sum_univ_two, Matrix.of_apply,
         Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.empty_val',
         Matrix.cons_val_fin_one, Matrix.head_cons, Matrix.head_fin_const]
-      rw [Algebra.smul_def, map_add, mul_comm ε s, map_mul]
+      rw [Algebra.smul_def, map_add (f := _), mul_comm ε s, map_mul]
       noncomm_ring
     · simp [pow_succ', map_mul]
     · simp [Matrix.mul_apply, Fin.sum_univ_two]

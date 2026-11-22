@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SelmerRankBoundLaurent
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SelmerRankBoundLaurent
+
+@[expose] public section
+
 open PositivityTheory.Rg.Tf.Geo UpperTheory.ConvolutionTheory.G UpperTheory.ConvolutionTheory.T4
 open NumberField IsDedekindDomain GroundTheory.Global.SemiLocal GroundTheory.Automorphic ValuativeRel
 
@@ -11,7 +16,7 @@ private theorem completionMap_mem_iff {F E : Type} [Field F] [NumberField F] [Fi
     (v : HeightOneSpectrum (𝓞 F)) (w : PlacesOver E v) (x : v.adicCompletion F) :
     completionMap v w.1 x ∈ 𝒪[w.1.adicCompletion E] ↔ x ∈ 𝒪[v.adicCompletion F] := by
   rw [mem_integers_iff, mem_integers_iff, valued_completionMap]
-  exact pow_le_one_iff (Ideal.ramificationIdx_pos w.1.asIdeal (𝓞 F)).ne'
+  exact pow_le_one_iff (Ideal.ramificationIdx_pos (R := 𝓞 F) w.1.asIdeal).ne'
 
 theorem UpperTheory.adicCompletion_integers_baseChange_iff :
     UnitIff := by

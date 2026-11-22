@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.IdealNormPrincipalInExtension
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.IdealNormPrincipalInExtension
+public import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
+
+@[expose] public section
+
 open NumberField GroundTheory.Heights₂.Heights
 open scoped nonZeroDivisors
 set_option maxHeartbeats 1000000 in

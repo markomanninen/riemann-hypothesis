@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.IteratedFDerivIntegral
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductFunctionOnSumCoordsMemAdelicSchwartzSpace
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.IteratedFDerivIntegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductFunctionOnSumCoordsMemAdelicSchwartzSpace
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,9 +53,9 @@ theorem contDiff_Ain : ContDiff ℝ ∞ fun p : (κ' ⊕ κ'' → W) × ℝ => A
   simp only [Ain_apply]
   rcases j with j | j
   · simp only [sc, Sum.elim_inl, one_smul]
-    exact (contDiff_apply ℝ W (Sum.inl j)).comp contDiff_fst
+    exact (contDiff_apply ℝ (fun _ : κ' ⊕ κ'' => W) (Sum.inl j)).comp contDiff_fst
   · simp only [sc, Sum.elim_inr]
-    exact contDiff_snd.smul ((contDiff_apply ℝ W (Sum.inr j)).comp contDiff_fst)
+    exact contDiff_snd.smul ((contDiff_apply ℝ (fun _ : κ' ⊕ κ'' => W) (Sum.inr j)).comp contDiff_fst)
 
 end PositivityTheory.SiegelWeilFormula.Ald.PCI
 

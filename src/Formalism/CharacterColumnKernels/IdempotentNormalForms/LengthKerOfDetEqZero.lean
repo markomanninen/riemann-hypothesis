@@ -1,6 +1,10 @@
-import Formalism.CharacterColumnKernels.Statement
-import Lemmata.SecondBlockLemmaA.Imports
-import Lemmata.AddValuationProducts.AddValProd
+module
+
+public import Formalism.CharacterColumnKernels.Statement
+public import Lemmata.SecondBlockLemmaA.Imports
+public import Lemmata.AddValuationProducts.AddValProd
+
+@[expose] public section
 
 open Module IsDiscreteValuationRing Matrix
 
@@ -37,7 +41,8 @@ lemma matQ_mk {ι : Type*} [Fintype ι] (A : Matrix ι ι O) (y : ι → Fractio
   show ∑ j, A i j • (Submodule.mkQ (1 : Submodule O (FractionRing O)) (y j)) =
     Submodule.mkQ (1 : Submodule O (FractionRing O))
       ((A.map (algebraMap O (FractionRing O)) *ᵥ y) i)
-  rw [Matrix.mulVec, dotProduct, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.mulVec, dotProduct, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [← map_smul, Matrix.map_apply, Algebra.smul_def]
 

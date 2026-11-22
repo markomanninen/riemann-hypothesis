@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.SecondBound
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.Window1
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.SecondBound
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.Window1
+
+@[expose] public section
 
 open NumberField Formalism.GaloisCohomology UpperTheory.Top UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Win
 

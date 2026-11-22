@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,9 +38,6 @@ def rAct (σ : O →+* Module.End k H) (X : Submodule k H) (h : ∀ a, ∀ x ∈
   map_zero' := by ext; simp
   map_add' a b := by ext; simp
 
-@[simp] theorem rAct_apply (σ : O →+* Module.End k H) (X : Submodule k H) (h : ∀ a, ∀ x ∈ X, σ a x ∈ X)
-    (a : O) (x : X) : ((rAct σ X h a x : X) : H) = σ a x := rfl
-
 def qAct (σ : O →+* Module.End k H) (X : Submodule k H) (h : ∀ a, ∀ x ∈ X, σ a x ∈ X) :
     O →+* Module.End k (H ⧸ X) where
   toFun a := X.mapQ X (σ a) (fun x hx => h a x hx)
@@ -55,7 +56,7 @@ theorem mSub_stable (σ : O →+* Module.End k H) (χ : C →+* k) (X : Submodul
   | mem z hz =>
     obtain ⟨c, y, hy, rfl⟩ := hz
     refine Submodule.subset_span ⟨c, σ a y, hX a y hy, ?_⟩
-    rw [map_sub, map_smul, ← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul, ← map_mul,
+    rw [map_sub, map_smul, ← mul_apply_eq_comp, ← mul_apply_eq_comp, ← map_mul, ← map_mul,
       Algebra.commutes]
   | zero => simp
   | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
@@ -68,9 +69,10 @@ theorem jSub_stable {ι : Type*} (σ : O →+* Module.End k H) (χ : ι → C �
   | mem z hz =>
     obtain ⟨r, lam, c, y, hy, hc, rfl⟩ := hz
     refine Submodule.subset_span ⟨r, lam, c, σ a y, hX a y hy, hc, ?_⟩
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
-    rw [map_smul, ← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul, ← map_mul, Algebra.commutes]
+    rw [map_smul, ← mul_apply_eq_comp, ← mul_apply_eq_comp, ← map_mul, ← map_mul, Algebra.commutes]
   | zero => simp
   | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
   | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ c hx

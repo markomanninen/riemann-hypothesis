@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.RestRoom
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SymbolFormOfOrthogonality
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.IoBlockMonomial
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFTrueDeg
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.RestRoom
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SymbolFormOfOrthogonality
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.IoBlockMonomial
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFTrueDeg
+
+@[expose] public section
 
 noncomputable section
 
@@ -188,14 +192,15 @@ theorem ioBlock_coeff (hp : 0 < X.p) (j : Fin (numSeg X.TT)) (b : SegBlock (segS
     by_cases h : ν = μ
     · rw [if_pos h, if_pos (by rw [h])]
     · rw [if_neg h, if_neg fun e => h (ioExp_inj C0 CE1 CE2 X hp j b e)]
-  | add p q hp' hq' => rw [ioBlock_add, coeff_add, coeff_add, hp', hq']
+  | add p q hp' hq' => rw [ioBlock_add, MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp', hq']
 
 theorem ioBlock_ne_zero (hp : 0 < X.p) (j : Fin (numSeg X.TT)) (b : SegBlock (segS X.TT j) X.m)
     {u : MvPolynomial (BV C0 CE1 CE2 X j) (KK O)} (hu : u ≠ 0) : ioBlock (KK O) X.p C0 CE1 CE2 X j b u ≠ 0 := by
   intro h
   apply hu
   ext μ
-  rw [← ioBlock_coeff hp j b u μ, h, coeff_zero, coeff_zero]
+  rw [← ioBlock_coeff hp j b u μ, h]
+  simp only [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
 
 theorem ioD_ne_zero (hp : 0 < X.p) {mu : ℝ} (β : GlobalTheory X) (j : Fin (numSeg X.TT))
     {u : MvPolynomial (BVar (2 * segS X.TT j + 1) X.m (BDk C0 CE1 CE2 mu X β j).T.t) (KK O)} (hu : u ≠ 0) :

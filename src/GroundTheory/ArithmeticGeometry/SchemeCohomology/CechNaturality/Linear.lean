@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechSeparated
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechSeparated
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -15,23 +20,22 @@ variable {C : Type u} [Category.{v} C] {J : GrothendieckTopology C}
 
 noncomputable def H.endRingHom (G : Sheaf J AddCommGrpCat.{w}) (n : ℕ) :
     End G →+* AddMonoid.End (Sheaf.H.{w'} G n) where
-  toFun f := Sheaf.H.map f n
+  toFun f := Sheaf.H.map f.asHom n
   map_one' := by
     ext x
     exact Sheaf.H.map_id_apply x
   map_mul' f g := by
     ext x
-    exact Sheaf.H.map_comp_apply g f x
+    exact Sheaf.H.map_comp_apply g.asHom f.asHom x
   map_zero' := by
     ext x
     change Sheaf.H.map 0 n x = 0
     rw [Sheaf.H.map_apply, Abelian.Ext.mk₀_zero, Abelian.Ext.comp_zero]
   map_add' f g := by
     ext x
-    exact Sheaf.H.map_add_apply f g x
-
-lemma H.endRingHom_apply (G : Sheaf J AddCommGrpCat.{w}) (n : ℕ) (f : End G)
-    (x : Sheaf.H.{w'} G n) : H.endRingHom G n f x = Sheaf.H.map f n x := rfl
+    change Sheaf.H.map (f.asHom + g.asHom) n x =
+      Sheaf.H.map f.asHom n x + Sheaf.H.map g.asHom n x
+    exact Sheaf.H.map_add_apply f.asHom g.asHom x
 
 end EndAction
 
@@ -49,7 +53,7 @@ lemma restrictTop_restrict {U V : X.Opens} (i : U ⟶ V) (r : Γ(X, ⊤)) :
 
 noncomputable def smulHom (F : X.Modules) (r : Γ(X, ⊤)) : F ⟶ F :=
   ⟨PresheafOfModules.homMk
-    { app := fun U => Scheme.Modules.smul (M := F) (U := U.unop) (restrictTop U.unop r)
+    { app := fun U => (Scheme.Modules.smul (M := F) (U := U.unop) (restrictTop U.unop r)).asHom
       naturality := fun {U V} f => by
         induction U with | op U => ?_
         induction V with | op V => ?_
@@ -74,47 +78,59 @@ lemma smulHom_comp {F G : X.Modules} (φ : F ⟶ G) (r : Γ(X, ⊤)) :
     Scheme.Modules.Hom.app_smul]
 
 noncomputable def smulRingHom (F : X.Modules) : Γ(X, ⊤) →+* End F where
-  toFun := smulHom F
+  toFun r := End.of (smulHom F r)
   map_one' := by
+    apply End.ext
     change smulHom F 1 = 𝟙 F
     ext U x
     simp [smulHom_app_apply]
   map_mul' r s := by
+    apply End.ext
     change smulHom F (r * s) = smulHom F s ≫ smulHom F r
     ext U x
     simp only [smulHom_app_apply, Scheme.Modules.Hom.comp_app, ConcreteCategory.comp_apply,
       map_mul, mul_smul]
   map_zero' := by
+    apply End.ext
     change smulHom F 0 = 0
     ext U x
     simp [smulHom_app_apply]
   map_add' r s := by
+    apply End.ext
     change smulHom F (r + s) = smulHom F r + smulHom F s
     ext U x
     simp [smulHom_app_apply, add_smul]
 
-lemma smulRingHom_apply (F : X.Modules) (r : Γ(X, ⊤)) : smulRingHom F r = smulHom F r := rfl
-
-noncomputable def smulAbRingHom (F : X.Modules) : Γ(X, ⊤) →+* End (modulesAb F) where
-  toFun r := (SheafOfModules.toSheaf X.ringCatSheaf).map (smulHom F r)
-  map_one' := by
-    rw [show smulHom F 1 = 𝟙 F from (smulRingHom F).map_one]
-    exact (SheafOfModules.toSheaf X.ringCatSheaf).map_id F
-  map_mul' r s := by
-    rw [show smulHom F (r * s) = smulHom F s ≫ smulHom F r from (smulRingHom F).map_mul r s]
-    exact (SheafOfModules.toSheaf X.ringCatSheaf).map_comp _ _
-  map_zero' := by
-    rw [show smulHom F 0 = 0 from (smulRingHom F).map_zero]
-    exact (SheafOfModules.toSheaf X.ringCatSheaf).map_zero F F
-  map_add' r s := by
-    rw [show smulHom F (r + s) = smulHom F r + smulHom F s from (smulRingHom F).map_add r s]
-    exact (SheafOfModules.toSheaf X.ringCatSheaf).map_add
-
-lemma smulAbRingHom_apply (F : X.Modules) (r : Γ(X, ⊤)) :
-    smulAbRingHom F r = (SheafOfModules.toSheaf X.ringCatSheaf).map (smulHom F r) := rfl
+lemma smulRingHom_apply (F : X.Modules) (r : Γ(X, ⊤)) :
+    (smulRingHom F r).asHom = smulHom F r := rfl
 
 noncomputable abbrev modulesAbMap {F G : X.Modules} (φ : F ⟶ G) : modulesAb F ⟶ modulesAb G :=
   (SheafOfModules.toSheaf X.ringCatSheaf).map φ
+
+noncomputable def smulAbRingHom (F : X.Modules) : Γ(X, ⊤) →+* End (modulesAb F) where
+  toFun r := End.of (modulesAbMap (smulHom F r))
+  map_one' := by
+    apply End.ext
+    change modulesAbMap (smulHom F 1) = 𝟙 _
+    rw [← smulRingHom_apply, map_one, End.one_asHom]
+    exact (SheafOfModules.toSheaf X.ringCatSheaf).map_id F
+  map_mul' r s := by
+    apply End.ext
+    change modulesAbMap (smulHom F (r * s)) =
+      modulesAbMap (smulHom F s) ≫ modulesAbMap (smulHom F r)
+    rw [← smulRingHom_apply, map_mul, End.mul_asHom, smulRingHom_apply, smulRingHom_apply]
+    exact (SheafOfModules.toSheaf X.ringCatSheaf).map_comp _ _
+  map_zero' := by
+    apply End.ext
+    change modulesAbMap (smulHom F 0) = 0
+    rw [← smulRingHom_apply, map_zero]
+    exact (SheafOfModules.toSheaf X.ringCatSheaf).map_zero F F
+  map_add' r s := by
+    apply End.ext
+    change modulesAbMap (smulHom F (r + s)) =
+      modulesAbMap (smulHom F r) + modulesAbMap (smulHom F s)
+    rw [← smulRingHom_apply, map_add]
+    exact (SheafOfModules.toSheaf X.ringCatSheaf).map_add
 
 lemma modulesAbMap_id (F : X.Modules) : modulesAbMap (𝟙 F) = 𝟙 (modulesAb F) :=
   (SheafOfModules.toSheaf X.ringCatSheaf).map_id F
@@ -124,7 +140,7 @@ lemma modulesAbMap_comp {F G K : X.Modules} (φ : F ⟶ G) (ψ : G ⟶ K) :
   (SheafOfModules.toSheaf X.ringCatSheaf).map_comp φ ψ
 
 lemma smulAbRingHom_comp {F G : X.Modules} (φ : F ⟶ G) (r : Γ(X, ⊤)) :
-    smulAbRingHom F r ≫ modulesAbMap φ = modulesAbMap φ ≫ smulAbRingHom G r := by
+    (smulAbRingHom F r).asHom ≫ modulesAbMap φ = modulesAbMap φ ≫ (smulAbRingHom G r).asHom := by
   change modulesAbMap (smulHom F r) ≫ modulesAbMap φ = modulesAbMap φ ≫ modulesAbMap (smulHom G r)
   rw [← modulesAbMap_comp, ← modulesAbMap_comp, smulHom_comp]
 
@@ -156,9 +172,11 @@ noncomputable def H.linearMap {F G : X.Modules} (φ : F ⟶ G) (n : ℕ) :
   toFun := Sheaf.H.map.{w'} (modulesAbMap φ) n
   map_add' := map_add _
   map_smul' a x := by
-    change Sheaf.H.map.{w'} _ n (Sheaf.H.map.{w'} _ n x) = Sheaf.H.map.{w'} _ n (Sheaf.H.map.{w'} _ n x)
+    let r := algebraMap A Γ(X, ⊤) a
+    change Sheaf.H.map.{w'} (modulesAbMap φ) n
+        (Sheaf.H.map.{w'} (smulAbRingHom F r).asHom n x) =
+      Sheaf.H.map.{w'} (smulAbRingHom G r).asHom n (Sheaf.H.map.{w'} (modulesAbMap φ) n x)
     rw [← Sheaf.H.map_comp_apply, ← Sheaf.H.map_comp_apply, smulAbRingHom_comp]
-    rfl
 
 lemma H.linearMap_apply {F G : X.Modules} (φ : F ⟶ G) (n : ℕ) (x : Sheaf.H.{w'} (modulesAb F) n) :
     H.linearMap A φ n x = Sheaf.H.map.{w'} (modulesAbMap φ) n x := rfl

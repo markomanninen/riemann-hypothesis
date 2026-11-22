@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Cartier
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsCompactUnitaryPointsAtPlaceFstMemCompact
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Cartier
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsCompactUnitaryPointsAtPlaceFstMemCompact
+
+@[expose] public section
+
 open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top GroundTheory.Heights₂.Heights.ModelLeaves
 open ReciprocityTheory.ChartRestriction.G.Geo (HermLine IsSmoothHerm IsArithVar IsHorizontal mcPts mCoordIdeal IsIntersectionFamily IsIntersectionSystem IntersectionSystem ptsIntegral geoNum charOf recR arInt ChartBundle chartRing)
 open NumberField
@@ -40,7 +45,7 @@ theorem lineVert_prod_weight [Fintype K] (m : (Σ k, ι k) →₀ ℕ) :
   induction m using Finsupp.induction_linear with
   | zero => simp
   | add f g hf hg =>
-    rw [Finsupp.prod_add_index' (by simp) (by intros; rw [pow_add]), hf, hg, map_add,
+    rw [Finsupp.prod_add_index' (by simp) (by intros; rw [pow_add]), hf, hg, map_add (f := _),
       ← Finset.prod_mul_distrib]
     exact Finset.prod_congr rfl fun k _ => by rw [Pi.add_apply, pow_add]
   | single p e =>
@@ -54,8 +59,8 @@ theorem lineVert_prod_weight [Fintype K] (m : (Σ k, ι k) →₀ ℕ) :
 theorem lineVert_cone_homog [Fintype K] (y : (Σ k, ι k) → Ω) {h : MRing ι ℤ} {b : K → ℕ}
     (hh : IsMultiHomog h b) :
     pointConeMap ℤ y h = C (aeval y h) * ∏ k, X k ^ b k := by
-  have key : ∀ m ∈ h.support, pointConeMap ℤ y (monomial m (coeff m h)) =
-      C (aeval y (monomial m (coeff m h) : MRing ι ℤ)) * ∏ k, X k ^ b k := by
+  have key : ∀ m ∈ h.support, pointConeMap ℤ y (monomial m (AddMonoidAlgebra.coeff h m)) =
+      C (aeval y (monomial m (AddMonoidAlgebra.coeff h m) : MRing ι ℤ)) * ∏ k, X k ^ b k := by
     intro m hm
     have hw : Finsupp.weight (blockWeight ι) m = b := hh (mem_support_iff.mp hm)
     rw [pointConeMap, aeval_monomial, aeval_monomial, ← hw, ← lineVert_prod_weight]
@@ -64,14 +69,16 @@ theorem lineVert_cone_homog [Fintype K] (y : (Σ k, ι k) → Ω) {h : MRing ι 
       simp only [mul_pow, Finsupp.prod, Finset.prod_mul_distrib, map_prod, map_pow]
     rw [e1]
     simp [mul_assoc]
-  calc pointConeMap ℤ y h = ∑ m ∈ h.support, pointConeMap ℤ y (monomial m (coeff m h)) := by
+  calc pointConeMap ℤ y h = ∑ m ∈ h.support, pointConeMap ℤ y (monomial m (AddMonoidAlgebra.coeff h m)) := by
         conv_lhs => rw [h.as_sum]
-        rw [map_sum]
-    _ = ∑ m ∈ h.support, C (aeval y (monomial m (coeff m h) : MRing ι ℤ)) * ∏ k, X k ^ b k :=
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
+    _ = ∑ m ∈ h.support, C (aeval y (monomial m (AddMonoidAlgebra.coeff h m) : MRing ι ℤ)) * ∏ k, X k ^ b k :=
         Finset.sum_congr rfl key
     _ = C (aeval y h) * ∏ k, X k ^ b k := by
         conv_rhs => rw [h.as_sum]
-        rw [map_sum, map_sum, Finset.sum_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, map_sum, Finset.sum_mul]
 
 theorem lineVert_mem_of_homog [Fintype K] (y : (Σ k, ι k) → Ω) {h : MRing ι ℤ} {b : K → ℕ}
     (hh : IsMultiHomog h b) (h0 : aeval y h = 0) : h ∈ pointIdeal ℤ y := by
@@ -106,7 +113,7 @@ theorem lineVert_chart_form [Fintype K] (y : (Σ k, ι k) → Ω) (c : ∀ k, ι
       exact a₁.add a₂
     · have hp : ∀ r : ℕ, ∏ k, y ⟨k, c k⟩ ^ r = segreVec y c ^ r := fun r => by
         rw [segreVec, Finset.prod_pow]
-      rw [map_add, map_mul, map_mul, lineVertMono_aeval, lineVertMono_aeval, hp, hp, ← v₁, ← v₂]
+      rw [map_add (f := _), map_mul, map_mul, lineVertMono_aeval, lineVertMono_aeval, hp, hp, ← v₁, ← v₂]
       ring
   | mul x z _ _ hx hz =>
     obtain ⟨r₁, G₁, h₁, v₁⟩ := hx

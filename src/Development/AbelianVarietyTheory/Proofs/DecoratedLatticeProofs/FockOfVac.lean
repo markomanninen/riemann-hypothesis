@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SphericalVolumeLift
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFockPolynomialOperatorHeisenbergDerivative
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockOperatorActsByNoncompactQuadraticOps
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramNegTransposeDiag
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SphericalVolumeLift
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFockPolynomialOperatorHeisenbergDerivative
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockOperatorActsByNoncompactQuadraticOps
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramNegTransposeDiag
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField Matrix
 open GlobalTheory.Chain
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -21,16 +26,42 @@ theorem coeff_sum_pderiv_eq_zero {ι : Type} [Fintype ι] (c : ι → ℂ) (Q : 
   rw [MvPolynomial.coeff_sum]
   refine Finset.sum_eq_zero fun i _ => ?_
   rw [MvPolynomial.coeff_smul, MvPolynomial.coeff_pderiv,
-    hQ _ (by rw [map_add, Finsupp.degree_single]; omega), zero_mul, smul_zero]
+    hQ _ (by rw [map_add (f := _), Finsupp.degree_single]; omega), zero_mul, smul_zero]
 
 theorem fock_of_vac : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPar) (M : DSModel V S) (M' : DSModel W S') (θ : InfFam D) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → IsInfFam θ → ∀ f, IsVacVec ψ θ M M' f → ∀ P, GlobalTheory.IndefiniteRowSideFullHecke.SphericalVolumeLift.IsFockVec ψ θ V W (cart M) (cart M') (ptOf ψ θ M M' f P) := by
   intro D V W S S' M M' θ ψ hψ hθ f hf P
   have hS : ∀ τ, IsCartanInv (gramAt D V τ) (cart M τ) := GlobalTheory.FrameEquiv.isCartanInv_cart_model M
   have hT : ∀ τ, IsCartanInv (gramAt D W τ) (cart M' τ) := GlobalTheory.FrameEquiv.isCartanInv_cart_model M'
   set A := aPlusAll (heisO ψ V W) θ (fun τ => cplxO (cart M τ) (cart M' τ)) (onb M) (onb M') with hAdef
-  have hadd : ∀ g g', IsThetaFunO ψ V W g → IsThetaFunO ψ V W g' → IsThetaFunO ψ V W (g + g') :=
-    fun _ _ => theta_add
-  have hsm : ∀ (a : ℂ) g, IsThetaFunO ψ V W g → IsThetaFunO ψ V W (a • g) := fun a _ => theta_smul a
+  have hadd : ∀ g g', IsThetaFunO ψ V W g → IsThetaFunO ψ V W g' → IsThetaFunO ψ V W (g + g') := by
+    intro g g' hg hg'
+    refine { quasi := ?_, level := ?_, cont := hg.cont.add hg'.cont, smooth := ?_ }
+    · intro γ w
+      simp only [Pi.add_apply, hg.quasi, hg'.quasi, mul_add]
+    · obtain ⟨U, hU, hUg⟩ := hg.level
+      obtain ⟨U', hU', hUg'⟩ := hg'.level
+      refine ⟨U ⊓ U', by rw [AddSubgroup.coe_inf]; exact hU.inter hU', fun u hu hinf => ?_⟩
+      have he : heisO ψ V W u (g + g') = heisO ψ V W u g + heisO ψ V W u g' := by
+        funext w
+        simp only [heisO, Pi.add_apply, mul_add]
+      rw [he, hUg u hu.1 hinf, hUg' u hu.2 hinf]
+    · intro k L hL hfin w
+      simpa [Pi.add_apply] using (hg.smooth k L hL hfin w).add (hg'.smooth k L hL hfin w)
+  have hsm : ∀ (a : ℂ) g, IsThetaFunO ψ V W g → IsThetaFunO ψ V W (a • g) := by
+    intro a g hg
+    refine { quasi := ?_, level := ?_, cont := hg.cont.const_smul a, smooth := ?_ }
+    · intro γ w
+      simp only [Pi.smul_apply, smul_eq_mul, hg.quasi]
+      ring
+    · obtain ⟨U, hU, hUg⟩ := hg.level
+      refine ⟨U, hU, fun u hu hinf => ?_⟩
+      have he : heisO ψ V W u (a • g) = a • heisO ψ V W u g := by
+        funext w
+        simp only [heisO, Pi.smul_apply, smul_eq_mul]
+        ring
+      rw [he, hUg u hu hinf]
+    · intro k L hL hfin w
+      simpa [Pi.smul_apply] using (hg.smooth k L hL hfin w).const_smul a
   have hA : ∀ k g, IsThetaFunO ψ V W g → IsThetaFunO ψ V W (A k g) := fun _ _ h => aPlus_theta hψ hθ _ _ _ h
   have hc : ∀ i j g, IsThetaFunO ψ V W g → A i (A j g) = A j (A i g) :=
     fun i j _ h => aPlus_comm' hψ hθ i.1 _ hS hT j.1 _ h
@@ -73,7 +104,7 @@ theorem fock_of_vac : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPar)
         omega
   obtain ⟨Q, hQ, hQc⟩ := key l
   have hQ0 : Q = 0 := MvPolynomial.ext _ _ fun m => by
-    rw [hQc m (by rw [hl]; omega), MvPolynomial.coeff_zero]
+    simpa using hQc m (by rw [hl]; omega)
   rw [hpt, hQ, hQ0, map_zero]
 
 end GlobalTheory.FockVecOfVac

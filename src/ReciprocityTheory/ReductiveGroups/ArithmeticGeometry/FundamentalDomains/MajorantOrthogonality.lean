@@ -1,9 +1,13 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.NonvanishingNearMaximum
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermCOrthonormalCoordinates
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.PositiveSpanMatrices
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicCombinations
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianPairingAlgebra
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowMatMulVec
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.NonvanishingNearMaximum
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermCOrthonormalCoordinates
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.PositiveSpanMatrices
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicCombinations
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianPairingAlgebra
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowMatMulVec
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.MajorantOrthogonality
 
@@ -30,14 +34,12 @@ lemma pform_h (X : Data E r) (x y : Fin r → E) : (pform X).h x y = herm X.Gm y
 lemma isLattice (X : DataX E r) : ReciprocityTheory.MultiplicativeHeights.IsLattice X.L' := by
   refine ⟨X.L'_fg, ?_⟩
   rw [eq_top_iff, ← X.Λ_span, Submodule.span_le]
-  intro v hv
-  have h := X.NA_sub v hv
+  intro x hx
+  have hmem : (X.NA : E) • x ∈ Submodule.span E (X.L' : Set (Fin r → E)) :=
+    Submodule.subset_span (X.NA_sub x hx)
   have hNA : (X.NA : E) ≠ 0 := Nat.cast_ne_zero.mpr X.NA_pos.ne'
-  have hv' : v = (X.NA : E)⁻¹ • ((X.NA : E) • v) := by
-    rw [smul_smul, inv_mul_cancel₀ hNA, one_smul]
-  rw [hv']
-  exact Submodule.smul_mem _ _ (Submodule.subset_span h)
-
+  have hx' := Submodule.smul_mem _ ((X.NA : E)⁻¹) hmem
+  rwa [smul_smul, inv_mul_cancel₀ hNA, one_smul] at hx'
 lemma selfDual (X : DataX E r) : ReciprocityTheory.MultiplicativeHeights.IsSelfDual (pform X.toData) X.L' := by
   have key : ∀ x y, (pform X.toData).h x y = cc (herm X.Gm x y) := fun x y => by
     rw [pform_h, ReciprocityTheory.ChartRestriction.G.FD.HermitianPairingAlgebra.herm_symm X.Gm_herm]
@@ -134,7 +136,8 @@ lemma herm_coord (X : Data E r) {x : Frame X.Ψ r} (hx : x ∈ X.dom) (ho : X.Is
   have hdet : (mat x τ).det ≠ 0 := ((Data.mem_dom_iff X x).mp hx τ).1
   have hf := hermC_col_mat_of_isOrtho X ho τ
   have h1 : τ.1 (herm X.Gm u v) = hermC τ.1 X.Gm (Data.emb τ.1 u) (Data.emb τ.1 v) := by
-    simp only [herm, hermC, Data.emb, map_sum, map_mul, cc, IsCMField.complexEmbedding_complexConj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [herm, hermC, Data.emb, map_sum, map_mul, cc, IsCMField.complexEmbedding_complexConj]
   calc τ.1 (herm X.Gm u v) = hermC τ.1 X.Gm (Data.emb τ.1 u) (Data.emb τ.1 v) := h1
     _ = hermC τ.1 X.Gm (∑ k, ((mat x τ)⁻¹ *ᵥ Data.emb τ.1 u) k • col (mat x τ) k)
           (∑ l, ((mat x τ)⁻¹ *ᵥ Data.emb τ.1 v) l • col (mat x τ) l) := by

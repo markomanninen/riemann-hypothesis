@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJFELeviMulti
-import GroundTheory.AutomorphicForms.InductionParabolic
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJFELeviMulti
+public import GroundTheory.AutomorphicForms.InductionParabolic
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,8 +63,8 @@ theorem isAdmissible_twist (hρ : IsAdmissible ρ) : IsAdmissible (twist (nnreal
     rw [fixedVectors_twist χ hχ ρ hKc]
     exact hρ.2 K hKc hKo⟩
 
-omit hχ in
 
+omit hχ in
 def subrepresentationTwistOrderIso :
     Subrepresentation (twist (nnrealCharC χ) ρ) ≃o Subrepresentation ρ where
   toFun S := ⟨S.toSubmodule, fun g v hv => by
@@ -178,8 +182,8 @@ theorem leviEquivPi_symm_mulSingle (a : Set.range β) :
   · rw [Pi.mulSingle_eq_of_ne hb]
     simp only [Units.val_one, Matrix.one_apply, blockIndicator, hk, if_neg hb, zpow_zero, hkl]
 
-variable (β) in
 
+variable (β) in
 def leviIdx (a : Set.range β) (k l : Fin (blockSize β a)) : LeviIndex n β :=
   ⟨((fiberFin β a k).1, (fiberFin β a l).1), by
     have hk := congrArg Subtype.val (fiberFin β a k).2
@@ -213,8 +217,8 @@ theorem prod_leviIndex {M : Type*} [CommMonoid M] (f : LeviIndex n β → M) :
   rw [← Fintype.prod_equiv (Equiv.ofBijective _ leviIdx_bijective) (fun p => f (leviIdx β p.1 p.2.1 p.2.2)) f
     (fun p => rfl), Fintype.prod_sigma]
 
-variable (β) in
 
+variable (β) in
 def blockTensor (φ : LeviIndex n β → F → ℂ) (a : Set.range β)
     (X : Matrix (Fin (blockSize β a)) (Fin (blockSize β a)) F) : ℂ :=
   ∏ p : Fin (blockSize β a) × Fin (blockSize β a), φ (leviIdx β a p.1 p.2) (X p.1 p.2)

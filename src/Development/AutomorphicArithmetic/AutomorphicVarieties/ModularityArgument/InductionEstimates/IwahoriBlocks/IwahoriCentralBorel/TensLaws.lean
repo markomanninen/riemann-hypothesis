@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -19,7 +23,8 @@ private theorem coef_mem {A B ι : Type} (X : Submodule ℂ (A → ℂ)) (s : Fi
     have h2 : (fun a => ∑ i ∈ s, φ i a * ψ i b) = ∑ i ∈ s, ψ i b • φ i := by
       funext a
       simp [Finset.sum_apply, mul_comm]
-    rw [h2, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, map_sum] at h1
     simpa [Finset.sum_apply, mul_comm] using h1
   exact hf (linearIndependent_iff'.1 hψ s _ h0 i hi)
 
@@ -35,7 +40,7 @@ private theorem prodMap_tmul {A B : Type} (X₁ : Submodule ℂ (A → ℂ)) (X�
 
 private theorem prodMap_inj {A B : Type} (X₁ : Submodule ℂ (A → ℂ)) (X₂ : Submodule ℂ (B → ℂ)) :
     Function.Injective (prodMap X₁ X₂) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro t ht
   let β := Module.Basis.ofVectorSpace ℂ X₂
   obtain ⟨c, rfl⟩ := TensorProduct.eq_repr_basis_right β t
@@ -46,7 +51,8 @@ private theorem prodMap_inj {A B : Type} (X₁ : Submodule ℂ (A → ℂ)) (X�
     rw [Submodule.mem_bot]
     funext a
     have := congrFun ht (a, b)
-    simpa [Finsupp.sum, map_sum, prodMap_tmul, Finset.sum_apply] using this)
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [Finsupp.sum, map_sum, prodMap_tmul, Finset.sum_apply] using this)
   refine Finset.sum_eq_zero fun i hi => ?_
   have : c i = 0 := Subtype.ext ((Submodule.mem_bot ℂ).1 (hc i hi))
   simp [this]
@@ -58,7 +64,7 @@ private theorem prodMap_range {A B : Type} (X₁ : Submodule ℂ (A → ℂ)) (X
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul φ ψ => exact Submodule.subset_span ⟨φ.1, φ.2, ψ.1, ψ.2, prodMap_tmul X₁ X₂ φ ψ⟩
-    | add x y hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   · refine Submodule.span_le.2 ?_
     rintro _ ⟨φ, hφ, ψ, hψ, rfl⟩
     exact ⟨⟨φ, hφ⟩ ⊗ₜ ⟨ψ, hψ⟩, prodMap_tmul X₁ X₂ _ _⟩

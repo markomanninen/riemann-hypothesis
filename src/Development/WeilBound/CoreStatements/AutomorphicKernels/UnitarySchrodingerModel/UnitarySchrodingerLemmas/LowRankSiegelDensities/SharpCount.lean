@@ -1,5 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.UnitarySchrodingerLemmas.LowRankSiegelDensities.OneVecBinaryMassOf
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteFieldQuadraticFormPointCount
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.UnitarySchrodingerLemmas.LowRankSiegelDensities.OneVecBinaryMassOf
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteFieldQuadraticFormPointCount
+
+@[expose] public section
+
 open MeasureTheory Matrix ComplexConjugate
 
 noncomputable section
@@ -76,7 +81,8 @@ theorem gauss_const (hF : ringChar k ≠ 2) (ψ : AddChar k ℂ) (hψ : ψ ≠ 1
   have hdiag : ∀ c : Fin (Module.finrank k (ι → k)) → k, β (v.equivFun.symm c) (v.equivFun.symm c) = ∑ i, w i * c i ^ 2 := by
     intro c
     rw [Module.Basis.equivFun_symm_apply]
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Finset.sum_eq_single i]
     · simp only [hw]; ring
@@ -91,7 +97,8 @@ theorem gauss_const (hF : ringChar k ≠ 2) (ψ : AddChar k ℂ) (hψ : ψ ≠ 1
       intro y
       have hy := v.sum_equivFun y
       rw [← hy]
-      simp only [map_sum, map_smul, smul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, smul_eq_mul]
       refine Finset.sum_eq_zero fun j _ => ?_
       by_cases hj : j = i
       · subst hj; rw [show β (v j) (v j) = w j by rw [hw], hi, mul_zero]

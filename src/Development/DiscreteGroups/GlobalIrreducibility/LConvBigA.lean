@@ -1,5 +1,9 @@
-import Development.DiscreteGroups.GlobalIrreducibility.LConvCut
-import GroundTheory.LocalFields.Uniqueness
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvCut
+public import GroundTheory.LocalFields.Uniqueness
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,18 +51,14 @@ theorem stdSum_symm_last : (stdSum (rfl : m + 1 = m + 1)).symm (Fin.last m) = Su
 
 theorem corner_cs_cs (g : GL (Fin m) k) (i j : Fin m) :
     (corner g : Matrix (Fin (m + 1)) (Fin (m + 1)) k) i.castSucc j.castSucc = (g : Matrix (Fin m) (Fin m) k) i j := by
-  simp [corner, val_emb₂, Matrix.reindex_apply, stdSum_symm_castSucc]
-
-theorem corner_cs_last (g : GL (Fin m) k) (i : Fin m) :
-    (corner g : Matrix (Fin (m + 1)) (Fin (m + 1)) k) i.castSucc (Fin.last m) = 0 := by
-  simp [corner, val_emb₂, Matrix.reindex_apply, stdSum_symm_castSucc, stdSum_symm_last]
+  simp [corner, emb₂, leviEmb, leviTwo, two, stdSum_symm_castSucc]
 
 theorem corner_last (g : GL (Fin m) k) (j : Fin (m + 1)) :
     (corner g : Matrix (Fin (m + 1)) (Fin (m + 1)) k) (Fin.last m) j =
       (1 : Matrix (Fin (m + 1)) (Fin (m + 1)) k) (Fin.last m) j := by
   refine Fin.lastCases ?_ (fun j => ?_) j
-  · simp [corner, val_emb₂, Matrix.reindex_apply, stdSum_symm_last]
-  · simp [corner, val_emb₂, Matrix.reindex_apply, stdSum_symm_castSucc, stdSum_symm_last,
+  · simp [corner, emb₂, leviEmb, leviTwo, two, stdSum_symm_last]
+  · simp [corner, emb₂, leviEmb, leviTwo, two, Matrix.blockDiagonal', stdSum_symm_castSucc, stdSum_symm_last,
       (Fin.castSucc_lt_last j).ne']
 
 theorem corner_one : corner (1 : GL (Fin m) k) = 1 :=
@@ -90,3 +90,4 @@ end Small
 end DiscreteGroups.sglob.LConv
 
 end
+

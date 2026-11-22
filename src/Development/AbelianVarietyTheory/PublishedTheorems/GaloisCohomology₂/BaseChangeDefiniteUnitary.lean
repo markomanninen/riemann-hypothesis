@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExpoConjOfIsCsd
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsContinuousPadic
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.FiniteIntertwining
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExpoConjOfIsCsd
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsContinuousPadic
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.FiniteIntertwining
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,15 +18,15 @@ namespace GlobalTheory.UnitaryBC
 
 section Linear
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
+
 
 variable (E a) in
-
 def splitCentre (t : ℝ) : GA E a :=
   infGL E a (Units.map (Matrix.scalar (Fin a)).toMonoidHom (expU fun _ : InfinitePlace E => (t : ℂ)))
 
-variable (E a) in
 
+variable (E a) in
 def latticeGL : Subgroup (GA E a) := (ratGL E a).range ⊔ Subgroup.zpowers (splitCentre E a 1)
 
 def IsSqInt (φ : GA E a → ℂ) : Prop :=
@@ -34,9 +38,9 @@ def IsSqInt (φ : GA E a → ℂ) : Prop :=
 structure IsDiscrete (V : Submodule ℂ (Sm E a)) : Prop where
   aut : ∀ φ ∈ V, IsAutForm φ
   sqInt : ∀ φ ∈ V, IsSqInt φ.1
-  stable : IsStable V
+  stable : _root_.GlobalTheory.CuspRep.IsStable V
   ne_bot : V ≠ ⊥
-  irred : ∀ W ≤ V, IsStable W → W = ⊥ ∨ W = V
+  irred : ∀ W ≤ V, _root_.GlobalTheory.CuspRep.IsStable W → W = ⊥ ∨ W = V
 
 def IsLocCompGL (V : Submodule ℂ (Sm E a)) (w : HeightOneSpectrum (𝓞 E))
     (σ : SmIrr (GL (Fin a) (w.adicCompletion E))) : Prop :=
@@ -45,9 +49,9 @@ def IsLocCompGL (V : Submodule ℂ (Sm E a)) (w : HeightOneSpectrum (𝓞 E))
 def HasInfCharGL (V : Submodule ℂ (Sm E a)) (τ : E →+* ℂ) (m : Multiset ℂ) : Prop :=
   Multiset.card m = a ∧ ∀ u, ∀ φ ∈ V, cap τ u φ = (m.map (u + ·)).prod • φ
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
-omit [IsTotallyComplex E] in
 
+attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
+omit [_root_.NumberField.IsTotallyComplex E] in
 def locProd {c n : ℕ} {N : Fin c → ℕ} (h : ∑ i, N i = n) (w : HeightOneSpectrum (𝓞 E))
     (σ : ∀ i, SmIrr (GL (Fin (N i)) (w.adicCompletion E))) :=
   GlobalTheory.SmGL.multiProd (GlobalTheory.SmGL.stdBlocks N h) fun i => (σ i).ρ
@@ -58,8 +62,8 @@ section CM
 
 variable (E : Type) [Field E] [NumberField E] [IsCMField E] {a : ℕ}
 
-variable {E} in
 
+variable {E} in
 def IsCsdGL (V : Submodule ℂ (Sm E a)) : Prop :=
   ∃ T : V ≃ₗ[ℂ] V, ∀ (o : Op E a) (φ ψ : V), ψ.1 = act (thetaOp o) φ.1 → (T ψ).1 = act o (T φ).1
 
@@ -79,31 +83,31 @@ def cLoc (w : HeightOneSpectrum (𝓞 E)) : UA E n →* GL (Fin n) (w.adicComple
 
 def cEmb (τ : E →+* ℂ) : UA E n →* GL (Fin n) ℂ := (GeneralLinearGroup.map (coord τ)).comp cInf
 
-variable (E n) in
 
+variable (E n) in
 def ratU : Subgroup (UA E n) := (ratGL E n).range.subgroupOf (UA E n)
 
-variable (E n) in
 
+variable (E n) in
 def finU : Subgroup (UA E n) := (cInf (E := E) (n := n)).ker
 
-variable (E n) in
 
+variable (E n) in
 def infU : Subgroup (UA E n) := ((GeneralLinearGroup.map (pFin E)).comp (UA E n).subtype).ker
 
-variable (n) in
 
+variable (n) in
 def locU (w : HeightOneSpectrum (𝓞 E)) : Subgroup (UA E n) :=
   finU E n ⊓ ⨅ (u : HeightOneSpectrum (𝓞 E))
     (_ : u.under (𝓞 (maximalRealSubfield E)) ≠ w.under (𝓞 (maximalRealSubfield E))), (cLoc u).ker
 
-variable (n) in
 
+variable (n) in
 def embU (τ : E →+* ℂ) : Subgroup (UA E n) :=
   infU E n ⊓ ⨅ (τ' : E →+* ℂ) (_ : InfinitePlace.mk τ' ≠ InfinitePlace.mk τ), (cEmb τ').ker
 
-variable (E n) in
 
+variable (E n) in
 abbrev RU : Representation ℂ (UA E n) (UA E n → ℂ) := rightReg ℂ (UA E n) ℂ
 
 structure IsAutFormU (φ : UA E n → ℂ) : Prop where
@@ -128,11 +132,11 @@ def IsSplitAt (w : HeightOneSpectrum (𝓞 E)) : Prop :=
     u.under (𝓞 (maximalRealSubfield E)) = w.under (𝓞 (maximalRealSubfield E))
 
 def IsUnramU (π : Submodule ℂ (UA E n → ℂ)) (w : HeightOneSpectrum (𝓞 E)) : Prop :=
-  ∃ φ ∈ π, φ ≠ 0 ∧ ∀ x ∈ locU n w, cLoc w x ∈ GlobalTheory.LFun.KGL w n → RU E n x φ = φ
+  ∃ φ ∈ π, φ ≠ 0 ∧ ∀ x ∈ locU n w, cLoc w x ∈ GlobalTheory.LFun.KGL w (n := n) → RU E n x φ = φ
 
 def HasSatAt (π : Submodule ℂ (UA E n → ℂ)) (w : HeightOneSpectrum (𝓞 E))
     (s : w.adicCompletion E →+* w.adicCompletion E) (ϖ : w.adicCompletion E) (q : ℕ) (α : Fin (n / 2) → ℂˣ) : Prop :=
-  ∃ b ∈ GlobalTheory.LFun.KGL w n, cT s b.val * b.val = antiJ (w.adicCompletion E) n ∧
+  ∃ b ∈ GlobalTheory.LFun.KGL w (n := n), cT s b.val * b.val = antiJ (w.adicCompletion E) n ∧
     ∃ p : locU n w →* GU s n, (∀ x, (p x).val = b⁻¹ * cLoc w x.val * b) ∧
       ∃ σ : SmIrr (GU s n), IsCompAlong π (locU n w) p σ.ρ ∧ GlobalTheory.LFun.HasSatU ϖ q σ.ρ α
 
@@ -152,7 +156,7 @@ structure IsBaseChange (π : Submodule ℂ (UA E n → ℂ)) {c : ℕ} {N : Fin 
   loc : ∀ i w, IsLocCompGL (V i) w (σ i w)
   inf : ∀ i τ, HasInfCharGL (V i) τ (m i τ)
 
-  unram : ∀ w, IsUnramU π w → GlobalTheory.LGrp.IsSpherical (locProd h w (σ · w)) (GlobalTheory.LFun.KGL w n)
+  unram : ∀ w, IsUnramU π w → GlobalTheory.LGrp.IsSpherical (locProd h w (σ · w)) (GlobalTheory.LFun.KGL w (n := n))
 
   inert : ∀ (w : HeightOneSpectrum (𝓞 E)) (s : w.adicCompletion E →+* w.adicCompletion E) (ϖ : w.adicCompletion E)
     (q : ℕ), (∀ x : E, s (algebraMap E _ x) = algebraMap E _ (IsCMField.complexConj E x)) → IsUnramInv ϖ s q →
@@ -171,44 +175,8 @@ theorem conjAd_algebraMap (x : E) :
     rfl
   · exact conjFin_algebraMap _ x
 
-theorem isAutRepU_const : IsAutRepU (Submodule.span ℂ {(fun _ => 1 : UA E n → ℂ)}) := by
-  have h0 : (fun _ => 1 : UA E n → ℂ) ≠ 0 := fun h => one_ne_zero (congrFun h 1)
-  have hc : ∀ φ ∈ Submodule.span ℂ {(fun _ => 1 : UA E n → ℂ)}, ∀ x, RU E n x φ = φ := fun φ hφ x => by
-    obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hφ
-    rfl
-  refine ⟨fun φ hφ => ⟨?_, ?_, ?_, ?_⟩, fun x φ hφ => by rwa [hc φ hφ], by simpa using h0,
-    fun W hW _ => (nonzero_span_atom _ h0).le_iff.1 hW⟩
-  · obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hφ
-    exact continuous_const
-  · obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hφ
-    exact fun _ _ _ => rfl
-  · rw [Set.eq_univ_of_forall (s := {k : finU E n | RU E n k φ = φ}) fun k => hc φ hφ k]
-    exact isOpen_univ
-  · refine FiniteDimensional.span_of_finite ℂ ((Set.finite_singleton φ).subset ?_)
-    rintro _ ⟨k, rfl⟩
-    exact hc φ hφ k
-
-theorem isUnramU_const (w : HeightOneSpectrum (𝓞 E)) :
-    IsUnramU (Submodule.span ℂ {(fun _ => 1 : UA E n → ℂ)}) w :=
-  ⟨_, Submodule.mem_span_singleton_self _, fun h => one_ne_zero (congrFun h 1), fun _ _ _ => rfl⟩
-
 theorem isDiscrete_of_cuspSub (P : CuspSub E a) (h : ∀ φ ∈ P.V, IsSqInt φ.1) : IsDiscrete P.V :=
   ⟨fun φ hφ => (P.cusp φ hφ).1, h, P.stable, P.ne_bot, P.irred⟩
-
-theorem isCsdGL_const : IsCsdGL (Submodule.span ℂ {oneFn E a}) := by
-  refine ⟨.refl _ _, fun o φ ψ h => ?_⟩
-  obtain ⟨c, hc⟩ := Submodule.mem_span_singleton.1 φ.2
-  change ψ.1 = act o φ.1
-  rw [h, ← hc, map_smul, map_smul, act_oneFn, act_oneFn]
-  cases o <;> rfl
-
-theorem isDiscrete_const (h : ∀ c : ℂ, IsSqInt fun _ : GA E a => c * 1) :
-    IsDiscrete (Submodule.span ℂ {oneFn E a}) :=
-  ⟨fun _ => isAutForm_const, fun φ hφ => by
-      obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hφ
-      exact h c,
-    isStable_const, fun e => oneFn_ne_zero (Submodule.span_singleton_eq_bot.1 e),
-    fun W hW _ => (nonzero_span_atom _ oneFn_ne_zero).le_iff.1 hW⟩
 
 theorem cuspSub_iff (P : CuspSub E a) :
     (IsCsdGL P.V ↔ P.IsCsd) ∧ (∀ w σ, IsLocCompGL P.V w σ ↔ P.IsLocComp w σ) ∧

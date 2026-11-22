@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
-import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.LocalTwistContinuousInvolutionIntegralProperties
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNormSurjectivity.MemMaxVAIff
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNormSurjectivity.WittFN
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNormSurjectivity.WittHS
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsOrthonormalBasisUnimodularHermitianLocalRi
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMatrixCharpolyPreservingHermitianFormCMStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.LocalTwistContinuousInvolutionIntegralProperties
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNormSurjectivity.MemMaxVAIff
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNormSurjectivity.WittFN
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNormSurjectivity.WittHS
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsOrthonormalBasisUnimodularHermitianLocalRi
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMatrixCharpolyPreservingHermitianFormCMStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -157,7 +162,7 @@ theorem main : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E →
   filter_upwards [hall C, hall Ci, hall H, ae_unit hHd, ae_unit (two_ne_zero : (2 : E) ≠ 0)] with w h1 h2 h3 h4 h5
   have hO : ∀ x : w.adicCompletion E, Valued.v x ≤ 1 → x ∈ (w.adicCompletionIntegers E).toSubring :=
     fun x hx => (HeightOneSpectrum.mem_adicCompletionIntegers _ _ _).2 hx
-  have hK : Cw w ∈ GlobalTheory.LFun.KGL w n :=
+  have hK : Cw w ∈ GlobalTheory.LFun.KGL w (n := n) :=
     mem_GLint _ (fun i j => hO _ (h1 i j)) (fun i j => hO _ (h2 i j))
   by_cases hs : IsSplitAt w
   · exact ⟨⟨Cw w, by rw [UL, if_pos hs]; exact Subgroup.mem_top _⟩, Subgroup.mem_subgroupOf.2 hK, hchar w⟩
@@ -178,8 +183,8 @@ theorem main : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E →
     have hCHw : cT (cj w) (C.map (f w)) * Hw * C.map (f w) = Hw := by
       rw [hmapc, hHwdef, ← Matrix.map_mul, ← Matrix.map_mul, hCH]
     obtain ⟨R, hR, hRH⟩ := lemLocal (w.adicCompletion E) ϖ (cj w) q hUI hq n Hw hHw1 hHw2 hHw3
-    have hRK : R ∈ GlobalTheory.LFun.KGL w n := by
-      have e : GlobalTheory.LFun.KGL w n = GLint (Fin n) (intL (w.adicCompletion E)) := by
+    have hRK : R ∈ GlobalTheory.LFun.KGL w (n := n) := by
+      have e : GlobalTheory.LFun.KGL w (n := n) = GLint (Fin n) (intL (w.adicCompletion E)) := by
         show GLint (Fin n) (w.adicCompletionIntegers E).toSubring = _
         rw [Ov_eq]
       rw [e]; exact hR

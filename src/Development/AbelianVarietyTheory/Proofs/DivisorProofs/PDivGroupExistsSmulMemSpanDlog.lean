@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTatePairingSandwich
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowEqOfIntegers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTatePairingSandwich
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowEqOfIntegers
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -50,8 +54,9 @@ theorem exists_smul_mem_span_dlog : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Fie
   have hzero : ∀ q : (G.omega ⧸ S) ⧸ T, q = 0 := fun q => by
     obtain ⟨w, rfl⟩ := hπ q
     refine b.ext_elem fun i => ?_
-    have := LinearMap.congr_fun (hcoord i) w
-    simpa using this
+    change b.coord i (π w) = b.coord i 0
+    rw [(b.coord i).map_zero]
+    exact LinearMap.congr_fun (hcoord i) w
   have htor : Module.IsTorsion O (G.omega ⧸ S) := fun q => by
     have := hzero (T.mkQ q)
     rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero, Submodule.mem_torsion_iff] at this

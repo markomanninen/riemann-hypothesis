@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaTranslateOrthogonalOfSupportMovedOff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaTranslateOrthogonalOfSupportMovedOff
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped TensorProduct InnerProductSpace ComplexConjugate
@@ -93,7 +98,8 @@ theorem sep : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D), IsStd
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [Pi.smul_apply, smul_eq_mul, mul_assoc]
     have e3 := congrArg Tm e2
-    rw [e1, map_sum, ← hfT] at e3
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, map_sum, ← hfT] at e3
     refine (Finset.sum_congr rfl fun i _ => ?_).trans e3.symm
     rw [map_smul, hTm.modul Φ hΦ (y i) (hy i), ← hfT]
   · have e1 : (fun t => conj (q (actO S T g 1 t)) * Φ t) = 0 := by
@@ -104,12 +110,14 @@ theorem sep : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D), IsStd
     have e2 : (fun t => conj (q (actO S T g 1 t)) * Φ t) =
         ∑ i, conj (a i) • fun t => ψ (symplO S T t (w i)) * Φ t := by
       funext t
-      rw [hqt, map_sum, Finset.sum_mul, Finset.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hqt, map_sum, Finset.sum_mul, Finset.sum_apply]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [Pi.smul_apply, smul_eq_mul, map_mul, GlobalTheory.ThetaOrth.conj_psi hψ,
         ← GlobalTheory.ThetaOrth.symplO_neg_right, ← hact i, GlobalTheory.SymplOInv.symplO_actO D S T g 1 t (w i), mul_assoc]
     have e3 := congrArg Tm e2
-    rw [e1, map_zero, map_sum] at e3
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, map_zero, map_sum] at e3
     rw [e3]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, hfT, hTm.modul Φ hΦ (w i) (hwh i)]

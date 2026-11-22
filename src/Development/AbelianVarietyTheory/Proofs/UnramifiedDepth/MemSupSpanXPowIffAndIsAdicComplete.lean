@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.PredMulSumPadicValNatFactorialAddCardLe
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.MemPowIffCoeffMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.PredMulSumPadicValNatFactorialAddCardLe
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.MemPowIffCoeffMem
+
+@[expose] public section
 
 namespace GlobalTheory.ChF
 

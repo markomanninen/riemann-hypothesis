@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -37,7 +41,7 @@ theorem map_sub_two_pow_mul_mem {R : Type} [CommRing R] (m : Ideal R) (φ : R �
     · intro a b ha hb
       have e : φ (a + b) - 2 ^ (n + 1 + 1) * (a + b) =
           (φ a - 2 ^ (n + 1 + 1) * a) + (φ b - 2 ^ (n + 1 + 1) * b) := by
-        rw [map_add]; ring
+        rw [map_add (f := _)]; ring
       rw [e]
       exact Ideal.add_mem _ ha hb
 
@@ -98,10 +102,10 @@ def kerPart (x : R) : RingHom.ker ev :=
 def cotPart (x : R) : (RingHom.ker ev).Cotangent := (RingHom.ker ev).toCotangent (kerPart ev x)
 
 theorem cotPart_add (x y : R) : cotPart ev (x + y) = cotPart ev x + cotPart ev y := by
-  rw [cotPart, cotPart, cotPart, ← map_add]
+  rw [cotPart, cotPart, cotPart, ← map_add (f := _)]
   congr 1
   apply Subtype.ext
-  simp only [kerPart, map_add, Submodule.coe_add]
+  simp only [kerPart, map_add (f := _), Submodule.coe_add]
   ring
 
 theorem cotPart_algebraMap (a : k) : cotPart ev (algebraMap k R a) = 0 := by

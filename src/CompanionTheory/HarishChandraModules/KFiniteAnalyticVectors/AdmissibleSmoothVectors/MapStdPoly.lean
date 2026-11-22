@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.KFinSmooth
-import Formalism.PeriodIntegrals.IsLowUnitH
+module
+
+public import Formalism.PeriodIntegrals.KFinSmooth
+public import Formalism.PeriodIntegrals.IsLowUnitH
+
+@[expose] public section
 
 open MeasureTheory Matrix
 

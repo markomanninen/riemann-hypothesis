@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EventuallyEqOfAgreeGLs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RdEqFderiv
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ZOpSmooth
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EventuallyEqOfAgreeGLs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RdEqFderiv
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ZOpSmooth
+
+@[expose] public section
 
 noncomputable section
 

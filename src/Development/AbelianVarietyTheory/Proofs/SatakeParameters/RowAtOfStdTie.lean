@@ -1,11 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.InertKernelTheory.DefsRepDict
-import Formalism.LocalToGlobal.InertKernelTheory.GenusOneModelExistsLattice
-import Formalism.LocalToGlobal.InertKernelTheory.StatementJets
-import Formalism.LocalToGlobal.InertKernelTheory.StatementAlgT
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.HasPartAnd
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThreeLeSplitAt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.KernelDatumConditionsAtStandardKernelComparisonStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsRepDict
+public import Formalism.LocalToGlobal.InertKernelTheory.GenusOneModelExistsLattice
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementJets
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementAlgT
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.HasPartAnd
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThreeLeSplitAt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.KernelDatumConditionsAtStandardKernelComparisonStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.L2.Ker Formalism.L2.Forms GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.Bl GlobalTheory.Fc GlobalTheory.Svd NumberField IsDedekindDomain
 
 namespace GlobalTheory.Pdv

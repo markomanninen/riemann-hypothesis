@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenOnFibres
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKodairaGeneric
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenOnFibres
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKodairaGeneric
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -20,7 +25,7 @@ theorem aeval_eq_eval_mConeMap (f : MRing ι) :
     aeval y f = MvPolynomial.eval (fun _ : K => (1 : Ω)) (mConeMap y f) := by
   induction f using MvPolynomial.induction_on with
   | C a => simp [mConeMap]
-  | add p q hp hq => rw [map_add, map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
   | mul_X p n hp => rw [map_mul, map_mul, map_mul, hp]; simp [mConeMap]
 
 theorem genIdeal_le_ker : KH.genIdeal y ≤ RingHom.ker (aeval y : MRingOver ℚ ι →ₐ[ℚ] Ω) := by
@@ -43,8 +48,8 @@ theorem evQ_smul (t : MRingOver ℚ ι) (m : MRingOver ℚ ι ⧸ KH.genIdeal y)
   rw [show t • Ideal.Quotient.mk (KH.genIdeal y) f = Ideal.Quotient.mk (KH.genIdeal y) (t * f) from rfl,
     evQ_mk, evQ_mk, map_mul]
 
-open Classical in
 
+open Classical in
 def evL (T : Submonoid (MRingOver ℚ ι)) (x : LocalizedModule T (MRingOver ℚ ι ⧸ KH.genIdeal y)) : Ω :=
   if h : ∀ t ∈ T, aeval y t ≠ 0 then
     x.liftOn (fun p => evQ y p.1 / aeval y (p.2 : MRingOver ℚ ι)) (by
@@ -65,11 +70,11 @@ variable {y}
 theorem evL_mk {T : Submonoid (MRingOver ℚ ι)} (hT : ∀ t ∈ T, aeval y t ≠ 0)
     (m : MRingOver ℚ ι ⧸ KH.genIdeal y) (t : T) :
     evL y T (LocalizedModule.mk m t) = evQ y m / aeval y (t : MRingOver ℚ ι) := by
-  rw [evL, dif_pos hT, LocalizedModule.liftOn_mk]
+  rw [evL, dite_eq_left hT, LocalizedModule.liftOn_mk]
 
 theorem evL_of_not {T : Submonoid (MRingOver ℚ ι)} (hT : ¬ ∀ t ∈ T, aeval y t ≠ 0)
     (x : LocalizedModule T (MRingOver ℚ ι ⧸ KH.genIdeal y)) : evL y T x = 0 := by
-  rw [evL, dif_neg hT]
+  rw [evL, dite_eq_right hT]
 
 def evLHom {T : Submonoid (MRingOver ℚ ι)} (hT : ∀ t ∈ T, aeval y t ≠ 0) :
     LocalizedModule T (MRingOver ℚ ι ⧸ KH.genIdeal y) →+* Ω where
@@ -95,7 +100,7 @@ def evLHom {T : Submonoid (MRingOver ℚ ι)} (hT : ∀ t ∈ T, aeval y t ≠ 0
     induction x' using LocalizedModule.induction_on with
     | h m' s' =>
     rw [LocalizedModule.mk_add_mk, evL_mk hT, evL_mk hT, evL_mk hT]
-    simp only [Submonoid.coe_mul, map_add, Submonoid.smul_def, evQ_smul, map_mul]
+    simp only [Submonoid.coe_mul, map_add (f := _), Submonoid.smul_def, evQ_smul, map_mul]
     field_simp [hT s s.2, hT s' s'.2]
 
 theorem evLHom_apply {T : Submonoid (MRingOver ℚ ι)} (hT : ∀ t ∈ T, aeval y t ≠ 0)
@@ -128,12 +133,13 @@ theorem cellMon_ne {I : ∀ k, Finset (ι k)} (hI : ∀ k, ∀ i ∈ I k, y ⟨k
   | one => simp
   | mul x x' _ _ hx hx' => rw [map_mul]; exact mul_ne_zero hx hx'
 
-variable (y) in
 
+variable (y) in
 theorem aeval_div_mem (c : ∀ k, ι k) {g : MRingOver ℚ ι} {d : K → ℕ} (hg : IsMultiHomog g d) :
     aeval y g / ∏ k, y ⟨k, c k⟩ ^ d k ∈ chartRingQ y c := by
   classical
-  rw [g.as_sum, map_sum, Finset.sum_div]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [g.as_sum, map_sum, Finset.sum_div]
   refine Subalgebra.sum_mem _ fun m hm => ?_
   rw [aeval_monomial, mul_div_assoc]
   refine Subalgebra.mul_mem _ (Subalgebra.algebraMap_mem _ _) ?_
@@ -164,7 +170,7 @@ theorem quotPart_mem (c : ∀ k, ι k) {d : K → ℤ} {m : MRingOver ℚ ι ⧸
     rw [e, ← div_eq_mul_inv]
     exact aeval_div_mem y c hg
   | zero => simp
-  | add x x' _ _ hx hx' => rw [map_add, add_mul]; exact add_mem hx hx'
+  | add x x' _ _ hx hx' => rw [map_add (f := _), add_mul]; exact add_mem hx hx'
   | smul r x _ hx => rw [map_smul, smul_mul_assoc]; exact Subalgebra.smul_mem _ hx r
 
 def chartCell (c : ∀ k, ι k) : KH.Cell K ι 0 :=
@@ -227,7 +233,8 @@ theorem locPart_mem {c : ∀ k, ι k} (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) {a : K 
       (evLHom hT).map_zero]
     simp
   | add x x' _ _ hx hx' =>
-    rw [← evLHom_apply hT, map_add, add_mul]
+    rw [← evLHom_apply hT (x + x'), (evLHom hT).map_add,
+      evLHom_apply hT x, evLHom_apply hT x', add_mul]
     exact add_mem hx hx'
   | smul r x _ hx =>
     rw [evL_smul hT, smul_mul_assoc]
@@ -235,8 +242,8 @@ theorem locPart_mem {c : ∀ k, ι k} (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) {a : K 
 
 variable [LinearOrder K] [∀ k, LinearOrder (ι k)]
 
-variable (y) in
 
+variable (y) in
 def val (z : KH.CechC ℚ ι (MRingOver ℚ ι ⧸ KH.genIdeal y) 0) (J : KH.Cell K ι 0) : Ω :=
   evL y (KH.cellMon ℚ J.1) (z J)
 
@@ -296,7 +303,7 @@ theorem val_faces (z : KH.CechC ℚ ι (MRingOver ℚ ι ⧸ KH.genIdeal y) 0)
     simp only [LinearMap.sum_apply]
     rw [Finset.sum_eq_single k0]
     · rw [Finset.sum_eq_add_of_mem i1 i2 hi1 hi2 (ne_of_lt hlt)]
-      · rw [dif_pos (hface i1 hi1), dif_pos (hface i2 hi2)]
+      · rw [dite_eq_left (hface i1 hi1), dite_eq_left (hface i2 hi2)]
         rfl
       · intro i hi hne'
         rw [hI] at hi
@@ -414,8 +421,8 @@ theorem val_chart_eq {z : KH.CechC ℚ ι (MRingOver ℚ ι ⧸ KH.genIdeal y) 0
       simp [Finset.mem_insert, hk]
   simpa using key Finset.univ
 
-variable (y) in
 
+variable (y) in
 theorem exists_sections_of_generatedV {n : K → ℤ} (hg : KH.GeneratedV ℚ (KH.genIdeal y) n) :
     ∃ (σ : Type) (_ : Fintype σ) (s : σ → Ω), (∀ j, s j ∈ chartLatQ y n 1) ∧
       ∀ c : ∀ k, ι k, (∀ k, y ⟨k, c k⟩ ≠ 0) → ∃ v : σ → Ω, (∀ j, v j ∈ chartRingQ y c) ∧
@@ -465,7 +472,8 @@ theorem exists_sections_of_generatedV {n : K → ℤ} (hg : KH.GeneratedV ℚ (K
         linear_combination (evL y _ (u (chartCell c) j) * evL y _ (z (chartCell c) j (chartCell c))) * h1
       rw [Fintype.sum_sigma, Finset.sum_eq_single c]
       · refine (Finset.sum_congr rfl fun j _ => e j).trans ?_
-        rw [← map_sum, hsum, map_one]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← map_sum, hsum, map_one]
       · intro c' _ hc'
         simp [hc']
       · intro h

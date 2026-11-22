@@ -1,8 +1,13 @@
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsAdaptedEmpty
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LeviNormalizesUnipotentVariant
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousAdelicUnitaryEmbedding
-import Formalism.LocalRingCardinality.DataSpaces
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinrankOrth
+module
+
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsAdaptedEmpty
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LeviNormalizesUnipotentVariant
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousAdelicUnitaryEmbedding
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinrankOrth
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Matrix
 open scoped TensorProduct ContDiff
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -17,7 +22,8 @@ theorem hT_coords {D : D7} (V : HSp D) (a b : Fin V.rank → D.host.E) :
     V.hT (V.frame.equivFun.symm a) (V.frame.equivFun.symm b) =
       ∑ k, ∑ l, star (a k) * V.gram k l * b l := by
   simp only [Module.Basis.equivFun_symm_apply]
-  simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul, HSpace.gram,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul, HSpace.gram,
     starRingEnd_apply, Finset.mul_sum, RingHom.id_apply]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
@@ -45,7 +51,8 @@ theorem exists_perp {E : Type} [Field E] [NumberField E] [StarRing E] (hst : ∀
     · simp [h, Ne.symm h]
   have hc : LinearIndependent E c := Fintype.linearIndependent_iff.2 fun g hg j => by
     have := congrArg (V.hT (d j)) hg
-    simpa [map_sum, hdc] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, hdc] using this
   obtain ⟨V', ι, hr, hι, h0⟩ := GlobalTheory.WittLow.exists_lower hst V c hc hcc
   have h0' : ∀ x a, V.hT (c a) (ι x) = 0 := fun x a => by rw [← hs.eq (ι x) (c a), h0, map_zero]
   let p : V.V →ₗ[E] V.V := LinearMap.id - ∑ k, (V.hT (d k)).smulRight (c k)
@@ -56,7 +63,8 @@ theorem exists_perp {E : Type} [Field E] [NumberField E] [StarRing E] (hst : ∀
     rw [← hι x y]
     show V.hT (p (ι x)) (p (ι y)) = V.hT (ι x) (ι y)
     have e1 : V.hT (ι x) (p (ι y)) = V.hT (ι x) (ι y) := by simp [hp, map_sum, h0]
-    rw [hp (ι x), map_sub, LinearMap.sub_apply, e1, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hp (ι x), map_sub, LinearMap.sub_apply, e1, map_sum, LinearMap.sum_apply]
     simp [hcp, h0']
   have hinj : Function.Injective ι := (injective_iff_map_eq_zero ι).2 fun x hx =>
     V'.nondeg.1 x fun y => by rw [← hι x y, hx]; simp
@@ -67,7 +75,8 @@ theorem exists_perp {E : Type} [Field E] [NumberField E] [StarRing E] (hst : ∀
     obtain ⟨g, hg⟩ := (Submodule.mem_span_range_iff_exists_fun E).1 hx
     have : x = 0 := V'.nondeg.1 x fun y => by
       rw [← hι x y, ← hg]
-      simp [map_sum, LinearMap.sum_apply, h0']
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, LinearMap.sum_apply, h0']
     rw [this, map_zero]
   have hle : LinearMap.range ι ⊔ Submodule.span E (Set.range c) ≤ P :=
     sup_le (by rintro _ ⟨x, rfl⟩; exact funext fun j => h0' x j)
@@ -91,7 +100,8 @@ theorem exists_perp {E : Type} [Field E] [NumberField E] [StarRing E] (hst : ∀
     refine ⟨x, ?_⟩
     have hg : ∀ k, V.hT (d k) (ι x) = -g k := fun k => by
       have := (hv k).2
-      simp [map_sum, hdc] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, hdc] at this
       exact eq_neg_of_add_eq_zero_left this
     show p (ι x) = _
     simp [hp, hg, sub_eq_add_neg]

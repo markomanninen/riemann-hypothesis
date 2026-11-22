@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.TauReduction.LatticeVectorsBoundedBelow
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DenominatorOfFinitelyGenerated
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.TauReduction.LatticeVectorsBoundedBelow
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DenominatorOfFinitelyGenerated
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,7 +24,7 @@ theorem one_le_norm_embedding_alt (I : AutInst) (a : 𝓞 I.E) (ha : a ≠ 0) :
   have hsI : IsIntegral ℤ (star (a : I.E)) := IsIntegral.map I.cm.sig haI
   have hβI : IsIntegral ℤ β := haI.mul hsI
   have hγI : IsIntegral ℤ γ := by
-    rw [← isIntegral_algebraMap_iff (algebraMap I.F I.E).injective, hγ]
+    rw [← isIntegral_algebraMap_iff (B := I.E), hγ]
     exact hβI
   have ha0 : (a : I.E) ≠ 0 := by simpa using ha
   have hβ0 : β ≠ 0 := mul_ne_zero ha0 (star_ne_zero.2 ha0)

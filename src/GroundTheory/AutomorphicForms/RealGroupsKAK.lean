@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.RealGroupsPolar
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.RealGroupsPolar
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.FiniteOrderIntersectionInSmooth
+module
+
+public import Formalism.HermitianCurvature.FiniteOrderIntersectionInSmooth
+
+@[expose] public section
 
 open Matrix Formalism.QuantumDeterminants
 open scoped ComplexConjugate
@@ -10,82 +14,6 @@ namespace Formalism.FourierDecayAlt.P.HermitianProjections
 section proj
 
 variable {n ι : Type*} [Fintype n] [DecidableEq n] [Fintype ι] [DecidableEq ι]
-
-def prj (H : Matrix n n ℂ) (V : Matrix n ι ℂ) : Matrix ι n ℂ := (Vᴴ * H * V)⁻¹ * Vᴴ * H
-
-def rhoOf (H : Matrix n n ℂ) (V : Matrix n ι ℂ) (Φ : Matrix ι ι ℂ) : Matrix n n ℂ :=
-  1 + V * (Φ - 1) * prj H V
-
-lemma prj_mul (H : Matrix n n ℂ) (V : Matrix n ι ℂ) (hΓ : IsUnit (Vᴴ * H * V).det) :
-    prj H V * V = 1 := by
-  have h := Matrix.nonsing_inv_mul _ hΓ
-  have e : prj H V * V = (Vᴴ * H * V)⁻¹ * (Vᴴ * H * V) := by
-    simp only [prj, Matrix.mul_assoc]
-  rw [e, h]
-
-lemma K_eq (H : Matrix n n ℂ) (V : Matrix n ι ℂ) (hΓ : IsUnit (Vᴴ * H * V).det) :
-    Vᴴ * H = (Vᴴ * H * V) * prj H V := by
-  have h := Matrix.mul_nonsing_inv _ hΓ
-  have e : (Vᴴ * H * V) * prj H V = ((Vᴴ * H * V) * (Vᴴ * H * V)⁻¹) * (Vᴴ * H) := by
-    simp only [prj, Matrix.mul_assoc]
-  rw [e, h, Matrix.one_mul]
-
-lemma prj_perp (H : Matrix n n ℂ) (V : Matrix n ι ℂ) (x : n → ℂ) (hx : (Vᴴ * H) *ᵥ x = 0) :
-    prj H V *ᵥ x = 0 := by
-  have e : prj H V = (Vᴴ * H * V)⁻¹ * (Vᴴ * H) := by
-    simp only [prj, Matrix.mul_assoc]
-  rw [e, ← Matrix.mulVec_mulVec, hx, Matrix.mulVec_zero]
-
-lemma decomp (H : Matrix n n ℂ) (V : Matrix n ι ℂ) (hΓ : IsUnit (Vᴴ * H * V).det) (x : n → ℂ) :
-    (Vᴴ * H) *ᵥ (x - V *ᵥ (prj H V *ᵥ x)) = 0 := by
-  have hK := K_eq H V hΓ
-  have e : (Vᴴ * H) *ᵥ (V *ᵥ (prj H V *ᵥ x)) = ((Vᴴ * H * V) * prj H V) *ᵥ x := by
-    simp only [Matrix.mulVec_mulVec, Matrix.mul_assoc]
-  rw [Matrix.mulVec_sub, e, ← hK, sub_self]
-
-lemma rhoOf_mul (H : Matrix n n ℂ) (V : Matrix n ι ℂ) (Φ : Matrix ι ι ℂ) (hΓ : IsUnit (Vᴴ * H * V).det) :
-    rhoOf H V Φ * V = V * Φ := by
-  simp only [rhoOf]
-  rw [Matrix.add_mul, Matrix.one_mul, Matrix.mul_assoc (V * (Φ - 1)), prj_mul H V hΓ, Matrix.mul_one,
-    Matrix.mul_sub, Matrix.mul_one]
-  abel
-
-lemma rhoOf_perp (H : Matrix n n ℂ) (V : Matrix n ι ℂ) (Φ : Matrix ι ι ℂ) (x : n → ℂ)
-    (hx : (Vᴴ * H) *ᵥ x = 0) : rhoOf H V Φ *ᵥ x = x := by
-  simp only [rhoOf]
-  rw [Matrix.add_mulVec, Matrix.one_mulVec, ← Matrix.mulVec_mulVec, prj_perp H V x hx, Matrix.mulVec_zero,
-    add_zero]
-
-lemma eq_rhoOf (H : Matrix n n ℂ) (V : Matrix n ι ℂ) (Φ : Matrix ι ι ℂ) (hΓ : IsUnit (Vᴴ * H * V).det)
-    (g : Matrix n n ℂ) (hg : g * V = V * Φ) (hgU : ∀ x, (Vᴴ * H) *ᵥ x = 0 → g *ᵥ x = x) :
-    g = rhoOf H V Φ := by
-  apply Matrix.toLin'.injective
-  refine LinearMap.ext fun x => ?_
-  simp only [Matrix.toLin'_apply]
-  have hd := decomp H V hΓ x
-  have h1 : g *ᵥ (x - V *ᵥ (prj H V *ᵥ x)) = x - V *ᵥ (prj H V *ᵥ x) := hgU _ hd
-  have h2 : rhoOf H V Φ *ᵥ (x - V *ᵥ (prj H V *ᵥ x)) = x - V *ᵥ (prj H V *ᵥ x) :=
-    rhoOf_perp H V Φ _ hd
-  have h3 : ∀ w : ι → ℂ, g *ᵥ (V *ᵥ w) = rhoOf H V Φ *ᵥ (V *ᵥ w) := fun w => by
-    rw [Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, hg, rhoOf_mul H V Φ hΓ]
-  have hx : x = (x - V *ᵥ (prj H V *ᵥ x)) + V *ᵥ (prj H V *ᵥ x) := (sub_add_cancel x _).symm
-  rw [hx, Matrix.mulVec_add, Matrix.mulVec_add, h1, h2, h3]
-
-lemma rhoOf_sub_one_pow (H : Matrix n n ℂ) (V : Matrix n ι ℂ) (Φ : Matrix ι ι ℂ)
-    (hΓ : IsUnit (Vᴴ * H * V).det) (m : ℕ) :
-    (rhoOf H V Φ - 1) ^ (m + 1) = V * (Φ - 1) ^ (m + 1) * prj H V := by
-  have hW : rhoOf H V Φ - 1 = V * (Φ - 1) * prj H V := by
-    simp only [rhoOf, add_sub_cancel_left]
-  have hP := prj_mul H V hΓ
-  induction m with
-  | zero => rw [zero_add, pow_one, pow_one, hW]
-  | succ k ih =>
-    rw [pow_succ (rhoOf H V Φ - 1) (k + 1), ih, hW]
-    calc V * (Φ - 1) ^ (k + 1) * prj H V * (V * (Φ - 1) * prj H V)
-        = V * (Φ - 1) ^ (k + 1) * (prj H V * V) * (Φ - 1) * prj H V := by
-          simp only [Matrix.mul_assoc]
-      _ = V * (Φ - 1) ^ (k + 1 + 1) * prj H V := by
-          rw [hP, Matrix.mul_one, pow_succ (Φ - 1) (k + 1), Matrix.mul_assoc V ((Φ - 1) ^ (k + 1)) (Φ - 1)]
 
 end proj
 
@@ -112,11 +40,6 @@ lemma strict_pow_eq_zero {m : ℕ} (M : Matrix (Fin m) (Fin m) ℂ) (hM : ∀ i 
   rw [Matrix.zero_apply]
   exact strict_pow_apply M hM m i j (by have := j.isLt; omega)
 
-lemma pow_eq_zero_of_le {R : Type*} [MonoidWithZero R] {x : R} {p q : ℕ} (h : x ^ p = 0)
-    (hpq : p ≤ q) : x ^ q = 0 := by
-  obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le hpq
-  rw [pow_add, h, zero_mul]
-
 section herm
 
 variable {n : Type*} [Fintype n]
@@ -133,18 +56,6 @@ lemma herm_smul_left (H : Matrix n n ℂ) (c : ℂ) (a w : n → ℂ) : herm H (
 lemma herm_smul_right (H : Matrix n n ℂ) (c : ℂ) (v a : n → ℂ) : herm H v (c • a) = conj c * herm H v a := by
   simp only [herm, star_smul, smul_dotProduct, smul_eq_mul]
   rfl
-
-lemma herm_sub_left (H : Matrix n n ℂ) (a b w : n → ℂ) : herm H (a - b) w = herm H a w - herm H b w := by
-  simp only [herm, Matrix.mulVec_sub, dotProduct_sub]
-
-lemma herm_sub_right (H : Matrix n n ℂ) (v a b : n → ℂ) : herm H v (a - b) = herm H v a - herm H v b := by
-  simp only [herm, star_sub, sub_dotProduct]
-
-lemma herm_zero_left (H : Matrix n n ℂ) (w : n → ℂ) : herm H 0 w = 0 := by
-  simp only [herm, Matrix.mulVec_zero, dotProduct_zero]
-
-lemma herm_zero_right (H : Matrix n n ℂ) (v : n → ℂ) : herm H v 0 = 0 := by
-  simp only [herm, star_zero, zero_dotProduct]
 
 lemma herm_mulVec {m ι κ : Type*} [Fintype m] [Fintype ι] [Fintype κ] (H : Matrix m m ℂ)
     (A : Matrix m ι ℂ) (B : Matrix m κ ℂ) (a : ι → ℂ) (b : κ → ℂ) :
@@ -206,11 +117,11 @@ lemma sig_split {p q : ℕ} (G : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ)
     intro P _ c d hd
     rw [← Fintype.sum_subtype_add_sum_subtype P (fun i => star (d i) * ((lam i : ℂ) * d i))]
     have h0 : ∑ i : {x // ¬ P x}, star (d i.1) * ((lam i.1 : ℂ) * d i.1) = 0 := by
-      apply Finset.sum_eq_zero; intro i _; rw [hd, dif_neg i.2]; simp
+      apply Finset.sum_eq_zero; intro i _; rw [hd, dite_eq_right i.2]; simp
     rw [h0, add_zero]
     apply Finset.sum_congr rfl
     intro i _
-    rw [hd, dif_pos i.2]
+    rw [hd, dite_eq_left i.2]
   have hEv : ∀ (P : Fin p ⊕ Fin q → Prop) [DecidablePred P] (c : {i // P i} → ℂ) (i : Fin p ⊕ Fin q),
       ((Matrix.of fun (i : Fin p ⊕ Fin q) (j : {i // P i}) => if i = j.1 then (1 : ℂ) else 0) *ᵥ c) i =
         if h : P i then c ⟨i, h⟩ else 0 := by

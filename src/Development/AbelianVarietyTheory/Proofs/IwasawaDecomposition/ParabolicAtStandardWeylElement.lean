@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LowSetFinite
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SplitOffDetection
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.HkSupSizedOfHkSup
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckeValueIntegrality
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsGoodRowHeckeOfOcc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EigenCompatibleOfBadSet
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesHermitianUniqueOfClassification
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ComplexConjugationMapsMultiplicitySpace
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiscreteSeriesModelOfDualParameter
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsFundamentalDomainOfHaar
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PlaceModelImp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LowSetFinite
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SplitOffDetection
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.HkSupSizedOfHkSup
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckeValueIntegrality
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsGoodRowHeckeOfOcc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EigenCompatibleOfBadSet
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesHermitianUniqueOfClassification
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ComplexConjugationMapsMultiplicitySpace
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiscreteSeriesModelOfDualParameter
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsFundamentalDomainOfHaar
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PlaceModelImp
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,8 +27,8 @@ section Abstract
 variable {k : Type} [Field k] [NumberField k] (σ : k →+* ℂ) {W X : Type} [AddCommGroup W] [Module k W] [FiniteDimensional k W]
   [AddCommGroup X] [Module ℂ X] (ι : W →ₛₗ[σ] X)
 
-omit [NumberField k] [FiniteDimensional k W] in
 
+omit [NumberField k] [FiniteDimensional k W] in
 theorem aeval_read {φ : Module.End k W} {T : Module.End ℂ X} (h : ∀ x, T (ι x) = ι (φ x)) (p : k[X]) (x : W) :
     aeval T (p.map σ) (ι x) = ι (aeval φ p x) := by
   have hp : ∀ (n : ℕ) (x : W), (T ^ n) (ι x) = ι ((φ ^ n) x) := by
@@ -63,7 +67,8 @@ theorem exists_finset_eig {κ : Type} (φ : κ → Module.End k W) (T : κ → M
       exact (isIntegral_trans (R := ℚ) z hi).isAlgebraic
   · intro L hL U hU h0 c hc t
     have hk : ∀ a : k, σ a ∈ L := fun a => by
-      rw [← b.sum_repr a, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← b.sum_repr a, map_sum]
       refine L.sum_mem fun i _ => ?_
       rw [map_rat_smul]
       exact L.smul_mem (hL _ (Finset.mem_union_left _ (Finset.mem_image_of_mem _ (Finset.mem_univ i))))
@@ -109,8 +114,8 @@ open scoped TensorProduct
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E] {n : ℕ}
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem frame_int {β β' : GL (Fin n) (E ⊗[F] Af F)} {Λ : Submodule (𝓞 E) (Fin n → E)} (h : IsFrame β Λ) (h' : IsFrame β' Λ)
     (i j : Fin n) : ((β'⁻¹ * β : GL (Fin n) (E ⊗[F] Af F)) : Matrix (Fin n) (Fin n) (E ⊗[F] Af F)) i j ∈ intAf F E := by
   have h1 : (β : Matrix (Fin n) (Fin n) (E ⊗[F] Af F)).mulVec (Pi.single j 1) ∈ hatL (F := F) Λ := by
@@ -121,8 +126,8 @@ theorem frame_int {β β' : GL (Fin n) (E ⊗[F] Af F)} {Λ : Submodule (𝓞 E)
   have h2 := (h' _).1 h1 i
   rwa [Matrix.mulVec_mulVec, ← Units.val_mul, Matrix.mulVec_single_one] at h2
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem princ_frame {β β' : GL (Fin n) (E ⊗[F] Af F)} {Λ : Submodule (𝓞 E) (Fin n → E)} (h : IsFrame β Λ) (h' : IsFrame β' Λ)
     {x : GL (Fin n) (E ⊗[F] Af F)} (hx : x ∈ St β) : x ∈ St β' ∧ ∀ PP, redFn β PP x = 1 → redFn β' PP x = 1 := by
   have inj : ∀ {A B : Matrix (Fin n) (Fin n) (intAf F E)}, A.map (intAf F E).subtype = B.map (intAf F E).subtype → A = B :=
@@ -186,8 +191,8 @@ theorem eig_conj (θ : Formalism.IndefR.Datum.InfFam D) (M : DSModel V S) (M' : 
     simp only [e']
     rw [← star_sum, ha', star_mul']
 
-variable (V S) in
 
+variable (V S) in
 def Occ (J : Set (GA D V)) (I : Finset (GA D V) → ℂ → Prop) : Prop :=
   ∃ θ : Formalism.IndefR.Datum.InfFam D, IsInfFam θ ∧ ∃ M : DSModel V S, ∃ U ∈ Mult θ M J fun _ => 1, U ≠ 0 ∧
     ∀ Rr a, I Rr a → heckeOn M Rr U = a • U
@@ -237,8 +242,8 @@ theorem levTriv_eq {T : Type} {L : LevCh D T} {μ0 : T} (hL : L.Is μ0) (i : Fin
     exact Subgroup.mem_iInf.2 fun PP => Subgroup.mem_iInf.2 fun hP =>
       Subgroup.mem_iInf.1 (Subgroup.mem_iInf.1 ht PP) ((hL.Pg PP).1 hP)
 
-open Classical in
 
+open Classical in
 def parOf (W : HSp D) (l : D.what₂.Tau → (D.host.E →+* ℂ)) (ρ : D.what₂.Tau) : SPar :=
   let τ : D.what₂.Tau := if h : ∃ τ, l τ = tauE D ρ ∨ l τ = (starRingEnd ℂ).comp (tauE D ρ) then h.choose else ρ
   if l τ = tauE D ρ then Formalism.L2.NTheta.holPar _ _ (Formalism.L2.NTheta.kapW (D.hc τ) (W.sig (tauE D ρ)).1 (W.sig (tauE D ρ)).2)
@@ -307,7 +312,7 @@ theorem exists_boundAt (hU : GlobalTheory.Published.DiscreteSeriesUpqUnique) (R 
     exact FiniteDimensional.span_of_finite Ks (Set.finite_range b)
   let ι : (R.FW i).WK →ₛₗ[(sg0 D A3.A).comp (algebraMap Ks D.what₂.LL)] MMap (R.MW i (sg0 D A3.A)) :=
     { toFun := fun x => (R.HW i (sg0 D A3.A)).e ((R.FW i).j (sg0 D A3.A) x)
-      map_add' := fun x y => by rw [Submodule.coe_add, map_add, map_add]
+      map_add' := fun x y => by rw [Submodule.coe_add, map_add (f := _), map_add (f := _)]
       map_smul' := fun a x => by rw [Submodule.coe_smul, ← algebraMap_smul D.what₂.LL a, map_smulₛₗ, map_smul]; rfl }
   let κ := {t : ℕ × PlE D.host × GA D (Wc D i) × Finset (GA D (Wc D i)) // HkAt R.C i t.1 t.2.1 t.2.2.1 t.2.2.2}
   obtain ⟨S, h1, h2⟩ := exists_finset_eig _ ι
@@ -331,7 +336,8 @@ theorem exists_boundAt (hU : GlobalTheory.Published.DiscreteSeriesUpqUnique) (R 
     have hx : x ∈ Submodule.span D.what₂.LL (Set.range b) := hsp' ▸ Submodule.mem_top
     obtain ⟨a, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun _).1 hx
     show (R.HW i (sg0 D A3.A)).e _ ∈ Submodule.span ℂ (Set.range ι)
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     refine Submodule.sum_mem _ fun l _ => ?_
     rw [map_smulₛₗ, map_smul]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨⟨b l, hb l⟩, rfl⟩)
@@ -354,10 +360,11 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 theorem mem_mult_iff {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar} {θ : Formalism.IndefR.Datum.InfFam D} {M : DSModel V S}
     {J : Set (GA D V)} {χ : GA D V → ℂ} {U : MMap M} :
     U ∈ Mult θ M J χ ↔ ∃ s : Set (MMap M), (∀ T ∈ s, IsMultMap θ M J χ T) ∧ U ∈ Submodule.span ℂ s :=
-  ⟨fun h => ⟨_, fun _ hT => hT, h⟩, fun ⟨_, hs, h⟩ => Submodule.span_mono hs h⟩
+  ⟨fun h => ⟨_, fun _ hT => hT, h⟩, fun ⟨s, hs, h⟩ =>
+    Submodule.span_mono (show s ⊆ {T | IsMultMap θ M J χ T} from hs) h⟩
+
 
 set_option maxHeartbeats 4000000 in
-
 theorem boundAt_tr (X X' : Stages) (h : X.B.toPre = X'.B.toPre) (f : Fr X.B.toPre) (f' : Fr X'.B.toPre) (hf : HEq f f')
     (S : Finset ℂ) (H : ∀ i, BoundAt (Fr.at X f) i S) : ∀ i, BoundAt (Fr.at X' f') i S := by
   obtain ⟨B, C, W, V, S₀, N, G⟩ := X
@@ -413,8 +420,8 @@ theorem exists_bound (hU : GlobalTheory.Published.DiscreteSeriesUpqUnique) {D : 
 def Bounds (Q : Pre) (f : Fr Q) (S : Finset ℂ) : Prop :=
   (∀ z ∈ S, IsAlgebraic ℚ z) ∧ ∀ (X : Stages) (f' : Fr X.B.toPre), Q = X.B.toPre → HEq f f' → ∀ i, BoundAt (Fr.at X f') i S
 
-open Classical in
 
+open Classical in
 def gens (Q : Pre) (f : Fr Q) : Finset ℂ := if h : ∃ S, Bounds Q f S then h.choose else ∅
 
 theorem gens_alg (Q : Pre) (f : Fr Q) : ∀ z ∈ gens Q f, IsAlgebraic ℚ z := by
@@ -426,7 +433,7 @@ theorem boundAt_gens (X : Stages) (f : Fr X.B.toPre) {S : Finset ℂ} (h1 : ∀ 
     (h2 : ∀ i, BoundAt (Fr.at X f) i S) : ∀ i, BoundAt (Fr.at X f) i (gens X.B.toPre f) := by
   have h : ∃ S, Bounds X.B.toPre f S := ⟨S, h1, fun X' f' e hf => boundAt_tr X X' e f f' hf S h2⟩
   unfold gens
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec.2 X f rfl HEq.rfl
 
 theorem rowEig_mem_fixedField : GlobalTheory.Published.DiscreteSeriesUpqUnique → ∀ hL : GlobalTheory.Published.LocalLanglandsGL, StepW Start fun K B f T w => ∀ (P : Pre2 K w) (x : St P), LA hL x → ∀ hL' : ∀ j, ℕ → PlE (Dof x).host → Module.End (Dof x).what₂.LL ((SOf x).WL j), StabC (SOf x) hL' → HeckeRd x.m.z.R x.m.z.cG (kKsOf x) (hkOf x) (SbD (Dof x)) hL' → ∀ (i : Fin (Dof x).R.m) (σ : (Dof x).what₂.FT) (k : ℕ) (Pl : PlE (Dof x).host) α Rr, HkDat x.m.z.R (SbD (Dof x)) i k Pl α Rr → (Dof x).nd.goodRow σ → (Dof x).what₂.isot (i.1 + 1) σ ≠ ⊥ → ∃ c : ↥(Dof x).LL0, (Dof x).what₂.embLL (c : (Dof x).what₂.LL) = hkNorm x.m.z.R i k Pl * GlobalTheory.EigRows.rowEig x.r.Y i σ Pl (GlobalTheory.EigRows.diagLab (Dof x).R.r k) := by

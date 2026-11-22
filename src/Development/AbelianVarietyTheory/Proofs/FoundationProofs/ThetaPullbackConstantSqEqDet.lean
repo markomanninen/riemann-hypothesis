@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsAddHaarMeasurePi
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IntMIffInt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaTranslationIntertwinerUnitary
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AdmissibleCharactersExist
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaSpaceSelfDualPairAtMostLine
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIntegerMapEqHalfOneAddSqrt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CoordsAlongOrthonormalRealSubfieldBasis
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OrthoProductThetaMemThetaSpaceOfLattice
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeanSquareOrthoProductThetaEqProd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeisenbergReproducingKernelSumSpec
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PhDetMulIntegral
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralHeisKerSumDiag
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsAddHaarMeasurePi
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IntMIffInt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaTranslationIntertwinerUnitary
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AdmissibleCharactersExist
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaSpaceSelfDualPairAtMostLine
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIntegerMapEqHalfOneAddSqrt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CoordsAlongOrthonormalRealSubfieldBasis
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OrthoProductThetaMemThetaSpaceOfLattice
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeanSquareOrthoProductThetaEqProd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeisenbergReproducingKernelSumSpec
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PhDetMulIntegral
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralHeisKerSumDiag
+
+@[expose] public section
 
 section
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
@@ -236,7 +240,7 @@ theorem isSemichar_of_fixed {V : Type} [AddCommGroup V] [Module ℂ V] (H : Sesq
         cexp (-(π : ℂ) * H z (x + y) - (π : ℂ) * H (x + y) (x + y) / 2) := by
     rw [← Complex.exp_add, ← Complex.exp_add]
     congr 1
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     linear_combination (π : ℂ) * hi
   linear_combination α x * α y * θ (z + (x + y)) * this
 
@@ -351,7 +355,7 @@ theorem infinite_norm_one (D : D7) :
   refine Set.infinite_of_injective_forall_mem (f := fun n : ℕ => ((n : D.host.K) + s) / ((n : D.host.K) - s))
     (fun n m h => ?_) (fun n => ?_)
   · have e := congrArg φ h
-    simp only [map_div₀, map_add, map_sub, map_natCast] at e
+    simp only [map_div₀, map_add (f := _), map_sub, map_natCast] at e
     rw [div_eq_div_iff (hne n) (hne m)] at e
     have : (n : ℂ) = m := by
       apply mul_left_cancel₀ (mul_ne_zero two_ne_zero hs0)
@@ -359,7 +363,7 @@ theorem infinite_norm_one (D : D7) :
     exact_mod_cast this
   · change φ (((n : D.host.K) + s) / ((n : D.host.K) - s)) *
       (starRingEnd ℂ) (φ (((n : D.host.K) + s) / ((n : D.host.K) - s))) = 1
-    simp only [map_div₀, map_add, map_sub, map_natCast, hc]
+    simp only [map_div₀, map_add (f := _), map_sub, map_natCast, hc]
     have h1 := hne n
     have h2 := hne' n
     rw [sub_neg_eq_add, ← sub_eq_add_neg]

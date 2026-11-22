@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafExcLevelPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafExcLevelPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits GlobalTheory.EtC
@@ -8,6 +12,7 @@ namespace LateralTheory.CohomologicalPurity.TubeCut
 abbrev levF (n : SimplexCategoryᵒᵖ) : Spc ⥤ Spc := (evaluation SimplexCategoryᵒᵖ PSh).obj n ⋙ disc
 
 theorem LeafMLev_of : LeafMLev := by
+  set_option synthInstance.maxHeartbeats 200000 in
   intro P' P φ n
   let F := levF n
   have hc : F.map (P'.hom ≫ φ.right) = F.map P'.hom ≫ F.map φ.right := F.map_comp _ _

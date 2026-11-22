@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.OwnerNoneIff
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.OwnerNoneIff
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -8,11 +12,6 @@ variable {E : Type} [Field E] [NumberField E] {n nb : ℕ}
 
 section Col
 variable {dim : (E →+* ℂ) → ℕ}
-
-theorem iteratedDeriv_cast (s : (Fin 1 → Vsp dim) → ℂ) {N M : ℕ} (h : N = M) (v : Fin N → Vsp dim) :
-    d1 s N v = d1 s M (fun k => v (k.cast h.symm)) := by
-  subst h
-  rfl
 
 theorem iteratedDeriv_list_bound (s : (Fin 1 → Vsp dim) → ℂ) (c : ℕ) (μ : ℂ) (y : Vsp dim) (ε : ℝ)
     (σ : E →+* ℂ)
@@ -59,9 +58,9 @@ section Main
 variable {dim : (E →+* ℂ) → ℕ} (bs : Fin nb → Block E n dim)
 
 open Classical in
-
-def eU (j : Fin nb) (a : Fin (bs j).i) : Vsp dim :=
-  EuclideanSpace.single (⟨(bs j).τ, Fin.castLE (bs j).hi a⟩ : Idx dim) (1 : ℂ)
+def eU (j : Fin nb) (a : Fin (bs j).i) : Vsp dim := by
+  classical
+  exact EuclideanSpace.single (⟨(bs j).τ, Fin.castLE (bs j).hi a⟩ : Idx dim) (1 : ℂ)
 
 def idealA (μ : (Σ j : Fin nb, Fin (bs j).i) → ℂ) (y : (Σ j : Fin nb, Fin (bs j).i) → Vsp dim)
     (ee : Fin n → ℂ) (T : Choice bs) (k : Fin n) : ℂ :=
@@ -91,7 +90,7 @@ theorem main_term (hD : Disj bs) (μ : (Σ j : Fin nb, Fin (bs j).i) → ℂ)
     intro p
     have hex : ∃ p', colB bs p' = colB bs p := ⟨p, rfl⟩
     unfold owner
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     exact congrArg some (hinj hex.choose_spec)
   have hnone : ∀ k, owner bs k = none ↔ k ∉ Finset.univ.image (colB bs) := by
     intro k
@@ -102,7 +101,7 @@ theorem main_term (hD : Disj bs) (μ : (Σ j : Fin nb, Fin (bs j).i) → ℂ)
       exact Option.some_ne_none _ h
     · intro h
       unfold owner
-      rw [dif_neg]
+      rw [dite_eq_right]
       rintro ⟨p, rfl⟩
       exact h (Finset.mem_image_of_mem _ (Finset.mem_univ p))
   have hT : ∀ T : Choice bs, ∏ k, idealA bs μ y ee T k =

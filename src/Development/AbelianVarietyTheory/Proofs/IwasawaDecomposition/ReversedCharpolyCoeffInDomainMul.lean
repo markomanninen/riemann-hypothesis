@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraMapNormCoeff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraMapNormCoeff
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,8 @@ theorem charpoly_reverse_coeff_smul {K V : Type} [Field K] [AddCommGroup V] [Mod
   generalize LinearMap.toMatrix e e f = M
   congr 1
   rw [Matrix.charpolyRev, Matrix.charpolyRev, ← coe_compRingHom_apply, RingHom.map_det]
-  congr 1
+  apply congrArg (fun p : K[X] => p.coeff)
+  apply congrArg Matrix.det
   refine Matrix.ext fun i j => ?_
   by_cases hij : i = j <;> simp [hij] <;> ring
 

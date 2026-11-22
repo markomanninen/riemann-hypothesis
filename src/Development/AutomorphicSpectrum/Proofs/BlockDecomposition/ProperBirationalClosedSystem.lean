@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PowIdeal
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PushforwardSystemAffineSectionsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacobsonIdealFaithfulModuleStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompleteModuleNoetherianRealizationStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubobjectLeIffAffineSectionsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.QuasicoherentSupSectionsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IdealPowerSubobjectSectionsStatement
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.RestrictIso
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PowIdeal
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PushforwardSystemAffineSectionsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacobsonIdealFaithfulModuleStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompleteModuleNoetherianRealizationStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubobjectLeIffAffineSectionsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.QuasicoherentSupSectionsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IdealPowerSubobjectSectionsStatement
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.RestrictIso
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -45,7 +49,7 @@ theorem eq_zero_of_mem_pow {B R M : Type} [CommRing B] [CommRing R] [IsNoetheria
       have h2 : algebraMap B R a ∈ (I ^ (n + 1)).map (algebraMap B R) := Ideal.mem_map_of_mem _ ha
       rwa [Ideal.map_pow] at h2
     exact Submodule.smul_mono_left (Ideal.pow_le_pow_right (Nat.le_succ n)) (h1 (hm n))
-  have hK := Ideal.iInf_pow_smul_eq_bot_of_le_jacobson (M := M) IR hjac
+  have hK := Ideal.iInf_pow_smul_eq_bot_of_le_jacobson (M := M) IR (by simpa only [Ideal.jacobson_bot] using hjac)
   have : m ∈ (⨅ n : ℕ, IR ^ n • (⊤ : Submodule R M)) := Submodule.mem_iInf _ |>.2 key
   rw [hK] at this
   exact (Submodule.mem_bot R).1 this
@@ -68,8 +72,8 @@ theorem adjKer_pow_smul_mem_secs {A : Type} [CommRing A] [IsNoetherianRing A] (I
   have hpow : ∀ n, Ideal.map (toFunctions (A := A) (V : X.Opens)) (I ^ n) = IB ^ n :=
     fun n => Ideal.map_pow _ _ _
   let T : ℕ → Submodule Γ(X, V) Γ(E, V) := fun n => secsSub (S n) V
-  have hpowsecs : ∀ n, secs (powSub I E n) V =
-      ((IB ^ n • ⊤ : Submodule Γ(X, V) Γ(E, V)) : Set Γ(E, V)) := by
+  have hpowsecs : ∀ n, secs (powSub I E n) (V : X.Opens) =
+      ((IB ^ n • ⊤ : Submodule Γ(X, (V : X.Opens)) Γ(E, (V : X.Opens))) : Set Γ(E, (V : X.Opens))) := by
     intro n
     rw [GlobalTheory.T.ideal_power_subobject_sections I E hE.1 n V V.2, hpow]
   have h1 : ∀ n, IB ^ (n + 1) • (⊤ : Submodule Γ(X, V) Γ(E, V)) ≤ T n := by

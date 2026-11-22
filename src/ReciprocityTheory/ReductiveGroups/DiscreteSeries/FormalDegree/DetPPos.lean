@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HasDerivAtMexpCommAddBracket
-import Mathlib.Analysis.Matrix.PosDef
-import Mathlib.LinearAlgebra.Matrix.SesquilinearForm
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HasDerivAtMexpCommAddBracket
+public import Mathlib.Analysis.Matrix.PosDef
+public import Mathlib.LinearAlgebra.Matrix.SesquilinearForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem det_pos_of_posForm {V : Type*} [AddCommGroup V] [Module ℝ V] [FiniteDi
         (1 - t) • (1 : Matrix (Fin (Module.finrank ℝ V)) (Fin (Module.finrank ℝ V)) ℝ)).det := by
       funext t
       show LinearMap.det (t • T + (1 - t) • LinearMap.id) = _
-      rw [← LinearMap.det_toMatrix b, map_add, map_smul, map_smul, LinearMap.toMatrix_id]
+      rw [← LinearMap.det_toMatrix b, map_add (f := _), map_smul, map_smul, LinearMap.toMatrix_id]
     rw [e]
     exact ((continuous_id.smul continuous_const).add
       ((continuous_const.sub continuous_id).smul continuous_const)).matrix_det
@@ -279,9 +283,8 @@ theorem pmat_shcAdCL (y w : PCoord ε → ℂ) : pmat (shcAdCL y w) = shcAd y (p
   have hJJ : J * J = 1 := by
     rw [hJd, Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
     congr 1
-    funext a
-    simp only [hsd]
-    split_ifs <;> norm_num
+    funext i
+    cases hi : ε i <;> simp [hsd, hi]
   have hJZ : ∀ z : PCoord ε → ℂ, J * pmat z * J = -pmat z := by
     intro z
     ext a b

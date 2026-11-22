@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+
+@[expose] public section
 
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob Matrix
 
@@ -251,7 +255,7 @@ theorem UpperTheory.exists_hermitian_conjugation_of_unitary_tau :
       rw [hN]
       exact hδ
     rw [hcp] at h
-    simp only [map_mul, map_sub, map_add, map_one, map_pow, Polynomial.aeval_X,
+    simp only [map_mul, map_sub, map_add (f := _), map_one, map_pow, Polynomial.aeval_X,
       Polynomial.aeval_C] at h
     rw [Algebra.smul_def, ← sq]
     exact h

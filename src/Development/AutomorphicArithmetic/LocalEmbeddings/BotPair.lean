@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.LocalEmbeddings.BotPure
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilModelArchimedeanExponent
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.LocalEmbeddings.BotPure
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilModelArchimedeanExponent
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix
@@ -37,7 +41,7 @@ theorem localLattice_le_latticeAtPlace {S T : HSp D} {ΛS : Submodule (𝓞 D.ho
   have e : u = liftV v (1 : Fv D.host.F v) • (mapO S T).symm (mapO S T u) := by
     rw [LinearEquiv.symm_apply_apply, GlobalTheory.BigDatLat.smul_eq_of_at hu.1]
   rw [e]
-  refine GlobalTheory.BigDat.map_mem_of_closure ((DistribMulAction.toAddMonoidHom _ (liftV v (1 : Fv D.host.F v))).comp
+  refine GlobalTheory.BigDat.map_mem_of_closure ((DistribSMul.toAddMonoidHom _ (liftV v (1 : Fv D.host.F v))).comp
     (mapO S T).symm.toLinearMap.toAddMonoidHom) ?_ hu.2
   rintro _ ⟨α, hα, -, a, ha, s, hs, t, ht, rfl⟩
   have e2 : (mapO S T).symm (Matrix.of fun i j => (pairA D.host.F 0 α) ⊗ₜ[D.host.F] (a * t i * ∑ k, star (s k) * S.gram k j)) =
@@ -49,8 +53,8 @@ theorem localLattice_le_latticeAtPlace {S T : HSp D} {ΛS : Submodule (𝓞 D.ho
   exact (congrArg (fun z => liftV v (1 : Fv D.host.F v) • z ∈ latAtV Xs Ws v) e2).mpr
     (GlobalTheory.BigDat.one_smul_gen_mem _ _ v hα (hLS s hs) (hLT _ (GlobalTheory.BigDat.smul_mem_scLat_of_mem ha ht)))
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem exists_pure_pair (ε : Bool) (M X : HSp D) {k : ℕ} (hk : k = X.rank) {Xs : Spc D.host.F D.host.E M.rank}
     {Ws : Spc D.host.F D.host.E k} (Mo : Model D.sp.cm.sig Xs Ws) (hJ : Xs.J = GlobalTheory.RealDict.sgE (D := D) ε • M.gram)
     (hJW : Ws.J = D.host.xi0 • (X.gramᵀ).submatrix (finCongr hk) (finCongr hk))

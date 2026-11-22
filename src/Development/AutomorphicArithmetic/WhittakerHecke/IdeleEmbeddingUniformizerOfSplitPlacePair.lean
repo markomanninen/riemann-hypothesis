@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.FacDefs
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.PlaceAe
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.FacDefs
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.PlaceAe
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
 open UpperTheory.ConvolutionTheory.R2 UpperTheory.ConvolutionTheory.RankTwoDescent
@@ -8,12 +13,13 @@ open UpperTheory.ConvolutionTheory.R2.G (FS2 Rw nE row)
 open UpperTheory.V.Af.Smo (EigAt)
 open scoped ComplexOrder
 open GroundTheory.Global.SemiLocal GroundTheory.Global.AdeleBaseChange UpperTheory.ConvolutionTheory.R2.H
-open private UpperTheory.ConvolutionTheory.R2.H.nearSquareValuations.val_iota UpperTheory.ConvolutionTheory.R2.H.nearSquareValuations.finrank_two from Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.PlaceAe
 
 private theorem e_one {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (D : Dat F E) (v : P F)
     (x y : PlacesOver E v) (h : x ≠ y) : x.1.asIdeal.ramificationIdx (𝓞 F) = 1 := by
   have hs := sum_ramificationIdx_mul_inertiaDeg E v
-  rw [UpperTheory.ConvolutionTheory.R2.H.nearSquareValuations.finrank_two D] at hs
+  have hfin : Module.finrank F E = 2 := by
+    rw [Module.finrank_eq_card_basis D.b, Fintype.card_fin]
+  rw [hfin] at hs
   have hpos : ∀ x : PlacesOver E v, 1 ≤ x.1.asIdeal.ramificationIdx (𝓞 F) * x.1.asIdeal.inertiaDeg (𝓞 F) := fun x =>
     Nat.mul_pos (Ideal.ramificationIdx_pos _ _) (Ideal.inertiaDeg_pos _ _)
   have h1 := Finset.sum_le_sum_of_subset (f := fun x : PlacesOver E v => x.1.asIdeal.ramificationIdx (𝓞 F) * x.1.asIdeal.inertiaDeg (𝓞 F))
@@ -71,13 +77,13 @@ theorem UpperTheory.ideleEmbedding_uniformizer_of_split_place_pair :
   obtain ⟨-, -, -, hi₂, -, -, -, -, -, -⟩ := sgLaws E w'
   refine ⟨Units.map (completionMap v w : Kv v →* Kv w) ϖ, Units.map (completionMap v w' : Kv v →* Kv w') ϖ, ?_, ?_, Units.ext ?_⟩
   · change Valued.v (completionMap v w (ϖ : Kv v)) = _
-    rw [UpperTheory.ConvolutionTheory.R2.H.nearSquareValuations.val_iota v w (e_one D v _ _ hn)]
+    rw [valued_completionMap, e_one D v _ _ hn, pow_one]
     exact hϖ
   · change Valued.v (completionMap v w' (ϖ : Kv v)) = _
-    rw [UpperTheory.ConvolutionTheory.R2.H.nearSquareValuations.val_iota v w' (e_one D v _ _ hn.symm)]
+    rw [valued_completionMap, e_one D v _ _ hn.symm, pow_one]
     exact hϖ
   · obtain ⟨h1, h2⟩ := map_sg v w w' hne (fun u hu => hall u (HeightOneSpectrum.ext hu.over.symm)) ((ϖ : Kv v) - 1)
     change adeleMap ℚ E ((idl v ϖ : (A ℚ)ˣ) : A ℚ) = _
-    rw [Units.val_mul, hi, hi₁, hi₂, map_add, map_one, h1, map_sub, map_sub, map_one, map_one, add_mul, mul_add, mul_add, h2]
+    rw [Units.val_mul, hi, hi₁, hi₂, map_add (f := _), map_one, h1, map_sub, map_sub, map_one, map_one, add_mul, mul_add, mul_add, h2]
     simp only [one_mul, mul_one, add_zero, Units.coe_map, MonoidHom.coe_coe]
     abel

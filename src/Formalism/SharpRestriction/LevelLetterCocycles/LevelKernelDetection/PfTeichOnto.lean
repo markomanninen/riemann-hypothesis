@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.TeichOnto
-import Mathlib.NumberTheory.Padics.Hensel
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.TeichOnto
+public import Mathlib.NumberTheory.Padics.Hensel
+
+@[expose] public section
 
 noncomputable section
 

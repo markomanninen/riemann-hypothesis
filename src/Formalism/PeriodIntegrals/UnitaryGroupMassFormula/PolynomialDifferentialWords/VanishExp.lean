@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialDifferentialWords.KappaRight
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialDifferentialWords.KappaRight
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -47,7 +51,7 @@ lemma rop_iter_mul_X (a b : Fin k) (hab : a ≠ b) (g : Pol K k) (i : Fin k ⊕ 
       Function.iterate_succ_apply' _ _ _
     have e3 : (Rop K k a b)^[n + 1] g = Rop K k a b ((Rop K k a b)^[n] g) :=
       Function.iterate_succ_apply' _ _ _
-    rw [e1, ih, map_add, map_nsmul, rop_mul, rop_mul, rop_rop_X a b hab i, e2, ← e3]
+    rw [e1, ih, map_add (f := _), map_nsmul, rop_mul, rop_mul, rop_rop_X a b hab i, e2, ← e3]
     rw [mul_zero, add_zero, succ_nsmul _ (n + 1)]
     abel
 
@@ -80,10 +84,10 @@ theorem expFormula (a b : Fin k) (hab : a ≠ b) (s : K) (g : Pol K k) : ExpForm
     obtain ⟨N1, hz1, hs1⟩ := hp
     obtain ⟨N2, hz2, hs2⟩ := hq
     refine ⟨max N1 N2, fun n hn => ?_, fun M hM x => ?_⟩
-    · rw [← Module.End.coe_pow, map_add, Module.End.coe_pow, hz1 n (by omega), hz2 n (by omega), add_zero]
-    · rw [map_add, hs1 M (by omega) x, hs2 M (by omega) x, ← Finset.sum_add_distrib]
+    · rw [← Module.End.coe_pow, map_add (f := _), Module.End.coe_pow, hz1 n (by omega), hz2 n (by omega), add_zero]
+    · rw [map_add (f := _), hs1 M (by omega) x, hs2 M (by omega) x, ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun n _ => ?_
-      rw [← Module.End.coe_pow, map_add, map_add]
+      rw [← Module.End.coe_pow, map_add (f := _), map_add (f := _)]
       ring
   next p i hp =>
     obtain ⟨N, hz, hsum⟩ := hp
@@ -95,7 +99,7 @@ theorem expFormula (a b : Fin k) (hab : a ≠ b) (s : K) (g : Pol K k) : ExpForm
           eval x ((Rop K k a b)^[m + 1] p) * x i +
             ((m : K) + 1) * (eval x ((Rop K k a b)^[m] p) * eval x (Rop K k a b (X i))) := by
         intro m
-        rw [rop_iter_mul_X a b hab p i m, map_add, eval_mul, eval_X, map_nsmul, eval_mul, nsmul_eq_mul]
+        rw [rop_iter_mul_X a b hab p i m, map_add (f := _), eval_mul, eval_X, map_nsmul, eval_mul, nsmul_eq_mul]
         push_cast
         ring
       have hTM : s ^ M / (M.factorial : K) * eval x ((Rop K k a b)^[M] p) = 0 := by

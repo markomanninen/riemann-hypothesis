@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.CrLift
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.CrLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,7 +87,7 @@ theorem cr_compl [CharZero K] [FiniteDimensional K V] (E : GLOps n K V) (hR : Sa
       have : v2 = (v1 + v2) - v1 := by abel
       rw [this]; exact Submodule.sub_mem _ hvHs hv1.1
     show u (v1 + v2) ∈ W ⊔ W'
-    rw [map_add]
+    rw [map_add (f := _)]
     refine Submodule.add_mem _ (Submodule.mem_sup_left (v2rep_Umon_stable E W hW u hu v1 hv1.2))
       (Submodule.mem_sup_right ?_)
     by_cases h0 : v2 = 0

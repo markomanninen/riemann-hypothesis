@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.MExistsCut
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.AdelicIsomorphismStatement
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.NumFieldHosCountable
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.MeasCore
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.MeasInfCut
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.MExistsCut
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.AdelicIsomorphismStatement
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.NumFieldHosCountable
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.MeasCore
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.MeasInfCut
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem repr_tensMap (b : Module.Basis ι F E) {R R' : Type} [CommRing R] [Algeb
   | zero => simp
   | tmul r x =>
     simp [tensMap, Algebra.TensorProduct.basis_repr_tmul]
-  | add x y hx hy => simp [map_add, hx, hy]
+  | add x y hx hy => simp [map_add (f := _), hx, hy]
 
 end Ring
 
@@ -277,8 +281,6 @@ def sA (hE : Module.finrank F E = 2) : HA (AF F) σ J ≃ₜ* HA (Ainf F) σ J �
       exact ((MulEquiv.ofBijective (splitA σ J) ⟨splitA_injective σ J b,
         splitA_surjective σ J b⟩).toEquiv.toHomeomorphOfContinuousOpen (splitA_cont σ J b) ho).symm.continuous }
 
-theorem sA_apply (hE : Module.finrank F E = 2) (g : HA (AF F) σ J) : sA σ J hE g = splitA σ J g := rfl
-
 end Iso
 
 end Formalism.L2.SG.Pf.Meas
@@ -304,7 +306,7 @@ theorem tauF_eq (y : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.A
     rw [tauF_tmul]
     simp [tensMap]
     rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 variable (hb : AdBridgeIso I)
 
@@ -445,9 +447,6 @@ def eFin : I.Gf ≃ₜ* HA (Af I.F) I.cm.sig I.J where
     rfl
   continuous_toFun := continuous_snd.comp ((Phi I hb).continuous.comp (continuous_const.prodMk continuous_id))
   continuous_invFun := continuous_snd.comp ((Phi I hb).symm.continuous.comp (continuous_const.prodMk continuous_id))
-
-theorem eInf_coe : (eInf I hb : I.Ginf → _) = toInfI I hb := rfl
-theorem eFin_coe : (eFin I hb : I.Gf → _) = toFinI I hb := rfl
 
 theorem Phi_eq : (Phi I hb : I.GA → _) = Prod.map (eInf I hb) (eFin I hb) := by
   funext p
@@ -627,7 +626,8 @@ theorem hform_crdA (A : UnitaryGroupInstance D) (v w : (VS D).V) :
     A.ιE (Formalism.UG.hform (starRingEnd A.I.E) A.I.J (crdOf A.I A.ιE A.bas v) (crdOf A.I A.ιE A.bas w)) =
       (VS D).hT v w := by
   conv_rhs => rw [← A.bas.sum_repr v, ← A.bas.sum_repr w]
-  simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
     Formalism.UG.hform, map_mul, crdOf, starRingEnd_apply, A.ιE_conj, RingEquiv.apply_symm_apply,
     A.J_eq, Finset.mul_sum]
   rw [Finset.sum_comm]

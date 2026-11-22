@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.RestSegCore
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.RestSegCore
+
+@[expose] public section
 
 noncomputable section
 

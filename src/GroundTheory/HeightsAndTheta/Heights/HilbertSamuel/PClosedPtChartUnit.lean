@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsClosedPtChartUnit
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PTwinVertDivIff
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsVerticalDivOfIsVerticalDivisorAlt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsClosedPtChartUnit
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PTwinVertDivIff
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsVerticalDivOfIsVerticalDivisorAlt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -54,7 +59,7 @@ theorem ClosedPtChartUnit.proof : ClosedPtChartUnit.Statement := by
   have hcomp : weightedHomogeneousComponent (NumbersDVR.blockWeight ι) e t =
       weightedHomogeneousComponent (NumbersDVR.blockWeight ι) e p +
         weightedHomogeneousComponent (NumbersDVR.blockWeight ι) e (g₀ * f) := by
-    rw [← hpr, map_add]
+    rw [← hpr, map_add (f := _)]
   have htself : weightedHomogeneousComponent (NumbersDVR.blockWeight ι) e t = t := by
     rw [weightedHomogeneousComponent_of_mem ((mem_weightedHomogeneousSubmodule _ _ _ _).mpr hte'), if_pos rfl]
   rw [htself] at hcomp

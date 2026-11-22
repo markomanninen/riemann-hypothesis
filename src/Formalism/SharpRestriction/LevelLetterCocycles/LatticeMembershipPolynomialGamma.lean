@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfFrame
-import Formalism.SharpRestriction.LevelLetterCocycles.PsCoprimeOf
-import Formalism.SharpRestriction.LevelLetterCocycles.AnnihilatorGeneralOfRingCondition
-import Formalism.SharpRestriction.LevelLetterCocycles.SecondComparisonInCoordinates
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfFrame
+public import Formalism.SharpRestriction.LevelLetterCocycles.PsCoprimeOf
+public import Formalism.SharpRestriction.LevelLetterCocycles.AnnihilatorGeneralOfRingCondition
+public import Formalism.SharpRestriction.LevelLetterCocycles.SecondComparisonInCoordinates
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem ιV_act (g : G) (y : V ⊗[Qp] B) :
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul x b => simp [ιV, actVB, actVdR, PD.ι_comm]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem ιV_mul (c : K₀) (y : V ⊗[Qp] B) :
     ιV PD (LL := LL) (V := V) (mulVB (K₀ := K₀) (B := B) (V := V) (LL := LL) c y) =
@@ -64,7 +68,7 @@ theorem ιV_mul (c : K₀) (y : V ⊗[Qp] B) :
   | zero => simp
   | tmul x b =>
     simp [ιV, mulVB, mulVdR, ← IsScalarTower.algebraMap_apply K₀ K BdR]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem ι_DdRE (τ₀ : K₀ →ₐ[Qp] LL) (τ : K →ₐ[Qp] LL)
     (hover : ∀ x : K₀, τ (algebraMap K₀ K x) = τ₀ x)
@@ -95,7 +99,7 @@ theorem mem_filCris_of_jumps (τ₀ : K₀ →ₐ[Qp] LL) (τ : K →ₐ[Qp] LL)
   · exact filV_anti hua ha
   · have key : ∀ k : ℤ, a ≤ k → k ≤ u → ιV PD (LL := LL) (V := V) y ∈ FildR PD ρ τ k := by
       intro k hak
-      induction k, hak using Int.le_induction with
+      induction k, hak using Int.leInduction with
       | base => intro _; exact Submodule.mem_inf.mpr ⟨hD, ha⟩
       | succ k hak ih =>
         intro hk
@@ -132,7 +136,8 @@ theorem uniformizer_mem_delta_invariants : W.π₀ ∈ W.AΔ := by
     obtain ⟨a, ha, hxa⟩ := (W.DelF_def δ).1 hδ
     exact (W.DelF_def _).2 ⟨a, ha, by rw [inv_pow, hxa, inv_one]⟩
   unfold LocWach.π₀₁
-  rw [map_add, map_sub, map_one, map_natCast, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), map_sub, map_one, map_natCast, map_sum]
   congr 1
   have key : ∀ y : W.Gam, W.γ₀ δ (W.γ₀ y (1 + PowerSeries.X)) = W.γ₀ (δ * y) (1 + PowerSeries.X) := by
     intro y; rw [map_mul, AlgHom.mul_apply]
@@ -152,7 +157,7 @@ theorem actVB_φVB (T : LocLat G Qp LL O) (g : G) (y : T.V ⊗[Qp] B) :
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul x b => simp [actVB, φVB, PD.φ_comm]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem mulVB_φVB (T : LocLat G Qp LL O) (c : K₀) (y : T.V ⊗[Qp] B) :
     mulVB (K₀ := K₀) (B := B) (V := T.V) (LL := LL) (PD.σ c) (φVB PD (LL := LL) (V := T.V) y) =
@@ -160,7 +165,7 @@ theorem mulVB_φVB (T : LocLat G Qp LL O) (c : K₀) (y : T.V ⊗[Qp] B) :
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul x b => simp [mulVB, φVB, map_mul, PD.φ_K₀]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem φVB_letter (T : LocLat G Qp LL O) (i : ZMod n) {y : T.V ⊗[Qp] B}
     (hy : y ∈ DcrisL PD T.ρ (W.emb i)) :
@@ -196,7 +201,7 @@ theorem cmpD_letter (T : LocLat G Qp LL O) (c : ZMod n) {x : W.DD T}
   obtain ⟨y, hy, rfl⟩ := Submodule.mem_map.mp hxl
   have hN : ((letE c : LetA O n) • LinearMap.id : W.DD T →ₗ[LetA O n] W.DD T) y ∈ W.N T := hxN.1
   unfold Formalism.MainNotions.ArcLiftingSetup.cmpD
-  rw [dif_pos hN]
+  rw [dite_eq_left hN]
   have e : (⟨((letE c : LetA O n) • LinearMap.id : W.DD T →ₗ[LetA O n] W.DD T) y, hN⟩ : ↥(W.N T)) =
       (letE c : LetA O n) • (⟨y, hy⟩ : ↥(W.N T)) := by
     ext; simp
@@ -209,7 +214,8 @@ theorem dvO_split (T : LocLat G Qp LL O) (e s : ℕ) (hs : s ≤ e) {d : ℕ} (b
       (∑ m, algebraMap O LL (c₀ m) • ((φVB PD (LL := LL) (V := T.V)) ^ (e - s))
         (Formalism.MainNotions.ArcLiftingSetup.cmpD W T (b m))) := by
   unfold Formalism.MainNotions.ArcLiftingSetup.dvO Formalism.MainNotions.ArcLiftingSetup.dv
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [map_smul, ← Module.End.mul_apply, ← pow_add, Nat.add_sub_cancel' hs]
 
@@ -419,7 +425,8 @@ theorem secIn_map (φ : W.EE →+ W.EE)
   obtain ⟨I, g, c₀, α, h, ef⟩ := hf
   refine ⟨I, fun i => φ (g i), c₀, α, fun i => ⟨hI _ _ (h i).1, (h i).2⟩, fun k => ?_⟩
   show φ (f k) = ∑ i, φ (g i) * algebraMap O W.EE (c₀ i k)
-  rw [ef k, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ef k, map_sum]
   exact Finset.sum_congr rfl fun i _ => hφ _ _
 
 theorem secIn_mulι {c : LetA O n} (hc : c ∈ W.AΔ) {f : Fin d → W.EE} (hf : SecIn W a e cond f) :
@@ -465,7 +472,7 @@ theorem inNL_add {f g : Fin d → W.EE} (hf : InNL W T a e (abelian₂ W A a e) 
     have := secIn_add W h1 h2
     convert this using 1
     funext k
-    simp only [Pi.add_apply, ι_lE, lE, pow_add]
+    simp only [Pi.add_apply, ι_lE, lE_add]
     ring
 
 theorem inNL_mulι {c : LetA O n} (hc : c ∈ W.AΔ) {f : Fin d → W.EE}
@@ -487,10 +494,9 @@ theorem inNL_smul (o : O) {f : Fin d → W.EE} (hf : InNL W T a e (abelian₂ W 
 
 theorem inNL_neg {f : Fin d → W.EE} (hf : InNL W T a e (abelian₂ W A a e) b f) :
     InNL W T a e (abelian₂ W A a e) b (-f) := by
-  have := inNL_smul W T A a e b (-1) hf
-  convert this using 1
+  convert inNL_smul W T A a e b (-1) hf using 1
   funext k
-  simp
+  simp only [Pi.neg_apply, neg_one_smul]
 
 theorem inNL_γ (hS : PsStable W) {f : Fin d → W.EE} (hf : InNL W T a e (abelian₂ W A a e) b f) :
     InNL W T a e (abelian₂ W A a e) b fun k => W.γE W.gam (f k) := by
@@ -524,7 +530,7 @@ theorem γE_aeval (P : Polynomial O) : ∀ x : W.EE,
     exact map_smul (W.γE W.gam) c x
   | add p q hp hq =>
     intro x
-    simp only [map_add, LinearMap.add_apply, hp, hq]
+    simp only [map_add (f := _), LinearMap.add_apply, hp, hq]
   | monomial k c ih =>
     intro x
     have e : ∀ y, Polynomial.aeval ((W.γE W.gam).toLinearMap : Module.End O W.EE)
@@ -552,7 +558,7 @@ theorem lattice_membership_polynomial_gamma (hS : PsStable W) (hP : ∀ g : W.Ga
     obtain ⟨g₁, h₁, e₁⟩ := hp g hg
     obtain ⟨g₂, h₂, e₂⟩ := hq g hg
     refine ⟨g₁ + g₂, inNL_add W T A a e b h₁ h₂, fun k => ?_⟩
-    simp only [map_add, LinearMap.add_apply, e₁, e₂, Pi.add_apply, mul_add]
+    simp only [map_add (f := _), LinearMap.add_apply, e₁, e₂, Pi.add_apply, mul_add]
   | monomial k c ih =>
     intro g hg
     obtain ⟨u, hu, hγ⟩ := hP W.gam
@@ -787,9 +793,5 @@ theorem universal_general_of_frame_sections (D : D7) (HW : HWOf D.loc) (F : FonO
   refine ⟨univNN _, fun {_} => ?_⟩
   exact univCore_of _ _ (Formalism.MainNotions.WachCoordinates.Br.isUnit_π₀ hR) (KF.psStable_of _ hR) (hAdm.2.2.1 l K LL hA h5)
     (hFr l K LL hG hA h5) (hSec l K LL hG hA h5) (hGen l K LL hG hA h5) (hLift l K LL hG hA h5)
-
-theorem univNNL (D : D7) (HW : HWOf D.loc) : AtCaseA fun l _ K LL hG =>
-    UnivNNCore ((HW l).W K 1 LL hG) :=
-  fun _ _ _ _ _ _ _ => univNN _
 
 end Formalism.MainNotions.UnusedSlot80

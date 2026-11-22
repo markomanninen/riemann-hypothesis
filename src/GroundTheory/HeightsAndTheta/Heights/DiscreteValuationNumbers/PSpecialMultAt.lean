@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -45,7 +50,7 @@ theorem length_localizedModule_eq_of_surjective {S T : Type*} [CommRing S] [Comm
     rw [hφ, algebraMap_smul]
   let g : M →ₗ[S] LocalizedModule Q.primeCompl N :=
     { toFun := fun x => LocalizedModule.mkLinearMap Q.primeCompl N (e x)
-      map_add' := fun x y => by simp only [map_add]
+      map_add' := fun x y => by simp only [map_add (f := _)]
       map_smul' := fun s x => by
         rw [RingHom.id_apply, hsmul, he, LinearMap.map_smul] }
   have hg : IsLocalizedModule W.primeCompl g := by

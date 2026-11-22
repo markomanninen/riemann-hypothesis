@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.HSClosing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.LemCone
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodB
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.HSClosing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.LemCone
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodB
+
+@[expose] public section
 
 noncomputable section
 
@@ -120,7 +124,7 @@ theorem mem_pts_iff (v : J → Ω) (z : J → ℂ) :
       apply hg
       intro h0
       apply hd
-      have h1 := congrArg (coeff d) hfg
+      have h1 := congrArg (AddMonoidAlgebra.coeff · d) hfg
       rw [coeff_C_mul, h0, mul_zero] at h1
       simp only [qmap, coeff_map] at h1
       simpa using h1
@@ -139,7 +143,8 @@ theorem mem_pts_iff (v : J → Ω) (z : J → ℂ) :
       have h2 := H k (qmap (homogeneousComponent k f)) ((homogeneousComponent_isHomogeneous k f).map _)
         (by rw [aeval_qmap, h1])
       rwa [aeval_qmap] at h2
-    rw [← sum_homogeneousComponent (φ := f), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← sum_homogeneousComponent (φ := f), map_sum]
     exact Finset.sum_eq_zero fun k _ => hk k
 
 theorem pts_matAct_gen (x : J → Ω) (A : Matrix J J ℚ) (hA : IsInvMat A) (z : J → ℂ) :

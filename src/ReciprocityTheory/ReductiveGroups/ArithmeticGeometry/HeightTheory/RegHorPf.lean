@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.RegAVpt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.RegAVpt
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -63,7 +67,7 @@ theorem reg_horizontal_pf {O A : Type} [CommRing O] [IsDomain O] [IsDiscreteValu
     rw [map_ne_zero_iff _ hinj]; rintro h; exact hws (h ▸ P.zero_mem)
 
   have hOA : Function.Injective (algebraMap O A) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     by_contra hx0
     obtain ⟨n, u, rfl⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible hx0 hϖ
@@ -100,7 +104,7 @@ theorem reg_horizontal_pf {O A : Type} [CommRing O] [IsDomain O] [IsDiscreteValu
             (x1 * algebraMap A (FractionRing A) t1) * algebraMap A (FractionRing A) t2 +
               (x2 * algebraMap A (FractionRing A) t2) * algebraMap A (FractionRing A) t1 := by
           rw [map_mul]; ring
-        rw [this, h1, h2, ← map_mul, ← map_mul, ← map_add]
+        rw [this, h1, h2, ← map_mul, ← map_mul, ← map_add (f := _)]
         congr 1
         ring
       algebraMap_mem' := fun r => ⟨r, 0, 1, P.zero_mem, (Ideal.ne_top_iff_one P).mp

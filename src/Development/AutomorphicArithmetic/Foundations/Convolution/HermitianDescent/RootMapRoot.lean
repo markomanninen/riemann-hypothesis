@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.NormAlmostAll
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalBase
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalExt
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ConjSep
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.RepNmSucc
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.NormProd
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.NormAlmostAll
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalBase
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalExt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ConjSep
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.RepNmSucc
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.NormProd
+
+@[expose] public section
 
 open Matrix Polynomial NumberField IsDedekindDomain
 open scoped TensorProduct
@@ -20,7 +24,7 @@ private theorem aeval_map_sg {k R : Type} [CommRing k] [CommRing R] [Algebra k R
   | C r =>
     ext i j
     simp [Matrix.algebraMap_matrix_apply, apply_ite s]
-  | add p q hp hq => rw [map_add, Polynomial.map_add, map_add, ← hp, ← hq, Matrix.map_add _ (map_add s)]
+  | add p q hp hq => rw [map_add (f := _), Polynomial.map_add (f := _), map_add (f := _), ← hp, ← hq, Matrix.map_add _ (map_add s)]
   | monomial m r h =>
     rw [pow_succ, ← mul_assoc, map_mul, Matrix.map_mul, h, Polynomial.map_mul (p := C r * X ^ m), map_mul]
     simp [hγ]
@@ -173,7 +177,7 @@ private theorem first (F E k : Type) [Field F] [Field E] [Algebra F E] [Field k]
   · intro r
     induction r using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul x e => simp [j, ext]
   · rw [hc, Polynomial.map_map, ← IsScalarTower.algebraMap_eq]
   · rw [← RingHom.range_eq_top, eq_top_iff]
@@ -196,7 +200,7 @@ private theorem first (F E k : Type) [Field F] [Field E] [Algebra F E] [Field k]
   · intro r
     induction r using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul x e => simp [j, ← map_mul]
 
 end UpperTheory.ConvolutionTheory.D

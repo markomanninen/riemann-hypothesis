@@ -1,14 +1,18 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.IsStarRep
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormalisedCuspFormL2Bounded
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LieActionSkewAdjointL2
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsInvariantHermitianForm
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AuxiliaryCuspLemma
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRightHaarMeasure
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspRapidDecaySiegelGL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GaloisRepresentationAdmitted
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.NotIsTemperedGLDetRepTwo
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsingletonRankZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.IsStarRep
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormalisedCuspFormL2Bounded
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LieActionSkewAdjointL2
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsInvariantHermitianForm
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AuxiliaryCuspLemma
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRightHaarMeasure
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspRapidDecaySiegelGL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GaloisRepresentationAdmitted
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.NotIsTemperedGLDetRepTwo
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsingletonRankZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,12 +20,13 @@ open NumberField GlobalTheory.CuspRep GlobalTheory.CuspRep.CuspidalL2GL GlobalTh
 
 namespace PositivityTheory.Rg.Cz.J
 
-theorem conj_sum_coord {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] (z : Cinf E) :
+theorem conj_sum_coord {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (z : Cinf E) :
     starRingEnd ℂ (∑ τ : E →+* ℂ, coord τ z) = ∑ τ : E →+* ℂ, coord τ z := by
   have h1 := GlobalTheory.CompanionTheory.HeckeAlg.dchi_eq_sum (Model.absC E 1) z
   have h2 := GlobalTheory.GKCoh.Tests.dchi_absC (E := E) 1 z
   simp only [Model.expo_absC, one_mul] at h1 h2
-  rw [← h1, h2, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← h1, h2, map_sum]
   refine Finset.sum_congr rfl fun w _ => ?_
   rw [map_mul, Complex.conj_ofReal, map_ofNat]
 
@@ -44,9 +49,9 @@ theorem unitTw_holds : PositivityTheory.Rg.Cz.UnitTw := by
   have hF : Function.Injective F := hi.comp U.injective
   let H : π.V →ₗ⋆[ℂ] π.V →ₗ[ℂ] ℂ :=
     LinearMap.mk₂'ₛₗ (starRingEnd ℂ) (RingHom.id ℂ) (fun φ ψ => inner ℂ (F φ) (F ψ))
-      (fun φ φ' ψ => by simp only [map_add, inner_add_left])
+      (fun φ φ' ψ => by simp only [map_add (f := _), inner_add_left])
       (fun c φ ψ => by simp only [map_smul, inner_smul_left, smul_eq_mul])
-      (fun φ ψ ψ' => by simp only [map_add, inner_add_right])
+      (fun φ ψ ψ' => by simp only [map_add (f := _), inner_add_right])
       (fun c φ ψ => by simp only [map_smul, inner_smul_right, smul_eq_mul, RingHom.id_apply])
   have hH : ∀ φ ψ, H φ ψ = inner ℂ (F φ) (F ψ) := fun φ ψ => rfl
 
@@ -58,14 +63,15 @@ theorem unitTw_holds : PositivityTheory.Rg.Cz.UnitTw := by
     rw [e3, e2, Units.val_one, one_smul] at e
     change toL2ₗ μ π'.V hm (U (π.op (.lie X) φ)) = _
     rw [e]
-    simp only [map_add, map_smul, F, LinearMap.comp_apply, LinearEquiv.coe_coe, U]
+    simp only [map_add (f := _), map_smul, F, LinearMap.comp_apply, LinearEquiv.coe_coe, U]
     abel
   have htr : ∀ X : Lie E a, dchi χ (Matrix.of X).trace = s * ∑ τ : E →+* ℂ, ∑ i, coord τ (X i i) := fun X => by
     rw [GlobalTheory.CompanionTheory.HeckeAlg.dchi_eq_sum, hχ]
     simp only [Model.expo_absC, ← Finset.mul_sum]
     congr 1
     refine Finset.sum_congr rfl fun τ _ => ?_
-    rw [Matrix.trace, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.trace, map_sum]
     rfl
   refine ⟨H, -2 * s.re, fun φ ψ => ?_, fun φ hφ => ?_, fun X φ ψ => ?_⟩
   · rw [hH, hH, inner_conj_symm]
@@ -81,7 +87,8 @@ theorem unitTw_holds : PositivityTheory.Rg.Cz.UnitTw := by
       GlobalTheory.CompanionTheory.PeterssonSkew.lie_skew_adjoint E a μ π' hm hb X (U ψ) (U φ)
     rw [hH, hH, hH, hU, hU, inner_sub_left, inner_sub_right, inner_smul_left, inner_smul_right, sk, htr]
     have hr : starRingEnd ℂ (∑ τ : E →+* ℂ, ∑ i, coord τ (X i i)) = ∑ τ : E →+* ℂ, ∑ i, coord τ (X i i) := by
-      simpa only [map_sum] using conj_sum_coord (E := E) (∑ i, X i i)
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa only [map_sum] using conj_sum_coord (E := E) (∑ i, X i i)
     set t := ∑ τ : E →+* ℂ, ∑ i, coord τ (X i i) with ht
     have hc : starRingEnd ℂ (s * t) = starRingEnd ℂ s * t := by rw [map_mul, hr]
     rw [hc]

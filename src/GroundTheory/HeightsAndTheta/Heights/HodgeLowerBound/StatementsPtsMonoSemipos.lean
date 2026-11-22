@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPtsBddConv
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPtsBddConv
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -21,8 +26,6 @@ def PtsMonoSemipos.Statement : Prop :=
       ptsIntegral P (fun (_ : Fin e) z => Real.log (L.h z) / r) g₂
 
 namespace Line
-
-open GroundTheory.Heights₂.Heights.Regular.ProjectiveLine
 
 end Line
 

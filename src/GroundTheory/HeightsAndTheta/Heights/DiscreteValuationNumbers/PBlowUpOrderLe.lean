@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpOrderLe
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleMul
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpOrderLe
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleMul
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -63,7 +68,7 @@ theorem BlowUpOrderLe.proof (h₁ : LocalizedQuotLength.Statement.{u})
   swap
   · have h0 : divCycle (blowUpOf P u) (liftForm z) G' = 0 := by
       unfold divCycle
-      rw [dif_neg hL]
+      rw [dite_eq_right hL]
     rw [h0]
     exact hRHS0
   have hzG : z ∈ G'.comap (liftForm (J := J)) :=
@@ -83,7 +88,7 @@ theorem BlowUpOrderLe.proof (h₁ : LocalizedQuotLength.Statement.{u})
     simpa [liftForm, rename_X] using hmem
   have hfin := length_localizedQuot_ne_top (P ⊔ Ideal.span {z}) (G'.comap (liftForm (J := J))) hRmin
   unfold divCycle
-  rw [dif_pos hL, dif_pos ⟨hRmin, hRrel⟩]
+  rw [dite_eq_left hL, dite_eq_left ⟨hRmin, hRrel⟩]
   suffices key : multAt (blowUpOf P u ⊔ Ideal.span {liftForm z}) G' ≤
       multAt (P ⊔ Ideal.span {z}) (G'.comap (liftForm (J := J))) by
     exact_mod_cast ENat.toNat_le_toNat key hfin

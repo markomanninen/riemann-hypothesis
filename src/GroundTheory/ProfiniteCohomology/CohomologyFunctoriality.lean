@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.ContinuousCochains
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.ContinuousCochains
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -50,8 +55,8 @@ variable [IsTopologicalGroup G] [IsTopologicalGroup H] [IsTopologicalGroup K]
 
 section Cochains
 
-omit [IsTopologicalGroup G] [IsTopologicalGroup H] in
 
+omit [IsTopologicalGroup G] [IsTopologicalGroup H] in
 theorem isLocallyConstant_cochainsMapAlong {A : Rep.{u} k G} {B : Rep.{u} k H} {φ : H →* G}
     (hφ : Continuous φ) (f : Rep.res φ A ⟶ B) {n : ℕ} {x : (Fin n → G) → A}
     (hx : IsLocallyConstant x) :
@@ -83,7 +88,6 @@ theorem cochainsComplexι_cochainsMapAlong_apply (n : ℕ) (x : (cochainsComplex
       fun h => f.hom (((cochainsComplexι A).f n).hom x (⇑φ ∘ h)) :=
   rfl
 
-@[reassoc]
 theorem cochainsMapAlong_comp_cochainsComplexι :
     cochainsMapAlong φ hφ f ≫ cochainsComplexι B =
       cochainsComplexι A ≫ groupCohomology.cochainsMap φ f := by
@@ -95,7 +99,6 @@ theorem cochainsMapAlong_id : cochainsMapAlong (MonoidHom.id G) continuous_id (�
   ext n x : 3
   rfl
 
-@[reassoc]
 theorem cochainsMapAlong_comp {C : Rep.{u} k K} [IsDiscreteRep C] (ψ : K →* H) (hψ : Continuous ψ)
     (g : Rep.res ψ B ⟶ C) :
     cochainsMapAlong (φ.comp ψ) (hφ.comp hψ) ((Rep.resFunctor ψ).map f ≫ g) =
@@ -103,7 +106,6 @@ theorem cochainsMapAlong_comp {C : Rep.{u} k K} [IsDiscreteRep C] (ψ : K →* H
   ext n x : 3
   rfl
 
-@[reassoc]
 theorem cochainsMapAlong_id_comp {A B C : Rep.{u} k G} [IsDiscreteRep A] [IsDiscreteRep B]
     [IsDiscreteRep C] (f : A ⟶ B) (g : B ⟶ C) :
     cochainsMapAlong (MonoidHom.id G) continuous_id (f ≫ g) =
@@ -130,7 +132,6 @@ noncomputable abbrev cocyclesMapAlong (n : ℕ) : cocycles A n ⟶ cocycles B n 
 noncomputable def cohomologyMapAlong (n : ℕ) : cohomology A n ⟶ cohomology B n :=
   HomologicalComplex.homologyMap (cochainsMapAlong φ hφ f) n
 
-@[reassoc, elementwise]
 theorem cohomologyπ_cohomologyMapAlong (n : ℕ) :
     cohomologyπ A n ≫ cohomologyMapAlong φ hφ f n = cocyclesMapAlong φ hφ f n ≫ cohomologyπ B n := by
   simp [cohomologyMapAlong, cocyclesMapAlong, cohomologyπ, cohomology]
@@ -141,7 +142,6 @@ theorem cohomologyMapAlong_id (n : ℕ) :
   rw [cohomologyMapAlong, cochainsMapAlong_id]
   exact HomologicalComplex.homologyMap_id _ _
 
-@[reassoc]
 theorem cohomologyMapAlong_comp {C : Rep.{u} k K} [IsDiscreteRep C] (ψ : K →* H) (hψ : Continuous ψ)
     (g : Rep.res ψ B ⟶ C) (n : ℕ) :
     cohomologyMapAlong (φ.comp ψ) (hφ.comp hψ) ((Rep.resFunctor ψ).map f ≫ g) n =
@@ -149,7 +149,6 @@ theorem cohomologyMapAlong_comp {C : Rep.{u} k K} [IsDiscreteRep C] (ψ : K →*
   rw [cohomologyMapAlong, cochainsMapAlong_comp, HomologicalComplex.homologyMap_comp]
   rfl
 
-@[reassoc]
 theorem cohomologyMapAlong_id_comp {A B C : Rep.{u} k G} [IsDiscreteRep A] [IsDiscreteRep B]
     [IsDiscreteRep C] (f : A ⟶ B) (g : B ⟶ C) (n : ℕ) :
     cohomologyMapAlong (MonoidHom.id G) continuous_id (f ≫ g) n =
@@ -158,7 +157,6 @@ theorem cohomologyMapAlong_id_comp {A B C : Rep.{u} k G} [IsDiscreteRep A] [IsDi
   rw [cohomologyMapAlong, cochainsMapAlong_id_comp, HomologicalComplex.homologyMap_comp]
   rfl
 
-@[reassoc]
 theorem cohomologyMapAlong_comp_homologyMap_cochainsComplexι (n : ℕ) :
     cohomologyMapAlong φ hφ f n ≫ (HomologicalComplex.homologyMap (cochainsComplexι B) n :
         cohomology B n ⟶ groupCohomology B n) =
@@ -183,7 +181,6 @@ theorem cohomologyRes_eq (S : Subgroup G) (n : ℕ) :
     cohomologyRes A S n = cohomologyMapAlong S.subtype (continuous_subgroup_subtype S) (𝟙 _) n :=
   rfl
 
-@[reassoc]
 theorem cohomologyRes_naturality {A' : Rep.{u} k G} [IsDiscreteRep A'] (g : A ⟶ A')
     (S : Subgroup G) (n : ℕ) :
     cohomologyMapAlong (MonoidHom.id G) continuous_id g n ≫ cohomologyRes A' S n =
@@ -192,7 +189,6 @@ theorem cohomologyRes_naturality {A' : Rep.{u} k G} [IsDiscreteRep A'] (g : A �
   rw [cohomologyRes, cohomologyRes, ← cohomologyMapAlong_comp, ← cohomologyMapAlong_comp]
   rfl
 
-@[reassoc]
 theorem cohomologyRes_comp_homologyMap_cochainsComplexι (S : Subgroup G) (n : ℕ) :
     cohomologyRes A S n ≫
       (HomologicalComplex.homologyMap (cochainsComplexι (Rep.res S.subtype A)) n :
@@ -217,7 +213,6 @@ theorem cohomologyInfl_eq (N : Subgroup G) [N.Normal] (n : ℕ) :
       (Rep.ofHom (A.ρ.quotientToInvariants_lift N)) n :=
   rfl
 
-@[reassoc]
 theorem cohomologyInfl_comp_homologyMap_cochainsComplexι (N : Subgroup G) [N.Normal] (n : ℕ) :
     cohomologyInfl A N n ≫ (HomologicalComplex.homologyMap (cochainsComplexι A) n :
         cohomology A n ⟶ groupCohomology A n) =

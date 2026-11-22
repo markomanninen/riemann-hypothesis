@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsClosedOfLocallyCompactSpace
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.QuotientIntegralFinitelyManyCellsWeightedSumStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.QuotientIntegralVanishOfCommutingProductStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIteratedInvariantIntegralLinearAndCongrStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsClosedOfLocallyCompactSpace
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.QuotientIntegralFinitelyManyCellsWeightedSumStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.QuotientIntegralVanishOfCommutingProductStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIteratedInvariantIntegralLinearAndCongrStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
@@ -41,14 +46,20 @@ theorem niter_update (q : (∀ i, H i) → ℂ) (i : ι) (g : H i) :
 
 theorem niter_unique (q : (∀ i, H i) → ℂ) : ∀ l : List ι,
     (∀ i ∈ l, ∀ (f : H i → ℂ) (z z' : ℂ), IsQuotIntL1 (ρ i) (μ i) f z → IsQuotIntL1 (ρ i) (μ i) f z' → z = z') →
-    ∀ h z z', NIter ρ μ q l h z → NIter ρ μ q l h z' → z = z'
-  | [], _, h, z, z', h1, h2 => by simp only [NIter] at h1 h2; rw [h1, h2]
-  | i :: l, hu, h, z, z', h1, h2 => by
+    ∀ h z z', NIter ρ μ q l h z → NIter ρ μ q l h z' → z = z' := by
+  intro l
+  induction l with
+  | nil =>
+    intro _ h z z' h1 h2
+    simp only [NIter] at h1 h2
+    exact h1.trans h2.symm
+  | cons i l ih =>
+    intro hu h z z' h1 h2
     simp only [NIter] at h1 h2
     obtain ⟨f, hf, hg⟩ := h1
     obtain ⟨f', hf', hg'⟩ := h2
     have e : f = f' := funext fun g =>
-      niter_unique q l (fun j hj => hu j (List.mem_cons_of_mem _ hj)) _ _ _ (hg g) (hg' g)
+      ih (fun j hj => hu j (List.mem_cons_of_mem _ hj)) _ _ _ (hg g) (hg' g)
     subst e
     exact hu i (List.mem_cons_self ..) f z z' hf hf'
 

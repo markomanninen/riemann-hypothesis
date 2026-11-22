@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.RowLetter
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RowDerivationChainRule.Development
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.RowLetter
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RowDerivationChainRule.Development
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -16,7 +20,7 @@ variable {K : Type} [Field K] {k : ℕ}
 
 theorem RE_add (a b : Fin k) (f g : MvPolynomial (Fin k × Fin k) K) :
     RE K k a b (f + g) = RE K k a b f + RE K k a b g := by
-  simp only [PI.RL.RE, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [PI.RL.RE, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 theorem RE_C (a b : Fin k) (r : K) : RE K k a b (C r) = 0 := by
   simp [PI.RL.RE]
@@ -51,14 +55,14 @@ private theorem derivation_aeval_eq_sum_pderiv {K : Type*} [CommRing K] {σ τ :
     rw [aeval_C, MvPolynomial.algebraMap_eq, hC]
     simp
   next p q hp hq =>
-    rw [map_add, hadd, hp, hq, ← Finset.sum_add_distrib]
+    rw [map_add (f := _), hadd, hp, hq, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl (fun c _ => ?_)
-    rw [map_add, map_add, add_mul]
+    rw [map_add (f := _), map_add (f := _), add_mul]
   next p i ih =>
     have e : ∀ c, aeval g (pderiv c (p * X i)) * D (g c) =
         g i * (aeval g (pderiv c p) * D (g c)) + (if c = i then aeval g p * D (g i) else 0) := by
       intro c
-      rw [pderiv_mul_eq, pderiv_X_eq_ite, map_add, map_mul, map_mul, aeval_X]
+      rw [pderiv_mul_eq, pderiv_X_eq_ite, map_add (f := _), map_mul, map_mul, aeval_X]
       by_cases h : c = i
       · subst h; rw [if_pos rfl, if_pos rfl, map_one]; ring
       · rw [if_neg h, if_neg h, map_zero]; ring

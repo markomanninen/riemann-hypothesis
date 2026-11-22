@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.WachLatticeTwists.LatticeDualFibres.FibreDualStable
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FactorMemCocyclesPowQuot
+module
+
+public import Mathlib
+public import Formalism.WachLatticeTwists.LatticeDualFibres.FibreDualStable
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FactorMemCocyclesPowQuot
+
+@[expose] public section
+
 open Formalism.RepresentationBoundsCohomology.LOC ReciprocityTheory.Gal GlobalTheory.LocDualInt
 open Formalism.NG (KO)
 
@@ -53,7 +58,7 @@ theorem exists_continuous_cocycle_lift_of_compatible : ∀ {O : Type} [CommRing 
     rw [continuous_iff_continuousAt]
     intro g0 U hU
     have hV : {y : M | y + e g0 ∈ U} ∈ nhds (0 : M) :=
-      (continuous_add_right (e g0)).continuousAt.preimage_mem_nhds (by simpa using hU)
+      (continuous_id.add continuous_const).continuousAt.preimage_mem_nhds (by simpa using hU)
     obtain ⟨n, hn⟩ := hbasis _ hV
     let q : G → M ⧸ powSub (M := M) a (r + n) := fun g => Submodule.Quotient.mk (w n g)
     have hq : Continuous q := (hw n).1

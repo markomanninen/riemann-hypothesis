@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.EfRankSum
+module
+
+public import Formalism.PeriodIntegrals.EfRankSum
+
+@[expose] public section
 
 namespace PI.UnitaryGroupMassFormula.EfRankSum
 
@@ -9,14 +13,16 @@ theorem mem_primesOver (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuation
     ζ.asIdeal ∈ (maximalIdeal O).primesOver ↥(As O A) := by
   haveI := ζ.isMaximal
   refine ⟨inferInstance, ⟨?_⟩⟩
-  exact (IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal ζ.asIdeal)).symm
+  exact (IsLocalRing.eq_maximalIdeal
+    (Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := O) ζ.asIdeal)).symm
 
 theorem isMaximal_of_mem_primesOver (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
     (A : Type) [CommRing A] [Algebra O A] {q : Ideal ↥(As O A)}
     (hq : q ∈ (maximalIdeal O).primesOver ↥(As O A)) : q.IsMaximal := by
   obtain ⟨hp, hl⟩ := hq
-  have h : q.comap (algebraMap O ↥(As O A)) = maximalIdeal O := hl.over.symm
-  exact Ideal.isMaximal_of_isIntegral_of_isMaximal_comap q (h ▸ IsLocalRing.maximalIdeal.isMaximal O)
+  have h : q.under O = maximalIdeal O := hl.over.symm
+  exact Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := O) q
+    (h ▸ IsLocalRing.maximalIdeal.isMaximal O)
 
 noncomputable def ptsEquiv (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
     (A : Type) [CommRing A] [Algebra O A] :

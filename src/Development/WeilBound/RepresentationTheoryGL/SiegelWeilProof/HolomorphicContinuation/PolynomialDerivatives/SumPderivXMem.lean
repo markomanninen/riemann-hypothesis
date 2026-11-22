@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.PartialDerivQuadraticPairing
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.PartialDerivQuadraticPairing
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ private theorem sum_X_mul_pderiv_mem_QA_of_generators (ε : Fin m → Bool) (g h
     ∀ R ∈ QA ε, (∑ a, X (g a) * pderiv (h a) R : PX m n) ∈ QA ε := by
   apply fun_mem ε (fun R => ∑ a, X (g a) * pderiv (h a) R)
   · intro x y
-    simp only [map_add, mul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), mul_add, Finset.sum_add_distrib]
   · intro x y
     simp only [Derivation.leibniz, smul_eq_mul, mul_add, Finset.sum_add_distrib, Finset.mul_sum]
     congr 1 <;> refine Finset.sum_congr rfl (fun a _ => by ring)
@@ -94,7 +98,7 @@ theorem Bf_comm (ε : Fin m → Bool) (i j : Fin n) (U V : PX m n) : Bf ε i j U
 
 theorem Bf_der (ε : Fin m → Bool) (i j : Fin n) (U : PX m n) (hU : ∀ k l, Bf ε i j U (Qp ε k l) ∈ QA ε) :
     ∀ V ∈ QA ε, Bf ε i j U V ∈ QA ε :=
-  fun_mem ε _ (fun x y => by simp only [Bf, map_add, mul_add, ← Finset.sum_add_distrib];
+  fun_mem ε _ (fun x y => by simp only [Bf, map_add (f := _), mul_add, ← Finset.sum_add_distrib];
                              exact Finset.sum_congr rfl fun _ _ => by ring)
     (fun x y => by simp only [Bf, Derivation.leibniz, smul_eq_mul, Finset.mul_sum, ← Finset.sum_add_distrib];
                    exact Finset.sum_congr rfl fun _ _ => by ring)
@@ -161,7 +165,7 @@ theorem fL_mem (ε : Fin m → Bool) (i j : Fin n) : ∀ R ∈ QA ε, fL ε i j 
   | add x y _ _ hx hy => simpa [fL, mul_add, Finset.sum_add_distrib] using add_mem hx hy
   | mul x y hx' hy' hx hy =>
     have e : fL ε i j (x * y) = x * fL ε i j y + y * fL ε i j x + Bf ε i j x y := by
-      simp only [fL, Bf, Derivation.leibniz, smul_eq_mul, map_add, Finset.mul_sum, ← Finset.sum_add_distrib]
+      simp only [fL, Bf, Derivation.leibniz, smul_eq_mul, map_add (f := _), Finset.mul_sum, ← Finset.sum_add_distrib]
       exact Finset.sum_congr rfl fun _ _ => by ring
     rw [e]
     exact add_mem (add_mem (mul_mem hx' hy) (mul_mem hy' hx)) (Bf_mem ε i j x hx' y hy')

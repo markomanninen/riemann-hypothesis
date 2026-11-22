@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FundamentalEquivalence.AdBridge
-import Formalism.PeriodIntegrals.AdBridgeSteps
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FundamentalEquivalence.AdBridge
+public import Formalism.PeriodIntegrals.AdBridgeSteps
+
+@[expose] public section
 
 noncomputable section
 

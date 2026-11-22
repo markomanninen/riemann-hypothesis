@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm
 
@@ -88,7 +92,6 @@ private theorem nz_ball : ∀ (D : ℕ) (c : Fin D → ℂ) (r : ℝ) (f : (Fin 
       intro w
       ext t
       simp [e, MeasurableEquiv.piFinSuccAbove_symm_apply]
-      rfl
     simp_rw [hslice]
     set t₀ := z₀ 0 with ht₀_def
     have hz₀' : (Fin.cons t₀ (Fin.tail z₀) : Fin (D + 1) → ℂ) = z₀ := Fin.cons_self_tail z₀

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix WithLp
 open scoped ComplexOrder MatrixOrder Matrix.Norms.L2Operator InnerProductSpace
@@ -74,22 +78,6 @@ theorem norm_lt_one_of_posDef {Z : Matrix m n ℂ} (hP : (1 - Zᴴ * Z).PosDef) 
 
 theorem posDef_iff_norm_lt_one (Z : Matrix m n ℂ) : (1 - Zᴴ * Z).PosDef ↔ ‖Z‖ < 1 :=
   ⟨norm_lt_one_of_posDef, posDef_one_sub_conjTranspose_mul⟩
-
-omit [DecidableEq m] in
-
-theorem l2_opNorm_le_hilbertSchmidt (Z : Matrix m n ℂ) :
-    ‖Z‖ ≤ Real.sqrt (∑ i, ∑ j, ‖Z i j‖ ^ 2) := by
-  rw [l2_opNorm_def]
-  refine ContinuousLinearMap.opNorm_le_bound _ (Real.sqrt_nonneg _) fun x => ?_
-  refine (sq_le_sq₀ (by positivity) (by positivity)).mp ?_
-  rw [mul_pow, Real.sq_sqrt (by positivity), EuclideanSpace.norm_sq_eq, EuclideanSpace.norm_sq_eq,
-    Finset.sum_mul]
-  refine Finset.sum_le_sum fun i _ => ?_
-  have h1 : ‖∑ j, Z i j * x j‖ ≤ ∑ j, ‖Z i j‖ * ‖x j‖ :=
-    (norm_sum_le _ _).trans (le_of_eq (by simp))
-  calc _ = ‖∑ j, Z i j * x j‖ ^ 2 := rfl
-    _ ≤ (∑ j, ‖Z i j‖ * ‖x j‖) ^ 2 := by gcongr
-    _ ≤ _ := Finset.sum_mul_sq_le_sq_mul_sq _ _ _
 
 end general
 

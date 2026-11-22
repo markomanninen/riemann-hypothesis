@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges
-import Formalism.LocalToGlobal.GroupLattices.FockModels.WeylDim
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.WeylDim
+
+@[expose] public section
 
 noncomputable section
 

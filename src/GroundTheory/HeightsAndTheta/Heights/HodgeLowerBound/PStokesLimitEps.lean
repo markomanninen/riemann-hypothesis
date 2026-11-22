@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsStokesGeo
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsTopNPoly
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsOmNPoly
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsMuMeasureLimit
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsStokesGeo
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsTopNPoly
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsOmNPoly
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsMuMeasureLimit
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.LowerBoundFree

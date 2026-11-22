@@ -1,11 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.RootOfUnityEightQMemCoeffGaloisSubfield
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.RootOfUnityEightQMemCoeffGaloisSubfield
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardBaseFlagComplementIntegralLattice
+
+@[expose] public section
 
 noncomputable section
 
 namespace GlobalTheory.Mem
 
 open Formalism.BasicNotions NumberField IsDedekindDomain
+
+theorem baseLattice_full {E : Type} [Field E] [NumberField E] [StarRing E] (S : HSpace E) :
+    Submodule.IsFullLattice E S.L0 :=
+  { toIsLattice := S.standardTuple_isLattice
+    span_eq_top := GlobalTheory.LoopC.Base.span_eq_top_of_unimodular
+      S.hT S.herm S.nondeg S.standardTuple_isLattice S.baseLattice_isUnimodular }
 
 structure Cols0 (B : Pre) where
   mem : ∀ u : B.Word, Member B.R (Tau B.R) (B.hcW u)
@@ -14,7 +25,7 @@ structure Cols0 (B : Pre) where
   A_Dstar : ∀ u, (mem u).A.Dstar = B.Dstar
   A_GamP : ∀ u, (mem u).A.GamP = B.GamP
   clsLat : letI := B.host.cmStar; ∀ u i, (mem u).C.cls i → Submodule (𝓞 B.host.E) (B.sp.X i).V
-  clsLat_lat : letI := B.host.cmStar; ∀ u i c, Submodule.IsLattice B.host.E (clsLat u i c)
+  clsLat_lat : letI := B.host.cmStar; ∀ u i c, Submodule.IsFullLattice B.host.E (clsLat u i c)
 
   Tup : Type
   mu0 : Tup

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SectionEmbeddingMulVec
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SectionEmbeddingMulVec
+
+@[expose] public section
 
 open Matrix Finset Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 

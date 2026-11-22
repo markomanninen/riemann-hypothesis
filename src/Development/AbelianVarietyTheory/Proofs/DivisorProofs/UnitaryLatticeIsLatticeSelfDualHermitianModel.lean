@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InertPlaceKappaOrbitalUnitEqSignedLatticeSumImpo
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModelLat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InertPlaceKappaOrbitalUnitEqSignedLatticeSumImpo
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModelLat
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -87,17 +92,21 @@ theorem unitLat_isLat_selfDual : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
   refine ⟨⟨?_, ?_⟩, ?_⟩
   · rw [hmap]
     exact (intVec_fg K n).map _
-  · rw [eq_top_iff]
-    have key : Submodule.map G ⊤ ≤ Submodule.span K.E (unitLat e B ψ q : Set B.A) := by
-      rw [← (Pi.basisFun K.E (Fin n)).span_eq, Submodule.map_span, Submodule.span_le]
-      rintro _ ⟨_, ⟨i, rfl⟩, rfl⟩
-      apply Submodule.subset_span
-      show G _ ∈ unitLat e B ψ q
-      rw [hmemL, Pi.basisFun_apply, hPG]
-      exact single_mem_intVec K i
+  · apply top_unique
     intro y _
-    rw [← hGP y]
-    exact key (Submodule.mem_map_of_mem trivial)
+    rw [← hGP y, ← Finset.univ_sum_single (P *ᵥ ψ y), map_sum]
+    apply Submodule.sum_mem
+    intro i _
+    have hi : G (Pi.single i (1 : K.E)) ∈ unitLat e B ψ q := by
+      rw [hmemL, hPG]
+      exact single_mem_intVec K i
+    have hs : G (Pi.single i (1 : K.E)) ∈ Submodule.span K.E (unitLat e B ψ q : Set B.A) :=
+      Submodule.subset_span hi
+    have heq : Pi.single i ((P *ᵥ ψ y) i) = (P *ᵥ ψ y) i • Pi.single i (1 : K.E) := by
+      ext j
+      simp [Pi.single_apply]
+    rw [heq, map_smul]
+    exact Submodule.smul_mem _ _ hs
   · intro y
     rw [hmemL]
     constructor

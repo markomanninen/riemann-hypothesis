@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelicUnitaryCongruenceTopology
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExtAeEqContRep
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GlobalConvolutionOrthogonalProjectorProofStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutomorphicKernelConvergencePropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DiscreteSeriesCoefficientIntegrableMajorantStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsContRepKernelIntegralCompactSupportStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DenseCompactlySupportedL2Statement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CoeFnSumSmulAeEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelicUnitaryCongruenceTopology
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExtAeEqContRep
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GlobalConvolutionOrthogonalProjectorProofStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutomorphicKernelConvergencePropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DiscreteSeriesCoefficientIntegrableMajorantStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsContRepKernelIntegralCompactSupportStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DenseCompactlySupportedL2Statement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CoeFnSumSmulAeEq
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec
 open scoped InnerProductSpace ComplexOrder ContDiff
@@ -77,13 +81,7 @@ def compactSub {X : Type} [TopologicalSpace X] [MeasurableSpace X] (μ : Measure
 theorem coeFn_sum_smul {X ι : Type} [MeasurableSpace X] (μ : Measure X) (s : Finset ι) (c : ι → ℂ)
     (y : ι → Lp ℂ 2 μ) (F : ι → X → ℂ) (h : ∀ i, (y i : X → ℂ) =ᵐ[μ] F i) :
     ((∑ i ∈ s, c i • y i : Lp ℂ 2 μ) : X → ℂ) =ᵐ[μ] fun x => ∑ i ∈ s, c i * F i x := by
-  first
-  | exact @_root_.GlobalTheory.SumSmulAeEq.coeFn_sum_smul_ae_eq
-  | exact _root_.GlobalTheory.SumSmulAeEq.coeFn_sum_smul_ae_eq
-  | (apply _root_.GlobalTheory.SumSmulAeEq.coeFn_sum_smul_ae_eq <;> assumption)
-  | (intros; apply _root_.GlobalTheory.SumSmulAeEq.coeFn_sum_smul_ae_eq <;> assumption)
-  | (intros; apply @_root_.GlobalTheory.SumSmulAeEq.coeFn_sum_smul_ae_eq <;> first | assumption | infer_instance)
-  | (intros; exact _root_.GlobalTheory.SumSmulAeEq.coeFn_sum_smul_ae_eq ..)
+  exact _root_.GlobalTheory.SumSmulAeEq.coeFn_sum_smul_ae_eq μ s c y F h
 
 theorem ae_eq_of_pairing {X ι : Type} [Fintype ι] [TopologicalSpace X] [T2Space X] [SigmaCompactSpace X]
     [MeasurableSpace X] [BorelSpace X] (μ : Measure X) [IsLocallyFiniteMeasure μ] (k : X → ℂ) (hk : Continuous k)
@@ -93,7 +91,7 @@ theorem ae_eq_of_pairing {X ι : Type} [Fintype ι] [TopologicalSpace X] [T2Spac
     (fun z => k z - ∑ i, c i * star (F i z)) =ᵐ[μ] 0 := by
   have hc : ∀ i, Continuous fun z => c i * star (F i z) := fun i => continuous_const.mul (hF i).star
   refine ae_eq_zero_of_forall_setIntegral_isCompact_eq_zero'
-    (hk.sub (continuous_finset_sum _ fun i _ => hc i)).locallyIntegrable fun s hs => ?_
+    (hk.sub (continuous_finsetSum _ fun i _ => hc i)).locallyIntegrable fun s hs => ?_
   have hm : MeasurableSet s := hs.isClosed.measurableSet
   have hg := indicatorConstLp_coeFn (p := 2) (hs := hm) (hμs := hs.measure_lt_top.ne) (c := (1 : ℂ)) (μ := μ)
   have h1 := hp (indicatorConstLp 2 hm hs.measure_lt_top.ne (1 : ℂ)) ⟨s, hs, by
@@ -108,8 +106,8 @@ theorem ae_eq_of_pairing {X ι : Type} [Fintype ι] [TopologicalSpace X] [T2Spac
     rw [hz]
     by_cases hzs : z ∈ s <;> simp [hzs]
   rw [integral_sub (hk.continuousOn.integrableOn_compact hs)
-    ((continuous_finset_sum _ fun i _ => hc i).continuousOn.integrableOn_compact hs),
-    integral_finset_sum _ fun i _ => (hc i).continuousOn.integrableOn_compact hs, ← e, h1, sub_eq_zero]
+    ((continuous_finsetSum _ fun i _ => hc i).continuousOn.integrableOn_compact hs),
+    integral_finsetSum _ fun i _ => (hc i).continuousOn.integrableOn_compact hs, ← e, h1, sub_eq_zero]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [integral_const_mul, ← e, mul_comm, L2.inner_def]
   congr 1
@@ -193,14 +191,14 @@ theorem kernelB : KernelB := by
     have h0 := ae_eq_of_pairing ((B.I.muA B.μf).restrict B.fund) _ hkx (fun i => F i x) y F
       (fun i => (hF i).1) (fun i => (hF i).2.2) fun g hg => by
         have h1 : IsContRep B (T g) fun x => ∑ i, ⟪y i, g⟫_ℂ * F i x := by
-          refine ⟨continuous_finset_sum _ fun i _ => continuous_const.mul (hF i).1, fun γ hγ x => ?_, ?_⟩
+          refine ⟨continuous_finsetSum _ fun i _ => continuous_const.mul (hF i).1, fun γ hγ x => ?_, ?_⟩
           · exact Finset.sum_congr rfl fun i _ => by rw [(hF i).2.1 γ hγ]
           · rw [hexp]
             exact coeFn_sum_smul _ _ _ y F fun i => (hF i).2.2
         exact congrFun (huniq _ _ _ h1 (hrep g hg)) x
     have z0 : IsContRep B 0 0 := ⟨continuous_const, fun _ _ _ => rfl, Lp.coeFn_zero _ _ _⟩
     have z1 : IsContRep B 0 fun z => kern B.I (phe B d) x z - ∑ i, F i x * star (F i z) := by
-      refine ⟨hkx.sub (continuous_finset_sum _ fun i _ => continuous_const.mul (hF i).1.star),
+      refine ⟨hkx.sub (continuous_finsetSum _ fun i _ => continuous_const.mul (hF i).1.star),
         fun γ hγ w => ?_, (Lp.coeFn_zero _ _ _).trans h0.symm⟩
       beta_reduce
       rw [(hKi γ hγ x w).2]
@@ -210,9 +208,9 @@ theorem kernelB : KernelB := by
   have hI := fun i => integral_mul_star _ (y i) (F i) (hF i).2.2 (hy.1 i)
   refine ⟨y, F, hy, hspan, hF, hK, ?_, ?_, fun c x => ?_⟩
   · simp only [hK]
-    exact integrable_finset_sum _ fun i _ => (hI i).1
+    exact integrable_finsetSum _ fun i _ => (hI i).1
   · simp only [hK]
-    rw [integral_finset_sum _ fun i _ => (hI i).1]
+    rw [integral_finsetSum _ fun i _ => (hI i).1]
     simp only [(hI _).2]
     simp
   · refine (norm_sum_sq_le c fun i => F i x).trans ?_

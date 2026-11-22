@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.RigidificationAtOriginIffPullback
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.RigidificationAtOriginBaseChange
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDPf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.RigidificationAtOriginIffPullback
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.RigidificationAtOriginBaseChange
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDPf
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -118,9 +122,9 @@ theorem act_of_map {X0 : Scheme.{0}} (t : SAB H X0) {S : Type} [CommRing S] (x0 
 
 end GlobalTheory.PlaceInt.FrameTie
 
+
 open GlobalTheory.PlaceInt.FrameTie GermD in
 set_option maxHeartbeats 1000000 in
-
 theorem GlobalTheory.PlaceInt.frameTie_holds : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) [StarRing (𝓞 E)], (∀ a : 𝓞 E, star a = H.bar a) → ReciprocityTheory.ChartRestriction.G.PullbackSections.FrameTieSt Xo c := by
   intro E _ _ _ H Dw l Xo c _ _ Tc io yI C
   letI := io.toAlgebra

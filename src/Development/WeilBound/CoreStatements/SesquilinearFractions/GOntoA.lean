@@ -1,4 +1,8 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCMFrame
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCMFrame
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -21,7 +25,7 @@ theorem ty_eq_of_rt {i j : Fin g} (h : ty i (H.rt : E) = ty j (H.rt : E)) (α : 
       exact e0
     have hi := congrArg (ty i) e
     have hj := congrArg (ty j) e
-    simp only [map_mul, map_add, map_one, map_ofNat] at hi hj
+    simp only [map_mul, map_add (f := _), map_one, map_ofNat] at hi hj
     have h2 : (2 : ℂ) * ty i ((H.w0 : 𝓞 E) : E) = 2 * ty j ((H.w0 : 𝓞 E) : E) := by
       rw [hi, hj, h]
     exact mul_left_cancel₀ two_ne_zero h2
@@ -34,13 +38,13 @@ theorem ty_eq_of_rt {i j : Fin g} (h : ty i (H.rt : E) = ty j (H.rt : E)) (α : 
   | algebraMap r => simp
   | add x y _ _ hx hy =>
     push_cast
-    rw [map_add, map_add, hx, hy]
+    rw [map_add (f := _), map_add (f := _), hx, hy]
   | mul x y _ _ hx hy =>
     push_cast
     rw [map_mul, map_mul, hx, hy]
 
-open Classical in
 
+open Classical in
 def kap (ty : Fin g → (E →+* ℂ)) (H : Host E) (b : Bool) (α : OK H) : ℂ :=
   if h : ∃ i, ty i (H.rt : E) = sgnRt H b then ty h.choose ((α : 𝓞 E) : E) else 0
 
@@ -50,7 +54,7 @@ theorem P_smul (hP : IsPeriod D ty P) {b : Bool} (a : PureType.lat hP (sgnRt H b
   rw [Pi.smul_apply, smul_eq_mul, hP.1]
   by_cases hi : ty i (H.rt : E) = sgnRt H b
   · have hex : ∃ i, ty i (H.rt : E) = sgnRt H b := ⟨i, hi⟩
-    rw [kap, dif_pos hex, ty_eq_of_rt (hi.trans hex.choose_spec.symm) α]
+    rw [kap, dite_eq_left hex, ty_eq_of_rt (hi.trans hex.choose_spec.symm) α]
   · have h0 : P (a : D.La) i = 0 := a.2 i hi
     rw [h0, mul_zero, mul_zero]
 
@@ -62,7 +66,8 @@ theorem span_top (hP : IsPeriod D ty P) (b : Fin g → Bool) (a : ∀ k, PureTyp
     intro y
     obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun (OK H)).1 (hN y)
     have h1 : P (N • y) ∈ W := by
-      rw [← hc, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hc, map_sum]
       refine Submodule.sum_mem _ fun k _ => ?_
       rw [Subalgebra.smul_def, P_smul hP (a k) (c k)]
       exact W.smul_mem _ (Submodule.subset_span ⟨k, rfl⟩)
@@ -102,7 +107,8 @@ theorem coeff_of_period (hP : IsPeriod D ty P) (b : Fin g → Bool) (a : ∀ k, 
   have e1 : ∑ k, ((N : ℂ) * s k) • P (a k) = (N : ℂ) • P y := by
     simp only [mul_smul, ← Finset.smul_sum, hs]
   have e2 : ∑ k, kap ty H (b k) (c k) • P (a k) = (N : ℂ) • P y := by
-    rw [Nat.cast_smul_eq_nsmul, ← map_nsmul, ← hc, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Nat.cast_smul_eq_nsmul, ← map_nsmul, ← hc, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [Subalgebra.smul_def, P_smul hP (a k) (c k)]
   have hsum : ∑ k, ((N : ℂ) * s k - kap ty H (b k) (c k)) • P (a k) = 0 := by

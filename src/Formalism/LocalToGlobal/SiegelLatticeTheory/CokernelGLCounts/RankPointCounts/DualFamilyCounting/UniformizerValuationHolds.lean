@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.SplitAtOf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DivMemLocRingOfVFEq
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CongrPIffInI
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsFracOfFixed
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.SplitAtOf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DivMemLocRingOfVFEq
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CongrPIffInI
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsFracOfFixed
+
+@[expose] public section
 
 open NumberField Module
 
@@ -21,14 +25,14 @@ private theorem vF_spec_of_ne_zero {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaxim
     a ∈ 𝔭 ^ vF 𝔭 a ∧ a ∉ 𝔭 ^ (vF 𝔭 a + 1) := by
   have hbot : ∃ N, a ∉ 𝔭 ^ N := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have hinf : a ∈ ⨅ i, 𝔭 ^ i := Submodule.mem_iInf _ |>.mpr hcon
     rw [Ideal.iInf_pow_eq_bot_of_isDomain 𝔭 h𝔭.ne_top, Ideal.mem_bot] at hinf
     exact ha hinf
   obtain ⟨N, hN⟩ := hbot
   have hbdd : BddAbove {e : ℕ | a ∈ 𝔭 ^ e} := ⟨N, fun e he => by
     by_contra hlt
-    push_neg at hlt
+    push Not at hlt
     exact hN (Ideal.pow_le_pow_right hlt.le he)⟩
   have hmem : a ∈ 𝔭 ^ vF 𝔭 a := Nat.sSup_mem ⟨0, by simp⟩ hbdd
   refine ⟨hmem, fun h => ?_⟩
@@ -51,7 +55,7 @@ theorem exists_mul_eq_of_mem_pow {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal
       rw [hJ, pow_succ]
       exact Ideal.mul_mono_right hle
     exact (Ideal.span_singleton_le_iff_mem _).mp hs)
-  obtain ⟨t, htJ, htp⟩ := SetLike.not_le_iff_exists.mp hJp
+  obtain ⟨t, htJ, htp⟩ := IsConcreteLE.not_le_iff_exists.mp hJp
   have hat : a' * t ∈ Ideal.span {a} := by
     rw [hJ]
     exact Ideal.mul_mem_mul ha' htJ
@@ -64,7 +68,7 @@ include hK hF
 theorem div_mem_locRing_of_mem_pow {P : Ideal (𝓞 K)} (hP : P.IsMaximal) {a a' : 𝓞 F}
     (ha : a ≠ 0) (ha' : a' ∈ (P.comap ι) ^ vF (P.comap ι) a) :
     κ (ι a') / κ (ι a) ∈ locRing P := by
-  have hPm : (P.comap ι).IsMaximal := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal P
+  have hPm : (P.comap ι).IsMaximal := Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := 𝓞 F) P
   obtain ⟨t, ht, c, hc⟩ := exists_mul_eq_of_mem_pow hPm ha ha'
   have hκa : κ (ι a) ≠ 0 := jK_iota_ne_zero ha
   have e : κ (ι t) * (κ (ι a') / κ (ι a)) = κ (ι c) := by
@@ -83,8 +87,8 @@ theorem div_mem_locRing_of_mem_pow {P : Ideal (𝓞 K)} (hP : P.IsMaximal) {a a'
   rw [e]
   exact Submodule.mem_one.mpr ⟨_, rfl⟩
 
-omit hK in
 
+omit hK in
 theorem mul_inv_pow_mem {P : Ideal (𝓞 K)} {π : K}
     (h1 : ∀ z ∈ extP K (P.comap ι), Dv (locRing P) π (κ z)) (j : ℕ) :
     ∀ z ∈ extP K (P.comap ι) ^ j, κ z * (π ^ j)⁻¹ ∈ locRing P := by
@@ -106,21 +110,21 @@ theorem mul_inv_pow_mem {P : Ideal (𝓞 K)} {π : K}
       rw [map_mul, pow_succ, mul_inv]
       convert hxy using 1
       ring
-    · rw [map_add, add_mul]
+    · rw [map_add (f := _), add_mul]
       exact (locRing P).add_mem hu hw
 
 theorem unifVal_at {P : Ideal (𝓞 K)} (hP : P.IsMaximal) :
     ∃ π : K, IsUnif (locRing P) π ∧ ∀ a : 𝓞 F, a ≠ 0 →
       IsUnitIn (locRing P) (algebraMap F K (a : F) * (π ^ vF (P.comap ι) a)⁻¹) := by
   obtain ⟨π, hπ, h1, h2⟩ := exists_isUnif hF hP
-  have hPm : (P.comap ι).IsMaximal := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal P
+  have hPm : (P.comap ι).IsMaximal := Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := 𝓞 F) P
   have hcoe : ∀ c : 𝓞 F, algebraMap F K (c : F) = κ (ι c) := fun c => by
     rw [← IsScalarTower.algebraMap_apply (𝓞 F) (𝓞 K) K, IsScalarTower.algebraMap_apply (𝓞 F) F K]
   have hstar : ∀ c : 𝓞 F, star (κ (ι c)) = κ (ι c) := fun c => (hF _).mpr ⟨(c : F), hcoe c⟩
   have hπ0 : π ≠ 0 := hπ.3
   have hex : ∃ p0 ∈ P.comap ι, IsUnitIn (locRing P) (κ (ι p0) * π⁻¹) := by
     by_contra hne
-    push_neg at hne
+    push Not at hne
     have hle : extP K (P.comap ι) ≤ extP K (P.comap ι) ^ 2 := by
       show Ideal.map ι (P.comap ι) ≤ _
       refine Ideal.map_le_iff_le_comap.mpr fun p0 hp0 => ?_

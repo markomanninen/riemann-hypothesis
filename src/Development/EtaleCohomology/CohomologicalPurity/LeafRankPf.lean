@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafChartCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafChartCut
+
+@[expose] public section
 
 noncomputable section
 open TensorProduct

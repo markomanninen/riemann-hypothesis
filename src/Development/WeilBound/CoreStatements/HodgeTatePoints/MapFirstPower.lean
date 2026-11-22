@@ -1,5 +1,9 @@
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GermComp1ZeroPointLeft
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBMapPf
+module
+
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GermComp1ZeroPointLeft
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBMapPf
+
+@[expose] public section
 
 noncomputable section
 

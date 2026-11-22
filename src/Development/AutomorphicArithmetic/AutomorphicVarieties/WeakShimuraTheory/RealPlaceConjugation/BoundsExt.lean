@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RbUVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.FerreroWashington
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RealPlaceConjugation.BaseCh
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RbUVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.FerreroWashington
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RealPlaceConjugation.BaseCh
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws UpperTheory.V.Two
 open scoped Classical
@@ -31,7 +35,7 @@ private theorem zgl_phi {O Γ : Type} [CommRing O] [Group Γ] [TopologicalSpace 
   obtain ⟨h1, h2, h3, h4⟩ := hz
   refine ⟨h1.comp φ, fun g h => ?_, fun g h => ?_, fun h => ?_⟩
   · show φ (z (g * h)) = φ (z g) + _ * φ (z h)
-    rw [h2, map_add, RingHom.comp_apply, phi_mul]
+    rw [h2, map_add (f := _), RingHom.comp_apply, phi_mul]
   · show φ (z g) = 0
     rw [h3 g h, map_zero]
   · show φ (z Φ.g0) = 0
@@ -59,6 +63,6 @@ theorem UpperTheory.V.Ws.cocycleBounds_of_ringHom_comp :
         obtain ⟨h1, h2⟩ := hz v
         refine ⟨h1.comp φ, fun g h => ?_⟩
         have h3 := congrArg φ (h2 g h)
-        rw [map_add, RingHom.comp_apply, phi_mul] at h3
+        rw [map_add (f := _), RingHom.comp_apply, phi_mul] at h3
         exact h3)
     exact_mod_cast this

@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.BesselHermitianTheta.IsAutFunDef
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.AdelicIsomorphismStatement
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InstExists
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.InfFam
+module
+
+public import Formalism.LocalToGlobal.BesselHermitianTheta.IsAutFunDef
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.AdelicIsomorphismStatement
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InstExists
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.InfFam
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,8 @@ theorem mem_Lv (x : Fin V.rank → D.host.E) : x ∈ Lv D V ↔ (∑ i, x i • 
 
 theorem hform_eq (x y : Fin V.rank → D.host.E) :
     Formalism.UG.hform (starRingEnd D.host.E) V.gram x y = V.hT (∑ i, x i • V.frame i) (∑ j, y j • V.frame j) := by
-  simp only [Formalism.UG.hform, Formalism.BasicNotions.HSpace.gram, map_sum, map_smulₛₗ, LinearMap.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.UG.hform, Formalism.BasicNotions.HSpace.gram, map_sum, map_smulₛₗ, LinearMap.sum_apply,
     LinearMap.smul_apply, map_smul, smul_eq_mul, Finset.mul_sum, RingHom.id_apply]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -45,13 +50,15 @@ theorem J_det : V.gram.det ≠ 0 := by
     intro i
     have hi := congrFun hy i
     simp only [Matrix.mulVec, dotProduct, Formalism.BasicNotions.HSpace.gram, Pi.zero_apply] at hi
-    simp only [map_sum, map_smul, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul]
     rw [← hi]
     exact Finset.sum_congr rfl fun j _ => mul_comm _ _
   have hw : (∑ j, y j • V.frame j) = 0 := by
     refine V.nondeg.2 _ fun v => ?_
     generalize (∑ j, y j • V.frame j) = w at hrow ⊢
-    rw [← V.frame.sum_repr v, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← V.frame.sum_repr v, map_sum, LinearMap.sum_apply]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [map_smulₛₗ, LinearMap.smul_apply, hrow, smul_zero]
   funext i
@@ -74,7 +81,40 @@ theorem L_fg : (Lv D V).FG := by
 theorem L_span : Submodule.span D.host.E ((Lv D V : Set (Fin V.rank → D.host.E))) = ⊤ := by
   rw [Lv_eq_map, Submodule.map_coe]
   change Submodule.span D.host.E (⇑((crd D V).symm.toLinearMap) '' (V.L0 : Set V.V)) = ⊤
-  rw [Submodule.span_image, V.standardTuple_isLattice.span_eq_top, Submodule.map_top]
+  have hspan : Submodule.span D.host.E (V.L0 : Set V.V) = ⊤ := by
+    let W := Submodule.span D.host.E (V.L0 : Set V.V)
+    change W = ⊤
+    by_contra h
+    let e : V.V ≃ₗ⋆[D.host.E] V.V :=
+      (crd D V).symm.trans ((starLinearEquiv D.host.E).trans (crd D V))
+    let g : V.V →ₗ[D.host.E] Module.Dual D.host.E W :=
+      (LinearMap.domRestrict' W).comp (V.hT.comp e.toLinearMap)
+    have hdim : Module.finrank D.host.E (Module.Dual D.host.E W) < Module.finrank D.host.E V.V := by
+      rw [Subspace.dual_finrank_eq]
+      exact Submodule.finrank_lt h
+    obtain ⟨x, hx, hx₀⟩ :=
+      Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+    have hsmul (a : D.host.E) : a • e x ∈ V.L0 := by
+      rw [← V.baseLattice_isUnimodular]
+      change a • e x ∈ Formalism.E.hdual V.hT V.L0
+      simp only [Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap,
+        LinearMap.restrictScalars_apply, Submodule.mem_one]
+      intro y hy
+      have hxy : V.hT (e x) y = 0 :=
+        congrArg (fun f : Module.Dual D.host.E W => f ⟨y, Submodule.subset_span hy⟩)
+          (LinearMap.mem_ker.mp hx)
+      have hyx : V.hT y (e x) = 0 := by
+        have hh := V.herm.eq (e x) y
+        simpa [hxy] using hh.symm
+      simp [map_smul, hyx]
+    let i : D.host.E →ₗ[𝓞 D.host.E] V.L0 :=
+      ((LinearMap.toSpanSingleton D.host.E _ (e x)).restrictScalars (𝓞 D.host.E)).codRestrict V.L0 hsmul
+    let : Module.Finite (𝓞 D.host.E) V.L0 := Module.Finite.iff_fg.mpr V.standardTuple_isLattice.fg
+    let : Module.Finite (𝓞 D.host.E) D.host.E := Module.Finite.of_injective i fun a b hab =>
+      smul_left_injective D.host.E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+    exact RingOfIntegers.not_isField D.host.E
+      (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 D.host.E) D.host.E) (Field.toIsField D.host.E))
+  rw [Submodule.span_image, hspan, Submodule.map_top]
   exact (crd D V).symm.range
 
 theorem L_dual (x : Fin V.rank → D.host.E) : x ∈ Lv D V ↔
@@ -160,38 +200,6 @@ def brg (fr : Frames D V) : (instV fr).GA ≃ₜ* GA D V :=
 
 theorem brg_isBridge (fr : Frames D V) : Formalism.L2.SG.AdBridge.IsBridge (instV fr) (brg fr) := by
   exact (Formalism.L2.SG.Closed.adelic_isomorphism_statement (instV fr)).1.choose_spec
-
-theorem frame_of_sig {n : ℕ} (M : Matrix (Fin n) (Fin n) ℂ) {p q : ℕ} (h : Formalism.UG.HasSignature M p q) :
-    ∃ (ε : Fin n → Bool) (P : Matrix (Fin n) (Fin n) ℂ), IsUnit P ∧ Pᴴ * M * P = Formalism.REAL.Jm ε := by
-  obtain ⟨e, P, hP⟩ := h
-  refine ⟨fun i => (e i).isLeft, (P : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ).submatrix e e, ?_, ?_⟩
-  · rw [Matrix.isUnit_iff_isUnit_det, Matrix.det_submatrix_equiv_self]
-    exact (Matrix.isUnit_iff_isUnit_det _).mp P.isUnit
-  · have hM : M = (M.reindex e e).submatrix e e := by
-      ext i j; simp [Matrix.reindex_apply]
-    rw [Matrix.conjTranspose_submatrix]
-    conv_lhs => rw [hM]
-    rw [Matrix.submatrix_mul_equiv, Matrix.submatrix_mul_equiv]
-    have hP' : (P : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ)ᴴ * M.reindex e e * (P : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) = Formalism.UG.Jpq p q := hP
-    rw [hP']
-    ext i j
-    simp only [Matrix.submatrix_apply, Formalism.REAL.Jm, Matrix.diagonal_apply, Formalism.UG.Jpq]
-    have hd : ∀ s : Fin p ⊕ Fin q, Matrix.fromBlocks (1 : Matrix (Fin p) (Fin p) ℂ) 0 0 (-1) s s = if s.isLeft then 1 else -1 := by
-      rintro (a | a)
-      · rw [Matrix.fromBlocks_apply₁₁, Matrix.one_apply_eq]; rfl
-      · rw [Matrix.fromBlocks_apply₂₂, Matrix.neg_apply, Matrix.one_apply_eq]; rfl
-    have ho : ∀ s t : Fin p ⊕ Fin q, s ≠ t → Matrix.fromBlocks (1 : Matrix (Fin p) (Fin p) ℂ) 0 0 (-1) s t = 0 := by
-      rintro (a | a) (b | b) hst
-      · rw [Matrix.fromBlocks_apply₁₁, Matrix.one_apply_ne (fun h => hst (by rw [h]))]
-      · rw [Matrix.fromBlocks_apply₁₂, Matrix.zero_apply]
-      · rw [Matrix.fromBlocks_apply₂₁, Matrix.zero_apply]
-      · rw [Matrix.fromBlocks_apply₂₂, Matrix.neg_apply, Matrix.one_apply_ne (fun h => hst (by rw [h])), neg_zero]
-    by_cases hij : i = j
-    · subst hij
-      rw [if_pos rfl]
-      exact hd (e i)
-    · rw [if_neg hij]
-      exact ho _ _ fun h => hij (e.injective h)
 
 theorem gram_map_herm (v : InfinitePlace D.host.F) :
     Formalism.UG.IsHerm (starRingEnd ℂ) (V.gram.map (phiV D v)) := by

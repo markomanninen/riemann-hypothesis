@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.UnitaryThreeTestFunctionHeckeRelations
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.ExpoEq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.UnitaryThreeTestFunctionHeckeRelations
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.ExpoEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,92 +36,14 @@ structure D (S : Finset I) (G : I → Type) [∀ v, CommGroup (G v)] where
 
 variable {S : Finset I} {G : I → Type} [∀ v, CommGroup (G v)]
 
-def sg (d : ∀ v, Fin 3 → G v) : ∀ v, Fin 3 → G v := fun v => ![(d v 2)⁻¹, (d v 1)⁻¹, (d v 0)⁻¹]
-
-def io (i : Fin 3) : (∀ v, G v) →* (∀ v, Fin 3 → G v) where
-  toFun t v := Pi.mulSingle i (t v)
-  map_one' := by
-    funext v
-    exact Pi.mulSingle_one i
-  map_mul' s t := by
-    funext v
-    exact Pi.mulSingle_mul i _ _
-
 namespace D
 
 variable (L : D S G)
 
-def od (v : I) (x : G v) : ℤ := (L.o v x).toAdd
-
-@[simp] private theorem od_mul (v : I) (x y : G v) : L.od v (x * y) = L.od v x + L.od v y := by
-  simp [od]
-
-@[simp] private theorem od_one (v : I) : L.od v 1 = 0 := by
-  simp [od]
-
-@[simp] private theorem od_inv (v : I) (x : G v) : L.od v x⁻¹ = - L.od v x := by
-  simp [od]
-
-@[simp] private theorem od_pow (v : I) (x : G v) (n : ℕ) : L.od v (x ^ n) = n * L.od v x := by
-  simp [od]
-
-def Dm (d : ∀ v, Fin 3 → G v) : Prop :=
-  ∀ v ∈ S, L.od v (d v 1) ≤ L.od v (d v 0) ∧ L.od v (d v 2) ≤ L.od v (d v 1)
-
-def Sd (d : ∀ v, Fin 3 → G v) : Prop :=
-  ∀ v ∈ S, L.od v (d v 1) < L.od v (d v 0) ∧ L.od v (d v 2) < L.od v (d v 1)
-
-def Cn (t : ∀ v, G v) : Prop := ∀ v ∈ S, 2 < L.od v (t v)
-
 variable {L}
 
-private theorem Dm.mul {d d' : ∀ v, Fin 3 → G v} (h : L.Dm d) (h' : L.Dm d') : L.Dm (d * d') := by
-  intro v hv
-  obtain ⟨h1, h2⟩ := h v hv
-  obtain ⟨h1', h2'⟩ := h' v hv
-  simp only [Pi.mul_apply, od_mul]
-  constructor <;> linarith
-
-private theorem Sd.mul {d d' : ∀ v, Fin 3 → G v} (h : L.Sd d) (h' : L.Dm d') : L.Sd (d * d') := by
-  intro v hv
-  obtain ⟨h1, h2⟩ := h v hv
-  obtain ⟨h1', h2'⟩ := h' v hv
-  simp only [Pi.mul_apply, od_mul]
-  constructor <;> linarith
-
-private theorem Dm.sg {d : ∀ v, Fin 3 → G v} (h : L.Dm d) : L.Dm (sg d) := by
-  intro v hv
-  obtain ⟨h1, h2⟩ := h v hv
-  simp only [CS.sg, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
-    Matrix.head_cons, Matrix.tail_cons, od_inv]
-  constructor <;> linarith
-
-private theorem dm_one : L.Dm 1 := by
-  intro v hv
-  simp
-
-private theorem Dm.pow {d : ∀ v, Fin 3 → G v} (h : L.Dm d) (N : ℕ) : L.Dm (d ^ N) := by
-  induction N with
-  | zero => simpa using dm_one
-  | succ n ih => rw [pow_succ]; exact ih.mul h
-
-variable (L) in
-
-structure Ch (χ : (∀ v, Fin 3 → G v) → ℂ) : Prop where
-  mul : ∀ d d', L.Dm d → L.Dm d' → χ (d * d') = χ d * χ d'
-  lev : ∀ d, (∀ v ∈ S, ∀ i, d v i ∈ L.H v) → χ d = 1
-  inv : ∀ d, L.Dm d → χ (sg d) = χ d
 
 variable {χ : (∀ v, Fin 3 → G v) → ℂ}
-
-private theorem Ch.pow (hχ : L.Ch χ) {d : ∀ v, Fin 3 → G v} (hd : L.Dm d) (N : ℕ) :
-    χ (d ^ N) = χ d ^ N := by
-  induction N with
-  | zero =>
-    simp only [pow_zero]
-    exact hχ.lev 1 (fun v _ i => by simp [Subgroup.one_mem])
-  | succ n ih =>
-    rw [pow_succ, pow_succ, hχ.mul _ _ (hd.pow n) hd, ih]
 
 section X
 
@@ -132,19 +58,6 @@ end Main
 section Ord
 
 variable (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-
-private theorem phi_ne (x : kˣ) :
-    IsNonarchimedeanLocalField.valueGroupWithZeroIsoInt k (valuation k (x : k)) ≠ 0 := by
-  simp
-
-def ordU : kˣ →* Multiplicative ℤ where
-  toFun x := Multiplicative.ofAdd
-    (-WithZero.log (IsNonarchimedeanLocalField.valueGroupWithZeroIsoInt k (valuation k (x : k))))
-  map_one' := by simp
-  map_mul' x y := by
-    have hx := phi_ne k x
-    have hy := phi_ne k y
-    rw [Units.val_mul, map_mul, map_mul, WithZero.log_mul hx hy, neg_add, ofAdd_add]
 
 end Ord
 

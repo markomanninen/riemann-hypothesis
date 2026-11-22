@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IMemSiegel
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.FirstCoordinateAdmissible
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IMemSiegel
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.FirstCoordinateAdmissible
+
+@[expose] public section
+
 open Matrix Complex NumberField
 open scoped ComplexConjugate ComplexOrder
 open ReciprocityTheory.ChartRestriction.G.FD (cc herm)
@@ -9,9 +14,6 @@ namespace GlobalTheory.SW
 noncomputable section
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n N : ℕ}
 
-open Classical in
-
-def indFam : Fam E n N := fun Λ x => if ColsIn Λ x then 1 else 0
 
 theorem mem_stdL {x : Fin n → E} : x ∈ stdL E n ↔ ∀ a, IsIntegral ℤ (x a) := by
   constructor

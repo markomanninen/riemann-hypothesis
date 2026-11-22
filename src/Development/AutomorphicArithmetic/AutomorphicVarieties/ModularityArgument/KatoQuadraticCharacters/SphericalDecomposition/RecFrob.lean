@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SphericalDecomposition.SphOfWit
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSphericalIffUnrOfLawsT
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecTExistsIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSphericalOfHasSatGL
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SphericalDecomposition.SphOfWit
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSphericalIffUnrOfLawsT
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecTExistsIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSphericalOfHasSatGL
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af GlobalTheory.WeilDeligne GlobalTheory.LocGL GlobalTheory.LocLanglands GlobalTheory.CuspRep Polynomial
 open UpperTheory.V.Z.Win UpperTheory.V.Z.Kato UpperTheory.V.Z.Kato.WeilSphericalRecords UpperTheory.Zero.LLC
@@ -42,7 +46,7 @@ private theorem root_diag {n : ℕ} (α : Fin n → ℂˣ) (y : WD h)
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.CuspRep.ParLaws in
 private theorem algNorm_diag {a : Weil h →* (w.adicCompletion E)ˣ} {ha : IsLocalArtin h a}
-    {rc : IrrGL (w.adicCompletion E) → WD h} (L : LawsT a ha rc) {n : ℕ}
+    {rc : IrrGL (k := w.adicCompletion E) → WD h} (L : LawsT a ha rc) {n : ℕ}
     (σ : SmIrr (GL (Fin n) (w.adicCompletion E))) (B : Multiset ℂˣ) (hB : GlobalTheory.LFun.HasSatGL w σ.ρ B) :
     ∃ α : Fin n → ℂˣ, B = Finset.univ.val.map α ∧
       rc (algNorm σ) = WD.mk (WDRep.diag h fun i => (α i)⁻¹ * qPow w ((1 - (n : ℝ)) / 2)) := by
@@ -60,9 +64,3 @@ private theorem algNorm_diag {a : Weil h →* (w.adicCompletion E)ˣ} {ha : IsLo
   ring
 
 end UpperTheory.V.Z.Kato.WeilSphericalRecords
-
-theorem UpperTheory.V.Z.Kato.WeilSphericalRecords.recFrob :
-    Af.Hypotheses₂ → RecFrob := by
-  intro _ E Ω _ _ _ _ _ A w h rc ⟨a, ha, L⟩ n σ B _ hB φ hd z hz
-  obtain ⟨α, rfl, e⟩ := algNorm_diag L σ B hB
-  exact root_diag α _ e φ hd z hz

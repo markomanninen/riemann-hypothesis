@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.AbsProps
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.AdmissibleMinors.AdmAbs
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.AbsProps
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.AdmissibleMinors.AdmAbs
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -18,7 +22,8 @@ theorem adm : ComparisonAdmissible := by
     have hact : M.act n g (b j) = ∑ k, M.mat n b g k j • b k := by
       conv_lhs => rw [← Matrix.toLin_toMatrix b b (M.act n g)]
       exact Matrix.toLin_self b b _ j
-    rw [hact, map_sum, AddMonoidHom.finsetSum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hact, map_sum, AddMonoidHom.finsetSum_apply]
     simp only [P.lin, Matrix.map_apply]
   exact AdmAbs.admissible_of_absolute (fun g => R.σ g) S hR.stab hR.frac (fun g => (M.mat n b g).map R.q)
     (fun g i j => hR.q_mem _)

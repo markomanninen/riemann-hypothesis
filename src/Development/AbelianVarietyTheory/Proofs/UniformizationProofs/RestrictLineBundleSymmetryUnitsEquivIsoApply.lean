@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegProd
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
-import Development.AbelianVarietyTheory.BlockTheory.UniformisationCharts.PowerGroupDatum
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegProd
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
+public import Development.AbelianVarietyTheory.BlockTheory.UniformisationCharts.PowerGroupDatum
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -278,27 +282,6 @@ section Pow
 
 variable {S : Scheme.{0}}
 
-def powEquiv (G' G : Over S) [GrpObj G'] [GrpObj G] (j : ℕ) :
-    Out.IsPowGrp G' G j ≃ PowerDatum j G' G where
-  toFun p := ⟨p.pr, p.hom, fun T => ⟨fun x y h => p.lim.hom_ext fun i => congrFun h i.as,
-    fun z => ⟨p.lim.lift (Fan.mk T z), funext fun i => p.lim.fac (Fan.mk T z) ⟨i⟩⟩⟩⟩
-  invFun P := ⟨P.pr, P.isMonHom, mkFanLimit _ (fun s => ((P.bij s.pt).2 s.proj).choose)
-    (fun s i => congrFun ((P.bij s.pt).2 s.proj).choose_spec i)
-    (fun s _ hm => (P.bij s.pt).1
-      ((funext hm).trans ((P.bij s.pt).2 s.proj).choose_spec.symm))⟩
-  left_inv p := by
-    cases p
-    dsimp only
-    congr 1
-    exact Subsingleton.elim _ _
-  right_inv _ := rfl
-
-abbrev GrpWithMaps (G : Over S) (n : ℕ) := Σ H : Over S, GrpObj H × (Fin n → (H ⟶ G))
-
-def powStep (G : Over S) [GrpObj G] {n : ℕ} (x : GrpWithMaps G n) : GrpWithMaps G (n + 1) :=
-  ⟨G ⊗ x.1, letI := x.2.1; inferInstance,
-    fun i => Fin.cases (fst G x.1) (fun k => snd G x.1 ≫ x.2.2 k) i⟩
-
 variable {G' G : Over S} [GrpObj G'] [GrpObj G] {j : ℕ}
 
 variable [IsCommMonObj G'] [IsCommMonObj G]
@@ -311,15 +294,5 @@ variable {S : Scheme.{0}} {G' G : Over S} [GrpObj G'] [IsCommMonObj G'] [GrpObj 
   [IsCommMonObj G] {j : ℕ}
 
 end Clauses
-
-def WellFormedSt : Prop :=
-  ∀ (S : Scheme.{0}) (G' G : Over S) [GrpObj G'] [IsCommMonObj G'] [GrpObj G] [IsCommMonObj G]
-    (j : ℕ) (p : Out.IsPowGrp G' G j) (L : RigLB G),
-    (Out.boxLB L.L p.pr).IsLB ∧ (Out.boxRig p L.L L.rig).IsGen
-
-def BoxSymRigSt : Prop :=
-  ∀ (S : Scheme.{0}) (G' G : Over S) [GrpObj G'] [IsCommMonObj G'] [GrpObj G] [IsCommMonObj G]
-    (j : ℕ) (p : Out.IsPowGrp G' G j) (L : RigLB G) (sy : SymGen L.L (ι[G]).left),
-    IsCanonSym L.L sy → IsCanonSym (Out.boxLB L.L p.pr) (Out.boxSym p L.L sy)
 
 end GlobalTheory.BoxCompare

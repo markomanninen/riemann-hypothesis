@@ -1,5 +1,9 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.LConvSepW
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvSepW
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ def pairW (I : (GL (Fin m) k → ℂ) →ₗ[ℂ] ℂ) (W : GL (Fin m) k → ℂ
   toFun := whittakerPairingValue I W
   map_add' a b := by
     simp only [whittakerPairingValue]
-    rw [← map_add]; congr 1; funext g
+    rw [← map_add (f := _)]; congr 1; funext g
     simp only [Submodule.coe_add, Pi.add_apply]; ring
   map_smul' c a := by
     simp only [whittakerPairingValue, RingHom.id_apply]
@@ -42,8 +46,8 @@ theorem repr_delta (hI : PosInt I) (hB : IsInvForm (rhoW ψ) B) {K : Subgroup (G
   rw [e, map_smul, smul_eq_mul, ← formI_apply, lam_eq hψ hI hB hK hy, lamK]
   exact div_mul_cancel₀ _ (cK_ne_zero hI hK)
 
-include hψ in
 
+include hψ in
 theorem repr (hI : PosInt I) (hB : IsInvForm (rhoW ψ) B) (y x : WT (m := m) ψ) :
     I (fun g => (x : GL (Fin m) k → ℂ) g * Wf ψ hψ I B y g) = B y x := by
   obtain ⟨K, hK, hKf⟩ := exists_good_fix hψ x y

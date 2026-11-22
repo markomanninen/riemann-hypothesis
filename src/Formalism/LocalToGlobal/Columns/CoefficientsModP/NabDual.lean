@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.Columns.CoefModB
-import Formalism.LocalToGlobal.Columns.CoefModX
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.NablaIndependenceHolds
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.TauLatticeLatticeHolds
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.BaseCh
+module
+
+public import Formalism.LocalToGlobal.Columns.CoefModB
+public import Formalism.LocalToGlobal.Columns.CoefModX
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.NablaIndependenceHolds
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.TauLatticeLatticeHolds
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.BaseCh
+
+@[expose] public section
 
 open MvPolynomial NumberField IsDedekindDomain
 open scoped Matrix
@@ -71,7 +75,7 @@ end
 
 theorem nabDelDual_of (hD : NabDelDescent) (hK : PairBDualK) : NabDelDual := by
   intro K _ _ _ ι _ n lam G M _ hG hM
-  have hMc : ∀ τ, Submodule.IsLattice K (bcLat (starRingEnd K) (M τ)) := fun τ =>
+  have hMc : ∀ τ, Submodule.IsFullLattice K (bcLat (starRingEnd K) (M τ)) := fun τ =>
     bc_bcLat_lattice (j := starRingEnd K) tauLatticeLattice_holds (M τ) (hM τ)
   let GG : ι → GL (Fin n) K := fun τ => Matrix.GeneralLinearGroup.mkOfDetNeZero (G τ) (hG τ).ne_zero
   constructor

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ProjectiveCokerOfIsLocallyConstantFinrankRange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ProjectiveCokerOfIsLocallyConstantFinrankRange
+
+@[expose] public section
 
 open MvPolynomial Module
 open Function (Injective)
@@ -96,8 +100,6 @@ def formsBasis (R σ : Type) [CommRing R] (e : ℕ) :
   (basisRestrictSupport R {m : σ →₀ ℕ | m.degree = e}).map
     (LinearEquiv.ofEq _ _ (homogeneousSubmodule_eq_finsupp_supported σ R e).symm)
 
-theorem forms_free (e : ℕ) : Module.Free R (homogeneousSubmodule σ R e) := .of_basis (formsBasis R σ e)
-
 theorem forms_finite [Finite σ] (e : ℕ) : Module.Finite R (homogeneousSubmodule σ R e) :=
   Module.Finite.iff_fg.mpr (homogeneousSubmodule_fg _ _ _)
 
@@ -151,8 +153,7 @@ theorem map_cmp_ker_ev [Finite Hh] (B : Type) [CommRing B] [Algebra R B] (d : �
       eval (fun i => algebraMap R B (p h i)) (cmp B d z) := by
     intro z h
     induction z with
-    | zero => simp
-    | add x y hx hy => simp only [map_add, Pi.add_apply, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), Pi.add_apply, hx, hy]
     | tmul b F =>
       rw [cmp_tmul, smul_eval, LinearMap.baseChange_tmul, TensorProduct.piScalarRight_apply,
         TensorProduct.piScalarRightHom_tmul]
@@ -295,7 +296,6 @@ theorem map_vanIdeal_of_const_away [IsReduced R] [Finite σ] [Finite Hh] (d : �
   rw [← hx']
   convert h1 using 2
   · exact RingHom.ext fun F => (map_map _ _ F).symm
-  · rfl
 
 theorem dimDeg_eq_of_cutBy {K : Type} [Field K] {I : Ideal (MvPolynomial σ K)} {Q : Polynomial ℚ} {d : ℕ}
     {p : Hh → σ → K} (h : CutBy I Q d p) {e : ℕ} (he : e ≥ d) :

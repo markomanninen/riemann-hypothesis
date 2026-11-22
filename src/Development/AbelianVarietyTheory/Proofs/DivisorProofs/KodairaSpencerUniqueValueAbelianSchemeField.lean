@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty
-import Development.AbelianVarietyTheory.Definitions.Divisors.P22
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WedgeOrdVpBaseChangeOfNeBot
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KodairaSpencerMatrixUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WedgeOrdVpBaseChangeOfNeBot
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KodairaSpencerMatrixUnique
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open AlgebraicGeometry CategoryTheory GlobalTheory.DeRham GlobalTheory.Cris
@@ -16,13 +20,24 @@ namespace GlobalTheory.DeRham
 
 open GlobalTheory.Published GlobalTheory.Published.AbelianDeRham
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem IsKSValue.exists_of_isAbelianScheme (P : AbelianDeRham) {K : Type} [Field K] {A : Over (Sp K)} [GrpObj A]
     {A' : Over (Sp (DualNumber K))} [GrpObj A'] {i : A.left ⟶ A'.left}
     (h : IsGrpPullback A A' (epsRed K) i) {g : ℕ} (hA : Semi.IsAbelianScheme A')
     (hg : SmoothOfRelativeDimension g A'.hom) {f : HdR A} (hf : f ∈ Fil A) : ∃ v, IsKSValue h f v := by
-  have a₀ := PolPull.isAbelianScheme_of_isGrpPullback hA h
+  have a₀ : Semi.IsAbelianScheme A := by
+    have := hA.comm
+    have hc : IsCommMonObj A := by
+      open CategoryTheory.MonoidalCategory CategoryTheory.CartesianMonoidalCategory CategoryTheory.MonObj in
+      rw [isCommMonObj_iff_isMulCommutative]
+      intro T
+      refine ⟨⟨fun x y => Over.OverMorphism.ext (h.1.hom_ext ?_ (by rw [Over.w, Over.w]))⟩⟩
+      rw [← h.2 T x y (pushPt h.1.w x) (pushPt h.1.w y) rfl rfl,
+        ← h.2 T y x (pushPt h.1.w y) (pushPt h.1.w x) rfl rfl, _root_.mul_comm]
+    exact ⟨hc, MorphismProperty.of_isPullback (P := @Smooth) h.1 hA.smooth,
+      MorphismProperty.of_isPullback (P := @IsProper) h.1 hA.proper,
+      MorphismProperty.of_isPullback (P := @GeometricallyConnected) h.1 hA.geomConnected⟩
   have g₀ := (smoothOfRelativeDimension_isStableUnderBaseChange g).of_isPullback h.1 hg
   have hL := (P.2.1 K A g a₀ g₀).1
   letI : Algebra (DualNumber K) K := (TrivSqZeroExt.fstHom K K K).toRingHom.toAlgebra
@@ -35,7 +50,7 @@ theorem IsKSValue.exists_of_isAbelianScheme (P : AbelianDeRham) {K : Type} [Fiel
   have rB := P.2.2.2.1.crysToDR_bijective hA hg (κ := epsDP K) (isDPNilpotent_squareZero _) su rfl h
   let φL : primDR A' →ₗ[DualNumber K] K :=
     { toFun := fun c => f ((bcMor h).pull c)
-      map_add' := fun x y => by simp only [map_add]
+      map_add' := fun x y => by simp only [map_add (f := _)]
       map_smul' := fun r c => by
         rw [LinearMap.map_smulₛₗ, map_smul, smul_eq_mul, RingHom.id_apply, Algebra.smul_def] }
   obtain ⟨u, hu⟩ := Module.projective_lifting_property (Algebra.linearMap (DualNumber K) K) φL
@@ -54,11 +69,11 @@ theorem IsKSValue.exists_of_isAbelianScheme (P : AbelianDeRham) {K : Type} [Fiel
       exact (Submodule.mem_dualAnnihilator _).1 hf _
         (Submodule.subset_span ⟨_, Submodule.projection_apply_mem _ _, rfl⟩)
     change (u _).fst = _
-    rw [e1, ← add_zero (f ((bcMor h).pull _)), ← e3, ← map_add, ← map_add, e2]
+    rw [e1, ← add_zero (f ((bcMor h).pull _)), ← e3, ← map_add (f := _), ← map_add (f := _), e2]
   obtain ⟨d, hd⟩ := rB.2 d'
   let k : HdR A :=
     { toFun := fun c => (d ((constMor A).pull c)).snd
-      map_add' := fun x y => by simp only [map_add, TrivSqZeroExt.snd_add]
+      map_add' := fun x y => by simp only [map_add (f := _), TrivSqZeroExt.snd_add]
       map_smul' := fun r c => by
         rw [LinearMap.map_smulₛₗ, map_smul, smul_eq_mul, RingHom.id_apply, smul_eq_mul,
           TrivSqZeroExt.algebraMap_eq_inl, TrivSqZeroExt.snd_mul]

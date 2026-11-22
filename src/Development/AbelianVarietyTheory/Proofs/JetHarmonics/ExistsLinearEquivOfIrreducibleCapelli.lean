@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CommonEigenvectors
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HighestWeightPolynomials
-import Development.AbelianVarietyTheory.Definitions.Jets.Imports
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsLinearEquivOfIrreducibleIsHW
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CommonEigenvectors
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HighestWeightPolynomials
+public import Development.AbelianVarietyTheory.Definitions.Jets.Imports
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsLinearEquivOfIrreducibleIsHW
+
+@[expose] public section
 
 open Formalism.REAL Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.Qr
 

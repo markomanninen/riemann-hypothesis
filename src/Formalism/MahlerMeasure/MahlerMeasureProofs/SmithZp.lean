@@ -1,5 +1,9 @@
-import Formalism.MahlerMeasure.StatementD
-import Formalism.SmithDeterminants.TruncationChainBoundNonnegExponents
+module
+
+public import Formalism.MahlerMeasure.StatementD
+public import Formalism.SmithDeterminants.TruncationChainBoundNonnegExponents
+
+@[expose] public section
 
 namespace Formalism.GM
 

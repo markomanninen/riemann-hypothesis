@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ZetaValueIdeals
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TranslateWideInd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ZetaValueIdeals
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TranslateWideInd
+
+@[expose] public section
+
 open NumberField Module Formalism.MainNotions.ShortIntervalPrimes GlobalTheory.RayZeta GlobalTheory.IndefiniteRowSideFullHecke.ZetaValueIdeals GlobalTheory.ZetaDenom
 open scoped nonZeroDivisors
 
@@ -21,12 +26,13 @@ theorem cE_le_of_inZl : ∀ {F : Type} [Field F] [NumberField F] (z : ClassGroup
   have hAq : ((a ^ n - 1 : ℕ) : ℚ) ≠ 0 := by exact_mod_cast hA
   have h1 := h C
   rw [inZl_iff, padicValRat.mul hAq hz, padicValRat.of_nat] at h1
+  rw [← Nat.padicValNat_def] at h1
   have h2 : (2 : ℚ) ^ finrank ℚ F ≠ 0 := pow_ne_zero _ two_ne_zero
   have h3 : padicValRat l (z C / 2 ^ finrank ℚ F) = padicValRat l (z C) - (finrank ℚ F : ℤ) * (padicValNat l 2 : ℤ) := by
     rw [padicValRat.div hz h2, padicValRat.pow (q := (2:ℚ))]
     have : padicValRat l (2 : ℚ) = padicValNat l 2 := by
       have := padicValRat.of_nat (p := l) (n := 2)
-      simpa using this
+      simpa [Nat.padicValNat_def] using this
     rw [this]
   rw [h3]
   omega

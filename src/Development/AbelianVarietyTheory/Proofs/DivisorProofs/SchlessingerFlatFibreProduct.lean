@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RTensorInjectiveOfPowSmulEqBot
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulTensorInjectiveOfFlatBaseChangeKerInfStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatQuotientSmulTopOfSurjectiveFlatStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RTensorInjectiveOfPowSmulEqBot
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulTensorInjectiveOfFlatBaseChangeKerInfStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatQuotientSmulTopOfSurjectiveFlatStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits
 
 namespace GlobalTheory.SchlessingerFlat
@@ -88,7 +93,7 @@ theorem ker_eq_map_of_fibre : ∀ (P R₁ R₂ B B₁ B₂ : Type) [CommRing P] 
     | add u v _ _ hu hv =>
       obtain ⟨z1, h1, e1, e1'⟩ := hu
       obtain ⟨z2, h2, e2, e2'⟩ := hv
-      exact ⟨z1 + z2, Ideal.add_mem _ h1 h2, by rw [map_add, e1, e2, add_zero], by rw [map_add, e1', e2']⟩
+      exact ⟨z1 + z2, Ideal.add_mem _ h1 h2, by rw [map_add (f := _), e1, e2, add_zero], by rw [map_add (f := _), e1', e2']⟩
     | smul s u _ hu =>
       obtain ⟨z, hz, e, e'⟩ := hu
       obtain ⟨t, rfl⟩ := hc₂ s

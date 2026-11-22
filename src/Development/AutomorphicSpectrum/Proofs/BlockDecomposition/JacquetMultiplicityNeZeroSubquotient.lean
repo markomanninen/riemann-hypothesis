@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.SquareIntegrableTempered.CasselmanCriterion.Zj
-import GroundTheory.AutomorphicForms.SupercuspidalCoefficients
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.SquareIntegrableTempered.CasselmanCriterion.Zj
+public import GroundTheory.AutomorphicForms.SupercuspidalCoefficients
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ namespace GlobalTheory.CompanionTheory.JmSub
 
 theorem exists_subQuot_of_jm_ne_zero :
     ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k],
-    ∀ {h N : ℕ} (x : Fin h → IrrGL k) (hd : ∑ a, (x a).1 = N) {V : Type} [AddCommGroup V] [Module ℂ V]
+    ∀ {h N : ℕ} (x : Fin h → IrrGL (k := k)) (hd : ∑ a, (x a).1 = N) {V : Type} [AddCommGroup V] [Module ℂ V]
       (π : Representation ℂ (GL (Fin N) k) V), Zc.jm x hd π ≠ 0 →
       ∃ S T : Subrepresentation (jac (stdBlocks (fun a => (x a).1) hd) π),
         Nonempty ((subQuot S T).Equiv (piTensor fun a => (x a).rep)) := by

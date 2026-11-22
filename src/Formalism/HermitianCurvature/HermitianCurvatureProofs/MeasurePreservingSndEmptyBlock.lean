@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OuterProductMatrix
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OuterProductMatrix
+
+@[expose] public section
 
 open Matrix MeasureTheory Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 open scoped ComplexConjugate

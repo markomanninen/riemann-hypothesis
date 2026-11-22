@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.RowFormsLemmas
-import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.RowFormsLemmas
+public import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -21,12 +25,13 @@ theorem rf_asAlgebraHom_eq (a : MonoidAlgebra K A) : ρ.asAlgebraHom a = ∑ t :
 
 theorem rf_coord_act (t : A) (φ : S.EqFun) :
     S.coordOf h S.outSec (ρ t φ) = ((S.toCSD h).actMat (S.repCSD h ρ) t).mulVec (S.coordOf h S.outSec φ) := by
-  have c : ∀ x, S.coordOf h S.outSec x = ⇑((S.toCSD h).basis.repr (S.res h x)) := fun x => rfl
+  have c : ∀ x, S.coordOf h S.outSec x = (S.toCSD h).basis.equivFun (S.res h x) := fun x => rfl
   have e1 : (S.repCSD h ρ) t (S.res h φ) = S.res h (ρ t φ) := by
     show (S.res h) (ρ t ((S.res h).symm (S.res h φ))) = _
     rw [LinearEquiv.symm_apply_apply]
   rw [c, c]
   unfold CSD.actMat
+  simp only [Basis.equivFun_apply]
   rw [LinearMap.toMatrix_mulVec_repr, e1]
 
 theorem rf_coord_ga (a : MonoidAlgebra K A) (φ : S.EqFun) :
@@ -36,10 +41,12 @@ theorem rf_coord_ga (a : MonoidAlgebra K A) (φ : S.EqFun) :
   have hsum : ∀ {m : ℕ} (M : A → Matrix (Fin m) (Fin m) K) (c : A → K) (v : Fin m → K),
       (∑ t, c t • M t).mulVec v = ∑ t, c t • (M t).mulVec v := by
     intro m M c v
-    rw [← Matrix.toLin'_apply, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Matrix.toLin'_apply, map_sum, LinearMap.sum_apply]
     refine Finset.sum_congr rfl (fun t _ => ?_)
     rw [map_smul, LinearMap.smul_apply, Matrix.toLin'_apply]
-  rw [rf_asAlgebraHom_eq, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [rf_asAlgebraHom_eq, LinearMap.sum_apply, map_sum]
   unfold CSD.gaMat
   rw [hsum]
   refine Finset.sum_congr rfl (fun t _ => ?_)

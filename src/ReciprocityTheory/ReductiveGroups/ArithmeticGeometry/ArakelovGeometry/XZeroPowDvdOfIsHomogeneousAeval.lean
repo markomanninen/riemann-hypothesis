@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.BasisOfLinearIndependentOfCardEqFinrank
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.BasisOfLinearIndependentOfCardEqFinrank
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,8 @@ theorem hc_mul_homog {σ : Type*} {p : MvPolynomial σ ℤ} {a : ℕ} (hp : p.Is
       p * MvPolynomial.homogeneousComponent b q := by
   classical
   conv_lhs => rw [← MvPolynomial.sum_homogeneousComponent q]
-  rw [Finset.mul_sum, map_sum, Finset.sum_eq_single b]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.mul_sum, map_sum, Finset.sum_eq_single b]
   · rw [MvPolynomial.homogeneousComponent_of_mem ((MvPolynomial.mem_homogeneousSubmodule _ _).mpr
       (hp.mul (MvPolynomial.homogeneousComponent_isHomogeneous b q))), if_pos rfl]
   · intro k _ hk
@@ -29,7 +34,7 @@ private theorem X_pow_dvd_of_le_degrees {σ : Type*} (i : σ) (m : ℕ) (p : MvP
   rw [p.as_sum]
   refine Finset.dvd_sum fun d hd => ?_
   have hle : Finsupp.single i m ≤ d := Finsupp.single_le_iff.mpr (h d hd)
-  exact ⟨MvPolynomial.monomial (d - Finsupp.single i m) (MvPolynomial.coeff d p), by
+  exact ⟨MvPolynomial.monomial (d - Finsupp.single i m) (AddMonoidAlgebra.coeff p d), by
     rw [MvPolynomial.X_pow_eq_monomial, MvPolynomial.monomial_mul, one_mul, add_tsub_cancel_of_le hle]⟩
 
 theorem X_pow_dvd_homogeneous_one_var {H : MvPolynomial (Fin (0 + 1)) ℤ} {M m : ℕ} (hH : H.IsHomogeneous M)
@@ -57,7 +62,8 @@ private theorem coneMap_of_isHomogeneous_arakelov_geometry {n : ℕ} (y : Fin (D
   classical
   conv_lhs => rw [P.as_sum]
   conv_rhs => rw [P.as_sum]
-  simp only [map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun d hd => ?_
   have hdeg : d.degree = n := by
     by_contra hne
@@ -93,7 +99,7 @@ theorem X_zero_pow_dvd_of_isHomogeneous_aeval (y : Fin (D + 1) → Ω) (hfree : 
   have hPeq := sub_eq_zero.mp hP0
   apply X_pow_dvd_of_le_degrees
   intro d hd
-  have h1 : MvPolynomial.coeff (d + Finsupp.single ⟨1, by omega⟩ m) (MvPolynomial.X 0 ^ m * H ⟨1, by omega⟩) ≠ 0 := by
+  have h1 : AddMonoidAlgebra.coeff (MvPolynomial.X 0 ^ m * H ⟨1, by omega⟩) (d + Finsupp.single ⟨1, by omega⟩ m) ≠ 0 := by
     rw [← hPeq, MvPolynomial.X_pow_eq_monomial, MvPolynomial.coeff_monomial_mul', if_pos le_add_self,
       add_tsub_cancel_right, one_mul]
     exact MvPolynomial.mem_support_iff.mp hd
@@ -161,7 +167,7 @@ theorem homog_of_chart (x : κ → Ω) (e : Fin (D + 1) → κ) (l : Fin (D + 1)
     refine ⟨max N1 N2, fun N hN => ?_⟩
     obtain ⟨H1, hH1, e1⟩ := h1 N (le_of_max_le_left hN)
     obtain ⟨H2, hH2, e2⟩ := h2 N (le_of_max_le_right hN)
-    exact ⟨H1 + H2, hH1.add hH2, by rw [map_add, mul_add, e1, e2, map_add]⟩
+    exact ⟨H1 + H2, hH1.add hH2, by rw [map_add (f := _), mul_add, e1, e2, map_add (f := _)]⟩
   · rename_i p k hp
     obtain ⟨N1, h1⟩ := hp
     refine ⟨N1 + 1, fun N hN => ?_⟩

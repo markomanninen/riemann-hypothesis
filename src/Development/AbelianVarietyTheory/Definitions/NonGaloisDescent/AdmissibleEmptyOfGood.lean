@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPlaceModelPlaceMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaPureTensorO
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsEtaTildeUnramified
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsThetaFunNeZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSelfDualAdelicFrameLevelOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCharOfTrace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPlaceModelPlaceMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaPureTensorO
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsEtaTildeUnramified
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsThetaFunNeZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSelfDualAdelicFrameLevelOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCharOfTrace
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,7 +75,7 @@ theorem realGL_rat {θ : InfFam D} (hθ : IsInfFam θ) {V : HSp D} {γ : GQ V} {
 
 def series (F : Frame S T) (ω : PairRep S T) (f : WO S T → ℂ) (h : GA D S) : PolF D T.rank S.rank →ₗ[ℂ] (GA D T → ℂ) where
   toFun P g := thetaKO ω h g (F.fock f P)
-  map_add' P P' := by funext g; simp only [thetaKO, LinearMap.map_add, Pi.add_apply]
+  map_add' P P' := by funext g; simp only [thetaKO, LinearMap.map_add (f := _), Pi.add_apply]
   map_smul' c P := by funext g; simp only [thetaKO, LinearMap.map_smul, Pi.smul_apply, RingHom.id_apply]
 
 theorem series_apply (F : Frame S T) (ω : PairRep S T) (f : WO S T → ℂ) (h : GA D S) (P : PolF D T.rank S.rank) (g : GA D T) :
@@ -90,7 +94,7 @@ def lawForms {G Γ W : Type} [Group G] [Group Γ] [AddCommGroup W] [Module ℂ W
   carrier := {F | ∀ (γ : Γ) (h : G) (k : J), F (ι γ * h * k) = (χ k : ℂ) • ρ γ (F h)}
   add_mem' := by
     intro F F' hF hF' γ h k
-    simp only [Pi.add_apply, hF γ h k, hF' γ h k, map_add, smul_add]
+    simp only [Pi.add_apply, hF γ h k, hF' γ h k, map_add (f := _), smul_add]
   zero_mem' := by
     intro γ h k
     simp
@@ -110,11 +114,13 @@ variable (B : Base S T)
 def IsWeil (ν : (AE D)ˣ →* Circle) (ω : PairRep S T) : Prop :=
   IsWeilDatumO B.F.ψ S T (B.mu * ν) (B.mu * ν * B.eta⁻¹) ω
 
-open Classical in
 
+open Classical in
 def admitted (Q : Finset (Pl D.host.E)) : Prop := PlacesOK B.G.Pg (B.de.Q ∪ Q) ∧ Disjoint B.de.Q Q
 
-theorem admissible_empty_of_good {B : Base S T} (h : B.Good) : B.admitted ∅ := ⟨by simpa using h.places, Finset.disjoint_empty_right _⟩
+theorem admissible_empty_of_good {B : Base S T} (h : B.Good) : B.admitted ∅ := ⟨by
+  classical
+  simpa only [Finset.union_empty] using h.places, Finset.disjoint_empty_right _⟩
 
 theorem admitted.mono {B : Base S T} {Q Q' : Finset (Pl D.host.E)} (h : B.admitted Q) (hQ : Q' ⊆ Q) : B.admitted Q' := by
   classical
@@ -124,8 +130,8 @@ def locFn (Q : Finset (Pl D.host.E)) (φ : ∀ PP : ↥Q, Matrix (Fin T.rank) (F
     (y : Reds D T.rank S.rank) : ℂ :=
   (∏ PP ∈ B.de.Q, flat (B.de.resC PP) (y PP)) * ∏ PP : ↥Q, φ PP (y PP.1)
 
-open Classical in
 
+open Classical in
 def vecAt (Q : Finset (Pl D.host.E)) (φ : ∀ PP : ↥Q, Matrix (Fin T.rank) (Fin S.rank) (kP PP.1) → ℂ) : WO S T → ℂ :=
   B.F.vec B.G (B.de.Q ∪ Q) (B.locFn Q φ)
 
@@ -141,8 +147,8 @@ theorem vecAt_empty (φ : ∀ PP : ↥(∅ : Finset (Pl D.host.E)), Matrix (Fin 
     B.vecAt ∅ φ = B.vecBase :=
   congrArg (B.vecAt ∅) (funext fun PP => absurd PP.2 (Finset.notMem_empty _))
 
-open Classical in
 
+open Classical in
 theorem isThetaAt_vecAt {B : Base S T} (h : B.Good) {Q : Finset (Pl D.host.E)} (hQ : B.admitted Q)
     (φ : ∀ PP : ↥Q, Matrix (Fin T.rank) (Fin S.rank) (kP PP.1) → ℂ) :
     IsThetaAt B.F.ψ (symplO S T) (heisO B.F.ψ S T) (halfIdem B.G.Pg (B.de.Q ∪ Q)) B.F.lat 1 B.F.f₀
@@ -181,15 +187,12 @@ def gen (ω : PairRep S T) (ψ : Twist D Circle) (h : GA D S) : PolF D T.rank S.
 def genSet (ω : PairRep S T) (ψ : Twist D Circle) (h : GA D S) (P : PolF D T.rank S.rank) : Set (GA D T → ℂ) :=
   {s | ∃ hQ, SuppAt (idem ψ.Q) S hQ ∧ s = B.gen ω ψ (h * hQ) P}
 
-def thetaPsi (ω : PairRep S T) (ψ : Twist D Circle) : Submodule O (GA D T → ℂ) :=
-  Submodule.span O {s | ∃ h ∈ GfC S, TrivAt S ψ.Q h ∧ ∃ P ∈ B.coefLat σ emb O (finPt S h), s ∈ B.genSet ω ψ h P}
-
 section Univ
 
 variable {C : Type} [AddCommGroup C] [Fintype C]
 
-open Classical in
 
+open Classical in
 def xi (ω : PairRep S T) (u : UnivTwist D C) (Q : Finset (Pl D.host.E))
     (Φ : ∀ PP : Pl D.host.E, C → Matrix (Fin T.rank) (Fin S.rank) (kP PP) → ℚ) (h : GA D S) (P : PolF D T.rank S.rank)
     (g : GA D T) : AddMonoidAlgebra ℂ (↥Q → C) :=
@@ -216,14 +219,14 @@ theorem xiCoef_apply (ω : PairRep S T) (u : UnivTwist D C) (Q : Finset (Pl D.ho
     exact fun e => hb (by rw [← e, add_sub_cancel_left])
   · exact fun hb => absurd (Finset.mem_univ _) hb
 
-omit [Fintype C] in
 
+omit [Fintype C] in
 def univFam (u : UnivTwist D C) (β : ∀ PP : Pl D.host.E, DetBases (kP PP) T.rank S.rank) (PP : Pl D.host.E) :
     C → Matrix (Fin T.rank) (Fin S.rank) (kP PP) → ℚ :=
   univCoef (β PP) (u.kap PP)
 
-omit [Fintype C] in
 
+omit [Fintype C] in
 def IsAdmFam (u : UnivTwist D C) (Q : Finset (Pl D.host.E))
     (Φ : ∀ PP : Pl D.host.E, C → Matrix (Fin T.rank) (Fin S.rank) (kP PP) → ℚ) : Prop :=
   ∀ PP ∈ Q, IsAdmissible (u.kap PP) (Φ PP)
@@ -235,8 +238,8 @@ theorem isAdmFam_univFam (u : UnivTwist D C) (Q : Finset (Pl D.host.E))
 
 end Univ
 
-open Classical in
 
+open Classical in
 def levS (ψ : Twist D Circle) : LevDat D.host.E ℂ S.rank :=
   { r := T.rank, hr := B.hr, t := S.rank - T.rank, s := 1, Pg := B.G.Pg, Q := B.de.Q ∪ ψ.Q, P := B.G.P,
     cg := fun _ => B.G.muC, xq := fun PP => B.de.locC PP * ψ.locC PP }
@@ -272,9 +275,6 @@ def mtLat (ψ : Twist D Circle) : Submodule O (Bridge.Gf S → PolF D T.rank S.r
 theorem mem_mtLat {ψ : Twist D Circle} {f : Bridge.Gf S → PolF D T.rank S.rank} :
     f ∈ B.mtLat σ emb O ψ ↔ f ∈ B.formsC ψ ∧ ∀ h, f h ∈ B.coefLat σ emb O h :=
   ⟨fun h => ⟨h.1, fun x => h.2 x trivial⟩, fun h => ⟨h.1, fun x _ => h.2 x⟩⟩
-
-def mtSpace (K' : Subfield ℂ) (ψ : Twist D Circle) : Submodule K' (Bridge.Gf S → PolF D T.rank S.rank) :=
-  Submodule.span K' (B.mtLat σ emb O ψ : Set (Bridge.Gf S → PolF D T.rank S.rank))
 
 def classSum (ω : PairRep S T) (ψ : Twist D Circle) {I : Type} [Fintype I] (h : I → GA D S) :
     (Bridge.Gf S → PolF D T.rank S.rank) →ₗ[ℂ] (GA D T → ℂ) :=
@@ -394,88 +394,52 @@ theorem exists_frame_good (S T : HSp D) (hS : S.SigOK) (hpos : S.IsPosDef) (hT :
   choose BT hBT using fun τ => GlobalTheory.GalLift.Vec.exists_isONBasis (hsT τ) (hT (tauE D τ))
   have dS := GlobalTheory.PlaceModel.isSelfDualC_latFrame S
   have dT := GlobalTheory.PlaceModel.isSelfDualC_latFrame T
-  obtain ⟨βS, hβS⟩ := GlobalTheory.AdelicFrame.exists_isFrame (F := D.host.F) _ dS.1.fg dS.1.span_eq_top
-  obtain ⟨βT, hβT⟩ := GlobalTheory.AdelicFrame.exists_isFrame (F := D.host.F) _ dT.1.fg dT.1.span_eq_top
+  have hsp (V : HSp D) (hd : IsSelfDualC V (GlobalTheory.PlaceModel.latFrame V)) :
+      Submodule.span D.host.E (GlobalTheory.PlaceModel.latFrame V : Set (Fin V.rank → D.host.E)) = ⊤ := by
+    let M := GlobalTheory.PlaceModel.latFrame V
+    apply top_unique
+    intro y _
+    let pairing (x z : Fin V.rank → D.host.E) :=
+      ∑ a, ∑ b, star (x a) * V.gram a b * z b
+    obtain ⟨s, hgen⟩ := hd.1.fg
+    obtain ⟨d, hdint⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors (𝓞 D.host.E)) s (pairing · y)
+    have hd0 : (d : 𝓞 D.host.E) ≠ 0 := mem_nonZeroDivisors_iff_ne_zero.mp d.property
+    have hdE : (d : 𝓞 D.host.E) • y ∈ M := by
+      apply (hd.2 _).2
+      intro x hx
+      show IsLocalization.IsInteger (𝓞 D.host.E) (pairing x ((d : 𝓞 D.host.E) • y))
+      have hscale (z : Fin V.rank → D.host.E) :
+          pairing z ((d : 𝓞 D.host.E) • y) = (d : 𝓞 D.host.E) • pairing z y := by
+        simp only [pairing, Pi.smul_apply, Algebra.smul_def, Finset.mul_sum, Finset.sum_mul,
+          mul_assoc, mul_left_comm, mul_comm]
+      rw [hscale]
+      refine Submodule.span_induction
+        (p := fun z _ => IsLocalization.IsInteger (𝓞 D.host.E) ((d : 𝓞 D.host.E) • pairing z y))
+        ?_ ?_ ?_ ?_ (hgen.symm ▸ hx)
+      · intro z hz
+        exact hdint z hz
+      · simp [pairing, IsLocalization.isInteger_zero]
+      · intro z z' _ _ hz hz'
+        convert IsLocalization.isInteger_add hz hz' using 1
+        simp only [pairing, Pi.add_apply, star_add, add_mul, Finset.sum_add_distrib, smul_add]
+      · intro a z _ hz
+        have ha : IsLocalization.IsInteger (𝓞 D.host.E) (star (a : D.host.E)) := by
+          refine ⟨⟨star (a : D.host.E), ?_⟩, rfl⟩
+          exact a.2.map (starRingEnd D.host.E).toIntAlgHom
+        convert IsLocalization.isInteger_mul ha hz using 1
+        simp only [pairing, Pi.smul_apply, Algebra.smul_def, star_mul', Finset.mul_sum, Finset.sum_mul,
+          mul_assoc, mul_left_comm, mul_comm]
+    have hspan := Submodule.subset_span (R := D.host.E) hdE
+    have hn : ((d : 𝓞 D.host.E) : D.host.E) ≠ 0 := by exact_mod_cast hd0
+    have hy := (Submodule.span D.host.E (M : Set (Fin V.rank → D.host.E))).smul_mem
+      (((d : 𝓞 D.host.E) : D.host.E)⁻¹) hspan
+    rwa [← IsScalarTower.algebraMap_smul D.host.E (d : 𝓞 D.host.E) y,
+      smul_smul, inv_mul_cancel₀ hn, one_smul] at hy
+  obtain ⟨βS, hβS⟩ := GlobalTheory.AdelicFrame.exists_isFrame (F := D.host.F) _ dS.1.fg (hsp S dS)
+  obtain ⟨βT, hβT⟩ := GlobalTheory.AdelicFrame.exists_isFrame (F := D.host.F) _ dT.1.fg (hsp T dT)
   obtain ⟨f₀, hf₀⟩ := GlobalTheory.Member.vacuum_oriented_exists D ψ θ hψ hθ S T (fun _ => 1) sT hS hT
     (fun τ => GlobalTheory.GalLift.Vec.isCartanInv_one (hBS τ)) hsT _ _ dS dT
   exact ⟨⟨ψ, θ, sT, BS, BT, _, _, βS, βT, f₀⟩, hr, hBS, hsT, hBT, dS, dT, hβS, hβT, hf₀⟩
-
-theorem exists_base_good (D : D7) (k : ℕ) : ∃ (S T : HSp D) (B : Base S T), S.rank = 2 * k + 2 ∧ T.rank = 2 * k + 1 ∧
-    B.Good ∧ B.admitted ∅ ∧ ∀ τ, B.w.ap τ 0 = 1 := by
-  let S : HSp D := Examples₂.posSpace Examples₂.star_isIntegral (2 * k + 2)
-  let T : HSp D := Examples₂.posSpace Examples₂.star_isIntegral (2 * k + 1)
-  have hr : T.rank ≤ S.rank := Nat.le_succ _
-  obtain ⟨F, hF⟩ := exists_frame_good S T (Examples₂.posSpace_sigOK _ _) (fun _ => rfl) (Examples₂.posSpace_sigOK _ _) hr
-  obtain ⟨η, hη⟩ := GlobalTheory.WeilParts.exists_isEtaTilde_unramified D
-  let B : Base S T := ⟨hr, F, TypeDat.empty D _, Twist.triv Circle ∅,
-    Weight.first D _ (fun _ => 2 * k + 1) (fun _ => 0) fun _ => k, 1, η⟩
-  have hB : B.Good :=
-    { even := ⟨k + 1, by change 2 * k + 2 = _; ring⟩
-      odd := ⟨k, rfl⟩
-      frame := hF
-      de := Twist.triv_good splitSet_empty
-      places := placesOK_empty
-      wt := Weight.first_good _ (fun _ => Nat.succ_pos _) fun _ => Nat.le_succ _
-      sig := fun _ => rfl
-      sigOK := Examples₂.posSpace_sigOK _ _
-      eta := hη
-      hecke := ⟨continuous_const, fun _ => rfl⟩
-      real := fun _ => rfl
-      unram := fun _ _ _ _ _ => rfl
-      tame := fun _ h => absurd h (Finset.notMem_empty _)
-      inf := fun τ => ⟨0, by simp [B, Weight.first]; ring, ⟨_, hF.vac.2.inf⟩, fun _ _ _ _ _ => by simp [B]⟩ }
-  exact ⟨S, T, B, rfl, rfl, hB, Base.admissible_empty_of_good hB, fun _ => rfl⟩
-
-theorem vec_empty {F : Frame S T} (hF : F.Good) : F.vec (TypeDat.empty D T.rank) ∅ (fun _ => 1) = F.f₀ := by
-  classical
-  have h := (Frame.isPlaceModel_placeMap (G := TypeDat.empty D T.rank) hF placesOK_empty).vac
-  rw [one_smul] at h
-  rw [← h, Frame.vec]
-  congr 1
-  funext x
-  have h0 : halfIdem (TypeDat.empty D T.rank).Pg (∅ : Finset (Pl D.host.E)) = 0 := by
-    change cA D (idem ∅) + idem ∅ = 0
-    rw [idem_empty, RingHom.map_zero, add_zero]
-  have h1 : ∀ y : Reds D S.rank T.rank, omegaG (TypeDat.empty D T.rank).levT (TypeDat.empty D T.rank).muC y = 1 := fun y => by
-    haveI : IsEmpty ↥(TypeDat.empty D T.rank).levT.Pg := ⟨fun PP => absurd PP.2 (Finset.notMem_empty _)⟩
-    unfold omegaG
-    rw [dif_pos ⟨fun _ h => absurd h (Finset.notMem_empty _), fun PP => isEmptyElim PP, fun PP => isEmptyElim PP,
-      fun PP => isEmptyElim PP, Subgroup.mem_bot.2 (Subsingleton.elim _ _)⟩, Finset.univ_eq_empty, Finset.prod_empty,
-      Finset.prod_empty, mul_one, mul_one]
-    rfl
-  rw [Frame.datumFn, halfInd, h0]
-  by_cases hx : IsHalf (0 : AE D) x
-  · obtain rfl : x = 0 := Matrix.ext fun i j => by rw [← hx i j, zero_mul]; rfl
-    have i1 : IsIntM (frMapAdj S T F.βS F.βT 0) := by
-      have := GlobalTheory.PlaceVec.frMapAdj_add S T F.βS F.βT 0 0
-      rw [add_zero, left_eq_add] at this
-      rw [this]
-      exact fun _ _ => zero_mem _
-    have i2 : IsIntM (frMapO S T F.βS F.βT 0) := by
-      intro i j
-      have := GlobalTheory.PlaceDatum.frMapO_add F.βS F.βT 0 0 1 i j
-      rw [one_smul, add_zero, Nat.cast_one, one_mul, left_eq_add] at this
-      rw [this]
-      exact zero_mem _
-    rw [if_pos ⟨hx, i1⟩, if_pos ⟨hx, i2⟩, if_pos ⟨zero_mem _, hx⟩, h1, one_mul]
-  · rw [if_neg fun h => hx h.1, zero_mul, if_neg fun h => hx h.2]
-
-example (D : D7) : IsCoefRing D.what₂.embLL (Links.labLL D) ⊤ :=
-  ⟨fun τ => FWT.embV_spec (RingHom.id _) D.what₂.embLL (RingHom.comp_id _) τ, fun _ => trivial⟩
-
-example (B : Base S T) (ω : PairRep S T) (h : GA D S) (P : PolF D T.rank S.rank) :
-    B.genSet ω (Twist.triv Circle ∅) h P = {B.theta ω h P} := B.genSet_triv ω h P
-
-example (F : Frame S T) (ω : PairRep S T) (f : WO S T → ℂ) : series F ω f 1 1 1 = f 0 := by
-  have : F.fock f 1 = f := by
-    rw [Frame.fock, pureTensorO, pureTensorL]
-    have := (MvPolynomial.basisMonomials (FVar D T.rank S.rank) ℂ).constr_basis ℂ
-      (fun k : FVar D T.rank S.rank →₀ ℕ => opPow (aPlusAll (heisO F.ψ S T) F.θ (fun τ => cplxO 1 (F.sT τ))
-        (fun τ => (F.BS τ).val) F.BT) k f) 0
-    rw [MvPolynomial.coe_basisMonomials] at this
-    exact this.trans (by simp [opPow])
-  rw [series_apply, this, show ((1, 1) : GA D S × GA D T) = 1 from rfl, MonoidHom.map_one]
-  rfl
 
 end GlobalTheory.ExportSeries
 

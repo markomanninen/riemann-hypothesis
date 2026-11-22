@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.XZeroPowDvdOfIsHomogeneousAeval
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.XZeroPowDvdOfIsHomogeneousAeval
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem exists_indep_sections (x : κ → Ω) (e : Fin (D + 1) → κ) (h : IsRa
 theorem secTrace_mem (x : κ → Ω) (e : Fin (D + 1) → κ) (h : IsProjFrame x e) (n : ℕ) {s : Ω}
     (hs : s ∈ sec ℤ x n) : secTrace x e n s ∈ sec ℤ (x ∘ e) n := by
   unfold secTrace fnTrace
-  rw [dif_pos (TraceNormBounds.sec_div_mem x (e 0) hs)]
+  rw [dite_eq_left (TraceNormBounds.sec_div_mem x (e 0) hs)]
   exact TraceNormBounds.trace_mem_sec x e h n hs
 
 theorem eq_zero_of_secTrace_mul_eq_zero (x : κ → Ω) (e : Fin (D + 1) → κ) (h : IsRatProjFrame x e)

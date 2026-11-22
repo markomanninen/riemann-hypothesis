@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShortLatticeUnitarize.Unitarize
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Tjcosets
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShortLatticeUnitarize.Unitarize
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Tjcosets
+
+@[expose] public section
 
 open NumberField IsDedekindDomain IsLocalRing UpperTheory.V UpperTheory.V.Sd Formalism.ConjugateSelfDual
 
@@ -18,7 +22,7 @@ private theorem pow_two_dim {O k : Type} [CommRing O] [CommRing k] (r : O →+* 
     refine ⟨U * (M 0 0 + M 1 1) + V, -(U * (M 0 0 * M 1 1 - M 0 1 * M 1 0)), ?_, ?_, ?_⟩
     · rw [pow_succ, h, add_mul, smul_mul_assoc, smul_mul_assoc, one_mul, sq_two M]
       module
-    · rw [map_add, map_mul, ht, hU, hV]; push_cast; ring
+    · rw [map_add (f := _), map_mul, ht, hU, hV]; push_cast; ring
     · rw [map_neg, map_mul, hd, hU]; push_cast; ring
 
 private theorem field_two {k : Type} [Field k] (hk : Nat.card k = 2) :
@@ -46,7 +50,7 @@ private theorem gen {O K : Type} [CommRing O] [IsLocalRing O] [Field K] (φ : O 
     rw [map_sub, map_mul, map_mul, hc, hd] at hdet
     simpa using hdet
   obtain ⟨U, V, hp, hU, -⟩ := pow_two_dim (residue O) (h : Matrix (Fin 2) (Fin 2) O)
-    (by rw [map_add, ha, hd]; norm_num) hdet n
+    (by rw [map_add (f := _), ha, hd]; norm_num) hdet n
   have hUu : IsUnit U := by
     by_contra hU'
     have h0 : residue O U = 0 := (residue_eq_zero_iff U).2 hU'

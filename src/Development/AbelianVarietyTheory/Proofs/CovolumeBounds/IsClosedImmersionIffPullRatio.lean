@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.TwistingSheafOneChartEqPreimageStandardChart
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsRegularFnIffOfIsAffineOpen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.TwistingSheafOneChartEqPreimageStandardChart
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsRegularFnIffOfIsAffineOpen
+
+@[expose] public section
 
 noncomputable section
 
@@ -221,11 +225,13 @@ structure IsCoordFamily (U : Fin (N + 1) → Y.Opens) (r : ∀ i, Fin (N + 1) �
   basicOpen_le : ∀ i j, Y.basicOpen (r i j) ≤ U j
 
 theorem isCoordFamily_pullRatio (φ : Y ⟶ PSpace R N) :
-    IsCoordFamily (fun i => φ ⁻¹ᵁ chart R N i) (fun i => pullRatio φ _ i le_rfl) where
-  cover := by rw [← Scheme.Hom.preimage_iSup, iSup_chart]; rfl
-  self _ := pullRatio_self
-  mul i j k := by rw [resG_pullRatio, resG_pullRatio, resG_pullRatio, pullRatio_mul_pullRatio]
-  basicOpen_le _ _ := basicOpen_pullRatio.le.trans inf_le_right
+    IsCoordFamily (fun i => φ ⁻¹ᵁ chart R N i) (fun i => pullRatio φ _ i le_rfl) := by
+  refine { cover := φ.iSup_preimage_eq_top (iSup_chart R N)
+           self := fun _ => pullRatio_self
+           mul := ?_
+           basicOpen_le := fun _ _ => basicOpen_pullRatio.le.trans inf_le_right }
+  intro i j k
+  rw [resG_pullRatio, resG_pullRatio, resG_pullRatio, pullRatio_mul_pullRatio]
 
 namespace IsCoordFamily
 
@@ -243,14 +249,6 @@ theorem appLE_mul (g : Z ⟶ Y) {T : Z.Opens} {i j : Fin (N + 1)} (hi : T ≤ g 
 theorem isUnit_appLE (g : Z ⟶ Y) {T : Z.Opens} {i j : Fin (N + 1)} (hi : T ≤ g ⁻¹ᵁ U i)
     (hj : T ≤ g ⁻¹ᵁ U j) : IsUnit ((g.appLE _ T hi).hom (r i j)) :=
   .of_mul_eq_one _ ((H.appLE_mul g hi hj i).trans (by rw [H.self, map_one]))
-
-theorem basicOpen_eq (i j : Fin (N + 1)) : Y.basicOpen (r i j) = U i ⊓ U j := by
-  refine le_antisymm (le_inf (Y.basicOpen_le _) (H.basicOpen_le i j)) ?_
-  have hu : IsUnit (resG Y (inf_le_left : U i ⊓ U j ≤ U i) (r i j)) :=
-    .of_mul_eq_one _ ((H.mul i j i).trans (by rw [H.self, map_one]))
-  have := Y.basicOpen_of_isUnit hu
-  rw [Scheme.basicOpen_res] at this
-  exact this.ge.trans inf_le_right
 
 theorem comp_ofCoords_eq (f : Y ⟶ Sp R) (i j : Fin (N + 1)) (a : Z ⟶ (U i).toScheme)
     (b : Z ⟶ (U j).toScheme) (e : a ≫ (U i).ι = b ≫ (U j).ι) :

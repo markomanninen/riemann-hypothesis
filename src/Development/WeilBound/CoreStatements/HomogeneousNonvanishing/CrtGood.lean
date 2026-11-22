@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.ProIsoAt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.ProIsoAt
+
+@[expose] public section
+
 open NumberField TensorProduct GlobalTheory.CompanionTheory.Ar
 
 namespace PositivityTheory.UnitarySelfGeneration
@@ -123,10 +128,10 @@ theorem tw_crt : ∀ (O : Type) [CommRing O] (L L' : Type) [AddCommGroup L] [Mod
       obtain ⟨c, hc⟩ := (f p hp).isom k x y
       refine ⟨c + B' e (a n y) + B' ((f p hp).a k x) e', ?_⟩
       have h1 : B' (a n x) (a n y) = B' ((f p hp).a k x) (a n y) + p ^ k • B' e (a n y) := by
-        rw [he, map_add, map_nsmul]; rfl
+        rw [he, map_add (f := _), map_nsmul]; rfl
       have h2 : B' ((f p hp).a k x) (a n y) = B' ((f p hp).a k x) ((f p hp).a k y)
           + p ^ k • B' ((f p hp).a k x) e' := by
-        rw [he', map_add, map_nsmul]
+        rw [he', map_add (f := _), map_nsmul]
       rw [h1, h2]
       simp only [nsmul_eq_mul]
       push_cast

@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PScalarQuotient
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FlagIndependenceStatement
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PScalarQuotient
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FlagIndependenceStatement
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Num.ScalarFlags
 

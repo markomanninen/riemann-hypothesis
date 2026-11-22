@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -20,7 +25,7 @@ theorem one_tmul_ne_zero_of_domain {A P k : Type} [CommRing A] [IsDomain A] [Add
   haveI : Module.Flat (FractionRing A) k := Module.Flat.of_free
   haveI : Module.Flat A k := Module.Flat.trans _ (FractionRing A) _
   have hi : Function.Injective (LinearMap.toSpanSingleton A P y) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     exact hy
   have h2 : (1 : k) ⊗ₜ[A] (1 : A) = 0 := by
     apply Module.Flat.lTensor_preserves_injective_linearMap (M := k) _ hi
@@ -43,7 +48,7 @@ theorem one_tmul_ne_zero {R₀ P k : Type} [CommRing R₀] [AddCommGroup P] [Mod
     (Ideal.Quotient.lift p (algebraMap R₀ k) (fun a ha => (hk a).2 ha)).toAlgebra
   haveI : IsScalarTower R₀ (R₀ ⧸ p) k := IsScalarTower.of_algebraMap_eq (fun _ => rfl)
   have hinj : Function.Injective (algebraMap (R₀ ⧸ p) k) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective a
     exact Ideal.Quotient.eq_zero_iff_mem.2 ((hk a).1 ha)
@@ -70,7 +75,7 @@ theorem one_tmul_eq_zero {R₀ M C₀ C₁ k : Type} [CommRing R₀] [AddCommGro
       have := LinearMap.congr_fun hg ((1 : k) ⊗ₜ[R₀] c)
       simp only [LinearMap.comp_apply, LinearMap.baseChange_tmul, LinearMap.id_apply] at this
       simp [this]
-    | add a b ha hb => simp only [map_add, ha, hb, tmul_add]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb, tmul_add]
   rw [← key, hy]
   simp
 
@@ -94,7 +99,7 @@ theorem exists_of_torsion {R₀ N C : Type} [CommRing R₀] [AddCommGroup N] [Mo
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul n c => simp [g, smul_tmul']
-    | add u v hu hv => simp only [map_add, Pi.add_apply, hu, hv, smul_add]
+    | add u v hu hv => simp only [map_add (f := _), Pi.add_apply, hu, hv, smul_add]
   funext a
   rw [key, hx _ (Ideal.subset_span a.2)]
   simp

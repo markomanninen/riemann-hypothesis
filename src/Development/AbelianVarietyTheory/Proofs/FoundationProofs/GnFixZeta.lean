@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBasisOnZetaPowMulQPow
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CupKummerDlogModPrimePowLevelLStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricLevelH1CoboundaryStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EdgeClassCupProductGeometricStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerCocycleValueExpansionEqLogDerivSmulStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBasisOnZetaPowMulQPow
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CupKummerDlogModPrimePowLevelLStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricLevelH1CoboundaryStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EdgeClassCupProductGeometricStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerCocycleValueExpansionEqLogDerivSmulStatement
+
+@[expose] public section
+
 open scoped MatrixGroups
 open GlobalTheory.KZ GlobalTheory.Glue GlobalTheory.K5 GlobalTheory.KummerEisensteinGalois
 
@@ -48,7 +53,7 @@ theorem adjoin_top (L : ℕ) : Algebra.adjoin (O0 p) {xn p L, yn p L} = ⊤ := b
   have hy : yn p L ∈ Algebra.adjoin (O0 p) {xn p L, yn p L} := Algebra.subset_adjoin (by simp)
   exact Subalgebra.mul_mem _ (Subalgebra.pow_mem _ hx _) (Subalgebra.pow_mem _ hy _)
 
-theorem emb_int (L : ℕ) (ι : On p L →ₐ[O0 p] Ω) (z : On p L) : IsInt p (ι z) := by
+theorem emb_int (L : ℕ) (ι : On p L →ₐ[O0 p] Ω) (z : On p L) : IsInt (p := p) (ι z) := by
   obtain ⟨b, -⟩ := GlobalTheory.K5.OnFree.on_free p L
   haveI : Module.Finite (O0 p) (On p L) := Module.Finite.of_basis b
   haveI : Algebra.IsIntegral (O0 p) (On p L) := Algebra.IsIntegral.of_finite _ _
@@ -64,12 +69,12 @@ theorem emb_fix (T : Tower p Ω) {L : ℕ} {ι : On p L →ₐ[O0 p] Ω} (hι : 
     · simp [hι.2, ((Basic.mem_gn T L g).1 hg).2])
   exact congrArg (fun φ : On p L →ₐ[O0 p] Ω => φ z) h
 
-theorem pint (k : ℕ) : IsInt p ((p : Ω) ^ k) := by
+theorem pint (k : ℕ) : IsInt (p := p) ((p : Ω) ^ k) := by
   have := Basic.isInt_intCast (p := p) (Ω := Ω) ((p : ℤ) ^ k)
   push_cast at this
   exact this
 
-theorem qq_int (T : Tower p Ω) (L : ℕ) : IsInt p (T.qq L) := by
+theorem qq_int (T : Tower p Ω) (L : ℕ) : IsInt (p := p) (T.qq L) := by
   refine ⟨Polynomial.X ^ (p ^ L) - Polynomial.C (qO p),
     Polynomial.monic_X_pow_sub_C _ (pow_ne_zero _ hp.out.ne_zero), ?_⟩
   rw [Polynomial.eval₂_sub, Polynomial.eval₂_X_pow, Polynomial.eval₂_C, Basic.qq_pow, sub_self]
@@ -81,7 +86,7 @@ theorem reb_mem {T : Tower p Ω} {L : ℕ} {ψ : O0 p →+* Ω} (hψ : IsReb T L
   exact h
 
 theorem reb_int {T : Tower p Ω} {L : ℕ} {ψ : O0 p →+* Ω} (hψ : IsReb T L ψ) (y : O0 p) :
-    IsInt p (ψ y) := by
+    IsInt (p := p) (ψ y) := by
   have h : Algebra.adjoin (O0 p) {T.qq L} ≤ integralClosure (O0 p) Ω :=
     Algebra.adjoin_le (by rw [Set.singleton_subset_iff, SetLike.mem_coe, mem_integralClosure_iff]; exact qq_int T L)
   exact h (reb_mem hψ y)
@@ -97,7 +102,7 @@ theorem reb_fix {T : Tower p Ω} {L : ℕ} {ψ : O0 p →+* Ω} (hψ : IsReb T L
   simpa using h2
 
 theorem ev_int {T : Tower p Ω} {L : ℕ} {ψ : O0 p →+* Ω} (hψ : IsReb T L ψ) {c : ℤ → Ω} {x x' : Ω}
-    (h : Ev ψ c x x') : IsInt p x ∧ IsInt p x' := by
+    (h : Ev ψ c x x') : IsInt (p := p) x ∧ IsInt (p := p) x' := by
   obtain ⟨d, e, a, he, -, rfl, rfl⟩ := h
   exact ⟨(integralClosure (O0 p) Ω).sum_mem fun t _ => (he t).1.mul (reb_int hψ _),
     (integralClosure (O0 p) Ω).sum_mem fun t _ => (he t).1.mul (reb_int hψ _)⟩
@@ -107,10 +112,10 @@ theorem ev_fix {T : Tower p Ω} {L : ℕ} {ψ : O0 p →+* Ω} (hψ : IsReb T L 
   obtain ⟨hg1, hg2⟩ := Subgroup.mem_inf.1 hg
   have hq : g (T.qq L) = T.qq L := ((Basic.mem_gn T L g).1 hg2).2
   obtain ⟨d, e, a, he, -, rfl, rfl⟩ := h
-  constructor <;>
-  · rw [map_sum]
-    refine Finset.sum_congr rfl fun t _ => ?_
-    rw [map_mul, hg1 _ (he t).2, reb_fix hψ hq]
+  set_option synthInstance.maxHeartbeats 100000 in
+    constructor <;> rw [map_sum] <;>
+      refine Finset.sum_congr rfl fun t _ => ?_ <;>
+      rw [map_mul, hg1 _ (he t).2, reb_fix hψ hq]
 
 theorem conj_mem {T : Tower p Ω} {L : ℕ} {σ g : Gal p Ω} (hσ : σ ∈ Gn T L) (hg : g ∈ Ggeo p Ω ⊓ Gn T L) :
     σ * g * σ⁻¹ ∈ Ggeo p Ω ⊓ Gn T L := by
@@ -134,7 +139,7 @@ theorem kum_rel (T : Tower p Ω) {n : ℕ} {H : Subgroup (Gal p Ω)} {θ ρ ra r
     {e ka kb : Gal p Ω → ZMod (p ^ n)}
     (hθ : IsKum T n H θ e) (ha : IsKum T n H ra ka) (hb : IsKum T n H rb kb)
     (hρ : ∀ g ∈ H, g ρ = ρ) (hrel : θ * rb = ρ * ra) (hne : θ * rb ≠ 0) {g : Gal p Ω} (hg : g ∈ H) :
-    Cong p n (((e g).val : Ω) + ((kb g).val : Ω)) ((ka g).val : Ω) := by
+    Cong (p := p) n (((e g).val : Ω) + ((kb g).val : Ω)) ((ka g).val : Ω) := by
   have h1 := congrArg g hrel
   rw [map_mul, map_mul, hθ g hg, hb g hg, hρ g hg, ha g hg] at h1
   have h2 : T.ζ n ^ ((e g).val + (kb g).val) * (θ * rb) = T.ζ n ^ (ka g).val * (θ * rb) := by
@@ -155,15 +160,16 @@ theorem edge_dlog : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∃ c : ℕ, ∀ (
   ∀ x y lz η : Gal p Ω → ZMod (p ^ n), IsKum T n (Gn T L) r x → IsKum T n (Gn T L) s y → IsKum T n (Gn T L) (T.ζ (L + n)) lz →
   (∀ g ∈ (Ggeo p Ω ⊓ Gn T L), ∀ h ∈ (Ggeo p Ω ⊓ Gn T L), x g * y h = η h - η (g * h) + η g) →
   (∀ g ∈ (Ggeo p Ω ⊓ Gn T L), ∃ S : Finset Ω, ∀ h ∈ (Ggeo p Ω ⊓ Gn T L), (∀ z ∈ S, h z = g z) → η h = η g) →
-  ∃ o : Ω, IsInt p o ∧ (∀ g ∈ (Ggeo p Ω ⊓ Gn T L), g o = o) ∧ ∀ σ ∈ Gn T L, ∀ (θ κ a a' b b' : Ω) (ca cb : ℤ → Ω),
+  ∃ o : Ω, IsInt (p := p) o ∧ (∀ g ∈ (Ggeo p Ω ⊓ Gn T L), g o = o) ∧ ∀ σ ∈ Gn T L, ∀ (θ κ a a' b b' : Ω) (ca cb : ℤ → Ω),
     IsKum T n (Ggeo p Ω ⊓ Gn T L) θ (fun h => η (σ * h * σ⁻¹) - η h - x h * y σ + x σ * y h) →
-    κ ≠ 0 → IsAlgZp p κ → θ ^ (p ^ n) * b = κ * a → Ev ψ ca a a' → Ev ψ cb b b' → a ≠ 0 → IsInt p a⁻¹ → b ≠ 0 → IsInt p b⁻¹ →
-    Cong p n ((p : Ω) ^ c * (a' / a - b' / b)) (σ⁻¹ o - o - (p : Ω) ^ c * ι (α * β' - β * α') * ((lz σ).val : Ω)) := by
+    κ ≠ 0 → IsAlgZp p κ → θ ^ (p ^ n) * b = κ * a → Ev ψ ca a a' → Ev ψ cb b b' → a ≠ 0 → IsInt (p := p) a⁻¹ → b ≠ 0 → IsInt (p := p) b⁻¹ →
+    Cong (p := p) n ((p : Ω) ^ c * (a' / a - b' / b)) (σ⁻¹ o - o - (p : Ω) ^ c * ι (α * β' - β * α') * ((lz σ).val : Ω)) := by
   intro p _ hp2
   obtain ⟨c₁, h53⟩ := GlobalTheory.T.cup_kummer_dlog_mod_primePow_levelL p hp2
   obtain ⟨c₂, hed⟩ := GlobalTheory.T.edge_class_cup_product_geometric p hp2 c₁
   obtain ⟨c₃, hgeo⟩ := GlobalTheory.T.kummerCocycle_value_expansion_eq_logDeriv_smul p hp2
-  obtain ⟨c₄, h71⟩ := GlobalTheory.T.geometric_level_h1_coboundary p hp2
+  have hlevel := GlobalTheory.K5.Reb.h1_geometric_level_coboundary p hp2
+  obtain ⟨c₄, h71⟩ := hlevel
   refine ⟨c₂ + c₃ + c₄, ?_⟩
   intro Ω _ _ hΩ T L n hnL hn1 ψ hψ ι hι u v α β α' β' hu hv r s hr hs x y lz η hx hy hlz hcup hloc
   haveI := hΩ.clo
@@ -225,12 +231,12 @@ theorem edge_dlog : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∃ c : ℕ, ∀ (
       _ = σ⁻¹ o₁ := by rw [h1]
   obtain ⟨X, hXd⟩ : ∃ X : Ω, X = (p : Ω) ^ c₃ * (σ⁻¹ o₁ - o₁ - (p : Ω) ^ c₂ * ι (α * β' - β * α') * ((lz σ).val : Ω))
       - (p : Ω) ^ (c₂ + c₃) * (a' / a - b' / b) := ⟨_, rfl⟩
-  have hXi : IsInt p X := by
+  have hXi : IsInt (p := p) X := by
     have ha' := (ev_int hψ hea).2
     have hb' := (ev_int hψ heb).2
-    have hfi : IsInt p (ι (α * β' - β * α')) := emb_int L ι _
-    have hσi : IsInt p (σ⁻¹ o₁) := Basic.isInt_gal _ ho₁i
-    have hlzi : IsInt p (((lz σ).val : Ω)) := by
+    have hfi : IsInt (p := p) (ι (α * β' - β * α')) := emb_int L ι _
+    have hσi : IsInt (p := p) (σ⁻¹ o₁) := Basic.isInt_gal _ ho₁i
+    have hlzi : IsInt (p := p) (((lz σ).val : Ω)) := by
       have := Basic.isInt_intCast (p := p) (Ω := Ω) ((lz σ).val : ℤ)
       exact_mod_cast this
     rw [hXd, div_eq_mul_inv, div_eq_mul_inv]

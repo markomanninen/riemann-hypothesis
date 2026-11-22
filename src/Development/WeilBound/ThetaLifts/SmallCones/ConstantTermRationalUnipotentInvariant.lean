@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.SmallCones.KerPol
-import Development.WeilBound.ThetaLifts.SmallCones.KerUni
-import Development.WeilBound.ThetaLifts.TowerModels.PlaneForm
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.KerPol
+public import Development.WeilBound.ThetaLifts.SmallCones.KerUni
+public import Development.WeilBound.ThetaLifts.TowerModels.PlaneForm
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -52,8 +56,8 @@ theorem tm_one (U) (Φ) : tm B M om H' e U Φ 1 = thetaSum F (e (M.co.rho B.ψ (
 
 end Gen
 
-variable (σ W H') in
 
+variable (σ W H') in
 structure MeanOK (μ : Measure (unip σ W H')) (𝓕 : Set (unip σ W H')) : Prop where
   haar : μ.IsHaarMeasure
   right : μ.IsMulRightInvariant

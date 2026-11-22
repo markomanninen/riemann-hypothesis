@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StProperSheetedFibreEsymm
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StUnbranchedProperCountConstant
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRiemannExtensionAnalytic
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StParametricCircleIntegralAnalytic
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StProperSheetedFibreEsymm
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StUnbranchedProperCountConstant
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRiemannExtensionAnalytic
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StParametricCircleIntegralAnalytic
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -13,8 +18,8 @@ open scoped Real
 
 namespace ProperSheetedFibreEsymm
 
-open Classical in
 
+open Classical in
 noncomputable def fibreEsymm {σ : Type} {d : ℕ} (Y : Set (σ → ℂ)) (A : (σ → ℂ) →L[ℂ] (Fin d → ℂ))
     (l : (σ → ℂ) →L[ℂ] ℂ) (j : ℕ) (t : Fin d → ℂ) : ℂ :=
   if h : {x | x ∈ Y ∧ A x = t}.Finite then (h.toFinset.val.map l).esymm j else 0
@@ -24,7 +29,7 @@ theorem fibreEsymm_eq {σ : Type} {d : ℕ} {Y : Set (σ → ℂ)} {A : (σ → 
     (hs : (↑s : Set (σ → ℂ)) = {x | x ∈ Y ∧ A x = t}) : fibreEsymm Y A l j t = (s.val.map l).esymm j := by
   have h : {x | x ∈ Y ∧ A x = t}.Finite := hs ▸ s.finite_toSet
   have hs' : h.toFinset = s := Finset.coe_injective (by rw [Set.Finite.coe_toFinset, hs])
-  rw [fibreEsymm, dif_pos h, hs']
+  rw [fibreEsymm, dite_eq_left h, hs']
 
 theorem fibre_sections {σ : Type} [Fintype σ] {Y : Set (σ → ℂ)} {d : ℕ} {A : (σ → ℂ) →L[ℂ] (Fin d → ℂ)}
     {D : Set (Fin d → ℂ)} {δ : (Fin d → ℂ) → ℂ} (hD : IsOpen D)
@@ -128,7 +133,7 @@ theorem norm_esymm_map_le {ι : Type*} (S : Finset ι) (f : ι → ℂ) (j : ℕ
         refine Finset.sum_le_sum fun u hu => ?_
         obtain ⟨hu1, hu2⟩ := Finset.mem_powersetCard.1 hu
         rw [norm_prod, ← hu2, ← Finset.prod_const]
-        exact Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun x hx => hC x (hu1 hx)
+        exact Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun x hx => hC x (hu1 hx)
     _ = _ := by rw [Finset.sum_const, Finset.card_powersetCard, nsmul_eq_mul]
 
 theorem fibreEsymm_locally_bounded (hcount : UnbranchedProperCountConstant.Statement) {σ : Type} [Fintype σ]
@@ -186,8 +191,8 @@ theorem analyticOnNhd_of_differentiableOn (hcirc : ParametricCircleIntegralAnaly
     AnalyticOnNhd ℂ F U := by
   have h := hcirc (Fin k) (fun p => F p.1 * p.2⁻¹) (U ×ˢ {s | s ≠ 0}) U 0 1 zero_le_one
     (hU.prod isOpen_ne) hU
-    ((hF.comp differentiable_fst.differentiableOn fun p hp => hp.1).mul
-      (differentiable_snd.differentiableOn.inv fun p hp => hp.2))
+    ((hF.fun_comp differentiable_fst.differentiableOn mapsTo_fst_prod).mul
+      (differentiable_snd.differentiableOn.inv fun _ hp => (mem_prod.1 hp).2))
     (fun x hx s hs => ⟨hx, by rintro rfl; simp at hs⟩)
   have hinv : (∮ z in C(0, 1), z⁻¹) = 2 * π * I := by
     simpa using circleIntegral.integral_sub_inv_of_mem_ball (c := 0) (w := 0) (R := 1) (by simp)
@@ -199,8 +204,8 @@ theorem analyticOnNhd_of_differentiableOn (hcirc : ParametricCircleIntegralAnaly
 
 end ProperSheetedFibreEsymm
 
-open ProperSheetedFibreEsymm in
 
+open ProperSheetedFibreEsymm in
 theorem ProperSheetedFibreEsymm.proof (hcount : UnbranchedProperCountConstant.Statement)
     (hriem : RiemannExtensionAnalytic.Statement) (hcirc : ParametricCircleIntegralAnalytic.Statement) :
     ProperSheetedFibreEsymm.Statement := by

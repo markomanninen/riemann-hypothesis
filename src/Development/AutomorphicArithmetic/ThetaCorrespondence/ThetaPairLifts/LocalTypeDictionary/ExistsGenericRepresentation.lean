@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DiscreteSpectrumResidualClassification
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DarbouxSchrodingerCompatibility
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BernsteinUnitaryProductIrreducible
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.ArchimedeanComponentDiscreteSeries
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DarbouxSchrodingerCompatibilityStatement
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DiscreteSpectrumResidualClassification
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DarbouxSchrodingerCompatibility
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BernsteinUnitaryProductIrreducible
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.ArchimedeanComponentDiscreteSeries
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DarbouxSchrodingerCompatibilityStatement
+
+@[expose] public section
 
 section
 noncomputable section
@@ -56,7 +60,7 @@ theorem exists_generic_representation : _root_.GlobalTheory.FunPr.ThetaLocalInpu
       rw [e1, hω, hω]
       exact (hsplit g hg (ρ g f) (ρ g f₁) h ((hR g hg).1 u hu f f₁ hf₁)).symm
     | zero => rw [rho_zero', map_zero, rho_zero']
-    | add x y _ _ hx hy => rw [rho_add', map_add, map_add, hx, hy, rho_add']
+    | add x y _ _ hx hy => rw [rho_add', map_add (f := _), map_add (f := _), hx, hy, rho_add']
     | smul c x _ hx => rw [rho_smul', map_smul, map_smul, hx, rho_smul']
   · unfold schA at hφ
     induction hφ using Submodule.span_induction with
@@ -67,12 +71,16 @@ theorem exists_generic_representation : _root_.GlobalTheory.FunPr.ThetaLocalInpu
       rw [e]
       exact hcont T f
     | zero => simp only [map_zero]; exact continuousOn_const
-    | add x y _ _ hx hy => simp only [map_add]; exact hx.add hy
+    | add x y _ _ hx hy => simp only [map_add (f := _)]; exact hx.add hy
     | smul c x _ hx => simp only [map_smul, smul_eq_mul]; exact continuousOn_const.mul hx
   · intro γ hγ Y hY T h hh l hl
     obtain ⟨L, hL⟩ := hl h hh
     show HasDerivAt (fun t : ℝ => l (ω₀ (γ (Multiplicative.ofAdd t)) (pureA F (Φ T) h))) _ 0
-    simp only [hω, hL]
+    have heq : (fun t : ℝ => l (ω₀ (γ (Multiplicative.ofAdd t)) (pureA F (Φ T) h))) =
+        (fun t : ℝ => L (ρ (γ (Multiplicative.ofAdd t)) (Φ T))) := by
+      funext t
+      erw [hω, hL]
+    rw [heq, hL]
     exact hder γ hγ Y hY T L
 end GlobalTheory.GenRep
 end

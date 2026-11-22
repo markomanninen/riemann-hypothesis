@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTorsionFreePDThickeningFrameValuationIntegers
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubstEqAddOfCob1EqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapSumSmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupChartIntegralAdditiveSeriesEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTorsionFreePDThickeningFrameValuationIntegers
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubstEqAddOfCob1EqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapSumSmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupChartIntegralAdditiveSeriesEqZero
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
 set_option autoImplicit false
@@ -57,7 +62,8 @@ theorem main : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C]
   have hs := GlobalTheory.QLog.Chart.isLie_comb p O C hF G d c _ e' _ b' hQL hLie'
   rw [hcomb] at hs
   have hc0 : constantCoeff (h - comb a e0) = 0 := by
-    rw [map_sub, hh.1, comb, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, hh.1, comb, map_sum]
     simp [← coeff_zero_eq_constantCoeff_apply, coeff_smul,
       coeff_zero_eq_constantCoeff_apply, (hB.1 _).1]
   have hl0 := (GlobalTheory.LieZero.lie_eq_zero p O C hF G d c _ _ hs).1 ha hc0
@@ -74,7 +80,8 @@ theorem main : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C]
       AddMonoidHom.mk' (cob1 (up C c.μ)) hadd
     have e1 : cob1 (up C c.μ) (comb a e0) = 0 := by
       change Φ (comb a e0) = 0
-      rw [comb, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [comb, map_sum]
       refine Finset.sum_eq_zero fun x _ => ?_
       change cob1 (up C c.μ) (algebraMap O C (a x) • e0 x) = 0
       rw [formalCoboundary_smul hμ]
@@ -89,7 +96,8 @@ theorem main : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C]
   rw [hs0, map_zero] at hs'
   have hEq : h = comb a e0 := sub_eq_zero.1 hs'.symm
   rw [hEq]
-  simp only [lin, comb, Fintype.sum_sum_type, map_add, map_sum, coeff_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [lin, comb, Fintype.sum_sum_type, map_add (f := _), map_sum, coeff_smul, smul_eq_mul]
   have h2 : ∀ j, algebraMap O C (a (Sum.inr j)) * coeff (Finsupp.single i 1) (e0 (Sum.inr j)) = 0 :=
     fun j => by rw [hinr j, map_zero, zero_mul]
   have h1 : ∀ i', coeff (Finsupp.single i 1) (e0 (Sum.inl i')) = (Pi.single i' (1 : C) : Fin d → C) i :=

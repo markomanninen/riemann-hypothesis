@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -143,9 +147,5 @@ variable {la : HeightOneSpectrum (𝓞 c.F)} {e : ℕ}
 end Local
 
 variable (Xo c)
-
-def IndepOn (p : CDVR → Prop) (k : ℕ) : Prop :=
-  ∀ (T : CDVR), p T → ∀ (io : c.F →+* T.Fr) (y : IntFr Xo c T io) (C C' : IntChart T io y) (e : ℕ)
-    (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ), nuLocC C e k a n = nuLocC C' e k a n
 
 end GlobalTheory.LocalDepthCompare

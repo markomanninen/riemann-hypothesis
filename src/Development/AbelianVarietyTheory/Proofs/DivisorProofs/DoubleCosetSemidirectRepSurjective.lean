@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -14,16 +18,16 @@ theorem doubleCoset_semidirect_surj :
             DoubleCoset.mk TP KP (s (Quotient.out (DoubleCoset.mk TM KM (π (Quotient.out d)))) * u X)
               = d := by
   intro P M N _ _ _ s π u hs _ hker KP KM L hKs _ _ TM CM TP CP _ hTP _ _ d
-  obtain ⟨t, ht, k, hk, hm⟩ := (DoubleCoset.eq TM KM
+  obtain ⟨t, ht, k, hk, hm⟩ := (@DoubleCoset.eq _ _ TM KM
     (Quotient.out (DoubleCoset.mk TM KM (π (Quotient.out d)))) (π (Quotient.out d))).1
-    (DoubleCoset.out_eq' TM KM _)
+    (DoubleCoset.out_eq' _)
   generalize Quotient.out (DoubleCoset.mk TM KM (π (Quotient.out d))) = q at hm ⊢
   obtain ⟨X, hX⟩ := (hker ((s q)⁻¹ * (s t)⁻¹ * Quotient.out d * (s k)⁻¹)).1 (by
     simp only [map_mul, map_inv, hs]
     rw [hm]; group)
   refine ⟨X, ?_⟩
   rw [hX]
-  conv_rhs => rw [← DoubleCoset.out_eq' TP KP d]
+  conv_rhs => rw [← DoubleCoset.out_eq' d]
   rw [DoubleCoset.eq]
   exact ⟨s t, (hTP _).2 ⟨t, ht, rfl⟩, s k, hKs k hk, by group⟩
 

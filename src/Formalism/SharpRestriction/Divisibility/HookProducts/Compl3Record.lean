@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.Divisibility.HookProducts.AbsPhFSubLeOfLe
-import Formalism.SharpRestriction.ParConsts
-import Formalism.SharpRestriction.ElevenLe
+module
+
+public import Formalism.SharpRestriction.Divisibility.HookProducts.AbsPhFSubLeOfLe
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.SharpRestriction.ElevenLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ open Formalism.BasicNotions
 
 theorem wSz_eq_wj (D : D7) (i : ℕ) (hi : i < D.R.m) (τ : D.what₂.Tau) : DV.wSz D (i + 1) τ = wj D (i + 1) τ := by
   unfold DV.wSz wj
-  rw [dif_pos ⟨by omega, by omega⟩, dif_pos (by omega)]
+  rw [dite_eq_left ⟨by omega, by omega⟩, dite_eq_left (by omega)]
 
 theorem compl3_diff (D : D7) (L : SizeData₂ D) (Z : DivX D) (Csz : ℝ) (u u' : D.what₂.Word) :
     (DV.hExpl6 D L Z Csz u + (∑ t : D.host.TT, (L.aT t : ℝ)) * Real.log ((D.mem u).A.T : ℝ)) -

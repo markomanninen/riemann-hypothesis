@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SandwichNormalForm
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SourceLatticeInvariance
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.LatticeNormalFormUnipotent
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormalFormAtPrime
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnipotentCharacterArgumentMulStabilizer
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SandwichNormalForm
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SourceLatticeInvariance
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.LatticeNormalFormUnipotent
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormalFormAtPrime
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnipotentCharacterArgumentMulStabilizer
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col GlobalTheory.QNormal
 
 noncomputable section
@@ -36,9 +41,6 @@ def lat (P : HeightOneSpectrum (𝓞 E)) (ι : Type) (c : E) : AddSubgroup (ι �
     have := IndefiniteRowSideFullHecke.SourceLatticeInvariance.intAt_neg (ha i)
     simpa using this
 
-theorem mem_lat {P : HeightOneSpectrum (𝓞 E)} {ι : Type} {c : E} {u : ι → E} :
-    u ∈ lat P ι c ↔ ∀ i, IntAt P (c * u i) := Iff.rfl
-
 theorem lat_le {P : HeightOneSpectrum (𝓞 E)} {ι : Type} {c c' : E} (k : ℕ) (h : c' = (qOf P : E) ^ k * c) :
     lat P ι c ≤ lat P ι c' := fun u hu i => by
   rw [h, mul_assoc]
@@ -59,7 +61,8 @@ theorem exists_bound {P : HeightOneSpectrum (𝓞 E)} (h : ∀ x : E, ∃ m : �
     conv_lhs => rw [show u = ∑ s, u s • (Pi.single s (1 : E) : ι → E) from by
       funext k
       simp [Finset.sum_apply, Pi.single_apply]]
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
   rw [e, Finset.sum_apply, Finset.mul_sum]
   refine intAt_sum _ _ fun s _ => ?_
   have := (hu s).mul (hm m' hm' (s, l))

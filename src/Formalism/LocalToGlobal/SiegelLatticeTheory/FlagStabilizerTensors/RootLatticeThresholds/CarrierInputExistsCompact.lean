@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierPOfRepairedModel
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RealInputsClosedCompactSupportOf
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveDensityCompactSupport
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierPOfRepairedModel
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RealInputsClosedCompactSupportOf
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveDensityCompactSupport
+
+@[expose] public section
 
 noncomputable section
 

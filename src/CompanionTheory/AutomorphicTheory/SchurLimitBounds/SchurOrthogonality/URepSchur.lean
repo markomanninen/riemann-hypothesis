@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.SchurLimitBounds.SchurOrthogonality.URepBasic
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.SchurLimitBounds.SchurOrthogonality.URepBasic
+
+@[expose] public section
 
 namespace CompanionTheory.LimBd.URep
 
@@ -14,14 +18,14 @@ variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteS
 variable {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 variable {π : UnitaryRep G H} {σ : UnitaryRep G K}
 
-omit [CompleteSpace H] in
 
+omit [CompleteSpace H] in
 lemma nontrivial_endomorphisms [Nontrivial H] : Nontrivial (H →L[ℂ] H) := by
   obtain ⟨v, hv⟩ := exists_ne (0 : H)
   exact ⟨⟨1, 0, fun h => hv (by simpa using congrArg (fun T : H →L[ℂ] H => T v) h)⟩⟩
 
-theorem IsIrreducible.spectrum_subsingleton (hπ : π.IsIrreducible) {A : H →L[ℂ] H}
-    (hA : A ∈ π.intertwiners π) (hsa : IsSelfAdjoint A) : (spectrum ℝ A).Subsingleton := by
+theorem IsIrreducible.spectrum_subsingleton (hπ : IsIrreducible (π := π)) {A : H →L[ℂ] H}
+    (hA : A ∈ intertwiners (π := π) π) (hsa : IsSelfAdjoint A) : (spectrum ℝ A).Subsingleton := by
   have := hπ.1
   have := nontrivial_endomorphisms (H := H)
   intro a ha b hb
@@ -52,7 +56,7 @@ theorem IsIrreducible.spectrum_subsingleton (hπ : π.IsIrreducible) {A : H →L
     simp only [f]; rw [max_eq_left (by linarith)]; linarith)
   have hQ0 : cfc g A ≠ 0 := hne g hgc a ha (by
     simp only [g]; rw [max_eq_left (by linarith)]; linarith)
-  have hPmem : cfc f A ∈ π.intertwiners π :=
+  have hPmem : cfc f A ∈ intertwiners (π := π) π :=
     mem_intertwiners_self_iff.mpr fun h => (commute_of_mem_intertwiners hA h).cfc_real f
   set V := (LinearMap.range ((cfc f A : H →L[ℂ] H) : H →ₗ[ℂ] H)).topologicalClosure with hV
   have hinv : π.IsInvariant V := (isInvariant_range hPmem).topologicalClosure
@@ -75,8 +79,8 @@ theorem IsIrreducible.spectrum_subsingleton (hπ : π.IsIrreducible) {A : H →L
     have : v ∈ LinearMap.ker ((cfc g A : H →L[ℂ] H) : H →ₗ[ℂ] H) := hcl Submodule.mem_top
     simpa using this
 
-theorem IsIrreducible.exists_eq_algebraMap_of_isSelfAdjoint (hπ : π.IsIrreducible)
-    {A : H →L[ℂ] H} (hA : A ∈ π.intertwiners π) (hsa : IsSelfAdjoint A) :
+theorem IsIrreducible.exists_eq_algebraMap_of_isSelfAdjoint (hπ : IsIrreducible (π := π))
+    {A : H →L[ℂ] H} (hA : A ∈ intertwiners (π := π) π) (hsa : IsSelfAdjoint A) :
     ∃ c : ℝ, A = algebraMap ℝ (H →L[ℂ] H) c := by
   have := hπ.1
   have := nontrivial_endomorphisms (H := H)
@@ -88,13 +92,13 @@ theorem IsIrreducible.exists_eq_algebraMap_of_isSelfAdjoint (hπ : π.IsIrreduci
     _ = cfc (fun _ : ℝ => c) A := cfc_congr fun x hx => hsub hx hc
     _ = algebraMap ℝ _ c := cfc_const c A hsa
 
-theorem IsIrreducible.exists_eq_smul_one (hπ : π.IsIrreducible) {T : H →L[ℂ] H}
-    (hT : T ∈ π.intertwiners π) : ∃ c : ℂ, T = c • (1 : H →L[ℂ] H) := by
+theorem IsIrreducible.exists_eq_smul_one (hπ : IsIrreducible (π := π)) {T : H →L[ℂ] H}
+    (hT : T ∈ intertwiners (π := π) π) : ∃ c : ℂ, T = c • (1 : H →L[ℂ] H) := by
   have hstar := star_mem_intertwiners hT
-  have hre : (ℜ T : H →L[ℂ] H) ∈ π.intertwiners π := by
+  have hre : (ℜ T : H →L[ℂ] H) ∈ intertwiners (π := π) π := by
     rw [realPart_apply_coe]
     exact Submodule.smul_of_tower_mem _ _ (add_mem hT hstar)
-  have him : (ℑ T : H →L[ℂ] H) ∈ π.intertwiners π := by
+  have him : (ℑ T : H →L[ℂ] H) ∈ intertwiners (π := π) π := by
     rw [imaginaryPart_apply_coe]
     exact Submodule.smul_mem _ _ (Submodule.smul_of_tower_mem _ _ (sub_mem hT hstar))
   obtain ⟨a, ha⟩ := hπ.exists_eq_algebraMap_of_isSelfAdjoint hre (ℜ T).2
@@ -104,30 +108,8 @@ theorem IsIrreducible.exists_eq_smul_one (hπ : π.IsIrreducible) {T : H →L[�
   rw [Algebra.algebraMap_eq_smul_one, Algebra.algebraMap_eq_smul_one, ← Complex.coe_smul,
     ← Complex.coe_smul, smul_smul, ← add_smul]
 
-theorem isIrreducible_iff :
-    π.IsIrreducible ↔
-      Nontrivial H ∧ ∀ T ∈ π.intertwiners π, ∃ c : ℂ, T = c • (1 : H →L[ℂ] H) := by
-  refine ⟨fun hπ => ⟨hπ.1, fun T hT => hπ.exists_eq_smul_one hT⟩, fun ⟨hnt, h⟩ => ⟨hnt, ?_⟩⟩
-  intro V hcl hinv
-  have : CompleteSpace V := hcl.completeSpace_coe
-  have hP : V.starProjection ∈ π.intertwiners π :=
-    mem_intertwiners_self_iff.mpr fun g => ((isInvariant_iff_commute_starProjection V).mp hinv g).symm
-  obtain ⟨c, hc⟩ := h _ hP
-  have hPv : ∀ v, V.starProjection v = c • v := fun v => by simp [hc]
-  by_cases hc0 : c = 0
-  · left
-    rw [eq_bot_iff]
-    intro v hv
-    rw [Submodule.mem_bot, ← Submodule.starProjection_eq_self_iff.mpr hv, hPv, hc0, zero_smul]
-  · right
-    rw [eq_top_iff]
-    intro v _
-    have hmem : V.starProjection v ∈ V := V.starProjection_apply_mem v
-    rw [hPv] at hmem
-    simpa [hc0] using V.smul_mem c⁻¹ hmem
-
-theorem IsIrreducible.isEquivalent_of_mem_intertwiners (hπ : π.IsIrreducible)
-    (hσ : σ.IsIrreducible) {T : H →L[ℂ] K} (hT : T ∈ π.intertwiners σ) (hT0 : T ≠ 0) :
+theorem IsIrreducible.isEquivalent_of_mem_intertwiners (hπ : IsIrreducible (π := π))
+    (hσ : IsIrreducible (π := σ)) {T : H →L[ℂ] K} (hT : T ∈ intertwiners (π := π) σ) (hT0 : T ≠ 0) :
     π.IsEquivalent σ := by
   obtain ⟨c, hc⟩ := hπ.exists_eq_smul_one
     (comp_mem_intertwiners (adjoint_mem_intertwiners hT) hT)
@@ -195,8 +177,8 @@ theorem IsIrreducible.isEquivalent_of_mem_intertwiners (hπ : π.IsIrreducible)
   show U (π g v) = σ g (U v)
   exact (Submodule.smul_mem _ _ hT) g v
 
-theorem IsIrreducible.eq_zero_of_not_isEquivalent (hπ : π.IsIrreducible) (hσ : σ.IsIrreducible)
-    (hne : ¬ π.IsEquivalent σ) {T : H →L[ℂ] K} (hT : T ∈ π.intertwiners σ) : T = 0 := by
+theorem IsIrreducible.eq_zero_of_not_isEquivalent (hπ : IsIrreducible (π := π)) (hσ : IsIrreducible (π := σ))
+    (hne : ¬ π.IsEquivalent σ) {T : H →L[ℂ] K} (hT : T ∈ intertwiners (π := π) σ) : T = 0 := by
   by_contra h
   exact hne (hπ.isEquivalent_of_mem_intertwiners hσ hT h)
 

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ECure
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpectralRedivisionTermEquivKeepsTermDataStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KeepPuVolAR
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsoPairToTermSymm
-import Formalism.LocalToGlobal.IndefiniteReal.HeckeNonvanishing.Imports
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ECure
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpectralRedivisionTermEquivKeepsTermDataStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KeepPuVolAR
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsoPairToTermSymm
+public import Lean
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,8 @@ variable {D : D7} (Z : New D) {X : HidaSetting D} {Y : Full X} (h : FinX Y) (h' 
 def eP (u u' : D.what₂.Word) : RP Y u u' ≃ RP (reY Z Y) (wd Z u) (wd Z u') :=
   (rp_iso_pair D Z X Y h h' u u').choose
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 def sIsoRe : SIso (sOf h) ((@sOf (reD D Z) (@reX D Z X) (@reY D Z X Y) h')) where
   cd := (by with_unfolding_all exact ((Eq.refl (Formalism.L2.SG.PairVal.cdScaleOf D)) :))
   del := (by with_unfolding_all exact ((Eq.refl D.s.Del) :))
@@ -59,8 +63,8 @@ end GlobalTheory.Mem.SRe.IsoRe
 
 namespace GlobalTheory.Mem.SRe
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem sIso_reD : ∀ (D : D7) (Z : New D) (X : HidaSetting D) (Y : Full X) (h : FinX Y) (h' : FinX (reY Z Y)),
     ∃ e : SIso (sOf h) ((@sOf (reD D Z) (@reX D Z X) (@reY D Z X Y) h')), HEq e.eHH (eHHre Z X) ∧ ∀ u, HEq (e.eCu u) (eCure Z h h' u) :=
   fun _ Z X _ h h' => ⟨IsoRe.sIsoRe Z h h', (by with_unfolding_all exact ((HEq.refl (eHHre Z X)) :)),

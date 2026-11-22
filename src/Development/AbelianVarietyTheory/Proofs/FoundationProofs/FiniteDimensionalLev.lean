@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.HahnPowOrderLeadingCoeff
-import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
-import Development.AbelianVarietyTheory.Definitions.Foundations.SiegelNeZeroIff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SiegelUnitQExpansionCoefficients
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.QuotientIntegralHolomorphic
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UpperHalfPlaneCodiscreteGermIdentityAndUnits
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModularTowerFunctionSlTwoIntInvariantStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModularTowerFunctionTendstoConstTermExponentialStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ConstOfSlTwoIntInvariantBoundedUpperHalfPlaneStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HahnSeriesPowOfLeadingQInvStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteDimensionalFixedFieldMapOfFiniteIndexStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HahnPowOrderLeadingCoeff
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SiegelNeZeroIff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SiegelUnitQExpansionCoefficients
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.QuotientIntegralHolomorphic
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UpperHalfPlaneCodiscreteGermIdentityAndUnits
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModularTowerFunctionSlTwoIntInvariantStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModularTowerFunctionTendstoConstTermExponentialStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ConstOfSlTwoIntInvariantBoundedUpperHalfPlaneStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HahnSeriesPowOfLeadingQInvStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteDimensionalFixedFieldMapOfFiniteIndexStatement
+
+@[expose] public section
 
 noncomputable section
 open scoped MatrixGroups
@@ -214,7 +218,7 @@ theorem hol_of_mem_adjoin (X : Tower Ω ε) (b : X.K) (hb : b ∈ Algebra.adjoin
   | add x y _ _ hx hy =>
     obtain ⟨a, ha, ha'⟩ := hx
     obtain ⟨b, hb, hb'⟩ := hy
-    exact ⟨a + b, ha.add hb, by rw [map_add, ha', hb']; rfl⟩
+    exact ⟨a + b, ha.add hb, by rw [map_add (f := _), ha', hb']; rfl⟩
   | mul x y _ _ hx hy =>
     obtain ⟨a, ha, ha'⟩ := hx
     obtain ⟨b, hb, hb'⟩ := hy
@@ -231,7 +235,8 @@ theorem hol_of_isIntegral (X : Tower Ω ε) (y : X.K) (hy : IsIntegral (Algebra.
   have heq : X.an y ^ n + ∑ i : Fin n, ((r i : ℂ → ℂ) : Mero) * X.an y ^ (i : ℕ) = 0 := by
     have h0 := congrArg X.an hP
     rw [hPm.as_sum] at h0
-    simp only [Polynomial.eval₂_add, Polynomial.eval₂_pow, Polynomial.eval₂_X, Polynomial.eval₂_finset_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Polynomial.eval₂_add, Polynomial.eval₂_pow, Polynomial.eval₂_X, Polynomial.eval₂_finsetSum,
       Polynomial.eval₂_mul, Polynomial.eval₂_C, map_add, map_pow, map_sum, map_mul, map_zero] at h0
     rw [← hn, Finset.sum_range (fun i => X.an (algebraMap _ X.K (P.coeff i)) * X.an y ^ i)] at h0
     rw [← h0]
@@ -254,7 +259,8 @@ theorem hol_of_isIntegral (X : Tower Ω ε) (y : X.K) (hy : IsIntegral (Algebra.
         (a : Mero) ^ n + ∑ i : Fin n, ((r i : ℂ → ℂ) : Mero) * (a : Mero) ^ (i : ℕ) * (b : Mero) ^ (n - i) := by
       have := map_add (Filter.Germ.coeRingHom (R := ℂ) (Filter.codiscreteWithin Hs)) (a ^ n)
         (∑ i : Fin n, r i * a ^ (i : ℕ) * b ^ (n - i))
-      simp only [map_sum, map_mul, map_pow] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, map_pow] at this
       exact this
     rw [e2, ← hab]
     calc (X.an y * (b : Mero)) ^ n + ∑ i : Fin n, ((r i : ℂ → ℂ) : Mero) * (X.an y * (b : Mero)) ^ (i : ℕ) *
@@ -311,7 +317,8 @@ namespace GlobalTheory.K4
 
 theorem finiteDimensional_lev : ∀ (Ω : Type) [Field Ω] [Algebra ℚ Ω] (ε : Ω →+* ℂ) (X : GlobalTheory.KZ.Tower Ω ε)
     (Γ' : Subgroup SL(2, ℤ)) (M : ℕ), 0 < M → CongruenceSubgroup.Gamma M ≤ Γ' →
-    letI := GlobalTheory.K4.algRat X Γ'; FiniteDimensional (RatFunc Ω) (GlobalTheory.K4.lev X Γ') := by
+    @FiniteDimensional (RatFunc Ω) (GlobalTheory.K4.lev X Γ') _ _
+      (@Algebra.toModule _ _ _ _ (GlobalTheory.K4.algRat X Γ')) := by
   intro Ω _ _ ε X Γ' M hM hle
   letI := GlobalTheory.K4.algRat X Γ'
   letI : Algebra (RatFunc Ω) X.K := ((lev X Γ').subtype.comp (jRat X Γ')).toAlgebra

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.AffineGLForms.CuspInvariantsFinite.CuspInvFin
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.AffineGLForms.CuspInvariantsFinite.CuspInvFin
+
+@[expose] public section
 
 open NumberField GlobalTheory.CuspRep MeasureTheory PositivityTheory.Affgl
 
@@ -21,7 +25,7 @@ theorem exists_monic_aeval_mem_of_le_sup {R : Type*} [Ring R] [Algebra ℂ R] (A
     refine ⟨v, hv, ?_⟩
     change I.mkQ v = I.mkQ (Polynomial.aeval z p)
     have hi0 : I.mkQ i = 0 := by simpa using hi
-    rw [← e, map_add, hi0, add_zero]
+    rw [← e, map_add (f := _), hi0, add_zero]
   let g : Polynomial ℂ →ₗ[ℂ] V.map I.mkQ := f.codRestrict _ hf
   have hnot : ¬ Function.Injective g := fun hinj =>
     Polynomial.not_finite (R := ℂ) (Module.Finite.of_injective g hinj)
@@ -36,7 +40,7 @@ theorem exists_monic_aeval_mem_of_le_sup {R : Type*} [Ring R] [Algebra ℂ R] (A
   rw [map_mul, Polynomial.aeval_C, ← Algebra.commutes, ← Algebra.smul_def]
   exact I.smul_mem _ hI
 
-theorem exists_monic_aeval_apply_eq_zero (E : Type) [Field E] [NumberField E] [IsTotallyComplex E]
+theorem exists_monic_aeval_apply_eq_zero (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
     (a : ℕ) (J : Set (Module.End ℂ (Sm E a))) (hJ : Cofin J) (z : Module.End ℂ (Sm E a))
     (hz : z ∈ Zalg E a) :
     ∃ p : Polynomial ℂ, p.Monic ∧ ∀ φ : Sm E a, (∀ j ∈ J, j φ = 0) →
@@ -55,7 +59,7 @@ theorem exists_monic_aeval_apply_eq_zero (E : Type) [Field E] [NumberField E] [I
     | smul c u _ hu => simp [hu]
   exact key _ hI
 
-theorem minpoly_on_killed : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ),
+theorem minpoly_on_killed : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ),
     ∀ J : Set (Module.End ℂ (Sm E a)), Cofin J → ∀ z ∈ Zalg E a, ∃ p : Polynomial ℂ, p.Monic ∧
       ∀ φ : Sm E a, (∀ j ∈ J, j φ = 0) → Polynomial.aeval z p φ = 0 :=
   fun E _ _ _ a J hJ z hz => exists_monic_aeval_apply_eq_zero E a J hJ z hz

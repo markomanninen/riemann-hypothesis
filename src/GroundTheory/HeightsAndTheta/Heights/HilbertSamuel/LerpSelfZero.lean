@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBergman
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.BergmanNorms
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBergman
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.BergmanNorms
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

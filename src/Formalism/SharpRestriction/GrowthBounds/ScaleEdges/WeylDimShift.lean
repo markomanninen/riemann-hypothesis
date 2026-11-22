@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgeFamOf
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.RankMulConductorDivLeOne
-import Formalism.PolynomialDimension.FinalNum
-import Formalism.PolynomialDimension.MultinomialDepth.FrameMultinomialBoundHolds
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgeFamOf
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.RankMulConductorDivLeOne
+public import Formalism.PolynomialDimension.FinalNum
+public import Formalism.PolynomialDimension.MultinomialDepth.FrameMultinomialBoundHolds
+
+@[expose] public section
 
 noncomputable section
 

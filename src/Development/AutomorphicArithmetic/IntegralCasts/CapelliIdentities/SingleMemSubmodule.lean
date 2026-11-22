@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.SingleMemSubmodule.single_mem :
     ∀ {K : Type} [inst : Field K] (d : Fin (3 : ℕ) → K),

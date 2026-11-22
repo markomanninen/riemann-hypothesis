@@ -1,5 +1,9 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FirstStatementE
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FirstStatementE
+
+@[expose] public section
 
 noncomputable section
 

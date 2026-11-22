@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -42,8 +46,9 @@ def GOAL : Prop := A2 → DivisorNaturality → DivisorRingCompatibility → A7 
 def IsCls {R : Type} [CommRing R] {X : Scheme.{0}} {I : Cx R} {n : ℤ}
     (x : CohomologyClass ((chains R).obj (sch.obj X)) I n) (a : Sec (I.X n) X) : Prop :=
   ∃ α : Cocycle ((chains R).obj (sch.obj X)) I n, CohomologyClass.mk α = x ∧
-    ev α.1 0 n (by simp) X (𝟙 X) = a ∧
-    ∀ (p : ℕ) (s : ℤ) (h : -((p + 1 : ℕ) : ℤ) + n = s) (U : Scheme.{0}) (y : Sx (sch.obj X) (p + 1) U), ev α.1 (p + 1) s h U y = 0
+    ev (R := R) α.1 0 n (by simp) X (𝟙 X) = a ∧
+    ∀ (p : ℕ) (s : ℤ) (h : -((p + 1 : ℕ) : ℤ) + n = s) (U : Scheme.{0}) (y : Sx (sch.obj X) (p + 1) U),
+      ev (R := R) α.1 (p + 1) s h U y = 0
 
 def tot {X S : Scheme.{0}} (p : X ⟶ S) : Over S ⥤ Scheme.{0} := Over.pullback p ⋙ Over.forget X
 

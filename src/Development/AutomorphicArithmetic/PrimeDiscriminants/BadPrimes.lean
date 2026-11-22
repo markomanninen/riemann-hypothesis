@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataHost
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataHost
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+
+@[expose] public section
 
 open NumberField
 

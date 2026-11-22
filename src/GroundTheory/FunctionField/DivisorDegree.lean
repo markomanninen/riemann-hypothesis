@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.FunctionField.PlaceDefs
-import GroundTheory.FunctionField.PlaceBasic
-import GroundTheory.FunctionField.ValuationAevalSubCoeffZeroLe
-import GroundTheory.FunctionField.Divisor
+module
+
+public import Mathlib
+public import GroundTheory.FunctionField.PlaceDefs
+public import GroundTheory.FunctionField.PlaceBasic
+public import GroundTheory.FunctionField.ValuationAevalSubCoeffZeroLe
+public import GroundTheory.FunctionField.Divisor
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.FunctionField
@@ -18,7 +23,8 @@ theorem linearIndependent_pow_of_transcendental {x : K} (hx : Transcendental k x
   intro g hg i
   set p : k[X] := ∑ j : Fin N, monomial (j : ℕ) (g j) with hp
   have hpx : aeval x p = 0 := by
-    rw [hp, map_sum, ← hg]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hp, map_sum, ← hg]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [aeval_monomial, Algebra.smul_def]
   have hp0 : p = 0 := by
@@ -29,7 +35,7 @@ theorem linearIndependent_pow_of_transcendental {x : K} (hx : Transcendental k x
   rw [Finset.sum_eq_single i] at h
   · simpa using h
   · intro j _ hj
-    rw [if_neg (fun h' => hj (Fin.ext h'))]
+    exact Finsupp.single_eq_of_ne' (fun h' => hj (Fin.ext h'))
   · intro h'; exact absurd (Finset.mem_univ i) h'
 
 theorem adjoin_inv_eq {x : K} :
@@ -132,7 +138,7 @@ theorem finrank_le_deg_poleDivisor {x : K} (hx : Transcendental k x) :
     simp only [Fintype.card_prod, Fintype.card_fin] at hcard
     have hLD := finrank_L_le_deg_add hD
     have hdeg : deg D = l * deg B + deg C := by
-      rw [hD', map_add, map_nsmul, nsmul_eq_mul]
+      rw [hD', map_add (f := _), map_nsmul, nsmul_eq_mul]
     have : ((l + 1 : ℕ) * n : ℕ) ≤ (finrank k (L D) : ℤ) := by exact_mod_cast hcard
     push_cast at this
     linarith
@@ -166,15 +172,6 @@ theorem deg_divisor (x : K) : deg (divisor x : Divisor k K) = 0 := by
   rw [← zeroDivisor_sub_poleDivisor, map_sub, deg_zeroDivisor halg, deg_poleDivisor halg,
     sub_self]
 
-theorem L_eq_bot_of_deg_neg {D : Divisor k K} (hD : deg D < 0) : L D = ⊥ := by
-  rw [eq_bot_iff]
-  intro z hz
-  rw [Submodule.mem_bot]
-  by_contra hz0
-  have h := deg_nonneg ((mem_L_iff_le hz0).1 hz)
-  rw [map_add, deg_divisor, zero_add] at h
-  omega
-
 theorem mul_mem_L {y : K} (hy : y ≠ 0) {E : Divisor k K} {z : K} (hz : z ∈ L (E + divisor y)) :
     y * z ∈ L E := by
   intro v
@@ -204,34 +201,13 @@ theorem finrank_L_add_divisor (D : Divisor k K) {x : K} (hx : x ≠ 0) :
 
 end Divisor
 
-variable (k K) in
 
-noncomputable abbrev Pic := Divisor k K ⧸ principalDivisors k K
+variable (k K) in
+noncomputable abbrev Pic := Divisor k K ⧸ principalDivisors (k := k) (K := K)
 
 namespace Pic
 
-noncomputable def deg : Pic k K →+ ℤ :=
-  QuotientAddGroup.lift (principalDivisors k K) Divisor.deg (by
-    intro D hD
-    obtain ⟨x, -, rfl⟩ := mem_principalDivisors.1 hD
-    simpa [AddMonoidHom.mem_ker] using Divisor.deg_divisor x)
-
-@[simp]
-theorem deg_mk (D : Divisor k K) :
-    deg (QuotientAddGroup.mk D : Pic k K) = Divisor.deg D := rfl
-
-theorem finrank_L_eq_of_mk_eq {D E : Divisor k K}
-    (h : (QuotientAddGroup.mk D : Pic k K) = QuotientAddGroup.mk E) :
-    finrank k (Divisor.L E) = finrank k (Divisor.L D) := by
-  rw [QuotientAddGroup.eq] at h
-  obtain ⟨x, hx, hxD⟩ := mem_principalDivisors.1 h
-  have hE : E = D + divisor x := by rw [hxD]; abel
-  rw [hE, Divisor.finrank_L_add_divisor D hx]
-
 end Pic
 
-variable (k K) in
-
-noncomputable abbrev Pic0 : AddSubgroup (Pic k K) := (Pic.deg (k := k) (K := K)).ker
 
 end GroundTheory.FunctionField

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.PhMeasCore
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ChainRuleSmooth.ExpIntertwine
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothVec
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.PhMeasCore
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ChainRuleSmooth.ExpIntertwine
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothVec
+
+@[expose] public section
 
 open Matrix Filter Topology Set
 

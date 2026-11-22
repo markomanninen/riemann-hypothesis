@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedCoefficientFieldInComplex
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ContainsRayFieldOfRay
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedCoefficientFieldInComplex
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ContainsRayFieldOfRay
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.Mem
 
 set_option autoImplicit false

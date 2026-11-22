@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsThetaFunctionDoublingSeesawOfStandardCharStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsThetaFunctionDoublingSeesawOfStandardCharStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,7 +88,7 @@ theorem lineAt_col (hθ : IsInfFam θ) {m n k : ℕ} (c : Fin k → Fin n) (τ :
   let L : ℝ →+ Mx D m k :=
     { toFun := fun t => (lineAt θ τ z t).submatrix id c
       map_zero' := by rw [map_zero]; rfl
-      map_add' := fun s t => by rw [map_add]; rfl }
+      map_add' := fun s t => by rw [map_add (f := _)]; rfl }
   have hL' : IsLineAt θ τ (z.submatrix id c) L := by
     refine ⟨continuous_matrix fun i j => hL.1.matrix_elem i (c j), fun t => ?_, fun t τ' => ?_⟩
     · exact congrArg (fun x => Matrix.submatrix x id c) (hL.2.1 t)
@@ -206,7 +210,7 @@ theorem annih_delta (hθ : IsInfFam θ) (hψ : IsStdChar D ψ (-1)) (τ : D.what
   unfold annih
   rw [dRho_delta hθ hψ τ _ h₁ h₂, dRho_delta hθ hψ τ _ h₁ h₂, cplxO_colL, cplxO_colR, dRho_neg hθ τ (cplxO _ _ _)]
   funext x
-  simp only [GlobalTheory.IndefiniteRowSideFullHecke.SphericalZero.delta, Pi.add_apply, Pi.smul_apply, Pi.neg_apply, smul_eq_mul, map_add, map_mul, map_neg, Complex.conj_I]
+  simp only [GlobalTheory.IndefiniteRowSideFullHecke.SphericalZero.delta, Pi.add_apply, Pi.smul_apply, Pi.neg_apply, smul_eq_mul, map_add (f := _), map_mul, map_neg, Complex.conj_I]
   ring
 
 theorem isFockVec_delta : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (A B : HSp D) (sA : RealMat A) (sB : RealMat B), IsStdChar D ψ (-1) → IsInfFam θ → ∀ Φ₁ Φ₂, IsFockVec ψ θ A B sA sB Φ₁ → IsFockVec ψ θ A B sA sB Φ₂ → IsFockVec ψ θ (dblSp A) B (fun τ => (Matrix.fromBlocks (sA τ) 0 0 (-sA τ)).submatrix finSumFinEquiv.symm finSumFinEquiv.symm) sB (delta A B Φ₁ Φ₂) := by

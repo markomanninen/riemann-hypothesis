@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenPtSubset
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAdelicCharacterNontrivialAtPlaces
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerIrreducibleFinitePlaceCompletionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenPtSubset
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAdelicCharacterNontrivialAtPlaces
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerIrreducibleFinitePlaceCompletionStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix
@@ -42,7 +46,7 @@ theorem schr_add_mem {K : Type} [CommRing K] [Invertible (2 : K)] (ψ : AddChar 
   exact N.smul_mem _ (ha _ (hb _ hφ))
 
 theorem exists_at_locCo {F : Type} [Field F] [NumberField F] {W : Type} [AddCommGroup W] [Module (AF F) W]
-    {B : W → W → AF F} {κ : Type} [Fintype κ] (co : GlobalTheory.WeilM.Darboux B κ) (v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F)
+    {B : W → W → AF F} {κ : Type} [Fintype κ] (co : GlobalTheory.WeilM.Darboux B κ) (v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F))
     (p : (κ → Fv F v) × (κ → Fv F v)) :
     ∃ u : W, At (evFin F v) u ∧ GlobalTheory.LatVac.locCo co v u = p := by
   refine ⟨co.e.symm (fun k => GlobalTheory.LatVac.liftV v (p.1 k), fun k => GlobalTheory.LatVac.liftV v (p.2 k)), ?_, ?_⟩
@@ -66,11 +70,11 @@ theorem rel_of_vac : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [Numbe
     {X : Spc F E n} {Y : Spc F E d} (M : Model σ X Y) (ψ : AddChar (AF F) ℂ), GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsStd ψ → M.IsGood ψ →
     ∀ {ι : Type} (P : Finset ι) (pl : ι → HeightOneSpectrum (𝓞 F)), Set.InjOn pl P →
     ∀ (Z : ι → Type) [∀ w, TopologicalSpace (Z w)] [∀ w, Add (Z w)]
-      (A A' : ι → Set (Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E)))
-      (co : ∀ w, Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E) → Z w)
+      (A A' : ι → Set (Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))))
+      (co : ∀ w, Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) → Z w)
       (I : ∀ w, ((Fin n × Fin d → Fv F (pl w)) → ℂ) →ₗ[ℂ] (Z w → ℂ))
-      (H : AddSubgroup (Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E)))
-      (R : Submodule ℂ ((Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E) → ℂ) × ((Fin n × Fin d → AF F) → ℂ)))
+      (H : AddSubgroup (Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))))
+      (R : Submodule ℂ ((Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) → ℂ) × ((Fin n × Fin d → AF F) → ℂ)))
       (f : SInf F (Fin n × Fin d)),
     (∀ w ∈ P, IsLagrModel M ψ (pl w) (A w) (A' w) (co w) (I w)) →
     (∀ w ∈ P, ∀ u ∈ A w, At (evFin F (pl w)) u ∧ u ∈ H) → (∀ w ∈ P, ∀ u ∈ A' w, At (evFin F (pl w)) u) →
@@ -111,7 +115,7 @@ theorem rel_of_vac : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [Numbe
       exact hv (hφ2 v fun w' hw' e => hc (Finset.mem_coe.2 (Finset.mem_image.2 ⟨w', hw', e⟩)))
     obtain ⟨r, -, er⟩ := GlobalTheory.PureFactor.exists_rest_factor (pl w) f φ (hfam.std hM)
 
-    let C : Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E) → ℂ := fun u => ∏ w' ∈ P.erase w, I w' (φ (pl w')) (co w' u)
+    let C : Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) → ℂ := fun u => ∏ w' ∈ P.erase w, I w' (φ (pl w')) (co w' u)
     have hne : ∀ w' ∈ P.erase w, pl w' ≠ pl w := fun w' hw' e =>
       (Finset.mem_erase.1 hw').1 (hpl (Finset.mem_erase.1 hw').2 hwP e)
     have hprod : ∀ (χ : (Fin n × Fin d → Fv F (pl w)) → ℂ) u,
@@ -122,12 +126,12 @@ theorem rel_of_vac : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [Numbe
       exact Finset.prod_congr rfl fun w' hw' => by rw [Function.update_of_ne (hne w' hw')]
 
     let L : ((Fin n × Fin d → Fv F (pl w)) → ℂ) →ₗ[ℂ]
-        ((Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E) → ℂ) × ((Fin n × Fin d → AF F) → ℂ)) :=
+        ((Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) → ℂ) × ((Fin n × Fin d → AF F) → ℂ)) :=
       { toFun := fun χ => (Set.indicator (H : Set _) fun u => I w χ (co w u) * C u,
           GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.tens (evFin F (pl w)) χ r)
         map_add' := fun a b => Prod.ext (funext fun u => by
             by_cases hu : u ∈ (H : Set _)
-            · simp only [Set.indicator_of_mem hu, map_add, Pi.add_apply, Prod.fst_add, add_mul]
+            · simp only [Set.indicator_of_mem hu, map_add (f := _), Pi.add_apply, Prod.fst_add, add_mul]
             · simp only [Set.indicator_of_notMem hu, Prod.fst_add, Pi.add_apply, add_zero])
           (funext fun _ => add_mul _ _ _)
         map_smul' := fun c a => Prod.ext (funext fun u => by
@@ -207,7 +211,7 @@ theorem rel_of_vac : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [Numbe
       intro p χ hχ
       obtain ⟨u, hu, rfl⟩ := exists_at_locCo M.co (pl w) p
       obtain ⟨x, hx, y, hy, rfl⟩ := hdec w hwP u hu
-      rw [map_add]
+      rw [map_add (f := _)]
       exact schr_add_mem _ N _ _ (hstA x hx) (hstA' y hy) χ hχ
     have hN : N = GlobalTheory.WeilM.SB _ :=
       GlobalTheory.T.schroedinger_irreducible_finitePlaceCompletion (pl w) (GlobalTheory.LatVac.psiAt ψ (pl w)) (GlobalTheory.SchrSB.continuous_psiAt ψ hstd.1 _)

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EntryAgree
-import Formalism.LocalToGlobal.Columns.ChainTw
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ConjSymmEntry
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemStabLIff
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ResiduesOfCompletionAtPrimeWithUniformizer
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ToLocEqMapToMatrix
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymmetricChainSupportOneOfPattern
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EntryAgree
+public import Formalism.LocalToGlobal.Columns.ChainTw
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ConjSymmEntry
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemStabLIff
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ResiduesOfCompletionAtPrimeWithUniformizer
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ToLocEqMapToMatrix
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymmetricChainSupportOneOfPattern
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory ValuativeRel Matrix Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.TwBridge
 open GlobalTheory.SymBridge (toLoc IsOrd yPos xPos IsCompl)
@@ -71,7 +75,8 @@ theorem apply_sum {N : ℕ} (φ : (Fin N → E) ≃ₗ[E] (Fin N → E)) (v : Fi
     funext i
     simp [Finset.sum_apply, Pi.single_apply]
   conv_lhs => rw [hv]
-  rw [map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_apply]
   refine Finset.sum_congr rfl fun l' _ => ?_
   rw [map_smul, Pi.smul_apply, smul_eq_mul, mul_comm]
 
@@ -313,8 +318,8 @@ theorem stdAt_eq (N : ℕ) : stdAt E N P = LocE.sclLat P q N 0 := by
   rw [StabRef.mem_sclLat, stdAt, StabRef.mem_locStd]
   simp
 
-variable (P q) in
 
+variable (P q) in
 def Par (kj n c : ℕ) (κ : Sp E (n + c) ≃ₗ[E] Sp E (n + c)) : Prop :=
   (∀ l l', IntAt P (κ (Pi.single l' 1) l)) ∧ ∀ l l' : Fin (n + c), (kj ≤ l.1 ∧ l.1 < n) → ¬ (kj ≤ l'.1 ∧ l'.1 < n) →
     IntAt P (κ (Pi.single l' 1) l / (q : E))
@@ -416,7 +421,7 @@ theorem det_block (h : j + c = s + 1) (hn : n = κ + j * (τ + 1))
   congr 1
   ext a b
   simp only [RingHom.mapMatrix_apply, submatrix_apply, Matrix.map_apply, Matrix.of_apply]
-  rw [hf, hf, eN_eq, Loc.atN, dif_pos (Fin.is_lt _)]
+  rw [hf, hf, eN_eq, Loc.atN, dite_eq_left (Fin.is_lt _)]
   rfl
 
 end Level

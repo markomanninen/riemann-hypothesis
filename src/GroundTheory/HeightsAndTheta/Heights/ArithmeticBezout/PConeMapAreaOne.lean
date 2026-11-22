@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsConeMapAreaOne
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsAreaFormulaInj
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeIntegralMass
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFrameJacobianSum
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.VolumePreservingUncurry
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsConeMapAreaOne
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsAreaFormulaInj
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeIntegralMass
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFrameJacobianSum
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.VolumePreservingUncurry
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -198,7 +203,7 @@ theorem aemeasurable_coneIntegrand {e n : ℕ} {U D : Set (Fin e → ℂ)}
     AEMeasurable (coneIntegrand v F) ((volume.restrict D).prod volume) := by
   have hvD : AEMeasurable v (volume.restrict D) := (hv.continuousOn.mono hDU).aemeasurable hD
   have hW : AEMeasurable (gramVecs v) (volume.restrict D) := by
-    refine aemeasurable_pi_lambda _ fun a => ?_
+    refine AEMeasurable.of_eval fun a => ?_
     refine Fin.cases ?_ (fun j => ?_) a
     · simpa [gramVecs] using hvD
     · simpa [gramVecs] using
@@ -264,8 +269,8 @@ theorem coordBall_eq (m k : ℕ) :
 
 end ConeMapAreaFormula
 
-open ConeMapAreaFormula in
 
+open ConeMapAreaFormula in
 theorem ConeMapAreaOne.proof (hA : AreaFormulaInj.Statement) : ConeMapAreaOne.Statement := by
   intro n e U D v F hU hD hDU hv hinj hF
   by_cases hn : e + 1 ≤ n

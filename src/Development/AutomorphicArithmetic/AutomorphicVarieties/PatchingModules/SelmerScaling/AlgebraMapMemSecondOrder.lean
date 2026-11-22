@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
@@ -101,7 +105,7 @@ private theorem kap_rho1_map_ddMap_algebraMap {l : ℕ} [Fact l.Prime] {Fm : GFr
   have e : ∀ M : Matrix (Fin n) (Fin n) (DD x.A k.g),
       M.map (DD.map (algebraMap x.A B)) = (DD.map (algebraMap x.A B)).mapMatrix M := fun _ => rfl
   unfold Kap.ρ1 NP.ρX
-  rw [e, map_mul, map_add, map_one, ← e, ← e, epM_map_ddMap_algebraMap, map_algebraMap_map_ddMap_algebraMap]
+  rw [e, map_mul, map_add (f := _), map_one, ← e, ← e, epM_map_ddMap_algebraMap, map_algebraMap_map_ddMap_algebraMap]
   rfl
 
 private theorem w1_map_dd_map_algebraMap {l : ℕ} [Fact l.Prime] {Fm : GFrame l} {n : ℕ} {x : NP Fm n} (k : Kap x) (B : Type)
@@ -119,7 +123,7 @@ private theorem wi1_map_dd_map_algebraMap {l : ℕ} [Fact l.Prime] {Fm : GFrame 
   have e : ∀ M : Matrix (Fin n) (Fin n) (DD x.A k.g),
       M.map (DD.map (algebraMap x.A B)) = (DD.map (algebraMap x.A B)).mapMatrix M := fun _ => rfl
   unfold Kap.wi1 NP.wiX
-  rw [e, map_mul, map_add, map_one, ← e, ← e, epM_map_ddMap_algebraMap, map_algebraMap_map_ddMap_algebraMap]
+  rw [e, map_mul, map_add (f := _), map_one, ← e, ← e, epM_map_ddMap_algebraMap, map_algebraMap_map_ddMap_algebraMap]
   rfl
 
 private theorem selMap2_lemma_12 {l : ℕ} [Fact l.Prime] {n : ℕ} (F : GFrame l) {R S : Type} [CommRing R] [CommRing S]
@@ -152,7 +156,7 @@ theorem UpperTheory.V.Pa.selMap2 :
   · beta_reduce
     beta_reduce at hco
     rw [hco g1 g2, ← kap_rho1_map_ddMap_algebraMap k x.Fr, ← kap_rho1_map_ddMap_algebraMap k x.Fr]
-    simp only [eM, map_add, map_mul]
+    simp only [eM, map_add (f := _), map_mul]
   · beta_reduce
     rw [hcj g]
     exact Matrix.ext fun i j => map_neg (DD.map (algebraMap x.A x.Fr)) (z g j i)

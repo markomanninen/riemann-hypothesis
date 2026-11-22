@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,15 +20,16 @@ open scoped ComplexOrder Matrix in
 private lemma ofReal_norm_sum_mul_sq_eq_double_sum_conj {ι : Type} [Fintype ι] (c w : ι → ℂ) :
     ((‖∑ i, c i * w i‖ ^ 2 : ℝ) : ℂ) =
       ∑ i, ∑ j, c i * (starRingEnd ℂ) (c j) * (w i * (starRingEnd ℂ) (w j)) := by
-  rw [Complex.ofReal_pow, ← Complex.mul_conj', map_sum, Finset.sum_mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Complex.ofReal_pow, ← Complex.mul_conj', map_sum, Finset.sum_mul_sum]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul]
   ring
 
+
 set_option autoImplicit false in
 open Filter Topology MeasureTheory in
 open scoped ComplexOrder Matrix in
-
 theorem _root_.GlobalTheory.HSAmp.gram_isHermitian_and_l2_eq_quadratic_form (S : Type) (Y : S → Type)
     [∀ σ, MeasurableSpace (Y σ)] (ι : Type) [Fintype ι]
     [DecidableEq ι] (μ : ∀ σ, Measure (Y σ)) (v : ∀ σ, Y σ → ι → ℂ)
@@ -38,8 +43,8 @@ theorem _root_.GlobalTheory.HSAmp.gram_isHermitian_and_l2_eq_quadratic_form (S :
   have hint := h.integrable
   have hterm : ∀ (c : ι → ℂ) (σ : S), Integrable (fun y => ∑ i, ∑ j,
       c i * (starRingEnd ℂ) (c j) * (v σ y i * (starRingEnd ℂ) (v σ y j))) (μ σ) :=
-    fun c σ => integrable_finset_sum _ fun i _ =>
-      integrable_finset_sum _ fun j _ => (hint σ i j).const_mul _
+    fun c σ => integrable_finsetSum _ fun i _ =>
+      integrable_finsetSum _ fun j _ => (hint σ i j).const_mul _
   refine ⟨?_, fun c => ⟨fun σ => ?_, ?_, ?_⟩⟩
   · ext i j
     simp only [Matrix.conjTranspose_apply, _root_.GlobalTheory.HSAmp.gram, Matrix.of_apply,
@@ -65,10 +70,10 @@ theorem _root_.GlobalTheory.HSAmp.gram_isHermitian_and_l2_eq_quadratic_form (S :
       simp only [_root_.GlobalTheory.HSAmp.cmb]
       rw [← integral_complex_ofReal,
         integral_congr_ae (ae_of_all _ fun y => ofReal_norm_sum_mul_sq_eq_double_sum_conj c (v σ y)),
-        integral_finset_sum _ fun i _ => integrable_finset_sum _ fun j _ =>
+        integral_finsetSum _ fun i _ => integrable_finsetSum _ fun j _ =>
           (hint σ i j).const_mul _]
       refine Finset.sum_congr rfl fun i _ => ?_
-      rw [integral_finset_sum _ fun j _ => (hint σ i j).const_mul _]
+      rw [integral_finsetSum _ fun j _ => (hint σ i j).const_mul _]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [integral_const_mul]
     rw [Complex.ofReal_sum]

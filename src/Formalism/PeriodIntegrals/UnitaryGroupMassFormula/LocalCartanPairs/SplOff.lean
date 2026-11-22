@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.SplPlane
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.PiNonunit
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.SplPlane
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.PiNonunit
+
+@[expose] public section
 
 noncomputable section
 

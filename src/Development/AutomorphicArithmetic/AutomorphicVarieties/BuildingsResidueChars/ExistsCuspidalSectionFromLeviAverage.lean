@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.LAbove
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.UnipBlocks
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.TensInterp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.UnipBlocks
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.LAbove
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.UnipBlocks
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.TensInterp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.UnipBlocks
+
+@[expose] public section
 
 open MeasureTheory NumberField Filter Topology Matrix
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace GroundTheory.Automorphic.AutomorphicForm
@@ -43,7 +47,7 @@ private theorem avg_mem {X Y : Type} [MeasurableSpace Y] (E : Submodule ℂ (X �
     have : ∀ w, h w u = ∑ l : Fin a × Fin b × Fin a × Fin b,
         (s l.1 l.2.2.1 * t l.2.1 l.2.2.2 * ψ l.2.1 ()) * h w (x l.1 l.2.2.1) * φ l.1 u := fun w => e _ (hE w) u
     simp only [this]
-    rw [integral_finset_sum _ fun l _ => ((hi _).const_mul _).mul_const _]
+    rw [integral_finsetSum _ fun l _ => ((hi _).const_mul _).mul_const _]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [integral_mul_const, integral_const_mul]
   rw [key]
@@ -53,27 +57,33 @@ private def repSub {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure 
     (τ : Submodule ℂ (L2 μ)) : Submodule ℂ (G1 K n → ℂ) where
   carrier := {f | ∃ v ∈ τ, Reps μ v f}
   zero_mem' := ⟨0, τ.zero_mem, by
-    filter_upwards [(quasiMeasurePreserving_mk (Gam K n) μ).ae (Lp.coeFn_zero ℂ 2 (quotientMeasure (Gam K n) μ))] with y e
-    simpa using e⟩
+    filter_upwards [MeasureTheory.QuasiMeasurePreserving.ae_eq_comp
+      (quasiMeasurePreserving_mk (Gam K n) μ) (Lp.coeFn_zero ℂ 2 (quotientMeasure (Gam K n) μ))] with y e
+    exact e⟩
   add_mem' := by
     rintro f g ⟨v, hv, hf⟩ ⟨w, hw, hg⟩
     refine ⟨v + w, τ.add_mem hv hw, ?_⟩
-    filter_upwards [(quasiMeasurePreserving_mk (Gam K n) μ).ae (Lp.coeFn_add v w), hf, hg] with y e1 e2 e3
+    filter_upwards [MeasureTheory.QuasiMeasurePreserving.ae_eq_comp
+      (quasiMeasurePreserving_mk (Gam K n) μ) (Lp.coeFn_add v w), hf, hg] with y e1 e2 e3
+    simp only [Function.comp_apply] at e1
     rw [e1, Pi.add_apply, e2, e3, Pi.add_apply]
   smul_mem' := by
     rintro c f ⟨v, hv, hf⟩
     refine ⟨c • v, τ.smul_mem c hv, ?_⟩
-    filter_upwards [(quasiMeasurePreserving_mk (Gam K n) μ).ae (Lp.coeFn_smul c v), hf] with y e1 e2
+    filter_upwards [MeasureTheory.QuasiMeasurePreserving.ae_eq_comp
+      (quasiMeasurePreserving_mk (Gam K n) μ) (Lp.coeFn_smul c v), hf] with y e1 e2
+    simp only [Function.comp_apply] at e1
     rw [e1, Pi.smul_apply, e2, Pi.smul_apply, smul_eq_mul]
 
 private theorem reps_tr {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (G1 K n)) [μ.IsHaarMeasure]
     {v : L2 μ} {φ : G1 K n → ℂ} (h : Reps μ v φ) (g : G1 K n) :
     Reps μ (rightRegularRep (Gam K n) μ g v) (fun y => φ (y * g)) := by
-  have h1 := (quasiMeasurePreserving_mk (Gam K n) μ).ae (coeFn_rightRegularRep (Gam K n) μ g v)
-  have h2 := (measurePreserving_mul_right μ g).quasiMeasurePreserving.ae h
+  have h1 := MeasureTheory.QuasiMeasurePreserving.ae_eq_comp
+    (quasiMeasurePreserving_mk (Gam K n) μ) (coeFn_rightRegularRep (Gam K n) μ g v)
+  have h2 := MeasureTheory.QuasiMeasurePreserving.ae
+    (measurePreserving_mul_right μ g).quasiMeasurePreserving h
   filter_upwards [h1, h2] with y e1 e2
-  rw [e1]
-  exact e2
+  exact e1.trans e2
 
 private theorem span_le_rep {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (G1 K n)) [μ.IsHaarMeasure]
     (τ : Submodule ℂ (L2 μ)) (hτ : CuspIrr μ τ) (S : Subgroup (G1 K n)) {φ : G1 K n → ℂ} (h : ∃ v ∈ τ, Reps μ v φ) :

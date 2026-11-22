@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsEvalKerKrullDim
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsEvalKerKrullDim
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

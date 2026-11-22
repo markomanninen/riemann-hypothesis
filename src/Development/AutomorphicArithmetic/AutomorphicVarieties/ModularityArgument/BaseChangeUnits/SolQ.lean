@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.SolvableEquivalenceOfBaseChange
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.SolCOfSolDescent
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.SolvableEquivalenceOfBaseChange
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.SolCOfSolDescent
+
+@[expose] public section
 
 theorem UpperTheory.V.Z.Bc.solQ (h : UpperTheory.V.Z.Bc.SolE) : UpperTheory.V.Z.Bc.SolC := by
   intro F₀ F M Ω _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ hsol hplus hF hM l _ ι n hn r μ hr hirr hμ hs ⟨c, P, hc, hP⟩

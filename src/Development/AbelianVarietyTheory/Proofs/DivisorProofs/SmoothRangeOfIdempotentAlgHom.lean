@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -26,7 +30,7 @@ theorem idempotent_algHom_ker_fg {R A : Type} [CommRing R] [CommRing A] [Algebra
       | mem x hx => exact Ideal.subset_span ⟨x, hx, rfl⟩
       | algebraMap r => simp
       | add x y _ _ hx hy =>
-        have h : x + y - e (x + y) = (x - e x) + (y - e y) := by rw [map_add]; ring
+        have h : x + y - e (x + y) = (x - e x) + (y - e y) := by rw [map_add (f := _)]; ring
         rw [h]; exact Ideal.add_mem _ hx hy
       | mul x y _ _ hx hy =>
         have h : x * y - e (x * y) = x * (y - e y) + e y * (x - e x) := by rw [map_mul]; ring

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FactorBounds
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeightedNormSquareRows
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OrthogonalNormSquareSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
-import Formalism.LocalRingCardinality.Lemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FactorBounds
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeightedNormSquareRows
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OrthogonalNormSquareSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
+public import Formalism.LocalRingCardinality.Lemmas
+
+@[expose] public section
+
 open Module NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.DIV Formalism.L2.Indef Formalism.L2.Col Formalism.L2.Ker GlobalTheory.IndefiniteRowSideFullHecke.PlaceLogThetaBounds GlobalTheory.ColRows
 
 namespace GlobalTheory.PairingOpNorm
@@ -16,7 +21,8 @@ theorem pairing_eq {K : Type} [Field K] (c n : ℕ) (g : (Fin c → K) →ₗ[K]
   rw [show (Pi.basisFun K (Fin c)).repr y = y from rfl] at h
   rw [h]
   conv_lhs => rw [← (Pi.basisFun K (Fin n)).sum_repr F]
-  simp [dotProduct, map_sum, Basis.dualBasis_repr, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [dotProduct, map_sum, Basis.dualBasis_repr]
 
 theorem continuous_cnorm {ι : Type} [Fintype ι] : Continuous (Formalism.HermitianLatticesTheory.cnorm : (ι → ℂ) → ℝ) := by
   unfold Formalism.HermitianLatticesTheory.cnorm
@@ -24,7 +30,7 @@ theorem continuous_cnorm {ι : Type} [Fintype ι] : Continuous (Formalism.Hermit
 
 theorem cnorm_nonneg {ι : Type} [Fintype ι] (u : ι → ℂ) : 0 ≤ Formalism.HermitianLatticesTheory.cnorm u := Real.sqrt_nonneg _
 
-theorem bilin_bound {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] (c n : ℕ)
+theorem bilin_bound {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (c n : ℕ)
     (X : Matrix (Fin c) (Fin c) ℂ) (X0 : Matrix (Fin n) (Fin n) ℂ) (S : Matrix (Fin n) (Fin c) ℂ)
     (v : InfinitePlace K) (C : ℝ)
     (h : ∀ (y : Fin c → K) (F : Fin n → K), ‖(fun j => v.embedding (F j)) ⬝ᵥ (S *ᵥ fun i => v.embedding (y i))‖ ≤
@@ -55,7 +61,7 @@ end GlobalTheory.PairingOpNorm
 namespace GlobalTheory.PairingOpNorm
 open Matrix
 
-theorem opNormAt_pairing_sq_le : ∀ (K : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K] (c n : ℕ) (X : InfinitePlace K → Matrix (Fin c) (Fin c) ℂ) (X0 : InfinitePlace K → Matrix (Fin n) (Fin n) ℂ) (g : (Fin c → K) →ₗ[K] Module.Dual K (Fin n → K)) (v : InfinitePlace K) (A : ℝ), IsUnit (X v).det → IsUnit (X0 v).det → (∀ y F, v (g y F) ^ 2 ≤ Real.exp A * Formalism.HermitianLatticesTheory.normAt (Pi.basisFun K (Fin c)) X v y ^ 2 * Formalism.HermitianLatticesTheory.normAt (Pi.basisFun K (Fin n)) X0 v F ^ 2) → Formalism.HN.opNormAt (Pi.basisFun K (Fin c)) X (Pi.basisFun K (Fin n)).dualBasis (Formalism.HN.dualFrame X0) v g ^ 2 ≤ Real.exp A := by
+theorem opNormAt_pairing_sq_le : ∀ (K : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] (c n : ℕ) (X : InfinitePlace K → Matrix (Fin c) (Fin c) ℂ) (X0 : InfinitePlace K → Matrix (Fin n) (Fin n) ℂ) (g : (Fin c → K) →ₗ[K] Module.Dual K (Fin n → K)) (v : InfinitePlace K) (A : ℝ), IsUnit (X v).det → IsUnit (X0 v).det → (∀ y F, v (g y F) ^ 2 ≤ Real.exp A * Formalism.HermitianLatticesTheory.normAt (Pi.basisFun K (Fin c)) X v y ^ 2 * Formalism.HermitianLatticesTheory.normAt (Pi.basisFun K (Fin n)) X0 v F ^ 2) → Formalism.HN.opNormAt (Pi.basisFun K (Fin c)) X (Pi.basisFun K (Fin n)).dualBasis (Formalism.HN.dualFrame X0) v g ^ 2 ≤ Real.exp A := by
   intro K _ _ _ _ c n X X0 g v A hX hX0 hb
   set σ : K →+* ℂ := v.embedding with hσ
   set S : Matrix (Fin n) (Fin c) ℂ :=
@@ -98,7 +104,7 @@ theorem opNormAt_pairing_sq_le : ∀ (K : Type) [Field K] [NumberField K] [StarR
   set w : Fin c → ℂ := WithLp.ofLp ξ with hw
   set m : Fin n → ℂ := M *ᵥ w with hm
   have hTx : ‖LinearMap.toContinuousLinearMap (Matrix.toEuclideanLin M) ξ‖ = Formalism.HermitianLatticesTheory.cnorm m := by
-    simp [LinearMap.coe_toContinuousLinearMap', Matrix.toEuclideanLin_apply, EuclideanSpace.norm_eq,
+    simp [LinearMap.coe_toContinuousLinearMap', Matrix.toLpLin_apply, EuclideanSpace.norm_eq,
       Formalism.HermitianLatticesTheory.cnorm, hm, hw]
   have hξ : ‖ξ‖ = Formalism.HermitianLatticesTheory.cnorm w := by
     simp [EuclideanSpace.norm_eq, Formalism.HermitianLatticesTheory.cnorm, hw]

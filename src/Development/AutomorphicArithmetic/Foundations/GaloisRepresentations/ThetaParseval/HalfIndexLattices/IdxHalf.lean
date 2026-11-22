@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+
+@[expose] public section
 
 open scoped TensorProduct Matrix Topology Kronecker ComplexOrder Classical
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Matrix
@@ -135,7 +139,7 @@ theorem UpperTheory.TP.W.idxHalf :
       refine ⟨⟨x + y, B.add_mem hx'.1 hy'.1⟩, ?_⟩
       have h1 : e y = 0 := by rw [← hy'.2, hee']
       have h2 : e' x = 0 := by rw [← hx'.2, he'e]
-      ext <;> simp [φ, map_add, hx'.2, hy'.2, h1, h2]
+      ext <;> simp [φ, map_add (f := _), hx'.2, hy'.2, h1, h2]
     have hcomap : A.toAddSubgroup.addSubgroupOf B.toAddSubgroup =
         AddSubgroup.comap φ (((Submodule.map e A).toAddSubgroup.addSubgroupOf
           (Submodule.map e B).toAddSubgroup).prod

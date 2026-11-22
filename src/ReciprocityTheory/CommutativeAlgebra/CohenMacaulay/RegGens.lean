@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.RegGensA
+module
+
+public import Mathlib
+public import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.RegGensA
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Abelian IsLocalRing RingTheory.Sequence
 

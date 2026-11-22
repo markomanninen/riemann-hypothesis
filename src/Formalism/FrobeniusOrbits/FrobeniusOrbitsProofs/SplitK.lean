@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.FrobeniusOrbits.Statement
-import Formalism.TameInertiaTowers.CentralOrderTwo.OddEqOneOfSubOneMem
-import Formalism.TameInertiaTowers.CentralOrderTwo.DecompositionSubgroupIndex
+module
+
+public import Mathlib
+public import Formalism.FrobeniusOrbits.Statement
+public import Formalism.TameInertiaTowers.CentralOrderTwo.OddEqOneOfSubOneMem
+public import Formalism.TameInertiaTowers.CentralOrderTwo.DecompositionSubgroupIndex
+
+@[expose] public section
 
 open NumberField IntermediateField Ideal
 open scoped Pointwise
@@ -41,7 +45,7 @@ private theorem aeval_X_sq_add_C_eq_zero_of_sq_eq_neg (hb : b ^ 2 = -(d : L)) :
     Polynomial.aeval b (Polynomial.X ^ 2 + Polynomial.C (d : ℚ)) = 0 := by
   first
   | simp [hb]
-  | (rw [map_add, map_pow, Polynomial.aeval_X, Polynomial.aeval_C, hb]; simp)
+  | (rw [map_add (f := _), map_pow, Polynomial.aeval_X, Polynomial.aeval_C, hb]; simp)
 
 private theorem minpoly_natDegree_eq_two_of_sq_eq_neg (hd : 0 < d) (hb : b ^ 2 = -(d : L)) :
     (minpoly ℚ b).natDegree = 2 := by
@@ -146,10 +150,10 @@ private theorem Kd_exists_algEquiv_bK_eq_neg (hd : 0 < d) (hb : b ^ 2 = -(d : L)
   have hroot : Polynomial.aeval (-pb.gen) (minpoly ℚ pb.gen) = 0 := by
     rw [hmin, minpoly_eq_X_sq_add_C_of_sq_eq_neg hd hb, hgen]
     first
-    | (simp only [map_add, map_pow, Polynomial.aeval_X, Polynomial.aeval_C, map_natCast]; linear_combination bK_sq hb)
+    | (simp only [map_add (f := _), map_pow, Polynomial.aeval_X, Polynomial.aeval_C, map_natCast]; linear_combination bK_sq hb)
     | (simp; linear_combination bK_sq hb)
     | (simp; rw [neg_sq, bK_sq hb]; ring)
-    | (simp only [map_add, map_pow, Polynomial.aeval_X, Polynomial.aeval_C]; rw [neg_sq, bK_sq hb]; simp)
+    | (simp only [map_add (f := _), map_pow, Polynomial.aeval_X, Polynomial.aeval_C]; rw [neg_sq, bK_sq hb]; simp)
   have hbij : Function.Bijective (pb.lift (-pb.gen) hroot) := by
     first
     | exact AlgHom.bijective _

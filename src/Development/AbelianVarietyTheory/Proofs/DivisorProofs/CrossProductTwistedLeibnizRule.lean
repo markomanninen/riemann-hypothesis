@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrossTZeroRight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullAwChainsBijective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveTotalOfColumns
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrossTZeroRight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullAwChainsBijective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveTotalOfColumns
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC GlobalTheory.EtC.CupSpec GlobalTheory.EZ GlobalTheory.PBFc
 
 noncomputable section
@@ -36,7 +41,8 @@ theorem biChains_dh (X : SimplicialObject Spc) (a b : ℕ) :
   rw [show D.d (a + 1) a = ∑ i : Fin (a + 2), (-1 : ℤ) ^ (i : ℕ) •
       (((SimplicialObject.whiskering _ _).obj (AlgebraicTopology.alternatingFaceMapComplex (Shv R))).obj ((freeBi R).obj X)).δ i
     from AlgebraicTopology.alternatingFaceMapComplex_obj_d _ a]
-  rw [← HomologicalComplex.eval_map, Functor.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← HomologicalComplex.eval_map, Functor.map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Functor.map_zsmul]
   rfl
@@ -209,24 +215,29 @@ def bisimplexFunctionBoundarySecond {A : Type*} [AddCommGroup A] (φ : ∀ p r :
 
 def xv (α : Cochain ((chains R).obj E) I n) (z : Cochain ((chains R).obj B) J m) (w : ℤ) (p r : ℕ) (x : Sx E p U)
     (v : Sx B r U) : Sec (K.X w) U :=
-  if h : (-(p : ℤ) + n) + (-(r : ℤ) + m) = w then μ.mul U _ _ w h (ev α p _ rfl U x) (ev z r _ rfl U v) else 0
+  if h : (-(p : ℤ) + n) + (-(r : ℤ) + m) = w then
+    μ.mul U _ _ w h (GlobalTheory.EtC.ev (R := R) α p _ rfl U x) (GlobalTheory.EtC.ev (R := R) z r _ rfl U v)
+  else 0
 
 theorem xv_eq (α : Cochain ((chains R).obj E) I n) (z : Cochain ((chains R).obj B) J m) (w : ℤ) (p r : ℕ) (x : Sx E p U)
     (v : Sx B r U) (s t : ℤ) (hs : -(p : ℤ) + n = s) (ht : -(r : ℤ) + m = t) (h : s + t = w) :
-    xv μ α z w p r x v = μ.mul U s t w h (ev α p s hs U x) (ev z r t ht U v) := by
+    xv μ α z w p r x v =
+      μ.mul U s t w h (GlobalTheory.EtC.ev (R := R) α p s hs U x) (GlobalTheory.EtC.ev (R := R) z r t ht U v) := by
   subst hs ht
   exact dif_pos h
 
 theorem xv_δ_left {n₁ : ℤ} (hn : n + 1 = n₁) (α : Cochain ((chains R).obj E) I n) (z : Cochain ((chains R).obj B) J m)
     (w : ℤ) (p r : ℕ) (x : Sx E p U) (v : Sx B r U) (s s' t : ℤ) (hs : -(p : ℤ) + n = s) (hs' : s + 1 = s')
     (ht : -(r : ℤ) + m = t) (h : s' + t = w) :
-    μ.mul U s' t w h (Sec.map (I.d s s') (ev α p s hs U x)) (ev z r t ht U v) =
+    μ.mul U s' t w h (Sec.map (I.d s s') (GlobalTheory.EtC.ev (R := R) α p s hs U x))
+      (GlobalTheory.EtC.ev (R := R) z r t ht U v) =
       xv μ (δ n n₁ α) z w p r x v - sg n₁ • bisimplexFunctionBoundaryFirst (xv μ α z w) p r x v := by
   rw [xv_eq μ _ z w p r x v s' t (by omega) ht h]
   cases p with
   | zero => rw [ev_δ_zero hn α U s s' hs, bisimplexFunctionBoundaryFirst, smul_zero, sub_zero]
   | succ p =>
-    rw [ev_δ_succ hn α U p s s' hs, bisimplexFunctionBoundaryFirst, map_add, LinearMap.add_apply, sg_smul, map_zsmul, LinearMap.smul_apply, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ev_δ_succ hn α U p s s' hs, bisimplexFunctionBoundaryFirst, map_add (f := _), LinearMap.add_apply, sg_smul, map_zsmul, LinearMap.smul_apply, map_sum,
       LinearMap.sum_apply, eq_sub_iff_add_eq]
     refine congrArg₂ (· + ·) rfl (congrArg _ (Finset.sum_congr rfl fun i _ => ?_))
     rw [map_zsmul, LinearMap.smul_apply, xv_eq μ α z w p r _ v s' t (by omega) ht h]
@@ -234,13 +245,15 @@ theorem xv_δ_left {n₁ : ℤ} (hn : n + 1 = n₁) (α : Cochain ((chains R).ob
 theorem xv_δ_right {m₁ : ℤ} (hm : m + 1 = m₁) (α : Cochain ((chains R).obj E) I n) (z : Cochain ((chains R).obj B) J m)
     (w : ℤ) (p r : ℕ) (x : Sx E p U) (v : Sx B r U) (s t t' : ℤ) (hs : -(p : ℤ) + n = s)
     (ht : -(r : ℤ) + m = t) (ht' : t + 1 = t') (h : s + t' = w) :
-    μ.mul U s t' w h (ev α p s hs U x) (Sec.map (J.d t t') (ev z r t ht U v)) =
+    μ.mul U s t' w h (GlobalTheory.EtC.ev (R := R) α p s hs U x)
+      (Sec.map (J.d t t') (GlobalTheory.EtC.ev (R := R) z r t ht U v)) =
       xv μ α (δ m m₁ z) w p r x v - sg m₁ • bisimplexFunctionBoundarySecond (xv μ α z w) p r x v := by
   rw [xv_eq μ α _ w p r x v s t' hs (by omega) h]
   cases r with
   | zero => rw [ev_δ_zero hm z U t t' ht, bisimplexFunctionBoundarySecond, smul_zero, sub_zero]
   | succ r =>
-    rw [ev_δ_succ hm z U r t t' ht, bisimplexFunctionBoundarySecond, map_add, sg_smul, map_zsmul, map_sum, eq_sub_iff_add_eq]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ev_δ_succ hm z U r t t' ht, bisimplexFunctionBoundarySecond, map_add (f := _), sg_smul, map_zsmul, map_sum, eq_sub_iff_add_eq]
     refine congrArg₂ (· + ·) rfl (congrArg _ (Finset.sum_congr rfl fun i _ => ?_))
     rw [map_zsmul, xv_eq μ α z w p r x _ s t' hs (by omega) h]
 
@@ -276,7 +289,7 @@ theorem evD_crossT (w : ℤ) (a b : ℕ) (U : Scheme.{0}) (y : BSx (twX E V) a b
     evD (crossT V ℓ μ hk α z) w a b U y = sg (m * a) • xv μ α z w a b (baseS V y) (vertS V ℓ y) := by
   by_cases h : -((a + b : ℕ) : ℤ) + k = w
   · rw [evD_eq _ _ _ _ h, evT_crossT_xv]
-  · rw [evD, dif_neg h, xv, dif_neg (by push_cast at h; omega), smul_zero]
+  · rw [evD, dite_eq_right h, xv, dite_eq_right (by push_cast at h; omega), smul_zero]
 
 theorem hB_crossT (w : ℤ) (a b : ℕ) (U : Scheme.{0}) (y : BSx (twX E V) a b U) :
     hB (crossT V ℓ μ hk α z) w a b U y = sg (m * a + m) • bisimplexFunctionBoundaryFirst (xv μ α z w) a b (baseS V y) (vertS V ℓ y) := by

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SubspaceCounting.ChoiceOfTopsRefined
-import Formalism.SatakeDualWeyl.Statement
-import Formalism.SatakeDualWeyl.StatementE
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.LevGapLoc
+module
+
+public import Mathlib
+public import Formalism.SubspaceCounting.ChoiceOfTopsRefined
+public import Formalism.SatakeDualWeyl.Statement
+public import Formalism.SatakeDualWeyl.StatementE
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.LevGapLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,8 +75,8 @@ section Red
 
 variable [IsDiscreteValuationRing O]
 
-open Classical in
 
+open Classical in
 def resL (x : L) : IsLocalRing.ResidueField O :=
   if h : x ∈ O then IsLocalRing.residue O ⟨x, h⟩ else 0
 
@@ -459,8 +463,8 @@ theorem exists_GLint_map {n : Type} [Fintype n] [DecidableEq n] {M : Matrix n n 
   congr 1
   rw [← Matrix.toLin'_apply', Matrix.toLin'_toMatrix']
 
-open Classical in
 
+open Classical in
 def dgl {ϖ : L} (hϖ : ϖ ≠ 0) (n e : ℕ) : GL (Fin n) L :=
   ⟨Matrix.diagonal fun i => if (i : ℕ) < e then ϖ else 1, Matrix.diagonal fun i => if (i : ℕ) < e then ϖ⁻¹ else 1,
     by rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]; congr 1; funext i; split_ifs <;> field_simp,
@@ -497,8 +501,8 @@ theorem isType_dgl {ϖ : O} (hϖ : Irreducible ϖ) {n e : ℕ} (he : e ≤ n) :
       card_filter_lt n e he]
     simp
 
-open Classical in
 
+open Classical in
 theorem card_filter_reps {ϖ : O} (hϖ : Irreducible ϖ) {n e : ℕ} {γ : GL (Fin n) L} (hγ : IsType O ϖ e γ)
     {R : Finset (GL (Fin n) L)} (hR : IsReps (Formalism.UG.GLint (Fin n) O) γ R)
     (P : Submodule (IsLocalRing.ResidueField O) (Fin n → IsLocalRing.ResidueField O) → Prop) :
@@ -585,11 +589,6 @@ section Count
 
 variable [IsDiscreteValuationRing O]
 
-def scU {ϖ : L} (hϖ : ϖ ≠ 0) (n : Type) [Fintype n] [DecidableEq n] : GL n L :=
-  ⟨ϖ • (1 : Matrix n n L), ϖ⁻¹ • (1 : Matrix n n L),
-    by rw [Matrix.smul_mul, Matrix.mul_smul, Matrix.one_mul, smul_smul, mul_inv_cancel₀ hϖ, one_smul],
-    by rw [Matrix.smul_mul, Matrix.mul_smul, Matrix.one_mul, smul_smul, inv_mul_cancel₀ hϖ, one_smul]⟩
-
 theorem countBelow_zero_space {K : Type} [Field K] (A : Submodule K (Fin 0 → K)) (j : ℕ) :
     Formalism.G0.countBelow A j = if j = 0 then 1 else 0 := by
   unfold Formalism.G0.countBelow
@@ -660,19 +659,11 @@ section Index
 
 variable [IsDiscreteValuationRing O]
 
-def redV (n : Type) : (n → O) →ₗ[O] (n → IsLocalRing.ResidueField O) :=
-  (Algebra.linearMap O (IsLocalRing.ResidueField O)).compLeft n
-
 end Index
 
 section Mirror
 
 variable [IsDiscreteValuationRing O]
-
-def invT {n : Type} [Fintype n] [DecidableEq n] (x : GL n L) : GL n L :=
-  ⟨((x⁻¹ : GL n L) : Matrix n n L)ᵀ, (x : Matrix n n L)ᵀ,
-    by rw [← Matrix.transpose_mul, Units.mul_inv, Matrix.transpose_one],
-    by rw [← Matrix.transpose_mul, Units.inv_mul, Matrix.transpose_one]⟩
 
 end Mirror
 

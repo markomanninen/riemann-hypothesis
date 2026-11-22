@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatOpA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGaugeGTrChain
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGaugeGQLFam
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGaugeGVTr
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGaugeGVsTr
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatOpA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGaugeGTrChain
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGaugeGQLFam
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGaugeGVTr
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGaugeGVsTr
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -139,8 +143,22 @@ theorem jdr_tr_at (hD : JDRDrTr) (hM : JDRModelV) (P : M.Par) (Bs : B.RealPlaceD
         MA.actA P (RhM P L y) (Gauge.VLem.trR P Bs.μsec e Φ) ∧
       Gauge.VLem.trR P Bs.μsec e (rhvGrp P.k P.r Bs.z Bs.z' (y : ℂ) Φ) =
         MA.actA P (RhvM P L y) (Gauge.VLem.trR P Bs.μsec e Φ) := by
-  have hV := fun b => Gauge.gauge_vector_transition_holds Wp Wq P Bs hpl hk e he Dc Φ hΦ y b
-  have hVs := fun a => Gauge.gauge_conj_vector_transition Wp Wq P Bs hpl hk e he Dc Φ hΦ y a
+  have hV : Gauge.GVTr := by
+    intro Wp Wq _ _ _ _ _ _ P Bs hpl hk e he Dc Φ hΦ Y b
+    have h := Gauge.VLem.vab_ind hpl hk he Y P.r le_rfl Dc Φ hΦ
+    rw [Gauge.VLem.sitesCommonSpace_v0_eq_Vp]
+    fin_cases b
+    · exact ⟨h.1.1, fun ρ => congrFun h.1.2 ρ⟩
+    · exact ⟨h.2.1, fun ρ => congrFun h.2.2 ρ⟩
+  have hV := fun b => hV Wp Wq P Bs hpl hk e he Dc Φ hΦ y b
+  have hVs : Gauge.GVsTr := by
+    intro Wp Wq _ _ _ _ _ _ P Bs hpl hk e he Dc Φ hΦ Y a
+    have h := Gauge.VLem.vabs_ind hpl hk he Y P.r le_rfl Dc Φ hΦ
+    rw [Gauge.VLem.sitesCommonSpace_v0_eq_Vp]
+    fin_cases a
+    · exact ⟨h.1.1, fun ρ => congrFun h.1.2 ρ⟩
+    · exact ⟨h.2.1, fun ρ => congrFun h.2.2 ρ⟩
+  have hVs := fun a => hVs Wp Wq P Bs hpl hk e he Dc Φ hΦ y a
   have hsm := fun (Dc' : (Fin P.r → ℂ) → Set (Q.Mx P.k P.r)) (Ψ : Q.Fn P.k P.r (Wq →L[ℂ] Wp))
     (hΨ : Gauge.FamR P Bs Dc' Ψ) => Gauge.raw_gauge_smoothness_holds Wp Wq P Bs hpl hk e he Dc' Ψ hΨ
   have hql := fun (Ψ : Q.Fn P.k P.r (Wq →L[ℂ] Wp)) (hΨ : Gauge.FamR P Bs Dc Ψ) (a b : Fin 2) =>

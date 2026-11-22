@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CmpPrime
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CmpPrime
+
+@[expose] public section
 
 open Polynomial
 
@@ -21,7 +25,7 @@ private theorem actL_pow (a : B) (n : ℕ) (m : M) :
 private theorem act_eval (a : B) (q : Λ[X]) (m : M) :
     q.eval₂ (lam : Λ →+* B) a • m = (aeval (actL lam M hs a) q) m := by
   refine Polynomial.induction_on' q (fun p r hp hr => ?_) (fun n c => ?_)
-  · rw [eval₂_add, add_smul, hp, hr, map_add, LinearMap.add_apply]
+  · rw [eval₂_add, add_smul, hp, hr, map_add (f := _), LinearMap.add_apply]
   · rw [eval₂_monomial, aeval_monomial, Module.End.mul_apply, Module.algebraMap_end_apply,
       actL_pow, mul_smul, hs]
     rfl

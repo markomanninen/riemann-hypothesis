@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ExSub
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerTail
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsBisSide
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsMoreBis
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ExSub
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerTail
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsBisSide
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsMoreBis
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -30,8 +35,8 @@ theorem pullDeg_sub (a b : K → ℤ) :
 
 end FlagModelJoinLeftAlt
 
-open FlagModelJoinLeftAlt in
 
+open FlagModelJoinLeftAlt in
 theorem FlagModelJoinLeftAlt.proof (hVert : JoinVerticalDivisor.Statement)
     (hFlag : FlagPairJoinLeft.Statement) (hNum : PairNumberJoinLeft.Statement) :
     FlagModelJoinLeftAlt.Statement := by
@@ -56,8 +61,8 @@ theorem FlagModelJoinLeftAlt.proof (hVert : JoinVerticalDivisor.Statement)
       hG.rename_isHomogeneous.mul hQ.rename_isHomogeneous
     rwa [show c + (d + 1 - c) = d + 1 by omega] at h
   unfold FlagModel.value
-  rw [hNum O Ω K ι x F.K' F.ι' F.z K₂ ι₂ w d F.model hZ (hfn.trans F.birat.symm) I I₁ hI hI₁ (N + r)
-    _ _ _ _ hvert _ hH]
+  refine (hNum O Ω K ι x F.K' F.ι' F.z K₂ ι₂ w d F.model hZ
+    (hfn.trans F.birat.symm) I I₁ hI hI₁ (N + r) _ _ _ _ hvert _ hH).trans ?_
   congr 1 <;> funext i <;> refine Fin.addCases (fun j => ?_) (fun j => ?_) i <;>
     simp [hdeg, hdeg', hf, hg, assocDeg_pullDeg, assocVar_comp_liftVar]
 

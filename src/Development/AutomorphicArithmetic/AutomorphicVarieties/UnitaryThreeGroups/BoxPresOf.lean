@@ -1,19 +1,23 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.IsLocPres
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxAbs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxCount
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatLoc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.FinrankKerAdRepComplexConjSubOneEqBoxDef
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.NotPrimeDvdRelIndexKerInducedUnitaryRep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsGaloisCyclotomicNegOneTrivialOnEtaPsi
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsFinitePlaceSetFactoringThroughGS
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.InertiaLeNormalIffKerLeAndInertiaLe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsDecompositionFieldFrobeniusData
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.GaloisGroupPhiCondition
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.KillLoc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ExistsLocallyConstantDOneEqCocycleOfTameInertia
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.IsLocPres
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxAbs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxCount
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatLoc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.FinrankKerAdRepComplexConjSubOneEqBoxDef
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.NotPrimeDvdRelIndexKerInducedUnitaryRep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsGaloisCyclotomicNegOneTrivialOnEtaPsi
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsFinitePlaceSetFactoringThroughGS
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.InertiaLeNormalIffKerLeAndInertiaLe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsDecompositionFieldFrobeniusData
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.GaloisGroupPhiCondition
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.KillLoc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ExistsLocallyConstantDOneEqCocycleOfTameInertia
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.GalOfCusp Matrix IsLocalRing
 open UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.Alg UpperTheory.V.U3
@@ -32,7 +36,7 @@ variable [TopologicalSpace Γ] [IsTopologicalGroup Γ]
 omit [IsTopologicalGroup Γ] in
 private theorem rbar_open (hη : IsLocallyConstant η) (hΨ : IsLocallyConstant (barChar O Ψ)) :
     IsOpen ((rbar O η Ψ).ker : Set Γ) :=
-  ((hη.prodMk hΨ).comp fun p => (⟨tor _ p.2, p.1⟩ : GG 3 (ResidueField O))).isOpen_fiber 1
+  ((hη.prodMk hΨ).comp fun p => (⟨tor _ p.2, p.1⟩ : GG (m := 3) (R := ResidueField O))).isOpen_fiber 1
 
 private theorem adBar_open (hη : IsLocallyConstant η) (hΨ : IsLocallyConstant (barChar O Ψ)) (j : ℤ) :
     IsOpen ((adBar O η Ψ j).ker : Set Γ) :=
@@ -148,7 +152,7 @@ private theorem aux (hI : CohInp) (hP : LemmaP) {Ω : Type} [Field Ω] [CharZero
 
 theorem UpperTheory.V.U3.boxPres :
     CohInp → LemmaP → ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {K : Type} [Field K] [NumberField K] [Algebra K Ω]
-      {l : ℕ} [Fact l.Prime] {c : Coef l} {N : ℕ} [NeZero N] {e : ℕ} {ψ : DirichletCharacter c.O N} (D : Dat Ω K c e ψ) (U : D.ULoc) (B : Univ (BoxCond D.Kill D.ι D.ι_cont U (D.loc.It U))) (WB : WPres c.O ℤ (U.R ⧸ D.loc.It U)),
+      {l : ℕ} [Fact l.Prime] {c : Coef l} {N : ℕ} [NeZero N] {e : ℕ} {ψ : DirichletCharacter c.O N} (D : Dat Ω K c e ψ) (U : (_root_.UpperTheory.V.U3.Univ (_root_.UpperTheory.V.U3.GCond.noCondition _ (D.η.comp D.ι) (D.Ψ.comp D.ι)))) (B : Univ (BoxCond D.Kill D.ι D.ι_cont U (D.loc.It U))) (WB : WPres c.O ℤ (U.R ⧸ D.loc.It U)),
       IsLocPres U (D.loc.It U) WB → BoxPres B WB := by
   intro hI hP Ω _ _ _ K _ _ _ l hl c N hN e ψ D U B WB hW
   obtain ⟨hc, hf, hlm, -⟩ := UpperTheory.V.abelian₂.dvr_finite l c.O

@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSTr
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeB
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormalFormOrderZeroOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSTr
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormalFormOrderZeroOfParts
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt MeasureTheory
 
@@ -40,7 +44,7 @@ theorem rawR_zero (P : M.Par) (μsec : ℂ → Matrix (Fin (P.k + 1)) (Fin (P.k 
 
 theorem smQ_sum_apply (P : M.Par) (x : M.Ty P → MA.SmQ P.r P.TT) (q : MA.Qp P.r P.TT) :
     ((∑ σ, x σ : MA.SmQ P.r P.TT) : MA.Qp P.r P.TT → ℂ) q = ∑ σ, ((x σ : MA.SmQ P.r P.TT) : MA.Qp P.r P.TT → ℂ) q := by
-  simp only [AddSubmonoidClass.coe_finset_sum, Finset.sum_apply]
+  simp only [AddSubmonoidClass.coe_finsetSum, Finset.sum_apply]
 
 variable (P : M.Par) (Bs : B.RealPlaceData P.k P.r Wp Wq) (hpl : Q.IsPlace P Bs.z Bs.z' Bs.π Bs.π') (hk2 : 2 ≤ P.k)
   (e : M.Ty P → ℂ → (Wq →L[ℂ] Wp)) (he : IsFrameB P Bs e)

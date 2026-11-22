@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AdelicUnitaryGroups
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AdelicUnitaryGroups
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -12,7 +16,7 @@ section Conj
 
 variable {F E : Type*} [Field F] [Field E] [Algebra F E] [Algebra.IsQuadraticExtension F E]
 
-theorem embedding_conj [NumberField F] [NumberField E] [IsTotallyReal F] [IsTotallyComplex E]
+theorem embedding_conj [NumberField F] [NumberField E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
     (σ : E →+* ℂ) (x : E) : σ (conj F E x) = starRingEnd ℂ (σ x) := by
   have hF : ∀ c : F, starRingEnd ℂ (σ (algebraMap F E c)) = σ (algebraMap F E c) := by
     intro c
@@ -24,11 +28,11 @@ theorem embedding_conj [NumberField F] [NumberField E] [IsTotallyReal F] [IsTota
   · obtain ⟨c, rfl⟩ := hx
     rw [conj_algebraMap, hF]
   · have hs : σ x + σ (conj F E x) = σ (algebraMap F E (Algebra.trace F E x)) := by
-      rw [← map_add, add_conj]
+      rw [← map_add (f := _), add_conj]
     have hp : σ x * σ (conj F E x) = σ (algebraMap F E (Algebra.norm F x)) := by
       rw [← map_mul, mul_conj]
     have e1 : starRingEnd ℂ (σ x) + starRingEnd ℂ (σ (conj F E x)) = σ x + σ (conj F E x) := by
-      rw [← map_add, hs, hF]
+      rw [← map_add (f := _), hs, hF]
     have e2 : starRingEnd ℂ (σ x) * starRingEnd ℂ (σ (conj F E x)) =
         σ x * σ (conj F E x) := by
       rw [← map_mul, hp, hF]
@@ -124,8 +128,8 @@ def stab (M : Majorant h v) : Subgroup (archUnitary h v) :=
 
 end Majorant
 
-variable (E) in
 
+variable (E) in
 structure IsLattice (La : AddSubgroup W) : Prop where
 
   smul_mem : ∀ (a : 𝓞 E) (x : W), x ∈ La → (a : E) • x ∈ La
@@ -137,7 +141,7 @@ structure IsLattice (La : AddSubgroup W) : Prop where
 def dualLattice (h : HermitianForm F E W) (La : AddSubgroup W) : AddSubgroup W where
   carrier := {y | ∀ x ∈ La, h.toSesq y x ∈ integralClosure ℤ E}
   add_mem' {a b} ha hb x hx := by
-    rw [map_add, LinearMap.add_apply]
+    rw [map_add (f := _), LinearMap.add_apply]
     exact add_mem (ha x hx) (hb x hx)
   zero_mem' x _ := by
     rw [map_zero, LinearMap.zero_apply]
@@ -165,17 +169,17 @@ def latticeStab (h : HermitianForm F E W) (La : AddSubgroup W) : Subgroup h.unit
 def IsIsotropicLine (h : HermitianForm F E W) (l : Submodule E W) : Prop :=
   finrank E l = 1 ∧ ∀ x ∈ l, ∀ y ∈ l, h.toSesq x y = 0
 
-variable (E) in
 
+variable (E) in
 def ringMultiples (x : W) : AddSubgroup W :=
   (((smulAddHom E W).flip x).comp (algebraMap (𝓞 E) E).toAddMonoidHom).range
 
-variable (E) in
 
+variable (E) in
 def lineIndex (La : AddSubgroup W) (x : W) : ℕ :=
   (ringMultiples E x).relIndex (La ⊓ (Submodule.span E {x}).toAddSubgroup)
 
-variable [NumberField F] [IsTotallyReal F] [IsTotallyComplex E]
+variable [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 
 def archEmbed (h : HermitianForm F E W) (v : Basis ι E W) : h.unitaryGroup →* archUnitary h v :=
   MonoidHom.codRestrict
@@ -191,13 +195,13 @@ def archLatticeGroup (h : HermitianForm F E W) (v : Basis ι E W) (La : AddSubgr
     Subgroup (archUnitary h v) :=
   (latticeStab h La).map (archEmbed h v)
 
-variable {h : HermitianForm F E W} {v : Basis ι E W} in
 
+variable {h : HermitianForm F E W} {v : Basis ι E W} in
 def countBelow (M : Majorant h v) (VV : Set W) (g : archUnitary h v) (t : ℝ) : ℝ≥0∞ :=
   (({x ∈ VV | M.len (invApply g (vecAt v x)) < t}.encard : ℕ∞) : ℝ≥0∞)
 
-variable {h : HermitianForm F E W} {v : Basis ι E W} in
 
+variable {h : HermitianForm F E W} {v : Basis ι E W} in
 def massBelow (M : Majorant h v) (μ : Measure (archUnitary h v)) (FD : Set (archUnitary h v))
     (VV : Set W) (t : ℝ) : ℝ≥0∞ :=
   ∫⁻ g in FD, countBelow M VV g t ∂μ

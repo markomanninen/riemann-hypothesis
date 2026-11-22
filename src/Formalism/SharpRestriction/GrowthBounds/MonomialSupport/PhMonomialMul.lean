@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.AevalValuation.PlDefs
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.AevalValuation.PlDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,14 +95,14 @@ end Alg2
 
 private theorem coeff_compD {Kf : Type} [Field Kf] {ι : Type} {s : ℕ} (d : ι → ℕ)
     (H : MvPolynomial (ι × Fin s) Kf) (m : ι × Fin s →₀ ℕ) :
-    coeff m (compD d H) = if (∀ x, multideg m x = d x) then coeff m H else 0 := by
+    AddMonoidAlgebra.coeff (compD d H) m = if (∀ x, multideg m x = d x) then AddMonoidAlgebra.coeff H m else 0 := by
   unfold compD
   rw [coeff_sum]
   simp only [coeff_monomial]
   rw [Finset.sum_ite_eq']
   simp only [Finset.mem_filter, mem_support_iff]
   by_cases h : ∀ x, multideg m x = d x
-  · by_cases h0 : coeff m H = 0 <;> simp [h, h0]
+  · by_cases h0 : AddMonoidAlgebra.coeff H m = 0 <;> simp [h, h0]
   · simp [h]
 
 private theorem compD_monomial' {Kf : Type} [Field Kf] {ι : Type} {s : ℕ} (d : ι → ℕ)
@@ -125,7 +129,8 @@ theorem compPh : CompPh := by
     simp only [multideg_add', multideg_phExp]
   unfold filtQ
   conv_lhs => rw [F.as_sum]
-  rw [map_sum, Finset.mul_sum, compD_sum, map_sum, Finset.mul_sum, Finset.sum_filter]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.mul_sum, compD_sum, map_sum, Finset.mul_sum, Finset.sum_filter]
   refine Finset.sum_congr rfl (fun mo _ => ?_)
   rw [ph_monomial_mul, compD_monomial']
   simp only [key]
@@ -136,11 +141,11 @@ private theorem fdig_eq_sum_C_coeff_mul_prod_of_support_subset {p : ℕ} {O : Ty
     (F : MvPolynomial (TL J Dt.nL r × Fin r) (KK O)) (S : Finset (TL J Dt.nL r × Fin r →₀ ℕ))
     (hS : F.support ⊆ S) :
     Dt.Fdig rho F = ∑ mo ∈ S with Dt.digOK rho mo,
-      C (coeff mo F) * ∏ v ∈ mo.support, X (Dt.liftVar v) ^ Dt.liftExp mo v := by
+      C (AddMonoidAlgebra.coeff F mo) * ∏ v ∈ mo.support, X (Dt.liftVar v) ^ Dt.liftExp mo v := by
   unfold SignedChainData.Fdig
   refine Finset.sum_subset (Finset.filter_subset_filter _ hS) ?_
   intro mo h1 h2
-  have h0 : coeff mo F = 0 := by
+  have h0 : AddMonoidAlgebra.coeff F mo = 0 := by
     by_contra h
     exact h2 (Finset.mem_filter.2 ⟨mem_support_iff.2 h, (Finset.mem_filter.1 h1).2⟩)
   simp [h0]
@@ -154,7 +159,7 @@ private theorem signedChainData_fdig_add {p : ℕ} {O : Type} [CommRing O] [IsDo
     fdig_eq_sum_C_coeff_mul_prod_of_support_subset Dt rho G (F.support ∪ G.support) Finset.subset_union_right,
     ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl (fun mo _ => ?_)
-  rw [coeff_add, map_add, add_mul]
+  rw [MvPolynomial.coeff_add, map_add (f := _), add_mul]
 
 theorem fdigSum : FdigSum := by
   intro p O _ _ _ r J Dt rho α s f
@@ -207,7 +212,7 @@ theorem liftMon_phExp (hP : ∀ j m, 0 < Dt.P j m) (β : TL J Dt.nL r × Fin r �
   ext w
   by_cases hw : w ∈ Set.range Dt.liftVar
   · obtain ⟨x, rfl⟩ := hw
-    simp only [liftMon, Finsupp.add_apply, Finsupp.mapDomain_apply (liftVar_injective' Dt)]
+    simp only [liftMon, Finsupp.add_apply, Finsupp.mapDomain_apply_of_injective (liftVar_injective' Dt)]
     rcases x with ⟨⟨j, l | m⟩, a⟩
     · simp [liftE, Pof, phExp_inl, SignedChainData.liftVar]
     · simp only [liftE, Finsupp.onFinset_apply, Pof, Finsupp.add_apply, phExp_inr, h1, zero_add,
@@ -250,11 +255,12 @@ theorem fdigPh : FdigPh := by
   intro p O _ _ _ r J _ Dt hP rho β c F hF
   have hsupp : ∀ mo ∈ F.support, ∀ v ∈ mo.support, IsLW v.1 := by
     intro mo hmo v hv
-    exact (mem_supported.1 hF) (Finset.mem_coe.2 ((mem_vars v).2 ⟨mo, hmo, hv⟩))
+    exact (mem_supported.1 hF) (Finset.mem_coe.2 ((mem_vars_iff_mem_support v).2 ⟨mo, hmo, hv⟩))
   have hs := fdigSum p O r J Dt rho _ F.support
-    (fun mo => monomial β c * Dt.ph (monomial mo (coeff mo F)))
+    (fun mo => monomial β c * Dt.ph (monomial mo (AddMonoidAlgebra.coeff F mo)))
   conv_lhs => rw [F.as_sum]
-  rw [map_sum, Finset.mul_sum, hs]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.mul_sum, hs]
   simp only [ph_monomial_mul, fdig_monomial]
   by_cases hd : Dt.digOK rho β
   · rw [if_pos hd]

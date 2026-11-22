@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TopologicalBasisBasicFacts
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnitOfFrobeniusDvdEisensteinPowMulStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TopologicalBasisBasicFacts
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnitOfFrobeniusDvdEisensteinPowMulStatement
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
 open Matrix
@@ -33,14 +38,15 @@ theorem c_frob_mem {S A : Type} [CommRing S] [IsNoetherianRing S] [CommRing A] {
     {ι : Type} (TB : TopBasis s I ι) (hI : I ≤ Ideal.jacobson ⊥) (φ : S →+* S) (Φ : A →+* A)
     (hφ : ∀ a, s (φ a) = Φ (s a)) (hφI : I.map φ ≤ I) (x : A) (N : Ideal S) (hN : ∀ i, φ (TB.c i x) ∈ N)
     (j : ι) : TB.c j (Φ x) ∈ N := by
-  have hH : IsHausdorff I (S ⧸ N) := IsHausdorff.of_le_jacobson _ _ hI
+  have hH : IsHausdorff I (S ⧸ N) := IsHausdorff.of_le_jacobson _ _ (by simpa only [Ideal.jacobson_bot] using hI)
   refine Ideal.Quotient.eq_zero_iff_mem.1 (hH.haus _ fun n => ?_)
   have hF : ∀ i, i ∉ (TB.fin x n).toFinset → TB.c i x ∈ I ^ n := fun i hi => by simpa using hi
   have h1 := Ideal.mem_map_of_mem Φ (TB.approx x n _ hF)
   have e : Φ.comp s = s.comp φ := RingHom.ext fun a => (hφ a).symm
   rw [Ideal.map_map, e, ← Ideal.map_map, Ideal.map_pow] at h1
   have h2 := TB.c_mem_of_mem_map _ _ (Ideal.map_mono (Ideal.pow_right_mono hφI n) h1) j
-  rw [map_sub, map_sub, map_sum, map_sum] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, map_sub, map_sum, map_sum] at h2
   have h3 : ∑ i ∈ (TB.fin x n).toFinset, TB.c j (Φ (s (TB.c i x) * TB.b i)) ∈ N :=
     N.sum_mem fun i _ => by
       rw [map_mul, ← hφ, TB.c_mul]
@@ -78,8 +84,8 @@ theorem ne_zero_of_isPer {K : FinExt l} (bk : BK K) {τ : Ainf l} (h : bk.IsPer 
 
 end GlobalTheory.BSP.CoeffIdeal
 
-open GlobalTheory.BSP.CoeffIdeal in
 
+open GlobalTheory.BSP.CoeffIdeal in
 theorem GlobalTheory.BSP.pow_l_mem_span_coeff : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K) (τ : Ainf l), bk.IsPer τ → ∀ (ι : Type) (TB : TopBasis bk.ev bk.J ι) (M : ℕ), ∃ r : ℕ, (l : bk.S) ^ r ∈ Ideal.span (Set.range fun i => TB.c i (τ ^ M)) := by
   intro l _ K bk τ hτ ι TB M
   set I : Ideal bk.S := Ideal.span (Set.range fun i => TB.c i (τ ^ M)) with hI

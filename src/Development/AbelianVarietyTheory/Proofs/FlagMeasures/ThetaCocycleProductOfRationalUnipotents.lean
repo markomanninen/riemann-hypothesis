@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocOf
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LeSpanEInfToO
+module
+
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocOf
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LeSpanEInfToO
+
+@[expose] public section
+
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.FourierDecayAlt Formalism.L2.SG.RowsConc Formalism.L2.SG.NGData Formalism.L2.SG.TermLoc GlobalTheory.SnFam
 open scoped Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -20,15 +25,9 @@ theorem orth_anti {U U' : Submodule E S.V} (h : U ≤ U') : orth S U' ≤ orth S
   rw [mem_orth_iff] at hv ⊢
   exact fun y hy => hv y (h hy)
 
-theorem le_spanE_inf (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsLattice E Λ) (U : Submodule E S.V) :
+theorem le_spanE_inf (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsFullLattice E Λ) (U : Submodule E S.V) :
     U ≤ spanE S (Λ ⊓ toO S U) := by
-  first
-  | exact @_root_.GlobalTheory.SpanInfDenominators.le_spanE_inf_toO
-  | exact _root_.GlobalTheory.SpanInfDenominators.le_spanE_inf_toO
-  | (apply _root_.GlobalTheory.SpanInfDenominators.le_spanE_inf_toO <;> assumption)
-  | (intros; apply _root_.GlobalTheory.SpanInfDenominators.le_spanE_inf_toO <;> assumption)
-  | (intros; apply @_root_.GlobalTheory.SpanInfDenominators.le_spanE_inf_toO <;> first | assumption | infer_instance)
-  | (intros; exact _root_.GlobalTheory.SpanInfDenominators.le_spanE_inf_toO ..)
+  exact _root_.GlobalTheory.SpanInfDenominators.le_spanE_inf_toO Λ hΛ U
 
 end Gen
 
@@ -77,7 +76,7 @@ section Main
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {S : Formalism.BasicNotions.HSpace E} {r : ℕ}
 
-theorem sub_le_uue {T T' : E} (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsLattice E Λ)
+theorem sub_le_uue {T T' : E} (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsFullLattice E Λ)
     (F : LFlag S r T) (F' : LFlag S r T') :
     Xsp F ≤ UUE Λ F F' ∧ Xsp F' ≤ UUE Λ F F' ∧ F.zt ∈ UUE Λ F F' ∧ F'.zt ∈ UUE Λ F F' := by
   have hUU : UU Λ F F' = XLam Λ F ⊔ Submodule.span (𝓞 E) {F.zt} ⊔ XLam Λ F' ⊔ Submodule.span (𝓞 E) {F'.zt} := rfl
@@ -111,7 +110,7 @@ theorem uue_le {T T' : E} (Λ : Submodule (𝓞 E) S.V) (F : LFlag S r T) (F'' :
     · exact Submodule.span_le.mpr (Set.singleton_subset_iff.mpr (by rw [hz'']; exact hz''M))
   exact fun v hv => this hv
 
-theorem th_eq_hp_gen {T T' : E} (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsLattice E Λ)
+theorem th_eq_hp_gen {T T' : E} (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsFullLattice E Λ)
     (F : LFlag S r T) (F' F'' : LFlag S r T')
     (hz : F.zt = F.fl.z) (hz' : F'.zt = F'.fl.z) (hz'' : F''.zt = F''.fl.z)
     (n m : S.V ≃ₗ[E] S.V) (hni : ∀ x y, S.hT (n x) (n y) = S.hT x y)
@@ -185,7 +184,7 @@ end GlobalTheory.DcosetCompl
 
 namespace GlobalTheory.DcosetCompl
 
-theorem th_eq_hp : ∀ (D : D7) {T T' : D.host.E} (Λ : Submodule (𝓞 D.host.E) (VS D).V) (F : LFlag (VS D) D.R.rS T) (F' F'' : LFlag (VS D) D.R.rS T'), Submodule.IsLattice D.host.E Λ → F.zt = F.fl.z → F'.zt = F'.fl.z → F''.zt = F''.fl.z → ∀ n ∈ NRat F, ∀ m ∈ NRat F', (∀ a, frame F'' a = (n * m) (frame F' a)) → Th Λ F F' F'' (n * m) = Hp Λ F F' := by
+theorem th_eq_hp : ∀ (D : D7) {T T' : D.host.E} (Λ : Submodule (𝓞 D.host.E) (VS D).V) (F : LFlag (D.sp.Y 0) D.R.rS T) (F' F'' : LFlag (D.sp.Y 0) D.R.rS T'), Submodule.IsFullLattice D.host.E Λ → F.zt = F.fl.z → F'.zt = F'.fl.z → F''.zt = F''.fl.z → ∀ n ∈ NRat F, ∀ m ∈ NRat F', (∀ a, frame F'' a = (n * m) (frame F' a)) → Th Λ F F' F'' (n * m) = Hp Λ F F' := by
   intro D T T' Λ F F' F'' hΛ hz hz' hz'' n hn m hm hfr
   have hnX : ∀ x ∈ Xsp F, n x - x ∈ Xsp F := by
     intro x hx

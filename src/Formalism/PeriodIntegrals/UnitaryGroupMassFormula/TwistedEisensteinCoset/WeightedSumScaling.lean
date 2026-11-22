@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.IaDivDown
-import Lemmata.PeriodicFunctions.PeriodicApplyMulAdd
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.IaDivDown
+public import Lemmata.PeriodicFunctions.PeriodicApplyMulAdd
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -280,8 +284,8 @@ theorem sg_qinv {a b : ℕ} {φ : E → K} (h : Good1 P a b φ) (f : ℕ) :
       field_simp
     rw [e, sg_stab hN hp hq (Nat.le_add_right a f) le_rfl h, Nat.sub_self, pow_zero, Nat.cast_one, one_mul]
 
-include hK in
 
+include hK in
 theorem weighted_sum_scaling {d : E} (hd : d ≠ 0) (a b : ℕ) :
     ∃ a' b' : ℕ, ∀ φ : E → K, Good1 P a b φ →
       Good1 P a' b' (fun u => φ (d * u)) ∧ W1 P a' b' (fun u => φ (d * u)) = (qOf P : K) ^ vq P d * W1 P a b φ := by

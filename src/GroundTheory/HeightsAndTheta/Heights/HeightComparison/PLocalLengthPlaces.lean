@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightLocalLengthPlaces
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightLocalQuotCard
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightCentredPlacesFinite
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightLocalQuotCentred
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightPlacesRingQuot
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightLocalLengthPlaces
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightLocalQuotCard
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightCentredPlacesFinite
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightLocalQuotCentred
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightPlacesRingQuot
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

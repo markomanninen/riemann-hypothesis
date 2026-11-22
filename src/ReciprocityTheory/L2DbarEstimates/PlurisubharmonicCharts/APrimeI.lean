@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.APrimeW
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.HoloSmooth
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.GROWCountStatement
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.HoloSmooth
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 
@@ -51,7 +55,7 @@ theorem ap_mu_compact (A : WeightedAtlas n Y ι La) (K : Set Y) (hK : IsCompact 
     (Metric.closedBall_subset_ball (by linarith)).trans hball
   have hSo : IsOpen (e.source ∩ e ⁻¹' Metric.ball (e y) (ε / 2)) :=
     e.isOpen_inter_preimage Metric.isOpen_ball
-  have hyS : y ∈ e.source ∩ e ⁻¹' Metric.ball (e y) (ε / 2) := ⟨hys, Metric.mem_ball_self hδ⟩
+  have hyS : y ∈ e.source ∩ e ⁻¹' Metric.ball (e y) (ε / 2) := ⟨hys, Set.mem_preimage.mpr (Metric.mem_ball_self hδ)⟩
   refine ⟨e.source ∩ e ⁻¹' Metric.ball (e y) (ε / 2),
     mem_nhdsWithin_of_mem_nhds (hSo.mem_nhds hyS), ?_⟩
   rw [A.mu_chart _ _ hSo.measurableSet Set.inter_subset_left]

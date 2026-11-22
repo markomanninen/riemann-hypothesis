@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActOOneOne
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CocompactTensor
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.MeanSquareAddFundamentalDomainOfCocompact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActOOneOne
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CocompactTensor
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.MeanSquareAddFundamentalDomainOfCocompact
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta
 open IsDedekindDomain NumberField
@@ -30,7 +34,7 @@ theorem isAddFundamentalDomain_blocks (e : G ≃ᵐ H × H) (he : ∀ x y, e (x 
   let eA : G →+ H × H := AddMonoidHom.mk' e he
   have hneg : ∀ g, e (-g) = -e g := fun g => eA.map_neg g
   have hqmp : Measure.QuasiMeasurePreserving e ((μ₁.prod μ₁).map e.symm) (μ₁.prod μ₁) :=
-    ⟨e.measurable, by rw [MeasurableEquiv.map_map_symm]⟩
+    ⟨e.measurable.aemeasurable, by rw [MeasurableEquiv.map_map_symm]⟩
   have hvadd : ∀ (g : Γ) (x : G), e (g +ᵥ x) = e g + e x := fun g x => he _ _
   refine ⟨(h.nullMeasurableSet.prod h.nullMeasurableSet).preimage hqmp, ?_, ?_⟩
   · rw [e.symm.measurableEmbedding.ae_map_iff]
@@ -108,8 +112,8 @@ theorem join_mem {u v : WO S T} (hu : u ∈ ratL T S) (hv : v ∈ ratL T S) : jo
 
 end GlobalTheory.DblBoxHaar
 
-open MeasureTheory in
 
+open MeasureTheory in
 theorem GlobalTheory.DblBoxHaar.box_integral : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (S T : HSp D),
     ∃ (μ : MeasureTheory.Measure (Formalism.IndefR.Datum.WO S (GlobalTheory.Doubling.dblSp T))) (𝓕 : Set (Formalism.IndefR.Datum.WO S (GlobalTheory.Doubling.dblSp T)))
       (μ₁ : MeasureTheory.Measure (Formalism.IndefR.Datum.WO S T)) (𝓕₁ : Set (Formalism.IndefR.Datum.WO S T)),
@@ -138,6 +142,9 @@ theorem GlobalTheory.DblBoxHaar.box_integral : ∀ (D : D7) (ψ : AddChar (AF D.
     rw [← GlobalTheory.DblBoxHaar.setIntegral_blocks eM μ₁ 𝓕₁ (fun u => a u * star (a' u)) (fun v => b v * star (b' v))]
     congr 1
     funext w
-    simp only [GlobalTheory.DblBox.box, star_mul', star_star]
-    show _ = a (GlobalTheory.DblBox.top w) * star (a' (GlobalTheory.DblBox.top w)) * (star (b (GlobalTheory.DblBox.bot w)) * b' (GlobalTheory.DblBox.bot w))
+    change (a (GlobalTheory.DblBox.top w) * star (b (GlobalTheory.DblBox.bot w))) *
+      star (a' (GlobalTheory.DblBox.top w) * star (b' (GlobalTheory.DblBox.bot w))) =
+      (a (GlobalTheory.DblBox.top w) * star (a' (GlobalTheory.DblBox.top w))) *
+        star (b (GlobalTheory.DblBox.bot w) * star (b' (GlobalTheory.DblBox.bot w)))
+    simp only [star_mul, star_star]
     ring

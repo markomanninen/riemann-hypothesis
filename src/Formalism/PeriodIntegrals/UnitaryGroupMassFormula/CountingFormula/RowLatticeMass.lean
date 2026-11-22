@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.GluedExists
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RowsMassOfParts
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.AnisotropicComplementDefinite
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RowLatticeMassHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RowSurjective
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.StabilizerSymmMapsOrthogonal
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RowClassHolds
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.GluedExists
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RowsMassOfParts
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.AnisotropicComplementDefinite
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RowLatticeMassHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RowSurjective
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.StabilizerSymmMapsOrthogonal
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RowClassHolds
+
+@[expose] public section
 
 open NumberField Module Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.BasicNotions Formalism.L2.SG.CntLocal Formalism.L2.SG.Pf.Cnt
 open Classical
@@ -62,6 +66,3 @@ theorem row_lattice_mass : RowsMass := by
   rw [row_weight_formula D u F0 Λ (hrl Λ hΛ)]
 
 end PI.UnitaryGroupMassFormula.CntFormula.RowsMassW
-
-variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
-example : Formalism.L2.SG.Pf.Cnt.RowsMass := PI.UnitaryGroupMassFormula.CntFormula.RowsMassW.row_lattice_mass

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIntMulIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIntMulIntegral
+
+@[expose] public section
+
 open NumberField Matrix
 
 namespace GlobalTheory.SylvesterInertia

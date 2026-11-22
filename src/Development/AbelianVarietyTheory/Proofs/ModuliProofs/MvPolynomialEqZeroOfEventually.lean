@@ -1,16 +1,20 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
 
 open Filter Topology
 
 namespace GlobalTheory.CountableFibres
 
-open Filter Topology in
 
+open Filter Topology in
 theorem _root_.GlobalTheory.CountableFibres.exists_injective_fderiv {E F : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
     [NormedAddCommGroup F] [NormedSpace ℂ F] [FiniteDimensional ℂ E] [FiniteDimensional ℂ F]
     {U : Set E} (hU : IsOpen U) (hne : U.Nonempty) {f : E → F}
@@ -37,7 +41,7 @@ theorem _root_.GlobalTheory.CountableFibres.exists_injective_fderiv {E F : Type}
     rintro ⟨w, x, rfl⟩
     exact ⟨x, by simp [hPL]⟩
   have hg : HasStrictFDerivAt (fun x => P (f x)) (P.comp L) z₀ :=
-    P.hasStrictFDerivAt.comp z₀ ((hf z₀ hz₀).hasStrictFDerivAt one_ne_zero)
+    P.hasStrictFDerivAt.comp z₀ ((hf z₀ hz₀).hasStrictFDerivAt_fderiv one_ne_zero)
 
   obtain ⟨R₀, hR₀⟩ := LinearMap.exists_rightInverse_of_surjective _ hsurj
   set R : W →L[ℂ] E := LinearMap.toContinuousLinearMap R₀
@@ -88,23 +92,49 @@ theorem _root_.GlobalTheory.CountableFibres.exists_injective_fderiv {E F : Type}
         map_sub, hxy, sub_self, map_zero]
     rw [hK, Submodule.mem_bot, sub_eq_zero] at this
     exact this
-  set Ψ := hg.implicitToOpenPartialHomeomorph _ _ hsurj
+  have hcc : K.ClosedComplemented := (P.comp L).ker_closedComplemented_of_finiteDimensional_range
+  let D : ImplicitFunctionData ℂ E W K := {
+    leftFun := fun x => P (f x)
+    leftDeriv := P.comp L
+    rightFun := fun x => (Classical.choose hcc) (x - z₀)
+    rightDeriv := Classical.choose hcc
+    pt := z₀
+    hasStrictFDerivAt_leftFun := hg
+    hasStrictFDerivAt_rightFun :=
+      (Classical.choose hcc).comp_hasStrictFDerivAt ((hasStrictFDerivAt_id z₀).sub_const z₀)
+    range_leftDeriv := hsurj
+    range_rightDeriv := LinearMap.range_eq_of_proj (Classical.choose_spec hcc)
+    isCompl_ker := LinearMap.isCompl_of_proj (Classical.choose_spec hcc) }
+  set Ψ := D.toOpenPartialHomeomorph
   set ψ : K → E := fun t => Ψ.symm (P (f z₀), t)
-  have hψ0 : ψ 0 = z₀ := hg.implicitFunction_apply_image hsurj
-  have hψc : ContinuousAt ψ 0 := (hg.to_implicitFunction hsurj).continuousAt
+  have hp : D.prodFun D.pt = (P (f z₀), 0) := by
+    rw [ImplicitFunctionData.prodFun_apply]
+    change (P (f z₀), (Classical.choose hcc) (z₀ - z₀)) = _
+    rw [sub_self, map_zero]
+  have htarget : (P (f z₀), (0 : K)) ∈ Ψ.target := by
+    have h := D.map_pt_mem_toOpenPartialHomeomorph_target
+    rw [← ImplicitFunctionData.prodFun_apply, hp] at h
+    exact h
+  have hψ0 : ψ 0 = z₀ := by
+    have h := Ψ.left_inv D.pt_mem_toOpenPartialHomeomorph_source
+    rw [D.toOpenPartialHomeomorph_coe, hp] at h
+    exact h
   have htend : Tendsto (fun t : K => (P (f z₀), t)) (𝓝 0) (𝓝 (P (f z₀), 0)) :=
     tendsto_const_nhds.prodMk_nhds tendsto_id
-  have hlev : ∀ᶠ t in 𝓝 (0 : K), P (f (ψ t)) = P (f z₀) :=
-    htend.eventually (hg.map_implicitFunction_eq hsurj)
-  have hinv : ∀ᶠ t in 𝓝 (0 : K), (Ψ (ψ t)).2 = t := by
-    have h := Ψ.open_target.mem_nhds (hg.mem_implicitToOpenPartialHomeomorph_target hsurj)
+  have hψc : ContinuousAt ψ 0 :=
+    (Ψ.continuousAt_symm htarget).comp htend
+  have hinv' : ∀ᶠ t in 𝓝 (0 : K), Ψ (ψ t) = (P (f z₀), t) := by
+    have h := Ψ.open_target.mem_nhds htarget
     filter_upwards [htend h] with t ht
-    simp only [ψ]
-    rw [Ψ.right_inv (by exact ht)]
+    exact Ψ.right_inv ht
+  have hlev : ∀ᶠ t in 𝓝 (0 : K), P (f (ψ t)) = P (f z₀) := by
+    filter_upwards [hinv'] with t ht
+    have h := congrArg Prod.fst ht
+    rw [D.toOpenPartialHomeomorph_apply] at h
+    exact h
+  have hinv : ∀ᶠ t in 𝓝 (0 : K), (Ψ (ψ t)).2 = t :=
+    hinv'.mono fun _ ht => congrArg Prod.snd ht
   have hdiff : ∀ᶠ t in 𝓝 (0 : K), DifferentiableAt ℂ ψ t := by
-    have hcc : K.ClosedComplemented :=
-      ContinuousLinearMap.ker_closedComplemented_of_finiteDimensional_range (P.comp L)
-    let D := hg.implicitFunctionDataOfComplemented _ _ hsurj hcc
     have hl : ContDiffAt ℂ 1 D.leftFun D.pt :=
       (P.contDiff.contDiffAt).comp z₀ (hf z₀ hz₀)
     have hr : ContDiffAt ℂ 1 D.rightFun D.pt := by
@@ -117,8 +147,9 @@ theorem _root_.GlobalTheory.CountableFibres.exists_injective_fderiv {E F : Type}
     have hcd := (D.contDiffAt_implicitFunction hl hr one_ne_zero).eventually (by simp)
     rw [hp] at hcd
     filter_upwards [htend.eventually hcd] with t ht
-    exact (ht.differentiableAt one_ne_zero).comp t
-      ((differentiableAt_const _).prodMk differentiableAt_id)
+    simpa only [Function.comp_def, Function.uncurry, ImplicitFunctionData.implicitFunction_apply, ψ, Ψ] using
+      (ht.differentiableAt one_ne_zero).comp t
+        ((differentiableAt_const _).prodMk differentiableAt_id)
   have hnear : ∀ᶠ t in 𝓝 (0 : K), ψ t ∈ U ∧
       (∀ v, P (fderiv ℂ f (ψ t) v) = 0 → fderiv ℂ f (ψ t) v = 0) := by
     have h := (hU.eventually_mem hz₀).and hker
@@ -163,41 +194,8 @@ theorem _root_.GlobalTheory.CountableFibres.exists_injective_fderiv {E F : Type}
     ⟨0, Metric.mem_ball_self hε⟩
   exact hxS hx
 
-theorem exists_rows {d : ℕ} {I : Type} (L : (Fin d → ℂ) →ₗ[ℂ] (I → ℂ))
-    (hL : Function.Injective L) :
-    ∃ a : Fin d → I, ∀ x, (∀ i, L x (a i) = 0) → x = 0 := by
-  let φ : I → Module.Dual ℂ (Fin d → ℂ) := fun b => (LinearMap.proj b) ∘ₗ L
-  obtain ⟨κ, a, -, hspan, hli⟩ := exists_linearIndependent' ℂ φ
-  have : Finite κ := hli.finite
-  let _ : Fintype κ := Fintype.ofFinite κ
-  have hker : ∀ x, (∀ k, L x (a k) = 0) → x = 0 := by
-    intro x hx
-    apply hL
-    rw [map_zero]
-    funext b
-    have hb : φ b ∈ Submodule.span ℂ (Set.range (φ ∘ a)) := by
-      rw [hspan]
-      exact Submodule.subset_span ⟨b, rfl⟩
-    have hle : Submodule.span ℂ (Set.range (φ ∘ a)) ≤
-        LinearMap.ker (Module.Dual.eval ℂ (Fin d → ℂ) x) := by
-      rw [Submodule.span_le]
-      rintro _ ⟨k, rfl⟩
-      exact hx k
-    exact hle hb
-  have h1 : Fintype.card κ ≤ d := by
-    simpa using hli.fintype_card_le_finrank
-  have h2 : d ≤ Fintype.card κ := by
-    have : Function.Injective (LinearMap.funLeft ℂ ℂ a ∘ₗ L) := by
-      rw [injective_iff_map_eq_zero]
-      intro x hx
-      exact hker x fun k => congrFun hx k
-    simpa using LinearMap.finrank_le_finrank_of_injective this
-  let e : Fin d ≃ κ := (Fintype.equivFinOfCardEq (le_antisymm h1 h2)).symm
-  refine ⟨a ∘ e, fun x hx => hker x fun k => ?_⟩
-  simpa using hx (e.symm k)
 
 open Filter Topology in
-
 theorem _root_.GlobalTheory.CountableFibres.exists_independent_ratios :
     ∀ (d : ℕ) (I : Type) [Finite I] (B : Set (Fin d → ℂ)) (θ : (Fin d → ℂ) → I → ℂ), IsOpen B →
       IsPreconnected B → B.Nonempty → (∀ a, DifferentiableOn ℂ (fun z => θ z a) B) →
@@ -267,7 +265,7 @@ theorem _root_.GlobalTheory.CountableFibres.exists_independent_ratios :
   refine ⟨a₀, a, ⟨z₁, hz₁, ha₀⟩, fun F hF => ?_⟩
   set π : (I → ℂ) →L[ℂ] Fin d → ℂ := ContinuousLinearMap.pi fun i => ContinuousLinearMap.proj (a i)
   have hG : HasStrictFDerivAt (fun z => π (ρ z)) (π.comp D) z₂ :=
-    π.hasStrictFDerivAt.comp z₂ ((hρ z₂ hz₂).hasStrictFDerivAt one_ne_zero)
+    π.hasStrictFDerivAt.comp z₂ ((hρ z₂ hz₂).hasStrictFDerivAt_fderiv one_ne_zero)
   have hsurj : LinearMap.range ((π.comp D : (Fin d → ℂ) →L[ℂ] Fin d → ℂ) :
       (Fin d → ℂ) →ₗ[ℂ] Fin d → ℂ) = ⊤ := by
     rw [LinearMap.range_eq_top, ← LinearMap.injective_iff_surjective, ← LinearMap.ker_eq_bot,

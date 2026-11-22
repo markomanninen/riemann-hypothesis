@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBin
+
+@[expose] public section
 
 open PowerSeries GlobalTheory.CycFr
 
@@ -7,7 +11,7 @@ namespace GlobalTheory.CycFr
 
 theorem padicInt_algebraMap_injective_of_charZero {l : ℕ} [Fact l.Prime] (O : Type) [CommRing O]
     [IsDomain O] [CharZero O] [Algebra ℤ_[l] O] : Function.Injective (algebraMap ℤ_[l] O) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   by_contra hx0
   rw [PadicInt.unitCoeff_spec hx0, map_mul, map_pow, map_natCast] at hx
@@ -61,7 +65,8 @@ theorem X_pow_dvd_mk_sub_sum {O : Type} [CommRing O] (c : ℕ → O) (N : ℕ) :
     (X : O⟦X⟧) ^ N ∣ PowerSeries.mk c - ∑ k ∈ Finset.range N, C (c k) * X ^ k := by
   rw [X_pow_dvd_iff]
   intro m hm
-  simp [map_sum, hm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, hm]
 
 theorem injective_and_range_eq_invariants {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O]
     [IsDomain O] [CharZero O] [Algebra ℤ_[l] O] (Δ : Subgroup ℤ_[l]ˣ) [Finite Δ]
@@ -80,7 +85,7 @@ theorem injective_and_range_eq_invariants {l : ℕ} [Fact l.Prime] {O : Type} [C
     rw [e]
     exact (dvd_pow_self (X : O⟦X⟧) hd.ne').mul_right _
   have hinj : Function.Injective j := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro b hb
     by_contra hb0
     obtain ⟨m, w, rfl, hw⟩ := exists_eq_X_pow_mul_of_ne_zero hb0
@@ -132,7 +137,8 @@ theorem injective_and_range_eq_invariants {l : ℕ} [Fact l.Prime] {O : Type} [C
     have hjsum : ∀ N, j (∑ k ∈ Finset.range N, C (c k) * X ^ k) =
         ∑ k ∈ Finset.range N, C (c k) * j X ^ k := by
       intro N
-      simp [map_sum, algHom_C]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, algHom_C]
     have hdvd : ∀ N, (X : O⟦X⟧) ^ N ∣ j (PowerSeries.mk c) - a := by
       intro N
       obtain ⟨r, hr⟩ := X_pow_dvd_mk_sub_sum c N
@@ -140,7 +146,7 @@ theorem injective_and_range_eq_invariants {l : ℕ} [Fact l.Prime] {O : Type} [C
         rw [← hr]
         ring
       have e4 : j (PowerSeries.mk c) - a = j X ^ N * (j r - (sq N).1) := by
-        conv_lhs => rw [e3, map_add, map_mul, map_pow, hjsum, hexp N]
+        conv_lhs => rw [e3, map_add (f := _), map_mul, map_pow, hjsum, hexp N]
         ring
       rw [e4]
       exact (pow_dvd_pow_of_dvd hXj N).trans (dvd_mul_right _ _)

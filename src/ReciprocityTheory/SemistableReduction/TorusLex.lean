@@ -1,6 +1,10 @@
-import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
-import ReciprocityTheory.SemistableReduction.TorusLexA
-import ReciprocityTheory.SemistableReduction.TorusLexC
+module
+
+public import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+public import ReciprocityTheory.SemistableReduction.TorusLexA
+public import ReciprocityTheory.SemistableReduction.TorusLexC
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.GaloisValuations.Global
+module
+
+public import Mathlib
+public import ReciprocityTheory.GaloisValuations.Global
+
+@[expose] public section
 
 set_option linter.style.haveILetI false
 

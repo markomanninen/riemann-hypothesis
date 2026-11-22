@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CoefPhaseL
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCountLoc
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CoefPhaseL
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCountLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,10 +79,10 @@ theorem corner_sg (σ : Fin (n + 1) → Fin (n + 1)) (hσ : ∀ a, σ (σ a) = a
             (if j = j₀ ∧ j.val + 1 = n then c / M (Fin.last n) j₀ else 0) := by
         intro j
         by_cases h1 : j.val + 1 < n + 1
-        · rw [dif_pos h1, dif_pos h1, Matrix.sub_apply]
+        · rw [dite_eq_left h1, dite_eq_left h1, Matrix.sub_apply]
           congr 1
           simp only [hX, Matrix.of_apply, Fin.ext_iff, Fin.val_last]
-        · rw [dif_neg h1, dif_neg h1]
+        · rw [dite_eq_right h1, dite_eq_right h1]
           have hn : ¬ (j = j₀ ∧ j.val + 1 = n) := fun h => h1 (by omega)
           rw [if_neg hn, sub_zero]
       unfold Formalism.DoubleCosetMeasures.sUp
@@ -93,9 +97,15 @@ section LastBlock
 variable {K : Type*} [Zero K]
 
 theorem last_row : ∀ (bs : List (K × ℕ)) (N : ℕ), (∀ b ∈ bs, 1 ≤ b.2) → (bs.map Prod.snd).sum = N + 1 →
-    bs.getLast? = some (pTau bs N, pSz bs N) ∧ pSt bs N + pSz bs N = N + 1 ∧ pSig bs N = pSt bs N
-  | [], N, _, h => by simp at h
-  | (t, s) :: bs, N, hpos, h => by
+    bs.getLast? = some (pTau bs N, pSz bs N) ∧ pSt bs N + pSz bs N = N + 1 ∧ pSig bs N = pSt bs N := by
+  intro bs
+  induction bs with
+  | nil =>
+    intro N _ h
+    simp at h
+  | cons b bs ih =>
+    obtain ⟨t, s⟩ := b
+    intro N hpos h
     simp only [List.map_cons, List.sum_cons] at h
     by_cases hlt : N < s
     · have hs : s = N + 1 := by
@@ -116,7 +126,7 @@ theorem last_row : ∀ (bs : List (K × ℕ)) (N : ℕ), (∀ b ∈ bs, 1 ≤ b.
       have hpos' : ∀ b ∈ bs, 1 ≤ b.2 := fun b hb => hpos b (List.mem_cons_of_mem _ hb)
       have hsum : (bs.map Prod.snd).sum = (N - s) + 1 := by
         have := hpos (t, s) List.mem_cons_self; omega
-      obtain ⟨ih1, ih2, ih3⟩ := last_row bs (N - s) hpos' hsum
+      obtain ⟨ih1, ih2, ih3⟩ := ih (N - s) hpos' hsum
       have hne : bs ≠ [] := by rintro rfl; simp at hsum
       simp only [pTau, pSz, pSt, pSig, if_neg hlt]
       refine ⟨?_, by omega, by rw [ih3]⟩
@@ -134,28 +144,28 @@ theorem sLow_sgT (A : Matrix (Fin (r + 1)) (Fin (r + 1)) R) : Formalism.DoubleCo
   rw [← Finset.sum_neg_distrib]
   refine Finset.sum_congr rfl fun j _ => ?_
   by_cases h : j.val + 1 < r + 1
-  · rw [dif_pos h, dif_pos h]
+  · rw [dite_eq_left h, dite_eq_left h]
     simp only [Sg, Matrix.diagonal_mul, Matrix.mul_diagonal, Matrix.transpose_apply]
     have e : r - j.val = (r - (j.val + 1)) + 1 := by omega
     have hx : (-1 : R) ^ (r - (j.val + 1)) * (-1 : R) ^ (r - (j.val + 1)) = 1 := by
       rw [← mul_pow]; simp
     rw [e, pow_succ]
     linear_combination (-(A j ⟨j.val + 1, h⟩)) * hx
-  · rw [dif_neg h, dif_neg h, neg_zero]
+  · rw [dite_eq_right h, dite_eq_right h, neg_zero]
 
 theorem sUp_sgT (A : Matrix (Fin (r + 1)) (Fin (r + 1)) R) : Formalism.DoubleCosetMeasures.sUp (Sg R r * A.transpose * Sg R r) = -Formalism.DoubleCosetMeasures.sLow A := by
   unfold Formalism.DoubleCosetMeasures.sLow Formalism.DoubleCosetMeasures.sUp
   rw [← Finset.sum_neg_distrib]
   refine Finset.sum_congr rfl fun j _ => ?_
   by_cases h : j.val + 1 < r + 1
-  · rw [dif_pos h, dif_pos h]
+  · rw [dite_eq_left h, dite_eq_left h]
     simp only [Sg, Matrix.diagonal_mul, Matrix.mul_diagonal, Matrix.transpose_apply]
     have e : r - j.val = (r - (j.val + 1)) + 1 := by omega
     have hx : (-1 : R) ^ (r - (j.val + 1)) * (-1 : R) ^ (r - (j.val + 1)) = 1 := by
       rw [← mul_pow]; simp
     rw [e, pow_succ]
     linear_combination (-(A ⟨j.val + 1, h⟩ j)) * hx
-  · rw [dif_neg h, dif_neg h, neg_zero]
+  · rw [dite_eq_right h, dite_eq_right h, neg_zero]
 
 end Signs
 
@@ -165,8 +175,8 @@ variable {D : Formalism.BasicNotions.D7} {M : ∀ p : PlF D, Loc.Model (D.s.atP 
   {δ : ∀ p : PlF D, (D.s.atP p).Fp} {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem local_phase_typed_places (hA : ∀ p, Agree δ M p) : PhaseLocG M δ u u' F0 what₂ := by
   intro γ w F' L U hrel hgen hN p hMp
   obtain ⟨-, -, hLu, hUu, e⟩ := hN
@@ -277,13 +287,13 @@ theorem local_phase_typed_places (hA : ∀ p, Agree δ M p) : PhaseLocG M δ u u
       (Matrix.diagonal (cf Zd p) * (Sg (D.s.atP p).Fp D.R.rS * (U.map φ2).transpose * Sg (D.s.atP p).Fp D.R.rS) *
         Matrix.diagonal (cfi Zd p))) + Formalism.DoubleCosetMeasures.sUp (glue sg.e r1' r2')) =
       Formalism.DoubleCosetMeasures.sLow (Matrix.diagonal (cf Zd p) * L.map φ1 * Matrix.diagonal (cfi Zd p)) + Formalism.DoubleCosetMeasures.sUp r1' := by
-    rw [map_add, ← sLow_map, ← sUp_map, glue_map_fst, glue_map_fst]
+    rw [map_add (f := _), ← sLow_map, ← sUp_map, glue_map_fst, glue_map_fst]
   have hx2 : p2 sg.e (Formalism.DoubleCosetMeasures.sLow (glue sg.e (Matrix.diagonal (cf Zd p) * L.map φ1 * Matrix.diagonal (cfi Zd p))
       (Matrix.diagonal (cf Zd p) * (Sg (D.s.atP p).Fp D.R.rS * (U.map φ2).transpose * Sg (D.s.atP p).Fp D.R.rS) *
         Matrix.diagonal (cfi Zd p))) + Formalism.DoubleCosetMeasures.sUp (glue sg.e r1' r2')) =
       Formalism.DoubleCosetMeasures.sLow (Matrix.diagonal (cf Zd p) * (Sg (D.s.atP p).Fp D.R.rS * (U.map φ2).transpose * Sg (D.s.atP p).Fp D.R.rS) *
         Matrix.diagonal (cfi Zd p)) + Formalism.DoubleCosetMeasures.sUp r2' := by
-    rw [map_add, ← sLow_map, ← sUp_map, glue_map_snd, glue_map_snd]
+    rw [map_add (f := _), ← sLow_map, ← sUp_map, glue_map_snd, glue_map_snd]
 
   have hyc : ∀ (j : Fin (D.R.rS + 1)) (h : j.val + 1 < D.R.rS + 1), cf Zd p ⟨j.val + 1, h⟩ * cfi Zd p j = yP Zd p :=
     fun j h => cf_mul_cfi Zd p ⟨j.val + 1, h⟩ j rfl
@@ -422,7 +432,7 @@ theorem local_phase_typed_places (hA : ∀ p, Agree δ M p) : PhaseLocG M δ u u
     have ht2 : p2 sg.e (tau0 p (D.mem u).A.T (D.mem u').A.T) =
         (((D.mem u').A.T : ℕ) : (D.s.atP p).Fp) * (sg.q : (D.s.atP p).Fp)⁻¹ := by
       simp only [tau0, hR, map_mul, snd_proj_symm, hqi, snd_proj_algebraMap]
-    rw [hX1, hX2, map_mul, map_mul, ht1, ht2, hinv1, hinv2, hsdef, map_add, map_add, hyP]
+    rw [hX1, hX2, map_mul, map_mul, ht1, ht2, hinv1, hinv2, hsdef, map_add (f := _), map_add (f := _), hyP]
     field_simp
     ring
   · have hc : ¬ (sgF w (Fin.last D.R.rS) ≠ Fin.last D.R.rS ∧ (sgF w (Fin.last D.R.rS)).val + 1 = D.R.rS) := by
@@ -432,7 +442,7 @@ theorem local_phase_typed_places (hA : ∀ p, Agree δ M p) : PhaseLocG M δ u u
       omega
     rw [hdf, if_neg h2, if_neg hc, if_neg hc, one_mul]
     congr 1
-    rw [hsdef, map_add, map_add, hyP]
+    rw [hsdef, map_add (f := _), map_add (f := _), hyP]
     field_simp
     ring
 

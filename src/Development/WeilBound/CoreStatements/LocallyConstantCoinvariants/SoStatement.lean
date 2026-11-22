@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.CompFinLiftE
+module
+
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.CompFinLiftE
+
+@[expose] public section
 
 noncomputable section
 
@@ -131,9 +135,84 @@ theorem mem_so (hM : M.IsGood ψ) (t : E →ₐ[F] Fv F v) {Ψ} (hΨ : Ψ ∈ sc
   have hC : ∀ ψ', ∀ᶠ w in cofinite, Function.update φ v ψ' w = M.vac w := fun ψ' => by
     filter_upwards [h2', Filter.eventually_cofinite_ne v] with w h h'
     rw [Function.update_of_ne h', h]
-  rw [Submodule.mem_comap, opL_pure hM.std h2']
-  refine pure_update_mem hM.std h2' v f _ (S := M.SoLoc ψ t) (fun ψ' h' => Submodule.subset_span ?_) (hA _)
-  exact ⟨f, _, hU _ h'.1, hC _, by simpa using h', rfl⟩
+  have hpure : ∀ (ψ' : (Fin n × Fin d → Fv F v) → ℂ) x,
+      pure f (Function.update φ v ψ') x =
+        ψ' (fun i => evFin F v (x i)) * pure f (Function.update φ v 1) x := by
+    intro ψ' x
+    have hint : ∀ᶠ w in cofinite, ∀ i, evFin F w (x i) ∈ w.adicCompletionIntegers F :=
+      eventually_all.2 fun i => (x i).2.2
+    have hfin : (Function.mulSupport fun w => Function.update φ v 1 w (fun i => evFin F w (x i))).Finite := by
+      apply Filter.eventually_cofinite.1
+      filter_upwards [hM.std, hC 1, hint] with w h1 h2 h3
+      rw [h2, h1]
+      exact Set.indicator_of_mem h3 1
+    let s : Pl F → ℂ := fun w => if w = v then ψ' (fun i => evFin F v (x i)) else 1
+    have hfs : (Function.mulSupport s).Finite := (Set.finite_singleton v).subset fun w hw => by
+      by_contra h
+      exact hw (if_neg h)
+    have key : (fun w => Function.update φ v ψ' w (fun i => evFin F w (x i))) =
+        fun w => s w * Function.update φ v 1 w (fun i => evFin F w (x i)) := by
+      funext w
+      by_cases h : w = v
+      · subst h
+        simp [s]
+      · simp [s, h, Function.update_of_ne h]
+    unfold GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure
+    rw [key, finprod_mul_distrib hfs hfin, finprod_eq_single s v fun w hw => if_neg hw]
+    simp only [s, if_true]
+    ring
+  have hrepl : ∀ x y, pure f (Function.update φ v 1) (repl v x y) = pure f (Function.update φ v 1) x := by
+    intro x y
+    unfold GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure
+    congr 1
+    refine finprod_congr fun w => ?_
+    by_cases h : w = v
+    · subst h
+      simp
+    · rw [Function.update_of_ne h]
+      congr 1
+      funext i
+      change Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F w ((x i).2 - GlobalTheory.AdelicU.singleFin v _ + GlobalTheory.AdelicU.singleFin v _) = _
+      rw [map_add (f := _), map_sub, GlobalTheory.AdelicU.evalV_singleFin_ne h, GlobalTheory.AdelicU.evalV_singleFin_ne h]
+      simp
+      rfl
+  have hop : opL v A (pure f φ) = pure f (Function.update φ v (A (φ v))) := by
+    funext x
+    have hs : (fun y => pure f φ (repl v x y)) = pure f (Function.update φ v 1) x • φ v := by
+      funext y
+      have h := hpure (φ v) (repl v x y)
+      rw [Function.update_eq_self, piK_repl, hrepl] at h
+      rw [h]
+      simp [mul_comm]
+    change A (fun y => pure f φ (repl v x y)) (piK v (finPart x)) = _
+    rw [hs, map_smul, hpure (A (φ v)) x]
+    simp only [Pi.smul_apply, smul_eq_mul]
+    rw [mul_comm]
+    rfl
+  rw [Submodule.mem_comap, hop]
+  have he : ∀ ψ', pure f (Function.update φ v ψ') =
+      fun x => ψ' (fun i => evFin F v (x i)) * pure f (Function.update φ v 1) x :=
+    fun ψ' => funext (hpure ψ')
+  have hspan : ∀ ψ' ∈ Submodule.span ℂ (M.SoLoc ψ t), pure f (Function.update φ v ψ') ∈ M.So ψ t := by
+    intro ψ' hψ'
+    induction hψ' using Submodule.span_induction with
+    | mem ψ' h' => exact Submodule.subset_span ⟨f, _, hU _ h'.1, hC _, by simpa using h', rfl⟩
+    | zero =>
+      rw [he]
+      convert (M.So ψ t).zero_mem using 1
+      funext x
+      simp
+    | add a b _ _ ha hb =>
+      rw [he] at ha hb ⊢
+      convert (M.So ψ t).add_mem ha hb using 1
+      funext x
+      simp [add_mul]
+    | smul c a _ ha =>
+      rw [he] at ha ⊢
+      convert (M.So ψ t).smul_mem c ha using 1
+      funext x
+      simp [mul_assoc]
+  exact hspan _ (hA _)
 
 theorem so_stable (h : IsCMExt F E σ) (hψ : IsStd ψ) (hX : X.J.det ≠ 0) (hW : W.J.det ≠ 0) (hM : M.IsGood ψ) {om : Rep σ X W}
     (hS : IsSplitting (adeleClass F) ψ M.co (actAB (cA σ)) om) (t : E →ₐ[F] Fv F v) (γ) :
@@ -163,7 +242,7 @@ theorem so_stable (h : IsCMExt F E σ) (hψ : IsStd ψ) (hX : X.J.det ≠ 0) (hW
     { toFun := fun φ' => ι (fun y => om γ (tens (evFin F v) φ' r) (repl v z y)) (coB σ X W t x)
       map_add' := fun a b => by
         have e : tens (evFin F v) (a + b) r = tens (evFin F v) a r + tens (evFin F v) b r := funext fun _ => add_mul _ _ _
-        rw [e, map_add]
+        rw [e, map_add (f := _)]
         exact congrFun (map_add ι _ _) _
       map_smul' := fun c a => by
         have e : tens (evFin F v) (c • a) r = c • tens (evFin F v) a r := funext fun _ => mul_assoc _ _ _

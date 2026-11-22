@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GlobSpecOfExists
-import Formalism.GradedWeylDivisibility.FinalD
-import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PosOkId
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsCofactorTwistHighestWeightStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CofactorTwistRelationRowDivSwapStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RowDivRowWeightStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GlobSpecOfExists
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PosOkId
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsCofactorTwistHighestWeightStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CofactorTwistRelationRowDivSwapStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RowDivRowWeightStatement
+
+@[expose] public section
 
 open MvPolynomial NumberField IsDedekindDomain Formalism.GradedWeylDivisibility Formalism.MainNotions.G Formalism.L2.Col Formalism.HermitianLatticesTheory Formalism.BasicNotions Formalism.L2.DIV GlobalTheory.GO GlobalTheory.ValCmp
 
@@ -48,7 +52,7 @@ theorem weyl_exists_cofRel : ∀ (R : Type) [CommRing R] [IsDomain R] (m : ℕ) 
     obtain ⟨g', hg', hr'⟩ := hy
     refine ⟨g + g', add_mem hg hg', ?_⟩
     unfold CofRel at hr hr' ⊢
-    rw [map_add, ← hr, ← hr', mul_add]
+    rw [map_add (f := _), ← hr, ← hr', mul_add]
   | smul c x _ hx =>
     obtain ⟨g, hg, hr⟩ := hx
     refine ⟨c • g, Submodule.smul_mem _ c hg, ?_⟩

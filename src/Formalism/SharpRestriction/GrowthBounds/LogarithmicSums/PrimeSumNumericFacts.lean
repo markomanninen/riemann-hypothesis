@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.SecondConstantNonneg
-import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.NumData
-import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.NinthBoundArithB
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.SecondConstantNonneg
+public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.NumData
+public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.NinthBoundArithB
+
+@[expose] public section
 
 noncomputable section
 

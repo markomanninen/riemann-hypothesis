@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TrDefs
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.CutIrr
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TrDefs
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.CutIrr
+
+@[expose] public section
 
 open GroundTheory.Automorphic UpperTheory.ConvolutionTheory.C
 open scoped InnerProductSpace
@@ -36,7 +40,7 @@ theorem UpperTheory.ConvolutionTheory.L1.jointNe :
     simp only [eigIn, Submodule.mem_inf, Module.End.mem_eigenspace_iff]
     rfl
   have hsa : ∀ k, IsSelfAdjoint (A k) := fun k =>
-    ((ContinuousLinearMap.nonneg_iff_isPositive _).1 (h.A_pos k)).isSelfAdjoint
+    (ContinuousLinearMap.nonneg_iff_isPositive.1 (h.A_pos k)).isSelfAdjoint
   have hAVE : ∀ j, ∀ w ∈ eigIn V E 1, A j w ∈ eigIn V E 1 := by
     intro j w hw
     obtain ⟨hwV, hwE⟩ := (hmemVE w).1 hw
@@ -125,7 +129,7 @@ theorem UpperTheory.ConvolutionTheory.L1.jointNe :
       let M : Submodule ℂ H :=
         { carrier := {w | w ∈ eigIn V E 1 ∧ ∀ g, π (ι k g) w ∈ Zᗮ}
           add_mem' := fun {a b} ha hb => ⟨Submodule.add_mem _ ha.1 hb.1, fun g => by
-            rw [map_add]; exact Submodule.add_mem _ (ha.2 g) (hb.2 g)⟩
+            rw [map_add (f := _)]; exact Submodule.add_mem _ (ha.2 g) (hb.2 g)⟩
           zero_mem' := ⟨Submodule.zero_mem _, fun g => by
             rw [map_zero]; exact Submodule.zero_mem _⟩
           smul_mem' := fun c a ha => ⟨Submodule.smul_mem _ c ha.1, fun g => by

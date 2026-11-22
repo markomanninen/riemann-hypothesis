@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.OrdinaryJacquetModules.ExpTor
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.OrdinaryJacquetModules.ExpTor
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -245,7 +249,7 @@ private theorem abs_unif (ι : Qbar l ≃+* ℂ) (ha : IsLocalArtin h a) :
   have h1 := congrArg ι (abs_val ι ha s0)
   rw [hs0, hd0, ι.apply_symm_apply, zpow_neg_one, map_inv₀, map_natCast] at h1
   exact h1
-private theorem supp_ps [IsTotallyComplex F] {n : ℕ} (hn : 1 ≤ n) (π : CuspSub F n) {ω : Fin n → (w.adicCompletion F)ˣ →* ℂˣ}
+private theorem supp_ps [_root_.NumberField.IsTotallyComplex F] {n : ℕ} (hn : 1 ≤ n) (π : CuspSub F n) {ω : Fin n → (w.adicCompletion F)ˣ →* ℂˣ}
     (hs : ∀ i, IsSmoothChar (ω i)) (hσ : ∀ σ, π.IsLocComp w σ → IsSubquotient σ.ρ (PS ω)) :
     Gam.TorAt π w ∧ ∀ s, Gam.SuppAt π w s → (∀ i, ω i * absPow (w.adicCompletion F) (((n : ℂ) - 1) / 2) ∈ ImaginaryQuadraticEtaCharacter.chars s) ∧
       ∀ ξ ∈ ImaginaryQuadraticEtaCharacter.chars s, ∃ i, ξ = ω i * absPow (w.adicCompletion F) (((n : ℂ) - 1) / 2) := by

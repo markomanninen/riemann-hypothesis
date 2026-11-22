@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.QuotientMetricDivisors.RatHermLcvTwist
-import Formalism.QuotientMetricDivisors.LatticeGlueUnique
-import Formalism.QuotientMetricDivisors.HeightBoundExactNorms
-import Formalism.MirabolicMackeyTheory.StatementT
+module
+
+public import Mathlib
+public import Formalism.QuotientMetricDivisors.RatHermLcvTwist
+public import Formalism.QuotientMetricDivisors.LatticeGlueUnique
+public import Formalism.QuotientMetricDivisors.HeightBoundExactNorms
+public import Formalism.MirabolicMackeyTheory.StatementT
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder InnerProductSpace
@@ -83,13 +87,13 @@ structure WF : Prop where
 
   HV_pos : ∀ t (v : InfinitePlace K), ((Df.HV t).map v.embedding).PosDef
 
-  Mt_lat : ∀ t, Submodule.IsLattice K (Df.Mt t)
+  Mt_lat : ∀ t, Submodule.IsFullLattice K (Df.Mt t)
 
   Pq_surj : ∀ t, Function.Surjective (Df.Pq t).mulVec
 
   XQ_quot : ∀ t, IsQuotMetric (Df.Pq t) (Df.HV t) (Df.XQ t)
 
-  Lam_lat : ∀ t, Submodule.IsLattice K (Df.abelian₂ t)
+  Lam_lat : ∀ t, Submodule.IsFullLattice K (Df.abelian₂ t)
 
   Qp_indep : iSupIndep (Df.Qp Bs.μ0)
 
@@ -97,7 +101,7 @@ structure WF : Prop where
 
   XT_herm : ∀ j t, IsHermAt Bs.v0 (Df.HT j t) (Df.XT j t)
 
-  Tl_lat : ∀ j t, Submodule.IsLattice K (Df.Tl j t)
+  Tl_lat : ∀ j t, Submodule.IsFullLattice K (Df.Tl j t)
 
   Zp_indep : ∀ j, iSupIndep (Df.Zp j Bs.μ0)
 
@@ -295,7 +299,7 @@ def H0 : Prop :=
   (∀ w, S.μ (conjPl w) = S.μ w) ∧ ∀ w, w ∈ S.Tw ↔ S.μ w ≠ Bs.μ0
 
 def Frames : Prop :=
-  (∀ v, IsUnit (S.XE v).det) ∧ (∀ j v, IsUnit (S.XW j v).det) ∧ ∀ j, Submodule.IsLattice K (S.M j)
+  (∀ v, IsUnit (S.XE v).det) ∧ (∀ j v, IsUnit (S.XW j v).det) ∧ ∀ j, Submodule.IsFullLattice K (S.M j)
 
 def BaseTypeSubspacesMapOntoBothSides : Prop :=
   (∀ p, (Df.Qp Bs.μ0 p).map (S.ι Bs.μ0).mulVecLin = S.Ep p) ∧
@@ -457,7 +461,7 @@ structure IndefFace where
 
   [sK : StarRing K]
 
-  [tK : IsTotallyComplex K]
+  [tK : _root_.NumberField.IsTotallyComplex K]
 
   Bs : DefBase K
 
@@ -466,9 +470,5 @@ structure IndefFace where
   fc : DefSub A → DefFace Bs
 
 attribute [instance] IndefFace.fK IndefFace.nK IndefFace.sK IndefFace.tK
-
-def IndefLink (Ix : ℝ → Type) (F : ∀ x, Ix x → IndefFace) (CH : ℝ)
-    (Q : ∀ x (i : Ix x), ℝ → DefSub (F x i).A → (HeightOneSpectrum (𝓞 (F x i).K) → (F x i).Bs.Tup) → Prop) : Prop :=
-  ∃ C x0 : ℝ, ∀ x ≥ x0, ∀ i : Ix x, ∃ P : IndefPkg (F x i).A (F x i).fc C CH, Q x i C P.Zs P.core.base.μ
 
 end Formalism.L2.Indef

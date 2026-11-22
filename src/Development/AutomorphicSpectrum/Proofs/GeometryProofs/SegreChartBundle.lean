@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.Metric
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIffChartLocalization
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GermGenPtInjectiveRangeRegAt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.Metric
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIffChartLocalization
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GermGenPtInjectiveRangeRegAt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
 
@@ -61,7 +66,7 @@ theorem unitAt_or_of_add (hg : IsCptGen ξ) (p : Cpt ξ) {s t : Ω} (hs : s ∈ 
     (h : unitAt ξ p (s + t)) : unitAt ξ p s ∨ unitAt ξ p t := by
   obtain ⟨s', rfl⟩ := hs
   obtain ⟨t', rfl⟩ := ht
-  rw [← map_add, ← isUnit_iff_unitAt (hg.inj p)] at h
+  rw [← map_add (f := _), ← isUnit_iff_unitAt (hg.inj p)] at h
   rcases IsLocalRing.isUnit_or_isUnit_of_isUnit_add h with h | h
   · exact Or.inl ((isUnit_iff_unitAt (hg.inj p) _).1 h)
   · exact Or.inr ((isUnit_iff_unitAt (hg.inj p) _).1 h)

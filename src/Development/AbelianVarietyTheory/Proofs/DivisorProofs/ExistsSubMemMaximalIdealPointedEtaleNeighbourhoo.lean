@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InstPreorder
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InstPreorder
+
+@[expose] public section
+
 open IsLocalRing GlobalTheory.Henselisation
 
 namespace GlobalTheory.Henselisation
@@ -23,8 +28,9 @@ theorem EtNbhd.exists_sub_mem_maximalIdeal :
   refine ⟨r₁ * ((u⁻¹ : Rˣ) : R), ?_⟩
   have key : IsLocalization.mk' i.B a s - algebraMap R i.B (r₁ * ((u⁻¹ : Rˣ) : R)) =
       IsLocalization.mk' i.B (a - (s : i.A) * algebraMap R i.A (r₁ * ((u⁻¹ : Rˣ) : R))) s := by
-    rw [IsLocalization.eq_mk'_iff_mul_eq, sub_mul, IsLocalization.mk'_spec, map_sub]
-    simp only [map_mul, ← IsScalarTower.algebraMap_apply R i.A i.B]
+    rw [IsLocalization.eq_mk'_iff_mul_eq, sub_mul, IsLocalization.mk'_spec,
+      (algebraMap i.A i.B).map_sub, (algebraMap i.A i.B).map_mul,
+      ← IsScalarTower.algebraMap_apply R i.A i.B]
     ring
   rw [key, IsLocalization.AtPrime.mk'_mem_maximal_iff (S := i.B) (I := i.q)]
   show _ ∈ RingHom.ker i.pt

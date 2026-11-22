@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.GlobalIrreducibility.KUSStable
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.KUSStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ theorem conj_S (j : ℕ) (hj : j < n) (x : GL (Fin n) k) (hx : TopLeft j (x : Ma
     (hw : w ∈ KN π ψ (j + 1) ⊔ KUS π ψ j Finset.univ (rowMul j ξ ((x⁻¹ : GL (Fin n) k) : Matrix (Fin n) (Fin n) k))) :
     π x⁻¹ w ∈ KN π ψ (j + 1) ⊔ KUS π ψ j Finset.univ ξ := by
   obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hw
-  rw [map_add]
+  rw [map_add (f := _)]
   refine Submodule.add_mem_sup (KN_stable π ψ j _ hy.good (by rw [inv_inv]; exact hx.good) ha) ?_
   refine (Submodule.span_le.2 ?_ : KUS π ψ j Finset.univ (rowMul j ξ ((x⁻¹ : GL (Fin n) k) : Matrix (Fin n) (Fin n) k))
     ≤ (KUS π ψ j Finset.univ ξ).comap (π x⁻¹)) hb

@@ -1,14 +1,18 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutEtaB
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepBI
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeIntertwinerRepSplitPlacePositiveScalar
-import Development.AutomorphicArithmetic.IdeleLatticeFacts.ExistsPlaceOfSplitIdempotentCmExt
-import Development.AutomorphicArithmetic.IdeleLatticeFacts.EqZeroOfSplitIdempotentEvalPlaceEqZero
-import Development.AutomorphicArithmetic.IdeleLatticeFacts.ExistsLocalLatticeOfGlobalLattice
-import Development.AutomorphicArithmetic.IdeleLatticeFacts.ExistsLatticeIndexOfInjectiveEndomorphism
-import Development.AutomorphicArithmetic.IdeleLatticeFacts.ExistsLinearMapDetMulMulEqPow
-import Development.AutomorphicArithmetic.IdeleLatticeFacts.ExistsSignHeckeCharAtNonfixedPlace
-import Development.AutomorphicArithmetic.IdeleLatticeFacts.LatticeDeterminantComparisonAtSplitPlace
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutEtaB
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepBI
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeIntertwinerRepSplitPlacePositiveScalar
+public import Development.AutomorphicArithmetic.IdeleLatticeFacts.ExistsPlaceOfSplitIdempotentCmExt
+public import Development.AutomorphicArithmetic.IdeleLatticeFacts.EqZeroOfSplitIdempotentEvalPlaceEqZero
+public import Development.AutomorphicArithmetic.IdeleLatticeFacts.ExistsLocalLatticeOfGlobalLattice
+public import Development.AutomorphicArithmetic.IdeleLatticeFacts.ExistsLatticeIndexOfInjectiveEndomorphism
+public import Development.AutomorphicArithmetic.IdeleLatticeFacts.ExistsLinearMapDetMulMulEqPow
+public import Development.AutomorphicArithmetic.IdeleLatticeFacts.ExistsSignHeckeCharAtNonfixedPlace
+public import Development.AutomorphicArithmetic.IdeleLatticeFacts.LatticeDeterminantComparisonAtSplitPlace
+
+@[expose] public section
 
 open scoped TensorProduct Matrix Topology Kronecker ComplexOrder Classical
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Matrix
@@ -109,10 +113,10 @@ theorem UpperTheory.TP.W.idxSign :
   rw [e1, e2, hi, hj, ← pow_add] at hidx
   have hoff : ∀ (z : (AEF F E)ˣ) (d : AEF F E), (z : AEF F E) = e * d + (1 - e) → ∀ Q, Q ≠ P → wv F E Q z = 1 := by
     intro z d hz Q hQ
-    rw [wv_apply, hz, map_add, map_mul, map_sub, map_one, h0 Q hQ, zero_mul, zero_add, sub_zero, map_one]
+    rw [wv_apply, hz, map_add (f := _), map_mul, map_sub, map_one, h0 Q hQ, zero_mul, zero_add, sub_zero, map_one]
   have hat : ∀ (z : (AEF F E)ˣ) (d : AEF F E), (z : AEF F E) = e * d + (1 - e) → wv F E P z = Valued.v (ev F E P d) := by
     intro z d hz
-    rw [wv_apply, hz, map_add, map_mul, map_sub, map_one, h1, one_mul, sub_self, add_zero]
+    rw [wv_apply, hz, map_add (f := _), map_mul, map_sub, map_one, h1, one_mul, sub_self, add_zero]
   have hdet : ∀ {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (a : GAF σ J),
       ev F E P (mtF σ J a).det = ((mtF σ J a).map (ev F E P)).det := by
     intro n J a

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermHyperbolic
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermHyperbolic
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.UTrans GlobalTheory.AdLat
 open scoped TensorProduct
 
@@ -20,7 +25,8 @@ theorem hfL_apply (σ : E →+* E) (G : Matrix (Fin n) (Fin n) E) (y x : Fin n �
 
 theorem hf_symm {σ : E →+* E} {G : Matrix (Fin n) (Fin n) E} (hG : IsHerm σ G) (x y : Fin n → E) :
     σ (hf σ G x y) = hf σ G y x := by
-  simp only [hf, map_sum, map_mul, hG.invol, hG.herm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hf, map_sum, map_mul, hG.invol, hG.herm]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   ring
@@ -44,7 +50,7 @@ theorem hf_comb {σ : E →+* E} (G : Matrix (Fin n) (Fin n) E) (a b : E) (u w :
       a * σ a * hf σ G u u + a * σ b * hf σ G u w + b * σ a * hf σ G w u + b * σ b * hf σ G w w := by
   simp only [hf, Finset.mul_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add, map_mul]
+  simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add (f := _), map_mul]
   ring
 
 theorem exists_isotropic_avoid [CharZero E] {σ : E →+* E} {G : Matrix (Fin n) (Fin n) E}
@@ -76,9 +82,9 @@ theorem exists_isotropic_avoid [CharZero E] {σ : E →+* E} {G : Matrix (Fin n)
     exact (Set.infinite_of_injective_forall_mem (f := fun t : ℕ => (t : E)) Nat.cast_injective h) hfin
   refine ⟨a • u + (-(hf σ G u u) / 2 + δ * t) • w, ?_, fun i => ?_⟩
   · rw [hf_comb, hw, ← ha, ← hσa]
-    simp only [map_add, map_mul, map_div₀, map_neg, huu, hδσ, map_natCast, map_ofNat]
+    simp only [map_add (f := _), map_mul, map_div₀, map_neg, huu, hδσ, map_natCast, map_ofNat]
     ring
-  · rw [map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
+  · rw [map_add (f := _), map_smul, map_smul, smul_eq_mul, smul_eq_mul]
     by_cases h : f i w = 0
     · simp [h, ha0, hui i]
     · intro h'

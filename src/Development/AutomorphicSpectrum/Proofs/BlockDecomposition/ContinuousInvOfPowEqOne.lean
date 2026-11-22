@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.ElementaryCosets.JPred
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsExtraExtra
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.ElementaryCosets.CosetMap
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsExtraExtra
+
+@[expose] public section
 
 noncomputable section
 
@@ -214,10 +218,20 @@ theorem tor_comm (N : ℕ) : ∀ x ∈ Tor k N, ∀ y ∈ Tor k N, x * y = y * x
 
 theorem tor_conj_nlo (N : ℕ) : ∀ s ∈ Tor k N, ∀ n ∈ Nlo k N, s⁻¹ * n * s ∈ Nlo k N := by
   rintro _ ⟨s, rfl⟩ n hn
-  have h := Subgroup.inv_mem _ (leviEmb_mem_normalizer_lower k (stdBlocks (ones N) (sum_ones N)) s)
-  have := (Subgroup.mem_normalizer_iff.1 h n).1 hn
-  rw [inv_inv] at this
-  exact this
+  let e := opp (stdBlocks (ones N) (sum_ones N))
+  have hp : torEmb k N s ∈ parab k e := by
+    apply mem_parab_iff.2
+    intro a b i j hab
+    change (leviEmb k e s : Matrix (Fin N) (Fin N) k) (e ⟨a, i⟩) (e ⟨b, j⟩) = 0
+    exact leviEmb_apply_ne k e s hab.ne' i j
+  change n ∈ unipRad k e at hn
+  change (torEmb k N s)⁻¹ * n * torEmb k N s ∈ unipRad k e
+  obtain ⟨u, hu, rfl⟩ := Subgroup.mem_map.1 hn
+  let p : parab k e := ⟨torEmb k N s, hp⟩
+  refine Subgroup.mem_map.2 ⟨p⁻¹ * u * p, ?_, rfl⟩
+  change leviProj k e (p⁻¹ * u * p) = 1
+  rw [map_mul, map_mul, map_inv, MonoidHom.mem_ker.1 hu]
+  simp
 
 theorem killNlo {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     (N : ℕ) (J : Subgroup (GL (Fin N) k)) (θ : MulAut (GL (Fin N) k)) (l : ℕ) (t : GL (Fin N) k)

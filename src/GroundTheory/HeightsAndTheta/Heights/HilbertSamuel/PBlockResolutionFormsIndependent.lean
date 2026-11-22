@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockResolutionFormsIndependent
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNonvanishingDense
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockResolutionFormsIndependent
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNonvanishingDense
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -62,7 +67,11 @@ theorem BlockResolutionFormsIndependent.proof (hND : NonvanishingDense.Statement
   have hpts : ∀ z ∈ mcPts (mCoordIdeal d.y), F z = 0 := by
     intro z hz
     have hcl := hND K ι (mCoordIdeal d.y) (D + 1) g d.arith hgP hz
-    exact (isClosed_eq hFc continuous_const).closure_subset_iff.2 (fun z' hz' => hoff z' hz'.1 hz'.2) hcl
+    have hsub : {z | z ∈ mcPts (mCoordIdeal d.y) ∧
+        eval z (map (Int.castRingHom ℂ) g) ≠ 0} ⊆ {z | F z = 0} := by
+      intro z' hz'
+      exact hoff z' hz'.1 hz'.2
+    exact (isClosed_eq hFc continuous_const).closure_subset_iff.2 hsub hcl
   exact coeff_eq_zero hli (mcPts_nonempty d) hpts
 
 end

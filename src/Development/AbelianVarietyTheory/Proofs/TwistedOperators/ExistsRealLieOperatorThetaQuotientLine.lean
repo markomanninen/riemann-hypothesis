@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRtensOp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchActionReadingsCompatible
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRtensOp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchActionReadingsCompatible
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
@@ -28,8 +32,8 @@ theorem actsD_zero' (L : ℝ → Module.End ℂ ((κ → AF F) → ℂ)) :
   simp only [map_zero, Pi.zero_apply]
   exact hasDerivAt_const _ _
 
-open scoped Classical in
 
+open scoped Classical in
 theorem actsD_comb (L : ℝ → Module.End ℂ ((κ → AF F) → ℂ)) (c : ℂ) {f f₁ g g₁ : SInf F κ}
     (hf : ActsD (evI F) (fun t => ⇑(L t)) ⇑f ⇑f₁) (hg : ActsD (evI F) (fun t => ⇑(L t)) ⇑g ⇑g₁) :
     ActsD (evI F) (fun t => ⇑(L t)) ⇑(c • f + g) ⇑(c • f₁ + g₁) := by
@@ -43,7 +47,7 @@ theorem actsD_comb (L : ℝ → Module.End ℂ ((κ → AF F) → ℂ)) (c : ℂ
     have h := ((hf r h1 x).const_mul c).add (hg r h2 x)
     have hfun : (fun t => L t (c • tens (evI F) ⇑f r + tens (evI F) ⇑g r) x) =
         (fun t => c * L t (tens (evI F) ⇑f r) x) + (fun t => L t (tens (evI F) ⇑g r) x) := by
-      funext t; simp [map_add, map_smul]
+      funext t; simp [map_add (f := _), map_smul]
     rw [hfun, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
     exact h
 
@@ -128,7 +132,7 @@ theorem GlobalTheory.RealLieOp.exists_realOp : ∀ {F E : Type} [Field F] [Numbe
       obtain ⟨g, g₁, g', g₁', hg, h2, hg', h2', rfl⟩ := hy
       refine ⟨f + g, f₁ + g₁, f' + g', f₁' + g₁', add_mem hf hg, GlobalTheory.RealLieOp.actsD_add L h1 h2,
         add_mem hf' hg', GlobalTheory.RealLieOp.actsD_add L' h1' h2', ?_⟩
-      simp only [map_add, Prod.mk_add_mk]
+      simp only [map_add (f := _), Prod.mk_add_mk]
       abel_nf
     | smul c x _ hx =>
       obtain ⟨f, f₁, f', f₁', hf, h1, hf', h1', rfl⟩ := hx

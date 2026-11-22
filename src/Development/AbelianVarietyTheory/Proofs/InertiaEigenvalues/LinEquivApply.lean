@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowSmulMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowSmulMem
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
@@ -45,19 +49,6 @@ def incl (T : QLat LL) : ↥T.L.T →ₗ[ℤ_[l]] T.V where
     rw [Submodule.coe_smul, ← algebraMap_smul ↥LL.1 (algebraMap ℤ_[l] ↥(OL LL) z) (x : T.V),
       ← algebraMap_smul ↥LL.1 (algebraMap ℤ_[l] ℚ_[l] z) (x : T.V)]
     rfl
-
-theorem exists_pow_mul_mem (LL : FinExt l) (a : ↥LL.1) :
-    ∃ k : ℕ, (l : ↥LL.1) ^ k * a ∈ OL LL := by
-  haveI : FiniteDimensional ℚ_[l] ↥LL.1 := LL.2
-  have h1 : IsAlgebraic ℚ_[l] a := Algebra.IsAlgebraic.isAlgebraic a
-  have h2 : IsAlgebraic ℤ_[l] a := (IsFractionRing.isAlgebraic_iff ℤ_[l] ℚ_[l] ↥LL.1).2 h1
-  obtain ⟨y, hy, hi⟩ := h2.exists_integral_multiple
-  obtain ⟨k, u, rfl⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible hy
-    (PadicInt.irreducible_p (p := l))
-  refine ⟨k, ?_⟩
-  have h3 := hi.smul ((u⁻¹ : ℤ_[l]ˣ) : ℤ_[l])
-  rw [smul_smul, ← mul_assoc, Units.inv_mul, one_mul, Algebra.smul_def, map_pow, map_natCast] at h3
-  exact h3
 
 theorem exists_pow_smul_mem (T : QLat LL) (v : T.V) :
     ∃ n : ℕ, (l : ↥LL.1) ^ n • v ∈ T.L.T := by
@@ -121,8 +112,8 @@ def changeRing (T : QLat LL) (eB : Pl.R.B ≃+* Bc)
     ↥T.L.T ⊗[ℤ_[l]] Bc ≃ₗ[ℤ_[l]] Pl.R.B ⊗[ℤ_[l]] ↥T.L.T :=
   (TensorProduct.congr (LinearEquiv.refl ℤ_[l] ↥T.L.T) (ringLin eB hz)).trans (TensorProduct.comm ℤ_[l] ↥T.L.T Pl.R.B)
 
-variable (Pl) in
 
+variable (Pl) in
 def invertPrime (T : QLat LL) : Pl.R.B ⊗[ℤ_[l]] ↥T.L.T ≃ₗ[ℚ_[l]] T.V ⊗[ℚ_[l]] Pl.R.B :=
   (AlgebraTensorModule.cancelBaseChange ℤ_[l] ℚ_[l] ℚ_[l] Pl.R.B ↥T.L.T).symm.trans
      ((TensorProduct.congr (LinearEquiv.refl ℚ_[l] Pl.R.B) (hbc T).equiv).trans
@@ -150,14 +141,14 @@ theorem addEquiv_smul (T : QLat LL) (eB : Pl.R.B ≃+* Per.Bcris l)
   induction w using TensorProduct.induction_on with
   | zero => simp only [smul_zero, map_zero]
   | add x y hx hy =>
-    rw [smul_add, map_add, map_add]
+    rw [smul_add, map_add (f := _), map_add (f := _)]
     exact (congrArg₂ (· + ·) hx hy).trans (smul_add c _ _).symm
   | tmul y x =>
     rw [TensorProduct.smul_tmul']
     induction y using TensorProduct.induction_on with
     | zero => simp only [smul_zero, zero_tmul, map_zero]
     | add y₁ y₂ h₁ h₂ =>
-      rw [smul_add, add_tmul, add_tmul, map_add, map_add]
+      rw [smul_add, add_tmul, add_tmul, map_add (f := _), map_add (f := _)]
       exact (congrArg₂ (· + ·) h₁ h₂).trans (smul_add c _ _).symm
     | tmul o b =>
       have e : (((c • o) • x : ↥T.L.T) : T.V) = (c : ↥LL.1) • ((o • x : ↥T.L.T) : T.V) := by
@@ -190,13 +181,13 @@ theorem linEquiv_act (T : QLat LL) (eB : Pl.R.B ≃+* Per.Bcris l)
   induction w using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | add x y hx hy =>
-    rw [map_add, map_add, map_add, map_add]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _)]
     exact congrArg₂ (· + ·) hx hy
   | tmul y x =>
     induction y using TensorProduct.induction_on with
     | zero => simp only [zero_tmul, map_zero]
     | add y₁ y₂ h₁ h₂ =>
-      rw [add_tmul, map_add, map_add, map_add, map_add]
+      rw [add_tmul, map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _)]
       exact congrArg₂ (· + ·) h₁ h₂
     | tmul o b =>
       have h1 : actB (sQ l) T g ((o ⊗ₜ[ℤ_[l]] b) ⊗ₜ[↥(OL LL)] x) =
@@ -220,13 +211,13 @@ theorem linEquiv_frob (T : QLat LL) (eB : Pl.R.B ≃+* Per.Bcris l)
   induction w using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | add x y hx hy =>
-    rw [map_add, map_add, map_add, map_add]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _)]
     exact congrArg₂ (· + ·) hx hy
   | tmul y x =>
     induction y using TensorProduct.induction_on with
     | zero => simp only [zero_tmul, map_zero]
     | add y₁ y₂ h₁ h₂ =>
-      rw [add_tmul, map_add, map_add, map_add, map_add]
+      rw [add_tmul, map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _)]
       exact congrArg₂ (· + ·) h₁ h₂
     | tmul o b =>
       have h1 : TWmap (frobOB l ↥(OL LL)) T ((o ⊗ₜ[ℤ_[l]] b) ⊗ₜ[↥(OL LL)] x) =

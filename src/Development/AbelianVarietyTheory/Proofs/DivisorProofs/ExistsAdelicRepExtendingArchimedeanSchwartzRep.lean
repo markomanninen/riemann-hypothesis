@@ -1,23 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+
+@[expose] public section
+
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open NumberField MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.BasicNotions.TH GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.FockAlg GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.RealLift
 
 namespace GlobalTheory.SliceExt
-
-theorem exists_extend {G S V : Type*} [Monoid G] [AddCommGroup S] [Module ℂ S]
-    [AddCommGroup V] [Module ℂ V] (j : S →ₗ[ℂ] V) (hj : Function.Injective j)
-    (ρ : G →* Module.End ℂ S) :
-    ∃ L : G →* Module.End ℂ V, ∀ g s, L g (j s) = j (ρ g s) := by
-  obtain ⟨p, hp⟩ := j.exists_leftInverse_of_injective (LinearMap.ker_eq_bot.mpr hj)
-  have hp' : ∀ s, p (j s) = s := fun s => LinearMap.congr_fun hp s
-  refine ⟨{ toFun := fun g => j ∘ₗ (ρ g) ∘ₗ p + (LinearMap.id - j ∘ₗ p)
-            map_one' := ?_
-            map_mul' := ?_ }, ?_⟩
-  · ext v; simp
-  · intro g g'; ext v; simp [hp']
-  · intro g s; simp [hp']
 
 noncomputable def splitPts (F : Type) [Field F] [NumberField F] (κ : Type) :
     (κ → AF F) ≃ (κ → mixedEmbedding.mixedSpace F) × (κ → Af F) where
@@ -33,9 +25,9 @@ noncomputable def splitPts (F : Type) [Field F] [NumberField F] (κ : Type) :
     funext i
     exact RingEquiv.apply_symm_apply _ _
 
+
 open scoped TensorProduct in
 open NumberField MeasureTheory in
-
 theorem _root_.GlobalTheory.SliceExt.exists_rep_pure (F : Type) [Field F] [NumberField F]
     (κ : Type) [Fintype κ]
     (G : Type) [Group G] (ρ : G →* (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.SInf F κ →L[ℂ] _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.SInf F κ)) :
@@ -77,7 +69,7 @@ theorem _root_.GlobalTheory.SliceExt.exists_rep_pure (F : Type) [Field F] [Numbe
         intro Φ Ψ
         funext x
         have : slice (Φ + Ψ) (s x).2 = slice Φ (s x).2 + slice Ψ (s x).2 := rfl
-        simp only [this, map_add, Pi.add_apply]
+        simp only [this, map_add (f := _), Pi.add_apply]
       map_smul' := by
         intro c Φ
         funext x

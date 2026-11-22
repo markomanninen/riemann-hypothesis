@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStrictHenselisation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgHomExtLocalization
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndEtaleLocalizedPiecesTrans
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStrictHenselisationOfDirectedUnion
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRingHomOfIsStrictHenselisation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStrictHenselisation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgHomExtLocalization
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndEtaleLocalizedPiecesTrans
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStrictHenselisationOfDirectedUnion
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRingHomOfIsStrictHenselisation
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 
 noncomputable section
@@ -264,7 +269,7 @@ theorem key {B : Subalgebra ℤ A} (E : Type) [CommRing E] [Algebra (RB A B) E] 
       | mem x hx =>
         exact ⟨algebraMap B' (RB A B') ⟨γ x, hF (Finset.mem_image_of_mem γ hx)⟩, toA_algebraMap A B' _⟩
       | algebraMap r => exact ⟨loc h r, by rw [toA_loc, hγ]⟩
-      | add x y _ _ hx hy => rw [map_add]; exact Subring.add_mem _ hx hy
+      | add x y _ _ hx hy => rw [map_add (f := _)]; exact Subring.add_mem _ hx hy
       | mul x y _ _ hx hy => rw [map_mul]; exact Subring.mul_mem _ hx hy
     intro y; exact this y (hs ▸ Algebra.mem_top)
   let e' : RB A B' ≃+* (toA A B').range := RingEquiv.ofBijective (toA A B').rangeRestrict
@@ -358,8 +363,8 @@ theorem isStalk_O (B : Subalgebra ℤ A) :
   exact ⟨⟨inferInstance, (sh A B).sep⟩, B, inferInstance, inferInstance, 𝟙 _, inferInstance, indEt_fromB B,
     (Category.comp_id _).symm⟩
 
-variable (A) in
 
+variable (A) in
 abbrev Idx (u : A) : Type := {B : Subalgebra ℤ A // B.FG ∧ u ∈ B}
 
 instance (u : A) : IsDirected (Idx A u) (· ≤ ·) :=

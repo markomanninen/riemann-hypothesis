@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.IntegralParts.HaarFourierSupport.PartialFourierFirstCoordinates
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.IntegralParts.HaarFourierSupport.PartialFourierFirstCoordinates
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,7 @@ theorem integrable_slice (hψ : Continuous ψ) {f : Sp k n → ℂ} (hf : f ∈ 
     have := GlobalTheory.SplitDict.slice_mem_SB h1 (Hb h p).1
     convert this using 1
     funext u
-    simp only [real_test_function_apply]
+    rw [real_test_function_apply]
     rfl
   obtain ⟨hl2, hcs2⟩ := h2
   have hc2 : Continuous fun u : Fin (dd Z) → k => (ψ (u ⬝ᵥ D τ Z p.1) : ℂ) :=
@@ -121,8 +125,8 @@ theorem fourier_transform_preserves_compact {c : kˣ} (hc : HasConductor ψ c) {
     exact (hf.2 hne) h0'
   simp [this]
 
-omit h [MeasurableSpace k] [BorelSpace k] [ν.IsAddHaarMeasure] in
 
+omit h [MeasurableSpace k] [BorelSpace k] [ν.IsAddHaarMeasure] in
 def Refl (τ : Matrix (Fin n) (Fin n) k →ₗ[k] k) (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) (p : Sp k n) : Sp k n :=
   (p.1 - (2 : k) • Pr τ Z p.1, p.2)
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralIntegralGLMulRightComplexProductSigma
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeviIntegralFacts
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralIntegralGLMulRightComplexProductSigma
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeviIntegralFacts
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+
+@[expose] public section
 
 open MeasureTheory Topology
 open scoped ComplexConjugate
@@ -51,7 +55,8 @@ theorem irreducible_of_fixed_line {G V : Type} [Group G] [TopologicalSpace G] [I
     exact hW _ _ hwW
   have hufix : ∀ k ∈ K, ρ k u = u := by
     intro k hk
-    rw [hu, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hu, map_sum]
     refine Finset.sum_bij (fun y _ => ρ k y) ?_ ?_ ?_ fun _ _ => rfl
     · intro y hy
       obtain ⟨l, rfl⟩ := hfin.mem_toFinset.1 hy
@@ -169,7 +174,7 @@ theorem exists_rep [MeasurableSpace G] [BorelSpace G] [T2Space G] (μ : Measure 
         exact integral_nonneg fun x => sq_nonneg _
       add_left := fun f f' f'' => by
         rw [← integral_add (hi f f'') (hi f' f'')]
-        simp only [Submodule.coe_add, Pi.add_apply, map_add, add_mul]
+        simp only [Submodule.coe_add, Pi.add_apply, map_add (f := _), add_mul]
       smul_left := fun f f' r => by
         rw [← integral_const_mul]
         simp only [Submodule.coe_smul, Pi.smul_apply, smul_eq_mul, map_mul, mul_assoc]

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EisensteinCovariance
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaSumInvariantWeylInvolution
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousHalfTr
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockMatrixInjective
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EisensteinCovariance
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaSumInvariantWeylInvolution
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousHalfTr
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockMatrixInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,9 +40,6 @@ theorem pr_add_right (b₀ : HermE D ρ) (u v v' : Mx D ρ p) : pr b₀ u (v + v
 theorem pr_neg_left (b₀ : HermE D ρ) (u v : Mx D ρ p) : pr b₀ (-u) v = -pr b₀ u v := by
   simp only [pr_def, adj_neg, Matrix.neg_mul]
 
-theorem pr_neg_right (b₀ : HermE D ρ) (u v : Mx D ρ p) : pr b₀ u (-v) = -pr b₀ u v := by
-  simp only [pr_def, Matrix.mul_neg]
-
 theorem adj_pr (b₀ : HermE D ρ) (u v : Mx D ρ p) : adj (pr b₀ u v) = pr b₀ v u := by
   simp only [pr_def, adj_mul, adj_adj, adj_B, Matrix.mul_assoc]
 
@@ -60,7 +61,7 @@ theorem trace_swap_pr (b₀ : HermE D ρ) {b : Mx D p p} (hb : adj b = b) (u v :
   rw [← trace_adj, adj_mul, hb, adj_pr, Matrix.trace_mul_comm]
 
 theorem halfTr_add'' (a c : AE D) : halfTr (a + c) = halfTr a + halfTr c := by
-  simp only [halfTr, trA, map_add, mul_add]
+  simp only [halfTr, trA, map_add (f := _), mul_add]
 
 theorem halfTr_neg'' (a : AE D) : halfTr (-a) = -halfTr a := by
   simp only [halfTr, trA, map_neg, mul_neg]

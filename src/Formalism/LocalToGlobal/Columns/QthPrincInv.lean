@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.QthCloseScl
+module
+
+public import Formalism.LocalToGlobal.Columns.QthCloseScl
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -35,7 +39,7 @@ theorem qth_ext_close (g : Sp E n ≃ₗ[E] Sp E n) (N : ℕ) (hg : lqPrinc P N 
     rfl
   rw [hcoe, Matrix.sub_apply, LinearMap.toMatrix'_apply, LinearEquiv.coe_coe, ← hu0, hval, hpi, hpi]
   by_cases hi : (i : ℕ) < n
-  · rw [dif_pos hi, dif_pos hi]
+  · rw [dite_eq_left hi, dite_eq_left hi]
     have hu : (LinearMap.funLeft E E (Fin.castAdd c)) u ⟨i, hi⟩ = u i := rfl
     rw [hu, sub_self, add_zero]
     by_cases hl : (l : ℕ) < n
@@ -66,7 +70,7 @@ theorem qth_ext_close (g : Sp E n ≃ₗ[E] Sp E n) (N : ℕ) (hg : lqPrinc P N 
         exact hi
       rw [hu', map_zero, Pi.zero_apply, h1, sub_zero, map_zero]
       exact zero_le'
-  · rw [dif_neg hi, dif_neg hi, zero_add, sub_zero]
+  · rw [dite_eq_right hi, dite_eq_right hi, zero_add, sub_zero]
     have h3 : u i - (1 : Matrix (Fin (n + c)) (Fin (n + c)) E) i l = 0 := by
       simp [hu0, Pi.single_apply, Matrix.one_apply]
     rw [h3, map_zero]

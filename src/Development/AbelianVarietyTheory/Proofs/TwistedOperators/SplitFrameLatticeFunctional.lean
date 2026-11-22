@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EmbeddingColumnLatticeIff
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DepthLatticeRowMulVecMemModulusScaledCompletion
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PadOneMemSecondBlockTriangular
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DependenceFixed
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceHermitianFrameProperties
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UpImageIntegralMatrixMemCompletedHomLattice
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceFrameLatticeOfMovedLattice
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitIdealCompletionAtPlaceEqIntegralAdelesAtPlac
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TmulOneMemIntAt
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ValuationEqUniformizerAndUnitAtPrime
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FunctionalValuesIntegralVectorsOfIntegerVectors
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AuxiliaryVectorDecompositionEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EmbeddingColumnLatticeIff
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DepthLatticeRowMulVecMemModulusScaledCompletion
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PadOneMemSecondBlockTriangular
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DependenceFixed
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceHermitianFrameProperties
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UpImageIntegralMatrixMemCompletedHomLattice
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceFrameLatticeOfMovedLattice
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitIdealCompletionAtPlaceEqIntegralAdelesAtPlac
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TmulOneMemIntAt
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ValuationEqUniformizerAndUnitAtPrime
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FunctionalValuesIntegralVectorsOfIntegerVectors
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AuxiliaryVectorDecompositionEqZero
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SepRows GlobalTheory.Asc
 open scoped TensorProduct
@@ -90,7 +95,7 @@ theorem coord_mem_pow (p : GlobalTheory.FinPl.SplitPt D k) {PP : HeightOneSpectr
   induction hY using AddSubgroup.closure_induction with
   | mem Y hY =>
     obtain ⟨α, hα, hαv, a, ha, x, hx, rfl⟩ := hY
-    obtain ⟨m, hm, rfl⟩ := (FractionalIdeal.mem_coeIdeal _).1 ha
+    obtain ⟨m, hm, rfl⟩ := (FractionalIdeal.mem_coeIdeal (𝓞 D.host.E)⁰).1 ha
     set Y₀ : Fin S.rank → AE D := fun i => pairA D.host.F 0 α ⊗ₜ[D.host.F] (1 * x i) with hY₀
     have h0 : Y₀ ∈ latV S L (· = p.v) := AddSubgroup.subset_closure ⟨α, hα, hαv, 1, rfl, x, hx, rfl⟩
     have h1 := GlobalTheory.UpMem.smul_mem_latMul S {1} L (· = p.v) p.e (GlobalTheory.UpMem.finPart_e_int p) _ h0
@@ -113,17 +118,17 @@ theorem coord_mem_pow (p : GlobalTheory.FinPl.SplitPt D k) {PP : HeightOneSpectr
     refine ⟨z + z', add_mem hz hz', ?_⟩
     push_cast
     rw [e, e', ← Pi.add_apply, ← Matrix.mulVec_add]
-    congr 2
+    congr 1
     funext j
-    simp
+    simp only [Pi.add_apply, map_add]
   | neg Y _ h =>
     obtain ⟨z, hz, e⟩ := h
     refine ⟨-z, neg_mem hz, ?_⟩
     push_cast
     rw [e, ← Pi.neg_apply, ← Matrix.mulVec_neg]
-    congr 2
+    congr 1
     funext j
-    simp
+    simp only [Pi.neg_apply, map_neg]
 
 theorem pow_mem_pow_fr {I : GlobalTheory.SeeSaw.FI D} {a : D.host.E} (ha : a ∈ I) (n : ℕ) : a ^ n ∈ I ^ n := by
   induction n with

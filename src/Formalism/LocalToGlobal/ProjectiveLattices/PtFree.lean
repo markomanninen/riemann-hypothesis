@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.VAtVNeBot
-import Formalism.LocalToGlobal.ProjectiveLattices.RulInst
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.VAtVNeBot
+public import Formalism.LocalToGlobal.ProjectiveLattices.RulInst
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,12 +21,6 @@ structure IsVal (la : HeightOneSpectrum (𝓞 K)) (v : R → EReal) : Prop where
   add : ∀ r s, min (v r) (v s) ≤ v (r + s)
   smul : ∀ (a : K) r, a ≠ 0 → v (a • r) = (((vLa la a : ℤ) : ℝ) : EReal) + v r
   mul : ∀ r s, v (r * s) = v r + v s
-
-structure IsNormOn (C : Submodule K R) (σ : K →+* ℂ) (N : R → ℝ) : Prop where
-  nonneg : ∀ f ∈ C, 0 ≤ N f
-  defin : ∀ f ∈ C, N f = 0 → f = 0
-  smul : ∀ (a : K), ∀ f ∈ C, N (a • f) = ‖σ a‖ * N f
-  add : ∀ f ∈ C, ∀ g ∈ C, N (f + g) ≤ N f + N g
 
 end One
 
@@ -47,7 +45,10 @@ theorem isVal_vAt {PY : Type} {lies : ∀ (T : CDVR) (ι : c.F →+* T.Fr), IntF
   dsimp only at hg1
   subst hg1
   have h0 : evI y0 (0 : Rul Xo c) = 0 := by
-    rw [← zero_smul c.F (0 : Rul Xo c), evI_smul, map_zero, zero_mul]
+    have h := evI_add y0 (0 : Rul Xo c) 0
+    simp only [add_zero] at h
+    apply add_left_cancel (a := evI y0 0)
+    simpa only [add_zero] using h.symm
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · show nval T.V e (evI y0 0) = ⊤
     rw [h0, nval_zero]
@@ -81,33 +82,6 @@ theorem isVal_valSet (la : HeightOneSpectrum (𝓞 c.F)) : ∀ v ∈ valSet Xo c
 
 variable (Xo c cls)
 
-def LiesTotal (PY : HeightOneSpectrum (𝓞 c.F) → Type)
-    (lies : ∀ la (T : CDVR) (ι : c.F →+* T.Fr), IntFr Xo c T ι → PY la → Prop) : Prop :=
-  ∀ la (T : CDVR) (ι : c.F →+* T.Fr) (e : ℕ), OverLa la T.V ι e → ∀ y : IntFr Xo c T ι, cls T ι y →
-    ∃ η, lies la T ι y η
-
 variable {Xo c cls}
-
-theorem nonneg_iff_of_liesTotal {PY : HeightOneSpectrum (𝓞 c.F) → Type}
-    {lies : ∀ la (T : CDVR) (ι : c.F →+* T.Fr), IntFr Xo c T ι → PY la → Prop}
-    (h : LiesTotal Xo c cls PY lies) (f : Rul Xo c) :
-    (∀ la, ∀ v ∈ valSet Xo c cls la, 0 ≤ v f) ↔
-      ∀ la (y : PtV Xo c cls (PY la) (lies la) la), 0 ≤ vAtV y f := by
-  constructor
-  · intro H la y
-    obtain ⟨⟨g, hg⟩, T, io, e, hO, y0, hcls, eta, hl, heq⟩ := y
-    have hg1 := congrArg Prod.fst heq
-    dsimp only at hg1
-    subst hg1
-    have hv := H la (vAtV (⟨profI Xo c Unit e y0 (), T, io, e, hO, y0, hcls, (), trivial, rfl⟩ :
-      PtV Xo c cls Unit (fun _ _ _ _ => True) la)) ⟨_, rfl⟩
-    exact hv
-  · rintro H la v ⟨y, rfl⟩
-    obtain ⟨⟨g, hg⟩, T, io, e, hO, y0, hcls, eta, hl, heq⟩ := y
-    have hg1 := congrArg Prod.fst heq
-    dsimp only at hg1
-    subst hg1
-    obtain ⟨η, hη⟩ := h la T io e hO y0 hcls
-    exact H la ⟨profI Xo c (PY la) e y0 η, T, io, e, hO, y0, hcls, η, hη, rfl⟩
 
 end Formalism.L2.PjFree

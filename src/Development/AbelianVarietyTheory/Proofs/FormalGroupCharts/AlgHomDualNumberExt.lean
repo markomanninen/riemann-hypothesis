@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.IsAdicCompleteOfFgOfNatCastMemStatement
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.MvPowerSeriesExistsPolynomialTotalDegreeLeSubMemStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.IsAdicCompleteOfFgOfNatCastMemStatement
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.MvPowerSeriesExistsPolynomialTotalDegreeLeSubMemStatement
+
+@[expose] public section
 
 open IsLocalRing TensorProduct
 
@@ -21,7 +25,7 @@ theorem leibniz_eq_zero {O C σ : Type} [CommRing O] [CommRing C]
     intro P
     induction P using MvPolynomial.induction_on with
     | C c => rw [MvPolynomial.coe_C]; exact hC c
-    | add p q hp hq => rw [MvPolynomial.coe_add, map_add, hp, hq, add_zero]
+    | add p q hp hq => rw [MvPolynomial.coe_add, map_add (f := _), hp, hq, add_zero]
     | mul_X p j hp => rw [MvPolynomial.coe_mul, MvPolynomial.coe_X, hmul, hp, hX]; simp
   have h2 : ∀ h ∈ Ideal.span (Set.range fun j =>
       (X j - MvPowerSeries.C (a j) : MvPowerSeries σ O)), φ₀ h = 0 ∧ E h = 0 := by
@@ -55,7 +59,7 @@ theorem finite_quotient {O σ : Type} [CommRing O] [Finite σ] (I : Ideal (MvPow
   rw [this]
   exact (Ideal.Quotient.eq.2 hg).symm
 
-theorem algHom_dualNumber_ext : ∀ (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (O : Type) [CommRing O] [Algebra O C], v.Integers O → ∀ (p : ℕ), p ≠ 0 → IsAdicComplete (Ideal.span {(p : O)}) O → ∀ J : Ideal O, J.FG → J ≠ ⊤ → (p : O) ∈ J → ∀ (σ : Type) [Finite σ] (n : ℕ) (e : Fin n ≃ σ) (f : Fin n → MvPowerSeries σ O) (M N : ℕ) (U : (MvPowerSeries σ O)ˣ), N ≠ 0 → Ideal.span (Set.range (MvPowerSeries.X : σ → MvPowerSeries σ O)) ^ M ≤ Ideal.span (Set.range f) ⊔ Ideal.map (MvPowerSeries.C : O →+* MvPowerSeries σ O) J → Matrix.det (Matrix.of fun i j : Fin n => MvPowerSeries.pderiv O (e j) (f i)) = (N : MvPowerSeries σ O) * U → ∀ φ φ' : (MvPowerSeries σ O ⧸ Ideal.span (Set.range f)) →ₐ[O] DualNumber C, (∀ a, (φ a).fst = (φ' a).fst) → φ = φ' := by
+theorem algHom_dualNumber_ext : ∀ (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (O : Type) [CommRing O] [Algebra O C], v.Integers O → ∀ (p : ℕ), p ≠ 0 → IsAdicComplete (Ideal.span {(p : O)}) O → ∀ J : Ideal O, J.FG → J ≠ ⊤ → (p : O) ∈ J → ∀ (σ : Type) [Finite σ] (n : ℕ) (e : Fin n ≃ σ) (f : Fin n → MvPowerSeries σ O) (M N : ℕ) (U : (MvPowerSeries σ O)ˣ), N ≠ 0 → Ideal.span (Set.range (MvPowerSeries.X : σ → MvPowerSeries σ O)) ^ M ≤ Ideal.span (Set.range f) ⊔ Ideal.map (MvPowerSeries.C : O →+* MvPowerSeries σ O) J → Matrix.det (Matrix.of fun i j : Fin n => MvPowerSeries.pderiv (R := O) (e j) (f i)) = (N : MvPowerSeries σ O) * U → ∀ φ φ' : (MvPowerSeries σ O ⧸ Ideal.span (Set.range f)) →ₐ[O] DualNumber C, (∀ a, (φ a).fst = (φ' a).fst) → φ = φ' := by
   intro C _ _ _ v O _ _ hv p hp hc J hJ hJt hpJ σ _ n e f M N U hN hM hdet φ φ' hfst
   classical
   have hJc := GlobalTheory.T.isAdicComplete_of_fg_of_natCast_mem_of_integers C v O hv p hp hc J hJ hJt hpJ
@@ -80,7 +84,7 @@ theorem algHom_dualNumber_ext : ∀ (C : Type) [Field C] [IsAlgClosed C] [CharZe
   let K : Ideal (MvPowerSeries σ O) :=
     { carrier := {g | v (φ₀ g) < 1}
       add_mem' := fun {x y} hx hy => by
-        simp only [Set.mem_setOf_eq, map_add] at hx hy ⊢
+        simp only [Set.mem_setOf_eq, map_add (f := _)] at hx hy ⊢
         exact v.map_add_lt hx hy
       zero_mem' := by simp
       smul_mem' := fun s x hx => by
@@ -101,8 +105,12 @@ theorem algHom_dualNumber_ext : ∀ (C : Type) [Field C] [IsAlgClosed C] [CharZe
       (hM.trans (sup_le hIK (Ideal.map_le_iff_le_comap.2 hJK)))
         (Ideal.pow_mem_pow (Ideal.subset_span (Set.mem_range_self j)) M)
     rw [hK, map_pow, map_pow] at h1
-    refine lt_of_le_of_ne (hle _) fun h => ?_
-    simp [h] at h1
+    have hM0 : M ≠ 0 := by
+      intro h
+      subst M
+      simp at h1
+    rw [hK]
+    exact (pow_lt_one_iff_of_nonneg zero_le hM0).1 h1
   let J' : Ideal O := J ⊔ Ideal.span (Set.range a)
   have hJ' : J'.FG := Submodule.FG.sup hJ (Submodule.fg_span (Set.finite_range a))
   have hJ'K : J' ≤ K.comap (MvPowerSeries.C : O →+* MvPowerSeries σ O) := by
@@ -128,11 +136,11 @@ theorem algHom_dualNumber_ext : ∀ (C : Type) [Field C] [IsAlgClosed C] [CharZe
         (Ideal.mem_map_of_mem _ (Ideal.mem_sup_right (Ideal.subset_span ⟨j, rfl⟩))))
   let d : Fin n → C := fun j => (ψ' (X (e j))).snd - (ψ (X (e j))).snd
   let E : MvPowerSeries σ O →+ C :=
-    { toFun := fun g => (ψ' g).snd - (ψ g).snd - ∑ j, φ₀ (pderiv O (e j) g) * d j
+    { toFun := fun g => (ψ' g).snd - (ψ g).snd - ∑ j, φ₀ (pderiv (R := O) (e j) g) * d j
       map_zero' := by simp
       map_add' := fun x y => by
-        simp only [map_add, TrivSqZeroExt.snd_add, add_mul, Finset.sum_add_distrib]; ring }
-  have hE : ∀ g, E g = (ψ' g).snd - (ψ g).snd - ∑ j, φ₀ (pderiv O (e j) g) * d j :=
+        simp only [map_add (f := _), TrivSqZeroExt.snd_add, add_mul, Finset.sum_add_distrib]; ring }
+  have hE : ∀ g, E g = (ψ' g).snd - (ψ g).snd - ∑ j, φ₀ (pderiv (R := O) (e j) g) * d j :=
     fun g => rfl
   have hE0 : ∀ g, E g = 0 := by
     refine leibniz_eq_zero (φ₀ : MvPowerSeries σ O →+* C) E a ?_ ?_ ?_ ?_
@@ -157,7 +165,7 @@ theorem algHom_dualNumber_ext : ∀ (C : Type) [Field C] [IsAlgClosed C] [CharZe
       rw [RingHom.coe_coe, map_sub, hCa, AlgHom.commutes, ha, sub_self]
   have hd : d = 0 := by
     let A : Matrix (Fin n) (Fin n) (MvPowerSeries σ O) :=
-      Matrix.of fun i j : Fin n => MvPowerSeries.pderiv O (e j) (f i)
+      Matrix.of fun i j : Fin n => MvPowerSeries.pderiv (R := O) (e j) (f i)
     refine Matrix.eq_zero_of_mulVec_eq_zero
       (M := (φ₀ : MvPowerSeries σ O →+* C).mapMatrix A) ?_ ?_
     · rw [← RingHom.map_det, hdet, map_mul, map_natCast]

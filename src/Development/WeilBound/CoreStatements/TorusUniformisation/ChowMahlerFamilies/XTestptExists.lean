@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsAbsoluteValueOfIsDiscreteValuationRing
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsAbsoluteValueOfIsDiscreteValuationRing
+
+@[expose] public section
+
 open GlobalTheory.CompanionTheory.Ar.Num
 
 theorem PositivityTheory.Xgn.t_testpt_exists : ∀ {o Ω : Type} [CommRing o] [Field Ω] [Algebra o Ω] (A : Subalgebra o Ω) (p : ℕ), p.Prime → (p : Ω) ≠ 0 → IsDiscreteValuationRing A → IsFractionRing A Ω → ¬ IsUnit (p : A) → ∃ (C : Type) (_ : Field C) (_ : Algebra o C) (_ : Algebra Ω C) (_ : IsScalarTower o Ω C) (RC : Subalgebra o C), IsTestPt p A RC ∧ ∀ a : Ω, algebraMap Ω C a ∈ RC → a ∈ A := by
@@ -31,6 +36,4 @@ theorem PositivityTheory.Xgn.t_testpt_exists : ∀ {o Ω : Type} [CommRing o] [F
     fun a ha => (hmem a).1 ((hRC _).1 ha)⟩
   · rw [NormedField.valuation_apply, ← NNReal.coe_lt_coe]
     exact hp1
-  · refine GlobalTheory.NormIntegers.isAdicComplete_span_singleton hO ?_
-    rw [map_natCast]
-    exact hp1
+  · exact GlobalTheory.NormIntegers.isAdicComplete_span_singleton hO (by simpa only [map_natCast] using hp1)

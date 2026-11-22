@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.SplitRigidity.SplitRigidAlt
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.LandauIteratedDerivatives.LandauL
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.EulerLogarithms.EulerProductLogBound
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.DiagonalTermNorms.ConvergenceOfLandauEuler
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.SplitRigidity.SplitRigidAlt
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.LandauIteratedDerivatives.LandauL
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.EulerLogarithms.EulerProductLogBound
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.DiagonalTermNorms.ConvergenceOfLandauEuler
+
+@[expose] public section
+
 open PositivityTheory.RgJS UpperTheory.V.Z.Tf.GOne UpperTheory.V.Z.Tf.SR
 open scoped ComplexConjugate
 
@@ -16,7 +21,8 @@ private theorem UpperTheory.V.Z.Tf.SR.lterm_scale {W A B G : Type} [Fintype A] [
 
 private theorem UpperTheory.V.Z.Tf.SR.sum_mul_conj {M : ℕ} (a : Fin M → ℂ) (t : ℂ) :
     ∑ i, ∑ j, a i * conj (a j) * t = (Complex.normSq (∑ i, a i) : ℂ) * t := by
-  rw [← Complex.mul_conj, map_sum, Finset.sum_mul_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Complex.mul_conj, map_sum, Finset.sum_mul_sum, Finset.sum_mul]
   exact Finset.sum_congr rfl fun i _ => by rw [Finset.sum_mul]
 
 theorem UpperTheory.V.Z.Tf.SR.shareBd :

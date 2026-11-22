@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BsLApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullbackComplexFormsLinearMapComp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BsLApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullbackComplexFormsLinearMapComp
+
+@[expose] public section
+
 open GlobalTheory GlobalTheory.CxForm
 open ReciprocityTheory.L2DbarEstimates (V)
 

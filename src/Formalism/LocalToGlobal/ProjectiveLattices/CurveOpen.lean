@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveComp
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveComp
+
+@[expose] public section
 
 noncomputable section
 

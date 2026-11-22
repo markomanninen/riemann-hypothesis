@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSumIntegralCubeDerivatives
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocallyIntegrableRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSumIntegralCubeDerivatives
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocallyIntegrableRep
+
+@[expose] public section
+
 open MeasureTheory
 open scoped ContDiff
 set_option maxHeartbeats 1000000 in

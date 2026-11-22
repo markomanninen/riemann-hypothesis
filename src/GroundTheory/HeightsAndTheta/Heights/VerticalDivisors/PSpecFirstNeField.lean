@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsSpecFirst
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.Statements
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsIncidenceZeroLocus
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsSpecFirst
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.Statements
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsIncidenceZeroLocus
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -73,7 +78,7 @@ theorem SpecFirstNeField.proof (h₁ : ConeDimOfChowForm.Statement) (h₂ : Cone
       obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton'.mp hb
       have hu0 : aeval y (linForm u) = 0 := by
         simpa [w, linForm] using hyw 0
-      rw [map_add, map_mul, hu0, mul_zero, add_zero, hyI a ha]
+      rw [map_add (f := _), map_mul, hu0, mul_zero, add_zero, hyI a ha]
     obtain ⟨W, hW, hvW⟩ := exists_relComps_of_mem_incidence_field hvJ
     rw [map_prod]
     exact Finset.prod_eq_zero ((Set.Finite.mem_toFinset _).mpr hW.1)

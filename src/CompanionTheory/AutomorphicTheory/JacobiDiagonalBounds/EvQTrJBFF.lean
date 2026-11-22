@@ -1,9 +1,13 @@
-import CompanionTheory.AutomorphicTheory.NumberFieldModels.StepCpt
-import CompanionTheory.AutomorphicTheory.JacobiDiagonalBounds.ModelLoc
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFLeibMain
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopDomEmpty
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocOpAdj
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CellSmoothness
+module
+
+public import CompanionTheory.AutomorphicTheory.NumberFieldModels.StepCpt
+public import CompanionTheory.AutomorphicTheory.JacobiDiagonalBounds.ModelLoc
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFLeibMain
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopDomEmpty
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocOpAdj
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CellSmoothness
+
+@[expose] public section
 
 open Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.P Formalism.FourierDecayAlt.P.CutBP Formalism.FourierDecayAlt.P.CutMP Formalism.FourierDecayAlt.P.CutMP.Gauge Formalism.MainStatements.NFTie
 
@@ -46,8 +50,8 @@ theorem thrW_exists (k r m : ℕ) : ∃ A : ℝ, WeakThresholdClauses.WeakDomina
   have h2 := abs_nonneg ((r : ℝ) * (4 * r + 2 * k - 1) * (6 * r + 1))
   constructor <;> linarith
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 theorem tie_FF (hLL : LocLift) (p : KB.Pl P Wp Wq) {e : M.Ty P → ℂ → (Wq →L[ℂ] Wp)} (he : IsFrameB P p.T.base e)
     (hG : GaugeQQ P p.T.base e) {Lm : R.LevelData (MA.A P (MA.DQ P)) P.r} (hM : MA.IsModelLevel P (MA.DQ P) Lm)
     {w : List C.Letter} (hw : KB.CutWord P p.l0 w) (a : Wd.Ix (Fin w.length))

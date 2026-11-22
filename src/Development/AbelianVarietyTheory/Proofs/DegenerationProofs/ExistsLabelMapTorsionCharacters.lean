@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.UTorsSt
-import Development.AbelianVarietyTheory.PublishedTheorems.SemistableReduction₂.SemistableReductionSt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowEqOfBaseChange
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.UTorsSt
+public import Development.AbelianVarietyTheory.PublishedTheorems.SemistableReduction₂.SemistableReductionSt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowEqOfBaseChange
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.ZH
@@ -39,28 +44,50 @@ theorem exists_lift_points {S S' : Scheme.{0}} {G : Over S} {G' : Over S'} [GrpO
   obtain ⟨a, ha⟩ := hk (Φ x) (by rw [← map_pow, hx, map_one])
   exact ⟨a, ((key a x).1 ha.symm).symm⟩
 
+
 attribute [local instance] TorusExt.gtGroup in
 
 theorem pow_eq_one_of_qkAdd {R : Type} [CommRing R] [IsDomain R] {D : DegPre R} {F : Type} [Field F]
     [Algebra (FractionRing R) F] (hB : D.TauBimult) {k : ℕ} {M : Type} [Group M] (f : QkPt D F k → M)
     (heq : ∀ q q', QkPt.Equiv D F q q' → f q = f q') (hadd : ∀ q q' q'', QkAdd q q' q'' → f q'' = f q * f q')
     (q : QkPt D F k) : f q ^ k = 1 := by
-  have fz : f (TorusExt.qkZero hB F k) = 1 := by
-    have e := hadd _ _ _ (TorusExt.qkAdd_qkAdd hB (TorusExt.qkZero hB F k) (TorusExt.qkZero hB F k))
-    rw [show TorusExt.qkAdd hB (TorusExt.qkZero hB F k) (TorusExt.qkZero hB F k) = TorusExt.qkZero hB F k from
+  letI := TorusExt.gtGroup D F
+  let iota : D.X →+ GtPtF D F := AddMonoidHom.mk' (fun x => (TorusExt.exists_iota hB x).choose) fun x x' => by
+    obtain ⟨b, v⟩ := (TorusExt.isIota_iff_val _ _).1 (TorusExt.exists_iota (F := F) hB x).choose_spec
+    obtain ⟨b', v'⟩ := (TorusExt.isIota_iff_val _ _).1 (TorusExt.exists_iota (F := F) hB x').choose_spec
+    obtain ⟨b'', v''⟩ := (TorusExt.isIota_iff_val _ _).1 (TorusExt.exists_iota (F := F) hB (x + x')).choose_spec
+    refine (TorusExt.isAdd_iff_eq _ _ _).1 ((TorusExt.isAdd_iff_val _ _ _).2 ⟨by rw [b, b', b'', ReciprocityTheory.ChartRestriction.G.DVR.cPoint_add], fun χ y J hJ => ?_⟩)
+    have C : IsCub (ReciprocityTheory.ChartRestriction.G.DVR.th D (T := TF (R := R) F) y J) := isCub_cubV D.cub hJ
+    rw [v χ y J hJ, v' χ y J hJ, v'' χ y J hJ, b, b', C.s01, C.s12]
+    exact ReciprocityTheory.ChartRestriction.G.DVR.tau_mul (𝟙 (TF (R := R) F)) hJ hB x x' χ
+  have isIota_iff_eq (x : D.X) (g : GtPtF D F) : GtPtF.IsIota x g ↔ g = iota x :=
+    ⟨fun h => TorusExt.isIota_unique h (TorusExt.exists_iota hB x).choose_spec,
+      fun h => h ▸ (TorusExt.exists_iota hB x).choose_spec⟩
+  have qk_nsmul (q : QkPt D F k) : k • q.g = iota q.y := by
+    obtain ⟨h, h₁, h₂⟩ := q.eq
+    exact ((TorusExt.isNsmul_iff_eq _ _ _).1 h₁).symm.trans ((isIota_iff_eq _ _).1 h₂)
+  let qkMk (y : D.X) (g : GtPtF D F) (h : k • g = iota y) : QkPt D F k :=
+    ⟨y, g, k • g, (TorusExt.isNsmul_iff_eq _ _ _).2 rfl, (isIota_iff_eq _ _).2 h⟩
+  let qkZero : QkPt D F k := qkMk 0 0 (by rw [nsmul_zero, map_zero])
+  let qkAdd (p p' : QkPt D F k) : QkPt D F k :=
+    qkMk (p.y + p'.y) (p.g + p'.g) (by rw [nsmul_add, qk_nsmul, qk_nsmul, map_add (f := _)])
+  have qkAdd_rel (p p' : QkPt D F k) : QkAdd p p' (qkAdd p p') :=
+    ⟨_, rfl, (TorusExt.isAdd_iff_eq _ _ _).2 rfl, qk_equiv_refl hB _⟩
+  have fz : f qkZero = 1 := by
+    have e := hadd _ _ _ (qkAdd_rel (qkZero) (qkZero))
+    rw [show qkAdd (qkZero) (qkZero) = qkZero from
       TorusExt.qk_ext (add_zero _) (add_zero _)] at e
     exact mul_eq_left.1 e.symm
-  let m : ℕ → QkPt D F k := fun n => TorusExt.qkMk hB (n • q.y) (n • q.g) (by
-    rw [smul_comm, TorusExt.qk_nsmul hB, map_nsmul])
+  let m : ℕ → QkPt D F k := fun n => qkMk (n • q.y) (n • q.g) (by
+    rw [smul_comm, qk_nsmul, map_nsmul])
   have hm : ∀ n, f (m n) = f q ^ n := fun n => by
     induction n with
     | zero => exact (congrArg f (TorusExt.qk_ext (zero_nsmul _) (zero_nsmul _))).trans (fz.trans (pow_zero _).symm)
     | succ n ih =>
-      rw [pow_succ, ← ih, ← hadd _ _ _ (TorusExt.qkAdd_qkAdd hB _ _)]
+      rw [pow_succ, ← ih, ← hadd _ _ _ (qkAdd_rel _ _)]
       exact congrArg f (TorusExt.qk_ext (succ_nsmul _ _) (succ_nsmul _ _))
   rw [← hm, ← fz]
-  exact (heq _ _ ((TorusExt.equiv_iff hB _ _).2
-    ⟨q.y, (zero_add _).symm, (TorusExt.qk_nsmul hB q).trans (zero_add _).symm⟩)).symm
+  exact (heq _ _ ⟨q.y, (zero_add _).symm, iota q.y, (isIota_iff_eq _ _).2 rfl, (TorusExt.isAdd_iff_eq _ _ _).2 ((qk_nsmul q).trans (zero_add _).symm)⟩).symm
 
 theorem exists_labelMap : Laws → Laws2 → UTorsSt → ∀ (o Ω : Type) [CommRing o] [Field Ω] [Algebra o Ω] [ArithBase o Ω] (S : ThetaSys o Ω) (ρ : S.Real) (p : ℕ) [Fact p.Prime] (y₀ : S.R →+* PadicAlgCl p) (u : ρ.UTest p y₀), ∃ yy : S.Gam →+ u.D.toPre.X ⧸ (nsmulAddMonoidHom (S.r * S.N) : u.D.toPre.X →+ u.D.toPre.X).range, Function.Surjective yy ∧ (∀ (a : S.Gam) (pk : QkPt u.D.toPre (PadicAlgCl p) (S.r * S.N)) (x : TFK (R := u.V) (PadicAlgCl p) ⟶ u.A.A), QkToAkU u.U.toUnifPre (PadicAlgCl p) (S.r * S.N) pk x → x.left ≫ u.φ = spMap y₀ ≫ (ρ.pt a).left → yy a = QuotientAddGroup.mk pk.y) := by
   intro L _ hU o Ω _ _ _ _ S ρ p _ y₀ u
@@ -85,9 +112,34 @@ theorem exists_labelMap : Laws → Laws2 → UTorsSt → ∀ (o Ω : Type) [Comm
     obtain ⟨z, hz, -⟩ := (heq q q').1 e
     exact QuotientAddGroup.eq.2 ⟨z, by rw [hz, neg_add_cancel_left]; rfl⟩
   have ftors : ∀ q, f q ^ (S.r * S.N) = 1 := pow_eq_one_of_qkAdd hB f (fun q q' e => (heq q q').2 e) hadd
+  let D := u.D.toPre
+  let F := PadicAlgCl p
+  let R := u.V
+  let k := S.r * S.N
+  letI := TorusExt.gtGroup D F
+  let iota : D.X →+ GtPtF D F := AddMonoidHom.mk' (fun x => (TorusExt.exists_iota hB x).choose) fun x x' => by
+    obtain ⟨b, v⟩ := (TorusExt.isIota_iff_val _ _).1 (TorusExt.exists_iota (F := F) hB x).choose_spec
+    obtain ⟨b', v'⟩ := (TorusExt.isIota_iff_val _ _).1 (TorusExt.exists_iota (F := F) hB x').choose_spec
+    obtain ⟨b'', v''⟩ := (TorusExt.isIota_iff_val _ _).1 (TorusExt.exists_iota (F := F) hB (x + x')).choose_spec
+    refine (TorusExt.isAdd_iff_eq _ _ _).1 ((TorusExt.isAdd_iff_val _ _ _).2 ⟨by rw [b, b', b'', ReciprocityTheory.ChartRestriction.G.DVR.cPoint_add], fun χ y J hJ => ?_⟩)
+    have C : IsCub (ReciprocityTheory.ChartRestriction.G.DVR.th D (T := TF (R := R) F) y J) := isCub_cubV D.cub hJ
+    rw [v χ y J hJ, v' χ y J hJ, v'' χ y J hJ, b, b', C.s01, C.s12]
+    exact ReciprocityTheory.ChartRestriction.G.DVR.tau_mul (𝟙 (TF (R := R) F)) hJ hB x x' χ
+  have isIota_iff_eq (x : D.X) (g : GtPtF D F) : GtPtF.IsIota x g ↔ g = iota x :=
+    ⟨fun h => TorusExt.isIota_unique h (TorusExt.exists_iota hB x).choose_spec,
+      fun h => h ▸ (TorusExt.exists_iota hB x).choose_spec⟩
+  have qk_nsmul (q : QkPt D F k) : k • q.g = iota q.y := by
+    obtain ⟨h, h₁, h₂⟩ := q.eq
+    exact ((TorusExt.isNsmul_iff_eq _ _ _).1 h₁).symm.trans ((isIota_iff_eq _ _).1 h₂)
+  let qkAdd (v v' : QkPt u.D.toPre (PadicAlgCl p) (S.r * S.N)) : QkPt u.D.toPre (PadicAlgCl p) (S.r * S.N) :=
+    ⟨v.y + v'.y, v.g + v'.g, (S.r * S.N) • (v.g + v'.g),
+      (TorusExt.isNsmul_iff_eq _ _ _).2 rfl,
+      (isIota_iff_eq _ _).2 (by rw [nsmul_add, qk_nsmul, qk_nsmul, map_add (f := _)])⟩
+  have qkAdd_rel (v v' : QkPt u.D.toPre (PadicAlgCl p) (S.r * S.N)) : QkAdd v v' (qkAdd v v') :=
+    ⟨_, rfl, (TorusExt.isAdd_iff_eq _ _ _).2 rfl, qk_equiv_refl hB _⟩
   refine ⟨AddMonoidHom.mk' (fun a => QuotientAddGroup.mk (P a).y) fun a b => ?_, fun c => ?_, fun a pk x hx hφ => ?_⟩
-  · exact wd _ (TorusExt.qkAdd hB (P a) (P b)) (by
-      rw [hadd _ _ _ (TorusExt.qkAdd_qkAdd hB _ _), hP, hP, hP, ofAdd_add, map_mul])
+  · exact wd _ (qkAdd (P a) (P b)) (by
+      rw [hadd _ _ _ (qkAdd_rel _ _), hP, hP, hP, ofAdd_add, map_mul])
   · obtain ⟨y, rfl⟩ := QuotientAddGroup.mk_surjective c
     obtain ⟨q, rfl⟩ := TorusExt.exists_qkPt (F := PadicAlgCl p) L.mulN (Or.inr L.polBaseChange) hB (Nat.pos_iff_ne_zero.1 hk) y
     obtain ⟨a, ha⟩ := hsurj' _ (ftors q)

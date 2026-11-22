@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsFrameVec
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RootOriginFrameArchimedeanStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RootOriginFrameNonarchimedeanStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FiniteResidueAbsoluteValueStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalAtLocalRingStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DiscriminantValuationDifferentStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.NonarchValuationOfPrimeStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsElementSamePrimeCountStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsFrameVec
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RootOriginFrameArchimedeanStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RootOriginFrameNonarchimedeanStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FiniteResidueAbsoluteValueStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalAtLocalRingStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DiscriminantValuationDifferentStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.NonarchValuationOfPrimeStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsElementSamePrimeCountStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Filter Topology
 open Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.ChartRestriction.G.AR.Inst Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Rec
@@ -207,7 +212,7 @@ theorem fib_V_htDual : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] [I
     obtain ⟨d₀, hd₀, hval⟩ := exists_different_val E p μ (fun a => absT_nonneg p la T e _)
       (fun a => (hf4 _).2 ⟨σ a, hσ' a⟩)
       (fun a b => by
-        simp only [hμ, map_add]
+        simp only [hμ, map_add (f := _)]
         exact absT_add_le p la T e ho.1 hr _ _)
       (by
         rw [hμ, map_natCast]

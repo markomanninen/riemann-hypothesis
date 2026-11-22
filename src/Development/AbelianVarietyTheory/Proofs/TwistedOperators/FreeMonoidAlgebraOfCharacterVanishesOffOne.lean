@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyEquivOfCharacterEq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FactTypePrime
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyEquivOfCharacterEq
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FactTypePrime
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S IsDedekindDomain NumberField
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
@@ -96,7 +100,7 @@ theorem free_of_trace_eq_zero : ∀ (P M : Type) [Group P] [Finite P] [AddCommGr
     | of g =>
       simp only [Representation.asAlgebraHom_of]
       exact e.toIntertwiningMap.isIntertwining _ _ g x
-    | add f f' hf hf' => simp only [map_add, LinearMap.add_apply, hf, hf']
+    | add f f' hf hf' => simp only [map_add (f := _), LinearMap.add_apply, hf, hf']
     | smul c f hf => simp only [map_smul, LinearMap.smul_apply, hf]
 
   have hact : ∀ (r : MonoidAlgebra ℂ P) (y : Fin N → MonoidAlgebra ℂ P),
@@ -104,7 +108,7 @@ theorem free_of_trace_eq_zero : ∀ (P M : Type) [Group P] [Finite P] [AddCommGr
     intro r y
     induction r using MonoidAlgebra.induction_on with
     | of g => rw [Representation.asAlgebraHom_of, freeRep_apply, MonoidAlgebra.of_apply]
-    | add f f' hf hf' => rw [map_add, LinearMap.add_apply, hf, hf', add_smul]
+    | add f f' hf hf' => rw [map_add (f := _), LinearMap.add_apply, hf, hf', add_smul]
     | smul c f hf => rw [map_smul, LinearMap.smul_apply, hf, smul_assoc]
   exact ⟨{ (ρ.asModuleEquiv.trans e.toLinearEquiv).toAddEquiv with
     map_smul' := fun r x => by

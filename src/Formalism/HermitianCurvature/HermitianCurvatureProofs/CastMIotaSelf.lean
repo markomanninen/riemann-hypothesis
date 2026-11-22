@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BasePointMemDomain
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbRadHeadOf
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameTransport
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftMemMatrixAlgebra
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BasePointMemDomain
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbRadHeadOf
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameTransport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftMemMatrixAlgebra
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate
@@ -130,9 +134,9 @@ theorem exists_cons {n ρ : ℕ} (hn : 1 + ρ = n) (c : Fin n → ℂ) :
   refine ⟨c ⟨0, by omega⟩, fun i => c ⟨i.val + 1, by omega⟩, funext fun l => ?_⟩
   unfold consC
   by_cases h : l.val = 0
-  · rw [dif_pos (by simpa using h)]
+  · rw [dite_eq_left (by simpa using h)]
     exact congrArg c (Fin.ext h)
-  · rw [dif_neg (by simpa using h)]
+  · rw [dite_eq_right (by simpa using h)]
     exact congrArg c (Fin.ext (by simp; omega))
 
 theorem omX_cons {n ρ : ℕ} (hn : 1 + ρ = n) {t : ℂ} {c : Fin ρ → ℂ}

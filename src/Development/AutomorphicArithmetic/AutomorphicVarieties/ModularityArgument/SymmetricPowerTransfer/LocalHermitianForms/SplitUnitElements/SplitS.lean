@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.IsFixMapIff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.Descent
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.IsFixMapIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.Descent
+
+@[expose] public section
 
 open QuadraticAlgebra Matrix UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc
 
@@ -57,6 +61,6 @@ theorem UpperTheory.V.Z.Sym.Loc.One.splitS :
     obtain ⟨b, hb⟩ := hvim
     have e : ((0, ofE Δ v * x.2) : Sp Δ τ) = b • ((x.1, ofE Δ (ω : Etau K τ) * x.2) : Sp Δ τ)
         + a • x - (a + b) • ((x.1, 0) : Sp Δ τ) := by
-      ext <;> simp [ofE] <;> simp only [Algebra.smul_def, map_add, ← ha, ← hb] <;> ring
+      ext <;> simp [ofE] <;> simp only [Algebra.smul_def, map_add (f := _), ← ha, ← hb] <;> ring
     rw [e]
     exact P.sub_mem (P.add_mem (P.smul_mem _ (hT x hx)) (P.smul_mem _ hx)) (P.smul_mem _ (h3 x hx))

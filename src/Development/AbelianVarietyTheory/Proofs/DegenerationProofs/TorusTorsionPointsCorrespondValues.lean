@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR
@@ -166,7 +171,7 @@ theorem tau_eq (a b : N.X) :
   rw [Category.id_comp]
   refine Eq.trans ?_ ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·)
     ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) rfl (val_inv _ _))) (val_inv _ _))) (val_inv _ _))).symm
-  rw [NumD.τ, map_div, map_div, p, p, p, map_add]
+  rw [NumD.τ, map_div, map_div, p, p, p, map_add (f := _)]
   apply Additive.ofMul.injective
   simp only [ofMul_mul, ofMul_inv, ofMul_div]
   abel
@@ -177,35 +182,35 @@ theorem pt_iff (g : GtPtF D F) (c : N.Gt) :
 
 theorem c_eq (χ : N.X) : ν.eA (N.c χ) = cP D _ (ν.eX χ) := ν.c_eq χ
 
-omit y in
 
+omit y in
 theorem exists_val (g : GtPtF D F) : ∃ c, ν.Pt g c := by
   let y : Sp F := (⊥ : PrimeSpectrum F)
   choose s hs using fun χ => (toStkU_bijective y).2 (val (g.s (ν.eX χ)) (𝟙 _) y ν.J)
   refine ⟨⟨ν.eA.symm g.b, s, fun χ χ' => (toStkU_bijective y).1 ?_⟩, (pt_iff ν y _ _).2 ⟨ν.eA.apply_symm_apply _, hs⟩⟩
   have e := gt_mul (𝟙 (TF (R := R) F)) (good ν y) g (ν.eX χ) (ν.eX χ')
   rw [Category.id_comp] at e
-  rw [map_mul, map_mul, hs, hs, hs, theta_eq ν y, c_eq, c_eq, ν.eA.apply_symm_apply, map_add]
+  rw [map_mul, map_mul, hs, hs, hs, theta_eq ν y, c_eq, c_eq, ν.eA.apply_symm_apply, map_add (f := _)]
   exact e
 
-omit y in
 
+omit y in
 theorem val_unique {g : GtPtF D F} {c c' : N.Gt} (h : ν.Pt g c) (h' : ν.Pt g c') : c = c' :=
   NumD.Gt.ext (ν.eA.injective (h.1.trans h'.1.symm)) (funext fun χ => Units.ext ((h.2 χ).trans (h'.2 χ).symm))
 
-omit y in
 
+omit y in
 theorem exists_pt (c : N.Gt) : ∃ g, ν.Pt g c := by
   let y : Sp F := (⊥ : PrimeSpectrum F)
   obtain ⟨g, hb, hv⟩ := exists_gt_pt (D := D) (F := F) (good ν y) (ν.eA c.b) (fun χ => toStkU y (c.s (ν.eX.symm χ)))
     (by rw [map_zero, NumD.Gt.s_zero]; exact map_one _) (fun χ χ' => by
       have e := congrArg (toStkU y) (c.mult (ν.eX.symm χ) (ν.eX.symm χ'))
-      rw [map_mul, map_mul, theta_eq ν y, c_eq, c_eq, ν.eX.apply_symm_apply, ν.eX.apply_symm_apply, ← map_add] at e
+      rw [map_mul, map_mul, theta_eq ν y, c_eq, c_eq, ν.eX.apply_symm_apply, ν.eX.apply_symm_apply, ← map_add (f := _)] at e
       exact e)
   exact ⟨g, (pt_iff ν y _ _).2 ⟨hb.symm, fun χ => ((hv _).trans (by rw [ν.eX.symm_apply_apply])).symm⟩⟩
 
-omit y in
 
+omit y in
 theorem pt_unique {g g' : GtPtF D F} {c : N.Gt} (h : ν.Pt g c) (h' : ν.Pt g' c) : g = g' := by
   let y : Sp F := (⊥ : PrimeSpectrum F)
   obtain ⟨a, b⟩ := (pt_iff ν y _ _).1 h
@@ -214,8 +219,8 @@ theorem pt_unique {g g' : GtPtF D F} {c : N.Gt} (h : ν.Pt g c) (h' : ν.Pt g' c
   obtain ⟨χ, rfl⟩ := ν.eX.surjective χ
   exact (b χ).symm.trans (b' χ)
 
-omit y in
 
+omit y in
 theorem isZero_val {g : GtPtF D F} {c : N.Gt} (h : ν.Pt g c) : g.IsZero ↔ c = 1 := by
   let y : Sp F := (⊥ : PrimeSpectrum F)
   obtain ⟨a, b⟩ := (pt_iff ν y _ _).1 h
@@ -224,8 +229,8 @@ theorem isZero_val {g : GtPtF D F} {c : N.Gt} (h : ν.Pt g c) : g.IsZero ↔ c =
   · rw [← a]; exact ν.eA.map_eq_one_iff
   · exact (Eq.congr (b χ).symm (map_one (toStkU y)).symm).trans (toStkU_bijective y).1.eq_iff
 
-omit y in
 
+omit y in
 theorem isAdd_val {g g' g'' : GtPtF D F} {c c' c'' : N.Gt} (h : ν.Pt g c) (h' : ν.Pt g' c') (h'' : ν.Pt g'' c'') :
     GtPtF.IsAdd g g' g'' ↔ c'' = c * c' := by
   let y : Sp F := (⊥ : PrimeSpectrum F)
@@ -239,8 +244,8 @@ theorem isAdd_val {g g' g'' : GtPtF D F} {c c' c'' : N.Gt} (h : ν.Pt g c) (h' :
     rw [c_eq, a, a'] at t
     rw [NumD.Gt.mul_s, eq_div_iff_mul_eq', ← (toStkU_bijective y).1.eq_iff, map_mul, map_mul, b, b', b'', t]
 
-omit y in
 
+omit y in
 theorem isIota_val {z : N.X} {g : GtPtF D F} {c : N.Gt} (h : ν.Pt g c) : GtPtF.IsIota (ν.eX z) g ↔ c = N.io z := by
   let y : Sp F := (⊥ : PrimeSpectrum F)
   obtain ⟨a, b⟩ := (pt_iff ν y _ _).1 h
@@ -249,8 +254,8 @@ theorem isIota_val {z : N.X} {g : GtPtF D F} {c : N.Gt} (h : ν.Pt g c) : GtPtF.
   · rw [← a, ← c_eq]; exact ν.eA.injective.eq_iff
   · exact (Eq.congr (b χ).symm (tau_eq ν y z χ).symm).trans (toStkU_bijective y).1.eq_iff
 
-omit y in
 
+omit y in
 theorem isNsmul_val (k : ℕ) {g g' : GtPtF D F} {c c' : N.Gt} (h : ν.Pt g c) (h' : ν.Pt g' c') :
     GtPtF.IsNsmul k g g' ↔ c' = c ^ k := by
   constructor
@@ -286,7 +291,7 @@ theorem points_correspond : BrGtSt := by
     obtain ⟨g', hg'⟩ := exists_pt ν (q.1.2 ^ k)
     exact ⟨⟨ν.eX q.1.1.toAdd, g, g', (isNsmul_val ν k hg hg').2 rfl, (isIota_val ν hg').2 q.2⟩, rfl, hg⟩
   · refine ν.eX.surjective.exists.trans (exists_congr fun z => and_congr ?_ ?_)
-    · rw [← h.1, ← h'.1, ← map_nsmul, ← map_add]; exact ν.eX.injective.eq_iff
+    · rw [← h.1, ← h'.1, ← map_nsmul, ← map_add (f := _)]; exact ν.eX.injective.eq_iff
     · obtain ⟨g, hg⟩ := exists_pt ν (N.io z)
       refine ⟨fun ⟨g', hi, ha⟩ => ?_, fun e => ⟨g, (isIota_val ν hg).2 rfl, (isAdd_val ν h.2 hg h'.2).2 e⟩⟩
       obtain ⟨c', hc'⟩ := exists_val ν g'

@@ -1,43 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix
 open scoped NNReal ENNReal Pointwise
 
 noncomputable section
 namespace GlobalTheory.SplitWeil.Model
-
-theorem padic_lt (p : ℕ) [Fact p.Prime] (x y : ℚ_[p]) :
-    valuation ℚ_[p] x < valuation ℚ_[p] y ↔ ‖x‖ < ‖y‖ := by
-  rw [(ValuativeRel.isEquiv (valuation ℚ_[p]) (Padic.mulValuation (p := p))).lt_iff_lt]
-  by_cases hx : x = 0 <;> by_cases hy : y = 0
-  · simp [hx, hy]
-  · simp [hx, hy, zero_lt_iff]
-  · simp [hx, hy]
-  · have hp : (1:ℝ) < p := by exact_mod_cast (Fact.out : p.Prime).one_lt
-    rw [Padic.norm_eq_zpow_neg_valuation hx, Padic.norm_eq_zpow_neg_valuation hy,
-      zpow_lt_zpow_iff_right₀ hp]
-    simp [Padic.mulValuation, hx, hy, inv_lt_inv₀]
-
-theorem padic_valTop (p : ℕ) [Fact p.Prime] : IsValuativeTopology ℚ_[p] := by
-  refine IsValuativeTopology.of_zero fun s => ?_
-  rw [Metric.mem_nhds_iff]
-  constructor
-  · rintro ⟨ε, hε, hs⟩
-    obtain ⟨y, hy0, hy⟩ := NormedField.exists_norm_lt ℚ_[p] hε
-    have hy' : y ≠ 0 := norm_pos_iff.1 hy0
-    refine ⟨Units.mk0 (valuation ℚ_[p] y) (by simpa using hy'), fun z hz => hs ?_⟩
-    have : ‖z‖ < ‖y‖ := (padic_lt p z y).1 hz
-    simpa using this.trans hy
-  · rintro ⟨γ, hγ⟩
-    obtain ⟨y, hy⟩ := ValuativeRel.valuation_surjective (γ : ValueGroupWithZero ℚ_[p])
-    have hy' : y ≠ 0 := by rintro rfl; exact γ.ne_zero (by simpa using hy.symm)
-    refine ⟨‖y‖, norm_pos_iff.2 hy', fun z hz => hγ ?_⟩
-    show valuation ℚ_[p] z < γ
-    rw [← hy, padic_lt]; simpa using hz
-
-theorem padic_localField (p : ℕ) [Fact p.Prime] : IsNonarchimedeanLocalField ℚ_[p] :=
-  { padic_valTop p with }
 
 variable {k : Type*} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
@@ -126,9 +98,6 @@ theorem exists_hasConductor : ∃ ψ : AddChar k Circle, HasConductor ψ 1 := by
 theorem KOne_le_KO (n : Type*) [Fintype n] [DecidableEq n] : KOne k n ≤ KO k n :=
   Subgroup.map_le_range _ _
 
-theorem IsUnram.isTame {μ : kˣ →* ℂˣ} (h : IsUnram μ) : IsTame μ := fun x hx =>
-  h x (by simpa using (valuation k).map_one_add_of_lt hx)
-
 theorem isOpen_int : IsOpen (𝒪[k] : Set k) := Valuation.isOpen_integer
 
 theorem isCompact_int : IsCompact (𝒪[k] : Set k) :=
@@ -158,17 +127,6 @@ theorem nabs_le_one (x : kˣ) (hx : valuation k (x : k) ≤ 1) : nabs k x ≤ 1 
   rw [nabs_vol ν h, h.2] at this
   exact ENNReal.ofReal_le_one.1 this
 
-theorem volM_int (ν : Measure k) (h : IsUnitVol ν) (m n : Type*) [Fintype m] [Fintype n] :
-    volM ν m n {x | ∀ i j, x i j ∈ (𝒪[k] : Set k)} = 1 := by
-  have := h.1
-  obtain ⟨_, _⟩ := secondCountable_and_t2_local_field (k := k)
-  have : {x : Matrix m n k | ∀ i j, x i j ∈ (𝒪[k] : Set k)} =
-      (Set.univ.pi fun _ : m => Set.univ.pi fun _ : n => (𝒪[k] : Set k) : Set (m → n → k)) :=
-    Set.ext fun x => ⟨fun hx i _ j _ => hx i j, fun hx i j => hx i trivial j trivial⟩
-  rw [this]
-  erw [Measure.pi_pi]
-  simp [Measure.pi_pi, h.2]
-
 theorem measurableEmbedding_val (n : Type*) [Fintype n] [DecidableEq n] :
     MeasurableEmbedding (fun g : GL n k => g.val) := by
   obtain ⟨_, _⟩ := secondCountable_and_t2_local_field (k := k)
@@ -182,33 +140,10 @@ theorem measurableEmbedding_val (n : Type*) [Fintype n] [DecidableEq n] :
   rw [this]
   exact (isOpen_ne_fun (continuous_id.matrix_det) continuous_const).measurableSet
 
-omit [MeasurableSpace k] [BorelSpace k] in
-theorem indicator_mem_SB : (𝒪[k] : Set k).indicator (fun _ => (1 : ℂ)) ∈ SB k := by
-  obtain ⟨_, _⟩ := secondCountable_and_t2_local_field (k := k)
-  have hcl : IsClopen (𝒪[k] : Set k) := ⟨isCompact_int.isClosed, isOpen_int⟩
-  refine ⟨?_, HasCompactSupport.intro isCompact_int fun x hx => Set.indicator_of_notMem hx _⟩
-  exact (LocallyConstant.indicator (LocallyConstant.const k (1 : ℂ)) hcl).isLocallyConstant
+
+
 
 omit [MeasurableSpace k] [BorelSpace k] in
-theorem noncompact : NoncompactSpace k := by
-  let _ := IsTopologicalAddGroup.rightUniformSpace k
-  have := isUniformAddGroup_of_addCommGroup (G := k)
-  let _ : (Valued.v (R := k)).RankOne :=
-  { hom' := IsRankLeOne.nonempty.some.emb (R := k).comp MonoidWithZeroHom.ValueGroup₀.embedding
-    strictMono' := IsRankLeOne.nonempty.some.strictMono.comp
-        MonoidWithZeroHom.ValueGroup₀.embedding_strictMono }
-  open scoped Valued in
-  exact NormedSpace.noncompactSpace k k
-
-theorem not_isSelfDual_one (ν : Measure k) : ¬ IsSelfDual (1 : AddChar k Circle) ν := by
-  rintro ⟨h1, h2⟩
-  obtain ⟨_, _⟩ := secondCountable_and_t2_local_field (k := k)
-  have := noncompact (k := k)
-  have h := h2 _ indicator_mem_SB
-  simp [Measure.real, measure_univ_of_isAddLeftInvariant ν, Set.indicator_of_mem (zero_mem 𝒪[k] : (0 : k) ∈ (𝒪[k] : Set k))] at h
-
-omit [MeasurableSpace k] [BorelSpace k] in
-
 theorem om_mem_SB {a b : Type*} [Fintype a] [DecidableEq a] [Fintype b] [DecidableEq b]
     (μ : kˣ →* ℂˣ) (g : GL a k) (h : GL b k) {Φ : Matrix b a k → ℂ} (hΦ : Φ ∈ SB (Matrix b a k)) :
     om μ g h Φ ∈ SB (Matrix b a k) := by

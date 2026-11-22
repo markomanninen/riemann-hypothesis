@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.AllPositions
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.AllPositions
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.SymChain
 
 noncomputable section
@@ -90,7 +95,7 @@ theorem blockDiag_mem_KO : ∀ (k : Type) [Field k] [ValuativeRel k] [Topologica
       simp [fromBlocks_multiply, hpow]
     rw [hM, hPP']
     rintro (x | l) (y | i)
-    · simp only [fromBlocks_apply₁₁, one_apply]; split_ifs <;> simp
+    · simp only [fromBlocks_apply₁₁, Matrix.one_apply]; split_ifs <;> simp
     · simp only [fromBlocks_apply₁₂, mul_diagonal]
       by_cases h : i.val + 1 = p
       · exact hE i h x
@@ -115,7 +120,7 @@ theorem blockDiag_mem_KO : ∀ (k : Type) [Field k] [ValuativeRel k] [Topologica
     have hPQ' : P * Q' = -(Q * S') := eq_neg_of_add_eq_zero_left hPQ
     rw [hM, hPP', hPQ', dB]
     rintro (x | l) (y | i)
-    · simp only [fromBlocks_apply₁₁, one_apply]; split_ifs <;> simp
+    · simp only [fromBlocks_apply₁₁, Matrix.one_apply]; split_ifs <;> simp
     · simp only [fromBlocks_apply₁₂, Matrix.neg_apply, mul_diagonal]
       by_cases h : i.val + 1 = p
       · have e : Q x i * (A⁻¹).val (Sum.inr i) (Sum.inr i) =

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj TopologicalSpace TensorProduct
 open scoped CategoryTheory.Obj
 
@@ -64,6 +69,7 @@ def bwd0 : MvPolynomial σ k →ₐ[k] k ⊗[A] LA f g :=
 lemma fibreHypersurfaceBackwardPolynomial_map (p : MvPolynomial σ A) :
     bwd0 f g k (MvPolynomial.map (algebraMap A k) p) =
       Algebra.TensorProduct.includeRight (R := A) (A := k) (rhoA f g p) := by
+  letI : IsScalarTower A k (k ⊗[A] LA f g) := TensorProduct.isScalarTower_left
   rw [bwd0, MvPolynomial.aeval_map_algebraMap]
   change _ = ((Algebra.TensorProduct.includeRight (R := A) (A := k)).comp (rhoA f g)) p
   conv_rhs => rw [MvPolynomial.aeval_unique ((Algebra.TensorProduct.includeRight (R := A) (A := k)).comp (rhoA f g))]
@@ -101,6 +107,7 @@ lemma fwd_bwd : (fwd f g k).comp (bwd2 f g k) = AlgHom.id k _ := by
     _root_.one_mul, fwd2, h1]
 
 lemma bwd_fwd : (bwd2 f g k).comp (fwd f g k) = AlgHom.id k _ := by
+  letI : IsScalarTower A k (k ⊗[A] LA f g) := TensorProduct.isScalarTower_left
   apply Algebra.TensorProduct.ext
   · ext
   · apply IsLocalization.algHom_ext (Submonoid.powers (Ideal.Quotient.mk (Ideal.span {f}) g))

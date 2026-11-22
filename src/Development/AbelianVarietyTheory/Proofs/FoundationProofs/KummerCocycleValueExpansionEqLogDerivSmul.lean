@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KaehlerDRootTwist
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TorsionKaehlerSpanDlogIndepStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SmulKaehlerDReparametrizationEqStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KaehlerDRootTwist
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TorsionKaehlerSpanDlogIndepStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SmulKaehlerDReparametrizationEqStatement
+
+@[expose] public section
+
 open scoped MatrixGroups
 open GlobalTheory.KZ GlobalTheory.Glue GlobalTheory.K5 GlobalTheory.KummerEisensteinGalois
 
@@ -78,9 +83,9 @@ theorem d_psi {T : Tower p Ω} {L : ℕ} {ψ : O0 p →+* Ω} (hψ : IsReb T L �
       y • KaehlerDifferential.D (O0 p) (integralClosure (O0 p) Ω) qL :=
   GlobalTheory.T.smul_kaehlerD_reparametrization_eq p Ω T L ψ hψ b x y qL hx hy hq
 
-set_option maxHeartbeats 2000000 in
 
-theorem geo_cob : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∃ c : ℕ, ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω → ∀ (T : GlobalTheory.K5.Tower p Ω) (L n : ℕ), n ≤ L → 1 ≤ n → ∀ (ψ : O0 p →+* Ω), IsReb T L ψ → ∀ (cw : ℤ → Ω) (w w' r : Ω), Ev ψ cw w w' → w ≠ 0 → IsInt p w⁻¹ → r ^ (p ^ n) = w →
+set_option maxHeartbeats 2000000 in
+theorem geo_cob : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∃ c : ℕ, ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω → ∀ (T : GlobalTheory.K5.Tower p Ω) (L n : ℕ), n ≤ L → 1 ≤ n → ∀ (ψ : O0 p →+* Ω), IsReb T L ψ → ∀ (cw : ℤ → Ω) (w w' r : Ω), Ev ψ cw w w' → w ≠ 0 → IsInt (p := p) w⁻¹ → r ^ (p ^ n) = w →
   ∀ a lq : Gal p Ω → ZMod (p ^ n), IsKum T n (Ggeo p Ω ⊓ Gn T L) r a → IsKum T n (Ggeo p Ω ⊓ Gn T L) (T.qq (L + n)) lq →
   Cob1 n (Ggeo p Ω ⊓ Gn T L) (fun g => (p : Ω) ^ c * ((a g).val : Ω) - (p : Ω) ^ c * (w' / w) * ((lq g).val : Ω)) := by
   intro p _ hp2
@@ -140,11 +145,11 @@ theorem geo_cob : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∃ c : ℕ, ∀ (Ω
   have hwwi : wS * wiS = 1 := Subtype.ext (by show w * w⁻¹ = 1; exact mul_inv_cancel₀ hw0)
   have hwS : wS = ∑ t, eS t * AS t := by
     apply Subtype.ext
-    rw [AddSubmonoidClass.coe_finset_sum]
+    rw [AddSubmonoidClass.coe_finsetSum]
     exact hwe
   have hw'S : w'S = ∑ t, eS t * A'S t := by
     apply Subtype.ext
-    rw [AddSubmonoidClass.coe_finset_sum]
+    rw [AddSubmonoidClass.coe_finsetSum]
     exact hw'e
   have hroot : ∀ t, ∃ y : Ω, y ^ (p ^ n) = e t ∧ IsIntegral (O0 p) y ∧ IsAlgZp p y :=
     fun t => exists_root_alg hΩ (he t).1 (he t).2 (p ^ n) hNpos
@@ -162,7 +167,8 @@ theorem geo_cob : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∃ c : ℕ, ∀ (Ω
     rw [Derivation.leibniz]
     linear_combination (norm := module) (eS t * qLi) • h - (eS t * hqL) • D (AS t)
   have hd : D wS = (w'S * qLi) • D qL + ∑ t, AS t • D (eS t) := by
-    rw [hwS, map_sum, Finset.sum_congr rfl (fun t _ => hterm t), Finset.sum_add_distrib,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hwS, map_sum, Finset.sum_congr rfl (fun t _ => hterm t), Finset.sum_add_distrib,
       ← Finset.sum_smul, hw'S, Finset.sum_mul]
   let η := (1 * r' ^ (p ^ n - 1)) • D r' - (w'S * qLi * qN ^ (p ^ n - 1)) • D qN -
     ∑ t, (AS t * yS t ^ (p ^ n - 1)) • D (yS t)
@@ -203,11 +209,13 @@ theorem geo_cob : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∃ c : ℕ, ∀ (Ω
     rw [← e0, map_pow, hgL.2]
   have hgqinv : g (algebraMap (O0 p) Ω qinv) = algebraMap (O0 p) Ω qinv := AlgEquiv.commutes g qinv
   have hgw : g w = w := by
-    rw [hwe, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hwe, map_sum]
     refine Finset.sum_congr rfl fun t _ => ?_
     rw [map_mul, hgeo _ (he t).2, psi_fix hψ hgL.2]
   have hgw' : g w' = w' := by
-    rw [hw'e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hw'e, map_sum]
     refine Finset.sum_congr rfl fun t _ => ?_
     rw [map_mul, hgeo _ (he t).2, psi_fix hψ hgL.2]
   let gS := (g.toAlgHom).mapIntegralClosure
@@ -235,7 +243,8 @@ theorem geo_cob : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∃ c : ℕ, ∀ (Ω
   let Aval : integralClosure (O0 p) Ω := ((a g).val : integralClosure (O0 p) Ω) -
     w'S * wiS * ((lq g).val : integralClosure (O0 p) Ω)
   have hσE : σ (∑ t, (AS t * yS t ^ (p ^ n - 1)) • D (yS t)) = ∑ t, (AS t * yS t ^ (p ^ n - 1)) • D (yS t) := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun t _ => ?_
     rw [hσ, map_mul, map_pow, hgAS, hgyS]
   have hση : σ η = η + (wS * zi * Aval) • D z := by
@@ -250,7 +259,7 @@ theorem geo_cob : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∃ c : ℕ, ∀ (Ω
       ((w'S * zi * ((lq g).val : integralClosure (O0 p) Ω)) * hwwi) • D z -
       ((w'S * zi * ((lq g).val : integralClosure (O0 p) Ω)) * hqL) • D z
   have e1 := congrArg σ hxy
-  rw [map_nsmul, hση, map_add, hσ, hσ, map_mul, map_mul, hgz, hgzi, hgqn, hgqi] at e1
+  rw [map_nsmul, hση, map_add (f := _), hσ, hσ, map_mul, map_mul, hgz, hgzi, hgqn, hgqi] at e1
   rw [← Nat.cast_smul_eq_nsmul (integralClosure (O0 p) Ω), Nat.cast_pow] at e1 hxy
   have hdiff : ((gS x - x - (p : integralClosure (O0 p) Ω) ^ c * wS * Aval) * zi) • D z +
       ((gS y0 - y0) * qi) • D qn = 0 := by

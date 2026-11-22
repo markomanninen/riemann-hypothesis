@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.LamLetters
-import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
-import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.ArakelovDegreeEqDegreeOfFamily
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.LamLetters
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
+public import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.ArakelovDegreeEqDegreeOfFamily
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.GeometryOfNumbersTheory
 open scoped ComplexOrder
@@ -12,7 +16,7 @@ theorem hermFam_isometry_injective {K : Type*} [Field K] [NumberField K] {V V' :
     [AddCommGroup V] [Module K V] [AddCommGroup V'] [Module K V']
     (h : HermFam K V) (h' : HermFam K V') (M : V →ₗ[K] V')
     (hM : ∀ s a b, h'.form s (M a) (M b) = h.form s a b) : Function.Injective M := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   by_contra h0
   obtain ⟨s⟩ : Nonempty (K →+* ℂ) := inferInstance

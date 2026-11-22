@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx
 open Filter Topology
 

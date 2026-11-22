@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaPartD
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermInf
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaPartD
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermInf
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ def hermE (σ : E →ₐ[F] E) (n : ℕ) : Submodule F (Matrix (Fin n) (Fin n) E
   carrier := {c | ∀ a b, σ (c b a) = c a b}
   add_mem' := by
     intro c d hc hd a b
-    simp [map_add, hc a b, hd a b]
+    simp [map_add (f := _), hc a b, hd a b]
   zero_mem' := by
     intro a b
     simp
@@ -63,7 +67,7 @@ def Kc {n : ℕ} (c : Matrix (Fin n) (Fin n) E) : AddSubgroup (Fin n → 𝓞 E)
         (fun j => algebraMap (𝓞 E) E (y j)) + fun j => algebraMap (𝓞 E) E (z j) := by
       funext j
       simp
-    rw [this, Matrix.mulVec_add, Pi.add_apply, ← ho, ← hp, map_add]
+    rw [this, Matrix.mulVec_add, Pi.add_apply, ← ho, ← hp, map_add (f := _)]
   zero_mem' := fun i => ⟨0, by
     have h0 : (fun _ : Fin n => (0 : E)) = 0 := rfl
     simp [h0, Matrix.mulVec_zero]⟩

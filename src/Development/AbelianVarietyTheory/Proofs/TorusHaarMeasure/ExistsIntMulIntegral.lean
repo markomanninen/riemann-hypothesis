@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsIntMulMem
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsIntMulMem
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates MeasureTheory Topology
 open scoped ContDiff ENNReal Matrix
@@ -9,16 +13,16 @@ namespace GlobalTheory.LatFin
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem exists_int_mul_integral (x : E) : ∃ k : ℤ, k ≠ 0 ∧ IsIntegral ℤ ((k : E) * x) := by
   have h : IsAlgebraic ℤ x :=
     (IsFractionRing.isAlgebraic_iff ℤ ℚ E).2 (Algebra.IsAlgebraic.isAlgebraic x)
   obtain ⟨k, hk, hi⟩ := h.exists_integral_multiple
   exact ⟨k, hk, by simpa [zsmul_eq_mul] using hi⟩
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem finite_bounded (Ψ : Finset (E →+* ℂ))
     (hΨ : ∀ τ : E →+* ℂ, τ ∈ Ψ ↔ ComplexEmbedding.conjugate τ ∉ Ψ) (k : ℤ) (hk : k ≠ 0) (R : ℝ) :
     {x : E | IsIntegral ℤ ((k : E) * x) ∧ ∀ τ : Ψ, ‖τ.1 x‖ ≤ R}.Finite := by
@@ -39,8 +43,8 @@ theorem finite_bounded (Ψ : Finset (E →+* ℂ))
   simp only [map_mul, map_intCast, norm_mul]
   exact mul_le_mul_of_nonneg_left this (norm_nonneg _)
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem exists_common_den {r : ℕ} (Λ : Submodule (𝓞 E) (Fin r → E)) (hΛ : Λ.FG) :
     ∃ k : ℤ, k ≠ 0 ∧ ∀ v ∈ Λ, ∀ a, IsIntegral ℤ ((k : E) * v a) := by
   classical
@@ -71,8 +75,8 @@ theorem exists_common_den {r : ℕ} (Λ : Submodule (𝓞 E) (Fin r → E)) (hΛ
     rw [Pi.smul_apply, Algebra.smul_def, mul_left_comm, mul_comm]
     exact this
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem exists_int_smul_mem {r : ℕ} (Λ : Submodule (𝓞 E) (Fin r → E))
     (hΛ : Submodule.span E (Λ : Set (Fin r → E)) = ⊤) (v : Fin r → E) :
     ∃ k : ℤ, k ≠ 0 ∧ k • v ∈ Λ := by

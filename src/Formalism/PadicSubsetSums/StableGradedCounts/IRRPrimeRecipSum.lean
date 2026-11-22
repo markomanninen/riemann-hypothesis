@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PadicSubsetSums.CentralIdempotents.GaloisIrreducibility
+module
+
+public import Mathlib
+public import Formalism.PadicSubsetSums.CentralIdempotents.GaloisIrreducibility
+
+@[expose] public section
 
 open Finset Nat
 

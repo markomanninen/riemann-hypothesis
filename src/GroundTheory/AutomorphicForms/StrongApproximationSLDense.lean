@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AdelicGLn
-import GroundTheory.AutomorphicForms.StrongApproximationSLElementary
-import GroundTheory.GlobalFields.Adele.Approximation
-import GroundTheory.GlobalFields.TateThesis.AdelicCharDual
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AdelicGLn
+public import GroundTheory.AutomorphicForms.StrongApproximationSLElementary
+public import GroundTheory.GlobalFields.Adele.Approximation
+public import GroundTheory.GlobalFields.TateThesis.AdelicCharDual
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter Set Matrix
 open scoped RestrictedProduct
@@ -65,10 +69,6 @@ theorem mem_finiteSL {g : FiniteAdelicGL K n} :
 def rationalFiniteSL : Subgroup (FiniteAdelicGL K n) :=
   (Matrix.GeneralLinearGroup.det : GL (Fin n) K →* Kˣ).ker.map (finiteDiagonal K n)
 
-theorem rationalFiniteSL_le_finiteSL : rationalFiniteSL K n ≤ finiteSL K n := by
-  rintro _ ⟨γ, hγ, rfl⟩
-  rw [mem_finiteSL, det_finiteDiagonal, MonoidHom.mem_ker.1 hγ, map_one]
-
 theorem continuous_transvectionGL {R : Type*} [CommRing R] [TopologicalSpace R]
     [IsTopologicalRing R] (i j : Fin n) (h : i ≠ j) :
     Continuous fun c : R => transvectionGL (Fin n) R ⟨i, j, h, c⟩ := by
@@ -123,8 +123,8 @@ theorem finiteAdele_zero_apply (v : HeightOneSpectrum (𝓞 K)) :
     (0 : FiniteAdeleRing (𝓞 K) K) v = 0 :=
   rfl
 
-open Classical in
 
+open Classical in
 def finiteAdeleSingleAdd (v : HeightOneSpectrum (𝓞 K)) (c : v.adicCompletion K) :
     FiniteAdeleRing (𝓞 K) K :=
   RestrictedProduct.single (fun w : HeightOneSpectrum (𝓞 K) => w.adicCompletionIntegers K) v c
@@ -135,8 +135,8 @@ theorem finiteAdeleSingleAdd_apply (v w : HeightOneSpectrum (𝓞 K)) (c : v.adi
       u.adicCompletion K) v c w :=
   rfl
 
-open Classical in
 
+open Classical in
 def localEmbedding (v : HeightOneSpectrum (𝓞 K)) : GL (Fin n) (v.adicCompletion K) →* FiniteAdelicGL K n where
   toFun x := (finiteRestrictedEquiv K n).symm
     (RestrictedProduct.mulSingle (fun w => GLnLocal.integralGL (w.adicCompletion K) n) v x)
@@ -149,12 +149,13 @@ theorem finiteRestrictedEquiv_symm_apply (y : FiniteRestrictedGL K n) (w : Heigh
       (y w : GL (Fin n) (w.adicCompletion K)) a b := by
   rw [← finiteRestrictedEquiv_apply, ContinuousMulEquiv.apply_symm_apply]
 
-open Classical in
 
+open Classical in
 theorem localEmbedding_transvectionGL (v : HeightOneSpectrum (𝓞 K))
     (t : TransvectionStruct (Fin n) (v.adicCompletion K)) :
     localEmbedding v (transvectionGL _ _ t) = transvectionGL (Fin n) (FiniteAdeleRing (𝓞 K) K)
       ⟨t.i, t.j, t.hij, finiteAdeleSingleAdd v t.c⟩ := by
+  classical
   refine Units.ext <| Matrix.ext fun a b => FiniteAdeleRing.ext K fun w => ?_
   change ((finiteRestrictedEquiv K n).symm _ : FiniteAdelicGL K n) a b w = _
   rw [finiteRestrictedEquiv_symm_apply]
@@ -201,14 +202,14 @@ theorem det_finiteRestrictedEquiv_apply (g : FiniteAdelicGL K n) (v : HeightOneS
   rw [RingHom.map_det]
   rfl
 
-open Classical in
 
+open Classical in
 def truncate (S : Finset (HeightOneSpectrum (𝓞 K))) (y : FiniteRestrictedGL K n) :
     FiniteRestrictedGL K n where
   val v := if v ∈ S then y v else 1
   property := by
     filter_upwards [S.finite_toSet.compl_mem_cofinite] with v hv
-    rw [if_neg (by simpa using hv)]
+    rw [ite_eq_right (by simpa using hv)]
     exact one_mem (GLnLocal.integralGL (v.adicCompletion K) n)
 
 open Classical in
@@ -298,7 +299,7 @@ theorem mem_closure_elementarySubgroup {g : FiniteAdelicGL K n}
     have hvS : v ∈ S := Finset.mem_union_left _ (hI.mem_toFinset.2 hv)
     have : w' v = 1 := Subtype.ext <| by
       change (y⁻¹ * truncate S y) v = 1
-      rw [RestrictedProduct.mul_apply, RestrictedProduct.inv_apply, truncate_apply, if_pos hvS,
+      rw [RestrictedProduct.mul_apply, RestrictedProduct.inv_apply, truncate_apply, ite_eq_left hvS,
         inv_mul_cancel]
     rw [this]
     exact mem_of_mem_nhds (ht v)
@@ -312,16 +313,6 @@ theorem finiteSL_le_topologicalClosure :
     finiteSL K n ≤ (rationalFiniteSL K n).topologicalClosure := fun _ hg =>
   closure_minimal (elementarySubgroup_le_topologicalClosure K n)
     (Subgroup.isClosed_topologicalClosure _) (mem_closure_elementarySubgroup ((mem_finiteSL K n).1 hg))
-
-theorem dense_rationalFiniteSL :
-    Dense (((rationalFiniteSL K n).subgroupOf (finiteSL K n) : Subgroup (finiteSL K n)) :
-      Set (finiteSL K n)) := by
-  rw [Topology.IsInducing.subtypeVal.dense_iff]
-  intro x
-  have hx := finiteSL_le_topologicalClosure K n x.2
-  rw [← SetLike.mem_coe, Subgroup.topologicalClosure_coe] at hx
-  refine closure_mono (fun g hg => ?_) hx
-  exact ⟨⟨g, rationalFiniteSL_le_finiteSL K n hg⟩, Subgroup.mem_subgroupOf.2 hg, rfl⟩
 
 theorem exists_finiteDiagonal_mem_nhds {g : FiniteAdelicGL K n}
     (hg : Matrix.GeneralLinearGroup.det g = 1) {U : Set (FiniteAdelicGL K n)} (hU : U ∈ 𝓝 g) :

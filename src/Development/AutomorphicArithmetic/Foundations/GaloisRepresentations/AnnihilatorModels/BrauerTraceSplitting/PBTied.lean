@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.LocFacts
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.BrauerTraceSplitting.LocFacts
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.BrauerTraceSplitting.AwayEq
-import Development.AutomorphicArithmetic.ThetaCorrespondence.LocalComparison.LocTied6
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.TiedAInvOfTheta
-import GroundTheory.PAdicHodge.ACrisPhi
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.LocFacts
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.BrauerTraceSplitting.LocFacts
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.BrauerTraceSplitting.AwayEq
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.LocalComparison.LocTied6
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.TiedAInvOfTheta
+public import GroundTheory.PAdicHodge.ACrisPhi
+
+@[expose] public section
 
 noncomputable section
 

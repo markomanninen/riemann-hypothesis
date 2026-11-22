@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.ModulusAdjoinISqrtNegPrimes
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.ModulusAdjoinISqrtNegPrimes
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum UpperTheory.V.Two
 open scoped Pointwise
@@ -19,7 +23,7 @@ theorem UpperTheory.V.Two.subqLen :
         rw [norm_zero] at h
         rw [norm_le_zero_iff.mp h, zero_smul]
       · refine ⟨⟨x / y, ?_⟩, ?_⟩
-        · rw [norm_div]
+        · rw [PadicInt.mem_subring_iff, norm_div]
           exact div_le_one_of_le₀ h (norm_nonneg _)
         · show x = (x / y) * y
           rw [div_mul_cancel₀ _ hy]

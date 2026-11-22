@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContinuousMatQApply
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SelNZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CoefDualFreeRankOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContinuousMatQApply
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SelNZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CoefDualFreeRankOne
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.Ord2.GwIneq
 open scoped Matrix
 
@@ -99,7 +104,7 @@ def tbA (c : Coef l) (n : ℕ) : Qn c n →+ ZMod (l ^ n) where
   map_add' a b := by
     obtain ⟨x, rfl⟩ := red_surjective c n a
     obtain ⟨y, rfl⟩ := red_surjective c n b
-    rw [← map_add, tau_congr c n (red_lft c n _), tau_congr c n (red_lft c n _),
+    rw [← map_add (f := _), tau_congr c n (red_lft c n _), tau_congr c n (red_lft c n _),
       tau_congr c n (red_lft c n _), map_add, map_add]
 
 theorem tbA_red (c : Coef l) (n : ℕ) (x : c.O) : tbA c n (red c n x) = PadicInt.toZModPow n (tau c x) :=
@@ -109,13 +114,13 @@ def pairA (c : Coef l) (n : ℕ) (y : Mn c n) : Mn c n →+ ZMod (l ^ n) where
   toFun x := tbA c n (x 0 * y 1 - x 1 * y 0)
   map_zero' := by simp
   map_add' a b := by
-    rw [← map_add]; congr 1; simp only [Pi.add_apply]; ring
+    rw [← map_add (f := _)]; congr 1; simp only [Pi.add_apply]; ring
 
 def Phi (c : Coef l) (n : ℕ) : Mn c n →ₗ[ZMod (l ^ n)] TDual (ZMod (l ^ n)) (Mn c n) :=
   (AddMonoidHom.mk' (fun y => TDual.mk ((pairA c n y).toZModLinearMap (l ^ n))) (fun a b => by
-    ext x
+    refine DFunLike.ext _ _ fun x => ?_
     show tbA c n _ = tbA c n _ + tbA c n _
-    rw [← map_add]; congr 1; simp only [Pi.add_apply]; ring)).toZModLinearMap (l ^ n)
+    rw [← map_add (f := _)]; congr 1; simp only [Pi.add_apply]; ring)).toZModLinearMap (l ^ n)
 
 theorem Phi_apply (c : Coef l) (n : ℕ) (y x : Mn c n) : Phi c n y x = tbA c n (x 0 * y 1 - x 1 * y 0) := rfl
 
@@ -127,7 +132,7 @@ theorem red_mulVec (c : Coef l) (n : ℕ) (M : Matrix (Fin 2) (Fin 2) (Qbar l)) 
       (⟨M i 0, hM i 0⟩ : c.O) * ⟨v 0, hv 0⟩ + (⟨M i 1, hM i 1⟩ : c.O) * ⟨v 1, hv 1⟩ := by
     apply Subtype.ext
     simp only [Matrix.mulVec, dotProduct, Fin.sum_univ_two, Subalgebra.coe_add, Subalgebra.coe_mul]
-  rw [e, map_add, map_mul, map_mul]
+  rw [e, map_add (f := _), map_mul, map_mul]
   simp only [Matrix.mulVec, dotProduct, Fin.sum_univ_two, Matrix.of_apply]
 
 def lftV (c : Coef l) (n : ℕ) (y : Mn c n) : Fin 2 → Qbar l := fun i => (lft c n (y i) : Qbar l)

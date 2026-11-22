@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TiedAt
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TensorOneApply
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.StdCharFinitePartRationalEqExpTrace
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.AddCharTrivialIntegralFiniteAdeleMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TiedAt
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TensorOneApply
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.StdCharFinitePartRationalEqExpTrace
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.AddCharTrivialIntegralFiniteAdeleMul
+
+@[expose] public section
 
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory Matrix ValuativeRel GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.SeeSaw GlobalTheory.AdForm GlobalTheory.LocMod
@@ -111,12 +115,12 @@ theorem psi_trace {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1)) {
     rw [trace_tmul, pairFiniteAdele_zero_mul_algebraMap_base]
     exact char_int hψ (intAf_mul' hα (coe_mem_intAf ⟨_, hint⟩))
   | zero => rw [map_zero]; exact AddChar.map_zero_eq_one ψ
-  | add x y _ _ hx hy => rw [map_add, AddChar.map_add_eq_mul, hx, hy, one_mul]
+  | add x y _ _ hx hy => rw [map_add (f := _), AddChar.map_add_eq_mul, hx, hy, one_mul]
   | neg x _ hx => rw [map_neg, AddChar.map_neg_eq_inv, hx, inv_one]
 
 theorem exists_den {ι : Type} [Fintype ι] (f : ι → D.host.E) :
     ∃ d : ℕ, 0 < d ∧ ∀ i, IsIntegral ℤ ((d : D.host.E) * f i) := by
-  haveI : Algebra.IsAlgebraic ℤ D.host.E :=
+  have : Algebra.IsAlgebraic ℤ D.host.E :=
     (IsFractionRing.comap_isAlgebraic_iff (A := ℤ) (K := ℚ) (C := D.host.E)).2 inferInstance
   obtain ⟨y, hy, h⟩ := Algebra.IsAlgebraic.exists_integral_multiples ℤ (Finset.univ.image f)
   refine ⟨y.natAbs, Int.natAbs_pos.2 hy, fun i => ?_⟩

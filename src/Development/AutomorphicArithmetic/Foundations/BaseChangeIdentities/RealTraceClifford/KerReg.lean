@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.RealTrOfAll
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.HderEntry
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.LgCpt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.RealTrOfAll
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.HderEntry
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.LgCpt
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem UpperTheory.RealTr.kerReg :
     exact hsum _ (hG y)
   refine ⟨?_, ?_, ?_⟩
   · rw [hfun]
-    refine continuous_finset_sum _ fun i _ => ?_
+    refine continuous_finsetSum _ fun i _ => ?_
     have hc : ContinuousOn (ks i) (GLs n) := (hks i).2.1.continuousOn
     exact (hc.comp_continuous Units.continuous_val hG).const_smul (c i)
   · choose R hR using fun i => (hks i).2.2.1

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacLocOfHpk
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingExistence
-import Formalism.SharpRestriction.CuspSpanNormBounds.UnimodularSchurMeasures.SigmaFiniteRestrictSubgroup
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacLocOfHpk
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingExistence
+public import Formalism.SharpRestriction.CuspSpanNormBounds.UnimodularSchurMeasures.SigmaFiniteRestrictSubgroup
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem meas_invM : Measurable (invM : Mt k r → Mt k r) := by
     funext x
     rw [Matrix.inv_def]
   have hc' : Measurable fun x : Mt k r => ((Matrix.of x).adjugate : Mt k r) :=
-    measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j =>
+    Measurable.of_eval fun i => Measurable.of_eval fun j =>
       ((continuous_apply j).comp ((continuous_apply i).comp hc)).measurable
   rw [he]
   exact hd.smul hc'
@@ -37,7 +41,7 @@ theorem meas_mulM : Measurable (mulM : Mt k r × Mt k r → Mt k r) := by
   unfold mulM
   have hc : Continuous (fun p : Mt k r × Mt k r => (Matrix.of p.1 * Matrix.of p.2 : Mat k r)) :=
     Continuous.matrix_mul continuous_fst continuous_snd
-  exact measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j =>
+  exact Measurable.of_eval fun i => Measurable.of_eval fun j =>
     ((continuous_apply j).comp ((continuous_apply i).comp hc)).measurable
 
 def Cm (g : Mt k r) (p : SS k r) : Mt k r := mulM (mulM (mulM (mulM (p.1.1, p.1.2), g), p.2.2), p.2.1)
@@ -133,8 +137,10 @@ theorem hpkEx_holds : HpkEx := by
   have iW := Formalism.FourierDecayAlt.P.haar_measure_inversion k r _ μW0 cW hW0
   have iW' := Formalism.FourierDecayAlt.P.haar_measure_inversion k r _ μW0' cW' hW0'
   have iN := Formalism.FourierDecayAlt.P.haar_measure_inversion k r _ μN0 cN hN0
-  have jW' : (b' • μW0').map invM = b' • μW0' := by rw [Measure.map_smul, iW']
-  have jN : (d • μN0).map invM = d • μN0 := by rw [Measure.map_smul, iN]
+  have jW' : (b' • μW0').map invM = b' • μW0' := by
+    rw [Measure.map_smul b' meas_invM.aemeasurable, iW']
+  have jN : (d • μN0).map invM = d • μN0 := by
+    rw [Measure.map_smul d meas_invM.aemeasurable, iN]
   set κ : ℝ≥0∞ := b * d * (b' * d) with hκ
   have hκ0 : κ ≠ 0 := by simp [hκ, hb0, hd0, hb0']
   have hκt : κ ≠ ⊤ := by simp [hκ, ENNReal.mul_eq_top, hbt, hdt, hbt']

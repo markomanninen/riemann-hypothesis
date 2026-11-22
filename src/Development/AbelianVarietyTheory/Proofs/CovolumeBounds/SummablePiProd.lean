@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.SummablePiProd
 
@@ -20,7 +24,7 @@ theorem summable_pi_prod {ι : Type u_1} [inst : Fintype ι] {J : ι → Type u_
         exact Fintype.mem_piFinset.2 fun i => Finset.mem_image_of_mem _ ht
     _ = ∏ i, ∑ j ∈ s.image (fun t => t i), u i j := (Finset.prod_univ_sum _ _).symm
     _ ≤ ∏ i, ∑' j, u i j := by
-        refine Finset.prod_le_prod (fun i _ => Finset.sum_nonneg fun j _ => h0 i j) ?_
+        refine Finset.prod_le_prod₀ (fun i _ => Finset.sum_nonneg fun j _ => h0 i j) ?_
         intro i _
         exact (hs i).sum_le_tsum _ (fun j _ => h0 i j)
 

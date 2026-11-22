@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocalizationOfData
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitMpOmjExtIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocalizationOfData
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitMpOmjExtIff
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential GlobalTheory.CatCoh GlobalTheory.CechDR
 
 set_option autoImplicit false
@@ -34,7 +39,7 @@ theorem pull2_surjective_of_comma : ∀ {R : Type} [CommRing R] {C : Type} [Cate
         have k1 := hm T T' φ t t' (ψ ≫ u) a
         have k2 := hm T' T'' ψ t t' u a
         have k3 := hm T T'' (φ ≫ ψ) t t' u a
-        simp only [map_sub, map_add, Category.assoc] at k1 k3 ⊢
+        simp only [map_sub, map_add (f := _), Category.assoc] at k1 k3 ⊢
         linear_combination k1 + k2 - k3)
   refine ⟨H2.mk F ⟨fun T T' T'' φ ψ ↦ x T T' T'' φ ψ,
     fun T T' T'' T''' φ ψ χ ↦ sub_eq_zero.1 (sep T''' _ fun t u ↦ ?_)⟩, ?_⟩
@@ -42,7 +47,7 @@ theorem pull2_surjective_of_comma : ∀ {R : Type} [CommRing R] {C : Type} [Cate
     have k2 := hx _ _ _ (φ ≫ ψ) χ t u
     have k3 := hx _ _ _ φ (ψ ≫ χ) t u
     have k4 := hx _ _ _ ψ χ t u
-    simp only [map_sub, map_add, Category.assoc, mp_comp] at k1 k2 k3 k4 ⊢
+    simp only [map_sub, map_add (f := _), Category.assoc, mp_comp] at k1 k2 k3 k4 ⊢
     linear_combination k1 + k2 - k3 - k4
   · rw [CoefMap.pullCohomologyTwo_class, H2.mk_eq_mk]
     refine ⟨fun t t' a ↦ m _ _ (G.map a) t' (𝟙 _) - h _ t t' (𝟙 _) a, ?_⟩

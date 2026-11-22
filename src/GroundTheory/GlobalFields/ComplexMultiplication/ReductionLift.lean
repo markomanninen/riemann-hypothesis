@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.ReductionGauss
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.ReductionGauss
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -41,8 +45,8 @@ theorem coordEval_algebraMap (c : 𝒪) :
     coordEval, AdjoinRoot.lift_of]
   simp
 
-include hxy in
 
+include hxy in
 theorem equation_residue_of_equation :
     ((W.map (residue 𝒪)).map (ResidueField.map j)).toAffine.Equation (residue Λ x)
       (residue Λ y) := by
@@ -54,8 +58,8 @@ theorem equation_residue_of_equation :
   simp only [← RingHom.comp_apply (ResidueField.map j), ResidueField.map_comp_residue]
   simpa only [RingHom.comp_apply] using this
 
-include hxy in
 
+include hxy in
 def coordEvalRed :
     (W.map (residue 𝒪)).toAffine.CoordinateRing →+* ResidueField Λ :=
   AdjoinRoot.lift (eval₂RingHom (ResidueField.map j) (residue Λ x)) (residue Λ y)
@@ -86,8 +90,8 @@ theorem residue_coordEval (a : W.toAffine.CoordinateRing) :
         AdjoinRoot.lift_root]
   exact congrArg (· a) this
 
-omit [IsDomain 𝒪] [IsDiscreteValuationRing 𝒪] in
 
+omit [IsDomain 𝒪] [IsDiscreteValuationRing 𝒪] in
 theorem coordinateRing_ringHom_ext {S : Type*} [CommRing S]
     {f g : W.toAffine.CoordinateRing →+* S}
     (h₁ : ∀ c : 𝒪, f (algebraMap 𝒪 _ c) = g (algebraMap 𝒪 _ c))
@@ -106,14 +110,19 @@ theorem coordinateRing_ringHom_ext {S : Type*} [CommRing S]
 
 variable (hx : Function.Injective (eval₂RingHom (ResidueField.map j) (residue Λ x)))
 
-include hx in
 
+include hx in
 theorem coordEvalRed_injective : Function.Injective (coordEvalRed W j hxy) := by
-  letI : Algebra (ResidueField 𝒪) (ResidueField Λ) := (ResidueField.map j).toAlgebra
-  have h : ((W.map (residue 𝒪)).baseChange (ResidueField Λ)).toAffine.Equation (residue Λ x)
-      (residue Λ y) := equation_residue_of_equation W j hxy
-  have ht : Transcendental (ResidueField 𝒪) (residue Λ x) := transcendental_iff_injective.mpr hx
-  exact evalAt_injective (W.map (residue 𝒪)) h ht
+  let : Module.Finite (ResidueField 𝒪)[X] (W.map (residue 𝒪)).toAffine.CoordinateRing :=
+    Module.Finite.of_basis (CoordinateRing.basis (W.map (residue 𝒪)).toAffine)
+  let : Algebra.IsIntegral (ResidueField 𝒪)[X] (W.map (residue 𝒪)).toAffine.CoordinateRing :=
+    Algebra.IsIntegral.of_finite _ _
+  rw [RingHom.injective_iff_ker_eq_bot]
+  apply Ideal.eq_bot_of_under_eq_bot (R := (ResidueField 𝒪)[X])
+  ext p
+  simp only [Ideal.under, Ideal.mem_comap, RingHom.mem_ker, Ideal.mem_bot,
+    AdjoinRoot.algebraMap_eq, coordEvalRed, AdjoinRoot.lift_of]
+  exact map_eq_zero_iff _ hx
 
 include hx in
 theorem isUnit_coordEval (s : (gaussPrime W).primeCompl) : IsUnit (coordEval W j hxy s) := by

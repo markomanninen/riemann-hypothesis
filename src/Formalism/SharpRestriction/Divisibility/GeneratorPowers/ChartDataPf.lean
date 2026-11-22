@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.IntChartCut
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.ChartSer
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.IntChartCut
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.ChartSer
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,8 @@ theorem mk_psTrunc {S : Type} [CommRing S] {κ : Type} [Fintype κ] [DecidableEq
     (hf : MvPowerSeries.constantCoeff f = 0) :
     Chart.pj m f = Ideal.Quotient.mk _ (psTrunc m f - MvPolynomial.C (MvPolynomial.constantCoeff (psTrunc m f))) := by
   have h0 : MvPolynomial.constantCoeff (psTrunc m f) = 0 := by
-    simp only [psTrunc, map_sum, MvPolynomial.constantCoeff_monomial]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [psTrunc, map_sum, MvPolynomial.constantCoeff_monomial]
     refine Finset.sum_eq_zero fun x _ => ?_
     split_ifs with hx
     · rw [hx, MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hf]

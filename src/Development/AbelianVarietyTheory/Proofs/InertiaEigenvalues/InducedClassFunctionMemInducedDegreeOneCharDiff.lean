@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IndApplyOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InducedClassFunctionFromSubgroupTransStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IndApplyOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InducedClassFunctionFromSubgroupTransStatement
+
+@[expose] public section
+
 open GlobalTheory.BI GlobalTheory.BrauerZero
 
 noncomputable section
@@ -24,13 +29,13 @@ theorem ind_eq_ind_map_subgroupOf {G : Type} [Group G] [Finite G] (E : Subgroup 
   simp only [ext0]
   by_cases hy : x⁻¹ * g * x ∈ H
   · have hy' : x⁻¹ * g * x ∈ (H.map E.subtype).subgroupOf E := by rw [hS]; exact hy
-    rw [dif_pos hy, dif_pos hy']
+    rw [dite_eq_left hy, dite_eq_left hy']
     congr 1
     apply (Subgroup.equivMapOfInjective H E.subtype Subtype.val_injective).injective
     rw [MulEquiv.apply_symm_apply]
     rfl
   · have hy' : x⁻¹ * g * x ∉ (H.map E.subtype).subgroupOf E := by rw [hS]; exact hy
-    rw [dif_neg hy, dif_neg hy']
+    rw [dite_eq_right hy, dite_eq_right hy']
 
 theorem ind_mem_D0_of_mem_D0 : ∀ {G : Type} [Group G] [Finite G] (E : Subgroup G) (f : E → ℂ),
     f ∈ D0 E → ind E f ∈ D0 G := by

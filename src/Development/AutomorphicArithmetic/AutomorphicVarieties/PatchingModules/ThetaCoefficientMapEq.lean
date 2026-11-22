@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PairedDualFirstOrderDualMatrixSpace
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PairedDualFirstOrderDualMatrixSpace
+
+@[expose] public section
 
 noncomputable section
 
@@ -225,8 +229,8 @@ structure TWMaps (ex : ℕ) where
   rel2 : ∀ j i (g : G.G₀) (m : A.M), (fEl Nq A.U *
     A.p.D.tr (MonoidAlgebra.single g 1 * q2El (ph j) (ta j) (A.U j) i (A.s (MvPowerSeries.X (j, i))))) ^ ex • m = 0
 
-variable (u J σ D) in
 
+variable (u J σ D) in
 structure TWAut (T : TWGrp G0) : Type 1 where
   b : TWBase u J σ D
   ut : Fin T.q → Fin n → O

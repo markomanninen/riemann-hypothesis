@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.Hilbert
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.Hilbert
+
+@[expose] public section
 
 noncomputable section
 

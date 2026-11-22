@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.TableLineDegreeTwo
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemIntPts
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.TableLineDegreeTwo
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemIntPts
+
+@[expose] public section
 
 namespace GlobalTheory
 

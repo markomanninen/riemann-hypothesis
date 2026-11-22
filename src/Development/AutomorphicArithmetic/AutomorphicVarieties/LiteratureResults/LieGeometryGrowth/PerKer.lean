@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.FNonneg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DeRhamInj
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.FNonneg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DeRhamInj
+
+@[expose] public section
+
 open UpperTheory.V.Lit UpperTheory.V.Lit.Geo UpperTheory.V.Lit.Dr NumberField GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.Af
 
 namespace UpperTheory.V.Lit.Geo
@@ -26,7 +31,8 @@ private theorem hd_sub (c c' : List Γ → M) (x : List Γ) : hd (fun y => c y -
 
 omit [Group Γ] in
 private theorem hd_map (f : M →ₗ[ℂ] N) (c : List Γ → M) (x : List Γ) : hd (fun y => f (c y)) x = f (hd c x) := by
-  simp only [hd, map_sum, map_zsmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hd, map_sum, map_zsmul]
 
 omit [Group Γ] [Module ℂ M] in
 private theorem hd_hd (x : List Γ) : ∀ c : List Γ → M, hd (hd c) x = 0 := by
@@ -77,7 +83,8 @@ private theorem lift_ex {ρ : Representation ℂ Γ M} {σ : Representation ℂ 
 
 private theorem hequiv_hd {ρ : Representation ℂ Γ M} {k : ℕ} {c : List Γ → M} (h : HEquiv ρ k c) :
     HEquiv ρ (k + 1) (hd c) := fun γ x hx => by
-  simp only [hd, map_sum, map_zsmul, List.length_map]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hd, map_sum, map_zsmul, List.length_map]
   refine Finset.sum_congr rfl fun i hi => ?_
   rw [List.eraseIdx_map, h γ _ (by rw [List.length_eraseIdx_of_lt (Finset.mem_range.1 hi), hx]; rfl)]
 

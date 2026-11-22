@@ -1,5 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.TraceFormulas.LatDefs
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BijectiveOfRetract
+module
+
+public import ReciprocityTheory.ReductiveGroups.TraceFormulas.LatDefs
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BijectiveOfRetract
+
+@[expose] public section
+
 open ReciprocityTheory.Gal Formalism.RepresentationBoundsCohomology.LOC ReciprocityTheory.ChartRestriction.T2 GlobalTheory.FunctorialityH2
 
 namespace GlobalTheory.H2CardScalars

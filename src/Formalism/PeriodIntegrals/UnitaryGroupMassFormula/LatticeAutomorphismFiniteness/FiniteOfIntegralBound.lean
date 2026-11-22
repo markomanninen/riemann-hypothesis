@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismFiniteness.MjSmulRight
-import Lemmata.GeneralBFactThirdExtra.Imports
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismFiniteness.MjSmulRight
+public import Lemmata.GeneralBFactThirdExtra.Imports
+
+@[expose] public section
 
 noncomputable section
 

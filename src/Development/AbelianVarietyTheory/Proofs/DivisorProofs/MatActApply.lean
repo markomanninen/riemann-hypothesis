@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieRankAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieRankAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ variable {O T V : Type} [CommRing O] [CommRing T] [AddCommGroup V] [Module T V]
 
 def eigSub (μ : O →+* Module.End T V) (τ : O →+* T) : Submodule T V where
   carrier := {v | ∀ c, μ c v = τ c • v}
-  add_mem' {u v} hu hv c := by simp only [Set.mem_setOf_eq, map_add, hu c, hv c, smul_add]
+  add_mem' {u v} hu hv c := by simp only [Set.mem_setOf_eq, map_add (f := _), hu c, hv c, smul_add]
   zero_mem' c := by simp
   smul_mem' r v hv c := by simp only [Set.mem_setOf_eq, map_smul, hv c, smul_comm r]
 

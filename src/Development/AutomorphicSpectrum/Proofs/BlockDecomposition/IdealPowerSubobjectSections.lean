@@ -1,4 +1,8 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PowSubSuccLe
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PowSubSuccLe
+
+@[expose] public section
 
 set_option autoImplicit false
 

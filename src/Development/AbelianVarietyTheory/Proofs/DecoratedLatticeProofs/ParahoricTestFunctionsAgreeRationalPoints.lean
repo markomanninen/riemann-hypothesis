@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EntryAgree
-import Formalism.LocalToGlobal.Columns.ChainTw
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ResiduesOfCompletionAtPrimeWithUniformizer
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CompletionChainLatticeEntriesAgree
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EntryAgree
+public import Formalism.LocalToGlobal.Columns.ChainTw
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ResiduesOfCompletionAtPrimeWithUniformizer
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CompletionChainLatticeEntriesAgree
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory ValuativeRel Matrix Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.TwBridge
 
@@ -90,13 +94,13 @@ theorem mem_KO_iff (P : HeightOneSpectrum (𝓞 E)) (q : ℕ) (ι : E →+* k) (
 
 theorem core (P : HeightOneSpectrum (𝓞 E)) (q : ℕ) (ι : E →+* k) (ϖ : kˣ) (σ₀ : K →+* ℂ)
     (ξ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) (δ : kˣ →* ℂˣ) (hC : IsCompl P q ι ϖ) (hU : GlobalTheory.IndefiniteRowSideFullHecke.FramePositiveSum.IsUnif ϖ)
-    (hδ : ∀ a (u : kˣ), IntAt P a → IsUnit (redP P a) → (u : k) = ι a → (δ u : ℂ) = (σ₀ (LocE.unitV ξ a))⁻¹)
+    (hδ : ∀ a (u : kˣ), IntAt P a → IsUnit (redP P a) → (u : k) = ι a → (δ u : ℂ) = (σ₀ (LocE.unitV (P := P) ξ a))⁻¹)
     {κ l τ j j' r b a : ℕ} (hr : r = κ + l) (hb : b = κ + l + j * τ) (ha : a = κ + l + j' * τ) (M : ℕ → ℕ → E)
     (Y : Matrix (Ix (Fin κ ⊕ Fin l) (Fin τ) j) (Ix (Fin κ ⊕ Fin l) (Fin τ) j') k)
     (hY : ∀ x y, Y x y = ι (M (zPos x) (zPos y))) :
     (((∀ p p', p < b → p' < a → IntAt P (M p p')) ∧
         (∀ p p', r ≤ p → p < b → p' < r → IntAt P (M p p' / (q : E)))) →
-      parPhi δ Y = σ₀ (LocE.unitV ξ (Matrix.det (Matrix.of fun s t : Fin r => M s.1 t.1)))) ∧
+      parPhi δ Y = σ₀ (LocE.unitV (P := P) ξ (Matrix.det (Matrix.of fun s t : Fin r => M s.1 t.1)))) ∧
     (¬ ((∀ p p', p < b → p' < a → IntAt P (M p p')) ∧
         (∀ p p', r ≤ p → p < b → p' < r → IntAt P (M p p' / (q : E)))) → parPhi δ Y = 0) := by
   subst hr hb ha
@@ -152,8 +156,8 @@ theorem core (P : HeightOneSpectrum (𝓞 E)) (q : ℕ) (ι : E →+* k) (ϖ : k
       have hint : IntAt P (Matrix.det (Matrix.of fun s t : Fin (κ + l) => M s.1 t.1)) :=
         (hC.int _).1 ((Valuation.mem_integer_iff _ _).2 hv.le)
       rw [Units.val_inv_eq_inv_val, hδ _ _ hint hu hdet, inv_inv]
-    · have h0 : LocE.unitV ξ (Matrix.det (Matrix.of fun s t : Fin (κ + l) => M s.1 t.1)) = 0 := by
-        unfold LocE.unitV; rw [dif_neg hu]
+    · have h0 : LocE.unitV (P := P) ξ (Matrix.det (Matrix.of fun s t : Fin (κ + l) => M s.1 t.1)) = 0 := by
+        unfold LocE.unitV; rw [dite_eq_right hu]
       rw [h0, map_zero]
       by_contra hne
       exact hu (key.1 ((parPhi_ne_zero_iff δ).1 hne)).2

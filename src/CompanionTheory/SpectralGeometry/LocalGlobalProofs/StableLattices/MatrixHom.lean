@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothCyc
-import CompanionTheory.AutomorphicTheory.ZuckermanCommutation.ZuckermanFunctors.IsSimpleFam
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothCyc
+public import CompanionTheory.AutomorphicTheory.ZuckermanCommutation.ZuckermanFunctors.IsSimpleFam
+
+@[expose] public section
 
 open CompanionTheory.Zuck BranchingSupport Matrix Finset
 open scoped InnerProductSpace Kronecker
@@ -25,7 +29,8 @@ theorem dOp_mAct {ι ι' V V' : Type} [Fintype ι] [AddCommGroup V] [Module ℂ 
     dOp ι' T (mAct A x) = mAct A (dOp ι T x) := by
   funext c
   have h : ∀ (κ : Type) (y : κ → V) (e : κ), dOp κ T y e = T (y e) := fun _ _ _ => rfl
-  simp only [h, mAct_coord, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [h, mAct_coord, map_sum, map_smul]
 
 theorem dsigW_eq_prod {k r : ℕ} (U : URep k r) :
     ∀ (W : List (Formalism.FourierDecayAlt.ThreeDimData.Mx k r)), LieWd k r W → ∀ v : U.R.smSub,
@@ -50,7 +55,8 @@ theorem matHom : MatHom := by
     simp only [dsigW_eq_prod U W hW]
     rw [Finset.sum_mul]
     refine Finset.sum_le_sum fun c _ => ?_
-    rw [mAct_coord, map_sum, Submodule.coe_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [mAct_coord, map_sum, Submodule.coe_sum, Finset.sum_mul]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun d _ => ?_)
     rw [map_smul, Submodule.coe_smul, norm_smul]
     refine mul_le_mul_of_nonneg_left ?_ (norm_nonneg _)

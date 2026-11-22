@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.LimWPhi
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTorsionFreeSurjZmod
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.LimWPhi
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTorsionFreeSurjZmod
+
+@[expose] public section
 
 noncomputable section
 

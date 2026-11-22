@@ -1,11 +1,15 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix Finset Real
 
 namespace GlobalTheory
 
-open Matrix Finset Real in
 
+open Matrix Finset Real in
 theorem _root_.GlobalTheory.sq_sum_eq_sum_sq_add_two_mul_sum_lt (a : ℕ) (j : Fin a → ℤ) :
     (∑ i, j i) ^ 2 = ∑ i, j i ^ 2 + 2 * ∑ i, ∑ k, if i < k then j i * j k else 0 := by
   have h : ∀ i k : Fin a, j i * j k = (if i < k then j i * j k else 0) +
@@ -25,8 +29,8 @@ theorem _root_.GlobalTheory.sq_sum_eq_sum_sq_add_two_mul_sum_lt (a : ℕ) (j : F
         simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true]
         ring
 
-open Matrix Finset Real in
 
+open Matrix Finset Real in
 theorem _root_.GlobalTheory.dim_unipotent_radical_identities :
     ∀ (a : ℕ) (j : Fin a → ℤ) (n : ℤ), let J := ∑ i, j i; let n₀ := n - 2 * J; let dimN := 4 * (∑ i, ∑ k, if i < k then j i * j k else 0) + 2 * J * n₀ + ∑ i, j i ^ 2; dimN = 2 * J ^ 2 - ∑ i, j i ^ 2 + 2 * J * n₀ ∧ n ^ 2 = n₀ ^ 2 + 2 * ∑ i, j i ^ 2 + 2 * dimN ∧ dimN ≤ 2 * J * n := by
   intro a j n

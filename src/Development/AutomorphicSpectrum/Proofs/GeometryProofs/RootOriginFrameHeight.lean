@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LabelSigBijective
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LabelSigBijective
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Filter Topology
 open Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.ChartRestriction.G.AR.Inst Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Rec
@@ -19,7 +24,8 @@ theorem exists_const_set {K Ω : Type} [Field K] [CharZero K] [FiniteDimensional
   have hq : ∀ q : ℚ, f (algebraMap ℚ K q) ∈ A := fun q => by
     rw [eq_ratCast, Rat.cast_def, map_div₀, map_intCast, map_natCast, div_eq_mul_inv]
     exact A.mul_mem (intCast_mem A _) (hn _ q.den_nz)
-  rw [← bs.sum_repr a, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← bs.sum_repr a, map_sum]
   refine A.sum_mem fun i _ => ?_
   rw [Algebra.smul_def, map_mul]
   exact A.mul_mem (hq _) (hS ⟨i, rfl⟩)
@@ -34,7 +40,7 @@ theorem test_mem {K Ω : Type} [Field K] [CommRing Ω] [Algebra K Ω] (t : TRing
     rw [h, φ.commutes]
     exact hc a
   | add p p' hp hp' =>
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     exact A.add_mem hp hp'
   | mul_X p i hp =>
     rw [map_mul, map_mul]

@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.Columns.CoefModB
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.NablaIndependenceHolds
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.NablaRoundFreeHolds
-import Formalism.GradedWeylDivisibility.StatementE
+module
+
+public import Formalism.LocalToGlobal.Columns.CoefModB
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.NablaIndependenceHolds
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.NablaRoundFreeHolds
+public import Formalism.GradedWeylDivisibility.StatementE
+
+@[expose] public section
 
 open MvPolynomial NumberField IsDedekindDomain
 open scoped Matrix
@@ -64,7 +68,8 @@ theorem sd_delta_beta (i k : Formalism.GradedWeylDivisibility.ssIdx n n ν) :
   have h1 : ∀ j, fockBL (sdBetaQ ν j) (sdBetaQ ν k) = sdGram ν j k := fun j => by
     rw [fockBL_apply, sd_fockB_rat]; rfl
   unfold sdDelta
-  simp only [map_smul, map_sum, LinearMap.smul_apply, LinearMap.sum_apply, h1, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_smul, map_sum, LinearMap.smul_apply, LinearMap.sum_apply, h1, smul_eq_mul]
   have h2 : ∑ j, (sdGram ν)⁻¹ i j * sdGram ν j k = ((sdGram ν)⁻¹ * sdGram ν) i k := (Matrix.mul_apply ..).symm
   rw [h2, Matrix.nonsing_inv_mul _ hdet, Matrix.one_apply]
   split_ifs <;> simp
@@ -81,7 +86,8 @@ theorem sd_bDual : Formalism.GradedWeylDivisibility.bDual n n le_rfl ν ((Formal
         rw [← Int.cast_smul_eq_zsmul ℚ]; exact Submodule.smul_mem _ _ (sd_delta_mem ν k))
     have h0 : ∀ k, fockBL (P - ∑ j, z j • sdDelta ν j) (sdBetaQ ν k) = 0 := by
       intro k
-      simp only [map_sub, map_sum, map_zsmul, LinearMap.sub_apply, LinearMap.sum_apply, LinearMap.smul_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sub, map_sum, map_zsmul, LinearMap.sub_apply, LinearMap.sum_apply, LinearMap.smul_apply,
         sd_delta_beta]
       rw [fockBL_apply, sd_fockB_rat, hz k]
       simp
@@ -91,7 +97,7 @@ theorem sd_bDual : Formalism.GradedWeylDivisibility.bDual n n le_rfl ν ((Formal
       induction hy using Submodule.span_induction with
       | mem y hy => obtain ⟨k, rfl⟩ := hy; exact h0 k
       | zero => exact map_zero _
-      | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+      | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
       | smul c x _ hx => rw [map_smul, hx, smul_zero]
     have h2 : P - ∑ k, z k • sdDelta ν k = 0 := by
       by_contra hne
@@ -120,7 +126,7 @@ theorem sd_bDual : Formalism.GradedWeylDivisibility.bDual n n le_rfl ν ((Formal
       obtain ⟨b, hb⟩ := hy
       refine ⟨a + b, ?_⟩
       rw [← sd_fockB_rat, ← fockBL_apply] at ha hb ⊢
-      rw [map_add, map_add, ha, hb]
+      rw [map_add (f := _), map_add (f := _), ha, hb]
       push_cast; ring
     | smul c x _ hx =>
       obtain ⟨a, ha⟩ := hx
@@ -155,12 +161,12 @@ theorem sd_dual_bases {V : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) 
         · exact Submodule.one_le.mp le_rfl
         · exact Submodule.zero_mem _
       | zero => rw [map_zero]; exact Submodule.zero_mem _
-      | add y y' _ _ hy hy' => rw [map_add]; exact Submodule.add_mem _ hy hy'
+      | add y y' _ _ hy hy' => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hy'
       | smul r y _ hy => rw [LinearMap.map_smul_of_tower]; exact Submodule.smul_mem _ r hy
     | zero => intro y _; rw [map_zero, LinearMap.zero_apply]; exact Submodule.zero_mem _
     | add x x' _ _ hx hx' =>
       intro y hy
-      rw [map_add, LinearMap.add_apply]
+      rw [map_add (f := _), LinearMap.add_apply]
       exact Submodule.add_mem _ (hx y hy) (hx' y hy)
     | smul r x _ hx =>
       intro y hy
@@ -170,7 +176,8 @@ theorem sd_dual_bases {V : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) 
     obtain ⟨a, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun K).1 hx
     have h1 : ∀ j, b (∑ i, a i • u i) (v j) = a j := by
       intro j
-      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, h, smul_eq_mul, mul_ite, mul_one,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, h, smul_eq_mul, mul_ite, mul_one,
         mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
     have h2 : ∀ j, ∃ r : 𝓞 K, algebraMap (𝓞 K) K r = a j := fun j => by
       have := hy (v j) (Submodule.subset_span ⟨j, rfl⟩)
@@ -203,7 +210,7 @@ theorem sd_word_image (ν : Fin n → ℕ) : nbWord K ν = sdQK K _ '' nbWord �
   rw [← Set.range_comp]
   congr 1
   funext w
-  simp only [Function.comp, sdQK_apply]
+  show _ = MvPolynomial.map (algebraMap ℚ K) _
   rw [← Formalism.GradedWeylDivisibility.lclosedeq_applyWord_map, Formalism.GradedWeylDivisibility.lclosedeq_hw_map]
 
 theorem sd_bid_image (ν : Fin n → ℕ) : bideterminantsOfShape K ν = sdQK K _ '' bideterminantsOfShape ℚ ν := by

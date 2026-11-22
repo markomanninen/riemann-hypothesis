@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.SqrtO
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.SqrtO
+
+@[expose] public section
 
 open QuadraticAlgebra UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc
 
@@ -34,7 +38,7 @@ theorem UpperTheory.V.Z.Sym.Loc.rootEx : UpperTheory.V.Z.Sym.Loc.RootEx := by
   have kK : ((algebraMap O K) τ₀ + 2 * ((e : ℤ) : K)) * ((algebraMap O K) y) ^ 2
       = ((e : ℤ) : K) := by
     have := congrArg (algebraMap O K) key
-    simpa [map_mul, map_add, map_pow, map_intCast, map_ofNat] using this
+    simpa [map_mul, map_add (f := _), map_pow, map_intCast, map_ofNat] using this
   refine ⟨((e : ℤ) : O) * y, y, Units.isUnit _, ?_, ?_⟩
   · rw [sq]
     ext

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.FiniteCohPushforwardIffOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsGloballyGeneratedIffGeneratingSections
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SecEqZeroAndHomEqOfThickenings
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.FiniteCohPushforwardIffOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsGloballyGeneratedIffGeneratingSections
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SecEqZeroAndHomEqOfThickenings
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -319,16 +323,14 @@ instance isFiniteQC_cut [IsFiniteQC F] : IsFiniteQC (cut F hL s) :=
 def cutComplex : ShortComplex X.Modules :=
   .mk (cutHom F hL s) (cutπ F hL s) (cokernel.condition _)
 
-theorem shortExact_cutComplex [h : Mono (cutHom F hL s)] : (cutComplex F hL s).ShortExact where
-  exact := ShortComplex.exact_cokernel _
-  mono_f := h
-  epi_g := epi_cutπ F hL s
+theorem shortExact_cutComplex [h : Mono (cutHom F hL s)] : (cutComplex F hL s).ShortExact :=
+  ShortComplex.ShortExact.mk' (ShortComplex.exact_cokernel _) h (epi_cutπ F hL s)
 
 theorem mono_cutHom_iff [IsLocallyNoetherian X] [F.IsQuasicoherent] :
     Mono (cutHom F hL s) ↔ assPoints F ⊆ nonzeroLocus s := (isMulBy_cutHom F hL s).mono_iff hL
 
-include hL in
 
+include hL in
 theorem mono_secHom_iff [IsLocallyNoetherian X] [F.IsQuasicoherent] :
     Mono (secHom F s) ↔ assPoints F ⊆ nonzeroLocus s := by
   have := isQuasicoherent_twist (F := F) hL
@@ -396,8 +398,8 @@ theorem interNum_cons_eq_interNum_cut (hP : ∀ i, (P i).IsLB) (h : FiniteCohTwi
   (interNum_cons k F hL hP).trans
     (interNum_cokernel _ hP (h.twist (isLB_lbZPow hL (-1))) h).symm
 
-omit [Mono (cutHom F hL s)] in
 
+omit [Mono (cutHom F hL s)] in
 theorem interNum_cons_eq_interNumSub [Mono (cutHom (structureModule X) hL s)]
     (hP : ∀ i, (P i).IsLB) (h : FiniteCohTwists k (structureModule X)) :
     interNum k (structureModule X) (Fin.cons L P : Fin (d + 1) → LB X) =
@@ -421,7 +423,7 @@ theorem exists_finite_subset_nonzeroLocus {W : Type*} [AddCommGroup W] [Module k
   let p : S → Submodule k W := fun x =>
     { carrier := {w | x.1 ∉ nonzeroLocus (φ w)}
       add_mem' := fun {a b} ha hb hx => by
-        rw [map_add] at hx
+        rw [map_add (f := _)] at hx
         exact (nonzeroLocus_add_le _ _ hx).elim ha hb
       zero_mem' := fun hx => by
         rw [map_zero] at hx
@@ -472,16 +474,16 @@ theorem exists_sum_mono_cutHom (hL : L.IsLB) {ι : Type*} [Fintype ι] (s : ι �
     fun x _ => Opens.mem_iSup.1 (h.ge (Set.mem_univ x))
   ⟨c, (mono_cutHom_iff F hL _).2 hc⟩
 
+
 variable (k) in
 include k in
-
 theorem IsGenerated.exists_mono_cutHom (h : IsGenerated L) : ∃ s, Mono (cutHom F h.isLB s) :=
   have ⟨_, s, hs⟩ := h
   have ⟨_, hc⟩ := exists_sum_mono_cutHom (k := k) F h.isLB s hs
   ⟨_, hc⟩
 
-omit [AlgebraicGeometry.IsNoetherian X] in
 
+omit [AlgebraicGeometry.IsNoetherian X] in
 theorem IsAmpleLB.exists_mono_cutHom [IsLocallyNoetherian X] (h : IsAmpleLB L) :
     ∃ n, 1 ≤ n ∧ ∃ s : (lbPow L n).Sec, Mono (cutHom F (isLB_lbPow h.isLB n) s) ∧
       IsAffineOpen (nonzeroLocus s) :=

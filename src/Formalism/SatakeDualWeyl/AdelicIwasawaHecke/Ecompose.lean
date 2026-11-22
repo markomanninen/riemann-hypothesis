@@ -1,8 +1,12 @@
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Heckecomm
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Cartan
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Satake
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Spherical
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Tjcosets
+module
+
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Heckecomm
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Cartan
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Satake
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Spherical
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Tjcosets
+
+@[expose] public section
 
 namespace Formalism.UG.P
 

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -19,7 +24,7 @@ theorem charpoly_coeff_det_int {E : Type} [Field E] [NumberField E] {n : ℕ} (w
     rw [hdet]; exact M.det.2
 
 theorem entries_int_of_mem_KGL {E : Type} [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) (n : ℕ)
-    (g : GL (Fin n) (w.adicCompletion E)) (hg : g ∈ GlobalTheory.LFun.KGL w n) :
+    (g : GL (Fin n) (w.adicCompletion E)) (hg : g ∈ GlobalTheory.LFun.KGL w (n := n)) :
     (∀ i j, g.1 i j ∈ w.adicCompletionIntegers E) ∧ ∀ i j, (g⁻¹).1 i j ∈ w.adicCompletionIntegers E := by
   simp only [GlobalTheory.LFun.KGL] at hg
   unfold GLint at hg
@@ -32,7 +37,7 @@ theorem entries_int_of_mem_KGL {E : Type} [Field E] [NumberField E] (w : HeightO
     rw [this]; exact ((h⁻¹).1 i j).2
 
 theorem kint : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E) (g : GLw n w),
-    g ∈ GlobalTheory.LFun.KGL w n →
+    g ∈ GlobalTheory.LFun.KGL w (n := n) →
     (∀ k, Valued.v (g.val.charpoly.coeff k) ≤ 1) ∧ Valued.v (g.val.charpoly.coeff 0) = 1 := by
   intro E _ _ _ n w g hg
   obtain ⟨h1, h2⟩ := entries_int_of_mem_KGL w n g hg

@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WtChar
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GalLab
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLabOntoAndKer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaSetupDividingLabelPersistsDeeperLevelStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightPartAttainsBoundUniqueShortestVectorStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaTranslateValuesShiftByRootOfUnityStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.UnitThetaConstantsGenerateIntegralTorsion
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UTorsClosed
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WtChar
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GalLab
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLabOntoAndKer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaSetupDividingLabelPersistsDeeperLevelStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightPartAttainsBoundUniqueShortestVectorStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaTranslateValuesShiftByRootOfUnityStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.UnitThetaConstantsGenerateIntegralTorsion
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UTorsClosed
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
@@ -29,7 +33,8 @@ theorem sum_proj_shift {o Ω : Type} [CommRing o] [Field Ω] [Algebra o Ω] {S :
         ∑ j, algebraMap o Ω (S.ρ t j i₀) * S.ev h₀ j := by
     intro h₀
     rw [ThetaSys.proj, finsum_eq_sum_of_fintype]
-    simp only [Matrix.smul_apply, Matrix.sum_apply, smul_eq_mul, map_mul, map_sum, Finset.mul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.smul_apply, Matrix.sum_apply, smul_eq_mul, map_mul, map_sum, Finset.mul_sum,
       Finset.sum_mul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun t _ => Finset.sum_congr rfl fun j _ => by ring
@@ -135,18 +140,18 @@ theorem exists_lab {X₁ : Setup F W i} {ε₁} (D : Deep X₁ ε₁) {L : Type}
   refine ⟨ν, ?_⟩
   simp only [nsmulAddMonoidHom_apply]
   rw [hd, mul_comm (X₁.S.r * X₁.S.N) d, mul_nsmul] at hν
-  refine (nsmul_right_inj hdpos).1 ?_
+  apply eq_of_nsmul_eq_nsmul_of_addCommute hdpos (AddCommute.all _ _)
   rw [← hν]
   exact smul_comm _ _ _
 
 private theorem isAddTorsionFree_of_free_int {X : Type} [AddCommGroup X] [Module.Free ℤ X] : IsAddTorsionFree X := by
   refine ⟨fun n hn a b hab => ?_⟩
+  intro h
   let e := (Module.Free.chooseBasis ℤ X).repr
   apply e.injective
   have h1 : n • e a = n • e b := by
-    simp only at hab
-    rw [← map_nsmul, ← map_nsmul, hab]
-  exact IsAddTorsionFree.nsmul_right_injective hn h1
+    rw [← map_nsmul, ← map_nsmul, h]
+  exact nsmul_right_injective hn h1
 
 private theorem rechart_proj {o Ω : Type} [CommRing o] [Field Ω] [Algebra o Ω] (S : ThetaSys o Ω) (c : Ω)
     (hc : c ≠ 0) (R' : Subalgebra o Ω) (fg : R'.FG) (frac : ∀ x : Ω, ∃ a ∈ R', ∃ b ∈ R', x = a / b)
@@ -160,7 +165,7 @@ private theorem mk_eq_mk_symm_of_mk_addEquiv_eq {X Y : Type} [AddCommGroup X] [A
   obtain ⟨β, hβ⟩ := h
   refine ⟨e.symm β, ?_⟩
   simp only [nsmulAddMonoidHom_apply] at hβ ⊢
-  rw [← map_nsmul, hβ, map_add, map_neg, AddEquiv.symm_apply_apply]
+  rw [← map_nsmul, hβ, map_add (f := _), map_neg, AddEquiv.symm_apply_apply]
 
 private theorem ker_eq_of_addEquiv_compat {G X Y : Type} [AddCommGroup G] [AddCommGroup X] [AddCommGroup Y] (k : ℕ)
     (f : G →+ ModN k X) (f' : G →+ ModN k Y) (e : X ≃+ Y)
@@ -184,8 +189,8 @@ private theorem thetaSys_proj_congr {o Ω : Type} [CommRing o] [Field Ω] [Algeb
   ext t
   exact hc t t.2 t.2
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem main : ∀ (g n : ℕ) (F : SFam g n (zetaAway n)) (W : Matrix (Fin 8) (Fin 8) ℤ) (Z : Scheme.{0}) (i : F.X ⟶ Z) (X₁ : Setup F W i), 1 ≤ g → 3 ≤ n → Odd n → IsOpenImmersion i → IsE8 W → ThetaInt F W i → IsProjOver X₁.M.s → ∀ (ε₁ : Matrix (Fin 8) (Fin 8) ℤ → (X₁.ρ.P.A ⟶ X₁.ρ.P.A)), IsDiagEnd F W X₁.ρ.P X₁.u ε₁ → ∀ (D : Deep X₁ ε₁) (z₁ : X₁.M.Z) (z₂ : D.X.M.Z), D.q z₂ = z₁ → ∀ (p : ℕ) [Fact p.Prime] (c : CTrait X₁ p z₁) (yy₁ : X₁.S.Gam →+ ModN (X₁.S.r * X₁.S.N) (Fin 8 → c.T.D.toPre.X)), IsLab X₁ ε₁ c yy₁ → ∀ (y : Sp (OO p) ⟶ D.X.M.Z) (h : y ≫ D.q = c.y), y (cPt p) = z₂ → ∀ yy : D.X.S.Gam →+ ModN (D.X.S.r * D.X.S.N) (Fin 8 → c.T.D.toPre.X), IsLab D.X D.ε (D.lift c y h) yy → D.Compat yy₁ yy → ∀ a ν, yy a = QuotientAddGroup.mk ν → (∀ χ, CongMod D.m χ ν → χ ≠ ν → qW W c.T.β ν < qW W c.T.β χ) → ∃ κ, ‖D.X.M.val (gPt p ≫ y) (GSum.part D z₁ z₂ a κ)‖ = Real.exp (-(c.sc * (qW W c.T.β ν : ℤ))) := by
   intro g n F W Z i X₁ hg hn hodd himm hE8 hTI hproj ε₁ hdiag D z₁ z₂ hq p hp c yy₁ hlab₁ y h hy yy hlab hC a ν hν hmin
   classical
@@ -213,7 +218,7 @@ theorem main : ∀ (g n : ℕ) (F : SFam g n (zetaAway n)) (W : Matrix (Fin 8) (
 
   have hmin' : ∀ χ : u.D.toPre.X, D.m • χ ≠ 0 → l.q ν' < l.q (ν' + D.m • χ) := by
     intro χ hχ
-    rw [hq', hq', map_add, map_nsmul, hν', AddEquiv.apply_symm_apply]
+    rw [hq', hq', map_add (f := _), map_nsmul, hν', AddEquiv.apply_symm_apply]
     have hne : ν + D.m • j χ ≠ ν := by
       intro he
       apply hχ
@@ -234,7 +239,7 @@ theorem main : ∀ (g n : ℕ) (F : SFam g n (zetaAway n)) (W : Matrix (Fin 8) (
 
   have hhH : hh ∈ D.X.S.HH D.X.M z₂ := by rw [← hK2']; exact hhker
   have hex : ∃ h' ∈ D.X.S.HH D.X.M z₂, D.m • h' = D.lab b := ⟨hh, hhH, hlb.symm⟩
-  have hlift : GSum.lift D z₂ b = hex.choose := by rw [GSum.lift, dif_pos hex]
+  have hlift : GSum.lift D z₂ b = hex.choose := by rw [GSum.lift, dite_eq_left hex]
   obtain ⟨hH'', hm''⟩ := hex.choose_spec
   obtain ⟨ξ, ⟨k', hk'pos, hξ⟩, hshift⟩ := GlobalTheory.T.theta_translate_values_shift_by_root_of_unity D.X.ρ (D.X.S.HH D.X.M z₂) D.m D.sq hh hex.choose
     (by rw [hm'', hlb]) ((D.X.S.HH D.X.M z₂).sub_mem hH'' hhH)
@@ -244,7 +249,7 @@ theorem main : ∀ (g n : ℕ) (F : SFam g n (zetaAway n)) (W : Matrix (Fin 8) (
     obtain ⟨x, hx⟩ := X₁.div z₁
     exact ⟨x, hx⟩
   have hbase : GSum.base X₁ z₁ ∈ X₁.S.supI X₁.M z₁ := by
-    rw [GSum.base, dif_pos hne]
+    rw [GSum.base, dite_eq_left hne]
     exact hne.some_mem
   have hqz : D.q (y (cPt p)) = z₁ := by
     rw [← c.cen, ← h]
@@ -290,7 +295,8 @@ theorem main : ∀ (g n : ℕ) (F : SFam g n (zetaAway n)) (W : Matrix (Fin 8) (
       rw [rechart_proj]
       exact e1
     rw [← e1', hi₀] at hnorm
-    rw [← hnorm, hSm, hmem hh, ← hy₀', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hnorm, hSm, hmem hh, ← hy₀', map_sum]
     simp only [map_mul]
   rw [hpart, norm_val_div (M := D.X.M) (gPt p ≫ y) hk'pos hξ hw (hmemO hh) hthO hthne, hSmn, hth0,
     mul_div_cancel_left₀ _ hδ.ne', hq', hν', AddEquiv.apply_symm_apply]

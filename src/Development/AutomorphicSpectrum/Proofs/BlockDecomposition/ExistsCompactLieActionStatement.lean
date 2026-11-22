@@ -1,7 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCompactLieAction
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCompactLieAction
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
+
+@[expose] public section
 
 open Matrix Finset
 open scoped InnerProductSpace

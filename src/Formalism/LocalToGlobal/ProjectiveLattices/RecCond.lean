@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.HasDataCondition
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.HasDataCondition
+
+@[expose] public section
 
 namespace Formalism.L2.Pj
 

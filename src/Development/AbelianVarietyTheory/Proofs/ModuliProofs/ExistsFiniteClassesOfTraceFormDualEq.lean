@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Definitions.HermitianLattices.TraceFormBilinSeparatingLeftIff
-import Development.AbelianVarietyTheory.PublishedTheorems.AdelicLattices₂.ExistsFiniteUnitaryClassesOfDualEqSmul
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Definitions.HermitianLattices.TraceFormBilinSeparatingLeftIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.AdelicLattices₂.ExistsFiniteUnitaryClassesOfDualEqSmul
+
+@[expose] public section
 
 namespace GlobalTheory.DatumClasses
 
@@ -35,7 +39,8 @@ theorem exists_finite_classes_of_forms {V : Type} [AddCommGroup V] [Module E V]
   have hsum : ∀ a (c : Fin n → E) j,
       h a (∑ i, c i • v a i) (v a j) = c j * h a (v a j) (v a j) := by
     intro a c j
-    rw [map_sum, LinearMap.sum_apply, Finset.sum_eq_single j]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply, Finset.sum_eq_single j]
     · simp
     · intro i _ hij; simp [hvo a i j hij]
     · simp
@@ -52,7 +57,8 @@ theorem exists_finite_classes_of_forms {V : Type} [AddCommGroup V] [Module E V]
     simp [φ, Basis.equivFun_symm_apply, hB]
   have hform : ∀ a c c', h a ((φ a).symm c) ((φ a).symm c') =
       ∑ j, star (c' j) * (c j * h a (v a j) (v a j)) := fun a c c' => by
-    rw [hφ, hφ, map_sum (h a _)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hφ, hφ, map_sum (h a _)]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smulₛₗ, hsum, starRingEnd_apply, smul_eq_mul]
   let L : α → Submodule ℤ (Fin n → E) := fun a => (Λ a).map ((φ a).toLinearMap.restrictScalars ℤ)

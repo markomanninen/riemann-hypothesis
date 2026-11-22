@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.Smooth
-import GroundTheory.HeightsAndTheta.Theta.AdelicFourierCoord
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.Smooth
+public import GroundTheory.HeightsAndTheta.Theta.AdelicFourierCoord
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -63,7 +67,7 @@ end UpperTheory.ConvolutionTheory.R2.D
 
 theorem UpperTheory.ConvolutionTheory.R2.D.sClos :
     ∀ (F : Type) [Field F] [NumberField F] (ι : Type) [Fintype ι] [DecidableEq ι] (g : GL ι (A F)) (φ : (ι → A F) → ℂ),
-    φ ∈ schwartzBruhatPi F ι → (fun v => φ (g.val *ᵥ v)) ∈ schwartzBruhatPi F ι := by
+    φ ∈ schwartzBruhatPi (K := F) (ι := ι) → (fun v => φ (g.val *ᵥ v)) ∈ schwartzBruhatPi (K := F) (ι := ι) := by
   intro F _ _ ι _ _ g φ hφ
   induction hφ using Submodule.span_induction with
   | mem G hG =>

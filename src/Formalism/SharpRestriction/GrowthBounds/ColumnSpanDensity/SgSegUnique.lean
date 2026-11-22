@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.MeanDefs
-import Formalism.SharpRestriction.GrowthBounds.TopChoiceBounds
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.MeanDefs
+public import Formalism.SharpRestriction.GrowthBounds.TopChoiceBounds
+
+@[expose] public section
 
 noncomputable section
 

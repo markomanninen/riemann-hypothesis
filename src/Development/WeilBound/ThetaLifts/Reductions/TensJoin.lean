@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.CartanFactorisation.TensMax
+module
+
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.TensMax
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,7 +108,7 @@ theorem tens_join {A : ι → Type} (act : ∀ i, A i → Module.End ℂ (V i)) 
         obtain ⟨s, s1, s2⟩ := ha
         obtain ⟨t, t1, t2⟩ := hb
         refine ⟨fun i => s i ++ t i, fun i y hy => (List.mem_append.1 hy).elim (s1 i y) (t1 i y), fun u hu => ?_⟩
-        rw [map_add]
+        rw [map_add (f := _)]
         exact Q.add_mem (s2 u fun i y hy => hu i y (List.mem_append_left _ hy))
           (t2 u fun i y hy => hu i y (List.mem_append_right _ hy))
       | smul c a _ ha =>
@@ -117,7 +121,7 @@ theorem tens_join {A : ι → Type} (act : ∀ i, A i → Module.End ℂ (V i)) 
     | smul_tprod c f =>
       choose u u1 u2 u3 using fun i => h4 i (t i) (t1 i) (f i)
       have a1 : map u (tprod ℂ v) ∈ Q := by
-        rw [← e, map_add]
+        rw [← e, map_add (f := _)]
         exact Q.add_mem (map_st act Q q2 u u1 p hp) (t2 u u3)
       have a2 : map u (tprod ℂ v) - tprod ℂ f ∈ Q := ker_le Z Q q1 (by
         rw [LinearMap.mem_ker, map_sub, map_tprod, map_tprod, map_tprod, sub_eq_zero]
@@ -131,7 +135,7 @@ theorem tens_join {A : ι → Type} (act : ∀ i, A i → Module.End ℂ (V i)) 
       Q ≤ R ∨ Q = ⊤ := fun Q q1 q2 =>
     (tens_max act K hr h1 h2 h3 R hR (Q ⊔ R) le_sup_right (fun i a x hx => by
       obtain ⟨p, hp, y, hy, rfl⟩ := Submodule.mem_sup.1 hx
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem_sup (q2 i a p hp) (Rst i a hy))).imp (le_sup_left.trans ·) (nak Q q1 q2)
   rcases le P hZ hP with a | a
   · rcases le P' hZ' hP' with b | b

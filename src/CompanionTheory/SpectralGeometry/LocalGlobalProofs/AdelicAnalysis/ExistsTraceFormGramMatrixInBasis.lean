@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,8 @@ theorem trace_hform (s : A →+* A) (hs : ∀ (r : R) (a : A), s (r • a) = r �
     intro i
     calc s (x i) = s (∑ k, β.repr (x i) k • β k) := by rw [β.sum_repr]
       _ = ∑ k, β.repr (x i) k • s (β k) := by
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         exact Finset.sum_congr rfl fun k _ => hs _ _
   have hy : ∀ j, y j = ∑ l, β.repr (y j) l • β l := fun j => (β.sum_repr (y j)).symm
   have term : ∀ i j, Algebra.trace R A (s (x i) * J i j * y j) =
@@ -35,14 +40,17 @@ theorem trace_hform (s : A →+* A) (hs : ∀ (r : R) (a : A), s (r • a) = r �
     intro i j
     rw [hx i]
     conv_lhs => rw [hy j]
-    rw [Finset.sum_mul, Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_mul, Finset.sum_mul, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.mul_sum, map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [smul_mul_assoc, smul_mul_assoc, mul_smul_comm, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
     ring
   unfold hform coord gramB dotProduct Matrix.mulVec dotProduct
-  simp only [map_sum, term, Fintype.sum_prod_type, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, term, Fintype.sum_prod_type, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   exact Finset.sum_comm
 
@@ -57,7 +65,8 @@ theorem coord_mulVec (β : Module.Basis (Fin d) R A) (H : Matrix (Fin M) (Fin M)
     rw [Finset.mul_sum]
     exact Finset.sum_congr rfl fun l _ => mul_smul_comm _ _ _
   simp only [coord, Matrix.mulVec, dotProduct, Fintype.sum_prod_type, hg]
-  simp only [hterm, map_sum, map_smul, Finsupp.coe_finset_sum, Finset.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hterm, map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply,
     Finsupp.smul_apply, Finsupp.coe_smul, Pi.smul_apply, smul_eq_mul, mul_comm]
 
 theorem coord_surj (β : Module.Basis (Fin d) R A) (u : Fin M × Fin d → R) :
@@ -100,7 +109,7 @@ theorem sigR_smul (R : Type) [CommRing R] [Algebra F R] (σ : E →ₐ[F] E) (r 
   induction a using TensorProduct.induction_on with
   | zero => simp
   | tmul x y => simp [sigR, TensorProduct.smul_tmul']
-  | add a c ha hc => simp only [smul_add, map_add, ha, hc]
+  | add a c ha hc => simp only [smul_add, map_add (f := _), ha, hc]
 
 theorem trace_one_tmul (R : Type) [CommRing R] [Algebra F R] [Module.Finite F E] (e : E) :
     Algebra.trace R (R ⊗[F] E) ((1 : R) ⊗ₜ[F] e) = algebraMap F R (Algebra.trace F E e) := by

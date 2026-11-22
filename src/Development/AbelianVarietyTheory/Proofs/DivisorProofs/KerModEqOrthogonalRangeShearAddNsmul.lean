@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EquivOfIsometryApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EquivOfIsometryApply
+
+@[expose] public section
+
 open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.LowDat GlobalTheory.LowFilt
 
 namespace GlobalTheory.LowFilt
@@ -18,7 +23,7 @@ theorem ker_mod_eq_perp_range_add : ∀ {E : Type} [Field E] [NumberField E] [Is
       rintro ⟨_, z, rfl⟩
       exact hbd z
     let φ : LinearMap.range t →+ ℤ := AddMonoidHom.mk' (fun x => D.EF x b / n) fun x x' => by
-      simp only [Submodule.coe_add, map_add, LinearMap.add_apply]
+      simp only [Submodule.coe_add, map_add (f := _), LinearMap.add_apply]
       exact Int.add_ediv_of_dvd_left (hx x)
     obtain ⟨b'', hb'', -⟩ := hW.2.2.1 φ
     refine ⟨b'', ?_⟩
@@ -52,7 +57,7 @@ theorem ker_mod_eq_perp_range_add : ∀ {E : Type} [Field E] [NumberField E] [Is
       exact h1
     refine ⟨y b'' - e₁ + y e, ?_⟩
     rw [map_nsmul] at hb1
-    rw [map_add, map_nsmul, smul_add, smul_sub, hb1]
+    rw [map_add (f := _), map_nsmul, smul_add, smul_sub, hb1]
     abel
 
 end GlobalTheory.LowFilt

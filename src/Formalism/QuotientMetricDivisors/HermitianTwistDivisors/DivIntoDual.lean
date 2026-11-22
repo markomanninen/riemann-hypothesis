@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.QuotientMetricDivisors.ProdFormula
-import Formalism.QuotientMetricDivisors.DivIntoDual
-import Formalism.QuotientMetricDivisors.ReductionLemmaZero
+module
+
+public import Mathlib
+public import Formalism.QuotientMetricDivisors.ProdFormula
+public import Formalism.QuotientMetricDivisors.DivIntoDual
+public import Formalism.QuotientMetricDivisors.ReductionLemmaZero
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix

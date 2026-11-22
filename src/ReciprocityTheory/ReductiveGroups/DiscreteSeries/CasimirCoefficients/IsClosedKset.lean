@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiExistsStatement
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiExistsStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,20 +35,18 @@ lemma isClosed_Kset (ε : Fin n → Bool) : IsClosed (Kset ε) := by
     isClosed_eq (continuous_id.mul continuous_const) (continuous_const.mul continuous_id)
   convert h1.inter h2 using 1
   ext g
-  simp only [Kset, Set.mem_setOf_eq, Set.mem_inter_iff, Matrix.unitaryGroup]
+  simp only [Kset, Set.mem_ofPred_eq, Set.mem_inter_iff, Matrix.unitaryGroup]
   exact Iff.rfl
 
 lemma isClosed_KG (ε : Fin n → Bool) : IsClosed ((KG ε : Set (UJ ε))) := by
   show IsClosed {g : UJ ε | toM g ∈ Kset ε}
-  exact (isClosed_Kset ε).preimage (by first
-    | fun_prop
-    | continuity
-    | exact continuous_subtype_val
-    | exact Units.continuous_val.comp continuous_subtype_val)
+  exact (isClosed_Kset ε).preimage (continuous_toM ε)
 
 instance (ε : Fin n → Bool) : LocallyCompactSpace (KG ε) := (isClosed_KG ε).locallyCompactSpace
 
-instance (ε : Fin n → Bool) : MeasurableSpace (KG ε) := borel _
+-- Keep the instance name stable across builds of the downstream Haar modules.
+instance instMeasurableSpaceSubtypeUnitsMatrixFinComplexMemSubgroupUJKG
+    (ε : Fin n → Bool) : MeasurableSpace (KG ε) := borel _
 
 instance (ε : Fin n → Bool) : BorelSpace (KG ε) := ⟨rfl⟩
 
@@ -58,8 +60,8 @@ def psM {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : KType ε Λ) (μ : Fin n
   ((Module.finrank ℂ T.V : ℂ) / ((muK ε Set.univ).toReal : ℂ)) •
     ∫ k, PhiM μ (toMK k⁻¹ * x * toMK k) • (T.op k * projW T * T.op k⁻¹) ∂(muK ε)
 
-open Classical in
 
+open Classical in
 def PsiM {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : KType ε Λ) (μ : Fin n → ℤ)
     (g : Matrix (Fin n) (Fin n) ℂ) : T.V →L[ℂ] T.V :=
   if h : ∃ (k : KG ε) (X : Matrix (Fin n) (Fin n) ℂ), inP ε X ∧ g = toMK k * NormedSpace.exp X then

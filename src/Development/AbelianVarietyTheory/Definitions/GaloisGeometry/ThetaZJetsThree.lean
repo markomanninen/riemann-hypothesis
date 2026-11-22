@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementH
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementJ
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementE
-import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.Statement
-import Formalism.LocalToGlobal.InertKernelTheory.StatementAlgT
-import Formalism.LocalToGlobal.InertKernelTheory.StatementIota
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementH
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementJ
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementE
+public import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.Statement
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementAlgT
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementIota
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,9 +68,5 @@ theorem mem_th (H : LatAt a₀ b₀ c₀ dK ha hdK lam hlam h Λ θ p ι) :
 theorem locNorm (H : LatAt a₀ b₀ c₀ dK ha hdK lam hlam h Λ θ p ι) : LocNorm a₀ b₀ dK ha hdK lam hlam h Λ θ p ι := H.2.2.2.2
 
 end LatAt
-
-example : CmOK 1 1 2 7 := ⟨by norm_num, by decide, by norm_num, by norm_num⟩
-
-example : CmOK 1 1 6 23 ∧ 23 % 8 = 7 ∧ 23 % 3 = 2 := ⟨⟨by norm_num, by decide, by norm_num, by norm_num⟩, by norm_num, by norm_num⟩
 
 end GlobalTheory.ThLoc

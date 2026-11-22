@@ -1,5 +1,9 @@
-import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.ChebyshevCharacterExplicitGeneral
-import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.NormIntegralComplLe
+module
+
+public import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.ChebyshevCharacterExplicitGeneral
+public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.NormIntegralComplLe
+
+@[expose] public section
 
 noncomputable section
 

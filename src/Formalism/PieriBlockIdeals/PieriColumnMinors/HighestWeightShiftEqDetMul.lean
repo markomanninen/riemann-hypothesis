@@ -1,5 +1,9 @@
-import Formalism.PieriBlockIdeals.ExZTranslate
-import Formalism.PieriBlockIdeals.PieriColumnMinors.ProdInitialMinorsMemDetSpan
+module
+
+public import Formalism.PieriBlockIdeals.ExZTranslate
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.ProdInitialMinorsMemDetSpan
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -136,12 +140,6 @@ theorem highest_weight_shift_eq_det_mul (R : Type) [CommRing R] {r : ℕ} (ν : 
     simp only [key, hl, Nat.sub_zero, hL]
     ring
 
-theorem highest_weight_ones_eq_det (R : Type) [CommRing R] (r : ℕ) :
-    hw R le_rfl (fun _ : Fin r => 1) = genericDet R r := by
-  have h := highest_weight_shift_eq_det_mul R (fun _ : Fin r => 0)
-  have h0 : hw R le_rfl (fun _ : Fin r => 0) = 1 := by simp [hw]
-  simpa [h0] using h
-
 private theorem divOp_mem_weyl (R : Type) [CommRing R] {r : ℕ} (μ : Fin r → ℕ)
     (a b : Fin r) (k : ℕ) (f : MvPolynomial (Fin r × Fin r) R)
     (hf : f ∈ weyl R r r le_rfl μ) : rowDiv R a b k f ∈ weyl R r r le_rfl μ := by
@@ -153,7 +151,7 @@ private theorem divOp_mem_weyl (R : Type) [CommRing R] {r : ℕ} (μ : Fin r →
   | zero => simp [rowDiv]
   | add x y _ _ hx hy =>
     unfold rowDiv at hx hy ⊢
-    rw [map_add, Polynomial.coeff_add]
+    rw [map_add (f := _), Polynomial.coeff_add]
     exact Submodule.add_mem _ hx hy
   | smul c x _ hx =>
     unfold rowDiv at hx ⊢
@@ -250,8 +248,8 @@ theorem weighted_homogeneous_cancel {σ : Type} {n : ℕ} (w : σ → Fin n → 
   intro d hd
   by_contra hne
   have key : ∀ e : σ →₀ ℕ,
-      coeff e (D * weightedHomogeneousComponent w (Finsupp.weight w d) g) =
-        if Finsupp.weight w e = δ + Finsupp.weight w d then coeff e (D * g) else 0 := by
+      AddMonoidAlgebra.coeff (D * weightedHomogeneousComponent w (Finsupp.weight w d) g) e =
+        if Finsupp.weight w e = δ + Finsupp.weight w d then AddMonoidAlgebra.coeff (D * g) e else 0 := by
     intro e
     rw [coeff_mul, coeff_mul]
     split_ifs with he
@@ -266,12 +264,12 @@ theorem weighted_homogeneous_cancel {σ : Type} {n : ℕ} (w : σ → Fin n → 
       rw [coeff_weightedHomogeneousComponent]
       split_ifs with hy
       · rfl
-      · by_cases hx : coeff x D = 0
+      · by_cases hx : AddMonoidAlgebra.coeff D x = 0
         · simp [hx]
         · exfalso
           apply hy
           have h1 := hD hx
-          rw [← hxy', map_add, h1] at he
+          rw [← hxy', map_add (f := _), h1] at he
           exact add_left_cancel he
     · refine Finset.sum_eq_zero ?_
       rintro ⟨x, y⟩ hxy
@@ -283,15 +281,15 @@ theorem weighted_homogeneous_cancel {σ : Type} {n : ℕ} (w : σ → Fin n → 
       dsimp only
       rw [coeff_weightedHomogeneousComponent]
       split_ifs with hy
-      · by_cases hx : coeff x D = 0
+      · by_cases hx : AddMonoidAlgebra.coeff D x = 0
         · simp [hx]
         · exfalso
           apply he
-          rw [← hxy', map_add, hD hx, hy]
+          rw [← hxy', map_add (f := _), hD hx, hy]
       · simp
   have hz : D * weightedHomogeneousComponent w (Finsupp.weight w d) g = 0 := by
     ext e
-    rw [key, coeff_zero]
+    simp only [key, AddMonoidAlgebra.coeff_zero, Pi.zero_apply]
     split_ifs with he
     · by_contra hc
       apply hne
@@ -302,8 +300,9 @@ theorem weighted_homogeneous_cancel {σ : Type} {n : ℕ} (w : σ → Fin n → 
   rcases mul_eq_zero.mp hz with h0 | h0
   · exact hD0 h0
   · apply hd
-    have h4 := congrArg (coeff d) h0
-    rw [coeff_weightedHomogeneousComponent, if_pos rfl, coeff_zero] at h4
+    have h4 := congrArg (AddMonoidAlgebra.coeff · d) h0
+    simp only [coeff_weightedHomogeneousComponent, if_pos rfl, AddMonoidAlgebra.coeff_zero,
+      Pi.zero_apply] at h4
     exact h4
 
 theorem det_mul_mem_dual_weyl_shift {r : ℕ} (ν : Fin r → ℕ) {g : MvPolynomial (Fin r × Fin r) ℤ}
@@ -318,8 +317,7 @@ theorem det_mul_mem_dual_weyl_shift {r : ℕ} (ν : Fin r → ℕ) {g : MvPolyno
     have h := hd1.mul hg1
     convert h using 1
     funext a
-    simp only [Pi.add_apply]
-    omega
+    simp [Nat.add_comm]
   · simp only [Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply,
       AlgHom.toLinearMap_apply, sub_eq_zero] at hg2 hd2 ⊢
     intro l j hlj

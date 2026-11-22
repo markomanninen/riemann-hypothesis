@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.IsThBIff
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamOfLSmulIff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpecialLinearGroupIntMapZmodSurjectiveStatement
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.IsThBIff
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamOfLSmulIff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpecialLinearGroupIntMapZmodSurjectiveStatement
+
+@[expose] public section
 
 open scoped MatrixGroups Matrix
 open GlobalTheory.KZ GlobalTheory.K4 GlobalTheory.Glue GlobalTheory.KummerEisensteinGalois UpperTheory.Kd.L
@@ -55,7 +59,7 @@ private theorem coe_uel_eq_umat (c d M : ℤ) (hc : c ≠ 0)
   by_cases hpd : (p : ℤ) ∣ d
   · have htM := (dvd_add_right hpd).1 hpe
     rcases hpz.dvd_or_dvd htM with hpt | hpM
-    · obtain ⟨q, hq, hpq⟩ := (Prime.dvd_finset_prod_iff hp.prime _).1 (Int.natCast_dvd_natCast.1 hpt)
+    · obtain ⟨q, hq, hpq⟩ := (Prime.dvd_finsetProd_iff hp.prime _).1 (Int.natCast_dvd_natCast.1 hpt)
       rw [Finset.mem_filter, Nat.mem_primeFactors] at hq
       have hpq' : p = q := (Nat.prime_dvd_prime_iff_eq hp hq.1.1).1 hpq
       subst hpq'
@@ -340,7 +344,7 @@ private theorem sum_cj_eq_sum_entries_not_dvd (l : ℕ) [Fact l.Prime] (k : ℕ)
   have pm : ∀ (X Y : SL(2, ZMod (l ^ k))) (i j : Fin 2),
       π ((X * Y) i j) = π (X i 0) * π (Y 0 j) + π (X i 1) * π (Y 1 j) := by
     intro X Y i j
-    rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.mul_apply, Fin.sum_univ_two, map_add, map_mul, map_mul]
+    rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.mul_apply, Fin.sum_univ_two, map_add (f := _), map_mul, map_mul]
   have pinv : ∀ X : SL(2, ZMod (l ^ k)), (X⁻¹) 1 0 = - X 1 0 ∧ (X⁻¹) 1 1 = X 0 0 := by
     intro X
     rw [Matrix.SpecialLinearGroup.SL2_inv_expl]

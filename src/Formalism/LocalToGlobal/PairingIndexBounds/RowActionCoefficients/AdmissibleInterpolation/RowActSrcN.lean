@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.NumericalIdentityScalar
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.WeylComplementDetCoeffSpan
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.NumericalIdentityScalar
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.WeylComplementDetCoeffSpan
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -60,11 +64,11 @@ theorem HgX_map (O K : Type) [CommRing O] [CommRing K] (f : O →+* K) (j : ℕ)
 
 theorem hQX (hS : XShape) (j : ℕ) (b : BX X) :
     (weyl X.G.O (NJ X j) (NJ X j) le_rfl (nuM X j b)).map (toK X.G.O X.G.Kf) ≤
-      Submodule.span X.G.O (Set.range fun m => coeff m (HgX X X.G.Kf j b)) := by
+      Submodule.span X.G.O (Set.range fun m => AddMonoidAlgebra.coeff (HgX X X.G.Kf j b) m) := by
   obtain ⟨h1, -, hanti, hle, -, -, -, -, -, -⟩ := hS p X j b
   rw [h1]
   have key : weyl X.G.O (NJ X j) (NJ X j) le_rfl (nuS X j b) ≤
-      Submodule.span X.G.O (Set.range fun m => coeff m (HgX X X.G.O j b)) := by
+      Submodule.span X.G.O (Set.range fun m => AddMonoidAlgebra.coeff (HgX X X.G.O j b) m) := by
     by_cases ho : IsOddPos b.2
     · have hn : nuS X j b = fun t => cX X j b - muX X j (NJ X j) b t.rev := if_pos ho
       unfold HgX
@@ -83,7 +87,7 @@ theorem hQX (hS : XShape) (j : ℕ) (b : BX X) :
   refine Submodule.span_mono ?_
   rintro _ ⟨m, rfl⟩
   refine ⟨m, ?_⟩
-  show _ = map (algebraMap X.G.O X.G.Kf) (coeff m (HgX X X.G.O j b))
+  show _ = map (algebraMap X.G.O X.G.Kf) (AddMonoidAlgebra.coeff (HgX X X.G.O j b) m)
   rw [← HgX_map X X.G.O X.G.Kf (algebraMap X.G.O X.G.Kf) j b]
   exact coeff_map _ _ _
 

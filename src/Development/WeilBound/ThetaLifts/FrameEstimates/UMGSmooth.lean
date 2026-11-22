@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.TowerRallisLemma
-import Development.WeilBound.ThetaLifts.FrameEstimates.UMGSmoothA
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.TowerRallisLemma
+public import Development.WeilBound.ThetaLifts.FrameEstimates.UMGSmoothA
+
+@[expose] public section
 
 noncomputable section
 

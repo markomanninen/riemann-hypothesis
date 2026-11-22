@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsLatBasisZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsLatBasisZero
+
+@[expose] public section
+
 open GlobalTheory.ShFam.Hor.LogCh
 
 set_option autoImplicit false

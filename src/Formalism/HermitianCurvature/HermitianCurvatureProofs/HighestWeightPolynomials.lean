@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuantumMinorCommutation
-import Lemmata.GeneralBFactSecondTerForm.Imports
+module
+
+public import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuantumMinorCommutation
+public import Lemmata.GeneralBFactSecondTerForm.Imports
+
+@[expose] public section
 
 open Finset
 

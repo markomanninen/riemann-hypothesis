@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.StripInt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AutomorphicRankinSelberg.StripInt
+
+@[expose] public section
 
 open MeasureTheory Set CongruenceSubgroup UpperTheory.V.Af UpperTheory.V.Sd
 open UpperHalfPlane hiding I
@@ -44,9 +48,7 @@ theorem UpperTheory.V.Af.Rs.rankSum :
       rw [← intervalIntegral.integral_mul_const]
       congr 1
       funext x
-      simp only [UpperHalfPlane.petersson, him x, zpow_natCast]
-      push_cast
-      ring
+      simp [UpperHalfPlane.petersson, him, mul_assoc]
     dsimp only
     rw [hx, mul_div_assoc, ← Complex.ofReal_div, Complex.re_mul_ofReal]
     congr 1

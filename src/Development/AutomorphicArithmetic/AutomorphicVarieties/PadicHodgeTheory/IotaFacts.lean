@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IotaSpec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IqBasic
-import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocC
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IofAdd
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IotaSpec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IqBasic
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocC
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IofAdd
+
+@[expose] public section
+
 open Formalism.ConjugateSelfDual Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc Topology NumberField IsDedekindDomain
 
 section SlopeTestRemainingChoices

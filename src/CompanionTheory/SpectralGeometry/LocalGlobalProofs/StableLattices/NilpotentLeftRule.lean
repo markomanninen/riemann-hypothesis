@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.LineFormulas.RightRule
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.InvMulSelfOfMemIndefiniteUnitary
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.LineFormulas.RightRule
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.InvMulSelfOfMemIndefiniteUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,7 @@ theorem left_tens {ε : Fin n → Bool} (X : GMod n) {ι : Type}
   have eL : tensCoef X (c p) j ((tens X).E a b u) g =
       ∑ k, g j k * c p (X.E a b (u k)) g + g j a * c p (u b) g := by
     show ∑ k, g j k * c p (tensE X a b u k) g = _
-    simp only [tensE_apply, map_add, Pi.add_apply, mul_add, sum_add_distrib]
+    simp only [tensE_apply, map_add (f := _), Pi.add_apply, mul_add, sum_add_distrib]
     congr 1
     rw [Finset.sum_eq_single a]
     · simp
@@ -212,7 +216,7 @@ theorem unit_rule (hσ : IsURepOn (UJset ε) σ) (hK : CompanionTheory.D.LK.IsKM
       _ = _ := by simp only [Finset.smul_sum, add_smul, Finset.sum_add_distrib, smul_smul]
   have hM : g * Matrix.single a b (1 : ℂ) * g⁻¹ = g * X₁ * g⁻¹ + Complex.I • (g * X₂ * g⁻¹) := by
     rw [hdec, Matrix.mul_add, Matrix.add_mul, Matrix.mul_smul, Matrix.smul_mul]
-  rw [hv, map_add, map_smul, inner_add_right, inner_smul_right, real_rule hσ hK ξ u hg h₁,
+  rw [hv, map_add (f := _), map_smul, inner_add_right, inner_smul_right, real_rule hσ hK ξ u hg h₁,
     real_rule hσ hK ξ u hg h₂, hM]
   simp only [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, add_mul, Finset.sum_add_distrib, Finset.mul_sum]
   congr 1

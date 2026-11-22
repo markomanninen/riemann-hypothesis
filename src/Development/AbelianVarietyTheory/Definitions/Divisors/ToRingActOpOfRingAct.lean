@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,39 +50,8 @@ theorem IsRAct.op_of_ringAct {A : Over S} [GrpObj A] [IsCommMonObj A] (ρ : Out.
     IsRAct A (fun a : Oᵐᵒᵖ => ρ.act a.unop) :=
   ⟨fun _ => ρ.hom _, ρ.map_one, fun _ _ => ρ.map_mul _ _, fun _ _ => ρ.map_add _ _⟩
 
-def IsRAct.toRingAct {A : Over S} [GrpObj A] [IsCommMonObj A] {act : Oᵐᵒᵖ → (A ⟶ A)} (h : IsRAct A act) :
-    Out.RingAct A O :=
-  ⟨fun a => act (MulOpposite.op a), fun _ => h.1 _, h.2.1,
-    fun a b => h.2.2.1 (MulOpposite.op b) (MulOpposite.op a), fun _ _ => h.2.2.2 _ _⟩
-
-@[simp] theorem IsRAct.toRingAct_act {A : Over S} [GrpObj A] [IsCommMonObj A] {act : Oᵐᵒᵖ → (A ⟶ A)}
-    (h : IsRAct A act) (a : O) : h.toRingAct.act a = act (MulOpposite.op a) := rfl
-
-theorem IsRAct.toRingAct_op_of_ringAct {A : Over S} [GrpObj A] [IsCommMonObj A] (ρ : Out.RingAct A O) (a : O) :
-    (IsRAct.op_of_ringAct ρ).toRingAct.act a = ρ.act a := rfl
-
 def IsRAct.toOAct {O : Type} [CommRing O] {A : Over S} [GrpObj A] {act : O → (A ⟶ A)} (h : IsRAct A act) :
     OAct O A :=
   ⟨act, h.1, h.2.1, h.2.2.1, h.2.2.2⟩
-
-@[simp] theorem IsRAct.toOAct_act {O : Type} [CommRing O] {A : Over S} [GrpObj A] {act : O → (A ⟶ A)}
-    (h : IsRAct A act) : h.toOAct.act = act := rfl
-
-theorem IsRAct.act_mul_comm {O : Type} [CommRing O] {A : Over S} [GrpObj A] {act : O → (A ⟶ A)}
-    (h : IsRAct A act) (a b : O) : act (a * b) = act b ≫ act a := by
-  rw [mul_comm]; exact h.2.2.1 b a
-
-theorem IsRAct.comp_comm {O : Type} [CommRing O] {A : Over S} [GrpObj A] {act : O → (A ⟶ A)}
-    (h : IsRAct A act) (a b : O) : act a ≫ act b = act b ≫ act a := by
-  rw [← h.2.2.1, ← h.2.2.1, mul_comm]
-
-example (A : Over S) [GrpObj A] (act : O → (A ⟶ A)) (h : IsRAct A act) (a : O) : act (a * 1) = act a := by
-  rw [h.2.2.1, h.2.1, Category.comp_id]
-
-example {A : Over S} [GrpObj A] [IsCommMonObj A] (ρ : Out.RingAct A O) (a b : O) :
-    ρ.act (b * a) = ρ.act a ≫ ρ.act b :=
-  (IsRAct.op_of_ringAct ρ).2.2.1 (MulOpposite.op a) (MulOpposite.op b)
-
-example {O : Type} [CommRing O] {A : Over S} [GrpObj A] (i : OAct O A) : (IsRAct.of_oAct i).toOAct = i := rfl
 
 end GlobalTheory.EndLoc

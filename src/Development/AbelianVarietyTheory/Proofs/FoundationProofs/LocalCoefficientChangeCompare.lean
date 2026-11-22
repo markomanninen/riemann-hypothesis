@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.LatticeConditions
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CrystallineCocycleTransportConjugation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.LatticeConditions
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CrystallineCocycleTransportConjugation
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,9 +43,9 @@ theorem mem_HfD_gen {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K�
     funext g
     exact (h g).symm
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 omit [IsDomain O] in
-
 theorem mem_HfD_iff (B : LocBridge l E Ω Gw O) {k : ℕ} (M : ↥Gw →* Matrix (Fin k) (Fin k) O)
     (w : ↥(GK B.Kw) → (Fin k → Br.LLw B) ⧸ stdG (Br.Ow B) (Br.LLw B) k) :
     w ∈ HfD (P.PD B.Kw) (Br.lat B M) ↔
@@ -49,8 +53,8 @@ theorem mem_HfD_iff (B : LocBridge l E Ω Gw O) {k : ℕ} (M : ↥Gw →* Matrix
         w g = Submodule.Quotient.mk (z g + ((Br.locM B M g).mulVec m - m)) :=
   mem_HfD_gen (P.PD B.Kw) (Br.lat B M) w
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def transport (B : LocBridge l E Ω Gw O) (k : ℕ) :
     (↥Gw → KOG O k) →ₛₗ[B.eO.toRingHom]
       (↥(GK B.Kw) → (Fin k → Br.LLw B) ⧸ stdG (Br.Ow B) (Br.LLw B) k) where
@@ -74,10 +78,11 @@ theorem vecS_mulVec (B : LocBridge l E Ω Gw O) {k : ℕ} (M : ↥Gw →* Matrix
   funext i
   change Br.toLLK B (∑ j, algebraMap O (FractionRing O) (M (Br.ι B g) i j) * u j) =
     ∑ j, Br.locM B M g i j * Br.toLLK B (u j)
-  simp only [map_sum, map_mul, locM_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, locM_apply]
+
 
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem phi_mem_of_mem_bkG (B : LocBridge l E Ω Gw O) {k : ℕ} (M : ↥Gw →* Matrix (Fin k) (Fin k) O)
     (c : ↥(Z1 (WKG M))) (hc : Submodule.Quotient.mk c ∈ Br.bkG B P (WKG M) M) :
     Br.Phi B (WKG M) c ∈ HfD (P.PD B.Kw) (Br.lat B M) := by
@@ -96,8 +101,8 @@ theorem phi_mem_of_mem_bkG (B : LocBridge l E Ω Gw O) {k : ℕ} (M : ↥Gw →*
   rw [h2, map_sub]
   exact Submodule.sub_mem _ h₁ hB
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem push_mem (B₀ : LocBridge l E Ω Gw O₀) (B : LocBridge l E Ω Gw O) (σ : GQ l)
     (hσ : ∀ g : ↥Gw, ((B.e g : ↥(GK B.Kw)) : GQ l) = σ * ((B₀.e g : ↥(GK B₀.Kw)) : GQ l) * σ⁻¹)
     (f : O₀ →+* O) (hf : Function.Injective f)
@@ -118,7 +123,8 @@ theorem push_mem (B₀ : LocBridge l E Ω Gw O₀) (B : LocBridge l E Ω Gw O) (
     intro g v
     funext i
     change φ (∑ j, Br.locM B₀ M₀ (θ g) i j * v j) = ∑ j, Br.locM B (mapM f M₀) g i j * φ (v j)
-    simp only [map_sum, map_mul, locM_apply, hφ, fracMap_alg, hθι]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, locM_apply, hφ, fracMap_alg, hθι]
     rfl
   refine (mem_HfD_iff P B _ _).2 ⟨_, crystallineCocycle_transport_conjugation P B₀.Kw B.Kw B₀.LL B.LL θ hθ σ hσ' _ _ φ.toLinearMap hp z hzf,
     fun j => φ (m j), fun g => ?_⟩
@@ -137,11 +143,11 @@ theorem push_mem (B₀ : LocBridge l E Ω Gw O₀) (B : LocBridge l E Ω Gw O) (
     rw [Br.toLLK_alg, RingEquiv.apply_symm_apply]
   change φ (algebraMap (Br.Ow B₀) (Br.LLw B₀) (n j)) =
     φ (Br.toLLK B₀ (u j) - (z (θ g) j + ((Br.locM B₀ M₀ (θ g)).mulVec m j - m j))) at h1
-  rw [h2, hφ, fracMap_alg, Br.toLLK_alg, map_sub, map_add, map_sub, hφ, congrFun (hp g m) j] at h1
+  rw [h2, hφ, fracMap_alg, Br.toLLK_alg, map_sub, map_add (f := _), map_sub, hφ, congrFun (hp g m) j] at h1
   exact h1
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem extCond_le_bkG : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (E Ω : Type) [Field E] [Field Ω] [Algebra E Ω] (Gw : Subgroup (Ω ≃ₐ[E] Ω)) (O₀ O : Type) [CommRing O₀] [IsDomain O₀] [IsDiscreteValuationRing O₀] [Algebra ℤ_[l] O₀] [Module.Finite ℤ_[l] O₀] [TopologicalSpace O₀] [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [TopologicalSpace O] (B₀ : LocBridge l E Ω Gw O₀) (B : LocBridge l E Ω Gw O) (σ : GQ l), (∀ g : ↥Gw, ((B.e g : ↥(GK B.Kw)) : GQ l) = σ * ((B₀.e g : ↥(GK B₀.Kw)) : GQ l) * σ⁻¹) → ∀ (f : O₀ →+* O) (hf : Function.Injective f), (∀ z : ℤ_[l], f (algebraMap ℤ_[l] O₀ z) = algebraMap ℤ_[l] O z) → ∀ (k : ℕ) (M₀ : ↥Gw →* Matrix (Fin k) (Fin k) O₀), extCond f hf (WKG M₀) (Br.bkG B₀ P (WKG M₀) M₀) (WKG (mapM f M₀)) ≤ Br.bkG B P (WKG (mapM f M₀)) (mapM f M₀) := by
   intro l _ P E Ω _ _ _ Gw O₀ O _ _ _ _ _ _ _ _ _ _ _ _ B₀ B σ hσ f hf hz k M₀
   refine Submodule.map_mono ?_

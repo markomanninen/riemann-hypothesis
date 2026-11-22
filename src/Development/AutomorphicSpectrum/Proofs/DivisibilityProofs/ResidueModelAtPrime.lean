@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyCN
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.DescentIntersectionNumberStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ConstantsMonomialApproximationStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyCN
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.DescentIntersectionNumberStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ConstantsMonomialApproximationStatement
+
+@[expose] public section
+
 open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top GroundTheory.Heights₂.Heights.ModelLeaves
 open ReciprocityTheory.ChartRestriction.G.Geo (HermLine IsSmoothHerm IsArithVar IsHorizontal mcPts mCoordIdeal IsIntersectionFamily IsIntersectionSystem IntersectionSystem ptsIntegral geoNum charOf recR arInt ChartBundle chartRing)
 
@@ -20,7 +25,7 @@ theorem mem_of_residue_map_mem_specialIdeal {K : Type} [DecidableEq K] {ι : K �
     rw [MvPolynomial.mem_map_C_iff]
     intro d
     rw [← IsLocalRing.residue_eq_zero_iff]
-    have h := congrArg (MvPolynomial.coeff d) hgf
+    have h := congrArg (AddMonoidAlgebra.coeff · d) hgf
     rw [MvPolynomial.coeff_map, MvPolynomial.coeff_map] at h
     rw [MvPolynomial.coeff_sub, map_sub, h, sub_self]
   have := W.add_mem hker hg

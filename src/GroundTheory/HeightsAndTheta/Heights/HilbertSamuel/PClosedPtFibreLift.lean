@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsClosedPtFibreLift
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGradedSubmodules
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsClosedPtSkyscraper
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsLocIdealKer
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenSESStep
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsClosedPtFibreLift
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGradedSubmodules
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsClosedPtSkyscraper
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsLocIdealKer
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenSESStep
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafSpreadSeparatedPf
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsClosedImmersionDescendsToSubring
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafSpreadSeparatedPf
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsClosedImmersionDescendsToSubring
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry LateralTheory.E.E4 LateralTheory.E.LeafDescendVCut LateralTheory.E.LeafSpreadSeparatedPf

@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.SecondPropositionFree
-import Formalism.SharpRestriction.LevelLetterCocycles.SecondRankCount
-import Formalism.SharpRestriction.LevelLetterCocycles.SecondPropositionHypothesis
-import Formalism.SharpRestriction.LevelLetterCocycles.ExpansionFormAll
-import Formalism.SharpRestriction.LevelLetterCocycles.UpPositionOfModels
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.SecondPropositionFree
+public import Formalism.SharpRestriction.LevelLetterCocycles.SecondRankCount
+public import Formalism.SharpRestriction.LevelLetterCocycles.SecondPropositionHypothesis
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExpansionFormAll
+public import Formalism.SharpRestriction.LevelLetterCocycles.UpPositionOfModels
+
+@[expose] public section
 
 noncomputable section
 

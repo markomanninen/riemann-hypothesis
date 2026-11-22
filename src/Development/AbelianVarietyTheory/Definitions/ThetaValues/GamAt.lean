@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
+
+@[expose] public section
 
 noncomputable section
 

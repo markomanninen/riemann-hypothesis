@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.Direct
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.PoincareInHH
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LatticeUnimodular
+module
+
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.Direct
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.PoincareInHH
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LatticeUnimodular
+
+@[expose] public section
+
 open scoped Classical ENNReal
 open Matrix MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.LocWSOf Formalism.L2.SG.PoincareInHH.PoincareSetting GlobalTheory.CovDom
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -32,7 +37,8 @@ theorem pairM_apply {α β : Type} [Fintype α] [Fintype β]
     GlobalTheory.SgAlg.pairM (D.sp.cm.sig : D.host.E →+* D.host.E) (Jc X) Q P a b =
       (VS D).hT (vecOf X fun i => P i a) (vecOf X fun i => Q i b) := by
   rw [vecOf_sum, vecOf_sum]
-  simp only [GlobalTheory.SgAlg.pairM, GlobalTheory.SgAlg.cT, Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, Jc,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [GlobalTheory.SgAlg.pairM, GlobalTheory.SgAlg.cT, Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, Jc,
     map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, Finset.sum_mul,
     Finset.mul_sum, sig_apply]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -160,8 +166,8 @@ end GlobalTheory.CovDom.FrameCrd
 
 namespace GlobalTheory.CovDom
 
-open GlobalTheory.CovDom.FrameCrd in
 
+open GlobalTheory.CovDom.FrameCrd in
 theorem frame_dual_lat : ∀ (D : D7) (X : HidaSetting D) (u : D.what₂.Word),
     GlobalTheory.SgAlg.IsFrame (D.sp.cm.sig : D.host.E →+* D.host.E) (Jc X) (algebraMap D.host.F D.host.E (Tc u)) (Pc X u) ∧
     GlobalTheory.SgAlg.IsDual (D.sp.cm.sig : D.host.E →+* D.host.E) (Jc X) (Pc X u) (fc X) ∧

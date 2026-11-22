@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.WtFieldPfA
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.WtFieldPfA
+
+@[expose] public section
 
 noncomputable section
 
@@ -199,7 +203,7 @@ theorem wtField_of_bcR (hW : EvalWD (K := c.F) (fun S _ _ => FrPt Xo c S) (fun Ï
     congr 1
     simp only [wchar, map_prod, map_pow, ht]
   unfold evR evalAt
-  rw [dif_pos hy, dif_pos hy']
+  rw [dite_eq_left hy, dite_eq_left hy']
   exact key _ _ _ _ _ _ hy.choose_spec.choose_spec.choose_spec hy'.choose_spec.choose_spec.choose_spec
 
 end ReciprocityTheory.ChartRestriction.G.PullbackSections

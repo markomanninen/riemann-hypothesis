@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SemisimpleLevels.CsdSsOfFull
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IndexNeZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.DivMono
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LocIsotypic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.FiniteIntertwining
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SemisimpleLevels.CsdSsOfFull
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IndexNeZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.DivMono
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LocIsotypic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.FiniteIntertwining
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,16 +57,16 @@ variable {L Ω : Type} [Field L] [NumberField L] [Field Ω] [Algebra L Ω] [IsAl
 def algPow (w : HeightOneSpectrum (𝓞 L)) (h : (L →+* Qbar l) → ℤ) (y : w.adicCompletion L) : Qbar l :=
   ∏ᶠ j : {j : w.adicCompletion L →+* Qbar l // Continuous j}, j.1 y ^ h (j.1.comp (algebraMap L (w.adicCompletion L)))
 
-variable (L l n) in
 
+variable (L l n) in
 abbrev Wt : Type := (L →+* Qbar l) → DomWeight n
 
-omit [NumberField L] in
 
+omit [NumberField L] in
 def lowW (lam : Wt L l n) (j : Fin n) (τ : L →+* Qbar l) : ℤ := (lam τ).w j.rev
 
-omit [NumberField L] in
 
+omit [NumberField L] in
 def htW (lam : Wt L l n) (j : Fin n) (τ : L →+* Qbar l) : ℤ := lowW lam j τ + (j : ℕ)
 
 variable (ι : Qbar l ≃+* ℂ) {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 L)} (h : IsPlaceOver A w)
@@ -79,21 +83,21 @@ def AtL (r : Dec (F := L) A →* GL (Fin n) (Qbar l)) (lam : Wt L l n) (σ : SmI
     (∀ i j, i ≠ j → ∃ y : Uo (w.adicCompletion L), ω i y ≠ ω j y) → Nonempty (σ.ρ.Equiv (PS ω)) →
   ∀ rc, IsRec h rc → Lev.AbW (rc (algNorm σ)) → DRat ι h r (fun τ => Finset.univ.val.map fun j => htW lam j τ) fun s => (rc (algNorm σ)).charPol s
 
+
 omit [NumberField L] [IsAlgClosure L Ω] in
 variable (A) in
-
 def PotCrys (r : Dec (F := L) A →* GL (Fin n) (Qbar l)) : Prop :=
   ∀ (O : Type) [CommRing O] [Algebra ℤ_[l] O] [TopologicalSpace O] (Bw : LocBridge l L Ω (Dec (F := L) A) O),
     GlobalTheory.Pst.Induces Bw → IsPotCrysAt (Loc.PP l) Bw r
 
-variable {h} in
 
+variable {h} in
 def OnArt {C : Type} [Monoid C] (a : Weil h →* (w.adicCompletion L)ˣ) (ψ : Dec (F := L) A →* C)
     (S : Set (w.adicCompletion L)ˣ) (f : (w.adicCompletion L)ˣ → C) : Prop :=
   ∀ (s : Weil h) (g : Dec (F := L) A), (g : G L Ω) = (s : G L Ω) → a s ∈ S → ψ g = f (a s)
 
-variable {h} in
 
+variable {h} in
 structure OrdChar (a : Weil h →* (w.adicCompletion L)ˣ) (ω : (w.adicCompletion L)ˣ →* ℂˣ) (hh : (L →+* Qbar l) → ℤ)
     (ψ : Dec (F := L) A →* (Qbar l)ˣ) : Prop where
   smooth : IsSmoothChar ω

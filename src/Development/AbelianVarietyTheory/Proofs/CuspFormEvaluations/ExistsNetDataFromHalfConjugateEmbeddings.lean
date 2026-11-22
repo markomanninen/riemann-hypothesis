@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.NormEuclideanEmbeddingEqNetNorm
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.NormEuclideanEmbeddingEqNetNorm
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Gaps.NetNorms
 open scoped ComplexConjugate
@@ -13,7 +17,8 @@ theorem linearIndependent_conj_coords {ι κ : Type*} [Fintype ι] (v : ι → �
   have h1 : ∑ i, conj (c i) • v i = 0 := by
     funext y
     have := congrArg conj (congrFun hc y)
-    simpa [Finset.sum_apply, map_sum] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [Finset.sum_apply, map_sum] using this
   simpa using h (fun i => conj (c i)) h1 i
 
 theorem exists_netData_of_readings_on_half :

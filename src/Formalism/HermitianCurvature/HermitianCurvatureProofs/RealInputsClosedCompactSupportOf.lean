@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.ArchimedeanUniformConstantsCompactSupport
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBJoint
+module
+
+public import Formalism.HermitianCurvature.ArchimedeanUniformConstantsCompactSupport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBJoint
+
+@[expose] public section
 
 open Finset NumberField MeasureTheory Formalism.FourierDecayAlt
 

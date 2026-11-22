@@ -1,11 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.IndexExponentDegree
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EmbHInjective
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralDensEqZero
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PerOComponents
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SmulMemLocPPerO
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsSdLatTwOExpS
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.IndexExponentDegree
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EmbHInjective
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralDensEqZero
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PerOComponents
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SmulMemLocPPerO
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsSdLatTwOExpS
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker Formalism.MainNotions Formalism.L2.Th1.H GlobalTheory.ThetaMove GlobalTheory.IndefiniteRowSideFullHecke.IndexExponentDegree
 
@@ -22,6 +27,35 @@ theorem signed_eq {V : Type} [AddCommGroup V] [Module ℂ V] {H : Sesq V} {α : 
 
 theorem alV_neg {ι : Type} [Fintype ι] {a b : ℕ} (d : ℕ) (sc : ℝ) (x : VV ι a b) : alV d sc (-x) = alV d sc x := by
   simp [alV, alphaQ, Formalism.L2.Th1.H.qOf]
+
+private theorem sdLat_span_local {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ}
+    (L : Submodule (𝓞 E) (Sp E n)) (hL : IsSdLat L) :
+    Submodule.span E (L : Set (Sp E n)) = ⊤ := by
+  let W := Submodule.span E (L : Set (Sp E n))
+  change W = ⊤
+  by_contra h
+  let e : Sp E n ≃ₗ⋆[E] Sp E n := starLinearEquiv E
+  let g : Sp E n →ₗ[E] Module.Dual E W :=
+    (LinearMap.domRestrict' W).comp ((hStd E n).comp e.toLinearMap)
+  have hdim : Module.finrank E (Module.Dual E W) < Module.finrank E (Sp E n) := by
+    rw [Subspace.dual_finrank_eq]
+    exact Submodule.finrank_lt h
+  obtain ⟨x, hx, hx₀⟩ :=
+    Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+  have hsmul (a : E) : a • e x ∈ L := by
+    rw [← hL.2, dualBasic_mem_dual]
+    intro y hy
+    apply hStd_mem_one_symm
+    have hxy : hStd E n (e x) y = 0 :=
+      congrArg (fun f : Module.Dual E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+    simp [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hxy]
+  let i : E →ₗ[𝓞 E] L :=
+    ((LinearMap.toSpanSingleton E _ (e x)).restrictScalars (𝓞 E)).codRestrict L hsmul
+  let : Module.Finite (𝓞 E) L := Module.Finite.iff_fg.mpr hL.1.fg
+  let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
+    smul_left_injective E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+  exact RingOfIntegers.not_isField E
+    (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
 
 section Loc
 
@@ -81,13 +115,17 @@ theorem signed_liftW_eq : ∀ (X : Fields) (A : Amb X) (a b : ℕ) (S : Finset (
     GlobalTheory.ThetaMove.PeriodTwist.twO_perO X.E a b A.AA N N' c' _ hfg hc' (fun Q => by have := expS_bound S Q; omega)
   have sdB := (GlobalTheory.ThetaMove.TwistSd.isSdLat_twO_expS X.E b N' c S hS hN' hc).1
   have sdA := fun c' (hc' : 0 < c') => (GlobalTheory.ThetaMove.TwistSd.isSdLat_twO_expS X.E b N' c' S hS hN' hc').2
-  have fB : Full (twist₂ (perO A.AA N N') c (expS S)) := eB ▸ per.2.2 N _ hfg sdB.1 hA0
+  have fullSd {n : ℕ} (L : Submodule (𝓞 X.E) (Sp X.E n)) (hL : IsSdLat L) :
+      Submodule.IsFullLattice X.E L := by
+    letI : Submodule.IsLattice X.E L := hL.1
+    exact ⟨sdLat_span_local L hL⟩
+  have fB : Full (twist₂ (perO A.AA N N') c (expS S)) := eB ▸ per.2.2 N _ hfg (fullSd _ sdB) hA0
   have fA : ∀ c' : ℕ, 0 < c' → Full (halfAO S (perO A.AA N N') c') := fun c' hc' => by
-    rw [eA c' hc']; exact per.2.2 N _ hfg (sdA c' hc').1 hA0
-  have fG : Full (perO A.AA G G') := per.2.2 G G' hG.1.fg hG'.1 hA0
+    rw [eA c' hc']; exact per.2.2 N _ hfg (fullSd _ (sdA c' hc')) hA0
+  have fG : Full (perO A.AA G G') := per.2.2 G G' hG.1.fg (fullSd _ hG') hA0
   have hmul := mem_mulLat_iff S A.AA N N' hfg hAA hc
   have hex : ∃ s, A.IsLift S N N' c x s := by
-    obtain ⟨c', hc', hx⟩ := per.2.2 N N' hfg hN'.1 hA0 x
+    obtain ⟨c', hc', hx⟩ := per.2.2 N N' hfg (fullSd _ hN') hA0 x
     obtain ⟨s, h1, h2⟩ := ((fA c' hc').inf fB).approx S x
     simp only [localization_inf, Submodule.mem_inf] at h1 h2
     refine ⟨s, ⟨c', hc', mem_of_locP fun Q => ?_⟩, (hmul _).2 fun P hP => (h1 P hP).2⟩

@@ -1,10 +1,18 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DiscreteSpectrumResidualClassification
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IterationAndLinearityCuspidal
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BernsteinUnitaryProductIrreducible
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.PlaceValuationLinAtLarge
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.CuspStepOfLargeFlipRun
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.EndCuspLeadingFormListed
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IterationAndLinearityCuspidalStatement
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DiscreteSpectrumResidualClassification
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IterationAndLinearityCuspidal
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BernsteinUnitaryProductIrreducible
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.PlaceValuationLinAtLarge
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.CuspStepOfLargeFlipRun
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.EndCuspLeadingFormListed
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+
+@[expose] public section
 
 section
 noncomputable section
@@ -33,7 +41,7 @@ open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Fl
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} (G : GridData L sc)
 theorem twisted_iterate_eventually_large : _root_.GlobalTheory.FunPr.ThetaLocalInputs → GlobalTheory.IndefiniteRowSideFullHecke.CuspAlongSmoothLifts.LiftsCuspidal → Big fun ch => IterAt ch := by
   intro hP hL
-  obtain ⟨c0, h0⟩ := (_root_.GlobalTheory.T.flipRun_cusp_transition hL hP).and ((_root_.GlobalTheory.EndCusp.leadingForm_mem_cuspList hP).and GlobalTheory.RowClaim.colFn_cont_left)
+  obtain ⟨c0, h0⟩ := Big.and (_root_.GlobalTheory.T.flipRun_cusp_transition hL hP) (Big.and (_root_.GlobalTheory.EndCusp.leadingForm_mem_cuspList hP) GlobalTheory.RowClaim.colFn_cont_left)
   refine ⟨c0, fun ε CF hC => ?_⟩
   obtain ⟨x0, hx⟩ := h0 ε CF hC
   refine ⟨x0, fun D large₂ he hxx Γ _ _ Pl0 T A Ks _ _ _ R Fc hS ch hch hsc => ?_⟩
@@ -67,7 +75,7 @@ theorem twisted_iterate_eventually_large : _root_.GlobalTheory.FunPr.ThetaLocalI
   rw [e2]
   exact (niter_lin_congr _ _ _ ρ _ (idx D) 1).1 _ τ.support τ _ _ fun d hd => (core d hd).2
 theorem twisted_iterate_eq_linear : _root_.GlobalTheory.FunPr.ThetaLocalInputs → GlobalTheory.IndefiniteRowSideFullHecke.CuspAlongSmoothLifts.LiftsCuspidal → Big fun ch => IterAt ch ∧ LinAt ch :=
-  fun hP hL => (_root_.GlobalTheory.RowChain.twisted_iterate_eventually_large hP hL).and (_root_.GlobalTheory.RowVal.placeValuation_linAt_large hP hL)
+  fun hP hL => Big.and (_root_.GlobalTheory.RowChain.twisted_iterate_eventually_large hP hL) (_root_.GlobalTheory.RowVal.placeValuation_linAt_large hP hL)
 end GlobalTheory.RowChain
 end
 end

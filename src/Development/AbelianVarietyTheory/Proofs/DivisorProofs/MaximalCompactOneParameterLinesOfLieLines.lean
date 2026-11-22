@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsHermitianLogUnitaryBlockDiagonal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsHermitianLogUnitaryBlockDiagonal
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,6 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 theorem piInf_tmul {w : InfinitePlace F} (τ : EmbOver E w) (a : AF F) (e : E) :
     piInf τ (a ⊗ₜ[F] e) = InfinitePlace.Completion.extensionEmbedding w (evInf F w a) * τ.1 e := by
   simp [piInf, compInf, infEmb]
-  left; rfl
 
 theorem ext_star {w : InfinitePlace F} (hw : w.IsReal) (x : w.Completion) :
     star (InfinitePlace.Completion.extensionEmbedding w x) = InfinitePlace.Completion.extensionEmbedding w x := by
@@ -29,7 +32,7 @@ theorem piInf_cA {σ : E →ₐ[F] E} (hCM : IsCMExt F E σ) {w : InfinitePlace 
   | tmul a e =>
     have h1 : cA σ (a ⊗ₜ[F] e) = a ⊗ₜ[F] σ e := by simp [cA]
     rw [h1, piInf_tmul, piInf_tmul, star_mul', ext_star (hCM.1.isReal w), hCM.2.2.2]
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, star_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), star_add]
 
 theorem exists_moved {σ : E →ₐ[F] E} (hCM : IsCMExt F E σ) (τ : ∀ w : InfinitePlace F, EmbOver E w) :
     ∃ e : E, σ e ≠ e := by
@@ -90,7 +93,7 @@ theorem eq_zero_of_piInf {σ : E →ₐ[F] E} (hCM : IsCMExt F E σ) (τ : ∀ w
   have hinf : ∀ w, evInf F w (c 0) = 0 ∧ evInf F w (c 1) = 0 := by
     intro w
     have hw := h0 w
-    rw [hd_eq, map_add, piInf_tmul, piInf_tmul, map_one, mul_one] at hw
+    rw [hd_eq, map_add (f := _), piInf_tmul, piInf_tmul, map_one, mul_one] at hw
     set r0 := InfinitePlace.Completion.extensionEmbedding w (evInf F w (c 0)) with hr0_def
     set r1 := InfinitePlace.Completion.extensionEmbedding w (evInf F w (c 1)) with hr1_def
     have hr0 : star r0 = r0 := ext_star (hCM.1.isReal w) _

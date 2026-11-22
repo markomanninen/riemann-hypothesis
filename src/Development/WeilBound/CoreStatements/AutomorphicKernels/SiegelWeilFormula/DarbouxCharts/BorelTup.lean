@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.DarbouxCharts.TChart
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnitaryChartEquiv.CEquivApply
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.DarbouxCharts.TChart
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnitaryChartEquiv.CEquivApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,6 @@ open PositivityTheory.SiegelWeilFormula.TBij.Adp PositivityTheory.SiegelWeilForm
 local instance (priority := high) measTup' {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ] :
     MeasurableSpace (κ → AF F) := borel _
 
-local instance borelTup' {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ] : BorelSpace (κ → AF F) := ⟨rfl⟩
-
 private theorem integral_mul_star_eq_of_lintegral_norm_sq_eq {α : Type*} [MeasurableSpace α] {μ : Measure α} {u v u' v' : α → ℂ}
     (hu : MemLp u 2 μ) (hv : MemLp v 2 μ) (hu' : MemLp u' 2 μ) (hv' : MemLp v' 2 μ)
     (h : ∀ k : ℂ, ∫⁻ x, ‖v x + k * u x‖ₑ ^ 2 ∂μ = ∫⁻ x, ‖v' x + k * u' x‖ₑ ^ 2 ∂μ) :
@@ -26,8 +28,8 @@ private theorem integral_mul_star_eq_of_lintegral_norm_sq_eq {α : Type*} [Measu
     rw [← MemLp.toLp_const_smul, ← MemLp.toLp_add, ← MemLp.toLp_const_smul, ← MemLp.toLp_add,
       Lp.norm_toLp, Lp.norm_toLp]
     congr 1
-    rw [eLpNorm_eq_lintegral_rpow_enorm (by norm_num) (by norm_num),
-      eLpNorm_eq_lintegral_rpow_enorm (by norm_num) (by norm_num)]
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) (hv.add (hu.const_smul k)).aestronglyMeasurable,
+      eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) (hv'.add (hu'.const_smul k)).aestronglyMeasurable]
     congr 1
     simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
     exact h k
@@ -72,11 +74,11 @@ theorem tUnit : TUnit := by
   have hmem : Φ' + k • Φ ∈ d.sch := d.sch.add_mem hΦ' (d.sch.smul_mem k hΦ)
   have e1 : ∀ y, C * S0 (d.om x Φ') y + k * (C * S0 (d.om x Φ) y) = C * S0 (d.om x (Φ' + k • Φ)) y := by
     intro y
-    simp only [map_add, map_smul, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+    simp only [map_add (f := _), map_smul, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
     ring
   have e2 : ∀ y, C * S0 Φ' y + k * (C * S0 Φ y) = C * S0 (Φ' + k • Φ) y := by
     intro y
-    simp only [map_add, map_smul, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+    simp only [map_add (f := _), map_smul, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
     ring
   simp_rw [e1, e2, enorm_mul, mul_pow]
   have hC : ‖C‖ₑ ^ 2 ≠ ⊤ := by simp

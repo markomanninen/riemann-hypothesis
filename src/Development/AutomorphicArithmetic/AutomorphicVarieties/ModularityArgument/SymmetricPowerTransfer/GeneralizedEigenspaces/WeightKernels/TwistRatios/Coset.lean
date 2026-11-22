@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.WeightKernels.GoodSet
-import Mathlib.Topology.Algebra.ClopenNhdofOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.WeightKernels.GoodSet
+public import Mathlib.Topology.Algebra.ClopenNhdofOne
+
+@[expose] public section
 
 noncomputable section
 

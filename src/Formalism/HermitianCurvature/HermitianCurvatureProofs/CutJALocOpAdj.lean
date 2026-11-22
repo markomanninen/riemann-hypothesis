@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocCC
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_JA_LocLemmas
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStable2
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocCC
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_JA_LocLemmas
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStable2
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 

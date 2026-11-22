@@ -1,15 +1,20 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.LatticeInclusionFormsInjective
-import Formalism.LocalToGlobal.CharacterGerms.CartesianBoundOnCurves
-import Formalism.LocalToGlobal.CharacterGerms.CoeffIterateZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.TwoMulChainStartIndexAddOneOfOdd
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CoeffLeafGaugeSubMainTermEqZeroOnFirstAxisStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.PderivLeafGaugeEqPairingAddIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.LinearSubstCoordinateIntegralOfDegreeLtStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CoeffIntegralOnExponentsSubstOfLowerSetStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CoeffCoordinatesGoodTangentsLtSqStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.HPullWUpGTwoGroupEmbeddingEqRenameStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.LatticeInclusionFormsInjective
+public import Formalism.LocalToGlobal.CharacterGerms.CartesianBoundOnCurves
+public import Formalism.LocalToGlobal.CharacterGerms.CoeffIterateZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.TwoMulChainStartIndexAddOneOfOdd
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CoeffLeafGaugeSubMainTermEqZeroOnFirstAxisStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.PderivLeafGaugeEqPairingAddIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.LinearSubstCoordinateIntegralOfDegreeLtStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CoeffIntegralOnExponentsSubstOfLowerSetStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CoeffCoordinatesGoodTangentsLtSqStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.HPullWUpGTwoGroupEmbeddingEqRenameStatement
+
+@[expose] public section
+
 open Formalism.L2.FormalSeriesBounds Formalism.IncomingBounds GlobalTheory.MainTerm Classical
 
 namespace GlobalTheory.MainTerm
@@ -24,7 +29,7 @@ private theorem ge_coeff_rename_inl {C : Type} [Field C] (V : VF C) {ι ι' : Ty
   rw [Set.Finite.mem_toFinset, Set.mem_preimage, Set.mem_singleton_iff] at hν
   apply h
   rw [Finsupp.degree_eq_sum, ← hν]
-  simp [Finsupp.mapDomain_apply Sum.inl_injective]
+  simp [Finsupp.mapDomain_apply_of_injective Sum.inl_injective]
 
 private theorem ge_coeff_rename_inr {C : Type} [Field C] (V : VF C) {ι ι' : Type} [Fintype ι]
     [Fintype ι'] (F : MvPowerSeries ι' C) (μ : ι ⊕ ι' →₀ ℕ)
@@ -36,7 +41,7 @@ private theorem ge_coeff_rename_inr {C : Type} [Field C] (V : VF C) {ι ι' : Ty
   rw [Set.Finite.mem_toFinset, Set.mem_preimage, Set.mem_singleton_iff] at hν
   apply h
   rw [Finsupp.degree_eq_sum, ← hν]
-  simp [Finsupp.mapDomain_apply Sum.inr_injective]
+  simp [Finsupp.mapDomain_apply_of_injective Sum.inr_injective]
 
 private theorem constantCoeff_linPull_eq_zero {C : Type} [Field C] {σ ι : Type} [Fintype σ]
     [Fintype ι] (e : ι → σ → C) (F : MvPowerSeries σ C)
@@ -51,13 +56,14 @@ private theorem constantCoeff_linPull_eq_zero {C : Type} [Field C] {σ ι : Type
 
 private theorem pderiv_inr_mainM_one {C : Type} [Field C] (V : VF C) {ι ι' : Type} [Fintype ι]
     [Fintype ι'] (Φ : ι' → ι → C) (b : ι') :
-    MvPowerSeries.pderiv C (Sum.inr b) (mainM V 1 Φ) =
+    MvPowerSeries.pderiv (R := C) (Sum.inr b) (mainM V 1 Φ) =
       MvPowerSeries.rename Sum.inl ((V.l : C)⁻¹ • ∑ c : ι,
         Φ b c • (MvPowerSeries.X c : MvPowerSeries ι C) ^ V.l) := by
   have hE : expE V.l 1 = 1 := by simp [expE]
   unfold mainM
   rw [hE, pow_one, pow_one]
-  simp only [map_smul, map_sum, MvPowerSeries.rename_X, map_pow, Finset.smul_sum, smul_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_smul, map_sum, MvPowerSeries.rename_X, map_pow, Finset.smul_sum, smul_smul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl (fun c _ => ?_)
   rw [Finset.sum_eq_single b]
@@ -112,7 +118,7 @@ theorem mPlus_of_good_tangents : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) [
     -((V.l : C) * (S g).be (em c) 1 κ) * X.pair g κ k * v' b k with hΦ
   set F := X.hM g a 1 (fun δ => (S g).tan (em δ)) v' - mainM V 1 Φ with hF
   have hcoeff : MvPowerSeries.coeff (μ' + Finsupp.single (Sum.inr b) 1) F =
-      ((μ' (Sum.inr b) : C) + 1)⁻¹ * MvPowerSeries.coeff μ' (MvPowerSeries.pderiv C (Sum.inr b) F) := by
+      ((μ' (Sum.inr b) : C) + 1)⁻¹ * MvPowerSeries.coeff μ' (MvPowerSeries.pderiv (R := C) (Sum.inr b) F) := by
     rw [MvPowerSeries.coeff_pderiv]
     field_simp
   rw [hcoeff]
@@ -120,14 +126,15 @@ theorem mPlus_of_good_tangents : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) [
   set G : MvPowerSeries (Fin N) C :=
     (∑ κ : J g, (∑ k, X.pair g κ k * v' b k) • linPull (fun δ => (S g).tan (em δ)) ((S g).ze (t g) κ)) -
       (V.l : C)⁻¹ • ∑ c : Fin N, Φ b c • (MvPowerSeries.X c : MvPowerSeries (Fin N) C) ^ V.l with hG
-  have hsplit : MvPowerSeries.pderiv C (Sum.inr b) F =
+  have hsplit : MvPowerSeries.pderiv (R := C) (Sum.inr b) F =
       MvPowerSeries.subst (fun w : WV I => hPullW (upG w.1 (t w.1 w.2))
         (fun c => toW g ((fun δ => (S g).tan (em δ)) c)) (fun b => toW (1 - g) (v' b))) γ +
       MvPowerSeries.rename Sum.inl G := by
     rw [hF, map_sub, hγeq, pderiv_inr_mainM_one V Φ b]
-    simp only [h91.1, hG, map_sub, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [h91.1, hG, map_sub, map_sum, map_smul]
     abel
-  rw [hsplit, map_add]
+  rw [hsplit, map_add (f := _)]
   refine VF.Ge.add ?_ ?_
   · have h2 : ∀ j g : Fin 2, j = g ∨ j = 1 - g := by decide
     refine GlobalTheory.T.coeffIntegralOnExponents_subst_of_lower_set C V (Fin N ⊕ Fin X.n) (WV I)
@@ -149,7 +156,8 @@ theorem mPlus_of_good_tangents : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) [
         rw [h91.1]
         apply ge_coeff_rename_inl V
         intro ν' hν'
-        rw [(GlobalTheory.T.coeff_coordinates_good_tangents_lt_sq C V d (I j) (J j) (X.G j) (S j) (t j) (hT j) N em hal ν'
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [(GlobalTheory.T.coeff_coordinates_good_tangents_lt_sq C V d (I j) (J j) (X.G j) (S j) (t j) (hT j) N em hal ν'
           (by rw [hν']; exact hP.1)).1 x, map_sum]
         apply VF.Ge.sum
         intro δ _
@@ -170,8 +178,10 @@ theorem mPlus_of_good_tangents : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) [
     have hdeg : ν.degree < V.l ^ 2 := by rw [hν]; exact hl'
     have h19 := (GlobalTheory.T.coeff_coordinates_good_tangents_lt_sq C V d (I g) (J g) (X.G g) (S g) (t g) (hT g) N em hal ν hdeg).2
     have hz : MvPowerSeries.coeff ν G = 0 := by
-      rw [hG, map_sub, map_sum]
-      simp only [MvPowerSeries.coeff_smul, h19, map_neg, map_sum, hΦ]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hG, map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [MvPowerSeries.coeff_smul, h19, map_neg, map_sum, hΦ]
       have hL : (V.l : C) ≠ 0 := VF.l_ne_zero
       rw [sub_eq_zero]
       simp only [Finset.mul_sum, Finset.sum_mul, mul_neg, Finset.sum_neg_distrib, neg_mul]

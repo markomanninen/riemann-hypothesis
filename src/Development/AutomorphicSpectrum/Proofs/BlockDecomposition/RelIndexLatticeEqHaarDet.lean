@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RelIndexMulMeasure
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RelIndexMulMeasure
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped ENNReal

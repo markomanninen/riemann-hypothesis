@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NormOneOfPow
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NormOneOfPow
+
+@[expose] public section
 
 noncomputable section
 

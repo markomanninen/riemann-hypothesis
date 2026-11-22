@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.CokernelKilling
-import Development.EtaleCohomology.EtaleSheaves.CokernelKilling.FiniteSubcover
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.CokernelKilling
+public import Development.EtaleCohomology.EtaleSheaves.CokernelKilling.FiniteSubcover
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E3Cut

@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.PeriodIntegrals.IsLowUnitH
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DsigWSubAvg
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.PeriodIntegrals.IsLowUnitH
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DsigWSubAvg
+
+@[expose] public section
+
 open Formalism.MainNotions.S
 
 namespace GlobalTheory.KFinDenseDS

@@ -1,4 +1,8 @@
-import Formalism.FockGram.StatementLat
+module
+
+public import Formalism.FockGram.StatementLat
+
+@[expose] public section
 
 open Matrix LinearMap Module
 
@@ -26,13 +30,5 @@ def HermDual : Prop :=
         (Algebra.norm ℤ GS.det).natAbs ∧
       (hdual B (Submodule.span S (Set.range b)) = Submodule.span S (Set.range b) ↔
         IsUnit GS.det)
-
-def HermTraceGram : Prop :=
-  ∀ (S M ι κ : Type) [CommRing S] [StarRing S] [AddCommGroup M] [Module S M]
-    [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
-    (B : M →ₗ⋆[S] M →ₗ[S] S) (b : Basis ι S M) (ω : Basis κ ℤ S),
-    (Matrix.of fun p q : ι × κ => Algebra.trace ℤ S (B (ω p.2 • b p.1) (ω q.2 • b q.1))).det =
-      (Matrix.of fun k l : κ => Algebra.trace ℤ S (star (ω k) * ω l)).det ^ Fintype.card ι *
-        Algebra.norm ℤ (sgram B b).det
 
 end Formalism.E

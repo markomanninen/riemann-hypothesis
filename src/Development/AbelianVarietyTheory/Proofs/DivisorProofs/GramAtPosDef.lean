@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.KernelNormConstantSpec
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.InfFam
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.KernelNormConstantSpec
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.InfFam
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links
 open IsDedekindDomain NumberField Matrix MvPolynomial
 open GlobalTheory.SignedHC GlobalTheory.ChiGrid Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.FunObj
@@ -61,7 +66,7 @@ theorem frAt_on {S : HSp D} (fr : GL (Fin S.rank) D.host.E)
   rw [← h2, frAt, gramAt]
   congr 2
   ext i j
-  simp [Formalism.UG.cT, Matrix.conjTranspose_apply, hs]
+  simp [Formalism.UG.cT, Matrix.conjTranspose_apply]
   exact (hs _).symm
 
 theorem gramAt_posDef {S : HSp D} (fr : GL (Fin S.rank) D.host.E)
@@ -85,8 +90,7 @@ theorem gramAt_posDef {S : HSp D} (fr : GL (Fin S.rank) D.host.E)
 
 theorem cart_one {S : HSp D} (fr : GL (Fin S.rank) D.host.E)
     (h : Formalism.UG.cT (D.sp.cm.sig : D.host.E →+* D.host.E) fr.1 * S.gram * fr.1 = 1)
-    {s : D.what₂.Tau → Matrix (Fin S.rank) (Fin S.rank) ℂ} (hs : ∀ τ, IsCartanInv (gramAt D S τ) (s τ)) : s = fun _ => 1 :=
-by
+    {s : D.what₂.Tau → Matrix (Fin S.rank) (Fin S.rank) ℂ} (hs : ∀ τ, IsCartanInv (gramAt D S τ) (s τ)) : s = fun _ => 1 := by
   funext τ
   have h1 : (gramAt D S τ).PosDef := gramAt_posDef fr h τ
   exact cartan_eq_one (hs τ) h1

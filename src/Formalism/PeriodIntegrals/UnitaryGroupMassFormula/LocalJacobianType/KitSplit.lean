@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LocJacTyp
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.Development
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.RingTopologyInstances
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDualGenerator.EpSelfDualSplit
-import Formalism.PeriodIntegrals.SplitIntLoc
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SplitIntLoc
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LocJacTyp
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.Development
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.RingTopologyInstances
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDualGenerator.EpSelfDualSplit
+public import Formalism.PeriodIntegrals.SplitIntLoc
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SplitIntLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem p_sig (z : Fv F v ⊗[F] E) :
     D.p 0 (sigR (Fv F v) σ z) = D.p 1 z ∧ D.p 1 (sigR (Fv F v) σ z) = D.p 0 z := by
   have h : sigR (Fv F v) σ z = D.p 1 z • D.e + D.p 0 z • (1 - D.e) := by
     conv_lhs => rw [D.decomp z]
-    rw [map_add, sigR_smul, sigR_smul, map_sub, map_one, D.hσ, sub_sub_cancel, add_comm]
+    rw [map_add (f := _), sigR_smul, sigR_smul, map_sub, map_one, D.hσ, sub_sub_cancel, add_comm]
   rw [h]
   exact D.p_pair _ _
 
@@ -124,7 +128,7 @@ theorem tens_iff (x : Fv F v ⊗[F] E) :
       left
       exact ⟨⟨(a : E), ⟨a, rfl⟩⟩, by simp [inclR]⟩
     | zero => simpa using zero_mem _
-    | add y z _ _ hy hz => rw [map_add]; exact add_mem hy hz
+    | add y z _ _ hy hz => simpa only [map_add] using add_mem hy hz
     | smul t y _ hy =>
       have h1 : t • y = ((t : Fv F v) ⊗ₜ[F] (1 : E)) * y := by
         rw [show t • y = (t : Fv F v) • y from rfl, Algebra.smul_def]
@@ -207,7 +211,7 @@ theorem exists_SD (hS : SplitHyp σ v) : Nonempty (SD σ v) := by
     have hfix : ∀ z, sigR (Fv F v) σ z = z := by
       intro z
       conv_lhs => rw [dec z]
-      rw [(sigR (Fv F v) σ).map_add, sigR_smul, sigR_smul, (sigR (Fv F v) σ).map_sub,
+      rw [map_add, sigR_smul, sigR_smul, (sigR (Fv F v) σ).map_sub,
         (sigR (Fv F v) σ).map_one, ← hfdef, hfe, ← dec z]
     ext x
     have h1 := hfix ((1 : Fv F v) ⊗ₜ[F] x)

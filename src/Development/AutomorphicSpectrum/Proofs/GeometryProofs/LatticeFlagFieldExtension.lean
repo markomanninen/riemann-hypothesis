@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.AdelicGroupAlgebraActionInjective
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHTFormOver
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushInvertible
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualMapOfFieldExtension
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkMap
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.AdelicGroupAlgebraActionInjective
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHTFormOver
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushInvertible
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualMapOfFieldExtension
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkMap
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar
 
@@ -38,21 +43,24 @@ theorem dual_frame_ext {Ω Ω' : Type} [Field Ω] [Field Ω'] (i : Ω →+* Ω')
     induction hu using Submodule.span_induction with
     | mem y hy =>
       obtain ⟨m, rfl⟩ := hy
-      simp [he, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [he, map_sum]
     | zero => simp
     | add y z _ _ hy hz => simp only [LinearMap.add_apply, hy, hz, add_zero]
     | smul a y _ hy => simp only [LinearMap.smul_apply, hy, smul_zero]
   have hjx : ∀ x, j x = ∑ k, i (b k x) • j (e k) := by
     intro x
     conv_lhs => rw [hx x]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun k _ => hj _ _
   have hext : ∀ v v' : Module.Dual Ω' W', (∀ k, v (j (e k)) = v' (j (e k))) → v = v' := by
     intro v v' h
     refine LinearMap.ext_on hs ?_
     rintro _ ⟨x, rfl⟩
     rw [hjx x]
-    simp only [map_sum, map_smul, h]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, h]
   have hpair : ∀ k l, jW (b k) (j (e l)) = if k = l then 1 else 0 := by
     intro k l
     rw [hjW, he]
@@ -142,7 +150,7 @@ theorem isVBOn_dual_pull : ∀ (X X' : Scheme.{0}) (Ω Ω' : Type) [Field Ω] [F
           exact Submodule.subset_span ⟨k, rfl⟩
         | zero => simp
         | add y z _ _ hy hz =>
-          rw [map_add]
+          rw [map_add (f := _)]
           exact Submodule.add_mem _ hy hz
         | smul a y _ hy =>
           have : jW (a • y) = (⟨i a, hreg _ a.2⟩ : regAt ξ' q') • jW y := hsemi (a : Ω) y

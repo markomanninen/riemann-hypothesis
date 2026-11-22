@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Imports
-import Formalism.HermitianCurvature.StatementJF
-import Formalism.HermitianCurvature.StatementU
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Imports
+public import Formalism.HermitianCurvature.StatementJF
+public import Formalism.HermitianCurvature.StatementU
+
+@[expose] public section
 
 open Matrix MeasureTheory
 

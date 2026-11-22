@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+
+@[expose] public section
 
 open scoped BigOperators
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Classical

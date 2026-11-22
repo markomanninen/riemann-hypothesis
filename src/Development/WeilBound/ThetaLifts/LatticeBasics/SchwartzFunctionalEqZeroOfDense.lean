@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.SchwartzMoments.EqZeroOfMoments
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.MetaplecticRepresentation
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.SchwartzMoments.EqZeroOfMoments
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.MetaplecticRepresentation
+
+@[expose] public section
 
 noncomputable section
 

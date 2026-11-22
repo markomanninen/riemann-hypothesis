@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
-import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.MixModel
 open IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
@@ -27,8 +32,7 @@ theorem gen_mem (D : D7) (S : HSp D) (L : Lat S) (α : Af D.host.F) (hα : α �
     Submodule.subset_span ⟨x, hx, rfl⟩
   have := Submodule.smul_mem _ (⟨_, hint⟩ : Formalism.L2.Herm.intAf D.host.F D.host.E) hgen
   convert this using 1
-  funext i
-  simp only [one_mul, finPart, Formalism.IndefR.Lev.swapAE, Formalism.UG.inclE]
+  ext i
   show _ = ((1 : D.host.E) ⊗ₜ[D.host.F] α) * (x i ⊗ₜ[D.host.F] (1 : Af D.host.F))
   rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, mul_one]
   rfl

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspidalNoRadicalFixed
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.CuspDiscreteDecompositionOfTraceClass
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsCompOfIsTraceClass
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegrableDescendOrbitSum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SetIntegralNormRmulLe
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnitaryAutomorphicConvolutionMemCuspidalOfRadicaStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasSumCuspidalMultiplicityTraceStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspidalNoRadicalFixed
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.CuspDiscreteDecompositionOfTraceClass
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsCompOfIsTraceClass
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegrableDescendOrbitSum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SetIntegralNormRmulLe
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnitaryAutomorphicConvolutionMemCuspidalOfRadicaStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasSumCuspidalMultiplicityTraceStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,15 +36,15 @@ theorem trace_comp_comp_of_comp_eq_id (S : K →L[ℂ] H) (P : H →L[ℂ] K) (h
     rw [trace_comp_comm ((hB i).comp_left S) ((hC i).comp_right P), trace_comp_comm (hB i) (hC i)]
     congr 1
     ext x; simp [hPS]
-  have h1 : HasSum (fun j => ⟪stdBasis H j, (S ∘L (∑ i, B i ∘L C i) ∘L P) (stdBasis H j)⟫_ℂ)
+  have h1 : HasSum (fun j => ⟪stdBasis (H := H) j, (S ∘L (∑ i, B i ∘L C i) ∘L P) (stdBasis (H := H) j)⟫_ℂ)
       (∑ i, trace (B i ∘L C i)) := by
     rw [e]
     simpa only [ContinuousLinearMap.sum_apply, inner_sum, t] using
       hasSum_sum fun i (_ : i ∈ Finset.univ) =>
-        hasSum_trace_comp (stdBasis H) ((hB i).comp_left S) ((hC i).comp_right P)
-  have h2 : HasSum (fun j => ⟪stdBasis K j, (∑ i, B i ∘L C i) (stdBasis K j)⟫_ℂ) (∑ i, trace (B i ∘L C i)) := by
+        hasSum_trace_comp (stdBasis (H := H)) ((hB i).comp_left S) ((hC i).comp_right P)
+  have h2 : HasSum (fun j => ⟪stdBasis (H := K) j, (∑ i, B i ∘L C i) (stdBasis (H := K) j)⟫_ℂ) (∑ i, trace (B i ∘L C i)) := by
     simpa only [ContinuousLinearMap.sum_apply, inner_sum] using
-      hasSum_sum fun i (_ : i ∈ Finset.univ) => hasSum_trace_comp (stdBasis K) (hB i) (hC i)
+      hasSum_sum fun i (_ : i ∈ Finset.univ) => hasSum_trace_comp (stdBasis (H := K)) (hB i) (hC i)
   exact h1.tsum_eq.trans h2.tsum_eq.symm
 
 end Compress

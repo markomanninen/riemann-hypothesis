@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.TotallyRealRoots.PrincTop
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.TotallyRealRoots.EmultiplicityPowSubOneOdd
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.TotallyRealRoots.PrincTop
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.TotallyRealRoots.EmultiplicityPowSubOneOdd
+
+@[expose] public section
 
 namespace KStar.TotallyRealRoots
 
@@ -11,7 +15,7 @@ private theorem gen_exists_nat {t : ℤ_[l]} (ht : IsUnit t) (d : ℤ_[l]) :
   refine ⟨(-(PadicInt.toZMod d) * (PadicInt.toZMod t)⁻¹ : ZMod l).val, ?_⟩
   have hm : d + t * ((-(PadicInt.toZMod d) * (PadicInt.toZMod t)⁻¹ : ZMod l).val : ℤ_[l]) ∈
       RingHom.ker (PadicInt.toZMod : ℤ_[l] →+* ZMod l) := by
-    rw [RingHom.mem_ker, map_add, map_mul, map_natCast, ZMod.natCast_zmod_val]
+    rw [RingHom.mem_ker, map_add (f := _), map_mul, map_natCast, ZMod.natCast_zmod_val]
     field_simp
     ring
   rw [PadicInt.ker_toZMod, PadicInt.maximalIdeal_eq_span_p, Ideal.mem_span_singleton] at hm

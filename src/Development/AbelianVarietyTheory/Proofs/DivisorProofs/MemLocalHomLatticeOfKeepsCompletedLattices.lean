@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.WeilParts
 open scoped TensorProduct Kronecker ComplexOrder
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -25,7 +30,7 @@ theorem map_toEAf (V : HSp D) (g : GA D V) :
 def swpVec (D : D7) (n : ℕ) (α : Af D.host.F) :
     (Fin n → Af D.host.F ⊗[D.host.F] D.host.E) →+ (Fin n → EAf D) :=
   AddMonoidHom.mk' (fun y i => ((1 : D.host.E) ⊗ₜ[D.host.F] α : EAf D) * swp D (y i))
-    (fun y z => by funext i; simp only [Pi.add_apply, map_add, mul_add])
+    (fun y z => by funext i; simp only [Pi.add_apply, map_add (f := _), mul_add])
 
 theorem swpVec_pure {n : ℕ} (α β : Af D.host.F) (x : Fin n → D.host.E) :
     swpVec D n α (fun i => β ⊗ₜ[D.host.F] x i) = fun i => x i ⊗ₜ[D.host.F] (α * β) := by
@@ -40,7 +45,8 @@ theorem mulVec_swpVec (V : HSp D) (g : GA D V) (α : Af D.host.F)
   funext i
   change ∑ j, swp D (finMat D.sp.cm.sig V.gram g i j) * (((1 : D.host.E) ⊗ₜ[D.host.F] α : EAf D) * swp D (y j)) =
     ((1 : D.host.E) ⊗ₜ[D.host.F] α : EAf D) * swp D (∑ j, finMat D.sp.cm.sig V.gram g i j * y j)
-  rw [map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul, mul_left_comm]
 
@@ -64,10 +70,10 @@ theorem rankOne_mem (S T : HSp D) (LS : Set (Fin S.rank → D.host.E)) (LT : Set
         rankOne_pure S T a x y β (α * γ)⟩
       rw [map_mul, map_mul, hP v hv, zero_mul, zero_mul]
     | zero => rw [map_zero, map_zero]; exact zero_mem _
-    | add y z _ _ hy hz => rw [map_add, map_add]; exact add_mem hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _), map_add (f := _)]; exact add_mem hy hz
     | neg y _ hy => rw [map_neg, map_neg]; exact neg_mem hy
   | zero => rw [map_zero, map_zero]; exact zero_mem _
-  | add y z _ _ hy hz => rw [map_add, map_add]; exact add_mem hy hz
+  | add y z _ _ hy hz => rw [map_add (f := _), map_add (f := _)]; exact add_mem hy hz
   | neg y _ hy => rw [map_neg, map_neg]; exact neg_mem hy
 
 theorem actO_mem (S T : HSp D) (LS : Set (Fin S.rank → D.host.E)) (LT : Set (Fin T.rank → D.host.E))

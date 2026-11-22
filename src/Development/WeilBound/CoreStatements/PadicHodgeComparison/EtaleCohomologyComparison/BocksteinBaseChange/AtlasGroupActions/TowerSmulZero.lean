@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.InstAddCommGroup
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.InstAddCommGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem padic_smul {l : ℕ} [Fact l.Prime] {A : Type} [CommRing A] {W : Type u}
   have hf : f z = f c * (l : A) ^ n + ((PadicInt.toZModPow n z).val : A) := by
     have : z = c * (l : ℤ_[l]) ^ n + ((PadicInt.toZModPow n z).val : ℤ_[l]) := by rw [hc]; ring
     conv_lhs => rw [this]
-    rw [map_add, map_mul, map_pow, map_natCast, map_natCast]
+    rw [map_add (f := _), map_mul, map_pow, map_natCast, map_natCast]
   rw [hf, add_smul, mul_smul, hw, smul_zero, zero_add, Nat.cast_smul_eq_nsmul]
 
 theorem modF_smul {R : Type} [CommRing R] {C : Type u} [Category.{v} C] (A : C ⥤ CommAlgCat.{w} R) (r : R)

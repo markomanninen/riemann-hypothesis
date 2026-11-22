@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ClsStab
-import Formalism.LocalRingCardinality.DataLevelD
-import Formalism.LocalToGlobal.GroupLattices.TrivialTransfer.GenCoprime
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.FiniteClassSetOfFiniteIndex
-import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.GramDetIsUnit
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ClsStab
+public import Formalism.LocalRingCardinality.DataLevelD
+public import Formalism.LocalToGlobal.GroupLattices.TrivialTransfer.GenCoprime
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.FiniteClassSetOfFiniteIndex
+public import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.GramDetIsUnit
+
+@[expose] public section
 
 noncomputable section
 

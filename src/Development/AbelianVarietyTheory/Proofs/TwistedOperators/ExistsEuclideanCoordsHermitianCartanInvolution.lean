@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FderivCompress
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FderivCompress
+
+@[expose] public section
+
 open MeasureTheory Complex Matrix GlobalTheory.RealWeil GlobalTheory.Mem.Lift
 open scoped RealInnerProductSpace Real ComplexOrder
 
@@ -9,8 +14,8 @@ namespace GlobalTheory.Twist.EuclidCoord
 
 open GlobalTheory.RealWeil.UnitaryOsc
 
-open scoped MatrixOrder in
 
+open scoped MatrixOrder in
 theorem exists_coord : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (H s : Matrix ι ι ℂ), Hᴴ = H → s * s = 1 → (H * s).PosDef → ∃ (E : EuclideanSpace ℂ ι ≃L[ℝ] (ι → ℂ)) (J : EuclideanSpace ℂ ι ≃ₗᵢ[ℝ] EuclideanSpace ℂ ι), (∀ x, J (J x) = -x) ∧ (∀ x, E (J x) = I • s *ᵥ E x) ∧ ∀ x y, (star (E y) ⬝ᵥ H *ᵥ E x).im = omJ J x y := by
   intro ι _ _ H s hH hs hpos
   have hP0 : (0 : Matrix ι ι ℂ) ≤ H * s := hpos.posSemidef.nonneg
@@ -38,7 +43,13 @@ theorem exists_coord : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (H s : Matr
   have hs₀h : s₀ᴴ = s₀ := by
     rw [← hform, conjTranspose_mul, conjTranspose_mul, conjTranspose_conjTranspose, hH, mul_assoc]
   let E : EuclideanSpace ℂ ι ≃L[ℝ] (ι → ℂ) :=
-    (crd ι).trans (ContinuousLinearEquiv.equivOfInverse (mvL (u⁻¹).1) (mvL u.1) (fun v => by simp) fun v => by simp)
+    (crd ι).trans (ContinuousLinearEquiv.equivOfInverse (mvL (u⁻¹).1) (mvL u.1)
+      (fun v => by
+        change u.1 *ᵥ (u⁻¹).1 *ᵥ v = v
+        rw [mulVec_mulVec, Units.mul_inv, one_mulVec])
+      (fun v => by
+        change (u⁻¹).1 *ᵥ u.1 *ᵥ v = v
+        rw [mulVec_mulVec, Units.inv_mul, one_mulVec]))
   have hE : ∀ x, E x = (u⁻¹).1 *ᵥ crd ι x := fun _ => rfl
   refine ⟨E, cplx s₀ hs₀h hs₀2, cplx_cplx s₀ hs₀h hs₀2, fun x => ?_, fun x y => ?_⟩
   · rw [hE, hE, crd_cplx, mulVec_smul, mulVec_mulVec, mulVec_mulVec]

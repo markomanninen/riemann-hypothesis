@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.PerfectRings.IntermediateMapWittQuadratic
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.PerfectRings.IntermediateMapWittQuadratic
+
+@[expose] public section
 
 noncomputable section
 

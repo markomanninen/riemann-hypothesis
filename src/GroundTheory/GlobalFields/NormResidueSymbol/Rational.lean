@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.NormResidueSymbol.RationalDiagonal
-import GroundTheory.GlobalFields.NormResidueSymbol.RationalCyclotomic
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.NormResidueSymbol.RationalDiagonal
+public import GroundTheory.GlobalFields.NormResidueSymbol.RationalCyclotomic
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -14,8 +18,6 @@ namespace RationalSymbol
 open _root_.GroundTheory.Global.Cyclotomic GroundTheory.LocalField.Abstract
 
 attribute [local instance] galCommGroup
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 section Unit
 
@@ -92,7 +94,8 @@ theorem rootsOfUnityField_le_maxCyclotomic (m : ℕ) [NeZero m] :
     rootsOfUnityField m ≤ maxCyclotomic :=
   adjoin_le_iff.2 fun _ hx ↦ subset_adjoin ℚ _ ⟨m, Nat.pos_of_neZero m, hx⟩
 
-theorem restrictNormal_eq_ideleSymbol (m : ℕ) [NeZero m] (x : IdeleGroup ℚ) (σ : Gal(ℚ̄/ℚ))
+theorem restrictNormal_eq_ideleSymbol (m : ℕ) [NeZero m] (x : IdeleGroup ℚ)
+    (σ : Gal(AlgebraicClosure ℚ/ℚ))
     (hσ : cycRestrict σ = reciprocityMap (IdeleClassGroup.mk ℚ x)) :
     σ.restrictNormal (rootsOfUnityField m) = ideleSymbol ℚ (rootsOfUnityField m) x := by
   obtain ⟨⟨a, y⟩, rfl⟩ := RationalIdeles.mulMap_bijective.2 x
@@ -112,8 +115,10 @@ theorem restrictNormal_eq_ideleSymbol (m : ℕ) [NeZero m] (x : IdeleGroup ℚ) 
     have hp' : ζ ^ (prime (placeOf ⟨p, hp⟩) ^ k) = 1 := by rw [prime_placeOf ⟨p, hp⟩]; exact hζ
     rw [ideleSymbol_apply_of_mem_positiveSubgroup L y _ hp']
     apply Subtype.ext
-    have h1 : ((σ₂ ζ : L) : ℚ̄) = σ ζ := AlgEquiv.restrictNormal_commutes σ L ζ
-    have hmem : (ζ : ℚ̄) ∈ maxCyclotomic := rootsOfUnityField_le_maxCyclotomic m ζ.2
+    have h1 : ((σ₂ ζ : L) : AlgebraicClosure ℚ) = σ ζ :=
+      AlgEquiv.restrictNormal_commutes σ L ζ
+    have hmem : (ζ : AlgebraicClosure ℚ) ∈ maxCyclotomic :=
+      rootsOfUnityField_le_maxCyclotomic m ζ.2
     have hζ' : (⟨ζ, hmem⟩ : maxCyclotomic) ^ (prime (placeOf ⟨p, hp⟩) ^ k) = 1 :=
       Subtype.ext (by simpa using congrArg Subtype.val hp')
     have h2 := reciprocityMap_apply_of_mem_positiveSubgroup y (placeOf ⟨p, hp⟩) hζ'
@@ -132,9 +137,9 @@ theorem restrictNormal_eq_ideleSymbol (m : ℕ) [NeZero m] (x : IdeleGroup ℚ) 
     _ = σ₁ r := by rw [this]
 
 theorem coe_ideleSymbol_apply (m : ℕ) [NeZero m] (x : IdeleGroup ℚ) (z : rootsOfUnityField m) :
-    ((ideleSymbol ℚ (rootsOfUnityField m) x z : rootsOfUnityField m) : ℚ̄) =
+    ((ideleSymbol ℚ (rootsOfUnityField m) x z : rootsOfUnityField m) : AlgebraicClosure ℚ) =
       ((reciprocityMap (IdeleClassGroup.mk ℚ x)
-        ⟨z, rootsOfUnityField_le_maxCyclotomic m z.2⟩ : maxCyclotomic) : ℚ̄) := by
+        ⟨z, rootsOfUnityField_le_maxCyclotomic m z.2⟩ : maxCyclotomic) : AlgebraicClosure ℚ) := by
   obtain ⟨σ, hσ⟩ := cycRestrict_surjective (reciprocityMap (IdeleClassGroup.mk ℚ x))
   rw [← restrictNormal_eq_ideleSymbol m x σ hσ, ← hσ, coe_cycRestrict_apply]
   exact AlgEquiv.restrictNormal_commutes σ (rootsOfUnityField m) z

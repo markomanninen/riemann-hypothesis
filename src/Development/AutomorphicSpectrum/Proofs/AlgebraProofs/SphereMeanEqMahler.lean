@@ -1,7 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LogMeanShares.LogMeanStatements.HSClaim
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.OnbMat
-import Development.AutomorphicSpectrum.Statements.MetricStatements.RankBound
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LogMeanShares.LogMeanStatements.HSClaim
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.OnbMat
+public import Formalism.MeanHeightDescent.CombinedAverageDegreeBound
+public import Formalism.MonomialMeanResidues.FilteredDegree
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.GROWCountStatement
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Statements
+
+@[expose] public section
 
 open GlobalTheory.CompanionTheory.Ar.HS NumberField MeasureTheory Matrix GroundTheory.Heights₂.Heights
 
@@ -17,8 +24,8 @@ section Cone
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
   [MeasurableSpace E] [BorelSpace E] [Nontrivial E]
 
-open Classical in
 
+open Classical in
 def radial (p : sphere (0 : E) 1) (z : E) : sphere (0 : E) 1 :=
   ⟨if z = 0 then (p : E) else ‖z‖⁻¹ • z, by
     split_ifs with h
@@ -104,7 +111,7 @@ variable {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
 lemma map_normalised {f : X → Y} (hf : MeasurableEmbedding f) {μ : Measure X} {ν : Measure Y}
     {a : ℝ≥0∞} (ha0 : a ≠ 0) (ha1 : a ≠ ⊤) (hmap : μ.map f = a • ν) (s : Set Y) :
     ((μ (f ⁻¹' s))⁻¹ • μ.restrict (f ⁻¹' s)).map f = (ν s)⁻¹ • ν.restrict s := by
-  rw [Measure.map_smul, ← hf.restrict_map, ← hf.map_apply μ s, hmap, Measure.restrict_smul,
+  rw [Measure.map_smul _ hf.measurable.aemeasurable, ← hf.restrict_map, ← hf.map_apply μ s, hmap, Measure.restrict_smul,
     Measure.smul_apply, smul_eq_mul, smul_smul]
   congr 1
   rw [ENNReal.mul_inv (Or.inl ha0) (Or.inl ha1), mul_comm a⁻¹, mul_assoc, ENNReal.inv_mul_cancel ha0 ha1,
@@ -192,7 +199,7 @@ theorem sphere_mean_eq_mahler : ∀ (N k : ℕ) (h : HermNorm N) (B : Matrix (Fi
     rw [map_radial]
     rfl
   have hmeas : Measurable (fun (z : Fin k → EuclideanSpace ℂ (Fin N)) (i : Fin k) => radial p (z i)) :=
-    measurable_pi_lambda _ (fun i => (measurable_radial p).comp (measurable_pi_apply i))
+    Measurable.of_eval (fun i => (measurable_radial p).comp (measurable_pi_apply i))
   have hΦ : Continuous (fun t : Fin k → Metric.sphere (0 : EuclideanSpace ℂ (Fin N)) 1 =>
       fun q : Fin k × Fin N => (B *ᵥ fun a => (t q.1 : EuclideanSpace ℂ (Fin N)) a) q.2) := by
     refine continuous_pi (fun q => ?_)

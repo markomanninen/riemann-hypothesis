@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.GenSectA
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.GenSectA
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem exists_pderiv_ne_zero_lt' {K : Type*} [Field K] [CharZero K] {ι : Type*
     simp at hP
   obtain ⟨i, hi⟩ : ∃ i, s i ≠ 0 := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hs0 (Finsupp.ext h)
   have hdeg : ∀ t : ι →₀ ℕ, t i ≠ 0 →
       (t.sum fun _ e => e) = ((t - Finsupp.single i 1).sum fun _ e => e) + 1 := by
@@ -32,15 +36,16 @@ theorem exists_pderiv_ne_zero_lt' {K : Type*} [Field K] [CharZero K] {ι : Type*
     conv_lhs => rw [← tsub_add_cancel_of_le hle]
     rw [Finsupp.sum_add_index' (fun _ => rfl) (fun _ _ _ => rfl), Finsupp.sum_single_index rfl]
   have hder : pderiv i P =
-      ∑ t ∈ P.support, monomial (t - Finsupp.single i 1) (coeff t P * (t i : K)) := by
+      ∑ t ∈ P.support, monomial (t - Finsupp.single i 1) (AddMonoidAlgebra.coeff P t * (t i : K)) := by
     conv_lhs => rw [P.as_sum]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun t _ => ?_
     rw [pderiv_monomial]
   refine ⟨i, ?_, ?_⟩
   · intro h0
-    have hc := congrArg (coeff (s - Finsupp.single i 1)) h0
-    rw [hder, coeff_sum, coeff_zero, Finset.sum_eq_single s] at hc
+    have hc := congrArg (AddMonoidAlgebra.coeff · (s - Finsupp.single i 1)) h0
+    rw [hder, coeff_sum, AddMonoidAlgebra.coeff_zero, Finset.sum_eq_single s] at hc
     · rw [coeff_monomial, if_pos rfl] at hc
       exact mul_ne_zero (mem_support_iff.1 hs) (by exact_mod_cast hi) hc
     · intro t _ hts
@@ -60,7 +65,7 @@ theorem exists_pderiv_ne_zero_lt' {K : Type*} [Field K] [CharZero K] {ι : Type*
       rw [← htd]
       exact hP
     rw [htd, hder]
-    refine lt_of_le_of_lt (totalDegree_finset_sum _ _) ((Finset.sup_lt_iff hpos).2 fun t ht => ?_)
+    refine lt_of_le_of_lt (MvPolynomial.totalDegree_finsetSum _ _) ((Finset.sup_lt_iff hpos).2 fun t ht => ?_)
     by_cases hti : t i = 0
     · simpa [hti, htd] using hP
     · refine lt_of_le_of_lt (totalDegree_monomial_le _ _) ?_
@@ -87,13 +92,13 @@ theorem card_Z (j₀ : Fin m) : Fintype.card {p : Fin (D + 1) × Fin m // Zs j�
   simp
 
 theorem trdeg_CT (j₀ : Fin m) (htr : Algebra.trdeg K Ω = D) :
-    Algebra.trdeg K (CT Ω D j₀) = (Fintype.card (Fin (D + 1) × Fin m) : Cardinal) := by
+    Algebra.trdeg K (CT (Ω := Ω) (D := D) j₀) = (Fintype.card (Fin (D + 1) × Fin m) : Cardinal) := by
   classical
   have hle : D ≤ Fintype.card (Fin (D + 1) × Fin m) := by
     rw [Fintype.card_prod, Fintype.card_fin, Fintype.card_fin]
     have := j₀.pos
     nlinarith
-  rw [← trdeg_add_eq (R := K) (S := Ω) (A := CT Ω D j₀), htr,
+  rw [← trdeg_add_eq (R := K) (S := Ω) (A := CT (Ω := Ω) (D := D) j₀), htr,
     MvPolynomial.trdeg_of_isDomain, Cardinal.lift_id, Cardinal.mk_fintype,
     Fintype.card_subtype_compl, card_Z, ← Nat.cast_add, Nat.add_sub_of_le hle]
 
@@ -116,30 +121,30 @@ theorem isAlgebraic_map_adjoin {R A B : Type*} [CommRing R] [CommRing A] [CommRi
 theorem alg_CT (x : Fin m → Ω) (j₀ : Fin m)
     (halg : ∀ ω : Ω, IsAlgebraic (Algebra.adjoin K (Set.range (rr x j₀))) ω)
     (hr : ∀ k, IsAlgebraic (Algebra.adjoin K (Set.range (gs (D := D) x j₀)))
-      (C (rr x j₀ k) : CT Ω D j₀)) :
-    Algebra.IsAlgebraic (Algebra.adjoin K (Set.range (gs (D := D) x j₀))) (CT Ω D j₀) := by
+      (C (rr x j₀ k) : CT (Ω := Ω) (D := D) j₀)) :
+    Algebra.IsAlgebraic (Algebra.adjoin K (Set.range (gs (D := D) x j₀))) (CT (Ω := Ω) (D := D) j₀) := by
   have hC : ∀ ω : Ω, IsAlgebraic (Algebra.adjoin K (Set.range (gs (D := D) x j₀)))
-      (C ω : CT Ω D j₀) := by
+      (C ω : CT (Ω := Ω) (D := D) j₀) := by
     intro ω
-    have h1 := isAlgebraic_map_adjoin (IsScalarTower.toAlgHom K Ω (CT Ω D j₀)) (C_injective _ _) _
+    have h1 := isAlgebraic_map_adjoin (IsScalarTower.toAlgHom K Ω (CT (Ω := Ω) (D := D) j₀)) (C_injective _ _) _
       (halg ω)
     refine IsAlgebraic.adjoin_of_forall_isAlgebraic ?_ h1
     rintro _ ⟨⟨_, ⟨k, rfl⟩, rfl⟩, -⟩
     exact hr k
   constructor
   intro c
-  have hc : c ∈ Algebra.adjoin K (Set.range (X : _ → CT Ω D j₀) ∪ Set.range (C : Ω → CT Ω D j₀)) := by
+  have hc : c ∈ Algebra.adjoin K (Set.range (X : _ → CT (Ω := Ω) (D := D) j₀) ∪ Set.range (C : Ω → CT (Ω := Ω) (D := D) j₀)) := by
     induction c using MvPolynomial.induction_on with
     | C a => exact Algebra.subset_adjoin (Or.inr ⟨a, rfl⟩)
     | add p r hp hr => exact add_mem hp hr
     | mul_X p n hp => exact mul_mem hp (Algebra.subset_adjoin (Or.inl ⟨n, rfl⟩))
-  have h0 : IsAlgebraic (Algebra.adjoin K (Set.range (X : _ → CT Ω D j₀) ∪
-      Set.range (C : Ω → CT Ω D j₀))) c :=
+  have h0 : IsAlgebraic (Algebra.adjoin K (Set.range (X : _ → CT (Ω := Ω) (D := D) j₀) ∪
+      Set.range (C : Ω → CT (Ω := Ω) (D := D) j₀))) c :=
     isAlgebraic_algebraMap (⟨c, hc⟩ : Algebra.adjoin K _)
   refine IsAlgebraic.adjoin_of_forall_isAlgebraic ?_ h0
   rintro y ⟨hy | ⟨ω, rfl⟩, -⟩
   · obtain ⟨q, rfl⟩ := hy
-    have hq : (X q : CT Ω D j₀) ∈ Algebra.adjoin K (Set.range (gs (D := D) x j₀)) :=
+    have hq : (X q : CT (Ω := Ω) (D := D) j₀) ∈ Algebra.adjoin K (Set.range (gs (D := D) x j₀)) :=
       Algebra.subset_adjoin ⟨q.1, by rw [gs, if_neg q.2, xv_of_not q.2]⟩
     exact isAlgebraic_algebraMap (⟨X q, hq⟩ : Algebra.adjoin K _)
   · exact hC ω
@@ -187,8 +192,8 @@ theorem gs_indep [CharZero K] (x : Fin m → Ω) (j₀ : Fin m) (hx₀ : x j₀ 
     have h0 : G.totalDegree = 0 := by omega
     rw [totalDegree_eq_zero_iff_eq_C] at h0
     rw [h0, aeval_C] at hG0
-    have hc : coeff 0 G = 0 :=
-      (algebraMap K (CT Ω D j₀)).injective (by rw [hG0, map_zero])
+    have hc : AddMonoidAlgebra.coeff G 0 = 0 :=
+      (algebraMap K (CT (Ω := Ω) (D := D) j₀)).injective (by rw [hG0, map_zero])
     exact hGne (by rw [h0, hc, C_0])
   obtain ⟨p₁, hp₁ne, hp₁lt⟩ := exists_pderiv_ne_zero_lt' G hpos
   have hp₁ : aeval (gs x j₀) (pderiv p₁ G) ≠ 0 := fun h => hp₁ne (hmin _ hp₁lt h)
@@ -211,7 +216,7 @@ theorem gs_indep [CharZero K] (x : Fin m → Ω) (j₀ : Fin m) (hx₀ : x j₀ 
         exact h
   obtain ⟨i, hi⟩ := hexi
   have hr : ∀ k, IsAlgebraic (Algebra.adjoin K (Set.range (gs (D := D) x j₀)))
-      (C (rr x j₀ k) : CT Ω D j₀) := by
+      (C (rr x j₀ k) : CT (Ω := Ω) (D := D) j₀) := by
     intro k
     by_cases hk : k = j₀
     · subst hk
@@ -226,7 +231,7 @@ theorem gs_indep [CharZero K] (x : Fin m → Ω) (j₀ : Fin m) (hx₀ : x j₀ 
         rw [Algebra.adjoin_range_eq_range_aeval]; exact ⟨_, rfl⟩
       refine ⟨Polynomial.C ⟨_, m1⟩ * Polynomial.X - Polynomial.C ⟨_, m2⟩, ?_, ?_⟩
       · intro h0
-        have h1 := congrArg (fun f => Polynomial.coeff f 1) h0
+        have h1 := congrArg (fun f => _root_.AddMonoidAlgebra.coeff (M := ℕ) f 1) h0
         simp only [Polynomial.coeff_sub, Polynomial.coeff_C_mul_X, Polynomial.coeff_C,
           Polynomial.coeff_zero, if_pos, one_ne_zero, if_false, sub_zero] at h1
         exact hi (congrArg Subtype.val h1)
@@ -241,7 +246,7 @@ theorem gs_indep [CharZero K] (x : Fin m → Ω) (j₀ : Fin m) (hx₀ : x j₀ 
 theorem gs_alg [CharZero K] (x : Fin m → Ω) (j₀ : Fin m) (hx₀ : x j₀ ≠ 0)
     (htr : Algebra.trdeg K Ω = D)
     (halg : ∀ ω : Ω, IsAlgebraic (Algebra.adjoin K (Set.range (rr x j₀))) ω) :
-    Algebra.IsAlgebraic (Algebra.adjoin K (Set.range (gs (D := D) x j₀))) (CT Ω D j₀) :=
+    Algebra.IsAlgebraic (Algebra.adjoin K (Set.range (gs (D := D) x j₀))) (CT (Ω := Ω) (D := D) j₀) :=
   ((gs_indep x j₀ hx₀ htr halg).isTranscendenceBasis_of_trdeg_le_of_finite
     (by rw [trdeg_CT j₀ htr, Cardinal.mk_fintype])).isAlgebraic
 

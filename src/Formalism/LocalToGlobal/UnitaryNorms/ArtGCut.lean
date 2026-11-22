@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.UnitaryNorms.RealCyclotomicTwoPower
+module
+
+public import Formalism.LocalToGlobal.UnitaryNorms.RealCyclotomicTwoPower
+
+@[expose] public section
 
 noncomputable section
 

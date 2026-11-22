@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.MirabolicMackeyTheory.StatementL
-import Formalism.MirabolicMackeyTheory.StatementT
+module
+
+public import Mathlib
+public import Formalism.MirabolicMackeyTheory.StatementL
+public import Formalism.MirabolicMackeyTheory.StatementT
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 
@@ -40,16 +44,16 @@ def OnLocalJ : Prop :=
         ((E : ℝ) - (vw w σ : ℝ) + (vw w ((Nat.card U : ℕ) : K) : ℝ)) * (d : ℝ) +
           (r + (finrank K Z : ℝ) * (vw w ((Nat.card U : ℕ) : K) : ℝ)) / (U.index : ℝ) + ε
 
-open Classical in
 
+open Classical in
 def TwistSetDouble : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (J : Type) [Fintype J]
     (ε0 : HeightOneSpectrum (𝓞 K) → J → ℝ) (w : HeightOneSpectrum (𝓞 K)),
     ∑ j, (ε0 w j + (if conjPl w = w then 0 else ε0 (conjPl w) j)) ≤ 1 / (plc w : ℝ) ^ 2 →
       ∑ j, (ε0 w j + ε0 (conjPl w) j) ≤ 2 / (plc w : ℝ) ^ 2
 
-open Classical in
 
+open Classical in
 def OnExportSet : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (D : ℕ), 0 < D →
   ∀ (Tup : Type) (μ : HeightOneSpectrum (𝓞 K) → Tup) (J : Type) [Fintype J] (d : J → ℕ),
@@ -122,36 +126,6 @@ def TwChain : Prop :=
     ∀ ε : ℝ, (lix w A X₃ : ℝ) ≤ (lix w A (ThJ.map (e.restrictScalars (𝓞 K))) : ℝ) + ε →
       (lix w A X₃ : ℝ) ≤ (lix w A (Th0.map (e.restrictScalars (𝓞 K))) : ℝ) + ε
 
-def ScalarLevel : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (w : HeightOneSpectrum (𝓞 K))
-    (nnL nnF q Z1 Z2 : K) (T c : ℕ), nnL ≠ 0 → nnF ≠ 0 → q ≠ 0 → Z1 ≠ 0 → Z2 ≠ 0 →
-    vw w Z1 = 0 → vw w Z2 = 0 →
-      vw w ((nnL * Z1) ^ T * (nnF * q ^ c * Z2)) = vw w (nnL ^ T * nnF) + (c : ℤ) * vw w q
-
-def CeilShift : Prop :=
-  ∀ (ρ vS : ℤ) (T : ℕ) (ν β : ℝ), 0 < ρ →
-    ⌈(ρ : ℝ) * ((T : ℝ) * (ν - (vS : ℝ) / (ρ : ℝ) + β))⌉ = ⌈(ρ : ℝ) * ((T : ℝ) * (ν + β))⌉ - (T : ℤ) * vS
-
-def LevelCeil : Prop :=
-  ∀ (ρ : ℤ) (T : ℕ) (DL Dk g : ℝ), 0 ≤ ρ → 0 ≤ DL → (T : ℝ) * DL ≤ Dk → 2 * Dk + 2 < g →
-    ⌈(ρ : ℝ) * ((T : ℝ) * (DL / (g - 1) + 1))⌉ ≤ ρ * ((T : ℤ) + 1)
-
-def LevelPlace : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (w : HeightOneSpectrum (𝓞 K))
-    (nnL nnF q Z1 Z2 : K) (T c : ℕ) (DL Dk g : ℝ), nnL ≠ 0 → nnF ≠ 0 → q ≠ 0 → Z1 ≠ 0 → Z2 ≠ 0 →
-    vw w Z1 = 0 → vw w Z2 = 0 → 0 ≤ vw w q → 1 ≤ T → 0 ≤ DL → (T : ℝ) * DL ≤ Dk → 2 * Dk + 2 < g →
-      ⌈(ramw w : ℝ) * ((T : ℝ) * (DL / (g - 1) + 1))⌉ - vw w ((nnL * Z1) ^ T * (nnF * q ^ c * Z2)) ≤
-        ramw w * (2 * (T : ℤ)) - vw w (nnL ^ T * nnF)
-
-def TraceClass : Prop :=
-  ∀ (R N Y Γ : Type) [CommRing R] [AddCommGroup N] [Module R N] [AddCommGroup Y] [Module R Y]
-    [Group Γ] [Fintype Γ] (ρ : Representation R Γ N) (lam : Γ →* R) (θ : N →ₗ[R] Y),
-    (∀ γ P, θ P = lam γ • θ (ρ γ P)) →
-    ∀ P : N, (∀ γ' : Γ, ρ γ' (∑ γ, lam γ • ρ γ P) = lam γ'⁻¹ • ∑ γ, lam γ • ρ γ P) ∧
-      θ (∑ γ, lam γ • ρ γ P) = (Fintype.card Γ : R) • θ P ∧
-      ∀ N0 : AddSubgroup N, (∀ γ, ∀ x ∈ N0, ρ γ x ∈ N0) → (∀ γ, ∀ x ∈ N0, lam γ • x ∈ N0) → P ∈ N0 →
-        ∑ γ, lam γ • ρ γ P ∈ N0
-
 def ConstB : Prop :=
   ∀ (RR PP DF d' n1 nW g' qmin : ℝ), 0 ≤ RR → 1 ≤ DF → 0 ≤ d' → 0 ≤ n1 → n1 ≤ nW → 0 < qmin → qmin ≤ g' →
     d' ^ 4 * nW + 2 * d' ^ 3 ≤ PP →
@@ -193,23 +167,9 @@ def LocalConditionsWeighted : Prop :=
         ((E : ℝ) - (vw w σ : ℝ) + (vw w ((Nat.card U : ℕ) : K) : ℝ)) * (d : ℝ) +
           (r + (finrank K Z : ℝ) * (vw w ((Nat.card U : ℕ) : K) : ℝ)) / (U.index : ℝ) + ε
 
-def BlockType : Prop :=
-  ∀ (R : Type) [CommRing R] (I : Ideal R) (r t : ℕ)
-    (A A' : Matrix (Fin r) (Fin r) R) (B B' : Matrix (Fin r) (Fin t) R)
-    (C C' : Matrix (Fin t) (Fin r) R) (D D' : Matrix (Fin t) (Fin t) R),
-    Matrix.fromBlocks A B C D * Matrix.fromBlocks A' B' C' D' = 1 → (∀ i j, B i j ∈ I) →
-      (Matrix.fromBlocks A B C D).det - A.det * D.det ∈ I ∧ (∀ i j, (A * A' - 1) i j ∈ I) ∧
-        (∀ i j, (A' * A - 1) i j ∈ I) ∧ ∀ i j, B' i j ∈ I
-
 def GapNum : Prop :=
   ∀ (T D nW r t h0 c : ℝ), 0 ≤ D → 0 ≤ r → 0 ≤ t → 2 ≤ nW → (D + 2) * nW + 2 * r ≤ T →
     (T + D + 2) * (T + D + 2 + 2 * r) ≤ 3.75 * T ^ 2 ∧
       (4 * T ^ 2 + 2 * t ≤ h0 → h0 ≤ c + 1 → (T + D + 2) * (T + D + 2 + 2 * r) ≤ c + 2)
-
-def PrimitiveLine : Prop :=
-  ∀ (R K σ : Type) [CommRing R] [Field K] [Algebra R K], Function.Injective (algebraMap R K) →
-    ∀ (Del Q : MvPolynomial σ R) (m : σ →₀ ℕ) (c : K), Del.coeff m = 1 →
-      c • MvPolynomial.map (algebraMap R K) Del = MvPolynomial.map (algebraMap R K) Q →
-        ∃ a : R, algebraMap R K a = c ∧ Q = a • Del
 
 end Formalism.EigenvalueLevelCeiling

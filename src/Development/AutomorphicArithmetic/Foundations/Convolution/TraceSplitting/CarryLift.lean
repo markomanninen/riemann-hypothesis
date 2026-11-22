@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SSatIff
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SInfIff
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SInfEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ConjIff
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.IsoEq
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalAdEq
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalTwistExAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.FormsFiniteGL
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.JacquetShalikaRigidity
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.P_SSatEx
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PBasic
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSGalAdEx
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SSatIff
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SInfIff
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SInfEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ConjIff
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.IsoEq
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalAdEq
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalTwistExAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.FormsFiniteGL
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.JacquetShalikaRigidity
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.P_SSatEx
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PBasic
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSGalAdEx
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Geo UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.C UpperTheory.ConvolutionTheory.T UpperTheory.ConvolutionTheory.Dp
@@ -21,7 +25,7 @@ open GlobalTheory.CuspRep Formalism.ConjugateSelfDual Formalism.L2.Host UpperThe
 
 section SlopeTestRemainingChoices
 
-variable {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] {n : ℕ} {μ : Measure (normOneGL K n)} [μ.IsHaarMeasure]
+variable {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] {n : ℕ} {μ : Measure (normOneGL (K := K) (n := n))} [μ.IsHaarMeasure]
 
 private theorem atEx (V : Submodule ℂ (LL μ)) (hV : IsSummand μ V) : ∃ Λ t, AtAE μ V Λ t := by
   classical
@@ -66,13 +70,13 @@ private theorem conj_iff (P : CuspSub K n) (g : K ≃+* K) :
     rw [hs s h1]
     exact h
 
-omit [IsTotallyComplex K] in
+omit [_root_.NumberField.IsTotallyComplex K] in
 private theorem pull_refl : pull n (RingEquiv.refl K) = id := by
   funext f x
   refine congrArg f (Matrix.GeneralLinearGroup.ext fun i j => ?_)
   exact (UpperTheory.ConvolutionTheory.K.adBasic K).2.1 _
 
-omit [IsTotallyComplex K] in
+omit [_root_.NumberField.IsTotallyComplex K] in
 private theorem pull_trans (g g' : K ≃+* K) : pull n (g.trans g') = pull n g ∘ pull n g' := by
   funext f x
   refine congrArg f (Matrix.GeneralLinearGroup.ext fun i j => ?_)

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumATop
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalGluing.ExistsIntegralMultiple
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumATop
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalGluing.ExistsIntegralMultiple
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,8 @@ private theorem hermSp_h_sum_smul_left {M : Model F E} {V : Type} [AddCommGroup 
 private theorem hermSp_h_sum_smul_right {M : Model F E} {V : Type} [AddCommGroup V] [Module E V] (H : HermSp M V)
     {ι : Type} [Fintype ι] (y : V) (c : ι → E) (x : ι → V) :
     H.h y (∑ i, c i • x i) = ∑ i, M.L.cj (c i) * H.h y (x i) := by
-  rw [H.h_herm (∑ i, c i • x i) y, hermSp_h_sum_smul_left, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [H.h_herm (∑ i, c i • x i) y, hermSp_h_sum_smul_left, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, ← H.h_herm]
 

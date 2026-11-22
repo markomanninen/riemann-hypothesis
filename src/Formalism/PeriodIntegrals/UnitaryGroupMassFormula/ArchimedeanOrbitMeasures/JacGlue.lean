@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.JacCut
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ImgLim
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.FibInv
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.T2SpaceTensorProductFiniteExtension
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.JacCut
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ImgLim
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.FibInv
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.T2SpaceTensorProductFiniteExtension
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,8 +108,9 @@ theorem splitAsym_good : SplitAsymFor GoodP := by
   set W : ℕ → Set (HmI X) := fun n => eH ⁻¹' ball (eH T0) (ρ n) with hW
   have hWp : ∀ n, ∀ T ∈ W n, T ∈ Ω₂ ∧ IsUnit (a T) ∧ rmulT X (a T) (Y0 X u') ∈ IndI X := by
     intro n T hTW
-    have h1 := (hAS n (show ((0 : EuclideanSpace ℝ ι), eH T) ∈ A n from ⟨mem_ball_self (hρp n), hTW⟩)).2
+    have h1 := (hAS n (show ((0 : EuclideanSpace ℝ ι), eH T) ∈ A n from ⟨by exact Set.mem_preimage.mpr (mem_ball_self (hρp n)), hTW⟩)).2
     simpa [eH.symm_apply_apply] using h1
+  set_option synthInstance.maxHeartbeats 100000 in
   have hΨc : ∀ n, ContinuousOn Ψ (A n) := fun n z hz =>
     ((hΨ' z (hAU n hz)).mono (hAU n)).continuousWithinAt
   have hΨm : ∀ n, MeasurableSet (Ψ '' A n) := fun n =>
@@ -153,7 +158,12 @@ theorem splitAsym_good : SplitAsymFor GoodP := by
     · rw [hνW n]; exact ENNReal.mul_lt_top ENNReal.ofReal_lt_top measure_ball_lt_top
     · rw [hBox n]; exact eT.continuous.measurable (hΨm n)
     · rintro y ⟨T, hTW, g, -, rfl⟩
-      exact indI_smul X g _ (hWp n T hTW).2.2
+      have hinj : Function.Injective (Matrix.mulVecLin
+          ((HA.mat (Ainf X.B.I.F) X.B.I.cm.sig X.B.I.J g : GL (Fin X.B.I.n) (Ainf X.B.I.F ⊗[X.B.I.F] X.B.I.E)) : Matrix (Fin X.B.I.n) (Fin X.B.I.n) (Ainf X.B.I.F ⊗[X.B.I.F] X.B.I.E))) := by
+        intro x x' h
+        have h2 := congrArg (fun v => Matrix.mulVec (((HA.mat (Ainf X.B.I.F) X.B.I.cm.sig X.B.I.J g)⁻¹ : GL (Fin X.B.I.n) (Ainf X.B.I.F ⊗[X.B.I.F] X.B.I.E)) : Matrix (Fin X.B.I.n) (Fin X.B.I.n) (Ainf X.B.I.F ⊗[X.B.I.F] X.B.I.E)) v) h
+        simpa [Matrix.mulVecLin_apply, Matrix.mulVec_mulVec] using h2
+      exact LinearIndependent.map' (hWp n T hTW).2.2 _ (LinearMap.ker_eq_bot.2 hinj)
     · rw [hμB n]; exact ENNReal.mul_lt_top ENNReal.ofReal_lt_top (hΨt n)
   · intro U' hU'
     have h1 : eH.symm ⁻¹' U' ∈ 𝓝 (eH T0) := by
@@ -181,8 +191,5 @@ theorem splitAsym_good : SplitAsymFor GoodP := by
     rw [hμB n, hνW n, hvolA n, ENNReal.toReal_mul, ENNReal.toReal_mul, ENNReal.toReal_mul,
       ENNReal.toReal_ofReal hcμ.le, ENNReal.toReal_ofReal hcν.le]
     field_simp
-
-theorem jacOneGood (hK : KPos) : JacOneFor GoodP :=
-  jacOneFor_of hK (locRatioFor_of hK splitAsym_good)
 
 end PI.AprimeInfW

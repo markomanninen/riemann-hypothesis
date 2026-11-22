@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshRegMax
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshRegMax
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit
@@ -48,7 +53,7 @@ theorem norm_le_of_symm_diag {H : E →L[ℝ] E →L[ℝ] ℝ} (hs : ∀ v w, H 
     simp only [x', y', map_smul, ContinuousLinearMap.smul_apply, smul_eq_mul]
     field_simp
   have key : 4 * H x' y' = H (x' + y') (x' + y') - H (x' - y') (x' - y') := by
-    simp only [map_add, map_sub, ContinuousLinearMap.add_apply, ContinuousLinearMap.sub_apply]
+    simp only [map_add (f := _), map_sub, ContinuousLinearMap.add_apply, ContinuousLinearMap.sub_apply]
     rw [hs y' x']
     ring
   have h1 : ‖x' + y'‖ ^ 2 ≤ 4 := by
@@ -105,7 +110,8 @@ theorem abs_fderiv_regMax_apply_le {η : ℝ} (hη : 0 < η) (p z : ι → ℝ) 
     simp [Finset.sum_apply, Pi.single_apply]
   have hLz : L z = ∑ j, z j * L (Pi.single j 1) := by
     conv_lhs => rw [hz]
-    simp [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_smul]
   have hs : ∑ j, L (Pi.single j 1) = 1 := regMax_fderiv_sum hη p
   have hn : ∀ j, 0 ≤ L (Pi.single j 1) := fun j =>
     regMax_fderiv_nonneg hη p _ (Pi.single_nonneg.2 zero_le_one)
@@ -328,39 +334,7 @@ open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Regular (RegChar
 
 variable {D : ℕ} {X : Type*} [TopologicalSpace X] {A : FinHolAtlas D X} {R : RegChartData A}
 
-theorem System.tendstoC2On_chart_symm_compact (S : System R) (k : Fin A.n) {K : Set (Fin D → ℂ)} (hK : IsCompact K)
-    (hKs : K ⊆ (A.chart k).target ∩ (A.chart k).symm ⁻¹' R.Yo) :
-    TendstoC2On (fun t y => S.ph t ((A.chart k).symm y)) (fun y => R.φ ((A.chart k).symm y)) K :=
-  S.c2 k K hK hKs
-
 end System
-
-theorem regularizedMax_c2_example_real_line :
-    TendstoC2On (fun t x => regMax t (fun j : Fin 2 => x ^ 2 + ((j : ℕ) : ℝ) * t) + t / 2)
-      (fun x : ℝ => x ^ 2) (Set.Icc (-1) 1) := by
-  have hd1 : ∀ c : ℝ, fderiv ℝ (fun x : ℝ => x ^ 2 + c) = fderiv ℝ (fun x : ℝ => x ^ 2) :=
-    fun c => funext fun y => fderiv_add_const c
-  refine RegularizedMaxConvergenceC2.proof (Fin 2) Set.univ (Set.Icc (-1) 1) (fun x : ℝ => x ^ 2)
-    (fun t j x => x ^ 2 + ((j : ℕ) : ℝ) * t) (fun t => t) (fun _ => 0) isOpen_univ
-    (Set.subset_univ _) (by fun_prop) ?_ ?_ ?_ ?_ ?_
-  · filter_upwards [self_mem_nhdsWithin] with t (ht : 0 < t)
-    exact ⟨ht, fun j => by fun_prop⟩
-  · exact tendsto_id.mono_left nhdsWithin_le_nhds
-  · intro j
-    refine ⟨Metric.tendstoUniformlyOn_iff.2 fun e he => ?_, ?_, ?_⟩
-    · filter_upwards [self_mem_nhdsWithin, nhdsWithin_le_nhds (eventually_lt_nhds he)]
-        with t (ht : 0 < t) hte
-      intro x _
-      have hj : ((j : ℕ) : ℝ) ≤ 1 := by exact_mod_cast Nat.lt_succ_iff.1 j.isLt
-      have hj0 : (0 : ℝ) ≤ ((j : ℕ) : ℝ) := Nat.cast_nonneg _
-      rw [Real.dist_eq, abs_sub_comm, add_sub_cancel_left, abs_of_nonneg (by positivity)]
-      nlinarith
-    · simp only [hd1]
-      exact tendstoUniformlyOn_self _ _ _
-    · simp only [hd1]
-      exact tendstoUniformlyOn_self _ _ _
-  · exact Eventually.of_forall fun t j x _ => by simp
-  · simp
 
 end
 

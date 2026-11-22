@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadDZKapLeft
-import Mathlib.LinearAlgebra.Lagrange
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadDZKapLeft
+public import Mathlib.LinearAlgebra.Lagrange
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Polynomial
 
@@ -23,7 +27,7 @@ theorem lag_weights (k : ℕ) : ∃ lam : Fin (k + 1) → ℂ, ∀ p : ℂ[X], p
     rw [Finset.card_univ, Fintype.card_fin]
     exact lt_of_le_of_lt (Polynomial.degree_le_of_natDegree_le hp) (by exact_mod_cast Nat.lt_succ_self k)
   conv_rhs => rw [Lagrange.eq_interpolate hinj hdeg]
-  rw [Lagrange.interpolate_apply, Polynomial.finset_sum_coeff]
+  rw [Lagrange.interpolate_apply, Polynomial.finsetSum_coeff]
   refine Finset.sum_congr rfl ?_
   intro j _
   rw [Polynomial.coeff_C_mul, mul_comm]
@@ -77,14 +81,16 @@ theorem kap_decomp (d : Q.NFData P A) (g : M.Ty P → ℂ) : d.κ g = ∑ ρ0, g
     funext ρ
     simp [dl, Finset.sum_apply]
   conv_lhs => rw [h]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul]
 
 theorem sum_dl (d : Q.NFData P A) : ∑ ρ, d.κ (dl ρ) = 1 := by
   have h : ∑ ρ, (dl ρ : M.Ty P → ℂ) = 1 := by
     funext x
     simp [dl, Finset.sum_apply]
-  rw [← map_sum, h, map_one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, h, map_one]
 
 theorem dl_mul_kap (d : Q.NFData P A) (ρ : M.Ty P) (g : M.Ty P → ℂ) :
     d.κ (dl ρ) * d.κ g = g ρ • d.κ (dl ρ) := by

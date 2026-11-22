@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJGlobalHaar
-import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteAdelicHaar
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJGlobalHaar
+public import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteAdelicHaar
+
+@[expose] public section
 
 open MeasureTheory Measure Topology Filter Set IsDedekindDomain NumberField
 
@@ -38,7 +42,9 @@ theorem isMulRightInvariant_infinite [MeasurableSpace (AdelicGLn.InfiniteAdelicG
     rw [Measure.map_map (measurable_mul_const p) he, hcomp,
       ← Measure.map_map he (measurable_mul_const _), map_mul_right_eq_self]
   set c := haarScalarFactor (ν.map e) P
-  have hc : ν.map e = c • P := isMulLeftInvariant_eq_smul (ν.map e) P
+  have hc : ν.map e = c • P := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact isMulLeftInvariant_eq_smul (ν.map e) P
   have hc0 : c ≠ 0 := by
     intro h0
     rw [h0, zero_smul] at hc
@@ -48,7 +54,7 @@ theorem isMulRightInvariant_infinite [MeasurableSpace (AdelicGLn.InfiniteAdelicG
   have hP : ∀ p, P.map (· * p) = P := by
     intro p
     have h1 : P = c⁻¹ • ν.map e := by rw [hc, smul_smul, inv_mul_cancel₀ hc0, one_smul]
-    rw [h1, Measure.map_smul, hν']
+    rw [h1, Measure.map_smul _ (measurable_mul_const p).aemeasurable, hν']
   refine ⟨fun g => ?_⟩
   have hprod : P.map (· * (g, (1 : AdelicGLn.FiniteAdelicGL K n))) = (μi.map (· * g)).prod μf := by
     have hf : (· * (g, (1 : AdelicGLn.FiniteAdelicGL K n))) = Prod.map (· * g) id := by
@@ -92,12 +98,14 @@ theorem isInvInvariant_archGroup (ν : Measure (archGroup K n)) [ν.IsHaarMeasur
     ν.IsInvInvariant := by
   have := isMulRightInvariant_archGroup ν
   have := secondCountableTopology_subgroup_units (archGroup K n)
-  have := (isExpLieAlgebra K n).locallyCompactSpace
+  have : LocallyCompactSpace (archGroup K n) :=
+    (archEquiv K n).symm.toHomeomorph.isOpenEmbedding.locallyCompactSpace
   constructor
   let c : ENNReal := Measure.haarScalarFactor ν.inv ν
   have hc : ν.inv = c • ν := Measure.isMulLeftInvariant_eq_smul ν.inv ν
   have h2 : Measure.map Inv.inv (Measure.map Inv.inv ν) = c ^ 2 • ν := by
-    rw [← Measure.inv_def ν, hc, Measure.map_smul, ← Measure.inv_def ν, hc, smul_smul, pow_two]
+    rw [← Measure.inv_def ν, hc, Measure.map_smul _ continuous_inv.measurable.aemeasurable,
+      ← Measure.inv_def ν, hc, smul_smul, pow_two]
   have νeq : ν = c ^ 2 • ν := by
     rw [Measure.map_map continuous_inv.measurable continuous_inv.measurable] at h2
     simpa only [inv_involutive, Function.Involutive.comp_self, Measure.map_id] using h2

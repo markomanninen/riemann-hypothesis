@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MainEqSteps
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.GenericRatioOfBoundHolds
-import Formalism.SharpRestriction.InertJacobiLevels.TwoPrimeFieldMemLevelOfCoprime
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MainEqSteps
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.GenericRatioOfBoundHolds
+public import Formalism.SharpRestriction.InertJacobiLevels.TwoPrimeFieldMemLevelOfCoprime
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ theorem gmap_inv_of' {a : S.V ≃ₗ[E] S.V} {L L' : Submodule (𝓞 E) S.V} (h 
 theorem xflag_mapLF' {T : E} (γ : S.V ≃ₗ[E] S.V) (hγ : γ ∈ Formalism.HermitianLatticesTheory.isom S.hT) (F : LFlag S r T) (j : ℕ) :
     Xflag (mapLF γ F) j = (Xflag F j).map (γ : S.V →ₗ[E] S.V) := by
   unfold Xflag mapLF
-  rw [dif_pos hγ]
+  rw [dite_eq_left hγ]
   show (mapFlag γ hγ F.fl).Xa j = _
   unfold FlagG.Xa mapFlag
   try simp only [Submodule.map_span, Set.image_image]
@@ -60,7 +64,7 @@ theorem xflag_mapLF' {T : E} (γ : S.V ≃ₗ[E] S.V) (hγ : γ ∈ Formalism.He
 theorem z_mapLF' {T : E} (γ : S.V ≃ₗ[E] S.V) (hγ : γ ∈ Formalism.HermitianLatticesTheory.isom S.hT) (F : LFlag S r T) :
     (mapLF γ F).fl.z = γ F.fl.z := by
   unfold mapLF
-  rw [dif_pos hγ]
+  rw [dite_eq_left hγ]
   try rfl
 
 theorem isPair_quot' {T T' : E} (Λ Λ' : Submodule (𝓞 E) S.V) (g : ℕ) (F : LFlag S r T) (F' : LFlag S r T')
@@ -225,7 +229,7 @@ theorem gUnramC_holds : GUnramC := by
   have hpos : ∀ q : (Ideal.span {((D.host.g i : ℕ) : ℤ)}).primesOver (𝓞 D.host.E),
       1 ≤ q.1.ramificationIdx ℤ * q.1.inertiaDeg ℤ := by
     rintro ⟨q, h1, h2⟩
-    exact Nat.mul_pos (Ideal.ramificationIdx_pos q ℤ) (Ideal.inertiaDeg_pos q ℤ)
+    exact Nat.mul_pos (Ideal.ramificationIdx_pos (R := ℤ) q) (Ideal.inertiaDeg_pos q ℤ)
   have hall : ∀ q : (Ideal.span {((D.host.g i : ℕ) : ℤ)}).primesOver (𝓞 D.host.E),
       q.1.ramificationIdx ℤ * q.1.inertiaDeg ℤ = 1 := by
     intro q0

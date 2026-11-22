@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ExtCutB
+module
+
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ExtCutB
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.C
 

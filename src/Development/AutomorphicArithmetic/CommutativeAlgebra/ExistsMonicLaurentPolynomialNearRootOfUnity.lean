@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.GoodRoot
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.GoodRoot
+
+@[expose] public section
+
 noncomputable section
 open IsLocalRing UpperTheory.Et
 
@@ -69,7 +74,7 @@ theorem UpperTheory.exists_monic_laurent_polynomial_near_root_of_unity :
   have hmon : (Polynomial.X ^ q - 1 : Polynomial (LaurentPolynomial A)).Monic := by
     simpa using Polynomial.monic_X_pow_sub_C (1 : LaurentPolynomial A) hq.ne'
   have hdeg : (Polynomial.X ^ q - 1 : Polynomial (LaurentPolynomial A)).natDegree ≠ 0 := by
-    have := Polynomial.natDegree_X_pow_sub_C (n := q) (r := (1 : LaurentPolynomial A))
+    have := Polynomial.natDegree_X_pow_sub_C (n := q) (1 : LaurentPolynomial A)
     rw [map_one] at this
     rw [this]
     exact hq.ne'

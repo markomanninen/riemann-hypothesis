@@ -1,14 +1,18 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BumpConvolutionSupportStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoshTransformConvolutionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoshTransformCasimirRealStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveKernelConvolutionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveKernelWordOrderSwapStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelMultiplierLinearStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelMultiplierOnEigenfunctionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveKernelDecompositionStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BumpConvolutionSupportStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoshTransformConvolutionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoshTransformCasimirRealStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveKernelConvolutionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveKernelWordOrderSwapStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelMultiplierLinearStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KernelMultiplierOnEigenfunctionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveKernelDecompositionStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,14 +63,16 @@ theorem asmMult_main : AsmMult := by
     refine ⟨fun χ => ∑ q : (Σ i, Fin (N i)), (conj (c q.1) * d q.1 q.2) * zVal (w₁ q.1 q.2) χ * coshT (g q.1) (cas χ), ?_, ?_⟩
     · refine isMult_of_fintype μ E (fun q : (Σ i, Fin (N i)) => conj (c q.1) * d q.1 q.2) (fun q => w₁ q.1 q.2)
         (fun q => g q.1) (fun q => K₁ q.1 q.2) (fun q => ⟨(hb q.1).1, hK₁ q.1 q.2⟩) (fun y hy => ?_) fun χ => rfl
-      rw [hs _ (inv_mem_GLs hy), map_sum, Fintype.sum_sigma]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hs _ (inv_mem_GLs hy), map_sum, Fintype.sum_sigma]
       refine Finset.sum_congr rfl fun i _ => ?_
       have := hadj i y hy
       rw [map_smulₛₗ, this, Finset.smul_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       simp [smul_smul]
     · intro χ hχ
-      rw [hv χ, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hv χ, map_sum]
       beta_reduce
       rw [Fintype.sum_sigma]
       refine Finset.sum_congr rfl fun i _ => ?_

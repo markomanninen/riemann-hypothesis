@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LeviMul
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.DualCoords
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LeviMul
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.DualCoords
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,8 @@ theorem hform_mulVec' {A : Type} [CommRing A] {n : Type} [Fintype n] [DecidableE
     rw [Finset.sum_comm]
   have hσ : (fun i => σ ((M *ᵥ x) i)) = (fun i => σ (x i)) ᵥ* (Formalism.UG.cT σ M) := by
     funext i
-    simp only [Matrix.mulVec, Matrix.vecMul, dotProduct, Formalism.UG.cT, Matrix.transpose_apply, Matrix.map_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, Matrix.vecMul, dotProduct, Formalism.UG.cT, Matrix.transpose_apply, Matrix.map_apply,
       map_sum, map_mul]
     exact Finset.sum_congr rfl (fun k _ => mul_comm _ _)
   rw [key, key, Matrix.dotProduct_mulVec, hσ, Matrix.vecMul_vecMul, Matrix.vecMul_vecMul, ← Matrix.mul_assoc, hM]
@@ -155,7 +160,7 @@ theorem leviM_one (v : TR.Pl) : leviM TR 1 v = 1 := by
     · exact zero_mem _
   have e : (⟨_, hI⟩ : IntAf X.B.I.F X.B.I.E) = ⟨_, sub_mem hI hIt⟩ + ⟨_, hIt⟩ := by
     apply Subtype.ext; simp
-  rw [e, map_add, res_eq_zero_of_Z TR v _ hZ, zero_add]
+  rw [e, map_add (f := _), res_eq_zero_of_Z TR v _ hZ, zero_add]
   by_cases h : i = j
   · subst h
     simp only [if_true, Matrix.one_apply_eq]

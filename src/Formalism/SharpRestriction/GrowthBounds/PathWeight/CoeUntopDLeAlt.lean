@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.PathWeight.GeneratorImageIsSymbol
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PathWeight.GeneratorImageIsSymbol
+
+@[expose] public section
 
 noncomputable section
 
@@ -125,12 +129,12 @@ theorem span_mul_image_mem_span {O : Type} [CommRing O] {σ τ υ : Type} (f : M
     induction hG using Submodule.span_induction with
     | mem b hb => exact key a ha b hb
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, mul_add, map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _), mul_add, map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul c x _ hx => rw [map_smul, mul_smul_comm, map_smul]; exact Submodule.smul_mem _ c hx
   induction hA using Submodule.span_induction with
   | mem a ha => exact step1 a ha
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, add_mul, map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _), add_mul, map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx => rw [map_smul, smul_mul_assoc, map_smul]; exact Submodule.smul_mem _ c hx
 
 theorem generator_pair_conditions_of_admitted (D : Formalism.BasicNotions.D7) (hA3 : Formalism.MainNotions.SourceCleaning.StandardMonomialSpanBis D) (hB1 : Formalism.MainNotions.SourceCleaning.PathPairCorrespondence D) : GeneratorSpanInclusion := by
@@ -166,7 +170,7 @@ theorem generator_pair_conditions_of_admitted (D : Formalism.BasicNotions.D7) (h
     · ext; simp; omega
     · have h3 : i.val - 1 + 1 < Mj X.Fr j := by have := i.2; omega
       show (if h : i.val - 1 + 1 < Mj X.Fr j then (⟨i.val - 1 + 1, h⟩ : Fin (Mj X.Fr j)) else _) = i
-      rw [dif_pos h3]
+      rw [dite_eq_left h3]
       ext; simp; omega
     · ext y
       show y < i ↔ y ≤ (⟨i.val - 1, by omega⟩ : Fin (Mj X.Fr j))

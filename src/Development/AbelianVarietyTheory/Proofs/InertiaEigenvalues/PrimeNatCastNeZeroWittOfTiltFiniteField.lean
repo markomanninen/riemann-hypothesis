@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NatCastNeZeroPs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NatCastNeZeroPs
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ variable {K}
 
 theorem iota_injective (τ : ZMod a) : Function.Injective (iota t K τ) := by
   have := Fintype.ofFinite (Fq l a)
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro w hw
   by_contra h0
   obtain ⟨m, b, hb, rfl⟩ := WittVector.exists_eq_pow_p_mul w h0
@@ -43,8 +47,8 @@ theorem prime_natCast_ne_zero_wittOfTiltFiniteField : (l : Wq l a) ≠ 0 := fun 
   rw [map_natCast, map_zero] at h1
   exact natCast_ne_zero_K l (K := K) hl.out.ne_zero h1
 
-variable (K) in
 
+variable (K) in
 def Rep (F : ZMod a → K⟦X⟧) (w : ℕ → Wq l a) : Prop :=
   ∀ τ n, ((n / e).factorial : K) * coeff n (F τ) = iota t K τ (w n)
 
@@ -69,8 +73,8 @@ theorem rep_pow_mul (m : ℕ) {F : ZMod a → K⟦X⟧} {w : ℕ → Wq l a} (hF
   rw [h1, coeff_C_mul, map_mul, map_pow, map_natCast, ← hF τ n]
   ring
 
-variable (t e) in
 
+variable (t e) in
 def ofRep (w : ℕ → Wq l a) : ZMod a → K⟦X⟧ :=
   fun τ => PowerSeries.mk fun n => iota t K τ (w n) / ((n / e).factorial : K)
 
@@ -147,8 +151,8 @@ theorem isPrecomplete_of (hsd : ∀ F ∈ Sd t K e, F ∈ SdSet t K e) :
   push_cast
   exact h4
 
-variable (t e) in
 
+variable (t e) in
 theorem isAdicComplete_of (hsd : ∀ F ∈ Sd t K e, F ∈ SdSet t K e) :
     IsAdicComplete (Ideal.span {(l : ↥(Sd t K e))}) ↥(Sd t K e) :=
   { toIsHausdorff := isHausdorff_of t e hsd, toIsPrecomplete := isPrecomplete_of t e hsd }

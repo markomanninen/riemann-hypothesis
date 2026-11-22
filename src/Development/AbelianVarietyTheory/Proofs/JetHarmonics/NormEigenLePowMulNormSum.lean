@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Finset
 open scoped InnerProductSpace
@@ -26,7 +30,8 @@ theorem norm_eigen_le_pow_mul_norm_sum {H κ : Type} [NormedAddCommGroup H] [Nor
     have heq : T (v s + ∑ i ∈ insert j E, v i) - lam j • (v s + ∑ i ∈ insert j E, v i)
         = (lam s - lam j) • v s + ∑ i ∈ E, (lam i - lam j) • v i := by
       rw [sum_insert hj]
-      simp only [map_add, map_sum, (hv _).2, smul_add, smul_sum, sub_smul, sum_sub_distrib]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_add (f := _), map_sum, (hv _).2, smul_add, smul_sum, sub_smul, sum_sub_distrib]
       abel
     rw [heq] at hT
     have hs : ‖v s‖ ≤ ‖(lam s - lam j) • v s‖ := by

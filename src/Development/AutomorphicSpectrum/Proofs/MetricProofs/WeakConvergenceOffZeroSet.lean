@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+
+@[expose] public section
+
 open MeasureTheory Metric Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.AnForm.M.FinHolAtlas
 open scoped ContDiff
 

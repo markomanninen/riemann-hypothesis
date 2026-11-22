@@ -1,5 +1,8 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.SimpleDistinctness.ScalarCharacterOfL2Embedding
+module
+
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.IsSimpleTriv
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.RgExhFin
 
@@ -31,10 +34,10 @@ theorem simplePath_ne {n : ℕ} (ss : List (Fin n)) :
     have h3 := ih _ h2 r s hrs hmem'
     simpa [Pi.single_apply, hra, hsa] using h3
 
-theorem simpleDistinct : CompanionTheory.RgExh.Fin.SimpleDistinct := by
-  unfold CompanionTheory.RgExh.Fin.SimpleDistinct
-  intro n χ ss hp hall r s hrs
+theorem simpleDistinct (n : ℕ) (χ : Fin n → ℂ) (ss : List (Fin n))
+    (hp : SimplePath χ ss) (hall : ∀ s, s ∈ ss) : Function.Injective χ := by
+  intro r s heq
   by_contra hne
-  exact simplePath_ne ss χ hp r s hne (Or.inl (hall r)) hrs
+  exact simplePath_ne ss χ hp r s hne (Or.inl (hall r)) heq
 
 end GlobalTheory.CompanionTheory.RgExhFin

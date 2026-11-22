@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.PhiCubeOfFactor
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupCommon.CoeffSingleLg
+module
+
+public import Formalism.PeriodIntegrals.PhiCubeOfFactor
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupCommon.CoeffSingleLg
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,9 +17,6 @@ theorem logMv_eq {σ : Type} (F : MvPowerSeries σ ℂ_[p]) : logMv F = logS F :
 
 theorem expMv_eq {σ : Type} (F : MvPowerSeries σ ℂ_[p]) : expMv F = PI.FglPhSplit.expMv F := rfl
 
-def uS (E : PowerSeries ℂ_[p]) (x : MvPowerSeries (Fin 2) ℂ_[p]) : MvPowerSeries (Fin 2) ℂ_[p] :=
-  PowerSeries.subst x (logMv E)
-
 theorem main : Lemma := by
   intro p _ l ex E Q hex0 hinv hE1 hfun hQ
   obtain ⟨n, hnI, hn0, rfl⟩ := hQ
@@ -28,7 +29,7 @@ theorem main : Lemma := by
     rw [constantCoeff_subst_of_zero (hcX i)]
     exact hl0
   have hs0 : constantCoeff (lg l (Xv 0 : MvPowerSeries (Fin 2) ℂ_[p]) + lg l (Xv 1)) = 0 := by
-    rw [map_add, hlg, hlg, add_zero]
+    rw [map_add (f := _), hlg, hlg, add_zero]
   have hd0 : constantCoeff (lg l (Xv 0 : MvPowerSeries (Fin 2) ℂ_[p]) - lg l (Xv 1)) = 0 := by
     rw [map_sub, hlg, hlg, sub_zero]
   have hA0 : constantCoeff (add l ex (Xv 0) (Xv 1) : MvPowerSeries (Fin 2) ℂ_[p]) = 0 := by
@@ -47,7 +48,7 @@ theorem main : Lemma := by
     refine subst_ne_zero hex0 hinv hs0 ?_
     intro h
     have h2 := congrArg (coeff (Finsupp.single (0 : Fin 2) k)) h
-    rw [map_add, map_zero, hc0, hc0] at h2
+    rw [map_add (f := _), map_zero, hc0, hc0] at h2
     simp at h2
     exact hlk h2
   have hBne : (sub l ex (Xv 0) (Xv 1) : MvPowerSeries (Fin 2) ℂ_[p]) ≠ 0 := by
@@ -102,7 +103,7 @@ theorem main : Lemma := by
       phAt E (add l ex (Xv 0) (Xv 1)) + phAt E (sub l ex (Xv 0) (Xv 1)) + -phAt E (Xv 0) + -phAt E (Xv 0) +
         -phAt E (Xv 1) + -phAt E (Xv 1) := by ring
   refine ⟨?_, ?_⟩
-  · rw [hf, map_add, map_add, map_add, map_add, map_add, hph0 _ hA0, hph0 _ hB0, hnph0 _ (hcX 0),
+  · rw [hf, map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hph0 _ hA0, hph0 _ hB0, hnph0 _ (hcX 0),
       hnph0 _ (hcX 1)]
     ring
   · rw [expMv_eq, hf]
@@ -110,10 +111,10 @@ theorem main : Lemma := by
     have c2 := hph0 _ hB0
     have c3 := hnph0 _ (hcX 0)
     have c4 := hnph0 _ (hcX 1)
-    rw [expMv_add' (by simp only [map_add, c1, c2, c3, c4, add_zero]) c4,
-      expMv_add' (by simp only [map_add, c1, c2, c3, add_zero]) c4,
-      expMv_add' (by simp only [map_add, c1, c2, c3, add_zero]) c3,
-      expMv_add' (by simp only [map_add, c1, c2, add_zero]) c3,
+    rw [expMv_add' (by simp only [map_add (f := _), c1, c2, c3, c4, add_zero]) c4,
+      expMv_add' (by simp only [map_add (f := _), c1, c2, c3, add_zero]) c4,
+      expMv_add' (by simp only [map_add (f := _), c1, c2, c3, add_zero]) c3,
+      expMv_add' (by simp only [map_add (f := _), c1, c2, add_zero]) c3,
       expMv_add' c1 c2, hneg _ (hcX 0), hneg _ (hcX 1)]
     refine int_of_mul_eq_one hnI hn0 ?_
     have e1 := hsub _ hA0

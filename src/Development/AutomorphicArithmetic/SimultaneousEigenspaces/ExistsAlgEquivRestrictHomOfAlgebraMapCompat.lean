@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.LocTower
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitsBasic
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.LocTower
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitsBasic
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.GalV UpperTheory.Gal.Int.Geo TensorProduct
 
@@ -36,7 +40,7 @@ theorem UpperTheory.exists_algEquiv_restrict_hom_of_algebraMap_compat :
       map_one' := hji (by rw [← hg]; simp only [map_one])
       map_mul' := fun a b => hji (by rw [← hg]; simp only [map_mul, hg])
       map_zero' := hji (by rw [← hg]; simp only [map_zero])
-      map_add' := fun a b => hji (by rw [← hg]; simp only [map_add, hg])
+      map_add' := fun a b => hji (by rw [← hg]; simp only [map_add (f := _), hg])
       commutes' := fun c => hji (by rw [← hg, hj, AlgEquiv.commutes]) }
   let r : (Ω' ≃ₐ[K] Ω') → (Ω ≃ₐ[k] Ω) := fun s => (Algebra.IsAlgebraic.algEquivEquivAlgHom k Ω).symm (gA s)
   have hr : ∀ s x, r s x = g s x := fun s x => rfl

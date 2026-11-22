@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+
+@[expose] public section
 
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob Matrix
 
@@ -55,7 +59,7 @@ theorem UpperTheory.exists_isUnit_det_mul_map_star_eq_of_unitary :
   have dec : ∀ v : Fin 3 → Lsq K Δ, ∃ w1 w2, S B w1 = w1 ∧ S B w2 = w2 ∧ v = w1 + om K Δ • w2 := by
     intro v
     refine ⟨(1/2 : K) • (v + S B v), (1/(2*Δ) : K) • om K Δ • (v - S B v), ?_, ?_, ?_⟩
-    · rw [map_smul, map_add, S_S hB, add_comm]
+    · rw [map_smul, map_add (f := _), S_S hB, add_comm]
     · rw [map_smul, S_om, map_sub, S_S hB, ← smul_neg, neg_sub]
     · rw [smul_comm (om K Δ) (1/(2*Δ) : K), om_om, smul_smul]
       have h2 : 1/(2*Δ) * Δ = (1/2 : K) := by field_simp

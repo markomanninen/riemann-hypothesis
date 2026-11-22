@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.ClosedUnitBallSubring.ballRing :
     (K : Type) → [inst : NormedField K] → [IsUltrametricDist K] → Subring K :=

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemConnectedComponentOfOneOfPos
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DenseRangeUnits
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemConnectedComponentOfOneOfPos
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DenseRangeUnits
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 ReciprocityTheory.Neutral.Bridge.HCFR Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2.Host GlobalTheory.HeckeGal
 
 noncomputable section
@@ -35,7 +40,7 @@ theorem norm_eq_one_of_sub_one_mem {a : 𝓞 E} (ha : IsUnit a) (h3 : a - 1 ∈ 
     rw [zsmul_eq_mul, Int.cast_ofNat, mul_comm, hm]; ring
   let b := RingOfIntegers.basis E
   have hdet : (Int.castRingHom (ZMod 3)) (Algebra.norm ℤ a) = 1 := by
-    rw [Algebra.norm_eq_matrix_det b, RingHom.map_det, ea, map_add, map_one, map_zsmul]
+    rw [Algebra.norm_eq_matrix_det b, RingHom.map_det, ea, map_add (f := _), map_one, map_zsmul]
     have : (Int.castRingHom (ZMod 3)).mapMatrix (1 + (3 : ℤ) • Algebra.leftMulMatrix b m) = 1 := by
       ext i j
       simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul,
@@ -110,8 +115,8 @@ theorem norm_ne_one_of_sign {w : InfinitePlace E} (hw : w.IsReal) {k : E} (hk : 
   rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ w.embedding), h2, h3, mul_one] at h1
   norm_num at h1
 
-open GlobalTheory.RayFromArtin GlobalTheory.Mem.LocTriv in
 
+open GlobalTheory.RayFromArtin GlobalTheory.Mem.LocTriv in
 theorem infIdele_neg_one_not_mem :
     ∀ (E : Type) [Field E] [NumberField E] (w : InfinitePlace E), w.IsReal →
       ReciprocityTheory.Neutral.Bridge.HCFR.infIdele E w (-1) ∉ ((diagUnits E).range ⊔ infConn E).topologicalClosure := by
@@ -165,8 +170,11 @@ theorem infIdele_neg_one_not_mem :
     simp only [Units.val_mul, Prod.fst_mul, Pi.mul_apply] at this
     exact this
   have hemb : ∀ (w' : InfinitePlace E) (hw' : w'.IsReal), InfinitePlace.embedding_of_isReal hw' (k : E) =
-      InfinitePlace.Completion.ringEquivRealOfIsReal hw' (algebraMap E w'.Completion (k : E)) := fun w' hw' =>
-    (InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe hw' ((WithAbs.equiv w'.1).symm (k : E))).symm
+      InfinitePlace.Completion.ringEquivRealOfIsReal hw' (algebraMap E w'.Completion (k : E)) := fun w' hw' => by
+    rw [InfinitePlace.Completion.ringEquivRealOfIsReal_apply,
+      AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+      Algebra.algebraMap_self_apply, InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe]
+    simp
   have hpos' : ∀ (w' : InfinitePlace E) (hw' : w'.IsReal),
       0 < InfinitePlace.Completion.ringEquivRealOfIsReal hw' (((z⁻¹ : Ideles E) : AdeleRing (𝓞 E) E).1 w') :=
     fun w' hw' => pos_of_mem_conn hw' hinf

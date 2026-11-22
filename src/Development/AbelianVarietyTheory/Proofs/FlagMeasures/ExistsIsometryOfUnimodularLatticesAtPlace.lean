@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsCoprimeScaledIsometrySameSignature
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsPositiveAdd
-import Formalism.LocalToGlobal.ProjectiveLattices.UnramBridgeHolds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsCoprimeScaledIsometrySameSignature
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsPositiveAdd
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnramBridgeHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -124,7 +128,7 @@ theorem mem_locR_iff (z : K) : z ∈ locR (K := K) P ↔ z ∈ semiLoc v := by
 
 variable [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
 
-theorem exists_basis (L : Submodule (𝓞 K) V) (hL : Submodule.IsLattice K L) :
+theorem exists_basis (L : Submodule (𝓞 K) V) (hL : Submodule.IsFullLattice K L) :
     ∃ b : Module.Basis (Fin (Module.finrank K V)) K V,
       ∀ x, x ∈ loc (K := K) P L ↔ ∀ i, b.repr x i ∈ semiLoc v := by
   let e := (Module.finBasis K V).equivFun
@@ -132,7 +136,7 @@ theorem exists_basis (L : Submodule (𝓞 K) V) (hL : Submodule.IsLattice K L) :
   have hL₀ : ReciprocityTheory.MultiplicativeHeights.IsLattice L₀ := by
     refine ⟨hL.fg.map _, ?_⟩
     have : (L₀ : Set _) = e.toLinearMap '' (L : Set V) := rfl
-    rw [this, Submodule.span_image, hL.span_eq_top, Submodule.map_top, LinearEquiv.range]
+    rw [this, Submodule.span_image, Submodule.IsFullLattice.span_eq_top (self := hL), Submodule.map_top, LinearEquiv.range]
   obtain ⟨g, hg⟩ := exists_frame v hL₀
   refine ⟨Module.Basis.ofEquivFun (e.trans (Matrix.toLin'OfInv (Units.mul_inv g) (Units.inv_mul g))), fun x => ?_⟩
   rw [mem_loc_iff hst v hP hPv]
@@ -147,7 +151,8 @@ omit hP hPv [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) 
 theorem form_eq (h : V →ₗ⋆[K] V →ₗ[K] K) {n : ℕ} (b : Module.Basis (Fin n) K V) (x y : V) :
     h y x = herm (Matrix.of fun i j => h (b j) (b i)) (b.equivFun x) (b.equivFun y) := by
   conv_lhs => rw [← b.sum_equivFun x, ← b.sum_equivFun y]
-  simp only [herm, map_sum, LinearMap.sum_apply, map_smul, LinearMap.map_smulₛₗ, LinearMap.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [herm, map_sum, LinearMap.sum_apply, map_smul, LinearMap.map_smulₛₗ, LinearMap.smul_apply,
     smul_eq_mul, Matrix.of_apply, Finset.mul_sum, starRingEnd_apply, hst]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
@@ -185,7 +190,7 @@ theorem gram (h : V →ₗ⋆[K] V →ₗ[K] K) (hn : h.Nondegenerate) {n : ℕ}
 
 theorem exists_isom [Algebra.Unramified (𝓞 (maximalRealSubfield K)) (𝓞 K)]
     (h : V →ₗ⋆[K] V →ₗ[K] K) (hs : h.IsSymm) (hn : h.Nondegenerate) (L L' : Submodule (𝓞 K) V)
-    (hL : Submodule.IsLattice K L) (hL' : Submodule.IsLattice K L')
+    (hL : Submodule.IsFullLattice K L) (hL' : Submodule.IsFullLattice K L')
     (hu : IsUnimodularAt h P L) (hu' : IsUnimodularAt h P L') :
     ∃ g ∈ isom h, gmap g (loc (K := K) P L) = loc (K := K) P L' := by
   obtain ⟨b, hb⟩ := exists_basis hst v hP hPv L hL
@@ -226,7 +231,7 @@ theorem exists_isom [Algebra.Unramified (𝓞 (maximalRealSubfield K)) (𝓞 K)]
 
 end Lat
 
-theorem exists_isom_of_isUnimodularAt : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (h : V →ₗ⋆[K] V →ₗ[K] K), IsCMUnram K → h.IsSymm → h.Nondegenerate → ∀ (L L' : Submodule (𝓞 K) V), Submodule.IsLattice K L → Submodule.IsLattice K L' → ∀ P : Ideal (𝓞 K), P.IsMaximal → IsUnimodularAt h P L → IsUnimodularAt h P L' → ∃ g ∈ isom h, gmap g (loc (K := K) P L) = loc (K := K) P L' := by
+theorem exists_isom_of_isUnimodularAt : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (h : V →ₗ⋆[K] V →ₗ[K] K), IsCMUnram K → h.IsSymm → h.Nondegenerate → ∀ (L L' : Submodule (𝓞 K) V), Submodule.IsFullLattice K L → Submodule.IsFullLattice K L' → ∀ P : Ideal (𝓞 K), P.IsMaximal → IsUnimodularAt h P L → IsUnimodularAt h P L' → ∃ g ∈ isom h, gmap g (loc (K := K) P L) = loc (K := K) P L' := by
   intro K V _ _ _ _ _ _ _ _ h hc hs hn L L' hL hL' P hP hu hu'
   obtain ⟨_, hst⟩ := (GlobalTheory.LeastExponentCompare.conj_iff K star).1 ⟨hc.2.1, by
     obtain ⟨θ, t, e1, e2⟩ := hc.2.2 P hP

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.OrbPol
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.SqChartCore
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.T2SpaceTensorProductFiniteExtension
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.OrbPol
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.SqChartCore
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.T2SpaceTensorProductFiniteExtension
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem rmulFacts_holds : RmulFacts := by
     intro a
     unfold rmulT
     refine continuous_pi fun b => continuous_pi fun i => ?_
-    exact continuous_finset_sum _ fun c _ => continuous_const.mul ((continuous_apply i).comp (continuous_apply c))
+    exact continuous_finsetSum _ fun c _ => continuous_const.mul ((continuous_apply i).comp (continuous_apply c))
   refine ⟨fun a => (hcont a).measurable, ?_, ?_, ?_, ?_, ?_, fun K hK => hK.isClosed.measurableSet, hcont⟩
   · intro a b Y
     funext b' i

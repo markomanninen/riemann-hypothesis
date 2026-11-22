@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DifferentiableAtOneParameter
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DifferentiableAtOneParameter
+
+@[expose] public section
 
 open Filter Topology
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LocalEnd
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LocalEnd
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 

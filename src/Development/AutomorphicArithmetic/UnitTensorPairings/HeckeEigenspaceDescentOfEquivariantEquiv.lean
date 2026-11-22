@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RingSpecNormalisedCharacterEq
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsSameData
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GoodTwistSideFormsLeSpanGoodLiftForms
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSemilinearDescentToBaseChangeOfFormStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RingSpecNormalisedCharacterEq
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsSameData
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GoodTwistSideFormsLeSpanGoodLiftForms
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSemilinearDescentToBaseChangeOfFormStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX NumberField IsDedekindDomain GlobalTheory.HeightCounting GlobalTheory.TwInputs.Move GlobalTheory.HeightCounting.SideCopy
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 set_option synthInstance.maxHeartbeats 400000
@@ -86,9 +91,11 @@ private theorem hermFramePairNormalForm_frameSpan_le_of_generators (D : D7) (S :
   let pr : Module.End (FractionRing (D.ntw.O i)) (D.nexp.Fm i j b) :=
     ∑ u : ↥(Formalism.IndefR.NX.U D.nd), rd (cU D In.θ u) • (D.nexp.actG i j b u).toLinearMap
   have hpr : ∀ w, pr (Ψ w) = Ψ (projL (S := S) In.θ j w) := fun w => by
-    simp only [pr, projL, LinearMap.sum_apply, LinearMap.smul_apply, LinearEquiv.coe_coe, map_sum, hc, ha]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [pr, projL, LinearMap.sum_apply, LinearMap.smul_apply, LinearEquiv.coe_coe, map_sum, hc, ha]
   have hE : ∀ x, eG D.nexp i j b (Ψ x) = Ψ (opL D S j (GlobalTheory.HeightCounting.FormsStep.eL D) x) := fun x => by
-    rw [opL_eL, finsum_eq_sum_of_fintype, LinearMap.sum_apply, map_sum, eG, MonoidAlgebra.lift_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [opL_eL, finsum_eq_sum_of_fintype, LinearMap.sum_apply, map_sum, eG, MonoidAlgebra.lift_apply,
       Finsupp.sum_fintype _ _ (by intros; simp), LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun g _ => ?_
     rw [LinearMap.smul_apply, LinearMap.smul_apply, hc, ha, D.nexp.eAlg_def, hrd]

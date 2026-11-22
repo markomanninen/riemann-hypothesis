@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MemMspan
-import Development.AbelianVarietyTheory.Definitions.Divisors.SmoothSpanLeMspan
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurableToGLEntry
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAddHaarMeasureVolumeLie
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SmoothSpanLeMspan
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurableToGLEntry
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ namespace GlobalTheory.JSW
 
 open GlobalTheory.CuspRep
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 def htInf (y : GL (Fin a) (Cinf E)) : ℝ :=
   ∏ w : InfinitePlace E, htGL (Matrix.GeneralLinearGroup.map (Pi.evalRingHom (fun _ : InfinitePlace E => ℂ) w) y)
@@ -46,7 +50,7 @@ theorem rspan_le {π : CuspSub E a} {S : Submodule ℂ (GA E a → ℂ)} (h₁ :
 theorem one_le_htInf (y : GL (Fin a) (Cinf E)) : 1 ≤ htInf y := by
   unfold htInf
   calc (1 : ℝ) = ∏ _w : InfinitePlace E, (1 : ℝ) := by simp
-    _ ≤ _ := Finset.prod_le_prod (fun _ _ => zero_le_one) fun w _ => one_le_htGL _
+    _ ≤ _ := Finset.prod_le_prod₀ (fun _ _ => zero_le_one) fun w _ => one_le_htGL _
 
 theorem htInf_pos (y : GL (Fin a) (Cinf E)) : 0 < htInf y := lt_of_lt_of_le one_pos (one_le_htInf y)
 
@@ -57,7 +61,7 @@ theorem htGL_le_htInf (y : GL (Fin a) (Cinf E)) (w : InfinitePlace E) :
   rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ w)]
   refine le_mul_of_one_le_right (htGL_pos _).le ?_
   calc (1 : ℝ) = ∏ _w ∈ Finset.univ.erase w, (1 : ℝ) := by simp
-    _ ≤ _ := Finset.prod_le_prod (fun _ _ => zero_le_one) fun w _ => one_le_htGL _
+    _ ≤ _ := Finset.prod_le_prod₀ (fun _ _ => zero_le_one) fun w _ => one_le_htGL _
 
 theorem norm_entry_le_htInf (y : GL (Fin a) (Cinf E)) (i j : Fin a) (w : InfinitePlace E) :
     ‖(y : Matrix (Fin a) (Fin a) (Cinf E)) i j w‖ ≤ htInf y ∧
@@ -84,13 +88,13 @@ theorem height_le_htInf (y : GL (Fin a) (Cinf E)) : height y ≤ 3 * htInf y := 
 theorem IsRapidInf.of_htInf {X : Type} [MeasurableSpace X] {ν : Measure X} {k : X → ℂ} {γ : X → GL (Fin a) (Cinf E)}
     (hk : Measurable k) (hγ : ∀ i j, Measurable fun x => (γ x : Matrix (Fin a) (Fin a) (Cinf E)) i j)
     (hm : ∀ N : ℕ, Integrable (fun x => ‖k x‖ * htInf (γ x) ^ N) ν) : IsRapidInf ν k γ := by
-  refine ⟨hk, measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => hγ i j, fun N => ?_⟩
+  refine ⟨hk, Measurable.of_eval fun i => Measurable.of_eval fun j => hγ i j, fun N => ?_⟩
   refine ((hm N).const_mul (3 ^ N)).mono' ?_ (Filter.Eventually.of_forall fun x => ?_)
   · refine (hk.norm.mul ?_).aestronglyMeasurable
     have hm' : Measurable fun x => toL (γ x).val :=
-      measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => hγ i j
+      Measurable.of_eval fun i => Measurable.of_eval fun j => hγ i j
     have hi : Measurable fun x => toL ((γ x)⁻¹).val := by
-      refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => measurable_pi_lambda _ fun w => ?_
+      refine Measurable.of_eval fun i => Measurable.of_eval fun j => Measurable.of_eval fun w => ?_
       set p : GL (Fin a) (Cinf E) →* GL (Fin a) ℂ :=
         Matrix.GeneralLinearGroup.map (Pi.evalRingHom (fun _ : InfinitePlace E => ℂ) w)
       have e : (fun x => toL ((γ x)⁻¹).val i j w) =
@@ -175,8 +179,8 @@ theorem rspan_eq_mspanR (π : CuspSub E a) : rspan π = mspanR π := by
   · refine sInf_le ⟨fun φ hφ => mem_rspan hφ, fun F hF h => rt_mem_rspan hF h, fun F hF X _ ν _ k γ hk => ?_⟩
     exact kerInf_mem_rspan hF ν hk
 
-open Classical in
 
+open Classical in
 def plS (w : InfinitePlace E) : ℂ →ₙ+* Cinf E where
   toFun z := Pi.single w z
   map_mul' z z' := by ext w'; by_cases h : w' = w <;> simp [Pi.single_apply, h]
@@ -185,26 +189,7 @@ def plS (w : InfinitePlace E) : ℂ →ₙ+* Cinf E where
 
 def plGL (w : InfinitePlace E) : GL (Fin a) ℂ →* GL (Fin a) (Cinf E) := cornerGL a (plS w)
 
-open Classical in
 
-theorem plGL_apply (w : InfinitePlace E) (g : GL (Fin a) ℂ) (i j : Fin a) (w' : InfinitePlace E) :
-    (plGL w g : Matrix (Fin a) (Fin a) (Cinf E)) i j w' =
-      if w' = w then (g : Matrix (Fin a) (Fin a) ℂ) i j else (1 : Matrix (Fin a) (Fin a) ℂ) i j := by
-  change (1 : Matrix (Fin a) (Fin a) (Cinf E)) i j w' - (Pi.single w ((1 : Matrix (Fin a) (Fin a) ℂ) i j) : Cinf E) w' +
-    (Pi.single w ((g : Matrix (Fin a) (Fin a) ℂ) i j) : Cinf E) w' = _
-  simp only [Pi.single_apply, Matrix.one_apply]
-  split_ifs <;> simp_all
-
-open Classical in
-
-theorem map_plGL (w : InfinitePlace E) (g : GL (Fin a) ℂ) (w' : InfinitePlace E) :
-    Matrix.GeneralLinearGroup.map (Pi.evalRingHom (fun _ : InfinitePlace E => ℂ) w') (plGL w g) =
-      if w' = w then g else 1 := by
-  classical
-  ext i j
-  change (plGL w g : Matrix (Fin a) (Fin a) (Cinf E)) i j w' = _
-  rw [plGL_apply]
-  split_ifs <;> rfl
 
 theorem isRapidInf_dirac (y : GL (Fin a) (Cinf E)) :
     IsRapidInf (Measure.dirac ()) (fun _ : Unit => (1 : ℂ)) (fun _ => y) :=
@@ -213,18 +198,5 @@ theorem isRapidInf_dirac (y : GL (Fin a) (Cinf E)) :
 theorem kerInf_dirac (y : GL (Fin a) (Cinf E)) (F : GA E a → ℂ) (g : GA E a) :
     kerInf (Measure.dirac ()) (fun _ : Unit => (1 : ℂ)) (fun _ => y) F g = F (g * infGL E a y) := by
   simp [kerInf]
-
-example (π : CuspSub E a) : 1 ≤ htInf (1 : GL (Fin a) (Cinf E)) ∧ rspan π ≠ ⊥ := ⟨one_le_htInf 1, rspan_ne_bot π⟩
-
-example (π : CuspSub E a) {F : GA E a → ℂ} (hF : F ∈ rspan π) (y : GL (Fin a) (Cinf E)) :
-    (fun g => F (g * infGL E a y)) ∈ rspan π := by
-  have h := kerInf_mem_rspan hF (Measure.dirac ()) (isRapidInf_dirac y)
-  rwa [show kerInf (Measure.dirac ()) (fun _ : Unit => (1 : ℂ)) (fun _ => y) F = fun g => F (g * infGL E a y) from
-    funext (kerInf_dirac y F)] at h
-
-example (w : InfinitePlace E) : htInf (plGL (a := a) w 1) = htGL (1 : GL (Fin a) ℂ) ^ Fintype.card (InfinitePlace E) := by
-  rw [map_one]
-  unfold htInf
-  simp
 
 end GlobalTheory.JSW

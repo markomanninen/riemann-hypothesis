@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleTensorCyclesLocallyLiftOfRowExactAndDescent
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleTensorCyclesLocallyLiftOfRowExactAndDescent
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex GlobalTheory.EtC
@@ -6,32 +10,33 @@ open scoped TensorProduct DirectSum
 
 namespace LateralTheory.EtaleFoundations
 
-local macro "TI " w:term:max : term => `({p : ℤ × ℤ // p.1 + p.2 = $w})
+abbrev TensorDegreeIndex (w : ℤ) : Type := {p : ℤ × ℤ // p.1 + p.2 = w}
 
-local macro "TF " C:term:max J:term:max U:term:max w:term:max : term =>
-  `(fun q : {p : ℤ × ℤ // p.1 + p.2 = $w} => Sec (HomologicalComplex.X $C q.1.1) $U ⊗[ULift.{1} _] Sec (HomologicalComplex.X $J q.1.2) $U)
+abbrev TensorDegreeSummand {R : Type} [CommRing R] (C J : Cx R) (U : Scheme.{0}) (w : ℤ)
+    (p : TensorDegreeIndex w) : Type 1 :=
+  Sec (C.X p.1.1) U ⊗[ULift.{1} R] Sec (J.X p.1.2) U
 
 def stD {R : Type} [CommRing R] (C J : Cx R) (U : Scheme.{0}) (w w' : ℤ) (h : w + 1 = w') :
     Tens C J U w →ₗ[ULift.{1} R] Tens C J U w' :=
   DirectSum.toModule _ _ _ fun p =>
-    (DirectSum.lof (ULift.{1} R) (TI w') (TF C J U w') ⟨(p.1.1 + 1, p.1.2), by have := p.2; omega⟩) ∘ₗ
+    (DirectSum.lof (ULift.{1} R) (TensorDegreeIndex w') (TensorDegreeSummand C J U w') ⟨(p.1.1 + 1, p.1.2), by have := p.2; omega⟩) ∘ₗ
         TensorProduct.map ((C.d p.1.1 (p.1.1 + 1)).hom.app (op U)).hom LinearMap.id +
-      ((p.1.1.negOnePow : ℤ) • ((DirectSum.lof (ULift.{1} R) (TI w') (TF C J U w') ⟨(p.1.1, p.1.2 + 1), by have := p.2; omega⟩) ∘ₗ
+      ((p.1.1.negOnePow : ℤ) • ((DirectSum.lof (ULift.{1} R) (TensorDegreeIndex w') (TensorDegreeSummand C J U w') ⟨(p.1.1, p.1.2 + 1), by have := p.2; omega⟩) ∘ₗ
         TensorProduct.map LinearMap.id ((J.d p.1.2 (p.1.2 + 1)).hom.app (op U)).hom))
 
 theorem stD_lof {R : Type} [CommRing R] (C J : Cx R) (U : Scheme.{0}) (w w' : ℤ) (h : w + 1 = w') (a b : ℤ) (hab : a + b = w)
     (v : Sec (C.X a) U ⊗[ULift.{1} R] Sec (J.X b) U) :
-    stD C J U w w' h (DirectSum.lof (ULift.{1} R) (TI w) (TF C J U w) ⟨(a, b), hab⟩ v) =
-      DirectSum.lof (ULift.{1} R) (TI w') (TF C J U w') ⟨(a + 1, b), by omega⟩
+    stD C J U w w' h (DirectSum.lof (ULift.{1} R) (TensorDegreeIndex w) (TensorDegreeSummand C J U w) ⟨(a, b), hab⟩ v) =
+      DirectSum.lof (ULift.{1} R) (TensorDegreeIndex w') (TensorDegreeSummand C J U w') ⟨(a + 1, b), by omega⟩
           (TensorProduct.map ((C.d a (a + 1)).hom.app (op U)).hom LinearMap.id v) +
-        (a.negOnePow : ℤ) • DirectSum.lof (ULift.{1} R) (TI w') (TF C J U w') ⟨(a, b + 1), by omega⟩
+        (a.negOnePow : ℤ) • DirectSum.lof (ULift.{1} R) (TensorDegreeIndex w') (TensorDegreeSummand C J U w') ⟨(a, b + 1), by omega⟩
           (TensorProduct.map LinearMap.id ((J.d b (b + 1)).hom.app (op U)).hom v) := by
   unfold stD
   rw [DirectSum.toModule_lof]
   rfl
 
-theorem lift_lof {R : Type} [CommRing R] {C J T : Cx R} (τ : Pair C J T) (U : Scheme.{0}) (w : ℤ) (p : TI w)
-    (v : Sec (C.X p.1.1) U ⊗[ULift.{1} R] Sec (J.X p.1.2) U) : τ.lift U w (DirectSum.lof (ULift.{1} R) (TI w) (TF C J U w) p v) =
+theorem lift_lof {R : Type} [CommRing R] {C J T : Cx R} (τ : Pair C J T) (U : Scheme.{0}) (w : ℤ) (p : TensorDegreeIndex w)
+    (v : Sec (C.X p.1.1) U ⊗[ULift.{1} R] Sec (J.X p.1.2) U) : τ.lift U w (DirectSum.lof (ULift.{1} R) (TensorDegreeIndex w) (TensorDegreeSummand C J U w) p v) =
       TensorProduct.lift (τ.mul U p.1.1 p.1.2 w p.2) v := by
   unfold Pair.lift
   rw [DirectSum.toModule_lof]
@@ -45,7 +50,7 @@ theorem stD_lift {R : Type} [CommRing R] {C J T : Cx R} (τ : Pair C J T) (U : S
     obtain ⟨⟨a, b⟩, hab⟩ := p
     refine TensorProduct.ext' fun u v => ?_
     simp only [LinearMap.comp_apply]
-    rw [stD_lof, map_add, map_zsmul, lift_lof, lift_lof, lift_lof]
+    rw [stD_lof, map_add (f := _), map_zsmul, lift_lof, lift_lof, lift_lof]
     simp only [TensorProduct.map_tmul, TensorProduct.lift.tmul, LinearMap.id_apply]
     have := τ.leibniz U a b w hab u v
     rw [Units.smul_def] at this
@@ -62,7 +67,7 @@ theorem stD_res {R : Type} [CommRing R] (C J : Cx R) {V U : Scheme.{0}} (g : V �
     have n2 := stair_map_res (J.d b (b + 1)) g v
     simp only [Sec.map, Sec.res] at n1 n2
     simp only [LinearMap.comp_apply]
-    rw [Tens.res, Tens.res, DirectSum.lmap_lof, stD_lof, stD_lof, map_add, map_zsmul, DirectSum.lmap_lof, DirectSum.lmap_lof]
+    rw [Tens.res, Tens.res, DirectSum.lmap_lof, stD_lof, stD_lof, map_add (f := _), map_zsmul, DirectSum.lmap_lof, DirectSum.lmap_lof]
     simp only [TensorProduct.map_tmul, LinearMap.id_apply]
     rw [n1, n2]
   exact LinearMap.congr_fun key y
@@ -80,18 +85,19 @@ theorem lift_res {R : Type} [CommRing R] {C J T : Cx R} (τ : Pair C J T) {V U :
 
 theorem lof_reidx {R : Type} [CommRing R] (C J : Cx R) (U : Scheme.{0}) (w' a a' b : ℤ) (ha : a + 1 = a')
     (h1 : a + 1 + b = w') (h2 : a' + b = w') (v : Sec (C.X a) U ⊗[ULift.{1} R] Sec (J.X b) U) :
-    DirectSum.lof (ULift.{1} R) (TI w') (TF C J U w') ⟨(a + 1, b), h1⟩
+    DirectSum.lof (ULift.{1} R) (TensorDegreeIndex w') (TensorDegreeSummand C J U w') ⟨(a + 1, b), h1⟩
         (TensorProduct.map ((C.d a (a + 1)).hom.app (op U)).hom LinearMap.id v) =
-      DirectSum.lof (ULift.{1} R) (TI w') (TF C J U w') ⟨(a', b), h2⟩
+      DirectSum.lof (ULift.{1} R) (TensorDegreeIndex w') (TensorDegreeSummand C J U w') ⟨(a', b), h2⟩
         (TensorProduct.map ((C.d a a').hom.app (op U)).hom LinearMap.id v) := by
   subst ha; rfl
 
 theorem stD_low {R : Type} [CommRing R] (C J : Cx R) (U : Scheme.{0}) (w w' : ℤ) (h : w + 1 = w') (n : ℤ)
-    (y : Tens C J U w) (hy : ∀ p : TI w, n < p.1.1 → y p = 0) :
-    ∀ q : TI w', n + 1 < q.1.1 → stD C J U w w' h y q = 0 := by
+    (y : Tens C J U w) (hy : ∀ p : TensorDegreeIndex w, n < p.1.1 → y p = 0) :
+    ∀ q : TensorDegreeIndex w', n + 1 < q.1.1 → stD C J U w w' h y q = 0 := by
   classical
   intro q hq
-  rw [← DirectSum.sum_support_of y, map_sum, DFinsupp.finset_sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← DirectSum.sum_support_of y, map_sum, DirectSum.sum_apply]
   refine Finset.sum_eq_zero fun p hp => ?_
   have hpn : p.1.1 ≤ n := by
     by_contra hc; exact (DFinsupp.mem_support_iff.1 hp) (hy p (by omega))
@@ -103,14 +109,15 @@ theorem stD_low {R : Type} [CommRing R] (C J : Cx R) (U : Scheme.{0}) (w w' : �
   · intro he; rw [he] at hq; simp only at hq; omega
 
 theorem stD_top {R : Type} [CommRing R] (C J : Cx R) (U : Scheme.{0}) (w w' : ℤ) (h : w + 1 = w') (s : ℤ)
-    (y : Tens C J U w) (hy : ∀ p : TI w, s < p.1.1 → y p = 0) (h0 : s + (w - s) = w) (h1 : s + 1 + (w - s) = w') :
+    (y : Tens C J U w) (hy : ∀ p : TensorDegreeIndex w, s < p.1.1 → y p = 0) (h0 : s + (w - s) = w) (h1 : s + 1 + (w - s) = w') :
     stD C J U w w' h y ⟨(s + 1, w - s), h1⟩ =
       TensorProduct.map ((C.d s (s + 1)).hom.app (op U)).hom LinearMap.id (y ⟨(s, w - s), h0⟩) := by
   classical
   conv_lhs => rw [← DirectSum.sum_support_of y]
-  rw [map_sum, DFinsupp.finset_sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, DirectSum.sum_apply]
   have hz : ∀ p ∈ DFinsupp.support y, p ≠ ⟨(s, w - s), h0⟩ →
-      stD C J U w w' h (DirectSum.of (TF C J U w) p (y p)) ⟨(s + 1, w - s), h1⟩ = 0 := by
+      stD C J U w w' h (DirectSum.of (TensorDegreeSummand C J U w) p (y p)) ⟨(s + 1, w - s), h1⟩ = 0 := by
     intro p hp hne
     have hps : p.1.1 < s := by
       have hle : p.1.1 ≤ s := by
@@ -122,13 +129,13 @@ theorem stD_top {R : Type} [CommRing R] (C J : Cx R) (U : Scheme.{0}) (w w' : �
     simp only at hps
     rw [← DirectSum.lof_eq_of (ULift.{1} R), stD_lof, DFinsupp.add_apply, DFinsupp.smul_apply,
       DirectSum.lof_eq_of, DirectSum.lof_eq_of, DirectSum.of_eq_of_ne, DirectSum.of_eq_of_ne, smul_zero, add_zero]
-    · intro he; have := congrArg (fun q : TI w' => q.1.1) he; simp only at this; omega
-    · intro he; have := congrArg (fun q : TI w' => q.1.1) he; simp only at this; omega
-  by_cases hm : (⟨(s, w - s), h0⟩ : TI w) ∈ DFinsupp.support y
+    · intro he; have := congrArg (fun q : TensorDegreeIndex w' => q.1.1) he; simp only at this; omega
+    · intro he; have := congrArg (fun q : TensorDegreeIndex w' => q.1.1) he; simp only at this; omega
+  by_cases hm : (⟨(s, w - s), h0⟩ : TensorDegreeIndex w) ∈ DFinsupp.support y
   · rw [Finset.sum_eq_single_of_mem _ hm hz]
     rw [← DirectSum.lof_eq_of (ULift.{1} R), stD_lof, DFinsupp.add_apply, DFinsupp.smul_apply,
       DirectSum.lof_eq_of, DirectSum.lof_eq_of, DirectSum.of_eq_same, DirectSum.of_eq_of_ne, smul_zero, add_zero]
-    intro he; have := congrArg (fun q : TI w' => q.1.1) he; simp only at this; omega
+    intro he; have := congrArg (fun q : TensorDegreeIndex w' => q.1.1) he; simp only at this; omega
   · rw [Finset.sum_eq_zero fun p hp => hz p hp (fun he => hm (he ▸ hp))]
     have : y ⟨(s, w - s), h0⟩ = 0 := by simpa [DFinsupp.mem_support_iff] using hm
     rw [this, map_zero]
@@ -150,20 +157,20 @@ theorem etale_tensor_cycle_locally_lowers_top_degree_of_row_exact : EtaleTensorC
     rw [stD_lift]; exact next_fix T w _ hc
   refine stair_loc_bind U _ _ (hτ.2 U (w + 1) _ hc') ?_
   intro V g hV
-  have hy : ∀ p : TI w, s < p.1.1 → Tens.res g w x p = 0 := by
+  have hy : ∀ p : TensorDegreeIndex w, s < p.1.1 → Tens.res g w x p = 0 := by
     intro p hp; rw [Tens.res, DirectSum.lmap_apply, hx p hp, map_zero]
   have hrow0 : TensorProduct.map ((C.d s (s + 1)).hom.app (op V)).hom LinearMap.id
       (Tens.res g w x ⟨(s, w - s), by omega⟩) = 0 := by
     rw [← stD_top C J V w (w + 1) rfl s _ hy (by omega) (by omega), stD_res, hV]; rfl
   refine stair_loc_mono V _ _ (hrow s (w - s) V _ hrow0) ?_
   rintro W k ⟨e, he⟩
-  have hlow : ∀ q : TI (w - 1), s - 1 < q.1.1 →
-      (DirectSum.lof (ULift.{1} R) (TI (w - 1)) (TF C J W (w - 1)) ⟨(s - 1, w - s), by omega⟩ e) q = 0 := by
+  have hlow : ∀ q : TensorDegreeIndex (w - 1), s - 1 < q.1.1 →
+      (DirectSum.lof (ULift.{1} R) (TensorDegreeIndex (w - 1)) (TensorDegreeSummand C J W (w - 1)) ⟨(s - 1, w - s), by omega⟩ e) q = 0 := by
     intro q hq
     rw [DirectSum.lof_eq_of, DirectSum.of_eq_of_ne]
     intro he'; rw [he'] at hq; simp only at hq; omega
   refine ⟨Tens.res k w (Tens.res g w x) - stD C J W (w - 1) w (by omega)
-      (DirectSum.lof (ULift.{1} R) (TI (w - 1)) (TF C J W (w - 1)) ⟨(s - 1, w - s), by omega⟩ e), ?_, ?_⟩
+      (DirectSum.lof (ULift.{1} R) (TensorDegreeIndex (w - 1)) (TensorDegreeSummand C J W (w - 1)) ⟨(s - 1, w - s), by omega⟩ e), ?_, ?_⟩
   · intro p hp
     rw [DFinsupp.sub_apply]
     rcases lt_or_eq_of_le (show s ≤ p.1.1 by omega) with hps | hps
@@ -178,9 +185,9 @@ theorem etale_tensor_cycle_locally_lowers_top_degree_of_row_exact : EtaleTensorC
         DirectSum.lof_eq_of, DirectSum.lof_eq_of, DirectSum.of_eq_same, DirectSum.of_eq_of_ne, smul_zero, add_zero,
         sub_eq_zero]
       · exact he.symm
-      · intro he'; have := congrArg (fun q : TI w => q.1.1) he'; simp only at this; omega
+      · intro he'; have := congrArg (fun q : TensorDegreeIndex w => q.1.1) he'; simp only at this; omega
   · obtain ⟨z', hz'⟩ := prev_fix T w (τ.lift W (w - 1)
-      (DirectSum.lof (ULift.{1} R) (TI (w - 1)) (TF C J W (w - 1)) ⟨(s - 1, w - s), by omega⟩ e))
+      (DirectSum.lof (ULift.{1} R) (TensorDegreeIndex (w - 1)) (TensorDegreeSummand C J W (w - 1)) ⟨(s - 1, w - s), by omega⟩ e))
     refine ⟨z', ?_⟩
     rw [map_sub, lift_res, lift_res, stair_res_res, stD_lift]
     exact congrArg (fun t => _ - t) hz'.symm

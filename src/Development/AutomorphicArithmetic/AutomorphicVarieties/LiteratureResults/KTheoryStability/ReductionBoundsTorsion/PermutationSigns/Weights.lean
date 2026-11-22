@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.PStab
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.PStab
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,6 @@ theorem tmC_pos {N q : ℕ} {σ : Equiv.Perm (Fin q)} {w : Fin q → InfinitePla
     tmC σ w Y = ∑ a : Fin q → Fin N, ∏ i, mat (Y i) (w i) (a i) (a (σ i)) := by
   rw [tmC, if_pos hw]
   simp [ent]
-  rfl
 
 theorem tmC_neg {N q : ℕ} {σ : Equiv.Perm (Fin q)} {w : Fin q → InfinitePlace L}
     (hw : ¬ ∀ i, w (σ i) = w i) (Y : Fin q → HS L N) : tmC σ w Y = 0 := by
@@ -148,7 +151,7 @@ theorem tmC_blk {d n q : ℕ} (σ : Equiv.Perm (Fin q)) (w : Fin q → InfiniteP
       intro p
       rw [← Finset.prod_mul_distrib]
       refine Finset.prod_congr rfl fun i _ => ?_
-      simp [hE, reindex_apply, kroneckerMap_apply, one_apply]
+      by_cases h : p.1 i = p.1 (σ i) <;> simp [hE, reindex_apply, kroneckerMap_apply, Matrix.one_apply, h]
     simp only [hA]
     rw [Fintype.sum_prod_type]
     dsimp only

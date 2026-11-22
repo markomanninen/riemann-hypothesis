@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsDiagonalCoordinates
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsIsHomFamilyComplex
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.WeilPairingEqOfIsomorphicCubePairings
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.WeilEqIffHermFormEqComplex
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IntegersOfCmFieldConjStructure
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CmCurveLieCharacterOfAdjoinGenerator
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLinearLiftOfIsMonHomPolAV
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsDiagonalCoordinates
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsIsHomFamilyComplex
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.WeilPairingEqOfIsomorphicCubePairings
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.WeilEqIffHermFormEqComplex
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IntegersOfCmFieldConjStructure
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CmCurveLieCharacterOfAdjoinGenerator
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLinearLiftOfIsMonHomPolAV
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
@@ -140,8 +144,9 @@ theorem exists_isExp (T : PAT H (Sp ℂ)) (D : Datum H) (u : HolUnif T.t.G T.t.P
     simp only [e]
     exact hW k a b c hk hc
 
-set_option maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 200000 in
+set_option maxHeartbeats 400000 in
 theorem exists_isExp_of_isTen : ThetaUnifAV → Out.Laws → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (ω : ℂ) (C : Ell H ℂ ω) (u₀ : HolUnif C.P.A C.P.L C.P.g) (c : ℂ) (D : Datum H) (ε : ℤˣ) (h : D.La → D.La → OK H) (T : PAT H (Sp ℂ)) (t : IsTen C D h T), c ≠ 0 → PureType.IsQuadLattice u₀.Λ H.d c → 0 < ((ε : ℤ) : ℝ) * ω.im → IsKForm D ε h → (D.q = 0 ∧ 2 * ω - 1 = H.rt0) ∨ (D.p = 0 ∧ 2 * ω - 1 = -H.rt0) →
   ∃ (g : ℕ) (ty : Fin g → (E →+* ℂ)) (Pe : D.La →+ (Fin g → ℂ)) (e : (Fin g → ℂ) → (Over.mk (spMap (RingHom.id ℂ)) ⟶ T.t.G)), IsTypeFn H D.p D.q ty ∧ IsExp T (RingHom.id ℂ) D ty Pe e ∧ (∀ a (z : ℂ), (e (z • Pe a)).left = (u₀.ex (fun _ => c * z) ≫ t.ten.tmul a).left) ∧
     ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (f : D.La →+ V), (∀ a, f (H.w0 • a) = ω • f a) → ∃ F : (Fin g → ℂ) →ₗ[ℂ] V, ∀ a, F (Pe a) = f a := by
@@ -168,7 +173,7 @@ theorem exists_isExp_of_isTen : ThetaUnifAV → Out.Laws → ∀ (E : Type) [Fie
   have hsemi : ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (f : D.La →+ V), (∀ a, f (H.w0 • a) = ω • f a) →
       ∀ (o : OK H) a, f (o • a) = τ₀ o • f a := fun V _ _ f hf o a => by
     obtain ⟨m, n, rfl⟩ := hgen o
-    rw [add_smul, mul_smul, Int.cast_smul_eq_zsmul, Int.cast_smul_eq_zsmul, map_add, map_zsmul, map_zsmul,
+    rw [add_smul, mul_smul, Int.cast_smul_eq_zsmul, Int.cast_smul_eq_zsmul, map_add (f := _), map_zsmul, map_zsmul,
       show wK H • a = H.w0 • a from rfl, hf]
     simp [hτ, add_smul, mul_smul, Int.cast_smul_eq_zsmul]
   obtain ⟨rig, hrig⟩ := T.pol.rigid
@@ -205,7 +210,7 @@ theorem exists_isExp_of_isTen : ThetaUnifAV → Out.Laws → ∀ (E : Type) [Fie
     rw [hFz, hFz, one_smul, one_smul, LinearMap.smul_apply, ← map_smul, e, hH₁] at this
     have e' : h a b = (((ε : ℤ) * (D.EF (H.w0 • a) b - D.EF a b) : ℤ) : OK H) +
         (((ε : ℤ) * D.EF a b : ℤ) : OK H) * wK H := Subtype.ext (hh a b)
-    rw [this, e', map_add, map_mul, map_intCast, map_intCast, hτ, map_one, _root_.mul_one, Complex.div_ofReal_im]
+    rw [this, e', map_add (f := _), map_mul, map_intCast, map_intCast, hτ, map_one, _root_.mul_one, Complex.div_ofReal_im]
     simp only [Complex.mul_im, Complex.add_im, Complex.intCast_im, Complex.intCast_re, Complex.re_ofNat,
       Complex.im_ofNat]
     push_cast
@@ -257,7 +262,7 @@ theorem exists_isExp_of_isTen : ThetaUnifAV → Out.Laws → ∀ (E : Type) [Fie
       map_one' := ext _ _ fun a => by rw [hRP, one_smul]; rfl
       map_mul' := fun s s' => ext _ _ fun a => by rw [Module.End.mul_apply, hRP, hRP, hRP, mul_smul] }
     fun s s' => ext _ _ fun a => (hRP _ _).trans (by
-      rw [add_smul, map_add, ← hRP, ← hRP]; rfl)
+      rw [add_smul, map_add (f := _), ← hRP, ← hRP]; rfl)
   obtain ⟨g, B, ty, hB⟩ := exists_diagonal_coordinates r
   have hΛP : ∀ v, v ∈ u.Λ ↔ v ∈ P.range := fun v => (hex v).symm.trans (hker v)
   obtain ⟨e, he, heB⟩ := exists_isExp T D u hAH.1 hAH.2.1 P hi hΛP hform (fun k a b c hk hc => by

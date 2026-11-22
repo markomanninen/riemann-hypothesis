@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -42,7 +46,8 @@ theorem linIndep_at_of_gen_at {R M : Type} [CommRing R] [AddCommGroup M] [Module
       have e2 : (LocalizedModule.mk (t • x) 1 : Mq) = ∑ i, (algebraMap R Rq (a i)) • n' i := by
         rw [← ha]
         simp only [n', algebraMap_smul]
-        rw [← LocalizedModule.mkLinearMap_apply, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← LocalizedModule.mkLinearMap_apply, map_sum]
         simp [LocalizedModule.mkLinearMap_apply]
       rw [e1, e2]
       exact Submodule.smul_mem _ _
@@ -61,7 +66,8 @@ theorem linIndep_at_of_gen_at {R M : Type} [CommRing R] [AddCommGroup M] [Module
     simp only [L, Fintype.linearCombination_apply, n', algebraMap_smul]
     have h0 : (LocalizedModule.mkLinearMap q.asIdeal.primeCompl M) (∑ i, c i • n i) = 0 := by
       rw [hc, map_zero]
-    simpa [map_sum, LocalizedModule.mkLinearMap_apply] using h0
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, LocalizedModule.mkLinearMap_apply] using h0
   have hz' : (fun i => algebraMap R Rq (c i)) = 0 := hinj (by rw [hz, map_zero])
   have hi : ∀ i, ∃ τ : q.asIdeal.primeCompl, (τ : R) * c i = 0 := fun i =>
     (IsLocalization.map_eq_zero_iff q.asIdeal.primeCompl Rq (c i)).1 (congrFun hz' i)

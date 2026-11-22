@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.SmallCones.UnfAbs
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.UnfAbs
+
+@[expose] public section
 
 noncomputable section
 

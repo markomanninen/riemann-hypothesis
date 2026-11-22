@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,7 +92,7 @@ theorem contDiff_exp_smul (Y : A) (n : WithTop ℕ∞) : ContDiff ℝ n fun t : 
   exact h.comp (contDiff_id.smul contDiff_const)
 
 theorem contDiff_tail (k : ℕ) (n : WithTop ℕ∞) : ContDiff ℝ n fun (t : Fin (k + 1) → ℝ) (i : Fin k) => t i.succ :=
-  contDiff_pi.2 fun i => contDiff_apply ℝ ℝ i.succ
+  contDiff_pi.2 fun i => contDiff_apply ℝ (fun _ => ℝ) i.succ
 
 omit [TopologicalSpace G] [ContinuousMul G] [Fintype ι] in
 theorem contDiff_pr (m : ι → G →* A) (n : WithTop ℕ∞) (w : ι) (k : ℕ) : ∀ γ : Fin k → (Multiplicative ℝ →* G),
@@ -100,8 +104,8 @@ theorem contDiff_pr (m : ι → G →* A) (n : WithTop ℕ∞) (w : ι) (k : ℕ
     obtain ⟨h1, h2⟩ := ih (fun i => γ i.succ) fun i => hγ i.succ
     obtain ⟨Y, hY⟩ := hγ 0
     simp only [pr_succ, mul_inv_rev, map_mul, ← map_inv, ← ofAdd_neg, hY w]
-    exact ⟨((contDiff_exp_smul (Y w) n).comp (contDiff_apply ℝ ℝ 0)).mul (h1.comp (contDiff_tail k n)),
-      (h2.comp (contDiff_tail k n)).mul ((contDiff_exp_smul (Y w) n).comp (contDiff_apply ℝ ℝ 0).neg)⟩
+    exact ⟨((contDiff_exp_smul (Y w) n).comp (contDiff_apply ℝ (fun _ => ℝ) 0)).mul (h1.comp (contDiff_tail k n)),
+      (h2.comp (contDiff_tail k n)).mul ((contDiff_exp_smul (Y w) n).comp (contDiff_apply ℝ (fun _ => ℝ) 0).neg)⟩
 
 def cj (x : G) (γ : Multiplicative ℝ →* G) : Multiplicative ℝ →* G := (MulAut.conj x⁻¹).toMonoidHom.comp γ
 

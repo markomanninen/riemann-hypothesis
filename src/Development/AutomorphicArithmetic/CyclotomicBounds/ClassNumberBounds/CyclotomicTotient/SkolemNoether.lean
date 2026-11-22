@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace KStar.Tree
 
@@ -17,7 +21,8 @@ theorem exists_conj_of_algHom {B : Type} [CommRing B] [IsLocalRing B] {r : ℕ}
       rw [Matrix.single_mul_single_same, mul_one]
     · rw [Matrix.single_mul_single_of_ne _ _ _ _ h, map_zero]
   have hsum : ∑ j, θ (Matrix.single j j (1 : B)) = 1 := by
-    rw [← map_sum, ← map_one θ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, ← map_one θ]
     congr 1
     ext p q
     rw [Matrix.sum_apply, Finset.sum_eq_single p]
@@ -97,7 +102,7 @@ theorem exists_conj_of_algHom {B : Type} [CommRing B] [IsLocalRing B] {r : ℕ}
     (∑ l, θ (Matrix.single l i0 (1 : B)) * Matrix.single b l 1) * x
   induction x using Matrix.induction_on' with
   | h_zero => simp
-  | h_add p q hp hq => rw [map_add, add_mul, hp, hq, mul_add]
+  | h_add p q hp hq => rw [map_add (f := _), add_mul, hp, hq, mul_add]
   | h_std_basis k l c =>
     have hs : Matrix.single k l c = c • Matrix.single k l (1 : B) := by
       rw [Matrix.smul_single, smul_eq_mul, mul_one]

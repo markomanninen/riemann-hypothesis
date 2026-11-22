@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ExpCombine
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.StepB
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.StepC
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ExpCombine
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.StepB
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.StepC
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,13 @@ theorem lim_one (ρ : E n → ℂ) (hρ : Integrable ρ) (t : ℝ) (ψ : E n →
       exact (hρ.aestronglyMeasurable.mul (continuous_gam (ε k)).aestronglyMeasurable).mul
         (hexp.comp (continuous_const.prodMk continuous_id)).aestronglyMeasurable
     · intro β; exact Eventually.of_forall fun y => hbd k y β
-    · exact Eventually.of_forall fun y => continuous_const.mul (hexp.comp (continuous_id.prodMk continuous_const))
+    · exact Eventually.of_forall fun y => by
+        have hip : Continuous (fun β : E n => ip β y) := by
+          unfold ip
+          fun_prop
+        have hy : Continuous (fun β : E n => Complex.exp (-(Complex.I * t * ip β y))) :=
+          Complex.continuous_exp.comp ((continuous_const.mul (Complex.continuous_ofReal.comp hip)).neg)
+        exact continuous_const.mul hy
   have hin : ∀ β : E n, Tendsto (fun k => ∫ y, ρ y * gam (ε k) y * Complex.exp (-(Complex.I * t * ip β y)))
       atTop (𝓝 (∫ y, ρ y * Complex.exp (-(Complex.I * t * ip β y)))) := by
     intro β

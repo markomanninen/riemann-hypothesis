@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ZetaAwayPowSelf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelGeometricFibre
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRingHomCyclotomicAwayToFieldPrimitiveRootStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLatticeMapModOfPerfectAlternatingStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ZetaAwayPowSelf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelGeometricFibre
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRingHomCyclotomicAwayToFieldPrimitiveRootStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLatticeMapModOfPerfectAlternatingStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem exists_sympCond_geom : ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (R : T
   have hprim : IsPrimitiveRoot ((I.ζ M : Kˣ) : K) M :=
     IsPrimitiveRoot.coe_units_iff.2 (I.ζ_prim M hM0 hMp)
   obtain ⟨β₀, hβ₀⟩ := GlobalTheory.T.exists_ringHom_cyclotomicAway_to_field_primitiveRoot M (by omega) K _ hprim hMK
-  refine ⟨spMap β₀, fun a => I.ev M (L a), fun a c => by show I.ev M (L (a + c)) = I.ev M (L a) * I.ev M (L c); rw [map_add, I.add],
+  refine ⟨spMap β₀, fun a => I.ev M (L a), fun a c => by show I.ev M (L (a + c)) = I.ev M (L a) * I.ev M (L c); rw [map_add (f := _), I.add],
     fun a => (I.onto M hM0 hMp _).2 ⟨L a, rfl⟩, ?_⟩
   intro k _ _ x' β' z hx' hz
   obtain ⟨φ, rfl⟩ : ∃ φ : K →+* k, x' = spMap φ := ⟨(Spec.preimage x').hom, (Spec.map_preimage _).symm⟩

@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.IsVerticalCartier
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ArithModel
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PConeTrdeg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedC
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.IsVerticalCartier
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ArithModel
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PConeTrdeg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedC
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.LowerBoundFree
@@ -78,7 +83,7 @@ theorem IsValueAt.unique {a : Ω} {v v' : ℂ} (hz : z ∈ mcPts (mCoordIdeal y)
 theorem valAt_eq {a : Ω} {v : ℂ} (hz : z ∈ mcPts (mCoordIdeal y)) (h : IsValueAt y a z v) :
     valAt y a z = v := by
   have hr : RegularAt y a z := ⟨v, h⟩
-  rw [valAt, dif_pos hr]
+  rw [valAt, dite_eq_left hr]
   exact IsValueAt.unique hz hr.choose_spec h
 
 theorem RegularAt.isValueAt {a : Ω} (hz : z ∈ mcPts (mCoordIdeal y)) (h : RegularAt y a z) :
@@ -113,21 +118,13 @@ theorem IsValueAt.add {a b : Ω} {v w : ℂ} (ha : IsValueAt y a z v) (hb : IsVa
     ProjLine.mhMul hh hh', ?_, ?_, ?_, ?_⟩
   · rw [map_mul]
     exact mul_ne_zero hy hy'
-  · simp only [map_add, map_mul]
+  · simp only [map_add (f := _), map_mul]
     rw [hyg, hyg']
     ring
   · rw [map_mul, eval_mul]
     exact mul_ne_zero hz hz'
-  · simp only [map_add, map_mul, eval_add, eval_mul]
+  · simp only [map_add (f := _), map_mul, eval_add, eval_mul]
     rw [hzg, hzg']
-    ring
-
-theorem IsValueAt.neg {a : Ω} {v : ℂ} (ha : IsValueAt y a z v) : IsValueAt y (-a) z (-v) := by
-  obtain ⟨d, g, h, hg, hh, hy, hyg, hz, hzg⟩ := ha
-  refine ⟨d, -g, h, ProjLine.mhNeg hg, hh, hy, ?_, hz, ?_⟩
-  · rw [map_neg, hyg]
-    ring
-  · rw [map_neg, eval_neg, hzg]
     ring
 
 theorem isValueAt_intCast (n : ℤ) : IsValueAt y (n : Ω) z (n : ℂ) := by
@@ -163,8 +160,8 @@ theorem RegularAt.sum {σ : Type} (s : Finset σ) {a : σ → Ω} (h : ∀ i ∈
     rw [Finset.sum_insert hi]
     exact (h i (Finset.mem_insert_self i s)).add (ih fun j hj => h j (Finset.mem_insert_of_mem hj))
 
-omit [Fintype κ] [∀ k, Fintype (ι k)] in
 
+omit [Fintype κ] [∀ k, Fintype (ι k)] in
 theorem eval_conj (f : MRing ι) (z : (Σ k, ι k) → ℂ) :
     eval (fun p => starRingEnd ℂ (z p)) (map (Int.castRingHom ℂ) f) =
       starRingEnd ℂ (eval z (map (Int.castRingHom ℂ) f)) := by

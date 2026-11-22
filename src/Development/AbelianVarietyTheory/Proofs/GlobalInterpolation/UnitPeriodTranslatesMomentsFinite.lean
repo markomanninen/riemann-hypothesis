@@ -1,29 +1,33 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LatIntZero
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TranslateMomentsAll
-import Formalism.LocalToGlobal.KernelLattices.LateralTheory
-import Formalism.LocalToGlobal.KernelLattices.DeterminantCokernelCount.CokernelIndexFactors.StatementB
-import Formalism.LocalToGlobal.KernelLattices.DeterminantCokernelCount.JetMomEquiv
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MkLeContinuumOfDenseRange
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CmLatticeTranslationOperatorEqPhaseMulNegComp
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.OpUConstMul
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LawsAndChart
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MomentMeasureNormLeOneIffLatticeIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DiscOneScaleRatioIdealRingAlgebraicUnitStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CmBaseFieldIntegersAndCurveIdealFactsStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormalizedVectorTranslatesPrimeOrderIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.GoodLiftEqIdempotentLiftStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IteratedFDerivAlgebraicDirectionsJetTransportStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LatticeJetsAreBoundedMomentsPullbackStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsAnalyticSetupPeriodLatticePairStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormalizedThetaVectorIsometryIsThetaStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AlgebraicJetsOfAlgebraicTaylorStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PairingScaledDirectionsEqPeriodPairingStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AlgebraicDirectionScaledEmbeddingStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.GoodLiftsLatticeMapMemSetupGoodLiftsStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PrimePowSmulGoodLiftMemSetupLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CoefInWeilOperatorTranslateAlgebraicStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EqOnPadicIntOfEqOnNaturalsMomentStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LatIntZero
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TranslateMomentsAll
+public import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+public import Formalism.LocalToGlobal.KernelLattices.DeterminantCokernelCount.CokernelIndexFactors.StatementB
+public import Formalism.LocalToGlobal.KernelLattices.DeterminantCokernelCount.JetMomEquiv
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MkLeContinuumOfDenseRange
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CmLatticeTranslationOperatorEqPhaseMulNegComp
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.OpUConstMul
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LawsAndChart
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MomentMeasureNormLeOneIffLatticeIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DiscOneScaleRatioIdealRingAlgebraicUnitStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CmBaseFieldIntegersAndCurveIdealFactsStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormalizedVectorTranslatesPrimeOrderIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.GoodLiftEqIdempotentLiftStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IteratedFDerivAlgebraicDirectionsJetTransportStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LatticeJetsAreBoundedMomentsPullbackStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsAnalyticSetupPeriodLatticePairStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormalizedThetaVectorIsometryIsThetaStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AlgebraicJetsOfAlgebraicTaylorStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PairingScaledDirectionsEqPeriodPairingStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AlgebraicDirectionScaledEmbeddingStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.GoodLiftsLatticeMapMemSetupGoodLiftsStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PrimePowSmulGoodLiftMemSetupLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CoefInWeilOperatorTranslateAlgebraicStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EqOnPadicIntOfEqOnNaturalsMomentStatement
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Classical Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker GlobalTheory.MomN
 
@@ -38,7 +42,7 @@ theorem U_transport (D : D7) (T : Tor D) {N N' g : ℕ} (Hm : Matrix (Fin g) (Fi
   funext z
   have h1 : JMB.hf Hm z (e t) = Hf D T (e.symm z) t := by
     rw [← hhf]; simp
-  simp only [JMB.opU, U, map_add, ContinuousLinearEquiv.symm_apply_apply, h1, hhf]
+  simp only [JMB.opU, U, map_add (f := _), ContinuousLinearEquiv.symm_apply_apply, h1, hhf]
   congr 2
   ring
 
@@ -52,9 +56,26 @@ theorem wop_transport (D : D7) (T : Tor D) {N N' g : ℕ} (S : JMB.Setup g) (e :
     rw [qH, JMB.beta, hhf, hd, Complex.re_ofReal_mul]
   have hU := U_transport D T S.Hm e hhf t F
   have hUy := U_transport D T S.Hm e hhf y (U D T t F)
+  have hphase : wPh D T p y = Complex.exp ((Real.pi : ℂ) * Complex.I * (qH D T y : ℂ)) := by
+    have hE : Complex.exp ((Real.pi : ℂ) * Complex.I * (qH D T y : ℂ)) = (-1 : ℂ) ^ m := by
+      rw [hqH.trans hm, show (Real.pi : ℂ) * Complex.I * ((m : ℝ) : ℂ) = (m : ℂ) * (Real.pi * Complex.I) by
+        push_cast; ring, Complex.exp_int_mul, Complex.exp_pi_mul_I]
+    unfold wPh
+    split_ifs with hp
+    · rfl
+    · rw [hE]
+      have hex : ∃ s : ℂ, ∃ (k : ℕ) (m' : ℤ), (p : ℝ) ^ k * qH D T y = (m' : ℝ) ∧ s = (-1 : ℂ) ^ m' :=
+        ⟨(-1 : ℂ) ^ m, 0, m, by rw [hqH.trans hm]; simp, rfl⟩
+      obtain ⟨k, m', hm', hs⟩ := Classical.epsilon_spec hex
+      rw [hs]
+      rw [hqH.trans hm] at hm'
+      have hm'' : m' = (p : ℤ) ^ k * m := by exact_mod_cast hm'.symm
+      have hodd : Odd ((p : ℤ) ^ k) := by
+        have := ((Fact.out : p.Prime).odd_of_ne_two hp).pow (n := k)
+        exact_mod_cast this
+      rw [hm'', zpow_mul, hodd.neg_one_zpow]
   funext z
-  rw [JMB.opW, hU, Wop, I3.JetMomEq.wPh_of_int T y m (hqH.trans hm), hqH]
-  rw [hUy]
+  simp only [JMB.opW, hU, hUy, Wop, hphase, hqH]
 
 theorem jet_transport (D : D7) {N N' g : ℕ} (e : VC D N N' ≃L[ℂ] (Fin g → ℂ)) (G : VC D N N' → ℂ)
     (hG : ContDiff ℂ ⊤ G) (k : ℕ) (v : Fin k → VC D N N') :
@@ -68,7 +89,8 @@ theorem embV_sum (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) {N N' r : ℕ}
     (b : Fin r → Matrix (Fin N') (Fin N) D.host.E) :
     embV D (tor0 D cc δ) (∑ i, ((a i : ℕ) : D.host.E) • b i) = ∑ i, ((a i : ℕ) : ℂ) • embV D (tor0 D cc δ) (b i) := by
   funext τ i j
-  simp [embV, tor0, Finset.sum_apply, Matrix.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [embV, tor0, Finset.sum_apply, Matrix.sum_apply, map_sum]
 
 theorem kap_transport (D : D7) (T : Tor D) {N N' g : ℕ} (Hm : Matrix (Fin g) (Fin g) ℂ) (e : VC D N N' ≃L[ℂ] (Fin g → ℂ))
     (hhf : ∀ x y, JMB.hf Hm (e x) (e y) = Hf D T x y) (x y : VC D N N') : kap D T x y = JMB.kap Hm (e x) (e y) := by
@@ -85,7 +107,7 @@ theorem moments_fin : (∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (B :
   have hne : δ / δ₀ ≠ 0 := by
     intro h; have := hUn ι; rw [h, map_zero, norm_zero] at this; exact zero_ne_one this
   have hδ0 : δ ≠ 0 := by intro h; apply hne; rw [h, zero_div]
-  have hlam : lamC lam (δ / δ₀) = ι (δ / δ₀) := by rw [lamC, dif_pos hQ]; exact (hι ⟨_, hQ⟩).symm
+  have hlam : lamC lam (δ / δ₀) = ι (δ / δ₀) := by rw [lamC, dite_eq_left hQ]; exact (hι ⟨_, hQ⟩).symm
   refine ⟨Ω * (Ideal.absNorm cc : ℂ_[p]) * lamC lam (δ / δ₀), ?_, ?_⟩
   · rw [norm_mul, norm_mul, hΩ, hlam, hUn ι, GlobalTheory.MomOne.Basic.norm_nat_eq_one (Nat.Coprime.symm hcop)]
     norm_num
@@ -163,7 +185,8 @@ theorem moments_fin : (∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (B :
   have hf := GlobalTheory.T.eq_on_padicInt_of_eq_on_naturals_moment p lam Ω g S r n k bS (JMB.liftY p n eps bS yt) ys gf (fun a => by
     rw [hg a, ← hK a, kap_transport D B.tor S.Hm e hhf, embV_sum]
     have hs : e (δ • ∑ i, ((a i : ℕ) : ℂ) • embV D (tor0 D cc δ) (b i)) = ∑ i, ((a i : ℕ) : ℂ) • bS i := by
-      simp only [bS, Finset.smul_sum, map_sum, map_smul, smul_comm δ]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [bS, Finset.smul_sum, map_sum, map_smul, smul_comm δ]
     rw [hs]
     congr 1
     exact Finset.prod_congr rfl fun j _ => (GlobalTheory.T.pairing_scaledDirections_eq_period_pairing D cc δ δ₀ B N N' g S e p lam Ω r b (y' j) _ hQ hne hcop hbeta).symm)

@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ActAtApply
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ActAtApply
+
+@[expose] public section
+
 open scoped TensorProduct
 open Formalism.BasicNotions.TH GlobalTheory.FockAlg GlobalTheory.RealLift GlobalTheory.HoweR
 
@@ -34,7 +39,8 @@ theorem atPl_one (w : T) : atPl w (1 : Module.End ℂ (V w)) = 1 := by
 
 theorem qop_atPl {ι : Type} [Fintype ι] [DecidableEq ι] (w : T) (F : ι → ι → Module.End ℂ (V w)) (α β : ℂ) (i j : ι) :
     qop (fun a b => atPl w (F a b)) α β i j = atPl w (qop F α β i j) := by
-  simp only [qop, ← atPlLin_apply, map_sub, map_sum, map_smul, apply_ite (atPlLin w), map_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [qop, ← atPlLin_apply, map_sub, map_sum, map_smul, apply_ite (atPlLin w), map_zero]
   simp only [atPlLin_apply, atPl_mul, atPl_one]
 
 theorem mem_of_atPl (C : ∀ w, Submodule ℂ (V w)) (w : T) (L : Module.End ℂ (V w)) (hL : ∀ x, L x ∈ C w)
@@ -44,7 +50,7 @@ theorem mem_of_atPl (C : ∀ w, Submodule ℂ (V w)) (w : T) (L : Module.End ℂ
     rw [map_smul, atPl_tprod]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, ⟨w, by simpa using hL (f w)⟩, rfl⟩)
   | add x y hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hx hy
 
 end GlobalTheory.HoweR.TensQuad

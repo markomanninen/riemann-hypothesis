@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.VanishingOfL2Equivariant
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DiscreteSeriesFormOneReduction
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VanishingOfL2Equivariant
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DiscreteSeriesFormOneReduction
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped InnerProductSpace ENNReal

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.ParConsts
+module
+
+public import Formalism.SharpRestriction.ParConsts
+
+@[expose] public section
 
 noncomputable section
 

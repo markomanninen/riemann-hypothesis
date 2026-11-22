@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.IoBlockWh
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.LogLeOfLeSq
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.IoBlockWh
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.LogLeOfLeSq
+
+@[expose] public section
 
 noncomputable section
 

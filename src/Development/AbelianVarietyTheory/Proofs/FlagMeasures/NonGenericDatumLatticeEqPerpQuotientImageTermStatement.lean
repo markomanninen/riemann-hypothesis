@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NonGenericDatumLatticeEqPerpQuotientImageTerm
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.IsTermOver
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NonGenericDatumLatticeEqPerpQuotientImageTerm
+public import Formalism.SharpRestriction.CuspSpanNormBounds.IsTermOver
+
+@[expose] public section
+
 open Formalism.MainNotions.S
 
 set_option maxHeartbeats 1000000 in

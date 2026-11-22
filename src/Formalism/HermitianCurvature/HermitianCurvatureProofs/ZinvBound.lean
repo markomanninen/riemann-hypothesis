@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleWordLengthLe
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleWordLengthLe
+
+@[expose] public section
 
 open Matrix Set
 open scoped ComplexConjugate ContDiff Topology

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+
+@[expose] public section
 
 open NumberField UpperHalfPlane GlobalTheory.HilbFam GlobalTheory.QFam
 open GlobalTheory.IndefiniteRowSideFullHecke.OmegaFactorization (Emb Frac latM qPow upperHalf cK omegaFactor IsPartialZeta HasExpansion)
@@ -20,10 +24,10 @@ private theorem coord_unit_smul {F : Type} [Field F]
   simp only [_root_.GlobalTheory.HilbFam.coord, hsmul, map_mul, Complex.ofReal_mul]
   ring
 
+
 set_option autoImplicit false in
 open NumberField UpperHalfPlane in
 open scoped Classical MatrixGroups nonZeroDivisors in
-
 theorem _root_.GlobalTheory.HilbFam.gTerm_unit_smul : ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (k : ℕ) (σ : ℂ) (b a : _root_.GlobalTheory.IndefiniteRowSideFullHecke.OmegaFactorization.Emb F → ℂ)
     (ε : (𝓞 F)ˣ) (x : Fin 2 → F), Even k → _root_.GlobalTheory.HilbFam.gTerm k σ b a (ε • x) = _root_.GlobalTheory.HilbFam.gTerm k σ b a x := by
   intro F _ _ _ k σ b a ε x hk

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.InPOfMemPow
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.StarAlgebraMap
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.InPOfMemPow
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.StarAlgebraMap
+
+@[expose] public section
 
 open NumberField Module
 
@@ -11,22 +15,6 @@ namespace Formalism.L2.SG.Pf.UnitPairSolutions
 open Formalism.HermitianLattices.Ext.L3 Formalism.L2.SG.Pf.Cnt Formalism.HermitianLattices.Ext.L3.HU Formalism.L2.SG.Pf.GluingBases
 
 variable {K F : Type} [Field K] [NumberField K] [StarRing K] [Field F] [NumberField F] [Algebra F K]
-
-theorem inP_alg_iff {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) (k : ℕ) (a : 𝓞 F) :
-    InP 𝔭 k (algebraMap F K (a : F)) ↔ a ∈ 𝔭 ^ k := by
-  haveI := h𝔭.isPrime
-  rw [← idealPowerSpanBounds.mem_pow_iff (K := K)]
-  constructor
-  · rintro ⟨t, ht, z, hz, hzeq⟩
-    have hz' : z = algebraMap (𝓞 F) (𝓞 K) t * algebraMap (𝓞 F) (𝓞 K) a := by
-      apply IsFractionRing.injective (𝓞 K) K
-      rw [hzeq, map_mul]
-      rfl
-    refine idealPowerSpanBounds.mem_of_mul_mem h𝔭 (v := 0) (d := t) (by simpa using ht) ?_
-    rw [zero_add, ← hz']
-    exact hz
-  · intro ha
-    exact inP_jK ha
 
 private theorem mem_pow_vF_of_ne_zero {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {a : 𝓞 F} (ha : a ≠ 0) :
     a ∈ 𝔭 ^ vF 𝔭 a ∧ a ∉ 𝔭 ^ (vF 𝔭 a + 1) := by
@@ -118,7 +106,9 @@ theorem unit_part_c (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : I
     show algebraMap F K (y : F) = _
     rw [hyF, map_mul]
     rfl
-  have hy2 : y ∈ 𝔭 ^ (2 * vF 𝔭 a) := (idealPowerSpanBounds.mem_pow_iff (K := K) _ _ _).mp (hyz ▸ hz)
+  have hy2 : y ∈ 𝔭 ^ (2 * vF 𝔭 a) := by
+    rw [← MeanB.comap_extP_pow (K := K), Ideal.mem_comap, hyz]
+    exact hz
   have hy1 : y ∈ 𝔭 ^ (vF 𝔭 a + 1) := Ideal.pow_le_pow_right (by omega) hy2
   obtain ⟨C, hCdef⟩ : ∃ C : 𝓞 F, C = y - t * a := ⟨_, rfl⟩
   have hCF : (C : F) = (t : F) * c := by
@@ -206,7 +196,7 @@ theorem eq_zero_of_orth {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hnd 
     obtain ⟨s, rfl⟩ := hx
     rw [← hs.eq, hz s, map_zero]
   | zero => simp
-  | add x w _ _ hx hw => rw [map_add, hx, hw, add_zero]
+  | add x w _ _ hx hw => rw [map_add (f := _), hx, hw, add_zero]
   | smul c x _ hx => rw [map_smul, hx, smul_zero]
 
 end Vec

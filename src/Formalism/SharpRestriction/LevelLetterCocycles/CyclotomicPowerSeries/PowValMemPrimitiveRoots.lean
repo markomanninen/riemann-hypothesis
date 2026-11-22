@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ConstantCoeffAeval
-import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.EmultiplicityEqValuation
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ConstantCoeffAeval
+public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.EmultiplicityEqValuation
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,7 +100,7 @@ theorem map_cyclotomic_comp {O LL : Type} [CommRing O] [Field LL] [CharZero LL] 
     simpa using hp
   rw [key, Polynomial.aeval_comp]
   have h1 : Polynomial.aeval (ρ X) (Polynomial.X + 1 : Polynomial O) = C ζ * exp LL := by
-    rw [map_add, Polynomial.aeval_X, map_one, add_comm, hρ]
+    rw [map_add (f := _), Polynomial.aeval_X, map_one, add_comm, hρ]
   rw [h1, ← Polynomial.map_cyclotomic m (algebraMap O LL), Polynomial.aeval_map_algebraMap]
 
 end LevelStatements.Link

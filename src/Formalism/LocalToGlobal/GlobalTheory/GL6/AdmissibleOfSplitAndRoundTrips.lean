@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL6.FrobeniusNoKernelOfFrobeniusSimilitude
-import Formalism.LocalToGlobal.GlobalTheory.GL6.ComplementSmulLocalExtensionMatrix
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.FrobeniusNoKernelOfFrobeniusSimilitude
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.ComplementSmulLocalExtensionMatrix
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,7 +105,7 @@ theorem local_diamond_of_idempotent (S : StepLevel F E σ J T f bad) (v : Height
     linear_combination (-c ^ 2 + 2 * c * c' - c' ^ 2) * hee + hcc
   have hμ'μ : μ' * μ = 1 := by rw [mul_comm]; exact hμμ'
   have hσμ : sigR σ (v.adicCompletion F) μ = μ' := by
-    rw [hμdef, hμ'def, map_add, map_mul, map_mul, map_sub, map_one, hσ, hσc, hσc']
+    rw [hμdef, hμ'def, map_add (f := _), map_mul, map_mul, map_sub, map_one, hσ, hσc, hσc']
     ring
   have hμO : μ ∈ intV E v :=
     add_mem (mul_mem hc he) (mul_mem hc' (sub_mem (one_mem _) he))
@@ -195,12 +199,6 @@ theorem local_diamonds_of_split (Tf : FormsTied D u) (hs : SplitAtT Tf.atT) : Lo
 
 theorem diamond_elements_of_split (Tf : FormsTied D u) (hs : SplitAtT Tf.atT) : DiamondElementsExist Tf :=
   diamond_elements_of_local Tf (local_diamonds_of_split Tf hs)
-
-theorem admissible_of_split_and_round_trips
-    (hS : ∀ (D : D7) (u : D.what₂.Word) (Tf : FormsTied D u), ChiFin Tf → SplitAtT Tf.atT)
-    (hR : ∀ (D : D7) (u : D.what₂.Word), FormsCompatible D u → Formalism.MainNotions.product_first_zeroth_parts.RoundUp D u ∧ Formalism.MainNotions.product_first_zeroth_parts.RoundDn D u) :
-    LinkAdmT :=
-  admissible_of_diamonds_and_round_trips (fun D u Tf hc => diamond_elements_of_split Tf (hS D u Tf hc)) hR
 
 end Tied
 

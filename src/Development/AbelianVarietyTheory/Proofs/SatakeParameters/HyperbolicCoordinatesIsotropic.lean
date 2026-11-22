@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRingHomRhoK
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRingHomRhoK
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,8 @@ theorem sum_sigma_comb_mul_comb (D : D7) (p : ℕ) [Fact p.Prime] (σ : MaximalU
         rw [← Finset.mul_sum, hp, if_neg (fun hh => hne hh.1), mul_zero]
       · simp [hc' t' h2]
     · simp [hc t h1]
-  simp only [map_sum, map_mul, hg, Finset.sum_mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, hg, Finset.sum_mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_eq_zero fun t _ => ?_
   rw [Finset.sum_comm]

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.PowerMembershipInertiaEigenvalues
 
@@ -17,7 +21,7 @@ theorem main : ∀ {k U : Type} [inst : Field k] [inst_1 : AddCommGroup U] [inst
   induction p using Polynomial.induction_on' with
   | add p q hp hq =>
     intro y hy
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     exact Q.add_mem (hp y hy) (hq y hy)
   | monomial n a =>
     intro y hy

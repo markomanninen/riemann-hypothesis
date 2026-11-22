@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GoodPartHasComplexCoordinates
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GoodPartHasComplexCoordinates
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,6 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 variable {D : D7} {Bs : DefBase D.what₂.LL} {A : DefAmb Bs} {X : CxData A} {fc : DefSub A → DefFace Bs} {s : Bool}
   {R : Read D X fc s} {cr : Crd A fc}
 
-theorem cjv_cjv (s : Bool) {n : ℕ} (x : Fin n → ℂ) : cjv s (cjv s x) = x := funext fun i => cj_cj s (x i)
-
 theorem cpt_single {K : Type} [Field K] (σ : K →+* ℂ) {n : ℕ} (i : Fin n) :
     (fun k => σ ((Pi.single i 1 : Fin n → K) k)) = (Pi.single i 1 : Fin n → ℂ) := by
   funext k
@@ -27,14 +29,16 @@ theorem sum_coord_jN (M : Seam R cr) (u : D.what₂.Word) (φ : D.what₂.Mu u) 
   have h : ∀ i, D.jN u (R.eNu u (Pi.single i 1)) = (M.cφ u).symm (Pi.single i 1) := fun i => by
     rw [← M.cφ_eq]
     exact congrArg _ (cpt_single D.what₂.embLL i)
-  simp only [h, ← map_smul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [h, ← map_smul, ← map_sum]
   rw [LinearEquiv.symm_apply_eq]
   funext k
   simp [Finset.sum_apply, Pi.single_apply]
 
 theorem sum_coord_eMu (M : Seam R cr) (u : D.what₂.Word) (φ : D.what₂.Mu u) :
     ∑ i, M.cφ u φ i • D.eMu u (D.jN u (R.eNu u (Pi.single i 1))) = D.eMu u φ := by
-  simp only [← map_smul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← map_smul, ← map_sum]
   rw [sum_coord_jN]
 
 theorem sum_coord_heq (M : Seam R cr) (u w : D.what₂.Word) (hw : w = u)

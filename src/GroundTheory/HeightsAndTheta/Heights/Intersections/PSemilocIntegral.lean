@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocIntegral
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StValCentreZ
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StCentreOverW
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocIntegral
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StValCentreZ
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StCentreOverW
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

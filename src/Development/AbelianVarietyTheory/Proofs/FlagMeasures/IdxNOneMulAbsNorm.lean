@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
-import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniquePlace
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLatticeLatIn
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemOfPerpPerp
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DiscriminantOrderCommonFixedLatticeEmbeddedData
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DetFromBlocksSingle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniquePlace
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLatticeLatIn
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemOfPerpPerp
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DiscriminantOrderCommonFixedLatticeEmbeddedData
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DetFromBlocksSingle
+
+@[expose] public section
 
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
@@ -64,16 +68,31 @@ theorem idxN_one_mul_absNorm (I : FractionalIdeal (nonZeroDivisors (𝓞 K)) K) 
 variable {ι : Type} [Fintype ι]
 
 theorem isLattice_pi (I : ι → FractionalIdeal (nonZeroDivisors (𝓞 K)) K) (hI : ∀ i, 1 ≤ I i) :
-    Submodule.IsLattice K (Submodule.pi Set.univ fun i => (I i : Submodule (𝓞 K) K)) := by
-  refine ⟨Submodule.fg_pi fun i => FractionalIdeal.fg_of_isNoetherianRing le_rfl _, ?_⟩
-  rw [eq_top_iff, ← (Pi.basisFun K ι).span_eq]
-  refine Submodule.span_mono ?_
-  rintro _ ⟨i, rfl⟩ j -
-  rw [Pi.basisFun_apply, Pi.single_apply]
-  split_ifs
-  · exact hI j (FractionalIdeal.one_mem_one _)
-  · exact zero_mem _
-
+    Submodule.IsFullLattice K (Submodule.pi Set.univ fun i => (I i : Submodule (𝓞 K) K)) := by
+  haveI : Submodule.IsLattice K (Submodule.pi Set.univ fun i => (I i : Submodule (𝓞 K) K)) := by
+    refine ⟨Submodule.fg_pi fun i => FractionalIdeal.fg_of_isNoetherianRing le_rfl _, ?_⟩
+    intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
+  refine ⟨?_⟩
+  · apply top_unique
+    intro x _
+    rw [← Finset.univ_sum_single x]
+    apply Submodule.sum_mem
+    intro i _
+    have hi : Pi.single i (1 : K) ∈ Submodule.pi Set.univ
+        (fun i => (I i : Submodule (𝓞 K) K)) := by
+      intro j _
+      by_cases h : j = i
+      · subst j
+        simpa using hI i (FractionalIdeal.one_mem_one _)
+      · simp [Pi.single_apply, h]
+    have := (Submodule.span K (Submodule.pi Set.univ
+      (fun i => (I i : Submodule (𝓞 K) K)) : Set (ι → K))).smul_mem
+        (x i) (Submodule.subset_span hi)
+    have heq : x i • Pi.single i (1 : K) = Pi.single i (x i) := by
+      ext j
+      by_cases h : j = i <;> simp [Pi.single_apply, h]
+    rwa [heq] at this
 variable [StarRing K] {V : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
 
 noncomputable def pseudo (v : ι → V) (I : ι → FractionalIdeal (nonZeroDivisors (𝓞 K)) K) : Submodule (𝓞 K) V :=
@@ -107,7 +126,8 @@ theorem latDetH_pseudo [DecidableEq ι] (hK : IsCMUnram K) (h : V →ₗ⋆[K] V
   let h' : (ι → K) →ₗ⋆[K] (ι → K) →ₗ[K] K := (h.comp φ).compl₂ φ
   have hh : ∀ x y, h' x y = h (φ x) (φ y) := fun _ _ => rfl
   have hx : ∀ y x, h' y x = ∑ i, star (y i) * (G *ᵥ x) i := fun y x => by
-    simp only [hh, hφ, Fintype.linearCombination_apply, map_sum, LinearMap.sum_apply, map_smulₛₗ,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hh, hφ, Fintype.linearCombination_apply, map_sum, LinearMap.sum_apply, map_smulₛₗ,
       LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, RingHom.id_apply, mulVec, dotProduct, hGd,
       Matrix.of_apply, Finset.mul_sum]
     rw [Finset.sum_comm]
@@ -124,8 +144,8 @@ theorem latDetH_pseudo [DecidableEq ι] (hK : IsCMUnram K) (h : V →ₗ⋆[K] V
   set P := Submodule.pi Set.univ fun i => (I i : Submodule (𝓞 K) K) with hP
   set P₀ := Submodule.pi Set.univ fun _ : ι =>
     ((1 : FractionalIdeal (nonZeroDivisors (𝓞 K)) K) : Submodule (𝓞 K) K) with hP₀
-  have hPl : Submodule.IsLattice K P := isLattice_pi I hI
-  have hP₀l : Submodule.IsLattice K P₀ := isLattice_pi _ fun _ => le_rfl
+  have hPl : Submodule.IsFullLattice K P := isLattice_pi I hI
+  have hP₀l : Submodule.IsFullLattice K P₀ := isLattice_pi _ fun _ => le_rfl
   have hle : P₀ ≤ P := fun x H i hi => hI i (H i hi)
   have hPi : IsIntLat h' P := ⟨hPl, fun x a y b => hint _ ⟨x, a, rfl⟩ _ ⟨y, b, rfl⟩⟩
   have hP₀i : IsIntLat h' P₀ := ⟨hP₀l, fun x a y b => hPi.2 x (hle a) y (hle b)⟩
@@ -171,7 +191,24 @@ theorem latDetH_pseudo [DecidableEq ι] (hK : IsCMUnram K) (h : V →ₗ⋆[K] V
     have a : (pseudo v I).toAddSubgroup = P.toAddSubgroup.map φ.toAddMonoidHom := rfl
     have c : Submodule.span K (pseudo v I : Set V) = LinearMap.range φ := by
       change Submodule.span K (φ '' P) = _
-      rw [← Submodule.map_span, hPl.span_eq_top, Submodule.map_top]
+      have hspan : Submodule.span K (P : Set (ι → K)) = ⊤ := by
+        apply top_unique
+        intro x _
+        rw [← Finset.univ_sum_single x]
+        apply Submodule.sum_mem
+        intro i _
+        have hi : Pi.single i (1 : K) ∈ P := by
+          intro j _
+          by_cases h : j = i
+          · subst j
+            simpa using hI i (FractionalIdeal.one_mem_one _)
+          · simp [Pi.single_apply, h]
+        have := (Submodule.span K (P : Set (ι → K))).smul_mem (x i) (Submodule.subset_span hi)
+        have heq : x i • Pi.single i (1 : K) = Pi.single i (x i) := by
+          ext j
+          by_cases h : j = i <;> simp [Pi.single_apply, h]
+        rwa [heq] at this
+      rw [← Submodule.map_span, hspan, Submodule.map_top]
     have b : (dualInH h (pseudo v I)).toAddSubgroup = (dual h' P).toAddSubgroup.map φ.toAddMonoidHom := by
       rw [dualInH, c]
       ext x
@@ -211,12 +248,12 @@ theorem hT_fvec (F : FlagG S r T) (a b : Fin (r + 1)) :
     simp [FlagG.fvec, F.e_iso a b, diagonal_apply, Fin.castSucc_ne_last]
 
 theorem Dl_succ (F : FlagG S r T) (F' : FlagG S r T') : Dl F F' (r + 1) = (Zhat F F').det := by
-  rw [Dl, leadMinorE, dif_pos le_rfl]
+  rw [Dl, leadMinorE, dite_eq_left le_rfl]
   congr 1
 
 theorem Dl_self (F : FlagG S r T) (F' : FlagG S r T') :
     Dl F F' r = ((Zhat F F').submatrix Fin.castSucc Fin.castSucc).det := by
-  rw [Dl, leadMinorE, dif_pos (Nat.le_succ r)]
+  rw [Dl, leadMinorE, dite_eq_left (Nat.le_succ r)]
   congr 1
 
 theorem det_gram (F : FlagG S r T) (F' : FlagG S r T') :
@@ -241,7 +278,8 @@ theorem exists_norm_eq (F : FlagG S r T) (F' : FlagG S r T') (hT : T ≠ 0) (hs 
   have h1 : ∀ a, S.hT (F.fvec a) y = if a = Fin.last r then Z.det else 0 := fun a => by
     have := congrFun (congrFun (Matrix.mul_adjugate Z) a) (Fin.last r)
     rw [Matrix.mul_apply, Matrix.smul_apply, Matrix.one_apply] at this
-    rw [hy, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hy, map_sum]
     simp only [map_smul, smul_eq_mul, mul_ite, mul_one, mul_zero] at this ⊢
     rw [← this]
     exact Finset.sum_congr rfl fun b _ => mul_comm _ _
@@ -250,7 +288,8 @@ theorem exists_norm_eq (F : FlagG S r T) (F' : FlagG S r T') (hT : T ≠ 0) (hs 
     simp only [c, adjugate_fin_succ_eq_det_submatrix, Fin.succAbove_last, ← two_mul, pow_mul]
     simp [hZ]
   have h2 : S.hT y y = -T' * (Dl F F' r * star (Dl F F' r)) := by
-    simp only [hy, map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, hT_fvec,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hy, map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, hT_fvec,
       diagonal_apply, starRingEnd_apply, RingHom.id_apply, mul_ite, mul_zero, Finset.sum_ite_eq',
       Finset.mem_univ, if_true, hc]
     ring
@@ -259,11 +298,11 @@ theorem exists_norm_eq (F : FlagG S r T) (F' : FlagG S r T') (hT : T ≠ 0) (hs 
   refine ⟨y + (Z.det / T) • F.z, (Formalism.MainNotions.mem_orth_iff _ _).2 (Formalism.MainNotions.hT_zero_of_mem_Xplus F (fun a => ?_) ?_), ?_⟩
   · have := h1 a.castSucc
     simp only [FlagG.fvec, Fin.snoc_castSucc, Fin.castSucc_ne_last, if_false] at this
-    rw [map_add, map_smul, this, F.z_orth, smul_zero, add_zero]
-  · rw [map_add, map_smul, h3, F.z_norm, smul_eq_mul]
+    rw [map_add (f := _), map_smul, this, F.z_orth, smul_zero, add_zero]
+  · rw [map_add (f := _), map_smul, h3, F.z_norm, smul_eq_mul]
     field_simp
     ring
-  · simp only [map_add, LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, h2, h3, h4,
+  · simp only [map_add (f := _), LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, h2, h3, h4,
       F.z_norm, starRingEnd_apply, RingHom.id_apply, star_div₀, hs, Gflag, Dl_succ, ← hZ]
     field_simp
     ring
@@ -354,7 +393,7 @@ theorem main : ∀ (D : D7) (large₂ : SizeData₂ D) (u u' : D.what₂.Word) (
     have a1 := (Formalism.MainNotions.mem_orth_iff _ _).1 hw x (Submodule.mem_sup_left hx)
     have a2 := Formalism.MainNotions.hT_swap_zero ((Formalism.MainNotions.mem_orth_iff _ _).1
       (hW.le (Submodule.mem_sup_left ⟨p, rfl⟩)) x (Submodule.mem_sup_left hx))
-    rw [map_add (VS D).hT, LinearMap.add_apply, a1, add_zero, map_add, a2, add_zero,
+    rw [map_add (VS D).hT, LinearMap.add_apply, a1, add_zero, map_add (f := _), a2, add_zero,
       D.sp.iXY_isom 0 (lt_of_lt_of_le (by norm_num) D.R.two_le_m)] at e
     rw [hGd, ← e, map_mul, map_natCast, ← Complex.ofReal_natCast, Complex.re_ofReal_mul]
     refine mul_nonneg (Nat.cast_nonneg _) ?_

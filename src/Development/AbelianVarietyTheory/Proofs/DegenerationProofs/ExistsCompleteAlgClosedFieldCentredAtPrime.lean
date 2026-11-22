@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RangeAlgebraMapEqIInfDiscreteValuationSubring
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsCompleteIsAlgClosedCExt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RangeAlgebraMapEqIInfDiscreteValuationSubring
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsCompleteIsAlgClosedCExt
+
+@[expose] public section
 
 namespace GlobalTheory.Ex
 
@@ -18,7 +22,11 @@ theorem exists_complete_isAlgClosed_centred_at_prime :
       ((IsFractionRing.injective O (FractionRing O)).comp hφ)
   letI : Algebra R C := ψ.toAlgebra
   haveI : FaithfulSMul R C := (faithfulSMul_iff_algebraMap_injective R C).2 hψ
-  let g : K →ₐ[R] C := IsAlgClosed.lift
+  let g : K →ₐ[R] C := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hg : ∀ r, g.toRingHom (algebraMap R K r) = ψ r := fun r => g.commutes r
   refine ⟨C, i1, i2, i3, i4, g.toRingHom, fun r => ?_, fun r hr => ?_⟩
   · rw [hg]

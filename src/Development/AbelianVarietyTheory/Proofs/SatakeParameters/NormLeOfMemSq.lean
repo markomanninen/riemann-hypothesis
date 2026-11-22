@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementE
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NatCastMemPrimeOf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementE
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NatCastMemPrimeOf
+
+@[expose] public section
 
 open NumberField
 
@@ -41,7 +45,7 @@ theorem norm_le_of_mem_sq {E : Type} [Field E] [NumberField E] (φ : E →+* ℂ
     rw [map_mul, map_mul, norm_mul]
     exact mul_le_mul (h a ha) (h b hb) (norm_nonneg _) hr
   · change ‖φ (algebraMap (𝓞 E) E (a + b))‖ ≤ r * r
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ha hb)
 
 theorem embSep : Formalism.L2.Th1.GD.EmbSep := by

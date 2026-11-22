@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAmbOfIsArithVar
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAmbOfIsArithVar
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,8 +22,8 @@ theorem pol_comp_equiv {ι : Type} [Fintype ι] (τ : ι ≃ ι) (φ : (ι → �
   refine Fintype.sum_equiv (Equiv.finsetCongr τ) _ _ fun S => ?_
   simp only [Equiv.finsetCongr_apply, Finset.card_map]
   congr 2
-  funext j
-  simp only [Function.comp_apply, Finset.mem_map_equiv]
+  funext i
+  simp
 
 theorem mixArch_iso_symm_congr : ∀ (k : Type) [CommRing k] (Y : Scheme.{0}) [IsIntegral Y] (q : Y ⟶ Sp k) (e : ℕ) (L : Fin e → HermLB q) (M : HermLB q) (r : M.B.ι → Y.functionFieldˣ) (hr : IsRatSec M.B r), (∀ L' : Fin e → HermLB q, (∀ a, (L a).Isometric (L' a)) → mixArch L M hr = mixArch L' M hr) ∧ (∀ τ : Equiv.Perm (Fin e), mixArch (fun a => L (τ a)) M hr = mixArch L M hr) ∧ ∀ (M' : HermLB q) (r' : M'.B.ι → Y.functionFieldˣ) (hr' : IsRatSec M'.B r'), M'.div hr' = M.div hr → (∀ σ, Set.EqOn (logNorm (M'.φ σ) r') (logNorm (M.φ σ) r) (offSupp q σ (M.div hr))) → mixArch L M' hr' = mixArch L M hr := by
   intro k _ Y _ q e L M r hr

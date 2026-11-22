@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,10 +47,6 @@ def ABSr (C' Cl Cg cb Cu cT CT C0 Cn C1 C : ℝ) : Prop :=
           ‖S.J νR γ‖ ≤ lossP large₂.sc.b C D.R.m W.z W.z' γ p *
             (C / (D.R.k * D.host.v)) ^ (D.R.rS * (D.R.k - 2 - D.R.rS)) *
             (‖DminN W.z W.z' γ D.R.rS‖ ^ (D.R.k - 2 - D.R.rS))⁻¹
-
-def DegVand : Prop :=
-  ∀ (W : LocW D.R.k D.R.rS) (l₁ l₂ : Fin (2 * D.R.rS + D.R.k + 1) → ℝ) (A₁ A₂ : LocS W), GoodS D l₁ A₁ → GoodS D l₂ A₂ →
-    A₂.deg * Formalism.MainNotions.S.vand l₁ = A₁.deg * Formalism.MainNotions.S.vand l₂
 
 def LocIn (C' Cl Cg cb Cu cT CT C0 : ℝ) : Prop :=
   HypZ D large₂ C' Cl Cg cb Cu cT CT C0 →

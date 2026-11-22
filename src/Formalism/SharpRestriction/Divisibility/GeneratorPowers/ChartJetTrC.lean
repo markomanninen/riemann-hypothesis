@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartJetTrB
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartJetTrB
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -61,7 +65,8 @@ theorem jetCoef_substP {V K : Type} [CommRing V] [CommRing K] (f : V →+* K) {�
     have eX : jetCoef f κ m (Ideal.Quotient.mk _ (MvPolynomial.X i)) = Ideal.Quotient.mk _ (MvPolynomial.X i) := by
       simp [jetCoef]
     rw [eX, keyK]
-    simp [jetCoef, MvPolynomial.constantCoeff_map]
+    set_option synthInstance.maxHeartbeats 200000 in
+      simp [jetCoef, MvPolynomial.constantCoeff_map]
 
 theorem unit_push {S S' : Scheme.{0}} {G : Over S} {G' : Over S'} [GrpObj G] [GrpObj G'] {f : S' ⟶ S}
     {φ : G'.left ⟶ G.left} (h : IsGrpPullback G' G f φ) : η[G'].left ≫ φ = f ≫ η[G].left := by

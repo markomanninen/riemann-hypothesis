@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteAdeleStrongApproximationModNat
+module
+
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteAdeleStrongApproximationModNat
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ theorem exists_reps (m : ℕ) (hm : 1 ≤ m) :
     have := h0 j
     omega
   · exact add_mem (HeightOneSpectrum.coe_mem_adicCompletionIntegers v _) (ha v)
-  · rw [h, nsmul_add, ← add_assoc, ← map_nsmul, ← map_add]
+  · rw [h, nsmul_add, ← add_assoc, ← map_nsmul, ← map_add (f := _)]
     congr 1
     change φ x = _
     congr 1

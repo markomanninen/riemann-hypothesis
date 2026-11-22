@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InfiniteMeasureTransfer.MeasureIsomorphismAtInfinity
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InfiniteMeasureTransfer.MeasureIsomorphismAtInfinity
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,8 @@ theorem thV_smul (v : InfinitePlace I.F) (c : TI I) (w : Fin I.n → TI I) :
 theorem thV_sum {ι : Type} (s : Finset ι) (v : InfinitePlace I.F) (f : ι → Fin I.n → TI I) :
     thV I v (∑ a ∈ s, f a) = ∑ a ∈ s, thV I v (f a) := by
   funext i
-  simp [thV, Finset.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [thV, Finset.sum_apply, map_sum]
 
 theorem thV_mulVec (v : InfinitePlace I.F) (M : Matrix (Fin I.n) (Fin I.n) (TI I)) (w : Fin I.n → TI I) :
     thV I v (M *ᵥ w) = M.map (thI I v) *ᵥ thV I v w := by
@@ -51,8 +56,8 @@ theorem thV_ext (w w' : Fin I.n → TI I) (h : ∀ v, thV I v w = thV I v w') : 
   funext i
   exact thI_ext I (w i) (w' i) fun v => congrFun (h v) i
 
-open Classical in
 
+open Classical in
 theorem exists_single (v0 : InfinitePlace I.F) (u : Fin I.n → ℂ) :
     ∃ w : Fin I.n → TI I, ∀ v, thV I v w = if v = v0 then u else 0 := by
   choose y hy using fun i => thI_surj I (fun v => if v = v0 then u i else 0)
@@ -115,13 +120,15 @@ theorem thI_hR (v : InfinitePlace I.F) (x : Fin I.n → I.E) (w : Fin I.n → TI
         Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf I.F) (I.cm.sig a) := by
       simp [Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR, Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR]
     rw [e, thI_inclR, hs]
-  simp only [Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.hR, Formalism.UG.hform, map_sum, map_mul, Formalism.L2.SG.Sub.ratV,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.hR, Formalism.UG.hform, map_sum, map_mul, Formalism.L2.SG.Sub.ratV,
     Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR, Matrix.map_apply, h1, thI_inclR, Bv, thV, phV]
 
 theorem phi_hE (v : InfinitePlace I.F) (x y : Fin I.n → I.E) :
     I.φ v (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.hE I.cm.sig I.J x y) = Bv I v (phV I v x) (phV I v y) := by
   have hs : ∀ a : I.E, I.φ v (I.cm.sig a) = star (I.φ v a) := fun a => I.cm.cmUnram.2.1 (I.φ v) a
-  simp only [Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.hE, Formalism.UG.hform, map_sum, map_mul, AlgHom.coe_toRingHom,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.hE, Formalism.UG.hform, map_sum, map_mul, AlgHom.coe_toRingHom,
     RingHom.coe_coe, hs, Bv, phV]
 
 theorem hJ_conj (v : InfinitePlace I.F) (a b : Fin I.n → ℂ) :

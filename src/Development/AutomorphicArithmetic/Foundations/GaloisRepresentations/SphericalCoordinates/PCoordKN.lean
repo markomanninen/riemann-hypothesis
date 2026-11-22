@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelEqKN
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCommonPosDenominatorOfIsCompactFiniteAdele
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelEqKN
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCommonPosDenominatorOfIsCompactFiniteAdele
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
@@ -47,7 +51,8 @@ private theorem exists_den_act (g : G.GAf) :
     intro i
     rw [map_nsmul, Finsupp.smul_apply, nsmul_eq_mul, KNLevel.isIntAf_iff]
     exact hden _ ⟨(k, i), rfl⟩
-  rw [← B.sum_repr z, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← B.sum_repr z, map_sum, Finset.smul_sum]
   refine sum_mem fun k _ => ?_
   rw [LinearMap.map_smul, smul_comm m]
   exact smul_mem_laHat (KNLevel.repr_isIntAf b z hz k) (hy k)
@@ -66,7 +71,7 @@ private theorem stable (hd : RdDense) (x : (AfP p ⊗[ℚ] G.C)ˣ) (h₁ h₂ : 
     have := sub_mem hz (nsmul_mem he m)
     rwa [add_sub_cancel_right] at this
   have h2 : rd L x h₂ w ∈ LaHat D := (A₂ w).mp ((A₁ w).mpr h1)
-  rw [map_add, map_nsmul, ← rd_move L x h₁ h₂ w]
+  rw [map_add (f := _), map_nsmul, ← rd_move L x h₁ h₂ w]
   exact add_mem h2 (hden e he)
 
 private theorem congOne_of_gen {N : ℕ} {g : G.GAf}
@@ -86,7 +91,7 @@ private theorem congOne_of_gen {N : ℕ} {g : G.GAf}
   | add y z _ _ hy hz =>
     obtain ⟨w₁, hw₁, e₁⟩ := hy
     obtain ⟨w₂, hw₂, e₂⟩ := hz
-    exact ⟨w₁ + w₂, add_mem hw₁ hw₂, by rw [map_add, e₁, e₂, smul_add]; abel⟩
+    exact ⟨w₁ + w₂, add_mem hw₁ hw₂, by rw [map_add (f := _), e₁, e₂, smul_add]; abel⟩
   | neg y _ hy =>
     obtain ⟨w, hw, e⟩ := hy
     exact ⟨-w, neg_mem hw, by rw [map_neg, e, neg_add, smul_neg]⟩
@@ -111,7 +116,7 @@ theorem coordKN_of : RdDense → CoordKN := by
     obtain ⟨w₂, hw₂, e₂⟩ := hk₂.2 a
     refine ⟨w₂ - L.actG (k₂⁻¹ * k₁) w₁, sub_mem hw₂ (hst w₁ hw₁), ?_⟩
     have e₃ := rd_move L x k₁ k₂ (j (t a))
-    rw [e₂, e₁, map_add, map_nsmul] at e₃
+    rw [e₂, e₁, map_add (f := _), map_nsmul] at e₃
     rw [smul_sub, ← add_sub_assoc, e₃]
     abel
   constructor
@@ -132,6 +137,6 @@ theorem coordKN_of : RdDense → CoordKN := by
     · obtain ⟨w₁, hw₁, e₁⟩ := hc1.2 a
       obtain ⟨w₃, hw₃, e₃⟩ := hC _ (inAf_mem_laHat a)
       refine ⟨w₃ + L.actG (h₂⁻¹ * h₁) w₁, add_mem hw₃ (memOf hC _ hw₁), ?_⟩
-      rw [rd_move L x h₁ h₂, e₁, map_add, map_nsmul, e₃, smul_add, add_assoc]
+      rw [rd_move L x h₁ h₂, e₁, map_add (f := _), map_nsmul, e₃, smul_add, add_assoc]
 
 end UpperTheory.Gal.W2

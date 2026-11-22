@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 open MeasureTheory
@@ -46,7 +50,7 @@ theorem map_mul_rho (t : ℝ) (ht : t ≠ 0) :
     rw [← withDensity_smul _ hmeas]
     congr 1
     funext y
-    simp only [Pi.smul_apply, smul_eq_mul]
+    change ENNReal.ofReal (1 / |y|) = ENNReal.ofReal |t| * ENNReal.ofReal (1 / |t * y|)
     rw [← ENNReal.ofReal_mul (abs_nonneg t), abs_mul]
     congr 1
     rw [one_div, one_div, mul_inv, ← mul_assoc, mul_inv_cancel₀ (abs_ne_zero.mpr ht), one_mul]
@@ -55,6 +59,7 @@ theorem map_mul_rho (t : ℝ) (ht : t ≠ 0) :
   conv_lhs => rw [hpt]
   rw [Measure.map_smul, map_withDensity_comp_of_measurableEmbedding hemb volume (fun y : ℝ => ENNReal.ofReal (1 / |y|)),
     Real.map_volume_mul_left ht, withDensity_smul_measure, smul_smul, hc, one_smul]
+  exact hemb.measurable.aemeasurable
 
 instance sigmaFinite_inverse_abs_density : SigmaFinite nu1 :=
   SigmaFinite.of_map nu1 measurableEmbedding_val.measurable.aemeasurable (by rw [map_val_inverse_abs_density_eq]; infer_instance)

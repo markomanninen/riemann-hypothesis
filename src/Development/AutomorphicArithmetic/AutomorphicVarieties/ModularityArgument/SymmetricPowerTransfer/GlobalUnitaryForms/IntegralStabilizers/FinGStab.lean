@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem stab_re_int {x : Lsq K Δ} (h : IsIntegral O x) : IsIntegral O (2 * x.re
   have e : x + star x = algebraMap K (Lsq K Δ) (2 * x.re) := by
     ext <;> simp <;> ring
   rw [e] at h2
-  exact (isIntegral_algebraMap_iff (fun a b hab => by simpa using congrArg QuadraticAlgebra.re hab)).1 h2
+  exact (isIntegral_algHom_iff (IsScalarTower.toAlgHom O K (Lsq K Δ)) (algebraMap K (Lsq K Δ)).injective).mp h2
 
 theorem stab_im_int {x : Lsq K Δ} (h : IsIntegral O x) {c : K} (hc : IsIntegral O (c ^ 2 * Δ)) :
     IsIntegral O (2 * (c * Δ * x.im)) := by
@@ -289,7 +293,8 @@ theorem stab_norm_le (hneg : ∀ σ : F →+* ℝ, σ Δ < 0) (γ : U3 Δ) (i j 
     rw [map_sub, map_mul, map_pow, map_pow]
     nlinarith [sq_nonneg (σ z.re), sq_nonneg (σ z.im)]
   have hs := congrArg σ hjj
-  rw [map_sum] at hs
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum] at hs
   have hsum : ∑ k, σ ((A k j).re ^ 2 - Δ * (A k j).im ^ 2) = 1 := by
     rw [hs]
     exact (congrArg σ (QuadraticAlgebra.re_one)).trans (map_one σ)

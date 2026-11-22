@@ -1,15 +1,19 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.WorkKilledA
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.ExistsPrimeToPart
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ApplySubrepresentationCongr
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.Shapiro
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.DefsForms
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.Brauer
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseInputs
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteOpen
-import GroundTheory.ProfiniteCohomology.PoitouTate.NonemptyOfNatCastMemOfNeOne
-import GroundTheory.ProfiniteCohomology.Shapiro
-import GroundTheory.ProfiniteCohomology.ShapiroDefs
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ShapiroReal
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.WorkKilledA
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.ExistsPrimeToPart
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ApplySubrepresentationCongr
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.Shapiro
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.DefsForms
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.Brauer
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseInputs
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteOpen
+public import GroundTheory.ProfiniteCohomology.PoitouTate.NonemptyOfNatCastMemOfNeOne
+public import GroundTheory.ProfiniteCohomology.Shapiro
+public import GroundTheory.ProfiniteCohomology.ShapiroDefs
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ShapiroReal
+
+@[expose] public section
 
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheory.Global
 
@@ -18,7 +22,6 @@ namespace PositivityTheory.Lit1.GEN.W_killed_b
 local notation "ℚ̄" => AlgebraicClosure ℚ
 
 set_option maxHeartbeats 1000000 in
-
 theorem ratio_shortExact_prime (ℓ : ℕ) [Fact ℓ.Prime] (K : FiniteSubfield) (S : Set (HeightOneSpectrum (𝓞 K.1)))
     (hS : S.Finite) (hSℓ : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
     (ιr : ∀ v : {v : InfinitePlace K.1 // v.IsReal}, ℚ̄ →ₐ[K.1] AlgebraicClosure v.1.Completion)
@@ -75,60 +78,6 @@ theorem ratio_shortExact_prime_card (ℓ : ℕ) [Fact ℓ.Prime] (K : FiniteSubf
   obtain ⟨n, hn⟩ := hc
   exact ratio_shortExact_prime ℓ K S hS hSℓ ιr T hT ⟨n, fun m => by rw [← hn]; exact card_nsmul_eq_zero'⟩
 
-theorem ratio_eq_one_of_cyclic_pow (ℓ : ℕ) [Fact ℓ.Prime]
-    (K : FiniteSubfield) (S : Set (HeightOneSpectrum (𝓞 K.1))) (hS : S.Finite)
-    (hSℓ : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
-    (ιr : ∀ v : {v : InfinitePlace K.1 // v.IsReal}, ℚ̄ →ₐ[K.1] AlgebraicClosure v.1.Completion)
-    (L : FiniteSubfield) [Fact (K ≤ L)] (hL : ∀ x : L.1, algebraMap L.1 ℚ̄ x ∈ maxUnramifiedOutside K.1 ℚ̄ S)
-    [(gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)).Normal]
-    [IsCyclic (galUnramifiedOutside K.1 ℚ̄ S ⧸ (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)))]
-    {a : ℕ} (hcard : Nat.card (galUnramifiedOutside K.1 ℚ̄ S ⧸
-      (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S))) = ℓ ^ a)
-    (M : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S)) [IsDiscreteRep M] [Finite M]
-    (hℓ : ∀ m : M, ℓ • m = 0)
-    (hL1 : ∀ ιrL : ∀ w : {w : InfinitePlace L.1 // w.IsReal}, ℚ̄ →ₐ[L.1] AlgebraicClosure w.1.Completion,
-      gsEulerRatio (placesOver S) (W_killed_a.resTo S L hL M) ιrL = 1) :
-    gsEulerRatio S M ιr = 1 := by
-  classical
-  have : Finite S := hS
-  have hp : ℓ.Prime := Fact.out
-  let P : ℕ → Prop := fun n => ∃ k, n = ℓ ^ k
-  have hPdvd : ∀ m n, m ∣ n → P n → P m := by
-    rintro m n hmn ⟨k, rfl⟩
-    obtain ⟨j, -, rfl⟩ := (Nat.dvd_prime_pow hp).1 hmn
-    exact ⟨j, rfl⟩
-  have hPmul : ∀ m n, P m → P n → P (m * n) := by
-    rintro m n ⟨i, rfl⟩ ⟨j, rfl⟩
-    exact ⟨i + j, (pow_add ℓ i j).symm⟩
-  have hχ : IsMultiplicativeOn P
-      (fun (A : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S)) [IsDiscreteRep A] =>
-        gsEulerRatio S A ιr) :=
-    { iso := fun {A B} _ _ _ _ e => gsEulerRatio_eq_of_iso S A ιr e
-      shortExact := fun {T} _ _ _ _ hT hP => by
-        obtain ⟨k, hk⟩ := hP
-        exact ratio_shortExact_prime ℓ K S hS hSℓ ιr T hT ⟨k, fun m => by
-          rw [← hk]; exact card_nsmul_eq_zero'⟩ }
-  have hcardM : P (Nat.card M) := by
-    refine ⟨_, Nat.eq_prime_pow_of_unique_prime_dvd Nat.card_pos.ne' ?_⟩
-    intro d hd hdvd
-    haveI : Fact d.Prime := ⟨hd⟩
-    obtain ⟨x, hx⟩ := exists_prime_addOrderOf_dvd_card' d hdvd
-    have : addOrderOf x ∣ ℓ := addOrderOf_dvd_of_nsmul_eq_zero (hℓ x)
-    rw [hx] at this
-    exact (Nat.prime_dvd_prime_iff_eq hd hp).1 this
-  have hpow := hχ.coind_res_eq_pow hPdvd hPmul (gsOpenSubgroup S hL) hcard M hcardM hℓ
-  obtain ⟨ιrL, hsh⟩ := exists_gsEulerRatio_coind_eq S hL ιr
-  have hfin : Finite (Rep.res (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)).subtype M) :=
-    inferInstanceAs (Finite M)
-  have hsh1 := hsh (Rep.res (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)).subtype M)
-  have he : gsEulerRatio S M ιr ^ (ℓ ^ a) = 1 := hpow.symm.trans (hsh1.trans (hL1 ιrL))
-  have hpos : 0 < gsEulerRatio S M ιr := by
-    obtain ⟨k, hk⟩ := hcardM
-    refine gsEulerRatio_pos S M ιr fun v hv => hSℓ v ?_
-    rw [hk, Nat.cast_pow] at hv
-    exact v.isPrime.mem_of_pow_mem k hv
-  exact (pow_eq_one_iff_of_nonneg hpos.le (pow_ne_zero _ hp.ne_zero)).1 he
-
 noncomputable def coindStagesEquiv {k G : Type} [CommRing k] [Group G] (U W : Subgroup G) (hUW : U ≤ W)
     (A : Rep.{0} k G) :
     (Rep.coind W.subtype (Rep.coind (U.subgroupOf W).subtype
@@ -175,8 +124,8 @@ theorem coind_stages {k G : Type} [CommRing k] [Group G] (U W : Subgroup G) (hUW
       Rep.coind U.subtype (Rep.res U.subtype A)) :=
   ⟨Rep.mkIso (coindStagesEquiv U W hUW A)⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem isMultiplicativeOn_ratio_coind (ℓ : ℕ) [Fact ℓ.Prime]
     (K : FiniteSubfield) (S : Set (HeightOneSpectrum (𝓞 K.1))) (hS : S.Finite)
     (hSℓ : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
@@ -339,7 +288,9 @@ theorem ratio_coind_cyclic (ℓ : ℕ) [Fact ℓ.Prime] (K : FiniteSubfield) (S 
   have : Finite (Rep.coind (gsOpenSubgroup S hL' : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)).subtype (Rep.res (gsOpenSubgroup S hL' : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)).subtype M)) :=
     Nat.finite_of_card_ne_zero (by rw [hcc']; exact pow_ne_zero _ hp.ne_zero)
   have hpos : 0 < gsEulerRatio S (Rep.coind (gsOpenSubgroup S hL' : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)).subtype (Rep.res (gsOpenSubgroup S hL' : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)).subtype M)) ιr := by
-    refine gsEulerRatio_pos S _ ιr fun v hv => hSℓ v ?_
+    apply gsEulerRatio_pos S _ ιr
+    intro v hv
+    apply hSℓ v
     rw [hcc', Nat.cast_pow] at hv
     exact v.isPrime.mem_of_pow_mem _ hv
   exact (pow_eq_one_iff_of_nonneg hpos.le (pow_ne_zero _ hp.ne_zero)).1 he

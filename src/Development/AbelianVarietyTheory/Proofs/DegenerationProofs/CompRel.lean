@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.NotAllMatchRankZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.NotAllMatchRankZero
+
+@[expose] public section
 
 open GlobalTheory.Ex
 noncomputable section

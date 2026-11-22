@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.JointEigenvectorsIndependent
 
@@ -20,7 +24,8 @@ theorem linearIndependent_of_joint_eigenvectors {ι α M : Type} [AddCommGroup M
       obtain ⟨a, ha⟩ : ∃ a, χ i a ≠ χ j a := Function.ne_iff.mp (fun h => hij (hχ h))
       have h1 : (g j * χ j a) • f j + ∑ k ∈ s, (g k * χ k a) • f k = 0 := by
         have h := congrArg (op a) hg
-        rw [map_add, map_sum, map_zero, map_smul, hop, smul_smul] at h
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_add (f := _), map_sum, map_zero, map_smul, hop, smul_smul] at h
         simpa only [map_smul, hop, smul_smul] using h
       have h2 : (g j * χ j a) • f j + ∑ k ∈ s, (g k * χ j a) • f k = 0 := by
         have h := congrArg (fun x => χ j a • x) hg

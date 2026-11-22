@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.BlockTheory.CMModuli.ThetaTowerRecognition
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsIsFib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GenRelNeZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsProjectiveModel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.BlockTheory.CMModuli.ThetaTowerRecognition
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsIsFib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GenRelNeZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsProjectiveModel
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -28,7 +32,7 @@ theorem iso_eq_of_torsion (hL : Laws) {C : Type} [Field C] [IsAlgClosed C] (Q Q'
     GlobalTheory.GenSpread.lbIso_pull_of_lbIso lb _
       (by rw [← Over.comp_left, Iso.trans_hom, Iso.symm_hom, Category.assoc, Iso.inv_hom_id, Category.comp_id])
   obtain ⟨w, hw⟩ : LBIso Q.L (Q.L.pull (a ≪≫ b.symm).hom.left) :=
-    LBIso.trans Q.isLB (pull_isLB Q'.isLB _) (pull_isLB Q.isLB _) la (LBIso.symm hpb)
+    LBIso.trans Q.isLB (LB.isLB_pull Q'.isLB _) (LB.isLB_pull Q.isLB _) la (LBIso.symm hpb)
   have hfix : ∀ x : Over.mk (𝟙 (Sp C)) ⟶ Q.A, x ^ k = 1 → x ≫ (a ≪≫ b.symm).hom = x := by
     intro x hx
     rw [Iso.trans_hom, Iso.symm_hom, ← Category.assoc, h x hx, Category.assoc, Iso.hom_inv_id, Category.comp_id]
@@ -53,7 +57,6 @@ theorem exists_fibre (hB : PolBaseChangeSt) {S S' : Scheme.{0}} (P : PolAV S) (t
   · rw [hsnd]; exact LBIso.symm ⟨w, hw⟩
   · apply pullback.hom_ext
     · simp [c]
-      exact (pullback.lift_fst _ _ _).symm
     · have hs : hpb.isoPullback.hom ≫ pullback.snd (Over.mk t).hom P.A.hom = g := hpb.isoPullback_hom_snd
       rw [Category.assoc, hs, Over.lift_left]
       erw [pullback.lift_snd]
@@ -108,8 +111,8 @@ theorem prod_iso_eq (hL : Laws) {S : Scheme.{0}} (P P' : PolAV S) {C : Type} [Fi
       GlobalTheory.GenSpread.lbIso_pull_comp e.hom rfl
         (by rw [ha_left, Over.comp_left]; simp only [Category.assoc, Iso.inv_hom_id_assoc]) (h3 i)
     have hQ' := GlobalTheory.GenSpread.lbIso_pull_of_lbIso he2' (a i).hom.left rfl
-    exact LBIso.trans Q.isLB (pull_isLB P'.isLB _) (pull_isLB Q'.isLB _)
-      (LBIso.trans Q.isLB (pull_isLB P.isLB _) (pull_isLB P'.isLB _) he2 h3e) (LBIso.symm hQ')
+    exact LBIso.trans Q.isLB (LB.isLB_pull P'.isLB _) (LB.isLB_pull Q'.isLB _)
+      (LBIso.trans Q.isLB (LB.isLB_pull P.isLB _) (LB.isLB_pull P'.isLB _) he2 h3e) (LBIso.symm hQ')
 
   have htor : ∀ x : 𝟙_ (Over (Sp C)) ⟶ Q.A, x ^ k = 1 → x ≫ (a 0).hom = x ≫ (a 1).hom := by
     intro x hx

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.VolHomog
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.VolHomog
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -22,7 +26,7 @@ namespace ArithHilbertSamuel
 
 variable {k : Type} [CommRing k] {X : Scheme.{0}} {p : X ⟶ Sp k} {D : ℕ}
 
-private theorem resG_resG {U V W : X.Opens} (h : V ≤ U) (h' : W ≤ V) (f : Γ(X, U)) :
+theorem resG_resG {U V W : X.Opens} (h : V ≤ U) (h' : W ≤ V) (f : Γ(X, U)) :
     resG X h' (resG X h f) = resG X (h'.trans h) f := by
   rw [← CommRingCat.comp_apply, ← X.presheaf.map_comp]
   rfl

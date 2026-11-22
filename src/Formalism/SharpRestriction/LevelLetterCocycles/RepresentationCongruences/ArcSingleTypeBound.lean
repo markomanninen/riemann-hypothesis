@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ImportsAlt
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcBasic
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.LiftsAtThickLetterType
-import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfMembership
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ImportsAlt
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcBasic
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.LiftsAtThickLetterType
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfMembership
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem cmpD_add' {x y : W.DD T} (hx : x ∈ W.N T) (hy : y ∈ W.N T) :
     cmpD W T (x + y) = cmpD W T x + cmpD W T y := by
   rw [Formalism.MainNotions.UnusedSlot80.ArcF.cmpD_of_mem W T hx, Formalism.MainNotions.UnusedSlot80.ArcF.cmpD_of_mem W T hy,
     Formalism.MainNotions.UnusedSlot80.ArcF.cmpD_of_mem W T ((W.N T).add_mem hx hy)]
-  rw [← map_add]
+  rw [← map_add (f := _)]
   rfl
 
 theorem cmpD_sum' {ι : Type} (s : Finset ι) (y : ι → W.DD T) (hy : ∀ k ∈ s, y k ∈ W.N T) :
@@ -114,7 +118,8 @@ theorem arc_single_type_bound [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsDomain O
     have e1 : dvO W T₁ ((arcOf b w S η up size).len c) b₁ (fun m => PowerSeries.constantCoeff
         (a m (c - (((arcOf b w S η up size).len c : ℕ) : ZMod n)))) =
         ((φVB PD (LL := LL) (V := T₁.V)) ^ ((arcOf b w S η up size).len c)) (cmpD W T₁ x₁) := by
-      rw [hcmp, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hcmp, map_sum]
       simp only [map_smul]
       rfl
     have e2 : dv W T₂ ((arcOf b w S η up size).len c) bb (Pi.single k₀ 1) =

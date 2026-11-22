@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfF
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ScalarPairOrthogonal.ExistsNeZeroMem
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.GramNondeg
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfF
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ScalarPairOrthogonal.ExistsNeZeroMem
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.GramNondeg
+
+@[expose] public section
 
 noncomputable section
 
@@ -118,7 +122,8 @@ theorem unitri_map (η : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) (𝓞 D.ho
 theorem GZ_frameAct (u h : Fin (D.R.rS + 1) → (VS D).V) (η : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) (𝓞 D.host.E)) :
     GZ u (frameAct h η) = GZ u h * η.map (fun x => (x : D.host.E)) := by
   ext a b
-  simp only [GZ, Matrix.of_apply, Matrix.mul_apply, Matrix.map_apply, frameAct, brS, map_sum, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [GZ, Matrix.of_apply, Matrix.mul_apply, Matrix.map_apply, frameAct, brS, map_sum, map_smul,
     smul_eq_mul]
   exact Finset.sum_congr rfl fun c _ => mul_comm _ _
 
@@ -128,7 +133,7 @@ theorem GDl_frameAct_top (u h : Fin (D.R.rS + 1) → (VS D).V)
     GDl u (frameAct h η) (D.R.rS + 1) = GDl u h (D.R.rS + 1) := by
   have hm := unitri_map η h1 h2
   unfold GDl
-  rw [dif_pos le_rfl, dif_pos le_rfl]
+  rw [dite_eq_left le_rfl, dite_eq_left le_rfl]
   have e : ∀ M : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E,
       M.submatrix (Fin.castLE (le_refl _)) (Fin.castLE (le_refl _)) = M := fun M => by ext i j; rfl
   rw [e, e, GZ_frameAct, Matrix.det_mul, det_unitri _ hm.1 hm.2, mul_one]
@@ -139,7 +144,7 @@ theorem GDl_frameAct_r (u h : Fin (D.R.rS + 1) → (VS D).V)
     GDl u (frameAct h η) D.R.rS = GDl u h D.R.rS := by
   have hm := unitri_map η h1 h2
   unfold GDl
-  rw [dif_pos (Nat.le_succ _), dif_pos (Nat.le_succ _), GZ_frameAct]
+  rw [dite_eq_left (Nat.le_succ _), dite_eq_left (Nat.le_succ _), GZ_frameAct]
   have ecs : (Fin.castLE (Nat.le_succ D.R.rS) : Fin D.R.rS → Fin (D.R.rS + 1)) = Fin.castSucc :=
     funext fun i => Fin.ext rfl
   rw [ecs]

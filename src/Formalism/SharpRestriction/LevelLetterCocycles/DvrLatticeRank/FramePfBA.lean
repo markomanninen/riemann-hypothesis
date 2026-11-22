@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfEqv
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfEqv
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,8 @@ theorem framepf_βα_core (Bs : FramepfBas W T) (π' Eπ : LetA O n) (h' M : ℕ
   apply hcan
   have h1 : Ψ (algebraMap (LetA O n) W.EE (Eπ ^ h') • x) =
       ∑ m, (∑ k, (letE c : LetA O n) * a k * R m k) • W.φD T (Bs.b m) := by
-    rw [hx', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx', map_sum]
     simp only [hΨ, algebraMap_smul, Finset.smul_sum, smul_smul]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun m _ => Finset.sum_smul.symm

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FderivFnCongr
-import Development.AbelianVarietyTheory.Definitions.Divisors.CommAlgFunctorCoboundaryZeroMemCocyclesOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FderivFnCongr
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CommAlgFunctorCoboundaryZeroMemCocyclesOne
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -42,22 +46,6 @@ theorem ellFam_nontrivial : (fun _ ↦ Complex.I) ∈ ellFam.V ∧
   · funext i
     simp [ellFam]
 
-theorem ellFam_free (l : ℤ × ℤ) (z : Fin 1 → ℂ) (hz : z ∈ ellFam.V) (h : ellFam.τ l z = 0) : l = 0 := by
-  have hz' : 0 < (z 0).im := hz
-  have h0 : ((l.1 : ℂ) * z 0 + l.2) = 0 := by
-    have := congrFun h 0
-    simpa [ellFam] using this
-  have him : (l.1 : ℝ) * (z 0).im = 0 := by
-    have := congrArg Complex.im h0
-    simpa using this
-  have h1 : l.1 = 0 := by
-    have : (l.1 : ℝ) = 0 := (mul_eq_zero.1 him).resolve_right hz'.ne'
-    exact_mod_cast this
-  have h2 : l.2 = 0 := by
-    rw [h1] at h0
-    simpa using h0
-  exact Prod.ext h1 h2
-
 variable {I : Type} [Fintype I] {g : ℕ} {Λ : Type} [AddCommGroup Λ]
 
 def Fam.shift (F : Fam I g Λ) (l : Λ) (p : Tot I g) : Tot I g := (p.1, p.2 + F.τ l p.1)
@@ -66,7 +54,7 @@ theorem Fam.shift_zero (F : Fam I g Λ) (p : Tot I g) : F.shift 0 p = p := by
   simp [Fam.shift]
 
 theorem Fam.shift_add (F : Fam I g Λ) (l m : Λ) (p : Tot I g) : F.shift (l + m) p = F.shift l (F.shift m p) := by
-  simp only [Fam.shift, map_add, Pi.add_apply, Prod.mk.injEq, true_and]
+  simp only [Fam.shift, map_add (f := _), Pi.add_apply, Prod.mk.injEq, true_and]
   abel
 
 theorem Fam.shift_analytic (F : Fam I g Λ) (l : Λ) {W : Set (Tot I g)} (h : ∀ p ∈ W, p.1 ∈ F.V) :
@@ -90,7 +78,8 @@ theorem Close.map {W : Opens (Tot I g)} {C C' : Type} [CommRing C] [CommRing C']
   | tail _ hs ih =>
     obtain ⟨n, hn, hnn, hρ⟩ := hs
     refine ih.tail ⟨fun a ↦ φ (n a), fun a ↦ hφ _ (hn a), fun a b ↦ by rw [← map_mul, hnn, map_zero], fun f ↦ ?_⟩
-    simp only [RingHom.comp_apply, hρ, map_add, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [RingHom.comp_apply, hρ, map_add (f := _), map_sum, map_mul]
 
 theorem Close.comap {W W' : Opens (Tot I g)} {C : Type} [CommRing C] {J : Ideal C}
     {ρ₁ ρ₂ : Hol W' →+* C} (h : Close J ρ₁ ρ₂) (ψ : Hol W →+* Hol W') (hψ : ∀ a f, dw a (ψ f) = ψ (dw a f)) :
@@ -151,8 +140,8 @@ def Based : Prop := ∃ k, ∀ z ∈ F.V, ((z, 0) : Tot I g) ∈ K.W k
 def cst (k : K.K) : Hol F.V →+* Hol (K.W k) :=
   (Hol.comap Prod.fst (fun _ _ ↦ analyticAt_fst) (K.base k)).toRingHom
 
-variable {K} in
 
+variable {K} in
 def sh {l : Λ} {k k' : K.K} (h : K.le l k' k) : Hol (K.W k) →+* Hol (K.W k') :=
   (Hol.comap (F.shift l) (F.shift_analytic l (K.base k')) (K.maps h)).toRingHom
 
@@ -162,24 +151,24 @@ theorem fn_cst (k : K.K) (f : Hol F.V) {p : Tot I g} (hp : p ∈ K.W k) : (K.cst
 variable {K}
 
 theorem fn_sh {l : Λ} {k k' : K.K} (h : K.le l k' k) (f : Hol (K.W k)) {p : Tot I g} (hp : p ∈ K.W k') :
-    (sh h f).fn p = f.fn (F.shift l p) := by
+    (K.sh h f).fn p = f.fn (F.shift l p) := by
   exact Hol.fn_comap _ _ _ f hp
 
-theorem sh_refl {k : K.K} (h : K.le 0 k k) (f : Hol (K.W k)) : sh h f = f := by
+theorem sh_refl {k : K.K} (h : K.le 0 k k) (f : Hol (K.W k)) : K.sh h f = f := by
   refine Hol.ext_fn fun p hp ↦ ?_
   rw [fn_sh h f hp, F.shift_zero]
 
 theorem sh_sh {l m : Λ} {k k' k'' : K.K} (h : K.le l k' k) (h' : K.le m k'' k') (h'' : K.le (l + m) k'' k)
-    (f : Hol (K.W k)) : sh h' (sh h f) = sh h'' f := by
+    (f : Hol (K.W k)) : K.sh h' (K.sh h f) = K.sh h'' f := by
   refine Hol.ext_fn fun p hp ↦ ?_
   rw [fn_sh h' _ hp, fn_sh h f (K.maps h' p hp), fn_sh h'' f hp, F.shift_add]
 
-theorem sh_cst {l : Λ} {k k' : K.K} (h : K.le l k' k) (f : Hol F.V) : sh h (K.cst k f) = K.cst k' f := by
+theorem sh_cst {l : Λ} {k k' : K.K} (h : K.le l k' k) (f : Hol F.V) : K.sh h (K.cst k f) = K.cst k' f := by
   refine Hol.ext_fn fun p hp ↦ ?_
   rw [fn_sh h _ hp, K.fn_cst k f (K.maps h p hp), K.fn_cst k' f hp]
   rfl
 
-theorem dw_sh {l : Λ} {k k' : K.K} (h : K.le l k' k) (a : Fin g) (f : Hol (K.W k)) : dw a (sh h f) = sh h (dw a f) := by
+theorem dw_sh {l : Λ} {k k' : K.K} (h : K.le l k' k) (a : Fin g) (f : Hol (K.W k)) : dw a (K.sh h f) = K.sh h (dw a f) := by
   refine Hol.ext_fn fun p hp ↦ ?_
   have hb : p.1 ∈ F.V := K.base k' p hp
   have hD : HasFDerivAt (F.τ l) (fderiv ℂ (F.τ l) p.1) p.1 :=
@@ -208,8 +197,8 @@ theorem dw_cst (k : K.K) (a : Fin g) (f : Hol F.V) : dw a (K.cst k f) = 0 := by
   rw [Hol.fn_of_mem (0 : Hol (K.W k)) hp]
   exact e1.trans rfl
 
-variable (K) in
 
+variable (K) in
 structure Obj : Type 1 where
 
   k : K.K
@@ -233,7 +222,7 @@ structure Hom (T T' : K.Obj) where
   deg : Λ
   le : K.le deg T'.k T.k
   mem : ∀ c ∈ T.J, φ c ∈ T'.J
-  close : Close T'.J (T'.ρ.comp (sh le)) ((φ : T.C →+* T'.C).comp T.ρ)
+  close : Close T'.J (T'.ρ.comp (K.sh le)) ((φ : T.C →+* T'.C).comp T.ρ)
 
 theorem Hom.ext' {T T' : K.Obj} {f f' : Hom T T'} (h : ∀ c, f.φ c = f'.φ c) (h' : f.deg = f'.deg) : f = f' := by
   obtain ⟨φ, d, le, mem, cl⟩ := f
@@ -245,12 +234,12 @@ theorem Hom.ext' {T T' : K.Obj} {f f' : Hom T T'} (h : ∀ c, f.φ c = f'.φ c) 
 instance : Category K.Obj where
   Hom := Hom
   id T := ⟨AlgHom.id _ _, 0, K.le_refl _, fun _ h ↦ h, by
-    rw [show T.ρ.comp (sh (K.le_refl T.k)) = T.ρ from RingHom.ext fun f ↦ congrArg T.ρ (sh_refl _ f)]
+    rw [show T.ρ.comp (K.sh (K.le_refl T.k)) = T.ρ from RingHom.ext fun f ↦ congrArg T.ρ (sh_refl _ f)]
     exact Relation.ReflTransGen.refl⟩
   comp {T T' T''} f f' := ⟨f'.φ.comp f.φ, f.deg + f'.deg, K.le_trans f.le f'.le, fun c h ↦ f'.mem _ (f.mem c h), by
-    rw [show T''.ρ.comp (sh (K.le_trans f.le f'.le)) = (T''.ρ.comp (sh f'.le)).comp (sh f.le) from
+    rw [show T''.ρ.comp (K.sh (K.le_trans f.le f'.le)) = (T''.ρ.comp (K.sh f'.le)).comp (K.sh f.le) from
       RingHom.ext fun h ↦ congrArg T''.ρ (sh_sh f.le f'.le _ h).symm]
-    exact Relation.ReflTransGen.trans (f'.close.comap (sh f.le) (dw_sh f.le)) (f.close.map (f'.φ : T'.C →+* T''.C) f'.mem)⟩
+    exact Relation.ReflTransGen.trans (f'.close.comap (K.sh f.le) (dw_sh f.le)) (f.close.map (f'.φ : T'.C →+* T''.C) f'.mem)⟩
   id_comp f := Hom.ext' (fun _ ↦ rfl) (zero_add _)
   comp_id f := Hom.ext' (fun _ ↦ rfl) (add_zero _)
   assoc f f' f'' := Hom.ext' (fun _ ↦ rfl) (add_assoc _ _ _)
@@ -266,29 +255,27 @@ theorem hom_ext {T T' : K.Obj} {f f' : T ⟶ T'} (h : ∀ c, f.φ c = f'.φ c) (
 
 @[simp] theorem comp_deg {T T' T'' : K.Obj} (f : T ⟶ T') (f' : T' ⟶ T'') : (f ≫ f').deg = f.deg + f'.deg := rfl
 
-@[simp] theorem id_deg (T : K.Obj) : Hom.deg (𝟙 T) = 0 := rfl
 
 variable (K) in
-
 @[reducible] def Oc : K.Obj ⥤ CommAlgCat.{0} (Hol F.V) where
   obj T := CommAlgCat.of _ T.C
   map f := CommAlgCat.ofHom f.φ
 
 theorem mp_Oc {T T' : K.Obj} (f : T ⟶ T') : mp K.Oc f = f.φ := rfl
 
-variable (K) in
 
+variable (K) in
 def perZ (per : Λ →+ Hol F.V) : Z1 K.Oc :=
   ⟨fun _ T' f ↦ algebraMap (Hol F.V) T'.C (per f.deg), fun T T' T'' f f' ↦ by
     change algebraMap _ T''.C (per (f.deg + f'.deg)) = f'.φ (algebraMap _ _ _) + algebraMap _ T''.C _
-    rw [AlgHom.commutes, map_add, map_add]⟩
+    rw [AlgHom.commutes, per.map_add, (algebraMap (Hol F.V) T''.C).map_add]⟩
+
 
 variable (K) in
-
 def perCl (per : Λ →+ Hol F.V) : H1 K.Oc := H1.mk _ (K.perZ per)
 
-variable (K) in
 
+variable (K) in
 @[reducible] def triv (k : K.K) : K.Obj where
   k := k
   C := Hol (K.W k)
@@ -299,7 +286,7 @@ variable (K) in
   ρ_cst _ := rfl
 
 def fromTriv {l : Λ} {k : K.K} (T : K.Obj) (h : K.le l T.k k) (ρ : Hol (K.W k) →+* T.C)
-    (hc : ∀ f, ρ (K.cst k f) = algebraMap (Hol F.V) T.C f) (hρ : Close T.J (T.ρ.comp (sh h)) ρ) : K.triv k ⟶ T where
+    (hc : ∀ f, ρ (K.cst k f) = algebraMap (Hol F.V) T.C f) (hρ : Close T.J (T.ρ.comp (K.sh h)) ρ) : K.triv k ⟶ T where
   φ := letI := (K.triv k).alg; { ρ with commutes' := hc }
   deg := l
   le := h
@@ -307,7 +294,7 @@ def fromTriv {l : Λ} {k : K.K} (T : K.Obj) (h : K.le l T.k k) (ρ : Hol (K.W k)
   close := hρ
 
 def ptHom {l : Λ} {k : K.K} (T : K.Obj) (h : K.le l T.k k) : K.triv k ⟶ T :=
-  fromTriv T h (T.ρ.comp (sh h)) (fun f ↦ (congrArg T.ρ (sh_cst h f)).trans (T.ρ_cst f)) Relation.ReflTransGen.refl
+  fromTriv T h (T.ρ.comp (K.sh h)) (fun f ↦ (congrArg T.ρ (sh_cst h f)).trans (T.ρ_cst f)) Relation.ReflTransGen.refl
 
 end Charts
 
@@ -324,8 +311,6 @@ theorem Fam.allCharts_rich (F : Fam I g Λ) : F.allCharts.Rich := by
 
 def Fam.transl (F : Fam I g Λ) (l : Λ) : F.allCharts.triv F.totChart ⟶ F.allCharts.triv F.totChart :=
   Charts.ptHom (l := l) (F.allCharts.triv F.totChart) (fun _ h ↦ h)
-
-theorem Fam.transl_deg (F : Fam I g Λ) (l : Λ) : (F.transl l).deg = l := rfl
 
 def Charts.dualAt {F : Fam I g Λ} (K : Charts F) (k : K.K) (p : Tot I g) (hp : p ∈ K.W k) : K.Obj where
   k := k
@@ -376,16 +361,8 @@ def Charts.tangentHom {F : Fam I g Λ} (K : Charts F) (k : K.K) (a : Fin g) (p :
         DualNumber ℂ) = TrivSqZeroExt.inl (Hol.ev p hp (K.cst k f))
       rw [Charts.dw_cst]; simp)
     (by
-      rw [show (K.dualAt k p hp).ρ.comp (Charts.sh (K.le_refl k)) = (K.dualAt k p hp).ρ from
+      rw [show (K.dualAt k p hp).ρ.comp (K.sh (K.le_refl k)) = (K.dualAt k p hp).ρ from
         RingHom.ext fun f ↦ congrArg (K.dualAt k p hp).ρ (Charts.sh_refl _ f)]
       exact Relation.ReflTransGen.single (step_tangentAt a p hp))
-
-example : ∃ (T T' : ellFam.allCharts.Obj) (f : T ⟶ T'), T'.J ≠ ⊥ ∧ f.deg = (0, 1) :=
-  ⟨_, _, ellFam.transl (0, 1) ≫
-      ellFam.allCharts.tangentHom ellFam.totChart 0 (fun _ ↦ Complex.I, 0) ellFam_nontrivial.1,
-    Charts.dualAt_J_ne_bot _ _ _ _, add_zero _⟩
-
-example (F : Fam I g Λ) (per : Λ →+ Hol F.V) (l : Λ) :
-    (F.allCharts.perZ per).1 _ _ (F.transl l) = F.allCharts.cst F.totChart (per l) := rfl
 
 end GlobalTheory.AnPer

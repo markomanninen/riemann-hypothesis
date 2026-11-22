@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -8,7 +12,7 @@ theorem exists_eq_nsmul_of_forall_dvd_of_bijective {La : Type} [AddCommGroup La]
   let g : La →ₗ[ℤ] ℤ :=
     { toFun := fun x => EF c x / N
       map_add' := fun x y => by
-        simp only [map_add]
+        simp only [map_add (f := _)]
         exact Int.add_ediv_of_dvd_left (hc x)
       map_smul' := fun r x => by
         simp only [map_smul, smul_eq_mul, RingHom.id_apply]
@@ -220,7 +224,8 @@ theorem exists_rel_of_forall_dvd_of_card_mul :
       calc EF a a' = EF (∑ i, b.repr a i • b i) (∑ j, b.repr a' j • b j) := by
             rw [b.sum_repr, b.sum_repr]
         _ = _ := by
-            simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
+            set_option synthInstance.maxHeartbeats 100000 in
+              simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
               Finset.mul_sum]
             rw [Finset.sum_comm]
             refine Finset.sum_congr rfl (fun i _ => Finset.sum_congr rfl (fun j _ => ?_))

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+
+@[expose] public section
 
 namespace Bl.general_b_fact_third_extra
 

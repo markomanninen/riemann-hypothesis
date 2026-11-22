@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertDensity.FinrankValPerp
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertDensity.FinrankValPerp
+
+@[expose] public section
 
 open Finset Module
 

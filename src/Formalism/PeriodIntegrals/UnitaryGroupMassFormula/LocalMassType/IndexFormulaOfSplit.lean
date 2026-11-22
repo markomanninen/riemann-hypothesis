@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.CongruenceLiftOfBasis
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.IdxTop
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.CongruenceLiftOfBasis
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.IdxTop
+
+@[expose] public section
 
 namespace PI.LocMassTypL
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.EqCOfPderivZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.EqCOfPderivZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -28,7 +32,7 @@ theorem degree_eq_sum (n : τ →₀ ℕ) : n.degree = ∑ w, n w := by
   exact Finset.sum_subset (Finset.subset_univ _) (fun w _ hw => by simpa using hw)
 
 theorem pderiv_prim (ω : τ → MvPowerSeries τ k)
-    (hω : ∀ a c, pderiv k c (ω a) = pderiv k a (ω c)) (v : τ) : pderiv k v (prim ω) = ω v := by
+    (hω : ∀ a c, pderiv (R := k) c (ω a) = pderiv (R := k) a (ω c)) (v : τ) : pderiv (R := k) v (prim ω) = ω v := by
   ext n
   rw [coeff_pderiv, coeff_prim]
   have hterm : ∀ w, ((n v : k) + 1) *
@@ -63,7 +67,7 @@ theorem pderiv_prim (ω : τ → MvPowerSeries τ k)
       Finset.sum_ite_eq', if_pos (Finset.mem_univ _), degree_eq_sum]
     push_cast; ring
   have hdeg : ((n + Finsupp.single v 1).degree : ℚ) = (n.degree : ℚ) + 1 := by
-    rw [map_add, Finsupp.degree_single]; push_cast; ring
+    rw [map_add (f := _), Finsupp.degree_single]; push_cast; ring
   rw [mul_comm, ← mul_assoc, mul_comm _ (algebraMap ℚ k _), mul_assoc, hsum, hdeg, ← mul_assoc]
   have : algebraMap ℚ k (((n.degree : ℚ) + 1)⁻¹) * ((n.degree : k) + 1) = 1 := by
     rw [show ((n.degree : k) + 1) = algebraMap ℚ k ((n.degree : ℚ) + 1) by simp, ← map_mul,

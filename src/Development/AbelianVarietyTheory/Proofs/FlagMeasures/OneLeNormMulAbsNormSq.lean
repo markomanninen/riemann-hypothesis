@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
-import Formalism.FlagUnipotentLattices.CardSubmodulesAndLinearEquivBounds
-import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Formalism.FlagUnipotentLattices.CardSubmodulesAndLinearEquivBounds
+public import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+
+@[expose] public section
+
 open NumberField Module Matrix Formalism.BasicNotions
 open scoped ENNReal
 
@@ -55,7 +60,7 @@ theorem exists_diag {K V : Type} [Field K] [StarRing K] [AddCommGroup V] [Module
     generalize P x = y at *
     generalize g x = c at *
     rw [hx']
-    simp only [map_add, LinearMap.add_apply, map_smul, LinearMap.map_smulₛₗ, LinearMap.smul_apply,
+    simp only [map_add (f := _), LinearMap.add_apply, map_smul, LinearMap.map_smulₛₗ, LinearMap.smul_apply,
       smul_eq_mul, hk, hk', starRingEnd_apply]
     ring
 
@@ -132,7 +137,7 @@ theorem one_le_norm_mul_absNorm_sq {K : Type} [Field K] [NumberField K] [StarRin
     · rintro x y ⟨o, ho⟩ ⟨o', ho'⟩
       refine ⟨o + o', ?_⟩
       change algebraMap _ K (o + o') = c * algebraMap _ K (x + y)
-      rw [map_add, map_add, mul_add]
+      rw [map_add (f := _), map_add (f := _), mul_add]
       exact congrArg₂ (· + ·) ho ho')
   rw [map_mul, hN] at this
   push_cast at this
@@ -165,7 +170,8 @@ theorem dualPack : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddC
       map_add' := by intro x y; ext v i; simp [add_mul] }
   have hΦ : ∀ x ∈ S, ∀ v, ‖Φ x v‖ ^ 2 = (τ v (h x x)).re := by
     intro x hx v
-    rw [EuclideanSpace.norm_sq_eq, hf x (Submodule.subset_span hx), map_sum, Complex.re_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [EuclideanSpace.norm_sq_eq, hf x (Submodule.subset_span hx), map_sum, Complex.re_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     change ‖τ v (f i x) * (Real.sqrt (τ v (h (e i) (e i))).re : ℂ)‖ ^ 2 = _
     rw [norm_mul, mul_pow, Complex.norm_real, Real.norm_eq_abs, sq_abs, Real.sq_sqrt (hnn _ _),

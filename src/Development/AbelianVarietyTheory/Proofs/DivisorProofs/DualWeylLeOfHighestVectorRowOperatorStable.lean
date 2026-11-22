@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CapelliDeterminantFirstRowsMemBmW
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CoefficientSpaceEqSpanOrbitExtremalVector
-import Formalism.BranchSandwichDivisors.DivFromPassageAndNorm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CapelliDeterminantFirstRowsMemBmW
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CoefficientSpaceEqSpanOrbitExtremalVector
+public import Formalism.BranchSandwichDivisors.DivFromPassageAndNorm
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility Formalism.BranchingDeterminantCap Formalism.BasicNotions Formalism.L2.DIV GlobalTheory.Mem.Gelf GlobalTheory.Mem.GelfCheck GlobalTheory.BrCompare
 
@@ -21,7 +25,7 @@ theorem rowDiv_succ_rec (R : Type) [CommRing R] {r m : ℕ} (a b : Fin r) (f : M
     | zero => simp [rowE_C, Polynomial.coeff_C]
     | succ k => simp
   | add p q hp hq =>
-    simp only [map_add, Polynomial.coeff_add, ← hp, ← hq]
+    simp only [map_add (f := _), Polynomial.coeff_add, ← hp, ← hq]
     ring
   | mul_X p v hp =>
     obtain ⟨c, s⟩ := v
@@ -54,7 +58,7 @@ theorem rowDiv_succ_rec (R : Type) [CommRing R] {r m : ℕ} (a b : Fin r) (f : M
       push_cast
       ring
     | succ k =>
-      rw [hs, hs, map_add, rowE_mul, rowE_mul, hx, hy', ← hp, ← hp]
+      rw [hs (k + 1), hs k, map_add (f := rowE R r m a b), rowE_mul, rowE_mul, hx, hy', ← hp, ← hp]
       push_cast
       ring
 

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.SimpSmul
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.SimpSmul
+
+@[expose] public section
 
 open NumberField UpperTheory.V UpperTheory.V.KT UpperTheory.V.Af.BA
 
@@ -23,7 +27,7 @@ theorem UpperTheory.real_structure_action_of_real_involution :
           intro a b
           apply Subtype.ext
           simp only [Submodule.coe_add]
-          rw [← actL_apply, ← actL_apply, ← actL_apply, map_add]
+          rw [← actL_apply, ← actL_apply, ← actL_apply, map_add (f := _)]
         map_smul' := by
           intro c a
           apply Subtype.ext

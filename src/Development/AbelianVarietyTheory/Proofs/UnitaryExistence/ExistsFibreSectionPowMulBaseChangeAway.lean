@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.UnivFrame
-import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniqueScaledBaseChangeFibreSection
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsLocalizedModuleResBasicOpenOfQcqs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.UnivFrame
+public import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniqueScaledBaseChangeFibreSection
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsLocalizedModuleResBasicOpenOfQcqs
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,9 +44,13 @@ theorem exists_pow_mul_eq {Y Z : Scheme.{0}} [CompactSpace Y] [QuasiSeparatedSpa
     have := hf i j
     rw [← ht i, ← ht j, GlobalTheory.LB.resG_appLE, GlobalTheory.LB.resG_appLE] at this
     exact this
-  obtain ⟨N, u, hu⟩ := AbLaw.SecOn.exists_pow_smul_eq_restrict hM (V := ⊤) isCompact_univ isQuasiSeparated_univ a
-    le_top ha (GlobalTheory.LB.mkSec t hmem)
-  refine ⟨N, AbLaw.SecOn.topEquiv M u, fun i => ?_⟩
+  haveI := GlobalTheory.LB.isQuasicoherent_toMod hM
+  obtain ⟨N, u, hu⟩ := GlobalTheory.QCoh.Qcqs.exists_pow_smul_eq_res_of_qcqs (GlobalTheory.LB.toMod M)
+    (U := ⊤) isCompact_univ isQuasiSeparated_univ a le_top ha (GlobalTheory.LB.mkSec t hmem)
+  let s : LB.Sec M := ⟨fun i => resG Y (le_inf le_top le_rfl) (GlobalTheory.LB.coord u i), fun i j => by
+    change resG Y _ (resG Y _ _) = _ * resG Y _ (resG Y _ _)
+    rw [GlobalTheory.LB.resG_resG, GlobalTheory.LB.resG_resG, GlobalTheory.LB.coord_rel u i j _ _ le_rfl, GlobalTheory.LB.resG_self]⟩
+  refine ⟨N, s, fun i => ?_⟩
   have e : resG Y inf_le_left (resG Y le_top a ^ N) * t i =
       resG Y (inf_le_inf_right _ le_top) (GlobalTheory.LB.coord u i) := congrArg (fun w => GlobalTheory.LB.coord w i) hu
   have e₂ := congrArg (π.appLE _ _ (k i)).hom e
@@ -57,7 +65,7 @@ theorem exists_pow_mul_eq_linComb {X Y Z : Scheme.{0}} [CompactSpace Y] [QuasiSe
       (hle : (LB.LinComb L φ' ε).U j ≤ π ⁻¹ᵁ (LB.LinComb L φ ε).U j), (π.appLE _ _ hle).hom (s.f j) =
         (π.appLE ⊤ _ le_top).hom a ^ N * s'.f j := by
   subst e
-  obtain ⟨N, s, hs⟩ := exists_pow_mul_eq π a ha (LB.isLB_linComb hL φ ε)
+  obtain ⟨N, s, hs⟩ := exists_pow_mul_eq π a ha (M := LB.LinComb L φ ε) (LB.isLB_linComb hL φ ε)
     (LB.LinComb L (fun k => π ≫ φ k) ε).U
     (fun _ _ hy => Set.mem_iInter.2 fun k => Set.mem_iInter.1 hy k)
     (fun _ _ hy => Set.mem_iInter.2 fun k => Set.mem_iInter.1 hy k) s'.f (fun i j => by
@@ -108,7 +116,9 @@ theorem isPullback_gx {S : Type} [CommRing S] (x : Sp S ⟶ Xo.X) :
 theorem isPullback_gxMap {S T : Type} [CommRing S] [CommRing T] (φ : S →+* T) (x : Sp S ⟶ Xo.X) :
     IsPullback (SecPull.gxMap φ x _ rfl) (fst (Over.mk (spMap φ ≫ x)) Xo.univ.t.G).left
       (fst (Over.mk x) Xo.univ.t.G).left (spMap φ) :=
-  IsPullback.of_right (by rw [SecPull.gxMap_snd]; exact isPullback_gx _) (SecPull.gxMap_fst φ x _ rfl)
+  IsPullback.of_right (by
+    convert isPullback_gx (spMap φ ≫ x) using 1
+    exact SecPull.gxMap_snd φ x _ rfl) (SecPull.gxMap_fst φ x _ rfl)
     (isPullback_gx x)
 
 theorem exists_secBC_pow_mul : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (S : Type) [CommRing S] (x : Sp S ⟶ Xo.X) (g : S) (s' : LB.Sec (PPx (spMap (algebraMap S (Localization.Away g)) ≫ x))), ∃ (N : ℕ) (s : LB.Sec (PPx x)) (s₁ : LB.Sec (PPx (spMap (algebraMap S (Localization.Away g)) ≫ x))), SecBC (algebraMap S (Localization.Away g)) 1 x _ s s₁ ∧ ∀ i, s₁.f i = scal _ ((algebraMap S (Localization.Away g)) g ^ N) i * s'.f i := by

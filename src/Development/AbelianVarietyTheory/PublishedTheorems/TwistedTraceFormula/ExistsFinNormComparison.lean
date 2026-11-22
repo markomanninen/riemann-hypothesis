@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsModGrowthExpLeNormInfPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsModGrowthExpLeNormInfPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ theorem coord_le_absFin {b' : ι → E} (hb : ∀ x k, Algebra.trace F E (b' k *
       ∑ τ : E →ₐ[F] FvBar F v, finEmb F v τ (((1 : Fv F v) ⊗ₜ[F] b' k) * y) := by
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy, mul_add, Finset.sum_add_distrib]
+    | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy, mul_add, Finset.sum_add_distrib]
     | tmul a x =>
       simp only [Algebra.TensorProduct.tmul_mul_tmul, one_mul, GlobalTheory.AdelicU.finEmb_tmul, ← Finset.mul_sum]
       rw [← trace_eq_sum_embeddings (FvBar F v), hb, Algebra.TensorProduct.basis_repr_tmul,
@@ -66,7 +70,7 @@ theorem evalV_repr (v : HeightOneSpectrum (𝓞 F)) (z : AF F ⊗[F] E) (k : ι)
       (Algebra.TensorProduct.basis (Fv F v) b).repr (compFin F E v z) k := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
   | tmul a x => simp [compFin, GlobalTheory.AdelicU.evFin, Algebra.TensorProduct.basis_repr_tmul]
 
 end Local

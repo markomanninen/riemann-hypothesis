@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.ThetaCoefficients.LPartFTD
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.ThetaCoefficients.LPartFTD
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,14 +32,14 @@ theorem one_sub_bl' {R : Type} [CommRing R] (hn : r + t = n) :
 
 theorem mat_w (hn : r + t = n) (M : Maps D hn) : mat M.w = (wr D.host.E n r).map (incA D) := by
   have hm : (-1 : Matrix (Fin r) (Fin r) D.host.E).map (incA D) = -1 := by
-    ext i j; by_cases h : i = j <;> simp [Matrix.one_apply, h]
+    ext i j; by_cases h : i = j <;> simp [h]
   rw [M.w_mat, wr, eId_eq hn, block_matrix_map, one_sub_bl', block_neg]
   simp [block_map, hm]
 
 theorem mat_emb (hn : r + t = n) (M : Maps D hn) (w : G D t) (hw : IsW w) :
     mat (M.emb w) = (wE (bl hn (0 : Matrix (Fin r) (Fin r) D.host.E) 0 0 1)).map (incA D) := by
   have hm : (-1 : Matrix (Fin t) (Fin t) D.host.E).map (incA D) = -1 := by
-    ext i j; by_cases h : i = j <;> simp [Matrix.one_apply, h]
+    ext i j; by_cases h : i = j <;> simp [h]
   rw [M.emb_mat w 0 1 (-1) 0 hw, wE, one_sub_bl, block_neg, block_matrix_map]
   simp [block_map, hm]
 

@@ -1,13 +1,18 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.KummerOpen
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.Trivial
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.FormationThree
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.Subgroup
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.NotDvdSuperIndexBotOfIsProPGroup
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.CdpOpenSubgroupLe
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.Closed
-import GroundTheory.ProfiniteCohomology.NotDvdSuperIndexIffMap
-import GroundTheory.ProfiniteCohomology.CartierDual
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.KummerOpen
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.Trivial
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.FormationThree
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.Subgroup
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.NotDvdSuperIndexBotOfIsProPGroup
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.CdpOpenSubgroupLe
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.Closed
+public import GroundTheory.ProfiniteCohomology.NotDvdSuperIndexIffMap
+public import GroundTheory.ProfiniteCohomology.CartierDual
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -48,7 +53,7 @@ theorem subsingleton_cohomology_three_galUnits_open (U : OpenSubgroup Gal(Ksep/K
 theorem subsingleton_cohomology_three_rootsOfUnity {n : ℕ} (hn : (n : K) ≠ 0)
     (U : OpenSubgroup Gal(Ksep/K)) :
     Subsingleton (cohomology (Rep.res (U : Subgroup Gal(Ksep/K)).subtype (galRootsOfUnity.{0} K Ksep n)) 3) :=
-  subsingleton_cohomology_three_rootsOfUnity_open K Ksep hn U
+  subsingleton_cohomology_three_rootsOfUnity_open K Ksep (V := U) hn
     (subsingleton_cohomology_three_galUnits_open K Ksep U)
 
 end Local
@@ -110,8 +115,8 @@ theorem apply_eq_of_isProPGroup {ℓ : ℕ} (hℓ : ℓ.Prime) {P : Subgroup Gal
 
 variable (K Ksep) [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
 
-omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 
+omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 theorem nonempty_zmod_addEquiv_rootsOfUnity {ℓ : ℕ} (hℓ : ℓ.Prime) (hℓK : (ℓ : K) ≠ 0) :
     Nonempty (ZMod ℓ ≃+ Additive (rootsOfUnity ℓ Ksep)) := by
   have : Fact ℓ.Prime := ⟨hℓ⟩
@@ -168,8 +173,8 @@ theorem cdp_galois_le_two {ℓ : ℕ} (hℓ : ℓ.Prime) (hℓK : (ℓ : K) ≠ 
         rw [hfix]⟩
   have hcomp : ψ ≫ ψ' = 𝟙 _ := by
     ext x
-    change e.symm (e x.down) = x.down
-    exact e.symm_apply_apply x.down
+    simp [ψ, ψ', Rep.Hom.hom, uliftIntLinearEquivAddHom]
+    exact congrArg ULift.up (e.symm_apply_apply x.down)
   have hinj : Function.Injective (cohomologyMap ψ 3).hom := fun x y h => by
     have h' := congrArg (cohomologyMap ψ' 3).hom h
     rwa [← ModuleCat.comp_apply, ← ModuleCat.comp_apply, ← cohomologyMap_comp, hcomp,

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvPowerSeriesAlgHomKillHighOrder
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvPowerSeriesAlgHomKillHighOrder
+
+@[expose] public section
+
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Katz
 
 namespace GlobalTheory
@@ -30,7 +35,8 @@ theorem mvPowerSeries_algHom_ext_of_isNilpotent :
   set p : MvPowerSeries σ k := ∑ α ∈ hfin.toFinset, monomial α (coeff α f) with hpdef
   have hc : ∀ α : σ →₀ ℕ, α.degree ≤ N₁ + N₂ → coeff α (f - p) = 0 := by
     intro α hα
-    rw [map_sub, hpdef, map_sum, Finset.sum_eq_single α]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, hpdef, map_sum, Finset.sum_eq_single α]
     · simp
     · intro β _ hβ
       rw [coeff_monomial_ne hβ.symm]
@@ -39,7 +45,8 @@ theorem mvPowerSeries_algHom_ext_of_isNilpotent :
   have e₁ : φ (f - p) = 0 := h₁ _ (fun α hα => hc α (by omega))
   have e₂ : ψ (f - p) = 0 := h₂ _ (fun α hα => hc α (by omega))
   have e₃ : φ p = ψ p := by
-    rw [hpdef, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hpdef, map_sum, map_sum]
     exact Finset.sum_congr rfl (fun α _ => hm _ _)
   rw [map_sub, sub_eq_zero] at e₁ e₂
   rw [e₁, e₂, e₃]

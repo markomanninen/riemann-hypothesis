@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.JuxtWords
-import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.JuxtShl
-import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.JuxtSwap
-import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.JuxtUniq
-import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.JuxtDec
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.JuxtWords
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.JuxtShl
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.JuxtSwap
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.JuxtUniq
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.JuxtDec
+
+@[expose] public section
 
 noncomputable section
 

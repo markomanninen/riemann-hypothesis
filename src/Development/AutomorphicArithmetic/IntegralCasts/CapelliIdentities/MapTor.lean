@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.H71.wt1 :
     Fin (3 : ℕ) → ℤ :=
@@ -65,4 +69,5 @@ theorem UpperTheory.Reformulated.B.H71.map_tor :
   rw [Matrix.diagonal_map (map_zero f)]
   congr 1
   funext i
-  simp only [Function.comp_apply, ← map_zpow, Units.coe_map, MonoidHom.coe_coe]
+  rw [← map_zpow, Units.coe_map]
+  rfl

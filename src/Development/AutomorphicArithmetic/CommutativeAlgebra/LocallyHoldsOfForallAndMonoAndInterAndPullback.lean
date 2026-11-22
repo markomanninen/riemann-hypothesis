@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.LocallyExactCech
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.LocallyExactCech
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite UpperTheory.Et
 

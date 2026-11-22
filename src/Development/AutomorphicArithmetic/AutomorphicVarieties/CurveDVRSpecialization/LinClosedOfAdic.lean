@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
+
+@[expose] public section
 
 set_option maxHeartbeats 1000000 in
 open IsLocalRing Filter Topology in
@@ -16,7 +20,7 @@ theorem UpperTheory.V.Pr.linClosedOfAdic :
           ext s t
           simp [e]
         simp only [Set.mem_setOf_eq] at hx hy ⊢
-        rw [h, map_add, hx, hy, add_zero]
+        rw [h, map_add (f := _), hx, hy, add_zero]
       zero_mem' := by
         have h : e 0 = 0 := by
           ext s t
@@ -78,7 +82,8 @@ theorem UpperTheory.V.Pr.linClosedOfAdic :
         mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
     have hmem : K.mkQ (y g - y g0) ∈
         (maximalIdeal A ^ N • ⊤ : Submodule A ((Fin n × Fin n → A) ⧸ K)) := by
-      rw [hsum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hsum, map_sum]
       refine Submodule.sum_mem _ fun p _ => ?_
       rw [LinearMap.map_smul]
       exact Submodule.smul_mem_smul (hd p) Submodule.mem_top

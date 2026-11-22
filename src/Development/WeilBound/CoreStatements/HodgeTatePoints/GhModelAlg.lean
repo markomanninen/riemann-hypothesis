@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LieModel
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LieModel
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,8 @@ theorem exists_int_proj (E : Type) [Field E] [NumberField E] :
   have ha : ∀ k, ((∑ j, n (k, j) • RingOfIntegers.basis E j : 𝓞 E) : E) = ((m : ℤ) : E) * HT.dualInt E k := by
     intro k
     conv_rhs => rw [← (integralBasis E).sum_repr (HT.dualInt E k)]
-    rw [RingOfIntegers.coe_eq_algebraMap, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [RingOfIntegers.coe_eq_algebraMap, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     have h := hn (k, j)
     simp only [eq_intCast, zsmul_eq_mul] at h
@@ -195,7 +200,7 @@ theorem alg_main {E : Type} [Field E] [NumberField E] {Ω C R A A' : Type} [Fiel
     | add x y _ _ hx hy =>
       obtain ⟨o, ho⟩ := hx
       obtain ⟨o', ho'⟩ := hy
-      exact ⟨o + o', by rw [map_add, map_add, ho, ho']⟩
+      exact ⟨o + o', by rw [map_add (f := _), map_add (f := _), ho, ho']⟩
     | smul c x _ hx =>
       obtain ⟨o, ho⟩ := hx
       exact ⟨c * o, by rw [map_mul, ho, ← algebraMap_smul C c x, map_smul, smul_eq_mul]⟩

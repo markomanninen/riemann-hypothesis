@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.PsiCoordExistsUniqueUpToUnitLocal
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.BetaAtAddLeftAndDiagEqTwoOrder
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsGoodIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.PsiCoordExistsUniqueUpToUnitLocal
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.BetaAtAddLeftAndDiagEqTwoOrder
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsGoodIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ theorem cls_pow_eq_one [IsIntegrallyClosed R] {n : ℕ} (hn : n ≠ 0) (c : Cls 
   exact (QuotientGroup.eq_one_iff _).2 ⟨⟨a, b, hab, by rw [mul_comm, hab]⟩, Units.ext ha⟩
 
 instance [IsIntegrallyClosed R] : IsMulTorsionFree (Cls R) where
-  pow_left_injective n hn a b h := by
+  eq_of_pow_eq_pow_of_commute n hn a b _ h := by
     have : (a * b⁻¹) ^ n = 1 := by rw [mul_pow, inv_pow, show a ^ n = b ^ n from h, mul_inv_cancel]
     exact mul_inv_eq_one.1 (cls_pow_eq_one hn _ this)
 
@@ -71,12 +75,13 @@ theorem exists_lift [IsIntegrallyClosed R] {X : Type} [AddCommGroup X] [Module.F
   have hq : Function.Surjective q := fun c => QuotientGroup.mk_surjective (Additive.toMul c)
   have : Module.Finite ℤ (TensorProduct ℤ X X) := Module.Finite.tensorProduct ℤ X X
   have : Module.Finite ℤ (LinearMap.range B) := Module.Finite.range B
+  have : HasUniqueRoots (Cls R) := IsMulTorsionFree.hasUniqueRoots
   have : Module.Free ℤ (LinearMap.range B) := inferInstance
   obtain ⟨s, hs⟩ := Module.projective_lifting_property q (LinearMap.range B).subtype hq
   refine ⟨fun a c => Additive.toMul (s (B.rangeRestrict (a ⊗ₜ c))), fun a c => ?_, fun a a' c => ?_, fun a c a' c' h => ?_⟩
   · exact congrArg Additive.toMul (LinearMap.congr_fun hs (B.rangeRestrict (a ⊗ₜ c)))
   · beta_reduce
-    rw [TensorProduct.add_tmul, map_add, map_add]; rfl
+    rw [TensorProduct.add_tmul, map_add (f := _), map_add (f := _)]; rfl
   · have : B.rangeRestrict (a ⊗ₜ c) = B.rangeRestrict (a' ⊗ₜ c') := Subtype.ext (by
       show B _ = B _
       rw [hB, hB, h])
@@ -88,8 +93,8 @@ section Coord
 
 variable {R : Type} [CommRing R] [IsDomain R] [IsLocalRing R]
 
-open GlobalTheory.BetaAdd in
 
+open GlobalTheory.BetaAdd in
 theorem coord_rel (Dg : DegData R (maximalIdeal R)) (r : Dg.toPre.X → R) (hr : ∀ χ, PsiCoord Dg.toPre χ (r χ)) :
     (∀ a a' b, ∃ u : Rˣ, r (a + a' + b) * r a * r a' * r b * u = r (a + b) * r (a' + b) * r (a + a')) ∧
       ∀ a, ∃ u : Rˣ, r (-a) * u = r a := by
@@ -225,7 +230,7 @@ theorem tauCls_bal {O : Type} [Ring O] [StarRing O] [Module O Dg.toPre.X] (ρ : 
 
 theorem tauCls_half [IsIntegrallyClosed R] {O : Type} [Ring O] [StarRing O] [Module O Dg.toPre.X] (ρ : Dg.toPre.OAct O)
     {w : O} (hw : w + star w = 1) (a : Dg.toPre.X) : tauCls Dg a (w • a) = psiCls Dg a := by
-  refine pow_left_injective (n := 2) two_ne_zero ?_
+  refine (Commute.all _ _).eq_of_pow_eq_pow (n := 2) two_ne_zero ?_
   show _ ^ 2 = _ ^ 2
   rw [← tauCls_self, sq]
   nth_rewrite 2 [tauCls_symm]
@@ -271,15 +276,6 @@ theorem IsReading.pos {O : Type} [Ring O] [StarRing O] [Module O Dg.toPre.X] {t}
     (t a a : FractionRing R) ∈ (algebraMap R (FractionRing R)).range :=
   mem_range_of_cls (mul_ne_zero (coord_ne Dg a) (coord_ne Dg a)) (by
     rw [h.cls, tauCls_self, toK_mul (coord_ne Dg a) (coord_ne Dg a), sq]; rfl)
-
-theorem IsReading.pos_max [CharZero R] [IsIntegrallyClosed R] {O : Type} [Ring O] [StarRing O] [Module O Dg.toPre.X] {t}
-    (h : IsReading Dg O t) {a : Dg.toPre.X} (ha : a ≠ 0) :
-    ∃ r ∈ maximalIdeal R, algebraMap R (FractionRing R) r = t a a := by
-  obtain ⟨r, hr, h0, hm, -⟩ := (GlobalTheory.PsiCoordLocal.main R Dg inferInstance a).1
-  have e : (t a a : Cls R) = toK (r * r) (mul_ne_zero h0 h0) := by
-    rw [h.cls, tauCls_self, psiCls_eq Dg hr, toK_mul h0 h0, sq]; rfl
-  obtain ⟨u, hu⟩ := cls_eq_iff.1 e.symm
-  exact ⟨r * r * u, Ideal.mul_mem_right _ _ (Ideal.mul_mem_right _ _ (hm ha)), (map_mul _ _ _).trans hu⟩
 
 end Coord
 

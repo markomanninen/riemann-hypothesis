@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsBasOpens
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AugmentationSigmaMapBasicProperties
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AugmentationSigmaMapNatural
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AugmentationSigmaMapInjectiveOfFlat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsBasOpens
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AugmentationSigmaMapBasicProperties
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AugmentationSigmaMapNatural
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AugmentationSigmaMapInjectiveOfFlat
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open scoped TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.LiftSys GlobalTheory.Obs GlobalTheory.LBObs GlobalTheory.AbLaw GlobalTheory.AbDual GlobalTheory.CechPic
@@ -27,7 +32,7 @@ theorem isSig_unique {R R₀ : Type} [CommRing R] [CommRing R₀] {I : Ideal R} 
   | tmul r b₀ =>
     obtain ⟨b, rfl⟩ := hp b₀
     rw [hσ, hσ']
-  | add x x' hx hx' => rw [map_add, map_add, hx, hx']
+  | add x x' hx hx' => rw [map_add (f := _), map_add (f := _), hx, hx']
 
 theorem isObU_unique : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀] (I : Ideal R) (hI : I ^ 2 = 0) (π : R →+* R₀) (hπ : Function.Surjective π) (hk : RingHom.ker π = I) (R₁ : Type) [CommRing R₁] [Algebra R₀ R₁] (α : Aug I π R₁) (C : Type) [Category.{0} C] (F : C ⥤ CommAlgCat.{0} R₀) (L : Pre I π F) (u : ∀ (T T' : C) (_ : T ⟶ T'), (F.obj T')ˣ) (c c' : GlobalTheory.CatCoh.H2 (ext R₁ F)), IsObU L α u c → IsObU L α u c' → c = c' := by
   intro R R₀ _ _ I hI π hπ hk R₁ _ _ α C _ F L u c c' h h'
@@ -62,7 +67,7 @@ theorem isObU_unique : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀] (I : Ide
     have k4 := (hz T T' T'' a b).1
     have k5 := (hz' T T' T'' a b).1
     unfold Aug.KerQ at k1 k2 k3 k4 k5 ⊢
-    simp only [map_sub, map_add, map_neg, k1, k2, k3, k4, k5]
+    simp only [map_sub, map_add (f := _), map_neg, k1, k2, k3, k4, k5]
     simp
   ·
     have e1 := (hz T T' T'' a b).2
@@ -79,7 +84,7 @@ theorem isObU_unique : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀] (I : Ide
       rw [hQ, hyσ, add_sub_cancel, _root_.mul_assoc, Units.inv_mul, _root_.mul_one]
     have vab : (v' T T'' (a ≫ b) : L.B T'') = (1 + Y) * (v T T'' (a ≫ b) : L.B T'') := by
       rw [hY, hyσ, add_sub_cancel, _root_.mul_assoc, Units.inv_mul, _root_.mul_one]
-    rw [va, vb, vab, map_mul, map_add, map_one, nat.1] at e2
+    rw [va, vb, vab, map_mul, map_add (f := _), map_one, nat.1] at e2
     rw [← hP] at e2
     have mem : ∀ x, σ T'' x ∈ I.map (algebraMap R (L.B T'')) := bas.1
     have sq : ∀ x x', σ T'' x * σ T'' x' = 0 := fun x x' ↦ mul_eq_zero_of_mem_map hI (mem x) (mem x')
@@ -88,7 +93,7 @@ theorem isObU_unique : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀] (I : Ide
     have hQZ : Q * Z = 0 := sq _ _
     have hZY : Z' * Y = 0 := sq _ _
     have hV : (v T T'' (a ≫ b) : L.B T'') * ((v T T'' (a ≫ b))⁻¹ : (L.B T'')ˣ) = 1 := Units.mul_inv _
-    simp only [map_sub, map_add, map_neg]
+    simp only [map_sub, map_add (f := _), map_neg]
     rw [← hP, ← hQ, ← hY, ← hZ, ← hZ']
     have E : (1 + P) * (1 + Q) * (1 + Z) * (v T T'' (a ≫ b) : L.B T'') =
         (1 + Z') * (1 + Y) * (v T T'' (a ≫ b) : L.B T'') := by

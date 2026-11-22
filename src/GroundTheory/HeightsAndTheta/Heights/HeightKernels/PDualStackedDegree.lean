@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedDegree
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualLatticeIndex
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualTopLatticeChange
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesGenIndexTrans
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesGenIndexDet
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesLatticeBasis
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesIsLattice
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedDegree
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualLatticeIndex
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualTopLatticeChange
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesGenIndexTrans
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesGenIndexDet
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesLatticeBasis
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLinesIsLattice
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -18,7 +23,7 @@ namespace DualStackedDegreeAlt
 
 variable {K : Type} [Field K] [NumberField K] {i : ℕ}
 
-theorem isLattice (F : HermLattice K i) : Submodule.IsLattice ℚ (F.lattice.restrictScalars ℤ) :=
+theorem isLattice (F : HermLattice K i) : Submodule.IsFullLattice ℚ (F.lattice.restrictScalars ℤ) :=
   LinesIsLattice.proof K (Fin i) F.lattice (F.fg.restrictScalars) F.span_eq
 
 theorem degree_withStdMetric (F : HermLattice K i) :
@@ -76,8 +81,8 @@ theorem relIndex_stacked {T : Type} [Fintype T] [DecidableEq T] {F F' : HermLatt
 
 end DualStackedDegreeAlt
 
-open DualStackedDegreeAlt in
 
+open DualStackedDegreeAlt in
 theorem DualStackedDegree.proof (hIdx : DualLatticeIndex.Statement) : DualStackedDegree.Statement := by
   intro K _ _ i F F' T _ _ b b' a h hab
   have ha : ∀ t, a t ≠ 0 := fun t ht => b.ne_zero t (Subtype.ext (by rw [hab t, ht, zero_smul]; rfl))

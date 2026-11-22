@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePIndAr
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePAddCvSelf
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePIndAr
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePAddCvSelf
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,7 +88,8 @@ theorem ptSelf_of (hEx : PTExSelfSt) (hAvg : PTAvgSelfSt) (hStab : HStabSelfSt) 
   have hγ1 : ∀ i, PowerSeries.coeff 1 (γ i) = ∑ c, (Y.rawSelf p).u g c i * w c := by
     intro i
     have h1 := congrArg (PowerSeries.coeff 1) (hlg i)
-    rw [coeff_alongCv_low le_rfl hγ0 (FBChart.self_chart_log_constantCoeff (Y := Y) (p := p) i), map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [coeff_alongCv_low le_rfl hγ0 (FBChart.self_chart_log_constantCoeff (Y := Y) (p := p) i), map_sum] at h1
     simp only [PowerSeries.coeff_smul, c1, hx0, smul_eq_mul] at h1
     rw [← h1, Finset.sum_eq_single i]
     · rw [FBChart.rawSelf_lin (Y := Y) (p := p) i _ (hdeg i), MvPowerSeries.coeff_X, if_pos rfl, one_mul]
@@ -97,7 +102,8 @@ theorem ptSelf_of (hEx : PTExSelfSt) (hAvg : PTAvgSelfSt) (hStab : HStabSelfSt) 
   have key : ∀ q : I0, V.Ge 0 (PowerSeries.coeff 1 (lam q) - x 0 (Sum.inr q)) := by
     intro q
     have h2 := congrArg (PowerSeries.coeff 1) (hq q)
-    rw [c1, map_add, map_sub, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [c1, map_add (f := _), map_sub, map_sum,
       coeff_alongCv_low le_rfl hγ0 (RawChart.constantCoeff_sg (Y.rawSelf p) (fun e he => FBChart.rawSelf_axis0 (Y := Y) (p := p) e he) _)] at h2
     simp only [hγ1] at h2
     have hA : ∑ i, MvPowerSeries.coeff (Finsupp.single i 1) ((Y.rawSelf p).sg ((Y.rawSelf p).u (1 - g) q)) *
@@ -207,10 +213,5 @@ theorem ptAvgSelf_of (hAct : OActSelfSt) (hLim : LimSelfSt) : PTAvgSelfSt := by
 
 theorem ptSelf_of_act (hEx : PTExSelfSt) (hAct : OActSelfSt) (hLim : LimSelfSt) (hStab : HStabSelfSt) : PTSelfSt :=
   ptSelf_of hEx (ptAvgSelf_of hAct hLim) hStab
-
-theorem ptExSelf_of_pt (h : PTSelfSt) : PTExSelfSt := by
-  intro C _ _ V O _ _ dd Y d _ I0 _ p g a w hw hty
-  obtain ⟨x, hx, h0, -⟩ := h C V O dd Y d I0 p g a w hw hty
-  exact ⟨x, hx, fun c => congrFun h0 (Sum.inl c)⟩
 
 end Formalism.L2.FormalSeriesBounds

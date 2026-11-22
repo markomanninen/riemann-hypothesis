@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RowFrameCoherence.FrameZEqLinZu
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.GenericRatioOfBoundHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ScalarEquivalenceGenerators.ScalarEquivOfGen
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RowFrameCoherence.FrameZEqLinZu
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.GenericRatioOfBoundHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ScalarEquivalenceGenerators.ScalarEquivOfGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,8 +33,9 @@ theorem gval_ne (s : Formalism.L2.SG.TermOp.GTerm X u u' (X.Fu u) (X.Fu u') (Y.w
       (Formalism.L2.SG.TermDef.mk _ _ _ x) = Gval (lf D (X.Fu u)) x.1 :=
     hGF _ _ ((hEq _ _).1 (Quot.out_eq (Formalism.L2.SG.TermDef.mk s.lam (lf D (X.Fu u))
       (Formalism.L2.SG.TermDef.PD D s.lam (lf D (X.Fu u)) u') x)))
-  rw [← gv]
-  exact hG'
+  intro hz
+  apply hG'
+  exact gv.trans (by with_unfolding_all exact hz)
 
 variable (s : Formalism.L2.SG.TermOp.GTerm X u u' (X.Fu u) (X.Fu u') (Y.what₂ u) (Y.what₂ u'))
 
@@ -69,7 +74,8 @@ theorem agree_pair (s₁ s₂ : Formalism.L2.SG.TermOp.GTerm X u u' (X.Fu u) (X.
         ∃ y₁, orthogonalComplementRational X u u' (Mof X Y u u' s₁) y₁ ∧ y₁ - y₂ ∈ WperpE X u ∧
           Miof X Y u u' s₁ *ᵥ y₁ - Miof X Y u u' s₂ *ᵥ y₂ ∈ WperpE X u' := by
   have hRL : IsRowLat D (X.Fu u) s₁.lam := (Y.rowsOK u).1 s₁.lam s₁.mem
-  obtain ⟨_, ⟨hlat, _, hlift, _⟩, _⟩ := hRL
+  obtain ⟨hgen, ⟨_, _, hlift, _⟩, _⟩ := hRL
+  have hlat : Submodule.IsFullLattice D.host.E s₁.lam := hgen.1
   have hL₁ : IsLift s₁.lam s₁.frame := s₁.rep.2.2.2.2.1
   have hL₂ : IsLift s₁.lam s₂.frame := by rw [hl]; exact s₂.rep.2.2.2.2.1
   have gv₁ := gval_ne X Y u u' s₁ hG₁
@@ -94,11 +100,11 @@ theorem agree_pair (s₁ s₂ : Formalism.L2.SG.TermOp.GTerm X u u' (X.Fu u) (X.
     constructor
     · intro h
       obtain ⟨d, hd, hdO, hd0⟩ := ker_of_det X Y u u' s₁ gv₁ h
-      obtain ⟨d₂, hd₂, hd₂O, hd₂0⟩ := ker_transport hlat rfl hz₁ hz₂ gv₁ hTh'' hsc hd hdO hd0
+      obtain ⟨d₂, hd₂, hd₂O, hd₂0⟩ := ker_transport (by first | exact hlat | exact hlat.toIsLattice) rfl hz₁ hz₂ gv₁ hTh'' hsc hd hdO hd0
       exact det_of_ker X Y u u' s₂ hd₂ hd₂O hd₂0
     · intro h
       obtain ⟨d, hd, hdO, hd0⟩ := ker_of_det X Y u u' s₂ gv₂ h
-      obtain ⟨d₁, hd₁, hd₁O, hd₁0⟩ := ker_transport_rev hlat rfl hz₁ hz₂ gv₂ hTh hsc hd hdO hd0
+      obtain ⟨d₁, hd₁, hd₁O, hd₁0⟩ := ker_transport_rev (by first | exact hlat | exact hlat.toIsLattice) rfl hz₁ hz₂ gv₂ hTh hsc hd hdO hd0
       exact det_of_ker X Y u u' s₁ hd₁ hd₁O hd₁0
   refine ⟨?_, ?_, ?_⟩
   ·
@@ -106,7 +112,7 @@ theorem agree_pair (s₁ s₂ : Formalism.L2.SG.TermOp.GTerm X u u' (X.Fu u) (X.
     · have h₂ := hdet.1 h₁
       simp [nu1E, h₁, h₂]
     have h₂ : (ZE X u u' (Mof X Y u u' s₂)).det ≠ 0 := fun h => h₁ (hdet.2 h)
-    obtain ⟨ν, hνm, hνe, hνz, hνd⟩ := firstNormal_transport hlat rfl hz₁ hz₂ hT0 hTh'' hsc (firstNormal_mem_Xplus X Y u u' s₁)
+    obtain ⟨ν, hνm, hνe, hνz, hνd⟩ := firstNormal_transport (by first | exact hlat | exact hlat.toIsLattice) rfl hz₁ hz₂ hT0 hTh'' hsc (firstNormal_mem_Xplus X Y u u' s₁)
       (firstNormal_e X Y u u' s₁ h₁) (firstNormal_z X Y u u' s₁ h₁)
     have hνeq : ν = Formalism.L2.SG.Pf.Level.toV X (nu1E X u u' (Mof X Y u u' s₂)) := by
       by_contra hne
@@ -131,7 +137,7 @@ theorem agree_pair (s₁ s₂ : Formalism.L2.SG.TermOp.GTerm X u u' (X.Fu u) (X.
     · have h₂ := hdet.1 h₁
       simp [nu2E, h₁, h₂]
     have h₂ : (ZE X u u' (Mof X Y u u' s₂)).det ≠ 0 := fun h => h₁ (hdet.2 h)
-    obtain ⟨x, hxm, hxe, hxz, hxd⟩ := secondNormal_transport hlat rfl hz₁ hz₂ hT0' hi hβe hβz hTh'' hsc
+    obtain ⟨x, hxm, hxe, hxz, hxd⟩ := secondNormal_transport (by first | exact hlat | exact hlat.toIsLattice) rfl hz₁ hz₂ hT0' hi hβe hβz hTh'' hsc
       (secondNormal_mem_Xplus X Y u u' s₁) (secondNormal_e X Y u u' s₁ h₁) (secondNormal_z X Y u u' s₁ h₁)
     have hxeq : x = Formalism.L2.SG.Pf.Level.toV X (x2E X u u' (Mof X Y u u' s₂)) := by
       by_contra hne
@@ -153,7 +159,7 @@ theorem agree_pair (s₁ s₂ : Formalism.L2.SG.TermOp.GTerm X u u' (X.Fu u) (X.
     intro y₂ hy₂
     have hV := orthogonal_toV (Λ := s₁.lam) X Y u u' s₂ hy₂
     obtain ⟨y₁, hy₁, hd1, hd2⟩ := orthogonal_transport hTh'' hV
-    refine ⟨X.crd y₁, orthogonal_ofV X Y u u' s₁ hlat hlift hL₁ hy₁, ?_, ?_⟩
+    refine ⟨X.crd y₁, orthogonal_ofV X Y u u' s₁ (by first | exact hgen.1 | exact hgen.1.toIsLattice) hlift hL₁ hy₁, ?_, ?_⟩
     · apply wperp_of X u
       rw [Formalism.L2.SG.Pf.Level.toV_sub, Formalism.L2.SG.Pf.Level.toV_crd]
       exact fixedX X u _ hd1

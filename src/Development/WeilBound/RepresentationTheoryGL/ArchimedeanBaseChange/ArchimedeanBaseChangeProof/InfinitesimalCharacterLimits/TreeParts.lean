@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.InfinitesimalCharacterGlue
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.GalStepOfHyp
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.InfinitesimalCharacterGlue
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.GalStepOfHyp
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,6 @@ def Tr.leafList : {N : ℕ} → Tr E N → List (Σ M : ℕ, Submodule ℂ (Sm E
 
 def TreeParts {N : ℕ} (t : Tr E N) (P : PositivityTheory.Rg.BcB.F.Pre E N) : Prop :=
   (List.ofFn fun i => (⟨P.N i, P.V i⟩ : Σ M : ℕ, Submodule ℂ (Sm E M))) = t.leafList.filter fun x => 0 < x.1
-
-abbrev Carrier {G V : Type} [Monoid G] [AddCommGroup V] [Module ℂ V] (_ : Representation ℂ G V) : Type := V
 
 def rt {a b : ℕ} (g : Hf E a b) (F : H E a b → ℂ) : H E a b → ℂ := fun x => F (x * finH g)
 

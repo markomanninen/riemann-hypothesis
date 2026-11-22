@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.FirstChernHodgeTateCompatAlt
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.CrSEqOne
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.FirstChernHodgeTateCompatAlt
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.CrSEqOne
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -33,7 +37,7 @@ theorem sq4 (m₁ : CH.Mor F₁ F₂ σ₁) (m₂ : CH.Mor F₂ F₄ σ₂) (m�
 def smulMor (c : R₂) (m : CH.Mor F₁ F₂ σ₁) : CH.Mor F₁ F₂ σ₁ where
   G := m.G
   τ T := { toFun := fun x => c • m.τ T x
-           map_add' := fun x y => by rw [map_add, smul_add]
+           map_add' := fun x y => by rw [map_add (f := _), smul_add]
            map_smul' := fun r x => by rw [LinearMap.map_smulₛₗ, smul_comm] }
   nat φ x := by
     change c • m.τ _ _ = (F₂.map φ).hom (c • m.τ _ x)
@@ -140,8 +144,6 @@ def rEta (T : (TS γ' q' l s' {⊤}).FullSubcategory) :
     (RingHom.id (T.obj.B ⧸ lnT T.obj l n)) (r_comm nm d d' hd T.obj)
     (DPMorphism.id (redδ T.obj T.property.1 n)).isDPMorphism fun e => (spec_id _ e _).trans
       ((Category.assoc _ _ _).symm.trans (hpt _ ((redG q' s' d' {⊤}).obj T).y).symm)
-
-theorem rEta_φ (T : (TS γ' q' l s' {⊤}).FullSubcategory) : (rEta nm hm d d' hd mm hpt T).φ = RingHom.id (T.obj.B ⧸ lnT T.obj l n) := rfl
 
 def rNat : (nm.smor _ _ hm).G ⋙ redG q s d {⊤} ⟶ redG q' s' d' {⊤} ⋙ mm.functor where
   app := rEta nm hm d d' hd mm hpt

@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamEqZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExistsFamRep
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.VRatioGtStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExistsCeil
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamEqZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExistsFamRep
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.VRatioGtStatement
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -157,7 +161,7 @@ private theorem repsX_statement : RepsXSt := by
       omega
     · apply b.equivFun.injective
       ext i
-      simp only [map_add, map_nsmul, LinearEquiv.apply_symm_apply, Pi.add_apply, Pi.smul_apply, nsmul_eq_mul]
+      simp only [map_add (f := _), map_nsmul, LinearEquiv.apply_symm_apply, Pi.add_apply, Pi.smul_apply, nsmul_eq_mul]
       rw [Int.toNat_of_nonneg (Int.emod_nonneg _ hk0.ne')]
       first
         | exact Int.emod_add_mul_ediv _ _
@@ -167,7 +171,7 @@ private theorem repsX_statement : RepsXSt := by
   · intro a a' mu mu' h
     funext i
     have h' := congrArg (fun x => b.equivFun x i) h
-    simp only [map_add, map_nsmul, LinearEquiv.apply_symm_apply, Pi.add_apply, Pi.smul_apply,
+    simp only [map_add (f := _), map_nsmul, LinearEquiv.apply_symm_apply, Pi.add_apply, Pi.smul_apply,
       nsmul_eq_mul, Pi.mul_apply, Pi.natCast_apply] at h'
     have e1 : ((a i : ℕ) : ℤ) = (((a i : ℕ) : ℤ) + k * b.equivFun mu i) % k := by
       rw [Int.add_mul_emod_self_left, Int.emod_eq_of_lt (by positivity) (by exact_mod_cast (a i).isLt)]

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRInvDefs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.DetTransposeApply
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRInvDefs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.DetTransposeApply
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -154,7 +158,7 @@ theorem det_Mr_expand (R0 : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → ℂ)
     rw [e3]
     have e4 := (Matrix.detRowAlternating (n := Fin (2 * r + k + 1)) (R := ℂ)).toMultilinearMap.map_smul_univ cf
       (Mr k r R0 (fun l => bvec (J l)))
-    simp only [AlternatingMap.coe_multilinearMap] at e4
+    simp only [AlternatingMap.coe_multilinearMap, RingHom.id_apply] at e4
     rw [e4, smul_eq_mul, ← Matrix.det]
     congr 1
     rw [prod_iota cf (fun q h => by simp [hcf, h])]

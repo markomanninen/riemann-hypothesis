@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.ThickFrames.MarkedLow
-import Development.AutomorphicArithmetic.ThickFrames.expectationSpec
-import Development.AutomorphicArithmetic.ThickFrames.MarkedGe
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ChoiceOfTops
+module
+
+public import Development.AutomorphicArithmetic.ThickFrames.MarkedLow
+public import Development.AutomorphicArithmetic.ThickFrames.expectationSpec
+public import Development.AutomorphicArithmetic.ThickFrames.MarkedGe
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ChoiceOfTops
+
+@[expose] public section
 
 open Finset UpperTheory.BernoulliSumsFrobeniusOrbits Formalism.G0
 open GlobalTheory.RandomTops (tile tile_disjoint marked_congr)
@@ -93,7 +97,7 @@ theorem UpperTheory.BernoulliSumsFrobeniusOrbits.tiles_le :
         rw [ex_prod (J s₀) (tile r u) (fun s V => 1 - ind (Marked V r u s)) _
           (fun i _ j _ hij => tile_disjoint hij) (hJs s₀)]
         calc _ ≤ ∏ s ∈ J s₀, (1 - markedLow δ r u) := by
-              refine Finset.prod_le_prod (fun s _ => ?_) fun s _ => ?_
+              refine Finset.prod_le_prod₀ (fun s _ => ?_) fun s _ => ?_
               · rw [bernoulliExpectation_one_sub]; linarith [hP1 s]
               · rw [bernoulliExpectation_one_sub]; linarith [hmk s]
           _ ≤ _ := by

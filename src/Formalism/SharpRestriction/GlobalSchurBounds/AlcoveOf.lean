@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
-import Formalism.SharpRestriction.AdmissibleParameterJoins.DIVfromGLb
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.DIVfromGLb
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ theorem entryR (D : D7) (u : D.what₂.Word) (i : ℕ) (hi : i ≤ D.R.m) (τ : 
     rw [(D.fm u).lam_eq i hi τ a]
     unfold flipTwoThree.lamLiftN flipTwoThree.lamCol flipTwoThree.wJ
     by_cases h : a.1 < D.R.k
-    · rw [dif_pos h, if_pos h, dif_pos h]
-    · rw [dif_neg h, if_neg h, dif_pos (D.R.blk_lt hi a h)]
+    · rw [dite_eq_left h, if_pos h, dite_eq_left h]
+    · rw [dite_eq_right h, if_neg h, dite_eq_left (D.R.blk_lt hi a h)]
   rw [← h]
   simp
 

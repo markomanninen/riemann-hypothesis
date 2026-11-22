@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MonodromyZeroOfWeilDeligneRepClassIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MonodromyZeroOfWeilDeligneRepClassIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,12 +60,12 @@ theorem tensor_iso_twist {V : Type*} [AddCommGroup V] [Module ℂ V] [FiniteDime
         TensorProduct.rid_tmul, WDRep.twist_ρ, LinearMap.smul_apply, map_smul, coe_chr]
       rw [apply_eq_det_smul (c.ρ σ) y, smul_smul]
       simp [Function.eval, mul_comm]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   · induction v using TensorProduct.induction_on with
     | zero => simp
     | tmul x y =>
-      simp [N_eq_zero c, Function.eval]
-    | add x y hx hy => simp only [map_add, hx, hy]
+      simp [N_eq_zero c, Function.eval, WDRep.twist]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem iso_of_twist {V V' : Type*} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]
     [AddCommGroup V'] [Module ℂ V'] [FiniteDimensional ℂ V']
@@ -75,8 +79,8 @@ theorem iso_of_twist {V V' : Type*} [AddCommGroup V] [Module ℂ V] [FiniteDimen
 
 end GlobalTheory.WeilDeligne.TwistInj
 
-open GlobalTheory.WeilDeligne.TwistInj in
 
+open GlobalTheory.WeilDeligne.TwistInj in
 theorem GlobalTheory.WeilDeligne.lpChar_left_injective_of_lpDim_one : ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω) (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a b c : WD h), c.lpDim = 1 → a.lpChar c = b.lpChar c → a = b := by
   intro E Ω _ _ _ _ _ A w h a b c hc hab
   induction a using WD.ind with
@@ -88,5 +92,5 @@ theorem GlobalTheory.WeilDeligne.lpChar_left_injective_of_lpDim_one : ∀ (E Ω 
   rw [WD.lpDim_mk, Module.finrank_fin_fun] at hc
   subst hc
   rw [WD.lpChar_mk, WD.lpChar_mk, WD.mk_eq_mk] at hab
-  exact WD.sound (iso_of_twist (chr c) (isSmooth_chr c)
-    (((tensor_iso_twist a c).symm.trans hab).trans (tensor_iso_twist b c)))
+  exact WD.sound (TwistInj.iso_of_twist (TwistInj.chr c) (TwistInj.isSmooth_chr c)
+    (((TwistInj.tensor_iso_twist a c).symm.trans hab).trans (TwistInj.tensor_iso_twist b c)))

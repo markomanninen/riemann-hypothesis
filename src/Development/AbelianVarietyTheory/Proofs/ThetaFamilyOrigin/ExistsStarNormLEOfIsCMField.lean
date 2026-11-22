@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.TorsionEndomorphisms.EndDeterminedOnTorsion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.TorsionEndomorphisms.EndDeterminedOnTorsion
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -59,11 +63,13 @@ theorem casimir {ι : Type} [Fintype ι] [DecidableEq ι] (e : Module.Basis ι �
     intro y
     rw [Algebra.trace_eq_matrix_trace e y]
     simp only [Matrix.trace, Matrix.diag, Algebra.leftMulMatrix_eq_repr_mul]
-    rw [hc, Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hc, Finset.sum_mul, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [smul_mul_assoc, map_smul, mul_assoc, mul_comm y (e i)]
     conv_lhs => rw [← e.sum_repr (e i * y)]
-    rw [Finset.mul_sum, map_sum, Finset.sum_eq_single i]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.mul_sum, map_sum, Finset.sum_eq_single i]
     · rw [mul_smul_comm, map_smul, smul_eq_mul, smul_eq_mul]
       field_simp [hd i]
     · intro j _ hj
@@ -90,11 +96,11 @@ theorem exists_rat_bound (hσ : ∀ x, σ (σ x) = x) (hp : ∀ x, x ≠ 0 → 0
     rw [← Algebra.trace_eq_of_algEquiv σ (σ v * u), map_mul σ, hσ, mul_comm]
   obtain ⟨e, he⟩ := LinearMap.BilinForm.exists_orthogonal_basis
     (B := LinearMap.mk₂ ℚ (fun u v : E => Algebra.trace ℚ E (σ u * v))
-      (fun a b c => by rw [map_add, add_mul, map_add])
+      (fun a b c => by rw [map_add (f := _), add_mul, map_add (f := _)])
       (fun r a b => by
         rw [show σ (r • a) = r • σ a by rw [Rat.smul_def, Rat.smul_def, map_mul, map_ratCast],
           smul_mul_assoc, map_smul])
-      (fun a b c => by rw [mul_add, map_add])
+      (fun a b c => by rw [mul_add, map_add (f := _)])
       (fun r a b => by rw [mul_smul_comm, map_smul]))
     (LinearMap.isSymm_def.mpr fun u v => by simp only [LinearMap.mk₂_apply, RingHom.id_apply]; exact hsym u v)
   rw [LinearMap.isOrthoᵢ_def] at he
@@ -128,7 +134,7 @@ theorem exists_rat_bound (hσ : ∀ x, σ (σ x) = x) (hp : ∀ x, x ≠ 0 → 0
     refine ⟨2 * a + 2 * b, ?_⟩
     have h : ((2 * a + 2 * b : ℚ) : E) - σ (u + v) * (u + v) =
         ((2 : ℚ) : E) * ((a : E) - σ u * u) + ((2 : ℚ) : E) * ((b : E) - σ v * v) + σ (u - v) * (u - v) := by
-      rw [map_add, map_sub]
+      rw [map_add (f := _), map_sub]
       push_cast
       ring
     rw [h]
@@ -201,8 +207,8 @@ theorem trace_conj_mul_pos [IsCMField E] (x : E) (hx : x ≠ 0) :
 
 end StarNormBound
 
-open StarNormBound in
 
+open StarNormBound in
 theorem exists_starNormLE_of_isCMField : ∀ (E : Type) [Field E] [NumberField E] [NumberField.IsCMField E]
     [StarRing (NumberField.RingOfIntegers E)],
     (∀ a : NumberField.RingOfIntegers E, ((star a : NumberField.RingOfIntegers E) : E) =

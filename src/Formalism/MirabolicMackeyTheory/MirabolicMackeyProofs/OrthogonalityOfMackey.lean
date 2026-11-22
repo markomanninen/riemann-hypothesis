@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.MirabolicMackeyTheory.StatementL
+module
+
+public import Mathlib
+public import Formalism.MirabolicMackeyTheory.StatementL
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 

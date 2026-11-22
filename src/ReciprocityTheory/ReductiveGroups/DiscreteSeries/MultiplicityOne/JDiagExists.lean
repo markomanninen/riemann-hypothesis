@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDiagExists
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDiagExists
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,19 +15,24 @@ namespace ReciprocityTheory.ChartRestriction.DS.Mult1
 open Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.B2
 
 theorem isHaarOn_smul_of {k r : ℕ} {U : Set (Mat k r)} {μ : Measure (Mt k r)} (hμ : IsHaarOn U μ)
-    {c : ℝ≥0∞} (hc0 : c ≠ 0) (hct : c ≠ ∞) : IsHaarOn U (c • μ) where
-  conc := by simp [hμ.conc]
-  left a ha := by rw [Measure.map_smul, hμ.left a ha]
-  right a ha := by rw [Measure.map_smul, hμ.right a ha]
-  finite_compact K hK := by
-    rw [Measure.smul_apply, smul_eq_mul]
+    {c : ℝ≥0∞} (hc0 : c ≠ 0) (hct : c ≠ ∞) : IsHaarOn U (c • μ) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · rw [smul_apply, hμ.conc, smul_zero]
+  · intro a ha
+    have hcont : Continuous (lmulM (k := k) (r := r) a) :=
+      continuous_const.matrix_mul continuous_id
+    rw [Measure.map_smul c hcont.measurable.aemeasurable, hμ.left a ha]
+  · intro a ha
+    have hcont : Continuous (rmulF a) := continuous_id.matrix_mul continuous_const
+    rw [Measure.map_smul c hcont.measurable.aemeasurable, hμ.right a ha]
+  · intro K hK
+    rw [smul_apply, smul_eq_mul]
     exact ENNReal.mul_lt_top (lt_top_iff_ne_top.2 hct) (hμ.finite_compact K hK)
-  ne_zero := by
-    intro h0
+  · intro h0
     apply hμ.ne_zero
     ext s _
     have h1 := congrArg (fun ν : Measure (Mt k r) => ν s) h0
-    simp only [Measure.smul_apply, smul_eq_mul, Measure.coe_zero, Pi.zero_apply, mul_eq_zero] at h1
+    simp only [smul_apply, smul_eq_mul, FunLike.coe_zero, Pi.zero_apply, mul_eq_zero] at h1
     simpa [hc0] using h1
 
 theorem stDiagExists (h : UnitaryGroupStructuralFacts) : StDiagExists := by
@@ -64,7 +73,7 @@ theorem stDiagExists (h : UnitaryGroupStructuralFacts) : StDiagExists := by
   refine ⟨D', hDz, hDπ, ?_⟩
   refine ⟨hDz'.trans hDz.symm, hDπ'.trans hDπ.symm, rfl, ?_, ?_⟩
   · show ((D.μW Set.univ)⁻¹ • D.μW) Set.univ = 1
-    rw [Measure.smul_apply, smul_eq_mul, ENNReal.inv_mul_cancel hm0 hmt]
+    rw [smul_apply, smul_eq_mul, ENNReal.inv_mul_cancel hm0 hmt]
   · show Formalism.MainNotions.S.IsIrredOn (UWset k r D.z) D.π
     rw [hDz, hDπ]
     exact hirr

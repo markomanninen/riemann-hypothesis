@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality
-import GroundTheory.ProfiniteCohomology.TorsionDualDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality
+public import GroundTheory.ProfiniteCohomology.TorsionDualDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -13,8 +18,8 @@ variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologic
 
 section ResLE
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 theorem continuous_subgroup_inclusion {U V : Subgroup G} (h : V ≤ U) :
     Continuous (Subgroup.inclusion h) :=
   continuous_induced_rng.2 continuous_subtype_val
@@ -25,11 +30,6 @@ def resResHom {U V : Subgroup G} (h : V ≤ U) :
     Rep.res (Subgroup.inclusion h) (Rep.res U.subtype A) ⟶ Rep.res V.subtype A :=
   Rep.ofHom ⟨LinearMap.id, fun _ => rfl⟩
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] in
-@[simp]
-theorem resResHom_hom_apply {U V : Subgroup G} (h : V ≤ U) (a : A) :
-    (resResHom A h).hom a = a :=
-  rfl
 
 variable [IsDiscreteRep A]
 

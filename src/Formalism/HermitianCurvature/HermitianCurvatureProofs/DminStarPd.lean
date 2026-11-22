@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZinvBound
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HomogeneityNaturalDegree
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCorrectionU1.WeightBoundMultiplicative
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZinvBound
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HomogeneityNaturalDegree
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCorrectionU1.WeightBoundMultiplicative
+
+@[expose] public section
 
 open Matrix Set
 open scoped ComplexConjugate ContDiff Topology
@@ -18,11 +22,6 @@ variable {k r : ℕ}
 lemma gf_pd (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) :
     U.IsPolyDeg (2 * r + 2) (fun g : Mat k r => ((Gf k r z z' g : ℝ) : ℂ)) := by
   exact gram_function_polynomial k r z z'
-
-lemma dmin_pd (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (l : Fin (r + 2)) :
-    U.IsPolyDeg (2 * r + 2) (fun g : Mat k r => Dmin k r z z' g l) := by
-  obtain ⟨q, hq, he⟩ := minor_polynomial_property k r z z' l
-  exact ⟨q, hq.trans (by have := l.isLt; omega), he⟩
 
 section fac
 
@@ -87,7 +86,7 @@ private lemma dw_const_smul {F : Type*} [NormedAddCommGroup F] [NormedSpace ℂ 
     show Dx x (Dw w (fun g => c • f g)) g = c • Dx x (Dw w f) g
     rw [ih, Dx_eq, Dx_eq]
     first
-    | exact deriv_const_smul' c (f := fun t => Dw w f (crv x g t))
+    | exact deriv_const_smul_field c (f := fun t => Dw w f (crv x g t))
     | exact deriv_const_smul' (f := fun t => Dw w f (crv x g t)) c
     | simp [deriv_const_smul']
 
@@ -134,9 +133,7 @@ lemma ubl_fib (D : RealPlaceData k r Wp Wq) (E : Mat k r → C6.EndH Wp Wq) (hE 
       (le_abs_self _).trans (Finset.single_le_sum (f := fun j => |Cf j|)
         (fun j _ => abs_nonneg _) (Finset.mem_range.2 hi))
     have hnorm : ‖(((v.map nz).prod : ℝ) : ℂ)‖ = |(v.map nz).prod| := by
-      first
-      | simp
-      | rw [Complex.norm_real, Real.norm_eq_abs]
+      rw [Complex.norm_real, Real.norm_eq_abs]
     rw [hnorm]
     calc |(v.map nz).prod| * ‖dLR u (v' ++ v.map nrm) E g‖
         ≤ |(v.map nz).prod| * (Cf (u.length + (v' ++ v.map nrm).length) *

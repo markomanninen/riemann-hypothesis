@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.AuxiliaryInertOddPrime
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ConjugateSqrtNeg
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.AuxiliaryInertOddPrime
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ConjugateSqrtNeg
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.CuspRep GlobalTheory.UnitaryBC UpperTheory.Gal.W2.Seed UpperTheory.Gal.G1 UpperTheory.Gal.Int.Geo GlobalTheory.CongL
 open scoped TensorProduct
 
@@ -21,7 +26,7 @@ private lemma omega_at {E : Type} [Field E] [NumberField E] [IsCMField E] (bar :
   obtain ⟨w, hw⟩ : ∃ w : E, w = ((tr : E) + (f : E) * x) / 2 := ⟨_, rfl⟩
   obtain ⟨v, hv⟩ : ∃ v : E, v = ((tr : E) - (f : E) * x) / 2 := ⟨_, rfl⟩
   have hcw : IsCMField.complexConj E w = v := by
-    simp only [hw, hv, map_div₀, map_add, map_mul, map_intCast, map_ratCast, hcx, map_ofNat]
+    simp only [hw, hv, map_div₀, map_add (f := _), map_mul, map_intCast, map_ratCast, hcx, map_ofNat]
     ring
   have hsum : w + v = (tr : E) := by
     rw [hw, hv]; ring
@@ -45,7 +50,7 @@ private lemma omega_at {E : Type} [Field E] [NumberField E] [IsCMField E] (bar :
   have hbω : ((bar ω : 𝓞 E) : E) = v := by rw [hbar, hω', hcw]
   refine ⟨ω, ?_, ?_, ?_⟩
   · apply RingOfIntegers.ext
-    simp only [map_add, map_intCast, hω', hbω, hsum]
+    simp only [map_add (f := _), map_intCast, hω', hbω, hsum]
   · apply RingOfIntegers.ext
     simp only [map_mul, map_intCast, hω', hbω, hprod]
   · rw [hω', hw]; ring
@@ -61,7 +66,7 @@ theorem UpperTheory.Gal.G1.pArithK :
   have hmem : ∀ q : ℕ, q.Prime → q ∣ M → q ∈ Q := by
     intro q hq hqM
     rw [hMdef] at hqM
-    obtain ⟨a, ha, hqa⟩ := (Prime.dvd_finset_prod_iff hq.prime _).1 hqM
+    obtain ⟨a, ha, hqa⟩ := (Prime.dvd_finsetProd_iff hq.prime _).1 hqM
     rwa [(Nat.prime_dvd_prime_iff_eq hq (hprime a ha)).1 hqa]
   obtain ⟨bar, hbar⟩ := hBar E
   obtain ⟨tr, nm, f, hneg, hdisc, hsplit⟩ := hQuad d hd

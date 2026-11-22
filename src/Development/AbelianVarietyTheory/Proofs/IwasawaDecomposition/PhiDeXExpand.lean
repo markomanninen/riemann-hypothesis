@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IncreasingRowChoicePerColumn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IncreasingRowChoicePerColumn
+
+@[expose] public section
+
 open MvPolynomial
 
 noncomputable section
@@ -32,8 +37,10 @@ theorem map_nablaX_expand (p : ℕ) [Fact p.Prime] {Lt : Type} [Fintype Lt] [Dec
         MvPolynomial.map (algebraMap ℚ ℂ_[p]) (∏ s, MvPolynomial.rename (sig N s) (b s (κ s))) := by
   have h0 : (Int.castRingHom ℂ_[p]) = (algebraMap ℚ ℂ_[p]).comp (Int.castRingHom ℚ) := RingHom.ext_int _ _
   rw [h0, ← MvPolynomial.map_map, map_nablaX ℚ N nu hY J]
-  simp_rw [hb, map_sum, map_smul]
-  rw [Fintype.prod_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [hb, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Fintype.prod_sum, map_sum]
   refine Finset.sum_congr rfl fun κ _ => ?_
   simp only [smul_eq_C_mul, Finset.prod_mul_distrib, map_mul, map_prod, MvPolynomial.map_C]
   congr 1
@@ -66,9 +73,12 @@ theorem phi_DeX_expand : ∀ (p : ℕ) [Fact p.Prime] (Lt T : Type) [Fintype Lt]
           (MvPolynomial.map (algebraMap ℚ ℂ_[p]) (GlobalTheory.WeylMinorDual.colProd ℚ N (nu s) (hY s) J)) := by
     intro s k
     rw [hg]
-    simp [map_sum, smul_eq_C_mul]
-  rw [h2, map_sum]
-  simp_rw [MvPolynomial.C_mul', map_smul, map_nablaX_expand p N nu hY ι b c hb, minY_colsOf_eq p e N nu hY y,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, smul_eq_C_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h2, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [MvPolynomial.C_mul', map_smul, map_nablaX_expand p N nu hY ι b c hb, minY_colsOf_eq p e N nu hY y,
     map_sum, map_smul, smul_eq_mul, hG, Fintype.prod_sum]
   simp_rw [Finset.mul_sum]
   rw [Finset.sum_comm]

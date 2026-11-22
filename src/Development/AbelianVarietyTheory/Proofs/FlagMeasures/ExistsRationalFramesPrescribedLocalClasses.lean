@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGAnalytic
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.DataInst
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.InVolumesAtOfSWS
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GlobSet
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.PlacesOf
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalUnitriangularFrameChangeLocalScalings
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitriangularChangeRationalFlagIffRationalUnipotStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PatternUnitriangularStrongApproximationStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGAnalytic
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.DataInst
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.InVolumesAtOfSWS
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GlobSet
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.PlacesOf
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalUnitriangularFrameChangeLocalScalings
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitriangularChangeRationalFlagIffRationalUnipotStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PatternUnitriangularStrongApproximationStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -121,12 +125,12 @@ private theorem algebraMap_δ_mul_uP_mem_O (Z : LocDat D) (p : PlF D) :
     exact FractionalIdeal.coeIdeal_le_one
   have h1 : (1 : D.host.E) ∈ (ddS D)⁻¹ ^ 1 := by
     rw [pow_one]
-    have hle := FractionalIdeal.inv_anti_mono h0 one_ne_zero hle0
+    have hle := FractionalIdeal.inv_anti_mono h0 hle0
     rw [inv_one] at hle
     exact FractionalIdeal.one_le.mp hle
   obtain ⟨-, -, -, hO, -⟩ := Z.agree p
-  have h2 := LocFacts.lf_mem_pow p dualLoc_holds Z 1 1 h1
-  simp only [map_one, one_mul, pow_one] at h2
+  have h2 := LocFacts.lf_mem_inv p dualLoc_holds Z 1 (by simpa using h1)
+  simp only [map_one, one_mul] at h2
   rw [hO]
   exact h2
 
@@ -145,7 +149,8 @@ theorem chg_scaled (Z : LocDat D) (p : PlF D) {f g : Fin (D.R.rS + 1) → (VS D)
     Chg (scaled Z p f) (Matrix.diagonal (fun a => Ring.inverse (frFac Z.δ p a)) * t.map (D.s.atP p).ιE *
       Matrix.diagonal (frFac Z.δ p)) (scaled Z p g) := by
   intro b
-  simp only [scaled, h b, map_sum, baseChange_smul₂, Finset.smul_sum, smul_smul, Matrix.mul_diagonal,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [scaled, h b, map_sum, baseChange_smul₂, Finset.smul_sum, smul_smul, Matrix.mul_diagonal,
     Matrix.diagonal_mul, Matrix.map_apply]
   refine Finset.sum_congr rfl fun a _ => ?_
   congr 1
@@ -158,10 +163,10 @@ section Glob
 
 variable {D : D7}
 
-theorem one_flag (Z : LocDat D) {T : D.host.E} (hT : T ≠ 0) (F : LFlag (VS D) D.R.rS T)
+theorem one_flag (Z : LocDat D) {T : D.host.E} (hT : T ≠ 0) (F : LFlag (D.sp.Y 0) D.R.rS T)
     (P : Finset (PlF D)) (f : ∀ p : PlF D, Fin (D.R.rS + 1) → Vp D p)
     (hf : ∀ p ∈ P, Tri (D.s.atP p).Ep (scaled Z p (frame F)) (f p)) :
-    ∃ G : LFlag (VS D) D.R.rS T, Tri D.host.E (frame F) (frame G) ∧ G.zt = G.fl.z ∧
+    ∃ G : LFlag (D.sp.Y 0) D.R.rS T, Tri D.host.E (frame F) (frame G) ∧ G.zt = G.fl.z ∧
       (∀ p, p ∉ P → ∃ A : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) (D.s.atP p).Ep, Uni A ∧
         (∀ a b, A a b ∈ (Z.M p).L.O) ∧ Chg (scaled Z p (frame F)) A (scaled Z p (frame G))) ∧
       ∀ p ∈ P, ∃ A : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) (D.s.atP p).Ep, Uni A ∧
@@ -285,11 +290,11 @@ theorem one_flag (Z : LocDat D) {T : D.host.E} (hT : T ≠ 0) (F : LFlag (VS D) 
       rw [← mul_assoc, Matrix.mul_nonsing_inv _ (hdet p), one_mul]
       exact hsc p
 
-theorem choose_frames : ∀ (D : D7) (Z : LocDat D) (u u' : D.what₂.Word) (F : LFlag (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E))
-    (F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) (P : Finset (PlF D))
+theorem choose_frames : ∀ (D : D7) (Z : LocDat D) (u u' : D.what₂.Word) (F : LFlag (D.sp.Y 0) D.R.rS (((D.mem u).A.T : ℕ) : D.host.E))
+    (F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)) (P : Finset (PlF D))
     (f f' : ∀ p : PlF D, Fin (D.R.rS + 1) → Vp D p),
     (∀ p ∈ P, Tri (D.s.atP p).Ep (scaled Z p (frame F)) (f p) ∧ Tri (D.s.atP p).Ep (scaled Z p (frame F')) (f' p)) →
-    ∃ (G : LFlag (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)) (G' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)),
+    ∃ (G : LFlag (D.sp.Y 0) D.R.rS (((D.mem u).A.T : ℕ) : D.host.E)) (G' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)),
       StdOff Z P F G F' G' ∧ ∀ p ∈ P, ∃ A A' : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) (D.s.atP p).Ep,
         Uni A ∧ Uni A' ∧ (∀ a b, A a b ∈ (Z.M p).L.O ∧ A' a b ∈ (Z.M p).L.O ∧
           A a b - A' a b ∈ Submodule.span (Z.M p).L.O

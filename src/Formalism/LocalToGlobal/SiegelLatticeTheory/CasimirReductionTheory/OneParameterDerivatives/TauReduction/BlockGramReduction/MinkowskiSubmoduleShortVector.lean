@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.TauReduction.BlockGramReduction.BlockDiagonalMulVecApply
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.TauReduction.BlockGramReduction.T8m
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.TauReduction.BlockGramReduction.BlockDiagonalMulVecApply
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.TauReduction.BlockGramReduction.T8m
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -23,7 +27,8 @@ theorem coord_linear_comb (I : AutInst) (x : I.GA) (v : InfinitePlace I.F) {j : 
   have hw : (fun i => I.φ v ((∑ k, a k • b k) i)) =
       (Matrix.of fun i k => b k i).map (I.φ v) *ᵥ fun k => I.φ v (a k) := by
     funext i
-    simp [Matrix.mulVec, dotProduct, Finset.sum_apply, map_sum, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mulVec, dotProduct, Finset.sum_apply, map_sum, mul_comm]
   rw [hw, Matrix.mulVec_mulVec]
 
 theorem gramV_eq_conjTranspose_t8C_mul_t8C (I : AutInst) (x : I.GA) (v : InfinitePlace I.F) {j : ℕ} (b : Fin j → Fin I.n → I.E) :
@@ -70,7 +75,7 @@ theorem linearComb_apply {n j : ℕ} {E : Type} [Field E] (b : Fin j → Fin n �
 
 theorem linear_comb_injective {n j : ℕ} {E : Type} [Field E] (b : Fin j → Fin n → E) (hb : LinearIndependent E b) :
     Function.Injective (linearCombinationOfRows b) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   rw [linearComb_apply] at ha
   funext k
@@ -121,7 +126,7 @@ theorem short_vector_sublattice (I : AutInst) (h1 : LatticeFinitelyGenerated) (h
       rw [hgen]
       exact s.B.smul_mem _ (s.b_mem p.1)
     | zero => simp
-    | add y z _ _ hy hz => rw [map_add]; exact s.B.add_mem hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _)]; exact s.B.add_mem hy hz
     | smul c y _ hy => rw [map_zsmul]; exact s.B.toAddSubgroup.zsmul_mem hy c
   have hmapO : Op.map lin = P.toAddSubgroup := by
     ext y
@@ -134,7 +139,7 @@ theorem short_vector_sublattice (I : AutInst) (h1 : LatticeFinitelyGenerated) (h
         rw [hgen]
         exact P.smul_mem _ (Submodule.subset_span ⟨p.1, rfl⟩)
       | zero => simp
-      | add y z _ _ hy hz => rw [map_add]; exact P.add_mem hy hz
+      | add y z _ _ hy hz => rw [map_add (f := _)]; exact P.add_mem hy hz
       | smul c y _ hy => rw [map_zsmul]; exact P.toAddSubgroup.zsmul_mem hy c
     · intro hy
       obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun (𝓞 I.E)).1 (show y ∈ P from hy)

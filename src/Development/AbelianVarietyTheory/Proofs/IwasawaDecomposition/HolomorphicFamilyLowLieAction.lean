@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
-import Formalism.LocalRingCardinality.DataExtra
-import Formalism.LocalRingCardinality.DataTies
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsHolRepOfIsTau
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemUJsetOfKset
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOperatorLowestWeightHolomorphicKTypeStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLowestKTypeLeSmoothVectorsStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Formalism.LocalRingCardinality.DataExtra
+public import Formalism.LocalRingCardinality.DataTies
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsHolRepOfIsTau
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemUJsetOfKset
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOperatorLowestWeightHolomorphicKTypeStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLowestKTypeLeSmoothVectorsStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum GlobalTheory.JointHarm
 open scoped TensorProduct InnerProductSpace Classical
@@ -44,10 +48,10 @@ theorem exists_multi (U : ∀ i, L i →ₗ[ℂ] R) (hU : ∀ i j, i ≠ j → �
       map_update_smul' := ?_ }, fun v => ?_⟩
   · intro inst v i x y
     obtain rfl : inst = (fun a b => Classical.propDecidable (a = b)) := Subsingleton.elim _ _
-    simp only [prod_update U hU, map_add, mul_add]
+    simp only [prod_update U hU, map_add (f := _), mul_add]
   · intro inst v i c x
     obtain rfl : inst = (fun a b => Classical.propDecidable (a = b)) := Subsingleton.elim _ _
-    simp only [prod_update U hU, map_smul, mul_smul_comm]
+    simp only [prod_update U hU, map_smul, mul_smul_comm, RingHom.id_apply]
   · rw [PiTensorProduct.lift.tprod]
     rfl
 
@@ -148,7 +152,7 @@ theorem core [Fintype ι] {B : P →ₗ⋆[ℂ] P →ₗ[ℂ] ℂ} {ϖ : (ι →
       rw [map_smul, hm]
       exact (Finset.noncommProd_commute _ _ _ _ (fun j _ => hAU j (v j))).smul_right r
     | add x y hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact hx.add_right hy
   · intro g hg v y hv
     have key : ∀ s : Finset ι, (s.noncommProd (fun j => U j (v j)) (pw U hUU v s)) y =

@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.LocalRepresentationL2
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.FormsIrr
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.OrthOrIso
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.IsoIff
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.LocalRepresentationL2
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.FormsIrr
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.OrthOrIso
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.IsoIff
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -20,8 +24,8 @@ private theorem orth_closure {H : Type*} [NormedAddCommGroup H] [InnerProductSpa
 theorem UpperTheory.ConvolutionTheory.Dp.multiplicity_one_cuspidal_spectrum_normOneGL :
     UpperTheory.ConvolutionTheory.C.CuspidalMultiplicityOneTotallyComplex := by
   intro E _ _ _ n μ _ V V' hV hV' hne
-  obtain ⟨π, hπ, -⟩ := exCusp E n μ V hV
-  obtain ⟨π', hπ', -⟩ := exCusp E n μ V' hV'
+  obtain ⟨π, hπ⟩ := ExistsUnique.exists (exCusp E n μ V hV)
+  obtain ⟨π', hπ'⟩ := ExistsUnique.exists (exCusp E n μ V' hV')
   obtain ⟨hs, -, hi, hc⟩ := formsIrr E n μ V hV
   obtain ⟨hs', -, hi', hc'⟩ := formsIrr E n μ V' hV'
   rw [← hπ.carrier_eq] at hs hi hc

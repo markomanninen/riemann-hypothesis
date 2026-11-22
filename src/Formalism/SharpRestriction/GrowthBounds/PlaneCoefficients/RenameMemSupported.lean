@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.TensZeroRight
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembVB
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.FrameZeroLe
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.TensZeroRight
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembVB
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.FrameZeroLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem algHom_mem_supported {σ τ R : Type*} [CommSemiring R] (φ : MvPolynomi
     rw [← algebraMap_eq, AlgHom.commutes]
     exact Subalgebra.algebraMap_mem _ a
   | add p q hp hq =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Subalgebra.add_mem _ hp hq
   | mul_X p v hp =>
     rw [map_mul]
@@ -111,7 +115,8 @@ theorem restT_of (hGeo : RestGeo) : RestT := by
     have hLD : LD Fr p hk nL (rename (castV hk) (∏ j ∈ Finset.range Fr.J, phSeg O K p Fr (j : ℤ) (nmEmb O r K (G j)))) := by
       rw [map_prod]
       refine LD_prod Fr p hk nL _ _ fun j hj => LD_phSeg Fr p hk nL hGO j (Finset.mem_range.1 hj) _ ?_
-      exact T5.rename_mem_supported (fun v : ℤ × Fin K => (v.1, Fin.natAdd r v.2)) _ _ (fun v hv => hv.1) _
+      exact T5.rename_mem_supported (fun v : ℤ × Fin K => (v.1, Fin.natAdd r v.2))
+        {v : ℤ × Fin K | v.1 ∈ Fr.letters j ∧ ¬ Fr.IsW j v.1} _ (fun v hv => hv.1) _
         (hG j (Finset.mem_range.1 hj))
     have hSu : rename (castV hk) (∏ j ∈ Finset.range Fr.J, phSeg O K p Fr (j : ℤ) (nmEmb O r K (G j))) ∈
         supported O {v : TV n' (m + 1) | r ≤ v.2.val} := by
@@ -131,7 +136,7 @@ theorem restT_of (hGeo : RestGeo) : RestT := by
         simp
       omega
     have h1 : (l.mapDomain (castV hk)) (noVar Fr hk nL x c) = l (posOf n' (posTL Fr x), Fin.natAdd r c) :=
-      Finsupp.mapDomain_apply (castV_inj hk) l (posOf n' (posTL Fr x), Fin.natAdd r c)
+      Finsupp.mapDomain_apply_of_injective (castV_inj hk) l (posOf n' (posTL Fr x), Fin.natAdd r c)
     rw [Finsupp.add_apply, h0, add_zero, h1]
     have h3 := Formalism.MainNotions.Proposition5Numerics.tl_mem_letters hV hr hnL x
     exact hl (segZ x.1) (posTL Fr x) h3.1 h3.2 _

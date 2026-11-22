@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StInterNumPointDeg
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.InterNumRestrictSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PInterNumPoint
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PHilbertPoint
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PHilbertPositive
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PVeryAmpleDim
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StInterNumPointDeg
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.InterNumRestrictSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PInterNumPoint
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PHilbertPoint
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PHilbertPositive
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PVeryAmpleDim
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -124,10 +129,10 @@ theorem finrank_funField_pt (hrel : ∃ i, (X i : Poly k N) ∉ pp) :
       refine ⟨_, ⟨NumbersDVR.blockWeight (fun _ : Unit => Fin (N + 1)) ⟨(), l⟩, X ⟨(), l⟩, X ⟨(), j⟩,
         isWeightedHomogeneous_X k _ _,
         isWeightedHomogeneous_X k _ _, hjP, rfl⟩, ?_⟩
-      simp only [AlgEquiv.toAlgHom_eq_coe, AlgHom.coe_coe, map_div₀, hΦ, aeval_pt_oneBlock]
+      simp only [AlgEquiv.coe_toAlgHom, AlgHom.coe_coe, map_div₀, hΦ, aeval_pt_oneBlock]
       rfl
   unfold FieldNumbers.resDeg
-  rw [dif_pos (inferInstance : P.IsPrime), ← hmap]
+  rw [dite_eq_left (inferInstance : P.IsPrime), ← hmap]
   exact ((FieldNumbers.homFracDegZero P).equivMap _).toLinearEquiv.finrank_eq.symm
 
 end InterNumPointDeg

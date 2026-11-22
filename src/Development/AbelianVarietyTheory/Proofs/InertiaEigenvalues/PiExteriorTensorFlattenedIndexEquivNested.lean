@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSubquotientOfEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSubquotientOfEquiv
+
+@[expose] public section
+
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.JacStages
 
 noncomputable section
@@ -38,7 +43,7 @@ theorem tprod_tprod_update_sigma [DecidableEq (Σ a, β a)] (x : ∀ p, M p) (a�
     intro h'
     exact h (congrArg Sigma.fst h')
 
-def curryML : MultilinearMap ℂ M (⨂[ℂ] a, ⨂[ℂ] b, M ⟨a, b⟩) where
+def curryML : (∀ p, M p) →ₘₗ[ℂ] ⨂[ℂ] a, ⨂[ℂ] b, M ⟨a, b⟩ where
   toFun x := tprod ℂ fun a => tprod ℂ fun b => x ⟨a, b⟩
   map_update_add' x p v w := by
     obtain ⟨a₀, b₀⟩ := p
@@ -46,8 +51,7 @@ def curryML : MultilinearMap ℂ M (⨂[ℂ] a, ⨂[ℂ] b, M ⟨a, b⟩) where
     rw [MultilinearMap.map_update_add, MultilinearMap.map_update_add]
   map_update_smul' x p c v := by
     obtain ⟨a₀, b₀⟩ := p
-    simp only [tprod_tprod_update_sigma]
-    rw [MultilinearMap.map_update_smul, MultilinearMap.map_update_smul]
+    simp only [tprod_tprod_update_sigma, MultilinearMap.map_update_smul, RingHom.id_apply]
 
 theorem curryML_apply (x : ∀ p, M p) : curryML M x = tprod ℂ fun a => tprod ℂ fun b => x ⟨a, b⟩ := rfl
 
@@ -122,7 +126,7 @@ theorem piTensor_flatHom_equiv : ∀ (s : ℕ) (t : Fin s → ℕ) (Γ : ∀ a, 
       rw [reindex_tprod, MonoidHom.comp_apply, piTensor_tprod]
       exact flatTensorEquiv_tprod Y fun p => ρ p.1 p.2 (g p.1 p.2) (x p)
     | add w w' hw hw' =>
-      simp only [map_add]
+      simp only [map_add (f := _)]
       rw [hw, hw']
   refine LinearMap.ext fun v => ?_
   obtain ⟨w, rfl⟩ := (reindex ℂ (fun p : Σ a, Fin (t a) => Y p.1 p.2) finSigmaFinEquiv).surjective v

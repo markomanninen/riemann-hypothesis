@@ -1,7 +1,11 @@
-import Formalism.PolynomialDimension.MultinomialDepth.PartnerM
-import Formalism.MahlerMeasure.MahlerMeasureProofs.WeightSpaceDimensionMonotone
-import Formalism.MahlerMeasure.MahlerMeasureProofs.GamInt
-import Formalism.MahlerMeasure.MahlerMeasureProofs.LieMat
+module
+
+public import Formalism.PolynomialDimension.MultinomialDepth.PartnerM
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.WeightSpaceDimensionMonotone
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.GamInt
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.LieMat
+
+@[expose] public section
 
 namespace Formalism.CountingSumsFrames.TO
 
@@ -123,7 +127,7 @@ theorem iSup_stable {ι : Sort*} {U : ι → Submodule K V} (hU : ∀ i, G.Stabl
     exact Submodule.mem_iSup_of_mem i (hU i a b y hy)
   · simp
   · intro y z hy hz
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hy hz
 
 theorem inf_stable {U U' : Submodule K V} (hU : G.Stable U) (hU' : G.Stable U') : G.Stable (U ⊓ U') := by
@@ -187,7 +191,7 @@ theorem span_hw {W : Submodule K V} (hW : G.Stable W) {S : Finset (Fin r → ℤ
       rw [hlaμ] at hle
       have := Dle_antisymm hle (Dle_raise μ hab)
       exact dl_ne_zero (ne_of_lt hab) (by simpa using this)
-    · intro x y hx hy; rw [map_add, map_add, hx, hy, add_zero]
+    · intro x y hx hy; rw [map_add (f := _), map_add (f := _), hx, hy, add_zero]
   apply hvU
   have hv'hw : G.IsHW μ ((((qlist S (GlW.casI μ)).map (fun c => (((GlW.casI μ - c : ℤ)) : K))).prod)⁻¹ •
       G.cprod (qlist S (GlW.casI μ)) v) := by
@@ -238,10 +242,10 @@ theorem indep_hw {W : Submodule K V} (hW : G.Stable W) {S : Finset (Fin r → �
     intro x hx
     refine Submodule.iSup_induction _ (motive := fun x =>
       G.cprod (qlist S (GlW.casI (la i))) (G.comp (la i) x) ∈ Submodule.span K (h '' {j | j ≠ i})) hx
-      (fun j x hx => ?_) (by simp) (fun x y hx hy => by rw [map_add, map_add]; exact Submodule.add_mem _ hx hy)
+      (fun j x hx => ?_) (by simp) (fun x y hx hy => by rw [map_add (f := _), map_add (f := _)]; exact Submodule.add_mem _ hx hy)
     refine Submodule.iSup_induction _ (motive := fun x =>
       G.cprod (qlist S (GlW.casI (la i))) (G.comp (la i) x) ∈ Submodule.span K (h '' {j | j ≠ i})) hx
-      (fun hj x hx => ?_) (by simp) (fun x y hx hy => by rw [map_add, map_add]; exact Submodule.add_mem _ hx hy)
+      (fun hj x hx => ?_) (by simp) (fun x y hx hy => by rw [map_add (f := _), map_add (f := _)]; exact Submodule.add_mem _ hx hy)
     by_cases hlj : la j = la i
     · obtain ⟨c', hc'⟩ := G.comp_top_of_mem (hh j) hx
       have e : G.comp (la i) x = c' • h j := by rw [← hlj]; exact hc'
@@ -286,7 +290,8 @@ theorem E_Lv (v : V) (a b : Fin r) (c : List (Fin r × Fin r) →₀ K) :
     G.E a b (Lv G v c) = Lv G v (Finsupp.mapDomain (List.cons (a, b)) c) := by
   unfold Lv
   rw [Finsupp.linearCombination_mapDomain]
-  simp only [Finsupp.linearCombination_apply, Finsupp.sum, map_sum, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finsupp.linearCombination_apply, Finsupp.sum, map_sum, map_smul,
     Function.comp_apply, act, LinearMap.comp_apply]
 
 theorem range_Lv (v : V) : LinearMap.range (Lv G v) = G.gS {v} := by
@@ -314,7 +319,7 @@ theorem range_Lv (v : V) : LinearMap.range (Lv G v) = G.gS {v} := by
     exact sInf_le (And.intro h1 h2)
 
 theorem Lv_add (v v' : V) (c : List (Fin r × Fin r) →₀ K) : Lv G (v + v') c = Lv G v c + Lv G v' c := by
-  simp [Lv, Finsupp.linearCombination_apply, map_add, smul_add, Finsupp.sum_add]
+  simp [Lv, Finsupp.linearCombination_apply, map_add (f := _), smul_add, Finsupp.sum_add]
 
 theorem Lv_smul (t : K) (v : V) (c : List (Fin r × Fin r) →₀ K) : Lv G (t • v) c = t • Lv G v c := by
   simp only [Lv, Finsupp.linearCombination_apply, Finsupp.sum, map_smul, Finset.smul_sum, smul_comm t]
@@ -325,8 +330,8 @@ theorem ker_le {W : Submodule K V} (hW : G.Stable W) (hWf : G.FinW W) {la : Fin 
   intro c hc
   rw [LinearMap.mem_ker] at hc ⊢
   by_contra hx
-  have hs : G.IsHW la (h + h') := ⟨by show G.comp la (h + h') = h + h'; rw [map_add, hh.1, hh'.1],
-    fun a b hab => by rw [map_add, hh.2 a b hab, hh'.2 a b hab, add_zero]⟩
+  have hs : G.IsHW la (h + h') := ⟨by show G.comp la (h + h') = h + h'; rw [map_add (f := _), hh.1, hh'.1],
+    fun a b hab => by rw [map_add (f := _), hh.2 a b hab, hh'.2 a b hab, add_zero]⟩
   have hxs : Lv G h' c ∈ G.gS {h + h'} := by rw [← range_Lv]; exact ⟨c, by rw [Lv_add, hc, zero_add]⟩
   have hxh : Lv G h' c ∈ G.gS {h'} := by rw [← range_Lv]; exact ⟨c, rfl⟩
   have hKs : G.Stable (G.gS {h + h'} ⊓ G.gS {h'}) := inf_stable G (G.gS_stable _) (G.gS_stable _)
@@ -375,13 +380,6 @@ open Formalism.GM.DimensionMonotonicity Finset
 namespace GlX
 
 variable {K V : Type} [Field K] [CharZero K] [AddCommGroup V] [Module K V] {r : ℕ} (G : GlW K V r)
-
-theorem tr_mem {h h' : V} (hk : LinearMap.ker (Lv G h) ≤ LinearMap.ker (Lv G h')) (y : LinearMap.range (Lv G h)) :
-    tr G hk y ∈ LinearMap.range (Lv G h') := by
-  obtain ⟨y, hy⟩ := y
-  obtain ⟨c, rfl⟩ := LinearMap.mem_range.mp hy
-  rw [show tr G hk ⟨Lv G h c, hy⟩ = Lv G h' c from tr_apply G hk c]
-  exact LinearMap.mem_range_self _ _
 
 theorem isWt_of_eig {μ : Fin r → ℤ} {z : V} (hz : ∀ c, G.E c c z = ((μ c : ℤ) : K) • z) : G.IsWt μ z := by
   unfold Formalism.GM.DimensionMonotonicity.GlW.IsWt
@@ -444,20 +442,6 @@ theorem proj_exists {W : Submodule K V} {ι : Type*} [DecidableEq ι] (R : ι �
     have := Submodule.projectionOnto_apply_right (hc i) ⟨x, hxq⟩
     simp only [LinearMap.comp_apply, Submodule.subtype_apply]
     rw [this]; rfl
-
-theorem proj_comm {W : Submodule K V} {ι : Type*} (R : ι → Submodule K V) (hWR : W ≤ ⨆ i, R i)
-    (π : ι → V →ₗ[K] V) (h2 : ∀ i, ∀ x ∈ R i, π i x = x) (h3 : ∀ i j, j ≠ i → ∀ x ∈ R j, π i x = 0)
-    (A : V →ₗ[K] V) (hA : ∀ j, ∀ x ∈ R j, A x ∈ R j) : ∀ i, ∀ x ∈ W, π i (A x) = A (π i x) := by
-  intro i x hx
-  refine Submodule.iSup_induction R (motive := fun x => π i (A x) = A (π i x)) (hWR hx) ?_ ?_ ?_
-  · intro j y hy
-    by_cases hij : j = i
-    · rw [hij] at hy
-      rw [h2 i _ (hA i y hy), h2 i y hy]
-    · rw [h3 i j hij _ (hA j y hy), h3 i j hij y hy, map_zero]
-  · simp
-  · intro y z hy hz
-    simp only [map_add, hy, hz]
 
 end Proj
 
@@ -554,39 +538,34 @@ theorem sl_monomial (m m' : σ →₀ ℕ) (a : K) :
   simp only [slc, Module.Basis.constr_basis]
   split_ifs <;> simp [smul_monomial]
 
-theorem ext_add (φ ψ : MvPolynomial σ K →ₗ[K] MvPolynomial σ K) : ext fs (φ + ψ) = ext fs φ + ext fs ψ := by
-  refine (basisMonomials σ K).ext fun m => ?_
-  simp only [coe_basisMonomials, ext_monomial, LinearMap.add_apply, add_mul, one_smul]
-
-theorem ext_sum {ι : Type*} (s : Finset ι) (φ : ι → MvPolynomial σ K →ₗ[K] MvPolynomial σ K) :
-    ext fs (∑ i ∈ s, φ i) = ∑ i ∈ s, ext fs (φ i) := by
-  refine (basisMonomials σ K).ext fun m => ?_
-  simp only [coe_basisMonomials, ext_monomial, LinearMap.sum_apply, Finset.sum_mul, one_smul]
-
 theorem ext_mul (φ : MvPolynomial σ K →ₗ[K] MvPolynomial σ K) {g q : MvPolynomial σ K} (hg : IsF fs g)
     (hq : IsL fs q) : ext fs φ (g * q) = φ g * q := by
   classical
-  rw [g.as_sum, q.as_sum, Finset.sum_mul_sum, map_sum, map_sum, Finset.sum_mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [g.as_sum, q.as_sum, Finset.sum_mul_sum, map_sum, map_sum, Finset.sum_mul_sum]
   refine Finset.sum_congr rfl fun a ha => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun b hb => ?_
   rw [monomial_mul, ext_monomial, frst_add, ltr_add, frst_of fs (hg a ha), ltr_of fs (hg a ha),
     frst_of' fs (hq b hb), ltr_of' fs (hq b hb), add_zero, zero_add]
-  have h1 : (monomial a (coeff a g) : MvPolynomial σ K) = coeff a g • monomial a 1 := by
+  have h1 : (monomial a (AddMonoidAlgebra.coeff g a) : MvPolynomial σ K) = AddMonoidAlgebra.coeff g a • monomial a 1 := by
     rw [smul_monomial, smul_eq_mul, mul_one]
-  have h2 : (monomial b (coeff b q) : MvPolynomial σ K) = coeff b q • monomial b 1 := by
+  have h2 : (monomial b (AddMonoidAlgebra.coeff q b) : MvPolynomial σ K) = AddMonoidAlgebra.coeff q b • monomial b 1 := by
     rw [smul_monomial, smul_eq_mul, mul_one]
   rw [h1, h2, map_smul, smul_mul_assoc, mul_smul_comm, smul_smul]
 
 theorem sl_mul (m : σ →₀ ℕ) {g q : MvPolynomial σ K} (hg : IsF fs g) (hq : IsL fs q) :
-    slc fs m (g * q) = coeff m q • g := by
+    slc fs m (g * q) = AddMonoidAlgebra.coeff q m • g := by
   classical
-  conv_lhs => rw [g.as_sum, q.as_sum, Finset.sum_mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [g.as_sum, q.as_sum, Finset.sum_mul_sum, map_sum]
   conv_rhs => rw [g.as_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun a ha => ?_
-  rw [map_sum]
-  have key : ∀ b ∈ q.support, slc fs m (monomial a (coeff a g) * monomial b (coeff b q)) =
-      if b = m then monomial a (coeff a g * coeff m q) else 0 := by
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
+  have key : ∀ b ∈ q.support, slc fs m (monomial a (AddMonoidAlgebra.coeff g a) * monomial b (AddMonoidAlgebra.coeff q b)) =
+      if b = m then monomial a (AddMonoidAlgebra.coeff g a * AddMonoidAlgebra.coeff q m) else 0 := by
     intro b hb
     rw [monomial_mul, sl_monomial, frst_add, ltr_add, frst_of fs (hg a ha), ltr_of fs (hg a ha),
       frst_of' fs (hq b hb), ltr_of' fs (hq b hb), add_zero, zero_add]
@@ -595,7 +574,7 @@ theorem sl_mul (m : σ →₀ ℕ) {g q : MvPolynomial σ K} (hg : IsF fs g) (hq
     · rfl
   rw [Finset.sum_congr rfl key, Finset.sum_ite_eq']
   split_ifs with hm
-  · rw [smul_monomial, smul_eq_mul, mul_comm (coeff a g)]
+  · rw [smul_monomial, smul_eq_mul, mul_comm (AddMonoidAlgebra.coeff g a)]
   · simp only [mem_support_iff, not_not] at hm
     rw [hm, zero_smul]
 
@@ -603,12 +582,13 @@ theorem ext_eq_sum (φ : MvPolynomial σ K →ₗ[K] MvPolynomial σ K) (x : MvP
     (hS : ∀ m ∈ x.support, ltr fs m ∈ S) : ext fs φ x = ∑ m ∈ S, φ (slc fs m x) * monomial m 1 := by
   conv_lhs => rw [x.as_sum]
   conv_rhs => rw [x.as_sum]
-  simp_rw [map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [map_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun d hd => ?_
   simp_rw [sl_monomial, apply_ite φ, map_zero, ite_mul, zero_mul]
   rw [Finset.sum_ite_eq S (ltr fs d), if_pos (hS d hd), ext_monomial]
-  have h1 : (monomial (frst fs d) (coeff d x) : MvPolynomial σ K) = coeff d x • monomial (frst fs d) 1 := by
+  have h1 : (monomial (frst fs d) (AddMonoidAlgebra.coeff x d) : MvPolynomial σ K) = AddMonoidAlgebra.coeff x d • monomial (frst fs d) 1 := by
     rw [smul_monomial, smul_eq_mul, mul_one]
   rw [h1, map_smul, smul_mul_assoc]
 
@@ -616,7 +596,8 @@ theorem eq_sum_sl (x : MvPolynomial σ K) (S : Finset (σ →₀ ℕ)) (hS : ∀
     x = ∑ m ∈ S, slc fs m x * monomial m 1 := by
   conv_lhs => rw [x.as_sum]
   conv_rhs => rw [x.as_sum]
-  simp_rw [map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [map_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun d hd => ?_
   simp_rw [sl_monomial, ite_mul, zero_mul]
@@ -624,7 +605,8 @@ theorem eq_sum_sl (x : MvPolynomial σ K) (S : Finset (σ →₀ ℕ)) (hS : ∀
 
 theorem sl_isF (m : σ →₀ ℕ) (x : MvPolynomial σ K) : IsF fs (slc fs m x) := by
   intro m' hm' v hv
-  rw [x.as_sum, map_sum] at hm'
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [x.as_sum, map_sum] at hm'
   obtain ⟨d, -, hd⟩ := Finset.mem_biUnion.mp (MvPolynomial.support_sum hm')
   rw [sl_monomial] at hd
   split_ifs at hd
@@ -755,7 +737,7 @@ theorem slc_glAct (L : Letters N) {j0 J : ℕ} (hJ : J ≤ j0) (c d : Fin r) (m 
       glAct_mul_kill L J c d _ (killL_of_isL hJ (isL_monomial_ltr _ m' 1)),
       sl_mul _ m (glAct_isF L j0 J c d (isF_monomial_frst _ m' a)) (isL_monomial_ltr _ m' 1),
       sl_mul _ m (isF_monomial_frst _ m' a) (isL_monomial_ltr _ m' 1), map_smul]
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, map_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]
 
 theorem weight_wv_zero (L : Letters N) {j0 J : ℕ} (hJ : J ≤ j0) (m : Fin N × Fin r →₀ ℕ)
     (hm : ∀ v, m v ≠ 0 → ¬ fsj N r j0 v) : Finsupp.weight (wv L J) m = 0 := by
@@ -771,7 +753,8 @@ theorem slc_wh (L : Letters N) {j0 J : ℕ} (hJ : J ≤ j0) (m : Fin N × Fin r 
   rw [mem_weightedHomogeneousSubmodule] at hx ⊢
   intro d hd
   have hd' : d ∈ (slc (fsj N r j0) m x).support := mem_support_iff.mpr hd
-  rw [x.as_sum, map_sum] at hd'
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [x.as_sum, map_sum] at hd'
   obtain ⟨e, he, hde⟩ := Finset.mem_biUnion.mp (MvPolynomial.support_sum hd')
   rw [sl_monomial] at hde
   split_ifs at hde
@@ -779,7 +762,7 @@ theorem slc_wh (L : Letters N) {j0 J : ℕ} (hJ : J ≤ j0) (m : Fin N × Fin r 
     rw [Finset.mem_singleton] at this
     subst this
     have hw := hx (mem_support_iff.mp he)
-    rw [← frst_add_ltr (fsj N r j0) e, map_add, weight_wv_zero L hJ _ (ltr_isL _ e), add_zero] at hw
+    rw [← frst_add_ltr (fsj N r j0) e, map_add (f := _), weight_wv_zero L hJ _ (ltr_isL _ e), add_zero] at hw
     exact hw
   · simp at hde
 
@@ -800,7 +783,8 @@ theorem slc_pol (L : Letters N) (j0 : ℕ) (m : Fin N × Fin r →₀ ℕ) {x : 
   unfold Formalism.GM.M.Pol at hx ⊢
   rw [mem_restrictSupport_iff] at hx ⊢
   intro d hd
-  rw [Finset.mem_coe, x.as_sum, map_sum] at hd
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.mem_coe, x.as_sum, map_sum] at hd
   obtain ⟨e, he, hde⟩ := Finset.mem_biUnion.mp (MvPolynomial.support_sum hd)
   rw [sl_monomial] at hde
   split_ifs at hde
@@ -886,7 +870,7 @@ theorem ext_glAct (L : Letters N) {j0 J : ℕ} (hJ : j0 ≤ J) (φ : MvPolynomia
       LinearMap.add_apply, glAct_mul_kill L j0 c d _ (killL_of_isL le_rfl hq), midAct_mul_F L hJ c d hg,
       glAct_mul_kill L j0 c d _ (killL_of_isL le_rfl hq), midAct_mul_F L hJ c d (hφF _), map_add,
       ext_mul _ φ (glAct_isF L j0 j0 c d hg) hq, ext_mul _ φ hg (midAct_isL L hJ c d hq), hφ1]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem weight_first (L : Letters N) {j0 J : ℕ} (hJ : j0 ≤ J) (m : Fin N × Fin r →₀ ℕ)
     (hm : ∀ v, m v ≠ 0 → fsj N r j0 v) : Finsupp.weight (wv L J) m = Finsupp.weight (wv L j0) m := by
@@ -910,7 +894,8 @@ theorem ext_wh (L : Letters N) {j0 J : ℕ} (hJ : j0 ≤ J) (φ : MvPolynomial (
     (hx : x ∈ weightedHomogeneousSubmodule ℚ_[p] (wv L J) ν) :
     ext (fsj N r j0) φ x ∈ weightedHomogeneousSubmodule ℚ_[p] (wv L J) ν := by
   classical
-  rw [x.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [x.as_sum, map_sum]
   refine Submodule.sum_mem _ fun m' hm' => ?_
   rw [ext_monomial]
   refine Submodule.smul_mem _ _ ?_
@@ -924,7 +909,7 @@ theorem ext_wh (L : Letters N) {j0 J : ℕ} (hJ : j0 ≤ J) (φ : MvPolynomial (
   rw [mem_weightedHomogeneousSubmodule] at hf ⊢
   rw [← h1]
   conv_rhs => rw [← frst_add_ltr (fsj N r j0) m']
-  rw [map_add]
+  rw [map_add (f := _)]
   exact hf.mul hl
 
 end Formalism.CountingSumsFrames.TO
@@ -1009,7 +994,8 @@ private theorem whc_ne_lemma_2 {σ M : Type} [AddCommMonoid M] (w : σ → M) {m
   classical
   rw [mem_weightedHomogeneousSubmodule] at h
   ext d
-  rw [coeff_weightedHomogeneousComponent, coeff_zero]
+  change (weightedHomogeneousComponent w n φ).coeff d = 0
+  rw [coeff_weightedHomogeneousComponent]
   split_ifs with hd
   · by_contra hne
     exact hnm (hd.symm.trans (h hne))
@@ -1028,7 +1014,7 @@ theorem whc_comm {σ M : Type} [AddCommMonoid M] (w : σ → M) (A : MvPolynomia
     · subst h
       rw [whc_same_lemma w h0, whc_same_lemma w h1]
     · rw [whc_ne_lemma_2 w h0 (Ne.symm h), whc_ne_lemma_2 w h1 (Ne.symm h), map_zero]
-  · simp only [map_add, hf, hg]
+  · simp only [map_add (f := _), hf, hg]
 
 theorem whc_keep {σ M M' : Type} [AddCommMonoid M] [AddCommMonoid M'] (w : σ → M) (w' : σ → M') (ν : M')
     (D : M) {x : MvPolynomial σ ℚ_[p]} (hx : x ∈ weightedHomogeneousSubmodule ℚ_[p] w D) :
@@ -1134,11 +1120,11 @@ theorem eqExt {W : Submodule K V} (hW : G.Stable W) (hWf : G.FinW W) {ι : Type}
   · have := hφ i (Finsupp.single [] 1)
     rwa [Lv_single_nil, Lv_single_nil] at this
   · refine Submodule.iSup_induction (fun i => G.gS {h i}) (motive := fun x => φ (G.E a b x) = G.E a b (φ x))
-      (hsp hx) (fun j y hy => ?_) (by simp) (fun x y hx hy => by simp only [map_add, hx, hy])
+      (hsp hx) (fun j y hy => ?_) (by simp) (fun x y hx hy => by simp only [map_add (f := _), hx, hy])
     obtain ⟨c, rfl⟩ := hrep j y hy
     rw [E_Lv, hφ, hφ, E_Lv]
   · refine Submodule.iSup_induction (fun i => G.gS {h i}) (motive := fun x => φ x ∈ W)
-      (hsp hx) (fun j y hy => ?_) (by simp) (fun x y hx hy => by rw [map_add]; exact W.add_mem hx hy)
+      (hsp hx) (fun j y hy => ?_) (by simp) (fun x y hx hy => by rw [map_add (f := _)]; exact W.add_mem hx hy)
     obtain ⟨c, rfl⟩ := hrep j y hy
     rw [hφ]
     exact (G.gS_le (by simpa using hgW j) hW) (hgS j c)
@@ -1186,7 +1172,7 @@ theorem form_zero {W : Submodule K V} (hW : G.Stable W) {ι : Type} (h : ι → 
   let U : Submodule K V :=
     { carrier := {x | x ∈ W ∧ ∀ y ∈ W, B x y = 0}
       add_mem' := fun {x x'} hx hx' => ⟨W.add_mem hx.1 hx'.1, fun y hy => by
-        rw [map_add, LinearMap.add_apply, hx.2 y hy, hx'.2 y hy, add_zero]⟩
+        rw [map_add (f := _), LinearMap.add_apply, hx.2 y hy, hx'.2 y hy, add_zero]⟩
       zero_mem' := ⟨W.zero_mem, fun y _ => by rw [map_zero, LinearMap.zero_apply]⟩
       smul_mem' := fun t x hx => ⟨W.smul_mem t hx.1, fun y hy => by
         rw [map_smul, LinearMap.smul_apply, hx.2 y hy, smul_zero]⟩ }
@@ -1317,7 +1303,7 @@ theorem fock_mul_mono (j0 : ℕ) {g g' : MvPolynomial (Fin N × Fin r) ℚ_[p]} 
     (hm' : ∀ v, m' v ≠ 0 → ¬ fsj N r j0 v) :
     fock p (g * monomial m 1) (g' * monomial m' 1) =
       if m = m' then fock p g g' * (m.prod fun _ k => (k.factorial : ℚ_[p])) else 0 := by
-  have := fock_mul_monomial_orthogonal j0 g.support g'.support (fun a => coeff a g) (fun b => coeff b g')
+  have := fock_mul_monomial_orthogonal j0 g.support g'.support (fun a => AddMonoidAlgebra.coeff g a) (fun b => AddMonoidAlgebra.coeff g' b)
     (fun a ha => hg a ha) (fun b hb => hg' b hb) m m' hm hm'
   rwa [← g.as_sum, ← g'.as_sum] at this
 
@@ -1347,7 +1333,8 @@ theorem fock_ext_reduce (j0 : ℕ)
     exact isL_monomial_ltr _ m0 1
   have hAu : A u = ∑ m ∈ S, A (slc (fsj N r j0) m u) * monomial m 1 := by
     conv_lhs => rw [eq_sum_sl (fsj N r j0) u S hSu]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun m hm => hA _ _ (hSL m hm)
   rw [hAu, ext_eq_sum (fsj N r j0) φ1 u' S hSu', ext_eq_sum (fsj N r j0) φ2 u S hSu]
   conv_rhs => rw [eq_sum_sl (fsj N r j0) u' S hSu']
@@ -1436,16 +1423,18 @@ theorem ext_ops_comm [DecidableEq σ] (fs : σ → Prop) [DecidablePred fs] (S :
         φ (monomial (frst fs m) a) * T (monomial (ltr fs m) 1) := by
       rw [mul_comm, ops_mul_free S hT _ (hfree _ (hφ _)), mul_comm]
     rw [ext_mul fs φ hg hq, e1, ext_mul fs φ hg hTq, e2]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem tieE_rename {τ : Type} {r : ℕ} (ι : σ → τ) (w e : Fin r → σ) (F : MvPolynomial σ k) :
     Formalism.GM.tieE (fun c => ι (w c)) (fun c => ι (e c)) (rename ι F) = rename ι (Formalism.GM.tieE w e F) := by
-  simp only [Formalism.GM.tieE, LinearMap.mulLeft_apply, map_mul, map_sum, rename_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.GM.tieE, LinearMap.mulLeft_apply, map_mul, map_sum, rename_X]
 
 theorem tieF_rename {τ : Type} {r : ℕ} (ι : σ → τ) (hι : Function.Injective ι) (w e : Fin r → σ)
     (F : MvPolynomial σ k) :
     Formalism.GM.tieF (fun c => ι (w c)) (fun c => ι (e c)) (rename ι F) = rename ι (Formalism.GM.tieF w e F) := by
-  simp only [Formalism.GM.tieF, LinearMap.sum_apply, LinearMap.comp_apply, Derivation.coeFn_coe, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.GM.tieF, LinearMap.sum_apply, LinearMap.comp_apply, Derivation.coeFn_coe, map_sum,
     pderiv_rename hι]
 
 theorem tiePhi_rename {τ : Type} {r : ℕ} (ι : σ → τ) (hι : Function.Injective ι) (w e : Fin r → σ) (o n z : ℕ)
@@ -1466,7 +1455,8 @@ theorem tiePhi_rename {τ : Type} {r : ℕ} (ι : σ → τ) (hι : Function.Inj
     induction j with
     | zero => intro G; simp
     | succ j ih => intro G; rw [pow_succ, Module.End.mul_apply, tieF_rename ι hι, ih, pow_succ, Module.End.mul_apply]
-  simp only [Formalism.GM.tiePhi, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.comp_apply, map_sum, hF, hE]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.GM.tiePhi, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.comp_apply, map_sum, hF, hE]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [← AlgHom.toLinearMap_apply (rename ι), map_smul]
   rfl
@@ -1541,7 +1531,8 @@ theorem phi_glAct (c d : Fin r) (x : MvPolynomial (Fin N × Fin r) ℚ_[p]) :
     simp only [Formalism.GM.tieE, LinearMap.mulLeft_apply]
     rw [Formalism.GM.M.FB.glAct_mul]
     have h0 : glAct p L (T.pos i + 1 + 1) c d (∑ e : Fin r, X (a, e) * X (b, e)) = 0 := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       have : ∀ e : Fin r, glAct p L (T.pos i + 1 + 1) c d (X (a, e) * X (b, e)) =
           (if e = c then -(X (a, c) * X (b, d)) else 0) + (if e = d then X (a, c) * X (b, d) else 0) := by
         intro e
@@ -1665,110 +1656,6 @@ namespace Formalism.CountingSumsFrames.TO
 open Formalism.GM Formalism.GM.M MvPolynomial Finset
 
 variable {p : ℕ} [Fact p.Prime]
-
-theorem gamma_zero_exponent_le (K r a : ℕ) (hr : 1 ≤ r) (κ : ℝ) (hκ : ((K + 3) * r ^ 2 : ℝ) * lgV2 p a r ≤ κ) :
-    (K + 2) * (r * Nat.log p (2 * a)) ≤ ⌈κ⌉₊ := by
-  have hp1 : (1 : ℝ) < p := by exact_mod_cast (Fact.out : p.Prime).one_lt
-  have hr1 : (1 : ℝ) ≤ r := by exact_mod_cast hr
-  have ha0 : (0 : ℝ) ≤ a := Nat.cast_nonneg a
-  have hlog : (Nat.log p (2 * a) : ℝ) ≤ lgV2 p a r := by
-    unfold lgV2
-    have h0 : 0 ≤ Real.logb p (8 * a + r) := Real.logb_nonneg hp1 (by linarith)
-    by_cases ha : a = 0
-    · have hz : Nat.log p (2 * a) = 0 := by rw [ha]; simp
-      rw [hz, Nat.cast_zero]
-      linarith
-    · have h1 : (Nat.log p (2 * a) : ℝ) ≤ Real.logb p ((2 * a : ℕ) : ℝ) := Real.natLog_le_logb _ _
-      have hapos : (0 : ℝ) < a := by exact_mod_cast Nat.pos_of_ne_zero ha
-      have h2 : Real.logb p ((2 * a : ℕ) : ℝ) ≤ Real.logb p (8 * a + r) := by
-        apply Real.logb_le_logb_of_le hp1
-        · push_cast; linarith
-        · push_cast; linarith
-      linarith
-  have hl0 : (0 : ℝ) ≤ (Nat.log p (2 * a) : ℝ) := Nat.cast_nonneg _
-  have hK0 : (0 : ℝ) ≤ K := Nat.cast_nonneg K
-  have h3 : (((K + 2) * (r * Nat.log p (2 * a)) : ℕ) : ℝ) ≤ κ := by
-    push_cast
-    calc ((K : ℝ) + 2) * ((r : ℝ) * (Nat.log p (2 * a) : ℝ))
-        ≤ ((K : ℝ) + 3) * ((r : ℝ) ^ 2 * lgV2 p a r) := by
-          apply mul_le_mul (by linarith) _ (by positivity) (by positivity)
-          apply mul_le_mul _ hlog hl0 (by positivity)
-          nlinarith
-      _ = ((K + 3) * r ^ 2 : ℝ) * lgV2 p a r := by ring
-      _ ≤ κ := hκ
-  exact_mod_cast h3.trans (Nat.le_ceil κ)
-
-theorem gamma_zero_integral_alt (K r : ℕ) (LLw : Letters (K + 1)) (ρ : Fin r) (n a : ℕ) (κ : ℝ)
-    (hS : LLw.total ≤ n) (hn : n ≤ 2 * a) (hκ : ((K + 3) * r ^ 2 : ℝ) * lgV2 p a r ≤ κ)
-    (f f' : MvPolynomial (Fin (K + 1) × Fin r) ℚ_[p]) (hf : f ∈ PolZ p r LLw) (hf' : f' ∈ PolZ p r LLw) :
-    ‖(p : ℚ_[p]) ^ ⌈κ⌉₊ * (fock p (freeze p LLw ρ n f) (freeze p LLw ρ n f') /
-      ((((n - LLw.total).factorial * LLw.total.factorial : ℕ) : ℚ_[p]) *
-        ∏ i, ((LLw.deg i).factorial : ℚ_[p])))‖ ≤ 1 := by
-  classical
-  have hr : 1 ≤ r := Nat.one_le_iff_ne_zero.mpr (fun h => by subst h; exact ρ.elim0)
-  obtain ⟨hfP, hfI⟩ := Submodule.mem_inf.mp hf
-  obtain ⟨hfP', hfI'⟩ := Submodule.mem_inf.mp hf'
-  obtain ⟨hFP, -, hFI⟩ := Formalism.GM.extendMapsTo p (K + 1) r LLw ρ n hS f hfP
-  obtain ⟨-, -, hFI'⟩ := Formalism.GM.extendMapsTo p (K + 1) r LLw ρ n hS f' hfP'
-  set F := freeze p LLw ρ n f with hF
-  set F' := freeze p LLw ρ n f' with hF'
-  have hc := gammaIntegralityLemmas.intPol_coeff F (hFI hfI)
-  have hc' := gammaIntegralityLemmas.intPol_coeff F' (hFI' hfI')
-  set Den : ℕ := ((n - LLw.total).factorial * LLw.total.factorial) * ∏ i, (LLw.deg i).factorial with hDen
-  have hDen0 : Den ≠ 0 := by
-    rw [hDen]
-    exact Nat.mul_ne_zero (Nat.mul_ne_zero (Nat.factorial_pos _).ne' (Nat.factorial_pos _).ne')
-      (Finset.prod_ne_zero_iff.mpr fun i _ => (Nat.factorial_pos _).ne')
-  have hDcast : ((((n - LLw.total).factorial * LLw.total.factorial : ℕ) : ℚ_[p]) *
-        ∏ i, ((LLw.deg i).factorial : ℚ_[p])) = (Den : ℚ_[p]) := by
-    rw [hDen]; push_cast; ring
-  rw [hDcast, gammaIntegralityLemmas.fock_def', Finset.sum_div, Finset.mul_sum]
-  refine gammaIntegralityLemmas.norm_sum_le_bound _ _ 1 zero_le_one ?_
-  intro m hm
-  have hmd : MultiDeg (LLw.snoc n) m := by
-    rw [Pol, mem_restrictSupport_iff] at hFP
-    exact hFP (Finset.mem_coe.mpr hm)
-  set Num : ℕ := ∏ v : Fin (K + 1 + 1) × Fin r, (m v).factorial with hNum
-  have hNum0 : Num ≠ 0 := Finset.prod_ne_zero_iff.mpr fun i _ => (Nat.factorial_pos _).ne'
-  have hwf : gammaIntegralityLemmas.wf (p := p) m = (Num : ℚ_[p]) := by
-    rw [hNum, gammaIntegralityLemmas.wf]; push_cast; rfl
-  rw [hwf]
-  have hδ : ∀ i, gammaIntegralityLemmas.δv m i = (LLw.snoc n).deg i := fun i => hmd i
-  have hT : ∀ i, gammaIntegralityLemmas.δv m i ≤ 2 * a := by
-    intro i
-    rw [hδ]
-    refine Fin.lastCases ?_ (fun i => ?_) i
-    · rw [FrozenVariableComponents.snoc_deg_last]; exact hn
-    · rw [FrozenVariableComponents.snoc_deg_castSucc]
-      exact (gammaIntegralityLemmas.deg_le_total LLw i).trans (hS.trans hn)
-  have h1 := gammaIntegralityLemmas.vW_ge (p := p) m (T := 2 * a) (B := Nat.log p (2 * a)) le_rfl hT
-  rw [Fin.sum_univ_castSucc] at h1
-  simp only [hδ, FrozenVariableComponents.snoc_deg_last, FrozenVariableComponents.snoc_deg_castSucc] at h1
-  have h2 : padicValNat p Den = padicValNat p (n - LLw.total).factorial + padicValNat p LLw.total.factorial +
-      ∑ i, padicValNat p (LLw.deg i).factorial := by
-    rw [hDen, padicValNat.mul (Nat.mul_ne_zero (Nat.factorial_pos _).ne' (Nat.factorial_pos _).ne')
-      (Finset.prod_ne_zero_iff.mpr fun i _ => (Nat.factorial_pos _).ne'),
-      padicValNat.mul (Nat.factorial_pos _).ne' (Nat.factorial_pos _).ne',
-      gammaIntegralityLemmas.v_prod _ _ (fun i _ => (Nat.factorial_pos _).ne')]
-  have h3 : padicValNat p (n - LLw.total).factorial + padicValNat p LLw.total.factorial ≤
-      padicValNat p n.factorial := by
-    have e := Nat.choose_mul_factorial_mul_factorial hS
-    rw [← e, padicValNat.mul (Nat.mul_ne_zero (Nat.choose_pos hS).ne' (Nat.factorial_pos _).ne')
-      (Nat.factorial_pos _).ne', padicValNat.mul (Nat.choose_pos hS).ne' (Nat.factorial_pos _).ne']
-    omega
-  have h4 := gamma_zero_exponent_le (p := p) K r a hr κ hκ
-  have h5 := gammaIntegralityLemmas.norm_K (p := p) ⌈κ⌉₊ (coeff m F) (coeff m F') 0 0 (by simpa using hc m) (by simpa using hc' m)
-    Num Den hNum0 hDen0 1 norm_one (by
-      have : (padicValNat p Den : ℤ) ≤ (padicValNat p Num : ℤ) + (⌈κ⌉₊ : ℤ) := by
-        have : padicValNat p Den ≤ padicValNat p Num + ⌈κ⌉₊ := by
-          rw [h2]
-          have h1' : ∑ i, padicValNat p (LLw.deg i).factorial + padicValNat p n.factorial ≤
-              padicValNat p Num + (K + 2) * (r * Nat.log p (2 * a)) := h1
-          omega
-        exact_mod_cast this
-      omega)
-  rw [one_mul] at h5
-  exact h5
 
 end Formalism.CountingSumsFrames.TO
 
@@ -1982,7 +1869,7 @@ theorem pow_succ_mul_gen {u u' : MvPolynomial σ ℚ_[p]} (hu : A u = u') (hu' :
       rw [pow_succ A (k + 1), Module.End.mul_apply]
     have e3 : (A ^ (k + 1)) f = (A ^ k) (A f) := by
       rw [pow_succ A k, Module.End.mul_apply]
-    rw [e1, e2, hA, hu, map_add, pow_mul_killed A hA hu' (k + 1), mul_comm u, ih, ← e3,
+    rw [e1, e2, hA, hu, map_add (f := _), pow_mul_killed A hA hu' (k + 1), mul_comm u, ih, ← e3,
       Nat.cast_succ (k + 1), add_smul, one_smul]
     abel
 
@@ -2030,7 +1917,7 @@ theorem divpow_int (L : Letters N) (j : ℕ) (c d : Fin r) (hcd : c ≠ d) (k : 
       rw [pow_succ, Module.End.mul_apply, glAct_C', map_zero, smul_zero]
       exact Submodule.zero_mem _
   | add f g hf hg =>
-    rw [map_add, map_add, smul_add]
+    rw [map_add (f := _), map_add (f := _), smul_add]
     exact Submodule.add_mem _ (hf k) (hg k)
   | mul_X f v hf =>
     rw [map_mul, map_X]
@@ -2121,7 +2008,8 @@ theorem int_main (L : Letters N) (ρ : Fin r) (e1 j0 : ℕ) (hj0 : j0 ≤ N) (hH
     exact this
   have hPy : ∀ la, P la y = f la := by
     intro la
-    rw [← hsum, Finsupp.sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hsum, Finsupp.sum, map_sum]
     rw [Finset.sum_eq_single la]
     · exact hPfix la _ (hf la)
     · intro mu _ hne; exact hPkill la mu hne _ (hf mu)
@@ -2143,7 +2031,8 @@ theorem int_main (L : Letters N) (ρ : Fin r) (e1 j0 : ℕ) (hj0 : j0 ≤ N) (hH
   have hy2 : y = ∑ la ∈ f.support, P la y := by
     conv_lhs => rw [← hsum, Finsupp.sum]
     exact Finset.sum_congr rfl fun la _ => (hPy la).symm
-  rw [hy2, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hy2, map_sum, Finset.smul_sum]
   exact Submodule.sum_mem _ fun la _ => hterm la
 
 end Formalism.CountingSumsFrames.TO
@@ -2159,7 +2048,7 @@ noncomputable def FfL (p : ℕ) [Fact p.Prime] {N r : ℕ} [NeZero N] (L : Lette
   toFun := T.Ffull p L i ρ n
   map_add' := by
     intro f g
-    simp only [TieData.Ffull, freeze, map_add, mul_add]
+    simp only [TieData.Ffull, freeze, map_add (f := _), mul_add]
   map_smul' := by
     intro c f
     simp only [TieData.Ffull, freeze, map_smul, mul_smul_comm, RingHom.id_apply]
@@ -2238,8 +2127,8 @@ theorem deg_compat (a : Fin (T.pos i + 1 + 1)) :
     rw [this]
     simp [Letters.takeD, (by omega : (a : ℕ) < N)]
 
-omit hS in
 
+omit hS in
 theorem ycond_pull (J : ℕ) (M : WithTop ℤ) (F : MvPolynomial (Fin (T.pos i + 1 + 1) × Fin r) ℚ_[p])
     (h : rename (fun x : Fin (T.pos i + 1 + 1) × Fin r => (ιF N (T.pos i + 1) x.1, x.2)) F ∈ YCond p LL J M) :
     F ∈ YCond p (((LL.setTies T n).takeD (T.pos i + 1)).snoc (n i)) J M := by
@@ -2286,7 +2175,7 @@ theorem hw_is_Ffull (μ : Fin r → ℤ) (v : MvPolynomial (Fin N × Fin r) ℚ_
   obtain ⟨F, hF⟩ : ∃ F, rename ι F = v := by
     apply exists_rename_eq_of_vars_subset_range v ι hι
     intro x hx
-    rw [Finset.mem_coe, mem_vars] at hx
+    rw [Finset.mem_coe, MvPolynomial.mem_vars_iff_mem_support] at hx
     obtain ⟨m, hm, hxm⟩ := hx
     have hlt : (x.1 : ℕ) < T.pos i + 1 + 1 := hvF m hm x (Finsupp.mem_support_iff.mp hxm)
     exact ⟨(⟨x.1, hlt⟩, x.2), Prod.ext (Fin.ext (ιF_val hK _)) rfl⟩
@@ -2299,7 +2188,7 @@ theorem hw_is_Ffull (μ : Fin r → ℤ) (v : MvPolynomial (Fin N × Fin r) ℚ_
       ((MvPolynomial.mem_restrictSupport_iff ℚ_[p]).mp hvP) (Finset.mem_coe.mpr (hsupp m hm))
     have h2 := h1 (ιF N (T.pos i + 1) a)
     have h3 : ∀ c, Finsupp.mapDomain ι m (ιF N (T.pos i + 1) a, c) = m (a, c) :=
-      fun c => Finsupp.mapDomain_apply hι m (a, c)
+      fun c => Finsupp.mapDomain_apply_of_injective hι m (a, c)
     simp only [h3] at h2
     rw [h2]
     simp only [Lz]
@@ -2376,11 +2265,13 @@ theorem hw_is_Ffull (μ : Fin r → ℤ) (v : MvPolynomial (Fin N × Fin r) ℚ_
     have hfr : freeze p LLK ρ (n i) f =
         ∑ w' ∈ S, freeze p LLK ρ (n i) (weightedHomogeneousComponent (wv LLK (T.pos i + 1)) w' f) := by
       conv_lhs => rw [← hsum]
-      simp only [freeze, map_sum, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [freeze, map_sum, Finset.mul_sum]
     have h5 : F = freeze p LLK ρ (n i) (weightedHomogeneousComponent (wv LLK (T.pos i + 1)) w f) := by
       have h6 : weightedHomogeneousComponent (wv (LLK.snoc (n i)) (T.pos i + 1 + 1)) μ F = F := by
         rw [weightedHomogeneousComponent_of_mem hFw, if_pos rfl]
-      rw [← h6, ← hfF, hfr, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← h6, ← hfF, hfr, map_sum]
       simp only [weightedHomogeneousComponent_of_mem (hcW _)]
       have hiff : ∀ w', μ = w' - ((n i : ℕ) : ℤ) • Pi.single ρ 1 ↔ w' = w := by
         intro w'; rw [hwd]; constructor
@@ -2427,14 +2318,16 @@ theorem Ffull_indep (Ω : Finset (Fin r → ℤ)) (nb : (Fin r → ℤ) → ℕ)
   rw [Fintype.linearIndependent_iff]
   intro c hc x0
   have h1 : T.Ffull p (LL.setTies T n) i ρ (n i) (∑ x : (Σ w : Ω, Fin (nb w.1)), c x • f x.1.1 x.2) = 0 := by
-    rw [← FfL_apply, map_sum, ← hc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← FfL_apply, map_sum, ← hc]
     refine Finset.sum_congr rfl fun x _ => ?_
     rw [map_smul, FfL_apply]
   have hsumP : (∑ x : (Σ w : Ω, Fin (nb w.1)), c x • f x.1.1 x.2) ∈ Pol p r LLK :=
     Submodule.sum_mem _ fun x _ => Submodule.smul_mem _ _ (hPf _ _)
   have h2 := Ffull_inj LL T hadm i ρ n hS _ hsumP h1
   have h3 := congrArg (weightedHomogeneousComponent (wv LLK (T.pos i + 1)) x0.1.1) h2
-  rw [map_sum, map_zero, Fintype.sum_sigma] at h3
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero, Fintype.sum_sigma] at h3
   have h4 : ∀ (w : Ω) (a : Fin (nb w.1)),
       weightedHomogeneousComponent (wv LLK (T.pos i + 1)) x0.1.1 (c ⟨w, a⟩ • f w.1 a) =
         if x0.1 = w then c ⟨w, a⟩ • f w.1 a else 0 := by
@@ -2508,14 +2401,15 @@ theorem slc_ext (φ : MvPolynomial σ K →ₗ[K] MvPolynomial σ K) (hφ : ∀ 
     split_ifs with h
     · rw [one_smul, ← map_smul, smul_monomial, smul_eq_mul, mul_one]
     · rw [zero_smul, smul_zero, map_zero]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 end Gen
 
 theorem slc_int (j0 : ℕ) (m : Fin N × Fin r →₀ ℕ) {x : MvPolynomial (Fin N × Fin r) ℚ_[p]}
     (hx : x ∈ IntPol p (Fin N × Fin r)) : slc (fsj N r j0) m x ∈ IntPol p (Fin N × Fin r) := by
   classical
-  rw [x.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [x.as_sum, map_sum]
   refine Submodule.sum_mem _ fun m' _ => ?_
   rw [sl_monomial]
   split_ifs
@@ -2721,7 +2615,8 @@ theorem slc_span (L : Letters N) (j0 : ℕ) (VF : Submodule ℚ_[p] (MvPolynomia
     (m : Fin N × Fin r →₀ ℕ) : slc (fsj N r j0) m z ∈ VF := by
   classical
   obtain ⟨s, a, hs, ha, rfl⟩ := rep_span VF j0 hz
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Submodule.sum_mem _ fun b hb => ?_
   have hL : IsL (fsj N r j0) (monomial b (1 : ℚ_[p])) := by
     intro m' hm' v hv hfs
@@ -2781,7 +2676,7 @@ theorem count_le (bad : ι → Prop) [DecidablePred bad]
     intro g hg
     refine Submodule.iSup_induction _ (motive := fun x => x - ϖ x = ∑ i ∈ univ.filter bad, π i x) (hsp hg) ?_
       (by simp) (fun x y hx hy => by
-        simp only [map_add, Finset.sum_add_distrib, ← hx, ← hy]; abel)
+        simp only [map_add (f := _), Finset.sum_add_distrib, ← hx, ← hy]; abel)
     intro k x hx
     by_cases hk : bad k
     · rw [hbad k hk x hx, sub_zero, Finset.sum_eq_single k (fun i _ hik => hπ0 i k (Ne.symm hik) x hx)
@@ -2796,7 +2691,8 @@ theorem count_le (bad : ι → Prop) [DecidablePred bad]
     apply eq_of_slc (fsj N r j0)
     intro m
     have hc := slc_C L j0 J M hy m
-    rw [map_sub, map_sum, bigOp_slc L j0 e J M Pi ϖ hPi hϖ m y, inOp_C L j0 e J M Pi ϖ hPi _ hc, hdec _ hc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum, bigOp_slc L j0 e J M Pi ϖ hPi hϖ m y, inOp_C L j0 e J M Pi ϖ hPi _ hc, hdec _ hc]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [bigOp_slc L j0 e J M Pi (π i) hPi (hπEq i) m y, inOp_C L j0 e J M Pi (π i) hPi _ hc]
   have hfd := Y_fd (p := p) (r := r) L J M
@@ -2944,7 +2840,8 @@ theorem smith_bases {σ : Type} (nb : ℕ) (f : Fin nb → MvPolynomial σ ℚ_[
   · intro a b
     have e : B (∑ x, U⁻¹ a x • f x) (∑ y, V⁻¹ y b • f y) =
         (U⁻¹ * (Matrix.of fun x y => B (f x) (f y)) * V⁻¹) a b := by
-      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, Matrix.mul_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, Matrix.mul_apply,
         Matrix.of_apply, Finset.sum_mul, Finset.mul_sum]
       refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ => ?_
       ring
@@ -2980,41 +2877,6 @@ theorem good_norm (E : ℝ) (hE : 0 ≤ E) (d : ℚ_[p]) (hd : ¬ ‖d‖ < (p :
   rw [norm_div, norm_pow, Padic.norm_p, Padic.norm_eq_zpow_neg_valuation hd0, div_le_one (zpow_pos hp0 _),
     inv_pow, ← zpow_natCast, ← zpow_neg]
   exact zpow_le_zpow_right₀ hp1.le (by omega)
-
-theorem K_bound (N r a j0 : ℕ) (κ : ℝ) (hr : 2 ≤ r) (hj0 : j0 ≤ N)
-    (hκ : ((N + 2) * r ^ 2 : ℝ) * lgV2 p a r ≤ κ) :
-    ((⌈κ / (N + 2)⌉₊ * j0 + 2 * ⌈κ / (N + 2)⌉₊ : ℕ) : ℝ) ≤ 3 * κ := by
-  have hp1 : (1 : ℝ) < p := by exact_mod_cast (Fact.out : p.Prime).one_lt
-  have hlg1 : 1 ≤ lgV2 p a r := by
-    unfold lgV2
-    have : (1 : ℝ) ≤ 8 * (a : ℝ) + r := by
-      have : (2 : ℝ) ≤ r := by exact_mod_cast hr
-      have : (0 : ℝ) ≤ a := Nat.cast_nonneg a
-      linarith
-    have := Real.logb_nonneg hp1 this
-    linarith
-  have hr2 : (4 : ℝ) ≤ (r : ℝ) ^ 2 := by
-    have : (2 : ℝ) ≤ r := by exact_mod_cast hr
-    nlinarith
-  have hN : (0 : ℝ) ≤ N := Nat.cast_nonneg N
-  have hκN : ((N : ℝ) + 2) * 4 ≤ κ := by
-    have h1 : ((N : ℝ) + 2) * 4 ≤ ((N : ℝ) + 2) * (r : ℝ) ^ 2 := mul_le_mul_of_nonneg_left hr2 (by positivity)
-    have h2 : ((N : ℝ) + 2) * (r : ℝ) ^ 2 ≤ ((N : ℝ) + 2) * (r : ℝ) ^ 2 * lgV2 p a r :=
-      le_mul_of_one_le_right (by positivity) hlg1
-    linarith
-  have hκ0 : 0 ≤ κ := by nlinarith
-  have hce : ((⌈κ / (N + 2)⌉₊ : ℕ) : ℝ) < κ / (N + 2) + 1 := Nat.ceil_lt_add_one (by positivity)
-  have hj : (j0 : ℝ) ≤ N := by exact_mod_cast hj0
-  have hj' : (0 : ℝ) ≤ j0 := Nat.cast_nonneg j0
-  have h3 : κ / (N + 2) * (N + 2) = κ := by
-    field_simp
-  push_cast
-  calc ((⌈κ / (N + 2)⌉₊ : ℕ) : ℝ) * j0 + 2 * ((⌈κ / (N + 2)⌉₊ : ℕ) : ℝ)
-      = ((⌈κ / (N + 2)⌉₊ : ℕ) : ℝ) * (j0 + 2) := by ring
-    _ ≤ (κ / (N + 2) + 1) * (j0 + 2) := mul_le_mul_of_nonneg_right hce.le (by positivity)
-    _ ≤ (κ / (N + 2) + 1) * (N + 2) := mul_le_mul_of_nonneg_left (by linarith) (by positivity)
-    _ = κ / (N + 2) * (N + 2) + (N + 2) := by ring
-    _ ≤ 3 * κ := by rw [h3]; linarith
 
 theorem S_eq_total {N : ℕ} (L : Letters N) (T : TieData) (i : Fin T.t) (h : T.pos i + 1 < N) :
     (L.takeD (T.pos i + 1)).total = T.S L i := by
@@ -3199,7 +3061,7 @@ theorem tie_core [NeZero r] (L : Letters N) (T : TieData) (hadm : T.Admissible L
         rw [hτ1]; exact hgτi x
       · rw [map_zero]; exact Submodule.zero_mem _
       · intro a b _ _ ha hb
-        rw [map_add]; exact Submodule.add_mem _ ha hb
+        rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
       · intro a b _ hb
         rw [LinearMap.map_smul_of_tower]; exact Submodule.smul_mem _ a hb
     exact int_main L ρ e1 (T.pos i + 1 + 1) hK hHP hHW (bigOp L (T.pos i + 1 + 1) Pi τ) (e1 * (T.pos i + 1 + 1))
@@ -3295,186 +3157,8 @@ theorem mmwZ_polZ [NeZero r] {K : ℕ} (LLw : Letters K) {q : ℕ} (J : Fin q �
   Submodule.mem_inf.mpr ⟨(Submodule.mem_inf.mp (Submodule.mem_inf.mp (Submodule.mem_inf.mp
     (Submodule.mem_inf.mp hg).1).1).1).1, (Submodule.mem_inf.mp hg).2⟩
 
-theorem tieOps_main : Formalism.CountingSumsFrames.TieOps := by
-  refine ⟨3, by norm_num, ?_⟩
-  intro p _ N r _ _ LL T a E κ n ρ _hp2 hr hρ hadm hE hSn hdeg _hz hκ hHP hHW _hL4 nb f U V dg fw hf hUV hfw i
-  classical
-  have hK : T.pos i + 1 + 1 ≤ N := hK_of_adm LL T hadm i
-  have hS : ((LL.setTies T n).takeD (T.pos i + 1)).total ≤ n i := by
-    rw [S_eq_total (LL.setTies T n) T i (by omega)]; exact hSn i
-  have hni : n i ≤ 2 * a := by
-    have := hdeg ⟨T.pos i + 1, by omega⟩
-    rwa [setTies_deg_eta LL T hadm i n (by omega)] at this
-  obtain ⟨coef, hcoef⟩ : ∃ coef : ℕ, coef =
-      (((LL.setTies T n).takeD (T.pos i + 1)).deg (Fin.last (T.pos i)) + n i + r + T.z i - 1).choose
-          (((LL.setTies T n).takeD (T.pos i + 1)).deg (Fin.last (T.pos i))) := ⟨_, rfl⟩
-  obtain ⟨NN, hNN⟩ : ∃ NN : ℚ_[p], NN =
-      ((((n i - ((LL.setTies T n).takeD (T.pos i + 1)).total).factorial *
-            ((LL.setTies T n).takeD (T.pos i + 1)).total.factorial : ℕ) : ℚ_[p]) *
-          ∏ x, ((((LL.setTies T n).takeD (T.pos i + 1)).deg x).factorial : ℚ_[p])) := ⟨_, rfl⟩
-  obtain ⟨cst, hcst⟩ : ∃ cst : ℚ_[p], cst = (p : ℚ_[p]) ^ ⌈κ⌉₊ * (coef : ℚ_[p]) / NN := ⟨_, rfl⟩
-  have hgam : ∀ g g', (p : ℚ_[p]) ^ ⌈κ⌉₊ * tieGam p ((LL.setTies T n).takeD (T.pos i + 1)) ρ (T.z i) (n i) g g' =
-      cst * fock p (T.phi p (LL.setTies T n) i (T.Ffull p (LL.setTies T n) i ρ (n i) g))
-        (T.Ffull p (LL.setTies T n) i ρ (n i) g') := by
-    intro g g'
-    rw [gam_eq LL T hadm i ρ n g g', ← hcoef, ← hNN, hcst]
-    ring
-  let B : MvPolynomial (Fin (T.pos i + 1) × Fin r) ℚ_[p] →ₗ[ℚ_[p]]
-      MvPolynomial (Fin (T.pos i + 1) × Fin r) ℚ_[p] →ₗ[ℚ_[p]] ℚ_[p] :=
-    cst • ((fockB p (Fin N × Fin r)).compl₁₂ ((T.phi p (LL.setTies T n) i) ∘ₗ FfL p (LL.setTies T n) T i ρ (n i))
-      (FfL p (LL.setTies T n) T i ρ (n i)))
-  have hB : ∀ g g', B g g' = cst * fock p (T.phi p (LL.setTies T n) i (T.Ffull p (LL.setTies T n) i ρ (n i) g))
-        (T.Ffull p (LL.setTies T n) i ρ (n i) g') := by
-    intro g g'
-    simp [B, fockB_apply, FfL_apply]
-  have hsm : ∀ w, ∃ f' f'' : Fin (nb i w) → MvPolynomial (Fin (T.pos i + 1) × Fin r) ℚ_[p],
-      (∀ a, f' a ∈ MMwZ p ((LL.setTies T n).takeD (T.pos i + 1)) T.J (T.thrUpTo i) ρ w) ∧
-      (∀ a, f'' a ∈ MMwZ p ((LL.setTies T n).takeD (T.pos i + 1)) T.J (T.thrUpTo i) ρ w) ∧
-      LinearIndependent ℚ_[p] f' ∧
-      MMwZ p ((LL.setTies T n).takeD (T.pos i + 1)) T.J (T.thrUpTo i) ρ w ≤ Submodule.span ℤ_[p] (Set.range f') ∧
-      ∀ a b, B (f' a) (f'' b) = if a = b then dg i w a else 0 := by
-    intro w
-    obtain ⟨hU1, hV1, hU2, hV2, hfac⟩ := hUV i w
-    refine smith_bases (nb i w) (f i w) _ (hf i w).1 (hf i w).2 B (U i w) (V i w) (dg i w) hU1 hV1 hU2 hV2 ?_
-    rw [← hfac]
-    ext x y
-    simp only [Matrix.of_apply]
-    rw [hB, hgam]
-  choose f' f'' hf'1 hf''1 hf'li hf'sp hf'diag using hsm
-  obtain ⟨Ω, hΩ⟩ : ∃ Ω : Finset (Fin r → ℤ), ∀ w, w ∈ Ω ↔
-      MMw p ((LL.setTies T n).takeD (T.pos i + 1)) T.J (T.thrUpTo i) ρ w ≠ ⊥ :=
-    ⟨(mmw_finite (p := p) LL T i ρ n).toFinset, fun w => by simp⟩
-  have hnb0 : ∀ w, w ∉ Ω → nb i w = 0 := by
-    intro w hw
-    by_contra h0
-    have hbot : MMw p ((LL.setTies T n).takeD (T.pos i + 1)) T.J (T.thrUpTo i) ρ w = ⊥ := by
-      by_contra h; exact hw ((hΩ w).mpr h)
-    have hmem : f i w ⟨0, Nat.pos_of_ne_zero h0⟩ ∈
-        MMwZ p ((LL.setTies T n).takeD (T.pos i + 1)) T.J (T.thrUpTo i) ρ w := by
-      rw [← (hf i w).2]; exact Submodule.subset_span ⟨_, rfl⟩
-    have h1 := mmwZ_mmw _ _ _ _ _ hmem
-    rw [hbot, Submodule.mem_bot] at h1
-    exact (hf i w).1.ne_zero _ h1
-  have hκ' : ((T.pos i + 3) * r ^ 2 : ℝ) * lgV2 p a r ≤ κ := by
-    refine le_trans ?_ hκ
-    have hp1 : (1 : ℝ) < p := by exact_mod_cast (Fact.out : p.Prime).one_lt
-    have hlg : 0 ≤ lgV2 p a r := by
-      unfold lgV2
-      have : (1 : ℝ) ≤ 8 * (a : ℝ) + r := by
-        have : (2 : ℝ) ≤ r := by exact_mod_cast hr
-        have : (0 : ℝ) ≤ a := Nat.cast_nonneg a
-        linarith
-      have := Real.logb_nonneg hp1 this
-      linarith
-    have h1 : ((T.pos i : ℝ) + 3) ≤ (N : ℝ) + 2 := by
-      have : ((T.pos i + 1 + 1 : ℕ) : ℝ) ≤ (N : ℝ) := by exact_mod_cast hK
-      push_cast at this; linarith
-    exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right h1 (by positivity)) hlg
-  have hspZ : ∀ μ v, v ∈ Cset p (LL.setTies T n) (T.pos i + 1 + 1) T.J T.thr →
-      (GA p (LL.setTies T n) (T.pos i + 1 + 1)).IsHW μ v → v ∈ IntPol p (Fin N × Fin r) →
-      v ∈ Submodule.span ℤ_[p] (Set.range fun x : (Σ w : Ω, Fin (nb i w.1)) =>
-          T.Ffull p (LL.setTies T n) i ρ (n i) (f' x.1.1 x.2)) := by
-    intro μ v hv hw hvi
-    obtain ⟨g, hg, rfl⟩ := hw_is_Ffull LL T hadm i ρ hρ n hS μ v hv hw hvi
-    by_cases hwΩ : (μ + ((n i : ℕ) : ℤ) • Pi.single ρ 1) ∈ Ω
-    · have hg' := hf'sp _ hg
-      refine Submodule.span_induction (p := fun g _ => T.Ffull p (LL.setTies T n) i ρ (n i) g ∈
-        Submodule.span ℤ_[p] (Set.range fun x : (Σ w : Ω, Fin (nb i w.1)) =>
-          T.Ffull p (LL.setTies T n) i ρ (n i) (f' x.1.1 x.2))) ?_ ?_ ?_ ?_ hg'
-      · rintro _ ⟨b, rfl⟩
-        exact Submodule.subset_span ⟨⟨⟨_, hwΩ⟩, b⟩, rfl⟩
-      · rw [← FfL_apply, map_zero]; exact Submodule.zero_mem _
-      · intro x y _ _ hx hy
-        rw [← FfL_apply, map_add]; exact Submodule.add_mem _ hx hy
-      · intro c x _ hx
-        rw [← FfL_apply, LinearMap.map_smul_of_tower]; exact Submodule.smul_mem _ c hx
-    · have hbot : MMw p ((LL.setTies T n).takeD (T.pos i + 1)) T.J (T.thrUpTo i) ρ
-          (μ + ((n i : ℕ) : ℤ) • Pi.single ρ 1) = ⊥ := by
-        by_contra h; exact hwΩ ((hΩ _).mpr h)
-      have h1 := mmwZ_mmw _ _ _ _ _ hg
-      rw [hbot, Submodule.mem_bot] at h1
-      rw [h1, ← FfL_apply, map_zero]; exact Submodule.zero_mem _
-  have hdiag : ∀ x y : (Σ w : Ω, Fin (nb i w.1)),
-      x.1.1 - ((n i : ℕ) : ℤ) • (Pi.single ρ 1 : Fin r → ℤ) = y.1.1 - ((n i : ℕ) : ℤ) • Pi.single ρ 1 →
-      cst * fock p (T.phi p (LL.setTies T n) i (T.Ffull p (LL.setTies T n) i ρ (n i) (f' x.1.1 x.2)))
-        (T.Ffull p (LL.setTies T n) i ρ (n i) (f'' y.1.1 y.2)) = if x = y then dg i x.1.1 x.2 else 0 := by
-    rintro ⟨⟨w, hw⟩, b⟩ ⟨⟨w', hw'⟩, b'⟩ hla
-    have hww : w = w' := sub_left_injective hla
-    subst hww
-    have := hf'diag w b b'
-    rw [hB] at this
-    simp only
-    rw [this]
-    by_cases hbb : b = b'
-    · subst hbb; simp
-    · rw [if_neg hbb, if_neg]
-      intro h
-      apply hbb
-      simpa using h
-  have hG0 : ∀ x y : (Σ w : Ω, Fin (nb i w.1)),
-      ‖cst * fock p (T.Ffull p (LL.setTies T n) i ρ (n i) (f' x.1.1 x.2))
-        (T.Ffull p (LL.setTies T n) i ρ (n i) (f' y.1.1 y.2))‖ ≤ 1 := by
-    intro x y
-    rw [fock_Ffull LL T hadm i ρ n]
-    have hg := gamma_zero_integral_alt (p := p) (T.pos i) r ((LL.setTies T n).takeD (T.pos i + 1)) ρ (n i) a κ hS hni hκ'
-      (f' x.1.1 x.2) (f' y.1.1 y.2) (mmwZ_polZ _ _ _ _ _ (hf'1 x.1.1 x.2)) (mmwZ_polZ _ _ _ _ _ (hf'1 y.1.1 y.2))
-    rw [← hNN] at hg
-    have e : cst * fock p (freeze p ((LL.setTies T n).takeD (T.pos i + 1)) ρ (n i) (f' x.1.1 x.2))
-        (freeze p ((LL.setTies T n).takeD (T.pos i + 1)) ρ (n i) (f' y.1.1 y.2)) =
-        (coef : ℚ_[p]) * ((p : ℚ_[p]) ^ ⌈κ⌉₊ *
-          (fock p (freeze p ((LL.setTies T n).takeD (T.pos i + 1)) ρ (n i) (f' x.1.1 x.2))
-        (freeze p ((LL.setTies T n).takeD (T.pos i + 1)) ρ (n i) (f' y.1.1 y.2)) / NN)) := by
-      rw [hcst]; ring
-    rw [e, norm_mul]
-    exact mul_le_one₀ (gammaIntegralityLemmas.norm_natCast_le_one' coef) (norm_nonneg _) hg
-  obtain ⟨Tm, πm, h1, h2, h3, h4, h5⟩ := tie_core (LL.setTies T n) T hadm i ρ ⌈κ / (N + 2)⌉₊ hK hHP hHW E (by linarith)
-    (ι := Σ w : Ω, Fin (nb i w.1))
-    (fun x => T.Ffull p (LL.setTies T n) i ρ (n i) (f' x.1.1 x.2))
-    (fun x => T.Ffull p (LL.setTies T n) i ρ (n i) (f'' x.1.1 x.2))
-    (fun x => x.1.1 - ((n i : ℕ) : ℤ) • Pi.single ρ 1)
-    (fun x => Ffull_hw LL T hadm i ρ hρ n x.1.1 _ (mmwZ_mmw _ _ _ _ _ (hf'1 x.1.1 x.2)) hS)
-    (fun x => Ffull_C LL T hadm i ρ n hS x.1.1 _ (mmwZ_mmw _ _ _ _ _ (hf'1 x.1.1 x.2)))
-    (Ffull_indep LL T hadm i ρ n hS Ω (nb i) f' (fun w a => mmwZ_mmw _ _ _ _ _ (hf'1 w a)) hf'li)
-    hspZ
-    (fun x => Ffull_hw LL T hadm i ρ hρ n x.1.1 _ (mmwZ_mmw _ _ _ _ _ (hf''1 x.1.1 x.2)) hS)
-    (fun x => Ffull_C LL T hadm i ρ n hS x.1.1 _ (mmwZ_mmw _ _ _ _ _ (hf''1 x.1.1 x.2)))
-    (fun x => Ffull_int LL T hadm i ρ n hS _ (mmwZ_polZ _ _ _ _ _ (hf''1 x.1.1 x.2)))
-    (fun x => dg i x.1.1 x.2) cst hdiag hG0
-    (fun x => T.Ffull p (LL.setTies T n) i ρ (n i) (fw i x.1.1))
-    (fun x => Ffull_hw LL T hadm i ρ hρ n x.1.1 _ (hfw i x.1.1).1 hS)
-    (fun x => Ffull_C LL T hadm i ρ n hS x.1.1 _ (hfw i x.1.1).1)
-    (fun x => Ffull_ne LL T hadm i ρ n x.1.1 _ (hfw i x.1.1).1 ((hfw i x.1.1).2 ((hΩ _).mp x.1.2)) hS)
-  refine ⟨Tm, πm, ⌈κ / (N + 2)⌉₊ * (T.pos i + 1 + 1) + 2 * ⌈κ / (N + 2)⌉₊,
-    K_bound N r a (T.pos i + 1 + 1) κ hr hK hκ, h1, h2, h3, fun j hij u _ => h4 j hij u, ?_⟩
-  have hsumN : ∑ x ∈ univ.filter (fun x : (Σ w : Ω, Fin (nb i w.1)) => ‖dg i x.1.1 x.2‖ < (p : ℝ) ^ (-E)),
-      Module.finrank ℚ_[p] (YYs (LL.setTies T n) (T.pos i + 1 + 1) T.J T.thr
-        (T.Ffull p (LL.setTies T n) i ρ (n i) (fw i x.1.1))) =
-      ∑ w ∈ Ω, (univ.filter (fun b => ‖dg i w b‖ < (p : ℝ) ^ (-E))).card *
-        Module.finrank ℚ_[p] (T.YYsp p LL i ρ n (fw i w)) := by
-    rw [Finset.sum_filter, Fintype.sum_sigma, ← Finset.sum_coe_sort Ω]
-    refine Finset.sum_congr rfl fun w _ => ?_
-    rw [← Finset.sum_filter, YYsp_eq]
-    exact Finset.sum_const_nat (fun _ _ => rfl)
-  have hfs : ∑ᶠ w, ((univ.filter (fun b => ‖dg i w b‖ < (p : ℝ) ^ (-E))).card : ℝ) *
-        (Module.finrank ℚ_[p] (T.YYsp p LL i ρ n (fw i w)) : ℝ) =
-      ∑ w ∈ Ω, ((univ.filter (fun b => ‖dg i w b‖ < (p : ℝ) ^ (-E))).card : ℝ) *
-        (Module.finrank ℚ_[p] (T.YYsp p LL i ρ n (fw i w)) : ℝ) := by
-    refine finsum_eq_sum_of_support_subset _ fun w hw => ?_
-    rw [Finset.mem_coe]
-    by_contra hwΩ
-    refine hw ?_
-    have hle : (univ.filter (fun b => ‖dg i w b‖ < (p : ℝ) ^ (-E))).card ≤ nb i w :=
-      (Finset.card_le_univ _).trans (by simp)
-    have hle0 := Nat.le_zero.mp (hle.trans (hnb0 w hwΩ).le)
-    simp only [hle0, Nat.cast_zero, zero_mul]
-  rw [hfs]
-  rw [hsumN] at h5
-  exact_mod_cast h5
-
 end Formalism.CountingSumsFrames.TO
 
 namespace Formalism.CountingSumsFrames
-
-theorem level_operators_exist : Formalism.CountingSumsFrames.TieOps := TO.tieOps_main
 
 end Formalism.CountingSumsFrames

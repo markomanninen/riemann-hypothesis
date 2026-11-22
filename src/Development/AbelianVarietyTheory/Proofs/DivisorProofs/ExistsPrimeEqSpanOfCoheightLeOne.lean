@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsConstMulEqUnit
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsConstMulEqUnit
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits
 open ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 

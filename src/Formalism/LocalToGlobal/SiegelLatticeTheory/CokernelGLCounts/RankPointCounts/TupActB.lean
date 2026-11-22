@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.TupAct
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ZsVolAct
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FrameShapeHolds
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.TupAct
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ZsVolAct
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FrameShapeHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,11 +18,11 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : Formalism.BasicNotions.D7}
 
-theorem cong_at_pair {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T')
+theorem cong_at_pair {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T')
     (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hc : IsFixedConv Λ (Lat.gS D) F) (hc' : IsFixedConv Λ (Lat.gS D) F')
     (hz' : F'.fl.z ∈ Λ) (hadm : ∀ b, ModG (VS D) Λ (Lat.gS D) (F'.fl.fvec b - F.fl.fvec b))
     (ν m : (VS D).V ≃ₗ[D.host.E] (VS D).V) (hν : ∀ v ∈ Λ, ν v ∈ Λ) (hm : ∀ v ∈ Λ, m v ∈ Λ)
-    (F'' : LFlag (VS D) D.R.rS T') (hadm'' : ∀ b, ModG (VS D) Λ (Lat.gS D) (F''.fl.fvec b - F.fl.fvec b))
+    (F'' : LFlag (D.sp.Y 0) D.R.rS T') (hadm'' : ∀ b, ModG (VS D) Λ (Lat.gS D) (F''.fl.fvec b - F.fl.fvec b))
     (hf'' : ∀ b, F''.fl.fvec b = ν⁻¹ (m (F'.fl.fvec b)))
     (uu uu' : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E) (huu : IsUpUni uu) (huu' : IsUpUni uu')
     (hfr : ∀ b, ν (F.fl.fvec b) = ∑ c, uu c b • F.fl.fvec c) (hfr' : ∀ b, m (F'.fl.fvec b) = ∑ c, uu' c b • F'.fl.fvec c)
@@ -116,12 +120,12 @@ theorem cong_at_pair {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (
   push_cast
   linear_combination ((Lat.gS D : ℕ) : D.host.E) * ho + ((t' : D.host.E) * (t : D.host.E) * (uu' j i - uu j i)) * hgi
 
-theorem cong_glob_pair {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T')
+theorem cong_glob_pair {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T')
     (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hc : IsFixedConv Λ (Lat.gS D) F) (hc' : IsFixedConv Λ (Lat.gS D) F')
     (hX : XLam Λ F = XS D F.fl) (hX' : XLam Λ F' = XS D F'.fl) (hz : F.fl.z ∈ Λ) (hz' : F'.fl.z ∈ Λ)
     (hadm : ∀ b, ModG (VS D) Λ (Lat.gS D) (F'.fl.fvec b - F.fl.fvec b))
     (ν m : (VS D).V ≃ₗ[D.host.E] (VS D).V) (hν : ∀ v ∈ Λ, ν v ∈ Λ) (hm : ∀ v ∈ Λ, m v ∈ Λ)
-    (F'' : LFlag (VS D) D.R.rS T') (hadm'' : ∀ b, ModG (VS D) Λ (Lat.gS D) (F''.fl.fvec b - F.fl.fvec b))
+    (F'' : LFlag (D.sp.Y 0) D.R.rS T') (hadm'' : ∀ b, ModG (VS D) Λ (Lat.gS D) (F''.fl.fvec b - F.fl.fvec b))
     (hf'' : ∀ b, F''.fl.fvec b = ν⁻¹ (m (F'.fl.fvec b)))
     (uu uu' : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E) (huu : IsUpUni uu) (huu' : IsUpUni uu')
     (hfr : ∀ b, ν (F.fl.fvec b) = ∑ c, uu c b • F.fl.fvec c) (hfr' : ∀ b, m (F'.fl.fvec b) = ∑ c, uu' c b • F'.fl.fvec c)

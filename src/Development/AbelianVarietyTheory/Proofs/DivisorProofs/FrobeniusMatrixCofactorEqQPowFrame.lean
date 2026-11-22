@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RankOfMulEqOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLatticeHeightsFromHodgeJumps
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JumpIffMultNeZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConcretePeriodDeRhamModuleFinrankLe
-import Formalism.PieriBlockIdeals.PieriColumnMinors.HeightDescentMinors
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RankOfMulEqOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLatticeHeightsFromHodgeJumps
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JumpIffMultNeZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConcretePeriodDeRhamModuleFinrankLe
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.HeightDescentMinors
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -34,8 +38,9 @@ theorem φpull_le_span {n : ℕ} (T : LocLat G Qp LL O) (b : Module.Basis (Fin n
   refine Submodule.span_le.2 ?_
   rintro _ ⟨x, hx, rfl⟩
   have e := congrArg Subtype.val (b.sum_repr ⟨x, hx⟩)
-  simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul] at e
-  rw [← e, map_sum]
+  simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul] at e
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← e, map_sum]
   refine Submodule.sum_mem _ fun j _ => ?_
   rw [φD_smul_A]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)

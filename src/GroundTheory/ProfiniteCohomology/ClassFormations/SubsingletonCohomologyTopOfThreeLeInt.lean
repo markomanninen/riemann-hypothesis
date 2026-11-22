@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.ClassFormations.HighFinite
-import GroundTheory.ProfiniteCohomology.ClassFormations.Corestriction
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.FormationThree
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolDefs
-import GroundTheory.ProfiniteCohomology.CupProducts.GroupCohomology
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.ClassFormations.HighFinite
+public import GroundTheory.ProfiniteCohomology.ClassFormations.Corestriction
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.FormationThree
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolDefs
+public import GroundTheory.ProfiniteCohomology.CupProducts.GroupCohomology
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -15,8 +20,8 @@ open CategoryTheory Limits MonoidalCategory groupCohomology
 variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
   [TotallyDisconnectedSpace G]
 
-omit [CompactSpace G] [TotallyDisconnectedSpace G] in
 
+omit [CompactSpace G] [TotallyDisconnectedSpace G] in
 theorem subsingleton_cohomology_of_top {k : Type} [CommRing k] (A : Rep.{0} k G) [IsDiscreteRep A]
     (r : ℕ) (h : Subsingleton (cohomology (Rep.res (⊤ : Subgroup G).subtype A) r)) :
     Subsingleton (cohomology A r) := by
@@ -31,8 +36,8 @@ section Int
 
 variable {C : Rep.{0} ℤ G} [IsDiscreteRep C] (F : ClassFormation C)
 
-include F in
 
+include F in
 theorem ClassFormation.exists_cupH_quot (U : OpenSubgroup G) (N : Subgroup (U : Subgroup G))
     [N.Normal] (hN : IsOpen (N : Set (U : Subgroup G))) (n : ℕ) [NeZero n]
     (w : groupCohomology ((Rep.res (U : Subgroup G).subtype C).quotientToInvariants N) (n + 2)) :
@@ -47,8 +52,8 @@ theorem ClassFormation.exists_cupH_quot (U : OpenSubgroup G) (N : Subgroup (U : 
     Subgroup.finite_quotient_of_finiteIndex
   let : Fintype ((U : Subgroup G) ⧸ (V : Subgroup G).subgroupOf U) := Fintype.ofFinite _
   exact ⟨_, GroundTheory.GroupCoh.exists_cupH_of_tate _ (F.groupFundamentalClass U V)
-    (fun S => (F.tate_hypotheses hVU S).1) (fun S => (F.tate_hypotheses hVU S).2.1)
-    (fun S => (F.tate_hypotheses hVU S).2.2) n w⟩
+    (fun S => (F.tate_hypotheses (U := U) (V := V) hVU S).1) (fun S => (F.tate_hypotheses (U := U) (V := V) hVU S).2.1)
+    (fun S => (F.tate_hypotheses (U := U) (V := V) hVU S).2.2) n w⟩
 
 def trivialToInvariantsHom {k H : Type} [CommRing k] [Group H] (N : Subgroup H) [N.Normal] :
     Rep.trivial k (H ⧸ N) k ⟶ (Rep.trivial k H k).quotientToInvariants N :=
@@ -64,8 +69,8 @@ theorem rightUnitor_quotientToInvariants {k H : Type} [CommRing k] [Group H] (A 
       (ρ_ (A.quotientToInvariants N)).hom.hom.toLinearMap :=
   TensorProduct.ext' fun _ _ => Subtype.ext rfl
 
-include F in
 
+include F in
 theorem ClassFormation.subsingleton_cohomology_of_three_le_int (U : OpenSubgroup G) {r : ℕ}
     (hr : 3 ≤ r) : Subsingleton (cohomology (Rep.res (U : Subgroup G).subtype C) r) := by
   obtain ⟨n, rfl⟩ : ∃ n, r = n + 2 := ⟨r - 2, by omega⟩
@@ -119,8 +124,8 @@ theorem ClassFormation.subsingleton_cohomology_of_three_le_int (U : OpenSubgroup
     (F.inv_bijective U).1 (by rw [map_nsmul, hq])
   rw [hz, ← hβ, map_nsmul, LinearMap.smul_apply, ← map_nsmul, hmt, map_zero, map_zero]
 
-include F in
 
+include F in
 theorem ClassFormation.subsingleton_cohomology_top_of_three_le_int {r : ℕ} (hr : 3 ≤ r) :
     Subsingleton (cohomology C r) :=
   subsingleton_cohomology_of_top C r (F.subsingleton_cohomology_of_three_le_int ⊤ hr)
@@ -131,15 +136,15 @@ section ULift
 
 variable {C : Rep.{0} (ULift.{0} ℤ) G} [IsDiscreteRep C] (F : ClassFormation C)
 
-include F in
 
+include F in
 theorem ClassFormation.subsingleton_cohomology_of_three_le (U : OpenSubgroup G) {r : ℕ}
     (hr : 3 ≤ r) : Subsingleton (cohomology (Rep.res (U : Subgroup G).subtype C) r) := by
-  have := (ClassFormation.toInt C F).subsingleton_cohomology_of_three_le_int U hr
+  let _ := (ClassFormation.toInt C F).subsingleton_cohomology_of_three_le_int U hr
   exact (cohomologyULiftIntAddEquiv (Rep.res (U : Subgroup G).subtype C) r).injective.subsingleton
 
-include F in
 
+include F in
 theorem ClassFormation.subsingleton_cohomology_top_of_three_le {r : ℕ} (hr : 3 ≤ r) :
     Subsingleton (cohomology C r) :=
   subsingleton_cohomology_of_top C r (F.subsingleton_cohomology_of_three_le ⊤ hr)

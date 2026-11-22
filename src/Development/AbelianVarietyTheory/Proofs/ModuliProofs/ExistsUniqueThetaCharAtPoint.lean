@@ -1,15 +1,19 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.CubePullbacks.CubePull
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsPolAVPullbackOfIsLocalRing
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnitOnInjectiveOfCommRing
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.WeilIsGrpPullbackOfCommute
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUniqueHalfChar
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.CubePullbacks.CubePull
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsPolAVPullbackOfIsLocalRing
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnitOnInjectiveOfCommRing
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.WeilIsGrpPullbackOfCommute
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUniqueHalfChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -119,7 +123,8 @@ theorem mulVec_period_basis {g : ℕ} {La : Type} [AddCommGroup La] (P : La →+
     ext k; simp only [Finset.sum_apply, Pi.single_apply, Pi.smul_apply, smul_eq_mul, mul_ite, _root_.mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
   rw [h1 fun i => v (.inl i), h1 fun i => v (.inr i)]
   conv_lhs => rw [h2]
-  simp only [map_sum, map_zsmul, Fintype.sum_sum_type, map_add, (hh _).1, (hh _).2, Matrix.mulVec_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_zsmul, Fintype.sum_sum_type, map_add (f := _), (hh _).1, (hh _).2, Matrix.mulVec_sum,
     Matrix.mulVec_smul, Matrix.mulVec_add]
 
 theorem existsUnique_char_of_triple (hT : ThetaUnifAV) (hmul : Out.MulNSt) {E : Type} [Field E] [NumberField E]
@@ -146,9 +151,14 @@ theorem existsUnique_char_of_triple (hT : ThetaUnifAV) (hmul : Out.MulNSt) {E : 
   have hg := isGrpPullback_pullback t.G (y b₀)
   obtain ⟨hL, hr, ⟨c', w, hw, -⟩, hsym⟩ := Out.CubePf.cubePull S _ t.G _ (cubeMapOf hg) t.PP t.cub
   obtain ⟨-, ws, gs', -⟩ := hsym t.sym
-  have semi := IsSemiAbelian.pullback (y b₀) t.G t.semi
-  have := semi.smooth
-  have := semi.geomConnected
+  haveI := t.semi.smooth
+  haveI := t.semi.geomConnected
+  haveI : Smooth ((Over.pullback (y b₀)).obj t.G).hom := by
+    change Smooth (pullback.snd t.G.hom (y b₀))
+    infer_instance
+  haveI : GeometricallyConnected ((Over.pullback (y b₀)).obj t.G).hom := by
+    change GeometricallyConnected (pullback.snd t.G.hom (y b₀))
+    infer_instance
   obtain ⟨U, hU, hc, -⟩ := exists_isAffineOpen_mem_and_subset (X := S) (U := ⊤)
     (x := y b₀ (default : PrimeSpectrum ℂ)) trivial
   have hy : ∀ x, y b₀ x ∈ U := fun x => (top_le_preimage_iff_mem _ U).2 hc trivial

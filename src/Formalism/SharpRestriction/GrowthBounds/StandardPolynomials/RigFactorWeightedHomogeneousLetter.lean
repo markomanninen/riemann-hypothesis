@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColumnWordMemPolynomialsOfDegree
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColumnWordMemPolynomialsOfDegree
+
+@[expose] public section
 
 noncomputable section
 

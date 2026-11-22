@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.FourierJacobiAverage
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.FramePositiveSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.FourierJacobiAverage
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.FramePositiveSum
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix
 open scoped ENNReal
@@ -64,8 +68,8 @@ def FJInt (ψ : AddChar k Circle) (ν : Measure k) (μX : Measure (GL n k)) (μG
 section Double
 variable {n₀ n₁ n₂ : Type} [Fintype n₀] [DecidableEq n₀] [Fintype n₁] [DecidableEq n₁] [Fintype n₂] [DecidableEq n₂]
 
-omit [MeasurableSpace k] [BorelSpace k] in
 
+omit [MeasurableSpace k] [BorelSpace k] in
 def TriPos (ψ : AddChar k Circle) (μ₁ μ₂ : kˣ →* ℂˣ) (ρ : ℕ) (σ : Representation ℂ (GL (n₂ ⊕ Fin c) k) A)
     (T : SB (Matrix n₁ n₀ k) →ₗ[ℂ] SB (Matrix n₂ n₁ k) →ₗ[ℂ] A →ₗ[ℂ] ℂ) : Prop :=
   (∀ Ψ₁, BilPos ψ μ₂ ρ σ (T Ψ₁)) ∧ ∀ (g : GL n₁ k) (Ψ₁ Ψ₁' : SB (Matrix n₁ n₀ k)) (Ψ₂ Ψ₂' : SB (Matrix n₂ n₁ k)),

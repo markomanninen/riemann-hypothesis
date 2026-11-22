@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LeadMinor
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.PLatticesAgree
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.PHeightOneIntersection
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LeadMinor
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.PLatticesAgree
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.PHeightOneIntersection
+
+@[expose] public section
 
 open Module NumberField GlobalTheory.CompanionTheory.Ar.HT TensorProduct
 
@@ -23,7 +27,7 @@ private theorem mem_range_bc_of_entries_mem_intL {A K : Type} [CommRing A] [IsDo
   obtain ⟨c, hc⟩ := hk
   exact ⟨c, hc⟩
 
-theorem test_incl : ∀ (A K : Type) [CommRing A] [IsDomain A] [IsNoetherianRing A] [IsIntegrallyClosed A] [Field K] [Algebra A K] [IsFractionRing A K] (Ω : Type) [AddCommGroup Ω] [Module K Ω] [Module A Ω] [IsScalarTower A K Ω] (M : Submodule A Ω) (x : Ω), M.IsLattice K → Module.Projective A M → (∀ 𝔮 : Ideal A, 𝔮.IsPrime → 𝔮.height = 1 → ∃ s : A, s ∉ 𝔮 ∧ s • x ∈ M) → x ∈ M := by
+theorem test_incl : ∀ (A K : Type) [CommRing A] [IsDomain A] [IsNoetherianRing A] [IsIntegrallyClosed A] [Field K] [Algebra A K] [IsFractionRing A K] (Ω : Type) [AddCommGroup Ω] [Module K Ω] [Module A Ω] [IsScalarTower A K Ω] (M : Submodule A Ω) (x : Ω), M.IsFullLattice K → Module.Projective A M → (∀ 𝔮 : Ideal A, 𝔮.IsPrime → 𝔮.height = 1 → ∃ s : A, s ∉ 𝔮 ∧ s • x ∈ M) → x ∈ M := by
   intro A K _ _ _ _ _ _ _ Ω _ _ _ _ M x hlat hproj hloc
   classical
   have hden : ∀ w ∈ Submodule.span K (M : Set Ω), ∃ d ∈ nonZeroDivisors A, d • w ∈ M := by
@@ -51,7 +55,8 @@ theorem test_incl : ∀ (A K : Type) [CommRing A] [IsDomain A] [IsNoetherianRing
         field_simp
       rw [e]
       exact M.smul_mem a h1
-  obtain ⟨d, hd, hdx⟩ := hden x (by rw [hlat.span_eq_top]; trivial)
+  letI := hlat
+  obtain ⟨d, hd, hdx⟩ := hden x (by rw [Submodule.IsFullLattice.span_eq_top]; trivial)
   have hd0' : algebraMap A K d ≠ 0 := IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors hd
   obtain ⟨σ, hσ⟩ := hproj.out
   set z : M := ⟨d • x, hdx⟩ with hzdef

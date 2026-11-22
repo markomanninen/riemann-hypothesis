@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCurveBranchLength
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCurveNormalisationLength
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StBranchNormalisation
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCurveBranchLength
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCurveNormalisationLength
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StBranchNormalisation
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -15,7 +20,7 @@ theorem localMult_ker_eval_eq_zero {n : ℕ} {J : Ideal (MvPolynomial (Fin n) �
     Ideal.eq_top_of_isUnit_mem _ (Ideal.mem_map_of_mem _ hg)
       (IsLocalization.map_units _ (⟨g, fun h ↦ hgq (RingHom.mem_ker.1 h)⟩ : (RingHom.ker (eval q)).primeCompl))
   have hs := Ideal.Quotient.subsingleton_iff.2 htop
-  rw [localMult, dif_pos (isPrime_ker_eval q), Module.length_eq_zero_iff.2 hs]
+  rw [localMult, dite_eq_left (isPrime_ker_eval q), Module.length_eq_zero_iff.2 hs]
   rfl
 
 theorem CurveBranchLength.proof (hN : CurveNormalisationLength.Statement)

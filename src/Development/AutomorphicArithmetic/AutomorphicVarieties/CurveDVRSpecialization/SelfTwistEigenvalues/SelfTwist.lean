@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.SelfTwistEigenvalues.CliffordSS
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.SelfTwistEigenvalues.CliffordSS
+
+@[expose] public section
+
 open Polynomial Matrix
 
 private theorem selfTwist_commonEig {K M ι : Type} [Field K] [IsAlgClosed K] [AddCommGroup M]
@@ -45,7 +50,7 @@ private theorem selfTwist_abstract {K G M : Type} [Field K] [IsAlgClosed K] [Gro
     intro a b x; rw [map_mul]; rfl
   let E : Submodule K M :=
     { carrier := {x | ∀ n ∈ N, c n x = x}
-      add_mem' := fun {a b} ha hb n hn => by rw [map_add, ha n hn, hb n hn]
+      add_mem' := fun {a b} ha hb n hn => by rw [map_add (f := _), ha n hn, hb n hn]
       zero_mem' := fun n hn => map_zero _
       smul_mem' := fun r x hx n hn => by rw [map_smul, hx n hn] }
   have hE : ∀ x, x ∈ E ↔ ∀ n ∈ N, c n x = x := fun x => Iff.rfl
@@ -92,7 +97,7 @@ private theorem selfTwist_abstract {K G M : Type} [Field K] [IsAlgClosed K] [Gro
       induction k with
       | zero => simp
       | succ k ih =>
-        rw [pow_succ', ← hmul, ih, map_add, map_smul, h3, h4, Nat.cast_succ, add_smul, one_smul]
+        rw [pow_succ', ← hmul, ih, map_add (f := _), map_smul, h3, h4, Nat.cast_succ, add_smul, one_smul]
         abel
     have h6 := h5 N.index
     rw [hx _ (N.pow_index_mem g₀)] at h6
@@ -135,7 +140,7 @@ theorem UpperTheory.V.Pr.T.selfTwist :
     ext v
     have hv : v ∈ W ⊔ W' := by rw [hc.sup_eq_top]; trivial
     obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hv
-    rw [hc', map_add, map_add, map_add p, hpW _ (hW _ (N.inv_mem hn) a ha),
+    rw [hc', map_add (f := _), map_add (f := _), map_add p, hpW _ (hW _ (N.inv_mem hn) a ha),
       hpW' _ (hW' _ (N.inv_mem hn) b hb), hpW a ha, hpW' b hb, add_zero, add_zero, hinv']
   obtain ⟨g₀, hg₀⟩ : ∃ g₀, (Representation.linHom ρ ρ) g₀ p ≠ p := by
     by_contra hall

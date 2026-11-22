@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvUAbsU
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemShellUIffDepth
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvUAbsU
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemShellUIffDepth
+
+@[expose] public section
+
 open MeasureTheory GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.SatakeBound GlobalTheory.WeylCell Formalism.UG GlobalTheory.WeylCell.WeylUnipotentShell
 
 noncomputable section
@@ -143,12 +148,12 @@ theorem torus_factor : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicat
     intro β g
     unfold chiDeltaU
     refine Finset.prod_congr rfl fun i _ => ?_
-    rw [dif_pos (by have := i.2; omega)]
+    rw [dite_eq_left (by have := i.2; omega)]
     rfl
   have hact : ∀ i, (actU k α i : ℂ) = if i = k then (α k : ℂ)⁻¹ else α i := by
     intro i
     unfold actU
-    rw [dif_neg hk]
+    rw [dite_eq_right hk]
     by_cases hi : i = k
     · subst hi; simp [Function.update_self, Units.val_inv_eq_inv_val]
     · simp [Function.update_of_ne hi, hi]

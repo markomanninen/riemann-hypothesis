@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ExistsPowSmulMemBall
-import Formalism.PeriodIntegrals.BallQuotLen
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.EfRankSum
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ExistsPowSmulMemBall
+public import Formalism.PeriodIntegrals.BallQuotLen
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.EfRankSum
+
+@[expose] public section
 
 namespace PI.UnitaryGroupMassFormula.BallQuotLen
 
@@ -15,7 +19,7 @@ variable {A : Type*} [CommRing A] [Algebra O A] {ϖ : O}
 private theorem enat_map_natCast_int_eq_top_iff (a : ℕ∞) : a.map (Nat.cast : ℕ → ℤ) = ⊤ ↔ a = ⊤ := by
   cases a <;> simp
 
-theorem eq_zero_of_ord_top [∀ ζ : Pts O A, IsDVRAt ζ] (h : IsUnif A ϖ) {x : A}
+theorem eq_zero_of_ord_top [∀ ζ : Pts O A, IsDVRAt ζ] (h : IsUnif (A := A) ϖ) {x : A}
     (hx : ∀ ζ : Pts O A, ord ϖ ζ x = ⊤) : x = 0 := by
   obtain ⟨n, hn⟩ := h.denom x
   have hy : (⟨ϖ ^ n • x, hn⟩ : ↥(As O A)) = 0 := by
@@ -32,7 +36,7 @@ theorem eq_zero_of_ord_top [∀ ζ : Pts O A, IsDVRAt ζ] (h : IsUnif A ϖ) {x :
   exact (h.isUnit.pow n).mul_right_eq_zero.mp h0
 
 theorem isUnit_of_ord_ne_top (K : Type*) [Field K] [Algebra K A] [FiniteDimensional K A]
-    [∀ ζ : Pts O A, IsDVRAt ζ] (h : IsUnif A ϖ) {x : A} (hx : ∀ ζ : Pts O A, ord ϖ ζ x ≠ ⊤) :
+    [∀ ζ : Pts O A, IsDVRAt ζ] (h : IsUnif (A := A) ϖ) {x : A} (hx : ∀ ζ : Pts O A, ord ϖ ζ x ≠ ⊤) :
     IsUnit x := by
   have hnz : x ∈ nonZeroDivisors A := by
     rw [mem_nonZeroDivisors_iff_right]
@@ -99,7 +103,7 @@ theorem exists_param [Finite (Pts O A)] (ζ₀ : Pts O A) [IsDVRAt ζ₀] :
     have hlt : vL ζ₀ a < vL ζ₀ (i * (1 - a)) := by
       rw [hva]
       exact lt_of_lt_of_le (by norm_num) hr
-    rw [ht, vL_eq_addVal, map_add, AddValuation.map_add_of_distinct_val, ← vL_eq_addVal,
+    rw [ht, vL_eq_addVal, map_add (f := _), AddValuation.map_add_of_distinct_val, ← vL_eq_addVal,
       ← vL_eq_addVal, min_eq_left hlt.le, hva]
     rw [← vL_eq_addVal, ← vL_eq_addVal]
     exact hlt.ne
@@ -112,10 +116,11 @@ theorem exists_param [Finite (Pts O A)] (ζ₀ : Pts O A) [IsDVRAt ζ₀] :
       exact ζ.asIdeal.add_mem hi' (hjmem ζ hz)
     exact ζ.isMaximal.ne_top ((Ideal.eq_top_iff_one _).mpr this)
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 theorem exists_unit_param (K : Type*) [Field K] [Algebra K A] [FiniteDimensional K A]
-    [Finite (Pts O A)] [∀ ζ : Pts O A, IsDVRAt ζ] (h : IsUnif A ϖ) (ζ₀ : Pts O A) :
+    [Finite (Pts O A)] [∀ ζ : Pts O A, IsDVRAt ζ] (h : IsUnif (A := A) ϖ) (ζ₀ : Pts O A) :
     ∃ t : Aˣ, ∀ ζ : Pts O A, ord ϖ ζ (t : A) = (((if ζ = ζ₀ then 1 else 0 : ℤ)) : WithTop ℤ) := by
   obtain ⟨t, ht1, ht2⟩ := exists_param ζ₀
   have hord : ∀ ζ : Pts O A, ord ϖ ζ (t : A) = (((if ζ = ζ₀ then 1 else 0 : ℤ)) : WithTop ℤ) := by
@@ -131,12 +136,12 @@ theorem exists_unit_param (K : Type*) [Field K] [Algebra K A] [FiniteDimensional
     isUnit_of_ord_ne_top K h (fun ζ => by rw [hord]; exact WithTop.coe_ne_top)
   exact ⟨hu.unit, fun ζ => by rw [hu.unit_spec]; exact hord ζ⟩
 
-private theorem ordZ_one (h : IsUnif A ϖ) (ζ : Pts O A) [IsDVRAt ζ] : ordZ ϖ ζ (1 : A) = 0 := by
+private theorem ordZ_one (h : IsUnif (A := A) ϖ) (ζ : Pts O A) [IsDVRAt ζ] : ordZ ϖ ζ (1 : A) = 0 := by
   have := coe_ordZ (ζ := ζ) h (one_mem (nonZeroDivisors A))
   rw [ord_one (ζ := ζ) h] at this
   exact_mod_cast this
 
-private theorem ordZ_units_mul (h : IsUnif A ϖ) (ζ : Pts O A) [IsDVRAt ζ] (v w : Aˣ) :
+private theorem ordZ_units_mul (h : IsUnif (A := A) ϖ) (ζ : Pts O A) [IsDVRAt ζ] (v w : Aˣ) :
     ordZ ϖ ζ ((v : A) * w) = ordZ ϖ ζ v + ordZ ϖ ζ w := by
   have hv := coe_ordZ (ζ := ζ) h v.isUnit.mem_nonZeroDivisors
   have hw := coe_ordZ (ζ := ζ) h w.isUnit.mem_nonZeroDivisors
@@ -145,7 +150,7 @@ private theorem ordZ_units_mul (h : IsUnif A ϖ) (ζ : Pts O A) [IsDVRAt ζ] (v 
   exact_mod_cast hvw
 
 theorem exists_unit_ord (K : Type*) [Field K] [Algebra K A] [FiniteDimensional K A]
-    [Finite (Pts O A)] [∀ ζ : Pts O A, IsDVRAt ζ] (h : IsUnif A ϖ) (d : Pts O A → ℤ) :
+    [Finite (Pts O A)] [∀ ζ : Pts O A, IsDVRAt ζ] (h : IsUnif (A := A) ϖ) (d : Pts O A → ℤ) :
     ∃ u : Aˣ, ∀ ζ : Pts O A, ord ϖ ζ (u : A) = ((d ζ : ℤ) : WithTop ℤ) := by
   classical
   haveI := Fintype.ofFinite (Pts O A)
@@ -169,7 +174,7 @@ theorem exists_unit_ord (K : Type*) [Field K] [Algebra K A] [FiniteDimensional K
       Finset.sum_ite_eq, Finset.mem_univ, if_true]
   rw [← coe_ordZ (ζ := ζ) h (Units.isUnit _).mem_nonZeroDivisors, hz]
 
-theorem ord_sub_one_nonneg_iff (h : IsUnif A ϖ) (ζ : Pts O A) [IsDVRAt ζ] (x : ↥(As O A)) :
+theorem ord_sub_one_nonneg_iff (h : IsUnif (A := A) ϖ) (ζ : Pts O A) [IsDVRAt ζ] (x : ↥(As O A)) :
     0 ≤ ord ϖ ζ (x : A) + ((-1 : ℤ) : WithTop ℤ) ↔ x ∈ ζ.asIdeal := by
   rw [ord_of_mem (ζ := ζ) h x.2]
   have e := vL_eq_zero_iff (ζ := ζ) x
@@ -229,26 +234,22 @@ theorem length_zero_of_le {R M : Type*} [Ring R] [AddCommGroup M] [Module R M]
   rw [Submodule.mkQ_apply, Submodule.mkQ_apply, Submodule.Quotient.eq]
   exact h (a - b).2
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem length_residue (hfin : Module.Finite O ↥(As O A)) (ζ : Pts O A) :
     Module.length O (↥(As O A) ⧸ ζ.asIdeal) = (fdeg ζ : ℕ∞) := by
   classical
   haveI : ζ.asIdeal.IsMaximal := ζ.isMaximal
-  haveI : Algebra.IsIntegral O ↥(As O A) := Algebra.IsIntegral.of_finite O _
-  have hmax : (ζ.asIdeal.comap (algebraMap O ↥(As O A))).IsMaximal :=
-    Ideal.isMaximal_comap_of_isIntegral_of_isMaximal ζ.asIdeal
-  have hp : ζ.asIdeal.comap (algebraMap O ↥(As O A)) = IsLocalRing.maximalIdeal O :=
-    IsLocalRing.eq_maximalIdeal hmax
-  haveI : ζ.asIdeal.LiesOver (IsLocalRing.maximalIdeal O) := ⟨hp.symm⟩
+  haveI : ζ.asIdeal.LiesOver (IsLocalRing.maximalIdeal O) := ⟨(comap_eq_maximalIdeal ζ).symm⟩
   have hf : fdeg ζ = Module.finrank (O ⧸ IsLocalRing.maximalIdeal O) (↥(As O A) ⧸ ζ.asIdeal) := by
-    rw [fdeg_eq_inertiaDeg, ← Ideal.inertiaDeg'_eq_inertiaDeg (IsLocalRing.maximalIdeal O) ζ.asIdeal,
-      Ideal.inertiaDeg_algebraMap]
+    rw [fdeg_eq_inertiaDeg, Ideal.inertiaDeg_eq_of_isMaximal (IsLocalRing.maximalIdeal O) ζ.asIdeal]
   letI : Field (O ⧸ IsLocalRing.maximalIdeal O) := Ideal.Quotient.field _
   haveI : Module.Finite O (↥(As O A) ⧸ ζ.asIdeal) :=
     Module.Finite.of_surjective ((ζ.asIdeal.restrictScalars O).mkQ) (Submodule.mkQ_surjective _)
   haveI : Module.Finite (O ⧸ IsLocalRing.maximalIdeal O) (↥(As O A) ⧸ ζ.asIdeal) :=
     Module.Finite.of_restrictScalars_finite O _ _
+  haveI : Module.Free (O ⧸ IsLocalRing.maximalIdeal O) (↥(As O A) ⧸ ζ.asIdeal) :=
+    Module.Free.of_divisionRing _ _
   let b := Module.finBasis (O ⧸ IsLocalRing.maximalIdeal O) (↥(As O A) ⧸ ζ.asIdeal)
   let eqv := b.equivFun.restrictScalars O
   have h1 : Module.length O (O ⧸ IsLocalRing.maximalIdeal O) = 1 :=
@@ -258,14 +259,15 @@ theorem length_residue (hfin : Module.Finite O ↥(As O A)) (ζ : Pts O A) :
 
 variable {V : Type*} [AddCommGroup V] [Module A V] [Module O V] [IsScalarTower O A V] {e : V}
 
-theorem ballO_mono [∀ ζ : Pts O A, IsDVRAt ζ] (h : IsUnif A ϖ) (he : IsGen A e)
+theorem ballO_mono [∀ ζ : Pts O A, IsDVRAt ζ] (h : IsUnif (A := A) ϖ) (he : IsGen (A := A) e)
     {c c' : Pts O A → ℤ} (hc : ∀ ζ, c ζ ≤ c' ζ) : ballO ϖ e c ≤ ballO ϖ e c' := fun v hv => ball_mono h he hc hv
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 theorem length_step (K : Type*) [Field K] [Algebra K A] [FiniteDimensional K A]
-    [Finite (Pts O A)] [∀ ζ : Pts O A, IsDVRAt ζ] (h : IsUnif A ϖ) (hfin : Module.Finite O ↥(As O A))
-    (he : IsGen A e) (c d : Pts O A → ℤ) (ζ₀ : Pts O A)
+    [Finite (Pts O A)] [∀ ζ : Pts O A, IsDVRAt ζ] (h : IsUnif (A := A) ϖ) (hfin : Module.Finite O ↥(As O A))
+    (he : IsGen (A := A) e) (c d : Pts O A → ℤ) (ζ₀ : Pts O A)
     (hd : ∀ ζ, d ζ = c ζ + if ζ = ζ₀ then 1 else 0) :
     Module.length O (↥(ballO ϖ e d) ⧸ (ballO ϖ e c).comap (ballO ϖ e d).subtype) = fdeg ζ₀ := by
   classical
@@ -345,8 +347,8 @@ theorem length_step (K : Type*) [Field K] [Algebra K A] [FiniteDimensional K A]
   exact length_residue hfin ζ₀
 
 theorem length_ball_quotient_eq_sum_mul_fdeg (K : Type*) [Field K] [Algebra K A] [FiniteDimensional K A]
-    [Fintype (Pts O A)] [∀ ζ : Pts O A, IsDVRAt ζ] (h : IsUnif A ϖ)
-    (hfin : Module.Finite O ↥(As O A)) (he : IsGen A e) :
+    [Fintype (Pts O A)] [∀ ζ : Pts O A, IsDVRAt ζ] (h : IsUnif (A := A) ϖ)
+    (hfin : Module.Finite O ↥(As O A)) (he : IsGen (A := A) e) :
     ∀ (n : ℕ) (c : Pts O A → ℤ) (m : Pts O A → ℕ), ∑ ζ, m ζ = n →
       Module.length O (↥(ballO ϖ e (fun ζ => c ζ + m ζ)) ⧸
           (ballO ϖ e c).comap (ballO ϖ e (fun ζ => c ζ + m ζ)).subtype) =
@@ -406,7 +408,7 @@ theorem ballQuotLen_main : PI.BallQuotLen := by
   haveI : Module.Finite O ↥(As O A) := hfin
   haveI : Finite (Pts O A) := PI.UnitaryGroupMassFormula.EfRankSum.finite_pts O A
   letI : Fintype (Pts O A) := Fintype.ofFinite _
-  have h : IsUnif A ϖ := by
+  have h : IsUnif (A := A) ϖ := by
     refine ⟨hϖ, ?_, ?_⟩
     · rw [IsScalarTower.algebraMap_apply O K A]
       refine IsUnit.map _ (isUnit_iff_ne_zero.mpr ?_)

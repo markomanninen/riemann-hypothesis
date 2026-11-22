@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExactAndKerBaseChangeOfForallResidueField
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExactAndKerBaseChangeOfForallResidueField
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -44,7 +48,7 @@ theorem mem_range_of_closed (a : A₀ →ₗ[R] A₁) (b : A₁ →ₗ[R] A₂) 
 theorem lTensor_liftQ_injective (b : A₁ →ₗ[R] A₂) (S : Submodule R A₁) (hSb : S ≤ LinearMap.ker b)
     (h : ∀ x, b.lTensor k x = 0 → x ∈ LinearMap.range (S.subtype.lTensor k)) :
     Function.Injective ((S.liftQ b hSb).lTensor k) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨y, rfl⟩ := LinearMap.lTensor_surjective k (Submodule.mkQ_surjective S) x
   rw [← LinearMap.comp_apply, ← LinearMap.lTensor_comp, Submodule.liftQ_mkQ] at hx
@@ -136,7 +140,7 @@ theorem ladder {c : A → B} {c' : A' → B'} (e : k ⊗[R] A ≃ₗ[k] B) (e' :
     (h : ∀ a, c' (d a) = δ (c a)) (y : k ⊗[R] A) : e' (d.lTensor k y) = δ (e y) := by
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul l a =>
     have h1 : l ⊗ₜ[R] a = l • ((1 : k) ⊗ₜ[R] a) := by simp [TensorProduct.smul_tmul']
     have h2 : l ⊗ₜ[R] d a = l • ((1 : k) ⊗ₜ[R] d a) := by simp [TensorProduct.smul_tmul']
@@ -202,7 +206,7 @@ theorem phi_injective {A₀ A₁ A₂ : Type} [AddCommGroup A₀] [Module R A₀
     (hθa : ∀ x, mk (q ⟨a x, hab x⟩) = 0)
     (hqk : ∀ x, b.lTensor k x = 0 → (∃ y, d.lTensor k y = ψ.lTensor k x) → ∃ y, a.lTensor k y = x)
     (hinj : Function.Injective ((LinearMap.ker b).subtype.lTensor k)) : Function.Injective Φ := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro t ht
   obtain ⟨v, rfl⟩ := LinearMap.lTensor_surjective k hθ t
   obtain ⟨w, h1, h2⟩ := exists_cocycle Z Z' mk mk' e₁ he₁ hz Φ hΦ q v
@@ -250,7 +254,7 @@ theorem lid_lTensor {R A B : Type} [CommRing R] [AddCommGroup A] [Module R A] [A
     (f : A →ₗ[R] B) (y : R ⊗[R] A) : TensorProduct.lid R B (f.lTensor R y) = f (TensorProduct.lid R A y) := by
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul r a => simp
 
 theorem qIso_unit {R A₀ A₁ A₂ B₀ B₁ B₂ : Type} [CommRing R] [AddCommGroup A₀] [AddCommGroup A₁] [AddCommGroup A₂]
@@ -304,11 +308,11 @@ theorem isOneCochain_diffZero (g : C0 F) : c1 m (d0 F g) = d0 F' (c0 m g) := by
 
 theorem isTwoCochain_diffOne (f : C1 F) : c2 m (d1 F f) = d1 F' (c1 m f) := by
   funext T T' T'' φ ψ
-  simp only [c1, c2, Pm, d1_apply, map_sub, map_add, m.naturality]
+  simp only [c1, c2, Pm, d1_apply, map_sub, map_add (f := _), m.naturality]
 
 theorem cochain_map_degree_three_d2 (z : C2 F) : c3 m (d2 F z) = d2 F' (c2 m z) := by
   funext T T' T'' T''' φ ψ χ
-  simp only [c3, c2, Pm, d2_apply, map_sub, map_add, m.naturality]
+  simp only [c3, c2, Pm, d2_apply, map_sub, map_add (f := _), m.naturality]
 
 theorem mem_Z2_iff {S : Type} [CommRing S] (G : C ⥤ CommAlgCat.{0} S) (z : C2 G) : z ∈ Z2 G ↔ d2 G z = 0 := by
   refine ⟨fun h ↦ ?_, fun h T T' T'' T''' φ ψ χ ↦ ?_⟩
@@ -374,11 +378,11 @@ theorem second_cohomology_comparison_surjective (m : BC F F') {X : Type} [AddCom
     obtain ⟨tb, rfl⟩ := e.surjective b
     induction ta using TensorProduct.induction_on with
     | zero => simp
-    | add u v hu hv => rw [map_add, map_add, LinearMap.add_apply]; exact add_mem hu hv
+    | add u v hu hv => rw [map_add (f := _), map_add (f := _), LinearMap.add_apply]; exact add_mem hu hv
     | tmul l a =>
       induction tb using TensorProduct.induction_on with
       | zero => simp
-      | add u v hu hv => rw [map_add, map_add]; exact add_mem hu hv
+      | add u v hu hv => rw [map_add (f := _), map_add (f := _)]; exact add_mem hu hv
       | tmul l' b => exact key0 l l' a b
   obtain ⟨E, hE⟩ := hW
   have hall : (⊤ : Submodule k (⋀[k]^2 (H1 F'))) ≤ (LinearMap.range f).comap E.toLinearMap := by

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MulEqOfRangeLe
-import GroundTheory.AutomorphicForms.AnisotropicHeight
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MulEqOfRangeLe
+public import GroundTheory.AutomorphicForms.AnisotropicHeight
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem aeval_mulVec_mem_of_stable {K : Type} [Field K] {n : ℕ} (γ : Matrix (
     exact W.smul_mem a hy
   | add p q hp hq =>
     intro y hy
-    rw [map_add, Matrix.add_mulVec]
+    rw [map_add (f := _), Matrix.add_mulVec]
     exact W.add_mem (hp y hy) (hq y hy)
   | monomial k a ih =>
     intro y hy
@@ -36,7 +40,7 @@ def stableIdeal {K : Type} [Field K] {n : ℕ} (γ : Matrix (Fin n) (Fin n) K) (
   add_mem' := by
     intro a b ha hb
     simp only [Set.mem_setOf_eq] at ha hb ⊢
-    rw [map_add, Matrix.add_mulVec]
+    rw [map_add (f := _), Matrix.add_mulVec]
     exact W.add_mem ha hb
   zero_mem' := by
     simp

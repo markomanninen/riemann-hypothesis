@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TraceKernelDecomposition
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SetIntegralNormRmulLe
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegrableDescendOrbitSum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KernelLocallyFiniteContinuous
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TraceKernelDecomposition
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SetIntegralNormRmulLe
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegrableDescendOrbitSum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KernelLocallyFiniteContinuous
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,9 @@ variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteS
 private lemma norm_toL1_inner_le_mul_norm {X : Type*} [MeasurableSpace X] {ν : Measure X} (f g : Lp ℂ 2 ν) :
     ‖(L2.integrable_inner f g).toL1 (fun x => ⟪f x, g x⟫_ℂ)‖ ≤ ‖f‖ * ‖g‖ := by
   have : ENNReal.HolderTriple 2 2 1 := ⟨by rw [ENNReal.inv_two_add_inv_two, inv_one]⟩
-  have h := eLpNorm_le_eLpNorm_mul_eLpNorm'_of_norm (p := 2) (q := 2) (r := 1) (μ := ν)
-    (Lp.aestronglyMeasurable f) (Lp.aestronglyMeasurable g) (fun u v : ℂ => ⟪u, v⟫_ℂ) 1
+  have h := eLpNorm_le_eLpNorm_mul_eLpNorm_of_norm (p := 2) (q := 2) (r := 1) (μ := ν)
+    (fun u v : ℂ => ⟪u, v⟫_ℂ) 1 (by fun_prop)
+    (Lp.aestronglyMeasurable f) (Lp.aestronglyMeasurable g)
     (Filter.Eventually.of_forall fun x => by simpa using norm_inner_le_norm (𝕜 := ℂ) (f x) (g x))
   have e : ‖(L2.integrable_inner f g).toL1 (fun x => ⟪f x, g x⟫_ℂ)‖
       = (eLpNorm (fun x => ⟪f x, g x⟫_ℂ) 1 ν).toReal := by
@@ -30,7 +35,7 @@ private lemma norm_toL1_inner_le_mul_norm {X : Type*} [MeasurableSpace X] {ν : 
 
 theorem exists_comp_of_isTraceClass {T : H →L[ℂ] H} (h : IsTraceClass T) :
     ∃ B C : H →L[ℂ] H, IsHilbertSchmidt B ∧ IsHilbertSchmidt C ∧ T = B ∘L C := by
-  set e := stdBasis H
+  set e := stdBasis (H := H)
   have hsum := (isTraceClass_iff_abs e).1 h
   have hA0 : 0 ≤ CFC.abs T := CFC.abs_nonneg T
   set A := CFC.abs T with hA
@@ -60,7 +65,7 @@ theorem exists_rankOne_expansion {T : H →L[ℂ] H} (h : IsTraceClass T) :
       (∀ ψ φ, HasSum (fun j => ⟪ψ, a j⟫_ℂ * ⟪b j, φ⟫_ℂ) ⟪ψ, T φ⟫_ℂ) ∧
       HasSum (fun j => ⟪b j, a j⟫_ℂ) (trace T) := by
   obtain ⟨B, C, hB, hC, rfl⟩ := exists_comp_of_isTraceClass h
-  set e := stdBasis H
+  set e := stdBasis (H := H)
   have hB2 : Summable fun j => ‖B (e j)‖ ^ 2 := (isHilbertSchmidt_iff e).1 hB
   have hC2 : Summable fun j => ‖adjoint C (e j)‖ ^ 2 := (isHilbertSchmidt_iff e).1 hC.adjoint
   refine ⟨fun j => B (e j), fun j => adjoint C (e j), ?_, ?_, ?_⟩
@@ -85,8 +90,8 @@ theorem exists_rankOne_expansion {T : H →L[ℂ] H} (h : IsTraceClass T) :
 def projSum {n : ℕ} (v : Fin n → H) (c : Fin n → ℝ) : H →L[ℂ] H :=
   ∑ i, ((c i : ℂ)⁻¹) • InnerProductSpace.rankOne ℂ (v i) (v i)
 
-omit [CompleteSpace H] in
 
+omit [CompleteSpace H] in
 theorem inner_projSum {n : ℕ} (v : Fin n → H) (c : Fin n → ℝ) (b a : H) :
     ⟪b, projSum v c a⟫_ℂ = ∑ i, (c i : ℂ)⁻¹ * (⟪v i, a⟫_ℂ * ⟪b, v i⟫_ℂ) := by
   simp [projSum, InnerProductSpace.rankOne_apply]
@@ -120,8 +125,8 @@ theorem norm_projSum_le {n : ℕ} {v : Fin n → H} {c : Fin n → ℝ} (h : ∀
     nlinarith [mul_self_nonneg ‖a - projSum v c a‖]
   exact (mul_self_le_mul_self_iff (norm_nonneg _) (norm_nonneg _)).2 hle
 
-omit [CompleteSpace H] in
 
+omit [CompleteSpace H] in
 theorem tendsto_inner_of_dense {P : ℕ → (H →L[ℂ] H)} (hP : ∀ m, ‖P m‖ ≤ 1) {S : Set H} (hS : Dense S)
     {q : H → H → ℂ} (hq : Continuous (Function.uncurry q))
     (h : ∀ b ∈ S, ∀ a ∈ S, Tendsto (fun m => ⟪b, P m a⟫_ℂ) atTop (𝓝 (q b a))) (b a : H) :
@@ -173,7 +178,7 @@ theorem exists_diagonal {ι : Type*} {a b : ι → Lp ℂ 2 ν} (h : Summable fu
         exact integral_add (L1.integrable_coeFn f).integrableOn (L1.integrable_coeFn f').integrableOn }
   have hg : Continuous g := continuous_setIntegral E
   have := hs.hasSum.map g hg
-  convert this using 1
+  convert (preTransparency := .reducible) this using 1
   · funext j
     simp only [Function.comp_apply, g, AddMonoidHom.coe_mk, ZeroHom.coe_mk]
     exact integral_congr_ae ((Integrable.coeFn_toL1 (hI j)).restrict).symm
@@ -225,8 +230,8 @@ theorem norm_mean_sub_le {F : X → X → ℂ} (hF : StronglyMeasurable (Functio
 
 variable {Y : Type*} [PseudoMetricSpace Y] [MeasurableSpace Y] [BorelSpace Y] {s : X → Y}
 
-omit [IsFiniteMeasure ν] in
 
+omit [IsFiniteMeasure ν] in
 theorem exists_partition (hs : Measurable s) {Ω : Set Y} (hΩ : IsCompact Ω) {E : Set X} (hE : MeasurableSet E)
     (hEΩ : E ⊆ s ⁻¹' Ω) {δ : ℝ} (hδ : 0 < δ) :
     ∃ (n : ℕ) (A : Fin n → Set X), (∀ i, MeasurableSet (A i)) ∧ Pairwise (Function.onFun Disjoint A) ∧
@@ -523,7 +528,26 @@ theorem traceIsDiagonal_Rop {G : Type} [Group G] [TopologicalSpace G] [IsTopolog
     refine integral_congr_ae (.of_forall fun q => ?_)
     simp only
     rw [hkq]
-  obtain ⟨hI, htrace⟩ := trace_eq_integral_diagonal (ν := quotMeasure Γ μ) measurableEmbedding_sec htr
+  have hsec : MeasurableEmbedding (sec Γ) := by
+    refine ⟨?_, ?_, ?_⟩
+    · exact Function.LeftInverse.injective mk_sec
+    · intro s hs
+      have : mk Γ ⁻¹' (sec Γ ⁻¹' s) = ⋃ γ : Γ, (fun x => (γ : G) * x) ⁻¹' (s ∩ stdDom Γ) := by
+        ext x
+        simp only [Set.mem_preimage, Set.mem_iUnion, Set.mem_inter_iff]
+        refine ⟨fun h => ?_, fun ⟨γ, h1, h2⟩ => by rwa [sec_eq h2 (mk_mul γ x)]⟩
+        obtain ⟨γ, e⟩ := mk_eq_iff.1 (mk_sec (mk Γ x)).symm
+        exact ⟨γ, e ▸ h, e ▸ sec_mem _⟩
+      change MeasurableSet (mk Γ ⁻¹' (sec Γ ⁻¹' s))
+      rw [this]
+      exact .iUnion fun γ => measurable_const_mul _ (hs.inter (measurableSet_stdDom Γ))
+    · intro s hs
+      have : sec Γ '' s = mk Γ ⁻¹' s ∩ stdDom Γ := by
+        ext x
+        exact ⟨by rintro ⟨q, h, rfl⟩; exact ⟨by simpa using h, sec_mem q⟩, fun h => ⟨_, h.1, sec_eq h.2 rfl⟩⟩
+      rw [this]
+      exact (measurable_mk hs).inter (measurableSet_stdDom Γ)
+  obtain ⟨hI, htrace⟩ := trace_eq_integral_diagonal (ν := quotMeasure Γ μ) hsec htr
     (GlobalTheory.AutomorphicL2KernelContinuous.continuous_kernel hf hc) hT
   have hfun : (fun x => kernelQ Γ f x x) = fun x => kernel Γ f (sec Γ x) (sec Γ x) := funext fun x => hkq x x
   unfold TraceIsDiagonal

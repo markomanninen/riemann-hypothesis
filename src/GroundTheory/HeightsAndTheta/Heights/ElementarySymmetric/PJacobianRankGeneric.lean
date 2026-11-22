@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StJacobianRankGeneric
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StJacobianRankGeneric
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -18,7 +23,7 @@ theorem JacobianRankGeneric.kaehler_D_aeval {σ K : Type*} [Fintype σ] [Field K
   | C a => simp
   | add p q hp hq => simp [hp, hq, Finset.sum_add_distrib, add_smul]
   | mul_X p i hp =>
-    simp only [map_mul, aeval_X, Derivation.leibniz, hp, Finset.smul_sum, smul_smul, map_add, add_smul,
+    simp only [map_mul, aeval_X, Derivation.leibniz, hp, Finset.smul_sum, smul_smul, map_add (f := _), add_smul,
       Finset.sum_add_distrib, pderiv_X, smul_eq_mul, Pi.single_apply]
     rw [add_left_inj]
     simp [apply_ite, ite_smul]

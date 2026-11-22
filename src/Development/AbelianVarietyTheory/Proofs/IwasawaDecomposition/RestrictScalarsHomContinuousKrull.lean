@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocUnitApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocUnitApply
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 ReciprocityTheory.Neutral.Bridge.HCFR Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2.Host GlobalTheory.HeckeGal GlobalTheory.NormCompat
 
 namespace GlobalTheory
@@ -32,7 +37,8 @@ theorem restrictScalarsHom_continuous_krull (E Ω : Type) [Field E] [Field Ω] [
   obtain ⟨y, rfl⟩ : ∃ y : L, (y : Ω) = x := ⟨⟨x, hx⟩, rfl⟩
   rw [← b.sum_repr y]
   change (AlgEquiv.restrictScalars E σ) _ = _
-  simp only [IntermediateField.coe_sum, IntermediateField.coe_smul, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [IntermediateField.coe_sum, IntermediateField.coe_smul, map_sum, map_smul]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [AlgEquiv.restrictScalars_apply, hb]
 

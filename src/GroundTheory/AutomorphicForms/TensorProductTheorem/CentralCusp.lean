@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.TensorProductTheorem.NonemptyAdelicDecomposition
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsDecay
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsMeasure
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.NonemptyAdelicDecomposition
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsDecay
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsMeasure
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,11 +83,6 @@ theorem finRepCusp_mem_centralCuspForms (h : AdelicGLn.FiniteAdelicGL K n) {φ :
   rw [mul_assoc]
   exact hφ s _
 
-variable (K n) in
-
-abbrev centralCusp : AdelicGKModule K n (centralCuspForms K n) :=
-  cuspSubmodule K n (centralCuspForms K n) (fun X _ hφ => ρ_mem_centralCuspForms X hφ)
-    (fun k _ hφ => σ_mem_centralCuspForms k hφ) (fun h _ hφ => finRepCusp_mem_centralCuspForms h hφ)
 
 theorem exists_norm_le_of_mem_centralCuspForms {φ : cuspForms K n} (hφ : φ ∈ centralCuspForms K n) :
     ∃ C : ℝ, ∀ x, ‖(φ : AdelicGLn.AdelicGL K n → ℂ) x‖ ≤ C := by
@@ -93,7 +92,7 @@ theorem exists_norm_le_of_mem_centralCuspForms {φ : cuspForms K n} (hφ : φ �
   rw [hφ s y]
   exact hC y hy
 
-def toOne (g : AdelicGLn.AdelicGL K n) : Reduction.normOneGL K n :=
+def toOne (g : AdelicGLn.AdelicGL K n) : Reduction.normOneGL (K := K) (n := n) :=
   ⟨g * (Reduction.centralSection K n (Reduction.detModule K n g))⁻¹,
     mul_centralSection_detModule_inv_mem g⟩
 
@@ -108,7 +107,7 @@ theorem apply_mul_toOne {φ : cuspForms K n} (hφ : φ ∈ centralCuspForms K n)
   rw [coe_toOne, ← map_inv, ← mul_assoc]
   exact apply_mul_centralSection_of_mem hφ _ _
 
-variable (μ : Measure (Reduction.normOneGL K n)) [μ.IsHaarMeasure]
+variable (μ : Measure (Reduction.normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
 theorem cuspFormLp_rightTranslate_eq_rep {φ ψ : cuspForms K n} (hφ : φ ∈ centralCuspForms K n)
     (g : AdelicGLn.AdelicGL K n)
@@ -140,7 +139,7 @@ theorem eq_zero_of_petersson_inner_self_eq_zero {φ : cuspForms K n} (hφ : φ �
   have h0 : cuspToL2 μ φ = 0 := inner_self_eq_zero.1 h
   exact injOn_cuspToL2 μ (hφ : _) (fun s x => rfl) (h0.trans (map_zero (cuspToL2 μ)).symm)
 
-local notation "Γ₁" => Reduction.rationalGLOne K n
+local notation "Γ₁" => Reduction.rationalGLOne (K := K) (n := n)
 
 theorem petersson_inner_eq_integral_quotient (φ ψ : cuspForms K n) :
     inner ℂ (cuspToL2 μ φ) (cuspToL2 μ ψ) =
@@ -158,7 +157,7 @@ def quotTr (φ : cuspForms K n) (g : AdelicGLn.AdelicGL K n) : RightCosetSpace �
     rw [mul_assoc]
     exact φ.2.1.isLeftInvariant γ _
 
-theorem quotTr_mk (φ : cuspForms K n) (g : AdelicGLn.AdelicGL K n) (y : Reduction.normOneGL K n) :
+theorem quotTr_mk (φ : cuspForms K n) (g : AdelicGLn.AdelicGL K n) (y : Reduction.normOneGL (K := K) (n := n)) :
     quotTr φ g (mk Γ₁ y) = (φ : AdelicGLn.AdelicGL K n → ℂ) ((y : AdelicGLn.AdelicGL K n) * g) := rfl
 
 theorem quotTr_one (φ : cuspForms K n) : quotTr φ 1 = cuspQuot φ.2.1.isLeftInvariant := by

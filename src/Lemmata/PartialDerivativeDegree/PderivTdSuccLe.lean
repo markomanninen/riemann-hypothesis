@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 universe u_1
 
@@ -12,7 +16,7 @@ private lemma pderiv_td_succ_le {σ : Type u_1} (i : σ) (q : MvPolynomial σ Co
     rwa [Finset.nonempty_iff_ne_empty, Ne, MvPolynomial.support_eq_empty]
   obtain ⟨m, hm, hmax⟩ :=
     Finset.exists_mem_eq_sup _ hne (fun s : σ →₀ ℕ => s.sum fun _ e => e)
-  have hc : MvPolynomial.coeff (m + Finsupp.single i 1) q ≠ 0 := by
+  have hc : AddMonoidAlgebra.coeff q (m + Finsupp.single i 1) ≠ 0 := by
     intro h0
     have h1 := MvPolynomial.mem_support_iff.mp hm
     rw [MvPolynomial.coeff_pderiv, h0, zero_mul] at h1

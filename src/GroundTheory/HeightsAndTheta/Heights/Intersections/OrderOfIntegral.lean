@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerLast
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerTer
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerFurther
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerLast
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerTer
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerFurther
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter

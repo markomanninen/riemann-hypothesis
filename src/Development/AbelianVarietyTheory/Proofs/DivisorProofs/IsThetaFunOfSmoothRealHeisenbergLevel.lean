@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTopologicalRingAE
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardTraceAddCharIsStandardCharOfAdmissibleCMStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableAtZeroHeisenbergCMRealLineTheta
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTopologicalRingAE
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardTraceAddCharIsStandardCharOfAdmissibleCMStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableAtZeroHeisenbergCMRealLineTheta
+
+@[expose] public section
+
 open scoped TensorProduct Matrix BoundedContinuousFunction ContDiff
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.IndefR.DatumF MeasureTheory Matrix GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open GlobalTheory.RealWeil GlobalTheory.RealWeilF
@@ -22,20 +27,21 @@ theorem continuous_theta_infPartF {τ : E →+* ℂ} {θ : Ainf F ⊗[F] E →+*
   have hz : ∀ z : AEF F E, θ (infPartF F E z) = ∑ i, θ (fstA F (bb.repr z i) ⊗ₜ[F] (1 : E)) * τ (b i) := by
     intro z
     conv_lhs => rw [← bb.sum_repr z]
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Algebra.TensorProduct.basis_apply, TensorProduct.smul_tmul', smul_eq_mul, mul_one]
     show θ (fstA F (bb.repr z i) ⊗ₜ[F] b i) = _
     rw [← hθ.1 (b i), ← map_mul, Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
   have hc : ∀ i, Continuous fun z : AEF F E => bb.repr z i := fun i =>
     IsModuleTopology.continuous_of_linearMap (bb.coord i)
-  refine (continuous_finset_sum _ fun i _ => ?_).congr fun z => (hz z).symm
+  refine (continuous_finsetSum _ fun i _ => ?_).congr fun z => (hz z).symm
   exact (hθ.2.comp (continuous_fst.comp (hc i))).mul continuous_const
 
 end GlobalTheory.ThetaOfSmF
 
-open GlobalTheory.ThetaOfSmF in
 
+open GlobalTheory.ThetaOfSmF in
 theorem GlobalTheory.ThetaOfSmF.theta_of_smF : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E)
     (B : Base F E), B.IsGood σ → ∀ (nS nT : ℕ) (JS : Matrix (Fin nS) (Fin nS) E) (JT : Matrix (Fin nT) (Fin nT) E),
       IsHermND σ JS → IsHermND σ JT → ∀ ξ₀ : E, ξ₀ ≠ 0 → σ ξ₀ = -ξ₀ → ∀ θ : InfinitePlace F → (Ainf F ⊗[F] E →+* ℂ),
@@ -55,7 +61,7 @@ theorem GlobalTheory.ThetaOfSmF.theta_of_smF : ∀ (F E : Type) [Field F] [Numbe
         simp only [piWF, map_zero, Matrix.zero_apply, Pi.zero_apply]
       map_add' := fun s t => by
         funext p
-        simp only [piWF, map_add, Matrix.add_apply, Pi.add_apply] }
+        simp only [piWF, map_add (f := _), Matrix.add_apply, Pi.add_apply] }
   have hP : Continuous P := continuous_pi fun p =>
     (continuous_theta_infPartF (hθ p.2)).comp ((continuous_apply p.1.2).comp ((continuous_apply p.1.1).comp hL))
   have hLP : ∀ t, L t = iotaVF ι (P t) := by
@@ -73,7 +79,7 @@ theorem GlobalTheory.ThetaOfSmF.theta_of_smF : ∀ (F E : Type) [Field F] [Numbe
   let φ : (Fin k → ℝ) →+ ℂ :=
     { toFun := fun t => -lam (symplOHF σ JS JT ξ₀ w (L t))
       map_zero' := by rw [map_zero L, GlobalTheory.HeisLineDiffF.symplOHF_zero_right, map_zero, neg_zero]
-      map_add' := fun s t => by rw [map_add L, GlobalTheory.HeisLineDiffF.symplOHF_add_right, map_add, neg_add] }
+      map_add' := fun s t => by rw [map_add L, GlobalTheory.HeisLineDiffF.symplOHF_add_right, map_add (f := _), neg_add] }
   have hφ : Continuous φ := (hlc.comp (GlobalTheory.HeisLineDiffF.continuous_symplOHF σ JS JT ξ₀ w hL)).neg
   have e : (fun t => f.1 (w + L t)) =
       fun t => Complex.exp (φ.toRealLinearMap hφ t) * ev _ _ w (rhoVF σ JS JT ξ₀ B.ψ hψ ι (P.toRealLinearMap hP t) f) := by

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePProjFB
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePProjFB
+
+@[expose] public section
 
 namespace GlobalTheory.ScalarStatement
 

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ContinuousSplitInv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ContinuousSplitInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,8 @@ theorem continuous_psiT (D : D7) (τ : D.what₂.Tau) : Continuous (psiT D τ) :
       psiT D τ (basAF D c) := by
     intro x
     conv_lhs => rw [← (basAF D).sum_repr x]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [Algebra.smul_def, map_mul]
   have hc : ∀ c, Continuous fun x : AE D => (basAF D).repr x c := fun c =>
@@ -38,7 +43,7 @@ theorem continuous_psiT (D : D7) (τ : D.what₂.Tau) : Continuous (psiT D τ) :
   have hfun : (⇑(psiT D τ) : AE D → ℂ) = fun x => ∑ c, psiT D τ (algebraMap (AF D.host.F) (AE D)
       ((basAF D).repr x c)) * psiT D τ (basAF D c) := funext hsum
   rw [hfun]
-  exact continuous_finset_sum _ fun c _ => (halg.comp (hc c)).mul continuous_const
+  exact continuous_finsetSum _ fun c _ => (halg.comp (hc c)).mul continuous_const
 
 end GlobalTheory.HaarReal
 
@@ -172,8 +177,9 @@ def eqv : GinfC V ≃ₜ* (∀ τ, Formalism.REAL.UJ (M.ε τ)) where
   invFun := bwd M
   left_inv g := by
     apply Subtype.ext
-    refine (famH_unique D V _ (unitFam_ofFr M (fwd M g)) (g : GA D V) g.2 fun τ => ?_).symm
-    show _ = GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ofFr M τ (toJ M τ _)
+    apply (famH_unique D V _ (unitFam_ofFr M (fwd M g)) (g : GA D V) g.2 ?_).symm
+    intro τ
+    change _ = GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ofFr M τ (toJ M τ _)
     rw [ofFr_toJ]
   right_inv us := by
     funext τ

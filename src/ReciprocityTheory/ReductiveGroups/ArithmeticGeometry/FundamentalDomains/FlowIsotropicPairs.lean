@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowMajorantFlags
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowMajorantFlags
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.FlowIsotropicPairs
 
@@ -10,7 +14,8 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ}
 private lemma herm_swap_eq_zero_of_eq_zero (X : Data E r) (x y : Fin r → E) (h : herm X.Gm x y = 0) :
     herm X.Gm y x = 0 := by
   have e : cc (herm X.Gm x y) = herm X.Gm y x := by
-    simp only [herm, cc, map_sum, map_mul, NumberField.IsCMField.complexConj_apply_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [herm, cc, map_sum, map_mul, NumberField.IsCMField.complexConj_apply_apply]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
     first

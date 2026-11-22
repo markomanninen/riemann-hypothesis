@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConjRepApply
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsWeilDatumComplexConjugateOfNegHermitianSpaceStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConjFockPureTensorMapNegFormSpaceEqStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsNonzeroFockVacuumConjUnitVacuumNegSpaceStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConjRepApply
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsWeilDatumComplexConjugateOfNegHermitianSpaceStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConjFockPureTensorMapNegFormSpaceEqStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsNonzeroFockVacuumConjUnitVacuumNegSpaceStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
@@ -22,20 +27,29 @@ theorem isIntw_transport {V W : HSp D} {S S' : D.what₂.Tau → SPar} {X Y P P'
     (ω : GA D V × GA D W →* Module.End ℂ (X → ℂ)) (ω₀ : GA D V × GA D W →* Module.End ℂ (Y → ℂ))
     (pt : P → (X → ℂ)) (pt₀ : P' → (Y → ℂ)) (e : P ≃ₗ[ℂ] P') (b : Y → X) (It : P' →ₗ[ℂ] SmT M' →ₗ[ℂ] SmT M)
     (hpt : ∀ φ, pt₀ (e φ) = pt φ ∘ b) (hω : ∀ p F, ω₀ p (F ∘ b) = ω p F ∘ b) (h : IsIntw θ M M' ω₀ pt₀ It) :
-    IsIntw θ M M' ω pt (It ∘ₗ e.toLinearMap) where
-  ne h0 := h.ne (LinearMap.ext fun φ => by
-    have := congrArg (fun L => L (e.symm φ)) h0
-    simpa using this)
-  bdd φ w := h.bdd (e φ) w
-  eqK τ g hg φ φ' hφ v := h.eqK τ g hg (e φ) (e φ') (by rw [hpt, hpt, hφ, hω]) v
-  eqg τ Y hY φ φ' hd v := h.eqg τ Y hY (e φ) (e φ') (fun z => by
-    simp only [hpt, hω, Function.comp_apply]; exact hd (b z)) v
-  invK τ k hk φ φ' v v' hφ hv := h.invK τ k hk (e φ) (e φ') v v' (by rw [hpt, hpt, hφ, hω]) hv
-  invg τ Y hY φ φ' v v' hd hv := h.invg τ Y hY (e φ) (e φ') v v' (fun z => by
-    simp only [hpt, hω, Function.comp_apply]; exact hd (b z)) hv
+    IsIntw θ M M' ω pt (It ∘ₗ e.toLinearMap) := by
+  refine { ne := ?_, bdd := ?_, eqK := ?_, eqg := ?_, invK := ?_, invg := ?_ }
+  · intro h0
+    apply h.ne
+    apply LinearMap.ext
+    intro φ
+    have hφ := congrArg (fun L => L (e.symm φ)) h0
+    simpa using hφ
+  · intro φ w
+    exact h.bdd (e φ) w
+  · intro τ g hg φ φ' hφ v
+    exact h.eqK τ g hg (e φ) (e φ') (by rw [hpt, hpt, hφ, hω]) v
+  · intro τ Y hY φ φ' hd v
+    exact h.eqg τ Y hY (e φ) (e φ') (fun z => by
+      simpa only [hpt, hω, Function.comp_apply] using hd (b z)) v
+  · intro τ k hk φ φ' v v' hφ hv
+    exact h.invK τ k hk (e φ) (e φ') v v' (by rw [hpt, hpt, hφ, hω]) hv
+  · intro τ Y hY φ φ' v v' hd hv
+    exact h.invg τ Y hY (e φ) (e φ') v v' (fun z => by
+      simpa only [hpt, hω, Function.comp_apply] using hd (b z)) hv
+
 
 open GlobalTheory.FockAdjoint in
-
 theorem ptOf_dag {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ)
     {V W : HSp D} {SV SW : D.what₂.Tau → SPar} (M : DSModel V SV) (M' : DSModel W SW) {g : WO V W → ℂ}
     (hg : IsThetaFunO ψ V W g) (Q : PolF D W.rank V.rank) :
@@ -51,7 +65,7 @@ theorem ptOf_dag {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} (hψ : IsStdCh
   | C a =>
     rw [jHom_C, ← mul_one (MvPolynomial.C _), ptF_C, ptF_one, ← mul_one (MvPolynomial.C a), ptF_C, ptF_one,
       dag_smul']
-  | add p q hp hq => rw [map_add, ptF_add, ptF_add, hp, hq, dag_add]
+  | add p q hp hq => rw [map_add (f := _), ptF_add, ptF_add, hp, hq, dag_add]
   | mul_X p v hp =>
     obtain ⟨τ, i, j⟩ := v
     rw [map_mul, jHom_X, mul_comm (jHom A B p), mul_assoc, ptF_C, ptF_X_mul hψ hθ B A hd, hp, mul_comm p,
@@ -66,7 +80,7 @@ theorem jHom_map_conj {S T : HSp D} (A : Fr S) (B : Fr T) (P : PolF D T.rank S.r
     jHom A B (MvPolynomial.map (starRingEnd ℂ) P) = swapHom A B P := by
   induction P using MvPolynomial.induction_on with
   | C a => simp [jHom_C, swapHom]
-  | add p q hp hq => rw [map_add, map_add, hp, hq, map_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _)]
   | mul_X p v hp => rw [map_mul, map_mul, hp, MvPolynomial.map_X, jHom_X, map_mul, swapHom_X]
 
 theorem dag_cj {S T : HSp D} (F : WO S T → ℂ) : dag S T (GlobalTheory.IndefiniteRowSideFullHecke.ConjugateAdjointDagger.cj id F) = F ∘ adjO S T := by
@@ -74,8 +88,8 @@ theorem dag_cj {S T : HSp D} (F : WO S T → ℂ) : dag S T (GlobalTheory.Indefi
 
 end GlobalTheory.AdjTr
 
-open GlobalTheory.AdjTr in
 
+open GlobalTheory.AdjTr in
 theorem GlobalTheory.AdjTr.downArrow_transport : ∀ {D : D7} (S T : GlobalTheory.Grid.Node D) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (χ : (AE D)ˣ →* Circle)
     (ω : GlobalTheory.Grid.WRep S.V T.V) (f : WO S.V T.V → ℂ), IsInfFam θ → GlobalTheory.Grid.IsWeil ψ true S.V T.V χ χ ω →
     GlobalTheory.Grid.IsVac ψ θ true S T f →

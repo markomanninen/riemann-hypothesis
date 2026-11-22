@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsVolData
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarLieNilpotentCoordinatesStatement
-import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.CountStA
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsVolData
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarLieNilpotentCoordinatesStatement
+public import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.CountStA
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,7 +79,7 @@ theorem measure_blocks : ∀ (ι : Type) [Fintype ι] (k r : ℕ) (DU : UTr r �
   set F : (ι → Mt k r) → (ι → Yf k r) := fun x w => nCoords k r (x w) with hFdef
   set R : Set (Zb ι k r) := Set.univ.pi DU ×ˢ Set.univ.pi DH ×ˢ Set.univ.pi DC ×ˢ Set.univ.pi DG with hRdef
   have hF : Measurable F :=
-    measurable_pi_lambda _ fun w => NEntry.cont_nCoords.measurable.comp (measurable_pi_apply w)
+    Measurable.of_eval fun w => NEntry.cont_nCoords.measurable.comp (measurable_pi_apply w)
   have hsp : Measurable (sp ι k r) := by
     unfold sp
     fun_prop

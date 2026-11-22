@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupBasics.TriShear
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupBasics.TriShear
+
+@[expose] public section
 
 open MeasureTheory Matrix
 
@@ -75,12 +79,12 @@ def vM (v : S → ℂ) : Matrix (Fin n) (Fin n) ℂ := fun i j => if h : (i, j) 
 
 theorem vM_at (v : S → ℂ) (q : S) : vM S v q.1.1 q.1.2 = v q := by
   unfold vM
-  rw [dif_pos q.2]
+  rw [dite_eq_left q.2]
 
 theorem sUp_vM (hS : ∀ q ∈ S, q.1 < q.2) (v : S → ℂ) : SUp (vM S v) := by
   intro i j hji
   unfold vM
-  rw [dif_neg]
+  rw [dite_eq_right]
   intro hm
   have h1 : i < j := hS _ hm
   rw [Fin.lt_def] at h1
@@ -129,7 +133,7 @@ theorem hSh_dep (hS : ∀ q ∈ S, q.1 < q.2) (q : S) (v w : S → ℂ) (h : ∀
 
 theorem continuous_hSh (q : S) : Continuous (hSh S q) := by
   unfold hSh
-  refine Continuous.neg (continuous_finset_sum _ (fun m _ => ?_))
+  refine Continuous.neg (continuous_finsetSum _ (fun m _ => ?_))
   have h1 : Continuous (fun v : S → ℂ => (-vM S v) ^ (m + 1 + 1)) := ((continuous_vM S).neg).pow _
   exact h1.matrix_elem q.1.1 q.1.2
 

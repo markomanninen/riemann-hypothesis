@@ -1,4 +1,8 @@
-import Formalism.ZeroFreeRegion.Statement
+module
+
+public import Formalism.ZeroFreeRegion.Statement
+
+@[expose] public section
 
 open Complex Filter Topology
 

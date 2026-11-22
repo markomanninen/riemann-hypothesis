@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.CloudPropOfMapsRetractionBasis
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.LatRetract
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.CloudPropOfMapsRetractionBasis
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.LatRetract
+
+@[expose] public section
 
 namespace Formalism.MainNotions.flipOneThree.Pf
 

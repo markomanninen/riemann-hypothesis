@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPfD
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPfD
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.PoinPf
 
@@ -36,7 +40,7 @@ theorem bchar_idF (X : Data E r) (la : Wt X.Ψ r) : bchar la (idF X) = 1 := by
 
 theorem bchar_contAt (X : Data E r) (la : Wt X.Ψ r) : ContinuousAt (bchar la) (idF X) := by
   unfold bchar
-  refine tendsto_finset_prod _ fun τ _ => tendsto_finset_prod _ fun i _ => ?_
+  refine tendsto_finsetProd _ fun τ _ => tendsto_finsetProd _ fun i _ => ?_
   have hc : Continuous fun b : Frame X.Ψ r => b τ i i := by fun_prop
   exact hc.continuousAt.zpow₀ _ (Or.inl (by simp [idF]))
 

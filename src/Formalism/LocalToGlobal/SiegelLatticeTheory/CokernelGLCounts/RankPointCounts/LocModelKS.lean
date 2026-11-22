@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DataCut
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SupportDatum.DeterminantFormIdentity
-import Formalism.SharpRestriction.CuspSpanNormBounds.LocalOrbitGerms
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocModel
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralReduction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelNonzeroModulusDeterminantEq
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.ProdFormulaE
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.GlobalConditionOfProductFormula
-import Development.AutomorphicArithmetic.BlochKatoExtensions.FundamentalExactSequenceContinuityAllTheories
-import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtB
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DataCut
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SupportDatum.DeterminantFormIdentity
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalOrbitGerms
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocModel
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralReduction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelNonzeroModulusDeterminantEq
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.ProdFormulaE
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.GlobalConditionOfProductFormula
+public import Development.AutomorphicArithmetic.BlochKatoExtensions.FundamentalExactSequenceContinuityAllTheories
+public import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtB
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,7 @@ theorem ptOfList_of {i : ℕ} {x : TB.Pt D.host.E} (hx : Formalism.L2.S.IsPtL (s
 theorem ptOfList_none {i : ℕ} {x : TB.Pt D.host.E} (hx : ¬ Formalism.L2.S.IsPtL (signPt D.R.rS x) i) :
     ptOfList i x = none := by
   unfold ptOfList
-  rw [dif_neg hx]
+  rw [dite_eq_right hx]
 
 def sgn (D : Formalism.BasicNotions.D7) (i : ℕ) : D.host.E := (-1) ^ (D.R.rS + 1 - i)
 
@@ -385,16 +389,21 @@ theorem gd_elt {δ : ∀ p : PlF D, (D.s.atP p).Fp} {M : ∀ p : PlF D, Loc.Mode
 
 theorem modBlocks_low {δ : ∀ p : PlF D, (D.s.atP p).Fp} (T T' : ℕ) (p : PlF D) (hδ : δ p ≠ 0) :
     ∀ (a : ℕ) (l : List (D.host.E × ℕ)), a + (l.map Prod.snd).sum ≤ D.R.rS + 1 →
-      (∀ b ∈ l, b.1 ≠ 0 ∧ 1 ≤ b.2) → ∃ l', modBlocks (blkTop δ T T' p) a l = some l'
-  | a, [], _, _ => ⟨[], rfl⟩
-  | a, (t, s) :: rest, hle, hb => by
+      (∀ b ∈ l, b.1 ≠ 0 ∧ 1 ≤ b.2) → ∃ l', modBlocks (blkTop δ T T' p) a l = some l' := by
+  intro a l
+  revert a
+  induction l with
+  | nil => exact fun _ _ _ => ⟨[], rfl⟩
+  | cons head rest ih =>
+    intro a hle hb
+    obtain ⟨t, s⟩ := head
     simp only [List.map_cons, List.sum_cons] at hle
     have h1 := hb (t, s) List.mem_cons_self
     have hnt : ¬ (a + s - 1 = D.R.rS + 1 ∧ s = 1) := by omega
     have hu : IsUnit (blkTop δ T T' p a s t) := by
       rw [blkTop_nonTop δ T T' p hnt]
       exact (isUnit_ιE p h1.1).mul (isUnit_hF p hδ _ _)
-    obtain ⟨l', hl'⟩ := modBlocks_low T T' p hδ (a + s) rest (by omega) fun b hb' => hb b (List.mem_cons_of_mem _ hb')
+    obtain ⟨l', hl'⟩ := ih (a + s) (by omega) fun b hb' => hb b (List.mem_cons_of_mem _ hb')
     have hs0 : 0 < s := by omega
     have e : modBlocks (blkTop δ T T' p) a ((t, s) :: rest) = some ((hu.unit, ⟨s, hs0⟩) :: l') := by
       simp only [modBlocks]
@@ -522,13 +531,19 @@ theorem pf_det (hMN : ModNorm D) {δ : ∀ p : PlF D, (D.s.atP p).Fp}
       (∀ p, IsUnit (PI.SupportDatumW.blkDet (mapBlocks (blkTop δ T T' p) b l))) ∧
       (Function.mulSupport fun p =>
         A5.modK (M p).R (PI.SupportDatumW.blkDet (mapBlocks (blkTop δ T T' p) b l))).Finite ∧
-      ∏ᶠ p, A5.modK (M p).R (PI.SupportDatumW.blkDet (mapBlocks (blkTop δ T T' p) b l)) = (blkNr D b l)⁻¹
-  | b, [], _, _ => by
+      ∏ᶠ p, A5.modK (M p).R (PI.SupportDatumW.blkDet (mapBlocks (blkTop δ T T' p) b l)) = (blkNr D b l)⁻¹ := by
+  intro b l
+  revert b
+  induction l with
+  | nil =>
+    intro b _ _
     simp [mapBlocks, PI.SupportDatumW.blkDet, blkNr, Formalism.FourierDecayAlt.P.A5x5.modK_one]
-  | b, (t, s) :: rest, hle, hb => by
+  | cons head rest ih =>
+    intro b hle hb
+    obtain ⟨t, s⟩ := head
     simp only [List.map_cons, List.sum_cons] at hle
     have h1 := hb (t, s) List.mem_cons_self
-    obtain ⟨hu, hf, hp⟩ := pf_det hMN hA T T' (b + s) rest (by omega) fun x hx => hb x (List.mem_cons_of_mem _ hx)
+    obtain ⟨hu, hf, hp⟩ := ih (b + s) (by omega) fun x hx => hb x (List.mem_cons_of_mem _ hx)
     have hnt : ¬ (b + s - 1 = D.R.rS + 1 ∧ s = 1) := by omega
     have hc : ∀ p, blkTop δ T T' p b s t = (D.s.atP p).ιE t * PI.SupportDatumW.hF D δ p b s :=
       fun p => blkTop_nonTop δ T T' p hnt t
@@ -711,7 +726,7 @@ theorem kglob_join {M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep} 
     rw [locK_cast M δ T T' p hi W W']
     rw [dfac_join M δ T T' p hi hs2 _ w.1 t hc, dfac_join M δ T T' p hi hs2 _ w'.1 t' hc']
     ring
-  · rw [dif_neg hi]
+  · rw [dite_eq_right hi]
     refine finprod_congr fun p => ?_
     simp only [dph, show ¬ (m + s = D.R.rS + 1 ∧ s = 2) from fun h => hi h.1, if_false, map_one, one_mul]
 
@@ -902,7 +917,7 @@ theorem krOf_head {δ : ∀ p : PlF D, (D.s.atP p).Fp}
       have a1 := phi_pos (isPtL_of_ptOfList hw)
       have a2 := phi_pos (isPtL_of_ptOfList hw')
       exact mul_ne_zero (by exact_mod_cast a1.ne') (by exact_mod_cast a2.ne')
-    rw [hK, div_mul_cancel₀ _ hpos, Kglob, dif_neg (by omega)]
+    rw [hK, div_mul_cancel₀ _ hpos, Kglob, dite_eq_right (by omega)]
 
 end Kern
 
@@ -1324,7 +1339,7 @@ theorem exists_shift {δ : ∀ p : PlF D, (D.s.atP p).Fp} (p : PlF D) (hδ : δ 
       have h1 := H ⟨n, hn⟩
       simp only at h1
       rw [← MulEquiv.isUnit_map sg.e.toRingEquiv.toMulEquiv] at h1
-      simp only [RingEquiv.toMulEquiv_eq_coe, RingEquiv.coe_toMulEquiv, AlgEquiv.coe_ringEquiv, map_add, map_natCast, Prod.isUnit_iff, Prod.fst_add, Prod.snd_add,
+      simp only [RingEquiv.toMulEquiv_eq_coe, RingEquiv.coe_toMulEquiv, AlgEquiv.coe_ringEquiv, map_add (f := _), map_natCast, Prod.isUnit_iff, Prod.fst_add, Prod.snd_add,
         Prod.fst_natCast, Prod.snd_natCast, isUnit_iff_ne_zero, not_and_or, not_not] at h1
       exact h1
     have h0 := key 0 (by norm_num)

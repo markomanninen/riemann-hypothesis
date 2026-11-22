@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsThetaMeanSquareNorm
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.ZhangDimensionPushDownGrassmannianHeightBounds
-import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
-import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.StatementsBundles
-import GroundTheory.PAdicHodge.SlopeCauchyBinet
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsThetaMeanSquareNorm
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.ZhangDimensionPushDownGrassmannianHeightBounds
+public import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
+public import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.StatementsBundles
+public import GroundTheory.PAdicHodge.SlopeCauchyBinet
+
+@[expose] public section
 
 open NumberField
 
@@ -198,7 +202,7 @@ theorem norm_det_le {m : ℕ} (C : Matrix (Fin m) (Fin m) ℂ) (a : Fin m → �
   rw [hCd]
   have hprod : ∏ i, ‖w i‖ ^ 2 ≤ (∏ i, a i) ^ 2 := by
     rw [← Finset.prod_pow]
-    exact Finset.prod_le_prod (fun i _ => by positivity)
+    exact Finset.prod_le_prod₀ (fun i _ => by positivity)
       (fun i _ => pow_le_pow_left₀ (norm_nonneg _) (hw_le i) 2)
   rw [← hdet] at hprod
   exact (sq_le_sq₀ (norm_nonneg _) (Finset.prod_nonneg fun i _ => (ha i).le)).mp hprod
@@ -243,7 +247,8 @@ theorem rows_independent {K : Type*} [Field K] (r m : ℕ) (J : Fin m → Fin r 
     rw [Finset.sum_comm]
     refine Finset.sum_eq_zero (fun j _ => ?_)
     have h1 := congrArg σ (hw j)
-    rw [map_sum, map_zero] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h1
     simp only [map_mul] at h1
     calc ∑ l, σ (w l) * (c j * σ (J l j)) = c j * ∑ l, σ (J l j) * σ (w l) := by
           rw [Finset.mul_sum]

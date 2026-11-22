@@ -1,4 +1,8 @@
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.HeckeUnitTensors.CompLeftSmulOne
+module
+
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.HeckeUnitTensors.CompLeftSmulOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,21 +25,21 @@ theorem mem_of_eig {T : Module.End ℂ (Fin (m + 1) → X.V)} {μ : ℂ} {f : Fi
 theorem Pr_mem (hS : ScalChar X χ) (f : Fin (m + 1) → X.V) : Pr X χ s f ∈ stepSub X (χ s) :=
   mem_of_eig (om_Pr hS f)
 
-variable (X) in
 
+variable (X) in
 def y1 : Module.End ℂ (Fin (m + 1) → Fin (m + 1) → X.V) := LinearMap.pi fun c => (om X).comp (LinearMap.proj c)
 
-variable (X) in
 
+variable (X) in
 def y2 : Module.End ℂ (Fin (m + 1) → Fin (m + 1) → X.V) :=
   LinearMap.pi fun a => -∑ c, (tensE X a c).comp (LinearMap.proj c)
 
-variable (X) in
 
+variable (X) in
 def eta : X.V →ₗ[ℂ] (Fin (m + 1) → Fin (m + 1) → X.V) := LinearMap.pi fun c => LinearMap.single ℂ (fun _ => X.V) c
 
-variable (X) in
 
+variable (X) in
 def psi : (Fin (m + 1) → Fin (m + 1) → X.V) →ₗ[ℂ] X.V where
   toFun H := ∑ c, H c c
   map_add' H K := by simp [Finset.sum_add_distrib]
@@ -53,7 +57,8 @@ theorem psi_apply (H : Fin (m + 1) → Fin (m + 1) → X.V) : psi X H = ∑ c, H
 
 theorem commute_left_right_casimir : Commute (y1 X) (y2 X) := by
   refine LinearMap.ext fun H => funext fun a => ?_
-  simp only [Module.End.mul_apply, left_casimir_apply, right_casimir_apply, map_neg, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Module.End.mul_apply, left_casimir_apply, right_casimir_apply, map_neg, map_sum]
   congr 1
   refine Finset.sum_congr rfl fun c _ => ?_
   exact (LinearMap.congr_fun (commute_om X a c).eq (H c)).symm
@@ -97,7 +102,7 @@ def liftL (T : Module.End ℂ (Fin (m + 1) → X.V)) : Module.End ℂ (Fin (m + 
   map_add' H K := by
     funext a d
     show T (fun c => H c d + K c d) a = T (fun c => H c d) a + T (fun c => K c d) a
-    rw [show (fun c => H c d + K c d) = (fun c => H c d) + (fun c => K c d) from rfl, map_add]; rfl
+    rw [show (fun c => H c d + K c d) = (fun c => H c d) + (fun c => K c d) from rfl, map_add (f := _)]; rfl
   map_smul' r H := by
     funext a d
     show T (fun c => r • H c d) a = r • T (fun c => H c d) a

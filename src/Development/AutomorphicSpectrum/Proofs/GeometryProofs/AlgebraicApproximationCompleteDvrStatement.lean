@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AlgebraicApproximationCompleteDvr
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AlgebraicApproximationCompleteDvr
+public import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+
+@[expose] public section
+
 open Formalism.L2.Pj
 
 set_option maxHeartbeats 1000000 in

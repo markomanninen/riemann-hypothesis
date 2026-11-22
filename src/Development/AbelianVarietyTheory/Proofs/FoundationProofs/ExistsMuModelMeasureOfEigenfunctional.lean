@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.PetIPSmulRight
-import Development.AbelianVarietyTheory.Definitions.Foundations.RepL
-import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ChapterMu
-import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.CuspidalUnitaryTwistsClaim
-import CompanionTheory.EightfoldTheory.VariationTheory.AutomorphicForms.Newform
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IterULevelValStable
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ZsNormCharLeOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModularFormCoeffSeqLinearStructure
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DirichletCharFiniteFourierTransformProperties
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EisensteinTameWeightSecondEqCharacterSumStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MuModelProductIsModularFormCoeffSeqLocallyAlgebrStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsModularFormCoeffSeqEisensteinProductParityStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.PetIPSmulRight
+public import Development.AbelianVarietyTheory.Definitions.Foundations.RepL
+public import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ChapterMu
+public import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.CuspidalUnitaryTwistsClaim
+public import CompanionTheory.EightfoldTheory.VariationTheory.AutomorphicForms.Newform
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IterULevelValStable
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ZsNormCharLeOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModularFormCoeffSeqLinearStructure
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DirichletCharFiniteFourierTransformProperties
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EisensteinTameWeightSecondEqCharacterSumStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MuModelProductIsModularFormCoeffSeqLocallyAlgebrStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsModularFormCoeffSeqEisensteinProductParityStatement
+
+@[expose] public section
+
 open UpperHalfPlane Complex MeasureTheory CongruenceSubgroup GlobalTheory.EisM UpperTheory.V.Af Filter Topology
 open scoped MatrixGroups Real ComplexConjugate Manifold ModularForm
 
@@ -119,11 +124,14 @@ lemma measMu_zm_val_bound {l : ℕ} [Fact l.Prime] (ι : PadicAlgCl l ≃+* ℂ)
       simp only [Zm, ← Finset.sum_sub_distrib]
       refine Finset.sum_congr rfl fun p _ => Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ => ?_
       split_ifs <;> ring
-    rw [e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum]
     refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hδ fun p _ => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hδ fun x hx => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hδ fun y hy => ?_
     split_ifs with h
     · rw [map_zero, norm_zero]; exact hδ
@@ -141,7 +149,8 @@ lemma measMu_zm_val_bound {l : ℕ} [Fact l.Prime] (ι : PadicAlgCl l ≃+* ℂ)
   have e2 : val B c l α r (Zm k l u w F) - val B c l α r (Zm k l u w F') =
       (α ^ r)⁻¹ * ∑ n ∈ Finset.range B, c n * (Zm k l u w F (l ^ r * n) - Zm k l u w F' (l ^ r * n)) := by
     simp only [measMu_val_eq, ← mul_sub, ← Finset.sum_sub_distrib]
-  rw [e2, map_mul, norm_mul, map_inv₀, map_pow, norm_inv, norm_pow, hα, one_pow, inv_one, one_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e2, map_mul, norm_mul, map_inv₀, map_pow, norm_inv, norm_pow, hα, one_pow, inv_one, one_mul, map_sum]
   refine (norm_sum_le _ _).trans ?_
   rw [Finset.sum_mul]
   refine Finset.sum_le_sum fun n _ => ?_

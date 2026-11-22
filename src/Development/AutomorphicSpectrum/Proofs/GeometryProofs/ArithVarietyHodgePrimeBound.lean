@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FullTorsionIntegrallyClosed
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianSchemePointObjectStatement
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.EqOfSpecializes
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.UnramifiedPrimeIdempotent
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FullTorsionIntegrallyClosed
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianSchemePointObjectStatement
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.EqOfSpecializes
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.UnramifiedPrimeIdempotent
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointIdeal segreVec IsFlagFrame IsFlagPair SameGenericFibre IsModelOver divCycle)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg fnField)
@@ -20,8 +25,8 @@ variable {Ω : Type} [Field Ω] {A : Type} [CommRing A] [Algebra A Ω] [IsIntegr
   {m : Ideal A} [m.IsPrime] {O : Type} [CommRing O] [Algebra A O] [IsLocalization.AtPrime O m] [Algebra O Ω]
   [IsScalarTower A O Ω]
 
-include m in
 
+include m in
 theorem algebraMap_injective : Function.Injective (algebraMap O Ω) := by
   have hA : Function.Injective (algebraMap A Ω) := IsIntegralClosure.algebraMap_injective A ℤ Ω
   refine (injective_iff_map_eq_zero _).2 fun x hx => ?_
@@ -33,14 +38,14 @@ theorem algebraMap_injective : Function.Injective (algebraMap O Ω) := by
   have h2 : a = 0 := hA (by rw [← h1, map_zero])
   rw [h2, IsLocalization.mk'_zero]
 
-include m in
 
+include m in
 theorem exists_of_integral (x : Ω) (hx : IsIntegral ℤ x) : ∃ o : O, algebraMap O Ω o = x :=
   ⟨algebraMap A O (IsIntegralClosure.mk' A x hx), by
     rw [← IsScalarTower.algebraMap_apply, IsIntegralClosure.algebraMap_mk']⟩
 
-include m in
 
+include m in
 theorem exists_hom {R : Type} [CommRing R] (f : R →+* Ω) (hf : ∀ a, IsIntegral ℤ (f a)) :
     ∃ g : R →+* O, ∀ a, algebraMap O Ω (g a) = f a := by
   have hi := algebraMap_injective (Ω := Ω) (A := A) (m := m) (O := O)
@@ -49,7 +54,7 @@ theorem exists_hom {R : Type} [CommRing R] (f : R →+* Ω) (hf : ∀ a, IsInteg
            map_one' := hi (by rw [hg, map_one, map_one])
            map_mul' := fun a b => hi (by rw [hg, map_mul, map_mul, hg, hg])
            map_zero' := hi (by rw [hg, map_zero, map_zero])
-           map_add' := fun a b => hi (by rw [hg, map_add, map_add, hg, hg]) }, hg⟩
+           map_add' := fun a b => hi (by rw [hg, map_add (f := _), map_add (f := _), hg, hg]) }, hg⟩
 
 end Ring
 
@@ -80,8 +85,8 @@ section Abstract
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
-open NumberField in
 
+open NumberField in
 theorem orbit_abstract {p : ℕ} (hp : p.Prime) (hd : ¬ (p : ℤ) ∣ NumberField.discr E) {T : Type} [Finite T] (t₀ : T)
     (φ : Equiv.Perm T) {k : Type} [Field k] (r : T → 𝓞 E →+* k) (hpk : (p : k) = 0)
     (hF : ∀ s a, r (φ s) a = (r s a) ^ p) :
@@ -121,9 +126,9 @@ theorem orbit_abstract {p : ℕ} (hp : p.Prime) (hd : ¬ (p : ℤ) ∣ NumberFie
   let sc : (𝓞 E ⧸ w₀) →+ (𝓞 E ⧸ Ideal.span {(p : 𝓞 E)}) :=
     AddMonoidHom.mk' (fun a => Ideal.Quotient.mk _ (ε * lf a)) fun a b => by
       have hm : lf (a + b) - (lf a + lf b) ∈ w₀ := by
-        rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_add, hlf, hlf, hlf, sub_self]
+        rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_add (f := _), hlf, hlf, hlf, sub_self]
       have := hz _ hm
-      rw [mul_sub, map_sub, sub_eq_zero, mul_add, map_add] at this
+      rw [mul_sub, map_sub, sub_eq_zero, mul_add, map_add (f := _)] at this
       exact this
   have hsc : ∀ a, sc a = Ideal.Quotient.mk _ (ε * lf a) := fun a => rfl
   let Sg : Type := {t : T // RingHom.ker (r t) = w₀}

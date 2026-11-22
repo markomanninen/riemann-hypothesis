@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTieChar
-import Formalism.LocalToGlobal.CharacterGerms.ValuationEqPairOfUnitGerm
-import Formalism.LocalToGlobal.CharacterGerms.MfactMulCoeffMvExpLinF
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieChar
+public import Formalism.LocalToGlobal.CharacterGerms.ValuationEqPairOfUnitGerm
+public import Formalism.LocalToGlobal.CharacterGerms.MfactMulCoeffMvExpLinF
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,7 +24,7 @@ section Uniq
 variable {K : Type} [Field K] [CharZero K] {τ : Type} [Fintype τ]
 
 theorem exp_unique (y : τ → K) (Ψ : MvPowerSeries τ K) (h0 : MvPowerSeries.constantCoeff Ψ = 1)
-    (hd : ∀ w, MvPowerSeries.pderiv K w Ψ = Ψ * MvPowerSeries.C (y w)) : Ψ = mvExp (linF y) := by
+    (hd : ∀ w, MvPowerSeries.pderiv (R := K) w Ψ = Ψ * MvPowerSeries.C (y w)) : Ψ = mvExp (linF y) := by
   have step : ∀ (w : τ) (m : τ →₀ ℕ), MvPowerSeries.coeff (m + Finsupp.single w 1) Ψ * ((m w : K) + 1) =
       y w * MvPowerSeries.coeff m Ψ := by
     intro w m
@@ -53,7 +57,7 @@ theorem exp_unique (y : τ → K) (Ψ : MvPowerSeries τ K) (h0 : MvPowerSeries.
           omega
         · simp [Ne.symm hx]
       have hdeg : m'.degree = n := by
-        rw [map_add, Finsupp.degree_single] at hm
+        rw [map_add (f := _), Finsupp.degree_single] at hm
         omega
       have hne : ((m' w : K) + 1) ≠ 0 := by exact_mod_cast Nat.succ_ne_zero (m' w)
       have e1 := step w m'
@@ -85,7 +89,7 @@ theorem chi_mul {χ : PS C 1 dd} (hχ : Y.IsChar χ) :
   exact h
 
 theorem constantCoeff_pderiv_uncurry (χ : PS C 1 dd) (i : Fin dd) :
-    MvPowerSeries.constantCoeff (MvPowerSeries.pderiv C i (un1 χ)) = dlogC χ i := by
+    MvPowerSeries.constantCoeff (MvPowerSeries.pderiv (R := C) i (un1 χ)) = dlogC χ i := by
   rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, MvPowerSeries.coeff_pderiv]
   have h1 : MvPowerSeries.coeff (Finsupp.single i 1) (un1 χ) = dlogC χ i := by
     show MvPowerSeries.coeff ((Finsupp.single i 1).mapDomain fun x : Fin dd => ((0 : Fin 1), x)) χ = _
@@ -96,49 +100,49 @@ theorem constantCoeff_pderiv_uncurry (χ : PS C 1 dd) (i : Fin dd) :
 def Psi (χ : PS C 1 dd) : MvPowerSeries (Fin dd) C := MvPowerSeries.subst (e Y) (un1 χ)
 
 theorem chi_ode {χ : PS C 1 dd} (hχ : Y.IsChar χ) (i : Fin dd) :
-    MvPowerSeries.pderiv C i (Psi Y χ) = Psi Y χ * MvPowerSeries.C (dlogC χ i) := by
+    MvPowerSeries.pderiv (R := C) i (Psi Y χ) = Psi Y χ * MvPowerSeries.C (dlogC χ i) := by
   have hFK : ∀ k, Y.B.FK C k = Y.B.G.F k := by
     intro k
     show MvPowerSeries.map (algebraMap C C) (Y.B.G.F k) = _
     rw [Algebra.algebraMap_self, MvPowerSeries.map_id]
     rfl
 
-  have hL : MvPowerSeries.pderiv C i (Psi Y χ) =
-      ∑ k, MvPowerSeries.subst (exZero Y) (MvPowerSeries.pderiv C ((1 : Fin 2), i) (Y.B.G.F k)) *
-        MvPowerSeries.subst (e Y) (MvPowerSeries.pderiv C k (un1 χ)) := by
+  have hL : MvPowerSeries.pderiv (R := C) i (Psi Y χ) =
+      ∑ k, MvPowerSeries.subst (exZero Y) (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), i) (Y.B.G.F k)) *
+        MvPowerSeries.subst (e Y) (MvPowerSeries.pderiv (R := C) k (un1 χ)) := by
     unfold Psi
     rw [pderiv_subst (og (cc_e Y))]
     refine Finset.sum_congr rfl fun k _ => ?_
     have := expODE Y i k
     rw [hFK] at this
-    show MvPowerSeries.pderiv C i (un1 (Y.ex k)) * _ = _
+    show MvPowerSeries.pderiv (R := C) i (un1 (Y.ex k)) * _ = _
     rw [this]
 
-  have h := congrArg (fun G => MvPowerSeries.subst (exZero Y) (MvPowerSeries.pderiv C ((1 : Fin 2), i) G)) (chi_mul Y hχ)
+  have h := congrArg (fun G => MvPowerSeries.subst (exZero Y) (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), i) G)) (chi_mul Y hχ)
   beta_reduce at h
   rw [Derivation.leibniz, pderiv_subst (og (cc_F Y)), pderiv_subst (og fun _ => cc_X _), pderiv_subst (og fun _ => cc_X _),
     MvPowerSeries.subst_add (hs (cc_exZero Y)), subst_sum (cc_exZero Y), smul_eq_mul, smul_eq_mul,
     subst_mul (cc_exZero Y), subst_mul (cc_exZero Y), subst_sum (cc_exZero Y), subst_sum (cc_exZero Y)] at h
-  have h1 : ∀ k, MvPowerSeries.subst (exZero Y) (MvPowerSeries.pderiv C ((1 : Fin 2), i) (Y.B.G.F k) *
-      MvPowerSeries.subst (fun k => Y.B.G.F k) (MvPowerSeries.pderiv C k (un1 χ))) =
-      MvPowerSeries.subst (exZero Y) (MvPowerSeries.pderiv C ((1 : Fin 2), i) (Y.B.G.F k)) *
-        MvPowerSeries.subst (e Y) (MvPowerSeries.pderiv C k (un1 χ)) := by
+  have h1 : ∀ k, MvPowerSeries.subst (exZero Y) (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), i) (Y.B.G.F k) *
+      MvPowerSeries.subst (fun k => Y.B.G.F k) (MvPowerSeries.pderiv (R := C) k (un1 χ))) =
+      MvPowerSeries.subst (exZero Y) (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), i) (Y.B.G.F k)) *
+        MvPowerSeries.subst (e Y) (MvPowerSeries.pderiv (R := C) k (un1 χ)) := by
     intro k
     rw [subst_mul (cc_exZero Y), subst_subst (cc_F Y) (cc_exZero Y)]
     congr 2
     funext k'
     exact F_exZero Y k'
   have h2 : ∀ k, MvPowerSeries.subst (exZero Y)
-      (MvPowerSeries.pderiv C ((1 : Fin 2), i) (MvPowerSeries.X ((0 : Fin 2), k) : PS C 2 dd) *
+      (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), i) (MvPowerSeries.X ((0 : Fin 2), k) : PS C 2 dd) *
       MvPowerSeries.subst (fun k : Fin dd => (MvPowerSeries.X ((0 : Fin 2), k) : PS C 2 dd))
-        (MvPowerSeries.pderiv C k (un1 χ))) = 0 := by
+        (MvPowerSeries.pderiv (R := C) k (un1 χ))) = 0 := by
     intro k
     rw [MvPowerSeries.pderiv_X_of_ne (fun hh => by simpa using (Prod.ext_iff.1 hh).1), zero_mul,
       subst_zero' (cc_exZero Y)]
   have h3 : ∀ k, MvPowerSeries.subst (exZero Y)
-      (MvPowerSeries.pderiv C ((1 : Fin 2), i) (MvPowerSeries.X ((1 : Fin 2), k) : PS C 2 dd) *
+      (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), i) (MvPowerSeries.X ((1 : Fin 2), k) : PS C 2 dd) *
       MvPowerSeries.subst (fun k : Fin dd => (MvPowerSeries.X ((1 : Fin 2), k) : PS C 2 dd))
-        (MvPowerSeries.pderiv C k (un1 χ))) = if k = i then MvPowerSeries.C (dlogC χ i) else 0 := by
+        (MvPowerSeries.pderiv (R := C) k (un1 χ))) = if k = i then MvPowerSeries.C (dlogC χ i) else 0 := by
     intro k
     by_cases hk : k = i
     · subst hk

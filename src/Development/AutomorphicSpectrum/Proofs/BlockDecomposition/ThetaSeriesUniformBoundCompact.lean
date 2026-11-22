@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThPr
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PureAdelicFunctionFormulaStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BoundedDenominatorsCompactIdeleSetStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThPr
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PureAdelicFunctionFormulaStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BoundedDenominatorsCompactIdeleSetStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ theorem pure_rv_zero_le {F : Type} [Field F] [NumberField F] (S : Finset (Height
     rw [abs_mul, Finset.abs_prod]
     refine mul_le_mul ((hMG _).trans (le_abs_self MG)) ?_
       (Finset.prod_nonneg fun v _ => abs_nonneg _) (abs_nonneg _)
-    exact Finset.prod_le_prod (fun v _ => abs_nonneg _) fun v hv => hB v hv _
+    exact Finset.prod_le_prod₀ (fun v _ => abs_nonneg _) fun v hv => hB v hv _
   · simp
 
 theorem th_pure_rv_zero_bound : ∀ (F : Type) [Field F] [NumberField F], IsTotallyReal F → ∀ θ : ℝ →+* Ainf F, Continuous θ → ∀ r : ℝ → (AF F)ˣ, IsRay θ r →

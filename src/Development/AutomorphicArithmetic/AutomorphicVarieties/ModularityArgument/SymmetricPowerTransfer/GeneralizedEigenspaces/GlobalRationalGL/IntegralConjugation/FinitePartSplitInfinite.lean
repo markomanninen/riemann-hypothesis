@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.EStar
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.EStar
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.SplitWeil Formalism.BasicNotions Matrix
 open UpperTheory.V UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Dict UpperTheory.V.Z.Sym.Dict.Br UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob
@@ -8,7 +12,7 @@ open UpperTheory.V.W (Plc Lp)
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 private theorem finite_part_split_infinite {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ} (f x : UA L n)
-    (hf : f ∈ finU L n) (hw : ∀ w : Plc L, mL w f = mL w x) :
+    (hf : f ∈ finU (E := L) (n := n)) (hw : ∀ w : Plc L, mL w f = mL w x) :
     f⁻¹ * x ∈ infU L n ∧ x = f * (f⁻¹ * x) ∧ ∀ τ, cEmb τ (f⁻¹ * x) = cEmb τ x := by
   obtain ⟨-, -, -, -, -, h6, -, -⟩ := uaFacts L n
   refine ⟨((h6 _).2).2 fun w => ?_, by group, fun τ => ?_⟩

@@ -1,8 +1,13 @@
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsFundOne
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
-import Formalism.FlagUnipotentLattices.MemOfOrthogonalAnisotropic
-import Formalism.FormalDegreeBessel.StatementG
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+module
+
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsFundOne
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
+public import Formalism.FlagUnipotentLattices.MemOfOrthogonalAnisotropic
+public import Formalism.FormalDegreeBessel.StatementG
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory

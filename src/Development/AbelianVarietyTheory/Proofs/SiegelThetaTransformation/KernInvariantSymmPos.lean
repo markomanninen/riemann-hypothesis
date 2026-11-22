@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DblZMemHn
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.PolyDerivEqSumList
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DblZMemHn
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.PolyDerivEqSumList
+
+@[expose] public section
 
 open Matrix Complex NumberField MeasureTheory GlobalTheory GlobalTheory.SW GlobalTheory.ThFr ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD
 open scoped ComplexConjugate ComplexOrder Real Classical
@@ -33,13 +37,11 @@ theorem cj_inv (M : Mat) : cj M⁻¹ = (cj M)⁻¹ := by
 
 theorem det_cj (M : Mat) : (cj M).det = conj M.det := ((starRingEnd ℂ).map_det M).symm
 
-theorem cj_smul (c : ℂ) (M : Mat) : cj (c • M) = conj c • cj M := by ext; simp [cj]
-
 def mix (p : ℕ) (M N : Mat) : Mat := Matrix.of fun a c => if (a : ℕ) < p then M a c else N a c
 
 theorem mix_mul (p : ℕ) (M N U : Mat) : mix p M N * U = mix p (M * U) (N * U) := by
   ext a c
-  simp only [mix, mul_apply, of_apply]
+  simp only [mix, Matrix.mul_apply, of_apply]
   split_ifs <;> rfl
 
 def ptZ (κ : ℂ) (G S A : Mat) : Mat := (κ / 4) • ((A⁻¹ * S * A)ᵀ * G)
@@ -162,13 +164,13 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r g q0 n : ℕ} (X 
 theorem aLin_eq (x₁ x₂ : Frame X.Ψ r) (τ : X.Ψ) :
     aLin X x₁ x₂ τ = mix X.p0 ((cj (mat x₂ τ))ᵀ * (X.Gm.map τ.1)ᵀ) (mat x₁ τ)⁻¹ := by
   ext a c
-  simp only [aLin, mix, of_apply, mul_apply, transpose_apply, map_apply, cj, mat, mul_comm]
+  simp only [aLin, mix, of_apply, Matrix.mul_apply, transpose_apply, map_apply, cj, mat, mul_comm]
 
 theorem aAnti_eq (x₁ x₂ : Frame X.Ψ r) (τ : X.Ψ) :
     aAnti X x₁ x₂ τ = mix X.p0 ((mat x₁ τ)ᵀ * X.Gm.map τ.1) (cj (mat x₂ τ))⁻¹ := by
   rw [← cj_inv]
   ext a c
-  simp only [aAnti, mix, of_apply, mul_apply, transpose_apply, map_apply, cj, mat]
+  simp only [aAnti, mix, of_apply, Matrix.mul_apply, transpose_apply, map_apply, cj, mat]
 
 theorem map_Gm_conjTranspose (τ : X.Ψ) : (X.Gm.map τ.1)ᴴ = X.Gm.map τ.1 := by
   ext a b
@@ -181,7 +183,7 @@ theorem det_map_Gm (τ : X.Ψ) : (X.Gm.map τ.1).det ≠ 0 := by
 theorem gram_eq_mul (τ : X.Ψ) (M : Matrix (Fin r) (Fin r) ℂ) :
     gram τ.1 X.Gm M = Mᵀ * X.Gm.map τ.1 * cj M := by
   ext a b
-  simp only [FD.gram, hermC, FD.col, of_apply, mul_apply, transpose_apply, map_apply, cj,
+  simp only [FD.gram, hermC, FD.col, of_apply, Matrix.mul_apply, transpose_apply, map_apply, cj,
     Finset.sum_mul]
   rw [Finset.sum_comm]
 
@@ -264,10 +266,10 @@ theorem sgnM_mul_self : sgnM X * sgnM X = 1 := by
 
 theorem cj_sgnM : cj (-sgnM X) = -sgnM X := by
   ext a b
-  by_cases h : a = b <;> simp [cj, sgnM, diagonal_apply, h]
+  by_cases h : a = b <;> simp [cj, sgnM, h]
+
 
 variable {X} in
-
 theorem aLin_aAnti_comm {x₁ x₂ : Frame X.Ψ r} (h₁ : x₁ ∈ X.dom) (h₂ : x₂ ∈ X.dom) (τ : X.Ψ) :
     aLin X x₁ x₂ τ * (X.Gm.map τ.1)ᵀ⁻¹ * (aAnti X x₁ x₂ τ)ᵀ * -sgnM X =
       -sgnM X * (aLin X x₁ x₂ τ * (X.Gm.map τ.1)ᵀ⁻¹ * (aAnti X x₁ x₂ τ)ᵀ) := by
@@ -280,7 +282,7 @@ theorem aLin_aAnti_comm {x₁ x₂ : Frame X.Ψ r} (h₁ : x₁ ∈ X.dom) (h₂
       (N * (aAnti X x₁ x₂ τ)ᵀ) a b = (aAnti X x₁ x₂ τ * Nᵀ) b a := by
     rw [← transpose_apply (aAnti X x₁ x₂ τ * Nᵀ), transpose_mul, transpose_transpose]
   ext a b
-  rw [Matrix.mul_neg, Matrix.neg_mul, neg_apply, neg_apply, sgnM, mul_diagonal, diagonal_mul,
+  rw [Matrix.mul_neg, Matrix.neg_mul, Matrix.neg_apply, Matrix.neg_apply, sgnM, mul_diagonal, diagonal_mul,
     aLin_eq, mix_mul, mix_mul, mul_nonsing_inv_cancel_right _ _ uG', mix, of_apply, e, e,
     aAnti_eq, mix_mul, mix_mul, transpose_transpose, nonsing_inv_mul _ u₂, transpose_mul,
     transpose_nonsing_inv, transpose_nonsing_inv, transpose_transpose, Matrix.mul_assoc _ (X.Gm.map τ.1) (_ * _),
@@ -295,8 +297,8 @@ theorem aLin_aAnti_comm {x₁ x₂ : Frame X.Ψ r} (h₁ : x₁ ∈ X.dom) (h₂
 theorem conj_kappa (τ : X.Ψ) : conj (τ.1 X.κ0) = -τ.1 X.κ0 :=
   Complex.ext (by simp [DblPoint.re_kappa]) (by simp)
 
-variable {X} in
 
+variable {X} in
 theorem kZero_swap {x₁ x₂ : Frame X.Ψ r} (h₁ : x₁ ∈ X.dom) (h₂ : x₂ ∈ X.dom)
     (z w : Fin n → Fin g → ℂ) :
     kZero X idx x₂ x₁ z w = conj (kZero X idx x₁ x₂ (star w) (star z)) := by
@@ -315,18 +317,20 @@ theorem kZero_swap {x₁ x₂ : Frame X.Ψ r} (h₁ : x₁ ∈ X.dom) (h₂ : x�
   have hv (a b : Fin g → ℂ) : mixV X idx τ (star a) (star b) = star (mixV X idx τ a b) := by
     funext c
     simp only [mixV, Pi.star_apply, apply_ite star]
-  rw [hM, hA, hB, det_cj, det_cj, map_mul, map_inv₀, map_pow, map_mul, ← Complex.exp_conj, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hM, hA, hB, det_cj, det_cj, map_mul, map_inv₀, map_pow, map_mul, ← Complex.exp_conj, map_mul,
     conj_ofReal, map_sum, mul_comm (conj _) (conj _)]
   congr 3
   refine Finset.sum_congr rfl fun k _ => ?_
   simp only [Pi.star_apply, hv]
-  simp only [dotProduct, mulVec, conjTranspose_apply, Pi.star_apply, Complex.star_def, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dotProduct, mulVec, conjTranspose_apply, Pi.star_apply, Complex.star_def, map_sum,
     map_mul, Complex.conj_conj, Finset.mul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by ring
 
-variable {X} in
 
+variable {X} in
 theorem kZero_ortho {x : Frame X.Ψ r} (hx : ∀ τ : X.Ψ, gram τ.1 X.Gm (mat x τ) = sgnM X)
     (z w : Fin n → Fin g → ℂ) :
     kZero X idx x x z w = ((∏ τ : X.Ψ, normSq (mat x τ).det ^ (n / 2) : ℝ) : ℂ) *
@@ -381,8 +385,8 @@ theorem letterCoord_letterDir (l l' : Harm.Var X.Ψ q0 X.p0 (Fin n)) :
   obtain ⟨τ', a', k'⟩ := l'
   by_cases hk : k = k' <;> simp [letterCoord, letterDir, Pi.single_apply, hk, -rowOf_apply]
 
-variable {X} in
 
+variable {X} in
 theorem kern_pos {m : ℕ} (P : Fin m → Harm.Poly ℂ X.Ψ q0 X.p0 (Fin n)) (hP : ∃ j, P j ≠ 0)
     {x : Frame X.Ψ r} (hx : ∀ τ : X.Ψ, gram τ.1 X.Gm (mat x τ) = sgnM X) :
     0 < (kern X hr idx P x x).re := by
@@ -412,12 +416,13 @@ theorem kern_pos {m : ℕ} (P : Fin m → Harm.Poly ℂ X.Ψ q0 X.p0 (Fin n)) (h
   · simp [hi]
   · exact (mul_pos hC (apolar_norm_pos hi tpos)).le
 
-variable {X} in
 
+variable {X} in
 theorem kern_swap {m : ℕ} (P : Fin m → Harm.Poly ℂ X.Ψ q0 X.p0 (Fin n)) {x₁ x₂ : Frame X.Ψ r}
     (h₁ : x₁ ∈ X.dom) (h₂ : x₂ ∈ X.dom) :
     kern X hr idx P x₂ x₁ = conj (kern X hr idx P x₁ x₂) := by
-  rw [kern, kern, biDeriv, biDeriv, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [kern, kern, biDeriv, biDeriv, map_sum]
   refine Finset.sum_congr rfl fun j _ => polyDeriv_barP_symm _ _ (fun l => ?_)
     (analyticAt_kZero X idx x₁ x₂) (analyticAt_kZero X idx x₂ x₁) (kZero_swap idx h₁ h₂)
   simp [letterDir]

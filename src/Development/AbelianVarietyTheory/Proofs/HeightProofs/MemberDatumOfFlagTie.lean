@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedBessel
-import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.BesselDatum
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.BesselPeriodPositionOneEqZero
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedBessel
+public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.BesselDatum
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleySignature
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +41,8 @@ theorem cA_inc (a : D.host.E) : cA D (incA D a) = incA D (star a) := by
 theorem hT_co (B : HSp D) (x y : B.V) :
     B.hT x y = ∑ i, ∑ j, star (co B x i) * B.gram i j * co B y j := by
   conv_lhs => rw [← B.frame.sum_repr x, ← B.frame.sum_repr y]
-  simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   simp only [co, HSpace.gram, RingHom.id_apply, starRingEnd_apply]
@@ -63,7 +69,8 @@ theorem hform_co (B : HSp D) (x y : B.V) :
 theorem hA_vec (B : HSp D) (x y : B.V) : hA B (vecA B x) (vecA B y) = incA D (B.hD x y) := by
   unfold HSpace.hD
   rw [hT_co]
-  simp only [hA, vecA, map_sum, map_mul, cA_inc, co]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hA, vecA, map_sum, map_mul, cA_inc, co]
 
 theorem hA_add (B : HSp D) (x x' y) : hA B (x + x') y = hA B x y + hA B x' y := by
   simp only [hA, Pi.add_apply, mul_add, Finset.sum_add_distrib]
@@ -84,12 +91,6 @@ theorem hA_sum (B : HSp D) {ρ : ℕ} (x : Fin ρ → Fin B.rank → AE D) (y) :
     | empty => simp [hA]
     | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, hA_add, ih]
   exact this _
-
-theorem vecA_smul (B : HSp D) (t : D.host.E) (v : B.V) : vecA B (t • v) = incA D t • vecA B v := by
-  funext k; simp [vecA]
-
-theorem actV_smul (B : HSp D) (n : GA D B) (t : D.host.E) (v : B.V) : actV B n (t • v) = incA D t • actV B n v := by
-  unfold actV; rw [vecA_smul, Matrix.mulVec_smul]
 
 theorem eMat_mulVec (B : HSp D) {ρ : ℕ} (e : Fin ρ → B.V) (a : Fin ρ → AE D) :
     ((eMat B e).map (incA D)).mulVec a = ∑ l, a l • vecA B (e l) := by
@@ -125,35 +126,6 @@ theorem NFlag_eMat (B : HSp D) {ρ : ℕ} (e : Fin ρ → B.V) : NFlag B (eMat B
     obtain ⟨a, ha⟩ := h v (fun i => by have := congrFun hx i; rwa [cT_mulVec] at this)
     exact ⟨a, (subOne_iff B e g v a).2 ha⟩
 
-theorem NS_smul_le (B : HSp D) {ρ : ℕ} (e : Fin ρ → B.V) (t : Fin ρ → D.host.E) (ht : ∀ i, t i ≠ 0) :
-    NS B e ⊆ NS B (fun i => t i • e i) := by
-  have key : ∀ (s : D.host.E) (c : Fin ρ → AE D), incA D s • ∑ l, c l • vecA B (e l) =
-      ∑ l, (incA D (s * (t l)⁻¹) * c l) • vecA B (t l • e l) := by
-    intro s c
-    rw [Finset.smul_sum]
-    refine Finset.sum_congr rfl fun l _ => ?_
-    rw [vecA_smul, smul_smul, smul_smul]
-    congr 1
-    rw [mul_right_comm, ← map_mul, mul_assoc, inv_mul_cancel₀ (ht l), mul_one]
-  rintro n ⟨h1, h2⟩
-  refine ⟨fun i => ?_, fun x hx => ?_⟩
-  · obtain ⟨c, hc, h⟩ := h1 i
-    refine ⟨fun l => incA D (t i * (t l)⁻¹) * c l, fun l hl => by simp [hc l hl], ?_⟩
-    rw [actV_smul, h, smul_add, key, vecA_smul]
-  · obtain ⟨c, h⟩ := h2 x (fun i => by
-      have := hx i
-      unfold HSpace.hD at this ⊢
-      rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_zero] at this
-      exact this.resolve_left (by simpa using ht i))
-    refine ⟨fun l => incA D (1 * (t l)⁻¹) * c l, ?_⟩
-    rw [h, ← key, map_one, one_smul]
-
-theorem NS_smul (B : HSp D) {ρ : ℕ} (e : Fin ρ → B.V) (t : Fin ρ → D.host.E) (ht : ∀ i, t i ≠ 0) :
-    NS B (fun i => t i • e i) = NS B e := by
-  refine subset_antisymm ?_ (NS_smul_le B e t ht)
-  have := NS_smul_le B (fun i => t i • e i) (fun i => (t i)⁻¹) (fun i => inv_ne_zero (ht i))
-  simpa [smul_smul, ht] using this
-
 def spanA (B : HSp D) {ρ : ℕ} (e : Fin ρ → B.V) : Submodule (AE D) (Fin B.rank → AE D) :=
   Submodule.span (AE D) (Set.range fun l => vecA B (e l))
 
@@ -162,8 +134,8 @@ theorem mt_mul (B : HSp D) (g h : GA D B) : mt B (g * h) = mt B g * mt B h := by
 
 theorem mt_one (B : HSp D) : mt B 1 = 1 := by simp [Formalism.L2.Theta.mt]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem closure_prop (B : HSp D) {ρ : ℕ} (e : Fin ρ → B.V) (n : GA D B) (hn : n ∈ Subgroup.closure (NS B e)) :
     (∀ s ∈ spanA B e, (mt B n).mulVec s ∈ spanA B e) ∧
       ∀ x : B.V, (∀ i, B.hD x (e i) = 0) → actV B n x - vecA B x ∈ spanA B e := by
@@ -197,7 +169,8 @@ theorem closure_prop (B : HSp D) {ρ : ℕ} (e : Fin ρ → B.V) (n : GA D B) (h
         rw [h', Matrix.mulVec_add, ← eq_sub_iff_add_eq] at h2
         rw [h2]
         refine sub_mem (hgen l) ?_
-        rw [← Matrix.mulVecLin_apply, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← Matrix.mulVecLin_apply, map_sum]
         refine Submodule.sum_mem _ fun k _ => ?_
         rcases lt_or_ge k l with hk | hk
         · rw [map_smul]; exact Submodule.smul_mem _ _ (ih k hk)
@@ -283,12 +256,10 @@ theorem besChar_eq_valOf (ψ : AddChar (AF D.host.F) ℂ) {A B : HSp D} {ι : A.
     · rw [he]; exact ha
     · rw [he, hz]; exact ha'
   unfold besChar
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact isBesVal_unique ψ b e f z he hz ef zf n _ hex.choose_spec
 
 variable {A B : HSp D} {ι : A.V →ₗ[D.host.E] B.V}
-
-theorem N_eq (d : BesselDatum A B ι) : d.N = Subgroup.closure (NS B d.e) := rfl
 
 theorem psiN_eq_valOf (d : BesselDatum A B ι) (ψ : AddChar (AF D.host.F) ℂ) (n : GA D B) :
     d.psiN ψ n = valOf ψ B d.e d.f d.z (fun _ => d.θ) n := by
@@ -314,7 +285,8 @@ def toBes (d : BesselDatum A B ι) : BesDat A B ι where
         simpa [eMat, Finset.sum_apply] using this
       have h1 : B.hT (d.f i) (∑ l, g l • d.e l) = 0 := by rw [h0, map_zero]
       have ef : ∀ l, B.hT (d.f i) (d.e l) = if l = i then 1 else 0 := fun l => d.ef l i
-      simpa [map_sum, ef] using h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum, ef] using h1
     · funext i j; rw [cT_mul]; exact d.ee j i
   e_perp := by funext i j; rw [frameMat_eq, cT_mul]; exact d.eA j _
   z := co B d.z
@@ -341,32 +313,6 @@ def ClauseFlag (ψ : AddChar (AF D.host.F) ℂ) (b : BesDat A B ι) (μ : Measur
     a = C * ∫ h in 𝓕, ∫ n in 𝓕N, star (φ h) * F ((n : GA D B) * s h * (b.y : GA D B)) *
       star (besChar ψ b (n : GA D B)) ∂μN ∂μ
 
-def ClauseDual (ψ : AddChar (AF D.host.F) ℂ) (d : BesselDatum A B ι) (μ : Measure (GA D A)) (𝓕 : Set (GA D A))
-    (s : GA D A → GA D B) (φ : GA D A → ℂ) (F : GA D B → ℂ) (C a : ℂ) : Prop :=
-  ∀ ν 𝓝, d.IsUnitPair ν 𝓝 → a = C * d.period ψ μ 𝓕 ν 𝓝 s (fun g => star (φ g)) F
-
-def ClauseOn (H : Subgroup (GA D B)) (χ : GA D B → ℂ) (μ : Measure (GA D A)) (𝓕 : Set (GA D A))
-    (s : GA D A → GA D B) (φ : GA D A → ℂ) (F : GA D B → ℂ) (C a : ℂ) : Prop :=
-  ∀ (ν : Measure H) (𝓝 : Set H), ν.IsHaarMeasure → IsFundamentalDomain ((GQ B).subgroupOf H) 𝓝 ν → ν 𝓝 = 1 →
-    a = C * ∫ h in 𝓕, star (φ h) * ∫ n in 𝓝, F ((n : GA D B) * s h) * star (χ n) ∂ν ∂μ
-
-theorem clauseOn_congr {H H' : Subgroup (GA D B)} {χ χ' : GA D B → ℂ} (h : H = H') (hχ : ∀ n ∈ H', χ n = χ' n)
-    (μ : Measure (GA D A)) (𝓕 s φ F C a) : ClauseOn H χ μ 𝓕 s φ F C a ↔ ClauseOn H' χ' μ 𝓕 s φ F C a := by
-  subst h
-  have : ∀ n : H, χ n = χ' n := fun n => hχ n n.2
-  simp only [ClauseOn, this]
-
-theorem clause_iff {b : BesDat A B ι} {d : BesselDatum A B ι} (h : Same b d) (hy : (b.y : GA D B) = 1)
-    (ψ μ 𝓕 s φ F C a) : ClauseFlag ψ b μ 𝓕 s φ F C a ↔ ClauseDual ψ d μ 𝓕 s φ F C a := by
-  have h1 : ClauseFlag ψ b μ 𝓕 s φ F C a ↔ ClauseOn (NFlag B b.e) (besChar ψ b) μ 𝓕 s φ F C a := by
-    unfold ClauseFlag ClauseOn
-    simp only [hy, mul_one, mul_assoc, integral_const_mul]
-    rfl
-  have h2 : ClauseDual ψ d μ 𝓕 s φ F C a ↔ ClauseOn d.N (d.psiN ψ) μ 𝓕 s φ F C a :=
-    ⟨fun H ν 𝓝 h1 h2 h3 => H ν 𝓝 ⟨h1, h2, h3⟩, fun H ν 𝓝 h => H ν 𝓝 h.1 h.2.1 h.2.2⟩
-  rw [h1, h2]
-  exact clauseOn_congr h.2.2.1 (h.2.2.2 ψ) ..
-
 theorem gram_isUnit (B : HSp D) : IsUnit B.gram := by
   rw [← Matrix.mulVec_injective_iff_isUnit]
   refine (injective_iff_map_eq_zero B.gram.mulVecLin).2 fun x hx => ?_
@@ -386,160 +332,18 @@ theorem exists_rep (B : HSp D) (l : B.V →ₗ[D.host.E] D.host.E) : ∃ v, ∀ 
   refine ⟨v, fun x => ?_⟩
   rw [hT_co, hv, Finset.sum_comm]
   conv_rhs => rw [← B.frame.sum_repr x]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   have := congrFun hw j
   simp only [Matrix.vecMul, dotProduct] at this
   rw [← Finset.sum_mul, map_smul, smul_eq_mul, ← this, mul_comm]
   simp [co]
 
-theorem exists_dual (hι : HSpace.IsIsomEmb A B ι) {ρ : ℕ} (e : Fin ρ → B.V) (z : B.V)
-    (hli : LinearIndependent D.host.E e) (ee : ∀ i j, B.hT (e i) (e j) = 0) (eA : ∀ i x, B.hT (ι x) (e i) = 0)
-    (ez : ∀ i, B.hT z (e i) = 0) (zA : ∀ x, B.hT z (ι x) = 0) (zz : B.hT z z ≠ 0) :
-    ∃ f : Fin ρ → B.V, (∀ i j, B.hT (f i) (f j) = 0) ∧ (∀ i j, B.hT (f j) (e i) = if i = j then 1 else 0) ∧
-      (∀ i x, B.hT (f i) (ι x) = 0) ∧ ∀ i, B.hT (f i) z = 0 := by
-  have sw : ∀ x y : B.V, B.hT y x = star (B.hT x y) := fun x y => hT_swap rfl
-  have h1 : ∀ j, ∃ g : B.V, (∀ i, B.hT g (e i) = if i = j then 1 else 0) ∧ (∀ x, B.hT g (ι x) = 0) ∧ B.hT g z = 0 := by
-    intro j
-    obtain ⟨l, hl⟩ := LinearMap.exists_extend ((Finsupp.lapply j).comp hli.repr)
-    have hl' : ∀ i, l (e i) = if i = j then 1 else 0 := fun i => by
-      have := LinearMap.congr_fun hl ⟨e i, Submodule.subset_span ⟨i, rfl⟩⟩
-      simp only [LinearMap.comp_apply, Submodule.subtype_apply, Finsupp.lapply_apply] at this
-      rw [this, hli.repr_eq_single i _ rfl, Finsupp.single_apply]
-    obtain ⟨v, hv⟩ := exists_rep B l
-    obtain ⟨w, hw⟩ := exists_rep A (l.comp ι)
-    have zA' : ∀ x, B.hT (ι x) z = 0 := fun x => by rw [sw, zA, star_zero]
-    refine ⟨v - ι w - star (l z / B.hT z z) • z, fun i => ?_, fun x => ?_, ?_⟩
-    · simp [hv, hl', eA, ez]
-    · simp [hv, hι w x, hw, zA]
-    · simp [hv, zA', zz, starRingEnd_apply]
-  choose g hge hgA hgz using h1
-  have heg : ∀ i j, B.hT (e i) (g j) = if i = j then 1 else 0 := fun i j => by
-    rw [sw, hge]; split_ifs <;> simp
-  have eA' : ∀ i x, B.hT (e i) (ι x) = 0 := fun i x => by rw [sw, eA, star_zero]
-  have ez' : ∀ i, B.hT (e i) z = 0 := fun i => by rw [sw, ez, star_zero]
-  refine ⟨fun j => g j - ∑ l, ((1 / 2 : D.host.E) * B.hT (g l) (g j)) • e l, fun i j => ?_, fun i j => ?_,
-    fun i x => ?_, fun i => ?_⟩
-  · have h2 : star (2 : D.host.E) = 2 := by simp
-    simp [map_sum, LinearMap.sum_apply, hge, heg, ee, starRingEnd_apply, ← sw, h2]
-    ring
-  · simp [map_sum, LinearMap.sum_apply, hge, ee]
-  · simp [map_sum, LinearMap.sum_apply, hgA, eA']
-  · simp [map_sum, LinearMap.sum_apply, hgz, ez']
-
-theorem exists_same (hι : HSpace.IsIsomEmb A B ι) (b : BesDat A B ι) (θ : D.host.E) (hθ : θ ≠ 0) :
-    ∃ d : BesselDatum A B ι, d.θ = θ ∧ Same b d := by
-  have sw : ∀ x y : B.V, B.hT y x = star (B.hT x y) := fun x y => hT_swap rfl
-  obtain ⟨e, he⟩ := eMat_surj B b.e
-  obtain ⟨z, hz⟩ := co_surj B b.z
-  have ee : ∀ i j, B.hT (e i) (e j) = 0 := fun i j => by
-    have := congrFun (congrFun b.e_iso.2 i) j
-    rwa [← he, cT_mul] at this
-  have ext : ∀ v : B.V, (∀ k, B.hT (ι (A.frame k)) v = 0) → ∀ x, B.hT (ι x) v = 0 := fun v hv x => by
-    rw [← A.frame.sum_repr x]
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, hv, smul_zero,
-      Finset.sum_const_zero]
-  have eA : ∀ i x, B.hT (ι x) (e i) = 0 := fun i => ext _ fun k => by
-    have := congrFun (congrFun b.e_perp k) i
-    rwa [← he, frameMat_eq, cT_mul] at this
-  have zA : ∀ x, B.hT (ι x) z = 0 := ext _ fun k => by
-    have := congrFun b.z_perpA k
-    rwa [← hz, frameMat_eq, cT_mulVec] at this
-  have ez : ∀ i, B.hT (e i) z = 0 := fun i => by
-    have := congrFun b.z_perpE i
-    rwa [← hz, ← he, cT_mulVec] at this
-  have zz : B.hT z z ≠ 0 := by have := b.z_ne; rwa [← hz, hform_co] at this
-  have hli : LinearIndependent D.host.E e := by
-    have h := b.e_iso.1
-    rw [← he] at h
-    exact LinearIndependent.of_comp B.frame.equivFun.toLinearMap h
-  obtain ⟨f, ff, fe, fA, fz⟩ := exists_dual hι e z hli ee eA (fun i => by rw [sw, ez, star_zero])
-    (fun x => by rw [sw, zA, star_zero]) zz
-  let t : ℕ → D.host.E := fun k => ∏ l : Fin b.ρ, if k ≤ l.1 then θ / b.c l else 1
-  have ht : ∀ k, t k ≠ 0 := fun k => Finset.prod_ne_zero_iff.2 fun l _ => by
-    split_ifs
-    · exact div_ne_zero hθ (b.c_ne l)
-    · exact one_ne_zero
-  have htop : t b.ρ = 1 := Finset.prod_eq_one fun l _ => if_neg (by have := l.2; omega)
-  have hstep : ∀ i : Fin b.ρ, t i = θ / b.c i * t (i + 1) := fun i => by
-    simp only [t]
-    rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ i), ← Finset.mul_prod_erase _ _ (Finset.mem_univ i),
-      if_pos le_rfl, if_neg (by omega), one_mul]
-    congr 1
-    refine Finset.prod_congr rfl fun l hl => ?_
-    have : l.1 ≠ i.1 := fun h => (Finset.mem_erase.1 hl).1 (Fin.ext h)
-    exact if_congr (by omega) rfl rfl
-  let d : BesselDatum A B ι :=
-    { isom := hι
-      ρ := b.ρ
-      rank_eq := by have := b.codim; omega
-      e := fun i => t i • e i
-      f := fun i => (star (t i))⁻¹ • f i
-      z := z
-      ee := fun i j => by simp [HSpace.hD, ee]
-      ff := fun i j => by simp [HSpace.hD, ff]
-      ef := fun i j => by
-        simp only [HSpace.hD, map_smul, LinearMap.map_smulₛₗ, LinearMap.smul_apply, fe, smul_eq_mul, RingHom.id_apply,
-          starRingEnd_apply, star_inv₀, star_star]
-        split_ifs with h
-        · subst h; simp [ht]
-        · simp
-      eA := fun i x => by simp [HSpace.hD, eA]
-      fA := fun i x => by
-        have : B.hT (ι x) (f i) = 0 := by rw [sw, fA, star_zero]
-        simp [HSpace.hD, this]
-      zA := zA
-      ez := fun i => by
-        have : B.hT z (e i) = 0 := by rw [sw, ez, star_zero]
-        simp [HSpace.hD, this]
-      fz := fun i => by
-        have : B.hT z (f i) = 0 := by rw [sw, fz, star_zero]
-        simp [HSpace.hD, this]
-      zz := zz
-      θ := θ
-      θ_ne := hθ }
-  have hN : NFlag B b.e = d.N := by
-    rw [N_eq, ← he, NFlag_eMat]
-    exact congrArg Subgroup.closure (NS_smul B e (fun i => t i) (fun i => ht i)).symm
-  refine ⟨d, rfl, rfl, hz.symm, hN, fun ψ n hn => ?_⟩
-  rw [besChar_eq_valOf ψ b e f z he.symm hz.symm fe fz n (hN ▸ hn), psiN_eq_valOf]
-  unfold valOf
-  congr 2
-  refine Finset.sum_congr rfl fun i _ => ?_
-  have haux : ∀ k : Fin (b.ρ + 1), Fin.snoc (α := fun _ => B.V) (fun i : Fin b.ρ => t i • e i) z k =
-      t k • Fin.snoc (α := fun _ => B.V) e z k := fun k => by
-    induction k using Fin.lastCases with
-    | last => simp [htop]
-    | cast k => simp
-  show _ = incA D θ * hA B (actV B n (Fin.snoc (α := fun _ => B.V) (fun i : Fin b.ρ => t i • e i) z i.succ))
-    (vecA B ((star (t i))⁻¹ • f i))
-  rw [haux, actV_smul, vecA_smul, hA_smul, hA_smul_right, cA_inc, ← mul_assoc, ← mul_assoc, ← map_mul, ← map_mul]
-  congr 2
-  have h1 := ht (i + 1)
-  have h2 := b.c_ne i
-  rw [star_inv₀, star_star, hstep i, Fin.val_succ]
-  field_simp
-
 section Ties
-
-open GlobalTheory.BesselGap
 
 variable {X : ThetaX D} {T : ThetaTied D X} {Wl : WeilTied D X T}
   {piT : D.what₂.Word → 𝓞 D.host.E} {piG : Fin 2 → 𝓞 D.host.E}
-
-def negDatum (d : BesselDatum A B ι) : BesselDatum A B (-ι) :=
-  { d with
-    isom := fun x y => by simpa using d.isom x y
-    eA := fun i x => by simpa [HSpace.hD] using d.eA i x
-    fA := fun i x => by simpa [HSpace.hD] using d.fA i x
-    zA := fun x => by simpa [HSpace.hD] using d.zA x }
-
-def oneSym (X : ThetaX D) (u₁ : D.what₂.Word) : ThetaX D := { X with posSym := fun _ => X.posSym u₁ }
-
-def oneSymT (T : ThetaTied D X) (u₁) : ThetaTied D (oneSym X u₁) := { T with }
-
-def oneSymW (Wl : WeilTied D X T) (u₁) : WeilTied D (oneSym X u₁) (oneSymT T u₁) :=
-  { Wl with om_tw := ⟨Wl.om_tw.1, Wl.om_tw.2, Wl.om_tw.3, Wl.om_tw.4⟩ }
 
 end Ties
 
@@ -560,13 +364,6 @@ theorem isAniso_iff (A : HSp D) : IsAniso A ↔ ∀ v : A.V, A.hD v v = 0 → v 
     refine hli.ne_zero ⟨0, hr⟩ ?_
     funext k
     simp [eMat, h _ h1]
-
-theorem compare {A B : HSp D} {ι : A.V →ₗ[D.host.E] B.V} (hι : HSpace.IsIsomEmb A B ι) :
-    (∀ d : BesselDatum A B ι, ∃ b : BesDat A B ι, (b.y : GA D B) = 1 ∧ (∀ i, b.c i = d.θ) ∧ Same b d) ∧
-    (∀ (b : BesDat A B ι) (θ : D.host.E), θ ≠ 0 → ∃ d : BesselDatum A B ι, d.θ = θ ∧ Same b d) ∧
-    ∀ (b : BesDat A B ι) (d : BesselDatum A B ι), Same b d → (b.y : GA D B) = 1 → ∀ ψ μ 𝓕 s φ F C a,
-      ClauseFlag ψ b μ 𝓕 s φ F C a ↔ ClauseDual ψ d μ 𝓕 s φ F C a :=
-  ⟨fun d => ⟨toBes d, rfl, fun _ => rfl, same_toBes d⟩, exists_same hι, fun _ _ h hy => clause_iff h hy⟩
 
 end GlobalTheory.BesselCompare
 

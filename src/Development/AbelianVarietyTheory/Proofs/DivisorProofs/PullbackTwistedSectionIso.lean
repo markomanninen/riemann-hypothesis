@@ -1,7 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GlobalHeightBoundIffAtGoodPrimes
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemNonzeroLocusIffPowFn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SemiposAtOfPositive
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdmissibleRepresentationFactorisation
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToIThCapDegOfAddNsmulDivP
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsFrobGBaseChange
+public import Formalism.SharpRestriction.Divisibility.LatticeTransfer
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemNonzeroLocusIffPowFn
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Out
 open GlobalTheory GlobalTheory.QCoh GlobalTheory.CechPic GlobalTheory.Vert GlobalTheory.Twist
@@ -34,7 +43,22 @@ theorem pullback_mulSecOfEq (hL : L.IsLB) (G : X.Modules) {n m k : ℤ} (σ : LB
   apply ((Scheme.Modules.pullbackPushforwardAdjunction f).homEquiv _ _).injective
   rw [Adjunction.homEquiv_naturality_left, Adjunction.homEquiv_naturality_right,
     homEquiv_pullbackZIso_hom, homEquiv_pullbackZIso_hom, Category.assoc]
-  have e := projZIso_mulSecOfEq f hL ((Scheme.Modules.pullback f).obj G) σ h
+  have e : (Scheme.Modules.pushforward f).map
+      (mulSecOfEq ((Scheme.Modules.pullback f).obj G) (zpull f σ) h) ≫
+        (projZIso f hL ((Scheme.Modules.pullback f).obj G) k).hom =
+      (projZIso f hL ((Scheme.Modules.pullback f).obj G) n).hom ≫
+        mulSecOfEq ((Scheme.Modules.pushforward f).obj ((Scheme.Modules.pullback f).obj G)) σ h := by
+    refine zhom_ext fun V (s : Γ(twistZ ((Scheme.Modules.pullback f).obj G) (L.pull f) n, f ⁻¹ᵁ V)) i => ?_
+    refine (zcoord_projZIso_hom_app f hL _ ((mulSecOfEq _ (zpull f σ) h).app _ s) i).trans ?_
+    refine Eq.trans ?_ (zcoord_mulSecOfEq_app σ h ((projZIso f hL _ n).hom.app V s) i).symm
+    have e : (f.app (V ⊓ L.U i)).hom (resG X inf_le_right (zfun σ i)) =
+        (f.appLE (L.U i) _ (f.preimage_mono (inf_le_right : V ⊓ L.U i ≤ L.U i))).hom (zfun σ i) := by
+      rw [← Scheme.Hom.appLE_eq_app, LB.appLE_resG]
+    rw [zcoord_mulSecOfEq_app, resM_smul, resG_resG, zfun_zpull, LB.resG_appLE]
+    refine Eq.trans (congrArg (· • resM _ (le_pidx_inf f V i) (zcoord s (pidx L f i))) e.symm) ?_
+    exact congrArg (fun t : Γ((Scheme.Modules.pullback f).obj G, f ⁻¹ᵁ (V ⊓ L.U i)) =>
+      (f.app (V ⊓ L.U i)).hom (resG X inf_le_right (zfun σ i)) • t)
+      (zcoord_projZIso_hom_app f hL _ s i).symm
   have e' : (projZIso f hL ((Scheme.Modules.pullback f).obj G) n).inv ≫
       (Scheme.Modules.pushforward f).map (mulSecOfEq ((Scheme.Modules.pullback f).obj G) (zpull f σ) h) =
         mulSecOfEq ((Scheme.Modules.pushforward f).obj ((Scheme.Modules.pullback f).obj G)) σ h ≫
@@ -43,14 +67,19 @@ theorem pullback_mulSecOfEq (hL : L.IsLB) (G : X.Modules) {n m k : ℤ} (σ : LB
     exact e
   rw [e', ← Category.assoc, ← Category.assoc]
   congr 1
-  exact (mulSecOfEq_naturality σ h _).symm
+  symm
+  refine zhom_ext fun V s i => ?_
+  change zcoord ((mulSecOfEq _ σ h).app V ((Twist.map (lbZPow L n) _).app V s)) i =
+    zcoord ((Twist.map (lbZPow L k) _).app V ((mulSecOfEq G σ h).app V s)) i
+  rw [zcoord_mulSecOfEq_app, zcoord_map_app, zcoord_map_app, zcoord_mulSecOfEq_app,
+    Scheme.Modules.Hom.app_smul]
 
 end GlobalTheory.CutPull
 
 namespace GlobalTheory
 
-open GlobalTheory.CutPull in
 
+open GlobalTheory.CutPull in
 theorem cut_pullback_iso : ∀ {X Y : Scheme.{0}} (f : Y ⟶ X) (G : X.Modules) [G.IsQuasicoherent] {L : LB X} (hL : L.IsLB) (s : L.Sec) (hL' : (L.pull f).IsLB), Nonempty ((Scheme.Modules.pullback f).obj (cut G hL s) ≅ cut ((Scheme.Modules.pullback f).obj G) hL' (secPull s f)) := by
   intro X Y f G _ L hL s hL'
   have : PreservesColimits (Scheme.Modules.pullback f) :=

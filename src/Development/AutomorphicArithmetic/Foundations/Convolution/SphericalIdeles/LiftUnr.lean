@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.RamDefs
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.CbcSph
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.LiftAll
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.NormRam
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.RamDefs
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.CbcSph
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.LiftAll
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.NormRam
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Filter
 open GlobalTheory.CuspRep Formalism.L2.Host Formalism.ConjugateSelfDual UpperTheory.V.Published UpperTheory.CBC

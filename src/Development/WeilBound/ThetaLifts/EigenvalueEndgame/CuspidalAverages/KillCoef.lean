@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.ConvCont
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.ConvCont
+
+@[expose] public section
 
 noncomputable section
 

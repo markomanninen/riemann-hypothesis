@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LatticeBlockClasses.CBlockValAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LatticeBlockClasses.CBlockValAlt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain UpperTheory.V UpperTheory.V.KL UpperTheory.V.ZK UpperTheory.V.ZK.Cl
 
@@ -88,7 +92,7 @@ theorem UpperTheory.V.ZK.Cl.cRes :
       have e' : ((b * b' : 𝓞 F) : F) = (b : F) * b' := by push_cast; rfl
       rw [e, e', ← hx, ← hy]
       ring
-    · simp only [map_add, map_mul, hu, hw]
+    · simp only [map_add (f := _), map_mul, hu, hw]
       ring
     · have e : ((a * a' : 𝓞 F) : F) = (a : F) * a' := by push_cast; rfl
       have e' : ((b * b' : 𝓞 F) : F) = (b : F) * b' := by push_cast; rfl

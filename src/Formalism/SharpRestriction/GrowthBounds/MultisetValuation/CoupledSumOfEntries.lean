@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.IntegralSpanCoordinates
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.LowestInvariantLeDelta
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.IntegralSpanCoordinates
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.LowestInvariantLeDelta
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,8 @@ theorem kernel_eq_theta {a a' : X.G.Kf} {v : X.Pl} {j : ℕ} (hTh : ThEq Y a a' 
 theorem ker_sum (j : ℕ) (La : X.Lt j) (La' : X.Lt (j + 1)) {ι : Type} (s : Finset ι) (G : ι → (X.Pj j).Xsp) :
     Y.ker j La La' (∑ x ∈ s, G x) = ∑ x ∈ s, Y.ker j La La' (G x) := by
   unfold Pend.ker Pend.kerF
-  rw [map_sum, LinearMap.sum_apply, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, LinearMap.sum_apply, Finset.smul_sum]
 
 theorem cC_ne (hp : (p : X.G.Kf) ≠ 0) {a : X.G.Kf} (ha : a ≠ 0) (v : X.Pl) (j k : ℕ) : cC X a v j k ≠ 0 :=
   mul_ne_zero (zpow_ne_zero _ hp) (mul_ne_zero (zpow_ne_zero _ ha) (zpow_ne_zero _ hp))
@@ -72,7 +77,7 @@ theorem hk_adj (D : Formalism.BasicNotions.D7) (h5b : MinkowskiCounting D X Y) (
   apply MvPolynomial.ext
   intro n
   let φ : X.Lv.comp j → (X.Pj j).Tup → (X.Pj j).Tup → Y.Kc := fun c L L1 =>
-    if (X.Pj j).IsLatTup L1 then MvPolynomial.coeff n (Y.ker j (c, L1) La' (F c L)) else 0
+    if (X.Pj j).IsLatTup L1 then AddMonoidAlgebra.coeff (Y.ker j (c, L1) La' (F c L)) n else 0
   have hφ : ∀ c (γ : (X.Lv.lev j c).Γ) L L1,
       φ c ((X.Lv.lev j c).smul γ L) ((X.Lv.lev j c).smul γ L1) = φ c L L1 := by
     intro c γ L L1

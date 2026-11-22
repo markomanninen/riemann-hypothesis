@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.ContinuousMapGL
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
-import Development.AutomorphicArithmetic.AdelicGluing.ExistsOpenSubgroupRightInvariantFiniteAdelicGL
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.ContinuousMapGL
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+public import Development.AutomorphicArithmetic.AdelicGluing.ExistsOpenSubgroupRightInvariantFiniteAdelicGL
+
+@[expose] public section
+
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.ConvolutionTheory.C PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Geo
@@ -136,7 +141,8 @@ private theorem iwSet_test (q : Pl F) :
   constructor
   · rw [← LocallyConstant.coe_charFn ℂ ⟨isClosed_iwSet q, isOpen_iwSet q⟩]
     exact LocallyConstant.isLocallyConstant _
-  · refine HasCompactSupport.of_support_subset_isCompact (isCompact_iwSet q) fun g hg => ?_
+  · set_option synthInstance.maxHeartbeats 200000 in
+    refine HasCompactSupport.of_support_subset_isCompact (isCompact_iwSet q) fun g hg => ?_
     by_contra h
     exact hg (Set.indicator_of_notMem h _)
 

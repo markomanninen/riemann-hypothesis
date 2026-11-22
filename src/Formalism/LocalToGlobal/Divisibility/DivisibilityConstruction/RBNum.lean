@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Divisibility.RecBridge
+module
+
+public import Formalism.LocalToGlobal.Divisibility.RecBridge
+
+@[expose] public section
 
 open Formalism.BasicNotions
 

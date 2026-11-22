@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry Polynomial DividedPowers GlobalTheory.LogCris GlobalTheory.PDA CrystallineSemistableComparison CrystallineSemistableComparison.CH CrystallineSemistableComparison.B
 
@@ -12,7 +17,8 @@ lemma map_mem_of_repr (e : Module.Basis ℕ B M) (P : Submodule B M) (L : M →�
     (h : ∀ k, L (e.repr z k • e k) ∈ P) : L z ∈ P := by
   have hz := e.linearCombination_repr z
   rw [Finsupp.linearCombination_apply, Finsupp.sum] at hz
-  rw [← hz, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hz, map_sum]
   exact P.sum_mem fun k _ => h k
 
 def grade (e : Module.Basis ℕ B M) (I : ℕ → Ideal B) (r : ℕ) : Submodule B M where
@@ -76,7 +82,7 @@ lemma exists_nilpotent_ideal (p q : B) (ν : ℕ → B) (hp : IsNilpotent p) (hq
   obtain ⟨N, hN⟩ := hN
   let S : Set B := {p, q - 1} ∪ ν '' {m | 2 ≤ m ∧ m < N}
   have hS : S.Finite :=
-    (Set.toFinite _).union (((Set.finite_Iio N).subset fun m hm => hm.2).image ν)
+    (Set.toFinite _).union (((Set.finite_Iio N).subset (show {m : ℕ | 2 ≤ m ∧ m < N} ⊆ Set.Iio N from fun _ hm => hm.2)).image ν)
   refine ⟨Ideal.span S, ?_, Ideal.subset_span (by simp [S]), Ideal.subset_span (by simp [S]), ?_⟩
   · rw [Ideal.FG.isNilpotent_iff_le_nilradical (Submodule.fg_span hS), Ideal.span_le]
     rintro x (hx | ⟨m, hm, rfl⟩)
@@ -106,7 +112,7 @@ lemma nilpotent_of_pow_mem (J : Ideal B) (hJ : IsNilpotent J) (A : Module.End B 
         rw [map_smul]
         exact Submodule.smul_mem_smul hr (ih n)
       · intro x y hx hy
-        rw [map_add]
+        rw [map_add (f := _)]
         exact Submodule.add_mem _ hx hy
   refine ⟨L, ?_⟩
   ext z
@@ -211,7 +217,7 @@ theorem ker_and_surjective : ∀ {B M : Type} [CommRing B] [AddCommGroup M] [Mod
       rw [map_smul]
       exact Submodule.smul_mem_smul hr trivial
     · intro x y hx hy
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ hx hy
   have hVp : ∀ z, ((D * shift e - 1) ^ p) z ∈ J • (⊤ : Submodule B M) := by
     intro z

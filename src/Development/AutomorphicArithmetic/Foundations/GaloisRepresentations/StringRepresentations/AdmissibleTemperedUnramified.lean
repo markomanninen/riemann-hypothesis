@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CuspidalSupport.GaloisStatementWeakOfFull
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CuspidalSupport.GaloisStatementWeakOfFull
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,11 +36,6 @@ variable {N A}
 
 theorem RelA.refl {w : PlE H} (x : A.LP w) : RelA N A x x := ⟨rfl, id, fun _ _ _ => rfl⟩
 
-theorem RelA.of_eq {w : PlE H} {x y : A.LP w} (e : x = y) : RelA N A x y := e ▸ RelA.refl x
-
-theorem RelA.where₂ {w : PlE H} {x y : A.LP w} (h : RelA N A x y) (m : A.mono0 y) : UpperTheory.Lit.Car.RelA N A x y :=
-  ⟨h.dim, h.mono, fun k => h.ine ⟨m, k⟩⟩
-
 private theorem commutator_le_self' {G : Type*} [Group G] (K : Subgroup G) : ⁅K, K⁆ ≤ K :=
   Subgroup.commutator_le.mpr fun a ha b hb => by
     rw [commutatorElement_def]
@@ -46,10 +45,6 @@ theorem RelA.unr {w : PlE H} {x y : A.LP w} (h : RelA N A x y) (hy : A.unr y) : 
   obtain ⟨hm, hi⟩ := (A.unr_iff_ine y).mp hy
   refine (A.unr_iff_ine x).mpr ⟨h.mono hm, fun σ hσ => ?_⟩
   rw [h.ine ⟨hm, fun τ hτ => hi τ (commutator_le_self' _ hτ)⟩ σ hσ, hi σ hσ, h.dim]
-
-theorem RelA.tw {w : PlE H} {x y : A.LP w} (h : RelA N A x y) (s : ℝ) : RelA N A (A.lpTw x s) (A.lpTw y s) :=
-  ⟨by rw [A.lpDim_tw, A.lpDim_tw, h.dim], by rw [A.monomial_twist_iff, A.monomial_twist_iff]; exact h.mono,
-    fun k => ((h.where₂ ((A.monomial_twist_iff _ _).1 k.1)).tw s).ine k.2⟩
 
 private theorem eq_X_sub_one_pow_of_monic_mul_eq {p q : ℂ[X]} {n m : ℕ} (hp : p.Monic) (hpn : p.natDegree = n)
     (h : p * q = (X - 1) ^ (n + m)) : p = (X - 1) ^ n := by
@@ -117,8 +112,6 @@ theorem CuspA.of_eq {w : PlE H} {x y : A.LP w} (e : x = y) : CuspA N A x y := by
   subst e
   exact ⟨RelA.refl x, fun _ => rfl⟩
 
-theorem RelW.eq_of_unr {w : PlE H} {x y : A.LP w} (h : RelW N A x y) (hy : A.unr y) : x = y := h.n0 (A.unr_mono0 y hy)
-
 theorem RelW.mono {w : PlE H} {x y : A.LP w} (h : RelW N A x y) (hy : A.mono0 y) : A.mono0 x := (h.n0 hy) ▸ hy
 
 theorem RelW.sum {w : PlE H} {x y x' y' : A.LP w} (h : RelW N A x y) (h' : RelW N A x' y') :
@@ -134,23 +127,6 @@ theorem RelW.sum {w : PlE H} {x y x' y' : A.LP w} (h : RelW N A x y) (h' : RelW 
     rw [← e, A.inePol_sum, h.ine γ hγ, ← A.inePol_sum]; exact hm
   have s2 := h'.spl _ c t γ hγ hm' (e ▸ s1)
   rwa [← A.lpSum_assoc, A.lpSum_comm x' x] at s2
-
-theorem Spl.tw {w : PlE H} {c : G H.E N.Om → ℂ} {t : ℕ} {y : A.LP w} (h : Spl N A c t y) (s : ℝ) :
-    Spl N A c t (A.lpTw y s) := by
-  obtain ⟨a, b, e, d, m, k⟩ := h
-  exact ⟨A.lpTw a s, A.lpTw b s, by rw [e, A.lpTw_sum], by rw [A.lpDim_tw, d], (A.monomial_twist_iff _ _).2 m,
-    fun σ hσ => by rw [A.inePol_tw _ _ σ hσ, k σ hσ]⟩
-
-theorem RelW.tw {w : PlE H} {x y : A.LP w} (h : RelW N A x y) (s : ℝ) : RelW N A (A.lpTw x s) (A.lpTw y s) := by
-  refine ⟨by rw [A.lpDim_tw, A.lpDim_tw, h.dim], fun σ hσ => by rw [A.inePol_tw _ _ σ hσ, A.inePol_tw _ _ σ hσ, h.ine σ hσ],
-    fun k => by rw [h.n0 ((A.monomial_twist_iff _ _).1 k)], fun u c t γ hγ hm hs => ?_⟩
-  have e : ∀ z : A.LP w, A.lpSum (A.lpTw z s) u = A.lpTw (A.lpSum z (A.lpTw u (-s))) s := fun z => by
-    rw [A.lpTw_sum, A.lpTw_add, neg_add_cancel, A.lpTw_zero]
-  rw [e] at hm hs ⊢
-  rw [A.inePol_tw _ _ γ hγ] at hm
-  have hs' := hs.tw (-s)
-  rw [A.lpTw_add, add_neg_cancel, A.lpTw_zero] at hs'
-  exact (h.spl _ c t γ hγ hm hs').tw s
 
 theorem Spl.char (hLP : TieLP N A) {w : PlE H} {c : G H.E N.Om → ℂ} {t : ℕ} {y : A.LP w} (h : Spl N A c t y)
     (k : A.LP w) (hk : A.lpDim k = 1) (hu : A.unr k) : Spl N A c t (A.lpChar y k) := by
@@ -205,20 +181,9 @@ def AutomorphicGaloisAdmissible : Prop :=
           ∀ τ, InducesW N i τ w → (A.jumpsW i ρ τ).map (fun n : ℤ => (n : ℂ)) =
             (A.infG χ ((A.iotaQC i).toRingHom.comp τ)).map (fun z => -(z + (s : ℂ))))
 
-def admissibleTemperedUnramified : Prop :=
-  ∀ (a : ℕ) (π : A.CG a), 1 ≤ a → A.csd π → A.ralg π → ∀ w, (A.unr (A.locG π w) ∨ a = 1) → A.tempered (A.locG π w)
-
 variable {N A}
 
-theorem weakA (h : exists_galois_rep_local_global_compatible N A) : AutomorphicGaloisAdmissible N A := fun i =>
-  ⟨fun a ha π hc hr => by
-    obtain ⟨ρ, c, s, o, u⟩ := (h i).1 a ha π hc hr
-    exact ⟨ρ, c, s, fun w hw => RelW.of_eq (o w hw).1,
-      fun w hw => ⟨(u w hw).1, (u w hw).2.1, CuspA.of_eq (u w hw).2.2⟩⟩, (h i).2⟩
 theorem weakA' (h : AutomorphicGaloisAdmissible N A) : AutomorphicGaloisAdmissible N A := h
-theorem weak {D : D7} (h : adm2 D) : AutomorphicGaloisAdmissible D.nd D.naut := weakA h
 theorem weak' {D : D7} (h : AutomorphicGaloisAdmissible D.nd D.naut) : AutomorphicGaloisAdmissible D.nd D.naut := h
-theorem tempA (h : TemperedCuspidal N A) : admissibleTemperedUnramified N A := fun a π ha hc hr w _ => h a π ha hc hr w
-theorem temp {D : D7} (h : adm7 D) : admissibleTemperedUnramified D.nd D.naut := tempA h
 
 end UpperTheory.GalN

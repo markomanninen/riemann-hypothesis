@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PolynomialDimension.DigitClassSize
+module
+
+public import Mathlib
+public import Formalism.PolynomialDimension.DigitClassSize
+
+@[expose] public section
 
 noncomputable section
 
@@ -135,10 +139,6 @@ theorem binomSeries_gen (k' B : ℕ) (hk : 2 ≤ k') :
   rw [← hgzero]
   have := (tendsto_const_nhds (x := g 0)).sub htend
   simpa using this
-
-theorem binomial_series_bound : BinomSeries := by
-  intro k' be hk
-  exact binomSeries_gen k' be hk
 
 theorem tail_q_bound (k' be : ℕ) (b' : ℝ) (hk : 1 ≤ k') (_hb : 0 < b') :
     ∀ J : ℕ, (be : ℝ) + J + k' ≤ 2 * b' →

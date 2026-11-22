@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.ExistsUnitOfSum
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.ComponentDataHeightIdentity
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComponentDataHodgeSecond
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntersectionSystemHodgeDegree
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SumLatticeWedgeComapStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TensorWedgeDetChangeStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.ExistsUnitOfSum
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.ComponentDataHeightIdentity
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComponentDataHodgeSecond
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntersectionSystemHodgeDegree
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SumLatticeWedgeComapStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TensorWedgeDetChangeStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory NumberField Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
@@ -69,9 +73,11 @@ theorem local_frame (Or : CptOrigin Y S₀ Dc Hd) {bb : ∀ τ, Fin Dc.N → W �
       refine (Submodule.Quotient.eq (Hd.F τ)).1 ?_
       have := ht τ k
       simp_rw [← map_smul] at this
-      rw [← map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum] at this
       exact this.symm
-    rw [Or.F_eq τ, Submodule.mem_comap, map_sub, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Or.F_eq τ, Submodule.mem_comap, map_sub, map_sum] at h1
     rw [← sub_eq_zero]
     refine (Submodule.disjoint_def.1 (MuIndep.blocks_disjoint Or τ)) _ ?_
       (sub_mem (hs τ k).1 (sum_mem fun a _ => Submodule.smul_mem _ _ (hs' τ a).1))
@@ -99,8 +105,13 @@ theorem local_change (Or : CptOrigin Y S₀ Dc Hd) (B : ℕ) (hpr : ∀ p ∈ S�
       unitAt Or.𝔐.ξ q ((∏ τ, (A τ).det) / ∏ p ∈ Dc.SB B,
         (MvPolynomial.aeval Dc.y (Dc.vnum p) / MvPolynomial.aeval Dc.y (Dc.vden p) * chartMono Dc.y ch (-Dc.vdeg p))) := by
   have hS : ∀ p ∈ Dc.SB B, p ∈ Dc.S := fun p hp => (Finset.mem_filter.1 hp).1
-  have P := fun s => GlobalTheory.T.lattice_patch_at_primes Or.𝔐.X Ω Or.𝔐.ξ Or.𝔐.Li (S₀ ∪ Dc.SB B) (Or.𝔐.dR s) (fun p => Or.𝔐.HT p s) q hpr
-  have P₀ := fun s => GlobalTheory.T.lattice_patch_at_primes Or.𝔐.X Ω Or.𝔐.ξ Or.𝔐.Li S₀ (Or.𝔐.dR s) (fun p => Or.𝔐.HT p s) q Or.𝔐.S_prime
+  have patch_values (S : Finset ℕ) (s : CMType H ⊕ CMType H) (hprime : ∀ p ∈ S, p.Prime) :
+      ((∀ p ∈ S, ¬ InFibre Or.𝔐.ξ p q) → Lat.patch S (Or.𝔐.dR s) (fun p => Or.𝔐.HT p s) q = Or.𝔐.dR s q) ∧
+      ∀ p ∈ S, InFibre Or.𝔐.ξ p q → Lat.patch S (Or.𝔐.dR s) (fun p => Or.𝔐.HT p s) q = Or.𝔐.HT p s q := by
+    exact ⟨fun h => Lat.patch_of_not S _ _ h, fun p hp h => Lat.patch_of_unique S _ _ hp h
+      fun p' hp' h' => inFibre_unique (hprime p hp) (hprime p' hp') h h'⟩
+  have P := fun s => patch_values (S₀ ∪ Dc.SB B) s hpr
+  have P₀ := fun s => patch_values S₀ s Or.𝔐.S_prime
   have hoff : ∀ p ∈ Dc.SB B, ¬ InFibre Or.𝔐.ξ p q → unitAt Or.𝔐.ξ q
       (MvPolynomial.aeval Dc.y (Dc.vnum p) / MvPolynomial.aeval Dc.y (Dc.vden p) * chartMono Dc.y ch (-Dc.vdeg p)) :=
     fun p hp h => unit_off_fibre hq (Dc.vertical p (hS p hp)) h

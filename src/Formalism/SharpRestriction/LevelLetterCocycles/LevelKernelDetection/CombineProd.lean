@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.FinalLevelsOf
-import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.PsCoprimeDvdSub
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.FinalLevelsOf
+public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.PsCoprimeDvdSub
+
+@[expose] public section
 
 noncomputable section
 

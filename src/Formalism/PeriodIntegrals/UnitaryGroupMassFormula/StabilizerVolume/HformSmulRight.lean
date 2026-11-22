@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WittExtensionTheorem
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Bridge
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.VolStabFromSWS
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WittExtensionTheorem
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Bridge
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.VolStabFromSWS
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ variable {E : Type} [Field E] {M : ℕ}
 
 theorem hform_add_left' (σ : E →+* E) (J : Matrix (Fin M) (Fin M) E) (x x' y : Fin M → E) :
     Formalism.UG.hform σ J (x + x') y = Formalism.UG.hform σ J x y + Formalism.UG.hform σ J x' y := by
-  simp only [Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hform_smul_left' (σ : E →+* E) (J : Matrix (Fin M) (Fin M) E) (c : E) (x y : Fin M → E) :
     Formalism.UG.hform σ J (c • x) y = σ c • Formalism.UG.hform σ J x y := by
@@ -53,7 +57,8 @@ theorem hSes_herm (J : Matrix (Fin M) (Fin M) E) (hJ : ∀ i j, starRingEnd E (J
     (x y : Fin M → E) : star (hSes J x y) = hSes J y x := by
   rw [hSes_apply, hSes_apply]
   show starRingEnd E _ = _
-  simp only [Formalism.UG.hform, map_sum, map_mul, starRingEnd_self_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.UG.hform, map_sum, map_mul, starRingEnd_self_apply]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [hJ]
@@ -79,7 +84,8 @@ theorem linInd_of_gram (J : Matrix (Fin M) (Fin M) E) {a : ℕ} (X : Fin a → F
   have h1 : G *ᵥ c = 0 := by
     funext j
     have := congrArg (hSes J (X j)) hc
-    simp only [map_sum, map_smul, map_zero, smul_eq_mul] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, map_zero, smul_eq_mul] at this
     simp only [mulVec, dotProduct, Pi.zero_apply, hG]
     rw [← this]
     refine Finset.sum_congr rfl fun i _ => ?_
@@ -108,7 +114,8 @@ theorem witt_tuple (J : Matrix (Fin M) (Fin M) E) (hJ : ∀ i j, starRingEnd E (
     intro u hu
     have hs := bU.sum_repr u
     rw [← hs] at hu
-    simp only [map_sum, map_smul, hf] at hu
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, hf] at hu
     have hc := (Fintype.linearIndependent_iff.mp h1) _ hu
     rw [← hs]
     simp [hc]

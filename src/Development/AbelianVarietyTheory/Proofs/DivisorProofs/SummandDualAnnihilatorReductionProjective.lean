@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SurjectiveOfIsPullbackSqZero
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsNoetherianRingDualNumber
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SurjectiveOfIsPullbackSqZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsNoetherianRingDualNumber
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential DividedPowers ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.DeRham GlobalTheory.SqLift GlobalTheory.LiftSys GlobalTheory.Published
 attribute [local instance] Over.cartesianMonoidalCategory
 
@@ -20,7 +25,7 @@ theorem isCompl_dualAnnihilator {K N : Submodule R C} (h : IsCompl K N) :
     rw [mem_inf, mem_dualAnnihilator, mem_dualAnnihilator] at hf
     rw [mem_bot]
     ext c
-    rw [← projection_add_projection_eq_self h c, map_add, hf.1 _ (projection_apply_mem h c),
+    rw [← projection_add_projection_eq_self h c, map_add (f := _), hf.1 _ (projection_apply_mem h c),
       hf.2 _ (projection_apply_mem h.symm c)]
     simp
   · rw [codisjoint_iff, eq_top_iff]
@@ -28,7 +33,7 @@ theorem isCompl_dualAnnihilator {K N : Submodule R C} (h : IsCompl K N) :
     have e : f = f ∘ₗ N.projection K h.symm + f ∘ₗ K.projection N h := by
       ext c
       simp only [LinearMap.add_apply, LinearMap.comp_apply]
-      rw [← map_add, add_comm, projection_add_projection_eq_self h c]
+      rw [← map_add (f := _), add_comm, projection_add_projection_eq_self h c]
     rw [e]
     refine add_mem_sup ?_ ?_
     · rw [mem_dualAnnihilator]
@@ -67,7 +72,8 @@ theorem exists_dual_lift [Projective R C] (hπ : Function.Surjective π) (ρ : C
   obtain ⟨s, hs⟩ := projective_def.mp (inferInstance : Projective R C)
   refine ⟨Finsupp.linearCombination R (fun m => Function.surjInv hπ (y (ρ m))) ∘ₗ s, fun c => ?_⟩
   conv_rhs => rw [← hs c]
-  simp only [LinearMap.comp_apply, Finsupp.linearCombination_apply, Finsupp.sum, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.comp_apply, Finsupp.linearCombination_apply, Finsupp.sum, map_sum,
     smul_eq_mul, map_mul, Function.surjInv_eq, LinearMap.map_smulₛₗ, id, RingHom.id_apply]
 
 theorem exists_dual_descent {ρ : C →ₛₗ[π] C₀} (hπ : Function.Surjective π)
@@ -90,7 +96,7 @@ theorem exists_dual_descent {ρ : C →ₛₗ[π] C₀} (hπ : Function.Surjecti
   refine ⟨{ toFun := fun v => π (x (g v)), map_add' := ?_, map_smul' := ?_ }, fun c => hx _ _ (hg _)⟩
   · intro a b
     rw [show π (x (g a)) + π (x (g b)) = π (x (g a + g b)) by simp]
-    exact hx _ _ (by rw [map_add, hg, hg, hg])
+    exact hx _ _ (by rw [map_add (f := _), hg, hg, hg])
   · intro r v
     obtain ⟨r', rfl⟩ := hπ r
     simp only [RingHom.id_apply, smul_eq_mul]
@@ -150,7 +156,7 @@ theorem exists_eq_dualAnnihilator [Projective R C] [Module.Finite R C]
         simp [projection_apply_of_mem_right hGH hh]
       · rw [← sub_eq_zero, ← forall_dual_apply_eq_zero_iff R]
         intro φ
-        rw [map_sub, map_add, hk φ, hl φ]
+        rw [map_sub, map_add (f := _), hk φ, hl φ]
         simp only [LinearMap.comp_apply, Dual.eval_apply]
         rw [← LinearMap.add_apply, add_comm, hsplit φ, sub_self]
   refine ⟨G.dualCoannihilator, ⟨_, hKL⟩, le_antisymm ?_ ?_⟩
@@ -165,7 +171,7 @@ theorem exists_eq_dualAnnihilator [Projective R C] [Module.Finite R C]
       obtain ⟨k, hk, l, hl, rfl⟩ := Submodule.mem_sup.mp (hKL.sup_eq_top ▸ mem_top : c ∈ _)
       have e : H.projection G hGH.symm φ = φ - G.projection H hGH φ := by
         rw [eq_sub_iff_add_eq, add_comm, hsplit φ]
-      rw [map_add, (mem_dualCoannihilator _).mp hl _ (projection_apply_mem hGH.symm φ), e,
+      rw [map_add (f := _), (mem_dualCoannihilator _).mp hl _ (projection_apply_mem hGH.symm φ), e,
         LinearMap.sub_apply, hφ k hk, (mem_dualCoannihilator _).mp hk _ (projection_apply_mem hGH φ)]
       simp
     rw [← hsplit φ, h0, add_zero]
@@ -198,19 +204,19 @@ theorem summand_dual_reduction :
         simp [hNK k hk]
       · rw [LinearMap.comp_apply, hx₀]
         conv_lhs => rw [← hsplit c]
-        rw [map_add, map_add,
+        rw [map_add (f := _), map_add (f := _),
           hy _ ((hL _).mp (mem_sup_left (projection_apply_mem hKN c))), zero_add]
     · rintro ⟨x, hx, hxy⟩
       rw [mem_dualAnnihilator] at hx ⊢
       intro f hf
       obtain ⟨c, rfl⟩ := hρ f
       obtain ⟨k, hk, m, hm, rfl⟩ := Submodule.mem_sup.mp ((hL c).mpr hf)
-      rw [map_add, (hker m).mpr hm, add_zero, hxy, hx k hk, map_zero]
+      rw [map_add (f := _), (hker m).mpr hm, add_zero, hxy, hx k hk, map_zero]
   · intro hR c
     constructor
     · intro hc
       obtain ⟨k, hk, m, hm, rfl⟩ := Submodule.mem_sup.mp hc
-      rw [map_add, (hker m).mpr hm, add_zero]
+      rw [map_add (f := _), (hker m).mpr hm, add_zero]
       have hv : N₀.projection F₀ hF.symm (ρ k) = 0 := by
         refine eq_zero_of_forall_dual_reduction hπ hρ hker _ fun φ => ?_
         obtain ⟨x, hx, hxy⟩ := (hR (φ ∘ₗ N₀.projection F₀ hF.symm)).mp (by

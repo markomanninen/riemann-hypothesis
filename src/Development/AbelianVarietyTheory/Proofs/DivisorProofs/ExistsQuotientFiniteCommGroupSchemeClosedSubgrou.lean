@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankHopfAlgebraEqRangeMulKernelStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdditiveFrobeniusPullbackCotangentModVersc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankHopfAlgebraEqRangeMulKernelStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdditiveFrobeniusPullbackCotangentModVersc
+
+@[expose] public section
+
 open CategoryTheory TensorProduct Coalgebra Bialgebra GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Dieu
 
 noncomputable section
@@ -74,8 +79,7 @@ theorem mul_map_apply {D : Type} [CommRing D] [Bialgebra k D] (f : D →ₐc[k] 
       r (f (TensorProduct.rid k D (LinearMap.lTensor D (counit (R := k) (A := D)) t))) * ψ 1 := by
     intro t
     induction t with
-    | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy, add_mul]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, add_mul]
     | tmul x y =>
       rw [TensorProduct.map_tmul, CartierDual.pair_tmul_tmul, LinearMap.lTensor_tmul,
         TensorProduct.rid_tmul, CartierDual.map_apply]

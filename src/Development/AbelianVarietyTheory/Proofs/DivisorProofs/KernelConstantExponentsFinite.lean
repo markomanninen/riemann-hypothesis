@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker GlobalTheory.IndefiniteRowSideFullHecke.PlaceLogThetaBounds GlobalTheory.ColNorms
 open scoped ComplexOrder Pointwise
@@ -68,10 +72,11 @@ theorem exists_den_fg {K E ι κ : Type} [Field K] [NumberField K] [AddCommGroup
     induction hy using Submodule.span_induction with
     | mem y hy => exact h (⟨y, hy⟩, a, w)
     | zero => simpa using isIntegral_zero
-    | add y z _ _ hy hz => rw [Pi.single_add, map_add, Pi.add_apply, mul_add]; exact hy.add hz
+    | add y z _ _ hy hz => rw [Pi.single_add, map_add (f := _), Pi.add_apply, mul_add]; exact hy.add hz
     | smul c y _ hy =>
       rw [Pi.single_smul, map_zsmul, Pi.smul_apply, mul_smul_comm]; exact hy.zsmul c
-  rw [← Finset.univ_sum_single x, map_sum, Finset.sum_apply, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Finset.univ_sum_single x, map_sum, Finset.sum_apply, Finset.mul_sum]
   exact IsIntegral.sum _ fun a _ => key a _ (hS ▸ hx a)
 
 theorem one_mem (D : D7) : (1 : D.host.E) ∈ D.host.AA0 := by

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
-import Development.AbelianVarietyTheory.Definitions.Foundations.StrictInterlaceIffDescEnum
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.HermitianOrthogonalExtensionData
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Development.AbelianVarietyTheory.Definitions.Foundations.StrictInterlaceIffDescEnum
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.HermitianOrthogonalExtensionData
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,9 +63,6 @@ def rkP (i : ℕ) : ℕ := D.R.r + 1 + i * (sLen D - 1)
 
 def rkX (j : ℕ) : ℕ := rkP D D.R.m + j * (D.R.t + 1)
 
-theorem rk_eq (τ : D.what₂.Tau) (i j : ℕ) :
-    rkV D i j = (grid D τ).rankD i j ∧ rkP D i = (grid D τ).rankP i ∧ rkX D j = (grid D τ).rankX j := ⟨rfl, rfl, rfl⟩
-
 def parV (i j : ℕ) (τ : D.what₂.Tau) : SPar :=
   dualPar (shift (if Odd (i + j) then -(1 / 2) else 0) ((grid D τ).parD i j))
 
@@ -80,8 +81,8 @@ theorem parP_m : parP D D.R.m = parXp D 0 := funext fun τ => (grid D τ).parPi_
 
 end Numbers
 
-variable (D) in
 
+variable (D) in
 structure PlaceDat where
 
   q0 : ℕ
@@ -96,12 +97,12 @@ namespace PlaceDat
 
 variable (Z : PlaceDat D) (Pg : Finset (Pl D.host.E))
 
-open Classical in
 
+open Classical in
 def W : Finset (Pl D.host.E) := Pg ∪ Z.Wd ∪ {Z.w0}
 
-open Classical in
 
+open Classical in
 def depth (w : Pl D.host.E) : ℕ := if w = Z.w0 then Z.e0 else 2
 
 def ideal : Ideal (𝓞 D.host.E) := ∏ w ∈ Z.W Pg, w.asIdeal ^ Z.depth w
@@ -199,12 +200,8 @@ def meas0 (t : T) (j : ℕ) : (row0 R (j + 1)).MeasDat :=
   if h : j + 1 < D.R.m then Node.MeasDat.cast (nodeY_eq_chainVertexAtRowZero_of_lt R h) ⟨R.νY t (j + 1), R.fdY t (j + 1)⟩
   else Node.MeasDat.cast (nodeX_eq_chainVertexAtRowZero_of_ge R h) ⟨R.νX t, R.fdX t⟩
 
-def datum0 (t : T) (j : ℕ) : WO (row0 R j).V (row0 R (j + 1)).V → ℂ :=
-  if h : j + 1 < D.R.m then castFun (nodeY_eq_chainVertexAtRowZero_of_lt R (by omega)) (nodeY_eq_chainVertexAtRowZero_of_lt R h) (R.vY t j)
-  else if h' : j + 1 = D.R.m then castFun (nodeY_pred_eq_chainVertexAtRowZero_last R h') (nodeX_eq_chainVertexAtRowZero_of_ge R h) (R.vX t) else 0
 
 variable (D) in
-
 structure GridSp extends PlaceDat D where
 
   nV : ℕ → ℕ → Node D
@@ -229,19 +226,11 @@ abbrev lvl : Ideal (𝓞 D.host.E) := G.toPlaceDat.ideal R.Pg
 
 abbrev Cos (i : ℕ) : Type := Coset (G.vert R (i + 1) 0) (G.vert R i 0) (G.lvl R)
 
-def Data : Type := ∀ i : Fin D.R.m, G.Cos R i
-
-instance : Finite (G.Data R) :=
-  have : ∀ i : Fin D.R.m, Finite (G.Cos R i) := fun _ => finite_coset (G.toPlaceDat.ideal_ne_bot _)
-  Pi.finite
-
-instance : Nonempty (G.Data R) := ⟨fun _ => 0⟩
-
 end GridSp
+
 
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure GridPre extends GridSp D where
 
   idem : AE D
@@ -312,19 +301,6 @@ theorem meas_zero (t : T) (i : ℕ) : G.meas t i 0 = G.measCol i := by cases i <
 def measX : ∀ j, (G.Xp j).MeasDat
   | 0 => G.mP D.R.m
   | j + 1 => G.mX j
-
-def decRow : ∀ j, HermitianOrthogonalExtensionData (G.Xp j) (G.V D.R.m j) (D.R.m - 1 - j)
-  | 0 => G.decV D.R.m
-  | j + 1 => G.decX j
-
-theorem th_It (t t' : T) (i j : ℕ) : (G.th t i j).It = (G.th t' i j).It := by
-  cases i with
-  | succ i => rfl
-  | zero =>
-    show (th0 R t j).It = (th0 R t' j).It
-    unfold th0
-    split_ifs
-    exacts [ArrS.cast_It_congr _ _ rfl, ArrS.cast_It_congr _ _ rfl, rfl]
 
 abbrev muAt (R : RealDat D A Ks) (t : T) (j n : ℕ) : (AE D)ˣ →* Circle := Lift.attChr (R.toLevCh.mu t j) R.eta n
 
@@ -397,9 +373,6 @@ def ValuesInField : Prop :=
   (∀ i, 1 ≤ i → i ≤ D.R.m → (G.chiH i).ValuesIn 0 D.what₂.embLL) ∧
     ∀ w ∈ G.toPlaceDat.W R.Pg, ∃ z : D.what₂.LL, IsPrimitiveRoot z (Nat.card (kP w) ^ G.toPlaceDat.depth w)
 
-def datum (Φ : G.Data R) (i : ℕ) : WO (G.V (i + 1) 0).V (G.V i 0).V → ℂ :=
-  if h : i < D.R.m then G.vC i (Φ ⟨i, h⟩) else 0
-
 abbrev CV (i j : ℕ) : Submodule ℂ (G.V i j).Maps := (G.V i j).Cusp R.θ
 
 structure HasLifts : Prop where
@@ -419,24 +392,11 @@ structure HasLifts : Prop where
   up : ∀ i, i < D.R.m → ∀ f, IsFinVec R.ψ R.θ true (G.P (i + 1)) (G.P i) f →
     ∃ io, (G.dn i).IsLiftConj R.ψ R.θ true (G.ItU i) (G.mP i) f io
 
-structure RealVec where
-
-  pol : ∀ i, Pol (G.V (i + 1) 0) (G.V i 0)
-
-  w : (R.MY 0).Vec
-
-def RealVec.vec {G : GridPre R} (r : G.RealVec) (i : ℕ) : SmT (G.V i 0).M :=
-  Nat.rec (motive := fun i => SmT (G.V i 0).M) (PiTensorProduct.tprod ℂ r.w) (fun i v => (G.X i 0).It (r.pol i) v) i
-
-theorem RealVec.vec_zero {G : GridPre R} (r : G.RealVec) : r.vec 0 = PiTensorProduct.tprod ℂ r.w := rfl
-
-theorem RealVec.vec_succ {G : GridPre R} (r : G.RealVec) (i : ℕ) : r.vec (i + 1) = (G.X i 0).It (r.pol i) (r.vec i) := rfl
-
 end GridPre
+
 
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure GridDat extends GridPre R where
 
   gridInclusionColumnZero : ∀ i, (WO (toGridPre.V (i + 1) 0).V (toGridPre.V i 0).V → ℂ) → toGridPre.CV i 0 →ₗ[ℂ] toGridPre.CV (i + 1) 0
@@ -484,80 +444,7 @@ structure Is : Prop where
 
   lifts : G.IsLifts
 
-def colLift (t : T) (j : ℕ) (f : ∀ i, WO (G.V (i + 1) j).V (G.V i j).V → ℂ) (n : ℕ) : G.CV 0 j →ₗ[ℂ] G.CV n j :=
-  Nat.rec (motive := fun n => G.CV 0 j →ₗ[ℂ] G.CV n j) LinearMap.id (fun n L => G.ioX t n j (f n) ∘ₗ L) n
-
-theorem colLift_zero (t : T) (j : ℕ) (f : ∀ i, WO (G.V (i + 1) j).V (G.V i j).V → ℂ) : G.colLift t j f 0 = LinearMap.id := rfl
-
-theorem colLift_succ (t : T) (j : ℕ) (f : ∀ i, WO (G.V (i + 1) j).V (G.V i j).V → ℂ) (n : ℕ) :
-    G.colLift t j f (n + 1) = G.ioX t n j (f n) ∘ₗ G.colLift t j f n := rfl
-
-def rowLift (t : T) (i : ℕ) (f : ∀ j, WO (G.V i j).V (G.V i (j + 1)).V → ℂ) (n : ℕ) : G.CV i n →ₗ[ℂ] G.CV i 0 :=
-  Nat.rec (motive := fun n => G.CV i n →ₗ[ℂ] G.CV i 0) LinearMap.id (fun n L => L ∘ₗ G.ioT t i n (f n)) n
-
-theorem rowLift_zero (t : T) (i : ℕ) (f : ∀ j, WO (G.V i j).V (G.V i (j + 1)).V → ℂ) : G.rowLift t i f 0 = LinearMap.id := rfl
-
-theorem rowLift_succ (t : T) (i : ℕ) (f : ∀ j, WO (G.V i j).V (G.V i (j + 1)).V → ℂ) (n : ℕ) :
-    G.rowLift t i f (n + 1) = G.rowLift t i f n ∘ₗ G.ioT t i n (f n) := rfl
-
-def chiLift (Φ : G.Data R) (n : ℕ) : G.CV 0 0 →ₗ[ℂ] G.CV n 0 :=
-  Nat.rec (motive := fun n => G.CV 0 0 →ₗ[ℂ] G.CV n 0) LinearMap.id (fun n L => G.gridInclusionColumnZero n (G.datum Φ n) ∘ₗ L) n
-
-theorem chiLift_zero (Φ : G.Data R) : G.chiLift Φ 0 = LinearMap.id := rfl
-
-theorem chiLift_succ (Φ : G.Data R) (n : ℕ) : G.chiLift Φ (n + 1) = G.gridInclusionColumnZero n (G.datum Φ n) ∘ₗ G.chiLift Φ n := rfl
-
-theorem chiLift_eq (t : T) (Φ : G.Data R) (n : ℕ) : G.chiLift Φ n = G.colLift t 0 (G.datum Φ) n := rfl
-
-theorem IsLifts.hasLifts {G : GridDat R} (h : G.IsLifts) : G.toGridPre.HasLifts :=
-  ⟨fun t i j a b f c => ⟨_, h.X t i j a b f c⟩, fun t i j a b f c => ⟨_, h.th t i j a b f c⟩,
-    fun t j a f c => ⟨_, h.col t j a f c⟩, fun i a f c => ⟨_, h.dn i a f c⟩, fun i a f c => ⟨_, h.up i a f c⟩⟩
-
 end GridDat
-
-theorem GridPre.exists_gridDat {R : RealDat D A Ks} (G : GridPre R) (hG : G.Is) (h : G.HasLifts) :
-    ∃ G' : GridDat R, G'.toGridPre = G ∧ G'.Is := by
-  have ex : ∀ {α : Type} [Zero α] {p : Prop} {q : α → Prop}, (p → ∃ a, q a) → ∃ a, p → q a := fun {α} _ {p} {q} H => by
-    by_cases hp : p
-    · exact (H hp).imp fun _ ha _ => ha
-    · exact ⟨0, fun h => absurd h hp⟩
-  choose x0 hx0 using fun i f => ex fun c : i < D.R.m ∧ IsFinVec R.ψ R.θ true (G.V (i + 1) 0) (G.V i 0) f =>
-    h.X A.μ0 i 0 c.1 (Nat.zero_le _) f c.2
-  choose x1 hx1 using fun t i j f =>
-    ex fun c : i < D.R.m ∧ j + 1 ≤ D.R.m ∧ IsFinVec R.ψ R.θ true (G.V (i + 1) (j + 1)) (G.V i (j + 1)) f =>
-      h.X t i (j + 1) c.1 c.2.1 f c.2.2
-  choose th hth using fun t i j f =>
-    ex fun c : i ≤ D.R.m ∧ j < D.R.m ∧ IsFinVec R.ψ R.θ false (G.V i j) (G.V i (j + 1)) f => h.th t i j c.1 c.2.1 f c.2.2
-  choose cl hcl using fun t j f =>
-    ex fun c : j < D.R.m ∧ IsFinVec R.ψ R.θ false (G.Xp j) (G.Xp (j + 1)) f => h.col t j c.1 f c.2
-  choose dn hdn using fun i f => ex fun c : i < D.R.m ∧ IsFinVec R.ψ R.θ true (G.P (i + 1)) (G.P i) f => h.dn i c.1 f c.2
-  choose up hup using fun i f => ex fun c : i < D.R.m ∧ IsFinVec R.ψ R.θ true (G.P (i + 1)) (G.P i) f => h.up i c.1 f c.2
-  refine ⟨⟨G, x0, x1, th, cl, dn, up⟩, rfl, hG, fun t i j a b f c => ?_, fun t i j a b f c => hth t i j f ⟨a, b, c⟩,
-    fun t j a f c => hcl t j f ⟨a, c⟩, fun i a f c => hdn i f ⟨a, c⟩, fun i a f c => hup i f ⟨a, c⟩⟩
-  cases j with
-  | zero =>
-    have := hx0 i f ⟨a, c⟩
-    rw [G.meas_zero] at this
-    show (G.X i 0).IsLift R.ψ R.θ true (G.meas t i 0) f (x0 i f)
-    rwa [G.meas_zero]
-  | succ j => exact hx1 t i j f ⟨a, b, c⟩
-
-example (G : GridPre R) : (G.V 0 0).V = Yc D 0 ∧ (G.V 0 0).M = R.MY 0 := ⟨rfl, rfl⟩
-
-example (t : T) (j : ℕ) : (GridPre.muAt R t (j + 1) (rkV D 0 j), GridPre.muAt R t (j + 1) (rkV D 0 (j + 1))) =
-    Lift.chrStep (R.toLevCh.mu t) R.eta (j + 1) := by
-  have hr : Odd D.R.r := by
-    have h1 := D.R.k_even; have h2 := D.R.m_even; have h3 := D.R.two_le_m
-    unfold Ranks.r; grind
-  rw [Lift.chrStep_eq_att _ _ hr D.R.t_odd (Nat.le_add_left 1 j)]
-  simp [rkV]
-
-example (i : ℕ) : rkP D (i + 1) + i = rkV D (i + 1) 0 ∧ rkV D D.R.m D.R.m + 1 = rkX D D.R.m := by
-  have e : sLen D - 1 = D.R.r + 5 := rfl
-  refine ⟨?_, ?_⟩ <;> simp only [rkP, rkV, rkX, e] <;> simp only [sLen] <;> ring
-
-example (t : T) (P : PolF D (Yc D 1).rank (Yc D 0).rank) :
-    fock R.ψ R.θ false (nodeY R 0) (nodeY R 1) (R.vY t 0) P = R.ptY t 0 P := rfl
 
 end GlobalTheory.Grid
 

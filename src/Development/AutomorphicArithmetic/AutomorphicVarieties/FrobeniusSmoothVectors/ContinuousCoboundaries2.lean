@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.UnitaryThreeReflectionRight
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.UnitaryThreeReflectionRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ def coneH0 : Submodule k W where
   carrier := {X | (∀ g, ρ g X = X) ∧ ∀ v, X ∈ b v}
   add_mem' := by
     rintro x y ⟨a1, a2⟩ ⟨b1, b2⟩
-    exact ⟨fun g => by rw [map_add, a1, b1], fun v => add_mem (a2 v) (b2 v)⟩
+    exact ⟨fun g => by rw [map_add (f := _), a1, b1], fun v => add_mem (a2 v) (b2 v)⟩
   zero_mem' := ⟨fun g => map_zero _, fun v => zero_mem _⟩
   smul_mem' := by
     rintro c x ⟨a1, a2⟩
@@ -29,9 +33,9 @@ def Z1C : Submodule k ((G → W) × (V → W)) where
   add_mem' := by
     rintro x y ⟨a1, a2, a3⟩ ⟨b1, b2, b3⟩
     refine ⟨a1.add b1, fun s t => ?_, fun v s => ?_⟩
-    · simp only [Prod.fst_add, Pi.add_apply, a2, b2, map_add]; abel
+    · simp only [Prod.fst_add, Pi.add_apply, a2, b2, map_add (f := _)]; abel
     · convert add_mem (a3 v s) (b3 v s) using 1
-      simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, map_add]; abel
+      simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, map_add (f := _)]; abel
   zero_mem' := ⟨IsLocallyConstant.const 0, by simp, by simp⟩
   smul_mem' := by
     rintro c x ⟨a1, a2, a3⟩
@@ -44,7 +48,7 @@ def continuousCoboundaries1 : Submodule k ((G → W) × (V → W)) where
   add_mem' := by
     rintro x y ⟨X, a1, a2⟩ ⟨Y, b1, b2⟩
     refine ⟨X + Y, fun s => ?_, fun v => ?_⟩
-    · simp only [Prod.fst_add, Pi.add_apply, a1, b1, map_add]; abel
+    · simp only [Prod.fst_add, Pi.add_apply, a1, b1, map_add (f := _)]; abel
     · convert add_mem (a2 v) (b2 v) using 1
       simp only [Prod.snd_add, Pi.add_apply]; abel
   zero_mem' := ⟨0, by simp, by simp⟩
@@ -63,10 +67,10 @@ def continuousCocycles2 : Submodule k ((G × G → W) × (∀ v, Gv v → W)) wh
   add_mem' := by
     rintro x y ⟨a1, a2, a3, a4⟩ ⟨b1, b2, b3, b4⟩
     refine ⟨a1.add b1, fun v => (a2 v).add (b2 v), fun s t u => ?_, fun v s t => ?_⟩
-    · simp only [Prod.fst_add, Pi.add_apply, map_add]
+    · simp only [Prod.fst_add, Pi.add_apply, map_add (f := _)]
       rw [add_add_add_comm, a3, b3, add_add_add_comm]
     · convert add_mem (a4 v s t) (b4 v s t) using 1
-      simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, dOne, map_add]; abel
+      simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, dOne, map_add (f := _)]; abel
   zero_mem' := ⟨IsLocallyConstant.const 0, fun _ => IsLocallyConstant.const 0, by simp, by simp [dOne]⟩
   smul_mem' := by
     rintro c x ⟨a1, a2, a3, a4⟩
@@ -82,9 +86,9 @@ def continuousCoboundaries2 : Submodule k ((G × G → W) × (∀ v, Gv v → W)
     rintro x y ⟨β, Y, a1, a2, a3⟩ ⟨β', Y', b1, b2, b3⟩
     refine ⟨β + β', Y + Y', a1.add b1, ?_, fun v s => ?_⟩
     · funext p
-      simp only [Prod.fst_add, Pi.add_apply, a2, b2, dOne, map_add]; abel
+      simp only [Prod.fst_add, Pi.add_apply, a2, b2, dOne, map_add (f := _)]; abel
     · convert add_mem (a3 v s) (b3 v s) using 1
-      simp only [Prod.snd_add, Pi.add_apply, map_add]; abel
+      simp only [Prod.snd_add, Pi.add_apply, map_add (f := _)]; abel
   zero_mem' := ⟨0, 0, IsLocallyConstant.const 0, by funext p; simp [dOne], by simp⟩
   smul_mem' := by
     rintro c x ⟨β, Y, a1, a2, a3⟩
@@ -184,7 +188,7 @@ structure Ok [CharP k l] (C₀ : ℕ) : Prop where
   Ψ_open : IsOpen (F.Ψ.ker : Set F.Γ)
   Ψ_c : F.Ψ F.c = 1
   baseSubgroup_spec : F.Ψ F.g0 ^ 2 ≠ 1
-  phi : PhiCond F.Γ l
+  phi : PhiCond (Γ := F.Γ) l
   card_inf : Fintype.card F.Inf = F.d
   cw_sq : ∀ w, F.cw w * F.cw w = 1
   del_cw : ∀ w, F.del (F.cw w) = -1

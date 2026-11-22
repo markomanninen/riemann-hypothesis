@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AtPtsImp
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LamGeoEqFormula
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AtPtsImp
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LamGeoEqFormula
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,12 +31,12 @@ theorem wd_e : ((wd D j τ).e : ℚ) = (D.hc τ).e j := ((D.hc τ).e_int j).choo
 
 theorem wd_v (n : ℕ) (h : 2 ≤ n ∧ n - 2 < D.R.k - 1) : ((wd D j τ).v n : ℚ) = (D.hc τ).v ⟨n - 2, h.2⟩ := by
   show (((if h : 2 ≤ n ∧ n - 2 < D.R.k - 1 then ((D.hc τ).v_int ⟨n - 2, h.2⟩).choose else 0 : ℤ)) : ℚ) = _
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact ((D.hc τ).v_int _).choose_spec.symm
 
 theorem wd_b (n : ℕ) (h : 1 ≤ n ∧ n - 1 < D.R.m) : ((wd D j τ).b n : ℚ) = (D.hc τ).b ⟨n - 1, h.2⟩ := by
   show (((if h : 1 ≤ n ∧ n - 1 < D.R.m then ((D.hc τ).b_int ⟨n - 1, h.2⟩).choose else 0 : ℤ)) : ℚ) = _
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact ((D.hc τ).b_int _).choose_spec.symm
 
 end GlobalTheory.LiftWeightForced
@@ -171,13 +175,7 @@ theorem isLamPrime_lamLdef :
       (Formalism.IndefR.Bridge.lamLdef (D := D) (Vc D j).rank ((j : ℕ) + 1) τ) ((j : ℕ) + 1) τ := by
   have hex := exists_isLamPrime D j τ
   unfold Formalism.IndefR.Bridge.lamLdef
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hex.choose_spec
 
 end GlobalTheory.LiftWeightForced
-
-theorem GlobalTheory.LiftWeightForced.atPts : GlobalTheory.BigOn.AtPts fun Fm x _ i _ => ∀ (j : Fin (Fm.D x i).R.m) τ,
-    Formalism.IndefR.Bridge.IsLamPrime (D := Fm.D x i)
-      (Formalism.IndefR.Bridge.lamLdef (D := Fm.D x i) (Formalism.IndefR.Links.Vc (Fm.D x i) j).rank ((j : ℕ) + 1) τ) ((j : ℕ) + 1) τ :=
-  ⟨1, one_pos, fun _ _ _ => ⟨⟨0, fun _ => 0, fun _ => 0, fun _ => 0⟩, fun Fm _ _ _ =>
-    EvPt.of_forall fun x _ i _ _ _ j τ => GlobalTheory.LiftWeightForced.isLamPrime_lamLdef (Fm.D x i) j τ⟩⟩

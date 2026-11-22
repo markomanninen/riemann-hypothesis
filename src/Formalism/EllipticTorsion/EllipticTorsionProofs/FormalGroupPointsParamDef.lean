@@ -1,5 +1,9 @@
-import Formalism.EllipticTorsion.FormalGroupPointsParametrisation
-import Formalism.EllipticTorsion.EllipticTorsionProofs.WSeries
+module
+
+public import Formalism.EllipticTorsion.FormalGroupPointsParametrisation
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.WSeries
+
+@[expose] public section
 
 open PowerSeries
 
@@ -51,10 +55,10 @@ theorem Ev.add {f g : PowerSeries K} {t a b : K} (hf : Ev f t a) (hg : Ev g t b)
     Ev (f + g) t (a + b) := by
   refine ⟨?_, ?_⟩
   · refine (hf.1.add hg.1).of_nonneg_of_le (fun _ => norm_nonneg _) (fun n => ?_)
-    simp only [map_add, add_mul]
+    simp only [map_add (f := _), add_mul]
     exact norm_add_le _ _
   · unfold evalPS
-    simp only [map_add, add_mul]
+    simp only [map_add (f := _), add_mul]
     rw [hf.1.of_norm.tsum_add hg.1.of_norm]
     exact congrArg₂ (· + ·) hf.2 hg.2
 
@@ -156,7 +160,7 @@ theorem integral_w {W : WeierstrassCurve K} {w : PowerSeries K} (hW : IntegralMo
         rw [← coeff_zero_eq_constantCoeff_apply, ← coeff_zero_eq_constantCoeff_apply, coeff_map]
       rw [this, h, map_zero]
     · have h := congrArg (PowerSeries.map (unitBall K).subtype) hv.2
-      simp only [map_add, map_mul, map_pow, map_X, map_C] at h
+      simp only [map_add (f := _), map_mul, map_pow, map_X, map_C] at h
       exact h
   have he : w = PowerSeries.map (unitBall K).subtype v := WeierstrassSeriesLimit.fixed_unique W hw hmap
   intro n

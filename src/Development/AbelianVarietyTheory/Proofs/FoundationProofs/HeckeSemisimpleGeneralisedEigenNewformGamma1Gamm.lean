@@ -1,26 +1,30 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
-import Development.AbelianVarietyTheory.Definitions.Foundations.PetEqRelIndexMulPetProd
-import CompanionTheory.EightfoldTheory.VariationTheory.AutomorphicForms.Newform
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EichlerShimuraConjCocyclesCoboundariesPeriodSmul
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeBoundMain
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsEichlerShimuraDecompositionCocycleStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CuspFormsEqZeroOfPeriodSubConjCoboundaryStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CuspidalOfEichlerPeriodSubConjMemCoboundariesStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PeriodMapEquivariantStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeDoubleCosetRepsGammaOneGammaZeroLevelStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeOperatorOnCocycleMapsCocycleCoboundaryConjStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TendstoSlashValueAtInfty
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TqFSemisimple
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiamondGenEigenEigen
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SlashSmulPos
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeOperatorsOnHalfPlaneFunctionsAgreeExplicit
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiamondOperatorOfMatrixModularFormGamma1InterGamStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiamondOperatorOfMatrixCuspFormGamma1InterGamma0Statement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeUOperatorPreservesModularFormGamma1InterGamStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsZeroAtFinsetSum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeTOperatorExplicitModularFormStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeTOperatorExplicitCuspFormStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+public import Development.AbelianVarietyTheory.Definitions.Foundations.PetEqRelIndexMulPetProd
+public import CompanionTheory.EightfoldTheory.VariationTheory.AutomorphicForms.Newform
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EichlerShimuraConjCocyclesCoboundariesPeriodSmul
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeBoundMain
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsEichlerShimuraDecompositionCocycleStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CuspFormsEqZeroOfPeriodSubConjCoboundaryStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CuspidalOfEichlerPeriodSubConjMemCoboundariesStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PeriodMapEquivariantStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeDoubleCosetRepsGammaOneGammaZeroLevelStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeOperatorOnCocycleMapsCocycleCoboundaryConjStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TendstoSlashValueAtInfty
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TqFSemisimple
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiamondGenEigenEigen
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SlashSmulPos
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeOperatorsOnHalfPlaneFunctionsAgreeExplicit
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiamondOperatorOfMatrixModularFormGamma1InterGamStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiamondOperatorOfMatrixCuspFormGamma1InterGamma0Statement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeUOperatorPreservesModularFormGamma1InterGamStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsZeroAtFinsetSum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeTOperatorExplicitModularFormStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeTOperatorExplicitCuspFormStatement
+
+@[expose] public section
 
 open GlobalTheory.HeckeFamilyMatrices Polynomial UpperHalfPlane
 open scoped MatrixGroups ModularForm
@@ -63,7 +67,7 @@ theorem per_sub_smul (Γ : Subgroup SL(2, ℤ)) (w : ℕ) (f g : ℍ → ℂ) (h
   rw [this, sub_eq_add_neg, ← _root_.neg_smul, ← (GlobalTheory.HeckeFamilyMatrices.cj_mem_Z1_cj_mem_B1_per_smul Γ w).2.2]
   funext γ
   simp only [per, Pi.add_apply]
-  rw [eichler_add_of_cont w f _ hf (hg.const_smul (-a)), map_add]
+  rw [eichler_add_of_cont w f _ hf (hg.const_smul (-a)), map_add (f := _)]
 
 theorem cj_sub {Γ : Type} (x y : Γ → ℂ[X]) : cj (x - y) = cj x - cj y := by
   funext γ; simp [cj]
@@ -222,7 +226,7 @@ theorem cusp_of_iter (Γ : Subgroup SL(2, ℤ)) (k : ℕ) (F : (ℍ → ℂ) →
 theorem DdF_eq (k : ℤ) (σ : SL(2, ℤ)) (f : ℍ → ℂ) : DdF k σ f = f ∣[k] σ := by
   have : toGL (mat σ) = (σ : GL (Fin 2) ℝ) := by
     have hd : ¬ (mat σ).det = 0 := by simp
-    rw [toGL, dif_neg hd]
+    rw [toGL, dite_eq_right hd]
     ext i j
     rfl
   simp only [DdF, hkF, Finset.univ_unique, Finset.sum_singleton, this]
@@ -316,8 +320,8 @@ theorem pres (N l : ℕ) (k : ℤ) (hN : 0 < N) (hl : l.Prime) :
 
 end GlobalTheory.HeckeFamilyMatrices.Semi
 
-open GlobalTheory.HeckeFamilyMatrices.Semi in
 
+open GlobalTheory.HeckeFamilyMatrices.Semi in
 theorem GlobalTheory.HeckeFamilyMatrices.hecke_semisimple_at_newform : ∀ (k : ℕ) (g : UpperTheory.V.Af.Newform k) (N l : ℕ) (hN : g.M ∣ N), 5 ≤ N → l.Prime → ¬ l ∣ N → Odd k → 3 ≤ k →
   ∀ α : ℂ, α ^ 2 - g.a l * α + g.χ (l : ZMod g.M) * (l : ℂ) ^ (k - 1) = 0 →
   α ^ 2 ≠ g.χ (l : ZMod g.M) * (l : ℂ) ^ (k - 1) → α ^ 2 ≠ g.χ (l : ZMod g.M) * (l : ℂ) ^ (k - 2) →

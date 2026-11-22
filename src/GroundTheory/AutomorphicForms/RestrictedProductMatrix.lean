@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.Restricted
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.Restricted
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -19,11 +23,6 @@ def unitsCongr (e : A ≃* B) (he : Continuous e) (he' : Continuous e.symm) : A�
   continuous_invFun :=
     Units.continuous_iff.2 ⟨he'.comp Units.continuous_val, he'.comp Units.continuous_coe_inv⟩
 
-@[simp]
-theorem coe_unitsCongr_apply (e : A ≃* B) (he : Continuous e) (he' : Continuous e.symm) (u : Aˣ) :
-    ((unitsCongr e he he' u : Bˣ) : B) = e u :=
-  rfl
-
 end Units
 
 section Prod
@@ -42,16 +41,6 @@ def matrixProdRingEquiv : Matrix m m (R₁ × R₂) ≃+* Matrix m m R₁ × Mat
     · change ((M * N) a b).2 = (M.map Prod.snd * N.map Prod.snd) a b
       simp [Matrix.mul_apply, Prod.snd_sum]
   map_add' M N := rfl
-
-@[simp]
-theorem matrixProdRingEquiv_apply_fst (M : Matrix m m (R₁ × R₂)) (a b : m) :
-    (matrixProdRingEquiv m R₁ R₂ M).1 a b = (M a b).1 :=
-  rfl
-
-@[simp]
-theorem matrixProdRingEquiv_apply_snd (M : Matrix m m (R₁ × R₂)) (a b : m) :
-    (matrixProdRingEquiv m R₁ R₂ M).2 a b = (M a b).2 :=
-  rfl
 
 variable [TopologicalSpace R₁] [TopologicalSpace R₂]
 
@@ -77,16 +66,6 @@ def glProdEquiv : GL m (R₁ × R₂) ≃ₜ* GL m R₁ × GL m R₂ :=
       continuous_invFun := (Homeomorph.prodUnits (α := Matrix m m R₁)
         (β := Matrix m m R₂)).continuous_invFun }
 
-@[simp]
-theorem glProdEquiv_apply_fst (g : GL m (R₁ × R₂)) (a b : m) :
-    (glProdEquiv m R₁ R₂ g).1 a b = (g a b).1 :=
-  rfl
-
-@[simp]
-theorem glProdEquiv_apply_snd (g : GL m (R₁ × R₂)) (a b : m) :
-    (glProdEquiv m R₁ R₂ g).2 a b = (g a b).2 :=
-  rfl
-
 end Prod
 
 section Pi
@@ -103,11 +82,6 @@ def matrixPiRingEquiv : Matrix m m (Π j, R j) ≃+* Π j, Matrix m m (R j) wher
     simp [Matrix.mul_apply, Finset.sum_apply]
   map_add' M N := rfl
 
-@[simp]
-theorem matrixPiRingEquiv_apply (M : Matrix m m (Π j, R j)) (j : ι) (a b : m) :
-    matrixPiRingEquiv m R M j a b = M a b j :=
-  rfl
-
 variable [∀ j, TopologicalSpace (R j)]
 
 theorem continuous_matrixPiRingEquiv : Continuous (matrixPiRingEquiv m R) :=
@@ -123,11 +97,6 @@ variable [DecidableEq m]
 def glPiEquiv : GL m (Π j, R j) ≃ₜ* Π j, GL m (R j) :=
   (unitsCongr (matrixPiRingEquiv m R).toMulEquiv (continuous_matrixPiRingEquiv m R)
     (continuous_matrixPiRingEquiv_symm m R)).trans ContinuousMulEquiv.piUnits
-
-@[simp]
-theorem glPiEquiv_apply (g : GL m (Π j, R j)) (j : ι) (a b : m) :
-    glPiEquiv m R g j a b = g a b j :=
-  rfl
 
 end Pi
 
@@ -152,11 +121,6 @@ def congrSets {A A' : (i : ι) → Set (R i)} (h : ∀ i, A i = A' i) :
       (fun _ x => x) (.of_forall fun i x hx => (congrArg (x ∈ ·) (h i)).mpr hx)
       fun _ => continuous_id
 
-@[simp]
-theorem congrSets_apply {A A' : (i : ι) → Set (R i)} (h : ∀ i, A i = A' i)
-    (x : Πʳ i, [R i, A i]) (i : ι) : congrSets h x i = x i :=
-  rfl
-
 def congrSetsMul [∀ i, Monoid (R i)] {S S' : ι → Type*} [∀ i, SetLike (S i) (R i)]
     [∀ i, SubmonoidClass (S i) (R i)] [∀ i, SetLike (S' i) (R i)]
     [∀ i, SubmonoidClass (S' i) (R i)] {B : Π i, S i} {B' : Π i, S' i}
@@ -166,14 +130,6 @@ def congrSetsMul [∀ i, Monoid (R i)] {S S' : ι → Type*} [∀ i, SetLike (S 
   map_mul' _ _ := rfl
   continuous_toFun := (congrSets h).continuous
   continuous_invFun := (congrSets h).symm.continuous
-
-@[simp]
-theorem congrSetsMul_apply [∀ i, Monoid (R i)] {S S' : ι → Type*} [∀ i, SetLike (S i) (R i)]
-    [∀ i, SubmonoidClass (S i) (R i)] [∀ i, SetLike (S' i) (R i)]
-    [∀ i, SubmonoidClass (S' i) (R i)] {B : Π i, S i} {B' : Π i, S' i}
-    (h : ∀ i, (B i : Set (R i)) = B' i) (x : Πʳ i, [R i, B i]) (i : ι) :
-    congrSetsMul h x i = x i :=
-  rfl
 
 section Pi
 
@@ -203,11 +159,6 @@ def piEquiv (hA : ∀ i, IsOpen (A i)) :
     _root_.RestrictedProduct.mapAlong_continuous (fun i => m → R i) R id tendsto_id
       (A₁ := fun i => Set.pi univ fun _ => A i) (A₂ := A)
       (fun _ y => y a) (.of_forall fun _ _ hy => hy a (mem_univ a)) fun _ => continuous_apply a
-
-@[simp]
-theorem piEquiv_apply (hA : ∀ i, IsOpen (A i)) (x : m → Πʳ i, [R i, A i]) (i : ι) (a : m) :
-    piEquiv m hA x i a = x a i :=
-  rfl
 
 end Pi
 
@@ -243,12 +194,6 @@ def matrixRingEquiv (hC : ∀ i (M : Matrix m m (R i)), M ∈ C i ↔ ∀ a b, M
     exact map_sum (_root_.RestrictedProduct.evalRingHom R i) _ _
   map_add' _ _ := rfl
 
-omit [∀ i, TopologicalSpace (R i)] in
-@[simp]
-theorem matrixRingEquiv_apply (hC : ∀ i (M : Matrix m m (R i)), M ∈ C i ↔ ∀ a b, M a b ∈ B i)
-    (M : Matrix m m (Πʳ i, [R i, B i])) (i : ι) (a b : m) :
-    matrixRingEquiv m hC M i a b = M a b i :=
-  rfl
 
 omit [∀ i, TopologicalSpace (R i)] [∀ i, SubringClass (S i) (R i)] in
 theorem coe_eq_setOf (hC : ∀ i (M : Matrix m m (R i)), M ∈ C i ↔ ∀ a b, M a b ∈ B i) (i : ι) :
@@ -260,14 +205,14 @@ def matrixHomeomorph (hC : ∀ i (M : Matrix m m (R i)), M ∈ C i ↔ ∀ a b, 
     Matrix m m (Πʳ i, [R i, B i]) ≃ₜ Πʳ i, [Matrix m m (R i), C i] :=
   (matrixHomeomorphSets m hB).trans (congrSets fun i => (coe_eq_setOf m hC i).symm)
 
-omit [∀ i, SubringClass (S i) (R i)] in
 
+omit [∀ i, SubringClass (S i) (R i)] in
 theorem isOpen_coe_of_forall (hC : ∀ i (M : Matrix m m (R i)), M ∈ C i ↔ ∀ a b, M a b ∈ B i)
     (hB : ∀ i, IsOpen (B i : Set (R i))) (i : ι) : IsOpen (C i : Set (Matrix m m (R i))) := by
   rw [coe_eq_setOf m hC i]
   simp only [Set.ofPred_forall]
   exact isOpen_iInter_of_finite fun a => isOpen_iInter_of_finite fun b =>
-    (hB i).preimage ((continuous_apply b).comp (continuous_apply a))
+    (hB i).preimage (continuous_apply_apply a b)
 
 def matrixUnitsEquiv (hC : ∀ i (M : Matrix m m (R i)), M ∈ C i ↔ ∀ a b, M a b ∈ B i)
     (hB : ∀ i, IsOpen (B i : Set (R i))) :
@@ -275,12 +220,6 @@ def matrixUnitsEquiv (hC : ∀ i (M : Matrix m m (R i)), M ∈ C i ↔ ∀ a b, 
   (unitsCongr (matrixRingEquiv m hC).toMulEquiv (matrixHomeomorph m hC hB).continuous
     (matrixHomeomorph m hC hB).symm.continuous).trans
     (GroundTheory.Global.RestrictedProduct.continuousUnitsEquiv (isOpen_coe_of_forall m hC hB))
-
-@[simp]
-theorem matrixUnitsEquiv_apply (hC : ∀ i (M : Matrix m m (R i)), M ∈ C i ↔ ∀ a b, M a b ∈ B i)
-    (hB : ∀ i, IsOpen (B i : Set (R i))) (g : GL m (Πʳ i, [R i, B i])) (i : ι) (a b : m) :
-    (matrixUnitsEquiv m hC hB g i : Matrix m m (R i)) a b = g a b i :=
-  rfl
 
 end Matrix
 

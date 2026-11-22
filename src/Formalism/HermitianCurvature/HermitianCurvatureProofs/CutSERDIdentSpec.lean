@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialIdentityOfQuadratic
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialIdentityOfQuadratic
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped Matrix
@@ -283,10 +287,12 @@ theorem rAdj_inv {x xi : Pr (RadSp k r z z' π π')} (hx : RAdj μ x) (h1 : x * 
   obtain ⟨-, -, hx3, hx4⟩ := hx
   have e1 : ∀ Φ, x.1 (xi.1 Φ) = Φ := fun Φ => by
     have := congrArg (fun p : Pr (RadSp k r z z' π π') => p.1 Φ) h1
-    simpa [rds_fst_mul] using this
+    rw [rds_fst_mul, Module.End.mul_apply] at this
+    exact this
   have e2 : ∀ Φ, x.2.unop (xi.2.unop Φ) = Φ := fun Φ => by
     have := congrArg (fun p : Pr (RadSp k r z z' π π') => p.2.unop Φ) h2
-    simpa [rds_snd_mul] using this
+    rw [rds_snd_mul, Module.End.mul_apply] at this
+    exact this
   refine ⟨fun Ψ hΨ => (ht Ψ hΨ).1, fun Ψ hΨ => (ht Ψ hΨ).2, fun Φ Ψ hΨ => ?_, fun Φ Ψ hΨ => ?_⟩
   · conv_lhs => rw [← e2 Ψ]
     rw [← hx3 _ _ (ht Ψ hΨ).2, e1]

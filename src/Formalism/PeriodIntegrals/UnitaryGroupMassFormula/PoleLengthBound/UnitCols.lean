@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PoleLengthBound.AssembleAlt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.TaylorSpanGeneratorsAlt
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PoleLengthBound.AssembleAlt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.TaylorSpanGeneratorsAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,18 +24,19 @@ theorem uSpec_wfr (G : GlobalFamilyData X ka wL wF) (la : HeightOneSpectrum (�
 
 theorem sum_T_wfr (G : GlobalFamilyData X ka wL wF) (la : HeightOneSpectrum (𝓞 B.KO)) :
     ∑ col, algebraMap (Kp X la G.N) ↥(Frac0 X la G.w)
-      (algebraMap (Op X la G.N) (Kp X la G.N) (Tv X la G.N ((0 : Fin (WeightFamilies.dimY D j + 1)), col))) *
+      (@algebraMap (Op X la G.N) (Kp X la G.N) _ _ _ (Tv X la G.N ((0 : Fin (WeightFamilies.dimY D j + 1)), col))) *
         PoleLengthBounds.wfr G la col = 1 := by
   apply Subtype.ext
   have h : ∀ col, ((algebraMap (Kp X la G.N) ↥(Frac0 X la G.w)
-      (algebraMap (Op X la G.N) (Kp X la G.N) (Tv X la G.N ((0 : Fin (WeightFamilies.dimY D j + 1)), col))) *
+      (@algebraMap (Op X la G.N) (Kp X la G.N) _ _ _ (Tv X la G.N ((0 : Fin (WeightFamilies.dimY D j + 1)), col))) *
         PoleLengthBounds.wfr G la col : ↥(Frac0 X la G.w)) : Lw X la G.w) =
-      frac X la G.w 1 ((algebraMap (Op X la G.N) (Kp X la G.N) (Tv X la G.N ((0 : Fin (WeightFamilies.dimY D j + 1)), col))) •
+      frac X la G.w 1 ((@algebraMap (Op X la G.N) (Kp X la G.N) _ _ _ (Tv X la G.N ((0 : Fin (WeightFamilies.dimY D j + 1)), col))) •
         emb X la G.N (X.inc wL (G.w col))) := by
     intro col
     rw [LinearMap.map_smul, Algebra.smul_def]
     rfl
-  rw [AddSubmonoidClass.coe_finsetSum, Finset.sum_congr rfl fun col _ => h col, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [AddSubmonoidClass.coe_finsetSum, Finset.sum_congr rfl fun col _ => h col, ← map_sum]
   show frac X la G.w 1 (sec X la G.w 0) = _
   rw [frac_apply, pow_one, section_mul_inverse_eq_one]
   rfl
@@ -40,7 +45,8 @@ theorem sum_T_u (G : GlobalFamilyData X ka wL wF) (la : HeightOneSpectrum (𝓞 
     ∑ col, algebraMap (Op X la G.N) (OsK X la G.w) (Tv X la G.N ((0 : Fin (WeightFamilies.dimY D j + 1)), col)) *
       toOsK X la G.w (PoleLengthBounds.wfr G la col) = 1 := by
   have := congrArg (toOsK X la G.w) (sum_T_wfr G la)
-  rw [map_one, map_sum] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_one, map_sum] at this
   rw [← this]
   refine Finset.sum_congr rfl fun col _ => ?_
   rw [map_mul, AlgHom.commutes]

@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsExtraAlt
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerBis
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerSide
-import GroundTheory.HeightsAndTheta.Heights.Intersections.XcNotMemOfIsRelevant
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ArithVarZero
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsHorizontalOfDimOne
-import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsExtraAlt
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerBis
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerSide
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.XcNotMemOfIsRelevant
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ArithVarZero
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsHorizontalOfDimOne
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -51,7 +56,7 @@ theorem VerticalEmbedding.proof (hD : regularityDehomogenization_holds.Statement
             (geoNum 0 W (fun j => ((Fin.elim0 : Fin 0 → HermLine ι) j).a) : ℝ) * Real.log (charOf W)) =
         Real.log (Nat.card (locRing P W ⧸ locIdeal P W (y s W))) := by
     intro s hs hsP W hW
-    have hA : IsSectionOn P (HermLine.ofMetrics (fun k => fsMetric (ι k)) (fun k => (a k : ℤ))) s :=
+    have hA : IsSectionOn P (HermLine.ofMetrics (fun k => fsMetric (ι := ι k)) (fun k => (a k : ℤ))) s :=
       ⟨a, fun _ => rfl, hs, hsP⟩
     rw [if_neg (not_isHorizontal_of_dimOne arithVarZero hP hA hW)]
     obtain ⟨-, -, hta, htW, hy⟩ := hdata s W hW

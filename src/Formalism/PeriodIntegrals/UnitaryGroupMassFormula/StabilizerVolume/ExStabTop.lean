@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.ExStabSt
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.ExStabSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,9 +93,5 @@ theorem orbEmb_of (hW : SecCtblW) (hP : LCSCPolish) : OrbEmb := by
   have hcont := orb_cont (G := HA (AF F) σ J) (ratTup (F := F) (AF F) X0)
     (smul_ratTup_cont F E σ M J X0)
   exact ⟨hcont.measurableEmbedding (orb_inj _), hcont⟩
-
-theorem exStab_of_alt (hW : SecCtblW) (hP : LCSCPolish) (hO : OrbTup) (hH : StabUni) (hI : NuInv)
-    (hF : NuFin) (hN : NuNeZero) (hU : Unimod) : ExStab :=
-  exStab_of (secCtblG_of hW) hO stabClosed_holds hH hI hF hN (orbEmb_of hW hP) hU
 
 end PI.VolStabS

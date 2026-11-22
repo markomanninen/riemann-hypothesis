@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferSmoothAtBuiltPlace
-import CompanionTheory.AutomorphicTheory.BesselWaveGrids.CoefFacts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferSmoothAtBuiltPlace
+public import CompanionTheory.AutomorphicTheory.BesselWaveGrids.CoefFacts
+
+@[expose] public section
 
 namespace CompanionTheory.WaveGrid.Coef
 

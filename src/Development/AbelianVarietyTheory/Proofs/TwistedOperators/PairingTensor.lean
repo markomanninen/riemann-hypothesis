@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFiniteDimensionalKill
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFiniteDimensionalKill
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum
 open Formalism.IndefR.Mult (DSModel dualPar parA parB)
 open Formalism.MainNotions.SchurIrreducible (AdmGK ARi ARiiiUp ARiiiDown ARiiiLine DiscreteSeriesBlattner admQ5)
@@ -33,7 +38,7 @@ theorem eq_zero_of_ctr (U : Type) [AddCommGroup U] [Module ℂ U] (y : R.HK.V �
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => rw [TensorProduct.comm_tmul, GlobalTheory.PairingTensor.contrR_tmul, ctr_tmul]; rfl
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   apply (TensorProduct.comm ℂ _ _).injective
   rw [map_zero]
   exact GlobalTheory.PairingTensor.eq_zero_of_contrR m sepm _ fun v => by rw [key, hy]
@@ -47,15 +52,15 @@ theorem ctr_add (U : Type) [AddCommGroup U] [Module ℂ U] (v w : R.HK.V) (z : R
     ctr R U (v + w) z = ctr R U v z + ctr R U w z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | tmul a b => simp only [ctr_tmul, map_add, inner_add_left, add_smul]
-  | add x y hx hy => simp only [map_add, hx, hy]; abel
+  | tmul a b => simp only [ctr_tmul, map_add (f := _), inner_add_left, add_smul]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]; abel
 
 theorem ctr_smul (U : Type) [AddCommGroup U] [Module ℂ U] (c : ℂ) (v : R.HK.V)
     (z : R.HK.V ⊗[ℂ] U) : ctr R U (c • v) z = (starRingEnd ℂ) c • ctr R U v z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp only [ctr_tmul, map_smul, inner_smul_left, mul_smul]
-  | add x y hx hy => simp only [map_add, hx, hy, smul_add]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, smul_add]
 
 theorem ctr_act (U : Type) [AddCommGroup U] [Module ℂ U] {X : Mat p q} (hX : X ∈ upq p q)
     (v : R.HK.V) (z : R.HK.V ⊗[ℂ] U) :
@@ -65,7 +70,7 @@ theorem ctr_act (U : Type) [AddCommGroup U] [Module ℂ U] {X : Mat p q} (hX : X
   | tmul a b =>
     rw [TensorProduct.map_tmul, ctr_tmul, ctr_tmul,
       eq_neg_of_add_eq_zero_left (inner_act_skew R hX v a), neg_smul, LinearMap.id_apply]
-  | add x y hx hy => simp only [map_add, hx, hy, neg_add]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, neg_add]
 
 variable {W U : Type} [AddCommGroup W] [Module ℂ W] [AddCommGroup U] [Module ℂ U]
   (a : Mat p q →ₗ[ℂ] Module.End ℂ W)
@@ -90,7 +95,8 @@ theorem exists_finiteDimensional_kill (ha : IsGK a) (hA : AdmGK R.HK)
   have hR : ∀ w, ∀ x ∈ F, inner ℂ (R.ι x) (R.ι (φ w)) = l (B w x) := fun w x hx => by
     conv_rhs => rw [← he x hx]
     rw [hφ]
-    simp only [map_sum, map_smul, inner_sum, inner_smul_right, LinearMap.map_smulₛₗ,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, inner_sum, inner_smul_right, LinearMap.map_smulₛₗ,
       inner_conj_symm, smul_eq_mul, mul_comm]
   have hreal : ∀ X ∈ upq p q, IsKC X → ∀ w, φ (a X w) = R.HK.act X (φ w) := by
     intro X hX hK w
@@ -100,7 +106,7 @@ theorem exists_finiteDimensional_kill (ha : IsGK a) (hA : AdmGK R.HK)
       intro x hx
       have h1 := inner_act_skew R hX x (φ w)
       have h2 := congrArg l (hB X hX w x)
-      rw [map_add, map_zero] at h2
+      rw [map_add (f := _), map_zero] at h2
       rw [hR w _ (hFst X hK x hx)] at h1
       rw [map_sub, inner_sub_right, hR _ x hx]
       linear_combination h2 - h1
@@ -111,7 +117,7 @@ theorem exists_finiteDimensional_kill (ha : IsGK a) (hA : AdmGK R.HK)
   have heq : ∀ Z, IsKC Z → ∀ w, φ (a Z w) = R.HK.act Z (φ w) := by
     intro Z hZ w
     obtain ⟨X, Y, hX, hY, hK, rfl⟩ := exists_real_parts Z
-    simp only [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply,
+    simp only [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply,
       hreal X hX (hK hZ).1, hreal Y hY (hK hZ).2]
   rw [← hR P y hyF]
   exact hy _ (hE' φ heq P hP)
@@ -145,16 +151,18 @@ theorem exists_map (ha : IsGK a) (hA : AdmGK R.HK)
     have h1 := hkill (y - ∑ j, inner ℂ (R.ι (e j)) (R.ι y) • e j) (fun x hx => by
       rw [map_sub, inner_sub_left, sub_eq_zero]
       conv_lhs => rw [← he x hx]
-      simp only [map_sum, map_smul, inner_sum, sum_inner, inner_smul_right, inner_smul_left,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, inner_sum, sum_inner, inner_smul_right, inner_smul_left,
         inner_conj_symm, mul_comm])
     rw [map_sub, sub_eq_zero] at h1
     rw [h1]
-    simp only [map_sum, ctr_tmul, LinearMap.map_smulₛₗ, inner_conj_symm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, ctr_tmul, LinearMap.map_smulₛₗ, inner_conj_symm]
   choose g hg using ex
   let f : W →ₗ[ℂ] R.HK.V ⊗[ℂ] U :=
     { toFun := g
       map_add' := fun P Q => ext_ctr R U _ _ fun y => by
-        rw [map_add, hg, hg, hg, map_add, LinearMap.add_apply]
+        rw [map_add (f := _), hg, hg, hg, map_add (f := _), LinearMap.add_apply]
       map_smul' := fun t P => ext_ctr R U _ _ fun y => by
         rw [map_smul, hg, hg, map_smul, RingHom.id_apply, LinearMap.smul_apply] }
   have hf : ∀ P y, ctr R U y (f P) = B P y := hg
@@ -167,7 +175,7 @@ theorem exists_map (ha : IsGK a) (hA : AdmGK R.HK)
   refine ⟨f, fun Z => ?_, fun P y => (hf P y).symm⟩
   obtain ⟨X, Y, hX, hY, -, rfl⟩ := exists_real_parts Z
   refine LinearMap.ext fun P => ?_
-  simp only [LinearMap.comp_apply, map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply,
+  simp only [LinearMap.comp_apply, map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply,
     TensorProduct.map_add_left, TensorProduct.map_smul_left, hreal X hX, hreal Y hY]
 
 end GlobalTheory.ArchRec.PairTensor

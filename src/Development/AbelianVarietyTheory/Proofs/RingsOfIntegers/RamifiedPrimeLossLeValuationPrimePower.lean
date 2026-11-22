@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CMTraceForms.CmDatumDiscriminantDepthBounds
-import Development.AbelianVarietyTheory.Statements.ShortVectorBound.ScaledLatticesInSupLattices
-import Formalism.LocalToGlobal.ProjectiveLattices.CrudeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.PlaceBoundOwnPrimeOf
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CMTraceForms.CmDatumDiscriminantDepthBounds
+public import Development.AbelianVarietyTheory.Statements.ShortVectorBound.ScaledLatticesInSupLattices
+public import Formalism.LocalToGlobal.ProjectiveLattices.CrudeVal
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -30,17 +34,17 @@ theorem ramLoss_le_vLa_pPow (D : D7) (K : Type) [Field K] [NumberField K] (la : 
       ((vLa la (p : K) : ℤ) : ℝ) * D.host.vdH p * (DF w : ℝ) / 2 = 0 := fun p hp hne => by
     have hpp := Nat.prime_of_mem_primeFactors hp
     haveI : Fact p.Prime := ⟨hpp⟩
-    rw [Crude.crv_vLa_natCast la hpp.ne_zero, padicValNat_primes hne.symm]; simp
+    rw [Crude.crv_vLa_natCast la hpp.ne_zero, Nat.padicValNat_def, multiplicity_primes hne.symm]; simp
   rw [ramLoss, hR]
   by_cases hm : resCharOf la ∈ D.host.condN.primeFactors
-  · rw [Finset.sum_eq_single_of_mem _ hm hz, Crude.crv_vLa_natCast la hl.ne_zero, padicValNat_self]
+  · rw [Finset.sum_eq_single_of_mem _ hm hz, Crude.crv_vLa_natCast la hl.ne_zero, Nat.padicValNat_def, Nat.Prime.multiplicity_self]
     have key : D.host.vdH (resCharOf la) * (DF w : ℝ) / 2 ≤ (padicValNat (resCharOf la) (pPow D a b b) : ℝ) := by
       have hv0 := D.host.vdH_nonneg (resCharOf la)
       have hle : ∀ k : ℕ, resCharOf la ^ k ∣ pPow D a b b → (k : ℝ) ≤ (padicValNat (resCharOf la) (pPow D a b b) : ℝ) :=
-        fun k hk => by exact_mod_cast (padicValNat_dvd_iff_le hN).1 hk
+        fun k hk => by exact_mod_cast ((by simpa only [_root_.Nat.padicValNat_def] using @_root_.multiplicity_dvd_iff_le : ∀ {p : _root_.Nat} [hp : _root_.Fact (_root_.Nat.Prime p)] {a n : _root_.Nat} (ha : a ≠ 0), p ^ n ∣ a ↔ n ≤ _root_.padicValNat p a) hN).1 hk
       rcases (D.host.dvd_condN_iff_small hl).1 (Nat.dvd_of_mem_primeFactors hm) with h | h | h
       · have h1 := hle (padicValNat (resCharOf la) D.host.QS * a) (by
-          rw [pow_mul]; exact ((pow_dvd_pow_of_dvd pow_padicValNat_dvd a).mul_right _).mul_right _)
+          rw [pow_mul]; exact ((pow_dvd_pow_of_dvd (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _)) a).mul_right _).mul_right _)
         have h2 := (hs _ h).1
         push_cast at h1
         nlinarith [mul_le_mul h2 ha' hD (Nat.cast_nonneg _), mul_nonneg hv0 hD]

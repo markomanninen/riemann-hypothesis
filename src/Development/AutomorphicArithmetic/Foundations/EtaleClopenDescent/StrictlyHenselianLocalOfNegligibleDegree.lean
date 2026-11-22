@@ -1,6 +1,10 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.LeafSHNbSys
-import Development.EtaleCohomology.EtaleSheaves.LeafSHSysPf
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.LeafSHNbSys
+public import Development.EtaleCohomology.EtaleSheaves.LeafSHSysPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite

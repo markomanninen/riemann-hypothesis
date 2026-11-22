@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecCarriedOver
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecCarried
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGeneratorOfTheoremOfCubeTenPoints
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GrpPullbackPointsLiftMulInv
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RigidifiedIsoRespectsCubeAndSymmetry
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecCarriedOver
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecCarried
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGeneratorOfTheoremOfCubeTenPoints
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GrpPullbackPointsLiftMulInv
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RigidifiedIsoRespectsCubeAndSymmetry
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -232,8 +237,8 @@ theorem exists_gen_carried (cb : CubicalStr G L) (hF : ∀ σ, IsGrpPullback G G
 
 end Grp
 
-open RigidIsoCube in
 
+open RigidIsoCube in
 theorem pmaps_cub (R : Type) [CommRing R] [IsDomain R] (I : Ideal R) (D : DegData R I)
     (A : PolAV (Sp (FractionRing R))) (G : Over (Sp R)) [GrpObj G] [IsCommMonObj G] (U : UnifPre I D A G)
     {s : Sp R ⟶ Sp R} {F : G.left ⟶ G.left} (hF : IsGrpPullback G G s F) (w : LB.Iso U.LG.L (U.LG.L.pull F))
@@ -273,8 +278,7 @@ theorem pmaps_cub (R : Type) [CommRing R] [IsDomain R] (I : Ideal R) (D : DegDat
       refine (val_pull hJ _ _ _).trans ((congrArg (fun q => val (L := U.LG.L) (φ := thφ G (x3 G)) (ε := thε)
         U.cubG.t q y J) heF).trans ?_)
       refine ((isCub_cubV (T := Over.mk s) U.cubG hJ).face 1 1).trans
-        (Eq.trans ?_ (congrArg₂ (· * ·) p ((isCub_cubV U.cubG hJ').face 1 1)).symm)
-      simp)
+        (Eq.trans (by simp [mul_assoc]) (congrArg₂ (· * ·) p ((isCub_cubV U.cubG hJ').face 1 1)).symm))
   intro Z r z p q hp hq
   refine Eq.trans ?_ (key Z r z p q hp hq)
   rw [Category.comp_id]

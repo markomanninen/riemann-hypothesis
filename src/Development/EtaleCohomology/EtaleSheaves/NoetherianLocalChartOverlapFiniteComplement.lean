@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LZIdemSumApprox
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LZIdemSumApprox
+
+@[expose] public section
 
 noncomputable section
 open LateralTheory.E.StandardEtaleChartsIdempotentGluing

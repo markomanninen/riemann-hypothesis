@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DifferentiableSqTh
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.Cval
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntSerOfIsWq
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SigmaStarSquareQuotientInModelParameter
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicComplexIntegralBoundedSeriesLaws
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SqThD
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TaylorSeriesInParameterRescaleOfAlgebraic
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.InvOmega
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DifferentiableSqTh
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.Cval
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntSerOfIsWq
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SigmaStarSquareQuotientInModelParameter
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicComplexIntegralBoundedSeriesLaws
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SqThD
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TaylorSeriesInParameterRescaleOfAlgebraic
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.InvOmega
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
 open GlobalTheory.EvenTheta GlobalTheory.ThetaTransl
@@ -37,24 +42,24 @@ theorem algEnt_deriv {F : ℂ → ℂ} (hF : AlgEnt F) : AlgEnt (deriv F) := by
 variable {p : ℕ} [Fact p.Prime]
 
 theorem padicTaylorSeries_deriv_eq_derivative (lam : Qbar →+* ℂ_[p]) {F : ℂ → ℂ} (hF : AlgEnt F) :
-    GL3Theta.ser1 lam (deriv F) = derivative ℂ_[p] (GL3Theta.ser1 lam F) := by
+    GL3Theta.ser1 lam (deriv F) = d⁄dX (GL3Theta.ser1 lam F) := by
   ext n
   rw [coeff_derivative, GlobalTheory.SerTransport.coeff_padicTransportSeries, GlobalTheory.SerTransport.coeff_padicTransportSeries, taylorCoeffAtZero_deriv]
   obtain ⟨a, ha⟩ := GlobalTheory.SerTransport.exists_coef hF
   rw [ha]
   have e : ((n : ℂ) + 1) * (a (n + 1) : ℂ) = ((((n : Qbar) + 1) * a (n + 1) : Qbar) : ℂ) := by
     push_cast; rfl
-  rw [e, GlobalTheory.SerTransport.lamC_coe, GlobalTheory.SerTransport.lamC_coe, map_mul, map_add, map_natCast, map_one,
+  rw [e, GlobalTheory.SerTransport.lamC_coe, GlobalTheory.SerTransport.lamC_coe, map_mul, map_add (f := _), map_natCast, map_one,
     mul_comm]
 
 theorem atU_deriv (g : GL3Theta.G1 p) {F : ℂ → ℂ} (hF : AlgEnt F) :
-    derivative ℂ_[p] (g.atU F) =
-      g.atU (deriv F) * (C ((g.C.u⁻¹ : ℂ_[p]ˣ) : ℂ_[p]) * derivative ℂ_[p] g.l) := by
+    d⁄dX (g.atU F) =
+      g.atU (deriv F) * (C ((g.C.u⁻¹ : ℂ_[p]ˣ) : ℂ_[p]) * d⁄dX g.l) := by
   have hs := HasSubst.of_constantCoeff_zero' (GlobalTheory.SerTransport.const_Cl g ((g.C.u⁻¹ : ℂ_[p]ˣ) : ℂ_[p]))
   rw [GlobalTheory.SerTransport.atU_eq, GlobalTheory.SerTransport.atU_eq, derivative_subst hs, padicTaylorSeries_deriv_eq_derivative g.lam hF,
     Derivation.leibniz, derivative_C, smul_zero, add_zero, smul_eq_mul]
 
-theorem bddSer_derivative {f : PowerSeries ℂ_[p]} (hf : BddSer f) : BddSer (derivative ℂ_[p] f) := by
+theorem bddSer_derivative {f : PowerSeries ℂ_[p]} (hf : BddSer f) : BddSer (d⁄dX f) := by
   obtain ⟨B, hB⟩ := hf
   refine ⟨B, fun n => ?_⟩
   rw [coeff_derivative, norm_mul]
@@ -81,7 +86,7 @@ theorem sqThD_atU : ∀ (p : ℕ) [Fact p.Prime] (g : GL3Theta.G1 p), g.Ok → I
   obtain ⟨i1, i2, i3, i4, i6, -⟩ := hOk.1
   obtain ⟨vI, hvI, hvl⟩ := PI.JetsPhW.Inv.inverse_omega_holds p g.W g.wq i1 i2 i3 i4 i6 hq
   rw [PI.JetsPhW.Inv.dX_eq_derivative] at hvl
-  change vI * derivative ℂ_[p] g.l = 1 at hvl
+  change vI * d⁄dX g.l = 1 at hvl
   have hσd := algEnt_deriv hσ
   have hSd := algEnt_deriv hS
   have hm2 : (((-2 : Qbar)) : ℂ) = -2 := by push_cast; rfl
@@ -105,7 +110,7 @@ theorem sqThD_atU : ∀ (p : ℕ) [Fact p.Prime] (g : GL3Theta.G1 p), g.Ok → I
   set e := ePhi1 g.lam g.abelian₂ g.C g.wq with he
   set L := lineSer g.wq⁻¹ (xAt g v) with hL'
   obtain ⟨-, hbdd, hCb, hX, -⟩ := SerRing.series_ring_laws p
-  refine ⟨vI * (X * derivative ℂ_[p] L - 2 * L), ?_, ?_⟩
+  refine ⟨vI * (X * d⁄dX L - 2 * L), ?_, ?_⟩
   · have hX2 : BddSer (X ^ 2 : PowerSeries ℂ_[p]) := by
       rw [pow_two]; exact (hbdd _ _ ⟨1, hX⟩ ⟨1, hX⟩).2.2
     have hLb : BddSer L := by
@@ -118,11 +123,11 @@ theorem sqThD_atU : ∀ (p : ℕ) [Fact p.Prime] (g : GL3Theta.G1 p), g.Ok → I
     have dB := atU_deriv g hS
     rw [hA] at dA
     rw [hB] at dB
-    have hDA : derivative ℂ_[p] (C ε * X * e) = C ε * (e + X * derivative ℂ_[p] e) := by
+    have hDA : d⁄dX (C ε * X * e) = C ε * (e + X * d⁄dX e) := by
       simp only [Derivation.leibniz, derivative_C, derivative_X, smul_eq_mul]
       ring
-    have hDB : derivative ℂ_[p] (e ^ 2 * L) =
-        2 * e * derivative ℂ_[p] e * L + e ^ 2 * derivative ℂ_[p] L := by
+    have hDB : d⁄dX (e ^ 2 * L) =
+        2 * e * d⁄dX e * L + e ^ 2 * d⁄dX L := by
       simp only [Derivation.leibniz, Derivation.leibniz_pow, smul_eq_mul, nsmul_eq_mul]
       push_cast
       ring
@@ -134,9 +139,9 @@ theorem sqThD_atU : ∀ (p : ℕ) [Fact p.Prime] (g : GL3Theta.G1 p), g.Ok → I
     set b1 := g.atU (deriv (sqTh g.abelian₂ v))
     set x := C ε
     set y := C ε⁻¹
-    set l' := derivative ℂ_[p] g.l
-    set E' := derivative ℂ_[p] e
-    set L'' := derivative ℂ_[p] L
+    set l' := d⁄dX g.l
+    set E' := d⁄dX e
+    set L'' := d⁄dX L
     have ha1 : a1 = (e + X * E') * vI := by
       linear_combination (-a1) * F4 + (-a1 * x * y) * hvl + (-y * vI) * dA + ((e + X * E') * vI) * F4
     have hb1 : b1 = y * (2 * e * E' * L + e ^ 2 * L'') * vI := by

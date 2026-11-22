@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.Transference
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.EmbeddingHermSelf
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.IsLocalizedModuleSubtype
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.Transference
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.EmbeddingHermSelf
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.IsLocalizedModuleSubtype
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD Module Submodule
 
@@ -34,7 +38,8 @@ theorem exists_euclidean {M : ℕ} [FiniteDimensional ℚ V] (hM : finrank ℚ V
   refine ⟨φ, fun x y => ?_⟩
   have hB : B x y = ∑ j, v.repr x j * v.repr y j * B (v j) (v j) := by
     conv_lhs => rw [← v.sum_repr x, ← v.sum_repr y]
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
       Finset.mul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [Finset.sum_eq_single j]
@@ -95,7 +100,7 @@ theorem transference_rat {M : ℕ} (b : Basis (Fin M) ℚ V)
     | add x y _ _ hx hy =>
       obtain ⟨k1, h1⟩ := hx
       obtain ⟨k2, h2⟩ := hy
-      exact ⟨k1 + k2, by rw [map_add, LinearMap.add_apply, h1, h2]; push_cast; ring⟩
+      exact ⟨k1 + k2, by rw [map_add (f := _), LinearMap.add_apply, h1, h2]; push_cast; ring⟩
     | smul a x _ hx =>
       obtain ⟨k, h⟩ := hx
       exact ⟨a * k, by rw [map_zsmul, LinearMap.smul_apply, h, zsmul_eq_mul]; push_cast; ring⟩
@@ -121,7 +126,8 @@ theorem transference_rat {M : ℕ} (b : Basis (Fin M) ℚ V)
   have hyv : ∀ i, φ (∑ j, (m i j : ℚ) • b j) = y i := by
     intro i
     refine InnerProductSpace.ext_inner_right_basis b' fun k => ?_
-    rw [hm, hb', map_sum, sum_inner]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hm, hb', map_sum, sum_inner]
     simp only [map_smul, ← Rat.cast_smul_eq_qsmul ℝ, real_inner_smul_left, hd3, mul_ite, mul_one,
       mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true, Rat.cast_intCast]
   refine ⟨fun i => ∑ j, (m i j : ℚ) • b j, fun i => ?_, ?_, fun i => ?_⟩
@@ -131,7 +137,8 @@ theorem transference_rat {M : ℕ} (b : Basis (Fin M) ℚ V)
   · rw [Fintype.linearIndependent_iff]
     intro g hg i
     have h := congrArg φ hg
-    rw [map_sum, map_zero] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h
     simp only [map_smul, hyv, ← Rat.cast_smul_eq_qsmul ℝ] at h
     have := (Fintype.linearIndependent_iff.mp hyli) (fun i => (g i : ℝ)) h i
     exact_mod_cast this
@@ -294,12 +301,12 @@ end ShortVectors
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
-open ShortVectors in
 
+open ShortVectors in
 theorem exists_short_vectors {n : ℕ} (Λ : Submodule (𝓞 E) (Fin n → E)) (hfg : Λ.FG)
     (hint : ∀ x ∈ Λ, ∀ y ∈ Λ, IsIntegral ℤ (herm 1 x y)) (hdual : ∀ x, (∀ y ∈ Λ, IsIntegral ℤ (herm 1 x y)) → x ∈ Λ) :
     ∃ v : Fin (2 * fdeg E * n) → Fin n → E, (∀ i, v i ∈ Λ) ∧ LinearIndependent ℚ v ∧ Submodule.span ℚ (Set.range v) = ⊤ ∧
-      ∀ i (τ : E →+* ℂ), ∑ k, ‖τ (v i k)‖ ^ 2 ≤ (2 * (fdeg E : ℝ) ^ ((3 : ℝ) / 2) * n ^ 2 * rdE E) ^ 2 := by
+      ∀ i (τ : E →+* ℂ), ∑ k, ‖τ (v i k)‖ ^ 2 ≤ (2 * (fdeg E : ℝ) ^ ((3 : ℝ) / 2) * n ^ 2 * rdE E) ^ 2 := open ShortVectors in by
   classical
   have hspan := DualFamily.span_eq_top Λ hfg hdual
   obtain ⟨b, hb⟩ := exists_basis Λ hfg hspan
@@ -331,7 +338,7 @@ theorem exists_short_vectors {n : ℕ} (Λ : Submodule (𝓞 E) (Fin n → E)) (
       | add x z _ _ hx hz =>
         obtain ⟨k1, h1⟩ := hx
         obtain ⟨k2, h2⟩ := hz
-        exact ⟨k1 + k2, by rw [map_add, h1, h2]; push_cast; ring⟩
+        exact ⟨k1 + k2, by rw [map_add (f := _), h1, h2]; push_cast; ring⟩
       | smul a x _ hx =>
         obtain ⟨k, h⟩ := hx
         exact ⟨a * k, by rw [map_zsmul, h, zsmul_eq_mul]; push_cast; ring⟩

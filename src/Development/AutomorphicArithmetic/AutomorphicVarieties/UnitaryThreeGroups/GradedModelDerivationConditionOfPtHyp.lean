@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.Rigid0
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ModelSigns
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.TanDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.NormCob
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ZetaReducibleRepEqSubInvAndIsUnit
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.Rigid0
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ModelSigns
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.TanDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.NormCob
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ZetaReducibleRepEqSubInvAndIsUnit
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.HV
 
@@ -41,11 +45,11 @@ private theorem twist_der (t : Kˣ) (ξ : A →ₐ[O] K) (D E : A →ₗ[O] K) (
       simp only [smul_eq_mul]
       ring
     · intro g g' h h'
-      simp only [mul_add, map_add, smul_add, add_smul, smul_eq_mul] at h h' ⊢
+      simp only [mul_add, map_add (f := _), smul_add, add_smul, smul_eq_mul] at h h' ⊢
       rw [h, h']
       ring
   · intro f f' h h'
-    simp only [add_mul, map_add, smul_add, add_smul, smul_eq_mul] at h h' ⊢
+    simp only [add_mul, map_add (f := _), smul_add, add_smul, smul_eq_mul] at h h' ⊢
     rw [h, h']
     ring
 
@@ -74,17 +78,19 @@ private theorem twist_kills {x : A →ₐ[O] O} {r s r' s' m : ℕ} (Q : Eqns �
     rw [smul_eq_mul, hE'', hb0, hξ' b hb]
     simp
 
-private theorem cob_smul {G C : Type} [Group G] [CommRing C] {m : ℕ} (r : G →* GG m C) (a : C)
+private theorem cob_smul {G C : Type} [Group G] [CommRing C] {m : ℕ} (r : G →* GG (m := m) (R := C)) (a : C)
     (X : Matrix (Fin m) (Fin m) C) : cob r (a • X) = a • cob r X := by
   funext g
   simp only [cob, map_smul, Pi.smul_apply, smul_sub]
 
-private theorem zmat_map {G R R' : Type} [Group G] [CommRing R] [CommRing R'] (f : R →+* R') (r : G →* GG 3 R)
+private theorem zmat_map {G R R' : Type} [Group G] [CommRing R] [CommRing R'] (f : R →+* R')
+    (r : G →* GG (m := 3) (R := R))
     (c g₁ : G) (a b : Fin 3) : zmat c g₁ ((GG.map f).comp r) a b = f (zmat c g₁ r a b) := by
   simp [zmat]
 
 private theorem normalised_map {G R R' : Type} [Group G] [CommRing R] [CommRing R'] (f : R →+* R')
-    (r : G →* GG 3 R) (c g₁ : G) (h : Normalised c g₁ r) : Normalised c g₁ ((GG.map f).comp r) := by
+    (r : G →* GG (m := 3) (R := R)) (c g₁ : G) (h : Normalised c g₁ r) :
+    Normalised c g₁ ((GG.map f).comp r) := by
   refine ⟨?_, ?_, ?_⟩
   · simp [GG.map_mat, h.atc]
   · rw [zmat_map, h.z12, map_zero]
@@ -150,7 +156,7 @@ theorem UpperTheory.V.U3.gradedModel_derivationCondition_of_ptHyp :
     · intro h j hj y hy
       rw [act_tz M.𝒜 t ξ hy, h j hj y hy, mul_zero]
   have hsg := model_signs S M hl hm f hf
-  have htwo : TwoPt η S.r.hom f :=
+  have htwo : TwoPt (η := η) S.r.hom f :=
     ⟨hf, fun h => hsign.1 (hneg.1 (hsg.1.2 h)), fun h => hsign.2 (hpos.1 (hsg.2.1.2 h))⟩
   have hrig := hpt.rigid f htwo
   obtain ⟨X, hX⟩ := hrig F hF
@@ -224,5 +230,5 @@ theorem UpperTheory.V.U3.gradedModel_derivationCondition_of_ptHyp :
       ring
     exact (mul_eq_zero.1 h').resolve_left (htne j)
   · intro y y' h h'
-    simp only [map_add]
+    simp only [map_add (f := _)]
     linear_combination h + h'

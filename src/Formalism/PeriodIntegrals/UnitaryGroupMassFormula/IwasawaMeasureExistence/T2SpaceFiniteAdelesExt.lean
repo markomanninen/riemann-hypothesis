@@ -1,4 +1,27 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IwasawaMeasureExistence.SecondCountableOfOpenSubgroups
+module
+
+public import Formalism.PeriodIntegrals.LatCountG
+public import Formalism.HarderNarasimhan.StatementPl
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.SphericalFunctionIntegrableOfLocal
+public import Formalism.FlagUnipotentLattices.HalfDifferenceL1Bound
+public import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.ExtensionInterSubspace
+public import Formalism.LogSumExpBounds.StatementD
+public import Formalism.LatticeRigidity.HeightMinimum.PackingCountGeometricMean
+public import Mathlib
+public import Formalism.LatticeRigidity.HeightMinimum.PowFinrankEqZeroOfTracePow
+public import Formalism.GelfandTransference.EnergyIdentity
+public import Formalism.NormUnitaryBounds.DetPolynomialWeights.ShortIndependentVectorsOfDualMinimum
+public import Formalism.LatticeTheta.ThetaShiftInversion
+public import Formalism.LatticeRigidity.StatementC
+public import Formalism.LatticeRigidity.HeightMinimum.SqrtAbsNormLeProd
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PlaceDegreeData
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.TraceConjMulEqHilbertSchmidt
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IndefiniteUnitaryPreservesForm
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.InclusionInjective
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirVolumeRatios.DetNorm
+public import Formalism.HermitianLattices.StatementMass
+
+@[expose] public section
 
 noncomputable section
 
@@ -230,7 +253,7 @@ theorem sum_crd (t : AEf I) : t = ∑ j, b j ⊗ₜ[I.F] crd I b j t := by
     rw [TensorProduct.sum_tmul]
     simp only [TensorProduct.smul_tmul']
   | add s t hs ht =>
-    simp only [map_add, TensorProduct.tmul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib]
     rw [← hs, ← ht]
 
 theorem exists_denom : ∃ D : ℕ, 1 ≤ D ∧ ∀ o : 𝓞 I.E, ∀ j : ι,
@@ -272,9 +295,9 @@ theorem exists_denom : ∃ D : ℕ, 1 ≤ D ∧ ∀ o : 𝓞 I.E, ∀ j : ι,
     obtain ⟨r, hr⟩ := hx j
     obtain ⟨r', hr'⟩ := hy' j
     refine ⟨r + r', ?_⟩
-    rw [map_add, ← hr, ← hr']
+    rw [map_add (f := _), ← hr, ← hr']
     push_cast
-    rw [map_add, Finsupp.add_apply, mul_add]
+    rw [map_add (f := _), Finsupp.add_apply, mul_add]
   | smul a x _ hx =>
     intro j
     obtain ⟨r, hr⟩ := hx j
@@ -335,7 +358,7 @@ theorem crd_mem {ι : Type} [Fintype ι] (b : Module.Basis ι I.F I.E) {D : ℕ}
     rw [e, hr]
     exact mul_mem (algebraMap_mem_intAd I r) ha
   | zero => rw [map_zero, mul_zero]; exact zero_mem _
-  | add x y _ _ h h' => rw [map_add, mul_add]; exact add_mem h h'
+  | add x y _ _ h h' => rw [map_add (f := _), mul_add]; exact add_mem h h'
   | neg x _ h => rw [map_neg, mul_neg]; exact neg_mem h
 
 theorem eq_zero_of_forall_bsub (t : AEf I) (h : ∀ N : ℕ, 1 ≤ N → t ∈ bsub I N) : t = 0 := by
@@ -366,10 +389,5 @@ theorem t2Space_finite_adeles_ext : @T2Space (AEf I) (tAf I) := by
   intro N hN
   obtain ⟨k, rfl⟩ : ∃ k, N = k + 1 := ⟨N - 1, by omega⟩
   exact hcon _ ((hasBasis_nhds_zero_tAf I).mem_of_mem trivial)
-
-theorem isUnit_natCast (c : ℕ) (hc : 1 ≤ c) : IsUnit (c : AEf I) := by
-  have h0 : (c : I.F) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
-  have := h0.isUnit.map (algebraMap I.F (AEf I))
-  rwa [map_natCast] at this
 
 end PI.IwaMeasEx.AfT

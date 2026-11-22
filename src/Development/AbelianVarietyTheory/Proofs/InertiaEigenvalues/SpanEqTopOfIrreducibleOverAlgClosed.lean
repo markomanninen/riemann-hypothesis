@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open IsLocalRing Matrix
 
 namespace GlobalTheory.BurnsideMonoid
@@ -32,7 +37,7 @@ theorem span_range_eq_top_of_isIrreducible {G K V : Type} [Monoid G] [Field K] [
   obtain ⟨r, rfl⟩ := hsurj f
   induction r using MonoidAlgebra.induction_linear with
   | zero => simp
-  | add x y hx hy => rw [map_add]; exact Submodule.add_mem _ (hx trivial) (hy trivial)
+  | add x y hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ (hx trivial) (hy trivial)
   | single g c =>
     rw [Representation.asAlgebraHom_single]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨g, rfl⟩)

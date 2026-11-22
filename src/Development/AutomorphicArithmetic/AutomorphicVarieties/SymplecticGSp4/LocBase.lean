@@ -1,19 +1,24 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ResidueCharMemLevelPrimes
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SgnMulSelf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.OnCompSelf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.OnCompMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.SpChartL
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.SpChartP
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PhiCond
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DecEmb
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.UnivLift
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.UnivCond
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Coprod
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.LiftGrading
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ChartSum
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ChartGr
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueFixedPointOfAdicContraction
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ResidueCharMemLevelPrimes
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SgnMulSelf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.OnCompSelf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.OnCompMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.SpChartL
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.SpChartP
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PhiCond
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DecEmb
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.UnivLift
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.UnivCond
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Coprod
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.LiftGrading
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ChartSum
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ChartGr
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueFixedPointOfAdicContraction
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
 section Series
@@ -227,7 +232,7 @@ private theorem prj_hom {A A' : Type} [CommRing A] [CommRing A'] (f : A →+* A'
     prj (fun a => f (c a)) (F X) i = F (prj c X i) := by
   have key : ∀ p : Polynomial A, Polynomial.aeval (F X) (p.map f) = F (Polynomial.aeval X p) := fun p => by
     induction p using Polynomial.induction_on' with
-    | add p q hp hq => rw [Polynomial.map_add, map_add, map_add, map_add, hp, hq]
+    | add p q hp hq => rw [Polynomial.map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
     | monomial n a =>
       rw [Polynomial.map_monomial, Polynomial.aeval_monomial, Polynomial.aeval_monomial, ← Algebra.smul_def,
         ← Algebra.smul_def, hF, map_pow]

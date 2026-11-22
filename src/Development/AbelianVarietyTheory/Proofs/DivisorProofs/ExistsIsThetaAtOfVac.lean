@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.KernelNormConstantSpec
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOrEqOfPlaceIdem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GridFirstColumnSpaceRankSignatureSelfDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.KernelNormConstantSpec
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOrEqOfPlaceIdem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GridFirstColumnSpaceRankSignatureSelfDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,8 +25,8 @@ section Frames
 
 variable {K : Type} [Field K] [NumberField K] {n : ℕ}
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem mem_colLat_iff (B : GL (Fin n) K) (x : Fin n → K) :
     x ∈ colLat B ↔ ∃ c : Fin n → 𝓞 K, (B : Matrix (Fin n) (Fin n) K) *ᵥ (fun j => (c j : K)) = x := by
   unfold colLat
@@ -36,22 +40,10 @@ theorem mem_colLat_iff (B : GL (Fin n) K) (x : Fin n → K) :
   rw [key]
 
 theorem isLattice_colLat (B : GL (Fin n) K) : Submodule.IsLattice K (colLat B) := by
-  refine ⟨Submodule.fg_span (Set.finite_range _), eq_top_iff.2 fun x _ => ?_⟩
-  have e : x = ∑ j, (((B⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K) *ᵥ x) j •
-      fun a : Fin n => (B : Matrix (Fin n) (Fin n) K) a j := by
-    have h : (B : Matrix (Fin n) (Fin n) K) *ᵥ (((B⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K) *ᵥ x) = x := by
-      rw [Matrix.mulVec_mulVec, Units.mul_inv, Matrix.one_mulVec]
-    funext a
-    rw [Finset.sum_apply]
-    refine (congrFun h a).symm.trans ?_
-    generalize ((B⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K) *ᵥ x = y
-    simp only [Pi.smul_apply, smul_eq_mul, Matrix.mulVec, dotProduct]
-    exact Finset.sum_congr rfl fun j _ => mul_comm _ _
-  rw [e]
-  exact sum_mem fun j _ => Submodule.smul_mem _ _ (Submodule.subset_span (Submodule.subset_span ⟨j, rfl⟩))
+  exact Submodule.IsLattice.of_fg K (Submodule.fg_span (Set.finite_range _))
+
 
 omit [NumberField K] in
-
 theorem form_frame [StarRing K] (G B : Matrix (Fin n) (Fin n) K) (hB : Bᴴ * G * B = 1) (c d : Fin n → K) :
     ∑ i, ∑ j, star ((B *ᵥ c) i) * G i j * (B *ᵥ d) j = ∑ i, star (c i) * d i := by
   have h1 : ∑ i, ∑ j, star ((B *ᵥ c) i) * G i j * (B *ᵥ d) j = star (B *ᵥ c) ⬝ᵥ (G *ᵥ (B *ᵥ d)) := by
@@ -91,8 +83,8 @@ theorem isSelfDualC_colLat (V : HSp D) (B : GL (Fin V.rank) D.host.E)
 variable {S T : HSp D} {ΛS ΛS' : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)}
   {ΛT ΛT' : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)}
 
-theorem exists_nsmul_latO (hS : ΛS.FG) (hT : ΛT.FG) (hS' : Submodule.IsLattice D.host.E ΛS')
-    (hT' : Submodule.IsLattice D.host.E ΛT') : ∃ c : ℕ, 0 < c ∧ ∀ u : WO S T, u.map (infPart D) = 0 →
+theorem exists_nsmul_latO (hS : ΛS.FG) (hT : ΛT.FG) (hS' : Submodule.IsFullLattice D.host.E ΛS')
+    (hT' : Submodule.IsFullLattice D.host.E ΛT') : ∃ c : ℕ, 0 < c ∧ ∀ u : WO S T, u.map (infPart D) = 0 →
       u ∈ latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) (fun _ => True) →
       c • u ∈ latO S T (ΛS' : Set (Fin S.rank → D.host.E)) (ΛT' : Set (Fin T.rank → D.host.E)) (fun _ => True) := by
   obtain ⟨K, hK, h⟩ := GlobalTheory.PlaceDatum.exists_nsmul_mem_latO hS' hT'
@@ -106,12 +98,12 @@ theorem exists_nsmul_latO (hS : ΛS.FG) (hT : ΛT.FG) (hS' : Submodule.IsLattice
     rw [nsmul_eq_mul, RingHom.map_mul, map_natCast]
     exact h' t hu i j
 
-theorem isSBHalf_of_lattices (hS : Submodule.IsLattice D.host.E ΛS) (hT : Submodule.IsLattice D.host.E ΛT)
-    (hS' : Submodule.IsLattice D.host.E ΛS') (hT' : Submodule.IsLattice D.host.E ΛT') {e : AE D}
+theorem isSBHalf_of_lattices (hS : Submodule.IsFullLattice D.host.E ΛS) (hT : Submodule.IsFullLattice D.host.E ΛT)
+    (hS' : Submodule.IsFullLattice D.host.E ΛS') (hT' : Submodule.IsFullLattice D.host.E ΛT') {e : AE D}
     (he : infPart D e = 0) {Φ : WO S T → ℂ} (hΦ : IsSBHalf e (latO S T ΛS ΛT fun _ => True) Φ) :
     IsSBHalf e (latO S T ΛS' ΛT' fun _ => True) Φ := by
-  obtain ⟨c, hc, h⟩ := exists_nsmul_latO hS.fg hT.fg hS' hT'
-  obtain ⟨c', hc', h'⟩ := exists_nsmul_latO hS'.fg hT'.fg hS hT
+  obtain ⟨c, hc, h⟩ := exists_nsmul_latO hS.toIsLattice.fg hT.toIsLattice.fg hS' hT'
+  obtain ⟨c', hc', h'⟩ := exists_nsmul_latO hS'.toIsLattice.fg hT'.toIsLattice.fg hS hT
   obtain ⟨h1, k, hk, h2, h3⟩ := hΦ
   have hh : ∀ (m : ℕ) (u : WO S T), IsHalf e u → IsHalf e (m • u) := fun m u hu =>
     (GlobalTheory.PlaceModel.isHalf_iff S T).2 (nsmul_mem ((GlobalTheory.PlaceModel.isHalf_iff S T).1 hu) m)
@@ -122,13 +114,16 @@ theorem isSBHalf_of_lattices (hS : Submodule.IsLattice D.host.E ΛS) (hT : Submo
     exact nsmul_mem (h _ (GlobalTheory.PlaceDatum.infPart_of_half he (hh _ _ (h1 t ht))) (h3 t ht)) c'
 
 theorem exists_isThetaAt_of_vac {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} {sS sT}
-    (hS : Submodule.IsLattice D.host.E ΛS) (hT : Submodule.IsLattice D.host.E ΛT) (hS' : IsSelfDualC S ΛS')
+    (hS : Submodule.IsFullLattice D.host.E ΛS) (hT : Submodule.IsFullLattice D.host.E ΛT) (hS' : IsSelfDualC S ΛS')
     (hT' : IsSelfDualC T ΛT') {e : AE D} {P : Finset (Pl D.host.E)} (he : IsIdemSum e P) {f₀ Φ : WO S T → ℂ}
     (hf : IsVacO ψ θ S T sS sT ΛS' ΛT' f₀) (hΦ : IsSBHalf e (latO S T ΛS ΛT fun _ => True) Φ) :
     ∃ f, IsThetaAt ψ (symplO S T) (heisO ψ S T) e (latO S T ΛS' ΛT' fun _ => True) 1 f₀ Φ f :=
   GlobalTheory.PlaceDatum.exists_isThetaAt hf.1 hS' hT' (GlobalTheory.PlaceDatum.idemSum_mul_self he) (GlobalTheory.PlaceDatum.infPart_idemSum he)
     (GlobalTheory.PlaceModelSum.placeModelExistsSum D ψ hf.1 S T ΛS' ΛT' hS' hT' _ e he f₀ hf.2.theta hf.2.lat).1
-    (isSBHalf_of_lattices hS hT hS'.1 hT'.1 (GlobalTheory.PlaceDatum.infPart_idemSum he) hΦ)
+    (isSBHalf_of_lattices hS hT
+      (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull S ΛS' hS')
+      (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull T ΛT' hT')
+      (GlobalTheory.PlaceDatum.infPart_idemSum he) hΦ)
 
 end VecEx
 
@@ -150,12 +145,14 @@ theorem Normal.hasVec_of_defPair {G : ChiGrid.GridData L sc} {W : G.Weil} {μ0 :
     (Z : Normal W N) {t : T} {p : Pair T} (hp : DefPair D.R.m p) (d : FinDatum G t p) : Z.HasVec d := by
   obtain ⟨h1, h2⟩ := hp.nodes
   have hv := Z.vac_is p hp
+  letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ (h1.selfDual G hL)
+  letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ (h2.selfDual G hL)
   rcases p with ⟨i, j⟩ | ⟨t', i, j⟩ | i | ⟨t', j⟩
-  · exact VecEx.exists_isThetaAt_of_vac (S := G.pS (.chi i j)) (T := G.pT (.chi i j)) (h2.selfDual G hL).1 (h1.selfDual G hL).1 (isSelfDualC_neg (N.selfDual h2))
+  · exact VecEx.exists_isThetaAt_of_vac (S := G.pS (.chi i j)) (T := G.pT (.chi i j)) inferInstance inferInstance (isSelfDualC_neg (N.selfDual h2))
       (N.selfDual h1) d.e_is hv d.sb
   · exact hp.elim
   · exact hp.elim
-  · exact VecEx.exists_isThetaAt_of_vac (h1.selfDual G hL).1 (h2.selfDual G hL).1 (N.selfDual h1)
+  · exact VecEx.exists_isThetaAt_of_vac inferInstance inferInstance (N.selfDual h1)
       (N.selfDual h2) d.e_is hv d.sb
 
 theorem hasVec {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} (G : ChiGrid.GridData L sc) (W : G.Weil) :

@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.InhabitedFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BurnsideSurjOfIrred
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.InhabitedFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BurnsideSurjOfIrred
+
+@[expose] public section
 
 noncomputable section
 

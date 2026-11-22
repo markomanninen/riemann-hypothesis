@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DiscreteSpectrumResidualClassification
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaLiftDarbouxAdelicSymplectic
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BernsteinUnitaryProductIrreducible
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.RealLiftCharacterTraceHasDerivAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaLiftDarbouxAdelicSymplecticStatement
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DiscreteSpectrumResidualClassification
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaLiftDarbouxAdelicSymplectic
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BernsteinUnitaryProductIrreducible
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.RealLiftCharacterTraceHasDerivAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaLiftDarbouxAdelicSymplecticStatement
+
+@[expose] public section
 
 section
 noncomputable section
@@ -34,7 +38,7 @@ theorem exists_archimedean_component : _root_.GlobalTheory.FunPr.ThetaLocalInput
           ∫ x, star (ρ g f₁ x) * ρ g f₂ x ∂ν = ∫ x, star (f₁ x) * f₂ x ∂ν) ∧
       (∀ (L : SInf F κ →L[ℂ] ℂ) (f : SInf F κ),
         ContinuousOn (fun g => L (ρ g f)) {g : UG (cA σ) JB | At (evI F) ((g.1 : Matrix β β (AE F E)) - 1)}) ∧
-      ∀ γ ∈ RLines σ JB, ∀ Y, IsGen τ C γ Y → ∀ (T : Tens F P Q R S) (L : SInf F κ →L[ℂ] ℂ),
+      ∀ γ ∈ RLines (σ := σ) JB, ∀ Y, IsGen τ C γ Y → ∀ (T : Tens F P Q R S) (L : SInf F κ →L[ℂ] ℂ),
         HasDerivAt (fun t : ℝ => L (ρ (γ (Multiplicative.ofAdd t)) (Φ T)))
           (L (Φ (sumPl (fun w => fockAct2 P Q R S (Y w) + (c₀ w * (Y w).trace) • 1) T))) 0 := by
   intro hP hDer _ F E _ _ _ _ _ σ α β κ _ _ _ _ _ P Q R S ψ τ JA JB d a b A C Φ hCM hψ hFr hΦ
@@ -83,7 +87,7 @@ theorem exists_archimedean_component : _root_.GlobalTheory.FunPr.ThetaLocalInput
     have e1 : ⇑f₁ = schrF (trP F κ) (locV (d.e u).1, locV (d.e u).2) ⇑f := by
       funext y
       have := congrFun ((GlobalTheory.T.heisenbergOp_archimedean_vector_acts_by_schrodinger_trace F E σ α β κ ψ JA JB d hψ u hu f fun _ => 1).symm.trans (hf fun _ => 1)) (liftV y)
-      simpa [pureA, liftV] using this.symm
+      simpa only [pureA, liftV, RingEquiv.apply_symm_apply, Pi.one_apply, mul_one] using this.symm
     have e2 : ⇑(toE f₁) = rhoFun (φ c) ⇑(toE f) := by
       have := hS (locV (d.e u).1, locV (d.e u).2) ⇑(toE f)
       rw [← htoV, hVE, ← e1, ← hφu u c hu hc] at this
@@ -105,7 +109,8 @@ theorem exists_archimedean_component : _root_.GlobalTheory.FunPr.ThetaLocalInput
     simp only [htoE, Function.comp_apply]
   · simp only [hρ']
     exact (hρc (L ∘L toV) (toE f)).continuousOn
-  · have hkY : ∀ (t : ℝ) w, k (γ (Multiplicative.ofAdd t)) w = NormedSpace.exp (t • Y w) := fun t w =>
+  · change Multiplicative ℝ →* UG (cA σ) JB at γ
+    have hkY : ∀ (t : ℝ) w, k (γ (Multiplicative.ofAdd t)) w = NormedSpace.exp (t • Y w) := fun t w =>
       hcan w _ _ ((hkC _ w).symm.trans (hY t w))
     have hYu : ∀ w, Y w ∈ upq R S := fun w => GlobalTheory.RealLiftGen.mem_upq_of (Y w) fun t => by
       have := congrArg (fun X => X.map star) (hkJ (γ (Multiplicative.ofAdd t)) w)
@@ -118,9 +123,11 @@ theorem exists_archimedean_component : _root_.GlobalTheory.FunPr.ThetaLocalInput
     have hsZ : ∀ t : ℝ, (s (γ (Multiplicative.ofAdd t)) : Matrix (Fin n ⊕ Fin n) (Fin n ⊕ Fin n) ℝ) =
         NormedSpace.exp (t • Z) := fun t => Matrix.toLin'.injective (LinearMap.ext fun v => by
       obtain ⟨c, rfl⟩ := φ.surjective v
-      rw [Matrix.toLin'_apply, Matrix.toLin'_apply, hsφ, hZe]
+      rw [Matrix.toLin'_apply, Matrix.toLin'_apply]
+      change (s (γ (Multiplicative.ofAdd t)) : Matrix _ _ ℝ) *ᵥ φ c = NormedSpace.exp (t • Z) *ᵥ φ c
+      rw [hsφ, hZe]
       simp only [hkY])
-    have hd := hρd (fun t => γ (Multiplicative.ofAdd t)) (hγ.1.comp continuous_ofAdd) (by simp) Z hZ hsZ _
+    have hd := hρd (fun t => γ (Multiplicative.ofAdd t)) (hγ.1.comp continuous_ofAdd) (by exact map_one γ) Z hZ hsZ _
       (hkk γ hγ Y hY) (L ∘L toV) (toE (Φ T))
     obtain ⟨D, hD⟩ := hDer F E σ α β κ ψ JA JB d hψ
     have hΨ : ∀ c T, (toE.toLinearMap ∘ₗ Φ) (sumPl (fun w => heisOp (c w)) T) = dRho (φ c) ((toE.toLinearMap ∘ₗ Φ) T) := by
@@ -137,8 +144,11 @@ theorem exists_archimedean_component : _root_.GlobalTheory.FunPr.ThetaLocalInput
       exact (hD u hu (Φ T)).2 y
     have e3 := GlobalTheory.T.fockToSchwartz_intertwines_metaplecticQuadratic GlobalTheory.T.metaplecticQuadraticOperator_eq_sum_symplectic_dual GlobalTheory.T.fockAct2_eq_symmetrised_heisenbergQuadratic _ _ P Q R S φ hφ _ hΨ Y hYu Z hZφ T
     simp only [LinearMap.comp_apply, ContinuousLinearMap.coe_coe] at e3
-    simp only [hρ']
-    refine hd.congr_deriv ?_
+    have hfun : (fun t : ℝ => L (ρ' (γ (Multiplicative.ofAdd t)) (Φ T))) =
+        (fun t : ℝ => (L ∘L toV) (ρ (γ (Multiplicative.ofAdd t)) (toE (Φ T)))) := by
+      funext t
+      exact congrArg L (hρ' _ _)
+    refine hfun.symm ▸ hd.congr_deriv ?_
     rw [e3, sumPl_add_smul]
     simp only [ContinuousLinearMap.comp_apply, hVE, LinearMap.add_apply, LinearMap.smul_apply, Module.End.one_apply,
       map_add, map_smul, smul_eq_mul, Finset.sum_div]
@@ -169,7 +179,7 @@ theorem _root_.GlobalTheory.T.archimedean_component_discreteSeries : _root_.Glob
           ∫ x, star (ρ g f₁ x) * ρ g f₂ x ∂ν = ∫ x, star (f₁ x) * f₂ x ∂ν) ∧
       (∀ (L : SInf F κ →L[ℂ] ℂ) (f : SInf F κ),
         ContinuousOn (fun g => L (ρ g f)) {g : UG (cA σ) JB | At (evI F) ((g.1 : Matrix β β (AE F E)) - 1)}) ∧
-      ∀ γ ∈ RLines σ JB, ∀ Y, IsGen τ C γ Y → ∀ (T : Tens F P Q R S) (L : SInf F κ →L[ℂ] ℂ),
+      ∀ γ ∈ RLines (σ := σ) JB, ∀ Y, IsGen τ C γ Y → ∀ (T : Tens F P Q R S) (L : SInf F κ →L[ℂ] ℂ),
         HasDerivAt (fun t : ℝ => L (ρ (γ (Multiplicative.ofAdd t)) (Φ T)))
           (L (Φ (sumPl (fun w => fockAct2 P Q R S (Y w) + (c₀ w * (Y w).trace) • 1) T))) 0 := by
   first | exact @_root_.GlobalTheory.ArchRep.exists_archimedean_component | exact _root_.GlobalTheory.ArchRep.exists_archimedean_component | (intros; apply _root_.GlobalTheory.ArchRep.exists_archimedean_component <;> assumption)

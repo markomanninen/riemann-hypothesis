@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.FWExist
-import Formalism.LocalToGlobal.LatticeGeometry.CmTypeMeetsConjugatePair
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.FWExist
+public import Formalism.LocalToGlobal.LatticeGeometry.CmTypeMeetsConjugatePair
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.L2.Pj Formalism.IndefR.FWT Formalism.IndefR
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -73,7 +78,7 @@ theorem lab_conj {D : D7} (σ : D.what₂.LL →+* ℂ) (ρ : D.what₂.Tau) : l
       · right; rw [h]
       · left; rw [h, conj_conj]
   unfold lab
-  rw [dif_pos (lab_exists _ ρ), dif_pos (lab_exists σ ρ)]
+  rw [dite_eq_left (lab_exists _ ρ), dite_eq_left (lab_exists σ ρ)]
   congr 1
 
 theorem parAt_conj {D : D7} (W : HSp D) (σ : D.what₂.LL →+* ℂ) :
@@ -81,7 +86,7 @@ theorem parAt_conj {D : D7} (W : HSp D) (σ : D.what₂.LL →+* ℂ) :
   funext ρ
   have hk : kapAt W ((starRingEnd ℂ).comp σ) ρ = kapAt W σ ρ := by unfold kapAt; rw [lab_conj]
   have hs : labE σ (lab σ ρ) = tauE D ρ ∨ labE σ (lab σ ρ) = (starRingEnd ℂ).comp (tauE D ρ) := by
-    unfold lab; rw [dif_pos (lab_exists σ ρ)]; exact (lab_exists σ ρ).choose_spec
+    unfold lab; rw [dite_eq_left (lab_exists σ ρ)]; exact (lab_exists σ ρ).choose_spec
   unfold Links.parAt
   rw [hk, lab_conj, labE_conj]
   rcases hs with h | h
@@ -106,15 +111,6 @@ theorem not_good_conj {σ : D.what₂.LL →+* ℂ} (h : GoodEmb T.Q.c (res T σ
   simp only [sq, Complex.mul_re, Complex.neg_re, Complex.natCast_re, him] at hre
   nlinarith [mul_self_nonneg T.Q.H.rt0.re]
 
-theorem premises_met (hl : LawsJ T) (i : Fin D.R.m) : ∃ σ : D.what₂.LL →+* ℂ, ¬ GoodEmb T.Q.c (res T σ) ∧
-    T.V ((i : ℕ) + 1) (resC T σ) = Wc D i := by
-  have key : ∃ σ : D.what₂.LL →+* ℂ, ¬ GoodEmb T.Q.c (res T σ) := by
-    by_cases h : GoodEmb T.Q.c (res T D.what₂.embLL)
-    · exact ⟨_, not_good_conj T h⟩
-    · exact ⟨_, h⟩
-  obtain ⟨σ, hσ⟩ := key
-  exact ⟨σ, hσ, hl.spaceW _ (inR i) _ (good_resC T hσ)⟩
-
 theorem branch (ha : AlgTie T) (hp : T.Q.PinField) (hr : ∀ τ, tauE D τ (T.Q.H.rt : D.host.E) = T.Q.H.rt0)
     (σ : D.what₂.LL →+* ℂ) (ρ : D.what₂.Tau) : GoodEmb T.Q.c (res T σ) ↔ labE σ (lab σ ρ) = tauE D ρ := by
   have e0 := res_embLL T ha hp
@@ -128,23 +124,13 @@ theorem branch (ha : AlgTie T) (hp : T.Q.PinField) (hr : ∀ τ, tauE D τ (T.Q.
     (congrArg σ (hx _)).symm.trans ((RingHom.congr_fun h _).trans (hr ρ))
   refine ⟨fun h => ?_, hb σ⟩
   have hs : labE σ (lab σ ρ) = tauE D ρ ∨ labE σ (lab σ ρ) = (starRingEnd ℂ).comp (tauE D ρ) := by
-    unfold lab; rw [dif_pos (lab_exists σ ρ)]; exact (lab_exists σ ρ).choose_spec
+    unfold lab; rw [dite_eq_left (lab_exists σ ρ)]; exact (lab_exists σ ρ).choose_spec
   refine hs.resolve_right fun h' => not_good_conj T h (hb _ ?_)
   rw [lab_conj, labE_conj, h', conj_conj]
 
 theorem branch_of_pins (ha : AlgTie T) (hp : T.Q.Pins) (σ : D.what₂.LL →+* ℂ) (ρ : D.what₂.Tau) :
     GoodEmb T.Q.c (res T σ) ↔ labE σ (lab σ ρ) = tauE D ρ :=
   branch T ha hp.2.2.1 (fun τ => hp.1.2.2.2 τ) σ ρ
-
-def ConjModel (D : D7) : Prop :=
-  ∀ {V : HSp D} {S : D.what₂.Tau → SPar} (M : DSModel V S), ∃ (M' : DSModel V (fun τ => dualPar (S τ)))
-    (c : ∀ τ, M'.H τ ≃ₗᵢ⋆[ℂ] M.H τ), ∀ τ, ∀ g ∈ Formalism.QuantumDeterminants.UH (gramAt D V τ), ∀ w, c τ (M'.rep τ g w) = M.rep τ g (c τ w)
-
-def ConjMult (D : D7) : Prop :=
-  ∀ {V : HSp D} {S S' : D.what₂.Tau → SPar} (θ : InfFam D) (M : DSModel V S) (M' : DSModel V S')
-    (c : ∀ τ, M'.H τ ≃ₗᵢ⋆[ℂ] M.H τ), (∀ τ, ∀ g ∈ Formalism.QuantumDeterminants.UH (gramAt D V τ), ∀ w, c τ (M'.rep τ g w) = M.rep τ g (c τ w)) →
-    (∀ τ (w : M'.H τ), w ∈ M'.sm τ ↔ c τ w ∈ M.sm τ) ∧ ∀ J χ, ∀ T ∈ Mult θ M J χ, ∃ T' ∈ Mult θ M' J (fun k => star (χ k)),
-      ∀ (v' : M'.Vec) (v : M.Vec), (∀ τ, (v τ : M.H τ) = c τ (v' τ)) → ∀ g, T' v' g = star (T v g)
 
 end Row
 

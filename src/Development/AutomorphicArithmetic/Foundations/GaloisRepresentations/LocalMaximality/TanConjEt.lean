@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsGaloisCover
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.OmegaPullOmegaTraceOfSecTraceOne
-import Development.AutomorphicArithmetic.KaehlerVanishing.DerivationEqOfFormallyEtaleOfEvaluationEq
-import Development.AutomorphicArithmetic.KaehlerVanishing.KaehlerFunctionalVanishingOfLocalizationAtPrime
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsGaloisCover
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.OmegaPullOmegaTraceOfSecTraceOne
+public import Development.AutomorphicArithmetic.KaehlerVanishing.DerivationEqOfFormallyEtaleOfEvaluationEq
+public import Development.AutomorphicArithmetic.KaehlerVanishing.KaehlerFunctionalVanishingOfLocalizationAtPrime
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.HodgeCoh GlobalTheory.CechDR KaehlerDifferential GlobalTheory.W1
 
@@ -19,7 +23,7 @@ private theorem exists_stalk {Y : Scheme.{0}} (s' : Y ⟶ Sp ℂ) (y : CxPts s' 
       (Scheme.stalkClosedPointTo y.1).hom ((Y.presheaf.germ W _ hW).hom b) = valR y.1 W b := by
     intro W hW b
     have hh : ⊤ ≤ y.1 ⁻¹ᵁ W := (Points.le_preimage_iff y.1 W).mpr hW
-    rw [valR, dif_pos hh]
+    rw [valR, dite_eq_left hh]
     have := congrArg (fun g => g.hom b) (Scheme.germ_stalkClosedPointTo y.1 W hW)
     simp only [CommRingCat.hom_comp, RingHom.comp_apply] at this
     rw [this]
@@ -77,8 +81,8 @@ private theorem exists_der {Y : Scheme.{0}} (s' : Y ⟶ Sp ℂ) (y0 : Y)
   haveI : IsLocalization.AtPrime (Y.presheaf.stalk y0) p := hV.isLocalization_stalk ⟨y0, h⟩
   have hp : ∀ b : Sec s' V, b ∈ p ↔ ev (algebraMap (Sec s' V) _ b) = 0 := by
     intro b
-    rw [← mem_max_iff ev, ← IsLocalization.AtPrime.comap_maximalIdeal (Y.presheaf.stalk y0) p]
-    rfl
+    exact (IsLocalization.AtPrime.to_map_mem_maximal_iff (Y.presheaf.stalk y0) p b).symm.trans
+      (mem_max_iff ev _)
   obtain ⟨δ, h1, h2, h3⟩ := UpperTheory.kaehler_functional_vanishing_of_localization_at_prime (B := Sec s' V) (S := Y.presheaf.stalk y0) p ev hp d φ
     (fun b ω => (hs b ω).trans (by rw [he]; rfl))
     (fun ω hω => by

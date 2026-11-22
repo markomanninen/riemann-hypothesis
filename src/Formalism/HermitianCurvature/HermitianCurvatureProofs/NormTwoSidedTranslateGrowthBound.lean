@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasurableEnormComposition
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasurableEnormComposition
+
+@[expose] public section
 
 noncomputable section
 

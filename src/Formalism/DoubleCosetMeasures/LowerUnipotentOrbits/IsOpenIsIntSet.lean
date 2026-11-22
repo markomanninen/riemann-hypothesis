@@ -1,4 +1,8 @@
-import Formalism.DoubleCosetMeasures.Statement
+module
+
+public import Formalism.DoubleCosetMeasures.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,31 +69,35 @@ theorem phi_inv (hIntInv : IntInv) (hIsoInv : IsoInv) (hSA : SimpleAdd)
   have hyU : IsUpUni (((y : GL (Fin s.sum) K)) : Matrix (Fin s.sum) (Fin s.sum) K) := y.2
   unfold phi
   simp only [Subgroup.coe_mul, Units.val_mul]
-  have hM : ((a : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) *
-        ((x : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) * pt s t *
-        (((y : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) *
-          ((b : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K)) =
+  have hi := hIntInv K R s.sum _ _
+    (((x : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) * pt s t *
+      ((y : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K)) haL hbU haI hbI
+  have hc := hIsoInv K R s.sum _ _
+    (((x : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) * pt s t *
+      ((y : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K)) haL hbU haI hbI C e lam
+  have hi' : IsInt R (((a : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) *
+      ((x : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) * pt s t *
+      (((y : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) *
+       ((b : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K))) ↔
+      IsInt R (((x : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) * pt s t *
+       ((y : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K)) := by
+    simpa only [mul_assoc] using hi
+  have heq : (((a : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) *
+      ((x : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) * pt s t *
+      (((y : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) *
+       ((b : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K))) =
       ((a : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) *
-        (((x : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) * pt s t *
-          ((y : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K)) *
-        ((b : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) := by
-    simp only [Matrix.mul_assoc]
-  rw [(hSA K _ _ _).1 haL hxL, (hSA K _ _ _).2 hyU hbU]
-  have hI : IsInt R (((a : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) * ((x : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) * pt s t * (((y : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) * ((b : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K))) ↔ IsInt R (((x : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) * pt s t * ((y : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K)) := by
-    rw [hM]; exact hIntInv K R _ _ _ _ haL hbU haI hbI
-  have hC : Nat.card (isoSet R (((a : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) * ((x : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) * pt s t * (((y : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) * ((b : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K))) C e lam) =
-      Nat.card (isoSet R (((x : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) * pt s t * ((y : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K)) C e lam) := by
-    rw [hM]; exact hIsoInv K R _ _ _ _ haL hbU haI hbI C e lam
-  have hψ' : ψ (sLow ((a : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) + sLow ((x : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) + (sUp ((y : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) + sUp ((b : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K))) = ψ (sLow ((x : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) + sUp ((y : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K)) := by
-    rw [show sLow ((a : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) + sLow ((x : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) + (sUp ((y : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) + sUp ((b : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K)) =
-        (sLow ((a : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) + sUp ((b : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K)) + (sLow ((x : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) + sUp ((y : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K)) by ring,
-      AddChar.map_add_eq_mul, AddChar.map_add_eq_mul ψ (sLow ((a : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K)),
-      hψ _ (sLow_mem R _ haI), hψ _ (sUp_mem R _ hbI), one_mul, one_mul]
-  rw [hψ']
-  congr 1
-  by_cases h : IsInt R (((x : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) * pt s t * ((y : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K))
-  · rw [if_pos (hI.2 h), if_pos h, hC]
-  · rw [if_neg (fun h' => h (hI.1 h')), if_neg h]
+      (((x : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) * pt s t *
+       ((y : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K)) *
+      ((b : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) := by simp only [mul_assoc]
+  have hc' := (congrArg (fun z => Nat.card (isoSet R z C e lam)) heq).trans hc
+  simp only [hi', hc', (hSA K s.sum _ _).1 haL hxL, (hSA K s.sum _ _).2 hyU hbU]
+  have hpa : ψ (sLow ((a : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K)) = 1 := hψ _ (sLow_mem R _ haI)
+  have hpb : ψ (sUp ((b : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K)) = 1 := hψ _ (sUp_mem R _ hbI)
+  rw [show sLow ((a : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) + sLow ((x : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) + (sUp ((y : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) + sUp ((b : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K)) =
+      (sLow ((a : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) + sUp ((b : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K)) + (sLow ((x : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K) + sUp ((y : GL (Fin s.sum) K) : Matrix (Fin s.sum) (Fin s.sum) K)) by abel]
+  simp only [AddChar.map_add_eq_mul, hpa, hpb, one_mul]
+  split_ifs with h h <;> simp_all
 
 theorem bbFinite_of : IntTwoSided → IntInv → IsoInv → SimpleAdd → BBFinite := by
   intro hTS hII hIso hSA K _ _ _ R hR s t ψ hψ μ₁ μ₂ _ _ _ _ C _ _ e lam hcs

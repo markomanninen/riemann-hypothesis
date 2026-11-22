@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSELeib
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSELeib
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ComplexConjugate
@@ -27,7 +31,7 @@ theorem pi_single_decomp (l : Fin r) (h : ℂ) :
 theorem clm_single_wirt (L : (Fin r → ℂ) →L[ℝ] E) (l : Fin r) (h : ℂ) :
     L (Pi.single l h) = h • ((1 / 2 : ℂ) • (L (Pi.single l 1) - Complex.I • L (Pi.single l Complex.I))) +
       conj h • ((1 / 2 : ℂ) • (L (Pi.single l 1) + Complex.I • L (Pi.single l Complex.I))) := by
-  rw [pi_single_decomp l h, map_add, map_smul, map_smul]
+  rw [pi_single_decomp l h, map_add (f := _), map_smul, map_smul]
   rw [← Complex.coe_smul, ← Complex.coe_smul]
   simp only [smul_add, smul_sub, smul_smul]
   match_scalars
@@ -166,8 +170,8 @@ theorem hsVec_smul' (a : ℂ) (A : Wq →L[ℂ] Wp) : B.hsVec (a • A) = a • 
   ext i
   simp [B.hsVec]
 
-omit [FiniteDimensional ℂ Wp] in
 
+omit [FiniteDimensional ℂ Wp] in
 def hsVecLin : (Wq →L[ℂ] Wp) →ₗ[ℂ] PiLp 2 (fun _ : Fin (Module.finrank ℂ Wq) => Wp) where
   toFun := B.hsVec
   map_add' := hsVec_add'
@@ -228,7 +232,7 @@ theorem slice_bound (Ξ1 Ξ2 : RadSp k r z z' π π') (h1 : Ξ1 ∈ lcSub k r z 
   set C : Set (Mt k r) := (fun g : Mx k r => (Matrix.of.symm g : Mt k r)) '' (K ∩ Glev k r (Fin.last r)) with hCdef
   have hCmem : ∀ g : Mt k r, g ∈ C ↔ Matrix.of g ∈ K ∧ Matrix.of g ∈ Glev k r (Fin.last r) := by
     intro g; constructor
-    · rintro ⟨g', hg', rfl⟩; simpa using hg'
+    · rintro ⟨g', hg', rfl⟩; simpa only [Equiv.apply_symm_apply, Set.mem_inter_iff] using hg'
     · intro hg; exact ⟨Matrix.of g, hg, rfl⟩
   have hCc : IsCompact C := (hKc.inter_right (P.Qx5.Glev_closed _)).image continuous_id
   have hmap : Continuous (fun p : ℂ × Mt k r => (Function.update y l p.1, (Matrix.of p.2 : Mx k r))) :=

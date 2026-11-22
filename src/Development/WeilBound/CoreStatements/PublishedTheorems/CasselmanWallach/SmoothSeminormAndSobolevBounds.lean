@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.EigBasis
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.EigBasis
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
+
+@[expose] public section
 
 noncomputable section
 

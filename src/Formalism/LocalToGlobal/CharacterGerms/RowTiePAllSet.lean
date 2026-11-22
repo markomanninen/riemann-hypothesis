@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePPTAvg
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePPTAvg
+
+@[expose] public section
 
 noncomputable section
 

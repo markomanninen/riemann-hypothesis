@@ -1,4 +1,8 @@
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.HerbrandA
+module
+
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.HerbrandA
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField.Herbrand
 
@@ -17,17 +21,11 @@ def cokerMap (f : A →+ B) (fD : ∀ a, f (DA a) = DB (f a)) : B ⧸ f.range �
 theorem ses_coker (hf : Injective f)
     (fD : ∀ a, f (DA a) = DB (f a)) (fN : ∀ a, f (NA a) = NB (f a))
     (DN : ∀ b, DB (NB b) = 0) (ND : ∀ b, NB (DB b) = 0) :
-    SES DA NA DB NB (cokerMap f fD) (cokerMap f fN) f (QuotientAddGroup.mk' f.range) where
-  inj := hf
-  exact := fun b => by
-    rw [QuotientAddGroup.mk'_apply, QuotientAddGroup.eq_zero_iff]; rfl
-  surj := QuotientAddGroup.mk'_surjective _
-  fD := fD
-  fN := fN
-  gD := fun _ => rfl
-  gN := fun _ => rfl
-  DN := DN
-  ND := ND
+    SES DA NA DB NB (cokerMap f fD) (cokerMap f fN) f (QuotientAddGroup.mk' f.range) := by
+  refine ⟨hf, ?_, QuotientAddGroup.mk'_surjective _, fD, fN, fun _ => rfl, fun _ => rfl, DN, ND⟩
+  intro b
+  rw [QuotientAddGroup.mk'_apply, QuotientAddGroup.eq_zero_iff]
+  rfl
 
 theorem isFin_iff_of_finiteIndex (hf : Injective f) (hfi : f.range.FiniteIndex)
     (fD : ∀ a, f (DA a) = DB (f a)) (fN : ∀ a, f (NA a) = NB (f a))
@@ -92,7 +90,8 @@ theorem map_dHom (ρA : Representation k G A) (ρB : Representation k G B) (g : 
 
 theorem map_nHom (ρA : Representation k G A) (ρB : Representation k G B) (i : A →+ B)
     (hiG : ∀ c a, i (ρA c a) = ρB c (i a)) (a : A) : i (nHom ρA a) = nHom ρB (i a) := by
-  rw [nHom_apply, nHom_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [nHom_apply, nHom_apply, map_sum]
   exact Finset.sum_congr rfl fun c _ => hiG c a
 
 theorem ses_of_rep (ρA : Representation k G A) (ρB : Representation k G B) (ρC : Representation k G C)

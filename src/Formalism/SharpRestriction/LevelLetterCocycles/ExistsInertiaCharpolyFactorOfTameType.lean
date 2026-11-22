@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
-import Formalism.PadicSubsetSums.StableGradedCounts.CardLtAddCardGtAddCardEq
-import Formalism.PadicSubsetSums.StableGradedCounts.ContinuousCoeffCharpolyRev
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
+public import Formalism.PadicSubsetSums.StableGradedCounts.CardLtAddCardGtAddCardEq
+public import Formalism.PadicSubsetSums.StableGradedCounts.ContinuousCoeffCharpolyRev
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,7 +106,8 @@ theorem closed_of_adic {O : Type} [CommRing O] [IsLocalRing O] [IsNoetherianRing
     have h2 : g - f = ∑ x, (g x - f x) • (Pi.single x 1 : X → O) := by
       funext y
       simp [Finset.sum_apply, Pi.single_apply]
-    rw [h2, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, map_sum]
     refine Submodule.sum_mem _ fun x _ => ?_
     rw [map_smul]
     exact Submodule.smul_mem_smul (hg x) Submodule.mem_top
@@ -240,7 +245,8 @@ theorem isSSRep_descent (ρ : Γ →* GL (Fin a) K) (hs : IsSSRep (mapRep (algeb
     intro M y
     funext j
     show s (∑ b, algebraMap K L (M j b) * y b) = ∑ b, M j b * s (y b)
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [← Algebra.smul_def, map_smul, smul_eq_mul]
   intro W hW
@@ -267,7 +273,7 @@ theorem isSSRep_descent (ρ : Γ →* GL (Fin a) K) (hs : IsSSRep (mapRep (algeb
       rw [this]
       exact W.smul_mem _ hw
     | zero => intro c; simp
-    | add y z _ _ hy hz => intro c; rw [smul_add, map_add]; exact W.add_mem (hy c) (hz c)
+    | add y z _ _ hy hz => intro c; rw [smul_add, map_add (f := _)]; exact W.add_mem (hy c) (hz c)
     | smul d y _ hy => intro c; rw [smul_smul]; exact hy _
   let πL : (Fin a → L) →ₗ[L] (Fin a → L) := WL.subtype ∘ₗ Submodule.projectionOnto WL WL' hc
   have hπmem : ∀ y, πL y ∈ WL := fun y => (Submodule.projectionOnto WL WL' hc y).2
@@ -289,7 +295,7 @@ theorem isSSRep_descent (ρ : Γ →* GL (Fin a) K) (hs : IsSSRep (mapRep (algeb
       ((ρ g : Matrix (Fin a) (Fin a) K).map (algebraMap K L)).mulVec (πL y) := by
     intro g y
     have h1 : y = πL y + (y - πL y) := by abel
-    conv_lhs => rw [h1, Matrix.mulVec_add, map_add]
+    conv_lhs => rw [h1, Matrix.mulVec_add, map_add (f := _)]
     have e1 : πL (((ρ g : Matrix (Fin a) (Fin a) K).map (algebraMap K L)).mulVec (πL y)) =
         ((ρ g : Matrix (Fin a) (Fin a) K).map (algebraMap K L)).mulVec (πL y) := hπl _ (hWL g _ (hπmem y))
     have e2 : πL (((ρ g : Matrix (Fin a) (Fin a) K).map (algebraMap K L)).mulVec (y - πL y)) = 0 :=
@@ -328,7 +334,7 @@ theorem continuous_of_comp {O : Type} [CommRing O] [TopologicalSpace O] [IsTopol
   rw [continuous_iff_continuousAt]
   intro x0 s hs
   have h0 : (fun y => y + f x0) ⁻¹' s ∈ 𝓝 (0 : O) :=
-    (continuous_add_right (f x0)).continuousAt.preimage_mem_nhds (by simpa using hs)
+    (continuous_add_const (f x0)).continuousAt.preimage_mem_nhds (by simpa using hs)
   obtain ⟨n, hn⟩ := (isAdic_iff.1 hJ).2 _ h0
   obtain ⟨ε, hε0, hε⟩ := hε n
   have hU : {x | ‖ι (f x) - ι (f x0)‖ < ε} ∈ 𝓝 x0 := by
@@ -347,7 +353,8 @@ theorem norm_le_one_of_finite {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [
   have hbd : ∀ x : O, ‖ι x‖ ≤ ∑ j, ‖ι (b j)‖ := by
     intro x
     obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun ℤ_[l]).1 (hb ▸ Submodule.mem_top : x ∈ _)
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun j _ => ?_)
     rw [Algebra.smul_def, map_mul, norm_mul]
     exact mul_le_of_le_one_left (norm_nonneg _) (hz _)
@@ -614,7 +621,8 @@ theorem eq_one_of_map_eq_one {A B : Type} [CommRing A] [IsDomain A] [CommRing B]
   have h2 : ∑ k ∈ Finset.range n, x ^ k = 0 := (mul_eq_zero.1 h1).resolve_left (sub_ne_zero.2 h)
   apply hn
   have h3 := congrArg f h2
-  simpa [map_sum, map_pow, hf] using h3
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [map_sum, map_pow, hf] using h3
 
 theorem card_map_eq {Γ A B : Type} [Group Γ] [Group A] [Group B] (K : Subgroup Γ) (δ : Γ →* A) (χ : Γ →* B)
     (φ : A →* B) (h : ∀ σ ∈ K, χ σ = φ (δ σ)) (hinj : ∀ x ∈ K.map δ, φ x = 1 → x = 1) :
@@ -730,17 +738,20 @@ theorem psiChi_span (hG : Formalism.MainNotions.SumRepresentations.At.Idempotent
   have hM : (∑ k, f k π • rO N i r π (g k)).map (toK N i) =
       ∑ k, toK N i (f k π) • mapM (toK N i) (rO N i r π) (g k) := by
     show (toK N i).mapMatrix _ = _
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     ext a b
     simp [mapM]
-  rw [hM, Matrix.sum_mulVec, map_sum] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hM, Matrix.sum_mulVec, map_sum] at h1
   simp only [Matrix.smul_mulVec, map_smul, hgrp] at h1
   have h2 := congrFun (congrArg Prod.snd h1) c
   simp only [LinearEquiv.apply_symm_apply, Pi.single_eq_same, mul_one, Prod.snd_sum, Prod.smul_snd,
     Finset.sum_apply, Pi.smul_apply, smul_eq_mul] at h2
   apply IsFractionRing.injective (N.O i) (KK N i)
-  rw [← h2, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← h2, map_sum]
   simp
 
 end G5c
@@ -874,7 +885,8 @@ theorem Y_of_b (hG : Formalism.MainNotions.SumRepresentations.At.IdempotentChoic
     rw [haev, yg_eq, mul_smul_comm, ← mul_assoc, hk _ γ hγ, zero_mul, smul_zero]
   · rw [hψ]
     have h1 := hu.map ((Pi.evalRingHom (fun _ : N.X i => N.O i) π).comp (N.T i).val.toRingHom)
-    rw [eval_eq_sum_range, map_sum, Finset.sum_range] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [eval_eq_sum_range, map_sum, Finset.sum_range] at h1
     convert h1 using 2
     rw [map_mul, map_pow, map_pow, character_eq_first_off_l N w hw _ (by omega) (by have := c.2; omega) _ (N.locNd_chebotarevPlace_mem i w)]
     simp [chi1]
@@ -1414,13 +1426,6 @@ theorem SplitI_of_TY (A : NAut N) (hr : GoodR N i r) (w : PlE H) (hw : w ∉ pla
       rfl)
   exact ⟨Pm, fun γ hγ => hPm ⟨γ, hγ⟩⟩
 
-theorem split_inertia_of_hypotheses (A : NAut N) (hr : GoodR N i r) (hTY : At.MonodromyInertiaType N A) (w : PlE H)
-    (hSQ : w ∈ N.S i ∨ w ∈ N.Q i)
-    (hcond : w ∈ N.Q i ∨ (At.Del N i ∧
-      (w ∈ placesOver H.E H.pde ∨ (N.l i = H.pde ∧ w ∈ placesOver H.E H.pde'))))
-    (hL : At.LGCat N r A w) (x : N.X i) : SplitI N r w x :=
-  SplitI_of_TY N r A hr w (N.SQ_l i w hSQ) hL (fun P => hTY.1 i P w hSQ hcond) x
-
 end G5a
 
 section H0
@@ -1494,7 +1499,7 @@ theorem inj_of_scalars {ι : Type} [DecidableEq ι] {V W : Type} [AddCommGroup V
     (hl : ∀ σ, ∃ lam : ℂ, lam ≠ 0 ∧ ∀ f ∈ M σ, θ' (θ f) = lam • f) : Function.Injective θ := by
   classical
   choose lam hl0 hl using hl
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro f h0
   have hf : f ∈ iSup M := htop ▸ Submodule.mem_top
   obtain ⟨x, rfl⟩ := (Submodule.mem_iSup_iff_exists_dfinsupp M f).1 hf
@@ -1544,8 +1549,8 @@ theorem thetaT_injective (i : N.Loc) (hInt : Rows.IsotInternal what₂) (h42 : A
   · exact ⟨1, one_ne_zero, fun f hf => by rw [h, Submodule.mem_bot] at hf; simp [hf]⟩
   · obtain ⟨lam, h0, hl⟩ := (h42 σ h).1.1; exact ⟨(lam : ℂ), by exact_mod_cast h0.ne', hl⟩
 
-open Classical in
 
+open Classical in
 theorem multiplicity_sum_eq_dimension (i : N.Loc) (hInt : Rows.IsotInternal what₂) (h42 : At.Conclusion42 N A i)
     (h2 : (goodPartM N A i).map (what₂.thetaT (N.mu i) (N.j i)) = ⨆ x ∈ ZgoodN N A i, eigC N A i x) :
     ∑ x : N.X i, (if x ∈ ZgoodN N A i then N.mult i x else 0) = dM N A i := by
@@ -1638,20 +1643,6 @@ def G3a (i : N.Loc) (r : N.X i → (G H.E N.Om →* GL (Fin R.nV) (N.O i))) : Pr
         W₁ ⊓ W₂ = ⊥ →
         ¬ IsoSub (mapRep ((algebraMap (Kf N i) K').comp (algebraMap (N.O i) (Kf N i))) (r x)) W₁ W₂
 
-def ReducedFamilyProposition (i : N.Loc) : Prop :=
-  (∃ rq : N.X i → (G H.E N.Om →* GL (Fin R.nV) (Qbar (N.l i))), ∀ x, IsHeckeGaloisQ N A i x (rq x)) ∧
-  (∀ P P' : A.AV i, A.ptV i P ≠ none → A.ptV i P = A.ptV i P' →
-    (∀ Pa Pa', IsBCV N A i P Pa → IsBCV N A i P' Pa' → Pa.Perm Pa') ∧
-    ∀ w, w ∉ N.S i → w ∉ N.Q i →
-      (IsSplitPl H w → A.locV i P w = A.locV i P' w) ∧
-      (¬ IsSplitPl H w → ubc R.nV (A.satV i P w) = ubc R.nV (A.satV i P' w))) ∧
-  ∀ r, GoodR N i r → G2 N A i r ∧ G3a N i r ∧ G4 N i r
-
-theorem proposition_families_iff (hC : Cheb N) (hO : OLarge N A) (i : N.Loc) : Conclusion41 N A i ↔ ReducedFamilyProposition N A i :=
-  ⟨fun h => ⟨h.1.1, h.2.1, fun r hr => ⟨(h.2.2 r hr).2.1, (h.2.2 r hr).2.2.1.1, (h.2.2 r hr).2.2.2⟩⟩,
-    fun h => ⟨⟨h.1, exists_GoodR N A hO i h.1⟩, h.2.1, fun r hr => ⟨charpoly_clause_of_chebotarev N hC i r hr, (h.2.2 r hr).1,
-      ⟨(h.2.2 r hr).2.1, residual_charpoly_of_chebotarev_clause N i r (charpoly_clause_of_chebotarev N hC i r hr)⟩, (h.2.2 r hr).2.2⟩⟩⟩
-
 def ReducedGaloisClause (i : N.Loc) : Prop :=
   HG N A i → ∀ r, GoodR N i r → ∀ w : PlE H, (w ∈ N.S i ∨ w ∈ N.Q i) →
     w ∉ placesOver H.E (N.l i) →
@@ -1689,28 +1680,6 @@ theorem galois_clause_iff_reduced (i : N.Loc) (hDel : Del N i) : ConclusionG5 N 
       · rw [if_neg hlp] at hp
         exact Or.inr (Or.inl hp)
 
-def SufficientGaloisClause (i : N.Loc) : Prop :=
-  HG N A i → ∀ r, GoodR N i r → ∀ w : PlE H, (w ∈ N.S i ∨ w ∈ N.Q i) →
-    LGCat N r A w ∧
-    (w ∈ N.S i → (∃ rb, IsRhoBar N i rb) ∧ ∀ rb, IsRhoBar N i rb →
-      ¬ (((rb (N.gam0 i w) : GL _ _) : Matrix (Fin R.r) (Fin R.r) _).charpoly).IsRoot
-        (IsLocalRing.residue (N.O i) (chi1 N i (N.gam0 i w))) ∧
-      ∀ e : ℤ, HOneTwoZero N i w (Formalism.MainNotions.N.twistRep (Formalism.MainNotions.N.glRep rb) (chiEpsBar N i e)))
-
-theorem galois_clause_of_sufficient (hC : Cheb N) (hT : TieGal N A) (hTY : MonodromyInertiaType N A) (i : N.Loc) (hDel : Del N i)
-    (h : SufficientGaloisClause N A i) : ConclusionG5 N A i := by
-  rw [galois_clause_iff_reduced N A i hDel]
-  intro hg r hr w hw hl
-  obtain ⟨hL, hS⟩ := h hg r hr w hw
-  refine ⟨fun hq x => split_inertia_of_hypotheses N r A hr hTY w hw ?_ hL x, fun hgk hS' => ?_,
-    fun hS' rb hrb e => ?_⟩
-  · rcases hq with hq | hq
-    · exact Or.inl hq
-    · exact Or.inr ⟨hDel, hq⟩
-  · obtain ⟨⟨rb, hrb⟩, hall⟩ := hS hS'
-    exact exists_inertia_charpoly_factor_of_tame_type N r A hC hr hT hTY w hS' hgk hL rb hrb (hall rb hrb).1
-  · exact (HStarZero_iff N rb w hl ((hS hS').2 rb hrb).1 e).2 (((hS hS').2 rb hrb).2 e)
-
 end At
 
 def ReducedAutomorphicHypotheses (D : D7) : Prop := At.ReducedAutomorphicNoBrauerNesbitt D.nd D.naut
@@ -1719,21 +1688,13 @@ theorem condition_iff_additive_maps (D : D7) : adm5 D ↔ ReducedAutomorphicHypo
 
 def tieLab (D : D7) : Prop := At.TieLab D.nd D.naut
 
-def ReducedFamilyProposition (D : D7) : Prop := ∀ i, At.ReducedFamilyProposition D.nd D.naut i
 def ReducedParameterProposition (D : D7) : Prop := ∀ i, At.ReducedParameterProposition D.nd D.naut i
 def ReducedGaloisClause (D : D7) : Prop := ∀ i, At.ReducedGaloisClause D.nd D.naut i
-def SufficientGaloisClause (D : D7) : Prop := ∀ i, At.SufficientGaloisClause D.nd D.naut i
-
-theorem proposition_families_iff (D : D7) (h5 : adm5 D) (hO : hypO D) : Conclusion41 D ↔ ReducedFamilyProposition D :=
-  forall_congr' fun i => At.proposition_families_iff D.nd D.naut h5.2.2.1 hO i
 
 theorem proposition_parameters_iff_reduced (D : D7) (hT : tieLab D) : Conclusion42 D ↔ ReducedParameterProposition D :=
   forall_congr' fun i => parameter_proposition_iff D.nd D.naut hT i
 
 theorem galois_clause_iff_reduced (D : D7) : ConclusionG5 D ↔ ReducedGaloisClause D :=
   forall_congr' fun i => At.galois_clause_iff_reduced D.nd D.naut i (Del_holds D i)
-
-theorem galois_clause_of_sufficient (D : D7) (h : AdmA D) (ho : SufficientGaloisClause D) : ConclusionG5 D := fun i =>
-  At.galois_clause_of_sufficient D.nd D.naut h.2.2.2.2.2.2.2.2.1 h.1.2.2 h.2.2.2.2.2.1 i (Del_holds D i) (ho i)
 
 end Formalism.MainNotions.SumRepresentations

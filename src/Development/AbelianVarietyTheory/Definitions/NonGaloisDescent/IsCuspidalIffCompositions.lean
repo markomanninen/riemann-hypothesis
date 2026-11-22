@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.DefGroup
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.BlockTriangularOfSubOne
-import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
-import Development.AbelianVarietyTheory.Definitions.Divisors.SplitDoublingNBlock
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.DefGroup
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.BlockTriangularOfSubOne
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SplitDoublingNBlock
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,8 +28,8 @@ theorem blockDiag_iff {b : Fin N → ℕ} {M : Matrix (Fin N) (Fin N) k} :
     · exact h2 (OrderDual.toDual_lt_toDual.2 h)
     · exact h1 h
 
-variable (k) in
 
+variable (k) in
 def levi (b : Fin N → ℕ) : Subgroup (GL (Fin N) k) where
   carrier := {g | ∀ i j, b i ≠ b j → (g : Matrix (Fin N) (Fin N) k) i j = 0}
   one_mem' := fun i j hij => by
@@ -137,22 +141,8 @@ theorem blockTri_le_normalizer (b : Fin N → ℕ) :
   rw [← Subgroup.normal_subgroupOf_iff_le_normalizer (unipRadical_le_blockTri b), ← ker_leviProj]
   infer_instance
 
-def relProj (a c : Fin N → ℕ) : (blockTri (κ := k) c).subgroupOf (levi k a) →* ↥(levi k a ⊓ levi k c) :=
-  ((levi k c).subtype.comp ((leviProj c).comp
-    (((levi k a).subtype.comp (Subgroup.subtype _)).codRestrict (blockTri c) fun p => p.2))).codRestrict _
-    fun p => ⟨fun i j hij => by
-      show (if c i = c j then (((p : levi k a) : GL (Fin N) k) : Matrix (Fin N) (Fin N) k) i j else 0) = 0
-      rw [(p : levi k a).2 i j hij, ite_self], fun _ _ hij => if_neg hij⟩
-
-theorem inclusion_mem_normalizer (a c : Fin N → ℕ) (m : ↥(levi k a ⊓ levi k c)) :
-    Subgroup.inclusion (inf_le_left : levi k a ⊓ levi k c ≤ levi k a) m ∈
-      Subgroup.normalizer (((unipRadical k c).subgroupOf (levi k a) : Subgroup (levi k a)) : Set (levi k a)) := by
-  rw [Subgroup.mem_normalizer_iff]
-  intro u
-  exact Subgroup.mem_normalizer_iff.1 (blockTri_le_normalizer c (levi_le_blockTri c m.2.2)) u
 
 variable (k) in
-
 def permGL : Equiv.Perm (Fin N) →* GL (Fin N) k := (Matrix.permMatrixHom (R := k)).toHomUnits
 
 theorem permGL_apply (w : Equiv.Perm (Fin N)) (i j : Fin N) :
@@ -195,22 +185,6 @@ theorem conj_mem_unipRadical {b : Fin N → ℕ} {w : Equiv.Perm (Fin N)} {g : G
 def leviConj (b : Fin N → ℕ) (w : Equiv.Perm (Fin N)) : levi k (b ∘ w) ≃* levi k b where
   toFun x := ⟨permGL k w * x * (permGL k w)⁻¹, conj_mem_levi.2 x.2⟩
   invFun y := ⟨(permGL k w)⁻¹ * y * permGL k w, conj_mem_levi.1 (by simpa [mul_assoc] using y.2)⟩
-  left_inv x := Subtype.ext (by simp [mul_assoc])
-  right_inv y := Subtype.ext (by simp [mul_assoc])
-  map_mul' x y := Subtype.ext (by simp [mul_assoc])
-
-theorem comp_symm_comp (b : Fin N → ℕ) (w : Equiv.Perm (Fin N)) : (b ∘ w.symm) ∘ w = b := by
-  ext i; simp
-
-def relConj (a b : Fin N → ℕ) (w : Equiv.Perm (Fin N)) :
-    ↥(levi k b ⊓ levi k (a ∘ w)) ≃* ↥(levi k a ⊓ levi k (b ∘ w.symm)) where
-  toFun x := ⟨permGL k w * x * (permGL k w)⁻¹, conj_mem_levi.2 x.2.2,
-    conj_mem_levi.2 (by rw [comp_symm_comp]; exact x.2.1)⟩
-  invFun y := ⟨(permGL k w)⁻¹ * y * permGL k w, by
-      have h : (permGL k w)⁻¹ * y * permGL k w ∈ levi k ((b ∘ w.symm) ∘ w) :=
-        conj_mem_levi.1 (by simpa [mul_assoc] using y.2.2)
-      rwa [comp_symm_comp] at h,
-    conj_mem_levi.1 (by simpa [mul_assoc] using y.2.1)⟩
   left_inv x := Subtype.ext (by simp [mul_assoc])
   right_inv y := Subtype.ext (by simp [mul_assoc])
   map_mul' x y := Subtype.ext (by simp [mul_assoc])
@@ -313,20 +287,18 @@ theorem blockOf_stdEquiv_two {r t : ℕ} (hd : ∑ c, (![r, t] : Fin 2 → ℕ) 
 
 def IsTwoBlock (r : ℕ) (b : Fin N → ℕ) : Prop := ∀ i j, b i = b j ↔ ((i : ℕ) < r ↔ (j : ℕ) < r)
 
-theorem isTwoBlock_twoBlocks (N r : ℕ) : IsTwoBlock r (twoBlocks N r) := by
-  intro i j
-  simp only [twoBlocks]
-  split_ifs <;> simp [*]
-
 def oppTwoBlocks (N r : ℕ) : Fin N → ℕ := fun i => if (i : ℕ) < r then 1 else 0
 
 variable {r t : ℕ}
 
 def twoEquiv (hN : r + t = N) : Fin r ⊕ Fin t ≃ Fin N := finSumFinEquiv.trans (finCongr hN)
 
-@[simp] theorem twoEquiv_inl (hN : r + t = N) (i : Fin r) : (twoEquiv hN (Sum.inl i) : ℕ) = i := rfl
+@[local simp] private theorem twoEquiv_inl_lt (hN : r + t = N) (i : Fin r) :
+    (twoEquiv hN (Sum.inl i) : ℕ) < r := i.isLt
 
-@[simp] theorem twoEquiv_inr (hN : r + t = N) (i : Fin t) : (twoEquiv hN (Sum.inr i) : ℕ) = r + i := rfl
+@[local simp] private theorem twoEquiv_inr_not_lt (hN : r + t = N) (i : Fin t) :
+    ¬ (twoEquiv hN (Sum.inr i) : ℕ) < r :=
+  Nat.not_lt.mpr (Nat.le_add_right r i.val)
 
 def twoDiagHom (hN : r + t = N) {b : Fin N → ℕ} (hb : IsTwoBlock r b) : GL (Fin r) k × GL (Fin t) k →* levi k b :=
   MonoidHom.codRestrict (MonoidHom.toHomUnits
@@ -424,13 +396,15 @@ theorem bijective_fixed_mkQ (ρ : Representation ℂ G V) (U : Subgroup G) [Fini
     obtain ⟨v, rfl⟩ := Submodule.mkQ_surjective _ q
     have hf : (Fintype.card U : ℂ)⁻¹ • S v ∈ fixed ρ U := by
       refine Submodule.smul_mem _ _ (mem_fixed.2 fun n hn => ?_)
-      rw [hS, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hS, map_sum]
       exact Fintype.sum_equiv (Equiv.mulLeft (⟨n, hn⟩ : U)) _ _ fun u => by simp
     refine ⟨⟨_, hf⟩, ?_⟩
     show (twKer ρ U 1).mkQ ((Fintype.card U : ℂ)⁻¹ • S v) = _
     have h2 : ∀ u : U, (twKer ρ U 1).mkQ (ρ u v) = (twKer ρ U 1).mkQ v := fun u =>
       (Submodule.Quotient.eq _).2 (Submodule.subset_span ⟨u, v, by simp⟩)
-    rw [map_smul, hS, map_sum, Finset.sum_congr rfl fun u _ => h2 u, Finset.sum_const, Finset.card_univ,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, hS, map_sum, Finset.sum_congr rfl fun u _ => h2 u, Finset.sum_const, Finset.card_univ,
       ← Nat.cast_smul_eq_nsmul ℂ, smul_smul, inv_mul_cancel₀ hc, one_smul]
 
 def Embeds (ρ : Representation ℂ G V) (σ : Representation ℂ G W) : Prop :=
@@ -453,12 +427,6 @@ theorem isIrreducible_of_equiv {ρ : Representation ℂ G V} {σ : Representatio
   exact IsSimpleModule.congr (LinearEquiv.ofBijective
     (Representation.IntertwiningMap.equivLinearMapAsModule σ ρ e.symm.toIntertwiningMap) e.symm.toLinearEquiv.bijective)
 
-def extTprod (ρ : Representation ℂ G V) (σ : Representation ℂ H W) : Representation ℂ (G × H) (V ⊗[ℂ] W) :=
-  Representation.tprod (ρ.comp (MonoidHom.fst G H)) (σ.comp (MonoidHom.snd G H))
-
-@[simp] theorem extTprod_tmul (ρ : Representation ℂ G V) (σ : Representation ℂ H W) (x : G × H) (v : V) (w : W) :
-    extTprod ρ σ x (v ⊗ₜ w) = ρ x.1 v ⊗ₜ σ x.2 w := rfl
-
 def extTensor {ι : Type} {Γ Y : ι → Type} [∀ a, Group (Γ a)] [∀ a, AddCommGroup (Y a)] [∀ a, Module ℂ (Y a)]
     (ρ : ∀ a, Representation ℂ (Γ a) (Y a)) : Representation ℂ (∀ a, Γ a) (⨂[ℂ] a, Y a) :=
   PiTensorProduct.mapMonoidHom.comp (Pi.monoidHom fun a => (ρ a).comp (Pi.evalMonoidHom Γ a))
@@ -468,21 +436,17 @@ def extTensor {ι : Type} {Γ Y : ι → Type} [∀ a, Group (Γ a)] [∀ a, Add
     extTensor ρ x (PiTensorProduct.tprod ℂ v) = PiTensorProduct.tprod ℂ fun a => ρ a (x a) (v a) :=
   PiTensorProduct.map_tprod _ _
 
-variable (G) in
 
+variable (G) in
 def isoSetoid : Setoid (FDRep ℂ G) where
   r A B := Nonempty (Representation.Equiv A.ρ B.ρ)
   iseqv := ⟨fun _ => ⟨.refl _⟩, fun ⟨e⟩ => ⟨e.symm⟩, fun ⟨e⟩ ⟨f⟩ => ⟨e.trans f⟩⟩
 
-variable (G) in
 
+variable (G) in
 def RepClass : Type 1 := Quotient (isoSetoid G)
 
 def cls [FiniteDimensional ℂ V] (ρ : Representation ℂ G V) : RepClass G := Quotient.mk (isoSetoid G) (FDRep.of ρ)
-
-theorem cls_eq_iff [FiniteDimensional ℂ V] [FiniteDimensional ℂ W] (ρ : Representation ℂ G V)
-    (σ : Representation ℂ G W) : cls ρ = cls σ ↔ Nonempty (ρ.Equiv σ) :=
-  Quotient.eq (r := isoSetoid G)
 
 end General
 
@@ -493,9 +457,6 @@ variable {k : Type} [Field k] {N : ℕ} {V W : Type} [AddCommGroup V] [Module �
 def hcRes (b : Fin N → ℕ) (ρ : Representation ℂ (GL (Fin N) k) V) :
     Representation ℂ (levi k b) (fixed ρ (unipRadical k b)) :=
   onFixed ρ (unipRadical k b) (levi k b).subtype fun m => blockTri_le_normalizer b (levi_le_blockTri b m.2)
-
-@[simp] theorem hcRes_apply (b : Fin N → ℕ) (ρ : Representation ℂ (GL (Fin N) k) V) (m : levi k b)
-    (v : fixed ρ (unipRadical k b)) : (hcRes b ρ m v : V) = ρ m v := rfl
 
 def hcCoinv (b : Fin N → ℕ) (ρ : Representation ℂ (GL (Fin N) k) V) :
     Representation ℂ (levi k b) (Jacquet ρ (unipRadical k b)) :=
@@ -508,9 +469,6 @@ def hcResEquivCoinv [Finite k] (b : Fin N → ℕ) (ρ : Representation ℂ (GL 
 def inflate (b : Fin N → ℕ) (σ : Representation ℂ (levi k b) W) : Representation ℂ (blockTri (κ := k) b) W :=
   σ.comp (leviProj b)
 
-@[simp] theorem inflate_apply (b : Fin N → ℕ) (σ : Representation ℂ (levi k b) W) (p : blockTri (κ := k) b) :
-    inflate b σ p = σ (leviProj b p) := rfl
-
 abbrev IndSpace (b : Fin N → ℕ) (σ : Representation ℂ (levi k b) W) : Submodule ℂ (GL (Fin N) k → W) :=
   Representation.coindV (blockTri (κ := k) b).subtype (inflate b σ)
 
@@ -520,27 +478,16 @@ theorem mem_indSpace {b : Fin N → ℕ} {σ : Representation ℂ (levi k b) W} 
 def hcInd (b : Fin N → ℕ) (σ : Representation ℂ (levi k b) W) : Representation ℂ (GL (Fin N) k) (IndSpace b σ) :=
   GlobalTheory.FinGL.parInd b (inflate b σ)
 
-@[simp] theorem hcInd_apply (b : Fin N → ℕ) (σ : Representation ℂ (levi k b) W) (g x : GL (Fin N) k)
-    (f : IndSpace b σ) : (hcInd b σ g f : GL (Fin N) k → W) x = (f : GL (Fin N) k → W) (x * g) := rfl
-
 def hcResMap (b : Fin N → ℕ) {ρ : Representation ℂ (GL (Fin N) k) V} {σ : Representation ℂ (GL (Fin N) k) W}
     (f : ρ.IntertwiningMap σ) : (hcRes b ρ).IntertwiningMap (hcRes b σ) where
   toLinearMap := f.toLinearMap.restrict fun v hv => mem_fixed.2 fun u hu => by
     rw [f.toLinearMap_apply, ← f.isIntertwining, mem_fixed.1 hv u hu]
   isIntertwining' m := LinearMap.ext fun v => Subtype.ext (f.isIntertwining _ _ (m : GL (Fin N) k) (v : V))
 
-@[simp] theorem hcResMap_apply (b : Fin N → ℕ) {ρ : Representation ℂ (GL (Fin N) k) V}
-    {σ : Representation ℂ (GL (Fin N) k) W} (f : ρ.IntertwiningMap σ) (v : fixed ρ (unipRadical k b)) :
-    (hcResMap b f v : W) = f v := rfl
-
 def hcIndMap (b : Fin N → ℕ) {ρ : Representation ℂ (levi k b) V} {σ : Representation ℂ (levi k b) W}
     (f : ρ.IntertwiningMap σ) : (hcInd b ρ).IntertwiningMap (hcInd b σ) :=
   Representation.coindMap (blockTri (κ := k) b).subtype
     (⟨f.toLinearMap, fun p => f.isIntertwining' (leviProj b p)⟩ : (inflate b ρ).IntertwiningMap (inflate b σ))
-
-@[simp] theorem hcIndMap_apply (b : Fin N → ℕ) {ρ : Representation ℂ (levi k b) V} {σ : Representation ℂ (levi k b) W}
-    (f : ρ.IntertwiningMap σ) (φ : IndSpace b ρ) (x : GL (Fin N) k) :
-    (hcIndMap b f φ : GL (Fin N) k → W) x = f ((φ : GL (Fin N) k → V) x) := rfl
 
 theorem Embeds.hcRes (b : Fin N → ℕ) {ρ : Representation ℂ (GL (Fin N) k) V} {σ : Representation ℂ (GL (Fin N) k) W}
     (h : Embeds ρ σ) : Embeds (hcRes b ρ) (hcRes b σ) := by
@@ -571,34 +518,6 @@ theorem toHcInd_injective (b : Fin N → ℕ) (ρ : Representation ℂ (GL (Fin 
   simp only [toHcInd_apply, map_one, Module.End.one_apply] at h
   exact hi h
 
-def relRes (a c : Fin N → ℕ) (ρ : Representation ℂ (levi k a) V) :
-    Representation ℂ ↥(levi k a ⊓ levi k c) (fixed ρ ((unipRadical k c).subgroupOf (levi k a))) :=
-  onFixed ρ _ (Subgroup.inclusion inf_le_left) (inclusion_mem_normalizer a c)
-
-@[simp] theorem relRes_apply (a c : Fin N → ℕ) (ρ : Representation ℂ (levi k a) V) (m : ↥(levi k a ⊓ levi k c))
-    (v : fixed ρ ((unipRadical k c).subgroupOf (levi k a))) : (relRes a c ρ m v : V) = ρ ⟨m, m.2.1⟩ v := rfl
-
-abbrev RelIndSpace (a c : Fin N → ℕ) (σ : Representation ℂ ↥(levi k a ⊓ levi k c) W) : Submodule ℂ (levi k a → W) :=
-  Representation.coindV ((blockTri (κ := k) c).subgroupOf (levi k a)).subtype (σ.comp (relProj a c))
-
-def relInd (a c : Fin N → ℕ) (σ : Representation ℂ ↥(levi k a ⊓ levi k c) W) :
-    Representation ℂ (levi k a) (RelIndSpace a c σ) :=
-  Representation.coind ((blockTri (κ := k) c).subgroupOf (levi k a)).subtype (σ.comp (relProj a c))
-
-@[simp] theorem relInd_apply (a c : Fin N → ℕ) (σ : Representation ℂ ↥(levi k a ⊓ levi k c) W) (g x : levi k a)
-    (f : RelIndSpace a c σ) : (relInd a c σ g f : levi k a → W) x = (f : levi k a → W) (x * g) := rfl
-
-def relTwist (a b : Fin N → ℕ) (w : Equiv.Perm (Fin N)) (σ : Representation ℂ ↥(levi k a ⊓ levi k (b ∘ w.symm)) W) :
-    Representation ℂ ↥(levi k b ⊓ levi k (a ∘ w)) W :=
-  σ.comp (relConj a b w).toMonoidHom
-
-@[simp] theorem relTwist_apply (a b : Fin N → ℕ) (w : Equiv.Perm (Fin N))
-    (σ : Representation ℂ ↥(levi k a ⊓ levi k (b ∘ w.symm)) W) (x : ↥(levi k b ⊓ levi k (a ∘ w))) :
-    relTwist a b w σ x = σ (relConj a b w x) := rfl
-
-instance [Finite k] [FiniteDimensional ℂ W] (b : Fin N → ℕ) (σ : Representation ℂ (levi k b) W) :
-    FiniteDimensional ℂ (IndSpace b σ) := inferInstance
-
 variable {h : ℕ} {d : Fin h → ℕ} {Y : Fin h → Type} [∀ a, AddCommGroup (Y a)] [∀ a, Module ℂ (Y a)]
 
 def leviTensor (e : (Σ a, Fin (d a)) ≃ Fin N) (ρ : ∀ a, Representation ℂ (GL (Fin (d a)) k) (Y a)) :
@@ -614,19 +533,7 @@ def prodInd (d : Fin h → ℕ) (hd : ∑ a, d a = N) (ρ : ∀ a, Representatio
     Representation ℂ (GL (Fin N) k) (IndSpace (blockOf (stdEquiv d hd)) (leviTensor (stdEquiv d hd) ρ)) :=
   hcInd _ (leviTensor (stdEquiv d hd) ρ)
 
-def prodRes (d : Fin h → ℕ) (hd : ∑ a, d a = N) (ρ : Representation ℂ (GL (Fin N) k) V) :
-    Representation ℂ (∀ a, GL (Fin (d a)) k) (fixed ρ (unipRadical k (blockOf (stdEquiv d hd)))) :=
-  (hcRes _ ρ).comp (leviEquiv (stdEquiv d hd)).symm.toMonoidHom
-
 variable {r t : ℕ}
-
-def twoInd (hN : r + t = N) {b : Fin N → ℕ} (hb : IsTwoBlock r b) (σ : Representation ℂ (GL (Fin r) k × GL (Fin t) k) W) :
-    Representation ℂ (GL (Fin N) k) (IndSpace b (σ.comp (leviTwo hN hb).toMonoidHom)) :=
-  hcInd b _
-
-def twoRes (hN : r + t = N) {b : Fin N → ℕ} (hb : IsTwoBlock r b) (ρ : Representation ℂ (GL (Fin N) k) V) :
-    Representation ℂ (GL (Fin r) k × GL (Fin t) k) (fixed ρ (unipRadical k b)) :=
-  (hcRes b ρ).comp (leviTwo hN hb).symm.toMonoidHom
 
 end Functors
 
@@ -651,16 +558,8 @@ theorem isCuspidal_iff_forall (ρ : Representation ℂ (GL (Fin N) k) V) :
   have h1 := congrArg (ρ (permGL k w)) h0
   rwa [← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, map_zero, Module.End.one_apply] at h1
 
-theorem Embeds.isCuspidal {ρ : Representation ℂ (GL (Fin N) k) V} {σ : Representation ℂ (GL (Fin N) k) W}
-    (h : Embeds ρ σ) (hσ : IsCuspidal σ) : IsCuspidal ρ := by
-  obtain ⟨f, hf⟩ := h
-  intro b hb hne v hv
-  refine hf ?_
-  rw [map_zero]
-  exact hσ b hb hne _ fun u hu => by rw [← f.isIntertwining, hv u hu]
 
 variable (k) in
-
 abbrev GradedClass : Type 1 := Σ n : ℕ, RepClass (GL (Fin n) k)
 
 def classes {h : ℕ} {d : Fin h → ℕ} {Y : Fin h → Type} [∀ a, AddCommGroup (Y a)] [∀ a, Module ℂ (Y a)]
@@ -671,26 +570,6 @@ def HasCuspSupport (κ : Representation ℂ (GL (Fin N) k) V) (s : Multiset (Gra
   κ.IsIrreducible ∧ ∃ (h : ℕ) (d : Fin h → ℕ) (hd : ∑ a, d a = N) (Y : Fin h → Type) (_ : ∀ a, AddCommGroup (Y a))
     (_ : ∀ a, Module ℂ (Y a)) (_ : ∀ a, FiniteDimensional ℂ (Y a)) (ρ : ∀ a, Representation ℂ (GL (Fin (d a)) k) (Y a)),
     (∀ a, 0 < d a) ∧ (∀ a, (ρ a).IsIrreducible) ∧ (∀ a, IsCuspidal (ρ a)) ∧ Embeds κ (prodInd d hd ρ) ∧ s = classes ρ
-
-theorem HasCuspSupport.sum_fst {κ : Representation ℂ (GL (Fin N) k) V} {s : Multiset (GradedClass k)}
-    (h : HasCuspSupport κ s) : (s.map Sigma.fst).sum = N := by
-  obtain ⟨-, h, d, hd, Y, _, _, _, ρ, -, -, -, -, rfl⟩ := h
-  rw [classes, Multiset.map_map]
-  exact hd
-
-theorem HasCuspSupport.of_mem {κ : Representation ℂ (GL (Fin N) k) V} {s : Multiset (GradedClass k)}
-    (h : HasCuspSupport κ s) {n : ℕ} [FiniteDimensional ℂ W] {σ : Representation ℂ (GL (Fin n) k) W}
-    (hσ : (⟨n, cls σ⟩ : GradedClass k) ∈ s) : 0 < n ∧ σ.IsIrreducible ∧ IsCuspidal σ := by
-  obtain ⟨-, h, d, hd, Y, _, _, _, ρ, hpos, hi, hc, -, rfl⟩ := h
-  obtain ⟨a, -, ha⟩ := Multiset.mem_map.1 hσ
-  obtain rfl : d a = n := congrArg Sigma.fst ha
-  obtain ⟨e⟩ := (cls_eq_iff _ _).1 (sigma_mk_injective (β := fun n => RepClass (GL (Fin n) k)) ha)
-  exact ⟨hpos a, isIrreducible_of_equiv e (hi a), (Embeds.of_equiv e.symm).isCuspidal (hc a)⟩
-
-theorem HasCuspSupport.of_equiv {κ : Representation ℂ (GL (Fin N) k) V} {κ' : Representation ℂ (GL (Fin N) k) W}
-    {s : Multiset (GradedClass k)} (h : HasCuspSupport κ s) (e : κ.Equiv κ') : HasCuspSupport κ' s := by
-  obtain ⟨hκ, h, d, hd, Y, _, _, _, ρ, hpos, hi, hc, he, rfl⟩ := h
-  exact ⟨isIrreducible_of_equiv e hκ, h, d, hd, Y, _, _, _, ρ, hpos, hi, hc, (Embeds.of_equiv e.symm).trans he, rfl⟩
 
 def detRep (N : ℕ) (χ : kˣ →* ℂˣ) : Representation ℂ (GL (Fin N) k) (Fin 1 → ℂ) :=
   lineRep ((Units.coeHom ℂ).comp (χ.comp Matrix.GeneralLinearGroup.det))
@@ -715,24 +594,6 @@ theorem hasCuspSupport_self [FiniteDimensional ℂ V] (hN : 0 < N) {κ : Represe
     rw [stdEquiv_val, Subsingleton.elim a 0]
     simp)
   rw [leviEquiv_apply, leviProj_apply, blockOf_apply, blockOf_apply, if_pos rfl, he, he]
-
-example : HasCuspSupport (lineRep signGL₂) {⟨2, cls (lineRep signGL₂)⟩} :=
-  hasCuspSupport_self two_pos signGL₂_cuspidal.1 signGL₂_cuspidal.2
-
-example {κ : Representation ℂ (GL (Fin N) k) V} {s : Multiset (GradedClass k)} (h : HasCuspSupport κ s) :
-    (⟨2, cls (Representation.trivial ℂ (GL (Fin 2) k) ℂ)⟩ : GradedClass k) ∉ s :=
-  fun hm => not_isCuspidal_trivial le_rfl (h.of_mem hm).2.2
-
-example (hd : ∑ a, (![1, 1] : Fin 2 → ℕ) a = 2) :
-    transvGL₂ ∈ unipRadical (ZMod 2) (blockOf (stdEquiv ![1, 1] hd)) ∧
-      transvGL₂ ∉ unipRadical (ZMod 2) (oppTwoBlocks 2 1) := by
-  rw [blockOf_stdEquiv_two, mem_unipRadical, mem_unipRadical]
-  refine ⟨fun i j hij => ?_, fun h => ?_⟩
-  · fin_cases i <;> fin_cases j <;> simp [transvGL₂, twoBlocks] at hij ⊢
-  · simpa [transvGL₂] using h 0 1 (by simp [oppTwoBlocks])
-
-example : ((permGL ℚ (finRotate 3) : GL (Fin 3) ℚ) : Matrix (Fin 3) (Fin 3) ℚ) 1 0 = 1 := by
-  rw [permGL_apply]; simp
 
 end Cuspidal
 

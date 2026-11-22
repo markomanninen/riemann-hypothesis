@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RGHyp
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RGHyp
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,10 +30,10 @@ private theorem rg_fwd_sup_lemma {g₁ g₂ : Fin (r + 1) → V} {U₁ U₂ W₁
     (h : φ (H.mkW g₁ ⟨a + b, hy⟩) = H.mkW g₂ ⟨u + ψ w, hx⟩) :
     b = w ∧ φ (H.mkW g₁ ⟨a, ha'⟩) = H.mkW g₂ ⟨u, hu'⟩ := by
   obtain ⟨a₂, ha₂, ha₂', e⟩ := hC2 a ha ha'
-  rw [mkW_add H a b ha' (hW₁ b.2), map_add, e, hC1, mkW_add H u _ hu' (hW₂ (ψ w).2)] at h
+  rw [mkW_add H a b ha' (hW₁ b.2), map_add (f := _), e, hC1, mkW_add H u _ hu' (hW₂ (ψ w).2)] at h
   have h5 : H.mkW g₂ (⟨a₂, ha₂'⟩ + ⟨ψ b, hW₂ (ψ b).2⟩) =
       H.mkW g₂ (⟨u, hu'⟩ + ⟨ψ w, hW₂ (ψ w).2⟩) := by
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     exact h
   simp only [HermSp.mkW, Submodule.mkQ_apply] at h5
   rw [Submodule.Quotient.eq, Submodule.mem_comap] at h5

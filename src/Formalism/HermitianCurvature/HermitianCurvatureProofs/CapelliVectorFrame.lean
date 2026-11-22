@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.StatementTL
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SingleMulVecOne
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AnisotropicColumnSums
+module
+
+public import Formalism.HermitianCurvature.StatementTL
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SingleMulVecOne
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AnisotropicColumnSums
+
+@[expose] public section
 
 open Matrix Finset
 

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PickDefs
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PickDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ section Fock
 variable {R : Type} [CommRing R] {σ : Type}
 
 theorem fockR_add (G T₁ T₂ : MvPolynomial σ R) : fock G (T₁ + T₂) = fock G T₁ + fock G T₂ := by
-  simp only [fock, coeff_add, mul_add, add_mul, Finset.sum_add_distrib]
+  simp only [fock, MvPolynomial.coeff_add, mul_add, add_mul, Finset.sum_add_distrib]
 
 theorem fockR_zero (G : MvPolynomial σ R) : fock G 0 = 0 := by
   simp [fock]
@@ -45,12 +49,6 @@ theorem sum_split {M : Type} [AddCommMonoid M] (f : T × Fin (r + K) → M) :
   rw [Fintype.sum_prod_type, Fintype.sum_prod_type, Fintype.sum_prod_type, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun x _ => ?_
   exact Fin.sum_univ_add _
-
-theorem prod_split {M : Type} [CommMonoid M] (f : T × Fin (r + K) → M) :
-    ∏ v, f v = (∏ v : T × Fin r, f (v.1, Fin.castAdd K v.2)) * ∏ v : T × Fin K, f (v.1, Fin.natAdd r v.2) := by
-  rw [Fintype.prod_prod_type, Fintype.prod_prod_type, Fintype.prod_prod_type, ← Finset.prod_mul_distrib]
-  refine Finset.prod_congr rfl fun x _ => ?_
-  exact Fin.prod_univ_add _
 
 end Split
 
@@ -120,7 +118,7 @@ theorem tvar_inj (hinj : Function.Injective fun x : TL J nL r => posOf n' (posTL
 theorem bigM_apply (hinj : Function.Injective fun x : TL J nL r => posOf n' (posTL Fr x))
     (rho : TL J nL r × Fin (r + K) → ℕ) (bp : TL J nL r × Fin r →₀ ℕ) (bn : TL J nL r × Fin K →₀ ℕ)
     (v : TL J nL r × Fin (r + K)) : bigM Fr p hk nL rho bp bn (tvar Fr hk nL v) = bigE Fr p nL rho bp bn v := by
-  rw [bigM, Finsupp.mapDomain_apply (tvar_inj hinj)]
+  rw [bigM, Finsupp.mapDomain_apply_of_injective (tvar_inj hinj)]
   rfl
 
 theorem bigM_pl (hinj : Function.Injective fun x : TL J nL r => posOf n' (posTL Fr x))
@@ -186,12 +184,6 @@ theorem bigM_noMon (hp : 0 < p) (hinj : Function.Injective fun x : TL J nL r => 
   ext ⟨x, b⟩
   simp only [noMon, Finsupp.coe_equivFunOnFinite_symm]
   rw [bigM_no hinj, Nat.add_mul_div_left _ _ (lowP_pos hp x), Nat.div_eq_of_lt (hrho _ _), zero_add]
-
-theorem plMon_multideg (mo : TV n' (m + 1) →₀ ℕ) (x : TL J nL r) :
-    multideg (plMon Fr p hk nL mo) x = ∑ a : Fin r, mo (plVar Fr hk nL x a) / lowP Fr p x := rfl
-
-theorem noMon_multideg (mo : TV n' (m + 1) →₀ ℕ) (x : TL J nL r) :
-    multideg (noMon Fr p hk nL mo) x = ∑ b : Fin K, mo (noVar Fr hk nL x b) / lowP Fr p x := rfl
 
 theorem bigM_inBlock (hp : 0 < p) (hinj : Function.Injective fun x : TL J nL r => posOf n' (posTL Fr x))
     (rho : TL J nL r × Fin (r + K) → ℕ) (hrho : ∀ x c, rho (x, c) < lowP Fr p x)

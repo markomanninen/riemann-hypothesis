@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Locfin
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Locfin
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ private theorem continuous_qR_comp {L : Type} [Field L] [NumberField L] {N : ℕ
     [TopologicalSpace X] {f : X → HS L N} {g : X → VR L N} (hf : Continuous f)
     (hg : Continuous g) : Continuous fun x => qR (f x) (g x) := by
   show Continuous fun x => ∑ w, (star (g x w) ⬝ᵥ mat (f x) w *ᵥ g x w).re
-  refine continuous_finset_sum _ fun w _ => Complex.continuous_re.comp ?_
+  refine continuous_finsetSum _ fun w _ => Complex.continuous_re.comp ?_
   have h1 : Continuous fun x => g x w := (continuous_apply w).comp hg
   have h2 : Continuous fun x => mat (f x) w :=
     (continuous_apply w).comp (continuous_subtype_val.comp hf)

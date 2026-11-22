@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.ContinuousAinApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormIteratedFDerivRemCompLe
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.ContinuousAinApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormIteratedFDerivRemCompLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -105,7 +109,8 @@ theorem arch_part (T : SchwartzMap (κ' ⊕ κ'' → W) ℂ →L[ℂ] ℂ)
     ext x
     rw [hsum x]
     simp
-  rw [hf', map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hf', map_sum]
   simp [hres]
 
 end PositivityTheory.SiegelWeilFormula.Ald.PCI

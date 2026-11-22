@@ -1,8 +1,12 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.InfinitesimalCharacterPaths.TensDecomp
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.PolynomialNilpotentPath
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HasCharSub
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsEvalAtOfMem
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.InfinitesimalCharacterPaths.TensDecomp
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.PolynomialNilpotentPath
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HasCharSub
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsEvalAtOfMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,13 +103,14 @@ theorem coef_mem {M : Type*} [AddCommGroup M] [Module ℂ M] (P : Submodule ℂ 
     have e : ℓ' (∑ j ∈ Finset.range l, t ^ j • c j) = 0 := by
       show ℓ (P.mkQ _) = 0
       rw [Submodule.mkQ_apply, (Submodule.Quotient.mk_eq_zero P).2 (h t), map_zero]
-    simp only [map_sum, map_smul, smul_eq_mul] at e
-    simp only [p, Polynomial.eval_finset_sum, Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul] at e
+    simp only [p, Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow,
       Polynomial.eval_X, Polynomial.eval_zero]
     rw [← e]
     exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
-  have e3 := congrArg (fun q => Polynomial.coeff q j) hp
-  simpa [p, Polynomial.finset_sum_coeff, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow, hj, ℓ'] using e3
+  have e3 := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q j) hp
+  simpa [p, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow, hj, ℓ'] using e3
 
 theorem qdet_mem {A : Type} [Ring A] [Algebra ℂ A] (B : Subalgebra ℂ A) {m : ℕ} (E : Fin m → Fin m → A)
     (hE : ∀ a b, E a b ∈ B) (u : ℂ) : qdet E u ∈ B := by
@@ -210,7 +215,7 @@ theorem exists_killed (F : Filt X A) (B : GradBasis A) (W' : Submodule ℂ (Modu
 def Sk (F : Filt X A) (B : GradBasis A) (W' : Submodule ℂ (Module.Dual ℂ X.V)) : Submodule ℂ (Module.Dual ℂ X.V) where
   carrier := {φ | φ ∈ W F ∧ ∀ p q, bl B p < bl B q → (Eb X B p q).dualMap φ ∈ W'}
   add_mem' := fun {φ ψ} h1 h2 => ⟨(W F).add_mem h1.1 h2.1, fun p q h => by
-    rw [map_add]; exact W'.add_mem (h1.2 p q h) (h2.2 p q h)⟩
+    rw [map_add (f := _)]; exact W'.add_mem (h1.2 p q h) (h2.2 p q h)⟩
   zero_mem' := ⟨(W F).zero_mem, fun p q h => by rw [map_zero]; exact W'.zero_mem⟩
   smul_mem' := fun c φ h1 => ⟨(W F).smul_mem c h1.1, fun p q h => by
     rw [map_smul]; exact W'.smul_mem c (h1.2 p q h)⟩
@@ -378,7 +383,7 @@ theorem aeval_dual_mem {V : Type} [AddCommGroup V] [Module ℂ V] (W' : Submodul
     have : (aeval T (p + q)).dualMap φ - (p + q).eval z • φ =
         ((aeval T p).dualMap φ - p.eval z • φ) + ((aeval T q).dualMap φ - q.eval z • φ) := by
       ext x
-      simp only [map_add, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.dualMap_apply, LinearMap.smul_apply,
+      simp only [map_add (f := _), LinearMap.add_apply, LinearMap.sub_apply, LinearMap.dualMap_apply, LinearMap.smul_apply,
         eval_add, smul_eq_mul]
       ring
     rw [this]
@@ -517,7 +522,7 @@ theorem aeval_mem (I : Submodule ℂ Z) (T : Module.End ℂ Z) (hI : ∀ x ∈ I
     rw [this]
     exact I.smul_mem a hx
   | add p q hp hq =>
-    rw [map_add, LinearMap.add_apply]
+    rw [map_add (f := _), LinearMap.add_apply]
     exact I.add_mem hp hq
   | monomial k a ih =>
     have h1 : aeval T (C a * X ^ (k + 1)) = T * aeval T (C a * X ^ k) := by
@@ -596,7 +601,7 @@ theorem coeff_sumPoly_comp (θ : ℕ → ℂ) (e : ℕ) (h : θ (e + 1) = 1) (c 
   have e1 : (sumPoly θ (e + 1)).comp (X + C c) = ∑ k ∈ Finset.range (e + 1 + 1), C (θ k) * (X + C c) ^ k := by
     have := map_sum (Polynomial.compRingHom (X + C c)) (fun k => C (θ k) * X ^ k) (Finset.range (e + 1 + 1))
     simpa [sumPoly, Polynomial.coe_compRingHom_apply] using this
-  rw [e1, finset_sum_coeff, Finset.sum_range_succ, Finset.sum_range_succ]
+  rw [e1, finsetSum_coeff, Finset.sum_range_succ, Finset.sum_range_succ]
   have e2 : ∑ x ∈ Finset.range e, (C (θ x) * (X + C c) ^ x).coeff e = 0 := by
     refine Finset.sum_eq_zero fun k hk => ?_
     rw [coeff_C_mul, coeff_X_add_C_pow, Nat.choose_eq_zero_of_lt (Finset.mem_range.1 hk)]
@@ -623,9 +628,14 @@ theorem joint_label {n : ℕ} [Nontrivial Z] (χ : Fin n → ℂ) (d : Fin 3 →
     rintro _ ⟨p, rfl⟩ _ ⟨q, rfl⟩
     exact (hcomm _ _ _ _).eq
   have hint : ∀ i k, k < d i + 1 → IsIntegral ℂ (a i k) := by
-    letI : CommRing (Algebra.adjoin ℂ s) := Algebra.adjoinCommRingOfComm ℂ hcs
+    letI : CommRing (Algebra.adjoin ℂ s) :=
+      { (inferInstance : Ring (Algebra.adjoin ℂ s)) with
+        mul_comm := fun x y => Subtype.ext <|
+          (Algebra.commute_of_mem_adjoin_of_forall_mem_commute y.2 fun b hb =>
+            (Algebra.commute_of_mem_adjoin_of_forall_mem_commute x.2 fun a ha =>
+              (hcs b hb a ha)).symm).eq }
     have hamem : ∀ i k, a i k ∈ Algebra.adjoin ℂ s := fun i k => Algebra.subset_adjoin ⟨(i, k), rfl⟩
-    let Pp : Fin 3 → (Algebra.adjoin ℂ s)[X] := fun i => sumPoly (fun k => ⟨a i k, hamem i k⟩) (d i)
+    let Pp : Fin 3 → (Algebra.adjoin ℂ s)[X] := fun i => sumPoly (fun k => (⟨a i k, hamem i k⟩ : Algebra.adjoin ℂ s)) (d i)
     have hPm : ∀ i, (Pp i).Monic := fun i => sumPoly_monic _ _ (Subtype.ext (ha1 i))
     have hprod : ∀ u : ℂ, IsIntegral ℂ (∏ i ∈ Finset.univ, (Pp i).eval (algebraMap ℂ (Algebra.adjoin ℂ s) (u + sh i))) := by
       intro u
@@ -825,7 +835,7 @@ theorem start1 : Start1 := by
   let aB : Fin 3 → ℕ → ↥Bb := fun i k => if h : a i k ∈ Bb then ⟨a i k, h⟩ else 0
   have haB : ∀ i k, k < dims n B.j i + 1 → (aB i k : Module.End ℂ X.V) = a i k := fun i k hk => by
     simp only [aB]
-    rw [dif_pos (ha i k hk)]
+    rw [dite_eq_left (ha i k hk)]
   have hcomB : ∀ i j k l, Commute (aB i k) (aB j l) := by
     intro i j k l
     simp only [aB]
@@ -838,7 +848,7 @@ theorem start1 : Start1 := by
   let qB : Fin 3 → ℂ → ↥Bb := fun i Y => ∑ k ∈ Finset.range (dims n B.j i + 1), (Y + shB n B.j i) ^ k • aB i k
   have hqB : ∀ i Y, (qB i Y : Module.End ℂ X.V) = Qb X B i Y := fun i Y => by
     rw [Qb_eq, hform]
-    simp only [qB, AddSubmonoidClass.coe_finset_sum, Subalgebra.coe_smul]
+    simp only [qB, AddSubmonoidClass.coe_finsetSum, Subalgebra.coe_smul]
     exact Finset.sum_congr rfl fun k hk => by rw [haB i k (Finset.mem_range.1 hk)]
   have hD : ∀ i Y, ∑ k ∈ Finset.range (dims n B.j i + 1), (Y + shB n B.j i) ^ k • a' i k = rho S W' (qB i Y) :=
     fun i Y => by simp only [qB, map_sum, map_smul, a']

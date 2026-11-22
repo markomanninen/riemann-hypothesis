@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsFirstOrderDeformationOfRZero
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsFirstOrderDeformationOfRZero
+
+@[expose] public section
 
 open Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.HV UpperTheory.V.Base IsLocalRing
 
@@ -11,7 +15,7 @@ variable {R E : Type} [CommRing R] [CommRing E]
 theorem aeval_semi {X h : M4 R} {c : Fin 4 → R} (H : X * h = h * Matrix.diagonal c) (p : R[X]) :
     aeval X p * h = h * Matrix.diagonal fun a => p.eval (c a) := by
   refine Polynomial.induction_on' p (fun p q hp hq => ?_) (fun n a => ?_)
-  · rw [map_add, add_mul, hp, hq, ← mul_add, Matrix.diagonal_add]
+  · rw [map_add (f := _), add_mul, hp, hq, ← mul_add, Matrix.diagonal_add]
     simp only [Polynomial.eval_add]
   · have e : h * Matrix.diagonal c ^ n = X ^ n * h :=
       SemiconjBy.pow_right (show SemiconjBy h (Matrix.diagonal c) X from H.symm) n
@@ -24,10 +28,9 @@ theorem aeval_semi {X h : M4 R} {c : Fin 4 → R} (H : X * h = h * Matrix.diagon
 theorem aeval_red (π : R →+* E) {X : M4 R} {c : Fin 4 → R} (H : X.map π = Matrix.diagonal fun a => π (c a)) (p : R[X]) :
     (aeval X p).map π = Matrix.diagonal fun a => π (p.eval (c a)) := by
   refine Polynomial.induction_on' p (fun p q hp hq => ?_) (fun n a => ?_)
-  · rw [map_add, Matrix.map_add _ (map_add π), hp, hq, Matrix.diagonal_add]
+  · rw [map_add (f := _), Matrix.map_add _ (map_add π), hp, hq, Matrix.diagonal_add]
     congr 1
-    funext i
-    simp
+    simp only [Polynomial.eval_add, map_add]
   · have H' : π.mapMatrix X = Matrix.diagonal fun a => π (c a) := H
     change π.mapMatrix _ = _
     rw [Polynomial.aeval_monomial, map_mul, map_pow, H', Matrix.diagonal_pow, RingHom.mapMatrix_apply,
@@ -38,7 +41,7 @@ theorem aeval_red (π : R →+* E) {X : M4 R} {c : Fin 4 → R} (H : X.map π = 
 
 theorem aeval_tri {X : M4 R} (H : X.BlockTriangular id) (p : R[X]) : (aeval X p).BlockTriangular id := by
   refine Polynomial.induction_on' p (fun p q hp hq => ?_) (fun n a => ?_)
-  · rw [map_add]
+  · rw [map_add (f := _)]
     exact hp.add hq
   · rw [Polynomial.aeval_monomial]
     exact (Matrix.blockTriangular_algebraMap a).mul (H.pow n)
@@ -444,7 +447,7 @@ theorem UpperTheory.V.Loc.spFlag :
     rw [sub_eq_zero] at h0
     have h1 := IsFractionRing.injective ℤ_[l] ℚ_[l] h0
     have h2 : cycZ ℚ Ω l (D.s0 : G ℚ Ω) ^ D.wts4 i = cycZ ℚ Ω l (D.s0 : G ℚ Ω) ^ D.wts4 j := by
-      ext
+      apply Units.ext
       simpa using h1
     exact hij (hw i j ((pow_inj_iff_of_orderOf_eq_zero (orderOf_eq_zero_iff.mpr hD.decompSigma_ord)).mp h2))
   have hu : ∀ i, IsUnit (algebraMap c.O B (D.ps i (D.s0 : G ℚ Ω))) := fun i =>

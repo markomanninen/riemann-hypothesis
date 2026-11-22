@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
-import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.LegendreBoundsFactorialMultiIndexCapelli
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
+public import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.LegendreBoundsFactorialMultiIndexCapelli
+
+@[expose] public section
 
 open ReciprocityTheory.PGsh
 
@@ -11,9 +15,9 @@ namespace GlobalTheory.ExpWeight
 variable {C : Type} [Field C] (v : AddValuation C (WithTop ℝ))
   {σ : Type} [DecidableEq σ] (ρ : σ → ℝ)
 
+
 variable {C : Type} [Field C] (v : AddValuation C (WithTop ℝ))
   {σ : Type} [DecidableEq σ] (ρ : σ → ℝ) in
-
 theorem _root_.GlobalTheory.ExpWeight.weight_exp :
   (∀ (C : Type) [Field C] [CharZero C] (v : AddValuation C (WithTop ℝ)) (l : ℕ), l.Prime → v (l : C) = 1 → ∀ (σ : Type) [Fintype σ] [DecidableEq σ] (ρ : σ → ℝ) (h : MvPowerSeries σ C), MvPowerSeries.constantCoeff h = 0 →
     (∀ α, (((1 / (l - 1)) - α.sum (fun j e => ρ j * (e : ℝ)) : ℝ) : WithTop ℝ) ≤ v (MvPowerSeries.coeff α (h))) → (∀ α, (((0) - α.sum (fun j e => ρ j * (e : ℝ)) : ℝ) : WithTop ℝ) ≤ v (MvPowerSeries.coeff α (PowerSeries.subst (h) (PowerSeries.exp C))))) := by
@@ -69,7 +73,7 @@ theorem _root_.GlobalTheory.ExpWeight.weight_exp :
   rw [hy, hfact, ← WithTop.coe_add, WithTop.coe_eq_zero] at hprod
   have hle := _root_.GlobalTheory.LegendreBounds.upper l hl d
   have hyr : y = -((d.factorial.factorization l : ℕ) : ℝ) := by linarith
-  rw [Nat.factorization_def _ hl] at hyr
+  simp only [Nat.padicValNat_def, ← Nat.factorization_def _ hl] at hle
   have hdc : (d : ℝ) / ((l : ℝ) - 1) = d * c := by rw [hc]; ring
   rw [hy]
   calc (((0 : ℝ) - w α : ℝ) : WithTop ℝ) ≤ ((y + ((d : ℝ) * c - w α) : ℝ) : WithTop ℝ) :=

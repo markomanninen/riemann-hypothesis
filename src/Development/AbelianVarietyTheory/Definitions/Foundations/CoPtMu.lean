@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.PieceEqPieceT
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.PieceEqPieceT
+
+@[expose] public section
 
 noncomputable section
 

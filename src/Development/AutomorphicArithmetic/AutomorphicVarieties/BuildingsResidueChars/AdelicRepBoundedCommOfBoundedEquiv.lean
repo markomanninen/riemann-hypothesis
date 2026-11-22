@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
+
+@[expose] public section
 
 theorem UpperTheory.adelic_rep_bounded_comm_of_bounded_equiv :
     UpperTheory.V.Af.CohB.BddEquiv → UpperTheory.V.Af.BA.BddSub → UpperTheory.V.Af.BA.BddOver → UpperTheory.V.Af.BA.BddComm := by
   intro hEq hSub hOver G _ Γ Λ hc hΛ
   obtain ⟨h1, h2⟩ := hc
-  have f1 : (Γ.subgroupOf Λ).FiniteIndex := ⟨h1⟩
-  have f2 : (Λ.subgroupOf Γ).FiniteIndex := ⟨h2⟩
+  have f1 : (Γ.subgroupOf Λ).FiniteIndex := Subgroup.isFiniteRelIndex_iff_finiteIndex.mp h1
+  have f2 : (Λ.subgroupOf Γ).FiniteIndex := Subgroup.isFiniteRelIndex_iff_finiteIndex.mp h2
   have b1 := hSub Λ (Γ.subgroupOf Λ) f1 hΛ
   have e : (Γ.subgroupOf Λ) ≃* (Λ.subgroupOf Γ) :=
     { toFun := fun x => ⟨⟨x.1.1, x.2⟩, x.1.2⟩

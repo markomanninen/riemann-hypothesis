@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.GlobalFields.CompletionAtPlace.Galois
-import GroundTheory.GlobalFields.SemilocalAlgebras.Galois
-import GroundTheory.GlobalFields.IdeleGroups.LocalNormGroups
-import GroundTheory.GlobalFields.IdeleGroups.LocalNormsEverywhere
-import GroundTheory.LocalFields.LocalReciprocityUniversal
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.CompletionAtPlace.Galois
+public import GroundTheory.GlobalFields.SemilocalAlgebras.Galois
+public import GroundTheory.GlobalFields.IdeleGroups.LocalNormGroups
+public import GroundTheory.GlobalFields.IdeleGroups.LocalNormsEverywhere
+public import GroundTheory.LocalFields.LocalReciprocityUniversal
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -18,11 +22,6 @@ variable {F E Ω : Type*} [Field F] [Field E] [Field Ω] [Algebra F E] [Algebra 
 
 def equivFieldRange (i : E →ₐ[F] Ω) : E ≃ₐ[F] i.fieldRange :=
   AlgEquiv.ofInjectiveField i
-
-@[simp]
-theorem coe_equivFieldRange (i : E →ₐ[F] Ω) (y : E) :
-    ((equivFieldRange i y : i.fieldRange) : Ω) = i y :=
-  rfl
 
 end Range
 

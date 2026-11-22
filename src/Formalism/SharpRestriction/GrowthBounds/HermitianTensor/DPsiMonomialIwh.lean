@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.SubYDPsiMonomial
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDbasisLemmas
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.SubYDPsiMonomial
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDbasisLemmas
+
+@[expose] public section
 
 noncomputable section
 

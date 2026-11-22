@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+
+@[expose] public section
 
 open Metric Set Filter Asymptotics
 open scoped Topology
@@ -126,8 +130,8 @@ theorem tendstoUniformlyOn_doublingLog_of_contraction
   have := (mem_ball_zero_iff.mp hx).le
   gcongr
 
-omit [CompleteSpace V] in
 
+omit [CompleteSpace V] in
 theorem exists_ball_contraction
     (h : (fun x => ε x - (2 : ℂ)⁻¹ • x) =O[𝓝 0] fun x => ‖x‖ ^ 2) :
     ∃ r > 0, ∃ C ≥ 0, (∀ x ∈ ball (0 : V) r, ‖ε x‖ ≤ 5 / 8 * ‖x‖) ∧

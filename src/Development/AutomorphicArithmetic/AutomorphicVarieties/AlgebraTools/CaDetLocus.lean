@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CotInd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DetLocus
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDetMin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDetDim
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDetAdj
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CotInd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DetLocus
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDetMin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDetDim
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDetAdj
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.AlgebraTools
 

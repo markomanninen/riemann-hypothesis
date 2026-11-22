@@ -1,13 +1,18 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsDimensionInequalitySteps
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsDimensionInequalitySteps
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
 
 open Polynomial
 
-attribute [local instance] Polynomial.algebra Polynomial.isLocalization in
 
+attribute [local instance] Polynomial.algebra Polynomial.isLocalization in
 theorem PolynomialPrimeOverZeroHeight.proof : PolynomialPrimeOverZeroHeight.Statement := by
   intro D _ _ Q _ hQ
   let K := FractionRing D

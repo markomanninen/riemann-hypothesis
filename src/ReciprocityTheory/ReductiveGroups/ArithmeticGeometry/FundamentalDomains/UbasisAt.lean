@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HCSumRight
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HCSumRight
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.OrthonormalPerpBasis
 
@@ -245,7 +249,8 @@ theorem ubasis_at (ξ : Fin r → E) (z0 x0 : Frame X.Ψ r) (hξ0 : ξ ≠ 0) (h
     ⟨_, expand X hx0 ho τ (Data.emb τ.1 ξ)⟩
   have hw0 : hermC τ.1 X.Gm (Data.emb τ.1 ξ) (Data.emb τ.1 ξ) = 0 := by
     have h : hermC τ.1 X.Gm (Data.emb τ.1 ξ) (Data.emb τ.1 ξ) = τ.1 (herm X.Gm ξ ξ) := by
-      simp only [hermC, herm, Data.emb, map_sum, map_mul, emb_cc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hermC, herm, Data.emb, map_sum, map_mul, emb_cc]
     rw [h, hiso, map_zero]
   have hd0 : d ≠ 0 := by
     rintro rfl
@@ -308,7 +313,8 @@ theorem ubasis_at (ξ : Fin r → E) (z0 x0 : Frame X.Ψ r) (hξ0 : ξ ≠ 0) (h
     intro c
     calc ∑ a : Fin r, (∑ k, c k * F k a) * conj (∑ k, c k * F k a)
         = ∑ k, ∑ l, c l * conj (c k) * ∑ a : Fin r, F l a * conj (F k a) := by
-          simp only [map_sum, map_mul, Finset.sum_mul, Finset.mul_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [map_sum, map_mul, Finset.sum_mul, Finset.mul_sum]
           rw [Finset.sum_comm]
           refine Finset.sum_congr rfl fun k _ => ?_
           rw [Finset.sum_comm]

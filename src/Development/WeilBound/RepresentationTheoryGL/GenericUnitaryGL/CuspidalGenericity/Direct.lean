@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsNontrivialDerivative
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalIsGeneric
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsNontrivialDerivative
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalIsGeneric
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.BZMir
 

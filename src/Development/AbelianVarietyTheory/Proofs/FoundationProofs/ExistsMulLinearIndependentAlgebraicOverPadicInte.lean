@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
+
+@[expose] public section
+
 open GlobalTheory.K5
 
 namespace GlobalTheory.K5.ReprInd
@@ -45,9 +50,9 @@ theorem main {R Ω : Type*} [CommRing R] [IsDomain R] [Field Ω] [Algebra R Ω] 
 end GlobalTheory.K5.ReprInd
 
 theorem GlobalTheory.K5.algSpan_reprInd : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →
-    ∀ y ∈ Submodule.span (O0 p) {x : Ω | IsAlgZp p x},
-    ∃ (n : ℕ) (a : Fin n → Ω) (f : Fin n → O0 p) (g : O0 p), (∀ i, IsAlgZp p (a i)) ∧
+    ∀ y ∈ Submodule.span (O0 p) {x : Ω | IsAlgZp (p := p) x},
+    ∃ (n : ℕ) (a : Fin n → Ω) (f : Fin n → O0 p) (g : O0 p), (∀ i, IsAlgZp (p := p) (a i)) ∧
       LinearIndependent (O0 p) a ∧ g ≠ 0 ∧
       algebraMap (O0 p) Ω g * y = ∑ i, algebraMap (O0 p) Ω (f i) * a i := by
   intro p _ Ω _ _ _
-  exact GlobalTheory.K5.ReprInd.main (fun x => IsAlgZp p x)
+  exact GlobalTheory.K5.ReprInd.main (fun x => IsAlgZp (p := p) x)

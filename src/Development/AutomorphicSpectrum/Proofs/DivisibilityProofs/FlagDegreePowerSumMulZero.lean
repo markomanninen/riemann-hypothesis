@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
-import Formalism.DegreeFormula.PointDegree.PowSum
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
+public import Formalism.DegreeFormula.PointDegree.PowSum
+
+@[expose] public section
+
 open MvPolynomial Filter Topology GlobalTheory.CompanionTheory.Ar.Top
 
 namespace GlobalTheory.CompanionTheory.Ar.Top

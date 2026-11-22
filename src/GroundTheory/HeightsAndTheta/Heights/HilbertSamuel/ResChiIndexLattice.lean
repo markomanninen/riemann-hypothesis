@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChangeOfLattice
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChangeOfLattice
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -18,7 +23,8 @@ theorem basis_det_eq {N : Type*} [AddCommGroup N] [Module ℤ N] {r : ℕ} (b : 
   rw [Basis.det_apply, ← Matrix.det_transpose]
   congr 1
   ext i j
-  rw [Matrix.transpose_apply, Basis.toMatrix_apply, hv i, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.transpose_apply, Basis.toMatrix_apply, hv i, map_sum]
   simp only [map_zsmul, Basis.repr_self, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
     Finsupp.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
 

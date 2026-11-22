@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.NatCardAlgHomEqFinrankOfIsReducedOfIsFractionRin
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsCounitDerivationCounitComp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.NatCardAlgHomEqFinrankOfIsReducedOfIsFractionRin
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsCounitDerivationCounitComp
+
+@[expose] public section
 
 open Coalgebra Bialgebra HopfAlgebra WithConv
 open scoped TensorProduct
@@ -52,7 +56,7 @@ theorem derivation_sub_nsmul_mem_pow [Algebra k H] (I : Ideal H) (E : Derivation
         exact Ideal.mul_mem_mul (ih b hb) ha
     · have e : E (a + b) - ((n + 1 : ℕ) : H) * (a + b) =
           (E a - ((n + 1 : ℕ) : H) * a) + (E b - ((n + 1 : ℕ) : H) * b) := by
-        rw [map_add]; ring
+        rw [map_add (f := _)]; ring
       rw [e]; exact add_mem ha hb
 
 variable [Bialgebra k H]
@@ -72,8 +76,7 @@ theorem counit_invariantDerivation (φ : H →ₗ[k] k)
       φ (TensorProduct.lid k H ((counit (R := k)).rTensor H s)) := by
     intro s
     induction s with
-    | zero => simp
-    | add s s' h h' => simp only [map_add, h, h']
+    | add s s' h h' => simp only [map_add (f := _), h, h']
     | tmul a b => simp [mul_comm]
   rw [invariantDerivation_apply, key]
   simp
@@ -99,9 +102,9 @@ theorem exists_derivations_sum_sub_mem_sq [Bialgebra k H] [Algebra.FiniteType k 
   have hq : ∀ y, q y = Ideal.Quotient.mk (I ^ 2) (p y) := fun y ↦ rfl
   have hqmul : ∀ a b, q (a * b) = counit (R := k) a • q b + counit (R := k) b • q a := by
     intro a b
-    rw [← map_smul, ← map_smul, ← map_add, hq, hq, Ideal.Quotient.eq]
+    rw [← map_smul, ← map_smul, ← map_add (f := _), hq, hq, Ideal.Quotient.eq]
     have : p (a * b) - p (counit (R := k) a • b + counit (R := k) b • a) = p a * p b := by
-      simp only [hp, map_add, map_smul, counit_mul, smul_eq_mul, map_mul, Algebra.smul_def,
+      simp only [hp, map_add (f := _), map_smul, counit_mul, smul_eq_mul, map_mul, Algebra.smul_def,
         counit_algebraMap, Algebra.algebraMap_self, RingHom.id_apply]
       ring
     rw [this, sq]
@@ -118,7 +121,9 @@ theorem exists_derivations_sum_sub_mem_sq [Bialgebra k H] [Algebra.FiniteType k 
         induction hz using Submodule.span_induction with
         | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
         | zero => simp
-        | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
+        | add x y _ _ hx hy =>
+          rw [q.map_add]
+          exact add_mem hx hy
         | smul a x hx' hx =>
           have : x ∈ I := hs ▸ hx'
           rw [smul_eq_mul, hqmul, (hmem x).1 this, zero_smul, add_zero]
@@ -135,7 +140,7 @@ theorem exists_derivations_sum_sub_mem_sq [Bialgebra k H] [Algebra.FiniteType k 
     have : q.rangeRestrict (a * c) =
         counit (R := k) a • q.rangeRestrict c + counit (R := k) c • q.rangeRestrict a :=
       Subtype.ext (hqmul a c)
-    simp only [φ, LinearMap.comp_apply, this, map_add, map_smul, smul_eq_mul]
+    simp only [φ, LinearMap.comp_apply, this, map_add (f := _), map_smul, smul_eq_mul]
   refine ⟨_, fun i ↦ p (z i), fun i ↦ invariantDerivation (φ i) (hφ i), fun i ↦ hpI _,
     fun y hy ↦ ?_⟩
   have h1 : ∑ i, φ i y • p (z i) - y ∈ I ^ 2 := by
@@ -144,7 +149,8 @@ theorem exists_derivations_sum_sub_mem_sq [Bialgebra k H] [Algebra.FiniteType k 
     simp only [Submodule.coe_sum, Submodule.coe_smul, ← hz] at h2
     have h3 : Ideal.Quotient.mk (I ^ 2) y = q y := by
       rw [hq, hp, (hmem y).1 hy]; simp
-    rw [h3, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h3, map_sum]
     exact h2
   have h2 : ∑ i, p (z i) * p (invariantDerivation (φ i) (hφ i) y) ∈ I ^ 2 :=
     Ideal.sum_mem _ fun i _ ↦ by rw [sq]; exact Ideal.mul_mem_mul (hpI _) (hpI _)
@@ -304,19 +310,6 @@ theorem smooth_of_grpObj_of_isAffine [IsAffine G] [LocallyOfFiniteType f] : Smoo
     exact isReduced_of_grpObj_of_isAffine (Limits.pullback.snd f g)
   exact smooth_of_grpObj f
 
-theorem etale_of_grpObj_of_isFinite [IsFinite f] : Etale f := by
-  have : IsAffine G := isAffine_of_isAffineHom f
-  have := isReduced_of_grpObj_of_isAffine f
-  obtain ⟨φ, hφ⟩ := Spec.map_surjective (G.isoSpec.inv ≫ f)
-  suffices h : Etale (Spec.map φ) by
-    have e : f = G.isoSpec.hom ≫ Spec.map φ := by rw [hφ, Iso.hom_inv_id_assoc]
-    rw [e]; infer_instance
-  rw [HasRingHomProperty.Spec_iff (P := @Etale)]
-  have h1 : IsFinite (Spec.map φ) := by rw [hφ]; infer_instance
-  rw [IsFinite.SpecMap_iff] at h1
-  algebraize [φ.hom]
-  exact etale_of_isReduced_of_perfectField k Γ(G, ⊤)
-
 theorem smooth_of_hopfAlgebra (k H : Type u) [Field k] [CharZero k] [CommRing H] [HopfAlgebra k H]
     [Algebra.FiniteType k H] : Algebra.Smooth k H := by
   let f : Spec (.of H) ⟶ Spec (.of k) := Spec.map (CommRingCat.ofHom (algebraMap k H))
@@ -359,26 +352,6 @@ theorem torsion_quotient_closureIdeal : Submodule.torsion V (H ⧸ closureIdeal 
   rw [TensorProduct.tmul_smul, Algebra.smul_def, Ideal.unit_mul_mem_iff_mem _ hu] at h1
   exact Ideal.Quotient.eq_zero_iff_mem.2 h1
 
-instance isTorsionFree_quotient_closureIdeal [IsDomain V] :
-    Module.IsTorsionFree V (H ⧸ closureIdeal K J) :=
-  Submodule.isTorsionFree_iff_torsion_eq_bot.2 (torsion_quotient_closureIdeal J)
-
-theorem map_closureIdeal :
-    (closureIdeal K J).map (Algebra.TensorProduct.includeRight : H →ₐ[V] K ⊗[V] H) = J := by
-  letI : Algebra H (K ⊗[V] H) := Algebra.TensorProduct.rightAlgebra
-  have := IsLocalization.tensorRight (R := V) (S := H) K (nonZeroDivisors V)
-  exact IsLocalization.map_under (Algebra.algebraMapSubmonoid H (nonZeroDivisors V)) (K ⊗[V] H) J
-
-noncomputable def baseChangeQuotientClosureIdealEquiv :
-    K ⊗[V] (H ⧸ closureIdeal K J) ≃ₐ[K] (K ⊗[V] H) ⧸ J :=
-  (Algebra.TensorProduct.tensorQuotientEquiv (R := V) K H K (closureIdeal K J)).trans
-    (Ideal.quotientEquivAlgOfEq K (map_closureIdeal J))
-
-@[simp]
-theorem baseChangeQuotientClosureIdealEquiv_tmul (a : K) (x : H) :
-    baseChangeQuotientClosureIdealEquiv J (a ⊗ₜ Ideal.Quotient.mk _ x) =
-      Ideal.Quotient.mk J (a ⊗ₜ x) := rfl
-
 theorem flat_quotient_closureIdeal_of_isDedekindDomain [IsDedekindDomain V] :
     Module.Flat V (H ⧸ closureIdeal K J) :=
   IsDedekindDomain.flat_iff_torsion_eq_bot.2 (torsion_quotient_closureIdeal J)
@@ -393,15 +366,13 @@ variable {V K H : Type*} [CommRing V] [Field K] [Algebra V K] [CommRing H]
 variable [HopfAlgebra V H] [IsFractionRing V K] (J : Ideal (K ⊗[V] H)) [J.IsHopfIdeal K]
 
 theorem isHopfIdeal_closureIdeal_of_flat [Module.Flat V (H ⧸ closureIdeal K J)] :
-    (closureIdeal K J).IsHopfIdeal V where
-  counit_eq_zero x hx := by
+    (closureIdeal K J).IsHopfIdeal V := by
+  refine { counit_eq_zero := ?_, map_mkQ_comul_eq_zero := ?_, antipode_mem := ?_ }
+  · intro x hx
     have h := Submodule.IsCoideal.counit_eq_zero (I := J.restrictScalars K) hx
     apply IsFractionRing.injective V K
     simpa [Algebra.smul_def] using h
-  antipode_mem x hx := by
-    have h := Ideal.IsHopfIdeal.antipode_mem (R := K) (I := J) hx
-    simpa using h
-  map_mkQ_comul_eq_zero x hx := by
+  · intro x hx
     have h := Submodule.IsCoideal.map_mkQ_comul_eq_zero (I := J.restrictScalars K) hx
     let Q := (K ⊗[V] H) ⧸ J.restrictScalars K
     let P := H ⧸ closureIdeal K J
@@ -410,7 +381,7 @@ theorem isHopfIdeal_closureIdeal_of_flat [Module.Flat V (H ⧸ closureIdeal K J)
       ((J.restrictScalars K).mkQ.restrictScalars V ∘ₗ TensorProduct.mk V K H 1)
       (fun y hy ↦ (Submodule.Quotient.mk_eq_zero _).2 hy)
     have hι : Function.Injective ι := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro y hy
       obtain ⟨y, rfl⟩ := Ideal.Quotient.mk_surjective y
       exact Ideal.Quotient.eq_zero_iff_mem.2
@@ -428,11 +399,13 @@ theorem isHopfIdeal_closureIdeal_of_flat [Module.Flat V (H ⧸ closureIdeal K J)
       TensorProduct.comul_tmul]
     generalize comul (R := V) x = t
     induction t with
-    | zero => simp only [map_zero, TensorProduct.tmul_zero]
-    | add a b ha hb => simp only [map_add, TensorProduct.tmul_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), TensorProduct.tmul_add, ha, hb]
     | tmul a b =>
       simp only [CommSemiring.comul_apply, TensorProduct.map_tmul, TensorProduct.AlgebraTensorModule.tensorTensorTensorComm_tmul]
       rfl
+  · intro x hx
+    have h := Ideal.IsHopfIdeal.antipode_mem (R := K) (I := J) hx
+    simpa using h
 
 theorem isHopfIdeal_closureIdeal_of_isDedekindDomain [IsDedekindDomain V] :
     (closureIdeal K J).IsHopfIdeal V :=
@@ -443,22 +416,14 @@ end HopfClosure
 
 section Surjections
 
-theorem surjective_of_epi_of_finite {R S : CommRingCat} (f : R ⟶ S) [CategoryTheory.Epi f]
-    (hf : f.hom.Finite) : Function.Surjective f :=
-  RingHom.surjective_of_epi_of_finite f hf
-
 end Surjections
 
 section Examples
 
 theorem isHopfIdeal_ker_counit (R H : Type*) [CommRing R] [CommRing H] [HopfAlgebra R H] :
-    (RingHom.ker (counitAlgHom R H)).IsHopfIdeal R where
-  counit_eq_zero _ hx := hx
-  antipode_mem x hx := by
-    have hx' : counit (R := R) x = 0 := hx
-    change counit (R := R) (antipode R x) = 0
-    simpa using hx'
-  map_mkQ_comul_eq_zero x hx := by
+    (RingHom.ker (counitAlgHom R H)).IsHopfIdeal R := by
+  refine { counit_eq_zero := fun _ hx ↦ hx, map_mkQ_comul_eq_zero := ?_, antipode_mem := ?_ }
+  · intro x hx
     have hx' : counit (R := R) x = 0 := hx
     set π := ((RingHom.ker (counitAlgHom R H)).restrictScalars R).mkQ with hπ
     have h1 : ∀ y, π y = counit (R := R) y • π 1 := fun y ↦ by
@@ -469,22 +434,16 @@ theorem isHopfIdeal_ker_counit (R H : Type*) [CommRing R] [CommRing H] [HopfAlge
         π 1 ⊗ₜ π (TensorProduct.lid R H ((counit (R := R)).rTensor H t)) := by
       intro t
       induction t with
-      | zero => simp
-      | add a b ha hb => simp only [map_add, TensorProduct.tmul_add, ha, hb]
+      | add a b ha hb => simp only [map_add (f := _), TensorProduct.tmul_add, ha, hb]
       | tmul a b =>
         rw [TensorProduct.map_tmul, h1 a, TensorProduct.smul_tmul, LinearMap.rTensor_tmul,
           TensorProduct.lid_tmul, map_smul]
     rw [h2, rTensor_counit_comul, TensorProduct.lid_tmul, one_smul, h1 x, hx', zero_smul,
       TensorProduct.tmul_zero]
-
-example : Algebra.Etale ℚ (AddMonoidAlgebra ℚ (ZMod 3)) := etale_of_hopfAlgebra _ _
-
-example : Algebra.Smooth ℚ (AddMonoidAlgebra ℚ ℤ) := smooth_of_hopfAlgebra _ _
-
-example : (closureIdeal (V := ℤ) ℚ
-    (RingHom.ker (counitAlgHom ℚ (ℚ ⊗[ℤ] AddMonoidAlgebra ℤ (ZMod 3))))).IsHopfIdeal ℤ :=
-  have := isHopfIdeal_ker_counit ℚ (ℚ ⊗[ℤ] AddMonoidAlgebra ℤ (ZMod 3))
-  isHopfIdeal_closureIdeal_of_isDedekindDomain _
+  · intro x hx
+    have hx' : counit (R := R) x = 0 := hx
+    change counit (R := R) (antipode R x) = 0
+    simpa using hx'
 
 end Examples
 

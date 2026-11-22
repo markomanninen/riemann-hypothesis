@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LocKIntMem
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExpNegOneLtOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LocKIntMem
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExpNegOneLtOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
+
+@[expose] public section
 
 namespace HeckeCharacterValueBounds
 section

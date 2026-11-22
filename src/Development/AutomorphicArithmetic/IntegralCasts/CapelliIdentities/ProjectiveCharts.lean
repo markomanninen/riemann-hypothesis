@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.ProjectiveCharts.HomogIdeal :
     {B : Type} → [inst : CommRing B] → {n : ℕ} → Ideal (MvPolynomial (Fin n) B) → Prop :=
@@ -45,7 +49,7 @@ private theorem comp_mul {p : MvPolynomial (Fin M) B} {e : ℕ} (hp : p.IsHomoge
     by_cases hd : d = u.degree
     · simp [hd]
     · simp [hd]
-  | add a b ha hb => rw [mul_add, map_add, map_add, mul_add, ha, hb]
+  | add a b ha hb => rw [mul_add, map_add (f := _), map_add (f := _), mul_add, ha, hb]
 
 private theorem pow_mul_mem {R : Type} [CommRing R] {Q : Ideal R} {r f : R} {m k : ℕ}
     (hmk : m ≤ k) (h : r ^ m * f ∈ Q) : r ^ k * f ∈ Q := by
@@ -103,9 +107,9 @@ private theorem comp_mem_of_nilp [IsNoetherianRing B] (T Q : Ideal (MvPolynomial
           have h3 := totalDegree_mul (monomial u c) t
           rw [homogeneousComponent_eq_zero _ _ (by omega)]
           exact Q.zero_mem
-      | add a b ha hb => rw [add_mul, map_add]; exact Q.add_mem ha hb
+      | add a b ha hb => rw [add_mul, map_add (f := _)]; exact Q.add_mem ha hb
     | zero => intro a; simp
-    | add x y _ _ hx hy => intro a; rw [mul_add, map_add]; exact Q.add_mem (hx a) (hy a)
+    | add x y _ _ hx hy => intro a; rw [mul_add, map_add (f := _)]; exact Q.add_mem (hx a) (hy a)
     | smul b x _ hx => intro a; rw [smul_eq_mul, ← mul_assoc]; exact hx _
   simpa using key 1
 
@@ -174,7 +178,7 @@ private theorem plus_homog {P Q : Ideal (MvPolynomial (Fin M) B)}
     (hP : UpperTheory.Reformulated.B.ProjectiveCharts.HomogIdeal P) (hQ : UpperTheory.Reformulated.B.ProjectiveCharts.HomogIdeal Q) (a : Fin M) :
     UpperTheory.Reformulated.B.ProjectiveCharts.HomogIdeal (plus P Q (X a)) := by
   rintro d _ ⟨q, hq, h, hh, rfl⟩
-  rw [map_add]
+  rw [map_add (f := _)]
   rcases d with _ | d
   · refine ⟨_, hQ 0 q hq, 0, P.zero_mem, ?_⟩
     congr 1

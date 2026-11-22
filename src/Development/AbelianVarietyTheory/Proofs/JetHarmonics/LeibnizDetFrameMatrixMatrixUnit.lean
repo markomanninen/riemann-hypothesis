@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.BasicLiftAll
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ConjugateTransposeLeibniz.YOperatorLeibnizRule
-import ReciprocityTheory.GeometryOfNumbers.PluriharmonicAnalysis.LogDetSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.BasicLiftAll
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ConjugateTransposeLeibniz.YOperatorLeibnizRule
+public import ReciprocityTheory.GeometryOfNumbers.PluriharmonicAnalysis.LogDetSt
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.R Formalism.FourierDecayAlt.Wd Formalism.FourierDecayAlt.Fr Formalism.REAL Formalism.QuantumDeterminants MeasureTheory GlobalTheory.HatNF
 

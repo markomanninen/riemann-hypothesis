@@ -1,4 +1,8 @@
-import Development.AutomorphicSpectrum.Proofs.TwistedProofs.UnramDoublingInert
+module
+
+public import Development.AutomorphicSpectrum.Proofs.TwistedProofs.UnramDoublingInert
+
+@[expose] public section
 
 noncomputable section
 

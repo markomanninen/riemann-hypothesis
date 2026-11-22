@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.KerDatTuple
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsDeltaDelAtOwnAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GramMapMulInv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilDatumTwistHeckeCharacters
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilRepresentationVacuumCosetVectorsGrid
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstRelIffTwistFactorAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCmAdeleUnitCharacterReadingHeckeChar
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsResOfTameAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EasyInputs
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.NotIsConjPlOfIdemSum
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsFundamentalDomainOfHaar
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemSumOfNoConj
-import Formalism.LocalToGlobal.UnitaryNorms.CharUniq
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.KerDatTuple
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsDeltaDelAtOwnAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GramMapMulInv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilDatumTwistHeckeCharacters
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilRepresentationVacuumCosetVectorsGrid
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstRelIffTwistFactorAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCmAdeleUnitCharacterReadingHeckeChar
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsResOfTameAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EasyInputs
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.NotIsConjPlOfIdemSum
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsFundamentalDomainOfHaar
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemSumOfNoConj
+public import Formalism.LocalToGlobal.UnitaryNorms.CharUniq
+public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -26,8 +30,8 @@ open GlobalTheory.OnCmp GlobalTheory.BigOn GlobalTheory.RealIndexBound
 
 namespace GlobalTheory.OnCmp
 
-open Classical in
 
+open Classical in
 theorem exists_baseKernel : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T0 : Type) (A : FamIn D.what₂.LL G Pl0 T0 D.R.m) (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A), GlobalTheory.Hk3.Core R F → ∀ (i : Fin D.R.m), ∀ (v : HeightOneSpectrum (𝓞 D.what₂.LL)), v ∈ R.twPl → R.tup_mu_on → ∃ ω φ, IsBaseKernel R i v (ownAt D v) ω φ := by
   intro D G _ _ Pl0 T0 A Ks _ _ _ R F hC i v hv hmu
   obtain ⟨ψw, Qw, hψ, hxi⟩ := hmu v hv
@@ -37,7 +41,11 @@ theorem exists_baseKernel : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T
     intro P
     unfold Formalism.L2.Host.HChar.TameAt Formalism.L2.Host.HChar.LevelLe
     intro x hx hle
-    rw [hδ, Formalism.L2.Host.HChar.loc_mul, Formalism.L2.Host.HChar.loc_inv, hL.xi_tame (R.mu v) P x hx hle, hψ.tame P x hx hle,
+    have loc_mul (a b : Formalism.L2.Host.HChar D.host.E) :
+        (a * b).loc P x = a.loc P x * b.loc P x := rfl
+    have loc_inv (a : Formalism.L2.Host.HChar D.host.E) :
+        (a⁻¹).loc P x = (a.loc P x)⁻¹ := rfl
+    rw [hδ, loc_mul, loc_inv, hL.xi_tame (R.mu v) P x hx hle, hψ.tame P x hx hle,
       inv_one, mul_one]
   have htriv : (R.C.delAt (Formalism.EigenvalueLevelCeiling.plc v)).TrivOn D.host.F := by
     rw [hδ]; exact (hL.xi_triv (R.mu v)).mul hψ.triv.inv

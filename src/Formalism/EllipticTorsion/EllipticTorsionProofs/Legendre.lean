@@ -1,5 +1,9 @@
-import Formalism.EllipticTorsion.Statement
-import Formalism.EllipticTorsion.EllipticTorsionProofs.LegendreInvariant
+module
+
+public import Formalism.EllipticTorsion.Statement
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.LegendreInvariant
+
+@[expose] public section
 
 namespace Formalism.ELL
 

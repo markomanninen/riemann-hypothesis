@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPrAlt
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPrAlt
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+
+@[expose] public section
 
 open Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal ContDiff
@@ -14,16 +18,6 @@ open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {k r : ℕ}
-
-abbrev detRep (k r m : ℕ) : Rep k r where
-  H := ℂ
-  σ := fun g => (g.det ^ m) • ContinuousLinearMap.id ℂ ℂ
-
-def rho2 (g : Mx k r) : Matrix (Fin 2) (Fin 2) ℂ := !![1, 0; 0, g.det]
-
-def gam2 : Matrix (Fin 2) (Fin 2) ℂ := !![1, 0; 0, -1]
-
-def dl (I c : Fin 2) : ℂ := if I = c then 1 else 0
 
 theorem lenA_eq_lA (z : Fin (2 * r + k + 1) → ℂ) (g : Mx k r) (a : Fin (r + 1)) :
     lenA k r z g a = Formalism.MainNotions.S.lA k r z g a := by

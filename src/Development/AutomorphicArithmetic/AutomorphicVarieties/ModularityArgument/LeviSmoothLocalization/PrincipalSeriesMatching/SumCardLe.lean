@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.MatchAd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.PolFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.NormVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SuppFacts
-import GroundTheory.GlobalFields.TateThesis.LocalConductor
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.MatchAd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.PolFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.NormVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SuppFacts
+public import GroundTheory.GlobalFields.TateThesis.LocalConductor
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,7 +98,7 @@ private theorem core {K : Type} [Field K] [NumberField K] {v : HeightOneSpectrum
     (he : ∀ j ∈ Finset.range 2, ∀ w : PlacesOver K v, (e j).comp (nm w) = 1)
     (hc : ∀ θ : (v.adicCompletion ℚ)ˣ →* ℂˣ, IsSmoothChar θ → ∀ w : PlacesOver K v, IsUnram (θ.comp (nm w)) →
       ((Finset.range 2).filter fun j => IsUnram (θ * e j)).card = ∑ w' : PlacesOver K v, fdeg w')
-    (s : ∀ w : PlacesOver K v, Multiset (IrrGL (w.1.adicCompletion K))) (hs : ∀ w, (s w).card ≤ 3)
+    (s : ∀ w : PlacesOver K v, Multiset (IrrGL (k := w.1.adicCompletion K))) (hs : ∀ w, (s w).card ≤ 3)
     (hm : ∀ θ : (v.adicCompletion ℚ)ˣ →* ℂˣ, IsSmoothChar θ →
       ∏ j ∈ Finset.range 2, ∏ i, lin (a i * θ * e j) = ∏ w, (pol (s w) (θ.comp (nm w))).comp (X ^ fdeg w))
     (w : PlacesOver K v) : ∀ y ∈ s w, ∃ i hζ, y = IrrGL.ofChar ((a i).comp (nm w)) hζ := by
@@ -179,51 +183,3 @@ private theorem core {K : Type} [Field K] [NumberField K] {v : HeightOneSpectrum
   exact ⟨i', hζ, rfl⟩
 
 end UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter
-
-theorem UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter.adK :
-    UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter.AdK := by
-  intro K _ _ _ hK D hD P hP v w
-  obtain ⟨η, hη⟩ := matchAd K hK D hD P hP
-  obtain ⟨h1, h2, h3⟩ := hη v
-  have hν : IsSmoothChar (D.ν v) :=
-    GroundTheory.Global.isOpen_ker_of_continuous v GroundTheory.Global.Complex.units_noSmallSubgroups _ (D.unit v).1
-  have sf := fun w : PlacesOver K v => suppFacts K 3 (by norm_num) P w.1
-  choose s hs using fun w => (sf w).1
-  have key := core ![D.ν v, 1, (D.ν v)⁻¹] (fun i => by fin_cases i; exacts [hν, isSmoothChar_one, hν.inv])
-    (fun j => (η ^ j).loc v)
-    (fun j hj w => by
-      have := Finset.mem_range.1 hj
-      interval_cases j
-      · rw [pow_zero]; rfl
-      · rw [pow_one]; exact h1 w)
-    h2 s
-    (fun w => by
-      obtain ⟨-, h4, h5⟩ := (sf w).2.2.1 _ (hs w)
-      have := Multiset.card_nsmul_le_sum (s := (s w).map Sigma.fst) (a := 1) fun x hx => by
-        obtain ⟨y, hy, rfl⟩ := Multiset.mem_map.1 hx
-        exact h5 y hy
-      simpa [h4] using this)
-    (fun θ hθ => by
-      rw [← h3 s hs θ hθ]
-      refine Finset.prod_congr rfl fun j _ => ?_
-      simp only [Fin.prod_univ_three, Matrix.cons_val, one_mul, mul_assoc]) w
-  have hch : ∀ t, SuppAt P w.1 t → ∀ ζ ∈ chars t,
-      ζ = (D.ν v).comp (nm w) ∨ ζ = 1 ∨ ζ = ((D.ν v).comp (nm w))⁻¹ := by
-    rintro t ht ζ ⟨hζ, hm⟩
-    obtain rfl := (sf w).2.1 _ _ ht (hs w)
-    obtain ⟨i, hi, e⟩ := key _ hm
-    obtain rfl := (polFacts _).2.2.1 _ _ _ _ e
-    fin_cases i
-    exacts [Or.inl rfl, Or.inr (Or.inl rfl), Or.inr (Or.inr rfl)]
-  refine ⟨⟨((sf w).2.2.1 _ (hs w)).1.2 fun y hy => ?_, fun t ht ζ hζ => ?_⟩, hch⟩
-  · obtain ⟨i, hi, rfl⟩ := key y hy
-    rfl
-  · have hn : ‖((ζ (unif (w.1.adicCompletion K)) : ℂˣ) : ℂ)‖ = 1 := by
-      rcases hch t ht ζ hζ with rfl | rfl | rfl
-      · exact (D.unit v).2 _
-      · simp
-      · rw [MonoidHom.inv_apply, Units.val_inv_eq_inv_val, norm_inv, inv_eq_one]
-        exact (D.unit v).2 _
-    have hq : (1 : ℝ) < Ideal.absNorm w.1.asIdeal := by exact_mod_cast NumberField.HeightOneSpectrum.one_lt_absNorm w.1
-    rw [hn]
-    exact ⟨Real.rpow_lt_one_of_one_lt_of_neg hq (by norm_num), Real.one_lt_rpow hq (by norm_num)⟩

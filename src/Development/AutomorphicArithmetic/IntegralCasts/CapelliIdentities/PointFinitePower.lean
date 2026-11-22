@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.PointFinitePower.ptFin_pow :
     ∀ {O S : Type} [inst : CommRing O] [inst_1 : CommRing S]

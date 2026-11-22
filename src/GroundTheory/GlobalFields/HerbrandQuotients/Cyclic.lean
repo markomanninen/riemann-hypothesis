@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.TateCohomology.HerbrandAbstract
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CyclicSubtraction
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.HerbrandAbstract
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CyclicSubtraction
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

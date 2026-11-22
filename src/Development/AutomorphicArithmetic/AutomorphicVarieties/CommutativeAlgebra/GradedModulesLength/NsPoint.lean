@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
-import Mathlib.RingTheory.Jacobson.Ring
-import Mathlib.RingTheory.LocalRing.ResidueField.Ideal
-import Mathlib.FieldTheory.IsAlgClosed.Basic
-import Mathlib.RingTheory.TensorProduct.Finite
-import Mathlib.RingTheory.FiniteStability
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+public import Mathlib.RingTheory.Jacobson.Ring
+public import Mathlib.RingTheory.LocalRing.ResidueField.Ideal
+public import Mathlib.FieldTheory.IsAlgClosed.Basic
+public import Mathlib.RingTheory.TensorProduct.Finite
+public import Mathlib.RingTheory.FiniteStability
+
+@[expose] public section
 
 open IsLocalRing Filter Formalism.MainNotions.V.Pf.V2.Calc UpperTheory.V.Alg UpperTheory.V.Alg.M
 open scoped TensorProduct
@@ -19,7 +23,11 @@ private theorem ns_point (K R : Type) [Field K] [IsAlgClosed K] [CommRing R] [Al
   letI : Field (R ⧸ M) := Ideal.Quotient.field M
   haveI : Module.Finite K (R ⧸ M) := finite_of_finite_type_of_isJacobsonRing K (R ⧸ M)
   haveI : Algebra.IsAlgebraic K (R ⧸ M) := Algebra.IsAlgebraic.of_finite K _
-  let e : (R ⧸ M) →ₐ[K] K := IsAlgClosed.lift
+  let e : (R ⧸ M) →ₐ[K] K := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨e.comp (Ideal.Quotient.mkₐ K M), fun y hy => ?_, ?_⟩
   · have : Ideal.Quotient.mk M y = 0 := Ideal.Quotient.eq_zero_iff_mem.2 (hQM hy)
     simp [this]

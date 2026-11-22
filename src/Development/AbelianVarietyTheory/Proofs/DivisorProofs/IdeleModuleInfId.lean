@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LocPoly
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LocPoly
+
+@[expose] public section
 
 noncomputable section
 

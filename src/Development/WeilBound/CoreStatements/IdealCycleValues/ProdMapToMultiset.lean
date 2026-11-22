@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -19,7 +23,8 @@ theorem evL_monomial (φ : (σ →₀ ℕ) → ℝ) (μ : σ →₀ ℕ) (c : �
 theorem evL_eq (φ : (σ →₀ ℕ) → ℝ) (H : MvPolynomial σ ℝ) :
     ∑ μ ∈ H.support, H.coeff μ * φ μ = evL φ H := by
   conv_rhs => rw [H.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl (fun μ _ => (evL_monomial φ μ _).symm)
 
 theorem evL_C_mul (φ : (σ →₀ ℕ) → ℝ) (c : ℝ) (H : MvPolynomial σ ℝ) :
@@ -30,7 +35,7 @@ theorem evL_rename (e : σ → σ') (φ : (σ' →₀ ℕ) → ℝ) (H : MvPolyn
     evL φ (rename e H) = evL (fun μ => φ (μ.mapDomain e)) H := by
   refine MvPolynomial.induction_on' H (fun μ c => ?_) (fun p q hp hq => ?_)
   · rw [rename_monomial, evL_monomial, evL_monomial]
-  · rw [map_add, map_add, map_add, hp, hq]
+  · rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
 
 theorem classes_mapDomain (e : σ → σ') (cls : σ' → G) (μ : σ →₀ ℕ) :
     ((μ.mapDomain e).toMultiset.map cls).toList = (μ.toMultiset.map (cls ∘ e)).toList := by
@@ -40,7 +45,7 @@ theorem classes_add_perm (cls : σ → G) (ν μ : σ →₀ ℕ) (Q : List G) :
     (((ν + μ).toMultiset.map cls).toList ++ Q).Perm
       ((ν.toMultiset.map cls).toList ++ ((μ.toMultiset.map cls).toList ++ Q)) := by
   rw [← Multiset.coe_eq_coe, ← Multiset.coe_add, ← Multiset.coe_add, ← Multiset.coe_add]
-  simp only [Multiset.coe_toList, map_add, Multiset.map_add, add_assoc]
+  simp only [Multiset.coe_toList, map_add (f := _), Multiset.map_add (f := _), add_assoc]
 
 theorem evL_mul (n : List G → ℝ) (hp : ∀ l l', l.Perm l' → n l = n l') (cls : σ → G)
     (H P : MvPolynomial σ ℝ) (Q : List G) :
@@ -53,9 +58,9 @@ theorem evL_mul (n : List G → ℝ) (hp : ∀ l l', l.Perm l' → n l = n l') (
     · simp only [monomial_mul, evL_monomial]
       rw [hp _ _ (classes_add_perm cls ν μ Q)]
       ring
-    · rw [add_mul, map_add, ih1, ih2, map_add]
+    · rw [add_mul, map_add (f := _), ih1, ih2, map_add (f := _)]
       ring
-  · rw [mul_add, map_add, ih1, ih2, map_add]
+  · rw [mul_add, map_add (f := _), ih1, ih2, map_add (f := _)]
 
 theorem evL_mul_X (n : List G → ℝ) (hp : ∀ l l', l.Perm l' → n l = n l') (cls : σ → G)
     (H : MvPolynomial σ ℝ) (i : σ) (Q : List G) :
@@ -83,7 +88,8 @@ theorem subst_multiset [AddCommGroup G] [Fintype σ] (d : ℕ) (n : List G → �
     intro l hl k
     let f : G →+ ℝ := AddMonoidHom.mk' (fun b => n (b :: l)) (fun b b' => ha b b' l hl)
     have hf : ∀ b, f b = n (b :: l) := fun _ => rfl
-    rw [← hf, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hf, map_sum]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     rw [map_zsmul, zsmul_eq_mul, hf]
   induction s using Multiset.induction_on with
@@ -102,7 +108,8 @@ theorem subst_multiset [AddCommGroup G] [Fintype σ] (d : ℕ) (n : List G → �
     have hlen : ((Multiset.map (fun t => ∑ i, M t i • cls i) s).toList ++ Q).length + 1 = d := by
       rw [List.length_append, Multiset.length_toList, Multiset.card_map]
       omega
-    rw [hp _ _ hperm, hlin _ hlen, Multiset.map_cons, Multiset.prod_cons, Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hp _ _ hperm, hlin _ hlen, Multiset.map_cons, Multiset.prod_cons, Finset.sum_mul, map_sum]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     have hmid : n (cls i :: ((Multiset.map (fun t => ∑ i, M t i • cls i) s).toList ++ Q)) =
         n ((Multiset.map (fun t => ∑ i, M t i • cls i) s).toList ++ (cls i :: Q)) :=
@@ -120,7 +127,8 @@ theorem subst_abs [AddCommGroup G] [Fintype σ] (d : ℕ) (n : List G → ℝ)
       evL (fun μ => n ((μ.toMultiset.map cls).toList ++ Q))
         (aeval (fun t => ∑ i, (C (M t i : ℝ) * X i : MvPolynomial σ ℝ)) H) := by
   conv_rhs => rw [H.as_sum]
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   refine Finset.sum_congr rfl (fun μ hμ => ?_)
   have hdeg : Multiset.card μ.toMultiset = m := by
     have h := hH (mem_support_iff.mp hμ)

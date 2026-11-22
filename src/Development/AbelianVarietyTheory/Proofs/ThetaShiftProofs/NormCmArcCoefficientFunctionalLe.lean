@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ArcDatumSectionValueCoeffEqFourierJacobi
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.EqZeroOfSumSq
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ArchBoundFlow
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.LetterSquaredLengthLeFlowHeightStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.CmMetrisedLineLengthsEqSectionLieNormsStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.NormalisedTrivialisationNormOneComplexReadingStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsTauCanonicalIffOfIsPullDegTauBimultStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.QuadraticCoefficientForms
-import Formalism.LocalToGlobal.CMDeterminantIdeals.CMIdealValuations.AbsNormSpanGalois
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ArcDatumSectionValueCoeffEqFourierJacobi
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.EqZeroOfSumSq
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ArchBoundFlow
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.LetterSquaredLengthLeFlowHeightStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.CmMetrisedLineLengthsEqSectionLieNormsStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.NormalisedTrivialisationNormOneComplexReadingStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsTauCanonicalIffOfIsPullDegTauBimultStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.QuadraticCoefficientForms
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.CMIdealValuations.AbsNormSpanGalois
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.FreeQuotientRank
@@ -114,7 +118,8 @@ theorem cfOf_le {K₁ : Type} [Field K₁] [Algebra c.F K₁] (d : ArcDatum Xo c
   set P := arcNum (evR Xo c F d.yF) with hP
   let G : MvPolynomial (ArcLt Dw) ℂ := ∑ m ∈ P.support, MvPolynomial.monomial m (em ((P.coeff m).coeff d.jj))
   have hG : ∀ x, MvPolynomial.eval x G = ajAt d em F x := fun x => by
-    simp only [G, map_sum, MvPolynomial.eval_monomial, ajAt, Finsupp.prod, hP]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [G, map_sum, MvPolynomial.eval_monomial, ajAt, Finsupp.prod, hP]
   have hc : G.coeff d.μ = em (cfOf d.yF d.μ d.jj F) := by
     simp only [G, MvPolynomial.coeff_sum, MvPolynomial.coeff_monomial, Finset.sum_ite_eq', cfOf, ← hP]
     split_ifs with hm
@@ -195,9 +200,9 @@ theorem const_le (r : ℕ) {La c₁ T C : ℝ} (hLa : 1 ≤ La) (hT : 0 < T) (hC
       _ = _ := by ring
   have b2 : ∏ τ : E →+* ℂ, ∏ i : Fin (Dw.mult τ), h τ i ^ ((a (τ, (i : ℕ)) : ℝ) / 2) ≤ e ^ absA Dw a := by
     rw [absA, ← Finset.prod_pow_eq_pow_sum]
-    refine Finset.prod_le_prod (fun τ _ => Finset.prod_nonneg fun i _ => Real.rpow_nonneg (h0 τ i) _) fun τ _ => ?_
+    refine Finset.prod_le_prod₀ (fun τ _ => Finset.prod_nonneg fun i _ => Real.rpow_nonneg (h0 τ i) _) fun τ _ => ?_
     rw [← Finset.prod_pow_eq_pow_sum]
-    refine Finset.prod_le_prod (fun i _ => Real.rpow_nonneg (h0 τ i) _) fun i _ => ?_
+    refine Finset.prod_le_prod₀ (fun i _ => Real.rpow_nonneg (h0 τ i) _) fun i _ => ?_
     exact hsq _ _ _ (h0 τ i) he0.le ((hh τ i).trans (by gcongr))
   refine (mul_le_mul b1 b2 (Finset.prod_nonneg fun τ _ => Finset.prod_nonneg fun i _ =>
     Real.rpow_nonneg (h0 τ i) _) (by positivity)).trans (le_of_eq ?_)
@@ -233,8 +238,9 @@ theorem line_pos {K₁ : Type} [Field K₁] [NumberField K₁] [Algebra c.F K₁
     · rw [h]; exact (h2 _).1.2 em
 
 theorem norm_cfOf_le : Known → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (K₁ : Type) [Field K₁] [NumberField K₁] [Algebra c.F K₁] (d : ArcDatum Xo c K₁) (n' : ℕ) (La c₁ : ℝ) (s : CMIn d.a d.e d.th d.jj n' La c₁) (em : K₁ →+* ℂ) (r : ℕ) (U : Unf Xo c (em.comp (algebraMap c.F K₁)) r) (xi S : ℝ) (a' : (E →+* ℂ) × ℕ → ℕ) (n : ℕ), Std d → 1 ≤ La → GoodEmb c (em.comp (algebraMap c.F K₁)) → IsUnf U → (∀ k (τ : E →+* ℂ), ‖τ (U.X k).ξ0‖ = xi) → Dom a' n → (∀ k, TransvIn (U.X k) l.M' (laU U a' n k)) → ∀ F ∈ sec Xo c a' n, 0 ≤ S → (∀ k, ∀ y ∈ (U.X k).dom, lieFac Dw xi a' * (U.X k).pnorm (laU U a' n k) (rdU U F k) y ≤ S) → ‖em (cfOf d.yF d.μ d.jj F)‖ * (s.valLine d.μ n).n em ≤ S * Real.exp (4 * Real.pi + GlobalTheory.ArcCM.archP E r La c₁ * ((absA Dw a' : ℝ) + (fdeg E : ℝ) * n)) := by
-  intro hK E _ _ _ H Dw l Xo c K₁ _ _ _ d n' La c₁ s em r U xi S a' n ⟨hover, ⟨y₀, hy₀, hc⟩, hpush⟩ hLa hgood hunf
+  intro hK E _ _ _ H Dw l Xo c K₁ _ _ _ d n' La c₁ s em r U xi S a' n hstd hLa hgood hunf
     hxi hdom htv F hF hS0 hS
+  obtain ⟨hover, ⟨y₀, hy₀, hc⟩, hpush⟩ := hstd
   have h1 := hK.laws
   have h2 := hK.laws2
   have hev := hK.ev E H Dw l Xo c
@@ -315,7 +321,8 @@ theorem norm_cfOf_le : Known → ∀ (E : Type) [Field E] [NumberField E] [IsCMF
           unfold Datum.mult
           split_ifs <;> omega
         exact_mod_cast this
-      rw [← herm_single Hm, ← hLz, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← herm_single Hm, ← hLz, map_sum]
       have := herm_sum_le hH'.2.1 (fun j => L (x ⟨τ, (i, j)⟩ • z₁ τ j))
         (b := (La * Real.sqrt (max 1 c₁)) ^ 2 / Real.pi) fun j => by
           rw [le_div_iff₀' Real.pi_pos, map_smul, herm_smul, mul_left_comm]

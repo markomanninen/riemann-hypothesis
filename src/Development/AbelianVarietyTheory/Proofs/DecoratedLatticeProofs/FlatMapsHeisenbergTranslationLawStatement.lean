@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatMapsHeisenbergTranslationLaw
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleExact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatMapsHeisenbergTranslationLaw
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleExact
+
+@[expose] public section
+
 open Formalism.BasicNotions
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.flatMaps_heisenbergTranslation_law : ∀ D : D7, GlobalTheory.FinPl.FlatShift D := by

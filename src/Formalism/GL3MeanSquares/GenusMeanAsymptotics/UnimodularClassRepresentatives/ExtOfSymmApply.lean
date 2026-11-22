@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsUnimodularAtAdjoinIff
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsUnimodularAtAdjoinIff
+
+@[expose] public section
 
 open NumberField Module
 
@@ -14,18 +18,11 @@ variable {K V V' : Type} [Field K] [NumberField K] [StarRing K]
 
 variable {h : V →ₗ⋆[K] V →ₗ[K] K} {h' : V' →ₗ⋆[K] V' →ₗ[K] K}
 
-theorem h_x₀_decomp (S : VecSplit h h') (c : K) (a : V') :
-    h S.x₀ (c • S.x₀ + S.ι a) = c * h S.x₀ S.x₀ := by
-  exact S.h_x₀_comb c a
-
 theorem exists_of_orth (S : VecSplit h h') {v : V} (hv : h S.x₀ v = 0) : ∃ a, S.ι a = v := by
   obtain ⟨c, a, rfl⟩ := S.cover v
   rw [S.h_x₀_comb] at hv
   have hc : c = 0 := (mul_eq_zero.mp hv).resolve_right S.hx₀
   exact ⟨a, by rw [hc, zero_smul, zero_add]⟩
-
-theorem orth' (hs : h.IsSymm) (S : VecSplit h h') (a : V') : h (S.ι a) S.x₀ = 0 := by
-  exact S.orth' hs a
 
 theorem h_decomp (hs : h.IsSymm) (S : VecSplit h h') (c d : K) (a b : V') :
     h (c • S.x₀ + S.ι a) (d • S.x₀ + S.ι b) = star c * d * h S.x₀ S.x₀ + h' a b := by
@@ -68,11 +65,7 @@ theorem linearMap_ext (S : VecSplit h h') {f g : V →ₗ[K] V} (h0 : f S.x₀ =
     (h1 : ∀ a, f (S.ι a) = g (S.ι a)) : f = g := by
   ext v
   obtain ⟨c, a, rfl⟩ := S.cover v
-  rw [map_add, map_add, map_smul, map_smul, h0, h1]
-
-theorem autL_iff {W : Type} [AddCommGroup W] [Module K W] [Module (𝓞 K) W]
-    [IsScalarTower (𝓞 K) K W] {k : W →ₗ⋆[K] W →ₗ[K] K} {M : Submodule (𝓞 K) W} {g : W ≃ₗ[K] W} :
-    g ∈ Formalism.ThetaLiftIndependence.autL k M ↔ g ∈ Formalism.HermitianLatticesTheory.isom k ∧ Formalism.HermitianLatticesTheory.gmap g M = M := Iff.rfl
+  rw [map_add (f := _), map_add (f := _), map_smul, map_smul, h0, h1]
 
 theorem isom_apply {g : V ≃ₗ[K] V} (hg : g ∈ Formalism.HermitianLatticesTheory.isom h) (x y : V) : h (g x) (g y) = h x y := hg x y
 

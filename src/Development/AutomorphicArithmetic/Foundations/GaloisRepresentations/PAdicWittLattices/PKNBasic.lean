@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.TransCancel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoprimeNsmulEndomorphismPreservesCompletioStatement
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.InvMemLatMonoidOfMemAwaySupp
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.TransCancel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoprimeNsmulEndomorphismPreservesCompletioStatement
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.InvMemLatMonoidOfMemAwaySupp
+
+@[expose] public section
 
 open UpperTheory.Gal.G3
 
@@ -16,7 +20,7 @@ private theorem congOne_conj {p : ℕ} [Fact p.Prime] {D : GlobalTheory.UPel.HT.
     rw [← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply]
   have key : j' • L.actG (g * u * g⁻¹) v = j' • (v + N • j • L.actG g w) := by
     have e2 := congrArg (L.actG g) e
-    simp only [map_add, map_nsmul, h1] at e2
+    simp only [map_add (f := _), map_nsmul, h1] at e2
     rw [map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, e2, smul_add, smul_smul, smul_smul]
     congr 2
     ring
@@ -34,7 +38,7 @@ theorem UpperTheory.Gal.G3.pKNBasic :
       refine ⟨L.actG k w, UpperTheory.Gal.Int.Geo.integ_of_mem hk w hw, ?_⟩
       have h1 : L.actG k (L.actG k⁻¹ v) = v := by
         rw [← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply]
-      rw [map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, e, map_add, map_nsmul, h1]
+      rw [map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, e, map_add (f := _), map_nsmul, h1]
     refine ⟨key u hu.1, ?_⟩
     have e : (k * u * k⁻¹)⁻¹ = k * u⁻¹ * k⁻¹ := by group
     rw [e]

@@ -1,27 +1,31 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.KerIsTerm
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ExistsRecordDat
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ReferenceCharactersFactorTame
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.JetStepEqZeroExample
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteDivLatticeQuotient
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaSupportInDivLattice
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsOfStarEq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InertAtLeCongN
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SubDSharpInDeg
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NotDvdDifferent
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RelIndexLocPNeZero
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AbsNormEqOfSplit
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormalisedFamilyLatticeHypAndSmooth
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedCompAtDetIdl
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevOkTwists
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TameCharacterValuesEqHeckeCharLocalValuesStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LocalCharEqHeckeCharLocalComponentOfValues
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IntAtOfLocTop
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OrdSubEqOrdDet
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TildeQDetPtEqChiId
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.KerIsTerm
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ExistsRecordDat
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ReferenceCharactersFactorTame
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.JetStepEqZeroExample
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteDivLatticeQuotient
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaSupportInDivLattice
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsOfStarEq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InertAtLeCongN
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SubDSharpInDeg
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NotDvdDifferent
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RelIndexLocPNeZero
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AbsNormEqOfSplit
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormalisedFamilyLatticeHypAndSmooth
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedCompAtDetIdl
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevOkTwists
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TameCharacterValuesEqHeckeCharLocalValuesStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LocalCharEqHeckeCharLocalComponentOfValues
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IntAtOfLocTop
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OrdSubEqOrdDet
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TildeQDetPtEqChiId
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,10 +45,10 @@ theorem sSharp_eq (I : ChainIn X.E X.K X.Tau R) (σ : X.K →+* ℂ) (h : I.Ok) 
     (I.chain X.emb σ h hc).sSharp i τ = sS hc i τ ∧ (I.chain X.emb σ h hc).sDiv i τ = sD hc i τ := by
   constructor
   · have h1 : ((sS hc i τ : ℤ) : ℚ) = sExp' R ((hc τ).e ⟨i, hi⟩) (i + 1) := by
-      rw [sS, dif_pos hi]; exact GlobalTheory.GO.ChSrc.zOf_spec R _ ((hc τ).e_int _) _
+      rw [sS, dite_eq_left hi]; exact GlobalTheory.GO.ChSrc.zOf_spec R _ ((hc τ).e_int _) _
     exact_mod_cast ((I.chain X.emb σ h hc).sSharp_eq i hi τ).trans h1.symm
   · have h1 : ((sD hc i τ : ℤ) : ℚ) = sExp R ((hc τ).e ⟨i, hi⟩) (i + 1) := by
-      rw [sD, dif_pos hi]; exact GlobalTheory.GO.ChSrc.zOf_spec R _ ((hc τ).e_int _) _
+      rw [sD, dite_eq_left hi]; exact GlobalTheory.GO.ChSrc.zOf_spec R _ ((hc τ).e_int _) _
     exact_mod_cast ((I.chain X.emb σ h hc).sDiv_eq i hi τ).trans h1.symm
 
 theorem kmap_of_jet (I : ChainIn X.E X.K X.Tau R) (σ : X.K →+* ℂ) (h : I.Ok) (hc : X.Tau → HCParam R) {i : ℕ} (hi : i < R.m)
@@ -105,10 +109,51 @@ theorem map_kerOf (A : Amb X) {a b : ℕ} (Sa SB : Finset (HeightOneSpectrum (�
         jetMap (jetC A.cD (thC (X.embC A.σ₀) A.δ A.d A.sc A.AA Sa N N' (cA * cB) (fun x => A.σ₀ (Ξ x)) (A.e a b N N'))) 0
           (MvPolynomial.map A.σ₀ (F.1 * ∏ τ, frDet X.K a τ ^ n τ)) := by
   classical
-  have hfin := GlobalTheory.finite_divLat_quot_mulLat_homAt X.E a b Sa N N' cA cB hN.1 hN'.1 hA hB
+  have span_of_self_dual {n : ℕ} {L : Submodule (𝓞 X.E) (Sp X.E n)} (hLat : IsSdLat L) :
+      Submodule.span X.E (L : Set (Sp X.E n)) = ⊤ := by
+    apply Submodule.dualAnnihilator_eq_bot_iff.mp
+    apply le_antisymm ?_ bot_le
+    intro f hf
+    let v : Sp X.E n := fun i => star (f (Pi.single i 1))
+    have hpair : hStd X.E n v = f := by
+      apply (Pi.basisFun X.E (Fin n)).ext
+      intro i
+      rw [Pi.basisFun_apply, hStd_apply, Finset.sum_eq_single i]
+      · simp [v]
+      · intro j _ hj
+        simp [hj]
+      · simp
+    have hline (r : X.E) : r • v ∈ L := by
+      rw [← show dual (hStd X.E n) L = L from hLat.2, dualBasic_mem_dual]
+      intro y hy
+      have hy0 : hStd X.E n v y = 0 := by
+        rw [hpair]
+        exact (Submodule.mem_dualAnnihilator f).mp hf y (Submodule.subset_span hy)
+      have hz : hStd X.E n y v = 0 := by
+        simpa [hy0] using ((hStd_isSymm (E := X.E) (n := n)).eq v y).symm
+      simp [hz]
+    have hv : v = 0 := by
+      funext i
+      change v i = 0
+      by_contra hi
+      -- A nonzero coordinate would make the field finite over its ring of integers.
+      let coord := (LinearMap.proj i : Sp X.E n →ₗ[X.E] X.E).restrictScalars (𝓞 X.E)
+      have htop : L.map coord = ⊤ := by
+        rw [eq_top_iff]
+        intro x _
+        exact ⟨(x / v i) • v, hline _, div_mul_cancel₀ _ hi⟩
+      have : Module.Finite (𝓞 X.E) X.E := Module.finite_def.mpr (htop ▸ hLat.1.fg.map coord)
+      exact RingOfIntegers.not_isField X.E
+        (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 X.E) X.E) (Field.toIsField X.E))
+    rw [Submodule.mem_bot]
+    simpa [hv] using hpair.symm
+  have hNfull : Submodule.IsFullLattice X.E N :=
+    { toIsLattice := hN.1, span_eq_top := span_of_self_dual hN }
+  have hfin := GlobalTheory.finite_divLat_quot_mulLat_homAt X.E a b Sa N N' cA cB hNfull hN'.1 hA hB
   have hth := GlobalTheory.latSum_thInd_eq_thC X A a b Sa N N' cA cB (fun x => A.σ₀ (Ξ x)) (indTieD_of_la A a b Sa _ (Nat.mul_pos hA hB) hL)
-    hN hN' hA hB (GlobalTheory.ThetaMove.VolumePos.volC_pos X.E a b A.AA Sa N N' hN.1.fg hN'.1.fg hN.1.span_eq_top hN'.1.span_eq_top
-      hL.2.2.2.2.1 h0) hfin (fun x hx => hΞ.1 x ((map_ne_zero A.σ₀).1 hx)) fun x y hy => congrArg A.σ₀ (hΞ.2 x y hy)
+    hN hN' hA hB (GlobalTheory.ThetaMove.VolumePos.volC_pos X.E a b A.AA Sa N N' hN.1.fg hN'.1.fg
+      hNfull.span_eq_top (span_of_self_dual hN') hL.2.2.2.2.1 h0) hfin
+    (fun x hx => hΞ.1 x ((map_ne_zero A.σ₀).1 hx)) fun x y hy => congrArg A.σ₀ (hΞ.2 x y hy)
   let _ := Fintype.ofFinite (↥(divLat cA (homAt Sa N N')) ⧸ (mulLat cB (homAt Sa N N')).comap (divLat cA (homAt Sa N N')).subtype)
   rw [kerOf_thDistC, ← funext hth]
   unfold latSum
@@ -122,7 +167,8 @@ theorem map_kerOf (A : Amb X) {a b : ℕ} (Sa SB : Finset (HeightOneSpectrum (�
     funext m
     rw [jetC_sum _ _ _ hs, Finset.sum_apply]
     rfl
-  rw [hj, GlobalTheory.GO.jetMap_sum, LinearMap.sum_apply, LinearMap.sum_apply, Submodule.coe_sum, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hj, GlobalTheory.GO.jetMap_sum, LinearMap.sum_apply, LinearMap.sum_apply, Submodule.coe_sum, map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun q _ => ?_
   rw [LinearMap.smul_apply, LinearMap.smul_apply, LinearMap.smul_apply, Submodule.coe_smul, Submodule.coe_smul, jetOp_coe lam lam' n hV,
     smul_smul, MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.map_C, ← MvPolynomial.smul_eq_C_mul,
@@ -138,7 +184,7 @@ theorem map_kerOf (A : Amb X) {a b : ℕ} (Sa SB : Finset (HeightOneSpectrum (�
       rw [h1]
       push_cast
       simp [GlobalTheory.JetDeg.natW_cast, Finset.sum_add_distrib, mul_comm]
-    rw [Amb.jetK, desc, dif_pos h1]
+    rw [Amb.jetK, desc, dite_eq_left h1]
     exact h1.choose_spec
 
 end Poly
@@ -153,7 +199,7 @@ theorem sel_mem_QE (h : Reads σ (mu : Chr X.F X.E X.K) ξ) {P : HeightOneSpectr
     sel (P.under (𝓞 X.F)) ∈ QE sel (mu : Chr X.F X.E X.K) := by
   classical
   have hf := GlobalTheory.OpenChrRam.qprime_finite X.F X.E X.K (mu : Chr X.F X.E X.K) mu.2.1.1.1.1.2
-  rw [QE, dif_pos hf]
+  rw [QE, dite_eq_left hf]
   exact Finset.mem_image_of_mem _ (hf.mem_toFinset.2 ((GlobalTheory.Mem.ReadTwist.mem_qprime_iff h _).2 ⟨P, rfl, hP⟩))
 
 theorem locK_eq_val {L : Type} [Field L] [NumberField L] (χ : HChar L) (Q : HeightOneSpectrum (𝓞 L)) (hu : χ.UnrAt Q) (k : Lˣ)
@@ -185,7 +231,7 @@ theorem map_muAtT (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) (hg : ∀ k, Pr
     · rw [if_pos hP, hG j.1 j.2 P hP q hq', Units.val_inv_eq_inv_val, map_inv₀]
     · have hg' : ∀ k, ((Pr.g k : ℕ) : 𝓞 X.E) ∉ P.1.asIdeal := fun k =>
         GlobalTheory.ColPeriod.natCast_notMem_of_ne (hPr.g_prime k) hlp.1.1 (fun h => hlp.2 hP (h ▸ hg k)) P.1 (Ideal.absNorm_mem _)
-      rw [if_neg hP, muqT, dif_pos j.2, Units.val_mul, Units.val_inv_eq_inv_val, Units.val_inv_eq_inv_val, map_mul, map_inv₀, map_inv₀,
+      rw [if_neg hP, muqT, dite_eq_left j.2, Units.val_mul, Units.val_inv_eq_inv_val, Units.val_inv_eq_inv_val, map_mul, map_inv₀, map_inv₀,
         ht.muVal j P.1 hg', ← locK_eq_val (m0 j) P.1 ((ht.mu0 j).unr _ hg') q
           (hq' ▸ GlobalTheory.CharVal.val_natCast_of_notMem_sq (Ideal.absNorm_mem _) hlp.1.2)]
   · rw [hm]
@@ -198,8 +244,8 @@ theorem map_muAtT (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) (hg : ∀ k, Pr
         rw [show (sel (P.1.under (𝓞 X.F))).under (𝓞 X.F) = P.1.under (𝓞 X.F) from HeightOneSpectrum.ext (hsel _),
           (GlobalTheory.Mem.ReadTwist.plc_under_eq_iff (F := X.F) P.1 (hPr.g_prime k)).2 gk] at h1
         exact h1 (hg k)
-      rw [if_pos hP, GlobalTheory.NormOneUnit.locK_unr hun (hu x y c hx hc), (ht.mu0 j).atg ⟨P.1, hP⟩ x y c hx hc, chiP, dif_pos hP, chiAt, extChi,
-        dif_pos j.2, Units.val_inv_eq_inv_val, map_inv₀, inv_inv, Units.val_one, inv_one, mul_one]
+      rw [if_pos hP, GlobalTheory.NormOneUnit.locK_unr hun (hu x y c hx hc), (ht.mu0 j).atg ⟨P.1, hP⟩ x y c hx hc, chiP, dite_eq_left hP, chiAt, extChi,
+        dite_eq_left j.2, Units.val_inv_eq_inv_val, map_inv₀, inv_inv, Units.val_one, inv_one, mul_one]
     · have hg' : ∀ k, ((Pr.g k : ℕ) : 𝓞 X.E) ∉ P.1.asIdeal := fun k =>
         GlobalTheory.ColPeriod.natCast_notMem_of_ne (hPr.g_prime k) hlp.1.1 (fun h => hlp.2 hP (h ▸ hg k)) P.1 (Ideal.absNorm_mem _)
       rw [if_neg hP, GlobalTheory.NormOneUnit.locK_unr ((ht.mu0 j).unr _ hg') (hu x y c hx hc), MonoidHom.inv_apply, Units.val_inv_eq_inv_val,
@@ -223,7 +269,7 @@ theorem map_muInvDet (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) (hg : ∀ k,
         (HeightOneSpectrum.ext (hsel (w.under (𝓞 X.F)))) with e | e
       exacts [h1 (Finset.mem_union_right _ (e ▸ h3)), h2 (Finset.mem_union_right _ (e ▸ h3))]
     refine ⟨((ht.mu0 j).unr w hg').mul hun, ?_⟩
-    rw [mUof, dif_pos j.2, Units.val_mul, Units.val_inv_eq_inv_val, Units.val_inv_eq_inv_val, map_mul, map_inv₀, map_inv₀,
+    rw [mUof, dite_eq_left j.2, Units.val_mul, Units.val_inv_eq_inv_val, Units.val_inv_eq_inv_val, map_mul, map_inv₀, map_inv₀,
       ht.muVal j w hg', (GlobalTheory.T.tame_character_values_eq_heckeChar_local_values X.F X.E X.K σ _ ξ h hta w).1 hun, Formalism.L2.Host.HChar.val_mul, Units.val_mul, mul_inv]
 
 end Scalar
@@ -247,7 +293,7 @@ section True
 
 open GlobalTheory.Mem GlobalTheory.Mem.Chr
 
-local instance starHost (B : Base) : StarRing B.host.E := B.fields.starE
+local instance (B : Base) : StarRing B.fields.E := B.fields.starE
 
 variable {B : Base} {X : PreX B.toPre} (I : ColIn B X)
 
@@ -286,13 +332,6 @@ theorem rhoIs (h : I.Ok) (a : I.ι) (u : B.Word) {i : ℕ} (hi : i < B.R.m) :
   rw [map_mul, map_inv₀, m1, m2, e1, e2, Th.chiFac, ← c1, ← c2]
   simp only [Units.val_mul, Units.val_inv_eq_inv_val, Units.val_zpow_eq_zpow_val, zpow_neg, mul_inv, inv_inv]
   ring
-
-abbrev trueIn (a : I.ι) (u : B.Word) (Tp : TopLev B.fields (B.primes X) B.R (I.Q a)) : ChainIn B.fields.E B.fields.K B.fields.Tau B.R :=
-  chainAt (Pr := B.primes X) I.sel (I.tup a) (I.cst a) (I.idx a) Tp u (fun i _ p => ((rhoAt I.SQ I.C (I.xi a) i p.1.1 : ℂˣ) : ℂ))
-    (fun i _ p => ((rhoAt' I.SQ I.C (I.xi a) i p.1.1 : ℂˣ) : ℂ)) I.A.cD (thAt (Pr := B.primes X) I.Ch I.sel (I.tup a) (I.cst a) (I.idx a) I.A u)
-
-def KmapIs {D : D7} {u : D.what₂.Word} (Y : Dat D u) (i : ℕ) (k : Y.Ker i) : Prop :=
-  ∀ c c' F, Y.ch.C.Kmap i c c' (Y.ev i F) = Y.ev (i + 1) (k c.1 c'.1 ((Y.I.S i).rep c) ((Y.I.S (i + 1)).rep c') F)
 
 theorem laHyp_of_vecP (C : Cols B) (W : RowsRest B C) (V : DivStage B C W) (S : SStage B C W) (N : NStage B C W) (G : GJStage B C)
     (h : I.Ok) (hv : (I.J.toRec B C W V S N G).VecP I.chi) (a : I.ι) (u : B.Word) (i j : ℕ) :

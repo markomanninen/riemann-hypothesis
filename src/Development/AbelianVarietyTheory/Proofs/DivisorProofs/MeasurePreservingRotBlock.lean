@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinSubstLinSubst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussAbsProdLeOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogGaussAbsSupportFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMultiHomogeneousProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinSubstLinSubst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussAbsProdLeOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogGaussAbsSupportFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMultiHomogeneousProd
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -173,7 +177,7 @@ theorem eval_along {S : Type} [CommRing S] (φ : R →+* S) (d : ι → R) (z : 
     ((along d f).map (eval₂Hom φ z)).eval t = eval₂Hom φ (fun p => z p + t * φ (d p)) f := by
   induction f using MvPolynomial.induction_on with
   | C a => simp [along_C]
-  | add p q hp hq => rw [along_add, Polynomial.map_add, Polynomial.eval_add, hp, hq, map_add]
+  | add p q hp hq => rw [along_add, Polynomial.map_add (f := _), Polynomial.eval_add, hp, hq, map_add (f := _)]
   | mul_X p i hp =>
     rw [along_mul, Polynomial.map_mul, Polynomial.eval_mul, hp, map_mul, along_X]
     congr 1
@@ -199,15 +203,16 @@ theorem linSubst_coeff_along (w : Matrix (Fin N) (Fin n) R) (b : Fin B) (k : Fin
   have key : (along (inBlock b (w.col k)) f).map ψ = along (inBlock b (Pi.single k 1)) (ψ f) := by
     induction f using MvPolynomial.induction_on with
     | C a => simp [along_C, ψ]
-    | add p q hp hq => rw [along_add, Polynomial.map_add, hp, hq, map_add, along_add]
+    | add p q hp hq => rw [along_add, Polynomial.map_add (f := _), hp, hq, map_add (f := _), along_add]
     | mul_X p i hp =>
       rw [along_mul, Polynomial.map_mul, hp, map_mul, along_mul, along_X]
       congr 1
       have e1 : ψ (X i) = ∑ k, C (w i.2 k) * X (i.1, k) := by simp [ψ]
       have e2 : ∀ c, ψ (C c) = C c := fun c => by simp [ψ]
-      rw [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_C, Polynomial.map_C, Polynomial.map_X, e1, e2,
+      rw [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_C, Polynomial.map_C, Polynomial.map_X, e1, e2,
         along_sum]
-      simp only [along_mul, along_C, along_X, mul_add, Finset.sum_add_distrib, map_sum, map_mul, ← mul_assoc,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [along_mul, along_C, along_X, mul_add, Finset.sum_add_distrib, map_sum, map_mul, ← mul_assoc,
         ← Finset.sum_mul]
       congr 2
       by_cases h : i.1 = b <;> simp [inBlock, h, Pi.single_apply, apply_ite]
@@ -222,7 +227,8 @@ theorem homog_coeff_along {K : Type} [Field K] {B N : ℕ} (b : Fin B) (u : Fin 
   let wt : Option (Fin B × Fin N) → Fin B → ℕ := fun o => o.elim (Pi.single b 1) GlobalTheory.Chow.blockWeight
   have hs : IsWeightedHomogeneous wt (shift (inBlock b u) f) a := by
     rw [isMultiHomogeneous_iff_block] at hf
-    rw [f.as_sum, shift, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [f.as_sum, shift, map_sum]
     refine IsWeightedHomogeneous.sum _ _ _ fun s hs => ?_
     rw [aeval_monomial, algebraMap_eq]
     refine IsWeightedHomogeneous.C_mul ?_ _
@@ -233,7 +239,7 @@ theorem homog_coeff_along {K : Type} [Field K] {B N : ℕ} (b : Fin B) (u : Fin 
     · have : wt (some p) = wt none := by simp [wt, GlobalTheory.Chow.blockWeight, h]
       rw [this]
       exact (isWeightedHomogeneous_X K wt none).C_mul _
-    · simp only [inBlock, if_neg h, map_zero, zero_mul]
+    · simp only [inBlock, ite_eq_right h, map_zero, zero_mul]
       exact isWeightedHomogeneous_zero _ _ _
   have key : ∀ s ∈ ((along (inBlock b u) f).coeff j).support, ∀ i,
       ∑ l, s (i, l) + (Pi.single b j : Fin B → ℕ) i = a i := fun s hs' i => by
@@ -251,7 +257,7 @@ theorem homog_coeff_along {K : Type} [Field K] {B N : ℕ} (b : Fin B) (u : Fin 
     conv_lhs => rw [this, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
     have := key s₀ hs₀ i
-    simp only [Finset.sum_pi_single', Finset.mem_univ, if_true]
+    simp only [Finset.sum_pi_single', Finset.mem_univ, ite_true]
     omega
 
 theorem gaussAbs_coeff_along_le {K ι : Type} [Field K] [NumberField K] (v : FinitePlace K) {d : ι → K}
@@ -261,10 +267,10 @@ theorem gaussAbs_coeff_along_le {K ι : Type} [Field K] [NumberField K] (v : Fin
   rw [along, optionEquivLeft_coeff_coeff]
   refine (coeff_le_gauss_abs v _ _).trans (GlobalTheory.GaussSubst.gaussAbs_aeval_le K v _ _ _ _ fun p => ?_)
   refine gauss_abs_le_of_coeff_le v _ zero_le_one fun m => ?_
-  rw [coeff_add, coeff_C_mul]
+  rw [AddMonoidAlgebra.coeff_add, Finsupp.add_apply, coeff_C_mul]
   refine (FinitePlace.add_le v _ _).trans (max_le ?_ ?_)
-  · rw [coeff_X']; split_ifs <;> simp
-  · rw [coeff_X']; split_ifs <;> simp [hd p]
+  · rw [coeff_X]; split_ifs <;> simp
+  · rw [coeff_X]; split_ifs <;> simp [hd p]
 
 theorem eq_C_of_natDegree_along {K : Type} [Field K] [Infinite K] {B N n : ℕ} {w : Matrix (Fin N) (Fin n) K}
     (hw : Submodule.span K (Set.range w.col) = ⊤) {f : MvPolynomial (Fin B × Fin N) K}
@@ -301,7 +307,7 @@ theorem eval_linSubst_map {K : Type} [Field K] {B N : ℕ} (σ : K →+* ℂ) (A
     eval z (linSubst A (MvPolynomial.map σ g)) = eval₂Hom σ (fun q => A.mulVec (fun i => z (q.1, i)) q.2) g := by
   induction g using MvPolynomial.induction_on with
   | C a => simp [linSubst]
-  | add p q hp hq => simp only [linSubst, map_add] at hp hq ⊢; rw [hp, hq]
+  | add p q hp hq => simp only [linSubst, map_add (f := _)] at hp hq ⊢; rw [hp, hq]
   | mul_X p i hp =>
     simp only [linSubst, map_mul] at hp ⊢
     rw [hp]
@@ -377,18 +383,24 @@ theorem formHeight_zero_ge {K : Type} [Field K] [NumberField K] {B N n : ℕ} (h
       clear hm hP hL0 ha' hs hf hf0
       induction f using MvPolynomial.induction_on with
       | C a => exact along_C _ _
-      | add p q hp hq => rw [along_add, hp, hq, map_add]
+      | add p q hp hq => rw [along_add, hp, hq, map_add (f := _)]
       | mul_X p i hp => rw [along_mul, hp, along_X]; simp [inBlock]
     rw [this, Polynomial.natDegree_C])
   have hih := ih (∑ i, a' i) (by omega) a' _ hL0 ha' rfl
   have harch := fun σ => mean_leadingCoeff_le σ (hA σ) b hx (hΛ k σ) hf0 hf ha'
   obtain ⟨P, hP'⟩ := GlobalTheory.HeightUnique.exists_right_inv hw
-  have hfin := (GlobalTheory.HSFinPart.finPart_props K _ _).2.1 _ _ (GlobalTheory.HeightUnique.linSubst_ne_zero hP' hf0)
-    (GlobalTheory.HeightUnique.linSubst_ne_zero hP' hL0) fun v => by
-      rw [Polynomial.leadingCoeff, linSubst_coeff_along]
-      refine gaussAbs_coeff_along_le v (fun p => ?_) _ _
-      simp only [inBlock, Pi.single_apply]
-      split_ifs <;> simp
+  have hfin : GlobalTheory.HSChoice.finPart (linSubst w (along (inBlock b (w.col k)) f).leadingCoeff) ≤
+      GlobalTheory.HSChoice.finPart (linSubst w f) := by
+    unfold GlobalTheory.HSChoice.finPart
+    refine div_le_div_of_nonneg_right ?_ (Nat.cast_nonneg _)
+    refine finsum_le_finsum
+      (ReciprocityTheory.ChartRestriction.G.T0.SatakeVectors.gaussAbs_support_finite _)
+      (ReciprocityTheory.ChartRestriction.G.T0.SatakeVectors.gaussAbs_support_finite _) fun v => ?_
+    apply Real.log_le_log (gauss_abs_pos_of_ne_zero v _ (GlobalTheory.HeightUnique.linSubst_ne_zero hP' hL0))
+    rw [Polynomial.leadingCoeff, linSubst_coeff_along]
+    refine gaussAbs_coeff_along_le v (fun p => ?_) _ _
+    simp only [inBlock, Pi.single_apply]
+    split_ifs <;> simp
   have hd : (0 : ℝ) < Module.finrank ℚ K := Nat.cast_pos.2 Module.finrank_pos
   have hsum := Finset.sum_le_sum fun σ (_ : σ ∈ Finset.univ) => harch σ
   rw [Finset.sum_sub_distrib, Finset.sum_const, Finset.card_univ, NumberField.Embeddings.card, nsmul_eq_mul] at hsum

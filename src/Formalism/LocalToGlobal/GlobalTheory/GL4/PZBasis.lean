@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL4.PColStd
-import Formalism.LocalToGlobal.GlobalTheory.GL4.KronDetScalar
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StandardSlopeBound.Inhabit
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StandardSlopeBound.GramMatrixDuality
-import Formalism.LocalToGlobal.Columns.CoefficientsModP
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.PColStd
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.KronDetScalar
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StandardSlopeBound.Inhabit
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StandardSlopeBound.GramMatrixDuality
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP
+
+@[expose] public section
 
 open Module MvPolynomial
 open scoped Matrix TensorProduct
@@ -43,12 +47,14 @@ theorem li_semilin_gen {K F V M ι κ : Type} [Field K] [Field F] [AddCommGroup 
   have hexp : ∀ a' ∈ s, e (v a') = ∑ i ∈ T, σ (b.repr (v a') i) • e (b i) := by
     intro a' ha'
     conv_lhs => rw [hx_eq (v a') (hsub a' ha')]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smulₛₗ]
   have hfv : ∀ a' ∈ s, f (v a') = ∑ i ∈ T, b.repr (v a') i * f (b i) := by
     intro a' ha'
     conv_lhs => rw [hx_eq (v a') (hsub a' ha')]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smul, smul_eq_mul]
   have hcoef : ∀ i ∈ T, ∑ a' ∈ s, g a' * σ (b.repr (v a') i) = 0 := by
     have h2 : ∑ i ∈ T, (∑ a' ∈ s, g a' * σ (b.repr (v a') i)) • e (b i) = 0 := by
@@ -70,7 +76,8 @@ theorem li_semilin_gen {K F V M ι κ : Type} [Field K] [Field F] [AddCommGroup 
     _ = ∑ a' ∈ s, g a' * σ (∑ i ∈ T, b.repr (v a') i * f (b i)) :=
         Finset.sum_congr rfl fun a' ha' => by rw [hfv a' ha']
     _ = ∑ i ∈ T, σ (f (b i)) * ∑ a' ∈ s, g a' * σ (b.repr (v a') i) := by
-        simp only [map_sum, map_mul, Finset.mul_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_mul, Finset.mul_sum]
         rw [Finset.sum_comm]
         refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun a' _ => ?_
         ring
@@ -134,7 +141,8 @@ theorem span_int (hν : Antitone ν) (e : Basis (Fin r) ℤ (weyl ℤ N N le_rfl
     have hx : applyWord ℤ w (hw ℤ le_rfl ν) ∈ weyl ℤ N N le_rfl ν := Submodule.subset_span ⟨w, rfl⟩
     have h := congrArg (fun y : weyl ℤ N N le_rfl ν => MvPolynomial.map (Int.castRingHom F) (y : MvPolynomial (Fin N × Fin N) ℤ))
       (e.sum_repr (⟨applyWord ℤ w (hw ℤ le_rfl ν), hx⟩ : weyl ℤ N N le_rfl ν))
-    simp only [Submodule.coe_sum, Submodule.coe_smul, map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Submodule.coe_sum, Submodule.coe_smul, map_sum] at h
     rw [SetLike.mem_coe]
     show applyWord F w (hw F le_rfl ν) ∈ _
     rw [← lclosedeq_hw_map (Int.castRingHom F), lclosedeq_applyWord_map, ← h]
@@ -174,7 +182,8 @@ theorem prodZ_span : Submodule.span ℤ (Set.range (prodZ lam e)) = Submodule.sp
       exact this.symm
     rw [SetLike.mem_coe]
     unfold Formalism.MainNotions.flipTwoThree.ten
-    rw [Finset.prod_congr rfl (fun τ _ => by rw [hfτ τ, map_sum]), Finset.prod_univ_sum, Fintype.piFinset_univ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.prod_congr rfl (fun τ _ => by rw [hfτ τ, map_sum]), Finset.prod_univ_sum, Fintype.piFinset_univ]
     refine Submodule.sum_mem _ fun I _ => ?_
     have : (∏ τ, rename (Prod.mk τ) ((e τ).repr ⟨f τ, hf τ⟩ (I τ) • (e τ (I τ) : MvPolynomial (Fin n × Fin n) ℤ))) =
         (∏ τ, (e τ).repr ⟨f τ, hf τ⟩ (I τ)) • prodZ lam e I := by

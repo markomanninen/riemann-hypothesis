@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangeOfCoefficientJump
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.BaseCoefJumpProof
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangeOfCoefficientJump
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.BaseCoefJumpProof
+
+@[expose] public section
 
 namespace Formalism.MainNotions.UnusedSlot80
 

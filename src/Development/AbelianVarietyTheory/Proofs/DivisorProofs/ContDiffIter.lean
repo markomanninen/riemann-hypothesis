@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TCoefMInMMul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ScaledKoszulTestFamilyHasDerivAtScaleStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSmoothEventuallyZeroCutoffIntervalIntegralDeriStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjugationDerivCutoffPolynomialMemUnitarySpanStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TCoefMInMMul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ScaledKoszulTestFamilyHasDerivAtScaleStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSmoothEventuallyZeroCutoffIntervalIntegralDeriStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjugationDerivCutoffPolynomialMemUnitarySpanStatement
+
+@[expose] public section
 
 open MvPolynomial GlobalTheory.PsCo.Pc1 GlobalTheory.PsCo.Pc1.A
 open scoped ContDiff
@@ -77,14 +81,14 @@ theorem stHomot : GlobalTheory.PsCo.Pc1.StHomot := by
       field_simp
     have hDc : Continuous D := by
       rw [hD]
-      refine continuous_finset_sum _ fun x _ => continuous_finset_sum _ fun j _ => ?_
+      refine continuous_finsetSum _ fun x _ => continuous_finsetSum _ fun j _ => ?_
       exact ((hc _).mul continuous_const).add ((hc _).mul continuous_const)
     have hftc := intervalIntegral.integral_eq_sub_of_hasDerivAt hder (hDc.intervalIntegrable _ _)
     have hint : ∫ s in (1:ℝ)..t, D s = ∑ x : Mode ε, ∑ j ∈ Finset.range (nMode ε + 1),
         adBas ε (Matrix.single x.1.2 x.1.1 1) (fun y => ∫ s in (1:ℝ)..t, scF G j s y) (q x j) g := by
-      rw [hD, intervalIntegral.integral_finset_sum]
+      rw [hD, intervalIntegral.integral_finsetSum]
       · refine Finset.sum_congr rfl fun x _ => ?_
-        rw [intervalIntegral.integral_finset_sum]
+        rw [intervalIntegral.integral_finsetSum]
         · refine Finset.sum_congr rfl fun j _ => ?_
           rw [intervalIntegral.integral_add (((hc _).mul_const _).intervalIntegrable _ _)
             (((hc _).mul_const _).intervalIntegrable _ _),
@@ -94,7 +98,7 @@ theorem stHomot : GlobalTheory.PsCo.Pc1.StHomot := by
         · intro j _
           exact (((hc _).mul continuous_const).add ((hc _).mul continuous_const)).intervalIntegrable _ _
       · intro x _
-        refine (continuous_finset_sum _ fun j _ => ?_).intervalIntegrable _ _
+        refine (continuous_finsetSum _ fun j _ => ?_).intervalIntegrable _ _
         exact ((hc _).mul continuous_const).add ((hc _).mul continuous_const)
     simp only [Pi.sub_apply, Pi.neg_apply, Finset.sum_apply]
     rw [← hint, hftc]

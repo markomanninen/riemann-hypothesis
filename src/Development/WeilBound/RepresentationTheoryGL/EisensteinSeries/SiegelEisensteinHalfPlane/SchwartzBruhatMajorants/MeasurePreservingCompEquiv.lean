@@ -1,21 +1,25 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.HeisenbergTheta.HeisenbergThetaConstant.ThetaC
-import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.GJGlobalModulus
-import Mathlib
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.HeisenbergTheta.HeisenbergThetaConstant.ThetaC
+public import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.GJGlobalModulus
+
+@[expose] public section
+
 open NumberField Matrix MeasureTheory Filter Topology
 open scoped NumberField.AdeleRing
 open PositivityTheory.He2M1 GroundTheory.Global GroundTheory.Automorphic GroundTheory.Automorphic.GJMatrix IdeleGroup PositivityTheory.RgEis
 
 namespace GlobalTheory.CompanionTheory.LtrFourier.Hd
 
-open MeasureTheory in
 
+open MeasureTheory in
 theorem measurePreserving_comp_equiv {ι κ : Type} [Fintype ι] [Fintype κ] {α : Type*} [MeasurableSpace α] (μ : Measure α)
     [SigmaFinite μ] (e : κ ≃ ι) :
     MeasurePreserving (fun x : ι → α ↦ x ∘ e) (Measure.pi fun _ ↦ μ)
       (Measure.pi fun _ ↦ μ) := by
   have hm : Measurable (fun x : ι → α ↦ x ∘ e) :=
-    measurable_pi_lambda _ fun k ↦ measurable_pi_apply (e k)
+    Measurable.of_eval fun k ↦ measurable_pi_apply (e k)
   refine ⟨hm, (Measure.pi_eq fun s hs ↦ ?_).symm⟩
   rw [Measure.map_apply hm (MeasurableSet.univ_pi hs)]
   have hpre : (fun x : ι → α ↦ x ∘ e) ⁻¹' Set.pi Set.univ s =
@@ -85,6 +89,7 @@ theorem map_mulVec {k : Type} [Field k] [NumberField k] {ι : Type} [Fintype ι]
   rw [hfun, ← Measure.map_map h3.measurable (hP.comp h1.measurable),
     ← Measure.map_map hP h1.measurable, h1.map_eq, map_mulVec_fin P, hdet, Measure.map_smul,
     h3.map_eq]
+  exact h3.measurable.aemeasurable
 
 def mulVecHomeo {k : Type} [Field k] [NumberField k] {ι : Type} [Fintype ι] [DecidableEq ι]
     (A : GL ι 𝔸[k]) : (ι → 𝔸[k]) ≃ₜ (ι → 𝔸[k]) where

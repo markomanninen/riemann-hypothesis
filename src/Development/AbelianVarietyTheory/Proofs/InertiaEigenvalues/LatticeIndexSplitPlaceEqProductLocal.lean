@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemHyperspecialIffGIntOfSuppAtSplit
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GramMulInv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemHyperspecialIffGIntOfSuppAtSplit
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GramMulInv
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.NTheta IsDedekindDomain NumberField Matrix GlobalTheory.SplitHecke GlobalTheory.RawLift
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -94,8 +99,8 @@ def coordA {v : HeightOneSpectrum (𝓞 D.host.F)} (π : AE D →+* Fv D.host.F 
   map_add' x y := by
     rw [← Matrix.mulVec_add]
     congr 1
-    funext k
-    simp
+    funext i
+    simp only [Pi.add_apply, map_add]
 
 def coordB (W : HSp D) {v : HeightOneSpectrum (𝓞 D.host.F)} (π : AE D →+* Fv D.host.F v)
     (β : GL (Fin W.rank) (Fv D.host.F v)) : (Fin W.rank → AE D) →+ (Fin W.rank → Fv D.host.F v) where
@@ -104,8 +109,8 @@ def coordB (W : HSp D) {v : HeightOneSpectrum (𝓞 D.host.F)} (π : AE D →+* 
   map_add' x y := by
     rw [← Matrix.add_vecMul]
     congr 1
-    funext k
-    simp
+    funext i
+    simp only [Pi.add_apply, map_add]
 
 variable {e : AE D} {v : HeightOneSpectrum (𝓞 D.host.F)} {π : AE D →+* Fv D.host.F v} {W : HSp D}
   {β : GL (Fin W.rank) (Fv D.host.F v)}
@@ -170,11 +175,11 @@ theorem coords_surj (he : IsSplitIdem D e) (hπ : Chart e v π) (hβ : Frame W e
     · rw [hy₂, hxb]; exact hb j
   · change (β⁻¹).1 *ᵥ (fun k => π (e * y₁ k + cA D e * y₂ k)) = a
     have : (fun k => π (e * y₁ k + cA D e * y₂ k)) = fun k => π (y₁ k) := funext fun k => by
-      simp [map_add, map_mul, h1, h0]
+      simp [map_add (f := _), map_mul, h1, h0]
     rw [this, hAa]
   · change (fun i => π (cA D (e * y₁ i + cA D e * y₂ i))) ᵥ* (G * β.1) = b
     have : (fun i => π (cA D (e * y₁ i + cA D e * y₂ i))) = fun k => π (cA D (y₂ k)) := funext fun k => by
-      simp [map_add, map_mul, h1, h0, hcc]
+      simp [map_add (f := _), map_mul, h1, h0, hcc]
     rw [this, hy₂, hxb]
 
 end GlobalTheory.SplitIndexLocal

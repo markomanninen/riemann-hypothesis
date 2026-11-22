@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.NormMod
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.NormMod
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ private theorem exists_valuation_sub_algebraMap_le {R K : Type*} [CommRing R] [I
     exact hz
   have hsub : algebraMap R K b / algebraMap R K c - algebraMap R K x =
       algebraMap R K z / algebraMap R K c := by
-    rw [← hyz, map_add, map_mul, add_div, mul_div_assoc, div_self hcK, mul_one,
+    rw [← hyz, map_add (f := _), map_mul, add_div, mul_div_assoc, div_self hcK, mul_one,
       add_sub_cancel_left]
   rw [hsub, map_div₀, div_le_iff₀ hpos]
   simp only [HeightOneSpectrum.valuation_of_algebraMap]

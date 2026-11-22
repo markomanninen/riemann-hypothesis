@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuBesselLoc
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuBesselLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,7 @@ theorem gap_lt (R : Ranks) (P : HCParam R)
     have hodd : (b.val - (R.k - 1)) % 2 ≠ 0 := by
       intro h
       exact he (by simp [h])
-    rw [dif_pos hak, dif_neg hbk, dif_pos hjb]
+    rw [dite_eq_left hak, dite_eq_right hbk, dite_eq_left hjb]
     have h1 := bmono (b.val - (R.k - 1) - 1) ⟨0, by omega⟩ ⟨b.val - (R.k - 1), hjb⟩ (by first | omega | (simp; omega))
     have h2 := umono (R.k - 1 - (a.val + 1)) ⟨a.val + 1, by omega⟩ (by first | omega | (simp; omega))
     have h3 := P.v_gt_u ⟨a.val, hak⟩
@@ -79,7 +83,7 @@ theorem gap_lt (R : Ranks) (P : HCParam R)
     have hne : a.val - (R.k - 1) ≠ b.val - (R.k - 1) := by
       intro h
       exact he (by simp [h])
-    rw [dif_neg hak, dif_neg hbk, dif_pos hja, dif_pos hjb]
+    rw [dite_eq_right hak, dite_eq_right hbk, dite_eq_left hja, dite_eq_left hjb]
     have h1 := bmono (b.val - (R.k - 1) - (a.val - (R.k - 1)) - 1) ⟨a.val - (R.k - 1), hja⟩
       ⟨b.val - (R.k - 1), hjb⟩ (by first | omega | (simp; omega))
     have hq' := (Rat.cast_le (K := ℝ)).2 h1
@@ -96,8 +100,8 @@ theorem gapAtLeast_of (R : Ranks) (P : HCParam R)
   · rw [abs_sub_comm]
     exact (gap_lt R P hg b a hab (Ne.symm he)).trans (le_abs_self _)
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem gapOK_of (R : Ranks) (h1801 : 1801 ≤ R.r) :
     Formalism.FourierDecayAlt.ThreeDimData.GapOK R.k R.rS (16 * (R.r : ℝ) ^ 19) := by
   have hr : R.r = R.k + R.m - 1 := rfl

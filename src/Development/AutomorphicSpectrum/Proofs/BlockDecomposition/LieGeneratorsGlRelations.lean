@@ -1,12 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JBConjTranspose
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MapMemKfin
+public import Formalism.RealPlaceAnalysis.StatementA
+
+@[expose] public section
 
 noncomputable section
 
-open Matrix Finset GlobalTheory.OpTrace GlobalTheory.AutomorphicL2Unitary GlobalTheory.LinRed GlobalTheory.CompanionTheory.GLK
-open PositivityTheory.RgBcC PositivityTheory.RgBcC.Real PositivityTheory.RgBcC.RealD
-open PositivityTheory.RgTw (Mat G th IsThetaOp)
-open scoped InnerProductSpace ComplexConjugate
+open Matrix
+open PositivityTheory.RgTw (Mat)
 
 namespace GlobalTheory.CompanionTheory.GLK.Pair
 

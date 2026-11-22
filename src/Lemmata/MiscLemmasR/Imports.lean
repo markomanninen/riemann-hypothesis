@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Bl.ThirdBlockLemmaC
 
@@ -6,7 +10,7 @@ noncomputable def goal1 :
   {K : Type} →   [inst : Field K] →     [NumberField K] →       RingHom K K → Submodule (NumberField.RingOfIntegers K) K → Submodule (NumberField.RingOfIntegers K) K := @fun K _ _ σ M =>
   { carrier := σ ⁻¹' (M : Set K)
     add_mem' := fun {x y} hx hy => by
-      simp only [Set.mem_preimage, map_add, SetLike.mem_coe] at *
+      simp only [Set.mem_preimage, map_add (f := _), SetLike.mem_coe] at *
       exact M.add_mem hx hy
     zero_mem' := by
       simp only [Set.mem_preimage, map_zero, SetLike.mem_coe]

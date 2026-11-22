@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -20,9 +25,6 @@ def EmbeddingWeight.Statement : Prop :=
 section Inhabitants
 
 open ProjLine
-
-def trivialWeight (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] : HermLine ι :=
-  HermLine.ofWeight (fun _ => 0) (fun _ _ _ => rfl)
 
 end Inhabitants
 

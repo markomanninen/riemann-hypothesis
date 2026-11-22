@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+
+@[expose] public section
 
 open IsLocalRing Filter Formalism.MainNotions.V.Pf.V2.Calc UpperTheory.V.Alg UpperTheory.V.Alg.M
 
@@ -31,7 +35,7 @@ private theorem φ_sub (v : ℤ × ℤ) (f : ℤ × ℤ → ℤ) (p : ℤ × ℤ
   rw [map_sub, map_one, LinearMap.sub_apply, Pi.sub_apply, frobenius_inclusion_X_eq_mul_Q]; rfl
 
 private theorem φ_add (v : ℤ × ℤ) (f : ℤ × ℤ → ℤ) (p : ℤ × ℤ) : φ (1 + x v) f p = f p + f (p - v) := by
-  rw [map_add, map_one, LinearMap.add_apply, Pi.add_apply, frobenius_inclusion_X_eq_mul_Q]; rfl
+  rw [map_add (f := _), map_one, LinearMap.add_apply, Pi.add_apply, frobenius_inclusion_X_eq_mul_Q]; rfl
 
 private theorem one_sub_x_ne {v : ℤ × ℤ} (hv : v ≠ 0) : 1 - x v ≠ 0 := by
   intro h
@@ -85,10 +89,10 @@ private theorem N_insert {τ : Type} [DecidableEq τ] (w : τ → ℤ × ℤ) (h
           tsub_add_cancel_of_le (Finsupp.single_le_iff.2 (Nat.one_le_iff_ne_zero.2 h0))
         refine ⟨ν - Finsupp.single i 1, ⟨fun j hj => by simp [h1 j hj], ?_⟩, e1⟩
         rw [← h2]
-        conv_rhs => rw [← e1, map_add, Finsupp.weight_single, one_smul, add_sub_cancel_right]
+        conv_rhs => rw [← e1, map_add (f := _), Finsupp.weight_single, one_smul, add_sub_cancel_right]
     · rintro (⟨h1, h2⟩ | ⟨μ, ⟨h1, h2⟩, rfl⟩)
       · exact ⟨fun j hj => h1 j (fun h => hj (by simp [h])), h2⟩
-      · refine ⟨fun j hj => ?_, by simp [map_add, Finsupp.weight_single, h2]⟩
+      · refine ⟨fun j hj => ?_, by simp [map_add (f := _), Finsupp.weight_single, h2]⟩
         have : i ≠ j := by rintro rfl; simp at hj
         simp [h1 j hj, this]
   rw [φ_sub, N, N, N, h, Set.ncard_union_eq _ (hfin _ _) ((hfin _ _).image _),
@@ -135,7 +139,7 @@ private theorem N_one {τ : Type} [DecidableEq τ] (w : τ → ℤ × ℤ) {i j 
       · simp [hkj, hij, h2.2]
       simp [h1 k (by simp [hki, hkj]), hki, hkj]
     · rintro rfl
-      refine ⟨fun k hk => ?_, by simp [map_add, Finsupp.weight_single, hi, hj]⟩
+      refine ⟨fun k hk => ?_, by simp [map_add (f := _), Finsupp.weight_single, hi, hj]⟩
       simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hk
       simp [hk.1, hk.2]
   simp [N, this]
@@ -191,7 +195,7 @@ private theorem key {τ : Type} [Fintype τ] [DecidableEq τ] (w : τ → ℤ ×
     rw [a1, a2, h42, hC]; ring
   rw [hop, φ_mul, φ_mul, pow_add, ← mul_one (2 ^ r')]
   refine ev_pow (ev_pow ?_ _ _) _ _
-  rw [map_add, LinearMap.add_apply, ← e1, ← e2, φ_mul, φ_mul, φ_mul, hT, hT]
+  rw [map_add (f := _), LinearMap.add_apply, ← e1, ← e2, φ_mul, φ_mul, φ_mul, hT, hT]
   filter_upwards [N_one w h₀ h₁, eventually_const_of_shift (ev_pow (ev_pow (N_zero w h₁ h₂) (1, 0) 1) (2, 0) 1) (0, 2)] with p a1 a2
   rw [Pi.add_apply, a1, a2]; simp
 
@@ -227,7 +231,7 @@ theorem UpperTheory.V.Alg.M.num_holds :
       (((Finsupp.weight (negW wt) ν : ℕ) : ℤ), ((Finsupp.weight (posW wt) ν : ℕ) : ℤ)) := fun ν => by
     induction ν using Finsupp.induction_linear with
     | zero => simp [Prod.ext_iff]
-    | add a b ha hb => simp [map_add, ha, hb]
+    | add a b ha hb => simp [map_add (f := _), ha, hb]
     | single i n => simp [Finsupp.weight_single, w]
   have hfin : ∀ S p, (mons w S p).Finite := fun S p => by
     refine (Finsupp.finite_of_nat_weight_le (fun i => negW wt i + posW wt i) (fun i => ?_)

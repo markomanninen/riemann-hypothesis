@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.JoinType
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LocFinal
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEquivPiExteriorTensorBlockLevi
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IrreducibleSmoothAdmissibleGL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HintConstMulSum
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.JoinType
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LocFinal
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEquivPiExteriorTensorBlockLevi
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IrreducibleSmoothAdmissibleGL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HintConstMulSum
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain Matrix Filter
@@ -31,7 +35,7 @@ theorem hk_add' (ρ : Representation ℂ (GL ι F) V) (K : Subgroup (GL ι F)) (
     hk ρ K e (v + w) = hk ρ K e v + hk ρ K e w := by
   unfold hk
   rw [← finsum_add_distrib (hk_supp ρ K e he v) (hk_supp ρ K e he w)]
-  exact finsum_congr fun q => by rw [map_add, smul_add]
+  exact finsum_congr fun q => by rw [map_add (f := _), smul_add]
 
 theorem hk_smul' (ρ : Representation ℂ (GL ι F) V) (K : Subgroup (GL ι F)) (e : GL ι F → ℂ) (c : ℂ) (v : V) :
     hk ρ K e (c • v) = c • hk ρ K e v := by

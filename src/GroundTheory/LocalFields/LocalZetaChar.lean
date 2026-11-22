@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.LocalZetaShell
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.LocalZetaShell
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,7 +80,8 @@ theorem exists_unitFiltrationUnits_le_ker : ∃ n, unitFiltrationUnits K n ≤ �
 
 theorem unitFiltrationUnits_quasiCharConductor_le_ker :
     unitFiltrationUnits K (quasiCharConductor χ) ≤ χ.ker :=
-  Nat.sInf_mem (exists_unitFiltrationUnits_le_ker hχ)
+  Nat.sInf_mem (show {n : ℕ | unitFiltrationUnits K n ≤ χ.ker}.Nonempty from
+    exists_unitFiltrationUnits_le_ker hχ)
 
 theorem quasiCharConductor_eq_zero_iff : quasiCharConductor χ = 0 ↔ IsUnramifiedChar χ := by
   constructor
@@ -145,8 +150,8 @@ theorem continuous_quasiChar_inv (hχ : Continuous χ) : Continuous (χ⁻¹ : K
   rw [this]
   exact hχ.inv
 
-omit hχ in
 
+omit hχ in
 theorem quasiCharExponent_inv : quasiCharExponent χ⁻¹ = -quasiCharExponent χ := by
   simp only [quasiCharExponent, MonoidHom.inv_apply, Units.val_inv_eq_inv_val, norm_inv,
     Real.logb_inv, neg_neg]
@@ -157,8 +162,8 @@ section ShellIntegral
 
 variable [MeasurableSpace K] [BorelSpace K] {χ : Kˣ →* ℂˣ}
 
-open scoped Classical in
 
+open scoped Classical in
 theorem setIntegral_ordShell_quasiChar (hχ : Continuous χ) (k : ℤ) :
     ∫ u in ordShell K k, ((χ u : ℂˣ) : ℂ) ∂multHaar K =
       if IsUnramifiedChar χ then ((χ (unifUnit K) : ℂˣ) : ℂ) ^ k else 0 := by

@@ -1,8 +1,8 @@
-import Mathlib
+module
 
-theorem UpperTheory.Reformulated.B.Yoa6.aux1 :
-    SMulCommClass ℂ ℂ ℂ := by
-  infer_instance
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Yoa6.HasSesq :
     {G V : Type} → [inst : Group G] → [inst_1 : AddCommGroup V] → [inst_2 : _root_.Module ℂ V] → Representation ℂ G V → Prop :=
@@ -19,10 +19,10 @@ private noncomputable def herm {V : Type} [AddCommGroup V] [Module ℂ V]
     (B : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ) (c : ℂ) : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ :=
   LinearMap.mk₂'ₛₗ (RingHom.id ℂ) (starRingEnd ℂ)
     (fun v w => c * B v w + starRingEnd ℂ c * starRingEnd ℂ (B w v))
-    (by intro v v' w; simp only [map_add, LinearMap.add_apply]; ring)
+    (by intro v v' w; simp only [map_add (f := _), LinearMap.add_apply]; ring)
     (by intro a v w; simp only [map_smul, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
           RingHom.id_apply, map_mul, Complex.conj_conj]; ring)
-    (by intro v w w'; simp only [map_add, LinearMap.add_apply]; ring)
+    (by intro v w w'; simp only [map_add (f := _), LinearMap.add_apply]; ring)
     (by intro a v w; simp only [map_smul, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
           RingHom.id_apply, map_mul, Complex.conj_conj]; ring)
 
@@ -47,7 +47,7 @@ theorem UpperTheory.Reformulated.B.Yoa6.main :
   obtain ⟨B, hB0, hBinv⟩ := h
   have hherm : ∀ (c : ℂ) (v w : V), herm B c w v = starRingEnd ℂ (herm B c v w) := by
     intro c v w
-    simp only [herm_apply, map_add, map_mul, Complex.conj_conj]
+    simp only [herm_apply, map_add (f := _), map_mul, Complex.conj_conj]
     ring
   have hinv : ∀ (c : ℂ) (g : G) (v w : V), herm B c (ρ g v) (ρ g w) = herm B c v w := by
     intro c g v w

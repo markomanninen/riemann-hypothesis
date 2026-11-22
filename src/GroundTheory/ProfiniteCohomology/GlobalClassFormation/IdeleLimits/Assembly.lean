@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.LevelsColimit
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.LevelsTrans
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.LevelsColimit
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.LevelsTrans
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -31,8 +36,8 @@ theorem levelTransitionG_trans {p q r : GLevel K} (h₁ : p ≤ q) (h₂ : q ≤
   exact congrArg (fun φ => φ.hom y)
     (levelTransition_comp_levelTransition (K := K) (F := p.1) (E := q.1) (M := r.1) n)
 
-variable (K) in
 
+variable (K) in
 structure LevelDecomposition where
 
   L : Place K.1 → GLevel K → Type
@@ -63,8 +68,8 @@ attribute [instance] LocalLimit.grp
 
 variable {n} (D : LevelDecomposition K n) (T : LocalLimit D) (hn : 1 ≤ n)
 
-include hn in
 
+include hn in
 def levelSum (p : GLevel K) : cohomology (ideleRep K.1 p.1.1) n →+ ⨁ v : Place K.1, T.T v :=
   (DFinsupp.mapRange.addMonoidHom fun v => (T.infl v p).comp (D.e v p).toAddMonoidHom).comp
     (idelesCohomologyEquiv hn).symm.toAddMonoidHom
@@ -117,7 +122,7 @@ theorem limitCohomologyFun_add (x₁ x₂ : cohomology (limitRep K) n) :
   obtain ⟨r, h1r, h2r⟩ := GLevel.exists_ge p₁ p₂
   have hsum : (levelInfl K r.1 n).hom ((levelTransitionG n h1r).hom y₁ +
       (levelTransitionG n h2r).hom y₂) = (levelInfl K p₁.1 n).hom y₁ + (levelInfl K p₂.1 n).hom y₂ := by
-    rw [map_add, levelTransitionG_comp_levelInfl, levelTransitionG_comp_levelInfl]
+    rw [map_add (f := _), levelTransitionG_comp_levelInfl, levelTransitionG_comp_levelInfl]
   rw [limitCohomologyFun_eq D T hn p₁ y₁ _ rfl, limitCohomologyFun_eq D T hn p₂ y₂ _ rfl,
     limitCohomologyFun_eq D T hn r _ _ hsum, map_add, levelSum_levelTransition, levelSum_levelTransition]
 

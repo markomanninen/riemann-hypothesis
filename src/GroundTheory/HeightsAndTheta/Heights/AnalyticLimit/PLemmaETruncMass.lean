@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLemmaETruncMass
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.IntegrableOfTendstoOfIntegralLe
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLemmaETruncMass
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.IntegrableOfTendstoOfIntegralLe
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit

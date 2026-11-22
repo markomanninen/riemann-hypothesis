@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PoincareLelongRegularised
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PoincareLelongLimit
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PoincareLelongRegularised
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PoincareLelongLimit
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets

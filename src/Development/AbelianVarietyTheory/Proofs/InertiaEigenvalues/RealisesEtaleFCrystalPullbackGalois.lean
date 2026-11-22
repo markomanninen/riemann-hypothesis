@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaBdRPlusSurjectiveKerUnitsEquivariant
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaBdRPlusSurjectiveKerUnitsEquivariant
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 
@@ -79,7 +84,7 @@ theorem map_gal_smul (g : GQ l) (r : T →ₗ[ℤ_[l]] T) (c : WCb l) (x : WCb l
   | tmul w t =>
     rw [smul_tmul', TensorProduct.map_tmul, TensorProduct.map_tmul, smul_tmul', smul_eq_mul, smul_eq_mul,
       AlgEquiv.toLinearMap_apply, AlgEquiv.toLinearMap_apply, map_mul]
-  | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
 
 theorem map_gal_frob (g : GQ l) (r : T →ₗ[ℤ_[l]] T) (x : WCb l ⊗[ℤ_[l]] T) :
     TensorProduct.map (galW l g).toLinearMap r (TensorProduct.map (frobW l).toLinearMap LinearMap.id x) =
@@ -89,7 +94,7 @@ theorem map_gal_frob (g : GQ l) (r : T →ₗ[ℤ_[l]] T) (x : WCb l ⊗[ℤ_[l]
   | tmul w t =>
     simp only [TensorProduct.map_tmul, AlgHom.toLinearMap_apply, AlgEquiv.toLinearMap_apply, LinearMap.id_apply]
     rw [galW_frobW]
-  | add x y hx hy => rw [map_add, map_add, map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
 
 theorem map_gal_comp (g g' : GQ l) (r r' : T →ₗ[ℤ_[l]] T) (x : WCb l ⊗[ℤ_[l]] T) :
     TensorProduct.map (galW l g).toLinearMap r (TensorProduct.map (galW l g').toLinearMap r' x) =
@@ -99,7 +104,7 @@ theorem map_gal_comp (g g' : GQ l) (r r' : T →ₗ[ℤ_[l]] T) (x : WCb l ⊗[�
   | tmul w t =>
     simp only [TensorProduct.map_tmul, AlgEquiv.toLinearMap_apply, LinearMap.comp_apply, map_mul,
       AlgEquiv.mul_apply]
-  | add x y hx hy => rw [map_add, map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
 
 theorem map_gal_inv (g : GQ l) (r : T ≃ₗ[ℤ_[l]] T) (x : WCb l ⊗[ℤ_[l]] T) :
     TensorProduct.map (galW l g⁻¹).toLinearMap r.symm.toLinearMap
@@ -108,7 +113,7 @@ theorem map_gal_inv (g : GQ l) (r : T ≃ₗ[ℤ_[l]] T) (x : WCb l ⊗[ℤ_[l]]
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul w t => simp
-  | add x y hx hy => rw [map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), hx, hy]
 
 theorem map_gal_inv' (g : GQ l) (r : T ≃ₗ[ℤ_[l]] T) (x : WCb l ⊗[ℤ_[l]] T) :
     TensorProduct.map (galW l g).toLinearMap r.toLinearMap
@@ -117,7 +122,7 @@ theorem map_gal_inv' (g : GQ l) (r : T ≃ₗ[ℤ_[l]] T) (x : WCb l ⊗[ℤ_[l]
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul w t => simp
-  | add x y hx hy => rw [map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), hx, hy]
 
 end Tensor
 
@@ -162,7 +167,7 @@ def pullJ (j : E.M (ainfObj K) →ₛₗ[(inclW l).comp (ainfId K).toRingHom] (W
   map_add' y z := by
     have h1 := map_add (E.tr (homFrom K g σ hσ)) y z
     refine (congrArg (fun w => TensorProduct.map (galW l g).toLinearMap ρg.toLinearMap (j w)) h1).trans ?_
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     rfl
   map_smul' a y := by
     have h1 := LinearMap.map_smulₛₗ (E.tr (homFrom K g σ hσ)) a y
@@ -215,7 +220,7 @@ theorem semiBC_pullJ (j : E.M (ainfObj K) →ₛₗ[(inclW l).comp (ainfId K).to
     { toFun := fun x => (w₁ (Gi x) : Q)
       map_add' := fun x y => by
         change (w₁ (Gi (x + y)) : Q) = (w₁ (Gi x) : Q) + (w₁ (Gi y) : Q)
-        rw [map_add, map_add]
+        rw [map_add (f := _), map_add (f := _)]
       map_smul' := fun c x => by
         change (show Q from w₁ (Gi (c • x))) = (RingHom.id (WCb l) c) • (show Q from w₁ (Gi x))
         rw [RingHom.id_apply, map_gal_smul, w₁.map_smul]
@@ -230,7 +235,7 @@ theorem semiBC_pullJ (j : E.M (ainfObj K) →ₛₗ[(inclW l).comp (ainfId K).to
       { toFun := fun x => (w' (G x) : Q)
         map_add' := fun x y => by
           change w' (G (x + y)) = w' (G x) + w' (G y)
-          rw [map_add, map_add]
+          rw [map_add (f := _), map_add (f := _)]
         map_smul' := fun c x => by
           change w' (G (c • x)) = galW l g c • w' (G x)
           rw [map_gal_smul, w'.map_smul] }

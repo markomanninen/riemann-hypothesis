@@ -1,10 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwLeviMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwFactBlock
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwDomMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHeckePairIwC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwMemIwC
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwLeviMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwFactBlock
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwDomMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHeckePairIwC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwMemIwC
+
+@[expose] public section
+
 open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 
 private theorem pm_diagT {k : Type} [Field k] {n : ℕ} (w : Equiv.Perm (Fin n)) (t : Fin n → kˣ) :
@@ -70,7 +75,5 @@ theorem UpperTheory.V.AlgebraTools.bernDom :
       pm_diagT, mul_assoc, ← mul_assoc, hss, one_mul, ← map_mul]
     congr 2
     funext a
-    simp only [Pi.mul_apply, ← _root_.zpow_add]
-    congr 1
-    simp only [fund, Equiv.swap_apply_def, Fin.ext_iff]
-    split_ifs <;> omega
+    simp only [Pi.mul_apply, fund, Equiv.swap_apply_def, Fin.ext_iff]
+    split_ifs <;> simp_all <;> omega

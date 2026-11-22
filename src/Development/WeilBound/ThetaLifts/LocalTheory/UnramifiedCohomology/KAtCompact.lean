@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedCohomology.Lint
-import Development.WeilBound.ThetaLifts.SmallCones.FcCols
-import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.EvFinIdemSelf
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.Kcompact
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedCohomology.Lint
+public import Development.WeilBound.ThetaLifts.SmallCones.FcCols
+public import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.EvFinIdemSelf
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.Kcompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,8 +69,8 @@ namespace US
 
 variable {n : ℕ} {X : Spc F E n}
 
-variable (σ X) in
 
+variable (σ X) in
 def uSub (v : Pl F) : Subgroup (UA σ X.J) where
   carrier := UAt σ X (evFin F v)
   one_mem' := fun u _ => by rw [show mat (1 : UA σ X.J) = 1 from rfl, sub_self, smul_zero]
@@ -129,7 +133,7 @@ theorem part_levi {a : AF F} (ha : a * a = a) {t : (AE F E)ˣ} {g : UA σ Y₁.J
     simp only [partI, add_smul, smul_assoc, one_smul]
   · rw [part_vec, h.2.1]
     change _ = cA σ (a • (t⁻¹).1 + (1 - a) • 1) • _
-    simp only [map_add, map_smul, map_one, add_smul, smul_assoc, one_smul]
+    simp only [map_add (f := _), map_smul, map_one, add_smul, smul_assoc, one_smul]
   · simp only [mat_partU, Matrix.add_mul, Matrix.mul_add, Matrix.smul_mul, Matrix.mul_smul, h.2.2, Matrix.one_mul, Matrix.mul_one]
 
 theorem part_unip {a : AF F} (ha : a * a = a) {u : UA σ Y.J} (h : u ∈ unip σ Y H) : partU ha u ∈ unip σ Y H := by
@@ -263,7 +267,8 @@ theorem kInv (hB : B.IsGood σ) (hY : Y.IsHerm σ B r s) (hH : H.IsAdapted σ B 
   have hd₁ : IsUnit Y₁.J.det := hfr.isUnit_det hd.isUnit
   have h₁ : ∀ i j, σ (Y₁.J j i) = (((1 : ℤˣ) : ℤ) : E) * Y₁.J i j := fun i j => by
     rw [← hH.gram]
-    simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul, hY.herm,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul, hY.herm,
       PositivityTheory.ThKG.Tow.Levi.sig_sig hB.cm, Finset.sum_mul, Units.val_one, Int.cast_one, one_mul]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring

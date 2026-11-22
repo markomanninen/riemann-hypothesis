@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightEntryRestrictionMem
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.SumFinsuppAntidiagEqSumPiFinset
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightEntryRestrictionMem
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.SumFinsuppAntidiagEqSumPiFinset
+
+@[expose] public section
 
 noncomputable section
 

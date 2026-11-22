@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.RecAct
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.FramesTr
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.RecAct
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.FramesTr
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,15 +53,16 @@ structure CmpHyp0 (T : ∀ u : D.what₂.Word, Forms0 D u) (Gt : GatTies D) (I :
     (cmpRec T Gt I u w hg '' (((D.fm u).lat 0).L : Set ((D.fm u).lat 0).V)) = (D.gat u w hg).M
 
 theorem CmpHyp0.toHyp {T : ∀ u : D.what₂.Word, Forms0 D u} {Gt : GatTies D} {I : CmpIn D X} (H : CmpHyp0 T Gt I) :
-    CmpHyp T Gt I where
-  ex := H.ex
-  uniq := fun u w hg => valUniq_of (embT_conj D) (H.evInj u w hg) (H.ptEx u w hg)
-  pos := H.pos
-  chi := H.chi
-  li := fun u w hg => cmpC_li (e := I.embW u w hg) (embT_conj D) (H.ex u w hg)
-    (valUniq_of (embT_conj D) (H.evInj u w hg) (H.ptEx u w hg)) (H.ptAll u w hg) (embFr_inj T u)
-    ((D.fm u).lat 0).b ((D.fm u).lat 0).b.linearIndependent
-  latM := H.latM
+    CmpHyp T Gt I := by
+  exact {
+    ex := H.ex
+    uniq := fun u w hg => valUniq_of (embT_conj D) (H.evInj u w hg) (H.ptEx u w hg)
+    pos := H.pos
+    chi := H.chi
+    li := fun u w hg => cmpC_li (e := I.embW u w hg) (embT_conj D) (H.ex u w hg)
+      (valUniq_of (embT_conj D) (H.evInj u w hg) (H.ptEx u w hg)) (H.ptAll u w hg) (embFr_inj T u)
+      ((D.fm u).lat 0).b ((D.fm u).lat 0).b.linearIndependent
+    latM := H.latM }
 
 end Formalism.L2.G.Cmp
 

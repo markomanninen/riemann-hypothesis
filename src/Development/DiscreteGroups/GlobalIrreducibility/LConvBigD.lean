@@ -1,5 +1,9 @@
-import Development.DiscreteGroups.GlobalIrreducibility.LConvBigC
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvBigC
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+
+@[expose] public section
 
 noncomputable section
 

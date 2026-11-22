@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PColAntiA
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PColAntiC
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PColAntiA
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PColAntiC
+
+@[expose] public section
 
 noncomputable section
 
@@ -180,8 +184,8 @@ theorem colAnti_of : TensorGl → JMComm → Height → ColAnti := by
         funext x
         simp only [Function.comp_apply, Equiv.swap_apply_def]
         split_ifs with h1 h2
-        · rw [h1, hIpq]
-        · rw [h2, hIpq]
+        · simpa [h1] using hIpq
+        · simpa [h2] using hIpq.symm
         · rfl
       have h := (Q_swap_iff L hpq).mp (hsw p q hpq hcol)
       have h2 : L (Pi.single I v) = -L (Pi.single I v) := by
@@ -191,8 +195,10 @@ theorem colAnti_of : TensorGl → JMComm → Height → ColAnti := by
       simpa using h3
   refine ⟨c, LinearMap.ext fun f => ?_⟩
   show L f = c * ℓ (cA col b f)
-  rw [cA_apply, alt_apply, map_sum]
-  conv_lhs => rw [← Finset.univ_sum_single f, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [cA_apply, alt_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← Finset.univ_sum_single f, map_sum]
   rw [← Finset.sum_subset (Finset.subset_univ ((colG col).image (fun σ : Equiv.Perm (Fin m) => b ∘ ⇑σ)))
     (fun I _ hI => hzero I hI (f I))]
   rw [Finset.sum_image]

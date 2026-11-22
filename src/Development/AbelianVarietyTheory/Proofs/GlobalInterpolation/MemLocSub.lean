@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataLatDefs
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataLatDefs
+
+@[expose] public section
 
 namespace GlobalTheory.EX.Glue
 

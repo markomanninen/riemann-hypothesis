@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.NonEllFlag
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.NonEllFlag
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -168,8 +172,8 @@ abbrev Oth : Type := {w : InfinitePlace E // w ≠ v₁ ∧ w ≠ v₂}
 
 abbrev Rest : Type := (Oth v₁ v₂ → ℂ) × Af E
 
-open Classical in
 
+open Classical in
 def glue (a b : ℂ) (c : Oth v₁ v₂ → ℂ) : Cinf E := fun w =>
   if h₁ : w = v₁ then a else if h₂ : w = v₂ then b else c ⟨w, h₁, h₂⟩
 
@@ -224,8 +228,8 @@ theorem continuous_qAd_symm (h : v₁ ≠ v₂) : Continuous (qAd h).symm := by
   · exact continuous_snd.comp continuous_fst
   · exact (continuous_apply _).comp (continuous_fst.comp continuous_snd)
 
-variable (v₁ v₂) in
 
+variable (v₁ v₂) in
 def conjRest : Rest v₁ v₂ →+* Rest v₁ v₂ :=
   RingHom.prodMap (starRingEnd (Oth v₁ v₂ → ℂ)) (conjFin (IsCMField.complexConj E).toRingEquiv)
 
@@ -308,8 +312,8 @@ theorem t2Space_finiteAdeleRing_cmField : T2Space (Af E) := by
 
 end Field
 
-open Classical in
 
+open Classical in
 theorem splitAt2 : SplitAt2 := by
   intro E _ _ _ n v₁ v₂ hne _ _ μ _
   haveI : T2Space (Af E) := t2Space_finiteAdeleRing_cmField

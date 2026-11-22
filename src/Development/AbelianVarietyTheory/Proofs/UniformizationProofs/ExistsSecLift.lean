@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsGenOfSmallExtension
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsGenOfSmallExtension
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -230,7 +234,7 @@ theorem split_cocycle {w : LB.Iso N' (N.pull F)} (hw : w.IsGen) (H : FirstCohomo
   clear_value χ
   obtain ⟨ψ, hψ⟩ := H I (fun a => F ⁻¹ᵁ V a) k' h'
     (eq_top_iff.2 fun y _ => Opens.mem_iSup.2 (cov (F y))) χ (fun a b d => gr_ext fun y hy => by
-      rw [map_add, gr_res, gr_res, map_mul, gr_res, gr_res, hχ, hχ, hχ]
+      rw [map_add (f := _), gr_res, gr_res, map_mul, gr_res, gr_res, hχ, hχ, hχ]
       have e₁ := hφ a b d y hy.1.1 hy.1.2 hy.2
       have e₂ := iso_rel hw y (h a hy.1.1) (h b hy.1.2) (h' a hy.1.1) (h' b hy.1.2)
       have e₃ := hi a y hy.1.1
@@ -314,7 +318,7 @@ theorem exists_sec_lift : ∀ (A A₀ A' : Type) [CommRing A] [CommRing A₀] [C
     obtain ⟨e₁, p₁, q₁⟩ := hφ i l y ⟨hi, hl⟩
     obtain ⟨e₂, p₂, q₂⟩ := hφ l m y ⟨hl, hm⟩
     obtain ⟨e₃, p₃, q₃⟩ := hφ i m y ⟨hi, hm⟩
-    rw [← q₁, ← q₂, ← q₃, ← stalkMap_gr, ← map_mul, ← map_add, ← sub_eq_zero, ← map_sub, ← hS]
+    rw [← q₁, ← q₂, ← q₃, ← stalkMap_gr, ← map_mul, ← map_add (f := _), ← sub_eq_zero, ← map_sub, ← hS]
     rw [hd] at p₁ p₂ p₃
     have c := gr_cocycle hN (𝟙 X) (j y) (h i hi) (h l hl) (h m hm)
     linear_combination p₃ - p₁ - gr (𝟙 X) (j y) (N.U (k i) ⊓ N.U (k l)) ⟨h i hi, h l hl⟩

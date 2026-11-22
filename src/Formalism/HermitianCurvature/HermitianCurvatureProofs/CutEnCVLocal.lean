@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliWordSumExpansion
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliWordSumExpansion
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 open Formalism.REAL Formalism.QuantumDeterminants

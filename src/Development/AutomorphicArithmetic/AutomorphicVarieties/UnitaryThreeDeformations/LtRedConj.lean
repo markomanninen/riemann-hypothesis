@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia
 
@@ -25,7 +29,7 @@ private theorem congOne_iff {C : Type} [CommRing C] (I : Ideal C) (h : GL (Fin 3
     exact congrArg Units.val e
 
 private theorem map_conjBy {C D : Type} [CommRing C] [Group D] (I : Ideal C) (h : GL (Fin 3) C)
-    (hh : CongOne I h) (r : D →* GG 3 C) (g : D) :
+    (hh : CongOne I h) (r : D →* GG (m := 3) (R := C)) (g : D) :
     GG.map (Ideal.Quotient.mk I) (conjBy h r g) = GG.map (Ideal.Quotient.mk I) (r g) := by
   have e : GG.map (Ideal.Quotient.mk I) (GG.ofGL h) = 1 := by
     unfold GG.map
@@ -33,14 +37,17 @@ private theorem map_conjBy {C D : Type} [CommRing C] [Group D] (I : Ideal C) (h 
   simp only [conjBy, MonoidHom.comp_apply, MulEquiv.coe_toMonoidHom, MulAut.conj_apply, map_mul, map_inv, e,
     one_mul, inv_one, mul_one]
 
-private theorem mats_conjBy {C D : Type} [CommRing C] [Group D] (h : GL (Fin 3) C) (r : D →* GG 3 C) (g : D) :
+private theorem mats_conjBy {C D : Type} [CommRing C] [Group D] (h : GL (Fin 3) C)
+    (r : D →* GG (m := 3) (R := C)) (g : D) :
     mats (conjBy h r) g =
       (h : Matrix (Fin 3) (Fin 3) C) * mats r g *
         ((sgnAct 3 C (r g).right h⁻¹ : GL (Fin 3) C) : Matrix (Fin 3) (Fin 3) C) := by
   simp [mats, GG.mat, conjBy, GG.ofGL, SemidirectProduct.mul_left, Units.val_mul]
 
 theorem UpperTheory.V.UnitaryThreeInertia.lt_red_conj :
-    ∀ {O R D : Type} [CommRing O] [IsLocalRing O] [CommRing R] [IsLocalRing R] [Algebra O R] [Group D] [TopologicalSpace D] (η : D →* ℤˣ) (Ψ : D →* Oˣ) (r : D →* GG 3 R) (h : GL (Fin 3) R),
+    ∀ {O R D : Type} [CommRing O] [IsLocalRing O] [CommRing R] [IsLocalRing R] [Algebra O R]
+      [Group D] [TopologicalSpace D] (η : D →* ℤˣ) (Ψ : D →* Oˣ)
+      (r : D →* GG (m := 3) (R := R)) (h : GL (Fin 3) R),
       InHat h → Red η Ψ r → InHat h⁻¹ ∧ Red η Ψ (conjBy h r) ∧ (IsLocallyConstant η → IsLocallyConstant (mats r) → IsLocallyConstant (mats (conjBy h r))) := by
   intro O R D _ _ _ _ _ _ _ η Ψ r h hh hr
   have hinv : InHat h⁻¹ := by

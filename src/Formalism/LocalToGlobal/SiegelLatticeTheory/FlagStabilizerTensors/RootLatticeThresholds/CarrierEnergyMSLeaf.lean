@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierEnergyMS
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierEnergyMS
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem diffProd_holds : DiffProd := by
     have h2 := NumberField.absNorm_differentIdeal (K := X.B.I.F) (𝓞 X.B.I.F)
     rw [h, Ideal.absNorm_bot] at h2
     exact NumberField.discr_ne_zero X.B.I.F (Int.natAbs_eq_zero.mp h2.symm)
-  have hfin := Ideal.finite_mulSupport hne
+  have hfin := Ideal.hasFiniteMulSupport hne
   have hdN : dN X = fun v => ((Nat.castRingHom ℝ : ℕ →* ℝ).comp
       (Ideal.absNorm : Ideal (𝓞 X.B.I.F) →*₀ ℕ).toMonoidHom) (v.maxPowDividing (differentIdeal ℤ (𝓞 X.B.I.F))) :=
     funext (fun v => dN_eq X v)

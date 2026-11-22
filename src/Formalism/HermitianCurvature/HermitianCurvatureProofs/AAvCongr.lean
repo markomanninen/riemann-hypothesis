@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThirdPeelingMinorMemIdeal
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThirdPeelingMinorMemIdeal
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -17,7 +21,7 @@ theorem la_ideal {A M : Type} [Ring A] [Algebra ℂ A] [AddCommGroup M] [Module 
       intro a
       rw [mul_sub, map_sub, hR a p q hpq, ← Algebra.commutes, ← Algebra.smul_def, map_smul, sub_self]
     | zero => intro a; simp
-    | add x y _ _ hx hy => intro a; rw [mul_add, map_add, hx, hy, add_zero]
+    | add x y _ _ hx hy => intro a; rw [mul_add, map_add (f := _), hx, hy, add_zero]
     | smul b x _ hx => intro a; rw [smul_eq_mul, ← mul_assoc]; exact hx (a * b)
   simpa using key x hx 1
 

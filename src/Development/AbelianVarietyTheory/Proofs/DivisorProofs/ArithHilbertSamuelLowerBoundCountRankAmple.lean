@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermLineBundlePairSectionsMulMemNormMul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermPairPowSectionMemAndNormPow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdditiveSectionValueUnitFrameStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousHermSectionValueMulConjAndNormBoundedStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SectionQuotientsTranscendenceBasisBasepointFreeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFunctionFieldBasisOfSectionsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CardBoundedHomogeneousIntFormFamiliesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomogeneousFormCombinationEqZeroIndependentStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjArithFunctionFieldCharZeroTrdegStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermLineBundlePairSectionsMulMemNormMul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermPairPowSectionMemAndNormPow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdditiveSectionValueUnitFrameStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousHermSectionValueMulConjAndNormBoundedStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SectionQuotientsTranscendenceBasisBasepointFreeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFunctionFieldBasisOfSectionsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CardBoundedHomogeneousIntFormFamiliesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomogeneousFormCombinationEqZeroIndependentStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjArithFunctionFieldCharZeroTrdegStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -38,7 +42,7 @@ theorem card_deg (D q : ℕ) : Fintype.card (Deg D q) = (q + D).choose D := by
 def xm {K : Type} [CommRing K] {D : ℕ} (x : Fin (D + 1) → K) (α : Fin (D + 1) →₀ ℕ) : K := ∏ l, x l ^ α l
 
 theorem aeval_eq_sum {K : Type} [CommRing K] {D q : ℕ} (x : Fin (D + 1) → K) (T : MvPolynomial (Fin (D + 1)) ℤ)
-    (hT : T.IsHomogeneous q) : aeval x T = ∑ α : Deg D q, coeff α.1 T • xm x α.1 := by
+    (hT : T.IsHomogeneous q) : aeval x T = ∑ α : Deg D q, AddMonoidAlgebra.coeff T α.1 • xm x α.1 := by
   rw [aeval_def, eval₂_eq']
   have hsub : T.support ⊆ Finset.univ.map (Function.Embedding.subtype fun α : Fin (D + 1) →₀ ℕ => α.degree = q) := by
     intro d hd
@@ -95,7 +99,8 @@ theorem sum_zsmul (P : Pair p) (a b : ℤ) {J : Type} [Fintype J] (f : J → X.f
   obtain ⟨ℓ, hℓ⟩ := GlobalTheory.T.exists_additive_sectionValueUnitFrame k X p P a b σ y
   let F : P.H a b := ∑ j, n j • (⟨f j, hf j⟩ : P.H a b)
   have hF : (F : X.functionField) = ∑ j, n j • f j := by simp [F]
-  rw [← hF, ← norm_val, ← hℓ, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hF, ← norm_val, ← hℓ, map_sum]
   refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun j _ => ?_)
   rw [map_zsmul, zsmul_eq_mul, norm_mul, Complex.norm_intCast, hℓ, norm_val]
 
@@ -142,15 +147,16 @@ theorem count_rank_lower : ∀ (k : Type) [CommRing k] (X : Scheme.{0}) [IsInteg
     have hT : ∀ i, (T i).IsHomogeneous q := fun i =>
       IsHomogeneous.sum _ _ _ fun α _ => isHomogeneous_monomial _ α.2
     have hTe : ∀ i, aeval x (T i) = ∑ α : Deg D q, n (i, α) • xm x α.1 := fun i => by
-      simp only [T, map_sum, aeval_monomial, Finsupp.prod_pow, algebraMap_int_eq, eq_intCast, zsmul_eq_mul, xm]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [T, map_sum, aeval_monomial, Finsupp.prod_pow, algebraMap_int_eq, eq_intCast, zsmul_eq_mul, xm]
     have h0 := GlobalTheory.T.homogeneousFormCombination_eq_zero_independent X.functionField D x hx0 halg hfin (Fin δ) g hgi q T hT (by
       rw [← hn, Fintype.sum_prod_type]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [hTe, Finset.sum_mul]
       refine Finset.sum_congr rfl fun α _ => ?_
       simp only [w, smul_mul_assoc])
-    have h1 := congrArg (coeff ia.2.1) (congrFun h0 ia.1)
-    simp only [T, coeff_sum, coeff_monomial, Pi.zero_apply, coeff_zero] at h1
+    have h1 := congrArg (AddMonoidAlgebra.coeff · ia.2.1) (congrFun h0 ia.1)
+    simp only [T, coeff_sum, coeff_monomial, Pi.zero_apply, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at h1
     have h2 : ∀ α : Deg D q, (if (α : Fin (D + 1) →₀ ℕ) = ia.2.1 then n (ia.1, α) else 0) =
         if α = ia.2 then n (ia.1, α) else 0 := fun α => by simp only [Subtype.coe_inj]
     rw [Finset.sum_congr rfl fun α _ => h2 α] at h1
@@ -159,7 +165,7 @@ theorem count_rank_lower : ∀ (k : Type) [CommRing k] (X : Scheme.{0}) [IsInteg
     obtain ⟨hfinS, hcnt, -, -, -⟩ := GlobalTheory.T.card_bounded_homogeneous_int_form_families D q δ R hR
     let Φ : (Fin δ → MvPolynomial (Fin (D + 1)) ℤ) → X.functionField := fun T => ∑ i, aeval x (T i) * g i
     have hΦ : ∀ T : Fin δ → MvPolynomial (Fin (D + 1)) ℤ, (∀ i, (T i).IsHomogeneous q) →
-        Φ T = ∑ ia : Fin δ × Deg D q, coeff ia.2.1 (T ia.1) • w ia := by
+        Φ T = ∑ ia : Fin δ × Deg D q, AddMonoidAlgebra.coeff (T ia.1) ia.2.1 • w ia := by
       intro T hT
       simp only [Φ, Fintype.sum_prod_type]
       refine Finset.sum_congr rfl fun i _ => ?_
@@ -167,7 +173,7 @@ theorem count_rank_lower : ∀ (k : Type) [CommRing k] (X : Scheme.{0}) [IsInteg
       refine Finset.sum_congr rfl fun α _ => ?_
       simp only [w, smul_mul_assoc]
     have hinj : Set.InjOn Φ {T : Fin δ → MvPolynomial (Fin (D + 1)) ℤ | (∀ i, (T i).IsHomogeneous q) ∧
-        ∀ i α, |((coeff α (T i) : ℤ) : ℝ)| ≤ R} := by
+        ∀ i α, |((AddMonoidAlgebra.coeff (T i) α : ℤ) : ℝ)| ≤ R} := by
       intro T hT T' hT' h
       have := GlobalTheory.T.homogeneousFormCombination_eq_zero_independent X.functionField D x hx0 halg hfin (Fin δ) g hgi q (T - T')
         (fun i => (hT.1 i).sub (hT'.1 i)) (by
@@ -175,19 +181,19 @@ theorem count_rank_lower : ∀ (k : Type) [CommRing k] (X : Scheme.{0}) [IsInteg
           exact sub_eq_zero.2 h)
       exact sub_eq_zero.1 this
     have hmaps : Set.MapsTo Φ {T : Fin δ → MvPolynomial (Fin (D + 1)) ℤ | (∀ i, (T i).IsHomogeneous q) ∧
-        ∀ i α, |((coeff α (T i) : ℤ) : ℝ)| ≤ R}
+        ∀ i α, |((AddMonoidAlgebra.coeff (T i) α : ℤ) : ℝ)| ≤ R}
         (P.Bl (e * (q + c : ℕ) + a) b (((δ : ℝ) + 1) * M' * (q + D).choose D * R)) := by
       intro T hT
-      rw [Set.mem_setOf_eq] at hT
+      rw [Set.mem_ofPred_eq] at hT
       rw [hΦ T hT.1]
-      obtain ⟨h1, h2⟩ := sum_zsmul P _ b w (fun ia => (hw ia).1) (fun ia => coeff ia.2.1 (T ia.1))
+      obtain ⟨h1, h2⟩ := sum_zsmul P _ b w (fun ia => (hw ia).1) (fun ia => AddMonoidAlgebra.coeff (T ia.1) ia.2.1)
       refine ⟨h1, fun σ y => (h2 σ y).trans ?_⟩
       have hterm : ∀ ia : Fin δ × Deg D q,
-          |((coeff ia.2.1 (T ia.1) : ℤ) : ℝ)| * P.nu (e * ((q + c : ℕ) : ℤ) + a) b σ y (w ia) ≤ R * M' := by
+          |((AddMonoidAlgebra.coeff (T ia.1) ia.2.1 : ℤ) : ℝ)| * P.nu (e * ((q + c : ℕ) : ℤ) + a) b σ y (w ia) ≤ R * M' := by
         intro ia
         rw [(hw ia).2 σ y]
         have hp : ∏ l, P.nu e 0 σ y (x l) ^ ia.2.1 l ≤ 1 :=
-          Finset.prod_le_one (fun l _ => pow_nonneg (nu_nonneg _ _ _ _ _ _) _)
+          Finset.prod_le_one₀ (fun l _ => pow_nonneg (nu_nonneg _ _ _ _ _ _) _)
             (fun l _ => pow_le_one₀ (nu_nonneg _ _ _ _ _ _) (hxl l σ y))
         refine mul_le_mul (hT.2 _ _) ?_
           (mul_nonneg (Finset.prod_nonneg fun l _ => pow_nonneg (nu_nonneg _ _ _ _ _ _) _) (nu_nonneg _ _ _ _ _ _)) hR

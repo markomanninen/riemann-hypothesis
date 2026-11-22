@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ClOfSelf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InducedProductDropZeroFactors
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JhMultSubAddQuot
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ClOfSelf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InducedProductDropZeroFactors
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JhMultSubAddQuot
+
+@[expose] public section
 
 noncomputable section
 
@@ -106,7 +110,7 @@ theorem jac_dropPlacing_equiv (d : Fin r → ℕ) (o : Fin r' → Fin r) (ho : S
   rw [← e]
   exact ⟨φ⟩
 
-theorem jhMult_jac_ne_zero_of_jm (y : Fin r → IrrGL k) (o : Fin r' → Fin r) (ho : StrictMono o)
+theorem jhMult_jac_ne_zero_of_jm (y : Fin r → IrrGL (k := k)) (o : Fin r' → Fin r) (ho : StrictMono o)
     (hz : ∀ j, (y j).1 ≠ 0 → j ∈ Set.range o) (hd : ∑ a, (y (o a)).1 = N)
     (f : (Σ j, Fin (y j).1) ≃ Fin N) (π : Representation ℂ (GL (Fin N) k) V)
     (h : jm (fun a => y (o a)) hd π ≠ 0) :
@@ -126,15 +130,15 @@ theorem jhMult_jac_ne_zero_of_jm (y : Fin r → IrrGL k) (o : Fin r' → Fin r) 
 end Local
 
 theorem sigma_clOf {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    (x : IrrGL k) (d : ℕ) (h : d = x.1) : (⟨d, clOf x d⟩ : IrrGL k) = x := by
+    (x : IrrGL (k := k)) (d : ℕ) (h : d = x.1) : (⟨d, clOf x d⟩ : IrrGL (k := k)) = x := by
   subst h
   exact Sigma.ext rfl (heq_of_eq (clOf_self x))
 
-theorem jhMult_row : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {n p N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V), IsSmooth π → ∀ (zz : Fin n → IrrGL k) (σ : Fin p ↪o Fin n) (c : Fin n → ℕ), (∀ a, c (σ a) = (zz (σ a)).1) → (∀ j, j ∉ Set.range σ → c j = 0) → ∀ (hz : ∑ a, (zz (σ a)).1 = N) (f : (Σ j, Fin (c j)) ≃ Fin N), jm (fun a => zz (σ a)) hz π ≠ 0 → jhMult (piTensor fun j => (clOf (zz j) (c j)).rep.ρ) (jac f π) ≠ 0 := by
+theorem jhMult_row : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {n p N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V), IsSmooth π → ∀ (zz : Fin n → IrrGL (k := k)) (σ : Fin p ↪o Fin n) (c : Fin n → ℕ), (∀ a, c (σ a) = (zz (σ a)).1) → (∀ j, j ∉ Set.range σ → c j = 0) → ∀ (hz : ∑ a, (zz (σ a)).1 = N) (f : (Σ j, Fin (c j)) ≃ Fin N), jm (fun a => zz (σ a)) hz π ≠ 0 → jhMult (piTensor fun j => (clOf (zz j) (c j)).rep.ρ) (jac f π) ≠ 0 := by
   intro k _ _ _ _ n p N V _ _ π _ zz σ c hc h0 hz f h
-  let y : Fin n → IrrGL k := fun j => ⟨c j, clOf (zz j) (c j)⟩
+  let y : Fin n → IrrGL (k := k) := fun j => ⟨c j, clOf (zz j) (c j)⟩
   have hy : (fun a => y (σ a)) = fun a => zz (σ a) := funext fun a => sigma_clOf _ _ (hc a)
-  have key : ∀ (x x' : Fin p → IrrGL k) (_ : x = x') (hx : ∑ a, (x a).1 = N) (hx' : ∑ a, (x' a).1 = N),
+  have key : ∀ (x x' : Fin p → IrrGL (k := k)) (_ : x = x') (hx : ∑ a, (x a).1 = N) (hx' : ∑ a, (x' a).1 = N),
       jm x hx π = jm x' hx' π := by
     rintro x _ rfl _ _
     rfl

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MvPolynomial
 
 namespace GlobalTheory
@@ -9,7 +14,7 @@ variable {V : Type} [CommRing V] {σ : Type}
 theorem span_coeff_C_mul (a : V) (f : MvPolynomial σ V) :
     Ideal.span (Set.range fun s => (C a * f).coeff s) =
       Ideal.span {a} * Ideal.span (Set.range fun s => f.coeff s) := by
-  rw [Ideal.span_mul_span']
+  rw [Ideal.span_mul_span]
   congr 1
   ext x
   simp only [coeff_C_mul, Set.mem_range, Set.mem_mul, Set.mem_singleton_iff]
@@ -26,7 +31,8 @@ theorem span_coeff_eq_top_iff [IsLocalRing V] (f : MvPolynomial σ V) :
       Ideal.span (Set.range fun s => f.coeff s) ≤ IsLocalRing.maximalIdeal V := by
     rw [Ideal.span_le, Set.range_subset_iff, MvPolynomial.ext_iff]
     refine forall_congr' fun s => ?_
-    rw [coeff_map, coeff_zero, IsLocalRing.residue_eq_zero_iff]
+    rw [coeff_map, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply,
+      IsLocalRing.residue_eq_zero_iff]
     rfl
   rw [ne_eq, h1]
   constructor
@@ -100,11 +106,11 @@ theorem span_coeff_linear {m : ℕ} (c : Fin m → V) :
   · apply Ideal.span_mono
     rintro _ ⟨i, rfl⟩
     refine ⟨Finsupp.single i 1, ?_⟩
-    simp only [coeff_sum, coeff_C_mul, coeff_X']
+    simp only [coeff_sum, coeff_C_mul, coeff_X]
     rw [Finset.sum_eq_single i]
     · simp
     · intro j _ hj
-      rw [if_neg, mul_zero]
+      rw [ite_eq_right, mul_zero]
       intro h
       exact hj (Finsupp.single_left_injective one_ne_zero h)
     · simp

@@ -1,4 +1,8 @@
-import Formalism.JumpKernelCokernel.Statement
+module
+
+public import Formalism.JumpKernelCokernel.Statement
+
+@[expose] public section
 
 theorem Formalism.KernelCokernelLengths.filtration_exponent_holds : Formalism.KernelCokernelLengths.FExp := by
   intro R _ u π₀ q ℓ hℓ Mi h hMi

@@ -1,15 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrderedCechToCatCochainsOneApplyValueAtSubset
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.IsCoreMod
+
+@[expose] public section
 
 noncomputable section
 
-open Matrix Finset MeasureTheory
-open scoped ContDiff ComplexConjugate InnerProductSpace
-open PositivityTheory.RgBcC PositivityTheory.RgBcC.Real PositivityTheory.RgBcC.RealD
-open PositivityTheory.RgTw (Mat)
-open GlobalTheory.CompanionTheory.GLK (e1 e2 f1)
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open PositivityTheory.RgBcC.RealD (alg kF)
 
 namespace GlobalTheory.CompanionTheory.ModelS.LocFin
 
@@ -145,7 +143,8 @@ theorem comm_letters {F1 F2 : Fin n → Fin n → Module.End ℂ V} (h1 : Formal
   · have h : kF F1 F2 a b * F2 c d - F2 c d * kF F1 F2 a b =
         (if b = c then F2 a d else 0) - (if d = a then F2 c b else 0) := by
       rw [← h2 a b c d]
-      simp only [kF, add_mul, mul_add, hc a b c d]
+      delta kF
+      simp only [add_mul, mul_add, hc a b c d]
       abel
     change kF F1 F2 a b * F2 c d - F2 c d * kF F1 F2 a b ∈ _
     rw [h]
@@ -153,7 +152,8 @@ theorem comm_letters {F1 F2 : Fin n → Fin n → Module.End ℂ V} (h1 : Formal
   · have h : kF F1 F2 a b * F1 c d - F1 c d * kF F1 F2 a b =
         (if b = c then F1 a d else 0) - (if d = a then F1 c b else 0) := by
       rw [← h1 a b c d]
-      simp only [kF, add_mul, mul_add, hc c d a b]
+      delta kF
+      simp only [add_mul, mul_add, hc c d a b]
       abel
     change kF F1 F2 a b * F1 c d - F1 c d * kF F1 F2 a b ∈ _
     rw [h]

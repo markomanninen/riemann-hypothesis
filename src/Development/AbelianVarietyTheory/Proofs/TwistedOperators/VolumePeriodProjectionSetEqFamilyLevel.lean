@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowGrpEq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RepresentationAtEveryPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevRowSuccInfUA
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AuxiliaryVectorDecompositionEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInverseUnipotentVolumeConjDiagonalEq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiUnipotentEqProdRootExchange
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OffPlacesPartMovedLevelKeepsStandardHomLattice
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemFlagUnipotentRadicalOfBesselNormalFrameLocal
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselColumnFormCentralTranslation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilDatumPowersUnramifiedEtaTilde
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemFlagNOfBlocks
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowGrpEq
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RepresentationAtEveryPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevRowSuccInfUA
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AuxiliaryVectorDecompositionEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInverseUnipotentVolumeConjDiagonalEq
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierJacobiUnipotentEqProdRootExchange
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OffPlacesPartMovedLevelKeepsStandardHomLattice
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemFlagUnipotentRadicalOfBesselNormalFrameLocal
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselColumnFormCentralTranslation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilDatumPowersUnramifiedEtaTilde
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemFlagNOfBlocks
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NsmulProjectionXColumnsMemSelfDualLattice
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
@@ -127,8 +132,8 @@ theorem inBasis_off {V : HSp D} {e : AE D} {P : Finset (Pl D.host.E)} (he : IsId
       exact h0.symm
   exact (GlobalTheory.OffPartLattice.inBasis_mix β _ _ c hX w).1 (GlobalTheory.OffPartLattice.cpt_pair_zero V he w hw)
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem KO_frame {n : ℕ} {Λ : Submodule (𝓞 D.host.E) (Fin n → D.host.E)} {β β' : GL (Fin n) (Lev.EAf D)} (h : IsFrame β Λ)
     (h' : IsFrame β' Λ) (w : Pl D.host.E) {x : GL (Fin n) (Lev.EAf D)} (hx : inBasis rfl β' w x ∈ KO (Kw w) (Fin n)) :
     inBasis rfl β w x ∈ KO (Kw w) (Fin n) := by
@@ -171,8 +176,8 @@ theorem mem_conj_KO {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [
 
 variable {D : D7}
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem pr_iff {A B : HSp D} {c : ℕ} {ε : D.host.E} {d : HermitianOrthogonalExtensionData A B c ε} {N : Subgroup (GA D B)} {em : GA D A →* GA D B}
     (hS : Shape d N em) (hc : 1 ≤ c) {Λ : Submodule (𝓞 D.host.E) (Fin B.rank → D.host.E)} {β : GL (Fin A.rank) (Lev.EAf D)}
     {β' β'' : GL (Fin B.rank) (Lev.EAf D)} (hβ' : IsFrame β' Λ) (hβ'' : IsFrame β'' Λ) (hsd : IsSelfDualC B Λ)
@@ -241,7 +246,7 @@ theorem pr_iff {A B : HSp D} {c : ℕ} {ε : D.host.E} {d : HermitianOrthogonalE
     have pn : ∀ w : P, phi (hb w) (hab w) β' w.1 n = Y w * v w * (Y w)⁻¹ := fun w =>
       (congrArg (frameGL (hab w)) (hz w _ (hn w))).trans ((frameGL (hab w)).apply_symm_apply _)
     have e0 : infPart D (e + cA D e) = 0 := by
-      rw [RingHom.map_add, (GlobalTheory.FunObj.Comparison₂.cpt_idemSum he).1, GlobalTheory.PlaceDatum.infPart_cA (GlobalTheory.FunObj.Comparison₂.cpt_idemSum he).1, add_zero]
+      rw [RingHom.map_add (f := _), (GlobalTheory.FunObj.Comparison₂.cpt_idemSum he).1, GlobalTheory.PlaceDatum.infPart_cA (GlobalTheory.FunObj.Comparison₂.cpt_idemSum he).1, add_zero]
     refine ⟨n, mem_of_phi hS hc he hF ha hb hab hns fun w => pn w ▸ (hYp w).2.1 _ (hv w),
       Subgroup.mem_inf.2 ⟨(GfC B).mul_mem ((GfC B).mul_mem ((GfC B).inv_mem hx)
         ((GfC B).mul_mem (GlobalTheory.WeilProduct.mem_GfC_of_supp e0 hns) (hS.2.2 g hg))) hx, ?_⟩⟩
@@ -277,7 +282,9 @@ theorem exists_frame (S : GridChoice W U) {j : ℕ} (hj : j < D.R.m) : ∃ β'' 
   choose y hy _ using fun p : Fin (D.R.m - 1 - j) =>
     exists_gen (rowId_ne_zero G j p) Set.finite_empty (fun _ => 0) fun _ h => absurd h (Set.notMem_empty _)
   obtain ⟨β', h1, h2⟩ := exists_sumFrame (by norm_num : (-1 : D.host.E) ≠ 0) (G.rowDec j hj)
-    (G.isV (X := .top j) hj.le fun _ e => by cases e).sd.1 (S.βp_is j hj.le) (rowId_ne_zero G j) y hy
+    (GlobalTheory.ProjXCols.selfDual_isFullLattice _ _
+      (G.isV (X := .top j) hj.le fun _ e => by cases e).sd)
+    (S.βp_is j hj.le) (rowId_ne_zero G j) y hy
   exact ⟨β', rowLat_eq G j hj ▸ h1, fun w => ⟨_, h2 w⟩⟩
 
 theorem sgn_diag (t : T) (s : ℤˣ) (w : Pl D.host.E) (j : ℕ)
@@ -291,8 +298,8 @@ theorem sgn_diag (t : T) (s : ℤˣ) (w : Pl D.host.E) (j : ℕ)
   simp only [Function.comp_apply]
   rw [if_neg (by omega), Units.val_one]
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem prSet_eq (S : GridChoice W U) {t : T} (ht : t ∈ U) (Φ : G.Datum) (s : ℤˣ) (β : CosFam G t) {b : Pts G}
     (h : IsRep t S.B s β b) {j : ℕ} (hi : j ∈ idx D) (hj : j < D.R.m) (hb : b j ∈ GfC _) :
     prSet G j ⟨b j, hb⟩ = {g | Lev.finE (G.V (.top j)) g.1 ∈ S.levTop t Φ β j hj} := by

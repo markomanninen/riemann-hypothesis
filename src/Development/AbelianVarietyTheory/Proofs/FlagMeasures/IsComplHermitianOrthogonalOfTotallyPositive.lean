@@ -1,9 +1,14 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
-import Formalism.HermitianLattices.FinalNeighbourConstruct
-import Formalism.HermitianLattices.HermitianLatticesProofs.ClassSetAssembly
-import Formalism.HermitianLattices.HermitianLatticesProofs.GenusCovolBound
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocClosed
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
+public import Formalism.HermitianLattices.FinalNeighbourConstruct
+public import Formalism.HermitianLattices.HermitianLatticesProofs.ClassSetAssembly
+public import Formalism.HermitianLattices.HermitianLatticesProofs.GenusCovolBound
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocClosed
+
+@[expose] public section
+
 open scoped Classical ENNReal
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.L2.SG.RowsConc Formalism.L2.SG.NGData Formalism.L2.SG.TermLoc GlobalTheory.Unfold
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -37,7 +42,8 @@ theorem GlobalTheory.isCompl_orth_of_definite {E : Type} [Field E] [NumberField 
       have := congrArg (Subtype.val) hx'
       simp only [Submodule.coe_sum, Submodule.coe_smul] at this
       exact this
-    rw [hxs, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hxs, map_sum]
     simp [LinearMap.sum_apply, hy']
   have hrk : Module.finrank E S.V ≤ Module.finrank E U + Module.finrank E (orth S U) := by
     have h1 := LinearMap.finrank_range_add_finrank_ker φ

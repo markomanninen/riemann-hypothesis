@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.LayerLe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.HostComp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.PartOrd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompCond
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompOrd
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.LayerLe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.HostComp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.PartOrd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompCond
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompOrd
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.Top UpperTheory.V.HV
 

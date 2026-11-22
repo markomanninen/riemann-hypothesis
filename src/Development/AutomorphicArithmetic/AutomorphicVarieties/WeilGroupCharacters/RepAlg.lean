@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ def pull {E' : Type} [Ring E'] [Algebra A E'] (φ : E' →ₐ[A] E) : Det n A E'
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   homog B _ _ b x := by
     change D.D B (Algebra.TensorProduct.map (AlgHom.id B B) φ (b • x)) = b ^ n * D.D B (Algebra.TensorProduct.map (AlgHom.id B B) φ x)
     rw [map_smul, D.homog]
@@ -51,7 +55,8 @@ namespace GDet
 
 variable {n : ℕ} {A G : Type} [CommRing A] [Group G] (D : GDet n A G)
 
-@[ext] theorem ext {D D' : GDet n A G} (h : ∀ (B : Type) [CommRing B] [Algebra A B] (x), D.D B x = D'.D B x) : D = D' := by
+@[ext] theorem ext {D D' : GDet n A G}
+    (h : ∀ (B : Type) [CommRing B] [Algebra A B] (x), D.D B x = D'.D B x) : D = D' := by
   cases D; cases D'; congr; funext B _ _; exact MonoidHom.ext (h B)
 
 def map {A' : Type} [CommRing A'] (f : A →+* A') : GDet n A' G where
@@ -70,7 +75,7 @@ def comap {H : Type} [Group H] (φ : H →* G) : GDet n A H where
     congr 1
     induction x using MonoidAlgebra.induction_linear with
     | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | single g r => simp
   homog B _ _ b x := by
     change D.D B (MonoidAlgebra.mapDomainAlgHom B B φ (b • x)) = b ^ n * D.D B (MonoidAlgebra.mapDomainAlgHom B B φ x)
@@ -88,7 +93,7 @@ def ofRep (ρ : G →* Matrix (Fin n) (Fin n) A) : GDet n A G where
     congr 1
     induction x using MonoidAlgebra.induction_linear with
     | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | single g r => ext i j; simp [repAlg]
   homog B _ _ b x := by
     change (repAlg ρ B (b • x)).det = b ^ n * (repAlg ρ B x).det
@@ -109,8 +114,8 @@ def gen {m : ℕ} (y : Fin m → MonoidAlgebra A G) : MonoidAlgebra (MvPolynomia
 
 def CH : Set (MonoidAlgebra A G) :=
   {z | ∃ (m : ℕ) (y : Fin m → MonoidAlgebra A G) (β : Fin m →₀ ℕ), ∀ g : G,
-    z.coeff g = MvPolynomial.coeff β
-      ((Polynomial.aeval (gen y) ((D.map (MvPolynomial.C : A →+* MvPolynomial (Fin m) A)).chi (gen y))).coeff g)}
+    z.coeff g = AddMonoidAlgebra.coeff ((Polynomial.aeval (gen y) ((D.map (MvPolynomial.C : A →+* MvPolynomial (Fin m) A)).chi (gen y))).coeff g)
+      β}
 
 variable [TopologicalSpace G]
 
@@ -122,7 +127,5 @@ def closureIdeal {A G : Type} [CommRing A] [Group G] [TopologicalSpace G] (I : I
     TwoSidedIdeal (MonoidAlgebra A G) :=
   ⨅ (N : ℕ) (H : OpenNormalSubgroup G), TwoSidedIdeal.span
     (S ∪ {z | ∃ a ∈ I ^ N, z = MonoidAlgebra.single 1 a} ∪ {z | ∃ h ∈ H, z = MonoidAlgebra.single h 1 - 1})
-
-example (A G : Type) [CommRing A] [Group G] (n : ℕ) : GDet n A G := GDet.ofRep 1
 
 end UpperTheory.V.W

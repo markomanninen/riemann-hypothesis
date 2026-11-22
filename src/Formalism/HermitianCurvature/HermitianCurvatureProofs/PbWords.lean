@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsOpenDomP
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightAverageSmoothComm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocOfSmoothOnH
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.VLetZeroNear
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChartIntegralLocal
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsOpenDomP
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightAverageSmoothComm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocOfSmoothOnH
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VLetZeroNear
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChartIntegralLocal
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 

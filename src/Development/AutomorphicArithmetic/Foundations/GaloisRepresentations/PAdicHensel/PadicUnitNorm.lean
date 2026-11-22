@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
-import Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.HermitianHassePrincipleHolds
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.TraceDefinitePairsEqAutomorphicTrace
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
+public import Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.HermitianHassePrincipleHolds
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.TraceDefinitePairsEqAutomorphicTrace
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,7 +61,7 @@ def IsoEx : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A : 
   ∃ a : GL (Fin n) (FiniteAdeleRing (𝓞 E) E),
     (a.val.map (cF E))ᵀ * (Matrix.diagonal fun i => ((A.dg n i : 𝓞 E) : E)).map (algebraMap E (FiniteAdeleRing (𝓞 E) E)) * a.val = 1 ∧
     ∀ (w : HeightOneSpectrum (𝓞 E)) (q : ℕ), q.Prime → A.Good q → (q : 𝓞 E) ∈ w.asIdeal →
-      GeneralLinearGroup.map (pLoc E w) a ∈ GlobalTheory.LFun.KGL w n
+      GeneralLinearGroup.map (pLoc E w) a ∈ GlobalTheory.LFun.KGL w (n := n)
 
 def PadMap : Prop := ∀ (F : Type) [Field F] [NumberField F] (w : HeightOneSpectrum (𝓞 F)),
   ∃ (v : HeightOneSpectrum ℤ) (_ : v.adicCompletion ℚ →+* w.adicCompletion F),
@@ -113,8 +117,8 @@ def InfCongr : Prop := ∀ (n : ℕ) (G G' : Matrix (Fin n) (Fin n) ℂ), G.IsHe
 def mat {E : Type} [Field E] [NumberField E] [IsCMField E] {A : Arith E} {n p : ℕ} [Fact p.Prime] (S : Setup A n p) (x : S.G.C) :
     Matrix (Fin n) (Fin n) E := x
 
-open Classical in
 
+open Classical in
 def DefSign : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n p : ℕ) [Fact p.Prime] (S : Setup A n p)
   (B : DForm S.G), (∀ a b, IsCMField.complexConj E ((mat S B.β * (A.H n)⁻¹) a b) = (mat S B.β * (A.H n)⁻¹) b a) ∧
     (mat S B.β * (A.H n)⁻¹).det ≠ 0 ∧ ∀ (τ : E →+* ℂ) (x : Fin n → ℂ), x ≠ 0 →

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AvPrimeDimOne
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AvPrimeDimOne
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0.DimensionQuotientBound
 
@@ -37,7 +41,7 @@ theorem local_step {B : Type*} [CommRing B] [IsDomain B] [IsNoetherianRing B] (M
   have hinj : Function.Injective (algebraMap B R) :=
     IsLocalization.injective R (Ideal.primeCompl_le_nonZeroDivisors M)
   have hcm : (IsLocalRing.maximalIdeal R).comap (algebraMap B R) = M :=
-    Localization.AtPrime.comap_maximalIdeal (I := M)
+    Localization.AtPrime.under_maximalIdeal (I := M)
   have hh : algebraMap B R (e * w) ≠ 0 := by
     intro h
     exact mul_ne_zero he hw0 (hinj (by rw [h, map_zero]))
@@ -72,11 +76,11 @@ theorem local_step {B : Type*} [CommRing B] [IsDomain B] [IsNoetherianRing B] (M
     haveI hP' : (P.map (algebraMap B R)).IsPrime :=
       IsLocalization.isPrime_of_isPrime_disjoint M.primeCompl R P hP hdisj
     have hcomap : (P.map (algebraMap B R)).comap (algebraMap B R) = P :=
-      IsLocalization.comap_map_of_isPrime_disjoint M.primeCompl R hP hdisj
+      IsLocalization.under_map_of_isPrime_disjoint M.primeCompl R hP hdisj
     have h1 : p < P.map (algebraMap B R) := by
       refine lt_of_le_of_ne ?_ ?_
       · have hpe : (p.comap (algebraMap B R)).map (algebraMap B R) = p :=
-          IsLocalization.map_comap M.primeCompl R p
+          IsLocalization.map_under M.primeCompl R p
         rw [← hpe]
         exact Ideal.map_mono hqP
       · intro heq

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubini
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubini
+
+@[expose] public section
 
 open MeasureTheory PositivityTheory.Rg.Tf.Loc in
 theorem UpperTheory.V.Z.Tf.Orb.quotRight :

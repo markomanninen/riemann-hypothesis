@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 
@@ -37,14 +41,15 @@ theorem linearIndependent_of_sub_apply_eq {V : Type*} [AddCommGroup V] [Module �
       rw [← Finset.prod_erase_mul s _ hk, ← hw k, map_mul, map_mul, aeval_C, map_sub, aeval_X,
         aeval_C, Module.End.mul_apply, Module.End.mul_apply, Module.algebraMap_end_apply,
         map_smul, map_smul]
-    rw [hqdef, map_sum, LinearMap.sum_apply, Finset.sum_congr rfl h1, ← map_sum, hg, map_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hqdef, map_sum, LinearMap.sum_apply, Finset.sum_congr rfl h1, ← map_sum, hg, map_zero]
   have hq : q = 0 := by
     by_contra hne
     have hu := isUnit_aeval_of_forall_isUnit_sub T h q hne
     have hinj := ((Module.End.isUnit_iff _).1 hu).1
     exact hv (hinj (by rw [hq0, map_zero]))
   have h2 : eval i q = g i * ∏ j ∈ s.erase i, (i - j) := by
-    rw [hqdef, eval_finset_sum, Finset.sum_eq_single i]
+    rw [hqdef, Polynomial.eval_finsetSum, Finset.sum_eq_single i]
     · simp [eval_prod]
     · intro k _ hki
       rw [eval_mul, eval_prod, Finset.prod_eq_zero (i := i) (Finset.mem_erase.2 ⟨hki.symm, hi⟩)

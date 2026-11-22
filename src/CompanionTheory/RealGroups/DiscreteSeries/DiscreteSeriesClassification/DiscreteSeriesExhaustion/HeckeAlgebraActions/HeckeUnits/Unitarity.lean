@@ -1,5 +1,9 @@
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.HeckeUnitTensors.OmegaProjectionScalarCharacter
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HeckeDualityFactsStatement
+module
+
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.HeckeUnitTensors.OmegaProjectionScalarCharacter
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HeckeDualityFactsStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,13 +68,13 @@ theorem coeY_mem_Isub
   obtain ⟨A, B, hAB⟩ := cop (fun t => -χ t - cn (m + 1)) (-(χ s + 1) - cn (m + 1))
     (fun t h => hfree t (by linear_combination -h)) K k
   have e := congrArg (fun q => Polynomial.aeval (Om' X) q (coeY G)) hAB
-  simp only [map_add, map_mul, map_one, LinearMap.add_apply, Module.End.mul_apply,
+  simp only [map_add (f := _), map_mul, map_one, LinearMap.add_apply, Module.End.mul_apply,
     Module.End.one_apply] at e
   rw [← e, aeval_CH, Om'_CH K hK, LinearMap.zero_apply, map_zero, zero_add, aeval_lin]
   exact aeval_mem_Isub B hI
 
-variable (χ s) in
 
+variable (χ s) in
 def phiB (hS : ScalChar X χ) : X.V →ₗ[ℂ] ↥(backSub (step X (χ s)) (χ s + 1)) :=
   (phi0 χ s hS).codRestrict (backSub (step X (χ s)) (χ s + 1)) fun v => mem_of_eig' (omega_projection_scalar_character hS v)
 
@@ -101,8 +105,8 @@ theorem phiB_surj (hS : ScalChar X χ) (hsimp : ∀ r, r ≠ s → χ r ≠ χ s
   rw [← hv c]
   exact Pr_step hS hsimp _ (hom _ (show ↥(stepSub X (χ s)) from G c).2)
 
-variable (χ s) in
 
+variable (χ s) in
 def phiBk (hS : ScalChar X χ) (hB : BackStable) :
     X.V →ₗ[ℂ] (back (step X (χ s)) (χ s + 1) (hB (m + 1) _ _)).V := phiB χ s hS
 
@@ -125,7 +129,7 @@ theorem phiB_E (hS : ScalChar X χ) (hB : BackStable) (a b : Fin (m + 1)) (v : X
   dsimp only
   by_cases h : c = b
   · subst h
-    rw [if_pos rfl, ← Pr_tensE, tensE_single, if_pos rfl, map_add, add_sub_cancel_right]
+    rw [if_pos rfl, ← Pr_tensE, tensE_single, if_pos rfl, map_add (f := _), add_sub_cancel_right]
   · rw [if_neg h, sub_zero, ← Pr_tensE, tensE_single, if_neg (Ne.symm h), add_zero]
 
 theorem unit_of_dualFacts (hDF : DualFacts) : Unit := by

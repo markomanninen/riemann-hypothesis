@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.PathWeight
-import Formalism.SharpRestriction.GrowthBounds.TableLineDegreeFive
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PathWeight
+public import Formalism.SharpRestriction.GrowthBounds.TableLineDegreeFive
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,14 +32,6 @@ def OneSidedLemma4 (_D : Formalism.BasicNotions.D7) (CLa CD Csz : ℝ) : Prop :=
   ∀ (mon : Fin n' × Fin (r + K) →₀ ℕ), IsLabel p Fr mon → (∀ v ∈ mon.support, v.1 ∈ Fr.TT) →
   ∀ o : ℕ, (∀ m ∈ (monPh O K p Fr mon xi).support, normDeg r m = o) →
     Realisable p n' S.w n' r g c' o (MvPolynomial.map (algebraMap O (KK O)) (monPh O K p Fr mon xi))
-
-theorem lemma4_of_one_sided (D : Formalism.BasicNotions.D7) (CLa CD Csz : ℝ) (h : OneSidedLemma4 D CLa CD Csz) : Conclusion6 D CLa CD Csz := by
-  intro p n' r K _ _ _ _ O _ _ _ _ S hO hH Fr L₁ N₁ G' hV hT deg a Y c0 c'' cStar Dd hII c' g hg n obd xi dd hxi hdd
-    mon hmon hmonT o ho
-  refine h p n' r K O S hO hH Fr L₁ N₁ G' hV hT deg a Y c0 c'' cStar Dd hII g hg n obd xi dd hxi ?_ mon hmon hmonT o ho
-  intro j hj x hx hw
-  have := (abs_le.1 (hdd j hj x hx hw)).2
-  linarith
 
 def RestGeomU : Prop :=
   ∀ (p n' r : ℕ) [NeZero n'] (F : Frames n' r) (L₁ N₁ : ℕ), 13 ≤ p → 2 ≤ r → Even n' → F.Valid L₁ N₁ →
@@ -227,7 +223,8 @@ theorem one_sided_lemma4_of_interfaces (D : Formalism.BasicNotions.D7) (CLa CD C
       rw [← Finset.prod_mul_distrib]
       refine Finset.prod_congr rfl fun j hj => ?_
       rw [(hξ' i j (Finset.mem_range.1 hj)).1, map_mul, mul_comm]
-    rw [e1, map_mul, map_mul, hPhe, map_monomial, map_one, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, map_mul, map_mul, hPhe, map_monomial, map_one, map_sum]
     simp only [map_prod]
     rw [← hSg]
     ring

@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FockVacuumBounds.VacCore
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FockVacuumBounds.VacLin
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FockVacuumBounds.VacCore
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FockVacuumBounds.VacLin
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,10 +35,6 @@ theorem fock_le_vacOn_univ {d : SD σ} (R : RD d) : R.fock ≤ R.vacOn Finset.un
   refine Submodule.span_le.2 ?_
   rintro f ⟨P, g, hg, rfl⟩
   exact Submodule.subset_span ⟨P, g, fun w hw => absurd (Finset.mem_univ w) hw, hg, rfl⟩
-
-theorem gens_sub_fock {d : SD σ} (R : RD d) (s : Finset (InfinitePlace F)) : R.gens s ⊆ R.fock := by
-  rintro f ⟨P, g, -, hg, rfl⟩
-  exact Submodule.subset_span ⟨P, g, hg, rfl⟩
 
 theorem vacOn_step (hG : AbsSt.GenCore) (c : ℂ) (hT : TAll) (hAux : AuxiliaryPrimeFunction) (hFM : FockMem) (hLE : LiftEx)
     (hLo : LocOpEx) (hLI : LocInst) (hGS : GSplit) (hGI : GIinv) (hGD : GIdil) (hPK : PolyKFin) (hSK : SecK)
@@ -81,7 +81,8 @@ theorem vacOn_step (hG : AbsSt.GenCore) (c : ℂ) (hT : TAll) (hAux : AuxiliaryP
     have hmem : Φ - ∑ i, a i • Φf i ∈ d.sch :=
       d.sch.sub_mem hΦ (d.sch.sum_mem fun i _ => d.sch.smul_mem _ (hK i).1)
     refine sub_eq_zero.mp ((hT.1 F E σ d).2.2 _ hmem ?_)
-    rw [← Tl_apply, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Tl_apply, map_sub, map_sum]
     simp only [map_smul, Tl_apply, hTf, hf, sub_self]
   rw [hΦeq]
   exact ident_lincomb hT hSK hEW d c a Φf hK hI x

@@ -1,11 +1,15 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
 namespace GlobalTheory.DomDVR
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_dominating_dvr : ∀ (F : Type) [Field F] [CharZero F] (T' : Subring F), IsDiscreteValuationRing T' → ∀ (s : Finset F), (1 : F) ∈ Submodule.span T' (s : Set F) → (∀ x ∈ s, ∀ y ∈ s, x * y ∈ Submodule.span T' (s : Set F)) → ∃ T'' : Subring F, IsDiscreteValuationRing T'' ∧ T' ≤ T'' ∧ (∀ x ∈ s, x ∈ T'') ∧ (∀ x ∈ T', (∃ y ∈ T'', x * y = 1) → ∃ y ∈ T', x * y = 1) ∧ (∀ y ∈ T'', ∃ d ∈ T', d ≠ 0 ∧ d * y ∈ Submodule.span T' (s : Set F)) := by
   intro F _ _ T' hT s h1 hmul
   classical
@@ -54,7 +58,7 @@ theorem exists_dominating_dvr : ∀ (F : Type) [Field F] [CharZero F] (T' : Subr
   have hPbot : P ≠ ⊥ := by
     rintro rfl
     apply IsDiscreteValuationRing.not_a_field T'
-    rw [← hPm, Ideal.comap_bot_of_injective _ hinjC]
+    rw [← hPm, (show Ideal.under _ ⊥ = ⊥ from Ideal.comap_bot_of_injective _ hinjC)]
   let Loc := Localization.AtPrime P
   haveI : IsDiscreteValuationRing Loc :=
     IsLocalization.AtPrime.isDiscreteValuationRing_of_dedekind_domain C hPbot Loc

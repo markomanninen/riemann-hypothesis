@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SignAgreement.ExistsCompositumWithPrimeDegreeGalois
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SignAgreement.ExistsCompositumWithPrimeDegreeGalois
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N Polynomial GlobalTheory.CuspRep GlobalTheory.HeckeGal GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Af.Bc UpperTheory.V.Published UpperTheory.V.Af.Sol
 
@@ -12,7 +16,11 @@ theorem UpperTheory.solvable_auxiliary_galois_extension :
   set P := minpoly ℚ α with hPdef
   have hPdeg : P.natDegree = Module.finrank ℚ L := by
     rw [← IntermediateField.adjoin.finrank hαi, hα, IntermediateField.finrank_top']
-  let φ : L →ₐ[ℚ] Ω := IsAlgClosed.lift
+  let φ : L →ₐ[ℚ] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   set β := φ α with hβdef
   have hβP : minpoly ℚ β = P := minpoly.algHom_eq φ φ.injective α
   set Q : Polynomial M := P.map (algebraMap ℚ M) with hQdef

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalFunctionAppOfPreservesGenericPointStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SectionsPreimageAffineBaseChangeEqSumProductsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumTmulEqZeroOfFlatLinearlyDisjointSubringStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalFunctionAppOfPreservesGenericPointStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SectionsPreimageAffineBaseChangeEqSumProductsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumTmulEqZeroOfFlatLinearlyDisjointSubringStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -61,7 +65,8 @@ theorem app_injective : ∀ (R F : Type) [CommRing R] [IsDomain R] [Field F] (c�
     ((p.appLE ⊤ (Dp k b) le_top).hom.comp (Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom).toAlgebra
   have hsum : ∑ i, θ ((ψ.comp (fnOf (Dp k b) hV)) (a i)) * GlobalTheory.Desc.cst (f ≫ pullback.snd p (spMap ρ)) (r i) = 0 := by
     have := congrArg (fnOf (f ⁻¹ᵁ (pullback.fst p (spMap ρ)) ⁻¹ᵁ Dp k b) hY) hx
-    rw [map_zero, map_sum, map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zero, map_sum, map_sum] at this
     rw [← this]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, map_mul]
@@ -83,7 +88,8 @@ theorem app_injective : ∀ (R F : Type) [CommRing R] [IsDomain R] [Field F] (c�
     ⟨g.hom, fun t => const_agree ρ p _ _ pullback.condition _ t⟩
   let sA : R₁ →ₐ[R] Γ(pullback p (spMap ρ), (pullback.fst p (spMap ρ)) ⁻¹ᵁ Dp k b) := ⟨s, fun _ => rfl⟩
   have := congrArg (Algebra.TensorProduct.lift gA sA fun _ _ => Commute.all _ _) hz
-  rw [map_zero, map_sum] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_zero, map_sum] at this
   simp only [Algebra.TensorProduct.lift_tmul] at this
   exact this
 

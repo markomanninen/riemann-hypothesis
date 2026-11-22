@@ -1,4 +1,8 @@
-import Formalism.GaloisIrreducibility.Statement
+module
+
+public import Formalism.GaloisIrreducibility.Statement
+
+@[expose] public section
 
 namespace Formalism.GaloisIrreducibility
 
@@ -78,7 +82,7 @@ lemma orbs_parts (σ : Perm α) : (orbs σ).val.map Finset.card = σ.partition.p
   have hinj2 : Set.InjOn (fun y : α => ({y} : Finset α)) ((univ \ σ.support : Finset α) : Set α) := by
     intro y _ z _ h
     exact Finset.singleton_injective h
-  rw [orbs, ← Finset.disjUnion_eq_union _ _ hdisj, Finset.disjUnion_val, Multiset.map_add,
+  rw [orbs, ← Finset.disjUnion_eq_union _ _ hdisj, Finset.disjUnion_val, Multiset.map_add (f := _),
     Finset.image_val_of_injOn hinj1, Finset.image_val_of_injOn hinj2, Multiset.map_map, Multiset.map_map,
     Perm.parts_partition, Perm.cycleType_def]
   congr 1

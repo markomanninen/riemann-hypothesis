@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+
+@[expose] public section
+
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible GlobalTheory.FockAlg MvPolynomial
 
 noncomputable section
@@ -11,7 +16,8 @@ theorem X_mul_pderiv_mem {σ : Type} (d : ℕ) (i j : σ) (P : MvPolynomial σ �
     X i * pderiv j P ∈ restrictTotalDegree σ ℂ d := by
   classical
   rw [mem_restrictTotalDegree] at hP
-  rw [P.as_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [P.as_sum, map_sum, Finset.mul_sum]
   refine Submodule.sum_mem _ fun α hα => ?_
   have hd : (α.sum fun _ e => e) ≤ d := (le_totalDegree hα).trans hP
   rw [pderiv_monomial]
@@ -102,7 +108,7 @@ theorem mem_of_monomials {σ : Type} (N : Submodule ℂ (MvPolynomial σ ℂ))
     (h : ∀ α, monomial α (1 : ℂ) ∈ N) (P : MvPolynomial σ ℂ) : P ∈ N := by
   rw [P.as_sum]
   refine Submodule.sum_mem _ fun α _ => ?_
-  have := N.smul_mem (coeff α P) (h α)
+  have := N.smul_mem (AddMonoidAlgebra.coeff P α) (h α)
   rwa [smul_monomial, smul_eq_mul, mul_one] at this
 
 theorem monomial_mem_weightSpace_fockAction_first {p q r s : ℕ} (α : Ln p q r s →₀ ℕ) :

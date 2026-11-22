@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIntegralBasisCompletion
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceHermitianFrameProperties
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BesselSecondBasePointCharacterTrivialDepthLattic
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AuxiliaryVectorDecompositionEqZero
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ValuationEqUniformizerAndUnitAtPrime
-import GroundTheory.GlobalFields.TateThesis.AdelePoisson
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIntegralBasisCompletion
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceHermitianFrameProperties
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BesselSecondBasePointCharacterTrivialDepthLattic
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AuxiliaryVectorDecompositionEqZero
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ValuationEqUniformizerAndUnitAtPrime
+public import GroundTheory.GlobalFields.TateThesis.AdelePoisson
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SepRows GlobalTheory.Asc
 open scoped TensorProduct
@@ -96,14 +101,15 @@ theorem pair_int (p : SplitPt D k) {w : HeightOneSpectrum (𝓞 D.host.E)} (he :
     obtain ⟨b, hb⟩ := (hΛ.2 x).1 hx t ht
     convert pr_tmul_int p he hα b using 1
     rw [hb, tmul_eq', Finset.sum_comm]
-    simp only [one_mul, map_sum, map_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [one_mul, map_sum, map_mul, Finset.mul_sum]
     refine Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => ?_
     rw [tmul_eq' _ (x _), map_mul]
     ring
   | zero => simp
   | add x y _ _ hx hy =>
     convert add_mem hx hy using 1
-    simp only [Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+    simp only [Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
   | neg x _ hx =>
     convert neg_mem hx using 1
     simp only [Pi.neg_apply, map_neg, mul_neg, Finset.sum_neg_distrib]
@@ -126,7 +132,7 @@ def rowVal {A R : Type} [CommRing A] [CommRing R] (f : A →+* R) {a b : ℕ} {n
   toFun u := ((fun j => f (∑ m, u j m * ε m)) ᵥ* M) i
   map_zero' := by simp [vecMul, dotProduct]
   map_add' x y := by
-    simp only [vecMul, dotProduct, Matrix.add_apply, add_mul, Finset.sum_add_distrib, map_add]
+    simp only [vecMul, dotProduct, Matrix.add_apply, add_mul, Finset.sum_add_distrib, map_add (f := _)]
 
 theorem vecMul_const_mul {R : Type} [CommRing R] {a : ℕ} {n : Type} (x : R) (g : Fin a → R) (M : Matrix (Fin a) n R) (i : n) :
     ((fun j => x * g j) ᵥ* M) i = x * (g ᵥ* M) i := by
@@ -155,8 +161,8 @@ theorem rowVal_col {A R : Type} [CommRing A] [CommRing R] (f : A →+* R) (g : A
   rw [← hx, ← map_pow, ← map_pow, ← map_mul, ← map_mul, hy, Matrix.mul_apply, Finset.mul_sum]
   simp only [hj, mul_left_comm]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem functional_mem (p : SplitPt D k) {w : HeightOneSpectrum (𝓞 D.host.E)} (he : Formalism.L2.NTheta.IsIdemAt p.e w)
     {S T : HSp D} {LS : Set (Fin S.rank → D.host.E)} {Λ : Lat T} (hΛ : IsSelfDualC T Λ) {n : Type} [Fintype n] [DecidableEq n]
     (β : Frame p T n) (hβ : β.IsLat Λ (Submodule.pi Set.univ fun _ => (1 : Submodule 𝒪[k] k)))
@@ -179,7 +185,8 @@ theorem functional_mem (p : SplitPt D k) {w : HeightOneSpectrum (𝓞 D.host.E)}
     have e : ∀ j, (∑ m, (pairA D.host.F 0 α ⊗ₜ[D.host.F] (c * t j * ∑ l, star (s l) * S.gram l m) : AE D) * incA D (ε m)) =
         (pairA D.host.F 0 α ⊗ₜ[D.host.F] (1 : D.host.E)) *
           (incA D (c * ∑ m, (∑ l, star (s l) * S.gram l m) * ε m) * incA D (t j)) := fun j => by
-      rw [← map_mul, Finset.mul_sum, Finset.sum_mul, map_sum, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_mul, Finset.mul_sum, Finset.sum_mul, map_sum, Finset.mul_sum]
       refine Finset.sum_congr rfl fun m _ => ?_
       rw [tmul_eq', mul_assoc, ← map_mul]
       congr 2

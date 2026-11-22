@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.PderivTripleMultiplicationMaximal
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.PderivTripleMultiplicationMaximal
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -32,7 +36,8 @@ theorem Tk_int {f : PS C 3 dd} (hf : IntS V f) (k : Fin dd) : IntS V (Tk f k) :=
 theorem decomp {f : PS C 3 dd} (h1 : ev (rz 2) f = 1) : f = 1 + ∑ k, X ((0 : Fin 3), k) * Tk f k := by
   classical
   ext p
-  rw [map_add, MvPowerSeries.coeff_one, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), MvPowerSeries.coeff_one, map_sum]
   have hX : ∀ k, coeff p (X ((0 : Fin 3), k) * Tk f k) =
       if Finsupp.single ((0 : Fin 3), k) 1 ≤ p then
         coeff (p - Finsupp.single ((0 : Fin 3), k) 1) (Tk f k) else 0 := by
@@ -116,7 +121,7 @@ theorem QQ_expand (Y : FBChart C V O dd) :
   rfl
 
 theorem triple_multiplication_pderiv_other (Y : FBChart C V O dd) (k : Fin dd) (s : Fin 3 × Fin dd) (hs : s.1 ≠ 0) :
-    pderiv C s (m3 Y.B.G V.l k) = 0 := by
+    pderiv (R := C) s (m3 Y.B.G V.l k) = 0 := by
   simp only [m3]
   rw [pderiv_eval_single (fun j => by simp [p3, pt])]
   apply Finset.sum_eq_zero
@@ -135,22 +140,22 @@ theorem triple_multiplication_first_only (Y : FBChart C V O dd) (k : Fin dd) (p 
   exact (mul_eq_zero.mp h).resolve_right (Nat.cast_add_one_ne_zero _)
 
 private theorem pderiv_ev_p3_zero_eq_ev_pderiv (i : Fin dd) (g : PS C 1 dd) :
-    pderiv C ((0 : Fin 3), i) (ev ![(p3 0 : Pt C 3 dd)] g) =
-      ev ![(p3 0 : Pt C 3 dd)] (pderiv C ((0 : Fin 1), i) g) := by
+    pderiv (R := C) ((0 : Fin 3), i) (ev ![(p3 0 : Pt C 3 dd)] g) =
+      ev ![(p3 0 : Pt C 3 dd)] (pderiv (R := C) ((0 : Fin 1), i) g) := by
   rw [pderiv_eval_single (fun j => by simp [p3, pt])]
   simp [p3, pderiv_pt, Finset.sum_ite_eq']
 
 theorem iterate_pderiv_triple_multiplication (Y : FBChart C V O dd) (k i : Fin dd) (L : ℕ) :
-    (pderiv C ((0 : Fin 3), i))^[L] (m3 Y.B.G V.l k) =
-      ev ![(p3 0 : Pt C 3 dd)] ((pderiv C ((0 : Fin 1), i))^[L] (mulL Y.B.G.F V.l k)) := by
+    (pderiv (R := C) ((0 : Fin 3), i))^[L] (m3 Y.B.G V.l k) =
+      ev ![(p3 0 : Pt C 3 dd)] ((pderiv (R := C) ((0 : Fin 1), i))^[L] (mulL Y.B.G.F V.l k)) := by
   induction L with
   | zero => rfl
   | succ L ih =>
     rw [Function.iterate_succ_apply', ih, pderiv_ev_p3_zero_eq_ev_pderiv,
-      ← Function.iterate_succ_apply' (pderiv C ((0 : Fin 1), i))]
+      ← Function.iterate_succ_apply' (pderiv (R := C) ((0 : Fin 1), i))]
 
 private theorem coeff_iterate_pderiv_eq_coeff_add_single_mul_prod {σ : Type} (i : σ) (L : ℕ) : ∀ (f : MvPowerSeries σ C) (μ : σ →₀ ℕ),
-    coeff μ ((pderiv C i)^[L] f) =
+    coeff μ ((pderiv (R := C) i)^[L] f) =
       coeff (μ + Finsupp.single i L) f * ∏ t ∈ Finset.range L, ((μ i : C) + t + 1) := by
   induction L with
   | zero =>
@@ -368,7 +373,8 @@ theorem phiQ (Y : FBChart C V O dd) (u : Fin dd → C) (hu : ∀ i, V.Ge 0 (u i)
       ∑ k, coeff (ix i V.l γ) (m3 Y.B.G V.l k * ev (![m3 Y.B.G V.l, p3 1, p3 2] : Fin 3 → Pt C 3 dd)
         (Tk Y.B.ph2 k)) := by
     intro i
-    rw [map_add, map_sum, MvPowerSeries.coeff_one, if_neg, zero_add]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), map_sum, MvPowerSeries.coeff_one, if_neg, zero_add]
     intro h
     have h2 := congrArg (fun p => p ((0 : Fin 3), i)) h
     simp [index_raise_first] at h2
@@ -473,7 +479,7 @@ private theorem single_zero_apply_up_two_eq_zero (i : Fin dd) (L : ℕ) (t : Fin
 
 private theorem ix_apply_up_two (i : Fin dd) (L : ℕ) (γ : Fin 2 × Fin dd →₀ ℕ) (t : Fin 2 × Fin dd) :
     ix i L γ (up 2 t) = γ t := by
-  rw [ix, Finsupp.add_apply, single_zero_apply_up_two_eq_zero, zero_add, Finsupp.mapDomain_apply (up_inj 2)]
+  rw [ix, Finsupp.add_apply, single_zero_apply_up_two_eq_zero, zero_add, Finsupp.mapDomain_apply_of_injective (up_inj 2)]
 
 theorem ix_div (i : Fin dd) (γ : Fin 2 × Fin dd →₀ ℕ) (L : ℕ) (hL : 0 < L) :
     (ix i L γ).mapRange (fun n => n / L) (Nat.zero_div L) =
@@ -494,7 +500,7 @@ theorem ix_div (i : Fin dd) (γ : Fin 2 × Fin dd →₀ ℕ) (L : ℕ) (hL : 0 
   | succ k' =>
     have e : ((Fin.succ k', j) : Fin 3 × Fin dd) = up 2 (k', j) := rfl
     rw [e, Finsupp.mapRange_apply, ix_apply_up_two, Finsupp.add_apply, single_zero_apply_up_two_eq_zero, add_zero,
-      Finsupp.mapDomain_apply (up_inj 2), Finsupp.mapRange_apply]
+      Finsupp.mapDomain_apply_of_injective (up_inj 2), Finsupp.mapRange_apply]
 
 theorem ix_dvd (i : Fin dd) (γ : Fin 2 × Fin dd →₀ ℕ) :
     (∀ s, V.l ∣ ix i V.l γ s) ↔ ∀ t, V.l ∣ γ t := by

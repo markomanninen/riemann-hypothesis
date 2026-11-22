@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CrdOver
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMapOfOfExtends
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CrdOver
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMapOfOfExtends
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,9 +20,6 @@ namespace GlobalTheory.Mem.R3.Rw.GeoTies
 def ModelSame {D D' : D7} {V : HSp D} {V' : HSp D'} {S : D.what₂.Tau → SPar} {S' : D'.what₂.Tau → SPar}
     (M : DSModel V S) (M' : DSModel V' S') : Prop :=
   HEq M'.H M.H ∧ HEq M'.nacg M.nacg ∧ HEq M'.ips M.ips ∧ HEq M'.σ M.σ ∧ HEq M'.lam M.lam ∧ HEq M'.ε M.ε ∧ HEq M'.fr M.fr
-
-theorem ModelSame.refl {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar} (M : DSModel V S) : ModelSame M M :=
-  ⟨HEq.rfl, HEq.rfl, HEq.rfl, HEq.rfl, HEq.rfl, HEq.rfl, HEq.rfl⟩
 
 section Two
 

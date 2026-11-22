@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Saturated
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Saturated
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.Present
@@ -19,7 +23,7 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
 def DΔ (T : LocLat G Qp LL O) : AddSubgroup (W.DD T) where
   carrier := {x | ∀ δ ∈ W.DelF, W.γD T δ x = x}
   zero_mem' := fun δ _ => map_zero _
-  add_mem' := fun ha hb δ hδ => by rw [map_add, ha δ hδ, hb δ hδ]
+  add_mem' := fun ha hb δ hδ => by rw [map_add (f := _), ha δ hδ, hb δ hδ]
   neg_mem' := fun ha δ hδ => by rw [map_neg, ha δ hδ]
 
 def Onto (T : LocLat G Qp LL O) (A : Ob k G) (q : ↥T.L.T →ₗ[O] (Fin A.m → k)) : Prop :=

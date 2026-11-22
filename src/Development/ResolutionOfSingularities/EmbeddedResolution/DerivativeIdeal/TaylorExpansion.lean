@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace FunctorialResolution.EmbeddedResolution.TaylorExpansion
 
@@ -59,7 +63,8 @@ private theorem iterate_deriv_mul_eq_sum_nsmul (D : Derivation A R R) (n : ℕ) 
       _ = ⇑D (∑ i ∈ Finset.range (n + 1), n.choose i • ((⇑D)^[i] f * (⇑D)^[n - i] g)) := by
             rw [ih]
       _ = ∑ i ∈ Finset.range (n + 1), ⇑D (n.choose i • ((⇑D)^[i] f * (⇑D)^[n - i] g)) := by
-            rw [map_sum]
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [map_sum]
       _ = ∑ i ∈ Finset.range (n + 1), (n.choose i • ((⇑D)^[i] f * (⇑D)^[n - i + 1] g)
             + n.choose i • ((⇑D)^[i + 1] f * (⇑D)^[n - i] g)) :=
             Finset.sum_congr rfl fun i _ => key i
@@ -152,7 +157,8 @@ theorem truncatedSeries_mul (σ : R →+* S) (D : Derivation A R R) (β : S) (N 
           coeff σ D i f * coeff σ D (j - i) g := by
   rw [truncatedSeries_apply]
   refine Finset.sum_congr rfl fun j _ => ?_
-  rw [iterate_deriv_mul D j f g, map_sum, Finset.mul_sum, Finset.sum_mul, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [iterate_deriv_mul D j f g, map_sum, Finset.mul_sum, Finset.sum_mul, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i hi => ?_
   have hij : i ≤ j := Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)
   have key := factorial_inv_mul_choose (S' := S) j i hij
@@ -174,11 +180,11 @@ theorem truncatedSeries_add (σ : R →+* S) (D : Derivation A R R) (β : S) (N 
     induction j with
     | zero => simp
     | succ k ih =>
-      simp only [Function.iterate_succ_apply', ih, map_add]
+      simp only [Function.iterate_succ_apply', ih, map_add (f := _)]
   simp only [truncatedSeries_apply]
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun j _ => ?_
-  rw [key j, map_add]
+  rw [key j, map_add (f := _)]
   ring
 
 theorem truncatedSeries_one (σ : R →+* S) (D : Derivation A R R) (β : S) (N : ℕ) (hN : 1 ≤ N) :
@@ -282,14 +288,14 @@ theorem truncatedSeries_mul_sub_mem (σ : R →+* S) (D : Derivation A R R) (β 
   exact sum_convolution_sub_mul_mem β N J hβ (fun i => coeff σ D i f)
     (fun i => coeff σ D i g)
 
-private theorem mk_truncatedSeries_one (σ : R →+* S) (D : Derivation A R R) (β : S) (N : ℕ)
+theorem mk_truncatedSeries_one (σ : R →+* S) (D : Derivation A R R) (β : S) (N : ℕ)
     (J : Ideal S) (hN : 1 ≤ N) :
     Ideal.Quotient.mk J (truncatedSeries σ D β N 1) = 1 := by
   have h1 : D 1 = 0 := by simp
   rw [truncatedSeries_of_deriv_eq_zero σ D β N hN 1 h1]
   simp
 
-private theorem mk_truncatedSeries_mul (σ : R →+* S) (D : Derivation A R R) (β : S) (N : ℕ)
+theorem mk_truncatedSeries_mul (σ : R →+* S) (D : Derivation A R R) (β : S) (N : ℕ)
     (J : Ideal S) (hβ : β ^ N ∈ J) (f g : R) :
     Ideal.Quotient.mk J (truncatedSeries σ D β N (f * g)) =
       Ideal.Quotient.mk J (truncatedSeries σ D β N f) *
@@ -302,17 +308,17 @@ private theorem mk_truncatedSeries_mul (σ : R →+* S) (D : Derivation A R R) (
     Ideal.Quotient.eq.mpr h
   rw [h2, map_mul]
 
-private theorem mk_truncatedSeries_zero (σ : R →+* S) (D : Derivation A R R) (β : S) (N : ℕ)
+theorem mk_truncatedSeries_zero (σ : R →+* S) (D : Derivation A R R) (β : S) (N : ℕ)
     (J : Ideal S) :
     Ideal.Quotient.mk J (truncatedSeries σ D β N 0) = 0 := by
   rw [truncatedSeries_zero, map_zero]
 
-private theorem mk_truncatedSeries_add (σ : R →+* S) (D : Derivation A R R) (β : S) (N : ℕ)
+theorem mk_truncatedSeries_add (σ : R →+* S) (D : Derivation A R R) (β : S) (N : ℕ)
     (J : Ideal S) (f g : R) :
     Ideal.Quotient.mk J (truncatedSeries σ D β N (f + g)) =
       Ideal.Quotient.mk J (truncatedSeries σ D β N f) +
         Ideal.Quotient.mk J (truncatedSeries σ D β N g) := by
-  rw [truncatedSeries_add, map_add]
+  rw [truncatedSeries_add, map_add (f := _)]
 
 def truncatedSeriesRingHom (σ : R →+* S) (D : Derivation A R R) (β : S) (N : ℕ) (J : Ideal S)
     (hN : 1 ≤ N) (hβ : β ^ N ∈ J) : R →+* S ⧸ J :=

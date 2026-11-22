@@ -1,6 +1,10 @@
-import Mathlib.Analysis.Normed.Operator.Extend
-import Mathlib.Analysis.InnerProductSpace.Subspace
-import Mathlib.LinearAlgebra.Finsupp.LinearCombination
+module
+
+public import Mathlib.Analysis.Normed.Operator.Extend
+public import Mathlib.Analysis.InnerProductSpace.Subspace
+public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
+
+@[expose] public section
 
 noncomputable section
 

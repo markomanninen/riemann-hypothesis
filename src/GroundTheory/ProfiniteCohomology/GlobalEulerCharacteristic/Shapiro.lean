@@ -1,15 +1,20 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ShapiroRatio
-import GroundTheory.ProfiniteCohomology.RealPlaces.VanishingMackeyTransfer
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ShapiroRatio
+public import GroundTheory.ProfiniteCohomology.RealPlaces.VanishingMackeyTransfer
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory NumberField IsDedekindDomain GroundTheory.Global
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
   {L : FiniteSubfield} [Fact (K ≤ L)]
@@ -22,7 +27,8 @@ theorem exists_gsEulerRatio_coind_eq :
         [IsDiscreteRep B] [Finite B],
         gsEulerRatio S (Rep.coind (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)).subtype B)
             ιr =
-          gsEulerRatio (placesOver S) (Rep.res (gsBaseChange S hL).symm.toMulEquiv.toMonoidHom B) ιrL := by
+          @gsEulerRatio L (placesOver S) (Rep.res (gsBaseChange S hL).symm.toMulEquiv.toMonoidHom B)
+            (IsDiscreteRep.res (continuous_mulEquiv_toMonoidHom (gsBaseChange S hL).symm) B) ιrL := by
   choose mem hmem using realMemberPlace_surjective S ιr hL
   choose ιrL e he using fun w => exists_real_data_of_eq S ιr hL (mem w) w
     ((coe_realMemberPlace S ιr hL (mem w)).symm.trans (congrArg Subtype.val (hmem w)))

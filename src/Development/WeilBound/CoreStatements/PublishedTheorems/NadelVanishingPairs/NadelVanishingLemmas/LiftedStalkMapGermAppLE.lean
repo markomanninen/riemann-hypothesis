@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsLifted
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtCoord
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.ModPSquaredStalkSurjective
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.EtaleCoordinatesFlatLiftStatement
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.LocalRingImageStalkMap
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.ExistsFrobeniusLiftStalk
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.SncChartEquationsDifferUnit
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.FrobeniusLiftUnitTimesCoord
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogLiftPpZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogLiftOfUnitMemMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsLifted
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtCoord
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.ModPSquaredStalkSurjective
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.EtaleCoordinatesFlatLiftStatement
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.LocalRingImageStalkMap
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.ExistsFrobeniusLiftStalk
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.SncChartEquationsDifferUnit
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.FrobeniusLiftUnitTimesCoord
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogLiftPpZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogLiftOfUnitMemMap
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -49,7 +53,7 @@ theorem isLifted_of_sncCharts : ∀ (p : ℕ) [Fact p.Prime] (Y X : Scheme.{0}) 
   refine ⟨Y.presheaf.stalk (π (genericPoint X)), inferInstance, πK, F, hflat, ?_, ?_, ?_⟩
   · intro i z
     obtain ⟨w, hw⟩ := hF1 i z
-    rw [hw, map_add, map_pow, map_mul, map_natCast, hpK, zero_mul, add_zero]
+    rw [hw, map_add (f := _), map_pow, map_mul, map_natCast, hpK, zero_mul, add_zero]
   · intro i l
     exact ⟨_, hlift i l, hF2 i l⟩
   intro y t hyt a ha

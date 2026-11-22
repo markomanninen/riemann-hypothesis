@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassFiniteness.Development
-import Formalism.PeriodIntegrals.HermLatFin
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassFiniteness.Development
+public import Formalism.PeriodIntegrals.HermLatFin
+
+@[expose] public section
 
 noncomputable section
 

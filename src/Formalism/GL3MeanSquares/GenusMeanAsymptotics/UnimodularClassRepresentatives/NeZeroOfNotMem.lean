@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.SpanPowMulLe
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.SpanPowMulLe
+
+@[expose] public section
 
 open NumberField Module
 
@@ -80,18 +84,24 @@ theorem exists_norm (hF : IsFixF K F) (u : 𝓞 K) : ∃ n₀ : 𝓞 F, ι n₀ 
 
 theorem isLocUnif (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F) {𝔭 : Ideal (𝓞 F)}
     (h𝔭 : 𝔭.IsMaximal) [hp : 𝔭.IsPrime] {π₀ s₀ : 𝓞 F} (hu : IsUnif0 𝔭 π₀ s₀) :
-    IsLocUnif (SP K 𝔭) (jK (ι π₀)) where
-  star_mem := fun a ha => InP.conj hF ha
-  mem := jK_mem_SP _
-  fix := star_ι hF _
-  ne := jι_ne_zero hu.ne_zero
-  tr := by
+    IsLocUnif (SP K 𝔭) (jK (ι π₀)) := by
+  refine
+    { star_mem := fun a ha => InP.conj hF ha
+      mem := jK_mem_SP _
+      fix := star_ι hF _
+      ne := jι_ne_zero hu.ne_zero
+      tr := ?tr
+      skew := ?skew
+      dv := ?dv
+      rad := ?rad
+      arch := ?arch }
+  case tr =>
     obtain ⟨z, hz⟩ := exists_add_conj_eq hK hF (1 : 𝓞 F)
     refine ⟨jK z, jK_mem_SP _, ?_⟩
     have := congrArg jK hz
-    rw [map_add, map_one, map_one] at this
+    rw [map_add (f := _), map_one, map_one] at this
     exact this
-  skew := by
+  case skew =>
     obtain ⟨P, hP, -⟩ := exists_maximal_over hK hF h𝔭
     obtain ⟨θ, hθ⟩ := exists_sub_conjO_notMem hK hP
     refine ⟨jK (θ - conjO K θ), jK_mem_SP _, ?_, ?_⟩
@@ -103,7 +113,7 @@ theorem isLocUnif (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsF
       apply hθ
       rw [jK_inj (h.trans (map_zero _).symm)]
       exact zero_mem _
-  dv := by
+  case dv =>
     intro f hf hfix
     obtain ⟨t, ht, z, e⟩ := mem_SP.1 hf
     have hzfix : conjO K z = z := by
@@ -132,27 +142,33 @@ theorem isLocUnif (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsF
       refine mem_SP.2 ⟨z₀, hz, ι t, ?_⟩
       rw [e]
       field_simp
-  rad := by
+  case rad =>
     intro s hs
     obtain ⟨t, ht, z, e⟩ := mem_SP.1 hs
     have ht0 : jK (ι t) ≠ 0 := jι_ne_zero (ne_zero_of_notMem ht)
     obtain ⟨n₀, hn₀⟩ := exists_norm hF (ι t + ι π₀ * z)
     have hn : n₀ ∉ 𝔭 := by
       intro hmem
-      have h1 : ι (n₀ - t * t) ∈ extP K 𝔭 ^ 1 := by
+      have hconj (a : 𝓞 F) : conjO K (ι a) = ι a :=
+        jK_inj (star_ι hF a)
+      have h1 : ι (n₀ - t * t) ∈ extP K 𝔭 := by
         have : ι (n₀ - t * t) = ι π₀ * (z * ι t + ι t * conjO K z + ι π₀ * z * conjO K z) := by
-          rw [map_sub, hn₀, map_add, map_mul (conjO K), conjO_map hF, conjO_map hF, map_mul]
+          rw [map_sub, hn₀, map_add (f := _), map_mul (conjO K), hconj t, hconj π₀, map_mul]
           ring
         rw [this]
-        exact Ideal.mul_mem_right _ _ (ι_mem_pow (by rw [pow_one]; exact hu.mem))
-      rw [mem_pow_iff, pow_one] at h1
+        exact Ideal.mul_mem_right _ _ (Ideal.mem_map_of_mem ι hu.mem)
+      have hdiff : n₀ - t * t ∈ 𝔭 := by
+        have hcomap : (extP K 𝔭).comap ι = 𝔭 :=
+          Ideal.comap_map_eq_self_of_faithfullyFlat 𝔭
+        rw [← hcomap]
+        exact Ideal.mem_comap.mpr h1
       have h2 : t * t ∈ 𝔭 := by
-        have := sub_mem hmem h1
+        have := sub_mem hmem hdiff
         rwa [sub_sub_cancel] at this
       exact (hp.mem_or_mem h2).elim ht ht
     have hn0 : jK (ι n₀) ≠ 0 := jι_ne_zero (ne_zero_of_notMem hn)
     have e1 : jK (ι t) * (1 + jK (ι π₀) * s) = jK (ι t + ι π₀ * z) := by
-      rw [map_add, map_mul, e]
+      rw [map_add (f := _), map_mul, e]
       ring
     have e2 : jK (ι n₀) = jK (ι t + ι π₀ * z) * jK (conjO K (ι t + ι π₀ * z)) := by
       rw [hn₀, map_mul]
@@ -164,7 +180,7 @@ theorem isLocUnif (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsF
     refine ⟨hne, mem_SP.2 ⟨n₀, hn, ι t * conjO K (ι t + ι π₀ * z), ?_⟩⟩
     rw [e2, ← e1, map_mul]
     field_simp
-  arch := by
+  case arch =>
     intro a
     obtain ⟨x, y, hy, rfl⟩ := IsFractionRing.div_surjective (A := 𝓞 K) a
     have hy0 : y ≠ 0 := nonZeroDivisors.ne_zero hy
@@ -183,7 +199,7 @@ theorem isLocUnif (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsF
       exact h𝔭.ne_top
     obtain ⟨𝔟, hb, hnd⟩ := (FiniteMultiplicity.of_not_isUnit hnu hc').exists_eq_pow_mul_and_not_dvd
     rw [Ideal.dvd_iff_le] at hnd
-    obtain ⟨t, ht, ht'⟩ := SetLike.not_le_iff_exists.1 hnd
+    obtain ⟨t, ht, ht'⟩ := IsConcreteLE.not_le_iff_exists.1 hnd
     generalize multiplicity 𝔭 (Ideal.span {n₀}) = l at hb
     refine ⟨l, mem_SP.2 ⟨t, ht', ?_⟩⟩
     have h1 : π₀ ^ l * t ∈ Ideal.span {n₀} := by

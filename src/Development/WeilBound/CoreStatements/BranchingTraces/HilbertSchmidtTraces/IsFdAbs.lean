@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.BranchingTraces.HilbertSchmidtTraces.Unfold
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSchur
+module
+
+public import Development.WeilBound.CoreStatements.BranchingTraces.HilbertSchmidtTraces.Unfold
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSchur
+
+@[expose] public section
 
 open MeasureTheory Matrix Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants Formalism.L2.Theta GlobalTheory.SmVec GlobalTheory.CompanionTheory.UnitaryFramesMetricPeriods
 open scoped InnerProductSpace

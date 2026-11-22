@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GalRigidOfSurjective
-import Development.AbelianVarietyTheory.Definitions.Divisors.MinSt5OfMinSt4
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
-import Development.AbelianVarietyTheory.Definitions.Divisors.TateProductRigidificationTrivial
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueFactorCompletedStalkOfMap
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsRegularLocalRingOfFlatOfMapEqMaximalIdeal
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsRegularLocalRingAdicCompletion
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNoetherianRingAdicCompletionOfNoetherian
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GalRigidOfSurjective
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MinSt5OfMinSt4
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TateProductRigidificationTrivial
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueFactorCompletedStalkOfMap
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsRegularLocalRingOfFlatOfMapEqMaximalIdeal
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsRegularLocalRingAdicCompletion
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNoetherianRingAdicCompletionOfNoetherian
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg GlobalTheory.Poinc GlobalTheory.SiegJoin GlobalTheory.TChart
@@ -69,7 +74,7 @@ theorem exists_complAt_factor_of_isAdicComplete : ∀ (W : Type) [CommRing W] [I
     · have h1 : residue R (c (IsLocalization.mk' L a s)) = residue R r := by
         rw [← hx, ResidueField.map_residue]
       have h2 : r - c (IsLocalization.mk' L a s) ∈ maximalIdeal R := by
-        rw [← residue_eq_zero_iff, map_sub, h1, sub_self]
+        rw [← residue_eq_zero_iff, (residue R).map_sub, h1, sub_self]
       have h3 : c (IsLocalization.mk' L a s) * ψ s = ψ a := by
         show c (IsLocalization.mk' L a s) * c (algebraMap A L s) = c (algebraMap A L a)
         rw [← map_mul, IsLocalization.mk'_spec]
@@ -79,7 +84,7 @@ theorem exists_complAt_factor_of_isAdicComplete : ∀ (W : Type) [CommRing W] [I
       exact Ideal.mul_mem_right _ _ h2
   · haveI : IsLocalHom (θ.comp (algebraMap L R)) := by
       rw [hθ]
-      apply ((IsLocalRing.local_hom_TFAE φ).out 0 2).mpr
+      apply ((IsLocalRing.local_hom_tfae φ).out 1 3).mpr
       simpa using hk
     exact GlobalTheory.isLocalHom_of_extend_adicCompletion hfg θ
   · refine ⟨fun a ha => hC.map_nonunit a ?_⟩

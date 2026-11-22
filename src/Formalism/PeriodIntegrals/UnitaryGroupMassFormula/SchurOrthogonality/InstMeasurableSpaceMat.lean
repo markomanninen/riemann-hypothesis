@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SchurFock
-import Formalism.PeriodIntegrals.HwIrred
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SchurFock
+public import Formalism.PeriodIntegrals.HwIrred
+
+@[expose] public section
 
 noncomputable section
 

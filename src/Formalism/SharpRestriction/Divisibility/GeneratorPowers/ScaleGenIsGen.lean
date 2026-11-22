@@ -1,10 +1,14 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTie
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdJet
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdLB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBCorr
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.HarmonicValueIntegral
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CPfSym
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTie
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdJet
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdLB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBCorr
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.HarmonicValueIntegral
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CPfSym
+
+@[expose] public section
 
 set_option autoImplicit false
 

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.ActUVariableEqPow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.MSpBasis
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.ActUVariableEqPow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.MSpBasis
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.N ValuativeRel IsLocalRing
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil
@@ -63,15 +67,15 @@ private theorem exists_mvPolynomial_action_extending_inc (R B M V : Type) [CommR
         rw [h1, h2]
         simp only [map_smul, map_mul, Module.End.mul_apply, LinearMap.smul_apply]
       | add p q hp hq =>
-        simp only [mul_add, map_add, AddMonoidHom.add_apply, hp, hq]
+        simp only [mul_add, map_add (f := _), AddMonoidHom.add_apply, hp, hq]
     | add p q hp hq =>
-      simp only [map_add, add_mul, AddMonoidHom.add_apply, hp, hq, LinearMap.add_apply]
+      simp only [map_add (f := _), add_mul, AddMonoidHom.add_apply, hp, hq, LinearMap.add_apply]
   · intro b h m
     induction h using MvPolynomial.induction_on' with
     | monomial e c =>
       rw [MvPolynomial.C_mul_monomial, hG, hG, mul_comm, mul_smul]
     | add p q hp hq =>
-      simp only [mul_add, map_add, AddMonoidHom.add_apply, hp, hq]
+      simp only [mul_add, map_add (f := _), AddMonoidHom.add_apply, hp, hq]
 
 theorem UpperTheory.V.Pa.Lev.multiPhi :
     ∀ (R B M V : Type) [CommRing R] [CommRing B] [AddCommGroup M] [Module B M] [AddCommGroup V] [Module R V] (q n : ℕ) (β : R →+* B) (P : Fin q → Polynomial B) (act : PU R q n →ₐ[R] Module.End R V) (inc : M →+ V), (∀ j, (P j).Monic) → (∀ j, (P j).natDegree = n) → (∀ (t : R) m, inc (β t • m) = t • inc m) → (∀ j k, k ≤ n → ∀ m, act (emb ℤ R j (MvPolynomial.esymm (Fin n) ℤ k)) (inc m) = inc (((-1) ^ k * (P j).coeff (n - k)) • m)) → ∃ φ : MSplitAlg P n ⊗[B] M →+ V, (∀ m, φ (1 ⊗ₜ m) = inc m) ∧ ∀ (t : PU R q n) z, φ (Ideal.Quotient.mk (mSplitIdeal P n) (MvPolynomial.map β t) • z) = act t (φ z) := by
@@ -114,9 +118,9 @@ theorem UpperTheory.V.Pa.Lev.multiPhi :
         have hm : MvPolynomial.monomial e b = MvPolynomial.C b * MvPolynomial.map β (MvPolynomial.monomial e 1) := by
           rw [MvPolynomial.map_monomial, map_one, MvPolynomial.C_mul_monomial, mul_one]
         rw [hm, mul_assoc, hC, hL, hgen jk (b • m), map_zero]
-      | add p q hp hq => simp only [add_mul, map_add, AddMonoidHom.add_apply, hp, hq, add_zero]
+      | add p q hp hq => simp only [add_mul, map_add (f := _), AddMonoidHom.add_apply, hp, hq, add_zero]
     | zero => intro a m; simp
-    | add x y _ _ hx hy => intro a m; simp only [mul_add, map_add, AddMonoidHom.add_apply, hx, hy, add_zero]
+    | add x y _ _ hx hy => intro a m; simp only [mul_add, map_add (f := _), AddMonoidHom.add_apply, hx, hy, add_zero]
     | smul c x _ hx => intro a m; rw [smul_eq_mul, ← mul_assoc, hx]
   have hvan : (mSplitIdeal P n).toAddSubgroup ≤ G.ker := by
     intro x hx
@@ -139,4 +143,4 @@ theorem UpperTheory.V.Pa.Lev.multiPhi :
       obtain ⟨f, rfl⟩ := Ideal.Quotient.mk_surjective x
       rw [TensorProduct.smul_tmul', TensorProduct.liftAddHom_tmul, TensorProduct.liftAddHom_tmul, smul_eq_mul,
         ← map_mul, hF, hF, hL]
-    | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, map_add]
+    | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, map_add (f := _)]

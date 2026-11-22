@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.CasselmanSuffTemp
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeSpectralOfStrictExponent
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MatrixCoefficientHeckeDecay
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SquareIntegrableOfHeckeSpectral
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.CasselmanSuffTemp
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeSpectralOfStrictExponent
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MatrixCoefficientHeckeDecay
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SquareIntegrableOfHeckeSpectral
+
+@[expose] public section
 
 open Filter Topology MeasureTheory GlobalTheory GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult ValuativeRel GlobalTheory.CompanionTheory.CoeffBound
 
@@ -204,7 +208,14 @@ theorem rpow_mul_pow_eq {r : ℕ} (q p : ℝ) (e g : Fin r → ℕ) (ρ : Fin r 
     rw [← Finset.prod_pow_eq_pow_sum]
     exact Finset.prod_congr rfl fun j _ => by rw [← pow_mul, mul_comm]
   have h2 : ∏ j, (ρ j ^ p) ^ g j = (∏ j, ρ j ^ g j) ^ p := by
-    rw [← Real.finset_prod_rpow _ _ (fun j _ => pow_nonneg (hρ j) _)]
+    have hprod : ∀ s : Finset (Fin r), (∏ j ∈ s, ρ j ^ g j) ^ p = ∏ j ∈ s, (ρ j ^ g j) ^ p := by
+      intro s
+      induction s using Finset.induction_on with
+      | empty => simp
+      | @insert a s ha ih =>
+        simp only [Finset.prod_insert ha]
+        rw [Real.mul_rpow (pow_nonneg (hρ a) _) (Finset.prod_nonneg fun j _ => pow_nonneg (hρ j) _), ih]
+    rw [hprod]
     exact Finset.prod_congr rfl fun j _ => by
       rw [← Real.rpow_natCast, ← Real.rpow_mul (hρ j), mul_comm, Real.rpow_mul (hρ j), Real.rpow_natCast]
   simp only [mul_pow _ _ (g _)]
@@ -229,15 +240,20 @@ theorem coeffLp_of_heckeWeak (p : ℝ) (hp : 2 < p) : ∀ (k : Type) [Field k] [
     intro g
     obtain ⟨z, hz⟩ := QuotientGroup.mk_out_eq_mul (Subgroup.center (GL (Fin N) k)) g
     rw [hz, Subgroup.mem_center_iff.1 z.2 g, map_mul, Module.End.mul_apply, hcen _ z.2]
-  refine ⟨fun q => ‖l (π q.out v)‖, hF, ?_, ?_⟩
-  · refine Continuous.aestronglyMeasurable ((QuotientGroup.isQuotientMap_mk _).continuous_iff.2 ?_)
+  have hmeas : AEStronglyMeasurable (fun q : AdGL k N => ‖l (π q.out v)‖) μ := by
+    refine Continuous.aestronglyMeasurable ((QuotientGroup.isQuotientMap_mk _).continuous_iff.2 ?_)
     rw [show (fun q : AdGL k N => ‖l (π q.out v)‖) ∘ QuotientGroup.mk = fun g => ‖l (π g v)‖ from funext hF]
     exact ((SqIntBridge.isLocallyConstant_orbit hs v).comp fun w => ‖l w‖).continuous
-  rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (by simpa using (by linarith : 0 < p)) ENNReal.ofReal_ne_top,
+  refine ⟨fun q => ‖l (π q.out v)‖, hF, ?_⟩
+  change eLpNorm (fun q : AdGL k N => ‖l (π q.out v)‖) (ENNReal.ofReal p) μ < ⊤
+  rw [eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top (by simpa using (by linarith : 0 < p)) ENNReal.ofReal_ne_top hmeas,
     ENNReal.toReal_ofReal hp0]
   rcases Nat.eq_zero_or_pos N with rfl | hN
   · have : Subsingleton (GL (Fin 0) k) := inferInstance
-    have h1 : Subsingleton (AdGL k 0) := inferInstance
+    have h1 : Subsingleton (AdGL k 0) := ⟨fun x y => by
+      induction x using Quotient.inductionOn with | _ x =>
+      induction y using Quotient.inductionOn with | _ y =>
+      rw [Subsingleton.elim x y]⟩
     have h2 : μ Set.univ < ⊤ := isCompact_univ.measure_lt_top
     refine lintegral_rpow_lt_top_of_cover hp0 μ _ (fun _ _ : Unit => Set.univ) (fun _ => ⟨(), (), trivial⟩)
       (fun _ _ => ‖l (π (1 : AdGL k 0).out v)‖) (fun _ _ => 1) (fun _ _ => zero_le_one) (fun _ _ => norm_nonneg _) _ h2 ?_ (by simp)

@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOrbitPadicComplex
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousAdicModuleIff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFontaineThetaOnAinfStatement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOrbitPadicComplex
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousAdicModuleIff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFontaineThetaOnAinfStatement
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.MainNotions.LocalSituation GlobalTheory.Cyc
 open Topology Filter
@@ -24,7 +28,7 @@ theorem exists_eq_mul_of_norm_le (z : OC l)
   have h1 : ‖(z : PadicComplex l) / l‖ ≤ 1 := by
     rw [norm_div]; exact div_le_one_of_le₀ hz (norm_nonneg _)
   refine ⟨⟨(z : PadicComplex l) / l, ?_⟩, ?_⟩
-  · rw [PadicComplex.norm_eq_norm, Valued.v.norm_def, PadicComplex.RankOne.hom_eq_embedding,
+  · rw [PadicComplex.norm_eq_norm, Valued.v.norm_def, (show Valuation.RankLeOne.hom' Valued.v = MonoidWithZeroHom.ValueGroup₀.embedding from rfl),
       Valuation.embedding_restrict (PadicComplex.valued l).v] at h1
     refine (Valuation.mem_valuationSubring_iff _ _).2 ?_
     exact_mod_cast h1
@@ -67,7 +71,8 @@ theorem eventually_sub_mem_pow (N : ℕ) (y : Ainf l) :
     (fun i _ => ht ((((_root_.frobeniusEquiv (OCb l) l).symm ^ i) (y.coeff i))))
   filter_upwards [hall] with g hg
   rw [sub_eq_iff_eq_add] at hc
-  rw [hc, map_add, map_mul, map_pow, map_natCast, map_sum, add_sub_add_comm, ← mul_sub,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hc, map_add (f := _), map_mul, map_pow, map_natCast, map_sum, add_sub_add_comm, ← mul_sub,
     ← Finset.sum_sub_distrib]
   refine add_mem (Ideal.mul_mem_right _ _ (Ideal.pow_mem_pow hlI _)) (sum_mem fun i hi => ?_)
   rw [map_mul, map_pow, map_natCast, ← sub_mul]
@@ -113,7 +118,7 @@ theorem eventually_xi (r n : ℕ) :
   have hp : θ p = 0 := by
     have := congrArg θ hpq
     rw [hb2] at this
-    simp only [map_add, map_mul, map_pow, map_natCast, map_sub, hθξ, pow_succ, mul_zero, zero_mul,
+    simp only [map_add (f := _), map_mul, map_pow, map_natCast, map_sub, hθξ, pow_succ, mul_zero, zero_mul,
       add_zero, sub_zero] at this
     have hl : ((l : ℕ) : OC l) ≠ 0 := Nat.cast_ne_zero.2 (Fact.out : l.Prime).ne_zero
     exact (mul_eq_zero.1 this).resolve_right (pow_ne_zero _ hl)
@@ -158,7 +163,7 @@ theorem eventually_actQab (a b : ℤ) (hab : a ≤ b) (r : ℕ) (x : Qab (AinfSu
   rw [map_mul, hz, inclW_act, mul_zpow, ← map_zpow, zpow_add, zpow_natCast, Units.val_mul,
     Units.val_mul, Units.val_pow_eq_pow_val, Algebra.smul_def, map_pow, map_natCast]
   have h3 := congrArg (inclW l) hpq
-  simp only [map_add, map_mul, map_pow, map_natCast, map_sub] at h3
+  simp only [map_add (f := _), map_mul, map_pow, map_natCast, map_sub] at h3
   have e1 : ((xiU AI : (WCb l)ˣ) : WCb l) = inclW l AI.ξ := rfl
   have e2 : ((Units.map (inclW l).toMonoidHom (u ^ a) : (WCb l)ˣ) : WCb l) =
     inclW l ((u ^ a : (Ainf l)ˣ) : Ainf l) := rfl
@@ -272,7 +277,7 @@ theorem eventually_tensor {R G M N : Type} [CommRing R] [AddCommGroup M] [Module
     abel
   | add x x' hx hx' =>
     filter_upwards [hx, hx'] with g ⟨y, e⟩ ⟨y', e'⟩
-    exact ⟨y + y', by rw [map_add, smul_add, ← e, ← e']; abel⟩
+    exact ⟨y + y', by rw [map_add (f := _), smul_add, ← e, ← e']; abel⟩
 
 theorem continuous_repQ {P : LocPrime l} (AI : LocAinf l P) (K LL : FinExt l)
     (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)) (a b : ℤ) (H : Subgroup (GQ l)) (hle : H ≤ GK K)

@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UpqRep
-import Formalism.PeriodIntegrals.PhMeasCore
-import Formalism.FormalDegreeBessel.StatementDS
-import Formalism.RealPlaceAnalysis.StatementE
-import Formalism.RealPlaceAnalysis.Complexify
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UpqRep
+public import Formalism.PeriodIntegrals.PhMeasCore
+public import Formalism.FormalDegreeBessel.StatementDS
+public import Formalism.RealPlaceAnalysis.StatementE
+public import Formalism.RealPlaceAnalysis.Complexify
+
+@[expose] public section
 
 noncomputable section
 

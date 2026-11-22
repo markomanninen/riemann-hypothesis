@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LogPeriodLimit
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsIsChart
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicSublatticeCovolumePositiveStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannLatticeEigenProjectionStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LogPeriodLimit
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsIsChart
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicSublatticeCovolumePositiveStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannLatticeEigenProjectionStatement
+
+@[expose] public section
 
 open NumberField Matrix Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp GroundTheory.Heights₂.Heights.LowerBoundFree GroundTheory.Heights₂.Heights.Regular
 open GlobalTheory.CompanionTheory.Ar.RiemannLimit GlobalTheory.CompanionTheory.Ar.Cusp.BoundaryLimit
@@ -102,10 +106,11 @@ def combo (c : 𝓞 E →₀ ℂ) : ℂ ⊗[ℤ] 𝓞 E := ∑ a ∈ c.support, 
 
 theorem evalHom_combo (c : 𝓞 E →₀ ℂ) (s : E →+* ℂ) :
     evalHom E (combo c) s = ∑ a ∈ c.support, c a * s (algebraMap (𝓞 E) E a) := by
-  simp only [combo, map_sum, Finset.sum_apply, evalHom_tmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [combo, map_sum, Finset.sum_apply, evalHom_tmul]
+
 
 open Classical in
-
 theorem exists_coeff (s : E →+* ℂ) : ∃ c : 𝓞 E →₀ ℂ, evalHom E (combo c) = Pi.single s 1 := by
   have h : (Pi.single s 1 : (E →+* ℂ) → ℂ) ∈ Submodule.span ℂ (Set.range (charVec (E := E))) := by
     rw [span_charVec]
@@ -133,7 +138,8 @@ theorem actHom_tmul (ρ : 𝓞 E →+* Module.End ℂ V) (z : ℂ) (a : 𝓞 E) 
 
 theorem actHom_combo (ρ : 𝓞 E →+* Module.End ℂ V) (c : 𝓞 E →₀ ℂ) (x : V) :
     actHom ρ (combo c) x = ∑ a ∈ c.support, c a • ρ a x := by
-  simp [combo, map_sum, actHom_tmul, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [combo, map_sum, actHom_tmul, LinearMap.sum_apply]
 
 theorem mem_eigSp_iff {ρ : 𝓞 E →+* Module.End ℂ V} {s : 𝓞 E →+* ℂ} {x : V} :
     x ∈ eigSp ρ s ↔ ∀ a, ρ a x = s a • x := by
@@ -149,7 +155,8 @@ theorem eigComp_eq_combination : ∀ (E : Type) [Field E] [NumberField E] (s₀ 
   refine ⟨cs (extEmb s₀), fun V _ _ ρ => ?_⟩
   have hsum : ∑ s, combo (cs s) = 1 := by
     apply evalHom_injective
-    rw [map_sum, map_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_one]
     simp only [hcs]
     funext s'
     simp [Finset.sum_apply, Pi.single_apply]
@@ -166,7 +173,8 @@ theorem eigComp_eq_combination : ∀ (E : Type) [Field E] [NumberField E] (s₀ 
   have hsum' : ∀ x, ∑ s, actHom ρ (combo (cs s)) x = x := by
     intro x
     have h := congrArg (actHom ρ) hsum
-    rw [map_sum, map_one] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_one] at h
     have h2 := LinearMap.congr_fun h x
     simpa [LinearMap.sum_apply] using h2
   have heig : ∀ (s : E →+* ℂ) x, actHom ρ (combo (cs s)) x ∈ eigSp ρ (s.comp (algebraMap (𝓞 E) E)) := by
@@ -216,7 +224,7 @@ theorem eigComp_eq_combination : ∀ (E : Type) [Field E] [NumberField E] (s₀ 
     have h : ∃ p ∈ eigSp ρ s₀, x - p ∈ ⨆ σ' ∈ {σ' : 𝓞 E →+* ℂ | σ' ≠ s₀}, eigSp ρ σ' :=
       ⟨_, (hex x).1, (hex x).2⟩
     unfold eigComp
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     obtain ⟨h1, h2⟩ := h.choose_spec
     have h3 := hz _ h2
     rw [map_sub, hself _ h1, sub_eq_zero] at h3

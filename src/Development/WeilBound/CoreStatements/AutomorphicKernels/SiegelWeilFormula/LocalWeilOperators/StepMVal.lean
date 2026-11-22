@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.StepMB
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.Imports
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.StepMB
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ namespace RD
 
 variable {d : SD σ} (R : RD d) (w : InfinitePlace F)
 
-theorem compFin_det (t : GL (Fin d.n) (AE F E)) (hf : finOne F • t.1 = finOne F • 1) (v : Pl F) :
+theorem compFin_det (t : GL (Fin d.n) (AE F E)) (hf : finOne F • t.1 = finOne F • 1) (v : Pl (F := F)) :
     compFin F E v (t.1.det) = 1 := by
   have hm : t.1.map (compFin F E v) = 1 := by
     ext i j
@@ -45,9 +49,9 @@ theorem det_uW (t : GL (Fin d.n) (AE F E)) (a : Matrix (Fin d.n) (Fin d.n) ℂ) 
   obtain ⟨-, hs2, hs3, -, -⟩ := (Place.exists_sec d.cm d.B.emb).choose_spec
   apply PositivityTheory.ThKG.Tow.Levi.ad_ext d.cm d.B.emb
   · intro w'
-    rw [piInf_det (d := d) w t a ht ho w', SD.uW, map_add, hs2, Place.piInf_finOne, add_zero]
+    rw [piInf_det (d := d) w t a ht ho w', SD.uW, map_add (f := _), hs2, Place.piInf_finOne, add_zero]
   · intro v
-    rw [compFin_det (d := d) t hf v, SD.uW, map_add, ← Place.compFin_finOne v, hs3, map_zero, zero_add,
+    rw [compFin_det (d := d) t hf v, SD.uW, map_add (f := _), ← Place.compFin_finOne v, hs3, map_zero, zero_add,
       Place.compFin_finOne, map_one]
 
 theorem chi_det (t : GL (Fin d.n) (AE F E)) (a : Matrix (Fin d.n) (Fin d.n) ℂ) (ht : d.cw w t.1 = a)
@@ -58,7 +62,7 @@ theorem chi_det (t : GL (Fin d.n) (AE F E)) (a : Matrix (Fin d.n) (Fin d.n) ℂ)
     rw [← e]
     exact (Matrix.GeneralLinearGroup.det t).isUnit.map (RingHom.id _) |>.map (RingHom.id _) |> fun h => by
       simpa [Matrix.GeneralLinearGroup.val_det_apply] using h
-  rw [SD.chiW, dif_pos hu]
+  rw [SD.chiW, dite_eq_left hu]
   have : hu.unit = Matrix.GeneralLinearGroup.det t :=
     Units.ext (by rw [IsUnit.unit_spec, Matrix.GeneralLinearGroup.val_det_apply, e])
   rw [this]

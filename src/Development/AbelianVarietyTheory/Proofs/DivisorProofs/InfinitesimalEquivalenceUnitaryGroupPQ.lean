@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IsIrrKSubOfIsKTypeOf
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IsAdmissibleSubOfFiniteDimensional
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DifferentiableAtOrbit
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntertwinerOfKFiniteVectors
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GlRelationsOnKFiniteVectors
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothVectorsUnitaryRepStableConjSkewAdjoint
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HarishChandraModulesIndefiniteUnitaryGroup
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Closure
-import Formalism.LocalToGlobal.IndefiniteReal.SmExpSmulContDiff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IsIrrKSubOfIsKTypeOf
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IsAdmissibleSubOfFiniteDimensional
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DifferentiableAtOrbit
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntertwinerOfKFiniteVectors
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GlRelationsOnKFiniteVectors
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothVectorsUnitaryRepStableConjSkewAdjoint
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HarishChandraModulesIndefiniteUnitaryGroup
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Closure
+public import Formalism.LocalToGlobal.IndefiniteReal.SmExpSmulContDiff
+
+@[expose] public section
 
 section
 
@@ -156,7 +160,7 @@ theorem vAct_decomp (hρ : Formalism.QuantumDeterminants.IsCRepOn (UJset ε) ρ)
     (X : Matrix (Fin n) (Fin n) ℂ) :
     vAct hρ hV X = vAct hρ hV (cre ε X) + Complex.I • vAct hρ hV (cim ε X) := by
   conv_lhs => rw [← cre_add_cim (ε := ε) X]
-  rw [map_add, map_smul]
+  rw [map_add (f := _), map_smul]
 
 theorem vAct_bracket_of_mem (hρ : Formalism.QuantumDeterminants.IsCRepOn (UJset ε) ρ) (hV : IsGKSub ε ρ V)
     {X Y : Matrix (Fin n) (Fin n) ℂ} (hX : X ∈ lieSet ε) (hY : Y ∈ lieSet ε) :
@@ -180,7 +184,7 @@ theorem vAct_bracket (hρ : Formalism.QuantumDeterminants.IsCRepOn (UJset ε) ρ
     module
   have h := hm (cre ε X) (cim ε X) (cre ε Y) (cim ε Y)
   rw [cre_add_cim, cre_add_cim] at h
-  rw [h, map_sub, map_add, map_add, map_smul, map_smul, vAct_bracket_of_mem hρ hV (cre_mem X) (cre_mem Y),
+  rw [h, map_sub, map_add (f := _), map_add (f := _), map_smul, map_smul, vAct_bracket_of_mem hρ hV (cre_mem X) (cre_mem Y),
     vAct_bracket_of_mem hρ hV (cre_mem X) (cim_mem Y), vAct_bracket_of_mem hρ hV (cim_mem X) (cre_mem Y),
     vAct_bracket_of_mem hρ hV (cim_mem X) (cim_mem Y), vAct_decomp hρ hV X, vAct_decomp hρ hV Y]
   simp only [add_mul, mul_add, smul_mul_assoc, mul_smul_comm, smul_smul, Complex.I_mul_I, neg_one_smul,
@@ -196,7 +200,8 @@ theorem actM_vE (hρ : Formalism.QuantumDeterminants.IsCRepOn (UJset ε) ρ) (hV
     ext i j
     simp [Matrix.sum_apply, single_apply, ite_and, Finset.sum_ite_eq, Finset.sum_ite_eq']
   conv_rhs => rw [hX]
-  simp only [map_sum, map_smul, ReciprocityTheory.ChartRestriction.DS.actM, vE]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, ReciprocityTheory.ChartRestriction.DS.actM, vE]
 
 theorem isGlRep_vE (hρ : Formalism.QuantumDeterminants.IsCRepOn (UJset ε) ρ) (hV : IsGKSub ε ρ V) :
     ReciprocityTheory.ChartRestriction.DS.IsGlRep (vE hρ hV) := by
@@ -353,7 +358,8 @@ theorem vAct_conj_etr (hρ : Formalism.QuantumDeterminants.IsCRepOn (UJset ε) �
       fun a b => ∑ c, ∑ d, (P c a * P⁻¹ b d) • vAct hρ hV (single c d 1) := by
     funext a b
     rw [conj_single]
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
   rw [this]
   exact GlobalTheory.T.gelfandTrace_conj_invertible_scalarMatrix (fun a b => vAct hρ hV (single a b 1)) P hP k
 
@@ -391,7 +397,7 @@ theorem vIso_kStable (Λ : Fin n → ℝ) : IsKStableOn ε ρ (vIso ε ρ V Λ) 
     exact le_sSup (s := {S : Submodule ℂ H | S ≤ V ∧ IsKTypeOf ε ρ Λ S}) S.2 (S.2.2.2.1 k hk x hx)
   · simp
   · intro x y hx hy
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hx hy
 
 theorem casimir_mem_vIso (hρ : Formalism.QuantumDeterminants.IsCRepOn (UJset ε) ρ) (hV : IsGKSub ε ρ V) (Λ : Fin n → ℝ)
@@ -448,7 +454,7 @@ theorem rep_mem_closure_of_vIso [CompleteSpace H] (hU : IsURepOn (UJset ε) ρ) 
     have hy : y ∈ ⨆ μ, Module.End.eigenspace T μ := by rw [htop]; trivial
     refine Submodule.iSup_induction _ (motive := fun y : A' => ρ g ((y : V) : H) ∈ V.topologicalClosure) hy
       (fun μ z hz => ?_) (by simp) (fun a b ha hb => by
-        simpa only [Submodule.coe_add, map_add] using add_mem ha hb)
+        simpa only [Submodule.coe_add, map_add (f := _)] using add_mem ha hb)
     by_cases hz0 : z = 0
     · simp [hz0]
     have hreal : (starRingEnd ℂ) μ = μ :=
@@ -596,7 +602,7 @@ theorem form_prop [Nontrivial H₁] (hU₁ : IsURepOn (UJset ε) σ₁) (hI₁ :
     intro w hw
     have hd := GlobalTheory.KFinDual.decomp n ε H₁ σ₁ hUK₁ (kType_exists hU₁) w hw
     refine Submodule.iSup_induction _ (motive := fun w => ⟪T y, T w⟫_ℂ = (c : ℂ) * ⟪(y : H₁), w⟫_ℂ) hd
-      (fun Λ z hz => ?_) (by simp) (fun a b ha hb => by simp only [map_add, inner_add_right, ha, hb]; ring)
+      (fun Λ z hz => ?_) (by simp) (fun a b ha hb => by simp only [map_add (f := _), inner_add_right, ha, hb]; ring)
     by_cases hΛ : Λ = Λ₀
     · subst hΛ
       have h1 := hP y ⟨z, hz⟩
@@ -611,7 +617,7 @@ theorem form_prop [Nontrivial H₁] (hU₁ : IsURepOn (UJset ε) σ₁) (hI₁ :
   let R : Submodule ℂ H₁ :=
     { carrier := {x | IsKFin ε σ₁ x ∧ ∀ w, IsKFin ε σ₁ w → ⟪T x, T w⟫_ℂ = (c : ℂ) * ⟪x, w⟫_ℂ}
       add_mem' := fun {a b} ha hb => ⟨(kFinVec ε σ₁).add_mem ha.1 hb.1, fun w hw => by
-        simp only [map_add, inner_add_left, ha.2 w hw, hb.2 w hw]; ring⟩
+        simp only [map_add (f := _), inner_add_left, ha.2 w hw, hb.2 w hw]; ring⟩
       zero_mem' := ⟨(kFinVec ε σ₁).zero_mem, fun w _ => by simp⟩
       smul_mem' := fun r a ha => ⟨(kFinVec ε σ₁).smul_mem r ha.1, fun w hw => by
         simp only [map_smul, inner_smul_left, ha.2 w hw]; ring⟩ }
@@ -696,7 +702,7 @@ theorem infinitesimalEquivalence_unitaryGroupPQ : GlobalTheory.Published.Infinit
         exact he.2 X hX v _ (vAct_of_mem hρ₁ hG₁ hX v))
     intro Y v
     rw [vAct_decomp hρ₁ hG₁ Y, vAct_decomp hρ₂ hG₂ Y]
-    simp only [LinearMap.add_apply, LinearMap.smul_apply, map_add, map_smul, hX _ (cre_mem Y), hX _ (cim_mem Y)]
+    simp only [LinearMap.add_apply, LinearMap.smul_apply, map_add (f := _), map_smul, hX _ (cre_mem Y), hX _ (cim_mem Y)]
 
   obtain ⟨cs, hcs⟩ := GlobalTheory.HcPort.casimirActsByScalar_indefUnitary n ε H₁ σ₁ hU₁ hI₁
   have hsm := (CompanionTheory.D.gk.HC.K_finite_smooth_vectors n ε H₁ σ₁ hU₁ hI₁).1

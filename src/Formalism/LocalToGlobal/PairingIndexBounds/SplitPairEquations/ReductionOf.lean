@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.CharacterFactorUnitaryAction
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.CharacterFactorUnitaryAction
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.BasicNotions Classical

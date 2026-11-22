@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IMemSiegel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IMemSiegel
+
+@[expose] public section
+
 open Matrix Complex GlobalTheory.SW
 open scoped ComplexConjugate Real
 
@@ -154,7 +159,7 @@ theorem haar_eq_haarAt : ∀ (K κ ι : Type) [Field K] [NumberField K] [Fintype
   intro K κ ι _ _ _ _ R φ hR h
   refine ⟨?_, HaarLevel.finite_support hR h⟩
   have hs : IsSB φ := ⟨R, hR, h⟩
-  rw [haar, dif_pos hs, ← HaarLevel.haarAt_mul hR h hs.choose_spec.1,
+  rw [haar, dite_eq_left hs, ← HaarLevel.haarAt_mul hR h hs.choose_spec.1,
     ← HaarLevel.haarAt_mul hs.choose_spec.1 hs.choose_spec.2 hR, mul_comm]
 
 end GlobalTheory.SW

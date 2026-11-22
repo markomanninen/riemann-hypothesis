@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KernelsMatrix
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGauss
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KernelsMatrix
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGauss
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

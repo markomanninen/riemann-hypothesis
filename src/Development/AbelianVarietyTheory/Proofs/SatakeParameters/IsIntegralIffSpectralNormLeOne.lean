@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasNormGroups
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsParahoricTypeVectorAtConjugatePlace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasNormGroups
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsParahoricTypeVectorAtConjugatePlace
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ValuativeRel Matrix Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocDict
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -69,7 +74,7 @@ theorem isIntegral_map (f : v.adicCompletion K →+* v'.adicCompletion F) (hf : 
 theorem valued_le_one_of_isIntegral {x : v'.adicCompletion F}
     (hx : IsIntegral (v'.adicCompletionIntegers F) (algebraMap (v'.adicCompletion F) (Kbar v') x)) :
     Valued.v x ≤ 1 := by
-  rw [isIntegral_algebraMap_iff (algebraMap (v'.adicCompletion F) (Kbar v')).injective] at hx
+  rw [isIntegral_algebraMap_iff ] at hx
   obtain ⟨y, rfl⟩ := IsIntegrallyClosed.isIntegral_iff.1 hx
   exact (HeightOneSpectrum.mem_adicCompletionIntegers _ _ _).1 y.2
 

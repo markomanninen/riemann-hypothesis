@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FiniteMinimalPrimes
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChPrime
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.StalkLocA
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FiniteMinimalPrimes
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChPrime
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.StalkLocA
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Cmp.SncRes.Kreg
 

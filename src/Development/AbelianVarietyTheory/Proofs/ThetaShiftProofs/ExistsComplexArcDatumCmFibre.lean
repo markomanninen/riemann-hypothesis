@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.PrimAn
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ConstOfNormPeriodic
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsArcInTraceArc
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsInverseUnitTower
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.FamilyUniformisationFibreTheta
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.RosatiAdjIffLamEq
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.RingActIffOAct
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsPullback
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsOfCmTriplePullback
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsHolUnifReparam
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DeterminantConditionOfDiagonalCMAction
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsPELObjectOfPrimitivePeriodMapUniformised
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.HasGenPull
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.TripleProductTorusPeriodicBounded
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsSymmetricIffExistsGen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.PrimAn
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ConstOfNormPeriodic
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsArcInTraceArc
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsInverseUnitTower
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.FamilyUniformisationFibreTheta
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.RosatiAdjIffLamEq
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.RingActIffOAct
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsPullback
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsOfCmTriplePullback
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsHolUnifReparam
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DeterminantConditionOfDiagonalCMAction
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsPELObjectOfPrimitivePeriodMapUniformised
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.HasGenPull
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.TripleProductTorusPeriodicBounded
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsSymmetricIffExistsGen
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -24,8 +28,8 @@ noncomputable section
 
 namespace GlobalTheory.ArcCM.CxFibre
 
-open ReciprocityTheory.ChartRestriction.G.DVR in
 
+open ReciprocityTheory.ChartRestriction.G.DVR in
 theorem exists_primGen {S : Scheme.{0}} {G : Over S} [GrpObj G] [IsCommMonObj G] (L : RigLB G) (f : G ⟶ G) [IsMonHom f]
     (h : LBIso L.L (cubeLB G ![𝟙 G, f] L.L)) :
     ∃ w : LB.Gen (LB.LinComb L.L (K := Fin 4)
@@ -145,8 +149,8 @@ theorem lieMult_card (unif : ThetaUnifAV) {E : Type} [Field E] [NumberField E] (
   exact Nat.card_congr (Equiv.subtypeEquivRight fun i =>
     ⟨fun e => by rw [e], fun e => IsLocalization.ringHom_ext (nonZeroDivisors (𝓞 E)) e⟩)
 
-open FibreUnif in
 
+open FibreUnif in
 theorem exists_holUnif_of_exp (hT : ThetaUnifAV) {S : Scheme.{0}} {G : Over S} [GrpObj G] {L₀ : LB G.left}
     (hL₀ : L₀.IsLB) (t : Sp ℂ ⟶ S) (P : Out.PolAV (Sp ℂ)) (rig : LB.Gen (P.L.pull (eSec P.A))) (hrig : rig.IsGen)
     (φ : P.A.left ⟶ G.left) (hp : IsGrpPullback P.A G t φ) (hiso : LBIso P.L (L₀.pull φ)) {g : ℕ}
@@ -226,7 +230,7 @@ theorem exists_holUnif_of_exp (hT : ThetaUnifAV) {S : Scheme.{0}} {G : Over S} [
     Submodule.ext hΛ, ⟨herm, pos, fun l => hAH.2.2.1 _, fun l i z hz => ?_⟩, fun j hj => ?_, fun j θ hθ => ?_, hex⟩
   · have := hAH.2.2.2 ⟨F l, l.2⟩ i (F z) hz
     change u.fr i (F z) / 1 = _ * Complex.exp (_ * hermForm Hm z l + _ * hermForm Hm l l) * (u.fr i (F (z + l)) / 1)
-    rw [div_one, div_one, map_add, ← hH, ← hH]
+    rw [div_one, div_one, map_add (f := _), ← hH, ← hH]
     exact this
   · change u.fr _ (F 0) / 1 = _
     rw [map_zero, div_one]
@@ -237,7 +241,7 @@ theorem exists_holUnif_of_exp (hT : ThetaUnifAV) {S : Scheme.{0}} {G : Over S} [
         have a : ∀ v, F (T.symm v) = v := T.apply_symm_apply
         simp only [← hH, a] at h
         beta_reduce
-        rw [map_add]
+        rw [map_add (f := _)]
         exact h⟩
     refine ⟨s, fun i z hz => ?_⟩
     have := hs i (T z) hz

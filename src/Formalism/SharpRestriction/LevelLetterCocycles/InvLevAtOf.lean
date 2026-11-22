@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.KillWinFromCut
-import Formalism.SharpRestriction.LevelLetterCocycles.GenOfKiller
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.KillWinFromCut
+public import Formalism.SharpRestriction.LevelLetterCocycles.GenOfKiller
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,11 +45,11 @@ theorem denI_upd (H : ℕ → ℕ) (e s : ℕ) (hs : s < e) (x : ℤ) :
 theorem aev_fixed (P : Polynomial O) : ∀ z : W.EE, W.γE W.gam z = z → aev P z = P.eval 1 • z := by
   induction P using Polynomial.induction_on with
   | C c => intro z _; simp [Polynomial.aeval_C, Module.algebraMap_end_apply]
-  | add p q hp hq => intro z hz; rw [map_add, LinearMap.add_apply, hp z hz, hq z hz,
+  | add p q hp hq => intro z hz; rw [map_add (f := _), LinearMap.add_apply, hp z hz, hq z hz,
       Polynomial.eval_add, add_smul]
   | monomial k c ih =>
     intro z hz
-    rw [pow_succ, ← mul_assoc, Polynomial.aeval_mul, Module.End.mul_apply, Polynomial.aeval_X,
+    rw [pow_succ, ← mul_assoc, Polynomial.aeval_mul, mul_apply_eq_comp, Polynomial.aeval_X,
       AlgHom.toLinearMap_apply, hz, ih z hz]
     simp
 
@@ -130,7 +134,7 @@ theorem lev_const (hKL : KillerLevCore W) (hS : PsStable W)
   rw [hupd1] at h₂
   have hγG : W.γE W.gam Gg - Gg = aev (Polynomial.X ^ (PD.p ^ ell) - 1 : Polynomial O) y₂ := by
     rw [← mul_geom_sum, aeval_mul_apply, ← hSg, ← hGg, map_sub, LinearMap.sub_apply,
-      Polynomial.aeval_X, map_one, AlgHom.toLinearMap_apply, Module.End.one_apply]
+      Polynomial.aeval_X, map_one, AlgHom.toLinearMap_apply, one_apply_eq_self]
   rw [← hγG] at h₂
 
   have hT : s ∉ (Finset.range ell).erase s := by simp

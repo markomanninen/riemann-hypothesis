@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -42,7 +46,7 @@ theorem UpperTheory.V.Alg.der_hom :
               map_add' := ?_
               map_smul' := ?_ }, ?_, rfl⟩
     · intro f g
-      simp only [hD, map_add, TrivSqZeroExt.snd_add]
+      simp only [hD, map_add (f := _), TrivSqZeroExt.snd_add]
     · intro r f
       simp only [hD, map_smul, TrivSqZeroExt.snd_smul, RingHom.id_apply]
     · show ∀ f g : A, _ = _

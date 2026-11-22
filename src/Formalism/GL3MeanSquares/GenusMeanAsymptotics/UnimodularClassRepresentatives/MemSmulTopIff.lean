@@ -1,8 +1,12 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ApplyMemSmulOfMemAutSub
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CardQuotInfNeZero
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsIsomCongr
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsLatticeVdLeOne
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsIntegralAtLocF
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ApplyMemSmulOfMemAutSub
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CardQuotInfNeZero
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsIsomCongr
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsLatticeVdLeOne
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsIntegralAtLocF
+
+@[expose] public section
 
 open NumberField Module Filter
 
@@ -220,7 +224,7 @@ theorem cnt_tube_mul (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : 
 
 theorem cnt_tube_refine (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F)
     {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hd : IsTotPosDef h) {A₀ : Submodule (𝓞 K) V}
-    (hA₀ : Submodule.IsLattice K A₀) (hA₀i : Formalism.HermitianLatticesTheory.IsIntegralLat h A₀) {𝔭 : Ideal (𝓞 F)}
+    (hA₀ : Submodule.IsFullLattice K A₀) (hA₀i : Formalism.HermitianLatticesTheory.IsIntegralLat h A₀) {𝔭 : Ideal (𝓞 F)}
     (h𝔭 : 𝔭.IsMaximal) {n : 𝓞 F} (hn : n ≠ 0) {x : V} (hxA : x ∈ locF 𝔭 A₀)
     (hx : h x x = algebraMap F K (n : F))
     {J : ℕ} (hJ : 4 * vF 𝔭 n + eA h (locF 𝔭 A₀) 𝔭 + 1 ≤ J)
@@ -241,7 +245,7 @@ theorem cnt_tube_refine (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF
     have h1 : x' - c x ∈ ((extP K 𝔭) ^ J • A : Submodule (𝓞 K) V) := by
       have := add_mem (pow_smul_anti 𝔭 A (show J ≤ k - c₀ by omega) hx'y) hyc
       rwa [sub_add_sub_cancel] at this
-    obtain ⟨γ, hγ1, hγ2, hγ3⟩ := exists_isom_congr hK hF hs hd hA₀ hA₀i h𝔭 hn
+    obtain ⟨γ, hγ1, hγ2, hγ3⟩ := exists_isom_congr hK hF hs hd hA₀.toIsLattice hA₀i h𝔭 hn
       (DA.apply_mem hcA.2 hxA) hx'A (by rw [hcA.1, hx]) hx' hJ h1
     refine ⟨γ * c, mul_mem (hΓ γ hγ1 hγ2) hc, ?_⟩
     rw [LinearEquiv.mul_apply, hγ3, ← neg_sub]
@@ -254,8 +258,8 @@ theorem cnt_tube_refine (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF
 
 theorem pair (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F)
     {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hd : IsTotPosDef h)
-    {M₁ M₂ : Submodule (𝓞 K) V} (hM₁ : Submodule.IsLattice K M₁)
-    (hM₁i : Formalism.HermitianLatticesTheory.IsIntegralLat h M₁) (hM₂ : Submodule.IsLattice K M₂)
+    {M₁ M₂ : Submodule (𝓞 K) V} (hM₁ : Submodule.IsFullLattice K M₁)
+    (hM₁i : Formalism.HermitianLatticesTheory.IsIntegralLat h M₁) (hM₂ : Submodule.IsFullLattice K M₂)
     (hM₂i : Formalism.HermitianLatticesTheory.IsIntegralLat h M₂) {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {n : 𝓞 F}
     (hn : n ≠ 0) {x : V} (hx : h x x = algebraMap F K (n : F)) (hx₁ : x ∈ locF 𝔭 M₁)
     (hx₂ : x ∈ locF 𝔭 M₂) :
@@ -272,10 +276,12 @@ theorem pair (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K
   set A₂ := locF 𝔭 M₂ with hA₂
   set C := autSub h A₁ ⊓ autSub h A₂ with hC
   set B := A₁ ⊓ A₂ with hB
-  obtain ⟨j₁, hj₁⟩ := exists_congr_mem_autSub h hM₁ hM₂ h𝔭
-  obtain ⟨j₂, hj₂⟩ := exists_congr_mem_autSub h hM₂ hM₁ h𝔭
-  obtain ⟨r₁, hr₁⟩ := exists_pow_smul_le hM₁ hM₂ h𝔭
-  obtain ⟨r₂, hr₂⟩ := exists_pow_smul_le hM₂ hM₁ h𝔭
+  obtain ⟨j₁, hj₁⟩ :=
+    exists_congr_mem_autSub h (M₁ := M₁) (M₂ := M₂) inferInstance inferInstance h𝔭
+  obtain ⟨j₂, hj₂⟩ :=
+    exists_congr_mem_autSub h (M₁ := M₂) (M₂ := M₁) inferInstance inferInstance h𝔭
+  obtain ⟨r₁, hr₁⟩ := exists_pow_smul_le (M₁ := M₁) (M₂ := M₂) inferInstance inferInstance h𝔭
+  obtain ⟨r₂, hr₂⟩ := exists_pow_smul_le (M₁ := M₂) (M₂ := M₁) inferInstance inferInstance h𝔭
   have hr₁' : ((extP K 𝔭) ^ r₁ • A₁ : Submodule (𝓞 K) V) ≤ B := le_inf Submodule.smul_le_right hr₁
   have hr₂' : ((extP K 𝔭) ^ r₂ • A₂ : Submodule (𝓞 K) V) ≤ B := le_inf hr₂ Submodule.smul_le_right
   have hlA₁ : locF 𝔭 A₁ = A₁ := LocalizedFibreSets.locF_idem 𝔭 M₁
@@ -301,9 +307,9 @@ theorem pair (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K
     cnt_tube_refine hK hF hs hd hM₂ hM₂i h𝔭 hn hx₂ hx (J := J) hJ₂
       (C := C) inf_le_right hΓ₂ (B := B) inf_le_right hr₂' (le_refl J),
     eventually_ge_atTop (J + r₁ + r₂)] with k hk₁ hk₂ hk
-  have m₁ := cnt_tube_mul hK hF hs hd hM₁ hM₁i h𝔭 hn hx₁ hx (J := J) (k := k) hJ₁ (by omega)
+  have m₁ := cnt_tube_mul hK hF hs hd hM₁.toIsLattice hM₁i h𝔭 hn hx₁ hx (J := J) (k := k) hJ₁ (by omega)
     (C := C) inf_le_left hΓ₁
-  have m₂ := cnt_tube_mul hK hF hs hd hM₂ hM₂i h𝔭 hn hx₂ hx (J := J) (k := k) hJ₂ (by omega)
+  have m₂ := cnt_tube_mul hK hF hs hd hM₂.toIsLattice hM₂i h𝔭 hn hx₂ hx (J := J) (k := k) hJ₂ (by omega)
     (C := C) inf_le_right hΓ₂
   rw [← hA₁] at m₁ hk₁
   rw [← hA₂] at m₂ hk₂
@@ -328,13 +334,14 @@ theorem pair (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K
   have hle : ∀ (A : Submodule (𝓞 K) V) (r : ℕ), ((extP K 𝔭) ^ r • A : Submodule (𝓞 K) V) ≤ B →
       r ≤ k → ((extP K 𝔭) ^ k • A : Submodule (𝓞 K) V) ≤ B :=
     fun A r hr hrk => (pow_smul_anti 𝔭 A hrk).trans hr
-  have hfinB := finite_quot_inf hM₁ hM₂ h𝔭 k
+  have hfinB := finite_quot_inf hM₁.toIsLattice hM₂.toIsLattice h𝔭 k
   have s₁ := cnt_sub hF (h := h) h𝔭 hlA₁ hlB (GoodPrimeTerms.isIntegralAt_locF h𝔭.isPrime hF hM₁i) inf_le_left
     (hle A₁ r₁ hr₁' (by omega)) hfinB n hΩB (hst A₁ r₁ hr₁' (by omega))
   have s₂ := cnt_sub hF (h := h) h𝔭 hlA₂ hlB (GoodPrimeTerms.isIntegralAt_locF h𝔭.isPrime hF hM₂i) inf_le_right
     (hle A₂ r₂ hr₂' (by omega)) hfinB n hΩB (hst A₂ r₂ hr₂' (by omega))
-  have i0 := card_quot_inf_ne_zero hM₁ hM₂ h𝔭
-  have im := card_quot_inf_mul hK hF hs hd hM₁ hM₁i hM₂ hM₂i h𝔭
+  have i0 := card_quot_inf_ne_zero (M₁ := M₁) (M₂ := M₂) inferInstance inferInstance h𝔭
+  have im := card_quot_inf_mul hK hF hs hd (M₁ := M₁) (M₂ := M₂)
+    inferInstance hM₁i inferInstance hM₂i h𝔭
   rw [← hA₁, ← hA₂, ← hB] at i0 im
   have hq : Ideal.absNorm 𝔭 ≠ 0 := (reductionMapsOfForms.absNorm_pos h𝔭).ne'
 

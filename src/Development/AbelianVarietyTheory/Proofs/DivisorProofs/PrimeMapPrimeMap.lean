@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CountSpanSingletonRingEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CountSpanSingletonRingEquiv
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 open scoped nonZeroDivisors
 

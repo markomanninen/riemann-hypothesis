@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitsPatch
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitsPatch
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.CechPic GlobalTheory.AbDual GlobalTheory.DualCon
 open scoped CategoryTheory.Obj
@@ -27,12 +32,14 @@ theorem exists_mvPolynomial_lift_of_mem_conductor :
   rw [MvPolynomial.mem_map_C_iff] at hG
   choose y hy hyG using fun m => key _ (hG m)
   refine ⟨∑ m ∈ G.support, MvPolynomial.monomial m (y m), ?_, ?_⟩
-  · rw [map_sum]
-    refine Finset.sum_eq_zero fun m _ => ?_
-    rw [MvPolynomial.map_monomial, Ideal.Quotient.eq_zero_iff_mem.mpr (hy m), map_zero]
-  · rw [map_sum]
-    conv_rhs => rw [G.as_sum]
-    refine Finset.sum_congr rfl fun m _ => ?_
-    rw [MvPolynomial.map_monomial, hyG]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum]
+      refine Finset.sum_eq_zero fun m _ => ?_
+      rw [MvPolynomial.map_monomial, Ideal.Quotient.eq_zero_iff_mem.mpr (hy m), map_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum]
+      conv_rhs => rw [G.as_sum]
+      refine Finset.sum_congr rfl fun m _ => ?_
+      rw [MvPolynomial.map_monomial, hyG]
 
 end GlobalTheory

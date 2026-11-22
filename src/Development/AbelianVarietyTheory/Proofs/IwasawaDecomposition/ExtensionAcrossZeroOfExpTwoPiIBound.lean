@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Metric Filter Topology Set
 
 namespace GlobalTheory.PuncturedDiscExtension
@@ -100,8 +105,8 @@ end GlobalTheory.PuncturedDiscExtension
 
 namespace GlobalTheory
 
-open GlobalTheory.PuncturedDiscExtension in
 
+open GlobalTheory.PuncturedDiscExtension in
 theorem holomorphic_extension_of_exp_two_pi_I_bound :
     ∀ (H : ℂ → ℂ) (r C : ℝ) (N : ℕ), 0 < r →
       DifferentiableOn ℂ H (Metric.ball (0 : ℂ) r \ {0}) →

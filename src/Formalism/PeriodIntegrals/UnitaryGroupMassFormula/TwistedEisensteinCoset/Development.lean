@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.TwistedEisensteinNonvanishing
+module
+
+public import Formalism.PeriodIntegrals.TwistedEisensteinNonvanishing
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -53,12 +57,12 @@ def JLawP : Prop :=
     (Ideal.absNorm P.asIdeal).Prime → ((Ideal.absNorm P.asIdeal : ℕ) : 𝓞 E) ∉ P.asIdeal ^ 2 →
     ∀ (ξ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) (k₀ r c' n' c n kj : ℕ), r = kj + c → k₀ ≤ kj → kj ≤ n → r ≤ n' + c' → k₀ ≤ n' →
     ∀ κ ∈ JQ P (qOf P) kj n c, ∃ lam : K, lam ≠ 0 ∧ ∀ y : HomE E (n' + c') (n + c),
-      PhiQ (qOf P) ξ k₀ r c' n' c n (κ.symm.toLinearMap ∘ₗ y) = lam * PhiQ (qOf P) ξ k₀ r c' n' c n y
+      PhiQ (q := qOf P) (ξ := ξ) k₀ r c' n' c n (κ.symm.toLinearMap ∘ₗ y) = lam * PhiQ (q := qOf P) (ξ := ξ) k₀ r c' n' c n y
 
 def MuNeP : Prop :=
   ∀ (E K : Type) [Field E] [NumberField E] [StarRing E] [Field K] (P : HeightOneSpectrum (𝓞 E)),
     (Ideal.absNorm P.asIdeal).Prime → ((Ideal.absNorm P.asIdeal : ℕ) : 𝓞 E) ∉ P.asIdeal ^ 2 →
-    ∀ (cq : K) (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ), cq ≠ 0 → ∀ a : E, a ≠ 0 → locChar (qOf P) cq χ a ≠ 0
+    ∀ (cq : K) (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ), cq ≠ 0 → ∀ a : E, a ≠ 0 → locChar (P := P) (q := qOf P) cq χ a ≠ 0
 
 def OmStepP : Prop :=
   ∀ (E K : Type) [Field E] [NumberField E] [StarRing E] [Field K] (P : HeightOneSpectrum (𝓞 E)),
@@ -67,14 +71,14 @@ def OmStepP : Prop :=
     ∀ (ξ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) (k₀ r c' n' c n kj : ℕ), r = kj + c → k₀ ≤ kj → kj ≤ n → r ≤ n' + c' → k₀ ≤ n' →
     ∀ (g₀ : (Fin (n' + c') → E) ≃ₗ[E] (Fin (n' + c') → E)) (h ρ κ : (Fin (n + c) → E) ≃ₗ[E] (Fin (n + c) → E)),
       κ ∈ JQ P (qOf P) kj n c → ∃ C : K, C ≠ 0 ∧ ∀ x : HomE E (n' + c') (n + c),
-        om (locChar (qOf P) cq ξ⁻¹) (vP P (qOf P)) sq g₀ (ρ * h * κ) (PhiQ (qOf P) ξ k₀ r c' n' c n) x =
-          C * om (locChar (qOf P) cq ξ⁻¹) (vP P (qOf P)) sq g₀ h (PhiQ (qOf P) ξ k₀ r c' n' c n)
+        om (locChar (P := P) (q := qOf P) cq ξ⁻¹) (vP P (qOf P)) sq g₀ (ρ * h * κ) (PhiQ (q := qOf P) (ξ := ξ) k₀ r c' n' c n) x =
+          C * om (locChar (P := P) (q := qOf P) cq ξ⁻¹) (vP P (qOf P)) sq g₀ h (PhiQ (q := qOf P) (ξ := ξ) k₀ r c' n' c n)
             ((ρ⁻¹).toLinearMap ∘ₗ x)
 
 def PhiSuppP : Prop :=
   ∀ (E K : Type) [Field E] [NumberField E] [StarRing E] [Field K] (P : HeightOneSpectrum (𝓞 E)) (q : ℕ)
     (ξ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) (k₀ r c' n' c n : ℕ), k₀ ≤ n → k₀ ≤ n' →
-    ∀ y : HomE E (n' + c') (n + c), PhiQ q ξ k₀ r c' n' c n y ≠ 0 →
+    ∀ y : HomE E (n' + c') (n + c), PhiQ (q := q) (ξ := ξ) k₀ r c' n' c n y ≠ 0 →
       ∀ (s : ℕ) (l : Fin (n + c)), IntAt P (y (eN E (n' + c') s) l)
 
 def PhiPerP : Prop :=
@@ -82,7 +86,7 @@ def PhiPerP : Prop :=
     (Ideal.absNorm P.asIdeal).Prime → ((Ideal.absNorm P.asIdeal : ℕ) : 𝓞 E) ∉ P.asIdeal ^ 2 →
     ∀ (ξ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) (k₀ r c' n' c n : ℕ) (y ε : HomE E (n' + c') (n + c)),
       (∀ (s : ℕ) (l : Fin (n + c)), IntAt P (ε (eN E (n' + c') s) l / (qOf P : E))) →
-      PhiQ (qOf P) ξ k₀ r c' n' c n (y + ε) = PhiQ (qOf P) ξ k₀ r c' n' c n y
+      PhiQ (q := qOf P) (ξ := ξ) k₀ r c' n' c n (y + ε) = PhiQ (q := qOf P) (ξ := ξ) k₀ r c' n' c n y
 
 def BddEntP : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [StarRing E] (P : HeightOneSpectrum (𝓞 E)) (R : Ranks) (j : ℕ)

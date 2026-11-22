@@ -1,6 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.ExistsUniformizerOrd
-import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohCmpA
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.FinalPtfsUnif
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.FinalPtfsKummer
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.FinalPtfsChi
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.FinalPtfsHasse
+public import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohCmpA
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +61,8 @@ theorem d_comp_homF (rho : Representation R G M) (A : Rep.{0} k G) (e : M →+ A
     (he : ∀ g m, e (rho g m) = A.ρ g (e m)) (n : ℕ) (f : (Fin n → G) → M) :
     (inhomogeneousCochains.d A n).hom (fun s => e (f s)) = fun s => e (dn rho n f s) := by
   funext s
-  rw [inhomogeneousCochains.d_hom_apply, dn_app, map_add, map_sum, he]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [inhomogeneousCochains.d_hom_apply, dn_app, map_add (f := _), map_sum, he]
   congr 1
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [neg_one_pow_smul' (S := k), neg_one_pow_smul' (S := R), map_zsmul]
@@ -64,7 +72,7 @@ end Cochains
 theorem urChar_mulF {K Ω : Type} [Field K] [ValuativeRel K] [TopologicalSpace K]
     [IsNonarchimedeanLocalField K] [Field Ω] [Algebra K Ω] [HasUnramifiedRoots K Ω] (N : ℕ+)
     (σ τ : Gal(Ω/K)) : urChar K Ω N (σ * τ) = urChar K Ω N σ + urChar K Ω N τ := by
-  simp only [urChar, map_mul, toAdd_mul, map_add]
+  simp only [urChar, map_mul, toAdd_mul, map_add (f := _)]
 
 theorem urChar_isLocallyConstant {K Ω : Type} [Field K] [ValuativeRel K] [TopologicalSpace K]
     [IsNonarchimedeanLocalField K] [Field Ω] [Algebra K Ω] [HasUnramifiedRoots K Ω] (N : ℕ+) :

@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.RealArchimedeanBounds.ATrans
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.RealArchimedeanBounds.ATrans
+
+@[expose] public section
 
 noncomputable section
 
@@ -115,7 +119,7 @@ private theorem exists_height_lower_bound (hMem : AMem) (hMono : AMono) (hRow : 
   have harch : (1 / ((N : ℝ) ^ 2 * C)) ^ Fintype.card (InfinitePlace F) ≤ ∏ v, |(z v).1.im| /
       ‖((mkDat c χ).σ v (((N : F) • s0) 0) : ℂ) * (z v).1 + ((mkDat c χ).σ v (((N : F) • s0) 1) : ℂ)‖ ^ 2 := by
     rw [← Finset.card_univ, ← Finset.prod_const]
-    exact Finset.prod_le_prod (fun _ _ => by positivity) fun v _ => arch_le hN hC hs0 (z v).2 (hb v)
+    exact Finset.prod_le_prod₀ (fun _ _ => by positivity) fun v _ => arch_le hN hC hs0 (z v).2 (hb v)
   have hm := mul_le_mul harch hfin ha.le (Finset.prod_nonneg fun _ _ => by positivity)
   unfold Dat.Ht
   change _ ≤ _ * (absF (Matrix.GeneralLinearGroup.det x) / nF ((N : F) • s0) x ^ 2)

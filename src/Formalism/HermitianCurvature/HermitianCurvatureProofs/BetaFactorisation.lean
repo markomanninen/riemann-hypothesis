@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementSz
+module
+
+public import Formalism.HermitianCurvature.StatementSz
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 
@@ -272,7 +276,7 @@ theorem nodeBound : NodeBound := by
     exact s1.trans s2
   simp only [Cfg.Nd, Cfg.prodb]
   calc ∏ j ∈ Icc 1 c.m, Real.sqrt ((c.b j + y) * (c.b j + y - 1))
-      ≤ ∏ j ∈ Icc 1 c.m, (c.b j * E) := prod_le_prod (fun _ _ => Real.sqrt_nonneg _) hterm
+      ≤ ∏ j ∈ Icc 1 c.m, (c.b j * E) := prod_le_prod₀ (fun _ _ => Real.sqrt_nonneg _) hterm
     _ = (∏ j ∈ Icc 1 c.m, c.b j) * E ^ c.m := by
         rw [prod_mul_distrib, prod_const, Nat.card_Icc]; simp
     _ = Real.exp c.vth * ∏ j ∈ Icc 1 c.m, c.b j := by
@@ -475,7 +479,7 @@ theorem Sz6.positionsBefore_of (H1 : PositionBefore) (H2 : ProdOneAddTwoDivLeSqr
   have hk4 : (4:ℝ) ≤ c.k := by exact_mod_cast h.hk
   have step1 : ∏ i ∈ Ico 1 l, c.rho de de' (-Y) i ≤
       ∏ i ∈ Ico 1 l, (fun j : ℕ => (1 + 2 / (4 * (j : ℝ) - 1))) (l - i) := by
-    apply prod_le_prod
+    apply Finset.prod_le_prod₀
     · intro i hi
       rw [mem_Ico] at hi
       have hnt : ¬ (c.top = true ∧ i + 1 = c.k) := by rintro ⟨_, h2⟩; omega

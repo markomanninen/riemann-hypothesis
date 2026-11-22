@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.HalfOneAddSqrtNegIsIntegral
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.HalfOneAddSqrtNegIsIntegral
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,7 @@ theorem hT_lat_mem (D : D7) (j : ℕ) {v w : (D.sp.W j).V} (hv : v ∈ latW D j)
       rw [← algebraMap_smul D.host.E c w, map_smul, smul_eq_mul, ← Algebra.smul_def]
       exact Submodule.smul_mem _ c h
   | zero => simp
-  | add v v' _ _ h h' => rw [map_add, LinearMap.add_apply]; exact add_mem (h hw) (h' hw)
+  | add v v' _ _ h h' => rw [map_add (f := _), LinearMap.add_apply]; exact add_mem (h hw) (h' hw)
   | smul c v _ h =>
     rw [← algebraMap_smul D.host.E c v, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul]
     have hc : (starRingEnd D.host.E) (algebraMap (𝓞 D.host.E) D.host.E c) =
@@ -154,27 +158,29 @@ theorem dual_eq (hP : Formalism.BasicNotions.FactPrincipalDatum) (D : D7) :
 
 theorem exists_smul_mem_base_lattice (D : D7) (j : ℕ) (v : (D.sp.W j).V) :
     ∃ t ∈ nonZeroDivisors (𝓞 D.host.E), t • v ∈ (D.sp.W j).L0 := by
-  have hv : v ∈ Submodule.span D.host.E ((D.sp.W j).L0 : Set (D.sp.W j).V) := by
-    rw [(D.sp.W j).standardTuple_isLattice.span_eq_top]; trivial
-  induction hv using Submodule.span_induction with
-  | mem v hv => exact ⟨1, one_mem _, by rw [one_smul]; exact hv⟩
-  | zero => exact ⟨1, one_mem _, by rw [smul_zero]; exact zero_mem _⟩
-  | add v w _ _ hv hw =>
-    obtain ⟨s, hs, hsv⟩ := hv
-    obtain ⟨t, ht, htw⟩ := hw
-    refine ⟨s * t, mul_mem hs ht, ?_⟩
-    rw [smul_add, mul_comm s t, mul_smul, mul_comm t s, mul_smul]
-    exact add_mem ((D.sp.W j).L0.smul_mem t hsv) ((D.sp.W j).L0.smul_mem s htw)
-  | smul e v _ hv =>
-    obtain ⟨s, hs, hsv⟩ := hv
-    obtain ⟨⟨c, t⟩, hct⟩ := IsLocalization.surj (nonZeroDivisors (𝓞 D.host.E)) e
-    refine ⟨(t : 𝓞 D.host.E) * s, mul_mem t.2 hs, ?_⟩
-    have : ((t : 𝓞 D.host.E) * s) • (e • v) = c • (s • v) := by
-      rw [← algebraMap_smul D.host.E ((t : 𝓞 D.host.E) * s), ← algebraMap_smul D.host.E c, smul_smul,
-        ← algebraMap_smul D.host.E s, smul_smul, map_mul, ← hct]
-      congr 1; ring
-    rw [this]
-    exact (D.sp.W j).L0.smul_mem c hsv
+  classical
+  obtain ⟨s, hs⟩ := (D.sp.W j).standardTuple_isLattice.fg
+  obtain ⟨n, hn, hint⟩ := exists_integral_multiples ℤ ℚ (s.image fun x => (D.sp.W j).hT x v)
+  refine ⟨(n : 𝓞 D.host.E), mem_nonZeroDivisors_of_ne_zero (Int.cast_ne_zero.mpr hn), ?_⟩
+  rw [Int.cast_smul_eq_zsmul, ← (D.sp.W j).baseLattice_isUnimodular]
+  simp only [Formalism.HermitianLatticesTheory.dual, Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap]
+  intro x hx
+  rw [← hs] at hx
+  show (D.sp.W j).hT x (n • v) ∈ (1 : Submodule (𝓞 D.host.E) D.host.E)
+  induction hx using Submodule.span_induction with
+  | mem x hx =>
+    rw [map_zsmul]
+    exact Submodule.mem_one.2 ⟨⟨_, hint _ (Finset.mem_image_of_mem _ hx)⟩, rfl⟩
+  | zero => simp
+  | add x y _ _ hx hy =>
+    rw [map_add, LinearMap.add_apply]
+    exact add_mem hx hy
+  | smul c x _ hx =>
+    rw [← algebraMap_smul D.host.E c x, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul]
+    have hc : (starRingEnd D.host.E) (algebraMap (𝓞 D.host.E) D.host.E c) =
+        algebraMap (𝓞 D.host.E) D.host.E (barE D c) := (barE_eq_star D c).symm
+    rw [hc, ← Algebra.smul_def]
+    exact Submodule.smul_mem _ _ hx
 
 theorem trace_sep (D : D7) {w : D.host.E}
     (h : ∀ c : 𝓞 D.host.E, Algebra.trace ℚ D.host.E (w * algebraMap (𝓞 D.host.E) D.host.E c) = 0) : w = 0 := by
@@ -199,20 +205,22 @@ theorem trace_rep (D : D7) (g : 𝓞 D.host.E →ₗ[ℤ] ℤ) : ∃ z : D.host.
   have hj : ∀ k, Algebra.trace ℚ D.host.E ((∑ i, ((g (RingOfIntegers.basis D.host.E i) : ℤ) : ℚ) • db i) *
       algebraMap (𝓞 D.host.E) D.host.E (RingOfIntegers.basis D.host.E k)) = g (RingOfIntegers.basis D.host.E k) := by
     intro k
-    rw [← integralBasis_apply, Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← integralBasis_apply, Finset.sum_mul, map_sum]
     simp_rw [smul_mul_assoc, map_smul, key]
     simp
   intro c
   conv_lhs => rw [← (RingOfIntegers.basis D.host.E).sum_repr c]
   conv_rhs => rw [← (RingOfIntegers.basis D.host.E).sum_repr c]
-  simp only [map_sum, map_zsmul, Finset.mul_sum, mul_smul_comm, hj, Int.cast_sum, smul_eq_mul, Int.cast_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_zsmul, Finset.mul_sum, mul_smul_comm, hj, Int.cast_sum, smul_eq_mul, Int.cast_mul]
   simp only [zsmul_eq_mul]
 
 theorem riesz {E : Type} [Field E] [NumberField E] [StarRing E] (S : Formalism.BasicNotions.HSpace E) (l : S.V →ₗ[E] E) :
     ∃ x, ∀ v, S.hT x v = l v := by
   let T : S.V →ₗ[E] (Fin S.rank → E) :=
     { toFun := fun x i => star (S.hT x (S.frame i))
-      map_add' := by intro x y; ext i; simp [map_add, star_add]
+      map_add' := by intro x y; ext i; simp [map_add (f := _), star_add]
       map_smul' := by
         intro e x; ext i
         simp [LinearMap.map_smulₛₗ, star_mul', starRingEnd_apply, star_star] }
@@ -263,12 +271,13 @@ theorem int_exists_smul_mem_latW (hP : Formalism.BasicNotions.FactPrincipalDatum
   exact Submodule.subset_span ⟨_, hαA, _, htv, rfl⟩
 
 theorem isLoc (hP : Formalism.BasicNotions.FactPrincipalDatum) (D : D7) (j : ℕ) :
-    IsLocalizedModule (nonZeroDivisors (𝓞 D.host.E)) (latW D j).subtype where
-  map_units s := isUnit_end s
-  surj v := by
+    IsLocalizedModule (nonZeroDivisors (𝓞 D.host.E)) (latW D j).subtype := by
+  refine ⟨fun s => isUnit_end s, ?_, ?_⟩
+  · intro v
     obtain ⟨s, hs, hsv⟩ := int_exists_smul_mem_latW hP D j v
     exact ⟨(⟨_, hsv⟩, ⟨s, hs⟩), rfl⟩
-  exists_of_eq h := ⟨1, by rw [one_smul, one_smul]; exact Subtype.ext h⟩
+  · intro x y h
+    exact ⟨1, by rw [one_smul, one_smul]; exact Subtype.ext h⟩
 
 def zOf (D : D7) (j : ℕ) (f : latW D j →ₗ[ℤ] ℤ) (y : latW D j) : D.host.E :=
   (trace_rep D (f.comp ((LinearMap.toSpanSingleton (𝓞 D.host.E) (latW D j) y).restrictScalars ℤ))).choose
@@ -281,7 +290,7 @@ def phiOf (D : D7) (j : ℕ) (f : latW D j →ₗ[ℤ] ℤ) : latW D j →ₗ[�
   toFun := zOf D j f
   map_add' y y' := by
     have := trace_sep D (w := zOf D j f (y + y') - (zOf D j f y + zOf D j f y')) (fun c => by
-      rw [sub_mul, add_mul, map_sub, map_add, zOf_spec, zOf_spec, zOf_spec, smul_add, map_add]
+      rw [sub_mul, add_mul, map_sub, map_add (f := _), zOf_spec, zOf_spec, zOf_spec, smul_add, map_add (f := _)]
       push_cast; ring)
     exact sub_eq_zero.1 this
   map_smul' c' y := by

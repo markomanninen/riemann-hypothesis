@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.SmoothDesignExistence.DesignExistsDes
-import Formalism.SharpRestriction.AdmissibleParameterJoins.SumLogPrimeFactorsLe
-import Development.AutomorphicArithmetic.CharacterBoxes.DivinNOfHypV
+module
+
+public import Formalism.SharpRestriction.SmoothDesignExistence.DesignExistsDes
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.SumLogPrimeFactorsLe
+public import Development.AutomorphicArithmetic.CharacterBoxes.DivinNOfHypV
+
+@[expose] public section
 
 noncomputable section
 

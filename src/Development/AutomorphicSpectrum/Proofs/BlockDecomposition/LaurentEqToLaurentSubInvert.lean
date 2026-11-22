@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRingHomPowPrimePow
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PfFacts
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRingHomPowPrimePow
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PfFacts
+
+@[expose] public section
+
 open TensorProduct CrystallineSemistableComparison.D
 open scoped LaurentPolynomial
 
@@ -15,7 +20,7 @@ theorem laurent_eq_toLaurent_sub_invert {K : Type} [CommRing K] (h : K[T;T⁻¹]
     obtain ⟨α₁, β₁, rfl⟩ := hf
     obtain ⟨α₂, β₂, rfl⟩ := hg
     refine ⟨α₁ + α₂, β₁ + β₂, ?_⟩
-    simp only [map_add]
+    simp only [map_add (f := _)]
     ring
   | C_mul_T n a =>
     rcases le_total 0 n with hn | hn

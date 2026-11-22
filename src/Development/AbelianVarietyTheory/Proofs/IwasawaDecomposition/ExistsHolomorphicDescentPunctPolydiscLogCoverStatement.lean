@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHolomorphicDescentPunctPolydiscLogCover
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHolomorphicDescentPunctPolydiscLogCover
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero
+
+@[expose] public section
+
 open GlobalTheory.ShFam.Hor
 
 set_option maxHeartbeats 1000000 in

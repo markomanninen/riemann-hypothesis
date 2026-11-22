@@ -1,6 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsStepVecOfIff
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittHyperbolicRankZeroProjMulEmb
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.SiegelEisenstein.DoubledUnramifiedFrames
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceLocalGroupElementsJacobiBessel
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittHyperbolicRankZeroProjMulEmb
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +21,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke.AppendedVectorData (lastPair lastKe
 open GlobalTheory.IndefiniteRowSideFullHecke.UnramifiedLocalFrameSequences (IsFockOver StepsAll vec atW IsMoved InAt InvOnUnits IsBesFrame IsJacFrame FrameMapsPrefix jacLat ptBF ptFB)
 open scoped TensorProduct Pointwise
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
-open GlobalTheory.RouteCompare
 open GlobalTheory.Mem.Isom
 
 namespace GlobalTheory.OverTgt
@@ -68,18 +74,9 @@ theorem mul_mem_latO {S T T' : HSp D} {LS : Set (Fin S.rank → D.host.E)} {LT :
   | add z z' _ _ hz hz' => rw [Matrix.mul_add]; exact add_mem hz hz'
   | neg z _ hz => rw [Matrix.mul_neg]; exact neg_mem hz
 
-theorem isHalf_mul {m n l : ℕ} {e : AE D} (M : Mx D m l) {u : Mx D l n} (h : IsHalf e u) : IsHalf e (HMul.hMul M u) := by
-  intro i j
-  simp only [Matrix.mul_apply, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun k _ => ?_
-  rw [mul_left_comm, h k j]
-
 section Isometry
 
 variable {V V' : HSp D} (I : IsoMat V V') (S : HSp D)
-
-def conjOp (Tm : (WO S V → ℂ) →ₗ[ℂ] (WO S V → ℂ)) : (WO S V' → ℂ) →ₗ[ℂ] (WO S V' → ℂ) :=
-  LinearMap.funLeft ℂ ℂ (I.phi S).symm ∘ₗ Tm ∘ₗ LinearMap.funLeft ℂ ℂ (I.phi S)
 
 variable {Λ : AddSubgroup (WO S V)} {Λ' : AddSubgroup (WO S V')} (hΛ : ∀ u, u ∈ Λ ↔ I.phi S u ∈ Λ')
 include hΛ

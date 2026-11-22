@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BlockParabolicUnitriangularSubgroupsGLnPrimeFielStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BlockParabolicUnitriangularSubgroupsGLnPrimeFielStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -459,7 +463,7 @@ private theorem entN_tl' {k n : ℕ} (M : Mt g n) (a b : ℕ) :
     entN (tl k M) a b = if a < k ∧ b < k then entN M a b else 0 := by
   by_cases hh : a < k ∧ b < k
   · rw [if_pos hh, entN_tl M hh.1 hh.2]
-  · rw [if_neg hh, entN, dif_neg hh]
+  · rw [if_neg hh, entN, dite_eq_right hh]
 
 private theorem entN_last_of_inMir {k : ℕ} {M : Mt g (k + 1)} (hM : InMir M) (b : ℕ) :
     entN M k b = if b = k then 1 else 0 := by
@@ -491,7 +495,7 @@ theorem inR_iff_tl {i k : ℕ} (hi : i ≤ k) {M : Mt g (k + 1)} (hM : InMir M) 
         rwa [if_pos ⟨hh, by omega⟩] at this
       · subst hh
         rw [entN_last_of_inMir hM, if_neg (by omega)]
-      · rw [entN, dif_neg (by omega)]
+      · rw [entN, dite_eq_right (by omega)]
     · rcases lt_or_eq_of_le (Nat.lt_succ_iff.1 ha) with hh | hh
       · have h2 := hB a b hb hh
         refine ⟨fun hba => ?_, fun hab => ?_⟩

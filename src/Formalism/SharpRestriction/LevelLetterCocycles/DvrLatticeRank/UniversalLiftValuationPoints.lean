@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.Imports
-import Formalism.SharpRestriction.LevelLetterCocycles.DdRFull
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.U1r2Basis
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.Imports
+public import Formalism.SharpRestriction.LevelLetterCocycles.DdRFull
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.U1r2Basis
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.WMultA
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsMulMemOfAlgebraMapLocRingEqZero
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.WMultA
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsMulMemOfAlgebraMapLocRingEqZero
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory ReciprocityTheory.AnForm.R
 

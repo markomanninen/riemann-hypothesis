@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SubClosed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SubClosed
+
+@[expose] public section
 
 open GlobalTheory.SeqCx Matrix
 
@@ -12,7 +16,7 @@ theorem bd_mapDomain {V W : Type} (e : V → W) (c : List V →₀ ℤ) :
     apply Finsupp.lhom_ext
     intro l n
     simp [bd, Finsupp.linearCombination_single, Finsupp.mapDomain_single, Finset.smul_sum,
-      Finsupp.mapDomain_finset_sum, Finsupp.mapDomain_smul, List.eraseIdx_map,
+      Finsupp.mapDomain_finsetSum, Finsupp.mapDomain_smul, List.eraseIdx_map,
       ← Finsupp.single_mul]
   exact LinearMap.congr_fun key c
 

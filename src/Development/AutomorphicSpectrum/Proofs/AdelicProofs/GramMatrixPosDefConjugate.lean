@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
-import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.StatementsBundles
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.GramMat
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
+public import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.StatementsBundles
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.GramMat
+
+@[expose] public section
+
 open NumberField TensorProduct GroundTheory.Heights₂.Heights GlobalTheory.CompanionTheory.Ar.Lines Matrix
 open scoped ComplexOrder nonZeroDivisors
 
@@ -50,13 +55,15 @@ private theorem linear_independent_one_tmul {L : Type} [Field L] [NumberField L]
   set T : ComplexAt σ ⊗[𝓞 L] (Fin i →₀ 𝓞 L) :=
     ∑ b, (ComplexAt.ofComplex σ (g b)) ⊗ₜ[𝓞 L] Finsupp.single b (1 : 𝓞 L) with hT
   have hT0 : LinearMap.lTensor (ComplexAt σ) (Finsupp.linearCombination (𝓞 L) f) T = 0 := by
-    rw [hT, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hT, map_sum]
     simp only [LinearMap.lTensor_tmul, Finsupp.linearCombination_single, one_smul]
     exact hg
   have hT1 : T = 0 := hinj (hT0.trans (map_zero _).symm)
   have h3 := congrArg (fun t => TensorProduct.rid (𝓞 L) (ComplexAt σ)
     (LinearMap.lTensor (ComplexAt σ) (Finsupp.lapply a) t)) hT1
-  simp only [hT, map_sum, LinearMap.lTensor_tmul, Finsupp.lapply_apply, TensorProduct.rid_tmul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hT, map_sum, LinearMap.lTensor_tmul, Finsupp.lapply_apply, TensorProduct.rid_tmul,
     Finsupp.single_apply, map_zero, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq',
     Finset.sum_ite_eq, Finset.mem_univ, if_true] at h3
   exact (ComplexAt.ofComplex σ).injective (h3.trans (map_zero _).symm)

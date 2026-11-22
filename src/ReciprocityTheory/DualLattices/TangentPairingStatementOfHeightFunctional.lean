@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.TotalFibreMapTotalFibreNsmulSnd
+module
+
+public import ReciprocityTheory.DualLattices.TotalFibreMapTotalFibreNsmulSnd
+
+@[expose] public section
 
 noncomputable section
 

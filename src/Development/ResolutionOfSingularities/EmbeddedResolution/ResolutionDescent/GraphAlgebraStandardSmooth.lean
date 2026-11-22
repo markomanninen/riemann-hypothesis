@@ -1,5 +1,9 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.GraphAlgebra
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.GraphAlgebra
+
+@[expose] public section
 
 universe u
 

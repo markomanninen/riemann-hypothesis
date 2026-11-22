@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PointsNonemptyUnitaryRankOne
-import GroundTheory.Brauer.TensorSimple
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointsNonemptyUnitaryRankOne
+public import GroundTheory.Brauer.TensorSimple
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount GlobalTheory.LKCx
 open scoped TensorProduct Classical
 
@@ -13,7 +18,7 @@ open Matrix NumberField in
 open scoped TensorProduct Classical in
 variable {p : ℕ} [Fact p.Prime] in
 private theorem mem_span_infinitePlace_embedding (K : Type) [Field K] [NumberField K]
-    [IsTotallyComplex K] (w : InfinitePlace K → ℂ) :
+    [_root_.NumberField.IsTotallyComplex K] (w : InfinitePlace K → ℂ) :
     w ∈ Submodule.span ℝ (Set.range fun (f : K) (u : InfinitePlace K) => u.embedding f) := by
   have hc : ∀ u : InfinitePlace K, u.IsComplex := fun u => IsTotallyComplex.isComplex u
   let P : mixedEmbedding.mixedSpace K →ₗ[ℝ] (InfinitePlace K → ℂ) :=
@@ -92,13 +97,13 @@ private theorem mem_span_range_psi {p : ℕ} [Fact p.Prime] (G : _root_.GlobalTh
     rw [hφ]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨c, rfl⟩)
   | add x y hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ hx hy
+
 
 open Matrix NumberField in
 open scoped TensorProduct Classical in
 variable {p : ℕ} [Fact p.Prime] in
-
 theorem _root_.GlobalTheory.CoordArch.coord_bound : ∀ (p : ℕ) [Fact p.Prime] (G : _root_.GlobalTheory.LKTrip.HTGroup p), ∃ R : ℝ, ∀ (c : G.C) (i : Fin (Module.finrank ℚ G.C)),
     |((Module.finBasis ℚ G.C).repr c i : ℝ)| ≤ R * ∑ w : InfinitePlace G.F, ∑ a : Fin G.n, ∑ b : Fin G.n, ‖G.psi w c a b‖ := by
   intro p _ G
@@ -111,7 +116,8 @@ theorem _root_.GlobalTheory.CoordArch.coord_bound : ∀ (p : ℕ) [Fact p.Prime]
     intro c
     funext u a b
     have h := congrArg (fun x => G.psi u x a b) (B.sum_repr c)
-    simp only [map_sum, Matrix.sum_apply, map_rat_smul] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Matrix.sum_apply, map_rat_smul] at h
     simp only [L, Φ, Fintype.linearCombination_apply, Finset.sum_apply, Matrix.sum_apply]
     rw [← h]
     refine Finset.sum_congr rfl fun i _ => ?_
@@ -138,8 +144,7 @@ theorem _root_.GlobalTheory.CoordArch.coord_bound : ∀ (p : ℕ) [Fact p.Prime]
     | smul r x _ hx =>
       convert Submodule.smul_mem _ r hx using 1
       funext u
-      simp only [Pi.smul_apply]
-      exact smul_assoc _ _ _
+      simpa only [Pi.smul_apply] using (smul_assoc r (x u) (G.psi u c))
   have hspan : ∀ y : InfinitePlace G.F → Matrix (Fin G.n) (Fin G.n) ℂ,
       y ∈ Submodule.span ℝ (Set.range Φ) := by
     intro y

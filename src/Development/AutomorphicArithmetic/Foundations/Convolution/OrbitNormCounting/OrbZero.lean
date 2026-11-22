@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.OrbitNormCounting.NormCount
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.OrbitNormCounting.NormCount
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC GlobalTheory.BCT

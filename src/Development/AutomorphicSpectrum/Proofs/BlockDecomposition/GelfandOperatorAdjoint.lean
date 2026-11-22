@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EpowTSucc
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EpowTSucc
+
+@[expose] public section
 
 noncomputable section
 
@@ -116,9 +120,9 @@ theorem ibp_Epow (hL : LgFacts) (hR : RCalc) (s : Bool) (m : ℕ) (a b : Fin n) 
       intro y
       rw [EpowT_succ' hR (!s) m a b hh (val_mem y), Finset.sum_apply, inner_sum]
     simp_rw [e1, e2]
-    rw [integral_finset_sum _ fun c _ => int_inner μ hL (sm_Eu hR s a c (sm_Epow hR s m c b hf)) hh
+    rw [MeasureTheory.integral_finsetSum _ fun c _ => int_inner μ hL (sm_Eu hR s a c (sm_Epow hR s m c b hf)) hh
         (Cpt_Eu hL s a c (Cpt_Epow hL s m c b cf)),
-      integral_finset_sum _ fun c _ => int_inner μ hL hf
+      MeasureTheory.integral_finsetSum _ fun c _ => int_inner μ hL hf
         (sm_EpowT hR (!s) m b c (sm_Eu hR (!s) a c hh)) cf,
       Finset.mul_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
@@ -143,9 +147,9 @@ theorem ibp_gel : LgFacts → RCalc → ∀ (n : ℕ) [MeasurableSpace (G n)] [B
     intro y
     simp only [gelT, Finset.sum_apply, inner_sum]
   simp_rw [e1, e2]
-  rw [integral_finset_sum _ fun a _ => int_inner μ hL (sm_Epow hR s m a a hf) hh
+  rw [MeasureTheory.integral_finsetSum _ fun a _ => int_inner μ hL (sm_Epow hR s m a a hf) hh
       (Cpt_Epow hL s m a a cf),
-    integral_finset_sum _ fun a _ => int_inner μ hL hf (sm_EpowT hR (!s) m a a hh) cf,
+    MeasureTheory.integral_finsetSum _ fun a _ => int_inner μ hL hf (sm_EpowT hR (!s) m a a hh) cf,
     Finset.mul_sum]
   exact Finset.sum_congr rfl fun a _ => ibp_Epow μ hL hR s m a a hf hh cf ch
 

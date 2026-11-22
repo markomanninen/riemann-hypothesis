@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRulesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRulesStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
 open scoped TensorProduct
@@ -41,7 +46,7 @@ theorem exists_fg_lTensor (x : A ⊗[S] B) :
     obtain ⟨J₂, fg₂, y₂, rfl⟩ := ih₂
     refine ⟨J₁ ⊔ J₂, fg₁.sup fg₂, LinearMap.lTensor A (Submodule.inclusion le_sup_left) y₁ +
       LinearMap.lTensor A (Submodule.inclusion le_sup_right) y₂, ?_⟩
-    rw [map_add, ← LinearMap.lTensor_comp_apply, ← LinearMap.lTensor_comp_apply]
+    rw [map_add (f := _), ← LinearMap.lTensor_comp_apply, ← LinearMap.lTensor_comp_apply]
     rfl
 
 theorem rTensor_comm_eq {Y : Type*} [AddCommGroup Y] [Module S Y] (g : B →ₗ[S] Y) (x : A ⊗[S] B) :
@@ -50,7 +55,7 @@ theorem rTensor_comm_eq {Y : Type*} [AddCommGroup Y] [Module S Y] (g : B →ₗ[
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem fg_lTensor_eq_zero {J : Submodule S D} (hJ : J.FG) {t : A ⊗[S] J}
     (h : LinearMap.lTensor A J.subtype t = 0) :
@@ -81,7 +86,7 @@ theorem surj
   | tmul c q =>
     exact locMono (hs U q) fun V g ⟨x, hx⟩ => ⟨(C.map g.op).hom c ⊗ₜ x, by simp [hx]⟩
   | add a b ha hb =>
-    exact locMono (locAnd ha hb) fun V g ⟨⟨x, hx⟩, ⟨x', hx'⟩⟩ => ⟨x + x', by simp [map_add, hx, hx']⟩
+    exact locMono (locAnd ha hb) fun V g ⟨⟨x, hx⟩, ⟨x', hx'⟩⟩ => ⟨x + x', by simp [map_add (f := _), hx, hx']⟩
 
 theorem kerPart
     (hi : ∀ (U : Scheme.{0}) (x : P.obj (op U)), (φ.app (op U)).hom x = 0 → Loc U fun _ g => (P.map g.op).hom x = 0)
@@ -92,7 +97,7 @@ theorem kerPart
   induction z using TensorProduct.induction_on with
   | zero => exact locAll fun _ _ => by simp
   | tmul c k => exact locMono (hi V k.1 (hK k.1 k.2)) fun W h hk => by simp [hk]
-  | add a b ha hb => exact locMono (locAnd ha hb) fun W h ⟨h1, h2⟩ => by simp [map_add, h1, h2]
+  | add a b ha hb => exact locMono (locAnd ha hb) fun W h ⟨h1, h2⟩ => by simp [map_add (f := _), h1, h2]
 
 theorem map_restr_comp {U V W : Scheme.{0}} (g : V ⟶ U) (k : W ⟶ V) :
     TensorProduct.map (C.map (k ≫ g).op).hom (P.map (k ≫ g).op).hom =

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DUnitMemRangeOfMemKerIdeal
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.AevalSurjectiveOfSpanCotangent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DUnitMemRangeOfMemKerIdeal
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.AevalSurjectiveOfSpanCotangent
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,7 +20,7 @@ namespace GlobalTheory.PDivGroup
 theorem aeval_surjective_of_dUnit_span {K A : Type} [Field K] [CommRing A] [Bialgebra K A]
     [Module.Finite K A] (hconn : ∀ a ∈ augIdeal K A, IsNilpotent a) {d : ℕ} (x : Fin d → A)
     (hx : ∀ i, Coalgebra.counit (R := K) (x i) = 0)
-    (hspan : ∀ c : Cot K A, ∃ l : Fin d → K, c = ∑ i, l i • dUnit K (x i)) :
+    (hspan : ∀ c : Cot K A, ∃ l : Fin d → K, c = ∑ i, l i • dUnit (R := K) (x i)) :
     Function.Surjective (MvPolynomial.aeval (R := K) x) := by
   haveI : IsNoetherianRing A := isNoetherian_of_tower K inferInstance
   have hxm : ∀ i, x i ∈ RingHom.ker (counitAlgHom K A) := fun i => by
@@ -27,14 +31,15 @@ theorem aeval_surjective_of_dUnit_span {K A : Type} [Field K] [CommRing A] [Bial
     exact mem_nilradical.2 (hconn a ha)
   refine GlobalTheory.HeightOneHopf.aeval_surjective_of_span_cotangent (counitAlgHom K A) hnil x hxm ?_
   intro y hy
-  obtain ⟨l, hl⟩ := hspan (dUnit K y)
+  obtain ⟨l, hl⟩ := hspan (dUnit (R := K) y)
   refine ⟨l, ?_⟩
   have hmem : y - ∑ i, l i • x i ∈ RingHom.ker (counitAlgHom K A) :=
     sub_mem hy (Ideal.sum_mem _ fun i _ => by
       rw [Algebra.smul_def]; exact Ideal.mul_mem_left _ _ (hxm i))
-  have h0 : dUnit K (y - ∑ i, l i • x i) = 0 := by
-    have e : dUnit K (y - ∑ i, l i • x i) = dUnit K y - ∑ i, l i • dUnit K (x i) := by
-      simp only [dUnit, map_sub, map_sum, map_smul]
+  have h0 : dUnit (R := K) (y - ∑ i, l i • x i) = 0 := by
+    have e : dUnit (R := K) (y - ∑ i, l i • x i) = dUnit (R := K) y - ∑ i, l i • dUnit (R := K) (x i) := by
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [dUnit, map_sub, map_sum, map_smul]
     rw [e, ← hl, sub_self]
   rwa [dUnit, AugCot.d_of_mem _ hmem, Ideal.toCotangent_eq_zero] at h0
 
@@ -49,7 +54,7 @@ theorem exists_coords_generate (p : ℕ) [Fact p.Prime] (K : Type) [Field K] (h 
     Module.Finite.equiv (LinearEquiv.ofBijective _ (G.omegaLevel_one_bijective h)).symm
   set d := Module.finrank K G.omega with hd
   let b := Module.finBasis K G.omega
-  have h1 : ∀ i, ∃ a : G.A 1, Coalgebra.counit (R := K) a = 0 ∧ dUnit K a = (b i).1 1 := by
+  have h1 : ∀ i, ∃ a : G.A 1, Coalgebra.counit (R := K) a = 0 ∧ dUnit (R := K) a = (b i).1 1 := by
     intro i
     obtain ⟨a, ha⟩ := AugCot.d_surjective (counitAlgHom K (G.A 1)) ((b i).1 1)
     refine ⟨a - algebraMap K _ (Coalgebra.counit (R := K) a), ?_, ?_⟩
@@ -82,13 +87,13 @@ theorem exists_coords_generate (p : ℕ) [Fact p.Prime] (K : Type) [Field K] (h 
     cases n with
     | zero => rw [← hres 0 i, CoalgHomClass.counit_comp_apply]; exact hcou1 0 i
     | succ n => exact hcou1 n i
-  have hdu : ∀ n i, dUnit K (x (n + 1) i) = (b i).1 (n + 1) := by
+  have hdu : ∀ n i, dUnit (R := K) (x (n + 1) i) = (b i).1 (n + 1) := by
     intro n
     induction n with
     | zero => exact hx1d
     | succ n ih =>
       intro i
-      obtain ⟨u, hu⟩ := G.omegaLevel_surjective (n + 2) (dUnit K (x (n + 2) i))
+      obtain ⟨u, hu⟩ := G.omegaLevel_surjective (n + 2) (dUnit (R := K) (x (n + 2) i))
       rw [omegaLevel_apply] at hu
       have hn : (u - b i).1 (n + 1) = 0 := by
         change u.1 (n + 1) - (b i).1 (n + 1) = 0
@@ -98,7 +103,7 @@ theorem exists_coords_generate (p : ℕ) [Fact p.Prime] (K : Type) [Field K] (h 
       have hub : u = b i := sub_eq_zero.1
         ((G.omegaLevel_one_bijective h).1 (h1'.trans (map_zero _).symm))
       rw [← hu, hub]
-  have hspan : ∀ n (c : Cot K (G.A n)), ∃ l : Fin d → K, c = ∑ i, l i • dUnit K (x n i) := by
+  have hspan : ∀ n (c : Cot K (G.A n)), ∃ l : Fin d → K, c = ∑ i, l i • dUnit (R := K) (x n i) := by
     intro n c
     cases n with
     | zero => exact ⟨0, by rw [G.cot_zero_eq_zero c]; simp⟩
@@ -106,7 +111,8 @@ theorem exists_coords_generate (p : ℕ) [Fact p.Prime] (K : Type) [Field K] (h 
       obtain ⟨w, rfl⟩ := G.omegaLevel_surjective (n + 1) c
       refine ⟨b.repr w, ?_⟩
       conv_lhs => rw [← b.sum_repr w]
-      simp only [map_sum, map_smul, omegaLevel_apply, hdu]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, omegaLevel_apply, hdu]
       rfl
   exact ⟨x, hres, hcou, fun n =>
     aeval_surjective_of_dUnit_span (hG n) (x n) (hcou n) (hspan n)⟩

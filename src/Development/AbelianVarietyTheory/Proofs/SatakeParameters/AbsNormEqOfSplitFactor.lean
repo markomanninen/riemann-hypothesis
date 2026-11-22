@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetOpIntegral
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AbsNormSpanInvol
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetOpIntegral
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AbsNormSpanInvol
+
+@[expose] public section
 
 namespace GlobalTheory.ColPeriod
 
@@ -66,8 +70,8 @@ theorem absNorm_eq_of_splitAt (h2 : Module.finrank F E = 2) {v : HeightOneSpectr
   · obtain rfl : P' = Q := HeightOneSpectrum.ext (P'.isMaximal.eq_of_le Q.isPrime.ne_top h)
     exact absNorm_eq_of_split_factor h2 hv hne.symm (hm.trans (mul_comm _ _))
 
-omit [NumberField E] [Field E] [Algebra F E] in
 
+omit [NumberField E] [Field E] [Algebra F E] in
 theorem plc_eq_absNorm {v : HeightOneSpectrum (𝓞 F)} (hq : (Ideal.absNorm v.asIdeal).Prime) :
     Formalism.EigenvalueLevelCeiling.plc v = Ideal.absNorm v.asIdeal := by
   have h6 : ringChar (𝓞 F ⧸ v.asIdeal) ∣ Ideal.absNorm v.asIdeal := by

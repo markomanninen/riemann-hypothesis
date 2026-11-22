@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelPlaceDatumOverNumberField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeIsometrySignFirst
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNonvanishingFiniteDatumDefiniteLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelPlaceDatumOverNumberField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeIsometrySignFirst
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNonvanishingFiniteDatumDefiniteLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ set_option maxHeartbeats 800000
 
 namespace GlobalTheory.BasePoint
 
-open GlobalTheory.AdjDatumNe in
 
+open GlobalTheory.AdjDatumNe in
 theorem exists_point {O La ι : Type} [CommRing O] [AddCommGroup La] [Module O La] (P : Finset ι) (k : ι → Type)
     [∀ i, CommRing (k i)] (φ : ∀ i, O → k i) (crt : ∀ t : ∀ i, k i, ∃ c, ∀ i ∈ P, φ i c = t i) {n r : ℕ}
     (ρ : ∀ i, Fin r → La →+ k i) (hs : ∀ i a c x, ρ i a (c • x) = φ i c * ρ i a x) (J : Submodule O La)
@@ -31,7 +35,8 @@ theorem exists_point {O La ι : Type} [CommRing O] [AddCommGroup La] [Module O L
     choose c hc using fun b : Fin n => crt fun i => ∑ a', ρ i a' x * B' i (Fin.castLE hrn a') b
     have : (Submodule.Quotient.mk x : La ⧸ J) = Submodule.Quotient.mk (∑ b, c b • z b) := by
       refine (heq _ _).2 fun i hi a => ?_
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [hs, hc _ i hi, hz _ i hi, Finset.sum_mul]
       rw [Finset.sum_comm]
       simp only [mul_assoc, ← Finset.mul_sum]
@@ -41,7 +46,8 @@ theorem exists_point {O La ι : Type} [CommRing O] [AddCommGroup La] [Module O L
       simp [h1]
     rw [this]
     change (Submodule.mkQ J) _ ∈ _
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact sum_mem fun b _ => by
       rw [map_smul]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨b, rfl⟩)
@@ -64,7 +70,7 @@ theorem low_top_iff {κ : Type} [Zero κ] [One κ] {n r : ℕ} (hrn : r ≤ n) (
     ext b a
     by_cases hb : b.val < r
     · have := congrFun (congrFun h2 ⟨b.val, hb⟩) a
-      rw [topL, dif_pos ⟨b.2, a.2⟩, Matrix.one_apply] at this
+      rw [topL, dite_eq_left ⟨b.2, a.2⟩, Matrix.one_apply] at this
       simpa only [rectOne, Fin.ext_iff] using this
     · rw [h1 b a (by omega) a.2, rectOne, if_neg (by omega)]
   · rintro rfl
@@ -141,7 +147,8 @@ theorem exists_dual (W : HSp D) (β : GL (Fin W.rank) (EAf D)) (Λ : Submodule (
       change _ = ((fun a => pr W β y a) ᵥ* ((β⁻¹).val * s₁.map (eToEAf D))) k
       rw [h1, Matrix.vecMul_vecMul, ← Matrix.mul_assoc, Units.mul_inv, Matrix.one_mul, congrFun hc' k,
         ← Matrix.vecMul_vecMul]
-      simp only [Matrix.vecMul, dotProduct, map_sum, map_mul, Matrix.map_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.vecMul, dotProduct, map_sum, map_mul, Matrix.map_apply]
 
 theorem pr_int {W : HSp D} {β : GL (Fin W.rank) (EAf D)} {Λ : Submodule (𝓞 D.host.E) (Fin W.rank → D.host.E)}
     (hβ : IsSDFrame W β Λ 1) {y : Fin W.rank → D.host.E} (hy : y ∈ Λ) (a : Fin W.rank) :
@@ -174,7 +181,7 @@ variable (W : HSp D) (β : GL (Fin W.rank) (EAf D)) (e : AE D) {La : Type} [AddC
 def rho (PP : Pl D.host.E) (a : Fin W.rank) : La →+ kP PP :=
   (resS D.host.F PP).toAddMonoidHom.comp (AddMonoidHom.mk' (fun x => ⟨_, hi x a⟩) fun x y => Subtype.ext (by
     change rowP W β e (ι (x + y)) a = rowP W β e (ι x) a + rowP W β e (ι y) a
-    rw [map_add, rowPairing_add]))
+    rw [map_add (f := _), rowPairing_add]))
 
 theorem rho_apply (PP : Pl D.host.E) (a : Fin W.rank) (x : La) :
     rho W β e ι hi PP a x = resS D.host.F PP ⟨_, hi x a⟩ := rfl
@@ -228,10 +235,12 @@ theorem rho_onto {Λ : Submodule (𝓞 D.host.E) (Fin W.rank → D.host.E)} (hβ
       hc k PP hPP, show (⟨_, pr_int hβ (hs k) a⟩ : Formalism.L2.Herm.intAf D.host.F D.host.E) = B k a from
         Subtype.ext (hB k a).symm, mul_mul_mul_comm, hu PP hPP, one_mul, Finset.sum_mul]
     simp only [mul_assoc]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [h1]
   rw [Finset.sum_comm]
-  simp only [← Finset.mul_sum, ← RingHom.map_mul, ← map_sum, ← Matrix.mul_apply, hAB, Matrix.one_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← Finset.mul_sum, ← RingHom.map_mul, ← map_sum, ← Matrix.mul_apply, hAB, Matrix.one_apply]
   rw [Finset.sum_eq_single a (fun b _ hb => by rw [if_neg hb, map_zero, mul_zero]) (by simp), if_pos rfl, map_one, mul_one]
 
 theorem rho_ker {Λ : Submodule (𝓞 D.host.E) (Fin W.rank → D.host.E)} (hβ : IsSDFrame W β Λ 1) (hι : LatEmb W ι)
@@ -255,7 +264,8 @@ theorem rho_ker {Λ : Submodule (𝓞 D.host.E) (Fin W.rank → D.host.E)} (hβ 
       refine Subtype.ext ?_
       rw [AddSubmonoidClass.coe_finsetSum]
       exact hc2 k
-    rw [← Ideal.Quotient.eq_zero_iff_mem, ← resS_oToS (F := D.host.F), h1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Ideal.Quotient.eq_zero_iff_mem, ← resS_oToS (F := D.host.F), h1, map_sum]
     refine Finset.sum_eq_zero fun a _ => ?_
     have h2 := rho_eq W β e ι hi he PP hPP a ((m : 𝓞 D.host.E) • x) 1 _ (pr_int hβ hm a) (by
       rw [map_smul, show ((1 : 𝓞 D.host.E) : D.host.E) = 1 from rfl, map_one, one_smul, ← hcast]; rfl)
@@ -263,7 +273,8 @@ theorem rho_ker {Λ : Submodule (𝓞 D.host.E) (Fin W.rank → D.host.E)} (hβ 
     rw [map_mul, ← h2, zero_mul]
   have h3 : ((N * m : ℕ) : 𝓞 D.host.E) • x = ∑ k, τ (c k) • z k := by
     refine hι.1 ?_
-    rw [map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_sum]
     change (((N * m : ℕ) : 𝓞 D.host.E) : D.host.E) • ι x = _
     rw [hcast, Nat.cast_mul, mul_smul, hc1, Finset.smul_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
@@ -325,66 +336,6 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Form
 open scoped TensorProduct Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-set_option maxHeartbeats 1600000 in
-
-theorem exists_point_phiIs : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T0 : Type) (A : Formalism.L2.DIV.FamIn D.what₂.LL G Pl0 T0 D.R.m) (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A), R.Char F → ∀ (i : Fin D.R.m), VStd D i → ∀ (H : Geo.Tor.Host D.host.E) (Dw : Datum H) (l : Geo.Tor.Level H) (c : Coeff l) (ι : Dw.La →ₗ[𝓞 D.host.E] (Fin (Wc D i).rank → D.host.E)) (I : Ideal (𝓞 D.host.E)), LatEmb (Wc D i) ι → HalfIs R A.μ0 l.Mb I → ∃ x1 : Fin (Vc D i).rank → LevQc Dw l, Submodule.span (𝓞 D.host.E) (Set.range x1) = ⊤ ∧ PhiIs R i c.F.val.toRingHom A.μ0 ι (Mfr l • ⊤) (indPhi c x1) := by
-  intro D G _ _ Pl0 T0 A Ks _ _ _ R F hR i hV H Dw l c ι I hι hh
-  have hQ : R.Q A.μ0 = ∅ := Finset.eq_empty_of_forall_notMem fun PP hP =>
-    (hR.lev.Q_ram A.μ0 PP).2 (Or.inl hP) (by rw [hR.lev.xi_base]; exact fun _ _ => rfl)
-  obtain ⟨-, e, he, -⟩ := hR.thP.vP i A.μ0
-  have he' : IsIdemSum e R.Pg := by rwa [hQ, Finset.union_empty] at he
-  have hP := fun PP (h : PP ∈ R.Pg) => hh.2.2 PP (Or.inl h)
-  have hβ := GlobalTheory.StdFrameInv.isIntM_inv D i _ _ hV (hR.lev.βV i)
-  have hβ' := isIntM_frame i hV (hR.lev.βV i)
-  have hi : ∀ x a, LevelDatum.rowP (Wc D i) (R.βW i) e (ι x) a ∈ Formalism.L2.Herm.intAf D.host.F D.host.E := fun x a =>
-    LevelDatum.rowP_int _ _ _ (hR.lev.βW i) e _ he' hP _ (hι.2.le (LinearMap.mem_range_self ι x)) a
-  have hτ : ∀ c, ((H.bar c : 𝓞 D.host.E) : D.host.E) = D.sp.cm.sig (c : D.host.E) := fun c => H.bar_eq c
-  have hrn : (Wc D i).rank ≤ (Vc D i).rank := (rank_Wc i).le.trans (r_le_V i)
-  obtain ⟨x1, h1, h2⟩ := exists_point R.Pg (fun PP => Formalism.L2.DIV.kP PP)
-    (fun PP c => Ideal.Quotient.mk PP.asIdeal (H.bar c))
-    (fun t => by
-      obtain ⟨c, hc⟩ := crt_places R.Pg t
-      exact ⟨H.bar.symm c, fun PP h => by rw [RingEquiv.apply_symm_apply]; exact hc PP h⟩)
-    (rho (Wc D i) (R.βW i) e ι hi) (fun PP a c x => rho_smul _ _ _ _ hi PP a c _ (hτ c) x) (Mfr l • ⊤)
-    (fun x => ⟨fun hx PP hPP a => LevelDatum.residue_rowPairing_eq_zero _ _ e ι a (fun x => hi x a) (Mfr l) PP (fun c hc => by
-        obtain ⟨b, hb, rfl⟩ := (Ideal.mem_map_iff_of_surjective _ H.bar.surjective).1 hc
-        rw [hh.1] at hb
-        refine ⟨b, Ideal.prod_le_inf.trans (Finset.inf_le hPP) hb, ?_⟩
-        change _ = star ((H.bar b : 𝓞 D.host.E) : D.host.E)
-        rw [H.bar_eq]
-        exact (star_star _).symm) x hx,
-      fun hx => by
-        rw [Mfr, hh.1]
-        exact rho_ker _ _ _ _ hi (hR.lev.βW i) hι he' hP _ hτ x hx⟩)
-    (rho_onto _ _ _ _ hi (hR.lev.βW i) hι he' fun PP h h' =>
-      hP PP h (by rw [Nat.cast_mul]; exact Ideal.mul_mem_left _ _ h'))
-    (fun PP => Matrix.of fun a b => Formalism.L2.DIV.resS D.host.F PP ⟨_, hβ' a b⟩)
-    (fun PP => Matrix.of fun a b => Formalism.L2.DIV.resS D.host.F PP ⟨_, hβ a b⟩)
-    (fun PP => by
-      ext a b
-      simp only [Matrix.mul_apply, Matrix.of_apply, ← RingHom.map_mul, ← map_sum]
-      have : (∑ j, ⟨_, hβ a j⟩ * ⟨_, hβ' j b⟩ : Formalism.L2.Herm.intAf D.host.F D.host.E) = if a = b then 1 else 0 := by
-        refine Subtype.ext ?_
-        rw [AddSubmonoidClass.coe_finsetSum]
-        refine (congrFun (congrFun (R.βV i).inv_mul a) b).trans ?_
-        rw [Matrix.one_apply]
-        split_ifs <;> rfl
-      rw [this, Matrix.one_apply]
-      split_ifs
-      exacts [map_one _, map_zero _]) hrn
-  refine ⟨x1, h1, e, he, fun x => ?_⟩
-  obtain ⟨h3, h4⟩ := LevelDatum.redM_uMat (Vc D i) (Wc D i) hV.1 _ hβ (R.βW i) e (fun b => ι (x b)) fun b a => hi (x b) a
-  refine ⟨h3, ?_⟩
-  have h5 : ((fun b => Submodule.Quotient.mk (x b)) = x1) ↔ ∀ PP ∈ R.Pg,
-      LowZero (Wc D i).rank (redM PP (FWT.uMat (Vc D i) (Wc D i) (R.βV i) (R.βW i) e fun b => ι (x b))) ∧
-      topL (Wc D i).rank (redM PP (FWT.uMat (Vc D i) (Wc D i) (R.βV i) (R.βW i) e fun b => ι (x b))) = 1 :=
-    (h2 x).trans (forall₂_congr fun PP _ => by
-      rw [low_top_iff hrn]
-      exact Eq.congr_left (Matrix.ext fun b a => (h4 PP b a).symm))
-  rw [hQ, omegaQ, dif_pos (by simp), Finset.attach_empty, Finset.prod_empty, mul_one, omegaK, indPhi]
-  by_cases h6 : (fun b => Submodule.Quotient.mk (x b)) = x1
-  · rw [if_pos h6, if_pos (h5.1 h6), map_one]
-  · rw [if_neg h6, if_neg (mt h5.2 h6), map_zero]
 
 end GlobalTheory.BasePoint
 

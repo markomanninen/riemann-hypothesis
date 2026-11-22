@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleRightZeroThd
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogChain
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleRightZeroThd
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogChain
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,7 +24,7 @@ theorem ev_add {a : Fin m → Pt k n d} (ha : CZ a) (f g : PS k m d) : ev a (f +
   have h : ∀ F : PS k m d, ev a F = MvPowerSeries.substAlgHom ha.hasSubst F := fun F => by
     rw [MvPowerSeries.coe_substAlgHom]
     rfl
-  rw [h, h, h, map_add]
+  rw [h, h, h, map_add (f := _)]
 
 theorem ev_mul {a : Fin m → Pt k n d} (ha : CZ a) (f g : PS k m d) : ev a (f * g) = ev a f * ev a g := by
   have h : ∀ F : PS k m d, ev a F = MvPowerSeries.substAlgHom ha.hasSubst F := fun F => by
@@ -42,7 +46,8 @@ theorem ev_neg {a : Fin m → Pt k n d} (ha : CZ a) (f : PS k m d) : ev a (-f) =
 
 theorem ev_sum {a : Fin m → Pt k n d} (ha : CZ a) {ι : Type} (s : Finset ι) (f : ι → PS k m d) :
     ev a (∑ x ∈ s, f x) = ∑ x ∈ s, ev a (f x) := by
-  rw [← evHom_apply ha, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← evHom_apply ha, map_sum]
   exact Finset.sum_congr rfl (fun x _ => evHom_apply ha (f x))
 
 theorem ev_C {a : Fin m → Pt k n d} (ha : CZ a) (c : k) : ev a (C c : PS k m d) = C c := by
@@ -76,10 +81,35 @@ theorem ev_pt (f : PS k m d) : ev (fun j => pt k (n := m) d j) f = f := by
 
 theorem CZ.pt : CZ (fun j => pt k (n := n) d j) := fun j i => MvPowerSeries.constantCoeff_X _
 
+open scoped MvPowerSeries.WithPiTopology in
 theorem pderiv_ev {a : Fin m → Pt k n d} (ha : CZ a) (f : PS k m d) (v : Fin n × Fin d) :
-    pderiv k v (ev a f) = ∑ p : Fin m × Fin d, ev a (pderiv k p f) * pderiv k v (a p.1 p.2) := by
-  unfold ev
-  exact pderiv_subst (a := fun p : Fin m × Fin d => a p.1 p.2) (fun p => ha p.1 p.2) f v
+    pderiv v (ev a f) = ∑ p : Fin m × Fin d, ev a (pderiv p f) * pderiv v (a p.1 p.2) := by
+  classical
+  let : UniformSpace k := ⊥
+  let b : Fin m × Fin d → PS k n d := fun p => a p.1 p.2
+  change pderiv v (subst b f) = ∑ p, subst b (pderiv p f) * pderiv v (b p)
+  have hsubst : Continuous (subst b : PS k m d → PS k n d) := continuous_subst ha.hasSubst
+  have hderiv {σ : Type} (i : σ) : Continuous (pderiv (R := k) i) := by
+    apply continuous_pi
+    intro e
+    change Continuous (fun g => coeff e (pderiv i g))
+    simp only [coeff_pderiv]
+    exact (WithPiTopology.continuous_coeff k _).mul continuous_const
+  refine congrFun (WithPiTopology.denseRange_toMvPowerSeries.equalizer
+    (hderiv v |>.comp hsubst) (continuous_finsetSum _ fun p _ =>
+      (hsubst.comp (hderiv p)).mul continuous_const) ?_) f
+  funext q
+  change pderiv v (subst b (q : PS k m d)) =
+    ∑ p, subst b (pderiv p (q : PS k m d)) * pderiv v (b p)
+  simp only [pderiv_coe, subst_coe]
+  induction q using MvPolynomial.induction_on with
+  | C c => simp
+  | add q r hq hr => simp only [map_add, hq, hr, add_mul, Finset.sum_add_distrib]
+  | mul_X q p hq =>
+    rw [map_mul, MvPolynomial.aeval_X, Derivation.leibniz, hq, smul_eq_mul, smul_eq_mul,
+      Finset.mul_sum]
+    simp [Pi.single_apply, apply_ite (MvPolynomial.aeval b), add_mul, Finset.sum_add_distrib,
+      mul_assoc]
 
 theorem ev_zeroFam (f : PS k m d) : ev (fun _ _ => (0 : PS k n d)) f = C (constantCoeff f) := by
   classical

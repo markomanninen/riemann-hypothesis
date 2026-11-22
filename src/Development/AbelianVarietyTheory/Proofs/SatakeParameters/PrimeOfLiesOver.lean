@@ -1,11 +1,16 @@
-import Mathlib
-import Formalism.LocalRingCardinality.HostCls
-import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.OffSmall
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.ShapeDegreeParity
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.TeichmullerFactorisation
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TauPlBijective
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NatCastMemPrimeOf
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.HostCls
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.OffSmall
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalRingCardinality.DataKerI
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+public import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TauPlBijective
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NatCastMemPrimeOf
+
+@[expose] public section
 
 noncomputable section
 

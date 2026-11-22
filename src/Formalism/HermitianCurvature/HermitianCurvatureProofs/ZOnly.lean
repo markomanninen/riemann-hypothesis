@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZOnlyOfLeviCurve
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianPartLevi
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZOnlyOfLeviCurve
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianPartLevi
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 

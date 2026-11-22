@@ -1,6 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.ExistsUniformizerOrd
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.FinalPtfsHasse
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.FinalPtfsUnif
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.FinalPtfsKummer
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.FinalPtfsChi
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.FinalPtfsHasse
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,8 +79,8 @@ theorem kummer_loc
 
 end Local
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem found_side_inv' (Kf : FiniteSubfield) [NumberField Kf.1] [IsAlgClosure Kf.1 (AlgebraicClosure ℚ)]
     (S : Set (HeightOneSpectrum (𝓞 Kf.1))) [Fintype S] {l r : ℕ} [Fact l.Prime] (hr : 0 < r)
     (hS : ∀ v : HeightOneSpectrum (𝓞 Kf.1), ((l : ℕ) : 𝓞 Kf.1) ∈ v.asIdeal → v ∈ S)
@@ -111,7 +117,100 @@ theorem found_side_inv' (Kf : FiniteSubfield) [NumberField Kf.1] [IsAlgClosure K
   have hY := root_loc (ιs := ιs) (v := v) (l := l) (r := r) hϖ0 hy
   have hζv := prim_loc (ιs := ιs) (v := v) hζ
   have hκv := kummer_loc (ιs := ιs) (v := v) (ev := ev) hev κ hκ
-  refine hasse_kummer_unram' ⟨l ^ r, pow_pos (Fact.out : l.Prime).pos r⟩ (Units.mk0 _ hϖ0)
+  have hHasse {K Ω : Type} [Field K] [ValuativeRel K] [TopologicalSpace K]
+      [IsNonarchimedeanLocalField K] [Field Ω] [Algebra K Ω] [IsSepClosure K Ω]
+      (N : ℕ+)
+      (ϖ : Kˣ) (hϖ : ord (ϖ : K) = 1) (Y : Ω) (hY : Y ^ (N : ℕ) = algebraMap K Ω ϖ)
+      (ζ : Ω) (hζ : IsPrimitiveRoot ζ N) (κ : Gal(Ω/K) → ZMod (N : ℕ))
+      (hκ : ∀ g : Gal(Ω/K), g Y = ζ ^ (κ g).val * Y)
+      (c : cocycles (galUnitsZ K Ω) 2)
+      (hc : ∀ s : Fin 2 → Gal(Ω/K), ((Additive.toMul (cochainOf _ (cocycleι _ 2 c) s) : Ωˣ) : Ω) =
+        ζ ^ (κ (s 0) * urChar K Ω N (s 1)).val) :
+      brauerInvZOfIsSepClosure K Ω (cohomologyπ _ 2 c) = - zmodToQZ (N : ℕ) 1 := by
+    classical
+    have hN0 : (N : ℕ) ≠ 0 := N.ne_zero
+    have hϖ0 : algebraMap K Ω (ϖ : K) ≠ 0 :=
+      (map_ne_zero_iff _ (algebraMap K Ω).injective).2 ϖ.ne_zero
+    have hY0 : Y ≠ 0 := by
+      rintro rfl
+      rw [zero_pow hN0] at hY
+      exact hϖ0 hY.symm
+    let ψ := urPsi (K := K) (Ω := Ω) N
+    obtain ⟨w, hw, hwc⟩ := exists_cocycle_cupCharClassProf (galUnitsZ K Ω) ψ (unitsInvariant K Ω ϖ)
+    let Yu : Ωˣ := Units.mk0 Y hY0
+    let bf : Gal(Ω/K) → (galUnitsZ K Ω).V := fun h =>
+      Additive.ofMul (Yu ^ (urChar K Ω N h).val)
+    have hbf_lc : IsLocallyConstant fun t : Fin 1 → Gal(Ω/K) => bf (t 0) := by
+      have h1 : IsLocallyConstant (urChar K Ω N) :=
+        (IsLocallyConstant.iff_continuous _).2 (continuous_urChar (K := K) (Ω := Ω) N)
+      exact (h1.comp fun u => Additive.ofMul (Yu ^ u.val)).comp_continuous (continuous_apply 0)
+    have hsum : cohomologyπ _ 2 c + cohomologyπ _ 2 w = 0 := by
+      rw [← map_add (f := _)]
+      refine (PositivityTheory.LocalTateOrthogonality.Gcoh.pi_succ_eq_zero_iff (galUnitsZ K Ω) 1 (c + w)).2
+        ⟨fun t => bf (t 0), hbf_lc, ?_⟩
+      have hd := PositivityTheory.LocalTateOrthogonality.Gcoh.d_comp (galUnitsZ K Ω).ρ (galUnitsZ K Ω) (AddEquiv.refl _)
+        (fun _ _ => rfl) 1 (fun t => bf (t 0))
+      simp only [AddEquiv.refl_apply] at hd
+      rw [hd]
+      funext s
+      rw [PositivityTheory.LocalTateOrthogonality.Gcoh.dn_one, map_add (f := _), cochainOf_add, Pi.add_apply]
+      have hwc' := hwc s
+      have hc' := hc s
+      let a0 := (urChar K Ω N (s 0)).val
+      let a1 := (urChar K Ω N (s 1)).val
+      let a01 := (urChar K Ω N (s 0 * s 1)).val
+      let cc := charCocycle (charAdd ψ) (s 0, s 1)
+      have hrel : ((N : ℕ) : ℤ) * cc = (a0 : ℤ) + a1 - a01 := charCocycle_urPsi N (s 0) (s 1)
+      apply Additive.toMul.injective
+      apply Units.ext
+      rw [hwc']
+      simp only [toMul_add, toMul_zsmul, Units.val_mul,
+        Units.val_zpow_eq_zpow_val, bf]
+      rw [hc', coe_unitsInvariant]
+      have hL : ((Additive.toMul (((zRepOfMonoidEnd (galUnitsHom K Ω)) (s 0))
+            (Additive.ofMul (Yu ^ (urChar K Ω N (s 1)).val)) -
+            Additive.ofMul (Yu ^ (urChar K Ω N (s 0 * s 1)).val) +
+            Additive.ofMul (Yu ^ (urChar K Ω N (s 0)).val)) : Ωˣ) : Ω) =
+          (s 0) Y ^ a1 * (Y ^ a01)⁻¹ * Y ^ a0 := by
+        show ((Additive.toMul ((Additive.ofMul (galUnitsHom K Ω (s 0) (Yu ^ a1)) : Additive Ωˣ) -
+            Additive.ofMul (Yu ^ a01) + Additive.ofMul (Yu ^ a0)) : Ωˣ) : Ω) = _
+        simp only [toMul_add, toMul_sub, toMul_ofMul, Units.val_mul,
+          coe_galUnitsHom_apply, Units.val_inv_eq_inv_val, Units.val_pow_eq_pow_val, Yu, Units.val_mk0,
+          map_pow, div_eq_mul_inv]
+      refine Eq.trans hL ?_
+      rw [hκ (s 0), mul_pow]
+      have hYz : Y ^ a1 * (Y ^ a01)⁻¹ * Y ^ a0 = (algebraMap K Ω (ϖ : K)) ^ cc := by
+        rw [← hY, show (Y ^ (N : ℕ)) ^ cc = Y ^ (((N : ℕ) : ℤ) * cc) by rw [zpow_mul, zpow_natCast],
+          hrel, zpow_sub₀ hY0, zpow_add₀ hY0, zpow_natCast, zpow_natCast, zpow_natCast]
+        ring
+      have hζN : ζ ^ (N : ℕ) = 1 := hζ.pow_eq_one
+      have hzk : (ζ ^ (κ (s 0)).val) ^ a1 = ζ ^ (κ (s 0) * urChar K Ω N (s 1)).val := by
+        rw [← pow_mul, ZMod.val_mul]
+        conv_lhs => rw [← Nat.div_add_mod ((κ (s 0)).val * a1) (N : ℕ), pow_add, pow_mul, hζN,
+          one_pow, one_mul]
+      rw [← hzk, ← hYz]
+      ring
+    have hc0 : cohomologyπ _ 2 c = - cohomologyπ _ 2 w := eq_neg_of_add_eq_zero_left hsum
+    rw [hc0, map_neg, hw]
+    have hInv : brauerInvZOfIsSepClosure K Ω (galCupClass K Ω ψ ϖ) =
+        zmodToQZ (N : ℕ) 1 := by
+      obtain ⟨σ, hσ⟩ := unramifiedDegree_surjective (K := K) (Ω := Ω) (Multiplicative.ofAdd 1)
+      let := algebraicValuativeRel K Ω
+      let := algebraicTopology K Ω
+      have := algebraicTopology_isValuativeTopology K Ω
+      have := algebraicValuativeRel_valuativeExtension K Ω
+      have hψ : ∀ g ∈ (unramifiedDegree K Ω).ker,
+          (urPsi (K := K) (Ω := Ω) N) (Additive.ofMul g) = 0 := by
+        intro g hg
+        show zmodToQZ (N : ℕ) (urChar K Ω N g) = 0
+        rw [urChar_of_ker N (MonoidHom.mem_ker.1 hg), map_zero]
+      have key := brauerInvZ_galCupClass_of_unramified (urPsi (K := K) (Ω := Ω) N) hψ hσ ϖ
+      show brauerInvZ K Ω _ = _
+      rw [key, hϖ, one_smul]
+      show zmodToQZ (N : ℕ) (urChar K Ω N σ) = _
+      rw [urChar_of_deg_one N hσ]
+    exact congrArg Neg.neg hInv
+  refine hHasse ⟨l ^ r, pow_pos (Fact.out : l.Prime).pos r⟩ (Units.mk0 _ hϖ0)
     (by rw [Units.val_mk0]; exact hϖ) (ιs v y) hY (ιs v ζ) hζv (fun σ => κ (ev σ)) hκv _ fun s => ?_
   rw [cochain_push]
   refine (rootsLocalMorZ_hom_apply S ιs (l ^ r) v _).trans ?_

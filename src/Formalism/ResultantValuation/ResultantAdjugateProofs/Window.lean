@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.ResultantValuation.WindowValuation
+module
+
+public import Mathlib
+public import Formalism.ResultantValuation.WindowValuation
+
+@[expose] public section
 
 open Finset
 
@@ -72,8 +76,8 @@ lemma lte_unit (l : ℕ) [Fact l.Prime] (hl2 : l ≠ 2) (u : ℤ_[l]) (hu : (u -
     rintro rfl
     exact hm (dvd_zero l)
   have hv : padicValNat l (l ^ a * m) = a := by
-    rw [padicValNat.mul (pow_ne_zero _ hp.ne_zero) hm0, padicValNat.prime_pow,
-      padicValNat.eq_zero_of_not_dvd hm, add_zero]
+    rw [Nat.padicValNat_def, Nat.multiplicity_mul (pow_ne_zero _ hp.ne_zero) hm0,
+      Nat.multiplicity_prime_pow, multiplicity_eq_zero_of_not_dvd hm, add_zero]
   have h1 := emultiplicity_pow_prime_pow_sub_pow_prime_pow hprime (hp.odd_of_ne_two hl2) hdvd hndvd a
   rw [one_pow] at h1
   have hdvd2 : (l : ℤ_[l]) ∣ u ^ l ^ a - 1 := by

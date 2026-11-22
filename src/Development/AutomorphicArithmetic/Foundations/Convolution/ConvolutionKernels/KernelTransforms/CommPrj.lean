@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.TensFun
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TensFun
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -23,7 +27,7 @@ private theorem commute_prj {H : Type*} [NormedAddCommGroup H] [InnerProductSpac
   exact a3 v _ (h2 w ((hm _).1 hw))
 
 theorem UpperTheory.ConvolutionTheory.Tf.commPrj :
-    ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (U : Subgroup (AdelicGLn.FiniteAdelicGL K n)),
+    ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (U : Subgroup (AdelicGLn.FiniteAdelicGL K n)),
       IsClosed (fixF μ U : Set (LL μ)) ∧ (∀ v, v ∈ fixF μ U ↔ ∀ u ∈ U, rhoF μ u v = v) ∧ (∀ v, prj (fixF μ U) v ∈ fixF μ U) ∧
       (∀ v ∈ fixF μ U, prj (fixF μ U) v = v) ∧ (∀ u ∈ U, rhoF μ u ∘L prj (fixF μ U) = prj (fixF μ U) ∧ prj (fixF μ U) ∘L rhoF μ u = prj (fixF μ U)) ∧
       (∀ h h', rhoF μ (h * h') = rhoF μ h ∘L rhoF μ h') ∧ rhoF μ 1 = 1 ∧ (∀ h, ContinuousLinearMap.adjoint (rhoF μ h) = rhoF μ h⁻¹) ∧

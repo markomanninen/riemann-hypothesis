@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.KirCusp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.KirCusp
+
+@[expose] public section
 
 noncomputable section
 
@@ -258,7 +262,7 @@ private theorem exists_mem_Kc_rows_unitriangular (p : GL (Fin n) k) (i : Fin n)
   let y₀ : Fin n → 𝒪[k] := Pi.single i 1
   have hdot : d₀ ⬝ᵥ y₀ = d₀ i := by simp [y₀]
   have hu : IsUnit (1 + d₀ ⬝ᵥ y₀) := by
-    rw [hdot, hI.isUnit_iff_valuation_eq_one, map_add, map_one]
+    rw [hdot, hI.isUnit_iff_valuation_eq_one, map_add (f := _), map_one]
     exact Valuation.map_one_add_of_lt _ (hdv i)
   obtain ⟨u, hu'⟩ := hu
   have hc : ((u⁻¹ : (𝒪[k])ˣ) : 𝒪[k]) * (1 + d₀ ⬝ᵥ y₀) = 1 := by rw [← hu']; exact u.inv_mul
@@ -267,7 +271,7 @@ private theorem exists_mem_Kc_rows_unitriangular (p : GL (Fin n) k) (i : Fin n)
   have hM : ∀ a b, (M : Matrix (Fin n) (Fin n) k) a b =
       (1 : Matrix (Fin n) (Fin n) k) a b + (Pi.single i (1 : k) : Fin n → k) a * d b := by
     intro a b
-    simp only [M, GeneralLinearGroup.map_apply, M₀, tv_apply, map_add, map_mul]
+    simp only [M, GeneralLinearGroup.map_apply, M₀, tv_apply, map_add (f := _), map_mul]
     congr 1
     · simp [Matrix.one_apply]
     · congr 1
@@ -278,7 +282,7 @@ private theorem exists_mem_Kc_rows_unitriangular (p : GL (Fin n) k) (i : Fin n)
     rw [SetLike.mem_coe, MonoidHom.mem_ker]
     apply GeneralLinearGroup.ext
     intro a b
-    rw [GeneralLinearGroup.map_apply, tv_apply, map_add]
+    rw [GeneralLinearGroup.map_apply, tv_apply, map_add (f := _)]
     have hz : Ideal.Quotient.mk (𝓂[k] ^ 1) (y₀ a * d₀ b) = 0 := by
       rw [Ideal.Quotient.eq_zero_iff_mem, pow_one]
       exact Ideal.mul_mem_left _ _ (hmax _ (hdv b))

@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BorderSignIdentity.SkipOneEqSuccAbove
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmColExp
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmRowExp
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BorderSignIdentity.SkipOneEqSuccAbove
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmColExp
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmRowExp
+
+@[expose] public section
 
 theorem quantum_minor_border_es : PI.QmBorderES := PI.UnitaryGroupMassFormula.QmBorderES.qmBorderES_of quantum_minor_column_expansion quantum_minor_row_expansion

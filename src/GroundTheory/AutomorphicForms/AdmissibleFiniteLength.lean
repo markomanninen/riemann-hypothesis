@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AdmissibleInduction
-import GroundTheory.AutomorphicForms.CuspidalAdmissible
-import GroundTheory.AutomorphicForms.JacquetAdmissible
-import GroundTheory.AutomorphicForms.SupercuspidalCoefficients
-import GroundTheory.AutomorphicForms.IwahoriFactorization
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AdmissibleInduction
+public import GroundTheory.AutomorphicForms.CuspidalAdmissible
+public import GroundTheory.AutomorphicForms.JacquetAdmissible
+public import GroundTheory.AutomorphicForms.SupercuspidalCoefficients
+public import GroundTheory.AutomorphicForms.IwahoriFactorization
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedBessel
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
-import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ComplexEmbeddingHermitianQuadrupleSum
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsNormaliseMeanSquareOfCocompact
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.EmbeddingXiZeroNeZero
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.CovolOneIntegralAdd
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedBessel
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ComplexEmbeddingHermitianQuadrupleSum
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsNormaliseMeanSquareOfCocompact
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.EmbeddingXiZeroNeZero
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.CovolOneIntegralAdd
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,20 +23,20 @@ namespace GlobalTheory.MixModel
 
 variable {D : D7}
 
-theorem cancel₂ {k l m n : ℕ} {a : Mx D k l} {b : Mx D l m} {c : Mx D k m} (h : a ⬝ b = c) (x : Mx D m n) :
-    a ⬝ (b ⬝ x) = c ⬝ x := by
+theorem cancel₂ {k l m n : ℕ} {a : Mx D k l} {b : Mx D l m} {c : Mx D k m} (h : a * b = c) (x : Mx D m n) :
+    a * (b * x) = c * x := by
   rw [← h, Matrix.mul_assoc]
 
-theorem cancel₃ {j k l m n : ℕ} {a : Mx D j k} {b : Mx D k l} {c : Mx D l m} {e : Mx D j m} (h : a ⬝ (b ⬝ c) = e)
-    (x : Mx D m n) : a ⬝ (b ⬝ (c ⬝ x)) = e ⬝ x := by
+theorem cancel₃ {j k l m n : ℕ} {a : Mx D j k} {b : Mx D k l} {c : Mx D l m} {e : Mx D j m} (h : a * (b * c) = e)
+    (x : Mx D m n) : a * (b * (c * x)) = e * x := by
   rw [← h, Matrix.mul_assoc, Matrix.mul_assoc]
 
 theorem gram_swap (S : HSp D) {k l : ℕ} {a : Mx D S.rank k} {b : Mx D S.rank l} {c : Mx D k l}
-    (h : adj a ⬝ (gA S ⬝ b) = c) : adj b ⬝ (gA S ⬝ a) = adj c := by
+    (h : adj a * (gA S * b) = c) : adj b * (gA S * a) = adj c := by
   rw [← h, adj_mul, adj_mul, adj_adj, adj_gA, Matrix.mul_assoc]
 
 theorem gram_rat (S : HSp D) {k l : ℕ} {a : Matrix (Fin S.rank) (Fin k) D.host.E} {b : Matrix (Fin S.rank) (Fin l) D.host.E}
-    {c : Matrix (Fin k) (Fin l) D.host.E} (h : aᴴ * S.gram * b = c) : adj (rat a) ⬝ (gA S ⬝ rat b) = rat c := by
+    {c : Matrix (Fin k) (Fin l) D.host.E} (h : aᴴ * S.gram * b = c) : adj (rat a) * (gA S * rat b) = rat c := by
   rw [← h, rat_mul, rat_mul, rat_conjTranspose, Matrix.mul_assoc]; rfl
 
 structure OrthDec (S A B : HSp D) where
@@ -89,47 +93,45 @@ theorem iA_qA_add : d.iA * d.qA + d.iB * d.qB = 1 := by
   rw [← fromCols_mul_fromRows]
   exact (Matrix.mul_eq_one_comm_of_card_eq _ _ _ (by simp [d.rank_add])).1 h
 
-theorem pA_eq : d.pA = giA A ⬝ (adj d.jA ⬝ gA S) := by
+theorem pA_eq : d.pA = giA A * (adj d.jA * gA S) := by
   rw [pA, qA, rat_mul, rat_mul, rat_conjTranspose]; rfl
 
-theorem pB_eq : d.pB = giA B ⬝ (adj d.jB ⬝ gA S) := d.symm.pA_eq
+theorem pB_eq : d.pB = giA B * (adj d.jB * gA S) := d.symm.pA_eq
 
-theorem gram_AA : adj d.jA ⬝ (gA S ⬝ d.jA) = gA A := gram_rat S d.isoA
+theorem gram_AA : adj d.jA * (gA S * d.jA) = gA A := gram_rat S d.isoA
 
-theorem gram_BB : adj d.jB ⬝ (gA S ⬝ d.jB) = gA B := gram_rat S d.isoB
+theorem gram_BB : adj d.jB * (gA S * d.jB) = gA B := gram_rat S d.isoB
 
-theorem gram_BA : adj d.jB ⬝ (gA S ⬝ d.jA) = 0 := (gram_rat S d.orth).trans rat_zero
+theorem gram_BA : adj d.jB * (gA S * d.jA) = 0 := (gram_rat S d.orth).trans rat_zero
 
-theorem gram_AB : adj d.jA ⬝ (gA S ⬝ d.jB) = 0 := d.symm.gram_BA
+@[simp] theorem pA_jA : d.pA * d.jA = 1 := by rw [pA, jA, ← rat_mul, qA_iA, rat_one]
 
-@[simp] theorem pA_jA : d.pA ⬝ d.jA = 1 := by rw [pA, jA, ← rat_mul, qA_iA, rat_one]
+@[simp] theorem pA_jB : d.pA * d.jB = 0 := by rw [pA, jB, ← rat_mul, qA_iB, rat_zero]
 
-@[simp] theorem pA_jB : d.pA ⬝ d.jB = 0 := by rw [pA, jB, ← rat_mul, qA_iB, rat_zero]
+@[simp] theorem pB_jB : d.pB * d.jB = 1 := d.symm.pA_jA
 
-@[simp] theorem pB_jB : d.pB ⬝ d.jB = 1 := d.symm.pA_jA
+@[simp] theorem pB_jA : d.pB * d.jA = 0 := d.symm.pA_jB
 
-@[simp] theorem pB_jA : d.pB ⬝ d.jA = 0 := d.symm.pA_jB
-
-theorem sum_eq_one : d.jA ⬝ d.pA + d.jB ⬝ d.pB = 1 := by
+theorem sum_eq_one : d.jA * d.pA + d.jB * d.pB = 1 := by
   rw [jA, jB, pA, pB, ← rat_mul, ← rat_mul, ← rat_add, iA_qA_add, rat_one]
 
-theorem gram_images {I : Mx D S.rank A.rank} {J : Mx D S.rank B.rank} (hI : adj I ⬝ (gA S ⬝ I) = gA A)
-    (hJ : adj J ⬝ (gA S ⬝ J) = gA B) (hJI : adj J ⬝ (gA S ⬝ I) = 0) :
-    adj (I ⬝ d.pA + J ⬝ d.pB) ⬝ (gA S ⬝ (I ⬝ d.pA + J ⬝ d.pB)) =
-      adj d.pA ⬝ (gA A ⬝ d.pA) + adj d.pB ⬝ (gA B ⬝ d.pB) := by
+theorem gram_images {I : Mx D S.rank A.rank} {J : Mx D S.rank B.rank} (hI : adj I * (gA S * I) = gA A)
+    (hJ : adj J * (gA S * J) = gA B) (hJI : adj J * (gA S * I) = 0) :
+    adj (I * d.pA + J * d.pB) * (gA S * (I * d.pA + J * d.pB)) =
+      adj d.pA * (gA A * d.pA) + adj d.pB * (gA B * d.pB) := by
   have hIJ := gram_swap S hJI
   simp only [adj_add, adj_mul, Matrix.mul_add, Matrix.add_mul, Matrix.mul_assoc, cancel₃ hI, cancel₃ hJ, cancel₃ hJI,
     cancel₃ hIJ, adj_zero, Matrix.zero_mul, Matrix.mul_zero, add_zero, zero_add]
 
-theorem gA_eq : gA S = adj d.pA ⬝ (gA A ⬝ d.pA) + adj d.pB ⬝ (gA B ⬝ d.pB) := by
+theorem gA_eq : gA S = adj d.pA * (gA A * d.pA) + adj d.pB * (gA B * d.pB) := by
   rw [← d.gram_images d.gram_AA d.gram_BB d.gram_BA, sum_eq_one, adj_one, Matrix.one_mul, Matrix.mul_one]
 
-theorem giA_eq : giA S = d.jA ⬝ (giA A ⬝ adj d.jA) + d.jB ⬝ (giA B ⬝ adj d.jB) := by
+theorem giA_eq : giA S = d.jA * (giA A * adj d.jA) + d.jB * (giA B * adj d.jB) := by
   rw [← Matrix.one_mul (giA S), ← d.sum_eq_one, pA_eq, pB_eq]
   simp only [Matrix.add_mul, Matrix.mul_assoc, gA_mul_giA, Matrix.mul_one]
 
 def emb : GA D A × GA D B →* GA D S where
-  toFun p := ofMat S (d.jA ⬝ mt A p.1 ⬝ d.pA + d.jB ⬝ mt B p.2 ⬝ d.pB) (by
+  toFun p := ofMat S (d.jA * mt A p.1 * d.pA + d.jB * mt B p.2 * d.pB) (by
     refine (d.gram_images ?_ ?_ ?_).trans d.gA_eq.symm
     · rw [adj_mul, Matrix.mul_assoc, cancel₃ d.gram_AA, mt_unitary]
     · rw [adj_mul, Matrix.mul_assoc, cancel₃ d.gram_BB, mt_unitary]
@@ -142,29 +144,26 @@ def emb : GA D A × GA D B →* GA D S where
       Matrix.mul_zero, add_zero, zero_add])
 
 theorem mt_emb (a : GA D A) (b : GA D B) :
-    mt S (d.emb (a, b)) = d.jA ⬝ mt A a ⬝ d.pA + d.jB ⬝ mt B b ⬝ d.pB := rfl
+    mt S (d.emb (a, b)) = d.jA * mt A a * d.pA + d.jB * mt B b * d.pB := rfl
 
-theorem emb_jA (a : GA D A) (b : GA D B) : mt S (d.emb (a, b)) ⬝ d.jA = d.jA ⬝ mt A a := by
+theorem emb_jA (a : GA D A) (b : GA D B) : mt S (d.emb (a, b)) * d.jA = d.jA * mt A a := by
   simp only [mt_emb, Matrix.add_mul, Matrix.mul_assoc, pA_jA, pB_jA, Matrix.mul_one, Matrix.mul_zero, add_zero]
 
-theorem emb_jB (a : GA D A) (b : GA D B) : mt S (d.emb (a, b)) ⬝ d.jB = d.jB ⬝ mt B b := by
+theorem emb_jB (a : GA D A) (b : GA D B) : mt S (d.emb (a, b)) * d.jB = d.jB * mt B b := by
   simp only [mt_emb, Matrix.add_mul, Matrix.mul_assoc, pA_jB, pB_jB, Matrix.mul_one, Matrix.mul_zero, zero_add]
 
-theorem pA_emb (a : GA D A) (b : GA D B) : d.pA ⬝ mt S (d.emb (a, b)) = mt A a ⬝ d.pA := by
+theorem pA_emb (a : GA D A) (b : GA D B) : d.pA * mt S (d.emb (a, b)) = mt A a * d.pA := by
   simp only [mt_emb, Matrix.mul_add, Matrix.mul_assoc, cancel₂ d.pA_jA, cancel₂ d.pA_jB, Matrix.one_mul,
     Matrix.zero_mul, add_zero]
 
-theorem pB_emb (a : GA D A) (b : GA D B) : d.pB ⬝ mt S (d.emb (a, b)) = mt B b ⬝ d.pB := by
+theorem pB_emb (a : GA D A) (b : GA D B) : d.pB * mt S (d.emb (a, b)) = mt B b * d.pB := by
   simp only [mt_emb, Matrix.mul_add, Matrix.mul_assoc, cancel₂ d.pB_jA, cancel₂ d.pB_jB, Matrix.one_mul,
     Matrix.zero_mul, zero_add]
 
-theorem emb_symm (a : GA D A) (b : GA D B) : d.symm.emb (b, a) = d.emb (a, b) :=
-  mt_injective S (add_comm _ _)
-
 theorem emb_injective : Function.Injective d.emb := by
   rintro ⟨a, b⟩ ⟨a', b'⟩ h
-  have h1 : d.pA ⬝ (mt S (d.emb (a, b)) ⬝ d.jA) = d.pA ⬝ (mt S (d.emb (a', b')) ⬝ d.jA) := by rw [h]
-  have h2 : d.pB ⬝ (mt S (d.emb (a, b)) ⬝ d.jB) = d.pB ⬝ (mt S (d.emb (a', b')) ⬝ d.jB) := by rw [h]
+  have h1 : d.pA * (mt S (d.emb (a, b)) * d.jA) = d.pA * (mt S (d.emb (a', b')) * d.jA) := by rw [h]
+  have h2 : d.pB * (mt S (d.emb (a, b)) * d.jB) = d.pB * (mt S (d.emb (a', b')) * d.jB) := by rw [h]
   rw [emb_jA, emb_jA, cancel₂ d.pA_jA, cancel₂ d.pA_jA, Matrix.one_mul, Matrix.one_mul] at h1
   rw [emb_jB, emb_jB, cancel₂ d.pB_jB, cancel₂ d.pB_jB, Matrix.one_mul, Matrix.one_mul] at h2
   exact Prod.ext (mt_injective A h1) (mt_injective B h2)
@@ -196,13 +195,9 @@ theorem embRel_left (ι : A.V →ₗ[D.host.E] S.V) (hι : frameMat S A ι = d.i
   rw [mt_emb, mt_one, Matrix.mul_one, Matrix.add_mulVec, ← Matrix.mulVec_mulVec, h2, Matrix.mulVec_zero,
     ← Matrix.mulVec_mulVec, h3]
 
-theorem embRel_right (ι : B.V →ₗ[D.host.E] S.V) (hι : frameMat S B ι = d.iB) (b : GA D B) :
-    EmbRel S B ι (d.emb (1, b)) b := by
-  rw [← emb_symm]; exact d.symm.embRel_left ι hι b
-
 def resS (T : HSp D) : WO S T ≃+ WO A T × WO B T where
-  toFun x := (x ⬝ d.jA, x ⬝ d.jB)
-  invFun p := p.1 ⬝ d.pA + p.2 ⬝ d.pB
+  toFun x := (x * d.jA, x * d.jB)
+  invFun p := p.1 * d.pA + p.2 * d.pB
   left_inv x := by
     simp only [Matrix.mul_assoc]
     rw [← Matrix.mul_add, sum_eq_one, Matrix.mul_one]
@@ -211,10 +206,10 @@ def resS (T : HSp D) : WO S T ≃+ WO A T × WO B T where
       zero_add]
   map_add' x y := Prod.ext (Matrix.add_mul _ _ _) (Matrix.add_mul _ _ _)
 
-theorem resS_apply (T : HSp D) (x : WO S T) : d.resS T x = (x ⬝ d.jA, x ⬝ d.jB) := rfl
+theorem resS_apply (T : HSp D) (x : WO S T) : d.resS T x = (x * d.jA, x * d.jB) := rfl
 
 theorem resS_symm_apply (T : HSp D) (u : WO A T) (v : WO B T) :
-    (d.resS T).symm (u, v) = u ⬝ d.pA + v ⬝ d.pB := rfl
+    (d.resS T).symm (u, v) = u * d.pA + v * d.pB := rfl
 
 theorem hO_resS (T : HSp D) (x y : WO S T) :
     hO S T x y = hO A T (d.resS T x).1 (d.resS T y).1 + hO B T (d.resS T x).2 (d.resS T y).2 := by
@@ -225,11 +220,11 @@ theorem hO_resS (T : HSp D) (x y : WO S T) :
 
 theorem symplOH_resS (T : HSp D) (x y : WO S T) :
     symplOH S T x y = symplOH A T (d.resS T x).1 (d.resS T y).1 + symplOH B T (d.resS T x).2 (d.resS T y).2 := by
-  rw [symplOH_eq, hO_resS d, map_add]; rfl
+  rw [symplOH_eq, hO_resS d, map_add (f := _)]; rfl
 
 theorem symplO_resS (T : HSp D) (x y : WO S T) :
     symplO S T x y = symplO A T (d.resS T x).1 (d.resS T y).1 + symplO B T (d.resS T x).2 (d.resS T y).2 := by
-  rw [symplO_eq, hO_resS d, mul_add, map_add]; rfl
+  rw [symplO_eq, hO_resS d, mul_add, map_add (f := _)]; rfl
 
 theorem resS_actO (T : HSp D) (a : GA D A) (b : GA D B) (h : GA D T) (x : WO S T) :
     d.resS T (actO S T (d.emb (a, b)) h x) = (actO A T a h (d.resS T x).1, actO B T b h (d.resS T x).2) := by
@@ -257,7 +252,7 @@ theorem heisO_boxS (ψ : AddChar (AF D.host.F) ℂ) (T : HSp D) (fA : WO A T →
     heisO ψ S T u (d.boxS T fA fB) = d.boxS T (heisO ψ A T (d.resS T u).1 fA) (heisO ψ B T (d.resS T u).2 fB) := by
   funext w
   simp only [heisO, boxS]
-  rw [d.symplOH_resS, AddChar.map_add_eq_mul, map_add, Prod.fst_add, Prod.snd_add]
+  rw [d.symplOH_resS, AddChar.map_add_eq_mul, map_add (f := _), Prod.fst_add, Prod.snd_add]
   ring
 
 theorem isThetaFunO_boxS {ψ : AddChar (AF D.host.F) ℂ} {T : HSp D} {fA : WO A T → ℂ} {fB : WO B T → ℂ}
@@ -275,8 +270,8 @@ namespace OrthDec
 variable {T A B : HSp D} (d : OrthDec T A B)
 
 def resT (S : HSp D) : WO S T ≃+ WO S A × WO S B where
-  toFun x := (d.pA ⬝ x, d.pB ⬝ x)
-  invFun p := d.jA ⬝ p.1 + d.jB ⬝ p.2
+  toFun x := (d.pA * x, d.pB * x)
+  invFun p := d.jA * p.1 + d.jB * p.2
   left_inv x := by
     simp only [← Matrix.mul_assoc]
     rw [← Matrix.add_mul, sum_eq_one, Matrix.one_mul]
@@ -285,10 +280,10 @@ def resT (S : HSp D) : WO S T ≃+ WO S A × WO S B where
       add_zero, zero_add]
   map_add' x y := Prod.ext (Matrix.mul_add _ _ _) (Matrix.mul_add _ _ _)
 
-theorem resT_apply (S : HSp D) (x : WO S T) : d.resT S x = (d.pA ⬝ x, d.pB ⬝ x) := rfl
+theorem resT_apply (S : HSp D) (x : WO S T) : d.resT S x = (d.pA * x, d.pB * x) := rfl
 
 theorem resT_symm_apply (S : HSp D) (u : WO S A) (v : WO S B) :
-    (d.resT S).symm (u, v) = d.jA ⬝ u + d.jB ⬝ v := rfl
+    (d.resT S).symm (u, v) = d.jA * u + d.jB * v := rfl
 
 theorem hO_resT (S : HSp D) (x y : WO S T) :
     hO S T x y = hO S A (d.resT S x).1 (d.resT S y).1 + hO S B (d.resT S x).2 (d.resT S y).2 := by
@@ -298,11 +293,11 @@ theorem hO_resT (S : HSp D) (x y : WO S T) :
 
 theorem symplOH_resT (S : HSp D) (x y : WO S T) :
     symplOH S T x y = symplOH S A (d.resT S x).1 (d.resT S y).1 + symplOH S B (d.resT S x).2 (d.resT S y).2 := by
-  rw [symplOH_eq, hO_resT d, map_add]; rfl
+  rw [symplOH_eq, hO_resT d, map_add (f := _)]; rfl
 
 theorem symplO_resT (S : HSp D) (x y : WO S T) :
     symplO S T x y = symplO S A (d.resT S x).1 (d.resT S y).1 + symplO S B (d.resT S x).2 (d.resT S y).2 := by
-  rw [symplO_eq, hO_resT d, mul_add, map_add]; rfl
+  rw [symplO_eq, hO_resT d, mul_add, map_add (f := _)]; rfl
 
 theorem resT_actO (S : HSp D) (g : GA D S) (a : GA D A) (b : GA D B) (x : WO S T) :
     d.resT S (actO S T g (d.emb (a, b)) x) = (actO S A g a (d.resT S x).1, actO S B g b (d.resT S x).2) := by
@@ -330,7 +325,7 @@ theorem heisO_boxT (ψ : AddChar (AF D.host.F) ℂ) (S : HSp D) (fA : WO S A →
     heisO ψ S T u (d.boxT S fA fB) = d.boxT S (heisO ψ S A (d.resT S u).1 fA) (heisO ψ S B (d.resT S u).2 fB) := by
   funext w
   simp only [heisO, boxT]
-  rw [d.symplOH_resT, AddChar.map_add_eq_mul, map_add, Prod.fst_add, Prod.snd_add]
+  rw [d.symplOH_resT, AddChar.map_add_eq_mul, map_add (f := _), Prod.fst_add, Prod.snd_add]
   ring
 
 theorem isThetaFunO_boxT {ψ : AddChar (AF D.host.F) ℂ} {S : HSp D} {fA : WO S A → ℂ} {fB : WO S B → ℂ}

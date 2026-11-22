@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.ComplexMultiplication.UniqInvOfLat
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.ComplexMultiplication.UniqInvOfLat
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,8 +13,8 @@ open Formalism.BasicNotions (D7)
 open Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity (IsLat jL Uniformization CMTransitive)
 open Formalism.MainNotions.TaylorLogMetric (lamOf)
 
-open Filter Topology in
 
+open Filter Topology in
 theorem weierstrassP_eventuallyEq_nhdsNE_of_zero (L L' : PeriodPair)
     (h : L.weierstrassP =ᶠ[𝓝[≠] 0] L'.weierstrassP) (x : ℂ) :
     L.weierstrassP =ᶠ[𝓝[≠] x] L'.weierstrassP := by
@@ -30,8 +34,8 @@ theorem weierstrassP_eventuallyEq_nhdsNE_of_zero (L L' : PeriodPair)
   filter_upwards [hx] with z hz
   exact sub_eq_zero.1 hz
 
-open Filter Topology in
 
+open Filter Topology in
 theorem lattice_subset_of_weierstrassP (L L' : PeriodPair)
     (h : L.weierstrassP =ᶠ[𝓝[≠] 0] L'.weierstrassP) :
     (L.lattice : Set ℂ) ⊆ L'.lattice := by
@@ -43,8 +47,8 @@ theorem lattice_subset_of_weierstrassP (L L' : PeriodPair)
   rw [← meromorphicOrderAt_congr (weierstrassP_eventuallyEq_nhdsNE_of_zero L L' h l), h1] at h2
   exact absurd h2 (by decide)
 
-open Filter Topology in
 
+open Filter Topology in
 theorem lattice_eq_of_weierstrassP (L L' : PeriodPair)
     (h : L.weierstrassP =ᶠ[𝓝[≠] 0] L'.weierstrassP) :
     (L.lattice : Set ℂ) = L'.lattice :=

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.CommutativeAlgebra.MaximalIdealSquares.RingKrullDimQuotientSpanSingletonAddOne
+module
+
+public import Mathlib
+public import ReciprocityTheory.CommutativeAlgebra.MaximalIdealSquares.RingKrullDimQuotientSpanSingletonAddOne
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 

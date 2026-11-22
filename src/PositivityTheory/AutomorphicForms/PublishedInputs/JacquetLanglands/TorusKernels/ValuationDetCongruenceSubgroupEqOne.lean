@@ -1,6 +1,10 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShortLatticeUnitarize.CompactBoxLattices.GlFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ScalarStabilizers.FinSupp
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShortLatticeUnitarize.CompactBoxLattices.GlFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ScalarStabilizers.FinSupp
+
+@[expose] public section
 
 noncomputable section
 
@@ -146,7 +150,7 @@ theorem loc (hU : GUnit) {c : Pl F → ℕ} (hc : ∀ v, c (D.pl v) = 1) {W : Li
   set T : (D.pl v).adicCompletion F := (↑(Matrix.GeneralLinearGroup.map (pLoc F (D.pl v)) (a i * k⁻¹)) : Matrix (Fin 2) (Fin 2) ((D.pl v).adicCompletion F)).trace with hT
   set Δ : (D.pl v).adicCompletion F := (↑(Matrix.GeneralLinearGroup.map (pLoc F (D.pl v)) (a i * k⁻¹)) : Matrix (Fin 2) (Fin 2) ((D.pl v).adicCompletion F)).det with hΔ
   have hτT : M.trace = D.em v T := by
-    rw [hM, hT, Matrix.trace_fin_two, Matrix.trace_fin_two, map_add, gl_apply, gl_apply]
+    rw [hM, hT, Matrix.trace_fin_two, Matrix.trace_fin_two, map_add (f := _), gl_apply, gl_apply]
   have hδΔ : M.det = D.em v Δ := by
     rw [hM, hΔ, Matrix.det_fin_two, Matrix.det_fin_two, gl_apply, gl_apply, gl_apply, gl_apply, map_sub, (D.em v).map_mul, (D.em v).map_mul]
 
@@ -156,7 +160,7 @@ theorem loc (hU : GUnit) {c : Pl F → ℕ} (hc : ∀ v, c (D.pl v) = 1) {W : Li
     rw [hrel]; simp only [map_mul, map_inv, Pi.mul_apply, Pi.inv_apply]
   have htr : v.embedding γ.val.trace = (D.ea v z)⁻¹ * M.trace := by
     have e1 : v.embedding γ.val.trace = (D.gl (jF F γ) v : Matrix (Fin 2) (Fin 2) ℂ).trace := by
-      rw [Matrix.trace_fin_two, Matrix.trace_fin_two, map_add, gl_apply, gl_apply]
+      rw [Matrix.trace_fin_two, Matrix.trace_fin_two, map_add (f := _), gl_apply, gl_apply]
       simp only [jF, Matrix.GeneralLinearGroup.map_apply, ← hea]
     rw [e1, hj, tr_conj, Units.val_mul, hS, Matrix.mul_smul, Matrix.mul_one, Matrix.trace_smul, smul_eq_mul]
   have hdt : v.embedding γ.val.det = ((D.ea v z)⁻¹) ^ 2 * M.det := by

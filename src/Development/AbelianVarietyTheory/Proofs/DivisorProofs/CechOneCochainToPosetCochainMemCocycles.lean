@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RestrictCapFBijective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RestrictCapFBijective
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry Opposite
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.KS (rsT IsCoc IsCob)
@@ -27,7 +32,7 @@ theorem cechOneCochainToPosetCochain_mem_cocycles : ∀ (I : Type) [Finite I] (X
     le_inf (inf_le_left.trans inf_le_left) inf_le_right
   rw [GlobalTheory.KS.rsT_rsT e1 hW, GlobalTheory.KS.rsT_rsT e2 hW, GlobalTheory.KS.rsT_rsT e3 hW] at key
   apply (cv s U hU hinf T'').injective
-  rw [map_add, cv_toPos, cv_mp, cv_toPos, cv_toPos, GlobalTheory.KS.rsT_rsT hT' h23]
+  rw [map_add (f := _), cv_toPos, cv_mp, cv_toPos, cv_toPos, GlobalTheory.KS.rsT_rsT hT' h23]
   exact key.symm
 
 end GlobalTheory.CechCmp

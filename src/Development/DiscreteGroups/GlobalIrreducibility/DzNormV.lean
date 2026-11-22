@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.ConjugateSelfDual.Statement
-import Development.DiscreteGroups.GlobalIrreducibility.ExistsOfMemKOne
+module
+
+public import Mathlib
+public import Formalism.ConjugateSelfDual.Statement
+public import Development.DiscreteGroups.GlobalIrreducibility.ExistsOfMemKOne
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Filter Topology
 

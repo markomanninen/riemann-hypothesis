@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementG
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementG
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

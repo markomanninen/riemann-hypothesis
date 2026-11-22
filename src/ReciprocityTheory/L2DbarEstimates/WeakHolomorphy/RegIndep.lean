@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.MeasurableEmbeddingRotAbout
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.RegConv
+module
+
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.MeasurableEmbeddingRotAbout
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.RegConv
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.C
 
@@ -127,7 +131,10 @@ theorem moll_mean {n : ℕ} {a : ℝ} (ha : 0 < a) {h : V n → ℂ} {x : V n}
     rw [← e1]
     congr 1
     funext z
-    simp only [sub_add_cancel_left, moll, norm_neg]
+    congr 1
+    · unfold moll
+      congr 1
+      rw [show x - (x + z) = -z by abel, norm_neg]
   rw [hA]
   have hB : ∀ θ : ℝ, ∫ z, (moll n a z : ℂ) * h (x + circleMap 0 1 θ • z)
       = ∫ z, (moll n a z : ℂ) * h (x + z) := by
@@ -138,7 +145,9 @@ theorem moll_mean {n : ℕ} {a : ℝ} (ha : 0 < a) {h : V n → ℂ} {x : V n}
     rw [← e2]
     congr 1
     funext z
-    simp only [moll, norm_smul, hc, one_mul]
+    congr 1
+    unfold moll
+    rw [norm_smul, hc, one_mul]
   obtain ⟨C, hC⟩ := (isCompact_closedBall x (a / 2)).exists_bound_of_continuousOn
     (hh.continuousOn.mono (closedBall_subset_ball (by linarith)))
   have hcont : Continuous (fun p : ℝ × V n => (moll n a p.2 : ℂ) * h (x + circleMap 0 1 p.1 • p.2)) := by

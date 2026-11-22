@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.ParamsHeightRankConstant
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.BaseSizes
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.ParamsHeightRankConstant
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.BaseSizes
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PulledRead
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtPlace
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PulledRead
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtPlace
+
+@[expose] public section
 
 noncomputable section
 

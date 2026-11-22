@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToBaseChangePtsBijective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DUnitMemRangeOfMemKerIdeal
-import Development.AbelianVarietyTheory.Definitions.Divisors.PadicActionConstInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToBaseChangePtsBijective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DUnitMemRangeOfMemKerIdeal
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PadicActionConstInjective
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -36,8 +40,13 @@ variable {R R' : Type} [CommRing R] [CommRing R'] {σ : R →+* R'} {A A' : Type
 
 def SemiBialgHom.prim (f : SemiBialgHom σ A A') :
     LinearMap.ker (cobOne R A) →ₛₗ[σ] LinearMap.ker (cobOne R' A') where
-  toFun b := ⟨f b.1, (f.two_cobOne b.1).symm.trans ((congrArg f.two b.2).trans (map_zero _))⟩
-  map_add' _ _ := Subtype.ext (map_add f.lin _ _)
+  toFun b := ⟨f b.1, by
+    have hb : cobOne R A b.1 = 0 := b.2
+    have hone : SemiBialgHom.lin f 1 = 1 := f.toRingHom.map_one
+    have h := congrArg (SemiBialgHom.two f) hb
+    simpa only [LinearMap.mem_ker, cobOne_apply, map_sub, SemiBialgHom.two_comul,
+      TensorProduct.map_tmul, hone, SemiBialgHom.lin_apply, map_zero] using h⟩
+  map_add' _ _ := Subtype.ext (f.toRingHom.map_add _ _)
   map_smul' _ _ := Subtype.ext (f.smul_map _ _)
 
 @[simp] theorem SemiBialgHom.prim_val (f : SemiBialgHom σ A A') (b : LinearMap.ker (cobOne R A)) :
@@ -55,8 +64,8 @@ theorem evalAt_mul [Module.Finite R A] [Module.Projective R A] [IsCocomm R A]
         counitAlgHom R (CartierDual R A) ψ • CartierDual.evalAt R A b.1 φ :=
   (CartierDual.isPrimitiveElem_iff_mul b.1).1 (isPrimitiveElem_of_mem_ker b.2) φ ψ
 
-variable (R A) in
 
+variable (R A) in
 def primTangent [Module.Finite R A] [Module.Projective R A] [IsCocomm R A] :
     LinearMap.ker (cobOne R A) →ₗ[R] Module.Dual R (Cot R (CartierDual R A)) where
   toFun b := AugCot.lift _ (CartierDual.evalAt R A b.1) (evalAt_mul b)
@@ -65,35 +74,12 @@ def primTangent [Module.Finite R A] [Module.Projective R A] [IsCocomm R A] :
 
 @[simp] theorem primTangent_d [Module.Finite R A] [Module.Projective R A] [IsCocomm R A]
     (b : LinearMap.ker (cobOne R A)) (φ : CartierDual R A) :
-    primTangent R A b (dUnit R φ) = φ b.1 := AugCot.lift_d _ _ (evalAt_mul b) φ
+    primTangent R A b (dUnit (R := R) φ) = φ b.1 := AugCot.lift_d _ _ (evalAt_mul b) φ
 
 variable [IsCocomm R A] [IsCocomm R' A']
 
-variable (R A) in
 
-def levelRel : A →ₗ[R] symCocycles R A × Cot R A :=
-  ((cobOne R A).codRestrict _ fun _ => cobOne_mem _).prod (AugCot.d (counitAlgHom R A))
 
-variable (R A) in
-
-abbrev LevelRig : Type := (symCocycles R A × Cot R A) ⧸ LinearMap.range (levelRel R A)
-
-omit [IsCocomm R A] [IsCocomm R' A'] in
-
-def SemiBialgHom.levelPair (f : SemiBialgHom σ A A') :
-    symCocycles R A × Cot R A →ₛₗ[σ] symCocycles R' A' × Cot R' A' where
-  toFun x := (⟨f.two x.1.1, f.two_mem x.1.2⟩, f.cot x.2)
-  map_add' _ _ := Prod.ext (Subtype.ext (map_add f.two _ _)) (map_add f.cot _ _)
-  map_smul' _ _ := Prod.ext (Subtype.ext (map_smulₛₗ f.two _ _)) (map_smulₛₗ f.cot _ _)
-
-def SemiBialgHom.levelRig (f : SemiBialgHom σ A A') : LevelRig R A →ₛₗ[σ] LevelRig R' A' :=
-  Submodule.mapQ _ _ f.levelPair (by
-    rintro _ ⟨b, rfl⟩
-    exact ⟨f b, Prod.ext (Subtype.ext (f.two_cobOne b).symm) (f.cot_d b).symm⟩)
-
-@[simp] theorem SemiBialgHom.levelRig_mk (f : SemiBialgHom σ A A')
-    (x : symCocycles R A × Cot R A) :
-    f.levelRig (Submodule.Quotient.mk x) = Submodule.Quotient.mk (f.levelPair x) := rfl
 
 end Level
 
@@ -148,8 +134,7 @@ theorem transl_res (n : ℕ) (a : G.A (n + 2)) :
   rw [transl_apply, transl_apply, ← pullTwo_comul]
   generalize comul (R := R) a = t
   induction t with
-  | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul x y => simp
 
 theorem transl_mulP (n : ℕ) (a : G.A n) : G.transl n (G.mulP n a) = G.mulP n a ⊗ₜ 1 := by
@@ -158,8 +143,7 @@ theorem transl_mulP (n : ℕ) (a : G.A n) : G.transl n (G.mulP n a) = G.mulP n a
     ← Coalgebra.lTensor_counit_comul]
   generalize comul (R := R) a = t
   induction t with
-  | zero => simp
-  | add x y hx hy => simp only [map_add, add_tmul, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), add_tmul, hx, hy]
   | tmul x y => simp [resOne_mulP, Algebra.algebraMap_eq_smul_one, smul_tmul]
 
 theorem pullbackTwo_mulP_injective (n : ℕ) : Function.Injective (pullbackTwo (G.mulP n)) :=
@@ -190,19 +174,8 @@ def primLie : LinearMap.ker (cobOne R (G.A 1)) →ₗ[R] G.dual.Lie :=
   (G.dual.omegaLevel 1).dualMap ∘ₗ primTangent R (G.A 1)
 
 theorem primLie_apply (b : LinearMap.ker (cobOne R (G.A 1))) (w : G.dual.omega)
-    (φ : CartierDual R (G.A 1)) (h : w.1 1 = dUnit R φ) : G.primLie b w = φ b.1 :=
+    (φ : CartierDual R (G.A 1)) (h : w.1 1 = dUnit (R := R) φ) : G.primLie b w = φ b.1 :=
   (congrArg (primTangent R (G.A 1) b) h).trans (primTangent_d b φ)
-
-def cocyclesLevel (n : ℕ) : G.cocycles →ₗ[R] symCocycles R (G.A n) :=
-  (LinearMap.proj n ∘ₗ G.cocycles.subtype).codRestrict _ fun c => (c.2 n).1
-
-def rigLevel (n : ℕ) : G.RigExt →ₗ[R] LevelRig R (G.A n) :=
-  Submodule.mapQ _ _ ((G.cocyclesLevel n).prodMap (G.omegaLevel n)) (by
-    rintro _ ⟨b, rfl⟩
-    exact ⟨b.1 n, rfl⟩)
-
-@[simp] theorem rigLevel_mk (n : ℕ) (c : G.cocycles) (w : G.omega) :
-    G.rigLevel n (G.rigMk (c, w)) = Submodule.Quotient.mk (⟨c.1 n, (c.2 n).1⟩, w.1 n) := rfl
 
 end PDivGroup
 

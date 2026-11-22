@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.PowBddInt
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.PowBddInt
+
+@[expose] public section
 
 namespace PI.PowBddIntWork
 

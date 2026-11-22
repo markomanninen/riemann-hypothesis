@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.FlipTwoThree
-import Formalism.SharpRestriction.ParamsHeightRankConstant
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.FlipTwoThree
+public import Formalism.SharpRestriction.ParamsHeightRankConstant
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,18 +37,18 @@ theorem hc_u_step {R : Ranks} (h : HCParam R) (i : ℕ) (hi : i + 1 < R.k) :
 
 theorem lamCol_eq (D : D7) (u : D.what₂.Word) (τ : D.what₂.Tau) (i : ℕ) (hi : i < D.R.k) :
     lamCol D u τ i = (D.hcW u τ).u ⟨i, hi⟩ - (((D.R.k : ℚ) - 1) / 2 - i) := by
-  rw [lamCol, dif_pos hi]
+  rw [lamCol, dite_eq_left hi]
   simp only [hcToWeightQ, rhoVec, Fin.val_mk]
 
 theorem wJ_eq (D : D7) (u : D.what₂.Word) (τ : D.what₂.Tau) (j : ℕ) (hj : j < D.R.m) :
     wJ D u τ j = (D.hc τ).e ⟨j, hj⟩ - (D.R.k : ℚ) / 2 - (2 * ((j : ℚ) + 1) - 1) * ((D.R.t : ℚ) + 1) / 2 := by
-  rw [wJ, dif_pos hj, wG, D.hcW_e]
+  rw [wJ, dite_eq_left hj, wG, D.hcW_e]
   push_cast <;> ring
 
 theorem wj_eq (D : D7) (τ : D.what₂.Tau) (j : ℕ) (hj : j < D.R.m) :
     wj D (j + 1) τ = (((D.hc τ).e ⟨j, hj⟩ : ℚ) : ℝ) := by
   have h : j + 1 - 1 < D.R.m := by omega
-  rw [wj, dif_pos h]
+  rw [wj, dite_eq_left h]
   have e : (⟨j + 1 - 1, h⟩ : Fin D.R.m) = ⟨j, hj⟩ := Fin.ext (by simp)
   rw [e]
 

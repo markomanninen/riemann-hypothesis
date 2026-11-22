@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedStandardAddCharConductorPropertiesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedStandardAddCharConductorPropertiesStatement
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 namespace GlobalTheory.JR
@@ -19,11 +24,11 @@ theorem fourB_indicator_intLattice : ∀ (F E : Type) [NontriviallyNormedField F
       rw [e1]
       exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (h i) (by rw [norm_neg]; exact ha i))
     · intro h i
-      rw [map_add, Pi.add_apply]
+      rw [map_add (f := _), Pi.add_apply]
       exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (ha i) (h i))
   have hBadd : ∀ a x, B (a + x) y = B a y * B x y := by
     intro a x
-    rw [hB, hB, hB, map_add, star_add, add_dotProduct, map_add, AddChar.map_add_eq_mul]
+    rw [hB, hB, hB, map_add (f := _), star_add, add_dotProduct, map_add (f := _), AddChar.map_add_eq_mul]
   haveI : ContinuousAdd A.L := IsModuleTopology.toContinuousAdd F A.L
   unfold fourB
   by_cases hy : y ∈ Λ
@@ -31,7 +36,8 @@ theorem fourB_indicator_intLattice : ∀ (F E : Type) [NontriviallyNormedField F
       intro x
       by_cases hx : x ∈ Λ
       · rw [Set.indicator_of_mem hx, Set.indicator_of_mem hx, Pi.one_apply, one_mul, hB]
-        simp only [dotProduct, Pi.star_apply, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [dotProduct, Pi.star_apply, map_sum]
         refine Finset.sum_induction _ (fun t => ψ t = 1) (fun u v hu hv => by
           rw [AddChar.map_add_eq_mul, hu, hv, one_mul]) (AddChar.map_zero_eq_one ψ) fun i _ => ?_
         exact (key (j y i)).2 (hy i) _ (by rw [hU.norm_star]; exact hx i)

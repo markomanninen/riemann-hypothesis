@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaSpaceSelfDualPairAtMostLine
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinsumQuotientNonnegOfSwapConj
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PullEqGaussSmulIntertwiner
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaSpaceSelfDualPairAtMostLine
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinsumQuotientNonnegOfSwapConj
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PullEqGaussSmulIntertwiner
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
 
@@ -57,7 +62,7 @@ theorem gauss_nonneg {V : Type} [AddCommGroup V] [Module ℂ V] (H : V →ₗ[�
   have hcomm : ∀ Q : V →ₗ[ℂ] V, (∀ x, Q (a x) = a (Q x)) → ∀ x, Q (C x) = C (Q x) := by
     intro Q hQ x
     obtain ⟨z, rfl⟩ := hsurj x
-    rw [hC, map_sub, hQ, hC, map_smul, map_add, hQ]
+    rw [hC, map_sub, hQ, hC, map_smul, map_add (f := _), hQ]
   have hskew : ∀ x y, H (C x) y = -H x (C y) := by
     intro x y
     obtain ⟨z, rfl⟩ := hsurj x
@@ -232,7 +237,7 @@ theorem semi (T : Tor D) (A : AddSubgroup (VC D N N')) (hq : ∀ x ∈ A, ∃ m 
     congr 1
     have e1 := Complex.sub_conj (hfL T x y)
     rw [← hfL_swap] at e1
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     push_cast at e1 ⊢
     linear_combination (-(Real.pi : ℂ) / 2) * e1
   rw [sub_eq_add_neg, ex_add, ex_add, ← hfL_apply]

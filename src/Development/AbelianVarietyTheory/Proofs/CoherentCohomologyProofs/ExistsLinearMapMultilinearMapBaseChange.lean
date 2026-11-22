@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.FiniteCohPushforwardIffOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsMvPolynomialOfIteratedBackwardDifferenceVa
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsFiniteSubsetNonzeroLocus
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsFiniteLengthOfIsArtinianRingAnnihilator
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallySubsingletonCohTwistZOfIsProjOver
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.FiniteCohPushforwardIffOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsMvPolynomialOfIteratedBackwardDifferenceVa
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsFiniteSubsetNonzeroLocus
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsFiniteLengthOfIsArtinianRingAnnihilator
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallySubsingletonCohTwistZOfIsProjOver
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,49 +25,6 @@ section BaseChange
 
 variable {R : Type*} (K : Type*) {G N : Type*} [CommRing R] [CommRing K] [Algebra R K]
   [AddCommGroup G] [Module R G] [AddCommGroup N] [Module R N] [Module K N] [IsScalarTower R K N]
-
-theorem multilinearMap_ext_one_tmul {ι : Type*} [Finite ι]
-    {Φ Ψ : MultilinearMap K (fun _ : ι ↦ K ⊗[R] G) N}
-    (h : ∀ x : ι → G, Φ (fun i ↦ 1 ⊗ₜ x i) = Ψ fun i ↦ 1 ⊗ₜ x i) : Φ = Ψ := by
-  refine MultilinearMap.ext_of_span_eq_top (g := fun _ (x : G) ↦ (1 : K) ⊗ₜ[R] x) (fun _ ↦ ?_) h
-  rw [eq_top_iff]
-  rintro z -
-  induction z with
-  | zero => exact zero_mem _
-  | tmul a x =>
-    rw [← mul_one a, ← smul_eq_mul, ← smul_tmul']
-    exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨x, rfl⟩)
-  | add a b ha hb => exact add_mem ha hb
-
-theorem exists_linearMap_multilinearMap_baseChange (d : ℕ) :
-    ∃ E : MultilinearMap R (fun _ : Fin d ↦ G) N →ₗ[R]
-        MultilinearMap K (fun _ : Fin d ↦ K ⊗[R] G) N,
-      ∀ φ x, E φ (fun i ↦ 1 ⊗ₜ x i) = φ x := by
-  have (n : ℕ) : IsScalarTower R K (MultilinearMap K (fun _ : Fin n ↦ K ⊗[R] G) N) :=
-    ⟨fun r a φ ↦ MultilinearMap.ext fun x ↦ smul_assoc r a (φ x)⟩
-  induction d with
-  | zero =>
-    refine ⟨(MultilinearMap.constLinearEquivOfIsEmpty K K _ N).toLinearMap.restrictScalars R ∘ₗ
-      (MultilinearMap.constLinearEquivOfIsEmpty R R _ N).symm.toLinearMap, fun φ x ↦ ?_⟩
-    exact congrArg φ (Subsingleton.elim _ _)
-  | succ d ih =>
-    obtain ⟨E, hE⟩ := ih
-    refine ⟨(multilinearCurryLeftEquiv K (fun _ : Fin (d + 1) ↦ K ⊗[R] G)
-        N).symm.toLinearMap.restrictScalars R ∘ₗ
-      (LinearMap.liftBaseChangeEquiv K).toLinearMap.restrictScalars R ∘ₗ
-      LinearMap.compRight R E ∘ₗ
-      (multilinearCurryLeftEquiv R (fun _ : Fin (d + 1) ↦ G) N).toLinearMap, fun φ x ↦ ?_⟩
-    have h := hE (φ.curryLeft (x 0)) (Fin.tail x)
-    rw [MultilinearMap.curryLeft_apply, Fin.cons_self_tail] at h
-    rw [← h]
-    simp [multilinearCurryLeftEquiv]
-    rfl
-
-theorem existsUnique_multilinearMap_baseChange {d : ℕ}
-    (φ : MultilinearMap R (fun _ : Fin d ↦ G) N) :
-    ∃! Φ : MultilinearMap K (fun _ : Fin d ↦ K ⊗[R] G) N, ∀ x, Φ (fun i ↦ 1 ⊗ₜ x i) = φ x :=
-  have ⟨E, hE⟩ := exists_linearMap_multilinearMap_baseChange (R := R) K (G := G) (N := N) d
-  ⟨E φ, hE φ, fun _ h ↦ multilinearMap_ext_one_tmul K fun x ↦ (h x).trans (hE φ x).symm⟩
 
 end BaseChange
 
@@ -200,13 +161,6 @@ theorem chiPic_twist (hM : M.IsLB) : DiffVanish (d + 1) (chiPic k (twist F M)) :
   rw [funext (GlobalTheory.chiPic_twist k F hM)]
   exact h.translate _
 
-theorem chiPic_pushforward_of_isAffineHom {Y : Scheme.{0}} [Algebra k Γ(Y, ⊤)] {f : X ⟶ Y}
-    (hf : ∀ r : k, f.appTop (algebraMap k Γ(Y, ⊤) r) = algebraMap k Γ(X, ⊤) r) [IsAffineHom f]
-    [F.IsQuasicoherent] :
-    DiffVanish (d + 1) (chiPic k ((Scheme.Modules.pushforward f).obj F)) := by
-  rw [GlobalTheory.chiPic_pushforward_of_isAffineHom hf]
-  exact h.comap _
-
 theorem form_cls {P : Fin d → LB X} (hP : ∀ i, (P i).IsLB) :
     h.form (fun i ↦ cls (P i) (hP i)) = interNum k F P := by
   rw [interNum_eq_multiDiff k F hP, h.form_apply _ 0]
@@ -249,7 +203,8 @@ theorem interNum_update_of_cls_eq_sum {κ : Type*} (s : Finset κ) {P : κ → L
     fun a b ↦ congrFun (h.multiDiff_update_add_of_le_card hd _ i a b) 0
   have hψ : ∀ (N : LB X) (hN : N.IsLB), interNum k F (Function.update L i N) = ψ (cls N hN) :=
     fun N hN ↦ by rw [interNum_eq_multiDiff k F (isLB_update hL i hN), cls_update hL i hN]; rfl
-  rw [hψ M hM, e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hψ M hM, e, map_sum]
   exact Finset.sum_congr rfl fun j _ ↦ by rw [map_zsmul, hψ _ (hP j), smul_eq_mul]
 
 theorem interNum_update_of_cls_eq_zsmul (hM : M.IsLB) (hA : A.IsLB) (n : ℤ)
@@ -273,12 +228,14 @@ theorem interNum_of_cls_eq_zsmul {P Q : Fin d → LB X} (hP : ∀ i, (P i).IsLB)
     (n : Fin d → ℤ) (e : ∀ i, cls (Q i) (hQ i) = n i • cls (P i) (hP i)) :
     interNum k F Q = (∏ i, n i) * interNum k F P := by
   rw [← h.form_cls hQ, ← h.form_cls hP, funext e, MultilinearMap.map_smul_univ, smul_eq_mul]
+  rfl
 
 theorem interNum_of_cls_eq_sum [DecidableEq ι] (hL : ∀ j, (L j).IsLB) {Q : Fin d → LB X}
     (hQ : ∀ i, (Q i).IsLB) (n : Fin d → ι → ℤ)
     (e : ∀ i, cls (Q i) (hQ i) = ∑ j, n i j • cls (L j) (hL j)) :
     interNum k F Q = ∑ a : Fin d → ι, (∏ i, n i (a i)) * interNum k F (L ∘ a) := by
-  rw [← h.form_cls hQ, funext e, MultilinearMap.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← h.form_cls hQ, funext e, MultilinearMap.map_sum]
   refine Finset.sum_congr rfl fun a _ ↦ ?_
   rw [MultilinearMap.map_smul_univ, smul_eq_mul, ← h.form_cls (P := L ∘ a) fun i ↦ hL (a i)]
   rfl
@@ -309,21 +266,6 @@ end Poly
 section Ext
 
 variable [CommRing K]
-
-theorem existsUnique_interForm :
-    ∃! Φ : MultilinearMap K (fun _ : Fin d ↦ K ⊗[ℤ] Pic X) K,
-      ∀ (P : Fin d → LB X) (hP : ∀ i, (P i).IsLB),
-        Φ (fun i ↦ 1 ⊗ₜ cls (P i) (hP i)) = interNum k F P := by
-  refine (existsUnique_congr fun Φ ↦ ⟨fun H P hP ↦ ?_, fun H x ↦ ?_⟩).1
-    (existsUnique_multilinearMap_baseChange K
-      ((Algebra.linearMap ℤ K).compMultilinearMap h.form))
-  · rw [H, ← h.form_cls hP]; rfl
-  · choose P hP e using fun i ↦ cls_surj (x i)
-    obtain rfl : x = fun i ↦ cls (P i) (hP i) := funext fun i ↦ (e i).symm
-    rw [H, ← h.form_cls hP]; rfl
-
-def interForm : MultilinearMap K (fun _ : Fin d ↦ K ⊗[ℤ] Pic X) K :=
-  (h.existsUnique_interForm K).exists.choose
 
 end Ext
 

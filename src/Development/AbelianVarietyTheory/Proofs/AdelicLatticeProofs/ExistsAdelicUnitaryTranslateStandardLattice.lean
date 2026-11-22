@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermForm
-import Formalism.LocalToGlobal.ProjectiveLattices.ThClass
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicCompletionRationalPointsAndApproximation
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsUnitaryOfSelfDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermForm
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThClass
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicCompletionRationalPointsAndApproximation
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsUnitaryOfSelfDual
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -119,8 +123,8 @@ theorem exists_div (d : ℕ) (e : FiniteAdeleRing (𝓞 F) F) (he : ∀ v, e v �
   · rw [nsmul_eq_mul, ← mul_assoc, ← map_natCast (algebraMap F (FiniteAdeleRing (𝓞 F) F)), ← map_mul,
       mul_inv_cancel₀ hd0, map_one, one_mul]
 
-open Classical in
 
+open Classical in
 def idem (F : Type) [Field F] [NumberField F] (k : ℕ) : FiniteAdeleRing (𝓞 F) F :=
   ⟨fun v => if (k : 𝓞 F) ∈ v.asIdeal then 1 else 0, Filter.Eventually.of_forall fun v => by
     dsimp only
@@ -255,7 +259,8 @@ theorem span_eq_top (Λ : GenLat E n) (hU : Λ.Unimod) : Submodule.span E (Λ.La
   obtain ⟨σ⟩ : Nonempty (E →+* ℂ) := inferInstance
   have h2 : ∑ j, Complex.normSq (σ (v j)) = 0 := by
     have := congrArg σ h1
-    simp only [map_sum, map_mul, IsCMField.complexEmbedding_complexConj, map_zero,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, IsCMField.complexEmbedding_complexConj, map_zero,
       ← Complex.normSq_eq_conj_mul_self] at this
     exact_mod_cast this
   have h3 : ∀ j, v j = 0 := fun j => by

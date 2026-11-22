@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsMultiHomogIdealSpanSingleton
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsMultiHomogIdealSpanSingleton
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -49,7 +54,7 @@ variable [DecidableEq K] [DecidableEq (Lex (Fin (Fintype.card K) → ℕ))]
 
 theorem isHomogeneous_lex_of_isMultiHomogIdeal (e : K ≃ Fin (Fintype.card K))
     {I : Ideal (MRing ι R)} (hI : IsMultiHomogIdeal I) :
-    letI := weightedGradedAlgebra R (fun v => lexRelabel e (blockWeight ι v))
+    letI := weightedGradedAlgebra R (fun v => lexRelabel e (blockWeight ι v));
     I.IsHomogeneous (weightedHomogeneousSubmodule R (fun v => lexRelabel e (blockWeight ι v))) := by
   letI := weightedGradedAlgebra R (fun v => lexRelabel e (blockWeight ι v))
   intro i r hr
@@ -62,7 +67,7 @@ theorem isHomogeneous_lex_of_isMultiHomogIdeal (e : K ≃ Fin (Fintype.card K))
 
 theorem isMultiHomogIdeal_of_isHomogeneous_lex (e : K ≃ Fin (Fintype.card K))
     {I : Ideal (MRing ι R)}
-    (hI : letI := weightedGradedAlgebra R (fun v => lexRelabel e (blockWeight ι v))
+    (hI : letI := weightedGradedAlgebra R (fun v => lexRelabel e (blockWeight ι v));
       I.IsHomogeneous (weightedHomogeneousSubmodule R (fun v => lexRelabel e (blockWeight ι v)))) :
     IsMultiHomogIdeal I := by
   letI := weightedGradedAlgebra R (fun v => lexRelabel e (blockWeight ι v))

@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.FormalGroupLog.FormalGroupLogProofs.ChainRule
-import Formalism.LocalToGlobal.InertKernelTheory.StatementZ
-import Formalism.LocalToGlobal.InertKernelTheory.Adm11OfBeProp
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EnInParamKProd
-import Formalism.FormalGroupWitt.FormalGroupWittProofs.WittTeichmullerRoot
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.CoeffPowEqZeroOfCc
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.DegreeLeOfMemAntidiagonal
+module
+
+public import Mathlib
+public import Formalism.FormalGroupLog.FormalGroupLogProofs.ChainRule
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementZ
+public import Formalism.LocalToGlobal.InertKernelTheory.Adm11OfBeProp
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EnInParamKProd
+public import Formalism.FormalGroupWitt.FormalGroupWittProofs.WittTeichmullerRoot
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.CoeffPowEqZeroOfCc
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.DegreeLeOfMemAntidiagonal
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem fc_add_single [DecidableEq σ] (n : σ →₀ ℕ) (i : σ) :
   ring
 
 theorem fc_coeff_pderiv [DecidableEq σ] (f : MvPowerSeries σ K) (n : σ →₀ ℕ) (i : σ) :
-    fc n * coeff n (pderiv K i f) = fc (n + Finsupp.single i 1) * coeff (n + Finsupp.single i 1) f := by
+    fc n * coeff n (pderiv (R := K) i f) = fc (n + Finsupp.single i 1) * coeff (n + Finsupp.single i 1) f := by
   rw [MvPowerSeries.coeff_pderiv, fc_add_single]
   ring
 
@@ -82,7 +86,7 @@ private theorem sub_single_one_add_single_one_of_ne_zero (n : σ →₀ ℕ) (i 
 
 private theorem hur_of_closed_under_pderiv [DecidableEq σ] (Q : MvPowerSeries σ K → Prop)
     (h0 : ∀ f, Q f → constantCoeff f ∈ R)
-    (hd : ∀ f, Q f → ∀ i, ∃ a b, Q a ∧ Q b ∧ pderiv K i f = a + b) :
+    (hd : ∀ f, Q f → ∀ i, ∃ a b, Q a ∧ Q b ∧ pderiv (R := K) i f = a + b) :
     ∀ f, Q f → Hur R f := by
   suffices H : ∀ n : σ →₀ ℕ, ∀ f, Q f → fc n * coeff n f ∈ R from fun f hf n => H n f hf
   intro n
@@ -102,11 +106,11 @@ private theorem hur_of_closed_under_pderiv [DecidableEq σ] (Q : MvPowerSeries �
       simp only [Finsupp.coe_tsub, Pi.sub_apply, Finsupp.single_eq_same] at e
       omega
     obtain ⟨a, b, ha, hb, hab⟩ := hd f hf i
-    rw [← sub_single_one_add_single_one_of_ne_zero n i hi, ← fc_coeff_pderiv, hab, map_add, mul_add]
+    rw [← sub_single_one_add_single_one_of_ne_zero n i hi, ← fc_coeff_pderiv, hab, map_add (f := _), mul_add]
     exact R.add_mem (ih _ hlt a ha) (ih _ hlt b hb)
 
 theorem hur_of_closed [DecidableEq σ] (S : Set (MvPowerSeries σ K))
-    (h0 : ∀ f ∈ S, constantCoeff f ∈ R) (hd : ∀ f ∈ S, ∀ i, pderiv K i f ∈ S) :
+    (h0 : ∀ f ∈ S, constantCoeff f ∈ R) (hd : ∀ f ∈ S, ∀ i, pderiv (R := K) i f ∈ S) :
     ∀ f ∈ S, Hur R f := by
   intro f hf
   refine hur_of_closed_under_pderiv R (fun g => g ∈ S ∨ g = 0) ?_ ?_ f (Or.inl hf)
@@ -114,7 +118,7 @@ theorem hur_of_closed [DecidableEq σ] (S : Set (MvPowerSeries σ K))
     · exact h0 g hg
     · rw [map_zero]; exact R.zero_mem
   · rintro g (hg | rfl) i
-    · exact ⟨pderiv K i g, 0, Or.inl (hd g hg i), Or.inr rfl, (add_zero _).symm⟩
+    · exact ⟨pderiv (R := K) i g, 0, Or.inl (hd g hg i), Or.inr rfl, (add_zero _).symm⟩
     · exact ⟨0, 0, Or.inr rfl, Or.inr rfl, by rw [map_zero, add_zero]⟩
 
 theorem hur_zero : Hur R (0 : MvPowerSeries σ K) := by
@@ -124,7 +128,7 @@ theorem hur_zero : Hur R (0 : MvPowerSeries σ K) := by
 
 theorem hur_add {f g : MvPowerSeries σ K} (hf : Hur R f) (hg : Hur R g) : Hur R (f + g) := by
   intro n
-  rw [map_add, mul_add]
+  rw [map_add (f := _), mul_add]
   exact R.add_mem (hf n) (hg n)
 
 theorem hur_neg {f : MvPowerSeries σ K} (hf : Hur R f) : Hur R (-f) := by
@@ -161,7 +165,7 @@ theorem hur_X [DecidableEq σ] (i : σ) : Hur R (X i : MvPowerSeries σ K) := by
   · exact R.zero_mem
 
 theorem hur_pderiv [DecidableEq σ] {f : MvPowerSeries σ K} (hf : Hur R f) (i : σ) :
-    Hur R (pderiv K i f) := by
+    Hur R (pderiv (R := K) i f) := by
   intro n
   rw [fc_coeff_pderiv]
   exact hf _
@@ -201,23 +205,9 @@ private theorem hur_one : Hur R (1 : MvPowerSeries σ K) := by
   · exact R.one_mem
   · exact R.zero_mem
 
-theorem hur_pow [DecidableEq σ] {f : MvPowerSeries σ K} (hf : Hur R f) (k : ℕ) : Hur R (f ^ k) := by
-  induction k with
-  | zero => rw [pow_zero]; exact hur_one R
-  | succ k ih => rw [pow_succ]; exact hur_mul R ih hf
-
-theorem hur_prod [DecidableEq σ] {α : Type*} (s : Finset α) (f : α → MvPowerSeries σ K)
-    (h : ∀ a ∈ s, Hur R (f a)) : Hur R (∏ a ∈ s, f a) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => rw [Finset.prod_empty]; exact hur_one R
-  | @insert a s ha ih =>
-    rw [Finset.prod_insert ha]
-    exact hur_mul R (h a (Finset.mem_insert_self a s)) (ih (fun b hb => h b (Finset.mem_insert_of_mem hb)))
-
 theorem hur_gamma [DecidableEq σ] [CharZero K] {f : MvPowerSeries σ K} (hf : Hur R f)
     (hf0 : constantCoeff f = 0) (k : ℕ) : Hur R (C ((k.factorial : K))⁻¹ * f ^ k) := by
-  have hC : ∀ (c : K) (i : σ), pderiv K i (C c : MvPowerSeries σ K) = 0 := by
+  have hC : ∀ (c : K) (i : σ), pderiv (R := K) i (C c : MvPowerSeries σ K) = 0 := by
     intro c i
     ext n
     rw [MvPowerSeries.coeff_pderiv, MvPowerSeries.coeff_C, if_neg, zero_mul, map_zero]
@@ -237,12 +227,12 @@ theorem hur_gamma [DecidableEq σ] [CharZero K] {f : MvPowerSeries σ K} (hf : H
   · rintro h ⟨j, g, hg, rfl⟩ i
     cases j with
     | zero =>
-      refine ⟨C ((Nat.factorial 0 : K))⁻¹ * f ^ 0 * pderiv K i g, 0, ⟨0, _, hur_pderiv R hg i, rfl⟩,
+      refine ⟨C ((Nat.factorial 0 : K))⁻¹ * f ^ 0 * pderiv (R := K) i g, 0, ⟨0, _, hur_pderiv R hg i, rfl⟩,
         ⟨0, 0, hur_zero R, by simp⟩, ?_⟩
       simp
     | succ j =>
-      refine ⟨C ((j.factorial : K))⁻¹ * f ^ j * (pderiv K i f * g),
-        C (((j + 1).factorial : K))⁻¹ * f ^ (j + 1) * pderiv K i g,
+      refine ⟨C ((j.factorial : K))⁻¹ * f ^ j * (pderiv (R := K) i f * g),
+        C (((j + 1).factorial : K))⁻¹ * f ^ (j + 1) * pderiv (R := K) i g,
         ⟨j, _, hur_mul R (hur_pderiv R hf i) hg, rfl⟩, ⟨j + 1, _, hur_pderiv R hg i, rfl⟩, ?_⟩
       have hc : C (((j + 1).factorial : K))⁻¹ * (((j + 1 : ℕ) : MvPowerSeries σ K)) = C ((j.factorial : K))⁻¹ := by
         rw [show (((j + 1 : ℕ) : MvPowerSeries σ K)) = C ((j + 1 : ℕ) : K) from (map_natCast _ _).symm, ← map_mul]
@@ -284,15 +274,15 @@ theorem hur_subst {τ : Type*} [DecidableEq σ] [DecidableEq τ] [Fintype σ] [F
       rw [map_mul, cc_subst ha0]
       exact R.mul_mem (hur_cc R hg) (hur_cc R hb)
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact R.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact R.add_mem hx hy
     | neg x _ hx => rw [map_neg]; exact R.neg_mem hx
-  have hd : ∀ h ∈ S, ∀ i, pderiv K i h ∈ S := by
+  have hd : ∀ h ∈ S, ∀ i, pderiv (R := K) i h ∈ S := by
     intro h hh i
     induction hh using AddSubgroup.closure_induction with
     | mem x hx =>
       obtain ⟨g, b, hg, hb, rfl⟩ := hx
-      have e : pderiv K i (subst a g * b) = subst a g * pderiv K i b +
-          ∑ j, subst a (pderiv K j g) * (pderiv K i (a j) * b) := by
+      have e : pderiv (R := K) i (subst a g * b) = subst a g * pderiv (R := K) i b +
+          ∑ j, subst a (pderiv (R := K) j g) * (pderiv (R := K) i (a j) * b) := by
         rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul, Formalism.G.LogCR.pderiv_subst ha0, Finset.mul_sum]
         congr 1
         refine Finset.sum_congr rfl fun j _ => ?_
@@ -301,7 +291,7 @@ theorem hur_subst {τ : Type*} [DecidableEq σ] [DecidableEq τ] [Fintype σ] [F
       refine S.add_mem (AddSubgroup.subset_closure ⟨g, _, hg, hur_pderiv R hb i, rfl⟩) (S.sum_mem fun j _ => ?_)
       exact AddSubgroup.subset_closure ⟨_, _, hur_pderiv R hg j, hur_mul R (hur_pderiv R (ha j) i) hb, rfl⟩
     | zero => rw [map_zero]; exact S.zero_mem
-    | add x y _ _ hx hy => rw [map_add]; exact S.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact S.add_mem hx hy
     | neg x _ hx => rw [map_neg]; exact S.neg_mem hx
   have hmem : subst a g * 1 ∈ S :=
     AddSubgroup.subset_closure ⟨g, 1, hg, by rw [← map_one (C (σ := τ) (R := K))]; exact hur_C R R.one_mem, rfl⟩
@@ -345,27 +335,27 @@ theorem int_inv {φ : PowerSeries K} (h1 : PowerSeries.constantCoeff φ = 1)
 
 theorem hur_substInv {L : PowerSeries K} (hL0 : PowerSeries.constantCoeff L = 0)
     (hL1 : IsUnit (PowerSeries.coeff 1 L))
-    (hLd1 : PowerSeries.constantCoeff (PowerSeries.derivative K L) = 1)
-    (hLd : ∀ n, PowerSeries.coeff n (PowerSeries.derivative K L) ∈ R) :
+    (hLd1 : PowerSeries.constantCoeff (PowerSeries.derivative (R := K) L) = 1)
+    (hLd : ∀ n, PowerSeries.coeff n (PowerSeries.derivative (R := K) L) ∈ R) :
     Hur R ((L.substInvOfIsUnit hL1 : PowerSeries K) : MvPowerSeries Unit K) := by
   set E : PowerSeries K := L.substInvOfIsUnit hL1 with hEdef
   have hE0 : PowerSeries.constantCoeff E = 0 := PowerSeries.constantCoeff_substInvOfIsUnit _ _
   have hs : PowerSeries.HasSubst E := PowerSeries.HasSubst.of_constantCoeff_zero' hE0
   have hLE : PowerSeries.subst E L = PowerSeries.X :=
     PowerSeries.subst_substInvOfIsUnit_right (P := L) (hP := hL0) (hP' := hL1)
-  set w : PowerSeries K := (PowerSeries.derivative K L)⁻¹ with hw
+  set w : PowerSeries K := (PowerSeries.derivative (R := K) L)⁻¹ with hw
   have hwi : ∀ n, PowerSeries.coeff n w ∈ R := int_inv R hLd1 hLd
-  have hwL : w * PowerSeries.derivative K L = 1 :=
+  have hwL : w * PowerSeries.derivative (R := K) L = 1 :=
     PowerSeries.inv_mul_cancel _ (by rw [hLd1]; exact one_ne_zero)
   have hone : PowerSeries.subst E (1 : PowerSeries K) = 1 := by
     rw [← PowerSeries.coe_substAlgHom hs, map_one]
-  have hdE : PowerSeries.derivative K E = PowerSeries.subst E w := by
-    have h1 : PowerSeries.subst E (PowerSeries.derivative K L) * PowerSeries.derivative K E = 1 := by
-      have := congrArg (PowerSeries.derivative K) hLE
+  have hdE : PowerSeries.derivative (R := K) E = PowerSeries.subst E w := by
+    have h1 : PowerSeries.subst E (PowerSeries.derivative (R := K) L) * PowerSeries.derivative (R := K) E = 1 := by
+      have := congrArg (PowerSeries.derivative (R := K)) hLE
       rwa [PowerSeries.derivative_subst hs, PowerSeries.derivative_X] at this
-    calc PowerSeries.derivative K E
-        = (PowerSeries.subst E w * PowerSeries.subst E (PowerSeries.derivative K L)) *
-            PowerSeries.derivative K E := by
+    calc PowerSeries.derivative (R := K) E
+        = (PowerSeries.subst E w * PowerSeries.subst E (PowerSeries.derivative (R := K) L)) *
+            PowerSeries.derivative (R := K) E := by
           rw [← PowerSeries.subst_mul hs, hwL, hone, one_mul]
       _ = PowerSeries.subst E w := by rw [mul_assoc, h1, mul_one]
   let S : Set (MvPowerSeries Unit K) :=
@@ -375,15 +365,15 @@ theorem hur_substInv {L : PowerSeries K} (hL0 : PowerSeries.constantCoeff L = 0)
     rw [PowerSeries.subst_def, cc_subst (fun _ => hE0)]
     have := hh 0
     rwa [PowerSeries.coeff_zero_eq_constantCoeff_apply] at this
-  have hd : ∀ F ∈ S, ∀ i, pderiv K i F ∈ S := by
+  have hd : ∀ F ∈ S, ∀ i, pderiv (R := K) i F ∈ S := by
     rintro F ⟨h, hh, rfl⟩ i
-    refine ⟨PowerSeries.derivative K h * w, fun n => ?_, ?_⟩
+    refine ⟨PowerSeries.derivative (R := K) h * w, fun n => ?_, ?_⟩
     · rw [PowerSeries.coeff_mul]
       refine R.sum_mem fun x _ => R.mul_mem ?_ (hwi _)
       rw [PowerSeries.coeff_derivative]
       exact R.mul_mem (hh _) (R.add_mem (natCast_mem R _) R.one_mem)
-    · have e : pderiv K i (PowerSeries.subst E h : MvPowerSeries Unit K) =
-          PowerSeries.derivative K (PowerSeries.subst E h) := rfl
+    · have e : pderiv (R := K) i (PowerSeries.subst E h : MvPowerSeries Unit K) =
+          PowerSeries.derivative (R := K) (PowerSeries.subst E h) := rfl
       rw [e, PowerSeries.derivative_subst hs, hdE, PowerSeries.subst_mul hs]
   have hX : (E : MvPowerSeries Unit K) ∈ S :=
     ⟨PowerSeries.X, fun n => by
@@ -439,7 +429,7 @@ theorem Wr_to (x : K0 p) (hx : x ∈ Wr p) : algebraMap (K0 p) K1 x ∈ R1 := by
   exact hW y
 
 theorem hur_en_E : Hur R1 ((Formalism.MainNotions.FormalGroupSystem.Pf.en_E p K1 : PowerSeries K1) : MvPowerSeries Unit K1) := by
-  have hd : ∀ n, PowerSeries.coeff n (PowerSeries.derivative K1 (Formalism.MainNotions.FormalGroupSystem.Pf.en_L p K1)) =
+  have hd : ∀ n, PowerSeries.coeff n (PowerSeries.derivative (R := K1) (Formalism.MainNotions.FormalGroupSystem.Pf.en_L p K1)) =
       algebraMap (K0 p) K1 (PowerSeries.coeff (n + 1) (logF p) * ((n : K0 p) + 1)) := by
     intro n
     rw [PowerSeries.coeff_derivative, Formalism.MainNotions.FormalGroupSystem.Pf.en_L, PowerSeries.coeff_map, map_mul]
@@ -515,7 +505,8 @@ theorem hur_PhAt {X : Sys p} (Y : Pend X) (h : BeJetInt p Y.be) (j : ℕ) (v : X
   classical
   unfold Pend.PhAt
   refine ⟨hur_sum (Wr p) _ _ fun e _ => (hurwitz_substitute_two_series h _ _).1, ?_⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_eq_zero fun e _ => (hurwitz_substitute_two_series h _ _).2
 
 theorem hur_coordZA {X : Sys p} (Y : Pend X) (j : ℕ) (e : X.EA j ⊕ X.EA j) :
@@ -575,7 +566,7 @@ section Gen2
 variable {K : Type*} [Field K] {σ : Type*} (R : Subring K)
 
 theorem hur_of_pderiv [DecidableEq σ] {f : MvPowerSeries σ K} (h0 : constantCoeff f ∈ R)
-    (hd : ∀ i, Hur R (pderiv K i f)) : Hur R f := by
+    (hd : ∀ i, Hur R (pderiv (R := K) i f)) : Hur R f := by
   intro n
   by_cases hn : n = 0
   · subst hn
@@ -596,14 +587,14 @@ theorem hur_inv [DecidableEq σ] {E : MvPowerSeries σ K} (hE : Hur R E) (h1 : c
     Hur R E⁻¹ := by
   have hEi : E * E⁻¹ = 1 := MvPowerSeries.mul_inv_cancel E (by rw [h1]; exact one_ne_zero)
   have hiE : E⁻¹ * E = 1 := MvPowerSeries.inv_mul_cancel E (by rw [h1]; exact one_ne_zero)
-  have hD : ∀ i, pderiv K i E⁻¹ = -(E⁻¹ ^ 2 * pderiv K i E) := by
+  have hD : ∀ i, pderiv (R := K) i E⁻¹ = -(E⁻¹ ^ 2 * pderiv (R := K) i E) := by
     intro i
-    have e := congrArg (pderiv K i) hEi
+    have e := congrArg (pderiv (R := K) i) hEi
     rw [Derivation.leibniz, Derivation.map_one_eq_zero, smul_eq_mul, smul_eq_mul] at e
-    calc pderiv K i E⁻¹ = (E⁻¹ * E) * pderiv K i E⁻¹ := by rw [hiE, one_mul]
-      _ = E⁻¹ * (E * pderiv K i E⁻¹) := by ring
-      _ = E⁻¹ * (-(E⁻¹ * pderiv K i E)) := by rw [eq_neg_of_add_eq_zero_left e]
-      _ = -(E⁻¹ ^ 2 * pderiv K i E) := by ring
+    calc pderiv (R := K) i E⁻¹ = (E⁻¹ * E) * pderiv (R := K) i E⁻¹ := by rw [hiE, one_mul]
+      _ = E⁻¹ * (E * pderiv (R := K) i E⁻¹) := by ring
+      _ = E⁻¹ * (-(E⁻¹ * pderiv (R := K) i E)) := by rw [eq_neg_of_add_eq_zero_left e]
+      _ = -(E⁻¹ ^ 2 * pderiv (R := K) i E) := by ring
   have hc1 : constantCoeff E⁻¹ = 1 := by rw [MvPowerSeries.constantCoeff_inv, h1, inv_one]
   have := hur_of_closed_under_pderiv R (fun h => ∃ (j : ℕ) (g : MvPowerSeries σ K), Hur R g ∧ h = E⁻¹ ^ j * g) ?_ ?_ E⁻¹
     ⟨1, 1, hur_one R, by rw [pow_one, mul_one]⟩
@@ -612,7 +603,7 @@ theorem hur_inv [DecidableEq σ] {E : MvPowerSeries σ K} (hE : Hur R E) (h1 : c
     rw [map_mul, map_pow, hc1, one_pow, one_mul]
     exact hur_cc R hg
   · rintro h ⟨j, g, hg, rfl⟩ i
-    refine ⟨E⁻¹ ^ j * pderiv K i g, E⁻¹ ^ (j + 1) * (-((j : MvPowerSeries σ K) * (pderiv K i E * g))),
+    refine ⟨E⁻¹ ^ j * pderiv (R := K) i g, E⁻¹ ^ (j + 1) * (-((j : MvPowerSeries σ K) * (pderiv (R := K) i E * g))),
       ⟨j, _, hur_pderiv R hg i, rfl⟩,
       ⟨j + 1, _, hur_neg R (hur_mul R (hur_natCast R j) (hur_mul R (hur_pderiv R hE i) hg)), rfl⟩, ?_⟩
     rw [Derivation.leibniz, Derivation.leibniz_pow, hD]
@@ -656,7 +647,7 @@ theorem hur_of_simeq {ι : Type} [Fintype ι] [DecidableEq ι] {f g : MvPowerSer
       ← Formalism.MainNotions.FormalGroupSystem.Pf.en_inParamK_eq, ← expS_eq_mvExp hG0, ← inParam_eq, he]
   have hint : IntR (Wr p) (inParamK p (K0 p) (Formalism.L2.Th1.C.mvExp (f - g))) := by
     intro n
-    rw [hE, map_add, coeff_map, coeff_one]
+    rw [hE, map_add (f := _), coeff_map, coeff_one]
     refine (Wr p).add_mem ?_ (mem_Wr p _)
     split_ifs
     · exact (Wr p).one_mem
@@ -665,8 +656,8 @@ theorem hur_of_simeq {ι : Type} [Fintype ι] [DecidableEq ι] {f g : MvPowerSer
   have h1 : constantCoeff (Formalism.L2.Th1.C.mvExp (f - g)) = 1 := Formalism.L2.Th1.C.constantCoeff_mvExp hF0
   have hEi : Hur (Wr p) (Formalism.L2.Th1.C.mvExp (f - g))⁻¹ := hur_inv _ hEh h1
   refine hur_of_pderiv _ (by rw [hF0]; exact (Wr p).zero_mem) fun i => ?_
-  have e : pderiv (K0 p) i (f - g) =
-      pderiv (K0 p) i (Formalism.L2.Th1.C.mvExp (f - g)) * (Formalism.L2.Th1.C.mvExp (f - g))⁻¹ := by
+  have e : pderiv (R := K0 p) i (f - g) =
+      pderiv (R := K0 p) i (Formalism.L2.Th1.C.mvExp (f - g)) * (Formalism.L2.Th1.C.mvExp (f - g))⁻¹ := by
     rw [Formalism.L2.Th1.C.pderiv_mvExp hF0, mul_assoc,
       MvPowerSeries.mul_inv_cancel _ (by rw [h1]; exact one_ne_zero), mul_one]
   rw [e]
@@ -689,8 +680,8 @@ variable {K : Type*} [Field K] {τ : Type*} [Finite τ]
 
 theorem pd2 (g : MvPowerSeries (Fin 2) K) {u w : MvPowerSeries τ K} (hu : constantCoeff u = 0)
     (hw : constantCoeff w = 0) (i : τ) :
-    pderiv K i (subst ![u, w] g) =
-      subst ![u, w] (pderiv K 0 g) * pderiv K i u + subst ![u, w] (pderiv K 1 g) * pderiv K i w := by
+    pderiv (R := K) i (subst ![u, w] g) =
+      subst ![u, w] (pderiv (R := K) 0 g) * pderiv (R := K) i u + subst ![u, w] (pderiv (R := K) 1 g) * pderiv (R := K) i w := by
   rw [Formalism.G.LogCR.pderiv_subst (fun j => by fin_cases j <;> simpa), Fin.sum_univ_two]
   rfl
 
@@ -705,47 +696,57 @@ section Jets
 
 variable {p : ℕ} [Fact p.Prime]
 
-local notation "KK" => K0 p
+theorem constantCoeff_X_fin_three (i : Fin 3) :
+    constantCoeff (X i : MvPowerSeries (Fin 3) (K0 p)) = 0 := constantCoeff_X i
 
-theorem constantCoeff_X_fin_three (i : Fin 3) : constantCoeff (X i : MvPowerSeries (Fin 3) KK) = 0 := constantCoeff_X i
-
-theorem second_deriv_additive_first (be : MvPowerSeries (Fin 2) KK) :
-    pderiv KK 0 (pderiv KK 1 (sub2 p be (X 0 + X 1) (X 2) - sub2 p be (X 0) (X 2) - sub2 p be (X 1) (X 2) -
-      (0 : MvPowerSeries (Fin 3) KK))) =
-      subst ![(X 0 + X 1 : MvPowerSeries (Fin 3) KK), X 2] (pderiv KK 0 (pderiv KK 0 be)) := by
-  have h01 : constantCoeff (X 0 + X 1 : MvPowerSeries (Fin 3) KK) = 0 := by simp
+theorem second_deriv_additive_first (be : MvPowerSeries (Fin 2) (K0 p)) :
+    pderiv (R := K0 p) 0 (pderiv (R := K0 p) 1
+      (sub2 p be (X 0 + X 1) (X 2) - sub2 p be (X 0) (X 2) - sub2 p be (X 1) (X 2) -
+      (0 : MvPowerSeries (Fin 3) (K0 p)))) =
+      subst ![(X 0 + X 1 : MvPowerSeries (Fin 3) (K0 p)), X 2]
+        (pderiv (R := K0 p) 0 (pderiv (R := K0 p) 0 be)) := by
+  have h01 : constantCoeff (X 0 + X 1 : MvPowerSeries (Fin 3) (K0 p)) = 0 := by simp
   unfold sub2
   simp only [sub_zero, map_sub]
-  rw [pd2 _ h01 (constantCoeff_X_fin_three 2), pd2 _ (constantCoeff_X_fin_three 0) (constantCoeff_X_fin_three 2), pd2 _ (constantCoeff_X_fin_three 1) (constantCoeff_X_fin_three 2)]
-  simp only [map_add, pderiv_X_self, pderiv_X_of_ne (show (0 : Fin 3) ≠ 1 by decide),
+  rw [pd2 _ h01 (constantCoeff_X_fin_three (p := p) 2),
+    pd2 _ (constantCoeff_X_fin_three (p := p) 0) (constantCoeff_X_fin_three (p := p) 2),
+    pd2 _ (constantCoeff_X_fin_three (p := p) 1) (constantCoeff_X_fin_three (p := p) 2)]
+  simp only [map_add (f := _), pderiv_X_self, pderiv_X_of_ne (show (0 : Fin 3) ≠ 1 by decide),
     pderiv_X_of_ne (show (2 : Fin 3) ≠ 1 by decide), mul_zero, add_zero, mul_one, zero_add, sub_zero]
-  rw [pd2 _ h01 (constantCoeff_X_fin_three 2), pd2 _ (constantCoeff_X_fin_three 1) (constantCoeff_X_fin_three 2)]
+  rw [pd2 _ h01 (constantCoeff_X_fin_three (p := p) 2),
+    pd2 _ (constantCoeff_X_fin_three (p := p) 1) (constantCoeff_X_fin_three (p := p) 2)]
   simp [pderiv_X_self, pderiv_X_of_ne (show (1 : Fin 3) ≠ 0 by decide),
     pderiv_X_of_ne (show (2 : Fin 3) ≠ 0 by decide)]
 
-theorem second_deriv_additive_second (be : MvPowerSeries (Fin 2) KK) :
-    pderiv KK 1 (pderiv KK 2 (sub2 p be (X 0) (X 1 + X 2) - sub2 p be (X 0) (X 1) - sub2 p be (X 0) (X 2) -
-      (0 : MvPowerSeries (Fin 3) KK))) =
-      subst ![(X 0 : MvPowerSeries (Fin 3) KK), X 1 + X 2] (pderiv KK 1 (pderiv KK 1 be)) := by
-  have h12 : constantCoeff (X 1 + X 2 : MvPowerSeries (Fin 3) KK) = 0 := by simp
+theorem second_deriv_additive_second (be : MvPowerSeries (Fin 2) (K0 p)) :
+    pderiv (R := K0 p) 1 (pderiv (R := K0 p) 2
+      (sub2 p be (X 0) (X 1 + X 2) - sub2 p be (X 0) (X 1) - sub2 p be (X 0) (X 2) -
+      (0 : MvPowerSeries (Fin 3) (K0 p)))) =
+      subst ![(X 0 : MvPowerSeries (Fin 3) (K0 p)), X 1 + X 2]
+        (pderiv (R := K0 p) 1 (pderiv (R := K0 p) 1 be)) := by
+  have h12 : constantCoeff (X 1 + X 2 : MvPowerSeries (Fin 3) (K0 p)) = 0 := by simp
   unfold sub2
   simp only [sub_zero, map_sub]
-  rw [pd2 _ (constantCoeff_X_fin_three 0) h12, pd2 _ (constantCoeff_X_fin_three 0) (constantCoeff_X_fin_three 1), pd2 _ (constantCoeff_X_fin_three 0) (constantCoeff_X_fin_three 2)]
-  simp only [map_add, pderiv_X_self, pderiv_X_of_ne (show (0 : Fin 3) ≠ 2 by decide),
+  rw [pd2 _ (constantCoeff_X_fin_three (p := p) 0) h12,
+    pd2 _ (constantCoeff_X_fin_three (p := p) 0) (constantCoeff_X_fin_three (p := p) 1),
+    pd2 _ (constantCoeff_X_fin_three (p := p) 0) (constantCoeff_X_fin_three (p := p) 2)]
+  simp only [map_add (f := _), pderiv_X_self, pderiv_X_of_ne (show (0 : Fin 3) ≠ 2 by decide),
     pderiv_X_of_ne (show (1 : Fin 3) ≠ 2 by decide), mul_zero, add_zero, mul_one, zero_add, sub_zero]
-  rw [pd2 _ (constantCoeff_X_fin_three 0) h12, pd2 _ (constantCoeff_X_fin_three 0) (constantCoeff_X_fin_three 2)]
+  rw [pd2 _ (constantCoeff_X_fin_three (p := p) 0) h12,
+    pd2 _ (constantCoeff_X_fin_three (p := p) 0) (constantCoeff_X_fin_three (p := p) 2)]
   simp [pderiv_X_self, pderiv_X_of_ne (show (0 : Fin 3) ≠ 1 by decide),
     pderiv_X_of_ne (show (2 : Fin 3) ≠ 1 by decide)]
 
-theorem restr (g : MvPowerSeries (Fin 2) KK) (u w : MvPowerSeries (Fin 3) KK) (b : Fin 3 → MvPowerSeries (Fin 2) KK)
+theorem restr (g : MvPowerSeries (Fin 2) (K0 p)) (u w : MvPowerSeries (Fin 3) (K0 p))
+    (b : Fin 3 → MvPowerSeries (Fin 2) (K0 p))
     (hu : constantCoeff u = 0) (hw : constantCoeff w = 0) (hb : ∀ j, constantCoeff (b j) = 0)
     (hbu : subst b u = X 0) (hbw : subst b w = X 1) :
     subst b (subst ![u, w] g) = g := by
-  have ha : HasSubst (![u, w] : Fin 2 → MvPowerSeries (Fin 3) KK) :=
+  have ha : HasSubst (![u, w] : Fin 2 → MvPowerSeries (Fin 3) (K0 p)) :=
     hasSubst_of_constantCoeff_zero (cc2 hu hw)
   have hbs : HasSubst b := hasSubst_of_constantCoeff_zero hb
   rw [subst_comp_subst_apply ha hbs]
-  have e : (fun s => subst b ((![u, w] : Fin 2 → MvPowerSeries (Fin 3) KK) s)) = X := by
+  have e : (fun s => subst b ((![u, w] : Fin 2 → MvPowerSeries (Fin 3) (K0 p)) s)) = X := by
     funext s
     fin_cases s
     · simpa using hbu
@@ -768,35 +769,33 @@ section Conj
 
 variable {p : ℕ} [Fact p.Prime]
 
-local notation "KK" => K0 p
-
-theorem conj_dd (be : MvPowerSeries (Fin 2) KK) (a' b' : KK) :
-    constantCoeff (pderiv KK 0 (pderiv KK 1 (sub2 p be (C a' * X 0) (X 1) - sub2 p be (X 0) (C b' * X 1) :
-      MvPowerSeries (Fin 2) KK))) =
-      constantCoeff (pderiv KK 0 (pderiv KK 1 be)) * (a' - b') := by
-  have hu : constantCoeff (C a' * X 0 : MvPowerSeries (Fin 2) KK) = 0 := by simp
-  have hw : constantCoeff (C b' * X 1 : MvPowerSeries (Fin 2) KK) = 0 := by simp
-  have hX0 : constantCoeff (X 0 : MvPowerSeries (Fin 2) KK) = 0 := constantCoeff_X 0
-  have hX1 : constantCoeff (X 1 : MvPowerSeries (Fin 2) KK) = 0 := constantCoeff_X 1
-  have hu0 : pderiv KK 0 (C a' * X 0 : MvPowerSeries (Fin 2) KK) = C a' := by
+theorem conj_dd (be : MvPowerSeries (Fin 2) (K0 p)) (a' b' : K0 p) :
+    constantCoeff (pderiv (R := K0 p) 0 (pderiv (R := K0 p) 1
+      (sub2 p be (C a' * X 0) (X 1) - sub2 p be (X 0) (C b' * X 1) : MvPowerSeries (Fin 2) (K0 p)))) =
+      constantCoeff (pderiv (R := K0 p) 0 (pderiv (R := K0 p) 1 be)) * (a' - b') := by
+  have hu : constantCoeff (C a' * X 0 : MvPowerSeries (Fin 2) (K0 p)) = 0 := by simp
+  have hw : constantCoeff (C b' * X 1 : MvPowerSeries (Fin 2) (K0 p)) = 0 := by simp
+  have hX0 : constantCoeff (X 0 : MvPowerSeries (Fin 2) (K0 p)) = 0 := constantCoeff_X 0
+  have hX1 : constantCoeff (X 1 : MvPowerSeries (Fin 2) (K0 p)) = 0 := constantCoeff_X 1
+  have hu0 : pderiv (R := K0 p) 0 (C a' * X 0 : MvPowerSeries (Fin 2) (K0 p)) = C a' := by
     rw [Derivation.leibniz]; simp
-  have hu1 : pderiv KK 1 (C a' * X 0 : MvPowerSeries (Fin 2) KK) = 0 := by
+  have hu1 : pderiv (R := K0 p) 1 (C a' * X 0 : MvPowerSeries (Fin 2) (K0 p)) = 0 := by
     rw [Derivation.leibniz]; simp [pderiv_X_of_ne (show (0 : Fin 2) ≠ 1 by decide)]
-  have hw0 : pderiv KK 0 (C b' * X 1 : MvPowerSeries (Fin 2) KK) = 0 := by
+  have hw0 : pderiv (R := K0 p) 0 (C b' * X 1 : MvPowerSeries (Fin 2) (K0 p)) = 0 := by
     rw [Derivation.leibniz]; simp [pderiv_X_of_ne (show (1 : Fin 2) ≠ 0 by decide)]
-  have hw1 : pderiv KK 1 (C b' * X 1 : MvPowerSeries (Fin 2) KK) = C b' := by
+  have hw1 : pderiv (R := K0 p) 1 (C b' * X 1 : MvPowerSeries (Fin 2) (K0 p)) = C b' := by
     rw [Derivation.leibniz]; simp
-  have A1 : pderiv KK 1 (subst ![C a' * X 0, X 1] be : MvPowerSeries (Fin 2) KK) =
-      subst ![C a' * X 0, X 1] (pderiv KK 1 be) := by
+  have A1 : pderiv (R := K0 p) 1 (subst ![C a' * X 0, X 1] be : MvPowerSeries (Fin 2) (K0 p)) =
+      subst ![C a' * X 0, X 1] (pderiv (R := K0 p) 1 be) := by
     rw [pd2 _ hu hX1, hu1, pderiv_X_self]; ring
-  have A0 : pderiv KK 0 (subst ![C a' * X 0, X 1] (pderiv KK 1 be) : MvPowerSeries (Fin 2) KK) =
-      subst ![C a' * X 0, X 1] (pderiv KK 0 (pderiv KK 1 be)) * C a' := by
+  have A0 : pderiv (R := K0 p) 0 (subst ![C a' * X 0, X 1] (pderiv (R := K0 p) 1 be) : MvPowerSeries (Fin 2) (K0 p)) =
+      subst ![C a' * X 0, X 1] (pderiv (R := K0 p) 0 (pderiv (R := K0 p) 1 be)) * C a' := by
     rw [pd2 _ hu hX1, hu0, pderiv_X_of_ne (show (1 : Fin 2) ≠ 0 by decide)]; ring
-  have B1 : pderiv KK 1 (subst ![X 0, C b' * X 1] be : MvPowerSeries (Fin 2) KK) =
-      subst ![X 0, C b' * X 1] (pderiv KK 1 be) * C b' := by
+  have B1 : pderiv (R := K0 p) 1 (subst ![X 0, C b' * X 1] be : MvPowerSeries (Fin 2) (K0 p)) =
+      subst ![X 0, C b' * X 1] (pderiv (R := K0 p) 1 be) * C b' := by
     rw [pd2 _ hX0 hw, pderiv_X_of_ne (show (0 : Fin 2) ≠ 1 by decide), hw1]; ring
-  have B0 : pderiv KK 0 (subst ![X 0, C b' * X 1] (pderiv KK 1 be) * C b' : MvPowerSeries (Fin 2) KK) =
-      subst ![X 0, C b' * X 1] (pderiv KK 0 (pderiv KK 1 be)) * C b' := by
+  have B0 : pderiv (R := K0 p) 0 (subst ![X 0, C b' * X 1] (pderiv (R := K0 p) 1 be) * C b' : MvPowerSeries (Fin 2) (K0 p)) =
+      subst ![X 0, C b' * X 1] (pderiv (R := K0 p) 0 (pderiv (R := K0 p) 1 be)) * C b' := by
     rw [Derivation.leibniz, pd2 _ hX0 hw, pderiv_C, pderiv_X_self, hw0]; simp [mul_comm]
   unfold sub2
   rw [map_sub, map_sub, A1, A0, B1, B0, map_sub, map_mul, map_mul, cc_subst (cc2 hu hX1),
@@ -806,40 +805,40 @@ theorem conj_dd (be : MvPowerSeries (Fin 2) KK) (a' b' : KK) :
 theorem decomp (n : Fin 2 →₀ ℕ) (i : Fin 2) (h : n i ≠ 0) : n = (n - Finsupp.single i 1) + Finsupp.single i 1 := (sub_single_one_add_single_one_of_ne_zero n i h).symm
 
 theorem beJet_of_prop_conj (hα : ∃ α : WW p, (sigW p)^[2] α = α ∧ IsUnit (α - sigW p α))
-    {be : MvPowerSeries (Fin 2) KK} (h : BeProp p be)
+    {be : MvPowerSeries (Fin 2) (K0 p)} (h : BeProp p be)
     (hconj : ∀ α : WW p, (sigW p)^[2] α = α →
-      Simeq p (sub2 p be (C (algebraMap (WW p) KK α) * X 0) (X 1) : MvPowerSeries (Fin 2) KK)
-        (sub2 p be (X 0) (C (algebraMap (WW p) KK (sigW p α)) * X 1))) : BeJetInt p be := by
+      Simeq p (sub2 p be (C (algebraMap (WW p) (K0 p) α) * X 0) (X 1) : MvPowerSeries (Fin 2) (K0 p))
+        (sub2 p be (X 0) (C (algebraMap (WW p) (K0 p) (sigW p α)) * X 1))) : BeJetInt p be := by
   classical
   have hcc : constantCoeff be = 0 := by
     by_contra hc
     have := h.ab 0 (by rwa [coeff_zero_eq_constantCoeff_apply])
     simp at this
-  have h00 : Hur (Wr p) (pderiv KK 0 (pderiv KK 0 be)) := by
+  have h00 : Hur (Wr p) (pderiv (R := K0 p) 0 (pderiv (R := K0 p) 0 be)) := by
     have H := hur_pderiv _ (hur_pderiv _ (hur_of_simeq h.add1) 1) 0
     rw [second_deriv_additive_first] at H
-    have hb0 : ∀ j, constantCoeff ((![X 0, 0, X 1] : Fin 3 → MvPowerSeries (Fin 2) KK) j) = 0 := by
+    have hb0 : ∀ j, constantCoeff ((![X 0, 0, X 1] : Fin 3 → MvPowerSeries (Fin 2) (K0 p)) j) = 0 := by
       intro j; fin_cases j <;> simp
-    have hb : HasSubst (![X 0, 0, X 1] : Fin 3 → MvPowerSeries (Fin 2) KK) := hasSubst_of_constantCoeff_zero hb0
+    have hb : HasSubst (![X 0, 0, X 1] : Fin 3 → MvPowerSeries (Fin 2) (K0 p)) := hasSubst_of_constantCoeff_zero hb0
     have := hur_subst (Wr p) hb0 (by intro j; fin_cases j <;> simp [hur_X, hur_zero]) H
     rwa [restr _ _ _ _ (by simp) (by simp) hb0 (by rw [subst_add hb, subst_X hb, subst_X hb]; simp)
       (by rw [subst_X hb]; simp)] at this
-  have h11 : Hur (Wr p) (pderiv KK 1 (pderiv KK 1 be)) := by
+  have h11 : Hur (Wr p) (pderiv (R := K0 p) 1 (pderiv (R := K0 p) 1 be)) := by
     have H := hur_pderiv _ (hur_pderiv _ (hur_of_simeq h.add2) 2) 1
     rw [second_deriv_additive_second] at H
-    have hb0 : ∀ j, constantCoeff ((![X 0, X 1, 0] : Fin 3 → MvPowerSeries (Fin 2) KK) j) = 0 := by
+    have hb0 : ∀ j, constantCoeff ((![X 0, X 1, 0] : Fin 3 → MvPowerSeries (Fin 2) (K0 p)) j) = 0 := by
       intro j; fin_cases j <;> simp
-    have hb : HasSubst (![X 0, X 1, 0] : Fin 3 → MvPowerSeries (Fin 2) KK) := hasSubst_of_constantCoeff_zero hb0
+    have hb : HasSubst (![X 0, X 1, 0] : Fin 3 → MvPowerSeries (Fin 2) (K0 p)) := hasSubst_of_constantCoeff_zero hb0
     have := hur_subst (Wr p) hb0 (by intro j; fin_cases j <;> simp [hur_X, hur_zero]) H
     rwa [restr _ _ _ _ (by simp) (by simp) hb0 (by rw [subst_X hb]; simp)
       (by rw [subst_add hb, subst_X hb, subst_X hb]; simp)] at this
-  have h01 : constantCoeff (pderiv KK 0 (pderiv KK 1 be)) ∈ Wr p := by
+  have h01 : constantCoeff (pderiv (R := K0 p) 0 (pderiv (R := K0 p) 1 be)) ∈ Wr p := by
     obtain ⟨α, hα2, u, hu⟩ := hα
     have hc := hur_cc _ (hur_pderiv _ (hur_pderiv _ (hur_of_simeq (hconj α hα2)) 1) 0)
     rw [conj_dd, ← map_sub, ← hu] at hc
-    have e : constantCoeff (pderiv KK 0 (pderiv KK 1 be)) =
-        constantCoeff (pderiv KK 0 (pderiv KK 1 be)) * algebraMap (WW p) KK (u : WW p) *
-          algebraMap (WW p) KK ((u⁻¹ : (WW p)ˣ) : WW p) := by
+    have e : constantCoeff (pderiv (R := K0 p) 0 (pderiv (R := K0 p) 1 be)) =
+        constantCoeff (pderiv (R := K0 p) 0 (pderiv (R := K0 p) 1 be)) * algebraMap (WW p) (K0 p) (u : WW p) *
+          algebraMap (WW p) (K0 p) ((u⁻¹ : (WW p)ˣ) : WW p) := by
       rw [mul_assoc, ← map_mul, Units.mul_inv, map_one, mul_one]
     rw [e]
     exact (Wr p).mul_mem hc (mem_Wr p _)
@@ -888,63 +887,6 @@ section Transfer
 
 variable (p : ℕ) [Fact p.Prime] (K1 : Type) [Field K1] [Algebra (K0 p) K1]
 
-theorem aL_eq_rename {ι : Type} (s : ι) :
-    Formalism.MainNotions.FormalGroupSystem.Pf.en_aL p K1 s = rename (fun _ : Unit => s) (Formalism.MainNotions.FormalGroupSystem.Pf.en_L p K1) := by
-  rw [rename_eq_subst]
-  rfl
-
-theorem hasSubst_aL_any {ι : Type} : HasSubst (Formalism.MainNotions.FormalGroupSystem.Pf.en_aL p K1 : ι → MvPowerSeries ι K1) where
-  const_coeff s := by rw [Formalism.MainNotions.FormalGroupSystem.Pf.en_aL_zero]; exact IsNilpotent.zero
-  coeff_zero d := by
-    refine d.support.finite_toSet.subset fun s hs => ?_
-    simp only [Set.mem_setOf_eq] at hs
-    rw [aL_eq_rename] at hs
-    by_contra hsd
-    have hd : d ∉ Set.range (Finsupp.mapDomain (fun _ : Unit => s)) := by
-      rintro ⟨u, rfl⟩
-      rw [Finset.mem_coe, Finsupp.mem_support_iff, not_not] at hsd
-      have hu : u = Finsupp.single () (u ()) := Finsupp.unique_single u
-      rw [hu, Finsupp.mapDomain_single, Finsupp.single_eq_same] at hsd
-      rw [hu, Finsupp.mapDomain_single, hsd, Finsupp.single_zero, coeff_zero_eq_constantCoeff_apply,
-        constantCoeff_rename] at hs
-      exact hs (Formalism.MainNotions.FormalGroupSystem.Pf.en_L_zero p K1)
-    exact hs (coeff_rename_eq_zero _ _ hd)
-
-theorem inParamK_rename {σ ι : Type} [Finite σ] (f : σ → ι) [Filter.TendstoCofinite f]
-    (F : MvPowerSeries σ K1) : inParamK p K1 (rename f F) = rename f (inParamK p K1 F) := by
-  rw [Formalism.MainNotions.FormalGroupSystem.Pf.en_inParamK_eq, Formalism.MainNotions.FormalGroupSystem.Pf.en_inParamK_eq, rename_eq_subst, rename_eq_subst,
-    subst_comp_subst_apply (HasSubst.X_comp f) (hasSubst_aL_any p K1),
-    subst_comp_subst_apply (Formalism.MainNotions.FormalGroupSystem.Pf.en_aL_hs p K1) (HasSubst.X_comp f)]
-  congr 1
-  funext i
-  simp only [Function.comp_apply, subst_X (hasSubst_aL_any p K1)]
-  rw [aL_eq_rename, aL_eq_rename, ← rename_eq_subst, rename_rename]
-  rfl
-
-theorem degree_embDomain {σ τ : Type} (e : σ ↪ τ) (x : σ →₀ ℕ) :
-    (Finsupp.embDomain e x).degree = x.degree := by
-  show (∑ k ∈ (Finsupp.embDomain e x).support, (Finsupp.embDomain e x) k) = ∑ k ∈ x.support, x k
-  rw [Finsupp.support_embDomain, Finset.sum_map]
-  simp [Finsupp.embDomain_apply]
-
-theorem killCompl_expS {σ τ : Type} (e : σ ↪ τ) (G : MvPowerSeries τ (K0 p)) :
-    killCompl e (expS p G) = expS p (killCompl e G) := by
-  ext x
-  rw [coeff_killCompl]
-  show ∑ k ∈ range ((Finsupp.embDomain e x).degree + 1), _ = ∑ k ∈ range (x.degree + 1), _
-  rw [degree_embDomain]
-  refine Finset.sum_congr rfl fun k _ => ?_
-  rw [← map_pow, coeff_killCompl]
-
-theorem rename_substitute_two_series {τ : Type} (f : Fin 2 → τ) [Filter.TendstoCofinite f] (be : MvPowerSeries (Fin 2) (K0 p))
-    {u w : MvPowerSeries (Fin 2) (K0 p)} (hu : constantCoeff u = 0) (hw : constantCoeff w = 0) :
-    rename f (sub2 p be u w) = sub2 p be (rename f u) (rename f w) := by
-  unfold sub2
-  rw [rename_eq_subst, subst_comp_subst_apply (hasSubst_of_constantCoeff_zero (cc2 hu hw)) (HasSubst.X_comp f)]
-  congr 1
-  funext j
-  fin_cases j <;> simp [← rename_eq_subst]
-
 theorem conj_frobenius_two_variables {be : MvPowerSeries (Fin 2) (K0 p)} (h : BeProp p be) (α : WW p) (hα2 : (sigW p)^[2] α = α) :
     Simeq p (sub2 p be (C (algebraMap (WW p) (K0 p) α) * X 0) (X 1) : MvPowerSeries (Fin 2) (K0 p))
       (sub2 p be (X 0) (C (algebraMap (WW p) (K0 p) (sigW p α)) * X 1)) := by
@@ -959,15 +901,19 @@ theorem exists_alpha : ∃ α : WW p, (sigW p)^[2] α = α ∧ IsUnit (α - sigW
     by_contra hall
     push Not at hall
     have hpoly : (Polynomial.X ^ p - Polynomial.X : Polynomial (GaloisField p 2)) ≠ 0 :=
-      FiniteField.X_pow_card_sub_X_ne_zero _ hp1
+      Polynomial.X_pow_sub_X_ne_zero hp1
     have hle := Polynomial.card_le_degree_of_subset_roots (p := Polynomial.X ^ p - Polynomial.X)
       (Z := (Finset.univ : Finset (GaloisField p 2))) (fun y _ => by
         rw [Polynomial.mem_roots hpoly]
         simp [hall y])
-    rw [Finset.card_univ, hcard, FiniteField.X_pow_card_sub_X_natDegree_eq _ hp1] at hle
+    rw [Finset.card_univ, hcard, Polynomial.natDegree_X_pow_sub_X hp1] at hle
     have : p < p ^ 2 := by nlinarith
     omega
-  let φ : GaloisField p 2 →ₐ[ZMod p] kb p := IsAlgClosed.lift
+  let φ : GaloisField p 2 →ₐ[ZMod p] kb p := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   set ζ : kb p := φ x
   have hζ2 : ζ ^ (p ^ 2) = ζ := by
     rw [← map_pow, ← hcard, FiniteField.pow_card]

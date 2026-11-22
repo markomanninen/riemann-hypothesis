@@ -1,7 +1,12 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealOrder
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.MultiIndexDerivation
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealOrderDecrease
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealOrder
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.MultiIndexDerivation
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealOrderDecrease
+
+@[expose] public section
+
 namespace FunctorialResolution.EmbeddedResolution
 
 open IsLocalRing

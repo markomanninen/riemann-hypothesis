@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+
+@[expose] public section
+
 open Finset BranchingSupport Formalism.REAL Formalism.QuantumDeterminants
 open scoped InnerProductSpace
 
@@ -68,8 +73,8 @@ end GlobalTheory.LowCasShift
 
 namespace GlobalTheory
 
-open LowCasShift in
 
+open LowCasShift in
 theorem lowK_sub_single_and_sqrt_ckv_le :
     ∀ (n kk : ℕ) (ε : Fin n → Bool) (μ : Fin n → ℝ) (bv : ℝ) (s : Fin n), Shape ε kk μ bv →
       lowK ε (μ - Pi.single s 1) = lowK ε μ - Pi.single s 1 ∧

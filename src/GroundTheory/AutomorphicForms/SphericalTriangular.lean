@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.SphericalSatake
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.SphericalSatake
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ namespace Spherical
 variable {F : Type*} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F]
   {n : ℕ}
 
-variable (F) in
 
+variable (F) in
 def Bdd (t : ℤ) (x : F) : Prop := valuation F x ≤ valuation F (uniformizer F : F) ^ t
 
 theorem valuation_uniformizer_pos : 0 < valuation F (uniformizer F : F) :=
@@ -151,7 +155,8 @@ theorem bdd_det_submatrix {A B : Matrix (Fin n) (Fin n) F} (hA : ∀ i j, A i j 
   rw [← det_transpose, hT]
   change Bdd F _ ((detRowAlternating : (Fin m → F) [⋀^Fin m]→ₗ[F] F).toMultilinearMap
     (fun j => ∑ l, (d l * B l (c j)) • vec l))
-  rw [MultilinearMap.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [MultilinearMap.map_sum]
   refine bdd_sum _ fun p _ => ?_
   rw [MultilinearMap.map_smul_univ, smul_eq_mul]
   by_cases hp : Function.Injective p
@@ -186,8 +191,8 @@ theorem prod_zpow_uniformizer {ι : Type*} (s : Finset ι) (f : ι → ℤ) :
     rw [Finset.prod_insert ha, Finset.sum_insert ha, ih,
       zpow_add₀ (Cartan.uniformizer_ne_zero F)]
 
-variable (F n) in
 
+variable (F n) in
 def cartanType (g : GL (Fin n) F) : Fin n → ℤ :=
   (Cartan.existsUnique_mem_doubleCoset F n g).exists.choose
 
@@ -331,14 +336,14 @@ theorem satake_coeff (h : SphericalHecke μ (F := F) (n := n)) (l : Fin n → �
         if iwasawaExponent F n x.out = l then (h : HeckeAlgebra μ) x.out else 0 := by
   classical
   rw [satake, AddMonoidAlgebra.coeff_smul, Finsupp.smul_apply, AddMonoidAlgebra.coeff_sum,
-    Finsupp.finset_sum_apply, smul_eq_mul]
+    Finsupp.finsetSum_apply, smul_eq_mul]
   congr 1
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [AddMonoidAlgebra.coeff_single, Finsupp.single_apply]
 
 theorem satakeHom_injective : Function.Injective (satakeHom μ (F := F) (n := n)) := by
   classical
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro h h0
   by_contra hne
   obtain ⟨g, hg⟩ : ∃ g, (h : HeckeAlgebra μ) g ≠ 0 := by

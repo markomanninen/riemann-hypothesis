@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.ExistsDividedPowersAug
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.FilIsSubDPIdeal
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.ExistsDividedPowersAug
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.FilIsSubDPIdeal
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -120,7 +124,7 @@ theorem ring_poly (κ : DividedPowers I) (f : R →+* B) (δ : DividedPowers J) 
       have hm' := hm m
       rwa [hQ.var] at hm'
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, map_add, hx, hy]
+    | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
     | smul b x _ hx =>
       rw [Algebra.smul_def, map_mul, map_mul, hx]
       congr 1

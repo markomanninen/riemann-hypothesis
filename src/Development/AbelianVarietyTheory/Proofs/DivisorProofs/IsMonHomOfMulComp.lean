@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsProjOverWeierstrass
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsMatrixRingAct
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsProjOverWeierstrass
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsMatrixRingAct
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,7 +99,7 @@ def latEnd (T : Tens D D' W) : Matrix (Fin r) (Fin r) ℤ →+* Module.End ℤ D
   toFun A :=
     { toFun := latAct T A
       map_add' := fun y z ↦ T.xe.injective (funext fun i ↦ by
-        simp only [xe_latAct, map_add, Pi.add_apply, smul_add, Finset.sum_add_distrib])
+        simp only [xe_latAct, map_add (f := _), Pi.add_apply, smul_add, Finset.sum_add_distrib])
       map_smul' := fun n y ↦ T.xe.injective (funext fun i ↦ by
         simp only [xe_latAct, map_zsmul, Pi.smul_apply, RingHom.id_apply, Finset.smul_sum]
         exact Finset.sum_congr rfl fun j _ ↦ smul_comm _ _ _) }
@@ -114,7 +118,7 @@ def latEnd (T : Tens D D' W) : Matrix (Fin r) (Fin r) ℤ →+* Module.End ℤ D
   map_zero' := LinearMap.ext fun y ↦ T.xe.injective (funext fun i ↦ by
     simp [xe_latAct])
   map_add' A B := LinearMap.ext fun y ↦ T.xe.injective (funext fun i ↦ by
-    simp only [LinearMap.coe_mk, AddHom.coe_mk, xe_latAct, LinearMap.add_apply, map_add, Pi.add_apply,
+    simp only [LinearMap.coe_mk, AddHom.coe_mk, xe_latAct, LinearMap.add_apply, map_add (f := _), Pi.add_apply,
       Matrix.add_apply, add_smul, Finset.sum_add_distrib])
 
 abbrev tensModule (T : Tens D D' W) {O : Type} [Ring O] (ρ : O →+* Matrix (Fin r) (Fin r) ℤ) : Module O D'.X :=
@@ -125,7 +129,7 @@ def ringAct (T : Tens D D' W) {O : Type} [Ring O] (ρ : O →+* Matrix (Fin r) (
   hom a := matAct_hom T (ρ a)
   map_one := by rw [map_one, matAct_one]
   map_mul a b := by rw [map_mul, matAct_mul]
-  map_add a b := by rw [map_add, matAct_add]; rfl
+  map_add a b := by rw [map_add (f := _), matAct_add]; rfl
 
 def cHom (D : DegPre R) : D.X →+ Additive (𝟙_ (Over (Spec (CommRingCat.of R))) ⟶ D.P.A) :=
   AddMonoidHom.mk' (fun x ↦ Additive.ofMul (D.c x)) fun a b ↦ by rw [D.c_add]; rfl

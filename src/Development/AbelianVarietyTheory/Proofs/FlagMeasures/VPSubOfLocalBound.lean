@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.OrbitStepSpace
-import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.OrthonormalPlaceBasis
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsContinuousMultilinearMapOfInnerProd
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HasDerivAtOrbitTens
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StepSpacePropsOfDiff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.OrbitStepSpace
+public import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.OrthonormalPlaceBasis
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsContinuousMultilinearMapOfInnerProd
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HasDerivAtOrbitTens
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StepSpacePropsOfDiff
+
+@[expose] public section
 
 open Formalism.MainNotions.S NumberField GlobalTheory.Count GlobalTheory.IndefiniteRowSideFullHecke.OrthonormalPlaceBasis
 

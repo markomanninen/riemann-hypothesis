@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.QthConjClose
+module
+
+public import Formalism.LocalToGlobal.Columns.QthConjClose
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -37,7 +41,7 @@ theorem qth_lamQB_one {P : HeightOneSpectrum (𝓞 X.E)} (hq : ((qOf P : ℕ) : 
     have e2 : D s t = ((toGLm X.E (R.N j + cOf R j) y : GL (Fin (R.N j + cOf R j)) X.E) : Matrix (Fin (R.N j + cOf R j)) (Fin (R.N j + cOf R j)) X.E) ⟨R.k + j + s.1, hs⟩ ⟨R.k + j + t.1, ht⟩ := by
       rw [qsp_toGLm_apply, hD, Matrix.of_apply, e1]
       unfold Loc.atN
-      rw [dif_pos hs]
+      rw [dite_eq_left hs]
       rfl
     obtain ⟨h1, h2⟩ := qth_red_entry P (qOf P) hq0 hq hy ⟨R.k + j + s.1, hs⟩ ⟨R.k + j + t.1, ht⟩
     rw [e2]
@@ -52,7 +56,7 @@ theorem qth_lamQB_one {P : HeightOneSpectrum (𝓞 X.E)} (hq : ((qOf P : ℕ) : 
     rw [this, Matrix.det_one]
   unfold LocE.unitV
   have hu : IsUnit (redP P D.det) := by rw [hdet]; exact isUnit_one
-  rw [dif_pos hu]
+  rw [dite_eq_left hu]
   have : hu.unit = 1 := Units.ext (by rw [IsUnit.unit_spec, hdet]; rfl)
   rw [this, map_one, Units.val_one, inv_one]
 
@@ -65,9 +69,9 @@ theorem qth_exists_e (P : HeightOneSpectrum (𝓞 X.E)) (hq0 : ((qOf P : ℕ) : 
   have := Int.self_le_toNat (-(WithZero.log (P.valuation X.E ((qOf P : ℕ) : X.E))))
   omega
 
+
 open Classical in
 set_option maxHeartbeats 4000000 in
-
 theorem thetaOpen_twLevQ (hc : cst.Ok) (hQg : ∀ P ∈ QE sel (mu : Chr X.F X.E X.K), P ∉ Pr.vGs) (j : ℕ)
     (hh : rowSG Pr sel mu → AutY X R j) : ThetaOpen (twLevQ Ch sel mu cst j hh) := by
   intro P
@@ -126,8 +130,8 @@ theorem thetaOpen_twLevQ (hc : cst.Ok) (hQg : ∀ P ∈ QE sel (mu : Chr X.F X.E
     exact qth_lamQB_one hq hq0 _ _ hy
   · rfl
 
-open Classical in
 
+open Classical in
 theorem thetaOpen_twIdx (hc : cst.Ok) (hQg : ∀ P ∈ QE sel (mu : Chr X.F X.E X.K), P ∉ Pr.vGs) (m2 j : ℕ)
     (b : (twIdx Ch sel mu cst m2).β j) : ThetaOpen ((twIdx Ch sel mu cst m2).levQ j b) := by
   show ThetaOpen (if j = 0 then LevQFam.top X.E X.K (R.N j) _ else twLevQ Ch sel mu cst j ((twSt Ch sel mu cst m2 j).h b))

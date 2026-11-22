@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMulIntSingle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMulIntSingle
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.UG
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK GlobalTheory.ThetaDenom
 open scoped TensorProduct NNReal Matrix
@@ -26,7 +31,8 @@ theorem pureA_fixed : ∀ {F : Type} [Field F] [NumberField F] {κ : Type} [Fint
   · have hs : ∀ (c d : κ → AF F), (∀ i, (d i).1 = 0) → (c ⬝ᵥ d).1 = 0 := by
       intro c d hd
       change fstA F (∑ i, c i * d i) = 0
-      rw [map_sum]; refine Finset.sum_eq_zero fun i _ => ?_
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]; refine Finset.sum_eq_zero fun i _ => ?_
       rw [map_mul]; change (c i).1 * (d i).1 = 0; rw [hd i, mul_zero]
     have hnat : ∀ (v : HeightOneSpectrum (𝓞 F)) (n : ℕ), ‖(n : Fv F v)‖ ≤ 1 :=
       fun v n => GlobalTheory.SmoothForms.denom_norm_natCast_le_one v n
@@ -49,7 +55,8 @@ theorem pureA_fixed : ∀ {F : Type} [Field F] [NumberField F] {κ : Type} [Fint
           _ = (‖evFin F v (⅟2 : AF F)‖ * ‖(2 : Fv F v)‖) * ‖((m₁ * M * m₃ : ℕ) : Fv F v)‖ := by
               push_cast; simp only [norm_mul]; ring
           _ ≤ 1 := by rw [h2, one_mul]; exact hnat v _
-      rw [map_add, dotProduct, dotProduct, Finset.mul_sum, map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_add (f := _), dotProduct, dotProduct, Finset.mul_sum, map_sum, map_sum]
       refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ?_ ?_)
       · refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (norm_nonneg _) fun i _ => ?_
         rw [map_mul, norm_mul]

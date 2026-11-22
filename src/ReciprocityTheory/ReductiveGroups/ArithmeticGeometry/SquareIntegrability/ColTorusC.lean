@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SecondProjectionOrthogonalComplement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.PropASt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SecondProjectionOrthogonalComplement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.PropASt
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -22,10 +26,6 @@ def ctY (Y : GT ι) (w : EuclideanSpace ℂ ι) : GT ι where
     rw [norm_mul, Y.ka_abs x hx, one_mul, Complex.norm_exp]
     simp
 
-theorem twisted_firstMinimum (Y : GT ι) (w : EuclideanSpace ℂ ι) : (ctY Y w).la1 = Y.la1 := rfl
-
-theorem ctY_lat (Y : GT ι) (w : EuclideanSpace ℂ ι) : lat (ctY Y w).b = lat Y.b := rfl
-
 private theorem Hf_add_left_euclidean (a b c : EuclideanSpace ℂ ι) : Hf (a + b) c = Hf a c + Hf b c := by
   simp [Hf, add_mul, Finset.sum_add_distrib]
 
@@ -45,7 +45,8 @@ private theorem Hf_smul_right' (a b : EuclideanSpace ℂ ι) (c : ℂ) :
   simp <;> ring
 
 private theorem Hf_swap_eq_conj' (a b : EuclideanSpace ℂ ι) : Hf b a = (starRingEnd ℂ) (Hf a b) := by
-  simp only [Hf, map_sum, map_mul, Complex.conj_conj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Hf, map_sum, map_mul, Complex.conj_conj]
   exact Finset.sum_congr rfl fun i _ => mul_comm _ _
 
 private theorem norm_sq_eq_re_Hf_self (v : EuclideanSpace ℂ ι) : ‖v‖ ^ 2 = (Hf v v).re := by

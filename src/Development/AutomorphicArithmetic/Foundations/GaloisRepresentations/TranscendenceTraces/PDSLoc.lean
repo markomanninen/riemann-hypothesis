@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.PhiExact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRulesStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.PhiExact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRulesStatement
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex GlobalTheory.EtC UpperTheory.Gal.TranscendenceTraces
 
@@ -19,7 +23,7 @@ private theorem DS_map_apply {R : Type} [CommRing R] {Z S : Scheme.{0}} (p : Z �
       simp [DirectSum.of_eq_same]
     · rw [DirectSum.of_eq_of_ne _ _ _ (Ne.symm hv), DirectSum.of_eq_of_ne _ _ _ (Ne.symm hv)]
       simp [Sec.map]
-  | add x y hx hy => simp [map_add, hx, hy, Sec.map]
+  | add x y hx hy => simp [map_add (f := _), hx, hy, Sec.map]
 
 theorem UpperTheory.Gal.TranscendenceTraces.dSLoc_of :
     DSOne → DSLoc := by
@@ -36,9 +40,11 @@ theorem UpperTheory.Gal.TranscendenceTraces.dSLoc_of :
   intro V g hg
   choose a ha using hg
   refine ⟨∑ i : x.support, a i, ?_⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [ha]
-  rw [← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum]
   congr 1
   conv_rhs => rw [← DirectSum.sum_support_of x]
   simp only [inc, DirectSum.lof_eq_of]

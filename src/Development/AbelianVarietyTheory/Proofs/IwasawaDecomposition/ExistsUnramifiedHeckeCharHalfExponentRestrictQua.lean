@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
-import Development.AbelianVarietyTheory.PublishedTheorems.AdelicLattices₂.AlgebraMapNormOfBasisOneSqrt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdelicCharacterTrivialBaseFiniteIdeles
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeCharEqOneOfTrivialFinitePartOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalIdeleSndSelf
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmEmbeddingProperties
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostEtaTildeCharacterExists
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCmAdeleUnitCharacterReadingHeckeChar
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemNormGroupIffEverywhereNorm
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
+public import Development.AbelianVarietyTheory.PublishedTheorems.AdelicLattices₂.AlgebraMapNormOfBasisOneSqrt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdelicCharacterTrivialBaseFiniteIdeles
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeCharEqOneOfTrivialFinitePartOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalIdeleSndSelf
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmEmbeddingProperties
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostEtaTildeCharacterExists
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCmAdeleUnitCharacterReadingHeckeChar
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemNormGroupIffEverywhereNorm
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.IndefR.Links Formalism.L2.JoinChr Formalism.L2.Host
 open scoped TensorProduct
@@ -167,9 +171,9 @@ theorem val_finite (D : D7) (ι : (Af D.host.F ⊗[D.host.F] D.host.E) ≃+* Af 
     beta_reduce
     rw [a, WithZero.log_one, neg_zero, zpow_zero]
 
+
 set_option maxHeartbeats 1000000 in
 open GlobalTheory.FockCompare in
-
 theorem val_infinite (D : D7) (c : (AE D)ˣ →* Circle) (χ : HChar D.host.E) (hc : ChrEq c χ) (hu : ∀ P, χ.UnrAt P)
     (n : D.R.Psi → ℤ) (hn : χ.HasInf (embPsi D.host) n)
     (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) (hθ : IsInfFam θ) (x : (AE D)ˣ)
@@ -190,9 +194,9 @@ theorem val_infinite (D : D7) (c : (AE D)ˣ →* Circle) (χ : HChar D.host.E) (
       rw [RingHom.map_sub, RingHom.map_sub, h2, sub_self]
   let t : (D.what₂.Tau → ℂˣ) → AE D := fun z => s (fun τ => (z τ : ℂ)) + (1 - s 1)
   have tf : ∀ z, finPart D (t z) = 1 := fun z => by
-    simp only [t, RingHom.map_add, RingHom.map_sub, RingHom.map_one, hs.fin, zero_add, sub_zero]
+    simp only [t, RingHom.map_add (f := _), RingHom.map_sub, RingHom.map_one, hs.fin, zero_add, sub_zero]
   have ti : ∀ z τ, θ τ (infPart D (t z)) = z τ := fun z τ => by
-    simp only [t, RingHom.map_add, RingHom.map_sub, RingHom.map_one, hs.comp, Pi.one_apply, sub_self, add_zero]
+    simp only [t, RingHom.map_add (f := _), RingHom.map_sub, RingHom.map_one, hs.comp, Pi.one_apply, sub_self, add_zero]
   have tc : Continuous t :=
     (hs.cont.comp (continuous_pi fun τ => Units.continuous_val.comp (continuous_apply τ))).add continuous_const
   let T : (D.what₂.Tau → ℂˣ) →* AE D :=
@@ -215,7 +219,7 @@ theorem val_infinite (D : D7) (c : (AE D)ˣ →* Circle) (χ : HChar D.host.E) (
     intro z
     refine (GlobalTheory.HeckeFinTrivial.denseRange_units (tauE D) hd).induction_on z
       (isClosed_eq (continuous_subtype_val.comp (hc.1.1.comp Tc)) ?_) fun k => ?_
-    · refine continuous_finset_prod _ fun τ _ => ?_
+    · refine continuous_finsetProd _ fun τ _ => ?_
       have c1 : Continuous fun z : D.what₂.Tau → ℂˣ => (z τ : ℂ) := Units.continuous_val.comp (continuous_apply τ)
       have n0 : ∀ z : D.what₂.Tau → ℂˣ, (‖(z τ : ℂ)‖ : ℂ) ≠ 0 := fun z => by simp
       exact (c1.div (Complex.continuous_ofReal.comp c1.norm) n0).zpow₀ _
@@ -250,9 +254,9 @@ theorem idF_norm (D : D7) (x : (AE D)ˣ) :
   have := D.host.isCMField_hostE
   exact GlobalTheory.Published.algebraMap_norm_tensor (E := D.host.E) (AF D.host.F) (x : AE D)
 
+
 set_option maxHeartbeats 1000000 in
 open GlobalTheory.FockCompare in
-
 theorem isEta_res (D : D7) (c : (AE D)ˣ →* Circle) (χ : HChar D.host.E) (hc : ChrEq c χ) (h : IsEtaT D.host χ) :
     IsEta D (c.comp (idF D)) := by
   classical
@@ -315,7 +319,7 @@ theorem isEta_res (D : D7) (c : (AE D)ˣ →* Circle) (χ : HChar D.host.E) (hc 
     let τ₀ : D.what₂.Tau := ((GlobalTheory.CMTypePlaces.places_bijective D).2 (Classical.arbitrary _)).choose
     let w : Ainf D.host.F := 1 + ρ (Pi.single τ₀ (-2))
     have hw : ∀ τ, θ τ (w ⊗ₜ[D.host.F] (1 : D.host.E)) = if τ = τ₀ then -1 else 1 := fun τ => by
-      rw [TensorProduct.add_tmul, map_add, r1, ← Algebra.TensorProduct.one_def, map_one, Pi.single_apply]
+      rw [TensorProduct.add_tmul, map_add (f := _), r1, ← Algebra.TensorProduct.one_def, map_one, Pi.single_apply]
       split_ifs <;> norm_num
     have hww : w * w = 1 := by
       refine sub_eq_zero.1 (r0 _ fun τ => ?_)

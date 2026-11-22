@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.SheafIsomorphism.LeafShIsoOf
-import Development.EtaleCohomology.EtaleSheaves.BoundaryKernel.Formal
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SheafIsomorphism.LeafShIsoOf
+public import Development.EtaleCohomology.EtaleSheaves.BoundaryKernel.Formal
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite

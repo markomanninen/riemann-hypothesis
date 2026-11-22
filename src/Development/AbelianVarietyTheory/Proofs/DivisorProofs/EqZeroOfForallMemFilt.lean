@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntDerApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivationTaylorPowerSeriesOfDerivationsKill
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntDerApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivationTaylorPowerSeriesOfDerivationsKill
+
+@[expose] public section
+
 open IsLocalRing GlobalTheory.FormalOrigin
 
 namespace GlobalTheory.FormalOrigin.Extend
@@ -14,7 +19,7 @@ def filt {σ R : Type} [CommRing R] (I : Ideal R) (k : ℕ) : Ideal (MvPowerSeri
     rw [smul_eq_mul, MvPowerSeries.coeff_mul]
     refine Ideal.sum_mem _ fun p hp => Ideal.mul_mem_left _ _ ?_
     have h := Finset.HasAntidiagonal.mem_antidiagonal.1 hp
-    have : p.2.degree ≤ α.degree := by rw [← h, map_add]; omega
+    have : p.2.degree ≤ α.degree := by rw [← h, map_add (f := _)]; omega
     exact Ideal.pow_le_pow_right (by omega) (hF p.2)
 
 theorem mem_filt {σ R : Type} [CommRing R] (I : Ideal R) (k : ℕ) (F : MvPowerSeries σ R) :

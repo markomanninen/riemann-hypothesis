@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.NatCastMulCoeffOfPderivEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.NatCastMulCoeffOfPderivEq
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -13,10 +17,10 @@ variable {k : Type} [CommRing k] {σ τ : Type}
 
 theorem pderiv_subst [Fintype σ] {a : σ → MvPowerSeries τ k} (ha : ∀ s, constantCoeff (a s) = 0)
     (f : MvPowerSeries σ k) (t : τ) :
-    pderiv k t (subst a f) = ∑ s, subst a (pderiv k s f) * pderiv k t (a s) :=
+    pderiv (R := k) t (subst a f) = ∑ s, subst a (pderiv (R := k) s f) * pderiv (R := k) t (a s) :=
   GlobalTheory.FormalCalc.pderiv_subst (hasSubst_of_constantCoeff_zero ha) f t
 
-theorem pderiv_comm (u v : τ) (g : MvPowerSeries τ k) : pderiv k u (pderiv k v g) = pderiv k v (pderiv k u g) := by
+theorem pderiv_comm (u v : τ) (g : MvPowerSeries τ k) : pderiv (R := k) u (pderiv (R := k) v g) = pderiv (R := k) v (pderiv (R := k) u g) := by
   classical
   ext n
   simp only [coeff_pderiv]
@@ -26,7 +30,7 @@ theorem pderiv_comm (u v : τ) (g : MvPowerSeries τ k) : pderiv k u (pderiv k v
     simp only [Finsupp.add_apply, Finsupp.single_apply, if_neg h, if_neg (Ne.symm h), add_zero]
     ring
 
-theorem eq_C_of_pderiv_zero [Algebra ℚ k] {g : MvPowerSeries τ k} (h : ∀ v, pderiv k v g = 0) :
+theorem eq_C_of_pderiv_zero [Algebra ℚ k] {g : MvPowerSeries τ k} (h : ∀ v, pderiv (R := k) v g = 0) :
     g = C (constantCoeff g) := by
   classical
   ext n

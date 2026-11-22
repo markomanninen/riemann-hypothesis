@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.CotangentSurjective
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
-import ReciprocityTheory.DualLattices.PowMemCarrier
-import ReciprocityTheory.DualLattices.UpSmith
-import ReciprocityTheory.DualLattices.MemOfSumSingleEqZero
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+public import ReciprocityTheory.DualLattices.PowMemCarrier
+public import ReciprocityTheory.DualLattices.UpSmith
+public import ReciprocityTheory.DualLattices.MemOfSumSingleEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -114,7 +118,22 @@ lemma exists_hasLen (hv : v.Integers R) {Y : Type} (A B : Submodule R (Y → C))
   let b := Module.finBasis R A
   let e := b.equivFun
   obtain ⟨s, hs⟩ := hKfg.map (e : A →ₗ[R] (Fin (Module.finrank R A) → R))
-  obtain ⟨c, ⟨f⟩⟩ := Smith.smith_gen hv (Module.finrank R A)
+  have smith_gen : ∀ (b : ℕ) {ι : Type} [Fintype ι] (g : ι → Fin b → R),
+      ∃ c : Fin b → R, Nonempty (((Fin b → R) ⧸ Submodule.span R (Set.range g)) ≃ₗ[R]
+        ((i : Fin b) → R ⧸ Ideal.span {c i})) := by
+    intro b
+    induction b with
+    | zero =>
+      intro ι _ g
+      exact ⟨Fin.elim0, ⟨LinearEquiv.ofSubsingleton _ _⟩⟩
+    | succ b ih =>
+      intro ι _ g
+      obtain ⟨i0, a, u, s, hu, hau, hs, -, -⟩ := Smith.exists_pivot hv g
+      obtain ⟨e1⟩ := Smith.pivot_equiv g i0 a u s hu hau hs
+      obtain ⟨c, ⟨e2⟩⟩ := ih (fun j => Fin.removeNth i0 (g j - s j • a • u))
+      exact ⟨Fin.cons a c, ⟨(e1.trans ((LinearEquiv.refl R _).prodCongr e2)).trans
+        (Smith.consEquiv a c)⟩⟩
+  obtain ⟨c, ⟨f⟩⟩ := smith_gen (Module.finrank R A)
     (fun i : s => (i : Fin (Module.finrank R A) → R))
   refine ⟨_, Module.finrank R A, c, ⟨?_⟩, rfl⟩
   have hr : Set.range (fun i : s => (i : Fin (Module.finrank R A) → R)) = ↑s := by

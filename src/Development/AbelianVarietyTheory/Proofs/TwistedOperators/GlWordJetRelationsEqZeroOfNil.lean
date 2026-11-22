@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FunJetApply
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JetRelPermAndCompactVanish
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GlWordJetRelationsMultiplicationEquivariantStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FunJetApply
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JetRelPermAndCompactVanish
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GlWordJetRelationsMultiplicationEquivariantStatement
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec GlobalTheory.SphJet
 open scoped InnerProductSpace ComplexOrder Matrix.Norms.L2Operator
@@ -142,7 +146,8 @@ theorem riesz_arr_casimir {B : List (Fin n × Fin n) → W →ₗ⋆[ℂ] W →�
   have hsum : ∑ c, ∑ d, z c d = ((ckv ε Λ : ℝ) : ℂ) • y := by
     apply j.injective
     rw [map_smul, ← kCasSpan V n ε E Λ u (glRel_kRel ε E hL.1) hL.2.2.1 _ (hL.mem_kSpan y), compactCasimir_apply]
-    simp only [map_sum, hz]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, hz]
   have hFF : ⟪F, F⟫_ℂ = ∑ α, B (List.ofFn α).reverse y (g α) := by
     rw [← hpair, hF]
   rw [compactCasimir_apply, hFF]
@@ -153,7 +158,8 @@ theorem riesz_arr_casimir {B : List (Fin n × Fin n) → W →ₗ⋆[ℂ] W →�
         ∑ c, ∑ d, B (List.ofFn α).reverse (z c d) (g α) := by
     intro α
     have := congrArg (fun w => B (List.ofFn α).reverse w (g α)) hsum
-    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
       Complex.conj_ofReal] at this
     exact this.symm
   simp only [hα]

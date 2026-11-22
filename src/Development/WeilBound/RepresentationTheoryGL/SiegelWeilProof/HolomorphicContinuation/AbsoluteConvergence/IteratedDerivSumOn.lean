@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,8 +55,10 @@ theorem exists_int_elem {X : Type} [MeasurableSpace X] (ν : Measure X) {V : Typ
   have e1 : ∀ x, l (φ x) = ∑ j, cl j (φ x) * l (b j) := by
     intro x
     conv_lhs => rw [hrepr x]
-    simp [map_sum, map_smul, smul_eq_mul]
-  simp only [map_sum, map_smul, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, smul_eq_mul]
   simp_rw [e1]
   rw [integral_finsetSum]
   · refine Finset.sum_congr rfl fun j _ => ?_

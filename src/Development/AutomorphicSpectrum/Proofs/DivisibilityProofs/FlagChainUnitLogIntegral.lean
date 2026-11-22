@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.IsChainFirst
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGrassFibreDegree
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PConsequences
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHFlProdLinear
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.IsChainFirst
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGrassFibreDegree
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PConsequences
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHFlProdLinear
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -73,7 +78,8 @@ theorem ringKrullDim_span (k₀ : K) (hk : ∀ a : K, a = k₀) {n : ℕ} (σ : 
   rw [span_eq_ker, ringKrullDim_eq_of_ringEquiv
       (RingHom.quotientKerEquivOfSurjective (Bridge.GeoNum.red_surjective p)),
     MvPolynomial.ringKrullDim_of_isNoetherianRing, ringKrullDim_eq_zero_of_field, zero_add,
-    card_coords ι k₀ hk σ, card_blocks k₀ hk]
+    ENat.card_eq_coe_natCard, card_coords ι k₀ hk σ, card_blocks k₀ hk]
+  simp
 
 theorem intNum_bot (k₀ : K) (hk : ∀ a : K, a = k₀) {n : ℕ} (σ : ι k₀ ≃ Fin (n + 1)) (a : K → ℤ) (ha : a k₀ = 1) :
     NumbersDVR.intNum (ZMod p) (⊥ : Ideal (NumbersDVR.MRing ι (ZMod p))) (fun _ : Fin n => a) = 1 := by
@@ -112,12 +118,12 @@ theorem arithVar_bot (k₀ : K) (hk : ∀ a : K, a = k₀) {n : ℕ} (σ : ι k�
   · exact Ideal.comap_bot_of_injective _ (C_injective _ _)
   · rw [ringKrullDim_eq_of_ringEquiv (RingEquiv.quotientBot _),
       MvPolynomial.ringKrullDim_of_isNoetherianRing, IsPrincipalIdealRing.ringKrullDim_eq_one ℤ Int.not_isField,
-      card_coords ι k₀ hk σ, card_blocks k₀ hk]
+      ENat.card_eq_coe_natCard, card_coords ι k₀ hk σ, card_blocks k₀ hk]
     push_cast
     exact add_comm _ _
 
-omit p in
 
+omit p in
 theorem ptsIntegral_bot (II : IntersectionSystem) (hII : IsIntersectionSystem II) (k₀ : K) (hk : ∀ a : K, a = k₀)
     {n : ℕ} (σ : ι k₀ ≃ Fin (n + 1)) (L : HermLine ι) (hL : IsSmoothHerm L) (ha : L.a k₀ = 1) :
     ptsIntegral (⊥ : Ideal (MRing ι)) (pot fun _ : Fin n => L) (fun _ => 1) = 1 := by
@@ -177,13 +183,13 @@ theorem pPart_eq_bot (τ : Ψ) (h : 0 < N - 1) (k₀ : K) (hk : ∀ a : K, a = k
     intro x
     induction x using MvPolynomial.induction_on with
     | C a => simp
-    | add f g hf hg => simp only [map_add, hf, hg]
+    | add f g hf hg => simp only [map_add (f := _), hf, hg]
     | mul_X f p hf => simp only [map_mul, hf, aeval_X, map_X, rename_X, hy]
   have hcomp : ∀ x : MRing (PIdx j), aeval (fun _ : K => (1 : ΩFl Ψ N)) (mConeMap (yPart j) x) = aeval (yPart j) x := by
     intro x
     induction x using MvPolynomial.induction_on with
     | C a => simp [mConeMap]
-    | add f g hf hg => simp only [map_add, hf, hg]
+    | add f g hf hg => simp only [map_add (f := _), hf, hg]
     | mul_X f p hf => simp only [map_mul, hf]; simp [mConeMap]
   unfold PPart mCoordIdeal
   rw [← RingHom.injective_iff_ker_eq_bot]

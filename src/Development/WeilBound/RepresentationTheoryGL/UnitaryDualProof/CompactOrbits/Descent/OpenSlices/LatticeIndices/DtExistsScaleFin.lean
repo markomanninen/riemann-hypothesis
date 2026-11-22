@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.Descent.OpenSlices.LatticeIndices.ValuationPiNeZero
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DualCountBound.MatIdxB
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.Descent.OpenSlices.LatticeIndices.ValuationPiNeZero
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DualCountBound.MatIdxB
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,8 +55,6 @@ instance (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) : Module.IsTorsionFree �
     · exact Or.inl (Subtype.ext h1)
     · exact Or.inr (Subtype.ext h1)
 
-example (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) : Module.Free 𝒪[k] (LatO Z) := inferInstance
-
 theorem LatO_le (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) {x : Matrix (Fin n) (Fin n) k} (hx : x ∈ LatO Z) :
     x ∈ Subalgebra.centralizer k (Z : Set (Matrix (Fin n) (Fin n) k)) :=
   (Subalgebra.mem_centralizer_iff k).2 fun a ha => hx.1 a ha
@@ -92,7 +94,7 @@ theorem det_transfer (Z : Subalgebra k (Matrix (Fin n) (Fin n) k))
       simp_rw [mul_smul]
       rw [← Finset.smul_sum]
       have : ∑ x, c x • (b x : Matrix (Fin n) (Fin n) k) = 0 := by
-        simpa [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul, v] using hc'
+        simpa [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul, v] using hc'
       rw [this, smul_zero]
     have := (Fintype.linearIndependent_iff.mp b.linearIndependent) d hd i
     have h2 : pi k ^ N * c i = 0 := congrArg Subtype.val this
@@ -130,7 +132,7 @@ theorem det_transfer (Z : Subalgebra k (Matrix (Fin n) (Fin n) k))
     have h2 := congrArg Subtype.val (b.sum_repr (f (b j)))
     simp only [Submodule.coe_sum, Submodule.coe_smul, dt_smul_coe_O] at h2
     rw [h1, ← h2]
-    simp only [v, LinearMap.toMatrix_apply, AddSubmonoidClass.coe_finset_sum, SetLike.val_smul]
+    simp only [v, LinearMap.toMatrix_apply, AddSubmonoidClass.coe_finsetSum, SetLike.val_smul]
     rfl
   have hM : LinearMap.toMatrix bB bB F = (LinearMap.toMatrix b b f).map (algebraMap 𝒪[k] k) := by
     ext i j

@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SizeCount.Development
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitSumCount.TauPlBijective
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SizeCount.Development
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitSumCount.TauPlBijective
+
+@[expose] public section
 
 noncomputable section
 

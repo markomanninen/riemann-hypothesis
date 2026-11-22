@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SumEqTraceOriented
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOpenKer
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SumEqTraceOriented
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOpenKer
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,7 @@ include hE
 
 theorem heis_comp (u : WO S T) (f : WA V W → ℂ) : Heisenberg₂ ψ V W (E u) f ∘ E = heisO ψ S T u (f ∘ E) := by
   funext w
-  simp only [Function.comp_apply, Heisenberg₂, heisO, hE.sympl, map_add]
+  simp only [Function.comp_apply, Heisenberg₂, heisO, hE.sympl, map_add (f := _)]
 
 theorem theta_iff (f : WA V W → ℂ) : IsThetaFunO ψ S T (f ∘ E) ↔ IsThetaFun ψ V W f := by
   constructor
@@ -73,7 +77,7 @@ theorem theta_iff (f : WA V W → ℂ) : IsThetaFunO ψ S T (f ∘ E) ↔ IsThet
     · obtain ⟨δ, hδ⟩ := (hE.rat (E.symm (ratW V W γ))).2 (by rw [E.apply_symm_apply]; exact ⟨γ, rfl⟩)
       have hδ' : ratW T S δ = E.symm (ratW V W γ) := hδ
       have := hf.quasi δ (E.symm w)
-      simpa only [hδ', Function.comp_apply, map_add, hE.sympl, E.apply_symm_apply] using this
+      simpa only [hδ', Function.comp_apply, map_add (f := _), hE.sympl, E.apply_symm_apply] using this
     · obtain ⟨U, hU, hfix⟩ := hf.level
       refine ⟨U.comap E.symm.toAddMonoidHom, hU.preimage hE.cont', fun u hu h0 => ?_⟩
       have := hfix (E.symm u) hu ((hE.inf _).2 (by rwa [E.apply_symm_apply]))
@@ -89,7 +93,7 @@ theorem theta_iff (f : WA V W → ℂ) : IsThetaFunO ψ S T (f ∘ E) ↔ IsThet
     · obtain ⟨δ, hδ⟩ := (hE.rat (ratW T S γ)).1 ⟨γ, rfl⟩
       have hδ' : ratW V W δ = E (ratW T S γ) := hδ
       have := hf.quasi δ (E w)
-      simpa only [hδ', Function.comp_apply, map_add, hE.sympl] using this
+      simpa only [hδ', Function.comp_apply, map_add (f := _), hE.sympl] using this
     · obtain ⟨U, hU, hfix⟩ := hf.level
       refine ⟨U.comap E.toAddMonoidHom, hU.preimage hE.cont, fun u hu h0 => ?_⟩
       rw [← hE.heis_comp, hfix (E u) hu ((hE.inf _).1 h0)]
@@ -188,7 +192,7 @@ theorem map_mulGramInv {R : Type} [CommRing R] (φ : AE D →+* R) (S T : HSp D)
     rw [← (mulGramInv S T).symm_apply_apply x]
     exact (Matrix.map_mul (f := φ)).trans (by rw [h, Matrix.zero_mul])
 
-theorem isCoord_large (S T : HSp D) (hr : S.rank < T.rank) : IsCoord S T T S (mulGramInv S T) where
+theorem isCoord_large (S T : HSp D) (hr : S.rank < T.rank) : IsCoord S T T S (mulGramInv S T) := {
   cont := continuous_id.matrix_mul continuous_const
   cont' := continuous_id.matrix_mul continuous_const
   sympl x y := by
@@ -208,10 +212,10 @@ theorem isCoord_large (S T : HSp D) (hr : S.rank < T.rank) : IsCoord S T T S (mu
   fin := map_mulGramInv _ S T
   part a x h i j := by
     show a * ∑ k, x i k * incA D (S.gram⁻¹ k j) = ∑ k, x i k * incA D (S.gram⁻¹ k j)
-    simp only [Finset.mul_sum, ← mul_assoc, h]
+    simp only [Finset.mul_sum, ← mul_assoc, h] }
 
 theorem isCoord_small (S T : HSp D) (hr : S.rank < T.rank) :
-    IsCoord S T S T ((mulGramInv S T).trans (Matrix.transposeAddEquiv _ _ _)) where
+    IsCoord S T S T ((mulGramInv S T).trans (Matrix.transposeAddEquiv _ _ _)) := {
   cont := (isCoord_large S T hr).cont.matrix_transpose
   cont' := (isCoord_large S T hr).cont'.comp continuous_id.matrix_transpose
   sympl x y := ((isCoord_large S T hr).sympl x y).trans (GlobalTheory.WeilTieCheck.symplH_transpose T S hr.ne' _ _).symm
@@ -221,7 +225,7 @@ theorem isCoord_small (S T : HSp D) (hr : S.rank < T.rank) :
     ⟨fun h => congrArg Matrix.transpose h, fun h => congrArg Matrix.transpose h⟩
   fin x := ((isCoord_large S T hr).fin x).trans
     ⟨fun h => congrArg Matrix.transpose h, fun h => congrArg Matrix.transpose h⟩
-  part a x h i j := (isCoord_large S T hr).part a x h j i
+  part a x h i j := (isCoord_large S T hr).part a x h j i }
 
 theorem weilCoreEx_of_datum : ∀ D : D7, (∀ (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (S T : HSp D) (χS χT : IdC D), IsHeckeChar D χS → IsHeckeChar D χT → ResEta D χS S.rank → ResEta D χT T.rank → ∃ om, Formalism.IndefR.Datum.IsWeilDatumO ψ S T χS χT om) → WeilCoreEx D := by
   intro D hO ψ hψ

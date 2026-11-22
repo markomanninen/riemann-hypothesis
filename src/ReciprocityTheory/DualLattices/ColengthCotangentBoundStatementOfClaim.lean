@@ -1,6 +1,10 @@
-import ReciprocityTheory.DualLattices.ColengthCotangentBoundStatement
-import ReciprocityTheory.DualLattices.PrimeHopfOrderStatement
-import ReciprocityTheory.DualLattices.IsLocalOfIntegers
+module
+
+public import ReciprocityTheory.DualLattices.ColengthCotangentBoundStatement
+public import ReciprocityTheory.DualLattices.PrimeHopfOrderStatement
+public import ReciprocityTheory.DualLattices.IsLocalOfIntegers
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,8 @@ theorem colengthCotangentBound_of_claim (p : ℕ) [Fact p.Prime] (C : Type) [Fie
     obtain ⟨⟨f, hf⟩, rfl⟩ := Submodule.mkQ_surjective _ z
     obtain ⟨r, hr⟩ := hgen f hf
     have e : q ⟨f, hf⟩ = ∑ j, r j • y j := by
-      simp only [y, ← map_smul, ← map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [y, ← map_smul, ← map_sum]
       apply key
       simpa using hr
     show q ⟨f, hf⟩ ∈ _
@@ -50,7 +55,8 @@ theorem colengthCotangentBound_of_claim (p : ℕ) [Fact p.Prime] (C : Type) [Fie
     intro i
     obtain ⟨a, ha⟩ := htri i
     refine ⟨a, ?_⟩
-    simp only [y, ← map_smul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [y, ← map_smul, ← map_sum]
     apply key
     have e2 : (((∑ j, (if j < i then a j else 0) • (⟨g j, hg j⟩ : augIdeal AA.carrier) :
         augIdeal AA.carrier)) : N → C) = ∑ j, (if j < i then a j else 0) • g j := by

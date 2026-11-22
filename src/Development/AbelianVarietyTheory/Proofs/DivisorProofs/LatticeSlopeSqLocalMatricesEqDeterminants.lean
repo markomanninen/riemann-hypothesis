@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdelicOne
-import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementG
-import Formalism.PolynomialDimension.WeylDim
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLatticeLatticeOfLocalMatrixFamily
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsGramFrameEmbeddingMatrixNormOfVectorStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DegreeDeterminantLineTwoHermitianLattices
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MaxSlopeSqLeOfNoShortVector
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLocalBasisLatticeOfInverseAdelicMatrixFamiStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramDeterminantSmulStandardBasisInverseFramesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdelicOne
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementG
+public import Formalism.PolynomialDimension.WeylDim
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLatticeLatticeOfLocalMatrixFamily
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsGramFrameEmbeddingMatrixNormOfVectorStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DegreeDeterminantLineTwoHermitianLattices
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MaxSlopeSqLeOfNoShortVector
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLocalBasisLatticeOfInverseAdelicMatrixFamiStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramDeterminantSmulStandardBasisInverseFramesStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Formalism.BasicNotions Formalism.L2.Pj GlobalTheory.DualWeyl GlobalTheory.AllWt GlobalTheory.FlatLine GlobalTheory.DefPt MvPolynomial
 open scoped Matrix
@@ -65,10 +69,9 @@ theorem relIndex_reindex {ι : Type} [Fintype ι] [DecidableEq ι] {n : ℕ} (e 
       (φ : (ι → K) →ₗ[𝓞 K] (Fin n → K)) = Submodule.span (𝓞 K) (Set.range fun k => t • (Pi.single k 1 : Fin n → K)) := by
     rw [Submodule.map_span, ← Set.range_comp]
     congr 2
-    funext k
-    simp only [Function.comp_apply, LinearEquiv.coe_coe, hφ]
     funext j
-    simp [Pi.single_apply, e.symm_apply_eq, eq_comm]
+    ext k
+    simp [hφ, Pi.single_apply, e.symm_apply_eq, eq_comm]
   have h2 : (locLat A).map (φ : (ι → K) →ₗ[𝓞 K] (Fin n → K)) = locLat (fun w => Matrix.reindex e e (A w)) := by
     ext y
     constructor
@@ -152,9 +155,9 @@ theorem log_relIndex {n : ℕ} (A : HeightOneSpectrum (𝓞 K) → Matrix (Fin n
 
 end GlobalTheory.LocMatSlope
 
-open GlobalTheory.LocMatSlope in
 
-theorem GlobalTheory.LocMatSlope.slope_sq_locLat : ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (ι : Type)
+open GlobalTheory.LocMatSlope in
+theorem GlobalTheory.LocMatSlope.slope_sq_locLat : ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (ι : Type)
     [Fintype ι] [DecidableEq ι] [Nonempty ι] (A : HeightOneSpectrum (𝓞 K) → Matrix ι ι K)
     (Y : (K →+* ℂ) → Matrix ι ι ℂ), IsAdelic A → (∀ σ, (Y σ).det ≠ 0) →
     (∀ σ, ‖(Y ((starRingEnd ℂ).comp σ)).det‖ = ‖(Y σ).det‖) →
@@ -179,12 +182,22 @@ theorem GlobalTheory.LocMatSlope.slope_sq_locLat : ∀ (K : Type) [Field K] [Num
       | (funext k; simp [he, Pi.basisFun_apply])
   have hle : Submodule.span (𝓞 K) (Set.range e) ≤ locLat A :=
     Submodule.span_le.2 (by rintro _ ⟨k, rfl⟩; exact smul_single_mem A d hd _)
+  have hspan : Submodule.span K (locLat A : Set (ι → K)) = ⊤ := by
+    apply eq_top_iff.mpr
+    intro x _
+    have hx : x = ∑ i : ι, (x i / (d : K)) • ((d : K) • (Pi.single i 1 : ι → K)) := by
+      funext j
+      simp [Finset.sum_apply, Pi.single_apply, smul_smul, div_mul_cancel₀ _ hdK]
+      rw [Algebra.smul_def, show algebraMap (𝓞 K) K d = (d : K) from rfl, mul_div_cancel₀ _ hdK]
+    rw [hx]
+    exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _
+      (Submodule.subset_span (smul_single_mem A d hd i))
   have hrk : Formalism.HN.rkK (locLat A) = n := by
     unfold Formalism.HN.rkK
-    rw [hL.span_eq_top, finrank_top, Module.finrank_fintype_fun_eq_card]
+    rw [hspan, finrank_top, Module.finrank_fintype_fun_eq_card]
   have hL0 : locLat A ≠ ⊥ := by
     intro h0
-    have h := hL.span_eq_top
+    have h := hspan
     rw [h0, Submodule.bot_coe, Submodule.span_zero_singleton] at h
     exact bot_ne_top h
   have hX : ∀ v : InfinitePlace K, IsUnit ((Y v.embedding)⁻¹).det := fun v => (hG v).1

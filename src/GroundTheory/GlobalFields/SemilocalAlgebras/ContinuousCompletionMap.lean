@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -10,25 +14,25 @@ namespace SemiLocal
 
 variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
 
-variable (L) in
 
+variable (L) in
 abbrev PlacesOver (v : HeightOneSpectrum (𝓞 K)) : Type _ :=
   {w : HeightOneSpectrum (𝓞 L) // w.asIdeal.LiesOver v.asIdeal}
 
-instance (v : HeightOneSpectrum (𝓞 K)) (w : PlacesOver L v) : w.1.asIdeal.LiesOver v.asIdeal :=
+instance (v : HeightOneSpectrum (𝓞 K)) (w : PlacesOver (L := L) v) : w.1.asIdeal.LiesOver v.asIdeal :=
   w.2
 
-variable (L) in
 
+variable (L) in
 def placesOverEquiv (v : HeightOneSpectrum (𝓞 K)) :
-    PlacesOver L v ≃ v.asIdeal.primesOver (𝓞 L) where
+    PlacesOver (L := L) v ≃ v.asIdeal.primesOver (𝓞 L) where
   toFun w := ⟨w.1.asIdeal, w.1.isPrime, w.2⟩
   invFun P := ⟨⟨P.1, P.2.1, (have := P.2.2; Ideal.ne_bot_of_liesOver_of_ne_bot v.ne_bot P.1)⟩, P.2.2⟩
   left_inv _ := rfl
   right_inv _ := rfl
 
-instance (v : HeightOneSpectrum (𝓞 K)) : Fintype (PlacesOver L v) :=
-  Fintype.ofEquiv _ (placesOverEquiv L v).symm
+instance (v : HeightOneSpectrum (𝓞 K)) : Fintype (PlacesOver (L := L) v) :=
+  Fintype.ofEquiv _ (placesOverEquiv (L := L) v).symm
 
 section Map
 
@@ -63,16 +67,15 @@ theorem completionMap_algebraMap (x : K) :
 theorem valued_completionMap (x : v.adicCompletion K) :
     Valued.v (completionMap v w x) = Valued.v x ^ w.asIdeal.ramificationIdx (𝓞 K) := by
   set e := w.asIdeal.ramificationIdx (𝓞 K) with he
-  have he0 : e ≠ 0 := (Ideal.ramificationIdx_pos w.asIdeal (𝓞 K)).ne'
+  have he0 : e ≠ 0 := (Ideal.ramificationIdx_pos (R := 𝓞 K) w.asIdeal).ne'
   have hK : ∀ k : K, Valued.v (completionMap v w (algebraMap K _ k)) =
       Valued.v (algebraMap K (v.adicCompletion K) k) ^ e := by
     intro k
     rw [completionMap_algebraMap, IsScalarTower.algebraMap_apply K L (w.adicCompletion L),
       HeightOneSpectrum.algebraMap_adicCompletion, HeightOneSpectrum.algebraMap_adicCompletion]
-    simp only [Function.comp_apply, HeightOneSpectrum.valuedAdicCompletion_eq_valuation']
-    rw [he, ← Ideal.ramificationIdx'_eq_ramificationIdx v.asIdeal w.asIdeal v.ne_bot,
-      HeightOneSpectrum.valuation_liesOver L v w]
-    simp only [Algebra.algebraMap_self, RingHom.id_apply]
+    simpa only [Function.comp_apply, HeightOneSpectrum.valuedAdicCompletion_eq_valuation',
+      Algebra.algebraMap_self, RingHom.id_apply, he] using
+      (HeightOneSpectrum.valuation_liesOver L v w k).symm
   have hclosed : IsClosed
       {x : v.adicCompletion K | Valued.v (completionMap v w x) = Valued.v x ^ e} := by
     rw [← isOpen_compl_iff, isOpen_iff_mem_nhds]

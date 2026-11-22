@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CongSubgroup
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SimplicialConeTilesSignStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CongSubgroup
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SimplicialConeTilesSignStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -89,7 +93,8 @@ theorem mem_coneOn_basis [DecidableEq V] {κ : Type} [Fintype κ] (b : Module.Ba
   · rintro ⟨t, ht, rfl⟩ i
     rw [Finset.sum_image (fun a _ c _ hac => b.injective hac)]
     have hrep : b.repr (∑ j, t (b j) • b j) i = t (b i) := by
-      simp only [map_sum, map_smul, Module.Basis.repr_self, Finsupp.smul_single, smul_eq_mul, mul_one,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, Module.Basis.repr_self, Finsupp.smul_single, smul_eq_mul, mul_one,
         Finsupp.finsetSum_apply]
       rw [Finset.sum_eq_single i]
       · rw [Finsupp.single_apply, if_pos rfl]

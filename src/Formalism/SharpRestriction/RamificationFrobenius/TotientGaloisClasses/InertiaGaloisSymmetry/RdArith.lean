@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open ArithmeticFunction Finset
 
@@ -191,10 +195,11 @@ theorem card_KK {f : ℕ} (hf : f ∣ N) : (KK N f).card * f.totient = N.totient
   rw [h1, ← ZMod.card_units_eq_totient f, ← Nat.card_eq_fintype_card, ← h2, Subgroup.card_mul_index,
     Nat.card_eq_fintype_card, ZMod.card_units_eq_totient]
 
-open Classical in
 
-def rho (U : Subgroup (ZMod N)ˣ) (f : ℕ) : ℝ :=
-  (((KK N f).filter fun u => u ∉ U).card : ℝ) * f.totient / N.totient
+open Classical in
+def rho (U : Subgroup (ZMod N)ˣ) (f : ℕ) : ℝ := by
+  classical
+  exact (((KK N f).filter fun u => u ∉ U).card : ℝ) * f.totient / N.totient
 
 open Classical in
 theorem abel (U : Subgroup (ZMod N)ˣ) :
@@ -242,7 +247,9 @@ private theorem card_KK_ne_zero_of_dvd {f : ℕ} (hf : f ∣ N) : (KK N f).card 
 
 theorem rho_nonneg (U : Subgroup (ZMod N)ˣ) (f : ℕ) : 0 ≤ rho U f := by
   unfold rho
-  positivity
+  apply div_nonneg
+  · positivity
+  · exact le_of_lt (by exact_mod_cast (Nat.totient_pos).2 (Nat.pos_of_ne_zero (NeZero.ne N)))
 
 open Classical in
 theorem rho_eq (U : Subgroup (ZMod N)ˣ) {f : ℕ} (hf : f ∣ N) :
@@ -262,8 +269,11 @@ theorem rho_eq (U : Subgroup (ZMod N)ˣ) {f : ℕ} (hf : f ∣ N) :
       exact_mod_cast card_KK hf
     have ht : (f.totient : ℝ) ≠ 0 := by
       exact_mod_cast totient_ne_zero_of_ne_zero (ne_zero_of_dvd_of_neZero hf)
+    have hK : ((KK N f).card : ℝ) ≠ 0 := by
+      exact_mod_cast card_KK_ne_zero_of_dvd hf
     unfold rho
-    rw [← hc, mul_div_mul_right _ _ ht]
+    rw [← hc]
+    field_simp [ht, hK]
   have hc : ((KK N f).card : ℝ) * f.totient = N.totient := by
     exact_mod_cast card_KK hf
   have ht : (f.totient : ℝ) ≠ 0 := by
@@ -317,8 +327,11 @@ theorem half_le_rho (U : Subgroup (ZMod N)ˣ) {f : ℕ} (hf : f ∣ N) (h : ∃ 
       exact_mod_cast card_KK hf
     have ht : (f.totient : ℝ) ≠ 0 := by
       exact_mod_cast totient_ne_zero_of_ne_zero (ne_zero_of_dvd_of_neZero hf)
+    have hK : ((KK N f).card : ℝ) ≠ 0 := by
+      exact_mod_cast card_KK_ne_zero_of_dvd hf
     unfold rho
-    rw [← hc, mul_div_mul_right _ _ ht]
+    rw [← hc]
+    field_simp [ht, hK]
   open Classical in
   have card_inside_le_outside_lemma_15 {N : ℕ} [NeZero N] (U : Subgroup (ZMod N)ˣ) {f : ℕ} (hf : f ∣ N) {u0 : (ZMod N)ˣ}
       (hu0 : u0 ∈ KK N f) (hu0' : u0 ∉ U) :
@@ -362,8 +375,11 @@ theorem rho_le_half (U : Subgroup (ZMod N)ˣ) {f : ℕ} (hf : f ∣ N)
       exact_mod_cast card_KK hf
     have ht : (f.totient : ℝ) ≠ 0 := by
       exact_mod_cast totient_ne_zero_of_ne_zero (ne_zero_of_dvd_of_neZero hf)
+    have hK : ((KK N f).card : ℝ) ≠ 0 := by
+      exact_mod_cast card_KK_ne_zero_of_dvd hf
     unfold rho
-    rw [← hc, mul_div_mul_right _ _ ht]
+    rw [← hc]
+    field_simp [ht, hK]
   open Classical in
   have card_outside_le_inside_lemma_16 {N : ℕ} [NeZero N] (U : Subgroup (ZMod N)ˣ) {f : ℕ} (hf : f ∣ N)
       (h : ∀ u ∈ KK N f, ∀ v ∈ KK N f, u ∉ U → v ∉ U → u * v ∈ U) :

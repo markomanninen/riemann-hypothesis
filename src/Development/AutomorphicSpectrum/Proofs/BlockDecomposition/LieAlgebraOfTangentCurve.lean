@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.SmComplete
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.SmComplete
+
+@[expose] public section
+
 open SmoothVectors Filter Topology
 open scoped ContDiff Matrix.Norms.Elementwise
 

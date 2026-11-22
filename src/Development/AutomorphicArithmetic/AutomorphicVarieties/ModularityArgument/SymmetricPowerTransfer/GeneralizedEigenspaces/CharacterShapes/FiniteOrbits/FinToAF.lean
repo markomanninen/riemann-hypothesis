@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.FinOrbSub
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.DcBasic
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.FinOrbSub
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.DcBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -125,15 +129,16 @@ private theorem core {G H V : Type} [Group G] [Group H] [AddCommGroup V] [Module
       intro r
       rw [hmulR, map_mul, hc _ r.2, mul_one]
     simp only [this]
-    rw [← map_sum, hE, Pi.smul_apply, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, hE, Pi.smul_apply, map_smul]
 
 theorem UpperTheory.V.Z.Sym.So.finToAF :
     UpperTheory.V.Z.Sym.So.FinToAF := by
   intro L _ _ _ n V _ _ R U hU Φ hL hV
   obtain ⟨-, -, hdec, hcomm, hext, hmem, -, -⟩ := uaFacts L n
-  have hN : (finU L n).Normal := ⟨fun x hx g => (hmem _).1.2 fun τ => by
+  have hN : (finU (E := L) (n := n)).Normal := ⟨fun x hx g => (hmem _).1.2 fun τ => by
     simp [((hmem x).1.1 hx) τ]⟩
-  obtain ⟨φ, h1, h2, h3, h4, h5⟩ := core (finU L n) (infU L n) (ratU L n) U (infC L n) R hdec hcomm
+  obtain ⟨φ, h1, h2, h3, h4, h5⟩ := core (finU (E := L) (n := n)) (infU L n) (ratU L n) U (infC L n) R hdec hcomm
     (fun x hx hx' => hext x 1 (fun w => by simpa using (hmem x).2.1 hx' w)
       (fun τ => by simpa using (hmem x).1.1 hx τ))
     (fun x hx => by

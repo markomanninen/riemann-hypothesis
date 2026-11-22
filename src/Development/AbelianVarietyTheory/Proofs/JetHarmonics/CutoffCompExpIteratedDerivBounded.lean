@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.BasicLiftAll
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.BasicLiftAll
+
+@[expose] public section
 
 namespace GlobalTheory.HatNF
 

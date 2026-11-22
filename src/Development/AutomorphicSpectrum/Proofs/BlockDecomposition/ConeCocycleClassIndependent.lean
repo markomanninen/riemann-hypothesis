@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.Precomp
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TruncatedLogMultiplicative
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeLiftRatioMemIdeal
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.Precomp
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TruncatedLogMultiplicative
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeLiftRatioMemIdeal
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -138,7 +142,8 @@ theorem plogK_zero {B : Type} [CommRing B] {J : Ideal B} (δ : DividedPowers J) 
 theorem plogK_map {T T' : Thick (smFun X q)} (f : T ⟶ T') (s : ℕ) {x : T.B} (hx : x ∈ T.J) :
     f.φ (plogK T.δ s x) = plogK T'.δ s (f.φ x) := by
   unfold plogK
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_mul, map_mul, map_pow, map_neg, map_one, map_natCast, f.dp.2 x hx]
 

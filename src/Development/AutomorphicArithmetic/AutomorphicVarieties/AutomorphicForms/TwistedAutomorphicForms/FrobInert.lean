@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TwistedAutomorphicForms.EqOneOfMemLev
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TwistedAutomorphicForms.EqOneOfMemLev
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual UpperTheory.V.Af UpperTheory.V.Af.Tw
 open scoped Pointwise
@@ -38,7 +42,10 @@ private theorem normV_under (w : HeightOneSpectrum (𝓞 L)) :
   have : w.asIdeal.LiesOver (w.under (𝓞 K)).asIdeal := ⟨rfl⟩
   have := w.isMaximal
   have := (w.under (𝓞 K)).isMaximal
-  show Ideal.absNorm w.asIdeal = Ideal.absNorm (w.under (𝓞 K)).asIdeal ^ w.asIdeal.inertiaDeg (𝓞 K)
+  have hnorm {F : Type} [Field F] [NumberField F] (v : HeightOneSpectrum (𝓞 F)) :
+      normV v = Ideal.absNorm v.asIdeal := by
+    rw [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
+  rw [hnorm, hnorm]
   rw [← Ideal.absNorm_relNorm (𝓞 K) (𝓞 L) w.asIdeal,
     Ideal.relNorm_eq_pow_of_isMaximal w.asIdeal (w.under (𝓞 K)).asIdeal, map_pow]
 
@@ -75,7 +82,9 @@ theorem UpperTheory.V.Af.Tw.frobInert :
   obtain ⟨w, hw, hwv⟩ := place_between (L := L) hA
   have : Algebra.IsQuadraticExtension F L := ⟨h2⟩
   have : IsGalois F L := inferInstance
-  have hq : normV v ≠ 0 := (lt_trans zero_lt_one (NumberField.HeightOneSpectrum.one_lt_absNorm v)).ne'
+  have hq : normV v ≠ 0 := by
+    rw [normV, ← Submodule.cardQuot_apply, ← Ideal.absNorm_apply]
+    exact (lt_trans zero_lt_one (NumberField.HeightOneSpectrum.one_lt_absNorm v)).ne'
   have hu : w.under (𝓞 F) = v := HeightOneSpectrum.ext hwv.over.symm
   set c : L ≃ₐ[F] L := AlgEquiv.restrictNormalHom L σ with hc
   have hcx : ∀ x : L, algebraMap L Ω (c x) = σ (algebraMap L Ω x) := fun x =>

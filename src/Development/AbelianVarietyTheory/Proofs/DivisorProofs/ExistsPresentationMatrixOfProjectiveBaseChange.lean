@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open CategoryTheory Limits TensorProduct
 
 namespace GlobalTheory
@@ -40,7 +45,7 @@ theorem projective_baseChange_presentation_matrix : ∀ (R B M : Type) [CommRing
             Finset.sum_mul, mul_comm, mul_left_comm]
         rw [this]
         exact Submodule.sum_mem _ fun b _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨b, rfl⟩)
-    | add a b ha hb => rw [map_add, map_add]; exact N.add_mem ha hb
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _)]; exact N.add_mem ha hb
   have hπv : ∀ a, πB (v a - Pi.single a 1) = 0 := by
     intro a
     have h1 : πB (v a) = (1 : B) ⊗ₜ[R] π (Pi.single a 1) := LinearMap.congr_fun hi _
@@ -57,14 +62,16 @@ theorem projective_baseChange_presentation_matrix : ∀ (R B M : Type) [CommRing
       exact this
     have hsum : (1 : B) ⊗ₜ[R] π (r b) = ∑ a, algebraMap R B (r b a) • ((1 : B) ⊗ₜ[R] π (Pi.single a 1)) := by
       conv_lhs => rw [← Finset.univ_sum_single (r b)]
-      simp only [map_sum, TensorProduct.tmul_sum, algebraMap_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, TensorProduct.tmul_sum, algebraMap_smul]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [← TensorProduct.tmul_smul, ← map_smul]
       congr 2
       ext j
       simp [Pi.single_apply]
     have h1 : ∑ a, algebraMap R B (r b a) • v a = 0 := by
-      simp only [v, ← map_smul, ← map_sum, ← hsum, hrb, TensorProduct.tmul_zero, map_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [v, ← map_smul, ← map_sum, ← hsum, hrb, TensorProduct.tmul_zero, map_zero]
     have := congrFun h1 l
     simpa [Finset.sum_apply, Algebra.smul_def] using this
   · have := congrFun (hw a) l

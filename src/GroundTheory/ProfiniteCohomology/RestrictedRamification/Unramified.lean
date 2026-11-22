@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GaloisModules.FixedField
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.MaxUnramifiedOutside
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.Ramification
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GaloisModules.FixedField
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.MaxUnramifiedOutside
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.Ramification
+
+@[expose] public section
 
 namespace GroundTheory.ProfCoh
 
@@ -11,8 +15,8 @@ open scoped Pointwise
 
 variable {F Ω : Type*} [Field F] [NumberField F] [Field Ω] [Algebra F Ω]
 
-omit [NumberField F] in
 
+omit [NumberField F] in
 theorem finiteDimensional_of_le {E M : IntermediateField F Ω} (h : E ≤ M) [FiniteDimensional F M] :
     FiniteDimensional F E :=
   Module.Finite.of_injective (IntermediateField.inclusion h).toLinearMap
@@ -58,8 +62,8 @@ theorem isUnramifiedIn_iff_inertia {E M : IntermediateField F Ω} (h : E ≤ M)
     subst e
     exact hu
 
-omit [NumberField F] in
 
+omit [NumberField F] in
 theorem mem_map_fixedField_iff {M : IntermediateField F Ω} (H : Subgroup Gal(M/F)) (x : Ω) :
     x ∈ (IntermediateField.fixedField H).map M.val ↔ ∃ hx : x ∈ M, ∀ σ ∈ H, σ ⟨x, hx⟩ = ⟨x, hx⟩ := by
   rw [IntermediateField.mem_map]

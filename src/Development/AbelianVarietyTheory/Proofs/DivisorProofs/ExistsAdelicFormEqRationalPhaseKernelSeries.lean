@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceOfAt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeltaPrimeIsAuxiliarySplitSquarefreeLevel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseTupleThetaSpanHasType
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKernelVectorMovedByRootsOfUnity
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemOfOrderDvd
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsLevelDatumReferenceTupleSmallField
-import Formalism.LocalRingCardinality.ConjSqrtMinusD
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceOfAt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeltaPrimeIsAuxiliarySplitSquarefreeLevel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseTupleThetaSpanHasType
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKernelVectorMovedByRootsOfUnity
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemOfOrderDvd
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsLevelDatumReferenceTupleSmallField
+public import Formalism.LocalRingCardinality.ConjSqrtMinusD
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -184,8 +188,8 @@ variable {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 I0 T0 : Type} {A3 : FamIn3 D.w
   {T : CoreJ D} [Algebra T.Q.c.F D.what₂.LL] {Rl : RealDat3 D A3 T.Q.c.F} {cG : G0 Rl.Pg D.R.r ≃* G0g D.nd}
   {S : NX.RatDat D.ntw} (YS : NX.NExpRealS Rl cG S)
 
-include YS in
 
+include YS in
 theorem exists_goodCover_bigF (hRF : GlobalTheory.NT.RayField) (hT : LawsJ T) (ha : AlgTie T) (hs : SmallHas D Rl.C) {pd : ℕ}
     (haux : IsAuxiliarySplitSquarefreeLevel D (D.host.g 0 * D.host.g 1) pd) (hd : pd ∣ D.host.pde * D.host.pde') (j : Fin D.R.m) (n : ℕ) :
     ∃ C : GlobalTheory.CoverRead.Cover T ((j : ℕ) + 1) T.σ₀, C.d.pd = pd ∧ C.σ₂.fieldRange = (bigF D).toSubfield ∧
@@ -211,8 +215,8 @@ theorem exists_goodCover_bigF (hRF : GlobalTheory.NT.RayField) (hT : LawsJ T) (h
 
 end Cover
 
-set_option linter.unusedVariables false in
 
+set_option linter.unusedVariables false in
 theorem exists_adForm_eq_phase_smul : GlobalTheory.Published.CuspRapidDecay → GlobalTheory.Published.GlobalArtinReciprocity → GlobalTheory.Published.RayClassFieldSt →
   ∀ (D : D7) (Γ : Type) [Group Γ] [Fintype Γ] (Pl0 I0 T0 : Type) (A3 : FamIn3 D.what₂.LL Γ Pl0 I0 (List ℕ) T0 D.R.m)
     (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (Rl : RealDat3 D A3 T.Q.c.F) (cG : G0 Rl.Pg D.R.r ≃* G0g D.nd)
@@ -292,7 +296,8 @@ theorem exists_adForm_eq_phase_smul : GlobalTheory.Published.CuspRapidDecay → 
   refine ⟨(YS.fi j).e (∑ k, c k • Subtype.val (x k)), ?_⟩
   rw [e, one_smul, show (fun τ => (u τ : (Rl.MW j (sg0 D A3.A)).sm τ)) = v₀ j _ from funext hu]
   change evW YS v₀ j (∑ k, c k • Subtype.val (x k)) = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun k _ => by rw [evW_smul, ← hc k]; rfl
 
 end GlobalTheory.KerPhase

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.LocalZetaIntegral
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.LocalZetaIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -160,7 +164,7 @@ theorem localZeta_mul_localZeta_fourier_eq {f g : K → ℂ} (hf : f ∈ schwart
     _ = ∫ x, ∫ y, F₁ x * G₁ (x * y) ∂multHaar K ∂multHaar K := by
         refine integral_congr_ae (Eventually.of_forall fun x => ?_)
         simp only
-        rw [integral_const_mul, integral_mul_left_eq_self G₁ x]
+        rw [integral_const_mul, integral_mul_left_eq_self (μ := multHaar K) G₁ x]
     _ = ∫ y, ∫ x, F₁ x * G₁ (x * y) ∂multHaar K ∂multHaar K := integral_integral_swap hH
     _ = _ := by
         refine integral_congr_ae (Eventually.of_forall fun y => ?_)

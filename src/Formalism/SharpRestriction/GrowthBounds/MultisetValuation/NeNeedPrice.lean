@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NumericalFamilyOfThreshold
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NumericalFamilyOfThreshold
+
+@[expose] public section
 
 noncomputable section
 

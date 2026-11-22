@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExpoConjOfIsCsd
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmEmbeddingProperties
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DenseRangeUnits
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExpoConjOfIsCsd
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmEmbeddingProperties
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DenseRangeUnits
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,7 @@ theorem loc_eq_one_of_prod {ψ : Ideles L →* ℂˣ} (hψ : Continuous ψ) (S :
         (fun w : HeightOneSpectrum (𝓞 L) => (1 : w.adicCompletion L)))
     rw [this, map_one, map_one]
 
-theorem infId_pInf [IsTotallyComplex L] (k : Lˣ) :
+theorem infId_pInf [_root_.NumberField.IsTotallyComplex L] (k : Lˣ) :
     infId L (Units.map (pInf L).toMonoidHom (diagUnits L k)) = ∏ w, infIdele L w (atInf w k) := by
   classical
   apply Units.ext
@@ -186,7 +190,7 @@ theorem isCsd_of_norm (χ : HChar L)
       simpa using ((Complex.ofRealCLM.hasDerivAt (x := 0)).mul_const (dchi χ (z + star z))).cexp
     rw [funext h1] at h2
     have h3 := h2.unique (hasDerivAt_const _ _)
-    rw [map_add] at h3
+    rw [map_add (f := _)] at h3
     rw [map_neg]
     exact (eq_neg_of_add_eq_zero_left h3).symm
 
@@ -217,8 +221,8 @@ theorem etaInf_norm {k : Lˣ} {t : (𝐅)ˣ} (ht : upF 𝐅 t = k * cU 𝐜 k) (
 
 end GlobalTheory.CuspRep.NormTriv
 
-open GlobalTheory.CuspRep.NormTriv in
 
+open GlobalTheory.CuspRep.NormTriv in
 theorem GlobalTheory.CuspRep.isCsd_ofChar_of_res : ∀ {R : Formalism.BasicNotions.Ranks} (H : Formalism.BasicNotions.Host R) (χ : HChar H.E),
     (χ.TrivOn H.F ∨ χ.ResEta H.F) → haveI := host_isCMField H; (CG.ofChar χ).IsCsd := by
   intro R H χ h

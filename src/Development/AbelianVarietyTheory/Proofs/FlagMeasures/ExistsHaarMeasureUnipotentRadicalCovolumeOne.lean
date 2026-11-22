@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.Measures
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedMeasureSplitting.T2SpaceGeneralLinearGroup
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NsubCocompact
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FundamentalDomainCovol
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.Measures
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedMeasureSplitting.T2SpaceGeneralLinearGroup
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NsubCocompact
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FundamentalDomainCovol
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.SG.Sub Formalism.L2.SG.Measures
 open scoped TensorProduct ENNReal

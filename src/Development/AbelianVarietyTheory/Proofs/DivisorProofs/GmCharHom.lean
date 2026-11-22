@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBoxGenOfSection
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.GmCharPow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinHomIffLinEnd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBoxGenOfSection
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.GmCharPow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinHomIffLinEnd
+
+@[expose] public section
 
 noncomputable section
 

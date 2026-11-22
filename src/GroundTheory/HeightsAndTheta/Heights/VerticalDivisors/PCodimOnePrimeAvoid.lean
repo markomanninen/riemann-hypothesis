@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsFibreCut
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsFibreCut
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -50,7 +55,7 @@ theorem CodimOnePrimeAvoid.proof : CodimOnePrimeAvoid.Statement := by
   · exact Ideal.eq_top_of_isUnit_mem _ hhN (IsLocalization.Away.algebraMap_isUnit h)
   · have hN := IsLocalization.height_under (Submonoid.powers h) q
     rw [hq1] at hN
-    have := height_add_ringKrullDim_quotient k (q.comap (algebraMap B Bh))
+    have := GroundTheory.Arith.Abelian.Jacobian.height_add_ringKrullDim_quotient k (q.comap (algebraMap B Bh))
     rw [Ideal.under] at hN
     rw [hN] at this
     rw [← this, add_comm]

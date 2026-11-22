@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.IndefiniteReal.TrISepWith
-import Formalism.LocalToGlobal.IndefiniteReal.FWExist
-import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
-import Formalism.LocalToGlobal.IndefiniteReal.OneMapEq
-import Formalism.LocalToGlobal.IndefiniteReal.RhoGeo
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.TrISepWith
+public import Formalism.LocalToGlobal.IndefiniteReal.FWExist
+public import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
+public import Formalism.LocalToGlobal.IndefiniteReal.OneMapEq
+public import Formalism.LocalToGlobal.IndefiniteReal.RhoGeo
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,9 +24,9 @@ def phEff {G Pl0 I0 T0 : Type} [Group G] [Fintype G] {A3 : FamIn3 D.what₂.LL G
     {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (Rl : RealDat3 D A3 Ks) : Fin D.R.m → ℂ :=
   fun i => cj (twAt D.what₂.embLL A3.A.v0) (Rl.phs i)
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure RealTB (Rc : Formalism.L2.RecT ex) (P : RowSideFamily ex) (Dcf : ∀ Zs : DefSub P.A3.fam3.amb3, DefCols (P.A3.side3 P.Ps P.ψs Zs))
     (Spf : ∀ Zs : DefSub P.A3.fam3.amb3, SPer (Dcf Zs)) (Zscf : DefSub P.A3.fam3.amb3 → IndefScale P.A3.fam3.base3)
     (S : Formalism.L2.SG.SpectralTiesReal.STiesR Rc) : Type 1 where
@@ -64,21 +68,5 @@ structure RowsB (B : RealTB Rc P Dcf Spf Zscf S) : Prop where
   ioExt : IoExt B.Q.Rl.toRealDat
 
   oneMap : ∀ i, OneMapRowR B.T B.Q.Rl.toRealDat B.κ B.v₀ B.O (phEff B.Q.Rl) i
-
-structure InB (B : RealTB Rc P Dcf Spf Zscf S) : Prop where
-
-  jEvExists : JEvExists B.T B.Q.Rl.toRealDat B.κ B.v₀
-
-  jEvBar : JEvBar B.T B.Q.Rl.toRealDat B.κ
-
-  evInj : EvInj B.T B.Q.Rl.toRealDat B.v₀
-
-  jUnif : JUnif B.T B.Q.Rl.toRealDat B.κ B.v₀
-
-  geoAct : GeoAct B.T B.Q.Rl.toRealDat B.κ B.v₀
-
-  latFull : LatFull B.T B.κ
-
-  dimMatch : DimMatch B.T B.Q.Rl.toRealDat B.κ
 
 end Formalism.IndefR

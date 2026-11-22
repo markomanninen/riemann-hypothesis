@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnitStep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnrLow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.LevelS
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedDualEvalBidualApply
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnitStep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnrLow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.LevelS
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedDualEvalBidualApply
+
+@[expose] public section
 
 noncomputable section Helpers
 
@@ -233,9 +237,9 @@ private theorem bare (P : GC.Hypotheses₂) (l : ℕ) [Fact l.Prime] (hl : l ≠
       (fun y => ⟨AddMonoidHom.mk' (fun x => y.1 x) (fun a b => map_add (show N →ₗ[ZMod (l ^ k)] ZMod (l ^ k) from y.1) a b), fun s x => ?_⟩) fun a b h => ?_
     · have := congrArg (fun φ : TDual (ZMod (l ^ k)) N => φ (ρ s x)) (y.2 s)
       beta_reduce at this
-      rw [twDual_apply, ← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply, hμε] at this
+      rw [twDual_apply, ← mul_apply_eq_comp, ← map_mul, inv_mul_cancel, map_one, one_apply_eq_self, hμε] at this
       exact this.symm
-    · exact Subtype.ext (TDual.ext fun x => DFunLike.congr_fun (congrArg Subtype.val h) x)
+    · exact Subtype.ext (LinearMap.ext fun x => DFunLike.congr_fun (congrArg Subtype.val h) x)
   refine core ρ τ hρ (locFam T A) (continuous_locFam T A) _ _ hcont (fun L => ?_) Z h1 h2
   have h := P.gw F Ω l k N T ρ hk0 hl hT hcont μ hμ A hA c (fun w _ => hc w) L
   rw [← harch]
@@ -310,7 +314,7 @@ theorem UpperTheory.V.Z.J.gwlOf :
         simp only [Set.mem_iUnion]
         exact ⟨q.1, q.2.2, A' q.1, hA' q.1, hg⟩
       have := hY ⟨g, Ine_le_Dec _ hg.1⟩ hg.1
-      rw [MonoidHom.mem_ker.1 hg1, map_one, Module.End.one_apply, sub_self] at this
+      rw [MonoidHom.mem_ker.1 hg1, map_one, one_apply_eq_self, sub_self] at this
       exact this)
     refine ⟨y, ⟨hy, fun v => ?_⟩, funext hyz⟩
     have := (b3 ⟨pl v, hSS ((hS _).2 ⟨v, rfl⟩)⟩ v rfl).2 (fun g => z (toGS Ω _ g)) (hw _)

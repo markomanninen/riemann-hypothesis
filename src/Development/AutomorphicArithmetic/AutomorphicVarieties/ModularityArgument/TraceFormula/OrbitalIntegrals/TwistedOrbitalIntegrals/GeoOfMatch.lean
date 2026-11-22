@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.GeoTransport
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.GeoTransport
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain PositivityTheory.Rg.Tf.Loc UpperTheory.ConvolutionTheory.Loc GroundTheory.Global GroundTheory.Global.SemiLocal UpperTheory.V.Z.Tf.Orb
 open PositivityTheory.Rg.Tf.Geo (mapGL incFin galFin)
@@ -15,7 +19,7 @@ theorem UpperTheory.V.Z.Tf.Orb.geoOfMatch :
     obtain ⟨hreg, hS⟩ := hI k E σ hσ n δ γ hγ hδ'
     have hcl : IsClosed ((Subgroup.centralizer {γ} : Subgroup (GL (Fin n) k)) : Set (GL (Fin n) k)) := by
       have : ((Subgroup.centralizer {γ} : Subgroup (GL (Fin n) k)) : Set (GL (Fin n) k)) = {x | x * γ = γ * x} := by
-        ext x; simp [Subgroup.mem_centralizer_singleton_iff]
+        ext x; simp [Subgroup.mem_centralizer_singleton_iff, Commute, SemiconjBy]
       rw [this]
       exact isClosed_eq (continuous_id.mul continuous_const) (continuous_const.mul continuous_id)
     have hcm : ∀ a ∈ (Subgroup.centralizer {γ} : Subgroup (GL (Fin n) k)), ∀ b ∈ (Subgroup.centralizer {γ} : Subgroup (GL (Fin n) k)),

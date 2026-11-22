@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.BetaAtSymm
-import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.ChartLawPf
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsConstantEigenbasisTangentArc
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.BetaAtSymm
+public import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.ChartLawPf
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsConstantEigenbasisTangentArc
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,8 +85,8 @@ theorem exists_solutions {V : Type} (F : Type) [CommRing V] [IsDomain V] [Field 
       Ideal.mem_span_singleton] at h1
     exact isUnit_of_dvd_one h1
 
-open IsLocalRing in
 
+open IsLocalRing in
 theorem exists_mul_eq_one {R : Type} [CommRing R] [IsDomain R] [IsDiscreteValuationRing R] (e : ℕ) {m n : Type}
     [Fintype m] [DecidableEq m] [Fintype n] (C : Matrix m n R)
     (hC : ∀ u, u ᵥ* C.map (Ideal.Quotient.mk (maximalIdeal R ^ (e + 1))) = 0 → u = 0) :
@@ -111,8 +115,8 @@ theorem exists_mul_eq_one {R : Type} [CommRing R] [IsDomain R] [IsDiscreteValuat
     exact pow_ne_zero _ hc
   exact ⟨Matrix.of Q * (C * Matrix.of Q)⁻¹, by rw [← Matrix.mul_assoc, Matrix.mul_nonsing_inv _ hu]⟩
 
-open NumberField TensorProduct in
 
+open NumberField TensorProduct in
 theorem finrank_int_eq (E : Type) [Field E] [NumberField E] (X : Type) [AddCommGroup X] [Module (𝓞 E) X] :
     Module.finrank ℤ X = Module.finrank ℚ E * Module.finrank (𝓞 E) X := by
   rw [← (TensorProduct.isBaseChange ℤ X ℚ).finrank_eq, ← (TensorProduct.isBaseChange (𝓞 E) X E).finrank_eq,
@@ -164,8 +168,10 @@ theorem le_finrank_eigenSub {R V F O X : Type} [CommRing R] [CommRing V] [IsDoma
           ext k j
           refine hinj ?_
           have h₁ := hφ' k (o p.1) (b j)
-          rw [← b.sum_repr (σ (o p.1) • b j), map_sum] at h₁
-          simp only [Matrix.mul_apply, map_sum, map_mul, hΦ, Matrix.smul_apply, smul_eq_mul, Matrix.map_apply,
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [← b.sum_repr (σ (o p.1) • b j), map_sum] at h₁
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [Matrix.mul_apply, map_sum, map_mul, hΦ, Matrix.smul_apply, smul_eq_mul, Matrix.map_apply,
             Matrix.of_apply, map_intCast, mul_assoc, ← Finset.mul_sum]
           rw [mul_left_comm]
           congr 1
@@ -196,7 +202,7 @@ theorem le_finrank_eigenSub {R V F O X : Type} [CommRing R] [CommRing V] [IsDoma
       rw [RingHom.map_vecMul] at h₂
       exact h₂.trans (map_mul _ _ _)
     | zero => simp
-    | add a a' _ _ h h' => rw [map_add, map_add, LinearMap.add_apply, h, h', add_smul]
+    | add a a' _ _ h h' => rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, h, h', add_smul]
     | smul z a _ h => rw [map_zsmul, map_zsmul, LinearMap.smul_apply, h, smul_assoc]
   have li : LinearIndependent F (W.map (algebraMap V F)).row := by
     rw [← Matrix.vecMul_injective_iff]
@@ -256,8 +262,8 @@ theorem exists_matrix_torus {S X : Type} [CommRing S] [AddCommGroup X] {G : Over
   rw [e, funext fun i => (Chart.isLieComb_iff _ _ _).1 (hC i), vecMul_eq_sum]
   exact prodPts_prodPts hv.1 _ fun i => C i
 
-open IsLocalRing ReciprocityTheory.ChartRestriction.G.Out in
 
+open IsLocalRing ReciprocityTheory.ChartRestriction.G.Out in
 theorem exists_matrix_level {R : Type} [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
     {D : DegData R (maximalIdeal R)} {P : PolAV (Sp (FractionRing R))} {G : Over (Sp R)} [GrpObj G] [IsCommMonObj G]
     (U : UnifPre (maximalIdeal R) D P G) {O : Type} [CommRing O] [StarRing O] [Module O D.toPre.X] {oD : D.OAct O}
@@ -302,8 +308,8 @@ theorem exists_matrix_level {R : Type} [CommRing R] [IsDomain R] [IsDiscreteValu
   refine h₂.trans ?_
   simp [Matrix.mul_apply, vecMul, dotProduct, Diag.dualBasis_apply]
 
-open IsLocalRing ReciprocityTheory.ChartRestriction.G.Out in
 
+open IsLocalRing ReciprocityTheory.ChartRestriction.G.Out in
 theorem finrank_le_of_lieMult {R : Type} [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
     {D : DegData R (maximalIdeal R)} {P : PolAV (Sp (FractionRing R))} {G : Over (Sp R)} [GrpObj G] [IsCommMonObj G]
     (U : UnifPre (maximalIdeal R) D P G) {O : Type} [CommRing O] [IsDomain O] [StarRing O] [Module.Finite ℤ O]
@@ -377,7 +383,7 @@ theorem rank_le_signature : ∀ (E : Type) [Field E] [NumberField E] [IsCMField 
     rw [← map_pow, H.rt_sq] at h2
     exact H.d_prime.ne_zero (by simpa using h2)
   refine ⟨Module.finrank (𝓞 E) U.D.toPre.X, ?_, ?_⟩
-  · have h1 := Module.finrank_mul_finrank ℚ (maximalRealSubfield E) E
+  · have h1 := (letI : Module.Free (maximalRealSubfield E) E := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank ℚ (maximalRealSubfield E) E)
     rw [Algebra.IsQuadraticExtension.finrank_eq_two (maximalRealSubfield E) E] at h1
     rw [finrank_int_eq E]
     congr 1

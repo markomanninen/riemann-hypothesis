@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne
+
+@[expose] public section
+
 open GlobalTheory.K5
 
 namespace GlobalTheory.K5

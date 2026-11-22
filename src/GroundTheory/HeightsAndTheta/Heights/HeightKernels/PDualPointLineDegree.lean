@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLineDegreeDual
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.IsArithVarBotDualBlocksUnit
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsHorizontalOfDimOne
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ArithVarZero
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLineDegreeDual
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.IsArithVarBotDualBlocksUnit
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsHorizontalOfDimOne
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ArithVarZero
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -51,7 +56,8 @@ theorem dualNormSq_point (b : Module.Basis T ℤ (dualLattice F))
   have hw : dualRecover b hb (fun t => σ' (dualPointCoord b v ⟨(), t⟩)) = w := by
     rw [dualRecover, LinearEquiv.symm_apply_eq]
     funext t
-    simp only [LinearEquiv.ofBijective_apply, Matrix.mulVecLin_apply, Matrix.mulVec, dotProduct,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearEquiv.ofBijective_apply, Matrix.mulVecLin_apply, Matrix.mulVec, dotProduct,
       dualEmbMatrix, w, Fintype.sum_prod_type, mul_ite, mul_zero, dualPointCoord, map_sum, map_mul]
     rw [Finset.sum_eq_single σ (fun τ _ hτ => by simp [hτ]) (by simp)]
     simp [hσ]
@@ -68,8 +74,8 @@ theorem dualNormSq_point (b : Module.Basis T ℤ (dualLattice F))
 
 end DualPointLineDegreeAlt
 
-open DualPointLineDegreeAlt in
 
+open DualPointLineDegreeAlt in
 theorem DualPointLineDegree.proof (hPt : DualCurvePoint.Statement) (hPos : PointDegCPos.Statement)
     (hAr : PointArInt.Statement) (hVert : PointVertR.Statement) (hIdx : DualLineIndex.Statement)
     (hSemi : DualLineSemipositive.Statement) : DualPointLineDegree.Statement := by

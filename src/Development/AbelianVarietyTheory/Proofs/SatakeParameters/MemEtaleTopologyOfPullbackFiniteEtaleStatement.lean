@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemEtaleTopologyOfPullbackFiniteEtale
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FibrePointsLEId
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemEtaleTopologyOfPullbackFiniteEtale
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FibrePointsLEId
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.mem_etaleTopology_of_pullback_finite_etale : ∀ {Z X : Scheme.{0}} (f : Z ⟶ X) [IsFinite f] [Etale f] (T : Sieve X), T.pullback f ∈ Scheme.etaleTopology Z → (∀ {V : Scheme.{0}} (v : V ⟶ X), IsEmpty (pullback f v : Scheme.{0}) → T v) → T ∈ Scheme.etaleTopology X := by

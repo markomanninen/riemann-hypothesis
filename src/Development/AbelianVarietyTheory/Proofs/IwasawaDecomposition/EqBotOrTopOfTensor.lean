@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.CoefMod
-import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIrreducibleSmallRepUnitary
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SpanRangeEqTopOfIsIrreducible
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.CoefMod
+public import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIrreducibleSmallRepUnitary
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SpanRangeEqTopOfIsIrreducible
+
+@[expose] public section
 
 open MvPolynomial Formalism.BasicNotions Formalism.L2.DIV GlobalTheory.Branching
 
@@ -12,7 +16,8 @@ namespace GlobalTheory.CoefIrred
 
 theorem eq_bot_or_top_of_tensor {K ι : Type} [Field K] [Fintype ι] {V κ G : ι → Type}
     [∀ τ, AddCommGroup (V τ)] [∀ τ, Module K (V τ)] [Fintype (∀ τ, κ τ)] {W : Type} [AddCommGroup W] [Module K W]
-    (b : ∀ τ, Module.Basis (κ τ) K (V τ)) (t : MultilinearMap K V W) (B : Module.Basis (∀ τ, κ τ) K W)
+    (b : ∀ τ, Module.Basis (κ τ) K (V τ)) (t : (∀ τ, V τ) →ₘₗ[K] W)
+    (B : Module.Basis (∀ τ, κ τ) K W)
     (hB : ∀ i, B i = t fun τ => b τ (i τ)) (ρ : ∀ τ, G τ → Module.End K (V τ))
     (hρ : ∀ τ, Submodule.span K (Set.range (ρ τ)) = ⊤) (U : Submodule K W)
     (hU : ∀ g : ∀ τ, G τ, ∃ L : Module.End K W,
@@ -26,7 +31,7 @@ theorem eq_bot_or_top_of_tensor {K ι : Type} [Field K] [Fintype ι] {V κ G : �
     by_contra h
     push Not at h
     exact hx0 (B.repr.map_eq_zero_iff.1 (Finsupp.ext h))
-  let Φ : MultilinearMap K (fun τ => Module.End K (V τ)) W :=
+  let Φ : (∀ τ, Module.End K (V τ)) →ₘₗ[K] W :=
     ∑ i, B.repr x i • t.compLinearMap fun τ => LinearMap.applyₗ (b τ (i τ))
   have hΦ : ∀ T, Φ T = ∑ i, B.repr x i • t fun τ => T τ (b τ (i τ)) := by
     intro T
@@ -37,7 +42,8 @@ theorem eq_bot_or_top_of_tensor {K ι : Type} [Field K] [Fintype ι] {V κ G : �
     have : Φ (fun τ => ρ τ (g τ)) = L x := by
       rw [hΦ]
       conv_rhs => rw [← B.sum_repr x]
-      simp only [map_sum, map_smul, hB, hL]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, hB, hL]
     simpa [this] using hLU x hx
   have hmem : ∀ T, Φ T ∈ U := fun T => by
     simpa using congrArg (fun m => m T) h0
@@ -59,7 +65,7 @@ theorem eq_bot_or_top_of_tensor {K ι : Type} [Field K] [Fintype ι] {V κ G : �
 
 variable {K ι : Type} [Field K] [Fintype ι] {n : ℕ}
 
-def tenMul (lam : ι → DomWeight n) : MultilinearMap K (fun τ => nablaSq K n (lam τ)) (VV K lam) :=
+def tenMul (lam : ι → DomWeight n) : (∀ τ, nablaSq K n (lam τ)) →ₘₗ[K] VV K lam :=
   haveI := Classical.decEq ι
   ((MultilinearMap.mkPiAlgebra K ι (Pol K ι n)).compLinearMap fun τ =>
     (Formalism.GradedWeylDivisibility.blockEmb K τ).toLinearMap ∘ₗ (nablaSq K n (lam τ)).subtype).codRestrict (VV K lam)

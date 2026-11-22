@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.GeoTransport
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.GeoTransport
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel PositivityTheory.Rg.Tf.Loc GroundTheory.Global GroundTheory.Global.SemiLocal PositivityTheory.Rg.Tf.Geo
 open scoped TensorProduct
@@ -11,12 +15,12 @@ theorem UpperTheory.V.Z.Tf.Orb.placeData :
     rw [← sum_finrank_eq E v, Finset.sum_eq_single w (fun b _ hb => absurd (hw b) hb) (by simp)]
   have hfin : FiniteDimensional (v.adicCompletion F) (w.1.adicCompletion E) :=
     Module.finite_of_finrank_pos (hrk ▸ Module.finrank_pos)
-  have he0 : w.1.asIdeal.ramificationIdx (𝓞 F) ≠ 0 := (Ideal.ramificationIdx_pos w.1.asIdeal (𝓞 F)).ne'
+  have he0 : w.1.asIdeal.ramificationIdx (𝓞 F) ≠ 0 := (Ideal.ramificationIdx_pos (R := 𝓞 F) w.1.asIdeal).ne'
   have hle : ∀ x y : w.1.adicCompletion E, valuation _ x ≤ valuation _ y ↔ Valued.v x ≤ Valued.v y := fun x y =>
     ValuativeRel.isEquiv (valuation (w.1.adicCompletion E)) Valued.v x y
   have hlt : ∀ x : w.1.adicCompletion E, valuation _ x < 1 ↔ Valued.v x < 1 := fun x =>
     (ValuativeRel.isEquiv (valuation (w.1.adicCompletion E)) Valued.v).lt_one_iff_lt_one
-  have hval : ValuativeExtension (v.adicCompletion F) (w.1.adicCompletion E) := ⟨fun a b => by
+  have hval : ValuativeExtension (v.adicCompletion F) (w.1.adicCompletion E) := ⟨fun {a b} => by
     change Valued.v (completionMap v w.1 a) ≤ Valued.v (completionMap v w.1 b) ↔ Valued.v a ≤ Valued.v b
     rw [valued_completionMap, valued_completionMap]
     exact pow_le_pow_iff_left₀ zero_le zero_le he0⟩
@@ -50,8 +54,7 @@ theorem UpperTheory.V.Z.Tf.Orb.placeData :
     rw [h1]
     clear h1
     induction t with
-    | zero => simp
-    | add a b ha hb => simp only [map_add, Pi.add_apply, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), Pi.add_apply, ha, hb]
     | tmul x a =>
       rw [Algebra.TensorProduct.map_tmul, tensorEquiv'_tmul, tensorEquiv'_tmul, Pi.mul_apply, Pi.mul_apply, map_mul]
       congr 1

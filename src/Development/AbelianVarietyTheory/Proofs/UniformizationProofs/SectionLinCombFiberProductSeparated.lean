@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.MemRangeRTensorOfForallDual
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.MemRangeRTensorOfForallDual
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -53,7 +57,7 @@ theorem pi_tensor_ext (t : (∀ p, A p) ⊗[F] (∀ q, B q))
       simp only [TensorProduct.map_tmul, LinearMap.proj_apply, LinearMap.single_apply, ← TensorProduct.tmul_sum,
         ← TensorProduct.sum_tmul, Finset.univ_sum_single]
     | add x y hx hy =>
-      simp only [map_add, Finset.sum_add_distrib]
+      simp only [map_add (f := _), Finset.sum_add_distrib]
       rw [← hx, ← hy]
   rw [this t]
   simp [h]
@@ -64,7 +68,8 @@ theorem pi_tensor_surj (c : ∀ p q, A p ⊗[F] B q) : ∃ t : (∀ p, A p) ⊗[
   cases nonempty_fintype P
   cases nonempty_fintype Q
   refine ⟨∑ p, ∑ q, TensorProduct.map (LinearMap.single F A p) (LinearMap.single F B q) (c p q), fun p q => ?_⟩
-  simp only [map_sum, TensorProduct.map_map]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, TensorProduct.map_map]
   rw [Finset.sum_eq_single p, Finset.sum_eq_single q]
   · simp [LinearMap.proj_comp_single_same]
   · intro q' _ hq
@@ -95,18 +100,19 @@ theorem exists_sum_of_compatible (hF : IsField F) {A' : P → P → Type} {B' : 
       induction t using TensorProduct.induction_on with
       | zero => simp
       | tmul a b => simp [d₁, TensorProduct.sub_tmul]
-      | add x y hx hy => simp only [map_add, hx, hy]; abel)
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]; abel)
     (pi_tensor_ext _ fun p x => by
       rw [← sub_eq_zero.2 (h₂ p x.1 x.2), ← ht, ← ht]
       clear ht
       induction t using TensorProduct.induction_on with
       | zero => simp
       | tmul a b => simp [d₂, TensorProduct.tmul_sub]
-      | add x y hx hy => simp only [map_add, hx, hy]; abel)
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]; abel)
   refine ⟨n, a, b, fun i p p' => sub_eq_zero.1 (congrFun (ha i) (p, p')),
     fun i p p' => sub_eq_zero.1 (congrFun (hb i) (p, p')), fun p q => ?_⟩
   rw [← ht, e]
-  simp [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum]
 
 theorem eq_zero_of_linearIndependent (hF : IsField F) {C : Type} [AddCommGroup C] [Module F C] {n : ℕ} (a : Fin n → ∀ p, A p)
     (ha : LinearIndependent F a) (b : Fin n → C) (h : ∀ p, ∑ i, a i p ⊗ₜ[F] b i = 0) (k : Fin n) : b k = 0 := by
@@ -118,7 +124,8 @@ theorem eq_zero_of_linearIndependent (hF : IsField F) {C : Type} [AddCommGroup C
   have hl' : ∀ i, l (a i) = Finsupp.single i 1 := fun i => by
     simpa using LinearMap.congr_fun hl (Finsupp.single i 1)
   have := congrArg (fun t => TensorProduct.lid F (Unit → C) ((Finsupp.lapply k ∘ₗ l).rTensor (Unit → C) t) ()) e
-  simpa [map_sum, hl', Finsupp.single_apply, ite_apply] using this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [map_sum, hl', Finsupp.single_apply, ite_apply] using this
 
 end
 
@@ -244,7 +251,7 @@ theorem gs_prodFn_map (hz' : r z ∈ p ⁻¹ᵁ U' ⊓ q ⁻¹ᵁ V') (f : Fn i�
   induction t using TensorProduct.induction_on with
   | zero => rw [map_zero, gs_prodFn_zero H r z hz, gs_prodFn_zero H r z hz', mul_zero]
   | tmul a b => rw [TensorProduct.map_tmul, gs_prodFn_tmul H r z hz, gs_prodFn_tmul H r z hz', hf, hg]; ring
-  | add x y hx hy => rw [map_add, gs_prodFn_add H r z hz, gs_prodFn_add H r z hz', hx, hy, mul_add]
+  | add x y hx hy => rw [map_add (f := _), gs_prodFn_add H r z hz, gs_prodFn_add H r z hz', hx, hy, mul_add]
 
 end
 
@@ -262,8 +269,8 @@ theorem le_wchart_sum {U : X₁.Opens} {V : X₂.Opens} {j : K₁ → L.ι} {k :
     rintro (a | a)
     exacts [Set.mem_iInter.1 (hU hy.1) a, Set.mem_iInter.1 (hV hy.2) a])
 
-include H in
 
+include H in
 theorem exists_sum (hL : L.IsLB) [IsAffine S] (hS : IsField Γ(S, ⊤)) [CompactSpace X₁] [CompactSpace X₂]
     [X₁.IsSeparated] [X₂.IsSeparated]
     (v : LB.Sec (LB.LinComb L (Sum.elim (fun k => p ≫ φ₁ k) (fun k => q ≫ φ₂ k)) (Sum.elim ε₁ ε₂))) :
@@ -326,8 +333,8 @@ theorem exists_sum (hL : L.IsLB) [IsAffine S] (hS : IsField Γ(S, ⊤)) [Compact
   rw [sval, sval, hs i _ _ z x _ hx m₁, ht i _ _ z y _ hy m₂, Units.val_mul]
   ring
 
-include H in
 
+include H in
 theorem eq_zero_of_sum (hL : L.IsLB) [IsAffine S] (hS : IsField Γ(S, ⊤)) [CompactSpace X₁] {n : ℕ}
     (a : Fin n → LB.Sec (LB.LinComb L φ₁ ε₁)) (b : Fin n → LB.Sec (LB.LinComb L φ₂ ε₂))
     (ha : ∀ c : Fin n → Γ(S, ⊤), (∀ j, ∑ i, resTop _ (i₁.appTop.hom (c i)) * (a i).f j = 0) → c = 0)

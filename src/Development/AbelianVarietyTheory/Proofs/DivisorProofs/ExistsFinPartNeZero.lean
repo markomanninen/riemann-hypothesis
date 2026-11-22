@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
+
+@[expose] public section
 
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -13,10 +17,10 @@ namespace GlobalTheory.EvZeroInf
 
 variable {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ]
 
-def finPart (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ) (x : κ → AF F) : ℂ :=
+def finPart (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ) (x : κ → AF F) : ℂ :=
   ∏ᶠ v, φ v fun i => evFin F v (x i)
 
-theorem pure_eq_tens (f : SInf F κ) (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ) :
+theorem pure_eq_tens (f : SInf F κ) (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ) :
     pure f φ = tens (evI F) (⇑f) (finPart φ) := rfl
 
 theorem snd_eq_zero_of_at (z : κ → AF F) (hz : At (evI F) z) (i : κ) : (z i).2 = 0 := by
@@ -27,7 +31,7 @@ theorem snd_eq_zero_of_at (z : κ → AF F) (hz : At (evI F) z) (i : κ) : (z i)
   change (1 : Af F) * (z i).2 = 0 at h
   rwa [one_mul] at h
 
-theorem finPart_add (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ) (x z : κ → AF F) (hz : At (evI F) z) :
+theorem finPart_add (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ) (x z : κ → AF F) (hz : At (evI F) z) :
     finPart φ (x + z) = finPart φ x := by
   unfold finPart
   refine finprod_congr fun v => ?_
@@ -36,9 +40,9 @@ theorem finPart_add (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ) (x z : κ → A
   have h : evFin F v (z i) = 0 := by
     show Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F v (z i).2 = 0
     rw [snd_eq_zero_of_at z hz i, map_zero]
-  rw [Pi.add_apply, map_add, h, add_zero]
+  rw [Pi.add_apply, map_add (f := _), h, add_zero]
 
-theorem exists_finPart_ne_zero (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ) (h0 : ∀ v, φ v ≠ 0)
+theorem exists_finPart_ne_zero (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ) (h0 : ∀ v, φ v ≠ 0)
     (hstd : ∀ᶠ v in cofinite, φ v = Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers F} 1) :
     ∃ x₀ : κ → Af F, ∀ x : κ → AF F, (∀ i, (x i).2 = x₀ i) → finPart φ x ≠ 0 := by
   classical
@@ -54,7 +58,8 @@ theorem exists_finPart_ne_zero (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ) (h0 
     intro w
     funext i
     show Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F w (x i).2 = _
-    rw [hx i, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx i, map_sum]
     by_cases hw : w ∈ S
     · rw [Finset.sum_eq_single w (fun v _ hv => evalV_singleFin_ne (Ne.symm hv) _) (fun h => absurd hw h),
         evalV_singleFin_self, if_pos hw]
@@ -77,7 +82,7 @@ theorem exists_finPart_ne_zero (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ) (h0 
   · exact Finset.prod_ne_zero_iff.2 fun w _ => hne w
   · exact one_ne_zero
 
-theorem eq_of_pure_eq (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ) (h0 : ∀ v, φ v ≠ 0)
+theorem eq_of_pure_eq (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ) (h0 : ∀ v, φ v ≠ 0)
     (hstd : ∀ᶠ v in cofinite, φ v = Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers F} 1)
     (g g' : SInf F κ) (h : pure g φ = pure g' φ) : g = g' := by
   obtain ⟨x₀, hx₀⟩ := exists_finPart_ne_zero φ h0 hstd

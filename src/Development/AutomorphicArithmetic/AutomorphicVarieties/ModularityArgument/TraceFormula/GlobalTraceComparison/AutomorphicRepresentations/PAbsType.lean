@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.OrthZero
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.TwtrContOfMem
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.OrthZero
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.TwtrContOfMem
+
+@[expose] public section
 
 open UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi UpperTheory.Zero.ConvolutionTheory.EB
 
@@ -46,7 +50,7 @@ private lemma orbit_stable {Γ F : Type} [Group Γ] [AddCommGroup F] [Module ℂ
     refine Submodule.subset_span ⟨g * k, ?_⟩
     simp [map_mul, Module.End.mul_apply]
   | zero => simp
-  | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
   | smul c a _ ha => rw [map_smul]; exact Submodule.smul_mem _ c ha
 
 private lemma self_mem_orbit {Γ F : Type} [Group Γ] [AddCommGroup F] [Module ℂ F]
@@ -98,7 +102,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.absType_pf :
       rw [hadj]
       exact hPo z _ ⟨hV _ _ ha.1, hTR _ _ ha.2⟩
     | zero => simp
-    | add a' b _ _ ha' hb => rw [map_add, ha', hb, add_zero]
+    | add a' b _ _ ha' hb => rw [map_add (f := _), ha', hb, add_zero]
     | smul c a' _ ha' => rw [map_smul, ha', smul_zero]
   intro v hv
   haveI := hVf v hv

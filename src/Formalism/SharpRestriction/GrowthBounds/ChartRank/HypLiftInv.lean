@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypLiftTw
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.PStabEq
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypLiftTw
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.PStabEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,8 @@ section Rec
 variable {D : D7} {u : D.what₂.Word} {C : ColumnChain D.R D.what₂.Tau (D.hcW u)} {A : ColumnsAtT D.R C} {P : PeriodMap D.R C}
   {M : MemberForms D.what₂.LL D.what₂.embLL D.what₂.places D.what₂.Tau (D.hcW u) C A P} {p : ℕ} {i : ℕ} {hi : i ≤ D.R.m} {G : GAtP p}
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem cmpInvRaw_holds (S : StepIn M i hi G) (e : D.what₂.LL →+* G.Kf) : CmpInvRawOf S e := by
   intro hS H X β rep hok c g γ0 κ0 hγ0 hL hpt Q hQ γ hγ κ hyc y y' hy
   have Hb := H β
@@ -91,42 +95,12 @@ theorem cmpInvRaw_holds (S : StepIn M i hi G) (e : D.what₂.LL →+* G.Kf) : Cm
 theorem cmpLiftOf_of_evVal (S : StepIn M i hi G) (e : D.what₂.LL →+* G.Kf) (hV : ∀ β, EvValLe S β) : CmpLiftOf S e :=
   cmpLiftOf_of_raw S e hV (cmpInvRaw_holds S e)
 
-theorem invLeOf_of_evVal (S : StepIn M i hi G) (e : D.what₂.LL →+* G.Kf) (hV : ∀ β, EvValLe S β) : InvLeOf S e :=
-  invLeOf_of_cmp S e (cmpLiftOf_of_evVal S e hV)
-
-def EvValCAt (S : StepIn M i hi G) (β : S.Ch) : Prop :=
-  EvValC (Hc S β).P (S.loc β).rk S.pos (gramC (gramN D i hi) (embT D)) (atInfGL (embT D) (S.loc β).B⁻¹) (M.lam i)
-
-theorem evValLe_of (S : StepIn M i hi G) (β : S.Ch) (h : EvValCAt S β)
-    (hw : WtTie (Hc S β).P (S.loc β).rk S.pos (M.lam i)) : EvValLe S β := by
-  intro Q hQ
-  rw [← h hw]
-  exact Submodule.mem_map_of_mem hQ
-
-theorem cmpLiftOf_of_evValC (S : StepIn M i hi G) (e : D.what₂.LL →+* G.Kf) (h : ∀ β, EvValCAt S β) : CmpLiftOf S e := by
-  intro hS H X
-  exact cmpLiftOf_of_evVal S e (fun β => evValLe_of S β (h β) (H β).wt) hS H X
-
 end Rec
 
 section Card
 
 variable {D : D7} {Tw : TwForms D} {u : D.what₂.Word} {μ : D.what₂.Tup} {w : D.what₂.places.Pl}
   {h : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)} {Fl : Fills (D.gat u w h)} {Lv : Levels Fl}
-
-theorem cmpJHyp_of_evVal (c : LatCmp D) {I : CmpJIn Tw u μ w h Lv} (Gt : GatTies D) (hS : BlockRationalityField)
-    (core : ∀ j hj β, (I.at' j hj).st.Core (c.embW u w h) β) (ok : ∀ j hj, (I.at' j hj).st.okW w)
-    (twUnit : ∀ j hj β, (I.at' j hj).st.TwUnit w β) (valIntN : ∀ j hj, (I.at' j hj).st.ValIntN (c.embW u w h) w)
-    (iwF : ∀ j hj β, (I.at' j hj).st.IwF β) (hfin : ∀ j, j + 1 ≤ D.R.m → (gatJ Lv (j + 1)).FinClasses)
-    (X : ∀ j hj, KAat.ChX (I.at' j hj).st) (hV : ∀ j hj β, EvValLe (I.at' j hj).st β) : CmpJHyp c I :=
-  cmpJHyp_of_cmp c Gt hS core ok twUnit valIntN iwF hfin X fun j hj => cmpLiftOf_of_evVal _ _ (hV j hj)
-
-theorem cmpJHyp_of_evValC (c : LatCmp D) {I : CmpJIn Tw u μ w h Lv} (Gt : GatTies D) (hS : BlockRationalityField)
-    (core : ∀ j hj β, (I.at' j hj).st.Core (c.embW u w h) β) (ok : ∀ j hj, (I.at' j hj).st.okW w)
-    (twUnit : ∀ j hj β, (I.at' j hj).st.TwUnit w β) (valIntN : ∀ j hj, (I.at' j hj).st.ValIntN (c.embW u w h) w)
-    (iwF : ∀ j hj β, (I.at' j hj).st.IwF β) (hfin : ∀ j, j + 1 ≤ D.R.m → (gatJ Lv (j + 1)).FinClasses)
-    (X : ∀ j hj, KAat.ChX (I.at' j hj).st) (hV : ∀ j hj β, EvValCAt (I.at' j hj).st β) : CmpJHyp c I :=
-  cmpJHyp_of_cmp c Gt hS core ok twUnit valIntN iwF hfin X fun j hj => cmpLiftOf_of_evValC _ _ (hV j hj)
 
 end Card
 

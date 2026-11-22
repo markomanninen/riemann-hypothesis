@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeadingTermIdentity
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeadingTermIdentity
+
+@[expose] public section
 
 open Matrix Finset
 

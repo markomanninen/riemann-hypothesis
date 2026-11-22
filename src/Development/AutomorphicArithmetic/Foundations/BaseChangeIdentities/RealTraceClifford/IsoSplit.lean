@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +84,7 @@ private theorem wt_comp (F : Fin n → Fin n → Module.End ℂ V) {S₁ S₂ : 
   have key : ∀ a, F a a y₁ = ↑(μ a) • y₁ ∧ F a a y₂ = ↑(μ a) • y₂ := by
     intro a
     have e := h a
-    rw [map_add, smul_add] at e
+    rw [map_add (f := _), smul_add] at e
     have hz := parts_zero hd (S₁.sub_mem (s1 a a y₁ h₁) (S₁.smul_mem _ h₁))
       (S₂.sub_mem (s2 a a y₂ h₂) (S₂.smul_mem _ h₂)) (by rw [sub_add_sub_comm, e, sub_self])
     exact ⟨sub_eq_zero.mp hz.1, sub_eq_zero.mp hz.2⟩
@@ -94,10 +98,10 @@ private theorem hw_comp (F : Fin n → Fin n → Module.End ℂ V) {S₁ S₂ : 
   obtain ⟨w1, w2⟩ := wt_comp F hd s1 s2 h₁ h₂ h.1
   refine ⟨⟨w1, fun a b hab e => ?_⟩, ⟨w2, fun a b hab e => ?_⟩⟩
   · have h0 := h.2 a b hab e
-    rw [map_add] at h0
+    rw [map_add (f := _)] at h0
     exact (parts_zero hd (s1 a b _ h₁) (s2 a b _ h₂) h0).1
   · have h0 := h.2 a b hab e
-    rw [map_add] at h0
+    rw [map_add (f := _)] at h0
     exact (parts_zero hd (s1 a b _ h₁) (s2 a b _ h₂) h0).2
 
 end SlopeTestRemainingChoices

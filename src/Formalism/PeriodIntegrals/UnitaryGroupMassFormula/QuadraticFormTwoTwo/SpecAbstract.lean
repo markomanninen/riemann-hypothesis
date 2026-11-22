@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticFormTwoTwo.InLieW
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticFormTwoTwo.InLieW
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ContDiff
@@ -120,7 +124,7 @@ theorem spec_abstract {Wp Wq : Type*} [NormedAddCommGroup Wp] [NormedSpace ℂ W
       simp only [hkey _ g hg τ w hw, Finset.sum_ite_eq', Finset.mem_univ, if_true]
     · simp
     · intro x y hx hy
-      simp only [map_add, hx, hy, Finset.sum_add_distrib]
+      simp only [map_add (f := _), hx, hy, Finset.sum_add_distrib]
   · intro σ Y g hg
     ext v
     rw [_root_.smul_apply]
@@ -133,7 +137,7 @@ theorem spec_abstract {Wp Wq : Type*} [NormedAddCommGroup Wp] [NormedSpace ℂ W
       · rw [smul_zero, smul_zero]
     · simp
     · intro x y hx hy
-      rw [map_add, map_add, hx, hy, smul_add]
+      rw [map_add (f := _), map_add (f := _), hx, hy, smul_add]
   · intro g hg σ v
     refine Submodule.iSup_induction (S g)
       (motive := fun v => ∃ w ∈ S g σ, dec σ g v = J g w) (htop g hg v) ?_ ?_ ?_
@@ -144,6 +148,6 @@ theorem spec_abstract {Wp Wq : Type*} [NormedAddCommGroup Wp] [NormedSpace ℂ W
       · exact ⟨0, zero_mem _, by rw [hkey σ g hg τ w hw, if_neg hστ, map_zero]⟩
     · exact ⟨0, zero_mem _, by rw [map_zero, map_zero]⟩
     · rintro x y ⟨w₁, hw₁, h₁⟩ ⟨w₂, hw₂, h₂⟩
-      exact ⟨w₁ + w₂, add_mem hw₁ hw₂, by rw [map_add, map_add, h₁, h₂]⟩
+      exact ⟨w₁ + w₂, add_mem hw₁ hw₂, by rw [map_add (f := _), map_add (f := _), h₁, h₂]⟩
 
 end Formalism.FourierDecayAlt.Q.LieAlgebraWeightVectors

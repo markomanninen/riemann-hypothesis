@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.LeviForms.ConvExpandStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.LeviForms.ConvExpandStatement
+
+@[expose] public section
+
 open MeasureTheory Metric Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.AnForm.M.FinHolAtlas
 open scoped ContDiff
 
@@ -188,9 +193,13 @@ theorem cpt_maMeasure [CompactSpace X] (A : FinHolAtlas e X) (hne : Nonempty (Ch
   have hint : ∀ j, Integrable G (chartMeasure A hne.some Φ j) := fun j =>
     (cpt_chartMeasure A hne.some Φ hK hKU j (hc j) hG hGK).1.2
       (cpt_integrableOn A hne.some Φ hK hKU j (hc j) hG hB)
-  rw [maMeasure_eq_sum A Φ hne]
-  refine ⟨integrable_finset_sum_measure.2 fun j _ => hint j, ?_⟩
-  rw [integral_finset_sum_measure fun j _ => hint j]
+  have hmeasure : maMeasure A Φ = ∑ j, chartMeasure A hne.some Φ j := by
+    unfold maMeasure
+    rw [dite_eq_left hne]
+    rfl
+  rw [hmeasure]
+  refine ⟨integrable_finsetSum_measure.2 fun j _ => hint j, ?_⟩
+  rw [integral_finsetSum_measure fun j _ => hint j]
   exact Finset.sum_congr rfl fun j _ => (cpt_chartMeasure A hne.some Φ hK hKU j (hc j) hG hGK).2
 
 theorem cpt_meas {U S : Set X} (hU : IsOpen U) (hS : MeasurableSet S) (hSU : S ⊆ U) {f : X → ℝ}
@@ -315,7 +324,7 @@ theorem compact_part_integrals_tendsto :
   · have h := (integrable_indicator_iff hKm).1 c1.1
     exact ((integrableOn_const_iff (by simp)).1 h).resolve_left (by simp)
   · rw [c3.2]
-    refine Tendsto.congr' ?_ (tendsto_finset_sum _ fun j _ =>
+    refine Tendsto.congr' ?_ (tendsto_finsetSum _ fun j _ =>
       cpt_chart_tendsto A hne.some Φ ΦT hU hK hKc hKU j (hc j) hpot
         (hunif j _ (cptSet_subset A hne.some hKU j) (cptSet_compact A hne.some hKc j))
         hgT hgc hgU hE hEK)

@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EvalAtOneExtremalMul
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FockSubstitutionIdentitiesStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HoweDualityUnitarySubstitutionSpanUnitStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemSpanTprodOfCommuteAtEachPlaceStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsPiTensorMvPolynomialEquivBlocksStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeylDeterminantTwistTensorFiniteDimensionalStablStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EvalAtOneExtremalMul
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FockSubstitutionIdentitiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HoweDualityUnitarySubstitutionSpanUnitStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemSpanTprodOfCommuteAtEachPlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsPiTensorMvPolynomialEquivBlocksStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeylDeterminantTwistTensorFiniteDimensionalStablStatement
+
+@[expose] public section
+
 open MvPolynomial Formalism.BasicNotions Formalism.L2.Forms Formalism.L2.Ker GlobalTheory.KJInf MeasureTheory
 open scoped TensorProduct
 
@@ -21,21 +26,24 @@ theorem lft_jY (g : ι → Matrix (Fin a) (Fin a) ℂ) (τ : ι) (F : PY Unit a)
     lft g (jY a τ F) = jY a τ (lft (fun _ => g τ) F) := by
   have : (lft g).comp (jY a τ) = (jY a τ).comp (lft (fun _ : Unit => g τ)) := by
     apply MvPolynomial.algHom_ext; intro v
-    simp [lft, jY, aeval_X, rename_X, map_sum, map_mul, rename_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [lft, jY, aeval_X, rename_X, map_sum, map_mul, rename_C]
   exact DFunLike.congr_fun this F
 
 theorem mvZ_jZ (g : ι → Matrix (Fin a) (Fin a) ℂ) (h : ι → Matrix (Fin b) (Fin b) ℂ) (τ : ι) (P : FP Unit a b) :
     mvZ g h (jZ a b τ P) = jZ a b τ (mvZ (fun _ => g τ) (fun _ => h τ) P) := by
   have : (mvZ g h).comp (jZ a b τ) = (jZ a b τ).comp (mvZ (fun _ : Unit => g τ) (fun _ => h τ)) := by
     apply MvPolynomial.algHom_ext; intro v
-    simp [mvZ, jZ, aeval_X, rename_X, map_sum, map_mul, rename_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [mvZ, jZ, aeval_X, rename_X, map_sum, map_mul, rename_C]
   exact DFunLike.congr_fun this P
 
 theorem subY_jY (hab : a ≤ b) (y' : ι → Matrix (Fin b) (Fin b) ℂ) (τ : ι) (F : PY Unit a) :
     subY hab y' (jY a τ F) = jZ a b τ (subY hab (fun _ => y' τ) F) := by
   have : (subY hab y').comp (jY a τ) = (jZ a b τ).comp (subY hab (fun _ : Unit => y' τ)) := by
     apply MvPolynomial.algHom_ext; intro v
-    simp [subY, jZ, jY, aeval_X, rename_X, map_sum, map_mul, rename_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [subY, jZ, jY, aeval_X, rename_X, map_sum, map_mul, rename_C]
   exact DFunLike.congr_fun this F
 
 theorem tenU (ι σ : Type) [Fintype ι] [DecidableEq ι] :
@@ -195,7 +203,8 @@ theorem pure_rep [Fintype ι] [DecidableEq ι] (hab : a ≤ b) (ha : 0 < a) (lam
     have hy : ∀ τ j, (fun _ : Unit => y' τ j ()) = y' τ j := fun τ j => funext fun u => by cases u; rfl
     have ht' : ∀ τ, t τ (f τ) = ∑ j, s τ j • subY hab (y' τ j) (f τ : PY Unit a) := by
       intro τ; rw [← hT τ]; exact hrep τ _ (f τ).2
-    simp only [LinearMap.compMultilinearMap_apply, LinearMap.coe_comp, Function.comp_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.compMultilinearMap_apply, LinearMap.coe_comp, Function.comp_apply,
       PiTensorProduct.map_tprod, LinearEquiv.coe_coe, hY1, hZ1, LinearMap.sum_apply,
       LinearMap.smul_apply, AlgHom.toLinearMap_apply, map_prod, subY_jY, ht', map_sum, map_smul, hy,
       Submodule.coe_subtype]
@@ -205,8 +214,8 @@ theorem pure_rep [Fintype ι] [DecidableEq ι] (hab : a ≤ b) (ha : 0 < a) (lam
 
 end GlobalTheory.KJInf.HoweDualityMaps
 
-open GlobalTheory.KJInf.HoweDualityMaps in
 
+open GlobalTheory.KJInf.HoweDualityMaps in
 theorem GlobalTheory.KJInf.howeSpan_all : ∀ (ι : Type) [Fintype ι], HoweSpan ι := by
   intro ι _ a b hab ha lam n Q hQ
   classical
@@ -254,5 +263,3 @@ theorem GlobalTheory.KJInf.howeSpan_all : ∀ (ι : Type) [Fintype ι], HoweSpan
   obtain ⟨v, rfl⟩ := hF
   have := hrep v
   simpa [Q'] using this
-
-example : ∀ (ι : Type) [Fintype ι], HoweSpan ι := GlobalTheory.KJInf.howeSpan_all

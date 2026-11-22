@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory.TangentRigid
@@ -121,7 +126,7 @@ theorem first_order_rigid : ∀ (k : Type) [Field k] (m : ℕ) (A B a dA dB : k)
         (6 * (C a ^ 4 * C A) * n ^ 2 - 9 * (C a ^ 6 * C B) * n * h ^ 2
           + 4 * (C a ^ 4 * C A) ^ 2 * h ^ 4) * G₁
         + G * (27 * (C a ^ 6 * C B) * h ^ 2 - 18 * (C a ^ 4 * C A) * n) := by
-      simp only [map_mul, map_pow, map_add, c4, c27, hG, hG₁]
+      simp only [map_mul, map_pow, map_add (f := _), c4, c27, hG, hG₁]
       ring
     rw [h2'] at h1
     exact (IsCoprime.of_add_mul_left_right h1).of_mul_right_right

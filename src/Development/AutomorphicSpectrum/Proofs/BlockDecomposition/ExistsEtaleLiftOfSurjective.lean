@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -119,7 +123,7 @@ theorem tensor_existsUnique_lift {P Qb R B : Type} [CommRing P] [CommRing Qb] [C
     refine RingHom.ext fun x => ?_
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul b r =>
       have : b ⊗ₜ[P] r = (b ⊗ₜ[P] (1 : R)) * ((1 : Qb) ⊗ₜ[P] r) := by simp
       rw [this, map_mul, h1, h2]
@@ -178,7 +182,7 @@ theorem exists_lift_hom {P Q Qb R : Type} [CommRing P] [CommRing Q] [CommRing Qb
       change F2 (F1 x) = x
       induction x using TensorProduct.induction_on with
       | zero => simp
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]
       | tmul b d =>
         obtain ⟨x, rfl⟩ := hs b
         rw [hF1, hjb0, map_mul]
@@ -240,7 +244,7 @@ theorem nonempty_lift {O R Λ : Type} [CommRing O] [CommRing R] [CommRing Λ] (a
       rw [RingHom.mem_ker, MvPolynomial.mem_map_C_iff]
       constructor
       · intro hf m
-        have := congrArg (MvPolynomial.coeff m) hf
+        have := congrArg (AddMonoidAlgebra.coeff · m) hf
         rw [MvPolynomial.coeff_map, MvPolynomial.coeff_zero] at this
         exact Ideal.Quotient.eq_zero_iff_mem.mp this
       · intro hf

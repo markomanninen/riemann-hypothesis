@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ScaledBasisMemChainLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ScaledBasisMemChainLattice
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix
 open scoped Pointwise
@@ -14,26 +18,10 @@ theorem isLattice_stdLat_and_act : ∀ (k : Type) [Field k] [ValuativeRel k] [To
     refine Submodule.fg_pi fun _ => ?_
     rw [Submodule.one_eq_span]
     exact Submodule.fg_span_singleton _
-  · rw [eq_top_iff]
-    intro v _
-    have hv : v = ∑ i, v i • (Pi.single i (1 : k) : ι → k) := by
-      ext j
-      simp [Pi.single_apply]
-    rw [hv]
-    refine Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span ?_)
-    refine mem_stdLat.2 fun j => ?_
-    rw [Pi.single_apply]
-    split_ifs
-    · exact one_mem _
-    · exact zero_mem _
+  · intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
   · exact hL.fg.map _
-  · have himg : ((act g L : Submodule 𝒪[k] (ι → k)) : Set (ι → k))
-        = (g : Matrix ι ι k).mulVecLin '' (L : Set (ι → k)) := by
-      ext v
-      exact mem_act
-    rw [himg, ← Submodule.map_span, hL.span_eq_top, Submodule.map_top, LinearMap.range_eq_top]
-    intro w
-    refine ⟨((g⁻¹ : GL ι k) : Matrix ι ι k) *ᵥ w, ?_⟩
-    rw [Matrix.mulVecLin_apply, Matrix.mulVec_mulVec, Units.mul_inv, Matrix.one_mulVec]
+  · intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
 
 end GlobalTheory.RootEx.UnfoldShape

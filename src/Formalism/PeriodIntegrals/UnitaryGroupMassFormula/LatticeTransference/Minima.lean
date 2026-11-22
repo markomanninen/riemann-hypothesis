@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.Transference
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeTransference.TransferenceKey
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.Transference
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeTransference.TransferenceKey
+
+@[expose] public section
 
 open Module
 open scoped InnerProductSpace
@@ -33,7 +37,8 @@ lemma finrank_span_lt_succMin (M : Submodule ℤ (EuclideanSpace ℝ (Fin N))) (
       ∃ v : Fin i → EuclideanSpace ℝ (Fin N), (∀ j, v j ∈ M) ∧ LinearIndependent ℝ v ∧ ∀ j, ‖v j‖ ≤ t} :=
     ⟨(norm_nonneg _).trans (Finset.le_sup' (fun j => ‖v j‖) (Finset.mem_univ ⟨0, hi⟩)),
       v, fun j => (hvS j).1, hvli, fun j => Finset.le_sup' (fun j => ‖v j‖) (Finset.mem_univ j)⟩
-  have hinf := csInf_le ⟨0, fun t ht => ht.1⟩ ht_mem
+  have hinf : succMin M i ≤ Finset.univ.sup' hne (fun j => ‖v j‖) :=
+    csInf_le ⟨0, fun t ht => ht.1⟩ ht_mem
   exact lt_irrefl (succMin M i) (lt_of_le_of_lt hinf ht_lt)
 
 theorem minima_of_key (h : TransferenceKey) : TransferenceMinima := by

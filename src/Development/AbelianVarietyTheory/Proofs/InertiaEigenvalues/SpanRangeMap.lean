@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCyclotomicKernelFixedBasisWittTensorLatticStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EtalePhiMatrixDecompletionToWachStatement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCyclotomicKernelFixedBasisWittTensorLatticStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EtalePhiMatrixDecompletionToWachStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct GlobalTheory.HWL
 
@@ -17,7 +21,8 @@ theorem repr_of_fixed (e : Module.Basis (Fin r) R M) (τ : R →+* R) (A : M →
     e.repr (A x) i = τ (e.repr x i) := by
   have h : A x = ∑ k, τ (e.repr x k) • e k := by
     conv_lhs => rw [← e.sum_repr x]
-    simp only [map_sum, hA, he]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, hA, he]
   rw [h, e.repr_sum_self]
 
 theorem isUnit_matrix (e : Module.Basis (Fin r) R M) (σ : R →+* R) (Φ : M →+ M)
@@ -27,7 +32,8 @@ theorem isUnit_matrix (e : Module.Basis (Fin r) R M) (σ : R →+* R) (Φ : M �
   have hle : Submodule.span R (Set.range Φ) ≤ Submodule.span R (Set.range fun j => Φ (e j)) := by
     rw [Submodule.span_le]
     rintro _ ⟨x, rfl⟩
-    rw [← e.sum_repr x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← e.sum_repr x, map_sum]
     refine Submodule.sum_mem _ fun k _ => ?_
     rw [hΦ]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
@@ -56,9 +62,8 @@ theorem change_basis (e : Module.Basis (Fin r) R M) (σ : R →+* R) (Φ : M →
     ext m
     have hm := congrFun (congrFun h m) j
     simp only [Matrix.mul_apply, Matrix.of_apply, Matrix.map_apply] at hm
-    simp only [hL, map_sum, hΦ, map_smul, Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.smul_apply,
-      smul_eq_mul, Module.Basis.repr_self, Finsupp.single_apply, mul_ite, mul_one, mul_zero,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hL, map_sum, hΦ, map_smul, smul_eq_mul, Finsupp.single_apply]
     simpa only [mul_comm] using hm
   rw [key, Module.Basis.repr_sum_self]
 
@@ -72,7 +77,7 @@ theorem map_smul_semi (f : R →ₐ[O] R) (a : N →ₗ[O] N) (c : R) (x : R ⊗
     TensorProduct.map f.toLinearMap a (c • x) = f c • TensorProduct.map f.toLinearMap a x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+  | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
   | tmul b t => simp [TensorProduct.smul_tmul']
 
 theorem span_range_map (f : R →ₐ[O] R) :
@@ -93,7 +98,7 @@ theorem map_comm (f g : R →ₐ[O] R) (h : ∀ c, f (g c) = g (f c)) (a : N →
       TensorProduct.map f.toLinearMap (LinearMap.id : N →ₗ[O] N) (TensorProduct.map g.toLinearMap a x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul b t => simp [h]
 
 theorem descend {r : ℕ} {ι : Type} (φ : R →ₐ[O] R) (g : ι → (R →ₐ[O] R)) (a : ι → (N →ₗ[O] N))
@@ -121,7 +126,8 @@ theorem descend {r : ℕ} {ι : Type} (φ : R →ₐ[O] R) (g : ι → (R →ₐ
     exact h1.symm)
   obtain ⟨e', h1, h2⟩ := change_basis e φ Φ hΦ V F₁ hV hE
   refine ⟨e', fun s j => ?_, fun i j => ?_⟩
-  · rw [h1, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [h1, map_sum]
     exact Finset.sum_congr rfl fun i _ => by rw [map_smul_semi, hVg, he]
   · have := hS i j
     rw [← h2] at this
@@ -153,7 +159,7 @@ theorem map_id_comm {Z O W : Type} [CommRing Z] [CommRing O] [CommRing W] [Algeb
     Algebra.TensorProduct.map (AlgHom.id O O) g (Algebra.TensorProduct.map (AlgHom.id O O) f x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a w => simp [h]
 
 theorem frob_comm_gal {l : ℕ} [Fact l.Prime] {P : LocPrime l} (AI : LocAinf l P) (LL : FinExt l) (g : GQ l)

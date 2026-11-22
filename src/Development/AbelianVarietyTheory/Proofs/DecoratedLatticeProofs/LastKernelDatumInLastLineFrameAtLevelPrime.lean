@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.IndicatorFunctionIdentity
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LMLatOfLIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.IndicatorFunctionIdentity
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LMLatOfLIntegral
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory Matrix ValuativeRel IsLocalRing GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.SeeSaw GlobalTheory.FinPl
 
@@ -83,12 +87,18 @@ theorem overAll_of_extFun_eq (ψ : AddChar (AF D.host.F) ℂ) {S T : HSp D} (α 
     (β : ∀ i, Frame (p i) T n₂) (β' : ∀ i, Frame (p i) T n) (LS : Lat S) (LT : Lat T) (Ψ : ι → Matrix n₂ n' k → ℂ)
     (Ψ' : ι → Matrix n n' k → ℂ) (h : ∀ i, extFun (α i) (β i) (Ψ i) = extFun (α i) (β' i) (Ψ' i))
     (hSB : ∀ i, Ψ' i ∈ SB (Matrix n n' k)) :
-    ∀ (l : List ι) (f f' : WO S T → ℂ), OverAll ψ α β LS LT Ψ l f f' → OverAll ψ α β' LS LT Ψ' l f f'
-  | [], _, _, hf => hf
-  | i :: l, f, f', hf => by
-    obtain ⟨g, hg, hov⟩ : ∃ g, OverAll ψ α β LS LT Ψ l f g ∧ Over ψ (α i) (β i) LS LT g (Ψ i) f' := hf
+    ∀ (l : List ι) (f f' : WO S T → ℂ), OverAll ψ α β LS LT Ψ l f f' → OverAll ψ α β' LS LT Ψ' l f f' := by
+  intro l f f' hf
+  induction l generalizing f' with
+  | nil => exact hf
+  | cons i l ih =>
+    change ∃ g, OverAll ψ α β LS LT Ψ l f g ∧ Over ψ (α i) (β i) LS LT g (Ψ i) f' at hf
+    change ∃ g, OverAll ψ α β' LS LT Ψ' l f g ∧ Over ψ (α i) (β' i) LS LT g (Ψ' i) f'
+    obtain ⟨g, hg, hov⟩ := hf
+    refine ⟨g, ih g hg, ?_⟩
+    unfold Over at hov ⊢
     obtain ⟨h1, h2, h3, -, h5⟩ := hov
-    refine ⟨g, overAll_of_extFun_eq ψ α β β' LS LT Ψ Ψ' h hSB l f g hg, h1, h2, h3, hSB i, ?_⟩
+    refine ⟨h1, h2, h3, hSB i, ?_⟩
     rw [← h i]
     exact h5
 
@@ -96,7 +106,8 @@ end Lists
 
 theorem isLattice_of_lastKer {m : Type} [Fintype m] [DecidableEq m] {Q : Pair k n₂} (G : Matrix (m ⊕ Fin 1) n₂ k)
     (G' : Matrix n₂ (m ⊕ Fin 1) k) (hGG : G * G' = 1) (L : Submodule 𝒪[k] (m → k))
-    (hker : ∀ y, y ∈ Q.ker ↔ G *ᵥ y ∈ GlobalTheory.IndefiniteRowSideFullHecke.AppendedVectorData.lastKer L) : L.IsLattice k := by
+    (hker : ∀ y, y ∈ Q.ker ↔ G *ᵥ y ∈ GlobalTheory.IndefiniteRowSideFullHecke.AppendedVectorData.lastKer L) :
+    L.IsFullLattice k := by
   let e : (m → k) →ₗ[k] (m ⊕ Fin 1 → k) :=
     { toFun := fun x => Sum.elim x 0
       map_add' := by intro x y; ext (i | i) <;> simp
@@ -117,13 +128,42 @@ theorem isLattice_of_lastKer {m : Type} [Fintype m] [DecidableEq m] {Q : Pair k 
     rw [Submodule.mem_comap, LinearMap.restrictScalars_apply, hker, hGf, GlobalTheory.IndefiniteRowSideFullHecke.AppendedVectorData.mem_lastKer]
     simp
   rw [hL]
-  exact GlobalTheory.GoodLat.isLattice_comap Q.ker Q.ker_isLat f hf
+  have := GlobalTheory.GoodLat.isLattice_comap Q.ker Q.ker_isLat.toIsLattice f hf
+  refine ⟨?_⟩
+  refine eq_top_iff.2 fun x _ => ?_
+  have hx : f x ∈ Submodule.span k (Q.ker : Set (n₂ → k)) := by
+    rw [Submodule.IsFullLattice.span_eq_top]
+    trivial
+  obtain ⟨a, ha, hax⟩ := GlobalTheory.GoodLat.exists_smul_mem Q.ker hx
+  have hmem : a • x ∈ Q.ker.comap (f.restrictScalars 𝒪[k]) := by
+    change (f.restrictScalars 𝒪[k]) (a • x) ∈ Q.ker
+    rw [map_smul]
+    exact hax
+  have hspan := Submodule.subset_span (R := k) hmem
+  have ha' : algebraMap 𝒪[k] k a ≠ 0 := by
+    intro hzero
+    exact ha (IsFractionRing.injective 𝒪[k] k (hzero.trans (map_zero _).symm))
+  rw [← algebraMap_smul k a x] at hspan
+  simpa only [inv_smul_smul₀ ha'] using
+    (Submodule.span k (Q.ker.comap (f.restrictScalars 𝒪[k]) : Set (m → k))).smul_mem
+      (algebraMap 𝒪[k] k a)⁻¹ hspan
 
 end GlobalTheory.LastKerRep
 
-open GlobalTheory.LastKerRep in
 
-theorem GlobalTheory.SeeSaw.lastKernel_reps : ∀ (D : D7) (c : Comm D) (v : VCom c) (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (ι : Type) (o : TDat c k ι), c.Is → v.Is → ShapeOff v o → ∀ j (h : j + 2 * 0 + 2 = D.R.m), ∃ (Λ : ι → Submodule 𝒪[k] (Fin c.T.rank → k)) (hΛ : ∀ i, (Λ i).IsLattice k) (u : ι → 𝓀[k]ˣ), (∀ i, (o.γ i).IsLat v.NT (Λ i)) ∧ Reps c.ψ (o.β (j + 1)) (o.γ₀ (j + 1 + 1) h) (c.x (j + 1)).L (c.x (j + 1 + 1)).L (fun i => haveI := hΛ i; phiOne (u i • o.Q (j + 1) i) (GlobalTheory.IndefiniteRowSideFullHecke.AppendedVectorData.lastPair o.q (Λ i))) o.I (· ∈ v.tP) (v.dT (j + 1)) := by
+open GlobalTheory.LastKerRep in
+theorem GlobalTheory.SeeSaw.lastKernel_reps :
+    ∀ (D : D7) (c : Comm D) (v : VCom c) (k : Type) [Field k] [ValuativeRel k]
+      [TopologicalSpace k] [IsNonarchimedeanLocalField k] (ι : Type) (o : TDat c k ι),
+      c.Is → v.Is → ShapeOff v o → ∀ j (h : j + 2 * 0 + 2 = D.R.m),
+      ∃ (Λ : ι → Submodule 𝒪[k] (Fin c.T.rank → k)) (hΛ : ∀ i, (Λ i).IsFullLattice k)
+        (u : ι → 𝓀[k]ˣ), (∀ i, (o.γ i).IsLat v.NT (Λ i)) ∧
+        Reps c.ψ (o.β (j + 1)) (o.γ₀ (j + 1 + 1) h) (c.x (j + 1)).L (c.x (j + 1 + 1)).L
+          (fun i =>
+            haveI := hΛ i
+            phiOne (u i • o.Q (j + 1) i)
+              (GlobalTheory.IndefiniteRowSideFullHecke.AppendedVectorData.lastPair o.q (Λ i)))
+          o.I (· ∈ v.tP) (v.dT (j + 1)) := by
   intro D c v k _ _ _ _ ι o hc hv hS j h
   have htop := fun i => (hS.pre.topT (j + 1 + 1) h i).2
   choose Λ s hLat hKer hVal using htop
@@ -131,17 +171,17 @@ theorem GlobalTheory.SeeSaw.lastKernel_reps : ∀ (D : D7) (c : Comm D) (v : VCo
     intro i
     simp only [Matrix.mul_assoc]
     rw [← Matrix.mul_assoc (o.β (j + 1 + 1) i).b, (o.β (j + 1 + 1) i).bb', Matrix.one_mul, (o.γ₀ (j + 1 + 1) h i).b'b]
-  have hΛ : ∀ i, (Λ i).IsLattice k := fun i => isLattice_of_lastKer _ _ (hGG i) (Λ i) (hKer i)
+  have hΛ : ∀ i, (Λ i).IsFullLattice k := fun i => isLattice_of_lastKer _ _ (hGG i) (Λ i) (hKer i)
   refine ⟨Λ, hΛ, fun i => (s i)⁻¹, hLat, (hv.atT (j + 1)).1, fun f hf => ?_⟩
   refine overAll_of_extFun_eq c.ψ (o.β (j + 1)) (o.β (j + 1 + 1)) (o.γ₀ (j + 1 + 1) h) _ _ _ _ (fun i => ?_) (fun i => ?_)
     o.I f _ (hS.rep (j + 1) (by omega) f hf)
-  · haveI := hΛ i
+  · have := hΛ i
     apply extFun_eq_of
     intro x
     exact phiOne_transport _ _ _ (hasVal_transport _ _ (hGG i)
       (glue_hasVal (GlobalTheory.IndefiniteRowSideFullHecke.AppendedVectorData.isGlue_last o.q (Λ i)))
       (fun y => (hKer i y).trans (by rw [glue_ker])) (hVal i)) x
-  · haveI := hΛ i
+  · have := hΛ i
     exact GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity.phiOne_mem _ _
 
 end

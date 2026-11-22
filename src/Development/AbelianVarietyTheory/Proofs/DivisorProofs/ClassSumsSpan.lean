@@ -1,19 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMapOfOfExtends
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolSub0LeSpanRaw
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RawSeriesMoveDatum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnfoldingFrameDeltaChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelValuesThird
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRepsOfFiniteIndex
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicLinearIndependent
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOmegaField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsHomogeneousOfRowDeg
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelValuesFirstStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelExtensionSecondStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelValuesSixthStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelUnitValues
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRationalUnitaryMoveSelfDualToSplitStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKernelTensorValues
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMapOfOfExtends
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolSub0LeSpanRaw
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RawSeriesMoveDatum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnfoldingFrameDeltaChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelValuesThird
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRepsOfFiniteIndex
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicLinearIndependent
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOmegaField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsHomogeneousOfRowDeg
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelValuesFirst
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GenReads
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelExtensionSecond
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelValuesSixth
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelUnitValues
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRationalUnitaryMoveSelfDualToSplitStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKernelTensorValues
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option synthInstance.maxHeartbeats 200000
@@ -160,8 +166,8 @@ theorem dict_mem (hT : LawsJ T) (O : OMDat T.toCore R i Tp tup) (g : GA D (Wc D 
   obtain ⟨th, hr, -, hd⟩ := hT.dictU _ (inR i) _ (goodEmbedding_baseEmbedding_coreData O)
   exact hd.2.2.2.1 _
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem atDict_indep (hT : LawsJ T) (O : OMDat T.toCore R i Tp tup) (κ : WeightFamilies.Wt D ((i : ℕ) + 1)) (m : ℕ)
     (b : Fin m → Rul (T.Q.Xo ((i : ℕ) + 1)) O.c') (hb : ∀ j, b j ∈ GlobalTheory.OneMapAll.cuspOver O κ)
     (hli : LinearIndependent O.c'.F b) : LinearIndependent ℂ fun j => atDict O (rdU (unfO O) (b j)) := by
@@ -177,7 +183,8 @@ theorem atDict_indep (hT : LawsJ T) (O : OMDat T.toCore R i Tp tup) (κ : Weight
     Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (((mem_cusp _ _ _ _ _ _).1 (hb j)).2 _ (goodEmbedding_baseEmbedding_coreData O))
   have hEq := eqv_holSub (unfO O).X _ hmem
   have hz : atDict O (∑ j, w j • rdU (unfO O) (b j)) = 0 := by
-    rw [← hw, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hw, map_sum]
     exact Finset.sum_congr rfl fun j _ => map_smul _ _ _
   funext k x
   by_cases hx : x ∈ ((unfO O).X k).dom
@@ -194,8 +201,8 @@ theorem atDict_indep (hT : LawsJ T) (O : OMDat T.toCore R i Tp tup) (κ : Weight
     have : rdU (unfO O) (b j) k x = 0 := dif_neg hx
     rw [this, mul_zero]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem rdU_mem_span_raw (hT : LawsJ T) (O : OMDat T.toCore R i Tp tup) (κ : WeightFamilies.Wt D ((i : ℕ) + 1))
     (hn : κ.n = (Vc D i).rank) (hsz : 8 * D.R.f * D.R.r + 4 ≤ (Vc D i).rank) [StarRing (𝓞 D.host.E)]
     (nab : NabV (T.Q.Xo ((i : ℕ) + 1)) O.c') (hnab : IsNab _ O.c' nab) {bad : ℕ} (hb : 0 < bad)

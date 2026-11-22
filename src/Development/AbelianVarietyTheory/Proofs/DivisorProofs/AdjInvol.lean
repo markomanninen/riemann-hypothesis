@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.SmoothInExponentialCoordsIffFirstSecondKind
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.HasSmoothLogNearOneOfIsUnitaryLieExpData
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.SmoothInExponentialCoordsIffFirstSecondKind
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.HasSmoothLogNearOneOfIsUnitaryLieExpData
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,8 +39,8 @@ def unit (anti : ∀ a b, σ (a * b) = σ b * σ a) (one : σ 1 = 1) (invol : �
     have : ((a⁻¹ : 𝔸ˣ) : 𝔸) = σ a := (Units.eq_inv_of_mul_eq_one_right ha).symm
     rw [this, invol, mul_adj σ ha]
 
-open Classical in
 
+open Classical in
 def sec (anti : ∀ a b, σ (a * b) = σ b * σ a) (one : σ 1 = 1) (invol : ∀ a, σ (σ a) = a) (a : 𝔸) :
     unit σ anti one invol :=
   if h : σ a * a = 1 then ⟨⟨a, σ a, mul_adj σ h, h⟩, h⟩ else 1
@@ -44,15 +48,15 @@ def sec (anti : ∀ a b, σ (a * b) = σ b * σ a) (one : σ 1 = 1) (invol : ∀
 variable {σ} (anti : ∀ a b, σ (a * b) = σ b * σ a) (one : σ 1 = 1) (invol : ∀ a, σ (σ a) = a)
 
 theorem sec_val {a : 𝔸} (h : σ a * a = 1) : ((sec σ anti one invol a : 𝔸ˣ) : 𝔸) = a := by
-  rw [sec, dif_pos h]
+  rw [sec, dite_eq_left h]
 
-theorem lieData : IsLieData σ (skew σ).subtype (sec σ anti one invol) where
-  anti := anti
-  one := one
-  invol := invol
-  inj := Subtype.val_injective
-  skew X := ⟨fun h => ⟨⟨X, (mem_skew σ).2 h⟩, rfl⟩, by rintro ⟨Y, rfl⟩; exact (mem_skew σ).1 Y.2⟩
-  mul a b ha hb := by
+theorem lieData : IsLieData σ (skew σ).subtype (sec σ anti one invol) := by
+  refine ⟨anti, one, invol, Subtype.val_injective, ?_, ?_⟩
+  · intro X
+    refine ⟨fun h => ⟨⟨X, (mem_skew σ).2 h⟩, rfl⟩, ?_⟩
+    rintro ⟨Y, rfl⟩
+    exact (mem_skew σ).1 Y.2
+  · intro a b ha hb
     have hab : σ (a * b) * (a * b) = 1 := by rw [anti, mul_assoc, ← mul_assoc (σ a), ha, one_mul, hb]
     refine Subtype.ext (Units.ext ?_)
     rw [Subgroup.coe_mul, Units.val_mul, sec_val _ _ _ ha, sec_val _ _ _ hb, sec_val _ _ _ hab]
@@ -262,7 +266,8 @@ theorem chain_at {f : (ι → Mt n) → ℂ} (hf : SmFn Hm f) {E : Type} [Normed
     rw [this]; rfl
   rw [e] at c4 c5
   refine c5.trans ?_
-  rw [← sum_sgl (adj Hm _ * _), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← sum_sgl (adj Hm _ * _), map_sum]
   refine Finset.sum_congr rfl fun τ _ => ?_
   rw [← c2 _ (sgl_skew hH ((skew_iff hH _).1 c4 τ))]
   simp only [exp_sgl]

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+
+@[expose] public section
+
 open Filter Topology MeasureTheory GlobalTheory.HSAmp
 open scoped ComplexOrder Matrix
 
@@ -35,7 +40,7 @@ theorem simultaneous_diagonalisation :
   have hSH : Sᴴ = S := by
     rw [hS, Matrix.diagonal_conjTranspose]
     congr 1
-    funext i
+    ext i
     simp
   have h0 : (U * S)ᴴ * G * (U * S) = 1 := by
     have : (U * S)ᴴ * G * (U * S) = S * (Uᴴ * G * U) * S := by

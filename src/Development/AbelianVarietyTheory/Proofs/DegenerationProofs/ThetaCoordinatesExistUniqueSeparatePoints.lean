@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsThetaPtOverOfSubsingleton
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsGenOfMemChart
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.LocGenOfTrivial
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SecMInvariantEqBotOrUnivAtGeometricPoint
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsSecValueIsUnit
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsGenOfAssociated
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CubeTheoremAndSectionsFiniteGrowthAbelianVariety
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsThetaPtOverOfSubsingleton
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsGenOfMemChart
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.LocGenOfTrivial
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SecMInvariantEqBotOrUnivAtGeometricPoint
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsSecValueIsUnit
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsGenOfAssociated
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CubeTheoremAndSectionsFiniteGrowthAbelianVariety
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -82,8 +86,8 @@ theorem exists_rescale {z : T ⟶ A} {τ : Frame L k z} (hτ : τ.IsGen) (u : Γ
       linear_combination (-(c * d)) * h
     exact key _ _ _ _ e
 
-omit [GrpObj A] in
 
+omit [GrpObj A] in
 theorem exists_frame (hL : L.IsLB) [Subsingleton T.left] [Nonempty T.left] (z : T ⟶ A) :
     ∃ τ : Frame L k z, τ.IsGen := by
   obtain ⟨p⟩ := ‹Nonempty T.left›
@@ -285,8 +289,8 @@ theorem IsThetaFam.span_eq_top {k N : ℕ} (hk : 1 ≤ k) (hN : 4 ≤ N) (hK : (
     have : w = r • SecM.ofSec P.A th := Subtype.ext (funext hr')
     exact hw (by rw [this, hz', smul_zero])
 
-omit [IsAlgClosed K] in
 
+omit [IsAlgClosed K] in
 theorem span_pull_eq_top {N : ℕ} (hN : 1 ≤ N) {I : Type} {t : I → SecM P.A P.L N (Over.mk s)}
     (H : Submodule.span Γ((Over.mk s).left, ⊤) (Set.range t) = ⊤) (T' : Over S) [IsAffine T'.left]
     (h : T' ⟶ Over.mk s) :
@@ -309,8 +313,8 @@ theorem span_pull_eq_top {N : ℕ} (hN : 1 ≤ N) {I : Type} {t : I → SecM P.A
   rw [hc, ← pullM_comp P.A P.isLB]
   exact key _ (H.ge trivial)
 
-omit [IsAlgClosed K] in
 
+omit [IsAlgClosed K] in
 theorem eq_of_span {N : ℕ} (hN : 3 ≤ N) {I : Type} {t : I → LB.Sec (LPow P.A P.L N (Over.mk s))}
     (H : Submodule.span Γ((Over.mk s).left, ⊤) (Set.range fun i => SecM.ofSec P.A (t i)) = ⊤)
     {z z' : Over.mk s ⟶ P.A} {τ : Frame P.L N z} {τ' : Frame P.L N z'} (hτ : τ.IsGen) (hτ' : τ'.IsGen)

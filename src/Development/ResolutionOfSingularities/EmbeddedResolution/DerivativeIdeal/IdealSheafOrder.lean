@@ -1,6 +1,11 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealOrder
-import Development.ResolutionOfSingularities.Foundations.Schemes.AffineOpens
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealOrder
+public import Development.ResolutionOfSingularities.Foundations.Schemes.AffineOpens
+
+@[expose] public section
+
 namespace FunctorialResolution.EmbeddedResolution
 
 open AlgebraicGeometry TopologicalSpace

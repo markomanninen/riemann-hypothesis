@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues Polynomial
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
@@ -190,7 +195,8 @@ theorem eig_indep {M : Type} [AddCommGroup M] [Module ℂ M] {ι U : Type} [Deci
       obtain ⟨u, hu⟩ := hχ i (Finset.mem_insert_of_mem hi) a (Finset.mem_insert_self a s) hia
       have hS : ∑ k ∈ s, (C k * (χ k u - χ a u)) • v k = 0 := by
         have e1 : T u (∑ k ∈ s, C k • v k) = ∑ k ∈ s, (C k * χ k u) • v k := by
-          simp [map_sum, map_smul, hv, smul_smul]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp [map_sum, map_smul, hv, smul_smul]
         have e2 : ∑ k ∈ s, C k • v k = -(C a • v a) := eq_neg_of_add_eq_zero_right hC
         have e3 : ∑ k ∈ s, (C k * (χ k u - χ a u)) • v k =
             T u (∑ k ∈ s, C k • v k) - χ a u • ∑ k ∈ s, C k • v k := by

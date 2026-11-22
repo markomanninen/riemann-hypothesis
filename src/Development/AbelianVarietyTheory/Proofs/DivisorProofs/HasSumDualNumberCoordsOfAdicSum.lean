@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TanRel
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsPolAVSectionInverseImage
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbsoluteSiegel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffTopMonEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigValD
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TanRel
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsPolAVSectionInverseImage
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbsoluteSiegel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffTopMonEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigValD
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
-open GlobalTheory GlobalTheory.LieHt GlobalTheory.Cartier GlobalTheory.ThetaOnto GlobalTheory.MBModel GlobalTheory.KeyCl GlobalTheory.Ex GlobalTheory.MBLow GlobalTheory.SecJet
+open GlobalTheory GlobalTheory.LieHt GlobalTheory.Cartier GlobalTheory.ThetaOnto GlobalTheory.KeyCl GlobalTheory.Ex GlobalTheory.MBLow GlobalTheory.SecJet
 open scoped CategoryTheory.Obj
 attribute [local instance] Over.cartesianMonoidalCategory
 
@@ -24,7 +29,7 @@ theorem hasSum_of_sumI {R : Type} [CommRing R] [IsNoetherianRing R] {I : Ideal R
     induction hy using Submodule.span_induction with
     | mem y hy => exact hc y hy
     | zero => simpa using h0
-    | add y z _ _ k1 k2 => rw [map_add]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le k1 k2)
+    | add y z _ _ k1 k2 => rw [map_add (f := _)]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le k1 k2)
     | smul a y _ k1 => rw [hf, norm_mul]; exact (mul_le_of_le_one_left (norm_nonneg _) (h1 a)).trans k1
   obtain ⟨N, ⟨t, rfl⟩, -, -, h⟩ := h
   obtain ⟨u, rfl⟩ := IsNoetherian.noetherian I
@@ -45,7 +50,7 @@ theorem hasSum_of_sumI {R : Type} [CommRing R] [IsNoetherianRing R] {I : Ideal R
       intro y hy
       rw [pow_succ', Submodule.mul_smul] at hy
       refine Submodule.smul_induction_on hy (fun a ha z hz => ?_)
-        (fun y z k1 k2 => by rw [map_add]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le k1 k2))
+        (fun y z k1 k2 => by rw [map_add (f := _)]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le k1 k2))
       rw [hg, norm_mul, pow_succ', _root_.mul_assoc]
       exact mul_le_mul (hI a ha) (ih z hz) (norm_nonneg _) hr0
   refine Metric.tendsto_nhds.2 fun e he => ?_
@@ -55,7 +60,8 @@ theorem hasSum_of_sumI {R : Type} [CommRing R] [IsNoetherianRing R] {I : Ideal R
   obtain ⟨S, hS⟩ := h n
   refine Filter.mem_of_superset (Filter.mem_atTop S) fun T hT => ?_
   show dist _ _ < e
-  rw [dist_comm, dist_eq_norm, ← map_sum, ← map_sub]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [dist_comm, dist_eq_norm, ← map_sum, ← map_sub]
   exact (hP n _ (hS T hT)).trans_lt hn
 
 theorem hasSum_fst_snd : ∀ (V : Type) [CommRing V] [IsDomain V] [IsNoetherianRing V] (I : Ideal V) (C : Type) [NormedField C] [IsUltrametricDist C] [Algebra (FractionRing V) C], CExt V I C → ∀ {Ix : Type} (x : Ix → DualNumber V) (s : DualNumber V), GlobalTheory.UT.SumI I x s → HasSum (fun i => toF V C (x i).fst) (toF V C s.fst) ∧ HasSum (fun i => toF V C (x i).snd) (toF V C s.snd) := by

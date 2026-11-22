@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsCoinv
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsCoinv
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.RestTerms
@@ -8,8 +13,8 @@ open MvPolynomial Finset
 
 noncomputable section
 
-open Coinv in
 
+open Coinv in
 theorem CoinvIdealRepresentation.proof : CoinvIdealRepresentation.Statement := by
   intro K _ f n J hJ
   induction hJ using Submodule.span_induction with

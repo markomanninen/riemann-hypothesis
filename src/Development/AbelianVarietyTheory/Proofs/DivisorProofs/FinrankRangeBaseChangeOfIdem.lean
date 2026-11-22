@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToBaseChangePtsBijective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsHopfIdealKerIdealOfBialgHom
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerAppEqBialgHomKernelIdealOfIdempotents
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerIdealFinrankEqPowOfIdempotent
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCocommOfSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FactorClosedImmersion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToBaseChangePtsBijective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsHopfIdealKerIdealOfBialgHom
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerAppEqBialgHomKernelIdealOfIdempotents
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerIdealFinrankEqPowOfIdempotent
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCocommOfSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FactorClosedImmersion
+
+@[expose] public section
+
 open CategoryTheory Opposite Matrix GlobalTheory GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 open TensorProduct Coalgebra Bialgebra GlobalTheory.PDiv
 
@@ -117,8 +122,7 @@ theorem bcMap_toLinearMap {O : Type} [CommRing O] (O' : Type) [CommRing O'] [Alg
       ((f : A →ₐ[O] A).toLinearMap).baseChange O' := by
   refine LinearMap.ext fun x => ?_
   induction x with
-  | zero => simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   | tmul r a => exact bcMap_tmul f r a
 
 variable (p : ℕ) [Fact p.Prime] (O : Type) [CommRing O] [IsLocalRing O]
@@ -184,7 +188,7 @@ theorem idempotent_split_of_isLocalRing (G : PDivGroup p O) (u : G ⟶ G) (hu : 
   obtain ⟨hfac, hcan⟩ := factor_closedImmersion p O K G i (fun n => (hi n).1)
   obtain ⟨q, hq⟩ := hfac G u (fun n => by rw [(hi n).2, hker n])
   have hiv : i ≫ v = 0 := by
-    refine hom_ext fun n => BialgHom.ext fun b => ?_
+    refine Hom.ext (funext fun n => BialgHom.ext fun b => ?_)
     have h := (kerIdeal_le_ker_iff (v.app n) (i.app n : G.A n →ₐ[O] K.A n)).1 (hi n).2.ge b
     change i.app n (v.app n b) = (1 : WithConv (G.A n →ₐc[O] K.A n)).ofConv b
     refine Eq.trans h ?_

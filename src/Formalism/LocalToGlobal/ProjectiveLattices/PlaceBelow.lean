@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.ChartDirectionsIntegral
-import Formalism.LocalToGlobal.ProjectiveLattices.VAtVNeBot
-import Formalism.LocalToGlobal.ProjectiveLattices.ThProps
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.ChartDirectionsIntegral
+public import Formalism.LocalToGlobal.ProjectiveLattices.VAtVNeBot
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThProps
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,8 +20,8 @@ section Copies
 variable {R : Type} [CommRing R] {d : ℕ}
 
 def DofN (F : Fin d → PS R 2 d) {n : ℕ} (b : Fin n) (u : Fin d → R) (f : PS R n d) : PS R n d :=
-  ∑ j : Fin d, (∑ i : Fin d, C (u i) * ev (n := n) ![pt R d b, 0] (pderiv R ((1 : Fin 2), i) (F j))) *
-    pderiv R (b, j) f
+  ∑ j : Fin d, (∑ i : Fin d, C (u i) * ev (n := n) ![pt R d b, 0] (pderiv (R := R) ((1 : Fin 2), i) (F j))) *
+    pderiv (R := R) (b, j) f
 
 def DmonN (F : Fin d → PS R 2 d) {n : ℕ} {ι : Type} [Fintype ι] (cp : ι → Fin n) (u : ι → Fin d → R)
     (m : ι →₀ ℕ) (f : PS R n d) : PS R n d :=
@@ -94,19 +98,19 @@ def IsRam (p : ℕ) : Prop := p ∈ Q.sm ∨ p = Q.q1 ∨ p = Q.dd
 
 def IsBad (p : ℕ) : Prop := Q.IsRam p ∨ p = Q.g1 ∨ p = Q.g2
 
-open Classical in
 
+open Classical in
 def cP (DF : ℕ) (p : ℕ) : ℕ := if Q.IsRam p then ⌈Q.vd p * (DF : ℝ)⌉.toNat else 0
 
-open Classical in
 
+open Classical in
 def nuN (DFL : ℕ) (nu : ℝ) (p : ℕ) : ℝ :=
   if p = Q.g1 then (DFL : ℝ) / ((Q.g1 : ℝ) - 1)
   else if p = Q.g2 then (DFL : ℝ) / ((Q.g2 : ℝ) - 1)
   else nu + (Q.cP DFL p : ℝ)
 
-open Classical in
 
+open Classical in
 def eLam (eL : ℕ) (nuStar : ℝ) (p : ℕ) : ℕ :=
   ⌈(eL : ℝ) * (Q.T : ℝ) * (nuStar + if Q.IsBad p then 1 else 0)⌉.toNat
 

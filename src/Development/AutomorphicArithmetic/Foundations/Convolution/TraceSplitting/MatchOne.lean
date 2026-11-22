@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.MatchOne
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.MatchOne
+
+@[expose] public section
 
 theorem UpperTheory.ConvolutionTheory.T.matchOne :
     UpperTheory.ConvolutionTheory.T.MatchOne := by

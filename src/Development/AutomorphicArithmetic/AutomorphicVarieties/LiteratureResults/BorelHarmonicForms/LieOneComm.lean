@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible UpperTheory.V.Lit UpperTheory.V.Lit.Bor
 open scoped TensorProduct
 
 section
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 private theorem lie_left (X : Lie E a) (φ : Sm E a) (h g : GA E a) (hφ : ∀ g, φ.1 (h * g) = φ.1 g) :
     (lie E a X φ).1 (h * g) = (lie E a X φ).1 g := by
@@ -35,21 +40,20 @@ private theorem level_lie (X : Lie E a) (φ : Sm E a) (h : IsOpen {k | act (.fin
       one_mem' := by simp
       mul_mem' := fun {x y} hx hy => by
         change ρ (x * y) ψ = ψ
-        rw [map_mul, Module.End.mul_apply, hy, hx]
+        rw [map_mul, mul_apply_eq_comp, hy, hx]
       inv_mem' := fun {x} hx => by
         change ρ x⁻¹ ψ = ψ
         have hx' : ρ x ψ = ψ := hx
-        conv_lhs => rw [← hx', ← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply] }
+        conv_lhs => rw [← hx', ← mul_apply_eq_comp, ← map_mul, inv_mul_cancel, map_one, one_apply_eq_self] }
   have hle : S φ ≤ S (lie E a X φ) := fun k hk => (lie_fin X k φ).trans (congrArg (lie E a X) hk)
   exact Subgroup.isOpen_mono hle h
 
-private theorem isSq_lie (r : ℝ) (X : Lie E a) (φ : Sm E a) (h : IsSq r φ) : IsSq r (lie E a X φ) where
-  left γ g := lie_left X φ _ g (h.left γ)
-  level := level_lie X φ h.level
-  one := by rw [lie_one_comm, h.one, map_smul]
-  sq l := by
+private theorem isSq_lie (r : ℝ) (X : Lie E a) (φ : Sm E a) (h : IsSq r φ) : IsSq r (lie E a X φ) := by
+  refine ⟨fun γ g => lie_left X φ _ g (h.left γ), level_lie X φ h.level, ?_, ?_⟩
+  · rw [lie_one_comm, h.one, map_smul]
+  · intro l
     have := h.sq (l ++ [X])
-    rwa [List.map_append, List.prod_append, List.map_singleton, List.prod_singleton, Module.End.mul_apply] at this
+    rwa [List.map_append, List.prod_append, List.map_singleton, List.prod_singleton, mul_apply_eq_comp] at this
 
 end
 

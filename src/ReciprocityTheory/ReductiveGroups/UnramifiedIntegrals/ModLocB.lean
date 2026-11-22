@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGDefs
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorHensel
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGDefs
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorHensel
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical UpperHalfPlane

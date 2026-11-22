@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.MuProd
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.PenultimateKernelDiamondInvariant
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.MuProd
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.PenultimateKernelDiamondInvariant
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -102,7 +106,7 @@ theorem mh_val_lt {w : E} (hI : IntAt P w) (h0 : redP P w = 0) : P.valuation E w
     refine ⟨Ideal.Quotient.mk P.asIdeal r * (Ideal.Quotient.mk P.asIdeal s)⁻¹, r, s, hs, hrs, ?_⟩
     rw [mul_comm, mul_assoc, inv_mul_cancel₀ hs0, mul_one]
   unfold redP at h0
-  rw [dif_pos hex] at h0
+  rw [dite_eq_left hex] at h0
   obtain ⟨r', s', hs', hrs', hmk⟩ := hex.choose_spec
   rw [h0, mul_zero] at hmk
   have hr' : r' ∈ P.asIdeal := Ideal.Quotient.eq_zero_iff_mem.mp hmk.symm

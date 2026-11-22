@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.BesselHermitianTheta.IsAutFunDef
-import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
+module
+
+public import Formalism.LocalToGlobal.BesselHermitianTheta.IsAutFunDef
+public import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
+
+@[expose] public section
 
 noncomputable section
 

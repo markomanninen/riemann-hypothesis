@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudADef
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.TieDefs
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwrowLemmas
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudADef
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.TieDefs
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwrowLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,28 +30,29 @@ def sub2 (K : Type) [Field K] (r : ℕ) :
   aeval fun w => map (blockEmb K (k := r) (n := r) w.1).toRingHom (subY K r (X w.2))
 
 theorem coeff_sum_monomial_linear {K B σ : Type} [Field K] [CommRing B] [Algebra K B] (L : B →ₗ[K] K) (f : MvPolynomial σ B)
-    (u : σ →₀ ℕ) : coeff u (∑ u' ∈ f.support, monomial u' (L (coeff u' f))) = L (coeff u f) := by
+    (u : σ →₀ ℕ) : AddMonoidAlgebra.coeff (∑ u' ∈ f.support, monomial u' (L (AddMonoidAlgebra.coeff f u'))) u = L (AddMonoidAlgebra.coeff f u) := by
   classical
   rw [coeff_sum]
   simp only [coeff_monomial]
   rw [Finset.sum_ite_eq']
   split_ifs with hu
   · rfl
-  · have h0 : coeff u f = 0 := by simpa [mem_support_iff] using hu
+  · have h0 : AddMonoidAlgebra.coeff f u = 0 := by simpa [mem_support_iff] using hu
     rw [h0, map_zero]
 
 def lcoef {K B σ : Type} [Field K] [CommRing B] [Algebra K B] (L : B →ₗ[K] K) :
     MvPolynomial σ B →ₗ[K] MvPolynomial σ K where
-  toFun f := ∑ u ∈ f.support, monomial u (L (coeff u f))
+  toFun f := ∑ u ∈ f.support, monomial u (L (AddMonoidAlgebra.coeff f u))
   map_add' f g := by
     ext u
-    rw [coeff_add, coeff_sum_monomial_linear, coeff_sum_monomial_linear, coeff_sum_monomial_linear, coeff_add, map_add]
+    simp only [AddMonoidAlgebra.coeff_add (R := K), Finsupp.add_apply, coeff_sum_monomial_linear]
+    simp only [AddMonoidAlgebra.coeff_add, Finsupp.add_apply, map_add]
   map_smul' c f := by
     ext u
     rw [RingHom.id_apply, coeff_smul, coeff_sum_monomial_linear, coeff_sum_monomial_linear, coeff_smul, map_smul]
 
 theorem coeff_lcoef {K B σ : Type} [Field K] [CommRing B] [Algebra K B] (L : B →ₗ[K] K) (f : MvPolynomial σ B)
-    (u : σ →₀ ℕ) : coeff u (lcoef L f) = L (coeff u f) :=
+    (u : σ →₀ ℕ) : AddMonoidAlgebra.coeff (lcoef L f) u = L (AddMonoidAlgebra.coeff f u) :=
   coeff_sum_monomial_linear L f u
 
 def lamOf (K : Type) [Field K] (r : ℕ) (L : MvPolynomial (Bool × (Fin r × Fin r)) K →ₗ[K] K) :
@@ -62,7 +67,7 @@ def resY (A : Type) [CommRing A] (r : ℕ) (s : MvPolynomial (Fin (r + 1 + 1) ×
   eval (idPoint (MvPolynomial (Fin r × Fin r) A) (r + 1 + 1) (r + 1 + 1)) (subY A r s)
 
 def RowA {K : Type} [CommRing K] {k n : ℕ} (a : Fin k) (f : MvPolynomial (Fin k × Fin n) K) (d : ℕ) : Prop :=
-  ∀ u, coeff u f ≠ 0 → rowDeg u a = d
+  ∀ u, AddMonoidAlgebra.coeff f u ≠ 0 → rowDeg u a = d
 
 def shapeC {r : ℕ} (c : ℕ) (β : Fin r → ℕ) : Fin (r + 1 + 1) → ℕ :=
   fun t => if t = 0 then c else match midOf t with
@@ -88,7 +93,7 @@ def QPh : Prop :=
 
 def SubCoeffP : Prop :=
   ∀ (A : Type) [CommRing A] (r : ℕ) (ν : Fin (r + 1 + 1) → ℕ) (v : MvPolynomial (Fin (r + 1 + 1) × Fin (r + 1 + 1)) A),
-    v ∈ dualWeyl A (r + 1 + 1) (r + 1 + 1) ν → ∀ u, coeff u (subY A r v) ∈ dualWeyl A r r (fun j => ν (midI r j))
+    v ∈ dualWeyl A (r + 1 + 1) (r + 1 + 1) ν → ∀ u, AddMonoidAlgebra.coeff (subY A r v) u ∈ dualWeyl A r r (fun j => ν (midI r j))
 
 def SubMapP : Prop :=
   ∀ (A B : Type) [CommRing A] [CommRing B] (φ : A →+* B) (r : ℕ) (v : MvPolynomial (Fin (r + 1 + 1) × Fin (r + 1 + 1)) A),
@@ -101,9 +106,9 @@ def SubRowP : Prop :=
 def LamCoeffP : Prop :=
   ∀ (K : Type) [Field K] (r : ℕ) (L : MvPolynomial (Bool × (Fin r × Fin r)) K →ₗ[K] K)
     (v t : MvPolynomial (Fin (r + 1 + 1) × Fin (r + 1 + 1)) K) (u : Fin (r + 1 + 1) × Fin (r + 1 + 1) →₀ ℕ),
-    coeff u (lamOf K r L (blockEmb K true v * blockEmb K false t)) =
+    AddMonoidAlgebra.coeff (lamOf K r L (blockEmb K true v * blockEmb K false t)) u =
       ∑ x ∈ Finset.HasAntidiagonal.antidiagonal u,
-        L (blockEmb K true (coeff x.1 (subY K r v)) * blockEmb K false (coeff x.2 (subY K r t)))
+        L (blockEmb K true (AddMonoidAlgebra.coeff (subY K r v) x.1) * blockEmb K false (AddMonoidAlgebra.coeff (subY K r t) x.2))
 
 def LamEquivP : Prop :=
   ∀ (K : Type) [Field K] (r : ℕ) (L : MvPolynomial (Bool × (Fin r × Fin r)) K →ₗ[K] K)
@@ -153,7 +158,7 @@ def DetDivP : Prop :=
 def IntCapP : Prop :=
   ∀ (O K : Type) [CommRing O] [Field K] [Algebra O K], Function.Injective (algebraMap O K) →
     ∀ (k : ℕ) (ν : Fin k → ℕ) (F : MvPolynomial (Fin k × Fin k) K), F ∈ dualWeyl K k k ν →
-      (∀ u, coeff u F ∈ Set.range (algebraMap O K)) → F ∈ intO O k ν
+      (∀ u, AddMonoidAlgebra.coeff F u ∈ Set.range (algebraMap O K)) → F ∈ intO O k ν
 
 def HwMulP : Prop :=
   ∀ (A : Type) [CommRing A] (k : ℕ) (ν ν' : Fin k → ℕ), Antitone ν → Antitone ν' →

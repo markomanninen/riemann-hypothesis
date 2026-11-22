@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -12,7 +16,7 @@ theorem maxIdeal_pow_dvd_natCast_of_integers :
   intro p hp C _ _ v O _ _ hv A _ _ _ _ a ha
 
   set J : Ideal O := (maximalIdeal A).comap (algebraMap O A) with hJdef
-  haveI : J.IsMaximal := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (maximalIdeal A)
+  haveI : J.IsMaximal := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (algebraMap _ _) (RingHom.Finite.to_isIntegral (RingHom.finite_algebraMap.mpr inferInstance)) (maximalIdeal A)
 
   have hJp : ∀ c ∈ J, ∃ k : ℕ, (p : O) ∣ c ^ k := by
     intro c hc
@@ -46,7 +50,8 @@ theorem maxIdeal_pow_dvd_natCast_of_integers :
     have hQc : Q.comap (algebraMap O A) = J :=
       ((inferInstance : J.IsMaximal).eq_of_le (Ideal.IsPrime.comap (algebraMap O A)).ne_top hle).symm
     haveI : (Q.comap (algebraMap O A)).IsMaximal := by rw [hQc]; infer_instance
-    haveI : Q.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap Q this
+    haveI : Q.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap
+      (algebraMap O A) (RingHom.Finite.to_isIntegral (RingHom.finite_algebraMap.mpr inferInstance)) Q this
     rw [IsLocalRing.eq_maximalIdeal this]
     exact ha
   have h2 : a ∈ (Ideal.span {(p : A)}).radical := by

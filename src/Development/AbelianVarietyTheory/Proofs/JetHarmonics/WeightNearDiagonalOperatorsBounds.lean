@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WtNearOrthDecompStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WtNearOrthDecompStatement
+
+@[expose] public section
+
 open Finset BranchingSupport Formalism.REAL Formalism.QuantumDeterminants
 open scoped InnerProductSpace
 
@@ -33,7 +38,8 @@ theorem wtNear_diag_bounds : ∀ (M : Type) [NormedAddCommGroup M] [InnerProduct
     simpa [← hsum] using this
   have hE : ∀ a, E a a w = ∑ ω ∈ T, (ω a : ℂ) • x ω := by
     intro a
-    rw [hsum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsum, map_sum]
     exact Finset.sum_congr rfl fun ω hω => (hx ω hω).2 a
   have hE2 : ∀ a, ‖E a a w‖ ^ 2 = ∑ ω ∈ T, ω a ^ 2 * ‖x ω‖ ^ 2 := by
     intro a

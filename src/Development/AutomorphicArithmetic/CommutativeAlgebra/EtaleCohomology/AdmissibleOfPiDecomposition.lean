@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.NilToPhiAlt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.AdmissibleSequenceExact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsModelOfMem
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.NilToPhiAlt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.AdmissibleSequenceExact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsModelOfMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem bound_cr {l : ℕ} [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P) (h
       induction x using TensorProduct.induction_on with
       | zero => simp
       | tmul u b => simp [m]
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]
     rw [e]
     exact Module.Flat.lTensor_preserves_injective_linearMap c hc
   have hcomm : ∀ (g : ↥(GK K)) x, AlgebraTensorModule.map (ρ g) (σSt P K g) (m x) = m (AlgebraTensorModule.map (ρ g) (σCr P K g) x) := by
@@ -31,7 +35,7 @@ theorem bound_cr {l : ℕ} [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P) (h
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul u b => simp [m, hcg]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have hmem : ∀ x ∈ Dinv (σCr P K) ρ, m x ∈ Dinv (σSt P K) ρ := by
     intro x hx
     rw [mem_Dinv] at hx ⊢
@@ -73,7 +77,7 @@ theorem tm_mem {ρ : Representation L G X} {ρ' : Representation L G Y} {f : X �
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul u b => simp [hf g u]
-    | add y z hy hz => simp only [map_add, hy, hz]
+    | add y z hy hz => simp only [map_add (f := _), hy, hz]
   rw [e, hx g]
 
 theorem tm_comp (f : X →ₗ[L] Y) (h : Y →ₗ[L] Z) (x : X ⊗[F] B) :
@@ -81,13 +85,13 @@ theorem tm_comp (f : X →ₗ[L] Y) (h : Y →ₗ[L] Z) (x : X ⊗[F] B) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul u b => simp
-  | add y z hy hz => simp only [map_add, hy, hz]
+  | add y z hy hz => simp only [map_add (f := _), hy, hz]
 
 theorem tm_zero (x : X ⊗[F] B) : tm (F := F) (B := B) (0 : X →ₗ[L] Y) x = 0 := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul u b => simp
-  | add y z hy hz => simp only [map_add, hy, hz, add_zero]
+  | add y z hy hz => simp only [map_add (f := _), hy, hz, add_zero]
 
 theorem admissible_of_pi_decomposition {e : ℕ} (hB : Bound σ L e) {W : Type} [AddCommGroup W] [Module L W] [Module F W] [IsScalarTower F L W]
     [Module.Finite L W] (ρ : Representation L G W) {I : Type} [Fintype I] [DecidableEq I] (C : I → Type)
@@ -127,7 +131,8 @@ theorem admissible_of_pi_decomposition {e : ℕ} (hB : Bound σ L e) {W : Type} 
     funext j
     apply Subtype.ext
     show tm (F := F) (B := B) (pr j) (∑ i, tm (F := F) (B := B) (inc i) (y i).1) = (y j).1
-    rw [map_sum, Finset.sum_eq_single j]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single j]
     · rw [tm_comp, ho]
       simp
     · intro i _ h
@@ -380,94 +385,126 @@ end UpperTheory.Ru.crystallineComparison.JQ
 open UpperTheory.Ru.crystallineComparison.JQ in
 theorem UpperTheory.Ru.crystallineComparison.joinQ :
     UpperTheory.Ru.crystallineComparison.JoinQ := by
-  intro l _ P AI hT E Ω _ _ _ Gw O _ _ _ Bw f q n ϑ a r₀ r _ hgr hin
-  obtain ⟨V, _, _, _, ρ, T, b, hcr, hann, hb, hbg, hbT⟩ := hin
-  obtain ⟨c, hc⟩ := hgr
-  obtain ⟨d, v, M, hM, hMg, hMT⟩ := coords ρ T Bw.e ϑ (fun g => (r₀ g : Matrix (Fin a) (Fin a) (Om l))) b hb hbg hbT
-  let Θ : Matrix (Fin 1) (Fin (n + 1)) (Om l) := Matrix.of fun _ j => ϑ j
-  let L : FinExt l := entExt (entExt Bw.LL M) Θ
-  haveI := L.2
-  let φ : ↥L.1 →+* Om l := algebraMap ↥L.1 (Om l)
-  have hle : (entExt Bw.LL M).1 ≤ L.1 := le_entExt _ _
-  have hLL : Bw.LL.1 ≤ L.1 := (le_entExt _ _).trans hle
-  have hMmem : ∀ i j, M i j ∈ L.1 := fun i j => hle (mem_entExt _ _ i j)
-  have hθmem : ∀ j ≤ n, ϑ j ∈ L.1 := fun j hj => mem_entExt (entExt Bw.LL M) Θ 0 ⟨j, Nat.lt_succ_of_le hj⟩
-  let M' : Matrix (Fin d) (Fin a) ↥L.1 := Matrix.of fun i j => ⟨M i j, hMmem i j⟩
-  have hM' : M'.map φ = M := Matrix.ext fun i j => rfl
-  let ϑ' : ℕ → ↥L.1 := fun j => if h : j ≤ n then ⟨ϑ j, hθmem j h⟩ else 0
-  have hϑ' : ∀ j ≤ n, φ (ϑ' j) = ϑ j := fun j hj => by simp only [ϑ', dif_pos hj]; rfl
-  have hinjM' : Function.Injective M'.mulVec := by
-    intro x y hxy
-    have h1 : ∀ w : Fin a → ↥L.1, M *ᵥ (fun i => φ (w i)) = fun i => φ ((M' *ᵥ w) i) :=
-      fun w => funext fun i => by rw [← hM']; exact (RingHom.map_mulVec φ M' w i).symm
-    have h2 := hM (show M *ᵥ (fun i => φ (x i)) = M *ᵥ (fun i => φ (y i)) by rw [h1, h1, hxy])
-    exact funext fun i => φ.injective (congrFun h2 i)
-  obtain ⟨N, hN⟩ := exists_leftInv M' hinjM'
-  let RL : ↥(GK Bw.Kw) → Matrix (Fin d) (Fin d) ↥L.1 :=
-    fun g => (LinearMap.toMatrix v v (ρ g)).map (algebraMap ℚ_[l] ↥L.1)
-  have hRφ : ∀ g, (RL g).map φ = (LinearMap.toMatrix v v (ρ g)).map (algebraMap ℚ_[l] (Om l)) := fun g => by
-    simp only [RL, Matrix.map_map]; congr 1
-  have hr₀ : ∀ g, (r₀ g : Matrix (Fin a) (Fin a) (Om l)) = (N * RL (Bw.e g) * M').map φ := fun g => by
-    rw [Matrix.map_mul, Matrix.map_mul, hRφ, hM', Matrix.mul_assoc, hMg, ← Matrix.mul_assoc, ← hM', ← Matrix.map_mul, hN,
-      Matrix.map_one φ (map_zero φ) (map_one φ), Matrix.one_mul]
-  have hmem₀ : ∀ g i j, (r₀ g : Matrix (Fin a) (Fin a) (Om l)) i j ∈ L.1 := fun g i j => by
-    rw [hr₀ g]; exact ((N * RL (Bw.e g) * M') i j).2
-  have hmem : ∀ g i j, (r g : Matrix (Fin a) (Fin a) (Om l)) i j ∈ L.1 := fun g i j => by
-    rw [((hc g).2 i j)]; split_ifs
-    · exact hmem₀ g i j
-    · exact L.1.zero_mem
-  obtain ⟨s₀, hs₀⟩ := exists_model_of_mem r₀ L hmem₀
-  obtain ⟨s, hs⟩ := exists_model_of_mem r L hmem
-  have hs₀g : ∀ g, ((s₀ g : GL (Fin a) ↥L.1) : Matrix (Fin a) (Fin a) ↥L.1).map φ = (r₀ g : Matrix (Fin a) (Fin a) (Om l)) :=
-    fun g => by rw [← hs₀]; rfl
-  have hsg : ∀ g, ((s g : GL (Fin a) ↥L.1) : Matrix (Fin a) (Fin a) ↥L.1).map φ = (r g : Matrix (Fin a) (Fin a) (Om l)) :=
-    fun g => by rw [← hs]; rfl
-  have hinjMap : ∀ {m k : ℕ}, Function.Injective (fun X : Matrix (Fin m) (Fin k) ↥L.1 => X.map φ) :=
-    fun {m k} X Y h => Matrix.ext fun i j => φ.injective (congrFun (congrFun h i) j)
-  have hintL : ∀ g, RL (Bw.e g) * M' = M' * (s₀ g : Matrix (Fin a) (Fin a) ↥L.1) := fun g =>
-    hinjMap (by simp only [Matrix.map_mul]; rw [hs₀g, hRφ, hM']; exact hMg g)
-  have hTL : ∀ j ≤ n, (LinearMap.toMatrix v v (T j)).map (algebraMap ℚ_[l] ↥L.1) * M' = ϑ' j • M' := fun j hj =>
-    hinjMap (by
-      simp only [Matrix.map_mul]
-      have e1 : ((LinearMap.toMatrix v v (T j)).map (algebraMap ℚ_[l] ↥L.1)).map φ =
-          (LinearMap.toMatrix v v (T j)).map (algebraMap ℚ_[l] (Om l)) := by simp only [Matrix.map_map]; congr 1
-      rw [e1, hM', hMT j hj]
-      ext x y
-      show ϑ j * M x y = φ (ϑ' j * M' x y)
-      rw [map_mul, hϑ' j hj]
-      rfl)
-  let ρU := Bw.repE L s₀
-  let ρW := Bw.repE L s
-  obtain ⟨i, hi, hiG, hiT⟩ := descend v ρ T ρU (fun g => (s₀ (Bw.e.symm g) : Matrix (Fin a) (Fin a) ↥L.1))
-    (fun _ _ => rfl) M' ϑ' hinjM' (fun g => by have := hintL (Bw.e.symm g); rwa [MulEquiv.apply_symm_apply] at this) hTL
-  have hAcr : admitted (σCr P Bw.Kw) (finrank ℚ_[l] ↥(K0 Bw.Kw)) ρ := admissible_of_crystalline l P Bw.Kw V ρ hcr
-  obtain ⟨hBst, hcm⟩ := boundSt_holds l P AI hT Bw.Kw L
-  obtain ⟨hAst, hDst⟩ := stOfCr_holds l P AI hT Bw.Kw V ρ hAcr
-  have hBcr := bound_cr P AI hT Bw.Kw L
-  have hAL : admitted (σCr P Bw.Kw) (finrank ℚ_[l] ↥(K0 Bw.Kw)) (extRep ↥L.1 ρ) :=
-    ((annExt_of dinvExt_of) ℚ_[l] _ _ (σCr P Bw.Kw) (ψCr P f) ↥L.1 V ρ).1 (finrank ℚ_[l] ↥(K0 Bw.Kw)) hAcr
-  have hAU : admitted (σCr P Bw.Kw) (finrank ℚ_[l] ↥(K0 Bw.Kw)) ρU :=
-    (admissible_sequence_exact ℚ_[l] _ _ (σCr P Bw.Kw) ↥L.1 (finrank ℚ_[l] ↥(K0 Bw.Kw)) hBcr (Fin a → ↥L.1) (↥L.1 ⊗[ℚ_[l]] V) ρU (extRep ↥L.1 ρ) i hiG).1 hi hAL
-  have hGr : ∀ g, ((s₀ (Bw.e.symm g) : Matrix (Fin a) (Fin a) ↥L.1)).BlockTriangular c ∧
-      ∀ i j, (s (Bw.e.symm g) : Matrix (Fin a) (Fin a) ↥L.1) i j =
-        if c i = c j then (s₀ (Bw.e.symm g) : Matrix (Fin a) (Fin a) ↥L.1) i j else 0 := by
-    intro g
-    have hx : ∀ (h : ↥Gw) i j, φ ((s₀ h : Matrix (Fin a) (Fin a) ↥L.1) i j) = (r₀ h : Matrix (Fin a) (Fin a) (Om l)) i j :=
-      fun h i j => congrFun (congrFun (hs₀g h) i) j
-    have hy : ∀ (h : ↥Gw) i j, φ ((s h : Matrix (Fin a) (Fin a) ↥L.1) i j) = (r h : Matrix (Fin a) (Fin a) (Om l)) i j :=
-      fun h i j => congrFun (congrFun (hsg h) i) j
-    refine ⟨fun i j hij => φ.injective ?_, fun i j => φ.injective ?_⟩
-    · rw [hx, map_zero]; exact (hc _).1 hij
-    · rw [hy, (hc _).2 i j]
-      split_ifs
-      · rw [hx]
-      · rw [map_zero]
-  obtain ⟨I, _, _, C, _, _, _, _, ρC, Eq, hE, hS⟩ := blocks ℚ_[l] c (fun g => (s₀ (Bw.e.symm g) : Matrix (Fin a) (Fin a) ↥L.1))
-    (fun g => (s (Bw.e.symm g) : Matrix (Fin a) (Fin a) ↥L.1)) ρU ρW (fun _ _ => rfl) (fun _ _ => rfl)
-    (fun g => (hGr g).1) (fun g => (hGr g).2)
-  have hAC : ∀ t, admitted (σCr P Bw.Kw) (finrank ℚ_[l] ↥(K0 Bw.Kw)) (ρC t) := fun t =>
-    (nilSubq_of admissible_sequence_exact nilEmb_of ℚ_[l] _ _ (σCr P Bw.Kw) (ψCr P f) ↥L.1 (finrank ℚ_[l] ↥(K0 Bw.Kw)) hBcr _ _ ρU (ρC t) (hS t) hAU).1
-  have hAW : admitted (σCr P Bw.Kw) (finrank ℚ_[l] ↥(K0 Bw.Kw)) ρW := admissible_of_pi_decomposition (σCr P Bw.Kw) hBcr ρW C ρC Eq hE hAC
-  refine ⟨L, s, ϑ', ⟨hLL, hs⟩, crys_of_adm P Bw.Kw ρW hAW, hϑ', ?_⟩
-  exact nil_scalar (σSt P Bw.Kw) (ψSt P f) (hcm f) hBst ρ q n T hAst (hDst f q n T hann) ρU i ϑ' hiG hi hiT ρW C ρC
-    (fun t => LinearMap.proj t ∘ₗ Eq.toLinearMap) hS hE (fun w hw => Eq.injective (funext fun t => by simpa using hw t))
+  set_option synthInstance.maxHeartbeats 200000 in
+    intro l _ P AI hT E Ω _ _ _ Gw O _ _ _ Bw f q n ϑ a r₀ r _ hgr hin
+    obtain ⟨V, _, _, _, ρ, T, b, hcr, hann, hb, hbg, hbT⟩ := hin
+    obtain ⟨c, hc⟩ := hgr
+    obtain ⟨d, v, M, hM, hMg, hMT⟩ := coords ρ T Bw.e ϑ (fun g => (r₀ g : Matrix (Fin a) (Fin a) (Om l))) b hb hbg hbT
+    let entExt (L : FinExt l) {d a : ℕ} (M : Matrix (Fin d) (Fin a) (Om l)) : FinExt l :=
+      ⟨L.1 ⊔ IntermediateField.adjoin ℚ_[l] (Set.range fun p : Fin d × Fin a => M p.1 p.2),
+        haveI := L.2
+        haveI : FiniteDimensional ℚ_[l]
+            (IntermediateField.adjoin ℚ_[l] (Set.range fun p : Fin d × Fin a => M p.1 p.2)) :=
+          IntermediateField.finiteDimensional_adjoin fun x _ => Algebra.IsIntegral.isIntegral x
+        IntermediateField.finiteDimensional_sup _ _⟩
+    have le_entExt (L : FinExt l) {d a : ℕ} (M : Matrix (Fin d) (Fin a) (Om l)) :
+        L.1 ≤ (entExt L M).1 := le_sup_left
+    have mem_entExt (L : FinExt l) {d a : ℕ} (M : Matrix (Fin d) (Fin a) (Om l)) (i : Fin d) (j : Fin a) :
+        M i j ∈ (entExt L M).1 :=
+      (le_sup_right : IntermediateField.adjoin ℚ_[l] _ ≤ (entExt L M).1)
+        (IntermediateField.subset_adjoin _ _ ⟨(i, j), rfl⟩)
+    let Θ : Matrix (Fin 1) (Fin (n + 1)) (Om l) := Matrix.of fun _ j => ϑ j
+    let L : FinExt l := entExt (entExt Bw.LL M) Θ
+    haveI := L.2
+    let φ : ↥L.1 →+* Om l := algebraMap ↥L.1 (Om l)
+    have hle : (entExt Bw.LL M).1 ≤ L.1 := le_entExt _ _
+    have hLL : Bw.LL.1 ≤ L.1 := (le_entExt _ _).trans hle
+    have hMmem : ∀ i j, M i j ∈ L.1 := fun i j => hle (mem_entExt _ _ i j)
+    have hθmem : ∀ j ≤ n, ϑ j ∈ L.1 := fun j hj => mem_entExt (entExt Bw.LL M) Θ 0 ⟨j, Nat.lt_succ_of_le hj⟩
+    let M' : Matrix (Fin d) (Fin a) ↥L.1 := Matrix.of fun i j => ⟨M i j, hMmem i j⟩
+    have hM' : M'.map φ = M := Matrix.ext fun i j => rfl
+    let ϑ' : ℕ → ↥L.1 := fun j => if h : j ≤ n then ⟨ϑ j, hθmem j h⟩ else 0
+    have hϑ' : ∀ j ≤ n, φ (ϑ' j) = ϑ j := fun j hj => by simp only [ϑ', dif_pos hj]; rfl
+    have hinjM' : Function.Injective M'.mulVec := by
+      intro x y hxy
+      have h1 : ∀ w : Fin a → ↥L.1, M *ᵥ (fun i => φ (w i)) = fun i => φ ((M' *ᵥ w) i) :=
+        fun w => funext fun i => by rw [← hM']; exact (RingHom.map_mulVec φ M' w i).symm
+      have h2 := hM (show M *ᵥ (fun i => φ (x i)) = M *ᵥ (fun i => φ (y i)) by rw [h1, h1, hxy])
+      exact funext fun i => φ.injective (congrFun h2 i)
+    obtain ⟨N, hN⟩ := exists_leftInv M' hinjM'
+    let RL : ↥(GK Bw.Kw) → Matrix (Fin d) (Fin d) ↥L.1 :=
+      fun g => (LinearMap.toMatrix v v (ρ g)).map (algebraMap ℚ_[l] ↥L.1)
+    have hRφ : ∀ g, (RL g).map φ = (LinearMap.toMatrix v v (ρ g)).map (algebraMap ℚ_[l] (Om l)) := fun g => by
+      simp only [RL, Matrix.map_map]; congr 1
+    have hr₀ : ∀ g, (r₀ g : Matrix (Fin a) (Fin a) (Om l)) = (N * RL (Bw.e g) * M').map φ := fun g => by
+      rw [Matrix.map_mul, Matrix.map_mul, hRφ, hM', Matrix.mul_assoc, hMg, ← Matrix.mul_assoc, ← hM', ← Matrix.map_mul, hN,
+        Matrix.map_one φ (map_zero φ) (map_one φ), Matrix.one_mul]
+    have hmem₀ : ∀ g i j, (r₀ g : Matrix (Fin a) (Fin a) (Om l)) i j ∈ L.1 := fun g i j => by
+      rw [hr₀ g]; exact ((N * RL (Bw.e g) * M') i j).2
+    have hmem : ∀ g i j, (r g : Matrix (Fin a) (Fin a) (Om l)) i j ∈ L.1 := fun g i j => by
+      rw [((hc g).2 i j)]; split_ifs
+      · exact hmem₀ g i j
+      · exact L.1.zero_mem
+    have exists_model_of_mem {Γ : Type} [Group Γ] {a : ℕ} (r : Γ →* GL (Fin a) (Om l)) (L : FinExt l)
+        (hL : ∀ g i j, (r g : Matrix (Fin a) (Fin a) (Om l)) i j ∈ L.1) :
+        ∃ ρ : Γ →* GL (Fin a) ↥L.1, Formalism.MainNotions.N.mapRep (algebraMap ↥L.1 (Om l)) ρ = r := by
+      let f : ↥L.1 →+* Om l := algebraMap ↥L.1 (Om l)
+      let M : Γ → Matrix (Fin a) (Fin a) ↥L.1 :=
+        fun g => Matrix.of fun i j => ⟨(r g : Matrix (Fin a) (Fin a) (Om l)) i j, hL g i j⟩
+      have hinj : Function.Injective (f.mapMatrix : Matrix (Fin a) (Fin a) ↥L.1 →+* Matrix (Fin a) (Fin a) (Om l)) :=
+        fun A B h => Matrix.ext fun i j => f.injective (by simpa using congrFun (congrFun h i) j)
+      have hM : ∀ g, f.mapMatrix (M g) = (r g : Matrix (Fin a) (Fin a) (Om l)) := fun g => Matrix.ext fun i j => rfl
+      let ρ : Γ →* GL (Fin a) ↥L.1 :=
+        { toFun := fun g => ⟨M g, M g⁻¹,
+            hinj (by rw [map_mul, hM, hM, map_one, ← Units.val_mul, ← map_mul, mul_inv_cancel, map_one, Units.val_one]),
+            hinj (by rw [map_mul, hM, hM, map_one, ← Units.val_mul, ← map_mul, inv_mul_cancel, map_one, Units.val_one])⟩
+          map_one' := Units.ext (hinj (by rw [hM, map_one, Units.val_one, Units.val_one, map_one]))
+          map_mul' := fun g h => Units.ext (hinj (by
+            show f.mapMatrix (M (g * h)) = f.mapMatrix (M g * M h)
+            rw [map_mul, hM, hM, hM, map_mul, Units.val_mul])) }
+      exact ⟨ρ, MonoidHom.ext fun g => Units.ext (hM g)⟩
+    obtain ⟨s₀, hs₀⟩ := exists_model_of_mem r₀ L hmem₀
+    obtain ⟨s, hs⟩ := exists_model_of_mem r L hmem
+    have hs₀g : ∀ g, ((s₀ g : GL (Fin a) ↥L.1) : Matrix (Fin a) (Fin a) ↥L.1).map φ = (r₀ g : Matrix (Fin a) (Fin a) (Om l)) :=
+      fun g => by rw [← hs₀]; rfl
+    have hsg : ∀ g, ((s g : GL (Fin a) ↥L.1) : Matrix (Fin a) (Fin a) ↥L.1).map φ = (r g : Matrix (Fin a) (Fin a) (Om l)) :=
+      fun g => by rw [← hs]; rfl
+    have hinjMap : ∀ {m k : ℕ}, Function.Injective (fun X : Matrix (Fin m) (Fin k) ↥L.1 => X.map φ) :=
+      fun {m k} X Y h => Matrix.ext fun i j => φ.injective (congrFun (congrFun h i) j)
+    have hintL : ∀ g, RL (Bw.e g) * M' = M' * (s₀ g : Matrix (Fin a) (Fin a) ↥L.1) := fun g =>
+      hinjMap (by simp only [Matrix.map_mul]; rw [hs₀g, hRφ, hM']; exact hMg g)
+    have hTL : ∀ j ≤ n, (LinearMap.toMatrix v v (T j)).map (algebraMap ℚ_[l] ↥L.1) * M' = ϑ' j • M' := fun j hj =>
+      hinjMap (by
+        simp only [Matrix.map_mul]
+        have e1 : ((LinearMap.toMatrix v v (T j)).map (algebraMap ℚ_[l] ↥L.1)).map φ =
+            (LinearMap.toMatrix v v (T j)).map (algebraMap ℚ_[l] (Om l)) := by simp only [Matrix.map_map]; congr 1
+        rw [e1, hM', hMT j hj]
+        ext x y
+        show ϑ j * M x y = φ (ϑ' j * M' x y)
+        rw [map_mul, hϑ' j hj]
+        rfl)
+    let ρU := Bw.repE L s₀
+    let ρW := Bw.repE L s
+    obtain ⟨i, hi, hiG, hiT⟩ := descend v ρ T ρU (fun g => (s₀ (Bw.e.symm g) : Matrix (Fin a) (Fin a) ↥L.1))
+      (fun _ _ => rfl) M' ϑ' hinjM' (fun g => by have := hintL (Bw.e.symm g); rwa [MulEquiv.apply_symm_apply] at this) hTL
+    have hAcr : admitted (σCr P Bw.Kw) (finrank ℚ_[l] ↥(K0 Bw.Kw)) ρ := admissible_of_crystalline l P Bw.Kw V ρ hcr
+    obtain ⟨hBst, hcm⟩ := boundSt_holds l P AI hT Bw.Kw L
+    obtain ⟨hAst, hDst⟩ := stOfCr_holds l P AI hT Bw.Kw V ρ hAcr
+    have hBcr := bound_cr P AI hT Bw.Kw L
+    have hAL : admitted (σCr P Bw.Kw) (finrank ℚ_[l] ↥(K0 Bw.Kw)) (extRep ↥L.1 ρ) :=
+      ((annExt_of dinvExt_of) ℚ_[l] _ _ (σCr P Bw.Kw) (ψCr P f) ↥L.1 V ρ).1 (finrank ℚ_[l] ↥(K0 Bw.Kw)) hAcr
+    have hAU : admitted (σCr P Bw.Kw) (finrank ℚ_[l] ↥(K0 Bw.Kw)) ρU :=
+      (admissible_sequence_exact ℚ_[l] _ _ (σCr P Bw.Kw) ↥L.1 (finrank ℚ_[l] ↥(K0 Bw.Kw)) hBcr (Fin a → ↥L.1) (↥L.1 ⊗[ℚ_[l]] V) ρU (extRep ↥L.1 ρ) i hiG).1 hi hAL
+    have hGr : ∀ g, ((s₀ (Bw.e.symm g) : Matrix (Fin a) (Fin a) ↥L.1)).BlockTriangular c ∧
+        ∀ i j, (s (Bw.e.symm g) : Matrix (Fin a) (Fin a) ↥L.1) i j =
+          if c i = c j then (s₀ (Bw.e.symm g) : Matrix (Fin a) (Fin a) ↥L.1) i j else 0 := by
+      intro g
+      have hx : ∀ (h : ↥Gw) i j, φ ((s₀ h : Matrix (Fin a) (Fin a) ↥L.1) i j) = (r₀ h : Matrix (Fin a) (Fin a) (Om l)) i j :=
+        fun h i j => congrFun (congrFun (hs₀g h) i) j
+      have hy : ∀ (h : ↥Gw) i j, φ ((s h : Matrix (Fin a) (Fin a) ↥L.1) i j) = (r h : Matrix (Fin a) (Fin a) (Om l)) i j :=
+        fun h i j => congrFun (congrFun (hsg h) i) j
+      refine ⟨fun i j hij => φ.injective ?_, fun i j => φ.injective ?_⟩
+      · rw [hx, map_zero]; exact (hc _).1 hij
+      · rw [hy, (hc _).2 i j]
+        split_ifs
+        · rw [hx]
+        · rw [map_zero]
+    obtain ⟨I, _, _, C, _, _, _, _, ρC, Eq, hE, hS⟩ := blocks ℚ_[l] c (fun g => (s₀ (Bw.e.symm g) : Matrix (Fin a) (Fin a) ↥L.1))
+      (fun g => (s (Bw.e.symm g) : Matrix (Fin a) (Fin a) ↥L.1)) ρU ρW (fun _ _ => rfl) (fun _ _ => rfl)
+      (fun g => (hGr g).1) (fun g => (hGr g).2)
+    have hAC : ∀ t, admitted (σCr P Bw.Kw) (finrank ℚ_[l] ↥(K0 Bw.Kw)) (ρC t) := fun t =>
+      (nilSubq_of admissible_sequence_exact nilEmb_of ℚ_[l] _ _ (σCr P Bw.Kw) (ψCr P f) ↥L.1 (finrank ℚ_[l] ↥(K0 Bw.Kw)) hBcr _ _ ρU (ρC t) (hS t) hAU).1
+    have hAW : admitted (σCr P Bw.Kw) (finrank ℚ_[l] ↥(K0 Bw.Kw)) ρW := admissible_of_pi_decomposition (σCr P Bw.Kw) hBcr ρW C ρC Eq hE hAC
+    refine ⟨L, s, ϑ', ⟨hLL, hs⟩, crys_of_adm P Bw.Kw ρW hAW, hϑ', ?_⟩
+    exact nil_scalar (σSt P Bw.Kw) (ψSt P f) (hcm f) hBst ρ q n T hAst (hDst f q n T hann) ρU i ϑ' hiG hi hiT ρW C ρC
+      (fun t => LinearMap.proj t ∘ₗ Eq.toLinearMap) hS hE (fun w hw => Eq.injective (funext fun t => by simpa using hw t))

@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CongruenceNumberRankThree
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsEmbeddingPadicAlgClPlace
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CongruenceNumberRankThree
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsEmbeddingPadicAlgClPlace
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial GlobalTheory.GalOfCusp UpperTheory.V.Af
 
 theorem UpperTheory.adicNorm_prod_le_prod_of_injective_classes :
@@ -9,11 +14,11 @@ theorem UpperTheory.adicNorm_prod_le_prod_of_injective_classes :
   have h1 : ∀ o s, ‖ι.symm (f o s)‖ ≤ 1 := fun o s =>
     GlobalTheory.norm_le_one_of_isIntegral_int (map_isIntegral_int ι.symm (hf o s))
   rw [map_prod, norm_prod]
-  refine Finset.prod_le_prod (fun _ _ => norm_nonneg _) (fun o _ => ?_)
+  refine Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) (fun o _ => ?_)
   rw [map_prod, norm_prod]
   have h2 : ∏ r : ↥(X o), ‖ι.symm (f o (cl o r))‖
       = ∏ s ∈ Finset.univ.map ⟨cl o, hcl o⟩, ‖ι.symm (f o s)‖ := by
     rw [Finset.prod_map]; rfl
   rw [h2]
-  exact Finset.prod_le_prod_of_subset_of_le_one (Finset.subset_univ _)
+  exact Finset.prod_le_prod_of_subset_of_le_one₀ (Finset.subset_univ _)
     (fun _ _ => norm_nonneg _) (fun s _ _ => h1 o s)

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
-import ReciprocityTheory.GaloisValuations.Global
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.Inertia
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
-import GroundTheory.PAdicHodge.AxLemma
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormSubOnePowTotient
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
+public import ReciprocityTheory.GaloisValuations.Global
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.Inertia
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
+public import GroundTheory.PAdicHodge.AxLemma
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormSubOnePowTotient
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.KZ GlobalTheory.Glue
 
@@ -172,7 +176,7 @@ theorem bound (hW : IntVal W) (n m : ℕ) (z : PadicAlgCl l) (hz : IsPrimitiveRo
     have a2 : Q.coeff N = 0 := by by_contra h; have := (h2 N h).1; omega
     simp [a1, a2]
   have hz1 : ‖z‖ = 1 := norm_root_eq_one (pow_pos hl.out.pos _).ne' hz.pow_eq_one
-  rw [← map_add]
+  rw [← map_add (f := _)]
   conv_lhs => rw [aeval_eq_sum_range]
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (by positivity) ?_
   intro j _
@@ -258,7 +262,7 @@ theorem exists_gamma (hW : IntVal W) (n j : ℕ) (hj : 1 ≤ j) :
   have hlt : m < l ^ (n + m + 1) := lt_of_lt_of_le (Nat.lt_pow_self hp.one_lt) (Nat.pow_le_pow_right hp.pos (by omega))
   have hpos : 0 < l ^ (n + m + 1) := pow_pos hp.pos _
   have : NeZero (l ^ (n + m + 1)) := ⟨hpos.ne'⟩
-  obtain ⟨z, hz⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot (PadicAlgCl l) (l ^ (n + m + 1))
+  obtain ⟨z, hz⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot (PadicAlgCl l) (l ^ (n + m + 1))
   have hint : IsIntegral W z := Algebra.IsIntegral.isIntegral z
   have hdeg : (l ^ (n + m + 1)).totient ≤ (minpoly W z).natDegree := by
     by_contra hlt
@@ -319,7 +323,7 @@ theorem sp_fixed (N : ℕ) (z : PadicAlgCl l) (g : PadicAlgCl l ≃ₐ[W] PadicA
     obtain ⟨k, ⟨t, rfl⟩, rfl⟩ := hw
     rw [pow_mul, map_pow, hg]
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, hx, hy]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy]
   | smul c x _ hx => rw [gal_smul, hx]
 
 theorem sp_pow_le (N : ℕ) (z : PadicAlgCl l) : (sp W (z ^ N) fun _ => True) ≤ sp W z fun k => N ∣ k := by
@@ -340,7 +344,7 @@ theorem estimate (hW : IntVal W) (n m : ℕ) (z : PadicAlgCl l) (hz : IsPrimitiv
       (sub_mem (sp_stable n m z hz g w hw) (Submodule.smul_mem _ (⟨_, emb_mem c⟩ : W) hw))
     rw [norm_mul, norm_emb] at this
     convert this using 3
-    rw [map_add, sp_fixed _ z g hg b hb, map_sub, map_one]
+    rw [map_add (f := _), sp_fixed _ z g hg b hb, map_sub, map_one]
     ring
 
 theorem ax (z x : PadicAlgCl l) (r : ℝ)
@@ -385,7 +389,7 @@ theorem small_top (hW : IntVal W) (j : ℕ) (hj : 1 ≤ j) : Small (W := W) j �
   have hδ0 : 0 < δ := norm_pos_iff.2 (sub_ne_zero.2 hγ1.symm)
   obtain ⟨m, hm⟩ := exists_pow_lt_of_lt_one (show 0 < δ / (4 * D) by positivity) hq1
   have : NeZero (l ^ (n + m + 1)) := ⟨(pow_pos hp.pos _).ne'⟩
-  obtain ⟨z, hz⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot (PadicAlgCl l) (l ^ (n + m + 1))
+  obtain ⟨z, hz⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot (PadicAlgCl l) (l ^ (n + m + 1))
   have hw : IsPrimitiveRoot (z ^ (l ^ m)) (l ^ (n + 1)) := hz.pow (pow_pos hp.pos _) (by ring)
   refine ⟨2 * (D / δ + D), fun x ε H => ?_⟩
   have hε : 0 ≤ ε := (norm_nonneg _).trans (H 1 trivial)
@@ -442,7 +446,7 @@ theorem small_inf (j : ℕ) (H : Subgroup (PadicAlgCl l ≃ₐ[W] PadicAlgCl l))
     rw [mem_rootSet_of_ne (minpoly.ne_zero hint)]
     change aeval ((σ : PadicAlgCl l ≃ₐ[W] PadicAlgCl l) α) _ = 0
     rw [aeval_algHom_apply, minpoly.aeval, map_zero]
-  haveI : Fintype (MulAction.orbit H α) := hfin.fintype
+  have : Fintype (MulAction.orbit H α) := hfin.fintype
   have hτ : ∀ t : MulAction.orbit H α, ∃ τ : PadicAlgCl l ≃ₐ[W] PadicAlgCl l, τ ∈ H ∧ τ α = t := by
     rintro ⟨_, σ, rfl⟩
     exact ⟨σ, σ.2, rfl⟩
@@ -468,7 +472,8 @@ theorem small_inf (j : ℕ) (H : Subgroup (PadicAlgCl l ≃ₐ[W] PadicAlgCl l))
       rw [norm_mul]
       refine mul_le_mul_of_nonneg_left (hC _ _ fun σ hσ => ?_) (norm_nonneg _)
       change ‖_ - c σ * _‖ ≤ _
-      rw [map_sum, Finset.mul_sum, ← Equiv.sum_comp (MulAction.toPerm (⟨σ, hσ⟩ : H))
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.mul_sum, ← Equiv.sum_comp (MulAction.toPerm (⟨σ, hσ⟩ : H))
         (fun t : MulAction.orbit H α => c σ * ((t : PadicAlgCl l) ^ k * (c (τ t)⁻¹ * τ t x))),
         ← Finset.sum_sub_distrib]
       refine (norm_sum_le _ _).trans ?_
@@ -550,8 +555,8 @@ theorem inert_Kur (σ : PadicAlgCl l ≃ₐ[MaximalUnramifiedExtension l (⊥ : 
 
 end GlobalTheory.IntTate
 
-open GlobalTheory.IntTate ReciprocityTheory.Neutral.Cmp in
 
+open GlobalTheory.IntTate ReciprocityTheory.Neutral.Cmp in
 theorem GlobalTheory.IntTate.integral_tate_inertia : ∀ (l : ℕ) [Fact l.Prime] (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] (A : ValuationSubring Ω), A.valuation (l : Ω) < 1 →
   ∀ (j : ℕ), 1 ≤ j → ∀ F : Finset Ω, ∃ c : ℕ, ∀ (n : ℕ) (x : Ω), x ∈ A →
   (∀ s ∈ Ine (F := ℚ) A, (∀ y ∈ F, s y = y) → CgA A l n (s x) ((((cycMod ℚ Ω l n s : ZMod (l ^ n)).val : ℕ) : Ω) ^ j * x)) →

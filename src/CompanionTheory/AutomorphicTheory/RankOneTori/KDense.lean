@@ -1,5 +1,9 @@
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.ParametricIntegralSmoothness.IntCommute
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.AdmissibleOfIwasawa
+module
+
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.ParametricIntegralSmoothness.IntCommute
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.AdmissibleOfIwasawa
+
+@[expose] public section
 
 open Matrix Filter Topology Set MeasureTheory MeasureTheory.Measure
 open scoped ContDiff
@@ -25,12 +29,14 @@ def finAlg (Γ : Type) [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] 
     refine ⟨V * W, ⟨hV.1.mul hW.1, fun a x hx => ?_⟩, Submodule.mul_mem_mul hp hq⟩
     refine Submodule.mul_induction_on hx (fun m hm n hn => ?_) fun x y hx hy => ?_
     · rw [map_mul]; exact Submodule.mul_mem_mul (hV.2 a m hm) (hW.2 a n hn)
-    · rw [map_add]; exact add_mem hx hy
+    · rw [map_add (tr a)]
+      exact add_mem hx hy
   add_mem' := by
     rintro p q ⟨V, hV, hp⟩ ⟨W, hW, hq⟩
     refine ⟨V ⊔ W, ⟨hV.1.sup hW.1, fun a x hx => ?_⟩, Submodule.add_mem_sup hp hq⟩
     obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hx
-    rw [map_add]; exact Submodule.add_mem_sup (hV.2 a y hy) (hW.2 a z hz)
+    rw [map_add (tr a)]
+    exact Submodule.add_mem_sup (hV.2 a y hy) (hW.2 a z hz)
   algebraMap_mem' c := by
     refine ⟨Submodule.span ℝ {1}, ⟨Submodule.fg_span (finite_singleton _), fun a x hx => ?_⟩, ?_⟩
     · obtain ⟨t, rfl⟩ := Submodule.mem_span_singleton.1 hx
@@ -182,7 +188,10 @@ theorem fin_of_finAlg (hG : IsMatGroup G) (hKG : K ⊆ G) (h : RepOn G σ) {v : 
     rw [← hs, Submodule.map_span, Submodule.span_span_of_tower]
   refine ⟨Submodule.span ℂ (V.map T : Set H), ?_, Submodule.subset_span ⟨p, hpV, rfl⟩, fun a ha x hx => ?_⟩
   · rw [hS]; exact FiniteDimensional.span_of_finite ℂ (s.finite_toSet.image _)
-  · refine Submodule.span_induction (fun y hy => ?_) (by simp) (fun y z _ _ hy hz => by rw [map_add]; exact add_mem hy hz)
+  · refine Submodule.span_induction (fun y hy => ?_) (by simp)
+      (fun y z _ _ hy hz => by
+        rw [(σ a).map_add]
+        exact add_mem hy hz)
       (fun c y _ hy => by rw [map_smul]; exact Submodule.smul_mem _ c hy) hx
     obtain ⟨q, hq, rfl⟩ := hy
     set a' : MG K hK := MG.mk hK a ha with ha'

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FiniteMinimalPrimes
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChPrime
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FiniteMinimalPrimes
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChPrime
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,10 +21,12 @@ theorem exists_basicOpen_of_isSncModel : ∀ (K : Type) [Fintype K] (ι : K → 
   obtain rfl : f = fun l => aeval (fun q : Σ k, ι k => y q / y ⟨q.1, p q.1⟩) (F l) :=
     funext fun l => (hF l).symm
   have hker : aeval (fun q : Σ k, ι k => y q / y ⟨q.1, p q.1⟩) (∑ l, A l * F l - 1) = 0 := by
-    simp only [map_sub, map_sum, map_mul, map_one, hA]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_mul, map_one, hA]
     exact sub_eq_zero.2 hsum
   have h1 := ht _ hker
-  simp only [map_sub, map_sum, map_mul, map_one] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, map_mul, map_one] at h1
   obtain ⟨l, hl⟩ : ∃ l, eval t (map (algebraMap ℚ ℂ) (F l)) ≠ 0 := by
     by_contra hc
     push_neg at hc

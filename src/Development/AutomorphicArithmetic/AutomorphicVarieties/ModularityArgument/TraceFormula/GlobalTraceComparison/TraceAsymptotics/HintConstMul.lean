@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,7 +87,7 @@ theorem rCtEx : RCtEx := by
     induction e with
     | one =>
       funext m
-      show chi μ a b w m * ct rfl w ((KGL w (a + b) : Set _).indicator 1) m = (K2 a b w : Set _).indicator 1 m
+      show chi μ a b w m * ct rfl w ((KGL w (n := (a + b)) : Set _).indicator 1) m = (K2 a b w : Set _).indicator 1 m
       rw [hUnit E w (a + b) a b rfl]
       by_cases hm : m ∈ K2 a b w
       · simp [Set.indicator, hm, hK m hm]
@@ -116,7 +120,7 @@ theorem rCtEx : RCtEx := by
       ring
     | mul e₁ e₂ ih₁ ih₂ =>
       have h1 : fn1 (a + b) w (Ex.mul e₁ e₂) =
-          cv (KGL w (a + b)) (fn1 (a + b) w e₁) (fn1 (a + b) w e₂) := rfl
+          cv (KGL w (n := (a + b))) (fn1 (a + b) w e₁) (fn1 (a + b) w e₂) := rfl
       show _ = fun y => hint (K2 a b w) fun z => fn2 a b w (e₁.bind t) z * fn2 a b w (e₂.bind t) (z⁻¹ * y)
       rw [h1, hMul E w (a + b) a b rfl _ _ (hEx E (a + b) w e₁).1 (hEx E (a + b) w e₂).1, ← ih₁, ← ih₂]
       funext m

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open UpperHalfPlane ModularForm MatrixGroups EisensteinSeries Filter Topology
 
@@ -172,10 +176,13 @@ lemma G_eq (L : PeriodPair) (z : ℍ) (hz : L.ω₁ = L.ω₂ * z) {k : ℕ} (hk
         rw [← (L.latticeEquivProd.symm.toEquiv).tsum_eq, ← (finTwoArrowEquiv ℤ).tsum_eq]
         congr 1
         funext v
-        simp only [LinearEquiv.coe_toEquiv, PeriodPair.latticeEquiv_symm_apply, finTwoArrowEquiv_apply,
-          EisensteinSeries.eisSummand, zpow_natCast]
+        simp only [EisensteinSeries.eisSummand, zpow_natCast]
         have e : (v 0 : ℂ) * L.ω₁ + v 1 * L.ω₂ = L.ω₂ * (v 0 * z + v 1) := by rw [hz]; ring
-        show (((v 0 : ℂ) * L.ω₁ + (v 1 : ℂ) * L.ω₂) ^ k)⁻¹ = _
+        have hcoord : (L.latticeEquivProd.symm.toEquiv ((finTwoArrowEquiv ℤ) v) : ℂ) =
+            (v 0 : ℂ) * L.ω₁ + v 1 * L.ω₂ := by
+          simp [PeriodPair.latticeEquivProd, Finsupp.linearCombination_apply,
+            Finsupp.sum_fintype, PeriodPair.latticeBasis]
+        rw [hcoord]
         rw [e, mul_pow, mul_inv, inv_pow]
         congr 1
         try simp [one_div]

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+
+@[expose] public section
 
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -12,8 +16,8 @@ namespace GlobalTheory.DblSiegelX
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-def zs {n n₁ d : ℕ} (H : Plane E n n₁) (u : Fin d → AE F E) : Matrix (Fin n) (Fin d ⊕ Fin d) (AE F E) :=
-  Matrix.vecMulVec (incV F H.y) ((diagCols (Fin d) : Matrix (Fin d ⊕ Fin d) (Fin d) (AE F E)) *ᵥ u)
+def zs {n n₁ d : ℕ} (H : Plane E n n₁) (u : Fin d → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) : Matrix (Fin n) (Fin d ⊕ Fin d) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) :=
+  Matrix.vecMulVec (incV F H.y) ((diagCols (Fin d) : Matrix (Fin d ⊕ Fin d) (Fin d) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) *ᵥ u)
 
 variable {κ : Type} [Fintype κ] {V : Type} [AddCommGroup V] [Module (AF F) V] {Bf : V → V → AF F} {d : ℕ}
 
@@ -25,22 +29,22 @@ theorem rho_smul (dd : Darboux Bf κ) (ψ : AddChar (AF F) ℂ) (w : V) (c : ℂ
     dd.rho ψ w (c • Φ) = c • dd.rho ψ w Φ := by
   funext x; simp [Darboux.rho, schr]; ring
 
-def avgFun (dd : Darboux Bf κ) (ψ : AddChar (AF F) ℂ) (z : (Fin d → AE F E) → V) (lam : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ)
-    (Φ : (κ → AF F) → ℂ) : (Fin d → AE F E) → ℂ :=
+def avgFun (dd : Darboux Bf κ) (ψ : AddChar (AF F) ℂ) (z : (Fin d → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) → V) (lam : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ)
+    (Φ : (κ → AF F) → ℂ) : (Fin d → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) → ℂ :=
   fun u => lam (dd.rho ψ (z u) Φ)
 
-theorem avgFun_add (dd : Darboux Bf κ) (ψ : AddChar (AF F) ℂ) (z : (Fin d → AE F E) → V)
+theorem avgFun_add (dd : Darboux Bf κ) (ψ : AddChar (AF F) ℂ) (z : (Fin d → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) → V)
     (lam : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ) (Φ Ψ : (κ → AF F) → ℂ) :
     avgFun dd ψ z lam (Φ + Ψ) = avgFun dd ψ z lam Φ + avgFun dd ψ z lam Ψ := by
   funext u; simp [avgFun, rho_add]
 
-theorem avgFun_smul (dd : Darboux Bf κ) (ψ : AddChar (AF F) ℂ) (z : (Fin d → AE F E) → V)
+theorem avgFun_smul (dd : Darboux Bf κ) (ψ : AddChar (AF F) ℂ) (z : (Fin d → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) → V)
     (lam : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ) (c : ℂ) (Φ : (κ → AF F) → ℂ) :
     avgFun dd ψ z lam (c • Φ) = c • avgFun dd ψ z lam Φ := by
   funext u; simp [avgFun, rho_smul]
 
-def avgSub (dd : Darboux Bf κ) (ψ : AddChar (AF F) ℂ) (z : (Fin d → AE F E) → V) (lam : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ)
-    (μ : @Measure (Fin d → AE F E) (borel _)) : Submodule ℂ ((κ → AF F) → ℂ) where
+def avgSub (dd : Darboux Bf κ) (ψ : AddChar (AF F) ℂ) (z : (Fin d → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) → V) (lam : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ)
+    (μ : @Measure (Fin d → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) (borel _)) : Submodule ℂ ((κ → AF F) → ℂ) where
   carrier := {Φ | Integrable (avgFun dd ψ z lam Φ) μ}
   zero_mem' := by
     show Integrable (avgFun dd ψ z lam 0) μ
@@ -55,8 +59,8 @@ def avgSub (dd : Darboux Bf κ) (ψ : AddChar (AF F) ℂ) (z : (Fin d → AE F E
     show Integrable (avgFun dd ψ z lam (c • Φ)) μ
     rw [avgFun_smul]; exact hΦ.smul c
 
-def averagedIntegralIntegrable (dd : Darboux Bf κ) (ψ : AddChar (AF F) ℂ) (z : (Fin d → AE F E) → V) (lam : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ)
-    (μ : @Measure (Fin d → AE F E) (borel _)) : avgSub dd ψ z lam μ →ₗ[ℂ] ℂ where
+def averagedIntegralIntegrable (dd : Darboux Bf κ) (ψ : AddChar (AF F) ℂ) (z : (Fin d → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) → V) (lam : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ)
+    (μ : @Measure (Fin d → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) (borel _)) : avgSub dd ψ z lam μ →ₗ[ℂ] ℂ where
   toFun Φ := ∫ u, avgFun dd ψ z lam Φ.1 u ∂μ
   map_add' Φ Ψ := by
     simp only [Submodule.coe_add, avgFun_add, Pi.add_apply]
@@ -65,12 +69,12 @@ def averagedIntegralIntegrable (dd : Darboux Bf κ) (ψ : AddChar (AF F) ℂ) (z
     simp only [Submodule.coe_smul, avgFun_smul, Pi.smul_apply, smul_eq_mul, RingHom.id_apply]
     exact integral_const_mul c _
 
-def avgL (dd : Darboux Bf κ) (ψ : AddChar (AF F) ℂ) (z : (Fin d → AE F E) → V) (lam : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ)
-    (μ : @Measure (Fin d → AE F E) (borel _)) : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ :=
+def avgL (dd : Darboux Bf κ) (ψ : AddChar (AF F) ℂ) (z : (Fin d → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) → V) (lam : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ)
+    (μ : @Measure (Fin d → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) (borel _)) : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ :=
   (LinearMap.exists_extend (averagedIntegralIntegrable dd ψ z lam μ)).choose
 
-theorem avgL_apply (dd : Darboux Bf κ) (ψ : AddChar (AF F) ℂ) (z : (Fin d → AE F E) → V)
-    (lam : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ) (μ : @Measure (Fin d → AE F E) (borel _)) (Φ : (κ → AF F) → ℂ)
+theorem avgL_apply (dd : Darboux Bf κ) (ψ : AddChar (AF F) ℂ) (z : (Fin d → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) → V)
+    (lam : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ) (μ : @Measure (Fin d → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) (borel _)) (Φ : (κ → AF F) → ℂ)
     (h : Integrable (avgFun dd ψ z lam Φ) μ) : avgL dd ψ z lam μ Φ = ∫ u, avgFun dd ψ z lam Φ u ∂μ := by
   have := congrArg (fun f => f ⟨Φ, h⟩) (LinearMap.exists_extend (averagedIntegralIntegrable dd ψ z lam μ)).choose_spec
   exact this

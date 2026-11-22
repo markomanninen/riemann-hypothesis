@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsLinearMapMultilinearMapBaseChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsFrameOfBijectiveStalk
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsLinearMapMultilinearMapBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsFrameOfBijectiveStalk
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -87,29 +91,55 @@ theorem chiLen_eq_of_surjective (k : Type) [CommRing k] [Algebra R k] [Algebra k
 
 variable {R}
 
+private theorem exists_coh_boundary_exact (hS : S.ShortExact) (n : ℕ) :
+    ∃ δ : coh S.X₃ n →ₗ[R] coh S.X₁ (n + 1),
+      Function.Exact (cohOn.map R S.g ⊤ n) δ ∧
+        Function.Exact δ (cohOn.map R S.f ⊤ (n + 1)) := by
+  have hAb := shortExact_toAbSheaf hS
+  let δ : coh S.X₃ n →ₗ[R] coh S.X₁ (n + 1) :=
+    WithAction.linearMap (cohOn.action S.X₃ ⊤ n) (cohOn.action S.X₁ ⊤ (n + 1)) R
+      (SheafLES.δ hAb n ⊤) fun r x => by
+        rw [cohOn.action_apply, cohOn.action_apply]
+        let φ : S ⟶ S :=
+          { τ₁ := smulHom S.X₁ r
+            τ₂ := smulHom S.X₂ r
+            τ₃ := smulHom S.X₃ r
+            comm₁₂ := smulHom_comp r S.f
+            comm₂₃ := smulHom_comp r S.g }
+        simpa only [SheafLES.map, SiteCoh.map, Functor.mapShortComplex_map_τ₁,
+          Functor.mapShortComplex_map_τ₃, φ] using
+          (SheafLES.δ_naturality hAb hAb ((toAbSheaf X).mapShortComplex.map φ) n ⊤ x).symm
+  exact ⟨δ, SheafLES.exact₃ hAb n ⊤, SheafLES.exact₁ hAb n ⊤⟩
+
 namespace FiniteLenCoh
 
-theorem of_iso (h : FiniteLenCoh R F) (e : F ≅ G) : FiniteLenCoh R G where
-  ne_top n := (cohOn.mapIso R ⊤ n e).length_eq ▸ h.ne_top n
-  eventually_zero :=
-    have ⟨N, hN⟩ := h.eventually_zero
-    ⟨N, fun n hn => have := hN n hn; (cohOn.mapIso R ⊤ n e).symm.injective.subsingleton⟩
+theorem of_iso (h : FiniteLenCoh R F) (e : F ≅ G) : FiniteLenCoh R G := by
+  refine ⟨fun n => (cohOn.mapIso R ⊤ n e).length_eq ▸ h.ne_top n, ?_⟩
+  obtain ⟨N, hN⟩ := h.eventually_zero
+  refine ⟨N, fun n hn => ?_⟩
+  have := hN n hn
+  exact (cohOn.mapIso R ⊤ n e).symm.injective.subsingleton
 
 theorem of_shortExact₂ (hS : S.ShortExact) (h₁ : FiniteLenCoh R S.X₁) (h₃ : FiniteLenCoh R S.X₃) :
-    FiniteLenCoh R S.X₂ where
-  ne_top n := length_ne_top_of_exact (cohOn.exact₂ R hS ⊤ n) (h₁.ne_top n) (h₃.ne_top n)
-  eventually_zero :=
-    have ⟨N₁, h₁⟩ := h₁.eventually_zero
-    have ⟨N₃, h₃⟩ := h₃.eventually_zero
-    ⟨max N₁ N₃, fun n hn => cohOn.subsingleton₂ hS ⊤ n (h₁ n (by omega)) (h₃ n (by omega))⟩
+    FiniteLenCoh R S.X₂ := by
+  constructor
+  · intro n
+    have h₂ : Function.Exact (cohOn.map R S.f ⊤ n) (cohOn.map R S.g ⊤ n) :=
+      SheafLES.exact₂ (shortExact_toAbSheaf hS) n ⊤
+    exact length_ne_top_of_exact h₂ (h₁.ne_top n) (h₃.ne_top n)
+  · obtain ⟨N₁, hN₁⟩ := h₁.eventually_zero
+    obtain ⟨N₃, hN₃⟩ := h₃.eventually_zero
+    exact ⟨max N₁ N₃, fun n hn => cohOn.subsingleton₂ hS ⊤ n (hN₁ n (by omega)) (hN₃ n (by omega))⟩
 
 theorem of_shortExact₃ (hS : S.ShortExact) (h₁ : FiniteLenCoh R S.X₁) (h₂ : FiniteLenCoh R S.X₂) :
-    FiniteLenCoh R S.X₃ where
-  ne_top n := length_ne_top_of_exact (cohOn.exact₃ R hS ⊤ n) (h₂.ne_top n) (h₁.ne_top (n + 1))
-  eventually_zero :=
-    have ⟨N₁, h₁⟩ := h₁.eventually_zero
-    have ⟨N₂, h₂⟩ := h₂.eventually_zero
-    ⟨max N₁ N₂, fun n hn => cohOn.subsingleton₃ hS ⊤ n (h₂ n (by omega)) (h₁ (n + 1) (by omega))⟩
+    FiniteLenCoh R S.X₃ := by
+  constructor
+  · intro n
+    obtain ⟨_, h₃, _⟩ := exists_coh_boundary_exact (R := R) hS n
+    exact length_ne_top_of_exact h₃ (h₂.ne_top n) (h₁.ne_top (n + 1))
+  · obtain ⟨N₁, hN₁⟩ := h₁.eventually_zero
+    obtain ⟨N₂, hN₂⟩ := h₂.eventually_zero
+    exact ⟨max N₁ N₂, fun n hn => cohOn.subsingleton₃ hS ⊤ n (hN₂ n (by omega)) (hN₁ (n + 1) (by omega))⟩
 
 end FiniteLenCoh
 
@@ -129,18 +159,22 @@ theorem chiLen_shortExact (hS : S.ShortExact) (h₁ : FiniteLenCoh R S.X₁)
     | succ N ih =>
       have e₁ := toNat_length_eq_range_add_range (LinearMap.exact_subtype_ker_map
         (cohOn.map R S.f ⊤ N)) (h₁.ne_top N)
-      have e₂ := toNat_length_eq_range_add_range (cohOn.exact₂ R hS ⊤ N) (h₂.ne_top N)
-      have e₃ := toNat_length_eq_range_add_range (cohOn.exact₃ R hS ⊤ N) (h₃.ne_top N)
+      have hfg : Function.Exact (cohOn.map R S.f ⊤ N) (cohOn.map R S.g ⊤ N) :=
+        SheafLES.exact₂ (shortExact_toAbSheaf hS) N ⊤
+      obtain ⟨δ, hgδ, hδf⟩ := exists_coh_boundary_exact (R := R) hS N
+      have e₂ := toNat_length_eq_range_add_range hfg (h₂.ne_top N)
+      have e₃ := toNat_length_eq_range_add_range hgδ (h₃.ne_top N)
       rw [Submodule.range_subtype] at e₁
-      rw [← (cohOn.exact₁ R hS ⊤ N).linearMap_ker_eq] at e₃
+      rw [← hδf.linearMap_ker_eq] at e₃
       simp only [Finset.sum_range_succ, pow_succ]
       change _ = a N + _ at e₁
       change _ = _ + a (N + 1) at e₃
       erw [e₁, e₂, e₃]
       linear_combination ih
   have a0 : a 0 = 0 := by
+    have := hS.mono_f
     simp only [a]
-    rw [LinearMap.ker_eq_bot.2 (cohOn.injective_zero R hS ⊤)]
+    rw [LinearMap.ker_eq_bot.2 (cohOn.map_zero_injective_of_mono R ⊤ S.f)]
     simp
   let N := max N₁ (max N₂ N₃)
   have aN : a N = 0 := by
@@ -168,8 +202,8 @@ def interLen {ι : Type} [Fintype ι] (F : X.Modules) (L : ι → LB X) : ℤ :=
 
 variable {F G : X.Modules} {M N : LB X} {S : ShortComplex X.Modules}
 
-variable (F) in
 
+variable (F) in
 @[simp] theorem chiLenPic_cls (hM : M.IsLB) : chiLenPic R F (cls M hM) = chiLen R (twist F M) := rfl
 
 theorem chiLenPic_congr (e : F ≅ G) : chiLenPic R F = chiLenPic R G := by
@@ -177,8 +211,8 @@ theorem chiLenPic_congr (e : F ≅ G) : chiLenPic R F = chiLenPic R G := by
   obtain ⟨M, hM, rfl⟩ := cls_surj c
   exact chiLen_congr R ((twistFunctor M).mapIso e)
 
-variable (F) in
 
+variable (F) in
 theorem chiLenPic_twist (hM : M.IsLB) (c : Pic X) :
     chiLenPic R (twist F M) c = chiLenPic R F (cls M hM + c) := by
   obtain ⟨N, hN, rfl⟩ := cls_surj c
@@ -189,8 +223,8 @@ theorem chiLenPic_eq_zero_of_isZero (h : IsZero F) : chiLenPic R F = 0 := by
   obtain ⟨M, hM, rfl⟩ := cls_surj c
   exact chiLen_eq_zero_of_isZero R ((isZero_twist_iff hM).2 h)
 
-variable (F) in
 
+variable (F) in
 theorem interLen_eq_multiDiff {ι : Type} [Fintype ι] {L : ι → LB X} (hL : ∀ i, (L i).IsLB) :
     interLen R F L = multiDiff (fun i => cls (L i) (hL i)) (chiLenPic R F) 0 :=
   Finset.sum_congr rfl fun S _ => by
@@ -236,10 +270,13 @@ theorem chiLenPic_shortExact (hS : S.ShortExact) (h₁ : FiniteLenTwists R S.X�
 theorem bwdDiff_chiLenPic {L : LB X} (hL : L.IsLB) (s : L.Sec) [Mono (cutHom F hL s)]
     (h : FiniteLenTwists R F) : FiniteLenTwists R (cut F hL s) ∧
       bwdDiff (cls L hL) (chiLenPic R F) = chiLenPic R (cut F hL s) := by
+  have hS : (cutComplex F hL s).ShortExact := by
+    exact ShortComplex.ShortExact.mk' (ShortComplex.exact_cokernel (cutHom F hL s))
+      (inferInstanceAs (Mono (cutHom F hL s))) (epi_cutπ F hL s)
   have h₁ := h.twist (isLB_lbZPow hL (-1))
-  have h₃ := h₁.of_shortExact₃ (shortExact_cutComplex F hL s) h
+  have h₃ := h₁.of_shortExact₃ hS h
   refine ⟨h₃, funext fun c => ?_⟩
-  have e := congrFun (chiLenPic_shortExact (shortExact_cutComplex F hL s) h₁ h₃) c
+  have e := congrFun (chiLenPic_shortExact hS h₁ h₃) c
   change chiLenPic R F c =
     chiLenPic R (twist F (lbZPow L (-1))) c + chiLenPic R (cut F hL s) c at e
   rw [chiLenPic_twist R F (isLB_lbZPow hL (-1)), cls_lbZPow hL, neg_one_zsmul,
@@ -312,8 +349,8 @@ section Sym
 
 variable {G H : Type*} [AddCommGroup G] [AddCommGroup H]
 
-variable (G) in
 
+variable (G) in
 abbrev SymQ : Type _ := SymmetricAlgebra ℚ (ℚ ⊗[ℤ] G)
 
 def symOf : G →+ SymQ G :=
@@ -333,8 +370,8 @@ def symMap (f : G →+ H) : SymQ G →ₐ[ℚ] SymQ H := symLift (symOf.comp f)
 @[simp] theorem symMap_symOf (f : G →+ H) (g : G) : symMap f (symOf g) = symOf (f g) :=
   symLift_symOf _ g
 
-variable (G) in
 
+variable (G) in
 def symDeg (n : ℕ) : Submodule ℚ (SymQ G) :=
   Submodule.span ℚ (Set.range fun g : Fin n → G => ∏ i, symOf (g i))
 
@@ -347,12 +384,13 @@ theorem span_prod_symOf : Submodule.span ℚ
     rw [Algebra.algebraMap_eq_smul_one]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨0, by simp⟩)
   | ι x =>
-    induction x with
-    | zero => rw [map_zero]; exact zero_mem _
+    induction x using TensorProduct.inductionOn with
     | tmul a g =>
       rw [← mul_one a, ← smul_eq_mul, ← smul_tmul', map_smul]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨{g}, by simp [symOf_apply]⟩)
-    | add a b ha hb => rw [map_add]; exact add_mem ha hb
+    | add a b ha hb =>
+      rw [map_add]
+      exact add_mem ha hb
   | mul a b ha hb =>
     have := Submodule.mul_mem_mul ha hb
     rw [Submodule.span_mul_span] at this
@@ -378,7 +416,7 @@ theorem exists_topForm (h : DiffVanish (d + 1) φ) : ∃ l : SymQ G →ₗ[ℚ] 
   let f : Multiset G → ℚ := fun s =>
     if s.card = d then (shiftAct G ℤ (s.map diffElt).prod φ 0 : ℚ) else 0
   have hf (a b : G) (s : Multiset G) : f (s + {a + b}) = f (s + {a}) + f (s + {b}) := by
-    simp only [f, Multiset.card_add, Multiset.card_singleton, Multiset.map_add,
+    simp only [f, Multiset.card_add, Multiset.card_singleton, Multiset.map_add (f := _),
       Multiset.map_singleton, Multiset.prod_add, Multiset.prod_singleton]
     split_ifs with hs
     · have : (s.map diffElt).prod * (diffElt a * diffElt b) ∈ diffIdeal G ^ (d + 1) := by
@@ -389,7 +427,7 @@ theorem exists_topForm (h : DiffVanish (d + 1) φ) : ∃ l : SymQ G →ₗ[ℚ] 
           have := prod_diffElt_mem Finset.univ s.get
           rw [← List.prod_ofFn, ← Function.comp_def, ← List.map_ofFn, List.ofFn_get] at this
           simpa using this
-      rw [diffElt_add, mul_sub, mul_add, map_sub, map_add, LinearMap.sub_apply,
+      rw [diffElt_add, mul_sub, mul_add, map_sub, map_add (f := _), LinearMap.sub_apply,
         h.shiftAct_eq_zero this]
       simp
     · simp
@@ -410,16 +448,16 @@ theorem exists_topForm (h : DiffVanish (d + 1) φ) : ∃ l : SymQ G →ₗ[ℚ] 
       | monomial m c =>
         rw [show MvPolynomial.monomial m c = c • MvPolynomial.monomial m (1 : ℚ) by
           simp [MvPolynomial.smul_monomial], smul_mul_assoc, map_smul]
-        simp only [mul_sub, mul_add, map_sub, map_add, MvPolynomial.X,
+        simp only [mul_sub, mul_add, map_sub, map_add (f := _), MvPolynomial.X,
           MvPolynomial.monomial_mul, mul_one, hl, Finsupp.toMultiset_single, one_nsmul, hf]
         simp
-      | add p q hp hq => rw [add_mul, map_add, hp, hq, add_zero]
+      | add p q hp hq => rw [add_mul, map_add (f := _), hp, hq, add_zero]
     | zero => simp
-    | add x y _ _ hx hy => intro r; rw [mul_add, map_add, hx, hy, add_zero]
+    | add x y _ _ hx hy => intro r; rw [mul_add, map_add (f := _), hx, hy, add_zero]
     | smul a x _ hx => intro r; rw [smul_eq_mul, ← mul_assoc, hx]
   let c : G →+ MvPolynomial G ℚ ⧸ J := AddMonoidHom.mk' (fun g => Ideal.Quotient.mk J (.X g))
     fun a b => by
-      rw [← map_add, Ideal.Quotient.eq]
+      rw [← map_add (f := _), Ideal.Quotient.eq]
       exact Ideal.subset_span ⟨(a, b), rfl⟩
   refine ⟨(J.restrictScalars ℚ).liftQ l hJ ∘ₗ
     (Submodule.Quotient.restrictScalarsEquiv ℚ J).symm.toLinearMap ∘ₗ (symLift c).toLinearMap,
@@ -431,7 +469,8 @@ theorem exists_topForm (h : DiffVanish (d + 1) φ) : ∃ l : SymQ G →ₗ[ℚ] 
   refine (congrArg (fun x => (J.restrictScalars ℚ).liftQ l hJ
     ((Submodule.Quotient.restrictScalarsEquiv ℚ J).symm x)) e).trans ((hl _).trans ?_)
   have e' : Finsupp.toMultiset (∑ i, Finsupp.single (g i) 1) = Finset.univ.val.map g := by
-    simp only [map_sum, Finsupp.toMultiset_single, one_nsmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Finsupp.toMultiset_single, one_nsmul]
     rw [Finset.sum_eq_multiset_sum, ← Multiset.sum_map_singleton (Finset.univ.val.map g),
       Multiset.map_map]
     rfl
@@ -460,11 +499,6 @@ theorem topForm_eq_add {χ : G → ℤ} (h : DiffVanish (d + 1) χ) (h₁ : Diff
       multiDiff_translate, h₁.multiDiff_eq_of_le_card hn.ge g _ 0, Int.cast_add]
   · simp
 
-example : topForm (diffVanish_pow_int 2).1 (∏ _i : Fin 2, symOf 1) = 2 ∧
-    topForm (diffVanish_pow_int 2).1 (∏ _i : Fin 1, symOf 1) = 0 := by
-  rw [topForm_prod, topForm_prod, multiDiff_pow]
-  simp
-
 end Sym
 
 section SmallPic
@@ -482,12 +516,12 @@ instance small_pic : Small.{0} (Pic X) := by
   exact ⟨⟨⟨_, _⟩, h⟩, (cls_eq_iff h hL).2
     (iso_of_chart hL ⟨j, fun _ => le_rfl, fun _ _ _ _ _ => rfl⟩)⟩
 
-variable (X) in
 
+variable (X) in
 abbrev SmallPic : Type := Shrink.{0} (Pic X)
 
-variable (X) in
 
+variable (X) in
 def smallPicEquiv : SmallPic X ≃+ Pic X := Shrink.addEquiv
 
 def smallCls (L : LB X) (hL : L.IsLB) : SmallPic X := (smallPicEquiv X).symm (cls L hL)
@@ -510,23 +544,13 @@ theorem smallPull_smallCls (f : Y ⟶ X) {L : LB X} (hL : L.IsLB) (h : (L.pull f
     smallPull f (smallCls L hL) = smallCls (L.pull f) h := by
   simp [smallPull, smallCls, cls_pull hL]
 
-variable (X) in
 
+variable (X) in
 abbrev PicSym : Type := SymQ (SmallPic X)
 
 def c1 (L : LB X) (hL : L.IsLB) : PicSym X := symOf (smallCls L hL)
 
 def firstChernPic : Pic X →+ PicSym X := symOf.comp (smallPicEquiv X).symm.toAddMonoidHom
-
-@[simp] theorem firstChernPic_class (L : LB X) (hL : L.IsLB) : firstChernPic (cls L hL) = c1 L hL := rfl
-
-theorem firstChernTensor {L M : LB X} (hL : L.IsLB) (hM : M.IsLB) (h : (tens L M).IsLB) :
-    c1 (tens L M) h = c1 L hL + c1 M hM := map_add firstChernPic (cls L hL) (cls M hM)
-
-theorem firstChern_trivial (h : (LB.triv X).IsLB) : c1 (LB.triv X) h = 0 := map_zero firstChernPic
-
-theorem firstChernCongr {L M : LB X} (hL : L.IsLB) (hM : M.IsLB) (h : LBIso L M) : c1 L hL = c1 M hM :=
-  congrArg symOf ((smallCls_eq_iff hL hM).2 h)
 
 def picSymPull (f : Y ⟶ X) : PicSym X →ₐ[ℚ] PicSym Y := symMap (smallPull f)
 
@@ -558,15 +582,6 @@ theorem picForm_eq_add {χ : Pic X → ℤ} (h : DiffVanish (d + 1) χ) (h₁ : 
     (h₂ : DiffVanish (d + 1) ψ) (a : Pic X) (e : ∀ x, χ x = φ (a + x) + ψ x) :
     picForm h = picForm h₁ + picForm h₂ :=
   topForm_eq_add _ _ _ ((smallPicEquiv X).symm a) fun x => by simpa using e _
-
-theorem picForm_comap (f : Y ⟶ X) {χ : Pic Y → ℤ} (h : DiffVanish (d + 1) χ) (x : PicSym X) :
-    picForm (h.comap (pull f)) x = picForm h (picSymPull f x) := by
-  refine LinearMap.congr_fun (picSym_linearMap_ext
-    (l' := picForm h ∘ₗ (picSymPull f).toLinearMap) fun n g => ?_) x
-  simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply, map_prod, picSymPull_c1Pic,
-    picForm_prod]
-  rw [multiDiff_comap, Function.comp_apply, map_zero]
-  rfl
 
 theorem picForm_eq_zero (h : DiffVanish (d + 1) φ) {n : ℕ} (hn : n ≠ d) {x : PicSym X}
     (hx : x ∈ symDeg (SmallPic X) n) : picForm h x = 0 := topForm_eq_zero _ hn hx

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SqPair
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SquarePairLocal.SqPairLocalOfSteps
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.UnimodGenus
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SqPair
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SquarePairLocal.SqPairLocalOfSteps
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.UnimodGenus
+
+@[expose] public section
 
 noncomputable section
 open NumberField Matrix
@@ -15,9 +19,9 @@ section SlopeTestRemainingChoices
 variable {E : Type} [Field E] [NumberField E] [StarRing E]
 
 theorem isLattice_of_isSDG {N : ℕ} {L : Submodule (𝓞 E) (Fin N → E)} (h : IsSDG E N L) :
-    Submodule.IsLattice E L := by
+    Submodule.IsFullLattice E L := by
   obtain ⟨h1, h2, -⟩ := h
-  exact ⟨h1, h2⟩
+  exact { toIsLattice := Submodule.IsLattice.of_fg E h1, span_eq_top := h2 }
 
 theorem isUnimodular_of_isSDG {N : ℕ} {L : Submodule (𝓞 E) (Fin N → E)} (h : IsSDG E N L) :
     IsUnimodular (hStd E N) L := by
@@ -88,7 +92,8 @@ end SlopeTestRemainingChoices
 
 theorem dict : Dict := by
   intro E _ _ _ hE N L hL Q hQ hc
-  obtain ⟨g, hg, hgL⟩ := unimodular_genus_unique E N hE L (isLattice_of_isSDG hL) (isUnimodular_of_isSDG hL) Q hQ
+  obtain ⟨g, hg, hgL⟩ := unimodular_genus_unique E N hE L (isLattice_of_isSDG hL).toIsLattice
+    (isUnimodular_of_isSDG hL) Q hQ
   have h1 := unitary_of_isom hg
   have h2 := mul_eq_one_comm.mp h1
   refine ⟨LinearMap.toMatrix' (g : (Fin N → E) →ₗ[E] (Fin N → E)), h1, h2, fun y => ?_⟩

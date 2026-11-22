@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartSpan
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartSpan
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -62,8 +66,10 @@ theorem UpperTheory.V.Alg.wPres_maximalIdeal_gr_zero_eq_sup_span_monomials :
     have hb' : b - algebraMap O (W.gr 0) (constantCoeff f) = ∑ m : μ, mk (c m.1) (hc m.1) * U m := by
       apply hinj
       have h2 := congrArg W.π hsum
-      rw [map_sub, map_sum, ← Finset.sum_coe_sort] at h2
-      rw [map_sub, map_sum, AlgHom.commutes, hφ, ← hfb, ← W.π.commutes]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum, ← Finset.sum_coe_sort] at h2
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum, AlgHom.commutes, hφ, ← hfb, ← W.π.commutes]
       simp only [map_mul] at h2 ⊢
       exact h2
     have hs : b - algebraMap O (W.gr 0) (constantCoeff f) ∈

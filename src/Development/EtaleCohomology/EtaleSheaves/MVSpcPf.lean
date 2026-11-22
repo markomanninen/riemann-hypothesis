@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.PullInjOfIso
-import Development.EtaleCohomology.TateTwists.EtaleSimplicialCochainShortExactSequenceHolds
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.PullInjOfIso
+public import Development.EtaleCohomology.TateTwists.EtaleSimplicialCochainShortExactSequenceHolds
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC

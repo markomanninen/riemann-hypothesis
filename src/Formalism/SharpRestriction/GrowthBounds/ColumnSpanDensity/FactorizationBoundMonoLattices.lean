@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.MeanDefs
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.SgSegUnique
-import Formalism.PolynomialDimension.DigitClassCount
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.MeanDefs
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.SgSegUnique
+public import Formalism.PolynomialDimension.DigitClassCount
+
+@[expose] public section
 
 noncomputable section
 

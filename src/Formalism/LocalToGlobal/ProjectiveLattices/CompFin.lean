@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.IsGenFrGenFr
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsGenFrGenFr
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem isNoetherian_XF (Xo : Moduli Dw l) (c : Coeff l) : IsNoetherian (Xo.XF c
       (algebraMap (KA l) (MvPolynomial.homogeneousSubmodule (Fin (N + 1)) (KA l) 0)) := by
     rintro ⟨x, hx⟩
     have hx' := (MvPolynomial.mem_homogeneousSubmodule _ _).1 hx
-    refine ⟨MvPolynomial.coeff 0 x, Subtype.ext ?_⟩
+    refine ⟨AddMonoidAlgebra.coeff x 0, Subtype.ext ?_⟩
     rcases eq_or_ne x 0 with rfl | h0
     · simp
     · exact (MvPolynomial.totalDegree_eq_zero_iff_eq_C.1 (hx'.totalDegree h0)).symm

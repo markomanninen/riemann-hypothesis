@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGenericPrimitive
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGenericPrimitive
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.ComplexSets
@@ -16,7 +21,8 @@ theorem eval_linearFormPoly {k : Type*} [Field k] {n : ℕ} (φ : (Fin n → k) 
   have hc : c = ∑ j, c j • (Pi.single j 1 : Fin n → k) := by
     ext i; simp [Finset.sum_apply, Pi.single_apply]
   conv_rhs => rw [hc]
-  simp [linearFormPoly, map_sum, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [linearFormPoly, map_sum, mul_comm]
 
 theorem GenericPrimitive.proof : GenericPrimitive.Statement := by
   intro k K L _ _ _ _ _ _ _ _ _ n x hx

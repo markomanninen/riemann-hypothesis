@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -125,21 +129,8 @@ def Bset (q : ι) : Set (ι → ℂ) := {x | 1 / 2 ≤ tW q x ∧ tW q x ≤ 1 �
 
 def PsiF (p q : ι) (s : ℝ) (x : ι → ℂ) : ℝ≥0∞ := (‖1 - star (x p) / (tW q x : ℂ)‖₊ : ℝ≥0∞) ^ (-s)
 
-def eF (p q i : ι) (z : ℂ) : ℝ := if i = q then 1 else if i = p then |z.im| else |z.re| * |z.im|
-
 def gF (p q : ι) (β : ℝ) (i : ι) (z : ℂ) : ℝ :=
   if i = q then one1 z.re * one1 z.im else if i = p then one1 z.re * pw1 β z.im else pw1 β z.re * pw1 β z.im
-
-lemma sum_split (q : ι) (f : ι → ℝ) : ∑ i, f i = f q + ∑ i, (if i = q then 0 else f i) := by
-  have hs : ∀ i, f i = (if i = q then f i else 0) + (if i = q then 0 else f i) := by
-    intro i
-    split_ifs <;> simp
-  calc ∑ i, f i = ∑ i, ((if i = q then f i else 0) + (if i = q then 0 else f i)) :=
-        Finset.sum_congr rfl (fun i _ => hs i)
-    _ = f q + ∑ i, (if i = q then 0 else f i) := by
-        first
-        | (rw [Finset.sum_add_distrib, Finset.sum_ite_eq']; simp)
-        | simp [Finset.sum_add_distrib]
 
 lemma normSq_le_tW (q : ι) (x : ι → ℂ) (i : ι) (hi : i ≠ q) : Complex.normSq (x i) ≤ tW q x ^ 2 := by
   have hnn : ∀ j ∈ Finset.univ, 0 ≤ (if j = q then 0 else Complex.normSq (x j)) := by
@@ -333,7 +324,7 @@ lemma psi_le {p q : ι} (hpq : p ≠ q) {k : ℕ} (hk : Fintype.card ι = k + 1)
         | (field_simp; done)
         | (field_simp; ring)
     _ ≤ ∏ i ∈ Finset.univ.erase q, gF p q (s / k) i (x i) := by
-        apply Finset.prod_le_prod
+        apply Finset.prod_le_prod₀
         · intro i _
           exact Real.rpow_nonneg hu.le _
         · intro i hi
@@ -342,7 +333,7 @@ lemma psi_le {p q : ι} (hpq : p ≠ q) {k : ℕ} (hk : Fintype.card ι = k + 1)
 lemma measurableSet_Bset (q : ι) : MeasurableSet (Bset q) := by
   have hc : Continuous (tW q) := by
     unfold tW
-    refine Real.continuous_sqrt.comp (continuous_finset_sum _ fun i _ => ?_)
+    refine Real.continuous_sqrt.comp (continuous_finsetSum _ fun i _ => ?_)
     by_cases h : i = q
     · simp only [h, if_true]
       exact continuous_const

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSpaceCohomologyPresheafClassesAsCocyclesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChosenInjectiveResolutionEtaleSheafBasicPropertiStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSpaceCohomologyPresheafClassesAsCocyclesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChosenInjectiveResolutionEtaleSheafBasicPropertiStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex Simplicial TensorProduct GlobalTheory.EtC
 
 noncomputable section
@@ -63,9 +68,9 @@ namespace GlobalTheory.EtC
 
 theorem leray_inj : ∀ (R : Type) [CommRing R] (F : Shv R) (E : Spc) (n : ℕ),
     (∀ k m : ℕ, 0 < m → k + m = n → ∀ y : H R (disc.obj (E.obj (op ⦋k⦌))) F m, y = 0) →
-    (∀ s : (free R).obj (E.obj (op ⦋0⦌)) ⟶ F, IsCls s 0 → s = 0) ∧
-    ∀ s : (free R).obj (E.obj (op ⦋n + 1⦌)) ⟶ F, IsCls s 0 →
-      ∃ t : (free R).obj (E.obj (op ⦋n⦌)) ⟶ F, cobd t = s := by
+    (∀ s : (free R).obj (E.obj (op ⦋0⦌)) ⟶ F, IsCls (R := R) (E := E) (n := 0) s 0 → s = 0) ∧
+    ∀ s : (free R).obj (E.obj (op ⦋n + 1⦌)) ⟶ F, IsCls (R := R) (E := E) (n := n + 1) s 0 →
+      ∃ t : (free R).obj (E.obj (op ⦋n⦌)) ⟶ F, cobd (R := R) (E := E) (n := n) t = s := by
   intro R _ F E n hH
   obtain ⟨-, hneg, hmono, ⟨w, hex⟩, -, hpos⟩ := GlobalTheory.T.chosenInjectiveResolutionEtaleSheaf_basic_properties R F
   constructor

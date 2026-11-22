@@ -1,13 +1,18 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.SpanPowerMembership.FmZeroHLatEmpty
-import Formalism.LocalToGlobal.Columns.RhoEqOfSmulEq
-import Formalism.LocalToGlobal.Columns.GSetLemmas
-import Formalism.LocalToGlobal.Columns.PolyFn
-import Formalism.LocalToGlobal.Columns.CoefModB
-import Formalism.LocalToGlobal.Divisibility.Frames
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.SpanPowerMembership.FmZeroHLatEmpty
+public import Formalism.LocalToGlobal.Columns.RhoEqOfSmulEq
+public import Formalism.LocalToGlobal.Columns.GSetLemmas
+public import Formalism.LocalToGlobal.Columns.PolyFn
+public import Formalism.LocalToGlobal.Columns.CoefModB
+public import Formalism.LocalToGlobal.Divisibility.Frames
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+public import Formalism.LocalToGlobal.Columns.HeckeSpCount
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,8 +106,13 @@ structure Ok (S : GStep E K n) : Prop where
   root : ∀ b (g : S.G b), ∃ m : ℕ, 0 < m ∧ S.chr b g ^ m = 1
   lsh_smul : ∀ b (g : S.G b) (d : S.D b) (x : Fin n → E),
     (S.gam b g : Matrix (Fin n) (Fin n) E) *ᵥ x ∈ S.Lsh b (g • d) ↔ x ∈ S.Lsh b d
-  lsh_lat : ∀ b (d : S.D b), Submodule.IsLattice E (S.Lsh b d)
+  lsh_full_lat : ∀ b (d : S.D b), Submodule.IsFullLattice E (S.Lsh b d)
   stab_inj : ∀ b (g : S.G b) (d : S.D b), g • d = d → S.gam b g = 1 → g = 1
+
+omit [NumberField K] [StarRing K] in
+theorem Ok.lsh_lat {S : GStep E K n} (hS : S.Ok) (b : S.β) (d : S.D b) :
+    Submodule.IsLattice E (S.Lsh b d) :=
+  (hS.lsh_full_lat b d).toIsLattice
 
 def Free (S : GStep E K n) : Prop := ∀ b (g : S.G b) (d : S.D b), g • d = d → g = 1
 
@@ -134,8 +144,8 @@ def rho (b : S.β) : S.G b →* Module.End K (VV K lam) where
     simp only [map_mul, Units.val_mul]
     rw [smul_mul_smul_comm]
 
-open Classical in
 
+open Classical in
 @[reducible] def fam : GFam K where
   β := S.β
   V := VV K lam
@@ -152,7 +162,7 @@ def Fi : Submodule ℂ (S.Cl → Fr emb σ n → ℂ) where
   carrier := {φ | ∀ c, φ c ∈ ValC (Gr emb σ n) lam ∧ ∀ g : S.Stab c, S.tr emb σ c.1 g.1 (φ c) = φ c}
   add_mem' := by
     intro a b ha hb c
-    exact ⟨Submodule.add_mem _ (ha c).1 (hb c).1, fun g => by rw [Pi.add_apply, map_add, (ha c).2 g, (hb c).2 g]⟩
+    exact ⟨Submodule.add_mem _ (ha c).1 (hb c).1, fun g => by rw [Pi.add_apply, map_add (f := _), (ha c).2 g, (hb c).2 g]⟩
   zero_mem' := fun c => ⟨Submodule.zero_mem _, fun g => map_zero _⟩
   smul_mem' := by
     intro r a ha c
@@ -166,9 +176,6 @@ abbrev FormsK : Submodule K (S.Cl → VV K lam) := (S.csd emb lam h).Forms
 
 instance formsModO : Module (𝓞 K) (S.FormsK emb lam h) :=
   (fun C : CSD K => (inferInstance : Module (𝓞 K) C.Forms)) (S.csd emb lam h)
-
-instance formsTow : IsScalarTower (𝓞 K) K (S.FormsK emb lam h) :=
-  (fun C : CSD K => (inferInstance : IsScalarTower (𝓞 K) K C.Forms)) (S.csd emb lam h)
 
 def latOf (M : S.Cl → Submodule (𝓞 K) (VV K lam)) : Submodule (𝓞 K) (S.FormsK emb lam h) :=
   { carrier := {x | ∀ c, x.1 c ∈ M c}
@@ -237,8 +244,8 @@ structure TDat {E K : Type} [Field E] [NumberField E] [Field K] {n : ℕ} (S : G
 
 structure TDat.Ok {E K : Type} [Field E] [NumberField E] [Field K] {n : ℕ} {S : GStep E K n}
     {ST : Finset (HeightOneSpectrum (𝓞 E))} (A : TDat S ST) (T : ℕ) : Prop where
-  N_lat : ∀ b d, Submodule.IsLattice E (A.N b d)
-  dnN_lat : ∀ b d P, Submodule.IsLattice E (A.dnN b d P)
+  N_lat : ∀ b d, Submodule.IsFullLattice E (A.N b d)
+  dnN_lat : ∀ b d P, Submodule.IsFullLattice E (A.dnN b d P)
   ker_lat : ∀ b d P, Submodule.IsLattice E (A.ker b d P)
   f_add : ∀ b d P, ∀ x ∈ A.N b d, ∀ y ∈ A.N b d, A.f b d P (x + y) = A.f b d P x + A.f b d P y
   f_smul : ∀ b d (P : ST) (a : 𝓞 E), ∀ x ∈ A.N b d, A.f b d P (a • x) = Ideal.Quotient.mk P.1.asIdeal a * A.f b d P x
@@ -286,20 +293,20 @@ abbrev lv (P : ST) (c : S.Cl) : Type := Red (A.N c.1 (S.rep c)) P.1
 
 abbrev lk (P : ST) (c : S.Cl) : Type := Red (A.dnN c.1 (S.rep c) P) P.1
 
-open Classical in
 
+open Classical in
 def fv (P : ST) (c : S.Cl) : Module.Dual (Res P.1) (A.lv P c) :=
   if h : ∃ φ : Module.Dual (Res P.1) (A.lv P c), ∀ x : A.N c.1 (S.rep c),
     φ (Submodule.Quotient.mk x) = A.f c.1 (S.rep c) P x then h.choose else 0
 
-open Classical in
 
+open Classical in
 def te (T : ℕ) (P : ST) (c : S.Cl) : A.lk P c :=
   if h : ∃ t : A.dnN c.1 (S.rep c) P, ∃ e ∈ A.N c.1 (S.rep c), A.f c.1 (S.rep c) P e = 1 ∧ (t : Fin n → E) = (T : 𝓞 E) • e
   then Submodule.Quotient.mk h.choose else 0
 
-open Classical in
 
+open Classical in
 def extF (M : Submodule (𝓞 E) (Fin n → E)) (P : HeightOneSpectrum (𝓞 E)) (g : Module.Dual (Res P) (Red M P))
     (y : Fin n → E) : Res P :=
   if h : ∃ a : Res P, ∃ s : 𝓞 E, s ∉ P.asIdeal ∧ ∃ z : M, (z : Fin n → E) = s • y ∧
@@ -321,23 +328,23 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ}
 
 def autO (N : Submodule (𝓞 E) (Sp E n)) : Subgroup (Sp E n ≃ₗ[E] Sp E n) := UF E n ⊓ autLat N
 
-variable (E n) in
 
+variable (E n) in
 def autOrd : Set ℕ :=
   {a | ∃ N : Submodule (𝓞 E) (Sp E n), Submodule.IsLattice E N ∧ Formalism.HermitianLatticesTheory.IsUnimodular (hStd E n) N ∧ a = Nat.card (autO N)}
 
 def gamRanks (R : Ranks) : Finset ℕ := (Finset.Icc 1 R.m).image R.N ∪ {R.rankX', R.rankY (R.m - 1), R.nV}
 
-variable (E) in
 
+variable (E) in
 def gamOrd (R : Ranks) : Set ℕ := ⋃ n ∈ gamRanks R, autOrd E n
+
 
 variable (E) in
 open Classical in
-
 def DGam (R : Ranks) : ℕ := if h : (gamOrd E R).Finite then h.toFinset.lcm id else 0
 
-theorem autO_finite (hE : PosStar E) {N : Submodule (𝓞 E) (Sp E n)} (hN : Submodule.IsLattice E N) : Finite (autO N) :=
+theorem autO_finite (hE : PosStar E) {N : Submodule (𝓞 E) (Sp E n)} (hN : Submodule.IsFullLattice E N) : Finite (autO N) :=
   Formalism.HermitianLatticesTheory.final_autFinite E (Sp E n) (hStd E n) hStd_isSymm (hStd_pos hE) N hN
 
 theorem card_autO_gmap {g : Sp E n ≃ₗ[E] Sp E n} (hg : g ∈ UF E n) (N : Submodule (𝓞 E) (Sp E n)) :
@@ -371,21 +378,21 @@ theorem gamOrd_finite (hE : PosStar E) (R : Ranks) : (gamOrd E R).Finite :=
 theorem dvd_DGam (hE : PosStar E) (R : Ranks) (hn : n ∈ gamRanks R) {N : Submodule (𝓞 E) (Sp E n)}
     (h1 : Submodule.IsLattice E N) (h2 : Formalism.HermitianLatticesTheory.IsUnimodular (hStd E n) N) : Nat.card (autO N) ∣ DGam E R := by
   unfold DGam
-  rw [dif_pos (gamOrd_finite hE R)]
+  rw [dite_eq_left (gamOrd_finite hE R)]
   exact Finset.dvd_lcm (f := id) ((Set.Finite.mem_toFinset _).2 (Set.mem_biUnion hn ⟨N, h1, h2, rfl⟩))
 
 theorem DGam_dvd (hE : PosStar E) (R : Ranks) {M : ℕ} (h : ∀ a ∈ gamOrd E R, a ∣ M) : DGam E R ∣ M := by
   unfold DGam
-  rw [dif_pos (gamOrd_finite hE R)]
+  rw [dite_eq_left (gamOrd_finite hE R)]
   exact Finset.lcm_dvd fun a ha => h a ((Set.Finite.mem_toFinset _).1 ha)
 
 theorem DGam_pos (hE : PosStar E) (R : Ranks) : 0 < DGam E R := by
   apply Nat.pos_of_ne_zero
   unfold DGam
-  rw [dif_pos (gamOrd_finite hE R), Ne, Finset.lcm_eq_zero_iff]
+  rw [dite_eq_left (gamOrd_finite hE R), Ne, Finset.lcm_eq_zero_iff]
   rintro ⟨a, ha, h0⟩
-  obtain ⟨n, -, N, h1, -, rfl⟩ := Set.mem_iUnion₂.1 ((Set.Finite.mem_toFinset _).1 ha)
-  haveI := autO_finite hE h1
+  obtain ⟨n, -, N, hN, hUni, rfl⟩ := Set.mem_iUnion₂.1 ((Set.Finite.mem_toFinset _).1 ha)
+  have := autO_finite hE (hcnt_isFullLattice_of_unimodular hN hUni)
   exact Nat.card_pos.ne' h0
 
 theorem N_mem_gamRanks (R : Ranks) {j : ℕ} (h1 : 1 ≤ j) (h2 : j ≤ R.m) : R.N j ∈ gamRanks R :=
@@ -457,9 +464,9 @@ def unf (i : ℕ) (c : (I.S i).Cl) (c' : (I.S (i + 1)).Cl) : (Fr emb σ (R.N i) 
   rho'_norm := h.rho'_norm
   unf := I.unf emb σ
   sSharp i τ := if hi : i < R.m then ⌊(hc τ).e ⟨i, hi⟩ - (R.N (i + 1) : ℚ) / 2⌋ else 0
-  sSharp_eq i hi τ := by rw [dif_pos hi]; exact floor_sub_half _ _ _
+  sSharp_eq i hi τ := by rw [dite_eq_left hi]; exact floor_sub_half _ _ _
   sDiv i τ := if hi : i < R.m then ⌊(hc τ).e ⟨i, hi⟩ - (R.N i : ℚ) / 2⌋ else 0
-  sDiv_eq i hi τ := by rw [dif_pos hi]; exact floor_sub_half _ _ _
+  sDiv_eq i hi τ := by rw [dite_eq_left hi]; exact floor_sub_half _ _ _
 
 end ChainIn
 
@@ -514,7 +521,7 @@ def Mt : Submodule ℂ (∀ b, Q.S'.D b → Pol ℂ ι (R.N R.m - 1)) where
     intro F G hF hG b d
     refine ⟨Submodule.add_mem _ (hF b d).1 (hG b d).1, fun g hg => ?_⟩
     simp only [Pi.add_apply]
-    rw [(hF b d).2 g hg, (hG b d).2 g hg, map_add, smul_add]
+    rw [(hF b d).2 g hg, (hG b d).2 g hg, map_add (f := _), smul_add]
   zero_mem' := fun b d => ⟨Submodule.zero_mem _, fun g _ => by simp⟩
   smul_mem' := by
     intro r F hF b d
@@ -687,8 +694,8 @@ namespace TDat
 variable {E K : Type} [Field E] [NumberField E] [Field K] {n : ℕ} {S : GStep E K n}
   {ST : Finset (HeightOneSpectrum (𝓞 E))} (A : TDat S ST)
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 structure Laws (T : ℕ) : Prop where
   lv_rank : ∀ P c, Module.finrank (Res P.1) (A.lv P c) = n
   lk_rank : ∀ P c, Module.finrank (Res P.1) (A.lk P c) = n
@@ -742,8 +749,8 @@ structure FmLaws (Pl : Rows.Places K) (hI : I.Ok) (hQ : Q.Ok) : Prop where
   B_span : ∀ i (w : Pl.Pl) P, Submodule.span K
     (locW Pl w (BLat J emb hc i (fam i) P) : Set ((I.S i).hlat emb (lamT hc i) (fam i)).V) = ⊤
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 def forms {Pl : Rows.Places K} (Z : FmIn J Pl) (hI : I.Ok) (hJ : J.Ok) (hQ : Q.Ok) (l : J.Laws emb σ hc)
     (lf : FmLaws J Q emb σ hc Pl hI hQ) (_hT : Q.Over J) :
     MemberForms K σ Pl ι hc (I.chain emb σ hI hc) (J.atT emb σ hI hJ hc l) (Q.per emb σ hI hQ hc) where
@@ -844,8 +851,8 @@ def Ys.Off (y : Ys X n) (P : HeightOneSpectrum (𝓞 X.E)) : Prop :=
   ∀ N N' : Submodule (𝓞 X.E) (Sp X.E n), (∀ w : HeightOneSpectrum (𝓞 X.E), w ≠ P → w ≠ conjPrime₂ P →
     Formalism.HermitianLatticesTheory.localization₂ w.asIdeal N' = Formalism.HermitianLatticesTheory.localization₂ w.asIdeal N) → y.ys N' = y.ys N
 
-variable (ST SG Q) in
 
+variable (ST SG Q) in
 def PtY (y : Ys X n) : Type := {p : DecoF X.E n ST SG Q × Set (Sp X.E n) // p.2 ∈ y.ys p.1.deco.1.N}
 
 @[reducible] def ptYAct (y : Ys X n) (Λ : LevFam X.E X.K n SG) (Θ : LevQFam X.E X.K n Q) :
@@ -858,8 +865,8 @@ def PtY (y : Ys X n) : Type := {p : DecoF X.E n ST SG Q × Set (Sp X.E n) // p.2
     show FrmG.incl Λ Θ (g * h) • p.1.1 = FrmG.incl Λ Θ g • FrmG.incl Λ Θ h • p.1.1
     rw [map_mul, mul_smul]) (Set.image_image (fun v => g.1.1 v) (fun v => h.1.1 v) p.1.2).symm)
 
-open Classical in
 
+open Classical in
 def prefRep {G D : Type} [Group G] [MulAction G D] (pref : D → Prop) (q : MulAction.orbitRel.Quotient G D) : D :=
   if h : ∃ p, Quotient.mk (MulAction.orbitRel G D) p = q ∧ pref p then h.choose else Quotient.out q
 
@@ -870,8 +877,8 @@ theorem prefRep_spec {G D : Type} [Group G] [MulAction G D] (pref : D → Prop) 
   · exact h.choose_spec.1
   · exact Quotient.out_eq q
 
-variable (ST) in
 
+variable (ST) in
 @[reducible] def stepY (y : Ys X n) (β : Type) [Fintype β] [DecidableEq β] (Λ : β → LevFam X.E X.K n SG)
     (Θ : β → LevQFam X.E X.K n Q) (pref : DecoF X.E n ST SG Q → Prop) : GStep X.E X.K n where
   β := β
@@ -885,14 +892,14 @@ variable (ST) in
   rp b := @prefRep _ _ _ (ptYAct y (Λ b) (Θ b)) fun p => pref p.1.1
   rp_spec b := @prefRep_spec _ _ _ (ptYAct y (Λ b) (Θ b)) fun p => pref p.1.1
 
-open Classical in
 
-def PtY.mv {y : Ys X n} (p : PtY ST SG Q y) (d : DecoSet X.E n ST SG) : PtY ST SG Q y :=
+open Classical in
+def PtY.mv {y : Ys X n} (p : PtY ST SG Q y) (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) : PtY ST SG Q y :=
   if h : (∀ (P : Q) (x : Sp X.E n), p.1.1.1.2 P x ∈ d.1.at P.1 ↔ x ∈ stdAt X.E n P.1) ∧ p.1.2 ∈ y.ys d.1.N
   then ⟨(⟨(d, p.1.1.1.2), h.1⟩, p.1.2), h.2⟩ else p
 
-variable (ST) in
 
+variable (ST) in
 def tdatY (T : ℕ) (y : Ys X n) (β : Type) [Fintype β] [DecidableEq β] (Λ : β → LevFam X.E X.K n SG)
     (Θ : β → LevQFam X.E X.K n Q) (pref : DecoF X.E n ST SG Q → Prop) : TDat (stepY ST y β Λ Θ pref) ST where
   N _ p := p.1.1.deco.1.N
@@ -929,9 +936,9 @@ structure TopLev.Ok {X : Fields} {Pr : Primes X} {R : Ranks} {Q : Finset (Height
   pref_off : ∀ u j, j ≠ R.m → ∀ p, Tp.pref u j p
   pref_top : ∀ u p, Tp.pref u R.m p → ∃ d, p.deco = DecoSet.tilH (N_m_succ R) (Pr.piT u) d
 
+
 variable (R) in
 open Classical in
-
 def ysAt (j : ℕ) : Ys X (R.N j) :=
   if j + 1 = R.m then ⟨ybSet sel mu cst, fun N γ Y => ybSet_gmap sel mu cst N γ Y⟩ else Ys.triv X _
 

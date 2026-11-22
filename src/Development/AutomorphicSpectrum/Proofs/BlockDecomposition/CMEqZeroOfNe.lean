@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+
+@[expose] public section
 
 open Matrix GroundTheory.Automorphic GroundTheory.Automorphic.Iwasawa PositivityTheory.JacquetShalikaLocal
 
@@ -12,12 +16,12 @@ variable {F : Type} [Field F] {n : ℕ}
 theorem cM_eq_zero_of_ne {k : ℕ} (x : Fin (k + 1) → F) {i j : Fin n}
     (h : ¬ ((j : ℕ) = k + 1 ∧ (i : ℕ) < k + 1)) : cM n k x i j = 0 := by
   simp only [cM, Matrix.of_apply]
-  rw [dif_neg h]
+  rw [dite_eq_right h]
 
 theorem cM_eq_of {k : ℕ} (x : Fin (k + 1) → F) {i j : Fin n} (hj : (j : ℕ) = k + 1)
     (hi : (i : ℕ) < k + 1) : cM n k x i j = x ⟨i, hi⟩ := by
   simp only [cM, Matrix.of_apply]
-  rw [dif_pos ⟨hj, hi⟩]
+  rw [dite_eq_left ⟨hj, hi⟩]
 
 theorem col_val (k : ℕ) (x : Fin (k + 1) → F) :
     ((col n k x : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) = 1 + cM n k x := rfl

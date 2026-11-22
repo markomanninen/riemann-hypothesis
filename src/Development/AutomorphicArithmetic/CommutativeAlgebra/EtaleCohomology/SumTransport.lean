@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.AddIff
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.EvalExact
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.AddIff
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.EvalExact
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,10 +21,11 @@ private lemma sum_transport {Q : C ⥤ Type} {K : Coef C} (c : Sec Q K) {I : Typ
     (g : I → (Q ⟶ Q)) {A B : C} (φ : A ⟶ B) (w : Q.obj A) :
     (K.map φ).hom (∑ i, c.1 A ((g i).app A w)) =
       ((Finset.univ.val.map fun i => (g i).app B (Q.map φ w)).map (c.1 B)).sum := by
-  rw [map_sum, Multiset.map_map]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Multiset.map_map]
   change _ = ∑ i, c.1 B ((g i).app B (Q.map φ w))
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [sec_nat c φ, FunctorToTypes.naturality]
+  rw [sec_nat c φ, ← NatTrans.naturality_apply (g i) φ]
 
 private lemma avg_indep (Pa : Parts C) {K : Coef C} (hK : Pa.Add K) {Q P : C ⥤ Type} {p : Q ⟶ P}
     {I : Type} [Fintype I] {g : I → (Q ⟶ Q)} (h : Pa.LocTrans p g) (c : Sec Q K) {A : C}
@@ -46,12 +51,13 @@ private def avg (Pa : Parts C) {K : Coef C} (hK : Pa.Add K) {Q P : C ⥤ Type} {
   ⟨fun A y => ∑ i, c.1 A ((g i).app A (lift Pa h A y)), by
     intro A B φ y
     have hw : p.app B (Q.map φ (lift Pa h A y)) = p.app B (lift Pa h B (P.map φ y)) := by
-      rw [lift_spec, FunctorToTypes.naturality, lift_spec]
+      rw [lift_spec, NatTrans.naturality_apply p φ, lift_spec]
     change (K.map φ).hom (∑ i, c.1 A ((g i).app A (lift Pa h A y))) =
       ∑ i, c.1 B ((g i).app B (lift Pa h B (P.map φ y)))
-    rw [← avg_indep Pa hK h c hw, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← avg_indep Pa hK h c hw, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [sec_nat c φ, FunctorToTypes.naturality]⟩
+    rw [sec_nat c φ, ← NatTrans.naturality_apply (g i) φ]⟩
 
 private lemma avg_apply (Pa : Parts C) {K : Coef C} (hK : Pa.Add K) {Q P : C ⥤ Type} {p : Q ⟶ P}
     {I : Type} [Fintype I] {g : I → (Q ⟶ Q)} (h : Pa.LocTrans p g) (c : Sec Q K) (A : C)
@@ -77,7 +83,8 @@ private lemma avg_map (Pa : Parts C) {K L : Coef C} (hK : Pa.Add K) (hL : Pa.Add
     (α : K ⟶ L) (c : Sec Q K) (c' : Sec Q L)
     (hc : ∀ (A : C) (q : Q.obj A), c'.1 A q = (α.app A).hom (c.1 A q)) (A : C) (y : P.obj A) :
     (avg Pa hL h c').1 A y = (α.app A).hom ((avg Pa hK h c).1 A y) := by
-  rw [avg_apply, avg_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [avg_apply, avg_apply, map_sum]
   exact Finset.sum_congr rfl fun i _ => hc _ _
 
 private lemma zero_case (Pa : Parts C) (T : Theory C) {K L : Coef C} (hK : Pa.Add K)

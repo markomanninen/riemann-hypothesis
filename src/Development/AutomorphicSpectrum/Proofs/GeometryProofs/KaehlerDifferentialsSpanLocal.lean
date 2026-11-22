@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MvPolynomial
 
 namespace GlobalTheory.CompanionTheory.Kaehler
@@ -59,7 +64,7 @@ theorem maximalIdeal_eq_span_of_span_D :
         have : (⟨f 0, hmem 0⟩ : m) = 0 := by ext; simp [hf]
         rw [this, map_zero]
       map_add' := fun a b => by
-        rw [← map_add]
+        rw [← map_add (f := _)]
         congr 1
         ext
         simp [hf]
@@ -67,7 +72,7 @@ theorem maximalIdeal_eq_span_of_span_D :
   have hD₀ : ∀ s, D₀ s = m.toCotangent ⟨f s, hmem s⟩ := fun _ => rfl
   have leib : ∀ a b, D₀ (a * b) = ψ a • D₀ b + ψ b • D₀ a := by
     intro a b
-    rw [hD₀, hD₀, hD₀, ← map_smul, ← map_smul, ← map_add, Ideal.toCotangent_eq]
+    rw [hD₀, hD₀, hD₀, ← map_smul, ← map_smul, ← map_add (f := _), Ideal.toCotangent_eq]
     have h2 : f a * f b ∈ m ^ 2 := by
       rw [pow_two]; exact Ideal.mul_mem_mul (hmem a) (hmem b)
     have : ((⟨f (a * b), hmem (a * b)⟩ : m) : B)
@@ -97,7 +102,8 @@ theorem maximalIdeal_eq_span_of_span_D :
     rintro _ ⟨s, _, rfl⟩
     exact hfs s
   apply le_antisymm _ hJm
-  exact Submodule.le_of_le_smul_of_le_jacobson_bot (IsNoetherian.noetherian m)
-    (IsLocalRing.maximalIdeal_le_jacobson _) hle
+  exact Submodule.le_of_le_smul_of_le_jacobson (IsNoetherian.noetherian m)
+    (by simpa only [Ideal.jacobson_bot] using
+      (IsLocalRing.maximalIdeal_le_jacobson (⊥ : Ideal B))) hle
 
 end GlobalTheory.CompanionTheory.Kaehler

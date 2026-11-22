@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMonoHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMonoHom
+
+@[expose] public section
 
 open GlobalTheory.MonoHom
 
@@ -121,8 +125,8 @@ theorem existsUnique_coeff {ε : ι → LinearMap.BilinForm ℤ X} (hε : IsSymB
   · rw [hF]
     have := bimul_ext e q (fun x y => ∏ p : Fin (Module.finrank ℤ X) × Fin (Module.finrank ℤ X),
         q (e p.1) (e p.2) ^ halfForm e p.1 p.2 x y) hadd hadd'
-      (fun a a' b => by simp only [map_add, LinearMap.add_apply, zpow_add, Finset.prod_mul_distrib])
-      (fun a b b' => by simp only [map_add, zpow_add, Finset.prod_mul_distrib])
+      (fun a a' b => by simp only [map_add (f := _), LinearMap.add_apply, zpow_add, Finset.prod_mul_distrib])
+      (fun a b b' => by simp only [map_add (f := _), zpow_add, Finset.prod_mul_distrib])
       (fun i j => by
         simp only [halfForm_basis]
         rw [Finset.prod_eq_single (min i j, max i j)]
@@ -138,8 +142,8 @@ theorem existsUnique_coeff {ε : ι → LinearMap.BilinForm ℤ X} (hε : IsSymB
       rw [div_eq_one]
       have := bimul_ext e q (fun x y => ∏ p : Fin (Module.finrank ℤ X) × Fin (Module.finrank ℤ X),
           q (e p.1) (e p.2) ^ halfForm e p.1 p.2 x y) hadd hadd'
-        (fun a a' b => by simp only [map_add, LinearMap.add_apply, zpow_add, Finset.prod_mul_distrib])
-        (fun a b b' => by simp only [map_add, zpow_add, Finset.prod_mul_distrib])
+        (fun a a' b => by simp only [map_add (f := _), LinearMap.add_apply, zpow_add, Finset.prod_mul_distrib])
+        (fun a b b' => by simp only [map_add (f := _), zpow_add, Finset.prod_mul_distrib])
         (fun i j => by
           simp only [halfForm_basis]
           rw [Finset.prod_eq_single (min i j, max i j)]
@@ -178,8 +182,5 @@ theorem isSymBasis_mul : IsSymBasis (fun _ : Fin 1 => (LinearMap.mul ℤ ℤ : L
     have hy : y = y • (1 : ℤ) := by simp
     rw [hx, hy, LinearMap.map_smul₂, LinearMap.map_smul]
     simp only [smul_eq_mul]; ring
-
-example (s s' : ℚˣ) (h : ∀ x y : ℤ, s ^ ((3 : ℤ) * (x * y)) = s' ^ ((3 : ℤ) * (x * y))) : s ^ 3 = s' ^ 3 :=
-  pow_eq_pow_of_prod isSymBasis_mul 3 (fun _ => s) (fun _ => s') (fun x y => by simpa using h x y) 0
 
 end GlobalTheory.PerRoot

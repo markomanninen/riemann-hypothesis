@@ -1,22 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.DenomBound
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.PolarConjTranspose
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.HasSmoothLogNearOneOfIsUnitaryLieExpDataStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.SmoothInExponentialCoordsIffFirstSecondKindStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CommutingAlgebrasFiniteSpanStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryLieGeneratorsRepStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsEnvelopingAlgHomUnitaryLieAlgebraStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.EnvelopingMapSurjectiveStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryRealPointsStructureRealPlacesStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryAdelicHeightCosetLeNormInfPowStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.NormInfSubmultiplicativeLeAdelicHeightStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryLatticeDenominatorHeightBoundProofStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsFiniteCosetsAdelicUnitaryBoundedDenominatoStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryReductionPolynomialHeightBoundStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.OrthogonalAnisotropicFrameBoundedCMStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ShortLatticeVectorBoundedSizeOfOrthogonalFrameStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.AnisotropicFiniteLengthsOfShortLatticeVectorStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.OrthogonalFrameOfAnisotropicFiniteLengthsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.DenomBound
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.PolarConjTranspose
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.HasSmoothLogNearOneOfIsUnitaryLieExpDataStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.SmoothInExponentialCoordsIffFirstSecondKindStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CommutingAlgebrasFiniteSpanStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryLieGeneratorsRepStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsEnvelopingAlgHomUnitaryLieAlgebraStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.EnvelopingMapSurjectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryRealPointsStructureRealPlacesStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryAdelicHeightCosetLeNormInfPowStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.NormInfSubmultiplicativeLeAdelicHeightStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryLatticeDenominatorHeightBoundProofStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsFiniteCosetsAdelicUnitaryBoundedDenominatoStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryReductionPolynomialHeightBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.OrthogonalAnisotropicFrameBoundedCMStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ShortLatticeVectorBoundedSizeOfOrthogonalFrameStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.AnisotropicFiniteLengthsOfShortLatticeVectorStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.OrthogonalFrameOfAnisotropicFiniteLengthsStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,8 +86,8 @@ def jInf (V : HSp D) : LieN V →ₗ[ℝ] AlgInf V where
 
 variable (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ))
 
-open Classical in
 
+open Classical in
 def secInf (V : HSp D) (u : AlgInf V) : GA D V :=
   if h : ∃ g ∈ GinfC V, ∀ τ, infMat D.sp.cm.sig V.gram (θ τ) g = u τ then h.choose else 1
 
@@ -106,7 +110,7 @@ theorem unit_iff (R : RealPoints θ V) (u : AlgInf V) :
 theorem secInf_spec (R : RealPoints θ V) {u : AlgInf V} (hu : sigInf V u * u = 1) :
     secInf θ V u ∈ GinfC V ∧ ∀ τ, infMat D.sp.cm.sig V.gram (θ τ) (secInf θ V u) = u τ := by
   have h := R.2.1 u ((unit_iff R u).1 hu)
-  rw [secInf, dif_pos h]
+  rw [secInf, dite_eq_left h]
   exact h.choose_spec
 
 theorem isLieData (R : RealPoints θ V) : IsLieData (sigInf V) (jInf V) (secInf θ V) := by
@@ -171,7 +175,7 @@ theorem oneP_eq (R : RealPoints θ V) (τ : D.what₂.Tau) (X : LieAt V τ) (t :
     · rw [h0.2]; simp [atPlace]
     · rw [h0.2]; simp [atPlace, Pi.single_eq_of_ne h]
   have h : ∃ x, IsAtTau θ V τ (NormedSpace.exp (t • X.1)) x := ⟨_, h1⟩
-  rw [oneP, atTau, dif_pos h]
+  rw [oneP, atTau, dite_eq_left h]
   refine R.2.2.1 _ h.choose_spec.1 _ h1.1 fun τ' => ?_
   by_cases c : τ' = τ
   · subst c; rw [h.choose_spec.2.1, h1.2.1]
@@ -319,7 +323,7 @@ theorem exists_gelf (R : RealPoints θ V) (τ : D.what₂.Tau) : ∃ c : ℕ →
       ∀ k (φ : SmF θ V), gelf θ V τ k φ.1 = (envRep R τ (c k) φ).1 := by
   obtain ⟨P, Q, hPQ, h⟩ := GlobalTheory.T.unitary_lie_generators_rep _ _ (R.1 τ).1 (R.1 τ).2
   obtain ⟨h1, h2⟩ := h (EnvAt V τ) (fun X => UniversalEnvelopingAlgebra.ι ℂ ((1 : ℂ) ⊗ₜ[ℝ] X))
-    (fun X Y => by rw [TensorProduct.tmul_add, map_add])
+    (fun X Y => by rw [TensorProduct.tmul_add, map_add (f := _)])
     (fun c X => by
       rw [← map_smul, TensorProduct.tmul_smul, TensorProduct.smul_tmul', TensorProduct.smul_tmul']
       simp)
@@ -331,13 +335,14 @@ theorem exists_gelf (R : RealPoints θ V) (τ : D.what₂.Tau) : ∃ c : ℕ →
     refine Subalgebra.sum_mem _ fun l _ => Subalgebra.smul_mem _ (Subalgebra.list_prod_mem _ fun x hx => ?_) _
     obtain ⟨X, -, rfl⟩ := List.mem_map.1 hx
     exact Algebra.span_le_adjoin ℂ _ (h2 X)
-  · rw [gelf, gelfA, map_sum, LinearMap.sum_apply, Submodule.coe_sum]
-    refine Finset.sum_congr rfl fun idx _ => ?_
-    rw [map_list_prod, List.map_ofFn]
-    refine foldr_ofFn_eq _ _ _ _ (fun i x => ?_) φ
-    simp only [Function.comp, map_add, map_smul, envRep_ι]
-    rw [RderC, conjAt, ← (hPQ _ _).1, ← (hPQ _ _).2, Rder_eq R, Rder_eq R]
-    rfl
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [gelf, gelfA, map_sum, LinearMap.sum_apply, Submodule.coe_sum]
+      refine Finset.sum_congr rfl fun idx _ => ?_
+      rw [map_list_prod, List.map_ofFn]
+      refine foldr_ofFn_eq _ _ _ _ (fun i x => ?_) φ
+      simp only [Function.comp, map_add (f := _), map_smul, envRep_ι]
+      rw [RderC, conjAt, ← (hPQ _ _).1, ← (hPQ _ _).2, Rder_eq R, Rder_eq R]
+      rfl
 
 theorem zfin_iff (R : RealPoints θ V) {φ : GA D V → ℂ} (hφ : IsSmoothInf V (expInf θ V) φ) :
     (∃ W : Submodule ℂ (GA D V → ℂ), FiniteDimensional ℂ W ∧ φ ∈ W ∧ ∀ τ k, ∀ f ∈ W, gelf θ V τ k f ∈ W) ↔
@@ -531,53 +536,6 @@ theorem isAutFunSm_iff (hθ : IsInfFam θ) (V : HSp D) (φ : GA D V → ℂ) : I
     exact ⟨ha, (smooth_iff R φ).2 hs, (zfin_iff R hs).2 hz, (growth_iff hθ R ha hs).2 hg⟩
 
 variable {X : ThetaX D}
-
-theorem afTiedSm_iff (T : ThetaTied D X) : ThetaSmoothnessCondition T ↔
-    ∀ V : HSp D, V.SigOK → ∀ φ : GA D V → ℂ, (∃ F : X.AF V, T.ev V F = φ) ↔ IsSmoothAutForm V φ := by
-  constructor
-  · rintro ⟨⟨θ, hθ⟩, h⟩ V hV φ
-    rw [← isAutFunSm_iff hθ]
-    exact Set.ext_iff.1 (h θ hθ V hV) φ
-  · intro h
-    exact ⟨T.actR.1, fun θ hθ V hV => Set.ext fun φ => (h V hV φ).trans (isAutFunSm_iff hθ V φ).symm⟩
-
-theorem compare (D : D7) :
-    (∀ θ, IsInfFam (D := D) θ → ∀ V : HSp D, (∃! e, IsExpFam θ V e) ∧ ∀ e, IsExpFam θ V e →
-      (∀ τ, lieAt V τ = lieU (gramAt D V τ)) ∧
-      (∀ τ (Y : LieAt V τ) t, oneP θ V τ Y.1 t = e (t • atPlace V τ Y)) ∧
-      (∀ τ (Y : LieAt V τ) φ, Rder θ V τ Y.1 φ = lieDer V e (atPlace V τ Y) φ) ∧
-      (∀ τ, ∃ c : ℕ → List (LieAt V τ) →₀ ℂ,
-        Subalgebra.center ℂ (EnvAt V τ) = Algebra.adjoin ℂ (Set.range fun k => envOf V τ (c k)) ∧
-        ∀ k φ, IsSmoothInf V e φ → gelf θ V τ k φ = envDer V e τ (c k) φ) ∧
-      (∀ φ : GA D V → ℂ, (∀ (k : ℕ) (τs : Fin k → D.what₂.Tau) (Xs : Fin k → Matrix (Fin V.rank) (Fin V.rank) ℂ),
-        (∀ i, Xs i ∈ lieAt V (τs i)) → ∀ g,
-          ContDiff ℝ ∞ fun t : Fin k → ℝ => φ (g * (List.ofFn fun i => oneP θ V (τs i) (Xs i) (t i)).prod)) ↔
-        IsSmoothInf V e φ) ∧
-      (∀ φ, IsSmoothInf V e φ →
-        ((∃ W : Submodule ℂ (GA D V → ℂ), FiniteDimensional ℂ W ∧ φ ∈ W ∧ ∀ τ k, ∀ f ∈ W, gelf θ V τ k f ∈ W) ↔
-          ∀ τ, IsZFiniteAt V e τ φ)) ∧
-      (∀ φ, IsAutFun V φ → IsSmoothInf V e φ →
-        ((∃ N : ℕ, ∀ l : List (D.what₂.Tau × Matrix (Fin V.rank) (Fin V.rank) ℂ), (∀ p ∈ l, p.2 ∈ lieAt V p.1) →
-          ∀ x, ∃ C : ℝ, ∀ g ∈ GinfC V,
-            ‖(l.foldr (fun p f => Rder θ V p.1 p.2 f) φ) (x * g)‖ ≤ C * normInf θ V g ^ N) ↔
-          IsUnifModerate θ V e φ))) ∧
-    (∀ θ, IsInfFam (D := D) θ → ∀ (V : HSp D) φ, IsAutFunSm θ V φ ↔ IsSmoothAutForm V φ) ∧
-    ∀ (X : ThetaX D) (T : ThetaTied D X),
-      (ThetaSmoothnessCondition T ↔ ∀ V : HSp D, V.SigOK → ∀ φ : GA D V → ℂ, (∃ F : X.AF V, T.ev V F = φ) ↔ IsSmoothAutForm V φ) ∧
-      (FormsTied T ↔ ThetaSmoothnessCondition T ∧
-        ∀ V : HSp D, ¬ V.SigOK → ∀ φ : GA D V → ℂ, (∃ F : X.AF V, T.ev V F = φ) ↔ IsSmoothAutForm V φ) := by
-  refine ⟨fun θ hθ V => ?_, fun θ hθ => isAutFunSm_iff hθ, fun X T => ⟨afTiedSm_iff T, ?_⟩⟩
-  · have R := (GlobalTheory.T.adelicUnitary_realPoints_structure_realPlaces D).2 θ hθ V
-    refine ⟨⟨_, isExpFam_expInf R, fun e he => eq_expInf R he⟩, fun e he => ?_⟩
-    obtain rfl := eq_expInf R he
-    refine ⟨fun _ => rfl, oneP_eq R, Rder_eq R, fun τ => ?_, smooth_iff R, fun φ => zfin_iff R,
-      fun φ => growth_iff hθ R⟩
-    obtain ⟨c, h1, h2⟩ := exists_gelf R τ
-    choose w hw using fun k => GlobalTheory.T.enveloping_map_surjective D V τ (c k)
-    refine ⟨w, by simpa only [hw] using h1, fun k φ hφ => ?_⟩
-    exact (h2 k ⟨φ, hφ⟩).trans (by rw [← hw]; exact (envDer_eq R τ (w k) ⟨φ, hφ⟩).symm)
-  · rw [afTiedSm_iff]
-    exact ⟨fun h => ⟨fun V _ => h V, fun V _ => h V⟩, fun h V => (em V.SigOK).elim (h.1 V) (h.2 V)⟩
 
 end GlobalTheory.SmoothForms
 

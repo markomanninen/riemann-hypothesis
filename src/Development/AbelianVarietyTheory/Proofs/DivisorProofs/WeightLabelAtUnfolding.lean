@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothReal
-import Development.AbelianVarietyTheory.Counterexamples.TwistSurvey.ConjModelCast
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothReal
+public import Development.AbelianVarietyTheory.Counterexamples.TwistSurvey.ConjModelCast
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,7 +78,7 @@ theorem aPl_cast (D : D7) (i : Fin D.R.m) (τ : D.what₂.Tau) (p n : ℕ) (hp :
   have h3 := Formalism.L2.NTheta.lamAt_add_add_le (D.hc τ) (p - 1 - n) n (by simp only [Ranks.r]; omega)
   have hl : Formalism.L2.NTheta.lamAt (D.hc τ) (n + (p - 1 - n)) = -(D.hc τ).b i := by
     unfold Formalism.L2.NTheta.lamAt
-    rw [dif_neg (by omega), dif_pos (by omega)]
+    rw [dite_eq_right (by omega), dite_eq_left (by omega)]
     congr 2
     exact Fin.ext (by simp only; omega)
   have hc : ((p - 1 - n : ℕ) : ℚ) = (p : ℚ) - (n + 1) := by
@@ -105,7 +109,7 @@ theorem aMi_cast (D : D7) (i : Fin D.R.m) (τ : D.what₂.Tau) (p q c : ℕ) (hp
   have hm : (i : ℕ) + 1 < D.R.m := by omega
   have hl : Formalism.L2.NTheta.lamAt (D.hc τ) p = -(D.hc τ).b ⟨i + 1, hm⟩ := by
     unfold Formalism.L2.NTheta.lamAt
-    rw [dif_neg (by omega), dif_pos (by omega)]
+    rw [dite_eq_right (by omega), dite_eq_left (by omega)]
     congr 2
     exact Fin.ext (by simp only; omega)
   rw [hl] at h3
@@ -172,13 +176,13 @@ theorem laU_eq_wtCol : ∀ (D : D7) (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL]
   by_cases h : (c : ℕ) < (D.R.sigW ((i : ℕ) + 1)).2
   · have h1 : (D.R.sigW ((i : ℕ) + 1)).2 - 1 - c < (D.R.sigW ((i : ℕ) + 1)).2 := by omega
     have h2 := aMi_cast D i s _ _ c hp hq h
-    rw [if_pos h, if_neg (not_le.2 h), ext0, dif_pos h1, hM]
+    rw [if_pos h, if_neg (not_le.2 h), ext0, dite_eq_left h1, hM]
     push_cast
     rw [h2, he']
     constructor <;> linarith
   · have h1 : (c : ℕ) - (D.R.sigW ((i : ℕ) + 1)).2 < (D.R.sigW ((i : ℕ) + 1)).1 := by omega
     have h2 := aPl_cast D i s _ _ hp h1
-    rw [if_neg h, if_pos (not_lt.1 h), ext0, dif_pos h1, hP]
+    rw [if_neg h, if_pos (not_lt.1 h), ext0, dite_eq_left h1, hP]
     simp only [Int.cast_sub, Int.cast_add, Int.cast_natCast, Int.cast_one]
     rw [h2, he']
     constructor <;> linarith

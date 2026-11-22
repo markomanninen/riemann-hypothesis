@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.IsGenFrGenFr
-import Formalism.LocalToGlobal.ProjectiveLattices.CompFin
-import Formalism.LocalToGlobal.ProjectiveLattices.CompSplitPfC
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsGenFrGenFr
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompFin
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompSplitPfC
+
+@[expose] public section
 
 noncomputable section
 

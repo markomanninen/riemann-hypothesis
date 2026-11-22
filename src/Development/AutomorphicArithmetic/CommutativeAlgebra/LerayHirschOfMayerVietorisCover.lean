@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.MayerVietorisConnectingExistsUniqueAdditiveExact
-import Development.AutomorphicArithmetic.CommutativeAlgebra.MayerVietorisConnectingCupPullback
-import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupHypercohomologyPullbackStatement
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.MayerVietorisConnectingExistsUniqueAdditiveExact
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.MayerVietorisConnectingCupPullback
+public import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupHypercohomologyPullbackStatement
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Pbf
 
@@ -65,7 +69,7 @@ private theorem lhmv_phi_add (q : ℕ) {X E : Spc} (π : X ⟶ E) {m : ℕ} (d e
   unfold UpperTheory.LHMV.Phi
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun j _ => ?_
-  simp only [Pi.add_apply, map_add, AddMonoidHom.add_apply]
+  simp only [Pi.add_apply, map_add (f := _), AddMonoidHom.add_apply]
   exact UpperTheory.LHMV.cast_add' _ _ _ _
 
 private theorem lhmv_phi_sub (q : ℕ) {X E : Spc} (π : X ⟶ E) {m : ℕ} (d e : Fin m → ℤ) (c : ∀ j, Ht q X (d j) (e j))
@@ -88,7 +92,8 @@ private theorem pull_lhmv_phi_eq_of_square (q : ℕ) {Y Y' B B' : Spc} (p : Y �
     pull _ s _ _ (UpperTheory.LHMV.Phi q p d e c n i a) =
       UpperTheory.LHMV.Phi q p' d e (fun j => pull _ s _ _ (c j)) n i (fun j => pull _ t _ _ (a j)) := by
   unfold UpperTheory.LHMV.Phi
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [UpperTheory.LHMV.pull_cast', pull_cup_commutative_algebra, ← pull_comp, ← pull_comp, h]
 

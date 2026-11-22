@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.Aa
-import Development.AutomorphicArithmetic.WhittakerHecke.LintegralIdeleRatPolyDecayMulNormRpowLtTop
-import GroundTheory.AutomorphicForms.GL2.GJGlobalLattice
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.Aa
+public import Development.AutomorphicArithmetic.WhittakerHecke.LintegralIdeleRatPolyDecayMulNormRpowLtTop
+public import GroundTheory.AutomorphicForms.GL2.GJGlobalLattice
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
 open UpperTheory.ConvolutionTheory.R2 UpperTheory.ConvolutionTheory.RankTwoDescent
@@ -67,7 +72,7 @@ private theorem fin_eq {k : G1 ℚ} (z : A ℚ) :
   linear_combination (-z.2) * hd'
 
 theorem UpperTheory.schwartzBruhat_row_lintegral_abs_pow_bounded :
-    ∀ Φ ∈ schwartzBruhatPi ℚ (Fin 2), ∀ e : ℝ, 1 < e → ∃ C : ℝ≥0, ∀ k ∈ KK ℚ,
+    ∀ Φ ∈ schwartzBruhatPi (K := ℚ) (ι := Fin 2), ∀ e : ℝ, 1 < e → ∃ C : ℝ≥0, ∀ k ∈ KK ℚ,
         ∫⁻ z : IdeleGroup ℚ, ‖Φ fun j => ((z : (A ℚ)ˣ) : A ℚ) * row k j‖ₑ * ENNReal.ofReal (ab z ^ e) ∂(ideleMeasure ℚ) ≤ C := by
   intro Φ hΦ e he
   obtain ⟨M, hM⟩ := exists_nat_gt e

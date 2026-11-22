@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TorMatch
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowNotMemMaximalIdealPowSucc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalFibreIsReducedOfField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorMatch
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowNotMemMaximalIdealPowSucc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalFibreIsReducedOfField
+
+@[expose] public section
 
 open IsLocalRing GlobalTheory.Poinc.Eq8
 open scoped TensorProduct

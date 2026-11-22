@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmHostUnitAddConjEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmHostUnitAddConjEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem exists_ext (hZ : IsIsoSat D Z) (φ : Z →+ ℤ) : ∃ y : D.La, ∀ z :
       rw [map_sub, ← LinearMap.comp_apply, hσ, LinearMap.id_apply, sub_self]
     exact (Submodule.Quotient.mk_eq_zero _).1 this
   obtain ⟨y, hy⟩ := exists_ef_eq D (AddMonoidHom.mk' (fun x => φ ⟨_, hmem x⟩) fun x x' => by
-    rw [← map_add]; congr 1; ext; simp only [map_add, Submodule.coe_add]; abel)
+    rw [← map_add (f := _)]; congr 1; ext; simp only [map_add (f := _), Submodule.coe_add]; abel)
   refine ⟨-y, fun z => ?_⟩
   have h0 : (Z.restrictScalars ℤ).mkQ (z : D.La) = 0 := (Submodule.Quotient.mk_eq_zero _).2 z.2
   rw [map_neg, ef_swap, neg_neg, hy]
@@ -117,7 +121,7 @@ theorem exists_opp (D : Datum H) (Z : Submodule (𝓞 E) D.La) (hZ : IsIsoSat D 
     intro φ
     have hmC : ∀ x : D.La, s ((perp D Z).mkQ x) ∈ C := fun x => ⟨_, rfl⟩
     obtain ⟨y, hy⟩ := exists_ef_eq D (AddMonoidHom.mk' (fun x => φ ⟨_, hmC x⟩) fun x x' => by
-      rw [← map_add]; congr 1; ext; simp only [map_add, Submodule.coe_add])
+      rw [← map_add (f := _)]; congr 1; ext; simp only [map_add (f := _), Submodule.coe_add])
     simp only [AddMonoidHom.mk'_apply] at hy
     have hyZ : -y ∈ Z := mem_of_perp_perp hZ _ fun p hp => by
       have h0 : (perp D Z).mkQ p = 0 := (Submodule.Quotient.mk_eq_zero _).2 hp
@@ -135,7 +139,7 @@ theorem exists_opp (D : Datum H) (Z : Submodule (𝓞 E) D.La) (hZ : IsIsoSat D 
       rw [h1, h2, sub_self, neg_zero]
     exact sub_eq_zero.1 (D.unimod.1 (LinearMap.ext fun x => by rw [hw, map_zero, LinearMap.zero_apply]))
   let β : LinearMap.BilinForm ℤ C := LinearMap.mk₂ ℤ (fun a b : C => -D.EF a b)
-    (fun a a' b => by simp only [Submodule.coe_add, map_add, LinearMap.add_apply]; abel) (fun n a b => by simp) (fun a b b' => by simp only [Submodule.coe_add, map_add]; abel) (fun n a b => by simp)
+    (fun a a' b => by simp only [Submodule.coe_add, map_add (f := _), LinearMap.add_apply]; abel) (fun n a b => by simp) (fun a b b' => by simp only [Submodule.coe_add, map_add (f := _)]; abel) (fun n a b => by simp)
   obtain ⟨t, ht⟩ := exists_skew_solve A2 β (fun a b => by
       show -D.EF a b = -(-D.EF b a)
       rw [ef_swap D a b]) (fun c a b => by
@@ -145,13 +149,13 @@ theorem exists_opp (D : Datum H) (Z : Submodule (𝓞 E) D.La) (hZ : IsIsoSat D 
   let g : C →ₗ[𝓞 E] D.La := C.subtype + Z.subtype ∘ₗ t
   have hg : ∀ c, g c = c + t c := fun c => rfl
   have kZ : ∀ (a : Z) (c : C), D.EF a (g c) = D.EF a c := fun a c => by
-    rw [hg, map_add, hZ.1 a.2 _ (t c).2, add_zero]
+    rw [hg, map_add (f := _), hZ.1 a.2 _ (t c).2, add_zero]
   refine ⟨LinearMap.range g, hZ.1, ?_, fun φ => ?_, fun φ => ?_⟩
   · rintro _ ⟨b, rfl⟩ _ ⟨b', rfl⟩
     show D.EF (g b) (g b') = 0
     have h0 : D.EF (t b) (t b') = 0 := hZ.1 (t b).2 _ (t b').2
     rw [hg, hg]
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     linear_combination ht' b b' + h0
   · obtain ⟨b, hb, hu⟩ := A1 φ
     refine ⟨⟨g b, b, rfl⟩, fun a => (kZ a b).trans (hb a), ?_⟩

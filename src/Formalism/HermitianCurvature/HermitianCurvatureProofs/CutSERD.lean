@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVnice
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVpic
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellZetaMinors
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVnice
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVpic
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellZetaMinors
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped Matrix
@@ -80,17 +84,6 @@ def RDOpsProp (D : B.RealPlaceData k r Wp Wq) (Θ : Fin 4 → B.DiffOp k r Wp Wq
     (∀ ε : ℝ, 0 < ε → ∃ d : ℝ, 0 ≤ d ∧ B.PolyCoef D ε d (B.opOrder (Θ j) + 5) (Θ j)) ∧
     ∀ F, NiceAll D F → NiceAll D (B.opApply (Θ j) F) ∧ NiceAll D (B.opAdj (Θ j) F)
 
-def RDRadIdProp (D : B.RealPlaceData k r Wp Wq) (Θ : Fin 4 → B.DiffOp k r Wp Wq) : Prop :=
-  ∀ (s : ℂ) (F : B.Mat k r → (Wq →L[ℂ] Wp)), NiceAll D F → ∀ q ∈ B.Qset D,
-    s • B.JF D (wvG D.z D.z' s F) (B.gq D q) =
-      B.JF D (B.opAdj (Θ 0) (wvG D.z D.z' s (B.opApply (Θ 1) F))) (B.gq D q) -
-        B.JF D (B.opAdj (Θ 2) (wvG D.z D.z' s (B.opApply (Θ 3) F))) (B.gq D q)
-
 end Second
-
-def RDIdentAB : Prop :=
-  RDHyp fun k r Wp Wq _ _ _ _ _ _ D => ∃ Θ : Fin 4 → B.DiffOp k r Wp Wq, RDOpsProp D Θ ∧ RDRadIdProp D Θ
-
-def RDIdentOfAB : Prop := RDIdentAB → RDIdent
 
 end Formalism.FourierDecayAlt.P.CutSE

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.DegeneratingToriPeriodMapEqBaseOfYEqZero
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusProjPeriodZeroEqReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.DegeneratingToriPeriodMapEqBaseOfYEqZero
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusProjPeriodZeroEqReal
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ def toDual (hy : Function.Surjective y) : kerPerp hadj y →ₗ[ℤ] Module.Dual
   LinearMap.mk₂ ℤ (fun t x => -EF t (Function.surjInv hy x))
     (fun _ _ _ => by simp [add_comm]) (fun _ _ _ => by simp)
     (fun t x x' => by
-      rw [← neg_add, ← map_add]
+      rw [← neg_add, ← map_add (f := _)]
       exact congrArg _ (apply_eq_of_eq t.2 (by simp [Function.surjInv_eq])))
     (fun k t x => by
       rw [smul_neg, ← map_zsmul]
@@ -171,11 +175,6 @@ theorem nilTo_ne_zero {a : A.La} (ha : a.y ≠ 0) :
   rw [h] at h1
   have h2 : (0 : ℤ) = A.be a.y a.y := by simpa using h1
   exact (A.be_pos _ ha).ne h2
-
-example (c τ₀ : ℂ) : KerPerp.nilTo (gaussCM c τ₀).EF_smul (gaussCM c τ₀).EF_bijective
-    (gaussCM c τ₀).yLin_surjective (gaussCM c τ₀).be_adj
-    (La.mk (A := gaussCM c τ₀) (1 : GaussianInt) 0 0) ≠ 0 :=
-  (gaussCM c τ₀).nilTo_ne_zero (one_ne_zero (α := GaussianInt))
 
 end AnArc
 

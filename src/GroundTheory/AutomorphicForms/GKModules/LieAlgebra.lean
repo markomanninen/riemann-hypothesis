@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.RealGroupsLie
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.RealGroupsLie
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -67,8 +71,6 @@ theorem lie_mem {X Y : 𝔸} (hX : X ∈ 𝔤) (hY : Y ∈ 𝔤) : ⁅X, Y⁆ �
 
 def lieSubalgebra : LieSubalgebra ℝ 𝔸 :=
   { 𝔤 with lie_mem' := fun hX hY => h.lie_mem hX hY }
-
-@[simp] theorem lieSubalgebra_toSubmodule : h.lieSubalgebra.toSubmodule = 𝔤 := rfl
 
 @[simp] theorem mem_lieSubalgebra {X : 𝔸} : X ∈ h.lieSubalgebra ↔ X ∈ 𝔤 := Iff.rfl
 

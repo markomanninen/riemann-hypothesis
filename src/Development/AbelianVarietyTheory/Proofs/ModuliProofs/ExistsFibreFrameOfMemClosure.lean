@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EqOfFiniteOfClosedFibres
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsValuesLineFibre
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EqOfFiniteOfClosedFibres
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsValuesLineFibre
+
+@[expose] public section
 
 noncomputable section
 

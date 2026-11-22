@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.QuotientMetricDivisors.ProdFormula
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ProdFormula
-import Formalism.HermitianLattices.HermitianLatticesProofs.LocDual
-import Formalism.HermitianLattices.HermitianLatticesProofs.IndexBasic
-import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
-import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
+module
+
+public import Mathlib
+public import Formalism.QuotientMetricDivisors.ProdFormula
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ProdFormula
+public import Formalism.HermitianLattices.HermitianLatticesProofs.LocDual
+public import Formalism.HermitianLattices.HermitianLatticesProofs.IndexBasic
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder
@@ -105,18 +109,6 @@ theorem hform_nondeg {n : ℕ} (H : Matrix (Fin n) (Fin n) K) (hs : (hform H).Is
   refine ⟨fun x hx => hform_sepRight H hdet x (fun y => ?_), hform_sepRight H hdet⟩
   rw [← hsym x y, hx y, map_zero]
 
-theorem gramR_std {D : ℕ} (Γ : Matrix (Fin D) (Fin D) K) :
-    gramR Γ (fun i => (Pi.single i 1 : Fin D → K)) = Γ.det := by
-  unfold gramR
-  congr 1
-  ext a b
-  have hst : ∀ x : Fin D, star ((Pi.single a (1 : K) : Fin D → K) x) = (Pi.single a (1 : K) : Fin D → K) x := by
-    intro x; rcases eq_or_ne x a with rfl | h
-    · simp
-    · simp [Pi.single_eq_of_ne h]
-  simp only [Matrix.of_apply, dotProduct, Pi.star_apply, hst]
-  simp [Matrix.mulVec, dotProduct, Pi.single_apply]
-
 theorem expand_std {d : ℕ} (f : Fin d → Fin d → K) :
     (fun i => ∑ k, (Matrix.of f)ᵀ k i • (Pi.single k (1 : K) : Fin d → K)) = f := by
   funext i
@@ -147,6 +139,7 @@ end RationalHermitianForm
 
 open RationalHermitianForm
 
+open Formalism.HermitianLatticesTheory in
 theorem jwGram_of (hIC : IdxChange) : JwGram := by
   intro K _ _ _ _ K0 hcm d H X hR T hT w f hf
   classical
@@ -174,7 +167,8 @@ theorem jwGram_of (hIC : IdxChange) : JwGram := by
     have hmul : M * M⁻¹ = 1 := Matrix.mul_nonsing_inv M hMu
     have := congrFun (congrFun hmul a) b
     rw [Matrix.mul_apply, Matrix.one_apply] at this
-    rw [← this, hfs, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← this, hfs, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, smul_eq_mul, mul_comm]
     rfl
@@ -182,14 +176,34 @@ theorem jwGram_of (hIC : IdxChange) : JwGram := by
     rw [Fintype.linearIndependent_iff]
     intro g hg i
     have := congrArg (h (f i)) hg
-    rw [map_sum, map_zero] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at this
     simp only [map_smul, hpair, smul_eq_mul, mul_ite, mul_one, mul_zero,
       Finset.sum_ite_eq, Finset.mem_univ, if_true] at this
     exact this
   have hspK : Submodule.span K (Set.range f) = ⊤ :=
     hf.1.span_eq_top_of_card_eq_finrank' (by simp)
-  have hspan_f : Submodule.IsLattice K (Submodule.span (𝓞 K) (Set.range f)) :=
-    ⟨Submodule.fg_span (Set.finite_range f), by rw [Submodule.span_span_of_tower, hspK]⟩
+  have hspan_f : Submodule.IsFullLattice K (Submodule.span (𝓞 K) (Set.range f)) := by
+    letI : Submodule.IsLattice K (Submodule.span (𝓞 K) (Set.range f)) :=
+      Submodule.IsLattice.of_fg K (Submodule.fg_span (Set.finite_range f))
+    exact { span_eq_top := by rwa [Submodule.span_span_of_tower] }
+  have hfullT : Submodule.IsFullLattice K T := by
+    refine { span_eq_top := ?_ }
+    apply top_unique
+    rw [← hspK, Submodule.span_le]
+    rintro _ ⟨i, rfl⟩
+    have hmem : f i ∈ loc (K := K) w.asIdeal T := by
+      rw [← hf.2, loc]
+      exact locBasic_le_locS _ _ (Submodule.subset_span ⟨i, rfl⟩)
+    unfold loc at hmem
+    obtain ⟨a, ha, hai⟩ := locBasic_mem_locS.mp hmem
+    have ha0 : a ≠ 0 := by
+      intro hzero
+      subst a
+      exact locBasic_hcompl_not_mem (K := K) w.asIdeal 0 ha w.asIdeal.zero_mem
+    have haK := (map_ne_zero_iff _ (IsFractionRing.injective (𝓞 K) K)).mpr ha0
+    rw [← one_smul K (f i), ← inv_mul_cancel₀ haK, ← smul_smul, algebraMap_smul]
+    exact Submodule.smul_mem _ _ (Submodule.subset_span hai)
   have hone : ∀ c : K, c ∈ (1 : Submodule (𝓞 K) K) → ∀ r : 𝓞 K,
       star (algebraMap (𝓞 K) K r) * c ∈ (1 : Submodule (𝓞 K) K) := by
     intro c hc r
@@ -222,14 +236,14 @@ theorem jwGram_of (hIC : IdxChange) : JwGram := by
         · exact Submodule.mem_one.mpr ⟨1, map_one _⟩
         · exact Submodule.zero_mem _
       | zero => rw [map_zero, LinearMap.zero_apply]; exact Submodule.zero_mem _
-      | add x y _ _ hx hy => rw [map_add, LinearMap.add_apply]; exact Submodule.add_mem _ hx hy
+      | add x y _ _ hx hy => rw [map_add (f := _), LinearMap.add_apply]; exact Submodule.add_mem _ hx hy
       | smul r x _ hx =>
         rw [Formalism.HermitianLatticesTheory.locDual_h_smul_left]
         exact hone _ hx r
-  have hdualT : Submodule.IsLattice K (Formalism.HermitianLatticesTheory.dual h T) :=
-    (Formalism.HermitianLatticesTheory.dualLattice (𝓞 K) K (Fin d → K) h hs hnd hstar T hT).1
+  have hdualT : Submodule.IsFullLattice K (Formalism.HermitianLatticesTheory.dual h T) :=
+    (Formalism.HermitianLatticesTheory.dualLattice (𝓞 K) K (Fin d → K) h hs hnd hstar T hfullT).1
   have hLD := Formalism.HermitianLatticesTheory.locDual (𝓞 K) K (Fin d → K) h hs hstar
-  have A := (hLD _ hspan_f.fg).1 w.asIdeal w.isPrime
+  have A := (hLD _ hspan_f.toIsLattice.fg).1 w.asIdeal w.isPrime
   have B := (hLD _ hT.fg).1 w.asIdeal w.isPrime
   have hlocfs : IsLocBasis (Formalism.HermitianLatticesTheory.dual h T) w fs := by
     refine ⟨hfsli, ?_⟩
@@ -245,10 +259,10 @@ theorem jwGram_of (hIC : IdxChange) : JwGram := by
     funext i
     simp [Matrix.one_apply]
   have i1 := (hIC K d T hT f hf.1 w 1 (by rw [hone_f]; exact hf)).1
-  have i2 := (hIC K d (Formalism.HermitianLatticesTheory.dual h T) hdualT f hf.1 w M⁻¹ hlocfs).1
+  have i2 := (hIC K d (Formalism.HermitianLatticesTheory.dual h T) hdualT.toIsLattice f hf.1 w M⁻¹ hlocfs).1
   have : w.asIdeal.IsMaximal := w.isMaximal
   have hIB := Formalism.HermitianLatticesTheory.indexBasic (𝓞 K) K (Fin d → K) h hs hnd hstar w.asIdeal T
-    (Submodule.span (𝓞 K) (Set.range f)) (Formalism.HermitianLatticesTheory.dual h T) hT hspan_f hdualT
+    (Submodule.span (𝓞 K) (Set.range f)) (Formalism.HermitianLatticesTheory.dual h T) hfullT hspan_f hdualT
   unfold jw Formalism.HermitianLatticesTheory.jIdx
   unfold idx at i1 i2
   rw [hIB.2.2.1, hIB.2.1, i1, i2, Matrix.det_nonsing_inv, Ring.inverse_eq_inv', ValuationRepresentative.vw_inv,
@@ -299,8 +313,8 @@ theorem ratHermLcv_of (hLB : LcvBasis) (hIC : IdxChange) (hEx : LocBasisEx) : Ra
     have hexp := expand_std (f w)
     have hloc : IsLocBasis T w (fun i => ∑ k, (Matrix.of (f w))ᵀ k i • e k) := by
       rw [he_def, hexp]; exact hf w
-    obtain ⟨i1, i2⟩ := hIC K d T hT e he w _ hloc
-    have hj := hJ K K0 hcm d H X hR T hT w (f w) (hf w)
+    obtain ⟨i1, i2⟩ := hIC K d T hT.toIsLattice e he w _ hloc
+    have hj := hJ K K0 hcm d H X hR T hT.toIsLattice w (f w) (hf w)
     have hδ := det_of_ne_zero (hf w).1
     rw [gramR_eq_std, ValuationRepresentative.vw_mul w _ _ (mul_ne_zero (star_ne_zero.mpr hδ) hδ) hdetH,
       ValuationRepresentative.vw_mul w _ _ (star_ne_zero.mpr hδ) hδ, ((valuation_basic_properties K w).2.1)] at hj

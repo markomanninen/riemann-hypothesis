@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.PerRowC
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ProdMaxInvLeProdMax
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFlagPairLatticeSumDiscriminantEqNormMinor
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagFramesSameGradedDefinitePartLatticeEq
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RealPointGramMinorsAgreeProofStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsAdaptedNormalFormRelevantTermProofStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RowLatticeTermAdaptedNormalFormStatement
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RelevantSetZeroGNotIdentity
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.FamilySeparationBoundOfNorms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.PerRowC
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ProdMaxInvLeProdMax
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFlagPairLatticeSumDiscriminantEqNormMinor
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagFramesSameGradedDefinitePartLatticeEq
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RealPointGramMinorsAgreeProofStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsAdaptedNormalFormRelevantTermProofStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RowLatticeTermAdaptedNormalFormStatement
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RelevantSetZeroGNotIdentity
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.FamilySeparationBoundOfNorms
+
+@[expose] public section
+
 noncomputable section
 open scoped Classical ENNReal Pointwise
 open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full
@@ -16,8 +21,8 @@ open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotio
 namespace GlobalTheory.TypeAsm.CompatibleChartOperations
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-open GlobalTheory.Amp in
 
+open GlobalTheory.Amp in
 theorem prod_degBd_le_explicit (C' : ℝ) (ι : Type) [Fintype ι] (k r j q : ℕ) (H₁ : ℝ) (Dm : ι → Fin (r + 1) → ℝ)
     (De D sg : ι → ℝ) (hj : 1 ≤ j) (hjr : j ≤ r) (hk5 : 5 * r ≤ k) (hk : 40 * r ^ 4 ≤ k)
     (hq : q = (⌈C'⌉₊ + 2) * k * r) (hH : 1 ≤ H₁)
@@ -72,7 +77,7 @@ theorem prod_degBd_le_explicit (C' : ℝ) (ι : Type) [Fintype ι] (k r j q : �
         rw [mul_pow ((2 * H₁) ^ (2 * r))]; ring
     _ ≤ ∏ v, (16 * Real.pi * Real.exp 1 / k) ^ (j * (k - 1 - j)) * (D v ^ (k - 1 - j))⁻¹ * (8 * r * H₁) ^ (80 * r ^ 4) *
           sg v ^ (-(C' * k)) := by
-        refine Finset.prod_le_prod (fun v _ => ?_) fun v _ => ?_
+        refine Finset.prod_le_prod₀ (fun v _ => ?_) fun v _ => ?_
         · have := hD0 v; have := hs0 v; positivity
         · have h1 := hD0 v
           have h2 := hs0 v
@@ -133,7 +138,7 @@ theorem one_le_nloc {D : D7} {large₂ : SizeData₂ D} {X : HidaSetting D} {Y :
   have hdne : dI D ≠ ⊥ := hd ▸ N.𝔡_ne
   have key : N.nD l = ((Nloc (ddS D) D.R.rS l (Dl (lf D (X.Fu u)).fl (frq X t.rep).fl l) : ℚ) : ℝ) := by
     unfold GlobalTheory.DegCnt.NF.nD
-    rw [dif_pos hl', hDl l hl', nloc_norm, hnf, norm_of_star, hd, frameExp_int _ _ hl']
+    rw [dite_eq_left hl', hDl l hl', nloc_norm, hnf, norm_of_star, hd, frameExp_int _ _ hl']
   have hne : N.nD l ≠ 0 := by
     rw [key, nloc_norm]
     have hA : (Ideal.absNorm (dI D) : ℝ) ≠ 0 := by
@@ -211,7 +216,7 @@ theorem prodC_holds : ProdC := by
     rw [hPF, hPdef, ← Finset.prod_pow]
     refine Finset.prod_congr rfl fun τ _ => ?_
     rw [hgram τ ⟨jT t, hjr⟩]
-    simp only [labT, if_pos le_rfl]
+    simp only [labT, ite_eq_left le_rfl]
   set De : D.what₂.Tau → ℝ := fun τ => Finset.univ.fold max 1 fun l => (Dm τ l)⁻¹ with hDedef
   have hDeOK : ∀ τ, GlobalTheory.Amp.DeOK D.R.k D.R.rS (zB X (C.Qi τ) u τ) (zB X (C.Qi τ) u τ) (gamT C t τ) (De τ) := by
     intro τ
@@ -232,8 +237,8 @@ theorem prodC_holds : ProdC := by
   have hsgle : ∏ τ, GlobalTheory.Amp.sgV D.R.k D.R.rS (zB X (C.Qi τ) u τ) (zB X (C.Qi τ) u τ) (gamT C t τ) (H1C large₂ CH) ^
       (-(Cs * D.R.k)) ≤ k2S D (H1C large₂ CH) (jT t) (labT t) ^ (-(Cs * (D.R.k : ℝ))) := by
     unfold k2S
-    rw [← Real.finset_prod_rpow _ _ (fun τ _ => zero_le_one.trans (one_le_minor_sigma _ _ _ τ))]
-    refine Finset.prod_le_prod (fun τ _ => ?_) fun τ _ => ?_
+    rw [← Real.finsetProd_rpow _ _ (fun τ _ => zero_le_one.trans (one_le_minor_sigma _ _ _ τ))]
+    refine Finset.prod_le_prod₀ (fun τ _ => ?_) fun τ _ => ?_
     · refine Real.rpow_nonneg ?_ _
       unfold GlobalTheory.Amp.sgV
       exact (Finset.le_fold_max _).2 (Or.inl zero_le_one)

@@ -1,4 +1,8 @@
-import Formalism.PadicSubsetSums.CentralIdempotents.ResidueAvoidanceOfPrimes
+module
+
+public import Formalism.PadicSubsetSums.CentralIdempotents.ResidueAvoidanceOfPrimes
+
+@[expose] public section
 
 namespace Formalism.IrreducibleCountingLemmas.TOP
 

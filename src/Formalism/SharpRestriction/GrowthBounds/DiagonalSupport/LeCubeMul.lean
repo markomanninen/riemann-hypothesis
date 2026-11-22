@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.TriangularCountLeSq
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.TriangularCountLeSq
+
+@[expose] public section
 
 noncomputable section
 

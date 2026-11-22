@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafTailPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafTailPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC

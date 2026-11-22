@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLocModelIsPrimeOf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLocModelIsPrimeOf
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,8 +23,8 @@ def placeAlg (E : Place (algebraMap ℂ K)) : Subalgebra ℂ K :=
 theorem mem_placeAlg {E : Place (algebraMap ℂ K)} {e : K} : e ∈ placeAlg E ↔ e ∈ E.ring :=
   Iff.rfl
 
-variable (κ') in
 
+variable (κ') in
 def tensMap (A : Subalgebra ℂ K) : A ⊗[ℂ] κ' →ₐ[ℂ] K ⊗[ℂ] κ' :=
   Algebra.TensorProduct.map A.val (AlgHom.id ℂ κ')
 
@@ -30,7 +34,7 @@ theorem tensMap_injective (A : Subalgebra ℂ K) : Function.Injective (tensMap �
     induction w using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => rfl
-    | add u v hu hv => simp only [map_add, hu, hv]
+    | add u v hu hv => simp only [map_add (f := _), hu, hv]
   rw [e]
   exact Module.Flat.rTensor_preserves_injective_linearMap _ Subtype.val_injective
 
@@ -79,7 +83,7 @@ def locAt {A : Subalgebra ℂ K} (𝔭 : Ideal (tens (κ' := κ') A)) [𝔭.IsPr
   add_mem' := by
     rintro x y ⟨a, s, hs, hx⟩ ⟨a', s', hs', hy⟩
     refine ⟨a * s' + a' * s, s * s', fun h => (Ideal.IsPrime.mem_or_mem ‹_› h).elim hs hs', ?_⟩
-    simp only [Subalgebra.coe_mul, Subalgebra.coe_add, map_mul, map_add]
+    simp only [Subalgebra.coe_mul, Subalgebra.coe_add, map_mul, map_add (f := _)]
     rw [← hx, ← hy]
     ring
   zero_mem' := ⟨0, 1, one_notMem 𝔭, by simp⟩

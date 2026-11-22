@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsUnitHermOfDet
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRing
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHaarMeasure
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HermitianMatricesLocallyCompactBorel
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FibreMassEq
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TensTop
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsUnitHermOfDet
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRing
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHaarMeasure
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HermitianMatricesLocallyCompactBorel
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FibreMassEq
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TensTop
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.Published.SiegelOneVector GlobalTheory.CompanionTheory.SiegelND GlobalTheory.CompanionTheory.SiegelND.Coef
 open scoped TensorProduct ENNReal
 
@@ -39,7 +44,7 @@ theorem fibre_mass_on {V X Y : Type} [TopologicalSpace V] [MeasurableSpace V] [T
   · rw [Set.indicator_of_mem hb]
     refine measure_congr ?_
     filter_upwards [hae] with x hx
-    refine propext ⟨fun h => h.1, fun h => ⟨h, ?_⟩⟩
+    refine ⟨fun h => h.1, fun h => ⟨h, ?_⟩⟩
     show g x ∈ S
     rwa [hx]
   · rw [Set.indicator_of_notMem hb]
@@ -123,7 +128,7 @@ theorem avg_gen {V X Y : Type} {_ : TopologicalSpace V} {_ : MeasurableSpace V} 
   have hcv : fib c A' = fib c A := by
     refine measure_congr ?_
     filter_upwards [ae_lift_eq h hg hι c] with x hx
-    refine propext ⟨fun h => h.1, fun h => ⟨h, ?_⟩⟩
+    refine ⟨fun h => h.1, fun h => ⟨h, ?_⟩⟩
     show g x ∈ S k0
     rw [hx]
     exact hSc k0

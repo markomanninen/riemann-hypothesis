@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WHyp
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SelfDualMeasureExistsUniqueFourierInversionStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EtaleHermitianPairStructureFactsStatement
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WHyp
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SelfDualMeasureExistsUniqueFourierInversionStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EtaleHermitianPairStructureFactsStatement
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 namespace GlobalTheory.JR.Hyp.PtTest
@@ -47,8 +52,8 @@ theorem slice_isTest {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y] (Φ 
 
 end GlobalTheory.JR.Hyp.PtTest
 
-open GlobalTheory.JR.Hyp.PtTest in
 
+open GlobalTheory.JR.Hyp.PtTest in
 theorem GlobalTheory.JR.Hyp.pt_isTest : ∀ (F E : Type) [NontriviallyNormedField F] [NontriviallyNormedField E] [NormedAlgebra F E] [StarRing E] [Unram F E] (A : Et F E) (ψ : AddChar F ℂ), IsStdChar ψ → ∀ (x : A.Kˣ) (ν : Measure A.K), ν.IsAddHaarMeasure → ∀ Φ : A.K × A.K → ℂ, IsTest Φ → IsTest (Hyp.pt A ν ψ x Φ) := by
   intro F E _ _ _ _ _ A ψ hψ x ν hν Φ hΦ
 

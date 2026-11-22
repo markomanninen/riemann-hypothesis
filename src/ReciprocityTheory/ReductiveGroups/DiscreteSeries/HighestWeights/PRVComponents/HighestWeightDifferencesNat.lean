@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.IsInfUnitary
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.UniqueA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.IsInfUnitary
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.UniqueA
+
+@[expose] public section
 
 noncomputable section
 

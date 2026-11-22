@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RealTransport.RealTransport
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.QuadraticTwists.ExtReal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RealTransport.RealTransport
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.QuadraticTwists.ExtReal
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial
 open GlobalTheory.CuspRep GlobalTheory.HeckeGal GlobalTheory.GalOfCusp UpperTheory.V.Published
@@ -91,7 +95,9 @@ private theorem infDiag_inv_unit_eq_infinite_one {F : Type} [Field F] [NumberFie
       ((algebraMap F (NumberField.InfiniteAdeleRing F) u, 1) : NumberField.InfiniteAdeleRing F ×
         IsDedekindDomain.FiniteAdeleRing (NumberField.RingOfIntegers F) F) := by
   classical
-  rw [Formalism.L2.Host.infDiag, MonoidHom.finset_prod_apply, Units.coe_prod]
+  letI : IsOneApply (Fˣ →* Neutral.B1.Ideles F) := ⟨fun _ => rfl⟩
+  letI : IsMulApply (Fˣ →* Neutral.B1.Ideles F) := ⟨fun _ _ _ => rfl⟩
+  rw [Formalism.L2.Host.infDiag, prod_apply, Units.coe_prod]
   let p2 : NumberField.AdeleRing (NumberField.RingOfIntegers F) F →*
       IsDedekindDomain.FiniteAdeleRing (NumberField.RingOfIntegers F) F :=
     ⟨⟨Prod.snd, rfl⟩, fun _ _ => rfl⟩

@@ -1,19 +1,23 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsNormOneOrthTriple
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetTermBasicFacts
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermExponentsNonnegAndDefectGroupBoundStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CongruenceSubgroupLatticeStabilizer
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ProperIdealsOfHenselian
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsTraceChar
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExpandByConductor
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TwoGeometricSumsIndexBound
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormGaussSumLe
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLocalCharacterSumStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsNormOneOrthTriple
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetTermBasicFacts
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermExponentsNonnegAndDefectGroupBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CongruenceSubgroupLatticeStabilizer
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ProperIdealsOfHenselian
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsTraceChar
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExpandByConductor
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TwoGeometricSumsIndexBound
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormGaussSumLe
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLocalCharacterSumStatement
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical
@@ -357,7 +361,7 @@ theorem shares : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] 
     let φ : S.V →+ E := AddMonoidHom.mk' (fun u => hf L S.Hm y u) (hf_add_right L S.Hm y)
     let χ : AddChar S.V ℂ := L.psi0.compAddMonoidHom φ
     have hχ1 : ∀ u, ‖χ u‖ = 1 := fun u => by
-      obtain ⟨c, hc⟩ := (L.cj_fix (φ u + L.cj (φ u))).1 (by rw [map_add, L.cj_cj, add_comm])
+      obtain ⟨c, hc⟩ := (L.cj_fix (φ u + L.cj (φ u))).1 (by rw [map_add (f := _), L.cj_cj, add_comm])
       change ‖L.psi0 (φ u)‖ = 1
       rw [hψ _ c hc.symm, hψ1]
     have hint' := integral_of_reps L S.Hm S.ϖ S.ϖ_irr Λ hSD UU inf_le_left N (by omega) R hR' y hy

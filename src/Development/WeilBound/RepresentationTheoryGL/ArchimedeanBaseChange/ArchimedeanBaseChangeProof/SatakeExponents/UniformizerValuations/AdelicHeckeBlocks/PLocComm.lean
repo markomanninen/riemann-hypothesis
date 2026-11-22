@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryLevelSubgroupProperties
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasCompactSupportTj
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryLevelSubgroupProperties
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasCompactSupportTj
+
+@[expose] public section
 
 noncomputable section
 
@@ -123,12 +127,12 @@ section Frame
 
 variable {n : ℕ} (d : LocData E n)
 
-theorem isOpen_KGL' (w : Pl E) (m : ℕ) : IsOpen (GlobalTheory.LFun.KGL w m : Set (GLw m w)) := by
+theorem isOpen_KGL' (w : Pl E) (m : ℕ) : IsOpen (GlobalTheory.LFun.KGL w (n := m) : Set (GLw m w)) := by
   rw [GlobalTheory.CompanionTheory.IwLevels.KGL_eq_KO]
   exact GlobalTheory.SplitFlip.isOpen_KO
 
 theorem isOpen_levelSubgroup' (a b : ℕ) (w : Pl E) : IsOpen (K2 a b w : Set (GLw a w × GLw b w)) := by
-  show IsOpen (((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b) : Subgroup _) : Set (GLw a w × GLw b w))
+  show IsOpen (((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)) : Subgroup _) : Set (GLw a w × GLw b w))
   rw [Subgroup.coe_prod]
   exact (isOpen_KGL' w a).prod (isOpen_KGL' w b)
 

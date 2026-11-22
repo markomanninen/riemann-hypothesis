@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.EqZeroOfForallLTensorEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.EqZeroOfForallLTensorEqZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -40,7 +44,7 @@ theorem baseChange_sub_counit_mem (p : ℕ) (k k' : Type) [Field k] [Field k'] [
     have : x + y - algebraMap k' ((G.baseChange k').A n) (Coalgebra.counit (R := k') (x + y)) =
         (x - algebraMap k' _ (Coalgebra.counit (R := k') x)) +
           (y - algebraMap k' _ (Coalgebra.counit (R := k') y)) := by
-      rw [map_add, map_add]; abel
+      rw [map_add (f := _), map_add (f := _)]; abel
     rw [this]
     exact add_mem hx hy
 

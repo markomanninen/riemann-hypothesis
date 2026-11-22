@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.NeBotOfNorm
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TwistAdmissible
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CardKerMatrixFiniteField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.NeBotOfNorm
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TwistAdmissible
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CardKerMatrixFiniteField
+
+@[expose] public section
 
 open Matrix Complex NumberField GlobalTheory.SW Filter Topology
 open ReciprocityTheory.ChartRestriction.G.FD (cc herm)
@@ -333,7 +337,7 @@ theorem sum_add_cc {Ψ : Finset (E →+* ℂ)} (hΨ : IsType Ψ) (w : E) :
       simp
   rw [h3, ← Finset.sum_add_sum_compl Ψ, h4] at h2
   rw [Finset.sum_coe_sort Ψ (fun τ => τ (w + cc w))]
-  simp only [map_add, Finset.sum_add_distrib]
+  simp only [map_add (f := _), Finset.sum_add_distrib]
   exact h2.symm
 
 noncomputable def sym (a b : Fin N → E) : Matrix (Fin N) (Fin N) E :=
@@ -509,7 +513,7 @@ theorem count_int {M q : ℕ} {P : Ideal (𝓞 E)} (hP : GoodPrime M q P) {Λ : 
 noncomputable def pairChar (u : X →ₗ[𝓞 E] (Fin n → E)) (b : 𝓞 E) (η : X) : AddChar X ℂ where
   toFun := fun ξ => eT (herm 1 (u η) (u (b • ξ)))
   map_zero_eq_one' := eT_int (Int'.symm (by rw [smul_zero, map_zero]; exact int_zero _))
-  map_add_eq_mul' := fun ξ ξ' => by rw [smul_add, map_add, herm_ar, eT_add]
+  map_add_eq_mul' := fun ξ ξ' => by rw [smul_add, map_add (f := _), herm_ar, eT_add]
 
 theorem pairChar_spec {M q : ℕ} {P : Ideal (𝓞 E)} (hP : GoodPrime M q P) {Λ : Lt E n}
     (hS : SD Λ) {b : 𝓞 E} (hb : b ∈ conjI P) (u : X →ₗ[𝓞 E] (Fin n → E))
@@ -571,8 +575,8 @@ theorem twist_ite {M R s : ℕ} {φ : Fam E n N} {Y : Lt E N} (hφ : admitted M 
 
 end GlobalTheory.SW.HeckeId
 
-open GlobalTheory.SW.HeckeId GlobalTheory.SW.Nbr in
 
+open GlobalTheory.SW.HeckeId GlobalTheory.SW.Nbr in
 theorem GlobalTheory.SW.hecke_relation_pointwise : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (Ψ : Finset (E →+* ℂ)), IsType Ψ → ∀ (n N : ℕ) (M R q : ℕ) (P : Ideal (𝓞 E)) (φ : Fam E n N) (𝔛 : Lt E N), admitted M R φ → 𝔛.FG → Agree (R * M) 𝔛 (stdL E N) → GoodPrime (R * M) q P → ∃ (A : ℕ) (XA XB : Fin A → Lt E N) (β : Fin A → Fin (q ^ N) → Matrix (Fin N) (Fin N) E), A * (q - 1) = q ^ N - 1 ∧ (∀ i, (XA i).FG ∧ Agree (R * M) (XA i) (stdL E N) ∧ gidx (XA i) = q * gidx 𝔛 ∧ (XB i).FG ∧ Agree (R * M) (XB i) (stdL E N) ∧ q * gidx (XB i) = gidx 𝔛 ∧ ∀ j, ccT (β i j) = β i j) ∧ ∀ Λ ∈ Vset E n M, ∀ x, ((q : ℂ) - 1) * ((q : ℂ) ^ n * ∑ i, twist R (XA i) φ Λ x + ∑ i, ∑ j, chiH Ψ (β i j) x * twist R (XB i) φ Λ x) = ((q : ℂ) - 1) * (q : ℂ) ^ N * (∑ᶠ Λ' ∈ Nb M P Λ, twist R 𝔛 φ Λ' x) + ((q : ℂ) ^ (2 * N) - (q : ℂ) ^ n) * twist R 𝔛 φ Λ x := by
   intro E _ _ _ Ψ hΨ n N M R q P φ 𝔛 hφ hfg hA hP'
   have hP : GoodPrime M q P := ⟨hP'.1, Nat.Coprime.coprime_mul_left_right hP'.2.1, hP'.2.2⟩
@@ -580,8 +584,10 @@ theorem GlobalTheory.SW.hecke_relation_pointwise : ∀ (E : Type) [Field E] [Num
   have hq := hP.1
   have mP := max_of_norm hq hP.2.2.1
   have mQ := max_of_norm hq hQ.2.2.1
-  have cP : Nat.card (𝓞 E ⧸ P) = q := hP.2.2.1
-  have cQ : Nat.card (𝓞 E ⧸ conjI P) = q := hQ.2.2.1
+  have cP : Nat.card (𝓞 E ⧸ P) = q := by
+    simpa only [Ideal.absNorm_eq_natCard] using hP.2.2.1
+  have cQ : Nat.card (𝓞 E ⧸ conjI P) = q := by
+    simpa only [Ideal.absNorm_eq_natCard] using hQ.2.2.1
   have : Finite (𝓞 E ⧸ P) := Nat.finite_of_card_ne_zero (cP ▸ hq.ne_zero)
   have : Finite (𝓞 E ⧸ conjI P) := Nat.finite_of_card_ne_zero (cQ ▸ hq.ne_zero)
   have qP : ((q : ℕ) : 𝓞 E) ∈ P := hP.2.2.1 ▸ Ideal.absNorm_mem P

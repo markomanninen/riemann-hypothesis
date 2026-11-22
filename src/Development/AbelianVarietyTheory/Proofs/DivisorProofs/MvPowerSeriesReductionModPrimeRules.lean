@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+
+@[expose] public section
+
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Katz
 
 namespace GlobalTheory.Katz.RedRules
@@ -44,7 +49,7 @@ theorem red_add_sub (f f' : MvPowerSeries σ (Fr p k)) (g g' : MvPowerSeries σ 
   · intro α
     obtain ⟨w, hw, hg⟩ := h α
     obtain ⟨w', hw', hg'⟩ := h' α
-    exact ⟨w + w', by rw [map_add, map_add, hw, hw'], by rw [map_add, map_add, hg, hg']⟩
+    exact ⟨w + w', by rw [map_add (f := _), map_add (f := _), hw, hw'], by rw [map_add (f := _), map_add (f := _), hg, hg']⟩
   · intro α
     obtain ⟨w, hw, hg⟩ := h α
     obtain ⟨w', hw', hg'⟩ := h' α

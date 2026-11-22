@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
+
+@[expose] public section
 
 open Matrix Filter NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 
@@ -93,7 +97,7 @@ private theorem cardInv {n : ℕ} [Fact n.Prime] {D M M' : Type} [Group D] [AddC
       rw [← htw g y x]
       exact DFunLike.congr_fun (h g) x
     · intro h g
-      apply TDual.ext
+      apply DFunLike.ext
       intro x
       show ((twDual χ σ) g (Φ y)) x = Φ y x
       rw [htw, h g]

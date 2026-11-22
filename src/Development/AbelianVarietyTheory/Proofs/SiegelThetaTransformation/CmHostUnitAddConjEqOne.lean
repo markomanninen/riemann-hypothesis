@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsBaseClassLevelAdapted
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnChartAsm
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsQuotEquiv
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeVacuaExistUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsBaseClassLevelAdapted
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnChartAsm
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsQuotEquiv
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeVacuaExistUnique
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr
@@ -136,7 +140,7 @@ theorem cmHostUnit_add_conj_eq_one (H : Host E) : H.w0 + H.bar H.w0 = 1 := by
   have hb : H.bar H.rt = -H.rt := (sq_eq_sq_iff_eq_or_eq_neg.1 hsq).resolve_left hne
   have h2 : 2 * H.bar H.w0 = 1 - H.rt := by
     have := congrArg H.bar H.two_weight_eq_one_add_root
-    rw [map_mul, map_add, map_one, hb, map_ofNat] at this
+    rw [map_mul, map_add (f := _), map_one, hb, map_ofNat] at this
     rw [this]; ring
   have : (2 : 𝓞 E) * (H.w0 + H.bar H.w0) = 2 * 1 := by rw [mul_add, H.two_weight_eq_one_add_root, h2]; ring
   exact mul_left_cancel₀ two_ne_zero this
@@ -150,7 +154,7 @@ theorem cSep_spec (l : Geo.Tor.Level H) : cSep l ∈ Mfr l ∧ cSep l - 1 ∈ l.
     rw [← hab]
     simpa using ha
   unfold cSep
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem level_mem (l : Geo.Tor.Level H) : (l.M : 𝓞 E) ∈ l.Mb ∧ (l.M : 𝓞 E) ∈ Mfr l := by
@@ -308,7 +312,7 @@ theorem EF_int (l : Geo.Tor.Level H) {X : Data E r} {L : Lt E r} (hL : SelfD X L
     rw [← hk]
     change EF X y ((m : E) • x) = EF X (((H.bar m : 𝓞 E) : E) • y) x
     rw [TensLat.EF_smul, H.bar_eq, cc, IsCMField.complexConj_apply_apply]
-  · exact ⟨k + k', by rw [TensLat.EF_eq_bilin, map_add, ← TensLat.EF_eq_bilin, ← TensLat.EF_eq_bilin, hk, hk',
+  · exact ⟨k + k', by rw [TensLat.EF_eq_bilin, map_add (f := _), ← TensLat.EF_eq_bilin, ← TensLat.EF_eq_bilin, hk, hk',
       Int.cast_add]⟩
 
 theorem mem_tens {Λ : Lt E n} {L : Lt E r} {M N : ℕ} (hΛ : Λ ∈ Vset E n M) (hN : NOK Λ N M)
@@ -360,7 +364,7 @@ theorem heis_eq {X : Data E r} {bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.Λ
     rw [Finset.mul_sum]
     refine Finset.sum_congr rfl fun b _ => ?_
     change EF X (y b) (u b + u b) = _
-    rw [TensLat.EF_eq_bilin, map_add, ← TensLat.EF_eq_bilin, hk, two_mul]
+    rw [TensLat.EF_eq_bilin, map_add (f := _), ← TensLat.EF_eq_bilin, hk, two_mul]
   have h5 := Complex.exp_int_mul_two_pi_mul_I (-(∑ b, k b))
   rw [h3, h4]
   have h6 : -((Real.pi : ℂ) * I * ((2 * ((∑ b, k b : ℤ) : ℚ) : ℚ) : ℂ)) =
@@ -428,7 +432,7 @@ theorem gphi_move : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : 
       have hdiff : Y q b - Y' (fun b => σ (q b)) b ∈ L := by
         have h3 := add_mem (sub_mem h h') (sub_mem hu (hm₃.mem z))
         convert h3 using 1
-        rw [e2, eq_add_of_sub_eq' hz, map_add, map_nsmul, ← Nat.cast_smul_eq_nsmul E,
+        rw [e2, eq_add_of_sub_eq' hz, map_add (f := _), map_nsmul, ← Nat.cast_smul_eq_nsmul E,
           ← Nat.cast_smul_eq_nsmul E, smul_add, smul_add, smul_smul, smul_smul, inv_mul_cancel₀ hM0,
           one_smul, one_smul]
         abel

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+
+@[expose] public section
 
 open NumberField Matrix ReciprocityTheory.ChartRestriction.G.FD
 
@@ -17,7 +21,8 @@ theorem linearIndependent_of_skew_of_real : ∀ {E : Type} [Field E] [NumberFiel
   have hmap : ∀ g : Fin n → E, (∑ i, g i • e i).map cc = ∑ i, cc (g i) • (e i).map cc := by
     intro g
     ext a b
-    simp [Matrix.sum_apply, cc, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.sum_apply, cc, map_sum]
   have hinj : ∀ M : Matrix (Fin r) (Fin r) E, Mᵀ * G = 0 → M = 0 := by
     intro M hM
     have hu : IsUnit G.det := isUnit_iff_ne_zero.mpr hG

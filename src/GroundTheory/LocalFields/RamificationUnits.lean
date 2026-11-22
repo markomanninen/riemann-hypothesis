@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.Ramification
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.Ramification
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem sub_mem_of_uniformizer {σ : L ≃ₐ[K] L} (hσ : σ ∈ lowerRamificat
   set e := integerAlgEquiv K L σ
   let P : 𝒪[L] → Prop := fun y ↦ e y - y ∈ 𝓂[L] ^ n
   have hadd : ∀ a b, P a → P b → P (a + b) := fun a b ha hb ↦ by
-    have : e (a + b) - (a + b) = (e a - a) + (e b - b) := by rw [map_add]; ring
+    have : e (a + b) - (a + b) = (e a - a) + (e b - b) := by rw [map_add (f := _)]; ring
     simp only [P, this]
     exact add_mem ha hb
   have hmul : ∀ a b, P a → P b → P (a * b) := fun a b ha hb ↦ by
@@ -126,8 +130,8 @@ theorem uniformizerRatio_mem {n : ℕ} (σ : lowerRamificationGroup K L n) :
   (mem_lowerRamificationGroup_iff_uniformizerRatio hϖ
     (lowerRamificationGroup_antitone K L (by omega) σ.2) n).mp σ.2
 
-omit hϖ in
 
+omit hϖ in
 theorem map_mul_inv_mem {n : ℕ} {σ : L ≃ₐ[K] L} (hσ : σ ∈ lowerRamificationGroup K L n)
     (u : 𝒪[L]ˣ) :
     Units.map (integerAlgEquiv K L σ : 𝒪[L] →* 𝒪[L]) u * u⁻¹ ∈ unitFiltration L (n + 1) := by
@@ -138,8 +142,8 @@ theorem map_mul_inv_mem {n : ℕ} {σ : L ≃ₐ[K] L} (hσ : σ ∈ lowerRamifi
   rw [h]
   exact Ideal.mul_mem_right _ _ (mem_lowerRamificationGroup_natCast_iff.mp hσ (u : 𝒪[L]))
 
-omit hϖ in
 
+omit hϖ in
 abbrev unitFiltrationSucc (L : Type*) [Field L] [ValuativeRel L] [TopologicalSpace L]
     [IsNonarchimedeanLocalField L] (n : ℕ) : Subgroup (unitFiltration L n) :=
   (unitFiltration L (n + 1)).subgroupOf (unitFiltration L n)
@@ -180,18 +184,6 @@ theorem ker_ramificationToUnits (n : ℕ) :
   rw [MonoidHom.mem_ker, ramificationToUnits_apply, QuotientGroup.eq_one_iff,
     Subgroup.mem_subgroupOf, Subgroup.mem_subgroupOf,
     mem_lowerRamificationGroup_iff_uniformizerRatio hϖ hσ0]
-
-def ramificationQuotientToUnits (n : ℕ) :
-    lowerRamificationGroup K L n ⧸
-        (lowerRamificationGroup K L (n + 1 : ℕ)).subgroupOf (lowerRamificationGroup K L n) →*
-      unitFiltration L n ⧸ unitFiltrationSucc L n :=
-  (QuotientGroup.kerLift (ramificationToUnits hϖ n)).comp
-    (QuotientGroup.quotientMulEquivOfEq (ker_ramificationToUnits hϖ n).symm).toMonoidHom
-
-@[simp]
-theorem ramificationQuotientToUnits_mk (n : ℕ) (σ : lowerRamificationGroup K L n) :
-    ramificationQuotientToUnits hϖ n (QuotientGroup.mk σ) = ramificationToUnits hϖ n σ :=
-  rfl
 
 end Ratio
 

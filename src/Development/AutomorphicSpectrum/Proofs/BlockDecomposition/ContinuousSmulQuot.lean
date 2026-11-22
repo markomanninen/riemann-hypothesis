@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.CellAbs
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.CellAbs
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ theorem density_rp {P : Subgroup G} {h : G → ℝ} {mu : (G → ℂ) → ℂ} (
 
 theorem sec_translate {P : Subgroup G} {h : G → ℝ} {mu : (G → ℂ) → ℂ} [ContinuousMul G] (S : Setup P h mu)
     {f : G → ℂ} (hf : Sec P h f) (x : G) : Sec P h (fun g => f (g * x)) := by
-  refine ⟨hf.1.comp (continuous_mul_right x), fun p hp g => ?_⟩
+  refine ⟨hf.1.comp (continuous_mul_const x), fun p hp g => ?_⟩
   have h1 := hf.2 p hp (g * x)
   have h2 : ((h (p * g) : ℂ)) * h (g * x) = h g * h (p * (g * x)) := by
     exact_mod_cast S.law p hp g (g * x)
@@ -79,11 +83,11 @@ theorem continuous_density {P : Subgroup G} {h : G → ℝ} {mu : (G → ℂ) �
     funext g
     exact density_rp S x g
   rw [this]
-  exact (S.cont.comp (continuous_mul_right x)).div S.cont fun g => (S.pos g).ne'
+  exact (S.cont.comp (continuous_mul_const x)).div S.cont fun g => (S.pos g).ne'
 
 theorem continuous_smul_quot {P : Subgroup G} (x : G) : Continuous fun q : G ⧸ P => x • q := by
   rw [(QuotientGroup.isOpenQuotientMap_mk (N := P)).isQuotientMap.continuous_iff]
-  exact QuotientGroup.continuous_mk.comp (continuous_mul_left x)
+  exact QuotientGroup.continuous_mk.comp (continuous_const_mul x)
 
 theorem compact_quot' {P : Subgroup G}
     (hco : ∃ C : Set G, IsCompact C ∧ ∀ g, ∃ q ∈ P, ∃ c ∈ C, g = q * c) : CompactSpace (G ⧸ P) := by

@@ -1,17 +1,22 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceRelations
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
-import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.DisjointUnionOfOpens
-import Development.ResolutionOfSingularities.EmbeddedResolution.MaximalContactHypersurfaces.TunedSheaf
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.OrderReductionAlgorithm
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.MaxContactReduction
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.BlowupSequenceData
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.Append
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.ControlledTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceRelations
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
+public import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.DisjointUnionOfOpens
+public import Development.ResolutionOfSingularities.EmbeddedResolution.MaximalContactHypersurfaces.TunedSheaf
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.OrderReductionAlgorithm
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.MaxContactReduction
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.BlowupSequenceData
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.Append
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.ControlledTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry
@@ -80,27 +85,12 @@ instance instFlatCoverMap (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible
     AlgebraicGeometry.Flat (coverMap T hv) :=
   flat_coverMap_of_isAdmissible T hv
 
-theorem locallyOfFiniteType_coverMap (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible) :
-    LocallyOfFiniteType (coverMap T hv) := by
-  rw [coverMap_eq_sigmaOpensDesc]
-  exact locallyOfFiniteType_sigmaOpensDesc T.scheme (chosenCoverData T hv).opens
-
-instance instLocallyOfFiniteTypeCoverMap (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible) :
-    LocallyOfFiniteType (coverMap T hv) :=
-  locallyOfFiniteType_coverMap T hv
-
 @[reducible] noncomputable def coverMaxContactIdeal (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible) :
     (chosenCoverData T hv).disjointUnion.IdealSheafData :=
   (chosenCoverData T hv).iInfImageIdeal
 
 noncomputable def coverTriple (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible) : MarkedIdealWithBoundary.{u} :=
   (chosenCoverData T hv).markedTriple (balancedTunedIdeal T hv) (tunedMult T)
-
-@[simp] theorem coverTriple_scheme (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible) :
-    (coverTriple T hv).scheme = (chosenCoverData T hv).disjointUnion := rfl
-
-@[simp] theorem coverTriple_baseField (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible) :
-    (coverTriple T hv).base = T.base := rfl
 
 @[simp] theorem coverTriple_structureMorphism (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible) :
     (coverTriple T hv).structMap = coverMap T hv ≫ T.structMap := rfl
@@ -114,19 +104,11 @@ noncomputable def coverTriple (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmiss
 @[simp] theorem coverTriple_boundary (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible) :
     (coverTriple T hv).boundary = T.boundary.map (fun D => D.comap (coverMap T hv)) := rfl
 
-@[simp] theorem coverTriple_dim (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible) :
-    (coverTriple T hv).krullDimSucc = krullDimSucc (chosenCoverData T hv).disjointUnion := rfl
-
 noncomputable def coverMarkedBlowupData (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible) (hinv : ComapIsoInvariance.{u})
     (rc : ∀ S : MarkedIdealWithBoundary.{u}, S.krullDimSucc ≤ T.krullDimSucc → ℕ → S.SequenceOfBlowups) :
     MarkedBlowupSequenceData (coverTriple T hv).structMap (coverTriple T hv).ideal
       (coverTriple T hv).mult (coverTriple T hv).boundary :=
   MaxContactReduction.reduceAlongHypersurface hinv T rc (coverTriple T hv) (coverMaxContactIdeal T hv)
-
-theorem cover_eq_reduceAlongHypersurface (T : MarkedIdealWithBoundary.{u}) (hv : T.IsAdmissible) (hinv : ComapIsoInvariance.{u})
-    (rc : ∀ S : MarkedIdealWithBoundary.{u}, S.krullDimSucc ≤ T.krullDimSucc → ℕ → S.SequenceOfBlowups) :
-    coverMarkedBlowupData T hv hinv rc =
-      MaxContactReduction.reduceAlongHypersurface hinv T rc (coverTriple T hv) (coverMaxContactIdeal T hv) := rfl
 
 theorem isStrictPullbackBlowupSeq_of_descendStrictPullback_eq_some {T S : MarkedIdealWithBoundary.{u}} (φ : S.scheme ⟶ T.scheme)
     (s : MarkedBlowupSequenceData S.structMap S.ideal S.mult S.boundary) {d : BlowupSequenceData T.scheme}

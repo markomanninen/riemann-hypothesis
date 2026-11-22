@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.HeckeCharacterParameters
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SameBlockOfPosC
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemOfIsometryEigenOfDenseISup
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.HeckeCharacterParameters
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SameBlockOfPosC
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemOfIsometryEigenOfDenseISup
+
+@[expose] public section
+
 open Formalism.BasicNotions.TH GlobalTheory.FockAlg GlobalTheory.IndefiniteRowSideFullHecke.MatrixMinorProducts MeasureTheory
 open Formalism.MainNotions.SchurIrreducible (IrrU IrrGK IsHCMod)
 open scoped TensorProduct
@@ -28,7 +33,7 @@ theorem irrU_of_dense_graded_irrGK :
     intro Z y hy
     obtain ⟨X, hX, Y, hY, rfl⟩ := GlobalTheory.FockTensor.exists_upq_add Z
     rw [Submodule.mem_comap] at hy ⊢
-    simp only [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply]
+    simp only [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply]
     exact S.add_mem (hreal X hX y hy) (S.smul_mem _ (hreal Y hY y hy))
   rcases hirr.2 _ hstab with h | h
   · left
@@ -46,7 +51,7 @@ theorem irrU_of_dense_graded_irrGK :
       rintro _ ⟨x, hx, rfl⟩
       obtain ⟨a, ha, b, hb, hab⟩ := S.exists_add_mem_mem_orthogonal (j x)
       have he := heig m x hx
-      rw [hab, map_add, smul_add] at he
+      rw [hab, map_add (f := _), smul_add] at he
       have hdiff : σ.π k a - lam m • a = lam m • b - σ.π k b := by
         rw [sub_eq_sub_iff_add_eq_add, he, add_comm]
       have h1 : σ.π k a - lam m • a ∈ S := S.sub_mem (hinv _ _ ha) (S.smul_mem _ ha)

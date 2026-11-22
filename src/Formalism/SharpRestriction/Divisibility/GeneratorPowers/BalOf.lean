@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FormalGroupLinearSecond
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FormalGroupLinearSecond
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -62,7 +66,7 @@ theorem bal_of {P : MvPolynomial (Fin 2 × Fin d) S} {m : ℕ} (hm : 2 ≤ m) (B
     exact sub_eq_zero.1 (eq_zero_of_isHomogeneous
       ((eval_pair_homogeneous hh _ _ (lin_hom A 0) (xs_hom 1)).sub (eval_pair_homogeneous hh _ _ (xs_hom 0) (lin_hom Ab 1))) k)
   ext i0 l0
-  have hc := congrArg (coeff (sil i0 l0)) hb1
+  have hc := congrArg (AddMonoidAlgebra.coeff · (sil i0 l0)) hb1
   rw [hhdef, eval_pair_bilinear, eval_pair_bilinear, coeff_linL, coeff_linR] at hc
   simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.of_apply]
   exact hc

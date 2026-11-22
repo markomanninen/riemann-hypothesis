@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.DistinguishedUnitIdeals.StatementE
+module
+
+public import Mathlib
+public import Formalism.DistinguishedUnitIdeals.StatementE
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem cob_add (L : Lat B n V) {y z y' z' : ZMod n → V} (h : L.IsCobound y z)
     (h' : L.IsCobound y' z') : L.IsCobound (y + y') (z + z') := by
   obtain ⟨m, rfl, rfl⟩ := h
   obtain ⟨m', rfl, rfl⟩ := h'
-  refine ⟨m + m', ?_, ?_⟩ <;> funext i <;> simp only [Lat.dφ, Lat.dγ, Pi.add_apply, map_add] <;> abel
+  refine ⟨m + m', ?_, ?_⟩ <;> funext i <;> simp only [Lat.dφ, Lat.dγ, Pi.add_apply, map_add (f := _)] <;> abel
 
 theorem cob_neg (L : Lat B n V) {y z : ZMod n → V} (h : L.IsCobound y z) :
     L.IsCobound (-y) (-z) := by
@@ -72,7 +76,8 @@ theorem combine {O : Type} [CommRing O] {n : ℕ} {V₁ V₂ : Type} [AddCommGro
         ∑ c ∈ s, C (a c) • ((fun i => f (y1 c i)) - C (m c) • yc c) := by
   subst he
   funext i
-  simp only [Pi.sub_apply, Pi.smul_apply, Finset.sum_apply, map_sum, map_smul, smul_sub,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Pi.sub_apply, Pi.smul_apply, Finset.sum_apply, map_sum, map_smul, smul_sub,
     Finset.smul_sum, Finset.sum_sub_distrib, smul_smul]
   have h1 : ∑ c ∈ s, (C (a c) * C (m c)) • yc c i = ∑ c ∈ s, C (l ^ e₂) • yc c i :=
     Finset.sum_congr rfl fun c hc => by rw [← map_mul, ham c hc]

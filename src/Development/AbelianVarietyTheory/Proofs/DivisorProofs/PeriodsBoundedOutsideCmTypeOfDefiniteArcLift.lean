@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MonoSpMapRingOfIntegersAlt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsArcLiftPeriodsTendstoSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MonoSpMapRingOfIntegersAlt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsArcLiftPeriodsTendstoSpan
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits NumberField ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formalism.L2.Pj GlobalTheory.Toroidal GlobalTheory.Cartier GlobalTheory.ShFam GlobalTheory.ShFam.BdArc Filter Topology
 open ReciprocityTheory.ChartRestriction.G.FD (Data Frame Bor rmul lact mat col dmin Wt)
 
@@ -27,7 +32,7 @@ theorem tendsto_of_inv_mulVec_span {α : Type} {l : Filter α} {N n : ℕ} (M : 
       rw [this, Pi.single_apply, Matrix.one_apply]
     simp only [e]
     rw [lim]
-    exact tendsto_finset_sum _ fun j _ => ((ht j).apply_nhds a').const_mul _
+    exact tendsto_finsetSum _ fun j _ => ((ht j).apply_nhds a').const_mul _
   have hRi : Tendsto (fun w => ((M w)⁻¹ * W)⁻¹) l (𝓝 1) := by
     have h0 : ContinuousAt Ring.inverse (1 : Matrix (Fin N) (Fin N) ℂ).det := by
       rw [Matrix.det_one, Ring.inverse_eq_inv']
@@ -69,7 +74,7 @@ theorem periods_bounded_outside_cmType_of_definite_arc_lift_alt : ∀ (E : Type)
       have hi : (i : ℕ) < N - (U.X k).p0 := by omega
       refine (hLp j τ' ⟨i, hi⟩).congr fun w => ?_
       unfold perFr
-      rw [dif_pos τ'.2, dif_pos (by simp only [hp0]; omega)]
+      rw [dite_eq_left τ'.2, dite_eq_left (by simp only [hp0]; omega)]
       congr 1
       ext
       simp [hp0]
@@ -92,7 +97,7 @@ theorem periods_bounded_outside_cmType_of_definite_arc_lift_alt : ∀ (E : Type)
   filter_upwards [hF.norm.eventually (gt_mem_nhds (lt_add_one _))] with w hw
   intro τ i hτ
   unfold perFr
-  rw [dif_neg hτ]
+  rw [dite_eq_right hτ]
   split_ifs with h' hj
   · exact ((norm_le_pi_norm (F w ⟨_, h'⟩) ⟨_, hj⟩).trans (norm_le_pi_norm (F w) ⟨_, h'⟩)).trans hw.le
   · simp only [norm_zero]; positivity

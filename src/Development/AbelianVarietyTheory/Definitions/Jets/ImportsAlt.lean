@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementTBB
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementTBB
+
+@[expose] public section
 
 namespace GlobalTheory.TopVec
 

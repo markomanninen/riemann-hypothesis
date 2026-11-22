@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.StmtFields
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.StmtFields
+
+@[expose] public section
 
 open NumberField Formalism.HC UpperTheory.Top UpperTheory.V
 

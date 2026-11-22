@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.LocUApply
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.LocUApply
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.CuspidalSpectrum GlobalTheory.IndefiniteRowSideFullHecke.IwahoriDoubleCosets GlobalTheory.PRep Formalism.BasicNotions GlobalTheory.CuspRep GlobalTheory.SmGL UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.C UpperTheory.ConvolutionTheory.C.Sf
@@ -34,8 +38,8 @@ private theorem eqv_translate {L G H S : Type} [Group L] [TopologicalSpace L] [G
   rw [hx]
   exact Submodule.subset_span ⟨_, hE, _, rfl⟩
 
-private theorem exists_factor {K : Type} [Field K] [NumberField K] {n : ℕ} (w : Pl K) (x : normOneGL K n) :
-    ∃ (c : normOneGL K n) (a : Gw n w), x = c * MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w a) ∧
+private theorem exists_factor {K : Type} [Field K] [NumberField K] {n : ℕ} (w : Pl K) (x : normOneGL (K := K) (n := n)) :
+    ∃ (c : normOneGL (K := K) (n := n)) (a : Gw n w), x = c * MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w a) ∧
       ∀ g : Gw n w, c * MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w g) =
         MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w g) * c := by
   obtain ⟨A, u, rfl⟩ := MultiplicityOne.exists_archProj_mul_finProj x
@@ -78,22 +82,22 @@ private theorem invariant_of_translate {L G H S : Type} [Group L] [TopologicalSp
     obtain ⟨f', hf', y, rfl⟩ := hv
     exact h x f' hf' y
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
   | smul c a _ ha => rw [map_smul]; exact Submodule.smul_mem _ c ha
 
-private theorem locU_eq {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+private theorem locU_eq {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
     (w : Pl K) (g : Gw n w) (v : LL μ) :
-    locU μ w g v = rightRegularRep (rationalGLOne K n) μ (MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w g)) v := by
+    locU μ w g v = rightRegularRep (rationalGLOne (K := K) (n := n)) μ (MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w g)) v := by
   rw [locU_apply]
   rfl
 
 theorem UpperTheory.summand_le_closure_span_local_type_images :
-    ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (V : Submodule ℂ (LL μ)) (w : Pl K) (σ : SmIrr (Gw n w)), IsSummand μ V → Occurs μ V w σ → V ≤ (spanAll σ.ρ (locU μ w) V).topologicalClosure := by
+    ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (V : Submodule ℂ (LL μ)) (w : Pl K) (σ : SmIrr (Gw n w)), IsSummand μ V → Occurs μ V w σ → V ≤ (spanAll σ.ρ (locU μ w) V).topologicalClosure := by
   intro K _ _ n μ _ V w σ hV hO
   obtain ⟨f, hf0, hfm, hfe⟩ := hO
   have hf : Eqv σ.ρ (locU μ w) V f := ⟨hfm, fun g x => by rw [hfe, locU_apply]⟩
-  refine dense_of_invariant (rightRegularRep (rationalGLOne K n) μ) (cuspidalL2 μ) V hV σ.ρ (locU μ w) f hf0 hf ?_
+  refine dense_of_invariant (rightRegularRep (rationalGLOne (K := K) (n := n)) μ) (cuspidalL2 μ) V hV σ.ρ (locU μ w) f hf0 hf ?_
   refine invariant_of_translate σ.ρ (locU μ w) _ V fun x f' hf' y => ?_
   obtain ⟨c, a, rfl, hc⟩ := exists_factor w x
-  exact eqv_translate σ.ρ (locU μ w) (rightRegularRep (rationalGLOne K n) μ) V (IsSummandOf.inv hV)
+  exact eqv_translate σ.ρ (locU μ w) (rightRegularRep (rationalGLOne (K := K) (n := n)) μ) V (IsSummandOf.inv hV)
     (fun g => MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w g)) (locU_eq μ w) c hc f' hf' a y

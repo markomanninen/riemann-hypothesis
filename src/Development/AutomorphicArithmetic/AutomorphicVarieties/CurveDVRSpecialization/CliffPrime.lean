@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
+
+@[expose] public section
 
 open Matrix UpperTheory.V.U3 Module
 
@@ -44,7 +48,7 @@ private theorem min_dvd [FiniteDimensional κ V] (σ : G →* Module.End κ V) (
     refine hmax (S ⊔ W.map (σ g)) ⟨?_, by rw [hs]; exact dvd_add hd dvd_rfl⟩ ?_
     · intro h hh v hv
       obtain ⟨a, ha, _, ⟨b, hb, rfl⟩, rfl⟩ := Submodule.mem_sup.mp hv
-      rw [map_add]
+      rw [map_add (f := _)]
       refine Submodule.add_mem_sup (hS h hh a ha) ⟨_, hW _ (hn.conj_mem' h hh g) b hb, ?_⟩
       rw [hmul, hmul]; congr 2; group
     · refine lt_of_le_of_ne le_sup_left fun h => hg fun w hw => ?_
@@ -66,7 +70,7 @@ private theorem min_dvd [FiniteDimensional κ V] (σ : G →* Module.End κ V) (
 
 private def eig (σ : G →* Module.End κ V) {U : Subgroup G} (μ : U →* κˣ) : Submodule κ V where
   carrier := {v | ∀ u : U, σ u v = (μ u : κ) • v}
-  add_mem' ha hb u := by rw [map_add, ha u, hb u, smul_add]
+  add_mem' ha hb u := by rw [map_add (f := _), ha u, hb u, smul_add]
   zero_mem' u := by simp
   smul_mem' c a ha u := by rw [map_smul, ha u, smul_comm]
 
@@ -86,7 +90,8 @@ private theorem eig_indep (σ : G →* Module.End κ V) (U : Subgroup G) :
       have := ih (fun i => ((i u : κ) - a u) • v i)
         (fun i hi => Submodule.smul_mem _ _ (hv i (Finset.mem_insert_of_mem hi))) (by
           have h1 := congrArg (σ u) h0
-          rw [map_add, map_sum, map_zero, hv a (Finset.mem_insert_self _ _) u,
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_add (f := _), map_sum, map_zero, hv a (Finset.mem_insert_self _ _) u,
             Finset.sum_congr rfl fun i hi => hv i (Finset.mem_insert_of_mem hi) u] at h1
           simp only [sub_smul, Finset.sum_sub_distrib, ← Finset.smul_sum]
           rw [eq_neg_of_add_eq_zero_right h1, eq_neg_of_add_eq_zero_right h0, smul_neg, sub_self]) j hj

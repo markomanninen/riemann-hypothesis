@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,15 +33,13 @@ def Stmt (P : LocPrime l) : Prop :=
     ∀ (X : Type) [AddCommGroup X] [Module ↥(Loc.OL LL) X] [Finite X],
       admissibleClassesTwistedChar P K LL emb D Γ c X = {0}
 
-def RealisationStatementAll (L : LocTheory) : Prop := ∀ (l : ℕ) [Fact l.Prime], Stmt (L l)
-
 theorem twCoef_Wchi {G : Type} [Group G] [TopologicalSpace G] {Qp LL O : Type} [Field Qp] [Field LL]
     [Algebra Qp LL] [CommRing O] [Algebra O LL] [TopologicalSpace LL] (Γ : GalData G Qp LL O) (c : ℕ)
     (X : Type) [AddCommGroup X] [Module O X] (g : G) (y : O ⊗[O] X) :
     twCoef (Γ.Wchi c) Γ.χ₁ X g y = (((Γ.ε g) ^ (-((c : ℤ) - 1)) : Oˣ) : O) • y := by
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => rw [map_add, ha, hb, smul_add]
+  | add a b ha hb => rw [map_add (f := _), ha, hb, smul_add]
   | tmul a x =>
     rw [coefRep_tmul, twistRep_apply, smul_tmul']
     congr 1
@@ -45,7 +47,5 @@ theorem twCoef_Wchi {G : Type} [Group G] [TopologicalSpace G] {Qp LL O : Type} [
     rw [smul_smul, ← Units.val_mul]
     congr 2
     simp [GalData.chi]
-
-example : 2 ≤ exData.t ∧ exData.T1 41 ∧ exData.T2 41 ∧ exData.T3 41 := ⟨le_rfl, exData_T1_T2_T3_fortyOne⟩
 
 end GlobalTheory.IndefiniteRowSideFullHecke.AdmissibleTwistedCharClasses

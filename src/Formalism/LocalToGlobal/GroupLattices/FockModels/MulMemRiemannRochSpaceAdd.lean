@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.TableLineDegreeFive
-import Formalism.LocalToGlobal.GroupLattices.FockModels.MkP
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TableLineDegreeFive
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.MkP
+
+@[expose] public section
 
 open MvPolynomial
 

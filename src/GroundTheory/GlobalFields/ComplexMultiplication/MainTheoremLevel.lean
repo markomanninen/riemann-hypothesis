@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremAssembly
-import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremModels
-import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremFields
-import GroundTheory.GlobalFields.ComplexMultiplication.BadPrimesFinite
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremAssembly
+public import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremModels
+public import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremFields
+public import GroundTheory.GlobalFields.ComplexMultiplication.BadPrimesFinite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Global
@@ -16,9 +21,9 @@ open GroundTheory.LocalField (maximalAbelianExtension)
 open scoped nonZeroDivisors
 
 variable {K : Type} [Field K] [NumberField K] [Algebra K ℂ] (hK : finrank ℚ K = 2)
-  [IsTotallyComplex K]
+  [_root_.NumberField.IsTotallyComplex K]
 
-omit [NumberField K] [IsTotallyComplex K] in
+omit [NumberField K] [_root_.NumberField.IsTotallyComplex K] in
 theorem exists_isogeny_homConstSet_congr {L : Type} [Field L] [Algebra L ℂ]
     {A A' B B' : WeierstrassCurve L} [A.IsElliptic] [A'.IsElliptic] [B.IsElliptic] [B'.IsElliptic]
     (eA : A = A') (eB : B = B') {S : Set ℂ}
@@ -29,15 +34,15 @@ theorem exists_isogeny_homConstSet_congr {L : Type} [Field L] [Algebra L ℂ]
   subst eA eB
   exact h
 
-omit [NumberField K] [IsTotallyComplex K] [Algebra K ℂ] in
+omit [NumberField K] [_root_.NumberField.IsTotallyComplex K] [Algebra K ℂ] in
 theorem nonempty_isogEnd_congr {L : Type} [Field L] [Algebra L ℂ] {B B' : WeierstrassCurve L}
     [B.IsElliptic] [B'.IsElliptic] (e : B = B') (h : Nonempty (isogEnd (B.baseChange ℂ) ≃+* 𝓞 K)) :
     Nonempty (isogEnd (B'.baseChange ℂ) ≃+* 𝓞 K) := by
   subst e
   exact h
 
-include hK in
 
+include hK in
 theorem exists_uniformization_level (σ : ℂ ≃ₐ[K] ℂ) (s : IdeleGroup K)
     (hs : ∀ x : maximalAbelianExtension K (algebraicClosure K ℂ),
       ((artinMap K (algebraicClosure K ℂ) (IdeleClassGroup.mk K s) x : algebraicClosure K ℂ) : ℂ) =
@@ -218,7 +223,8 @@ theorem exists_uniformization_level (σ : ℂ ≃ₐ[K] ℂ) (s : IdeleGroup K)
     show _ = ((shortModel (⟨ELL.j ((ellMulAction (algebraMap K ℂ) hK).smul (primeClass 𝔭) x₀), hL _⟩ : L)).map (algebraMap L ℂ)).j
     rw [map_j, shortModel_j]
     show _ = ELL.j ((ellMulAction (algebraMap K ℂ) hK).smul (primeClass 𝔭) x₀)
-    rw [hyL₂, ellOf, ELL.j_toEll]
+    set_option backward.isDefEq.respectTransparency false in
+      rw [hyL₂, ellOf, ELL.j_toEll]
     exact j_congr rfl
   obtain ⟨V', hV'⟩ := exists_variableChange_of_j_eq _ _ hjV'
   exact exists_uniformization_of_data hK σ s 𝔞 hf (σ.restrictNormal L) hτσ V₀ hV₀ htors 𝔭 x

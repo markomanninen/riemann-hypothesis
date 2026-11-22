@@ -1,5 +1,9 @@
-import Development.DiscreteGroups.GlobalIrreducibility.ExistsColChar
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnipRadStdBlocksTwoNeBotStatement
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.ExistsColChar
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnipRadStdBlocksTwoNeBotStatement
+
+@[expose] public section
 
 noncomputable section
 

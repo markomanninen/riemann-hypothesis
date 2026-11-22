@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelParam
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelParam
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.Doubling GlobalTheory.GLDoubling GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection GlobalTheory.ZonalCellDecomposition GlobalTheory.SatakeBound
 
 noncomputable section
@@ -139,8 +144,8 @@ theorem val_inv_torusElt {n : Type} [Fintype n] [DecidableEq n] (ϖ : kˣ) (f : 
     rw [Units.val_mul, val_torusElt, val_torusElt, diagonal_mul_diagonal, Units.val_one, ← diagonal_one]
     congr 1
     funext i
-    simp only [Pi.neg_apply, _root_.zpow_neg]
-    exact inv_mul_cancel₀ (zpow_ne_zero _ ϖ.ne_zero)
+    simpa only [Pi.mul_apply, Pi.neg_apply, Pi.one_apply, _root_.zpow_neg] using
+      inv_mul_cancel₀ (zpow_ne_zero (f i) ϖ.ne_zero)
   rw [this, val_torusElt]
   rfl
 

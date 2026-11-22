@@ -1,5 +1,9 @@
-import Formalism.GradedWeylDivisibility.StatementD
-import Formalism.SubspaceCounting.GoodOrbitIntervalTileCondition
+module
+
+public import Formalism.GradedWeylDivisibility.StatementD
+public import Formalism.SubspaceCounting.GoodOrbitIntervalTileCondition
+
+@[expose] public section
 
 open MvPolynomial
 

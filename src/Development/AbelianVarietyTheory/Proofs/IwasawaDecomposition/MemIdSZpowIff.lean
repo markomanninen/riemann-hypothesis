@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OneSubMemIdS
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InTypeIsoSortedPos
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OneSubMemIdS
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InTypeIsoSortedPos
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.L2.Col GlobalTheory.InertNbr
 open Formalism.L2.DIV (Pl kP St resS oToS idS cmpS)
 open scoped TensorProduct
@@ -99,10 +104,19 @@ theorem exists_approx (x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) (J : Id
     (u : Fin n → E ⊗[F] Formalism.L2.Herm.Af F) (hu : ∀ i, u i ∈ Formalism.L2.Herm.intAf F E) :
     ∃ v ∈ Formalism.UG.CS.globLat x (stdLat E n), ∀ i, ∃ t ∈ idS F J, u i = pullV x v i + (t : E ⊗[F] Formalism.L2.Herm.Af F) := by
   have hxu : (x⁻¹).1 *ᵥ (x.1 *ᵥ u) = u := by rw [mulVec_mulVec, Units.inv_mul, one_mulVec]
+  have hspan : Submodule.span E (stdLat E n : Set (Fin n → E)) = ⊤ := by
+    apply top_unique
+    intro v _
+    have hv : v = ∑ i, v i • (Pi.single i (1 : E) : Fin n → E) := by
+      funext j
+      simp [Finset.sum_apply, Pi.single_apply]
+    rw [hv]
+    exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _
+      (Submodule.subset_span (by simpa using single_mem_stdLat (E := E) i 1))
   have h1 : x.1 *ᵥ u ∈ Submodule.span (Formalism.L2.Herm.intAf F E)
       ((fun v : Fin n → E => fun i => iA F E (v i)) '' (Formalism.UG.CS.globLat x (stdLat E n) : Set (Fin n → E))) := by
     rw [Formalism.UG.P.span_recovery_of_integral_adelic_approx Formalism.UG.P.integral_adele_approximation_holds F E (Fin n) (stdLat E n)
-      (Module.Finite.iff_fg.2 (stdLat_lattice (E := E) (n := n)).fg) (stdLat_lattice (E := E) (n := n)).span_eq_top x _]
+      (Module.Finite.iff_fg.2 (stdLat_lattice (E := E) (n := n)).fg) hspan x _]
     rw [mem_latS_std, hxu]
     exact hu
   rw [← hxu]
@@ -157,7 +171,7 @@ def coordMod (x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) (J : Fin n → I
   toFun v i := resI F (J i) (hJ i) ⟨pullV x v.1 i, (mem_globLat x v.1).1 v.2 i⟩
   map_add' v w := by
     funext i
-    rw [Pi.add_apply, ← map_add]
+    rw [Pi.add_apply, ← map_add (f := _)]
     congr 1
     exact Subtype.ext (pullV_add x v.1 w.1 i)
   map_smul' a v := by
@@ -177,7 +191,7 @@ theorem coordMod_surj (x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) (J : Fi
   obtain ⟨t, ht, e⟩ := h i
   have ht' : t ∈ idS F (J i) := Ideal.map_mono (Ideal.prod_le_inf.trans (Finset.inf_le (Finset.mem_univ i))) ht
   have e' : oToS F E (a i) = ⟨pullV x v i, (mem_globLat x v).1 hv i⟩ + t := Subtype.ext e
-  rw [← ha, ← resI_oToS (F := F) (J i) (hJ i), e', map_add, (resI_eq_zero _ _ t).2 ht', add_zero]
+  rw [← ha, ← resI_oToS (F := F) (J i) (hJ i), e', map_add (f := _), (resI_eq_zero _ _ t).2 ht', add_zero]
   rfl
 
 variable {Q : Pl E} {ε : E ⊗[F] Formalism.L2.Herm.Af F}

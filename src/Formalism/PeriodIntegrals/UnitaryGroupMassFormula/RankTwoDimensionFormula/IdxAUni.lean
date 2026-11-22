@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GGMirabolicBase
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IndexGe
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.UniAMulDiag
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GGMirabolicBase
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IndexGe
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.UniAMulDiag
+
+@[expose] public section
 
 namespace PI.UnitaryDimensionFormula
 

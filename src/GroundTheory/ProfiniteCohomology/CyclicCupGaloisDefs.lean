@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CyclicCupDefs
-import GroundTheory.ProfiniteCohomology.Characters
-import GroundTheory.ProfiniteCohomology.CupProducts
-import GroundTheory.ProfiniteCohomology.ContinuousCochains.Functoriality
-import GroundTheory.ProfiniteCohomology.GaloisModules.Discrete
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CyclicCupDefs
+public import GroundTheory.ProfiniteCohomology.Characters
+public import GroundTheory.ProfiniteCohomology.CupProducts
+public import GroundTheory.ProfiniteCohomology.ContinuousCochains.Functoriality
+public import GroundTheory.ProfiniteCohomology.GaloisModules.Discrete
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh

@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceBig
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.SliceBound
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.ResTyp
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CapelliAuxiliaryStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermAuxiliaryStatementB
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceBig
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.SliceBound
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.ResTyp
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CapelliAuxiliaryStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermAuxiliaryStatementB
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ open GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.V.Cm
 
 namespace UpperTheory.ConvolutionTheory.BW.SliceClasses
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {r s : ℕ} {S : Set (Pl E)}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {r s : ℕ} {S : Set (Pl E)}
 
 private abbrev eS (r s : ℕ) : Fin s ⊕ Fin r ≃ Fin (r + s) :=
   (Equiv.sumComm (Fin s) (Fin r)).trans (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s))
@@ -32,13 +36,13 @@ private theorem ex_rel (r : ℕ) (u : UC E s) : ∃ u' : UC E (r + s), (uC E s u
   | add x y _ _ hx hy =>
     obtain ⟨x', hx⟩ := hx
     obtain ⟨y', hy⟩ := hy
-    exact ⟨x' + y', by rw [map_add, map_add]; exact (CapRes.relAlg (eS r s)).add_mem hx hy⟩
+    exact ⟨x' + y', by rw [map_add (f := _), map_add (f := _)]; exact (CapRes.relAlg (eS r s)).add_mem hx hy⟩
   | mul x y _ _ hx hy =>
     obtain ⟨x', hx⟩ := hx
     obtain ⟨y', hy⟩ := hy
     exact ⟨x' * y', by rw [map_mul, map_mul]; exact (CapRes.relAlg (eS r s)).mul_mem hx hy⟩
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 private theorem lev_loc (w : Pl E) (k : GL (Fin s) (w.adicCompletion E)) :
     lev (Af E) r s (1, locGL E s w k) = locGL E (r + s) w (lev (w.adicCompletion E) r s (1, k)) := by
   have ext : ∀ g h : GL (Fin (r + s)) (Af E),
@@ -53,9 +57,9 @@ private theorem lev_loc (w : Pl E) (k : GL (Fin s) (w.adicCompletion E)) :
   · simp only [pLoc_locGL_of_ne e, map_one]
     exact map_one _
 
-omit [IsTotallyComplex E] in
-private theorem lev_KGL (w : Pl E) {k : GL (Fin s) (w.adicCompletion E)} (hk : k ∈ GlobalTheory.LFun.KGL w s) :
-    lev (w.adicCompletion E) r s (1, k) ∈ GlobalTheory.LFun.KGL w (r + s) := by
+omit [_root_.NumberField.IsTotallyComplex E] in
+private theorem lev_KGL (w : Pl E) {k : GL (Fin s) (w.adicCompletion E)} (hk : k ∈ GlobalTheory.LFun.KGL w (n := s)) :
+    lev (w.adicCompletion E) r s (1, k) ∈ GlobalTheory.LFun.KGL w (n := (r + s)) := by
   obtain ⟨k, rfl⟩ := hk
   refine ⟨lev _ r s (1, k), ?_⟩
   refine (Slice2.map_lev _ _).trans ?_
@@ -78,7 +82,7 @@ end UpperTheory.ConvolutionTheory.BW.SliceClasses
 
 open UpperTheory.ConvolutionTheory.BW UpperTheory.ConvolutionTheory.BW.SliceClasses in
 theorem UpperTheory.ConvolutionTheory.BW.sliceUmg :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.SliceUmg E := by
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.SliceUmg E := by
   intro E _ _ _ S r s b t φ hφ
   let G : Sm E (r + s) := ⟨_, big_mem_Sm b t hφ⟩
   let ψ : Sm E s := ⟨_, Slice2.res_mem_Sm G⟩
@@ -96,7 +100,7 @@ theorem UpperTheory.ConvolutionTheory.BW.sliceUmg :
     unfold slice
     congr 1
     funext y
-    have := Pair.ct_lev_rat hφ.left 1 γ (zt E r t * ((Quotient.out y : normOneGL E r) : GA E r)) m
+    have := Pair.ct_lev_rat hφ.left 1 γ (zt E r t * ((Quotient.out y : normOneGL (K := E) (n := r)) : GA E r)) m
     rw [map_one, one_mul] at this
     rw [this]
   · refine isOpen_stab_of_mem_nhds _ _ (Filter.mem_of_superset
@@ -130,7 +134,7 @@ theorem UpperTheory.ConvolutionTheory.BW.sliceUmg :
     have h0 := h (x.mapDomain j) (by
       rw [Finsupp.sum_mapDomain_index (h := fun k (c : ℂ) => c • ρ k) (fun _ => zero_smul _ _)
         fun _ _ _ => add_smul _ _ _, ← hx]
-      exact Finsupp.sum_congr fun k _ => by rw [resR, dif_pos (hK k)])
+      exact Finsupp.sum_congr fun k _ => by rw [resR, dite_eq_left (hK k)])
     have hz : ∑ k ∈ x.support, x k • rt E (r + s) (lev (Ad E) r s (1, (k : GA E s))) φ = 0 := by
       refine Subtype.ext (funext fun g => ?_)
       have := h0 g

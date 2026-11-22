@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsChartMax
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PProperSymm
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LowerBoundConditional
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsChartMax
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PProperSymm
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LowerBoundConditional
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -48,7 +53,7 @@ theorem ker_toSub {I W : Ideal (MvPolynomial (Fin n) F)} (h : I ≤ W) (t : Fin 
         exact Ideal.mem_map_of_mem (chartX I t e) hw
       exact hle hb
     have ha' : Ideal.Quotient.mk (chartIncIdeal I t e) a = 0 := Ideal.Quotient.eq_zero_iff_mem.mpr ha
-    rw [map_add, ha', zero_add]
+    rw [map_add (f := _), ha', zero_add]
     exact hb'
   · rw [Ideal.map_le_iff_le_comap]
     intro w hw
@@ -99,8 +104,8 @@ theorem le_of_sup_le (hD : ChartDehomog.Statement) {W₁ W₂ : Ideal (MvPolynom
 
 end ChartMaxIdeals
 
-open ChartMaxIdeals in
 
+open ChartMaxIdeals in
 theorem ChartMaxIdeals.proof (h₁ : ConeDimOfChowForm.Statement) (h₂ : ConeDimComponent.Statement)
     (h₆ : SpecFirstMemIncIdeal.Statement) (h₇ : ChartFinite.Statement) (h₈ : ChartIncDomain.Statement)
     (h₉ : ChartKernel.Statement) (hH : ChartHomogenise.Statement) (hD : ChartDehomog.Statement)
@@ -148,8 +153,12 @@ theorem ChartMaxIdeals.proof (h₁ : ConeDimOfChowForm.Statement) (h₂ : ConeDi
         ((chartIdeal I t e p W).comap (algebraMap (Localization.AtPrime p) (ChartLoc I t e p)))]
       change Ideal.map _ (Ideal.comap (algebraMap (MvPolynomial (Fin e × Fin n) F) (Localization.AtPrime p)) _) = _
       rw [hO, Localization.AtPrime.map_eq_maximalIdeal]
-    refine ⟨Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := Localization.AtPrime p) _ ?_, hc𝔓, ?_⟩
-    · rw [hmaxO]; exact IsLocalRing.maximalIdeal.isMaximal _
+    haveI := h𝔓
+    refine ⟨Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := Localization.AtPrime p)
+      (chartIdeal I t e p W) ?_, hc𝔓, ?_⟩
+    · change (Ideal.comap (algebraMap (Localization.AtPrime p) (ChartLoc I t e p))
+        (chartIdeal I t e p W)).IsMaximal
+      rw [hmaxO]; exact IsLocalRing.maximalIdeal.isMaximal _
     · rw [comap_chartX_map hIW t, hker]
 
   have hmem : ∀ W ∈ {W | W ∈ (divCycle I u).support ∧ Ideal.span {q} = incIdeal W e},
@@ -213,7 +222,25 @@ theorem ChartMaxIdeals.proof (h₁ : ConeDimOfChowForm.Statement) (h₂ : ConeDi
       rw [← hp, ← h₉ F n e W t hWp ht, ← comap_algebraMap_map hIW t]
       exact (Ideal.comap_mono hPW).trans hPp
     obtain ⟨hrel, hinc⟩ := hC F n e I W u q hI hdim hu hWp hJW hq hincle
-    refine ⟨W, ⟨(hsupp W).mpr ⟨hrel, localMult_ne_zero_of_mem_minimalPrimes hrel.1⟩, hinc.symm⟩, ?_⟩
+    have hmult : localMult (I ⊔ Ideal.span {linForm u}) W ≠ 0 := by
+      have hprime : W.IsPrime := hrel.1.1.1
+      unfold localMult
+      rw [dite_eq_left hprime]
+      let R := Localization.AtPrime W
+      let J : Ideal R := (I ⊔ Ideal.span {linForm u}).map (algebraMap _ R)
+      have hmin : IsLocalRing.maximalIdeal R ∈ J.minimalPrimes := by
+        rw [IsLocalization.minimalPrimes_map W.primeCompl R _, Set.mem_preimage,
+          Localization.AtPrime.under_maximalIdeal]
+        exact hrel.1
+      have := IsLocalRing.quotient_artinian_of_mem_minimalPrimes_of_isLocalRing J hmin
+      have : IsArtinian R (R ⧸ J) :=
+        isArtinian_of_surjective_algebraMap (Ideal.Quotient.mk_surjective (I := J))
+      have : IsNoetherian R (R ⧸ J) := isNoetherian_quotient J
+      have hJ : J ≠ ⊤ := ne_top_of_le_ne_top (IsLocalRing.maximalIdeal.isMaximal R).ne_top hmin.1.2
+      have : Nontrivial (R ⧸ J) := Ideal.Quotient.nontrivial_iff.mpr hJ
+      rw [Ne, ENat.toNat_eq_zero, not_or]
+      exact ⟨(Module.length_pos (R := R) (M := R ⧸ J)).ne', Module.length_ne_top⟩
+    refine ⟨W, ⟨(hsupp W).mpr ⟨hrel, hmult⟩, hinc.symm⟩, ?_⟩
     have hmaxW := (key W hWp ht hIW (hinc.trans hp.symm)).1
     have hle : chartIdeal I t e p W ≤ 𝔓 := by
       rw [chartIdeal, Ideal.map_le_iff_le_comap]

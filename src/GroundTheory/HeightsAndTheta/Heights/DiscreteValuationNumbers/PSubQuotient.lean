@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -29,7 +34,8 @@ theorem classNum_rename {σ τ : Type*} (e : σ → τ) (he : Function.Injective
 
 theorem rename_psumExpansion {M N : ℕ} (e : Fin M → Fin N) (k : ℕ) (i : Fin M) :
     rename (Sum.map e e) (psumExpansion M k i) = psumExpansion N k (e i) := by
-  simp [psumExpansion, map_sum, rename_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [psumExpansion, map_sum, rename_X]
 
 theorem pairNum_join {r m N : ℕ} (P : Ideal (MRing ι O)) (e : Fin r ⊕ Fin m ≃ Fin N)
     (xU xU' : Fin r → K → ℤ) (xV xV' : Fin m → K → ℤ) (fU gU : Fin r → MRing ι O)
@@ -153,12 +159,13 @@ theorem isFlagPair_join (ϖ : O) (y : (Σ k, ι k) → Ω) (B B' : ChartBundle O
     (hpV : IsFlagPair ϖ y BV BV' wV wV' xV xV' fV gV) :
     IsFlagPair ϖ y B B' (((wU.prod wV).map φ).reindex e) (((wU'.prod wV').map φ).reindex e)
       (fun i => Sum.elim xU xV (e.symm i)) (fun i => Sum.elim xU' xV' (e.symm i))
-      (fun i => Sum.elim fU fV (e.symm i)) (fun i => Sum.elim gU gV (e.symm i)) where
-  flag := isFlagFrame_join y B BU BV φ e he (fun c hc u => (hU c hc u).1)
-    (fun c hc q => (hV c hc q).1) hpU.flag hpV.flag
-  flag' := isFlagFrame_join y B' BU' BV' φ e he (fun c hc u => (hU c hc u).2)
-    (fun c hc q => (hV c hc q).2) hpU.flag' hpV.flag'
-  sameFlag i i' hii' := by
+      (fun i => Sum.elim fU fV (e.symm i)) (fun i => Sum.elim gU gV (e.symm i)) := by
+  refine { flag := ?_, flag' := ?_, sameFlag := ?_, vertical := ?_, generic := ?_ }
+  · exact isFlagFrame_join y B BU BV φ e he (fun c hc u => (hU c hc u).1)
+      (fun c hc q => (hV c hc q).1) hpU.flag hpV.flag
+  · exact isFlagFrame_join y B' BU' BV' φ e he (fun c hc u => (hU c hc u).2)
+      (fun c hc q => (hV c hc q).2) hpU.flag' hpV.flag'
+  · intro i i' hii'
     obtain ⟨t, rfl⟩ := e.surjective i
     obtain ⟨t', rfl⟩ := e.surjective i'
     rw [Fin.lt_def, he, he] at hii'
@@ -169,12 +176,12 @@ theorem isFlagPair_join (ϖ : O) (y : (Σ k, ι k) → Ω) (B B' : ChartBundle O
     · have := a'.isLt
       omega
     · simpa using hpV.sameFlag b b' (Fin.lt_def.2 (by omega))
-  vertical i := by
+  · intro i
     obtain ⟨t, rfl⟩ := e.surjective i
     rcases t with a | b
     · simpa using hpU.vertical a
     · simpa using hpV.vertical b
-  generic i := by
+  · intro i
     obtain ⟨t, rfl⟩ := e.surjective i
     rcases t with a | b
     · simpa using hpU.generic a

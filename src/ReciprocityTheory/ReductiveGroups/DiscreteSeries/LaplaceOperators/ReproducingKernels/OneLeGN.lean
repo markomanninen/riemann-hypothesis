@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.ReproducingKernels.ReproCoreStatement
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.ReproducingKernels.ReproCoreStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,16 +70,6 @@ theorem hpk_mul (k r : ℕ) : Hpk k r * Hpk k r = 1 := by
   · intro b _ hb; rw [hpk_apply k r i b, if_neg (fun h => hb (Fin.ext h)), zero_mul]
   · intro h; exact absurd (Finset.mem_univ _) h
 
-theorem mul_mem {k r : ℕ} {g x : Mat k r} (hg : g ∈ UH (Hpk k r)) (hx : x ∈ UH (Hpk k r)) :
-    g * x ∈ UH (Hpk k r) := by
-  have hg' : gᴴ * Hpk k r * g = Hpk k r := hg
-  have hx' : xᴴ * Hpk k r * x = Hpk k r := hx
-  show (g * x)ᴴ * Hpk k r * (g * x) = Hpk k r
-  rw [Matrix.conjTranspose_mul]
-  calc xᴴ * gᴴ * Hpk k r * (g * x) = xᴴ * (gᴴ * Hpk k r * g) * x := by
-        simp only [Matrix.mul_assoc]
-    _ = _ := by rw [hg', hx']
-
 theorem inv_eq {k r : ℕ} {g : Mat k r} (hg : g ∈ UH (Hpk k r)) : g⁻¹ = Hpk k r * gᴴ * Hpk k r := by
   have hg' : gᴴ * Hpk k r * g = Hpk k r := hg
   refine Matrix.inv_eq_left_inv ?_
@@ -103,7 +97,7 @@ theorem inv_mem {k r : ℕ} {g : Mat k r} (hg : g ∈ UH (Hpk k r)) : g⁻¹ ∈
 theorem gN_nonneg {k r : ℕ} (g : Mat k r) : 0 ≤ Formalism.FourierDecayAlt.B.gN g := Real.sqrt_nonneg _
 
 theorem gN_sq {k r : ℕ} (g : Mat k r) : (∑ i, ∑ j, Complex.normSq (g i j)) = (trace (gᴴ * g)).re := by
-  simp only [trace, diag, mul_apply, conjTranspose_apply, Complex.re_sum]
+  simp only [trace, diag, Matrix.mul_apply, conjTranspose_apply, Complex.re_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_
   rw [Complex.normSq_apply, Complex.star_def, Complex.mul_re, Complex.conj_re, Complex.conj_im]; ring
@@ -167,11 +161,6 @@ theorem one_le_gN' {k r : ℕ} {g : Mat k r} (hg : g ∈ UH (Hpk k r)) : 1 ≤ F
     have := gN_mul_le' g g⁻¹
     rwa [mul_inv hg, gN_inv' hg] at this
   nlinarith [gN_nonneg g]
-
-theorem gN_le_mul {k r : ℕ} {y g : Mat k r} (hg : g ∈ UH (Hpk k r)) :
-    Formalism.FourierDecayAlt.B.gN y ≤ Formalism.FourierDecayAlt.B.gN (y * g) * Formalism.FourierDecayAlt.B.gN g := by
-  have := gN_mul_le' (y * g) g⁻¹
-  rwa [Matrix.mul_assoc, mul_inv hg, Matrix.mul_one, gN_inv' hg] at this
 
 theorem pb_real (a A B Y : ℝ) (ha : 0 ≤ a) (hA : 1 ≤ A) (hB : 1 ≤ B) (hY : 0 < Y) (hYB : Y ≤ B * A)
     (hAB : A ≤ B) : A ^ (-a) * B ^ (-a) ≤ Y ^ (-(a / 4)) * B ^ (-(a / 2)) := by

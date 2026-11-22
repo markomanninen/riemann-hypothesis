@@ -1,10 +1,15 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemExpSolCons
-import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemExpSolCons
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
+
+@[expose] public section
+
 open NumberField MeasureTheory GlobalTheory.CuspRep GlobalTheory.HCF Topology
 
 namespace GlobalTheory.HCF
 
-theorem span_formsGL_killed_scalD : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (L : Subgroup (GL (Fin a) (Af E)))
+theorem span_formsGL_killed_scalD : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (L : Subgroup (GL (Fin a) (Af E)))
     (W : Submodule ℂ (Kinf E a → ℂ)) (X : Set (Module.End ℂ (Sm E a) → ℂ)), X.Finite → ∀ N : ℕ,
     ∃ Λ : List ℂ, ∀ φ ∈ Submodule.span ℂ (formsGL E a L W X N),
       (Λ.map fun c => scalD E a - algebraMap ℂ (Module.End ℂ (Sm E a)) c).prod φ = 0 := by

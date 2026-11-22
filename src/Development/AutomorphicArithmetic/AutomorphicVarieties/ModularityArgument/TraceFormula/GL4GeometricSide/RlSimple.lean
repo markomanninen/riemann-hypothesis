@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4GeometricSide.InnerEq
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.UnitaryCurves.StarMulOfPlaces
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4GeometricSide.InnerEq
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.UnitaryCurves.StarMulOfPlaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,7 @@ private theorem dbl (μ : Measure G) [μ.IsHaarMeasure] (K : Subgroup G) (hKo : 
         rw [(hC x (hA.mem_toFinset.1 hx) y).1 h]
         exact hA.mem_toFinset.1 hx
     simp only [hpt]
-    rw [integral_finset_sum, Finset.mul_sum]
+    rw [integral_finsetSum, Finset.mul_sum]
     · refine Finset.sum_congr rfl fun x _ => ?_
       rw [integral_indicator_const _ (hCm x)]
       simp only [Measure.real, hCμ, Complex.real_smul]
@@ -101,14 +105,15 @@ private theorem lie_mem (N : Submodule ℂ (Sm E n))
       simp [hi]
     · simp
   rw [hX]
-  simp only [map_sum, map_add, map_smul, ← lieS_apply, lieS_atEmb_one, lieS_atEmb_I, LinearMap.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_add (f := _), map_smul, ← lieS_apply, lieS_atEmb_one, lieS_atEmb_I, LinearMap.sum_apply,
     LinearMap.add_apply, LinearMap.smul_apply, LinearMap.sub_apply]
   refine N.sum_mem fun i _ => N.sum_mem fun j _ => N.sum_mem fun w _ => N.add_mem ?_ ?_
   · exact N.smul_of_tower_mem _ (N.add_mem (h1 w i j x hx) (h2 w i j x hx))
   · exact N.smul_of_tower_mem _ (N.smul_mem _ (N.sub_mem (h1 w i j x hx) (h2 w i j x hx)))
 
-variable (E n) in
 
+variable (E n) in
 private def fam : (InfinitePlace E → Un n) →* GL (Fin n) (Cinf E) :=
   MonoidHom.toHomUnits
     (((Matrix.piRingEquiv (n := Fin n) (β := fun _ : InfinitePlace E => ℂ)).symm.toRingHom.toMonoidHom).comp
@@ -156,7 +161,7 @@ private theorem cpt_mem (N : Submodule ℂ (Sm E n))
 
 private theorem span_stable (N : Submodule ℂ (Sm E n)) (h1 : ∀ X, ∀ x ∈ N, lie E n X x ∈ N)
     (h2 : ∀ k : Kinf E n, ∀ x ∈ N, rt E n (infGL E n (Unitary.toUnits k)) x ∈ N) :
-    IsStable (Submodule.span ℂ {φ | ∃ g, ∃ x ∈ N, φ = finRep E n g x}) := by
+    _root_.GlobalTheory.CuspRep.IsStable (Submodule.span ℂ {φ | ∃ g, ∃ x ∈ N, φ = finRep E n g x}) := by
   intro o φ hφ
   refine Submodule.mem_comap.1 (Submodule.span_le.2 ?_ hφ)
   rintro _ ⟨g, x, hx, rfl⟩
@@ -217,7 +222,7 @@ theorem UpperTheory.V.Z.GSp4Splitting.rlSimple :
       obtain ⟨x, hx, e⟩ := iha (hle ha)
       obtain ⟨y, hy, e'⟩ := ihb (hle hb)
       refine ⟨x + y, W.add_mem hx hy, fun u => ?_⟩
-      rw [map_add, map_add, ← e, ← e', ← map_add]
+      rw [map_add (f := _), map_add (f := _), ← e, ← e', ← map_add (f := _)]
       rfl
     | smul c a ha iha =>
       intro _
@@ -245,7 +250,8 @@ theorem UpperTheory.V.Z.GSp4Splitting.rlSimple :
             rw [map_mul, mul_assoc])
       have hN : (T.card : ℂ) ≠ 0 := Nat.cast_ne_zero.2 hT.card_pos.ne'
       refine ⟨(c * T.card)⁻¹ • D.R ⟨h, hs, hbi⟩ x, W.smul_mem _ (hR _ x hx), fun u => ?_⟩
-      rw [map_smul, map_smul, e1, map_smul, map_sum, Finset.sum_congr rfl (e2 u), Finset.sum_const, nsmul_eq_mul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_smul, map_smul, e1, map_smul, map_sum, Finset.sum_congr rfl (e2 u), Finset.sum_const, nsmul_eq_mul,
         smul_eq_mul, smul_eq_mul, ← mul_assoc c, inv_mul_cancel_left₀ (mul_ne_zero hc hN)]
   refine eq_top_iff.2 fun v _ => ?_
   obtain ⟨x, hx, e⟩ := key (D.i v).1 (h1.ge (D.i v).2) (D.i v).2

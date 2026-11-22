@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GalMapMul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAlgClosedFractionRingOfMonicPolynomialsHaveRoo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GalMapMul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAlgClosedFractionRingOfMonicPolynomialsHaveRoo
+
+@[expose] public section
+
 noncomputable section
 
 open TensorProduct Polynomial
@@ -41,11 +46,10 @@ private theorem exists_of_idem (T C : Type) [CommRing T] [IsDomain T] [IsIntegra
   rw [← ht']
   clear ht ht'
   induction t with
-  | zero => exact ⟨0, by simp⟩
   | add x y hx hy =>
     obtain ⟨a, ha⟩ := hx
     obtain ⟨b, hb⟩ := hy
-    exact ⟨a + b, by rw [map_add, map_add, ha, hb]⟩
+    exact ⟨a + b, by rw [map_add (f := _), map_add (f := _), ha, hb]⟩
   | tmul x y =>
     obtain ⟨r, hr⟩ := IsIntegrallyClosed.algebraMap_eq_of_integral (R := T) y.2
     refine ⟨r • x, ?_⟩
@@ -80,9 +84,10 @@ private theorem core (T C : Type) [CommRing T] [IsDomain T] [IsIntegrallyClosed 
       by_cases h : k = i
       · subst h; simp [Pi.single_eq_of_ne hij]
       · simp [Pi.single_eq_of_ne h]
-    · rw [map_sum, map_one]
-      simp only [hc]
-      exact Finset.univ_sum_single 1
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [map_sum, map_one]
+        simp only [hc]
+        exact Finset.univ_sum_single 1
   refine ⟨c, hcoi, fun j => ?_⟩
   have hidem : IsIdempotentElem (c j) := hcoi.idem j
   let φ : C →+* FractionRing T := (Pi.evalRingHom _ j).comp G
@@ -96,7 +101,7 @@ private theorem core (T C : Type) [CommRing T] [IsDomain T] [IsIntegrallyClosed 
     (IsIdempotentElem.iff_eq_one_of_isUnit (IsLocalization.Away.algebraMap_isUnit (c j))).1
       (hidem.map _)
   have hinj : Function.Injective ψ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     obtain ⟨x, rfl⟩ := hsurj a
     rw [hψ] at ha

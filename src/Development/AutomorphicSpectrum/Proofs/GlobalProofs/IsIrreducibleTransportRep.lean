@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.BlockTriangularOfSubOne
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCuspidalWithLabel
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SimpleIffIrreducible
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.ExistsTeichmullerMapAlgebraicClosureFiniteField
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsIrreducibleIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.BlockTriangularOfSubOne
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCuspidalWithLabel
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SimpleIffIrreducible
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.ExistsTeichmullerMapAlgebraicClosureFiniteField
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsIrreducibleIff
+
+@[expose] public section
 
 open Polynomial CategoryTheory
 

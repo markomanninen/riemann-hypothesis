@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LabelSigBijective
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LabelSigBijective
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Filter Topology
 open Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.ChartRestriction.G.AR.Inst Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Rec
@@ -86,11 +91,11 @@ theorem hv_add {s s' : Ω} {w w' : 𝕜} (h : Small.HasVal y (0 : K → ℤ) s z
     isMultiHomog_mul_of_mRing hh hh', fun k => by simp, ?_, ?_, ?_⟩
   · rw [add_comm dg dg']
     exact isMultiHomog_mul_of_mRing hg' hh
-  · simp only [map_add, map_mul, ey, ey']
+  · simp only [map_add (f := _), map_mul, ey, ey']
     ring
   · rw [map_mul]
     exact mul_ne_zero hz hz'
-  · simp only [map_add, map_mul, ez, ez']
+  · simp only [map_add (f := _), map_mul, ez, ez']
     ring
 
 theorem hv_neg {s : Ω} {w : 𝕜} (h : Small.HasVal y (0 : K → ℤ) s z w) :
@@ -155,7 +160,7 @@ theorem exists_subring_val : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k
     induction f using MvPolynomial.induction_on
     · simp [mConeMap]
     · rename_i hp hq
-      simp only [map_add, hp, hq]
+      simp only [map_add (f := _), hp, hq]
     · rename_i hp
       simp only [map_mul, hp]
       simp [mConeMap]

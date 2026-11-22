@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory in
 private theorem UpperTheory.Reformulated.B.Qh1.map_involution_eq {G : Type*} [Group G]

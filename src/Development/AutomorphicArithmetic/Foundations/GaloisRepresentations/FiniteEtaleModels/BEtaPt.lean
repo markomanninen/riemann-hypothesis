@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.SecInjG
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.IdealSplit
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.SecInjG
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.IdealSplit
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen GlobalTheory.UPel.HT.EtLev GlobalTheory.LKTrip GlobalTheory.LKGeo
@@ -35,7 +39,7 @@ theorem UpperTheory.Gal.FiniteEtaleModels.etaPtB_holds :
   have hN : 0 < (N : ℕ) := by
     have := N.2.1
     omega
-  have key := (hiff _ (Nat.mul_pos hN' hN) (Nat.Coprime.mul N'.2.2 N.2.2)
+  have key := (hiff _ (Nat.mul_pos hN' hN) (Nat.Coprime.mul_left N'.2.2 N.2.2)
     ((N : ℕ) • x) ((N' : ℕ) • y)).2 hv
   have ex : I'.ev ((N' : ℕ) * N) ((N : ℕ) • x) = I'.ev N' x := by
     have t1 := I'.tower (N' : ℕ) N hN' hN x

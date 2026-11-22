@@ -1,8 +1,13 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateDivisorSmoothness
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateSubscheme
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateDivisorSmoothness
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateSubscheme
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry
@@ -35,7 +40,7 @@ private theorem mem_of_complOrderEmbPreimage_eq_none (m : ℕ) (S : Finset (Fin 
     (h : complOrderEmbPreimage m S s = none) : s ∈ S := by
   by_contra hs
   unfold complOrderEmbPreimage at h
-  rw [dif_neg hs] at h
+  rw [dite_eq_right hs] at h
   simp at h
 
 private theorem complOrderEmb_of_complOrderEmbPreimage_eq_some (m : ℕ) (S : Finset (Fin m)) (s : Fin m)
@@ -43,10 +48,10 @@ private theorem complOrderEmb_of_complOrderEmbPreimage_eq_some (m : ℕ) (S : Fi
   by_cases hs : s ∈ S
   · exfalso
     unfold complOrderEmbPreimage at h
-    rw [dif_pos hs] at h
+    rw [dite_eq_left hs] at h
     simp at h
   · unfold complOrderEmbPreimage at h
-    rw [dif_neg hs] at h
+    rw [dite_eq_right hs] at h
     have hu : Classical.choose (exists_complOrderEmb_eq m S hs) = u := Option.some.inj h
     rw [← hu]
     exact Classical.choose_spec (exists_complOrderEmb_eq m S hs)

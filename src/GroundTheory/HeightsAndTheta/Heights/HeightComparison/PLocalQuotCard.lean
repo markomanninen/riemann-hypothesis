@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightLocalQuotCard
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.PSubringPrimeMaximal
-import GroundTheory.HeightsAndTheta.Heights.Intersections.CardLength
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KrullDimQuotientEqOneIffEqBot
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightLocalQuotCard
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.PSubringPrimeMaximal
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.CardLength
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KrullDimQuotientEqOneIffEqBot
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

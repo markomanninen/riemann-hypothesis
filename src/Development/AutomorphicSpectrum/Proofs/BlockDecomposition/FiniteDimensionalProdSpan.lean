@@ -1,4 +1,8 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStable
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStable
+
+@[expose] public section
 
 noncomputable section
 

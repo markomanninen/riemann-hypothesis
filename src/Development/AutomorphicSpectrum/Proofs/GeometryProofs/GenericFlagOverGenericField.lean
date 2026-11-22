@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordTieCompEquiv
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordTieCompEquiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem genField_adjoin_eq_top :
       rw [← h1]
       exact IntermediateField.algebraMap_mem K a
     · intro p q hp hq
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem hp hq
     · intro p n hp
       rw [map_mul]

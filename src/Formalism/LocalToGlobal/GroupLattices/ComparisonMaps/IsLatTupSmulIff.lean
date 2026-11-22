@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ValUniqOf
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ValUniqOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,11 +85,11 @@ theorem cmpC_equiv (tE : Tau → E →+* LL) (htE : ∀ τ x, embLL (tE τ x) = 
   · have hL' : G.P.IsLatTup ((G.lev i).smul γ L) := (isLatTup_smul_iff i γ L).2 hL
     obtain ⟨κ, hκ⟩ := haw i γ
     obtain ⟨r, hr, hr1⟩ := hchi i γ κ hκ
-    rw [if_pos hL, if_pos hL', actX_map A tE pos e hA hpos i γ,
+    rw [ite_eq_left hL, ite_eq_left hL', actX_map A tE pos e hA hpos i γ,
       ← valC_equiv tE htE hc hBs hA hex hpos hchi hi hp x i γ (hU i γ) κ hκ r hr L hL, map_smul',
       ← algebraMap_smul G.Kf ((G.lev i).χ γ : G.O), smul_smul, hr1, one_smul]
   · have hL' : ¬ G.P.IsLatTup ((G.lev i).smul γ L) := fun h => hL ((isLatTup_smul_iff i γ L).1 h)
-    rw [if_neg hL, if_neg hL', map_zero, smul_zero]
+    rw [ite_eq_right hL, ite_eq_right hL', map_zero, smul_zero]
 
 end Formalism.L2.G.Cmp
 

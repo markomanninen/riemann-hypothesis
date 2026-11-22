@@ -1,5 +1,9 @@
-import Formalism.GradedWeylDivisibility.StatementE
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwlineLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.StatementE
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwlineLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -133,7 +137,7 @@ theorem qn_off_inj {n : ℕ} (ν : Fin n → ℕ) (m e : Fin n × Fin n →₀ �
 theorem qn_coeff_pt (n : ℕ) (ν : Fin n → ℕ) (F : MvPolynomial (Fin n × Fin n) ℚ)
     (hF : IsWeightedHomogeneous (colW n n) F ν) (e : Fin n × Fin n →₀ ℕ) (he : LowerTri e)
     (hec : ∀ t : Fin n, ∑ a : Fin n, e (a, t) = ν t) :
-    coeff (qn_off e) (aeval (qn_pt n (qn_low n)) F) = coeff e F := by
+    AddMonoidAlgebra.coeff (aeval (qn_pt n (qn_low n)) F) (qn_off e) = AddMonoidAlgebra.coeff F e := by
   classical
   rw [aeval_def, eval₂_eq', coeff_sum]
   simp only [algebraMap_eq, coeff_C_mul, qn_prod_pt]
@@ -155,13 +159,13 @@ theorem qn_tri (n : ℕ) (ν : Fin n → ℕ) (W : Set (MvPolynomial (Fin n × F
     (hW : ∀ F ∈ W, ∀ (a b : Fin n) (k : ℕ), a ≠ b → rowDiv ℚ a b k F ∈ W)
     (hev : ∀ F ∈ W, ∃ z : ℤ, eval (idFrame ℚ n n) F = z)
     (hcol : ∀ F ∈ W, IsWeightedHomogeneous (colW n n) F ν) :
-    ∀ F ∈ W, ∀ e : Fin n × Fin n →₀ ℕ, LowerTri e → ∃ z : ℤ, coeff e F = z := by
+    ∀ F ∈ W, ∀ e : Fin n × Fin n →₀ ℕ, LowerTri e → ∃ z : ℤ, AddMonoidAlgebra.coeff F e = z := by
   classical
   intro F hF e he
   by_cases hec : ∀ t : Fin n, ∑ a : Fin n, e (a, t) = ν t
   · rw [← qn_coeff_pt n ν F (hcol F hF) e he hec]
     obtain ⟨G, hG⟩ := qn_int_pt n W hW hev (qn_low n) (fun x hx => (Finset.mem_filter.mp hx).2) F hF
-    refine ⟨coeff (qn_off e) G, ?_⟩
+    refine ⟨AddMonoidAlgebra.coeff G (qn_off e), ?_⟩
     rw [← hG, coeff_map]
     rfl
   · refine ⟨0, ?_⟩

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.AdmissibleHermitianColumns
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.AdmissibleHermitianColumns
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.TransvectionPeriodicity
 
@@ -147,10 +151,6 @@ lemma sec_periodic_gen (la : Wt X.Ψ r) (P : Frame X.Ψ r → ℂ) (hP : X.IsSec
   rw [← hlact, hP.2.2 _ hγ y hy, hχ, one_mul]
 
 lemma cR_add (p q : X.Ψ → ℝ) : cR X (p + q) = cR X p + cR X q := by
-  funext τ
-  simp [cR]
-
-lemma cR_neg (p : X.Ψ → ℝ) : cR X (-p) = -cR X p := by
   funext τ
   simp [cR]
 

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.TwQSpP
+module
+
+public import Formalism.LocalToGlobal.Columns.TwQSpP
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -37,9 +41,9 @@ theorem qsp_std_mulVec {M : Matrix (Fin n) (Fin n) (𝓞 F)} {x : Sp E n} (hx : 
   refine Submodule.mem_one.2 ⟨algebraMap (𝓞 F) (𝓞 E) (M i j) * a, ?_⟩
   rw [Matrix.map_apply, ← ha, map_mul, ← IsScalarTower.algebraMap_apply]
 
+
 set_option maxHeartbeats 4000000 in
 include hint hPv hF hvP in
-
 theorem qsp_dense (D : 𝓞 F) (hD : D ≠ 0) (hDv : D ∈ v.asIdeal) (k : GL (Fin n) (v.adicCompletion F))
     (hk : qbInt (k : Matrix (Fin n) (Fin n) (v.adicCompletion F)))
     (hk' : qbInt ((k⁻¹ : GL (Fin n) (v.adicCompletion F)) : Matrix (Fin n) (Fin n) (v.adicCompletion F))) :

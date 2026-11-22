@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.WeightWLet
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FtFockZeroLeft
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.IoBlockSupported
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FactorialExponentEqProd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.WeightWLet
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FtFockZeroLeft
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.IoBlockSupported
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FactorialExponentEqProd
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,10 +1,14 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.FibSandwich
-import Development.WeilBound.CoreStatements.VolumeEquality.PrimeIdealOfFromSpec
-import Development.WeilBound.CoreStatements.VolumeEquality.ChartMeetsPoint
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsFormNotInCoordIdeal
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DvrModelOfNumberFieldPlace
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueValuationRingLift
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ValAtCompLocalHom
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.FibSandwich
+public import Development.WeilBound.CoreStatements.VolumeEquality.PrimeIdealOfFromSpec
+public import Development.WeilBound.CoreStatements.VolumeEquality.ChartMeetsPoint
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsFormNotInCoordIdeal
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DvrModelOfNumberFieldPlace
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueValuationRingLift
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ValAtCompLocalHom
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,7 +82,7 @@ def primeOf {F : Type} [Field F] [NumberField F] {p : Nat.Primes} (κ : F →+* 
       have := IsUltrametricDist.norm_add_le_max (κ (a : F)) (κ (b : F))
       show ‖κ ((a + b : 𝓞 F) : F)‖ < 1
       push_cast
-      rw [map_add]
+      rw [map_add (f := _)]
       exact this.trans_lt (max_lt ha hb)
     zero_mem' := by simp
     smul_mem' := fun a b hb => by
@@ -300,7 +304,11 @@ theorem pointEx : PointEx := by
     letI := ψL.toAlgebra
     letI := κ'.toAlgebra
     haveI : Algebra.IsAlgebraic F' L := Algebra.IsAlgebraic.tower_top (K := ℚ) F'
-    let φ : L →ₐ[F'] ℂ_[p] := IsAlgClosed.lift
+    let φ : L →ₐ[F'] ℂ_[p] := (by
+      refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+      solve_by_elim* (maxDepth := 2) only [*,
+        @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+        @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
     exact ⟨φ.toRingHom, RingHom.ext fun a => φ.commutes a⟩
   obtain ⟨V, _, _, _, _, _, hV⟩ := exists_dvr j
   obtain ⟨s₀, hft, hqc, -⟩ := ChartFType.main 𝔐.X Ω 𝔐.ξ _ _ 𝔐.all 𝔐.tie

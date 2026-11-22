@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.IsDiffOf
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DatumExistsPeriod
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.PureTypeVectorSpansQuadraticLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.IsDiffOf
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DatumExistsPeriod
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.PureTypeVectorSpansQuadraticLattice
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
@@ -10,8 +14,8 @@ open GlobalTheory GlobalTheory.CM
 
 namespace GlobalTheory.CM
 
-open PureTypeVector in
 
+open PureTypeVector in
 theorem cmDatum_form_sqrtNegD_pure_period {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} (D : Datum H) {g : ℕ}
     {ty : Fin g → (E →+* ℂ)} {Pe : D.La →+ (Fin g → ℂ)} (hP : IsPeriod D ty Pe) {ρ : ℂ}
     (hty : ∀ i, ty i (H.rt : E) = ρ) {x : D.La} (hx : x ≠ 0) :
@@ -24,7 +28,7 @@ theorem cmDatum_form_sqrtNegD_pure_period {E : Type} [Field E] [NumberField E] [
       have := congrArg (algebraMap (𝓞 E) E) H.two_weight_eq_one_add_root
       simpa [map_ofNat] using this
     have h3 := congrArg (ty i) h2
-    rw [map_mul, map_add, map_one, map_ofNat, hty i] at h3
+    rw [map_mul, map_add (f := _), map_one, map_ofNat, hty i] at h3
     rw [← h3]; ring
   set r : ℝ := (hermForm Hm (Pe x) (Pe x)).re with hr
   have hre : hermForm Hm (Pe x) (Pe x) = (r : ℂ) :=

@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.InertKernelTheory.StatementBe
-import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSv
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.StmtEndIntWHolds
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementBe
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSv
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.StmtEndIntWHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,8 @@ theorem pair_mem_W2pair {α : WW p} (hα : (Formalism.MainNotions.FormalGroupSys
   set S := ∑ i ∈ Finset.Iic n, WittVector.teichmuller p
     (((_root_.frobeniusEquiv (kb p) p).symm ^ i) (α.coeff i)) * (p : WW p) ^ i with hS
   refine ⟨pairHom p S, ?_, ?_⟩
-  · rw [hS, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+    rw [hS, map_sum]
     refine Subring.sum_mem _ fun i _ => ?_
     rw [map_mul, map_pow, map_natCast]
     refine Subring.mul_mem _ (teich_mem ?_) (Subring.pow_mem _ (natCast_mem _ p) i)
@@ -201,10 +206,5 @@ theorem admissible_second_at_place : Adm2cAt := by
   show Formalism.MainNotions.FormalGroupSystem.BeProp p Y.be
   rw [hY]
   exact beta_property_of_weight D cc δ p g hLT hAt h5 hin hM hB
-
-theorem beProp_of_beW {D : Formalism.BasicNotions.D7} (hW : beW D) {cc : Ideal (NumberField.RingOfIntegers D.host.K)} {δ : ℂ} {p : ℕ}
-    [Fact p.Prime] {g : G1 p} (hLT : LTIso g) (hAt : At D cc δ g) (h5 : 5 ≤ p) (hin : InertK D p)
-    (hM : ModelOverW g.lam g.abelian₂ g.C) : Formalism.MainNotions.FormalGroupSystem.BeProp p (beLT hLT) :=
-  beta_property_of_weight D cc δ p g hLT hAt h5 hin hM (hW p cc δ g hAt h5 hin hM)
 
 end Formalism.L2.KerInert

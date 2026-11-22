@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.CutIdentityRightSideCongrOfSubMem
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.CutIdentityRightSideCongrOfSubMem
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -85,7 +90,7 @@ theorem HorizontalAvoidingForm.proof : HorizontalAvoidingForm.Statement.{u} := b
     by_contra hmin
     apply hW
     unfold divCycle
-    rw [dif_neg]
+    rw [dite_eq_right]
     exact fun h => hmin h.1
 
   have hT : ∀ Q ∈ insert P (hfin.toFinset.filter fun H => (C ϖ : MRing ι O) ∉ H),

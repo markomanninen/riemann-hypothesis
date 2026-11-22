@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceUnitaryLocalPointsEquivGL
-import GroundTheory.AutomorphicForms.AdelicGLn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceUnitaryLocalPointsEquivGL
+public import GroundTheory.AutomorphicForms.AdelicGLn
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,11 +19,11 @@ open GlobalTheory.SplitPts GroundTheory.Automorphic
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem mem_KGL_iff_val (w : Pl E) (g : GLw n w) :
-    g ∈ GlobalTheory.LFun.KGL w n ↔ (∀ i j, Valued.v (g.val i j) ≤ 1) ∧ ∀ i j, Valued.v ((g⁻¹).val i j) ≤ 1 := by
-  have hO : GLnLocal.integralGL (w.adicCompletion E) n = GlobalTheory.LFun.KGL w n := by
+    g ∈ GlobalTheory.LFun.KGL w (n := n) ↔ (∀ i j, Valued.v (g.val i j) ≤ 1) ∧ ∀ i j, Valued.v ((g⁻¹).val i j) ≤ 1 := by
+  have hO : GLnLocal.integralGL (w.adicCompletion E) n = GlobalTheory.LFun.KGL w (n := n) := by
     have h : (ValuativeRel.valuation (w.adicCompletion E)).integer = Formalism.UG.Ov E w :=
       Subring.ext fun x => GroundTheory.Global.mem_valuationInteger_iff w x
     rw [GlobalTheory.LFun.KGL, ← h]; rfl
@@ -47,7 +51,7 @@ theorem conjLoc_eq_cj {w : Pl E} (hw : ¬ IsSplitAt w) (a : Af E) :
     rintro v rfl f hf h
     have hex : ∃ s : v.adicCompletion E →+* v.adicCompletion E, Continuous s ∧
       ∀ x : E, s (algebraMap E _ x) = algebraMap E _ (IsCMField.complexConj E x) := ⟨f, hf, h⟩
-    rw [cj, dif_pos hex]
+    rw [cj, dite_eq_left hex]
     exact congrFun ((HeightOneSpectrum.denseRange_algebraMap (K := E) v).equalizer hf hex.choose_spec.1
       (funext fun k => (h k).trans (hex.choose_spec.2 k).symm)) _
   exact key _ (conjSrc_eq_of_not_split hw) _ (conjLoc_spec (conjE E) _).1 (conjLoc_spec (conjE E) _).2.1
@@ -72,15 +76,15 @@ theorem val_inv_entry (x : UA E n) (u : Pl E) (i j : Fin n) :
   rw [e]
   exact (conjLoc_spec (conjE E) u).2.2 _
 
-theorem integral_conjSrc (x : UA E n) (u : Pl E) (h : cLoc u x ∈ GlobalTheory.LFun.KGL u n) :
-    cLoc (conjSrc (conjE E) u) x ∈ GlobalTheory.LFun.KGL (conjSrc (conjE E) u) n := by
+theorem integral_conjSrc (x : UA E n) (u : Pl E) (h : cLoc u x ∈ GlobalTheory.LFun.KGL u (n := n)) :
+    cLoc (conjSrc (conjE E) u) x ∈ GlobalTheory.LFun.KGL (conjSrc (conjE E) u) (n := n) := by
   rw [mem_KGL_iff_val] at h ⊢
   refine ⟨fun i j => (val_inv_entry x u j i) ▸ h.2 j i, fun i j => ?_⟩
   have h2 := val_inv_entry x⁻¹ u j i
   rw [map_inv, map_inv, inv_inv] at h2
   exact h2 ▸ h.1 j i
 
-theorem mem_globLev (S : Set (Pl E)) (K' : ∀ w : Pl E, Subgroup (UL n w)) (k : finU E n) :
+theorem mem_globLev (S : Set (Pl E)) (K' : ∀ w : Pl E, Subgroup (UL n w)) (k : finU (E := E) (n := n)) :
     k ∈ globLev S K' ↔ ∀ w ∈ S, (⟨cLoc w k.1, cLoc_mem_UL w k.1⟩ : UL n w) ∈ K' w := by
   simp only [globLev, Subgroup.mem_iInf, Subgroup.mem_comap]
   refine forall₂_congr fun w _ => ⟨?_, fun h => ⟨_, h, rfl⟩⟩
@@ -88,10 +92,10 @@ theorem mem_globLev (S : Set (Pl E)) (K' : ∀ w : Pl E, Subgroup (UL n w)) (k :
   have : a = ⟨cLoc w k.1, cLoc_mem_UL w k.1⟩ := Subtype.ext e
   exact this ▸ ha
 
-variable (E n) in
 
-def finPart : finU E n →* GL (Fin n) (Af E) :=
-  (GeneralLinearGroup.map (pFin E)).comp ((UA E n).subtype.comp (finU E n).subtype)
+variable (E n) in
+def finPart : finU (E := E) (n := n) →* GL (Fin n) (Af E) :=
+  (GeneralLinearGroup.map (pFin E)).comp ((UA E n).subtype.comp (finU (E := E) (n := n)).subtype)
 
 theorem continuous_finPart : Continuous (finPart E n) :=
   (Continuous.units_map _ (continuous_id.matrix_map (continuous_snd : Continuous (pFin E)))).comp
@@ -100,7 +104,7 @@ theorem continuous_finPart : Continuous (finPart E n) :=
 theorem globLev_KL_eq {S : Set (Pl E)} (hS : IsSection S) :
     globLev S (KL n) = (AdelicGLn.integralFiniteGL E n).comap (finPart E n) := by
   ext k
-  have e : k ∈ (AdelicGLn.integralFiniteGL E n).comap (finPart E n) ↔ ∀ u, cLoc u k.1 ∈ GlobalTheory.LFun.KGL u n := by
+  have e : k ∈ (AdelicGLn.integralFiniteGL E n).comap (finPart E n) ↔ ∀ u, cLoc u k.1 ∈ GlobalTheory.LFun.KGL u (n := n) := by
     rw [Subgroup.mem_comap, AdelicGLn.mem_integralFiniteGL_iff, ← map_inv]
     simp only [mem_KGL_iff_val, ← map_inv, GroundTheory.Global.mem_integralFiniteAdeles]
     exact ⟨fun h u => ⟨fun i j => h.1 i j u, fun i j => h.2 i j u⟩,
@@ -121,7 +125,7 @@ theorem continuous_conj_ad : Continuous (conjAd E) :=
   ((continuous_infEq E).comp (continuous_star.comp continuous_pInf_ad)).prodMk
     ((continuous_conjFin _).comp continuous_snd)
 
-theorem isClosedEmbedding_finU : Topology.IsClosedEmbedding (fun x : finU E n => ((x : UA E n) : GA E n)) := by
+theorem isClosedEmbedding_finU : Topology.IsClosedEmbedding (fun x : finU (E := E) (n := n) => ((x : UA E n) : GA E n)) := by
   haveI : T2Space (FiniteAdeleRing (𝓞 E) E) :=
     inferInstanceAs (T2Space (RestrictedProduct (fun v : HeightOneSpectrum (𝓞 E) => v.adicCompletion E)
       (fun v => (v.adicCompletionIntegers E : Set (v.adicCompletion E))) Filter.cofinite))
@@ -132,7 +136,7 @@ theorem isClosedEmbedding_finU : Topology.IsClosedEmbedding (fun x : finU E n =>
       (g : Matrix (Fin n) (Fin n) (Ad E)) = 1}
     exact isClosed_eq (((Units.continuous_val.matrix_map continuous_conj_ad).matrix_transpose.matrix_mul
       continuous_const).matrix_mul Units.continuous_val) continuous_const
-  have h2 : IsClosed ((finU E n : Subgroup (UA E n)) : Set (UA E n)) := by
+  have h2 : IsClosed ((finU (E := E) (n := n) : Subgroup (UA E n)) : Set (UA E n)) := by
     haveI : T2Space (GL (Fin n) (Cinf E)) := Units.isEmbedding_embedProduct.t2Space
     have hc : Continuous (cInf (E := E) (n := n)) :=
       (Continuous.units_map _ (continuous_id.matrix_map continuous_pInf_ad)).comp continuous_subtype_val
@@ -150,10 +154,10 @@ theorem continuous_cLoc (w : Pl E) : Continuous (cLoc (n := n) w) :=
 theorem globLev_isOpen_isCompact_isLevel : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E → ∀ n : ℕ, 1 ≤ n →
     ∀ (S : Set (Pl E)), IsSection S → ∀ (K' : ∀ w : Pl E, Subgroup (UL n w)),
     IsLevelFam (fun w : Pl E => MonoidHom.id (UL n w)) (KL n) K' →
-    IsOpen (globLev S (KL n) : Set (finU E n)) ∧ IsCompact (globLev S (KL n) : Set (finU E n)) ∧
+    IsOpen (globLev S (KL n) : Set (finU (E := E) (n := n))) ∧ IsCompact (globLev S (KL n) : Set (finU (E := E) (n := n))) ∧
       IsLevel (MonoidHom.id _) (globLev S (KL n)) (globLev S K') := by
   intro E _ _ _ _ n _ S hS K' hK
-  have hO : IsOpen (globLev S (KL n) : Set (finU E n)) := by
+  have hO : IsOpen (globLev S (KL n) : Set (finU (E := E) (n := n))) := by
     rw [globLev_KL_eq hS]
     exact (AdelicGLn.isOpen_integralFiniteGL E n).preimage continuous_finPart
   have hle : globLev S K' ≤ globLev S (KL n) := fun k hk =>
@@ -167,9 +171,9 @@ theorem globLev_isOpen_isCompact_isLevel : ∀ (E : Type) [Field E] [NumberField
     · have h1 : GeneralLinearGroup.map (pInf E) ((x : UA E n) : GA E n) = 1 := x.2
       exact ga_ext (by rw [pInf_finGL, h1]) (by rw [pFin_finGL]; rfl)
   · have hfin : {w | w ∈ S ∧ K' w ≠ KL n w}.Finite := (Filter.eventually_cofinite.1 hK.2).subset fun w hw => hw.2
-    have e : (globLev S K' : Set (finU E n)) = (globLev S (KL n) : Set (finU E n)) ∩
+    have e : (globLev S K' : Set (finU (E := E) (n := n))) = (globLev S (KL n) : Set (finU (E := E) (n := n))) ∩
         ⋂ w ∈ {w | w ∈ S ∧ K' w ≠ KL n w},
-          (fun k : finU E n => (⟨cLoc w k.1, cLoc_mem_UL w k.1⟩ : UL n w)) ⁻¹' (K' w : Set (UL n w)) := by
+          (fun k : finU (E := E) (n := n) => (⟨cLoc w k.1, cLoc_mem_UL w k.1⟩ : UL n w)) ⁻¹' (K' w : Set (UL n w)) := by
       ext k
       simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_preimage, SetLike.mem_coe]
       refine ⟨fun hk => ⟨hle hk, fun w hw => (mem_globLev S _ k).1 hk w hw.1⟩, fun hk => ?_⟩

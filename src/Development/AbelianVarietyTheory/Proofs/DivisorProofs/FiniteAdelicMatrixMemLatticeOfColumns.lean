@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GenReads
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSelfDualCHLat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GenReads
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSelfDualCHLat
+
+@[expose] public section
+
 open NumberField Matrix Complex MeasureTheory IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Dict GlobalTheory.AdTh GlobalTheory.ClsVal
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level Host
@@ -26,10 +31,9 @@ def lift (D : D7) : Af D.host.F ⊗[D.host.F] D.host.E →ₗ[D.host.F] AE D :=
 
 theorem lift_eq (z : Af D.host.F ⊗[D.host.F] D.host.E) :
     lift D z = finEmb D (Algebra.TensorProduct.comm D.host.F (Af D.host.F) D.host.E z) := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
+  induction z using TensorProduct.inductionOn with
   | tmul a e => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem lift_finPart (z : AE D) (h : infPart D z = 0) : lift D (finPart D z) = z := by
   have key : ∀ z : AE D, z =
@@ -37,15 +41,14 @@ theorem lift_finPart (z : AE D) (h : infPart D z = 0) : lift D (finPart D z) = z
         LinearMap.inl D.host.F (Ainf D.host.F) (Af D.host.F)).rTensor D.host.E (infPart D z) +
       lift D (finPart D z) := by
     intro z
-    induction z using TensorProduct.induction_on with
-    | zero => simp
+    induction z using TensorProduct.inductionOn with
     | tmul a e =>
       change _ = (pairA D.host.F a.1 0) ⊗ₜ[D.host.F] e + (pairA D.host.F 0 a.2) ⊗ₜ[D.host.F] e
       rw [← TensorProduct.add_tmul]
       congr 1
       exact Prod.ext (add_zero a.1).symm (zero_add a.2).symm
     | add x y hx hy =>
-      simp only [map_add]
+      simp only [map_add (f := _)]
       rw [add_add_add_comm, ← hx, ← hy]
   have := key z
   rw [h, map_zero, zero_add] at this
@@ -56,7 +59,7 @@ def col (V W : HSp D) (b : Fin V.rank) : (Fin W.rank → Af D.host.F ⊗[D.host.
   map_zero' := by ext i j; simp
   map_add' y z := by
     ext i j
-    simp only [Matrix.of_apply, Matrix.add_apply, Pi.add_apply, map_add]
+    simp only [Matrix.of_apply, Matrix.add_apply, Pi.add_apply, map_add (f := _)]
     split_ifs <;> simp
 
 theorem col_mem (V W : HSp D) (hV : V.gram = 1) (k : GA D W) (b : Fin V.rank)

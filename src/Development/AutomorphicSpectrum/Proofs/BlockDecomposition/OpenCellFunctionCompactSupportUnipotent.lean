@@ -1,15 +1,20 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.GenericProdIff
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OpenFns
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactOpenExhaustionStabilizes
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ClosedUnipotentCompactExhaustion
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnipotentRadicalDecompositionNormal
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OpenCellUnipotentUniquenessClosed
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothVectorCompactUnipotentFixerStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CellHeightLocalReduction
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompactUnipotentInCompactSubgroup
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.GenericProdIff
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OpenFns
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactOpenExhaustionStabilizes
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ClosedUnipotentCompactExhaustion
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnipotentRadicalDecompositionNormal
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OpenCellUnipotentUniquenessClosed
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothVectorCompactUnipotentFixerStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CellHeightLocalReduction
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompactUnipotentInCompactSubgroup
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+
+@[expose] public section
+
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.BZMir.Leib GlobalTheory.CompanionTheory.Rodier
 open scoped TensorProduct
 
@@ -47,12 +52,19 @@ theorem cell_eq {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
     (hg : g ∈ cell k d hd (wOpen d hd)) :
     ∃ p ∈ parab k (stdBlocks d hd), ∃ u ∈ unipU k d hd, g = p * pm k (wOpen d hd) * u := by
   obtain ⟨p, hp, n, hn, rfl⟩ := hg
-  obtain ⟨a, ha, u, hu, rfl⟩ := (GlobalTheory.CompanionTheory.Rodier.unipB_eq_levi_mul_rad k h N d hd).1 n hn
-  obtain ⟨m, hm⟩ : (MulAut.conj (pm k (wOpen d hd))).toMonoidHom a ∈ (leviEmb k (stdBlocks d hd)).range := ha.2
-  have hc : pm k (wOpen d hd) * a * (pm k (wOpen d hd))⁻¹ = leviEmb k (stdBlocks d hd) m := by
-    rw [hm]; rfl
-  refine ⟨p * leviEmb k (stdBlocks d hd) m, mul_mem hp (leviEmb_mem_parab k _ m), u, hu, ?_⟩
-  rw [← hc]; group
+  let w := pm k (wOpen d hd)
+  let e := stdBlocks d hd
+  have hnLower : w * n * w⁻¹ ∈ parab k (opp e) := OpenFactor.conj_mem_parabLower k d hd hn
+  let nLower : parab k (opp e) := ⟨w * n * w⁻¹, hnLower⟩
+  obtain ⟨v, hv, hnv⟩ := GlobalTheory.SmGL.exists_levi_mul_unip k (opp e) nLower
+  let m := leviProj k (opp e) nLower
+  have hfactor : w * n * w⁻¹ = leviEmb k e m * v := hnv
+  refine ⟨p * leviEmb k e m, mul_mem hp (leviEmb_mem_parab k e m), w⁻¹ * v * w,
+    LowerOpen.inv_conj_mem_unipU k d hd hv, ?_⟩
+  change p * w * n = p * leviEmb k e m * w * (w⁻¹ * v * w)
+  calc
+    p * w * n = p * (w * n * w⁻¹) * w := by group
+    _ = p * leviEmb k e m * w * (w⁻¹ * v * w) := by rw [hfactor]; group
 
 theorem exists_open_of_le {G : Type} [Group G] [TopologicalSpace G] [ContinuousMul G] (U L L₀ : Subgroup G)
     (hL : L ≤ U) (h0 : L₀ ≤ L) (O₀ : Set G) (hO : IsOpen O₀) (hOU : O₀ ∩ (U : Set G) = L₀) :
@@ -75,8 +87,8 @@ theorem exists_open_of_le {G : Type} [Group G] [TopologicalSpace G] [ContinuousM
 
 end GlobalTheory.CompanionTheory.Rodier.OpenSupp
 
-open GlobalTheory.CompanionTheory.Rodier.OpenSupp in
 
+open GlobalTheory.CompanionTheory.Rodier.OpenSupp in
 theorem GlobalTheory.CompanionTheory.Rodier.exists_compact_open_support :
     ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (h N : ℕ) (d : Fin h → ℕ) (hd : ∑ a, d a = N) {W : Type} [AddCommGroup W] [Module ℂ W] (ρ : Representation ℂ (Levi k fun a => Fin (d a)) W), IsSmooth ρ → ∀ f ∈ openFns d hd ρ, ∃ L : Subgroup (GL (Fin N) k), L ≤ unipU k d hd ∧ IsCompact (L : Set (GL (Fin N) k)) ∧ (∃ O : Set (GL (Fin N) k), IsOpen O ∧ O ∩ (unipU k d hd : Set (GL (Fin N) k)) = L) ∧ ∀ g, f.1.1 g ≠ 0 → ∃ p ∈ parab k (stdBlocks d hd), ∃ u ∈ L, g = p * pm k (wOpen d hd) * u := by
   intro k _ _ _ _ h N d hd W _ _ ρ hρ f hf

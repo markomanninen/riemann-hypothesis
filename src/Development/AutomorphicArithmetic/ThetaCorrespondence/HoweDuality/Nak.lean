@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.FactorApply
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.FactorApply
+
+@[expose] public section
+
 open scoped TensorProduct
 open UpperTheory.Lit.HoweDuality
 
@@ -46,7 +51,7 @@ theorem UpperTheory.Lit.HoweDuality.nak :
       · rcases Finset.mem_union.1 hk with h | h
         · exact hS k h
         · exact hS2 k h
-      · rw [map_add]
+      · rw [map_add (f := _)]
         exact N.add_mem (hS' e Φ hΦ fun k hk => h k (Finset.mem_union_left _ hk))
           (hS2' e Φ hΦ fun k hk => h k (Finset.mem_union_right _ hk))
   obtain ⟨s, hGen, hs⟩ := hRad
@@ -57,7 +62,7 @@ theorem UpperTheory.Lit.HoweDuality.nak :
     obtain ⟨S, hSK, hS⟩ := h2 u hu
     obtain ⟨e, he, hes, heS⟩ := hs S hSK
     obtain ⟨Φ, hΦ, hΦN⟩ := h1 e he
-    have : j r s = Φ n + Φ u := by rw [← map_add, hnu, hΦ, hes]
+    have : j r s = Φ n + Φ u := by rw [← map_add (f := _), hnu, hΦ, hes]
     rw [this]
     exact N.add_mem (hΦN n hn) (hS e Φ hΦ heS)
   have h4 : ∀ r, N.comap (j r) = ⊤ := by

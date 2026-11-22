@@ -1,17 +1,21 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCompatibleRootsOfUnityAndTiltPadic
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPrimitiveTiltedRootOfUnityLocalPeriodRingsData
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FontaineThetaEqZeroIffFontaineXiElementDvd
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaBdRPlusSurjectiveKerUnitsEquivariant
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PeriodRingsGaloisActionLawsFrobeniusComm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Acris0TorsionFree
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTeichmullerTiltMinusOnePowDivEnvelope
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CoeffGaloisTilt
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisLoc
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCompatibleRootsOfUnityAndTiltPadic
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPrimitiveTiltedRootOfUnityLocalPeriodRingsData
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FontaineThetaEqZeroIffFontaineXiElementDvd
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaBdRPlusSurjectiveKerUnitsEquivariant
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PeriodRingsGaloisActionLawsFrobeniusComm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Acris0TorsionFree
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTeichmullerTiltMinusOnePowDivEnvelope
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CoeffGaloisTilt
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisLoc
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,10 +59,6 @@ theorem locAinf_actW {P : LocPrime l} (AI : LocAinf l P) (g : GQ l) (a : Ainf l)
     AI.actW g a = Per.σA g a :=
   WittVector.ext fun n => (locAinf_actT AI g (a.coeff n)).trans (GlobalTheory.RingIface.sigA_coeff l g a n).symm
 
-theorem locAinf_xi {P : LocPrime l} (AI : LocAinf l P) : AI.ξ = xi AI.ε := rfl
-
-theorem locAinf_mu {P : LocPrime l} (AI : LocAinf l P) : AI.μ = mu AI.ε := rfl
-
 variable (l)
 
 theorem isUnit_l_BdRp : IsUnit ((l : ℕ) : Per.BdRp l) := by
@@ -99,54 +99,28 @@ instance : Algebra (Per.Acris l) (BcrisP l) :=
 instance : IsLocalization.Away ((l : ℕ) : Per.Acris l) (BcrisP l) :=
   inferInstanceAs (IsLocalization.Away _ (Localization.Away ((l : ℕ) : Per.Acris l)))
 
-variable {l} in
 
+variable {l} in
 def plusLift {S : Type} [CommRing S] (f : Per.Acris l →+* S) (h : IsUnit ((l : ℕ) : S)) : BcrisP l →+* S :=
   IsLocalization.Away.lift ((l : ℕ) : Per.Acris l) (g := f) (by rwa [map_natCast])
 
-variable {l} in
 
+variable {l} in
 theorem plusLift_alg {S : Type} [CommRing S] (f : Per.Acris l →+* S) (h : IsUnit ((l : ℕ) : S))
     (x : Per.Acris l) : plusLift f h (algebraMap _ _ x) = f x :=
   IsLocalization.Away.lift_eq _ _ x
 
-theorem isUnit_l_BcrisP : IsUnit ((l : ℕ) : BcrisP l) := by
-  have h := IsLocalization.Away.algebraMap_isUnit (S := BcrisP l) ((l : ℕ) : Per.Acris l)
-  rwa [map_natCast] at h
-
 def plusToB : BcrisP l →+* Per.Bcris l :=
   plusLift (algebraMap (Per.Acris l) (Per.Bcris l)) (isUnit_l_Bcris l)
 
-def phiP : BcrisP l →+* BcrisP l :=
-  plusLift ((algebraMap (Per.Acris l) (BcrisP l)).comp (phiA l)) (isUnit_l_BcrisP l)
-
 variable {l}
-
-def sigP (g : Per.Gq l) : BcrisP l →+* BcrisP l :=
-  plusLift ((algebraMap (Per.Acris l) (BcrisP l)).comp (sigA g)) (isUnit_l_BcrisP l)
 
 theorem plusToB_alg (x : Per.Acris l) :
     plusToB l (algebraMap _ _ x) = algebraMap (Per.Acris l) (Per.Bcris l) x := plusLift_alg _ _ x
 
-theorem phiP_alg (x : Per.Acris l) : phiP l (algebraMap _ _ x) = algebraMap _ _ (phiA l x) :=
-  plusLift_alg _ _ x
-
-theorem sigP_alg (g : Per.Gq l) (x : Per.Acris l) : sigP g (algebraMap _ _ x) = algebraMap _ _ (sigA g x) :=
-  plusLift_alg _ _ x
-
 theorem plus_ext {S : Type} [CommRing S] {f f' : BcrisP l →+* S}
     (h : ∀ x : Per.Acris l, f (algebraMap _ _ x) = f' (algebraMap _ _ x)) : f = f' :=
   IsLocalization.ringHom_ext (Submonoid.powers ((l : ℕ) : Per.Acris l)) (RingHom.ext h)
-
-theorem plusToB_phi (x : BcrisP l) : plusToB l (phiP l x) = Per.φB l (plusToB l x) :=
-  RingHom.congr_fun (plus_ext (f := (plusToB l).comp (phiP l)) (f' := (Per.φB l).comp (plusToB l)) fun y => by
-    rw [RingHom.comp_apply, RingHom.comp_apply, phiP_alg, plusToB_alg, plusToB_alg]
-    exact ((ActLaws.act_laws l).2.2.2.2.2.2.2.2.2.2.2.2 y).symm) x
-
-theorem plusToB_sig (g : Per.Gq l) (x : BcrisP l) : plusToB l (sigP g x) = Per.σB g (plusToB l x) :=
-  RingHom.congr_fun (plus_ext (f := (plusToB l).comp (sigP g)) (f' := (Per.σB g).comp (plusToB l)) fun y => by
-    rw [RingHom.comp_apply, RingHom.comp_apply, sigP_alg, plusToB_alg, plusToB_alg]
-    exact ((ActLaws.act_laws l).2.2.2.2.2.2.2.2.2.2.2.1 g y).symm) x
 
 namespace Core
 
@@ -175,14 +149,14 @@ theorem ker_theta : RingHom.ker (Per.θ l) = Ideal.span {xi C.ε} := by
 
 end Core
 
-variable (l) in
 
+variable (l) in
 theorem acris_torsionFree_complete : (∀ x : Per.Acris l, ((l : ℕ) : Per.Acris l) * x = 0 → x = 0) ∧
     IsAdicComplete (Ideal.span {((l : ℕ) : Per.Acris l)}) (Per.Acris l) :=
   ⟨(acris_basic l).2.1, (acris_basic l).1⟩
 
-variable (l) in
 
+variable (l) in
 theorem thetaD_onto_ker : Function.Surjective (Per.θD l) ∧ RingHom.ker (Per.θD l) = Per.FilP l 1 :=
   ⟨(thetaD_props l).1, Ideal.ext fun y => (thetaD_props l).2.1 y⟩
 
@@ -247,16 +221,5 @@ structure Fits {P : LocPrime l} {AI : LocAinf l P} (T : LocTied l P AI) (C : Cor
 
   σ : ∀ (K : FinExt l) (x : ↥(K0 K)) (c : ↥(MaximalUnramifiedExtension l)), (c : Om l) = (x : Om l) →
     (((P.PD K).σ x : ↥(K0 K)) : Om l) = ((C.σ c : ↥(MaximalUnramifiedExtension l)) : Om l)
-
-example (C : Core l) : Per.θ l (xi C.ε) = 0 :=
-  (theta_eq_zero_iff_xi_dvd l C.ε (core_isEps l C) _).2 dvd_rfl
-
-example (C : Core l) : Nontrivial (BcrisP l) := ((Per.θD l).comp C.jP).domain_nontrivial
-
-example (C : Core l) (x : ℚ_[l]) : C.ι (C.qB x) = C.oD (algebraMap ℚ_[l] (Om l) x) := C.ι_u _
-
-example (C : Core l) (x : ℚ_[l]) : C.ι (C.qB x) ∈ Per.FilD l 0 := by
-  rw [show C.ι (C.qB x) = _ from C.ι_u _]
-  exact GlobalTheory.RingIface.alg_mem_FilD_zero l _
 
 end GlobalTheory.MemLoc

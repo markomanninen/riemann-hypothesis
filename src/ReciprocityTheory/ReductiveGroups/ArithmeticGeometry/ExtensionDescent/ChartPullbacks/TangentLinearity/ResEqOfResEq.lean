@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.TangentLinearity.PairProp
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.TangentLinearity.PairProp
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -101,14 +105,6 @@ lemma corr_pull_comp {φ : K → (Y ⟶ X)} {ε : K → ℤ} (c : LB.Gen (LB.Lin
     (W.presheaf.map (homOfLE _).op).hom ((LB.pullGen L φ ε c (g2 ≫ g1)).s j).val
   rw [pullGen_s_val, pullGen_s_val, pullGen_s_val]
   exact (appLE_appLE_lemma_2 g1 g2 _ _ _ _).trans (appLE_res_lemma_3 (g2 ≫ g1) _ _ _).symm
-
-lemma corr_pull_one (h : Z ⟶ Y) :
-    LB.Gen.Corr L _ _ PEmpty.elim PEmpty.elim (LB.pullGen L (Y := Y) (K := PEmpty) PEmpty.elim
-      PEmpty.elim (LB.oneGen L) h) (LB.oneGen L) := by
-  intro j j' _ _ _
-  delta LB.pullGen LB.oneGen
-  simp only [map_one]
-  exact (res_one_lemma _).trans (res_one_lemma _).symm
 
 lemma appLE_one {φ : K → (Y ⟶ X)} {ε : K → ℤ} (t : LB.Gen (LB.LinComb L φ ε)) (h : Z ⟶ Y)
     (hC : LB.Gen.Corr L _ ε PEmpty.elim PEmpty.elim (LB.pullGen L φ ε t h) (LB.oneGen L))
@@ -351,8 +347,8 @@ theorem u_zero (hGF : GlobalFnsSt) (hu : u.IsGen)
   have h1 : v.s j = canon.s j := (hκ j).trans (by rw [hκ1, map_one, _root_.one_mul])
   exact (congrArg (res _) h1).trans ((corr_symm' D.toPre.P.L hcc) j j' hj hj' hm)
 
-include hO in
 
+include hO in
 theorem rho_e (hGF : GlobalFnsSt) (hu : u.IsGen)
     (hu0 : LB.Gen.Corr D.toPre.P.L _ _ _ _ (LB.pullGen D.toPre.P.L _ _ u (zero2 D.toPre.P.A))
       (LB.oneGen D.toPre.P.L))

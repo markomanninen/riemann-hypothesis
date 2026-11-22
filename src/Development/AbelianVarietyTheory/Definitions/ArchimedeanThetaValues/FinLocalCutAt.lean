@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFramedPointChangedByLetters
-import Formalism.LocalToGlobal.ProjectiveLattices.PtFree
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.FinCoreSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.QuotSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFramedPointChangedByLetters
+public import Formalism.LocalToGlobal.ProjectiveLattices.PtFree
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.FinCoreSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.QuotSt
+
+@[expose] public section
 
 noncomputable section
 

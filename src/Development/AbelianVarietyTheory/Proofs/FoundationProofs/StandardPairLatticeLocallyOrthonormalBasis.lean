@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.LocalRingCardinality.ConjSqrtMinusD
-import Formalism.LocalToGlobal.ProjectiveLattices.HostRank
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitNormOfSelfDualHermitianLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SelfDualHermitianLatticeExistsNormOneModStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HermitianLatticeNormOneOfNormOneModPrimeStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsOrthonormalHermitianOfDiagPosIsSquareStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeCharacterTrivialNearOneStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalRingCardinality.ConjSqrtMinusD
+public import Formalism.LocalToGlobal.ProjectiveLattices.HostRank
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitNormOfSelfDualHermitianLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SelfDualHermitianLatticeExistsNormOneModStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HermitianLatticeNormOneOfNormOneModPrimeStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsOrthonormalHermitianOfDiagPosIsSquareStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeCharacterTrivialNearOneStatement
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
 
@@ -37,12 +42,12 @@ theorem exists_orthonormal_perp : ∀ (K V : Type) [Field K] [CharZero K] [AddCo
     have hzs : ∀ i : Fin n, h z (e i.succ) = σ (h (e i.succ) z) := fun i => hh _ _
     refine ⟨fun i => e i.succ + (h (e i.succ) z / (h (e 0) z - 1)) • (z - e 0),
       fun i => W.add_mem (he _) (W.smul_mem _ (W.sub_mem hz (he 0))), fun i j => ?_, fun i => ?_⟩
-    · simp only [map_add, map_smul, map_sub, LinearMap.add_apply, LinearMap.smul_apply,
+    · simp only [map_add (f := _), map_smul, map_sub, LinearMap.add_apply, LinearMap.smul_apply,
         LinearMap.sub_apply, LinearMap.map_smulₛₗ, smul_eq_mul, hss, hs0, h0s, hzs, hzz, h00, hz0,
         map_div₀, map_one]
       field_simp
       ring
-    · simp only [map_add, map_smul, map_sub, LinearMap.add_apply, LinearMap.smul_apply,
+    · simp only [map_add (f := _), map_smul, map_sub, LinearMap.add_apply, LinearMap.smul_apply,
         LinearMap.sub_apply, smul_eq_mul, hzz]
       field_simp
       ring
@@ -158,7 +163,7 @@ theorem exists_local_ring : ∀ (K : Type) [Field K] [CharZero K] (p : ℕ), p.P
     exact ⟨s, hs, by simpa using hx.neg⟩
   · rintro ⟨s, hs, hx⟩
     have h1 : IsIntegral ℤ ((s : ℚ) * r) := by
-      rw [← isIntegral_algebraMap_iff (algebraMap ℚ K).injective]
+      rw [← isIntegral_algebraMap_iff (B := K)]
       simpa using hx
     obtain ⟨n, hn'⟩ := IsIntegrallyClosed.isIntegral_iff.1 h1
     have h2 : padicNorm p (s : ℚ) = 1 :=
@@ -241,7 +246,7 @@ theorem local_dual : ∀ (D : D7) (p : ℕ) (x : D.host.E), (∀ y ∈ D.host.AA
     rw [ht, mul_assoc, ← nsmul_eq_mul, map_nsmul, nsmul_eq_mul, Nat.cast_mul, mul_comm _ (t : D.host.K), mul_assoc]
     exact h1
   | zero => simpa using isIntegral_zero
-  | add y z _ _ hy hz => rw [map_add, mul_add, map_add]; exact hy.add hz
+  | add y z _ _ hy hz => rw [map_add (f := _), mul_add, map_add (f := _)]; exact hy.add hz
   | smul c y _ hy =>
     rw [map_zsmul, mul_smul_comm, map_zsmul]; exact hy.zsmul c
 
@@ -284,11 +289,11 @@ theorem exists_form (D : D7) (σ : D.host.K →+* D.host.K)
       ∀ x y, h x y = hYY D x y := by
   refine ⟨LinearMap.mk₂'ₛₗ (RingHom.id _) σ (hYY D) ?_ ?_ ?_ ?_, fun _ _ => rfl⟩
   · intro x x' y
-    simp only [hYY, Matrix.add_apply, add_mul, Finset.sum_add_distrib, map_add]
+    simp only [hYY, Matrix.add_apply, add_mul, Finset.sum_add_distrib, map_add (f := _)]
   · intro c x y
     simp only [hYY, Matrix.smul_apply, RingHom.id_apply, ← map_smul, Finset.smul_sum, smul_mul_assoc]
   · intro x y y'
-    simp only [hYY, Matrix.add_apply, mul_add, Finset.sum_add_distrib, map_add]
+    simp only [hYY, Matrix.add_apply, mul_add, Finset.sum_add_distrib, map_add (f := _)]
   · intro c x y
     simp only [hYY, Matrix.smul_apply, ← map_smul, Finset.smul_sum]
     congr 1
@@ -299,7 +304,8 @@ theorem hYY_herm (D : D7) (σ : D.host.K →+* D.host.K)
     (hc : ∀ y : D.host.E, D.host.conj (D.host.conj y) = y)
     (ht : ∀ y : D.host.E, Algebra.trace D.host.K D.host.E (D.host.conj y) = σ (Algebra.trace D.host.K D.host.E y))
     {N N' : ℕ} (x y : Matrix (Fin N') (Fin N) D.host.E) : hYY D y x = σ (hYY D x y) := by
-  simp only [hYY, ← ht, map_sum D.host.conj, map_mul, hc, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hYY, ← ht, map_sum D.host.conj, map_mul, hc, mul_comm]
 
 theorem hYY_pos (D : D7)
     (hp : ∀ y : D.host.E, y ≠ 0 → ∃ a : ℚ, 0 < a ∧ Algebra.trace D.host.K D.host.E (y * D.host.conj y) = (a : D.host.K))
@@ -320,7 +326,8 @@ theorem hYY_pos (D : D7)
   refine ⟨∑ i, ∑ j, a (x i j), ?_, ?_⟩
   · refine Finset.sum_pos' (fun i _ => Finset.sum_nonneg fun j _ => ha0 _) ⟨i, Finset.mem_univ _, ?_⟩
     exact Finset.sum_pos' (fun j _ => ha0 _) ⟨j, Finset.mem_univ _, ha1 _ hij⟩
-  · simp only [hYY, map_sum, ha2, Rat.cast_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [hYY, map_sum, ha2, Rat.cast_sum]
 
 theorem hYY_single (D : D7) {N N' : ℕ} (x : Matrix (Fin N') (Fin N) D.host.E) (i : Fin N') (j : Fin N)
     (y : D.host.E) :
@@ -429,7 +436,8 @@ theorem odd_one : ∀ D : D7, odd1 D := by
     have e1 : ((s * t : ℕ) : D.host.K) * h x y = ∑ i, ∑ j, Algebra.trace D.host.K D.host.E
         ((s : D.host.E) * x i j * D.host.conj ((t : D.host.E) * y i j)) := by
       rw [hh, hYY, ← smul_eq_mul, ← map_smul]
-      simp only [← map_sum, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [← map_sum, Finset.smul_sum]
       congr 1
       refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
       rw [smul_eq, map_mul, map_natCast]; push_cast; ring

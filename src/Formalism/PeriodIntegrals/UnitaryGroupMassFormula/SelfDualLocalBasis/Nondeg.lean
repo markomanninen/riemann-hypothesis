@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SelfDualLoc
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SelfDualLocalBasis.DualBasis
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SelfDualLoc
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SelfDualLocalBasis.DualBasis
+
+@[expose] public section
 
 open Matrix NumberField IsDedekindDomain
 open scoped TensorProduct nonZeroDivisors
@@ -60,7 +64,7 @@ lemma exists_not_mem_intOE : ∃ t : E, t ∉ intOE E := by
   have h1 : IsIntegral ℤ ((2 : E)⁻¹) := ha ▸ RingOfIntegers.isIntegral_coe a
   have h2 : algebraMap ℚ E ((2 : ℚ)⁻¹) = (2 : E)⁻¹ := by simp
   rw [← h2] at h1
-  have h3 : IsIntegral ℤ ((2 : ℚ)⁻¹) := (isIntegral_algebraMap_iff (algebraMap ℚ E).injective).1 h1
+  have h3 : IsIntegral ℤ ((2 : ℚ)⁻¹) := (isIntegral_algebraMap_iff ).1 h1
   obtain ⟨z, hz⟩ := IsIntegrallyClosed.isIntegral_iff.1 h3
   have h4 : (2 : ℚ) * (z : ℚ) = 1 := by
     rw [show (z : ℚ) = (2 : ℚ)⁻¹ by simpa using hz]

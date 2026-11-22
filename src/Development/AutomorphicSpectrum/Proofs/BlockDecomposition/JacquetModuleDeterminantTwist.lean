@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.GeometricLemmaFiltration
-import GroundTheory.AutomorphicForms.GeometricLemma
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.GeometricLemmaFiltration
+public import GroundTheory.AutomorphicForms.GeometricLemma
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -208,8 +213,8 @@ theorem block_det_of_not_le {a c : β'} (hac : ¬ a ≤ c) :
     exact not_le.mp hac⟩
   exact Matrix.det_isEmpty
 
-include hγ hp in
 
+include hγ hp in
 theorem det_adLie_levi :
     (LinearEquiv.det (adLie k N γ p) : kˣ) =
       ∏ a, GeneralLinearGroup.det (g a) ^ modExp m' a := by

@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.Statements
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PMinimalPrimeMultiHomog
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PColonMultiHomog
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSupSpanMultiHomog
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PGradedFinite
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.Statements
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PMinimalPrimeMultiHomog
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PColonMultiHomog
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSupSpanMultiHomog
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PGradedFinite
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Model
@@ -144,7 +149,7 @@ theorem hilbFn_sub_le_of_regular {P : Ideal (MRing ι F)} (hP : IsMultiProjPrime
     have hxf : IsMultiHomog (x * f) (M + bg) := by
       rw [← hdeg]; exact hxh.mul hf
     have hcomp := congrArg (weightedHomogeneousComponent (blockWeight ι) (M + bg)) hpq
-    rw [map_add, ← component_mul_multiHomog a g M bg hg,
+    rw [map_add (f := _), ← component_mul_multiHomog a g M bg hg,
       hxf.weightedHomogeneousComponent_same] at hcomp
     have hpc : weightedHomogeneousComponent (blockWeight ι) (M + bg) p ∈ P :=
       hP.multiHomog p hp _
@@ -181,9 +186,6 @@ theorem SectionNef.proof : SectionNef.Statement := by
       Matrix.cons_val_zero, diffStep]
     linarith
   · exact le_rfl
-
-theorem SectionNefGenerated.proof : SectionNefGenerated.Statement :=
-  SectionNefGenerated.of_sectionNef SectionNef.proof
 
 end
 

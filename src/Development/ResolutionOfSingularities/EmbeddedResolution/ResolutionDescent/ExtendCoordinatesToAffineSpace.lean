@@ -1,9 +1,14 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.AffineSpaceCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineSpaceProduct
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.AffineSpaceCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineSpaceProduct
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace
@@ -125,7 +130,7 @@ theorem specToAffineSpaceExtendCoords_appTop_surjective (k : Type u) [Field k] (
         obtain ⟨P, hP⟩ := hp
         obtain ⟨Q, hQ⟩ := hq
         refine ⟨P + Q, ?_⟩
-        rw [map_add, MvPolynomial.eval₂_add, map_add, hP, hQ]
+        rw [map_add (f := _), MvPolynomial.eval₂_add, map_add (f := _), hP, hQ]
     | mul_X p j hp =>
         obtain ⟨P, hP⟩ := hp
         refine ⟨P * AffineSpace.coord (Spec (CommRingCat.of k))

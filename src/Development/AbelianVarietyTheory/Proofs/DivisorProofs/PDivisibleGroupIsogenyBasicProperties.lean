@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivHomDivisibleByPowOfKillsPowTorsionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BialgHomSurjectiveIffFinrankKernelQuotientEqOneStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivHomDivisibleByPowOfKillsPowTorsionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BialgHomSurjectiveIffFinrankKernelQuotientEqOneStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -38,10 +42,10 @@ theorem hasLogDeg_pow_smul_id (G : PDivGroup p k) (m : ℕ) :
     HasLogDeg ((p : ℤ_[p]) ^ m • 𝟙 G) (m * G.height) := by
   refine ⟨m, fun n hn => ?_⟩
   obtain ⟨f, hf, hk⟩ := G.exists_res_le hn
-  have e : Hom.app ((p : ℤ_[p]) ^ m • 𝟙 G) n = mulBy k _ (p ^ m) := by
+  have e : Hom.app ((p : ℤ_[p]) ^ m • 𝟙 G) n = mulBy (R := k) (A := G.A n) (p ^ m) := by
     rw [← Nat.cast_pow, natCast_smul_id_app]
   rw [e]
-  change Module.finrank k (G.A n ⧸ torsionIdeal k (G.A n) (p ^ m)) = _
+  change Module.finrank k (G.A n ⧸ torsionIdeal (R := k) (A := G.A n) (p ^ m)) = _
   rw [← hk]
   exact ((Ideal.quotientKerAlgEquivOfSurjective (f := (f : G.A n →ₐ[k] G.A m)) hf).toLinearEquiv.finrank_eq).trans
     (finrank_A G m)

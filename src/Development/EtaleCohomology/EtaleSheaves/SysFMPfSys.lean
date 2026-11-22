@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.SysFMPfAlg
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SysFMPfAlg
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry LateralTheory.E.BuildCut LateralTheory.E.SysFMPf LateralTheory.E.SysFMPfAlg

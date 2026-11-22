@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DetAdmC
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.NuInvSt
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DetAdmC
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.NuInvSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ theorem detAdm_gen {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E
     (h : ∀ Φ, IsAdm F E Φ → ∫ X, Φ X ∂ν1 = ∫ X, Φ X ∂ν2) : ν1 = ν2 := by
   classical
   let ι := Fin a × Fin M × Fin (Module.finrank F E)
-  let Ψ := psiH F E a M
+  let Ψ := psiH (F := F) (E := E) (a := a) (M := M)
   let Ψm := Ψ.toMeasurableEquiv
   have hfin : ∀ ν : Measure (Fin a → Fin M → AF F ⊗[F] E), (∀ K, IsCompact K → ν K < ⊤) →
       ∀ K, IsCompact K → ν.map Ψm K < ⊤ := by
@@ -52,7 +56,7 @@ theorem detAdm_gen {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E
       by_cases hp : p.2 ∈ boxS D
       · rw [Set.indicator_of_mem (mk_mem_prod (mem_univ p.1) hp : p ∈ univ ×ˢ boxS D),
           Set.indicator_of_mem hp, mul_one]
-      · rw [Set.indicator_of_notMem (fun h' => hp h'.2), Set.indicator_of_notMem hp, mul_zero]
+      · rw [Set.indicator_of_notMem (by exact fun h' => hp h'.2), Set.indicator_of_notMem hp, mul_zero]
     have hfc : ∀ μ : Measure ((ι → Ainf F) × (ι → Af F)), (∀ K, IsCompact K → μ K < ⊤) →
         IsFiniteMeasureOnCompacts (ρ μ) := fun μ hμ =>
       ⟨fun K hK => by

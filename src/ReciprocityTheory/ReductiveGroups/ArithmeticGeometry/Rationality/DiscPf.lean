@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.DiscSt
-import ReciprocityTheory.SemistableReduction.CauchyInequalityOnTorus
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.DiscSt
+public import ReciprocityTheory.SemistableReduction.CauchyInequalityOnTorus
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FreeQuotientRank
 

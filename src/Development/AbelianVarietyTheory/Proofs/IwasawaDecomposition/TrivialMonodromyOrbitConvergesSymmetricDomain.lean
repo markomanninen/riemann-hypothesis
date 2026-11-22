@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MonoSpMapRingOfIntegersAlt
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsDifferentiableOnTorsSq
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustFStatementPfB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.DetSubUpper
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LminorSubmatrixCastSucc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MonoSpMapRingOfIntegersAlt
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsDifferentiableOnTorsSq
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustFStatementPfB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.DetSubUpper
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LminorSubmatrixCastSucc
+
+@[expose] public section
 
 open GlobalTheory.ShFam.BdArc Filter Topology Matrix
 open ReciprocityTheory.ChartRestriction.G.FD
@@ -113,7 +117,7 @@ theorem posDef_iff {N p : ℕ} (hp : p ≤ N) (U : Matrix (Fin N) (Fin p) ℂ) :
     rw [Jm, IsHermitian, diagonal_conjTranspose]
     congr 1
     funext a
-    simp
+    simp [Pi.star_apply]
   have key : ∀ v, star v ⬝ᵥ (Uᴴ * Jm N p * U) *ᵥ v =
       ((2 * nsq (U.submatrix (Fin.castLE hp) id *ᵥ v) - nsq (U *ᵥ v) : ℝ) : ℂ) := fun v => by
     rw [← mulVec_mulVec, ← mulVec_mulVec, dotProduct_mulVec, ← star_mulVec, form_eq hp]
@@ -192,7 +196,14 @@ theorem det_extend {N p : ℕ} {hp : p ≤ N} {Y : Matrix (Fin N) (Fin p) ℂ} (
     split_ifs with hb
     · have ha : (a : ℕ) < p := lt_of_le_of_lt hab hb
       have := congrFun (congrFun h.1 ⟨a, ha⟩) ⟨b, hb⟩
-      simpa [one_apply, Fin.ext_iff] using this
+      by_cases hab : a = b
+      · subst b
+        simpa [one_apply] using this
+      · have hab' : (⟨a, ha⟩ : Fin p) ≠ ⟨b, hb⟩ := by
+          intro heq
+          apply hab
+          exact Fin.ext (congrArg (fun x : Fin p => x.val) heq)
+        simpa [one_apply, hab, hab'] using this
     · rfl
   rw [det_of_isLowerTriangular _ fun a b hab => by
     have hab' : a < b := hab
@@ -216,7 +227,7 @@ theorem submatrix_mul_upper {N p : ℕ} (hp : p ≤ N) (y b : Matrix (Fin N) (Fi
     (y * b).submatrix id (Fin.castLE hp) =
       y.submatrix id (Fin.castLE hp) * b.submatrix (Fin.castLE hp) (Fin.castLE hp) := by
   ext a j
-  simp only [submatrix_apply, mul_apply, id]
+  simp only [submatrix_apply, Matrix.mul_apply, id]
   rw [sum_castLE hp fun k => y a k * b k (Fin.castLE hp j)]
   refine Finset.sum_congr rfl fun k _ => ?_
   split_ifs with hk

@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.CharacterColumnKernels.StatementRho
-import Formalism.GaloisCohomology.LocalTateDualityK
-import ReciprocityTheory.Hypotheses.GalCohDefs
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LevRepZApply
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteCardTorsionLevelFractionRingQuot
+module
+
+public import Mathlib
+public import Formalism.CharacterColumnKernels.StatementRho
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import ReciprocityTheory.Hypotheses.GalCohDefs
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LevRepZApply
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteCardTorsionLevelFractionRingQuot
+
+@[expose] public section
+
 open ReciprocityTheory.Gal
 
 namespace GlobalTheory.ShapeNeg

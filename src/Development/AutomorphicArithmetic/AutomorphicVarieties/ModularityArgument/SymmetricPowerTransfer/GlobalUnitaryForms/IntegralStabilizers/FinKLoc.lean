@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,6 @@ theorem int_star {x : Lsq K Δ} (h : IsIntegral O x) : IsIntegral O (star x) := 
   exact h.map φ
 
 variable (Δ) in
-
 def RL : Subring (Matrix (Fin 2) (Fin 2) (Lsq K Δ)) where
   carrier := {m | Shape m ∧ ∀ i j, IsIntegral O (m i j)}
   mul_mem' := by
@@ -87,7 +90,12 @@ def RL : Subring (Matrix (Fin 2) (Fin 2) (Lsq K Δ)) where
 theorem qm_mem {a b : Lsq K Δ} (ha : IsIntegral O a) (hb : IsIntegral O b) : qm a b ∈ RL Δ O := by
   refine ⟨shape_qm a b, fun i j => ?_⟩
   fin_cases i <;> fin_cases j <;> simp [qm]
-  exacts [ha, hb, int_star O hb, int_star O ha]
+  all_goals first
+    | assumption
+    | exact int_star O hb
+    | exact int_star O ha
+    | simpa using (int_star O hb).neg
+    | simpa using (int_star O ha).neg
 
 theorem mem_KD (g : DX Δ) : g ∈ KD Δ O ↔ mt g ∈ RL Δ O ∧ mt g⁻¹ ∈ RL Δ O := by
   rw [KD, Subgroup.mem_subgroupOf, MonoidHom.mem_range]

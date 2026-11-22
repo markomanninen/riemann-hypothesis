@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Statements
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Cartier
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Statements
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Cartier
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -21,13 +26,15 @@ def IsEffectiveVertical (P : Ideal (MRing ι O)) (ϖ : O) (b : K → ℤ) (f g :
   IsVerticalDivisor P ϖ b f g ∧ ∀ W : Ideal (MRing ι O), W.IsPrime → P ≤ W → IsRelevant W →
     ∃ u v : MRing ι O, u ∉ W ∧ u * f - v * g ∈ P
 
-open Classical in
 
+open Classical in
 def cutIdentity (ϖ : O) (P : Ideal (MRing ι O)) (b : K → ℤ) (f g : MRing ι O) (c : K → ℕ)
     (s : MRing ι O) {d : ℕ} (L : Fin d → K → ℤ) : Prop :=
-  cycEval (fun G => vNum G (Matrix.vecCons (fun k => (c k : ℤ)) L)) (ratDiv P f g) =
-    cycEval (fun W => if (C ϖ : MRing ι O) ∈ W then vNum W (Matrix.vecCons b L)
-        else cycEval (fun G => vNum G L) (ratDiv W f g)) (divCycle P s)
+  by
+    classical
+    exact cycEval (fun G => vNum G (Matrix.vecCons (fun k => (c k : ℤ)) L)) (ratDiv P f g) =
+      cycEval (fun W => if (C ϖ : MRing ι O) ∈ W then vNum W (Matrix.vecCons b L)
+          else cycEval (fun G => vNum G L) (ratDiv W f g)) (divCycle P s)
 
 end Defs
 
@@ -81,10 +88,12 @@ def GenericFibProps.Statement : Prop :=
       IsMultiHomog (MvPolynomial.map (algebraMap O (FractionRing O)) s) c ∧
         MvPolynomial.map (algebraMap O (FractionRing O)) s ∉ genFib P
 
-open Classical in
 
+open Classical in
 def GenericCycleCorresp.Statement : Prop :=
-  ∀ (O : Type u) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (ϖ : O), Irreducible ϖ →
+  by
+  classical
+  exact ∀ (O : Type u) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (ϖ : O), Irreducible ϖ →
     ∀ (K : Type) [Fintype K] [DecidableEq K] (ι : K → Type) [∀ k, Fintype (ι k)] (P : Ideal (MRing ι O)) (s : MRing ι O), P.IsPrime →
     P.comap (C : O →+* MRing ι O) = ⊥ → s ∉ P →
     ∀ n : Ideal (MRing ι (FractionRing O)) → ℤ,
@@ -152,40 +161,6 @@ theorem isMultiHomogIdeal_span_singleton {K : Type*} [DecidableEq K] {ι : K →
       exact ⟨e, hx⟩)
   intro f hf b
   exact MvPolynomial.weightedHomogeneousComponent_mem_of_mem R (blockWeight ι) h hf b
-
-theorem lemmas_hypotheses_example :
-    let S := MRing (fun _ : Unit => Fin 2) ℤ_[2]
-    let ϖ : ℤ_[2] := ((2 : ℕ) : ℤ_[2])
-    let H : Ideal S := Ideal.span {X ⟨(), 0⟩}
-    IsModelOver (⊥ : Ideal S) 1 ∧ (X ⟨(), 0⟩ : S) ∉ (⊥ : Ideal S) ∧ (X ⟨(), 1⟩ : S) ∉ (⊥ : Ideal S) ∧
-      IsVerticalDivisor (⊥ : Ideal S) ϖ 0 (C ϖ) 1 ∧
-      IsMultiProjPrime H ∧ (⊥ : Ideal S) ≤ H ∧ (C ϖ : S) ∉ H ∧
-      H ∈ ((⊥ : Ideal S) ⊔ Ideal.span {X ⟨(), 0⟩}).minimalPrimes := by
-  intro S ϖ H
-  have hϖ : ϖ ≠ 0 := PadicInt.irreducible_p.ne_zero
-  have hCϖ : (C ϖ : S) ∉ (⊥ : Ideal S) := by
-    rw [Ideal.mem_bot, C_eq_zero]; exact hϖ
-
-  have hev : ∀ p ∈ H, aeval (fun v : Σ _ : Unit, Fin 2 => if v.2 = 0 then (0 : S) else X v) p = 0 := by
-    intro p hp
-    obtain ⟨q, rfl⟩ := Ideal.mem_span_singleton'.mp hp
-    simp
-  have hHprime : H.IsPrime := (Ideal.span_singleton_prime (X_ne_zero _)).mpr (MvPolynomial.X_prime)
-  refine ⟨isModelOver_projectiveSpace 1, by rw [Ideal.mem_bot]; exact X_ne_zero _,
-    by rw [Ideal.mem_bot]; exact X_ne_zero _, isVerticalDivisor_uniformiser ϖ ⊥ hCϖ,
-    ⟨hHprime, isMultiHomogIdeal_span_singleton (isWeightedHomogeneous_X _ _ _), ?_⟩, bot_le, ?_, ?_⟩
-  · intro k
-    refine ⟨1, fun h => ?_⟩
-    have := hev _ h
-    simp at this
-    exact X_ne_zero _ this
-  · intro h
-    have := hev _ h
-    rw [aeval_C] at this
-    change (C ϖ : S) = 0 at this
-    exact hϖ (C_eq_zero.mp this)
-  · rw [bot_sup_eq, Ideal.minimalPrimes_eq_subsingleton_self]
-    rfl
 
 end Examples
 

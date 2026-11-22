@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.DedekindLFunctions.LandauZeroFreeCriterion
-import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.kernelIntegral
+module
+
+public import Development.AutomorphicArithmetic.DedekindLFunctions.LandauZeroFreeCriterion
+public import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.kernelIntegral
+
+@[expose] public section
 
 open Complex MeasureTheory Set Filter Topology
 
@@ -29,7 +33,8 @@ lemma landau_tails_chernoff (k : ℕ) {s l U V : ℝ} (hl : 0 ≤ l) (hs : l < s
     ← integral_add i1 i2]
   have hm : MeasurableSet (Ioi (0 : ℝ) \ Icc U V) := measurableSet_Ioi.diff measurableSet_Icc
   refine le_trans (setIntegral_mono_on (IntegrableOn.mono_set i0 sdiff_subset)
-    (IntegrableOn.mono_set i3 sdiff_subset) hm ?_) (setIntegral_mono_set i3 ?_ sdiff_subset.eventuallyLE)
+    (IntegrableOn.mono_set i3 sdiff_subset) hm ?_)
+    (setIntegral_mono_set i3 ?_ (Filter.Eventually.of_forall fun _ h => h.1))
   · intro u hu
     have hu0 : 0 < u := hu.1
     have hf : 0 < (k.factorial : ℝ) := by positivity

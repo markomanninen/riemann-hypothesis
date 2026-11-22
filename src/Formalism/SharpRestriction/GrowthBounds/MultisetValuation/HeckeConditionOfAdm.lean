@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.HkEsymmSmul
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PrimeCastNeZero
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.HkEsymmSmul
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PrimeCastNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,8 @@ theorem hk_point (Y : Pend X) (hC : CountLoc) (hT : RestTmFQ X)
       ∑ L1 ∈ EE (X.Pj (j + 1)) (X.vJ (j + 1) v) i (L' (X.vJ (j + 1) v)),
         X.Kz j F c' (Function.update L' (X.vJ (j + 1) v) L1) :=
     Tminus_eq (X.Pj (j + 1)) (X.vJ (j + 1) v) i (X.Kz j F c') L'
-  rw [eT, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [eT, map_sum, map_sum]
   have eL : ∀ L1 ∈ EE (X.Pj (j + 1)) (X.vJ (j + 1) v) i (L' (X.vJ (j + 1) v)),
       MvPolynomial.map (algebraMap X.G.Kf Y.Kc) (X.Kz j F c' (Function.update L' (X.vJ (j + 1) v) L1)) =
         ∑ x : Cl, (((wt x : Y.Kc))⁻¹ * cK) • ∑ y : Yb,
@@ -115,7 +120,8 @@ theorem heckeCondition_of_adm (D : Formalism.BasicNotions.D7) (X : Sys p) (Y : P
               (MvPolynomial.esymm (Fin (X.t + 1)) X.G.Kf l)) *
               (p : X.G.Kf) ^ (-(hv X v * ((i - l : ℕ) : ℤ) * ((NN X.G.P.m X.t j : ℤ) - ((i - l : ℕ) : ℤ))))) •
               X.Kz j (X.Tm v (i - l) j F) := by
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         refine Finset.sum_congr rfl fun l _ => ?_
         unfold Sys.ecal
         rw [map_smul, map_smul, smul_smul]

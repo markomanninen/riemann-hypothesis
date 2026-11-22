@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.HeckeSp
-import Formalism.LocalToGlobal.Columns.AlgebraMapMemMaximalIdealPowIff
+module
+
+public import Formalism.LocalToGlobal.Columns.HeckeSp
+public import Formalism.LocalToGlobal.Columns.AlgebraMapMemMaximalIdealPowIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -159,7 +163,7 @@ theorem hcnt_max_smul_mem (Q : HeightOneSpectrum (𝓞 E)) {N : Submodule (𝓞 
   rw [mul_smul, mk'_smul, smul_comm]
   exact Submodule.smul_mem_smul ha hty
 
-theorem exists_redLat {N : Submodule (𝓞 E) (Sp E n)} (hlat : Submodule.IsLattice E N)
+theorem exists_redLat {N : Submodule (𝓞 E) (Sp E n)} (hlat : Submodule.IsFullLattice E N)
     (Q : HeightOneSpectrum (𝓞 E)) :
     ∃ ρ : N →ₗ[𝓞 E] (Fin n → 𝓞 E ⧸ Q.asIdeal), Function.Surjective ρ ∧
       LinearMap.ker ρ = (Q.asIdeal • N).comap N.subtype := by
@@ -182,7 +186,7 @@ theorem exists_redLat {N : Submodule (𝓞 E) (Sp E n)} (hlat : Submodule.IsLatt
   let ρ : N →ₗ[𝓞 E] (Fin n → 𝓞 E ⧸ Q.asIdeal) :=
     { toFun := fun x j => e.symm (Ideal.Quotient.mk _ (b.equivFun (inc x) j))
       map_add' := fun x y => funext fun j => by
-        simp only [hinc_add, map_add, Pi.add_apply]
+        simp only [hinc_add, map_add (f := _), Pi.add_apply]
       map_smul' := fun a x => funext fun j => by
         simp only [hinc_smul, map_smul, Pi.smul_apply, smul_eq_mul, map_mul, he, RingHom.id_apply]
         rw [Algebra.smul_def, Ideal.Quotient.algebraMap_eq] }
@@ -200,7 +204,7 @@ theorem exists_redLat {N : Submodule (𝓞 E) (Sp E n)} (hlat : Submodule.IsLatt
       exact Subtype.ext (algebraMap_smul (Ow Q) s _).symm
     rw [hρ, h1, map_smul, LinearEquiv.apply_symm_apply, Pi.smul_apply, smul_eq_mul, ← map_mul, he, map_mul, ha]
     have h2 : Ideal.Quotient.mk Q.asIdeal (t * s) = 1 := by
-      rw [← map_one (Ideal.Quotient.mk Q.asIdeal), ← hts, map_add, Ideal.Quotient.eq_zero_iff_mem.2 hp, add_zero]
+      rw [← map_one (Ideal.Quotient.mk Q.asIdeal), ← hts, map_add (f := _), Ideal.Quotient.eq_zero_iff_mem.2 hp, add_zero]
     rw [h2, one_mul]
   · apply le_antisymm
     · intro x hx
@@ -290,16 +294,47 @@ section CardNbr
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ}
   {ST SG : Finset (HeightOneSpectrum (𝓞 E))}
 
+theorem hcnt_isFullLattice_of_unimodular {L : Submodule (𝓞 E) (Sp E n)}
+    (hL : Submodule.IsLattice E L) (hu : IsUnimodular (hStd E n) L) :
+    Submodule.IsFullLattice E L := by
+  let := hL
+  refine { span_eq_top := ?_ }
+  let W := Submodule.span E (L : Set (Sp E n))
+  change W = ⊤
+  by_contra h
+  let e : Sp E n ≃ₗ⋆[E] Sp E n := starLinearEquiv E
+  let g : Sp E n →ₗ[E] Module.Dual E W :=
+    (LinearMap.domRestrict' W).comp ((hStd E n).comp e.toLinearMap)
+  have hdim : finrank E (Module.Dual E W) < finrank E (Sp E n) := by
+    rw [Subspace.dual_finrank_eq]
+    exact Submodule.finrank_lt h
+  obtain ⟨x, hx, hx₀⟩ :=
+    Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+  have hsmul (a : E) : a • e x ∈ L := by
+    rw [← hu, dualBasic_mem_dual]
+    intro y hy
+    apply hStd_mem_one_symm
+    have hxy : hStd E n (e x) y = 0 :=
+      congrArg (fun f : Module.Dual E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+    simp [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hxy]
+  let i : E →ₗ[𝓞 E] L :=
+    ((LinearMap.toSpanSingleton E _ (e x)).restrictScalars (𝓞 E)).codRestrict L hsmul
+  let : Module.Finite (𝓞 E) L := Module.Finite.iff_fg.mpr hL.fg
+  let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
+    smul_left_injective E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+  exact RingOfIntegers.not_isField E
+    (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
+
 theorem isHeckeNbr_iff (P : HeightOneSpectrum (𝓞 E)) (i : ℕ) (N N' : Submodule (𝓞 E) (Sp E n)) :
     IsHeckeNbr P.asIdeal i N N' ↔ P.asIdeal • N' ≤ N ∧ (conjPrime₂ P).asIdeal • N ≤ N' ∧
       Nonempty ((N ⧸ (N' ⊓ N).comap N.subtype) ≃ₗ[𝓞 E] (Fin i → 𝓞 E ⧸ (conjPrime₂ P).asIdeal)) := by
   unfold IsHeckeNbr
   rw [conjIdeal_asIdeal]
 
-theorem DecoSet.card_heckeSet (d : DecoSet E n ST SG) (P : HeightOneSpectrum (𝓞 E)) (hne : conjPrime₂ P ≠ P)
+theorem DecoSet.card_heckeSet (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (P : HeightOneSpectrum (𝓞 E)) (hne : conjPrime₂ P ≠ P)
     (hST : ∀ Q : ST, Q.1 ≠ P ∧ Q.1 ≠ conjPrime₂ P) (hSG : ∀ w : SG, w.1 ≠ P ∧ w.1 ≠ conjPrime₂ P) (i : ℕ) :
     Nat.card (d.heckeSet P.asIdeal i) = gaussBin (Nat.card (𝓞 E ⧸ P.asIdeal)) n i := by
-  obtain ⟨ρ, hρs, hρk⟩ := exists_redLat d.2.lat (conjPrime₂ P)
+  obtain ⟨ρ, hρs, hρk⟩ := exists_redLat (hcnt_isFullLattice_of_unimodular d.2.lat d.2.uni) (conjPrime₂ P)
   have hker : ∀ N' : Submodule (𝓞 E) (Sp E n), IsHeckeNbr P.asIdeal i d.1.N N' →
       LinearMap.ker ρ ≤ (N' ⊓ d.1.N).comap d.1.N.subtype := by
     intro N' h
@@ -356,7 +391,7 @@ theorem DecoPts.card_nb (c : DecoPts S E n ST SG) {S0 : Set (HeightOneSpectrum (
     (i : ℕ) (d : S.D) : (c.nb P.1.asIdeal i d).card = gaussBin (SplitOff.q P) n i := by
   have hfin := DecoSet.heckeSet_finite P.1.ne_bot (conjIdeal_ne_bot P.1.ne_bot) i (c.pts d)
   unfold DecoPts.nb DecoSet.heckeNb
-  rw [Finset.card_map, dif_pos hfin, ← Set.ncard_eq_toFinset_card _ hfin, ← Nat.card_coe_set_eq]
+  rw [Finset.card_map, dite_eq_left hfin, ← Set.ncard_eq_toFinset_card _ hfin, ← Nat.card_coe_set_eq]
   exact DecoSet.card_heckeSet (c.pts d) P.1 (SplitOff.conjP_ne P)
     (fun Q => SplitOff.ne_of_mem P (Or.inl (Or.inr Q.2))) (fun w => SplitOff.ne_of_mem P (Or.inr w.2)) i
 
@@ -370,9 +405,6 @@ theorem heckeFam_eq_zero_of_lt (c : DecoPts S E n ST SG) (S0 : Set (HeightOneSpe
   rfl
 
 variable (K) (E) (n) (ST) (SG)
-
-def trivSys (S0 : Set (HeightOneSpectrum (𝓞 E))) : LevOff ST SG S0 × ℕ → K :=
-  fun y => (gaussBin (SplitOff.q y.1) n y.2 : K)
 
 end FamCount
 

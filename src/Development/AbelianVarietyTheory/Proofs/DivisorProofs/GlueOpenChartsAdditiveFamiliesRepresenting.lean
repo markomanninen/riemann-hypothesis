@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.WhiskerLeftEqLift
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullLiftOneEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullUnitEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RepresentableOver
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGeomPointThrough
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WhiskerLeftEqLift
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullLiftOneEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullUnitEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RepresentableOver
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGeomPointThrough
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section

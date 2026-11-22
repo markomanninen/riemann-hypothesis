@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvAboveTopGeneral
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvAboveTop
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvIdealComponent
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvIdealRepresentation
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvMonomialReduction
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvPolynomialReduction
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvStaircaseComponent
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvStaircaseDegree
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvStepReduction
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PHomogeneousComponentMul
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvAboveTopGeneral
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvAboveTop
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvIdealComponent
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvIdealRepresentation
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvMonomialReduction
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvPolynomialReduction
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvStaircaseComponent
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvStaircaseDegree
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvStepReduction
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PHomogeneousComponentMul
+
+@[expose] public section
 
 open MvPolynomial Filter Topology GlobalTheory.CompanionTheory.Ar.Top
 
-open GroundTheory.Heights₂.Heights.RestTerms in
 
+open GroundTheory.Heights₂.Heights.RestTerms in
 theorem RootFieldNumerics.coinv_above_top : CoinvAboveTopGeneral.Statement :=
   CoinvAboveTopGeneral.proof (CoinvAboveTop.proof
     (CoinvPolynomialReduction.proof (CoinvMonomialReduction.proof CoinvStepReduction.proof))

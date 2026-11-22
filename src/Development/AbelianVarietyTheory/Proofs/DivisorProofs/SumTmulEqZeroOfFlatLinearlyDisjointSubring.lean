@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef
@@ -55,7 +60,8 @@ theorem tmul_sum_eq_zero_of_linDisj {R R₁ F K : Type} [CommRing R] [CommRing R
         rw [hu i]
         simp only [Algebra.smul_def, map_sub, map_mul, hθ']
         ring
-      rw [Finset.sum_congr rfl (fun i _ => e1 i), Finset.sum_sub_distrib, ← Finset.mul_sum, ← map_sum, hsum, map_neg]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finset.sum_congr rfl (fun i _ => e1 i), Finset.sum_sub_distrib, ← Finset.mul_sum, ← map_sum, hsum, map_neg]
       have h' := h
       rw [Fin.sum_univ_succAbove _ j] at h'
       linear_combination h'
@@ -66,7 +72,8 @@ theorem tmul_sum_eq_zero_of_flat_linDisj : ∀ (R R₁ A F K : Type) [CommRing R
   let eA : A →ₐ[R] F := { e with commutes' := fun x => RingHom.congr_fun hec x }
   have hinj := Module.Flat.rTensor_preserves_injective_linearMap (M := R₁) eA.toLinearMap he
   apply hinj
-  rw [map_sum, map_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero]
   simp only [LinearMap.rTensor_tmul]
   exact tmul_sum_eq_zero_of_linDisj (R := R) c θ hc₀ hθ hL n (fun i => e (a i)) r h
 

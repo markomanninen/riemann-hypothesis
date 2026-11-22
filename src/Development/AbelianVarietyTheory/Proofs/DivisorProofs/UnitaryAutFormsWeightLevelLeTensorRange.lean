@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSplitFinMulSplitInf
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNeZeroWeightTensorIntertwiningAutRepStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpanInfinitePlacesWeightRepresentationEqTopStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDefiniteUnitaryRationalPointFiniteAndInfinStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSplitFinMulSplitInf
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNeZeroWeightTensorIntertwiningAutRepStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpanInfinitePlacesWeightRepresentationEqTopStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDefiniteUnitaryRationalPointFiniteAndInfinStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.BCT.TrKer
 open scoped Classical TensorProduct
@@ -19,7 +23,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 def infHom (lam : InfinitePlace E → DomWeight n) : Submodule ℂ (Wsp lam →ₗ[ℂ] (UA E n → ℂ)) where
   carrier := {T | ∀ x ∈ infU E n, ∀ w, T (wInf lam x w) = RU E n x (T w)}
   add_mem' ha hb x hx w := by
-    simp only [LinearMap.add_apply, ha x hx, hb x hx, map_add]
+    simp only [LinearMap.add_apply, ha x hx, hb x hx, map_add (f := _)]
   zero_mem' x _ w := by simp
   smul_mem' c T hT x hx w := by
     simp only [LinearMap.smul_apply, hT x hx, map_smul]
@@ -28,7 +32,7 @@ theorem RU_mul (a b : UA E n) (φ : UA E n → ℂ) : RU E n (a * b) φ = RU E n
   rw [map_mul]; rfl
 
 theorem comp_mem_infHom (lam : InfinitePlace E → DomWeight n) {T : Wsp lam →ₗ[ℂ] (UA E n → ℂ)} (hT : T ∈ infHom lam)
-    (k : finU E n) : RU E n k.1 ∘ₗ T ∈ infHom lam := by
+    (k : finU (E := E) (n := n)) : RU E n k.1 ∘ₗ T ∈ infHom lam := by
   intro x hx w
   simp only [LinearMap.comp_apply, hT x hx, ← RU_mul, GlobalTheory.DefU.fin_mul_inf k.2 hx]
 
@@ -55,13 +59,14 @@ theorem eq_zero_of_sum (lam : InfinitePlace E → DomWeight n) {ι : Type} [Fint
   refine b.ext fun m => ?_
   obtain ⟨P, hP⟩ := exists_op lam ((b.coord k).smulRight (b m))
   have := congrArg P h
-  rw [map_sum, map_zero] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero] at this
   rw [LinearMap.zero_apply, ← this]
   rw [Finset.sum_eq_single k]
   · rw [← hP _ (hT k)]; simp
   · intro j _ hj
     rw [← hP _ (hT j)]
-    simp [Module.Basis.coord_apply, Module.Basis.repr_self, Finsupp.single_apply, hj]
+    simp [Module.Basis.coord_apply, Module.Basis.repr_self, hj]
   · simp
 
 end GlobalTheory.BCT.TrKer
@@ -127,9 +132,10 @@ theorem mem_range_of_mem (S : Set (Pl E)) (K' : ∀ w : Pl E, Subgroup (UL n w))
       have := hfix ⟨k, hk⟩
       simpa [RF] using this
     have h2 : ∑ i, (RU E n k.1 ∘ₗ T i - T i) (b i) = 0 := by
-      simp only [LinearMap.sub_apply, LinearMap.comp_apply, Finset.sum_sub_distrib, ← map_sum, h1, sub_self]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [LinearMap.sub_apply, LinearMap.comp_apply, Finset.sum_sub_distrib, ← map_sum, h1, sub_self]
     exact sub_eq_zero.1 (eq_zero_of_sum lam b _ (fun i => sub_mem (comp_mem_infHom lam (hT i) k) (hT i)) h2 j)
-  obtain ⟨F, hFa⟩ : ∃ F : Fin (Module.finrank ℂ (Wsp lam)) → finU E n → Module.Dual ℂ (Wsp lam),
+  obtain ⟨F, hFa⟩ : ∃ F : Fin (Module.finrank ℂ (Wsp lam)) → finU (E := E) (n := n) → Module.Dual ℂ (Wsp lam),
       ∀ j x w, F j x w = T j w x.1 :=
     ⟨fun j x => LinearMap.proj (R := ℂ) (φ := fun _ : UA E n => ℂ) x.1 ∘ₗ T j, fun _ _ _ => rfl⟩
   have hphi : ∀ j, phiFun lam (F j) = T j := by
@@ -163,14 +169,14 @@ theorem mem_range_of_mem (S : Set (Pl E)) (K' : ∀ w : Pl E, Subgroup (UL n w))
       rw [← hwi, hT j _ (inv_mem i.2)]
       change T j w ((finPt γ).1 * x.1) = T j w (x.1 * i.1⁻¹)
       rw [GlobalTheory.DefU.fin_mul_inf x.2 (inv_mem i.2), ← hl, hri]
-      congr 1
       group
     · refine LinearMap.ext fun w => ?_
       rw [hFa, hFa]
       change T j w (x.1 * k.1) = T j w x.1
       exact congrFun (LinearMap.congr_fun (hfixT k hk j) w) x.1
   refine ⟨∑ j, ⟨F j, hF j⟩ ⊗ₜ b j, ?_⟩
-  simp [map_sum, Phi_tmul, hphi]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, Phi_tmul, hphi]
 
 theorem forms_le_range : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E → ∀ n : ℕ, 1 ≤ n → ∀ (S : Set (Pl E)), IsSection S → ∀ (lam : InfinitePlace E → DomWeight n) (K' : ∀ w : Pl E, Subgroup (UL n w)), IsLevelFam (fun w : Pl E => MonoidHom.id (UL n w)) (KL n) K' → forms S lam K' ≤ LinearMap.range (Phi S lam K') := by
   intro E _ _ _ _ n _ S _ lam K' _

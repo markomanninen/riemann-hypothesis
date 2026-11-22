@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.AdditionLawSecondIdentity
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.AxisPderivComp
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SumSupportRename
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.AdditionLawSecondIdentity
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.AxisPderivComp
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SumSupportRename
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,7 +20,7 @@ variable {k : Type} [CommRing k] {d n : ℕ}
 
 theorem dofN_ev {m : ℕ} (F : Fin d → PS k 2 d) (b : Fin n) (u : Fin d → k) (V : Fin m → Pt k n d)
     (hV : ∀ j, GP (V j)) (g : PS k m d) :
-    DofN F b u (ev V g) = ∑ c : Fin m, ∑ l : Fin d, ev V (pderiv k (c, l) g) * DofN F b u (V c l) := by
+    DofN F b u (ev V g) = ∑ c : Fin m, ∑ l : Fin d, ev V (pderiv (c, l) g) * DofN F b u (V c l) := by
   unfold DofN
   simp only [pderiv_ev V hV]
   simp only [Finset.mul_sum (s := (Finset.univ : Finset (Fin m))), Finset.mul_sum (f := fun l => ev V _ * _)]
@@ -34,7 +38,7 @@ theorem dofN_inCol_ne (F : Fin d → PS k 2 d) {b c : Fin n} (h : c ≠ b) (u : 
   rw [pderiv_inCol, if_neg h, mul_zero]
 
 theorem dofN_eq_sum (F : Fin d → PS k 2 d) (b : Fin n) (u : Fin d → k) (g : PS k n d) :
-    DofN F b u g = ∑ l, inCol b (Dof F u (X ((0 : Fin 1), l))) * pderiv k (b, l) g := by
+    DofN F b u g = ∑ l, inCol b (Dof F u (X ((0 : Fin 1), l))) * pderiv (b, l) g := by
   have hX : ∀ l, inCol b (X ((0 : Fin 1), l) : PS k 1 d) = X (b, l) := fun l => gt_ev_X _ (gp b) 0 l
   simp only [← dofN_inCol, hX]
   conv_lhs => unfold DofN

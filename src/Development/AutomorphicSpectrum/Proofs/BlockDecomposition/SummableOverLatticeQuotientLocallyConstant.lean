@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Set
 
@@ -24,7 +28,7 @@ theorem integrable_of_summable_quotient_periodic :
     have h3 := U.sub_mem hh h2
     have h4 : g - ι h - ι (-h + Quotient.out (QuotientAddGroup.mk h : H ⧸ U.comap ι))
         = g - r (QuotientAddGroup.mk h : H ⧸ U.comap ι) := by
-      simp only [r, map_add, map_neg]; abel
+      simp only [r, map_add (f := _), map_neg]; abel
     change g - r _ ∈ U
     rwa [h4] at h3
   have hdisj : Pairwise (Function.onFun Disjoint c) := by
@@ -35,7 +39,7 @@ theorem integrable_of_summable_quotient_periodic :
     have h1 : ι (-Quotient.out x + Quotient.out y) ∈ U := by
       have h3 := U.sub_mem hgx' hgy'
       have h4 : g - r x - (g - r y) = ι (-Quotient.out x + Quotient.out y) := by
-        simp only [r, map_add, map_neg]; abel
+        simp only [r, map_add (f := _), map_neg]; abel
       rwa [h4] at h3
     have h2 : (QuotientAddGroup.mk (Quotient.out x) : H ⧸ U.comap ι) = QuotientAddGroup.mk (Quotient.out y) :=
       QuotientAddGroup.eq.2 h1

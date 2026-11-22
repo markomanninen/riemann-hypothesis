@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.SFunOf
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.SFunOf
+
+@[expose] public section
 
 open MeasureTheory
 open PositivityTheory.Rg.BcB PositivityTheory.Rg.BcB.D1 PositivityTheory.Rg.BcB.E1
@@ -49,7 +53,7 @@ theorem abs_vecs (hKB : KerBasic) (hKL : KerLin) (hCB : CntBasic) (hVE : VecEx) 
   obtain ⟨C₁, Ω₁, C₁t, Ω₁c, n₁⟩ := hVN X ι (fun i j => adj (Φ₁ j i)) tA
   obtain ⟨C₂, Ω₂, C₂t, Ω₂c, n₂⟩ := hVN X ι Φ₂ t₂
   refine ⟨k₁, fun x i => ∑ l, M l i • k (th x) l, fun i => ⟨c₁ i, ?_⟩, ?_, ?_, ?_, ?_⟩
-  · exact continuous_finset_sum _ fun l _ => ((c l).comp hth).const_smul (M l i)
+  · exact continuous_finsetSum _ fun l _ => ((c l).comp hth).const_smul (M l i)
   · intro x i u
     exact (hVI X ι Φ₁ x i (k₁ x i) u t₁).2 (v₁ x i)
   · intro x i u
@@ -60,7 +64,7 @@ theorem abs_vecs (hKB : KerBasic) (hKL : KerLin) (hCB : CntBasic) (hVE : VecEx) 
     rw [integral_mul_const, mul_comm]
   · set P : ℝ≥0∞ := ∑ i, (∑ l, ‖M l i‖ₑ) ^ 2 with hP
     have Pt : P ≠ ⊤ := ENNReal.sum_ne_top.2 fun i _ =>
-      ENNReal.pow_ne_top (ENNReal.sum_ne_top.2 fun l _ => enorm_ne_top)
+      ENNReal.pow_ne_top (ENNReal.sum_ne_top.2 fun l _ => eNorm_ne_top)
     refine ⟨C₁ + P * C₂, Ω₁ ∪ th '' Ω₂, ENNReal.add_ne_top.2 ⟨C₁t, ENNReal.mul_ne_top Pt C₂t⟩,
       Ω₁c.union (Ω₂c.image hth), fun x i => ⟨?_, ?_⟩⟩
     · calc ‖k₁ x i‖ₑ ^ 2 ≤ C₁ * cnt X.Γ Ω₁ x := n₁ x i _ (v₁ x i)
@@ -76,8 +80,8 @@ theorem abs_vecs (hKB : KerBasic) (hKL : KerLin) (hCB : CntBasic) (hVE : VecEx) 
             gcongr
             exact (hCB X).2.2.1 _ _ Set.subset_union_right x
       have hsum : ‖∑ l, M l i • k (th x) l‖ₑ ≤ ∑ l, ‖M l i‖ₑ * ‖k (th x) l‖ₑ := by
-        refine (enorm_sum_le _ _).trans (Finset.sum_le_sum fun l _ => ?_)
-        rw [enorm_smul]
+        refine (eNorm_sum_le _ _).trans (Finset.sum_le_sum fun l _ => ?_)
+        rw [eNorm_smul]
       calc ‖∑ l, M l i • k (th x) l‖ₑ ^ 2 ≤ (∑ l, ‖M l i‖ₑ * ‖k (th x) l‖ₑ) ^ 2 := by gcongr
         _ ≤ (∑ l, ‖M l i‖ₑ) ^ 2 * (C₂ * cnt X.Γ (Ω₁ ∪ th '' Ω₂) x) := sum_mul_sq_le _ _ _ _ hb
         _ ≤ P * (C₂ * cnt X.Γ (Ω₁ ∪ th '' Ω₂) x) := by
@@ -95,7 +99,8 @@ theorem abs_vecs (hKB : KerBasic) (hKL : KerLin) (hCB : CntBasic) (hVE : VecEx) 
     rw [hfun, (hKL X (ι × ι) (fun p => Φ p.1 p.2) (fun p => M p.2 p.1) fun p => tΦ _ _).2,
       Fintype.sum_prod_type]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [map_sum, inner_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, inner_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [map_smul, inner_smul_right,
       hPt X ι Φ₁ Φ₂ Φ T₁ T₂ U t₁ t₂ tΦ o₁ o₂ oΦ x (th x) i l (k₁ x i) (k (th x) l) (v₁ x i) (v _ l),
@@ -104,7 +109,38 @@ theorem abs_vecs (hKB : KerBasic) (hKL : KerLin) (hCB : CntBasic) (hVE : VecEx) 
 theorem vecsEx_of : RatProper → KerBasic → KerLin → CntBasic → CntPair → VecEx → VecNorm → VecInner → PtEq →
     VecsEx := by
   intro hR hKB hKL hCB hCP hVE hVN hVI hPt E _ _ _ a b D ι _ Φ₁ Φ₂ T₁ T₂ M h₁ h₂ o₁ o₂
-  obtain ⟨k₁, k₂, c, r₁, r₂, n, d⟩ := abs_vecs hKB hKL hCB hVE hVN hVI hPt (ctx hR D) th
+  open PositivityTheory.Rg.BcB.E GlobalTheory.CuspRep in
+  letI : MeasurableSpace (H E a b) := borelH E a b
+  let X : Ctx := by
+    haveI := GlobalTheory.CuspRep.CuspidalL2GL.t2Space_GA E a
+    haveI := GlobalTheory.CuspRep.CuspidalL2GL.t2Space_GA E b
+    haveI := GlobalTheory.CuspRep.CuspidalL2GL.locallyCompactSpace_GA E a
+    haveI := GlobalTheory.CuspRep.CuspidalL2GL.locallyCompactSpace_GA E b
+    haveI := GlobalTheory.CuspRep.CuspidalL2GL.secondCountableTopology_GA E a
+    haveI := GlobalTheory.CuspRep.CuspidalL2GL.secondCountableTopology_GA E b
+    haveI := (hR E a).2.1
+    haveI := (hR E b).2.1
+    haveI := D.haar.1
+    haveI := D.haar.2.2.1
+    haveI : IsLocallyFiniteMeasure D.μ := D.haar.2.2.2
+    haveI : IsFiniteMeasureOnCompacts D.μ := isFiniteMeasureOnCompacts_of_isLocallyFiniteMeasure
+    exact { G := H E a b
+            ms := borelH E a b
+            bs := ⟨rfl⟩
+            μ := D.μ
+            haar := ⟨⟩
+            Γ := ratH E a b
+            cn := (((ratGL E a).prodMap (ratGL E b)).rangeRestrict_surjective).countable
+            proper := by
+              intro C hC
+              have h1 := (hR E a).2.2 _ (hC.image continuous_fst)
+              have h2 := (hR E b).2.2 _ (hC.image continuous_snd)
+              refine ((h1.prod h2).image ((ratGL E a).prodMap (ratGL E b)).rangeRestrict).subset ?_
+              rintro ⟨_, γ, rfl⟩ hγ
+              exact ⟨γ, ⟨⟨_, hγ, rfl⟩, ⟨_, hγ, rfl⟩⟩, rfl⟩
+            F := D.F
+            fd := D.fd }
+  obtain ⟨k₁, k₂, c, r₁, r₂, n, d⟩ := abs_vecs hKB hKL hCB hVE hVN hVI hPt X th
     (hCP E a b).2.1 (hCP E a b).1 Φ₁ Φ₂ T₁ T₂ M h₁ h₂ o₁ o₂
   refine ⟨k₁, k₂, ⟨c, r₁, r₂, n, ?_⟩⟩
   intro U Φ hΦ hop x

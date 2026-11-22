@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
-import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
+public import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
+
+@[expose] public section
 
 open ReciprocityTheory.PGsh
 
@@ -23,7 +27,7 @@ theorem legendre_real (l : ℕ) (hl : l.Prime) (N : ℕ) :
     (padicValNat l N.factorial : ℝ) = ((N : ℝ) - ((Nat.digits l N).sum : ℕ)) / (l - 1) := by
   have := Fact.mk hl
   have h1 : (l - 1) * padicValNat l N.factorial = N - (Nat.digits l N).sum :=
-    sub_one_mul_padicValNat_factorial N
+    by simpa [Nat.padicValNat_def] using (hl.sub_one_mul_multiplicity_factorial (n := N))
   have h2 : (Nat.digits l N).sum ≤ N := Nat.digit_sum_le l N
   have hl1 : (1 : ℝ) < l := by exact_mod_cast hl.one_lt
   have h3 := congrArg (Nat.cast : ℕ → ℝ) h1
@@ -91,10 +95,10 @@ theorem padicValNat_prod_factorial (l : ℕ) (hl : l.Prime) {κ : Type} (s : Fin
   have := Fact.mk hl
   classical
   refine Finset.induction_on s ?_ ?_
-  · simp
+  · simp [Nat.padicValNat_def]
   · intro a t ha ih
     rw [Finset.prod_insert ha, Finset.sum_insert ha,
-      padicValNat.mul (Nat.factorial_ne_zero _)
+      (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (Nat.factorial_ne_zero _)
         (Finset.prod_ne_zero_iff.mpr fun j _ => Nat.factorial_ne_zero _), Nat.cast_add, ih]
 
 theorem legendre_bounds :

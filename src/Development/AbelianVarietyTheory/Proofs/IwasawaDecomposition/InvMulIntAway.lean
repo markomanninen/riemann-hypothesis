@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OneSubMemIdS
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OneSubMemIdS
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.L2.Col GlobalTheory.InertNbr
 open Formalism.L2.DIV (Pl kP St resS oToS idS cmpS)
 open scoped TensorProduct
@@ -50,7 +55,11 @@ theorem inv_mul_int_away {F E : Type} [Field F] [NumberField F] [Field E] [Numbe
   classical
   intro i j
   have hfin := Module.Finite.iff_fg.2 (stdLat_lattice (E := E) (n := n)).fg
-  have hspan := (stdLat_lattice (E := E) (n := n)).span_eq_top
+  have hspan : Submodule.span E (stdLat E n : Set (Fin n → E)) = ⊤ := by
+    rw [eq_top_iff, ← (Pi.basisFun E (Fin n)).span_eq]
+    refine Submodule.span_mono ?_
+    rintro _ ⟨k, rfl⟩
+    simpa using single_mem_stdLat (E := E) k 1
   have hSR := Formalism.UG.P.span_recovery_of_integral_adelic_approx Formalism.UG.P.integral_adele_approximation_holds F E (Fin n) (stdLat E n) hfin hspan
   have hcol : (y : Matrix (Fin n) (Fin n) _) *ᵥ (Pi.single j 1 : Fin n → E ⊗[F] Formalism.L2.Herm.Af F) ∈
       Formalism.UG.latS (F := F) (Formalism.L2.Herm.Af F) (Formalism.L2.Herm.intAf F E) (Formalism.UG.CS.globLat y (stdLat E n)) := by

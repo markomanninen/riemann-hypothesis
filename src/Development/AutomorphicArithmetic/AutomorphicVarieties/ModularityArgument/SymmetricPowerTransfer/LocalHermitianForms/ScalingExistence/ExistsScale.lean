@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.CintIdx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.Descent
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.SqrtO
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.CintIdx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.Descent
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.SqrtO
+
+@[expose] public section
 
 open QuadraticAlgebra UpperTheory.V.Z.Sym
 
@@ -346,7 +350,7 @@ theorem tor_bound (h : IsLoc O Δ) (hτ : τ ^ 2 - 4 ≠ 0) (N : O) {ι : Type} 
   have hX2 : φ2 (N • (quo hzU.unit * T i)) = algebraMap O K N * (s⁻¹ * φ2 (T i)) := by
     rw [hsm, map_mul, hq2]
   apply int_of_tr (N • (quo hzU.unit * T i)) (N * a1 + a2) (N * m)
-  · rw [htr, hX1, hX2, map_add, map_mul, ha1, ha2]
+  · rw [htr, hX1, hX2, map_add (f := _), map_mul, ha1, ha2]
   · rw [hnorm, hX1, hX2, map_mul, hm, hnorm (T i)]
     field_simp
 

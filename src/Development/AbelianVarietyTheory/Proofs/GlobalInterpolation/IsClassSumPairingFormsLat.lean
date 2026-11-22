@@ -1,17 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.PeriodPairingUnitLattice
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.ColumnAvoidanceConditions
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MinkowskiBoundComapLattice
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeExtensionAlongFieldEmbeddingDuals
-import Formalism.LocalToGlobal.Columns.ToHLat
-import Formalism.LocalToGlobal.Columns.CoefModB
-import Formalism.LocalToGlobal.Divisibility.FramesLemmas
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataAmbForm
+public import Formalism.LocalRingCardinality.DataKerP
+public import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.ColumnAvoidanceConditions
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MinkowskiBoundComapLattice
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeExtensionAlongFieldEmbeddingDuals
+public import Formalism.LocalToGlobal.Columns.ToHLat
+public import Formalism.LocalToGlobal.Columns.CoefModB
+public import Formalism.LocalToGlobal.Divisibility.FramesLemmas
+
+@[expose] public section
 
 noncomputable section
 
 namespace GlobalTheory.PeriodClassSum
 
-open NumberField IsDedekindDomain Module Formalism.BasicNotions Formalism.L2.Col Formalism.L2.DIV GlobalTheory.IndefiniteRowSideFullHecke
+open NumberField IsDedekindDomain Module Formalism.BasicNotions Formalism.L2.Col Formalism.L2.DIV
+open GlobalTheory.IndefiniteRowSideFullHecke
 open scoped Matrix ComplexOrder
 
 section Herm
@@ -27,7 +33,8 @@ theorem wForm_nonneg (hG : G.PosSemidef) (a : C → ι → ℂ) : 0 ≤ wForm w 
 
 theorem wForm_conj (hG : G.IsHermitian) (a b : C → ι → ℂ) : starRingEnd ℂ (wForm w G b a) = wForm w G a b := by
   unfold wForm
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [map_mul, map_inv₀, map_natCast, starRingEnd_apply, ← Matrix.star_dotProduct, Matrix.star_mulVec, hG.eq,
     ← Matrix.dotProduct_mulVec]
@@ -113,8 +120,9 @@ theorem coordAt_sum (v : InfinitePlace K) (x : S.EqFun) :
     coordAt S v (x : S.D → S.V) = ∑ i, v.embedding ((S.hB h).repr x i) • coordAt S v (S.hB h i : S.D → S.V) := by
   funext c k
   conv_lhs => rw [← (S.hB h).sum_repr x]
-  simp only [coordAt, AddSubmonoidClass.coe_finset_sum, Submodule.coe_smul, Finset.sum_apply, Pi.smul_apply, map_sum,
-    map_smul, Finsupp.coe_finset_sum, Finsupp.coe_smul, smul_eq_mul, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coordAt, AddSubmonoidClass.coe_finsetSum, Submodule.coe_smul, Finset.sum_apply, Pi.smul_apply, map_sum,
+    map_smul, Finset.sum_apply', Finsupp.coe_smul, smul_eq_mul, map_mul]
 
 theorem coordAt_indep (v : InfinitePlace K) :
     LinearIndependent ℂ fun i => fun p : S.Cl × S.ιV => coordAt S v (S.hB h i : S.D → S.V) p.1 p.2 := by
@@ -214,7 +222,8 @@ theorem gramB_posDef (φ : K →+* ℂ) : ((gramB K lam).map φ).PosDef := by
 theorem map_pairBK (φ : K →+* ℂ) (x y : VV K lam) :
     φ (pairBK lam x y) = (fun i => φ ((bVV K lam).repr x i)) ⬝ᵥ (gramB K lam).map φ *ᵥ fun i => φ ((bVV K lam).repr y i) := by
   conv_lhs => rw [← (bVV K lam).sum_repr x, ← (bVV K lam).sum_repr y]
-  simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, map_mul, dotProduct,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, map_mul, dotProduct,
     Matrix.mulVec, Matrix.map_apply, gramB, Matrix.of_apply, Finset.mul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
@@ -223,25 +232,8 @@ end Coeff
 
 section Level
 
-variable {X : Fields} {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))} (C C' : CoefPk X n (DecoSet X.E n ST SG))
+variable {X : Fields} {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))} (C C' : CoefPk X n (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)))
   (Λ : LevFam X.E X.K n SG)
-
-theorem chr_inv (g : Λ.grp) : Λ.inv.chr g = (Λ.chr g)⁻¹ := by
-  rw [LevFam.chr_apply Λ g, ← Finset.prod_inv_distrib]
-  exact LevFam.chr_apply Λ.inv g
-
-theorem pairBK_smul {K ι : Type} [Field K] [Fintype ι] (lam : ι → DomWeight n) (a b : Kˣ) (e : b = a⁻¹)
-    (x y : VV K lam) : pairBK lam ((a : K) • x) ((b : K) • y) = pairBK lam x y := by
-  rw [e, map_smul, map_smul, LinearMap.smul_apply, smul_smul, Units.inv_mul, one_smul]
-
-theorem card_stab_inv (d : DecoSet X.E n ST SG) :
-    Nat.card (MulAction.stabilizer (formGSD C' Λ.inv).G d) = Nat.card (MulAction.stabilizer (formGSD C Λ).G d) := by
-  let e : FormG Λ.inv ≃ FormG Λ := Equiv.refl (FormG Λ)
-  refine Nat.card_congr (Equiv.subtypeEquiv e fun a => ?_)
-  rw [MulAction.mem_stabilizer_iff, MulAction.mem_stabilizer_iff, formGSD_smul, formGSD_smul]
-  rfl
-
-def clInv : (formGSD C' Λ.inv).Cl ≃ (formGSD C Λ).Cl := Equiv.refl (formGSD C Λ).Cl
 
 end Level
 
@@ -253,38 +245,10 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Ch
   (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ} (mu : Tup X.F X.E X.K S)
   (P : LevFam X.E X.K R.r Pr.vGs)
 
-def dualVal (SG : Finset (HeightOneSpectrum (𝓞 X.E))) : CoefPk X (R.N R.m - 1) (DecoSet X.E (R.N R.m - 1) ∅ SG) :=
+def dualVal (SG : Finset (HeightOneSpectrum (𝓞 X.E))) : CoefPk X (R.N R.m - 1) (DecoSet (E := X.E) (n := R.N R.m - 1) (ST := ∅) (SG := SG)) :=
   roundPk X W.sgTrue fun d => d.1.N
 
 @[reducible] def dualGSD : GSD X.K := formGSD (dualVal W (rowSG Pr sel mu)) (rowTy Ch sel mu P)
-
-theorem dualOk (hX : X.Ok) : (dualGSD W Ch sel mu P).Ok :=
-  formGSD_ok _ _ hX
-    { nab_smul := fun a d => roundPk_nab X _ _ (d.1.N_act a.1.1 a.2)
-      del_smul := fun a d => roundPk_del X _ _ (d.1.N_act a.1.1 a.2)
-      inv := roundPk_inv X _ _ hX.emb_star }
-
-def rowPair : BiPair (dualGSD W Ch sel mu P) (mtildeGSD W Ch sel mu P) where
-  tr := MonoidHom.id (FormG (rowTy Ch sel mu P))
-  p := id
-  B := pairBK W.sgTrue
-  hp _ _ := rfl
-  inv g x y :=
-    (pairBK_smul W.sgTrue _ _ (chr_inv (rowTy Ch sel mu P) g.2) _ _).trans
-      (pairingBInvariant_holds X.E X.K X.Tau _ X.emb W.sgTrue (ufGL _ _ g.1) x y)
-
-def classSum (h : (mtildeGSD W Ch sel mu P).Ok) :
-    (dualGSD W Ch sel mu P).EqFun →ₗ[X.K] (mtildeGSD W Ch sel mu P).EqFun →ₗ[X.K] X.K :=
-  (rowPair W Ch sel mu P).formOf h (mtildeGSD W Ch sel mu P).outSec
-
-theorem dual_gramV : (dualGSD W Ch sel mu P).gramV = gramB X.K W.sgTrue := by
-  ext i j
-  have e : gramKd X.emb (1 : Matrix (Fin (R.N R.m - 1)) (Fin (R.N R.m - 1)) X.E) = fun _ => 1 := by
-    funext τ
-    rw [gramKd, Matrix.map_one _ (map_zero _) (map_one _), inv_one, Matrix.transpose_one]
-  show pairK W.sgTrue (gramKd X.emb 1) (bVV _ _ i) (bVV _ _ j) = _
-  rw [e]
-  exact pairK_one_basis W.sgTrue i j
 
 theorem row_gramV : (mtildeGSD W Ch sel mu P).gramV = gramB X.K W.sgTrue := by
   ext i j
@@ -297,11 +261,6 @@ theorem row_gramV : (mtildeGSD W Ch sel mu P).gramV = gramB X.K W.sgTrue := by
 
 variable (h : (mtildeGSD W Ch sel mu P).Ok) (h' : (dualGSD W Ch sel mu P).Ok)
 
-def IsConcrete (emb : X.K →+* ℂ) (Λ Λ' : HLat X.K) (per : Λ.V → Λ'.V → ℂ) : Prop :=
-  ∃ (κ : Λ.V ≃ₗ[X.K] (dualGSD W Ch sel mu P).EqFun) (ι : Λ'.V ≃ₗ[X.K] (mtildeGSD W Ch sel mu P).EqFun),
-    IsFormsOf _ h' (dualGSD W Ch sel mu P).intDel Λ κ ∧ IsFormsOf _ h (MtildeL W Ch sel mu P) Λ' ι ∧
-      ∀ x z, per x z = emb (classSum W Ch sel mu P h (κ x) (ι z))
-
 variable {W Ch sel mu P h h'}
 
 end Concrete
@@ -313,22 +272,8 @@ open ColumnAvoidanceConditions
 variable (D : D7) (EX : ErrX D) (Ch : Chars (fieldsOf D) (primesOf D EX) D.R.m)
   (sel : HeightOneSpectrum (𝓞 (fieldsOf D).F) → HeightOneSpectrum (𝓞 (fieldsOf D).E)) {S : Set ℕ}
 
-def LayerTie (ξ : Tup (fieldsOf D).F (fieldsOf D).E (fieldsOf D).K S) {hc : D.what₂.Tau → HCParam D.R}
-    {C : ColumnChain D.R D.what₂.Tau hc} {A : ColumnsAtT D.R C} {P : PeriodMap D.R C}
-    (M : MemberForms D.what₂.LL D.what₂.embLL D.what₂.places D.what₂.Tau hc C A P) (Λ' : HLat D.what₂.LL)
-    (per : M.ptLat.V → Λ'.V → ℂ) : Prop :=
-  ∃ (h : (mtildeGSD (wtsOf D EX) Ch sel ξ (rPsymF Ch)).Ok) (h' : (dualGSD (wtsOf D EX) Ch sel ξ (rPsymF Ch)).Ok),
-    IsConcrete (wtsOf D EX) Ch sel ξ (rPsymF Ch) h h' D.what₂.embLL M.ptLat Λ' per ∧
-      ∃ e : M.clsP ≃ (mtildeGSD (wtsOf D EX) Ch sel ξ (rPsymF Ch)).Cl,
-        ∀ c, Nat.card (M.stabilizer₂ c) = ((mtildeGSD (wtsOf D EX) Ch sel ξ (rPsymF Ch)).toCSD h).wt (e c)
-
 variable (tw : D.what₂.Tup → Tup (fieldsOf D).F (fieldsOf D).E (fieldsOf D).K S) (Tw : TwForms D)
   (A : AmbForm D (RowSide.sharp D)) (u : D.what₂.Word)
-
-def PeriodTie : Prop :=
-  LayerTie D EX Ch sel (1 : Tup (fieldsOf D).F (fieldsOf D).E (fieldsOf D).K S) (D.fm u) (A.MtH D.what₂.mu0)
-      (PeriodPairingUnitLattice.per0 D A u) ∧
-    ∀ μ, DV.Used D μ → μ ≠ D.what₂.mu0 → LayerTie D EX Ch sel (tw μ) (Tw.fm u μ) (A.MtH μ) (PeriodPairingUnitLattice.perTw D Tw A u μ)
 
 end Record
 

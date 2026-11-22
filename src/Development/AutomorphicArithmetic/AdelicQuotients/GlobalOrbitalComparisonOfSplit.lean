@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SelmerRankBoundLaurent
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SelmerRankBoundLaurent
+
+@[expose] public section
+
 open PositivityTheory.Rg.Tf.Geo UpperTheory.ConvolutionTheory.G UpperTheory.ConvolutionTheory.T4
 open MeasureTheory NumberField GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Global GroundTheory.Global.AdeleBaseChange PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Loc
 
@@ -92,7 +97,7 @@ theorem UpperTheory.globalOrbitalComparison_of_split :
       rw [heE]
       simp only [map_one, mul_one]
     have hm : ∀ x : G1 E n, (x : GA E n)⁻¹ * AdelicGLn.diagonal E n δ * mapGL n (galAd σ) (x : GA E n) ∈
-        normOneGL E n := by
+        normOneGL (K := E) (n := n) := by
       intro x
       have hx : detModule E n (x : GA E n) = 1 := mem_normOneGL_iff_detModule.1 x.2
       rw [mem_normOneGL_iff_detModule, map_mul, map_mul, map_inv, (hN5 F E σ hσ n hn).2.2, hx, diag_mem]
@@ -100,7 +105,7 @@ theorem UpperTheory.globalOrbitalComparison_of_split :
     have hx : (fun x : G1 E n => ext0 (avg Φ) ((x : GA E n)⁻¹ * AdelicGLn.diagonal E n δ *
         mapGL n (galAd σ) (x : GA E n))) = fun x => FE σ δ Φ (eE (x, 1)) := by
       funext x
-      rw [h1, ext0, dif_pos (hm x)]
+      rw [h1, ext0, dite_eq_left (hm x)]
       rfl
     rw [hx]
     have hmeas : Measurable fun x : G1 E n => FE σ δ Φ (eE (x, 1)) := by
@@ -116,7 +121,7 @@ theorem UpperTheory.globalOrbitalComparison_of_split :
       rw [h4] at h2
       rw [h1, h1]
       simpa using h2
-    have hq := hQ (GA E n) (Subgroup.centralizer {γ₁} : Subgroup (G1 F n)) (normOneGL E n) isClosed_normOneGL
+    have hq := hQ (GA E n) (Subgroup.centralizer {γ₁} : Subgroup (G1 F n)) (normOneGL (K := E) (n := n)) isClosed_normOneGL
       μE j ν hPE _ hmeas hinv
     have hj' : (fun t : Subgroup.centralizer {γ₁} => (j t : GA E n)) =
         fun t : Subgroup.centralizer {γ₁} => mapGL n (adeleMap F E) ((t : G1 F n) : GA F n) := funext hjv

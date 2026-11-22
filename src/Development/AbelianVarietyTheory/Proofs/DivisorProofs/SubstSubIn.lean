@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvPowerSeriesCoeffsInIdealPowEqFactorialMulStatement
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvPowerSeriesCoeffsInIdealPowEqFactorialMulStatement
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
 
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
@@ -10,7 +14,7 @@ variable {B Q : Type} [CommRing B] [CommRing Q] [Algebra B Q]
 
 def coeffIdeal (τ : Type) (J : Ideal B) : Ideal (MvPowerSeries τ B) where
   carrier := {w | ∀ α, coeff α w ∈ J}
-  add_mem' ha hb α := by rw [map_add]; exact J.add_mem (ha α) (hb α)
+  add_mem' ha hb α := by rw [map_add (f := _)]; exact J.add_mem (ha α) (hb α)
   zero_mem' α := by rw [map_zero]; exact J.zero_mem
   smul_mem' c x hx α := by
     classical
@@ -22,11 +26,12 @@ def scaledIdeal (τ : Type) (K : Ideal B) (c : Q) : Ideal (MvPowerSeries τ B) w
   add_mem' {x y} hx hy γ := by
     obtain ⟨a, ha, ea⟩ := hx γ
     obtain ⟨b, hb, eb⟩ := hy γ
-    exact ⟨a + b, K.add_mem ha hb, by rw [map_add, map_add, mul_add, ea, eb, map_add]⟩
+    exact ⟨a + b, K.add_mem ha hb, by rw [map_add (f := _), map_add (f := _), mul_add, ea, eb, map_add (f := _)]⟩
   zero_mem' γ := ⟨0, K.zero_mem, by simp⟩
   smul_mem' r x hx γ := by
     classical
-    rw [smul_eq_mul, coeff_mul, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [smul_eq_mul, coeff_mul, map_sum, Finset.mul_sum]
     have key : ∀ q ∈ Finset.HasAntidiagonal.antidiagonal γ, ∃ b ∈ K,
         c * algebraMap B Q (coeff q.1 r * coeff q.2 x) = algebraMap B Q b := by
       intro q _
@@ -34,7 +39,8 @@ def scaledIdeal (τ : Type) (K : Ideal B) (c : Q) : Ideal (MvPowerSeries τ B) w
       exact ⟨coeff q.1 r * b, K.mul_mem_left _ hb, by rw [map_mul, map_mul, ← eb]; ring⟩
     choose! g hg eg using key
     exact ⟨∑ q ∈ Finset.HasAntidiagonal.antidiagonal γ, g q, K.sum_mem hg, by
-      rw [map_sum]; exact Finset.sum_congr rfl eg⟩
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]; exact Finset.sum_congr rfl eg⟩
 
 end GlobalTheory.KatzCongr
 
@@ -84,7 +90,9 @@ end GlobalTheory.KatzCongr
 
 namespace GlobalTheory.KatzCongr
 
-theorem subst_sub_in : ∀ (p : ℕ) [Fact p.Prime] (B O Q : Type) [CommRing B] [CommRing Q] [CommRing O] [Algebra B Q] (θ : B →+* O), IsFrame p Q θ → ∀ J : Ideal B, (∀ x ∈ J, ∃ y ∈ J, x ^ p = p * y) → ∀ (σ τ : Type) [Fintype σ] (N : Ideal B) (f : MvPowerSeries σ Q) (u v : σ → MvPowerSeries τ B), DIn N f → (∀ i, constantCoeff (u i) = 0) → (∀ i, constantCoeff (v i) = 0) → (∀ i α, coeff α (u i - v i) ∈ J) → In (J * N) (subst (up Q u) f - subst (up Q v) f) := by
+theorem subst_sub_in : ∀ (p : ℕ) [Fact p.Prime] (B O Q : Type) [CommRing B] [CommRing Q] [CommRing O] [Algebra B Q] (θ : B →+* O), IsFrame p Q θ → ∀ J : Ideal B, (∀ x ∈ J, ∃ y ∈ J, x ^ p = p * y) → ∀ (σ τ : Type) [Fintype σ] (N : Ideal B) (f : MvPowerSeries σ Q) (u v : σ → MvPowerSeries τ B), DIn N f → (∀ i, constantCoeff (u i) = 0) → (∀ i, constantCoeff (v i) = 0) → (∀ i α, coeff α (u i - v i) ∈ J) →
+    In (J * N) (MvPowerSeries.subst (σ := σ) (τ := τ) (R := Q) (S := Q) (up Q u) f -
+      MvPowerSeries.subst (σ := σ) (τ := τ) (R := Q) (S := Q) (up Q v) f) := by
   intro p _ B O Q _ _ _ _ θ hF J hJ σ τ _ N f u v hf hu hv huv
   classical
   have hdp : ∀ w ∈ coeffIdeal τ J, ∀ n : ℕ, 0 < n →
@@ -97,7 +105,7 @@ theorem subst_sub_in : ∀ (p : ℕ) [Fact p.Prime] (B O Q : Type) [CommRing B] 
   rw [map_sub, coeff_subst hsU, coeff_subst hsV,
     ← finsum_sub_distrib (coeff_subst_finite hsU f γ) (coeff_subst_finite hsV f γ)]
   refine finsum_induction (fun q => ∃ b ∈ J * N, q = algebraMap B Q b) ⟨0, Submodule.zero_mem _, by simp⟩
-    (fun x y ⟨a, ha, ea⟩ ⟨b, hb, eb⟩ => ⟨a + b, Submodule.add_mem _ ha hb, by rw [ea, eb, map_add]⟩)
+    (fun x y ⟨a, ha, ea⟩ ⟨b, hb, eb⟩ => ⟨a + b, Submodule.add_mem _ ha hb, by rw [ea, eb, map_add (f := _)]⟩)
     (fun d => ?_)
   have hprod : ∀ w : σ → MvPowerSeries τ B,
       (d.prod fun s e => up Q w s ^ e) = map (algebraMap B Q) (∏ i, w i ^ d i) := by

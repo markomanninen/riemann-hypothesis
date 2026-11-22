@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyEquivOfSemilinear
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleOfSurjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ReductionSameSSOfLattices
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleStd
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSeriesOfExact
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PhiGammaLatticeFamiliesShiftInclusion
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIntegralCyclotomicChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyEquivOfSemilinear
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleOfSurjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ReductionSameSSOfLattices
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleStd
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSeriesOfExact
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PhiGammaLatticeFamiliesShiftInclusion
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIntegralCyclotomicChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -159,8 +163,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {r₀ : ℕ} {D : TopData n r₀}
     {RN : ∀ (T : LocLat G Qp LL O) (A : Ob k G), (↥T.L.T →ₗ[O] (Fin A.m → k)) → Lats k n A.m → Prop}
 
-variable (Γ RN) in
 
+variable (Γ RN) in
 def Red (T : LocLat G Qp LL O) (A : Ob k G) (q : ↥T.L.T →ₗ[O] (Fin A.m → k)) (N : Lats k n A.m) : Prop :=
   Onto T A q ∧ KerIs Γ.lam q ∧ RN T A q N
 
@@ -172,8 +176,8 @@ theorem crys_tw (htw : StdAdm.TwistRule PD emb O) (hθ : IsCrysChar PD emb Γ.χ
     CrysWith PD emb (tw hθ T).ρ (fun i => (U i).map (· + -D.w i)) :=
   (htw T U _ _ h hθ).1
 
-variable (RN) in
 
+variable (RN) in
 def Base (hθ : IsCrysChar PD emb Γ.χ₁⁻¹ fun i => -D.w i) (A : Ob k G) (N : Lats k n A.m) : Prop :=
   ∃ (μ : ℕ) (T : LocLat G Qp LL O) (q : ↥(tw hθ T).L.T →ₗ[O] (Fin A.m → k)),
     SumFull PD emb Γ D.t D.Ut μ T ∧ Red Γ RN (tw hθ T) A q N
@@ -221,7 +225,8 @@ theorem exists_red {T : LocLat G Qp LL O} {U : ZMod n → Multiset ℤ} (h : Cry
   obtain ⟨A, q, hm, hq, hK, hg⟩ := exists_reduction hk.1 hk.2 (latRep T.L)
   obtain ⟨N, hN, -⟩ := hex T A q U ⟨hq, hg⟩ hK h
   refine ⟨A, q, N, hm.trans ?_, ⟨hq, hg⟩, hK, hN⟩
-  have : Submodule.IsLattice LL T.L.T := ⟨T.L.fg, T.L.span⟩
+  have : Submodule.IsFullLattice LL T.L.T :=
+    { toIsLattice := Submodule.IsLattice.of_fg LL T.L.fg, span_eq_top := T.L.span }
   rw [Module.finrank, Module.finrank, Submodule.IsLattice.rank' LL]
 
 theorem exists_red_sum {T T' : LocLat G Qp LL O} {U U' : ZMod n → Multiset ℤ} (h : CrysWith PD emb T.ρ U)

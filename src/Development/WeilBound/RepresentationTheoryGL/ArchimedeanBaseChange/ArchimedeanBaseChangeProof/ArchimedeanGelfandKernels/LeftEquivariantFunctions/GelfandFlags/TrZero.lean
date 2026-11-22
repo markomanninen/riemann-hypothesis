@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.IntSmooth
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.IntSmooth
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,7 +12,7 @@ theorem trZero : TrZero := by
   intro V _ _ _ B T e i c hc hei heB hTe
   let t : (V →L[ℂ] V) → ℂ := fun A => LinearMap.trace ℂ V (A : V →ₗ[ℂ] V)
   have tadd : ∀ A A' : V →L[ℂ] V, t (A + A') = t A + t A' := fun A A' => by
-    simp only [t, ContinuousLinearMap.coe_add, map_add]
+    simp only [t, ContinuousLinearMap.coe_add, map_add (f := _)]
   have tneg : ∀ A : V →L[ℂ] V, t (-A) = -t A := fun A => by
     simp only [t, ContinuousLinearMap.coe_neg, map_neg]
   have tsmul : ∀ (a : ℂ) (A : V →L[ℂ] V), t (a • A) = a * t A := fun a A => by

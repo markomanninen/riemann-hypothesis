@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjFrameBasePtFree
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjFrameImage
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjFrameGraphDeg
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.FirstPointNeSecondPoint
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IsSmoothHermFubiniStudyO1
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjFrameBasePtFree
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjFrameImage
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjFrameGraphDeg
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.FirstPointNeSecondPoint
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IsSmoothHermFubiniStudyO1
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -33,7 +38,7 @@ theorem isSmoothHerm_ofCone {m : ConeMetric ℂ (Ix κ)} (hm : IsSmoothMetric m)
   exact fun h0 => hi (congrFun h0 _)
 
 theorem fs_linApply (e : Fin (D + 1) → Ix κ) (z : Ix κ → ℂ) :
-    (HermLine.ofCone (fsMetric (Ix (Fin (D + 1))))).h
+    (HermLine.ofCone (fsMetric (ι := Ix (Fin (D + 1))))).h
         (linApply (ι := GlobalTheory κ) (ι₂ := GlobalTheory (Fin (D + 1))) (projMat e) z) =
       Real.sqrt (∑ k, ‖z (e k)‖ ^ 2) := by
   simp only [HermLine.ofCone, fsMetric, EuclideanSpace.norm_eq]
@@ -44,17 +49,26 @@ theorem fs_linApply (e : Fin (D + 1) → Ix κ) (z : Ix κ → ℂ) :
 
 end TopPullFS
 
-open TopPullFS in
 
+open TopPullFS in
 theorem TopPullFS.proof (hCM : ChangeOfModelStatement) (hBP : ProjFrameBasePtFree.Statement)
     (hIm : ProjFrameImage.Statement) (hDeg : ProjFrameGraphDeg.Statement) : TopPullFS.Statement := by
   intro D Ω _ _ κ _ I x m e hI hP hm hfr hFS
   obtain ⟨G, J, hJ, hJe⟩ := hDeg D Ω κ x e hP hfr
   have himg := hIm D Ω κ x e hfr
+  have hSmoothFS : IsSmoothHerm (HermLine.ofCone (fsMetric (ι := Ix (Fin (D + 1))))) := by
+    apply isSmoothHerm_ofCone
+    intro z hz
+    change ContDiffWithinAt ℝ _ (fun w : Ix (Fin (D + 1)) → ℂ => ‖WithLp.toLp 2 w‖) _ z
+    have hL : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞)
+        (WithLp.toLp 2 : (Ix (Fin (D + 1)) → ℂ) → _) :=
+      PiLp.contDiff_toLp
+    have hz' : WithLp.toLp 2 z ≠ 0 := by simpa using hz
+    exact (hL.contDiffAt.norm ℂ hz').contDiffWithinAt
   have key := hCM I hI Unit (GlobalTheory κ) (GlobalTheory (Fin (D + 1))) (coordIdeal ℤ x) (D + 1) (projMat e) G J
-    (fun _ => HermLine.ofCone (fsMetric (Ix (Fin (D + 1))))) (fun _ => HermLine.ofCone m) hP
+    (fun _ => HermLine.ofCone (fsMetric (ι := Ix (Fin (D + 1))))) (fun _ => HermLine.ofCone m) hP
     (hBP D Ω κ x e hfr) (by rw [himg]; exact IndefiniteRowSideFullHecke.Inter.isArithVar_bot D) hJ
-    (fun _ => IndefiniteRowSideFullHecke.HilbertSamuel.P1.isSmoothHerm_fs) (fun _ => isSmoothHerm_ofCone hm) (fun _ => rfl)
+    (fun _ => hSmoothFS) (fun _ => isSmoothHerm_ofCone hm) (fun _ => rfl)
     (fun _ z hz => by
       rw [fs_linApply]
       exact hFS z ⟨fun h0 => by obtain ⟨i, hi⟩ := hz.1 (); exact hi (congrFun h0 _), hz.2⟩)

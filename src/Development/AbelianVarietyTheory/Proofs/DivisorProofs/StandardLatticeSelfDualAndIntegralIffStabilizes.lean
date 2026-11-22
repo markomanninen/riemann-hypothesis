@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodModModT
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardLatticeDoubleCosetClassesStabilisers
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SelfDualCLatP
-import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBaseChangeFiniteAdeleRingEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodModModT
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardLatticeDoubleCosetClassesStabilisers
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SelfDualCLatP
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBaseChangeFiniteAdeleRingEquiv
+
+@[expose] public section
 
 open NumberField MeasureTheory IsDedekindDomain UniqueFactorizationMonoid
 open scoped Classical Pointwise
@@ -50,7 +54,7 @@ theorem mem_intAE_iff_swap (z : Af D.host.F ⊗[D.host.F] D.host.E) :
       exact mul_mem (Subring.subset_closure (Or.inl ⟨⟨_, x, rfl⟩, rfl⟩))
         (Subring.subset_closure (Or.inr ⟨⟨a, fun v => ha v⟩, rfl⟩))
     | zero => rw [RingHom.map_zero]; exact zero_mem _
-    | add y z _ _ hy hz => rw [RingHom.map_add]; exact add_mem hy hz
+    | add y z _ _ hy hz => rw [RingHom.map_add (f := _)]; exact add_mem hy hz
     | neg y _ hy => rw [RingHom.map_neg]; exact neg_mem hy
   · intro hz
     let c := (Algebra.TensorProduct.comm D.host.F D.host.E (Af D.host.F)).toRingEquiv.toRingHom
@@ -64,7 +68,7 @@ theorem mem_intAE_iff_swap (z : Af D.host.F ⊗[D.host.F] D.host.E) :
       induction w using TensorProduct.induction_on with
       | zero => rw [RingHom.map_zero, RingHom.map_zero]
       | tmul a b => rfl
-      | add a b ha hb => rw [RingHom.map_add, RingHom.map_add, ha, hb]
+      | add a b ha hb => rw [RingHom.map_add (f := _), RingHom.map_add (f := _), ha, hb]
     have h : c (Lev.swapAE D z) ∈ intSub D := key hz
     rw [e] at h
     exact h
@@ -133,8 +137,8 @@ theorem stdLat_eq (V : HSp D) : stdLat V = GlobalTheory.SW.stdL D.host.E V.rank 
 
 end GlobalTheory.NormRatio.StdLevel
 
-open GlobalTheory.NormRatio.StdLevel in
 
+open GlobalTheory.NormRatio.StdLevel in
 theorem GlobalTheory.NormRatio.selfDual_and_mem_intG_iff : ∀ {D : D7} (V : HSp D) (n : ℕ) (g : GA D V) (x : Formalism.MainNotions.StandardLatticesGL3.GA D n),
     V.gram = 1 → V.rank = n → GlobalTheory.BotFormula.IsFinPt V g x →
     IsSelfDualC V (stdLat V) ∧ (x ∈ intG D n ↔ g ∈ openOff V (stdLat V) ∅) := by
@@ -163,7 +167,7 @@ theorem GlobalTheory.NormRatio.selfDual_and_mem_intG_iff : ∀ {D : D7} (V : HSp
     have e : g ∈ openOff V (stdLat V) ∅ ↔ g ∈ GlobalTheory.AdelicU.levelOpen _ (HSpace.gram V) (stdLat V) := by
       rw [GlobalTheory.AdelicU.mem_levelOpen]; simp [openOff]
     haveI := hSD.1
-    rw [e, GlobalTheory.AdelicU.mem_levelOpen_iff_latHat _ _ Submodule.IsLattice.fg]
+    rw [e, GlobalTheory.AdelicU.mem_levelOpen_iff_latHat _ _ (Submodule.IsLattice.fg D.host.E (stdLat V))]
     refine forall_congr' fun y => ?_
     rw [mem_latHat_stdLat, mem_latHat_stdLat]
     rfl

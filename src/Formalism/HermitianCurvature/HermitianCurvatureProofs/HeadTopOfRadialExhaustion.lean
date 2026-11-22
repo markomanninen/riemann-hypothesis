@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadTopOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopFirstOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaCompactSupport
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBTAsm
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadTopOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopFirstOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaCompactSupport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBTAsm
+
+@[expose] public section
 
 noncomputable section
 

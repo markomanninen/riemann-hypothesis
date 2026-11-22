@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.TateCohomology.CupCochains
-import GroundTheory.ProfiniteCohomology.ContinuousCochains
-import GroundTheory.ProfiniteCohomology.Bridge
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.CupCochains
+public import GroundTheory.ProfiniteCohomology.ContinuousCochains
+public import GroundTheory.ProfiniteCohomology.Bridge
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -16,8 +21,8 @@ variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G]
 
 section Discrete
 
-omit [TopologicalSpace G] in
 
+omit [TopologicalSpace G] in
 theorem stabilizer_inf_le_stabilizer_tmul (A B : Rep.{u} k G) (a : A) (b : B) :
     stabilizer A.ρ a ⊓ stabilizer B.ρ b ≤
       stabilizer (A ⊗ B).ρ (a ⊗ₜ[k] b : (A ⊗ B : Rep k G)) := by
@@ -84,13 +89,13 @@ theorem cupCochain_zero_right (h : p + q = n) (f : (Fin p → G) → A) :
 
 section Elements
 
-variable (A) in
 
+variable (A) in
 def cochainOf [IsDiscreteRep A] {i : ℕ} (a : (cochainsComplex A).X i) : (Fin i → G) → A :=
   (a : locallyConstantCochains A i).1
 
-variable (A) in
 
+variable (A) in
 def mkCochain [IsDiscreteRep A] {i : ℕ} (c : (Fin i → G) → A) (hc : IsLocallyConstant c) :
     (cochainsComplex A).X i :=
   (⟨c, hc⟩ : locallyConstantCochains A i)
@@ -99,33 +104,33 @@ variable [IsDiscreteRep A]
 
 @[simp]
 theorem cochainOf_mkCochain {i : ℕ} (c : (Fin i → G) → A) (hc : IsLocallyConstant c) :
-    cochainOf A (mkCochain A c hc) = c :=
+    cochainOf (A := A) (mkCochain (A := A) c hc) = c :=
   rfl
 
 theorem isLocallyConstant_cochainOf {i : ℕ} (a : (cochainsComplex A).X i) :
-    IsLocallyConstant (cochainOf A a) :=
+    IsLocallyConstant (cochainOf (A := A) a) :=
   (a : locallyConstantCochains A i).2
 
-theorem cochainOf_injective {i : ℕ} : Function.Injective (cochainOf A (i := i)) :=
+theorem cochainOf_injective {i : ℕ} : Function.Injective (cochainOf (A := A) (i := i)) :=
   fun _ _ h => Subtype.ext h
 
 @[simp]
 theorem cochainOf_add {i : ℕ} (a b : (cochainsComplex A).X i) :
-    cochainOf A (a + b) = cochainOf A a + cochainOf A b :=
+    cochainOf (A := A) (a + b) = cochainOf (A := A) a + cochainOf (A := A) b :=
   rfl
 
 @[simp]
 theorem cochainOf_smul {i : ℕ} (c : k) (a : (cochainsComplex A).X i) :
-    cochainOf A (c • a) = c • cochainOf A a :=
+    cochainOf (A := A) (c • a) = c • cochainOf (A := A) a :=
   rfl
 
 @[simp]
-theorem cochainOf_zero {i : ℕ} : cochainOf A (0 : (cochainsComplex A).X i) = 0 :=
+theorem cochainOf_zero {i : ℕ} : cochainOf (A := A) (0 : (cochainsComplex A).X i) = 0 :=
   rfl
 
 theorem cochainOf_d {i : ℕ} (a : (cochainsComplex A).X i) :
-    cochainOf A ((cochainsComplex A).d i (i + 1) a) =
-      (inhomogeneousCochains.d A i).hom (cochainOf A a) := by
+    cochainOf (A := A) ((cochainsComplex A).d i (i + 1) a) =
+      (inhomogeneousCochains.d A i).hom (cochainOf (A := A) a) := by
   rw [cochainsComplex_d]
   rfl
 
@@ -135,18 +140,18 @@ variable [IsDiscreteRep A] [IsDiscreteRep B]
 
 def cupLocallyConstant (h : p + q = n) :
     (cochainsComplex A).X p →ₗ[k] (cochainsComplex B).X q →ₗ[k] (cochainsComplex (A ⊗ B)).X n :=
-  LinearMap.mk₂ k (fun f g => mkCochain (A ⊗ B) (cupCochain h (cochainOf A f) (cochainOf B g))
+  LinearMap.mk₂ k (fun f g => mkCochain (A := A ⊗ B) (cupCochain h (cochainOf (A := A) f) (cochainOf (A := B) g))
       (isLocallyConstant_cupCochain h (isLocallyConstant_cochainOf f)
         (isLocallyConstant_cochainOf g)))
-    (fun f f' g => cochainOf_injective ((cupₗ h).map_add₂ (cochainOf A f) (cochainOf A f') (cochainOf B g)))
-    (fun c f g => cochainOf_injective ((cupₗ h).map_smul₂ c (cochainOf A f) (cochainOf B g)))
-    (fun f g g' => cochainOf_injective ((cupₗ h (cochainOf A f)).map_add (cochainOf B g) (cochainOf B g')))
-    (fun c f g => cochainOf_injective ((cupₗ h (cochainOf A f)).map_smul c (cochainOf B g)))
+    (fun f f' g => cochainOf_injective ((cupₗ h).map_add₂ (cochainOf (A := A) f) (cochainOf (A := A) f') (cochainOf (A := B) g)))
+    (fun c f g => cochainOf_injective ((cupₗ h).map_smul₂ c (cochainOf (A := A) f) (cochainOf (A := B) g)))
+    (fun f g g' => cochainOf_injective ((cupₗ h (cochainOf (A := A) f)).map_add (cochainOf (A := B) g) (cochainOf (A := B) g')))
+    (fun c f g => cochainOf_injective ((cupₗ h (cochainOf (A := A) f)).map_smul c (cochainOf (A := B) g)))
 
 @[simp]
 theorem cochainOf_cupLocallyConstant (h : p + q = n) (f : (cochainsComplex A).X p)
     (g : (cochainsComplex B).X q) :
-    cochainOf (A ⊗ B) (cupLocallyConstant h f g) = cupCochain h (cochainOf A f) (cochainOf B g) :=
+    cochainOf (A := A ⊗ B) (cupLocallyConstant h f g) = cupCochain h (cochainOf (A := A) f) (cochainOf (A := B) g) :=
   rfl
 
 end LocallyConstant
@@ -155,41 +160,41 @@ section Cocycles
 
 variable {A B : Rep.{u} k G} [IsDiscreteRep A] [IsDiscreteRep B] {p q n : ℕ}
 
-variable (A p) in
 
+variable (A p) in
 def cocycleι : cocycles A p →ₗ[k] (cochainsComplex A).X p :=
   ((cochainsComplex A).iCycles p).hom
 
-theorem cocycleι_injective : Function.Injective (cocycleι A p) :=
+theorem cocycleι_injective : Function.Injective (cocycleι (A := A) (p := p)) :=
   (ModuleCat.mono_iff_injective ((cochainsComplex A).iCycles p)).1 inferInstance
 
 theorem d_cocycleι (x : cocycles A p) :
-    (inhomogeneousCochains.d A p).hom (cochainOf A (cocycleι A p x)) = 0 := by
+    (inhomogeneousCochains.d A p).hom (cochainOf (A := A) (cocycleι (A := A) (p := p) x)) = 0 := by
   rw [← cochainOf_d]
   have h := congrArg (fun φ => φ.hom x) ((cochainsComplex A).iCycles_d p (p + 1))
-  exact congrArg (cochainOf A) h
+  exact congrArg (cochainOf (A := A)) h
 
 theorem cochainOf_cocycleι_toCycles {i : ℕ} (a : (cochainsComplex A).X i) :
-    cochainOf A (cocycleι A (i + 1) ((cochainsComplex A).toCycles i (i + 1) a)) =
-      (inhomogeneousCochains.d A i).hom (cochainOf A a) := by
+    cochainOf (A := A) (cocycleι (A := A) (p := i + 1) ((cochainsComplex A).toCycles i (i + 1) a)) =
+      (inhomogeneousCochains.d A i).hom (cochainOf (A := A) a) := by
   rw [← cochainOf_d]
-  exact congrArg (fun φ => cochainOf A (φ.hom a)) ((cochainsComplex A).toCycles_i i (i + 1))
+  exact congrArg (fun φ => cochainOf (A := A) (φ.hom a)) ((cochainsComplex A).toCycles_i i (i + 1))
 
 theorem isCocycle_cupCochain (h : p + q = n) (x : cocycles A p) (y : cocycles B q) :
     (inhomogeneousCochains.d (A ⊗ B) n).hom
-      (cupCochain h (cochainOf A (cocycleι A p x)) (cochainOf B (cocycleι B q y))) = 0 := by
+      (cupCochain h (cochainOf (A := A) (cocycleι (A := A) (p := p) x)) (cochainOf (A := B) (cocycleι (A := B) (p := q) y))) = 0 := by
   rw [d_cupCochain, d_cocycleι, d_cocycleι, cupCochain_zero_left, cupCochain_zero_right,
     smul_zero, add_zero]
 
 def cupCocyclesAlt (h : p + q = n) (x : cocycles A p) (y : cocycles B q) : cocycles (A ⊗ B) n :=
   (cochainsComplex (A ⊗ B)).cyclesMk
-    (cupLocallyConstant h (cocycleι A p x) (cocycleι B q y)) (n + 1) (by simp) (by
+    (cupLocallyConstant h (cocycleι (A := A) (p := p) x) (cocycleι (A := B) (p := q) y)) (n + 1) (by simp) (by
       apply cochainOf_injective (A := A ⊗ B)
       exact (cochainOf_d (A := A ⊗ B) _).trans (isCocycle_cupCochain h x y))
 
 theorem cocycle_inclusion_cupCocycles (h : p + q = n) (x : cocycles A p) (y : cocycles B q) :
-    cocycleι (A ⊗ B) n (cupCocyclesAlt h x y) =
-      cupLocallyConstant h (cocycleι A p x) (cocycleι B q y) :=
+    cocycleι (A := A ⊗ B) (p := n) (cupCocyclesAlt h x y) =
+      cupLocallyConstant h (cocycleι (A := A) (p := p) x) (cocycleι (A := B) (p := q) y) :=
   (cochainsComplex (A ⊗ B)).i_cyclesMk _ _ _ _
 
 def cupCocycles (h : p + q = n) :
@@ -202,14 +207,14 @@ def cupCocycles (h : p + q = n) :
 
 @[simp]
 theorem cocycleι_cupCocycles (h : p + q = n) (x : cocycles A p) (y : cocycles B q) :
-    cocycleι (A ⊗ B) n (cupCocycles h x y) =
-      cupLocallyConstant h (cocycleι A p x) (cocycleι B q y) :=
+    cocycleι (A := A ⊗ B) (p := n) (cupCocycles h x y) =
+      cupLocallyConstant h (cocycleι (A := A) (p := p) x) (cocycleι (A := B) (p := q) y) :=
   cocycle_inclusion_cupCocycles h x y
 
 theorem cupCocycles_toCycles_left (h : p + q = n) {i m : ℕ} (hi : i + 1 = p) (hm : i + q = m)
     (hmn : m + 1 = n) (a : (cochainsComplex A).X i) (y : cocycles B q) :
     cupCocycles h ((cochainsComplex A).toCycles i p a) y =
-      (cochainsComplex (A ⊗ B)).toCycles m n (cupLocallyConstant hm a (cocycleι B q y)) := by
+      (cochainsComplex (A ⊗ B)).toCycles m n (cupLocallyConstant hm a (cocycleι (A := B) (p := q) y)) := by
   subst hi hm hmn
   apply cocycleι_injective
   apply cochainOf_injective
@@ -221,7 +226,7 @@ theorem cupCocycles_toCycles_right (h : p + q = n) {j m : ℕ} (hj : j + 1 = q) 
     (hmn : m + 1 = n) (x : cocycles A p) (b : (cochainsComplex B).X j) :
     cupCocycles h x ((cochainsComplex B).toCycles j q b) =
       (-1 : k) ^ p • (cochainsComplex (A ⊗ B)).toCycles m n
-        (cupLocallyConstant hm (cocycleι A p x) b) := by
+        (cupLocallyConstant hm (cocycleι (A := A) (p := p) x) b) := by
   subst hj hm hmn
   apply cocycleι_injective
   apply cochainOf_injective

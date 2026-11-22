@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.EigOrdInt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.AdmLocal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.EigOrdInt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.AdmLocal
+
+@[expose] public section
+
 open IsLocalRing UpperTheory.V.Hi UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite
 
 open TensorProduct in
@@ -44,7 +49,7 @@ theorem UpperTheory.span_ordinaryPart_eq_sup_unit_generalized_eigenspaces :
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a v => rw [LinearMap.baseChange_tmul, hEt, hEt, map_smul, hT]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have h1 := congrArg (Submodule.map E.toLinearMap) key
   simp only [Submodule.map_iSup, UpperTheory.map_max_gen_eigenspace_of_intertwine E _ T hc] at h1
   rw [iSup_subtype]
@@ -59,7 +64,7 @@ theorem UpperTheory.span_ordinaryPart_eq_sup_unit_generalized_eigenspaces :
       refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, ?_, rfl⟩)
       rw [← hex.2.1]
       exact ⟨v, rfl⟩
-    | add x y hx hy => rw [map_add, map_add]; exact Submodule.add_mem _ hx hy
+    | add x y hx hy => simp only [map_add] at ⊢; exact Submodule.add_mem _ hx hy
   · rw [Submodule.span_le]
     rintro _ ⟨v, hv, rfl⟩
     rw [← hex.2.1] at hv

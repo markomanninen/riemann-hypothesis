@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.FourierWhittaker (whittaker)
@@ -26,7 +30,7 @@ private theorem exists_bil {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V]
     { toFun := fun u => lmul (toL (L u))
       map_add' := fun u v => by
         ext1 x
-        rw [ContinuousLinearMap.add_apply, of_lmul, of_lmul, of_lmul, map_add, add_mul]; rfl
+        rw [ContinuousLinearMap.add_apply, of_lmul, of_lmul, of_lmul, map_add (f := _), add_mul]; rfl
       map_smul' := fun c u => by
         ext1 x
         rw [ContinuousLinearMap.smul_apply, of_lmul, of_lmul, map_smul, smul_mul_assoc]; rfl }

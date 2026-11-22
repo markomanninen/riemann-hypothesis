@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -23,7 +27,7 @@ theorem exists_pow_eq_one_isUnit_one_sub_pow (T : Type) [CommRing T] [IsDomain T
       = ∏ ζ ∈ S.erase 1, (Polynomial.X - Polynomial.C ζ) :=
     mul_left_cancel₀ hne (hgeom.trans hprod)
   have hev := congrArg (Polynomial.eval (1 : T)) hcan
-  simp only [Polynomial.eval_finset_sum, Polynomial.eval_pow, Polynomial.eval_X, one_pow,
+  simp only [Polynomial.eval_finsetSum, Polynomial.eval_pow, Polynomial.eval_X, one_pow,
     Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one, Polynomial.eval_prod,
     Polynomial.eval_sub, Polynomial.eval_C] at hev
   have hmem : x ^ k ∈ S.erase 1 := by

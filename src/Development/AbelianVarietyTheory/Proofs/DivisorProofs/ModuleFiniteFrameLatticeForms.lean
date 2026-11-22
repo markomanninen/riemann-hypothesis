@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
-import Formalism.PieriBlockIdeals.PieriColumnMinors.DepthNonnegative
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.DepthNonnegative
+
+@[expose] public section
 
 set_option autoImplicit false
 

@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.FiniteIntertwining
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.BideterminantRowWeightDominance
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.BideterminantAntidiagEvalWeightUnitSupport
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.FiniteIntertwining
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.BideterminantRowWeightDominance
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.BideterminantAntidiagEvalWeightUnitSupport
+
+@[expose] public section
+
 open MvPolynomial Formalism.GradedWeylDivisibility Formalism.BasicNotions GlobalTheory.Branching Matrix
 
 namespace UpperTheory.V.Hi
@@ -34,7 +39,7 @@ private theorem cong {O : Type} [CommRing O] [IsDomain O] {n : ℕ} (lam : DomWe
   obtain ⟨h, hh⟩ : C c ∣ sqAct O n lam g f - f.1 := by
     rw [C_dvd_iff_dvd_coeff]
     intro m
-    rw [← Ideal.Quotient.eq_zero_iff_dvd, ← coeff_map, h2, coeff_zero]
+    rw [← Ideal.Quotient.eq_zero_iff_dvd, ← coeff_map, h2, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
   rw [← smul_eq_C_mul] at hh
   refine ⟨h, dualWeylSat O n n _ c h hc ?_, by rw [← hh]; abel⟩
   rw [← hh]
@@ -132,7 +137,7 @@ theorem sqBasis (O K : Type) [CommRing O] [IsDomain O] [Field K] [Algebra O K] (
       apply Subtype.ext
       rw [sqRep_coe, hbc, ← map_sqAct, e]
       simp [hbc, smul_eq_C_mul, Finset.mul_sum, mul_assoc]
-    rw [this, map_add, b.repr_self, Finsupp.add_apply, congrFun (b.repr_sum_self _) i, Finsupp.single_apply]
+    rw [this, map_add (f := _), b.repr_self, Finsupp.add_apply, congrFun (b.repr_sum_self _) i, Finsupp.single_apply]
     simp only [eq_comm]
   · intro g hg j
     have : ℓ (sqRep K n lam g (b j)) = (∏ i, g.val i i ^ ((rowWt k0.1 i : ℤ) + lam.detShift)) * ℓ (b j) := by

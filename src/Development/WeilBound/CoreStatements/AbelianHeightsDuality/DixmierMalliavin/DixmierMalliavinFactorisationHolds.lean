@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DixmierMalliavin.DecompDirection
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IsClosedEmbeddingOfLocallyCompact
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ClosedMatrixSubgroupTheorem
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GlueSmoothOfCompactSupportStatement
+module
+
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DixmierMalliavin.DecompDirection
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IsClosedEmbeddingOfLocallyCompact
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ClosedMatrixSubgroupTheorem
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GlueSmoothOfCompactSupportStatement
+
+@[expose] public section
 
 namespace PositivityTheory.DM
 

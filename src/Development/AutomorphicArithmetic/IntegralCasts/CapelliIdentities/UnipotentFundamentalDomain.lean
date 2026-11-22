@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.UnipotentFundamentalDomain.val_two :
     ∀ (K : Type) [inst : Field K] [inst_1 : NumberField K],

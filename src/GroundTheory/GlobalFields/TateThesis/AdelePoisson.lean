@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.SchwartzBruhat
-import GroundTheory.GlobalFields.TateThesis.TraceLatticePoisson
-import GroundTheory.GlobalFields.IdeleGroups.ClassGroup
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.SchwartzBruhat
+public import GroundTheory.GlobalFields.TateThesis.TraceLatticePoisson
+public import GroundTheory.GlobalFields.IdeleGroups.ClassGroup
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -127,7 +131,7 @@ theorem summable_norm_iff_and_tsum_eq_of_coset (J : (FractionalIdeal (𝓞 K)⁰
     congr 1
     have he := coe_idealLatticeEquiv J (e.symm α)
     rw [Equiv.apply_symm_apply] at he
-    simp only [h, map_add]
+    simp only [h, map_add (f := _)]
     rw [← he, add_comm]
   refine ⟨?_, ?_⟩
   · rw [← hinj.summable_iff (f := fun ξ ↦ ‖f ξ‖) (fun ξ hξ ↦ by simp [hsupp ξ hξ])]

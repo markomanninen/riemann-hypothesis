@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.DiracOfDiracZeroModule
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CliffordHighestWeightVector
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DiracKHolds
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.DiracOfDiracZeroModule
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CliffordHighestWeightVector
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DiracKHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,7 +85,7 @@ theorem dirac_ineq0 : ∀ {n : ℕ} (lam : Fin n → ℤ) (V : Type) [NormedAddC
   have hg : ∀ a b d e, g a b * g d e + g d e * g a b = if a = e ∧ b = d then (2 : ℂ) • (1 : Module.End ℂ (ι → V)) else 0 := by
     intro a b d e
     have h1 := congrArg Rr (cliff_hg hcl a b d e)
-    simp only [map_add, map_mul] at h1
+    simp only [map_add (f := _), map_mul] at h1
     rw [show g a b * g d e + g d e * g a b = Rr (c a b) * Rr (c d e) + Rr (c d e) * Rr (c a b) from rfl, h1]
     split_ifs
     · rw [map_smul, map_one]
@@ -114,12 +118,14 @@ theorem dirac_ineq0 : ∀ {n : ℕ} (lam : Fin n → ℤ) (V : Type) [NormedAddC
     have h1 := congrArg L (cas_p_add_k E1 E2)
     simp only [two_mul] at h1
     rw [← h1]
-    simp [Formalism.REAL.Cas, map_add, map_sum, map_mul, hpdef, hkdef, pF, kF]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Formalism.REAL.Cas, map_add (f := _), map_sum, map_mul, hpdef, hkdef, pF, kF]
   have hCasS : Formalism.REAL.Cas s = (((n : ℂ) ^ 3 - n) / 4) • (1 : Module.End ℂ (ι → V)) := by
     have h1 := congrArg Rr (spinM_cas c hcl)
     simp only [map_smul, map_one] at h1
     rw [← h1]
-    simp [Formalism.REAL.Cas, map_sum, map_mul, hsdef]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Formalism.REAL.Cas, map_sum, map_mul, hsdef]
   have hTot : D * D + Formalism.REAL.Cas (yF (kF E1 E2) c) =
       L (Formalism.REAL.Cas E1 + Formalism.REAL.Cas E1 + (Formalism.REAL.Cas E2 + Formalism.REAL.Cas E2)) +
         (((n : ℂ) ^ 3 - n) / 4) • (1 : Module.End ℂ (ι → V)) := by

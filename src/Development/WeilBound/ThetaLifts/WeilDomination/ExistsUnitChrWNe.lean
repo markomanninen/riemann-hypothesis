@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.WeilDomination.FacNeGauss
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+module
+
+public import Development.WeilBound.ThetaLifts.WeilDomination.FacNeGauss
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+
+@[expose] public section
 
 noncomputable section
 

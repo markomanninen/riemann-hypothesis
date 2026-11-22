@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockMatrixMulVecBasis
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.HasSmoothLogNearOneOfIsUnitaryLieExpDataStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.SmoothInExponentialCoordsIffFirstSecondKindStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.RightDerivativeAlongLieSmoothAndLinearStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.RightDerivativeAlongLieCommutatorEqBracketStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockMatrixMulVecBasis
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.HasSmoothLogNearOneOfIsUnitaryLieExpDataStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.SmoothInExponentialCoordsIffFirstSecondKindStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.RightDerivativeAlongLieSmoothAndLinearStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.RightDerivativeAlongLieCommutatorEqBracketStatement
+
+@[expose] public section
+
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK GlobalTheory.ThK.DescB GlobalTheory.ThK.FlagCT GlobalTheory.ThK.FlagPar
+open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK GlobalTheory.ThK.DescB
 open GlobalTheory.SiegelSet GlobalTheory.UAut GlobalTheory.LeviHC
 
 noncomputable section
@@ -36,9 +41,9 @@ abbrev LieL (A : Matrix (Fin n) (Fin n) ℂ) : Type := ↥(GlobalTheory.Indefini
 
 def jA (A : Matrix (Fin n) (Fin n) ℂ) : LieL A →ₗ[ℝ] Matrix (Fin n) (Fin n) ℂ := (GlobalTheory.IndefiniteRowSideFullHecke.LieAlgebraExponentialFamilies.lieU A).toSubmodule.subtype
 
-variable (σ J) in
-open Classical in
 
+open Classical in
+variable (σ J) in
 def secA (τ : EmbOver E w) (u : Matrix (Fin n) (Fin n) ℂ) : GAd σ J :=
   if hu : ∃ y : GArch σ J w, archMat σ J τ y = u then embArch σ J w hu.choose else 1
 
@@ -49,7 +54,7 @@ theorem archMat_injective (h : IsCMExt F E σ) (τ : EmbOver E w) : Function.Inj
 theorem secA_archMat (h : IsCMExt F E σ) (τ : EmbOver E w) (y : GArch σ J w) :
     secA σ J τ (archMat σ J τ y) = embArch σ J w y := by
   have hu : ∃ y' : GArch σ J w, archMat σ J τ y' = archMat σ J τ y := ⟨y, rfl⟩
-  rw [secA, dif_pos hu, archMat_injective h τ hu.choose_spec]
+  rw [secA, dite_eq_left hu, archMat_injective h τ hu.choose_spec]
 
 theorem exists_archMat (h : IsCMExt F E σ) (hJ : IsHermND σ J) (τ : EmbOver E w) {u : Matrix (Fin n) (Fin n) ℂ}
     (hu : sigA (J.map τ.1) u * u = 1) : ∃ y : GArch σ J w, archMat σ J τ y = u := by
@@ -119,31 +124,6 @@ theorem sm_of_isSm (h : IsCMExt F E σ) (hJ : IsHermND σ J) (τ : EmbOver E w) 
   intro k Y _ g
   exact hf k (fun i t => expMap (jA (J.map τ.1)) (secA σ J τ) (t • Y i))
     (fun i => (isLineOf_expMap h hJ τ (Y i)).isRealLine h) g
-
-theorem lineDer_add_bracket : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-    (σ : E →ₐ[F] E), IsCMExt F E σ →
-    ∀ (n : ℕ) (J : Matrix (Fin n) (Fin n) E), IsHermND σ J →
-    ∀ (w : InfinitePlace F) (τ : EmbOver E w) (f : GAd σ J → ℂ), IsSm σ J f →
-    ∀ (X X' : Matrix (Fin n) (Fin n) ℂ) (γ δ ε : ℝ → GAd σ J), IsLineOf σ J τ X γ → IsLineOf σ J τ X' δ →
-      (IsLineOf σ J τ (X + X') ε → lineDer ε f = lineDer γ f + lineDer δ f) ∧
-      (IsLineOf σ J τ (X * X' - X' * X) ε → lineDer ε f = lineDer γ (lineDer δ f) - lineDer δ (lineDer γ f)) := by
-  intro F E _ _ _ _ _ σ h n J hJ w τ f hf X X' γ δ ε hγ hδ
-  have H := isLieData h hJ τ
-  have hl := hasLog h hJ τ
-  have hs := sm_of_isSm h hJ τ hf
-  have hX := hγ.skew h
-  have hX' := hδ.skew h
-  let Y : LieL (J.map τ.1) := ⟨X, hX⟩
-  let Y' : LieL (J.map τ.1) := ⟨X', hX'⟩
-  obtain rfl : γ = _ := hγ.unique h (isLineOf_expMap h hJ τ Y)
-  obtain rfl : δ = _ := hδ.unique h (isLineOf_expMap h hJ τ Y')
-  refine ⟨fun hε => ?_, fun hε => ?_⟩
-  · obtain rfl : ε = _ := hε.unique h (isLineOf_expMap h hJ τ (Y + Y'))
-    exact (GlobalTheory.T.rightDerivativeAlongLie_smooth_and_linear _ _ _ _ _ _ H hl f hs).2.1 Y Y'
-  · have hZ := hε.skew h
-    let Z : LieL (J.map τ.1) := ⟨X * X' - X' * X, hZ⟩
-    obtain rfl : ε = _ := hε.unique h (isLineOf_expMap h hJ τ Z)
-    exact (GlobalTheory.T.rightDerivativeAlongLie_commutator_eq_bracket _ _ _ _ _ _ H hl f hs Y Y' Z rfl).symm
 
 end Chart
 

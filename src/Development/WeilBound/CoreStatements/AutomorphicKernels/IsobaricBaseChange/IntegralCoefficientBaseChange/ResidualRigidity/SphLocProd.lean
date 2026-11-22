@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsUniqueIsContr
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsUniqueIsContr
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,9 +19,9 @@ namespace GlobalTheory.Rigid
 
 theorem isSpherical_locProd {E : Type} [Field E] [NumberField E] {c n : ℕ} {N : Fin c → ℕ} (h : ∑ i, N i = n)
     (w : HeightOneSpectrum (𝓞 E)) (σ : ∀ i, SmIrr (GL (Fin (N i)) (w.adicCompletion E)))
-    (hs : ∀ i, GlobalTheory.LGrp.IsSpherical (σ i).ρ (GlobalTheory.LFun.KGL w (N i))) :
-    GlobalTheory.LGrp.IsSpherical (GlobalTheory.UnitaryBC.locProd h w σ) (GlobalTheory.LFun.KGL w n) := by
-  have hKO : ∀ m, GlobalTheory.LFun.KGL w m = KO (w.adicCompletion E) (Fin m) := fun m =>
+    (hs : ∀ i, GlobalTheory.LGrp.IsSpherical (σ i).ρ (GlobalTheory.LFun.KGL w (n := (N i)))) :
+    GlobalTheory.LGrp.IsSpherical (GlobalTheory.UnitaryBC.locProd h w σ) (GlobalTheory.LFun.KGL w (n := n)) := by
+  have hKO : ∀ m, GlobalTheory.LFun.KGL w (n := m) = KO (w.adicCompletion E) (Fin m) := fun m =>
     (GlobalTheory.SmGL.SphCompletion.KO_completion w m).symm
   choose v hv hv0 using fun i => (Submodule.ne_bot_iff _).1 (hs i)
   obtain ⟨f, hf, hf1⟩ := GlobalTheory.SatInd.exists_fixed_apply_one (k := w.adicCompletion E) (stdBlocks N h)

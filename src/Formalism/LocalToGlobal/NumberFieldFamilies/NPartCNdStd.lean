@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.NumberFieldFamilies.NPartCNdTie
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverEta
+module
+
+public import Formalism.LocalToGlobal.NumberFieldFamilies.NPartCNdTie
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverEta
+
+@[expose] public section
 
 noncomputable section
 

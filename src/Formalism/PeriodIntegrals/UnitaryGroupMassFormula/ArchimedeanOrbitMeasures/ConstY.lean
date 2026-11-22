@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ConstPush
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.DetNZHolds
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ConstPush
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.DetNZHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,5 @@ theorem frame_independent_at_infinity : FrameIndependentAtInfinity := by
   have h := (orbM_mem X u' hT (detNZ_holds X u' ψ hT μinf νinf fibInf hH) 1).2
   have h2 : orbM X u' 1 = Y0 X u' := one_smul _ _
   rwa [h2] at h
-
-theorem constTest_of_polar_prop (hP : PolarLoc) (hPr : ProperOrb) : ConstTest :=
-  constTest_of_polar_proper hP frame_independent_at_infinity hPr
 
 end PI.AprimeInfW

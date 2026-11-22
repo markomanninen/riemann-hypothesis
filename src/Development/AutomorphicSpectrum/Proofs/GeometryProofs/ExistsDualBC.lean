@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StalkLoc
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatLie
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueSemilinearStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StalkLoc
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatLie
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueSemilinearStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,13 +55,13 @@ theorem clear_denom [Module.Finite A L₀] (hinj : Function.Injective (algebraMa
     | add c d _ _ hc hd =>
       obtain ⟨a, ha⟩ := hc
       obtain ⟨a', ha'⟩ := hd
-      exact ⟨a + a', by rw [map_add, map_add, ha, ha', mul_add]⟩
+      exact ⟨a + a', by rw [map_add (f := _), map_add (f := _), ha, ha', mul_add]⟩
     | smul r c _ hc =>
       obtain ⟨a, ha⟩ := hc
       exact ⟨r * a, by rw [map_mul, map_smul, ha, Algebra.smul_def]; ring⟩
   choose w₀ hw₀ using hall
   refine ⟨u, ⟨⟨w₀, fun a b => hinj ?_⟩, fun r a => hinj ?_⟩, h1, h2, hw₀⟩
-  · rw [map_add, hw₀, hw₀, hw₀, map_add, mul_add]
+  · rw [map_add (f := _), hw₀, hw₀, hw₀, map_add (f := _), mul_add]
   · show algebraMap A Ω (w₀ (r • a)) = algebraMap A Ω (r * w₀ a)
     rw [map_mul, hw₀, hw₀, map_smul, Algebra.smul_def]; ring
 
@@ -142,7 +146,7 @@ omit [IsCommMonObj G] [Smooth G.hom] in
 theorem tan_ext {O : Type} [CommRing O] [Algebra A O] {z : Spec (CommRingCat.of O) ⟶ X}
     (hzs : Spec.map (CommRingCat.ofHom (algebraMap A O)) ≫ x = z) (g : O →+* Ω)
     (hg : g.comp (algebraMap A O) = algebraMap A Ω) (j₀ : L₀ → Li)
-    (hj : ∀ v, (M.pt (j₀ v)).left = Spec.map (CommRingCat.ofHom (dualMap (algebraMap A Ω))) ≫ (M₀.pt v).left)
+    (hj : ∀ v, (M.pt (j₀ v)).left = Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap A Ω))) ≫ (M₀.pt v).left)
     (b : L₀) : ∃ v : epsAt z ⟶ G, IsTanAt G z v ∧
       (M.pt (j₀ b)).left = Spec.map (CommRingCat.ofHom (dualMap g)) ≫ v.left := by
   let ψ := LieCarrier.epsHom (algebraMap A O) x _ hzs
@@ -161,7 +165,7 @@ theorem tan_denom {O : Type} [CommRing O] [Algebra A O] (S : Submonoid A) [IsLoc
     {z : Spec (CommRingCat.of O) ⟶ X}
     (hzs : Spec.map (CommRingCat.ofHom (algebraMap A O)) ≫ x = z) (g : O →+* Ω)
     (hg : g.comp (algebraMap A O) = algebraMap A Ω) (j₀ : L₀ → Li)
-    (hj : ∀ v, (M.pt (j₀ v)).left = Spec.map (CommRingCat.ofHom (dualMap (algebraMap A Ω))) ≫ (M₀.pt v).left)
+    (hj : ∀ v, (M.pt (j₀ v)).left = Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap A Ω))) ≫ (M₀.pt v).left)
     (e : Li) (v : epsAt z ⟶ G) (hv : IsTanAt G z v)
     (he' : (M.pt e).left = Spec.map (CommRingCat.ofHom (dualMap g)) ≫ v.left) :
     ∃ u ∈ S, ∃ b, algebraMap A Ω u • e = j₀ b := by
@@ -173,7 +177,7 @@ theorem tan_denom {O : Type} [CommRing O] [Algebra A O] (S : Submonoid A) [IsLoc
 
 theorem mem_omLat_iff (hξ : IsCptGen ξ) (hk : Function.Injective (algebraMap A Ω))
     (hx : Spec.map (CommRingCat.ofHom (algebraMap A Ω)) ≫ x = ξ) (j₀ : L₀ → Li)
-    (hj : ∀ v, (M.pt (j₀ v)).left = Spec.map (CommRingCat.ofHom (dualMap (algebraMap A Ω))) ≫ (M₀.pt v).left)
+    (hj : ∀ v, (M.pt (j₀ v)).left = Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap A Ω))) ≫ (M₀.pt v).left)
     (q : Cpt ξ) (hq : q.1 ∈ Set.range x) (hsub : ∀ a, algebraMap A Ω a ∈ regAt ξ q) (w : Module.Dual Ω Li) :
     w ∈ M.omLat q ↔ ∀ b, w (j₀ b) ∈ regAt ξ q := by
   obtain ⟨p, hp⟩ : ∃ p : PrimeSpectrum A, x p = q.1 := hq

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvUAbsU
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvUAbsU
+
+@[expose] public section
+
 open MeasureTheory GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.SatakeBound GlobalTheory.WeylCell Formalism.UG
 
 noncomputable section
@@ -87,7 +92,7 @@ theorem chiDeltaU_conj_simpleU_long :
     intro i hi
     have hik : i ≠ k := Finset.ne_of_mem_erase hi
     have hin : i.val < n := by have := i.2; omega
-    rw [dif_pos hin, dif_pos hin, hdiag, hact, Function.update_of_ne hik]
+    rw [dite_eq_left hin, dite_eq_left hin, hdiag, hact, Function.update_of_ne hik]
     have hfix : simpleU k ⟨i.val, hin⟩ = ⟨i.val, hin⟩ := by
       rw [hs]
       refine Equiv.swap_apply_of_ne_of_ne ?_ ?_
@@ -96,7 +101,7 @@ theorem chiDeltaU_conj_simpleU_long :
     rw [hfix]
   rw [Finset.prod_congr rfl hrest]
   have hkn : k.val < n := by omega
-  rw [dif_pos hkn, dif_pos hkn, hdiag, hact]
+  rw [dite_eq_left hkn, dite_eq_left hkn, hdiag, hact]
   beta_reduce
   rw [Function.update_self]
   have hlk : (⟨k.val, hkn⟩ : Fin n) = lo k := rfl

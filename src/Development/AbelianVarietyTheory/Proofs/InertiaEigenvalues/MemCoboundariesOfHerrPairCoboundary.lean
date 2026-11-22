@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+
+@[expose] public section
 
 open GlobalTheory.PhiGam GlobalTheory.AdmLoc GlobalTheory.Models GlobalTheory.TopSteps Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 open scoped LaurentSeries PowerSeries
@@ -94,7 +98,7 @@ theorem mem_cob_of_repr_mem_herrB : ∀ {k G : Type} [Field k] [Group G] {l n : 
   obtain ⟨y, hy⟩ := (hex (e - f one)).1 hker
   have hkey : ∀ σ, A.ρ σ y = y + z σ := fun σ => by
     apply hinj
-    rw [ha σ y, hy, map_sub, hρe σ, hw σ, map_add, hy]
+    rw [ha σ y, hy, map_sub, hρe σ, hw σ, map_add (f := _), hy]
     abel
   unfold GlobalTheory.Models.cob
   refine LinearMap.mem_range.mpr ⟨y, funext fun σ => ?_⟩

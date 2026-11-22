@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.EvCotStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.EvCotStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,15 +25,10 @@ variable (C : Type) [Field C] [Algebra (Tw.O : Type) C]
 
 end
 
-lemma val_smul {G : Type} [AddCommGroup G] (x : G) (hx : p • x = 0) (n : ℕ) :
-    (n : ZMod p).val • x = n • x := by
-  rw [ZMod.val_natCast]
-  conv_rhs => rw [← Nat.mod_add_div n p, add_nsmul, mul_nsmul, hx, smul_zero, add_zero]
-
 end CotOf
 
-open TensorProduct IsLocalRing Matrix in
 
+open TensorProduct IsLocalRing Matrix in
 theorem _root_.GlobalTheory.evCot_of_univDer :
   (∀ {R₀ : Type} [CommRing R₀] {p : ℕ} [Fact p.Prime] {g : ℕ} {B : _root_.ReciprocityTheory.PGsh.BX R₀} {Tw : _root_.ReciprocityTheory.PGsh.ATowerL R₀ p} {Dt : _root_.ReciprocityTheory.PGsh.DualTower Tw} [Algebra ℤ_[p] (Tw.O : Type)] {Oe : Type} [CommRing Oe] [Algebra ℤ_[p] Oe] {σ : Oe ≃ₐ[ℤ_[p]] Oe} {cp : (Tw.O : Type)} (D : _root_.ReciprocityTheory.PGsh.Be2.Dat p g B Tw Dt Oe σ cp), ∃ δ : ((D.fin.AAx (D.ptIdx 0)) : Type) →+ _root_.ReciprocityTheory.PGsh.Up.LieDualModP p (Tw.O : Type) g,
     (∀ o f, δ ((D.fin.sO (D.ptIdx 0)).1 o * f) = o • δ f) ∧ (∀ f f', δ (f * f') = (D.ptMap 0).1 f • δ f' + (D.ptMap 0).1 f' • δ f) ∧
@@ -68,7 +67,7 @@ theorem _root_.GlobalTheory.evCot_of_univDer :
     change Submodule.span _ (Set.range ⇑f) = _
     rw [← LinearMap.coe_range, Submodule.span_eq]
   have hinjΨ : Function.Injective Ψ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro F hF
     funext i
     apply D.fin.sep i
@@ -173,7 +172,7 @@ theorem _root_.GlobalTheory.evCot_of_univDer :
             simp only [map_zero, sub_zero, ZeroMemClass.coe_zero]
           map_add' := fun x y => by
             rw [← Submodule.Quotient.mk_add]; congr 1; apply Subtype.ext
-            simp only [map_add, Submodule.coe_add]; abel }
+            simp only [map_add (f := _), Submodule.coe_add]; abel }
       obtain ⟨u, hu, -⟩ := hδuniv (I ⧸ J) d
         (fun o x => by
           show Submodule.Quotient.mk _ = o • Submodule.Quotient.mk _
@@ -212,7 +211,7 @@ theorem _root_.GlobalTheory.evCot_of_univDer :
             f (Pi.single _ b), (hmemA _).2 (by rw [Pi.single_eq_same]; exact hb),
             by rw [Pi.single_mul, hfmul]⟩
         | zero => rw [Pi.single_zero, map_zero]; exact zero_mem _
-        | add x y _ _ hx hy => rw [Pi.single_add, map_add]; exact add_mem hx hy
+        | add x y _ _ hx hy => rw [Pi.single_add, map_add (f := _)]; exact add_mem hx hy
         | smul c x _ hx =>
           have hs : (Pi.single (D.ptIdx 0) (c • x) : ∀ i, (D.fin.AAx i).carrier) =
               c • (Pi.single (D.ptIdx 0) x : ∀ i, (D.fin.AAx i).carrier) := by
@@ -231,7 +230,7 @@ theorem _root_.GlobalTheory.evCot_of_univDer :
       have hEmem : f E ∈ _root_.ReciprocityTheory.PGsh.L2.augIdeal (D.evImg C) := (hmemA E).2 (by simp [E])
       have hGmem : f G ∈ _root_.ReciprocityTheory.PGsh.L2.augIdeal (D.evImg C) := (hmemA G).2 (by simp [G])
       have hF : f F = f (Pi.single (D.ptIdx 0) (F (D.ptIdx 0))) + f G := by
-        rw [← map_add]; congr 1; simp [G]
+        rw [← map_add (f := _)]; congr 1; simp [G]
       show f F ∈ _root_.ReciprocityTheory.PGsh.Up.sqIdeal (_root_.ReciprocityTheory.PGsh.L2.augIdeal (D.evImg C))
       rw [hF]
       refine add_mem (hlift _ hx) ?_
@@ -253,7 +252,7 @@ theorem _root_.GlobalTheory.evCot_of_univDer :
         | add x y _ _ hx hy =>
           obtain ⟨F1, rfl, h1⟩ := hx
           obtain ⟨F2, rfl, h2⟩ := hy
-          exact ⟨F1 + F2, map_add f _ _, by rw [Pi.add_apply, map_add, h1, h2, add_zero]⟩
+          exact ⟨F1 + F2, map_add f _ _, by rw [Pi.add_apply, map_add (f := _), h1, h2, add_zero]⟩
         | smul c x _ hx =>
           obtain ⟨F1, rfl, h1⟩ := hx
           refine ⟨c • F1, map_smul f _ _, ?_⟩
@@ -280,11 +279,13 @@ theorem _root_.GlobalTheory.evCot_of_univDer :
           ∑ j, (PadicInt.toZMod (s j)).val • ⟨D.L.τ j 0, (_root_.ReciprocityTheory.PGsh.Be2.mem_torP B p _).2 (hτ j)⟩ := by
         apply Subtype.ext
         simp [_root_.ReciprocityTheory.PGsh.Be2.ptOf, _root_.ReciprocityTheory.PGsh.Up.red]
-      rw [hsplit, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hsplit, map_sum]
       simp only [map_nsmul]
       push_cast
       simp only [D.L.ρ_spec]
-      simp only [_root_.ReciprocityTheory.PGsh.Be2.ptOf, _root_.ReciprocityTheory.PGsh.Up.red, Matrix.mulVec, dotProduct, map_sum, map_mul, Finset.smul_sum, smul_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [_root_.ReciprocityTheory.PGsh.Be2.ptOf, _root_.ReciprocityTheory.PGsh.Up.red, Matrix.mulVec, dotProduct, map_sum, map_mul, Finset.smul_sum, smul_smul]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun k _ => ?_
       have hc : (∑ j, PadicInt.toZMod (D.H.ρ a k j) * PadicInt.toZMod (s j)) =

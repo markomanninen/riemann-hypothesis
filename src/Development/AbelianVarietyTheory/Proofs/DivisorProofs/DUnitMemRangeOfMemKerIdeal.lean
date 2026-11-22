@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToSpanSingletonConstGenInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToSpanSingletonConstGenInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,17 +21,17 @@ theorem cotMap_surjective {f : C →ₐc[R] A} (hf : Function.Surjective f) :
   AugCot.map_surjective _ _ hf
 
 theorem dUnit_mem_range_of_mem_kerIdeal (g : D →ₐc[R] C) {c : C} (hc : c ∈ kerIdeal g) :
-    dUnit R c ∈ LinearMap.range (cotMap g) := by
-  suffices h : counitAlgHom R C c = 0 ∧ dUnit R c ∈ LinearMap.range (cotMap g) from h.2
+    dUnit (R := R) c ∈ LinearMap.range (cotMap g) := by
+  suffices h : counitAlgHom R C c = 0 ∧ dUnit (R := R) c ∈ LinearMap.range (cotMap g) from h.2
   induction hc using Submodule.span_induction with
   | mem x hx =>
     obtain ⟨a, ha, rfl⟩ := hx
-    refine ⟨?_, dUnit R a, cotMap_d g a⟩
+    refine ⟨?_, dUnit (R := R) a, cotMap_d g a⟩
     have ha' : counit (R := R) a = 0 := ha
     simpa using ha'
   | zero => exact ⟨map_zero _, by rw [dUnit, map_zero]; exact zero_mem _⟩
   | add x y _ _ hx hy =>
-    exact ⟨by rw [map_add, hx.1, hy.1, add_zero], by rw [dUnit, map_add]; exact add_mem hx.2 hy.2⟩
+    exact ⟨by rw [map_add (f := _), hx.1, hy.1, add_zero], by rw [dUnit, map_add (f := _)]; exact add_mem hx.2 hy.2⟩
   | smul a x _ hx =>
     refine ⟨by rw [smul_eq_mul, map_mul, hx.1, mul_zero], ?_⟩
     rw [smul_eq_mul, dUnit, AugCot.d_mul, hx.1, zero_smul, add_zero]
@@ -46,26 +50,18 @@ theorem exact_cotMap {f : C →ₐc[R] A} (hf : Function.Surjective f) (g : D �
     obtain ⟨a, rfl⟩ := AugCot.d_surjective _ v
     rw [cotMap_d, cotMap_d]
     have h := (kerIdeal_le_ker_iff g (f : C →ₐ[R] A)).1 hk.ge a
-    exact (congrArg (dUnit R) h).trans (AugCot.d_algebraMap _ _)
+    exact (congrArg (dUnit (R := R)) h).trans (AugCot.d_algebraMap _ _)
 
-theorem cotMap_mulBy [IsCocomm R C] (m : ℕ) (w : Cot R C) :
-    cotMap (mulBy R C m) w = (m : R) • w := by
+theorem cotMap_mulBy [IsCocomm R C] (m : ℕ) (w : Cot (R := R) (A := C)) :
+    cotMap (mulBy (R := R) (A := C) m) w = (m : R) • w := by
   rw [mulBy, cotMap_pow, ofConv_toConv, cotMap_id, Nat.cast_smul_eq_nsmul]
   rfl
 
 theorem cotMap_eq_zero_iff [IsCocomm R C] {f : C →ₐc[R] A} (hf : Function.Surjective f) {m : ℕ}
-    (hk : RingHom.ker f = torsionIdeal R C m) (w : Cot R C) :
-    cotMap f w = 0 ↔ ∃ v : Cot R C, w = (m : R) • v := by
+    (hk : RingHom.ker f = torsionIdeal (R := R) (A := C) m) (w : Cot (R := R) (A := C)) :
+    cotMap f w = 0 ↔ ∃ v : Cot (R := R) (A := C), w = (m : R) • v := by
   rw [exact_cotMap hf _ hk w]
   exact exists_congr fun v => by rw [cotMap_mulBy, eq_comm]
-
-theorem ker_cotMap [IsCocomm R C] {f : C →ₐc[R] A} (hf : Function.Surjective f) {m : ℕ}
-    (hk : RingHom.ker f = torsionIdeal R C m) :
-    LinearMap.ker (cotMap f) = Ideal.span {(m : R)} • (⊤ : Submodule R (Cot R C)) := by
-  ext w
-  rw [LinearMap.mem_ker, cotMap_eq_zero_iff hf hk, Submodule.ideal_span_singleton_smul,
-    Submodule.mem_smul_pointwise_iff_exists]
-  exact exists_congr fun v => by simp [eq_comm]
 
 end PDiv
 
@@ -75,19 +71,14 @@ open PDiv
 
 variable {p : ℕ} {O : Type} [CommRing O] (G : PDivGroup p O)
 
-theorem ker_cotMap_of_ker_eq {m n : ℕ} {f : G.A n →ₐc[O] G.A m} (hf : Function.Surjective f)
-    (hk : RingHom.ker f = torsionIdeal O _ (p ^ m)) :
-    LinearMap.ker (cotMap f) = Ideal.span {(p : O) ^ m} • (⊤ : Submodule O (Cot O (G.A n))) := by
-  rw [ker_cotMap hf hk, Nat.cast_pow]
-
 theorem cotMap_res_surjective (n : ℕ) : Function.Surjective (cotMap (G.res n)) :=
   cotMap_surjective (G.res_surjective n)
 
-theorem cotMap_res_eq_zero_iff (n : ℕ) (w : Cot O (G.A (n + 1))) :
+theorem cotMap_res_eq_zero_iff (n : ℕ) (w : Cot (R := O) (A := G.A (n + 1))) :
     cotMap (G.res n) w = 0 ↔ ∃ v, w = (p : O) ^ n • v := by
   rw [cotMap_eq_zero_iff (G.res_surjective n) (G.ker_res n), Nat.cast_pow]
 
-def omegaLevel (n : ℕ) : G.omega →ₗ[O] Cot O (G.A n) :=
+def omegaLevel (n : ℕ) : G.omega →ₗ[O] Cot (R := O) (A := G.A n) :=
   LinearMap.proj n ∘ₗ G.omegaSub.subtype
 
 @[simp] theorem omegaLevel_apply (n : ℕ) (w : G.omega) : G.omegaLevel n w = w.1 n := rfl
@@ -101,26 +92,26 @@ theorem omega_val_eq_zero_of_le {m n : ℕ} (h : m ≤ n) {w : G.omega} (hw : w.
   | base => exact hw
   | succ n _ ih => exact ih (by rw [← w.2 n, hw, map_zero])
 
-theorem cot_zero_eq_zero (w : Cot O (G.A 0)) : w = 0 := by
+theorem cot_zero_eq_zero (w : Cot (R := O) (A := G.A 0)) : w = 0 := by
   simpa using G.pow_smul_cot 0 w
 
 theorem omegaLevel_surjective (n : ℕ) : Function.Surjective (G.omegaLevel n) := by
   have hsec := fun k => (G.cotMap_res_surjective k).hasRightInverse
   choose s hs using hsec
 
-  have key : ∀ (n : ℕ) (x : Cot O (G.A (n + 1))), cotMap (G.res n) x = 0 →
+  have key : ∀ (n : ℕ) (x : Cot (R := O) (A := G.A (n + 1))), cotMap (G.res n) x = 0 →
       ∃ w : G.omega, w.1 (n + 1) = x := by
     intro n x hx
-    let u : ∀ k, Cot O (G.A k) := fun k =>
+    let u : ∀ k, Cot (R := O) (A := G.A k) := fun k =>
       if h : n + 1 ≤ k then Nat.leRecOn h (fun {k} => s k) x else 0
     refine ⟨⟨u, fun k => ?_⟩, by simp [u, Nat.leRecOn_self]⟩
     rcases lt_trichotomy k n with hk | rfl | hk
     · simp only [u]
-      rw [dif_neg (by omega), dif_neg (by omega), map_zero]
+      rw [dite_eq_right (by omega), dite_eq_right (by omega), map_zero]
     · simp only [u]
-      rw [dif_pos le_rfl, dif_neg (by omega), Nat.leRecOn_self, hx]
+      rw [dite_eq_left le_rfl, dite_eq_right (by omega), Nat.leRecOn_self, hx]
     · simp only [u]
-      rw [dif_pos (by omega), dif_pos (show n + 1 ≤ k from hk), Nat.leRecOn_succ (show n + 1 ≤ k from hk)]
+      rw [dite_eq_left (by omega), dite_eq_left (show n + 1 ≤ k from hk), Nat.leRecOn_succ (show n + 1 ≤ k from hk)]
       exact hs k _
   induction n with
   | zero => exact fun x => ⟨0, (G.cot_zero_eq_zero _).trans (G.cot_zero_eq_zero _).symm⟩
@@ -129,7 +120,7 @@ theorem omegaLevel_surjective (n : ℕ) : Function.Surjective (G.omegaLevel n) :
     obtain ⟨v, hv⟩ := ih (cotMap (G.res n) x)
     obtain ⟨w, hw⟩ := key n (x - v.1 (n + 1)) (by rw [map_sub, v.2 n, ← hv]; exact sub_self _)
     refine ⟨w + v, ?_⟩
-    rw [map_add, omegaLevel_apply, omegaLevel_apply, hw, sub_add_cancel]
+    rw [map_add (f := _), omegaLevel_apply, omegaLevel_apply, hw, sub_add_cancel]
 
 theorem exists_sub_pow_smul_val_succ (n : ℕ) (w : G.omega) (hw : w.1 n = 0) :
     ∃ v : G.omega, (w - (p : O) ^ n • v).1 (n + 1) = 0 := by
@@ -178,7 +169,7 @@ theorem ker_omegaLevel (n : ℕ) :
   exact exists_congr fun v => by simp [eq_comm]
 
 def omegaQuotEquiv (n : ℕ) :
-    (G.omega ⧸ (Ideal.span {(p : O)} ^ n • ⊤ : Submodule O G.omega)) ≃ₗ[O] Cot O (G.A n) :=
+    (G.omega ⧸ (Ideal.span {(p : O)} ^ n • ⊤ : Submodule O G.omega)) ≃ₗ[O] Cot (R := O) (A := G.A n) :=
   Submodule.quotEquivOfEq _ _ (G.ker_omegaLevel n).symm ≪≫ₗ
     (G.omegaLevel n).quotKerEquivOfSurjective (G.omegaLevel_surjective n)
 

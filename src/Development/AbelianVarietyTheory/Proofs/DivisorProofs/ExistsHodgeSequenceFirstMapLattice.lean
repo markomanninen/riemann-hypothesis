@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateLatticeEqRowSpaceOfSandwichDatumStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmulMemRange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowEqOfIntegers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateLatticeEqRowSpaceOfSandwichDatumStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmulMemRange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowEqOfIntegers
+
+@[expose] public section
+
 open CategoryTheory Opposite Matrix GlobalTheory GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
 set_option autoImplicit false
@@ -23,7 +28,7 @@ theorem eq_of_theta_eq {s s' : ι → A} (h : ∀ i, θ (s i) = θ (s' i)) : R s
 def descend : (ι → O) →ₗ[O] M where
   toFun ρ := R (fun i => Function.surjInv hs (ρ i))
   map_add' ρ ρ' := by
-    rw [← map_add]
+    rw [← map_add (f := _)]
     exact eq_of_theta_eq θ R hR fun i => by
       simp [Function.surjInv_eq hs]
   map_smul' c ρ := by
@@ -43,8 +48,6 @@ def dotL (ρ : ι → O) : (ι → O) →ₗ[O] O where
   toFun w := ρ ⬝ᵥ w
   map_add' := dotProduct_add ρ
   map_smul' c w := by rw [dotProduct_smul, RingHom.id_apply]
-
-@[simp] theorem dotL_apply (ρ w : ι → O) : dotL ρ w = ρ ⬝ᵥ w := rfl
 
 end GlobalTheory.LattIota
 
@@ -147,7 +150,7 @@ theorem iota_exists : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgCl
     have : dotL (κ w) = (LinearMap.applyₗ w : Module.Dual O G.omega →ₗ[O] O) ∘ₗ
         lie.toLinearMap ∘ₗ D.Fil.mkQ := by
       refine LinearMap.pi_ext' fun i => LinearMap.ext_ring ?_
-      simp [hκ]
+      simp [dotL, hκ]
     intro m
     exact LinearMap.congr_fun this m
   have hκi : Function.Injective κ := by
@@ -175,7 +178,7 @@ theorem iota_exists : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgCl
     congr 1
     funext i
     rw [hκ, hw, LinearEquiv.symm_apply_apply]
-    simp [ψ]
+    simp [ψ, dotL]
   · rintro ⟨w, rfl⟩
     refine LinearMap.ext fun x => ?_
     change π (Φ (κ w)) x = 0
@@ -188,15 +191,18 @@ theorem iota_exists : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgCl
       intro t
       have ht : t = ∑ i, e t i • e.symm (Pi.single i 1) := by
         apply e.injective
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         ext j
         simp [Finset.sum_apply, Pi.single_apply]
       have hlin : epsPairing hε G t χ =
           ∑ i, e t i * epsPairing hε G (e.symm (Pi.single i 1)) χ := by
         conv_lhs => rw [ht]
-        simp only [epsPairing, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [epsPairing, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply,
           smul_eq_mul]
-      rw [hlin, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hlin, map_sum]
       simp only [dotProduct, sχ, map_mul]
       exact Finset.sum_congr rfl fun i _ => mul_comm _ _
     have hyL : y = L (sχ ᵥ* D.G) := by

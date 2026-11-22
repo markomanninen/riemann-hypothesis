@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.Period
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.BranchPack
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.Period
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.BranchPack
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.Grow
 open GlobalTheory.IndefiniteRowSideFullHecke.LevelPlusSubgroup (coefPlus Cols SizeRows)

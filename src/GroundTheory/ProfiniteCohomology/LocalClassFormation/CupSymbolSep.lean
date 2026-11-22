@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbol
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbol
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.Entire
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ThetaLiftEqAnisotropicPart
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.Entire
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ThetaLiftEqAnisotropicPart
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ open UpperTheory.ConvolutionTheory.R2.G (FS2 nE)
 
 namespace UpperTheory.ConvolutionTheory.RankTwoDescent.TA
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 def thInf (D : Dat ℚ E) : Cinf E := pInf E (rt D.θ)
 

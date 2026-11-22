@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.MemSpanSSelf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.JordanSpanHolds
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.ExistsNearOfSmul
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.UniformizerValuationHolds
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.RebasingHolds
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.MemSpanSSelf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.JordanSpanHolds
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.ExistsNearOfSmul
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.UniformizerValuationHolds
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.RebasingHolds
+
+@[expose] public section
 
 open NumberField Module
 
@@ -20,8 +24,21 @@ theorem jordanIsom_of (hE : ExactVec) (hR : Rebase) (hL : LocSpan) (hU : UnifVal
   have hda := LocF.aniso_of_totPosDef hd
   obtain ⟨-, hbL, hbo, hbn, hba⟩ := hb
   obtain ⟨-, hbL', hbo', hbn', hba'⟩ := hb'
-  have hsp := hJ K F V L hLl _ h𝔭 _ b hbL
-  have hsp' := hJ K F V L' hLl' _ h𝔭 _ b' hbL'
+  have span_of_jordan (c : Fin (finrank K (⊤ : Submodule K V)) → V)
+      (d : Fin (finrank K (⊤ : Submodule K V)) → 𝓞 F)
+      (ho : ∀ i j, i ≠ j → h (c i) (c j) = 0)
+      (hn : ∀ i, h (c i) (c i) = algebraMap F K ((d i : 𝓞 F) : F))
+      (hd : ∀ i, d i ≠ 0) : Submodule.span K (Set.range c) = ⊤ := by
+    have hi : LinearIndependent K c := LinearMap.linearIndependent_of_isOrthoᵢ ho (fun i => by
+      rw [hn i]
+      apply (map_ne_zero (algebraMap F K)).2
+      intro hz
+      apply hd i
+      exact FaithfulSMul.algebraMap_injective (𝓞 F) F (by simpa using hz))
+    apply hi.span_eq_top_of_card_eq_finrank'
+    simp
+  have hsp := span_of_jordan b a hbo hbn hba
+  have hsp' := span_of_jordan b' a' hbo' hbn' hba'
   have hS := isHermSemilocal_locRing hK hP
   obtain ⟨g, hg, -, hgm⟩ := core_of_split hs hda
     (splitAt_of (hE K F V hK hF h hs hd P hP π hπ) (hR K V (locRing P) π h hS hπ hs hda))

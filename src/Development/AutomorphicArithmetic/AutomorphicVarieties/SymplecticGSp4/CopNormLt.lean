@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LocDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PtFinFinite
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CoproductGeometry
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MonicNormLtOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LocDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PtFinFinite
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CoproductGeometry
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MonicNormLtOne
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
 section SlopeTestRemainingChoices
@@ -57,7 +62,7 @@ private theorem cop_bdd {l : ℕ} [Fact l.Prime] {R : Type} [CommRing R] [IsNoet
     | mem z hz => exact Finset.le_sup (f := fun x => ‖(F x).snd‖₊) hz
     | zero => simp
     | add x y _ _ hx hy =>
-      rw [map_add, TrivSqZeroExt.snd_add]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
+      rw [map_add (f := _), TrivSqZeroExt.snd_add]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
     | smul c x hx0 hx =>
       have h0 : (F x).fst = 0 := by
         have : x ∈ RingHom.ker f := hP ▸ hx0
@@ -71,12 +76,13 @@ private theorem cop_bdd {l : ℕ} [Fact l.Prime] {R : Type} [CommRing R] [IsNoet
   have h4 : a - ∑ i, u i • b i ∈ RingHom.ker f := congrArg Subtype.val h3
   have h5 := h2 _ (hP ▸ h4)
   have h6 : ‖(F (∑ i, u i • b i)).snd‖ ≤ ∑ i, ‖(F (b i)).snd‖ := by
-    rw [map_sum, TrivSqZeroExt.snd_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, TrivSqZeroExt.snd_sum]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => ?_)
     rw [map_smul, TrivSqZeroExt.snd_smul, Algebra.smul_def, norm_mul]
     exact mul_le_of_le_one_left (norm_nonneg _) ((cop_intIff _).1 isIntegral_algebraMap)
   have h7 : (F a).snd = (F (a - ∑ i, u i • b i)).snd + (F (∑ i, u i • b i)).snd := by
-    rw [← TrivSqZeroExt.snd_add, ← map_add, sub_add_cancel]
+    rw [← TrivSqZeroExt.snd_add, ← map_add (f := _), sub_add_cancel]
   rw [h7]
   exact (norm_add_le _ _).trans (add_le_add h5 h6)
 
@@ -98,7 +104,7 @@ private theorem cop_snd {R κ : Type} [CommRing R] [NormedField κ] [IsUltrametr
         have h3 := h1 1 v (by rwa [pow_one])
         calc _ ≤ (a ^ n * C) * a ^ 1 := mul_le_mul (ih u hu) h3 (norm_nonneg _) (by positivity)
           _ = _ := by ring
-    · rw [map_add, TrivSqZeroExt.snd_add]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hu hv)
+    · rw [map_add (f := _), TrivSqZeroExt.snd_add]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hu hv)
 
 private theorem cop_main {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
     [CharZero O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O]
@@ -121,7 +127,7 @@ private theorem cop_main {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDom
     show ‖f x‖ ≤ 1
     rw [h2]
     exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hm _ hc).le ((cop_intIff _).1 h3))
-  obtain ⟨E, hE⟩ := UpperTheory.V.Loc.ptFin R F hm
+  obtain ⟨E, hE⟩ := UpperTheory.V.Loc.ptFin (l := l) R F hm
   haveI : FiniteDimensional ℚ_[l] E.1 := E.2
   obtain ⟨c', hc'⟩ := cop_coef E.1
   have hc : ∀ x, (F x).fst ∈ c'.O := fun x => hc' _ (hE x).1 (h1 x)

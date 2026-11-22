@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ProjHypA
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ProjHypA
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -33,7 +37,7 @@ theorem segre_rename_chartUpd (p : (k : K) → ι k) {f : MvPolynomial (Σ k, ι
     exact prod_X_chartUpd p q
   have hC : ∀ r : ℂ, φ (C r) = C r := fun r => by
     simp [φ, segreMap]
-  have key : ∀ m ∈ f.support, φ (monomial m (coeff m f)) = (∏ k, c k ^ a k) * monomial m (coeff m f) := by
+  have key : ∀ m ∈ f.support, φ (monomial m (AddMonoidAlgebra.coeff f m)) = (∏ k, c k ^ a k) * monomial m (AddMonoidAlgebra.coeff f m) := by
     intro m hm
 
     have hpow : (m.prod fun q e => c q.1 ^ e) = ∏ k, c k ^ a k := by
@@ -48,9 +52,9 @@ theorem segre_rename_chartUpd (p : (k : K) → ι k) {f : MvPolynomial (Σ k, ι
     rw [Finsupp.prod_mul, hpow]
     ring
   show φ f = _
-  calc φ f = φ (∑ m ∈ f.support, monomial m (coeff m f)) := by rw [← f.as_sum]
-    _ = ∑ m ∈ f.support, φ (monomial m (coeff m f)) := map_sum _ _ _
-    _ = ∑ m ∈ f.support, (∏ k, c k ^ a k) * monomial m (coeff m f) := Finset.sum_congr rfl key
+  calc φ f = φ (∑ m ∈ f.support, monomial m (AddMonoidAlgebra.coeff f m)) := by rw [← f.as_sum]
+    _ = ∑ m ∈ f.support, φ (monomial m (AddMonoidAlgebra.coeff f m)) := map_sum _ _ _
+    _ = ∑ m ∈ f.support, (∏ k, c k ^ a k) * monomial m (AddMonoidAlgebra.coeff f m) := Finset.sum_congr rfl key
     _ = (∏ k, c k ^ a k) * f := by rw [← Finset.mul_sum, ← f.as_sum]
 
 open Classical in
@@ -136,8 +140,8 @@ theorem val_polyToAway_mul_pow {f : MvPolynomial (Σ k, ι k) ℂ} {a : K → �
   have hC : ∀ r, ψ (C r) = τ (C r) := fun r => by
     rw [hψ, val_polyToAway_C hP p r]
     simp [τ]
-  have key : ∀ m ∈ f.support, ψ (monomial m (coeff m f)) * W ^ (∑ k, a k) =
-      τ (monomial m (coeff m f)) := by
+  have key : ∀ m ∈ f.support, ψ (monomial m (AddMonoidAlgebra.coeff f m)) * W ^ (∑ k, a k) =
+      τ (monomial m (AddMonoidAlgebra.coeff f m)) := by
     intro m hm
 
     have hW : W ^ (∑ k, a k) = m.prod (fun _ e => W ^ e) := by
@@ -148,10 +152,11 @@ theorem val_polyToAway_mul_pow {f : MvPolynomial (Σ k, ι k) ℂ} {a : K → �
       ← Finsupp.prod_mul]
     simp only [map_pow, ← mul_pow, hX, hC]
   show ψ f * W ^ (∑ k, a k) = τ f
-  calc ψ f * W ^ (∑ k, a k) = (∑ m ∈ f.support, ψ (monomial m (coeff m f))) * W ^ (∑ k, a k) := by
-        rw [← map_sum, ← f.as_sum]
-    _ = ∑ m ∈ f.support, ψ (monomial m (coeff m f)) * W ^ (∑ k, a k) := Finset.sum_mul _ _ _
-    _ = ∑ m ∈ f.support, τ (monomial m (coeff m f)) := Finset.sum_congr rfl key
+  calc ψ f * W ^ (∑ k, a k) = (∑ m ∈ f.support, ψ (monomial m (AddMonoidAlgebra.coeff f m))) * W ^ (∑ k, a k) := by
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← map_sum, ← f.as_sum]
+    _ = ∑ m ∈ f.support, ψ (monomial m (AddMonoidAlgebra.coeff f m)) * W ^ (∑ k, a k) := Finset.sum_mul _ _ _
+    _ = ∑ m ∈ f.support, τ (monomial m (AddMonoidAlgebra.coeff f m)) := Finset.sum_congr rfl key
     _ = τ f := by rw [← map_sum, ← f.as_sum]
 
 theorem val_polyToAway_segre_mul_pow {g : MvPolynomial ((k : K) → ι k) ℂ} {d : ℕ}
@@ -195,7 +200,7 @@ theorem val_polyToAway_segre_mul_pow {g : MvPolynomial ((k : K) → ι k) ℂ} {
     show ψ (segreMap (C r)) = σ' (C r)
     rw [e, hψ, val_polyToAway_C hP p r]
     rfl
-  have key : ∀ m ∈ g.support, ψ' (monomial m (coeff m g)) * W ^ d = σ' (monomial m (coeff m g)) := by
+  have key : ∀ m ∈ g.support, ψ' (monomial m (AddMonoidAlgebra.coeff g m)) * W ^ d = σ' (monomial m (AddMonoidAlgebra.coeff g m)) := by
     intro m hm
     have hdeg : ∑ v ∈ m.support, m v = d := by
       have h1 := hg (mem_support_iff.1 hm)
@@ -206,10 +211,11 @@ theorem val_polyToAway_segre_mul_pow {g : MvPolynomial ((k : K) → ι k) ℂ} {
       ← Finsupp.prod_mul]
     simp only [map_pow, ← mul_pow, hA, hC]
   show ψ' g * W ^ d = σ' g
-  calc ψ' g * W ^ d = (∑ m ∈ g.support, ψ' (monomial m (coeff m g))) * W ^ d := by
-        rw [← map_sum, ← g.as_sum]
-    _ = ∑ m ∈ g.support, ψ' (monomial m (coeff m g)) * W ^ d := Finset.sum_mul _ _ _
-    _ = ∑ m ∈ g.support, σ' (monomial m (coeff m g)) := Finset.sum_congr rfl key
+  calc ψ' g * W ^ d = (∑ m ∈ g.support, ψ' (monomial m (AddMonoidAlgebra.coeff g m))) * W ^ d := by
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← map_sum, ← g.as_sum]
+    _ = ∑ m ∈ g.support, ψ' (monomial m (AddMonoidAlgebra.coeff g m)) * W ^ d := Finset.sum_mul _ _ _
+    _ = ∑ m ∈ g.support, σ' (monomial m (AddMonoidAlgebra.coeff g m)) := Finset.sum_congr rfl key
     _ = σ' g := by rw [← map_sum, ← g.as_sum]
 
 theorem away_eq_mk_of_val {N : ℕ} (n : MvPolynomial ((k : K) → ι k) ℂ) (hn : n.IsHomogeneous N)

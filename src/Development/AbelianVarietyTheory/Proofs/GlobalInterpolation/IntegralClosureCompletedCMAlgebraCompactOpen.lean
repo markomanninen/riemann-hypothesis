@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+
+@[expose] public section
 
 open scoped TensorProduct
 open NumberField IsDedekindDomain MeasureTheory Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -15,7 +19,7 @@ theorem eq_sum_trace {F E : Type} [Field F] [Field E] [Algebra F E] [FiniteDimen
   induction z using TensorProduct.induction_on with
   | zero => simp
   | add x y hx hy =>
-    simp only [add_mul, map_add, add_smul, Finset.sum_add_distrib]
+    simp only [add_mul, map_add (f := _), add_smul, Finset.sum_add_distrib]
     rw [← hx, ← hy]
   | tmul a e =>
     have h3 : ∀ e : E, Algebra.trace R (R ⊗[F] E) (a ⊗ₜ[F] e) =
@@ -81,7 +85,7 @@ theorem isCompact_isOpen_integralClosure : ∀ (F E : Type) [Field F] [NumberFie
       (v.adicCompletionIntegers F))
   have h3 := h1.add h2
   rw [← SelfDualLatticeCompare.trace_tensor (Fv F v) h,
-    isIntegral_algebraMap_iff (FaithfulSMul.algebraMap_injective _ _)] at h3
+    isIntegral_algebraMap_iff ] at h3
   obtain ⟨y, hy⟩ := IsIntegrallyClosed.isIntegral_iff.1 h3
   beta_reduce
   rw [← hy]

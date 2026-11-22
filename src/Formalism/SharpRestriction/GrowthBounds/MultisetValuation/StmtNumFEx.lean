@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PriceLinearCombinationLe
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NdBNonneg
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PriceLinearCombinationLe
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NdBNonneg
+
+@[expose] public section
 
 namespace Formalism.MainNotions.FormalGroupSystem.Pf
 

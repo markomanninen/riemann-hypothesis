@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.AffineGLForms.CuspInvariantsFinite.CuspInvFin
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousConjFin
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QdetTopThreeOrders
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.AffineGLForms.CuspInvariantsFinite.CuspInvFin
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousConjFin
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QdetTopThreeOrders
+
+@[expose] public section
 
 open NumberField GlobalTheory.CuspRep Polynomial Finset
 
@@ -32,7 +36,8 @@ theorem trace_mem {A : Type} [Ring A] [Algebra ℂ A] (S : Subalgebra ℂ A) (n 
   have hQ0 : Q = 0 := Polynomial.funext fun u => by
     have h1 := hf _ (h u)
     rw [hR u] at h1
-    simp only [map_add, map_sum, map_smul, smul_eq_mul, f1, mul_zero, zero_add] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sum, map_smul, smul_eq_mul, f1, mul_zero, zero_add] at h1
     simp only [hQ, eval_add, eval_finsetSum, eval_mul, eval_C, eval_prod, eval_sub, eval_X, eval_pow, eval_zero]
     rw [← h1]
     congr 1
@@ -67,16 +72,17 @@ theorem trace_mem {A : Type} [Ring A] [Algebra ℂ A] (S : Subalgebra ℂ A) (n 
   have e1 : ∑ i : Fin n, f (M i i) * (∏ l ∈ univ.erase i, (X - C ((l : ℕ) : ℂ))).coeff (n - 1) = ∑ i, f (M i i) :=
     Finset.sum_congr rfl fun i _ => by rw [t1 i, mul_one]
   rw [e1, e2, e3, add_zero, add_zero] at hc
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact hc
 
 end GlobalTheory.CompanionTheory.CapelliTrace
 
 namespace GlobalTheory.CompanionTheory.CapelliTrace
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 open Classical in
 theorem atEmb_one (τ : E →+* ℂ) : atEmb τ 1 = Pi.single (InfinitePlace.mk τ) 1 := by
   unfold atEmb; split_ifs <;> simp
@@ -105,7 +111,7 @@ end GlobalTheory.CompanionTheory.CapelliTrace
 
 namespace GlobalTheory.CompanionTheory.CapelliTrace
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem sum_Eop (i j : Fin a) : ∑ τ : E →+* ℂ, Eop τ i j = lieS E a i j 1 := by
   set X := ∑ τ : E →+* ℂ, Eop τ i j
@@ -114,7 +120,8 @@ theorem sum_Eop (i j : Fin a) : ∑ τ : E →+* ℂ, Eop τ i j = lieS E a i j 
   have h2 : (2 : ℂ) • X = (2 : ℂ) • lieS E a i j 1 := by
     rw [two_smul, two_smul]
     nth_rewrite 2 [← hc]
-    rw [← Finset.sum_add_distrib, Finset.sum_congr rfl fun τ _ => Eop_add_conj τ i j, ← map_sum, sum_atEmb_one,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.sum_add_distrib, Finset.sum_congr rfl fun τ _ => Eop_add_conj τ i j, ← map_sum, sum_atEmb_one,
       show (2 : Cinf E) = 1 + 1 from one_add_one_eq_two.symm, map_add]
   exact smul_right_injective _ two_ne_zero h2
 
@@ -129,10 +136,11 @@ theorem lie_oneL_eq : lie E a (oneL E a) = ∑ τ : E →+* ℂ, ∑ i, Eop τ i
     · rw [Matrix.one_apply_ne h]
       exact (Finset.sum_eq_zero fun c _ => by
         rw [Matrix.single_apply, if_neg fun hc => h (hc.1.symm.trans hc.2)]).symm
-  rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   rfl
 
-theorem lie_oneL_mem_Zalg : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ),
+theorem lie_oneL_mem_Zalg : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ),
     lie E a (oneL E a) ∈ Zalg E a := by
   intro E _ _ _ a
   rw [lie_oneL_eq]

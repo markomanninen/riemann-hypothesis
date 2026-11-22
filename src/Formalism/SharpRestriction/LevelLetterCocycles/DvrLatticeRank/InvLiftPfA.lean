@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfA
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfA
+
+@[expose] public section
 
 noncomputable section
 

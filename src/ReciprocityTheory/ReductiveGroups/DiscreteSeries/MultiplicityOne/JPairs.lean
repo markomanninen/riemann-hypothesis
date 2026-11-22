@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JPairsA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JPairsA
+
+@[expose] public section
 
 noncomputable section
 

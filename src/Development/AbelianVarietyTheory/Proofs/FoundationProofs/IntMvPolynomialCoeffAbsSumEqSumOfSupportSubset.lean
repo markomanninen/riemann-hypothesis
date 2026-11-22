@@ -1,24 +1,29 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSelfDualE
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.PairingNondegenerateHolds
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
-import Formalism.GradedWeylDivisibility.StatementE
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Formalism.QuotientMetricDivisors.ReductionLemmaZero
-import Formalism.QuotientMetricDivisors.ProdFormula
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LeafBounds.MeanMaxLeaf.LeafMMFree
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSelfDualE
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.PairingNondegenerateHolds
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
+public import Formalism.GradedWeylDivisibility.StatementE
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Formalism.QuotientMetricDivisors.ReductionLemmaZero
+public import Formalism.QuotientMetricDivisors.ProdFormula
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LeafBounds.MeanMaxLeaf.LeafMMFree
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MvPolynomial Formalism.BasicNotions Formalism.L2.DIV Formalism.DivisionValues GlobalTheory.TestLat Formalism.L2.Indef.Tree.ArchimedeanLeafBounds.Cuts
 open scoped Matrix ComplexOrder
 
 namespace GlobalTheory.IntMvPolynomialCoeffAbsSum
 
 noncomputable def l1 {σ : Type*} (f : MvPolynomial σ ℤ) : ℕ :=
-  ∑ mo ∈ f.support, (coeff mo f).natAbs
+  ∑ mo ∈ f.support, (AddMonoidAlgebra.coeff f mo).natAbs
 
 variable {σ : Type*}
 
 theorem intMvPolynomialCoeffAbsSum_eq_sum_of_support_subset (f : MvPolynomial σ ℤ) (s : Finset (σ →₀ ℕ)) (h : f.support ⊆ s) :
-    l1 f = ∑ mo ∈ s, (coeff mo f).natAbs := by
+    l1 f = ∑ mo ∈ s, (AddMonoidAlgebra.coeff f mo).natAbs := by
   unfold l1
   refine Finset.sum_subset h ?_
   intro m _ hm
@@ -30,7 +35,7 @@ theorem intMvPolynomialCoeffAbsSum_add_le (f g : MvPolynomial σ ℤ) : l1 (f + 
     intMvPolynomialCoeffAbsSum_eq_sum_of_support_subset f (f.support ∪ g.support) Finset.subset_union_left,
     intMvPolynomialCoeffAbsSum_eq_sum_of_support_subset g (f.support ∪ g.support) Finset.subset_union_right, ← Finset.sum_add_distrib]
   refine Finset.sum_le_sum fun m _ => ?_
-  rw [coeff_add]
+  rw [MvPolynomial.coeff_add]
   exact Int.natAbs_add_le _ _
 
 theorem intMvPolynomialCoeffAbsSum_sum_le {ι : Type*} (s : Finset ι) (f : ι → MvPolynomial σ ℤ) :
@@ -49,7 +54,7 @@ theorem intMvPolynomialCoeffAbsSum_monomial (m : σ →₀ ℕ) (a : ℤ) : l1 (
 
 theorem intMvPolynomialCoeffAbsSum_mul_le (f g : MvPolynomial σ ℤ) : l1 (f * g) ≤ l1 f * l1 g := by
   have h : f * g = ∑ m ∈ f.support, ∑ k ∈ g.support,
-      monomial (m + k) (coeff m f * coeff k g) := by
+      monomial (m + k) (AddMonoidAlgebra.coeff f m * AddMonoidAlgebra.coeff g k) := by
     conv_lhs => rw [f.as_sum, g.as_sum, Finset.sum_mul_sum]
     simp only [monomial_mul]
   rw [h]
@@ -129,7 +134,7 @@ theorem sum_exponents_le {n : ℕ} (ν : Fin n → ℕ) (R : ℕ) (hν : Antiton
     simp [e, Formalism.GradedWeylDivisibility.nuNext]
   omega
 
-theorem highestWeightVector_coeff_natAbs_sum_le_factorial_pow : ∀ (n : ℕ) (ν : Fin n → ℕ) (R : ℕ), Antitone ν → (∀ i, ν i ≤ R) → ∑ mo ∈ (Formalism.GradedWeylDivisibility.hw ℤ (le_refl n) ν).support, (coeff mo (Formalism.GradedWeylDivisibility.hw ℤ (le_refl n) ν)).natAbs ≤ (n.factorial) ^ R := by
+theorem highestWeightVector_coeff_natAbs_sum_le_factorial_pow : ∀ (n : ℕ) (ν : Fin n → ℕ) (R : ℕ), Antitone ν → (∀ i, ν i ≤ R) → ∑ mo ∈ (Formalism.GradedWeylDivisibility.hw ℤ (le_refl n) ν).support, (AddMonoidAlgebra.coeff (Formalism.GradedWeylDivisibility.hw ℤ (le_refl n) ν) mo).natAbs ≤ (n.factorial) ^ R := by
   intro n ν R hν hR
   change l1 (Formalism.GradedWeylDivisibility.hw ℤ (le_refl n) ν) ≤ _
   unfold Formalism.GradedWeylDivisibility.hw

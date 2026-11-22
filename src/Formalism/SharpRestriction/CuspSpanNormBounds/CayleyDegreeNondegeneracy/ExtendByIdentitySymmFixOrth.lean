@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.GluingMassOfGluingFacts
-import Formalism.SharpRestriction.CuspSpanNormBounds.AbsoluteAmplitudeSecondOfSource
-import Formalism.HermitianLattices.HermitianLatticesProofs.IsomAct
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.GluingMassOfGluingFacts
+public import Formalism.SharpRestriction.CuspSpanNormBounds.AbsoluteAmplitudeSecondOfSource
+public import Formalism.HermitianLattices.HermitianLatticesProofs.IsomAct
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,8 @@ theorem finrank_orth_add_finrank (U : Submodule E S.V) : finrank E (orth S U) + 
     rw [Fintype.linearIndependent_iff]
     intro c hc a
     have h1 : S.hT (∑ a, star (c a) • (b a : S.V)) = 0 := by
-      rw [map_sum, ← hc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, ← hc]
       refine Finset.sum_congr rfl (fun a _ => ?_)
       rw [map_smulₛₗ, starRingEnd_apply, star_star]
     have h2 : ∑ a, star (c a) • (b a : S.V) = 0 := S.nondeg.1 _ (fun y => by rw [h1]; rfl)
@@ -128,7 +133,7 @@ theorem inner_decomp_orth_range (w w' : (D.sp.X 0).V) (b b' : (VS D).V)
     (VS D).hT (D.sp.iXY 0 w + b) (D.sp.iXY 0 w' + b') = (D.sp.X 0).hT w w' + (VS D).hT b b' := by
   have h1 : (VS D).hT (D.sp.iXY 0 w) b' = 0 := (Formalism.MainNotions.mem_orth_iff _ _).1 hb' _ ⟨w, rfl⟩
   have h2 : (VS D).hT b (D.sp.iXY 0 w') = 0 := Formalism.MainNotions.hT_swap_zero ((Formalism.MainNotions.mem_orth_iff _ _).1 hb _ ⟨w', rfl⟩)
-  simp only [map_add, LinearMap.add_apply]
+  simp only [map_add (f := _), LinearMap.add_apply]
   rw [embedding_isometry_W, h1, h2]
   ring
 

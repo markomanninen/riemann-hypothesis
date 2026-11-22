@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsFreeRingActionIffInertiaEqBotOfIsPrime
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIsoNormalizationPullbackOfToIntegralClosure
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsFreeRingActionIffInertiaEqBotOfIsPrime
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIsoNormalizationPullbackOfToIntegralClosure
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
+
+@[expose] public section
 
 universe u v
 
@@ -52,8 +56,8 @@ theorem isIntegrallyClosed_of_injective_of_dvd {R S : Type*} [CommRing R] [CommR
   have : algebraMap R (FractionRing R) b ≠ 0 := by simpa using hb0
   rw [map_mul, mul_div_cancel_left₀ _ this]
 
-variable (G A) in
 
+variable (G A) in
 theorem isDomain_and_isIntegrallyClosed_localization_of_isInvariant (B : Type*) [CommRing B]
     [Algebra B A] [FaithfulSMul B A] [SMulCommClass G B A] [Algebra.IsInvariant B A G]
     (hA : ∀ (q : Ideal A) [q.IsPrime],
@@ -87,7 +91,7 @@ theorem isDomain_and_isIntegrallyClosed_localization_of_isInvariant (B : Type*) 
   have hφa (b : B) : φ (algebraMap B _ b) = algebraMap A _ (algebraMap B A b) :=
     Localization.localRingHom_to_map ..
   have hφ : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨⟨b, s⟩, hbs⟩ := IsLocalization.surj p.primeCompl x
     have := congrArg φ hbs
@@ -166,16 +170,16 @@ theorem isInvariant_of_isBaseChange_of_sum_eq_one {c : A} (hc : ∑ g : G, g •
     hb.lift_eq _ a
   have hτ (x : A') : algebraMap B' A' (τ x) = ∑ g : G, g • (f c * x) := by
     induction x using hb.inductionOn with
-    | zero => simp
     | tmul a =>
       change algebraMap B' A' (τ (f a)) = ∑ g : G, g • (f c * f a)
-      rw [hτf, ← IsScalarTower.algebraMap_apply, ← f.commutes, FreeQuotient.algebraMap_ringTrace,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hτf, ← IsScalarTower.algebraMap_apply, ← f.commutes, FreeQuotient.algebraMap_ringTrace,
         map_sum]
       simp only [hf, map_mul]
     | smul b x hx =>
       rw [map_smul, smul_eq_mul, map_mul, hx, ← Algebra.smul_def, Finset.smul_sum]
       simp only [mul_smul_comm, smul_comm _ b]
-    | add x y hx hy => simp only [map_add, hx, hy, mul_add, smul_add, Finset.sum_add_distrib]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, mul_add, smul_add, Finset.sum_add_distrib]
   have h1 : τ 1 = 1 := by
     have : FreeQuotient.ringTrace G B A c = 1 := FaithfulSMul.algebraMap_injective B A (by
       rw [FreeQuotient.algebraMap_ringTrace, hc, map_one])
@@ -186,7 +190,8 @@ theorem isInvariant_of_isBaseChange_of_sum_eq_one {c : A} (hc : ∑ g : G, g •
   · have hx' (g : G) : g • x = x := hx g
     rw [hτ]
     simp only [smul_mul', hx', ← hf]
-    rw [← Finset.sum_mul, ← map_sum, hc, map_one, one_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.sum_mul, ← map_sum, hc, map_one, one_mul]
 
 end Ring
 
@@ -220,37 +225,13 @@ theorem exists_forall_apply_eq_apply_smul (φ ψ : A →+* k)
     (Polynomial.mapRingHom ψ) (fun p hp ↦ by
       ext i
       simp only [Polynomial.coe_mapRingHom, Polynomial.coeff_map]
-      exact h _ fun g ↦ by rw [← Polynomial.coeff_smul, hp])
+      exact h _ fun g ↦ by rw [← AddMonoidAlgebra.coeff_smul_apply, hp])
     (∑ g, Polynomial.monomial (n g) (a g))
-  have := congrArg (fun p ↦ Polynomial.coeff p (n g)) hg
-  simp only [Polynomial.coe_mapRingHom, Polynomial.coeff_map, Polynomial.coeff_smul,
-    Polynomial.finset_sum_coeff, Polynomial.coeff_monomial, hn.eq_iff, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true] at this
+  have := congrArg (fun p ↦ _root_.AddMonoidAlgebra.coeff (M := ℕ) p (n g)) hg
+  simp only [Polynomial.coe_mapRingHom, Polynomial.coeff_map, AddMonoidAlgebra.coeff_smul_apply,
+    Polynomial.finsetSum_coeff, Polynomial.coeff_monomial_apply, hn.eq_iff, Finset.sum_ite_eq',
+    Finset.mem_univ, ite_true] at this
   exact ha g this
-
-theorem exists_ringHom_extension_of_isIntegral {B A k : Type*} [CommRing B] [CommRing A] [Field k]
-    [IsAlgClosed k] [Algebra B A] [FaithfulSMul B A] [Algebra.IsIntegral B A] (φ : B →+* k) :
-    ∃ ψ : A →+* k, ψ.comp (algebraMap B A) = φ := by
-  have := RingHom.ker_isPrime φ
-  obtain ⟨⟨Q, hQ⟩, hQφ⟩ := Algebra.IsIntegral.comap_surjective B A ⟨RingHom.ker φ, ‹_›⟩
-  have : Q.LiesOver (RingHom.ker φ) := ⟨congr($(hQφ).asIdeal).symm⟩
-  let := (RingHom.kerLift φ).toAlgebra
-  have : FaithfulSMul (B ⧸ RingHom.ker φ) k :=
-    (faithfulSMul_iff_algebraMap_injective _ _).mpr (RingHom.kerLift_injective φ)
-  have : IsDomain (A ⧸ Q) := inferInstance
-  have : IsDomain (B ⧸ RingHom.ker φ) := inferInstance
-  have : Module.IsTorsionFree (B ⧸ RingHom.ker φ) (A ⧸ Q) :=
-    Module.isTorsionFree_iff_faithfulSMul.mpr inferInstance
-  have : Module.IsTorsionFree (B ⧸ RingHom.ker φ) k :=
-    Module.isTorsionFree_iff_faithfulSMul.mpr inferInstance
-  have : Algebra.IsIntegral (B ⧸ RingHom.ker φ) (A ⧸ Q) := ⟨fun x ↦ by
-    obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective x
-    exact ((Algebra.IsIntegral.isIntegral (R := B) a).map
-      (Ideal.Quotient.mkₐ B Q)).tower_top⟩
-  have : Algebra.IsAlgebraic (B ⧸ RingHom.ker φ) (A ⧸ Q) := Algebra.IsIntegral.isAlgebraic
-  let ψ : (A ⧸ Q) →ₐ[B ⧸ RingHom.ker φ] k := IsAlgClosed.lift
-  exact ⟨(ψ : A ⧸ Q →+* k).comp (Ideal.Quotient.mk Q),
-    RingHom.ext fun b ↦ ψ.commutes (Ideal.Quotient.mk _ b)⟩
 
 end Ring
 
@@ -260,7 +241,7 @@ variable {G : Type v} [Group G] {X Y Z : Scheme.{u}}
 
 structure IsAffineQuotient (ρ : G →* Aut X) (π : X ⟶ Y) : Prop where
 
-  comp_eq : ∀ g, (ρ g).hom ≫ π = π
+  comp_eq : ∀ g, (ρ g).asIso.hom ≫ π = π
 
   isAffineHom : IsAffineHom π
 
@@ -276,10 +257,6 @@ theorem isAffineQuotient_spec [Finite G] (B A : Type u) [CommRing B] [CommRing A
   have := isSchemeTheoreticallyDominant_spec_algebraMap B A
   ⟨specAction_comp G B A, inferInstance, Scheme.Hom.app_injective _,
     mem_range_spec_app_of_isInvariant G B A⟩
-
-example (K L : Type u) [Field K] [Field L] [Algebra K L] [FiniteDimensional K L] [IsGalois K L] :
-    IsAffineQuotient (specAction Gal(L/K) L) (Spec.map (CommRingCat.ofHom (algebraMap K L))) :=
-  isAffineQuotient_spec K L
 
 theorem epi_of_surjective_of_app_injective (π : X ⟶ Y) [Surjective π]
     (h : ∀ W, Function.Injective (π.app W)) : Epi π := ⟨fun {Z} a b hab ↦ by
@@ -306,7 +283,7 @@ namespace IsAffineQuotient
 
 variable {ρ : G →* Aut X} {π : X ⟶ Y}
 
-theorem of_cover [Finite G] (hπ : ∀ g, (ρ g).hom ≫ π = π)
+theorem of_cover [Finite G] (hπ : ∀ g, (ρ g).asIso.hom ≫ π = π)
     (h : ∀ y : Y, ∃ W : Y.Opens, IsAffineOpen W ∧ y ∈ W ∧ IsAffineOpen (π ⁻¹ᵁ W) ∧
       Function.Injective (π.app W) ∧
       ∀ s : Γ(X, π ⁻¹ᵁ W), IsInvariantSection ρ _ s → s ∈ Set.range (π.app W)) :
@@ -324,13 +301,8 @@ theorem of_cover [Finite G] (hπ : ∀ g, (ρ g).hom ≫ π = π)
 variable (h : IsAffineQuotient ρ π)
 include h
 
-theorem preimage_le (W : Y.Opens) (g : G) : π ⁻¹ᵁ W ≤ (ρ g).hom ⁻¹ᵁ π ⁻¹ᵁ W :=
+theorem preimage_le (W : Y.Opens) (g : G) : π ⁻¹ᵁ W ≤ (ρ g).asIso.hom ⁻¹ᵁ π ⁻¹ᵁ W :=
   preimage_le_of_invariant ρ π h.comp_eq W g
-
-theorem range_app (W : Y.Opens) :
-    Set.range (π.app W) = {s | IsInvariantSection ρ (π ⁻¹ᵁ W) s} :=
-  Set.ext fun s ↦ ⟨by rintro ⟨t, rfl⟩; exact isInvariantSection_app ρ π h.comp_eq W t,
-    h.mem_range_app W s⟩
 
 theorem isSchemeTheoreticallyDominant : IsSchemeTheoreticallyDominant π :=
   have := h.isAffineHom
@@ -340,10 +312,10 @@ theorem isSchemeTheoreticallyDominant : IsSchemeTheoreticallyDominant π :=
     exact ⟨W, hW, hy, h.app_injective W⟩
 
 theorem isInvariant (W : Y.Opens) :
-    letI := sectionsAction ρ _ (h.preimage_le W)
-    letI := (π.app W).hom.toAlgebra
-    SMulCommClass G Γ(Y, W) Γ(X, π ⁻¹ᵁ W) ∧ FaithfulSMul Γ(Y, W) Γ(X, π ⁻¹ᵁ W) ∧
-      Algebra.IsInvariant Γ(Y, W) Γ(X, π ⁻¹ᵁ W) G := by
+    (letI := sectionsAction ρ _ (h.preimage_le W);
+     letI := (π.app W).hom.toAlgebra;
+     SMulCommClass G Γ(Y, W) Γ(X, π ⁻¹ᵁ W) ∧ FaithfulSMul Γ(Y, W) Γ(X, π ⁻¹ᵁ W) ∧
+       Algebra.IsInvariant Γ(Y, W) Γ(X, π ⁻¹ᵁ W) G) := by
   let := sectionsAction ρ _ (h.preimage_le W)
   let := (π.app W).hom.toAlgebra
   have hfix (g : G) (a : Γ(Y, W)) : g • algebraMap Γ(Y, W) Γ(X, π ⁻¹ᵁ W) a = algebraMap _ _ a :=
@@ -352,27 +324,27 @@ theorem isInvariant (W : Y.Opens) :
     (faithfulSMul_iff_algebraMap_injective _ _).mpr (h.app_injective W), ⟨fun s hs ↦
       h.mem_range_app W s fun g ↦ ⟨h.preimage_le W g, ?_⟩⟩⟩
   simpa only [inv_inv] using
-    (show (ρ g⁻¹⁻¹).hom.appLE _ _ (h.preimage_le W _) s = s from hs g⁻¹)
+    (show (ρ g⁻¹⁻¹).asIso.hom.appLE _ _ (h.preimage_le W _) s = s from hs g⁻¹)
 
 theorem isReduced [IsReduced X] : IsReduced Y :=
   ⟨fun _ ↦ isReduced_of_injective _ (h.app_injective _)⟩
 
 variable [Finite G]
 
-theorem isIntegralHom : IsIntegralHom π where
-  toIsAffineHom := h.isAffineHom
-  isIntegral_app W _ := by
-    let := sectionsAction ρ _ (h.preimage_le W)
-    let := (π.app W).hom.toAlgebra
-    obtain ⟨_, _, _⟩ := h.isInvariant W
-    exact (Algebra.IsInvariant.isIntegral Γ(Y, W) Γ(X, π ⁻¹ᵁ W) G).isIntegral
+theorem isIntegralHom : IsIntegralHom π := by
+  refine { toIsAffineHom := h.isAffineHom, isIntegral_app := ?_ }
+  intro W _
+  let := sectionsAction ρ _ (h.preimage_le W)
+  let := (π.app W).hom.toAlgebra
+  obtain ⟨_, _, _⟩ := h.isInvariant W
+  exact (Algebra.IsInvariant.isIntegral Γ(Y, W) Γ(X, π ⁻¹ᵁ W) G).isIntegral
 
 theorem surjective : Surjective π :=
   have := h.isIntegralHom
   have := h.isSchemeTheoreticallyDominant
   inferInstance
 
-theorem apply_eq_iff (x y : X) : π x = π y ↔ ∃ g, (ρ g).hom x = y :=
+theorem apply_eq_iff (x y : X) : π x = π y ↔ ∃ g, (ρ g).asIso.hom x = y :=
   have := h.isAffineHom
   apply_eq_iff_exists_aut_of_invariant ρ π h.comp_eq (fun W _ ↦ h.mem_range_app W) x y
 
@@ -383,16 +355,16 @@ theorem isQuotientMap : Topology.IsQuotientMap π :=
 
 theorem isOpenMap : IsOpenMap π := fun U hU ↦ by
   rw [← h.isQuotientMap.isOpen_preimage]
-  have : π ⁻¹' (π '' U) = ⋃ g, (ρ g).hom ⁻¹' U := by
+  have : π ⁻¹' (π '' U) = ⋃ g, (ρ g).asIso.hom ⁻¹' U := by
     ext x
     simp only [Set.mem_preimage, Set.mem_image, Set.mem_iUnion]
     refine ⟨fun ⟨y, hy, e⟩ ↦ ?_, fun ⟨g, hg⟩ ↦ ⟨_, hg, ((h.apply_eq_iff _ _).mpr ⟨g, rfl⟩).symm⟩⟩
     obtain ⟨g, rfl⟩ := (h.apply_eq_iff _ _).mp e.symm
     exact ⟨g, hy⟩
   rw [this]
-  exact isOpen_iUnion fun g ↦ hU.preimage (ρ g).hom.continuous
+  exact isOpen_iUnion fun g ↦ hU.preimage (ρ g).asIso.hom.continuous
 
-theorem exists_preimage_eq {U : X.Opens} (hU : ∀ g, U ≤ (ρ g).hom ⁻¹ᵁ U) :
+theorem exists_preimage_eq {U : X.Opens} (hU : ∀ g, U ≤ (ρ g).asIso.hom ⁻¹ᵁ U) :
     ∃ W : Y.Opens, π ⁻¹ᵁ W = U := by
   refine ⟨⟨π '' U, h.isOpenMap _ U.isOpen⟩, le_antisymm ?_ fun x hx ↦ ⟨x, hx, rfl⟩⟩
   rintro x ⟨y, hy, e⟩
@@ -403,7 +375,7 @@ theorem epi : Epi π :=
   have := h.surjective
   epi_of_surjective_of_app_injective π h.app_injective
 
-theorem exists_comp_eq (f : X ⟶ Z) (hf : ∀ g, (ρ g).hom ≫ f = f) : ∃ f' : Y ⟶ Z, π ≫ f' = f := by
+theorem exists_comp_eq (f : X ⟶ Z) (hf : ∀ g, (ρ g).asIso.hom ≫ f = f) : ∃ f' : Y ⟶ Z, π ≫ f' = f := by
   have := h.surjective
   let π₀ : C(X, Y) := π.base.hom
   have hq : Topology.IsQuotientMap π₀ := h.isQuotientMap
@@ -426,7 +398,7 @@ theorem exists_comp_eq (f : X ⟶ Z) (hf : ∀ g, (ρ g).hom ≫ f = f) : ∃ f'
       map_one' := h.app_injective _ (by rw [hc, map_one, map_one])
       map_mul' a b := h.app_injective _ (by rw [map_mul, hc, hc, hc, map_mul])
       map_zero' := h.app_injective _ (by rw [hc, map_zero, map_zero])
-      map_add' a b := h.app_injective _ (by rw [map_add, hc, hc, hc, map_add]) }
+      map_add' a b := h.app_injective _ (by rw [map_add (f := _), hc, hc, hc, map_add (f := _)]) }
   have hc' (W : Z.Opens) : c' W ≫ π.app (V W) = f.appLE W _ (e W) := by
     ext s; exact hc W s
   let m : Y.toPresheafedSpace.Hom Z.toPresheafedSpace :=
@@ -455,17 +427,17 @@ theorem exists_comp_eq (f : X ⟶ Z) (hf : ∀ g, (ρ g).hom ≫ f = f) : ∃ f'
   rw [hc']
   exact (f.appLE_map _ _).trans f.appLE_eq_app
 
-theorem existsUnique_comp_eq (f : X ⟶ Z) (hf : ∀ g, (ρ g).hom ≫ f = f) :
+theorem existsUnique_comp_eq (f : X ⟶ Z) (hf : ∀ g, (ρ g).asIso.hom ≫ f = f) :
     ∃! f' : Y ⟶ Z, π ≫ f' = f := by
   have := h.epi
   obtain ⟨f', hf'⟩ := h.exists_comp_eq f hf
   exact ⟨f', hf', fun f'' hf'' ↦ (cancel_epi π).mp (hf''.trans hf'.symm)⟩
 
-noncomputable def desc (f : X ⟶ Z) (hf : ∀ g, (ρ g).hom ≫ f = f) : Y ⟶ Z :=
+noncomputable def desc (f : X ⟶ Z) (hf : ∀ g, (ρ g).asIso.hom ≫ f = f) : Y ⟶ Z :=
   (h.exists_comp_eq f hf).choose
 
 @[reassoc (attr := simp)]
-theorem comp_desc (f : X ⟶ Z) (hf : ∀ g, (ρ g).hom ≫ f = f) : π ≫ h.desc f hf = f :=
+theorem comp_desc (f : X ⟶ Z) (hf : ∀ g, (ρ g).asIso.hom ≫ f = f) : π ≫ h.desc f hf = f :=
   (h.exists_comp_eq f hf).choose_spec
 
 theorem hom_ext {a b : Y ⟶ Z} (e : π ≫ a = π ≫ b) : a = b :=
@@ -484,11 +456,6 @@ theorem comp_uniqueIso_hom {Y' : Scheme.{u}} {π' : X ⟶ Y'} (h' : IsAffineQuot
     π ≫ (h.uniqueIso h').hom = π' :=
   h.comp_desc _ h'.comp_eq
 
-@[reassoc (attr := simp)]
-theorem comp_uniqueIso_inv {Y' : Scheme.{u}} {π' : X ⟶ Y'} (h' : IsAffineQuotient ρ π') :
-    π' ≫ (h.uniqueIso h').inv = π :=
-  h'.comp_desc _ h.comp_eq
-
 theorem isIntegral [IsIntegral X] : IsIntegral Y :=
   have := h.isReduced
   have := h.surjective
@@ -501,7 +468,8 @@ theorem isNormalScheme [IsNormalScheme X] : IsNormalScheme Y :=
     let := sectionsAction ρ _ (h.preimage_le W)
     let := (π.app W).hom.toAlgebra
     obtain ⟨_, _, _⟩ := h.isInvariant W
-    exact isDomain_and_isIntegrallyClosed_localization_of_isInvariant G Γ(X, π ⁻¹ᵁ W) Γ(Y, W)
+    exact isDomain_and_isIntegrallyClosed_localization_of_isInvariant (G := G)
+      (A := Γ(X, π ⁻¹ᵁ W)) Γ(Y, W)
       ((IsNormalScheme.iff_forall_isAffineOpen X).mp ‹_› _ (hW.preimage π)) p
 
 section Base
@@ -568,21 +536,16 @@ section Free
 variable {G : Type v} [Group G] {X Y : Scheme.{u}}
 
 def IsFreeAction (ρ : G →* Aut X) : Prop :=
-  ∀ (k : Type u) [Field k] (x : Spec (.of k) ⟶ X) (g : G), x ≫ (ρ g).hom = x → g = 1
+  ∀ (k : Type u) [Field k] (x : Spec (.of k) ⟶ X) (g : G), x ≫ (ρ g).asIso.hom = x → g = 1
 
 theorem IsFreeAction.of_isAlgClosed {ρ : G →* Aut X}
     (h : ∀ (k : Type u) [Field k] [IsAlgClosed k] (x : Spec (.of k) ⟶ X) (g : G),
-      x ≫ (ρ g).hom = x → g = 1) : IsFreeAction ρ := fun k _ x g hx ↦
+      x ≫ (ρ g).asIso.hom = x → g = 1) : IsFreeAction ρ := fun k _ x g hx ↦
   h (AlgebraicClosure k) (Spec.map (CommRingCat.ofHom (algebraMap k _)) ≫ x) g
     (by rw [Category.assoc, hx])
 
-theorem IsFreeAction.eq_one {ρ : G →* Aut X} (h : IsFreeAction ρ) {T : Scheme.{u}} [Nonempty T]
-    (x : T ⟶ X) {g : G} (hx : x ≫ (ρ g).hom = x) : g = 1 :=
-  h (T.residueField (Classical.arbitrary T)) (T.fromSpecResidueField _ ≫ x) g
-    (by rw [Category.assoc, hx])
-
 theorem IsFreeAction.of_equivariant {ρ : G →* Aut X} (h : IsFreeAction ρ) {ρ' : G →* Aut Y}
-    (p : Y ⟶ X) (hp : ∀ g, (ρ' g).hom ≫ p = p ≫ (ρ g).hom) : IsFreeAction ρ' := fun k _ x g hx ↦
+    (p : Y ⟶ X) (hp : ∀ g, (ρ' g).asIso.hom ≫ p = p ≫ (ρ g).asIso.hom) : IsFreeAction ρ' := fun k _ x g hx ↦
   h k (x ≫ p) g (by rw [Category.assoc, ← hp, reassoc_of% hx])
 
 theorem isFreeAction_specAction_iff (A : Type u) [CommRing A] [MulSemiringAction G A] :
@@ -609,22 +572,32 @@ theorem isFreeAction_specAction_iff (A : Type u) [CommRing A] [MulSemiringAction
     exact (RingHom.sub_mem_ker_iff _).mpr congr($hx a)
 
 theorem specAction_fromSpec (ρ : G →* Aut X) {U : X.Opens} (hU : IsAffineOpen U)
-    (hst : ∀ g, U ≤ (ρ g).hom ⁻¹ᵁ U) (g : G) :
-    letI := sectionsAction ρ U hst
-    (specAction G Γ(X, U) g).hom ≫ hU.fromSpec = hU.fromSpec ≫ (ρ g).hom := by
+    (hst : ∀ g, U ≤ (ρ g).asIso.hom ⁻¹ᵁ U) (g : G) :
+    (letI := sectionsAction ρ U hst;
+     (specAction G Γ(X, U) g).asIso.hom ≫ hU.fromSpec = hU.fromSpec ≫ (ρ g).asIso.hom) := by
   let := sectionsAction ρ U hst
-  rw [← IsAffineOpen.SpecMap_appLE_fromSpec (ρ g).hom hU hU (hst g), specAction_hom]
+  rw [← IsAffineOpen.SpecMap_appLE_fromSpec (ρ g).asIso.hom hU hU (hst g), specAction_hom]
   congr 2
   ext s
-  change (ρ g⁻¹⁻¹).hom.appLE U U (hst _) s = _
+  change (ρ g⁻¹⁻¹).asIso.hom.appLE U U (hst _) s = _
   simp only [inv_inv]
 
 theorem IsFreeAction.isFreeRingAction {ρ : G →* Aut X} (h : IsFreeAction ρ) {U : X.Opens}
-    (hU : IsAffineOpen U) (hst : ∀ g, U ≤ (ρ g).hom ⁻¹ᵁ U) :
-    letI := sectionsAction ρ U hst
-    IsFreeRingAction G Γ(X, U) :=
-  letI := sectionsAction ρ U hst
-  (isFreeAction_specAction_iff _).mp (h.of_equivariant _ (specAction_fromSpec ρ hU hst))
+    (hU : IsAffineOpen U) (hst : ∀ g, U ≤ (ρ g).asIso.hom ⁻¹ᵁ U) :
+    (letI := sectionsAction ρ U hst;
+     IsFreeRingAction G Γ(X, U)) := by
+  let := sectionsAction ρ U hst
+  refine (FreeQuotient.isFreeRingAction_iff_inertia_eq_bot G Γ(X, U)).mpr fun P hP ↦ ?_
+  rw [Subgroup.eq_bot_iff_forall]
+  intro g hg
+  let := Ideal.Quotient.field P
+  let q := CommRingCat.ofHom (Ideal.Quotient.mk P)
+  refine inv_eq_one.mp (h (Γ(X, U) ⧸ P) (Spec.map q ≫ hU.fromSpec) g⁻¹ ?_)
+  rw [Category.assoc, ← hU.SpecMap_appLE_fromSpec (ρ g⁻¹).asIso.hom hU (hst g⁻¹),
+    ← Spec.map_comp_assoc]
+  congr 2
+  ext a
+  exact Ideal.Quotient.eq.mpr (AddSubgroup.mem_inertia.mp hg a)
 
 theorem isPullback_fromSpec_app (π : X ⟶ Y) {W : Y.Opens} (hW : IsAffineOpen W)
     (hV : IsAffineOpen (π ⁻¹ᵁ W)) :
@@ -637,15 +610,15 @@ namespace IsAffineQuotient
 variable [Finite G] {ρ : G →* Aut X} {π : X ⟶ Y} (h : IsAffineQuotient ρ π) (hρ : IsFreeAction ρ)
 include h hρ
 
-theorem isFinite_of_isFreeAction : IsFinite π where
-  toIsAffineHom := h.isAffineHom
-  finite_app W hW := by
-    have := h.isAffineHom
-    let := sectionsAction ρ _ (h.preimage_le W)
-    let := (π.app W).hom.toAlgebra
-    obtain ⟨_, _, _⟩ := h.isInvariant W
-    exact (FreeQuotient.finite_and_projective Γ(Y, W)
-      (hρ.isFreeRingAction (hW.preimage π) (h.preimage_le W))).1
+theorem isFinite_of_isFreeAction : IsFinite π := by
+  have := h.isAffineHom
+  refine { toIsAffineHom := ‹_›, finite_app := ?_ }
+  intro W hW
+  let := sectionsAction ρ _ (h.preimage_le W)
+  let := (π.app W).hom.toAlgebra
+  obtain ⟨_, _, _⟩ := h.isInvariant W
+  exact (FreeQuotient.finite_and_projective Γ(Y, W)
+    (hρ.isFreeRingAction (hW.preimage π) (h.preimage_le W))).1
 
 theorem etale_of_isFreeAction : Etale π := by
   have := h.isAffineHom
@@ -694,7 +667,7 @@ namespace IsAffineQuotient
 
 variable {ρ : G →* Aut X} {π : X ⟶ Y} (h : IsAffineQuotient ρ π)
   {ρ' : G →* Aut X'} {π' : X' ⟶ Y'} {p : X' ⟶ X} {t : Y' ⟶ Y} (H : IsPullback p π' π t)
-  (hp : ∀ g, (ρ' g).hom ≫ p = p ≫ (ρ g).hom) (hπ' : ∀ g, (ρ' g).hom ≫ π' = π')
+  (hp : ∀ g, (ρ' g).asIso.hom ≫ p = p ≫ (ρ g).asIso.hom) (hπ' : ∀ g, (ρ' g).asIso.hom ≫ π' = π')
 include h H hp hπ'
 
 theorem of_isPullback_of_flat_or_sum_eq_one [Fintype G]
@@ -737,8 +710,8 @@ theorem of_isPullback_of_flat_or_sum_eq_one [Fintype G]
   have hf (g : G) (a : Γ(X, π ⁻¹ᵁ W)) :
       IsScalarTower.toAlgHom Γ(Y, W) Γ(X, π ⁻¹ᵁ W) Γ(X', π' ⁻¹ᵁ W') (g • a) =
         g • IsScalarTower.toAlgHom Γ(Y, W) Γ(X, π ⁻¹ᵁ W) Γ(X', π' ⁻¹ᵁ W') a := by
-    change p.appLE _ _ e' ((ρ g⁻¹).hom.appLE _ _ (h.preimage_le W _) a) =
-      (ρ' g⁻¹).hom.appLE _ _ (hst' _) (p.appLE _ _ e' a)
+    change p.appLE _ _ e' ((ρ g⁻¹).asIso.hom.appLE _ _ (h.preimage_le W _) a) =
+      (ρ' g⁻¹).asIso.hom.appLE _ _ (hst' _) (p.appLE _ _ e' a)
     simp only [← CommRingCat.comp_apply, Scheme.Hom.appLE_comp_appLE, hp]
   have hfix (g : G) (a : Γ(Y', W')) :
       g • algebraMap Γ(Y', W') Γ(X', π' ⁻¹ᵁ W') a = algebraMap _ _ a :=
@@ -762,40 +735,32 @@ theorem of_isPullback [Flat t] : IsAffineQuotient ρ' π' :=
   h.of_isPullback_of_flat_or_sum_eq_one H hp hπ' fun _ hW _ hW' e ↦
     .inl (t.flat_appLE hW hW' e)
 
-theorem of_isPullback_of_isFreeAction (hρ : IsFreeAction ρ) : IsAffineQuotient ρ' π' :=
-  have := Fintype.ofFinite G
-  have := h.isAffineHom
-  h.of_isPullback_of_flat_or_sum_eq_one H hp hπ' fun W hW _ _ _ ↦ .inr <|
-    letI := sectionsAction ρ _ (h.preimage_le W)
-    FreeQuotient.exists_sum_smul_eq_one_of_free
-      (hρ.isFreeRingAction (hW.preimage π) (h.preimage_le W))
-
 end IsAffineQuotient
 
-noncomputable def pullbackAction (ρ : G →* Aut X) (f : X ⟶ S) (hf : ∀ g, (ρ g).hom ≫ f = f)
+noncomputable def pullbackAction (ρ : G →* Aut X) (f : X ⟶ S) (hf : ∀ g, (ρ g).asIso.hom ≫ f = f)
     (t : S' ⟶ S) : G →* Aut (pullback f t) :=
-  MonoidHom.mk' (fun g ↦
-    { hom := pullback.map f t f t (ρ g).hom (𝟙 _) (𝟙 _) (by simp [hf]) (by simp)
-      inv := pullback.map f t f t (ρ g).inv (𝟙 _) (𝟙 _)
-        ((Category.comp_id _).trans ((Iso.eq_inv_comp (ρ g)).mpr (hf g))) (by simp)
-      hom_inv_id := by apply pullback.hom_ext <;> simp [(ρ g).hom_inv_id]
-      inv_hom_id := by apply pullback.hom_ext <;> simp [(ρ g).inv_hom_id] }) fun g k ↦ by
-    refine Iso.ext ?_
-    change _ = pullback.map f t f t (ρ k).hom (𝟙 _) (𝟙 _) (by simp [hf]) (by simp) ≫
-      pullback.map f t f t (ρ g).hom (𝟙 _) (𝟙 _) (by simp [hf]) (by simp)
-    have e : (ρ (g * k)).hom = (ρ k).hom ≫ (ρ g).hom := by rw [map_mul]; rfl
+  MonoidHom.mk' (fun g ↦ Aut.of
+    { hom := pullback.map f t f t (ρ g).asIso.hom (𝟙 _) (𝟙 _) (by simp [hf]) (by simp)
+      inv := pullback.map f t f t (ρ g).asIso.inv (𝟙 _) (𝟙 _)
+        ((Category.comp_id _).trans ((Iso.eq_inv_comp (ρ g).asIso).mpr (hf g))) (by simp)
+      hom_inv_id := by apply pullback.hom_ext <;> simp [(ρ g).asIso.hom_inv_id]
+      inv_hom_id := by apply pullback.hom_ext <;> simp [(ρ g).asIso.inv_hom_id] }) fun g k ↦ by
+    apply Aut.ext
+    apply Iso.ext
+    change _ = pullback.map f t f t (ρ k).asIso.hom (𝟙 _) (𝟙 _) (by simp [hf]) (by simp) ≫
+      pullback.map f t f t (ρ g).asIso.hom (𝟙 _) (𝟙 _) (by simp [hf]) (by simp)
+    have e : (ρ (g * k)).asIso.hom = (ρ k).asIso.hom ≫ (ρ g).asIso.hom := by rw [map_mul]; rfl
     apply pullback.hom_ext <;> simp [-map_mul, e]
 
-variable (ρ : G →* Aut X) (f : X ⟶ S) (hf : ∀ g, (ρ g).hom ≫ f = f) (t : S' ⟶ S)
+variable (ρ : G →* Aut X) (f : X ⟶ S) (hf : ∀ g, (ρ g).asIso.hom ≫ f = f) (t : S' ⟶ S)
 
-@[reassoc (attr := simp)]
 theorem pullbackAction_fst (g : G) :
-    (pullbackAction ρ f hf t g).hom ≫ pullback.fst f t = pullback.fst f t ≫ (ρ g).hom :=
+    (pullbackAction ρ f hf t g).asIso.hom ≫ pullback.fst f t = pullback.fst f t ≫ (ρ g).asIso.hom :=
   pullback.lift_fst ..
 
 @[reassoc (attr := simp)]
 theorem pullbackAction_snd (g : G) :
-    (pullbackAction ρ f hf t g).hom ≫ pullback.snd f t = pullback.snd f t :=
+    (pullbackAction ρ f hf t g).asIso.hom ≫ pullback.snd f t = pullback.snd f t :=
   (pullback.lift_snd ..).trans (Category.comp_id _)
 
 theorem isPullback_pullbackMap (π : X ⟶ Y) (q : Y ⟶ S) (hq : π ≫ q = f) :
@@ -805,17 +770,6 @@ theorem isPullback_pullbackMap (π : X ⟶ Y) (q : Y ⟶ S) (hq : π ≫ q = f) 
 
 variable {ρ f} [Finite G] {π : X ⟶ Y} (h : IsAffineQuotient ρ π) (q : Y ⟶ S) (hq : π ≫ q = f)
 include h
-
-theorem IsAffineQuotient.pullbackMap [Flat t] : IsAffineQuotient (pullbackAction ρ f hf t)
-    (pullback.map f t q t π (𝟙 _) (𝟙 _) (by simp [hq]) (by simp)) :=
-  h.of_isPullback (isPullback_pullbackMap f t π q hq) (by simp) fun g ↦ by
-    apply pullback.hom_ext <;> simp [h.comp_eq]
-
-theorem IsAffineQuotient.pullbackMap_of_isFreeAction (hρ : IsFreeAction ρ) :
-    IsAffineQuotient (pullbackAction ρ f hf t)
-      (pullback.map f t q t π (𝟙 _) (𝟙 _) (by simp [hq]) (by simp)) :=
-  h.of_isPullback_of_isFreeAction (isPullback_pullbackMap f t π q hq) (by simp) (fun g ↦ by
-    apply pullback.hom_ext <;> simp [h.comp_eq]) hρ
 
 end BaseChange
 
@@ -835,7 +789,7 @@ theorem _root_.GlobalTheory.exists_specMap_fromSpec_eq_of_mem (x : Spec (.of k) 
 include h
 
 theorem comp_eq_comp_iff (x y : Spec (.of k) ⟶ X) :
-    x ≫ π = y ≫ π ↔ ∃ g, x ≫ (ρ g).hom = y := by
+    x ≫ π = y ≫ π ↔ ∃ g, x ≫ (ρ g).asIso.hom = y := by
   refine ⟨fun e ↦ ?_, by rintro ⟨g, rfl⟩; rw [Category.assoc, h.comp_eq]⟩
   have := h.isAffineHom
   obtain ⟨_, ⟨W, hW, rfl⟩, hx, -⟩ := Y.isBasis_affineOpens.exists_subset_of_mem_open
@@ -853,28 +807,11 @@ theorem comp_eq_comp_iff (x y : Spec (.of k) ⟶ X) :
     obtain ⟨b, rfl⟩ := (h.isInvariant W).2.2.isInvariant a ha
     exact congr($e b)
   refine ⟨g⁻¹, ?_⟩
-  rw [Category.assoc, ← specAction_fromSpec ρ hV (h.preimage_le W), specAction_hom,
-    ← Spec.map_comp_assoc, inv_inv]
+  rw [Category.assoc, ← hV.SpecMap_appLE_fromSpec (ρ g⁻¹).asIso.hom hV (h.preimage_le W g⁻¹),
+    ← Spec.map_comp_assoc]
   congr 2
   ext a
   exact (hg a).symm
-
-theorem exists_comp_eq_of_isAlgClosed [IsAlgClosed k] (y : Spec (.of k) ⟶ Y) :
-    ∃ x : Spec (.of k) ⟶ X, x ≫ π = y := by
-  have := h.isIntegralHom
-  obtain ⟨_, ⟨W, hW, rfl⟩, hy, -⟩ := Y.isBasis_affineOpens.exists_subset_of_mem_open
-    (Set.mem_univ (y default)) isOpen_univ
-  have hW : IsAffineOpen W := hW
-  have hV := hW.preimage π
-  obtain ⟨φ, rfl⟩ := exists_specMap_fromSpec_eq_of_mem y hW hy
-  let := (π.app W).hom.toAlgebra
-  have := (h.isInvariant W).2.1
-  have : Algebra.IsIntegral Γ(Y, W) Γ(X, π ⁻¹ᵁ W) := ⟨π.isIntegral_app W hW⟩
-  obtain ⟨ψ, hψ⟩ := exists_ringHom_extension_of_isIntegral (A := Γ(X, π ⁻¹ᵁ W)) φ.hom
-  refine ⟨Spec.map (CommRingCat.ofHom ψ) ≫ hV.fromSpec, ?_⟩
-  rw [Category.assoc, (isPullback_fromSpec_app π hW hV).w, ← Spec.map_comp_assoc]
-  congr 2
-  exact CommRingCat.hom_ext hψ
 
 end IsAffineQuotient
 

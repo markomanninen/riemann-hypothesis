@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.AlphaAbs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.HolMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.SLApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.GlNegOp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.IsAlgIsoRefl
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualInfinitesimalCharacterRegular
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.AlphaAbs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.HolMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.SLApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.GlNegOp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.IsAlgIsoRefl
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualInfinitesimalCharacterRegular
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.AlgRepEndIrreducible
 open scoped TensorProduct
 
@@ -16,7 +21,8 @@ variable {E : Type} [Field E] [NumberField E] {a : ℕ}
 omit [NumberField E] [IsScalarTower ℝ ℂ N] [IsScalarTower ℝ ℂ N'] in
 private theorem hol_nat (τ : E →+* ℂ) (φ : N →ₗ[ℂ] N') (L : Lie E a →ₗ[ℝ] N) (L' : Lie E a →ₗ[ℝ] N')
     (h : ∀ X, φ (L (toL X)) = L' (toL X)) (x : Matrix (Fin a) (Fin a) ℂ) : φ (hol τ L x) = hol τ L' x := by
-  simp only [hol_apply, eL, map_sum, map_smul, map_sub, h]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hol_apply, eL, map_sum, map_smul, map_sub, h]
 
 omit [NumberField E] [IsScalarTower ℝ ℂ N] in
 private theorem hol_add (τ : E →+* ℂ) (L L' : Lie E a →ₗ[ℝ] N) : hol τ (L + L') = hol τ L + hol τ L' := by
@@ -33,7 +39,7 @@ private theorem hol_smul (τ : E →+* ℂ) (r : ℝ) (L : Lie E a →ₗ[ℝ] N
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   module
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 private theorem hol_grp (τ : E →+* ℂ) (φ : N →ₗ[ℂ] N') (L : Lie E a →ₗ[ℝ] N) (L' : Lie E a →ₗ[ℝ] N')
     (p q : Matrix (Fin a) (Fin a) (Cinf E)) (h : ∀ X, φ (L (toL X)) = L' (toL (p * X * q)))
@@ -71,7 +77,7 @@ private theorem hol_der_end (τ : E →+* ℂ) (u : Module.End ℂ M) (L : Lie E
 end SlopeTestRemainingChoices
 
 theorem UpperTheory.V.AlgRepEndIrreducible.alphaReal :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (M : Type) [AddCommGroup M] [Module ℂ M] [Module ℝ M] [IsScalarTower ℝ ℂ M] (κ : Kinf E a → Module.End ℂ M) (LA LB : Lie E a →ₗ[ℝ] Module.End ℂ M),
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (M : Type) [AddCommGroup M] [Module ℂ M] [Module ℝ M] [IsScalarTower ℝ ℂ M] (κ : Kinf E a → Module.End ℂ M) (LA LB : Lie E a →ₗ[ℝ] Module.End ℂ M),
       IsLieHom LA → IsLieHom LB → (∀ X Y, Commute (LA X) (LB Y)) →
       (∀ (k : Kinf E a) (X : Matrix (Fin a) (Fin a) (Cinf E)), κ k * LA (toL X) = LA (toL (k.1 * X * star k.1)) * κ k) →
       (∀ (k : Kinf E a) (X : Matrix (Fin a) (Fin a) (Cinf E)), κ k * LB (toL X) = LB (toL (k.1 * X * star k.1)) * κ k) →
@@ -86,12 +92,14 @@ theorem UpperTheory.V.AlgRepEndIrreducible.alphaReal :
     exact (((((hc _ _).sub_right ((hc _ _).smul_right _)).sub_left
       (((hc _ _).sub_right ((hc _ _).smul_right _)).smul_left _)).smul_right _).smul_left _
       |>.smul_right _).smul_left _
-  obtain ⟨α₀, h1, h2, h3⟩ := alphaAbs M a (hol τ LA) (hol τ LB) (fun k => x - (k : ℂ)) hcomm
+  have hAbs := _root_.UpperTheory.V.AlgRepEndIrreducible.alphaAbs M a (hol τ LA) (hol τ LB)
+    (fun k : Fin a => x - (k.val : ℂ)) hcomm
+  obtain ⟨α₀, h1, h2, h3⟩ := hAbs
   set s : ℂ := ((a.factorial : ℂ) * (c - c'))⁻¹ with hs
   have e : ∀ (r : ℝ) (v : M), r • v = (r : ℂ) • v := fun r v => (algebraMap_smul ℂ r v).symm
   let α : (Lie E a →ₗ[ℝ] M) →ₗ[ℝ] M :=
     { toFun := fun f => s • α₀ (hol τ f)
-      map_add' := fun f g => by rw [hol_add, map_add, smul_add]
+      map_add' := fun f g => by rw [hol_add, map_add (f := _), smul_add]
       map_smul' := fun r f => by rw [hol_smul, map_smul, RingHom.id_apply, e, smul_comm] }
   have hα : ∀ f, α f = s • α₀ (hol τ f) := fun _ => rfl
   refine ⟨α, fun Y f f' hf => ?_, fun k f f' hf => ?_, fun m f hf => ?_⟩

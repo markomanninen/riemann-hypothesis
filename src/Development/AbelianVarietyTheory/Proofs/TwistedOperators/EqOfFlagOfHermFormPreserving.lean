@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+
+@[expose] public section
 
 namespace GlobalTheory.FlagEq
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -21,8 +25,10 @@ theorem eq_of_flag_of_hermForm : ∀ {α : Type} {m : α → ℕ} {g : ℕ} (e :
           Submodule.mem_map_of_mem (Submodule.subset_span ⟨j, hj, rfl⟩)
         have h2 : h' (ev j) - s • bv τ j ∈ (E i).map h'.toLinearMap := by
           have := ih j hj (hh' τ j)
-          exact Submodule.map_mono (Submodule.span_mono
-            (Set.image_mono (fun k (hk : k < j) => (lt_trans hk hj : k < i)))) this
+          have hsub : {k : Fin (m τ) | k < j} ⊆ {k | k < i} := by
+            intro k hk
+            exact lt_trans hk hj
+          exact Submodule.map_mono (Submodule.span_mono (Set.image_mono hsub)) this
         have h3 : s • bv τ j ∈ (E i).map h'.toLinearMap := by
           have := Submodule.sub_mem _ h1 h2
           simpa using this

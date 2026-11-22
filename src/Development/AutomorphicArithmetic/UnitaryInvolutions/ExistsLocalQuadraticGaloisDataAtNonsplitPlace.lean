@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.SimpleTwistedTraceFormulaStable
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.IsHerm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralProperties
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SimpleTwistedTraceFormulaStable
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.IsHerm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralProperties
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC GlobalTheory.BCT
 open scoped Classical TensorProduct
@@ -20,15 +25,11 @@ private noncomputable def cE (c : O →+* O) (hc : ∀ x, c (c x) = x) : O ≃�
 private theorem cE_apply (c : O →+* O) (hc : ∀ x, c (c x) = x) (x : O) : cE c hc x = c x := rfl
 
 private theorem isGal_cE (c : O →+* O) (hc : ∀ x, c (c x) = x) (ω u : O) (hu : (ω - c ω) * u = 1) :
-    UpperTheory.ConvolutionTheory.D.IsGal (cE c hc) 2 where
-  pos := by norm_num
-  pow := by
-    ext x
+    UpperTheory.ConvolutionTheory.D.IsGal (cE c hc) 2 := by
+  refine ⟨by norm_num, ?_, Subtype.val_injective, (fun r hr => ⟨⟨r, hr⟩, rfl⟩), ?_⟩
+  · ext x
     rw [pow_two, AlgEquiv.mul_apply, cE_apply, cE_apply, hc, AlgEquiv.one_apply]
-  inj := Subtype.val_injective
-  fix := fun r hr => ⟨⟨r, hr⟩, rfl⟩
-  sep := by
-    refine ⟨2, ![-(c ω) * u, u], ![1, ω], fun j hj => ?_⟩
+  · refine ⟨2, ![-(c ω) * u, u], ![1, ω], fun j hj => ?_⟩
     interval_cases j
     · simp only [Fin.sum_univ_two, pow_zero, AlgEquiv.one_apply, Matrix.cons_val_zero, Matrix.cons_val_one, if_true]
       linear_combination hu

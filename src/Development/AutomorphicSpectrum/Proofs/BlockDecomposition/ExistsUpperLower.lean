@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix
 
@@ -8,19 +12,6 @@ variable {R : Type} [CommRing R]
 
 def CongOne {n : ℕ} (I : Ideal R) (A : Matrix (Fin n) (Fin n) R) : Prop :=
   ∀ i j, A i j - (1 : Matrix (Fin n) (Fin n) R) i j ∈ I
-
-theorem CongOne.mul {n : ℕ} {I : Ideal R} {X Y : Matrix (Fin n) (Fin n) R}
-    (hX : CongOne I X) (hY : CongOne I Y) : CongOne I (X * Y) := by
-  intro i j
-  have h : (X * Y) i j - (1 : Matrix (Fin n) (Fin n) R) i j
-      = ((X - 1) * Y) i j + (Y i j - (1 : Matrix (Fin n) (Fin n) R) i j) := by
-    have h0 : X * Y - 1 = (X - 1) * Y + (Y - 1) := by noncomm_ring
-    have h1 := congrFun (congrFun h0 i) j
-    simpa using h1
-  rw [h]
-  refine I.add_mem ?_ (hY i j)
-  rw [Matrix.mul_apply]
-  exact I.sum_mem fun k _ => I.mul_mem_right _ (by simpa using hX i k)
 
 def bordered {n : ℕ} (M : Matrix (Fin n) (Fin n) R) (c r : Fin n → R) (d : R) :
     Matrix (Fin (n + 1)) (Fin (n + 1)) R := fun i j =>

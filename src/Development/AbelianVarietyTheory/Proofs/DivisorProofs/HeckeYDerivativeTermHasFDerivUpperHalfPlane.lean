@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KFacDifferentiable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HTransABTwoZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KFacDifferentiable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HTransABTwoZero
+
+@[expose] public section
+
 open NumberField Complex
 open scoped nonZeroDivisors ContDiff
 open GlobalTheory.IndefiniteRowSideFullHecke.OmegaFactorization GlobalTheory.HeckeTwo
@@ -20,7 +25,7 @@ theorem fderiv_prod_coord {ι : Type} [Fintype ι] [DecidableEq ι] (g : ι → 
   have h1 : ∀ i ∈ (Finset.univ : Finset ι), HasFDerivAt (fun w : ι → ℂ => g i (w i))
       ((L i).comp (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : ι => ℂ) i)) z := fun i _ =>
     (hg i).comp z (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : ι => ℂ) i).hasFDerivAt
-  have h2 := HasFDerivAt.finset_prod h1
+  have h2 := HasFDerivAt.finsetProd h1
   refine ⟨h2.differentiableAt, fun j v => ?_⟩
   rw [h2.fderiv, ContinuousLinearMap.sum_apply, Finset.sum_eq_single j]
   · simp [mul_comm]

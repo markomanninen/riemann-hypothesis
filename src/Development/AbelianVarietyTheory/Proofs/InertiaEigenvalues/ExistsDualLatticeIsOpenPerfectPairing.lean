@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSummandTw
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSummandTw
+
+@[expose] public section
+
 open Formalism Formalism.MainNotions Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module GlobalTheory.Pass Formalism.MainNotions.PairedCharacterCondition GlobalTheory.Pass.LocDual
 
 noncomputable section
 
 namespace GlobalTheory.Pass.LocDual
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem exists_dualLat_isOpen : ∀ {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field K]
     [Algebra Qp K₀] [Algebra Qp K] [Algebra K₀ K] [IsScalarTower Qp K₀ K]
     {B BdR : Type} [CommRing B] [CommRing BdR] [Algebra Qp B] [Algebra K₀ B] [IsScalarTower Qp K₀ B]
@@ -83,7 +88,8 @@ theorem exists_dualLat_isOpen : ∀ {G : Type} [Group G] [TopologicalSpace G] {Q
         exact h2.symm
       obtain ⟨c, hcx⟩ : ∃ c : Module.Free.ChooseBasisIndex O LT.T → O, x = ∑ i, c i • e i := ⟨_, hx'⟩
       refine ⟨∑ i, c i * a i, ?_⟩
-      rw [hcx, map_sum, LinearMap.sum_apply, map_sum (algebraMap O LL)]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hcx, map_sum, LinearMap.sum_apply, map_sum (algebraMap O LL)]
       refine Finset.sum_congr rfl (fun i _ => ?_)
       rw [← algebraMap_smul LL (c i) (e i), map_smul, LinearMap.smul_apply, ← ha i,
         smul_eq_mul, map_mul]
@@ -100,7 +106,8 @@ theorem exists_dualLat_isOpen : ∀ {G : Type} [Group G] [TopologicalSpace G] {Q
       have hy' : y = ∑ i, a i • bf i := by
         apply hφinj
         funext j
-        rw [hφ, hφ, map_sum, ← ha j]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hφ, hφ, map_sum, ← ha j]
         simp_rw [← algebraMap_smul LL (a _) (bf _), map_smul, hφf, Pi.single_apply, smul_eq_mul,
           mul_ite, mul_one, mul_zero]
         simp

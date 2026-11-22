@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LCfRelA
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LCfRelB
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LCfRelC
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LCfRelA
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LCfRelB
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LCfRelC
+
+@[expose] public section
 
 noncomputable section
 
@@ -116,8 +120,8 @@ theorem cfRel : HtExist → CfRel := by
     have h1 : ContinuousOn (fun p : ℂ × KAt D n v => cutR nb C (E p.1) (g * ↑p.2))
         (Metric.sphere s₀ ε ×ˢ univ) :=
       (cut_cont hE nb C g).mono (Set.prod_mono hsph subset_rfl)
-    exact (hpc.comp continuousOn_fst (fun p hp => hp.1)).mul
-      (h1.div (hdc.comp continuousOn_fst (fun p hp => hp.1)) (fun p hp => hdne p.1 hp.1))
+    exact (hpc.comp continuousOn_fst (fun (p : ℂ × KAt D n v) (hp : p ∈ Metric.sphere s₀ ε ×ˢ univ) => hp.1)).mul
+      (h1.div (hdc.comp continuousOn_fst (fun (p : ℂ × KAt D n v) (hp : p ∈ Metric.sphere s₀ ε ×ˢ univ) => hp.1)) (fun p hp => hdne p.1 hp.1))
   have hbound : ∃ M, ∀ z ∈ Metric.sphere s₀ ε, ∀ u : KAt D n v,
       ‖(z - s₀) ^ (k - 1) * (cutR nb C (E z) (g * ↑u) / Polynomial.eval z d)‖ ≤ M := by
     obtain ⟨M1, hM1⟩ := cut_bound hE nb C g hsph (isCompact_sphere s₀ ε)

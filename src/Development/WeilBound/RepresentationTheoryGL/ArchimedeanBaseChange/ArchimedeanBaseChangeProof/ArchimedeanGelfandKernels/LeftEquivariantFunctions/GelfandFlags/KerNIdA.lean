@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.IntSmooth
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.IntSmooth
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,9 +83,9 @@ theorem lg_contOn : ContinuousOn lg (GLs n) := by
     exact continuousAt_inv₀ hy
   have hs : ContinuousAt (fun x : Mat n => 1 + ∑ a, ∑ b, (‖x a b‖ ^ 2 + ‖x⁻¹ a b‖ ^ 2)) y := by
     apply continuousAt_const.add
-    apply tendsto_finset_sum
+    apply tendsto_finsetSum
     intro a _
-    apply tendsto_finset_sum
+    apply tendsto_finsetSum
     intro b _
     have e1 : ContinuousAt (fun x : Mat n => x a b) y := (continuous_id.matrix_elem a b).continuousAt
     have e2 : ContinuousAt (fun x : Mat n => x⁻¹ a b) y :=

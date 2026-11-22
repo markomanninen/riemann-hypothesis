@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementQr
+module
+
+public import Formalism.HermitianCurvature.StatementQr
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 

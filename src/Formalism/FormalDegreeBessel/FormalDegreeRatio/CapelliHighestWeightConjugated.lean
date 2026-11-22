@@ -1,6 +1,10 @@
-import Formalism.FormalDegreeBessel.StatementIO
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.IOCentral
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.IOLeft
+module
+
+public import Formalism.FormalDegreeBessel.StatementIO
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.IOCentral
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.IOLeft
+
+@[expose] public section
 
 open Matrix
 open scoped ContDiff
@@ -129,12 +133,6 @@ lemma ioh_smooth (ε : Fin n → Bool) (H P Q : Matrix (Fin n) (Fin n) ℂ)
 
 end Transport
 
-theorem conjugated_generator_transport : EabHTransport := by
-  intro n ε E _ _ H P Q f a b g hQP hPQ hH hsm hg
-  rw [ioh_EabH_eq ε H P Q f a b hQP hPQ hH g,
-    ecSumV n ε E _ _ _ hsm (ioh_inUJ ε H P Q g hPQ hH hg)]
-  simp only [ioh_single]
-
 theorem conjugated_generator_gl_relation : EabHGl := by
   intro n ε E _ _ H P Q f a b c d g hQP hPQ hH hf hg
   have hsm := ioh_smooth ε H P Q f hPQ hH hf
@@ -218,8 +216,8 @@ lemma ioh_qminor_rep {Eop : Fin n → Fin n → (Matrix (Fin n) (Fin n) ℂ → 
   simp only [Finset.sum_apply, Pi.smul_apply, List.map_ofFn]
   rfl
 
-variable (ε E) in
 
+variable (ε E) in
 def iohE (P Q : Matrix (Fin n) (Fin n) ℂ) (a b : Fin n) : Module.End ℂ (ioS ε E) :=
   ∑ c, ∑ d, (P c a * Q b d) • ioE ε E c d
 
@@ -235,10 +233,6 @@ lemma ioh_repr (P Q : Matrix (Fin n) (Fin n) ℂ) :
     Submodule.coe_smul, Finset.sum_apply, Pi.smul_apply, ioh_single]
   refine Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun d _ => ?_
   rw [ioE_rep h c d g hg]
-
-lemma ioh_gl (hAd : GlRelAd) (P Q : Matrix (Fin n) (Fin n) ℂ) (hQP : Q * P = 1) :
-    GlRel (iohE ε E P Q) :=
-  hAd (Module.End ℂ (ioS ε E)) n (ioE ε E) P Q (io_gl ε E) hQP
 
 end Central
 
@@ -297,63 +291,6 @@ lemma ioh_qminor (ε : Fin n → Bool) (H P Q : Matrix (Fin n) (Fin n) ℂ) (hQP
     intro Eop; rw [List.map_ofFn]; rfl
   rw [e1, e1, ioh_foldr ε H P Q hQP hPQ hH]
 
-lemma ioh_qminor_fun (ε : Fin n → Bool) (H P Q : Matrix (Fin n) (Fin n) ℂ) (hQP : Q * P = 1)
-    (hPQ : P * Q = 1) (hH : H = Pᴴ * Jm ε * P) {t : ℕ} (α β : Fin t → Fin n) (u : ℂ)
-    (G : Matrix (Fin n) (Fin n) ℂ → E) :
-    (fun y => qminorOp (EabH H) α β u G (Q * y * P)) =
-      qminorOp (fun a b => EcV ε (P * Matrix.single a b 1 * Q)) α β u (fun y => G (Q * y * P)) := by
-  funext y
-  rw [ioh_qminor ε H P Q hQP hPQ hH, ioh_PQ P Q y hPQ]
-
 end Conj
-
-theorem capCentralH_of (hAd : GlRelAd) : CapCentralH := by
-  intro n ε E _ _ H P Q f u c d g hQP hPQ hH hf hg
-  have hsm := ioh_smooth ε H P Q f hPQ hH hf
-  have hg' := ioh_inUJ ε H P Q g hPQ hH hg
-  obtain ⟨x, hx⟩ := io_rep_mk hsm
-  have hR := ioh_repr (ε := ε) (E := E) P Q
-  unfold capelliH qdetOp
-  rw [ioh_qminor ε H P Q hQP hPQ hH, ioh_EabH_fun ε H P Q f c d hQP hPQ hH,
-    ioh_EabH_eq ε H P Q _ c d hQP hPQ hH g, ioh_qminor_fun ε H P Q hQP hPQ hH]
-  have h1 := ioh_qminor_rep hR id id u (hR c d _ x hx) _ hg'
-  have h2 := hR c d _ _ (ioh_qminor_rep hR id id u hx) _ hg'
-  have hc := qDetCentral (Module.End ℂ (ioS ε E)) n (iohE ε E P Q) (ioh_gl hAd P Q hQP) u c d
-  dsimp only at h1 h2
-  rw [h1, h2]
-  unfold qdet at hc
-  exact congrArg (fun T : Module.End ℂ (ioS ε E) => (T x).1 ⟨_, hg'⟩) hc
-
-theorem capHWH_of (hAd : GlRelAd) : CapHWH := by
-  intro n ε E _ _ H P Q f ν hQP hPQ hH hf hhw g hg u
-  have hsm := ioh_smooth ε H P Q f hPQ hH hf
-  have hg' := ioh_inUJ ε H P Q g hPQ hH hg
-  obtain ⟨x, hx⟩ := io_rep_mk hsm
-  have hR := ioh_repr (ε := ε) (E := E) P Q
-  have hEW : ∀ a b y, EcV ε (P * Matrix.single a b 1 * Q) (fun y => f (Q * y * P)) y =
-      EabH H a b f (Q * y * P) := fun a b y =>
-    (congrFun (ioh_EabH_fun ε H P Q f a b hQP hPQ hH) y).symm
-  have hHW : IsHW (iohE ε E P Q) ν x := by
-    refine ⟨fun a => io_rep_unique (hR a a _ x hx) (fun g' hg' => ?_),
-      fun a b hab => io_rep_unique (hR a b _ x hx) (fun g' hg' => ?_)⟩
-    · show EcV ε (P * Matrix.single a a 1 * Q) (fun y => f (Q * y * P)) g' = _
-      rw [hEW, (hhw _ (ioh_inUH ε H P Q g' hPQ hH hg')).1 a, Submodule.coe_smul,
-        Pi.smul_apply, ← hx g' hg']
-    · show EcV ε (P * Matrix.single a b 1 * Q) (fun y => f (Q * y * P)) g' = _
-      rw [hEW, (hhw _ (ioh_inUH ε H P Q g' hPQ hH hg')).2 a b hab]; rfl
-  have h1 := ioh_qminor_rep hR id id u hx _ hg'
-  have h2 := qDetHW (ioS ε E) n (iohE ε E P Q) ν x (ioh_gl hAd P Q hQP) hHW u
-  unfold capelliH qdetOp
-  rw [ioh_qminor ε H P Q hQP hPQ hH, h1]
-  unfold qdet at h2
-  rw [h2]
-  show (∏ k : Fin n, (u - ((k : ℕ) : ℂ) + ν k)) • x.1 ⟨_, hg'⟩ = _
-  rw [← hx _ hg']
-  show _ • f (Q * (P * g * Q) * P) = _
-  rw [ioh_QP P Q g hQP]
-
-theorem capelli_central_conjugated : CapCentralH := capCentralH_of gl_relation_adjoint_holds
-
-theorem capelli_highest_weight_conjugated : CapHWH := capHWH_of gl_relation_adjoint_holds
 
 end Formalism.QuantumDeterminants

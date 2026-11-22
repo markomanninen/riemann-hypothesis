@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsPowDivPrimeZpowIntegralClosureUnitStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsPowDivPrimeZpowIntegralClosureUnitStatement
+
+@[expose] public section
+
 open GlobalTheory.K5
 
 namespace GlobalTheory.K5.ResidueIndep
@@ -28,7 +33,8 @@ theorem field_indep {k : Type} [Field k] (p : ℕ) [hp : Fact p.Prime] [CharP k 
   let c' : ℕ → K := fun j => if h : j < p ^ N then ⟨c j, hc j h⟩ else 0
   let P : K[X] := ∑ j ∈ Finset.range (p ^ N), monomial j (c' j)
   have hP : aeval t P = 0 := by
-    rw [← hs, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hs, map_sum]
     refine Finset.sum_congr rfl fun j hj => ?_
     rw [aeval_monomial]
     simp only [c', dif_pos (Finset.mem_range.1 hj)]
@@ -47,8 +53,7 @@ theorem field_indep {k : Type} [Field k] (p : ℕ) [hp : Fact p.Prime] [CharP k 
     exact absurd (Nat.pow_le_pow_right hp.out.pos hNn) (not_le.2 h4)
   intro j hj
   have h1 : P.coeff j = c' j := by
-    simp only [P, finset_sum_coeff, coeff_monomial]
-    rw [Finset.sum_ite_eq' , if_pos (Finset.mem_range.2 hj)]
+    simp [P, coeff_monomial, Finsupp.single_apply] <;> omega
   rw [hP0, coeff_zero] at h1
   have h2 := congrArg Subtype.val h1
   simp only [c', dif_pos hj] at h2
@@ -58,7 +63,7 @@ variable {p : ℕ} [hp : Fact p.Prime] {Ω : Type} [Field Ω] [Algebra (O0 p) Ω
 
 theorem mem_rad_iff (h : IsClo p Ω) (x : integralClosure (O0 p) Ω) :
     x ∈ (Ideal.span {(p : integralClosure (O0 p) Ω)}).radical ↔
-      ∃ m : ℕ, 0 < m ∧ IsInt p ((x : Ω) ^ m / (p : Ω)) := by
+      ∃ m : ℕ, 0 < m ∧ IsInt (p := p) ((x : Ω) ^ m / (p : Ω)) := by
   haveI := Basic.charZero_of_isClo h
   have hp0 : (p : Ω) ≠ 0 := by exact_mod_cast hp.out.ne_zero
   constructor
@@ -76,7 +81,7 @@ theorem mem_rad_iff (h : IsClo p Ω) (x : integralClosure (O0 p) Ω) :
     field_simp
 
 theorem isInt_inv (h : IsClo p Ω) (x : Ω)
-    (hx : ¬ ∃ m : ℕ, 0 < m ∧ IsInt p (x ^ m / (p : Ω))) : x ≠ 0 ∧ IsInt p x⁻¹ := by
+    (hx : ¬ ∃ m : ℕ, 0 < m ∧ IsInt (p := p) (x ^ m / (p : Ω))) : x ≠ 0 ∧ IsInt (p := p) x⁻¹ := by
   haveI := Basic.charZero_of_isClo h
   have hp0 : (p : Ω) ≠ 0 := by exact_mod_cast hp.out.ne_zero
   have hpi : IsIntegral (O0 p) (p : Ω) := by exact_mod_cast Basic.isInt_intCast (p := p) (Ω := Ω) (p : ℤ)
@@ -84,7 +89,25 @@ theorem isInt_inv (h : IsClo p Ω) (x : Ω)
     rintro rfl
     exact hx ⟨1, one_pos, by simpa [IsInt] using isIntegral_zero⟩
   refine ⟨hx0, ?_⟩
-  obtain ⟨a, b, hb, h1, h2⟩ := GlobalTheory.T.exists_pow_div_prime_zpow_integralClosure_unit p Ω h x hx0
+  have hIntegral : ∃ (a : ℤ) (b : ℕ), 0 < b ∧
+      IsIntegral (O0 p) (x ^ b / (p : Ω) ^ a) ∧
+      IsIntegral (O0 p) ((p : Ω) ^ a / x ^ b) := by
+    obtain ⟨hdom, hdvr, hirr⟩ := completed_laurent_isDVR p
+    have hmax : IsLocalRing.maximalIdeal (O0 p) = Ideal.span {(p : O0 p)} :=
+      (IsDiscreteValuationRing.irreducible_iff_uniformizer _).1 hirr
+    have : IsAdicComplete (IsLocalRing.maximalIdeal (O0 p)) (O0 p) := by
+      rw [hmax]
+      exact o0_isAdicComplete_span_p p
+    have : FaithfulSMul (O0 p) Ω := (faithfulSMul_iff_algebraMap_injective _ _).2 h.inj
+    let _ : Algebra (FractionRing (O0 p)) Ω := FractionRing.liftAlgebra (O0 p) Ω
+    have : IsScalarTower (O0 p) (FractionRing (O0 p)) Ω :=
+      FractionRing.isScalarTower_liftAlgebra (O0 p) Ω
+    have : Algebra.IsAlgebraic (O0 p) Ω := h.alg
+    have : Algebra.IsAlgebraic (FractionRing (O0 p)) Ω :=
+      Algebra.IsAlgebraic.extendScalars (IsFractionRing.injective (O0 p) (FractionRing (O0 p)))
+    simpa only [map_natCast] using
+      exists_pow_div_zpow_isIntegral (O0 p) (FractionRing (O0 p)) Ω (p : O0 p) hirr x hx0
+  obtain ⟨a, b, hb, h1, h2⟩ := hIntegral
   by_cases ha : 0 < a
   · exfalso
     obtain ⟨n, rfl⟩ : ∃ n : ℕ, a = (n + 1 : ℕ) := ⟨(a - 1).toNat, by push_cast; omega⟩
@@ -120,16 +143,16 @@ theorem rad_isMaximal (h : IsClo p Ω) :
 
 theorem residue_indep : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →
   ∀ E : Subfield Ω, Set.range (algebraMap (O0 p) Ω) ⊆ (E : Set Ω) →
-  (∀ y ∈ E, IsInt p y →
-    ¬ ∃ m : ℕ, 0 < m ∧ IsInt p ((y ^ p - algebraMap (O0 p) Ω (qO p)) ^ m / (p : Ω))) →
-  ∀ (T : Tower p Ω) (N : ℕ) (d : ℕ → Ω), (∀ j < p ^ N, d j ∈ E ∧ IsInt p (d j)) →
-  (∃ m : ℕ, 0 < m ∧ IsInt p ((∑ j ∈ Finset.range (p ^ N), d j * T.qq N ^ j) ^ m / (p : Ω))) →
-  ∀ j < p ^ N, ∃ m : ℕ, 0 < m ∧ IsInt p (d j ^ m / (p : Ω)) := by
+  (∀ y ∈ E, IsInt (p := p) y →
+    ¬ ∃ m : ℕ, 0 < m ∧ IsInt (p := p) ((y ^ p - algebraMap (O0 p) Ω (qO p)) ^ m / (p : Ω))) →
+  ∀ (T : Tower p Ω) (N : ℕ) (d : ℕ → Ω), (∀ j < p ^ N, d j ∈ E ∧ IsInt (p := p) (d j)) →
+  (∃ m : ℕ, 0 < m ∧ IsInt (p := p) ((∑ j ∈ Finset.range (p ^ N), d j * T.qq N ^ j) ^ m / (p : Ω))) →
+  ∀ j < p ^ N, ∃ m : ℕ, 0 < m ∧ IsInt (p := p) (d j ^ m / (p : Ω)) := by
   intro p hp Ω _ _ h E hE hq T N d hd hs
   classical
   set M := (Ideal.span {(p : integralClosure (O0 p) Ω)}).radical with hM
   have hmem : ∀ x : integralClosure (O0 p) Ω, Ideal.Quotient.mk M x = 0 ↔
-      ∃ m : ℕ, 0 < m ∧ IsInt p ((x : Ω) ^ m / (p : Ω)) := fun x => by
+      ∃ m : ℕ, 0 < m ∧ IsInt (p := p) ((x : Ω) ^ m / (p : Ω)) := fun x => by
     rw [Ideal.Quotient.eq_zero_iff_mem, hM, mem_rad_iff h]
   haveI : M.IsMaximal := rad_isMaximal h
   letI : Field (integralClosure (O0 p) Ω ⧸ M) := Ideal.Quotient.field M
@@ -164,7 +187,9 @@ theorem residue_indep : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Alg
       rintro _ ⟨y, hy, rfl⟩ hb
       refine hq y hy y.2 ?_
       rw [← ht]
-      have := (hmem (y ^ p - t ^ p ^ N)).1 (by rw [map_sub, map_pow, map_pow, hb, sub_self])
+      have hz : Ideal.Quotient.mk M (y ^ p - t ^ p ^ N) = 0 := by
+        rw [RingHom.map_sub, RingHom.map_pow, RingHom.map_pow, hb, sub_self]
+      have := (hmem (y ^ p - t ^ p ^ N)).1 hz
       exact this)
     (fun j => Ideal.Quotient.mk M (d' j))
     (fun j hj => ⟨d' j, by
@@ -176,7 +201,8 @@ theorem residue_indep : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Alg
         push_cast
         exact Finset.sum_congr rfl fun j hj => by rw [hd' j (Finset.mem_range.1 hj)]
       have := (hmem _).2 (e ▸ hs)
-      simpa only [map_sum, map_mul, map_pow] using this)
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa only [map_sum, map_mul, map_pow] using this)
   intro j hj
   rw [← hd' j hj]
   exact (hmem _).1 (key j hj)

@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyCuspFrame
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyCuspFrame
+
+@[expose] public section
 
 set_option autoImplicit false
 

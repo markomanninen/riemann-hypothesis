@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermSelfNeZero
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJfSSymExp
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermSelfNeZero
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJfSSymExp
+
+@[expose] public section
 
 open Matrix Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 

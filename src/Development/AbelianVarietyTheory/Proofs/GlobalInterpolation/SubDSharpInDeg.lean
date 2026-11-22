@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SubstitutionAdjoint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SubstitutionAdjoint
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MvPolynomial Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.IndefiniteRowSideFullHecke.SubstitutionAdjoint
 open scoped Matrix
@@ -12,10 +16,12 @@ theorem algHom_hom {K σ ρ M N : Type} [CommRing K] [AddCommMonoid M] [AddCommM
     (g : M →+ N) (φ : MvPolynomial σ K →ₐ[K] MvPolynomial ρ K)
     (hφ : ∀ v, IsWeightedHomogeneous w' (φ (X v)) (g (w v))) {f : MvPolynomial σ K} {d : M}
     (hf : IsWeightedHomogeneous w f d) : IsWeightedHomogeneous w' (φ f) (g d) := by
-  rw [f.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [f.as_sum, map_sum]
   refine IsWeightedHomogeneous.sum _ _ _ fun m hm => ?_
   have hd : Finsupp.weight w m = d := hf (mem_support_iff.mp hm)
-  rw [monomial_eq, map_mul, algHom_C, algebraMap_eq, Finsupp.prod, map_prod, ← hd, Finsupp.weight_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [monomial_eq, map_mul, algHom_C, algebraMap_eq, Finsupp.prod, map_prod, ← hd, Finsupp.weight_apply,
     Finsupp.sum, map_sum]
   refine IsWeightedHomogeneous.C_mul ?_ _
   refine IsWeightedHomogeneous.prod _ _ _ fun v _ => ?_
@@ -103,25 +109,25 @@ theorem weight_derW (τ : ι) (μ : (ι × Fin b × Fin b) ⊕ DVar ι a b →�
 theorem natW_cast (lam : DomWeight a) (i : Fin a) : (lam.natW i : ℤ) = lam.w i - lam.detShift := by
   have hi := i.2
   have h : lam.detShift ≤ lam.w i := by
-    rw [DomWeight.detShift, dif_pos (by omega)]
+    rw [DomWeight.detShift, dite_eq_left (by omega)]
     exact lam.anti (by rw [Fin.le_def]; simp only; omega)
   rw [DomWeight.natW]
   omega
 
 end GlobalTheory.JetDeg
 
-open GlobalTheory.JetDeg in
 
+open GlobalTheory.JetDeg in
 theorem GlobalTheory.subD_sharp_inDeg : ∀ (K : Type) [Field K] (ι : Type) [Fintype ι] (a b : ℕ) (hab : a < b) (lam : ι → DomWeight a) (lam' : ι → DomWeight b) (s s' : ι → ℤ) (n : ι → ℕ), WtCompat hab lam lam' s s' n → ∀ P ∈ Formalism.L2.DIV.VV K lam, ∀ μ ∈ (subD K ι a b (sharp n P)).support, InDeg lam s' (Finsupp.comapDomain Sum.inr μ Sum.inr_injective.injOn) := by
   classical
   intro K _ ι _ a b hab lam lam' s s' n hw P hP μ hμ τ
-  have h := subD_hom (b := b) τ (sharp_hom n τ (VV_hom lam τ hP)) (mem_support_iff.mp hμ)
-  rw [weight_derW] at h
+  have h := GlobalTheory.JetDeg.subD_hom (b := b) τ (GlobalTheory.JetDeg.sharp_hom n τ (GlobalTheory.JetDeg.VV_hom lam τ hP)) (mem_support_iff.mp hμ)
+  rw [GlobalTheory.JetDeg.weight_derW] at h
   simp only [Finsupp.comapDomain_apply]
   rw [h]
   push_cast
   have e : ∀ i, (lam τ).w i + s' τ = ((lam τ).natW i : ℤ) + n τ := fun i => by
-    rw [natW_cast, hw.2.2 τ]; ring
+    rw [GlobalTheory.JetDeg.natW_cast, hw.2.2 τ]; ring
   simp [e, Finset.sum_add_distrib, mul_comm]
 
 end

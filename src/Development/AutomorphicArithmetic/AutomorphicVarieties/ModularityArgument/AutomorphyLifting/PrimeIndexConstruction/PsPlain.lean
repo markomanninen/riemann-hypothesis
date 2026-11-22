@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PrimeIndexConstruction.LocTrans
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsUnramOfFixedIwahori
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PrimeIndexConstruction.LocTrans
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsUnramOfFixedIwahori
+
+@[expose] public section
 
 noncomputable section
 

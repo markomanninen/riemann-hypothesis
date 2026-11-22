@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+
+@[expose] public section
+
 open TensorProduct GlobalTheory.EtC
 
 namespace GlobalTheory.PicCech
@@ -54,7 +59,8 @@ theorem cocycle_sum {ι : Type} [Fintype ι] (x y : ι → B) (hs : ∑ i, x i *
     Algebra.TensorProduct.map (AlgHom.id A B) (Algebra.TensorProduct.includeRight : B →ₐ[A] B ⊗[A] B) (∑ i, x i ⊗ₜ[A] y i) =
     Algebra.TensorProduct.map (AlgHom.id A B) (Algebra.TensorProduct.includeLeft : B →ₐ[A] B ⊗[A] B) (∑ i, x i ⊗ₜ[A] y i) *
       (Algebra.TensorProduct.includeRight : B ⊗[A] B →ₐ[A] B ⊗[A] (B ⊗[A] B)) (∑ i, x i ⊗ₜ[A] y i) := by
-  simp only [map_sum, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, Algebra.TensorProduct.includeRight_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, Algebra.TensorProduct.includeRight_apply,
     Algebra.TensorProduct.includeLeft_apply]
   rw [Finset.sum_mul_sum]
   simp_rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]

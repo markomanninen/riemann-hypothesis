@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.SpMapAlgHomId
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.SpMapAlgHomId
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -76,9 +80,5 @@ theorem frMap_trans {S T U : Type} [CommRing S] [Algebra c.F S] [CommRing T] [Al
     rw [← Scheme.Hom.appLE_comp_appLE pm2 pm1 _ _ _ h1 h2]
     simp only [CommRingCat.hom_comp, RingHom.comp_apply]
     rw [ha1 i h1, ha2 i h2]
-
-theorem faithfullyFlat_id (S : Type) [CommRing S] : (RingHom.id S).FaithfullyFlat := by
-  show Module.FaithfullyFlat S S
-  exact Module.FaithfullyFlat.self S
 
 end ReciprocityTheory.ChartRestriction.G.PullbackSections

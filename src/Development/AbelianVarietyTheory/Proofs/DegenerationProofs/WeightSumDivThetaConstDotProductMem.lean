@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.ArithBase
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaSysFFMemFinitePerpProj
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FfDivFfMemOfSpecializes
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsBasisLatticeNear
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.ArithBase
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaSysFFMemFinitePerpProj
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FfDivFfMemOfSpecializes
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsBasisLatticeNear
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -53,7 +57,8 @@ theorem ff_div_th_mul_dotProduct_mem : ∀ (o Ω : Type) [CommRing o] [Field Ω]
         fun j => S.th x₁ / S.FF _ c₁ k₁ * algebraMap o Ω (S.proj _ c₁ j i₁)) =
         S.FF _ c k / S.FF _ c₁ k₁ * (S.th x₁ / S.th x₀) *
           algebraMap o Ω ((S.proj _ c * S.proj _ c₁) i i₁) := by
-      simp only [dotProduct, Matrix.mul_apply, map_sum, map_mul, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [dotProduct, Matrix.mul_apply, map_sum, map_mul, Finset.mul_sum]
       exact Finset.sum_congr rfl fun j _ => by ring
     rw [e]
     by_cases hc : c.comp (AddSubgroup.inclusion hTT) = c₁

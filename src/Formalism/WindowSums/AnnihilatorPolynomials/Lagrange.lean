@@ -1,4 +1,8 @@
-import Formalism.WindowSums.Statement
+module
+
+public import Formalism.WindowSums.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,8 @@ theorem lagrange_annihilation : Lagrange := by
       rw [natDegree_C, max_lt_iff]
       refine ⟨lt_of_le_of_lt (natDegree_sum_le_of_forall_le _ _ hdeg) (by omega), hpos⟩
   have h := congrArg (fun p => aeval T p x) key
-  simp only [map_sum, aeval_C] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, aeval_C] at h
   rw [LinearMap.sum_apply] at h
   rw [Module.algebraMap_end_apply] at h
   rw [← h]

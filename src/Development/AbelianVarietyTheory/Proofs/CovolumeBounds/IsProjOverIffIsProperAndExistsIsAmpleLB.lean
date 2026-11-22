@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsAmpleLBOfRelAmpleOfIsAffine
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverMorphismRestrictOfRelAmple
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RelAmpleExternalTensorPowerGroupPower
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsAmpleLBOfRelAmpleOfIsAffine
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverMorphismRestrictOfRelAmple
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RelAmpleExternalTensorPowerGroupPower
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+
+@[expose] public section
 
 noncomputable section
 
@@ -480,17 +484,6 @@ theorem isAmpleLB_basic :
     fun f _ h => ⟨h.exists_isImmersion f, h.isQProjOver f⟩, fun f _ h => ⟨h.exists_veryAmpleBy f, h.isProjOver f⟩,
     fun A _ _ hA hL h => relAmple_of_isAbelianScheme A hA hL h, fun g _ _ h => isProjOver_comp_of_isFinite g h,
     fun P _ hL hM hN H => hL.box hM hN P H, fun _ lim h => h.boxLB lim⟩
-
-example : IsAmpleLB (tw (O1 ℚ 2) (O1 ℚ 2) 1) := (isAmple_projective_O_one ℚ 2).tw_one (isGenerated_O1 ℚ 2)
-
-example (R : Type) [CommRing R] (m n : ℕ) :
-    IsProjOver (pullback.fst (PSpace.str R m) (PSpace.str R n) ≫ PSpace.str R m) := by
-  have := isProper_str R m
-  have := isProper_str R n
-  have hL := LB.isLB_pull (O1_isLB R m) (pullback.fst (PSpace.str R m) (PSpace.str R n))
-  have hM := LB.isLB_pull (O1_isLB R n) (pullback.snd (PSpace.str R m) (PSpace.str R n))
-  exact ((isAmple_projective_O_one R m).box (isAmple_projective_O_one R n) (isLB_tw hL hM 1) (.of_hasPullback _ _)
-    (exists_gen_div_div_tw hL hM)).isProjOver _
 
 end Summary
 

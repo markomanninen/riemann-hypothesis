@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NatCastMemPlaceAt
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckePrimeDetection
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NatCastMemPlaceAt
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckePrimeDetection
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -37,7 +41,7 @@ theorem exists_lift {F : Type} [Field F] [NumberField F] (φ : F →+* ℂ_[p]) 
   · rw [hf, map_one, map_one]
   · simp only [map_mul, hf]
   · simp only [map_zero, hf]
-  · simp only [map_add, hf]
+  · simp only [map_add (f := _), hf]
 
 theorem exists_finite {F : Type} [Field F] [NumberField F] (ψ : F →+* PadicAlgCl p) :
     ∃ K : IntermediateField ℚ_[p] (PadicAlgCl p), FiniteDimensional ℚ_[p] K ∧ (∀ a, ψ a ∈ K) ∧
@@ -45,10 +49,11 @@ theorem exists_finite {F : Type} [Field F] [NumberField F] (ψ : F →+* PadicAl
   let b := Module.finBasis ℚ F
   refine ⟨IntermediateField.adjoin ℚ_[p] (Set.range fun i => ψ (b i)), ?_, fun a => ?_, fun x hx => ?_⟩
   · exact IntermediateField.finiteDimensional_adjoin fun x _ => Algebra.IsIntegral.isIntegral x
-  · rw [← b.sum_repr a, map_sum]
-    refine sum_mem fun i _ => ?_
-    rw [Rat.smul_def, map_mul, map_ratCast]
-    exact mul_mem (SubfieldClass.ratCast_mem _ _) (IntermediateField.subset_adjoin _ _ ⟨i, rfl⟩)
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [← b.sum_repr a, map_sum]
+      refine sum_mem fun i _ => ?_
+      rw [Rat.smul_def, map_mul, map_ratCast]
+      exact mul_mem (SubfieldClass.ratCast_mem _ _) (IntermediateField.subset_adjoin _ _ ⟨i, rfl⟩)
   · let M : IntermediateField ℚ_[p] (PadicAlgCl p) :=
       ψ.fieldRange.topologicalClosure.toIntermediateField fun r => by
         have hc : IsClosed {r : ℚ_[p] | algebraMap ℚ_[p] (PadicAlgCl p) r ∈ ψ.fieldRange.topologicalClosure} :=

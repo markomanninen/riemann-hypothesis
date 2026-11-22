@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SelfDualLoc
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SelfDualLocalBasis.DualBasis
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SelfDualLoc
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SelfDualLocalBasis.DualBasis
+
+@[expose] public section
 
 namespace Bl.PaddedFamilies
 

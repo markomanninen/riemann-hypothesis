@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.ExpNegGlue
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
-import Development.AbelianVarietyTheory.Definitions.Foundations.AestronglyMeasurableQuotMeasureIffLift
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.ExpNegGlue
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+public import Development.AbelianVarietyTheory.Definitions.Foundations.AestronglyMeasurableQuotMeasureIffLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -109,7 +113,7 @@ theorem exists_lt_of_finset (s : Finset ℂ) (ρ : ℝ) (h : ∀ z ∈ s, ‖z�
 
 section Cover
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {N : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {N : ℕ}
 
 theorem exists_mem_slab (hS : ∀ t, splitCentre E N t = An.tor E fun _ => t) (hL : latticeGL E N = An.lat E N)
     {ω : Set (GA E N)} {t : ℝ} (ht : 0 < t)
@@ -151,7 +155,7 @@ theorem exists_mem_slab (hS : ∀ t, splitCentre E N t = An.tor E fun _ => t) (h
     · have hN : 0 < N := by omega
       have hi' : i = ⟨N - 1, by omega⟩ := Fin.ext (by simp only; omega)
       rw [hi']
-      have hmN : m = ⌊x ⟨N - 1, by omega⟩⌋ := by rw [hm, dif_pos hN]
+      have hmN : m = ⌊x ⟨N - 1, by omega⟩⌋ := by rw [hm, dite_eq_left hN]
       have hc' : c = -(⌊x ⟨N - 1, by omega⟩⌋ : ℝ) := by rw [hc, hmN]; push_cast; ring
       rw [hc']
       constructor

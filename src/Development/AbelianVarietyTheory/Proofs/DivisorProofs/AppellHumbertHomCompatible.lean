@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HilbertKodairaSpencer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAHOfIsFactorAH
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaNonvanishingBundleGenerated
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductAbelianUniformization
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DifferentiableOnProdOfForall
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LbIsoOfSameFactor
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HilbertKodairaSpencer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAHOfIsFactorAH
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaNonvanishingBundleGenerated
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductAbelianUniformization
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DifferentiableOnProdOfForall
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LbIsoOfSameFactor
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -115,13 +119,13 @@ theorem exists_chart_pt' {X : Scheme.{0}} (L : LB X) (hL : L.IsLB) (y : Sp ℂ �
   rw [this]
   exact hj
 
-open Classical in
 
+open Classical in
 def chi {M : LB A.left} (u : HolUnif A M g) (χ : u.Λ → ℂ) (z : Fin g → ℂ) : ℂ :=
   if h : z ∈ u.Λ then χ ⟨z, h⟩ else 0
 
-omit [IsCommMonObj A] in
 
+omit [IsCommMonObj A] in
 theorem semichar {M : LB A.left} (hM : M.IsLB) (u : HolUnif A M g) {Hm : Matrix (Fin g) (Fin g) ℂ}
     {χ : u.Λ → ℂ} (hF : IsFactorAH u Hm χ) {l m : Fin g → ℂ} (hl : l ∈ u.Λ) (hm : m ∈ u.Λ) :
     chi u χ (l + m) * Complex.exp ((Real.pi : ℂ) / 2 * (hf Hm l m + hf Hm m l)) =
@@ -143,7 +147,7 @@ theorem semichar {M : LB A.left} (hM : M.IsLB) (u : HolUnif A M g) {Hm : Matrix 
   rw [hlm] at law3
   change u.fr i 0 = χ ⟨l, hl⟩ * Complex.exp (↑Real.pi / 2 * hf Hm l l) * u.fr i l at law1
   change u.fr i l = χ ⟨m, hm⟩ * Complex.exp (↑Real.pi * hf Hm l m + ↑Real.pi / 2 * hf Hm m m) * u.fr i (l + m) at law2
-  rw [chi, dif_pos (add_mem hl hm), chi, dif_pos hl, chi, dif_pos hm]
+  rw [chi, dite_eq_left (add_mem hl hm), chi, dite_eq_left hl, chi, dite_eq_left hm]
   set a := hf Hm l l
   set b := hf Hm l m
   set c := hf Hm m l
@@ -188,7 +192,7 @@ theorem sumL_mem {M₀ M : LB A.left} (u₀ : HolUnif A M₀ g) (u : HolUnif A M
 omit [IsCommMonObj A] in
 theorem chi_ne {M : LB A.left} (u : HolUnif A M g) {Hm : Matrix (Fin g) (Fin g) ℂ} {χ : u.Λ → ℂ}
     (hF : IsFactorAH u Hm χ) {z : Fin g → ℂ} (hz : z ∈ u.Λ) : chi u χ z ≠ 0 := by
-  rw [chi, dif_pos hz]
+  rw [chi, dite_eq_left hz]
   intro h0
   have := hF.2.1 ⟨z, hz⟩
   rw [h0, norm_zero] at this
@@ -228,12 +232,12 @@ theorem lam_factor {M₀ M : LB A.left} (hM : M.IsLB) (u₀ : HolUnif A M₀ g) 
       Complex.exp (↑Real.pi * hf Hm (sumL g I v) (sumL g I w) +
         ↑Real.pi / 2 * hf Hm (sumL g I w) (sumL g I w)) * u.fr (j I) (sumL g I (v + w)) := by
     intro I
-    rw [chi, dif_pos (sumL_mem u₀ u hex I hw), map_add]
+    rw [chi, dite_eq_left (sumL_mem u₀ u hex I hw), map_add (f := _)]
     exact hF.2.2 ⟨_, sumL_mem u₀ u hex I hw⟩ (j I) _ (lam_chart u₀ u hex j v hv I)
   have hne : ∀ I, u.fr (j I) (sumL g I (v + w)) ≠ 0 := by
     intro I
     refine u.fr_ne _ _ ?_
-    rw [map_add, ex_add_mem u _ (sumL_mem u₀ u hex I hw)]
+    rw [map_add (f := _), ex_add_mem u _ (sumL_mem u₀ u hex I hw)]
     exact lam_chart u₀ u hex j v hv I
   obtain ⟨hl, hr⟩ := (mem_sqLat _ _).1 hw
   have hl' := (mem_iff u₀ u hex _).2 hl
@@ -272,7 +276,7 @@ def twistMap (Fl : (Fin g → ℂ) →ₗ[ℂ] (Fin g → ℂ)) : (Fin (g + g) �
   map_add' v w := by
     funext q
     refine Fin.addCases (fun k => ?_) (fun k => ?_) q <;>
-      simp only [Fin.append_left, Fin.append_right, map_add, Pi.add_apply]
+      simp only [Fin.append_left, Fin.append_right, map_add (f := _), Pi.add_apply]
   map_smul' c v := by
     funext q
     refine Fin.addCases (fun k => ?_) (fun k => ?_) q <;>
@@ -286,66 +290,3 @@ theorem halfR_twist (Fl : (Fin g → ℂ) →ₗ[ℂ] (Fin g → ℂ)) (v : Fin 
 
 end GlobalTheory.LamPullFrame
 
-open GlobalTheory.LamPullFrame GlobalTheory.ProdUnifSq in
-
-theorem GlobalTheory.TorusRM.lbIso_lam_pull_of_selfAdjoint : ∀ (g : ℕ) (A : Over (Sp ℂ)) [GrpObj A], IsAbelianScheme A → IsProjOver A.hom →
-    ∀ (M₁ M₂ : LB A.left) (u₁ : HolUnif A M₁ g) (u₂ : HolUnif A M₂ g) (H₁ H₂ : Matrix (Fin g) (Fin g) ℂ)
-      (χ₁ : u₁.Λ → ℂ) (χ₂ : u₂.Λ → ℂ) (f : A ⟶ A) (Fl : (Fin g → ℂ) →ₗ[ℂ] (Fin g → ℂ)),
-    M₁.IsLB → M₂.IsLB → u₂.ex = u₁.ex → IsFactorAH u₁ H₁ χ₁ → IsFactorAH u₂ H₂ χ₂ → IsMonHom f →
-    (∀ z, u₁.ex (Fl z) = u₁.ex z ≫ f) →
-    (∀ z w, z ⬝ᵥ H₂.mulVec (star w) = z ⬝ᵥ H₁.mulVec (star (Fl w))) →
-    (∀ z w, Fl z ⬝ᵥ H₁.mulVec (star w) = z ⬝ᵥ H₁.mulVec (star (Fl w))) →
-    LBIso (abelian₂ A M₂) ((abelian₂ A M₁).pull (lift (fst A A) (snd A A ≫ f)).left) := by
-  intro g A _ hA hp M₁ M₂ u₁ u₂ H₁ H₂ χ₁ χ₂ f Fl hM₁ hM₂ hex hF₁ hF₂ hfm hFl hH hsa
-  haveI : IsCommMonObj A := hA.comm
-  haveI : IsMonHom f := hfm
-  have hFm : ∀ v, (lamUnif u₁ u₁ rfl).ex (twistMap Fl v) =
-      (sqUnif A u₁).ex v ≫ lift (fst A A) (snd A A ≫ f) := by
-    intro v
-    change lift (u₁.ex (halfL g (twistMap Fl v))) (u₁.ex (halfR g (twistMap Fl v))) =
-      lift (u₁.ex (halfL g v)) (u₁.ex (halfR g v)) ≫ lift (fst A A) (snd A A ≫ f)
-    rw [halfL_twist, halfR_twist, hFl, comp_lift, lift_fst, lift_snd_assoc]
-  let UP := GlobalTheory.linCombUnif (sqUnif A u₁) (lamUnif u₁ u₁ rfl) (fun _ : PUnit => lift (fst A A) (snd A A ≫ f))
-    (fun _ => twistMap Fl) (fun _ => 1) (fun _ v => hFm v)
-  let UN := GlobalTheory.SameFactor.divUnif (lamUnif u₁ u₂ hex) UP rfl
-  refine GlobalTheory.HolUnifSec.hasGen_of_periodic (A ⊗ A) (AbelianSchemeGerms.isAbelianScheme_tensor _ _ hA hA)
-    (GlobalTheory.ProjSpace.isProjOver_pullback hp hp) _
-    (LB.isLB_div (LB.isLB_linComb (LB.isLB_linComb hM₁ _ _) _ _) (LB.isLB_linComb hM₂ _ _)) (g + g) UN
-    (fun _ => 1) (differentiable_const _) (fun _ => one_ne_zero) ?_
-  intro w hw p z hz
-  obtain ⟨hz1, hz2⟩ := (top_le_preimage_inf _ _ _).1 hz
-  have hw' : w ∈ sqLat u₁.Λ := hw
-  obtain ⟨hl, hr⟩ := (mem_sqLat _ _).1 hw'
-  have hwt : twistMap Fl w ∈ sqLat u₁.Λ := by
-    refine (mem_sqLat _ _).2 ⟨by rw [halfL_twist]; exact hl, ?_⟩
-    rw [halfR_twist, ← u₁.ker, hFl, (u₁.ker _).2 hr, MonObj.one_comp]
-  have hc1 : ⊤ ≤ ((sqUnif A u₁).ex (twistMap Fl z)).left ⁻¹ᵁ (abelian₂ A M₁).U (p.1 PUnit.unit) := by
-    have h := (GlobalTheory.CubeValues.le_preimage_wchart ((sqUnif A u₁).ex z).left (abelian₂ A M₁)
-      (fun _ : PUnit => (lift (fst A A) (snd A A ≫ f)).left) p.1).1 hz1 PUnit.unit
-    rw [← Over.comp_left, ← hFm] at h
-    exact h
-  have fac1 := lam_factor hM₁ u₁ u₁ rfl hF₁ (p.1 PUnit.unit) (twistMap Fl z) (twistMap Fl w) hwt hc1
-  have fac2 := lam_factor hM₂ u₁ u₂ hex hF₂ p.2 z w hw' hz2
-  rw [halfL_twist, halfL_twist, halfR_twist, halfR_twist, ← map_add] at fac1
-  have hE : (hf H₁ (halfL g z) (Fl (halfR g w)) + hf H₁ (Fl (halfR g z)) (halfL g w) +
-      hf H₁ (halfL g w) (Fl (halfR g w))) =
-      hf H₂ (halfL g z) (halfR g w) + hf H₂ (halfR g z) (halfL g w) + hf H₂ (halfL g w) (halfR g w) := by
-    have e1 := hH (halfL g z) (halfR g w)
-    have e2 := hH (halfR g z) (halfL g w)
-    have e3 := hH (halfL g w) (halfR g w)
-    have e4 := hsa (halfR g z) (halfL g w)
-    simp only [hf]
-    rw [e1, e2, e3, e4]
-  rw [hE] at fac1
-  have hz2' : ⊤ ≤ ((sqUnif A u₁).ex (z + w)).left ⁻¹ᵁ (abelian₂ A M₂).U p.2 := by
-    rw [ex_add_mem _ _ hw']; exact hz2
-  have n2 := (lamUnif u₁ u₂ hex).fr_ne p.2 (z + w) hz2'
-  have hPf : ∀ v, UP.fr p.1 v = (lamUnif u₁ u₁ rfl).fr (p.1 PUnit.unit) (twistMap Fl v) := fun v => by
-    show (∏ k : PUnit, (lamUnif u₁ u₁ rfl).fr (p.1 k) (twistMap Fl v) ^ (1 : ℤ)) = _
-    simp
-  change 1 * (UP.fr p.1 (z + w) * ((lamUnif u₁ u₂ hex).fr p.2 (z + w))⁻¹) =
-    1 * (UP.fr p.1 z * ((lamUnif u₁ u₂ hex).fr p.2 z)⁻¹)
-  rw [hPf, hPf, fac1, fac2]
-  have ne := Complex.exp_ne_zero (↑Real.pi * (hf H₂ (halfL g z) (halfR g w) + hf H₂ (halfR g z) (halfL g w) +
-    hf H₂ (halfL g w) (halfR g w)))
-  field_simp

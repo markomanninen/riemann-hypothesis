@@ -1,5 +1,9 @@
-import ReciprocityTheory.SemistableReduction.SemiDegZ
-import Lemmata.GeneralBFactSecondAlt.Imports
+module
+
+public import ReciprocityTheory.SemistableReduction.SemiDegZ
+public import Lemmata.GeneralBFactSecondAlt.Imports
+
+@[expose] public section
 
 noncomputable section
 

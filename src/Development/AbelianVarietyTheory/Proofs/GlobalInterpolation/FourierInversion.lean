@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DecayZero
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ContinuousBdGen
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HalfMulTwoAF
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PoissonSummationAdelicTuplesStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EqOfThetaHeisenbergTranslatesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DecayZero
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ContinuousBdGen
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HalfMulTwoAF
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PoissonSummationAdelicTuplesStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EqOfThetaHeisenbergTranslatesStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Topology Filter Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.GaugeEx GlobalTheory.SWQ
 open scoped TensorProduct NNReal ENNReal
 

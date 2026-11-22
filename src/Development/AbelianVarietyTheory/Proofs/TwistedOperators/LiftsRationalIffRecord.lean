@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RatZOfTests
-import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.CoordRat
-import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RatThOfLiftTest
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraicFormsBasisInjective
-import Formalism.LocalToGlobal.IndefiniteReal.ZeroPartEigenvalueConvention
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RatZOfTests
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.CoordRat
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RatThOfLiftTest
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraicFormsBasisInjective
+public import Formalism.LocalToGlobal.IndefiniteReal.ZeroPartEigenvalueConvention
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,12 +22,6 @@ open Matrix
 
 variable {K : Type} [Field K] (σ : K →+* ℂ) {W : Type} [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W]
 
-def FunTest (S : Set W) : Prop :=
-  ∃ (N : ℕ) (ψ : Fin N → Module.Dual ℂ W), (∀ w, (∀ i, ψ i w = 0) → w = 0) ∧ ∀ s ∈ S, ∀ i, ψ i s ∈ Set.range σ
-
-def SpanTest (S : Set W) : Prop :=
-  ∃ (m : ℕ) (v : Fin m → W), LinearIndependent ℂ v ∧ ∀ s ∈ S, ∃ a : Fin m → K, s = ∑ i, σ (a i) • v i
-
 end Lin
 
 section Cx
@@ -31,15 +29,6 @@ section Cx
 open Formalism.DivisionValues Formalism.L2.Indef Formalism.L2.DIV Formalism.IndefR.Cx Formalism.IndefR.Rat GlobalTheory.IndefiniteRowSideFullHecke.GoodLiftPhase
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K] {Bs : DefBase K} {A : DefAmb Bs} (X : CxData A)
-
-def liftsAll (j : Bs.J) : Set (X.W j) := {w | ∃ (t : Bs.Tup) (x : A.FL j t), X.θ' j t (X.jL j t x) = w}
-
-def liftsAt (j : Bs.J) (t : Bs.Tup) : Set (X.W j) := {w | ∃ x : A.FL j t, X.θ' j t (X.jL j t x) = w}
-
-def levelBasis (b : Bool) (j : Bs.J) : Set (X.W j) := Set.range fun k : Fin (X.dW b j) => X.w0C b j (Pi.single k 1)
-
-def LevelIn (b : Bool) (V : ∀ j t, Submodule K (A.FL j t)) : Prop :=
-  ∀ j t, ∀ x ∈ V j t, X.θ' j t (X.jL j t x) ∈ LinearMap.range (X.w0C b j)
 
 theorem liftTest_of_liftTestB {b : Bool} (h : LiftTestB X b) : LiftTest X := fun j => by
   obtain ⟨N, ψ, h1, h2, -⟩ := h j

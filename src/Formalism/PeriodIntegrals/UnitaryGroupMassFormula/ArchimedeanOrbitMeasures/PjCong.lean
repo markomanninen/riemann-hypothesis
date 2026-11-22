@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.MpOfIsomProd
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.MpOfIsomProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -124,11 +128,13 @@ theorem cong_factor {m : ℕ} {η : Type} [Fintype η] (H : EuclideanSpace ℝ �
     rw [← Measure.map_map hmP.measurable (hmC.prodMap hmC), Measure.volume_eq_prod,
       ← Measure.map_prod_map _ _ hmC hmC, hC, Measure.prod_smul_left, Measure.prod_smul_right, smul_smul,
       Measure.map_smul, ← Measure.volume_eq_prod, hmP.map_eq]
+    exact hmP.measurable.aemeasurable
   have rhs : (volume : Measure (EuclideanSpace ℝ η × EuclideanSpace ℝ η)).map (psiLp H ∘ Prod.map C C) =
       (ENNReal.ofReal (Complex.normSq B.det ^ m)⁻¹ * ENNReal.ofReal (Complex.normSq B.det ^ m)⁻¹) • volume := by
     have : (psiLp H ∘ Prod.map C C) = mL ∘ mR ∘ psiLp H := funext key
     rw [this, ← Measure.map_map hmLm (hmRm.comp hmP.measurable), ← Measure.map_map hmRm hmP.measurable,
       hmP.map_eq, hR, Measure.map_smul, hL, smul_smul]
+    exact hmLm.aemeasurable
   have hball := lhs.symm.trans rhs
   have hv := congrArg (fun μ : Measure (EuclideanSpace ℝ (Fin m × Fin m × Bool)) => μ (Metric.ball 0 1)) hball
   simp only [Measure.smul_apply, smul_eq_mul] at hv

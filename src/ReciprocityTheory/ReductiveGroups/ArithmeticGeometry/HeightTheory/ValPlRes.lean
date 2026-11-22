@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -12,9 +16,8 @@ variable {O F L : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [F
   [IsDedekindDomain (integralClosure O L)] [IsFractionRing (integralClosure O L) L]
 
 variable (F) in
-
 theorem resDeg_addv (v : HeightOneSpectrum (integralClosure O L)) :
-    letI := resAlg (F := F) (addv L v)
+    letI := resAlg (F := F) (addv L v);
     Module.finrank (ResidueField ((vRing (addv L v)).comap (algebraMap F L)))
       (ResidueField (vRing (addv L v))) = v.asIdeal.inertiaDeg O := by
   classical
@@ -146,7 +149,7 @@ theorem resDeg_addv (v : HeightOneSpectrum (integralClosure O L)) :
   let jO : (O ⧸ maximalIdeal O) ≃+* ResidueField ((vRing w).comap (algebraMap F L)) :=
     (Ideal.quotEquivOfEq hkerO.symm).trans (RingHom.quotientKerEquivOfSurjective hsurjO)
   have hmax : (v.asIdeal.comap (algebraMap O (integralClosure O L))).IsMaximal :=
-    Ideal.isMaximal_comap_of_isIntegral_of_isMaximal v.asIdeal
+    Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := O) v.asIdeal
   haveI : v.asIdeal.LiesOver (maximalIdeal O) := ⟨(IsLocalRing.eq_maximalIdeal hmax).symm⟩
   have hc : (algebraMap (ResidueField ((vRing w).comap (algebraMap F L)))
       (ResidueField (vRing w))).comp jO.toRingHom =

@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.Direct
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.PoincareInHH
+module
+
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.Direct
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.PoincareInHH
+
+@[expose] public section
 
 open scoped Classical ENNReal
 open Matrix MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.LocWSOf Formalism.L2.SG.PoincareInHH.PoincareSetting GlobalTheory.CovDom
@@ -57,7 +61,8 @@ theorem of_cjw_mul (D : D7) (w : InfinitePlace D.host.E) (A B : Formalism.Quantu
       Matrix.of (cjw D w A) * Matrix.of (cjw D w B) := by
   unfold cjw
   split_ifs with h
-  · simp
+  · ext i j
+    rfl
   · ext i j
     simp [Matrix.mul_apply, star_sum]
 

@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ADensStC
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LeviOneEqLaplacianThm
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ArithModel
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ADensStC
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LeviOneEqLaplacianThm
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ArithModel
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -98,7 +103,7 @@ theorem analyticAt_eval_map (p : MvPolynomial J ℤ) (z : J → ℂ) :
     simp only [MvPolynomial.map_C, MvPolynomial.eval_C]
     exact analyticAt_const
   | add p q hp hq =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact hp.add hq
   | mul_X p v hp =>
     simp only [map_mul, MvPolynomial.map_X, MvPolynomial.eval_X]
@@ -119,9 +124,7 @@ theorem log_norm_pluriharmonic {T : (J → ℂ) → ℂ} {z : J → ℂ} (hT : A
     ring
   have hre : ContDiffAt ℝ 2 (fun y => (Complex.log (T y / T z)).re) z := by
     have h := (Complex.reCLM.contDiff (n := 2)).contDiffAt.comp z (hG.restrictScalars.contDiffAt (n := 2))
-    convert h using 1
-    funext y
-    simp
+    simpa only [Function.comp_def, Complex.reCLM_apply] using h
   have hc : ContDiffAt ℝ 2 (fun _ : J → ℂ => (1 : ℝ)) z := contDiffAt_const
   refine ⟨(hre.add (contDiffAt_const.mul hc)).congr_of_eventuallyEq hev, ?_⟩
   rw [ReciprocityTheory.AnForm.levi_congr hev w, ReciprocityTheory.AnForm.levi_add_smul _ hre hc w,
@@ -230,7 +233,7 @@ def blk (k : K) : ((Σ k, ι k) → ℂ) →L[ℂ] (ι k → ℂ) :=
     ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : (Σ k, ι k) => ℂ) ⟨k, i⟩
 
 def F (k : K) (y : (Σ k, ι k) → ℂ) : ℝ :=
-  Real.log ((fsMetric (ι k)).ρ (fun i => y ⟨k, i⟩))
+  Real.log ((fsMetric (ι := ι k)).ρ (fun i => y ⟨k, i⟩))
 
 theorem blk_ne {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) (k : K) :
     (fun i => z ⟨k, i⟩ : ι k → ℂ) ≠ 0 := by
@@ -238,22 +241,26 @@ theorem blk_ne {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0
   exact fun h0 => hi (congrFun h0 i)
 
 theorem rho_pos {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) (k : K) :
-    0 < (fsMetric (ι k)).ρ (fun i => z ⟨k, i⟩) :=
-  (fsMetric (ι k)).pos _ (blk_ne hz k)
+    0 < (fsMetric (ι := ι k)).ρ (fun i => z ⟨k, i⟩) :=
+  (fsMetric (ι := ι k)).pos _ (blk_ne hz k)
 
 theorem contDiffAt_F {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) (k : K) :
     ContDiffAt ℝ 2 (F k) z := by
-  have hφ := ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.adens_contDiffAt_logρ_id
-    (GroundTheory.Heights₂.Heights.HilbertSamuel.ProjLine.isSmoothMetric_fs (J := ι k)) (blk_ne hz k)
-  have hFk : F k = (fun u => Real.log ((fsMetric (ι k)).ρ u)) ∘ blk (ι := ι) k := rfl
+  have hρ : ContDiffAt ℝ 2 (fsMetric (ι := ι k)).ρ (blk (ι := ι) k z) :=
+    ((GroundTheory.Heights₂.Heights.HilbertSamuel.ProjLine.isSmoothMetric_fs (J := ι k)).contDiffAt
+      (isOpen_ne.mem_nhds (blk_ne hz k))).of_le (WithTop.coe_le_coe.2 le_top)
+  have hφ := hρ.log (rho_pos hz k).ne'
+  have hFk : F k = (fun u => Real.log ((fsMetric (ι := ι k)).ρ u)) ∘ blk (ι := ι) k := rfl
   rw [hFk]
   exact hφ.comp z ((blk (ι := ι) k).restrictScalars ℝ).contDiff.contDiffAt
 
 theorem levi_F_nonneg {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) (k : K)
     (w : (Σ k, ι k) → ℂ) : 0 ≤ ReciprocityTheory.AnForm.levi (F k) z w := by
-  have hφ := ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.adens_contDiffAt_logρ_id
-    (GroundTheory.Heights₂.Heights.HilbertSamuel.ProjLine.isSmoothMetric_fs (J := ι k)) (blk_ne hz k)
-  have hFk : F k = (fun u => Real.log ((fsMetric (ι k)).ρ u)) ∘ blk (ι := ι) k := rfl
+  have hρ : ContDiffAt ℝ 2 (fsMetric (ι := ι k)).ρ (blk (ι := ι) k z) :=
+    ((GroundTheory.Heights₂.Heights.HilbertSamuel.ProjLine.isSmoothMetric_fs (J := ι k)).contDiffAt
+      (isOpen_ne.mem_nhds (blk_ne hz k))).of_le (WithTop.coe_le_coe.2 le_top)
+  have hφ := hρ.log (rho_pos hz k).ne'
+  have hFk : F k = (fun u => Real.log ((fsMetric (ι := ι k)).ρ u)) ∘ blk (ι := ι) k := rfl
   rw [hFk, ReciprocityTheory.AnForm.levi_comp w ((blk (ι := ι) k).analyticAt z) hφ]
   exact GroundTheory.Heights₂.Heights.HilbertSamuel.ProjLine.leviForm_log_fs_nonneg (blk_ne hz k) _
 

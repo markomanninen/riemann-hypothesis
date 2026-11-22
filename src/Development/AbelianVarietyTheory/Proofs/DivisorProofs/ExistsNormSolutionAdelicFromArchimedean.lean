@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.Published
 open scoped TensorProduct
 
@@ -92,11 +97,11 @@ theorem placeAtInfE_mul (x y : w.Completion ⊗[F] E) :
     placeAtInfE F w E (x * y) = placeAtInfE F w E x * placeAtInfE F w E y := by
   induction x using TensorProduct.induction_on with
   | zero => rw [zero_mul, map_zero, zero_mul]
-  | add a b ha hb => rw [add_mul, map_add, map_add, ha, hb, add_mul]
+  | add a b ha hb => rw [add_mul, map_add (f := _), map_add (f := _), ha, hb, add_mul]
   | tmul a e =>
     induction y using TensorProduct.induction_on with
     | zero => rw [mul_zero, map_zero, mul_zero]
-    | add c d hc hd => rw [mul_add, map_add, map_add, hc, hd, mul_add]
+    | add c d hc hd => rw [mul_add, map_add (f := _), map_add (f := _), hc, hd, mul_add]
     | tmul b f =>
       unfold placeAtInfE
       rw [Algebra.TensorProduct.tmul_mul_tmul, LinearMap.rTensor_tmul, LinearMap.rTensor_tmul,
@@ -106,7 +111,7 @@ theorem placeAtInfE_sig (σ : E →ₐ[F] E) (x : w.Completion ⊗[F] E) :
     placeAtInfE F w E (sigR w.Completion σ x) = sigR (AF F) σ (placeAtInfE F w E x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x₁ x₂ h₁ h₂ => simp only [map_add, h₁, h₂]
+  | add x₁ x₂ h₁ h₂ => simp only [map_add (f := _), h₁, h₂]
   | tmul a e =>
     simp only [sigR, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, Algebra.TensorProduct.map_tmul,
       AlgHom.coe_id, id_eq, placeAtInfE_tmul]
@@ -117,7 +122,7 @@ theorem idem_mul_placeAtInfE {ε : AF F} (hε : IsPlacesIdem {w} ∅ ε) (x : w.
     algebraMap (AF F) (AF F ⊗[F] E) ε * placeAtInfE F w E x = placeAtInfE F w E x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x₁ x₂ h₁ h₂ => simp only [mul_add, map_add, h₁, h₂]
+  | add x₁ x₂ h₁ h₂ => simp only [mul_add, map_add (f := _), h₁, h₂]
   | tmul a e =>
     rw [placeAtInfE_tmul, Algebra.TensorProduct.algebraMap_apply, Algebra.TensorProduct.tmul_mul_tmul,
       one_mul, Algebra.algebraMap_self, RingHom.id_apply, idem_mul_placeAtInf hε]

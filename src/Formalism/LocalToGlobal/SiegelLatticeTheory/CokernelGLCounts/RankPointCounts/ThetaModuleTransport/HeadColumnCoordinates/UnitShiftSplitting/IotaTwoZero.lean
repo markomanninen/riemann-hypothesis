@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.EmbeddingSecondCoefficient
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.EmbeddingSecondCoefficient
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,8 +103,8 @@ def iota2H : (Fin (r + 1) → M.R) →+ (Ix r → M.L.O) where
   map_zero' := iotaTwo_zero hs
   map_add' := iotaTwo_add hs
 
-include hTT hZ hZσ in
 
+include hTT hZ hZσ in
 def toP : DG g Zh T T' →+ DD1 hs Z TT × DD1 hs Zσ TT :=
   QuotientAddGroup.lift (RelG g Zh T T').toAddSubgroup
     (((QuotientAddGroup.mk' (LL hs Z TT)).comp (cmp1 hs)).prod ((QuotientAddGroup.mk' (LL hs Zσ TT)).comp (cmp2 hs)))
@@ -110,8 +114,8 @@ def toP : DG g Zh T T' →+ DD1 hs Z TT × DD1 hs Zσ TT :=
         QuotientAddGroup.mk'_apply]
       exact Prod.ext ((QuotientAddGroup.eq_zero_iff _).2 h1) ((QuotientAddGroup.eq_zero_iff _).2 h2))
 
-include hTT hZ hZσ in
 
+include hTT hZ hZσ in
 def ofP : DD1 hs Z TT × DD1 hs Zσ TT →+ DG g Zh T T' :=
   AddMonoidHom.coprod
     (QuotientAddGroup.lift (LL hs Z TT) ((RelG g Zh T T').mkQ.toAddMonoidHom.comp (iota1H hs))
@@ -147,7 +151,7 @@ def splitQ : DG g Zh T T' ≃+ DD1 hs Z TT × DD1 hs Zσ TT where
     obtain ⟨x, y⟩ := p
     obtain ⟨l, rfl⟩ := QuotientAddGroup.mk_surjective x
     obtain ⟨w, rfl⟩ := QuotientAddGroup.mk_surjective y
-    rw [ofP_mk, toP_mk, map_add, map_add, firstComponent_iotaOne, secondComponent_iotaOne, firstComponent_iotaTwo, secondComponent_iotaTwo, add_zero, zero_add]
+    rw [ofP_mk, toP_mk, map_add (f := _), map_add (f := _), firstComponent_iotaOne, secondComponent_iotaOne, firstComponent_iotaTwo, secondComponent_iotaTwo, add_zero, zero_add]
   map_add' := (toP hs hTT hZ hZσ).map_add
 
 theorem splitQ_mk (Y : Ix r → M.L.O) :

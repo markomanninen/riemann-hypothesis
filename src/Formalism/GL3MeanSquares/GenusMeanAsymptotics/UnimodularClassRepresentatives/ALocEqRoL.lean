@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.AbsNormLeOfMemBoxSet
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.AbsNormLeOfMemBoxSet
+
+@[expose] public section
 
 open NumberField Module Filter Topology
 
@@ -14,15 +18,15 @@ def aLoc (h : V →ₗ⋆[K] V →ₗ[K] K) (L : Submodule (𝓞 K) V) (𝔭 : {
     (n : 𝓞 F) : ℝ :=
   alphaN h L 𝔭.1 n / eFac K (finrank K V) 𝔭.1
 
-open scoped Classical in
 
+open scoped Classical in
 def roL (h : V →ₗ⋆[K] V →ₗ[K] K) (L : Submodule (𝓞 K) V)
     (S : Finset {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal}) (𝔭 : {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal}) (j : ℕ) : ℝ :=
   if 𝔭 ∈ S then 1 else aLoc h L 𝔭 (exists_vF_eq 𝔭.2 j).choose
 
 variable (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F)
   {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hd : IsTotPosDef h) {L : Submodule (𝓞 K) V}
-  (hL : Submodule.IsLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) (hm : 2 ≤ finrank K V)
+  (hL : Submodule.IsFullLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) (hm : 2 ≤ finrank K V)
   {S : Finset {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal}}
   (hS : ∀ 𝔭 : {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal}, vd h L 𝔭.1 ≠ 0 → 𝔭 ∈ S)
 
@@ -36,7 +40,7 @@ theorem aLoc_eq_roL {𝔭 : {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal}} (h𝔭 : 
   obtain ⟨hn', hvn'⟩ := (exists_vF_eq 𝔭.2 (valF n 𝔭)).choose_spec
   rw [roL, if_neg h𝔭]
   unfold aLoc
-  rw [alphaN_eq_of_vF_eq hK hF hs hd hL hLi 𝔭.2 hv hn hn' (by rw [hvn', valF_apply hn])]
+  rw [alphaN_eq_of_vF_eq hK hF hs hd (by first | exact hL | exact hL.toIsLattice) hLi 𝔭.2 hv hn hn' (by rw [hvn', valF_apply hn])]
 
 include hm
 
@@ -53,7 +57,7 @@ theorem roL_zero (𝔭 : {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal}) : roL h L S 
       omega
     rw [roL, if_neg h𝔭]
     unfold aLoc
-    rw [unitaryAbsoluteValueBounds.alphaN_unit hK hF hs hd hL hLi 𝔭.2 hv (by omega) hn𝔭]
+    rw [unitaryAbsoluteValueBounds.alphaN_unit hK hF hs hd (by first | exact hL | exact hL.toIsLattice) hLi 𝔭.2 hv (by omega) hn𝔭]
     have he := eFac_pos (K := K) 𝔭.2 (m := finrank K V) (by omega)
     unfold eFac at he ⊢
     exact div_self he.ne'
@@ -74,7 +78,7 @@ theorem roL_diff (𝔭 : {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal}) (j : ℕ) :
     obtain ⟨hn0, hv0⟩ := (exists_vF_eq 𝔭.2 j).choose_spec
     rw [hro, hro]
     unfold aLoc eFac
-    have hb := alphaN_rho_diff_bound hK hF hs hd hL hLi hm 𝔭.2 hv hn1 hn0 (by rw [hv1, hv0])
+    have hb := alphaN_rho_diff_bound hK hF hs hd (by first | exact hL | exact hL.toIsLattice) hLi hm 𝔭.2 hv hn1 hn0 (by rw [hv1, hv0])
     refine hb.trans ?_
     rw [hv1]
 
@@ -132,7 +136,7 @@ theorem prodS_bound (S : Finset {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal}) :
   have hpos : ∀ 𝔭 : {𝔭 : Ideal (𝓞 F) // 𝔭.IsMaximal}, 0 < eFac K (finrank K V) 𝔭.1 :=
     fun 𝔭 => eFac_pos 𝔭.2 hm1
   have h0 : ∀ 𝔭 ∈ S, 0 ≤ aLoc h L 𝔭 n := fun 𝔭 _ => div_nonneg (hC 𝔭 n hn).1 (hpos 𝔭).le
-  refine ⟨Finset.prod_nonneg h0, Finset.prod_le_prod h0 fun 𝔭 _ => ?_⟩
+  refine ⟨Finset.prod_nonneg h0, Finset.prod_le_prod₀ h0 fun 𝔭 _ => ?_⟩
   exact div_le_div_of_nonneg_right (hC 𝔭 n hn).2 (hpos 𝔭).le
 
 end Formalism.HermitianLattices.Ext.L3.A5

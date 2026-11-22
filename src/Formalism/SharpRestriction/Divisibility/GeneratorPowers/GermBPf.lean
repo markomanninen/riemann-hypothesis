@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermBPrim
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermBPrim
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -513,8 +517,8 @@ theorem ex_rig (hch : IsChartG t x0 d F act tg uvec x) (i0 : t.PP.L.ι) (hi0 : (
 
 end Ex
 
-open Formalism.MainNotions.ModuliIntegralCharts.H1 in
 
+open Formalism.MainNotions.ModuliIntegralCharts.H1 in
 theorem frameSt_holds : FrameSt := by
   intro E _ _ _ H X0 t S _ _ x0 d G A κ _ tg uvec x hch
   obtain ⟨i0, hi0⟩ := exists_chart_covering_index t x0

@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TotalDegreeSubstFLe
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocalHoweContractionCompactUnitaryStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DetTwistedConjugateIsKTypeOfReversedStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TotalDegreeSubstFLe
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocalHoweContractionCompactUnitaryStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DetTwistedConjugateIsKTypeOfReversedStatement
+
+@[expose] public section
+
 open Formalism.MainNotions.S Matrix GlobalTheory.CompactHowe
 open scoped TensorProduct InnerProductSpace
 
@@ -20,9 +25,9 @@ theorem map_star_subst2 {N n : ℕ} (A : Matrix (Fin N) (Fin N) ℂ) (B : Matrix
       (subst2 (A.map star) (B.map star)).toRingHom.comp (MvPolynomial.map (starRingEnd ℂ)) := by
     refine MvPolynomial.ringHom_ext (fun c => ?_) (fun p => ?_)
     · simp
-    · simp only [RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, map_X, subst2_X,
-        map_sum, map_mul, map_C, Matrix.map_apply]
-      rfl
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, map_X, subst2_X,
+        map_sum, map_mul, map_C, Matrix.map_apply, starRingEnd_apply]
   exact congrArg (fun f => f P) key
 
 theorem map_star_map_star_poly {N n : ℕ} (P : MvPolynomial (Fin N × Fin n) ℂ) :
@@ -54,7 +59,7 @@ theorem exists_local_lift : ∀ (N n : ℕ) (hn : n ≤ N) (ν : Fin N → ℕ) 
   let cj : MvPolynomial (Fin N × Fin n) ℂ →+* MvPolynomial (Fin N × Fin n) ℂ :=
     MvPolynomial.map (starRingEnd ℂ)
   refine ⟨{ toFun := fun P => LinearMap.adjoint (I₀ (cj P)),
-            map_add' := fun P Q => by simp only [map_add]
+            map_add' := fun P Q => by simp only [map_add (f := _)]
             map_smul' := fun c P => by
               simp only [cj, map_star_smul, map_smul, LinearEquiv.map_smulₛₗ, RingHom.id_apply]
               simp }, fun h0 => hI₀0 ?_, fun h hh g hg P v => ?_⟩

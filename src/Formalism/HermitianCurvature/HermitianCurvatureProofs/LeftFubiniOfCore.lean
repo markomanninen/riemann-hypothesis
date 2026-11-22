@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoreLF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelZeroPointOver
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MulVecBvecApply
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SlicesFiniteRegularityBuilt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoreLF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelZeroPointOver
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MulVecBvecApply
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SlicesFiniteRegularityBuilt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -34,7 +38,7 @@ theorem leftFubini_of_core (hC : LeftFubiniLemmas.CoreLF) : LeftFubiniLemmas.Lef
     intro h2
     funext y
     unfold D.castF
-    rw [Formalism.FourierDecayAlt.P.Dx2.MN.castM_rfl, D.sliceAt, dif_pos hj]
+    rw [Formalism.FourierDecayAlt.P.Dx2.MN.castM_rfl, D.sliceAt, dite_eq_left hj]
     rfl
   simp only [hx, hs]
   exact hmain g hg H hH hR

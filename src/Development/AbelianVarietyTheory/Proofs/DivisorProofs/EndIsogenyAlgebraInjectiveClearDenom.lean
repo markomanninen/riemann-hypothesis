@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomTorsionFreeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomTorsionFreeStatement
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -27,7 +32,12 @@ theorem toEnd0_injective_and_fraction : ∀ (K : Type) [Field K] (A : AbVar K),
     have h1 : (c : ℤ) • (f - g) = 0 := by
       rw [smul_sub, sub_eq_zero]
       simpa [Submonoid.smul_def] using hc
-    exact sub_eq_zero.1 (GlobalTheory.T.abVar_hom_eq_zero_of_nsmul_eq_zero K A A (c : ℤ) (f - g) hc0 h1)
+    apply sub_eq_zero.1
+    apply End.addEquiv.injective
+    apply GlobalTheory.T.abVar_hom_eq_zero_of_nsmul_eq_zero K A A (c : ℤ) _ hc0
+    have hh := congrArg (End.addEquiv (X := A)) h1
+    rw [map_zsmul, map_zero] at hh
+    exact hh
   · obtain ⟨⟨m, c⟩, hc⟩ := IsLocalizedModule.surj (nonZeroDivisors ℤ) (TensorProduct.mk ℤ ℚ (End A) 1) x
     have hc0 : (c : ℤ) ≠ 0 := nonZeroDivisors.coe_ne_zero c
     simp only [Submonoid.smul_def] at hc

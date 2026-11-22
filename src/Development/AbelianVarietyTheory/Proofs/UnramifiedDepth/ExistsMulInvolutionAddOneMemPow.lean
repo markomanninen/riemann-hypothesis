@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.NormResidue
 
@@ -35,7 +39,7 @@ theorem exists_mul_involution_eq_neg_one {k : Type*} [Field k] [Finite k] (σ : 
   have ha : σ a = a := (memF _).1 a.2
   have hb : σ b = b := (memF _).1 b.2
   refine ⟨a + b * (x - σ x), ?_⟩
-  rw [map_add, map_mul, ha, hb, hθ]
+  rw [map_add (f := _), map_mul, ha, hb, hθ]
   linear_combination hab'
 
 theorem exists_mul_involution_add_one_mem_pow (O : Type) [CommRing O] (s : O →+* O)
@@ -67,7 +71,7 @@ theorem exists_mul_involution_add_one_mem_pow (O : Type) [CommRing O] (s : O →
     obtain ⟨z, rfl⟩ := Ideal.Quotient.mk_surjective w
     refine ⟨z, ?_, fun h => absurd rfl h⟩
     rw [zero_add, pow_one, ← Ideal.Quotient.eq_zero_iff_mem]
-    simpa only [σ, Ideal.quotientMap_mk, map_add, map_mul, map_one] using hw
+    simpa only [σ, Ideal.quotientMap_mk, map_add (f := _), map_mul, map_one] using hw
   · have hN0 : N ≠ 0 := hN.ne'
     obtain ⟨e, he_def⟩ : ∃ e, e = z0 * s z0 + 1 := ⟨_, rfl⟩
     have he : e ∈ P ^ N := he_def ▸ hz.resolve_left hN0
@@ -89,10 +93,10 @@ theorem exists_mul_involution_add_one_mem_pow (O : Type) [CommRing O] (s : O →
       · exact absurd h h2
       · exact h
     refine ⟨z0 + y * z0 * e, ?_, fun _ => ?_⟩
-    · have hse : s e = e := by rw [he_def, map_add, map_mul, hs, map_one]; ring
+    · have hse : s e = e := by rw [he_def, map_add (f := _), map_mul, hs, map_one]; ring
       have key : (z0 + y * z0 * e) * s (z0 + y * z0 * e) + 1
           = e * (1 - (y + s y) + (y + s y) * e) + e * (e * (y * z0 * s y * s z0)) := by
-        rw [map_add, map_mul, map_mul, hse]
+        rw [map_add (f := _), map_mul, map_mul, hse]
         rw [he_def]
         ring
       rw [key, pow_succ]

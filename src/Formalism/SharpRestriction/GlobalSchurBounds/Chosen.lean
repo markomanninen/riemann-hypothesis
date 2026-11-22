@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.ParConsts
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.FiltrationCocycleLiftCriterion
+module
+
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.FiltrationCocycleLiftCriterion
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,16 +22,16 @@ def ThickSetLowerBound (_L : SizeData₂ D) : Prop := D.host.secondSet_card_lowe
 def ChTT_at : Prop :=
   L.sc.delta1 * D.R.n / 2 ≤ (D.host.TT.card : ℝ) ∧ (D.host.TT.card : ℝ) ≤ 2 * L.sc.delta1 * D.R.n
 
-open Classical in
 
+open Classical in
 def largeOrderResiduePrimes : Finset ℕ :=
   (Finset.range ⌈L.sc.X'⌉₊).filter (fun p =>
     p.Prime ∧ G.IsResidueClassZero D p ∧ L.sc.x ^ (L.sc.eps / 4) ≤ (addOrderOf (G.hP D p) : ℝ))
 
 variable {L}
 
-open Classical in
 
+open Classical in
 def badTops (X : G.Inst D L) (p : ℕ) : Finset (G.HH D) :=
   D.host.TT.filter (fun t => ¬ G.Good X p (X.bs (G.stepP D p) t))
 
@@ -82,8 +86,6 @@ def Chosen (CH C0 C5 c6 Cb : ℝ) : Prop :=
 
 def ChosenE (C0 CH : ℝ) : Prop :=
   ∃ C5 c6 Cb : ℝ, 0 < C5 ∧ 0 < c6 ∧ 0 < Cb ∧ Chosen Fm CH C0 C5 c6 Cb
-
-def ChosenEx (CH : ℝ) : Prop := ∃ C0 : ℝ, 1 ≤ C0 ∧ ChosenE Fm C0 CH
 
 end Family
 

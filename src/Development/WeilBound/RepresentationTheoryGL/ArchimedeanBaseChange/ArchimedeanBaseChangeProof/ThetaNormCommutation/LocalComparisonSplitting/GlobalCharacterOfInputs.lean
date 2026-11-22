@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.IsTransl
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.IsMultZero
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.IsTransl
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.IsMultZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ abbrev Gf (E : Type) [Field E] [NumberField E] (a b : ℕ) : Type := GL (Fin a) 
 abbrev Gi (E : Type) [Field E] (a b : ℕ) : Type := InfinitePlace E → GL (Fin a) ℂ × GL (Fin b) ℂ
 
 def Kf (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) : Subgroup (GL (Fin n) (Af E)) :=
-  ⨅ w : Pl E, (GlobalTheory.LFun.KGL w n).comap (GeneralLinearGroup.map (pLoc E w))
+  ⨅ w : Pl E, (GlobalTheory.LFun.KGL w (n := n)).comap (GeneralLinearGroup.map (pLoc E w))
 
 def thP (E : Type) [Field E] [NumberField E] [IsCMField E] (a b : ℕ) : Gf E a b →* Gf E a b := (thF E a).prodMap (thF E b)
 

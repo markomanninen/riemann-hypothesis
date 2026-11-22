@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.NormWfLe
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.ImportsAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FoundBridge
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsSiegel
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.IsotypQuot
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.NormWfLe
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.ImportsAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FoundBridge
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsSiegel
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.IsotypQuot
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global
@@ -24,7 +28,7 @@ theorem UpperTheory.ConvolutionTheory.R2.Pp.bdd :
     have h1 : detModule F 2 (gl g) = 1 := by
       have : AdelicGLn.det F 2 (gl g) = 1 := Units.ext g.2
       rw [detModule, MonoidHom.comp_apply, this, map_one]
-    have h2 : (centralSection F 2 (detModule F 2 k))⁻¹ * (gl g * k) ∈ normOneGL F 2 := by
+    have h2 : (centralSection F 2 (detModule F 2 k))⁻¹ * (gl g * k) ∈ normOneGL (K := F) (n := 2) := by
       rw [mem_normOneGL_iff_detModule, map_mul, map_mul, map_inv, h1, detModule_centralSection two_pos, one_mul,
         inv_mul_cancel]
     have h3 := hc _ hf (u k) ((centralSection F 2 (detModule F 2 k))⁻¹ * (gl g * k))

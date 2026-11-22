@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsRestSide
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistModNatMul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsMonomialNotMem
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsRestSide
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistModNatMul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsMonomialNotMem
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -34,8 +39,8 @@ theorem ResidueGen.aeval_ratioMon {L : Type} [Field L] [Algebra F L] (z : (Σ k,
       ∏ k, (z ⟨k, d k⟩ ^ (β k).toNat * z ⟨k, c k⟩ ^ (-β k).toNat) := by
   simp [ResidueGen.ratioMon, map_prod]
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem ResidueGen.ratio_eval {L : Type} [Field L] [Algebra F L] (z : (Σ k, ι k) → L) (β : K → ℤ)
     (c d : ∀ k, ι k) (hc : ∀ k, z ⟨k, c k⟩ ≠ 0) (hd : ∀ k, z ⟨k, d k⟩ ≠ 0) :
     aeval z (ResidueGen.ratioMon (F := F) β c d) / aeval z (ResidueGen.ratioMon (F := F) β d c) =
@@ -122,7 +127,8 @@ theorem ResidueGen.proof : ResidueGen.Statement := by
       push_cast
       exact hsum
     have hone := congrArg σ hsumR
-    rw [map_sum, map_one] at hone
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_one] at hone
     have h2 : (∑ j, σ ⟨u j, hUR j⟩ *
         (ext (s j * ∏ k, y ⟨k, d₀ k⟩ ^ (-β k)) / (∏ k, y' ⟨k, d₀ k⟩ ^ (-β k)))) *
           (∏ k, y' ⟨k, c k⟩ ^ (-β k)) = 1 := by

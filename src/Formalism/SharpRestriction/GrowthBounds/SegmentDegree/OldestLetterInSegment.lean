@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ThresholdPowerBoundOfCounts
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ThresholdPowerBoundOfCounts
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,8 @@ section Rows
 
 variable {n' r : ℕ} [NeZero n'] [NeZero r]
 
-open Classical in
 
+open Classical in
 def evL (F : Frames n' r) (j x : ℤ) : List ℤ := ((F.letters j).filter fun z => Even z ∧ z < x).sort (· ≤ ·)
 
 theorem row_eq (X : Dat n' r) (j x : ℤ) (i : Fin r) :

@@ -1,9 +1,18 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.ChainRows
-import Development.AutomorphicSpectrum.Definitions.NonGaloisLines.TopLine
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.CupFlipContinuousCocycleStatement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+public import Formalism.SharpRestriction.LevelLetterCocycles.PairedCharacterCondition
+public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
+public import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CrysOnCond
+public import Development.AutomorphicSpectrum.Definitions.NonGaloisLines.TopLine
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.CupFlipContinuousCocycle
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism Formalism.ConjugateSelfDual Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations Module GlobalTheory.CompanionTheory.LocDual
 
 namespace GlobalTheory.CompanionTheory.LocDual.ExactAnn
@@ -198,7 +207,7 @@ theorem exists_pairing (Z : Submodule k E) (Z' : Submodule k E') (M C : Submodul
         rw [Submodule.coe_smul, smul_sub, mul_smul] }
   refine ⟨LinearMap.mk₂ k (fun a b => f ⟨cup a b, hM a a.2 b b.2⟩) ?_ ?_ ?_ ?_, ?_⟩
   · intro a a' b
-    rw [← map_add]
+    rw [← map_add (f := _)]
     congr 1
     ext
     simp
@@ -208,7 +217,7 @@ theorem exists_pairing (Z : Submodule k E) (Z' : Submodule k E') (M C : Submodul
     ext
     simp
   · intro a b b'
-    rw [← map_add]
+    rw [← map_add (f := _)]
     congr 1
     ext
     simp
@@ -242,7 +251,7 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
 def cocSub : Submodule LL (G × G → LL) where
   carrier := {z | Continuous z ∧ ReciprocityTheory.Def.d2 (charRep (cycLL PD LL)) z = 0}
   zero_mem' := ⟨continuous_const, map_zero _⟩
-  add_mem' := fun ha hb => ⟨ha.1.add hb.1, by rw [map_add, ha.2, hb.2, add_zero]⟩
+  add_mem' := fun ha hb => ⟨ha.1.add hb.1, by rw [map_add (f := _), ha.2, hb.2, add_zero]⟩
   smul_mem' := fun c _ ha => ⟨ha.1.const_smul c, by rw [map_smul, ha.2, smul_zero]⟩
 
 def cobSub : Submodule LL (G × G → LL) where
@@ -264,9 +273,6 @@ def cupBil (ρ' : Representation LL G V') (P : V →ₗ[LL] V' →ₗ[LL] LL) :
     (fun r a b => by ext x; simp [cupL])
     (fun a b b' => by ext x; simp [cupL])
     (fun r a b => by ext x; simp [cupL])
-
-theorem cupBil_apply (ρ' : Representation LL G V') (P : V →ₗ[LL] V' →ₗ[LL] LL) (a : G → V)
-    (b : G → V') : cupBil ρ' P a b = cupL ρ' P a b := rfl
 
 end Cup
 

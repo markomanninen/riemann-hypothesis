@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.TateCohomology.HerbrandAbstract
-import GroundTheory.GlobalFields.HerbrandQuotients.Cyclic
-import GroundTheory.GlobalFields.HerbrandQuotients.RationalForm
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.HerbrandAbstract
+public import GroundTheory.GlobalFields.HerbrandQuotients.Cyclic
+public import GroundTheory.GlobalFields.HerbrandQuotients.RationalForm
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

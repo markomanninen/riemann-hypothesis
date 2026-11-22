@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
+
+@[expose] public section
+
 open NumberField
 open scoped TensorProduct
 
@@ -52,7 +57,7 @@ theorem ringHom_padic_eq_algebraMap : ∀ (p : ℕ) [Fact p.Prime] (B : Type) [R
     have hc : c = (c.appr n : ℤ_[p]) + (p : ℤ_[p]) ^ n * μ := by rw [← hμ]; ring
     refine ⟨f μ - algebraMap ℤ_[p] B μ, ?_⟩
     conv_lhs => rw [hc]
-    rw [smul_sub, Algebra.smul_def, Algebra.smul_def, map_add, map_add, map_mul, map_mul, map_pow, map_pow,
+    rw [smul_sub, Algebra.smul_def, Algebra.smul_def, map_add (f := _), map_add (f := _), map_mul, map_mul, map_pow, map_pow,
       map_natCast, map_natCast, map_natCast, map_natCast]
     noncomm_ring
   apply b.repr.injective
@@ -66,7 +71,11 @@ theorem ringHom_padic_eq_algebraMap : ∀ (p : ℕ) [Fact p.Prime] (B : Type) [R
     conv_rhs => rw [hv]
     rw [map_smul, Finsupp.smul_apply, smul_eq_mul]
     exact dvd_mul_right _ _
-  have := (PadicInt.mem_span_pow_iff_le_valuation _ hne _).1 hmem
+  have hne' : b.repr (f c - algebraMap ℤ_[p] B c) i ≠ 0 := by
+    intro h
+    apply hne
+    rw [h]
+  have := (PadicInt.mem_span_pow_iff_le_valuation _ hne' _).1 hmem
   omega
 
 theorem matrix_basis_repr {ι R A : Type} [CommRing R] [AddCommGroup A] [Module R A] (m : ℕ) (b : Module.Basis ι R A)
@@ -81,7 +90,8 @@ theorem trace_mulLeft_matrix_eq : ∀ (R A : Type) [CommRing R] [CommRing A] [Al
   intro R A _ _ _ _ _ m Z
   classical
   let b := Module.Free.chooseBasis R A
-  rw [LinearMap.trace_eq_matrix_trace R (b.matrix (Fin m) (Fin m)), Matrix.trace, Matrix.trace, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.trace_eq_matrix_trace R (b.matrix (Fin m) (Fin m)), Matrix.trace, Matrix.trace, map_sum,
     Finset.mul_sum, Fintype.sum_prod_type]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Fintype.sum_prod_type, Algebra.trace_eq_matrix_trace b, Matrix.trace]

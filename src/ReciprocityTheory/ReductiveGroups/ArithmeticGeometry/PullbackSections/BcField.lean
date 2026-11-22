@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.ReadProofs
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.ReadProofs
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,35 +88,8 @@ theorem eig_bc {S T : Type} [CommRing S] [Algebra c.F S] [CommRing T] [Algebra c
   simp only [← Category.assoc, spMap_comp_spMap, dualMap_comp_epsMul, AlgHom.toRingHom_eq_coe,
     RingHom.coe_coe, AlgHom.commutes]
 
-def bcPt (hG : BcGenSt Xo c) (hL : BcLieSt Xo c) (p : TRing c.F) {T : Type} [Field T] [Algebra c.F T]
-    (ψ : p.R →ₐ[c.F] T) (y : FrPt Xo c p.R) : FrPt Xo c T where
-  x := spMap ψ.toRingHom ≫ y.x
-  x_over := by
-    rw [Category.assoc, y.x_over]
-    unfold sOf
-    rw [spMap_comp_spMap, ← RingHom.comp_assoc]
-    congr 2
-    ext r
-    simp
-  u τ i := spMap (dualMap ψ.toRingHom) ≫ y.u τ i
-  tan τ i := tan_bc ψ.toRingHom (y.tan τ i)
-  eig τ i := eig_bc ψ τ (y.eig τ i)
-  basis τ w hw he := hL p T ψ y τ w hw he
-  s := (hG p T ψ y).choose
-  gen := (hG p T ψ y).choose_spec.2
-
-theorem frMap_bcPt (hG : BcGenSt Xo c) (hL : BcLieSt Xo c) (p : TRing c.F) {T : Type} [Field T]
-    [Algebra c.F T] (ψ : p.R →ₐ[c.F] T) (y : FrPt Xo c p.R) : FrMap ψ y (bcPt hG hL p ψ y) := by
-  exact ⟨rfl, fun _ _ => rfl, bcPm ψ.toRingHom y.x, bcPm_snd _ _, bcPm_fst _ _,
-    (hG p T ψ y).choose_spec.1⟩
-
-theorem bcEx_of (hG : BcGenSt Xo c) (hL : BcLieSt Xo c) (σ : c.F →+* ℂ) : BCEx Xo c σ := by
-  intro p y ψ
-  letI : Field (CAt σ) := inferInstanceAs (Field ℂ)
-  exact ⟨_, frMap_bcPt (T := CAt σ) hG hL p ψ y⟩
 
 variable (Xo c) in
-
 def BcGenRSt : Prop :=
   ∀ (p : TRing c.F) (T : Type) [CommRing T] [Algebra c.F T] (ψ : p.R →ₐ[c.F] T) (y : FrPt Xo c p.R),
     ∃ s' : LB.Sec (PPx (spMap ψ.toRingHom ≫ y.x)),
@@ -122,8 +99,8 @@ def BcGenRSt : Prop :=
       ∀ s'' : LB.Sec (PPx (spMap ψ.toRingHom ≫ y.x)), ∃! a : T,
         ∀ i, s''.f i = scal (spMap ψ.toRingHom ≫ y.x) a i * s'.f i
 
-variable (Xo c) in
 
+variable (Xo c) in
 def BcLieRSt : Prop :=
   ∀ (p : TRing c.F) (T : Type) [CommRing T] [Algebra c.F T] (ψ : p.R →ₐ[c.F] T) (y : FrPt Xo c p.R)
     (τ : E →+* ℂ) (w : Sp (DualNumber T) ⟶ Xo.univ.t.G.left),
@@ -152,13 +129,5 @@ theorem frMap_bcPtR (hG : BcGenRSt Xo c) (hL : BcLieRSt Xo c) (p : TRing c.F) {T
     [Algebra c.F T] (ψ : p.R →ₐ[c.F] T) (y : FrPt Xo c p.R) : FrMap ψ y (bcPtR hG hL p ψ y) := by
   exact ⟨rfl, fun _ _ => rfl, bcPm ψ.toRingHom y.x, bcPm_snd _ _, bcPm_fst _ _,
     (hG p T ψ y).choose_spec.1⟩
-
-theorem bcGenSt_of_R (h : BcGenRSt Xo c) : BcGenSt Xo c := by
-  intro p T _ _ ψ y
-  exact h p T ψ y
-
-theorem bcLieSt_of_R (h : BcLieRSt Xo c) : BcLieSt Xo c := by
-  intro p T _ _ ψ y τ w hw he
-  exact h p T ψ y τ w hw he
 
 end ReciprocityTheory.ChartRestriction.G.PullbackSections

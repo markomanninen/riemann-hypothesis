@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCovolOne
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GermConstantsEqAlongAffineSpaceSquare
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCovolOne
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GermConstantsEqAlongAffineSpaceSquare
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 open GlobalTheory.CompanionTheory.WeilSiegel.Frame GlobalTheory.CompanionTheory.WeilSiegel.Free GlobalTheory.CompanionTheory.WeilSiegel.HypStep
@@ -251,7 +256,7 @@ theorem orbit_ring {A : Type} [CommRing A] (σ : A →+* A) (hσ : ∀ a, σ (σ
   obtain ⟨μ, hμ⟩ := exists_mu P₁ P₂ hmax h2 a (δ * x 1) hab
   set t : A := -(q * i2) + (μ : A) * δ with ht
   have hst : σ t = -(q * i2) - (μ : A) * δ := by
-    rw [ht, map_add, map_neg, map_mul, map_mul, hsq, hsi2, hδs, map_intCast]
+    rw [ht, map_add (f := _), map_neg, map_mul, map_mul, hsq, hsi2, hδs, map_intCast]
     ring
   let z : Fin (M + 2) → A := Fin.cons t (Fin.cons 1 u)
   let e : Fin (M + 2) → A := Fin.cons 1 fun _ => 0
@@ -354,7 +359,7 @@ theorem trans_orbit : ∀ (T : Type) [CommRing T] (O : Subring T) (s : T →+* T
   · funext i
     have h3 := congrArg Subtype.val (congrFun hgx i)
     rw [← h3, hval]
-    simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, AddSubmonoidClass.coe_finset_sum,
+    simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, AddSubmonoidClass.coe_finsetSum,
       Subring.coe_mul, Subring.coe_subtype]
     refine Finset.sum_congr rfl fun j _ => ?_
     congr 1

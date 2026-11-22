@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.DilationDecomposition.LocFam
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.DilationDecomposition.LocFam
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,8 +35,9 @@ theorem fam_eq_L_pf {d : SD σ} (R : RD d) {w : InfinitePlace F}
     apply Matrix.inv_eq_left_inv
     rw [diagonal_mul_diagonal, ← diagonal_one]
     congr 1
-    funext j
-    simp only [Pi.star_apply, Complex.star_def, Complex.conj_ofReal]
+    funext i
+    change (Real.exp (-(s * X i)) : ℂ) * star (Real.exp (s * X i) : ℂ) = 1
+    rw [Complex.star_def, Complex.conj_ofReal]
     rw [← Complex.ofReal_mul, ← Real.exp_add, neg_add_cancel, Real.exp_zero, Complex.ofReal_one]
   have hy : mR (a s) = mLoc A := by
     rw [show mR (a s) = _ from ha s, mLoc, hinv]

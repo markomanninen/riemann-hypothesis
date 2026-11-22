@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FlagBasis
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FlagBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,9 +56,9 @@ theorem repEx_of (h1 : GrEx) (h2 : ContGL) (h3 : MatEx) (h4 : MatConj) (h5 : Pie
   rw [hfun]
   split_ifs
   · simp only [cj_apply, Units.val_mul, Matrix.mul_apply]
-    refine continuous_finset_sum _ fun x _ => ?_
+    refine continuous_finsetSum _ fun x _ => ?_
     refine Continuous.mul ?_ continuous_const
-    refine continuous_finset_sum _ fun y _ => ?_
+    refine continuous_finsetSum _ fun y _ => ?_
     exact continuous_const.mul (hcont0 y x)
   · exact continuous_const
 

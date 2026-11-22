@@ -1,7 +1,11 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.PCDesc
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.OrbitDerivatives.EtaleClosedPointLiftsSimpleRootsMonic
-import Development.WeilBound.HeckeVectors.SmoothVectors.SobolevApproximation.SobApproxHolds
-import Formalism.LocalToGlobal.IndefiniteReal.SmExpSmulContDiff
+module
+
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.PCDesc
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.OrbitDerivatives.EtaleClosedPointLiftsSimpleRootsMonic
+public import Development.WeilBound.HeckeVectors.SmoothVectors.SobolevApproximation.SobApproxHolds
+public import Formalism.LocalToGlobal.IndefiniteReal.SmExpSmulContDiff
+
+@[expose] public section
 
 open Matrix Topology
 open scoped ComplexOrder
@@ -62,9 +66,54 @@ theorem repOnC (hσ : Formalism.MainNotions.S.IsURepOn (Formalism.MainNotions.S.
 theorem smoothVec_of_isSmC {w : H} (hw : CompanionTheory.D.Upq.Sm.IsSm (Formalism.MainNotions.S.UJset ε) σ w) :
     Formalism.L2.Theta.SmoothVec (Formalism.IndefR.Tow.SobPf.lieG (Formalism.REAL.Jm ε)) σ w := by
   intro m Xs hX
-  have hc := Formalism.IndefR.PeterssonHilbertSpace.sm_prod_exp_contDiff m Xs
+  have hc : ∀ (k : ℕ) (Ys : Fin k → Matrix (Fin n) (Fin n) ℂ),
+      ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun t : Fin k → ℝ =>
+        (List.ofFn fun i => NormedSpace.exp (t i • Ys i)).prod) := by
+    intro k
+    induction k with
+    | zero =>
+      intro Ys
+      simpa using (contDiff_const : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) fun _ : Fin 0 → ℝ =>
+        (1 : Matrix (Fin n) (Fin n) ℂ))
+    | succ k ih =>
+      intro Ys
+      have h1 : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun t : Fin (k + 1) → ℝ =>
+          NormedSpace.exp (t 0 • Ys 0)) := by
+        have he : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun s : ℝ => NormedSpace.exp (s • Ys 0)) := by
+          simpa only [Complex.coe_smul] using PI.BesselDerivW.exp_contDiff (Ys 0)
+        exact he.comp (contDiff_apply ℝ (fun _ => ℝ) (0 : Fin (k + 1)))
+      have h2 : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun t : Fin (k + 1) → ℝ =>
+          (List.ofFn fun i : Fin k => NormedSpace.exp (t i.succ • Ys i.succ)).prod) :=
+        (ih (fun i => Ys i.succ)).comp
+          (contDiff_pi.2 fun i => contDiff_apply ℝ (fun _ => ℝ) i.succ)
+      simp only [List.ofFn_succ, List.prod_cons]
+      exact PI.KFinSmoothW.Gard.contDiff_mat_mul h1 h2
+  have hc := hc m Xs
   have hmem : ∀ t : Fin m → ℝ, (List.ofFn fun i => NormedSpace.exp (t i • Xs i)).prod ∈ Formalism.MainNotions.S.UJset ε :=
-    fun t => Formalism.IndefR.PeterssonHilbertSpace.sm_prod_exp_mem _ m Xs (fun i => hX i) t
+    by
+      intro t
+      have hm : ∀ (k : ℕ) (Ys : Fin k → Matrix (Fin n) (Fin n) ℂ),
+          (∀ i, (Ys i)ᴴ * Formalism.REAL.Jm ε + Formalism.REAL.Jm ε * Ys i = 0) →
+          ∀ t : Fin k → ℝ,
+          ((List.ofFn fun i => NormedSpace.exp (t i • Ys i)).prod)ᴴ * Formalism.REAL.Jm ε *
+            (List.ofFn fun i => NormedSpace.exp (t i • Ys i)).prod = Formalism.REAL.Jm ε := by
+        intro k
+        induction k with
+        | zero => intro Ys hYs t; simp
+        | succ k ih =>
+          intro Ys hYs t
+          have hi := ih (fun i => Ys i.succ) (fun i => hYs i.succ) (fun i => t i.succ)
+          have hl : (t 0 • Ys 0)ᴴ * Formalism.REAL.Jm ε +
+              Formalism.REAL.Jm ε * (t 0 • Ys 0) = 0 := by
+            have h := CCRuleCW.lie_smul
+              (Formalism.REAL.Jm ε) (Ys 0) (hYs 0) (t 0)
+            simpa only [Complex.coe_smul] using h
+          have he := CCRuleCW.exp_mem_UH
+            (Formalism.REAL.Jm ε) (t 0 • Ys 0) hl
+          have hp := CCRuleCW.UH_mul
+            (Formalism.REAL.Jm ε) _ _ he hi
+          simpa only [Formalism.QuantumDeterminants.UH, Set.mem_setOf_eq, List.ofFn_succ, List.prod_cons] using hp
+      exact hm m Xs (fun i => hX i) t
   rw [contDiff_iff_contDiffAt]
   intro t0
   obtain ⟨U, F, hU, h0, hF, hEq⟩ := hw _ (hmem t0)

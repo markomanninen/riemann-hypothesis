@@ -1,24 +1,28 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsSpanOfOnto
-import Formalism.LocalToGlobal.IndefiniteReal.FWTie
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsCuspIsThClsDUnique
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DatEqOfPhiHat
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsPsiTieOfValues
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetReducedBlockEqResidueDet
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedLatticeStabilizerIffBasisIntegral
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnfoldingFrameDeltaChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LastPosWtAOfPins
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KapTopLastPosRun
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCoversOfHalves
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntValuationEqOfMem
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinCongMemLevEnv
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.EqZeroOfForallAlgHom
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.EmbeddingsDifferOnInteger
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RedMUMatMove
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ConjSmulEntry
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LowZeroMulRightIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitCOfCXiAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsSpanOfOnto
+public import Formalism.LocalToGlobal.IndefiniteReal.FWTie
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsCuspIsThClsDUnique
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DatEqOfPhiHat
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsPsiTieOfValues
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetReducedBlockEqResidueDet
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedLatticeStabilizerIffBasisIntegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnfoldingFrameDeltaChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LastPosWtAOfPins
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KapTopLastPosRun
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCoversOfHalves
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntValuationEqOfMem
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinCongMemLevEnv
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.EqZeroOfForallAlgHom
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.EmbeddingsDifferOnInteger
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RedMUMatMove
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ConjSmulEntry
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LowZeroMulRightIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitCOfCXiAt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism Formalism.IndefR Formalism.IndefR.FWT Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.L2.Pj Formalism.IndefR.Datum
 open scoped TensorProduct Matrix
@@ -36,8 +40,8 @@ theorem natCast_mem_Mb {E : Type} [Field E] [NumberField E] [IsCMField E] {H : R
     (l.M : 𝓞 E) ∈ l.Mb :=
   Ideal.mul_le_left (l.prod.ge (Ideal.mem_span_singleton_self _))
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_root_value (l : Level H) {V : HSp D} {k : GA D V} (hk : k ∈ GfC V) {c : (AE D)ˣ →* Circle}
     {χ : HChar D.host.E} (hc : ChrEq c χ) (ht : ∀ P, χ.TameAt P) (Q : Finset (Pl D.host.E))
     (ch : ∀ P : Pl D.host.E, (kP P)ˣ →* ℂˣ) (hres : ∀ P ∈ Q, IsRes χ P (ch P)) (hQ : ∀ P ∈ Q, l.Mb ≤ P.asIdeal)
@@ -103,13 +107,13 @@ theorem exists_of_mem_closure {A B k : Type} [CommRing A] [CommRing B] [CommRing
   | add x y _ _ hx hy =>
     obtain ⟨X, h1, h2⟩ := hx
     obtain ⟨Y, h3, h4⟩ := hy
-    exact ⟨X + Y, by rw [Subring.coe_add, map_add, h1, h3], by rw [map_add, h2, h4, add_zero]⟩
+    exact ⟨X + Y, by rw [Subring.coe_add, map_add (f := _), h1, h3], by rw [map_add (f := _), h2, h4, add_zero]⟩
   | neg x _ hx =>
     obtain ⟨X, h1, h2⟩ := hx
     exact ⟨-X, by rw [Subring.coe_neg, map_neg, h1], by rw [map_neg, h2, neg_zero]⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem resS_eq_zero {I : Ideal (𝓞 D.host.E)} {P : Pl D.host.E} (hP : I ≤ P.asIdeal)
     {z : Af D.host.F ⊗[D.host.F] D.host.E}
     (hz : z ∈ GlobalTheory.AdLat.hat1 D.host.F (algebraMap (𝓞 D.host.E) D.host.E '' (I : Set (𝓞 D.host.E)))) :
@@ -124,8 +128,8 @@ theorem resS_eq_zero {I : Ideal (𝓞 D.host.E)} {P : Pl D.host.E} (hP : I ≤ P
     rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, mul_one]
   · rw [RingHom.map_mul, resS_oToS, Ideal.Quotient.eq_zero_iff_mem.2 (hP hx), zero_mul]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_psi (V : HSp D) {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {n : ℕ} (d : DeltaDat Xo c n)
     (io : Dw.La →ₗ[𝓞 D.host.E] (Fin V.rank → D.host.E)) (hι : LatEmb V io) (hrk : Dw.p + Dw.q = V.rank)
     (hpq : 1 ≤ Dw.p + Dw.q) (hd : d.IsLev) (Q : Finset (Pl D.host.E)) (hQ : ∀ P ∈ Q, d.I ≤ P.asIdeal)
@@ -160,7 +164,7 @@ theorem exists_psi (V : HSp D) {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {n
   let ρ : ∀ P : Q, (𝓞 D.host.E ⧸ d.I)ˣ →* (kP P.1)ˣ := fun P =>
     Units.map (Ideal.Quotient.factor (hQ P.1 P.2)).toMonoidHom
   let χ : (𝓞 D.host.E ⧸ d.I)ˣ →* ℂ := ∏ P : Q, (Units.coeHom ℂ).comp ((ch P.1).comp (ρ P))
-  have hχ : ∀ x, χ x = ∏ P : Q, ((ch P.1 (ρ P x) : ℂˣ) : ℂ) := fun x => MonoidHom.finset_prod_apply _ _ _
+  have hχ : ∀ x, χ x = ∏ P : Q, ((ch P.1 (ρ P x) : ℂˣ) : ℂ) := fun x => MonoidHom.finsetProd_apply _ _ _
   have hχF : ∀ x, χ x ∈ c.F := fun x => hχ x ▸ prod_mem fun P _ => hmem P.1 P.2 _
   refine ⟨((χ.codRestrict c.F hχF).toHomUnits).comp δ, fun k s u U hk hlift hU w hw => ?_⟩
   refine (hχ (δ k)).trans (Finset.prod_congr rfl fun P _ => congrArg (fun t => ((ch P.1 t : ℂˣ) : ℂ)) (Units.ext ?_))
@@ -175,20 +179,21 @@ theorem exists_psi (V : HSp D) {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {n
       rw [← hrange, ← (GlobalTheory.T.adelicElementLattice_full_and_completion D V 1).2.2.2.2.1]
       exact hlift _ (hv₁ j))
   have hdet := hδ k a fun j => by
-    rw [← hv₂, ← hk, (Submodule.Quotient.eq _).2 (ha₁ j), ← Submodule.mkQ_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hv₂, ← hk, (Submodule.Quotient.eq _).2 (ha₁ j), ← Submodule.mkQ_apply, map_sum]
     simp only [map_smul, Submodule.mkQ_apply, hv₂]
   obtain ⟨Z, hZ, hZ0⟩ := resS_eq_zero (hQ P.1 P.2) ha₂
   have hUZ : U = Z + oToS _ _ a.det := by
     apply Subtype.ext
     rw [← swap_unswap U.1, Subring.coe_add, ← swap_unswap Z.1, hU, hZ, RingHom.map_sub]
     exact (sub_add_cancel _ _).symm
-  rw [hw, hUZ, RingHom.map_add, hZ0, zero_add, resS_oToS]
+  rw [hw, hUZ, RingHom.map_add (f := _), hZ0, zero_add, resS_oToS]
   change Ideal.Quotient.factor (hQ P.1 P.2) (δ k : 𝓞 D.host.E ⧸ d.I) = _
   rw [hdet]
   rfl
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem psiTie_of_values (V : HSp D) {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {n r : ℕ}
     (d : DeltaDat Xo c n) (hr : V.rank = r) (io : Dw.La →ₗ[𝓞 D.host.E] (Fin V.rank → D.host.E))
     (hι : IotaOK Dw V io) (hpq : 1 ≤ Dw.p + Dw.q) (x₀ : (D.host.E →+* ℂ) → Matrix (Fin r) (Fin r) ℂ)
@@ -241,7 +246,7 @@ theorem cSep_sub_one_mem (l : Level H) : cSep l - 1 ∈ l.Mb := by
     obtain ⟨a, ha, b, hb, hab⟩ := Submodule.mem_sup.1 (l.coprime.ge (Submodule.mem_top (x := (1 : 𝓞 E))))
     exact ⟨b, hb, by rw [← hab, sub_add_cancel_right]; exact neg_mem ha⟩
   unfold cSep
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec.2
 
 theorem mem_of_pairing (l : Level H) {t : 𝓞 E} (ht : t - 1 ∈ l.Mb) {y : Dw.La}
@@ -291,8 +296,8 @@ theorem adjoint_eq {l l₂ : Level H} (hM : l.M ∣ l₂.M) (hb : l₂.Mb ≤ l.
 
 end Pairing
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem datEq_of_values (S T : HSp D) (βS : GL (Fin S.rank) (EAf D)) (βT : GL (Fin T.rank) (EAf D))
     {Λ : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)} (hβ : IsSDFrame T βT Λ 1) (e : AE D) {l : Level H}
     {Xo : Moduli Dw l} {c : Coeff l} (d : DeltaDat Xo c S.rank) (hd : d.IsLev)
@@ -356,67 +361,5 @@ theorem datEq_of_values (S T : HSp D) (βS : GL (Fin S.rank) (EAf D)) (βT : GL 
   classical
   exact if_congr (forall₂_congr fun P hP => by beta_reduce; rw [hK P hP]) rfl rfl
 
-set_option maxHeartbeats 2000000 in
-
-theorem clsEx_of_pins : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T0 : Type) (A : FamIn D.what₂.LL G Pl0 T0 D.R.m) (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (R : RealDat D A T.Q.c.F) (F : Face D A) (κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1)) (v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec), R.Char F → Nonempty (FWTie T R κ v₀) → T.pb = R.C.P.pb → ∀ (i : Fin D.R.m) (Tp : Type) (tup : Tp → T0) (O : OMDat T.toCore R i Tp tup), D.what₂.embLL.toRatAlgHom.fieldRange ≤ O.c'.F → O.Pins (κ i) (v₀ i (sg0 D A)) (iotaW T i) (T.x₀ ((i : ℕ) + 1) O.s0) → GlobalTheory.OneMapTuples.ClsEx O (κ i) := by
-  intro D G _ _ Pl0 T0 A T _ R F κ v₀ hR ⟨tie⟩ _ i Tp tup O hLL hO t x _
-  have hT := tie.laws
-  have hL := hR.lev
-  have hj : InR D ((i : ℕ) + 1) := ⟨Nat.le_add_left _ _, i.2⟩
-  have hr : 1 ≤ D.R.r := by
-    have h1 := D.R.m_add_three_le_k
-    unfold Ranks.r
-    omega
-  have hpq := (exists_iotaOK D T.Q hT.pins _ hj).2.1
-  have hpos : 1 ≤ (T.Q.Dw ((i : ℕ) + 1)).p + (T.Q.Dw ((i : ℕ) + 1)).q := by omega
-  have hσ : GoodEmb T.Q.c O.s0 := rfl
-  obtain ⟨hio, hx₀⟩ := GlobalTheory.TupleCover.iotaOK_and_frame T hT _ hj _ hσ (Wc D i) (hT.spaceW _ hj _ hσ) (rank_Wc i)
-  obtain ⟨hd, hA₂, hnab⟩ := hO.cov t
-  obtain ⟨-, -, hxi, ⟨e, -, hφ⟩, hMb, hQ, -⟩ := hO.tuple t
-  obtain ⟨c0, ⟨m, hm, hc0⟩, hv⟩ := hO.cxi
-  obtain ⟨n, hn, ho⟩ := hL.xi_fin (tup t)
-  obtain ⟨xi', hx1, -, hx3, hx4⟩ := GlobalTheory.TupleCover.exists_xi D (Wc D i) (R.xi (tup t)) (R.xiH (tup t)) (hL.xi _) n hn ho
-    (hL.xi_triv _) (hL.xi_tame _)
-  have hxx : ∀ g : GA D (Wc D i), O.xi t (Matrix.GeneralLinearGroup.det (finHom (Wc D i) g)) =
-      xi' (Matrix.GeneralLinearGroup.det (finHom (Wc D i) g)) := fun g => by
-    obtain ⟨z, hz⟩ := (GlobalTheory.Member.isDetRoot_laws D (Wc D i)).1 g
-    exact Units.ext ((hxi g z hz).trans (hx1 g z hz).symm)
-  have hxN : ∀ g : GA D (Wc D i), O.xi t (Matrix.GeneralLinearGroup.det (finHom (Wc D i) g)) ^ (m * n) = 1 := fun g => by
-    rw [hxx, mul_comm, pow_mul, hx4, one_pow]
-  have hcN : c0 ^ (m * n) = 1 := by rw [pow_mul, hc0, one_pow]
-  obtain ⟨gramR, c0R, c0L, hfam⟩ := hR.fam.tie
-  obtain ⟨ψ, hψ⟩ := exists_psi (Wc D i) (O.dδ t) (iotaW T i) hio.emb (hpq.trans (rank_Wc i).symm) hpos hd (R.Q (tup t)) hQ
-    (R.xiR (tup t)) fun P hP z =>
-      hLL (GlobalTheory.RationalValues.xiR_mem R hL hR.fam.pl_onto hR.fam.muVal hfam.ok i (tup t) P hP z)
-  have htie : (O.dδ t).PsiTie ψ := by
-    refine psiTie_of_values (Wc D i) (O.dδ t) (rank_Wc i) _ hio hpos _ hx₀ hd hA₂ (O.xi t) _ (Nat.mul_pos hm hn) hxN
-      (fun γ hγ => (hxx γ).trans (hx3 γ hγ)) _ _ c0 hcN (hv t) ψ fun k s u hu₀ hu hk hlift => ?_
-    obtain ⟨y, -, hdet⟩ := exists_int_matrix (hL.βW i) hu
-    have hres : ∀ P : R.Q (tup t), ((Matrix.GeneralLinearGroup.det (Formalism.UG.bc (resS D.host.F P.1) y) : (kP P.1)ˣ) : kP P.1) =
-        resS D.host.F P.1 y.1.det := fun P => ((resS D.host.F P.1).map_det _).symm
-    obtain ⟨z, hz, hval⟩ := exists_root_value (O.dδ t).l₂ hu₀ (hL.xi (tup t)) (hL.xi_tame _) (R.Q (tup t)) (R.xiR (tup t))
-      (hL.xiR _) (fun P hP => (hd.2.2.2.1.le.trans Ideal.mul_le_right).trans (hQ P hP)) (fun P => (hL.Q_ram _ P).1) _ hdet _ hres
-    exact (hψ k s u _ hk hlift hdet _ hres).trans (hval.symm.trans (hxi u z hz).symm)
-  have hτ : Nonempty D.what₂.Tau := Fintype.card_pos_iff.1 (by
-    rw [D.what₂.card_Tau]; unfold Ranks.f Ranks.n; positivity)
-  obtain ⟨τ₀⟩ := hτ
-  have hnV : (κ i).n = (Vc D i).rank := (tie.kap i τ₀).2.2.trans (D.sp.V_rank _ hj.1 hj.2).symm
-  have hlast : (κ i).LastPos := fun τ k hk => by
-    rw [(tie.kap i τ).1 k, show (Wc D i).sig (tauE D τ) = D.R.sigW ((i : ℕ) + 1) from D.sp.W_sigval _ hj.1 hj.2 _]
-    refine GlobalTheory.LiftWeight.one_le_aPl_last D i τ _ _ ?_ hk
-    simp only [Ranks.sigW]
-    omega
-  obtain ⟨-, cga, -, -, hrange, -⟩ := hO.io
-  exact GlobalTheory.ClsVal.exists_cusp_isThClsD_unique GlobalTheory.ChartFree.chartIndep _ _ _ _ _ O.c' _ (O.dδ t) _ _ hr
-    (fun σ hσ' => GlobalTheory.OneMapAll.isUnf_unfExt O.hle σ (fun _ => rfl) (hT.unf _ hj (σ.comp (incF T.Q.c O.c' O.hle)) hσ')) hT.pins.2.1.2
-    (fun _ => ⟨hd, hA₂, hnab⟩)
-    (GlobalTheory.OneMapTuples.unitC_of_cXiAt D _ _ (Wc D i) _ _ _ _ _ (O.dδ t) (rank_Wc i) _ hio hpos _ hx₀ hd hA₂ (O.xi t) _ (Nat.mul_pos hm hn) hxN
-      _ _ c0 hcN (hv t))
-    ψ htie _ (O.w t) (O.La t) (O.Nc t) (O.gam t) (O.bad t) (O.vol t) (O.ep t) _ O.io (wtA (κ i)) (hnV ▸ dom_wtA (κ i))
-    (GlobalTheory.lastPos_wtA_of_pins D T.Q hT.pins _ hj _ hlast)
-    (fun k => datEq_of_values (Vc D i) (Wc D i) (R.βV i) (R.βW i) (hL.βW i) e (O.dδ t) hd _ hio R.Pg (R.Q (tup t))
-      (fun P hP => hMb.le.trans (Ideal.prod_le_inf.trans (Finset.inf_le hP))) hQ _ (O.φ t) _ (hO.w t k)
-      (fun z => (hφ z).1) (fun z => (hφ z).2) ψ hψ)
-    (hO.reps t).1 hrange.le x
 
 end GlobalTheory.PinnedClassSum

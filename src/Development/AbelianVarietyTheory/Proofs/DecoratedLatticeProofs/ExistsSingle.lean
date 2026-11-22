@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.DefGroup
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.DefGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -109,10 +113,6 @@ theorem r_congr (Q : P) {s t : S} (h : Z.p Q s = Z.p Q t) : r Q s = r Q t := by
   obtain ⟨ρ, -, hρ⟩ := Z.exists_res Q
   rw [← hρ, ← hρ, show Z.pO Q s = Z.pO Q t from Subtype.ext h]
 
-theorem gl_ext {n : ℕ} {x y : GL (Fin n) A} (h : ∀ Q, bc (Z.p Q) x = bc (Z.p Q) y) : x = y := by
-  refine Units.ext (Matrix.ext fun i j => Z.ext' fun Q => ?_)
-  exact congrArg (fun g : GL (Fin n) (Z.K Q) => (g : Matrix (Fin n) (Fin n) (Z.K Q)) i j) (h Q)
-
 theorem gl_int {n : ℕ} {x : GL (Fin n) A} (h : ∀ Q, ∃ y : GL (Fin n) (Z.O Q), bc (Z.O Q).subtype y = bc (Z.p Q) x) :
     ∃ y : GL (Fin n) S, bc S.subtype y = x := by
   have key : ∀ {x : GL (Fin n) A}, (∀ Q, ∃ y : GL (Fin n) (Z.O Q), bc (Z.O Q).subtype y = bc (Z.p Q) x) →
@@ -138,11 +138,11 @@ theorem gl_single {n : ℕ} (Q : P) (y : GL (Fin n) (Z.K Q)) :
   choose j hj hj' using Z.exists_single Q
   let g : Matrix (Fin n) (Fin n) (Z.K Q) → Matrix (Fin n) (Fin n) A := fun M => 1 + (M - 1).map j
   have g1 : ∀ M, (Z.p Q).mapMatrix (g M) = M := fun M => by
-    rw [map_add, map_one]
+    rw [map_add (f := _), map_one]
     have : (Z.p Q).mapMatrix ((M - 1).map j) = M - 1 := by ext a b; exact hj _
     rw [this, add_sub_cancel]
   have g2 : ∀ M Q', Q' ≠ Q → (Z.p Q').mapMatrix (g M) = 1 := fun M Q' h => by
-    rw [map_add, map_one]
+    rw [map_add (f := _), map_one]
     have : (Z.p Q').mapMatrix ((M - 1).map j) = 0 := by ext a b; exact hj' _ Q' h
     rw [this, add_zero]
   have gm : ∀ M N, M * N = 1 → g M * g N = 1 := fun M N h => Matrix.ext fun a b => Z.ext' fun Q' => by

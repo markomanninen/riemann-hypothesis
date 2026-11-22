@@ -1,7 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NStageTrivialCharacterCoeffEq
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.SplitK
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscrB
-import Formalism.CyclotomicNorms.NonsquarefreeBounds.NonsquarefreeMonicBoundHolds
+module
+
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NStageTrivialCharacterCoeffEq
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.SplitK
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscrB
+public import Formalism.CyclotomicNorms.NonsquarefreeBounds.NonsquarefreeMonicBoundHolds
+
+@[expose] public section
 
 namespace GlobalTheory.RingHomOfIsIntegral
 
@@ -20,6 +24,7 @@ theorem exists_ringHom_of_isIntegral (R : Type) [CommRing R] [CharZero R] [Algeb
   have := hP
   have hl0 : ((l : ℕ) : R ⧸ P) = 0 := by
     have h1 : (l : ℤ) ∈ P.comap (algebraMap ℤ R) := by
+      change (l : ℤ) ∈ Ideal.under ℤ P
       rw [hPc]
       exact Ideal.mem_span_singleton_self _
     rw [Ideal.mem_comap] at h1

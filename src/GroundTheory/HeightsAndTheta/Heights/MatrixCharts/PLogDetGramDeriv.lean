@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.Statements
-import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.StatementsBounds
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.Statements
+public import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.StatementsBounds
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -69,8 +74,8 @@ theorem key_bound (g k : ℕ) (a b x : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hx : 
 
 end MCLogDetGramDeriv
 
-open MCLogDetGramDeriv in
 
+open MCLogDetGramDeriv in
 theorem LogDetGramDeriv.proof (h₁ : InvEntryBound.Statement) (h₂ : InvEntryDeriv.Statement)
     (h₃ : MatrixDetDeriv.Statement) (h₄ : GramEntryDeriv.Statement) :
     LogDetGramDeriv.Statement := by

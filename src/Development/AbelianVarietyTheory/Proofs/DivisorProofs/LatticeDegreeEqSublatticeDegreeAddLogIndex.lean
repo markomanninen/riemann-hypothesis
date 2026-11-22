@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PointShiftSt
-import Development.AbelianVarietyTheory.Definitions.Divisors.HtValOnSubset
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DetIdealSelfDualLatticeAndInterStandard
-import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.ArakelovDegreeEqDegreeOfFamily
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsGramOneZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointShiftSt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HtValOnSubset
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DetIdealSelfDualLatticeAndInterStandard
+public import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.ArakelovDegreeEqDegreeOfFamily
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsGramOneZero
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -31,8 +35,8 @@ theorem ιMulti_ne_zero_of_li {m : ℕ} (v : Fin m → V) (hv : LinearIndependen
         ext i j; simp [Matrix.one_apply, Pi.single_apply, eq_comm], Matrix.det_one] at this
   exact one_ne_zero this
 
-omit [IsScalarTower (𝓞 K) K V] [Module (𝓞 K) V] in
 
+omit [IsScalarTower (𝓞 K) K V] [Module (𝓞 K) V] in
 theorem colon_smul_cancel (𝔞 : Ideal (𝓞 K)) (D : Submodule (𝓞 K) K)
     (hD : IsFractional (𝓞 K)⁰ D) (h0 : D ≠ ⊥) : (𝔞 • D).colon (D : Set K) = 𝔞 := by
   ext r
@@ -70,16 +74,16 @@ theorem colon_smul_cancel (𝔞 : Ideal (𝓞 K)) (D : Submodule (𝓞 K) K)
 
 variable {m : ℕ}
 
-variable (K) in
 
+variable (K) in
 def coordMap (v : Fin m → V) : (Fin m → K) →ₗ[𝓞 K] V :=
   (Fintype.linearCombination K v).restrictScalars (𝓞 K)
 
 theorem coordMap_apply (v : Fin m → V) (x : Fin m → K) : coordMap K v x = ∑ i, x i • v i := by
   simp [coordMap, Fintype.linearCombination_apply]
 
-variable (K) in
 
+variable (K) in
 def lineMap (ω : ⋀[K]^m V) : K →ₗ[𝓞 K] ⋀[K]^m V :=
   (LinearMap.toSpanSingleton K _ ω).restrictScalars (𝓞 K)
 
@@ -106,8 +110,8 @@ theorem detSpan_map_coord (v : Fin m → V) (M' : Submodule (𝓞 K) (Fin m → 
       rw [coordMap_apply]
     rw [lineMap_apply, e, GlobalTheory.FlatCM.Model.ιMulti_comb]
 
-omit [IsScalarTower (𝓞 K) K V] [Module (𝓞 K) V] in
 
+omit [IsScalarTower (𝓞 K) K V] [Module (𝓞 K) V] in
 theorem colon_map_of_injective {A B : Type} [AddCommGroup A] [Module (𝓞 K) A] [AddCommGroup B] [Module (𝓞 K) B]
     (f : A →ₗ[𝓞 K] B) (hf : Function.Injective f) (P Q : Submodule (𝓞 K) A) :
     (P.map f).colon ((Q.map f : Submodule (𝓞 K) B) : Set B) = P.colon (Q : Set A) := by
@@ -124,8 +128,8 @@ theorem colon_map_of_injective {A B : Type} [AddCommGroup A] [Module (𝓞 K) A]
     rw [← map_smul]
     exact Submodule.mem_map_of_mem (h q hq)
 
-omit [IsScalarTower (𝓞 K) K V] [Module (𝓞 K) V] in
 
+omit [IsScalarTower (𝓞 K) K V] [Module (𝓞 K) V] in
 theorem bdd_of_fg {M : Submodule (𝓞 K) (Fin m → K)} (hM : M.FG) : GlobalTheory.BetaEx.Bdd M := by
   classical
   obtain ⟨s, rfl⟩ := hM
@@ -147,8 +151,8 @@ theorem span_eq_of_latRank_eq [FiniteDimensional K V] {N L : Submodule (𝓞 K) 
     Submodule.span K (N : Set V) = Submodule.span K (L : Set V) :=
   Submodule.eq_of_le_of_finrank_eq (Submodule.span_mono hNL) hr.symm
 
-omit [IsScalarTower (𝓞 K) K V] in
 
+omit [IsScalarTower (𝓞 K) K V] in
 theorem fg_of_le_fg' {N L : Submodule (𝓞 K) V} (hNL : N ≤ L) (hL : L.FG) : N.FG := by
   have : IsNoetherian (𝓞 K) L := isNoetherian_of_fg_of_noetherian L hL
   have hfg := IsNoetherian.noetherian (N.comap L.subtype)

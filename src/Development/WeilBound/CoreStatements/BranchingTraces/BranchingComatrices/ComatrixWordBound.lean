@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.BranchingTraces.BranchingComatrices.OneLeDiff
-import Development.WeilBound.CoreStatements.OrbitDecayEstimates.CurveDerivativeDecay.KFiniteWordBoundIndefUnitary
+module
+
+public import Development.WeilBound.CoreStatements.BranchingTraces.BranchingComatrices.OneLeDiff
+public import Development.WeilBound.CoreStatements.OrbitDecayEstimates.CurveDerivativeDecay.KFiniteWordBoundIndefUnitary
+
+@[expose] public section
 
 namespace PositivityTheory.UnitaryDecomposition.Com
 

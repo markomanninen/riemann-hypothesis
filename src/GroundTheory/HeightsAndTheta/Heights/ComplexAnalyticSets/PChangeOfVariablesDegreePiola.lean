@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open scoped ContDiff
@@ -40,7 +45,8 @@ theorem det_update_eq_sum (V : Fin n → Fin n → ℝ) (k : Fin n) (r : Fin n �
   conv_lhs => rw [hr]
   change (Matrix.detRowAlternating : (Fin n → ℝ) [⋀^Fin n]→ₗ[ℝ] ℝ).toMultilinearMap.toLinearMap V k
     (∑ l, r l • (Pi.single l 1 : Fin n → ℝ)) = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul, smul_eq_mul, MultilinearMap.toLinearMap_apply]
   rfl
 
@@ -126,7 +132,7 @@ theorem sum_fderiv_cofactorFn_eq_zero (H : (Fin n → ℝ) → Fin n → ℝ) (h
     ∑ j, fderiv ℝ (cofactorFn H i j) x (Pi.single j 1) = 0 := by
   set D2 := fderiv ℝ (fderiv ℝ H) x with hD2
   have hsym : ∀ v w, D2 v w = D2 w v :=
-    (hH.contDiffAt (x := x)).isSymmSndFDerivAt (by simp; exact ENat.LEInfty.out)
+    (hH.contDiffAt (x := x)).isSymmSndFDerivAt (by simp)
   simp_rw [(hasFDerivAt_cofactorFn H hH i _ x).fderiv, ContinuousLinearMap.comp_apply,
     ContinuousMultilinearMap.linearDeriv_apply]
   rw [Finset.sum_comm]
@@ -154,7 +160,7 @@ theorem contDiff_cofactorFn (H : (Fin n → ℝ) → Fin n → ℝ) (hH : ContDi
 theorem integral_det_fderiv_eq_zero (H : (Fin n → ℝ) → Fin n → ℝ) (hH : ContDiff ℝ ∞ H)
     (i : Fin n) (hi : HasCompactSupport fun x => H x i) : ∫ x, (fderiv ℝ H x).det = 0 := by
   set h : (Fin n → ℝ) → ℝ := fun x => H x i with hh
-  have hhs : ContDiff ℝ ∞ h := (contDiff_apply ℝ ℝ i).comp hH
+  have hhs : ContDiff ℝ ∞ h := (contDiff_apply ℝ (fun _ => ℝ) i).comp hH
   have hJ : ∀ x j, jacobian H x i j = fderiv ℝ h x (Pi.single j 1) := fun x j =>
     jacobian_eq_fderiv_apply H x ((hH.differentiable (by simp)) x) i j
   have hexp : ∀ x, (fderiv ℝ H x).det =

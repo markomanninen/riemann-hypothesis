@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalRingCardinality.HostCls
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.HostCls
+
+@[expose] public section
 
 namespace UpperTheory.Ram.Rd
 

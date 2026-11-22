@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.RecordEigen
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.RecordEigen
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NineStatements
@@ -7,7 +12,7 @@ namespace GroundTheory.Heights₂.Heights.NineStatements
 open NumberField
 
 theorem absNorm_extDifferent {E L : Type} [Field E] [NumberField E] [Field L] [NumberField L] (ι : E →+* L) :
-    letI : Algebra E L := ι.toAlgebra
+    letI _ : Algebra E L := ι.toAlgebra;
     Ideal.absNorm (extDifferent ι) = (discr E).natAbs ^ Module.finrank E L := by
   let _ : Algebra E L := ι.toAlgebra
   have h1 : RingOfIntegers.mapRingHom ι = algebraMap (𝓞 E) (𝓞 L) := rfl

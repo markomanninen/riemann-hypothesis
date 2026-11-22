@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,6 @@ theorem hBd_mono {D : D7} {n N : ℕ} (hn : n ≤ N) (h1 : 1 ≤ 12 * (D.R.f : �
   calc _ ≤ (12 * (D.R.f : ℝ) ^ 2 * (N : ℝ) ^ 4 * D.host.rdE ^ 2) ^ (6 * D.R.f * n ^ 2) :=
         pow_le_pow_left₀ (by positivity) hb _
     _ ≤ _ := pow_le_pow_right₀ h1 (by gcongr)
-
-example (D : D7) : hBd D 0 = 1 := by simp [hBd]
 
 end GlobalTheory.ClassCount
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecondCountableHermC
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LintegralFintypeProdEqProd
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecondCountableHermC
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LintegralFintypeProdEqProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,7 +106,7 @@ theorem prod_le_pow {n K : ℕ} (hK : 3 * n ≤ K) {x : Fin n → ℝ} {a : ℝ}
   rw [Finset.prod_inv_distrib]
   refine inv_anti₀ (Finset.prod_pos fun i _ => by have := h0 i; positivity) ?_
   calc ∏ i, (1 + x i) ^ 3 ≤ ∏ _i : Fin n, (1 + a) ^ 3 :=
-        Finset.prod_le_prod (fun i _ => by have := h0 i; positivity)
+        Finset.prod_le_prod₀ (fun i _ => by have := h0 i; positivity)
           fun i _ => pow_le_pow_left₀ (by have := h0 i; positivity) (by linarith [hx i]) 3
     _ = (1 + a) ^ (3 * n) := by
         rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin, ← pow_mul]
@@ -128,7 +132,7 @@ theorem detW_eq {n : ℕ} {b : Matrix (Fin n) (Fin n) ℂ} (hb : b.IsHermitian) 
   set D : Matrix (Fin n) (Fin n) ℂ := diagonal (RCLike.ofReal ∘ hb.eigenvalues) with hD
   have hs := hb.spectral_theorem
   have h1 : 1 + b * b = Unitary.conjStarAlgAut ℂ _ hb.eigenvectorUnitary (1 + D * D) := by
-    rw [map_add, map_one, map_mul, ← hs]
+    rw [map_add (f := _), map_one, map_mul, ← hs]
   have h2 : 1 + D * D = diagonal fun i => (((1 + hb.eigenvalues i ^ 2 : ℝ)) : ℂ) := by
     rw [hD, diagonal_mul_diagonal, ← diagonal_one, diagonal_add]
     congr 1
@@ -163,6 +167,7 @@ theorem map_isometry {n : ℕ} (m : Measure (EuclideanSpace ℂ (Fin n))) [m.IsA
   have hm : Measure.map R (volume : Measure (EuclideanSpace ℂ (Fin n))) = volume := hp.map_eq
   conv_lhs => rw [hc]
   rw [Measure.map_smul, hm, ← hc]
+  exact R.continuous.aemeasurable
 
 theorem exists_scale (n : ℕ) (m : Measure (EuclideanSpace ℂ (Fin n))) [m.IsAddHaarMeasure] :
     ∃ c : NNReal, ∀ P : (Fin n → ℂ) → ℝ≥0∞, Measurable P →

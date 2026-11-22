@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToSpanSingletonConstGenInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToSpanSingletonConstGenInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,16 +17,16 @@ section Level
 
 variable {O A B : Type} [CommRing O] [CommRing A] [CommRing B] [Bialgebra O A] [Bialgebra O B]
 
-variable (O A) in
 
-def cobOne : A →ₗ[O] A ⊗[O] A :=
+variable (O A) in
+def cobOne (O A : Type) [CommRing O] [CommRing A] [Bialgebra O A] : A →ₗ[O] A ⊗[O] A :=
   comul - (TensorProduct.mk O A A).flip 1 - TensorProduct.mk O A A 1
 
 theorem cobOne_apply (b : A) : cobOne O A b = comul b - b ⊗ₜ 1 - 1 ⊗ₜ b := rfl
 
-variable (O A) in
 
-def cobTwo : A ⊗[O] A →ₗ[O] A ⊗[O] (A ⊗[O] A) :=
+variable (O A) in
+def cobTwo (O A : Type) [CommRing O] [CommRing A] [Bialgebra O A] : A ⊗[O] A →ₗ[O] A ⊗[O] (A ⊗[O] A) :=
   TensorProduct.mk O A (A ⊗[O] A) 1 - (TensorProduct.assoc O A A A).toLinearMap ∘ₗ comul.rTensor A
     + comul.lTensor A - ((TensorProduct.mk O A A).flip 1).lTensor A
 
@@ -30,9 +34,9 @@ theorem cobTwo_apply (c : A ⊗[O] A) : cobTwo O A c =
     1 ⊗ₜ c - TensorProduct.assoc O A A A (comul.rTensor A c) + comul.lTensor A c
       - ((TensorProduct.mk O A A).flip 1).lTensor A c := rfl
 
-variable (O A) in
 
-def symCocycles : Submodule O (A ⊗[O] A) :=
+variable (O A) in
+def symCocycles (O A : Type) [CommRing O] [CommRing A] [Bialgebra O A] : Submodule O (A ⊗[O] A) :=
   LinearMap.ker (cobTwo O A) ⊓ LinearMap.ker ((TensorProduct.comm O A A).toLinearMap - LinearMap.id)
 
 theorem mem_symCocycles {c : A ⊗[O] A} :
@@ -43,9 +47,8 @@ theorem cobTwo_cobOne (b : A) : cobTwo O A (cobOne O A b) = 0 := by
   have h1 : ∀ t : A ⊗[O] A, TensorProduct.assoc O A A A (t ⊗ₜ 1) =
       ((TensorProduct.mk O A A).flip 1).lTensor A t := fun t => by
     induction t with
-    | zero => simp
     | tmul a b => simp
-    | add x y hx hy => simp only [add_tmul, map_add, hx, hy]
+    | add x y hx hy => simp only [add_tmul, map_add (f := _), hx, hy]
   have h2 : comul (R := O) (1 : A) = 1 ⊗ₜ 1 := by simp [Algebra.TensorProduct.one_def]
   simp only [cobTwo_apply, cobOne_apply, map_sub, tmul_sub, coassoc_apply, LinearMap.rTensor_tmul,
     LinearMap.lTensor_tmul, h1, h2, LinearMap.flip_apply, mk_apply]
@@ -69,8 +72,7 @@ theorem pullTwo_cobOne (f : A →ₐc[O] B) (b : A) :
 theorem cobTwo_pullTwo (f : A →ₐc[O] B) (c : A ⊗[O] A) :
     cobTwo O B (pullbackTwo f c) = TensorProduct.map (f : A →ₗ[O] B) (pullbackTwo f) (cobTwo O A c) := by
   induction c with
-  | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a b =>
     have h := TensorProduct.map_map_assoc (f : A →ₗ[O] B) (f : A →ₗ[O] B) (f : A →ₗ[O] B)
       (comul a ⊗ₜ b)
@@ -84,18 +86,16 @@ theorem pullTwo_mem (f : A →ₐc[O] B) {c : A ⊗[O] A} (hc : c ∈ symCocycle
 theorem pullTwo_comp {D : Type} [CommRing D] [Bialgebra O D] (g : B →ₐc[O] D) (f : A →ₐc[O] B)
     (c : A ⊗[O] A) : pullbackTwo (g.comp f) c = pullbackTwo g (pullbackTwo f c) := by
   induction c with
-  | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a b => simp
 
 theorem pullTwo_id (c : A ⊗[O] A) : pullbackTwo (BialgHom.id O A) c = c := by
   induction c with
-  | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a b => simp
 
 theorem mulBy_of_cobOne_eq_zero [IsCocomm O A] {b : A} (hb : cobOne O A b = 0) (k : ℕ) :
-    mulBy O A k b = k • b ∧ counit (R := O) b = 0 := by
+    mulBy (R := O) (A := A) k b = k • b ∧ counit (R := O) b = 0 := by
   have hp : IsPrimitiveElem O b := by
     rw [cobOne_apply, sub_sub, sub_eq_zero] at hb; exact hb
   refine ⟨?_, hp.counit_eq_zero⟩
@@ -120,14 +120,14 @@ variable {p : ℕ} {O : Type} [CommRing O] (G H K : PDivGroup p O)
 def funs : Submodule O (∀ n, G.A n) where
   carrier := {b | ∀ n, G.res n (b (n + 1)) = b n}
   zero_mem' _ := map_zero _
-  add_mem' {v w} hv hw n := by rw [Pi.add_apply, map_add, hv n, hw n, Pi.add_apply]
+  add_mem' {v w} hv hw n := by rw [Pi.add_apply, map_add (f := _), hv n, hw n, Pi.add_apply]
   smul_mem' c w hw n := by rw [Pi.smul_apply, map_smul, hw n, Pi.smul_apply]
 
 def cocycles : Submodule O (∀ n, G.A n ⊗[O] G.A n) where
   carrier := {c | ∀ n, c n ∈ symCocycles O (G.A n) ∧ pullbackTwo (G.res n) (c (n + 1)) = c n}
   zero_mem' _ := ⟨zero_mem _, map_zero _⟩
   add_mem' {v w} hv hw n := ⟨add_mem (hv n).1 (hw n).1, by
-    rw [Pi.add_apply, map_add, (hv n).2, (hw n).2, Pi.add_apply]⟩
+    rw [Pi.add_apply, map_add (f := _), (hv n).2, (hw n).2, Pi.add_apply]⟩
   smul_mem' c w hw n := ⟨Submodule.smul_mem _ c (hw n).1, by
     rw [Pi.smul_apply, map_smul, (hw n).2, Pi.smul_apply]⟩
 
@@ -138,7 +138,7 @@ def cob : G.funs →ₗ[O] G.cocycles where
   map_smul' _ _ := Subtype.ext (funext fun _ => map_smul (cobOne O _) _ _)
 
 def dFun : G.funs →ₗ[O] G.omega where
-  toFun b := ⟨fun n => dUnit O (b.1 n), fun n => (cotMap_d _ _).trans (congrArg _ (b.2 n))⟩
+  toFun b := ⟨fun n => dUnit (R := O) (b.1 n), fun n => (cotMap_d _ _).trans (congrArg _ (b.2 n))⟩
   map_add' _ _ := Subtype.ext (funext fun _ => map_add (AugCot.d _) _ _)
   map_smul' _ _ := Subtype.ext (funext fun _ => map_smul (AugCot.d _) _ _)
 
@@ -173,15 +173,6 @@ theorem eq_zero_of_cobOne_eq_zero [IsDomain O] (hp : (p : O) ≠ 0) (n : ℕ) {b
   obtain ⟨h1, h2⟩ := mulBy_of_cobOne_eq_zero hb (p ^ n)
   rw [G.mulBy_pow_self, h2, map_zero, ← Nat.cast_smul_eq_nsmul O, Nat.cast_pow] at h1
   exact (smul_eq_zero.1 h1.symm).resolve_left (pow_ne_zero _ hp)
-
-theorem rigOfOmega_injective [IsDomain O] (hp : (p : O) ≠ 0) :
-    Function.Injective G.rigOfOmega := by
-  refine (injective_iff_map_eq_zero _).2 fun w hw => ?_
-  obtain ⟨b, hb⟩ := (Submodule.Quotient.mk_eq_zero _).1 hw
-  have h0 : b = 0 := Subtype.ext (funext fun n => G.eq_zero_of_cobOne_eq_zero hp n
-    (congrArg (fun x : G.cocycles × G.omega => x.1.1 n) hb))
-  rw [h0, map_zero] at hb
-  exact (congrArg Prod.snd hb).symm
 
 variable {G H K}
 
@@ -240,21 +231,17 @@ theorem rigToExt_rigExtMap (f : G ⟶ H) (x : H.RigExt) :
   obtain ⟨⟨c, w⟩, rfl⟩ := Submodule.mkQ_surjective _ x
   rfl
 
-variable (G) in
 
+variable (G) in
 abbrev LieUniv : Type := Module.Dual O G.RigExt
 
-def lieUnivMap (f : G ⟶ H) : G.LieUniv →ₗ[O] H.LieUniv := (rigExtMap f).dualMap
 
 variable (G) in
-
 def lieUnivToLie : G.LieUniv →ₗ[O] G.Lie := G.rigOfOmega.dualMap
 
 section Carry
 
 variable (p O)
-
-def digitFun (n : ℕ) : (const p O).A n := (constFun p O n).symm fun k => (k.val : O)
 
 variable {p O}
 

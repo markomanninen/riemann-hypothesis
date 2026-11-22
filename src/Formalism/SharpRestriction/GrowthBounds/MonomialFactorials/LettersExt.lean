@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BoxOfFibres
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BoxOfFibres
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,9 @@ theorem deg_eta (aTop : Fin X.s → ℕ) (b : SegBlock X.s X.r) (x : Lv C0 CE1 C
   rw [dif_neg h1, if_neg hodd, htop, if_neg hnl]
   simp only [hu, if_false, Nat.sub_zero]
   congr 1
-  refine (Finset.sum_eq_single i ?_ ?_).trans ?_
+  simp only [← List.sum_toFinset _ (List.nodup_finRange _), List.toFinset_finRange]
+  apply Eq.trans (Finset.sum_eq_single i ?_ ?_)
+  · exact if_pos (Or.inr (show (q : ℕ) = 2 * ((X.S C0 CE1 CE2).sigma + (i : ℕ)) + 1 from hq))
   · intro j _ hj
     have hj' : (j : ℕ) ≠ (i : ℕ) := fun h => hj (Fin.ext h)
     apply if_neg
@@ -48,7 +54,6 @@ theorem deg_eta (aTop : Fin X.s → ℕ) (b : SegBlock X.s X.r) (x : Lv C0 CE1 C
     omega
   · intro h
     exact absurd (Finset.mem_univ i) h
-  · exact if_pos (Or.inr (show (q : ℕ) = 2 * ((X.S C0 CE1 CE2).sigma + (i : ℕ)) + 1 from hq))
 
 theorem deg_other (aTop aTop' : Fin X.s → ℕ) (b : SegBlock X.s X.r) (x : Lv C0 CE1 CE2 X)
     (hag : ∀ l : Fin X.s, (l : ℕ) < (X.S C0 CE1 CE2).sigma → aTop l = aTop' l)

@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.EigenKilling.ConeIntegralFactorisation
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.EigenKilling.FockActionFirstEq
-import Development.WeilBound.ThetaLifts.CartanFactorisation.ExistsCharNe
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.EigenKilling.ConeIntegralFactorisation
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.EigenKilling.FockActionFirstEq
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.ExistsCharNe
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,18 +89,21 @@ theorem realVanish_of (hA : ArchOp) (hD : PolDense) (hFr : FrameEx) (hFo : FockE
           (pureA F (Φ (PiTensorProduct.tprod ℂ (Function.update g w f))) g₀))) =
           fun _ => L (Φ (PiTensorProduct.tprod ℂ (Function.update g w f))) := funext fun t => by
         obtain ⟨T, hT, -⟩ := hA F E σ B n d X W M χX χW om r s r' s' hp _ (hγ.2 (Multiplicative.ofAdd t)) 1 (fun u _ => by simp [mat])
-        rw [MonoidHom.comp_apply, MonoidHom.inl_apply, hT.1 _ _ hg₀, hl' _ _ hg₀, hg₁, one_mul,
+        change l (om (γ (Multiplicative.ofAdd t), 1) (pureA F (Φ (PiTensorProduct.tprod ℂ (Function.update g w f))) g₀)) = _
+        rw [hT.1 _ _ hg₀, hl' _ _ hg₀, hg₁, one_mul,
           hinv _ (hγ.2 (Multiplicative.ofAdd t)) T hT]
+      change HasDerivAt (fun t : ℝ => l ((om.comp (MonoidHom.inl _ _)) (γ (Multiplicative.ofAdd t))
+          (pureA F (Φ (PiTensorProduct.tprod ℂ (Function.update g w f))) g₀))) _ 0 at h2
       rw [h3] at h2
       have h4 := h2.unique (hasDerivAt_const _ _)
       rw [hl' _ _ hg₀, hg₁, one_mul, sumPl_single _ w (fun i hi => by simp [Pi.single_eq_of_ne hi]), Function.update_idem,
         Function.update_self, Pi.single_eq_same] at h4
       have h5 : l₀ ((fockAct1 r s r' s' Y + ((m w : ℂ) / 2 * Y.trace) • 1 : Module.End ℂ _) f) = 0 := h4
-      rw [LinearMap.add_apply, map_add, LinearMap.smul_apply, map_smul, smul_eq_mul, Module.End.one_apply] at h5
+      rw [LinearMap.add_apply, map_add (f := _), LinearMap.smul_apply, map_smul, smul_eq_mul, Module.End.one_apply] at h5
       linear_combination h5
     have h0 := noForm (m w) ((hp.skew.sig w).1 ▸ hd w) hr l₀ fun Y _ f => by
       obtain ⟨Y₁, a, Y₂, b, rfl⟩ := upq_span Y
-      rw [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply, map_add, map_smul, h1 _ a, h1 _ b, Matrix.trace_add,
+      rw [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply, map_add (f := _), map_smul, h1 _ a, h1 _ b, Matrix.trace_add,
         Matrix.trace_smul]
       simp only [smul_eq_mul]
       ring
@@ -104,7 +111,7 @@ theorem realVanish_of (hA : ArchOp) (hD : PolDense) (hFr : FrameEx) (hFo : FockE
   have k2 : ∀ T, L (Φ T) = 0 := fun T => by
     induction T using PiTensorProduct.induction_on with
     | smul_tprod c g => rw [map_smul, map_smul, key, smul_zero]
-    | add x y hx hy => rw [map_add, map_add, hx, hy, add_zero]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, add_zero]
   refine ContinuousLinearMap.ext fun f => congrFun (Continuous.ext_on (hD F E σ B n d X W M χX χW om r s r' s' hp)
     L.continuous continuous_zero fun f hf => ?_) f
   rw [← hrg] at hf

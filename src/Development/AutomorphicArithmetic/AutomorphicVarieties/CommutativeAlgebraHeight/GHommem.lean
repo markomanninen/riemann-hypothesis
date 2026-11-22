@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -30,8 +34,8 @@ theorem UpperTheory.V.CA.g_hommem :
   intro R σ _ _ _ P hP F
   classical
   have hsumco : ∀ (f : MvPolynomial σ R) (d : ℕ) (m : σ →₀ ℕ),
-      MvPolynomial.coeff m (∑ k ∈ Finset.range (d + 1), MvPolynomial.homogeneousComponent k f) =
-        if m.degree ≤ d then MvPolynomial.coeff m f else 0 := by
+      AddMonoidAlgebra.coeff (∑ k ∈ Finset.range (d + 1), MvPolynomial.homogeneousComponent k f) m =
+        if m.degree ≤ d then AddMonoidAlgebra.coeff f m else 0 := by
     intro f d m
     rw [MvPolynomial.coeff_sum]
     simp only [MvPolynomial.coeff_homogeneousComponent]
@@ -39,7 +43,7 @@ theorem UpperTheory.V.CA.g_hommem :
     simp only [Finset.mem_range, Nat.lt_succ_iff]
   have htr := UpperTheory.V.CA.exists_part (R := R) (σ := σ)
   have hpolyQ : ∀ f ∈ P, ∀ (d : ℕ) (g : MvPolynomial σ R),
-      (∀ m : σ →₀ ℕ, g.coeff m = if m.degree ≤ d then MvPolynomial.coeff m f else 0) → g ∈ P := by
+      (∀ m : σ →₀ ℕ, g.coeff m = if m.degree ≤ d then AddMonoidAlgebra.coeff f m else 0) → g ∈ P := by
     intro f hf d g hg
     have hgeq : g = ∑ k ∈ Finset.range (d + 1), MvPolynomial.homogeneousComponent k f := by
       ext m
@@ -96,7 +100,7 @@ theorem UpperTheory.V.CA.g_hommem :
       obtain ⟨gy, hgy⟩ := htr y d
       have hgeq : g = gx + gy := by
         ext m
-        rw [hg, MvPolynomial.coeff_add, hgx, hgy, map_add]
+        rw [hg, MvPolynomial.coeff_add, hgx, hgy, map_add (f := _)]
         split_ifs <;> simp
       rw [hgeq]
       exact P.add_mem (hx d gx hgx) (hy d gy hgy)
@@ -111,7 +115,7 @@ theorem UpperTheory.V.CA.g_hommem :
         · rw [if_pos hm, if_pos hm, MvPowerSeries.coeff_mul, MvPolynomial.coeff_mul]
           refine Finset.sum_congr rfl fun p hp => ?_
           have hpm : p.1 + p.2 = m := Finset.HasAntidiagonal.mem_antidiagonal.mp hp
-          have hdeg : p.1.degree + p.2.degree = m.degree := by rw [← map_add, hpm]
+          have hdeg : p.1.degree + p.2.degree = m.degree := by rw [← map_add (f := _), hpm]
           rw [hTa, hTx, if_pos (by omega), if_pos (by omega)]
         · rw [if_neg hm, if_neg hm]
       rw [hgeq]
@@ -148,27 +152,28 @@ theorem UpperTheory.V.CA.g_hommem :
       exact (Submodule.mem_span_range_iff_exists_fun _).mp (hPspan hmem)
     choose c hc using hcomp
     have hcoefF : ∀ m : σ →₀ ℕ,
-        MvPolynomial.coeff m (∑ i, c m.degree i • h i) = MvPowerSeries.coeff m F := by
+        AddMonoidAlgebra.coeff (∑ i, c m.degree i • h i) m = MvPowerSeries.coeff m F := by
       intro m
       rw [hc, MvPolynomial.coeff_homogeneousComponent, if_pos rfl,
         Classical.choose_spec (htr F m.degree) m, if_pos le_rfl]
     let C : ↥s × Fin (D + 1) → MvPowerSeries σ R := fun i p =>
-      MvPolynomial.coeff p (c (p.degree + i.2.val) i)
+      AddMonoidAlgebra.coeff (c (p.degree + i.2.val) i) p
     have hFeq : F = ∑ i, C i * MvPolynomial.coeToMvPowerSeries.ringHom (σ := σ) (R := R) (h i) := by
       ext m
-      rw [← hcoefF m, map_sum, MvPolynomial.coeff_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hcoefF m, map_sum, MvPolynomial.coeff_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [MvPowerSeries.coeff_mul, smul_eq_mul, MvPolynomial.coeff_mul]
       refine Finset.sum_congr rfl fun p hp => ?_
       rw [MvPolynomial.coeToMvPowerSeries.ringHom_apply, MvPolynomial.coeff_coe]
       have hpm : p.1 + p.2 = m := Finset.HasAntidiagonal.mem_antidiagonal.mp hp
-      have hdeg : p.1.degree + p.2.degree = m.degree := by rw [← map_add, hpm]
-      show MvPolynomial.coeff p.1 (c m.degree i) * MvPolynomial.coeff p.2 (h i) =
-        MvPolynomial.coeff p.1 (c (p.1.degree + i.2.val) i) * MvPolynomial.coeff p.2 (h i)
+      have hdeg : p.1.degree + p.2.degree = m.degree := by rw [← map_add (f := _), hpm]
+      show AddMonoidAlgebra.coeff (c m.degree i) p.1 * AddMonoidAlgebra.coeff (h i) p.2 =
+        AddMonoidAlgebra.coeff (c (p.1.degree + i.2.val) i) p.1 * AddMonoidAlgebra.coeff (h i) p.2
       by_cases h2 : p.2.degree = i.2.val
       · rw [← h2, hdeg]
-      · have h0 : MvPolynomial.coeff p.2 (h i) = 0 := by
-          show MvPolynomial.coeff p.2 (MvPolynomial.homogeneousComponent i.2.val i.1.val) = 0
+      · have h0 : AddMonoidAlgebra.coeff (h i) p.2 = 0 := by
+          show AddMonoidAlgebra.coeff (MvPolynomial.homogeneousComponent i.2.val i.1.val) p.2 = 0
           rw [MvPolynomial.coeff_homogeneousComponent, if_neg h2]
         rw [h0, mul_zero, mul_zero]
     rw [hFeq]

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,8 +66,6 @@ def ValUnit (κ : Rule) : Prop :=
   ∀ (S V K : Type) [CommRing S] [IsNoetherianRing S] [CommRing V] [IsDomain V] [IsIntegrallyClosed V] [Field K] [CharZero K]
     [Algebra V K] [IsFractionRing V K] (g : S →+* V) (y : KeyIn S) (x : KeyIn K),
     KeyPB x y ((algebraMap V K).comp g) → ∃ u : Vˣ, (κ K x : K) = algebraMap V K u
-
-def KeyRoot : Prop := ∃ κ : Rule, Homog (fun _ => 1) κ ∧ Funct κ ∧ UnitSp κ ∧ ArchNorm (fun _ => 1) κ
 
 def KeyFam (N : ℕ → ℕ) : Prop :=
   ∃ κ : Rule, Homog N κ ∧ Funct κ ∧ UnitSp κ ∧ ThetaOne κ ∧ ArchNorm N κ ∧ FamUnit κ ∧ FamHomog N κ ∧ ValUnit κ

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalisationModelLocalization
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalisationModelLocalization
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -93,7 +98,7 @@ theorem clear (h : MvPolynomial (Fin n ⊕ Fin M.m) ℂ) :
         rename Sum.inl (denProd M ^ N₂ * g₁ + denProd M ^ N₁ * g₂) =
         rename Sum.inl (denProd M) ^ N₂ * (rename Sum.inl (denProd M) ^ N₁ * p - rename Sum.inl g₁) +
           rename Sum.inl (denProd M) ^ N₁ * (rename Sum.inl (denProd M) ^ N₂ * r - rename Sum.inl g₂) := by
-      simp only [map_add, map_mul, map_pow]
+      simp only [map_add (f := _), map_mul, map_pow]
       ring
     rw [e]
     exact add_mem (Ideal.mul_mem_left _ _ h₁) (Ideal.mul_mem_left _ _ h₂)
@@ -189,7 +194,7 @@ theorem modelToFrac_mk (hJ : J.IsPrime) (hq : q ∈ zeroSet J) (h : MvPolynomial
   Ideal.Quotient.lift_mk _ _ _
 
 theorem modelToFrac_injective (hJ : J.IsPrime) (hq : q ∈ zeroSet J) : Function.Injective (modelToFrac M hJ hq) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨h, rfl⟩ := Ideal.Quotient.mk_surjective x
   rw [modelToFrac_mk, ← RingHom.mem_ker, ker_toFracModel hJ hq] at hx
@@ -215,7 +220,7 @@ theorem locToFrac_algebraMap (hJ : J.IsPrime) (hq : q ∈ zeroSet J) (r : MvPoly
   exact IsLocalization.lift_eq _ _
 
 theorem locToFrac_injective (hJ : J.IsPrime) (hq : q ∈ zeroSet J) : Function.Injective (locToFrac M hJ hq) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro z hz
   obtain ⟨⟨r, s⟩, rfl⟩ := IsLocalization.mk'_surjective (normalModelSubmonoid M q) z
   rw [locToFrac, IsLocalization.lift_mk'_spec, mul_zero] at hz
@@ -287,7 +292,7 @@ theorem toFracModel_mem (hJ : J.IsPrime) (hq : q ∈ zeroSet J) (h : MvPolynomia
     rw [← rename_C (R := ℂ) (Sum.inl : Fin n → Fin n ⊕ Fin M.m) c, toFracModel_rename]
     exact toFrac_mem _
   | add p r hp hr =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hp hr
   | mul_X p s hp =>
     rw [map_mul]
@@ -348,8 +353,8 @@ theorem exists_locToFrac (hJ : J.IsPrime) (hq : q ∈ zeroSet J) (x : FractionRi
 
 end NormalisationModelLocalization
 
-open NormalisationModelLocalization in
 
+open NormalisationModelLocalization in
 theorem NormalisationModelLocalization.proof : NormalisationModelLocalization.Statement := by
   intro n J q M hJ
   by_cases hq : q ∈ zeroSet J

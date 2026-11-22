@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.ObstructionBoundFromDuality
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsTerSide
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.ObstructionBoundFromDuality
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsTerSide
+
+@[expose] public section
+
 open Matrix Filter ReciprocityTheory.Gal UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.Pa.B2
 
 private theorem map_conj {A X X' : Type} [CommRing A] [CommRing X] [CommRing X'] [Algebra A X] [Algebra A X'] {n : ℕ}
@@ -7,7 +12,8 @@ private theorem map_conj {A X X' : Type} [CommRing A] [CommRing X] [CommRing X']
     (P.map (algebraMap A X) * M * Q.map (algebraMap A X)).map u =
       P.map (algebraMap A X') * M.map u * Q.map (algebraMap A X') := by
   ext i j
-  simp only [Matrix.map_apply, Matrix.mul_apply, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.map_apply, Matrix.mul_apply, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun k' _ => ?_
   rw [mul_comm _ (algebraMap A X _), mul_comm _ (algebraMap A X' _), ← Algebra.smul_def, ← Algebra.smul_def,
     ← Algebra.smul_def, ← Algebra.smul_def, map_smul, map_smul]

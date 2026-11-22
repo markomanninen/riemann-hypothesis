@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.TowerZeroSurjective
-import ReciprocityTheory.DualLattices.LinPairStatement
-import ReciprocityTheory.DualLattices.SubMemOfCompat
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.TowerZeroSurjective
+public import ReciprocityTheory.DualLattices.LinPairStatement
+public import ReciprocityTheory.DualLattices.SubMemOfCompat
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,16 +28,18 @@ lemma finOf_local_of_comp {O Q S : Type} [CommRing O] [CommRing Q] [CommRing S] 
     [IsLocalRing Q] [IsLocalRing S] [Algebra O Q] [Algebra.IsIntegral O Q] (g : Q →+* S)
     (h : IsLocalHom (g.comp (algebraMap O Q))) : IsLocalHom g := by
   have h1 : (maximalIdeal S).comap (g.comp (algebraMap O Q)) = maximalIdeal O :=
-    ((local_hom_TFAE (g.comp (algebraMap O Q))).out 0 4).1 h
+    ((local_hom_TFAE (g.comp (algebraMap O Q))).out 1 5).1 h
   have h2 : (((maximalIdeal S).comap g).comap (algebraMap O Q)).IsMaximal := by
     rw [Ideal.comap_comap, h1]; infer_instance
-  have h3 := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap _ h2
-  exact ((local_hom_TFAE g).out 4 0).1 (eq_maximalIdeal h3)
+  have h3 := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (algebraMap O Q)
+    (algebraMap_isIntegral_iff.mpr inferInstance) ((maximalIdeal S).comap g) h2
+  exact ((local_hom_tfae g).out 5 1).1 (eq_maximalIdeal h3)
 
 lemma finOf_local_algebraMap {O Q : Type} [CommRing O] [CommRing Q] [IsLocalRing O]
     [IsLocalRing Q] [Algebra O Q] [Algebra.IsIntegral O Q] : IsLocalHom (algebraMap O Q) :=
-  ((local_hom_TFAE (algebraMap O Q)).out 4 0).1
-    (eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (maximalIdeal Q)))
+  ((local_hom_TFAE (algebraMap O Q)).out 5 1).1
+    (eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (algebraMap _ _)
+      (algebraMap_isIntegral_iff.mpr inferInstance) (maximalIdeal Q)))
 
 variable {R₀ : Type} [CommRing R₀]
 
@@ -61,7 +67,7 @@ lemma finOf_tangent (B : BX R₀) (p : ℕ) (hp : p ≠ 0) (C : Type) [Field C] 
     (by rw [map_nsmul, hv, smul_sub, hz, hz', sub_self, map_zero])
   have hinj : Function.Injective
       (p • LinearMap.id : (finOf_fst (R₀ := R₀) C).ker →ₗ[R₀] (finOf_fst (R₀ := R₀) C).ker) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     have ha' : p • (a.1 : DualNumber C) = 0 := congrArg Subtype.val ha
     apply Subtype.ext
@@ -145,7 +151,8 @@ lemma finOf_split (B : BX R₀) (p : ℕ) [Module.Free (O : Type) A] [Module.Fin
     have h0 : ∀ i, φ (ε i) = 0 := fun i =>
       (finOf_idem ((hε.idem i).map φ)).resolve_right fun h => hcon ⟨i, h⟩
     have h1 := congrArg φ hε.complete
-    rw [map_sum, map_one, Finset.sum_eq_zero fun i _ => h0 i] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_one, Finset.sum_eq_zero fun i _ => h0 i] at h1
     exact zero_ne_one h1
   have hmk : ∀ i, Ideal.Quotient.mk (Ideal.span {1 - ε i}) (ε i) = 1 := fun i => by
     rw [← map_one (Ideal.Quotient.mk (Ideal.span {1 - ε i})), eq_comm, Ideal.Quotient.eq]

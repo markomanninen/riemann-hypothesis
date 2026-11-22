@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsLocalRingOfIdem
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardStableLatticesStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdjoinEqTopAndIsReducedOfCharpolySeparableStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharpolyMulLeftSeparableOfAdjoinEqTopStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsLocalRingOfIdem
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardStableLatticesStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdjoinEqTopAndIsReducedOfCharpolySeparableStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharpolyMulLeftSeparableOfAdjoinEqTopStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,8 @@ theorem mem_adjoin_both {O A : Type} [CommRing O] [CommRing A] [Algebra O A] (g 
     have hR : aeval Y R = 0 := by
       have : aeval Y R = (algebraMap O A ε - Y) ^ n * aeval g Q := by
         conv_rhs => rw [aeval_eq_sum_range, Finset.mul_sum]
-        simp only [R, map_sum, map_mul, map_pow, aeval_C, map_add, map_sub, aeval_X]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [R, map_sum, map_mul, map_pow, aeval_C, map_add (f := _), map_sub, aeval_X]
         refine Finset.sum_congr rfl fun i hi => ?_
         have hin : i ≤ n := Nat.lt_succ_iff.1 (Finset.mem_range.1 hi)
         rw [← hgY, mul_pow, Algebra.smul_def]
@@ -174,7 +179,7 @@ theorem cayley_selfadj (B : InvAlg K) (s ε : K.O) (Y : B.A) (hu : B.g * B.σ B.
     (hY : Y * (B.g + algebraMap K.O B.A s) = algebraMap K.O B.A ε * (B.g - algebraMap K.O B.A s)) :
     B.σ Y = Y := by
   have h1 := congrArg B.σ hY
-  simp only [map_mul, map_add, map_sub, σ_algebraMap, hε, map_neg] at h1
+  simp only [map_mul, map_add (f := _), map_sub, σ_algebraMap, hε, map_neg] at h1
   have he : algebraMap K.E B.A (algebraMap K.O K.E ε) = algebraMap K.O B.A ε :=
     (IsScalarTower.algebraMap_apply _ _ _ _).symm
   rw [he] at h1

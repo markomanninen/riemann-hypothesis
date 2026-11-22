@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCSt
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCSt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,7 +33,7 @@ theorem two_mul_form_half_unit (hcj : ∀ c : 𝓞 E, ∃ c' : 𝓞 E, (c' : E) 
     rw [mem.2 w₀ w' hw' a a, mem.1]
   have h3 : (γ : Y →ₗ[ℤ] Y →ₗ[ℤ] ℝ) ((w₀ + w') • a) a = (γ : Y →ₗ[ℤ] Y →ₗ[ℤ] ℝ) a a := by
     rw [h1, one_smul]
-  rw [add_smul, map_add, LinearMap.add_apply, ← h2] at h3
+  rw [add_smul, map_add (f := _), LinearMap.add_apply, ← h2] at h3
   linarith
 
 end
@@ -40,7 +44,7 @@ theorem bil_rad {Y : Type} [AddCommGroup Y] (γ : Y →ₗ[ℤ] Y →ₗ[ℤ] �
   have key : ∀ n : ℤ, 0 ≤ (n : ℝ) * γ a y + (n : ℝ) * γ a y + γ y y := by
     intro n
     have h := hpsd (n • a + y)
-    simp only [map_add, map_zsmul, LinearMap.add_apply, LinearMap.smul_apply, zsmul_eq_mul, ha,
+    simp only [map_add (f := _), map_zsmul, LinearMap.add_apply, LinearMap.smul_apply, zsmul_eq_mul, ha,
       hsym y a, mul_zero, zero_add] at h
     linarith
   by_contra hs

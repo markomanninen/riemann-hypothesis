@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.MatrixFormFourfoldBlock
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.Th0CharMulOpUTh0HalfPeriodEq
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.MatrixFormFourfoldBlockFirstBlockEmb
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.MatrixFormFourfoldBlock
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.Th0CharMulOpUTh0HalfPeriodEq
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.MatrixFormFourfoldBlockFirstBlockEmb
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -70,38 +74,9 @@ section Main
 
 variable (L : PeriodPair) (d : ℕ)
 
-local notation "EE" => Formalism.L2.Th1.F.altE L
-
 def q1 (w : ℂ) : ℝ := Real.sqrt d / 2 * (herm L w w).re
 
 def aa (w : ℂ) : ℂ := Complex.exp ((Real.pi : ℂ) * Complex.I * ((q1 L d w : ℝ) : ℂ))
-
-def io (w : ℂ) : Unit → ℂ := fun _ => w
-
-theorem io_mem {w : ℂ} (h : w ∈ L.lattice) : io w ∈ stdLat L Unit := by
-  unfold stdLat
-  first
-    | exact fun _ _ => h
-    | (rw [← SetLike.mem_coe, AddSubgroup.coe_pi]; exact Set.mem_univ_pi.mpr fun _ => h)
-
-private theorem stdH_unit_io_io_eq_herm (x y : ℂ) : stdH L Unit (io x) (io y) = herm L x y := by
-  unfold stdH
-  rw [matH_apply]
-  simp only [Finset.univ_unique, Finset.sum_singleton, Matrix.smul_apply, Matrix.one_apply_eq,
-    smul_eq_mul, mul_one, io, herm]
-  ring
-
-theorem cmQuadraticForm_eq_alternatingForm (w : ℂ) : qOf (Real.sqrt d / 2) (stdH L Unit) (io w) = q1 L d w := by
-  unfold qOf q1
-  rw [stdH_unit_io_io_eq_herm]
-
-theorem aa_eq (w : ℂ) : alphaQ (Real.sqrt d / 2) (stdH L Unit) (io w) = aa L d w := by
-  unfold alphaQ aa
-  rw [cmQuadraticForm_eq_alternatingForm]
-
-theorem altE_io (x y : ℂ) : altE (stdH L Unit) (io x) (io y) = EE x y := by
-  unfold Formalism.L2.Th1.H.altE Formalism.L2.Th1.F.altE
-  rw [stdH_unit_io_io_eq_herm]
 
 private theorem coord_lemma (z : ℂ) (hz : z ∈ L.lattice) :
     ∃ m n : ℤ, z = (m : ℂ) * L.ω₁ + (n : ℂ) * L.ω₂ := by
@@ -113,7 +88,8 @@ theorem herm_self (w : ℂ) : herm L w w = ((Complex.normSq w / Formalism.L2.Th1
   rw [Complex.mul_conj, Complex.ofReal_div]
 
 private theorem exists_sign_EE_lattice_eq_det : ∃ s : ℤ, (s = 1 ∨ s = -1) ∧ ∀ a b c e : ℤ,
-    EE ((a : ℂ) * L.ω₁ + (b : ℂ) * L.ω₂) ((c : ℂ) * L.ω₁ + (e : ℂ) * L.ω₂) =
+    Formalism.L2.Th1.F.altE L ((a : ℂ) * L.ω₁ + (b : ℂ) * L.ω₂)
+      ((c : ℂ) * L.ω₁ + (e : ℂ) * L.ω₂) =
       ((s * (a * e - b * c) : ℤ) : ℝ) := by
   obtain ⟨t, ht⟩ : ∃ t : ℝ, t = (L.ω₁ * conj L.ω₂).im := ⟨_, rfl⟩
   have hA : Formalism.L2.Th1.F.area L = |t| := by
@@ -128,8 +104,9 @@ private theorem exists_sign_EE_lattice_eq_det : ∃ s : ℤ, (s = 1 ∨ s = -1) 
     simp only [Complex.mul_im, Complex.mul_re, Complex.add_re, Complex.add_im, Complex.conj_re,
       Complex.conj_im, Complex.intCast_re, Complex.intCast_im]
     ring
-  have key : ∀ a b c e : ℤ, EE ((a : ℂ) * L.ω₁ + (b : ℂ) * L.ω₂) ((c : ℂ) * L.ω₁ + (e : ℂ) * L.ω₂) =
-      ((a : ℝ) * e - b * c) * t / |t| := by
+  have key : ∀ a b c e : ℤ,
+      Formalism.L2.Th1.F.altE L ((a : ℂ) * L.ω₁ + (b : ℂ) * L.ω₂)
+        ((c : ℂ) * L.ω₁ + (e : ℂ) * L.ω₂) = ((a : ℝ) * e - b * c) * t / |t| := by
     intro a b c e
     simp only [Formalism.L2.Th1.F.altE, herm]
     rw [Complex.div_ofReal_im, hIm, hA]
@@ -143,23 +120,12 @@ private theorem exists_sign_EE_lattice_eq_det : ∃ s : ℤ, (s = 1 ∨ s = -1) 
     push_cast
     ring
 
-theorem altE_add_right (x y z : ℂ) : EE x (y + z) = EE x y + EE x z := by
-  simp only [Formalism.L2.Th1.F.altE, herm, map_add, mul_add, add_div, Complex.add_im]
-
 private theorem exists_int_EE_eq_of_mem_lattice (x : ℂ) (hx : x ∈ L.lattice) (y : ℂ) (hy : y ∈ L.lattice) :
-    ∃ m : ℤ, EE x y = m := by
+    ∃ m : ℤ, Formalism.L2.Th1.F.altE L x y = m := by
   obtain ⟨s, -, hs⟩ := exists_sign_EE_lattice_eq_det L
   obtain ⟨a, b, rfl⟩ := coord_lemma L x hx
   obtain ⟨c, e, rfl⟩ := coord_lemma L y hy
   exact ⟨_, hs a b c e⟩
-
-theorem altE_two_right (x v : ℂ) : EE x (2 * v) = 2 * EE x v := by
-  have h : herm L x (2 * v) = ((2 : ℝ) : ℂ) * herm L x v := by
-    simp only [herm, map_mul, map_ofNat]
-    push_cast
-    ring
-  simp only [Formalism.L2.Th1.F.altE]
-  rw [h, Complex.im_ofReal_mul]
 
 private theorem exp_pi_I_intCast_eq_neg_one_pow (m : ℤ) :
     Complex.exp ((Real.pi : ℂ) * Complex.I * (((m : ℝ)) : ℂ)) = (-1 : ℂ) ^ m := by
@@ -167,15 +133,6 @@ private theorem exp_pi_I_intCast_eq_neg_one_pow (m : ℤ) :
     push_cast
     ring
   rw [h, Complex.exp_int_mul, Complex.exp_pi_mul_I]
-
-theorem altE_half_left (x y : ℂ) : EE (x / 2) y = EE x y / 2 := by
-  have h : herm L (x / 2) y = ((1 / 2 : ℝ) : ℂ) * herm L x y := by
-    simp only [herm]
-    push_cast
-    ring
-  simp only [Formalism.L2.Th1.F.altE]
-  rw [h, Complex.im_ofReal_mul]
-  ring
 
 private theorem cmTheta_one_eq :
     cmTheta 1 d = ((1 / 2 : ℝ) : ℂ) + ((Real.sqrt d / 2 : ℝ) : ℂ) * Complex.I := by
@@ -195,7 +152,7 @@ theorem theta_normSq : Complex.normSq (cmTheta 1 d) = (1 + (d : ℝ)) / 4 := by
   have h := Real.mul_self_sqrt (Nat.cast_nonneg (α := ℝ) d)
   linear_combination h / 4
 
-theorem altE_theta (w : ℂ) : EE (cmTheta 1 d * w) w = q1 L d w := by
+theorem altE_theta (w : ℂ) : Formalism.L2.Th1.F.altE L (cmTheta 1 d * w) w = q1 L d w := by
   have h1 : herm L (cmTheta 1 d * w) w = cmTheta 1 d * herm L w w := by
     simp only [herm]
     ring
@@ -204,8 +161,9 @@ theorem altE_theta (w : ℂ) : EE (cmTheta 1 d * w) w = q1 L d w := by
   ring
 
 private theorem q1_add (x y : ℂ) :
-    q1 L d (x + y) = q1 L d x + q1 L d y + 2 * EE (cmTheta 1 d * x) y - EE x y := by
-  simp only [q1, Formalism.L2.Th1.F.altE, herm, cmTheta_one_eq, map_add]
+    q1 L d (x + y) = q1 L d x + q1 L d y + 2 * Formalism.L2.Th1.F.altE L (cmTheta 1 d * x) y -
+      Formalism.L2.Th1.F.altE L x y := by
+  simp only [q1, Formalism.L2.Th1.F.altE, herm, cmTheta_one_eq, map_add (f := _)]
   simp only [Complex.div_ofReal_re, Complex.div_ofReal_im, Complex.add_re, Complex.add_im,
     Complex.mul_re, Complex.mul_im, Complex.conj_re, Complex.conj_im, Complex.ofReal_re,
     Complex.ofReal_im, Complex.I_re, Complex.I_im]
@@ -228,7 +186,7 @@ include hst
 theorem semi :
     (∀ x ∈ L.lattice, ∃ m : ℤ, q1 L d x = (m : ℝ)) ∧ (∀ x ∈ L.lattice, aa L d x = 1 ∨ aa L d x = -1) ∧
     ∀ x ∈ L.lattice, ∀ y ∈ L.lattice, aa L d (x + y) = aa L d x * aa L d y *
-      Complex.exp ((Real.pi : ℂ) * Complex.I * (EE x y : ℂ)) := by
+      Complex.exp ((Real.pi : ℂ) * Complex.I * (Formalism.L2.Th1.F.altE L x y : ℂ)) := by
   have hint : ∀ x ∈ L.lattice, ∃ m : ℤ, q1 L d x = (m : ℝ) := by
     intro x hx
     obtain ⟨m, hm⟩ := exists_int_EE_eq_of_mem_lattice L _ (hst x hx) x hx

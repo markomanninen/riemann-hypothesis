@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LminorSubmatrixCastSucc
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LminorSubmatrixCastSucc
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+
+@[expose] public section
 
 open Matrix Complex NumberField MeasureTheory GlobalTheory GlobalTheory.SW GlobalTheory.ThFr ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD
 open scoped ComplexConjugate ComplexOrder Real Classical
@@ -65,15 +69,16 @@ theorem det_aLin_ne_zero {x₁ x₂ : Frame X.Ψ r} (h₁ : x₁ ∈ X.dom) (h�
   have b := neg_of_lower x₁ h₂ τ hw fun a _ => congrFun h0 a
   linarith
 
-variable (X) in
 
+variable (X) in
 theorem aLin_swap (x₁ x₂ : Frame X.Ψ r) (τ : X.Ψ) :
     aLin X x₂ x₁ τ = (aAnti X x₁ x₂ τ).map conj := by
   ext a c
   simp only [aLin, aAnti, map_apply, of_apply]
   split_ifs
-  · simp only [map_sum, map_mul, ← emb_cc, X.Gm_herm]
-    exact Finset.sum_congr rfl fun b _ => mul_comm _ _
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [map_sum, map_mul, ← emb_cc, X.Gm_herm]
+      exact Finset.sum_congr rfl fun b _ => mul_comm _ _
   · rw [Complex.conj_conj]
 
 theorem det_aAnti_ne_zero {x₁ x₂ : Frame X.Ψ r} (h₁ : x₁ ∈ X.dom) (h₂ : x₂ ∈ X.dom) (τ : X.Ψ) :
@@ -105,7 +110,7 @@ theorem re_hermC_invol_neg {x₁ x₂ : Frame X.Ψ r} (h₁ : x₁ ∈ X.dom) (h
     rw [← mulVec_mulVec, ← mulVec_mulVec, hd₁, hd₂, ← mulVec_sub, ← hy]
     congr 1
     funext a
-    simp only [mulVec_diagonal, hyp, hym, Pi.sub_apply, sgn]
+    simp [Matrix.mulVec_diagonal, hyp, hym, sgn]
     split_ifs <;> simp
   have p₁ : d₁ ≠ 0 → 0 < (hermC τ.1 X.Gm d₁ d₁).re := fun h =>
     pos_of_upper h₁ x₂ τ h fun a ha => by rw [← hA, e₁]; simp only [hyp, if_neg ha]
@@ -143,7 +148,8 @@ theorem posDef_imH {N : ℕ} {Z : Matrix (Fin N) (Fin N) ℂ}
     congr 1
     simp
   · have e : star v ⬝ᵥ Zᴴ *ᵥ v = conj (star v ⬝ᵥ Z *ᵥ v) := by
-      simp only [dotProduct, mulVec, conjTranspose_apply, Pi.star_apply, Complex.star_def, map_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [dotProduct, mulVec, conjTranspose_apply, Pi.star_apply, Complex.star_def, map_sum,
         map_mul, Complex.conj_conj, Finset.mul_sum]
       rw [Finset.sum_comm]
       exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by ring
@@ -156,8 +162,8 @@ theorem posDef_imH {N : ℕ} {Z : Matrix (Fin N) (Fin N) ℂ}
     rw [this]
     exact_mod_cast h v hv
 
-variable (X) in
 
+variable (X) in
 theorem re_kappa (τ : E →+* ℂ) : (τ X.κ0).re = 0 := by
   have h : conj (τ X.ξ0) = -τ X.ξ0 := by rw [← emb_cc, X.ξ0_im, map_neg]
   have h' := congrArg Complex.re h

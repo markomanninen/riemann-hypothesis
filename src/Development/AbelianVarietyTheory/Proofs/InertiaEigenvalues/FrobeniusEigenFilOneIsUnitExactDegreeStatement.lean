@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusEigenFilOneIsUnitExactDegree
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusEigenFilOneIsUnitExactDegree
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+
+@[expose] public section
+
 open Formalism
 open scoped Formalism.Per
 set_option maxHeartbeats 1000000 in

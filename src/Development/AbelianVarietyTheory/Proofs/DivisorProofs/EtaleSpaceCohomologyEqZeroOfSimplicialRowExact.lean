@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LaurentVarUnit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LaurentMapIsIntegral
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimplicialCochainClassesBasicProperties
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiscreteSpaceCocycleVanishingPos
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CohomologyComplexOfSheafCocycleClassProperties
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChosenInjectiveResolutionEtaleSheafBasicProperti
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LaurentVarUnit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LaurentMapIsIntegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimplicialCochainClassesBasicProperties
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiscreteSpaceCocycleVanishingPos
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CohomologyComplexOfSheafCocycleClassProperties
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChosenInjectiveResolutionEtaleSheafBasicProperti
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite Simplicial CochainComplex CochainComplex.HomComplex GlobalTheory.EtC GlobalTheory.EtC.GmStep
 
 noncomputable section
@@ -50,11 +55,11 @@ theorem dcl_sum_zsmul (P : PSh) (m : ℤ) {ι : Type} (S : Finset ι) (c : ι �
     ∑ i ∈ S, c i • dcl P m (t i) (ht i) = dcl P m (∑ i ∈ S, c i • t i) h := by
   have hs : (∑ i ∈ S, c i • (⟨t i, ht i⟩ : closedSub (F := F) P m)) = ⟨∑ i ∈ S, c i • t i, h⟩ := by
     apply Subtype.ext
-    rw [AddSubgroup.val_finset_sum]
-    rfl
+    simp
   have e : dclHom (F := F) P m (∑ i ∈ S, c i • (⟨t i, ht i⟩ : closedSub (F := F) P m)) =
       ∑ i ∈ S, c i • dcl P m (t i) (ht i) := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_zsmul]
     rfl
@@ -107,7 +112,7 @@ theorem rowD_dcl (E : Spc) (s : ℤ) (p : ℕ) (t : (free R).obj (E.obj (op ⦋p
     rw [Category.assoc, ht, comp_zero]
   calc rowD R E F s p (dcl _ s t ht)
       = ∑ i : Fin (p + 2), ((-1 : ℤ) ^ (i : ℕ)) • dcl _ s ((free R).map (E.δ i) ≫ t) (hi i) := by
-        simp only [rowD, AddMonoidHom.finset_sum_apply, AddMonoidHom.smul_apply]
+        simp only [rowD, AddMonoidHom.finsetSum_apply, AddMonoidHom.smul_apply]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [pull_dcl]
     _ = dcl _ s (∑ i : Fin (p + 2), ((-1 : ℤ) ^ (i : ℕ)) • ((free R).map (E.δ i) ≫ t))
@@ -174,8 +179,8 @@ theorem clear_step {K L : Cx R} {n : ℤ} (z : Cocycle K L n) (k : ℕ)
 
 end GlobalTheory.EtC.RowVanish
 
-open GlobalTheory.EtC.RowVanish GlobalTheory.EtC.ClsBasic GlobalTheory.EtC.HCElements in
 
+open GlobalTheory.EtC.RowVanish GlobalTheory.EtC.ClsBasic GlobalTheory.EtC.HCElements in
 theorem GlobalTheory.EtC.vanish_of_rowExact : ∀ (R : Type) [CommRing R] (F : Shv R) (E : Spc) (P : PSh) (g : disc.obj P ⟶ E),
     IsIso (g.app (op ⦋0⦌)) →
     ∀ (n : ℕ) (x : H R E F n), pull R g F n x = 0 →
@@ -249,7 +254,8 @@ theorem GlobalTheory.EtC.vanish_of_rowExact : ∀ (R : Type) [CommRing R] (F : S
           rw [dcl_congr _ S hb hD1 (by rw [← hb]; exact hD1)]
           exact dcl_bd _ S _ _
         obtain ⟨w, hw⟩ := hrowp _ hc0
-        obtain ⟨s, hs, rfl⟩ := dcl_surj _ S w
+        obtain ⟨s, hs, hsw⟩ := dcl_surj (E.obj (op ⦋p⦌)) S w
+        subst w
         let D0 : (free R).obj (E.obj (op ⦋p + 1⦌)) ⟶ (free R).obj (E.obj (op ⦋p⦌)) :=
           ∑ i : Fin (p + 2), (-1 : ℤ) ^ (i : ℕ) • (free R).map (E.δ i)
         have hD0 : (D0 ≫ s) ≫ (res R F).d S (S + 1) = 0 := by rw [Category.assoc, hs, comp_zero]

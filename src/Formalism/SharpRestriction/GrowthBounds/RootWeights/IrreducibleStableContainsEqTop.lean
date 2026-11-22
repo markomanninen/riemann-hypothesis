@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.HighestWeightLatticeOfFirstPart
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.HighestWeightLatticeOfFirstPart
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,7 +111,8 @@ theorem weight_support_sum_eq_zero [CharZero (KK O)] (E : GLOps n (KK O) V) (Pr 
       have hkey : (((nu a : ℤ) : KK O) - ((mu0 a : ℤ) : KK O)) • ∑ mu ∈ insert mu0 F, f mu = ∑ mu ∈ F, g mu := by
         have h1 : E a a (∑ mu ∈ insert mu0 F, f mu) = ((nu a : ℤ) : KK O) • ∑ mu ∈ insert mu0 F, f mu :=
           hwt a nu _ hs
-        rw [sub_smul, ← h1, map_sum, hES]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [sub_smul, ← h1, map_sum, hES]
         simp only [g, sub_smul, Finset.sum_sub_distrib]
         rw [Finset.sum_insert hmu0, Finset.sum_insert hmu0, smul_add, Finset.smul_sum]
         abel
@@ -181,7 +186,7 @@ theorem irreducible_lowering_span_top {E : GLOps n (KK O) V} {lam : Fin n → �
       unfold loweringOperatorMonoid
       exact Submonoid.subset_closure ⟨c, d, hdc, rfl⟩
     | zero => simp
-    | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
     | smul r y _ hy => rw [map_smul]; exact Submodule.smul_mem _ r hy
   have hall : ∀ u ∈ loweringOperatorMonoid E, ∀ a b, E a b (u v) ∈ Submodule.span (KK O) {x | ∃ u ∈ loweringOperatorMonoid E, x = u v} := by
     intro u hu
@@ -214,7 +219,7 @@ theorem irreducible_lowering_span_top {E : GLOps n (KK O) V} {lam : Fin n → �
       obtain ⟨u, hu, rfl⟩ := hz
       exact hall u hu a b
     | zero => simp
-    | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
     | smul r y _ hy => rw [map_smul]; exact Submodule.smul_mem _ r hy
   exact irreducible_stable_contains_eq_top hI hstab hv1
 

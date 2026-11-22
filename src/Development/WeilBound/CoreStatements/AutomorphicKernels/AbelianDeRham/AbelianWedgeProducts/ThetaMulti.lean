@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -47,7 +51,7 @@ theorem key_alg {K : Type} [Field K] {V W : Type} [AddCommGroup V] [Module K V] 
       ext v
       simp [theta_ιMulti, exteriorPower.map_apply_ιMulti, e12]
     have h0 := congrArg (theta r₁ r₂ g) ht
-    rw [map_add] at h0
+    rw [map_add (f := _)] at h0
     have h1 := LinearMap.congr_fun hA t
     have h2 := LinearMap.congr_fun hB t
     have h3 := LinearMap.congr_fun hC t

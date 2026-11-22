@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitJetDegreeBound.JetTdegEqDegree
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitJetDegreeBound.JetTdegEqDegree
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,9 +61,11 @@ theorem hasSubst_Xs {N0 N1 : ℕ} (a : Fin N0) (b : Fin N1) :
 theorem cc_bsum {N0 N1 : ℕ} (sg : ℂ_[p]) (be : MvPowerSeries (ZMod (nP D p)) ℂ_[p]) (hbe : constantCoeff be = 0) :
     constantCoeff (sg • bsum D p (N0 := N0) (N1 := N1) be) = 0 := by
   unfold bsum
-  rw [MvPowerSeries.smul_eq_C_mul, map_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [MvPowerSeries.smul_eq_C_mul, map_mul, map_sum]
   rw [Finset.sum_eq_zero (fun a _ => ?_), mul_zero]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun b _ => ?_
   exact MvPowerSeries.constantCoeff_subst_eq_zero (hasSubst_Xs D p a b)
     (fun s => MvPowerSeries.constantCoeff_X _) hbe
@@ -70,10 +76,12 @@ theorem beAll_eq {N0 N1 : ℕ} (R : Finset (Pl D)) (sg : Pl D → ℂ_[p])
       ∑ r ∈ R, rename (pE D p r (Fin N0 × Fin N1)) (sg r • bsum D p (be r)) := by
   unfold beAll bsum
   refine Finset.sum_congr rfl fun r _ => ?_
-  rw [map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_smul, map_sum]
   congr 1
   refine Finset.sum_congr rfl fun a _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [MvPowerSeries.rename_eq_subst,
     MvPowerSeries.subst_comp_subst_apply (hasSubst_Xs D p a b) (MvPowerSeries.HasSubst.X_comp _)]
@@ -138,13 +146,13 @@ theorem mem_orbit_unique {R : Finset (Pl D)} (hR : IsReps D p R) {r r' : Pl D} (
 theorem sum_resM {γ : Type} {R : Finset (Pl D)} (hR : IsReps D p R) (m : Pl D × γ →₀ ℕ) :
     ∑ r ∈ R, mapDomain (pE D p r γ) (resM D p r m) = m := by
   ext ⟨z, c⟩
-  rw [Finsupp.finset_sum_apply]
+  rw [Finsupp.finsetSum_apply]
   obtain ⟨r0, ⟨hr0, e0, he0⟩, huniq⟩ := hR z
   have hx0 : ((z, c) : Pl D × γ) = pE D p r0 γ ((e0 : ZMod (nP D p)), c) := by
     show (z, c) = (orbMap D p r0 (e0 : ZMod (nP D p)), c)
     rw [← posPl_eq_orbMap, he0]
   rw [Finset.sum_eq_single r0]
-  · rw [hx0, Finsupp.mapDomain_apply (pE D p r0 γ).injective]
+  · rw [hx0, Finsupp.mapDomain_apply_of_injective (pE D p r0 γ).injective]
     rfl
   · intro r hr hne
     apply Finsupp.mapDomain_notin_range

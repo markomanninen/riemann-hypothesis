@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.SplitPolarLOf
-import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesAdmittedOfLevels
-import Formalism.SharpRestriction.LevelLetterCocycles.PolarToPoleOfCtx
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.SplitPolarLOf
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesAdmittedOfLevels
+public import Formalism.SharpRestriction.LevelLetterCocycles.PolarToPoleOfCtx
+
+@[expose] public section
 
 noncomputable section
 

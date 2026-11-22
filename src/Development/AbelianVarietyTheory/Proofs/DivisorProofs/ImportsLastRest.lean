@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,8 @@ theorem integral_mem {X Y : Type} [MeasurableSpace Y] (μ : Measure Y) (W : Subm
       ext t
       simp [r, Finset.sum_apply, Pi.single_apply]
     conv_lhs => rw [← h1, h2]
-    simp [map_sum, map_smul, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_smul, Finset.sum_apply]
   have hfun : (fun x => ∫ y, G y x ∂μ) =
       ((∑ s : S, (∫ y, G y s ∂μ) • L (Pi.single s 1) : W) : X → ℂ) := by
     funext x

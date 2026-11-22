@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.ExistsReductionOfCoordinateCombination
+module
+
+public import ReciprocityTheory.DualLattices.ExistsReductionOfCoordinateCombination
+
+@[expose] public section
 
 noncomputable section
 
@@ -199,7 +203,8 @@ lemma avgF_cong (hS : HodgeTateSetting p v R O σ cp) {H : HodgeTateDatum p g v 
   have hLε : (Lr ᵥ* U.εT i) ⬝ᵥ T =
       ∑ γ, (c * U.sg i (β γ⁻¹)) * ((Lr ᵥ* (H.ρ (β γ)).map (algebraMap ℤ_[p] R)) ⬝ᵥ T) := by
     have h := congrArg L (proj_lemma_6 β hS U hmul h1 hsep hcardG hi)
-    rw [map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h
     simp only [map_smul, smul_eq_mul] at h
     exact h.symm
   refine ⟨-(∑ γ, c * U.sg i (β γ⁻¹) * r (H.ρ (β γ) *ᵥ t)), ?_⟩
@@ -211,7 +216,8 @@ lemma avgF_cong (hS : HodgeTateSetting p v R O σ cp) {H : HodgeTateDatum p g v 
         algebraMap R C (p * r (H.ρ (β γ) *ᵥ t))) =
       algebraMap R C (∑ γ, c * U.sg i (β γ⁻¹) *
         ((Lr ᵥ* (H.ρ (β γ)).map (algebraMap ℤ_[p] R)) ⬝ᵥ T - p * r (H.ρ (β γ) *ᵥ t))) := by
-    simp only [map_sum, map_mul, map_sub]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_sub]
   rw [hmap, ← map_sub]
   congr 1
   have e : ∑ γ, c * U.sg i (β γ⁻¹) * (p * r (H.ρ (β γ) *ᵥ t)) =
@@ -273,7 +279,8 @@ lemma lift_one (hS : HodgeTateSetting p v R O σ cp) (hp2 : p ≠ 2) {H : HodgeT
           algebraMap R C (p * rB k t))) =
         algebraMap R C (∑ k, wH k * ((H.Ht *ᵥ (algebraMap ℤ_[p] R ∘ t)) k - p * rH k t) +
           ∑ k, wB k * ((H.Bt *ᵥ (algebraMap ℤ_[p] R ∘ t)) k - p * rB k t)) := by
-      simp only [map_add, map_sum, map_mul, map_sub]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_add (f := _), map_sum, map_mul, map_sub]
     rw [hmap, ← map_sub]
     congr 1
     have e1 : ∑ k, wH k * (p * rH k t) = (p : R) * ∑ k, wH k * rH k t := by

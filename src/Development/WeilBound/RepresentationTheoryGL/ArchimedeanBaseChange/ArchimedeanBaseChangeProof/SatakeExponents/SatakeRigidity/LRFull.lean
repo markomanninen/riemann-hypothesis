@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SatakeRigidity.StFull
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpehDataUnique
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SatakeRigidity.StFull
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpehDataUnique
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ theorem rfull_finite_under_eq (u : HeightOneSpectrum (𝓞 E)) :
 theorem rfull_eventually_sat (D : Pre E n) :
     ∀ᶠ w : HeightOneSpectrum (𝓞 E) in Filter.cofinite, ∃ B, D.Sat w B := by
   have h : ∀ᶠ w : HeightOneSpectrum (𝓞 E) in Filter.cofinite,
-      ∀ i, GlobalTheory.LGrp.IsSpherical (D.σ i w).ρ (GlobalTheory.LFun.KGL w (D.N i)) :=
+      ∀ i, GlobalTheory.LGrp.IsSpherical (D.σ i w).ρ (GlobalTheory.LFun.KGL w (n := (D.N i))) :=
     Filter.eventually_all.2 fun i =>
       (GlobalTheory.SpehPair.eventually_spherical (D.discrete i)).mono fun w hw => hw _ (D.loc i w)
   refine h.mono fun w hw => ?_
@@ -34,7 +38,7 @@ theorem rfull_eventually_sat (D : Pre E n) :
 
 theorem rfull_bcParam_map_inv (n : ℕ) (α : Fin (n / 2) → ℂˣ) :
     (GlobalTheory.LGrp.bcParam n α).map (·⁻¹) = GlobalTheory.LGrp.bcParam n α := by
-  simp only [GlobalTheory.LGrp.bcParam, Multiset.map_add, Multiset.map_map, Function.comp_def, inv_inv,
+  simp only [GlobalTheory.LGrp.bcParam, Multiset.map_add (f := _), Multiset.map_map, Function.comp_def, inv_inv,
     Multiset.map_replicate, inv_one]
   rw [add_comm (Multiset.map _ _) (Multiset.map _ _)]
 

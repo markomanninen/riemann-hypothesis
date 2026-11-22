@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IotaQInjective
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IotaQInjective
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TensorProduct Opposite MonoidalCategory CartesianMonoidalCategory MonObj ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR MainStatements.Hodge GlobalTheory.CompanionTheory.WedgeOf
 
@@ -42,7 +46,7 @@ theorem bijective_of_surjective_of_VB : ∀ (R A B : Type) [CommRing R] [AddComm
     rw [h1, rA p, rB p] at h3
     simpa using h3
   refine ⟨?_, hf⟩
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   have : (⟨a, ha⟩ : LinearMap.ker f) = 0 := Subsingleton.elim _ _
   simpa using congrArg Subtype.val this

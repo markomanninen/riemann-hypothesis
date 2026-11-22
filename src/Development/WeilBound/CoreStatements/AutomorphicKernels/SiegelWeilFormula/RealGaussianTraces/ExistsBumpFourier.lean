@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhitGenOf
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.Integr
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhitGenOf
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.Integr
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,8 +74,8 @@ theorem exp_pair3 {ι : Type} [Fintype ι] {n : ℕ} (l : ι → ℝ) (u w : ι 
   push_cast
   ring
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem selfDual_const {H : Type} [AddCommGroup H] [TopologicalSpace H] [MeasurableSpace H] [BorelSpace H]
     {ι : Type} [Fintype ι] {n : ℕ} (l : ι → ℝ) (hl : ∀ i, l i ≠ 0)
     (ν : Measure H) (χ : H → H → ℂ) (hsd : SelfDual ν χ)
@@ -87,8 +91,8 @@ theorem selfDual_const {H : Type} [AddCommGroup H] [TopologicalSpace H] [Measura
   have hF1' : ∫ s, F s = 1 := hF1
   let P : (ι → WR.E n) → ℂ := fun v => ∏ i, ∏ a, ∏ b, φ (v i a b)
   have hPc : Continuous P := by
-    refine continuous_finset_prod _ fun i _ => continuous_finset_prod _ fun a _ =>
-      continuous_finset_prod _ fun b _ => ?_
+    refine continuous_finsetProd _ fun i _ => continuous_finsetProd _ fun a _ =>
+      continuous_finsetProd _ fun b _ => ?_
     exact hφc.comp ((continuous_apply b).comp ((continuous_apply a).comp (continuous_apply i)))
   have hPs : HasCompactSupport P := by
     refine HasCompactSupport.intro (K := Set.univ.pi fun _ : ι => Set.univ.pi fun _ : Fin n =>

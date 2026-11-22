@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.OffContStepPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.OffContStepPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -26,7 +30,7 @@ theorem pairFiveS_surj (bd : LeafBd) (q : ℕ) {J : Type} [SmallCategory J] [IsF
   rw [← ha, ← hnat q _ _ (c l) hP (hm l)] at hu
   obtain ⟨M, g1, g2, -⟩ := IsFilteredOrEmpty.cocone_objs k l
   refine ⟨M, Hs.pull q (F.map g1.op) _ _ s + Hs.pull q (F.map g2.op) _ _ (δ q _ m i a), ?_⟩
-  rw [map_add, ← Hs.pullComp, ← Hs.pullComp, hc, hc, hu, add_sub_cancel]
+  rw [map_add (f := _), ← Hs.pullComp, ← Hs.pullComp, hc, hc, hu, add_sub_cancel]
 
 theorem pairFiveS_inj (bd : LeafBd) (q : ℕ) {J : Type} [SmallCategory J] [IsFiltered J] (F : Jᵒᵖ ⥤ Arrow Spc)
     (P : Arrow Spc) (c : ∀ j, P ⟶ F.obj (op j)) (hc : ∀ j k (f : j ⟶ k), c k ≫ F.map f.op = c j)

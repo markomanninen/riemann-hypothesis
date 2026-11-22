@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.DiscreteModules
-import GroundTheory.ProfiniteCohomology.GaloisModules.CoeGalRootsOfUnityHomApply
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.DiscreteModules
+public import GroundTheory.ProfiniteCohomology.GaloisModules.CoeGalRootsOfUnityHomApply
+
+@[expose] public section
 
 namespace GroundTheory.ProfCoh
 
@@ -51,9 +55,6 @@ instance isDiscreteRep_galAdd : IsDiscreteRep (galAdd K L) :=
 instance isDiscreteRep_galAddInt : IsDiscreteRep (galAddInt.{w} K L) :=
   ⟨fun x => isOpen_of_forall_apply_eq_mem _ (x : L) fun _ h => h⟩
 
-instance isDiscreteRep_galAddZ : IsDiscreteRep (galAddZ K L) :=
-  ⟨fun x => isOpen_of_forall_apply_eq_mem _ (x : L) fun _ h => h⟩
-
 instance isDiscreteRep_galUnits : IsDiscreteRep (galUnits.{w} K L) :=
   ⟨fun x => isOpen_of_forall_apply_eq_mem _ ((Additive.toMul x : Lˣ) : L) fun σ h => by
     rw [mem_stabilizer, galUnits_ρ_apply]
@@ -79,24 +80,11 @@ instance isDiscreteRep_galRootsOfUnity (n : ℕ) : IsDiscreteRep (galRootsOfUnit
     congr 1
     exact Subtype.ext (Units.ext h)⟩
 
-instance isDiscreteRep_galRootsOfUnityZ (n : ℕ) : IsDiscreteRep (galRootsOfUnityZ K L n) :=
-  ⟨fun x => isOpen_of_forall_apply_eq_mem _
-    (((Additive.toMul x : rootsOfUnity n L) : Lˣ) : L) fun σ h => by
-    rw [mem_stabilizer, galRootsOfUnityZ_ρ_apply]
-    change Additive.ofMul (galRootsOfUnityHom K L n σ (Additive.toMul x)) = x
-    rw [← ofMul_toMul x]
-    congr 1
-    exact Subtype.ext (Units.ext h)⟩
-
 end Discrete
 
 section Galois
 
 variable (K L) [IsGalois K L]
-
-example : IsDiscreteRep (galUnits.{u} K L) := inferInstance
-example (n : ℕ) : IsDiscreteRep (galRootsOfUnity.{u} K L n) := inferInstance
-example : IsDiscreteRep (galAdd K L) := inferInstance
 
 end Galois
 

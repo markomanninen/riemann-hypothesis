@@ -1,9 +1,13 @@
-import Formalism.LocalToGlobal.IndefiniteReal.RecTie
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
-import Formalism.LocalToGlobal.IndefiniteReal.LinksW
-import Formalism.LocalRingCardinality.DataRRMetric
-import Formalism.LocalToGlobal.IndefiniteReal.ConjSubConjSub
-import Formalism.LocalToGlobal.Divisibility.DefGroupLemmas
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.RecTie
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksW
+public import Formalism.LocalRingCardinality.DataRRMetric
+public import Formalism.LocalToGlobal.IndefiniteReal.ConjSubConjSub
+public import Formalism.LocalToGlobal.Divisibility.DefGroupLemmas
+
+@[expose] public section
 
 set_option genSizeOfSpec false
 set_option genInjectivity false
@@ -38,8 +42,8 @@ def TopMultH (R : RealDat D A Ks) : Prop :=
 def datXP (R : RealDat D A Ks) (t : T) (P : Formalism.L2.DIV.LevelP R.Pg D.R.r ℂ) : Formalism.L2.DIV.LevDat D.host.E ℂ D.sp.X'.rank :=
   datY _ D.R.r D.R.t D.R.m r_le_X R.Pg (R.Q t) P R.chi (R.xiR t) Frm.B
 
-open Classical in
 
+open Classical in
 def SsetF (R : RealDat D A Ks) (t : T) : Finset (HeightOneSpectrum (𝓞 D.host.F)) :=
   (R.Sb ∪ R.Q t).image (Formalism.L2.DIV.underPl D.host.F)
 

@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.IntMuCD
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.KSchur
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.KinstSecondCountable
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.IntMuCD
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.KSchur
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.KinstSecondCountable
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,13 +65,8 @@ theorem sum_inner_basis_sq_eq_adjoint {ε : Fin n → Bool} {lam : Fin n → ℝ
   simp_rw [key]
   rw [b.sum_sq_norm_inner_right, Unitary.norm_map]
 
-theorem haar_univ_eq_one (ε : Fin n → Bool) : dk ε Set.univ = 1 := by
-  unfold dk
-  rw [Measure.smul_apply, smul_eq_mul]
-  first
-  | exact ENNReal.inv_mul_cancel (Measure.measure_univ_ne_zero.mpr (NeZero.ne _)) (measure_ne_top _ _)
-  | exact ENNReal.inv_mul_cancel (measure_univ_pos.mpr (NeZero.ne _)).ne' (measure_ne_top _ _)
-  | exact ENNReal.inv_mul_cancel (IsOpenPosMeasure.open_pos _ isOpen_univ Set.univ_nonempty).ne' (measure_ne_top _ _)
+theorem haar_univ_eq_one (ε : Fin n → Bool) : dk ε Set.univ = 1 :=
+  (CompactHaarProbability.dk_isProb ε).measure_univ
 
 theorem hsOp_nonneg {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℂ V] [FiniteDimensional ℂ V]
     (A : V →L[ℂ] V) : 0 ≤ hsOp A := by
@@ -142,8 +141,6 @@ theorem lemma6a {ε : Fin n → Bool} {lam : Fin n → ℝ} {H : Type*} [NormedA
     simp only [c, hσ, ContinuousLinearMap.comp_apply]
     refine (sum_inner_basis_sq_eq_adjoint hF b k _).trans ?_
     rw [← hF.formF z, ContinuousLinearMap.comp_apply, ContinuousLinearMap.comp_apply]
-  rw [hL, lintegral_muCD ε F hFm]
-  congr 1
   have hin : ∀ (k : KG ε) (z : PCoord ε → ℂ), F (polarM (k, z)) * ENNReal.ofReal (Jac z) =
       ENNReal.ofReal (hsOp (fF ε lam T (pmat z)) * Jac z) := by
     intro k z
@@ -152,7 +149,37 @@ theorem lemma6a {ε : Fin n → Bool} {lam : Fin n → ℝ} {H : Type*} [NormedA
     rw [Set.piecewise_eq_of_mem S f 0 hm]
     show ENNReal.ofReal (∑ i, ∑ l, c i l (polarM (k, z))) * _ = _
     rw [hval k z, ← ENNReal.ofReal_mul (hsOp_nonneg _)]
-  simp_rw [hin]
-  rw [lintegral_const, haar_univ_eq_one, mul_one]
+  let e : Formalism.REAL.UJ ε → (Fin n → Fin n → ℂ) := Formalism.MainNotions.S.umat
+  let p : KG ε × (PCoord ε → ℂ) → (Fin n → Fin n → ℂ) := polarM
+  let J : (PCoord ε → ℂ) → ENNReal := fun z => ENNReal.ofReal (Jac z)
+  let ν := volume.withDensity J
+  have he : MeasurableEmbedding e := (isClosedEmbedding_toM ε).measurableEmbedding
+  have hp : Measurable p := (polarM_continuous ε).measurable
+  have hJ : Measurable J := ENNReal.measurable_ofReal.comp (jac_continuous ε).measurable
+  have hrange : ∀ᵐ x ∂(muPolarMat ε), x ∈ Set.range e := by
+    change ∀ᵐ x ∂(Measure.map p ((dk ε).prod ν)), x ∈ Set.range e
+    refine (ae_map_iff hp.aemeasurable he.measurableSet_range).2 (ae_of_all _ fun kz => ?_)
+    show polarM kz ∈ Set.range (fun g : UJ ε => toM g)
+    rw [range_toM]
+    exact polarM_inUJ kz
+  rw [hL]
+  calc
+    _ = ENNReal.ofReal (cPQ ε) * ∫⁻ x, F x ∂(muPolarMat ε) := by
+      rw [muCD, lintegral_smul_measure, lintegral_comap_embedding he _ hrange F, smul_eq_mul]
+    _ = ENNReal.ofReal (cPQ ε) * ∫⁻ kz, F (p kz) ∂((dk ε).prod ν) := by
+      change _ * (∫⁻ x, F x ∂(Measure.map p ((dk ε).prod ν))) = _
+      rw [lintegral_map hFm hp]
+    _ = _ := by
+      congr 1
+      refine (lintegral_prod (μ := dk ε) (ν := ν) (F ∘ p) (hFm.comp hp).aemeasurable).trans ?_
+      let I := ∫⁻ z : PCoord ε → ℂ, ENNReal.ofReal (hsOp (fF ε lam T (pmat z)) * Jac z)
+      calc
+        _ = ∫⁻ _ : KG ε, I ∂(dk ε) := by
+          refine lintegral_congr (fun k => ?_)
+          refine (lintegral_withDensity_eq_lintegral_mul volume hJ
+            (hFm.comp (hp.comp measurable_prodMk_left))).trans ?_
+          exact lintegral_congr (fun z => (mul_comm (J z) (F (p (k, z)))).trans (hin k z))
+        _ = I * dk ε Set.univ := lintegral_const I
+        _ = I := by rw [haar_univ_eq_one, mul_one]
 
 end ReciprocityTheory.ChartRestriction.DS

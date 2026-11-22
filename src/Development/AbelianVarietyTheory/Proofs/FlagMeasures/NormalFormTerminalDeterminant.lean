@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LeOfLatMod
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummaryStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFlagPairLatticeSumDiscriminantEqNormMinorStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LeOfLatMod
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummaryStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFlagPairLatticeSumDiscriminantEqNormMinorStatement
+
+@[expose] public section
 
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt
 open scoped Pointwise ENNReal Classical
@@ -46,7 +50,7 @@ variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [M
   [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
 
 omit [StarRing K] [FiniteDimensional K V] in
-theorem exists_mul {Λ : Submodule (𝓞 K) V} (hΛ : Submodule.IsLattice K Λ) (x : V) :
+theorem exists_mul {Λ : Submodule (𝓞 K) V} (hΛ : Submodule.IsFullLattice K Λ) (x : V) :
     ∃ n : ℕ, n ≠ 0 ∧ (n : K) • x ∈ Λ := by
   refine ⟨_, idxN_ne_zero hΛ (Submodule.fg_span_singleton x), ?_⟩
   rw [Nat.cast_smul_eq_nsmul]
@@ -54,7 +58,7 @@ theorem exists_mul {Λ : Submodule (𝓞 K) V} (hΛ : Submodule.IsLattice K Λ) 
     (K := (Submodule.span (𝓞 K) {x}).toAddSubgroup) (Submodule.mem_span_singleton_self x)
 
 omit [StarRing K] [FiniteDimensional K V] in
-theorem span_inf {Λ : Submodule (𝓞 K) V} (hΛ : Submodule.IsLattice K Λ) (S : Submodule K V) :
+theorem span_inf {Λ : Submodule (𝓞 K) V} (hΛ : Submodule.IsFullLattice K Λ) (S : Submodule K V) :
     Submodule.span K ((Λ ⊓ rs (𝓞 K) S : Submodule (𝓞 K) V) : Set V) = S := by
   refine le_antisymm (Submodule.span_le.2 fun x hx => hx.2) fun x hx => ?_
   obtain ⟨n, hn, h⟩ := exists_mul hΛ x
@@ -65,21 +69,24 @@ theorem span_inf {Λ : Submodule (𝓞 K) V} (hΛ : Submodule.IsLattice K Λ) (S
 
 omit [StarRing K] in
 theorem isLattice_field {M : Submodule (𝓞 K) K} (hfg : M.FG) {x : K} (hx : x ∈ M) (h0 : x ≠ 0) :
-    Submodule.IsLattice K M := by
-  refine ⟨hfg, eq_top_iff.2 fun y _ => ?_⟩
-  have : y = (y * x⁻¹) • x := by simp [h0]
-  rw [this]
-  exact Submodule.smul_mem _ _ (Submodule.subset_span hx)
+    Submodule.IsFullLattice K M := by
+  haveI : Submodule.IsLattice K M := Submodule.IsLattice.of_fg K hfg
+  refine ⟨?_⟩
+  apply eq_top_iff.mpr
+  intro y _
+  have hx' : x ∈ Submodule.span K (M : Set K) := Submodule.subset_span hx
+  have := (Submodule.span K (M : Set K)).smul_mem (y / x) hx'
+  simpa [smul_eq_mul, div_mul_cancel₀ _ h0] using this
 
-theorem idx_scal {c : K} (hc : c * star c = 1) {A M M' : Submodule (𝓞 K) K} (hA : Submodule.IsLattice K A)
-    (hM : Submodule.IsLattice K M) (hM' : Submodule.IsLattice K M') (h : ∀ t, t ∈ M' ↔ t * c ∈ M)
+theorem idx_scal {c : K} (hc : c * star c = 1) {A M M' : Submodule (𝓞 K) K} (hA : Submodule.IsFullLattice K A)
+    (hM : Submodule.IsFullLattice K M) (hM' : Submodule.IsFullLattice K M') (h : ∀ t, t ∈ M' ↔ t * c ∈ M)
     (h1 : M ≤ A) (h2 : M' ≤ A) : idx A M' = idx A M := by
   have hc0 : c ≠ 0 := fun e => by simp [e] at hc
   have hone : (1 : Submodule (𝓞 K) K).FG := by rw [Submodule.one_eq_span]; exact Submodule.fg_span_singleton _
   have o1 : (1 : K) ∈ (1 : Submodule (𝓞 K) K) := Submodule.mem_one.2 ⟨1, map_one _⟩
   have L1 := isLattice_field hone o1 one_ne_zero
   set C : Submodule (𝓞 K) K := Submodule.span (𝓞 K) {c} with hC
-  have LC : Submodule.IsLattice K C :=
+  have LC : Submodule.IsFullLattice K C :=
     isLattice_field (Submodule.fg_span_singleton _) (Submodule.mem_span_singleton_self c) hc0
   have mC : ∀ x : K, x * c ∈ C ↔ x ∈ (1 : Submodule (𝓞 K) K) := fun x => by
     rw [hC, Submodule.mem_span_singleton, Submodule.mem_one]
@@ -180,8 +187,8 @@ theorem mem_lead (F : FlagD H r) (Λ : Submodule (𝓞 K) V) (a : Fin r) (t : K)
   · rintro ⟨x, hx, h⟩
     exact ⟨x, hx, _, (F.Xa a.val).neg_mem h, by abel⟩
 
-omit [NumberField K] [FiniteDimensional K V] in
 
+omit [NumberField K] [FiniteDimensional K V] in
 theorem step (F : FlagD H r) {Λ J : Submodule (𝓞 K) V} (hJ : J ≤ Λ) (a : Fin r) :
     idx (latF F Λ (a.val + 1) ⊔ J) (latF F Λ a.val ⊔ J) = idx (lead F Λ a.castSucc) (lead F J a.castSucc) := by
   rw [idx_sup le_sup_right]
@@ -224,8 +231,8 @@ theorem idx_side (F F' : FlagD H r) (Λ : Submodule (𝓞 K) V) {j : ℕ} (hj : 
 
 end Flag
 
-omit [FiniteDimensional K V] in
 
+omit [FiniteDimensional K V] in
 theorem del_sup (H : HermSpace K V) (M : Submodule (𝓞 K) V) (I : Submodule K V)
     (h0 : I ⊓ Submodule.span K (M : Set V) = ⊥)
     (hI : ∀ i ∈ I, ∀ y ∈ Submodule.span K (M : Set V) ⊔ I, H.B i y = 0) :
@@ -252,7 +259,7 @@ theorem del_sup (H : HermSpace K V) (M : Submodule (𝓞 K) V) (I : Submodule K 
       rw [mem_dual_iff] at hs
       refine ⟨Submodule.add_mem_sup hs.1 hi, fun x hx => ?_⟩
       obtain ⟨m, hm, i', hi', rfl⟩ := Submodule.mem_sup.1 hx
-      rw [map_add, hI' i' hi' _ (Submodule.add_mem_sup hs.1 hi), add_zero, map_add, LinearMap.add_apply,
+      rw [map_add (f := _), hI' i' hi' _ (Submodule.add_mem_sup hs.1 hi), add_zero, map_add (f := _), LinearMap.add_apply,
         hI i hi m (Submodule.mem_sup_left (Submodule.subset_span hm)), add_zero]
       exact hs.2 m hm
   have key : ∀ {A B : Submodule (𝓞 K) V}, A ≤ rs (𝓞 K) (Submodule.span K (M : Set V)) →
@@ -272,7 +279,7 @@ theorem del_sup (H : HermSpace K V) (M : Submodule (𝓞 K) V) (I : Submodule K 
   rw [del, del, hd, gidx, gidx, key a b, key b a]
 
 theorem bOne_symm (H : HermSpace K V) {r : ℕ} (N : NF H r) (hS : NFShape N.F N.F' N.j N.c)
-    {Λ : Submodule (𝓞 K) V} (hΛ : Submodule.IsLattice K Λ) (hF : IsFrame N.F Λ N.aa) (hF' : IsFrame N.F' Λ N.aa) :
+    {Λ : Submodule (𝓞 K) V} (hΛ : Submodule.IsFullLattice K Λ) (hF : IsFrame N.F Λ N.aa) (hF' : IsFrame N.F' Λ N.aa) :
     bOne N.F' N.F Λ N.j = bOne N.F N.F' Λ N.j := by
   obtain ⟨hc0, -, hlev, -⟩ := hS
   set J := Λ ⊓ rs (𝓞 K) (II N.F N.F') with hJ
@@ -329,7 +336,12 @@ theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommG
   have hD := (GlobalTheory.T.hermFlagPairLatticeSumDiscriminant_eq_norm_minor K V H hK r N g Λ hg hT N.j le_rfl G.2.2.2.2.2.2.2.2.2.2.1).1
   obtain ⟨hS, -, -, hrad, -⟩ := G.1
   obtain ⟨⟨hU, hF, hF'⟩, -⟩ := hT
-  have hΛ := ((isUnimod_iff H Λ).1 hU).1
+  have hΛ : Submodule.IsFullLattice K Λ := by
+    obtain ⟨N, hN, hNΛ⟩ := hU.1.1
+    have heq : Λ = N := by simpa [rs] using hNΛ
+    have hfg : Λ.FG := heq.symm ▸ hN
+    haveI : Submodule.IsLattice K Λ := Submodule.IsLattice.of_fg K hfg
+    exact ⟨hU.1.2⟩
   have hb := bOne_symm H N hS hΛ hF hF'
   obtain ⟨hc0, -, -, -, z1, z2, x1, x2, hz⟩ := hS
   have hII : II N.F' N.F = II N.F N.F' := inf_comm _ _
@@ -345,13 +357,13 @@ theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommG
     have a : ∀ y ∈ S, H.B y x' = 0 := fun y hy => by
       obtain ⟨u, hu, u', hu', rfl⟩ := Submodule.mem_sup.1 hy
       have := h u (Submodule.mem_sup_left hu)
-      rw [map_add, LinearMap.add_apply, iso_X N.F hu (Submodule.mem_sup_left hx), zero_add] at this
-      rw [map_add, LinearMap.add_apply, sw _ _ this, iso_X N.F' hx' (Submodule.mem_sup_left hu'), zero_add]
+      rw [map_add (f := _), LinearMap.add_apply, iso_X N.F hu (Submodule.mem_sup_left hx), zero_add] at this
+      rw [map_add (f := _), LinearMap.add_apply, sw _ _ this, iso_X N.F' hx' (Submodule.mem_sup_left hu'), zero_add]
     have b := a _ hz
     rw [map_sub, LinearMap.sub_apply, iso_X N.F' hx' (Submodule.mem_sup_right (Submodule.mem_span_singleton_self _)),
       map_smul, LinearMap.smul_apply, zero_sub, neg_eq_zero, smul_eq_mul, mul_eq_zero, or_iff_right hc0] at b
     have c : H.B N.F.z (x + x') = 0 := by
-      rw [map_add, b, iso_X N.F hx (Submodule.mem_sup_right (Submodule.mem_span_singleton_self _)), add_zero]
+      rw [map_add (f := _), b, iso_X N.F hx (Submodule.mem_sup_right (Submodule.mem_span_singleton_self _)), add_zero]
     have d := sw _ _ (h _ hz)
     rw [map_sub, LinearMap.sub_apply, map_smul, LinearMap.smul_apply, c, smul_zero, sub_zero] at d
     intro w hw
@@ -391,7 +403,7 @@ theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommG
     have lS : A ⊔ A' ≤ rs (𝓞 K) S := sup_le (fun x hx => Submodule.mem_sup_left (S := N.F.X) hx.2)
       (fun x hx => Submodule.mem_sup_right (T := N.F'.X) hx.2)
     have lΛ : A ⊔ A' ≤ Λ := sup_le inf_le_left inf_le_left
-    rw [map_add H.B m i, LinearMap.add_apply, o1 i hi _ (S.add_mem (lS hm') (hIS hi')), add_zero, map_add,
+    rw [map_add H.B m i, LinearMap.add_apply, o1 i hi _ (S.add_mem (lS hm') (hIS hi')), add_zero, map_add (f := _),
       ← H.herm i' m, o1 i' hi' m (lS hm), star_zero, add_zero]
     have : m ∈ dual H Λ := hU.2.symm ▸ lΛ hm
     exact ((mem_dual_iff H Λ m).1 this).2 m' (lΛ hm')

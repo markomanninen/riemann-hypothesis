@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartHessCompare
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsHermFormCompare
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PChartDensityIntegrable
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ChartGramHess
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartHessCompare
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsHermFormCompare
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PChartDensityIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ChartGramHess
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -91,7 +96,8 @@ theorem cxHessian_affine_form [CompleteSpace F] (c : F) (L : (Fin e → ℂ) →
       ((‖L (star x) - (⟪c + L y, L (star x)⟫_ℂ / ⟪c + L y, c + L y⟫_ℂ) • (c + L y)‖ ^ 2 /
         (2 * ‖c + L y‖ ^ 2) : ℝ) : ℂ) := by
   have hD : ∑ i, star (x i) • L (Pi.single i 1) = L (star x) := by
-    simp_rw [← L.map_smul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp_rw [← L.map_smul, ← map_sum]
     congr 1
     funext k
     simp [Finset.sum_apply, Pi.single_apply]
@@ -222,8 +228,8 @@ end Chart
 
 end ChartHessianComparison
 
-open ChartHessianComparison in
 
+open ChartHessianComparison in
 theorem ChartHessCompare.proof (hCmp : HermFormCompare.Statement) : ChartHessCompare.Statement := by
   intro e M N hM hN
   obtain ⟨B, hMB, hB⟩ := ChartDensityIntegrableAlt.exists_conjTranspose_mul_self hM

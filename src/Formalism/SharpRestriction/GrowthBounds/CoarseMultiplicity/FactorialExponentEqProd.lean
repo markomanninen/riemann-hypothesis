@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FTDefs
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.ExponentFactorialAddSingleOne
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.ValuationNonnegIffIntegral
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FTDefs
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.ExponentFactorialAddSingleOne
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.ValuationNonnegIffIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,7 +98,7 @@ theorem intAt : IntAt := by
   rw [Finset.mul_sum]
   refine Finset.sum_induction _ (fun x => ∃ y : O, x = algebraMap O (KK O) (w ^ i * y)) ?_ ⟨0, by simp⟩ ?_
   · rintro _ _ ⟨y, rfl⟩ ⟨y', rfl⟩
-    exact ⟨y + y', by rw [← map_add]; congr 1; ring⟩
+    exact ⟨y + y', by rw [← map_add (f := _)]; congr 1; ring⟩
   · intro μ hμ
     obtain ⟨c, hc⟩ := hPi μ
     obtain ⟨c', hc'⟩ := hQ μ

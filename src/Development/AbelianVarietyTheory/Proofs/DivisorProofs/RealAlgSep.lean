@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.RealAlgebraCharacters
 
@@ -32,8 +36,8 @@ theorem span_mul (hadd : ∀ (a b : B) (x : X), χ (a + b) x = χ a x * χ b x)
     rw [smul_mul_assoc]
     exact Submodule.smul_mem _ c hu
 
-omit [AddCommGroup B] in
 
+omit [AddCommGroup B] in
 theorem span_bdd (hn : ∀ (a : B) (x : X), ‖χ a x‖ = 1)
     {f : X → ℂ} (hf : f ∈ Submodule.span ℂ (Set.range χ)) : ∃ M : ℝ, ∀ x, ‖f x‖ ≤ M := by
   induction hf using Submodule.span_induction with
@@ -69,16 +73,12 @@ def realAlg [TopologicalSpace X] (hadd : ∀ (a b : B) (x : X), χ (a + b) x = �
     intro f g hf hg
     have := span_mul χ hadd hf hg
     show (fun x => (((f * g) x : ℝ) : ℂ)) ∈ Submodule.span ℂ (Set.range χ)
-    convert this using 1
-    funext x
-    simp
+    convert this using 1 <;> ext x <;> simp
   add_mem' := by
     intro f g hf hg
     have := (Submodule.span ℂ (Set.range χ)).add_mem hf hg
     show (fun x => (((f + g) x : ℝ) : ℂ)) ∈ Submodule.span ℂ (Set.range χ)
-    convert this using 1
-    funext x
-    simp
+    convert this using 1 <;> ext x <;> simp
   algebraMap_mem' := by
     intro r
     have h : χ 0 ∈ Submodule.span ℂ (Set.range χ) := Submodule.subset_span ⟨0, rfl⟩

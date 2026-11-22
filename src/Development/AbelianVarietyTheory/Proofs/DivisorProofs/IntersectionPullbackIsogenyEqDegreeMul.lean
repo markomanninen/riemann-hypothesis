@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyIsIntegralNoetherianCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopologicalKrullDimEqDim
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StrHomEqAndIsProjOver
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsogenyFlatFinrank
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyPullbackStructureModuleIso
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAffineFiniteFree
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsDomainAndIsIntegrallyClosedLocalizationOfIsInv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyIsIntegralNoetherianCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopologicalKrullDimEqDim
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StrHomEqAndIsProjOver
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsogenyFlatFinrank
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyPullbackStructureModuleIso
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAffineFiniteFree
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsDomainAndIsIntegrallyClosedLocalizationOfIsInv
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -36,7 +41,7 @@ theorem inter_pull_isogeny_eq_deg_mul : ∀ (K : Type) [Field K] (A B : AbVar K)
     rw [Set.image_univ_of_surjective f.hom.left.surjective, closure_univ] at h1
     exact h1.eq (genericPoint_spec B.X.left)
   obtain ⟨V, hgV, hV, hV', hfree⟩ := GlobalTheory.GenFree.exists_affine_finite_free K A.X.left B.X.left B.X.hom
-    f.hom.left hXproj hBproj hgen (by rw [hAd, hBd, hdim]) _ rfl
+    f.hom.left hXproj hBproj hgen (by rw [hAd, hBd, hdim]) (f.hom.left.residueDegree (genericPoint A.X.left)) rfl
   set n := f.hom.left.residueDegree (genericPoint A.X.left)
 
   have hn : deg f = n := by

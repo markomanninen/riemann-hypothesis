@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GoodConstOfAniso
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CocompactOfMemIffAdelic
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.CondStd
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GoodConstOfAniso
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CocompactOfMemIffAdelic
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.CondStd
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,8 @@ variable {S T : Type} [Ring S] [TopologicalSpace S] [IsTopologicalRing S] [Ring 
   [IsTopologicalRing T] {st : S →+ S}
 
 theorem map_cay (π : S →+* T) (M : ℕ) (y : S) : π (cay M y) = cay M (π y) := by
-  simp [cay, map_sum, map_pow]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [cay, map_sum, map_pow]
 
 theorem compact_mod_near_of_filtration (S₀ : Subring S) (h : S)
     (N : ℕ → AddSubgroup S) (p : ℕ → S →+ S) (m : ℕ) (hcont : Continuous st)
@@ -39,7 +44,7 @@ theorem compact_mod_near_of_filtration (S₀ : Subring S) (h : S)
   have hhx : ∀ x, h * x + h * x = x := fun x => by rw [← add_mul, hh, one_mul]
   have hhN : ∀ i, ∀ x ∈ N i, h * x ∈ N i := fun i x hx => by
     have : h * x = p i (h * x) := by
-      conv_lhs => rw [← hpf i x hx, ← hhx x, map_add, mul_add, hhx]
+      conv_lhs => rw [← hpf i x hx, ← hhx x, map_add (f := _), mul_add, hhx]
     rw [this]; exact hpN _ _
   have hle0 : ∀ i, N i ≤ N 0 := fun i => by
     induction i with
@@ -228,7 +233,8 @@ theorem compact_mod_near_of_weights (S₀ : Subring S) (h : S)
     exact Finset.sum_eq_zero fun ab _ => hx _ _ (hmb _ _)
   · exact continuous_finsetSum _ fun ab _ => by fun_prop
   · show π (∑ ab ∈ _, _) = ∑ ab ∈ _, _
-    simp only [map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul]
 
 end Abstract
 

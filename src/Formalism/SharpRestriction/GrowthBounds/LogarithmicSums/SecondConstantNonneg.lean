@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.DfcHigh
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.DfcHigh
+
+@[expose] public section
 
 noncomputable section
 

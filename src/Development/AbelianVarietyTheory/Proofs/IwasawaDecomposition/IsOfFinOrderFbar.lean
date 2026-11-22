@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ConcreteTwistFrameExtraExcludedOverSmallPrimes
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ConcreteTwistFrameExtraExcludedOverSmallPrimes
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem redHom_inj {Ω : Type} [Field Ω] (B : ValuationSubring Ω) {g l : ℕ} 
     (cx : (orderOf x).Coprime l) (cy : (orderOf y).Coprime l) (h : redHom B κ t x = redHom B κ t y) : x = y := by
   let ρ : B →+* Formalism.CyclotomicNorms.Fbar l := κ.toRingHom.comp (IsLocalRing.residue B)
   have hρ : ∀ z (hz : z ∈ B), redThrough B κ z = ρ ⟨z, hz⟩ := fun z hz => by
-    unfold redThrough; rw [dif_pos hz]; rfl
+    unfold redThrough; rw [dite_eq_left hz]; rfl
   have hz : x * y⁻¹ ≠ 0 := mul_ne_zero hx (inv_ne_zero hy)
   set n := orderOf (x * y⁻¹) with hn
   have hnpos : 0 < n := (isOfFinOrder_fbar hz).orderOf_pos

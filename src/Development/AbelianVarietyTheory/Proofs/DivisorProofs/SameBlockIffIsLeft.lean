@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ActAtApply
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ActAtApply
+
+@[expose] public section
+
 open scoped TensorProduct
 open Formalism.BasicNotions.TH GlobalTheory.FockAlg GlobalTheory.RealLift GlobalTheory.HoweR
 
@@ -20,7 +25,8 @@ theorem act_eq_sum_units {p q : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V]
     (act : Mat p q →ₗ[ℂ] Module.End ℂ V) (X : Mat p q) (v : V) :
     act X v = ∑ a, ∑ b, X a b • units act a b v := by
   conv_lhs => rw [mat_eq_sum_eab X]
-  simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, units]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, units]
 
 theorem sameBlock_iff_isLeft {p q : ℕ} (a b : Ix p q) : sameBlock a b ↔ a.isLeft = b.isLeft := by
   cases a <;> cases b <;> simp [sameBlock]

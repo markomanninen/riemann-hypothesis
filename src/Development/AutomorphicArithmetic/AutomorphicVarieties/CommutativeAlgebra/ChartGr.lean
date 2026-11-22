@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.OrbitVanishingLocal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.KerPow
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.OrbitVanishingLocal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.KerPow
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -22,7 +26,7 @@ private lemma lin_coeff_sq {O R K τ : Type} [CommRing O] [CommRing R] [Algebra 
         _ ≤ (φ a).order + (φ b).order := add_le_add (hone a ha) (hone b hb)
         _ ≤ (φ a * φ b).order := MvPowerSeries.le_order_mul
     · intro a b ha hb
-      rw [map_add]
+      rw [map_add (f := _)]
       exact le_trans (le_min ha hb) MvPowerSeries.min_order_le_add
   apply MvPowerSeries.coeff_of_lt_order
   rw [Finsupp.degree_single]

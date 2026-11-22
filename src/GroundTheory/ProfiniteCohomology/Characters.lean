@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CharactersDefs
-import GroundTheory.ProfiniteCohomology.Colimit
-import GroundTheory.ProfiniteCohomology.ContinuousCochains.LongExactSequence
-import GroundTheory.ProfiniteCohomology.CupProducts
-import GroundTheory.TateCohomology.Characters
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CharactersDefs
+public import GroundTheory.ProfiniteCohomology.Colimit
+public import GroundTheory.ProfiniteCohomology.ContinuousCochains.LongExactSequence
+public import GroundTheory.ProfiniteCohomology.CupProducts
+public import GroundTheory.TateCohomology.Characters
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -28,7 +33,6 @@ theorem cochainsMap_nsmul (f : A ⟶ B) (m : ℕ) : cochainsMap (m • f) = m �
     rfl
 
 variable (A) in
-
 theorem cohomologyMap_nsmul_id (m n : ℕ) : cohomologyMap (m • 𝟙 A) n = m • 𝟙 (cohomology A n) := by
   change HomologicalComplex.homologyMap (cochainsMap (m • 𝟙 A)) n =
     m • 𝟙 ((cochainsComplex A).homology n)
@@ -93,7 +97,6 @@ theorem cochainsComplex_d_zero_one_trivial :
 
 omit [TopologicalSpace G] [IsTopologicalGroup G] in
 variable {G M} in
-
 theorem d_one_trivial_apply (f : (Fin 1 → G) → M) (g : Fin 2 → G) :
     (inhomogeneousCochains.d (Rep.trivial ℤ G M) 1).hom f g =
       f (fun _ => g 1) - f (fun _ => g 0 * g 1) + f (fun _ => g 0) := by
@@ -110,7 +113,6 @@ theorem d_one_trivial_apply (f : (Fin 1 → G) → M) (g : Fin 2 → G) :
   abel
 
 variable {G M} in
-
 theorem dLocallyConstant_one_trivial_eq_zero_iff
     (f : locallyConstantCochains (Rep.trivial ℤ G M) 1) :
     (dLocallyConstant (Rep.trivial ℤ G M) 1).hom f = 0 ↔
@@ -147,7 +149,6 @@ theorem ker_sc_one_g_trivial :
   rfl
 
 variable {G M} in
-
 theorem mem_ker_sc_one_trivial_iff (f : ((cochainsComplex (Rep.trivial ℤ G M)).sc 1).X₂) :
     f ∈ LinearMap.ker ((cochainsComplex (Rep.trivial ℤ G M)).sc 1).g.hom ↔
       ∀ x y : G, f.1 (fun _ => x * y) = f.1 (fun _ => x) + f.1 (fun _ => y) :=
@@ -202,15 +203,12 @@ theorem cohomologyOneIsoOfIsTrivial_hom_cohomologyπ (z : cocycles (Rep.trivial 
   have h1 : e.inv.hom ((K.homologyπ 1).hom z) = z := by
     have := ConcreteCategory.congr_hom e.hom_inv_id z
     rwa [HomologicalComplex.isoHomologyπ_hom] at this
-  have h2 := (K.sc 1).moduleCatCyclesIso_hom_i_apply z
   show ((cocyclesOneTrivialEquiv G M)
     ((K.sc 1).moduleCatCyclesIso.hom.hom (e.inv.hom ((K.homologyπ 1).hom z)))).1
       (Additive.ofMul g) = _
   rw [h1]
-  show (((K.sc 1).moduleCatLeftHomologyData.i).hom ((K.sc 1).moduleCatCyclesIso.hom.hom z)).1
-    (fun _ => g) = _
-  rw [h2]
-  rfl
+  exact congrArg (fun f : (K.sc 1).X₂ => f.1 (fun _ => g))
+    ((K.sc 1).moduleCatCyclesIso_hom_i_apply z)
 
 noncomputable def cohomologyOneRatModIntIso :
     cohomology (Rep.trivial ℤ G (AddCircle (1 : ℚ))) 1 ≅ ModuleCat.of ℤ (Additive G →ₜ+ QZ) :=
@@ -255,12 +253,6 @@ noncomputable def cohomologyTwoIntIso :
 noncomputable def cohomologyTwoIntAddEquiv :
     cohomology (Rep.trivial ℤ G ℤ) 2 ≃+ (Additive G →ₜ+ QZ) :=
   (cohomologyTwoIntIso G).toLinearEquiv.toAddEquiv
-
-theorem cohomologyTwoIntAddEquiv_symm_apply (χ : Additive G →ₜ+ QZ) :
-    (cohomologyTwoIntAddEquiv G).symm χ =
-      (δ (GroundTheory.GroupCoh.ratSES_shortExact G) 1 2 rfl).hom
-        ((cohomologyOneRatModIntIso G).inv.hom χ) :=
-  rfl
 
 end Profinite
 

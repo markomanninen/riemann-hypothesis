@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AeMemOfHaar
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AeMemOfHaar
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate
@@ -18,7 +22,7 @@ theorem om_cast {a b : ℕ} (h : a = b) (v v' : Fin (2 * a + k + 1) → ℂ) (g 
 theorem lowV_lift (ρ : ℕ) (v : Fin (2 * ρ + k + 1) → ℂ) : U.lowV k 1 ρ (liftVec k 1 ρ v) = v := by
   funext i
   simp only [U.lowV, liftVec]
-  rw [dif_pos (by omega)]
+  rw [dite_eq_left (by omega)]
   congr 1; ext; simp
 
 theorem mcOm : MCOm := by

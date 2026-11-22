@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsCan
+module
+
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsCan
+
+@[expose] public section
 
 set_option autoImplicit false
 

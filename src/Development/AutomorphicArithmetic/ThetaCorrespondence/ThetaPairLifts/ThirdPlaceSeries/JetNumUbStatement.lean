@@ -1,7 +1,14 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JetNumberUpperWeightStatement
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LiftLambdaBound
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.JetNumUb
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JetNumberUpperWeight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PhiAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PolyBetween
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LiftLambdaBound
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.JetNumUb
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 

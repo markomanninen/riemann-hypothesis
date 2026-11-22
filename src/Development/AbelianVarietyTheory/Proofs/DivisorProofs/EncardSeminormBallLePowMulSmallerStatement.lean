@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EncardSeminormBallLePowMulSmaller
-import Development.AbelianVarietyTheory.Definitions.Divisors.CharZeroFunctionField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EncardSeminormBallLePowMulSmaller
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CharZeroFunctionField
+
+@[expose] public section
+
 open Filter Topology
 open GlobalTheory GlobalTheory.VolBr
 set_option maxHeartbeats 1000000 in

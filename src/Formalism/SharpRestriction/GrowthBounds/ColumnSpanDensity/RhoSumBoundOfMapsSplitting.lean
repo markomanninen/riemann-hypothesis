@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoUpperBoundSmallDepth
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoUpperBoundSmallDepth
+
+@[expose] public section
 
 noncomputable section
 
@@ -131,12 +135,14 @@ theorem rho_sum_bound_of_maps_splitting (hM : RhoSumLatticeMaps) (hBS : BlockSpl
   have hsumA : ∑ j, Aj j = ((p : R.O) ^ (3 * u) * z) • (1 : Matrix (Fin n) (Fin n) R.O) := by
     ext i k
     apply hinj
-    rw [Matrix.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.sum_apply, map_sum]
     have e1 : ∀ j : Jf, algebraMap R.O R.Kf (Aj j i k) =
         ∑ l, (p : R.Kf) ^ (3 * u) * beHH (m := m) p TT (ex A) (ex B) (io j (pr j (x i))) (y l) *
           algebraMap R.O R.Kf (Mat l k) := by
       intro j
-      simp only [Aj, Matrix.mul_apply, Matrix.of_apply, map_sum, map_mul, ← hg, hkey]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Aj, Matrix.mul_apply, Matrix.of_apply, map_sum, map_mul, ← hg, hkey]
     simp only [e1]
     rw [Finset.sum_comm]
     have e2 : ∀ l, ∑ j : Jf, (p : R.Kf) ^ (3 * u) * beHH (m := m) p TT (ex A) (ex B) (io j (pr j (x i))) (y l) *
@@ -147,7 +153,8 @@ theorem rho_sum_bound_of_maps_splitting (hM : RhoSumLatticeMaps) (hBS : BlockSpl
           beHH (m := m) p TT (ex A) (ex B) (x i) (y l) := by
         rw [Finset.sum_coe_sort Jf (fun j => beHH (m := m) p TT (ex A) (ex B) (io j (pr j (x i))) (y l))]
         unfold beHH
-        rw [← map_sum, ← Finset.smul_sum, hsum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← map_sum, ← Finset.smul_sum, hsum]
       rw [← e3, Finset.sum_mul, Finset.mul_sum]
       exact Finset.sum_congr rfl fun j _ => by ring
     simp only [e2]
@@ -171,7 +178,8 @@ theorem rho_sum_bound_of_maps_splitting (hM : RhoSumLatticeMaps) (hBS : BlockSpl
       intro a' l'
       show be p 1 (lamj j) (∑ i, algebraMap R.O R.Kf (P jj a' i) • xs j i) (∑ l, (Mat * Q jj) l l' • ys j l) = _
       rw [be_sum_left, Matrix.mul_assoc]
-      simp only [be_sum, Matrix.mul_apply, map_sum, map_mul, Aj, Matrix.of_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [be_sum, Matrix.mul_apply, map_sum, map_mul, Aj, Matrix.of_apply]
       refine Finset.sum_congr rfl fun i _ => ?_
       congr 1
       have hgj : ∀ l, be p 1 (lamj j) (xs j i) (ys j l) = algebraMap R.O R.Kf (g jj i l) := fun l => hg jj i l

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapQuotBijective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapQuotBijective
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory
@@ -58,7 +63,7 @@ theorem hasseJet_vanishing_mem_pow (k A : Type) [Field k] [IsAlgClosed k] [CommR
         · have : l - p = 0 := by omega
           rw [this, (hQmem b).mp hb, mul_zero]
       · intro a b ha hb l hl hlj
-        rw [map_add, ha l hl hlj, hb l hl hlj, add_zero]
+        rw [map_add (f := _), ha l hl hlj, hb l hl hlj, add_zero]
   set x : A := π - algebraMap k A (Δ 0 π) with hx
   have hx0 : Δ 0 x = 0 := by rw [hx, map_sub, halg, h01, mul_one, sub_self]
   have hx1 : Δ 1 x = 1 := by rw [hx, map_sub, halg, h11, mul_zero, sub_zero, hπ]
@@ -120,7 +125,7 @@ theorem hasseJet_vanishing_mem_pow (k A : Type) [Field k] [IsAlgClosed k] [CommR
       have hzv : Δ j z = 0 := hvan (j + 1) z hz j (by omega) (by omega)
       have hfj : Δ j f = 0 := hf j (by omega)
       have ha : Δ 0 a = 0 := by
-        rw [← hyz, map_add, hzv, add_zero, mul_comm a, hL j (by omega),
+        rw [← hyz, map_add (f := _), hzv, add_zero, mul_comm a, hL j (by omega),
           Finset.sum_eq_single j] at hfj
         · rwa [hxpow j (by omega), Nat.sub_self, one_mul] at hfj
         · intro p hp hpj

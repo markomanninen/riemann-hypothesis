@@ -1,5 +1,14 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GEqTie
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GEqUnit
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GEqTie
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GEqBase
+public import Formalism.LocalToGlobal.IndefiniteReal.MultLemmas
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.IoUniq
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GEqMain
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.RightInv
+public import Formalism.LocalToGlobal.Divisibility.DefGroupLemmas
+
+@[expose] public section
 
 noncomputable section
 

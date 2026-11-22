@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.KisinModuleTensorBdRPlusEqLattice
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.ExistsUnitIdentificationSingleIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.KisinModuleTensorBdRPlusEqLattice
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.ExistsUnitIdentificationSingleIntegral
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 set_option maxHeartbeats 2000000
@@ -29,10 +34,12 @@ private theorem UpperTheory.KN.basis_change_matrices_algebra_map {O R R' M ι : 
       funext j
       simp [Finset.sum_apply, Pi.single_apply]
     have h2 : bD k = ∑ i, jD.symm (bD k) i • jD (Pi.single i 1) := by
-      conv_lhs => rw [← jD.apply_symm_apply (bD k), h1, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        conv_lhs => rw [← jD.apply_symm_apply (bD k), h1, map_sum]
       simp only [map_smul]
     have h3 := congrArg (fun x => bD.repr x k') h2
-    simp only [map_sum, map_smul, Finsupp.finset_sum_apply, Finsupp.smul_apply, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Finsupp.finsetSum_apply, Finsupp.smul_apply, smul_eq_mul,
       Module.Basis.repr_self, Finsupp.single_apply] at h3
     simp only [Matrix.mul_apply, Matrix.of_apply, Matrix.one_apply]
     exact h3.symm
@@ -44,7 +51,8 @@ private theorem UpperTheory.KN.basis_change_matrices_algebra_map {O R R' M ι : 
         simp
       · simp [hj]
     have e2 : TensorProduct.map f.toLinearMap LinearMap.id (z i) = ∑ k, f (bA.repr (z i) k) • bD k := by
-      conv_lhs => rw [hz i, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        conv_lhs => rw [hz i, map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       simp [bD, Algebra.TensorProduct.basis_apply, TensorProduct.smul_tmul']
     have h3 := h i

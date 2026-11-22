@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -19,7 +23,7 @@ theorem mul_rpow_lt_one_of_memLp_geometric {X : Type} [MeasurableSpace X]
     have : D * r ^ p ≤ 0 := mul_nonpos_of_nonpos_of_nonneg (not_le.1 hD).le hrp
     linarith
   have hp0 : ENNReal.ofReal p ≠ 0 := by simpa using hp
-  have hI := (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top hp0 ENNReal.ofReal_ne_top).1
+  have hI := (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top hp0 ENNReal.ofReal_ne_top hf.aestronglyMeasurable).1
     hf.eLpNorm_lt_top
   rw [ENNReal.toReal_ofReal hp.le] at hI
   have ha : 0 < c * B ^ p := mul_pos hc (Real.rpow_pos_of_pos hB p)

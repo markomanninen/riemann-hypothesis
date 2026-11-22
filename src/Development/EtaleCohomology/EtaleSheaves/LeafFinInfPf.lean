@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafOrdInfLocalPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafOrdInfLocalPf
+
+@[expose] public section
 
 namespace LateralTheory.E.E4
 

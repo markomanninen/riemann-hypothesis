@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartFH
-import Development.AbelianVarietyTheory.BlockTheory.JetGauges.OriginChartMultiplication
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartFH
+public import Development.AbelianVarietyTheory.BlockTheory.JetGauges.OriginChartMultiplication
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -14,39 +18,6 @@ open scoped TensorProduct
 attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.TorsionCompare
-
-theorem mulF_mapF {T O : Type} [CommRing T] [CommRing O] (f : T →+* O) {d : ℕ} (F : FGLaw T d)
-    (n : ℕ) : mulF (F.mapF f) n = fun i => MvPowerSeries.map f (mulSeries F n i) := by
-  induction n with
-  | zero => funext i; simp [mulF, mulSeries_zero]
-  | succ n ih =>
-    funext i
-    have h : ∀ q : Fin 2 × Fin d, MvPowerSeries.constantCoeff
-        ((![mulSeries F n, pt T d 0] : Fin 2 → Pt T 1 d) q.1 q.2) = 0 := by
-      rintro ⟨a, j⟩
-      fin_cases a
-      · exact constantCoeff_mulSeries F n j
-      · simp [pt]
-    rw [mulSeries_succ]
-    show ev ![mulF (F.mapF f) n, pt O d 0] (MvPowerSeries.map f (F.F i)) =
-      MvPowerSeries.map f (ev ![mulSeries F n, pt T d 0] (F.F i))
-    unfold ev
-    rw [MvPowerSeries.map_subst (MvPowerSeries.hasSubst_of_constantCoeff_zero h), ih]
-    congr 1
-    funext q
-    obtain ⟨a, j⟩ := q
-    fin_cases a
-    · rfl
-    · simp [pt]
-
-theorem span_mulF_eq_torsionIdeal {T O : Type} [CommRing T] [CommRing O] (f : T →+* O) {d : ℕ}
-    (F : FGLaw T d) (n : ℕ) :
-    Ideal.span (Set.range (mulF (F.mapF f) n)) = torsionIdeal f F n := by
-  rw [mulF_mapF]; rfl
-
-def quotEquiv {T O : Type} [CommRing T] [CommRing O] (f : T →+* O) {d : ℕ}
-    (F : FGLaw T d) (n : ℕ) : QF (F.mapF f) n ≃ₐ[O] TorsionRing f F n :=
-  Ideal.quotientEquivAlgOfEq O (span_mulF_eq_torsionIdeal f F n)
 
 section Jets
 

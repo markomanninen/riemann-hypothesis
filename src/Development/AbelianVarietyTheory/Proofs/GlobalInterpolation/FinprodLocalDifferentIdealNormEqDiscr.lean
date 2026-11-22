@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.LocalDualIndex
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HermitianFormFiniteZerosOnLineCmExt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.LocalDualIndex
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HermitianFormFiniteZerosOnLineCmExt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum WithZero Polynomial
 open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.IndefiniteRowSideFullHecke.LocalDualIndex
@@ -137,7 +141,8 @@ private lemma exists_integer_valuation_sub_le_exp_neg (k : K) (hk : v.valuation 
       rw [← map_mul, ← map_one (algebraMap (𝓞 K) K), ← map_sub, ← hyi]
       ring_nf
     have h3 := congrArg (algebraMap (𝓞 K) K) hgeom
-    simp only [map_mul, map_sub, map_one, map_pow, map_sum] at h3 ⊢
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_mul, map_sub, map_one, map_pow, map_sum] at h3 ⊢
     have key : algebraMap (𝓞 K) K b - algebraMap (𝓞 K) K c * (algebraMap (𝓞 K) K a' *
         (algebraMap (𝓞 K) K y * ∑ j ∈ Finset.range n, algebraMap (𝓞 K) K i ^ j)) =
         algebraMap (𝓞 K) K b * algebraMap (𝓞 K) K i ^ n := by
@@ -213,9 +218,9 @@ private lemma exists_integer_valued_sub_le_exp_neg (x : v.adicCompletionIntegers
   rw [e2, valuedAdicCompletion_eq_valuation']
   exact ha
 
+
 open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum WithZero Polynomial in
 variable {K : Type} [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K)) in
-
 theorem _root_.GlobalTheory.LocalDifferentProduct.card_quot_map {I : Ideal (𝓞 K)} (hI : I ≠ 0) :
     Nat.card (v.adicCompletionIntegers K ⧸
       I.map (algebraMap (𝓞 K) (v.adicCompletionIntegers K))) =
@@ -257,8 +262,8 @@ theorem _root_.GlobalTheory.LocalDifferentProduct.card_quot_map {I : Ideal (𝓞
 
 end Local
 
-open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum WithZero Polynomial in
 
+open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum WithZero Polynomial in
 theorem _root_.GlobalTheory.LocalDifferentProduct.finprod_card_quot_map {K : Type} [Field K] [NumberField K] {I : Ideal (𝓞 K)} (hI : I ≠ 0) :
     (Function.mulSupport fun v : HeightOneSpectrum (𝓞 K) => Nat.card (v.adicCompletionIntegers K ⧸
       I.map (algebraMap (𝓞 K) (v.adicCompletionIntegers K)))).Finite ∧
@@ -269,7 +274,7 @@ theorem _root_.GlobalTheory.LocalDifferentProduct.finprod_card_quot_map {K : Typ
     fun v => _root_.GlobalTheory.LocalDifferentProduct.card_quot_map v hI
   simp_rw [hcard]
   have hfin : (Function.mulSupport fun v : HeightOneSpectrum (𝓞 K) => v.maxPowDividing I).Finite :=
-    Ideal.finite_mulSupport hI
+    Ideal.hasFiniteMulSupport hI
   refine ⟨hfin.subset (Function.mulSupport_comp_subset (map_one _) _), ?_⟩
   have h := MonoidHom.map_finprod (Ideal.absNorm : Ideal (𝓞 K) →*₀ ℕ).toMonoidHom hfin
   simp only [MonoidWithZeroHom.toMonoidHom_coe, Ideal.finprod_heightOneSpectrum_factorization hI] at h
@@ -282,8 +287,8 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 
 end Relative
 
-open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum WithZero Polynomial in
 
+open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum WithZero Polynomial in
 theorem _root_.GlobalTheory.LocalDifferentProduct.prod_normDifferentV : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E]
     [Algebra F E] [StarRing E] (σ : E →ₐ[F] E), _root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.IsCMExt F E σ → (∀ x : E, star x = σ x) →
     _root_.Formalism.HermitianLatticesTheory.IsCMUnram E → (Function.mulSupport (_root_.GlobalTheory.IndefiniteRowSideFullHecke.LocalDualIndex.normDifferentV F)).Finite ∧

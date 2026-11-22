@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSmallSectionPointHeight
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionOrderAtPoint
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.IsSmoothHermConstLine
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsHorizontalOfDimOne
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ArithVarZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSmallSectionPointHeight
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionOrderAtPoint
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.IsSmoothHermConstLine
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsHorizontalOfDimOne
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ArithVarZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -24,7 +29,7 @@ theorem aeval_eq_eval_mConeMap (y : (Σ k, ι k) → Ω) (f : MRing ι) :
     aeval y f = eval (fun _ ↦ (1 : Ω)) (mConeMap y f) := by
   induction f using MvPolynomial.induction_on with
   | C c => simp [mConeMap]
-  | add p q hp hq => rw [map_add, map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
   | mul_X p n hp =>
     rw [map_mul, map_mul, map_mul, hp]
     simp [mConeMap]
@@ -78,8 +83,8 @@ theorem vertR_le {W : Ideal (MRing ι)} {G H : MRing ι}
 
 end SmallSectionPointHeight
 
-open SmallSectionPointHeight in
 
+open SmallSectionPointHeight in
 theorem SmallSectionPointHeight.proof (hOrd : SectionOrderAtPoint.Statement) :
     SmallSectionPointHeight.Statement := by
   intro K _ ι _ Ω _ y D A τ s II hII hP hbir hA hτ hs hs0 hsmall

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PBData
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompOfCechPt
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PBData
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompOfCechPt
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -176,7 +180,8 @@ private theorem gl_map_mulVec_comp_eq_comp_mulVec {n : ℕ} {A B : Type} [CommRi
     (↑(Matrix.GeneralLinearGroup.map φ M) : Matrix (Fin n) (Fin n) B).mulVec (φ ∘ x) =
       φ ∘ (↑M : Matrix (Fin n) (Fin n) A).mulVec x := by
   funext i
-  simp [Matrix.mulVec, dotProduct, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.mulVec, dotProduct, map_sum]
 
 theorem w_nat {V' V : Scheme.{0}} (s : V' ⟶ V) (a b : V ⟶ P.T') (h : a ≫ P.e = b ≫ P.e)
     (h' : (s ≫ a) ≫ P.e = (s ≫ b) ≫ P.e) :
@@ -339,7 +344,7 @@ def sv {n : ℕ} {U : Scheme.{0}} (z : Sx P.S n U) (i : Fin (n + 1)) : P.PA.obj 
 theorem S_comm {n : ℕ} {U : Scheme.{0}} (z : Sx P.S n U) :
     Sx.map P.bunV (Sx.map (pullback.fst P.bunV (PGL.pr d)) z) =
       Sx.map (PGL.pr d) (Sx.map (pullback.snd P.bunV (PGL.pr d)) z) := by
-  exact congrArg (fun φ : P.S ⟶ ofCat (glCat d) => Sx.map φ z) pullback.condition
+  exact congrArg (fun φ : P.S ⟶ ofCat (glCat d) => Sx.map φ z) (pullback.condition (f := P.bunV) (g := PGL.pr d))
 
 theorem sv_rel_le {n : ℕ} {U : Scheme.{0}} (z : Sx P.S n U) {i j : Fin (n + 1)} (hij : i ≤ j) :
     P.rel U (P.sv z i) (P.sv z j) := by
@@ -388,9 +393,11 @@ def pS : P.S ⟶ disc.obj P.Q where
     ext U z
     refine Eq.trans (congrArg (Quotient.mk (P.relS U.unop)) (P.sv_along _ θ.unop 0)) (Quotient.sound (s := P.relS U.unop) (P.sv_rel _ _ _))
 
-theorem bunF_fst : P.bunF ≫ pullback.fst P.bunV (PGL.pr d) = P.ρmap := pullback.lift_fst _ _ _
+theorem bunF_fst : P.bunF ≫ pullback.fst P.bunV (PGL.pr d) = P.ρmap := by
+  exact pullback.lift_fst (f := P.bunV) (g := PGL.pr d) _ _ _
 
-theorem bunF_snd : P.bunF ≫ pullback.snd P.bunV (PGL.pr d) = P.bunP := pullback.lift_snd _ _ _
+theorem bunF_snd : P.bunF ≫ pullback.snd P.bunV (PGL.pr d) = P.bunP := by
+  exact pullback.lift_snd (f := P.bunV) (g := PGL.pr d) _ _ _
 
 theorem ρmap_aug : P.ρmap ≫ cechAug P.c = cechAug P.e ≫ sch.map r := by
   ext n : 1

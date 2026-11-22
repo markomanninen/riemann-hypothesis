@@ -1,7 +1,11 @@
-import ReciprocityTheory.SemistableReduction.TorsionNonvanishStatement
-import ReciprocityTheory.L2DbarEstimates.JacobianInterpolationStatement
-import ReciprocityTheory.SemistableReduction.BWPolyB
-import ReciprocityTheory.SemistableReduction.BWPolyC
+module
+
+public import ReciprocityTheory.SemistableReduction.TorsionNonvanishStatement
+public import ReciprocityTheory.L2DbarEstimates.JacobianInterpolationStatement
+public import ReciprocityTheory.SemistableReduction.BWPolyB
+public import ReciprocityTheory.SemistableReduction.BWPolyC
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,8 @@ theorem bwPoly_holds (hH : LemmaHStatement) (hE : ∀ n, ReciprocityTheory.L2Dba
       t ^ j * MvPolynomial.eval z (MvPolynomial.homogeneousComponent j F) := by
     intro t
     conv_lhs => rw [← MvPolynomial.sum_homogeneousComponent F]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl (fun j _ => bwp_eval_smul_of_isHomogeneous
       (MvPolynomial.homogeneousComponent_isHomogeneous j F) t z)
   have hΦ : (∑ j ∈ Finset.range (F.totalDegree + 1),
@@ -56,12 +61,12 @@ theorem bwPoly_holds (hH : LemmaHStatement) (hE : ∀ n, ReciprocityTheory.L2Dba
       Polynomial.C (MvPolynomial.eval z F) * Polynomial.X ^ (∑ i, a i) := by
     refine bwp_poly_eq_of_eval_eq_off _ _ {0} (Set.finite_singleton 0) (fun t ht => ?_)
     have ht0 : t ≠ 0 := ht
-    rw [Polynomial.eval_finset_sum, Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow,
+    rw [Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow,
       Polynomial.eval_X, mul_comm, ← hscale t ht0, hsum t]
     refine Finset.sum_congr rfl (fun j _ => ?_)
     rw [Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X, mul_comm]
-  have hc := congrArg (fun q => Polynomial.coeff q (∑ i, a i)) hΦ
-  simp only [Polynomial.finset_sum_coeff, Polynomial.coeff_C_mul_X_pow, if_pos rfl] at hc
+  have hc := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q (∑ i, a i)) hΦ
+  simp only [Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow, if_pos rfl] at hc
   rw [Finset.sum_ite_eq] at hc
   split_ifs at hc with hk
   · exact hc.symm

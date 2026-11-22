@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.WittFrameLocaliserOrders
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.WittFrameLocaliserOrders
+
+@[expose] public section
 
 noncomputable section
 

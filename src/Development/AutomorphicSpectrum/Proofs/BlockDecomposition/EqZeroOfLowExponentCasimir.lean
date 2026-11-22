@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ActEqZeroOfMem
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CasimirElement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ActEqZeroOfMem
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CasimirElement
+
+@[expose] public section
 
 open GroundTheory.Automorphic.HarishChandra GlobalTheory.CompanionTheory.PresRho
 

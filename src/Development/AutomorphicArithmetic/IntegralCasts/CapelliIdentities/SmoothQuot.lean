@@ -1,21 +1,20 @@
-import Mathlib
+module
 
-noncomputable def UpperTheory.Reformulated.B.Gwb5.IsSmooth :
-    {k G V : Type} →
-      [inst : Field k] →
-        [inst_1 : Group G] →
-          [inst_2 : AddCommGroup V] → [inst_3 : _root_.Module k V] → [TopologicalSpace G] → Representation k G V → Prop :=
-    fun {k G V : Type} [Field k] [Group G] [AddCommGroup V] [_root_.Module k V] [TopologicalSpace G]
-        (ρ : Representation k G V) ↦
-      ∀ (v : V), IsOpen {g : G | ((ρ : G → V →ₗ[k] V) g : V → V) v = v}
+public import Mathlib
 
-theorem UpperTheory.Reformulated.B.Gwb5.smooth_quot :
-    ∀ {G : Type} [inst : Group G] {U : Type} [inst_1 : AddCommGroup U] [inst_2 : _root_.Module ℂ U]
-      [inst_3 : TopologicalSpace G] [IsTopologicalGroup G] {ρ : Representation ℂ G U},
-      UpperTheory.Reformulated.B.Gwb5.IsSmooth ρ →
-        ∀ (T : Submodule ℂ U) (hst : ∀ (g : G), T ≤ Submodule.comap ((ρ : G → U →ₗ[ℂ] U) g) T),
-          UpperTheory.Reformulated.B.Gwb5.IsSmooth (ρ.quotient T hst) := by
-  intro G _ U _ _ _ _ ρ h T hst v
+@[expose] public section
+
+namespace UpperTheory.Reformulated.B.Gwb5
+
+noncomputable def IsSmooth {k G V : Type} [Field k] [Group G] [AddCommGroup V] [Module k V]
+    [TopologicalSpace G] (ρ : Representation k G V) : Prop :=
+  ∀ v : V, IsOpen {g : G | ρ g v = v}
+
+theorem smooth_quot {G : Type} [Group G] {U : Type} [AddCommGroup U] [Module ℂ U]
+    [TopologicalSpace G] [IsTopologicalGroup G] {ρ : Representation ℂ G U} (h : IsSmooth ρ)
+    (T : Submodule ℂ U) (hst : ∀ g : G, T ≤ Submodule.comap (ρ g) T) :
+    IsSmooth (ρ.quotient T hst) := by
+  intro v
   obtain ⟨u, rfl⟩ := Submodule.Quotient.mk_surjective T v
   let H : Subgroup G :=
     { carrier := {g : G | ρ.quotient T hst g (Submodule.Quotient.mk u) = Submodule.Quotient.mk u}
@@ -48,3 +47,5 @@ theorem UpperTheory.Reformulated.B.Gwb5.smooth_quot :
   show ρ.quotient T hst g (Submodule.Quotient.mk u) = Submodule.Quotient.mk u
   have e : ρ.quotient T hst g (Submodule.Quotient.mk u) = Submodule.Quotient.mk (ρ g u) := rfl
   rw [e, hg']
+
+end UpperTheory.Reformulated.B.Gwb5

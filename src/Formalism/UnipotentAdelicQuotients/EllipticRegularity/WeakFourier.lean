@@ -1,4 +1,8 @@
-import Formalism.UnipotentAdelicQuotients.EllRegCut
+module
+
+public import Formalism.UnipotentAdelicQuotients.EllRegCut
+
+@[expose] public section
 
 namespace ZetaZeros.D.EllReg
 
@@ -129,21 +133,21 @@ theorem lb_good {f : E d → ℂ} (hf : ContDiff ℝ ∞ f) {K : Set (E d)} (hK 
     (hfK : ∀ y ∉ K, f y = 0) : ∀ w : List (Fin d), Good w.length K (lb w f)
   | [] => by intro p hp; simp [lb] at hp
   | k :: w => by
-    have ih := lb_good hf hK hfK w
+    have ih : Good w.length K (lb w f) := lb_good hf hK hfK w
     intro p hp
     simp only [lb, List.mem_cons, List.mem_append, List.mem_map] at hp
     rcases hp with rfl | ⟨q, hq, rfl⟩ | ⟨q, hq, rfl⟩
     · exact ⟨by simp, contDiff_Dk hf k, Dk_zero_off hK hfK k⟩
-    · obtain ⟨h1, h2, h3⟩ := ih q hq
-      exact ⟨by simp; omega, contDiff_Dk h2 k, Dk_zero_off hK h3 k⟩
-    · obtain ⟨h1, h2, h3⟩ := ih q hq
-      exact ⟨by simp; omega, h2, h3⟩
+    · have h := ih q hq
+      exact ⟨Nat.lt_succ_of_lt h.1, contDiff_Dk h.2.1 k, Dk_zero_off hK h.2.2 k⟩
+    · have h := ih q hq
+      exact ⟨Nat.succ_lt_succ h.1, h.2⟩
 
 theorem leib {f : E d → ℂ} (hf : ContDiff ℝ ∞ f) : ∀ (w : List (Fin d)) (g : E d → ℂ), ContDiff ℝ ∞ g →
     dw w (fun z => f z * g z) = fun y => f y * dw w g y + ev (lb w f) g y
   | [], g, hg => by funext y; simp [dw, lb, ev]
   | k :: w, g, hg => by
-    have hgood := lb_good hf isClosed_univ (by simp) w
+    have hgood : Good w.length Set.univ (lb w f) := lb_good hf isClosed_univ (by simp) w
     have hc : ∀ p ∈ lb w f, ContDiff ℝ ∞ p.2 := fun p hp => (hgood p hp).2.1
     funext y
     rw [dw_cons, leib hf w g hg, Dk_add (hf.mul (contDiff_dw hg w)) (contDiff_ev hc hg),
@@ -167,15 +171,15 @@ theorem sb_good {a : E d → ℂ} (ha : ContDiff ℝ ∞ a) {k : ℕ} {K : Set (
     ∀ L : List (List (Fin d) × (E d → ℂ)), Good k K L → Good k K (sb a L)
   | [], _ => by intro p hp; simp [sb] at hp
   | p :: L, hL => by
-    have hp := hL p (by simp)
-    have ih := sb_good ha L (fun q hq => hL q (by simp [hq]))
-    have hlb := lb_good ha isClosed_univ (by simp) p.1
+    have hp : p.1.length < k ∧ ContDiff ℝ ∞ p.2 ∧ ∀ y ∉ K, p.2 y = 0 := hL p (by simp)
+    have ih : Good k K (sb a L) := sb_good ha L (fun q hq => hL q (by simp [hq]))
+    have hlb : Good p.1.length Set.univ (lb p.1 a) := lb_good ha isClosed_univ (by simp) p.1
     intro q hq
     simp only [sb, sc, List.mem_cons, List.mem_append, List.mem_map] at hq
     rcases hq with rfl | ⟨r, hr, rfl⟩ | hq
     · exact ⟨hp.1, hp.2.1.mul ha, fun y hy => by simp [hp.2.2 y hy]⟩
-    · obtain ⟨h1, h2, -⟩ := hlb r hr
-      exact ⟨lt_trans h1 hp.1, hp.2.1.mul h2, fun y hy => by simp [hp.2.2 y hy]⟩
+    · have h := hlb r hr
+      exact ⟨lt_trans h.1 hp.1, hp.2.1.mul h.2.1, fun y hy => by simp [hp.2.2 y hy]⟩
     · exact ih q hq
 
 theorem good_mono {k k' : ℕ} {K : Set (E d)} {L : List (List (Fin d) × (E d → ℂ))} (hL : Good k K L)
@@ -265,7 +269,7 @@ theorem ev_eq_cf {m : ℕ} (g : E d → ℂ) (y : E d) : ∀ L : List (List (Fin
 theorem dw_congr {F G : E d → ℂ} : ∀ (v : List (Fin d)) (y : E d), F =ᶠ[𝓝 y] G → dw v F =ᶠ[𝓝 y] dw v G
   | [], _, h => h
   | k :: v, y, h => by
-    have ih := dw_congr v y h
+    have ih : dw v F =ᶠ[𝓝 y] dw v G := dw_congr v y h
     filter_upwards [ih.eventuallyEq_nhds] with x hx
     simp only [dw_cons, Dk, hx.fderiv_eq]
 

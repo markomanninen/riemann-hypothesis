@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InstAddCommGroupTwo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InstAddCommGroupTwo
+
+@[expose] public section
+
 open GlobalTheory GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.SmGL.Exponents ValuativeRel
 open scoped TensorProduct
 
@@ -15,7 +20,7 @@ def boolPair (v : X false) (w : X true) : ∀ x, X x
   | false => v
   | true => w
 
-def boolMulti : MultilinearMap ℂ X (X false ⊗[ℂ] X true) :=
+def boolMulti : (∀ x, X x) →ₘₗ[ℂ] (X false ⊗[ℂ] X true) :=
   MultilinearMap.mk' (fun x => x false ⊗ₜ[ℂ] x true)
     (fun m i x y => by cases i <;> simp [TensorProduct.add_tmul, TensorProduct.tmul_add])
     (fun m i c x => by cases i <;> simp [TensorProduct.smul_tmul', TensorProduct.tmul_smul])
@@ -34,24 +39,26 @@ def boolBilin : X false →ₗ[ℂ] X true →ₗ[ℂ] PiTensorProduct ℂ X :=
       rw [boolPair_eq_left (v + v') 0, boolPair_eq_left v 0, boolPair_eq_left v' 0,
         MultilinearMap.map_update_add])
     (fun c v w => by
-      rw [boolPair_eq_left (c • v) 0, boolPair_eq_left v 0, MultilinearMap.map_update_smul])
+      rw [boolPair_eq_left (c • v) 0, boolPair_eq_left v 0, MultilinearMap.map_update_smul,
+        RingHom.id_apply])
     (fun v w w' => by
       rw [boolPair_eq_right v (w + w') 0, boolPair_eq_right v w 0, boolPair_eq_right v w' 0,
         MultilinearMap.map_update_add])
     (fun c v w => by
-      rw [boolPair_eq_right v (c • w) 0, boolPair_eq_right v w 0, MultilinearMap.map_update_smul])
+      rw [boolPair_eq_right v (c • w) 0, boolPair_eq_right v w 0, MultilinearMap.map_update_smul,
+        RingHom.id_apply])
 
 def boolTensorEquiv : PiTensorProduct ℂ X ≃ₗ[ℂ] X false ⊗[ℂ] X true :=
-  LinearEquiv.ofLinear (PiTensorProduct.lift boolMulti) (TensorProduct.lift boolBilin)
+  LinearEquiv.ofLinearMap (PiTensorProduct.lift boolMulti) (TensorProduct.lift boolBilin)
     (by
-      ext v w
+      refine TensorProduct.ext' fun v w => ?_
       simp [boolBilin, boolMulti, boolPair])
     (by
-      ext x
+      refine PiTensorProduct.ext (MultilinearMap.ext fun x => ?_)
       simp only [boolBilin, boolMulti, LinearMap.compMultilinearMap_apply, LinearMap.comp_apply,
         PiTensorProduct.lift.tprod, MultilinearMap.mk'_apply, TensorProduct.lift.tmul,
         LinearMap.mk₂_apply, LinearMap.id_apply]
-      congr 1
+      apply (PiTensorProduct.tprod ℂ).congr_arg
       funext i
       cases i <;> rfl)
 

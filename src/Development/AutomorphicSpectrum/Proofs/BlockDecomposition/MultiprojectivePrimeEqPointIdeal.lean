@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPullHermPullLine
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedA
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.IsSmoothHermConstLine
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBlockImageInverse
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPullHermPullLine
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedA
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.IsSmoothHermConstLine
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBlockImageInverse
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -30,7 +34,7 @@ theorem mCoordIdeal_comp_ringHom {L Ω : Type} [Field L] [Field Ω] (j : L →+*
     intro f
     induction f using MvPolynomial.induction_on with
     | C a => simp [Geo.mConeMap]
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | mul_X p q hp =>
       rw [map_mul, map_mul, map_mul, hp]
       simp [Geo.mConeMap]
@@ -111,8 +115,14 @@ theorem exists_ptIdeal_eq_mCoordIdeal {F : Type} [Field F] (v : (Σ k, Bk n k) �
     exact Ideal.eq_top_of_isUnit_mem _ (Ideal.subset_span ⟨i, rfl⟩) (isUnit_iff_ne_zero.2 hi)
   let a : ∀ k, Sp F ⟶ PSpace ℤ (n k) := fun k =>
     GlobalTheory.ProjSpace.pt (Int.castRingHom F) (fun i : Bk n k => v ⟨k, i⟩) (hu k)
-  have ha : ∀ k, a k ≫ ProjSpace.toSpecBase ℤ (n k) = spMap (Int.castRingHom F) := fun k =>
-    GlobalTheory.ProjSpace.pt_str _ _ _
+  have ha : ∀ k, a k ≫ ProjSpace.toSpecBase ℤ (n k) = spMap (Int.castRingHom F) := by
+    intro k
+    dsimp only [a]
+    rw [GlobalTheory.ProjSpace.pt, ProjSpace.toSpecBase, ProjPoint.ofHom_toSpecZero_assoc,
+      ← Spec.map_comp]
+    congr 1
+    ext1
+    exact RingHom.ext fun r => MvPolynomial.eval₂Hom_C _ _ r
   let g : Sp F ⟶ MP ℤ m n := ProjSpace.lift m n (spMap (Int.castRingHom F)) a ha
   have hg : ∀ k, g ≫ prB n k = a k := fun k => ProjSpace.lift_pr m n _ a ha k
   let p : Sp F := IsLocalRing.closedPoint F

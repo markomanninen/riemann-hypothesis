@@ -1,15 +1,19 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSOpR
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutoffIteratedFDerivBounded
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HsVecApply
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.XFibreOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellValues
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvMulVecOfFixedVector
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliVectorFrame
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliVectorEquivariance
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAlgebraFacts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftOfFunctions
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HomogeneityNaturalDegree
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSOpR
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutoffIteratedFDerivBounded
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HsVecApply
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.XFibreOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellValues
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvMulVecOfFixedVector
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliVectorFrame
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliVectorEquivariance
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAlgebraFacts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftOfFunctions
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HomogeneityNaturalDegree
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ContDiff
@@ -92,7 +96,7 @@ theorem opAt_aeval {x : (Fin r → ℂ) × Mx k r} {a : Pr (RadSp k r z z' π π
     simp [Algebra.algebraMap_eq_smul_one]
   | add p q hp hq =>
     intro Φ
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     show (((Polynomial.aeval a p).1 Φ + (Polynomial.aeval a q).1 Φ : RadSp k r z z' π π') :
       Fn k r (Wq →L[ℂ] Wp)) x.1 x.2 = _
     simp only [Submodule.coe_add, Pi.add_apply, ContinuousLinearMap.add_apply]
@@ -128,7 +132,7 @@ theorem aeval_intertwine (φ : (Wq →L[ℂ] Wp) → (Wq →L[ℂ] Wp)) (hφa : 
     simp [Polynomial.aeval_C, Algebra.algebraMap_eq_smul_one, hφs]
   | add p q hp hq =>
     intro A
-    simp only [map_add, ContinuousLinearMap.add_apply, hp, hq, hφa]
+    simp only [map_add (f := _), ContinuousLinearMap.add_apply, hp, hq, hφa]
   | monomial n c hn =>
     intro A
     have e1 : Polynomial.C c * Polynomial.X ^ (n + 1) = Polynomial.C c * Polynomial.X ^ n * Polynomial.X := by
@@ -219,7 +223,9 @@ theorem spectral_operator_X : RDSOpX := by
     exact ubl_mono hSG h (by simp) le_rfl
   have hUa : ∀ ε : ℝ, 0 < ε → ∀ n : ℕ,
       UBL (fun g => HilbertSchmidtVectorization.adjH (cf g)) {g | g ∈ B.GV P.k P.r ∧ ε ≤ Gf P.k P.r D.z D.z' g} n 0 (3 * (P.r + 1)) :=
-    fun ε hε n => ubl_clm HilbertSchmidtVectorization.adjR (fun g hg => hg.1) (hU ε hε n)
+    fun ε hε n => ubl_clm HilbertSchmidtVectorization.adjR
+      (S := {g | g ∈ B.GV P.k P.r ∧ ε ≤ Gf P.k P.r D.z D.z' g})
+      (fun g hg => hg.1) (hU ε hε n)
   have hck : ∀ f : B.Mat P.k P.r → C6.EndH Wp Wq,
       (∀ ε : ℝ, 0 < ε → ∀ n : ℕ, UBL f {g | g ∈ B.GV P.k P.r ∧ ε ≤ Gf P.k P.r D.z D.z' g} n 0 (3 * (P.r + 1))) →
       B.CkOn ⊤ (B.GPos D) f := by

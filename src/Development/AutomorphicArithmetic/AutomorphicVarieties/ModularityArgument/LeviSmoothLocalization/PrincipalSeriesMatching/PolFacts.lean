@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.WinUpDown
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.WinUpDown
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Polynomial UpperTheory.V UpperTheory.V.Z.Gam UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL ValuativeRel
@@ -27,49 +31,79 @@ private theorem val_unif : valuation k (unif k : k) = uniformizer k := by
   exact le_antisymm (le_uniformizer_iff.2 unif_spec.1) (hp ▸ unif_spec.2 p (hp ▸ uniformizer_lt_one))
 
 private theorem eq_of_unram (ξ ξ' : kˣ →* ℂˣ) (h : IsUnram (ξ * ξ'⁻¹)) (e : ξ (unif k) = ξ' (unif k)) : ξ = ξ' := by
-  have h1 : IsUnram (1 : kˣ →* ℂˣ) := fun _ _ => rfl
-  have a := eq_unrChar h (val_unif (k := k))
-  have b := eq_unrChar h1 (val_unif (k := k))
-  have c : (ξ * ξ'⁻¹) (unif k) = 1 := by
-    rw [MonoidHom.mul_apply, MonoidHom.inv_apply, e, mul_inv_cancel]
-  rw [c] at a
-  rw [MonoidHom.one_apply] at b
-  rw [← b] at a
-  exact mul_inv_eq_one.1 a
+  let ord (x : kˣ) : ℤ :=
+    -WithZero.log (IsNonarchimedeanLocalField.valueGroupWithZeroIsoInt k (valuation k (x : k)))
+  have ord_mul (x y : kˣ) : ord (x * y) = ord x + ord y := by
+    simp only [ord, Units.val_mul, map_mul]
+    rw [WithZero.log_mul (by simp) (by simp)]
+    ring
+  have ord_one : ord (unif k) = 1 := by
+    set φ := IsNonarchimedeanLocalField.valueGroupWithZeroIsoInt k
+    have h0 : φ (uniformizer k) ≠ 0 := by simp
+    have key : φ (uniformizer k) = WithZero.exp (-1) := by
+      apply le_antisymm
+      · have ht : φ (uniformizer k) < φ 1 := φ.strictMono uniformizer_lt_one
+        rw [map_one, ← WithZero.exp_log h0, ← WithZero.exp_zero, WithZero.exp_lt_exp] at ht
+        rw [← WithZero.exp_log h0, WithZero.exp_le_exp]
+        omega
+      · have ht : φ.symm (WithZero.exp (-1)) ≤ uniformizer k := by
+          rw [le_uniformizer_iff, ← map_one φ.symm]
+          exact φ.symm.strictMono (by rw [← WithZero.exp_zero, WithZero.exp_lt_exp]; omega)
+        simpa using φ.strictMono.monotone ht
+    simp [ord, val_unif, φ, key]
+  have val_of_ord_zero (x : kˣ) (hx : ord x = 0) : valuation k (x : k) = 1 := by
+    set φ := IsNonarchimedeanLocalField.valueGroupWithZeroIsoInt k
+    have h0 : φ (valuation k (x : k)) ≠ 0 := by simp
+    have h1 : WithZero.log (φ (valuation k (x : k))) = 0 := neg_eq_zero.1 hx
+    apply φ.strictMono.injective
+    rw [map_one, ← WithZero.exp_log h0, h1, WithZero.exp_zero]
+  let o : kˣ →* Multiplicative ℤ := MonoidHom.mk' (fun x => .ofAdd (ord x)) fun x y => by
+    rw [ord_mul, ofAdd_add]
+  apply mul_inv_eq_one.mp
+  refine MonoidHom.ext fun x => ?_
+  have h0 : o (x / unif k ^ ord x) = 1 := by
+    rw [_root_.map_div, map_zpow, show o (unif k) = .ofAdd 1 from congrArg Multiplicative.ofAdd ord_one,
+      ← ofAdd_zsmul, smul_eq_mul, mul_one]
+    exact div_self' _
+  have hx := h _ (val_of_ord_zero _ (ofAdd_eq_one.mp h0))
+  have he : (ξ * ξ'⁻¹) (unif k) = 1 := by
+    simp [e]
+  rw [_root_.map_div, map_zpow, he, one_zpow, div_one] at hx
+  exact hx
 
-private noncomputable def pfac (χ : kˣ →* ℂˣ) (y : IrrGL k) : ℂ[X] :=
+private noncomputable def pfac (χ : kˣ →* ℂˣ) (y : IrrGL (k := k)) : ℂ[X] :=
   if h : ∃ ξ : kˣ →* ℂˣ, (∃ hξ, y = IrrGL.ofChar ξ hξ) ∧ IsUnram (ξ * χ) then
     1 - C (((h.choose * χ) (unif k) : ℂˣ) : ℂ) * X else 1
 
-private theorem pol_cons (y : IrrGL k) (s : Multiset (IrrGL k)) (χ : kˣ →* ℂˣ) :
+private theorem pol_cons (y : IrrGL (k := k)) (s : Multiset (IrrGL (k := k))) (χ : kˣ →* ℂˣ) :
     pol (y ::ₘ s) χ = pfac χ y * pol s χ := by
   simp only [pol, Multiset.map_cons, Multiset.prod_cons]
   rfl
 
-private theorem pol_zero (χ : kˣ →* ℂˣ) : pol (0 : Multiset (IrrGL k)) χ = 1 := by
+private theorem pol_zero (χ : kˣ →* ℂˣ) : pol (0 : Multiset (IrrGL (k := k))) χ = 1 := by
   simp [pol]
 
 private theorem fac_pos (χ ξ : kˣ →* ℂˣ) (hξ : IsSmoothChar ξ) (hu : IsUnram (ξ * χ)) :
     pfac χ (IrrGL.ofChar ξ hξ) = 1 - C (((ξ * χ) (unif k) : ℂˣ) : ℂ) * X := by
-  have h : ∃ ξ' : kˣ →* ℂˣ, (∃ hξ', (IrrGL.ofChar ξ hξ : IrrGL k) = IrrGL.ofChar ξ' hξ') ∧ IsUnram (ξ' * χ) :=
+  have h : ∃ ξ' : kˣ →* ℂˣ, (∃ hξ', (IrrGL.ofChar ξ hξ : IrrGL (k := k)) = IrrGL.ofChar ξ' hξ') ∧ IsUnram (ξ' * χ) :=
     ⟨ξ, ⟨hξ, rfl⟩, hu⟩
   unfold pfac
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   obtain ⟨h', e⟩ := h.choose_spec.1
   rw [← IrrGL.ofChar_inj.1 e]
 
-private theorem fac_neg (χ : kˣ →* ℂˣ) (y : IrrGL k) (h : ¬ ∃ ξ hξ, y = IrrGL.ofChar ξ hξ ∧ IsUnram (ξ * χ)) :
+private theorem fac_neg (χ : kˣ →* ℂˣ) (y : IrrGL (k := k)) (h : ¬ ∃ ξ hξ, y = IrrGL.ofChar ξ hξ ∧ IsUnram (ξ * χ)) :
     pfac χ y = 1 := by
   unfold pfac
-  rw [dif_neg]
+  rw [dite_eq_right]
   rintro ⟨ξ, ⟨hξ, e⟩, hu⟩
   exact h ⟨ξ, hξ, e, hu⟩
 
-private theorem fac_eval (χ : kˣ →* ℂˣ) (y : IrrGL k) : (pfac χ y).eval 0 = 1 := by
+private theorem fac_eval (χ : kˣ →* ℂˣ) (y : IrrGL (k := k)) : (pfac χ y).eval 0 = 1 := by
   unfold pfac
   split_ifs <;> simp
 
-private theorem pol_eval (s : Multiset (IrrGL k)) (χ : kˣ →* ℂˣ) : (pol s χ).eval 0 = 1 := by
+private theorem pol_eval (s : Multiset (IrrGL (k := k))) (χ : kˣ →* ℂˣ) : (pol s χ).eval 0 = 1 := by
   induction s using Multiset.induction_on with
   | empty => rw [pol_zero, eval_one]
   | cons y s ih => rw [pol_cons, eval_mul, ih, fac_eval, mul_one]
@@ -77,7 +111,7 @@ private theorem pol_eval (s : Multiset (IrrGL k)) (χ : kˣ →* ℂˣ) : (pol s
 private theorem natDegree_lin (a : ℂ) (ha : a ≠ 0) : (1 - C a * X : ℂ[X]).natDegree = 1 := by
   rw [natDegree_sub_eq_right_of_natDegree_lt] <;> simp [natDegree_C_mul_X _ ha]
 
-private theorem pol_deg (s : Multiset (IrrGL k)) (χ : kˣ →* ℂˣ) : (pol s χ).natDegree = cnt s χ := by
+private theorem pol_deg (s : Multiset (IrrGL (k := k))) (χ : kˣ →* ℂˣ) : (pol s χ).natDegree = cnt s χ := by
   induction s using Multiset.induction_on with
   | empty => simp [pol_zero, cnt]
   | cons y s ih =>
@@ -90,7 +124,7 @@ private theorem pol_deg (s : Multiset (IrrGL k)) (χ : kˣ →* ℂˣ) : (pol s 
         Multiset.card_add, Multiset.card_singleton]
     · rw [fac_neg χ y hy, if_neg hy, natDegree_one, zero_add, zero_add]
 
-private theorem fac_root (χ : kˣ →* ℂˣ) (y : IrrGL k) (x : ℂ) : (pfac χ y).eval x = 0 ↔
+private theorem fac_root (χ : kˣ →* ℂˣ) (y : IrrGL (k := k)) (x : ℂ) : (pfac χ y).eval x = 0 ↔
     ∃ ξ hξ, y = IrrGL.ofChar ξ hξ ∧ IsUnram (ξ * χ) ∧ (((ξ * χ) (unif k) : ℂˣ) : ℂ) * x = 1 := by
   by_cases hy : ∃ ξ hξ, y = IrrGL.ofChar ξ hξ ∧ IsUnram (ξ * χ)
   · obtain ⟨ξ, hξ, rfl, hu⟩ := hy
@@ -108,7 +142,7 @@ private theorem fac_root (χ : kˣ →* ℂˣ) (y : IrrGL k) (x : ℂ) : (pfac �
     rintro ⟨ξ, hξ, e, hu, _⟩
     exact hy ⟨ξ, hξ, e, hu⟩
 
-private theorem pol_root (s : Multiset (IrrGL k)) (χ : kˣ →* ℂˣ) (x : ℂ) : (pol s χ).eval x = 0 ↔
+private theorem pol_root (s : Multiset (IrrGL (k := k))) (χ : kˣ →* ℂˣ) (x : ℂ) : (pol s χ).eval x = 0 ↔
     ∃ ξ ∈ chars s, IsUnram (ξ * χ) ∧ (((ξ * χ) (unif k) : ℂˣ) : ℂ) * x = 1 := by
   induction s using Multiset.induction_on with
   | empty =>
@@ -135,7 +169,7 @@ private theorem unram_mul_iff (a μ : kˣ →* ℂˣ) (hμ : IsUnram μ) : IsUnr
   · intro h x hx
     rw [MonoidHom.mul_apply, h x hx, hμ x hx, mul_one]
 
-private theorem fac_comp (χ μ : kˣ →* ℂˣ) (hμ : IsUnram μ) (y : IrrGL k) :
+private theorem fac_comp (χ μ : kˣ →* ℂˣ) (hμ : IsUnram μ) (y : IrrGL (k := k)) :
     pfac (χ * μ) y = (pfac χ y).comp (C ((μ (unif k) : ℂˣ) : ℂ) * X) := by
   by_cases hy : ∃ ξ hξ, y = IrrGL.ofChar ξ hξ ∧ IsUnram (ξ * χ)
   · obtain ⟨ξ, hξ, rfl, hu⟩ := hy
@@ -150,7 +184,7 @@ private theorem fac_comp (χ μ : kˣ →* ℂˣ) (hμ : IsUnram μ) (y : IrrGL 
       exact hy ⟨ξ, hξ, e, hu⟩
     rw [fac_neg _ _ hy', fac_neg _ _ hy, one_comp]
 
-private theorem pol_comp (s : Multiset (IrrGL k)) (χ μ : kˣ →* ℂˣ) (hμ : IsUnram μ) :
+private theorem pol_comp (s : Multiset (IrrGL (k := k))) (χ μ : kˣ →* ℂˣ) (hμ : IsUnram μ) :
     pol s (χ * μ) = (pol s χ).comp (C ((μ (unif k) : ℂˣ) : ℂ) * X) := by
   induction s using Multiset.induction_on with
   | empty => rw [pol_zero, pol_zero, one_comp]

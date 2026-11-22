@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegUnif
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
-import Development.AbelianVarietyTheory.BlockTheory.UniformisationCharts.SeparatedSymmetricModel
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsTorusAndQuotientHom
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsAbelianSchemeThick
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegUnif
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+public import Development.AbelianVarietyTheory.BlockTheory.UniformisationCharts.SeparatedSymmetricModel
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsTorusAndQuotientHom
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsAbelianSchemeThick
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,33 +25,9 @@ section General
 variable {X₁ X₂ Y Y₁ Y₂ T : Scheme.{0}} {L : LB X₁} {M : LB X₂} {a : Y ⟶ X₁} {b : Y ⟶ X₂}
   {K : Type} [Fintype K]
 
-def wv (w : LB.Iso (L.pull a) (M.pull b)) {Z : Scheme.{0}} (r : Z ⟶ Y) (z : Z) (p : M.ι) (q : L.ι) :
-    (Z.presheaf.stalk z)ˣ := gw w r z p (fun _ => q)
-
-def Carries (w : LB.Iso (L.pull a) (M.pull b)) (ψ : K → (T ⟶ Y)) (ε : K → ℤ)
-    {φ₁ : K → (Y₁ ⟶ X₁)} (s : LB.Gen (LB.LinComb L φ₁ ε)) (f₁ : T ⟶ Y₁)
-    {φ₂ : K → (Y₂ ⟶ X₂)} (t : LB.Gen (LB.LinComb M φ₂ ε)) (f₂ : T ⟶ Y₂) : Prop :=
-  ∀ (Z : Scheme.{0}) (r : Z ⟶ T) (z : Z) (p : K → M.ι) (q : K → L.ι), (∀ k, b (ψ k (r z)) ∈ M.U (p k)) →
-    (∀ k, a (ψ k (r z)) ∈ L.U (q k)) →
-    gm (r ≫ f₂) z (LB.wchart M φ₂ p) (t.s p) =
-      (∏ k, wv w (r ≫ ψ k) z (p k) (q k) ^ ε k) * gm (r ≫ f₁) z (LB.wchart L φ₁ q) (s.s q)
-
 variable {w : LB.Iso (L.pull a) (M.pull b)} {ψ : K → (T ⟶ Y)} {ε : K → ℤ}
   {φ₁ : K → (Y₁ ⟶ X₁)} {s : LB.Gen (LB.LinComb L φ₁ ε)} {f₁ : T ⟶ Y₁}
   {φ₂ : K → (Y₂ ⟶ X₂)} {t : LB.Gen (LB.LinComb M φ₂ ε)} {f₂ : T ⟶ Y₂}
-
-theorem Carries.comp (H : Carries w ψ ε s f₁ t f₂) {T' : Scheme.{0}} (h : T' ⟶ T) {ψ' : K → (T' ⟶ Y)}
-    {g₁ : T' ⟶ Y₁} {g₂ : T' ⟶ Y₂} (e : ∀ k, ψ' k = h ≫ ψ k) (e₁ : g₁ = h ≫ f₁) (e₂ : g₂ = h ≫ f₂) :
-    Carries w ψ' ε s g₁ t g₂ := by
-  obtain rfl : ψ' = fun k => h ≫ ψ k := funext e
-  subst e₁ e₂
-  intro Z r z p q hp hq
-  simpa only [Category.assoc] using H Z (r ≫ h) z p q hp hq
-
-theorem Carries.congr {a' : Y ⟶ X₁} {b' : Y ⟶ X₂} {w' : LB.Iso (L.pull a') (M.pull b')} (ha : a = a') (hb : b = b')
-    (hw : HEq w w') : Carries w ψ ε s f₁ t f₂ ↔ Carries w' ψ ε s f₁ t f₂ := by
-  subst ha hb
-  rw [eq_of_heq hw]
 
 end General
 
@@ -110,18 +90,6 @@ open GlobalTheory.IndefiniteRowSideFullHecke GlobalTheory.IndefiniteRowSideFullH
 variable {R : Type} [CommRing R] [IsDomain R] {I : Ideal R} {D : DegPre R}
   {G : Over (Spec (CommRingCat.of R))} [GrpObj G] [IsCommMonObj G] {e : ℕ}
 
-structure GtMatch (g : GtCoord I D e G) (j : CanonicalRigidImages.GtIso D I e G) : Prop where
-  q : g.q = j.q
-  i : g.i = j.i
-  t : ∀ χ, HEq (g.t χ) (j.x χ)
-
-theorem Oφ_eq {g : GtCoord I D e G} {j : CanonicalRigidImages.GtIso D I e G} (h : g.q = j.q) (χ : D.X) :
-    D.Oφ g.pG χ = CanonicalRigidImages.oφ D I e j.q χ := by
-  rw [← h]
-  exact congrArg (fun y => ![y.left, _, _, _]) (_root_.mul_comm g.pG (toUnit _ ≫ D.c χ))
-
-theorem Oinvε_eq : Oinvε = CanonicalRigidImages.oεinv := by decide
-
 variable {LG : RigLB G} {g : GtCoord I D e G} {j : CanonicalRigidImages.GtIso D I e G}
   {w : LB.Iso (LG.L.pull (fstG I e G).left) (D.P.L.pull g.pG.left)}
   {ph : LB.Iso (LG.L.pull (toG I e G).F) (D.P.L.pull (toB j).F)}
@@ -136,14 +104,6 @@ variable {R : Type} [CommRing R] [IsDomain R] {I : Ideal R}
   {G : Over (Spec (CommRingCat.of R))} [GrpObj G] [IsCommMonObj G]
 
 variable {D : DegData R I} {A : PolAV (Spec (CommRingCat.of (FractionRing R)))} {rA : LB.Gen (A.L.pull (eSec A.A))}
-
-structure Match (u : Out.UnifPre I D A G) (v : SeparatedSymmetricModel.UnifPre R I D A rA G) : Prop where
-  gen : v.gen = u.gen.symm
-  LG : v.LG = u.LG
-  cub : HEq v.cub u.cubG
-  sym : HEq v.sym u.symG
-  gt : ∀ e, GtMatch (u.gt e) (v.j e)
-  w : ∀ e, HEq (u.w e) (v.ph e)
 
 end Main
 

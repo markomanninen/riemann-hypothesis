@@ -1,10 +1,14 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.ReductionHeight
-import GroundTheory.AutomorphicForms.ReductionIdele
-import GroundTheory.GlobalFields.Adele.Approximation
-import GroundTheory.GlobalFields.Adele.Discrete
-import GroundTheory.GlobalFields.Adele.IntegersLattice
-import GroundTheory.GlobalFields.IdeleGroups.LocalConditionIndex
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.ReductionHeight
+public import GroundTheory.AutomorphicForms.ReductionIdele
+public import GroundTheory.GlobalFields.Adele.Approximation
+public import GroundTheory.GlobalFields.Adele.Discrete
+public import GroundTheory.GlobalFields.Adele.IntegersLattice
+public import GroundTheory.GlobalFields.IdeleGroups.LocalConditionIndex
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter Set Matrix
 open GroundTheory.Global GroundTheory.Global.IdeleGroup
@@ -18,8 +22,8 @@ namespace Reduction
 
 variable {K : Type*} [Field K] [NumberField K]
 
-open scoped Classical in
 
+open scoped Classical in
 theorem norm_apply_le_norm_homeomorphMixedSpace (x : InfiniteAdeleRing K) (w : InfinitePlace K) :
     ‖x w‖ ≤ ‖GroundTheory.Global.homeomorphMixedSpace K x‖ := by
   rw [GroundTheory.Global.homeomorphMixedSpace_apply, InfiniteAdeleRing.ringEquiv_mixedSpace_apply]
@@ -57,8 +61,8 @@ theorem norm_le_one_of_mem_integralFiniteAdeles {a : FiniteAdeleRing (𝓞 K) K}
     ‖a v‖ ≤ 1 :=
   norm_le_one_of_mem v (ha v)
 
-open scoped Classical in
 
+open scoped Classical in
 theorem exists_dirichlet_box : ∃ B : ℝ, 0 < B ∧ ∀ (a : 𝔸[K]) (N : ℕ), 0 < N →
     ∃ l : 𝓞 K, l ≠ 0 ∧
       (∀ w : InfinitePlace K, ‖(algebraMap K 𝔸[K] (l : K)).1 w‖ ≤ (N + 1) * B) ∧
@@ -103,7 +107,8 @@ theorem exists_dirichlet_box : ∃ B : ℝ, 0 < B ∧ ∀ (a : 𝔸[K]) (N : ℕ
   have hlamK : ∀ p, ((lam p : 𝓞 K) : K) = ∑ i, (((p i : ℕ) : ℤ) • ((bZ i : 𝓞 K) : K)) := by
     intro p
     change algebraMap (𝓞 K) K (bZ.equivFun.symm _) = _
-    rw [Module.Basis.equivFun_symm_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Module.Basis.equivFun_symm_apply, map_sum]
     simp
   refine ⟨lam m - lam m', sub_ne_zero.2 (hlam_inj.ne hne), ?_, ?_⟩
   · intro w
@@ -121,7 +126,8 @@ theorem exists_dirichlet_box : ∃ B : ℝ, 0 < B ∧ ∀ (a : 𝔸[K]) (N : ℕ
       have : |(((m i : ℕ) : ℤ) - ((m' i : ℕ) : ℤ))| ≤ (N : ℤ) := by
         rw [abs_le]; constructor <;> omega
       exact_mod_cast this
-    rw [hφ, hcast, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hφ, hcast, map_sum]
     calc ‖∑ i, φ ((((m i : ℕ) : ℤ) - ((m' i : ℕ) : ℤ)) • ((bZ i : 𝓞 K) : K))‖
         ≤ ∑ i, ‖φ ((((m i : ℕ) : ℤ) - ((m' i : ℕ) : ℤ)) • ((bZ i : 𝓞 K) : K))‖ := norm_sum_le _ _
       _ ≤ ∑ i, (N : ℝ) * ‖φ ((bZ i : 𝓞 K) : K)‖ := Finset.sum_le_sum fun i _ => by
@@ -164,7 +170,8 @@ theorem exists_dirichlet_box : ∃ B : ℝ, 0 < B ∧ ∀ (a : 𝔸[K]) (N : ℕ
         change GroundTheory.Global.homeomorphMixedSpace K (algebraMap K (InfiniteAdeleRing K) (F : K)) = _
         rw [GroundTheory.Global.homeomorphMixedSpace_algebraMap]
         change mixedEmbedding K (algebraMap (𝓞 K) K F) = _
-        simp only [F, map_sum, map_zsmul, hb, Int.cast_smul_eq_zsmul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [F, map_sum, map_zsmul, hb, Int.cast_smul_eq_zsmul]
       have hhom : GroundTheory.Global.homeomorphMixedSpace K
           (e (lam m) - e (lam m') - algebraMap K 𝔸[K] (F : K)).1 =
           ∑ i, (Int.fract (sm i) - Int.fract (sm' i)) • b i := by
@@ -289,7 +296,7 @@ private theorem finprod_le_finprod_of_nonneg' {ι : Type*} {f g : ι → ℝ} (h
       (fun i hi => Finset.mem_coe.2 (Finset.mem_union_left _ (hf.mem_toFinset.2 hi))),
     finprod_eq_prod_of_mulSupport_subset g (s := hf.toFinset ∪ hg.toFinset)
       (fun i hi => Finset.mem_coe.2 (Finset.mem_union_right _ (hg.mem_toFinset.2 hi)))]
-  exact Finset.prod_le_prod (fun i _ => h0 i) fun i _ => hfg i
+  exact Finset.prod_le_prod₀ (fun i _ => h0 i) fun i _ => hfg i
 
 theorem euclidNorm_two_le {E : Type*} [NormedField E] (y : Fin 2 → E) :
     euclidNorm y ≤ ‖y 0‖ + ‖y 1‖ := by
@@ -327,7 +334,7 @@ theorem adelicNorm_ratVec_single {n : ℕ} (j : Fin n) :
     funext i
     change ((finEval v).comp (algebraMap K 𝔸[K])) ((Pi.single j (1 : K) : Fin n → K) i) = _
     by_cases h : i = j
-    · subst h; simp
+    · subst h; simp [finEval]
     · rw [Pi.single_eq_of_ne h, map_zero, Pi.single_eq_of_ne h]
   simp only [adelicNorm, hinf, hfin, euclidNorm_pi_single_one, norm_pi_single_one, one_pow,
     Finset.prod_const_one, finprod_one, mul_one]
@@ -479,7 +486,7 @@ theorem exists_adelicNorm_vecMul_le : ∃ C : ℝ, 0 < C ∧ ∀ (α δ : IdeleG
       refine mul_le_mul ?_ ?_ (finprod_nonneg fun _ => norm_nonneg _) (by positivity)
       · calc ∏ w : InfinitePlace K, euclidNorm (infComp w z) ^ w.mult
             ≤ ∏ w : InfinitePlace K, (A * s) ^ w.mult :=
-              Finset.prod_le_prod (fun _ _ => pow_nonneg (euclidNorm_nonneg _) _) fun w _ =>
+              Finset.prod_le_prod₀ (fun _ _ => pow_nonneg (euclidNorm_nonneg _) _) fun w _ =>
                 pow_le_pow_left₀ (euclidNorm_nonneg _) (hinf w) _
           _ = (A * s) ^ d := by rw [Finset.prod_pow_eq_pow_sum, InfinitePlace.sum_mult_eq]
       · calc ∏ᶠ v : HeightOneSpectrum (𝓞 K), ‖finComp v z‖

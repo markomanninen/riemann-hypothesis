@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.CharacteristicPolynomialRoots.LeKerPt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.CharacteristicPolynomialRoots.LeKerPt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC Formalism.MainNotions.N ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws GlobalTheory.GalOfCusp
 
@@ -44,14 +48,14 @@ theorem UpperTheory.V.Ws.Pu.cpAlg :
     intro x
     induction x using MonoidAlgebra.induction_linear with
     | zero => simp
-    | add a b ha hb => simp only [map_add, Matrix.trace_add, ha, hb, Finset.sum_add_distrib]
+    | add a b ha hb => simp only [map_add (f := _), Matrix.trace_add, ha, hb, Finset.sum_add_distrib]
     | single g a => simp only [MonoidAlgebra.lift_single, Matrix.trace_smul, h1, Finset.smul_sum]
   set M := MonoidAlgebra.lift O (Matrix (Fin n) (Fin n) K) Γ (W.mat ρ) y with hM
   set N := fun j => MonoidAlgebra.lift O (Matrix (Fin (d j)) (Fin (d j)) K) Γ (W.mat (σ j)) y with hN
   have h3 : ∀ p : K[X], (aeval M p).trace = ∑ j ∈ t, (aeval (N j) p).trace := by
     intro p
     induction p using Polynomial.induction_on' with
-    | add a b ha hb => simp only [map_add, Matrix.trace_add, ha, hb, Finset.sum_add_distrib]
+    | add a b ha hb => simp only [map_add (f := _), Matrix.trace_add, ha, hb, Finset.sum_add_distrib]
     | monomial k a =>
       have := h2 (y ^ k)
       simp only [map_pow] at this

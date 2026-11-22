@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
-import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
-import Formalism.LocalToGlobal.CharacterGerms.NegMem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+public import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
+public import Formalism.LocalToGlobal.CharacterGerms.NegMem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+
+@[expose] public section
+
 open scoped BigOperators
 open NumberField Formalism.IncomingBounds Formalism.L2.FormalSeriesBounds Formalism.L2.Pj GlobalTheory.RowLaw ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
 
@@ -101,7 +106,7 @@ theorem exists_character : ∀ (C : Type) [Field C] (V : VF C) (O : Type) [CommR
   have hadd : ∀ x y, χ (x + y) = χ x + χ y := by
     intro x y
     obtain ⟨u, hu, hx, hy, h⟩ := three x y (x + y)
-    rw [map_add, Matrix.add_mulVec, hx, hy, ← add_smul] at h
+    rw [map_add (f := _), Matrix.add_mulVec, hx, hy, ← add_smul] at h
     exact smul_left_injective C hu h.symm
   have hmul : ∀ x y, χ (x * y) = χ x * χ y := by
     intro x y

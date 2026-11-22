@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocalizationSheafGlueModules
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocalizationSheafGlueModules
+
+@[expose] public section
 
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.localization_sheaf_glue_modules : ∀ (R E : Type) [CommRing R] [AddCommGroup E] [Module R E] (J : Type) [Finite J] (f : J → R), Ideal.span (Set.range f) = ⊤ →

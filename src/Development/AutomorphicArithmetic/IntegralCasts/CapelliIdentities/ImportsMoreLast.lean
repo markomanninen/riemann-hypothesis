@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qk10.exists_w :
     ∀ (K : Type) [inst : Field K] [NumberField K] {p : ℕ},

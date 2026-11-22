@@ -1,6 +1,10 @@
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.ShiftLastLetterThresholds
-import Formalism.PolynomialDimension.MultinomialDepth.PartnerM
-import Formalism.MahlerMeasure.MahlerMeasureProofs.MeanGam
+module
+
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.ShiftLastLetterThresholds
+public import Formalism.PolynomialDimension.MultinomialDepth.PartnerM
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.MeanGam
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.L4
 
@@ -30,7 +34,7 @@ noncomputable def resL (p : ℕ) [Fact p.Prime] (v : σ) (e : ℕ) :
     MvPolynomial σ ℚ_[p] →ₗ[ℚ_[p]] MvPolynomial σ ℚ_[p] where
   toFun := initPart v e
   map_add' x y := by
-    ext m; simp only [coeff_initPart, coeff_add]; split_ifs <;> simp
+    ext m; simp only [coeff_initPart, MvPolynomial.coeff_add]; split_ifs <;> simp
   map_smul' a x := by
     ext m
     simp only [coeff_initPart, RingHom.id_apply, coeff_smul]
@@ -41,7 +45,7 @@ theorem resL_apply (v : σ) (e : ℕ) (f : MvPolynomial σ ℚ_[p]) : resL p v e
 theorem initPart_add (v : σ) (e : ℕ) (f g : MvPolynomial σ ℚ_[p]) :
     initPart v e (f + g) = initPart v e f + initPart v e g := by
   ext m
-  simp only [coeff_initPart, coeff_add]
+  simp only [coeff_initPart, MvPolynomial.coeff_add]
   split_ifs <;> simp
 
 theorem initPart_smul (v : σ) (e : ℕ) (c : ℚ_[p]) (f : MvPolynomial σ ℚ_[p]) :
@@ -63,7 +67,7 @@ theorem initPart_int (v : σ) (e : ℕ) (f : MvPolynomial σ ℚ_[p]) (hf : f �
 theorem initPart_zero_X_mul (v : σ) (a : MvPolynomial σ ℚ_[p]) : initPart v 0 (X v * a) = 0 := by
   classical
   ext m
-  rw [coeff_initPart, coeff_zero]
+  simp only [coeff_initPart, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
   split_ifs with hm
   · rw [MvPolynomial.coeff_X_mul', if_neg (by simp [hm])]
   · rfl
@@ -87,37 +91,5 @@ theorem smul_int (c : ℚ_[p]) (hc : ‖c‖ ≤ 1) (a : MvPolynomial σ ℚ_[p]
   intro m
   rw [coeff_smul, smul_eq_mul, norm_mul]
   exact mul_le_one₀ hc (norm_nonneg _) (ha m)
-
-theorem norm_p_pow_le (n : ℕ) : ‖((p : ℚ_[p]) ^ n)‖ ≤ 1 := by
-  have h1 : ‖(p : ℚ_[p])‖ ≤ 1 := by simpa using (p : ℤ_[p]).2
-  rw [norm_pow]
-  exact pow_le_one₀ (norm_nonneg _) h1
-
-theorem exists_div (v : σ) (h : MvPolynomial σ ℚ_[p]) :
-    ∃ a, h = initPart v 0 h + X v * a ∧ (h ∈ IntPol p σ → a ∈ IntPol p σ) := by
-  classical
-  refine ⟨MvPolynomial.divMonomial h (Finsupp.single v 1), ?_, ?_⟩
-  · have hmod : MvPolynomial.modMonomial h (Finsupp.single v 1) = initPart v 0 h := by
-      ext m
-      rw [coeff_initPart]
-      by_cases hm : m v = 0
-      · rw [if_pos hm, MvPolynomial.coeff_modMonomial_of_not_le]
-        rw [Finsupp.single_le_iff]
-        omega
-      · rw [if_neg hm, MvPolynomial.coeff_modMonomial_of_le]
-        rw [Finsupp.single_le_iff]
-        omega
-    have hdm := MvPolynomial.divMonomial_add_modMonomial h (Finsupp.single v 1)
-    rw [← hmod]
-    calc h = monomial (Finsupp.single v 1) 1 * (MvPolynomial.divMonomial h (Finsupp.single v 1)) +
-          MvPolynomial.modMonomial h (Finsupp.single v 1) := hdm.symm
-      _ = MvPolynomial.modMonomial h (Finsupp.single v 1) + X v * (MvPolynomial.divMonomial h (Finsupp.single v 1)) := by
-        rw [add_comm]
-        rfl
-  · intro hh
-    rw [intPol_iff_norm] at hh ⊢
-    intro m
-    rw [MvPolynomial.coeff_divMonomial]
-    exact hh _
 
 end Formalism.InvariantFactorPaths.L4

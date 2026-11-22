@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.ExistsMonogenicSeparating
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.ExistsMonogenicSeparating
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory.CompanionTheory.Ar.Flat

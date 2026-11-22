@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.SemiDegSt
+module
+
+public import ReciprocityTheory.SemistableReduction.SemiDegSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,8 @@ theorem sdd_append_li {k₀ k₁ : ℕ} (b₀ : Fin k₀ → Fin r → K) (c b�
   have hb' : ∀ i, cutProjK K r e (b₀ i) = 0 := fun i => (sdd_proj_eq_zero_iff _).mpr (hb₀cut i)
   have h1 : ∑ j, g (Fin.natAdd k₀ j) • b₁ j = 0 := by
     have := congrArg (cutProjK K r e) hg
-    simpa [map_add, map_sum, map_smul, hb', hc'] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_add (f := _), map_sum, map_smul, hb', hc'] using this
   have h1' := Fintype.linearIndependent_iff.mp hb₁li _ h1
   have h0 : ∑ i, g (Fin.castAdd k₁ i) • b₀ i = 0 := by simpa [h1'] using hg
   have h0' := Fintype.linearIndependent_iff.mp hb₀li _ h0
@@ -86,7 +91,8 @@ theorem sdd_append_span {k₀ k₁ : ℕ} (B : Submodule (𝓞 K) (Fin r → K))
     · rw [algebraMap_smul]
       exact B.smul_mem _ (hcB j)
   have hycut : y ∈ cutSub K r e := by
-    rw [← sdd_proj_eq_zero_iff, ← sdd_cutProjK_eq, hy, map_sub, map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← sdd_proj_eq_zero_iff, ← sdd_cutProjK_eq, hy, map_sub, map_smul, map_sum]
     simp only [map_smul, sdd_cutProjK_eq, hcb, ← hβ, Finset.smul_sum, smul_smul, hβ']
     rw [sub_eq_zero]
     refine Finset.sum_congr rfl fun j _ => ?_
@@ -155,6 +161,6 @@ theorem sdd_index {k₀ k₁ : ℕ} (B : Submodule (𝓞 K) (Fin r → K)) (b₀
     obtain ⟨s, hs, t, ht, rfl⟩ := Submodule.mem_sup.mp hsup
     refine ⟨⟨t, ht, ?_⟩, hx⟩
     show projGe K r e t = projGe K r e (s + t)
-    rw [map_add, (sdd_proj_eq_zero_iff s).mpr hs.2, zero_add]
+    rw [map_add (f := _), (sdd_proj_eq_zero_iff s).mpr hs.2, zero_add]
 
 end ReciprocityTheory.MultiplicativeHeights

@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
-import Formalism.LocalToGlobal.ProjectiveLattices.HostInt
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FactPrincipalDatum
-import Formalism.SharpRestriction.GlobalSchurBounds.Joints
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.StandardCharacterConductorAlmostAll
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HomLatticeCompletionSelfAnnihilatorAtPlaces
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FractionalIdealLocalGeneratorAtBasePrimeStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FractionalIdealGeneratedByOneAlmostEverywhereStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
+public import Formalism.LocalToGlobal.ProjectiveLattices.HostInt
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FactPrincipalDatum
+public import Formalism.SharpRestriction.GlobalSchurBounds.Joints
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.StandardCharacterConductorAlmostAll
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HomLatticeCompletionSelfAnnihilatorAtPlaces
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FractionalIdealLocalGeneratorAtBasePrimeStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FractionalIdealGeneratedByOneAlmostEverywhereStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory Matrix ValuativeRel IsLocalRing GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.SeeSaw GlobalTheory.FinPl
 open IsDedekindDomain NumberField
 open scoped TensorProduct
@@ -73,7 +78,7 @@ theorem alpha_mul_inv (S : Finset (Pl D)) (a : Pl D → D.host.E) (ha : ∀ v �
   rw [alpha, add_mul, one_mul, Finset.sum_mul, Finset.sum_congr rfl key, alpha, add_assoc, ← Finset.sum_add_distrib]
   have h2 : ∀ v ∈ S, ex v * incA D ((a v)⁻¹ - 1) + ex v * incA D ((a v - 1) * (a v)⁻¹) = 0 := by
     intro v _
-    rw [← mul_add, ← map_add]
+    rw [← mul_add, ← map_add (f := _)]
     have : (a v)⁻¹ - 1 + (a v - 1) * (a v)⁻¹ = 0 := by rw [sub_mul, mul_inv_cancel₀ (h0 v)]; ring
     rw [this, map_zero, mul_zero]
   rw [Finset.sum_congr rfl h2, Finset.sum_const_zero, add_zero]

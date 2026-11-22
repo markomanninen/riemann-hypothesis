@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.JetsPhW
+module
+
+public import Formalism.PeriodIntegrals.JetsPhW
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,14 +18,14 @@ private theorem coeff_dX (f : PowerSeries R) (n : ℕ) :
     PowerSeries.coeff n (PI.JetsPhW.dX f) = ((n : R) + 1) * PowerSeries.coeff (n + 1) f := by
   simp only [PI.JetsPhW.dX, PowerSeries.coeff_mk]
 
-theorem dX_eq (f : PowerSeries R) : dX f = PowerSeries.derivative R f := by
+theorem dX_eq (f : PowerSeries R) : dX f = PowerSeries.derivative (R := R) f := by
   ext n
   rw [PowerSeries.coeff_derivative, coeff_dX]
   ring
 
 theorem degree_le_of_le {y e : σ →₀ ℕ} (h : y ≤ e) : y.degree ≤ e.degree := by
   obtain ⟨z, rfl⟩ := exists_add_of_le h
-  rw [map_add]
+  rw [map_add (f := _)]
   exact Nat.le_add_right _ _
 
 theorem coeff_pow_eq_zero_of_degree_lt {a : MvPowerSeries σ R} (ha : MvPowerSeries.constantCoeff a = 0)
@@ -51,8 +55,8 @@ theorem coeff_mul_congr (u : MvPowerSeries σ R) {f g : MvPowerSeries σ R} {e :
 
 theorem pderiv_subst_coe (i : σ) {a : MvPowerSeries σ R} (ha : MvPowerSeries.constantCoeff a = 0)
     (q : Polynomial R) :
-    MvPowerSeries.pderiv R i (PowerSeries.subst a (q : PowerSeries R)) =
-      MvPowerSeries.pderiv R i a * PowerSeries.subst a (dX (q : PowerSeries R)) := by
+    MvPowerSeries.pderiv (R := R) i (PowerSeries.subst a (q : PowerSeries R)) =
+      MvPowerSeries.pderiv (R := R) i a * PowerSeries.subst a (dX (q : PowerSeries R)) := by
   have hs : PowerSeries.HasSubst a := PowerSeries.HasSubst.of_constantCoeff_zero ha
   rw [dX_eq, PowerSeries.derivative_coe, PowerSeries.subst_coe hs,
     PowerSeries.subst_coe hs, Derivation.map_aeval, smul_eq_mul]
@@ -60,20 +64,20 @@ theorem pderiv_subst_coe (i : σ) {a : MvPowerSeries σ R} (ha : MvPowerSeries.c
 
 theorem pderiv_subst (i : σ) {a : MvPowerSeries σ R} (ha : MvPowerSeries.constantCoeff a = 0)
     (g : PowerSeries R) :
-    MvPowerSeries.pderiv R i (PowerSeries.subst a g) =
-      MvPowerSeries.pderiv R i a * PowerSeries.subst a (dX g) := by
+    MvPowerSeries.pderiv (R := R) i (PowerSeries.subst a g) =
+      MvPowerSeries.pderiv (R := R) i a * PowerSeries.subst a (dX g) := by
   ext e
-  have h1 : MvPowerSeries.coeff e (MvPowerSeries.pderiv R i (PowerSeries.subst a g)) =
-      MvPowerSeries.coeff e (MvPowerSeries.pderiv R i
+  have h1 : MvPowerSeries.coeff e (MvPowerSeries.pderiv (R := R) i (PowerSeries.subst a g)) =
+      MvPowerSeries.coeff e (MvPowerSeries.pderiv (R := R) i
         (PowerSeries.subst a (PowerSeries.trunc (e.degree + 2) g : PowerSeries R))) := by
     rw [MvPowerSeries.coeff_pderiv, MvPowerSeries.coeff_pderiv]
     congr 1
     refine coeff_subst_congr ha (N := e.degree + 2) (fun k hk => ?_) ?_
     · exact (PowerSeries.coeff_coe_trunc_of_lt hk).symm
-    · rw [map_add, Finsupp.degree_single]
+    · rw [map_add (f := _), Finsupp.degree_single]
       omega
-  have h2 : MvPowerSeries.coeff e (MvPowerSeries.pderiv R i a * PowerSeries.subst a (PI.JetsPhW.dX g)) =
-      MvPowerSeries.coeff e (MvPowerSeries.pderiv R i a *
+  have h2 : MvPowerSeries.coeff e (MvPowerSeries.pderiv (R := R) i a * PowerSeries.subst a (PI.JetsPhW.dX g)) =
+      MvPowerSeries.coeff e (MvPowerSeries.pderiv (R := R) i a *
         PowerSeries.subst a (PI.JetsPhW.dX (PowerSeries.trunc (e.degree + 2) g : PowerSeries R))) := by
     refine coeff_mul_congr _ fun y hy => ?_
     refine coeff_subst_congr ha (N := e.degree + 1) (fun k hk => ?_) ?_
@@ -82,21 +86,15 @@ theorem pderiv_subst (i : σ) {a : MvPowerSeries σ R} (ha : MvPowerSeries.const
   rw [h1, pderiv_subst_coe i ha, h2]
 
 theorem pderiv_subst_X_self (i : σ) (g : PowerSeries R) :
-    MvPowerSeries.pderiv R i (PowerSeries.subst (MvPowerSeries.X i) g) =
+    MvPowerSeries.pderiv (R := R) i (PowerSeries.subst (MvPowerSeries.X i) g) =
       PowerSeries.subst (MvPowerSeries.X i) (dX g) := by
   rw [pderiv_subst i (a := MvPowerSeries.X i) (MvPowerSeries.constantCoeff_X i) g,
     MvPowerSeries.pderiv_X_self, one_mul]
 
 theorem pderiv_subst_X_ne {i j : σ} (h : j ≠ i) (g : PowerSeries R) :
-    MvPowerSeries.pderiv R i (PowerSeries.subst (MvPowerSeries.X j) g) = 0 := by
+    MvPowerSeries.pderiv (R := R) i (PowerSeries.subst (MvPowerSeries.X j) g) = 0 := by
   rw [pderiv_subst i (a := MvPowerSeries.X j) (MvPowerSeries.constantCoeff_X j) g,
     MvPowerSeries.pderiv_X_of_ne h, zero_mul]
-
-def sumL (l : PowerSeries R) (c : σ → R) (s : Finset σ) : MvPowerSeries σ R :=
-  ∑ j ∈ s, MvPowerSeries.C (c j) * PowerSeries.subst (MvPowerSeries.X j) l
-
-def DvR (v : PowerSeries R) (i : σ) (f : MvPowerSeries σ R) : MvPowerSeries σ R :=
-  PowerSeries.subst (MvPowerSeries.X i) v * MvPowerSeries.pderiv R i f
 
 theorem subst_one' (a : MvPowerSeries σ R) : PowerSeries.subst a (1 : PowerSeries R) = 1 := by
   simpa using PowerSeries.subst_C (a := a) (1 : R)

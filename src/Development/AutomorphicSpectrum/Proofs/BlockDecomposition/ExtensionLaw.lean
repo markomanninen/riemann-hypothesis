@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.ConvGrOf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SectionLawHolds
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.ConvGrOf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SectionLawHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ theorem ext_mul {K P : Subgroup G} {f : G → ℝ} (hadd : ∀ p ∈ P, ∀ q �
     (hfK : ∀ p ∈ P, p ∈ K → f p = 0) {p k : G} (hp : p ∈ P) (hk : k ∈ K) :
     PositivityTheory.RgEis.ext K P f (p * k) = f p := by
   have hex : ∃ c : K, p * k * (c : G)⁻¹ ∈ P := ⟨⟨k, hk⟩, by simpa using hp⟩
-  rw [PositivityTheory.RgEis.ext, dif_pos hex]
+  rw [PositivityTheory.RgEis.ext, dite_eq_left hex]
   have hcP : p * k * (hex.choose : G)⁻¹ ∈ P := hex.choose_spec
   have hq : p⁻¹ * (p * k * (hex.choose : G)⁻¹) ∈ P := P.mul_mem (P.inv_mem hp) hcP
   have hqK : p⁻¹ * (p * k * (hex.choose : G)⁻¹) ∈ K := by

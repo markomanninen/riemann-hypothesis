@@ -1,6 +1,10 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.GoodOrigin
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.GoodOrigin
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+
+@[expose] public section
 
 noncomputable section
 

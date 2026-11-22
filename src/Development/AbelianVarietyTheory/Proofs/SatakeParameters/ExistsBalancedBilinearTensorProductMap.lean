@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
-import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsPotentiallySemistableCoefficientFieldEnlarge
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CharpolyEqOfIsNilpotentSub
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsFrobSSWdRep
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsUnitOfStableLine
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinrankLetterHomComp
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CharpolyWeilDelignePotSemistableEnlargeCoefficie
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RepERankOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DmulMulDRight
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DeRhamCharacterTwistIffLocalEmbedding
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+public import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsPotentiallySemistableCoefficientFieldEnlarge
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CharpolyEqOfIsNilpotentSub
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsFrobSSWdRep
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsUnitOfStableLine
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinrankLetterHomComp
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CharpolyWeilDelignePotSemistableEnlargeCoefficie
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RepERankOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DmulMulDRight
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DeRhamCharacterTwistIffLocalEmbedding
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain Polynomial GlobalTheory.HeightCounting GlobalTheory.RowTie GlobalTheory.SplitRead GlobalTheory.NPin
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open Formalism.BasicNotions.Loc GlobalTheory.Pst GlobalTheory.WeilDeligne
@@ -39,11 +44,11 @@ theorem baseBil_left (β : D₁ →ₗ[LL] D₂ →ₗ[LL] D₃) (f₁ : Module.
     baseBil F β (f₁.baseChange F w) z = f₃.baseChange F (baseBil F β w z) := by
   induction w using TensorProduct.induction_on with
   | zero => simp
-  | add w w' hw hw' => simp [map_add, LinearMap.add_apply, hw, hw']
+  | add w w' hw hw' => simp [map_add (f := _), LinearMap.add_apply, hw, hw']
   | tmul a x =>
     induction z using TensorProduct.induction_on with
     | zero => simp
-    | add z z' hz hz' => simp only [map_add, hz, hz']
+    | add z z' hz hz' => simp only [map_add (f := _), hz, hz']
     | tmul b y => simp [LinearMap.baseChange_tmul, baseBil_tmul, h]
 
 theorem baseBil_right (β : D₁ →ₗ[LL] D₂ →ₗ[LL] D₃) (f₂ : Module.End LL D₂) (f₃ : Module.End LL D₃)
@@ -51,11 +56,11 @@ theorem baseBil_right (β : D₁ →ₗ[LL] D₂ →ₗ[LL] D₃) (f₂ : Module
     baseBil F β w (f₂.baseChange F z) = f₃.baseChange F (baseBil F β w z) := by
   induction w using TensorProduct.induction_on with
   | zero => simp
-  | add w w' hw hw' => simp [map_add, LinearMap.add_apply, hw, hw']
+  | add w w' hw hw' => simp [map_add (f := _), LinearMap.add_apply, hw, hw']
   | tmul a x =>
     induction z using TensorProduct.induction_on with
     | zero => simp
-    | add z z' hz hz' => simp only [map_add, hz, hz']
+    | add z z' hz hz' => simp only [map_add (f := _), hz, hz']
     | tmul b y => simp [LinearMap.baseChange_tmul, baseBil_tmul, h]
 
 end GlobalTheory.LetterDescent

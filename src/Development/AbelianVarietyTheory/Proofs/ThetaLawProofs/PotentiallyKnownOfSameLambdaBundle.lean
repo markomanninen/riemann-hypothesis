@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.GeomIntSelf
-import Development.AbelianVarietyTheory.Statements.FundamentalDomains.AtOfNumberField
-import Development.AbelianVarietyTheory.Statements.ThetaLevelCharacters.MemThetaLevelCharDimZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.SqOfCalculus
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsKeyPBRing
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.StalkOfAppLEEq
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.LbIsoDescendsToSubfieldContainingFinset
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsTwoTorsionTranslateSameLambdaBundleStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ThetaFrameValueKnownOfTwoTorsionTranslateStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.GeomIntSelf
+public import Development.AbelianVarietyTheory.Statements.FundamentalDomains.AtOfNumberField
+public import Development.AbelianVarietyTheory.Statements.ThetaLevelCharacters.MemThetaLevelCharDimZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.SqOfCalculus
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsKeyPBRing
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.StalkOfAppLEEq
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.LbIsoDescendsToSubfieldContainingFinset
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsTwoTorsionTranslateSameLambdaBundleStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ThetaFrameValueKnownOfTwoTorsionTranslateStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
@@ -129,7 +134,7 @@ theorem known_of_point (hL : Out.Laws) (hT : ThetaUnifAV) {K F : Type} [Field K]
   · have hw' := ((isProd_transl e.hom t).push hχ.1).unique hw (by rw [Category.assoc, ht]) hφe
     have k := lbIso_pull_comp hχ.2.2 (e.hom ≫ ((toUnit z.P.A ≫ t) * 𝟙 z.P.A)).left
     rw [hw'] at k
-    exact LBIso.trans y'.P.isLB (pull_isLB y.P.isLB _) (pull_isLB z.P.isLB _) hi k.symm
+    exact LBIso.trans y'.P.isLB (LB.isLB_pull y.P.isLB _) (LB.isLB_pull z.P.isLB _) hi k.symm
 
 theorem epi_spMap {k Ω : Type} [Field k] [Field Ω] (σ : k →+* Ω) : Epi (spMap σ) := by
   letI := σ.toAlgebra
@@ -144,7 +149,7 @@ theorem exists_polPB {R R' : Type} [CommRing R] [CommRing R'] (P : Out.PolAV (Sp
   have h := isGrpPullback_pullback P.A (spMap f)
   let φ : ((Over.pullback (spMap f)).obj P.A).left ⟶ P.A.left := pullback.fst P.A.hom (spMap f)
   change IsGrpPullback _ _ _ φ at h
-  have hL' := pull_isLB P.isLB φ
+  have hL' := LB.isLB_pull P.isLB φ
   have hw := (isGen_iff _).1 (idIso_isGen hL')
   exact ⟨{ A := (Over.pullback (spMap f)).obj P.A
            isAb := Out.TLinPf.isAb_pullback (spMap f) P.A P.isAb
@@ -173,8 +178,8 @@ theorem exists_point (hL : Out.Laws) {K Ω : Type} [Field K] [Field Ω] [IsAlgCl
     refine ⟨_, isSquare_tensor e'.hom, ?_⟩
     have k₁ := lbIso_pull_comp i₂ (e'.hom ⊗ₘ e'.hom).left
     rw [isSquare_unique (isSquare_comp (isSquare_tensor e'.hom) s₂) s₂' he'] at k₁
-    exact LBIso.trans (DVR.linComb_isLB _ P'.isLB _ _) (pull_isLB lQ _)
-      (pull_isLB (DVR.linComb_isLB _ Q'.isLB _ _) _) i₂' k₁.symm
+    exact LBIso.trans (DVR.linComb_isLB _ P'.isLB _ _) (LB.isLB_pull lQ _)
+      (LB.isLB_pull (DVR.linComb_isLB _ Q'.isLB _ _) _) i₂' k₁.symm
   obtain ⟨t, ht, hi⟩ := GlobalTheory.T.exists_twoTorsion_translate_same_lambdaBundle hL Ω Q' P' e' hm hl'
   refine ⟨t.left ≫ χ, P'.A, ψ, (e'.hom ≫ ((toUnit Q'.A ≫ t) * 𝟙 Q'.A)).left ≫ χ, ?_, ?_, hψ.1.1, ?_, ?_⟩
   · rw [Category.assoc, hχ.1.1.w, ← Category.assoc, Over.w t]
@@ -183,18 +188,18 @@ theorem exists_point (hL : Out.Laws) {K Ω : Type} [Field K] [Field Ω] [IsAlgCl
     exact ((sq_eq_one_iff t).1 ht).push hχ.1
   · rw [← he', ← Category.assoc]
     exact (isProd_transl e'.hom t).push hχ.1
-  · exact LBIso.trans (pull_isLB P.isLB _) P'.isLB (pull_isLB Q.isLB _) hψ.2.2.symm
-      (LBIso.trans P'.isLB (pull_isLB Q'.isLB _) (pull_isLB Q.isLB _) hi (lbIso_pull_comp hχ.2.2 _))
+  · exact LBIso.trans (LB.isLB_pull P.isLB _) P'.isLB (LB.isLB_pull Q.isLB _) hψ.2.2.symm
+      (LBIso.trans P'.isLB (LB.isLB_pull Q'.isLB _) (LB.isLB_pull Q.isLB _) hi (lbIso_pull_comp hχ.2.2 _))
 
 theorem lbIso_pull_both {W Y X Z : Scheme.{0}} {L : LB X} {M : LB Z} {a : Y ⟶ X} {b : Y ⟶ Z} (j : W ⟶ Y)
     (hL : L.IsLB) (hM : M.IsLB) :
     LBIso ((L.pull a).pull j) ((M.pull b).pull j) ↔ LBIso (L.pull (j ≫ a)) (M.pull (j ≫ b)) := by
-  have k₁ := lbIso_pull_comp (⟨idIso _, idIso_isGen (pull_isLB hL a)⟩ : LBIso (L.pull a) (L.pull a)) j
-  have k₂ := lbIso_pull_comp (⟨idIso _, idIso_isGen (pull_isLB hM b)⟩ : LBIso (M.pull b) (M.pull b)) j
-  have a₁ := pull_isLB (pull_isLB hL a) j
-  have a₂ := pull_isLB (pull_isLB hM b) j
-  have b₁ := pull_isLB hL (j ≫ a)
-  have b₂ := pull_isLB hM (j ≫ b)
+  have k₁ := lbIso_pull_comp (⟨idIso _, idIso_isGen (LB.isLB_pull hL a)⟩ : LBIso (L.pull a) (L.pull a)) j
+  have k₂ := lbIso_pull_comp (⟨idIso _, idIso_isGen (LB.isLB_pull hM b)⟩ : LBIso (M.pull b) (M.pull b)) j
+  have a₁ := LB.isLB_pull (LB.isLB_pull hL a) j
+  have a₂ := LB.isLB_pull (LB.isLB_pull hM b) j
+  have b₁ := LB.isLB_pull hL (j ≫ a)
+  have b₂ := LB.isLB_pull hM (j ≫ b)
   exact ⟨fun h => LBIso.trans b₁ a₁ b₂ k₁.symm (LBIso.trans a₁ a₂ b₂ h k₂),
     fun h => LBIso.trans a₁ b₁ a₂ k₁ (LBIso.trans b₁ b₂ a₂ h k₂.symm)⟩
 
@@ -231,7 +236,7 @@ theorem potKnown_of_lamIs : Out.Laws → ThetaUnifAV → ∀ (K : Type) [Field K
     (by rw [← Category.assoc, π₁])
   haveI : IsProper X₁.hom := MorphismProperty.of_isPullback (P := @IsProper) hψ₁ inferInstance
   obtain ⟨s', hs'⟩ := lbIso_descends_to_subfield_containing_finset K₁ Ω (algebraMap K₁ Ω) X₁ X π (P.L.pull ψ₁)
-    (y.P.L.pull w₁) hπ inferInstance inferInstance (pull_isLB P.isLB _) (pull_isLB y.P.isLB _)
+    (y.P.L.pull w₁) hπ inferInstance inferInstance (LB.isLB_pull P.isLB _) (LB.isLB_pull y.P.isLB _)
     ((lbIso_pull_both π P.isLB y.P.isLB).2 (by rw [π₁, πw]; exact hi))
   let K₂ := IntermediateField.adjoin K₁ (s' : Set Ω)
   haveI : FiniteDimensional K₁ K₂ :=
@@ -260,7 +265,7 @@ theorem potKnown_of_lamIs : Out.Laws → ThetaUnifAV → ∀ (K : Type) [Field K
   refine known_of_point hL hT _ y y' (φ ≫ e.hom.left) (a ≫ w₁)
     ((hφ.1.comp (isGrpPullback_of_iso e)).congr (Category.comp_id _) rfl)
     ((spMap j ≫ spMap (algebraMap K₁ K₂)) ≫ p₁) (by rw [Category.assoc, q₁, c₂]) ?_ ?_
-    (LBIso.trans y'.P.isLB (pull_isLB P.isLB _) (pull_isLB y.P.isLB _) hφ.2.2 i₃) hk
+    (LBIso.trans y'.P.isLB (LB.isLB_pull P.isLB _) (LB.isLB_pull y.P.isLB _) hφ.2.2 i₃) hk
   · rw [c₂, Category.assoc _ (spMap (algebraMap K K₁))]
     exact r₁.comp _
   · rw [← Category.assoc, ← a₂, ← a₁, Category.assoc, Category.assoc]

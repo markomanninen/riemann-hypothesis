@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.PieceEqPieceT
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PieceUnitSetEqSmoothingMulPieceRaw
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.PieceEqPieceT
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PieceUnitSetEqSmoothingMulPieceRaw
+
+@[expose] public section
 
 noncomputable section
 

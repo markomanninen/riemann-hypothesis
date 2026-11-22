@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsExpLieAlgebraComplexUnits
-import GroundTheory.AutomorphicForms.GKModules.Casimir
-import GroundTheory.AutomorphicForms.HarishChandraRegularity.ExpHaar
-import GroundTheory.AutomorphicForms.HarishChandraInvariance.Compact
-import GroundTheory.AutomorphicForms.DixmierMalliavin
-import GroundTheory.AutomorphicForms.GKModules.ParametricIntegral
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BoundedDerivFunctionalContDiffExpLineStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BoundedDerivFunctionalTsumReplicateStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsExpLieAlgebraComplexUnits
+public import GroundTheory.AutomorphicForms.GKModules.Casimir
+public import GroundTheory.AutomorphicForms.HarishChandraRegularity.ExpHaar
+public import GroundTheory.AutomorphicForms.HarishChandraInvariance.Compact
+public import GroundTheory.AutomorphicForms.DixmierMalliavin
+public import GroundTheory.AutomorphicForms.GKModules.ParametricIntegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BoundedDerivFunctionalContDiffExpLineStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BoundedDerivFunctionalTsumReplicateStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,10 +102,11 @@ theorem smFn_dixmierMalliavin_step : ∀ (𝔸 : Type) [NormedRing 𝔸] [Normed
     rw [integral_tsum_of_summable_integral_norm hTi hsum]
     congr 1
     funext t
-    simp only [T, hD, List.nil_append]
     rw [← tsum_mul_left]
     congr 1
     funext p
+    dsimp only [T, List.nil_append]
+    rw [hD]
     ring
   · congr 1; funext t; rw [mul_comm]
 

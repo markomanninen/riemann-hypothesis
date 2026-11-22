@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.DominantRearrangementProperties
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.DominantRearrangementProperties
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ private theorem cf_smul (c : ℂ) (f : FR n) (x : Wt n) : cf (c • f) x = c * c
 
 private theorem cf_sum {ι : Type} (s : Finset ι) (f : ι → FR n) (x : Wt n) :
     cf (∑ i ∈ s, f i) x = ∑ i ∈ s, cf (f i) x := by
-  simp [cf, Finsupp.finset_sum_apply]
+  simp [cf, Finsupp.finsetSum_apply]
 
 private theorem cf_ex (y x : Wt n) : cf (ex y) x = if y = x then 1 else 0 := by
   classical
@@ -127,7 +131,8 @@ private theorem alt_comp (x : Wt n) (w : Equiv.Perm (Fin n)) : alt (x ∘ w) = s
 
 private theorem act_alt (x : Wt n) (v : Equiv.Perm (Fin n)) : act v (alt x) = sg v • alt x := by
   unfold alt
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   refine Fintype.sum_equiv (Equiv.mulRight v) _ _ fun u => ?_
   have e : (x ∘ u) ∘ v = x ∘ (Equiv.mulRight v u) := rfl
   rw [map_smul, act_ex, e, smul_smul]

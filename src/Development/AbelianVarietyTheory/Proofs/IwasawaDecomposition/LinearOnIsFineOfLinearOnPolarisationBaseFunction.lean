@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEqAddOfRedVEq
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonnegSumSmulIntBilinFormToRealMemPsdCone
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEqAddOfRedVEq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonnegSumSmulIntBilinFormToRealMemPsdCone
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,15 +27,15 @@ theorem sum_le_evalR {φ : InvFun ℤ} (h : IsPolFanOn (id : ℤ → ℤ) φ X) 
     (h1 : ∀ i, γ i ∈ balForms (id : ℤ → ℤ) X) (h2 : ∀ i y, 0 ≤ γ i y y) {c : Fin m → ℝ} (hc : ∀ i, 0 ≤ c i) :
     ∑ i, c i * φ.evalZ (γ i) ≤ evalR φ (∑ i, c i • toReal (γ i)) := by
   classical
-  have hmem : ∀ d : Fin m → ℝ, (∀ i, 0 ≤ d i) → ∑ i, d i • toReal (γ i) ∈ psdCone (id : ℤ → ℤ) X :=
+  have hmem : ∀ d : Fin m → ℝ, (∀ i, 0 ≤ d i) → ∑ i, d i • toReal (γ i) ∈ psdCone (bar := (id : ℤ → ℤ)) (X := X) :=
     fun d hd => GlobalTheory.PolFan.ConeSub.sum_smul_toReal_mem_psdCone ℤ id X m γ d h1 h2 hd
-  have hsub : ∀ s : Finset (Fin m), ∑ i ∈ s, c i • toReal (γ i) ∈ psdCone (id : ℤ → ℤ) X := fun s => by
+  have hsub : ∀ s : Finset (Fin m), ∑ i ∈ s, c i • toReal (γ i) ∈ psdCone (bar := (id : ℤ → ℤ)) (X := X) := fun s => by
     have := hmem (fun i => if i ∈ s then c i else 0) fun i => by
       split_ifs
       · exact hc i
       · exact le_rfl
     simpa [ite_smul, Finset.sum_ite_mem] using this
-  have hone : ∀ a, toReal (γ a) ∈ psdCone (id : ℤ → ℤ) X := fun a => by
+  have hone : ∀ a, toReal (γ a) ∈ psdCone (bar := (id : ℤ → ℤ)) (X := X) := fun a => by
     have := hmem (Pi.single a 1) fun i => by
       by_cases e : i = a
       · subst e; simp
@@ -167,9 +171,9 @@ theorem isFine_of_additive [Module.Finite ℤ X] {γ : Fin m → LinearMap.Bilin
   have hn : ∀ x : X, (M + 1) • x = ((M : ℤ) + 1) • x := fun x => by
     rw [← natCast_zsmul]; push_cast; rfl
   have e1 : s a₀ + (M + 1) • s d = s α := by
-    rw [hd, map_add, map_smul, hn]
+    rw [hd, map_add (f := _), map_smul, hn]
   have e2 : s a₀ + (M + 1) • s e = s (a₀ + ((M : ℤ) + 1) • e) := by
-    rw [map_add, map_smul, hn]
+    rw [map_add (f := _), map_smul, hn]
   rw [e1, e2]
   have h3 := classMin_le M (h i) s (a₀ + ((M : ℤ) + 1) • e)
   rw [redV_add_smul, heq i (Finset.mem_univ i)] at h3
@@ -179,8 +183,8 @@ end Mean
 
 end GlobalTheory.PolFan.LinOn
 
-open GlobalTheory.PolFan.LinOn in
 
+open GlobalTheory.PolFan.LinOn in
 theorem GlobalTheory.PolFan.linearOn_and_isFine_of_linearOn_baseFun (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E)
     (g q D : ℕ) (φs : InvFun ℤ) (𝓜 : Finset ℕ) (X : Type) [AddCommGroup X] [Module (𝓞 E) X] [Module.Finite (𝓞 E) X]
     [Module.Projective (𝓞 E) X] (hD : 0 < D) (hφ : IsPolFan (id : ℤ → ℤ) g φs) (hq : Module.finrank ℚ E * q ≤ g)

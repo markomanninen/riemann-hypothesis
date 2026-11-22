@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
-import Development.AbelianVarietyTheory.Definitions.Jets.JetsOnCopiesCompatibleFrames
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.FiniteTorsOfFiniteTorsion
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CubWeilOneLeft
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDJet
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
+public import Development.AbelianVarietyTheory.Definitions.Jets.JetsOnCopiesCompatibleFrames
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.FiniteTorsOfFiniteTorsion
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CubWeilOneLeft
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDJet
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -41,7 +45,7 @@ theorem evHom_apply (f : MvPowerSeries κ R) : evHom ha f = nEval f a := by
 include ha
 
 theorem nEval_add (f g : MvPowerSeries κ R) : nEval (f + g) a = nEval f a + nEval g a := by
-  simp only [← evHom_apply ha, map_add]
+  simp only [← evHom_apply ha, map_add (f := _)]
 
 theorem nEval_sub (f g : MvPowerSeries κ R) : nEval (f - g) a = nEval f a - nEval g a := by
   simp only [← evHom_apply ha, map_sub]

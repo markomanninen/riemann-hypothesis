@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HermSysHypOneLeLambdaZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasBoundedPolesGlobalData
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HermSysHypOneLeLambdaZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBoundedPolesGlobalData
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+
+@[expose] public section
 
 set_option autoImplicit false
 

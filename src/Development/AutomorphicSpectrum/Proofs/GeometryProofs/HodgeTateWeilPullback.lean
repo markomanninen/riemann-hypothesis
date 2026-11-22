@@ -1,19 +1,24 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenWeil
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHTFormOver
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsVBOneOfChartGenerators
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeDominantCompat
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateWeilUniqueStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateWeilLocalStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualMapSnd
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FullTorsionPullbackPointsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.WeilPairingTransportRelationStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SemiAbelianOfPullbackStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualNumberSectionDerivationStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackSmoothStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.WeilPairingPullbackStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenWeil
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHTFormOver
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsVBOneOfChartGenerators
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeDominantCompat
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateWeilUniqueStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateWeilLocalStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualMapSnd
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FullTorsionPullbackPointsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.WeilPairingTransportRelationStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SemiAbelianOfPullbackStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualNumberSectionDerivationStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackSmoothStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.WeilPairingPullbackStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
 
@@ -46,7 +51,8 @@ theorem deriv_gen {X : Scheme.{0}} {Ω : Type} [Field Ω] {ξ : Spec (CommRingCa
     rfl
   have hy : y = ∑ k, a k • b k := by
     apply LiePull.val_inj
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine hce.trans (Finset.sum_congr rfl fun k _ => ?_)
     rw [LiePull.val_smul]
     rfl
@@ -62,7 +68,8 @@ theorem deriv_gen {X : Scheme.{0}} {Ω : Type} [Field Ω] {ξ : Spec (CommRingCa
   have e₂ : ∀ k, D (b k) = (secVal (B := DualNumber A) (v k).left W (hk k) s).snd := fun k =>
     (hD (b k)).trans (key _ _ (hbv k) (hin₀ (b k)) (hk k))
   refine e₁.trans ?_
-  rw [hy, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hy, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_smul, smul_eq_mul, e₂ k]
 
@@ -80,7 +87,7 @@ theorem om_pull {X X' : Scheme.{0}} {Ω Ω' : Type} [Field Ω] [Field Ω'] {ξ :
     [IsCommMonObj G'] {φ : G'.left ⟶ G.left} (hp : IsGrpPullback G' G f φ) (hs : Smooth G.hom)
     {E : Type} [AddCommGroup E] [Module Ω E] (M : LieModel G ξ E) {E' : Type} [AddCommGroup E'] [Module Ω' E']
     (M' : LieModel G' ξ' E') (j : E →+ E') (jd : Module.Dual Ω E →+ Module.Dual Ω' E')
-    (hj : ∀ v, (M'.pt (j v)).left ≫ φ = spMap (dualMap i) ≫ (M.pt v).left)
+    (hj : ∀ v, (M'.pt (j v)).left ≫ φ = spMap (GlobalTheory.CompanionTheory.Ar.dualMap i) ≫ (M.pt v).left)
     (hjd : ∀ w v, jd w (j v) = i (w v)) : M'.omLat = M.omLat.pull ξ' f jd := by
   funext q'
   obtain ⟨r, B, B', v, v', hBB, hl, hl', hv, hv', hvv⟩ :=
@@ -153,7 +160,7 @@ theorem ht_pull {X X' : Scheme.{0}} {Ω Ω' : Type} [Field Ω] [Field Ω'] {ξ :
     (t2 : ∀ (g' : Over.mk ξ' ⟶ G'), g' ^ n = 1 → ∃ g : Over.mk ξ ⟶ G, g ^ n = 1 ∧ g'.left ≫ φ = spMap i ≫ g.left)
     {E : Type} [AddCommGroup E] [Module Ω E] (M : LieModel G ξ E) {E' : Type} [AddCommGroup E'] [Module Ω' E']
     (M' : LieModel G' ξ' E') (j : E →+ E') (jd : Module.Dual Ω E →+ Module.Dual Ω' E')
-    (hj : ∀ v, (M'.pt (j v)).left ≫ φ = spMap (dualMap i) ≫ (M.pt v).left)
+    (hj : ∀ v, (M'.pt (j v)).left ≫ φ = spMap (GlobalTheory.CompanionTheory.Ar.dualMap i) ≫ (M.pt v).left)
     (hjd : ∀ w v, jd w (j v) = i (w v)) (q' : Cpt ξ') {y : Over.mk ξ ⟶ G} {y' : Over.mk ξ' ⟶ G'}
     (hy : y ^ n = 1) (hy' : y' ^ n = 1)
     (hc : ∀ (g : Over.mk ξ ⟶ G) (g' : Over.mk ξ' ⟶ G'), g ^ n = 1 → g' ^ n = 1 → g'.left ≫ φ = spMap i ≫ g.left →
@@ -193,9 +200,10 @@ theorem ht_pull {X X' : Scheme.{0}} {Ω Ω' : Type} [Field Ω] [Field Ω'] {ξ :
       fun t => RegAtDom.genMap_stalkMap hd q'.1 q'.2 (hd.specializes q') t
     refine Eq.trans ?_ (congrArg (fun t => genMap ξ' q' t + (n : Ω') * ∑ k, genMap ξ' q' (a k) * i (ρ k)) hsum).symm
     show jd w (∑ k, genMap ξ' q' (a k) • B' k) = genMap ξ' q' (∑ k, a k * _) + (n : Ω') * ∑ k, genMap ξ' q' (a k) * i (ρ k)
-    rw [map_sum, map_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [map_smul, smul_eq_mul, hBB k, hjd, hρe' k, map_add, map_mul, map_mul, hcomp k, hg, map_natCast]
+    rw [map_smul, smul_eq_mul, hBB k, hjd, hρe' k, map_add (f := _), map_mul, map_mul, hcomp k, hg, map_natCast]
     ring
 
 theorem main : ∀ (X : Scheme.{0}) [IsLocallyNoetherian X] (Ω : Type) [Field Ω] [CharZero Ω] (ξ : Spec (CommRingCat.of Ω) ⟶ X), IsCptGen ξ → Flat.NormalCpt ξ → ∀ (G : Over X) [GrpObj G], IsSemiAbelian G → ∀ (L : LB G.left) (n : ℕ), 1 ≤ n → FullTorsion G ξ n → ∀ e, GenWeil G L ξ n e → ∀ (E : Type) [AddCommGroup E] [Module Ω E] (M : LieModel G ξ E) (X' : Scheme.{0}) [IsLocallyNoetherian X'] (Ω' : Type) [Field Ω'] (ξ' : Spec (CommRingCat.of Ω') ⟶ X'), IsCptGen ξ' → Flat.NormalCpt ξ' → ∀ (f : X' ⟶ X) (i : Ω →+* Ω'), GlobalTheory.CompanionTheory.Ar.Dominates ξ' ξ f i → ∀ (G' : Over X') [GrpObj G'] [IsCommMonObj G'] (φ : G'.left ⟶ G.left), IsGrpPullback G' G f φ → ∀ (L' : LB G'.left) (e' : (Over.mk ξ' ⟶ G') → (Over.mk ξ' ⟶ G') → Ω'ˣ), GenWeil G' L' ξ' n e' → ∀ (E' : Type) [AddCommGroup E'] [Module Ω' E'] (M' : LieModel G' ξ' E') (j : E →+ E') (jd : Module.Dual Ω E →+ Module.Dual Ω' E'), (∀ v, (M'.pt (j v)).left ≫ φ = spMap (dualMap i) ≫ (M.pt v).left) → (∀ w v, jd w (j v) = i (w v)) → M'.htOm L' n = (M.htOm L n).pull ξ' f jd ∧ M'.omLat = M.omLat.pull ξ' f jd := by

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafExcOfEqvPfSq
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafExcOfEqvPfSq
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -9,7 +13,7 @@ theorem dblPO (A : Arrow Spc) : IsPushout A.hom A.hom (dbl.inl A) (dbl.inr A) :=
   IsPushout.of_hasPushout A.hom A.hom
 
 theorem mmPO {P' P : Arrow Spc} (φ : P' ⟶ P) : IsPushout P'.hom (P'.hom ≫ φ.right) (ii φ) (jj φ) :=
-  IsPushout.of_hasPushout _ _
+  IsPushout.of_hasPushout P'.hom (P'.hom ≫ φ.right)
 
 theorem LeafChiSq_of : LeafChiSq := by
   intro P' P φ

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ColRepSemisimple
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ColRepSemisimple
+
+@[expose] public section
 
 open Formalism.MainNotions.N Polynomial
 
@@ -10,8 +14,8 @@ namespace GlobalTheory.IndexTwoExt
 
 variable {Γ k : Type} [Group Γ] [Field k] {n : ℕ}
 
-variable {Γ k : Type} [Group Γ] [Field k] {n : ℕ} in
 
+variable {Γ k : Type} [Group Γ] [Field k] {n : ℕ} in
 theorem _root_.GlobalTheory.IndexTwoExt.isSSRep_of_ker [CharZero k] (η : Γ →* ℤˣ) (t : Γ)
     (ht : η t = -1) (ρ : Γ →* GL (Fin n) k)
     (hρ : _root_.Formalism.MainNotions.N.IsSSRep (ρ.comp η.ker.subtype)) : _root_.Formalism.MainNotions.N.IsSSRep ρ := by
@@ -35,7 +39,7 @@ theorem _root_.GlobalTheory.IndexTwoExt.isSSRep_of_ker [CharZero k] (η : Γ →
     obtain ⟨y, hy, z, hz, rfl⟩ :=
       Submodule.mem_sup.1 (hc.sup_eq_top ▸ Submodule.mem_top : v ∈ W ⊔ W')
     have hz' : σ g z ∈ W' := by rw [hσ]; exact hW' ⟨g, hg⟩ z hz
-    simp only [Module.End.mul_apply, map_add, hpW y hy, hpW' z hz, hpW _ (hWσ g y hy),
+    simp only [Module.End.mul_apply, map_add (f := _), hpW y hy, hpW' z hz, hpW _ (hWσ g y hy),
       hpW' _ hz', add_zero, map_zero]
   have hconj : ∀ g, η (t⁻¹ * g * t) = η g := fun g => by
     rw [map_mul, map_mul, map_inv, mul_comm (η t)⁻¹ (η g), inv_mul_cancel_right]
@@ -185,12 +189,12 @@ private theorem exists_sqrt_commute_of_isUnit_det {k : Type} [Field k] [IsAlgClo
     exact h1
   · refine Polynomial.induction_on q (fun a => ?_) (fun p r hp hr => ?_) (fun m a _ => ?_)
     · rw [Polynomial.aeval_C]; exact Algebra.commute_algebraMap_left a Y
-    · rw [map_add]; exact hp.add_left hr
+    · rw [map_add (f := _)]; exact hp.add_left hr
     · rw [map_mul, map_pow, Polynomial.aeval_C, Polynomial.aeval_X]
       exact (Algebra.commute_algebraMap_left a Y).mul_left (hY.pow_left _)
 
-variable {Γ k : Type} [Group Γ] [Field k] {n : ℕ} in
 
+variable {Γ k : Type} [Group Γ] [Field k] {n : ℕ} in
 theorem _root_.GlobalTheory.IndexTwoExt.main : ∀ (Γ k : Type) [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [Field k] [CharZero k] [IsAlgClosed k] [TopologicalSpace k] [IsTopologicalRing k] (n : ℕ) (η : Γ →* ℤˣ), IsOpen (η.ker : Set Γ) → ∀ r : η.ker →* GL (Fin n) k, Continuous r → _root_.Formalism.MainNotions.N.IsSSRep r → (∀ (g : Γ) (h h' : η.ker), (h' : Γ) = g * h * g⁻¹ → ((r h' : GL (Fin n) k) : Matrix (Fin n) (Fin n) k).trace = ((r h : GL (Fin n) k) : Matrix (Fin n) (Fin n) k).trace) → ∃ ρ : Γ →* GL (Fin n) k, Continuous ρ ∧ _root_.Formalism.MainNotions.N.IsSSRep ρ ∧ ∀ h : η.ker, ρ h = r h := by
   intro Γ k _ _ _ _ _ _ _ _ n η hH r hr hrss htr
   have hη : ∀ g, η g = 1 ∨ η g = -1 := fun g => Int.units_eq_one_or (η g)

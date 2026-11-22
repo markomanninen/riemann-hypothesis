@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.InertKernelTheory.DefsBeCob
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.ExistsCoprimePowEqOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PadicNormTwoHundredSixteenEqOneOfFiveLe
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsBeCob
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.ExistsCoprimePowEqOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PadicNormTwoHundredSixteenEqOneOfFiveLe
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.FunctionalLowerBoundOfConditionsNumeric
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ScaledValuationFormula
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.FunctionalLowerBoundOfConditionsNumeric
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ScaledValuationFormula
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix nonZeroDivisors
@@ -41,8 +45,5 @@ theorem scaledAt_anti {d : ℕ} (w : HeightOneSpectrum (𝓞 K)) (B : Submodule 
   exact ⟨a, primePow_anti w h ha, x, hx, rfl⟩
 
 variable [StarRing K] {Bs : DefBase K} {Df : DefSide Bs}
-
-def withLoss (O : FunData K Df) (T : Finset (HeightOneSpectrum (𝓞 K))) (δ : HeightOneSpectrum (𝓞 K) → ℤ) :
-    FunData K Df := { O with Tf := T, dF := δ }
 
 end GlobalTheory.FinitePlacesCompare

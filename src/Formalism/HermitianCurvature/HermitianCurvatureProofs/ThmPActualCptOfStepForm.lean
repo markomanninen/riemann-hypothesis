@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpLEqZeroOfEventually
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GroupFactorizationHolds
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpLEqZeroOfEventually
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GroupFactorizationHolds
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 
@@ -23,7 +27,7 @@ def pc (c : Fin r → ℂ) : ℂ := ∏ a : Fin r with a.val < (Fin.last r).val,
 
 theorem pc_continuous : Continuous (pc (r := r)) := by
   unfold pc
-  exact continuous_finset_prod _ fun a _ => continuous_apply a
+  exact continuous_finsetProd _ fun a _ => continuous_apply a
 
 theorem pc_ne_zero {c : Fin r → ℂ} (hc : c ∈ OmX r) : pc c ≠ 0 := Finset.prod_ne_zero_iff.2 fun a _ => hc a
 
@@ -164,8 +168,6 @@ theorem jfCptLocAll : JFCptLocAll := by
         a⁻¹ * n⁻¹ * x * n' * a' := rfl
     simp only [hxy, hFy, ContinuousLinearMap.comp_zero, ContinuousLinearMap.zero_comp, smul_zero, Pi.zero_apply]
   rw [hJ0, smul_zero]
-
-theorem herCptTopAll : HerCptTopAll := herCptTopAll_of_jf jfCptLocAll
 
 theorem thmPActualCpt_of_stepForm (hSF : StepFormCptAll) : ThmPActualCpt := thmPActualCpt_of_jf jfCptLocAll hSF
 

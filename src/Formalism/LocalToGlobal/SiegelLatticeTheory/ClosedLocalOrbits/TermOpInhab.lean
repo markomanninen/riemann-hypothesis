@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermOpStmt
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermOpStmt
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ theorem mapFlag_one (F : FlagG S r T) : mapFlag 1 one_mem_isom F = F := by
 
 theorem mapLF_one (F : LFlag S r T) : mapLF 1 F = F := by
   unfold mapLF
-  rw [dif_pos one_mem_isom, mapFlag_one]
+  rw [dite_eq_left one_mem_isom, mapFlag_one]
   rfl
 
 end Flag

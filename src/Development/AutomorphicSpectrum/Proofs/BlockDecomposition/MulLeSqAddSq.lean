@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.SFunOf
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.SFunOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,10 +38,10 @@ theorem enorm_inner_le {ι : Type} (D : Dom E a b) (U : Hs (ι := ι) D →L[ℂ
     (u v : Hs (ι := ι) D) (C : ℝ≥0∞) (hu : ‖u‖ₑ ^ 2 ≤ C) (hv : ‖v‖ₑ ^ 2 ≤ C) :
     ‖inner ℂ u (U v)‖ₑ ≤ ‖U‖ₑ * (2 * C) := by
   have h1 : ‖inner ℂ u (U v)‖ₑ ≤ ‖u‖ₑ * ‖U v‖ₑ := by
-    simp only [enorm_eq_nnnorm]
-    exact_mod_cast nnnorm_inner_le_nnnorm (𝕜 := ℂ) u (U v)
+    simp only [eNorm_eq_nnNorm]
+    exact_mod_cast nnNorm_inner_le_nnNorm (𝕜 := ℂ) u (U v)
   calc ‖inner ℂ u (U v)‖ₑ ≤ ‖u‖ₑ * ‖U v‖ₑ := h1
-    _ ≤ ‖u‖ₑ * (‖U‖ₑ * ‖v‖ₑ) := by gcongr; exact U.le_opNorm_enorm v
+    _ ≤ ‖u‖ₑ * (‖U‖ₑ * ‖v‖ₑ) := by gcongr; exact U.le_opENorm v
     _ = ‖U‖ₑ * (‖u‖ₑ * ‖v‖ₑ) := by ring
     _ ≤ ‖U‖ₑ * (‖u‖ₑ ^ 2 + ‖v‖ₑ ^ 2) := by gcongr; exact mul_le_sq_add_sq _ _
     _ ≤ ‖U‖ₑ * (C + C) := by gcongr
@@ -48,10 +52,10 @@ theorem lBound_of : Mahler → CutCount → LBound := by
   obtain ⟨C₁, N, hC₁, hcut⟩ := hC E a b D Ω hΩ
   refine ⟨2 * Fintype.card ι * C₀.toReal * C₁, N, fun τ hτ U => ?_⟩
   set S : Set (H E a b) := cutSet E a τ ×ˢ cutSet E b τ with hS
-  haveI : BorelSpace (H E a b) := ⟨rfl⟩
+  have : BorelSpace (H E a b) := ⟨rfl⟩
   have hSm : MeasurableSet S := ((hM E a τ).1.prod (hM E b τ).1).measurableSet
   have hg : Continuous fun x => ∑ i, inner ℂ (k₁ x i) (U (k₂ x i)) :=
-    continuous_finset_sum _ fun i _ => (hcont i).1.inner (U.continuous.comp (hcont i).2)
+    continuous_finsetSum _ fun i _ => (hcont i).1.inner (U.continuous.comp (hcont i).2)
   have hmeas : AEStronglyMeasurable (lInt D k₁ k₂ τ U) D.ν := by
     rw [lInt_eq]
     exact hg.aestronglyMeasurable.indicator hSm
@@ -66,7 +70,7 @@ theorem lBound_of : Mahler → CutCount → LBound := by
     by_cases hx : x ∈ S
     · rw [Set.indicator_of_mem hx, Set.indicator_of_mem hx]
       calc ‖∑ i, inner ℂ (k₁ x i) (U (k₂ x i))‖ₑ ≤ ∑ i, ‖inner ℂ (k₁ x i) (U (k₂ x i))‖ₑ :=
-            enorm_sum_le _ _
+            eNorm_sum_le _ _
         _ ≤ ∑ _i : ι, ‖U‖ₑ * (2 * (C₀ * cnt (ratH E a b) Ω x)) :=
             Finset.sum_le_sum fun i _ => enorm_inner_le D U _ _ _ (hnorm x i).1 (hnorm x i).2
         _ = c * cnt (ratH E a b) Ω x := by
@@ -86,7 +90,7 @@ theorem lBound_of : Mahler → CutCount → LBound := by
           congr 1
           ring
   refine ⟨⟨hmeas, hle.trans_lt ENNReal.ofReal_lt_top⟩, ?_⟩
-  rw [integral_norm_eq_lintegral_enorm hmeas]
+  rw [integral_norm_eq_lintegral_eNorm hmeas]
   exact ENNReal.toReal_le_of_le_ofReal hA hle
 
 end GlobalTheory.CompanionTheory.LBoundProof

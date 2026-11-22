@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.StatementSz
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CriticalThresholdLowerBound
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaFactorisation
+module
+
+public import Formalism.HermitianCurvature.StatementSz
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CriticalThresholdLowerBound
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaFactorisation
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.Sz7
 
@@ -179,7 +183,7 @@ theorem betaOnCut_of_tcritLower (HT : TcritLower) : BetaOnCut := by
   have hRl := (slotAt_true c de de' Y l h hw hw' hl hlk hne hY).2
   have hN := nodeBound c Y l h hl hlk hY
   have hRm : ∏ i ∈ Ico (l + 1) (c.k - 1), c.rho de de' (-Y) i ≤ 1 :=
-    Finset.prod_le_one (fun i _ => rho_nonneg c de de' Y l i h hlk hY)
+    Finset.prod_le_one₀ (fun i _ => rho_nonneg c de de' Y l i h hlk hY)
       (fun i hi => by
         rw [Finset.mem_Ico] at hi
         exact positionAfter c de de' Y l i h hw hw' hl (by omega) (by omega)

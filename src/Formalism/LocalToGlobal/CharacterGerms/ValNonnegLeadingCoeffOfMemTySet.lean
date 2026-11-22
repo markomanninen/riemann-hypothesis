@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.ConstMemTypeSetOfNonneg
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.ConstMemTypeSetOfNonneg
+
+@[expose] public section
 
 noncomputable section
 
@@ -131,7 +135,8 @@ theorem val_nonneg_leading_coeff_of_mem_tySet (V : VF C) (g : Fin 2)
       PowerSeries.coeff m (γ i) = ∑ c : I g, X.u g c i * PowerSeries.coeff m (tyS V.l fun s => x s (Sum.inl c)) := by
     intro m hm1 hm i
     have e1 := coeff_alongCv_low hm1 hm (hlg0 i)
-    rw [h1 i, map_sum] at e1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h1 i, map_sum] at e1
     simp only [hlg1, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true,
       PowerSeries.coeff_smul, smul_eq_mul] at e1
     exact e1.symm
@@ -170,7 +175,8 @@ theorem val_nonneg_leading_coeff_of_mem_tySet (V : VF C) (g : Fin 2)
   | inl c' => exact hinlInt c'
   | inr q =>
     have e2 := congrArg (PowerSeries.coeff (V.l ^ s)) (h2 q)
-    rw [coeff_tyS_pow hl2, map_add, map_sub, coeff_alongCv_low hpos hord' (X.constantCoeff_sg hh _), map_sum] at e2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [coeff_tyS_pow hl2, map_add (f := _), map_sub, coeff_alongCv_low hpos hord' (X.constantCoeff_sg hh _), map_sum] at e2
     have e3 : ∑ i, MvPowerSeries.coeff (Finsupp.single i 1) (X.sg (X.u (1 - g) q)) * PowerSeries.coeff (V.l ^ s) (γ i) =
         ∑ c : I g, X.sg1 (X.u g c) (X.u (1 - g) q) * x s (Sum.inl c) := by
       simp only [hlead, sg1, Finset.mul_sum, Finset.sum_mul]

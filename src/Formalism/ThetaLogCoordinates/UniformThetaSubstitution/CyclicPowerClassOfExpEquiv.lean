@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.OddLogRelation
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.OddLogRelation
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,12 +59,6 @@ def LogRescaleUnique : Prop :=
     PowerSeries.constantCoeff μ = 0 → PowerSeries.constantCoeff μ' = 0 →
     (PowerSeries.subst μ (lamF p ϖ) : PowerSeries K) = PowerSeries.X →
     (PowerSeries.subst μ' (lamF p ϖ) : PowerSeries K) = PowerSeries.X → μ = μ'
-
-def TraceDual : Prop :=
-  ∀ (F L ι : Type) [Field F] [Field L] [Algebra F L] [FiniteDimensional F L] [IsGalois F L]
-    [Fintype ι] [DecidableEq ι] (b : Module.Basis ι F L) (σ τ : L ≃ₐ[F] L),
-    (σ = τ → ∑ r, σ ((Algebra.traceForm F L).dualBasis (traceForm_nondegenerate F L) b r) * τ (b r) = 1) ∧
-    (σ ≠ τ → ∑ r, σ ((Algebra.traceForm F L).dualBasis (traceForm_nondegenerate F L) b r) * τ (b r) = 0)
 
 section Coord
 

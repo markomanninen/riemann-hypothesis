@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LocDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.CopNormLt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EiiUnit
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LocDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.CopNormLt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EiiUnit
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
 private theorem cont_of_adic {Γ R K : Type} [TopologicalSpace Γ] [CommRing R] [NormedRing K] (I : Ideal R)
@@ -34,7 +39,8 @@ theorem UpperTheory.V.GradeZeroInterpolatingElement.eptInt :
     refine ⟨b.support, fun g => y (b g), fun g => hy' _, ?_⟩
     ext p q
     have h2 := congrArg y (congrFun (congrFun hb p) q)
-    rw [Finsupp.sum, Matrix.sum_apply, map_sum] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finsupp.sum, Matrix.sum_apply, map_sum] at h2
     rw [Matrix.sum_apply]
     simp only [Matrix.smul_apply, smul_eq_mul, map_mul] at h2 ⊢
     have h3 : y (Matrix.single i i (1 : R) p q) = Matrix.single i i (1 : PadicAlgCl l) p q := by

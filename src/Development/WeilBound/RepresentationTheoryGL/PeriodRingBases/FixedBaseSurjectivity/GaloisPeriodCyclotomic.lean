@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.PeriodRingBases.PeriodRingUnits.DieudonneManinBasisModification
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.PhiGalCris
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.FundIotaTANeZero
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.AinfMapSurjective
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.AwayExistsSelf
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.PeriodRingBases.PeriodRingUnits.DieudonneManinBasisModification
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.PhiGalCris
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.FundIotaTANeZero
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.AinfMapSurjective
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.AwayExistsSelf
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -11,7 +15,7 @@ noncomputable section
 namespace period_ring_base
 
 open Formalism.Per6 hiding σB aB
-open GroundTheory.PAdicHodge DeRhamPotentiallySemistable.DRPst PfDRPst Matrix
+open GroundTheory.PAdicHodge DeRhamPotentiallySemistable.DRPst Matrix
 
 namespace BaseA
 

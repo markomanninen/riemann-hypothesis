@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.KHFreeDecompSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.KHFreeDecompSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -63,7 +68,7 @@ theorem mk_monomial_eq (I : ∀ k, Finset (ι k)) (u v : (Σ k, ι k) →₀ ℕ
     ext q
     simp only [Finsupp.add_apply, posExp, negExp, Finsupp.coe_equivFunOnFinite_symm]
     omega
-  rw [monoFrac, dif_pos hneg, LocalizedModule.mk_eq]
+  rw [monoFrac, dite_eq_left hneg, LocalizedModule.mk_eq]
   refine ⟨1, ?_⟩
   simp only [one_smul, Submonoid.smul_def, Algebra.smul_def, Ideal.Quotient.algebraMap_eq, ← map_mul,
     monomial_mul, mul_one]
@@ -92,11 +97,12 @@ theorem locPart_le (I : ∀ k, Finset (ι k)) (c d : K → ℤ) :
     refine Submodule.span_le.mpr ?_
     rintro _ ⟨p, ⟨hpos, hp⟩, rfl⟩
     rw [SetLike.mem_coe, Submodule.mem_comap]
-    have hsum : p = ∑ v ∈ p.support, coeff v p • (monomial v 1 : MRingOver S ι) := by
+    have hsum : p = ∑ v ∈ p.support, AddMonoidAlgebra.coeff p v • (monomial v 1 : MRingOver S ι) := by
       conv_lhs => rw [p.as_sum]
       refine Finset.sum_congr rfl fun v _ => ?_
       rw [smul_monomial, smul_eq_mul, mul_one]
-    rw [hsum, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsum, map_sum, map_sum]
     refine Submodule.sum_mem _ fun v hv => ?_
     rw [quot_mk_smul, map_smul]
     refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨fun q => (v q : ℤ) - u q, ?_, ?_⟩)
@@ -121,12 +127,12 @@ theorem embed_apply_cell [LinearOrder K] [∀ k, LinearOrder (ι k)] (a : (Σ k,
   rw [LinearMap.pi_apply]
   split_ifs with h
   · rfl
-  · rw [LinearMap.zero_apply, monoFrac, dif_neg h, smul_zero]
+  · rw [LinearMap.zero_apply, monoFrac, dite_eq_right h, smul_zero]
 
 end KHFreeDecomp
 
-open KHFreeDecomp in
 
+open KHFreeDecomp in
 theorem KHFreeDecomp.full : KHFreeDecomp.Statement := by
   intro S _ K _ _ ι _ _ c d n φ hφ
   classical

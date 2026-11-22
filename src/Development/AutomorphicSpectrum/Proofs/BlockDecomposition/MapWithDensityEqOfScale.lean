@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TopoPolish
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TopoPolish
+
+@[expose] public section
 
 open MeasureTheory MeasureTheory.Measure
 open scoped ENNReal NNReal
@@ -128,6 +132,7 @@ theorem map_translate (νN : Measure N) [νN.IsHaarMeasure] (νM : Measure M) [�
       have h0 : (fun x : N => u * conjCE N (m : Q) x) = (fun x => u * x) ∘ conjCE N (m : Q) := rfl
       rw [h0, ← map_map (measurable_const_mul u) (map_continuous _).measurable, map_conj,
         Measure.map_smul, map_mul_left_eq_self]
+      exact (measurable_const_mul u).aemeasurable
     have h2 : νM.map (fun x : M => m * x) = νM := map_mul_left_eq_self νM m
     have h3 := map_prod_map νN νM hS1 hS2
     rw [h1, h2] at h3
@@ -208,5 +213,6 @@ theorem haarNM : HaarNM := by
     fun m => ENNReal.mul_ne_top hc (modInv_ne_top N M m), key.trans ?_⟩
   have h3 : (fun p : N × M => c * modInv N M p.2) = c • f := rfl
   rw [h3, withDensity_smul c hf, Measure.map_smul]
+  exact φc.measurable.aemeasurable
 
 end GlobalTheory.CompanionTheory.QuotVan

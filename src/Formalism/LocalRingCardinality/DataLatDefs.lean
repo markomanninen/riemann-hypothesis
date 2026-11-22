@@ -1,6 +1,10 @@
-import Formalism.LocalRingCardinality.DataParams₂
-import Formalism.LocalRingCardinality.DataGatTies
-import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
+module
+
+public import Formalism.LocalRingCardinality.DataParams₂
+public import Formalism.LocalRingCardinality.DataGatTies
+public import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,7 +83,7 @@ def imgL {i j : ℕ} (w : D.what₂.places.Pl) (f : Fn D u i →ₗ[ℂ] Fn D u 
   carrier := {y | ∃ x ∈ A, (D.fm u).emb j y = f ((D.fm u).emb i x)}
   add_mem' := by
     rintro a b ⟨x, hx, h1⟩ ⟨y, hy, h2⟩
-    exact ⟨x + y, A.add_mem hx hy, by rw [map_add, map_add, map_add, h1, h2]⟩
+    exact ⟨x + y, A.add_mem hx hy, by rw [map_add (f := _), map_add (f := _), map_add (f := _), h1, h2]⟩
   zero_mem' := ⟨0, A.zero_mem, by simp⟩
   smul_mem' := by
     rintro r a ⟨x, hx, h1⟩
@@ -95,16 +99,6 @@ def expT (w : D.what₂.places.Pl) : ℤ :=
 
 def Nlam (w : D.what₂.places.Pl) : Submodule (Ow D w) (Vl D u 0) :=
   imgL D u w ((((D.mem u).A.T : ℂ) ^ expT D u w) • (Uprod D u 0 w) ^ D.R.m) (Sram D u w)
-
-def URat (i : ℕ) (v : (D.mem u).A.vT) : Prop :=
-  ∀ x, ∃ y, (D.fm u).emb i y = Uop D u i v ((D.fm u).emb i x)
-
-def UL (i : ℕ) (v : (D.mem u).A.vT) (h : URat D u i v) : Vl D u i →ₗ[D.what₂.LL] Vl D u i :=
-  descend ((D.fm u).emb i) ((D.fm u).emb i) ((D.fm u).emb_inj i) (Uop D u i v) h
-
-theorem UL_spec (i : ℕ) (v : (D.mem u).A.vT) (h : URat D u i v) (x : Vl D u i) :
-    (D.fm u).emb i (UL D u i v h x) = Uop D u i v ((D.fm u).emb i x) :=
-  descend_spec ((D.fm u).emb i) ((D.fm u).emb i) ((D.fm u).emb_inj i) (Uop D u i v) h x
 
 end LT
 

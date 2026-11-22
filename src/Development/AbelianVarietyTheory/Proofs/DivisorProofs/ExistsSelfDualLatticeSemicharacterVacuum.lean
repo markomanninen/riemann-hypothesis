@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusHermitianFormScaledCoordinateEq
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsSemicharacterCompletedSelfDualLattice
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalPointFinitePartIsotropicPairing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusHermitianFormScaledCoordinateEq
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsSemicharacterCompletedSelfDualLattice
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalPointFinitePartIsotropicPairing
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links
 open IsDedekindDomain NumberField Matrix MvPolynomial
 open GlobalTheory.SignedHC GlobalTheory.ChiGrid Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.FunObj
@@ -38,7 +43,7 @@ theorem exists_abstract_value {G R : Type} [AddCommGroup G] [AddCommGroup R] (ψ
       rw [sub_sub_sub_cancel_left] at h1
       exact sub_eq_zero.1 (hKL _ (L.sub_mem h.choose_spec.1 hl') h1)
     show dite _ _ _ = _
-    rw [dif_pos h, e]
+    rw [dite_eq_left h, e]
   have gen : ∀ u ∈ L, (∀ l ∈ L, ψ (B l u) * ψ (B (p (l + u)) (l + u)) = ψ (B (p l) l)) →
       ∀ x, ψ (B x u) * χ (x + u) = χ x := fun u hu H x => by
     by_cases h : ∃ l ∈ L, K (x - l)
@@ -112,7 +117,7 @@ theorem exists_semichar_value : ∀ {D : D7} (ψ : AddChar (AF D.host.F) ℂ) (S
     (fun x => by
       funext i j
       show incA D (b : D.host.E) * x i j + incA D (star (b : D.host.E)) * x i j = x i j
-      rw [← add_mul, ← RingHom.map_add, hb, RingHom.map_one, one_mul])
+      rw [← add_mul, ← RingHom.map_add (f := _), hb, RingHom.map_one, one_mul])
     (f7 _) (GlobalTheory.SemiChar.latO_mul_int S T _ _ _ b)
   refine ⟨χ, ⟨fun u hu => ?_, fun e he u hu hh => ?_⟩, c7⟩
   · funext x; exact c5 u hu x

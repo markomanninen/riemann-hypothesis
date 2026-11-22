@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LamV
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCompletionEquiv
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FrobOrderSpec
-import Formalism.LocalRingCardinality.ConjSqrtMinusD
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.LocalToGlobal.GroupLattices.PerfectRings.ICIntCp
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.WittFractionToCpAlgebraMap
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LamV
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCompletionEquiv
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FrobOrderSpec
+public import Formalism.LocalRingCardinality.ConjSqrtMinusD
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalToGlobal.GroupLattices.PerfectRings.ICIntCp
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.WittFractionToCpAlgebraMap
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+
+@[expose] public section
 
 open NumberField IsDedekindDomain IsLocalRing Formalism.UG Formalism.BasicNotions Formalism.FrobeniusOrbits Formalism.L2.G GlobalTheory.GO.PlWitt
 open scoped TensorProduct
@@ -69,7 +73,7 @@ theorem good_plc {i : E →+* Qn p n}
   obtain ⟨x, z, hz, e⟩ := h y
   refine ⟨x, ?_⟩
   simp only
-  rw [← IsFractionRing.injective (Wn p n) (Qn p n) (e.trans (hg x).symm), map_add, (mem_max z).1 hz, add_zero]
+  rw [← IsFractionRing.injective (Wn p n) (Qn p n) (e.trans (hg x).symm), map_add (f := _), (mem_max z).1 hz, add_zero]
 
 omit [NumberField E] in
 theorem good_approx {Q : HeightOneSpectrum (𝓞 E)} {i : E →+* Qn p n} (h : Good Q i) (y : Wn p n) :
@@ -129,14 +133,14 @@ theorem cc_notMem (e : Formalism.HC.Frame) : e.cc ∉ e.Psi := e.cc_notMem_Psi
 theorem frob_eq_mul (h : R.MA) : ((c0, h) : R.GG) = (zPsi R.toFrame h : R.GG) * R.cc := by
   rw [zPsi_eq, mul_assoc, cc_mul_cc, mul_one]
 
-variable (H) in
 
+variable (H) in
 def tw (i : H.E →+* Qn p n) (g : R.GG) : H.E →+* Qn p n := i.comp (H.sigmaOf g : H.E →+* H.E)
 
 theorem tw_apply (i : H.E →+* Qn p n) (g : R.GG) (x : H.E) : tw H i g x = i (H.sigmaOf g x) := rfl
 
-variable (H) in
 
+variable (H) in
 def twF (i : H.E →+* Qn p n) (g : R.GG) : H.F →+* Qn p n := (tw H i g).comp (algebraMap H.F H.E)
 
 theorem twF_cc_pow (i : H.E →+* Qn p n) (g : R.GG) (m : ℕ) : twF H i (g * R.cc ^ m) = twF H i g := by
@@ -200,8 +204,8 @@ theorem fr_pow_apply {Q : HeightOneSpectrum (𝓞 H.E)} {i : H.E →+* Qn p n} (
   | zero => simp [Host.sigmaOf]
   | succ s ih => rw [pow_succ, pow_succ, RingAut.mul_apply, fr_apply hfr hi, ih, sigmaOf_mul]
 
-include hfr h2 he in
 
+include hfr h2 he in
 theorem degree_eq {Q : HeightOneSpectrum (𝓞 H.E)} {i : H.E →+* Qn p n} (hi : Good Q i) (hn : n ≠ 0) : n = orderOf h := by
   have h1 : ((c0, h) : R.GG) ^ n = 1 := sigmaOf_inj (H := H) (AlgEquiv.ext fun x => i.injective (by
     rw [← fr_pow_apply hfr hi, GlobalTheory.SqrtUnif.fractionRing_frobenius_pow p hn]
@@ -218,8 +222,8 @@ variable {Q₀ : HeightOneSpectrum (𝓞 H.E)} {i : H.E →+* Qn p n} (hi : Good
 include hi in
 theorem good_tw (g : R.GG) : Good (plc (tw H i g)) (tw H i g) := good_aut hi _ fun _ => rfl
 
-include hun hfr hi hn in
 
+include hun hfr hi hn in
 theorem exists_pow_of_plc_eq {g g' : R.GG} (e : plc (tw H i g') = plc (tw H i g)) : ∃ s : ℕ, g' = g * (c0, h) ^ s := by
   have := hun _ (p_mem_plc (tw H i g))
   obtain ⟨s, -, hs⟩ := (good_tw hi g).exists_pow (ι := RingHom.id _) (j := RingHom.id _) hn p_mem (fun _ => rfl)
@@ -228,16 +232,16 @@ theorem exists_pow_of_plc_eq {g g' : R.GG} (e : plc (tw H i g') = plc (tw H i g)
   rw [sigmaOf_mul]
   exact (hs x).trans (fr_pow_apply hfr (good_tw hi g) s x)
 
-include hun hfr he hi hn in
 
+include hun hfr he hi hn in
 theorem plc_ne_conj (g : R.GG) : plc (tw H i (g * R.cc)) ≠ plc (tw H i g) := fun e => by
   obtain ⟨s, hs⟩ := exists_pow_of_plc_eq hun hfr hi hn e
   have h1 := (R.toFrame.cc_mem_zpowers_iff (c0, h)).1 (by
     rw [mul_left_cancel hs]; exact Subgroup.npow_mem_zpowers _ s)
   exact Nat.not_even_iff_odd.2 h1.2 he
 
-include hun hfr he hi hn in
 
+include hun hfr he hi hn in
 theorem good_twF (g : R.GG) : Good (plc (twF H i g)) (twF H i g) :=
   good_plc fun y => by
     obtain ⟨x, z, hz, e⟩ := good_approx (good_tw hi g) y
@@ -248,7 +252,7 @@ theorem good_twF (g : R.GG) : Good (plc (twF H i g)) (twF H i g) :=
     obtain ⟨t, ht⟩ := exists_real (b + H.conj • b) (by rw [smul_add, conj_conj, add_comm])
     obtain ⟨u, hu, eu⟩ := (mem_plc _ _).1 (sub_mem ((mem_plc_tw_cc i g b).1 hb) ha)
     refine ⟨t, z + u, add_mem hz hu, ?_⟩
-    rw [← add_assoc, map_add, e, eu, ← map_add]
+    rw [← add_assoc, map_add (f := _), e, eu, ← map_add (f := _)]
     have : x + (H.conj • b - a) = algebraMap (𝓞 H.F) (𝓞 H.E) t := by rw [ht, ← hab]; ring
     exact congrArg (fun y : 𝓞 H.E => tw H i g (y : H.E)) this
 
@@ -383,7 +387,7 @@ theorem exists_locId_host {R : Ranks} {H : Host R} {p : ℕ} [hp : Fact p.Prime]
   let i : H.E →+* Qn p n := i₀.comp (γ : H.E →+* H.E)
   have hi : Good (plc i) i := good_aut hi₀ γ fun _ => rfl
   have hκ : ∀ x, κ (i x) = lamV lam (H.φ₀ x) := fun x => by
-    rw [lamV, dif_pos (hmem x)]
+    rw [lamV, dite_eq_left (hmem x)]
     exact (hγ x).symm
   let rp : Fin (nOrb (zPsi R.toFrame h)) → R.GG := fun v => (orbRep (zPsi R.toFrame h) v : R.Psi)
   let pl : Fin (nOrb (zPsi R.toFrame h)) ≃ {v : HeightOneSpectrum (𝓞 H.F) // ((p : ℕ) : 𝓞 H.F) ∈ v.asIdeal} :=

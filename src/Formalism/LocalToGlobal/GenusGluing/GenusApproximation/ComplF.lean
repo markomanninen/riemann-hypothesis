@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.AdelicLemmas
+module
+
+public import Formalism.LocalToGlobal.Columns.AdelicLemmas
+
+@[expose] public section
 
 noncomputable section
 

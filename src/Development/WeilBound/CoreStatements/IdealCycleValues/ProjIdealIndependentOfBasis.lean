@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+
+@[expose] public section
+
 open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num
 
 namespace BaseChangeColon
@@ -25,7 +30,8 @@ theorem aeval_polyCoord (y : (Σ k, ι k) → Ω) (w : Module.Basis (Fin N) Ω E
     (φ : Fin M → Module.Dual Ω E) {Φ : Type} [Field Φ] [Algebra Ω Φ] (s : Fin N → Φ)
     (p : Σ o, bundleIdx ι M o) : aeval s (polyCoord y w φ p) = projCoord y w φ s p := by
   obtain ⟨_ | k, i⟩ := p
-  · simp only [polyCoord, projCoord, map_sum, map_mul, aeval_X, aeval_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [polyCoord, projCoord, map_sum, map_mul, aeval_X, aeval_C]
   · simp only [polyCoord, projCoord, aeval_C]
 
 theorem projIdeal_eq_ker (y : (Σ k, ι k) → Ω) (w : Module.Basis (Fin N) Ω E)
@@ -48,7 +54,8 @@ theorem projCoord_change (y : (Σ k, ι k) → Ω) (w w' : Module.Basis (Fin N) 
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun j _ => ?_
     conv_rhs => rw [← w.sum_repr (w' j)]
-    simp only [map_sum, map_smul, smul_eq_mul, map_mul, Finset.mul_sum, mul_assoc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul, map_mul, Finset.mul_sum, mul_assoc]
   · simp only [projCoord]
 
 theorem projIdeal_le (y : (Σ k, ι k) → Ω) (w w' : Module.Basis (Fin N) Ω E)

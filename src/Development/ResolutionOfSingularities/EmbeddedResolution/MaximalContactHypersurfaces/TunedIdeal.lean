@@ -1,5 +1,9 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdeal
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdeal
+
+@[expose] public section
 
 namespace FunctorialResolution.EmbeddedResolution
 
@@ -399,7 +403,7 @@ private theorem mem_of_natCast_add_one_mul_mem {A : Type*} [CommRing A] [Algebra
   have hpos : (0 : ℚ) < (n : ℚ) + 1 := by positivity
   have hq : ((n : ℚ) + 1) ≠ 0 := hpos.ne'
   have hmap : algebraMap ℚ A ((n : ℚ) + 1) = (n : A) + 1 := by
-    rw [map_add, map_one, map_natCast]
+    rw [map_add (f := _), map_one, map_natCast]
   have h1 : algebraMap ℚ A ((n : ℚ) + 1)⁻¹ * (((n : A) + 1) * y) ∈ I :=
     Ideal.mul_mem_left I _ h
   rw [← hmap, ← mul_assoc, ← map_mul, inv_mul_cancel₀ hq, map_one, one_mul] at h1

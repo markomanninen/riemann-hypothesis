@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsSubMemEigW
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntersectionHiddenFirstStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FibreCurveDegreeCompareStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FibrePowerFreeConjInjectiveStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FormalGermBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FormalIsomorphismTransportStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsSubMemEigW
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntersectionHiddenFirstStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FibreCurveDegreeCompareStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FibrePowerFreeConjInjectiveStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FormalGermBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FormalIsomorphismTransportStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Crv GlobalTheory.CompanionTheory.Ar.Conj GlobalTheory.CompanionTheory.Ar.Flat GlobalTheory.CompanionTheory.Ar.Fl
 open scoped CategoryTheory.Obj
@@ -17,13 +22,17 @@ namespace GlobalTheory.CompanionTheory.Ar.Flat.DegZ.GermFam
 
 theorem isMapOf_cancel {R R₁ R₂ : Type} [CommRing R] [CommRing R₁] [CommRing R₂] {d : ℕ} {O : Type} [CommRing O]
     [StarRing O] {f : R →+* R₁} {g : R₁ →+* R₂} {B : Germ.FB R d O} {B₁ : Germ.FB R₁ d O} {B₂ : Germ.FB R₂ d O}
-    (h : IsMapOf f B B₁) (h' : IsMapOf (g.comp f) B B₂) : IsMapOf g B₁ B₂ where
-  F := fun i => by rw [h'.F, h.F, MvPowerSeries.map_comp]; rfl
-  act := fun a i => by rw [h'.act, h.act, MvPowerSeries.map_comp]; rfl
-  ph1 := by rw [h'.ph1, h.ph1, MvPowerSeries.map_comp]; rfl
-  ph2 := by rw [h'.ph2, h.ph2, MvPowerSeries.map_comp]; rfl
-  sy := by rw [h'.sy, h.sy, MvPowerSeries.map_comp]; rfl
-  ad := fun a => by rw [h'.ad, h.ad, MvPowerSeries.map_comp]; rfl
+    (h : IsMapOf f B B₁) (h' : IsMapOf (g.comp f) B B₂) : IsMapOf g B₁ B₂ := by
+  constructor
+  · intro i
+    simp only [h'.F i, h.F i, MvPowerSeries.map_comp, RingHom.comp_apply]
+  · intro a i
+    simp only [h'.act a i, h.act a i, MvPowerSeries.map_comp, RingHom.comp_apply]
+  · simp only [h'.ph1, h.ph1, MvPowerSeries.map_comp, RingHom.comp_apply]
+  · simp only [h'.ph2, h.ph2, MvPowerSeries.map_comp, RingHom.comp_apply]
+  · simp only [h'.sy, h.sy, MvPowerSeries.map_comp, RingHom.comp_apply]
+  · intro a
+    simp only [h'.ad a, h.ad a, MvPowerSeries.map_comp, RingHom.comp_apply]
 
 section Lat
 

@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAdelicPlaceDecomposition
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeStableAlmostAllPlacesLeftStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeStableAlmostAllPlacesRightStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAdelicPlaceDecomposition
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeStableAlmostAllPlacesLeftStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeStableAlmostAllPlacesRightStatement
+
+@[expose] public section
+
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun
 
 noncomputable section
@@ -15,46 +20,49 @@ open Matrix GlobalTheory.UnitaryPlaceSplit
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-variable (F) in
 
+variable (F) in
 def idemInf : AF F := LinearMap.inl F (Ainf F) (Af F) 1
 
-def idemSet (S : Finset (Pl F)) : AF F := ∑ w ∈ S, idemAt w
+def idemSet (S : Finset (Pl (F := F))) : AF F := ∑ w ∈ S, idemAt w
 
 theorem evI_eq (a : AF F) : evI F a = InfiniteAdeleRing.ringEquiv_mixedSpace F (fstA F a) := rfl
 
-theorem evFin_idemInf (w : Pl F) : evFin F w (idemInf F) = 0 := by
+theorem evFin_idemInf (w : Pl (F := F)) : evFin F w (idemInf F) = 0 := by
   change Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F w (0 : Af F) = 0
   exact map_zero _
 
 theorem fstA_idemInf : fstA F (idemInf F) = 1 := rfl
 
-theorem fstA_idemAt (w : Pl F) : fstA F (idemAt w) = 0 := rfl
+theorem fstA_idemAt (w : Pl (F := F)) : fstA F (idemAt w) = 0 := rfl
 
-theorem fstA_idemSet (S : Finset (Pl F)) : fstA F (idemSet S) = 0 := by
+theorem fstA_idemSet (S : Finset (Pl (F := F))) : fstA F (idemSet S) = 0 := by
   unfold idemSet
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_eq_zero fun w _ => fstA_idemAt w
 
-theorem evFin_idemAt_ne {w w' : Pl F} (h : w' ≠ w) : evFin F w' (idemAt w) = 0 := by
+theorem evFin_idemAt_ne {w w' : Pl (F := F)} (h : w' ≠ w) : evFin F w' (idemAt w) = 0 := by
   change Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F w' (singleFin w 1) = 0
   exact evalV_singleFin_ne h 1
 
-theorem idemAt_mul_ne {w w' : Pl F} (h : w' ≠ w) : idemAt w * idemAt w' = 0 :=
+theorem idemAt_mul_ne {w w' : Pl (F := F)} (h : w' ≠ w) : idemAt w * idemAt w' = 0 :=
   mul_idemAt_of_evFin w' (evFin_idemAt_ne h)
 
-theorem evFin_idemSet_mem {S : Finset (Pl F)} {w : Pl F} (hw : w ∈ S) : evFin F w (idemSet S) = 1 := by
+theorem evFin_idemSet_mem {S : Finset (Pl (F := F))} {w : Pl (F := F)} (hw : w ∈ S) : evFin F w (idemSet S) = 1 := by
   classical
   unfold idemSet
-  rw [map_sum, Finset.sum_eq_single w (fun w' _ hne => evFin_idemAt_ne (Ne.symm hne)) (fun h => absurd hw h),
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single w (fun w' _ hne => evFin_idemAt_ne (Ne.symm hne)) (fun h => absurd hw h),
     evFin_idemAt]
 
-theorem evFin_idemSet_not_mem {S : Finset (Pl F)} {w : Pl F} (hw : w ∉ S) : evFin F w (idemSet S) = 0 := by
+theorem evFin_idemSet_not_mem {S : Finset (Pl (F := F))} {w : Pl (F := F)} (hw : w ∉ S) : evFin F w (idemSet S) = 0 := by
   unfold idemSet
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_eq_zero fun w' hw' => evFin_idemAt_ne (by rintro rfl; exact hw hw')
 
-theorem idemSet_mul_self (S : Finset (Pl F)) : idemSet S * idemSet S = idemSet S := by
+theorem idemSet_mul_self (S : Finset (Pl (F := F))) : idemSet S * idemSet S = idemSet S := by
   classical
   unfold idemSet
   rw [Finset.sum_mul]
@@ -62,12 +70,12 @@ theorem idemSet_mul_self (S : Finset (Pl F)) : idemSet S * idemSet S = idemSet S
   rw [Finset.mul_sum, Finset.sum_eq_single w (fun w' _ hne => idemAt_mul_ne hne) (fun h => absurd hw h),
     idemAt_mul_self]
 
-theorem mul_idemSet_of {S : Finset (Pl F)} {u : AF F} (hu : ∀ w ∈ S, evFin F w u = 0) : u * idemSet S = 0 := by
+theorem mul_idemSet_of {S : Finset (Pl (F := F))} {u : AF F} (hu : ∀ w ∈ S, evFin F w u = 0) : u * idemSet S = 0 := by
   unfold idemSet
   rw [Finset.mul_sum]
   exact Finset.sum_eq_zero fun w hw => mul_idemAt_of_evFin w (hu w hw)
 
-theorem idemInf_mul_idemSet (S : Finset (Pl F)) : idemInf F * idemSet S = 0 :=
+theorem idemInf_mul_idemSet (S : Finset (Pl (F := F))) : idemInf F * idemSet S = 0 :=
   mul_idemSet_of fun w _ => evFin_idemInf w
 
 theorem idemInf_mul_self : idemInf F * idemInf F = idemInf F :=
@@ -137,7 +145,7 @@ theorem mixM_mem {n : ℕ} {J : Matrix (Fin n) (Fin n) E} {e : AF F} (he : e * e
   have hT : (mixM e (mat g))ᵀ = e • (mat g)ᵀ + (1 - e) • (1 : Matrix (Fin n) (Fin n) (AE F E)) := by
     rw [mixM, transpose_add, transpose_smul, transpose_smul, transpose_one]
   have hc : (mixM e (mat g)).map (cA σ) = e • (mat g).map (cA σ) + (1 - e) • (1 : Matrix (Fin n) (Fin n) (AE F E)) := by
-    rw [← AlgHom.mapMatrix_apply, mixM, map_add, map_smul, map_smul, map_one, AlgHom.mapMatrix_apply]
+    rw [← AlgHom.mapMatrix_apply, mixM, map_add (f := _), map_smul, map_smul, map_one, AlgHom.mapMatrix_apply]
   rw [hT, hc, split (incM F J), mix_mul he, mix_mul he, hg, one_mul, mul_one]
 
 def mixU {n : ℕ} {J : Matrix (Fin n) (Fin n) E} (e : AF F) (he : e * e = e) (g : UA σ J) : UA σ J :=
@@ -166,10 +174,14 @@ end GlobalTheory.UnitaryTriSplit
 
 namespace GlobalTheory.UnitaryTriSplit
 theorem finite_bad {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {n d : ℕ}
-    (X : Spc F E n) (Y : Spc F E d) (hX : X.L.IsLattice E) (hY : Y.L.IsLattice E)
+    (X : Spc F E n) (Y : Spc F E d) (hX : X.L.IsFullLattice E) (hY : Y.L.IsFullLattice E)
     (M : Matrix (Fin n) (Fin n) (AE F E)) (N : Matrix (Fin d) (Fin d) (AE F E)) :
-    Set.Finite {w : Pl F | ¬ ∀ γ ∈ latAtV X Y w, M * γ * Matrix.transpose N ∈ latAtV X Y w} := by
-  refine (((GlobalTheory.T.lattice_stable_almost_all_places_left) F E n d X Y hX M).union ((GlobalTheory.T.lattice_stable_almost_all_places_right) F E n d X Y hY N)).subset ?_
+    Set.Finite {w : Pl (F := F) | ¬ ∀ γ ∈ latAtV X Y w, M * γ * Matrix.transpose N ∈ latAtV X Y w} := by
+  have hr : Set.Finite {w : Pl (F := F) | ¬ ∀ γ ∈ latAtV X Y w, γ * Matrix.transpose N ∈ latAtV X Y w} := by
+    first
+    | exact GlobalTheory.T.lattice_stable_almost_all_places_right F E n d X Y hY N
+    | exact GlobalTheory.T.lattice_stable_almost_all_places_right F E n d X Y hY.toIsLattice N
+  refine (((GlobalTheory.T.lattice_stable_almost_all_places_left) F E n d X Y hX M).union hr).subset ?_
   intro w hw
   by_contra hc
   simp only [Set.mem_union, Set.mem_setOf_eq, not_or, not_not] at hc
@@ -184,10 +196,10 @@ open Matrix GlobalTheory.UnitaryPlaceSplit
 
 theorem factor_away : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E)
     (a a' : ℕ) (G : Geo σ a a') (X : Chars F E) (om : Rep σ G.V G.W) (om' : Rep σ G.V' G.W), IsTriple B G X om om' →
-    ∀ (v : Pl F) (g : UA σ G.V'.J) (h : UA σ G.W.J), (∀ u : AF F, At (evFin F v) u → u • (mat g - 1) = 0) →
+    ∀ (v : Pl (F := F)) (g : UA σ G.V'.J) (h : UA σ G.W.J), (∀ u : AF F, At (evFin F v) u → u • (mat g - 1) = 0) →
     (∀ u : AF F, At (evFin F v) u → u • (mat h - 1) = 0) →
-    ∀ (φ : ∀ w : Pl F, (Fin a' × Fin (a + a') → Fv F w) → ℂ), (∀ᶠ w in Filter.cofinite, φ w = G.M'.vac w) →
-    ∃ (S : Finset (Pl F)) (g₁ g₂ g₃ : UA σ G.V'.J) (h₁ h₂ h₃ : UA σ G.W.J), v ∉ S ∧
+    ∀ (φ : ∀ w : Pl (F := F), (Fin a' × Fin (a + a') → Fv F w) → ℂ), (∀ᶠ w in Filter.cofinite, φ w = G.M'.vac w) →
+    ∃ (S : Finset (Pl (F := F))) (g₁ g₂ g₃ : UA σ G.V'.J) (h₁ h₂ h₃ : UA σ G.W.J), v ∉ S ∧
       g = g₁ * g₂ * g₃ ∧ h = h₁ * h₂ * h₃ ∧ At (evI F) (mat g₁ - 1) ∧ At (evI F) (mat h₁ - 1) ∧
       (∀ u : AF F, (∀ w ∈ S, evFin F w u = 0) → u • (mat g₂ - 1) = 0) ∧
       (∀ u : AF F, (∀ w ∈ S, evFin F w u = 0) → u • (mat h₂ - 1) = 0) ∧
@@ -202,7 +214,7 @@ theorem factor_away : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Numb
   have hY := hT.geo.hW.lat
   have hfin := ((Filter.eventually_cofinite.1 hφ).union (finite_bad G.V' G.W hX hY (mat g) (mat h))).union
     (finite_bad G.V' G.W hX hY (mat g⁻¹) (mat h⁻¹))
-  obtain ⟨S, hSdef⟩ : ∃ S : Finset (Pl F), S = hfin.toFinset.erase v := ⟨_, rfl⟩
+  obtain ⟨S, hSdef⟩ : ∃ S : Finset (Pl (F := F)), S = hfin.toFinset.erase v := ⟨_, rfl⟩
   have hout : ∀ w, w ≠ v → w ∉ S → w ∉ hfin.toFinset := fun w hwv hwS hm =>
     hwS (hSdef ▸ Finset.mem_erase.2 ⟨hwv, hm⟩)
   obtain ⟨e₁, e₂, h11, h22, h12, hI1, hS2, hfst1, hfst2, hevS, hevN⟩ : ∃ e₁ e₂ : AF F, e₁ * e₁ = e₁ ∧ e₂ * e₂ = e₂ ∧
@@ -210,15 +222,15 @@ theorem factor_away : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Numb
       fstA F e₁ = 1 ∧ fstA F e₂ = 0 ∧ (∀ w ∈ S, evFin F w (e₁ + e₂) = 1) ∧ (∀ w ∉ S, evFin F w (e₁ + e₂) = 0) :=
     ⟨idemInf F, idemSet S, idemInf_mul_self, idemSet_mul_self S, idemInf_mul_idemSet S, fun u hu => mul_idemInf_of_evI hu,
       fun u hu => mul_idemSet_of hu, fstA_idemInf, fstA_idemSet S,
-      fun w hw => by rw [map_add, evFin_idemInf, evFin_idemSet_mem hw, zero_add],
-      fun w hw => by rw [map_add, evFin_idemInf, evFin_idemSet_not_mem hw, zero_add]⟩
+      fun w hw => by rw [map_add (f := _), evFin_idemInf, evFin_idemSet_mem hw, zero_add],
+      fun w hw => by rw [map_add (f := _), evFin_idemInf, evFin_idemSet_not_mem hw, zero_add]⟩
   obtain ⟨e, he⟩ : ∃ e, e₁ + e₂ = e := ⟨_, rfl⟩
   have hee : e * e = e := by
     rw [← he, add_mul, mul_add, mul_add, h11, h22, h12, mul_comm e₂ e₁, h12, zero_add, add_zero]
   have h33 : (1 - e) * (1 - e) = 1 - e := by rw [sub_mul, one_mul, mul_sub, mul_one, hee, sub_self, sub_zero]
   have he3 : e * (1 - e) = 0 := by rw [mul_sub, mul_one, hee, sub_self]
   have hevI : evI F (1 - e) = 0 := by
-    rw [evI_eq, map_sub, map_one, ← he, map_add, hfst1, hfst2, add_zero, sub_self, map_zero]
+    rw [evI_eq, map_sub, map_one, ← he, map_add (f := _), hfst1, hfst2, add_zero, sub_self, map_zero]
   rw [he] at hevS hevN
   have hevS' : ∀ w ∈ S, evFin F w (1 - e) = 0 := fun w hw => by rw [map_sub, map_one, hevS w hw, sub_self]
   refine ⟨S, mixU e₁ h11 g, mixU e₂ h22 g, mixU (1 - e) h33 g, mixU e₁ h11 h, mixU e₂ h22 h, mixU (1 - e) h33 h,

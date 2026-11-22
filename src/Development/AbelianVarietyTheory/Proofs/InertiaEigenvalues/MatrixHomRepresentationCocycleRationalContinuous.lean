@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.KroneckerTransposeMulVec
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.KroneckerTransposeMulVec
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations GlobalTheory.Pst GlobalTheory.PMon TensorProduct
 open scoped Formalism.Per
 
@@ -43,7 +48,8 @@ theorem extCoc_rat_cont_cocycle : ∀ (l : ℕ) [Fact l.Prime] (a b : Type) [Fin
   have hcι : Continuous ι := Continuous.subtype_mk continuous_subtype_val _
   refine ⟨?_, ?_, ?_⟩
   · intro g i
-    rw [hform, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hform, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_mul, hrat.rat, hrat.rat]
   · intro i
@@ -55,7 +61,7 @@ theorem extCoc_rat_cont_cocycle : ∀ (l : ℕ) [Fact l.Prime] (a b : Type) [Fin
       push_cast
       rfl
     rw [this]
-    refine continuous_finset_sum _ fun k _ => ?_
+    refine continuous_finsetSum _ fun k _ => ?_
     exact ((hrat.cont _ _).comp hcι).mul ((hrat.cont _ _).comp (continuous_inv.comp hcι))
   · intro g h
     exact matrixHomRepresentationCocycleCoords_cocycle (ρ.comp ι) (ρ₁.comp ι) (ρ₂.comp ι) (fun g => c (ι g)) (fun g => hρ (ι g)) g h

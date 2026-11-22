@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.StatementC
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelProductIndex.Development
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.StatementC
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelProductIndex.Development
+
+@[expose] public section
 
 open Matrix NumberField IsDedekindDomain
 open scoped TensorProduct

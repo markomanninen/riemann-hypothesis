@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped ENNReal Pointwise
@@ -49,25 +53,25 @@ theorem _root_.GlobalTheory.OrbitUnfold.setLIntegral_pull (g : H) (f : H → ℝ
   (measurePreserving_mul_left ν g).setLIntegral_comp_preimage_emb
     (measurableEmbedding_mulLeft g) f 𝓕
 
+
 open MeasureTheory Set in
 open scoped ENNReal Pointwise in
 variable {H : Type} [Group H] [MeasurableSpace H] [MeasurableMul H] {ν : Measure H}
   [ν.IsMulLeftInvariant] {Γ : Subgroup H} {Y : Type} [MulAction Γ Y] {𝓕 : Set H} in
-
 theorem _root_.GlobalTheory.OrbitUnfold.isFundamentalDomain_iUnion_pull (hF : IsFundamentalDomain Γ 𝓕 ν)
     (y₀ : Y) {O : Set Y}
     [Countable O] (hO : ∀ γ : Γ, γ • y₀ ∈ O) (σ : O → Γ) (hσ : ∀ a : O, σ a • y₀ = a) :
     IsFundamentalDomain ((MulAction.stabilizer Γ y₀).map Γ.subtype)
-      (⋃ a : O, _root_.GlobalTheory.OrbitUnfold.pull 𝓕 (σ a : H)) ν where
-  nullMeasurableSet := .iUnion fun a => _root_.GlobalTheory.OrbitUnfold.nullMeasurableSet_pull hF _
-  ae_covers := by
+      (⋃ a : O, _root_.GlobalTheory.OrbitUnfold.pull 𝓕 (σ a : H)) ν := by
+  refine ⟨.iUnion (fun a => _root_.GlobalTheory.OrbitUnfold.nullMeasurableSet_pull hF _), ?_, ?_⟩
+  ·
     filter_upwards [hF.ae_covers] with x ⟨γ, hγ⟩
     let a : O := ⟨γ • y₀, hO γ⟩
     have hs : (σ a)⁻¹ * γ ∈ MulAction.stabilizer Γ y₀ := by
       rw [MulAction.mem_stabilizer_iff, mul_smul, inv_smul_eq_iff, hσ a]
     refine ⟨⟨Γ.subtype ((σ a)⁻¹ * γ), Subgroup.mem_map_of_mem _ hs⟩, Set.mem_iUnion.2 ⟨a, ?_⟩⟩
     simpa [_root_.GlobalTheory.OrbitUnfold.pull, Subgroup.smul_def, mul_assoc] using hγ
-  aedisjoint := by
+  ·
     rintro ⟨_, s, hs, rfl⟩ ⟨_, t, ht, rfl⟩ hst
     have hset : ∀ (u : Γ) (hu : u ∈ MulAction.stabilizer Γ y₀) (a : O),
         (⟨Γ.subtype u, Subgroup.mem_map_of_mem _ hu⟩ :
@@ -98,11 +102,11 @@ private theorem selfEquivSigmaOrbits_symm_mk {G X : Type} [Group G] [MulAction G
     (ω : MulAction.orbitRel.Quotient G X) (x : MulAction.orbit G ω.out) :
     (MulAction.selfEquivSigmaOrbits G X).symm ⟨ω, x⟩ = x := rfl
 
+
 open MeasureTheory Set in
 open scoped ENNReal Pointwise in
 variable {H : Type} [Group H] [MeasurableSpace H] [MeasurableMul H] {ν : Measure H}
   [ν.IsMulLeftInvariant] {Γ : Subgroup H} {Y : Type} [MulAction Γ Y] {𝓕 : Set H} in
-
 theorem _root_.GlobalTheory.OrbitUnfold.tsum_setIntegral_eq_zero :
     ∀ (H : Type) [Group H] [MeasurableSpace H] [MeasurableMul H] (ν : Measure H)
       [ν.IsMulLeftInvariant] (Γ : Subgroup H) [Countable Γ] (Y : Type) [Countable Y]
@@ -145,7 +149,7 @@ theorem _root_.GlobalTheory.OrbitUnfold.tsum_setIntegral_eq_zero :
             lintegral_iUnion_le _ _
         _ = ∑' a : MulAction.orbit Γ y₀, ∫⁻ h in 𝓕, ‖Φ a h‖ₑ ∂ν := by simp only [hlpt]
         _ ≤ ∑' y, ∫⁻ h in 𝓕, ‖Φ y h‖ₑ ∂ν :=
-            ENNReal.tsum_comp_le_tsum_of_injective Subtype.val_injective _
+            (by refine' _root_.le_trans _ (_root_.tsum_comp_le_tsum_of_injective Subtype.val_injective _); exact _root_.le_rfl)
         _ < ⊤ := lt_top_iff_ne_top.2 hfin
     simp only [hpt]
     rw [← integral_iUnion_ae (fun a => _root_.GlobalTheory.OrbitUnfold.nullMeasurableSet_pull hF _) hdisj hint]

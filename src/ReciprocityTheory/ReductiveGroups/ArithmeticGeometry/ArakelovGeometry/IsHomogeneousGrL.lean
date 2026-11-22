@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ExistsPrimeFiltrationOfIsMultiHomogIdeal
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ExistsPrimeFiltrationOfIsMultiHomogIdeal
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ def lexDeg (a : K → ℕ) : Lex (Fin (Fintype.card K) → ℕ) := toLex (a ∘ 
 
 theorem lexDeg_add (a b : K → ℕ) : lexDeg (a + b) = lexDeg a + lexDeg b := rfl
 
-variable (ι) in
 
+variable (ι) in
 abbrev grL : Lex (Fin (Fintype.card K) → ℕ) → Submodule ℤ (MRing ι) :=
   weightedHomogeneousSubmodule ℤ (lexW (ι := ι) (Fintype.equivFin K))
 
@@ -36,7 +40,7 @@ theorem mHom_eq (a : K → ℕ) : mHom ι a = grL ι (lexDeg a) := by
     exact (mem_grL_iff s a).symm
   rw [this, Submodule.span_eq]
 
-theorem mem_mHom_iff (f : MRing ι) (a : K → ℕ) : f ∈ mHom ι a ↔ IsMultiHomog f a := by
+theorem mem_mHom_iff_via_grL (f : MRing ι) (a : K → ℕ) : f ∈ mHom ι a ↔ IsMultiHomog f a := by
   rw [mHom_eq, mem_grL_iff]
 
 theorem isHomogeneous_grL {J : Ideal (MRing ι)} (hJ : IsMultiHomogIdeal J) :

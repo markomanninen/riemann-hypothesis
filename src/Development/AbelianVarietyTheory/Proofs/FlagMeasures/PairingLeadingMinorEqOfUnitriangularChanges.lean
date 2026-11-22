@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GlobSet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GlobSet
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc GlobalTheory.Unfold GlobalTheory.LocOver GlobalTheory.GenMass
 open scoped Classical
@@ -67,7 +71,8 @@ theorem h_sum_left (H : HermSp M V) {ι : Type} (s : Finset ι) (c : ι → E) (
 
 theorem h_sum_right (H : HermSp M V) {ι : Type} (s : Finset ι) (c : ι → E) (v : ι → V) (x : V) :
     H.h x (∑ i ∈ s, c i • v i) = ∑ i ∈ s, M.L.cj (c i) * H.h x (v i) := by
-  rw [H.h_herm (∑ i ∈ s, c i • v i) x, h_sum_left H, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [H.h_herm (∑ i ∈ s, c i • v i) x, h_sum_left H, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, ← H.h_herm (v i) x]
 

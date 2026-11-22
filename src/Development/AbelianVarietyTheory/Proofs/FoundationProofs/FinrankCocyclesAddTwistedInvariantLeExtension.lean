@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemTwInv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemTwInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem exists_extend_cocyc (Γ : Subgroup G) (ρ : G → E →ₗ[ℂ] E)
     apply Subtype.ext
     simp [hrγ, mul_assoc]
   show ρ (r (γ * x)) (z ⟨(γ : G) * x * (r (γ * x))⁻¹, hr _⟩) = _
-  rw [h1, hz, hrγ, map_add, ← hmul]
+  rw [h1, hz, hrγ, map_add (f := _), ← hmul]
   simp
 
 theorem exists_extn_of_cocyc (Γ : Subgroup G) (ρ : G → E →ₗ[ℂ] E) (s : G)
@@ -42,7 +46,7 @@ theorem exists_extn_of_cocyc (Γ : Subgroup G) (ρ : G → E →ₗ[ℂ] E) (s :
   have e2 : s ^ 2 * s ^ 2 = 1 := by rw [← hs]; group
   have e3 : s ^ 3 * s = 1 := by rw [← hs]; group
   have key : ∀ (γ : Γ) (x : G), u (γ * x) = ρ x (z γ) + u x := fun γ x => by
-    simp only [u, mul_assoc, hu0, map_add, ← hmul, e1, e2, e3, mul_one]
+    simp only [u, mul_assoc, hu0, map_add (f := _), ← hmul, e1, e2, e3, mul_one]
     module
   have key1 : ∀ γ : Γ, u γ - u 1 = z γ := fun γ => by
     have := key γ 1
@@ -56,7 +60,7 @@ theorem exists_extn_of_cocyc (Γ : Subgroup G) (ρ : G → E →ₗ[ℂ] E) (s :
   · have f1 : s * s = s ^ 2 := (pow_two s).symm
     have f2 : s * s ^ 2 = s ^ 3 := by group
     have f3 : s ^ 2 * s = s ^ 3 := by group
-    simp only [u, mul_assoc, map_add, map_smul, ← hmul, e1, e3, f1, f2, f3, mul_one, hone]
+    simp only [u, mul_assoc, map_add (f := _), map_smul, ← hmul, e1, e3, f1, f2, f3, mul_one, hone]
     module
 
 def extnToCocyc (Γ : Subgroup G) (ρ : G → E →ₗ[ℂ] E) (s : G) : extn Γ ρ s →ₗ[ℂ] cocyc Γ ρ where

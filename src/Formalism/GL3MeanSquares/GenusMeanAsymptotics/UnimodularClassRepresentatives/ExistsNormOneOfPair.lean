@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,7 +90,7 @@ theorem exists_norm_one_of_pair (hS : IsHermSemilocal S) {h : V →ₗ⋆[K] V �
   have key : ∀ c d : K, h (c • w + d • y) (c • w + d • y) =
       star c * c * h w w + star c * d + star d * c + star d * d * (star a * a) := by
     intro c d
-    simp only [map_add, LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply,
+    simp only [map_add (f := _), LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply,
       smul_eq_mul, hy, hyw, hwy, starRingEnd_apply, RingHom.id_apply]
     ring
   by_cases hu : a⁻¹ ∈ S

@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.IsTheta
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.LocCFTAll
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.Classical
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.NtExpand
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.IsTheta
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.LocCFTAll
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.Classical
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.NtExpand
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel IsLocalRing GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.UnitaryBC UpperTheory.V UpperTheory.V.Hi UpperTheory.V.Hi.CaseU
 open UpperTheory.V.W (Plc Lp HidaSetting Vl Resid LamObj UniversalOrdinaryDeterminantRing Pair)
@@ -27,7 +31,7 @@ theorem ofRep_comap {n : ℕ} {A G H : Type} [CommRing A] [Group G] [Group H] (�
     intro z
     induction z using MonoidAlgebra.induction_linear with
     | zero => simp
-    | add a b ha hb => rw [map_add, map_add, map_add, ha, hb]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _), ha, hb]
     | single g b => simp [W.GDet.repAlg, MonoidAlgebra.lift_single]
   exact congrArg Matrix.det (key y)
 
@@ -47,7 +51,7 @@ theorem polar_comap (O : Type) [CommRing O] [Algebra ℤ_[l] O] {R : Type} [Comm
     induction z using MonoidAlgebra.induction_linear with
     | zero => simp [W.GFrame.star]
     | add a b ha hb =>
-      simp only [W.GFrame.star, map_add, MulOpposite.unop_add] at *
+      simp only [W.GFrame.star, map_add (f := _), MulOpposite.unop_add] at *
       rw [ha, hb]
     | single g b =>
       have hc : h.π₀ (F'.conj g) = F.conj (h.π₀ g) := by

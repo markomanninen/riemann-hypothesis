@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NeZeroTop
-import Formalism.LocalToGlobal.Columns.RecLevelTop
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NeZeroTop
+public import Formalism.LocalToGlobal.Columns.RecLevelTop
+
+@[expose] public section
 
 noncomputable section
 

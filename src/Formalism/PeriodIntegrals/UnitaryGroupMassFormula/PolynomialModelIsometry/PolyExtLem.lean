@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialModelIsometry.IsPolyMon
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialModelIsometry.IsPolyMon
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ lemma pe_right {N : ℕ} (h : Matrix (Fin N) (Fin N) ℂ) (Q : MvPolynomial (Fin
   refine ⟨bind₁ (fun pq : Fin N × Fin N => ∑ r, X (pq.1, r) * C (h r pq.2)) Q, fun g => ?_⟩
   induction Q using MvPolynomial.induction_on with
   | C a => simp [evM]
-  | add p q hp hq => simp only [map_add, evM] at *; rw [hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), evM] at *; rw [hp, hq]
   | mul_X p n hp =>
     simp only [map_mul, evM, bind₁_X_right] at *
     rw [hp]
@@ -46,7 +50,7 @@ lemma pe_left {N : ℕ} (g : Matrix (Fin N) (Fin N) ℂ) (Q : MvPolynomial (Fin 
   refine ⟨bind₁ (fun pq : Fin N × Fin N => ∑ r, C (g pq.1 r) * X (r, pq.2)) Q, fun h => ?_⟩
   induction Q using MvPolynomial.induction_on with
   | C a => simp [evM]
-  | add p q hp hq => simp only [map_add, evM] at *; rw [hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), evM] at *; rw [hp, hq]
   | mul_X p n hp =>
     simp only [map_mul, evM, bind₁_X_right] at *
     rw [hp]

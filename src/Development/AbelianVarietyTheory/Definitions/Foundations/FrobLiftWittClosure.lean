@@ -1,69 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CyclotomicDvdExpandOfCoprime
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CyclotomicDvdExpandOfCoprime
+
+@[expose] public section
 
 noncomputable section
 open PowerSeries
 namespace GlobalTheory.Col.Model
 open GlobalTheory.Col
 
-theorem frobLift_witt (p : ℕ) [hp : Fact p.Prime] (k : Type) [Field k] [CharP k p] [PerfectRing k p] :
-    FrobLift (WittVector p k) p (WittVector.frobeniusEquiv p k) where
-  dom := inferInstance
-  prime := (WittVector.irreducible p).prime
-  complete := inferInstance
-  frob := by
-    intro x
-    rw [WittVector.mem_span_p_iff_coeff_zero_eq_zero]
-    have : (WittVector.constantCoeff : WittVector p k →+* k) (WittVector.frobeniusEquiv p k x - x ^ p) = 0 := by
-      rw [map_sub, map_pow]
-      simp [WittVector.frobeniusEquiv, WittVector.coeff_frobenius_charP]
-    simpa using this
-  perfect := by
-    intro x
-    obtain ⟨y, hy⟩ := (PerfectRing.bijective_frobenius (R := k) (p := p)).2 (x.coeff 0)
-    refine ⟨WittVector.teichmuller p y, ?_⟩
-    rw [WittVector.mem_span_p_iff_coeff_zero_eq_zero]
-    have : (WittVector.constantCoeff : WittVector p k →+* k) (WittVector.teichmuller p y ^ p - x) = 0 := by
-      rw [map_sub, map_pow]
-      simpa [sub_eq_zero] using hy
-    simpa using this
-
-theorem frobLift_witt_closure (p : ℕ) [hp : Fact p.Prime] :
-    FrobLift (WittVector p (AlgebraicClosure (ZMod p))) p (WittVector.frobeniusEquiv p (AlgebraicClosure (ZMod p))) :=
-  frobLift_witt p _
-
 section Free
 variable {R : Type} [CommRing R] (p : ℕ) [hp : Fact p.Prime]
-
-abbrev om : PowerSeries R := (1 + X) ^ p - 1
-
-theorem om_order (hu : (p : R) ∈ nonunits R) :
-    ((om p : PowerSeries R).map (Ideal.Quotient.mk (Ideal.span {(p : R)}))).order.toNat = p := by
-  haveI : CharP (R ⧸ Ideal.span {(p : R)}) p := CharP.quotient R p hu
-  haveI : Nontrivial (R ⧸ Ideal.span {(p : R)}) := CharP.nontrivial_of_char_ne_one (R := R ⧸ Ideal.span {(p : R)}) hp.out.ne_one
-  haveI : CharP (PowerSeries (R ⧸ Ideal.span {(p : R)})) p :=
-    charP_of_injective_ringHom (f := PowerSeries.C) PowerSeries.C_injective p
-  have : (om p : PowerSeries R).map (Ideal.Quotient.mk (Ideal.span {(p : R)})) = X ^ p := by
-    simp only [om, map_sub, map_pow, map_add, map_one, PowerSeries.map_X]
-    rw [add_pow_char]; simp
-  rw [this, order_X_pow]; simp
-
-theorem om_div (hu : (p : R) ∈ nonunits R) : (om p : PowerSeries R).IsWeierstrassDivisorAt (Ideal.span {(p : R)}) := by
-  unfold IsWeierstrassDivisorAt
-  rw [om_order p hu]
-  have h : ((1 + X) ^ p : PowerSeries R) = (((1 + Polynomial.X) ^ p : Polynomial R) : PowerSeries R) := by simp
-  have : coeff p (om p : PowerSeries R) = 1 := by
-    rw [om, map_sub, h, Polynomial.coeff_coe, Polynomial.coeff_one_add_X_pow, coeff_one, if_neg hp.out.ne_zero]; simp
-  rw [this]; exact isUnit_one
-
-theorem phi_split (c : R) (g : PowerSeries R) : phi p hp.out.pos (C c + X * g) = C c + om p * phi p hp.out.pos g := by
-  rw [map_add, map_mul, phi_X]
-  congr 1
-  exact (phi (R := R) p hp.out.pos).commutes c
-
-theorem eq_zero_of_X_pow_dvd (f : PowerSeries R) (h : ∀ n, X ^ n ∣ f) : f = 0 := by
-  ext n
-  exact (X_pow_dvd_iff.1 (h (n + 1))) n (Nat.lt_succ_self n)
 
 variable [IsAdicComplete (Ideal.span {(p : R)}) R]
 
@@ -159,7 +107,8 @@ open PowerSeries in
 variable {R : Type} [CommRing R] (p : ℕ) [hp : Fact p.Prime] in
 private lemma coeff_sum_expand_mul_X_pow (g : Fin p → R⟦X⟧) (n : ℕ) (j : Fin p) :
     coeff (p * n + j) (∑ i, expand p hp.out.ne_zero (g i) * X ^ (i : ℕ)) = coeff n (g j) := by
-  rw [map_sum, Finset.sum_eq_single j]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single j]
   · rw [coeff_mul_X_pow, coeff_expand_mul]
   · intro i _ hij
     rw [coeff_mul_X_pow']
@@ -204,7 +153,7 @@ theorem _root_.GlobalTheory.Col.Model.indep (hu : (p : R) ∈ nonunits R) (g : F
       rw [hD, smul_add, smul_smul, ← pow_succ] at hψ
       have h0 : ∑ i, expand p hp.out.ne_zero
           (g i + ((p : R) ^ (k + 1)) • PowerSeries.mk fun n => coeff (p * n + i) D) * X ^ (i : ℕ) = 0 := by
-        simp only [map_add, map_smul, add_mul, smul_mul_assoc, Finset.sum_add_distrib, ← Finset.smul_sum,
+        simp only [map_add (f := _), map_smul, add_mul, smul_mul_assoc, Finset.sum_add_distrib, ← Finset.smul_sum,
           sum_expand_mk_coeff_mul_X_pow_eq, hw]
         exact hψ
       refine ⟨fun i => -PowerSeries.mk fun n => coeff (p * n + i) D, fun i => ?_⟩
@@ -237,7 +186,7 @@ theorem _root_.GlobalTheory.Col.Model.spans (hu : (p : R) ∈ nonunits R) (h : P
   set ψ : (Fin p → R⟦X⟧) → R⟦X⟧ := fun g => ∑ i, _root_.GlobalTheory.Col.phi p hp.out.pos (g i) * X ^ (i : ℕ)
     with hψdef
   have ψ_add : ∀ a b, ψ (a + b) = ψ a + ψ b := fun a b => by
-    simp only [hψdef, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+    simp only [hψdef, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
   have ψ_smul : ∀ (c : R) a, ψ (c • a) = c • ψ a := fun c a => by
     simp only [hψdef, Pi.smul_apply, map_smul, smul_mul_assoc, Finset.smul_sum]
   have ψ_zero : ψ 0 = 0 := by simp [hψdef]
@@ -274,7 +223,8 @@ theorem _root_.GlobalTheory.Col.Model.spans (hu : (p : R) ∈ nonunits R) (h : P
       simp only [A]
       rw [Finset.sum_range_add_sum_Ico _ hab]
     rw [hsplit]
-    simp only [Pi.add_apply, Finset.sum_apply, Pi.smul_apply, map_add, map_sum, coeff_smul, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Pi.add_apply, Finset.sum_apply, Pi.smul_apply, map_add (f := _), map_sum, coeff_smul, smul_eq_mul,
       sub_add_cancel_left]
     refine ⟨-∑ k ∈ Finset.Ico a b, (p : R) ^ (k - a) * coeff n (G (hs k) i), ?_⟩
     rw [mul_neg, Finset.mul_sum]
@@ -320,10 +270,6 @@ instance (R : Type) [CommRing R] (p : ℕ) [hp : Fact p.Prime] : Algebra (PowerS
 section Basis
 variable {R : Type} [CommRing R] (p : ℕ) [hp : Fact p.Prime]
 
-theorem normOp_eq (h : PowerSeries R) : normOp p h = Algebra.norm (PowerSeries R) (S := Up R p) h := rfl
-
-theorem trOp_eq (h : PowerSeries R) : trOp p h = Algebra.trace (PowerSeries R) (Up R p) h := rfl
-
 variable [IsAdicComplete (Ideal.span {(p : R)}) R]
 
 def basis (hu : (p : R) ∈ nonunits R) : Module.Basis (Fin p) (PowerSeries R) (Up R p) :=
@@ -334,22 +280,7 @@ def basis (hu : (p : R) ∈ nonunits R) : Module.Basis (Fin p) (PowerSeries R) (
       rw [Submodule.mem_span_range_iff_exists_fun]
       exact ⟨g, hg.symm⟩)
 
-theorem normOp_phi (hu : (p : R) ∈ nonunits R) (g : PowerSeries R) : normOp p (phi p hp.out.pos g) = g ^ p := by
-  have := Algebra.norm_algebraMap_of_basis (basis p hu) g
-  rw [Fintype.card_fin] at this
-  exact this
-
-theorem trOp_phi (hu : (p : R) ∈ nonunits R) (g : PowerSeries R) : trOp p (phi p hp.out.pos g) = p • g := by
-  have := Algebra.trace_algebraMap_of_basis (basis p hu) g
-  rw [Fintype.card_fin] at this
-  exact this
-
 end Basis
-
-theorem frobLift_ops {R : Type} [CommRing R] (p : ℕ) [hp : Fact p.Prime] (σ : R ≃+* R) (F : FrobLift R p σ)
-    (g : PowerSeries R) : normOp p (phi p hp.out.pos g) = g ^ p ∧ trOp p (phi p hp.out.pos g) = p • g := by
-  haveI := F.complete
-  exact ⟨normOp_phi p F.prime.not_isUnit g, trOp_phi p F.prime.not_isUnit g⟩
 
 def UpL (R : Type) [CommRing R] (p m : ℕ) (_hm : 1 ≤ m) : Type := lev R p (m + 1)
 
@@ -367,8 +298,6 @@ def toUpL (p m : ℕ) (hm : 1 ≤ m) (x : lev R p (m + 1)) : UpL R p m hm := x
 
 theorem up_ev (g : PowerSeries R) : up p m hm (ev R p m g) = ev R p (m + 1) (phi p hp.out.pos g) := rfl
 
-theorem nrm_eq (x : lev R p (m + 1)) : nrm p m hm x = Algebra.norm (lev R p m) (S := UpL R p m hm) x := rfl
-
 variable [IsAdicComplete (Ideal.span {(p : R)}) R]
 
 open PowerSeries in
@@ -380,7 +309,8 @@ theorem _root_.GlobalTheory.Col.Model.indepL (hu : (p : R) ∈ nonunits R) (x : 
   choose g hg using fun i => hsurj (x i)
   have hzero : _root_.GlobalTheory.Col.ev R p (m + 1)
       (∑ i, _root_.GlobalTheory.Col.phi p hp.out.pos (g i) * X ^ (i : ℕ)) = 0 := by
-    rw [map_sum, ← hx]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← hx]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_mul, ← _root_.GlobalTheory.Col.Model.up_ev p m hm, hg]
   obtain ⟨k, hk⟩ := Ideal.mem_span_singleton'.1 (Ideal.Quotient.eq_zero_iff_mem.1 hzero)
@@ -403,14 +333,15 @@ def basisL (hu : (p : R) ∈ nonunits R) : Module.Basis (Fin p) (lev R p m) (UpL
       obtain ⟨g, hg⟩ := spans p hu h
       refine (Submodule.mem_span_range_iff_exists_fun _).2 ⟨fun i => ev R p m (g i), ?_⟩
       change ∑ i, up p m hm (ev R p m (g i)) * ev R p (m + 1) (X ^ (i : ℕ)) = ev R p (m + 1) h
-      rw [hg, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hg, map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_mul, up_ev])
+
 
 open PowerSeries in
 variable {R : Type} [CommRing R] (p : ℕ) [hp : Fact p.Prime] (m : ℕ) (hm : 1 ≤ m) in
 variable [IsAdicComplete (Ideal.span {(p : R)}) R] in
-
 theorem _root_.GlobalTheory.Col.Model.nrm_ev (hu : (p : R) ∈ nonunits R) (h : PowerSeries R) :
     _root_.GlobalTheory.Col.nrm p m hm (_root_.GlobalTheory.Col.ev R p (m + 1) h) = _root_.GlobalTheory.Col.ev R p m (_root_.GlobalTheory.Col.normOp p h) := by
   have hN1 : _root_.GlobalTheory.Col.normOp p h =
@@ -446,31 +377,12 @@ theorem _root_.GlobalTheory.Col.Model.nrm_ev (hu : (p : R) ∈ nonunits R) (h : 
     change _root_.GlobalTheory.Col.ev R p (m + 1) h * _root_.GlobalTheory.Col.ev R p (m + 1) (X ^ (j : ℕ)) =
       ∑ k, _root_.GlobalTheory.Col.up p m hm (_root_.GlobalTheory.Col.ev R p m (c k)) *
         _root_.GlobalTheory.Col.ev R p (m + 1) (X ^ (k : ℕ))
-    rw [← map_mul, hc', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_mul, hc', map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_mul, _root_.GlobalTheory.Col.Model.up_ev]
   rw [key, Module.Basis.repr_sum_self]
 
 end Level
-
-theorem lev_nontrivial {R : Type} [CommRing R] (p : ℕ) [hp : Fact p.Prime] (hu : (p : R) ∈ nonunits R) (m : ℕ) :
-    Nontrivial (lev R p (m + 1)) := by
-  refine Ideal.Quotient.nontrivial_iff.2 ?_
-  rw [Ne, Ideal.span_singleton_eq_top, isUnit_iff_constantCoeff]
-  have : constantCoeff (cyc R p (m + 1)) = (p : R) := by
-    unfold cyc
-    rw [Polynomial.hom_eval₂]
-    have : (constantCoeff : PowerSeries R →+* R).comp C = RingHom.id R := by ext; simp
-    rw [this]
-    simp [Polynomial.eval₂_id, Polynomial.eval_one_cyclotomic_prime_pow]
-  rw [this]; exact hu
-
-theorem dd_test {R : Type} [CommRing R] (p : ℕ) (hp : 0 < p) :
-    dd (phi (R := R) p hp (1 + X)) = (p : PowerSeries R) * phi (R := R) p hp (dd (1 + X : PowerSeries R)) := by
-  have h1 : dd (1 + X : PowerSeries R) = 1 + X := by simp [dd]
-  rw [h1, phi_one_add_X]
-  obtain ⟨n, rfl⟩ : ∃ n, p = n + 1 := ⟨p - 1, by omega⟩
-  simp [dd, Derivation.leibniz_pow]
-  ring
 
 end GlobalTheory.Col.Model

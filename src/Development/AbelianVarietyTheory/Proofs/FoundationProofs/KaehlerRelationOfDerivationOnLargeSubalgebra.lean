@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsTrDataGaussianIntOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsTrDataGaussianIntOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,8 @@ theorem kaehler_rel_local : ∀ (A S : Type) [CommRing A] [CommRing S] [Algebra 
   have hlc : ∀ (M : Type) [AddCommGroup M] [Module S M] (D : S → M),
       Finsupp.linearCombination S D v = ∑ i, x i • D (y i) := by
     intro M _ _ D
-    simp [hv, map_sum, Finsupp.linearCombination_single]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hv, map_sum, Finsupp.linearCombination_single]
   have hmem : v ∈ KaehlerDifferential.kerTotal A S := by
     rw [← KaehlerDifferential.kerTotal_eq, LinearMap.mem_ker, hlc, h]
   obtain ⟨G, hGs, hvG⟩ := Submodule.mem_span_finite_of_mem_span hmem

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.TruncatedCuspIrreducibility.IsOrthogonalProjectionTwoLines
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.TruncatedCuspIrreducibility.IsOrthogonalProjectionTwoLines
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic PositivityTheory.Rg.Tf.IntegralApplyAeEq PositivityTheory.Rg.Tf.Adel ContinuousLinearMap
 open scoped InnerProductSpace
@@ -112,7 +116,7 @@ private theorem core (hM : Main) (J : L V →ₗᵢ[ℂ] H) (J' : L W →ₗᵢ[
               have h1 : Λ (π h) = 0 := by simpa [hπι] using congrArg π h0
               have h2 : h = ι (π h) := by simpa [h1, sub_eq_zero] using h0
               obtain ⟨u, v, a1, a2, a3⟩ := (s3 _).1 h1
-              exact ⟨u, v, a1, a2, by rw [h2, a3, map_add, hJ, hJ']⟩
+              exact ⟨u, v, a1, a2, by rw [h2, a3, map_add (f := _), hJ, hJ']⟩
             · rintro ⟨u, v, a1, a2, rfl⟩
               have h1 := (s3 _).2 ⟨u, v, a1, a2, rfl⟩
               rw [map_add π, hπJ, hπJ', h1, map_add ι, hJ, hJ']
@@ -136,7 +140,7 @@ private theorem core (hM : Main) (J : L V →ₗᵢ[ℂ] H) (J' : L W →ₗᵢ[
   have hXP' : ∀ x, X (ι (π x)) = ι (π (X x)) := fun x => congrArg (fun A : H →L[ℂ] H => A x) hXP
   have e1 : ∀ x, ι (π (x - Λ x)) = x - Λ x := fun x => by
     obtain ⟨u, v, -, -, a⟩ := (s3 (x - Λ x)).1 (by simp [s2'])
-    rw [a, map_add, map_add, hπJ, hπJ', hJ, hJ']
+    rw [a, map_add (f := _), map_add (f := _), hπJ, hπJ', hJ, hJ']
   have e2 : ∀ x, Λ (ι (π x)) = ι (π (Λ x)) := fun x => by
     have a : ι (π x) - Λ (ι (π x)) = x - Λ x := by
       refine ext_inner_left ℂ fun y => ?_
@@ -157,7 +161,7 @@ private theorem core (hM : Main) (J : L V →ₗᵢ[ℂ] H) (J' : L W →ₗᵢ[
       · intro h0
         have h1 : Λ (ι h) = 0 := by rw [← e3, h0, map_zero]
         obtain ⟨u, v, a1, a2, a3⟩ := (s3 _).1 h1
-        exact ⟨u, v, a1, a2, by rw [← hπι h, a3, map_add, hπJ, hπJ']⟩
+        exact ⟨u, v, a1, a2, by rw [← hπι h, a3, map_add (f := _), hπJ, hπJ']⟩
       · rintro ⟨u, v, a1, a2, rfl⟩
         rw [map_add ι, hJ, hJ', (s3 _).2 ⟨u, v, a1, a2, rfl⟩, map_zero]
   obtain ⟨t1, t2⟩ := tr_compress ι π htc (by

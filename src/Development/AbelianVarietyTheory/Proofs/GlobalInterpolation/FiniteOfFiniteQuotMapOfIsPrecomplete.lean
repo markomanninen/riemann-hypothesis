@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -69,7 +73,8 @@ theorem finite_of_finite_quot_map_of_isPrecomplete :
     obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun O).1 hx
     refine ⟨c, ?_⟩
     have hq : Ideal.Quotient.mk I (Fintype.linearCombination O s' c) = Ideal.Quotient.mk I x := by
-      rw [Fintype.linearCombination_apply, map_sum, ← hc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Fintype.linearCombination_apply, map_sum, ← hc]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [Algebra.smul_def, map_mul, ← hs' i, Algebra.smul_def]
       rfl

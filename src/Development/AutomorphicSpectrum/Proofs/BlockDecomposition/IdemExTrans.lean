@@ -1,11 +1,16 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EqZeroOfComps
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EvFinSSOneNot
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsMemHROfGram
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FrameCompletes
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsOpenMulEqIdem
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsOpenFreeFramePairs
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EqZeroOfComps
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EvFinSSOneNot
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsMemHROfGram
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FrameCompletes
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsOpenMulEqIdem
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsOpenFreeFramePairs
+
+@[expose] public section
+
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct Topology
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory Filter
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel

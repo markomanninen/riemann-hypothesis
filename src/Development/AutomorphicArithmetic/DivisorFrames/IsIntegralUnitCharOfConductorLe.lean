@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.Definitions.Divisors.OmAUnipFourierInv
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ScaledIntegerPeriodic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OmAUnipFourierInv
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ScaledIntegerPeriodic
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.SplitFlip
 open scoped Pointwise
@@ -28,7 +32,7 @@ theorem UpperTheory.isIntegral_unitChar_of_conductor_le :
   intro k _ _ _ _ ϖ e ν hϖ hν x hx
   have hpow : ∀ n : ℕ, (x : k) ^ n ∈ 𝒪[k] := fun n =>
     (Valuation.mem_integer_iff _ _).2 (by rw [map_pow, hx, one_pow])
-  let g : ℕ → Res k e := fun n => Ideal.Quotient.mk _ ⟨(x : k) ^ n, hpow n⟩
+  let g : ℕ → Res (k := k) e := fun n => Ideal.Quotient.mk _ ⟨(x : k) ^ n, hpow n⟩
   obtain ⟨i, j, hne, hg⟩ := Finite.exists_ne_map_eq_of_infinite g
   have key : ∀ a b : ℕ, a < b → g a = g b → IsIntegral ℤ (ν x : ℂ) := by
     intro a b hab h

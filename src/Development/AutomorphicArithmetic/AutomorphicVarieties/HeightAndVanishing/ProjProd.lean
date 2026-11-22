@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.LayerLe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.ProjFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.LayerLe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.ProjFacts
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.Top UpperTheory.V.HV
 
@@ -20,7 +24,7 @@ private theorem UpperTheory.V.HV.projProd_ext (N : ℕ) [NeZero N] (a b : (ZMod 
     exact Nat.Coprime.pow _ _ ((Nat.coprime_primes (Nat.prime_of_mem_primeFactors hp) (Nat.prime_of_mem_primeFactors hq)).mpr hpq)
   have hd := Finset.prod_dvd_of_coprime hcop key
   have hN : ∏ r ∈ N.primeFactors, r ^ N.factorization r = N := by
-    conv_rhs => rw [← Nat.factorization_prod_pow_eq_self (NeZero.ne N)]
+    conv_rhs => rw [← Nat.prod_factorization_pow_eq_self (NeZero.ne N)]
     rw [Finsupp.prod, Nat.support_factorization]
   rw [← Nat.cast_prod, hN] at hd
   have e2 : ((a : ZMod N).val : ZMod N) = ((b : ZMod N).val : ZMod N) :=

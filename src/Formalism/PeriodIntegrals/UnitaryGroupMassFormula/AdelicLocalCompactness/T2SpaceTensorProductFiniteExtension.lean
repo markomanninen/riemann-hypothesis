@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.GaugeGap
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.FrameTransport
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem continuous_sigR (σ : E →ₐ[F] E) : Continuous (sigR R σ) := by
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul r y => simp [sigR, LinearMap.baseChange_tmul]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   rw [e]
   exact IsModuleTopology.continuous_of_linearMap _
 

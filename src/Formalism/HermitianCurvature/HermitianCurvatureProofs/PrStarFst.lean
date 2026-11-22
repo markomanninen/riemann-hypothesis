@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+module
+
+public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBF
 
@@ -25,7 +29,8 @@ def actP (M : SlopeTestRemainingChoices S (Q.Pr V)) (X : Ix S → V) : Ix S → 
 theorem polyAction_mul (M N : SlopeTestRemainingChoices S (Q.Pr V)) (X : Ix S → V) : actP (M * N) X = actP M (actP N X) := by
   funext a
   unfold actP
-  simp only [Matrix.mul_apply, pr_sum_fst, pr_mul_fst, LinearMap.sum_apply, Module.End.mul_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mul_apply, pr_sum_fst, pr_mul_fst, LinearMap.sum_apply, Module.End.mul_apply, map_sum]
   exact Finset.sum_comm
 
 theorem polyAction_one₂ (X : Ix S → V) : actP (1 : SlopeTestRemainingChoices S (Q.Pr V)) X = X := by
@@ -42,7 +47,7 @@ theorem polyAction_one₂ (X : Ix S → V) : actP (1 : SlopeTestRemainingChoices
 
 theorem blockMulVec_add (M : SlopeTestRemainingChoices S (Q.Pr V)) (X Y : Ix S → V) : actP M (X + Y) = actP M X + actP M Y := by
   funext a
-  simp only [actP, Pi.add_apply, map_add, Finset.sum_add_distrib]
+  simp only [actP, Pi.add_apply, map_add (f := _), Finset.sum_add_distrib]
 
 theorem actP_smul (M : SlopeTestRemainingChoices S (Q.Pr V)) (c : ℂ) (X : Ix S → V) : actP M (c • X) = c • actP M X := by
   funext a

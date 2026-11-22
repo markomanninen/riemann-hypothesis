@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Qh60.Pz :
     {R : Type} → [inst : Ring R] → [Algebra ℝ R] → R → Prop :=

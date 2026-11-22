@@ -1,11 +1,16 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SeriesAtThetaTwist
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SameGaloisLevelExists
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExpTh
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RootsOfUnityRingLeWittIntegers
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.AlAwayRepsum
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SideTw
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SeriesAtThetaTwist
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SameGaloisLevelExists
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExpTh
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RootsOfUnityRingLeWittIntegers
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.EtaPiece
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -166,7 +171,7 @@ private theorem choice_imp_pz {ch} (h : @IsChoice a.D ch) : @IsChoice b.D ((ch))
   { pair := (by with_unfolding_all exact (h.pair :))
     one := (by with_unfolding_all exact (h.one :)) }
 end L2
-private abbrev lt_pz {B : Base} {C : Cols B} (c : Late B C) (n : NStage B C c.W) : Late B C := ⟨c.W, c.V, c.S, n, c.G⟩
+abbrev lt_pz {B : Base} {C : Cols B} (c : Late B C) (n : NStage B C c.W) : Late B C := ⟨c.W, c.V, c.S, n, c.G⟩
 section L2
 open GlobalTheory.SeriesTie
 variable {B : Base} {C : Cols B} {c : Late B C} {a : NStage B C c.W} (b : NStage B C c.W)
@@ -276,24 +281,24 @@ private theorem norm_to_pz (h : IsNorm Rl v₀ X ν) :
       (real3 (a := lt_pz c a) (lt_pz c b) Rl) ((by with_unfolding_all exact (v₀ :))) ((by with_unfolding_all exact (j :))) ((by with_unfolding_all exact ((base_pz (a := lt_pz c a) (lt_pz c b) X) :))) ν := by
   delta IsNorm IsScale
   rewrite [famTie_eq (lt_pz c a) (lt_pz c b)]
-  kexactB h
+  with_unfolding_all exact (h :)
 private theorem norm_from_pz
     (h : @IsNorm (lt_pz c b).D Γ i1 i2 Pl0 I0 T (famInThreeCoefficientChange (a := lt_pz c a) (lt_pz c b) A3) Ks i3 i4 (alg (a := lt_pz c a) (lt_pz c b) iK)
       (real3 (a := lt_pz c a) (lt_pz c b) Rl) ((by with_unfolding_all exact (v₀ :))) ((by with_unfolding_all exact (j :))) ((by with_unfolding_all exact ((base_pz (a := lt_pz c a) (lt_pz c b) X) :))) ν) : IsNorm Rl v₀ X ν := by
   delta IsNorm IsScale at h
   rewrite [famTie_eq (lt_pz c a) (lt_pz c b)] at h
-  kexactB h
+  with_unfolding_all exact (h :)
 end L3
 section L4
 open GlobalTheory.SeriesTie
 variable {hL : _root_.UpperTheory.Zero.LLC.RecTExists} {K : Ctx} {B : Base} {f : Fr B.toPre} {T : TwDat B} {w : ColW B f T} {P : Pre2 K w}
   (x : St P) (l : _root_.GlobalTheory.HeightCounting.Up.SecondIntermediateLevel hL x) (th : NTh (Dof x).R (Dof x).host (Dof x).what₂ (Dof x).LL0 (Dof x).nd (Dof x).ntw (Dof x).nexp)
 private def nTh_pz : NStage B w.C x.o.Z.W := (by with_unfolding_all exact ((nTw x (thTw (Dof x) th)) :))
-def thetaTwistSetup : Setup (w.st (oTw x (thTw (Dof x) th)).Z).toD7.ntw :=
+private def thetaTwistSetup : Setup (w.st (oTw x (thTw (Dof x) th)).Z).toD7.ntw :=
   (by with_unfolding_all exact ((setup_pz (c := x.o.Z) (a := x.o.Z.N) (nTh_pz x th) l.b.ser.ex.ρ) :))
-theorem theta_twist_rho_good : (_root_.GlobalTheory.HeightCounting.Up.SerCp.thetaTwistSetup x l th).Good :=
+private theorem theta_twist_rho_good : (_root_.GlobalTheory.HeightCounting.Up.SerCp.thetaTwistSetup x l th).Good :=
   (by with_unfolding_all exact ((setup_good_pz (c := x.o.Z) (a := x.o.Z.N) (nTh_pz x th) l.b.ser.ex.good) :))
-theorem real_pin_theta_twist_rho : RealPin (datTw x (thTw (Dof x) th)).R (datTw x (thTw (Dof x) th)).cG (_root_.GlobalTheory.HeightCounting.Up.SerCp.thetaTwistSetup x l th) :=
+private theorem real_pin_theta_twist_rho : RealPin (datTw x (thTw (Dof x) th)).R (datTw x (thTw (Dof x) th)).cG (_root_.GlobalTheory.HeightCounting.Up.SerCp.thetaTwistSetup x l th) :=
   have h := l.b.ser.ex.pin
   { psi := (by with_unfolding_all exact (h.psi :))
     inf := (by with_unfolding_all exact (h.inf :))
@@ -313,22 +318,22 @@ theorem real_pin_theta_twist_rho : RealPin (datTw x (thTw (Dof x) th)).R (datTw 
     deltaPl := (by with_unfolding_all exact (h.deltaPl :))
     ap := (by with_unfolding_all exact (h.ap :))
     am := (by with_unfolding_all exact (h.am :)) }
-theorem is_norm_theta_twist_iff (i j s ν) : IsNorm (datTw x (thTw (Dof x) th)).R (datTw x (thTw (Dof x) th)).geo.v₀ ((_root_.GlobalTheory.HeightCounting.Up.SerCp.thetaTwistSetup x l th).B i j s) ν ↔
+private theorem is_norm_theta_twist_iff (i j s ν) : IsNorm (datTw x (thTw (Dof x) th)).R (datTw x (thTw (Dof x) th)).geo.v₀ ((_root_.GlobalTheory.HeightCounting.Up.SerCp.thetaTwistSetup x l th).B i j s) ν ↔
     IsNorm x.m.z.R x.m.z.geo.v₀ (l.b.ser.ex.ρ.B ((i)) ((j)) s) ν :=
   ⟨fun h => (by with_unfolding_all exact ((norm_from_pz (c := x.o.Z) (a := x.o.Z.N) (nTh_pz x th) (iK := x.m.z.alg) (Rl := x.m.z.R) (v₀ := x.m.z.geo.v₀)
       (X := l.b.ser.ex.ρ.B ((i)) ((j)) s) (ν := ν) ((h))) : _)),
     fun h => (by with_unfolding_all exact ((norm_to_pz (c := x.o.Z) (a := x.o.Z.N) (nTh_pz x th) (iK := x.m.z.alg) h) :))⟩
-theorem series_rat_theta_twist_iff (i j s ν) :
+private theorem series_rat_theta_twist_iff (i j s ν) :
     SeriesTie.Rat (_root_.GlobalTheory.HeightCounting.Up.SerCp.theta_twist_rho_good x l th) (realRd (_root_.GlobalTheory.HeightCounting.Up.ysTh_alt x l th) (datTw x (thTw (Dof x) th)).geo.v₀ (_root_.GlobalTheory.HeightCounting.Up.SerCp.theta_twist_rho_good x l th) i j s ν) ↔
       SeriesTie.Rat l.b.ser.ex.good (realRd l.b.YS x.m.z.geo.v₀ l.b.ser.ex.good ((i)) ((j)) s ν) :=
   ⟨fun h => (by with_unfolding_all exact ((rat_imp_pz (c := x.o.Z) (a := nTh_pz x th) x.o.Z.N h) :)),
     fun h => (by with_unfolding_all exact ((rat_imp_pz (c := x.o.Z) (a := x.o.Z.N) (nTh_pz x th) h) :))⟩
-theorem is_scalar_theta_twist_ys (i j s) : IsScalar (_root_.GlobalTheory.HeightCounting.Up.ysTh_alt x l th) (datTw x (thTw (Dof x) th)).geo.v₀ (_root_.GlobalTheory.HeightCounting.Up.SerCp.theta_twist_rho_good x l th) i j s
+private theorem is_scalar_theta_twist_ys (i j s) : IsScalar (_root_.GlobalTheory.HeightCounting.Up.ysTh_alt x l th) (datTw x (thTw (Dof x) th)).geo.v₀ (_root_.GlobalTheory.HeightCounting.Up.SerCp.theta_twist_rho_good x l th) i j s
     (l.b.ser.ex.ν ((i)) ((j)) s) :=
   have h := l.b.ser.ex.scalar ((by with_unfolding_all exact (i :))) ((by with_unfolding_all exact (j :))) s
   ⟨h.ne, fun h' => (_root_.GlobalTheory.HeightCounting.Up.SerCp.is_norm_theta_twist_iff x l th i j s _).2 (h.norm (h'.imp fun ν => (_root_.GlobalTheory.HeightCounting.Up.SerCp.is_norm_theta_twist_iff x l th i j s ν).1)),
     fun h' => (_root_.GlobalTheory.HeightCounting.Up.SerCp.series_rat_theta_twist_iff x l th i j s _).2 (h.rat (h'.imp fun ν k => ⟨(_root_.GlobalTheory.HeightCounting.Up.SerCp.is_norm_theta_twist_iff x l th i j s ν).1 k.1, (_root_.GlobalTheory.HeightCounting.Up.SerCp.series_rat_theta_twist_iff x l th i j s ν).1 k.2⟩))⟩
-def thetaTwistExportTie : ExportTie (_root_.GlobalTheory.HeightCounting.Up.ysTh_alt x l th) (datTw x (thTw (Dof x) th)).geo.v₀ where
+private def thetaTwistExportTie : ExportTie (_root_.GlobalTheory.HeightCounting.Up.ysTh_alt x l th) (datTw x (thTw (Dof x) th)).geo.v₀ where
   ρ := _root_.GlobalTheory.HeightCounting.Up.SerCp.thetaTwistSetup x l th
   good := _root_.GlobalTheory.HeightCounting.Up.SerCp.theta_twist_rho_good x l th
   pin := _root_.GlobalTheory.HeightCounting.Up.SerCp.real_pin_theta_twist_rho x l th
@@ -338,12 +343,52 @@ def thetaTwistExportTie : ExportTie (_root_.GlobalTheory.HeightCounting.Up.ysTh_
   tie := fun i j s => (by with_unfolding_all exact ((cell_pz (c := x.o.Z) (a := x.o.Z.N) (nTh_pz x th) (l.b.ser.ex.tie ((i)) ((j)) s)) : _))
   hecke := fun i j s => (by with_unfolding_all exact ((hecke_imp_pz (c := x.o.Z) (a := x.o.Z.N) (nTh_pz x th) (l.b.ser.ex.hecke ((i)) ((j)) s)) : _))
   univ := (by with_unfolding_all exact (l.b.ser.ex.univ :))
+
+private theorem charFrame_heq {D E : D7} (hD : D = E) {a : CharFrame D} {b : CharFrame E}
+    (hP : HEq a.P b.P) (hW : HEq a.W b.W) (hmu : HEq a.mu0 b.mu0)
+    (heta : HEq a.eta b.eta) (hchi : HEq a.chiPsi b.chiPsi)
+    (hdel : HEq a.del b.del) (hdel' : HEq a.del' b.del') : HEq a b := by
+  cases hD
+  cases a
+  cases b
+  dsimp only at hP hW hmu heta hchi hdel hdel'
+  subst hP hW hmu heta hchi hdel hdel'
+  rfl
+
+private theorem transport_lam_exists {D E : D7} (hD : D = E) {a : CharFrame D} {b : CharFrame E}
+    (hcf : HEq a b)
+    (h : ∃ Z : LamTie.LamDat D, Z.Ok ∧ Z.Teich ∧ Z.C = a ∧
+      Z.q0 = AbsolutelyIrreducibleSpan.q0 D ∧ LamTie.IsLamTieFull D.ntw Z) :
+    ∃ Z : LamTie.LamDat E, Z.Ok ∧ Z.Teich ∧ Z.C = b ∧
+      Z.q0 = AbsolutelyIrreducibleSpan.q0 E ∧ LamTie.IsLamTieFull E.ntw Z := by
+  cases hD
+  cases eq_of_heq hcf
+  exact h
+
 theorem series_theta_twist_exists : Nonempty (SerAt (_root_.GlobalTheory.HeightCounting.Up.ysTh_alt x l th) (datTw x (thTw (Dof x) th)).geo.v₀ (_root_.GlobalTheory.HeightCounting.Up.exponentOfTheta x l th) (_root_.GlobalTheory.HeightCounting.Up.rowPsiOfTheta x l.toLI th)
     (TC.cf w.I w.l (oTw x (thTw (Dof x) th)).Z) l.Pq) := by
-  obtain ⟨Z, h1, h2, h3, h4, h5⟩ := lam_thTw th ⟨l.b.ser.lam, l.b.ser.lam_ok, l.b.ser.lam_teich, l.b.ser.lam_C, l.b.ser.lam_q,
-    l.b.ser.lam_tie⟩
-  exact ⟨⟨_root_.GlobalTheory.HeightCounting.Up.SerCp.thetaTwistExportTie x l th, (by with_unfolding_all exact (l.b.ser.bad :)), (by with_unfolding_all exact (l.b.ser.ch :)), (by with_unfolding_all exact (l.b.ser.join :)), (by with_unfolding_all exact (l.b.ser.sup :)), (by with_unfolding_all exact (l.b.ser.off :)), (by with_unfolding_all exact (Z :)), (by with_unfolding_all exact (h1 :)), (by with_unfolding_all exact (h2 :)),
-    (by with_unfolding_all exact (h3 :)), (by with_unfolding_all exact (h4 :)), (by with_unfolding_all exact (h5 :))⟩⟩
+  let N := thTw (Dof x) th
+  have hD := (dof_oTw x N).symm
+  have hcf : HEq (N.cf (cfOf x)) (TC.cf w.I w.l (oTw x N).Z) := by
+    apply charFrame_heq hD <;> unfold TwNew.cf TC.cf <;> rfl
+  have hLam := lam_thTw th (cf := cfOf x)
+    ⟨l.b.ser.lam, l.b.ser.lam_ok, l.b.ser.lam_teich, l.b.ser.lam_C, l.b.ser.lam_q,
+      l.b.ser.lam_tie⟩
+  obtain ⟨Z, hOk, hTeich, hC, hq, hTie⟩ := transport_lam_exists hD hcf hLam
+  exact ⟨{
+    ex := _root_.GlobalTheory.HeightCounting.Up.SerCp.thetaTwistExportTie x l th
+    bad := by with_unfolding_all exact (l.b.ser.bad :)
+    ch := by with_unfolding_all exact (l.b.ser.ch :)
+    join := by with_unfolding_all exact (l.b.ser.join :)
+    sup := by with_unfolding_all exact (l.b.ser.sup :)
+    off := by with_unfolding_all exact (l.b.ser.off :)
+    lam := Z
+    lam_ok := hOk
+    lam_teich := hTeich
+    lam_C := hC
+    lam_q := hq
+    lam_tie := hTie
+  }⟩
 end L4
 end GlobalTheory.HeightCounting.Up.SerCp
 end

@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartIntCountAdd
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartMassCompact
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetSumMeasurable
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFibreBound
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartIntCountAdd
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartMassCompact
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetSumMeasurable
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFibreBound
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -33,8 +38,8 @@ theorem hasSum_indicator {E : ℕ → Set (Fin n → ℂ)} (hE : Pairwise (Funct
     simp only [h0, hu]
     exact hasSum_zero
 
-open Classical in
 
+open Classical in
 theorem sheetSum_eq_sum {J : Ideal (MvPolynomial (Fin n) ℂ)} {A : Matrix (Fin d) (Fin n) ℂ} {y : Fin d → ℂ}
     (hfin : (fibre J A y).Finite) (F : (Fin n → ℂ) → ((Fin d → ℂ) → Fin n → ℂ) → ℝ) :
     sheetSum J A F y =
@@ -87,8 +92,8 @@ theorem abs_indicator_mul_le (S : Set (Fin n → ℂ)) (f : (Fin n → ℂ) → 
 
 end ChartIntCountAdd
 
-open ChartIntCountAdd in
 
+open ChartIntCountAdd in
 theorem ChartIntCountAdd.proof (hCM : ChartMassCompact.Statement) : ChartIntCountAdd.Statement := by
   intro n d W A f φ E hW hdim hA hf hfc hφ hEm hE
   have hfin : ∀ y, (fibre W A y).Finite := fun y =>

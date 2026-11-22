@@ -1,8 +1,12 @@
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DualSelmerClassesGiveNoncohomologousCochains
-import Mathlib
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContinuousMatQApply
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SelNZero
+module
+
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DualSelmerClassesGiveNoncohomologousCochains
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContinuousMatQApply
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SelNZero
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.Ord2.GwIneq
 open scoped Matrix
 

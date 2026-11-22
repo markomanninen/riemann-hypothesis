@@ -1,4 +1,8 @@
-import Formalism.LFunctionBounds.ExpSumLowerBound
+module
+
+public import Formalism.LFunctionBounds.ExpSumLowerBound
+
+@[expose] public section
 
 open Complex
 
@@ -106,9 +110,9 @@ theorem rectRes_edge (g G : ℂ → ℂ) (P : Finset ℂ) (b : ℂ → ℂ) (γ 
         rw [mul_one_div]
     _ = (∫ t in a..c, G (γ t)) + ∫ t in a..c, ∑ p ∈ P, b p * (1 / (γ t - p)) := by
         refine intervalIntegral.integral_add hG.intervalIntegrable ?_
-        exact (continuousOn_finset_sum P (fun p hp => continuousOn_const.mul (hcont p hp))).intervalIntegrable
+        exact (continuousOn_finsetSum P (fun p hp => continuousOn_const.mul (hcont p hp))).intervalIntegrable
     _ = (∫ t in a..c, G (γ t)) + ∑ p ∈ P, b p * ∫ t in a..c, 1 / (γ t - p) := by
-        rw [intervalIntegral.integral_finset_sum]
+        rw [intervalIntegral.integral_finsetSum]
         · simp_rw [intervalIntegral.integral_const_mul]
         · intro p hp
           exact ((hcont p hp).intervalIntegrable).const_mul (b p)

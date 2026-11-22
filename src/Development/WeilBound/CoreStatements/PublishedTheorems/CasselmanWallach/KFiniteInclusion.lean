@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.FunctionalCalculusLaws
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.FunctionalCalculusLaws
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,14 +80,16 @@ theorem eigen_weighted_sum_bound : A0 → FunctionalCalculusLaws → B5 := by
   have hw : ((1 + casimirK ε E) ^ s) v =
       ∑ i ∈ (b.repr v).support, (b.repr v i * (((1 + μ i) ^ s : ℝ) : ℂ)) • b i := by
     conv_lhs => rw [hv]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, heig, smul_smul]
   have hfv : f v = inner ℂ (∑ i ∈ (b.repr v).support,
       (starRingEnd ℂ (f (b i)) * ((((1 + μ i) ^ s)⁻¹ : ℝ) : ℂ)) • b i) (((1 + casimirK ε E) ^ s) v) := by
     rw [hw, hb.on.inner_sum]
     conv_lhs => rw [hv]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, smul_eq_mul, map_mul, Complex.conj_conj, Complex.conj_ofReal]
     have h1 : ((((1 + μ i) ^ s)⁻¹ : ℝ) : ℂ) * (((1 + μ i) ^ s : ℝ) : ℂ) = 1 := by
@@ -94,7 +100,8 @@ theorem eigen_weighted_sum_bound : A0 → FunctionalCalculusLaws → B5 := by
     have e : ‖∑ i ∈ (b.repr v).support,
         (starRingEnd ℂ (f (b i)) * ((((1 + μ i) ^ s)⁻¹ : ℝ) : ℂ)) • b i‖ ^ 2 =
         ∑ i ∈ (b.repr v).support, ‖f (b i)‖ ^ 2 * (((1 + μ i) ^ s)⁻¹) ^ 2 := by
-      rw [@norm_sq_eq_re_inner ℂ, hb.on.inner_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [@norm_sq_eq_re_inner ℂ, hb.on.inner_sum, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       have hr : 0 ≤ ((1 + μ i) ^ s)⁻¹ := (inv_pos.mpr (hpos i)).le
       rw [RCLike.conj_mul, ← RCLike.ofReal_pow, RCLike.ofReal_re, norm_mul, Complex.norm_real,

@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.HgtIntOf
-import Development.WeilBound.ThetaLifts.LatticeBasics.CartanBound2
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HgtIntOf
+public import Development.WeilBound.ThetaLifts.LatticeBasics.CartanBound2
+
+@[expose] public section
 
 namespace GlobalTheory.ThK.Dbl
 

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BsLApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurePreservingCurry
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurePreservingPtSplit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BsLApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurePreservingCurry
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurePreservingPtSplit
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MvPolynomial MeasureTheory Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.L2DbarEstimates (V)
@@ -58,7 +63,7 @@ theorem setLIntegral_fibDens : ∀ (ι : Type) [Fintype ι] (m : ι → ℕ) (n 
   have hS : MeasurableSet (O ×ˢ (Set.univ : Set (Cell m → ℂ))) := hO.measurableSet.prod MeasurableSet.univ
   have hFO : AEMeasurable F (volume.restrict (O ×ˢ (Set.univ : Set (Cell m → ℂ)))) := by
     refine ENNReal.measurable_ofReal.comp_aemeasurable (AEMeasurable.mul ?_ (aemeasurable_fibDens G O hO hG))
-    exact (hδ.comp continuous_fst.continuousOn fun x hx => hx.1).aemeasurable hS
+    exact (hδ.comp continuous_fst.continuousOn (fun x (hx : x ∈ O ×ˢ (Set.univ : Set (Cell m → ℂ))) => hx.1)).aemeasurable hS
   have hFK : AEMeasurable F ((volume.restrict K).prod volume) := by
     rw [← Measure.restrict_univ (μ := (volume : Measure (Cell m → ℂ))), Measure.prod_restrict,
       ← Measure.volume_eq_prod]

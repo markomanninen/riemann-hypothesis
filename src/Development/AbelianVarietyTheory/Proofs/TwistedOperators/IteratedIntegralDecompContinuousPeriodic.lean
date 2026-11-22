@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MeanXMulStarRat
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.MeanSquareAddFundamentalDomainOfCocompact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MeanXMulStarRat
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.MeanSquareAddFundamentalDomainOfCocompact
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory NumberField Matrix
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -36,7 +40,8 @@ theorem iterInt_continuous_periodic : ∀ (D : D7) (V W : HSp D) (a b k : ℕ) (
   haveI : IsFiniteMeasure (η.restrict 𝓩) := ⟨by rw [Measure.restrict_apply_univ]; exact hZ⟩
 
   have hIc : Continuous (fun p : Mx D a b × Mx D 1 k => ∫ y in 𝓨, T (f₁ p.1 + f₂ p.2 + f₃ y) ∂μ) := by
-    refine continuous_of_dominated (bound := fun _ => M) ?_ ?_ (integrable_const M) ?_
+    set_option synthInstance.maxHeartbeats 200000 in
+      refine continuous_of_dominated (bound := fun _ => M) ?_ ?_ (integrable_const M) ?_
     · intro p
       exact (hT.comp (continuous_const.add hf₃)).aestronglyMeasurable
     · intro p
@@ -44,7 +49,8 @@ theorem iterInt_continuous_periodic : ∀ (D : D7) (V W : HSp D) (a b k : ℕ) (
     · refine Filter.Eventually.of_forall fun y => hT.comp ?_
       exact ((hf₁.comp continuous_fst).add (hf₂.comp continuous_snd)).add continuous_const
   refine ⟨?_, ?_⟩
-  · refine continuous_of_dominated (bound := fun _ => M * μ.real 𝓨) ?_ ?_ (integrable_const _) ?_
+  · set_option synthInstance.maxHeartbeats 200000 in
+      refine continuous_of_dominated (bound := fun _ => M * μ.real 𝓨) ?_ ?_ (integrable_const _) ?_
     · intro s
       exact (hIc.comp (continuous_const.prodMk continuous_id)).aestronglyMeasurable
     · intro s

@@ -1,9 +1,13 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.ContinuousExpG
-import Development.WeilBound.ThetaLifts.FrameEstimates.TowerRallisLemma
-import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
-import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
-import Development.WeilBound.ThetaLifts.CartanFactorisation.CartanConj
-import Development.WeilBound.CoreStatements.LocalThetaKernels.Locrep
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.ContinuousExpG
+public import Development.WeilBound.ThetaLifts.FrameEstimates.TowerRallisLemma
+public import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
+public import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.CartanConj
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.Locrep
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,8 @@ open GlobalTheory.Doubling (absE)
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
 
-open Classical in
 
+open Classical in
 def ind (S : Finset (Pl F)) : Af F :=
   ⟨fun u => if u ∈ S then 1 else 0, Eventually.of_forall fun u => by
     by_cases h : u ∈ S
@@ -71,7 +75,7 @@ theorem idm_sq (v : Pl F) : idm v * idm v = idm v := Prod.ext (mul_zero _) (ind_
 theorem eps_cons (S : Finset (Pl F)) (v : Pl F) (hv : v ∉ S) : eps (S.cons v hv) = eps S + idm v ∧ eps S * idm v = 0 := by
   refine ⟨Prod.ext (add_zero _).symm (fin_ext fun u => ?_), Prod.ext (mul_zero _) (fin_ext fun u => ?_)⟩
   · change Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F u (ind _) = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F u (ind S + ind {v})
-    rw [map_add, ev_ind, ev_ind, ev_ind]
+    rw [map_add (f := _), ev_ind, ev_ind, ev_ind]
     by_cases h : u = v
     · simp [h, hv]
     · have hm : u ∈ S.cons v hv ↔ u ∈ S := Finset.mem_cons.trans (or_iff_right h)
@@ -108,7 +112,7 @@ def piece (a : AF F) (ha : a * a = a) (g : UA σ J) : UA σ J :=
     by rw [mix_mul ha, mat_inv_mul, sub_self, smul_zero, add_zero]⟩, by
     change (1 + a • (mat g - 1))ᵀ * incM F J * (cA σ).mapMatrix (1 + a • (mat g - 1)) = incM F J
     have h := mat_unit g
-    rw [map_add, map_smul, map_sub, map_one, AlgHom.mapMatrix_apply, Matrix.transpose_add, Matrix.transpose_smul,
+    rw [map_add (f := _), map_smul, map_sub, map_one, AlgHom.mapMatrix_apply, Matrix.transpose_add, Matrix.transpose_smul,
       Matrix.transpose_sub, Matrix.transpose_one]
     generalize (mat g).map (cA σ) = y at h ⊢
     generalize (mat g)ᵀ = x at h ⊢
@@ -143,10 +147,10 @@ theorem piInf_piece (S : Finset (Pl F)) (g : UA σ J) {w : InfinitePlace F} (τ 
     | zero => rw [smul_zero]
     | tmul a x =>
       exact congrArg (fun b => GlobalTheory.AutFunCompare.evW w b ⊗ₜ[F] x) (one_mul a.1)
-    | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+    | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
   ext i j
   change piInf τ ((1 : Matrix _ _ _) i j + eps S • (mat g i j - (1 : Matrix _ _ _) i j)) = piInf τ (mat g i j)
-  rw [map_add, piInf, RingHom.comp_apply, RingHom.comp_apply, h, ← map_add, ← map_add, add_sub_cancel, RingHom.comp_apply]
+  rw [map_add (f := _), piInf, RingHom.comp_apply, RingHom.comp_apply, h, ← map_add (f := _), ← map_add (f := _), add_sub_cancel, RingHom.comp_apply]
 
 theorem piece_prod {W : Spc F E d} (g : UA σ W.J) (S : Finset (Pl F)) : ∃ l : List (UA σ W.J),
     (∀ h ∈ l, ∃ v, h ∈ UAt σ W (evFin F v)) ∧ piece (eps S) (eps_sq S) g = piece (eps ∅) (eps_sq ∅) g * l.prod := by
@@ -183,15 +187,31 @@ theorem level_sch (hL : PositivityTheory.ThKEst.Level) {n : ℕ} {X : Spc F E n}
     obtain ⟨U, hU, h⟩ := hL F E σ B n d X W M χX χW om r s r' s' hp g hg
     exact mem_of_superset hU fun u hu k => h u hu k f
   | zero => exact Eventually.of_forall fun _ _ => map_zero _
-  | add x y _ _ hx hy => filter_upwards [hx, hy] with u h1 h2 k using by rw [map_add, h1 k, h2 k]
+  | add x y _ _ hx hy => filter_upwards [hx, hy] with u h1 h2 k using by rw [map_add (f := _), h1 k, h2 k]
   | smul a x _ hx => filter_upwards [hx] with u h1 k using by rw [map_smul, h1 k]
 
 theorem decomp_of (hL : PositivityTheory.ThKEst.Level) : Decomp := by
   intro F E _ _ _ _ _ σ B a a' G X om om' t k hk Φ hΦ Φ' hΦ'
+  have hecke_div {χ χ' : Chr F E} (h : IsHecke F E χ) (h' : IsHecke F E χ') : IsHecke F E (χ / χ') :=
+    ⟨h.1.div' h'.1, fun x => by rw [MonoidHom.div_apply, h.2, h'.2, div_one]⟩
+  have res_div {K : Subgroup (AF F)ˣ} {χ χ' : Chr F E} {m n k : ℕ} (h : ResEtaPow K χ m)
+      (h' : ResEtaPow K χ' n) (e : k = m + n) : ResEtaPow K (χ / χ') k := fun x => by
+    rw [MonoidHom.div_apply, Circle.coe_div, h, h', e]
+    split_ifs
+    · simp
+    · rw [pow_add, div_eq_mul_inv, ← inv_pow, inv_neg, inv_one]
+  have pairV {G : Geo σ a a'} {om : Rep σ G.V G.W} {om' : Rep σ G.V' G.W} (h : IsTriple B G X om om') :
+      IsPair B G.M X.β (X.β / X.α) om (a - G.p) G.p (a + a' - (G.p + G.q)) (G.p + G.q) :=
+    ⟨h.base, h.geo.hV, h.geo.hW, h.geo.hM, h.chars.heckeβ, hecke_div h.chars.heckeβ h.chars.heckeα, h.chars.resβ,
+      res_div h.chars.resβ h.chars.resα rfl, h.weil⟩
+  have pairV' {G : Geo σ a a'} {om : Rep σ G.V G.W} {om' : Rep σ G.V' G.W} (h : IsTriple B G X om om') :
+      IsPair B G.M' X.α (X.α / X.β) om' G.q (a' - G.q) (a + a' - (G.p + G.q)) (G.p + G.q) :=
+    ⟨h.base, h.geo.hV', h.geo.hW, h.geo.hM', h.chars.heckeα, hecke_div h.chars.heckeα h.chars.heckeβ, h.chars.resα,
+      res_div h.chars.resα h.chars.resβ (add_comm _ _), h.weil'⟩
   have h1 : Tendsto (fun S : Finset (Pl F) => (piece (eps S) (eps_sq S) k)⁻¹ * k) atTop (𝓝 1) := by
     rw [← inv_mul_cancel k]
     exact (tendsto_piece k).inv.mul_const k
-  obtain ⟨S, h2, h3⟩ := (h1.eventually ((level_sch hL (PositivityTheory.ThKG.pairV t) hΦ).and (level_sch hL (PositivityTheory.ThKG.pairV' t) hΦ'))).exists
+  obtain ⟨S, h2, h3⟩ := (h1.eventually ((level_sch hL (pairV t) hΦ).and (level_sch hL (pairV' t) hΦ'))).exists
   have h4 : ∀ w, (mat ((piece (eps S) (eps_sq S) k)⁻¹ * k)).map (piInf (B.emb w)) = 1 := fun w => by
     rw [mat_mul, Matrix.map_mul, ← piInf_piece S k, ← Matrix.map_mul, mat_inv_mul, Matrix.map_one _ (map_zero _) (map_one _)]
   obtain ⟨l, l1, l2⟩ := piece_prod k S
@@ -217,7 +237,7 @@ theorem exists_ins {ι : Type} [DecidableEq ι] {Y : ι → Type} [∀ i, AddCom
         simp only [ext, dif_pos h]
         rw [Function.update_of_ne hne]
       · simp only [ext, dif_neg h]
-  let m : MultilinearMap ℂ (fun u : T => Y u) (PiTensorProduct ℂ fun u : (insert v T : Finset ι) => Y u) :=
+  let m : MultilinearMap (RingHom.id ℂ) (fun u : T => Y u) (PiTensorProduct ℂ fun u : (insert v T : Finset ι) => Y u) :=
     { toFun := fun w => PiTensorProduct.tprod ℂ (ext w)
       map_update_add' := fun {inst} w i x y => by
         simp only [hupd inst]
@@ -260,27 +280,46 @@ variable {a a' : ℕ} {B : Base F E} {G : Geo σ a a'} {X : Chars F E} {om : Rep
 theorem match_inf (hA : PositivityTheory.ThKF.ArchOp) (hm : IsMatched B G X om om' R Rf) {k : UA σ G.W.J} (hk : k ∈ KInf σ G.W B.emb) {Φ Φ'}
     (H : PolMatch B G X R Rf Φ Φ') : PolMatch B G X R Rf (om (1, k) Φ) (om' (1, k) Φ') := by
   have t := hm.triple
+  have hecke_div {χ χ' : Chr F E} (h : IsHecke F E χ) (h' : IsHecke F E χ') : IsHecke F E (χ / χ') :=
+    ⟨h.1.div' h'.1, fun x => by rw [MonoidHom.div_apply, h.2, h'.2, div_one]⟩
+  have res_div {K : Subgroup (AF F)ˣ} {χ χ' : Chr F E} {m n k : ℕ} (h : ResEtaPow K χ m)
+      (h' : ResEtaPow K χ' n) (e : k = m + n) : ResEtaPow K (χ / χ') k := fun x => by
+    rw [MonoidHom.div_apply, Circle.coe_div, h, h', e]
+    split_ifs
+    · simp
+    · rw [pow_add, div_eq_mul_inv, ← inv_pow, inv_neg, inv_one]
+  have pairV {G : Geo σ a a'} {om : Rep σ G.V G.W} {om' : Rep σ G.V' G.W} (h : IsTriple B G X om om') :
+      IsPair B G.M X.β (X.β / X.α) om (a - G.p) G.p (a + a' - (G.p + G.q)) (G.p + G.q) :=
+    ⟨h.base, h.geo.hV, h.geo.hW, h.geo.hM, h.chars.heckeβ, hecke_div h.chars.heckeβ h.chars.heckeα, h.chars.resβ,
+      res_div h.chars.resβ h.chars.resα rfl, h.weil⟩
+  have pairV' {G : Geo σ a a'} {om : Rep σ G.V G.W} {om' : Rep σ G.V' G.W} (h : IsTriple B G X om om') :
+      IsPair B G.M' X.α (X.α / X.β) om' G.q (a' - G.q) (a + a' - (G.p + G.q)) (G.p + G.q) :=
+    ⟨h.base, h.geo.hV', h.geo.hW, h.geo.hM', h.chars.heckeα, hecke_div h.chars.heckeα h.chars.heckeβ, h.chars.resα,
+      res_div h.chars.resα h.chars.resβ (add_comm _ _), h.weil'⟩
   have one : ∀ {n : ℕ} (Y : Spc F E n), (1 : UA σ Y.J) ∈ KInf σ Y B.emb := fun Y =>
     ⟨fun u _ => by rw [mat_one, sub_self, smul_zero], fun w => by
       rw [mat_one, Matrix.map_one _ (map_zero _) (map_one _)]; exact Commute.one_left _⟩
-  obtain ⟨A, a1, a2⟩ := hA F E σ B _ _ _ _ _ _ _ _ _ _ _ _ (PositivityTheory.ThKG.pairV t) 1 (one _).1 k hk.1
-  obtain ⟨A', b1, b2⟩ := hA F E σ B _ _ _ _ _ _ _ _ _ _ _ _ (PositivityTheory.ThKG.pairV' t) 1 (one _).1 k hk.1
+  obtain ⟨A, a1, a2⟩ := hA F E σ B _ _ _ _ _ _ _ _ _ _ _ _ (pairV t) 1 (one _).1 k hk.1
+  obtain ⟨A', b1, b2⟩ := hA F E σ B _ _ _ _ _ _ _ _ _ _ _ _ (pairV' t) 1 (one _).1 k hk.1
   obtain ⟨Op, o1, o2⟩ := common_op (S' := G.M'.Pol B.ψ B.emb) hm.real.quot.onto (A : _ →ₗ[ℂ] _) (A' : _ →ₗ[ℂ] _) fun x hx x' hx' e =>
     hm.real.cpt k hk _ hx _ hx' _ _ (a1.2 _) (b1.2 _) e
   obtain ⟨T, hT, m, m', f, φ, f', φ', h1, h2, rfl, rfl, e⟩ := H
   have cof : ∀ {P : Pl F → Prop}, (∀ v ∉ T, P v) → ∀ᶠ v in cofinite, P v := fun h => T.eventually_cofinite_notMem.mono h
   refine ⟨T, hT, m, m', fun i => A (f i), φ, fun i => A' (f' i), φ', fun i => ⟨a2 (one _) hk _ (h1 i).1, (h1 i).2⟩,
     fun i => ⟨b2 (one _) hk _ (h2 i).1, (h2 i).2⟩, ?_, ?_, ?_⟩
-  · rw [map_sum]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    obtain ⟨g, hg, e⟩ := PositivityTheory.ThKG.pure_eq_pureA t.geo.hM (φ i) (h1 i).2.1 (cof (h1 i).2.2)
-    rw [e, e, a1.1 _ g hg]
-  · rw [map_sum]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    obtain ⟨g, hg, e⟩ := PositivityTheory.ThKG.pure_eq_pureA t.geo.hM' (φ' i) (h2 i).2.1 (cof (h2 i).2.2)
-    rw [e, e, b1.1 _ g hg]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      obtain ⟨g, hg, e⟩ := PositivityTheory.ThKG.pure_eq_pureA t.geo.hM (φ i) (h1 i).2.1 (cof (h1 i).2.2)
+      rw [e, e, a1.1 _ g hg]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      obtain ⟨g, hg, e⟩ := PositivityTheory.ThKG.pure_eq_pureA t.geo.hM' (φ' i) (h2 i).2.1 (cof (h2 i).2.2)
+      rw [e, e, b1.1 _ g hg]
   · have := congrArg (Op.rTensor _) e
-    simp only [map_sum, LinearMap.rTensor_tmul, o1 _ (h1 _).1, o2 _ (h2 _).1] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.rTensor_tmul, o1 _ (h1 _).1, o2 _ (h2 _).1] at this
     exact this
 
 theorem match_fin (hP : PositivityTheory.ThKF.PureAct) (hm : IsMatched B G X om om' R Rf) {v : Pl F} {h : UA σ G.W.J}
@@ -311,16 +350,19 @@ theorem match_fin (hP : PositivityTheory.ThKF.PureAct) (hm : IsMatched B G X om 
     fun i => Function.update (φ' i) v (ω' (1, h) (φ' i v)),
     fun i => ⟨(h1 i).1, upd (fun _ x => x ∈ SB _) _ _ (h1 i).2.1 (L.pres 1 o h hh _ ((h1 i).2.1 v)), off _ _ _ (h1 i).2.2⟩,
     fun i => ⟨(h2 i).1, upd (fun _ x => x ∈ SB _) _ _ (h2 i).2.1 (L'.pres 1 o' h hh _ ((h2 i).2.1 v)), off _ _ _ (h2 i).2.2⟩, ?_, ?_, ?_⟩
-  · rw [map_sum]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    convert (hP F _ v (om (1, h)) (f i) (φ i) (h1 i).2.1 (((cof (h1 i).2.2).and t.geo.hM.std).mono fun _ k => k.1.trans k.2)).2.2 _
-      ((L.acts 1 o h hh _ ((h1 i).2.1 v) _).2 rfl)
-  · rw [map_sum]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    convert (hP F _ v (om' (1, h)) (f' i) (φ' i) (h2 i).2.1 (((cof (h2 i).2.2).and t.geo.hM'.std).mono fun _ k => k.1.trans k.2)).2.2 _
-      ((L'.acts 1 o' h hh _ ((h2 i).2.1 v) _).2 rfl)
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      convert (hP F _ v (om (1, h)) (f i) (φ i) (h1 i).2.1 (((cof (h1 i).2.2).and t.geo.hM.std).mono fun _ k => k.1.trans k.2)).2.2 _
+        ((L.acts 1 o h hh _ ((h1 i).2.1 v) _).2 rfl)
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      convert (hP F _ v (om' (1, h)) (f' i) (φ' i) (h2 i).2.1 (((cof (h2 i).2.2).and t.geo.hM'.std).mono fun _ k => k.1.trans k.2)).2.2 _
+        ((L'.acts 1 o' h hh _ ((h2 i).2.1 v) _).2 rfl)
   · have := congrArg (Ω.lTensor _) e
-    simp only [map_sum, LinearMap.lTensor_tmul] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.lTensor_tmul] at this
     refine (Finset.sum_congr rfl fun i _ => ?_).trans (this.trans (Finset.sum_congr rfl fun i _ => ?_))
     · rw [hΩ (fun u => Rf.p u (φ i u)) fun u hu => by rw [(h1 i).2.2 u hu], o1 _ ((h1 i).2.1 v)]
       congr 2
@@ -335,8 +377,25 @@ theorem match_fin (hP : PositivityTheory.ThKF.PureAct) (hm : IsMatched B G X om 
 theorem matchStab_of (hA : PositivityTheory.ThKF.ArchOp) (hPA : PositivityTheory.ThKF.PureAct) (hL : PositivityTheory.ThKEst.Level) (hS : PositivityTheory.ThKCT.SoStab) : MatchStab := by
   intro F E _ _ _ _ _ σ B a a' G X om om' R Rf hm k hk Φ Φ' hΦ' hP
   have t := hm.triple
-  refine ⟨hS F E σ B _ _ _ _ _ _ _ _ _ _ _ _ (PositivityTheory.ThKG.pairV' t) _ _ hΦ', ?_⟩
-  obtain ⟨p1, p2⟩ := PositivityTheory.ThKG.polMatch_mem hP
+  have hecke_div {χ χ' : Chr F E} (h : IsHecke F E χ) (h' : IsHecke F E χ') : IsHecke F E (χ / χ') :=
+    ⟨h.1.div' h'.1, fun x => by rw [MonoidHom.div_apply, h.2, h'.2, div_one]⟩
+  have res_div {K : Subgroup (AF F)ˣ} {χ χ' : Chr F E} {m n k : ℕ} (h : ResEtaPow K χ m)
+      (h' : ResEtaPow K χ' n) (e : k = m + n) : ResEtaPow K (χ / χ') k := fun x => by
+    rw [MonoidHom.div_apply, Circle.coe_div, h, h', e]
+    split_ifs
+    · simp
+    · rw [pow_add, div_eq_mul_inv, ← inv_pow, inv_neg, inv_one]
+  have pairV {G : Geo σ a a'} {om : Rep σ G.V G.W} {om' : Rep σ G.V' G.W} (h : IsTriple B G X om om') :
+      IsPair B G.M X.β (X.β / X.α) om (a - G.p) G.p (a + a' - (G.p + G.q)) (G.p + G.q) :=
+    ⟨h.base, h.geo.hV, h.geo.hW, h.geo.hM, h.chars.heckeβ, hecke_div h.chars.heckeβ h.chars.heckeα, h.chars.resβ,
+      res_div h.chars.resβ h.chars.resα rfl, h.weil⟩
+  have pairV' {G : Geo σ a a'} {om : Rep σ G.V G.W} {om' : Rep σ G.V' G.W} (h : IsTriple B G X om om') :
+      IsPair B G.M' X.α (X.α / X.β) om' G.q (a' - G.q) (a + a' - (G.p + G.q)) (G.p + G.q) :=
+    ⟨h.base, h.geo.hV', h.geo.hW, h.geo.hM', h.chars.heckeα, hecke_div h.chars.heckeα h.chars.heckeβ, h.chars.resα,
+      res_div h.chars.resα h.chars.resβ (add_comm _ _), h.weil'⟩
+  refine ⟨hS F E σ B _ _ _ _ _ _ _ _ _ _ _ _ (pairV' t) _ _ hΦ', ?_⟩
+  have hp : Φ ∈ PolData B G.M ∧ Φ' ∈ PolData B G.M' := PositivityTheory.ThKG.polMatch_mem hP
+  obtain ⟨p1, p2⟩ := hp
   obtain ⟨k₀, h0, l, r, h1, rfl, h2, h3⟩ := decomp_of hL F E σ B a a' G X om om' t k hk Φ (PositivityTheory.ThKG.polData_le t.geo.hM p1) Φ'
     (PositivityTheory.ThKG.polData_le t.geo.hM' p2)
   have m : ∀ {n : ℕ} {Y : Spc F E n} (o : Rep σ Y G.W) x y Ψ, o (1, x * y) Ψ = o (1, x) (o (1, y) Ψ) := fun o x y Ψ => by

@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StabEqStabilizer
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StabEqStabilizer
+
+@[expose] public section
+
 open GlobalTheory.LKCount
 
 namespace GlobalTheory.LKCount
@@ -26,12 +31,12 @@ theorem doubleCosetToOrbit_bijective (ι : Γ →* G) (H : Subgroup Γ) (K : Sub
     Function.Bijective (doubleCosetToOrbit ι H K) := by
   constructor
   · intro p q hpq
-    rw [← DoubleCoset.out_eq' _ _ p, ← DoubleCoset.out_eq' _ _ q] at hpq ⊢
+    rw [← DoubleCoset.out_eq' p, ← DoubleCoset.out_eq' q] at hpq ⊢
     rw [doubleCosetToOrbit_mk, doubleCosetToOrbit_mk] at hpq
     obtain ⟨h, hh⟩ := Quotient.exact hpq
     have hh' : LeftCosets.mk ι K (ι (h : Γ) * q.out) = LeftCosets.mk ι K p.out := hh
     rw [LeftCosets.mk_eq_mk] at hh'
-    refine ((DoubleCoset.eq _ _ _ _).2 ⟨ι h, Subgroup.mem_map_of_mem ι h.2, _, hh', ?_⟩).symm
+    refine ((@DoubleCoset.eq _ _ _ _ _ _).2 ⟨ι h, Subgroup.mem_map_of_mem ι h.2, _, hh', ?_⟩).symm
     group
   · intro o
     induction o using Quotient.inductionOn with
@@ -48,7 +53,7 @@ theorem finsum_doubleCoset_eq_finsum_orbit {Γ G : Type} [Group Γ] [Group G] (�
   refine finsum_congr fun q => ?_
   have hq : e q = Quotient.mk (MulAction.orbitRel H (LeftCosets ι K)) (LeftCosets.mk ι K q.out) := by
     show doubleCosetToOrbit ι H K q = _
-    conv_lhs => rw [← DoubleCoset.out_eq' _ _ q]
+    conv_lhs => rw [← DoubleCoset.out_eq' q]
     rfl
   rw [hq]
   obtain ⟨h, hh⟩ := Quotient.exact (Quotient.out_eq

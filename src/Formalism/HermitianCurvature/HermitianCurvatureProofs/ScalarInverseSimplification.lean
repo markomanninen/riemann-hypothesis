@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StrictMonoSnoc
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StrictMonoSnoc
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -103,7 +107,7 @@ theorem column_indicator_expansion : ExpansionCovector := by
     · intro a p ha hp
       rw [hxa _ _ (by omega)]
       split_ifs
-      · unfold Zb; rw [dif_pos ha, dif_neg (by omega)]
+      · unfold Zb; rw [dite_eq_left ha, dite_eq_right (by omega)]
       · rfl
     · intro a b
       have hb := b.isLt
@@ -114,13 +118,15 @@ theorem column_indicator_expansion : ExpansionCovector := by
   have hLa : (∑ w, herm (Hpk k _) (bvec (wI k _ w)) yb • La (qminor E (xR k _ (i0 + s'' + 1) le_rfl) (ew w) u)) =
       t • La (qminor E (xR k _ i0 (by omega)) (xR k _ i0 (by omega)) u) := by
     have := la_congr hR hP
-    rw [map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
     simp only [map_smul] at this
     rw [hzy] at this
     exact this
   have hD : Dlead i0 (s'' + 2) h t (i0 + s'' + 1 + 1) = h.det * t ^ (s'' + 2) * -sgnW s'' := by
     rw [show i0 + s'' + 1 + 1 = i0 + (s'' + 2) by omega, (derivative_leading_zb i0 (s'' + 2) h t).2, sign_alternates_add_two]
-  rw [hAA, hhead, map_smul, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hAA, hhead, map_smul, map_smul, map_sum]
   simp only [map_smul]
   rw [hLa, hD, (derivative_leading_zb i0 (s'' + 2) h t).1, smul_smul, smul_smul, smul_smul, smul_smul]
   congr 1

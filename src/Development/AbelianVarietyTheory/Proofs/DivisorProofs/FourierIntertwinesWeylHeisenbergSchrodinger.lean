@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnipVal
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianMatrixColumnPairingAlgebraicPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuadExtTopologyStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnipVal
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianMatrixColumnPairingAlgebraicPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuadExtTopologyStatement
+
+@[expose] public section
+
 open MeasureTheory Matrix GlobalTheory.KSp GlobalTheory.SplitUnitary
 open GlobalTheory.WeilM (UG IsQuad IsHerm ResEtaPow)
 open GlobalTheory.SplitWeil (SB nabs)
@@ -20,7 +25,7 @@ theorem heisFun_fou : ∀ (F : Type) [Field F] [CharZero F] [ValuativeRel F] [To
     show ψ (pr c Q _ _ + 2⁻¹ * pr c Q _ _) * _ = _
     rw [← hβ, ← hβ]
   have hJ : w * stdJ ν E = fromCols (-w.toCols₂) w.toCols₁ := by
-    ext i (j | j) <;> simp [stdJ, Matrix.mul_apply, Fintype.sum_sum_type, one_apply, fromBlocks, toCols₁, toCols₂]
+    ext i (j | j) <;> simp [stdJ, Matrix.mul_apply, Fintype.sum_sum_type, Matrix.one_apply, fromBlocks, toCols₁, toCols₂]
   funext x
   simp only [fou]
   rw [hh, hJ]
@@ -34,7 +39,7 @@ theorem heisFun_fou : ∀ (F : Type) [Field F] [CharZero F] [ValuativeRel F] [To
   simp only [add_neg_cancel_right]
   rw [← mul_assoc, ← mul_assoc, ← AddChar.map_add_eq_mul, ← AddChar.map_add_eq_mul]
   congr 2
-  simp only [map_add, map_neg, LinearMap.add_apply, LinearMap.neg_apply, hsym y x₁, hsym y₁ x₁]
+  simp only [map_add (f := _), map_neg, LinearMap.add_apply, LinearMap.neg_apply, hsym y x₁, hsym y₁ x₁]
   ring
 
 end GlobalTheory.KSp

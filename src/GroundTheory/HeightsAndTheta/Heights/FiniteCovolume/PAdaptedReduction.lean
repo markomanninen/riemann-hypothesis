@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsAdaptedReduction
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsHyperbolicPairs
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StLineNormalForm
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StComplementLattice
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsAdaptedReduction
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsHyperbolicPairs
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StLineNormalForm
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StComplementLattice
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 

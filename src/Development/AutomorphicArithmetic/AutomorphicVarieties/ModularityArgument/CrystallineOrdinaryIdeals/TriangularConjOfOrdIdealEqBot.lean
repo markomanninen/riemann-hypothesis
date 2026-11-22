@@ -1,25 +1,25 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.Imports
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.OrdinaryIdealSaturatorsConjInvariantStatement
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.NilpotentTwistStatement
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.IsUnitCharacterDiffAtChosenInertiaStatement
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.ExistsGLConjEqDiagonalOfCharpolyEqProdStatement
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.GaloisSubgroupLBasicPropertiesStatement
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.TripleProductStableFlag
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.UpperTriRepMulApplyZeroOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IqBasic
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.Imports
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.OrdinaryIdealSaturatorsConjInvariantStatement
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.NilpotentTwistStatement
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.IsUnitCharacterDiffAtChosenInertiaStatement
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.ExistsGLConjEqDiagonalOfCharpolyEqProdStatement
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.GaloisSubgroupLBasicPropertiesStatement
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ContinuousUnitsInvOfContinuousCoeFiniteQpAlgebra
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IqBasic
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg IsLocalRing Polynomial Topology
 
 namespace GlobalTheory.OrdLoc
 
-theorem conjBy_right_eq {G C : Type} [Group G] [CommRing C] (h : GL (Fin 3) C) (r : G →* GG 3 C) (g : G) :
+theorem conjBy_right_eq {G C : Type} [Group G] [CommRing C] (h : GL (Fin 3) C) (r : G →* GG (m := 3) (R := C)) (g : G) :
     (conjBy h r g).right = (r g).right := by
   simp [conjBy, MulAut.conj_apply]
-
-theorem conjBy_left_eq {G C : Type} [Group G] [CommRing C] (h : GL (Fin 3) C) (r : G →* GG 3 C) (g : G)
-    (hg : (r g).right = 1) : (conjBy h r g).left = h * (r g).left * h⁻¹ := by
-  simp [conjBy, GG.ofGL, SemidirectProduct.mul_left, SemidirectProduct.mul_right, SemidirectProduct.inv_left, SemidirectProduct.inv_right, hg]
 
 end GlobalTheory.OrdLoc
 
@@ -95,9 +95,9 @@ private theorem upperTriangular_fin_three_mul_entries {C : Type} [CommRing C] (A
   · simp [Matrix.mul_apply, Fin.sum_univ_three, a10, a20, a21, b10, b20, b21]
   · simp [Matrix.mul_apply, Fin.sum_univ_three, a10, a20, a21, b10, b20, b21]
 
-open GlobalTheory.OrdLoc in
 
-theorem GlobalTheory.OrdLoc.triangular_of_ordIdeal_eq_bot : ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CharZero O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (B : Type) [CommRing B] [Algebra ℚ_[l] B] [Module.Finite ℚ_[l] B] [Algebra O B] [Algebra ℤ_[l] B] [IsScalarTower ℤ_[l] O B] [IsScalarTower ℤ_[l] ℚ_[l] B] [IsLocalRing B] [TopologicalSpace B] [IsModuleTopology ℚ_[l] B] [IsTopologicalRing B] (r : GQ l →* GG 3 B), HasMult D.η r → (∀ a b, QCont l fun g => (r g).mat a b) → GlobalTheory.OrdLoc.ordIdeal D r = ⊥ → ∃ (h : GL (Fin 3) B) (ρ : ↥D.HL →* GL (Fin 3) B) (κ : Fin 3 → ↥D.HL →* Bˣ) (x y z : ↥D.HL → B), (∀ g, ρ g = (conjBy h r g).left) ∧ (∀ i, Continuous fun g => (κ i g : B)) ∧ (∀ g : ↥D.HL, (g : GQ l) ∈ Iq l → ∀ i, κ i g = cycA l l B (g : GQ l) ^ ((D.e : ℤ) * wt1 i)) ∧ Continuous z ∧ (∀ g, (ρ g : Matrix (Fin 3) (Fin 3) B) = triM (fun i => κ i g) (x g) (y g) (z g)) ∧ x ∈ Z1 (chRep (κ 0 / κ 1)) ∧ y ∈ Z1 (chRep (κ 1 / κ 2)) ∧ ∀ hσ : GlobalTheory.OrdLoc.fr D ∈ D.HL, (∃ v : Bˣ, GlobalTheory.OrdLoc.dd D r 0 = v * (((κ 0 / κ 1) ⟨_, hσ⟩ : Bˣ) - (cycA l l B (GlobalTheory.OrdLoc.fr D) : B))) ∧ ∃ v : Bˣ, GlobalTheory.OrdLoc.dd D r 1 = v * (((κ 1 / κ 2) ⟨_, hσ⟩ : Bˣ) - (cycA l l B (GlobalTheory.OrdLoc.fr D) : B)) := by
+open GlobalTheory.OrdLoc in
+theorem GlobalTheory.OrdLoc.triangular_of_ordIdeal_eq_bot : ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CharZero O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (B : Type) [CommRing B] [Algebra ℚ_[l] B] [Module.Finite ℚ_[l] B] [Algebra O B] [Algebra ℤ_[l] B] [IsScalarTower ℤ_[l] O B] [IsScalarTower ℤ_[l] ℚ_[l] B] [IsLocalRing B] [TopologicalSpace B] [IsModuleTopology ℚ_[l] B] [IsTopologicalRing B] (r : GQ l →* GG (m := 3) (R := B)), HasMult D.η r → (∀ a b, QCont l fun g => (r g).mat a b) → GlobalTheory.OrdLoc.ordIdeal D r = ⊥ → ∃ (h : GL (Fin 3) B) (ρ : ↥D.HL →* GL (Fin 3) B) (κ : Fin 3 → ↥D.HL →* Bˣ) (x y z : ↥D.HL → B), (∀ g, ρ g = (conjBy h r g).left) ∧ (∀ i, Continuous fun g => (κ i g : B)) ∧ (∀ g : ↥D.HL, (g : GQ l) ∈ Iq l → ∀ i, κ i g = cycA l l B (g : GQ l) ^ ((D.e : ℤ) * wt1 i)) ∧ Continuous z ∧ (∀ g, (ρ g : Matrix (Fin 3) (Fin 3) B) = triM (fun i => κ i g) (x g) (y g) (z g)) ∧ x ∈ Z1 (chRep (κ 0 / κ 1)) ∧ y ∈ Z1 (chRep (κ 1 / κ 2)) ∧ ∀ hσ : GlobalTheory.OrdLoc.fr D ∈ D.HL, (∃ v : Bˣ, GlobalTheory.OrdLoc.dd D r 0 = v * (((κ 0 / κ 1) ⟨_, hσ⟩ : Bˣ) - (cycA l l B (GlobalTheory.OrdLoc.fr D) : B))) ∧ ∃ v : Bˣ, GlobalTheory.OrdLoc.dd D r 1 = v * (((κ 1 / κ 2) ⟨_, hσ⟩ : Bˣ) - (cycA l l B (GlobalTheory.OrdLoc.fr D) : B)) := by
   intro l _ O _ _ _ _ _ _ _ D B _ _ _ _ _ _ _ _ _ _ _ r hmult hcont hbot
   obtain ⟨hHLn, -, -, hPsi, hS0⟩ := GlobalTheory.T.galoisSubgroupL_basic_properties D
   obtain ⟨hsHL, hsIq, -⟩ := hS0
@@ -122,18 +122,45 @@ theorem GlobalTheory.OrdLoc.triangular_of_ordIdeal_eq_bot : ∀ {l : ℕ} [Fact 
     intro g hg
     rw [hr'_def, GlobalTheory.OrdLoc.conjBy_right_eq]
     exact hright g hg
-  have hmat : ∀ g ∈ D.HL, (r' g).mat = (h : Matrix (Fin 3) (Fin 3) B) * (r g).mat * ((h⁻¹ : GL (Fin 3) B) : Matrix (Fin 3) (Fin 3) B) :=
-    fun g hg => GlobalTheory.OrdLoc.conjBy_mat h r g (hright g hg)
-  have hs0' : (r' D.s0).mat = Matrix.diagonal p := by rw [hmat _ hsHL, hh]
-  have hbot' : GlobalTheory.OrdLoc.ordIdeal D r' = ⊥ := by rw [(GlobalTheory.T.ordinaryIdeal_saturators_conj_invariant D r h hmult).1, hbot]
+  let H : Matrix (Fin 3) (Fin 3) B := h
+  let K : Matrix (Fin 3) (Fin 3) B := (h⁻¹ : GL (Fin 3) B)
+  let conjM (M : Matrix (Fin 3) (Fin 3) B) := H * M * K
+  have hHK : H * K = 1 := h.val_inv
+  have hKH : K * H = 1 := h.inv_val
+  have hconj_mul (M N : Matrix (Fin 3) (Fin 3) B) : conjM M * conjM N = conjM (M * N) := by
+    simp only [conjM, Matrix.mul_assoc]
+    rw [← Matrix.mul_assoc K H, hKH, Matrix.one_mul]
+  have hmat : ∀ g ∈ D.HL, (r' g).mat = conjM (r g).mat := by
+    intro g hg
+    have hleft : (r' g).left = h * (r g).left * h⁻¹ := by
+      show (GG.ofGL h * r g * (GG.ofGL h)⁻¹).left = _
+      rw [SemidirectProduct.mul_left, SemidirectProduct.mul_left, SemidirectProduct.inv_left]
+      simp only [SemidirectProduct.right_inl, SemidirectProduct.left_inl, SemidirectProduct.mul_right,
+        hright g hg, mul_one, inv_one, map_one, MulAut.one_apply]
+    unfold GG.mat
+    rw [hleft, Units.val_mul, Units.val_mul]
+  have hshift : ∀ a s, s ∈ D.HL → D.sh r' a s = conjM (D.sh r a s) := by
+    intro a s hs
+    rw [Dat3.sh, Dat3.sh, hmat s hs]
+    have hscalar (c : B) : conjM (Matrix.scalar (Fin 3) c) = Matrix.scalar (Fin 3) c := by
+      unfold conjM
+      rw [← (Matrix.scalar_commute c (fun _ => Commute.all _ _) H), Matrix.mul_assoc, hHK,
+        Matrix.mul_one]
+    simp only [conjM, Matrix.mul_sub, Matrix.sub_mul] at hscalar ⊢
+    rw [hscalar]
+  have hs0' : (r' D.s0).mat = Matrix.diagonal p := (hmat _ hsHL).trans hh
   have hsh : ∀ s : Fin 3 → GQ l, (∀ a, s a ∈ D.HL ⊓ Iq l) →
       D.sh r' 0 (s 0) * D.sh r' 1 (s 1) * D.sh r' 2 (s 2) = 0 := by
     intro s hs
-    ext i j
-    have hm : (D.sh r' 0 (s 0) * D.sh r' 1 (s 1) * D.sh r' 2 (s 2)) i j ∈ GlobalTheory.OrdLoc.ordIdeal D r' :=
-      Ideal.subset_span (Set.mem_union_right _ ⟨s, hs, i, j, rfl⟩)
-    rw [hbot', Ideal.mem_bot] at hm
-    simpa using hm
+    have hzero : D.sh r 0 (s 0) * D.sh r 1 (s 1) * D.sh r 2 (s 2) = 0 := by
+      ext i j
+      have hm : (D.sh r 0 (s 0) * D.sh r 1 (s 1) * D.sh r 2 (s 2)) i j ∈
+          GlobalTheory.OrdLoc.ordIdeal D r :=
+        Ideal.subset_span (Set.mem_union_right _ ⟨s, hs, i, j, rfl⟩)
+      rwa [hbot, Ideal.mem_bot] at hm
+    rw [hshift _ _ (hs 0).1, hshift _ _ (hs 1).1, hshift _ _ (hs 2).1,
+      hconj_mul, hconj_mul, hzero]
+    simp [conjM]
   have hs0I : D.s0 ∈ D.HL ⊓ Iq l := ⟨hsHL, hsIq⟩
   have htriI : ∀ t ∈ D.HL ⊓ Iq l, (r' t).mat 1 0 = 0 ∧ (r' t).mat 2 0 = 0 ∧ (r' t).mat 2 1 = 0 ∧
       (r' t).mat 0 0 = algebraMap O B (UpperTheory.V.UnitaryThreeInertia.psi D.Ψ 0 t) ∧
@@ -147,7 +174,7 @@ theorem GlobalTheory.OrdLoc.triangular_of_ordIdeal_eq_bot : ∀ {l : ℕ} [Fact 
       simpa [UpperTheory.V.Loc.Dat3.sh, hs0'] using this
     · have := hsh ![D.s0, D.s0, t] (by intro a; fin_cases a <;> simpa)
       simpa [UpperTheory.V.Loc.Dat3.sh, hs0'] using this
-  have hmm : ∀ x y : GG 3 B, x.right = 1 → (x * y).mat = x.mat * y.mat := by
+  have hmm : ∀ x y : GG (m := 3) (R := B), x.right = 1 → (x * y).mat = x.mat * y.mat := by
     intro x y hx
     simp [UpperTheory.V.U3.GG.mat, SemidirectProduct.mul_left, hx]
   have hpsiconj : ∀ g a, UpperTheory.V.UnitaryThreeInertia.psi D.Ψ a (g * D.s0 * g⁻¹) = UpperTheory.V.UnitaryThreeInertia.psi D.Ψ a D.s0 := by
@@ -262,8 +289,30 @@ theorem GlobalTheory.OrdLoc.triangular_of_ordIdeal_eq_bot : ∀ {l : ℕ} [Fact 
     rw [e12, dB 2]
     linear_combination ((r' a).mat 1 2 * (r' ((a⁻¹ : ↥D.HL) : GQ l)).mat 2 2) * hunit b 2
   · intro hσ
-    have hdd : ∀ a, D.dd r a = D.dd r' a := fun a => ((GlobalTheory.T.ordinaryIdeal_saturators_conj_invariant D r h hmult).2.1 a).symm
-    have hdiag' := GlobalTheory.T.ordinary_derivative_entry_formula D r' hs0'
+    have htr : ∀ a, D.tr r' a = D.tr r a := by
+      intro a
+      rw [Dat3.tr, Dat3.tr, hshift _ _ hsHL, hshift _ _ hsHL, hmat _ hσ,
+        hconj_mul, hconj_mul]
+      unfold conjM
+      rw [Matrix.trace_mul_comm, ← Matrix.mul_assoc, hKH, Matrix.one_mul]
+    have hdd : ∀ a, D.dd r a = D.dd r' a := by
+      intro a
+      simp only [Dat3.dd, htr]
+    have hshift_diag : ∀ b, D.sh r' b D.s0 = Matrix.diagonal (fun c => p c - p b) := by
+      intro b
+      rw [Dat3.sh, hs0', Matrix.scalar_apply, Matrix.diagonal_sub]
+    have htr_diag : ∀ a, D.tr r' a = algebraMap O B (D.cc a) * (r' D.fr).mat a a := by
+      intro a
+      rw [Dat3.tr, hshift_diag, hshift_diag, Matrix.diagonal_mul_diagonal, Matrix.trace,
+        Fin.sum_univ_three]
+      simp only [Matrix.diag, Matrix.diagonal_mul, Dat3.cc, map_mul, map_sub, ← hp_def]
+      fin_cases a <;> simp <;> ring
+    have hdiag' : ∀ a : Fin 3, D.dd r' a = algebraMap O B (D.cc a * D.cc (a + 1)) *
+        ((r' D.fr).mat a a - algebraMap O B ((cycA l l O D.fr : Oˣ) : O) *
+          (r' D.fr).mat (a + 1) (a + 1)) := by
+      intro a
+      simp only [Dat3.dd, htr_diag, map_mul]
+      ring
     have hc' : algebraMap O B ((cycA l l O (GlobalTheory.OrdLoc.fr D) : Oˣ) : O) =
         ((cycA l l B (GlobalTheory.OrdLoc.fr D) : Bˣ) : B) := by
       rw [← hcyc]

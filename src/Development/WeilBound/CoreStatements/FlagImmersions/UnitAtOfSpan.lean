@@ -1,9 +1,13 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.FibSandwich
-import Development.WeilBound.CoreStatements.FlagImmersions.ExistsUnitMetric
-import Development.WeilBound.CoreStatements.VolumeEquality.ChartMeetsPoint
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordOverIntOfFiniteOrder
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsFormNotInCoordIdeal
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PointOverNumberFieldValue
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.FibSandwich
+public import Development.WeilBound.CoreStatements.FlagImmersions.ExistsUnitMetric
+public import Development.WeilBound.CoreStatements.VolumeEquality.ChartMeetsPoint
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordOverIntOfFiniteOrder
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsFormNotInCoordIdeal
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PointOverNumberFieldValue
+
+@[expose] public section
 
 noncomputable section
 

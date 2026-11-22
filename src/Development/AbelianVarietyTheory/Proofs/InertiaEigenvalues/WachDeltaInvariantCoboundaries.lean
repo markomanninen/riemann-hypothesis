@@ -1,24 +1,28 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MapCSmulMulVec
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBin
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoordApply
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AssociatedRootSubOnePow
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfAlgHomEqMul
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUniqueAlgHomOfPadicLocalization
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompletedLocalisationInvariants
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AssociatedTraceAndLvlDvd
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvrComplete
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPrimitiveRootCoeffRingOfGood
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapPadicIntFinExtInjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardTorsionMulFinrank
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemXSmulOfProjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBasisAddPiSmul
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoordInjectiveRangeMem
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMatrixGamma
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMatrixFrobenius
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SemilinearMatrixComm
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumMulVecSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MapCSmulMulVec
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBin
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoordApply
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AssociatedRootSubOnePow
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfAlgHomEqMul
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUniqueAlgHomOfPadicLocalization
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompletedLocalisationInvariants
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AssociatedTraceAndLvlDvd
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvrComplete
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPrimitiveRootCoeffRingOfGood
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapPadicIntFinExtInjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardTorsionMulFinrank
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemXSmulOfProjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBasisAddPiSmul
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoordInjectiveRangeMem
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMatrixGamma
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMatrixFrobenius
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SemilinearMatrixComm
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumMulVecSmul
+
+@[expose] public section
 
 noncomputable section
 
@@ -144,7 +148,8 @@ theorem exists_eeTie [IsDomain O] [CharZero O] [NeZero n] (hp : PD.p = l) (R : F
         choose a ha using fun i => (hr (a' i)).2 fun d hd => congrFun (h d hd) i
         exact ⟨a, funext ha⟩)
     (fun a' d hd => by
-      rw [map_sum, ← sum_DelF_mul W (fun δ => W.γA δ a') d hd]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, ← sum_DelF_mul W (fun δ => W.γA δ a') d hd]
       refine Finset.sum_congr rfl fun δ _ => funext fun i => ?_
       change W.γ₀ d (W.γ₀ δ (a' i)) = W.γ₀ (d * δ) (a' i)
       rw [map_mul]; rfl)
@@ -188,7 +193,7 @@ theorem exists_sysTie (R : Fr l O) (j : O⟦X⟧ →ₐ[O] O⟦X⟧) (jE : (ZMod
       intro x y
       simp only [Sys.Z1, herrCocycles, LinearMap.mem_ker, LinearMap.coprod_apply, LinearMap.sub_apply,
         LinearMap.neg_apply, LinearMap.id_apply]
-      rw [← s1, ← s2, ← map_sub, ← map_sub, ← map_neg, ← map_add, map_eq_zero_iff _ t1]
+      rw [← s1, ← s2, ← map_sub, ← map_sub, ← map_neg, ← map_add (f := _), map_eq_zero_iff _ t1]
     ext ⟨y, z⟩
     simp only [LocWach.wachCocyclesDelta, herrZ1Δ, hK, Submodule.mem_inf, Submodule.mem_iInf, LinearMap.mem_ker,
       LinearMap.sub_apply, LinearMap.prodMap_apply, LinearMap.id_apply, sub_eq_zero, Prod.mk.injEq,
@@ -298,9 +303,10 @@ theorem π₀₁_spec (hl : l ≠ 2) (hc : W.DelF.card = l - 1) :
     rw [LocWach.π₀₁, hp]
   refine ⟨by rw [e, hc]; exact a1, fun d hd => ?_, by rw [e]; convert a2 using 1; ring⟩
   have h2 : W.γ₀ d (∑ δ ∈ W.DelF, W.γ₀ δ (1 + X)) = ∑ δ ∈ W.DelF, W.γ₀ δ (1 + X) := by
-    rw [map_sum, ← sum_DelF_mul W (fun δ => W.γ₀ δ (1 + X)) d hd]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← sum_DelF_mul W (fun δ => W.γ₀ δ (1 + X)) d hd]
     exact Finset.sum_congr rfl fun δ _ => by rw [map_mul]; rfl
-  rw [e, map_add, h2, map_sub, map_one, map_natCast]
+  rw [e, map_add (f := _), h2, map_sub, map_one, map_natCast]
 
 end Generic
 
@@ -312,7 +318,8 @@ theorem eq_neg_of_root {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomai
     have h5 : lvl l O 0 = ∑ i ∈ Finset.range l, ((1 + X) ^ i - C ζ ^ i) := by
       rw [Finset.sum_sub_distrib]
       simp only [← map_pow]
-      rw [← map_sum, hζ.geom_sum_eq_zero (Fact.out : l.Prime).one_lt]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, hζ.geom_sum_eq_zero (Fact.out : l.Prime).one_lt]
       simp [lvl]
     rw [h5]
     refine Finset.dvd_sum fun i _ => ?_
@@ -320,7 +327,7 @@ theorem eq_neg_of_root {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomai
     rw [map_sub, map_one]; ring
   have h6 := (prime_X_sub_C _ (sub_one_mem_max hu ζ hζ.pow_eq_one)).2 (x + l) (by
     convert (h4.trans hq).sub hd using 1
-    rw [map_add, map_natCast]; ring)
+    rw [map_add (f := _), map_natCast]; ring)
   exact eq_neg_of_add_eq_zero_left h6
 
 def Attached {l : ℕ} [Fact l.Prime] {P : LocPrime l} {K LL : FinExt l} {n : ℕ}
@@ -339,9 +346,64 @@ theorem exists_attached {l : ℕ} [Fact l.Prime] {P : LocPrime l} (H : LocHW l P
     ∃ R j jE, j X = ξ ∧ R.e = Module.finrank ↥(K0 K) ↥K.1 ∧ Attached (H.W K 1 LL h) R j jE := by
   have hs := H.W_s K 1 LL h
   obtain ⟨_, _, hu⟩ := GlobalTheory.FinExtIntegers.dvr_complete LL
-  obtain ⟨χ, hχ, hχ1⟩ := GlobalTheory.exists_cyclotomicChar_padicInt_units P K LL (H.W K 1 LL h)
+  have hex : ∀ g, ∃ y : ℤ_[l], algebraMap ℤ_[l] ↥(OL LL) y = ((H.W K 1 LL h).χΓ g : ↥(OL LL)) := by
+    intro g
+    obtain ⟨a, rfl⟩ := (H.W K 1 LL h).resΓ_onto g
+    have hm : IsIntegral ℤ_[l] (algebraMap ℚ_[l] ↥LL.1 ((P.PD K).χ a : ℚ_[l])) := by
+      rw [← (H.W K 1 LL h).χΓ_res a]
+      exact ((H.W K 1 LL h).χΓ ((H.W K 1 LL h).resΓ a) : ↥(OL LL)).2
+    have hm' : IsIntegral ℤ_[l] ((P.PD K).χ a : ℚ_[l]) :=
+      (isIntegral_algHom_iff (IsScalarTower.toAlgHom ℤ_[l] ℚ_[l] ↥LL.1)
+        (algebraMap ℚ_[l] ↥LL.1).injective).mp hm
+    obtain ⟨y, hy⟩ := IsIntegrallyClosed.isIntegral_iff.mp hm'
+    refine ⟨y, Subtype.ext ?_⟩
+    show algebraMap ℤ_[l] ↥LL.1 y = _
+    rw [IsScalarTower.algebraMap_apply ℤ_[l] ℚ_[l] ↥LL.1, hy, ← (H.W K 1 LL h).χΓ_res a]
+    rfl
+  have hinj : Function.Injective (algebraMap ℤ_[l] ↥(OL LL)) := by
+    intro a b hab
+    apply IsFractionRing.injective ℤ_[l] ℚ_[l]
+    apply (algebraMap ℚ_[l] ↥LL.1).injective
+    rw [← IsScalarTower.algebraMap_apply ℤ_[l] ℚ_[l] ↥LL.1, ← IsScalarTower.algebraMap_apply ℤ_[l] ℚ_[l] ↥LL.1]
+    exact congrArg Subtype.val hab
+  choose y hy using hex
+  have hi : ∀ g, y g * y g⁻¹ = 1 := fun g => hinj (by
+    rw [map_mul, hy, hy, map_one, ← Units.val_mul, ← map_mul, mul_inv_cancel, map_one, Units.val_one])
+  have hi' : ∀ g, y g⁻¹ * y g = 1 := fun g => by simpa using hi g⁻¹
+  let u : (H.W K 1 LL h).Gam → ℤ_[l]ˣ := fun g => ⟨y g, y g⁻¹, hi g, hi' g⟩
+  let χ : (H.W K 1 LL h).Gam →* ℤ_[l]ˣ :=
+    { toFun := u
+      map_one' := by apply Units.ext; apply hinj; simp [u, hy]
+      map_mul' := by intro a b; apply Units.ext; apply hinj; simp [u, hy] }
+  have hχ : ∀ g, algebraMap ℤ_[l] ↥(OL LL) (χ g : ℤ_[l]) = ((H.W K 1 LL h).χΓ g : ↥(OL LL)) := hy
+  have hχ1 : Associated ((χ (H.W K 1 LL h).gam : ℤ_[l]) - 1) (l : ℤ_[l]) := by
+    have hv : P.v LL (algebraMap ℤ_[l] ↥LL.1 ((χ (H.W K 1 LL h).gam : ℤ_[l]) - 1)) = 1 := by
+      rw [map_sub, map_one, IsScalarTower.algebraMap_apply ℤ_[l] ↥(OL LL) ↥LL.1, hχ]
+      have hg := (H.W K 1 LL h).gam_gen
+      rw [hs, Nat.cast_one] at hg
+      exact hg
+    have hc0 : ((χ (H.W K 1 LL h).gam : ℤ_[l]) - 1) ≠ 0 := by
+      intro hc
+      rw [hc, map_zero, AddValuation.map_zero] at hv
+      exact WithTop.top_ne_one hv
+    have hspec := PadicInt.unitCoeff_spec hc0
+    set v := PadicInt.unitCoeff hc0
+    have hnn : ∀ w : ℤ_[l], 0 ≤ P.v LL (algebraMap ℤ_[l] ↥LL.1 w) := fun w =>
+      (P.v_O LL _).mpr (Subalgebra.algebraMap_mem _ w)
+    have hv0 : P.v LL (algebraMap ℤ_[l] ↥LL.1 (v : ℤ_[l])) = 0 := by
+      have h1 : P.v LL (algebraMap ℤ_[l] ↥LL.1 (v : ℤ_[l])) +
+          P.v LL (algebraMap ℤ_[l] ↥LL.1 ((v⁻¹ : ℤ_[l]ˣ) : ℤ_[l])) = 0 := by
+        rw [← AddValuation.map_mul, ← map_mul, Units.mul_inv, map_one, AddValuation.map_one]
+      exact ((add_eq_zero_iff_of_nonneg (hnn _) (hnn _)).mp h1).1
+    have hval : ((χ (H.W K 1 LL h).gam : ℤ_[l]) - 1).valuation = 1 := by
+      rw [hspec, map_mul, AddValuation.map_mul, hv0, zero_add, map_pow, AddValuation.map_pow,
+        map_natCast, P.v_l LL, nsmul_one] at hv
+      exact_mod_cast hv
+    refine ⟨v⁻¹, ?_⟩
+    conv_lhs => rw [hspec]
+    rw [hval, pow_one, mul_comm, ← mul_assoc, Units.inv_mul, one_mul]
   obtain ⟨R, j, rfl, h2, h4, h5⟩ := exists_frTie (H.W K 1 LL h) (P.PD_p K) χ hχ hl hu
-    (GlobalTheory.exists_primitiveRoot_coeffRing_of_good K LL h) (hχ1 hs) ξ hξ hinv
+    (GlobalTheory.exists_primitiveRoot_coeffRing_of_good K LL h) hχ1 ξ hξ hinv
   have h3 : R.e = Module.finrank ↥(K0 K) ↥K.1 := by
     have hes := R.es
     have hc := GlobalTheory.TorsionCard.card_torsion_mul_finrank P K LL (H.W K 1 LL h) hl h.2.2.1

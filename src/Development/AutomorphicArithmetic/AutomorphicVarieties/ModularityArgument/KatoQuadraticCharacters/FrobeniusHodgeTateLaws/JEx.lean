@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.RhoFrob
-import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocA
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.RhoFrob
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocA
+
+@[expose] public section
 
 open UpperTheory.V.Z.Kato.Joint
 

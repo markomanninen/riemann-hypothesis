@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.DilationDecomposition.WeightFactorEqAutomorphy
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.NormDetFirstBlockCompact
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.GaussI
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.DilationDecomposition.WeightFactorEqAutomorphy
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.NormDetFirstBlockCompact
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.GaussI
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ open Matrix
 
 variable {n : ℕ}
 
-open PositivityTheory.Rg.Sw.Glob.GaussH in
 
+open PositivityTheory.Rg.Sw.Glob.GaussH in
 theorem actZ_mul_K (y k : GR n) (hk : InK (mR k)) : actZ (y * k) (Complex.I • 1) = actZ y (Complex.I • 1) := by
   classical
   obtain ⟨hG, hU⟩ := hk
@@ -115,8 +119,8 @@ theorem trace_aa {m : ℕ} (u : Fin m → Fin n → ℂ) (a : Matrix (Fin n) (Fi
   push_cast
   ring
 
-open PositivityTheory.Rg.Sw.Glob.GaussH in
 
+open PositivityTheory.Rg.Sw.Glob.GaussH in
 theorem gzf_eval {m : ℕ} (s : ℤˣ) (b a : Matrix (Fin n) (Fin n) ℂ) (hb : bᴴ = b) (u : Fin m → Fin n → ℂ) :
     gZf (fun _ : Fin m => true) (2 * Real.pi * ((s : ℤ) : ℝ)) (2 * Real.pi) (b + Complex.I • (a * aᴴ)) u =
       Complex.exp (2 * Real.pi * Complex.I * ((s : ℤ) : ℂ) * Matrix.trace (b * ((Matrix.of u)ᴴ * Matrix.of u))) *

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial Matrix
 
@@ -84,7 +88,7 @@ theorem real_pos {d : ℕ} (G : Matrix (Fin d) (Fin d) ℤ) (hs : ∀ i j, G i j
     refine Matrix.PosSemidef.of_dotProduct_mulVec_nonneg ?_ fun y => ?_
     · ext i j; simp [hM, hs i j]
     · rw [key]; exact real_nonneg G hG y
-  have h0 : M *ᵥ x = 0 := (hp.dotProduct_mulVec_zero_iff x).1 (by rw [key, hx])
+  have h0 : M *ᵥ x = 0 := (hp.dotProduct_mulVec_zero_iff).1 (by rw [key, hx])
   by_contra hne
   have : M.det = 0 := Matrix.exists_mulVec_eq_zero_iff.1 ⟨x, hne, h0⟩
   rw [hM, ← RingHom.mapMatrix_apply, ← RingHom.map_det] at this
@@ -112,18 +116,20 @@ theorem gram_pos {Λ : Type} [AddCommGroup Λ] (b : Λ →ₗ[ℤ] Λ →ₗ[ℤ
     (hd : ∀ P : ℤ[X], P ≠ 0 → P.degree < d → aeval φ P e ≠ 0) (c : Fin d → ℤ) (hc : c ≠ 0) :
     0 < c ⬝ᵥ (Matrix.of fun i j : Fin d => b ((φ ^ (i : ℕ)) e) ((φ ^ (j : ℕ)) e)) *ᵥ c := by
   have h1 : aeval φ (∑ i : Fin d, C (c i) * X ^ (i : ℕ)) e = ∑ i : Fin d, c i • (φ ^ (i : ℕ)) e := by
-    simp [map_sum, LinearMap.sum_apply, Module.End.intCast_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, LinearMap.sum_apply, Module.End.intCast_apply]
   have h2 : (∑ i : Fin d, C (c i) * X ^ (i : ℕ) : ℤ[X]) ≠ 0 := by
     intro h
     apply hc
     ext k
     have := congrArg (fun p : ℤ[X] => p.coeff k) h
-    simp only [finset_sum_coeff, coeff_C_mul_X_pow, coeff_zero, Fin.val_inj] at this
+    simp only [Polynomial.finsetSum_coeff, coeff_C_mul_X_pow, coeff_zero, Fin.val_inj] at this
     simpa using this
   have h3 := hb _ (hd _ h2 (degree_sum_fin_lt c))
   rw [h1] at h3
   refine h3.trans_eq ?_
-  simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, dotProduct, mulVec,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, dotProduct, mulVec,
     Finset.mul_sum, Matrix.of_apply, smul_eq_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
@@ -170,7 +176,8 @@ theorem form_pow (g : ℕ → ℕ → ℤ) (i j : ℕ) : form g (X ^ i) (X ^ j) 
 theorem form_sum (g : ℕ → ℕ → ℤ) (d : ℕ) (f h : ℂ[X]) (hf : f.natDegree < d) (hh : h.natDegree < d) :
     form g f h = ∑ i : Fin d, ∑ j : Fin d, f.coeff i * h.coeff j * (g i j : ℂ) := by
   conv_lhs => rw [f.as_sum_range' d hf, h.as_sum_range' d hh]
-  simp only [Finset.sum_range, ← smul_X_eq_monomial, map_sum, LinearMap.sum_apply, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_range, ← smul_X_eq_monomial, map_sum, LinearMap.sum_apply, map_smul,
     LinearMap.smul_apply, form_pow, smul_eq_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
@@ -181,7 +188,7 @@ theorem form_shift (g : ℕ → ℕ → ℤ) (q : ℤ) (hg : ∀ i j, g (i + 1) 
   | add p q hp hq => simp [mul_add, hp, hq]
   | monomial i a =>
     induction h using Polynomial.induction_on' with
-    | add p q hp hq => simp only [mul_add, map_add, hp, hq]
+    | add p q hp hq => simp only [mul_add, map_add (f := _), hp, hq]
     | monomial j c =>
       simp only [← smul_X_eq_monomial, mul_smul_comm, ← pow_succ', map_smul, LinearMap.smul_apply,
         form_pow, hg, smul_eq_mul]
@@ -232,7 +239,7 @@ theorem similitude_algebraic : ∀ (Λ : Type) [AddCommGroup Λ] (Q : Λ → ℤ
     intro i j; simp only [hg, hb]; rw [add_comm]; ring
   have hshift : ∀ i j, g (i + 1) (j + 1) = (q : ℤ) * g i j := by
     intro i j
-    simp only [hg, hb, pow_succ', Module.End.mul_apply, ← map_add, hφ]; ring
+    simp only [hg, hb, pow_succ', Module.End.mul_apply, ← map_add (f := _), hφ]; ring
   set Pc := P.map (Int.castRingHom ℂ) with hPc
   have hinj : Function.Injective (Int.castRingHom ℂ) := Int.cast_injective
   have hPc0 : Pc ≠ 0 := (Polynomial.map_ne_zero_iff hinj).2 hP
@@ -247,7 +254,8 @@ theorem similitude_algebraic : ∀ (Λ : Type) [AddCommGroup Λ] (Q : Λ → ℤ
   have hf'd : f'.natDegree < d := lt_of_le_of_lt natDegree_map_le hfd
   have hconj : Pc = (X - C ((starRingEnd ℂ) β)) * f' := by
     have : Pc.map (starRingEnd ℂ) = Pc := by
-      rw [hPc, Polynomial.map_map]; congr 1; exact RingHom.ext_int _ _
+      rw [hPc, Polynomial.map_map]; congr 1
+      ext n; simp
     rw [← this, hf]; simp [hf']
   have e1 : X * f = β • f + Pc := by rw [hf, smul_eq_C_mul]; ring
   have e2 : X * f' = (starRingEnd ℂ) β • f' + Pc := by rw [hconj, smul_eq_C_mul]; ring
@@ -255,7 +263,7 @@ theorem similitude_algebraic : ∀ (Λ : Type) [AddCommGroup Λ] (Q : Λ → ℤ
   have a2 : ∀ h, form g h Pc = 0 := fun h => by rw [form_symm g hsymm, a1]
   have main := form_shift g q hshift f f'
   rw [e1, e2] at main
-  simp only [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply, a1, a2, add_zero,
+  simp only [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply, a1, a2, add_zero,
     smul_eq_mul, mul_zero] at main
   have hne : form g f f' ≠ 0 := by
     intro hz

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.DivisorIdealBotUniformiser
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleMul
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.DivisorIdealBotUniformiser
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleMul
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -22,18 +27,18 @@ theorem idealCycle_eq_of_mul_mem {J J' U : Ideal (MRing ι R)} {s t : MRing ι R
   by_cases h : U ∈ J.minimalPrimes ∧ IsRelevant U
   · have h' : U ∈ J'.minimalPrimes ∧ IsRelevant U :=
       ⟨mem_minimalPrimes_of_mul_mem hs ht hsJ htJ h.1, h.2⟩
-    rw [dif_pos h, dif_pos h']
+    rw [dite_eq_left h, dite_eq_left h']
     have : U.IsPrime := h.1.1.1
     unfold multAt
     rw [length_localized_eq_of_mul_mem hs ht hsJ htJ]
   · have h' : ¬ (U ∈ J'.minimalPrimes ∧ IsRelevant U) := fun h' =>
       h ⟨mem_minimalPrimes_of_mul_mem ht hs htJ hsJ h'.1, h'.2⟩
-    rw [dif_neg h, dif_neg h']
+    rw [dite_eq_right h, dite_eq_right h']
 
 theorem divCycle_eq_zero_of_not_mem {W U : Ideal (MRing ι R)} {x : MRing ι R} (hx : x ∉ U) :
     divCycle W x U = 0 := by
   unfold divCycle
-  rw [dif_neg]
+  rw [dite_eq_right]
   rintro ⟨h, -⟩
   exact hx (h.1.2 (Ideal.mem_sup_right (Ideal.mem_span_singleton_self x)))
 
@@ -106,7 +111,7 @@ theorem DivisorIdealCycle.proof : DivisorIdealCycle.Statement.{u} := by
       exact hU ⟨h.1.1, hWJ.trans h.1.2, hrel⟩
     show divCycle W v U - divCycle W u U = idealCycle (W ⊔ divisorIdeal P f g) U
     unfold divCycle idealCycle
-    rw [dif_neg (hcomp _ le_sup_left), dif_neg (hcomp _ le_sup_left), dif_neg (hcomp _ le_sup_left),
+    rw [dite_eq_right (hcomp _ le_sup_left), dite_eq_right (hcomp _ le_sup_left), dite_eq_right (hcomp _ le_sup_left),
       sub_self]
 
 end

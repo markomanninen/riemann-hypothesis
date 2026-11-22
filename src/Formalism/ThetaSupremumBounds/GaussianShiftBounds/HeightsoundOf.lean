@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.ThetaSupremumBounds.StatementA
+module
+
+public import Mathlib
+public import Formalism.ThetaSupremumBounds.StatementA
+
+@[expose] public section
 
 open Finset MeasureTheory
 open scoped ComplexConjugate Real
@@ -19,7 +23,7 @@ theorem blockBound_of (hF : FockJet) (hI : BlockIntegral) : BlockBound := by
       (π : ℂ) ^ (Fintype.card Pl * Fintype.card ι) • Rc.sum (fun e A => (c e * (mfact e : ℂ)) • A) := by
     simp only [Finsupp.sum, Finset.smul_sum]
     simp_rw [h1]
-    rw [integral_finset_sum _ fun e _ => (hJ e).1.smul_const (Rc e)]
+    rw [MeasureTheory.integral_finsetSum _ fun e _ => (hJ e).1.smul_const (Rc e)]
     refine Finset.sum_congr rfl fun e _ => ?_
     rw [integral_smul_const, (hJ e).2, Fintype.card_prod, smul_smul]
   have hP : Rc.sum (fun e A => (c e * (mfact e : ℂ) * ∏ x : Pl × ι, lam x.1 ^ e x) • A) =

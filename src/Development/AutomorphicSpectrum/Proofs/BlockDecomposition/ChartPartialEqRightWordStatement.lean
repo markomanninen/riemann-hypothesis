@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChartPartialEqRightWord
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DwCons
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChartPartialEqRightWord
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DwCons
+
+@[expose] public section
+
 open MeasureTheory Matrix Finset
 open scoped ContDiff
 open PositivityTheory.RgTw (Mat G)

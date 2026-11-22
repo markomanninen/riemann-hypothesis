@@ -1,23 +1,27 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.TruncatedCuspIrreducibility.AdelDefs
-import GroundTheory.AutomorphicForms.ReductionMahler
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Archimedean
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.HeckeInj
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.Smoothing
-import GroundTheory.AutomorphicForms.ReductionMeasure
-import GroundTheory.AutomorphicForms.Reduction
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.CuspDecayHeights.HeightLe
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.SummandFactor
-import GroundTheory.AutomorphicForms.AdelicGLn
-import Development.AutomorphicArithmetic.Foundations.Convolution.TensFun
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.LevLaws
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.PiHomExt
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MeanValueUniqueness
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsOpenRightInvariance
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AeTranslateEq
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.TruncatedCuspIrreducibility.AdelDefs
+public import GroundTheory.AutomorphicForms.ReductionMahler
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Archimedean
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.HeckeInj
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.Smoothing
+public import GroundTheory.AutomorphicForms.ReductionMeasure
+public import GroundTheory.AutomorphicForms.Reduction
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.CuspDecayHeights.HeightLe
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.SummandFactor
+public import GroundTheory.AutomorphicForms.AdelicGLn
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TensFun
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.LevLaws
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.PiHomExt
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MeanValueUniqueness
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsOpenRightInvariance
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AeTranslateEq
+
+@[expose] public section
 
 section
 open MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Adel
@@ -40,14 +44,14 @@ private theorem UpperTheory.Reformulated.B.Gul4.mem_iff (μ : Measure (G1 K n)) 
   | mem x hx => exact hx
   | zero =>
     refine ⟨continuous_const, ⟨0, τ.zero_mem, ?_⟩, fun g => by simp, _, UpperTheory.Reformulated.B.Gul4.lev_top, fun u _ g => rfl⟩
-    exact hq.ae (Lp.coeFn_zero ℂ 2 _)
+    exact MeasureTheory.QuasiMeasurePreserving.ae hq (Lp.coeFn_zero ℂ 2 _)
   | add x y _ _ hx hy =>
     obtain ⟨cx, ⟨v, hv, rv⟩, ax, U, hU, fx⟩ := hx
     obtain ⟨cy, ⟨v', hv', rv'⟩, ay, U', hU', fy⟩ := hy
     obtain ⟨hL, hE⟩ := hinf U U' hU hU'
     refine ⟨cx.add cy, ⟨v + v', τ.add_mem hv hv', ?_⟩, UpperTheory.mean_value_uniqueness κ arc1 p harc hp.cont x y cx cy ax ay,
       _, hL, fun u hu g => ?_⟩
-    · filter_upwards [hq.ae (Lp.coeFn_add v v'), rv, rv'] with z h1 h2 h3
+    · filter_upwards [MeasureTheory.QuasiMeasurePreserving.ae hq (Lp.coeFn_add v v'), rv, rv'] with z h1 h2 h3
       rw [Pi.add_apply, ← h2, ← h3]
       exact h1
     · rw [hE] at hu
@@ -55,7 +59,7 @@ private theorem UpperTheory.Reformulated.B.Gul4.mem_iff (μ : Measure (G1 K n)) 
   | smul c x _ hx =>
     obtain ⟨cx, ⟨v, hv, rv⟩, ax, U, hU, fx⟩ := hx
     refine ⟨cx.const_smul c, ⟨c • v, τ.smul_mem c hv, ?_⟩, fun g => ?_, U, hU, fun u hu g => ?_⟩
-    · filter_upwards [hq.ae (Lp.coeFn_smul c v), rv] with z h1 h2
+    · filter_upwards [MeasureTheory.QuasiMeasurePreserving.ae hq (Lp.coeFn_smul c v), rv] with z h1 h2
       rw [Pi.smul_apply, ← h2]
       exact h1
     · rw [Pi.smul_apply, ← ax g, smul_eq_mul, ← integral_const_mul]

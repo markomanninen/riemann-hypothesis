@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LCBijPf
-import Development.EtaleCohomology.EtaleSheaves.LSecGluePf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LCBijPf
+public import Development.EtaleCohomology.EtaleSheaves.LSecGluePf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.E.t_E1Cut LateralTheory.E.LocallyConstantH0

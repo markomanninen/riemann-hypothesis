@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -21,31 +26,8 @@ def IsFiniteProjection (J : Ideal (MvPolynomial (Fin n) ℂ))
     (A : (Fin n → ℂ) →ₗ[ℂ] (Fin d → ℂ)) : Prop :=
   Function.Injective (projAlgHom J A) ∧ (projAlgHom J A).toRingHom.Finite
 
-def projDegree (J : Ideal (MvPolynomial (Fin n) ℂ)) [J.IsPrime]
-    (A : (Fin n → ℂ) →ₗ[ℂ] (Fin d → ℂ)) : ℕ :=
-  Module.finrank
-    (IntermediateField.adjoin ℂ (Set.range fun i =>
-      algebraMap (MvPolynomial (Fin n) ℂ ⧸ J) (FractionRing (MvPolynomial (Fin n) ℂ ⧸ J))
-        (projAlgHom J A (X i))))
-    (FractionRing (MvPolynomial (Fin n) ℂ ⧸ J))
-
-def projFibre (J : Ideal (MvPolynomial (Fin n) ℂ)) (A : (Fin n → ℂ) →ₗ[ℂ] (Fin d → ℂ))
-    (y : Fin d → ℂ) : Set (Fin n → ℂ) :=
-  zeroLocus ℂ J ∩ A ⁻¹' {y}
-
-def pullPoly (A : (Fin n → ℂ) →ₗ[ℂ] (Fin d → ℂ)) (P : MvPolynomial (Fin d) ℂ) :
-    MvPolynomial (Fin n) ℂ :=
-  aeval (linPoly A) P
-
 def unitaryRows (d n : ℕ) : Set (Matrix (Fin d) (Fin n) ℂ) :=
   {M | M * M.conjTranspose = 1}
-
-def IsClosedComplexSubmanifoldIn (S Ω : Set (Fin n → ℂ)) (k : ℕ) : Prop :=
-  S ⊆ Ω ∧ IsClosed ((↑) ⁻¹' S : Set Ω) ∧
-    ∀ z ∈ S, ∃ (V : Set (Fin n → ℂ)) (U : Set (Fin k → ℂ)) (π : (Fin n → ℂ) →L[ℂ] (Fin k → ℂ))
-      (g : (Fin k → ℂ) → (Fin n → ℂ)),
-      IsOpen V ∧ z ∈ V ∧ IsOpen U ∧ DifferentiableOn ℂ g U ∧ (∀ y ∈ U, π (g y) = y) ∧
-        S ∩ V = g '' U
 
 def GenericProjectionFinite.Statement : Prop :=
   ∀ (n d : ℕ) (J : Ideal (MvPolynomial (Fin n) ℂ)), J.IsPrime →
@@ -62,40 +44,6 @@ def GenericProjectionFinite.Statement : Prop :=
         ∃ U ∈ Matrix.unitaryGroup (Fin n) ℂ, ∀ (k : Fin m) (s : Fin d ↪ Fin n),
           IsFiniteProjection J (((U * F k).conjTranspose.submatrix s id).mulVecLin))
 
-def FibreBound.Statement : Prop :=
-  ∀ (n d : ℕ) (J : Ideal (MvPolynomial (Fin n) ℂ)) [J.IsPrime],
-    ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) = d →
-    ∀ A : (Fin n → ℂ) →ₗ[ℂ] (Fin d → ℂ), IsFiniteProjection J A →
-    ∀ y : Fin d → ℂ, (projFibre J A y).Nonempty ∧ (projFibre J A y).encard ≤ projDegree J A
-
-def DiscriminantCover.Statement : Prop :=
-  ∀ (n d : ℕ) (J : Ideal (MvPolynomial (Fin n) ℂ)) [J.IsPrime],
-    ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) = d →
-    ∀ A : (Fin n → ℂ) →ₗ[ℂ] (Fin d → ℂ), IsFiniteProjection J A →
-    ∃ P : MvPolynomial (Fin d) ℂ, P ≠ 0 ∧
-      (∀ y : Fin d → ℂ, eval y P ≠ 0 →
-        (projFibre J A y).encard = projDegree J A ∧
-        ∀ z ∈ projFibre J A y, ∃ (U : Set (Fin d → ℂ)) (V : Set (Fin n → ℂ))
-          (g : (Fin d → ℂ) → (Fin n → ℂ)),
-          IsOpen U ∧ y ∈ U ∧ IsOpen V ∧ z ∈ V ∧ DifferentiableOn ℂ g U ∧ g y = z ∧
-            (∀ y' ∈ U, A (g y') = y') ∧ zeroLocus ℂ J ∩ V = g '' U) ∧
-      IsClosedComplexSubmanifoldIn (zeroLocus ℂ J \ A ⁻¹' {y | eval y P = 0})
-        (A ⁻¹' {y | eval y P = 0})ᶜ d
-
-def BadSetSmaller.Statement : Prop :=
-  ∀ (n d : ℕ) (J : Ideal (MvPolynomial (Fin n) ℂ)), J.IsPrime →
-    ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) = d →
-    ∀ A : (Fin n → ℂ) →ₗ[ℂ] (Fin d → ℂ), IsFiniteProjection J A →
-    ∀ P : MvPolynomial (Fin d) ℂ, P ≠ 0 →
-      zeroLocus ℂ J ∩ A ⁻¹' {y | eval y P = 0} =
-          zeroLocus ℂ (J ⊔ Ideal.span {pullPoly A P}) ∧
-        ∀ Q ∈ (J ⊔ Ideal.span {pullPoly A P}).minimalPrimes,
-          ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ Q) < d
-
-def ConeScaling.Statement : Prop :=
-  ∀ (n : ℕ) (J : Ideal (MvPolynomial (Fin n) ℂ)), ReciprocityTheory.ChartRestriction.G.Geo.IsHomogIdeal ℂ J →
-    ∀ t : ℂ, t ≠ 0 → t • zeroLocus ℂ J = zeroLocus ℂ J
-
 def lineMap : MvPolynomial (Fin 2) ℂ →ₐ[ℂ] MvPolynomial (Fin 1) ℂ :=
   aeval ![X 0, 0]
 
@@ -109,8 +57,6 @@ theorem lineMap_surjective : Function.Surjective lineMap := by
     rw [Fin.fin_one_eq_zero i]
     rfl
   simp only [lineMap, aeval_rename, h, aeval_X_left_apply]
-
-instance lineIdeal_isPrime : lineIdeal.IsPrime := RingHom.ker_isPrime _
 
 def lineEquiv : (MvPolynomial (Fin 2) ℂ ⧸ lineIdeal) ≃ₐ[ℂ] MvPolynomial (Fin 1) ℂ :=
   Ideal.quotientKerAlgEquivOfSurjective lineMap_surjective
@@ -142,16 +88,6 @@ theorem lineProj_finite : IsFiniteProjection lineIdeal lineProj := by
     rw [lineEquiv_projAlgHom]
   exact ⟨hinj, RingHom.Finite.of_surjective _ hsurj⟩
 
-example : lineIdeal.IsPrime ∧ ringKrullDim (MvPolynomial (Fin 2) ℂ ⧸ lineIdeal) = (1 : ℕ) :=
-  ⟨inferInstance, lineIdeal_dim⟩
-
-example : lineIdeal.IsPrime ∧ ringKrullDim (MvPolynomial (Fin 2) ℂ ⧸ lineIdeal) = (1 : ℕ) ∧
-    IsFiniteProjection lineIdeal lineProj ∧ (X 0 : MvPolynomial (Fin 1) ℂ) ≠ 0 :=
-  ⟨inferInstance, lineIdeal_dim, lineProj_finite, X_ne_zero _⟩
-
 def originIdeal (n : ℕ) : Ideal (MvPolynomial (Fin n) ℂ) := RingHom.ker (eval (0 : Fin n → ℂ))
-
-example : X 0 ∈ originIdeal 1 ∧ (1 : MvPolynomial (Fin 1) ℂ) ∉ originIdeal 1 := by
-  simp [originIdeal]
 
 end GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets

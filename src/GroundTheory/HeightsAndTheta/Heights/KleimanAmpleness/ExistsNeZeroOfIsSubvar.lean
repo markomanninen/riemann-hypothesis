@@ -1,14 +1,19 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GenericPointSectionHypotheses
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsFieldSubalgebraSelf
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsExtraTer
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerAlt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsMoreAlt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsBisExtra
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsRestTer
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsLastExtra
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsExtraLast
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.WeilNumbersImpVerticalDivisorsCommute
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GenericPointSectionHypotheses
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsFieldSubalgebraSelf
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsExtraTer
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerAlt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsMoreAlt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsBisExtra
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsRestTer
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsLastExtra
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsExtraLast
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.WeilNumbersImpVerticalDivisorsCommute
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -92,8 +97,7 @@ theorem SectionCount.transfer (hBase : BaseRealises.Statement)
   rw [hP F K ι Ω y k₀ N e x hx hmod Q ν hQ n (-((n : ℤ) * q))]
   congr 1
   funext j
-  simp only [Pi.add_apply, Pi.smul_apply, Pi.sub_apply]
-  simp only [smul_eq_mul, nsmul_eq_mul]
+  simp only [smul_eq_mul, nsmul_eq_mul, Pi.add_apply, Pi.sub_apply, Pi.smul_apply, Pi.mul_apply, Pi.natCast_apply]
   ring
 
 theorem SectionCount.equiv (hG : GraphModel.Statement) (hB : BundleOfDeg.Statement) (hD : ModelDim.Statement)

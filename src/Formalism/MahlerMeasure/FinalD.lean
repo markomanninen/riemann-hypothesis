@@ -1,10 +1,14 @@
-import Formalism.MahlerMeasure.MahlerMeasureProofs.GaussRad
-import Formalism.MahlerMeasure.MahlerMeasureProofs.MahlerK
-import Formalism.MahlerMeasure.MahlerMeasureProofs.SmithZp
-import Formalism.MahlerMeasure.MahlerMeasureProofs.LieMat
-import Formalism.MahlerMeasure.MahlerMeasureProofs.LieRoots
-import Formalism.MahlerMeasure.MahlerMeasureProofs.DeterminantBlockLeadingTerm
-import Formalism.MahlerMeasure.MahlerMeasureProofs.SmithBall
+module
+
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.GaussRad
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.MahlerK
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.SmithZp
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.LieMat
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.LieRoots
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.DeterminantBlockLeadingTerm
+public import Formalism.MahlerMeasure.StatementD
+
+@[expose] public section
 
 namespace Formalism.GM.Top
 open Formalism.GM

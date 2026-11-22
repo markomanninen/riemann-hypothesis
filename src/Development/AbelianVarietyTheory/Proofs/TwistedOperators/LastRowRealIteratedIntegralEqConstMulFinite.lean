@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatIntegrableAaVacOfConductor
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMemValuationEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatIntegrableAaVacOfConductor
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMemValuationEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem exists_mul_of_rel {I : Type*} (L r : I → ℂ)
   · refine ⟨0, fun x => ?_⟩
     have hx := h x x 1 0 (by simp [h0 x])
     simpa using hx
-  · push_neg at h0
+  · push Not at h0
     obtain ⟨x₀, hx₀⟩ := h0
     refine ⟨L x₀ / r x₀, fun x => ?_⟩
     have hx := h x x₀ (r x₀) (-r x) (by ring)
@@ -54,7 +58,7 @@ theorem exists_mul_of_cellVan (hV : CellVan) {ι : Type} [DecidableEq ι] {H : �
       intro a ha ha1
       obtain ⟨e, he⟩ := h6 a ha ha1
       simp only [Fin.sum_univ_two, he]
-      simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]
+      simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
       linear_combination e * hrel)
   simpa [Fin.sum_univ_two] using key
 
@@ -68,17 +72,17 @@ theorem exists_haar_family {ι : Type} {H : ι → Type} [∀ i, Group (H i)]
   have e1 : ∀ i, ∃ m : Measure ((R i).subgroupOf (B i)), i ∈ l → m.IsHaarMeasure := by
     intro i
     by_cases hi : i ∈ l
-    · haveI : LocallyCompactSpace (B i) := (hS i hi).1.locallyCompactSpace
+    · have : LocallyCompactSpace (B i) := (hS i hi).1.locallyCompactSpace
       have hc : IsClosed (((R i).subgroupOf (B i) : Subgroup (B i)) : Set (B i)) := by
         rw [Subgroup.coe_subgroupOf]
         exact (hS i hi).2.preimage continuous_subtype_val
-      haveI : LocallyCompactSpace ((R i).subgroupOf (B i)) := hc.locallyCompactSpace
+      have : LocallyCompactSpace ((R i).subgroupOf (B i)) := hc.locallyCompactSpace
       exact ⟨Measure.haar, fun _ => inferInstance⟩
     · exact ⟨0, fun h => absurd h hi⟩
   have e2 : ∀ i, ∃ m : Measure (B i), i ∈ l → m.IsHaarMeasure := by
     intro i
     by_cases hi : i ∈ l
-    · haveI : LocallyCompactSpace (B i) := (hS i hi).1.locallyCompactSpace
+    · have : LocallyCompactSpace (B i) := (hS i hi).1.locallyCompactSpace
       exact ⟨Measure.haar, fun _ => inferInstance⟩
     · exact ⟨0, fun h => absurd h hi⟩
   choose ρ' hρ' using e1
@@ -157,7 +161,7 @@ theorem wt_eq {ch : Choice R} (ρ : ∀ j, Measure ((rowGrp ch.G j).subgroupOf (
     wt ρ μ b = ((idx D).map fun j => cellWt (ρ j) (μ j) ((latGrp ch.G j).subgroupOf _) ⟨b j, hb j⟩).prod := by
   unfold GlobalTheory.RowVal.wt
   congr 1
-  exact List.map_congr_left fun j _ => dif_pos (hb j)
+  exact List.map_congr_left fun j _ => dite_eq_left (hb j)
 
 theorem exists_lhs_eq (hV : CellVan) (ch : Choice R) (hG : GrpAt ch) (hI : IterAt ch) (hInv : InvAt ch) (s : ℤˣ)
     (hSu : SuppOn ch s) (hRep : RepAt ch s) (hOK : ∀ t a, ch.S.SumOK t (ch.Phi a)) (z : T → ℂˣ)
@@ -184,8 +188,7 @@ theorem exists_lhs_eq (hV : CellVan) (ch : Choice R) (hG : GrpAt ch) (hI : IterA
   choose b hb using fun t => (hRep' t).1
   have hl : (idx D).Nodup := by
     unfold idx
-    apply List.nodup_range'
-    all_goals simp
+    exact List.nodup_range'
   obtain ⟨c, hc⟩ := exists_mul_of_cellVan' hV (fun j => GinfC (ch.G.V (.grid D.R.m j)))
     (fun j => GfC (ch.G.V (.grid D.R.m j))) (rowGrp ch.G) (latGrp ch.G) (idx D) hl hG ρ μ ρ' μ'
     (fun j hj => ⟨(hH0 j hj).1, (hH0 j hj).2, (hH' j hj).1, (hH' j hj).2⟩)

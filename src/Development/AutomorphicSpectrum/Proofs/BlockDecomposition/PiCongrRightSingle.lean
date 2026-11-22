@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormLaws
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsBaseChangeEquiv
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExteriorPowerSplit
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KaehlerPushoutSplit
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TensorEquivBaseChangeTensor
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormLaws
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsBaseChangeEquiv
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExteriorPowerSplit
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KaehlerPushoutSplit
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TensorEquivBaseChangeTensor
+
+@[expose] public section
 
 open TensorProduct CrystallineSemistableComparison.Onto
 
@@ -54,7 +58,7 @@ theorem omKun_pushout (K A B R : Type) [CommRing K] [CommRing A] [CommRing B] [C
   unfold form
   congr 2
   funext k
-  simp only [Function.comp]
+  simp only [Function.comp_apply, KaehlerDifferential.mapBaseChange_tmul, one_smul]
   generalize Fin.cast _ k = j
   induction j using Fin.addCases with
   | left j => simp [KaehlerDifferential.mapBaseChange_tmul]

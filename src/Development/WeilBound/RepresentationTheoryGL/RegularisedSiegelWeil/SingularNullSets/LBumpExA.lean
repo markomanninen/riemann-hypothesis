@@ -1,14 +1,18 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsCompactLatticeStabilizerBoundedReal
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemSchwartzAOfIsSchwartzBruhat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralNormSqEqToL2
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsSelfDualLatticeAtPlaceComapUnitarySupported
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExtensionAdeleRealComponentsCmType
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBaseChangeFiniteAdeleRingEquiv
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LatHatOpenAndContinuous
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsCompactLatticeStabilizerBoundedReal
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemSchwartzAOfIsSchwartzBruhat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralNormSqEqToL2
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsSelfDualLatticeAtPlaceComapUnitarySupported
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExtensionAdeleRealComponentsCmType
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBaseChangeFiniteAdeleRingEquiv
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LatHatOpenAndContinuous
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,10 +43,9 @@ theorem cf_tmul (v : Pl D) (a : Af D.host.F) (x : D.host.E) : cf v (a ⊗ₜ[D.h
   rfl
 
 theorem cv_eq (v : Pl D) (x : AE D) : cv D v x = cf v (finPart D x) := by
-  induction x using TensorProduct.induction_on with
-  | zero => rw [RingHom.map_zero, RingHom.map_zero, map_zero]
+  induction x using TensorProduct.inductionOn with
   | tmul a y => rfl
-  | add x y hx hy => rw [RingHom.map_add, RingHom.map_add, map_add, hx, hy]
+  | add x y hx hy => rw [RingHom.map_add (f := _), RingHom.map_add (f := _), map_add (f := _), hx, hy]
 
 theorem cf_mem_of_mem {z : AfE D} (hz : z ∈ intAE D) (v : Pl D) : cf v z ∈ intLoc D.host.F D.host.E v := by
   induction hz using AddSubgroup.closure_induction with
@@ -70,10 +73,9 @@ theorem trace_projection_tmul (φ : D.host.E →ₗ[D.host.F] D.host.F) (v : Pl 
 
 theorem evalV_pr (φ : D.host.E →ₗ[D.host.F] D.host.F) (v : Pl D) (y : AfE D) :
     evalV D.host.F v (pr φ y) = aux₃ φ v (cf v y) := by
-  induction y using TensorProduct.induction_on with
-  | zero => rw [LinearMap.map_zero, map_zero, map_zero, LinearMap.map_zero]
+  induction y using TensorProduct.inductionOn with
   | tmul a x => rw [pr_tmul, cf_tmul, trace_projection_tmul, AlgHom.map_smul_of_tower]
-  | add y y' hy hy' => rw [LinearMap.map_add, map_add, map_add, LinearMap.map_add, hy, hy']
+  | add y y' hy hy' => rw [LinearMap.map_add (f := _), map_add (f := _), map_add (f := _), LinearMap.map_add (f := _), hy, hy']
 
 theorem trace_projection_mem_integers (φ : D.host.E →ₗ[D.host.F] D.host.F) (hφ : ∀ x : 𝓞 D.host.E, φ x ∈ (algebraMap (𝓞 D.host.F) D.host.F).range)
     (v : Pl D) {w : Ev D v} (hw : w ∈ intLoc D.host.F D.host.E v) : aux₃ φ v w ∈ v.adicCompletionIntegers D.host.F := by
@@ -83,18 +85,17 @@ theorem trace_projection_mem_integers (φ : D.host.E →ₗ[D.host.F] D.host.F) 
     rw [trace_projection_tmul, ← hr, Algebra.smul_def]
     exact mul_mem (v.coe_mem_adicCompletionIntegers r) ha
   · rw [LinearMap.map_zero]; exact zero_mem _
-  · rw [LinearMap.map_add]; exact add_mem hy hz
+  · rw [LinearMap.map_add (f := _)]; exact add_mem hy hz
   · rw [LinearMap.map_neg]; exact neg_mem hy
 
 theorem sum_pr {k : ℕ} (s : Fin k → 𝓞 D.host.E) (φ : Fin k → D.host.E →ₗ[D.host.F] D.host.F)
     (hsum : ∀ x, ∑ j, φ j x • (s j : D.host.E) = x) (y : AfE D) :
     ∑ j, pr (φ j) y ⊗ₜ[D.host.F] ((s j : D.host.E)) = y := by
-  induction y using TensorProduct.induction_on with
-  | zero => simp only [LinearMap.map_zero, TensorProduct.zero_tmul, Finset.sum_const_zero]
+  induction y using TensorProduct.inductionOn with
   | tmul a x =>
     simp only [pr_tmul, TensorProduct.smul_tmul]
     rw [← TensorProduct.tmul_sum, hsum x]
-  | add y y' hy hy' => simp only [LinearMap.map_add, TensorProduct.add_tmul, Finset.sum_add_distrib, hy, hy']
+  | add y y' hy hy' => simp only [LinearMap.map_add (f := _), TensorProduct.add_tmul, Finset.sum_add_distrib, hy, hy']
 
 theorem mem_of_cf_mem {z : AfE D} (hz : ∀ v : Pl D, cf v z ∈ intLoc D.host.F D.host.E v) : z ∈ intAE D := by
   obtain ⟨k, s, φ, hφ, hsum⟩ := GlobalTheory.AdelicU.SelfDual.exists_dualFamily_integers (F := D.host.F) (E := D.host.E)
@@ -121,7 +122,7 @@ theorem exists_nat_mul_mem {Q : Set (AfE D)} (hQ : IsCompact Q) :
 def U (S : Finset (Pl D)) (ef : AfE D) (N m n : ℕ) : AddSubgroup (Matrix (Fin m) (Fin n) (AfE D)) where
   carrier := {w | (∀ v ∉ S, ∀ i j, cf v (w i j) ∈ intLoc D.host.F D.host.E v) ∧ ∀ i j, (N : AfE D) * (ef * w i j) ∈ intAE D}
   add_mem' := fun {a b} ha hb => ⟨fun v hv i j => by
-      rw [Matrix.add_apply, map_add]; exact add_mem (ha.1 v hv i j) (hb.1 v hv i j),
+      rw [Matrix.add_apply, map_add (f := _)]; exact add_mem (ha.1 v hv i j) (hb.1 v hv i j),
     fun i j => by rw [Matrix.add_apply, mul_add, mul_add]; exact add_mem (ha.2 i j) (hb.2 i j)⟩
   zero_mem' := ⟨fun v _ i j => by rw [Matrix.zero_apply, map_zero]; exact zero_mem _,
     fun i j => by rw [Matrix.zero_apply, mul_zero, mul_zero]; exact zero_mem _⟩
@@ -132,8 +133,8 @@ theorem mem_U {S : Finset (Pl D)} {ef : AfE D} {N m n : ℕ} {w : Matrix (Fin m)
     w ∈ U S ef N m n ↔ (∀ v ∉ S, ∀ i j, cf v (w i j) ∈ intLoc D.host.F D.host.E v) ∧
       ∀ i j, (N : AfE D) * (ef * w i j) ∈ intAE D := Iff.rfl
 
-open Classical in
 
+open Classical in
 theorem mem_U_iff {S : Finset (Pl D)} {ef : AfE D} (hef : ef * ef = ef)
     (hS : ∀ v : Pl D, cf v ef = if v ∈ S then 1 else 0) {N m n : ℕ} {w : Matrix (Fin m) (Fin n) (AfE D)}
     (hw : ∀ v ∉ S, ∀ i j, cf v (w i j) ∈ intLoc D.host.F D.host.E v) :

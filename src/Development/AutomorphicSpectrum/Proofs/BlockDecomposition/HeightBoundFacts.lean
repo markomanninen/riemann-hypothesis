@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.FrameDer
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CongruenceActionDeterminant
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.FrameDer
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CongruenceActionDeterminant
+
+@[expose] public section
 
 noncomputable section
 

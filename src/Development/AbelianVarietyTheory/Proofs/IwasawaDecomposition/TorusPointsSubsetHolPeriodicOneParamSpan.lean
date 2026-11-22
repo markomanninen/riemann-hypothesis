@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MonoSpMapRingOfIntegersAlt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPerHolOne
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AnalyticDictionaryIsPointPeriodOrigin
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ContinuousOnThetaFrameValueHolomorphicFamily
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MonoSpMapRingOfIntegersAlt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPerHolOne
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AnalyticDictionaryIsPointPeriodOrigin
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ContinuousOnThetaFrameValueHolomorphicFamily
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,12 +89,12 @@ private theorem isHolTo_comp_continuousLinearMap {V : Type} [NormedAddCommGroup 
     unfold valAt'
     by_cases hb : ⊤ ≤ (f b ≫ g) ⁻¹ᵁ U
     · have hb' : ⊤ ≤ f b ⁻¹ᵁ g ⁻¹ᵁ U := hb
-      rw [dif_pos hb, dif_pos hb']
+      rw [dite_eq_left hb, dite_eq_left hb']
       unfold valAt
       rw [Scheme.Hom.comp_appLE]
       rfl
     · have hb' : ¬ ⊤ ≤ f b ⁻¹ᵁ g ⁻¹ᵁ U := hb
-      rw [dif_neg hb, dif_neg hb']
+      rw [dite_eq_right hb, dite_eq_right hb']
   exact ⟨h1, h2.congr fun b _ => key b⟩
 
 theorem isHolTo_expPt {m : ℂ → Λ →+ ℂ} (hm : ∀ x, Differentiable ℂ fun s => m s x) :
@@ -126,7 +130,7 @@ theorem isHolTo_expPt {m : ℂ → Λ →+ ℂ} (hm : ∀ x, Differentiable ℂ 
     refine AddMonoidAlgebra.induction_linear u ?_ ?_ ?_
     · simp
     · intro f g hf hg
-      simp only [map_add]
+      simp only [map_add (f := _)]
       exact hf.add hg
     · intro a c
       simp only [hψs]
@@ -166,7 +170,8 @@ theorem mem_closure_oneParam [Module.Free ℤ Λ] [Module.Finite ℤ Λ]
     ext x
     simp
     conv_lhs => rw [← b.sum_repr x]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_zsmul, zsmul_eq_mul]
     ring
@@ -229,8 +234,8 @@ end GlobalTheory.PeriodSpan.TorusExp
 
 namespace GlobalTheory.PeriodSpan
 
-open TorusExp in
 
+open TorusExp in
 theorem torusPts_subset_perHolSub (X : Scheme.{0}) (G : Over X) [GrpObj G] (y : Sp ℂ ⟶ X)
     (E : TorusExtension ((Over.pullback y).obj G)) :
     torusPts G y E ⊆ (perHolSub G y : Set (Over.mk y ⟶ G)) := by

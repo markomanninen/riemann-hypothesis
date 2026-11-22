@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FourierZeroHolds
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FourierZeroHolds
+
+@[expose] public section
+
 noncomputable section
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct Topology
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory Filter
@@ -17,7 +22,7 @@ variable {D : D7} {n ρ p : ℕ} {hn : ρ + p = n}
 theorem blockMatrix_multiply {R : Type} [CommRing R] (hn : ρ + p = n) (a a' : Matrix (Fin ρ) (Fin ρ) R) (b b' : Matrix (Fin ρ) (Fin p) R)
     (c c' : Matrix (Fin p) (Fin ρ) R) (d d' : Matrix (Fin p) (Fin p) R) :
     HMul.hMul (bl hn a b c d) (bl hn a' b' c' d') =
-      bl hn (a ⬝ a' + b ⬝ c') (a ⬝ b' + b ⬝ d') (c ⬝ a' + d ⬝ c') (c ⬝ b' + d ⬝ d') := by
+      bl hn (a * a' + b * c') (a * b' + b * d') (c * a' + d * c') (c * b' + d * d') := by
   simp only [bl]
   rw [Matrix.submatrix_mul_equiv, Matrix.fromBlocks_multiply]
 
@@ -55,17 +60,17 @@ theorem block_unipotent_mul (B B' : Matrix (Fin k) (Fin k) R) :
   · simp
 
 theorem block_diagonal_mul (A A' B B' : Matrix (Fin k) (Fin k) R) :
-    HMul.hMul (blk4 A 0 0 A') (blk4 B 0 0 B') = blk4 (A ⬝ B) 0 0 (A' ⬝ B') := by
+    HMul.hMul (blk4 A 0 0 A') (blk4 B 0 0 B') = blk4 (A * B) 0 0 (A' * B') := by
   rw [submatrix_fromBlocks_mul]
   congr 1 <;> simp
 
 theorem block_unipotent_mul_diagonal (B A A' : Matrix (Fin k) (Fin k) R) :
-    HMul.hMul (blk4 1 B 0 1) (blk4 A 0 0 A') = blk4 A (B ⬝ A') 0 A' := by
+    HMul.hMul (blk4 1 B 0 1) (blk4 A 0 0 A') = blk4 A (B * A') 0 A' := by
   rw [submatrix_fromBlocks_mul]
   congr 1 <;> simp
 
 theorem block_diagonal_mul_unipotent (B A A' : Matrix (Fin k) (Fin k) R) :
-    HMul.hMul (blk4 A 0 0 A') (blk4 1 B 0 1) = blk4 A (A ⬝ B) 0 A' := by
+    HMul.hMul (blk4 A 0 0 A') (blk4 1 B 0 1) = blk4 A (A * B) 0 A' := by
   rw [submatrix_fromBlocks_mul]
   congr 1 <;> simp
 
@@ -88,7 +93,7 @@ theorem lowerUnipotent_mul (hn : ρ + p = n) (c c' : Matrix (Fin p) (Fin ρ) R) 
   · simp
 
 theorem blockMatrix_twist (hn : ρ + p = n) (z z' : Matrix (Fin ρ) (Fin ρ) R) (x η : Matrix (Fin ρ) (Fin p) R)
-    (c c' : Matrix (Fin p) (Fin ρ) R) (h : z' = z + x ⬝ c' - η ⬝ c) :
+    (c c' : Matrix (Fin p) (Fin ρ) R) (h : z' = z + x * c' - η * c) :
     HMul.hMul (bl hn z x c 0) (bl hn 1 0 c' 1) = HMul.hMul (bl hn 1 η 0 1) (bl hn z' x c 0) := by
   rw [blockMatrix_multiply, blockMatrix_multiply]
   congr 1
@@ -120,13 +125,13 @@ theorem sh_zero (M : Maps D hn) : M.sh 0 = 1 := by
   exact mul_eq_left.1 h
 
 def tw (z : hermA D ρ) (x η : Mx D ρ p) : hermA D ρ :=
-  ⟨z.1 - x ⬝ adj η - η ⬝ adj x, by
+  ⟨z.1 - x * adj η - η * adj x, by
     have hz : adj z.1 = z.1 := z.2
     have hs : ∀ a b : Mx D ρ ρ, adj (a - b) = adj a - adj b := fun a b => by
       have := adj_add (a - b) b
       rw [sub_add_cancel] at this
       rw [this, add_sub_cancel_right]
-    show adj (z.1 - x ⬝ adj η - η ⬝ adj x) = z.1 - x ⬝ adj η - η ⬝ adj x
+    show adj (z.1 - x * adj η - η * adj x) = z.1 - x * adj η - η * adj x
     rw [hs, hs, hz, adj_mul, adj_mul, adj_adj, adj_adj]
     abel⟩
 
@@ -136,7 +141,7 @@ theorem nzx_sh (M : Maps D hn) (z : hermA D ρ) (x η : Mx D ρ p) :
   rw [mat_mul', mat_mul', M.nzx_mat, M.nzx_mat, M.sh_mat, block_unipotent_mul_diagonal, block_diagonal_mul_unipotent]
   congr 1
   refine blockMatrix_twist hn _ _ _ _ _ _ ?_
-  show z.1 - x ⬝ adj η - η ⬝ adj x = z.1 + x ⬝ (-adj η) - η ⬝ adj x
+  show z.1 - x * adj η - η * adj x = z.1 + x * (-adj η) - η * adj x
   rw [Matrix.mul_neg, sub_eq_add_neg z.1]
 
 end GlobalTheory.CompanionTheory.PcB

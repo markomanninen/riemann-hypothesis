@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.HidaSetting
-import Formalism.SatakeDualWeyl.StatementC
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramLoc
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ModuliIntegralCharts
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.HidaSetting
+public import Formalism.SatakeDualWeyl.StatementC
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramLoc
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ModuliIntegralCharts
+
+@[expose] public section
 
 noncomputable section
 
@@ -103,8 +107,6 @@ open NumberField IsDedekindDomain
 
 variable (K L : Type) [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
 
-theorem int_tower : IsScalarTower ℤ (𝓞 K) (𝓞 L) := inferInstance
-
 theorem tower_ef {p : ℕ} (hp : p.Prime)
     (h : ({v : HeightOneSpectrum (𝓞 L) | ((p : ℕ) : 𝓞 L) ∈ v.asIdeal}).ncard = Module.finrank ℚ L)
     (v : HeightOneSpectrum (𝓞 K)) (hv : ((p : ℕ) : 𝓞 K) ∈ v.asIdeal) :
@@ -113,7 +115,7 @@ theorem tower_ef {p : ℕ} (hp : p.Prime)
   have hq0 := span_p_ne_bot hp
   have hinj : Function.Injective (algebraMap (𝓞 K) (𝓞 L)) := FaithfulSMul.algebraMap_injective (𝓞 K) (𝓞 L)
   obtain ⟨Q, -, hQp, hQv⟩ := Ideal.exists_ideal_over_prime_of_isIntegral (S := 𝓞 L) v.asIdeal ⊥
-    (by rw [Ideal.comap_bot_of_injective _ hinj]; exact bot_le)
+    (by rw [(show Ideal.under _ ⊥ = ⊥ from Ideal.comap_bot_of_injective _ hinj)]; exact bot_le)
   have hvq : v.asIdeal ∈ (Ideal.span {(p : ℤ)}).primesOver (𝓞 K) := by
     rw [primesOver_eq K hp]; exact ⟨v, hv, rfl⟩
   have hvlo : v.asIdeal.LiesOver (Ideal.span {(p : ℤ)}) := hvq.2
@@ -132,11 +134,14 @@ theorem tower_ef {p : ℕ} (hp : p.Prime)
   have hf' := Ideal.inertiaDeg'_algebra_tower (Ideal.span {(p : ℤ)}) v.asIdeal Q
   rw [hf] at hf'
   have hQb : Q ≠ ⊥ := by
-    intro h0; apply v.ne_bot; rw [← hQv, h0, Ideal.comap_bot_of_injective _ hinj]
+    intro h0; apply v.ne_bot; rw [← hQv, h0]
+    exact Ideal.comap_bot_of_injective _ hinj
   have hmap1 : Ideal.map (algebraMap (𝓞 K) (𝓞 L)) v.asIdeal ≠ ⊥ := Ideal.map_ne_bot_of_ne_bot v.ne_bot
   have hmap2 : Ideal.map (algebraMap ℤ (𝓞 L)) (Ideal.span {(p : ℤ)}) ≠ ⊥ := Ideal.map_ne_bot_of_ne_bot hq0
   have hle : Ideal.map (algebraMap (𝓞 K) (𝓞 L)) v.asIdeal ≤ Q := by
-    rw [Ideal.map_le_iff_le_comap, hQv]
+    rw [Ideal.map_le_iff_le_comap]
+    change v.asIdeal ≤ Ideal.under (𝓞 K) Q
+    rw [hQv]
   have he' := Ideal.ramificationIdx'_algebra_tower (p := Ideal.span {(p : ℤ)}) hmap1 hmap2 hle
   rw [he] at he'
   exact ⟨Nat.eq_one_of_mul_eq_one_right he'.symm, Nat.eq_one_of_mul_eq_one_right hf'.symm⟩
@@ -220,7 +225,7 @@ def tlin : I.E →ₗ[I.F] I.F where
   toFun y := (star_add_self_mem I y).choose
   map_add' x y := by
     apply (algebraMap I.F I.E).injective
-    rw [map_add, (star_add_self_mem I (x + y)).choose_spec, (star_add_self_mem I x).choose_spec,
+    rw [map_add (f := _), (star_add_self_mem I (x + y)).choose_spec, (star_add_self_mem I x).choose_spec,
       (star_add_self_mem I y).choose_spec, star_add]; ring
   map_smul' c y := by
     apply (algebraMap I.F I.E).injective
@@ -243,7 +248,7 @@ theorem tlin_int (o : 𝓞 I.E) : tlin I (o : I.E) ∈ (algebraMap (𝓞 I.F) I.
     exact (RingOfIntegers.isIntegral_coe o).map (I.cm.sig.restrictScalars ℤ)
   rw [← tlin_spec] at h1
   have h2 : IsIntegral ℤ (tlin I (o : I.E)) :=
-    (isIntegral_algebraMap_iff (algebraMap I.F I.E).injective).1 h1
+    (isIntegral_algebraMap_iff ).1 h1
   exact ⟨⟨_, h2⟩, rfl⟩
 
 variable (v : HeightOneSpectrum (𝓞 I.F))
@@ -266,7 +271,7 @@ theorem add_sig (z : I.E ⊗[I.F] v.adicCompletion I.F) :
     rw [sigV_tmul, trV_tmul, ← TensorProduct.add_tmul, ← tlin_spec, Algebra.algebraMap_eq_smul_one,
       TensorProduct.smul_tmul]
   | add a b ha hb =>
-    rw [map_add, map_add, TensorProduct.tmul_add, ← ha, ← hb]; abel
+    rw [map_add (f := _), map_add (f := _), TensorProduct.tmul_add, ← ha, ← hb]; abel
 
 theorem trV_mul_tmul (c : v.adicCompletion I.F) (z : I.E ⊗[I.F] v.adicCompletion I.F) :
     trV I v (((1 : I.E) ⊗ₜ[I.F] c) * z) = c * trV I v z := by
@@ -274,7 +279,7 @@ theorem trV_mul_tmul (c : v.adicCompletion I.F) (z : I.E ⊗[I.F] v.adicCompleti
   | zero => simp
   | tmul y d =>
     rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, trV_tmul, trV_tmul, mul_smul_comm]
-  | add a b ha hb => rw [mul_add, map_add, map_add, ha, hb, mul_add]
+  | add a b ha hb => rw [mul_add, map_add (f := _), map_add (f := _), ha, hb, mul_add]
 
 theorem trV_one_tmul (c : v.adicCompletion I.F) : trV I v ((1 : I.E) ⊗ₜ[I.F] c) = 2 * c := by
   rw [trV_tmul, tlin_one, two_smul, two_mul]
@@ -294,7 +299,7 @@ theorem prV_sigA (x : I.E ⊗[I.F] Af I.F) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul y a => rfl
-  | add a b ha hb => rw [map_add, map_add, ha, hb, ← map_add, ← map_add]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, ← map_add (f := _), ← map_add (f := _)]
 
 end Local
 
@@ -346,7 +351,7 @@ theorem trV_intV {x : I.E ⊗[I.F] v.adicCompletion I.F}
     exact coe_mem_adicCompletionIntegers v s
   | add a b ha hb =>
     show trV I v (phiV I v (a + b)) ∈ _
-    rw [map_add, map_add]; exact add_mem ha hb
+    rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
 
 theorem wz (γ δ : WithZero (Multiplicative ℤ)) (h : γ < 1) (hδ : ∀ k : ℕ, δ ≤ γ ^ k) : δ = 0 := by
   by_contra hδ0
@@ -514,7 +519,8 @@ theorem trV_nondeg (z : I.E ⊗[I.F] v.adicCompletion I.F)
     let bi : 𝓞 I.E := ⟨b i, hbI i⟩
     have hbi : (bi : I.E) = b i := rfl
     have h1 := h bi
-    rw [Finset.mul_sum, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.mul_sum, map_sum] at h1
     simp only [Algebra.TensorProduct.tmul_mul_tmul, one_mul, trV_tmul, hbi] at h1
     have e : ∀ j, tlin I (b i * d j) = if i = j then 1 else 0 := by
       intro j
@@ -732,10 +738,6 @@ open Formalism.MainNotions.S NumberField IsDedekindDomain IsDedekindDomain.Heigh
 open scoped TensorProduct
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
-
-theorem ew_split_holds (v : HeightOneSpectrum (𝓞 X.B.I.F)) (hv : ((X.B.g : ℕ) : 𝓞 X.B.I.F) ∈ v.asIdeal) :
-    Formalism.UG.prV (E := X.B.I.E) v X.ew + Formalism.UG.sigR X.B.I.cm.sig (v.adicCompletion X.B.I.F) (Formalism.UG.prV (E := X.B.I.E) v X.ew) = 1 :=
-  eV_add X v hv
 
 namespace TypedLoc
 

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,31 +44,25 @@ def SameOrbit (ξ ξ' : A →ₐ[O] K) : Prop := ∃ t : Kˣ, ξ' = act 𝒜 (tz
 
 def M2 (I : Ideal A) : Prop := ((𝒜 0).map (Ideal.Quotient.mkₐ O I).toLinearMap).FG
 
-variable (K) in
+
+variable (K)
 
 def M3 (x : A →ₐ[O] O) (I : Ideal A) : Prop :=
   ∀ x₁ : A →ₐ[O] K, OnS I x₁ → NegZero 𝒜 x₁ → PosZero 𝒜 x₁ → x₁ ≠ (Algebra.ofId O K).comp x →
     (¬ ∃ ξ : A →ₐ[O] K, OnS I ξ ∧ NegZero 𝒜 ξ ∧ ¬ PosZero 𝒜 ξ ∧ Same0 𝒜 ξ x₁) ∨
     (¬ ∃ ξ : A →ₐ[O] K, OnS I ξ ∧ PosZero 𝒜 ξ ∧ ¬ NegZero 𝒜 ξ ∧ Same0 𝒜 ξ x₁)
 
-variable (K) in
 
 def M4 (I : Ideal A) : Prop :=
   ∀ ξ : A →ₐ[O] K, OnS I ξ → TwoSigned 𝒜 ξ → ∀ D ∈ PtDer ξ K, ∀ D' ∈ PtDer ξ K, (∀ f ∈ I, D f = 0) →
     (∀ f ∈ I, D' f = 0) → ∃ c c' : K, (c ≠ 0 ∨ c' ≠ 0) ∧ c • D + c' • D' = 0
 
-variable (K) in
 
-def OrbitVanishingLocal (I : Ideal A) : Prop :=
-  ∀ ξ : A →ₐ[O] K, OnS I ξ → TwoSigned 𝒜 ξ → ∀ f : TensorProduct O K A,
-    (∀ t : Kˣ, Algebra.TensorProduct.lift (AlgHom.id O K) (act 𝒜 (tz t) ξ) (fun _ _ => Commute.all _ _) f = 0) →
-    ∃ g : TensorProduct O K A, Algebra.TensorProduct.lift (AlgHom.id O K) ξ (fun _ _ => Commute.all _ _) g ≠ 0 ∧
-      g * f ∈ I.map (Algebra.TensorProduct.includeRight : A →ₐ[O] TensorProduct O K A)
-
-variable (K) in
 
 def M5 (x : A →ₐ[O] O) (I : Ideal A) (a : A) : Prop :=
   a ∈ 𝒜 0 ∧ x a = 0 ∧ ∀ ξ : A →ₐ[O] K, OnS I ξ → TwoSigned 𝒜 ξ → ξ a ≠ 0
+
+variable {K}
 
 def Covers (I : Ideal A) (T : Finset (A →ₐ[O] K)) : Prop :=
   (∀ ξ ∈ T, OnS I ξ ∧ TwoSigned 𝒜 ξ) ∧ ∀ ξ, OnS I ξ → TwoSigned 𝒜 ξ → ∃ ξ' ∈ T, SameOrbit 𝒜 ξ' ξ

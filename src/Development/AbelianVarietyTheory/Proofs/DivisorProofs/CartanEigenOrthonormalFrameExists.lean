@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBasisAdaptedToCartanInvolution
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBasisAdaptedToCartanInvolution
+
+@[expose] public section
+
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 
 noncomputable section
@@ -90,7 +95,7 @@ theorem frameEx_holds : FrameEx := by
   set G : Matrix (Fin n) (Fin n) ℂ := M.map star with hGdef
   have hJ : ∀ p q : ℕ, (fromBlocks 1 0 0 (-1) : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ).map star =
       fromBlocks 1 0 0 (-1) := by
-    intro p q; ext (i | i) (j | j) <;> simp [one_apply] <;> split_ifs <;> simp
+    intro p q; ext (i | i) (j | j) <;> simp [Matrix.one_apply] <;> split_ifs <;> simp
   have hA : A0ᴴ * G * A0 = fromBlocks 1 0 0 (-1) := by
     rw [← map_star_trip, hA0, hJ]
 

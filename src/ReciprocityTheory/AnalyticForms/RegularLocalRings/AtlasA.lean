@@ -1,6 +1,10 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.IsOpenAlt
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.AnChart
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.IsOpenAlt
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.AnChart
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -17,19 +21,19 @@ theorem analyticAt_eval_of_pi {E : Type*} [NormedAddCommGroup E] [NormedSpace �
     simp only [eval_C]
     exact analyticAt_const
   | add p q hp hq =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact hp.add hq
   | mul_X p l hp =>
     simp only [map_mul, eval_X]
     exact hp.mul (hf l)
 
-def AlgRes.GoodChart (R : AlgRes ι P D e) (ψ : OpenPartialHomeomorph R.M (Fin e → ℂ)) : Prop :=
+def AlgRes.GoodChart (R : AlgRes (ι := ι) P D e) (ψ : OpenPartialHomeomorph R.M (Fin e → ℂ)) : Prop :=
   ∃ i, ψ.source ⊆ R.src i ∧
     (∃ r : Fin e → MvPolynomial (Fin (R.amb i)) ℂ, ∀ y ∈ ψ.source, ψ y = evalFam r (R.coord i y)) ∧
     ∃ g : (Fin e → ℂ) → Fin (R.amb i) → ℂ, AnalyticOnNhd ℂ g ψ.target ∧
       ∀ w ∈ ψ.target, R.coord i (ψ.symm w) = g w
 
-theorem AlgRes.analyticAt_coord_symm (R : AlgRes ι P D e)
+theorem AlgRes.analyticAt_coord_symm (R : AlgRes (ι := ι) P D e)
     {ψ : OpenPartialHomeomorph R.M (Fin e → ℂ)} {i : Fin R.n} (hs : ψ.source ⊆ R.src i)
     {g : (Fin e → ℂ) → Fin (R.amb i) → ℂ} (hg : AnalyticOnNhd ℂ g ψ.target)
     (hgc : ∀ w ∈ ψ.target, R.coord i (ψ.symm w) = g w)
@@ -67,7 +71,7 @@ theorem AlgRes.analyticAt_coord_symm (R : AlgRes ι P D e)
     exact hl.symm
   exact congrArg (fun v => eval v h) hfun
 
-theorem AlgRes.analyticOnNhd_comp_symm (R : AlgRes ι P D e)
+theorem AlgRes.analyticOnNhd_comp_symm (R : AlgRes (ι := ι) P D e)
     {ψ : OpenPartialHomeomorph R.M (Fin e → ℂ)} (hψ : R.GoodChart ψ) {m : ℕ}
     (f : R.M → Fin m → ℂ) (S : Set R.M) (hS : IsOpen S) (j : Fin R.n) (hSj : S ⊆ R.src j)
     (r : Fin m → MvPolynomial (Fin (R.amb j)) ℂ) (hf : ∀ y ∈ S, f y = evalFam r (R.coord j y)) :
@@ -85,7 +89,7 @@ theorem AlgRes.analyticOnNhd_comp_symm (R : AlgRes ι P D e)
   intro l
   exact R.analyticAt_coord_symm hsi hg hgc j (r l) hw (hSj hwS')
 
-theorem AlgRes.exists_goodChart (R : AlgRes ι P D e) (i : Fin R.n) (x : R.M) (hx : x ∈ R.src i)
+theorem AlgRes.exists_goodChart (R : AlgRes (ι := ι) P D e) (i : Fin R.n) (x : R.M) (hx : x ∈ R.src i)
     (r : Fin e → MvPolynomial (Fin (R.amb i)) ℂ)
     (hr : Ideal.span (Set.range fun l => algebraMap _ (locRing (R.ideal i) (R.coord i x)) (r l)) =
       Ideal.map (algebraMap _ (locRing (R.ideal i) (R.coord i x))) (ptIdeal (R.coord i x)))

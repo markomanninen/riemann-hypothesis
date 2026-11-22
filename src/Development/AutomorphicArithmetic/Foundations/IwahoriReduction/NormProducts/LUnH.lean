@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.InvMod
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.InvMod
+
+@[expose] public section
 
 noncomputable section
 

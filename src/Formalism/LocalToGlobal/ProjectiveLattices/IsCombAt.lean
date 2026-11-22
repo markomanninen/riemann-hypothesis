@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.FlagBasis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaPt
-import Formalism.LocalToGlobal.ProjectiveLattices.EmbKCoe
-import Formalism.LocalToGlobal.ProjectiveLattices.AlgebraMapCAt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.FlagBasis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaPt
+public import Formalism.LocalToGlobal.ProjectiveLattices.EmbKCoe
+public import Formalism.LocalToGlobal.ProjectiveLattices.AlgebraMapCAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,8 +46,8 @@ def IsTanAt {S : Type} [CommRing S] (x : Sp S ⟶ Xo.X) (v : Sp (DualNumber S) �
   v ≫ Xo.univ.t.G.hom = spMap (algebraMap S (DualNumber S)) ≫ x ∧
     spMap (TrivSqZeroExt.fstHom S S S).toRingHom ≫ v = (1 : Over.mk x ⟶ Xo.univ.t.G).left
 
-variable (c) in
 
+variable (c) in
 def IsEigAt {S : Type} [CommRing S] [Algebra c.F S] (τ : E →+* ℂ)
     (v : Sp (DualNumber S) ⟶ Xo.univ.t.G.left) : Prop :=
   ∀ a : 𝓞 E, v ≫ (Xo.univ.t.act.act a).left = spMap (epsMul (algebraMap c.F S (embK c τ a))) ≫ v
@@ -96,6 +100,10 @@ def FrBor {S : Type} [CommRing S] [Algebra c.F S] (t : Ix Dw → Sˣ) (y y' : Fr
 variable (Xo c)
 
 abbrev Rul : Type := Rules (K := c.F) (fun S _ _ => FrPt Xo c S)
+
+set_option maxSynthPendingDepth 1 in
+instance (priority := high) rulModule : Module c.F (Rul Xo c) :=
+  inferInstance
 
 def sec (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) : Submodule c.F (Rul Xo c) :=
   secW (K := c.F) (fun S _ _ => FrPt Xo c S) (fun φ y z => FrMap φ y z) (fun t y y' => FrBor t y y') (ex Dw a n)

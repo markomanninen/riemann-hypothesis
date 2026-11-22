@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.PolBridge
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PolBridge
+
+@[expose] public section
 
 noncomputable section
 
@@ -122,7 +126,7 @@ theorem ycond_mul (LL : ChainLetters N) (j : ℕ) (M M' : WithTop ℤ) {f h : Mv
       · rw [glAct_mul']
         exact Submodule.add_mem _ (Submodule.mul_mem_mul (ycond_stable LL j M c d f hf) hh)
           (Submodule.mul_mem_mul hf (ycond_stable LL j M' c d h hh))
-      · rw [map_add]
+      · rw [map_add (f := _)]
         exact Submodule.add_mem _ hx hy
   exact key (Submodule.mul_mem_mul hf hh)
 
@@ -188,7 +192,7 @@ theorem ycond_X (LL : ChainLetters N) (j : ℕ) (a : Fin N) (e : Fin r) :
         · exact Submodule.zero_mem _
         · exact Submodule.zero_mem _
       | zero => rw [map_zero]; exact Submodule.zero_mem _
-      | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+      | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
       | smul t x _ hx => rw [map_smul]; exact Submodule.smul_mem _ _ hx
   exact key (Submodule.subset_span ⟨e, rfl⟩)
 
@@ -243,7 +247,8 @@ theorem ycond_pair (LL : ChainLetters N) (j : ℕ) (a a' : Fin N) (ha : LL.vec a
         obtain ⟨t, rfl⟩ := Submodule.mem_span_singleton.1 hx
         have h0 : glAct K (⟨LL.vec⟩ : Letters (Fin N)) {i : Fin N | (i : ℕ) < j} c d (tcPairP K (r := r) a a') = 0 := by
           unfold tcPairP
-          rw [map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum]
           simp only [glAct_mul', glAct_X']
           have m1 : a ∈ {i : Fin N | (i : ℕ) < j} := hboth.1
           have m2 : a' ∈ {i : Fin N | (i : ℕ) < j} := hboth.2
@@ -261,15 +266,6 @@ theorem ycond_pair (LL : ChainLetters N) (j : ℕ) (a a' : Fin N) (ha : LL.vec a
       split_ifs <;> simp_all
     refine Submodule.sum_mem _ fun c _ => ?_
     exact ycond_mono LL j hle (ycond_mul LL j _ _ (ycond_X LL j a c) (ycond_X LL j a' c))
-
-theorem ycond_monomial (LL : ChainLetters N) (j : ℕ) (ε : Fin N × Fin r →₀ ℕ) :
-    (monomial ε (1 : K) : MvPolynomial (Fin N × Fin r) K) ∈
-      YCond K (r := r) LL j ((∑ v : Fin N × Fin r, (ε v : ℤ) * (vWt LL j v.1 : ℤ) : ℤ) : WithTop ℤ) := by
-  classical
-  have e : (monomial ε (1 : K) : MvPolynomial (Fin N × Fin r) K) = ∏ v : Fin N × Fin r, X v ^ ε v := by
-    rw [MvPolynomial.monomial_eq, C_1, one_mul, Finsupp.prod_fintype _ _ (fun _ => pow_zero _)]
-  rw [e]
-  exact ycond_prod LL j Finset.univ _ _ fun v _ => ycond_pow LL j _ (ycond_X LL j v.1 v.2) (ε v)
 
 end YC
 

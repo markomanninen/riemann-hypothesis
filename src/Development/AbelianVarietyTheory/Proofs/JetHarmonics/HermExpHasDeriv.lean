@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
+
 open Matrix Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.Qr
 open Formalism.REAL (qdet GlRel IsHW)
 open Formalism.FourierDecayAlt.P Formalism.FourierDecayAlt.P.QrD
@@ -69,7 +74,7 @@ theorem EB_tensor : ∀ (V : Type) [NormedAddCommGroup V] [InnerProductSpace ℂ
         Complex.I • hermLin (Hpk k r) (B c) (B d) (hpart2 (Hpk k r) (unitB (Hpk k r) B a b)) • y d =
         if a = d then (if c = b then y d else 0) else 0 := by
       intro d
-      rw [smul_smul, ← add_smul, ← smul_eq_mul Complex.I, ← map_smul, ← map_add, LieListProducts.hsum]
+      rw [smul_smul, ← add_smul, ← smul_eq_mul Complex.I, ← map_smul, ← map_add (f := _), LieListProducts.hsum]
       have e5 : hermLin (Hpk k r) (B c) (B d) (unitB (Hpk k r) B a b) =
           herm (Hpk k r) (B c) (B b) * herm (Hpk k r) (B a) (B d) := by
         show herm (Hpk k r) (unitB (Hpk k r) B a b *ᵥ B c) (B d) = _

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open IsDedekindDomain
 
 namespace GlobalTheory.InertiaFixedVal
@@ -65,7 +70,7 @@ theorem valuation_le_exp_neg_card_inertia (R K L : Type) [CommRing R] [IsDomain 
   let w : HeightOneSpectrum OE := ⟨Q, inferInstance, hQne⟩
   haveI : P.asIdeal.LiesOver w.asIdeal := inferInstance
   have hval := HeightOneSpectrum.valuation_liesOver L w P z
-  rw [Ideal.ramificationIdx'_eq_ramificationIdx w.asIdeal P.asIdeal hQne, ← hcard] at hval
+  rw [← hcard] at hval
   change w.valuation E z ^ Nat.card H = P.valuation L y at hval
   have hn : Nat.card H ≠ 0 := Nat.card_pos.ne'
   have hz : w.valuation E z < 1 := by

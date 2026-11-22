@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NonemptyInvFunEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NonemptyInvFunEquiv
+
+@[expose] public section
 
 open MvPolynomial GlobalTheory.IndefiniteRowSideFullHecke.MinorOrderedEntries GlobalTheory.OneFunctional Formalism.BasicNotions GlobalTheory.Branching
 open scoped TensorProduct DirectSum
@@ -12,8 +16,8 @@ theorem curry_sum_mapDomain {ι β : Type} [Fintype ι] (v : ι → (β →₀ �
     (∑ σ, Finsupp.mapDomain (fun x => (σ, x)) (v σ)).curry τ = v τ := by
   classical
   ext x
-  rw [Finsupp.curry_apply, Finsupp.finset_sum_apply, Finset.sum_eq_single τ]
-  · exact Finsupp.mapDomain_apply (fun a b h => (Prod.mk.inj h).2) (v τ) x
+  rw [Finsupp.curry_apply, Finsupp.finsetSum_apply, Finset.sum_eq_single τ]
+  · exact Finsupp.mapDomain_apply_of_injective (fun a b h => (Prod.mk.inj h).2) (v τ) x
   · intro σ _ hσ
     apply Finsupp.mapDomain_notin_range
     rintro ⟨y, hy⟩
@@ -53,6 +57,6 @@ theorem exists_piTensor_equiv : ∀ (ι σ : Type) [Fintype ι],
       MvPolynomial.rename_monomial, expEquiv, Equiv.ofBijective_apply]
     exact MvPolynomial.monomial_sum_one _ _
   refine ⟨e, fun f => ?_⟩
-  simpa using congrArg (fun F : MultilinearMap ℂ (fun _ : ι => MvPolynomial σ ℂ) _ => F f) key
+  simpa using MultilinearMap.congr_fun key f
 
 end GlobalTheory.PolyTensor

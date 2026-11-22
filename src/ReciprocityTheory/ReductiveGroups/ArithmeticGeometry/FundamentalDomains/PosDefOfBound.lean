@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LowBlock
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LowBlock
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.OrthonormalChartBounds
 
@@ -34,7 +38,8 @@ lemma posDef_of_bound {n q k : ℕ} (A : Matrix (Fin q) (Fin n) ℂ) (B : Matrix
     dot_self, quad_AtA, quad_AtA]
   have hpos : 0 < nsq x := by
     obtain ⟨i, hi⟩ := Function.ne_iff.mp hx
-    have : 0 < ‖x i‖ ^ 2 := by positivity
+    change x i ≠ 0 at hi
+    have : 0 < ‖x i‖ ^ 2 := pow_pos (norm_pos_iff.mpr hi) 2
     exact lt_of_lt_of_le this (Finset.single_le_sum (f := fun j => ‖x j‖ ^ 2)
       (fun j _ => by positivity) (Finset.mem_univ i))
   have hB := nsq_nonneg (B.map (starRingEnd ℂ) *ᵥ x)

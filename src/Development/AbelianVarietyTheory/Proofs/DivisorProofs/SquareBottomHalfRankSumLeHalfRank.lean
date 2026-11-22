@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+module
+
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+
+@[expose] public section
+
 open GlobalTheory.SqTop
 
 noncomputable section

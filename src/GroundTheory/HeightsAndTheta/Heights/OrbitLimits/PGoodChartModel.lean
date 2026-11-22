@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StGoodChartModel
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StGoodChartZeroSet
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StGoodChartDim
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFiniteProjHomInjective
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PConeAvoidsFinite
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StGoodChartModel
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StGoodChartZeroSet
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StGoodChartDim
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFiniteProjHomInjective
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PConeAvoidsFinite
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -51,7 +56,8 @@ theorem pow_mem {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
     have h := hrel z hz
     rw [Fin.sum_univ_succ, hz1, one_mul] at h
     change eval (fun a => segre z (σ a)) f = 0
-    simp only [f, Gx, map_sub, map_add, map_pow, map_sum, map_mul, eval_X, eval_rename, hw,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [f, Gx, map_sub, map_add (f := _), map_pow, map_sum, map_mul, eval_X, eval_rename, hw,
       eval_linPoly, hA, chartProjMatrix_mulVec]
     rw [h]
     simp [Equiv.apply_symm_apply, mul_comm]
@@ -71,7 +77,8 @@ theorem pow_mem {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
     homogeneousComponent_eq_zero (n := r) (φ := Gx 0) (by have := hGx 0; omega)
   have hcomp : homogeneousComponent r f =
       X a ^ r - ∑ j : Fin e, homogeneousComponent (r - 1) (Gx j.succ) * linPoly A j := by
-    simp only [f, map_sub, map_add, map_sum, hX, h0, zero_add,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [f, map_sub, map_add (f := _), map_sum, hX, h0, zero_add,
       homogeneousComponent_mul_of_isHomogeneous_right _ _ (isHomogeneous_linPoly A _), h1, if_true]
   have hmem : homogeneousComponent r f + ∑ j : Fin e, homogeneousComponent (r - 1) (Gx j.succ) * linPoly A j ∈
       leadIdeal J ⊔ linIdeal A :=

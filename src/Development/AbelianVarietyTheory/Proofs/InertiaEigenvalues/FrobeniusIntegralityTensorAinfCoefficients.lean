@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusIntegralityWittTiltAinfStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusIntegralityWittTiltAinfStatement
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.MainNotions.LocalSituation
 open scoped TensorProduct
@@ -33,7 +37,7 @@ theorem regRep_map (f : W →ₐ[R] W') (z : O ⊗[R] W) (i j : I) :
   | zero => simp
   | tmul o w =>
     rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, regRep_tmul, regRep_tmul, map_smul]
-  | add x y hx hy => simp [map_add, Matrix.add_apply, hx, hy]
+  | add x y hx hy => simp [map_add (f := _), Matrix.add_apply, hx, hy]
 
 private theorem regRep_tmul' (o : O) (w : W) (i j : I) :
     regRep b W (o ⊗ₜ w) i j = b.repr (o * b j) i • w := by
@@ -52,7 +56,7 @@ theorem eq_sum_regRep (z : O ⊗[R] W) :
     simp_rw [← mul_smul_comm, ← Finset.mul_sum, b.sum_repr, mul_one]
   | add x y hx hy =>
     conv_lhs => rw [hx, hy]
-    simp [map_add, Matrix.add_apply, TensorProduct.tmul_add, smul_add, Finset.sum_add_distrib]
+    simp [map_add (f := _), Matrix.add_apply, TensorProduct.tmul_add, smul_add, Finset.sum_add_distrib]
 
 theorem mem_range_of_regRep (f : W →ₐ[R] W') (z : O ⊗[R] W')
     (h : ∀ i j, regRep b W' z i j ∈ Set.range f) :
@@ -60,7 +64,8 @@ theorem mem_range_of_regRep (f : W →ₐ[R] W') (z : O ⊗[R] W')
   choose g hg using h
   refine ⟨∑ i, ∑ j, b.repr 1 j • (b i ⊗ₜ[R] g i j), ?_⟩
   conv_rhs => rw [eq_sum_regRep b z]
-  simp_rw [TensorProduct.smul_tmul', map_sum, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, hg]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [TensorProduct.smul_tmul', map_sum, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, hg]
 
 def blow {p q : Type} (Z : Matrix p q (O ⊗[R] W)) : Matrix (p × I) (q × I) W :=
   Matrix.of fun x y => regRep b W (Z x.1 y.1) x.2 y.2
@@ -73,15 +78,16 @@ theorem blow_map {p q : Type} (f : W →ₐ[R] W') (Z : Matrix p q (O ⊗[R] W))
 theorem blow_add {p q : Type} (Z Z' : Matrix p q (O ⊗[R] W)) :
     blow b (Z + Z') = blow b Z + blow b Z' := by
   ext x y
-  simp [blow, map_add]
+  simp [blow, map_add (f := _)]
 
 theorem blow_mul {p q r : Type} [Fintype q] (Z : Matrix p q (O ⊗[R] W))
     (Z' : Matrix q r (O ⊗[R] W)) : blow b (Z * Z') = blow b Z * blow b Z' := by
   ext x y
-  simp [blow, Matrix.mul_apply, map_sum, Matrix.sum_apply, Fintype.sum_prod_type]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [blow, Matrix.mul_apply, map_sum, Matrix.sum_apply, Fintype.sum_prod_type]
+
 
 omit b [Fintype I] [DecidableEq I] in
-
 theorem integrality_baseChange [Module.Free R O] [Module.Finite R O] (f : W →ₐ[R] W')
     (φ : W' →ₐ[R] W')
     (H : ∀ (p q : Type) [Fintype p] [Fintype q] (Z : Matrix p q W') (S : Matrix p p W)

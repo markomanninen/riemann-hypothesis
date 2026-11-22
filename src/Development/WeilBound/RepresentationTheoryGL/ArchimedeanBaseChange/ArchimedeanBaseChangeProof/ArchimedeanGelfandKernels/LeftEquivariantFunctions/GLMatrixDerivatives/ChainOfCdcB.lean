@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.ChainOfCdc
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.ChainOfCdc
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,12 +74,12 @@ theorem dCinCE : DCinCE := by
       LinearMap.mk₂ ℝ (fun Y Z => ε Y (Rd Z f g + fderiv ℝ Fr 1 Z (f g)))
         (by
           intro a b c
-          simp only [map_add, ContinuousLinearMap.add_apply]
+          simp only [map_add (f := _), ContinuousLinearMap.add_apply]
           abel)
         (by intro c a b; simp only [map_smul, ContinuousLinearMap.smul_apply])
         (by
           intro a b c
-          simp only [Rd, Matrix.mul_add, map_add, ContinuousLinearMap.add_apply]
+          simp only [Rd, Matrix.mul_add, map_add (f := _), ContinuousLinearMap.add_apply]
           abel)
         (by
           intro c a b
@@ -88,7 +92,7 @@ theorem dCinCE : DCinCE := by
     calc ∑ p : Fin n × Fin n, ε (hb p) (Rd (hb p) f (g * k.1) + fderiv ℝ Fr 1 (hb p) (E.ρ k⁻¹ (f g)))
         = ∑ p : Fin n × Fin n, E.ρ k⁻¹ (B (k.1 * hb p * (k.1)ᴴ) (k.1 * hb p * (k.1)ᴴ)) := by
           refine Finset.sum_congr rfl fun p _ => ?_
-          rw [hRd, hdF, ← map_add, heps _ (hb_herm p)]
+          rw [hRd, hdF, ← map_add (f := _), heps _ (hb_herm p)]
           rfl
       _ = E.ρ k⁻¹ (∑ p : Fin n × Fin n, B (hb p) (hb p)) := by rw [← map_sum, key]
       _ = _ := rfl

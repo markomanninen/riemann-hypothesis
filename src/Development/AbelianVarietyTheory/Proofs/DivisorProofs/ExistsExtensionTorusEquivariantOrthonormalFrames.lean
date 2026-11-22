@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothReal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramSchmidtFlagDomainOrthonormalFramesStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExtFStatementPfA
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothReal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramSchmidtFlagDomainOrthonormalFramesStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExtFStatementPfA
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix MeasureTheory ReciprocityTheory.ChartRestriction.G.FD Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Pj Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT GlobalTheory.HolRead
 open scoped TensorProduct InnerProductSpace Classical
@@ -43,7 +47,7 @@ theorem exists_extension : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
     have hD : D (rmul y b) := ⟨(y, b), hy, hb, rfl⟩
     obtain ⟨h1, h2, h3⟩ := hD.choose_spec
     show (if h : D (rmul y b) then bchar la h.choose.2 * F h.choose.1 else 0) = _
-    rw [dif_pos hD]
+    rw [dite_eq_left hD]
     exact (value_indep X la F hF' hy h1 hb h2 h3).symm
   refine ⟨Q, fun y hy => ?_, fun x hx b hb => ?_⟩
   · have := hQ y hy _ (ExtFPf.oneF_mem X)

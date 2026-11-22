@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaPartD
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermInf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermOf
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleTopologyStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaPartD
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermInf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermOf
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleTopologyStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ def latN {d : ℕ} (b : Module.Basis (Fin d) F E) (n M N : ℕ) :
     obtain ⟨x, hx, ex⟩ := hX a i k
     obtain ⟨y, hy, ey⟩ := hY a i k
     refine ⟨x + y, fun v => add_mem (hx v) (hy v), ?_⟩
-    simp only [Pi.add_apply, map_add, Finsupp.add_apply, ex, ey, mul_add]
+    simp only [Pi.add_apply, map_add (f := _), Finsupp.add_apply, ex, ey, mul_add]
   neg_mem' := by
     intro X hX a i k
     obtain ⟨x, hx, ex⟩ := hX a i k

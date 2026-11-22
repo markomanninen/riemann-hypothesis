@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.FglChordFactor
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupChords.DerivativeFlog
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.FglChordFactor
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupChords.DerivativeFlog
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,10 +51,10 @@ theorem subst_pair_formal_add {l ex : PowerSeries ℂ_[p]} (hl0 : PowerSeries.co
   have hA : PowerSeries.HasSubst (PowerSeries.subst (MvPowerSeries.X 0 : MvPowerSeries (Fin 2) ℂ_[p]) l +
       PowerSeries.subst (MvPowerSeries.X 1 : MvPowerSeries (Fin 2) ℂ_[p]) l) :=
     PowerSeries.HasSubst.of_constantCoeff_zero (by
-      rw [map_add, cc_psubst (MvPowerSeries.constantCoeff_X 0), cc_psubst (MvPowerSeries.constantCoeff_X 1),
+      rw [map_add (f := _), cc_psubst (MvPowerSeries.constantCoeff_X 0), cc_psubst (MvPowerSeries.constantCoeff_X 1),
         hl0, add_zero])
   unfold PI.FglChordFactor.add PI.FglChordFactor.pt PI.FglChordFactor.lg
-  rw [subst_psubst hA hs, ← MvPowerSeries.coe_substAlgHom hs, map_add, MvPowerSeries.coe_substAlgHom,
+  rw [subst_psubst hA hs, ← MvPowerSeries.coe_substAlgHom hs, map_add (f := _), MvPowerSeries.coe_substAlgHom,
     subst_pair_first_series hs, subst_pair_second_series hs]
 
 theorem subst_bivariateSeries_difference_pair {l ex : PowerSeries ℂ_[p]} (hl0 : PowerSeries.constantCoeff l = 0)

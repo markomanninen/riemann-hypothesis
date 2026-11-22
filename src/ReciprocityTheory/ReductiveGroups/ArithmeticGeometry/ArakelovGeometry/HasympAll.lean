@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.MultAtEqCount
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.MultAtEqCount
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,8 @@ theorem main_step {L : ℝ} {m p : ℕ} (hp : p.Prime) {W : Ideal (MRing ι)} (h
       ringKrullDim (MRing ι ⧸ W') = ((m + Fintype.card K : ℕ) : WithBot ℕ∞) →
       HAsymp L m W' ∧ SymmAt m W') :
     HAsymp L (m + 1) W := by
-  choose a0 C hC hb using fun b => block_step (L := L) hp hW hpW hdim hR4W IH b
+  have hblock (b : K) := block_step (L := L) hp hW hpW hdim hR4W IH b
+  choose a0 C hC hb using hblock
   set a₁ := 1 + ∑ b, a0 b
   set Δ : (K → ℕ) → ℝ := fun a => lg W a - appr L (m + 1) W a with hΔ
   set B := coefB (m + 1) W

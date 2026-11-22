@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.OmegaDensityMuCDtr
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.OmegaDensityMuCDtr
+
+@[expose] public section
 
 noncomputable section
 
@@ -235,9 +239,19 @@ lemma isOmegaLeb_unique {P Q : ℕ} (lam lam' : Measure (Formalism.BasicNotions.
   obtain ⟨c, hsm⟩ : ∃ c : ENNReal, lam = c • lam' := by
     exact ⟨_, MeasureTheory.Measure.isAddLeftInvariant_eq_smul_of_innerRegular lam lam'⟩
   have hvol : (c * c) • (volume : Measure ((Fin P ⊕ Fin Q) × (Fin P ⊕ Fin Q) → ℂ)) = volume := by
+    haveI := lieU_borel P Q
+    have hcoe : Continuous (fun X : Formalism.BasicNotions.lieU P Q =>
+        (X : Matrix (Fin P ⊕ Fin Q) (Fin P ⊕ Fin Q) ℂ)) := continuous_subtype_val
+    have hm : Measurable (fun ab : Formalism.BasicNotions.lieU P Q × Formalism.BasicNotions.lieU P Q =>
+        Formalism.BasicNotions.entries ((ab.1 : Matrix (Fin P ⊕ Fin Q) (Fin P ⊕ Fin Q) ℂ) +
+          Complex.I • (ab.2 : Matrix (Fin P ⊕ Fin Q) (Fin P ⊕ Fin Q) ℂ))) := by
+      apply Continuous.measurable
+      refine continuous_pi fun ij => ?_
+      exact ((hcoe.comp continuous_fst).add
+        ((hcoe.comp continuous_snd).const_smul Complex.I)).matrix_elem ij.1 ij.2
     conv_rhs => rw [← hv]
-    rw [hsm, MeasureTheory.Measure.prod_smul_left, MeasureTheory.Measure.prod_smul_right,
-      MeasureTheory.Measure.map_smul, MeasureTheory.Measure.map_smul, hv', smul_smul]
+    rw [hsm, Measure.prod_smul_left, Measure.prod_smul_right, smul_smul,
+      Measure.map_smul _ hm.aemeasurable, hv']
   have hpos : 0 < (volume : Measure ((Fin P ⊕ Fin Q) × (Fin P ⊕ Fin Q) → ℂ))
       (Metric.ball 0 1) := Metric.measure_ball_pos _ _ one_pos
   have hfin : (volume : Measure ((Fin P ⊕ Fin Q) × (Fin P ⊕ Fin Q) → ℂ)) (Metric.ball 0 1) ≠ ⊤ :=

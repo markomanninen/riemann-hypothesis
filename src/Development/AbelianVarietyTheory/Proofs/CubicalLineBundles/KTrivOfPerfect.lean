@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.KTrivOfUnimodular
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.KTrivOfUnimodular
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ theorem kTriv_of_perfect : ∀ (S : Scheme.{0}) (O : Type) [CommRing O] (G A : O
   have am := a.hom
   let l : M → (M →ₗ[O] O) := fun n =>
     { toFun := fun m => h m n
-      map_add' := fun m m' => by rw [map_add, AddMonoidHom.add_apply]
+      map_add' := fun m m' => by rw [map_add (f := _), AddMonoidHom.add_apply]
       map_smul' := fun c m => by rw [map_smul, AddMonoidHom.smul_apply, RingHom.id_apply] }
   let q : M → (A ⟶ G) := fun n => t.mapLeft (IsTensor.self a) (l n)
   have qm : ∀ n, IsMonHom (q n) := fun n => IsTensor.isMonHom_mapLeft _ _ _

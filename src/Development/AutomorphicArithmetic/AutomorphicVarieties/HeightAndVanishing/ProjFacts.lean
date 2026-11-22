@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.LayerLe
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.LayerLe
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.Top UpperTheory.V.HV
 
@@ -10,7 +14,7 @@ private theorem projA {N : ℕ} (r d : ℕ) (h : d ∣ N) (hd : d ∣ ordProj[r]
     exact (Nat.ModEq.pow_totient (coprime_ordProj_ordCompl r N).symm).of_dvd hd
   apply Units.ext
   show ZMod.castHom h (ZMod d) (idem r N * u + (1 - idem r N)) = ZMod.castHom h (ZMod d) u
-  rw [map_add, map_mul, map_sub, h1, map_one]
+  rw [map_add (f := _), map_mul, map_sub, h1, map_one]
   ring
 
 private theorem projB {N : ℕ} (r d : ℕ) (hr : r.Prime) (h : d ∣ N) (hd : d ∣ ordCompl[r] N) (u : (ZMod N)ˣ) :
@@ -21,7 +25,7 @@ private theorem projB {N : ℕ} (r d : ℕ) (hr : r.Prime) (h : d ∣ N) (hd : d
     exact dvd_pow hd (Nat.totient_pos.2 (pow_pos hr.pos _)).ne'
   apply Units.ext
   show ZMod.castHom h (ZMod d) (idem r N * u + (1 - idem r N)) = 1
-  rw [map_add, map_mul, map_sub, h1, map_one]
+  rw [map_add (f := _), map_mul, map_sub, h1, map_one]
   ring
 
 private theorem crtExt {N : ℕ} [NeZero N] (r : ℕ) {u v : (ZMod N)ˣ}

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.HeckeFixedPointCMCycleClass
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.HeckeFixedPointCMCycleClass
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
@@ -17,7 +21,9 @@ private theorem isCoordA_of_dvd {p : ℕ} [Fact p.Prime] {D : GlobalTheory.UPel.
 
 theorem UpperTheory.Gal.W2.fixGa_of :
     UpperTheory.Gal.W2.HeckeCoord → UpperTheory.Gal.W2.LatIso → UpperTheory.Gal.W2.FixLine → UpperTheory.Gal.W2.ActY → UpperTheory.Gal.W2.IntMult → UpperTheory.Gal.W2.FixGa := by
-  intro hHC hLI hFL hAY hIM p _ D G L gb N N' h hlev X X' c₁ c₂ hX hL hX' hL' ρ hfine v t₀ B PD RD D' t hcls P j a hco x e hU y hsee
+  intro hHC hLI hFL hAY hIM
+  unfold FixGa
+  intro p _ D G L gb N N' h hlev X X' c₁ c₂ hX hL hX' hL' ρ hfine v t₀ B PD RD D' t hcls P j a hco x e hU y hsee
   obtain ⟨hpl, hca, hloc, Q₀, hQ₀, hQ₀j, hrel⟩ := hco
   obtain ⟨h3, hcp, h3', hcp', hd, hconj⟩ := hlev
   obtain ⟨D'', t'', P'', e'', inc, j'', hcls'', hU'', hP, he, hinc, hj, hpl'', hco'', hloc''⟩ :=

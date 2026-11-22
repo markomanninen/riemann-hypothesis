@@ -1,17 +1,21 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicClosed
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodOfComplete
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltWittEqZeroOfPrimeMulEqZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CocycleTwistCoboundaryOnBall
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NearPiSepComplete
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachInclusionInjectiveSaturatedInter
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GaloisFixedSubringTensorWittSaturatedComplete
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GaloisFixedTensorWittCompletePiAdicModEll
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusConstantsPiAdicFiltrationModEll
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltInvariantApproxByEpsilonRootsClosure
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicClosed
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodOfComplete
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltWittEqZeroOfPrimeMulEqZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CocycleTwistCoboundaryOnBall
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NearPiSepComplete
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachInclusionInjectiveSaturatedInter
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GaloisFixedSubringTensorWittSaturatedComplete
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GaloisFixedTensorWittCompletePiAdicModEll
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusConstantsPiAdicFiltrationModEll
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltInvariantApproxByEpsilonRootsClosure
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct GlobalTheory.HWL GlobalTheory.Decompl GlobalTheory.Cyc
 
@@ -100,7 +104,7 @@ theorem exists_inv : ∃ t, inclR πA * I.ioE t = 1 := by
   exact ⟨t, by rw [← ioE_letπ I, ← map_mul, ht, map_one]⟩
 
 theorem exists_succ : ∃ e, I.ioE e = inclR πA + 1 :=
-  ⟨algebraMap (LetA O n) R.EE letπ + 1, by rw [map_add, map_one, ioE_letπ]⟩
+  ⟨algebraMap (LetA O n) R.EE letπ + 1, by rw [map_add (f := _), map_one, ioE_letπ]⟩
 
 theorem dense (R : WSer Γ) {p : ℕ} (hp : PD.p = p) (e : R.EE) : ∃ (a : LetA O n) (m : ℕ) (r : R.EE),
     e * algebraMap _ R.EE ((letπ : LetA O n) ^ m) - algebraMap _ R.EE a = (p : R.EE) * r := by
@@ -173,7 +177,7 @@ theorem eroot_pow (j : ℕ) : AI.εroot j ^ l ^ j = AI.ε := by
 
 theorem piR_succ : piR AI LL s + 1 = fW LL (WittVector.teichmuller l (AI.εroot s)) := by
   have h : piR AI LL s = fW LL (piW AI s) := rfl
-  rw [h, ← map_one (fW LL), ← map_add, piW, sub_add_cancel]
+  rw [h, ← map_one (fW LL), ← map_add (f := _), piW, sub_add_cancel]
 
 theorem phi_iter_eroot (j : ℕ) : (φRW LL)^[j] (fW LL (WittVector.teichmuller l (AI.εroot j))) =
     (piR AI LL s + 1) ^ l ^ s := by
@@ -209,7 +213,7 @@ theorem near_of_crd (y : RW LL) (N m : ℕ) (w : Fin (Module.finrank ℤ_[l] ↥
   rw [LinearMap.map_sub, sub_coeff_zero, h1, crd_mul, crd_sum, WittVector.mul_coeff_zero, h4,
     coeff_zero_piW, coeff_inclW]
   have h5 := h i
-  rw [map_add, map_pow] at h5
+  rw [map_add (f := _), map_pow] at h5
   exact sub_eq_of_eq_add' h5
 
 theorem approx_subring (hG : Good K s LL) (T : Subring (RW LL))
@@ -248,6 +252,7 @@ theorem tilt_mem (I : IoS AI R) (hW : IoW I) (c : Om l) (hc : c ∈ K0 K) (m : �
   have h1 := hW ⟨c, hc⟩ m hm hl hcm x ht (fun i => ⟨_, hint i⟩) fun _ => rfl
   exact ⟨_, (I.ioE_ext _).trans (congrArg (inclR LL) h1)⟩
 
+set_option synthInstance.maxHeartbeats 200000 in
 theorem eroot_mem (I : IoS AI R) (j : ℕ) : ∃ e,
     (φRW LL)^[j] (fW LL (WittVector.teichmuller l (AI.εroot j))) = I.ioE e ^ l ^ s := by
   obtain ⟨e, he⟩ := exists_succ I
@@ -258,8 +263,9 @@ theorem mem_perf {R E : Type} [CommRing R] [CommRing E] {j : E →+* R} {φ : R 
     {hφ : ∀ e, ∃ e', φ (j e) = j e'} {p : ℕ} {x : R} (n k : ℕ) (e : E) (h : φ^[n] x = j e ^ k) :
     x ∈ perf j φ hφ p := ⟨n, e ^ k, 0, by rw [h, map_pow, mul_zero, add_zero]⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option synthInstance.maxHeartbeats 200000 in
+set_option maxHeartbeats 1000000 in
 theorem approx (hG : Good K s LL) (I : IoS AI R) (hW : IoW I) (y : RW LL) (hy : FixH AI K y) (m : ℕ) :
     ∃ (n : ℕ) (y0 : RW LL) (e : R.EE) (r : RW LL),
       (φRW LL)^[n] y0 = I.ioE e + (l : RW LL) * r ∧ NearPi AI LL s m (y - y0) := by
@@ -305,6 +311,7 @@ theorem vec (hG : Good K s LL) (I : IoS AI R) (hW : IoW I) (d : ℕ) (Pm : Matri
     (padic_closed (I.ioE : R.EE →+* RW LL) l1 l2 hs (complete R (P.PD_p K))) d Pm).2 z
     (fun i => (mem_fixSub_iff _).2 (hz i)) h
 
+set_option synthInstance.maxHeartbeats 200000 in
 theorem main : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P) (K : FinExt l) (s : ℕ) (LL : FinExt l), Good K s LL → ∀ (Γ : GamS P K s LL) (R : WSer Γ) (I : IoS AI R), IoW I → ∀ (p q : ℕ) (A : Matrix (Fin p) (Fin p) R.EE) (A' : Matrix (Fin q) (Fin q) R.EE) (Y : Matrix (Fin p) (Fin q) R.EE) (U : Matrix (Fin p) (Fin q) (RW LL)), IsUnit A → IsUnit A' → (∀ i j, FixH AI K (U i j)) → A.map I.ioE * U.map (φRW LL) = U * A'.map I.ioE + Y.map I.ioE → ∀ i j, U i j ∈ Set.range I.ioE := by
   intro l _ P AI K s LL hG Γ R I hW p q A A' Y U _ hA' hU h i j
   obtain ⟨C, hC⟩ := hA'.exists_right_inv

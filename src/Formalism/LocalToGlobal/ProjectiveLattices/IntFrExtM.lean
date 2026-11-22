@@ -1,10 +1,14 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CoreProofs
-import Formalism.LocalToGlobal.ProjectiveLattices.ChartDirectionsIntegral
-import Formalism.LocalToGlobal.ProjectiveLattices.ModelDef
-import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
-import Formalism.LocalToGlobal.ProjectiveLattices.PartitionExtendByZeroAntitone
-import Formalism.LocalToGlobal.ProjectiveLattices.ExistsOfValILeOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CoreProofs
+public import Formalism.LocalToGlobal.ProjectiveLattices.ChartDirectionsIntegral
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
+public import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
+public import Formalism.LocalToGlobal.ProjectiveLattices.PartitionExtendByZeroAntitone
+public import Formalism.LocalToGlobal.ProjectiveLattices.ExistsOfValILeOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -44,19 +48,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
 
 section Open
 
-def PlaceOf {l : Level H} (c : Coeff l) : Prop :=
-  ∀ (T : CDVR) (io : c.F →+* T.Fr), T.FinRes →
-    ∃ (p : ℕ) (W : ValuationSubring ℂ) (_ : p.Prime) (_ : (p : ℂ) ∈ W.nonunits) (b : c.V W →+* T.V),
-      (algebraMap T.V T.Fr).comp b = io.comp (c.V W).subtype
-
 variable {D : Datum H} {l : Level H}
-
-def FrOfAbPt (Xo : Moduli D l) (c : Coeff l) : Prop :=
-  ∀ {O : Type} [CommRing O] (β : O →+* c.F) (Y : Model Xo c β), PushInvertible Y.t.G Y.t.PP.L →
-    ∀ (T : CDVR) (io : c.F →+* T.Fr) (x : Sp T.Fr ⟶ Xo.X) (yF : Sp T.Fr ⟶ Xo.XF c) (yT : Sp T.V ⟶ Y.X),
-      yF ≫ pullback.fst _ _ = x → yF ≫ pullback.snd _ _ = spMap io →
-      spMap (algebraMap T.V T.Fr) ≫ yT = yF ≫ Y.j → Set.range yT ⊆ abLocus Y.t.G →
-      letI := io.toAlgebra; ∃ y : FrPt Xo c T.Fr, y.x = x ∧ Nonempty (IntData Xo c T io y)
 
 end Open
 
@@ -70,7 +62,7 @@ theorem exists_family {D : Datum H} {l : Level H} (X0 : Moduli D l) (hN : ∀ l'
   refine ⟨fun l' => if h : l' = l then cast (congrArg (Moduli D) h.symm) X0 else (hN l').some, ?_⟩
   first
     | (beta_reduce
-       rw [dif_pos rfl]
+       rw [dite_eq_left rfl]
        rfl)
     | simp
 

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsSectionOrder
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormSection
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsSectionOrder
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChowFormSection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

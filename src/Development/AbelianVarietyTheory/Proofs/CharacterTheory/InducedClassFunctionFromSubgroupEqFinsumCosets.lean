@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
+
+@[expose] public section
+
 open GlobalTheory.BI
 noncomputable section
 namespace GlobalTheory.BI
@@ -10,7 +15,7 @@ theorem subgroupFunctionExtendByZero_conj_of_mem {L G : Type} [Field L] [Group G
   unfold ext0
   by_cases ha : a ∈ H
   · have h1 : (y : G)⁻¹ * a * y ∈ H := H.mul_mem (H.mul_mem (H.inv_mem y.2) ha) y.2
-    rw [dif_pos ha, dif_pos h1]
+    rw [dite_eq_left ha, dite_eq_left h1]
     exact hψ ⟨a, ha⟩ y
   · have h1 : ¬ (y : G)⁻¹ * a * y ∈ H := by
       intro h
@@ -19,7 +24,7 @@ theorem subgroupFunctionExtendByZero_conj_of_mem {L G : Type} [Field L] [Group G
         H.mul_mem (H.mul_mem y.2 h) (H.inv_mem y.2)
       have h3 : (y : G) * ((y : G)⁻¹ * a * y) * (y : G)⁻¹ = a := by group
       rwa [h3] at h2
-    rw [dif_neg ha, dif_neg h1]
+    rw [dite_eq_right ha, dite_eq_right h1]
 
 theorem out_mul_bijective {G : Type} [Group G] (H : Subgroup G) :
     Function.Bijective (fun p : (G ⧸ H) × H => p.1.out * (p.2 : G)) := by

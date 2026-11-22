@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.PolydiscPoissonReproducesHarmonic
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntegralAngMeas
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PolydiscPoissonReproducesHarmonic
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntegralAngMeas
+
+@[expose] public section
+
 open MeasureTheory Filter Topology GlobalTheory.CompanionTheory.Ar.PB.Flat
 open scoped ContDiff
 set_option maxHeartbeats 1000000 in

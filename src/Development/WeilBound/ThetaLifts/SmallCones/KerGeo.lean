@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SmallCones.ExpAlg
-import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.PlaneAd
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.ExpAlg
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.PlaneAd
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -31,7 +35,7 @@ theorem hT_add_l (x x' y : Matrix (Fin n) (Fin d) S) : hTens c J J' (x + x') y =
   simp only [hTens, Matrix.add_apply, add_mul, Finset.sum_add_distrib]
 
 theorem hT_add_r (x y y' : Matrix (Fin n) (Fin d) S) : hTens c J J' x (y + y') = hTens c J J' x y + hTens c J J' x y' := by
-  simp only [hTens, Matrix.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [hTens, Matrix.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 theorem hT_smul_l (a : S) (x y : Matrix (Fin n) (Fin d) S) : hTens c J J' (a • x) y = a * hTens c J J' x y := by
   simp only [hTens, Matrix.smul_apply, smul_eq_mul, Finset.mul_sum, mul_assoc]
@@ -112,7 +116,8 @@ theorem tr_inc (e : E) : Algebra.trace (AF F) (AE F E) (inclR (F := F) (AF F) e)
 
 theorem hT_inc (x y : Matrix (Fin n) (Fin d) E) : hTens (cA σ) (incM F X.J) (incM F W.J) (incM F x) (incM F y) =
     inclR (F := F) (AF F) (hTens σ X.J W.J x y) := by
-  simp only [hTens, incM, Matrix.map_apply, cA_inc, map_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hTens, incM, Matrix.map_apply, cA_inc, map_mul, map_sum]
 
 theorem sy_inc (x y : Matrix (Fin n) (Fin d) E) :
     sy σ X W (incM F x) (incM F y) = algebraMap F (AF F) (Algebra.trace F E (-hTens σ X.J W.J x y)) := by
@@ -148,9 +153,12 @@ theorem nd_of_det {J : Matrix (Fin n) (Fin n) E} (hd : J.det ≠ 0) (v : Fin n �
 
 theorem pg_of (hB : B.IsGood σ) {Y : Spc F E n} {Y₁ : Spc F E n₁} {H : Plane E n n₁} {i₀ i₁ : ℕ}
     (hH : H.IsAdapted σ B Y Y₁ i₀ i₁) (ε : ℤˣ) (hJ : ∀ i j, σ (Y.J j i) = ((ε : ℤ) : E) * Y.J i j) (hd : Y.J.det ≠ 0)
-    (hL : Y.L.IsLattice E) : PG σ Y Y₁ H ε := by
+    (hL : Y.L.IsFullLattice E) : PG σ Y Y₁ H ε := by
   have sp : ∀ v : Fin n → E, ∃ (s t : E) (u : Fin n₁ → E), v = s • H.x + H.ι *ᵥ u + t • H.y := fun v => by
-    have hv : v ∈ Submodule.span E (Y.L : Set (Fin n → E)) := hL.span_eq_top ▸ Submodule.mem_top
+    have hv : v ∈ Submodule.span E (Y.L : Set (Fin n → E)) := by
+      let := hL
+      rw [Submodule.IsFullLattice.span_eq_top (A := E) (M := Y.L)]
+      exact Submodule.mem_top
     induction hv using Submodule.span_induction with
     | mem z hz =>
       obtain ⟨s, t, u, -, -, -, e⟩ := hH.split z hz
@@ -164,7 +172,7 @@ theorem pg_of (hB : B.IsGood σ) {Y : Spc F E n} {Y₁ : Spc F E n₁} {H : Plan
       obtain ⟨s, t, u, rfl⟩ := hb
       exact ⟨a * s, a * t, a • u, by rw [Matrix.mulVec_smul]; module⟩
   refine ⟨⟨conj_conj hB, by rw [← Int.cast_mul, ← Units.val_mul, Int.units_mul_self]; simp, map_intCast _ _, hJ, hH.xx, hH.yy, hH.xy,
-    fun z => (hH.orth z).1, fun z => (hH.orth z).2, sp, fun v hv => ?_⟩, planeOK hB hH ε hJ hd hL, fun u hu => ?_, hH.gram⟩
+    fun z => (hH.orth z).1, fun z => (hH.orth z).2, sp, fun v hv => ?_⟩, (by first | exact planeOK hB hH ε hJ hd hL | exact planeOK hB hH ε hJ hd hL.toIsLattice), fun u hu => ?_, hH.gram⟩
   · refine Matrix.eq_zero_of_vecMul_eq_zero hd (funext fun j => ?_)
     have := hv (Pi.single j 1)
     have e : (fun l => σ.toRingHom ((Pi.single j 1 : Fin n → E) l)) = Pi.single j 1 := funext fun l => by
@@ -195,11 +203,17 @@ theorem skew_det {r s : ℕ} (hY : X.IsSkew σ B r s) : X.J.det ≠ 0 := fun h0 
   rw [Matrix.det_smul]
   exact mul_eq_zero_of_right _ this.symm
 
+theorem full_of_herm_or_skew (hB : B.IsGood σ) {Y : Spc F E n} {r s : ℕ}
+    (hY : Y.IsHerm σ B r s ∨ Y.IsSkew σ B r s) : Y.L.IsFullLattice E := by
+  rcases hY with h | h
+  · exact h.lat
+  · exact h.lat
+
 theorem pg_herm (hB : B.IsGood σ) {H : Plane E n n₁} {i₀ i₁ r s : ℕ} (hH : H.IsAdapted σ B X X₁ i₀ i₁) (hY : X.IsHerm σ B r s) :
-    PG σ X X₁ H 1 := pg_of hB hH 1 (fun i j => by simp [hY.herm]) (herm_det hY) hY.lat
+    PG σ X X₁ H 1 := pg_of hB hH 1 (fun i j => by simp [hY.herm]) (herm_det hY) (full_of_herm_or_skew hB (Or.inl hY))
 
 theorem pg_skew (hB : B.IsGood σ) {H : Plane E n n₁} {i₀ i₁ r s : ℕ} (hH : H.IsAdapted σ B X X₁ i₀ i₁) (hY : X.IsSkew σ B r s) :
-    PG σ X X₁ H (-1) := pg_of hB hH (-1) (fun i j => by simp [hY.skew]) (skew_det hY) hY.lat
+    PG σ X X₁ H (-1) := pg_of hB hH (-1) (fun i j => by simp [hY.skew]) (skew_det hY) (full_of_herm_or_skew hB (Or.inr hY))
 
 theorem polar_of {T : Type} [AddCommGroup T] [Module E T] [Module F T] [IsScalarTower F E T] [FiniteDimensional F T]
     {ι : Matrix (Fin n) (Fin n₁) E} {ι' : Matrix (Fin d) (Fin d₁) E} {I : Set (Ten F E n d)}
@@ -213,9 +227,9 @@ theorem polar_of {T : Type} [AddCommGroup T] [Module E T] [Module F T] [IsScalar
     ∃ (m : ℕ) (b : Module.Basis (Fin m) F T) (z : Fin m → Matrix (Fin n) (Fin d) E),
       Polar σ X W X₁ W₁ ι ι' I (fun j => U (b j)) z := by
   let β : LinearMap.BilinForm F T := LinearMap.mk₂ F (fun t' t => Algebra.trace F E (-hTens σ X.J W.J (Z t') (U t)))
-    (fun a b c => by rw [map_add, hT_add_l, neg_add, map_add])
+    (fun a b c => by rw [map_add (f := _), hT_add_l, neg_add, map_add (f := _)])
     (fun a b c => by rw [← algebraMap_smul E a b, map_smul, hT_smul_l, ← mul_neg, ← Algebra.smul_def, map_smul])
-    (fun a b c => by rw [map_add, hT_add_r, neg_add, map_add])
+    (fun a b c => by rw [map_add (f := _), hT_add_r, neg_add, map_add (f := _)])
     (fun a b c => by
       rw [← algebraMap_smul E a c, map_smul, hT_smul_r, σ.commutes, ← mul_neg, ← Algebra.smul_def, map_smul])
   have hβ : β.Nondegenerate := LinearMap.BilinForm.Nondegenerate.ofSeparatingRight fun t ht => nd t fun t' => by
@@ -237,7 +251,8 @@ theorem polar_of {T : Type} [AddCommGroup T] [Module E T] [Module F T] [IsScalar
   · rw [sy, sy, symp, symp, hT_mm, incM_gram g, incM_gram g']
   · obtain ⟨s, t, x₁, rfl⟩ := span x
     refine ⟨b.repr s, (β.dualBasis hβ b).repr t, x₁, ?_⟩
-    simp only [← LinearMap.map_smul_of_tower, ← map_sum, Module.Basis.sum_repr]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← LinearMap.map_smul_of_tower, ← map_sum, Module.Basis.sum_repr]
 
 end PositivityTheory.ThKCT.Ker
 

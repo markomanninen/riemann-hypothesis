@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobSubMulSurjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormRootSubOneLt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TensorRight
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobSubMulSurjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormRootSubOneLt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TensorRight
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.MainNotions.LocalSituation GlobalTheory.Cyc
 open scoped TensorProduct Topology
@@ -59,7 +63,7 @@ theorem as_one [Module.Flat Z O] (f : W →ₐ[Z] W) (h1 : ∀ y, ∃ b, f b - b
   have e : ∀ b, Algebra.TensorProduct.map (AlgHom.id O O) f b = f.toLinearMap.lTensor O b := fun b => by
     induction b using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
     | tmul x y => rfl
   refine ⟨fun y => by simpa only [e] using k1 y, fun b hb => ?_⟩
   obtain ⟨x, rfl⟩ := k2 b (by rw [← e, hb])
@@ -67,7 +71,7 @@ theorem as_one [Module.Flat Z O] (f : W →ₐ[Z] W) (h1 : ∀ y, ∃ b, f b - b
   clear hb
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => rw [map_add, map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
   | tmul x y =>
     rw [LinearMap.lTensor_tmul, TensorProduct.rid_tmul, Algebra.linearMap_apply,
       Algebra.algebraMap_eq_smul_one, ← TensorProduct.smul_tmul]
@@ -89,7 +93,7 @@ theorem as_two [Module.Flat Z O] [Module.Flat O P] (f : W →ₐ[Z] W) (h1 : ∀
   clear hb
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => rw [map_add, map_add, TensorProduct.tmul_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), TensorProduct.tmul_add, hx, hy]
   | tmul x y =>
     rw [LinearMap.rTensor_tmul, TensorProduct.lid_tmul, Algebra.linearMap_apply,
       Algebra.algebraMap_eq_smul_one, TensorProduct.smul_tmul]
@@ -110,7 +114,7 @@ theorem cob_two [Module.Free Z O] [Module.Finite Z O] [Module.Free O P] [Module.
         (Algebra.TensorProduct.map (AlgHom.id O O) (a h) β) := fun g h β => by
     induction β using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul x y => simp [amul]
   refine avg_cob l 𝓕 (fun g β => Algebra.TensorProduct.map (AlgHom.id O O) (a g) β)
     (fun g => (TensorProduct.map (Algebra.TensorProduct.map (AlgHom.id O O) (a g)).toLinearMap
@@ -118,12 +122,12 @@ theorem cob_two [Module.Free Z O] [Module.Finite Z O] [Module.Free O P] [Module.
     (fun U hU => ?_) (fun g => (1 : O ⊗[Z] W) ⊗ₜ[O] c g) (fun g h => ?_) (fun r => ?_)
   · induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul x y => simp only [LinearMap.toAddMonoidHom_coe, TensorProduct.map_tmul,
         AlgHom.toLinearMap_apply, amul', ρmul]
   · induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, smul_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), smul_add, hx, hy]
     | tmul x y => simp only [LinearMap.toAddMonoidHom_coe, TensorProduct.map_tmul,
         AlgHom.toLinearMap_apply, TensorProduct.smul_tmul', smul_eq_mul, map_mul]
   · obtain ⟨N, h1, h2, h3, S, h4, β, h5, h6⟩ := htr U hU
@@ -265,13 +269,15 @@ theorem exists_trace {P : LocPrime l} (AI : LocAinf l P) (K : FinExt l) {G : Typ
 theorem as_TW {G : Type} [Group G] [TopologicalSpace G] (LL : FinExt l)
     (T : LocLat G ℚ_[l] ↥LL.1 ↥(OL LL)) : (∀ y, ∃ b, TWmap (φRW LL) T b - b = y) ∧
     ∀ b, TWmap (φRW LL) T b = b → ∃ t : ↥T.L.T, b = (1 : RW LL) ⊗ₜ[↥(OL LL)] t :=
-  haveI := T.L.free
-  haveI := free_OL LL
-  as_two (O := ↥(OL LL)) (P := ↥T.L.T) (frobW l) (GlobalTheory.ArtinSchreierWitt.main l).1
-    (GlobalTheory.ArtinSchreierWitt.main l).2.1
+  by
+    set_option synthInstance.maxHeartbeats 200000 in
+      haveI := T.L.free
+      haveI := free_OL LL
+      exact as_two (O := ↥(OL LL)) (P := ↥T.L.T) (frobW l) (GlobalTheory.ArtinSchreierWitt.main l).1
+        (GlobalTheory.ArtinSchreierWitt.main l).2.1
+
 
 set_option maxHeartbeats 1600000 in
-
 theorem cob_TW {P : LocPrime l} (AI : LocAinf l P) (K LL : FinExt l)
     (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)) (H : Subgroup ↥(GK K))
     (hH : ((GK K).subtype.comp H.subtype).range = Hinf K) (c : ↥(latticeCocycles (resLat T H))) :

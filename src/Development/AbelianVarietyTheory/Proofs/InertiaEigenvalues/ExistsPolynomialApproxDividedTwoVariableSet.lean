@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RingHomExtDense
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RingHomExtDense
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Filter GlobalTheory.CrysPrism GlobalTheory.CrysEval
 open scoped Formalism.Per
 
@@ -70,7 +75,7 @@ theorem exists_poly_approx_PPSet : ∀ (l : ℕ) [Fact l.Prime] (a e : ℕ) [NeZ
   let b : Bp l a := ∑ x ∈ s, Polynomial.monomial x.1 (Polynomial.monomial x.2 ((nn / N x) • w x))
   have coeff_b : ∀ i n, (b.coeff i).coeff n = if (i, n) ∈ s then (nn / N (i, n)) • w (i, n) else 0 := by
     intro i n
-    simp only [b, Polynomial.finset_sum_coeff, Polynomial.coeff_monomial]
+    simp only [b, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial]
     rw [Finset.sum_congr rfl (g := fun x => if x = (i, n) then (nn / N x) • w x else 0)]
     · exact Finset.sum_ite_eq' _ _ _
     · intro x _
@@ -88,7 +93,7 @@ theorem exists_poly_approx_PPSet : ∀ (l : ℕ) [Fact l.Prime] (a e : ℕ) [NeZ
     · simp [w₁, hx]
   · funext τ
     refine PowerSeries.ext fun i => PowerSeries.ext fun n => ?_
-    rw [← Nat.cast_pow, Pi.add_apply, Pi.mul_apply, Pi.natCast_apply, map_add, map_add, coeff_coeff_natCast_mul,
+    rw [← Nat.cast_pow, Pi.add_apply, Pi.mul_apply, Pi.natCast_apply, map_add (f := _), map_add (f := _), coeff_coeff_natCast_mul,
       coeff_F, coeff_ser, coeff_ser, hsplit (i, n), map_add, map_mul, map_pow, map_natCast]
     push_cast
     ring

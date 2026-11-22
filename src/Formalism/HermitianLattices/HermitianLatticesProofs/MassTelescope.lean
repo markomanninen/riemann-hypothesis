@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HermitianLattices.StatementMass
-import Formalism.HermitianLattices.HermitianLatticesProofs.MassBasic
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.StatementMass
+public import Formalism.HermitianLattices.HermitianLatticesProofs.MassBasic
+
+@[expose] public section
 
 open NumberField
 
@@ -37,7 +41,8 @@ lemma massTelescope_symm (n : ℕ) : (massTelescope_form K n).IsSymm := by
   have key : ∀ x y : Fin n → K,
       starRingEnd K (massTelescope_form K n x y) = massTelescope_form K n y x := by
     intro x y
-    simp only [massTelescope_form_apply, map_sum, starRingEnd_apply, star_mul, star_star]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [massTelescope_form_apply, map_sum, starRingEnd_apply, star_mul, star_star]
   first
   | exact key
   | exact ⟨key⟩
@@ -60,11 +65,12 @@ lemma massTelescope_ortho (n : ℕ) :
   · intro hi
     exact absurd (Finset.mem_univ i) hi
 
-lemma massTelescope_isLattice (n : ℕ) : Submodule.IsLattice K (massTelescope_lat K n) where
-  fg := Submodule.fg_span (Set.finite_range _)
-  span_eq_top := by
-    rw [massTelescope_lat, Submodule.span_span_of_tower]
-    exact (Pi.basisFun K (Fin n)).span_eq
+lemma massTelescope_isLattice (n : ℕ) : Submodule.IsFullLattice K (massTelescope_lat K n) := by
+  letI : Submodule.IsLattice K (massTelescope_lat K n) :=
+    Submodule.IsLattice.of_fg K (Submodule.fg_span (Set.finite_range _))
+  refine { span_eq_top := ?_ }
+  unfold massTelescope_lat
+  rw [Submodule.span_span_of_tower (RingOfIntegers K), (Pi.basisFun K (Fin n)).span_eq]
 
 lemma massTelescope_trace_pos (hCM : IsCMUnram K) (a : K) (ha : a ≠ 0) :
     0 < Algebra.trace ℚ K (star a * a) := by
@@ -99,7 +105,8 @@ lemma massTelescope_trace_nonneg (hCM : IsCMUnram K) (a : K) :
 
 lemma massTelescope_def (hCM : IsCMUnram K) (n : ℕ) (x : Fin n → K) (hx : x ≠ 0) :
     0 < Algebra.trace ℚ K (massTelescope_form K n x x) := by
-  rw [massTelescope_form_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [massTelescope_form_apply, map_sum]
   obtain ⟨i, hi⟩ : ∃ i, x i ≠ 0 := by
     by_contra hc
     push_neg at hc

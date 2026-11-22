@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementA
-import Formalism.FormalGroupLog.FormalGroupLogProofs.ChainRule
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementA
+public import Formalism.FormalGroupLog.FormalGroupLogProofs.ChainRule
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,13 +34,10 @@ theorem eval_second_zero_eq_algHom (h : MvPowerSeries (Fin 2) K) :
   rfl
 
 theorem evalYZero_add (g h : MvPowerSeries (Fin 2) K) : ev0 (g + h) = ev0 g + ev0 h := by
-  rw [eval_second_zero_eq_algHom, eval_second_zero_eq_algHom, eval_second_zero_eq_algHom, map_add]
+  rw [eval_second_zero_eq_algHom, eval_second_zero_eq_algHom, eval_second_zero_eq_algHom, map_add (f := _)]
 
 theorem eval_second_zero_sub (g h : MvPowerSeries (Fin 2) K) : ev0 (g - h) = ev0 g - ev0 h := by
   rw [eval_second_zero_eq_algHom, eval_second_zero_eq_algHom, eval_second_zero_eq_algHom, map_sub]
-
-theorem eval_second_zero_neg (h : MvPowerSeries (Fin 2) K) : ev0 (-h) = -ev0 h := by
-  rw [eval_second_zero_eq_algHom, eval_second_zero_eq_algHom, map_neg]
 
 theorem evalYZero_mul (g h : MvPowerSeries (Fin 2) K) : ev0 (g * h) = ev0 g * ev0 h := by
   rw [eval_second_zero_eq_algHom, eval_second_zero_eq_algHom, eval_second_zero_eq_algHom, map_mul]
@@ -198,7 +199,7 @@ variable {K : Type} [Field K] [CharZero K]
 theorem pd_atS (i : Fin 2) (f : PowerSeries K) : pd i (atS f) = atS (dz f) := by
   unfold atS
   unfold pd
-  rw [Formalism.G.LogCR.pderiv_psubst (by simp), map_add, MvPowerSeries.pderiv_X, MvPowerSeries.pderiv_X]
+  rw [Formalism.G.LogCR.pderiv_psubst (by simp), map_add (f := _), MvPowerSeries.pderiv_X, MvPowerSeries.pderiv_X]
   fin_cases i <;> simp
 
 theorem pderiv_zero_series_at_difference (f : PowerSeries K) : pd 0 (atD f) = atD (dz f) := by
@@ -226,13 +227,13 @@ theorem pderiv_at_variable_of_ne {i j : Fin 2} (hij : j ≠ i) (f : PowerSeries 
 
 theorem pderiv_zero_parallelogram_defect (f : PowerSeries K) :
     pd 0 (par0 f) = atS (dz f) + atD (dz f) - 2 * at1 0 (dz f) := by
-  simp only [par0, two_mul, map_add, map_sub, pd_atS, pderiv_zero_series_at_difference, partialDeriv_inVar_self,
+  simp only [par0, two_mul, map_add (f := _), map_sub, pd_atS, pderiv_zero_series_at_difference, partialDeriv_inVar_self,
     pderiv_at_variable_of_ne (show (1 : Fin 2) ≠ 0 by decide)]
   abel
 
 theorem pderiv_one_parallelogram_defect (f : PowerSeries K) :
     pd 1 (par0 f) = atS (dz f) - atD (dz f) - 2 * at1 1 (dz f) := by
-  simp only [par0, two_mul, map_add, map_sub, pd_atS, pderiv_one_series_at_difference, partialDeriv_inVar_self,
+  simp only [par0, two_mul, map_add (f := _), map_sub, pd_atS, pderiv_one_series_at_difference, partialDeriv_inVar_self,
     pderiv_at_variable_of_ne (show (0 : Fin 2) ≠ 1 by decide)]
   abel
 
@@ -241,7 +242,7 @@ end
 theorem wave_operator_kills : WaveKills := by
   intro K _ _ f
   rw [pderiv_zero_parallelogram_defect, pderiv_one_parallelogram_defect]
-  simp only [two_mul, map_add, map_sub, map_neg, pd_atS, pderiv_zero_series_at_difference, pderiv_one_series_at_difference, partialDeriv_inVar_self,
+  simp only [two_mul, map_add (f := _), map_sub, map_neg, pd_atS, pderiv_zero_series_at_difference, pderiv_one_series_at_difference, partialDeriv_inVar_self,
     pderiv_at_variable_of_ne (show (1 : Fin 2) ≠ 0 by decide), pderiv_at_variable_of_ne (show (0 : Fin 2) ≠ 1 by decide)]
   ring
 

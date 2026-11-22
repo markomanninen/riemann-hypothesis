@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TruncatedSumLimit
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TsumNeZeroEqSum
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TruncatedSumLimit
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TsumNeZeroEqSum
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW GlobalTheory.CompanionTheory.Mass.MeanV PositivityTheory.Rg.Mass NumberField IsDedekindDomain MeasureTheory Topology Filter
 open scoped ENNReal NNReal Classical
 set_option maxHeartbeats 1000000 in

@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsStepThreeOnWLift
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsClaimSeq
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PClaimVanish
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSurjectiveClosed
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsStepThreeOnWLift
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsClaimSeq
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PClaimVanish
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSurjectiveClosed
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -24,7 +29,8 @@ theorem homogeneousComponent_mul_of_isHomogeneous {σ R : Type*} [CommRing R] {P
     homogeneousComponent d (P * G) =
       if l ≤ d then P * homogeneousComponent (d - l) G else 0 := by
   conv_lhs => rw [← sum_homogeneousComponent G, Finset.mul_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   have hterm : ∀ i, homogeneousComponent d (P * homogeneousComponent i G) =
       if d = l + i then P * homogeneousComponent i G else 0 := fun i =>
     homogeneousComponent_of_mem ((hP.mul (homogeneousComponent_isHomogeneous i G)))
@@ -69,8 +75,8 @@ theorem exists_finset_forms (P : Ideal (Poly k N)) :
     intro z hz
     exact Finset.mem_coe.mpr (Finset.mem_biUnion.mpr ⟨g, hg, hz⟩)
 
-variable (x) in
 
+variable (x) in
 def idealGraded (P : Ideal (Poly k N)) : FinGradedSub (S := k) (x := x) Ω where
   piece c := Submodule.span k {z | ∃ (f : Poly k N) (e : ℕ), f ∈ P ∧ f.IsHomogeneous e ∧ (e : ℤ) = c ∧
     z = aeval x f}
@@ -99,9 +105,11 @@ def idealGraded (P : Ideal (Poly k N)) : FinGradedSub (S := k) (x := x) Ω where
       calc f = homogeneousComponent e f := h0.symm
         _ = homogeneousComponent e (∑ h : T, a h • h.1) := by rw [ha]
         _ = ∑ h : T, homogeneousComponent e (h.1 * a h) := by
-          rw [map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum]
           exact Finset.sum_congr rfl fun h _ => by rw [smul_eq_mul, mul_comm]
-    rw [SetLike.mem_coe, hfe, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [SetLike.mem_coe, hfe, map_sum]
     refine Submodule.sum_mem _ fun h _ => ?_
     rw [homogeneousComponent_mul_of_isHomogeneous (hdg h.1 h.2)]
     split_ifs with hle
@@ -207,7 +215,7 @@ theorem lift_of_subsingleton (Qc K : SubSystem S x Ω) (hKQ : ∀ I, K.sub I ≤
     else 0
   have hψ : ∀ I : Cech.Idx (support x) 0, ψ I.1.1 = s I.1 - (v I : Ω) := fun I => by
     simp only [ψ]
-    rw [dif_pos ⟨I.1.2, I.2⟩]
+    rw [dite_eq_left ⟨I.1.2, I.2⟩]
   have hpair : ∀ J : Cech.Idx (support x) 1,
       ∑ j : J.1.1, Cech.sgn J.1.1 j • ψ (J.1.1.erase j) = 0 := by
     intro J
@@ -272,8 +280,8 @@ end Lift
 
 end StepThreeOnWLift
 
-open StepThreeOnWLift in
 
+open StepThreeOnWLift in
 theorem StepThree.OnW.Lift.proof (hSeq : ClaimSeq.Statement.{u, w}) (hVan : ClaimVanish.Statement.{u, w})
     (hTwo : StepTwo.Statement.{u, w, w}) : StepThree.OnW.Lift.Statement.{u, w} := by
   intro k _ Ω _ _ N x T hK pp hpp

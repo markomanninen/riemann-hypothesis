@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsNormRepresentation
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsNormRepresentation
+
+@[expose] public section
 
 noncomputable section
 
@@ -235,7 +239,7 @@ theorem IsASD.exists_norm (hS : IsHermSemilocal S) (hπ : IsUnif S π) (hs : h.I
   have hnz : h n₀ z = 0 := by rw [← star_apply_eq_apply_swap_of_isSymm' hs z n₀, hzn, star_zero]
   have hexp : h y y = π * π * h n₀ n₀ + star t * t * h z z := by
     rw [hye]
-    simp only [map_add, LinearMap.add_apply, LinearMap.map_smulₛₗ₂, map_smul, starRingEnd_apply,
+    simp only [map_add (f := _), LinearMap.add_apply, LinearMap.map_smulₛₗ₂, map_smul, starRingEnd_apply,
       smul_eq_mul, hzn, hnz, hπ.fix]
     ring
   have hpi : π * π⁻¹ = 1 := mul_inv_cancel₀ hπ.ne

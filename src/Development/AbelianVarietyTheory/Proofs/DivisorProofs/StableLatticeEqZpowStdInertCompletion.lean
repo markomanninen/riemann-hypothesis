@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+
+@[expose] public section
 
 open IsDedekindDomain NumberField
 open scoped Matrix

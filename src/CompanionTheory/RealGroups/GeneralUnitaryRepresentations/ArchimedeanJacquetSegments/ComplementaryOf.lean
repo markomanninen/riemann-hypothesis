@@ -1,5 +1,9 @@
-import CompanionTheory.RealGroups.GeneralUnitaryRepresentations.ArchimedeanJacquetSegments.Complementary
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.HermApply
+module
+
+public import CompanionTheory.RealGroups.GeneralUnitaryRepresentations.ArchimedeanJacquetSegments.Complementary
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.HermApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,9 +30,6 @@ def starF {M : Type} [AddCommGroup M] [Module ℂ M] (B : M →ₗ[ℂ] M →ₛ
     M →ₗ[ℂ] M →ₛₗ[starRingEnd ℂ] ℂ :=
   LinearMap.mk₂'ₛₗ (RingHom.id ℂ) (starRingEnd ℂ) (fun v w => starRingEnd ℂ (B w v))
     (fun _ _ _ => by simp) (fun _ _ _ => by simp) (fun _ _ _ => by simp) (fun _ _ _ => by simp)
-
-@[simp] theorem starF_apply {M : Type} [AddCommGroup M] [Module ℂ M] (B : M →ₗ[ℂ] M →ₛₗ[starRingEnd ℂ] ℂ)
-    (v w : M) : starF B v w = starRingEnd ℂ (B w v) := rfl
 
 def resF {M : Type} [AddCommGroup M] [Module ℂ M] (B : M →ₗ[ℂ] M →ₛₗ[starRingEnd ℂ] ℂ) (W : Submodule ℂ M) :
     W →ₗ[ℂ] W →ₛₗ[starRingEnd ℂ] ℂ :=
@@ -135,10 +136,12 @@ theorem complementary_of (h : Signature) : Complementary := by
       have e1 : ∀ t, T t g w = ∑ i, ((Real.exp (r i * t) : ℝ) : ℂ) • (⟨e (u i), idem_mem hsm hKc _⟩ : W) := by
         intro t
         apply Subtype.ext
-        rw [hT, hu t, map_sum, Submodule.coe_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hT, hu t, map_sum, Submodule.coe_sum]
         simp only [map_smul, Submodule.coe_smul]
-      simp_rw [e1, map_sum, map_smul, smul_eq_mul]
-      refine continuous_finset_sum _ fun i _ => Continuous.mul ?_ continuous_const
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp_rw [e1, map_sum, map_smul, smul_eq_mul]
+      refine continuous_finsetSum _ fun i _ => Continuous.mul ?_ continuous_const
       exact Complex.continuous_ofReal.comp (Real.continuous_exp.comp (continuous_const.mul continuous_id))
     have hsimple : ∀ t, 0 ≤ t → ∀ U : Submodule ℂ W, (∀ g, ∀ w ∈ U, T t g w ∈ U) → U = ⊥ ∨ U = ⊤ := by
       intro t ht U hU
@@ -154,7 +157,7 @@ theorem complementary_of (h : Signature) : Complementary := by
           obtain ⟨g', rfl⟩ := hy
           exact Submodule.subset_span ⟨g * g', by simp only [map_mul, Module.End.mul_apply]⟩
         | zero => simp
-        | add x y _ _ hx hy => rw [map_add]; exact S.add_mem hx hy
+        | add x y _ _ hx hy => rw [map_add (f := _)]; exact S.add_mem hx hy
         | smul c x _ hx => rw [map_smul]; exact S.smul_mem c hx
       have hSt : S = ⊤ := by
         rcases irr_sub (hall t ht).2.2.1 S hS with h1 | h1

@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.ExistsMapEqOfPowMul
+module
+
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.ExistsMapEqOfPowMul
+
+@[expose] public section
 
 noncomputable section
 

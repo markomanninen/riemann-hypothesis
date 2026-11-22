@@ -1,9 +1,14 @@
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsTransportAdelicCorrection
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.EvalTIota
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.ColDict
+module
+
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsTransportAdelicCorrection
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.EvalTIota
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.ColDict
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.AutomorphicEvaluation Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.Core.Rk GlobalTheory.Core.Mi
 open scoped TensorProduct InnerProductSpace Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -24,10 +29,10 @@ theorem mem_GfC_iff (V : HSp D) (g : GA D V) : g ∈ GfC V ↔ (Formalism.L2.The
 
 theorem map_sand {k n : ℕ} (x : Mx D k n) (m : Mx D n n)
     (y : Mx D n k) (hm : m.map (finf D) = 1) :
-    (x ⬝ m ⬝ y).map (finf D) = (x ⬝ y).map (finf D) := by
-  have e1 : (x ⬝ m ⬝ y).map (finf D) = x.map (finf D) ⬝ m.map (finf D) ⬝ y.map (finf D) := by
+    (x * m * y).map (finf D) = (x * y).map (finf D) := by
+  have e1 : (x * m * y).map (finf D) = x.map (finf D) * m.map (finf D) * y.map (finf D) := by
     rw [Matrix.map_mul (f := finf D), Matrix.map_mul (f := finf D)]
-  have e2 : (x ⬝ y).map (finf D) = x.map (finf D) ⬝ y.map (finf D) := Matrix.map_mul (f := finf D)
+  have e2 : (x * y).map (finf D) = x.map (finf D) * y.map (finf D) := Matrix.map_mul (f := finf D)
   rw [e1, e2, hm, Matrix.mul_one]
 
 theorem orth_emb_mem_GfC {S A B : HSp D} (o : OrthDec S A B) {a : GA D A} (ha : a ∈ GfC A) :
@@ -111,28 +116,7 @@ theorem rtr_mem_Cu (hK : X.LevelSubgroupCharacter) {δ : Hfin X u} (hδ : ∀ k 
       rw [mul_assoc, mul_assoc, hc]
     exact (h2 g ξ (y * (1, δ))).trans (congrArg (T ξ) e.symm)
 
-theorem rtr_inv_rtr (δ : Hfin X u) (T : X.Vpi u →ₗ[ℂ] (Hinf X u × Hfin X u → ℂ)) :
-    Formalism.L2.SG.ColDict.rtr X δ⁻¹ (Formalism.L2.SG.ColDict.rtr X δ T) = T := by
-  ext ξ y
-  have hc : ((1 : Hinf X u), δ⁻¹) * (1, δ) = 1 := Prod.ext (mul_one 1) (inv_mul_cancel δ)
-  have e : y * (1, δ⁻¹) * (1, δ) = y := by rw [mul_assoc, hc, mul_one]
-  exact congrArg (T ξ) e
-
 end GlobalTheory.Core.Mi.CenAct
 
-open GlobalTheory.Core.Mi.CenAct in
-
-theorem GlobalTheory.Core.Mi.central_acts_on_columns : ∀ (D : D7) (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (h : X.B.I = Formalism.L2.SG.InstExistsPf.instOf D) (u : D.what₂.Word) (ψ : AddChar (AF D.host.F) ℂ) (A : HSp D) (B : SBes X h u ψ A) (hK : X.LevelSubgroupCharacter) (a : GA D A), GlobalTheory.Core.Mi.IdE X → a ∈ GfC A → a ∈ Subgroup.center (GA D A) → ∃ R : Cu X u hK →ₗ[ℂ] Cu X u hK, Function.Injective R ∧ ∀ (T : Cu X u hK) ξ, B.colForm (R T).1 ξ = rTrans a (B.colForm T.1 ξ) := by
-  intro D X h u ψ A B hK a _ haf hac
-  set δ : Hfin X u := (B.toH a).2 with hδdef
-  have hδ : ∀ k : Hfin X u, δ * k = k * δ := toH_snd_comm B hac
-  have hta : B.toH a = (1, δ) := Prod.ext (toH_fst B haf) rfl
-  refine ⟨(Formalism.L2.SG.ColDict.rtr X δ).restrict (fun T hT => rtr_mem_Cu hK hδ hT), fun T₁ T₂ e => ?_, fun T ξ => ?_⟩
-  · apply Subtype.ext
-    have e' := congrArg (fun S : Cu X u hK => Formalism.L2.SG.ColDict.rtr X δ⁻¹ (S : X.Vpi u →ₗ[ℂ] (Hinf X u × Hfin X u → ℂ))) e
-    simpa only [LinearMap.restrict_apply, rtr_inv_rtr] using e'
-  · funext a'
-    show T.1 ξ (B.toH a' * (1, δ)) = T.1 ξ (B.toH (a' * a))
-    rw [toH_mul, hta]
 
 end

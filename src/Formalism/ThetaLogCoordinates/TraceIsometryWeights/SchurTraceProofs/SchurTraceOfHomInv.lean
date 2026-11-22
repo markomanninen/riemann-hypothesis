@@ -1,5 +1,9 @@
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementB
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.HomRelationHolds
+module
+
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementB
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.HomRelationHolds
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.PW
 
@@ -56,7 +60,8 @@ theorem hom_eig_zero [CharZero K] (G₁ : GlW K V₁ n) (G₂ : GlW K V₂ n) (W
     simpa using h.symm
   ext x
   obtain ⟨S, hS⟩ := G₁.dec x
-  rw [← G₁.sum_comp x S hS, map_sum, LinearMap.zero_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← G₁.sum_comp x S hS, map_sum, LinearMap.zero_apply]
   exact Finset.sum_eq_zero fun μ _ => key μ x
 
 end gen

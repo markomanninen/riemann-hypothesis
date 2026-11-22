@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensHSt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.HenselCountHolds
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensHSt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.HenselCountHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -130,7 +134,7 @@ theorem fib_of_ratio (μ : Measure V) (ν : Measure X) [ν.IsAddHaarMeasure]
     have h1 : μ (P n) = ∫⁻ b in S n, ENNReal.ofReal (Φ b) ∂ν := by
       have hU : μ (P n) = ∫⁻ x in U, (P n).indicator 1 x ∂μ := by
         rw [lintegral_indicator_one (hPm n), Measure.restrict_apply (hPm n),
-          inter_eq_left.2 (fun x hx => hPkU ⟨hx.1, hn hx.2⟩)]
+          inter_eq_left.2 (by exact fun x hx => hPkU ⟨hx.1, hn hx.2⟩)]
       rw [hU, hdis ((P n).indicator 1) (measurable_one.indicator (hPm n))]
       simp_rw [lintegral_indicator_one (hPm n)]
       rw [← lintegral_indicator (hSo n).measurableSet]

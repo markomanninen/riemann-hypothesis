@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.LiftFactorization
-import ReciprocityTheory.L2DbarEstimates.LeviForms.DetMonoDetOneAdd
-import Lemmata.PosDefOfRealQuadratic.QuadFormRealSmul
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.LiftFactorization
+public import ReciprocityTheory.L2DbarEstimates.LeviForms.DetMonoDetOneAdd
+public import Lemmata.PosDefOfRealQuadratic.QuadFormRealSmul
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.ExhA
 
@@ -79,7 +83,8 @@ open ReciprocityTheory.L2DbarEstimates ReciprocityTheory.ChartRestriction.G.AR.U
 theorem quad_im {m : ℕ} {A : Matrix (Fin m) (Fin m) ℂ} (hA : A.IsHermitian) (x : Fin m → ℂ) :
     (star x ⬝ᵥ (A *ᵥ x)).im = 0 := by
   rw [← Complex.conj_eq_iff_im]
-  simp only [dotProduct, mulVec, map_sum, map_mul, Pi.star_apply, Complex.star_def,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dotProduct, mulVec, map_sum, map_mul, Pi.star_apply, Complex.star_def,
     Complex.conj_conj, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -114,14 +119,6 @@ theorem isOpen_of {X : Type*} [TopologicalSpace X] {f p q : ℕ} (g : X → V (n
   refine isOpen_iff_mem_nhds.2 fun x0 hx0 => ?_
   exact Filter.eventually_all.2 fun k => posDef_eventually _ (cont_entry g hg k)
     (fun x => herm_one_sub _) x0 (hx0 k)
-
-theorem zPart_apply {f p q N' : ℕ} (v : V (nD f p q + N')) (j : Fin (nD f p q)) :
-    zPart v j = v (Fin.castAdd N' j) := by
-  simp [zPart]
-
-theorem tPart_apply {f p q N' : ℕ} (v : V (nD f p q + N')) (j : Fin N') :
-    tPart v j = v (Fin.natAdd (nD f p q) j) := by
-  simp [tPart]
 
 theorem isOpen_Dset (f p q : ℕ) : IsOpen (Dset f p q) :=
   isOpen_of (fun v : V (nD f p q) => v) cont_coord

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubini
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubini
+
+@[expose] public section
 
 open MeasureTheory Topology PositivityTheory.Rg.Tf.Loc
 open scoped ENNReal
@@ -9,10 +13,10 @@ theorem UpperTheory.V.Z.Tf.Orb.normEx :
   intro G _ _ _ _ _ _ _ _ ⟨K, hKo, hKc⟩ H hH μ hμ hr
   let r : G → G := fun g => (DoubleCoset.mk H K g).out
   have hr1 : ∀ g, ∃ h ∈ H, ∃ k ∈ K, r g = h * g * k := fun g => by
-    obtain ⟨h, k, hh, hk, e⟩ := DoubleCoset.mk_out_eq_mul H K g
+    obtain ⟨h, hh, k, hk, e⟩ := DoubleCoset.mk_out_eq_mul H K g
     exact ⟨h, hh, k, hk, e⟩
   have hr2 : ∀ h ∈ H, ∀ g, ∀ k ∈ K, r (h * g * k) = r g := fun h hh g k hk =>
-    congrArg Quotient.out ((DoubleCoset.eq H K _ _).2 ⟨h, hh, k, hk, rfl⟩).symm
+    congrArg Quotient.out ((@DoubleCoset.eq _ _ H K _ _).2 ⟨h, hh, k, hk, rfl⟩).symm
   let A : G → Set H := fun x => {h | x⁻¹ * h * x ∈ K}
   have hAo : ∀ x, IsOpen (A x) := fun x => hKo.preimage (by fun_prop)
   have hAc : ∀ x, IsCompact (A x) := fun x => by

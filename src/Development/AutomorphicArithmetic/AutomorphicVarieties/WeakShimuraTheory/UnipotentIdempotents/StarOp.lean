@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.UnipotentIdempotents.TCont
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.UnipotentIdempotents.TCont
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws GlobalTheory.GalOfCusp UpperTheory.V.Ws.Lk
 
@@ -12,10 +16,10 @@ theorem UpperTheory.V.Ws.Lk.polar :
     induction z using MonoidAlgebra.induction_linear with
     | zero => simp
     | add a b ha hb =>
-      rw [map_add, ha, hb, Matrix.diagonal_add]
+      rw [map_add (f := _), ha, hb, Matrix.diagonal_add]
       congr 1
       funext i
-      rw [map_add]
+      rw [map_add (f := _)]
     | single g b =>
       simp only [W.GDet.repAlg, MonoidAlgebra.lift_single, Ψ]
       ext i j
@@ -25,7 +29,7 @@ theorem UpperTheory.V.Ws.Lk.polar :
     induction z using MonoidAlgebra.induction_linear with
     | zero => simp [W.GFrame.star]
     | add a b ha hb =>
-      simp only [W.GFrame.star, map_add, MulOpposite.unop_add] at ha hb ⊢
+      simp only [W.GFrame.star, map_add (f := _), MulOpposite.unop_add] at ha hb ⊢
       rw [ha, hb]
     | single g b =>
       simp only [W.GFrame.star, W.GFrame.starOp, MonoidAlgebra.lift_single, Ψ]

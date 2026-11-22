@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsHolPeriods
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsHolPeriods
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.PELU
 open scoped Matrix
@@ -69,7 +74,8 @@ def conjMat (f g : (Π i, Matrix (Fin (d i)) (Fin (d i)) ℂ) →ₐ[ℂ] A) : A
 
 lemma conjMat_self (f : (Π i, Matrix (Fin (d i)) (Fin (d i)) ℂ) →ₐ[ℂ] A) :
     conjMat f f = 1 := by
-  simp only [conjMat, ← map_mul, unit_mul_same, ← map_sum, sum_unit_diag, map_one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [conjMat, ← map_mul, unit_mul_same, ← map_sum, sum_unit_diag, map_one]
 
 lemma conjMat_unit (f g : (Π i, Matrix (Fin (d i)) (Fin (d i)) ℂ) →ₐ[ℂ] A)
     (j' : J) (p q : Fin (d j')) :
@@ -104,7 +110,8 @@ lemma conjMat_intertwines (f g : (Π i, Matrix (Fin (d i)) (Fin (d i)) ℂ) →�
     (t : Π i, Matrix (Fin (d i)) (Fin (d i)) ℂ) :
     f t * conjMat f g = conjMat f g * g t := by
   rw [eq_sum_unit t]
-  simp only [map_sum, map_smul, Finset.sum_mul, Finset.mul_sum, smul_mul_assoc, mul_smul_comm,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, Finset.sum_mul, Finset.mul_sum, smul_mul_assoc, mul_smul_comm,
     conjMat_unit]
 
 end HolConj

@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdealWeight
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SphericalHeckeValuesSameParameters
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemCharIdem
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvMemDoubleCosetAndComm
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAntiJFrame
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSubquotientOfSameSphericalHeckeEigenvaluesStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CommutativeHeckeActsByScalarOnFixedVectorsStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenIsCompactUnitaryIntegralPointsStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LaurentFiniteOfTriangularSignedIndicatorsStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitarySatakeTransformIsLaurentPolynomialStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryIwasawaCellBoundSmallTorusDoubleCosetStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryDoubleCosetOfGLintDoubleCosetStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSymmetricElementaryDivisorsUnitaryStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsMultisetSatakeEigenvalueEqStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdealWeight
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SphericalHeckeValuesSameParameters
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemCharIdem
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvMemDoubleCosetAndComm
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAntiJFrame
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSubquotientOfSameSphericalHeckeEigenvaluesStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CommutativeHeckeActsByScalarOnFixedVectorsStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenIsCompactUnitaryIntegralPointsStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LaurentFiniteOfTriangularSignedIndicatorsStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitarySatakeTransformIsLaurentPolynomialStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryIwasawaCellBoundSmallTorusDoubleCosetStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryDoubleCosetOfGLintDoubleCosetStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSymmetricElementaryDivisorsUnitaryStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsMultisetSatakeEigenvalueEqStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,13 +97,13 @@ theorem satEig_self_ne_zero (hB : B.card = n) : satEig (qV E w) n B n ≠ 0 := b
   simp [satEig, Multiset.esymm, hp]
 
 theorem exists_eigenvalue_GL {x : V} {y : W} (hx : IsSatVecGL w π x B) (hy : IsSatVecGL w ρ y B) :
-    ∀ f ∈ Hecke ℂ (KGL w n), ∃ c : ℂ, heckeVec π (KGL w n) f x = c • x ∧ heckeVec ρ (KGL w n) f y = c • y := by
-  have hK : IsCommensurated (KGL w n) := Final.GLintComm E w n
+    ∀ f ∈ Hecke ℂ (KGL w (n := n)), ∃ c : ℂ, heckeVec π (KGL w (n := n)) f x = c • x ∧ heckeVec ρ (KGL w (n := n)) f y = c • y := by
+  have hK : IsCommensurated (KGL w (n := n)) := Final.GLintComm E w n
   obtain ⟨ϖ, hu⟩ := exists_isUnifV w
   have h0 := ne_zero_of_isUnifV hu
   let A : Submodule ℂ (GL (Fin n) (w.adicCompletion E) → ℂ) :=
-    { carrier := {f | f ∈ Hecke ℂ (KGL w n) ∧
-        ∃ c : ℂ, heckeVec π (KGL w n) f x = c • x ∧ heckeVec ρ (KGL w n) f y = c • y}
+    { carrier := {f | f ∈ Hecke ℂ (KGL w (n := n)) ∧
+        ∃ c : ℂ, heckeVec π (KGL w (n := n)) f x = c • x ∧ heckeVec ρ (KGL w (n := n)) f y = c • y}
       zero_mem' := ⟨zero_mem _, 0, by simp [heckeVec_zero_left]⟩
       add_mem' := by
         rintro f f' ⟨hf, c, e1, e2⟩ ⟨hf', c', e1', e2'⟩
@@ -111,18 +115,18 @@ theorem exists_eigenvalue_GL {x : V} {y : W} (hx : IsSatVecGL w π x B) (hy : Is
           by rw [heckeVec_smul_left hK hf, e2, mul_smul]⟩ }
   have hT : ∀ j ≤ n, Tj ℂ n (Ov E w) ϖ j ∈ A := fun j hj =>
     ⟨Tj_mem_hecke hu j, _, hx.2.2.2 ϖ hu j hj, hy.2.2.2 ϖ hu j hj⟩
-  have hc : ∀ f ∈ A, ∀ f' ∈ A, conv (KGL w n) f f' ∈ A := by
+  have hc : ∀ f ∈ A, ∀ f' ∈ A, conv (KGL w (n := n)) f f' ∈ A := by
     rintro f ⟨hf, c, e1, e2⟩ f' ⟨hf', c', e1', e2'⟩
     exact ⟨Final.HeckeConvMem _ _ ℂ hK _ hf _ hf', c' * c,
       by rw [heckeVec_conv hK hf hf' hx.2.1, e1', heckeVec_smul hK hf, e1, mul_smul],
       by rw [heckeVec_conv hK hf hf' hy.2.1, e2', heckeVec_smul hK hf, e2, mul_smul]⟩
-  have hTn : Tj ℂ n (Ov E w) ϖ n = dosetInd ℂ (KGL w n) (tor h0 fun _ => 1) := by
+  have hTn : Tj ℂ n (Ov E w) ϖ n = dosetInd ℂ (KGL w (n := n)) (tor h0 fun _ => 1) := by
     rw [Tj_eq h0]; simp
-  have shift : ∀ g, dosetInd ℂ (KGL w n) (tor h0 (fun _ => 1) * g) ∈ A → dosetInd ℂ (KGL w n) g ∈ A := by
+  have shift : ∀ g, dosetInd ℂ (KGL w (n := n)) (tor h0 (fun _ => 1) * g) ∈ A → dosetInd ℂ (KGL w (n := n)) g ∈ A := by
     intro g hg
-    have hz := Final.DosetIndMem _ (KGL w n) ℂ (tor h0 fun _ => 1)
-    have hg' := Final.DosetIndMem _ (KGL w n) ℂ g
-    have hcv : conv (KGL w n) (dosetInd ℂ (KGL w n) g) (dosetInd ℂ (KGL w n) (tor h0 fun _ => 1)) ∈ A := by
+    have hz := Final.DosetIndMem _ (KGL w (n := n)) ℂ (tor h0 fun _ => 1)
+    have hg' := Final.DosetIndMem _ (KGL w (n := n)) ℂ g
+    have hcv : conv (KGL w (n := n)) (dosetInd ℂ (KGL w (n := n)) g) (dosetInd ℂ (KGL w (n := n)) (tor h0 fun _ => 1)) ∈ A := by
       refine mem_of_supp A (Final.HeckeConvMem _ _ ℂ hK _ hg' _ hz) fun x hx => ?_
       obtain ⟨y, z, ⟨a, ha, b, hb, rfl⟩, ⟨c, hc, d, hd, rfl⟩, rfl⟩ := conv_supp hK hx
       rwa [dosetInd_congr ⟨a, ha, b * c * d, mul_mem (mul_mem hb hc) hd, ?_⟩]
@@ -136,7 +140,7 @@ theorem exists_eigenvalue_GL {x : V} {y : W} (hx : IsSatVecGL w π x B) (hy : Is
     exact ⟨hg', (satEig (qV E w) n B n)⁻¹ * c, by rw [mul_smul, ← e1, inv_smul_smul₀ hne],
       by rw [mul_smul, ← e2, inv_smul_smul₀ hne]⟩
   have hall : ∀ (N : ℕ) (a : Fin n → ℤ), Antitone a → (∀ i, 0 ≤ a i + N) →
-      dosetInd ℂ (KGL w n) (tor h0 a) ∈ A := by
+      dosetInd ℂ (KGL w (n := n)) (tor h0 a) ∈ A := by
     intro N
     induction N with
     | zero =>
@@ -162,8 +166,8 @@ theorem exists_eigenvalue_GL {x : V} {y : W} (hx : IsSatVecGL w π x B) (hy : Is
   omega
 
 variable (w n) in
-theorem isOpen_isCompact_KGL : IsOpen (KGL w n : Set (GL (Fin n) (w.adicCompletion E))) ∧
-    IsCompact (KGL w n : Set (GL (Fin n) (w.adicCompletion E))) := by
+theorem isOpen_isCompact_KGL : IsOpen (KGL w (n := n) : Set (GL (Fin n) (w.adicCompletion E))) ∧
+    IsCompact (KGL w (n := n) : Set (GL (Fin n) (w.adicCompletion E))) := by
   letI := GlobalTheory.LocalData.complRel w
   haveI := GlobalTheory.LocalData.isLocalField w
   rw [KGL, ← GlobalTheory.SmGL.SphCompletion.KO_completion w n]
@@ -173,7 +177,7 @@ theorem isSphericalGL_iff (α : Fin n → ℂˣ) (φ : GL (Fin n) (w.adicComplet
     letI := GlobalTheory.LocalData.complRel w
     haveI := GlobalTheory.LocalData.isLocalField w
     Formalism.UG.IsSpherical E w (fun i => (α i : ℂ)) φ ↔
-      ∀ (b : (borelGL (w.adicCompletion E) (Fin n)).Q) g, ∀ k ∈ KGL w n, φ (b * g * k) =
+      ∀ (b : (borelGL (w.adicCompletion E) (Fin n)).Q) g, ∀ k ∈ KGL w (n := n), φ (b * g * k) =
         ((borelGL (w.adicCompletion E) (Fin n)).deltaHalf b : ℂ) *
           unrTorus (vZ (w.adicCompletion E)) α ((borelGL (w.adicCompletion E) (Fin n)).p b) * φ g := by
   letI := GlobalTheory.LocalData.complRel w
@@ -183,7 +187,9 @@ theorem isSphericalGL_iff (α : Fin n → ℂˣ) (φ : GL (Fin n) (w.adicComplet
     refine MonoidHom.ext fun t => ?_
     rw [unrTorus_apply, unrTorus_apply]
     refine Finset.prod_congr rfl fun i _ => ?_
-    rw [unrChar_eq, GlobalTheory.SmGL.unrChar_apply, GlobalTheory.SmGL.SphCompletion.ord_completion]
+    rw [unrChar_apply, unrChar_apply]
+    change (α i) ^ GlobalTheory.SmGL.ord (w.adicCompletion E) (t i) = _
+    rw [GlobalTheory.SmGL.SphCompletion.ord_completion]
     rfl
   have e := GlobalTheory.LGrp.BorelCompletion.deltaHalf_mul_unrTorus E w n α
   rw [e0]
@@ -234,16 +240,16 @@ theorem hasSatakeGL_iff :
     obtain ⟨x, hx⟩ := h.2.exists_vec
     exact hasSatakeGL_of_isSatVecGL h.1 hx⟩
 
-theorem exists_hasSatGL (hπ : IsIrrSmooth π) (hf : FiniteDimensional ℂ (fixed π (KGL w n)))
-    (hs : LGrp.IsSpherical π (KGL w n)) : ∃ B, HasSatGL w π B := by
-  have hK : IsCommensurated (KGL w n) := Final.GLintComm E w n
+theorem exists_hasSatGL (hπ : IsIrrSmooth π) (hf : FiniteDimensional ℂ (fixed π (KGL w (n := n))))
+    (hs : LGrp.IsSpherical π (KGL w (n := n))) : ∃ B, HasSatGL w π B := by
+  have hK : IsCommensurated (KGL w (n := n)) := Final.GLintComm E w n
   obtain ⟨ϖ, hu⟩ := exists_isUnifV w
   have h0 := ne_zero_of_isUnifV hu
   obtain ⟨x, hx, hx0⟩ := (Submodule.ne_bot_iff _).1 hs
   choose c hc using fun j => GlobalTheory.T.commutative_hecke_acts_by_scalar_on_fixed_vectors _ _ π _ (isOpen_isCompact_KGL w n).2 hK (Final.HeckeCommGL E w n ℂ) hπ hf _
     (Tj_mem_hecke hu j)
   have c0 : c 0 = 1 := by
-    have e : Tj ℂ n (Ov E w) ϖ 0 = dosetInd ℂ (KGL w n) 1 := by
+    have e : Tj ℂ n (Ov E w) ϖ 0 = dosetInd ℂ (KGL w (n := n)) 1 := by
       rw [Tj_eq h0]
       congr 1
     refine smul_left_injective ℂ hx0 ?_
@@ -251,7 +257,7 @@ theorem exists_hasSatGL (hπ : IsIrrSmooth π) (hf : FiniteDimensional ℂ (fixe
   have cn : c n ≠ 0 := by
     intro e
     have h1 := hc n x hx
-    have hTn : Tj ℂ n (Ov E w) ϖ n = dosetInd ℂ (KGL w n) (tor h0 fun _ => 1) := by
+    have hTn : Tj ℂ n (Ov E w) ϖ n = dosetInd ℂ (KGL w (n := n)) (tor h0 fun _ => 1) := by
       rw [Tj_eq h0]; simp
     rw [e, zero_smul, hTn, heckeVec_dosetInd (R := {tor h0 fun _ => 1}) hx, Finset.sum_singleton] at h1
     · exact hx0 (by simpa [← Module.End.mul_apply, ← map_mul] using congrArg (π (tor h0 fun _ => 1)⁻¹) h1)
@@ -283,6 +289,7 @@ theorem exists_algHom_extend {A : Type} [CommRing A] [Algebra ℂ A] (B : Subalg
     rw [(RingHom.injective_iff_ker_eq_bot _).1 Subtype.val_injective]; exact bot_le)
   have key : ∀ b : B, Ideal.Quotient.mk Q b = algebraMap ℂ (A ⧸ Q) (χ b) := fun b => by
     have : b - algebraMap ℂ B (χ b) ∈ Q.comap (algebraMap B A) := by
+      change b - algebraMap ℂ B (χ b) ∈ Ideal.under B Q
       rw [e, RingHom.mem_ker]; simp
     exact Ideal.Quotient.eq.2 this
   letI := Ideal.Quotient.field Q
@@ -354,14 +361,16 @@ theorem labInd_eq {d : List ℤ} {t : GU σ n}
 theorem exists_labInd_eq (hU : IsUnramInv ϖ σ q) (g : GU σ n) :
     ∃ d, Good n d ∧ labInd σ n ϖ d = dosetInd ℂ (KU σ n) g := by
   obtain ⟨d, hd, a, ha, b, hb, e⟩ := GlobalTheory.T.exists_symmetric_elementaryDivisors_unitary L ϖ σ q n hU g
-  obtain ⟨t, ht⟩ := exists_diag hU hd
+  obtain ⟨t, ht, -⟩ := P.fSatake_diag_exists (σ := σ) (fun i : Fin n => ϖ ^ d.getD i.1 0) fun i => by
+    rw [map_zpow₀, hU.2.2.1, hd.rev, ← zpow_add₀ (unif_ne_zero hU), add_neg_cancel, zpow_zero]
   refine ⟨d, hd, (labInd_eq ht).trans (GlobalTheory.WeylGL.dosetInd_congr ?_).symm⟩
   exact GlobalTheory.T.unitaryDoubleCoset_of_GLintDoubleCoset L ϖ σ q n hU t g a b ha hb (Units.ext (by rw [e, ← ht]; rfl))
 
 theorem eq_zero_of_satU (hU : IsUnramInv ϖ σ q) {f : GU σ n → ℂ} (hf : f ∈ Hecke ℂ (KU σ n))
     (h : ∀ α : Fin (n / 2) → ℂˣ, SatU ϖ q f (fun i => (α i : ℂ)) = 0) : f = 0 := by
   have hm : ∀ d, Good n d → labInd σ n ϖ d ∈ Hecke ℂ (KU σ n) := fun d hd => by
-    obtain ⟨t, ht⟩ := exists_diag hU hd
+    obtain ⟨t, ht, -⟩ := P.fSatake_diag_exists (σ := σ) (fun i : Fin n => ϖ ^ d.getD i.1 0) fun i => by
+      rw [map_zpow₀, hU.2.2.1, hd.rev, ← zpow_add₀ (unif_ne_zero hU), add_neg_cancel, zpow_zero]
     rw [labInd_eq ht]
     exact Final.DosetIndMem _ _ ℂ t
   have h1 : f ∈ Submodule.span ℂ (labInd σ n ϖ '' {d | Good n d}) :=
@@ -401,7 +410,7 @@ theorem exists_satU_eq (hU : IsUnramInv ϖ σ q) (l : Hecke ℂ (KU σ n) →ₗ
   let R : AddMonoidAlgebra ℂ (Fin (n / 2) → ℤ) → Hecke ℂ (KU σ n) → Prop := fun b f =>
     ∀ α : Fin (n / 2) → ℂˣ, ev α b = SatU ϖ q f.1 fun i => (α i : ℂ)
   have Radd : ∀ {a b f g}, R a f → R b g → R (a + b) (f + g) := fun {a b f g} e e' α => by
-    rw [map_add, e, e']; exact ((law α).1 _ f.2 _ g.2).symm
+    rw [map_add (f := _), e, e']; exact ((law α).1 _ f.2 _ g.2).symm
   have Rmul : ∀ {a b f g}, R a f → R b g → R (a * b) ⟨_, Final.HeckeConvMem _ _ ℂ hK _ f.2 _ g.2⟩ :=
     fun {a b f g} e e' α => by rw [map_mul, e, e']; exact (hmul α _ f.2 _ g.2).symm
   have Ralg : ∀ c : ℂ, R (algebraMap ℂ _ c) (c • ⟨_, Final.DosetIndMem _ _ ℂ 1⟩) := fun c α => by
@@ -423,7 +432,7 @@ theorem exists_satU_eq (hU : IsUnramInv ϖ σ q) (l : Hecke ℂ (KU σ n) →ₗ
       map_one' := by rw [Runiq (hφ 1) (Ralg 1), one_smul, h1]
       map_mul' := fun a b => by rw [Runiq (hφ (a * b)) (Rmul (hφ a) (hφ b)), hm]
       map_zero' := by rw [Runiq (hφ 0) (by simpa using Ralg 0 : R 0 0), map_zero]
-      map_add' := fun a b => by rw [Runiq (hφ (a + b)) (Radd (hφ a) (hφ b)), map_add]
+      map_add' := fun a b => by rw [Runiq (hφ (a + b)) (Radd (hφ a) (hφ b)), map_add (f := _)]
       commutes' := fun c => by rw [Runiq (hφ (algebraMap ℂ B c)) (Ralg c), map_smul, h1]; simp }
   have hR : ∀ (f : Hecke ℂ (KU σ n)) (s : (Fin (n / 2) → ℤ) →₀ ℂ),
       (∀ α : Fin (n / 2) → ℂ, SatU ϖ q f.1 α = s.sum fun a c => c * ∏ i, α i ^ a i) → R (.ofCoeff s) f :=

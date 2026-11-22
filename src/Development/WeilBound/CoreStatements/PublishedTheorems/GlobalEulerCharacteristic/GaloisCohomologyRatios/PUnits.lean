@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.GaloisCohomologyRatios.Places
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.Kummer
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.GaloisCohomologyRatios.Places
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.Kummer
+
+@[expose] public section
 
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheory.Global
 

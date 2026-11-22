@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.ClassGroupActionIso
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.ClassGroupActionIso
+
+@[expose] public section
 
 open NumberField Module
 open scoped nonZeroDivisors
@@ -9,9 +13,17 @@ noncomputable section
 namespace GroundTheory.Global
 namespace Elliptic
 
+abbrev periodLatticeEnd (L : PeriodPair) : Subring ℂ where
+  carrier := {a | ∀ z ∈ L.lattice, a * z ∈ L.lattice}
+  zero_mem' z _ := by rw [zero_mul]; exact zero_mem _
+  one_mem' z hz := by simpa only [one_mul] using hz
+  add_mem' ha hb z hz := by rw [add_mul]; exact add_mem (ha z hz) (hb z hz)
+  neg_mem' ha z hz := by rw [neg_mul]; exact neg_mem (ha z hz)
+  mul_mem' ha hb z hz := by rw [mul_assoc]; exact ha _ (hb z hz)
+
 variable {K : Type*} [Field K] [NumberField K] (σ : K →+* ℂ)
 
-def idealLattice (I : FractionalIdeal (𝓞 K)⁰ K) : Submodule ℤ ℂ :=
+def idealLattice (σ : K →+* ℂ) (I : FractionalIdeal (𝓞 K)⁰ K) : Submodule ℤ ℂ :=
   Submodule.map σ.toIntAlgHom.toLinearMap ((I : Submodule (𝓞 K) K).restrictScalars ℤ)
 
 theorem mem_idealLattice {I : FractionalIdeal (𝓞 K)⁰ K} {z : ℂ} :
@@ -42,12 +54,9 @@ def cmRingEquiv : 𝓞 K ≃+* cmRing σ :=
     ⟨fun a b h ↦ (FaithfulSMul.algebraMap_injective (𝓞 K) K) (σ.injective (congrArg Subtype.val h)),
       (σ.comp (algebraMap (𝓞 K) K)).rangeRestrict_surjective⟩
 
-theorem cmRingEquiv_apply (a : 𝓞 K) : (cmRingEquiv σ a : ℂ) = σ (algebraMap (𝓞 K) K a) :=
-  rfl
-
 section Quadratic
 
-variable (hK : finrank ℚ K = 2) [IsTotallyComplex K]
+variable (hK : finrank ℚ K = 2) [_root_.NumberField.IsTotallyComplex K]
 include hK
 
 theorem exists_rat_eq_of_im_eq_zero {x : K} (hx : (σ x).im = 0) : ∃ q : ℚ, algebraMap ℚ K q = x := by
@@ -99,7 +108,7 @@ theorem exists_ringOfIntegers_not_rat : ∃ θ : 𝓞 K, ∀ q : ℚ, algebraMap
   have := Subalgebra.bot_eq_top_iff_finrank_eq_one.mp htop
   omega
 
-omit [IsTotallyComplex K] in
+omit [_root_.NumberField.IsTotallyComplex K] in
 theorem card_chooseBasisIndex (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ) :
     Fintype.card (Free.ChooseBasisIndex ℤ I) = 2 := by
   rw [← hK, ← finrank_eq_card_basis (basisOfFractionalIdeal K I)]
@@ -107,13 +116,13 @@ theorem card_chooseBasisIndex (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ) :
 def idealBasis (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ) : Basis (Fin 2) ℚ K :=
   (basisOfFractionalIdeal K I).reindex (Fintype.equivFinOfCardEq (card_chooseBasisIndex hK I))
 
-omit [IsTotallyComplex K] in
+omit [_root_.NumberField.IsTotallyComplex K] in
 theorem mem_span_idealBasis {I : (FractionalIdeal (𝓞 K)⁰ K)ˣ} {x : K} :
     x ∈ Submodule.span ℤ (Set.range (idealBasis hK I)) ↔ x ∈ (I : FractionalIdeal (𝓞 K)⁰ K) := by
   rw [idealBasis, Basis.range_reindex]
   exact mem_span_basisOfFractionalIdeal K
 
-omit [IsTotallyComplex K] in
+omit [_root_.NumberField.IsTotallyComplex K] in
 theorem idealBasis_mem (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ) (i : Fin 2) :
     idealBasis hK I i ∈ (I : FractionalIdeal (𝓞 K)⁰ K) :=
   (mem_span_idealBasis hK).1 (Submodule.subset_span ⟨i, rfl⟩)
@@ -172,7 +181,7 @@ theorem lattice_idealPeriodPair (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ) :
     simp [Fin.sum_univ_two, idealPeriodPair, zsmul_eq_mul]
 
 theorem latticeEnd_idealPeriodPair (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ) :
-    latticeEnd (idealPeriodPair σ hK I) = cmRing σ := by
+    periodLatticeEnd (idealPeriodPair σ hK I) = cmRing σ := by
   ext α
   show (∀ l ∈ (idealPeriodPair σ hK I).lattice, α * l ∈ (idealPeriodPair σ hK I).lattice) ↔ _
   rw [lattice_idealPeriodPair]
@@ -211,12 +220,12 @@ theorem latticeEnd_idealPeriodPair (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ) :
     rw [RingHom.comp_apply, ← map_mul, ← Algebra.smul_def]
     exact map_mem_idealLattice σ (Submodule.smul_mem _ a hx)
 
-theorem exists_idealLattice_of_latticeEnd_eq (L : PeriodPair) (hL : latticeEnd L = cmRing σ) :
+theorem exists_idealLattice_of_latticeEnd_eq (L : PeriodPair) (hL : periodLatticeEnd L = cmRing σ) :
     ∃ (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ) (c : ℂ), c ≠ 0 ∧
       (L.lattice : Set ℂ) = (c * ·) '' idealLattice σ I := by
   have hω : L.ω₁ ≠ 0 := by simpa using L.indep.ne_zero 0
   obtain ⟨θ, hθ⟩ := exists_ringOfIntegers_not_rat hK (K := K)
-  have hθL : σ (algebraMap (𝓞 K) K θ) ∈ latticeEnd L := by rw [hL]; exact ⟨θ, rfl⟩
+  have hθL : σ (algebraMap (𝓞 K) K θ) ∈ periodLatticeEnd L := by rw [hL]; exact ⟨θ, rfl⟩
   obtain ⟨m, n, hmn⟩ := PeriodPair.mem_lattice.1 (hθL _ L.ω₁_mem_lattice)
   have hn : n ≠ 0 := by
     rintro rfl
@@ -238,13 +247,13 @@ theorem exists_idealLattice_of_latticeEnd_eq (L : PeriodPair) (hL : latticeEnd L
   let M : Submodule (𝓞 K) K :=
     { carrier := {x | σ x * L.ω₁ ∈ L.lattice}
       add_mem' := fun {a b} ha hb ↦ by
-        simp only [Set.mem_setOf_eq, map_add, add_mul] at *
+        simp only [Set.mem_setOf_eq, map_add (f := _), add_mul] at *
         exact add_mem ha hb
       zero_mem' := by simp
       smul_mem' := fun a x hx ↦ by
         simp only [Set.mem_setOf_eq] at *
         rw [Algebra.smul_def, map_mul, mul_assoc]
-        have ha : σ (algebraMap (𝓞 K) K a) ∈ latticeEnd L := by rw [hL]; exact ⟨a, rfl⟩
+        have ha : σ (algebraMap (𝓞 K) K a) ∈ periodLatticeEnd L := by rw [hL]; exact ⟨a, rfl⟩
         exact ha _ hx }
   have hmem : ∀ x : K, x ∈ M ↔ σ x * L.ω₁ ∈ L.lattice := fun _ ↦ Iff.rfl
   have h1 : (1 : K) ∈ M := by rw [hmem, map_one, one_mul]; exact L.ω₁_mem_lattice
@@ -254,7 +263,7 @@ theorem exists_idealLattice_of_latticeEnd_eq (L : PeriodPair) (hL : latticeEnd L
     obtain ⟨a, b, hab⟩ := PeriodPair.mem_lattice.1 ((hmem x).1 hx)
     refine ⟨a, b, σ.injective ?_⟩
     apply mul_right_cancel₀ hω
-    rw [← hab, map_add, map_mul, map_intCast, map_intCast, add_mul, mul_assoc, hy]
+    rw [← hab, map_add (f := _), map_mul, map_intCast, map_intCast, add_mul, mul_assoc, hy]
   have hspan : M = Submodule.span (𝓞 K) {1, y} := by
     apply le_antisymm
     · intro x hx
@@ -291,17 +300,17 @@ theorem exists_idealLattice_of_latticeEnd_eq (L : PeriodPair) (hL : latticeEnd L
         exact Submodule.smul_of_tower_mem _ a (Submodule.subset_span (by simp))
       · rw [← zsmul_eq_mul]
         exact Submodule.smul_of_tower_mem _ b (Submodule.subset_span (by simp))
-    · rw [map_add, map_mul, map_intCast, map_intCast]
+    · rw [map_add (f := _), map_mul, map_intCast, map_intCast]
       linear_combination (b : ℂ) * hy
   · rintro ⟨w, hw, rfl⟩
     obtain ⟨x, hx, rfl⟩ := (mem_idealLattice σ).1 hw
     rw [mul_comm]
     exact (hmem x).1 hx
 
-theorem latticeEnd_eq_cmRing_of_ringEquiv (L : PeriodPair) (e : latticeEnd L ≃+* 𝓞 K) :
-    latticeEnd L = cmRing σ := by
+theorem latticeEnd_eq_cmRing_of_ringEquiv (L : PeriodPair) (e : periodLatticeEnd L ≃+* 𝓞 K) :
+    periodLatticeEnd L = cmRing σ := by
   have : Algebra.IsQuadraticExtension ℚ K := { finrank_eq_two' := hK }
-  let g : 𝓞 K →+* ℂ := (latticeEnd L).subtype.comp e.symm.toRingHom
+  let g : 𝓞 K →+* ℂ := (periodLatticeEnd L).subtype.comp e.symm.toRingHom
   have hg : Function.Injective g := Subtype.val_injective.comp e.symm.injective
   let τ : K →+* ℂ := IsFractionRing.lift hg
   have hτ : ∀ a : 𝓞 K, τ (algebraMap (𝓞 K) K a) = g a := IsFractionRing.lift_algebraMap hg
@@ -312,7 +321,7 @@ theorem latticeEnd_eq_cmRing_of_ringEquiv (L : PeriodPair) (e : latticeEnd L ≃
     let E : IntermediateField ℚ ℂ := ψ.toRatAlgHom.fieldRange
     have e₁ : K ≃ₐ[ℚ] E := AlgEquiv.ofInjectiveField ψ.toRatAlgHom
     have hE := @AlgHom.fieldRange_of_normal ℚ ℂ _ _ _ E
-      (by convert Normal.of_algEquiv (h := hN) e₁; exact Subsingleton.elim _ _)
+      (Normal.of_algEquiv (h := hN) e₁)
       (φ.toRatAlgHom.comp e₁.symm.toAlgHom)
     have hx : φ x ∈ (φ.toRatAlgHom.comp e₁.symm.toAlgHom).fieldRange := ⟨e₁ x, by simp⟩
     have hx' : φ x ∈ E := hE ▸ hx

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+
+@[expose] public section
+
 open Module NumberField GlobalTheory.CompanionTheory.Ar.HT
 
 namespace GlobalTheory.CompanionTheory.Ar.HT

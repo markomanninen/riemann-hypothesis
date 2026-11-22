@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.SemistableReduction.LatAll
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.LUStatementPfA
+module
+
+public import Mathlib
+public import ReciprocityTheory.SemistableReduction.LatAll
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.LUStatementPfA
+
+@[expose] public section
 
 open Matrix MvPolynomial ReciprocityTheory.MultiplicativeHeights
 

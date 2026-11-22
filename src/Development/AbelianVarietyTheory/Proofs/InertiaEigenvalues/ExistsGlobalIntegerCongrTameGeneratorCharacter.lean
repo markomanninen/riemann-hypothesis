@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTypeGroupBlockLift
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GoodIdempotentFixesOfOnlySeriesOfLabelActs
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroInertia
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTypeGroupBlockLift
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GoodIdempotentFixesOfOnlySeriesOfLabelActs
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroInertia
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain Polynomial GlobalTheory.HeightCounting GlobalTheory.RowTie GlobalTheory.SplitRead GlobalTheory.NPin GlobalTheory.PendOf
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -30,9 +35,9 @@ theorem exists_int_cong_tg : ∀ (D : D7) (k : Fin 2) (v : D.nd.PlG k), ∃ (u :
   have hζn : ζ ^ (normV w - 1) = 1 := by
     rw [hζ, div_pow, ← map_pow, hπ, AlgEquiv.commutes, ← hπ, div_self (pow_ne_zero _ h0)]
   have hv1 : A.valuation ζ = 1 := by
-    refine pow_left_injective hn.ne' ?_
-    show _ ^ _ = 1 ^ _
-    rw [← map_pow, hζn, map_one, one_pow]
+    have heq : (A.valuation ζ) ^ (normV w - 1) = (1 : A.ValueGroup) ^ (normV w - 1) := by
+      rw [← map_pow, hζn, map_one, one_pow]
+    exact pow_left_injective hn.ne' heq
 
   have hζA : ζ ∈ A := (A.valuation_le_one_iff ζ).mp hv1.le
   haveI hcp : CharP (IsLocalRing.ResidueField A) (D.host.g k) := by
@@ -55,7 +60,7 @@ theorem exists_int_cong_tg : ∀ (D : D7) (k : Fin 2) (v : D.nd.PlG k), ∃ (u :
   have hroots := FiniteField.roots_X_pow_card_sub_X (ZMod (D.host.g k))
   rw [ZMod.card] at hroots
   have hprod := prod_multiset_X_sub_C_of_monic_of_roots_card_eq hmon (by
-    rw [hroots, FiniteField.X_pow_card_sub_X_natDegree_eq _ hp.one_lt, Finset.card_val, Finset.card_univ,
+    rw [hroots, Polynomial.natDegree_X_pow_sub_X hp.one_lt, Finset.card_val, Finset.card_univ,
       ZMod.card])
   have hev := congrArg (fun P => (P.map (ZMod.castHom (dvd_refl _) (IsLocalRing.ResidueField A))).eval z) hprod
   simp only [Polynomial.map_multiset_prod, Multiset.map_map, Function.comp_def, Polynomial.map_sub, Polynomial.map_X,

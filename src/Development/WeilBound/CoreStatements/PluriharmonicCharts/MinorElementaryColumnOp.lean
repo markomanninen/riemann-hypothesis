@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.IsBlockMapInitialVertex
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ElementaryFactorCommutation
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockDiagonalMinorVanishing
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.IsBlockMapInitialVertex
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ElementaryFactorCommutation
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockDiagonalMinorVanishing
+
+@[expose] public section
+
 open MvPolynomial Matrix ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped Classical
 
@@ -10,8 +15,6 @@ noncomputable section
 set_option linter.unusedSectionVars false
 
 namespace PositivityTheory.Xgp.W
-
-local instance (priority := 2000) intAlg3 {Φ : Type} [Field Φ] : Algebra ℤ (RatFunc Φ) := Ring.toIntAlgebra _
 
 open GlobalTheory.CompanionTheory.Ar.PB.CovGraph.GenIdeal GlobalTheory.CompanionTheory.Ar.PB.WSq
 
@@ -135,10 +138,9 @@ theorem minor_other (hj : j ≤ N) (hb : (b : ℕ) = a + 1) (hab : (b : ℕ) < j
     (t : R) {i : Fin N} (hi : i ≠ a) :
     minorIJ (h * (1 + Matrix.single cb ca t)) I (stepCols N j i) = minorIJ h I (stepCols N j i) := by
   rw [MinorCalc.minorIJ_mul_of_support _ _ _ _ fun k c hc hk => ?_]
-  · rw [MinorCalc.minorIJ_eq_det (1 + Matrix.single cb ca t) _ _ _ rfl rfl, Matrix.det_of_lowerTriangular
+  · rw [MinorCalc.minorIJ_eq_det (1 + Matrix.single cb ca t) _ _ _ rfl rfl, Matrix.det_of_isLowerTriangular
       ((1 + Matrix.single cb ca t).submatrix _ _) (fun x x' hx =>
-        (elem_lowerUni hcb t).2 _ _ (((stepCols N j i).orderEmbOfFin rfl).strictMono (by exact hx))),
-]
+        (elem_lowerUni hcb t).2 _ _ (((stepCols N j i).orderEmbOfFin rfl).strictMono hx))]
     have hone : ∀ x, (1 + Matrix.single cb ca t).submatrix ((stepCols N j i).orderEmbOfFin rfl)
         ((stepCols N j i).orderEmbOfFin rfl) x x = 1 := fun x => (elem_lowerUni hcb t).1 _
     simp only [hone, Finset.prod_const_one, mul_one]
@@ -165,7 +167,8 @@ theorem wCo_eq (hb : (b : ℕ) = a + 1) (hab : (b : ℕ) < j ∨ j ≤ (a : ℕ)
   rcases q with ⟨_ | k, m⟩
   · simp only [FlagModel.wCo, penCo, vecB]
     rw [Finset.sum_congr rfl fun I _ => by rw [minor_elem M.j_le hb hab hca hcb], M.y_step _ _ hk m]
-    simp only [CPts.minorIJ_map, mul_add, Finset.sum_add_distrib, map_sum, map_mul, Finset.mul_sum, mul_left_comm t]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [CPts.minorIJ_map, mul_add, Finset.sum_add_distrib, map_sum, map_mul, Finset.mul_sum, mul_left_comm t]
   · rfl
 
 theorem charZero_of_model (M : FlagModel y Ψ N j) : CharZero Φ :=
@@ -190,7 +193,8 @@ theorem blocks_of_model (M : FlagModel y Ψ N j) (k : K) : ∃ i, y ⟨k, i⟩ �
       (ValuationSubring.mem_top _) (fun _ _ => ValuationSubring.mem_top _) (fun _ _ => ValuationSubring.mem_top _)
       (fun I I' hI hI' => by
           have := congrArg am (hF.2.2.1 p k hp I I' hI hI')
-          rw [map_sum] at this
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum] at this
           simp only [map_mul] at this
           rw [this]
           split_ifs <;> simp)
@@ -254,7 +258,7 @@ theorem image_snd (hb : (b : ℕ) = a + 1) (hab : (b : ℕ) < j ∨ j ≤ (a : �
     have hdiag : ∀ c, B τ c c ≠ 0 := fun c h0 => by
       have h1 : (M.g τ).det * (B τ).det = 1 := by rw [← det_mul, (hB τ).2.2.det]
       have h2 : ∏ i, B τ i i = 0 := Finset.prod_eq_zero (Finset.mem_univ c) h0
-      rw [det_of_upperTriangular (hB τ).2.1, h2, mul_zero] at h1
+      rw [det_of_isUpperTriangular (hB τ).2.1, h2, mul_zero] at h1
       exact zero_ne_one h1
     have hden : φ (B τ cb cb) - RatFunc.X * φ (B τ ca cb) ≠ 0 := fun h0 => by
       have h3 : algebraMap (Polynomial Φ) (RatFunc Φ)
@@ -308,7 +312,8 @@ theorem image_snd (hb : (b : ℕ) = a + 1) (hab : (b : ℕ) < j ∨ j ≤ (a : �
         rfl
       · simp only [Function.comp, h1 ⟨k, m⟩ e]
         show φ (y ⟨k, m⟩) = _
-        rw [M.y_step p k hp m, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [M.y_step p k hp m, map_sum]
         refine Finset.sum_congr rfl fun I _ => ?_
         rw [map_mul]
         congr 1

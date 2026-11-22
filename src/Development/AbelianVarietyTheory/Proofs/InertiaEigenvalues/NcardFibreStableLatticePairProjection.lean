@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ComapInlMemStLat
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardStableLatticesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ComapInlMemStLat
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardStableLatticesStatement
+
+@[expose] public section
 
 noncomputable section
 

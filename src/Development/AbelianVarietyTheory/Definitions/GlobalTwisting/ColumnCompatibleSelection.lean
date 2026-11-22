@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ValidForConstructedPointClassesEventuallyWorking
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SquareIntegrableColumnsCompatible
-import Formalism.LocalToGlobal.ThresholdSelection
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.STiesR
-import Formalism.LocalToGlobal.IndefiniteReal.RealTB
-import Formalism.LocalToGlobal.Divisibility.NumericScaleExponentEqExtended
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ValidForConstructedPointClassesEventuallyWorking
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SquareIntegrableColumnsCompatible
+public import Formalism.LocalToGlobal.ThresholdSelection
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.STiesR
+public import Formalism.LocalToGlobal.IndefiniteReal.RealTB
+public import Formalism.LocalToGlobal.Divisibility.NumericScaleExponentEqExtended
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,9 +61,9 @@ def zsc {D : D7} {O : Obj D} (P : Formalism.L2.Rows.RowSideFamily O.ex) (Del h0 
     let z := Formalism.L2.DIV.ZscOfNum3 P.A3 P.P0 P.ψ0 (Formalism.L2.DIV.ofRecord D O.L Del h0) (Equiv.refl _) O.L.Nc Zs
     { z with l6m := fun j => z.l6m j - c * z.l6u, l6u := 0 }
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure Bundle (D : D7) (O : Obj D) (c : ℝ) : Type 1 where
   R : Formalism.L2.RecT O.ex
   S : Formalism.L2.SG.SpectralTiesReal.STiesR R
@@ -69,11 +73,9 @@ structure Bundle (D : D7) (O : Obj D) (c : ℝ) : Type 1 where
   C : SquareIntegrableColumnsCompatible R.T P
   B : Formalism.IndefR.RealTB R P C.c.face C.Sp (zsc P DH.1.1 DH.1.2 c) S
 
-abbrev BdR : BdT := fun _ O _ => Formalism.L2.RecT O.ex
-
 variable {𝒜 : FamClass} (σ : RawSel Bundle 𝒜)
 
-def sel : Formalism.L2.TSel 𝒜 := fun Fm hc => ⟨Fm.x1, fun x hx _ i => (σ Fm hc x hx i).R⟩
+def sel : Formalism.L2.TSel 𝒜 := fun Fm hc => (⟨Fm.x1, fun x hx _ i => (σ Fm hc x hx i).R⟩ : Formalism.L2.TSelF Fm)
 
 def selS : SelS 𝒜 (sel σ) := fun Fm hc x hx _ i => (σ Fm hc x hx i).S
 

@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.Models
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BaseChangePointsCompatStatement
-import Development.WeilBound.CoreStatements.HodgeTatePoints.TwhopfSec
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatDesc
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BaseChangePointsCompatStatement
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.TwhopfSec
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatDesc
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
-open GlobalTheory.CompanionTheory.Ar.BT GroundTheory.PAdicHodge
+open GlobalTheory.CompanionTheory.Ar.BT
 
 noncomputable section
 
@@ -50,7 +54,7 @@ def kapL (κ : FractionRing R →+* FractionRing R')
 lemma inj_one (κ : FractionRing R →+* FractionRing R')
     (hκ : κ.comp (algebraMap R _) = (algebraMap R' _).comp (algebraMap R R')) :
     Function.Injective ((kapL κ hκ).liftBaseChange R') := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro u hu
   obtain ⟨r, d, hd, rfl⟩ := tensor_frac_form u
   rw [LinearMap.liftBaseChange_tmul] at hu
@@ -67,7 +71,7 @@ lemma inj_one (κ : FractionRing R →+* FractionRing R')
 lemma inj_pi {T : Type} [Fintype T] [DecidableEq T] (κ : FractionRing R →+* FractionRing R')
     (hκ : κ.comp (algebraMap R _) = (algebraMap R' _).comp (algebraMap R R')) :
     Function.Injective (((kapL κ hκ).compLeft T).liftBaseChange R') := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro y hy
   have key : ∀ (y : R' ⊗[R] (T → FractionRing R)) (h : T),
       (kapL κ hκ).liftBaseChange R' (TensorProduct.piRight R R' R' (fun _ : T => FractionRing R) y h) =
@@ -76,7 +80,7 @@ lemma inj_pi {T : Type} [Fintype T] [DecidableEq T] (κ : FractionRing R →+* F
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul r f => simp [TensorProduct.piRight_apply, LinearMap.liftBaseChange_tmul]
-    | add a b ha hb => simp only [map_add, Pi.add_apply, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), Pi.add_apply, ha, hb]
   apply (TensorProduct.piRight R R' R' (fun _ : T => FractionRing R)).injective
   rw [map_zero]
   funext h
@@ -93,7 +97,7 @@ lemma tensor_pi_ext {T Q : Type} [Fintype T] [DecidableEq T] [AddCommGroup Q] [M
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul r f => simp [TensorProduct.piRight_apply]
-    | add a b ha hb => simp only [map_add, Pi.add_apply, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), Pi.add_apply, ha, hb]
   apply (TensorProduct.piRight R R' R' (fun _ : T => Q)).injective
   rw [map_zero]
   funext t
@@ -134,7 +138,8 @@ theorem alg_core {T : Type} [CommGroup T] [Finite T] [Module.Flat R R']
       fun h => algebraMap R' (FractionRing R') (g (t * h)) := by
     intro t
     funext h
-    simp only [z, map_sum, LinearMap.lTensor_tmul, cW, LinearMap.liftBaseChange_tmul, Finset.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [z, map_sum, LinearMap.lTensor_tmul, cW, LinearMap.liftBaseChange_tmul, Finset.sum_apply,
       Pi.smul_apply]
     rw [Finset.sum_eq_single (t * h)]
     · have := congr($hκ 1)
@@ -151,7 +156,7 @@ theorem alg_core {T : Type} [CommGroup T] [Finite T] [Module.Flat R R']
       induction y using TensorProduct.induction_on with
       | zero => simp
       | tmul r n => simp [cN, cW, LinearMap.liftBaseChange_tmul]
-      | add p q hp hq => simp only [map_add, hp, hq]
+      | add p q hp hq => simp only [map_add (f := _), hp, hq]
     have hle : Submodule.span R' {w : T → FractionRing R' | ∃ n ∈ N, w = fun h => κ (n h)} ≤
         LinearMap.range cN := by
       rw [Submodule.span_le]
@@ -176,7 +181,8 @@ theorem alg_core {T : Type} [CommGroup T] [Finite T] [Module.Flat R R']
   let e := ((Algebra.linearMap R R').compLeft T).liftBaseChange R'
   have hez : e z = g := by
     funext h
-    simp only [z, e, map_sum, LinearMap.liftBaseChange_tmul, Finset.sum_apply, Pi.smul_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [z, e, map_sum, LinearMap.liftBaseChange_tmul, Finset.sum_apply, Pi.smul_apply]
     rw [Finset.sum_eq_single h]
     · simp [LinearMap.compLeft_apply]
     · intro b' _ hb'
@@ -191,7 +197,7 @@ theorem alg_core {T : Type} [CommGroup T] [Finite T] [Module.Flat R R']
       simp only [LinearMap.lTensor_tmul, e, LinearMap.liftBaseChange_tmul]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨m, m.2, rfl⟩)
     | add p q hp hq =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact Submodule.add_mem _ hp hq
   rw [← hez, ← hy]
   exact hall y
@@ -288,7 +294,6 @@ lemma pushout_induction {A B C D : CommRingCat.{0}} {a : A ⟶ B} {c : A ⟶ C} 
   haveI : IsScalarTower A C D := .of_algebraMap_eq fun r => congr($(h.w).hom r)
   have hpo : Algebra.IsPushout A C B D := CommRingCat.isPushout_iff_isPushout.mp h.flip
   induction x using hpo.out.inductionOn with
-  | zero => exact h0
   | tmul y => exact h1 y
   | smul s n hn => exact h2 s n hn
   | add x y hx hy => exact h3 x y hx hy
@@ -320,8 +325,9 @@ theorem val_mem_span [Finite T] [Module.Flat R R'] (Γ : QFGroup R T) (Γ' : QFG
   · intro s
     refine Submodule.subset_span ⟨fun t => valAt (Γ.pt t).left ⊤ (top_le_pre _) s, ⟨s, fun _ _ => rfl⟩, ?_⟩
     funext t
+    have hpt := genericPoint_baseChange R T Γ R' Γ' F hbc κ hκ t
     rw [← valAt_comp (Γ'.pt t).left F ⊤ ⊤ _ (top_le_pre _) (top_le_pre _),
-      valAt_congr (GlobalTheory.T.base_change_points_compat R T Γ R' Γ' F hbc κ hκ t) _ _ (top_le_pre _),
+      valAt_congr hpt _ _ (top_le_pre _),
       valAt_map κ _ _ (top_le_pre _)]
   · intro c n hn
     have : (fun t => valAt (Γ'.pt t).left ⊤ (top_le_pre _) (((Γ'.G.hom.appLE ⊤ ⊤ (top_le_pre _)).hom c) * n)) =
@@ -341,7 +347,7 @@ theorem val_mem_span [Finite T] [Module.Flat R R'] (Γ : QFGroup R T) (Γ' : QFG
     exact Submodule.add_mem _ hp hq
 
 lemma flat_inj [Module.Flat R R'] : Function.Injective (algebraMap R R') := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro r hr
   by_contra hr0
   have hreg : IsSMulRegular R' r :=
@@ -388,8 +394,9 @@ lemma ext_le_btOrder [Finite T] (Γ : QFGroup R T) (Γ' : QFGroup R' T) (F : Γ'
   refine (mem_btOrder_iff Γ' _).2 fun t => ?_
   obtain ⟨s, hs⟩ := (mem_btOrder_iff Γ f).1 hf t
   refine ⟨(F.appLE ⊤ ⊤ (top_le_pre _)).hom s, fun h hh => ?_⟩
+  have hpt := genericPoint_baseChange R T Γ R' Γ' F hbc κ hκ h
   rw [← valAt_comp (Γ'.pt h).left F ⊤ ⊤ _ _ (top_le_pre _),
-    valAt_congr (GlobalTheory.T.base_change_points_compat R T Γ R' Γ' F hbc κ hκ h) _ _ (top_le_pre _),
+    valAt_congr hpt _ _ (top_le_pre _),
     valAt_map κ _ _ (top_le_pre _), hs h, hκ']
 
 end Sch

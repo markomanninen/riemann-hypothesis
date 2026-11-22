@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntAFSmulMemLatOF
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexNeZeroOfFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticFormUnitaryPairAction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntAFSmulMemLatOF
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexNeZeroOfFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticFormUnitaryPairAction
+
+@[expose] public section
+
 open scoped TensorProduct Matrix Topology
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -34,8 +39,8 @@ theorem symplOHF_actOF (hS : IsHermND σ JS) (ξ₀ : E) (g : GAF σ JS) (h : GA
   unfold symplOHF symplOF
   rw [hOF_actOF hS]
 
-variable (F E) in
 
+variable (F E) in
 def realIdF : AEF F E := algebraMap (AF F) (AEF F E) (pairA F 1 0)
 
 theorem infPartF_realIdF : infPartF F E (realIdF F E) = 1 := by
@@ -154,8 +159,8 @@ theorem heis_fin (hS : IsHermND σ JS) (hR : IsLatRepF σ JS JT ξ₀ ψ hc Λ w
 
 end GlobalTheory.FinLatHeis
 
-open GlobalTheory.FinLatF GlobalTheory.FinLatHeis in
 
+open GlobalTheory.FinLatF GlobalTheory.FinLatHeis in
 theorem GlobalTheory.FinLatHeis.isLatRepF_heis : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E),
     B.IsGood σ → ∀ (nS nT : ℕ) (JS : Matrix (Fin nS) (Fin nS) E) (JT : Matrix (Fin nT) (Fin nT) E),
       IsHermND σ JS → IsHermND σ JT → ∀ ξ₀ : E, ξ₀ ≠ 0 → σ ξ₀ = -ξ₀ →

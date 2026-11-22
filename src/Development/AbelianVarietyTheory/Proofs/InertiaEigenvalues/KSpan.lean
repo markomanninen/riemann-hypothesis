@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WordAppendSingle
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WordAppendSingle
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,7 +12,7 @@ open NumberField Matrix MeasureTheory GlobalTheory.CuspRep
 
 namespace GlobalTheory.MSpanDecay
 
-variable (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ)
+variable (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ)
 
 def kSpan : Submodule ℂ (GA E a → ℂ) :=
   Submodule.span ℂ {F | ∃ (X : Type) (_ : MeasurableSpace X) (ν : Measure X) (_ : SFinite ν) (k : X → ℂ)

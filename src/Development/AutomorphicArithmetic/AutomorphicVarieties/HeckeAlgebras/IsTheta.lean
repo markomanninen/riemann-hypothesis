@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.CoefficientRepTrivialOnUnramified
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.GalUnitary
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ArithmeticPointClassicality
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.CoefficientRepTrivialOnUnramified
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.GalUnitary
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ArithmeticPointClassicality
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,14 +28,14 @@ section Type_
 variable {L Ω : Type} [Field L] [NumberField L] [Field Ω] [Algebra L Ω] [IsAlgClosure L Ω] {l : ℕ} [Fact l.Prime] {n : ℕ}
   {St : Type} {wt : St → Plc L} {At : St → ValuationSubring Ω} (ht : ∀ u, IsPlaceOver (At u) (wt u))
 
-variable (n wt) in
 
+variable (n wt) in
 abbrev KT : Subgroup (GV n wt) := Subgroup.pi Set.univ fun u => KO ((wt u).adicCompletion L) (Fin n)
 
 def IsType {m : ℕ} (τ₀ : KT n wt →* GL (Fin m) ℂ) (χ : ∀ u, Fin n → Ine (F := L) (At u) →* ℂˣ) : Prop :=
   IsOpen (τ₀.ker : Set (KT n wt)) ∧
   ∀ (M : Type) [AddCommGroup M] [Module ℂ M] [Nontrivial M] (ρ : Representation ℂ (GV n wt) M) (σ : ∀ u, SmIrr (GLw n (wt u))),
-    (∀ u, IsoSum (by classical exact ρ.comp (MonoidHom.mulSingle (fun u => GLw n (wt u)) u)) ⊤ (σ u)) →
+    (∀ u, IsoSum (M := M) (by classical exact ρ.comp (MonoidHom.mulSingle (fun u => GLw n (wt u)) u)) ⊤ (σ u)) →
     ((∃ F : Fin m → M, F ≠ 0 ∧ ∀ (k : KT n wt) i, ∑ j, τ₀ k i j • ρ k (F j) = F i) ↔
       ∀ u rc, IsRec (ht u) rc → IsTypeWD (ht u) (χ u) (rc (algNorm (σ u))))
 
@@ -63,8 +67,8 @@ abbrev Ga : Type := (away l L n).range
 
 variable {l L}
 
-open Classical in
 
+open Classical in
 def cmp (w : Plc L) : Ga l L n →* GLw n w :=
   if h : ((l : ℕ) : 𝓞 L) ∉ w.asIdeal then
     (Pi.evalMonoidHom (fun w : {w : Plc L // ((l : ℕ) : 𝓞 L) ∉ w.asIdeal} => GLw n w.1) ⟨w, h⟩).comp (away l L n).range.subtype
@@ -84,8 +88,8 @@ def toKT : Ub n s →* KT n (wt s) :=
 def locA (w : Plc L) : Subgroup (Ub n s) :=
   ⨅ (w' : Plc L) (_ : w'.under (𝓞 (Lp L)) ≠ w.under (𝓞 (Lp L))), ((cmp n w').comp (Ub n s).subtype).ker
 
-open Classical in
 
+open Classical in
 def sec (w : Plc L) : GLw n w →* Ub n s :=
   if h : Function.Bijective (((cmp n w).comp (Ub n s).subtype).comp (locA n s w).subtype) then
     (locA n s w).subtype.comp (MulEquiv.ofBijective _ h).symm.toMonoidHom
@@ -151,8 +155,8 @@ def TypeFor (τ₀ : KT n (wt s) →* GL (Fin m) c.O) : Prop :=
 
 variable (τ₀ : KT n (wt s) →* GL (Fin m) c.O)
 
-variable {r} in
 
+variable {r} in
 def IsTheta (Λ : LamObj r) (θ : (hset Q τ₀).X.I.T →* Λ.Λˣ) : Prop :=
   ∀ (v : V.frame.Vl) (i : Fin n) (x : Weil (s.hw v.1)) (g : Dec (F := L) (s.A v.1)) (hg : g ∈ V.frame.Iv v) (y : Uo ((s.w v.1).adicCompletion L)),
     (g : G L Ω) = (x : G L Ω) → artOf (s.hw v.1) x = y →

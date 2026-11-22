@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegativeFrameDomainProductOpenPreconnectedStable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsArchimedeanLiftUnitaryGroupProduct
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiscreteSeriesModelUnitaryIrreducibleOrthonormalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagDomainFramesEqGramFramesUnitaryStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegativeFrameDomainProductOpenPreconnectedStable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsArchimedeanLiftUnitaryGroupProduct
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiscreteSeriesModelUnitaryIrreducibleOrthonormalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagDomainFramesEqGramFramesUnitaryStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.L2.Pj Formalism.IndefR.FWT Formalism.IndefR GlobalTheory.HolDict
 open scoped TensorProduct InnerProductSpace ContDiff Topology
@@ -21,13 +25,14 @@ theorem continuous_place {F L : Type} [Field F] [NumberField F] [Field L] [Numbe
   have he : (fun z : AF F ⊗[F] L => θ (Algebra.TensorProduct.map (fstA F) (AlgHom.id F L) z)) = fun z => ∑ i,
       θ (fstA F (B.coord i z) ⊗ₜ[F] (1 : L)) * τ (b i) := by
     funext z
-    conv_lhs => rw [← B.sum_repr z, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← B.sum_repr z, map_sum, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Algebra.TensorProduct.basis_apply, TensorProduct.smul_tmul', smul_eq_mul, mul_one, ← hθ.1, ← map_mul,
       Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul, Algebra.TensorProduct.map_tmul]
     rfl
   rw [he]
-  refine continuous_finset_sum _ fun i _ => Continuous.mul ?_ continuous_const
+  refine continuous_finsetSum _ fun i _ => Continuous.mul ?_ continuous_const
   have h1 : Continuous (B.coord i) := IsModuleTopology.continuous_of_linearMap _
   have h2 : Continuous (fstA F) := continuous_fst
   exact hθ.2.comp (h2.comp h1)
@@ -124,8 +129,8 @@ noncomputable def trFr {E : Type} [Field E] {Ψ : Finset (E →+* ℂ)} {n : ℕ
     (x : ι → Fin n → Fin n → ℂ) : ReciprocityTheory.ChartRestriction.G.FD.Frame Ψ n :=
   fun τ => (A (e.symm τ) * Matrix.of (x (e.symm τ)) : Mt n)
 
-open ReciprocityTheory.ChartRestriction.G.FD in
 
+open ReciprocityTheory.ChartRestriction.G.FD in
 theorem holSec_of_isSec {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} (X : Data E n) (la : Wt X.Ψ n)
     (P : Frame X.Ψ n → ℂ) (hP : X.IsSec la P) {ι : Type} [Fintype ι] [DecidableEq ι] (e : ι ≃ X.Ψ) (Hm : ι → Mt n)
     (q : ι → ℕ) (A : ι → Mt n)

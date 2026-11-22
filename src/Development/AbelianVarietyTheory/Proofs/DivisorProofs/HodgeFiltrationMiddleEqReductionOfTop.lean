@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveCrystalHodgeLiftClasses
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveCrystalHodgeLiftClasses
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj DividedPowers
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.SqLift GlobalTheory.Published GlobalTheory.Published.GrothendieckMessing
@@ -28,7 +32,25 @@ theorem filtration_reduction : AbelianDeRham → ∀ (R R₁ R₀ : Type) [CommR
     intro d d₁
     refine ⟨fun H' c' ↦ ?_, fun H' ↦ crysToDR_corr κ h h₁ M (redMor h₂) e' H'⟩
     obtain ⟨c, rfl⟩ := hs c'
-    have k := (liftMor κ h).comp M
+    have k : GrpMor (dp0 R) (𝟙 (Sp R)) A κ₁ (spMap π₁) A₀
+        (ρ.comp (RingHom.id R)) (𝟙 _ ≫ spMap π) (𝟙 _ ≫ i) := by
+      let m := liftMor κ h
+      refine ⟨IsDPMorphism.comp _ M.dp m.dp, ?_, ?_, ?_⟩
+      · rw [Category.assoc, m.base, ← Category.assoc, M.base, Category.assoc, Cris.spMap_comp]
+      · rw [Category.assoc, m.w, ← Category.assoc, M.w, Category.assoc]
+      · intro T x y x₀ y₀ hx hy
+        let x₁ : Over.mk (T.hom ≫ 𝟙 _) ⟶ A₀ := Over.homMk (x.left ≫ 𝟙 _) (by
+          simp only [Over.mk_hom, Category.assoc]; rw [M.w, reassoc_of% (Over.w x)])
+        let y₁ : Over.mk (T.hom ≫ 𝟙 _) ⟶ A₀ := Over.homMk (y.left ≫ 𝟙 _) (by
+          simp only [Over.mk_hom, Category.assoc]; rw [M.w, reassoc_of% (Over.w y)])
+        let x₂ : Over.mk ((Over.mk (T.hom ≫ 𝟙 _)).hom ≫ spMap π) ⟶ A := Over.homMk x₀.left (by simpa using Over.w x₀)
+        let y₂ : Over.mk ((Over.mk (T.hom ≫ 𝟙 _)).hom ≫ spMap π) ⟶ A := Over.homMk y₀.left (by simpa using Over.w y₀)
+        have h₁ : (x₁ * y₁).left = (x * y).left ≫ 𝟙 _ := M.mul T x y x₁ y₁ rfl rfl
+        have h₂ : (x₂ * y₂).left = (x₁ * y₁).left ≫ i :=
+          m.mul _ x₁ y₁ x₂ y₂ (by simp [x₂, x₁, hx]) (by simp [y₂, y₁, hy])
+        have h₃ : (x₀ * y₀).left = (x₂ * y₂).left := by
+          simp only [Hom.mul_def, Over.comp_left, Over.lift_left, x₂, y₂, Over.homMk_left]
+        rw [h₃, h₂, h₁, Category.assoc]
     rw [GrpMor.pull_pull (liftMor κ h) M k (fun _ ↦ rfl) rfl c,
       ← GrpMor.pull_pull (redMor h₂) (liftMor κ₁ h₁) k (fun _ ↦ rfl) e' c]
     exact H' c

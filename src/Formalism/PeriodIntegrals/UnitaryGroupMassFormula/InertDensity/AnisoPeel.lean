@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertDensity.FinrankInfKerAddOne
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertDensity.ExistsTraceNeZero
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertDensity.ValMain
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertDensity.FinrankInfKerAddOne
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertDensity.ExistsTraceNeZero
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertDensity.ValMain
+
+@[expose] public section
 
 open Finset Module
 

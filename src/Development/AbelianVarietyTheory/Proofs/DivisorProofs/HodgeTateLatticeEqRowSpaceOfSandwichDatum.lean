@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AinfGhostThetaFrobIterValuesXiMuPadicStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AinfTeichmullerMinusOneDvdOfGhostComponentsZeroStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsRegularOfMulEqSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AinfGhostThetaFrobIterValuesXiMuPadicStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AinfTeichmullerMinusOneDvdOfGhostComponentsZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsRegularOfMulEqSmul
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,8 +21,8 @@ section SlopeTestRemainingChoices
 variable {p : ℕ} [Fact p.Prime] {O : Type} [CommRing O] [Fact ¬IsUnit (p : O)]
   [IsAdicComplete (Ideal.span {(p : O)}) O]
 
-variable (p O) in
 
+variable (p O) in
 def ghostHom (n : ℕ) : Ainf p O →+* O where
   toFun := ghost p O n
   map_one' := by
@@ -174,11 +178,13 @@ theorem latt_eq_rowSpace : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [Is
       intro t
       have ht : t = ∑ i, e t i • e.symm (Pi.single i 1) := by
         apply e.injective
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         ext j
         simp [Finset.sum_apply, Pi.single_apply]
       conv_lhs => rw [ht]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [LinearMap.map_smulₛₗ, dotProduct, toA, smul_eq_mul, s]
       exact Finset.sum_congr rfl fun i _ => mul_comm _ _
     have hdiv : ∀ j, Sandwich.mu ε ∣ (s ᵥ* D.G) j := by

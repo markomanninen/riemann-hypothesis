@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndRaw
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndRaw
+
+@[expose] public section
 
 set_option autoImplicit false
 

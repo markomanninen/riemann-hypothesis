@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.Expand
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.Expand
+
+@[expose] public section
 
 open Polynomial UpperTheory.V.W
 
@@ -17,7 +21,7 @@ theorem UpperTheory.V.AlgebraTools.Det.killsLam :
     rw [map_mul, smul_mul_assoc, MonoidAlgebra.one_def]
   rw [heq, hk] at key
   have hc := congrArg (fun p : Polynomial A => p.coeff i) key
-  simp only [one_pow, mul_one, Polynomial.algebraMap_eq, Polynomial.finset_sum_coeff,
+  simp only [one_pow, mul_one, Polynomial.algebraMap_eq, Polynomial.finsetSum_coeff,
     Polynomial.coeff_C_mul_X_pow, Polynomial.coeff_one] at hc
   rw [Finset.sum_ite_eq] at hc
   have hmem : i ∈ Finset.range (n + 1) := Finset.mem_range.mpr (by omega)

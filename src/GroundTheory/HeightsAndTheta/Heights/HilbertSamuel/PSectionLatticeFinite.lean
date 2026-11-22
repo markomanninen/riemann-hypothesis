@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionLatticeFinite
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionLatticeFinite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -22,9 +27,9 @@ theorem fg_of_le_fg {H H' : AddSubgroup G} (h : H ≤ H') (hH' : H'.FG) : H.FG :
   exact Module.Finite.iff_fg.mp inferInstance
 
 theorem fg_map (f : G →+ G') {H : AddSubgroup G} (hH : H.FG) : (H.map f).FG := by
-  classical
-  obtain ⟨S, hS⟩ := hH
-  exact ⟨S.image f, by rw [Finset.coe_image, ← AddMonoidHom.map_closure, hS]⟩
+  rw [← AddSubgroup.toIntSubmodule_toAddSubgroup H, ← Submodule.fg_iff_addSubgroup_fg] at hH
+  rw [← AddSubgroup.toIntSubmodule_toAddSubgroup (H.map f), ← Submodule.fg_iff_addSubgroup_fg]
+  simpa using hH.map f.toIntLinearMap
 
 end Groups
 
@@ -85,7 +90,8 @@ theorem aeval_scale {g : MRing ι} {d : K → ℕ} (hg : IsMultiHomog g d) (μ :
   classical
   conv_lhs => rw [g.as_sum]
   conv_rhs => rw [g.as_sum]
-  rw [map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
   rw [aeval_monomial, aeval_monomial, Finsupp.prod, Finsupp.prod]
   simp only [mul_pow, Finset.prod_mul_distrib]
@@ -107,9 +113,10 @@ theorem secM_fg (y : (Σ k, ι k) → Ω) (d : K → ℕ) : (secM y d).FG := by
       Submodule.span ℤ S := by
     rw [Submodule.span_le]
     rintro _ ⟨g, hg, rfl⟩
-    rw [SetLike.mem_coe, g.as_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [SetLike.mem_coe, g.as_sum, map_sum]
     refine Submodule.sum_mem _ fun m hm => ?_
-    have hmon : aeval y (monomial m (coeff m g)) = (coeff m g) • aeval y (monomial m (1 : ℤ)) := by
+    have hmon : aeval y (monomial m (AddMonoidAlgebra.coeff g m)) = (AddMonoidAlgebra.coeff g m) • aeval y (monomial m (1 : ℤ)) := by
       rw [aeval_monomial, aeval_monomial, zsmul_eq_mul]
       simp
     rw [hmon]
@@ -127,8 +134,8 @@ theorem secM_fg (y : (Σ k, ι k) → Ω) (d : K → ℕ) : (secM y d).FG := by
   have := isNoetherian_of_le hle
   exact Module.Finite.iff_fg.mp inferInstance
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem chartLat_le_nm (y : (Σ k, ι k) → Ω) (a : K → ℤ) (τ : ℕ) : chartLat y a τ ≤ chartLatNm y a τ :=
   fun _ hs c hc => isIntegral_algebraMap (x := (⟨_, hs c hc⟩ : chartRingZ y c))
 
@@ -144,7 +151,7 @@ def fnField (y : (Σ k, ι k) → Ω) : Subfield Ω where
     rintro s t ⟨d, g, h, hg, hh, hh0, hgs⟩ ⟨e, g', h', hg', hh', hh0', hgt⟩
     refine ⟨d + e, g * h' + h * g', h * h', homog_add (homog_mul hg hh') (homog_mul hh hg'),
       homog_mul hh hh', by rw [map_mul]; exact mul_ne_zero hh0 hh0', ?_⟩
-    rw [map_add, map_mul, map_mul, map_mul, hgs, hgt]
+    rw [map_add (f := _), map_mul, map_mul, map_mul, hgs, hgt]
     ring
   zero_mem' := ⟨0, 0, 1, homog_zero 0, homog_one, by simp, by simp⟩
   neg_mem' := by
@@ -165,16 +172,16 @@ omit [Fintype K] in
 theorem mem_fnField (y : (Σ k, ι k) → Ω) {s : Ω} : s ∈ fnField y ↔ ∃ (d : K → ℕ) (g h : MRing ι),
     IsMultiHomog g d ∧ IsMultiHomog h d ∧ aeval y h ≠ 0 ∧ aeval y g = s * aeval y h := Iff.rfl
 
+
 omit [Fintype K] in
 open Classical in
-
 theorem ratio_mem (y : (Σ k, ι k) → Ω) (p : Σ k, ι k) (q : ι p.1) (hq : y ⟨p.1, q⟩ ≠ 0) :
     y p / y ⟨p.1, q⟩ ∈ fnField y :=
   ⟨Pi.single p.1 1, X p, X ⟨p.1, q⟩, homog_X p, homog_X ⟨p.1, q⟩, by rw [aeval_X]; exact hq,
     by rw [aeval_X, aeval_X, div_mul_cancel₀ _ hq]⟩
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem chartRingZ_le (y : (Σ k, ι k) → Ω) (c : ∀ k, ι k) (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) {x : Ω}
     (hx : x ∈ chartRingZ y c) : x ∈ fnField y := by
   induction hx using Algebra.adjoin_induction with
@@ -235,8 +242,8 @@ theorem birational_yr : Birational (yr y c0 hc0) := by
     show _ = s * _
     ring
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem map_chartRingZ_yr (c : ∀ k, ι k) :
     (chartRingZ (yr y c0 hc0) c).map (fnField y).subtype.toIntAlgHom = chartRingZ y c := by
   rw [chartRingZ, chartRingZ, AlgHom.map_adjoin, ← Set.range_comp]

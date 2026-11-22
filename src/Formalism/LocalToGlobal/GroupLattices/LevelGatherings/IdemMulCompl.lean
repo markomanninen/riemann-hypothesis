@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.FiniteClassSetOfLe
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.FiniteClassSetOfLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,8 +74,8 @@ section Adele
 
 variable (F : Type) [Field F] [NumberField F] (p : ℕ)
 
-open Classical in
 
+open Classical in
 def eP : FiniteAdeleRing (𝓞 F) F :=
   ⟨fun v => if ((p : ℕ) : 𝓞 F) ∈ v.asIdeal then 1 else 0, Filter.Eventually.of_forall fun v => by
     by_cases h : ((p : ℕ) : 𝓞 F) ∈ v.asIdeal
@@ -161,7 +165,7 @@ theorem inv_mul_trivializeAt_mem_away (L : ColLevel R F E sp gp C A clsLat) (p :
 theorem mk_trivP (L : ColLevel R F E sp gp C A clsLat) (p : ℕ)
     (y : UPts sp.cm.sig sp.gram0 (FiniteAdeleRing (𝓞 F) F)) :
     (Quotient.mk'' (trivP sp p y) : compL L p) = Quotient.mk'' y := by
-  refine ((DoubleCoset.eq _ _ _ _).mpr ⟨1, Subgroup.one_mem _, y⁻¹ * trivP sp p y, ?_, ?_⟩).symm
+  refine ((@DoubleCoset.eq _ _ _ _ _ _).mpr ⟨1, Subgroup.one_mem _, y⁻¹ * trivP sp p y, ?_, ?_⟩).symm
   · exact Subgroup.mem_subgroupOf.mpr (inv_mul_trivializeAt_mem_away L p y)
   · rw [one_mul, mul_inv_cancel_left]
 

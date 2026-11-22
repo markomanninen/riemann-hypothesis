@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBPull
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ProjectiveRepresentationPullbackCoordinates
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBPull
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ProjectiveRepresentationPullbackCoordinates
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
@@ -19,12 +24,38 @@ theorem le_iSup_chart {Y : Scheme.{0}} {L : LB Y} (hL : L.IsLB) : (⊤ : Y.Opens
 
 theorem exists_global_unit {Y : Scheme.{0}} {L : LB Y} (hL : L.IsLB) {t t' : L.Gen} (ht : t.IsGen) (ht' : t'.IsGen) :
     ∃ w : Γ(Y, ⊤)ˣ, ∀ j, t.s j = res (le_top : L.U j ≤ ⊤) w * t'.s j := by
-  obtain ⟨w, hw⟩ := glue_unit ⊤ L.U (fun _ => le_top) (le_iSup_chart hL) (fun j => t.s j * (t'.s j)⁻¹) (fun i j y hy => by
-    rw [← gm_res (𝟙 Y) y (inf_le_left : L.U i ⊓ L.U j ≤ L.U i) hy,
-      ← gm_res (𝟙 Y) y (inf_le_right : L.U i ⊓ L.U j ≤ L.U j) hy]
-    congr 1
-    rw [map_mul, map_mul, map_inv, map_inv, ht i j, ht' i j, mul_inv, _root_.mul_mul_mul_comm, mul_inv_cancel, _root_.one_mul])
-  exact ⟨w, fun j => by rw [hw j, inv_mul_cancel_right]⟩
+  let u : ∀ j, Γ(Y, L.U j)ˣ := fun j => t.s j * (t'.s j)⁻¹
+  have compat : ∀ i j, res (inf_le_left : L.U i ⊓ L.U j ≤ L.U i) (u i) =
+      res (inf_le_right : L.U i ⊓ L.U j ≤ L.U j) (u j) := by
+    intro i j
+    simp only [u, map_mul, map_inv, ht i j, ht' i j, mul_inv]
+    simp only [_root_.mul_mul_mul_comm, mul_inv_cancel, _root_.one_mul]
+  have glue : ∀ (v : ∀ j, Γ(Y, L.U j)ˣ),
+      (∀ i j, res (inf_le_left : L.U i ⊓ L.U j ≤ L.U i) (v i) =
+        res (inf_le_right : L.U i ⊓ L.U j ≤ L.U j) (v j)) →
+      ∃ s : Γ(Y, ⊤), ∀ j, resG Y (le_top : L.U j ≤ ⊤) s = (v j).val := by
+    intro v hv
+    exact (TopCat.Sheaf.existsUnique_gluing' Y.sheaf L.U ⊤ (fun _ => homOfLE le_top) (le_iSup_chart hL) _ (by
+        intro i j
+        exact congrArg Units.val (hv i j))).exists
+  obtain ⟨s, hs⟩ := glue u compat
+  have compat' : ∀ i j, res (inf_le_left : L.U i ⊓ L.U j ≤ L.U i) ((u i)⁻¹) =
+      res (inf_le_right : L.U i ⊓ L.U j ≤ L.U j) ((u j)⁻¹) := by
+    intro i j
+    rw [map_inv, map_inv, compat]
+  obtain ⟨s', hs'⟩ := glue (fun j => (u j)⁻¹) compat'
+  have hss : s * s' = 1 := by
+    apply Y.sheaf.eq_of_locally_eq' L.U ⊤ (fun _ => homOfLE le_top) (le_iSup_chart hL)
+    intro j
+    change resG Y (le_top : L.U j ≤ ⊤) (s * s') = resG Y (le_top : L.U j ≤ ⊤) 1
+    rw [map_mul, map_one, hs, hs']
+    exact Units.mul_inv (u j)
+  let w : Γ(Y, ⊤)ˣ := ⟨s, s', hss, by simpa [mul_comm] using hss⟩
+  refine ⟨w, fun j => ?_⟩
+  have hw : res (le_top : L.U j ≤ ⊤) w = u j := Units.ext (hs j)
+  rw [hw]
+  change t.s j = (t.s j * (t'.s j)⁻¹) * t'.s j
+  simp
 
 theorem appLE_spec {R R' : Type} [CommRing R] [CommRing R'] (φ : R →+* R') (e : (⊤ : (Sp R').Opens) ≤ spMap φ ⁻¹ᵁ ⊤)
     (a : R) : ((spMap φ).appLE ⊤ ⊤ e).hom ((Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom a) =
@@ -69,12 +100,48 @@ theorem unique (hM : M.IsLB) (h : SecCoord M th x v) {v' : I → R} (h' : SecCoo
     ∃ u : Rˣ, ∀ i, v' i = u * v i := by
   obtain ⟨τ, hτ, h⟩ := h
   obtain ⟨τ', hτ', h'⟩ := h'
-  have hL := pull_isLB hM x
-  obtain ⟨w, hw⟩ := exists_global_unit hL hτ hτ'
+  have hcov : (⊤ : (Sp R).Opens) ≤ iSup (M.pull x).U := by
+    intro y _
+    obtain ⟨i, hi⟩ := TopologicalSpace.Opens.mem_iSup.1 (hM.cover.ge (show x y ∈ (⊤ : X.Opens) from trivial))
+    exact TopologicalSpace.Opens.mem_iSup.2 ⟨fun _ => i, mem_pull.2 hi⟩
+  have global : ∃ w : Γ(Sp R, ⊤)ˣ, ∀ j, τ.s j = res (le_top : (M.pull x).U j ≤ ⊤) w * τ'.s j := by
+    let u : ∀ j, Γ((Sp R), (M.pull x).U j)ˣ := fun j => τ.s j * (τ'.s j)⁻¹
+    have compat : ∀ i j, res (inf_le_left : (M.pull x).U i ⊓ (M.pull x).U j ≤ (M.pull x).U i) (u i) =
+        res (inf_le_right : (M.pull x).U i ⊓ (M.pull x).U j ≤ (M.pull x).U j) (u j) := by
+      intro i j
+      simp only [u, map_mul, map_inv, hτ i j, hτ' i j, mul_inv]
+      simp only [_root_.mul_mul_mul_comm, mul_inv_cancel, _root_.one_mul]
+    have glue : ∀ (v : ∀ j, Γ((Sp R), (M.pull x).U j)ˣ),
+        (∀ i j, res (inf_le_left : (M.pull x).U i ⊓ (M.pull x).U j ≤ (M.pull x).U i) (v i) =
+          res (inf_le_right : (M.pull x).U i ⊓ (M.pull x).U j ≤ (M.pull x).U j) (v j)) →
+        ∃ s : Γ((Sp R), ⊤), ∀ j, resG (Sp R) (le_top : (M.pull x).U j ≤ ⊤) s = (v j).val := by
+      intro v hv
+      exact (TopCat.Sheaf.existsUnique_gluing' (Sp R).sheaf (M.pull x).U ⊤ (fun _ => homOfLE le_top) hcov _ (by
+          intro i j
+          exact congrArg Units.val (hv i j))).exists
+    obtain ⟨s, hs⟩ := glue u compat
+    have compaτ' : ∀ i j, res (inf_le_left : (M.pull x).U i ⊓ (M.pull x).U j ≤ (M.pull x).U i) ((u i)⁻¹) =
+        res (inf_le_right : (M.pull x).U i ⊓ (M.pull x).U j ≤ (M.pull x).U j) ((u j)⁻¹) := by
+      intro i j
+      rw [map_inv, map_inv, compat]
+    obtain ⟨s', hs'⟩ := glue (fun j => (u j)⁻¹) compaτ'
+    have hss : s * s' = 1 := by
+      apply (Sp R).sheaf.eq_of_locally_eq' (M.pull x).U ⊤ (fun _ => homOfLE le_top) hcov
+      intro j
+      change resG (Sp R) (le_top : (M.pull x).U j ≤ ⊤) (s * s') = resG (Sp R) (le_top : (M.pull x).U j ≤ ⊤) 1
+      rw [map_mul, map_one, hs, hs']
+      exact Units.mul_inv (u j)
+    let w : Γ((Sp R), ⊤)ˣ := ⟨s, s', hss, by simpa [mul_comm] using hss⟩
+    refine ⟨w, fun j => ?_⟩
+    have hw : res (le_top : (M.pull x).U j ≤ ⊤) w = u j := Units.ext (hs j)
+    rw [hw]
+    change τ.s j = (τ.s j * (τ'.s j)⁻¹) * τ'.s j
+    simp
+  obtain ⟨w, hw⟩ := global
   refine ⟨Units.map (Scheme.ΓSpecIso (CommRingCat.of R)).hom.hom.toMonoidHom w, fun i => ?_⟩
   have key : (Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom (v' i) =
       w.val * (Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom (v i) := by
-    apply (Sp R).sheaf.eq_of_locally_eq' (M.pull x).U ⊤ (fun _ => homOfLE le_top) (le_iSup_chart hL)
+    apply (Sp R).sheaf.eq_of_locally_eq' (M.pull x).U ⊤ (fun _ => homOfLE le_top) hcov
     intro j
     have e := (h' i j (pull_le M x j)).symm.trans (h i j (pull_le M x j))
     rw [hw j] at e

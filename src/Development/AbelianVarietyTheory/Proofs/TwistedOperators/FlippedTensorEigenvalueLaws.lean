@@ -1,15 +1,20 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.FunKit
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.StepUnfold
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsClasses
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowMapVUpdateZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EdgeFactorNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnderMemAndPlaceAboveEqOfMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationLeOneOfMem
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitThetaGridIsAdmissibleFlipTensor
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.StepType
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FirstVertexWeilOrbitValueStatement
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.FunKit
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.StepUnfold
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsClasses
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowMapVUpdateZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EdgeFactorNeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnderMemAndPlaceAboveEqOfMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationLeOneOfMem
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitThetaGridIsAdmissibleFlipTensor
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.StepType
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FirstVertexWeilOrbitValue
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.StepData
 open GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
@@ -123,10 +128,13 @@ theorem given_law_at (hL : L.Is μ₀) (B : Frames G) (Φ : G.Datum) (hw : w ∈
     ∀ (m : ℕ), m ≠ 0 → ∀ (κ : GL (Fin ((locGrid G t w).rank (0, m))) (Kw w)), κ ∈ givenLevel G t w (0, m) →
     (locGrid G t w).pathAct .one (SplitFlip.givenPath m) (Pi.mulSingle (0, m) κ)
         ((locGrid G t w).lines₂ (SplitFlip.givenPath m) (givenDatum t w B Φ)) =
-      endLamAt G t w m κ • (locGrid G t w).lines₂ (SplitFlip.givenPath m) (givenDatum t w B Φ)
-  | 0, h => absurd rfl h
-  | n + 1, _ => fun κ hκ => by
-    obtain ⟨hJ, ν, hν, H⟩ := stepType_laws (G := G) hL hw n
+      endLamAt G t w m κ • (locGrid G t w).lines₂ (SplitFlip.givenPath m) (givenDatum t w B Φ) := by
+  intro m
+  cases m with
+  | zero => exact fun h => absurd rfl h
+  | succ n =>
+    intro _ κ hκ
+    obtain ⟨hJ, ν, hν, H⟩ := stepType_laws (L := L) (G := G) (t := t) (w := w) hL hw n
     have hKO : ∀ Y, (Pi.mulSingle (0, n + 1) κ : (locGrid G t w).VertexGroup) Y ∈ KO (Kw w) _ := fun Y => by
       by_cases hY : Y = (0, n + 1)
       · subst hY; simpa using (givenLevel_open hL hw (0, n + 1)).2 hκ
@@ -233,8 +241,8 @@ end GlobalTheory.FirstRowEndLaw
 
 namespace GlobalTheory.FirstRowEndLaw
 
-open Formalism.MainNotions in
 
+open Formalism.MainNotions in
 theorem pde_ne_q' {D : D7} {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 T : Type} {A : FamIn D.what₂.LL Γ Pl0 T D.R.m}
     {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] {R : RealDat D A Ks} {large₂ : SizeData₂ D} {F : Face D A}
     (h : GlobalTheory.RowClaim.HidaSetting large₂ R F) : Nat.Coprime D.host.pde (D.host.QS * D.host.q) ∧ Nat.Coprime D.host.pde' (D.host.QS * D.host.q) := by
@@ -243,30 +251,5 @@ theorem pde_ne_q' {D : D7} {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 T : Type} {A
     UpperTheory.Ram.Fun.coprime_QSq_of_splitK D.host hpp (P.level_split p hp)
   exact ⟨key _ D.host.pde_level.1 D.host.pde_prime, key _ D.host.pde_level.2 D.host.pde'_prime⟩
 
-set_option maxHeartbeats 1600000 in
-
-theorem core : GlobalTheory.FunPr.Hypotheses₂ → SumOKK → Big fun {D} {_Γ} _ _ {_Pl0} {T} {_A} {_Ks} _ _ _ {R} ch =>
-    ∀ (t : T) (a : Fin ch.n) (k : FinPt ch.G (.grid 0 D.R.m)), finG (ch.G.V (.grid 0 D.R.m)) k ∈ ch.S.levRow t 0 (Nat.zero_le _) →
-    ∀ (hk : toXf k ∈ (levEnv D.sp.X' R.βX (R.datXt t)).J) (c : ℂ),
-      ch.W.om (.chi (GlobalTheory.FirstRowVertex.firstIx D) D.R.m : Pair T) (ch.G.toPair (.chi (GlobalTheory.FirstRowVertex.firstIx D) D.R.m : Pair T) ((ch.S.N.u (.grid 0 D.R.m))⁻¹ * k * ch.S.N.u (.grid 0 D.R.m)).1 1) (ch.S.Z.vac (.chi (GlobalTheory.FirstRowVertex.firstIx D) D.R.m : Pair T)) = c • ch.S.Z.vac (.chi (GlobalTheory.FirstRowVertex.firstIx D) D.R.m : Pair T) →
-      ∃ lam : locPl ch.G t → ℂ,
-        (∀ w : locPl ch.G t, (locGrid ch.G t w).pathAct .one (GlobalTheory.SplitFlip.oppositePath D.R.m)
-            (Pi.mulSingle (0, D.R.m) (GlobalTheory.FirstRowTermLaw.kapAt ch.S.toGridChoice t w k)) (Tflip ch.W ch.S.B t (ch.Phi a) w) =
-          lam w • Tflip ch.W ch.S.B t (ch.Phi a) w) ∧
-        (((levEnv D.sp.X' R.βX (R.datXt t)).χ ⟨toXf k, hk⟩ : ℂˣ) : ℂ) * c * ∏ w, lam w =
-          ∏ w : locPl ch.G t, (locGrid ch.G t w).edgeFactor .one
-            (Pi.mulSingle (0, D.R.m) (GlobalTheory.FirstRowTermLaw.kapAt ch.S.toGridChoice t w k)) (.ex 0 D.R.m) := by
-  intro hP hS
-  obtain ⟨CF0, hsc⟩ := GlobalTheory.T.first_vertex_weil_orbit_value hP hS
-  refine ⟨CF0, fun ε CF hC => ?_⟩
-  obtain ⟨x₀, hsc⟩ := hsc ε CF hC
-  refine ⟨x₀, fun D large₂ he hx Γ _ _ Pl0 T A Ks _ _ _ R F s ch hch hat => ?_⟩
-  have hs := hsc D large₂ he hx Γ Pl0 T A Ks R F s ch hch hat
-  intro t a k hk hk' c hc
-  have hL : R.toLevCh.Is A.μ0 := s.core.lev
-  have hde := pde_ne_q' s
-  have hcg : ∀ P ∈ R.toLevCh.Q t, ((Ideal.absNorm D.host.ccK : ℕ) : 𝓞 D.host.E) ∉ P.asIdeal := hch.guard t
-  refine ⟨fun w => endLam ch.G t w.1 (GlobalTheory.FirstRowTermLaw.kapAt ch.S.toGridChoice t w.1 k), fun w => ?_, hs t k hk hk' c hc⟩
-  exact Tflip_law hL ch.W ch.S.B t (ch.Phi a) hde hcg w.2 _ (Subgroup.mem_iInf.1 (Subgroup.mem_inf.1 hk).1 w)
 
 end GlobalTheory.FirstRowEndLaw

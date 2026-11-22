@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalDegreeUpperC
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqTopOfTranslates
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockVectorsKilledHeisenbergAverageIsotropic
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LevelFiniteThetaDatumNeZeroFrameAdjointSpec
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpecialisedUniversalSeriesEqTwistedThetaSeries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalDegreeUpperC
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqTopOfTranslates
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockVectorsKilledHeisenbergAverageIsotropic
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LevelFiniteThetaDatumNeZeroFrameAdjointSpec
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpecialisedUniversalSeriesEqTwistedThetaSeries
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT GlobalTheory.HolDict
 open scoped TensorProduct InnerProductSpace ContDiff ComplexOrder
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -39,9 +44,9 @@ theorem exists_val_ge {K Γ : Type} [Field K] [LinearOrderedCommGroupWithZero Γ
   rw [sub_sub_cancel] at h3
   exact lt_irrefl _ (h3.trans_lt (max_lt h2 h1))
 
+
 set_option maxHeartbeats 2000000 in
 open Classical in
-
 theorem exists_sum_zero {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsCharAF D.host.F ψ) (S T : HSp D)
     (βS : GL (Fin S.rank) (Datum.EAf D)) (βT : GL (Fin T.rank) (Datum.EAf D)) {e : AE D} {PP : Pl D.host.E}
     (he : Formalism.L2.NTheta.IsIdemAt e PP) (c : Fin T.rank → AE D) (hc : ∃ i, e * c i ≠ 0) (hr : T.rank ≤ S.rank) :
@@ -94,8 +99,8 @@ theorem exists_sum_zero {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsCharAF D.host.
   have hbadd : ∀ κ κ', Valued.v (b (κ + κ') - b κ - b κ') < 1 := by
     intro κ κ'
     have := hbres (oToS D.host.F D.host.E (rep κ) + oToS D.host.F D.host.E (rep κ')) (κ + κ') (by
-      rw [map_add, Formalism.L2.DIV.resS_oToS, Formalism.L2.DIV.resS_oToS, hrep, hrep])
-    rw [AddMemClass.coe_add, RingHom.map_add] at this
+      rw [map_add (f := _), Formalism.L2.DIV.resS_oToS, Formalism.L2.DIV.resS_oToS, hrep, hrep])
+    rw [AddMemClass.coe_add, RingHom.map_add (f := _)] at this
     rw [← Valuation.map_neg, show -(b (κ + κ') - b κ - b κ') = b κ + b κ' - b (κ + κ') by ring]
     exact this
   have he1 : π e = 1 := by
@@ -185,14 +190,16 @@ theorem exists_sum_zero {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsCharAF D.host.
     have hσ : resS D.host.F PP σ = 0 := by
       have h1 := congrFun (congrFun hAB i) k
       rw [Matrix.mul_apply, Matrix.one_apply] at h1
-      simp only [σ, map_sub, map_sum, map_mul, Formalism.L2.DIV.resS_oToS, hrep]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [σ, map_sub, map_sum, map_mul, Formalism.L2.DIV.resS_oToS, hrep]
       rw [sub_eq_zero, apply_ite (resS D.host.F PP), map_one, map_zero, ← h1]
       refine Finset.sum_congr rfl fun m _ => ?_
-      rw [hAb, topL, dif_pos ⟨(Fin.castLE hr m).2, k.2⟩, redM, dif_pos (ht _ _)]
+      rw [hAb, topL, dite_eq_left ⟨(Fin.castLE hr m).2, k.2⟩, redM, dite_eq_left (ht _ _)]
       rfl
     have h2 := hres σ hσ
     convert h2 using 2
-    simp only [σ, AddSubgroupClass.coe_sub, AddSubmonoidClass.coe_finsetSum, Subring.coe_mul, RingHom.map_sub,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [σ, AddSubgroupClass.coe_sub, AddSubmonoidClass.coe_finsetSum, Subring.coe_mul, RingHom.map_sub,
       map_sum, RingHom.map_mul]
     rw [Matrix.mul_apply]
     congr 1
@@ -223,9 +230,9 @@ theorem exists_sum_zero {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsCharAF D.host.
   rw [← (Equiv.sum_comp eqv.symm (fun κ => χ κ)).trans (AddChar.sum_eq_zero_of_ne_one hχ)]
   exact Finset.sum_congr rfl fun k _ => hpair _
 
+
 set_option maxHeartbeats 1000000 in
 open Classical in
-
 theorem exists_sum_heisO_eq_zero {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} {S T : HSp D}
     {sT : D.what₂.Tau → Matrix (Fin T.rank) (Fin T.rank) ℂ}
     {ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)} {ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)}
@@ -239,7 +246,8 @@ theorem exists_sum_heisO_eq_zero {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D
   obtain ⟨hv, e, he, ⟨Tm, hTm⟩, hall⟩ := h
   have ho := GlobalTheory.PlaceModelSum.isOrthSum_of_isIdemSum he
   have hinf := ho.conj.infPart_eq
-  have hSB := GlobalTheory.PlaceVec.isSBHalf_of_red hS.1 hT.1 hinf (frMapAdj S T βS βT) (GlobalTheory.PlaceVec.frMapAdj_add S T βS βT)
+  have hSB := GlobalTheory.PlaceVec.isSBHalf_of_red (GlobalTheory.PlaceVec.selfDual_isFullLattice S ΛS hS)
+    (GlobalTheory.PlaceVec.selfDual_isFullLattice T ΛT hT) hinf (frMapAdj S T βS βT) (GlobalTheory.PlaceVec.frMapAdj_add S T βS βT)
     (GlobalTheory.PlaceVec.frMapAdj_up S T βS βT) (GlobalTheory.PlaceVec.frMapAdj_down S T βS βT) (LT.Pg ∪ Q)
     (fun y => omegaG LT m y * omegaQ Q T.rank m (-1) y) fun y y' h => by
       rw [GlobalTheory.PlaceDatum.omegaG_congr LT m y y' fun PP hPP => h PP (Finset.mem_union_left _ hPP),
@@ -261,7 +269,8 @@ theorem exists_sum_heisO_eq_zero {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D
       Tm (fun t => ψ (symplO S T t (vecMulVec c (l k))) * GlobalTheory.FinZeta.levDatum S T βS βT LT Q m e t) := fun k => by
     rw [hall Tm hTm, ← hTm.modul _ hSB _ (by rw [GlobalTheory.LatVac.cA_cA]; exact hhalf k)]
     rfl
-  rw [Finset.sum_congr rfl fun k _ => hk k, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_congr rfl fun k _ => hk k, ← map_sum]
   have hz : (∑ k, fun t => ψ (symplO S T t (vecMulVec c (l k))) * GlobalTheory.FinZeta.levDatum S T βS βT LT Q m e t) = 0 := by
     funext t
     rw [Finset.sum_apply, ← Finset.sum_mul, Pi.zero_apply]
@@ -307,7 +316,8 @@ theorem sum_heisO_along_eq_zero_level : ∀ {D : D7} {G : Type} [Group G] [Finty
     rw [h1, ← hω.om_heis h g _ _ (hpt Q)]
     refine congrArg _ ?_
     rw [GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues.ptAt, GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues.ptAt, ((htr.2 _ (hl0 k)).2)]
-  rw [Finset.sum_congr rfl fun k _ => key k, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_congr rfl fun k _ => key k, ← map_sum]
   have hs := GlobalTheory.SpecFac.pureTensorO_sum hω.std hθ (fun _ => 1) (R.BV i) (cart (R.MW i σ)) BW Finset.univ
     (fun _ => (1 : ℂ)) (fun k => heisO R.ψ (Vc D i) (Wc D i) (vecMulVec c' (l k)) f) (fun k _ => (htr.2 _ (hl0 k)).1) Q
   simp only [one_smul] at hs

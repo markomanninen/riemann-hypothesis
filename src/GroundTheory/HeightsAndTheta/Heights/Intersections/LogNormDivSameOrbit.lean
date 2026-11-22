@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiHomogTwoXc
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsFurtherLast
-import GroundTheory.HeightsAndTheta.Heights.Intersections.SameOrbitOneSpecZ
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiHomogTwoXc
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsFurtherLast
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.SameOrbitOneSpecZ
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopDegreeDensityPullbackEqNormSqDetMul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFormMul
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.IntegralFderivApplyEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopDegreeDensityPullbackEqNormSqDetMul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFormMul
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.IntegralFderivApplyEqZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -45,7 +49,8 @@ theorem del_integral {f : V n → ℂ} (hf : ContDiff ℝ 1 f) (hc : HasCompactS
 theorem dens_delAt (F : V n → Alt n) (v : V n) : dens (delAt F v) =
     ∑ a, ∑ S, GlobalTheory.del (fun x => (bas n).repr (F x) S) v (coordVec a) *
       ((bas n).repr (dz a * bas n S) Finset.univ / (bas n).repr (vol n : Alt n) Finset.univ) := by
-  simp only [dens, delAt, coefwise, Finset.mul_sum, mul_smul_comm, map_sum, map_smul, Finsupp.coe_finset_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dens, delAt, coefwise, Finset.mul_sum, mul_smul_comm, map_sum, map_smul, Finsupp.coe_finsetSum,
     Finset.sum_apply, Finsupp.smul_apply, smul_eq_mul, Finset.sum_div, mul_div_assoc]
 
 theorem integral_dens_delAt {F : V n → Alt n} (hF : ∀ S, ContDiff ℝ 1 fun v => (bas n).repr (F v) S)
@@ -55,10 +60,10 @@ theorem integral_dens_delAt {F : V n → Alt n} (hF : ∀ S, ContDiff ℝ 1 fun 
       ((bas n).repr (dz a * bas n S) Finset.univ / (bas n).repr (vol n : Alt n) Finset.univ) :=
     fun a S => (del_integral (hF S) (hc S) _).1.mul_const _
   simp only [dens_delAt]
-  refine ⟨integrable_finset_sum _ fun a _ => integrable_finset_sum _ fun S _ => hi a S, ?_⟩
-  rw [integral_finset_sum _ fun a _ => integrable_finset_sum _ fun S _ => hi a S]
+  refine ⟨integrable_finsetSum _ fun a _ => integrable_finsetSum _ fun S _ => hi a S, ?_⟩
+  rw [integral_finsetSum _ fun a _ => integrable_finsetSum _ fun S _ => hi a S]
   refine Finset.sum_eq_zero fun a _ => ?_
-  rw [integral_finset_sum _ fun S _ => hi a S]
+  rw [integral_finsetSum _ fun S _ => hi a S]
   refine Finset.sum_eq_zero fun S _ => ?_
   rw [integral_mul_const, (del_integral (hF S) (hc S) _).2, zero_mul]
 
@@ -109,9 +114,9 @@ theorem integral_eq_of_vanish {M : Type} [TopologicalSpace M] [SecondCountableTo
     rw [Measure.restrict_apply hKm.compl, Set.compl_inter_self, measure_empty]
   have hv : ∀ v, v ∉ (A.e i) '' K → (dens (A.loc α i v)).re = 0 := fun v hv => by
     by_cases ht : v ∈ (A.e i).target
-    · rw [HolAtlas.loc, dif_pos ht, h0 ⟨(i, (A.e i).symm v), (A.e i).map_target ht⟩
+    · rw [HolAtlas.loc, dite_eq_left ht, h0 ⟨(i, (A.e i).symm v), (A.e i).map_target ht⟩
         fun h => hv ⟨_, h, (A.e i).right_inv ht⟩, dens_zero, Complex.zero_re]
-    · rw [HolAtlas.loc, dif_neg ht, dens_zero, Complex.zero_re]
+    · rw [HolAtlas.loc, dite_eq_right ht, dens_zero, Complex.zero_re]
   have hp : ∀ ε : ℤˣ, A.part α ε univ = ∫⁻ v, ENNReal.ofReal ((ε : ℤ) * (dens (A.loc α i v)).re) := fun ε => by
     rw [← measure_add_measure_compl hKm, hc ε, add_zero, HolAtlas.part,
       ChartGlue.glueMeas_apply A.e _ (fun j k => A.holo j k) (hρ ε) i hKm hKs,
@@ -149,7 +154,7 @@ theorem integral_del_fn_mul_eq_zero_of_isForm {M : Type} [TopologicalSpace M] [C
   have hβn : ∀ j, ∀ y ∈ (A.e j).source, y ∉ K → A.loc β j =ᶠ[𝓝 (A.e j y)] fun _ => 0 := fun j y hy hyK => by
     filter_upwards [(ChartGlue.isOpen_over (A.e j) (isClosed_tsupport χ).isOpen_compl).mem_nhds
       (ChartGlue.mem_over (A.e j) (S := Kᶜ) hy hyK)] with w hw
-    rw [HolAtlas.loc, dif_pos hw.1]
+    rw [HolAtlas.loc, dite_eq_left hw.1]
     exact hβ0 _ hw.2
   have hd0 : ∀ x : A.Pt, x.pt ∉ K → A.del β x = 0 := fun x hx =>
     delAt_eq_zero_of_eventually (hβn x.1.1 x.pt x.2 hx)
@@ -162,9 +167,9 @@ theorem integral_del_fn_mul_eq_zero_of_isForm {M : Type} [TopologicalSpace M] [C
     exact (A.e i).map_source (hs hy)
   have hF0 : ∀ v ∉ AK, F v = 0 := fun v hv => by
     by_cases ht : v ∈ (A.e i).target
-    · rw [hFdef, HolAtlas.loc, dif_pos ht]
+    · rw [hFdef, HolAtlas.loc, dite_eq_left ht]
       exact hβ0 _ fun h => hv ⟨_, h, (A.e i).right_inv ht⟩
-    · rw [hFdef, HolAtlas.loc, dif_neg ht]
+    · rw [hFdef, HolAtlas.loc, dite_eq_right ht]
   have hFA : ∀ v ∉ AK, F =ᶠ[𝓝 v] fun _ => 0 := fun v hv => by
     filter_upwards [hAK.isClosed.isOpen_compl.mem_nhds hv] with w hw
     exact hF0 w hw
@@ -177,10 +182,10 @@ theorem integral_del_fn_mul_eq_zero_of_isForm {M : Type} [TopologicalSpace M] [C
     HasCompactSupport.intro hAK fun v hv => by simp [hF0 v hv]
   have hloc : ∀ v, A.loc (A.del β) i v = delAt F v := fun v => by
     by_cases ht : v ∈ (A.e i).target
-    · rw [HolAtlas.loc, dif_pos ht]
+    · rw [HolAtlas.loc, dite_eq_left ht]
       show delAt (A.loc β i) ((A.e i) ((A.e i).symm v)) = _
       rw [(A.e i).right_inv ht]
-    · rw [HolAtlas.loc, dif_neg ht]
+    · rw [HolAtlas.loc, dite_eq_right ht]
       exact (delAt_eq_zero_of_eventually (hFA v fun h => ht (hAKt h))).symm
   obtain ⟨hI, h0⟩ := integral_dens_delAt hFS hFc
   have hIre : Integrable fun v => (dens (A.loc (A.del β) i v)).re := by

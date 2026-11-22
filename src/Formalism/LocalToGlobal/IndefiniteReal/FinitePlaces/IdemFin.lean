@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemSplit
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,7 +89,8 @@ theorem idemSum_orth (P : Finset (Formalism.L2.DIV.Pl D.host.E)) (e : AE D) (he 
           exact idem_orth (not_isConjPl_of_isIdemAt (hes PP hPP)) (hes PP hPP) (hes b hb) (Ne.symm hbne)
         · intro h; exact absurd hPP h
       have hR : es PP * cA D e = es PP := by
-        rw [hsum, map_sum, Finset.mul_sum, Finset.sum_eq_single PP']
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hsum, map_sum, Finset.mul_sum, Finset.sum_eq_single PP']
         · rw [hy, cA_cA]; exact (hes PP hPP).1.1
         · intro b hb hbne
           by_cases hb0 : b = PP

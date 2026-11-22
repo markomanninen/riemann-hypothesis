@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.StatementD
+module
+
+public import Formalism.GradedWeylDivisibility.StatementD
+
+@[expose] public section
 
 open MvPolynomial Finset
 
@@ -37,7 +41,7 @@ lemma ldrow_aeval_monomial {R : Type*} [CommRing R] {k n : ℕ} (t : Fin k → R
 
 lemma ldrow_coeff_rowAct_diag {R : Type*} [CommRing R] {k n : ℕ} (t : Fin k → R)
     (f : MvPolynomial (Fin k × Fin n) R) (m : Fin k × Fin n →₀ ℕ) :
-    coeff m (rowAct R (Matrix.diagonal t) f) = coeff m f * ∏ a : Fin k, t a ^ rowDeg m a := by
+    AddMonoidAlgebra.coeff (rowAct R (Matrix.diagonal t) f) m = AddMonoidAlgebra.coeff f m * ∏ a : Fin k, t a ^ rowDeg m a := by
   rw [ldrow_rowAct_diag_eq]
   induction f using MvPolynomial.induction_on' with
   | monomial u c =>
@@ -47,7 +51,7 @@ lemma ldrow_coeff_rowAct_diag {R : Type*} [CommRing R] {k n : ℕ} (t : Fin k �
       rfl
     · simp
   | add p q hp hq =>
-    rw [map_add, coeff_add, coeff_add, hp, hq, add_mul]
+    rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, add_mul]
 
 lemma ldrow_weight_rowW {k n : ℕ} (m : Fin k × Fin n →₀ ℕ) (a : Fin k) :
     Finsupp.weight (rowW k n) m a = rowDeg m a := by
@@ -65,11 +69,5 @@ lemma ldrow_weight_rowW {k n : ℕ} (m : Fin k × Fin n →₀ ℕ) (a : Fin k) 
     simp [rowW, Pi.single_apply, Ne.symm hb]
   · intro h
     exact absurd (Finset.mem_univ a) h
-
-lemma ldrow_rowAct_one {R : Type*} [CommRing R] {k n : ℕ} :
-    rowAct R (n := n) (1 : Matrix (Fin k) (Fin k) R) = AlgHom.id R _ := by
-  apply MvPolynomial.algHom_ext
-  intro v
-  simp [rowAct, Matrix.one_apply, apply_ite C, ite_mul]
 
 end Formalism.GradedWeylDivisibility

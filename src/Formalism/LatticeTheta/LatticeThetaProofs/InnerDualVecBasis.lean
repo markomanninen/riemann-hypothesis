@@ -1,4 +1,8 @@
-import Formalism.LatticeTheta.LatticeSummableDecay
+module
+
+public import Formalism.LatticeTheta.LatticeSummableDecay
+
+@[expose] public section
 
 open MeasureTheory Filter Complex
 open scoped RealInnerProductSpace
@@ -63,8 +67,5 @@ def dualEquiv (e : Module.Basis ι ℝ V) : (ι → ℤ) ≃ dual (Submodule.spa
      fun μ => by
       obtain ⟨m, hm⟩ := dualVec_surjective e μ μ.2
       exact ⟨m, Subtype.ext hm⟩⟩
-
-@[simp] theorem dualEquiv_apply (e : Module.Basis ι ℝ V) (m : ι → ℤ) :
-    ((dualEquiv e m : dual (Submodule.span ℤ (Set.range e))) : V) = dualVec e m := rfl
 
 end Formalism.H

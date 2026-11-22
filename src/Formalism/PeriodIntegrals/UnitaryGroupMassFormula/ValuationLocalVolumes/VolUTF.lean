@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.VolUTyp
+module
+
+public import Mathlib
+public import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.VolUTyp
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,10 +32,12 @@ theorem sig_eq (b : X.B.I.E) : X.ιE (X.B.I.cm.sig b) = star (X.ιE b) := by
 theorem hE_crd (x y : (VS D).V) :
     X.ιE (hE X.B.I.cm.sig X.B.I.J (crdOf X.B.I X.ιE X.bas x) (crdOf X.B.I X.ιE X.bas y)) = (VS D).hT x y := by
   unfold hE Formalism.UG.hform crdOf
-  simp only [map_sum, map_mul, AlgHom.coe_toRingHom, RingHom.coe_coe]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, AlgHom.coe_toRingHom, RingHom.coe_coe]
   simp only [sig_eq, X.J_eq, RingEquiv.apply_symm_apply]
   conv_rhs => rw [← X.bas.sum_repr x, ← X.bas.sum_repr y]
-  simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply,
     RingHom.id_apply, Finset.mul_sum]
   conv_rhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_

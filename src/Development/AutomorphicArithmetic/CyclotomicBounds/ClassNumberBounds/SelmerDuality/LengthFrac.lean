@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.SelmerDuality.LengthDet
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.SelmerDuality.H1cEqH1
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.SelmerDuality.LengthDet
+
+@[expose] public section
 
 namespace KStar.Selmer
 
@@ -67,7 +72,8 @@ private theorem range_fracInv (Φ : Matrix n n O) (h : Φ.det ≠ 0) :
   · rintro ⟨y, rfl⟩
     funext i
     rw [coefMap_apply, Pi.zero_apply]
-    simp only [fracInv_apply, ← map_smul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [fracInv_apply, ← map_smul, ← map_sum]
     rw [mkQ_eq_zero_iff]
     refine ⟨y i, ?_⟩
     simp only [smul_smul, ← Finset.sum_smul]
@@ -81,7 +87,8 @@ private theorem range_fracInv (Φ : Matrix n n O) (h : Φ.det ≠ 0) :
   · intro hw
     choose z hz using fun i => (1 : Submodule O K).mkQ_surjective (w i)
     have : ∀ i, ∃ y : O, algebraMap O K y = ∑ j, Φ i j • z j := fun i => by
-      rw [← mkQ_eq_zero_iff, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← mkQ_eq_zero_iff, map_sum]
       have := congrFun hw i
       rw [coefMap_apply, Pi.zero_apply] at this
       simpa only [map_smul, hz] using this
@@ -92,7 +99,8 @@ private theorem range_fracInv (Φ : Matrix n n O) (h : Φ.det ≠ 0) :
     have h3 : algebraMap O K ((Φ.adjugate *ᵥ y) i) = algebraMap O K Φ.det * z i := by
       have h4 : algebraMap O K ((Φ.adjugate *ᵥ y) i) =
           ∑ k, (Φ.adjugate * Φ) i k • z k := by
-        simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, hy, Matrix.mul_apply,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, hy, Matrix.mul_apply,
           Finset.sum_smul, ← Algebra.smul_def, Finset.smul_sum, smul_smul]
         exact Finset.sum_comm
       rw [h4, Matrix.adjugate_mul, ← Algebra.smul_def]

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MatrixGaussSumSingularAndInvertible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MatrixGaussSumMulDualEqCardPowSqStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MatrixGaussSumSingularAndInvertible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MatrixGaussSumMulDualEqCardPowSqStatement
+
+@[expose] public section
 
 open Matrix Finset
 open scoped TensorProduct Classical
@@ -36,7 +40,8 @@ theorem complexMatrixGaussSum_norm_integral_galois :
   set D := ∑ x : GL (Fin r) k, (((ξ⁻¹ (Matrix.GeneralLinearGroup.det x))⁻¹ : ℂˣ) : ℂ) *
     ψ⁻¹ (Matrix.trace (x : Matrix (Fin r) (Fin r) k)) with hD
   have hconj : D = starRingEnd ℂ S := by
-    rw [hS, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hS, map_sum]
     refine Finset.sum_congr rfl fun x _ => ?_
     rw [map_mul, AddChar.inv_apply, AddChar.map_neg_eq_conj, MonoidHom.inv_apply, inv_inv,
       Units.val_inv_eq_inv_val, map_inv₀,
@@ -95,7 +100,8 @@ theorem complexMatrixGaussSum_norm_integral_galois :
     have key := (GlobalTheory.matrixGaussSum_singular_and_invertible k ℂ ψ ξ' r hψ hξ'1).2 g
     rw [hdet, map_pow, Units.val_pow_eq_pow_val] at key
     simp only [Matrix.one_mul] at key
-    rw [← key, hS, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← key, hS, map_sum]
     refine Finset.sum_congr rfl fun x _ => ?_
     rw [map_mul, hbφ, Units.val_inv_eq_inv_val, map_inv₀, ← hξ', ← Units.val_inv_eq_inv_val, hg,
       Matrix.scalar_apply, ← Matrix.smul_eq_diagonal_mul, Matrix.trace_smul, smul_eq_mul]

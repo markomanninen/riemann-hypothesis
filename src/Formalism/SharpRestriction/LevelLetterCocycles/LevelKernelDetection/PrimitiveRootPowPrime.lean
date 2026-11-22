@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.CvZeroTerm
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.CvZeroTerm
+
+@[expose] public section
 
 noncomputable section
 

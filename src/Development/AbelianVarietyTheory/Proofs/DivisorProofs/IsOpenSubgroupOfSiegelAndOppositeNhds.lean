@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnipVal
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuadExtTopologyStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnipVal
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuadExtTopologyStatement
+
+@[expose] public section
 
 open MeasureTheory Matrix GlobalTheory.KSp GlobalTheory.SplitUnitary Filter Topology
 open GlobalTheory.WeilM (UG IsQuad IsHerm ResEtaPow)
@@ -48,8 +52,8 @@ theorem vOf_herm (g : UG c (stdJ ν E)) (hd : IsUnit (mat c g).toBlocks₂₂.de
     exact this
   rw [Matrix.map_neg _ (map_neg c), transpose_neg, h3]
 
-open scoped Classical in
 
+open scoped Classical in
 def nOf (g : UG c (stdJ ν E)) : UG c (stdJ ν E) :=
   if h : IsUnit (mat c g).toBlocks₂₂.det then unip c (-vOf c g) (vOf_herm c g h) else 1
 
@@ -91,7 +95,7 @@ theorem continuous_blk₂₁ : Continuous fun g : UG c (stdJ ν E) => (mat c g).
   continuous_matrix fun _ _ => (continuous_mat c).matrix_elem _ _
 
 theorem blk₂₂_one : (mat c (1 : UG c (stdJ ν E))).toBlocks₂₂ = 1 := by
-  ext i j; simp [mat, toBlocks₂₂, one_apply]
+  ext i j; simp [mat, toBlocks₂₂, Matrix.one_apply]
 
 theorem blk₂₁_one : (mat c (1 : UG c (stdJ ν E))).toBlocks₂₁ = 0 := by
   ext i j; simp [mat, toBlocks₂₁, one_apply]
@@ -143,8 +147,8 @@ end GlobalTheory.KSp.OpenCrit
 
 namespace GlobalTheory.KSp
 
-open OpenCrit in
 
+open OpenCrit in
 theorem isOpen_of_sieg_of_opp (F : Type) [Field F] [CharZero F] [ValuativeRel F] [TopologicalSpace F]
     [IsNonarchimedeanLocalField F] (E : Type) [Field E] [Algebra F E] [TopologicalSpace E] [IsModuleTopology F E]
     (c : E →ₐ[F] E) (δ : E) (hE : IsQuad c δ) (ν : Type) [Fintype ν] [DecidableEq ν] (U : Subgroup (UG c (stdJ ν E)))

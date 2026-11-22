@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FontaineThetaEqZeroIffFontaineXiElementDvd
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FontaineThetaEqZeroIffFontaineXiElementDvd
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.MemLoc
 open scoped Formalism.Per
 
@@ -185,7 +190,8 @@ theorem mu_rt (e : Per.Fl l) (n : ℕ) : mu (rt e n) = xi (rt e n) * mu (rt e (n
 theorem ph_xi (e : Per.Fl l) (n : ℕ) : ph n (xi (rt e n)) = xi e := by
   have : rt e (n + 1) ^ l ^ n = (frobeniusEquiv (Per.Fl l) l).symm e := by
     rw [rt_succ, ← map_pow, rt_pow]
-  rw [xi_rt, xi, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [xi_rt, xi, map_sum]
   simp only [map_pow (ph n), ph_tm, this]
 
 theorem th_ph_xi {e : Per.Fl l} (he : e.untilt = 1) {n m : ℕ} (h : n + 1 ≤ m) :
@@ -193,7 +199,8 @@ theorem th_ph_xi {e : Per.Fl l} (he : e.untilt = 1) {n m : ℕ} (h : n + 1 ≤ m
   obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le h
   have : rt e (n + 1) ^ l ^ (n + 1 + k) = e ^ l ^ k := by
     rw [pow_add, pow_mul, rt_pow]
-  rw [xi_rt, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [xi_rt, map_sum, map_sum]
   simp only [map_pow (ph _), ph_tm, this, map_pow (Per.θ l), WittVector.fontaineTheta_teichmuller,
     map_pow PreTilt.untilt, he]
   simp

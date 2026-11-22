@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RecHeightSWith
-import Formalism.LocalRingCardinality.SpanPowerMembership.FmZeroHLatEmpty
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RecHeightSWith
+public import Formalism.LocalRingCardinality.SpanPowerMembership.FmZeroHLatEmpty
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Core GlobalTheory.Core.Ht2 GlobalTheory.CoreHt
 open GlobalTheory.ColumnNormCompare (numDatumOfParameters codeRec plRec)
 attribute [local instance] GlobalTheory.Mem.Col2.starE
@@ -13,7 +18,7 @@ theorem spread_lamOf_le {R : Ranks} (p : HCParam R) (j : ℕ) (hj : j ≤ R.m) (
   have hNm := Formalism.BasicNotions.Examples₂.N_mono (R := R) hj
   have h2 := R.two_le_m
   unfold DomWeight.spread
-  rw [dif_pos hN]
+  rw [dite_eq_left hN]
   push_cast
   rw [Formalism.BasicNotions.Examples₂.lamOf_eq p j hj, Formalism.BasicNotions.Examples₂.lamOf_eq p j hj, Formalism.BasicNotions.Examples₂.wtQ_eq_wtN, Formalism.BasicNotions.Examples₂.wtQ_eq_wtN]
   have a1 : Formalism.BasicNotions.Examples₂.wtN p (R.N R.m - 1) ≤ Formalism.BasicNotions.Examples₂.wtN p (R.N j - 1) :=
@@ -30,7 +35,7 @@ theorem spread_lamOf_le {R : Ranks} (p : HCParam R) (j : ℕ) (hj : j ≤ R.m) (
     have c1 : ¬ R.N R.m - 1 < R.k := by unfold Ranks.N; omega
     have c2 : Formalism.BasicNotions.Examples₂.blkN R (R.N R.m - 1) < R.m := by omega
     unfold Formalism.BasicNotions.Examples₂.wtN
-    rw [dif_neg c1, dif_pos c2]
+    rw [dite_eq_right c1, dite_eq_left c2]
     have e : (⟨Formalism.BasicNotions.Examples₂.blkN R (R.N R.m - 1), c2⟩ : Fin R.m) = ⟨R.m - 1, hm⟩ := Fin.ext hb
     rw [e]
     unfold wG
@@ -44,7 +49,7 @@ theorem spread_lamOf_le {R : Ranks} (p : HCParam R) (j : ℕ) (hj : j ≤ R.m) (
     linarith
   have a3 : Formalism.BasicNotions.Examples₂.wtN p 0 ≤ p.u ⟨0, hk⟩ := by
     unfold Formalism.BasicNotions.Examples₂.wtN
-    rw [dif_pos hk]
+    rw [dite_eq_left hk]
     unfold hcToWeightQ rhoVec
     have : (1 : ℚ) ≤ R.k := by exact_mod_cast hk
     simp only [Nat.cast_zero]
@@ -85,8 +90,12 @@ theorem spread_lamTrue_le : ∀ {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} (
   have hb'0 : 0 < L.sc.b' := by
     have : 0 < L.sc.a := by linarith
     exact div_pos this hX0
-  have hn1 : (1 : ℝ) ≤ (I.rec7 l Z).R.n := by
-    have : 1 ≤ (I.rec7 l Z).R.n := by unfold Ranks.n; exact Nat.succ_le_of_lt (by positivity)
+  have hn1 : (1 : ℝ) ≤ (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).R.n := by
+    have : 1 ≤ (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).R.n := by
+      have h₁ := (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).R.two_le_m
+      have h₂ := (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).R.m_le_f
+      unfold Ranks.n
+      omega
     exact_mod_cast this
   have hw : L.sc.w'' (I.rec7 l Z).R.n ≤ L.sc.b' :=
     div_le_self hb'0.le (one_le_mul_of_one_le_of_one_le hx1.le hn1)
@@ -118,7 +127,7 @@ theorem spread_lamTrue_le : ∀ {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} (
   have he0 : (B.hcW u τ).e = ((I.rec7 l Z).hc τ).e := (I.rec7 l Z).hcW_e u τ
   have hwm : wj (I.rec7 l Z) B.R.m τ = (((B.hcW u τ).e ⟨B.R.m - 1, hm1⟩ : ℚ) : ℝ) := by
     unfold wj
-    rw [dif_pos (show B.R.m - 1 < (I.rec7 l Z).R.m from hm1)]
+    rw [dite_eq_left (show B.R.m - 1 < (I.rec7 l Z).R.m from hm1)]
     exact (congrArg (fun f => ((f ⟨B.R.m - 1, hm1⟩ : ℚ) : ℝ)) he0).symm
   rw [← hwm, hu0]
   by_cases htop : ((I.rec7 l Z).eTau τ : (I.rec7 l Z).R.GG) ∈ (I.rec7 l Z).host.topPlaces

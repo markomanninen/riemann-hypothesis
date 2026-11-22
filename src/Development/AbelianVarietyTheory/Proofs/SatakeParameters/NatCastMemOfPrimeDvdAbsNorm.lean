@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Ker Formalism.L2.Col Formalism.HermitianLatticesTheory Formalism.L2.DIV Classical
 
@@ -28,9 +32,7 @@ theorem sNum_qOf_rowSG :
       ∀ u μ (P : rowSG t.Pr t.sel (t.tup μ)), SNum (t.O u μ).S (qOf P.1) := by
   intro D L hT Gi Gl K Y cX ex t u μ P
   refine ⟨Nat.pos_of_ne_zero ?_, fun q hq hP => ?_⟩
-  · unfold Formalism.L2.Col.qOf
-    rw [Ne, Ideal.absNorm_eq_zero_iff]
-    exact P.1.ne_bot
+  · simpa [Formalism.L2.Col.qOf, Ideal.absNorm_eq_zero_iff] using P.1.ne_bot
   rw [t.O_S]
   refine Finset.mem_insert_of_mem ?_
   rcases Finset.mem_union.1 P.2 with hG | hQ

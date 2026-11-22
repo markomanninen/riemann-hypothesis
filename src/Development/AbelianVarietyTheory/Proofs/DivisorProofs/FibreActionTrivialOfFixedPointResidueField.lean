@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GrpObjPullG
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmallTorsionSetForEndomorphismStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteCardTorsionQuotSmulTopLePowFinrankStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowMapsTorsionIntoSmulTopStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GrpObjPullG
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmallTorsionSetForEndomorphismStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteCardTorsionQuotSmulTopLePowFinrankStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowMapsTorsionIntoSmulTopStatement
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.BasicNotions
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -123,7 +128,7 @@ theorem m_one {X' : Scheme.{0}} {Γ : Type} [Group Γ] (ρ' : Γ →* Aut X') (G
 
 theorem iter_fibEnd {X' S : Scheme.{0}} {Γ : Type} [Group Γ] (ρ' : Γ →* Aut X') (G' : Over X') [GrpObj G']
     (act' : OAct (𝓞 E) G') (m : Γ → (G'.left ⟶ G'.left)) (hE : EqvAct.IsEqvAct ρ' G' act' m) (g0 : Γ)
-    (t : S ⟶ X') (ht : t ≫ (ρ' g0).hom = t) (k : ℕ) :
+    (t : S ⟶ X') (ht : t ≫ (ρ' g0).asIso.hom = t) (k : ℕ) :
     ((fun f => f ≫ fibEnd G' (m g0) (hE.1 g0).1.w t ht)^[k] (𝟙 _)).left ≫ pullback.fst G'.hom t =
       pullback.fst G'.hom t ≫ m (g0 ^ k) := by
   induction k with
@@ -156,7 +161,7 @@ theorem fib_gen (I : Ideal (𝓞 E)) (g : ℕ) (hNP : NeatPrime I g (Dw.p + Dw.q
     {X' : Scheme.{0}} (ρ' : Γ →* Aut X') (G' : Over X') [GrpObj G'] (hS : IsSemiAbelian G')
     (act' : OAct (𝓞 E) G') (m : Γ → (G'.left ⟶ G'.left)) (hE : EqvAct.IsEqvAct ρ' G' act' m)
     (hT : EqvAct.TorsLevel I iota ρ' G' act' m) (g0 : Γ) (x : X') [CharZero (X'.residueField x)]
-    (hx : X'.fromSpecResidueField x ≫ (ρ' g0).hom = X'.fromSpecResidueField x)
+    (hx : X'.fromSpecResidueField x ≫ (ρ' g0).asIso.hom = X'.fromSpecResidueField x)
     (T : Scheme.{0}) (w : T ⟶ G'.left) (v : T ⟶ Spec (X'.residueField x))
     (hw : w ≫ G'.hom = v ≫ X'.fromSpecResidueField x) : w ≫ m g0 = w := by
   haveI := hS.comm
@@ -175,7 +180,7 @@ theorem fib_gen (I : Ideal (𝓞 E)) (g : ℕ) (hNP : NeatPrime I g (Dw.p + Dw.q
   let K := AlgebraicClosure (X'.residueField x)
   haveI : CharZero K := charZero_of_injective_algebraMap (algebraMap (X'.residueField x) K).injective
   let t : Sp K ⟶ X' := Spec.map (CommRingCat.ofHom (algebraMap (X'.residueField x) K)) ≫ X'.fromSpecResidueField x
-  have ht : t ≫ (ρ' g0).hom = t := by simp only [t, Category.assoc, hx]
+  have ht : t ≫ (ρ' g0).asIso.hom = t := by simp only [t, Category.assoc, hx]
   let α := fibEnd G' (m g0) (hE.1 g0).1.w t ht
   suffices hα : α = 𝟙 _ by
     refine descend G'.hom x K (m g0) (fun T w v hw => ?_) T w v hw
@@ -220,7 +225,7 @@ theorem fib_gen (I : Ideal (𝓞 E)) (g : ℕ) (hNP : NeatPrime I g (Dw.p + Dw.q
   have torβ : ∀ {z}, tor z → EqvAct.IsTorsI I act' (β z) := fun {z} hz a ha => by
     rw [← hβact, hz a ha, map_one]
   obtain ⟨e, headd, helin, heinj, hemv⟩ := hT K ((𝟙_ (Over (Sp K))).hom ≫ t)
-  have hfix : ((𝟙_ (Over (Sp K))).hom ≫ t) ≫ (ρ' g0).hom = (𝟙_ (Over (Sp K))).hom ≫ t := by
+  have hfix : ((𝟙_ (Over (Sp K))).hom ≫ t) ≫ (ρ' g0).asIso.hom = (𝟙_ (Over (Sp K))).hom ≫ t := by
     rw [Category.assoc, ht]
   have hE1 : e (β 1) = 0 := by
     have e1 := headd (β 1) (β 1) (torβ tor_one) (torβ tor_one)
@@ -289,7 +294,7 @@ end GlobalTheory.EqvFib
 
 end Helpers
 
-theorem GlobalTheory.EqvFib.fibre_trivial_of_fixed : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (TF : TorFlag Xo c) (Z : Comp Xo c), 1 ≤ Dw.p + Dw.q → l.A = 1 → ∀ (I : Ideal (𝓞 E)) (g : ℕ), NeatPrime I g (Dw.p + Dw.q) → l.Mb ≤ I → ∀ (Γ : Type) [Group Γ] [Finite Γ] (ι : Γ →* LevelAut Dw l), (∀ γ, UnipAt I (ι γ)) → ∀ (X' : Scheme.{0}) [IsIntegral X'] (φ : X' ⟶ X₀ TF.Y Z) (ρ' : Γ →* Aut X'), GlobalTheory.IsNormalScheme X' → IsProjOver (φ ≫ s₀ TF.Y Z) → ∀ m : Γ → ((GlobalTheory.EqvAct.pullG TF Z φ).left ⟶ (GlobalTheory.EqvAct.pullG TF Z φ).left), GlobalTheory.EqvAct.IsEqvAct ρ' (GlobalTheory.EqvAct.pullG TF Z φ) (GlobalTheory.EqvAct.pullAct TF Z φ) m → GlobalTheory.EqvAct.TorsLevel I ι ρ' (GlobalTheory.EqvAct.pullG TF Z φ) (GlobalTheory.EqvAct.pullAct TF Z φ) m → ∀ γ (x : X'), X'.fromSpecResidueField x ≫ (ρ' γ).hom = X'.fromSpecResidueField x → ∀ (T : Scheme.{0}) (w : T ⟶ (GlobalTheory.EqvAct.pullG TF Z φ).left) (v : T ⟶ Spec (X'.residueField x)), w ≫ (GlobalTheory.EqvAct.pullG TF Z φ).hom = v ≫ X'.fromSpecResidueField x → w ≫ m γ = w := by
+theorem GlobalTheory.EqvFib.fibre_trivial_of_fixed : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (TF : TorFlag Xo c) (Z : Comp Xo c), 1 ≤ Dw.p + Dw.q → l.A = 1 → ∀ (I : Ideal (𝓞 E)) (g : ℕ), NeatPrime I g (Dw.p + Dw.q) → l.Mb ≤ I → ∀ (Γ : Type) [Group Γ] [Finite Γ] (ι : Γ →* LevelAut Dw l), (∀ γ, UnipAt I (ι γ)) → ∀ (X' : Scheme.{0}) [IsIntegral X'] (φ : X' ⟶ X₀ TF.Y Z) (ρ' : Γ →* Aut X'), GlobalTheory.IsNormalScheme X' → IsProjOver (φ ≫ s₀ TF.Y Z) → ∀ m : Γ → ((GlobalTheory.EqvAct.pullG TF Z φ).left ⟶ (GlobalTheory.EqvAct.pullG TF Z φ).left), GlobalTheory.EqvAct.IsEqvAct ρ' (GlobalTheory.EqvAct.pullG TF Z φ) (GlobalTheory.EqvAct.pullAct TF Z φ) m → GlobalTheory.EqvAct.TorsLevel I ι ρ' (GlobalTheory.EqvAct.pullG TF Z φ) (GlobalTheory.EqvAct.pullAct TF Z φ) m → ∀ γ (x : X'), X'.fromSpecResidueField x ≫ (ρ' γ).asIso.hom = X'.fromSpecResidueField x → ∀ (T : Scheme.{0}) (w : T ⟶ (GlobalTheory.EqvAct.pullG TF Z φ).left) (v : T ⟶ Spec (X'.residueField x)), w ≫ (GlobalTheory.EqvAct.pullG TF Z φ).hom = v ≫ X'.fromSpecResidueField x → w ≫ m γ = w := by
   intro E _ _ _ H Dw l Xo c TF Z _ _ I g hNP hMb Γ _ _ iota hU X' _ φ ρ' _ _ m hE hT g0 x hx T w v hw
   haveI : CharZero (X'.residueField x) := by
     let q : Spec (X'.residueField x) ⟶ Sp c.F := X'.fromSpecResidueField x ≫ φ ≫ s₀ TF.Y Z

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.IsDiffOf
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SemiAbelianHomExtensionUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.IsDiffOf
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SemiAbelianHomExtensionUnique
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
@@ -24,6 +28,6 @@ theorem abelianScheme_hom_extends_dedekind_of_isGrpPullback :
     rw [hF', Over.comp_left, Over.comp_left, Category.assoc, Category.assoc, hb', ← ha', Category.assoc] at h₁
     have : IsIso a.hom.left := inferInstanceAs (IsIso ((Over.forget _).map a.hom))
     exact (cancel_epi a.hom.left).1 h₁
-  exact ⟨F, hF, key, fun F' h' => ExtUnique.over_hom_ext_of_isPullback hφ.1 (h'.symm.trans key)⟩
+  exact ⟨F, hF, key, fun F' h' => ExtUnique.over_hom_ext_of_isPullback (j := spMap (algebraMap R K)) hφ.1 (h'.symm.trans key)⟩
 
 end GlobalTheory

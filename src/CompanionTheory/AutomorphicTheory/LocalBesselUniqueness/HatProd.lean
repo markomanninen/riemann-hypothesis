@@ -1,5 +1,9 @@
-import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.OpLocal
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
+module
+
+public import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.OpLocal
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -173,8 +177,8 @@ theorem realF_comp (hpl : Q.IsPlace P Bs.z Bs.z' Bs.π Bs.π') {o' κ' : ℕ} {�
   · simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero]
     rw [trJB_congr hpl e (h2 J hJJ)]
 
-variable (P Bs e L o κ) in
 
+variable (P Bs e L o κ) in
 def RealX (X : MA.A P (MA.DQ P)) : Prop := RealF P Bs e L o κ (fun J => MA.actA P X (Gauge.trJB P Bs e J))
 
 theorem realX_zero : RealX P Bs e L o κ 0 :=

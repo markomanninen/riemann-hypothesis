@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.Transported
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.Transported
+
+@[expose] public section
 
 noncomputable section
 

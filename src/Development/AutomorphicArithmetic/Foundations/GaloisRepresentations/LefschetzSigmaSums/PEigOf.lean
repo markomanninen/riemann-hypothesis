@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LefschetzSigmaSums.HeckeTraceSemi
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SimultaneousEigenvectors.SimEig
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LefschetzSigmaSums.HeckeTraceSemi
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SimultaneousEigenvectors.SimEig
+
+@[expose] public section
+
 open UpperTheory.Gal.LocalSmoothExtension
 
 namespace UpperTheory.Gal.LocalSmoothExtension
@@ -28,7 +33,7 @@ private lemma common_eig {M J : Type} [AddCommGroup M] [Module ℂ M] [FiniteDim
     intro n
     induction n with
     | zero => simp
-    | succ n ih => rw [pow_succ, Module.End.mul_apply, h1, map_smul, ih, smul_smul, pow_succ']
+    | succ n ih => rw [pow_succ, mul_apply_eq_comp, h1, map_smul, ih, smul_smul, pow_succ']
   rw [hp] at hk
   rcases smul_eq_zero.1 hk with h | h
   · have : c = θ j := sub_eq_zero.1 (by_contra fun h' => pow_ne_zero k h' h)
@@ -45,7 +50,7 @@ private lemma wop_restrict {M J : Type} [AddCommGroup M] [Module ℂ M] (U : Sub
     | nil => intro x; simp
     | cons j w ih =>
       intro x
-      simp only [List.map_cons, List.prod_cons, Module.End.mul_apply, LinearMap.restrict_coe_apply, ih]
+      simp only [List.map_cons, List.prod_cons, mul_apply_eq_comp, LinearMap.coe_restrict_apply, ih]
   unfold wop
   simp only [Finsupp.sum, LinearMap.sum_apply, Submodule.coe_sum, LinearMap.smul_apply,
     Submodule.coe_smul, hw]
@@ -63,7 +68,7 @@ theorem UpperTheory.Gal.LocalSmoothExtension.eigOf_of :
     induction hx using Submodule.span_induction with
     | mem x h =>
       obtain ⟨w, z, rfl⟩ := h
-      exact Submodule.subset_span ⟨j :: w, z, by simp [Module.End.mul_apply]⟩
+      exact Submodule.subset_span ⟨j :: w, z, by simp [mul_apply_eq_comp]⟩
     | zero => simp
     | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
     | smul a x _ hx => rw [map_smul]; exact Submodule.smul_mem _ _ hx
@@ -73,9 +78,9 @@ theorem UpperTheory.Gal.LocalSmoothExtension.eigOf_of :
     | mem x h =>
       obtain ⟨w, z, rfl⟩ := h
       have := LinearMap.congr_fun (hc b j j' w) z
-      simpa [Module.End.mul_apply] using this
+      simpa [mul_apply_eq_comp] using this
     | zero => simp
-    | add x y _ _ hx hy => simp only [map_add, hx, hy]
+    | add x y _ _ hx hy => simp only [map_add (f := _), hx, hy]
     | smul a x _ hx => simp only [map_smul, hx]
   let S : ∀ b, J → End ℂ (U b) := fun b j => (T b j).restrict (hst b j)
   have hS : ∀ b j j', S b j * S b j' = S b j' * S b j := by
@@ -89,7 +94,7 @@ theorem UpperTheory.Gal.LocalSmoothExtension.eigOf_of :
   have hev : (wop T' s) b = wop (S b) s := map_wop (Pi.evalAlgHom ℂ (fun b => End ℂ (U b)) b) T' s
   obtain ⟨z, hz⟩ : ∃ z, (wop (T b) s * u b) z ≠ 0 := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hne (LinearMap.ext h)
   have hu : u b z ∈ U b := Submodule.subset_span ⟨[], z, by simp⟩
   have hcoe : ((wop (S b) s ⟨u b z, hu⟩ : U b) : W b) = wop (T b) s (u b z) :=
@@ -97,7 +102,7 @@ theorem UpperTheory.Gal.LocalSmoothExtension.eigOf_of :
   have hy : wop (S b) s ⟨u b z, hu⟩ ≠ 0 := by
     intro h
     apply hz
-    rw [Module.End.mul_apply, ← hcoe, h]
+    rw [mul_apply_eq_comp, ← hcoe, h]
     rfl
   have hyG : ∀ j, wop (S b) s ⟨u b z, hu⟩ ∈ (S b j).maxGenEigenspace (θ j) := by
     intro j
@@ -109,7 +114,7 @@ theorem UpperTheory.Gal.LocalSmoothExtension.eigOf_of :
       rw [← hev, Algebra.algebraMap_eq_smul_one] at *
       exact hN'
     have := LinearMap.congr_fun h2 ⟨u b z, hu⟩
-    simpa [Module.End.mul_apply] using this
+    simpa [mul_apply_eq_comp] using this
   obtain ⟨x, hx0, hx⟩ := common_eig (S b) (hS b) θ _ hy hyG
   refine ⟨(x : W b), fun h => hx0 (Subtype.ext h), fun j => ?_⟩
   exact congrArg Subtype.val (hx j)

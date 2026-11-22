@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PairedLiftAtOfIdentity
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.HookKeyOrderGeOne
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PairedLiftAtOfIdentity
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.HookKeyOrderGeOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,13 +85,11 @@ theorem isGLW_one' (k : ℕ) : IsGLW (1 : Matrix (Fin k) (Fin k) (WF X.p X.n')) 
   exact isUnit_one
 
 theorem IsFac.mul {w : O} {f f' sg sg' : RHH O X} {o o' : ℕ} (h : IsFac w f o sg) (h' : IsFac w f' o' sg') :
-    IsFac w (f * f') (o + o') (sg * sg') where
-  inA := by
-    have := inWj_mul ((inA_iff_wj w).1 h.inA) ((inA_iff_wj w).1 h'.inA)
-    exact (inA_iff_wj w).2 this
-  ord := fun g hg => inWjRg_mul (h.ord g hg) (h'.ord g hg)
-  sym := by
-    have e : liftSubst X.p X.n' O w 1 (hhLetters X.TT) 1 (f * f') - (w ^ (o + o')) • (sg * sg') =
+    IsFac w (f * f') (o + o') (sg * sg') := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · exact (inA_iff_wj w).2 (inWj_mul ((inA_iff_wj w).1 h.inA) ((inA_iff_wj w).1 h'.inA))
+  · exact fun g hg => inWjRg_mul (h.ord g hg) (h'.ord g hg)
+  · have e : liftSubst X.p X.n' O w 1 (hhLetters X.TT) 1 (f * f') - (w ^ (o + o')) • (sg * sg') =
         (liftSubst X.p X.n' O w 1 (hhLetters X.TT) 1 f - (w ^ o) • sg) *
             liftSubst X.p X.n' O w 1 (hhLetters X.TT) 1 f' +
           ((w ^ o) • sg) * (liftSubst X.p X.n' O w 1 (hhLetters X.TT) 1 f' - (w ^ o') • sg') := by
@@ -101,9 +103,7 @@ theorem IsFac.mul {w : O} {f f' sg sg' : RHH O X} {o o' : ℕ} (h : IsFac w f o 
     rw [e1] at a1
     rw [e2] at a2
     exact (wjSub w (o + o' + 1)).add_mem a1 a2
-  sgInt := by
-    have := inWj_mul ((inA_iff_wj w).1 h.sgInt) ((inA_iff_wj w).1 h'.sgInt)
-    exact (inA_iff_wj w).2 this
+  · exact (inA_iff_wj w).2 (inWj_mul ((inA_iff_wj w).1 h.sgInt) ((inA_iff_wj w).1 h'.sgInt))
 
 end Fac
 

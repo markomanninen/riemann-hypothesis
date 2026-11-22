@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsReduction
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.TopfBasis
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsCuspHom
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUnipotentQuotientInvariantProbability
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsAdelicUnitaryGroupModelsEquiv
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsReduction
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.TopfBasis
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsCuspHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUnipotentQuotientInvariantProbability
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsAdelicUnitaryGroupModelsEquiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,7 +88,7 @@ theorem quot_unique (Γ : Subgroup H) [Countable Γ]
       ← hlin (fun m => ∑' γ : Γ, A.indicator (1 : H → ENNReal) (γ * m)) _ _ g]
     · refine lintegral_congr fun m => tsum_congr fun γ => ?_
       rw [← mul_assoc]; rfl
-    · exact Measurable.ennreal_tsum fun γ => (measurable_one.indicator hA).comp (measurable_const_mul (γ : H))
+    · exact Measurable.tsum fun γ => (measurable_one.indicator hA).comp (measurable_const_mul (γ : H))
     · intro δ hδ y
       rw [← (Equiv.mulRight (⟨δ, hδ⟩ : Γ)).tsum_eq fun γ : Γ => A.indicator (1 : H → ENNReal) (γ * y)]
       exact tsum_congr fun γ => by rw [← mul_assoc]; rfl⟩
@@ -125,7 +129,7 @@ theorem quot_unique (Γ : Subgroup H) [Countable Γ]
     rw [Measure.inv_inv] at this
     rw [this]
     conv_rhs => rw [← Measure.inv_inv μ]
-    exact Measure.map_smul _ _ _
+    exact Measure.map_smul _ measurable_inv.aemeasurable
   refine ⟨c, fun f hf hi => ?_⟩
   have e : ν.map f = (κ.restrict D).map f := by
     ext B hB
@@ -375,15 +379,14 @@ theorem adele_tens_eq_zero {F E A B : Type} [Field F] [Field E] [Algebra F E] [C
         (Algebra.TensorProduct.map (AlgHom.snd F A B) (AlgHom.id F E) z) := by
     intro z
     induction z with
-    | zero => simp
     | tmul x y => simp [← TensorProduct.add_tmul]
     | add x y hx hy =>
-      simp only [map_add]
+      simp only [map_add (f := _)]
       rw [add_add_add_comm, ← hx, ← hy]
   rw [hz z, a, b, map_zero, map_zero, add_zero]
 
-open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes (HA AF Ainf inclR fstA sndA) in
 
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes (HA AF Ainf inclR fstA sndA) in
 theorem mem_NA_iff (I : AutInst) (θ : InfinitePlace I.F → (Ainf I.F ⊗[I.F] I.E →+* ℂ))
     (hθ : ∀ v, Formalism.MainNotions.StandardLattice.IsInfEmb (I.φ v) (θ v)) (h : HA (AF I.F) I.cm.sig I.J) (x : I.GA)
     (hf : I.fmat x.2 = (Formalism.MainNotions.StandardLattice.finMat I.cm.sig I.J h).map (Algebra.TensorProduct.comm I.F _ _))

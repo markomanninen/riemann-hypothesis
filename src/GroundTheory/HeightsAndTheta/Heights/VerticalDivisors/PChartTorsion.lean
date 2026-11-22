@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -31,7 +36,7 @@ theorem toChart_rename (p : MvPolynomial (Fin n) D) :
     toChart k P j (rename Sum.inl p) = C (toBase P j p) := by
   induction p using MvPolynomial.induction_on with
   | C d => simp [toChart]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p m hp => simp only [map_mul, hp, rename_X]; simp [toChart]
 
 theorem incIdeal_le_ker : incIdeal P k ≤ RingHom.ker (toChart k P j) := by
@@ -41,7 +46,8 @@ theorem incIdeal_le_ker : incIdeal P k ≤ RingHom.ker (toChart k P j) := by
     rw [toChart_rename]
     simp [toBase, Ideal.Quotient.eq_zero_iff_mem.2 hp]
   · show toChart k P j _ = 0
-    simp only [map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul]
     rw [← Finset.add_sum_erase _ _ (Finset.mem_univ j)]
     have hs : ∀ l ∈ Finset.univ.erase j,
         toChart k P j (X (Sum.inr (i, l))) * toChart k P j (X (Sum.inl l)) =
@@ -99,14 +105,16 @@ theorem back_toChart (g : MvPolynomial (Fin n ⊕ (Fin k × Fin n)) D) :
       · subst hm
         have hinc : toLoc k P m (∑ l, X (Sum.inr (i, l)) * X (Sum.inl l)) = 0 :=
           toLoc_mem k P m (Ideal.mem_sup_right (Ideal.subset_span ⟨i, rfl⟩))
-        rw [← Finset.add_sum_erase _ _ (Finset.mem_univ m), map_add, map_sum] at hinc
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← Finset.add_sum_erase _ _ (Finset.mem_univ m), map_add (f := _), map_sum] at hinc
         have hinv : baseToLoc k P m (IsLocalization.Away.invSelf (Ideal.Quotient.mk P (X m))) *
             toLoc k P m (X (Sum.inl m)) = 1 := by
           have e := baseToLoc_toBase k P m (X m)
           rw [rename_X] at e
           rw [← e, toBase, RingHom.comp_apply, ← map_mul, mul_comm, IsLocalization.Away.mul_invSelf,
             map_one]
-        simp only [RingHom.comp_apply, toChart, eval₂Hom_X', Sum.elim_inr, solve, ↓reduceIte,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [RingHom.comp_apply, toChart, eval₂Hom_X', Sum.elim_inr, solve, ↓reduceIte,
           back, map_neg, map_mul, map_sum, eval₂Hom_C, eval₂Hom_X', baseToLoc_toBase, rename_X]
         simp only [map_mul] at hinc
         set u := toLoc k P m (X (Sum.inr (i, m)))
@@ -123,8 +131,8 @@ theorem back_toChart (g : MvPolynomial (Fin n ⊕ (Fin k × Fin n)) D) :
 
 end ChartTorsion
 
-open ChartTorsion in
 
+open ChartTorsion in
 theorem ChartTorsion.proof : ChartTorsion.Statement := by
   intro D _ _ n k P hP hPD c g hc hcg j
   by_cases hj : (X j : MvPolynomial (Fin n) D) ∈ P

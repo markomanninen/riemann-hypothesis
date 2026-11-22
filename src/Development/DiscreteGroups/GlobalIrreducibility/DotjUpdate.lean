@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.GlobalIrreducibility.NeTopOfConj
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.NeTopOfConj
+
+@[expose] public section
 
 noncomputable section
 

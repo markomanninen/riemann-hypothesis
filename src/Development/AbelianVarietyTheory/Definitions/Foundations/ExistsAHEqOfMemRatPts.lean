@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
-import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceTensorProductFiniteExtension
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
+public import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceTensorProductFiniteExtension
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,16 +37,14 @@ def sumH {J : Matrix (Fin m) (Fin m) E} {J' : Matrix (Fin n) (Fin n) E} {Q : Mat
 
 variable {J : Matrix (Fin n) (Fin n) E} (Q : Matrix (Fin (n + n)) (Fin (n + n)) E)
 
-variable {Q} in
 
+variable {Q} in
 def ioH (h : Q = dblGram finSumFinEquiv J) : HA R σ J × HA R σ J →* HA R σ Q :=
   ioU (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR R σ) finSumFinEquiv (J := JR R J) (Q := JR R Q) (h ▸ JR_dblGram R J)
 
 abbrev siegelH : Subgroup (HA R σ Q) := siegelOf finSumFinEquiv (matHom R σ Q)
 
 abbrev aH : siegelH R σ Q →* (R ⊗[F] E)ˣ := aOf finSumFinEquiv (matHom R σ Q)
-
-abbrev unipH : Subgroup (HA R σ Q) := unipOf finSumFinEquiv (matHom R σ Q)
 
 abbrev leviH : Subgroup (HA R σ Q) := leviSubOf finSumFinEquiv (matHom R σ Q)
 
@@ -57,14 +59,6 @@ theorem matHom_ioH (g g' : HA R σ J) :
 
 theorem ioH_one : ioH R σ h (1, 1) = 1 := by
   exact map_one (ioH R σ h)
-
-theorem ioH_injective : Function.Injective (ioH R σ h) := by
-  rintro ⟨g, g'⟩ ⟨k, k'⟩ hx
-  have e1 := congrArg (matHom R σ Q) hx
-  rw [matHom_ioH, matHom_ioH] at e1
-  have e2 := blkGL_injective _ e1
-  simp only [Prod.mk.injEq] at e2
-  exact Prod.ext (matHom_injective R σ J e2.1) (matHom_injective R σ J e2.2)
 
 theorem continuous_ioH [TopologicalSpace R] : Continuous (ioH R σ h) := by
   rw [(isEmbedding_matHom R σ Q).continuous_iff]
@@ -99,8 +93,8 @@ theorem isUnit_det_JR (hJ : J.det ≠ 0) : IsUnit (JR (F := F) R J).det := by
   rw [e1]
   exact (isUnit_iff_ne_zero.2 hJ).map _
 
-include h in
 
+include h in
 theorem sigR_det_quot_mul_aH (hJ : J.det ≠ 0) (p : siegelH R σ Q) :
     Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR R σ (quotMat finSumFinEquiv (matHom R σ Q p).1).det * (aH R σ Q p).1 = 1 := by
   have hM : cT (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR R σ) (matHom R σ Q (p : HA R σ Q)).1 *
@@ -113,10 +107,9 @@ theorem sigR_det_quot_mul_aH (hJ : J.det ≠ 0) (p : siegelH R σ Q) :
 
 theorem sigR_invol (hσ : ∀ x, σ (σ x) = x) (y : R ⊗[F] E) :
     Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR R σ (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR R σ y) = y := by
-  induction y using TensorProduct.induction_on with
-  | zero => simp
+  induction y using TensorProduct.inductionOn with
   | tmul a x => simp [Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR, hσ]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem conjUnit_detH {J : Matrix (Fin m) (Fin m) E} (hJ : J.det ≠ 0) (g : HA R σ J) :
     conjUnit σ (detH R σ J g) = (detH R σ J g)⁻¹ := by
@@ -153,8 +146,8 @@ theorem aH_mapH (p : siegelH R σ Q) : aH R' σ Q ⟨mapH σ Q φ p, mapH_mem_si
   exact (congrArg Matrix.det (leviMat_map finSumFinEquiv (Algebra.TensorProduct.map φ (AlgHom.id F E)).toRingHom _)).trans
     (RingHom.map_det _ _).symm
 
-variable (σ Q) in
 
+variable (σ Q) in
 abbrev siegelRat : Subgroup (UJ (σ : E →+* E) Q) := siegelOf finSumFinEquiv (UJ (σ : E →+* E) Q).subtype
 
 theorem diagH_mem_siegelH [Nontrivial R] {γ : UJ (σ : E →+* E) Q} :
@@ -166,7 +159,7 @@ theorem diagH_mem_siegelH [Nontrivial R] {γ : UJ (σ : E →+* E) Q} :
   rw [mem_siegelOf, mem_siegelOf, keepsDiag_iff, keepsDiag_iff]
   refine forall_congr' fun i => forall_congr' fun j => ?_
   change inclR (F := F) R _ + inclR (F := F) R _ = inclR (F := F) R _ + inclR (F := F) R _ ↔ _
-  rw [← map_add, ← map_add, hinj.eq_iff]
+  rw [← map_add (f := _), ← map_add (f := _), hinj.eq_iff]
 
 theorem aH_diagH {γ : UJ (σ : E →+* E) Q} (hγ : γ ∈ siegelRat σ Q) (hγ' : diagH σ Q R γ ∈ siegelH R σ Q) :
     aH R σ Q ⟨_, hγ'⟩ = Units.map (inclR (F := F) R).toMonoidHom (aOf finSumFinEquiv (UJ (σ : E →+* E) Q).subtype ⟨γ, hγ⟩) := by
@@ -253,12 +246,12 @@ theorem mem_siegelH_adelic {g : GAd σ Q} : g ∈ siegelH (AF F) σ Q ↔
     · intro w
       have e1 := (keepsDiag_iff _).1 (mem_siegelOf.1 (h1 w)) i j
       rw [matHom_projArch] at e1
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact e1
     · intro v
       have e1 := (keepsDiag_iff _).1 (mem_siegelOf.1 (h2 v)) i j
       rw [matHom_proj] at e1
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact e1
 
 def embP (v : HeightOneSpectrum (𝓞 F)) : siegelH (Fv F v) σ Q →* siegelH (AF F) σ Q :=
@@ -301,8 +294,8 @@ theorem aH_embP (v : HeightOneSpectrum (𝓞 F)) (p : siegelH (Fv F v) σ Q) :
         Subtype.ext (by rw [coe_projP, coe_embP]; exact proj_emb_ne σ Q e _)
       rw [e1, map_one]
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem exists_aH_eq_of_mem_ratPts (p : siegelH (AF F) σ Q) (hp : (p : GAd σ Q) ∈ AdelicU.ratPts σ Q) :
     ∃ x : Eˣ, aH _ σ Q p = Units.map (inclR (F := F) (AF F)).toMonoidHom x := by
   have : Nontrivial (AF F) := (show Nontrivial (InfiniteAdeleRing F × FiniteAdeleRing (𝓞 F) F) from inferInstance)
@@ -323,8 +316,8 @@ end LocalGlobal
 section Level
 
 instance isLattice_sumLat (L : Submodule (𝓞 E) (Fin m → E)) (L' : Submodule (𝓞 E) (Fin n → E))
-    [h : Submodule.IsLattice E L] [h' : Submodule.IsLattice E L'] :
-    Submodule.IsLattice E (sumLat finSumFinEquiv L L') := by
+    [h : Submodule.IsFullLattice E L] [h' : Submodule.IsFullLattice E L'] :
+    Submodule.IsFullLattice E (sumLat finSumFinEquiv L L') := by
   let φ : ((Fin m → E) × (Fin n → E)) ≃ₗ[E] (Fin (m + n) → E) :=
     (LinearEquiv.sumArrowLequivProdArrow _ _ E E).symm.trans (LinearEquiv.funCongrLeft E E finSumFinEquiv.symm)
   have hφ : ∀ x, φ x = pairVec finSumFinEquiv x.1 x.2 := fun x => rfl
@@ -333,13 +326,15 @@ instance isLattice_sumLat (L : Submodule (𝓞 E) (Fin m → E)) (L' : Submodule
     refine ⟨fun hw => ⟨(_, _), hw, pairVec_eta _ w⟩, ?_⟩
     rintro ⟨x, hx, rfl⟩
     exact (pairVec_mem_sumLat _).2 hx
-  refine ⟨e ▸ (h.fg.prod h'.fg).map _, ?_⟩
+  let : Submodule.IsLattice E (sumLat finSumFinEquiv L L') :=
+    Submodule.IsLattice.of_fg E (e ▸ (h.fg.prod h'.fg).map _)
+  refine ⟨?_⟩
   rw [e, Submodule.map_coe, LinearMap.coe_restrictScalars, Submodule.span_image, Submodule.prod_coe,
     Submodule.span_prod_eq E (zero_mem L) (zero_mem L'), h.span_eq_top, h'.span_eq_top, Submodule.prod_top,
     Submodule.map_top, LinearEquiv.range]
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem latLoc_sumLat (L : Submodule (𝓞 E) (Fin m → E)) (L' : Submodule (𝓞 E) (Fin n → E)) (v : HeightOneSpectrum (𝓞 F)) :
     latLoc F (sumLat finSumFinEquiv L L') v = sumLat finSumFinEquiv (latLoc F L v) (latLoc F L' v) := by
   ext w
@@ -439,7 +434,7 @@ theorem ioH_mem_KArch {w : InfinitePlace F} {b : GL (Fin n) (w.Completion ⊗[F]
     ioH _ σ h (g, g') ∈ KArch σ Q w b ↔ g ∈ stabArch σ J w b ∧ g' ∈ stabArch σ J w b := by
   rw [mem_stabArch, mem_stabArch, mem_stabArch, matHom_ioH, ← map_inv (blkGL finSumFinEquiv),
     ← map_mul (blkGL finSumFinEquiv), ← map_mul (blkGL finSumFinEquiv), ← blkMat_one finSumFinEquiv, blkGL_mem_UJ]
-  try exact Iff.rfl
+  exact Iff.rfl
 
 theorem ioH_mem_KAd {g g' : GAd σ J} :
     ioH _ σ h (g, g') ∈ KAd σ Q L a ↔ g ∈ levelAll σ J L a ∧ g' ∈ levelAll σ J L a := by
@@ -471,8 +466,8 @@ theorem isLatticeFrame_dbl (ha : IsLatticeFrame L a) :
     · rw [pairVec_inr]
       exact h2 i
 
-include h in
 
+include h in
 theorem isMajorantFrame_dbl (ha : IsMajorantFrame σ J a) : IsMajorantFrame σ Q (blkGL finSumFinEquiv (a, a)) := by
   intro w
   obtain ⟨ε, hε⟩ := ha w
@@ -481,15 +476,14 @@ theorem isMajorantFrame_dbl (ha : IsMajorantFrame σ J a) : IsMajorantFrame σ Q
   dsimp only
   rw [dblGram, cT_blkMat, blkMat_mul, blkMat_mul, Matrix.mul_neg, Matrix.neg_mul, hε, Matrix.diagonal_neg, blkMat,
     Matrix.fromBlocks_diagonal, Matrix.submatrix_diagonal_equiv]
-  congr 1
+  apply congrArg Matrix.diagonal
   funext k
-  simp only [Function.comp_apply]
   obtain ⟨k, rfl⟩ := finSumFinEquiv.surjective k
-  simp only [Equiv.symm_apply_apply]
+  simp only [Function.comp_apply, Equiv.symm_apply_apply]
   rcases k with i | i <;> simp <;> split_ifs <;> simp_all
 
-include h in
 
+include h in
 theorem isSelfDualAt_dbl {v : HeightOneSpectrum (𝓞 F)} (hL : IsSelfDualAt σ J L v) :
     IsSelfDualAt σ Q (sumLat finSumFinEquiv L L) v := by
   have hz : ∀ y : Fin n → Fv F v ⊗[F] E,
@@ -525,7 +519,7 @@ theorem isSelfDualAt_dbl {v : HeightOneSpectrum (𝓞 F)} (hL : IsSelfDualAt σ 
 end
 
 theorem isCompact_levelAll (h : IsCMExt F E σ) (J : Matrix (Fin m) (Fin m) E) (L : Submodule (𝓞 E) (Fin m → E))
-    [Submodule.IsLattice E L] (a : GL (Fin m) (AF F ⊗[F] E)) : IsCompact (levelAll σ J L a : Set (GAd σ J)) := by
+    [Submodule.IsFullLattice E L] (a : GL (Fin m) (AF F ⊗[F] E)) : IsCompact (levelAll σ J L a : Set (GAd σ J)) := by
   have hA : IsCompact (Set.pi Set.univ fun w =>
       (stabArch σ J w (bc (compInf F E w) a) : Set (GArch σ J w))) :=
     isCompact_univ_pi fun w => GlobalTheory.AdelicU.Frames.isCompact_stabArch h J w _

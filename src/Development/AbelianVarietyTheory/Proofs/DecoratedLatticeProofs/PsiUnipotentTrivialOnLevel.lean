@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleExact
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicPointComponentsAtPlacesLatticesVacua
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FstACoordOfInfPart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleExact
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicPointComponentsAtPlacesLatticesVacua
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FstACoordOfInfPart
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,8 @@ namespace GlobalTheory.FinPl.PsiUnit
 
 variable {D : D7}
 
-open Formalism.IndefR.Fin.LevelGroupLemmas in
 
+open Formalism.IndefR.Fin.LevelGroupLemmas in
 theorem char_eq_one_of_local (ψ : AddChar (AF D.host.F) ℂ) (hψ : Continuous ψ) (t : AF D.host.F)
     (ht : fstA D.host.F t = 0) (h : ∀ v : Pl D, ψ (pairA D.host.F 0 (ePl D (· = v)) * t) = 1) : ψ t = 1 := by
   classical
@@ -30,7 +34,7 @@ theorem char_eq_one_of_local (ψ : AddChar (AF D.host.F) ℂ) (hψ : Continuous 
         congr 1
         refine RestrictedProduct.ext _ _ fun w => ?_
         change evalV D.host.F w (sglS (insert v A)) = evalV D.host.F w (sglS A + ePl D (· = v))
-        rw [map_add, evalV_sglS, evalV_sglS, evalV_ePl]
+        rw [map_add (f := _), evalV_sglS, evalV_sglS, evalV_ePl]
         by_cases hw : w = v
         · subst hw; simp [hv]
         · simp [hw]
@@ -71,40 +75,6 @@ theorem mulVec_colMul {l m n : ℕ} (A : Mx D l m) (x : Mx D m n) (i : Fin n) (a
   funext k
   simp only [Matrix.mulVec, dotProduct, colMul, Matrix.mul_apply, Finset.mul_sum]
   exact Finset.sum_congr rfl fun _ _ => by ring
-
-theorem entry_line {V V₀ : HSp D} {ρ : ℕ} (dV : HypDec V V₀ ρ) {LV : Lat V} {LV₀ : Lat V₀} {P : Pl D → Prop} {v : Pl D}
-    (hv : P v) (hm : MonoAt dV LV LV₀ v) {t : GL (Fin ρ) (AE D)} (ht : InK V LV P (dV.levi t)) (i j : Fin ρ) (a : AE D)
-    (ha : colMul dV.jX j a ∈ latV V LV (· = v)) : colMul dV.jX i (idem D (· = v) * t.1 i j * a) ∈ latV V LV (· = v) := by
-  have h1 := latV_mono hv ha
-  have h2 := smul_latV v (idem_mem_intAt (· = v)) ((ht.2 _ (latV_idAt h1)).1 h1)
-  have h3 := ((hm _).1 h2).1 i
-  rw [Matrix.mulVec_smul, mulVec_colMul, mulVec_colMul, dV.levi_jX, ← Matrix.mul_assoc, dV.pX_jX, Matrix.one_mul] at h3
-  convert h3 using 2
-  rw [Pi.smul_apply, smul_eq_mul, colMul]
-  ring
-
-theorem psiUni_eq_one : ∀ {D : D7} (ψ : AddChar (AF D.host.F) ℂ) {V V₀ : HSp D} {ρ : ℕ} (dV : HypDec V V₀ ρ) (LV : Lat V)
-    (LV₀ : Lat V₀) (P : Pl D → Prop), IsStdChar D ψ (-1) → IsSelfDualC V LV →
-    (∀ v, P v → MonoAt dV LV LV₀ v ∧ PrimAt ψ dV LV v) → ∀ u : UX D ρ, MxAt P (u.1.1 - 1) → InK V LV P (dV.levi u.1) →
-    psiUni ψ u.1 = 1 := by
-  intro D ψ V V₀ ρ dV LV LV₀ P hψ _ hP u hu hK
-  have key : ∀ i j : Fin ρ, j.1 = i.1 + 1 → psiE ψ (u.1.1 i j) = 1 := fun i j hij => by
-    have hne : i ≠ j := fun e => by rw [e] at hij; omega
-    have hs : u.1.1 i j ∈ idAt D P := by
-      have := hu i j
-      rwa [Matrix.sub_apply, Matrix.one_apply_ne hne, sub_zero] at this
-    refine psiE_eq_one_of_local ψ hψ.1.1 hs fun v hv => ?_
-    have h := ((hP v hv).2 i j hij _ (Ideal.mul_mem_right _ _ (idem_mem_idAt _))).1
-      (entry_line dV hv (hP v hv).1 hK i j) _ (idem_mem_intAt _)
-    rwa [mul_right_comm, idem_mul_self] at h
-  unfold psiUni upSum
-  refine Finset.sum_induction _ (fun x => psiE ψ x = 1) (fun a b ha hb => by rw [psiE_add, ha, hb, one_mul])
-    (psiE_zero ψ) fun i _ => ?_
-  refine Finset.sum_induction _ (fun x => psiE ψ x = 1) (fun a b ha hb => by rw [psiE_add, ha, hb, one_mul])
-    (psiE_zero ψ) fun j _ => ?_
-  split_ifs with h
-  · exact key i j h
-  · exact psiE_zero ψ
 
 end GlobalTheory.FinPl.PsiUnit
 

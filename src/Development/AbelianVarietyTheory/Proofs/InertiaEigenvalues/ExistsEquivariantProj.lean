@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemBddFormsOfWithSmoothings
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AutomorphicFormsFiniteGL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspRapidDecaySiegelGLOfFinite
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdeleModuleDetDiagUnitsPosIdele
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspFormLinearCombination
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsOpenIsCompact
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsUnitaryOfCharIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemBddFormsOfWithSmoothings
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AutomorphicFormsFiniteGL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspRapidDecaySiegelGLOfFinite
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdeleModuleDetDiagUnitsPosIdele
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspFormLinearCombination
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsOpenIsCompact
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsUnitaryOfCharIff
+
+@[expose] public section
 
 open NumberField MeasureTheory Matrix GlobalTheory.AutomorphicL2Unitary GlobalTheory.UnitaryBC GlobalTheory.CuspRep GlobalTheory.CuspRep.CuspidalL2GL GlobalTheory.Petersson GlobalTheory.Published Formalism.L2.Host Filter Topology
 open scoped ComplexConjugate
@@ -15,15 +19,15 @@ noncomputable section
 
 namespace GlobalTheory.CuspOrth
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ} {ω : HChar E}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ} {ω : HChar E}
   (μ : Measure (GA E a)) [μ.IsHaarMeasure]
 
 theorem cuspFormsBounded : CuspFormsBoundedGL :=
   GlobalTheory.CuspBoundSiegel.cuspFormsBounded_of_rapidDecay
     (GlobalTheory.cuspRapidDecaySiegelGL_of_finite GlobalTheory.automorphicFormsFiniteGL)
 
-variable (ω) in
 
+variable (ω) in
 abbrev bddSm : Submodule ℂ (Sm E a) := (bddForms E a ω).comap (Sm E a).subtype
 
 abbrev ip (φ ψ : Sm E a) : ℂ := pet (latticeGL E a) μ φ.1 ψ.1
@@ -31,7 +35,7 @@ abbrev ip (φ ψ : Sm E a) : ℂ := pet (latticeGL E a) μ φ.1 ψ.1
 theorem ip_add_right (hω : ω.IsUnitary) {φ ψ ψ' : Sm E a} (h : φ ∈ bddSm ω) (h1 : ψ ∈ bddSm ω) (h2 : ψ' ∈ bddSm ω) :
     ip μ φ (ψ + ψ') = ip μ φ ψ + ip μ φ ψ' := by
   unfold ip
-  rw [← conj_pet μ (ψ + ψ').1, ← conj_pet μ ψ.1, ← conj_pet μ ψ'.1, ← map_add]
+  rw [← conj_pet μ (ψ + ψ').1, ← conj_pet μ ψ.1, ← conj_pet μ ψ'.1, ← map_add (f := _)]
   exact congrArg conj (pet_add_left μ hω h1 h2 h)
 
 theorem ip_smul_right (c : ℂ) (φ ψ : Sm E a) : ip μ φ (c • ψ) = conj c * ip μ φ ψ := by

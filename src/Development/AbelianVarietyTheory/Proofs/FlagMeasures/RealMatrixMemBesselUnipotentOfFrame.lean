@@ -1,9 +1,14 @@
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsFundOne
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
-import Formalism.FlagUnipotentLattices.MemOfOrthogonalAnisotropic
-import Formalism.FormalDegreeBessel.StatementG
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CoordOfMemXa
+module
+
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsFundOne
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
+public import Formalism.FlagUnipotentLattices.MemOfOrthogonalAnisotropic
+public import Formalism.FormalDegreeBessel.StatementG
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CoordOfMemXa
+
+@[expose] public section
+
 open Matrix
 
 noncomputable section
@@ -91,7 +96,8 @@ theorem mem_Nset : ∀ {K V : Type} [Field K] [StarRing K] [AddCommGroup V] [Mod
           simp only [P, phi_sub' h, phi_sum' h, h.2.1, h.2.2.1]
         rw [ex, hn, ← phi_sub' h]
         have hperp : ∀ b, H.B (e b) (x - ∑ a : Fin r, H.B x (e a) • f a) = 0 := fun b => by
-          rw [map_sub, map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sub, map_sum]
           simp [hef]
           rw [starRingEnd_apply, H.herm, sub_self]
         have := h3 _ hperp

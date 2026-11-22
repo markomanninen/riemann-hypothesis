@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.LastComatrixRowInvertsDual
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.TensorDualStandardRel
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.LastComatrixRowInvertsDual
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.TensorDualStandardRel
+
+@[expose] public section
 
 open Formalism.REAL
 

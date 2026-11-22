@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.LinearIndependentOrth
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.SmulMemLocFOfSP
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.GlueInlInl
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.LinearIndependentOrth
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.SmulMemLocFOfSP
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.GlueInlInl
+
+@[expose] public section
 
 open NumberField Module
 
@@ -16,13 +20,15 @@ variable {K V : Type} [Field K] [StarRing K] [AddCommGroup V] [Module K V]
 theorem form_sum_orth {ι' : Type} [Fintype ι'] [DecidableEq ι'] (h : V →ₗ⋆[K] V →ₗ[K] K) (v : ι' → V)
     (hvo : ∀ i k, i ≠ k → h (v i) (v k) = 0) (i : ι') (x : ι' → K) :
     h (v i) (∑ k, x k • v k) = x i * h (v i) (v i) := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul, smul_eq_mul]
   exact Finset.sum_eq_single i (fun k _ hk => by rw [hvo i k (Ne.symm hk), mul_zero]) (by simp)
 
 theorem form_sum_zero {ι' : Type} [Fintype ι'] (h : V →ₗ⋆[K] V →ₗ[K] K) (u : V) (v : ι' → V)
     (h0 : ∀ k, h u (v k) = 0) (x : ι' → K) : h u (∑ k, x k • v k) = 0 := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul, smul_eq_mul, h0, mul_zero, Finset.sum_const_zero]
 
 theorem family_dual_holds : FamDual := by
@@ -72,10 +78,10 @@ theorem family_dual_holds : FamDual := by
   simp only [Sum.elim_inl, Sum.elim_inr] at hf
   have hbx : ∀ i, h (b i) x = f (Sum.inl i) * algebraMap F K (a i : F) := by
     intro i
-    rw [← hf, map_add, form_sum_orth h b hbo i, form_sum_zero h (b i) w (hbw i), hbn, add_zero]
+    rw [← hf, map_add (f := _), form_sum_orth h b hbo i, form_sum_zero h (b i) w (hbw i), hbn, add_zero]
   have hwx : ∀ j, h (w j) x = f (Sum.inr j) * algebraMap F K (c j) := by
     intro j
-    rw [← hf, map_add, form_sum_orth h w hwo j, form_sum_zero h (w j) b (fun i => hwb i j),
+    rw [← hf, map_add (f := _), form_sum_orth h w hwo j, form_sum_zero h (w j) b (fun i => hwb i j),
       (hwn j).1, zero_add]
   have hα : ∀ i, f (Sum.inl i) * algebraMap F K (a i : F) ∈ SP K 𝔭 := fun i => by
     rw [← hbx]; exact hX _ (hGb i)
@@ -120,7 +126,7 @@ theorem family_dual_holds : FamDual := by
           (f (Sum.inl i) * algebraMap F K (a i : F)) *
           ((algebraMap F K (a i : F))⁻¹ * algebraMap F K (π : F) ^ vF 𝔭 (a i)) *
           ((algebraMap F K (c (τ i)))⁻¹ * algebraMap F K (π : F) ^ vF 𝔭 (a i)) := by
-      rw [map_add, inv_pow, inv_pow, pow_mul]
+      rw [map_add (f := _), inv_pow, inv_pow, pow_mul]
       field_simp [hA0 i, hC0, hϖ0]
       ring
     rw [e]

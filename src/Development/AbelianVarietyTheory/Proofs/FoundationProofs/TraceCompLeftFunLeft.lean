@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.StandardFiveNontrivial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.StandardFiveNontrivial
+
+@[expose] public section
+
 open Polynomial Classical GlobalTheory.BadShare
 
 noncomputable section
@@ -13,7 +18,8 @@ theorem trace_compLeft_funLeft {G W : Type} [Fintype G] [AddCommGroup W] [Module
       ∑ x, LinearMap.single ℂ (fun _ : G => W) x ∘ₗ (A ∘ₗ LinearMap.proj (f x)) := by
     refine LinearMap.ext fun φ => funext fun y => ?_
     simp [LinearMap.sum_apply, Finset.sum_apply, Pi.single_apply, LinearMap.funLeft_apply]
-  rw [h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, map_sum]
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [LinearMap.trace_comp_comm']
   split_ifs with hx
@@ -33,7 +39,8 @@ def coindSum : (G → W) →ₗ[ℂ] Representation.coindV r σ :=
   LinearMap.codRestrict _
     (∑ γ : Γ, (σ γ⁻¹ : W →ₗ[ℂ] W).compLeft G ∘ₗ LinearMap.funLeft ℂ W fun x => r γ * x) (by
       intro φ δ x
-      simp only [LinearMap.sum_apply, Finset.sum_apply, LinearMap.comp_apply, LinearMap.compLeft_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [LinearMap.sum_apply, Finset.sum_apply, LinearMap.comp_apply, LinearMap.compLeft_apply,
         Function.comp_apply, LinearMap.funLeft_apply, map_sum]
       refine Fintype.sum_equiv (Equiv.mulRight δ) _ _ fun γ => ?_
       simp only [Equiv.coe_mulRight, map_mul r, mul_assoc, mul_inv_rev]
@@ -66,7 +73,8 @@ theorem trace_coind_mul_card (g : G) :
     change (coindSum r σ φ).1 (x * g) = _
     rw [coindSum_apply]
     simp [LinearMap.sum_apply, Finset.sum_apply, LinearMap.funLeft_apply]
-  rw [mul_comm, ← smul_eq_mul, ← map_smul, h1, LinearMap.trace_comp_comm', h2, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [mul_comm, ← smul_eq_mul, ← map_smul, h1, LinearMap.trace_comp_comm', h2, map_sum]
   exact Finset.sum_congr rfl fun γ _ => trace_compLeft_funLeft _ _
 
 end

@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerTer
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsBisRest
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerMore
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerExtra
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerTer
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsBisRest
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerMore
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerExtra
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -25,9 +30,6 @@ variable {Ω : Type*} [Field Ω] {K : Type} [Fintype K] {ι : K → Type} [∀ k
 def extChart (t : ∀ k, ι k) : ∀ k : K ⊕ Unit, Sum.elim ι ptIdx k
   | .inl k => t k
   | .inr _ => (0 : Fin 1)
-
-theorem restrictChart_extChart (t : ∀ k, ι k) : restrictChart (extChart t) = t :=
-  rfl
 
 theorem mseg_join (y : (Σ k, ι k) → Ω) (s : ∀ k : K ⊕ Unit, Sum.elim ι ptIdx k) :
     mseg (joinCoord y (ptCoord (Ω := Ω))) s = mseg y (restrictChart s) := by
@@ -189,8 +191,8 @@ end Pairs
 
 end JoinPointFlagModel
 
-open JoinPointFlagModel in
 
+open JoinPointFlagModel in
 theorem JoinPointFlagModel.proof (hIff : FlagPairCharacterisation.Statement.{0, 0, 0})
     (hModel : JoinPointModel.Statement) (hVert : JoinPointVerticalDivisor.Statement) :
     JoinPointFlagModel.Statement := by

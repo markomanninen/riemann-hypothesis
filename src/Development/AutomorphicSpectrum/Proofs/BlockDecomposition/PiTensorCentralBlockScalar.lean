@@ -1,10 +1,15 @@
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.SquareIntegrableTempered.CasselmanCriterion.Zj
-import GroundTheory.AutomorphicForms.SupercuspidalCoefficients
+module
+
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.SquareIntegrableTempered.CasselmanCriterion.Zj
+public import GroundTheory.AutomorphicForms.SupercuspidalCoefficients
+
+@[expose] public section
+
 open GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult
 
 namespace GlobalTheory.CompanionTheory.JCScalar
 
-theorem piTensor_zj : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k], ∀ {h : ℕ} (x : Fin h → IrrGL k) (t : kˣ) (c : Fin h → ℂ), (∀ i, Zl.ScalarBy (x i) t (c i)) → ∀ (j : Fin h) (v : PiTensorProduct ℂ (fun a => (x a).2.rep.V)), piTensor (fun a => (x a).rep) (Zl.JC.zj (fun a => (x a).1) t j) v = (∏ i ∈ Finset.univ.filter (· ≤ j), c i) • v := by
+theorem piTensor_zj : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k], ∀ {h : ℕ} (x : Fin h → IrrGL (k := k)) (t : kˣ) (c : Fin h → ℂ), (∀ i, Zl.ScalarBy (x i) t (c i)) → ∀ (j : Fin h) (v : PiTensorProduct ℂ (fun a => (x a).2.rep.V)), piTensor (fun a => (x a).rep) (Zl.JC.zj (fun a => (x a).1) t j) v = (∏ i ∈ Finset.univ.filter (· ≤ j), c i) • v := by
   intro k _ _ _ _ h x t c hc j v
   induction v using PiTensorProduct.induction_on with
   | smul_tprod r f =>
@@ -19,6 +24,7 @@ theorem piTensor_zj : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpac
       · simp [Zl.JC.zj, if_neg ha]
     simp only [hf]
     rw [MultilinearMap.map_smul_univ, Finset.prod_filter]
-  | add a b ha hb => rw [map_add, ha, hb, smul_add]
+    simp only [RingHom.id_apply]
+  | add a b ha hb => rw [map_add (f := _), ha, hb, smul_add]
 
 end GlobalTheory.CompanionTheory.JCScalar

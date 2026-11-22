@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudDefs
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudDefs
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.ArchimedeanWhittaker.Weights
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.ArchimedeanWhittaker.Weights
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.ArchWhittaker
 
@@ -159,9 +163,6 @@ theorem eq_zero_of_forall_inner_map {G : Type*} [Group G] [TopologicalSpace G]
 
 variable (σ : UnitaryRep FiltrationCocycleLiftCriterion H)
 
-instance completeSpace_weightSpace (j : ℤ) : CompleteSpace (weightSpace σ j) :=
-  (isClosed_weightSpace σ j).completeSpace_coe
-
 theorem inner_map_kMat_of_mem {j : ℤ} {y : H} (hy : y ∈ weightSpace σ j) (θ : ℝ) (u : H) :
     ⟪y, σ (kMat θ) u⟫_ℂ = chi j θ * ⟪y, u⟫_ℂ := by
   rw [UnitaryRep.inner_map_right, kMat_inv, hy (-θ), inner_smul_left, conj_chi, neg_neg]
@@ -177,7 +178,7 @@ theorem inner_wProj_of_mem {j : ℤ} {y : H} (hy : y ∈ weightSpace σ j) (u : 
   rw [inv_mul_cancel₀ hπ, one_mul]
 
 theorem wProj_add (j : ℤ) (x y : H) : wProj σ j (x + y) = wProj σ j x + wProj σ j y := by
-  simp only [wProj, map_add, smul_add]
+  simp only [wProj, map_add (f := _), smul_add]
   rw [intervalIntegral.integral_add ((continuous_wIntegrand σ j x).intervalIntegrable _ _)
     ((continuous_wIntegrand σ j y).intervalIntegrable _ _), smul_add]
 
@@ -191,8 +192,6 @@ noncomputable def wProjL (j : ℤ) : H →L[ℂ] H :=
       map_add' := wProj_add σ j
       map_smul' := wProj_smul σ j } 1 (fun x => by simpa using norm_wProj_le σ j x)
 
-@[simp] theorem wProjL_apply (j : ℤ) (x : H) : wProjL σ j x = wProj σ j x := rfl
-
 noncomputable def compr (j : ℤ) (g : FiltrationCocycleLiftCriterion) : weightSpace σ j →L[ℂ] weightSpace σ j :=
   ((wProjL σ j).comp ((σ g).comp (weightSpace σ j).subtypeL)).codRestrict (weightSpace σ j)
     (fun x => wProj_mem σ j _)
@@ -203,12 +202,6 @@ noncomputable def compr (j : ℤ) (g : FiltrationCocycleLiftCriterion) : weightS
 theorem inner_compr (j : ℤ) (g : FiltrationCocycleLiftCriterion) (v w : weightSpace σ j) :
     ⟪(w : H), (compr σ j g v : H)⟫_ℂ = ⟪(w : H), σ g v⟫_ℂ := by
   rw [coe_compr_apply, inner_wProj_of_mem σ w.2]
-
-theorem star_compr (j : ℤ) (g : FiltrationCocycleLiftCriterion) : star (compr σ j g) = compr σ j g⁻¹ := by
-  rw [ContinuousLinearMap.star_eq_adjoint, eq_comm, ContinuousLinearMap.eq_adjoint_iff]
-  intro x y
-  rw [Submodule.coe_inner, Submodule.coe_inner, ← inner_conj_symm, inner_compr,
-    inner_conj_symm, UnitaryRep.inner_map_left, inv_inv, ← inner_compr]
 
 theorem inner_map_iotaG {j : ℤ} {x y : H} (hx : x ∈ weightSpace σ j) (hy : y ∈ weightSpace σ j)
     (u : FiltrationCocycleLiftCriterion) : ⟪y, σ (iotaG u) x⟫_ℂ = ⟪y, σ u x⟫_ℂ := by
@@ -248,53 +241,5 @@ theorem compr_comm (j : ℤ) (g h : FiltrationCocycleLiftCriterion) : compr σ j
   congr 1
   congr 1; funext θ
   rw [← inner_map_iotaG σ v.2 w.2 (g * kMat θ * h), iotaG_mul, iotaG_mul, iotaG_kMat, mul_assoc]
-
-theorem weightSpace_eq_smul (hσ : σ.IsIrreducible) {j : ℤ} {x : H} (hx : x ∈ weightSpace σ j)
-    (hx0 : x ≠ 0) {y : H} (hy : y ∈ weightSpace σ j) : ∃ c : ℂ, y = c • x := by
-  set V := weightSpace σ j
-  set xV : V := ⟨x, hx⟩
-  have hxV : xV ≠ 0 := fun h => hx0 (congrArg Subtype.val h)
-  have : Nontrivial V := ⟨⟨xV, 0, hxV⟩⟩
-  set S : Set (V →L[ℂ] V) := range (compr σ j) with hS
-  have hirr : ∀ W : Submodule ℂ V, IsClosed (W : Set V) → (∀ s ∈ S, ∀ v ∈ W, s v ∈ W) →
-      W = ⊥ ∨ W = ⊤ := by
-    intro W hWc hWinv
-    by_cases hW : W = ⊥
-    · exact Or.inl hW
-    right
-    obtain ⟨x', hx'W, hx'0⟩ := (Submodule.ne_bot_iff W).1 hW
-    have : CompleteSpace W := hWc.completeSpace_coe
-    rw [← Submodule.orthogonal_eq_bot_iff, eq_bot_iff]
-    intro y' hy'
-    rw [Submodule.mem_bot]
-    apply Subtype.ext
-    refine eq_zero_of_forall_inner_map hσ (x := (x' : H)) (fun h => hx'0 (Subtype.ext h)) fun g => ?_
-    rw [← inner_compr, ← Submodule.coe_inner]
-    exact Submodule.inner_left_of_mem_orthogonal (hWinv _ ⟨g, rfl⟩ x' hx'W) hy'
-  have hstar : ∀ s ∈ S, star s ∈ S := by
-    rintro _ ⟨g, rfl⟩
-    exact ⟨g⁻¹, (star_compr σ j g).symm⟩
-  have hcomm : ∀ s ∈ S, ∀ t ∈ S, Commute s t := by
-    rintro _ ⟨g, rfl⟩ _ ⟨h, rfl⟩
-    exact compr_comm σ j g h
-  have hscal : ∀ g, ∃ c : ℂ, compr σ j g = c • (1 : V →L[ℂ] V) := fun g =>
-    eq_smul_one_of_commute hirr hstar hcomm ⟨g, rfl⟩
-  set c : ℂ := ⟪x, y⟫_ℂ / ⟪x, x⟫_ℂ with hc
-  refine ⟨c, ?_⟩
-  have hxx : ⟪x, x⟫_ℂ ≠ 0 := inner_self_ne_zero.2 hx0
-  set y' : H := y - c • x with hy'
-  have hy'V : y' ∈ V := V.sub_mem hy (V.smul_mem c hx)
-  have horth : ⟪y', x⟫_ℂ = 0 := by
-    rw [← inner_conj_symm, hy', inner_sub_right, inner_smul_right, hc,
-      div_mul_cancel₀ _ hxx, sub_self, map_zero]
-  have hzero : y' = 0 := by
-    refine eq_zero_of_forall_inner_map hσ hx0 fun g => ?_
-    obtain ⟨cg, hcg⟩ := hscal g
-    have := inner_compr σ j g xV ⟨y', hy'V⟩
-    simp only at this
-    rw [← this, hcg]
-    simp [xV, horth]
-  rw [hy', sub_eq_zero] at hzero
-  exact hzero
 
 end GroundTheory.Automorphic.ArchWhittaker

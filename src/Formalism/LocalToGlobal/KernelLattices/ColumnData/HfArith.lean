@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ColumnData
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.HfTrace
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.SplitK
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IntegralClosureCriterion
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.HfTrace
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.SplitK
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IntegralClosureCriterion
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,44 +53,6 @@ theorem bK_mem : bb D ∈ D.host.K := FL.bE_mem D
 
 def bK : D.host.K := ⟨bb D, bK_mem D⟩
 
-theorem phi_smul (s : ℚ) (x : D.host.E) : D.host.φ₀ (s • x) = (s : ℂ) * D.host.φ₀ x := by
-  rw [Rat.smul_def, map_mul, map_ratCast]
-
-theorem K_repr (u : D.host.K) :
-    ∃ p q : ℚ, D.host.φ₀ (u : D.host.E) = (p : ℂ) + (q : ℂ) * be D := by
-  have hK : Module.finrank ℚ D.host.K = 2 :=
-    Formalism.FrobeniusOrbits.SplitK.finrank_K (L := D.host.E) (b := bb D) D.host.hyp.2.1.pos (b_sq D)
-  have hli : LinearIndependent ℚ ![(1 : D.host.K), bK D] := by
-    rw [LinearIndependent.pair_iff]
-    intro s t hst
-    have h1 := congrArg (fun x : D.host.K => D.host.φ₀ (x : D.host.E)) hst
-    simp only [IntermediateField.coe_add, IntermediateField.coe_smul, IntermediateField.coe_one,
-      IntermediateField.coe_zero, map_add, phi_smul, map_one, map_zero, bK, phi_b, mul_one] at h1
-    have hre := congrArg Complex.re h1
-    have him := congrArg Complex.im h1
-    simp [be] at hre him
-    have hs := sqrt_pos D
-    rcases him with h | h
-    · exact ⟨by simpa [h] using hre, h⟩
-    · exact absurd h D.host.hyp.2.1.ne_zero
-  have hsp := hli.span_eq_top_of_card_eq_finrank (by simp [hK])
-  have hu : u ∈ Submodule.span ℚ (Set.range ![(1 : D.host.K), bK D]) := by rw [hsp]; trivial
-  obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun ℚ).1 hu
-  refine ⟨c 0, c 1, ?_⟩
-  rw [← hc, Fin.sum_univ_two]
-  simp only [Matrix.cons_val_zero, Matrix.cons_val_one,
-    IntermediateField.coe_add, IntermediateField.coe_smul, IntermediateField.coe_one, map_add,
-    phi_smul, map_one, mul_one, bK, phi_b]
-
-theorem int_of_rat (r : ℚ) (h : IsIntegral ℤ (r : ℂ)) : ∃ n : ℤ, r = n := by
-  have h' : IsIntegral ℤ r := by
-    refine (isIntegral_algHom_iff (algebraMap ℚ ℂ).toIntAlgHom (algebraMap ℚ ℂ).injective).mp ?_
-    simpa using h
-  obtain ⟨n, hn⟩ := IsIntegrallyClosed.isIntegral_iff.mp h'
-  exact ⟨n, by rw [← hn]; simp⟩
-
-abbrev psi : D.host.K →+* ℂ := D.host.φ₀.comp (algebraMap D.host.K D.host.E)
-
 theorem okc_of (u : 𝓞 D.host.K) : OKc D (D.host.φ₀ ((u : D.host.K) : D.host.E)) :=
   by apply _root_.UpperTheory.Reformulated.B.IntegralClosureCriterion.okc_of <;> assumption
 
@@ -126,7 +92,7 @@ theorem cramer (w₁ w₂ u : ℂ) :
 
 theorem Bf_comb (w₁ w₂ : ℂ) (s t s' t' : ℝ) :
     Bf ((s : ℂ) * w₁ + (t : ℂ) * w₂) ((s' : ℂ) * w₁ + (t' : ℂ) * w₂) = (s * t' - t * s') * Bf w₁ w₂ := by
-  simp only [Bf, map_add, map_mul, Complex.conj_ofReal, Complex.mul_im, Complex.mul_re,
+  simp only [Bf, map_add (f := _), map_mul, Complex.conj_ofReal, Complex.mul_im, Complex.mul_re,
     Complex.add_re, Complex.add_im, Complex.ofReal_re, Complex.ofReal_im, Complex.conj_re,
     Complex.conj_im]; ring
 
@@ -273,7 +239,7 @@ theorem okc_mul {z w : ℂ} (hz : OKc D z) (hw : OKc D w) : OKc D (z * w) := by
 theorem okc_conj {z : ℂ} (hz : OKc D z) : OKc D (starRingEnd ℂ z) := by
   obtain ⟨x, y, ⟨a, ha⟩, rfl⟩ := hz
   refine ⟨x, -y, ⟨a + y, by omega⟩, ?_⟩
-  rw [map_div₀, map_add, map_mul, conj_be, map_intCast, map_intCast, map_ofNat]; push_cast; ring
+  rw [map_div₀, map_add (f := _), map_mul, conj_be, map_intCast, map_intCast, map_ofNat]; push_cast; ring
 
 theorem coord_eq (x y : ℤ) :
     ((x : ℂ) + (y : ℂ) * be D) / 2 =
@@ -317,7 +283,7 @@ theorem ph_om : ph D (om D) = (1 + be D) / 2 := by
     rw [show (2 : D.host.K) = 1 + 1 by norm_num, IntermediateField.coe_add, IntermediateField.coe_one]
     norm_num
   push_cast
-  rw [h2, map_div₀, map_add, map_one, map_ofNat]
+  rw [h2, map_div₀, map_add (f := _), map_one, map_ofNat]
   exact congrArg (fun t => (1 + t) / 2) (phi_b D)
 
 theorem Bf_lat (δ : ℂ) (c₁ c₂ : 𝓞 D.host.K) :
@@ -352,7 +318,10 @@ theorem div_okc (cc : Ideal (𝓞 D.host.K)) (hcc : cc ≠ ⊥) (δ : ℂ) (hδ 
       rw [← ph_om]; simp [ph]
     have hc1 : ph D c ≠ 0 := by
       simp only [ph, map_ne_zero_iff _ D.host.φ₀.injective]
-      exact_mod_cast hc0
+      intro h
+      apply hc0
+      apply RingOfIntegers.coe_eq_zero_iff.mp
+      exact Subtype.ext h
     rw [Bf_lat, hph]
     have e : starRingEnd ℂ (ph D c) * (ph D c * ((1 + be D) / 2)) =
         (Complex.normSq (ph D c) : ℂ) * ((1 + be D) / 2) := by

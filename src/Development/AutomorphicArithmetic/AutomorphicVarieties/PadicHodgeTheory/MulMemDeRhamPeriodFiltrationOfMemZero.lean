@@ -1,14 +1,19 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OpenField
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsMonicUnitCoeffZeroAnnihilatingOfSpectrumNo
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.InertiaFixesOfFrobeniusAnnihilatedMemFilZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.NormLeOneOfMemSpectrumFrobeniusMatrixFilZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamDieudonneSpansTensorDeRhamPeriods
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamComparisonIsFiltered
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.KummerNotFrac
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FinrankDpstUnramifiedLeDimRepresentation
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OpenField
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsMonicUnitCoeffZeroAnnihilatingOfSpectrumNo
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.InertiaFixesOfFrobeniusAnnihilatedMemFilZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.NormLeOneOfMemSpectrumFrobeniusMatrixFilZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamDieudonneSpansTensorDeRhamPeriods
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamComparisonIsFiltered
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.KummerNotFrac
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FinrankDpstUnramifiedLeDimRepresentation
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal TensorProduct Module UpperTheory.V.Loc Topology
 
 noncomputable section
@@ -30,7 +35,7 @@ private def wtS (l : ℕ) [Fact l.Prime] : Subring (Bcr l) where
     rw [map_one]; exact ((PP l).PD (botExt l)).one_mem
   add_mem' := fun {a b} ha hb => by
     change (PP l).ιB (a + b) ∈ ((PP l).PD (botExt l)).Fil 0
-    rw [map_add]; exact Submodule.add_mem _ ha hb
+    rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
   zero_mem' := by
     change (PP l).ιB 0 ∈ ((PP l).PD (botExt l)).Fil 0
     rw [map_zero]; exact Submodule.zero_mem _
@@ -118,7 +123,7 @@ private theorem wt_aeval (K : FinExt l) (ψ : Bcr l →ₐ[ℚ_[l]] Bcr l)
       exact hψ _
   induction Q using Polynomial.induction_on' with
   | add p q hp hq =>
-    rw [Polynomial.map_add, map_add, map_add, Matrix.map_add _ (map_add _), Matrix.mul_add, ← hp, ← hq]
+    rw [Polynomial.map_add (f := _), map_add (f := _), map_add (f := _), Matrix.map_add _ (map_add _), Matrix.mul_add, ← hp, ← hq]
     rfl
   | monomial n a =>
     rw [Polynomial.map_monomial, aeval_monomial, aeval_monomial, ← Algebra.smul_def, ← Algebra.smul_def]
@@ -219,7 +224,8 @@ variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field 
 
 private theorem coord_sum (c : Fin d → BdR) (i : Fin d) :
     (TensorProduct.lid Qp BdR) (LinearMap.rTensor BdR (e.coord i) (∑ j, e j ⊗ₜ[Qp] c j)) = c i := by
-  simp only [map_sum, LinearMap.rTensor_tmul, TensorProduct.lid_tmul, Basis.coord_apply, Basis.repr_self]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.rTensor_tmul, TensorProduct.lid_tmul, Basis.coord_apply, Basis.repr_self]
   rw [Finset.sum_eq_single i]
   · simp
   · intro j _ hj
@@ -238,7 +244,7 @@ private theorem sum_mem_fil_iff (a : ℤ) (c : Fin d → BdR) :
       have := ((PD.Fil a).restrictScalars Qp).smul_mem (e.coord i v) x.2
       simpa using this
     | add x y hx hy =>
-      simp only [map_add]
+      simp only [map_add (f := _)]
       exact Submodule.add_mem _ hx hy
   · intro h
     exact Submodule.sum_mem _ fun j _ => ⟨e j ⊗ₜ ⟨c j, h j⟩, rfl⟩
@@ -249,7 +255,8 @@ private theorem sum_mem_DdR (c : Fin d → BdR)
   simp only [DdR, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply, LinearMap.id_apply, sub_eq_zero]
   intro g
   conv_rhs => rw [← h g]
-  simp only [map_sum, Matrix.mulVec, dotProduct, tmul_sum, Matrix.map_apply, LinearMap.toMatrix_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Matrix.mulVec, dotProduct, tmul_sum, Matrix.map_apply, LinearMap.toMatrix_apply]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun j _ => ?_
   change ρ g (e j) ⊗ₜ[Qp] PD.actdR g (c j) = _
@@ -382,7 +389,8 @@ private theorem genMat {Q B G V : Type} [Field Q] [CommRing B] [IsDomain B] [Alg
     ext j
     have := congrFun hc0 j
     simp only [Matrix.mulVec, dotProduct, A, Basis.toMatrix_apply, Pi.zero_apply] at this
-    simp only [map_sum, map_smul, Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
       smul_eq_mul, map_zero, Finsupp.zero_apply]
     rw [← this]
     exact Finset.sum_congr rfl fun k _ => mul_comm _ _
@@ -392,12 +400,13 @@ private theorem genMat {Q B G V : Type} [Field Q] [CommRing B] [IsDomain B] [Alg
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul c v => simp [TensorProduct.smul_tmul']
-    | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+    | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
   have hrep : ∀ g (x : B ⊗[Q] V) k, e.repr (TensorProduct.map (a g).toLinearMap (r g) x) k =
       ∑ j, algebraMap Q B (v.repr (r g (v j)) k) * a g (e.repr x j) := by
     intro g x k
     conv_lhs => rw [← e.sum_repr x]
-    simp only [map_sum, hs, map_smul, Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, hs, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
       smul_eq_mul]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [mul_comm]
@@ -484,7 +493,7 @@ private theorem exists_log (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAi
   · rw [T.fil, RingEquiv.apply_symm_apply]
     exact GlobalTheory.RingIface.alg_mem_FilD_zero l u
   · apply T.eD.injective
-    rw [T.actD, RingEquiv.apply_symm_apply, map_add, RingEquiv.apply_symm_apply, hct]
+    rw [T.actD, RingEquiv.apply_symm_apply, map_add (f := _), RingEquiv.apply_symm_apply, hct]
     rw [show Per.σD g (algebraMap (Per.BdRp l) (Per.BdR l) u) =
       algebraMap (Per.BdRp l) (Per.BdR l) (Per.σDp g u) from GlobalTheory.RingIface.sigD_alg l _ _, hg, map_add]
 
@@ -515,14 +524,14 @@ private theorem drMat (hF : IsField BdR) (ρ : Representation Qp G V)
     induction w using TensorProduct.induction_on with
     | zero => simp
     | tmul c v => simp [TensorProduct.smul_tmul']
-    | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+    | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
   have hc : ∀ g x, TensorProduct.map (a g).toLinearMap (ρ g) (TensorProduct.comm Qp V BdR x) =
       TensorProduct.comm Qp V BdR (actVdR PD ρ g x) := by
     intro g x
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul c v => rfl
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have hw : ∀ g k, TensorProduct.map (a g).toLinearMap (ρ g) (e k : BdR ⊗[Qp] V) = e k := by
     intro g k
     have h1 := hc g ((TensorProduct.comm Qp V BdR).symm (e k))
@@ -587,7 +596,7 @@ private theorem stMat {P : LocPrime l} {AI : LocAinf l P} (T : LocTied l P AI) (
         exact ⟨c, hc⟩)
       w hv Finset.univ (hli.linearIndepOn _)
   have hB' : LinearIndependent (Bst P) w := by
-    rw [← linearIndepOn_univ]; rw [Finset.coe_univ] at hB; exact hB
+    rw [← linearIndepOn_univ_iff]; rw [Finset.coe_univ] at hB; exact hB
   obtain ⟨M, M', h1, h2⟩ := genMat (fun g : ↥(GK K') => actSt P (g : GQ l)) (fun g => ρ ⟨g, GK_le hKK' g.2⟩)
     (fun g => det_rep ρ _) (hu K') v w hv hB'
   exact ⟨K', hKK', M, M', h1, h2⟩
@@ -687,14 +696,16 @@ private theorem coeff_mem_fil0_of_invertible_period (P : LocPrime l) (K : FinExt
   · refine a1 (M.map (E k)) (fun g => ?_) i j
     ext i j
     conv_rhs => rw [← hMg g]
-    simp only [Matrix.mul_apply, Matrix.map_apply, map_sum, hE1, hE2]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.map_apply, map_sum, hE1, hE2]
   · refine a2 (M'.map (E k)) (fun g => ?_) i j
     have h3 : M'.map (actSt P (g : GQ l)) = _ := inv_law (actSt P (g : GQ l) : Bst P →+* Bst P) hM (hMg g)
     ext i j
     have h4 := congrArg (E k) (congrFun (congrFun h3 i) j)
     rw [Matrix.map_apply, hE2] at h4
     rw [Matrix.map_apply, Matrix.map_apply, h4]
-    simp only [Matrix.mul_apply, Matrix.map_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.map_apply, map_sum]
     exact Finset.sum_congr rfl fun x _ => by rw [mul_comm, hE1, mul_comm]
 
 end Mats
@@ -728,7 +739,8 @@ private theorem evaluation_zero_galois_action_fil1 (P : LocPrime l) (K : FinExt 
   rw [e, coeff_zero_eq_eval_zero, eval_comp, eval_add, eval_X, eval_C, zero_add, eval_eq_sum_range,
     Finset.sum_range_succ', map_add, pow_zero, mul_one, coeff_map]
   erw [add_sub_cancel_right]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Submodule.sum_mem _ fun k _ => ?_
   rw [coeff_map, pow_succ, ← mul_assoc, map_mul, map_mul, map_pow]
   have h2 : P.ιB (P.actQ (g : GQ l) (p.coeff (k + 1))) ∈ fil0 P K := by
@@ -855,13 +867,13 @@ theorem UpperTheory.V.Loc.drWt0 :
     | tmul v b =>
       change ρ (e.symm (e x)) v ⊗ₜ[ℚ_[l]] ((PP l).PD K).actdR (e x) b = ρ x v ⊗ₜ[ℚ_[l]] (PP l).actQdR (φ x) b
       rw [(PP l).PD_actdR, he', e.symm_apply_apply]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have hD' : ∀ x y, actD φ (resCoef ℚ_[l] ρ) x y = actD φ ρ x y := by
     intro x y
     induction y using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul v b => rfl
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have hDD : ∀ y, y ∈ DdR ((PP l).PD K) ρ' ↔ y ∈ Ddr φ ρ := by
     intro y
     simp only [DdR, Ddr, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply, LinearMap.id_apply,

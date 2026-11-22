@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGivenStageEqOne
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PrimeDvdAbsNormHalfDifferent
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsHalfOfBasePins
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMulInvIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterIdeleCharacterMatchUnique
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.ModelLatA
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FactPrincipalDatum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGivenStageEqOne
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PrimeDvdAbsNormHalfDifferent
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsHalfOfBasePins
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMulInvIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterIdeleCharacterMatchUnique
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.ModelLatA
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FactPrincipalDatum
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,8 +67,8 @@ theorem char_int {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1)) {c
     | add y y' _ _ h h' =>
       obtain ⟨z, h1, h2, h3⟩ := h
       obtain ⟨z', h1', h2', h3'⟩ := h'
-      exact ⟨z + z', by rw [RingHom.map_add, h1, h1', add_zero], by rw [RingHom.map_add, h2, h2'],
-        by rw [mul_add, map_add, ψ.map_add_eq_mul, h3, h3', one_mul]⟩
+      exact ⟨z + z', by rw [RingHom.map_add (f := _), h1, h1', add_zero], by rw [RingHom.map_add (f := _), h2, h2'],
+        by rw [mul_add, map_add (f := _), ψ.map_add_eq_mul, h3, h3', one_mul]⟩
     | neg y _ h =>
       obtain ⟨z, h1, h2, h3⟩ := h
       exact ⟨-z, by rw [RingHom.map_neg, h1, neg_zero], by rw [RingHom.map_neg, h2],
@@ -299,7 +303,7 @@ theorem isGood_of_notMem {μ₀ : T} (hL : L.Is μ₀) {G : GridData L sc} (W : 
   have hμ := L.C.isMu0 ⟨j, hj⟩
   have emu : (locGrid G t w).mu (j + 1) = (L.C.mu0 ⟨j, hj⟩).loc w * (L.xiH t).loc w := by
     change (muBase L (j + 1) * L.xiH t).loc w = _
-    rw [muBase, dif_pos hj]
+    rw [muBase, dite_eq_left hj]
     rfl
   have echi : (locGrid G t w).chi ((locGrid G t w).m - i) = (G.ch.chiH (D.R.m - i)).loc w := rfl
   have enu : ∀ x, ((locGrid G t w).alpha i j / (locGrid G t w).beta i j) x =

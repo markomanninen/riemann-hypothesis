@@ -1,28 +1,38 @@
-import Formalism.PolynomialDimension.ChainOrderLetters
-import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.PartnerMeanProofs.TheoremMCKap7
-import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.PartnerMeanProofs.NatLogLeOfLe
-import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.PartnerMeanProofs.GammaZeroIntegral
-import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.PartnerMeanProofs.TheoremMXBOfPoint
+module
+
+public import Formalism.PolynomialDimension.ChainOrderLetters
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementF
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementC
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementH
+public import Formalism.ThetaLogCoordinates.BihomogeneousPairs.LetterChainEmbeddings.PairStep
+public import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.PartnerMeanProofs.GamIntC
+public import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.PartnerMeanProofs.PartnerConditionHolds
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.RestrictedSaturationHolds
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.HighestVectorProjectionPos
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.GramBoundPosOfProjSat
+public import Formalism.ThetaLogCoordinates.BihomogeneousPairs.FinalLL
+public import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.PartnerMeanProofs.NatLogLeOfLe
+public import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.PartnerMeanProofs.GammaZeroIntegral
+public import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.PartnerMeanProofs.TheoremMXBOfPoint
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.MC
 
 open Formalism.GM Formalism.GM.M Formalism.GM.TM Formalism.CountingSumsFrames Formalism.InvariantFactorPaths.PW Formalism.InvariantFactorPaths.L4 MvPolynomial Finset
 
 theorem meanGamX : MeanGamX :=
-  meanGamX_of (by first | exact Formalism.GM.gamma_degree_bound | exact Formalism.GM.Top.gamDeg)
-    (by first | exact Formalism.GM.gamma_leading_term | exact Formalism.GM.Top.gamLead)
-    (by first | exact Formalism.InvariantFactorPaths.MC.gamma_integral_holds | exact Formalism.InvariantFactorPaths.MC.Top.gamIntC)
-    (by first | exact Formalism.GM.Top.windowFullAP | exact Top.windowFullAP)
+  Formalism.InvariantFactorPaths.MC.meanGamX_of
+    Formalism.GM.gamma_degree_bound Formalism.GM.gamma_leading_term
+    gamma_integral_holds Formalism.GM.Top.windowFullAP
 
 theorem theoremMXB : TheoremMXB :=
-  theoremMXB_of_point meanGamX
-    (by first | exact DimensionMonotonicity.highest_weight_dim_monotone | exact Formalism.GM.DimensionMonotonicity.highest_weight_dim_monotone | exact Formalism.GM.M.DimensionMonotonicity.highest_weight_dim_monotone | exact Formalism.GM.TM.DimensionMonotonicity.highest_weight_dim_monotone)
-    (by first | exact monomial_count | exact Formalism.GM.monomial_count | exact Formalism.GM.M.monomial_count | exact Formalism.GM.TM.monomial_count)
-    (by first | exact Formalism.GM.Top.smithZp | exact Formalism.GM.smith_form_p_adic_integers | exact Formalism.GM.TM.smith_form_p_adic_integers | exact Formalism.GM.M.smith_form_p_adic_integers)
-    (by first | exact Formalism.GM.TM.existsAdaptedBasis | exact Formalism.GM.existsAdaptedBasis | exact Formalism.GM.Top.adaptedBasis)
-    (pointMX_of_partner
-      (by first | exact bad_criterion_holds | exact Formalism.InvariantFactorPaths.MC.bad_criterion_holds | exact Formalism.GM.bad_criterion_holds | exact Formalism.InvariantFactorPaths.MC.Top.badCrit | exact Formalism.GM.Top.badCrit)
-      (partnerMX_of_parts tieOpsX_main (by first | exact partner_condition_holds | exact Formalism.InvariantFactorPaths.MC.Top.yPartnerC | exact Formalism.InvariantFactorPaths.MC.Top.yPartner)))
+  Formalism.InvariantFactorPaths.MC.theoremMXB_of_point meanGamX
+    Formalism.GM.DimensionMonotonicity.highest_weight_dim_monotone
+    Formalism.CountingSumsFrames.monomial_count Formalism.GM.Top.smithZp
+    Formalism.GM.TM.existsAdaptedBasis
+    (pointMX_of_partner Formalism.GM.bad_criterion_holds
+      (partnerMX_of_parts tieOpsX_main partner_condition_holds))
 
 theorem natLog_le_lgSeg (p : ℕ) [Fact p.Prime] (a : ℝ) (r x : ℕ) (ha : 0 ≤ a) (hr : 1 ≤ r)
     (hx : (x : ℝ) ≤ p * (8 * a + r)) : (Nat.log p x : ℝ) ≤ lgSeg p a r := by
@@ -124,7 +134,7 @@ theorem deg_le_total' {N : ℕ} (LL : Letters N) (x : Fin N) : LL.deg x ≤ LL.t
 theorem theoremMV7Of : TheoremMV7Of := by
   unfold TheoremMV7Of
   intro p _ s r _ LL T a E Yl n₀ dd ρ hp2 hr hρ hadm hch hcond ha hE hY hS hsize hH
-  haveI : NeZero (2 * s + 1) := ⟨by omega⟩
+  have : NeZero (2 * s + 1) := ⟨by omega⟩
   have hr1 : 1 ≤ r := by omega
   have hrR : (2 : ℝ) ≤ r := by exact_mod_cast hr
   have hlg1 : 1 ≤ lgSeg p a r := one_le_lgSeg p a r (by linarith) hr1
@@ -155,7 +165,7 @@ theorem theoremMV7Of : TheoremMV7Of := by
       have hdA : degreeAtPosition (LL.setTies T fun i => n₀ i + dd i * (Yl i - 1)) (T.pos i) =
           (LL.setTies T fun i => n₀ i + dd i * (Yl i - 1)).deg ⟨T.pos i, h⟩ := by
         unfold degreeAtPosition
-        rw [dif_pos h]
+        rw [dite_eq_left h]
       rw [hdA] at h1
       push_cast at h1 ⊢
       have h4 := (Nat.cast_nonneg (degreeAtPosition (LL.setTies T fun i => n₀ i + dd i * (Yl i - 1)) (T.pos i + 1)) : (0 : ℝ) ≤ _)

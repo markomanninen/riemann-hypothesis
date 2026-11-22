@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartPrimTrSt
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartFrameTrA
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermBPrim
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartPrimTrSt
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartFrameTrA
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermBPrim
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+
+@[expose] public section
 
 set_option autoImplicit false
 

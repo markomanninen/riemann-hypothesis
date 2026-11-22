@@ -1,5 +1,9 @@
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+module
+
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+
+@[expose] public section
 
 namespace PositivityTheory.UnitarySelfGeneration.HolomorphicMinorCharts
 
@@ -38,7 +42,7 @@ theorem exists_re_of_levi_zero {e : ℕ} {d : (Fin e → ℂ) → ℝ} {c : Fin 
       have h1 := hL (u + v)
       have h2 := hL u
       have h3 := hL v
-      simp only [smul_add, map_add, ContinuousLinearMap.add_apply] at h1
+      simp only [smul_add, map_add (f := _), ContinuousLinearMap.add_apply] at h1
       have e1 := hS u v
       have e2 := hS (Complex.I • u) (Complex.I • v)
       linarith

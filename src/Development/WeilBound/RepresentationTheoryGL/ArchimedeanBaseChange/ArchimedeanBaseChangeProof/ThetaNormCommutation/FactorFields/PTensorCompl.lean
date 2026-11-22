@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.FactorFields.TensorCompl
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
-import Development.AbelianVarietyTheory.Definitions.Foundations.OfInfProjInfMulOfFinProjFin
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.FactorFields.TensorCompl
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
+public import Development.AbelianVarietyTheory.Definitions.Foundations.OfInfProjInfMulOfFinProjFin
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem map_extZ_self (y : v.adicCompletion F ⊗[F] K) :
   | tmul a x =>
     simp only [extZ, LinearMap.rTensor_tmul, Algebra.TensorProduct.map_tmul, AlgHom.id_apply]
     rw [GlobalTheory.AdelicU.evalV_singleFin_self]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem map_extZ_ne {v' : HeightOneSpectrum (𝓞 F)} (h : v' ≠ v) (y : v.adicCompletion F ⊗[F] K) :
     Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F v') (AlgHom.id F K) (extZ v y) = 0 := by
@@ -46,10 +50,10 @@ theorem map_extZ_ne {v' : HeightOneSpectrum (𝓞 F)} (h : v' ≠ v) (y : v.adic
   | tmul a x =>
     simp only [extZ, LinearMap.rTensor_tmul, Algebra.TensorProduct.map_tmul, AlgHom.id_apply]
     rw [GlobalTheory.AdelicU.evalV_singleFin_ne h, TensorProduct.zero_tmul]
-  | add a b ha hb => simp only [map_add, ha, hb, add_zero]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb, add_zero]
 
 theorem phi_injective : Function.Injective (phi (K := K) v) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro y hy
   have h0 : GlobalTheory.LFun.finAdEquiv F K (extZ v y) = 0 := by
     have hc : ∀ w : HeightOneSpectrum (𝓞 K), GlobalTheory.LFun.finAdEquiv F K (extZ v y) w = 0 := by
@@ -67,12 +71,12 @@ theorem phi_surjective : Function.Surjective (phi (K := K) v) := by
   obtain ⟨y, hy⟩ := (GlobalTheory.LFun.finAdEquiv F K).surjective
     ⟨fun w => if h : w.under (𝓞 F) = v then z ⟨w, h⟩ else 0, by
       filter_upwards [(finite_over (K := K) v).compl_mem_cofinite] with u hu
-      rw [dif_neg (by simpa using hu)]
+      rw [dite_eq_right (by simpa using hu)]
       exact zero_mem _⟩
   refine ⟨Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F v) (AlgHom.id F K) y, funext fun u => ?_⟩
   rw [phi_apply, ← GlobalTheory.LFun.finAdEquiv_apply u.2, hy]
   show (if h : u.1.under (𝓞 F) = v then z ⟨u.1, h⟩ else 0) = z u
-  rw [dif_pos u.2]
+  rw [dite_eq_left u.2]
 
 end PositivityTheory.Rg.BcB.G3.TensorComplP
 

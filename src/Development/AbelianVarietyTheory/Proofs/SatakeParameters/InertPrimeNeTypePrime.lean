@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ResidueCharacters.TwistedPlaces
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ResidueCharacters.TwistedPlaces
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations Formalism.ConjugateSelfDual ReciprocityTheory.Gal
 

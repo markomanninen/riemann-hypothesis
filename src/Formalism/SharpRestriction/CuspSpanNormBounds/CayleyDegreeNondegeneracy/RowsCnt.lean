@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.RowsDef
-import Formalism.SharpRestriction.CuspSpanNormBounds.AutLzFiniteOfLoop
-import Formalism.SharpRestriction.CuspSpanNormBounds.LatticeGluingRadicals
-import Formalism.SharpRestriction.CuspSpanNormBounds.AbsoluteAmplitudeSecondOfSource
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.RowsDef
+public import Formalism.SharpRestriction.CuspSpanNormBounds.AutLzFiniteOfLoop
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LatticeGluingRadicals
+public import Formalism.SharpRestriction.CuspSpanNormBounds.AbsoluteAmplitudeSecondOfSource
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,57 +15,6 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formal
 open scoped ENNReal
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-theorem rows_skeleton {P κ : Type*} [DecidableEq κ] (S : Finset P) (w a₁ a₂ : P → ℝ) (c₁ c₂ : P → κ) (M : ℝ) (N : κ → κ → ℝ)
-    (α₁ α₂ : κ → ℝ) (hw : ∀ p ∈ S, 0 ≤ w p) (h1 : ∀ p ∈ S, 0 ≤ a₁ p) (h2 : ∀ p ∈ S, 0 ≤ a₂ p)
-    (hα₁ : ∀ p ∈ S, a₁ p ≤ α₁ (c₁ p)) (hα₂ : ∀ p ∈ S, a₂ p ≤ α₂ (c₂ p))
-    (hN : ∀ x y, ∑ p ∈ S.filter (fun p => c₁ p = x ∧ c₂ p = y), w p ≤ M * N x y) :
-    ∑ p ∈ S, w p * (a₁ p * a₂ p) ≤ M * ∑ x ∈ S.image c₁, ∑ y ∈ S.image c₂, N x y * (α₁ x * α₂ y) := by
-  have hα₁0 : ∀ x ∈ S.image c₁, 0 ≤ α₁ x := by
-    intro x hx
-    obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp hx
-    exact (h1 p hp).trans (hα₁ p hp)
-  have hα₂0 : ∀ y ∈ S.image c₂, 0 ≤ α₂ y := by
-    intro y hy
-    obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp hy
-    exact (h2 p hp).trans (hα₂ p hp)
-  have hmaps : ∀ p ∈ S, (fun p => (c₁ p, c₂ p)) p ∈ S.image c₁ ×ˢ S.image c₂ := fun p hp =>
-    Finset.mem_product.mpr ⟨Finset.mem_image_of_mem _ hp, Finset.mem_image_of_mem _ hp⟩
-  calc ∑ p ∈ S, w p * (a₁ p * a₂ p)
-      ≤ ∑ p ∈ S, w p * (α₁ (c₁ p) * α₂ (c₂ p)) := by
-        apply Finset.sum_le_sum
-        intro p hp
-        apply mul_le_mul_of_nonneg_left _ (hw p hp)
-        exact mul_le_mul (hα₁ p hp) (hα₂ p hp) (h2 p hp) ((h1 p hp).trans (hα₁ p hp))
-    _ = ∑ q ∈ S.image c₁ ×ˢ S.image c₂,
-          ∑ p ∈ S.filter (fun p => (c₁ p, c₂ p) = q), w p * (α₁ (c₁ p) * α₂ (c₂ p)) :=
-        (Finset.sum_fiberwise_of_maps_to hmaps _).symm
-    _ = ∑ x ∈ S.image c₁, ∑ y ∈ S.image c₂,
-          ∑ p ∈ S.filter (fun p => c₁ p = x ∧ c₂ p = y), w p * (α₁ x * α₂ y) := by
-        rw [Finset.sum_product]
-        refine Finset.sum_congr rfl (fun x _ => Finset.sum_congr rfl (fun y _ => ?_))
-        have hfe : S.filter (fun p => (c₁ p, c₂ p) = (x, y)) = S.filter (fun p => c₁ p = x ∧ c₂ p = y) := by
-          ext p
-          simp only [Finset.mem_filter, Prod.mk.injEq]
-        rw [hfe]
-        refine Finset.sum_congr rfl (fun p hp => ?_)
-        obtain ⟨-, hx, hy⟩ := Finset.mem_filter.mp hp
-        rw [hx, hy]
-    _ = ∑ x ∈ S.image c₁, ∑ y ∈ S.image c₂,
-          (∑ p ∈ S.filter (fun p => c₁ p = x ∧ c₂ p = y), w p) * (α₁ x * α₂ y) := by
-        simp only [Finset.sum_mul]
-    _ ≤ ∑ x ∈ S.image c₁, ∑ y ∈ S.image c₂, (M * N x y) * (α₁ x * α₂ y) := by
-        apply Finset.sum_le_sum
-        intro x hx
-        apply Finset.sum_le_sum
-        intro y hy
-        exact mul_le_mul_of_nonneg_right (hN x y) (mul_nonneg (hα₁0 x hx) (hα₂0 y hy))
-    _ = M * ∑ x ∈ S.image c₁, ∑ y ∈ S.image c₂, N x y * (α₁ x * α₂ y) := by
-        rw [Finset.mul_sum]
-        refine Finset.sum_congr rfl (fun x _ => ?_)
-        rw [Finset.mul_sum]
-        refine Finset.sum_congr rfl (fun y _ => ?_)
-        ring
 
 section Count
 
@@ -152,8 +105,8 @@ theorem rows_mean_real {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (what₂ : Fi
         rw [ENNReal.ofReal_mul (Finset.sum_nonneg fun Λ _ => hw Λ),
           ENNReal.ofReal_sum_of_nonneg (fun Λ _ => hw Λ)]
 
-open Classical in
 
+open Classical in
 theorem rows_sum_wRow (S : Finset (D.s.Pair u u')) :
     ∑ p ∈ S, X.wRow p =
       ∑ Λ ∈ Y.what₂, wRow D Y.F0 Λ * ((S.filter (fun p => X.abelian₂ (D.s.pfst p) = Λ)).card : ℕ) := by
@@ -166,8 +119,8 @@ theorem rows_sum_wRow (S : Finset (D.s.Pair u u')) :
     fun p hp => by rw [(Finset.mem_filter.mp hp).2]
   rw [Finset.sum_congr rfl hc, Finset.sum_const, nsmul_eq_mul, mul_comm]
 
-open Classical in
 
+open Classical in
 theorem rows_count {C' Cl Cg cb Cu cT CT C0 A Ad C : ℝ} (hH : Cnt.Hyp D large₂ u u' C' Cl Cg cb Cu cT CT C0 A)
     (hC3 : UnitaryVolumeMass.MeanFlagPairCount D large₂ u u' C' Cl Cg cb Cu cT CT C0 A Ad C) (Z' Z'' : GramM D) (hZ' : RelZ D Z') (hZ'' : RelZ D Z'')
     (s : ℕ) (hs : 2 ≤ s) (hsk : s ≤ D.R.k) (De : ℝ) (hDe1 : 1 ≤ De)
@@ -189,8 +142,8 @@ end Count
 
 section One
 
-open Classical in
 
+open Classical in
 theorem rows_card_le_mul {α ι : Type} (Xs : Set α) (R : α → α → Prop) (hR : ∀ a ∈ Xs, R a a) (S : Finset ι) (f : ι → α)
     (hf : ∀ i ∈ S, f i ∈ Xs) (P : ℝ≥0∞)
     (hfib : ∀ i₀ ∈ S, ∀ S' : Finset ι, S' ⊆ S → (∀ i ∈ S', R (f i₀) (f i)) → ((S'.card : ℕ) : ℝ≥0∞) ≤ P) :
@@ -268,8 +221,8 @@ def wordPairSwapBound (D : D7) (large₂ : SizeData₂ D) (u u' : D.what₂.Word
 def gramPairQuadrupleBound (D : D7) (large₂ : SizeData₂ D) (C : ℝ) (Z' Z'' : GramM D) : ℝ :=
   C ^ D.R.f * (HHZ D large₂.sc.b C Z' * HHZ D large₂.sc.b C Z'') ^ (C * (D.R.rS : ℝ) ^ 2)
 
-open Classical in
 
+open Classical in
 theorem rows_countOne {C' Cl Cg cb Cu cT CT C0 A CSW C4 : ℝ} (hH : Cnt.Hyp D large₂ u u' C' Cl Cg cb Cu cT CT C0 A)
     (hSW : UnitaryVolumeMass.stSW D large₂ u u' C' Cl Cg cb Cu cT CT C0 A CSW) (hC4 : UnitaryVolumeMass.PartnerCountBound D large₂ u u' C' Cl Cg cb Cu cT CT C0 A C4)
     (hF : rowsSingleFibre X Y) (Z' Z'' : GramM D) (hZ' : RelZ D Z') (hZ'' : RelZ D Z'')
@@ -331,8 +284,8 @@ def wordPairTermSingleFibre (X : TermTie D) (Y : LoopTie D large₂ X u u' C1) :
       TEqv D (X.abelian₂ (D.s.pfst p₀)) (lf D Y.F0) (X.fl' (D.s.psnd p₀)) (X.fl' (D.s.psnd p))) →
     ((S.card : ℕ) : ℕ∞) ≤ cntPartners D (X.abelian₂ (D.s.pfst p₀)) (lf D Y.F0) (X.fl' (D.s.psnd p₀)) Z'
 
-open Classical in
 
+open Classical in
 theorem rows_countOne' {C' Cl Cg cb Cu cT CT C0 A CSW C4 : ℝ} (hH : Cnt.Hyp D large₂ u u' C' Cl Cg cb Cu cT CT C0 A)
     (hSW : UnitaryVolumeMass.stSW D large₂ u u' C' Cl Cg cb Cu cT CT C0 A CSW) (hC4 : UnitaryVolumeMass.PartnerCountBound D large₂ u u' C' Cl Cg cb Cu cT CT C0 A C4)
     (hF : wordPairTermSingleFibre X Y) (Z' Z'' : GramM D) (hZ' : RelZ D Z') (hZ'' : RelZ D Z'')
@@ -582,13 +535,15 @@ theorem rows_PairSymm_holds (X : TermTie D) (u u' : D.what₂.Word) : wordPairSy
   intro p hG1 hG2 hs
   have hP := X.isPair p
   have hF := X.fixed (D.s.pfst p)
+  have hFull := Formalism.MainNotions.LatticeGluingRadicals.a_full
+    (S := hS D) (X.abelian₂ (D.s.pfst p)) hF.1 hF.2.1
   have hne : ∀ t : D.s.Term u u', D.s.Gterm t ≠ 0 → Gval (X.fl t) (X.fl' t) ≠ 0 := by
     intro t hG
     rw [← X.G_eq t]
     exact (map_ne_zero_iff _ (algebraMap D.host.F D.host.E).injective).2 hG
-  have hU' := Formalism.MainNotions.LatticeGluingRadicals.a_HU (X.abelian₂ (D.s.pfst p)) hF.1 (X.fl (D.s.pfst p)) (X.fl' (D.s.pfst p)) hF.2.2.1.2
+  have hU' := Formalism.MainNotions.LatticeGluingRadicals.a_HU (X.abelian₂ (D.s.pfst p)) hFull (X.fl (D.s.pfst p)) (X.fl' (D.s.pfst p)) hF.2.2.1.2
     (X.lift' (D.s.pfst p)).2
-  have hU'' := Formalism.MainNotions.LatticeGluingRadicals.a_HU (X.abelian₂ (D.s.pfst p)) hF.1 (X.fl (D.s.pfst p)) (X.fl' (D.s.psnd p)) hF.2.2.1.2
+  have hU'' := Formalism.MainNotions.LatticeGluingRadicals.a_HU (X.abelian₂ (D.s.pfst p)) hFull (X.fl (D.s.pfst p)) (X.fl' (D.s.psnd p)) hF.2.2.1.2
     (X.lift' (D.s.psnd p)).2
   have hN' := Formalism.MainNotions.LatticeGluingRadicals.a_HNd (X.fl (D.s.pfst p)) (X.fl' (D.s.pfst p)) (hne _ hG1)
   have hN'' : Formalism.MainNotions.LatticeGluingRadicals.HNd (X.fl (D.s.pfst p)) (X.fl' (D.s.psnd p)) := by

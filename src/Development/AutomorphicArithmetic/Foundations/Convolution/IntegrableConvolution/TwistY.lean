@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensFactor
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TwTrace
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.JointEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TwistPerm
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.RestScalar
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.SphRank
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensOp
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.IntPow
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.FinSplit
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.SplitLoc
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ArchBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GlueBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.TwistUnitary
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TwistYA
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensFactor
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TwTrace
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.JointEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TwistPerm
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.RestScalar
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.SphRank
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensOp
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.IntPow
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.FinSplit
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.SplitLoc
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ArchBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GlueBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.TwistUnitary
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TwistYA
+
+@[expose] public section
 
 noncomputable section
 
@@ -105,16 +109,16 @@ private theorem place_inj {P : Finset (Pl F)} (w : ∀ p : P, Fin (m + 1) ≃ Pl
 
 private def gen {P : Finset (Pl F)} (s : Fin (m + 1) → archGroup F n →* archGroup E n)
     (w : ∀ p : P, Fin (m + 1) ≃ PlacesOver E p.1) (i : Fin (m + 1)) :
-    archGroup F n ⊕ (Σ p : P, GL (Fin n) (p.1.adicCompletion F)) → normOneGL E n
+    archGroup F n ⊕ (Σ p : P, GL (Fin n) (p.1.adicCompletion F)) → normOneGL (K := E) (n := n)
   | .inl g => archP E n (s i g)
   | .inr x => MultiplicityOne.finProj E n (AdelicGLn.localEmbedding (w x.1 i).1 (mapGL n (completionMap x.1.1 (w x.1 i).1) x.2))
 
-private theorem gen_int (μ : Measure (normOneGL E n)) [μ.IsHaarMeasure] {P : Finset (Pl F)}
+private theorem gen_int (μ : Measure (normOneGL (K := E) (n := n))) [μ.IsHaarMeasure] {P : Finset (Pl F)}
     (s : Fin (m + 1) → archGroup F n →* archGroup E n) (w : ∀ p : P, Fin (m + 1) ≃ PlacesOver E p.1) (i : Fin (m + 1))
-    (B : LL μ →L[ℂ] LL μ) (h1 : ∀ g, Commute B (rightRegularRep (rationalGLOne E n) μ (archP E n (s i g))))
+    (B : LL μ →L[ℂ] LL μ) (h1 : ∀ g, Commute B (rightRegularRep (rationalGLOne (K := E) (n := n)) μ (archP E n (s i g))))
     (h2 : ∀ p g, Commute B (rhoL μ (w p i).1 g)) (g : FreeGroup _) (v : LL μ) :
-    B (rightRegularRep (rationalGLOne E n) μ (FreeGroup.lift (gen s w i) g) v) =
-      rightRegularRep (rationalGLOne E n) μ (FreeGroup.lift (gen s w i) g) (B v) :=
+    B (rightRegularRep (rationalGLOne (K := E) (n := n)) μ (FreeGroup.lift (gen s w i) g) v) =
+      rightRegularRep (rationalGLOne (K := E) (n := n)) μ (FreeGroup.lift (gen s w i) g) (B v) :=
   lift_int _ B _ _ (fun x v => by
     rcases x with g | ⟨p, g⟩
     · exact DFunLike.congr_fun (h1 g).eq v
@@ -123,7 +127,7 @@ private theorem gen_int (μ : Measure (normOneGL E n)) [μ.IsHaarMeasure] {P : F
 end UpperTheory.ConvolutionTheory.L1.TY
 
 open UpperTheory.ConvolutionTheory.L1 UpperTheory.ConvolutionTheory.L1.TY in
-set_option maxHeartbeats 1600000 in
+set_option maxHeartbeats 6400000 in
 theorem UpperTheory.ConvolutionTheory.L1.twistY :
     UpperTheory.ConvolutionTheory.L1.TwistY := by
   intro F E _ _ _ _ _ _ σ hσ m n hm hn μ _ θ hθ D s hs hposition νE _ νF _ b a aE aF hA q w₀ hq T V hV hVU hrk
@@ -183,16 +187,16 @@ theorem UpperTheory.ConvolutionTheory.L1.twistY :
     show _ * _ = _ * _
     rw [← ag3, ← ag3]
     exact congrArg _ (Pi.mulSingle_commute (f := fun _ : Fin (m + 1) => archGroup F n) hij g h).eq
-  have hOc : ∀ (B : LL μ →L[ℂ] LL μ) i, (∀ g, Commute B (rightRegularRep (rationalGLOne E n) μ (archP E n (s i g)))) →
+  have hOc : ∀ (B : LL μ →L[ℂ] LL μ) i, (∀ g, Commute B (rightRegularRep (rationalGLOne (K := E) (n := n)) μ (archP E n (s i g)))) →
       Commute B (O i) := fun B i h => ContinuousLinearMap.ext fun v =>
     operatorAt_int μ (hs i) (hs i) νF a B (fun x u => DFunLike.congr_fun (h x).eq u) v
-  have hrep : ∀ x y : normOneGL E n, Commute x y →
-      Commute (rightRegularRep (rationalGLOne E n) μ x) (rightRegularRep (rationalGLOne E n) μ y) := fun x y h =>
+  have hrep : ∀ x y : normOneGL (K := E) (n := n), Commute x y →
+      Commute (rightRegularRep (rationalGLOne (K := E) (n := n)) μ x) (rightRegularRep (rationalGLOne (K := E) (n := n)) μ y) := fun x y h =>
     ContinuousLinearMap.ext fun v => by
       simp only [ContinuousLinearMap.mul_apply]
       rw [← UnitaryRep.map_mul_apply, ← UnitaryRep.map_mul_apply, h.eq]
   have hQO : ∀ A i, Commute (Q A) (O i) := fun A i => hOc _ i fun g => (GA_arch μ A _).symm
-  have hOa : ∀ i j, i ≠ j → ∀ g, Commute (O i) (rightRegularRep (rationalGLOne E n) μ (archP E n (s j g))) :=
+  have hOa : ∀ i j, i ≠ j → ∀ g, Commute (O i) (rightRegularRep (rationalGLOne (K := E) (n := n)) μ (archP E n (s j g))) :=
     fun i j hij g => (hOc _ i fun x => hrep _ _ ((hss j i hij.symm g x).map _)).symm
   have hOO : ∀ i j, Commute (O i) (O j) := fun i j => by
     by_cases e : i = j
@@ -238,7 +242,7 @@ theorem UpperTheory.ConvolutionTheory.L1.twistY :
     refine forall₂_congr fun g _ => ?_
     rw [hU', ← tp2 p.1 (Df p) (w p) (hw p) i g v, ← hU', ← hU']
     exact U.injective.eq_iff
-  have S : Slots (rightRegularRep (rationalGLOne E n) μ) V m (fun i => FreeGroup.lift (gen s w i)) (Q Onᶜ)
+  have S : Slots (rightRegularRep (rationalGLOne (K := E) (n := n)) μ) V m (fun i => FreeGroup.lift (gen s w i)) (Q Onᶜ)
       (fun i => O i * Q (R i)) U :=
     { summand := ⟨le_top, hV.closed, hV.inv, hV.ne_bot, hV.irred⟩
       ι_comm := hcomm
@@ -269,7 +273,7 @@ theorem UpperTheory.ConvolutionTheory.L1.twistY :
           · obtain ⟨e1, e2⟩ := T.off u hS fun h => hu (h ▸ Finset.mem_insert_self _ _ : _ ∈ P)
             rw [e1, e2]
             exact sphRank E n μ V hV u) h' fun u hu => h1 u (hfin.mem_toFinset.2 hu)
-        refine ⟨g, _, c, ?_, fun v hv => hc _ ⟨GA_mem μ hV _ hv, prj_mem (GA_closed μ _) v⟩⟩
+        refine ⟨g, _, c, ?_, fun v hv => hc _ ⟨GA_mem μ hV _ hv, prj_mem (GA_closed μ (J := T.J) (χ := T.χ) Onᶜ) v⟩⟩
         rw [← hg, e, mul_assoc]
         rfl
       E_sa := (prj_star _).isSelfAdjoint

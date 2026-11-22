@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.StatementFr
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositionInsertionDiagonalCompat
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CommuteInvLeft
+module
+
+public import Formalism.HermitianCurvature.StatementFr
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositionInsertionDiagonalCompat
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CommuteInvLeft
+
+@[expose] public section
 
 open Matrix Formalism.YangianSpanCharacter.T Formalism.YangianSpanCharacter.Y Formalism.FourierDecayAlt.R Formalism.FourierDecayAlt.Wd Formalism.FourierDecayAlt.Fr
 

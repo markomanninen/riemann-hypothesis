@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.AlgebraMapEq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.AlgebraMapEq
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 open scoped TensorProduct
@@ -62,7 +66,7 @@ private theorem op_isPrecomplete_finite {R M : Type} [CommRing R] [AddCommGroup 
     induction n with
     | zero => simp [F, hx0]
     | succ n ih =>
-      simp only [F, Finset.sum_range_succ, ← add_assoc, map_add] at ih ⊢
+      simp only [F, Finset.sum_range_succ, ← add_assoc, map_add (f := _)] at ih ⊢
       rw [ih, hde]
       abel
   have hFc : ∀ {m n}, m ≤ n → F m ≡ F n [SMOD (I ^ m • ⊤ : Submodule R (Fin r → R))] := by
@@ -135,7 +139,7 @@ theorem UpperTheory.V.Pa.BC.oprime :
   haveI hloc : IsLocalRing (AdjoinRoot P) := by
     refine IsLocalRing.of_unique_max_ideal ⟨M, hMmax, fun Q hQ => ?_⟩
     have hc : (Q.comap (algebraMap O (AdjoinRoot P))).IsMaximal :=
-      Ideal.isMaximal_comap_of_isIntegral_of_isMaximal Q
+      Ideal.isMaximal_under_of_isIntegral_of_isMaximal Q
     have hle : M ≤ Q := Ideal.map_le_iff_le_comap.mpr (IsLocalRing.eq_maximalIdeal hc).symm.le
     exact (hMmax.eq_of_le hQ.ne_top hle).symm
   have hMeq : M = maximalIdeal (AdjoinRoot P) := IsLocalRing.eq_maximalIdeal hMmax
@@ -190,7 +194,7 @@ theorem UpperTheory.V.Pa.BC.oprime :
     simpa using hπn 1
   have hprin : (maximalIdeal (AdjoinRoot P)).IsPrincipal := ⟨⟨π, by rw [← hMeq, hMspan]⟩⟩
   haveI : IsDiscreteValuationRing (AdjoinRoot P) :=
-    ((IsDiscreteValuationRing.TFAE (AdjoinRoot P) hnf).out 0 4).mpr hprin
+    ((IsDiscreteValuationRing.TFAE (AdjoinRoot P) hnf).out 1 5).mpr hprin
   have hsub : ∀ n : ℕ, ((maximalIdeal O ^ n • ⊤ : Submodule O (AdjoinRoot P)) : Set (AdjoinRoot P))
       = ((maximalIdeal (AdjoinRoot P) ^ n • ⊤ : Submodule (AdjoinRoot P) (AdjoinRoot P)) : Set (AdjoinRoot P)) := by
     intro n
@@ -246,10 +250,10 @@ theorem UpperTheory.V.Pa.BC.oprime :
     minpoly.dvd _ _ (by simp [FiniteField.pow_card])
   have hsplit : (X ^ Fintype.card K' - X : K'[X]).Splits := by
     rw [Polynomial.splits_iff_card_roots, FiniteField.roots_X_pow_card_sub_X, ← Finset.card_def,
-      Finset.card_univ, FiniteField.X_pow_card_sub_X_natDegree_eq K' Fintype.one_lt_card]
+      Finset.card_univ, Polynomial.natDegree_X_pow_sub_X (R := K') Fintype.one_lt_card]
   have hne : (X ^ Fintype.card K' - X : K'[X]) ≠ 0 := by
     intro h
-    have := FiniteField.X_pow_card_sub_X_natDegree_eq K' (Fintype.one_lt_card (α := K'))
+    have := Polynomial.natDegree_X_pow_sub_X (R := K') (Fintype.one_lt_card (α := K'))
     rw [h, Polynomial.natDegree_zero] at this
     exact Fintype.card_ne_zero this.symm
   refine hsplit.of_dvd hne ?_

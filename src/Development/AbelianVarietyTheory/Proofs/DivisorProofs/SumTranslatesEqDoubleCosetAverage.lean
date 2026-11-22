@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 namespace CosetAvg
@@ -88,7 +92,8 @@ theorem sum_translates_eq_avg : ∀ {G M : Type} [Group G] [AddCommGroup M] [Mod
     rw [Finset.sum_congr rfl (fun i _ => hF i _ _ (hval k i)),
       Finset.sum_congr rfl (fun i _ => hF i (y i) (a i) rfl)]
     simp only [map_mul, Module.End.mul_apply]
-    rw [← map_sum, Finset.sum_coe_sort s (fun i => ρ (a i) (w i)), hm k k.2]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, Finset.sum_coe_sort s (fun i => ρ (a i) (w i)), hm k k.2]
   have hmain := avg_of_invariant (H := H) Finset.univ y F hinv
 
   have horb : ∀ i : s, ∃ e : (R i) ≃ orbit H (y i),

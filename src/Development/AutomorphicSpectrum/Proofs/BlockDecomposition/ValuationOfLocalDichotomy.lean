@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IdempotentLocalInduction
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemIdempotentComplementIff
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IdempotentLocalInduction
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemIdempotentComplementIff
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry CrystallineSemistableComparison CrystallineSemistableComparison.R
 

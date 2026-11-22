@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.Closed
-import GroundTheory.ProfiniteCohomology.NotDvdSuperIndexIffMap
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.Closed
+public import GroundTheory.ProfiniteCohomology.NotDvdSuperIndexIffMap
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -52,8 +57,8 @@ section Summand
 
 attribute [local instance 2000] Rep.hV2
 
-omit [TotallyDisconnectedSpace G] in
 
+omit [TotallyDisconnectedSpace G] in
 theorem finite_of_isSimpleOrder {p : ℕ} (hp : p.Prime) (A : Rep.{u} (ULift.{u} ℤ) G)
     [IsDiscreteRep A] (hsimple : IsSimpleOrder (Subrepresentation A.ρ))
     (hA : ∀ a : A, p • a = 0) : Finite A := by
@@ -81,8 +86,8 @@ section Coinduction
 
 variable {k : Type u} [CommRing k] (H V : Subgroup G) [hVn : V.Normal] (A : Rep.{u} k H)
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] in
 noncomputable def coindFixed : Submodule k (Rep.coind H.subtype A) :=
   Representation.invariants ((Rep.coind H.subtype A).ρ.comp V.subtype)
 
@@ -112,8 +117,8 @@ theorem isDiscreteRep_coindFixedRep (hV : IsOpen (V : Set G)) :
     IsDiscreteRep (coindFixedRep H V A) :=
   ⟨fun m => Subgroup.isOpen_mono (fun v hv => Subtype.ext (m.2 ⟨v, hv⟩)) hV⟩
 
-omit [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] hVn in
 
+omit [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] hVn in
 noncomputable def coindFixedEval : Rep.res H.subtype (coindFixedRep H V A) ⟶ A :=
   Rep.ofHom ⟨{ toFun := fun m => m.1.1 1
                map_add' := fun _ _ => rfl
@@ -133,13 +138,11 @@ theorem rho_eq_of_inv_mul_mem (hfix : ∀ h : H, (h : G) ∈ V → ∀ a : A, A.
   have e : h₂ = h₁ * (h₁⁻¹ * h₂) := by group
   rw [e, map_mul, Module.End.mul_apply, hfix (h₁⁻¹ * h₂) (by simpa using h)]
 
-variable (H V) in
-omit [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G]
-  hVn in
-open scoped Classical in
 
-noncomputable def summandFun (a : A) (x : G) : A :=
-  if hx : x ∈ H ⊔ V then A.ρ (supSection H V ⟨x, hx⟩) a else 0
+variable (H V) in
+noncomputable def summandFun (a : A) (x : G) : A := by
+  classical
+  exact if hx : x ∈ H ⊔ V then A.ρ (supSection (H := H) (V := V) ⟨x, hx⟩) a else 0
 
 omit [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] in
 theorem summandFun_mul_left (hfix : ∀ h : H, (h : G) ∈ V → ∀ a : A, A.ρ h a = a) (a : A)
@@ -151,8 +154,13 @@ theorem summandFun_mul_left (hfix : ∀ h : H, (h : G) ∈ V → ∀ a : A, A.ρ
     simp only [summandFun, dif_pos hx, dif_pos hx']
     rw [← Module.End.mul_apply, ← map_mul]
     apply rho_eq_of_inv_mul_mem hfix
-    refine inv_mul_mem_trans (supSection_spec H V ⟨_, hx'⟩) ?_
-    have := inv_mul_mem_symm (supSection_spec H V ⟨x, hx⟩)
+    have hsection (y : ↥(H ⊔ V)) : (supSection (H := H) (V := V) y : G)⁻¹ * (y : G) ∈ V := by
+      have hex : ∃ g ∈ H, g⁻¹ * (y : G) ∈ V := by
+        obtain ⟨g, hg, w, hw, heq⟩ := Subgroup.mem_sup_of_normal_right.1 y.2
+        exact ⟨g, hg, by rwa [← heq, inv_mul_cancel_left]⟩
+      exact (Classical.choose_spec hex).2
+    refine inv_mul_mem_trans (hsection ⟨_, hx'⟩) ?_
+    have := inv_mul_mem_symm (hsection ⟨x, hx⟩)
     simpa [mul_assoc] using this
   · have hx' : (h : G) * x ∉ H ⊔ V := fun h' => hx (hmem.1 h')
     simp only [summandFun, dif_neg hx, dif_neg hx', map_zero]
@@ -167,9 +175,14 @@ theorem summandFun_mul_right (hfix : ∀ h : H, (h : G) ∈ V → ∀ a : A, A.�
     simp only [summandFun, dif_pos hx, dif_pos hx']
     rw [← Module.End.mul_apply, ← map_mul]
     apply rho_eq_of_inv_mul_mem hfix
-    refine inv_mul_mem_trans (supSection_spec H V ⟨_, hx'⟩) ?_
-    have h1 := inv_mul_mem_symm (supSection_spec H V ⟨x, hx⟩)
-    have h2 : (k' : G)⁻¹ * (x⁻¹ * (supSection H V ⟨x, hx⟩ : G)) * k' ∈ V := by
+    have hsection (y : ↥(H ⊔ V)) : (supSection (H := H) (V := V) y : G)⁻¹ * (y : G) ∈ V := by
+      have hex : ∃ g ∈ H, g⁻¹ * (y : G) ∈ V := by
+        obtain ⟨g, hg, w, hw, heq⟩ := Subgroup.mem_sup_of_normal_right.1 y.2
+        exact ⟨g, hg, by rwa [← heq, inv_mul_cancel_left]⟩
+      exact (Classical.choose_spec hex).2
+    refine inv_mul_mem_trans (hsection ⟨_, hx'⟩) ?_
+    have h1 := inv_mul_mem_symm (hsection ⟨x, hx⟩)
+    have h2 : (k' : G)⁻¹ * (x⁻¹ * (supSection (H := H) (V := V) ⟨x, hx⟩ : G)) * k' ∈ V := by
       have := hVn.conj_mem _ h1 (k' : G)⁻¹
       simpa using this
     simpa [mul_assoc] using h2
@@ -185,9 +198,15 @@ theorem summandFun_mul_right_of_mem (hfix : ∀ h : H, (h : G) ∈ V → ∀ a :
   · have hx' : x * v ∈ H ⊔ V := hmem.2 hx
     simp only [summandFun, dif_pos hx, dif_pos hx']
     apply rho_eq_of_inv_mul_mem hfix
-    refine inv_mul_mem_trans (supSection_spec H V ⟨_, hx'⟩) ?_
-    have h1 := inv_mul_mem_symm (supSection_spec H V ⟨x, hx⟩)
-    have h2 : v⁻¹ * (x⁻¹ * (supSection H V ⟨x, hx⟩ : G)) ∈ V := V.mul_mem (V.inv_mem hv) h1
+    have hsection (y : ↥(H ⊔ V)) : (supSection (H := H) (V := V) y : G)⁻¹ * (y : G) ∈ V := by
+      have hex : ∃ g ∈ H, g⁻¹ * (y : G) ∈ V := by
+        obtain ⟨g, hg, w, hw, heq⟩ := Subgroup.mem_sup_of_normal_right.1 y.2
+        exact ⟨g, hg, by rwa [← heq, inv_mul_cancel_left]⟩
+      exact (Classical.choose_spec hex).2
+    refine inv_mul_mem_trans (hsection ⟨_, hx'⟩) ?_
+    have h1 := inv_mul_mem_symm (hsection ⟨x, hx⟩)
+    have h2 : v⁻¹ * (x⁻¹ * (supSection (H := H) (V := V) ⟨x, hx⟩ : G)) ∈ V :=
+      V.mul_mem (V.inv_mem hv) h1
     simpa [mul_assoc] using h2
   · have hx' : x * v ∉ H ⊔ V := fun h' => hx (hmem.1 h')
     simp only [summandFun, dif_neg hx, dif_neg hx']
@@ -198,7 +217,12 @@ theorem summandFun_one (hfix : ∀ h : H, (h : G) ∈ V → ∀ a : A, A.ρ h a 
   have h1 : (1 : G) ∈ H ⊔ V := one_mem _
   simp only [summandFun, dif_pos h1]
   rw [← rho_eq_of_inv_mul_mem hfix (h₁ := 1) ?_ a, map_one, Module.End.one_apply]
-  have := V.inv_mem (supSection_spec H V ⟨1, h1⟩)
+  have hsection (y : ↥(H ⊔ V)) : (supSection (H := H) (V := V) y : G)⁻¹ * (y : G) ∈ V := by
+    have hex : ∃ g ∈ H, g⁻¹ * (y : G) ∈ V := by
+      obtain ⟨g, hg, w, hw, heq⟩ := Subgroup.mem_sup_of_normal_right.1 y.2
+      exact ⟨g, hg, by rwa [← heq, inv_mul_cancel_left]⟩
+    exact (Classical.choose_spec hex).2
+  have := V.inv_mem (hsection ⟨1, h1⟩)
   simpa using this
 
 end Coinduction
@@ -211,7 +235,7 @@ omit [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [TotallyDiscon
 theorem summandFun_add (a b : A) (x : G) :
     summandFun H V (a + b) x = summandFun H V a x + summandFun H V b x := by
   simp only [summandFun]
-  split_ifs <;> simp [map_add]
+  split_ifs <;> simp [map_add (f := _)]
 
 omit [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] in
 theorem summandFun_smul (r : k) (a : A) (x : G) :
@@ -219,8 +243,8 @@ theorem summandFun_smul (r : k) (a : A) (x : G) :
   simp only [summandFun]
   split_ifs <;> simp [map_smul]
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] in
 noncomputable def summandMap (hfix : ∀ h : H, (h : G) ∈ V → ∀ a : A, A.ρ h a = a) :
     A ⟶ Rep.res H.subtype (coindFixedRep H V A) :=
   Rep.ofHom ⟨{ toFun := fun a => ⟨⟨summandFun H V a, fun h x => summandFun_mul_left hfix a h x⟩,
@@ -231,8 +255,8 @@ noncomputable def summandMap (hfix : ∀ h : H, (h : G) ∈ V → ∀ a : A, A.�
     fun h => LinearMap.ext fun a => Subtype.ext (Subtype.ext (funext fun x =>
       (summandFun_mul_right hfix a h x).symm))⟩
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] in
 theorem summandMap_comp_coindFixedEval (hfix : ∀ h : H, (h : G) ∈ V → ∀ a : A, A.ρ h a = a) :
     summandMap hfix ≫ coindFixedEval H V A = 𝟙 A := by
   ext a

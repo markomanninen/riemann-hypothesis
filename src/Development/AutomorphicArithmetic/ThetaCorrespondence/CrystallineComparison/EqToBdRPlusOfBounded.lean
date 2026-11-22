@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Comparison
+module
+
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Comparison
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,10 +35,10 @@ theorem eq_toBdRPlus_of_bounded (j : Acris p R →+* BdRPlus p R)
     have hbz' := congrArg Subtype.val hbz
     simp only [Subring.coe_mul, Subring.coe_pow, Subring.coe_natCast, RingHom.coe_rangeRestrict] at hbz'
     have hy2 : j x = algebraMap (AinfInv p R) (BdRPlus p R) (a0 : AinfInv p R) + (p : BdRPlus p R) ^ (N + n + k) * j z := by
-      rw [hz, map_add, map_mul, map_pow, map_natCast, h0 a0]
+      rw [hz, map_add (f := _), map_mul, map_pow, map_natCast, h0 a0]
     have hx2 : Acris.toBdRPlus p R x =
         algebraMap (AinfInv p R) (BdRPlus p R) (a0 : AinfInv p R) + (p : BdRPlus p R) ^ (N + n + k) * Acris.toBdRPlus p R z := by
-      rw [hz, map_add, map_mul, map_pow, map_natCast, Acris.toBdRPlus_algebraMap_zero]
+      rw [hz, map_add (f := _), map_mul, map_pow, map_natCast, Acris.toBdRPlus_algebraMap_zero]
     refine ⟨(p : Ainf p R) ^ n * az - (p : Ainf p R) ^ N * bz, ?_⟩
     have e1 : BdRPlus.eval p R n ((p : BdRPlus p R) ^ N * j z) =
         Ideal.Quotient.mk _ (algebraMap (Ainf p R) (AinfInv p R) az) := haz
@@ -44,7 +48,7 @@ theorem eq_toBdRPlus_of_bounded (j : Acris p R →+* BdRPlus p R)
       rfl
     rw [map_mul, map_pow, map_natCast] at e1
     rw [hy2, hx2]
-    simp only [map_add, map_mul, map_pow, map_natCast, map_sub]
+    simp only [map_add (f := _), map_mul, map_pow, map_natCast, map_sub]
     rw [add_sub_add_left_eq_sub, ← mul_sub]
     calc (p : AinfInv p R ⧸ AinfInv.kerTheta p R ^ n) ^ (N + n + k) * (BdRPlus.eval p R n (j z) - BdRPlus.eval p R n (Acris.toBdRPlus p R z))
         = (p : AinfInv p R ⧸ AinfInv.kerTheta p R ^ n) ^ k *

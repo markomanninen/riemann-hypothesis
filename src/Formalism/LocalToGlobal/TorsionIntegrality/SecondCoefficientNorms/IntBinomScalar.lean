@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.HasSecondLogDeriv
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.HasSecondLogDeriv
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -52,6 +56,6 @@ def IntSubst : Prop :=
 
 def LGDeriv : Prop :=
   ∀ (K : Type) [Field K] [CharZero K] (R : Subring K) (σ : Type) (f : MvPowerSeries σ K),
-    LG R f → ∀ i : σ, IntMv R (MvPowerSeries.pderiv K i f)
+    LG R f → ∀ i : σ, IntMv R (MvPowerSeries.pderiv (R := K) i f)
 
 end Formalism.L2.Th1.C

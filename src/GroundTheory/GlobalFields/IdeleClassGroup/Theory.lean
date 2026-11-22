@@ -1,21 +1,25 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleClassGroup.NatCardTateOfIsCyclic
-import GroundTheory.GlobalFields.NormResidueSymbol.Cyclotomic
-import GroundTheory.LocalFields.AbstractLocalReciprocity.Valuation
-import GroundTheory.LocalFields.AbstractLocalReciprocity.ExistsEqNsmulOfProjEqZero
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleClassGroup.NatCardTateOfIsCyclic
+public import GroundTheory.GlobalFields.NormResidueSymbol.Cyclotomic
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.Valuation
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.ExistsEqNsmulOfProjEqZero
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
 open NumberField IntermediateField GroundTheory.LocalField.Abstract
 open scoped GroundTheory.LocalField.Abstract
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
 
 namespace IdeleClassLimit
 
 open FiniteSubfield RationalSymbol CyclotomicSymbol _root_.GroundTheory.Global.Cyclotomic
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 def rationals : FiniteSubfield :=
   ⟨⊥, inferInstance⟩
@@ -31,53 +35,12 @@ def baseEquiv :
     IdeleClassGroup rationals.1 ≃* fixedModule IdeleClassLimit (⊤ : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) :=
   (fixedEquiv rationals).trans (MulEquiv.subgroupCongr (by rw [fixingSubgroup_rationals]))
 
-@[simp]
-theorem coe_baseEquiv (c : IdeleClassGroup rationals.1) :
-    (baseEquiv c : IdeleClassLimit) = of rationals c :=
-  rfl
-
-theorem ideleClassMap_self_eq (K : Type*) [Field K] [NumberField K] (c : IdeleClassGroup K) :
-    ideleClassMap K K c = c :=
-  ideleClassMap_injective (ideleClassMap_ideleClassMap (K := K) (L := K) (M := K) c)
-
-def ratRingEquiv : ℚ ≃+* rationals.1 :=
-  ((IntermediateField.botEquiv ℚ ℚ̄).symm : ℚ ≃ₐ[ℚ] (⊥ : IntermediateField ℚ ℚ̄)).toRingEquiv
-
-theorem ideleClassEquiv_ratRingEquiv (c : IdeleClassGroup ℚ) :
-    ideleClassEquiv ratRingEquiv c = ideleClassMap ℚ rationals.1 c := by
-  have h := ideleClassEquiv_ideleClassMap_of_comm (L := ℚ) (L' := ℚ) (M := ℚ) (M' := rationals.1)
-    (RingEquiv.refl ℚ) ratRingEquiv (fun l ↦ by
-      rw [RingEquiv.refl_apply]
-      exact (eq_ratCast (ratRingEquiv.toRingHom.comp (algebraMap ℚ ℚ)) l).trans
-        (eq_ratCast (algebraMap ℚ rationals.1) l).symm) c
-  rwa [ideleClassMap_self_eq, ideleClassEquiv_refl] at h
-
-theorem ideleClassNorm_ideleClassEquiv_ratRingEquiv (c : IdeleClassGroup ℚ) :
-    ideleClassNorm ℚ rationals.1 (ideleClassEquiv ratRingEquiv c) = c := by
-  rw [ideleClassEquiv_ratRingEquiv, ideleClassNorm_ideleClassMap,
-    show Module.finrank ℚ rationals.1 = 1 from IntermediateField.finrank_bot, pow_one]
-
-def ratEquiv :
-    IdeleClassGroup ℚ ≃* fixedModule IdeleClassLimit (⊤ : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) :=
-  (ideleClassEquiv ratRingEquiv).toMulEquiv.trans baseEquiv
-
-theorem coe_ratEquiv (c : IdeleClassGroup ℚ) :
-    (ratEquiv c : IdeleClassLimit) = of rationals (ideleClassMap ℚ rationals.1 c) := by
-  rw [← ideleClassEquiv_ratRingEquiv]
-  rfl
-
 def val : fixedModule IdeleClassLimit (⊤ : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) →* Multiplicative ℤ̂ :=
   (cycDegree.comp (cycSymbol rationals)).comp baseEquiv.symm.toMonoidHom
 
 theorem val_baseEquiv (c : IdeleClassGroup rationals.1) :
     val (baseEquiv c) = cycDegree (cycSymbol rationals c) := by
   simp [val]
-
-theorem val_ratEquiv (c : IdeleClassGroup ℚ) :
-    val (ratEquiv c) = cycDegree (reciprocityMap c) := by
-  have h : ratEquiv c = baseEquiv (ideleClassEquiv ratRingEquiv c) := MulEquiv.trans_apply _ _ c
-  rw [h, val_baseEquiv, cycSymbol, MonoidHom.comp_apply,
-    ideleClassNorm_ideleClassEquiv_ratRingEquiv]
 
 theorem cycSymbol_ideleClassNorm {F : FiniteSubfield} (h : rationals ≤ F)
     (c : IdeleClassGroup F.1) :
@@ -129,8 +92,15 @@ theorem range_val_comp_norm (U : OpenSubgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) :
     (val.comp (norm IdeleClassLimit (⊤ : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄))
       (U : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)))).range =
       val.range.map (powMonoidHom (inertiaDegree degree (U : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)))) := by
-  set F := ofOpenSubgroup U
-  have hU : (U : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) = F.1.fixingSubgroup := (fixingSubgroup_ofOpenSubgroup U).symm
+  let K := fixedField U.toSubgroup
+  have hK : K.fixingSubgroup = U.toSubgroup :=
+    InfiniteGalois.fixingSubgroup_fixedField ⟨U.toSubgroup, U.isClosed⟩
+  let F : FiniteSubfield := ⟨K, (InfiniteGalois.isOpen_iff_finite K).1 (by
+    rw [hK]
+    exact U.isOpen)⟩
+  have hU : (U : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) = F.1.fixingSubgroup := hK.symm
+  have hFixed : fixedModule IdeleClassLimit (U : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) = (of F).range := by
+    rw [hU, fixedModule_fixingSubgroup]
   have hR := range_cycDegree_comp_cycSymbol F
   rw [← hU] at hR
   rw [range_val, ← MonoidHom.range_eq_map, ← hR]
@@ -138,7 +108,7 @@ theorem range_val_comp_norm (U : OpenSubgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) :
   constructor
   · rintro ⟨a, rfl⟩
     obtain ⟨c, hc⟩ : (a : IdeleClassLimit) ∈ (of F).range := by
-      rw [← fixedModule_openSubgroup U]
+      rw [← hFixed]
       exact a.2
     refine ⟨c, ?_⟩
     have hc' : of F c ∈ fixedModule IdeleClassLimit (U : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) := by
@@ -148,7 +118,8 @@ theorem range_val_comp_norm (U : OpenSubgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) :
     exact (val_norm_of hU c hc').symm
   · rintro ⟨c, rfl⟩
     have hc' : of F c ∈ fixedModule IdeleClassLimit (U : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) := by
-      rw [fixedModule_openSubgroup]; exact ⟨c, rfl⟩
+      rw [hFixed]
+      exact ⟨c, rfl⟩
     exact ⟨⟨of F c, hc'⟩, val_norm_of hU c hc'⟩
 
 theorem exists_eq_intCast_add_nsmul (n : ℕ) (hn : 0 < n)
@@ -182,13 +153,6 @@ def classFieldTheory : ClassFieldTheory (ℚ̄ ≃ₐ[ℚ] ℚ̄) IdeleClassLimi
 @[simp]
 theorem classFieldTheory_deg : classFieldTheory.deg = degree :=
   rfl
-
-theorem classFieldTheory_val (c : IdeleClassGroup ℚ) :
-    classFieldTheory.val (ratEquiv c) = cycDegree (reciprocityMap c) :=
-  val_ratEquiv c
-
-theorem classFieldTheory_val_surjective : Function.Surjective classFieldTheory.val :=
-  val_surjective
 
 end IdeleClassLimit
 

@@ -1,10 +1,16 @@
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValLast
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulEqZeroOfInf
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsOpenNsmulCompletedHomLatticeFiniteAdelic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsBiSmooth
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulEqZeroOfInf
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsOpenNsmulCompletedHomLatticeFiniteAdelic
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.SeeSaw
 open scoped TensorProduct ContDiff
@@ -143,7 +149,8 @@ theorem om_comb {S T : HSp D} {χS χT : (AE D)ˣ →* Circle} {om : Om S T} (ho
     {g : GA D S} {h : GA D T} (hg : g ∈ GinfC S) (hh : h ∈ GinfC T) {c : WO S T →₀ ℂ} (hc : IsFinComb c)
     {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) : om (g, h) (comb ψ S T c f) = comb ψ S T c (om (g, h) f) := by
   unfold comb
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun x hx => ?_
   rw [map_smul, hom.om_heis g h x f hf, actO_real hg hh (hc x hx)]
 
@@ -153,7 +160,8 @@ theorem op_combR {A S A' : HSp D} (T : Module.End ℂ (WO A S → ℂ)) (c : WO 
       ∑ y ∈ c.support, (c y * ψ (symplOH S A' v y)) • fun u => K u (v + y) := by
     funext u
     simp only [comb, Finset.sum_apply, Pi.smul_apply, heisO, smul_eq_mul, mul_assoc]
-  rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   funext u
   simp only [comb, Finset.sum_apply, Pi.smul_apply, heisO, smul_eq_mul, map_smul, mul_assoc]
 
@@ -163,7 +171,8 @@ theorem op_combL {A S A' : HSp D} (T : Module.End ℂ (WO S A' → ℂ)) (c : WO
       ∑ x ∈ c.support, (c x * ψ (symplOH A S u x)) • K (u + x) := by
     funext v
     simp only [comb, Finset.sum_apply, Pi.smul_apply, heisO, smul_eq_mul, mul_assoc]
-  rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   funext v
   simp only [comb, Finset.sum_apply, Pi.smul_apply, heisO, smul_eq_mul, map_smul, mul_assoc]
 
@@ -219,7 +228,7 @@ theorem exists_orth {S T : HSp D} (hψ : IsStdChar D ψ (-1)) {c : WO S T →₀
   refine ⟨U, ?_, fun w hw => hw⟩
   have e : (U : Set (WO S T)) = ⋂ x ∈ c.support, {w | ψ (symplOH S T w x) = 1} := by
     ext w
-    simp only [Set.mem_iInter, Set.mem_setOf_eq]
+    simp only [Set.mem_iInter, Set.mem_ofPred_eq]
     rfl
   rw [e]
   exact isOpen_biInter_finset fun x hx => isOpen_ker hψ (hc x hx)
@@ -244,7 +253,7 @@ theorem biTheta_combL {A S A' : HSp D} (hψ : IsStdChar D ψ (-1)) {K : WO A S �
     funext u v; exact comb_apply c _ u
   refine ⟨?_, ?_, fun γ u v => ?_, fun γ u v => ?_, ?_, ?_⟩
   · simp only [comb_apply]
-    exact continuous_finset_sum _ fun x _ => continuous_const.mul
+    exact continuous_finsetSum _ fun x _ => continuous_const.mul
       ((hψ.1.1.comp ((GlobalTheory.FinTranslate.continuous_symplOH A S x).comp continuous_fst)).mul
         (hK.cont.comp ((continuous_fst.add continuous_const).prodMk continuous_snd)))
   · intro n L L' hL hL' hLf hL'f u v
@@ -291,7 +300,7 @@ theorem biTheta_combR {A S A' : HSp D} (hψ : IsStdChar D ψ (-1)) {K : WO A S �
     funext u v; exact comb_apply c _ v
   refine ⟨?_, ?_, fun γ u v => ?_, fun γ u v => ?_, ?_, ?_⟩
   · simp only [comb_apply]
-    exact continuous_finset_sum _ fun y _ => continuous_const.mul
+    exact continuous_finsetSum _ fun y _ => continuous_const.mul
       ((hψ.1.1.comp ((GlobalTheory.FinTranslate.continuous_symplOH S A' y).comp continuous_snd)).mul
         (hK.cont.comp (continuous_fst.prodMk (continuous_snd.add continuous_const))))
   · intro n L L' hL hL' hLf hL'f u v

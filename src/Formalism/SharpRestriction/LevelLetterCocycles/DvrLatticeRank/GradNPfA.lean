@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantUniformizer
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantUniformizer
+
+@[expose] public section
 
 noncomputable section
 
@@ -152,7 +156,7 @@ theorem gradNPf_coker (π' f t : LetA O n) (c₀ : O) (hf : W.γA W.gam π' = π
       rw [hR]; abel
     have hE : (∏ y ∈ Finset.Ico 1 (k + 1), (c₀ ^ y - 1)) • z -
         (W.γD T W.gam ((c₀ ^ k - 1) • xk + R) - ((c₀ ^ k - 1) • xk + R)) = π' ^ (k + 1) • (-w) := by
-      rw [Finset.prod_Ico_succ_top hk, mul_comm, mul_smul, hPz, map_add, map_smul, smul_neg, ← hw]
+      rw [Finset.prod_Ico_succ_top hk, mul_comm, mul_smul, hPz, map_add (f := _), map_smul, smul_neg, ← hw]
       simp only [smul_add, smul_sub]
       abel
     have hγxP : W.γD T W.gam ((c₀ ^ k - 1) • xk + R) ∈ DelS W T :=

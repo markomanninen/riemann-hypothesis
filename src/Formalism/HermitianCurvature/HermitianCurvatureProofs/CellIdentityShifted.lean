@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThmBpAtEqOfShiftR
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BaseCutoffIsTruncation
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThmBpAtEqOfShiftR
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BaseCutoffIsTruncation
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBPEq
 
@@ -52,17 +56,18 @@ theorem orbIntegrand_swap (Ds : B.RealPlaceData k r Wp Wq) (Ds' : B.RealPlaceDat
   obtain ⟨h1m, n1m, h2m, n2m⟩ := hq
   have o1 : ∀ w : Fin (2 * r + k + 1) → ℂ, Matrix.of (Matrix.of.symm (1 : B.Mat k r)) ∈ UWset k r w := by
     intro w
-    simpa using PBO.one_mem_UWset w
+    rw [Matrix.of.apply_symm_apply]
+    exact PBO.one_mem_UWset w
   have hq1 : Ds.inSS ((Matrix.of.symm (1 : B.Mat k r), q.1.2), (Matrix.of.symm (1 : B.Mat k r), q.2.2)) :=
     ⟨o1 Ds.z, n1m, o1 Ds.z', n2m⟩
   have hq0 : Ds.inSS ((q.1.1, q.1.2), (Matrix.of.symm (1 : B.Mat k r), q.2.2)) :=
     ⟨h1m, n1m, o1 Ds.z', n2m⟩
   have e1 : B.sgs ((Matrix.of.symm (1 : B.Mat k r), q.1.2), (Matrix.of.symm (1 : B.Mat k r), q.2.2)) γ
       = (Matrix.of q.1.2)⁻¹ * γ * Matrix.of q.2.2 := by
-    simp [B.sgs]
+    simp only [B.sgs, Matrix.of.apply_symm_apply, inv_one, one_mul, mul_one]
   have e0 : B.sgs ((q.1.1, q.1.2), (Matrix.of.symm (1 : B.Mat k r), q.2.2)) γ
       = (Matrix.of q.1.1)⁻¹ * (Matrix.of q.1.2)⁻¹ * γ * Matrix.of q.2.2 := by
-    simp [B.sgs]
+    simp only [B.sgs, Matrix.of.apply_symm_apply, inv_one, one_mul, mul_one]
   have g1GV : (Matrix.of q.1.2)⁻¹ * γ * Matrix.of q.2.2 ∈ B.GV k r :=
     Dx2.DF.mul_UH (Dx2.DF.mul_UH (WeylGroupFacts.uh_inv (B6.Nset_sub k r n1m)) hγ) (B6.Nset_sub k r n2m)
   have g0GV : (Matrix.of q.1.1)⁻¹ * (Matrix.of q.1.2)⁻¹ * γ * Matrix.of q.2.2 ∈ B.GV k r := by

@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.WeakStable
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SatDict
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.UnlSph
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.UnrNorm
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.WeakStableAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.NormRam
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.Unlinked
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SmoEq
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.WeakStable
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SatDict
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.UnlSph
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.UnrNorm
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.WeakStableAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.NormRam
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.Unlinked
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SmoEq
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,12 +60,13 @@ theorem UpperTheory.ConvolutionTheory.Sph.ramSphOf :
   let u : PlacesOver M v := ⟨w, hlies⟩
   have hns : ¬ GM.Split M v := not_split_of_ramified v u hram
   obtain ⟨hN, -, -⟩ := UpperTheory.ConvolutionTheory.Sph.normRam K M hp w hram
-  have habs : Ideal.absNorm w.asIdeal = Ideal.absNorm v.asIdeal := hN
+  have habs : Ideal.absNorm w.asIdeal = Ideal.absNorm v.asIdeal := by
+    simpa [Formalism.ConjugateSelfDual.normV, Ideal.absNorm_apply, Submodule.cardQuot_apply, v] using hN
   haveI : Fact (Module.finrank K M).Prime := ⟨hp⟩
   haveI : IsCyclic (M ≃ₐ[K] M) := isCyclic_of_prime_card (p := Module.finrank K M) (IsGalois.card_aut_eq_finrank K M)
   obtain ⟨σ, hσ⟩ := IsCyclic.exists_generator (α := M ≃ₐ[K] M)
   obtain ⟨σw, N, hloc, hNorm, -⟩ := hLG K M σ hσ hp v u hns
-  obtain ⟨ε, hε, hsd⟩ := UpperTheory.ConvolutionTheory.Sph.satDict
+  obtain ⟨ε, hε, hsd⟩ : SatDict := UpperTheory.ConvolutionTheory.Sph.satDict
   obtain ⟨hconj, hex, hex'⟩ := UpperTheory.ConvolutionTheory.Sph.weakStable K M hp n hn π P hW
   obtain ⟨τ, hτ⟩ := hex v
   obtain ⟨τ', hτ'⟩ := hex' w

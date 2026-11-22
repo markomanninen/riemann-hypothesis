@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerLast
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsMoreTail
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.InterNumRestrictSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsExtraLast
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ExistsSumEqOneOfMulEqOne
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerLast
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsMoreTail
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.InterNumRestrictSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsExtraLast
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ExistsSumEqOneOfMulEqOne
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -17,8 +22,8 @@ section Generic
 
 variable {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} [∀ a, Fintype (ι a)] {k : Type} [Field k]
 
-omit [Fintype K] [DecidableEq K] [∀ a, Fintype (ι a)] in
 
+omit [Fintype K] [DecidableEq K] [∀ a, Fintype (ι a)] in
 theorem X_mem_mIdealOver_iff {Ω : Type} [Field Ω] [Algebra k Ω] (y : (Σ a, ι a) → Ω) (p : Σ a, ι a) :
     (X p : NumbersDVR.MRing ι k) ∈ mIdealOver k y ↔ y p = 0 := by
   change mConeMapOver k y (X p) = 0 ↔ _
@@ -28,8 +33,8 @@ def genPtOf (W : Ideal (NumbersDVR.MRing ι k)) [W.IsPrime] :
     (Σ a, ι a) → FractionRing (NumbersDVR.MRing ι k ⧸ W) :=
   fun p => algebraMap _ _ (Ideal.Quotient.mk W (X p))
 
-omit [Fintype K] [DecidableEq K] [∀ a, Fintype (ι a)] in
 
+omit [Fintype K] [DecidableEq K] [∀ a, Fintype (ι a)] in
 theorem aeval_genPtOf (W : Ideal (NumbersDVR.MRing ι k)) [W.IsPrime] (g : NumbersDVR.MRing ι k) :
     aeval (genPtOf W) g = algebraMap _ (FractionRing (NumbersDVR.MRing ι k ⧸ W)) (Ideal.Quotient.mk W g) := by
   have h : (aeval (genPtOf W) : NumbersDVR.MRing ι k →ₐ[k] FractionRing (NumbersDVR.MRing ι k ⧸ W)) =
@@ -53,10 +58,11 @@ theorem mIdealOver_genPtOf (W : Ideal (NumbersDVR.MRing ι k)) [W.IsPrime] (hh :
     rw [← sum_weightedHomogeneousComponent (NumbersDVR.blockWeight ι) f,
       finsum_eq_sum _ (weightedHomogeneousComponent_finsupp f)]
     refine Ideal.sum_mem _ fun b _ => (hz _).mp ?_
-    rw [← coeff_mConeMapOver, h, coeff_zero]
+    rw [← coeff_mConeMapOver, h, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
   · intro hf
     ext e
-    rw [coeff_zero, ← Finsupp.equivFunOnFinite_symm_coe e, coeff_mConeMapOver]
+    rw [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply,
+      ← Finsupp.equivFunOnFinite_symm_coe e, coeff_mConeMapOver]
     exact (hz _).mpr (hh f hf _)
 
 end Generic

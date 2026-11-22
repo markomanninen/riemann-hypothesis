@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL4.CfMemTwId
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.CfMemTwId
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain MvPolynomial
 open scoped Matrix
@@ -13,9 +17,9 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section SlopeTestRemainingChoices
 
-theorem emb_nonreal {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] (φ : E →+* ℂ) : ∃ a : E, (φ a).im ≠ 0 := by
+theorem emb_nonreal {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (φ : E →+* ℂ) : ∃ a : E, (φ a).im ≠ 0 := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hr : NumberField.ComplexEmbedding.IsReal φ :=
     NumberField.ComplexEmbedding.isReal_iff.mpr (RingHom.ext fun x => by
       rw [NumberField.ComplexEmbedding.conjugate_coe_eq]
@@ -69,10 +73,10 @@ theorem maj_bc (c : (D.mem u).C.cls 0) (τ : D.what₂.Tau) (v : InfinitePlace D
     (G := fun y z => φ ((D.sp.X 0).hT y z)) (σ := φ) (emb_nonreal φ) ⟨?_, ?_, ?_, ?_⟩ ⟨?_, ?_, ?_, ?_⟩ ?_ y z
   · intro x x' y
     show majAt _ _ v (CV.bc c τ (x + x')) _ = _
-    rw [map_add, s1]
+    rw [map_add (f := _), s1]
   · intro x y y'
     show majAt _ _ v _ (CV.bc c τ (y + y')) = _
-    rw [map_add, s2]
+    rw [map_add (f := _), s2]
   · intro a x y
     show majAt _ _ v (CV.bc c τ (a • x)) _ = _
     rw [CV.bc_smul, s3]
@@ -83,10 +87,10 @@ theorem maj_bc (c : (D.mem u).C.cls 0) (τ : D.what₂.Tau) (v : InfinitePlace D
     rfl
   · intro x x' y
     show φ ((D.sp.X 0).hT (x + x') y) = φ ((D.sp.X 0).hT x y) + φ ((D.sp.X 0).hT x' y)
-    rw [map_add, LinearMap.add_apply, map_add]
+    rw [map_add (f := _), LinearMap.add_apply, map_add (f := _)]
   · intro x y y'
     show φ ((D.sp.X 0).hT x (y + y')) = φ ((D.sp.X 0).hT x y) + φ ((D.sp.X 0).hT x y')
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
   · intro a x y
     show φ ((D.sp.X 0).hT (a • x) y) = starRingEnd ℂ (φ a) * φ ((D.sp.X 0).hT x y)
     rw [LinearMap.map_smulₛₗ₂, smul_eq_mul, map_mul, starRingEnd_apply, hcm]
@@ -121,7 +125,7 @@ theorem riesz_bc (c : (D.mem u).C.cls 0) (τ : D.what₂.Tau) (v : InfinitePlace
     have := s2 (CV.bc c τ y) 0 0
     rw [add_zero] at this
     linear_combination this
-  | add q q' _ _ h1 h2 => rw [map_add, map_add, s2, h1, h2]
+  | add q q' _ _ h1 h2 => rw [map_add (f := _), map_add (f := _), s2, h1, h2]
   | smul a q _ h1 => rw [map_smul, smul_eq_mul, map_mul, s4, h1]
 
 theorem gM_map (c : (D.mem u).C.cls 0) (y : Fin (D.R.N 0) → (D.sp.X 0).V) (τ : D.what₂.Tau) (v : InfinitePlace D.what₂.LL) :
@@ -188,12 +192,12 @@ theorem class_norm (c : (D.mem u).C.cls 0) (y : Fin (D.R.N 0) → (D.sp.X 0).V) 
       fockN G / extremalFockNormProduct lam := by
     rw [monH_norm]
     have e1 : ∑ m, monW lam m * ‖v.embedding (cfMap lam g (coE CV (hTV0 D u) x c) m)‖ ^ 2 =
-        (∑ m : MonI lam, ‖coeff m.1 G‖ ^ 2 * (mfact m.1 : ℝ)) / extremalFockNormProduct lam := by
+        (∑ m : MonI lam, ‖AddMonoidAlgebra.coeff G m.1‖ ^ 2 * (mfact m.1 : ℝ)) / extremalFockNormProduct lam := by
       rw [Finset.sum_div]
       refine Finset.sum_congr rfl fun m _ => ?_
       rw [hGdef, coeff_map, cfMap_apply, monW]
       ring
-    have e2 : ∑ m : MonI lam, ‖coeff m.1 G‖ ^ 2 * (mfact m.1 : ℝ) ≤ fockN G := by
+    have e2 : ∑ m : MonI lam, ‖AddMonoidAlgebra.coeff G m.1‖ ^ 2 * (mfact m.1 : ℝ) ≤ fockN G := by
       have := fockN_sum_le G ((Finset.univ : Finset (MonI lam)).map ⟨fun m : MonI lam => m.1, fun a b h => Subtype.ext h⟩)
       rwa [Finset.sum_map] at this
     rw [e1]

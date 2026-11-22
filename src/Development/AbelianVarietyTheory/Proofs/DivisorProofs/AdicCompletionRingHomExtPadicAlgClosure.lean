@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TorMatch
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PadicIntermediateFieldIntRingCompleteDvr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorMatch
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PadicIntermediateFieldIntRingCompleteDvr
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
@@ -18,7 +22,7 @@ def ballIdeal {R K : Type} [CommRing R] [NormedField K] [IsUltrametricDist K] (�
   carrier := {x | ‖φ x‖ ≤ c}
   zero_mem' := by simpa using hc
   add_mem' := fun {a b} ha hb => by
-    simp only [Set.mem_ofPred_eq, map_add] at *
+    simp only [Set.mem_ofPred_eq, map_add (f := _)] at *
     exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ha hb)
   smul_mem' := fun a b hb => by
     simp only [Set.mem_ofPred_eq, smul_eq_mul, map_mul, norm_mul] at *
@@ -57,7 +61,7 @@ theorem norm_le_of_mem_smul_top {R A K : Type} [CommRing R] [CommRing A] [Algebr
   refine Submodule.smul_induction_on (p := fun y => ‖F y‖ ≤ c) hy (fun a ha w _ => ?_) (fun a b ha hb => ?_)
   · rw [Algebra.smul_def, map_mul, norm_mul]
     exact (mul_le_of_le_one_right (norm_nonneg _) (hF w)).trans (h a ha)
-  · rw [map_add]
+  · rw [map_add (f := _)]
     exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ha hb)
 
 theorem ringHom_ext_of_norm {R K : Type} [CommRing R] [NormedField K] [IsUltrametricDist K]

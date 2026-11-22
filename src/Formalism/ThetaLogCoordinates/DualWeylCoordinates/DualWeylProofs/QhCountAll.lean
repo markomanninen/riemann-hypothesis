@@ -1,5 +1,9 @@
-import Formalism.ThetaLogCoordinates.DualWeylCoordinates.DualWeylProofs.QhMemDualWeyl
-import Formalism.ThetaLogCoordinates.DualWeylCoordinates.DualWeylProofs.QhEquivOfCount
+module
+
+public import Formalism.ThetaLogCoordinates.DualWeylCoordinates.DualWeylProofs.QhMemDualWeyl
+public import Formalism.ThetaLogCoordinates.DualWeylCoordinates.DualWeylProofs.QhEquivOfCount
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,12 +18,12 @@ def qhM (R : Type) [CommRing R] {n : ℕ} (s : ℕ) (J : ℕ → Fin n) : GLCoor
 
 lemma qhM_zero (J : ℕ → Fin n) : qhM R 0 J = 1 := by
   unfold qhM qhN
-  rw [dif_pos (Nat.zero_le n)]
+  rw [dite_eq_left (Nat.zero_le n)]
   simp [Matrix.det_isEmpty]
 
 lemma qhM_full (J : ℕ → Fin n) : ∃ ε : R, qhM R n J = ε • ((qhDet R n : (GLCoord R n)ˣ) : GLCoord R n) := by
   unfold qhM
-  rw [dif_pos le_rfl]
+  rw [dite_eq_left le_rfl]
   unfold qhN
   by_cases hJ : Function.Injective (fun q : Fin n => J q.val)
   · let σ : Equiv.Perm (Fin n) := Equiv.ofBijective _ (Finite.injective_iff_bijective.mp hJ)
@@ -41,7 +45,7 @@ lemma qh_initMinor [NeZero n] {s : ℕ} (I : Fin s → Fin n) (hs : s ≤ n) :
     algebraMap _ (GLCoord R n) (rename Prod.swap (Formalism.GradedWeylDivisibility.initMinor R I hs)) =
       qhM R s (fun q => if h : q < s then I ⟨q, h⟩ else 0) := by
   unfold qhM qhN Formalism.GradedWeylDivisibility.initMinor
-  rw [dif_pos hs]
+  rw [dite_eq_left hs]
   congr 1
   rw [AlgHom.map_det, ← Matrix.det_transpose]
   congr 1
@@ -154,7 +158,7 @@ private theorem exists_qhM_eq_smul_det {s : ℕ} (hs : s ≤ n) (J : ℕ → Fin
       ε • algebraMap (MvPolynomial (Fin n × Fin n) R) (GLCoord R n)
         (Matrix.of fun a b : Fin s => genMat R n (Fin.castLE hs a) (S.orderEmbOfFin hS b)).det := by
   unfold qhM qhN
-  rw [dif_pos hs]
+  rw [dite_eq_left hs]
   by_cases hJ : Function.Injective (fun q : Fin s => J q.val)
   · let S := univ.image (fun q : Fin s => J q.val)
     have hS : S.card = s := by

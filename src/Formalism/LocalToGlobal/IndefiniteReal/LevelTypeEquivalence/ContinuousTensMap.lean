@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+
+@[expose] public section
 
 open scoped TensorProduct
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Topology

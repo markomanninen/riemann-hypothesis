@@ -1,5 +1,9 @@
-import Formalism.LocalRingCardinality.Lemmas
-import Formalism.SharpRestriction.AdmissibleParameterJoins.DIVfromGLd
+module
+
+public import Formalism.LocalRingCardinality.Lemmas
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.DIVfromGLd
+
+@[expose] public section
 
 namespace Formalism.MainNotions.J
 

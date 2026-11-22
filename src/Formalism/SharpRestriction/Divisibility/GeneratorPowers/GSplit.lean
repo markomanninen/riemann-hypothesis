@@ -1,4 +1,8 @@
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+module
+
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -77,8 +81,8 @@ theorem split_of_ncard {E : Type} [Field E] [NumberField E] {p : ℕ} (hp : p.Pr
   have hMc : M.card = Module.finrank ℚ E := le_antisymm (hcard ▸ hle) (hcard1 ▸ h1)
   exact ⟨hMc, Multiset.toFinset_card_eq_card_iff_nodup.1 (hcard1.trans hMc.symm)⟩
 
-open Formalism.BasicNotions in
 
+open Formalism.BasicNotions in
 theorem g_splits (D : D7) (i : Fin 2) :
     (normalizedFactors (Ideal.span {((D.host.g i : ℕ) : 𝓞 D.host.E)})).card = Module.finrank ℚ D.host.E ∧
       (normalizedFactors (Ideal.span {((D.host.g i : ℕ) : 𝓞 D.host.E)})).Nodup :=

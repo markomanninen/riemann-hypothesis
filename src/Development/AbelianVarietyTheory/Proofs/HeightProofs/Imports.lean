@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.PolynomialCoeffEq
 
@@ -9,7 +13,8 @@ theorem coeff_eq {R : Type} [AddCommGroup R] [Module ℝ R]
     (hv : ∀ i j, i ≠ j → g (v i) (v j) = 0) (x : R) (k : Fin n) :
     g x (v k) = v.repr x k * g (v k) (v k) := by
   conv_lhs => rw [← v.sum_repr x]
-  rw [map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, LinearMap.sum_apply]
   simp only [map_smul, LinearMap.smul_apply, smul_eq_mul]
   rw [Finset.sum_eq_single k]
   · intro i _ hik

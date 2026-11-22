@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.HodgeComparisonCompatibility
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwistedGramMatricesMatch
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.HodgeComparisonCompatibility
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwistedGramMatricesMatch
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.CompanionTheory.Relay.hodge_component_twist_eigen_compat : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (Xo : Moduli D l)

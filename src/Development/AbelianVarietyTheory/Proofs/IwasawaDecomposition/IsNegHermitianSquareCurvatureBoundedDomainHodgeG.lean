@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNegSqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNegSqZero
+
+@[expose] public section
+
 open Matrix MvPolynomial GlobalTheory.GoodMetric GlobalTheory.HermFrame GlobalTheory.PointFormSign
 open ReciprocityTheory.L2DbarEstimates (V)
 open scoped ComplexOrder Topology
@@ -32,7 +37,7 @@ theorem domGram_eq (x : Fin m → Fin r → ℂ) : domGram m r x = ((domForm m r
 theorem mContDiffAt_of (k : WithTop ℕ∞) (y : Fin m → Fin r → ℂ) :
     MContDiffAt k (fun y : Fin m → Fin r → ℂ => Matrix.of y) y := fun a b => by
   show ContDiffAt ℝ k (fun x : Fin m → Fin r → ℂ => x a b) y
-  exact ((contDiff_apply ℝ ℂ b).comp (contDiff_apply ℝ (Fin r → ℂ) a)).contDiffAt
+  exact ((contDiff_apply ℝ (fun _ => ℂ) b).comp (contDiff_apply ℝ (fun _ => (Fin r → ℂ)) a)).contDiffAt
 
 theorem mdel_of (y ξ : Fin m → Fin r → ℂ) :
     mdel (fun y : Fin m → Fin r → ℂ => Matrix.of y) y ξ = Matrix.of ξ := by
@@ -107,8 +112,8 @@ end GlobalTheory.PointFormSign.DomCurv
 
 namespace GlobalTheory.PointFormSign
 
-open DomCurv in
 
+open DomCurv in
 theorem curv_domGram_isNegSq (m r : ℕ) (x : Fin m → Fin r → ℂ)
     (hx : (1 - Matrix.of x * (Matrix.of x)ᴴ).PosDef) : IsNegSq (curv (domGram m r) x) r := by
   have hxA : (domForm m r x).PosDef := hx

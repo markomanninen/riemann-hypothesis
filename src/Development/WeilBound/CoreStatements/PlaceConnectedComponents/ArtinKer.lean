@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import GroundTheory.GlobalFields.TateThesis.HeckeCharRayClass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import GroundTheory.GlobalFields.TateThesis.HeckeCharRayClass
+
+@[expose] public section
 
 noncomputable section
 

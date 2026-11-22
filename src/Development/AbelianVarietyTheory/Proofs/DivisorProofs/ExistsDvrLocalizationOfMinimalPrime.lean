@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDivOfCenterHeightLeOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsMoreTail
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDivOfCenterHeightLeOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsMoreTail
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory

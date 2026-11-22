@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.Smooth
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.EqAmOfBarEq
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.CdMeas
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.Smooth
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.EqAmOfBarEq
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.CdMeas
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -80,10 +84,13 @@ private theorem act_scalar (D : Dat F E) (w : (A E)ˣ) (a : A F) (ha : am E a = 
     fin_cases i <;> fin_cases j <;>
       simp [Matrix.mul_apply, Fin.sum_univ_two, Matrix.GeneralLinearGroup.scalar, Matrix.scalar_apply,
         Matrix.diagonal_apply] <;> ring
+  have hc (u : A F) : D.co (am E u) 0 = u := by
+    rw [← D.mkE_base, D.co_mkE]
+    rfl
   funext i
   unfold Dat.act Dat.unherm
   simp only [hX]
-  fin_cases i <;> simp [D.co_am_mul, Dat.herm]
+  fin_cases i <;> simp [D.co_am_mul, hc, Dat.herm]
 
 variable [IsTotallyReal F] [IsTotallyComplex E] {D : Dat F E}
 

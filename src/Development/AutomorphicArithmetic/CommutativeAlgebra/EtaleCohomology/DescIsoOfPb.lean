@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.HkOfPush
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SplitsOfSplitOn
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.HkOfPush
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SplitsOfSplitOn
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 

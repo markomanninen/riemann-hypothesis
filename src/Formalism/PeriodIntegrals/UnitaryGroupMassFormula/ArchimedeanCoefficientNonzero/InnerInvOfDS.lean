@@ -1,7 +1,11 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanCoefficientNonzero.Development
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointnessPolynomiallyBounded
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanCoefficientNonzero.Development
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointnessPolynomiallyBounded
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 open MeasureTheory
 open scoped InnerProductSpace
@@ -98,7 +102,8 @@ theorem sum_basis_inner (T : Wq →L[ℂ] Wq) (ξ' : Wq) :
   calc ⟪ξ', T ξ'⟫_ℂ = ⟪ξ', T (∑ i, ⟪stdOrthonormalBasis ℂ Wq i, ξ'⟫_ℂ • stdOrthonormalBasis ℂ Wq i)⟫_ℂ := by
         rw [(stdOrthonormalBasis ℂ Wq).sum_repr' ξ']
     _ = _ := by
-      rw [map_sum, inner_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, inner_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_smul, inner_smul_right, ← inner_conj_symm (stdOrthonormalBasis ℂ Wq i) ξ']
       rfl

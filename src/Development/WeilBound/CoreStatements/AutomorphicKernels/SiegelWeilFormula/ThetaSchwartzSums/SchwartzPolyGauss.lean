@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.NullSec
-import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.NullSec
+public import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem evX_temperate {m n : ℕ} (P : PX m n) : Function.HasTemperateGrowth (fu
     simp only [MvPolynomial.eval_C]
     exact Function.HasTemperateGrowth.const c0
   | add p q hp hq =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact Function.HasTemperateGrowth.add (hp rfl) (hq rfl)
   | mul_X p k hp =>
     simp only [map_mul, MvPolynomial.eval_X]

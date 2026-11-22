@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.Reductions.MetaDef
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.MetaDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,7 +95,7 @@ theorem LD.mul {U W : ℝ → Sch l →L[ℂ] Sch l} {P Q : Sch l → Sch l} {t�
   have h2 : HasDerivAt (fun t : ℝ => (t - t₀) • schwartzToL2 l (U t (Q f))) (schwartzToL2 l (U t₀ (Q f))) t₀ := by
     simpa using ((hasDerivAt_id t₀).sub_const t₀).fun_smul (hU (Q f))
   have h3 := (h1.fun_add h2).fun_add (hU (W t₀ f))
-  rw [zero_add, ← map_add, add_comm (U t₀ (Q f))] at h3
+  rw [zero_add, ← map_add (f := _), add_comm (U t₀ (Q f))] at h3
   refine h3.congr_of_eventuallyEq (.of_forall fun t => ?_)
   simp only [ContinuousLinearMap.mul_apply, map_sub, map_smul]
   simp only [csmul]
@@ -103,7 +107,8 @@ theorem weyl_step {V : Sch l →L[ℂ] Sch l} {w v : l ⊕ l → ℝ} (h : ∀ f
     (A : Sch l →L[ℂ] Sch l) (f : Sch l) :
     schwartzToL2 l ((A * dRho w) (V f)) = ∑ a, v a • schwartzToL2 l (A (V (dRho (Pi.single a 1) f))) := by
   rw [ContinuousLinearMap.mul_apply, h, dRho_eq_sum v]
-  simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply, map_sum, map_smul]
   simp only [csmul]
 
 theorem LD.differentiableAt {V : ℝ → Sch l →L[ℂ] Sch l} {Q : Sch l → Sch l} {t₀ : ℝ} (hV : LD V Q t₀)
@@ -119,7 +124,7 @@ theorem LD.differentiableAt {V : ℝ → Sch l →L[ℂ] Sch l} {Q : Sch l → S
       filter_upwards [h] with t ht
       exact weyl_step (ht w) A f
     · intro A B hA hB f
-      simp only [ContinuousLinearMap.add_apply, map_add]
+      simp only [ContinuousLinearMap.add_apply, map_add (f := _)]
       exact (hA f).add (hB f)
     · intro c A hA f
       simp only [ContinuousLinearMap.smul_apply, map_smul]
@@ -142,14 +147,15 @@ theorem LD.hasDerivAt {V : ℝ → Sch l →L[ℂ] Sch l} {Q : Sch l →L[ℂ] S
       · have e : dRho w * Q = Q * dRho w - dRho (v' w) := by rw [← hQ, sub_sub_cancel]
         rw [ContinuousLinearMap.mul_apply, ← ContinuousLinearMap.mul_apply (dRho w), e, dRho_eq_sum w,
           dRho_eq_sum (v' w)]
-        simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply, map_sum, map_smul, hv0, h0,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply, map_sum, map_smul, hv0, h0,
           ContinuousLinearMap.sub_apply, ContinuousLinearMap.mul_apply, map_sub, neg_smul, ← sub_eq_add_neg,
           Finset.sum_sub_distrib]
         simp only [csmul]
       · filter_upwards [h] with t ht
         exact weyl_step (ht w) A f
     · intro A B hA hB f
-      simp only [ContinuousLinearMap.add_apply, map_add]
+      simp only [ContinuousLinearMap.add_apply, map_add (f := _)]
       exact (hA f).add (hB f)
     · intro c A hA f
       simp only [ContinuousLinearMap.smul_apply, map_smul]

@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EpsVEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationLeOneOfMem
+module
+
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EpsVEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationLeOneOfMem
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
@@ -88,8 +93,8 @@ section Grid0
 
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts}
 
-variable (G : GridData L sc) in
 
+variable (G : GridData L sc) in
 def grid0 (w : Pl D.host.E) : Grid (Kw w) where
   m := D.R.m
   r := D.R.r
@@ -99,16 +104,15 @@ def grid0 (w : Pl D.host.E) : Grid (Kw w) where
   chi i := (G.ch.chiH i).loc w
   eta := L.C.eta.loc w
 
-variable (G : GridData L sc) in
-open Classical in
 
-def eps0 (w : Pl D.host.E) : (grid0 G w).VertexGroup :=
+open Classical in
+def eps0 (G : GridData L sc) (w : Pl D.host.E) : (grid0 G w).VertexGroup :=
   onColumn (G := grid0 G w) fun j => if j ∈ idx D then GlobalTheory.SplitFlip.diagGL fun a =>
     if Odd j ∧ topRank (grid0 G w) j + (D.R.m - 1 - j) / 2 ≤ a.1 then Units.map (Int.castRingHom (Kw w)).toMonoidHom (-1) else 1
     else 1
 
-variable (G : GridData L sc) in
 
+variable (G : GridData L sc) in
 def stair0 (w : Pl D.host.E) : (grid0 G w).VertexGroup :=
   onColumn (G := grid0 G w) fun j => if j + 2 ≤ D.R.m then stair (grid0 G w) (unifAt w) (cosExp G w) j else 1
 
@@ -129,14 +133,14 @@ theorem elt_stair (G : GridData L sc) (t : T) (w : Pl D.host.E)
     · exact through_elt _ hj
     · exact elt_eq_one t w _ (by omega)
   · show onColumn (G := locGrid G t w) _ (i, j) = onColumn (G := grid0 G w) _ (i, j)
-    rw [onColumn, onColumn, dif_neg (show ¬ (i, j).1 = (locGrid G t w).m from hi),
-      dif_neg (show ¬ (i, j).1 = (grid0 G w).m from hi)]
+    rw [onColumn, onColumn, dite_eq_right (show ¬ (i, j).1 = (locGrid G t w).m from hi),
+      dite_eq_right (show ¬ (i, j).1 = (grid0 G w).m from hi)]
     rfl
 
 end Grid0
 
-open Classical in
 
+open Classical in
 theorem scal : Big fun ch => ScalP ch := by
   refine ⟨0, fun ε CF _ => ⟨0, fun D large₂ _ _ Γ _ _ Pl0 T A Ks _ _ _ R F s ch hch _ => ?_⟩⟩
   have hL : R.toLevCh.Is A.μ0 := s.core.lev
@@ -176,7 +180,7 @@ theorem scal : Big fun ch => ScalP ch := by
         · exact a
       have hoff : ∀ i j, i ≠ D.R.m → epsV ch.G t w (i, j) = 1 := fun i j hi => by
         show onColumn (G := locGrid ch.G t w) _ (i, j) = 1
-        rw [onColumn, dif_neg (show ¬ (i, j).1 = (locGrid ch.G t w).m from hi)]
+        rw [onColumn, dite_eq_right (show ¬ (i, j).1 = (locGrid ch.G t w).m from hi)]
       have h1 : charFactor ({locGrid ch.G t w with mu := fun j => (muBase R.toLevCh j).loc w} : Grid (Kw w))
           (epsV ch.G t w) = 1 := by
         refine charFactor_eq_one _ _ (epsV_mem t w) (fun i hi => ⟨hoff i _ (Nat.ne_of_lt hi), ?_⟩) (fun j hj => ?_) ?_
@@ -187,7 +191,7 @@ theorem scal : Big fun ch => ScalP ch := by
           · exact hoff _ _ e
         · replace hj : j < D.R.m := hj
           show IsUnram ((muBase R.toLevCh (j + 1)).loc w)
-          rw [muBase, dif_pos hj]
+          rw [muBase, dite_eq_left hj]
           refine GlobalTheory.FunObj.Good.isUnram_loc.2 ((R.toLevCh.C.isMu0 ⟨j, hj⟩).unr w fun k hk => ?_)
           refine ha (ch.G.pl.mem_S0_of_sum_eq.2 (Or.inr ((GlobalTheory.ChiGrid.S1_mem_OmF D).2 ?_)))
           have : ((D.host.g k : ℕ) : 𝓞 D.host.F) ∈ (w.under (𝓞 D.host.F)).asIdeal := by

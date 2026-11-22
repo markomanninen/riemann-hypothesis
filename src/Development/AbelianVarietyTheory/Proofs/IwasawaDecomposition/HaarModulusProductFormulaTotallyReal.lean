@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MeasureRealValuedLeExp
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsAdicCompleteAndCardQuotientAdicCompletionInteg
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DistribHaarCharTransport
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MeasureRealValuedLeExp
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsAdicCompleteAndCardQuotientAdicCompletionInteg
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DistribHaarCharTransport
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.GaugeEx
 open scoped TensorProduct NNReal ENNReal Pointwise
@@ -56,11 +60,9 @@ theorem modu_finite (F : Type) [Field F] [NumberField F] (v : HeightOneSpectrum 
   rw [e1, e2, Measure.real, ← distribHaarChar_mul, ENNReal.toReal_mul, ENNReal.coe_toReal, card_residue,
     Fintype.card_unit, pow_one] at h
   have h2 := mul_right_cancel₀ (ENNReal.toReal_ne_zero.2 ⟨h0, h1⟩) h
-  rw [modu, dif_pos hu, h2, FinitePlace.norm_def, WithZeroMulInt.toNNReal_neg_apply _ hv]
+  rw [modu, dite_eq_left hu, h2, FinitePlace.norm_def, WithZeroMulInt.toNNReal_neg_apply _ hv]
   push_cast
   congr 1
-  conv_lhs => rw [← WithZero.coe_unzero hv]
-  rfl
 
 theorem distribHaarChar_pi_real (ι : Type) [Fintype ι] (u : (ι → ℝ)ˣ) :
     (distribHaarChar (ι → ℝ) u : ℝ) = ∏ i, |(u : ι → ℝ) i| := by
@@ -101,7 +103,7 @@ theorem modu_infinite (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (x 
           (continuous_apply w) }
   have h := GlobalTheory.JR.ModuleNorm.distribHaarChar_transport e hx.unit
     (Units.map (r : Ainf F →* (InfinitePlace F → ℝ)) hx.unit) (fun y => map_mul r x y)
-  rw [modu, dif_pos hx, ← h, distribHaarChar_pi_real]
+  rw [modu, dite_eq_left hx, ← h, distribHaarChar_pi_real]
   refine Finset.prod_congr rfl fun w _ => ?_
   rw [← Real.norm_eq_abs]
   exact (InfinitePlace.Completion.isometry_extensionEmbeddingOfIsReal
@@ -130,6 +132,7 @@ theorem prod_modu_eq_one : ∀ (F : Type) [Field F] [NumberField F] [IsTotallyRe
   congr 1
   refine Finset.prod_congr rfl fun w _ => ?_
   rw [(IsTotallyReal.isReal w).mult_eq_one, pow_one]
+  rw [InfiniteAdeleRing.algebraMap_apply]
   exact InfinitePlace.Completion.norm_coe w (WithAbs.toAbs w.1 e)
 
 end GlobalTheory.GaugeProdFormula

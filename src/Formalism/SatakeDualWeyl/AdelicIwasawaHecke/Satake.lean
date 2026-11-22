@@ -1,8 +1,12 @@
-import Formalism.SatakeDualWeyl.StatementE
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SatakeComb
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SatakeMat
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SatakeRes
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.HeckeActMem
+module
+
+public import Formalism.SatakeDualWeyl.StatementE
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SatakeComb
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SatakeMat
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SatakeRes
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.HeckeActMem
+
+@[expose] public section
 
 noncomputable section
 

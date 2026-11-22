@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LocalThetaPairExistenceStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnramifiedLocalPairActsOnVacuaByHeisenbergCombStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LocalThetaPairExistenceStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnramifiedLocalPairActsOnVacuaByHeisenbergCombStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem comb_of_scalar {X A M : Type} [AddCommGroup M] [Module ℂ M] (vac : M �
     rw [LinearMap.map_finsupp_linearCombination]
     congr 2
     funext p
-    simp only [Function.comp, hca p s hs, Finsupp.linearCombination_apply]
+    exact (Finsupp.linearCombination_apply ℂ (ca p)).trans (hca p s hs).symm
   calc (cA.sum fun p z => z • a p s) = Finsupp.linearCombination ℂ (fun p => a p s) cA :=
         (Finsupp.linearCombination_apply ℂ cA).symm
     _ = _ := h.symm

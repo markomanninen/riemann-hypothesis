@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsEtLevOver
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.RangeSubsetOfGeom
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EpsZeroPtEpsScalePt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsEtLevOver
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.RangeSubsetOfGeom
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EpsZeroPtEpsScalePt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.EtLev
 
@@ -91,7 +96,8 @@ theorem sum_eq_zero_of_eigen (T : Module.End k V) {I : Type} [DecidableEq I] (s 
     intro w l hw hl hT
     rw [Finset.sum_insert hj] at hT ⊢
     have e : ∑ i ∈ s, (l i - l j) • w i = T (w j + ∑ i ∈ s, w i) - l j • (w j + ∑ i ∈ s, w i) := by
-      rw [map_add, map_sum, hw j (Finset.mem_insert_self j s), smul_add, Finset.smul_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_add (f := _), map_sum, hw j (Finset.mem_insert_self j s), smul_add, Finset.smul_sum,
         Finset.sum_congr rfl (fun i hi => hw i (Finset.mem_insert_of_mem hi))]
       simp only [sub_smul, Finset.sum_sub_distrib]
       abel
@@ -135,7 +141,7 @@ theorem core {p : ℕ} [Fact p.Prime] (D : Datum p) {R : Type} [CommRing R] (b :
   have hq : ∀ u, Tω (Tω u) = (D.tr : k) • Tω u - (D.nm : k) • u := by
     intro u
     have h := congrArg (fun f => f u) (congrArg L hquad)
-    simp only [map_add, map_sub, map_mul, map_zero, Module.End.mul_apply, LinearMap.add_apply, LinearMap.sub_apply,
+    simp only [map_add (f := _), map_sub, map_mul, map_zero, Module.End.mul_apply, LinearMap.add_apply, LinearMap.sub_apply,
       LinearMap.zero_apply, L_int] at h
     rw [← hTω] at h
     rw [← sub_eq_zero, ← h]
@@ -198,7 +204,7 @@ theorem core {p : ℕ} [Fact p.Prime] (D : Datum p) {R : Type} [CommRing R] (b :
       · exact ⟨r0, by linear_combination h⟩
     obtain ⟨c, hc, e, f, hcef⟩ := exists_mem_pow_add_eq_one p D R b w0 r hw k β r2 (by rw [hr2, hρ2, hρ1])
     have h := congrArg (fun g => g v2) (congrArg L hcef)
-    simp only [map_add, map_mul, map_sub, map_one, Module.End.mul_apply, LinearMap.add_apply, LinearMap.sub_apply,
+    simp only [map_add (f := _), map_mul, map_sub, map_one, Module.End.mul_apply, LinearMap.add_apply, LinearMap.sub_apply,
       Module.End.one_apply, L_int, L_nat, k2 c hc] at h
     simp only [zero_add, add_zero] at h
     rw [← hTω, e2, hr2, map_smul, sub_self, hp, zero_smul, map_zero, add_zero] at h

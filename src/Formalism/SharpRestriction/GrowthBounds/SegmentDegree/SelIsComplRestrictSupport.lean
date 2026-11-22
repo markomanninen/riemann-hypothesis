@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.NonemptyDvrSettingOfStandard
-import Lemmata.ComplementLifts.ComplLift
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.NonemptyDvrSettingOfStandard
+public import Lemmata.ComplementLifts.ComplLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,8 @@ variable {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {σ : 
 theorem sel_red_sum {ι : Type} [Fintype ι] (c : ι → O) (v : ι → MvPolynomial σ O) :
     MvPolynomial.map (IsLocalRing.residue O) (∑ i, c i • v i) =
       ∑ i, IsLocalRing.residue O (c i) • MvPolynomial.map (IsLocalRing.residue O) (v i) := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [smul_eq_C_mul, map_mul, map_C, ← smul_eq_C_mul]
 

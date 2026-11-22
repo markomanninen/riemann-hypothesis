@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.CartanIdeles.SpacesExOf
-import GroundTheory.GlobalFields.ClassFieldConsequences.TrivialModulus
-import GroundTheory.GlobalFields.IdeleGroups.LocalConditionIndex
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.CartanIdeles.SpacesExOf
+public import GroundTheory.GlobalFields.ClassFieldConsequences.TrivialModulus
+public import GroundTheory.GlobalFields.IdeleGroups.LocalConditionIndex
+
+@[expose] public section
 
 open scoped nonZeroDivisors Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GroundTheory.Global GroundTheory.Global.IdeleGroup UpperTheory.Gal.TP.Skew

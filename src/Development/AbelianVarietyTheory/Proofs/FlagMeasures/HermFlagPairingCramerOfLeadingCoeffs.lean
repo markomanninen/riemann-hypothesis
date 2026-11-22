@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLocalizedModuleSubtype
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemOfForall
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLocalizedModuleSubtype
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemOfForall
+
+@[expose] public section
+
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt
 open scoped Pointwise ENNReal Classical
 open Formalism.MainNotions.S.Loc
@@ -177,7 +182,8 @@ theorem hermFlag_pairing_cramer_of_leadingCoeffs (F F' : FlagD H r) (Λ : Submod
   have hD : Dl F F' l (hl.trans (Nat.le_succ r)) = Z.det := rfl
   have key : ∀ (ξ : Fin l → K) (b : Fin l), H.B (∑ a, ξ a • e a) (∑ c, B b c • e' c) = (ξ ᵥ* (Z * Bᴴ)) b := by
     intro ξ b
-    simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, LinearMap.map_smulₛₗ, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, LinearMap.map_smulₛₗ, smul_eq_mul,
       vecMul, dotProduct, Matrix.mul_apply, hZ, Matrix.of_apply, conjTranspose_apply, starRingEnd_apply,
       Finset.mul_sum]
     rw [Finset.sum_comm]
@@ -221,8 +227,8 @@ theorem hermFlag_pairing_cramer_of_leadingCoeffs (F F' : FlagD H r) (Λ : Submod
   congr 1
   exact (congrFun hv b).symm
 
-open GlobalTheory.DegCnt.IdealPow in
 
+open GlobalTheory.DegCnt.IdealPow in
 theorem cramer (F F' : FlagD H r) (Λ : Submodule (𝓞 K) V)
     (hint : ∀ x ∈ Λ, ∀ y ∈ Λ, H.B x y ∈ (1 : Submodule (𝓞 K) K)) {𝔡 : Ideal (𝓞 K)} (h : 𝔡 ≠ ⊥)
     (hs : ∀ x ∈ 𝔡, ∃ y ∈ 𝔡, (y : K) = star (x : K))
@@ -268,8 +274,6 @@ open GlobalTheory.DegCnt.IdealPow GlobalTheory.UnimodQuot
 variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V]
   [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] {H : HermSpace K V}
 
-omit [StarRing K] in
-theorem mem_line {A : Submodule (𝓞 K) K} {v x : V} : x ∈ line A v ↔ ∃ t ∈ A, t • v = x := Iff.rfl
 
 omit [NumberField K] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 theorem B_smul (a b : K) (x y : V) : H.B (a • x) (b • y) = a * star b * H.B x y := by
@@ -311,7 +315,8 @@ theorem monomial {ι : Type} [Fintype ι] (v : ι → V) (n : ι → ℤ) {𝔡 
     have h3 : ξ i * H.B (v i) (v k) ∈ ipow 𝔡 (-n k) := by
       refine mem_of_forall h (neg_add_cancel _) fun β hβ => ?_
       have := hy.2 _ (hle k _ (star_mem h hs hβ))
-      rw [map_sum, LinearMap.sum_apply, Finset.sum_eq_single i (fun b _ hb => by simp [hk' b hb]) (by simp)] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, LinearMap.sum_apply, Finset.sum_eq_single i (fun b _ hb => by simp [hk' b hb]) (by simp)] at this
       convert this using 1
       rw [B_smul, star_star]; ring
     refine mem_of_forall h (add_neg_cancel _) fun δ hδ => ?_
@@ -326,7 +331,7 @@ theorem monomial {ι : Type} [Fintype ι] (v : ι → V) (n : ι → ℤ) {𝔡 
     revert y
     refine hind (C := fun y => ∀ x ∈ P, H.B (algebraMap (𝓞 K) K γ • y) x ∈ (1 : Submodule (𝓞 K) K))
       (fun _ _ => by simp) (fun a b ha hb x hx => ?_) (fun i t ht => ?_)
-    · rw [smul_add, map_add, LinearMap.add_apply]; exact add_mem (ha x hx) (hb x hx)
+    · rw [smul_add, map_add (f := _), LinearMap.add_apply]; exact add_mem (ha x hx) (hb x hx)
     refine hind (by simp) (fun a b ha hb => by rw [map_add]; exact add_mem ha hb) (fun k β hβ => ?_)
     by_cases hk : H.B (v i) (v k) = 0
     · simp [LinearMap.map_smulₛₗ, hk]

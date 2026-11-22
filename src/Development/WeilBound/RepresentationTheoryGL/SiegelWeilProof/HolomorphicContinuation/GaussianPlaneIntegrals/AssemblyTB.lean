@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.AssemblyTA
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.AssemblyTA
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,8 @@ theorem pair_inv {q : PV ι A B} (hq : q ∈ pairAlg ι A B) : IsInv q := by
     apply MvPolynomial.funext
     intro z
     rw [eval_sub]
-    simp only [map_sum, map_mul, eval_X, act, Sum.elim_inl, Sum.elim_inr, Matrix.map_apply, AlgHom.id_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, eval_X, act, Sum.elim_inl, Sum.elim_inr, Matrix.map_apply, AlgHom.id_apply]
     have e : ∀ i, (∑ j, u i j * z (Sum.inl (j, a))) * (∑ l, star (u i l) * z (Sum.inr (l, b))) =
         ∑ j, ∑ l, (star (u i l) * u i j) * (z (Sum.inl (j, a)) * z (Sum.inr (l, b))) := by
       intro i
@@ -102,7 +107,7 @@ theorem gip_integrable (hP : Pos) [Fintype A] [Fintype B] (f g : PV ι A B) :
 def gipL (hP : Pos) [Fintype A] [Fintype B] (p : PV ι A B) : PV ι A B →ₗ[ℂ] ℂ where
   toFun q := gip q p
   map_add' q1 q2 := by
-    simp only [gip, map_add, add_mul]
+    simp only [gip, map_add (f := _), add_mul]
     exact integral_add (gip_integrable hP q1 p) (gip_integrable hP q2 p)
   map_smul' c q := by
     simp only [gip, MvPolynomial.smul_eq_C_mul, map_mul, eval_C, RingHom.id_apply, smul_eq_mul]
@@ -110,8 +115,6 @@ def gipL (hP : Pos) [Fintype A] [Fintype B] (p : PV ι A B) : PV ι A B →ₗ[�
     refine integral_congr_ae (Filter.Eventually.of_forall fun z => ?_)
     simp only
     ring
-
-theorem gipL_apply (hP : Pos) [Fintype A] [Fintype B] (p q : PV ι A B) : gipL hP p q = gip q p := rfl
 
 theorem exists_points {σ : Type} [Fintype σ] (W : Submodule ℂ (MvPolynomial σ ℂ)) [FiniteDimensional ℂ W]
     (ℓ : W →ₗ[ℂ] ℂ) : ∃ c : (σ → ℂ) →₀ ℂ, ∀ q : W, ℓ q = c.sum fun z a => a * eval z (q : MvPolynomial σ ℂ) := by

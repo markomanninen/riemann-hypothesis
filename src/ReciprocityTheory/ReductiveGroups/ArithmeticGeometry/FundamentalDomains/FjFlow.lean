@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.PeriodLatticeCountable
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.PeriodLatticeCountable
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -23,8 +27,8 @@ theorem Data.fj_flow_real (X : Data E r) (la : Wt X.Ψ r) (ξ : Fin r → E) (h�
   by_cases hD : ∃ D : Set (X.Ψ → ℝ), MeasurableSet D ∧ IsAddFundamentalDomain (X.periods la) D volume ∧
       0 < volume D ∧ volume D < ⊤
   swap
-  · rw [dif_neg hD, dif_neg hD, mul_zero]
-  rw [dif_pos hD, dif_pos hD]
+  · rw [dite_eq_right hD, dite_eq_right hD, mul_zero]
+  rw [dite_eq_left hD, dite_eq_left hD]
   have hFD : IsAddFundamentalDomain (X.periods la) hD.choose volume := hD.choose_spec.2.1
 
   set F : (X.Ψ → ℝ) → ℂ := fun t => P (X.flow ξ (fun τ => (t τ : ℂ)) x) *

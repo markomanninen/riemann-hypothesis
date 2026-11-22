@@ -1,10 +1,14 @@
-import Formalism.HarderNarasimhan.QuotRealize
-import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.ExistsSmulMemOfFinrankEq
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.ShiftInvariance
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SlopeIneqMean
+module
+
+public import Formalism.HarderNarasimhan.QuotRealize
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.ExistsSmulMemOfFinrankEq
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.ShiftInvariance
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SlopeIneqMean
+
+@[expose] public section
 
 open Module NumberField
 
@@ -71,7 +75,7 @@ private theorem covol_eq_of_inner_preserving_equiv (L1 : Submodule ℤ E) (L2 : 
     Formalism.F.covol L1 = Formalism.F.covol L2 := by
   have hr : Module.finrank ℤ L1 = Module.finrank ℤ L2 := τ.finrank_eq
   unfold Formalism.F.covol
-  rw [dif_pos ‹DiscreteTopology L1›, dif_pos ‹DiscreteTopology L2›]
+  rw [dite_eq_left ‹DiscreteTopology L1›, dite_eq_left ‹DiscreteTopology L2›]
   congr 1
   let B : Module.Basis (Fin (Module.finrank ℤ L2)) ℤ L2 :=
     ((Module.finBasis ℤ L1).map τ).reindex (finCongr hr)
@@ -100,7 +104,7 @@ theorem covol_rk_eq (α : G →+ E) (β : G →+ F) (hn : ∀ g, ‖β g‖ = �
       map_add' := fun y z => by
         apply Subtype.ext
         show β (ex (y + z)).choose = β (ex y).choose + β (ex z).choose
-        rw [← map_add]
+        rw [← map_add (f := _)]
         exact eq_of_eq α β hn
           (by simp [(ex (y + z)).choose_spec.2, (ex y).choose_spec.2, (ex z).choose_spec.2]) }
   have hval : ∀ (y : (H.map α).toIntSubmodule) (g : G), α g = (y : E) → ((τf y : (H.map β).toIntSubmodule) : F) = β g := fun y g hg =>
@@ -109,7 +113,7 @@ theorem covol_rk_eq (α : G →+ E) (β : G →+ F) (hn : ∀ g, ‖β g‖ = �
     intro y
     rw [hval y _ (ex y).choose_spec.2, hn, (ex y).choose_spec.2]
   have hinj : Function.Injective τf := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro y hy
     have : ‖(y : E)‖ = 0 := by rw [← hnorm, hy]; simp
     exact Subtype.ext (norm_eq_zero.mp this)

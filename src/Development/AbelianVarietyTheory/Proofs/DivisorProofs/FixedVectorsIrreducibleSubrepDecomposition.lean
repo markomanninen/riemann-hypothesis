@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Submodule
 
@@ -47,7 +51,7 @@ theorem sum_proj {V : Type} [AddCommGroup V] [Module ℂ V] {ι : Type} [Fintype
   refine Submodule.iSup_induction t (motive := fun v => ∑ i, T i v = v) hv
     (fun j x hx => ?_) (by simp) (fun x y hx hy => ?_)
   · simp [hT _ j x hx]
-  · simp only [map_add, Finset.sum_add_distrib, hx, hy]
+  · simp only [map_add (f := _), Finset.sum_add_distrib, hx, hy]
 
 theorem proj_comm {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V]
     (ρ : Representation ℂ G V) {ι : Type} [Fintype ι] [DecidableEq ι]
@@ -59,7 +63,7 @@ theorem proj_comm {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V]
     (fun j x hx => ?_) (by simp) (fun x y hx hy => ?_)
   · rw [hT i j _ (hst j g x hx), hT i j x hx]
     split_ifs <;> simp
-  · simp only [map_add, hx, hy]
+  · simp only [map_add (f := _), hx, hy]
 
 end GlobalTheory.AbsDec
 

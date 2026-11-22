@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.QuotientHighestWeightTensorStandard
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.QuotientHighestWeightTensorStandard
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.DS.Lap.LemK
 
@@ -61,7 +65,7 @@ theorem isGlRep_tensVd (E : Fin n → Fin n → Module.End ℂ M) (hE : IsGlRep 
 theorem casimir_tensV' (E : Fin n → Fin n → Module.End ℂ M) (f : Fin n → M) :
     casimir (tensV E) f = (fun c => casimir E (f c)) + (n : ℂ) • f + (2 : ℂ) • eeV E f := by
   funext e
-  simp only [casimir_apply', Finset.sum_apply, tensV_apply', map_add, apply_ite (E _ _), map_zero,
+  simp only [casimir_apply', Finset.sum_apply, tensV_apply', map_add (f := _), apply_ite (E _ _), map_zero,
     Finset.sum_add_distrib, Pi.add_apply, Pi.smul_apply, eeV_apply', if_true, ite_add_zero]
   simp [Finset.sum_ite_eq, Finset.sum_ite_irrel, two_smul]
   rw [Nat.cast_smul_eq_nsmul]

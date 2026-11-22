@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.ParamsHeightRankConstant
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.FiltrationBoundaryCriterion
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.FiltrationCocycleLiftCriterion
-import Formalism.SharpRestriction.GlobalSchurBounds.Chosen
+module
+
+public import Formalism.SharpRestriction.ParamsHeightRankConstant
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.FiltrationBoundaryCriterion
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.FiltrationCocycleLiftCriterion
+public import Formalism.SharpRestriction.GlobalSchurBounds.Chosen
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,28 +41,11 @@ def QDRows_at (D : D7) (x eps : ℝ) : Prop :=
 def QDRowsF {eps : ℝ} (Fm : FamP eps) : Prop :=
   ∃ x0 : ℝ, ∀ x ≥ x0, ∀ i : Fm.Ix x, ∃ Y : ℝ, (x ^ (1 / Fm.J) ≤ Y ∧ Y ≤ x) ∧ QDRows_at (Fm.D x i) Y eps
 
-def TR_at (D : D7) : Prop :=
-  ∃ V : D.what₂.EE ≃ₗᵢ[ℂ] D.what₂.EE, ∀ u, ∃ a : ℂ, a ≠ 0 ∧
-    ∃ U : D.what₂.Mu u ≃ₗᵢ[ℂ] D.what₂.Mu u, ∀ φ F, D.what₂.Bu u φ F = a * D.besS u (U φ) (V F)
-
-def TRF {eps : ℝ} (Fm : FamP eps) : Prop := ∃ x0 : ℝ, ∀ x ≥ x0, ∀ i : Fm.Ix x, TR_at (Fm.D x i)
-
-def SB_at {D : D7} (L : SizeData₂ D) (CH : ℝ) : Prop :=
-  sFrame D.div.Nu D.div.h + D.div.RR.muMax ≤ L.sc.x ^ CH * L.sc.b
-
-def SBF {eps : ℝ} (Fm : FamP eps) (CH : ℝ) : Prop := ∃ x0 : ℝ, ∀ x ≥ x0, ∀ i : Fm.Ix x, SB_at (Fm.L x i) CH
-
 def MinkMult (n M : ℕ) : Prop :=
   ∀ H : Subgroup (Matrix.GeneralLinearGroup (Fin n) ℚ), Finite H → Nat.card H ∣ M
 
-def MinkLit (C : ℝ) : Prop :=
-  ∀ n : ℕ, 2 ≤ n → ∃ M : ℕ, 0 < M ∧ MinkMult n M ∧ Real.log (M : ℝ) ≤ C * n * Real.log n
-
 def DGamChoice_at (D : D7) : Prop :=
   ∀ M : ℕ, MinkMult (2 * D.R.f * D.R.N D.R.m) M → ∀ u, (D.mem u).C.DGam ∣ M
-
-def DGamChoiceF {eps : ℝ} (Fm : FamP eps) : Prop :=
-  ∃ x0 : ℝ, ∀ x ≥ x0, ∀ i : Fm.Ix x, DGamChoice_at (Fm.D x i)
 
 end Formalism.MainNotions
 

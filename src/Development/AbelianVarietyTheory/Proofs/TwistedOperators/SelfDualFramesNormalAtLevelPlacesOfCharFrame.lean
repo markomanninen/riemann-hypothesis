@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.FrameExistence.NormalFrameClauses
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ChainMatrices
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDecompChainSpaceDefiniteAddNormalFrame
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsAuxiliaryHyperbolicVectors
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsAdaptedVectorSystemECoZCo
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VertexAtOfLevTransport
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.FrameExistence.NormalFrameClauses
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ChainMatrices
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDecompChainSpaceDefiniteAddNormalFrame
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsAuxiliaryHyperbolicVectors
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsAdaptedVectorSystemECoZCo
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VertexAtOfLevTransport
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.IndefR.Mi Formalism.IndefR.Seed.Frm IsDedekindDomain NumberField
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -25,7 +29,8 @@ theorem selfDual_frames_normal_at_level_places_of_charFrame : ∀ (D : D7) (C : 
       βY := fun _ => 1, βX := 1, βV := fun _ => 1, βW := fun _ => 1 }
   have hP : ∀ PP, PP ∈ L.Pg ↔ ∃ l, L.C.P.Div l PP := hPg
   have hQ : ∀ t, Formalism.IndefR.Lev.IsTwistPlaces D.host.g (L.Q t) := fun t => t.elim
-  choose γ hγ using fun j => GlobalTheory.StdFrames.exists_base (D.sp.X j)
+  have hbase (j : ℕ) := GlobalTheory.StdFrames.exists_base (D.sp.X j)
+  choose γ hγ using hbase
   have hγ' : ∀ j, j < D.R.m → IsFrame (γ j) (Formalism.L2.Herm.crdLat (D.sp.X j) (D.sp.X j).L0) := fun j _ => by
     rw [hγ j]; exact GlobalTheory.StdFrames.isFrame_lat _
   have hex : ∀ j, ∃ (E Ev : ℕ → (D.sp.Y j).V) (z : (D.sp.Y j).V), j < D.R.m → IsAuxiliaryHeckeCharacter D j E Ev z := fun j => by

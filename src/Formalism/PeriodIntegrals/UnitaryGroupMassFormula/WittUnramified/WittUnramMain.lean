@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.WittUnram
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittUnramified.GhostComponentG
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittUnramified.PsiStep
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.WittUnram
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittUnramified.GhostComponentG
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittUnramified.PsiStep
+
+@[expose] public section
 
 noncomputable section
 

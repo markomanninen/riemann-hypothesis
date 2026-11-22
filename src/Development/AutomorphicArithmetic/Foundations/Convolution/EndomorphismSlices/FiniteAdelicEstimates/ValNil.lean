@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
-import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.SatCard
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.Places
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
+public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.FiniteAdelicEstimates.SatCard
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.Places
+
+@[expose] public section
 
 noncomputable section
 

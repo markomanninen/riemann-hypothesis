@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Statements
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Statements
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -21,10 +26,6 @@ def SecDegreeLe.Statement : Prop :=
         Module.finrank E (Vertical.SecAlg (Q.map (MvPolynomial.map (algebraMap k E))) y) ≤ δ
 
 namespace SecDegreeLe
-
-abbrev pointSecAlg : Type :=
-  Vertical.SecAlg ((⊥ : Ideal (MvPolynomial (Fin 1) ℚ)).map (MvPolynomial.map (algebraMap ℚ ℚ)))
-    (fun _ : Vertical.Par 0 1 => (1 : ℚ))
 
 end SecDegreeLe
 

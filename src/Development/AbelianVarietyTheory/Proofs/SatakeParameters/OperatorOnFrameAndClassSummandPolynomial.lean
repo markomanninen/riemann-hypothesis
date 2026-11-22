@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RkLe
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RkLe
+
+@[expose] public section
+
 open Formalism.BasicNotions NumberField IsDedekindDomain Formalism.MainNotions.G Formalism.MainNotions.FormalGroupSystem Formalism.L2.G.Pend Formalism.MainNotions Formalism.L2.Ker Formalism.L2.PairingIndexBounds.F Formalism.L2.KerInert Formalism.UG Formalism.L2.G.Cmp Formalism.L2.Forms Formalism.L2.KerInert.SecondKernelProjection Formalism.L2.KerInert.QuadraticBaseChangeGL3 Formalism.L2.KerInert.SecondKernelDifference Formalism.L2.KerInert.SecondKernelHermitian GlobalTheory.TwV.DelA
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -20,7 +25,8 @@ theorem polD_eq_map_polDY (D : D7) {N N' : ℕ} (s : D.what₂.Tau → ℂ) (Q :
   rw [← AlgHom.comp_apply]
   congr 1
   refine MvPolynomial.algHom_ext fun k => ?_
-  rw [AlgHom.comp_apply, MvPolynomial.aeval_X, MvPolynomial.aeval_X, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [AlgHom.comp_apply, MvPolynomial.aeval_X, MvPolynomial.aeval_X, map_sum]
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [MvPolynomial.mapAlgHom_apply]
   split_ifs with h
@@ -32,7 +38,8 @@ theorem applyFrame : Formalism.L2.KerInert.SecondKernelDifference.ApplyFrame := 
   intro D N N' s Q G y'
   rw [polD_eq_map_polDY]
   unfold GL3Theta.applyAt0 framePol GL3Theta.evFr
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   symm
   rw [← Finset.sum_subset (MvPolynomial.support_map_subset
     (MvPolynomial.eval fun k : GL3Theta.FrV D N' => y' k.1 k.2.1 k.2.2) (polDY D s Q))]

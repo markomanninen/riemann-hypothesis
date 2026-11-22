@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.SliceHolds
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.FgHolds
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.SignHolds
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.SliceHolds
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.FgHolds
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.SignHolds
+
+@[expose] public section
 
 open IsLocalRing Filter Formalism.MainNotions.V.Pf.V2.Calc UpperTheory.V.Alg UpperTheory.V.Alg.M
 
@@ -19,7 +23,7 @@ private theorem UpperTheory.V.Alg.M.fin_gen {O A K : Type} [CommRing O] [CommRin
   induction hf' using Submodule.span_induction with
   | mem y hy => exact hne y hy
   | zero => exact map_zero ξ
-  | add y z _ _ hy hz => rw [map_add, hy, hz, add_zero]
+  | add y z _ _ hy hz => rw [map_add (f := _), hy, hz, add_zero]
   | smul a y _ hy => rw [Algebra.smul_def, map_mul, hy, mul_zero]
 
 private theorem UpperTheory.V.Alg.M.fin_act {O A K : Type} [CommRing O] [CommRing A] [Algebra O A]
@@ -31,7 +35,8 @@ private theorem UpperTheory.V.Alg.M.fin_inv {O A K : Type} [CommRing O] [CommRin
     ξ = act 𝒜 (tz t⁻¹) (act 𝒜 (tz t) ξ) := by
   classical
   ext a
-  rw [← DirectSum.sum_support_decompose 𝒜 a, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← DirectSum.sum_support_decompose 𝒜 a, map_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   have hm := SetLike.coe_mem (DirectSum.decompose 𝒜 a i)
   rw [fin_act 𝒜 t⁻¹ _ hm, fin_act 𝒜 t ξ hm, ← mul_assoc, ← Units.val_mul, ← mul_zpow, inv_mul_cancel,
@@ -42,7 +47,8 @@ private theorem UpperTheory.V.Alg.M.fin_onS {O A K : Type} [CommRing O] [CommRin
     (hI : I.IsHomogeneous 𝒜) (h : OnS I ξ) : OnS I (act 𝒜 (tz t) ξ) := by
   classical
   intro f hf
-  rw [← DirectSum.sum_support_decompose 𝒜 f, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← DirectSum.sum_support_decompose 𝒜 f, map_sum]
   refine Finset.sum_eq_zero fun j _ => ?_
   rw [fin_act 𝒜 _ _ (DirectSum.decompose 𝒜 f j).2, h _ (hI j hf), mul_zero]
 

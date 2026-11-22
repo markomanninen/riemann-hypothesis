@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.CmpPair
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.CmpSt
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.PadicIntegersHenselianFiniteResidue
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.HodgeComparisonCompatibility
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TwistedHodgeTieCompareStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RootModelComparisonLimitStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.RootFundamentalWeightDualityStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RealisationFibreProductCompatibleStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsoLineOnEquivalenceStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BlockPullbackHermLineStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.CmpPair
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.CmpSt
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.PadicIntegersHenselianFiniteResidue
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.HodgeComparisonCompatibility
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TwistedHodgeTieCompareStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RootModelComparisonLimitStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.RootFundamentalWeightDualityStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RealisationFibreProductCompatibleStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsoLineOnEquivalenceStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BlockPullbackHermLineStatement
+
+@[expose] public section
+
 open MvPolynomial AlgebraicGeometry CategoryTheory NumberField Filter Topology ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cmp
 open ReciprocityTheory.ChartRestriction.G.AI.I1 (IsBlockMap pullDeg)
 open ReciprocityTheory.ChartRestriction.G.AI.I4 (IsPullHerm imageZ blockFnField)
@@ -35,8 +40,6 @@ theorem combLine_equiv {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype 
     exact Equiv.prod_comp e (fun j => (ℓ j).h z ^ n j)
 
 def relab {Ψ : Type} (π : Ψ ≃ Ψ) (N : ℕ) : Ψ × Fin N ≃ Ψ × Fin N := Equiv.prodCongr π (Equiv.refl _)
-
-@[simp] theorem relab_apply {Ψ : Type} (π : Ψ ≃ Ψ) (N : ℕ) (a : Ψ × Fin N) : relab π N a = (π a.1, a.2) := rfl
 
 end GlobalTheory.CompanionTheory.Ar.Cmp.PairTop
 

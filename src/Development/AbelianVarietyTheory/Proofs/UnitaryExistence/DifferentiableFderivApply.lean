@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsImEqLattice
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsImEqLattice
+
+@[expose] public section
 
 open Matrix Filter Topology Metric
 open scoped ComplexOrder

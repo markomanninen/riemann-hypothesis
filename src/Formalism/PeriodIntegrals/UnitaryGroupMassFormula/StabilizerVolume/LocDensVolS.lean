@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolT
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.UnifVSpec
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensSA
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensSAChar
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensVolT
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.UnifVSpec
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensSA
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensSAChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -191,7 +195,7 @@ def lamPsi (ψ : AddChar (AF F) ℂ) : Submodule (𝓞 F) F where
   add_mem' := by
     intro a b ha hb r
     simp only [Set.mem_setOf_eq] at ha hb ⊢
-    rw [mul_add, map_add, adele_pairing_zero_add, AddChar.map_add_eq_mul, ha r, hb r, one_mul]
+    rw [mul_add, map_add (f := _), adele_pairing_zero_add, AddChar.map_add_eq_mul, ha r, hb r, one_mul]
   zero_mem' := by
     intro r
     rw [mul_zero, map_zero]

@@ -1,18 +1,20 @@
-import Mathlib
-import Formalism.PadicSubsetSums.CentralIdempotents.EigenbasisOfDistinctRoots
-import Formalism.PadicSubsetSums.StableGradedCounts.PropositionOneCentralCount
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRCycleProbSum
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRPrimeRecipSum
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRLemmaLWeight
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRPrimeToPartEqIff
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRPrimeToPartSpec
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRLemmaP
-import Formalism.GaloisIrreducibility.NoSolvableTransitive
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRCentralIdemSelfAdjoint
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRIrredCountUpper
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRSquarefreeCount
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRTypeCountExact
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRCycleTypeProb
+module
+
+public import Mathlib
+public import Formalism.PadicSubsetSums.CentralIdempotents.EigenbasisOfDistinctRoots
+public import Formalism.PadicSubsetSums.CentralIdempotents.GaloisIrreducibility
+public import Formalism.GaloisIrreducibility.NoSolvableTransitive
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRCycleProbSum
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRPrimeRecipSum
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRPrimeToPartEqIff
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRPrimeToPartSpec
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRLemmaP
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRIrredCountUpper
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRSquarefreeCount
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRTypeCountExact
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRCycleTypeProb
+
+@[expose] public section
 
 namespace Bl.CyclicComponents
 
@@ -138,7 +140,8 @@ theorem goal1 :
     ⟨_, rfl⟩
   have hP : ∀ v, P v = ∑ u : J, ((↑(Nat.card J) : ℂ)⁻¹ * ↑(χ u)⁻¹) • ρ ↑u v := by
     intro v
-    rw [hPdef, Formalism.IrreducibleCountingLemmas.GaloisIrreducibility.twistedIdem.eq_def, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hPdef, Formalism.IrreducibleCountingLemmas.GaloisIrreducibility.twistedIdem.eq_def, map_sum, LinearMap.sum_apply]
     refine Finset.sum_congr rfl (fun u _ => ?_)
     rw [map_smul, LinearMap.smul_apply, Representation.asAlgebraHom_of]
   have hPW : ∀ v, P v ∈ Formalism.IrreducibleCountingLemmas.GaloisIrreducibility.eqvSpace ρ (fun u : J => u.val) (fun u => (χ u).val) := by
@@ -146,7 +149,8 @@ theorem goal1 :
     rw [Formalism.IrreducibleCountingLemmas.GaloisIrreducibility.eqvSpace.eq_def]
     show ∀ u : J, ρ ↑u (P v) = (χ u : ℂ) • P v
     intro u0
-    rw [hP, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hP, map_sum, Finset.smul_sum]
     refine Fintype.sum_equiv (Equiv.mulLeft u0) _ _ (fun u => ?_)
     simp only [Equiv.coe_mulLeft, map_smul, Subgroup.coe_mul, map_mul, Module.End.mul_apply, smul_smul,
       mul_inv_rev, Units.val_mul]

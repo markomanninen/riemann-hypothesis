@@ -1,5 +1,12 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JacobianCommutation.CutDefs
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+module
+
+public import Formalism.HermitianCurvature.BigCellVanishingOfCommute
+public import Formalism.HermitianCurvature.StatementJF
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Formalism.FormalDegreeBessel.FinalBF
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+
+@[expose] public section
 
 open MeasureTheory Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.C6
 
@@ -12,9 +19,6 @@ namespace PI.UnitaryGroupMassFormula.JCC
 section twist
 
 variable {Wp Wq : Type*} [NormedAddCommGroup Wp] [NormedSpace ℂ Wp] [NormedAddCommGroup Wq] [NormedSpace ℂ Wq]
-
-def twistL (A : Wp →L[ℂ] Wp) (B : Wq →L[ℂ] Wq) : (Wq →L[ℂ] Wp) →L[ℝ] (Wq →L[ℂ] Wp) :=
-  (((ContinuousLinearMap.compL ℂ Wq Wp Wp) A).comp ((ContinuousLinearMap.compL ℂ Wq Wq Wp).flip B)).restrictScalars ℝ
 
 end twist
 

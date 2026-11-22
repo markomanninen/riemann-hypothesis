@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAevalEqOfCharpolySeparableInvolutionStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfTraceMulOfSeparableGeneratedStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUnitSigmaEqMulHilbert90InvAlgStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAevalEqOfCharpolySeparableInvolutionStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfTraceMulOfSeparableGeneratedStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUnitSigmaEqMulHilbert90InvAlgStatement
+
+@[expose] public section
+
 open GlobalTheory.UnitLemma Polynomial
 
 namespace GlobalTheory.SesqAsym
@@ -30,7 +35,7 @@ theorem sesq_asym : ∀ (K : UQ) (B : InvAlg K), B.g * B.σ B.g = 1 → B.P.Sepa
     rw [hsym, ← mul_assoc, hu, one_mul]
   have hadd2 : ∀ y z z', s y (z + z') = s y z + s y z' := by
     intro y z z'
-    rw [hsym', hadd, map_add, ← hsym', ← hsym']
+    rw [hsym', hadd, map_add (f := _), ← hsym', ← hsym']
   have hlin2 : ∀ (e : K.E) y z, s y (e • z) = K.c e * s y z := by
     intro e y z
     rw [hsym', hlin, map_mul, ← hsym']
@@ -66,7 +71,7 @@ theorem sesq_asym : ∀ (K : UQ) (B : InvAlg K), B.g * B.σ B.g = 1 → B.P.Sepa
       rw [aeval_C, ← Algebra.smul_def, B.σ_alg, ← Algebra.smul_def, hlin, hlin2, K.c_c]
     | add p q hp hq =>
       intro y z
-      rw [map_add, add_mul, hadd, hp, hq, map_add, add_mul, hadd2]
+      rw [map_add (f := _), add_mul, hadd, hp, hq, map_add (f := _), add_mul, hadd2]
     | monomial n e ih =>
       intro y z
       rw [pow_succ, ← mul_assoc, map_mul, aeval_X, mul_assoc, ih, hadj_g]

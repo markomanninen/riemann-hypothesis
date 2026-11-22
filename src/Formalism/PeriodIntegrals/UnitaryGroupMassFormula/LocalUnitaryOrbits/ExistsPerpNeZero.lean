@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.TwoNeZeroV
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.UnifExHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.LatBasOHolds
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.TwoNeZeroV
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.UnifExHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.LatBasOHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.LatCpt
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,6 +42,7 @@ theorem exists_perp_ne_zero (hcm : IsCMExt F E σ) {ι : Type} [Fintype ι] (X :
   exact ⟨w, hne, fun i => congrFun (LinearMap.mem_ker.1 hw) i⟩
 
 theorem primPerp_holds : PrimPerp σ J ψ v Λ := by
+  classical
   intro hstd hL hsd hun ι _ _ X hX hUX hc
   obtain ⟨ϖ, hϖ⟩ := unifEx_holds v
   have hv : Valued.v ϖ = WithZero.exp (-1 : ℤ) := hϖ
@@ -45,19 +51,50 @@ theorem primPerp_holds : PrimPerp σ J ψ v Λ := by
     rw [h, map_zero] at hv
     exact WithZero.exp_ne_zero hv.symm
   obtain ⟨L, hLat, rfl⟩ := hL
-  obtain ⟨m, b, hli, hmem, hsp⟩ := exists_basO v L hLat
-  let B := Module.Basis.mk hli hsp
-  have hB : ∀ i, B i = b i := fun i => Module.Basis.mk_apply hli hsp i
-  have hsymm : ∀ c : Fin m → Fv F v, B.equivFun.symm c = ∑ i, c i • b i := by
-    intro c
-    rw [Module.Basis.equivFun_symm_apply]
-    simp only [hB]
+  let M := latLoc (E := E) v (L : Set (Fin n → E))
+  have hfg : M.FG := basLat_fg v L hLat
+  have hspan : Submodule.span (Fv F v) (M : Set (Fin n → Fv F v ⊗[F] E)) = ⊤ := by
+    have : IsModuleTopology (Fv F v) (Fv F v ⊗[F] E) := ⟨rfl⟩
+    have hopen := LocMassOrdLat.isOpen_latLoc σ J v (L : Set (Fin n → E)) hsd hfg
+    rw [eq_top_iff]
+    intro x _
+    obtain ⟨t, ht, htx⟩ := LocMassOrdLat.exists_scale v
+      (hopen.mem_nhds M.zero_mem) (fun _ : Unit => x)
+    have hmem : t • x ∈ Submodule.span (Fv F v) (M : Set (Fin n → Fv F v ⊗[F] E)) :=
+      Submodule.subset_span (htx ())
+    have hx : t⁻¹ • (t • x) ∈ Submodule.span (Fv F v) (M : Set (Fin n → Fv F v ⊗[F] E)) :=
+      Submodule.smul_mem _ t⁻¹ hmem
+    rwa [inv_smul_smul₀ ht] at hx
+  have : Submodule.IsFullLattice (Fv F v) M :=
+    { toIsLattice := Submodule.IsLattice.of_fg (Fv F v) hfg, span_eq_top := hspan }
+  have : Module.Finite (v.adicCompletionIntegers F) M := Module.Finite.iff_fg.2 hfg
+  have : Module.Free (v.adicCompletionIntegers F) M := Submodule.IsLattice.free (Fv F v) M
+  let m := Module.finrank (v.adicCompletionIntegers F) M
+  let b : Module.Basis (Fin m) (v.adicCompletionIntegers F) M := Module.finBasis _ _
+  let B := b.extendOfIsFullLattice (Fv F v)
+  have hB (i : Fin m) : B i = (b i : Fin n → Fv F v ⊗[F] E) :=
+    Module.Basis.extendOfIsFullLattice_apply (Fv F v) b i
+  have hmem (x : Fin n → Fv F v ⊗[F] E) : x ∈ M ↔
+      ∃ c : Fin m → v.adicCompletionIntegers F, x = ∑ i, (c i : Fv F v) • B i := by
+    constructor
+    · intro hx
+      refine ⟨fun i => b.repr ⟨x, hx⟩ i, ?_⟩
+      have h := congrArg (fun y : M => (y : Fin n → Fv F v ⊗[F] E)) (b.sum_repr ⟨x, hx⟩)
+      rw [Submodule.coe_sum] at h
+      exact h.symm.trans (Finset.sum_congr rfl fun i _ => by
+        rw [hB]
+        rfl)
+    · rintro ⟨c, rfl⟩
+      exact Submodule.sum_mem M fun i _ => by
+        rw [hB]
+        exact M.smul_mem (c i) (b i).2
+  have hsymm := Module.Basis.equivFun_symm_apply B
   obtain ⟨w, hw0, hwp⟩ := exists_perp_ne_zero σ J v hstd.1 X hc
   set c := B.equivFun w with hcdef
-  have hcw : w = ∑ i, c i • b i := by rw [← hsymm, hcdef, LinearEquiv.symm_apply_apply]
+  have hcw : w = ∑ i, c i • B i := by rw [← hsymm, hcdef, LinearEquiv.symm_apply_apply]
   have hcne : ∃ i, c i ≠ 0 := by
     by_contra h
-    push_neg at h
+    push Not at h
     apply hw0
     rw [hcw]
     simp [h]
@@ -68,7 +105,7 @@ theorem primPerp_holds : PrimPerp σ J ψ v Λ := by
     intro h
     have h1 := hj i0 (Finset.mem_univ _)
     rw [h, map_zero] at h1
-    exact hi0 ((Valuation.zero_iff _).1 (le_antisymm h1 zero_le'))
+    exact hi0 ((Valuation.zero_iff _).1 (le_antisymm h1 zero_le))
   have hvj : Valued.v (c j) ≠ 0 := (Valuation.ne_zero_iff _).2 hcj
   set p := (c j)⁻¹ • w with hp
   have hcp : B.equivFun p = (c j)⁻¹ • c := by rw [hp, map_smul]

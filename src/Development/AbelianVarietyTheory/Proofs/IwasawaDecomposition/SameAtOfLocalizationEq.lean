@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.HeckeInertComm
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PatchAtSelf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.HeckeInertComm
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PatchAtSelf
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.HermitianLatticesTheory Formalism.L2.Col GlobalTheory.InertExchange
 open Classical
 
@@ -39,8 +44,8 @@ end GlobalTheory.SameAtOfLoc
 
 namespace GlobalTheory
 
-open GlobalTheory.SameAtOfLoc in
 
+open GlobalTheory.SameAtOfLoc in
 theorem sameAt_of_localized_eq : ∀ {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ}
     (Q : HeightOneSpectrum (𝓞 E)) (A B : Submodule (𝓞 E) (Sp E n)), Submodule.IsLattice E A →
     Submodule.IsLattice E B → localization₂ Q.asIdeal A = localization₂ Q.asIdeal B → SameAt Q A B := by

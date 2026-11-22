@@ -1,27 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IMemSiegel
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RationalSchwartzBruhatAlgebraIntegralLinearStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SchwartzBruhatInvariantIntegralMatrixMulStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IMemSiegel
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RationalSchwartzBruhatAlgebraIntegralLinearStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SchwartzBruhatInvariantIntegralMatrixMulStatement
+
+@[expose] public section
 
 open Matrix Complex GlobalTheory.SW
 open scoped ComplexConjugate Real
 
 namespace GlobalTheory.SW.Parab
-
-theorem par_exists_den {ι : Type} [Fintype ι] (S : Matrix ι ι ℚ) :
-    ∃ N : ℕ, 0 < N ∧ ∀ i j, IsIntegral ℤ (((N : ℚ) • S) i j) := by
-  classical
-  refine ⟨∏ p : ι × ι, (S p.1 p.2).den, Finset.prod_pos fun p _ => (S p.1 p.2).den_pos, ?_⟩
-  intro i j
-  obtain ⟨c, hc⟩ : (S i j).den ∣ ∏ p : ι × ι, (S p.1 p.2).den :=
-    Finset.dvd_prod_of_mem (fun p : ι × ι => (S p.1 p.2).den) (Finset.mem_univ (i, j))
-  rw [hc, Matrix.smul_apply, smul_eq_mul]
-  have : (((S i j).den * c : ℕ) : ℚ) * S i j = algebraMap ℤ ℚ (c * (S i j).num) := by
-    simp only [eq_intCast, Int.cast_mul, Int.cast_natCast, Nat.cast_mul]
-    rw [← Rat.mul_den_eq_num (S i j)]
-    ring
-  rw [this]
-  exact isIntegral_algebraMap
 
 noncomputable def parChar {κ ι : Type} [Fintype κ] [Fintype ι] (S : Matrix ι ι ℚ)
     (x : Matrix κ ι ℚ) : ℂ :=
@@ -132,7 +121,7 @@ open scoped ComplexConjugate Real in
 theorem _root_.GlobalTheory.SW.Parab.qv_row_mul {κ ι : Type} [Fintype ι] (x : Matrix κ ι ℚ) (A : Matrix ι ι ℚ) (k : κ) :
     _root_.GlobalTheory.SW.qv ((x * A) k) = _root_.GlobalTheory.SW.qv (x k) ᵥ* _root_.GlobalTheory.SW.qm A := by
   funext j
-  simp [_root_.GlobalTheory.SW.qv, _root_.GlobalTheory.SW.qm, vecMul, dotProduct, mul_apply]
+  simp [_root_.GlobalTheory.SW.qv, _root_.GlobalTheory.SW.qm, vecMul, dotProduct, Matrix.mul_apply]
 
 open Matrix Complex in
 open scoped ComplexConjugate Real in
@@ -145,7 +134,7 @@ open scoped ComplexConjugate Real in
 theorem _root_.GlobalTheory.SW.Parab.qm_mul' {α β γ : Type} [Fintype β] (A : Matrix α β ℚ) (B : Matrix β γ ℚ) :
     _root_.GlobalTheory.SW.qm (A * B) = _root_.GlobalTheory.SW.qm A * _root_.GlobalTheory.SW.qm B := by
   ext i j
-  simp [_root_.GlobalTheory.SW.qm, mul_apply]
+  simp [_root_.GlobalTheory.SW.qm, Matrix.mul_apply]
 
 open Matrix Complex in
 open scoped ComplexConjugate Real in
@@ -166,9 +155,9 @@ private lemma parabolic_exponent_term_eq {ι : Type} [Fintype ι] (A B : Matrix 
     dotProduct_mulVec, vecMul_transpose, dotProduct_mulVec _ (_root_.GlobalTheory.SW.qm A) z]
   ring
 
+
 open Matrix Complex in
 open scoped ComplexConjugate Real in
-
 theorem _root_.GlobalTheory.SW.Parab.trans_parabolic : ∀ (κ ι : Type) [Fintype κ] [Fintype ι] [DecidableEq ι]
     (σ : Matrix (ι ⊕ ι) (ι ⊕ ι) ℚ), Even (Fintype.card κ) → σ ∈ Matrix.symplecticGroup ι ℚ →
     σ.toBlocks₂₁ = 0 → ∃ ω : (Matrix κ ι ℚ → ℂ) → (Matrix κ ι ℚ → ℂ), ∀ φ, _root_.GlobalTheory.SW.IsSB φ →
@@ -206,8 +195,7 @@ theorem _root_.GlobalTheory.SW.Parab.trans_parabolic : ∀ (κ ι : Type) [Finty
     have hqD : (_root_.GlobalTheory.SW.qm D)⁻¹ = _root_.GlobalTheory.SW.qm Aᵀ := by
       refine Matrix.inv_eq_right_inv ?_
       rw [← _root_.GlobalTheory.SW.Parab.qm_mul', hDA]
-      ext i j
-      by_cases hij : i = j <;> simp [_root_.GlobalTheory.SW.qm, one_apply, hij]
+      exact Matrix.map_one (Rat.castHom ℂ) (map_zero _) (map_one _)
     have h0 : _root_.GlobalTheory.SW.qm σ.toBlocks₂₁ = 0 := by
       rw [hC]
       ext i j

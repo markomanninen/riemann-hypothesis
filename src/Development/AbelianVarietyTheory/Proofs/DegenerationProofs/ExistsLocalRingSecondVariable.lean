@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.TwoVarValRing
 
@@ -62,7 +66,7 @@ noncomputable def locSecondVar (k : Type) [Field k] :
   add_mem' := by
     rintro x y ⟨u, v, hv, h⟩ ⟨u', v', hv', h'⟩
     refine ⟨u * v' + u' * v, v * v', not_X_dvd_mul _ hv hv', ?_⟩
-    rw [map_add, map_mul, map_mul, map_mul, ← h, ← h']; ring
+    rw [map_add (f := _), map_mul, map_mul, map_mul, ← h, ← h']; ring
   algebraMap_mem' := by
     intro r
     refine ⟨algebraMap k _ r, 1, not_X_dvd_one _, ?_⟩

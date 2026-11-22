@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GoodConstOfAniso
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AutomorphicConstantTermParabolic
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableOfIsSm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealLineMemInfPoints
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsQuotHeightMulExpInfLe
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RderMemAutFormsCuspForms
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModerateGrowthOfHasCompactSupport
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCompactIwasawa
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GoodConstOfAniso
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AutomorphicConstantTermParabolic
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableOfIsSm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealLineMemInfPoints
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsQuotHeightMulExpInfLe
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RderMemAutFormsCuspForms
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModerateGrowthOfHasCompactSupport
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCompactIwasawa
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,23 @@ theorem continuous_lineDer_of_growth (h : IsCMExt F E σ) {φ : GAd σ J → ℂ
   have hpos : ∀ g, 0 < (height σ J g : ℝ) := fun g =>
     zero_lt_one.trans_le (by exact_mod_cast GlobalTheory.AdelicU.one_le_height σ J g)
   have hB0 : 0 ≤ B := (mul_nonneg_iff_of_pos_right (pow_pos (hpos 1) A)).1 ((norm_nonneg _).trans (hB 1))
-  have hγc : Continuous γ := GlobalTheory.RealLineCont.continuous_of_isRealLine F E σ h n J γ hγ
+  have hγc : Continuous γ := by
+    obtain ⟨w, τ, Z, _, hy⟩ := hγ
+    choose y hγ' hy using hy
+    have hc : Continuous y := by
+      rw [(GlobalTheory.Orb.isEmbedding_archMat J h τ).continuous_iff]
+      have e : (GlobalTheory.Orb.matCoord (GlobalTheory.Orb.archMat σ J τ) ∘ y) = fun t i j => NormedSpace.exp (t • Z) i j := by
+        funext t i j; simp only [Function.comp_apply, GlobalTheory.Orb.matCoord, hy t]
+      rw [e]
+      have hexp : Continuous fun t : ℝ => NormedSpace.exp (t • Z) := by
+        letI : NormedRing (Matrix (Fin n) (Fin n) ℂ) := Matrix.linftyOpNormedRing
+        letI : NormedAlgebra ℂ (Matrix (Fin n) (Fin n) ℂ) := Matrix.linftyOpNormedAlgebra
+        letI : NormedAlgebra ℚ (Matrix (Fin n) (Fin n) ℂ) := NormedAlgebra.restrictScalars ℚ ℂ _
+        exact NormedSpace.exp_continuous.comp (continuous_id.smul continuous_const)
+      exact continuous_pi fun i => continuous_pi fun j => (continuous_apply j).comp ((continuous_apply i).comp hexp)
+    have : γ = fun t => embArch σ J w (y t) := funext hγ'
+    rw [this]
+    exact (continuous_embArch σ J w).comp hc
   have hht : Continuous fun g : GAd σ J => (height σ J g : ℝ) :=
     NNReal.continuous_coe.comp (GlobalTheory.AdelicU.continuous_height_GAd σ J)
   obtain ⟨c, hc'⟩ := ((isCompact_Icc (a := (0 : ℝ)) (b := 1)).image (hht.comp hγc)).bddAbove
@@ -59,15 +79,22 @@ theorem continuous_lineDer_of_growth (h : IsCMExt F E σ) {φ : GAd σ J → ℂ
     exact this.exists
   refine ⟨_, (isOpen_lt (hb.mul (continuous_const (y := t))) (continuous_const (y := ε))).mem_nhds t2,
     fun g => t⁻¹ • (φ (g * γ t) - φ g),
-    (((hc.comp (continuous_mul_right _)).sub hc).const_smul t⁻¹).continuousAt, fun y hy => hu ?_⟩
+    (((hc.comp (continuous_mul_const _)).sub hc).const_smul t⁻¹).continuousAt, fun y hy => hu ?_⟩
   rw [dist_eq_norm]
   exact (key t t0 t1 y).trans_lt hy
 
 theorem lineDer_mul_fin {φ : GAd σ J → ℂ} {γ : ℝ → GAd σ J} (hγ : IsRealLine σ J γ) {k : GAd σ J} (hk : k ∈ finPts σ J)
     (e : ∀ g, φ (g * k) = φ g) (g : GAd σ J) : lineDer γ φ (g * k) = lineDer γ φ g := by
   have : (fun t => φ (g * k * γ t)) = fun t => φ (g * γ t) := funext fun t => by
-    have hc := GlobalTheory.CompanionTheory.SiegelAssemble.commute_of_mem (GlobalTheory.RealLineInf.realLine_mem_infPts F E σ n J γ hγ t) hk
-    rw [mul_assoc, ← hc.eq, ← mul_assoc, e]
+    have hmem : γ t ∈ infPts σ J := by
+      obtain ⟨w, τ, Z, -, ht⟩ := hγ
+      obtain ⟨y, hy, -⟩ := ht t
+      rw [hy]
+      exact mem_infPts.2 (projFin_embArch σ J w y)
+    have hc := GlobalTheory.CompanionTheory.SiegelAssemble.commute_of_mem hmem hk
+    calc
+      φ (g * k * γ t) = φ ((g * γ t) * k) := by rw [mul_assoc, ← hc.eq, ← mul_assoc]
+      _ = φ (g * γ t) := e _
   simp only [lineDer, this]
 
 theorem isCuspidal_lineDer (h : IsCMExt F E σ) (hJ : IsHermND σ J) {φ : GAd σ J → ℂ} (hl : GlobalTheory.AutomorphicL2Unitary.LeftInv (ratPts σ J) φ)
@@ -81,7 +108,23 @@ theorem isCuspidal_lineDer (h : IsCMExt F E σ) (hJ : IsHermND σ J) {φ : GAd �
   have h0 : ∀ y, GlobalTheory.Cusp.constTermOn (ratPts σ J) (unipRad σ J C) φ y = 0 := fun y =>
     (hco.constTermOn_eq_zero_iff h𝓕 hl y).2 (hcu r C hC μ 𝓕 hμ h𝓕 y)
   have hd := GlobalTheory.CuspLie.hasDerivAt_constTermOn hco hl hc hl' hc'
-    (GlobalTheory.RealLineCont.continuous_of_isRealLine F E σ h n J γ hγ)
+    (by
+      obtain ⟨w, τ, Z, _, hy⟩ := hγ
+      choose y hγ' hy using hy
+      have hc : Continuous y := by
+        rw [(GlobalTheory.Orb.isEmbedding_archMat J h τ).continuous_iff]
+        have e : (GlobalTheory.Orb.matCoord (GlobalTheory.Orb.archMat σ J τ) ∘ y) = fun t i j => NormedSpace.exp (t • Z) i j := by
+          funext t i j; simp only [Function.comp_apply, GlobalTheory.Orb.matCoord, hy t]
+        rw [e]
+        have hexp : Continuous fun t : ℝ => NormedSpace.exp (t • Z) := by
+          letI : NormedRing (Matrix (Fin n) (Fin n) ℂ) := Matrix.linftyOpNormedRing
+          letI : NormedAlgebra ℂ (Matrix (Fin n) (Fin n) ℂ) := Matrix.linftyOpNormedAlgebra
+          letI : NormedAlgebra ℚ (Matrix (Fin n) (Fin n) ℂ) := NormedAlgebra.restrictScalars ℚ ℂ _
+          exact NormedSpace.exp_continuous.comp (continuous_id.smul continuous_const)
+        exact continuous_pi fun i => continuous_pi fun j => (continuous_apply j).comp ((continuous_apply i).comp hexp)
+      have : γ = fun t => embArch σ J w (y t) := funext hγ'
+      rw [this]
+      exact (continuous_embArch σ J w).comp hc)
     (GlobalTheory.UAut.ConstAut.hasDerivAt_foldr h hs (l := []) (by simp) hγ) x
   simp only [h0] at hd
   rw [GlobalTheory.UAut.ConstAut.realLine_zero h hγ, mul_one] at hd

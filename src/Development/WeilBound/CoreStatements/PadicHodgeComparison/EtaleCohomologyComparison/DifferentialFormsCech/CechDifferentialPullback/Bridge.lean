@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.CechDifferentialPullback.PullCochMemCoboundaries
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.GlobalDifferentialForms.FormCos
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.CechDifferentialPullback.PullCochMemCoboundaries
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.GlobalDifferentialForms.FormCos
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -39,13 +43,14 @@ def formCoch (n : ℕ) : (Glob.formCos q U a).X n →+ Cochain (modulesAb (Globa
     rfl
   map_add' c c' := by
     funext i
-    rw [show (c + c') i = c i + c' i from rfl, map_add, map_add]
+    rw [show (c + c') i = c i + c' i from rfl, map_add (f := _), map_add (f := _)]
     rfl
 
 theorem formCoch_d (n : ℕ) (c : (Glob.formCos q U a).X n) :
     formCoch q U a (n + 1) (CrystallineSemistableComparison.Cos.d (Glob.formCos q U a) n c) =
       d (modulesAb (GlobalTheory.HodgeCoh.Omega q a)).obj U n (formCoch q U a n c) := by
-  rw [CrystallineSemistableComparison.Cos.d_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [CrystallineSemistableComparison.Cos.d_apply, map_sum]
   funext i
   rw [GroundTheory.Arith.SchemeCoh.d_apply, Finset.sum_apply]
   refine Finset.sum_congr rfl fun k _ => ?_

@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
+module
+
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,6 @@ def hL (y : V) : V →ₗ[E] E where
   toFun x := H.h x y
   map_add' x x' := H.h_add_left x x' y
   map_smul' a x := H.h_smul_left a x y
-
-@[simp] lemma hL_apply (x y : V) : hL H y x = H.h x y := rfl
 
 lemma h_sub_left (x x' y : V) : H.h (x - x') y = H.h x y - H.h x' y := map_sub (hL H y) x x'
 
@@ -71,7 +73,8 @@ lemma prF_of_inW {w : V} (hw : InW Fr w) : Fr.prF w = w := by
 lemma ext_decomp (f g : V →ₗ[E] E) (he : ∀ a : Fin r, f (Fr.f a.castSucc) = g (Fr.f a.castSucc))
     (hs : ∀ a, f (Fr.es a) = g (Fr.es a)) (hw : ∀ w, InW Fr w → f w = g w) (u : V) : f u = g u := by
   rw [decomp Fr u]
-  simp only [map_add, map_sum, map_smul, he, hs, hw _ (prF_inW Fr u)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_sum, map_smul, he, hs, hw _ (prF_inW Fr u)]
 
 end Frame
 
@@ -84,7 +87,7 @@ def prL : V →ₗ[E] V :=
     ∑ a, (hL H (Fr.f a.castSucc)).smulRight (Fr.es a)
 
 lemma prL_apply (v : V) : prL Fr v = Fr.prF v := by
-  simp [prL, prF_eq]
+  simp [prL, prF_eq, hL]
 
 def Nl : V →ₗ[E] V :=
   ∑ a, (hL H (Fr.f a.castSucc)).smulRight (y a - Fr.es a) -
@@ -92,7 +95,7 @@ def Nl : V →ₗ[E] V :=
 
 lemma Nl_apply (v : V) : Nl Fr y v = ∑ a, H.h v (Fr.f a.castSucc) • (y a - Fr.es a) -
     ∑ j, H.h (Fr.prF v) (y j) • Fr.f j.castSucc := by
-  simp [Nl, prL_apply]
+  simp [Nl, prL_apply, hL]
 
 variable (hy1 : ∀ a b, H.h (y a) (Fr.f b) = if b = a.castSucc then 1 else 0)
   (hy2 : ∀ a b, H.h (y a) (y b) = 0)
@@ -129,7 +132,8 @@ lemma Nl_cube : Nl Fr y * Nl Fr y * Nl Fr y = 0 := by
   ext v
   simp only [Module.End.mul_apply, LinearMap.zero_apply]
   have h := Nl_perp Fr y (v := Nl Fr y v) (Nl_orth Fr y hy1 v)
-  rw [h, map_neg, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, map_neg, map_sum]
   simp [Nl_e]
 
 include hy1 in
@@ -219,8 +223,8 @@ lemma preserves_form_left (x : V) (hx : ∀ u, InW Fr u → H.h (nE Fr y hy1 u) 
     (hs : ∀ a, H.h (nE Fr y hy1 (Fr.es a)) (nE Fr y hy1 x) = H.h (Fr.es a) x) (u : V) :
     H.h (nE Fr y hy1 u) (nE Fr y hy1 x) = H.h u x := by
   have := ext_decomp Fr ((hL H (nE Fr y hy1 x)).comp (nE Fr y hy1).toLinearMap) (hL H x)
-    (by intro a; simpa using he a) (by intro a; simpa using hs a) (by intro w hw; simpa using hx w hw) u
-  simpa using this
+    (by intro a; simpa [hL] using he a) (by intro a; simpa [hL] using hs a) (by intro w hw; simpa [hL] using hx w hw) u
+  simpa [hL] using this
 
 include hy2 in
 lemma unitary : IsUnitary H (nE Fr y hy1) := by

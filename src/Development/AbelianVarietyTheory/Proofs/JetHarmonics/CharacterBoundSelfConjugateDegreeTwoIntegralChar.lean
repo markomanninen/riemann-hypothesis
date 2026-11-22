@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.IsSelfOf
-import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IsIntegralGaugedFormalGroupLawSelfConjugateSquar
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsCharactersBoundedMinorEigenspaceStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MvExpLinearPartIntegralCharMemIntegralGerm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.IsSelfOf
+public import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IsIntegralGaugedFormalGroupLawSelfConjugateSquar
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsCharactersBoundedMinorEigenspaceStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MvExpLinearPartIntegralCharMemIntegralGerm
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -76,8 +80,8 @@ theorem intS_inCol (col : Fin 2) {f : PS C 1 dd} (hf : IntS V f) : IntS V (inCol
   rw [inCol_eq]
   exact intS_subst V (fun _ => MvPowerSeries.constantCoeff_X _) (fun _ => intS_X V _) hf
 
-omit [CharZero C] in
 
+omit [CharZero C] in
 theorem coeff_inCol (col : Fin 2) (f : PS C 1 dd) (μ : Fin 2 × Fin dd →₀ ℕ) (hμ : μ.degree ≤ 1) :
     MvPowerSeries.coeff μ (inCol col (un1 f)) = MvPowerSeries.coeff μ
       (MvPowerSeries.C (MvPowerSeries.constantCoeff f) +
@@ -88,11 +92,11 @@ theorem coeff_inCol (col : Fin 2) (f : PS C 1 dd) (μ : Fin 2 × Fin dd →₀ �
   rw [inCol_eq, coeff_rename_low (fun q : Fin 1 × Fin dd => (col, q.2)) (N := 1)
     (g := MvPowerSeries.C (MvPowerSeries.constantCoeff f) +
         ∑ i, Pdiv.ChartF.dl f i • (MvPowerSeries.X ((0 : Fin 1), i) : PS C 1 dd)) ?_ μ hμ]
-  · rw [← MvPowerSeries.coe_substAlgHom (R := C) hS, map_add, map_sum]
-    simp only [map_smul, MvPowerSeries.coe_substAlgHom hS, MvPowerSeries.subst_X hS]
-    congr 2
-    rw [← MvPowerSeries.coe_substAlgHom (R := C) hS]
-    exact (MvPowerSeries.substAlgHom (R := C) hS).commutes _
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [← MvPowerSeries.coe_substAlgHom (R := C) hS, map_add (f := _), map_sum]
+      simp only [map_smul, MvPowerSeries.substAlgHom_X]
+      congr 2
+      exact (MvPowerSeries.substAlgHom (R := C) hS).commutes _
   · intro e he
     rcases Nat.le_one_iff_eq_zero_or_eq_one.1 he with h | h
     · rw [Finsupp.degree_eq_zero_iff] at h

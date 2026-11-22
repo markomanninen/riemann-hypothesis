@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.CharacterGerms.FirstVanishingAt
-import Formalism.LocalToGlobal.CharacterGerms.MaximalOfValuationGeOne
-import Formalism.LocalToGlobal.CharacterGerms.ConstantZeroDoubleMultiplicationPair
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePStartSelf
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.FirstVanishingAt
+public import Formalism.LocalToGlobal.CharacterGerms.MaximalOfValuationGeOne
+public import Formalism.LocalToGlobal.CharacterGerms.ConstantZeroDoubleMultiplicationPair
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePStartSelf
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -172,8 +176,8 @@ end Self2
 
 end SelfLinear
 
-open Formalism.IncomingBounds ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ MaximalIdealCongruence RowTiePE0 RowTiePProj RowTiePLSmall SelfLinear in
 
+open Formalism.IncomingBounds ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ MaximalIdealCongruence RowTiePE0 RowTiePProj RowTiePLSmall SelfLinear in
 theorem noLin_self (hAdj : ALinAdjSt) (hPL : ProjLieSelfSt) {C : Type} [Field C] [CharZero C] {V : VF C}
     {O : Type} [CommRing O] [StarRing O] {dd : ℕ} (Y : FBChart C V O dd) {d : ℕ} [NeZero d] {I0 : Type} [Fintype I0]
     (p : SelfData Y d I0) (g : Fin 2) (a0 : ZMod d) (u0 : Fin dd → C) (hu0 : ∀ i, V.Ge 0 (u0 i))
@@ -181,6 +185,7 @@ theorem noLin_self (hAdj : ALinAdjSt) (hPL : ProjLieSelfSt) {C : Type} [Field C]
     (hc0 : ∀ q : I0, V.MM (∑ col, Y.aLin (fun i => p.gm a0 col g * u0 i)
       (fun i => p.gm (p.ty0 q) col (1 - g) * p.e q i))) :
     ∀ v : Fin dd → C, (∀ i, V.Ge 0 (v i)) → V.MM (Y.aLin u0 v) := by
+  open SelfLinear Formalism.IncomingBounds ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ MaximalIdealCongruence RowTiePE0 RowTiePProj RowTiePLSmall in
   intro v hv
   have hq : ∀ q, V.MM (Y.aLin u0 (p.e q)) := fun q => by
     by_cases h : a0 + 1 = p.ty0 q + p.hd

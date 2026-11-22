@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicArithmetic.OrbitLabellings.RowDefs
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsCutIntoBoundedGroupsFinset
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.OrbitLabellings.RowDefs
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsCutIntoBoundedGroupsFinset
+
+@[expose] public section
 
 open Formalism.L2.FormalSeriesBounds UpperTheory.G2
 
-open Formalism.IncomingBounds in
 
+open Formalism.IncomingBounds in
 private theorem cut (K s B : ℕ) (e : ℕ → ℕ) : ∃ pc : Fin s → ℕ → ℕ,
     (∀ u, ∑ k ∈ Finset.Icc 1 K, pc u k ≤ B) ∧
     (∑ k ∈ Finset.Icc 1 K, e k ≤ s * B → (∀ k, e k ≠ 0 → 1 ≤ k ∧ k ≤ K) → ∀ k, ∑ u, pc u k = e k) := by
@@ -21,8 +25,8 @@ private theorem cut (K s B : ℕ) (e : ℕ → ℕ) : ∃ pc : Fin s → ℕ →
       exact Finset.sum_eq_zero fun u _ => h3 u k hk
   · exact ⟨fun _ _ => 0, by simp, fun h' => absurd h' h⟩
 
-open Formalism.IncomingBounds in
 
+open Formalism.IncomingBounds in
 private theorem monAl_le_first (K rk : ℕ) (e : ℕ → ℕ) (ρ : ℕ) :
     monAl K rk e ρ ≤ ∑ k ∈ Finset.Icc 1 K, e k := by
   unfold monAl

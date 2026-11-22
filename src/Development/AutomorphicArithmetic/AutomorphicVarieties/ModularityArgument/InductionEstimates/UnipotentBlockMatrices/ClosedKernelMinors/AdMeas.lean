@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
-import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.GJGlobalModulus
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+public import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.GJGlobalModulus
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -42,6 +46,7 @@ private theorem adMeas_pi {K : Type} [Field K] [NumberField K] {ι : Type} [Fint
   have hm := GJGlobal.Modulus.measurable_vecMul' g
   rw [hfun, ← Measure.map_map E.symm.measurable (hm.comp E.measurable),
     ← Measure.map_map hm E.measurable, hE.map_eq, h, Measure.map_smul, hE.symm.map_eq]
+  exact E.symm.measurable.aemeasurable
 
 private def adMeas_tau : Fin 2 × Fin 2 ≃ UPos (2 + 2) 2 where
   toFun p := ⟨(Fin.castAdd 2 p.1, Fin.natAdd 2 p.2), p.1.2, Nat.le_add_right _ _⟩
@@ -92,7 +97,10 @@ private theorem adMeas_conj {R : Type} [CommRing R] (a b : GL (Fin 2) R) (X : UP
 
 open scoped Matrix in
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.adMeas :
-    ∀ {K : Type} [Field K] [NumberField K] (m₁ m₂ : G1 K 2) (t : ℝ), ∃ e : (UPos (2 + 2) 2 → 𝔸[K]) ≃ₜ+ (UPos (2 + 2) 2 → 𝔸[K]), (∀ X, nn X * lv m₁ m₂ t = lv m₁ m₂ t * nn (e X)) ∧
+    ∀ {K : Type} [Field K] [NumberField K] (m₁ m₂ : G1 K 2) (t : ℝ),
+    ∃ e : (UPos (2 + 2) 2 → 𝔸[K]) ≃ₜ+ (UPos (2 + 2) 2 → 𝔸[K]),
+      (∀ X, unipOne (K := K) (n := 2 + 2) 2 X * lv m₁ m₂ t =
+        lv m₁ m₂ t * unipOne (K := K) (n := 2 + 2) 2 (e X)) ∧
       (unipMeasure K (2 + 2) 2).map e = ENNReal.ofReal (Real.exp (4 * t)) • unipMeasure K (2 + 2) 2 := by
   intro K _ _ m₁ m₂ t
   set a : AdelicGLn.AdelicGL K 2 := (m₁ : AdelicGLn.AdelicGL K 2) * zt K t with ha

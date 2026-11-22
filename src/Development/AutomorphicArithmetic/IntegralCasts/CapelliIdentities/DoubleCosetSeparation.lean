@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VLtOneOfOrdLEqOne
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCompactSupportDcos
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DiagTMemIwGL
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SeparableOfNewtonPolygon
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CharpolyCoeffValuation
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsOpenValuationLtOne
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VLtOneOfOrdLEqOne
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCompactSupportDcos
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DiagTMemIwGL
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SeparableOfNewtonPolygon
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CharpolyCoeffValuation
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsOpenValuationLtOne
+
+@[expose] public section
 
 open ValuativeRel Matrix
 
@@ -118,7 +122,7 @@ theorem UpperTheory.Reformulated.B.DoubleCosetSeparation.dcosSep :
     have h0 : Valued.v (ϖ : w.adicCompletion E) ≠ 0 := by simp
     have h1 : Valued.v (ϖ : w.adicCompletion E) < 1 := by
       unfold Formalism.UG.ordL at hϖ
-      rw [dif_neg h0] at hϖ
+      rw [dite_eq_right h0] at hϖ
       rw [← WithZero.coe_unzero h0, ← WithZero.coe_one, WithZero.coe_lt_coe, ← Multiplicative.toAdd_lt]
       rw [toAdd_one]
       omega

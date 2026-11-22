@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open CategoryTheory Limits TensorProduct
 
 namespace GlobalTheory
@@ -44,7 +49,8 @@ theorem projective_baseChange_of_presentation_split
         = (1 : B) ⊗ₜ[R] π (r b) := by
       conv_rhs => rw [show r b = ∑ l, r b l • Pi.single l (1 : R) by
         ext j; simp [Finset.sum_apply, Pi.single_apply]]
-      simp [map_sum, tmul_sum, algebraMap_smul, tmul_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, tmul_sum, algebraMap_smul, tmul_smul]
     rw [this, h0, tmul_zero]
   have hsv : ∀ a, s (v a) = (1 : B) ⊗ₜ[R] π (Pi.single a 1) := by
     intro a
@@ -62,11 +68,13 @@ theorem projective_baseChange_of_presentation_split
     simp only [LinearMap.comp_apply, LinearMap.id_apply, i, LinearMap.liftBaseChange_tmul, map_smul]
     have hz : φ z = ∑ a, z a • v a := by
       funext l; rw [hφ]; simp [Finset.sum_apply, Algebra.smul_def]
-    rw [hψ, hz, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hψ, hz, map_sum]
     simp_rw [LinearMap.map_smul_of_tower, hsv]
     conv_rhs => rw [show z = ∑ a, z a • Pi.single a (1 : R) by
         ext j; simp [Finset.sum_apply, Pi.single_apply]]
-    rw [map_sum, tmul_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, tmul_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [smul_comm, TensorProduct.smul_tmul', smul_eq_mul, mul_one, map_smul, TensorProduct.tmul_smul]
   exact Module.Projective.of_split i s hsi

@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
 
 open scoped InnerProductSpace
 
@@ -34,7 +38,7 @@ theorem orthCyc : CompanionTheory.D.LK.OrthCyc := by
     have h : E a b p - c • p ∈ W ⊓ Wᗮ := by
       refine ⟨W.sub_mem (hWst a b hab p hp) (W.smul_mem c hp), ?_⟩
       have : E a b p - c • p = c • q - E a b q := by
-        rw [hpq, map_add, smul_add] at hc
+        rw [hpq, map_add (f := _), smul_add] at hc
         rw [sub_eq_sub_iff_add_eq_add, hc, add_comm]
       rw [this]
       exact Wᗮ.sub_mem (Wᗮ.smul_mem c hq) (hOst a b hab q hq)

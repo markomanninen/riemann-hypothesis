@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.NotKept
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.NotKept
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,7 @@ theorem nk_bracket (s : ℕ) (c : ℕ → ℝ) (x nn Ai Ci κ μ : Fin s → ℝ
   have hpn : 0 ≤ ∏ i, nn i := Finset.prod_nonneg fun i _ => hn0 i
   have hpy : 0 ≤ ∏ i, (κ i * (E2 * Ai i)) :=
     Finset.prod_nonneg fun i _ => by have := hκ i; have := hAi i; positivity
-  have h2 : ∏ i, nn i ≤ ∏ i, (μ i * (E2 * Ci i)) := Finset.prod_le_prod (fun i _ => hn0 i) fun i _ => hn i
+  have h2 : ∏ i, nn i ≤ ∏ i, (μ i * (E2 * Ci i)) := Finset.prod_le_prod₀ (fun i _ => hn0 i) fun i _ => hn i
   have e1 : ∏ i, (κ i * (E2 * Ai i)) = (∏ i, κ i) * (E2 ^ s * ∏ i, Ai i) := by
     rw [Finset.prod_mul_distrib, Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
   have e2 : ∏ i, (μ i * (E2 * Ci i)) = (∏ i, μ i) * (E2 ^ s * ∏ i, Ci i) := by

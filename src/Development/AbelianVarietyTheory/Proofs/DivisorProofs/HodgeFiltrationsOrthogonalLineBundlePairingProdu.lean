@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PtAlgSpOver
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PoincareDeRhamDuality
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystallineCocycleOnPointsIsCocycleAndEvalEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHodgeFiltrationIffPointwiseCoboundary
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPointwiseCochainCoboundaryEqChernCocycleAlStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupPullbackCocyclesPointValueStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystallineCocycleOnTrivialThickeningsAdditiveLiStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoboundaryOfMemHodgeFiltrationStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PtAlgSpOver
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PoincareDeRhamDuality
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystallineCocycleOnPointsIsCocycleAndEvalEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHodgeFiltrationIffPointwiseCoboundary
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPointwiseCochainCoboundaryEqChernCocycleAl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupPullbackCocyclesPointValueStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystallineCocycleOnTrivialThickeningsAdditiveLiStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoboundaryOfMemHodgeFiltration
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -32,9 +36,9 @@ theorem fv_sum {R : Type} [CommRing R] {X : Over (Sp R)} {J : Type} (s : Finset 
   induction s using Finset.induction_on with
   | empty => rw [Finset.sum_empty, Finset.sum_empty]; rfl
   | insert i s hi ih =>
-    rw [Finset.sum_insert hi, Finset.sum_insert hi, (GlobalTheory.T.crystallineCocycleOnTrivialThickenings_additive_linear R X).1, ← ih, mul_comm,
-      ← (GlobalTheory.T.crystallineCocycleOnTrivialThickenings_additive_linear R X).2.1]
-    rfl
+    obtain ⟨hadd, hsmul, _⟩ := GlobalTheory.T.crystallineCocycleOnTrivialThickenings_additive_linear R X
+    rw [Finset.sum_insert hi, Finset.sum_insert hi, hadd, Fn1.add, hsmul, ih,
+      mul_comm (algebraMap R D' (c i))]
 
 theorem commAlgFunctorCocyclesTwo_finsetSum_apply {R : Type} [CommRing R] {C : Type 1} [Category.{0} C] (F : C ⥤ CommAlgCat.{0} R) {J : Type}
     (s : Finset J) (w : J → Z2 F) (T T' T'' : C) (φ : T ⟶ T') (ψ : T' ⟶ T'') :
@@ -48,7 +52,8 @@ theorem sum_cup_eq_mk {R : Type} [CommRing R] {A B : Over (Sp R)} {N : ℕ}
     (∑ k, cup _ (pullOver (dp0 R) (𝟙 _) (fst A B) (CatCoh.H1.mk _ (α k)))
       (pullOver (dp0 R) (𝟙 _) (snd A B) (CatCoh.H1.mk _ (β k)))) =
       CatCoh.H2.mk _ (∑ k, cupZ _ (m₁.coef.pullbackOneCocycle (α k)) (m₂.coef.pullbackOneCocycle (β k))) := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun k _ ↦ ?_
   rw [← cup_mk]
   rfl
@@ -64,8 +69,9 @@ theorem exists_isCupCob {R : Type} [CommRing R] {A B : Over (Sp R)} {N : ℕ} (P
   have m₂ : IsMor (dp0 R) (B.hom ≫ 𝟙 _) (dp0 R) ((A ⊗ B).hom ≫ 𝟙 _) (RingHom.id R) (snd A B).left :=
     IsMor.of_over _ (by rw [← Category.assoc, Over.w])
   rw [sum_cup_eq_mk m₁ m₂] at hc
-  obtain ⟨n, hn⟩ := GlobalTheory.T.exists_pointwiseCochain_coboundary_eq_chernCocycle' R (A ⊗ B) P _ hc
-  refine ⟨n, fun E _ _ E' _ _ E'' _ _ φ ψ z hz ↦ ?_⟩
+  obtain ⟨n, hn⟩ := GlobalTheory.PtExt.exists_pointwiseCochain_coboundary_eq_chernCocycle R (A ⊗ B) P _ hc
+  refine ⟨n, ?_⟩
+  intro E _ _ E' _ _ E'' _ _ φ ψ z hz
   rw [hn E E' E'' φ ψ z hz, commAlgFunctorCocyclesTwo_finsetSum_apply]
   exact Finset.sum_congr rfl fun k _ ↦ GlobalTheory.T.cup_pullback_cocycles_pointValue R A B m₁ m₂ _ _ E E' E'' φ ψ z
 
@@ -75,12 +81,18 @@ theorem sum_mem_F1prim {R : Type} [CommRing R] {A : Over (Sp R)} [GrpObj A] {N :
     (hk : IsCob (whole A) (fun D _ _ D' _ _ φ x ↦ ∑ i, fv (α i) D D' φ x * algebraMap R D' (c i)) k) :
     ∑ i, c i • a i ∈ PrimitiveSubmodule A := by
   have hF : CatCoh.H1.mk _ (∑ i, c i • α i) ∈ F1 (A.hom ≫ 𝟙 _) := by
-    refine (mem_hodgeFiltration_iff_pointwiseCoboundary R A _).2 ⟨k, fun D _ _ D' _ _ ψ z hz ↦ ?_⟩
-    rw [fv_sum]
-    exact hk D D' ψ z hz
-  rw [map_sum] at hF
+    have hfv : fv (∑ i, c i • α i) =
+        ((fun D _ _ D' _ _ φ x ↦ ∑ i, fv (α i) D D' φ x * algebraMap R D' (c i)) : Fn1 A) := by
+      funext D _ _ D' _ _ φ x
+      exact fv_sum Finset.univ c α D D' φ x
+    apply (mem_hodgeFiltration_iff_pointwiseCoboundary R A _).2
+    rw [hfv]
+    exact ⟨k, hk⟩
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum] at hF
   simp only [map_smul, hα] at hF
-  rw [PrimitiveSubmodule, Submodule.mem_comap, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [PrimitiveSubmodule, Submodule.mem_comap, map_sum]
   exact hF
 
 theorem fil_orthogonal : GlobalTheory.Published.AbelianHodgeDeRham → ∀ (R : Type) [CommRing R] (A B : Over (Sp R)) [GrpObj A] [GrpObj B] (g : ℕ), IsAbelianScheme A → IsAbelianScheme B → SmoothOfRelativeDimension g A.hom → SmoothOfRelativeDimension g B.hom → ∀ P : LB (A ⊗ B).left, P.IsLB → ∀ φ : HdR A →ₗ[R] HdR B →ₗ[R] R, AbDual.IsCorrForm (dp0 R) (𝟙 _) A B P φ → ∀ x ∈ Fil A, ∀ y ∈ Fil B, φ x y = 0 := by
@@ -90,11 +102,12 @@ theorem fil_orthogonal : GlobalTheory.Published.AbelianHodgeDeRham → ∀ (R : 
   choose β hβ using fun k ↦ CatCoh.H1.mk_surjective _ (b k).1
   obtain ⟨n, hcup⟩ := exists_isCupCob P α β (by simp only [hα, hβ]; exact hc)
   have hβ' : ∀ i, CatCoh.H1.mk _ (β i) ∈ primDR B := fun i ↦ by rw [hβ]; exact (b i).2
-  obtain ⟨k, hk⟩ := GlobalTheory.T.exists_coboundary_of_mem_hodgeFiltration H R A B g hB gB _ P.U hP.cover (Fin N) _ β hβ' n
+  obtain ⟨k, hk⟩ := GlobalTheory.PtExt.OrthPt.exists_isCob_of_mem_fil H R A B g hB gB _ P.U hP.cover (Fin N) _ β hβ' n
     (fun i ↦ (fv_isCoc_and_ev_eq R A (α i)).1) hcup y hy
   have eb : ∀ i, (⟨_, hβ' i⟩ : primDR B) = b i := fun i ↦ Subtype.ext (hβ i)
   have h0 := (Submodule.mem_dualAnnihilator _).1 hx _ (sum_mem_F1prim a α hα _ k hk)
-  rw [hφ, ← h0, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hφ, ← h0, map_sum]
   exact Finset.sum_congr rfl fun k _ ↦ by rw [map_smul, smul_eq_mul, mul_comm, eb]
 
 end GlobalTheory.PtExt.HodgeOrth

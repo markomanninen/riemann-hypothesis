@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OneAddSmulMemOfSqZeroStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsRatProjectorOfAutStableMatricesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OneAddSmulMemOfSqZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsRatProjectorOfAutStableMatricesStatement
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
@@ -43,7 +48,7 @@ theorem exists_linExt_corner_proj : ∀ (ι : Type) [Fintype ι] [DecidableEq ι
     refine ⟨?_, ?_⟩
     · have h1 := hΓ.aut_mem σ _ hx1
       have h2 : (1 + x).map σ = (σ : ℂ →+* ℂ).mapMatrix (1 + x) := rfl
-      rw [h2, map_add, map_one] at h1
+      rw [h2, map_add (f := _), map_one] at h1
       exact h1
     · have h3 := congrArg (σ : ℂ →+* ℂ).mapMatrix hx2
       rw [map_mul, map_mul, map_sub, map_one, hEσ] at h3

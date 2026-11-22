@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RowSubst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RowSubst
+
+@[expose] public section
+
 open MvPolynomial Formalism.GradedWeylDivisibility GlobalTheory.GenCoef
 
 set_option autoImplicit false
@@ -18,13 +23,14 @@ theorem evY_genSub (O : Type) [CommRing O] (N : ℕ) (R : Type) [CommRing R] [Al
   | C a =>
     simp [evY, GlobalTheory.HighWt.genSub, rowSubst, MvPolynomial.algebraMap_eq]
   | add p q hp hq =>
-    simp only [GlobalTheory.HighWt.genSub, map_add] at hp hq ⊢
+    simp only [GlobalTheory.HighWt.genSub, map_add (f := _)] at hp hq ⊢
     rw [hp, hq]
   | mul_X p v hp =>
     simp only [GlobalTheory.HighWt.genSub, map_mul] at hp ⊢
     rw [hp]
     congr 1
-    simp [evY, rowSubst, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [evY, rowSubst, map_sum]
 
 theorem evY_eq_sum (O : Type) [CommRing O] (N : ℕ) (R : Type) [CommRing R] [Algebra O R] (Y : Matrix (Fin N) (Fin N) R)
     (P : MvPolynomial (Fin N × Fin N) (MvPolynomial (Fin N × Fin N) O)) :
@@ -34,7 +40,6 @@ theorem evY_eq_sum (O : Type) [CommRing O] (N : ℕ) (R : Type) [CommRing R] [Al
   have h : (m.prod fun v k => (C (Y v.1 v.2) : MvPolynomial (Fin N × Fin N) R) ^ k) = C (m.prod fun v k => Y v.1 v.2 ^ k) := by
     simp [Finsupp.prod, map_prod, map_pow]
   rw [h, mul_comm, C_mul']
-  rfl
 
 theorem main : ∀ (O : Type) [CommRing O] (N : ℕ) (R : Type) [CommRing R] [Algebra O R] (Y : Matrix (Fin N) (Fin N) R) (f : MvPolynomial (Fin N × Fin N) O), rowSubst O N R Y f = ∑ m ∈ (GlobalTheory.HighWt.genSub O N f).support, (m.prod fun v k => Y v.1 v.2 ^ k) • MvPolynomial.map (algebraMap O R) ((GlobalTheory.HighWt.genSub O N f).coeff m) := by
   intro O _ N R _ _ Y f

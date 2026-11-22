@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj TopologicalSpace TensorProduct
 open scoped CategoryTheory.Obj
 
@@ -82,7 +87,8 @@ theorem no_common_zero_spreads : ∀ (A : Type) [CommRing A] (τ J : Type) [Fini
     · simp
   have hPmul : ∀ h j, P (h * G j) = P h * G j := by
     intro h j; ext n
-    rw [hPc, MvPolynomial.coeff_mul, MvPolynomial.coeff_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hPc, MvPolynomial.coeff_mul, MvPolynomial.coeff_mul, map_sum]
     refine (map_sum K.subtype _ _).trans (Finset.sum_congr rfl fun x _ => ?_)
     show ((g _ : K) : Ω) = _
     have e : (G j).coeff x.2 = ((⟨φ ((F j).coeff x.2), hφK _⟩ : K) : Ω) := by
@@ -92,7 +98,8 @@ theorem no_common_zero_spreads : ∀ (A : Type) [CommRing A] (τ J : Type) [Fini
   have hsum : ∑ j ∈ c.support, P (c j) * G j = 1 := by
     simp only [Finsupp.sum, smul_eq_mul] at hc
     have := congrArg PA hc
-    rw [map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
     simp only [PA, AddMonoidHom.mk'_apply] at this
     rw [← hP1]
     convert this using 1
@@ -125,12 +132,13 @@ theorem no_common_zero_spreads : ∀ (A : Type) [CommRing A] (τ J : Type) [Fini
   let E : MvPolynomial τ A := MvPolynomial.C b - ∑ j ∈ c.support, q j * F j
   have hE : MvPolynomial.map φ E = 0 := by
     have hG : ∀ j, MvPolynomial.map φ (F j) = G j := fun j => rfl
-    simp only [E, map_sub, map_sum, map_mul, MvPolynomial.map_C, hq, hG, _root_.mul_assoc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [E, map_sub, map_sum, map_mul, MvPolynomial.map_C, hq, hG, _root_.mul_assoc]
     rw [← Finset.mul_sum, hsum, _root_.mul_one, sub_self]
   refine ⟨b, E.coeffs, hb, ?_, ?_⟩
   · intro y hy
     obtain ⟨n, -, rfl⟩ := MvPolynomial.mem_coeffs_iff.1 hy
-    have := congrArg (MvPolynomial.coeff n) hE
+    have := congrArg (AddMonoidAlgebra.coeff · n) hE
     rwa [MvPolynomial.coeff_map, MvPolynomial.coeff_zero] at this
   · intro k _ ψ hψb hψI ⟨z, hz⟩
     have h0 : MvPolynomial.map ψ E = 0 := by
@@ -139,6 +147,7 @@ theorem no_common_zero_spreads : ∀ (A : Type) [CommRing A] (τ J : Type) [Fini
       by_cases hn : n ∈ E.support
       · exact hψI _ (MvPolynomial.mem_coeffs_iff.2 ⟨n, hn, rfl⟩)
       · rw [MvPolynomial.notMem_support_iff.1 hn, map_zero]
+        rfl
     have h2 : MvPolynomial.eval₂ ψ z E = 0 := by
       rw [MvPolynomial.eval₂_eq_eval_map, h0, map_zero]
     have h3 : MvPolynomial.eval₂ ψ z E = ψ b := by

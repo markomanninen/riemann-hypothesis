@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PairCalc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdemKernel
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PairCalc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdemKernel
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.ES
 open GlobalTheory.IwLevel (InSub IsIsogDeg)
@@ -56,7 +61,7 @@ theorem UpperTheory.Gal.crystallineComparison.Mod.kerU_of :
   have ρmul : ∀ a a', ρ (a * a') = ρ a ≫ ρ a' := fun a a' => by
     simp only [ρ]; rw [mul_comm, map_mul, o.act.mul]
   have ρadd : ∀ a a', ρ (a + a') = ρ a * ρ a' := fun a a' => by
-    simp only [ρ]; rw [map_add, o.act.add]
+    simp only [ρ]; rw [map_add (f := _), o.act.add]
   have ρ0 : ρ 0 = 1 := by
     have := ρadd 0 0
     rw [add_zero] at this

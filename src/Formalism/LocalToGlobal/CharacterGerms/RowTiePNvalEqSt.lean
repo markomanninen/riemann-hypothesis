@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTieDesc
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePEmbIntSt
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieDesc
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePEmbIntSt
+
+@[expose] public section
 
 set_option autoImplicit false
 

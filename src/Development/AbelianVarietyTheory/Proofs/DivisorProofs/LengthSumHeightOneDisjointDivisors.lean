@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LengthCokerLsmulEqLengthKerAddSumStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LengthKerCokerLsmulQuotientSpanSwapStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LengthCokerLsmulEqLengthKerAddSumStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LengthKerCokerLsmulQuotientSpanSwapStatement
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -74,7 +78,7 @@ theorem height_one_or_eq_max {A : Type} [CommRing A] [IsDomain A] [IsLocalRing A
   have hz : p.height ≠ 0 := by
     intro hz
     rw [Ideal.height_eq_zero_iff] at hz
-    exact h0 (le_bot_iff.1 (hz.2 ⟨Ideal.bot_prime, bot_le⟩ bot_le))
+    exact h0 (le_bot_iff.1 (hz.2 ⟨Ideal.isPrime_bot, bot_le⟩ bot_le))
   exact le_antisymm hle (ENat.one_le_iff_ne_zero.2 hz)
 
 end GlobalTheory.IntersectionSymm

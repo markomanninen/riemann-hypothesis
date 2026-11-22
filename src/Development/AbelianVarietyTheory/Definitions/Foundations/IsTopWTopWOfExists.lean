@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CobOn
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CobOn
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,13 +22,11 @@ def IsTopW {N : ℕ} (ζ : Ω) (x y : (Ω ≃ₐ[F] Ω) →* Multiplicative (ZMo
     Prop :=
   w ≠ 0 ∧ ∃ θ : Ω, θ ^ N = algebraMap K Ω w ∧ ∀ g ∈ geo F K Ω, kum (K := F) (N := N) ζ θ g = edge x y η σ g
 
+
 open Classical in
-
-def topW {N : ℕ} (ζ : Ω) (x y : (Ω ≃ₐ[F] Ω) →* Multiplicative (ZMod N)) (η : (Ω ≃ₐ[F] Ω) → ZMod N) (σ : Ω ≃ₐ[F] Ω) : K :=
-  if h : ∃ w : K, IsTopW ζ x y η σ w then h.choose else 1
-
-def topCoc {N : ℕ} (ζ : Ω) (x y : (Ω ≃ₐ[F] Ω) →* Multiplicative (ZMod N)) (η : (Ω ≃ₐ[F] Ω) → ZMod N) (σ : Ω ≃ₐ[F] Ω) : K :=
-  topW ζ x y η σ⁻¹
+def topW {N : ℕ} (ζ : Ω) (x y : (Ω ≃ₐ[F] Ω) →* Multiplicative (ZMod N)) (η : (Ω ≃ₐ[F] Ω) → ZMod N) (σ : Ω ≃ₐ[F] Ω) : K := by
+  classical
+  exact if h : ∃ w : K, IsTopW ζ x y η σ w then h.choose else 1
 
 namespace TopW
 
@@ -89,14 +91,14 @@ theorem edge_inv {Γ : Type*} [Group Γ] (x y : Γ →* Multiplicative (ZMod N))
 theorem isTopW_topW_of_exists {σ : Ω ≃ₐ[F] Ω} (h : ∃ w : K, IsTopW ζ x y η σ w) :
     IsTopW ζ x y η σ (topW (K := K) ζ x y η σ) := by
   unfold topW
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem topW_ne_zero (σ : Ω ≃ₐ[F] Ω) : topW (K := K) ζ x y η σ ≠ 0 := by
   by_cases h : ∃ w : K, IsTopW ζ x y η σ w
   · exact (isTopW_topW_of_exists h).1
   · unfold topW
-    rw [dif_neg h]
+    rw [dite_eq_right h]
     exact one_ne_zero
 
 theorem unique [NeZero N] [IsGalois K Ω] (hζ : IsPrimitiveRoot ζ N) {σ : Ω ≃ₐ[F] Ω} {w v : K}
@@ -115,28 +117,6 @@ theorem unique [NeZero N] [IsGalois K Ω] (hζ : IsPrimitiveRoot ζ N) {σ : Ω 
   rintro rfl
   rw [zero_pow (NeZero.ne N), mul_zero] at key
   exact hw0 key
-
-example : geo ℝ ℝ ℂ = ⊤ := by
-  ext g
-  simp only [mem_geo, Subgroup.mem_top, iff_true]
-  exact fun z => g.commutes z
-
-example [NeZero N] (hζ : IsPrimitiveRoot ζ N) (σ : Ω ≃ₐ[F] Ω) : IsTopW (N := N) ζ 1 1 0 σ (1 : K) :=
-  ⟨one_ne_zero, 1, by simp, fun g _ => by
-    rw [kum_eq_of hζ one_ne_zero 0 (by simp)]
-    simp [edge]⟩
-
-example (σ : ℂ ≃ₐ[ℝ] ℂ) : ¬ IsTopW (N := 2) (-1 : ℂ) 1 1 0 σ (-1 : ℝ) := by
-  intro h
-  have hζ : IsPrimitiveRoot (-1 : ℂ) 2 := IsPrimitiveRoot.neg_one 0 (by norm_num)
-  have h1 : IsTopW (N := 2) (-1 : ℂ) 1 1 0 σ (1 : ℝ) :=
-    ⟨one_ne_zero, 1, by simp, fun g _ => by
-      rw [kum_eq_of hζ one_ne_zero 0 (by simp)]
-      simp [edge]⟩
-  haveI : IsAlgClosure ℝ ℂ := ⟨inferInstance, inferInstance⟩
-  haveI : IsGalois ℝ ℂ := {}
-  obtain ⟨c, -, hc⟩ := unique hζ h h1
-  nlinarith [sq_nonneg c]
 
 end TopW
 

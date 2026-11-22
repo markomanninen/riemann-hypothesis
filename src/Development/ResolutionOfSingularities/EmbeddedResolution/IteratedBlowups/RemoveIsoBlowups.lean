@@ -1,8 +1,13 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry Opposite
@@ -194,7 +199,7 @@ theorem objNontrivialIndexZeroIso_hom (s : SequenceOfBlowups X) :
 noncomputable def towerWithoutIsoBlowups (s : SequenceOfBlowups X) : ℕᵒᵖ ⥤ Scheme.{u} :=
   (Monotone.functor s.nontrivialIndex_monotone).op ⋙ s.tower
 
-private theorem isBlowupAlongIdealSheaf_towerWithoutIsoBlowups_map (s : SequenceOfBlowups X) (i : ℕ) (hi : i < s.lengthWithoutIsoBlowups) :
+theorem isBlowupAlongIdealSheaf_towerWithoutIsoBlowups_map (s : SequenceOfBlowups X) (i : ℕ) (hi : i < s.lengthWithoutIsoBlowups) :
     Blowup.IsBlowupAlongIdealSheaf (s.towerWithoutIsoBlowups.map (homOfLE (Nat.le_succ i)).op) (s.center (s.nontrivialIndex i)) := by
   have : IsIso (s.transitionMap (s.succ_le_nontrivialIndex_succ i)) := s.isIso_transitionMap_nontrivialIndex_succ hi
   have hB : Blowup.IsBlowupAlongIdealSheaf (s.transitionMapSucc (s.nontrivialIndex i)) (s.center (s.nontrivialIndex i)) :=
@@ -216,9 +221,6 @@ noncomputable def withoutIsoBlowups (s : SequenceOfBlowups X) : SequenceOfBlowup
   isBlowup := s.isBlowupAlongIdealSheaf_towerWithoutIsoBlowups_map
 
 @[simp] theorem withoutIsoBlowups_length (s : SequenceOfBlowups X) : s.withoutIsoBlowups.length = s.lengthWithoutIsoBlowups := rfl
-
-@[simp] theorem withoutIsoBlowups_schemeAt (s : SequenceOfBlowups X) (j : ℕ) :
-    s.withoutIsoBlowups.schemeAt j = s.schemeAt (s.nontrivialIndex j) := rfl
 
 @[simp] theorem withoutIsoBlowups_center (s : SequenceOfBlowups X) (j : ℕ) :
     s.withoutIsoBlowups.center j = s.center (s.nontrivialIndex j) := rfl

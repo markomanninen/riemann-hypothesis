@@ -1,10 +1,14 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.StepFacEq
-import Development.WeilBound.ThetaLifts.CartanFactorisation.CuspidalClassOfWeilConvergence
-import Development.WeilBound.ThetaLifts.CartanFactorisation.Kills0Of
-import Development.WeilBound.ThetaLifts.CartanFactorisation.Unimod
-import Development.WeilBound.ThetaLifts.LatticeBasics.PolDense
-import Development.WeilBound.ThetaLifts.TowerModels.LeviEx
-import Development.WeilBound.ThetaLifts.LeviDeterminants.ActsEx
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.StepFacEq
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.CuspidalClassOfWeilConvergence
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.Kills0Of
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.Unimod
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PolDense
+public import Development.WeilBound.ThetaLifts.TowerModels.LeviEx
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.ActsEx
+
+@[expose] public section
 
 namespace PositivityTheory.ThKG.Loc
 

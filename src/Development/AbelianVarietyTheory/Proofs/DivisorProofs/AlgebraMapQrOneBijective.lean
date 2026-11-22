@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormGroupToPadicPointsDegreeOneEqUnitaryPoints
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormGroupToPadicPointsDegreeOneEqUnitaryPoints
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount GlobalTheory.LKCx GlobalTheory.TorCls
 open scoped TensorProduct Classical
 
@@ -172,7 +177,7 @@ theorem triv_of_idem {R : Type*} [Ring R] (σ : R →+* Rᵐᵒᵖ) (e B Bi : R)
     simp only [add_zero, zero_add]
     exact hef'
   refine ⟨inv B Bi hBi, inv Bi B hBi', ?_⟩
-  rw [map_add, map_mul, MulOpposite.unop_add, MulOpposite.unop_mul, hσe, hB, hσf]
+  rw [map_add (f := _), map_mul, MulOpposite.unop_add, MulOpposite.unop_mul, hσe, hB, hσf]
   have k2 : e * (B * e) = B * e := by rw [← mul_assoc, he B, mul_assoc, hee]
   have k3 : f * (B * f) = B * f := by rw [← mul_assoc, hfz B, mul_assoc, hff]
   have k4 : f * (B * (B * e)) = 0 := by rw [← mul_assoc B, ← he (B * B), ← mul_assoc, hfe, zero_mul]
@@ -222,7 +227,7 @@ theorem exists_idem (G : HTGroup p) : ∃ e : ℚ_[p] ⊗[ℚ] G.C, (∀ z, e * 
     | add x y hx hy => rw [mul_add, hx, hy, ← add_mul]
   have hstar : ∀ h k, (starT G.star ℚ_[p] (E h k)).unop = E h (-k) := by
     intro h k
-    simp only [E, map_add, MulOpposite.unop_add, starT_tmul, map_one, MulOpposite.unop_one, hδstar,
+    simp only [E, map_add (f := _), MulOpposite.unop_add, starT_tmul, map_one, MulOpposite.unop_one, hδstar,
       TensorProduct.tmul_neg, TensorProduct.neg_tmul]
   have hsub : ∀ h k, 1 - E h k = E (1 - h) (-k) := by
     intro h k

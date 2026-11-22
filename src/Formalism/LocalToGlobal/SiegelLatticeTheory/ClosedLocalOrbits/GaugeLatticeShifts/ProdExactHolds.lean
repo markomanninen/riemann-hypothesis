@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ProductFormulaHolds
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ExistsBox
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SecMeasLocHolds
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StepRealHolds
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalJacobianOfDoubleCoset
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NHLocHolds
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcRealPf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ProductFormulaHolds
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ExistsBox
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SecMeasLocHolds
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StepRealHolds
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalJacobianOfDoubleCoset
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NHLocHolds
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcRealPf
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,7 @@ theorem ProdExact_holds : Formalism.L2.SG.Pf.NcReal.ProdExact := by
   haveI : ∀ v, SigmaFinite (μH' v) := hσH'
   have hU : UnimodLoc := JL.rightInvS_of JL.setCorr_holds (JL.haarCorr_of JL.setCorr_holds)
   have hep : ∀ v a b, hJ (X.B.I.ε v) (eV X v a) (pV X v b) = if a = b then 1 else 0 := fun v a b =>
-    (hJ_X X v _ _).trans (by rw [X.ef]; split_ifs <;> simp)
+    (hJ_X X v _ _).trans (by rw [X.ef]; simp)
   have hpp : ∀ v a b, hJ (X.B.I.ε v) (pV X v a) (pV X v b) = 0 := fun v a b =>
     (hJ_X X v _ _).trans (by rw [X.ff]; simp)
   have hzp : ∀ w v b, hJ (X.B.I.ε v) (zV X w v) (pV X v b) = 0 := fun w v b => by
@@ -71,9 +75,11 @@ theorem ProdExact_holds : Formalism.L2.SG.Pf.NcReal.ProdExact := by
     haveI : SigmaFinite (muHv X u v) := inferInstance
     unfold Formalism.L2.SG.Pf.NcReal.muSL muSv
     rw [hκN v, hκH v, Measure.prod_smul_left, Measure.prod_smul_right, smul_smul, Measure.map_smul]
+    all_goals exact measurable_mul.aemeasurable
   have hSL' : ∀ v, Formalism.L2.SG.Pf.NcReal.muSL (μH' v) (μN' v) = (κN' v * κH' v) • muSv X u' v := fun v => by
     unfold Formalism.L2.SG.Pf.NcReal.muSL muSv
     rw [hκN' v, hκH' v, Measure.prod_smul_left, Measure.prod_smul_right, smul_smul, Measure.map_smul]
+    all_goals exact measurable_mul.aemeasurable
   haveI : ∀ w v, SigmaFinite (muSv X w v) := fun w v => (hSH w v).1.1
   haveI hσS : ∀ v, SigmaFinite (Formalism.L2.SG.Pf.NcReal.muSL (μH v) (μN v)) := fun v => by
     rw [hSL v]; exact sf_smul _ _ (ENNReal.mul_ne_top (hκNT v) (hκHT v))
@@ -118,7 +124,7 @@ theorem ProdExact_holds : Formalism.L2.SG.Pf.NcReal.ProdExact := by
     rw [PiM.pi_withDensity _ _ hwm (fun v x => ENNReal.ofReal_ne_top), ← Measure.restrict_pi_pi, good_eq]
     rfl
   set H : (Cinf X) → X.B.I.Ginf := fun c v => hs v (c v) with hHd
-  have hHm : Measurable H := measurable_pi_lambda _ fun v => (hsm v).comp (measurable_pi_apply v)
+  have hHm : Measurable H := Measurable.of_eval fun v => (hsm v).comp (measurable_pi_apply v)
   set μP := Measure.pi fun v => Formalism.L2.SG.Pf.NcReal.muSL (μH v) (μN v) with hμP
   set μP' := Measure.pi fun v => Formalism.L2.SG.Pf.NcReal.muSL (μH' v) (μN' v) with hμP'
   set Fc : Cinf X → ℝ≥0∞ := fun c => ∫⁻ s, ∫⁻ s', φ (s * H c * s'⁻¹) ∂μP' ∂μP with hFc
@@ -146,7 +152,7 @@ theorem ProdExact_holds : Formalism.L2.SG.Pf.NcReal.ProdExact := by
     rfl
   have hex := StepReal_holds D X u u' 1 one_pos c hc
   have hh : HasDiag X u u' 1 c (hOf X u u' 1 c) := by
-    unfold hOf; rw [dif_pos hex]; exact hex.choose_spec
+    unfold hOf; rw [dite_eq_left hex]; exact hex.choose_spec
   have hdc := fun v => Formalism.L2.SG.RealObj.InfCut.UnitaryIsometries.DiagDCLoc_holds _ _ _ _ _ _ _ _ _ 1 (frameLoc_X X u u' v) (c v)
     (hcv v) (hs v (c v)) (hOf X u u' 1 c v) (hss v (c v) (hcv v)) (hh v)
   choose t ht t' ht' htt using hdc
@@ -155,10 +161,12 @@ theorem ProdExact_holds : Formalism.L2.SG.Pf.NcReal.ProdExact := by
     PiM.pi_map_mul_right _ t fun v => by
       rw [hSL v, Measure.map_smul,
         hU _ _ _ _ _ _ _ _ _ (frameLoc_X X u u' v) _ (hSH u v) (t v) (ht v)]
+      exact (measurable_id.mul measurable_const).aemeasurable
   have hrt' : μP'.map (fun x => x * t') = μP' :=
     PiM.pi_map_mul_right _ t' fun v => by
       rw [hSL' v, Measure.map_smul,
         hU _ _ _ _ _ _ _ _ _ (frameLoc_X X u' u v) _ (hSH u' v) (t' v) (ht' v)]
+      exact (measurable_id.mul measurable_const).aemeasurable
   have hsw : ∫⁻ s, ∫⁻ s', φ (s * hOf X u u' 1 c * s'⁻¹) ∂μP' ∂μP = Fc c := by
     rw [hofe]; exact dc_switch _ _ φ hφ (H c) t t' hrt hrt'
   rw [hW, hmu, hmu', hsw]

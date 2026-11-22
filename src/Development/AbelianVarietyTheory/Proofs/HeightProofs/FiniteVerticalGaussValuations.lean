@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
-import ReciprocityTheory.SemistableReduction.AlgAll
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
+public import ReciprocityTheory.SemistableReduction.AlgAll
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.T0
 open scoped TensorProduct
@@ -70,7 +74,7 @@ theorem isDVR {K : Type} [Field K] [NumberField K] (σ : Type) [Finite σ]
     apply ha0
     have := hinj (hm.trans (map_zero _).symm)
     simpa using this
-  refine ((IsDiscreteValuationRing.TFAE (Localization.AtPrime P) hnf).out 0 4).mpr ?_
+  refine ((IsDiscreteValuationRing.TFAE (Localization.AtPrime P) hnf).out 1 5).mpr ?_
   rw [hmax]
   obtain ⟨g, hg⟩ := (IsPrincipalIdealRing.principal (maximalIdeal Ol))
   rw [hg]
@@ -95,7 +99,7 @@ theorem injective_of_dvr {R Ω : Type} [CommRing R] [IsDomain R] [Field Ω] (φ 
     obtain ⟨c, hc⟩ := hm
     apply ha0
     rw [← hψ, hc, map_mul, h, zero_mul]
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro r hr
   by_contra hr0
   have hinj := IsLocalization.injective (Localization.AtPrime P) (M := P.primeCompl)
@@ -146,8 +150,8 @@ theorem finite_places {R Ω : Type} [CommRing R] [IsDomain R] [Field Ω] [CharZe
 
 end VerticalGauss
 
-open VerticalGauss IsDedekindDomain in
 
+open VerticalGauss IsDedekindDomain in
 theorem finite_vertical_gauss_valuations : ∀ (K Ω : Type) [Field K] [NumberField K] [Field Ω] [Algebra K Ω] (D : ℕ) (x : Fin D → Ω), (⊤ : IntermediateField K Ω).FG → Algebra.trdeg K Ω = D → ∀ g : Ω, g ≠ 0 → {v : AddValuation Ω (WithTop ℤ) | IsNormDiscrete v ∧ v g ≠ 0 ∧ ∃ la : IsDedekindDomain.HeightOneSpectrum (𝓞 K), ∀ p : MvPolynomial (Fin D) (𝓞 K), 0 ≤ v (MvPolynomial.eval₂ ((algebraMap K Ω).comp (algebraMap (𝓞 K) K)) x p) ∧ (0 < v (MvPolynomial.eval₂ ((algebraMap K Ω).comp (algebraMap (𝓞 K) K)) x p) ↔ ∀ m, p.coeff m ∈ la.asIdeal)}.Finite := by
   intro K Ω _ _ _ _ D x hFG htr g hg
   classical
@@ -161,11 +165,11 @@ theorem finite_vertical_gauss_valuations : ∀ (K Ω : Type) [Field K] [NumberFi
     (algebraMap K Ω).injective.comp (IsFractionRing.injective (𝓞 K) K)
   let φ : MvPolynomial (Fin D) (𝓞 K) →+* Ω := MvPolynomial.eval₂Hom ι x
   have hinj : Function.Injective φ := by
-    haveI := isDVR (Fin D) la₀
+    haveI := VerticalGauss.isDVR (Fin D) la₀
     obtain ⟨a, ha, ha0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot la₀.ne_bot
-    refine injective_of_dvr φ (extPrime (Fin D) la₀) (fun r hr => ?_) (MvPolynomial.C a)
+    refine VerticalGauss.injective_of_dvr φ (VerticalGauss.extPrime (Fin D) la₀) (fun r hr => ?_) (MvPolynomial.C a)
       (Ideal.mem_map_of_mem _ ha) ?_
-    · rw [mem_extPrime, ← (h₀ r).2]
+    · rw [VerticalGauss.mem_extPrime, ← (h₀ r).2]
       change 0 < v₀ (φ r)
       rw [hr]; simp
     · simp only [φ, MvPolynomial.eval₂Hom_C]
@@ -221,24 +225,24 @@ theorem finite_vertical_gauss_valuations : ∀ (K Ω : Type) [Field K] [NumberFi
   obtain ⟨r, hr0, hr⟩ := (halg.isAlgebraic g).exists_integral_multiple
   obtain ⟨s, hs0, hs⟩ := (halg.isAlgebraic g⁻¹).exists_integral_multiple
   obtain ⟨m, hm⟩ := MvPolynomial.ne_zero_iff.1 (mul_ne_zero hr0 hs0)
-  have hfin : {la : HeightOneSpectrum (𝓞 K) |
-      la.asIdeal ∣ Ideal.span {MvPolynomial.coeff m (r * s)}}.Finite :=
-    Ideal.finite_factors (by simpa using hm)
+  have hfin : {la : IsDedekindDomain.HeightOneSpectrum (𝓞 K) |
+      la.asIdeal ∣ Ideal.span {AddMonoidAlgebra.coeff (r * s) m}}.Finite :=
+    Ideal.finite_factors (I := Ideal.span {AddMonoidAlgebra.coeff (r * s) m}) (by simpa using hm)
   refine (hfin.biUnion (t := fun la => {v : AddValuation Ω (WithTop ℤ) | IsNormDiscrete v ∧
-      ∀ y : R, 0 ≤ v (algebraMap R Ω y) ∧ (0 < v (algebraMap R Ω y) ↔ y ∈ extPrime (Fin D) la)})
-      (fun la _ => haveI := isDVR (Fin D) la; finite_places _)).subset ?_
+      ∀ y : R, 0 ≤ v (algebraMap R Ω y) ∧ (0 < v (algebraMap R Ω y) ↔ y ∈ VerticalGauss.extPrime (Fin D) la)})
+      (fun la _ => haveI := VerticalGauss.isDVR (Fin D) la; VerticalGauss.finite_places _)).subset ?_
   rintro v ⟨hv, hvg, la, hla⟩
   have hla' : ∀ y : R, 0 ≤ v (algebraMap R Ω y) ∧
-      (0 < v (algebraMap R Ω y) ↔ y ∈ extPrime (Fin D) la) := fun y => by
-    rw [mem_extPrime]; exact hla y
+      (0 < v (algebraMap R Ω y) ↔ y ∈ VerticalGauss.extPrime (Fin D) la) := fun y => by
+    rw [VerticalGauss.mem_extPrime]; exact hla y
   refine Set.mem_biUnion (x := la) ?_ ⟨hv, hla'⟩
   rw [Set.mem_setOf_eq, Ideal.dvd_span_singleton]
-  refine (mem_extPrime la _).1 ?_ m
+  refine (VerticalGauss.mem_extPrime la _).1 ?_ m
   by_contra hrs
-  have hz : ∀ y : R, y ∉ extPrime (Fin D) la → v (algebraMap R Ω y) = 0 := fun y hy =>
+  have hz : ∀ y : R, y ∉ VerticalGauss.extPrime (Fin D) la → v (algebraMap R Ω y) = 0 := fun y hy =>
     le_antisymm (not_lt.1 fun h => hy ((hla' y).2.1 h)) (hla' y).1
-  have h1 := nonneg_of_isIntegral v (fun y => (hla' y).1) hr
-  have h2 := nonneg_of_isIntegral v (fun y => (hla' y).1) hs
+  have h1 := VerticalGauss.nonneg_of_isIntegral v (fun y => (hla' y).1) hr
+  have h2 := VerticalGauss.nonneg_of_isIntegral v (fun y => (hla' y).1) hs
   rw [Algebra.smul_def, AddValuation.map_mul,
     hz _ (fun h => hrs (Ideal.mul_mem_right _ _ h)), zero_add] at h1
   rw [Algebra.smul_def, AddValuation.map_mul,

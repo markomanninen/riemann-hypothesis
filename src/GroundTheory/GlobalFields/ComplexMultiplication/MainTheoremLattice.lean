@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.FrobeniusAtPrimes
-import GroundTheory.GlobalFields.ComplexMultiplication.DegreeOneAutomorphismPoints
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.TateCharpoly
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.FrobeniusAtPrimes
+public import GroundTheory.GlobalFields.ComplexMultiplication.DegreeOneAutomorphismPoints
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.TateCharpoly
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Global
@@ -20,7 +25,7 @@ variable {F : Type*} [Field F] [IsAlgClosed F] [DecidableEq F] {A B : Weierstras
 theorem homPt_vcHom (C : VariableChange F) (hC : C • A = B) (R : A.toAffine.Point) :
     homPt (vcHom C hC) R = vcPoint C hC R := by
   have h0 : vcHom C hC ≠ 0 := fun h ↦ vcPt_ne_zero C hC (congrArg Subtype.val h)
-  rw [homPt, dif_neg h0, Isogeny.pointHom_apply]
+  rw [homPt, dite_eq_right h0, Isogeny.pointHom_apply]
   exact pointMap_eq_vcPoint C hC _ (isogOfHom_val _ h0) R
 
 variable {A' B' : WeierstrassCurve F} [A'.IsElliptic] [B'.IsElliptic]
@@ -52,28 +57,30 @@ end VC
 section Lattice
 
 variable {K : Type*} [Field K] [NumberField K] (σ₀ : K →+* ℂ) (hK : finrank ℚ K = 2)
-  [IsTotallyComplex K]
+  [_root_.NumberField.IsTotallyComplex K]
 
 theorem latticeEnd_eq_of_lattice_eq {L L' : PeriodPair} (h : L.lattice = L'.lattice) :
-    latticeEnd L = latticeEnd L' := by
+    periodLatticeEnd L = periodLatticeEnd L' := by
   ext α
   show (∀ l ∈ L.lattice, α * l ∈ L.lattice) ↔ (∀ l ∈ L'.lattice, α * l ∈ L'.lattice)
   rw [h]
 
-include hK in
 
+include hK in
 theorem latticeEnd_eq_cmRing_of_lattice_eq {L : PeriodPair} {𝔞 : (FractionalIdeal (𝓞 K)⁰ K)ˣ}
-    (h : L.lattice = idealLattice σ₀ 𝔞) : latticeEnd L = cmRing σ₀ := by
-  rw [latticeEnd_eq_of_lattice_eq (L' := idealPeriodPair σ₀ hK 𝔞)
-    (h.trans (lattice_idealPeriodPair σ₀ hK 𝔞).symm), latticeEnd_idealPeriodPair]
+    (h : L.lattice = idealLattice σ₀ 𝔞) : periodLatticeEnd L = cmRingOfEmbedding σ₀ := by
+  exact (latticeEnd_eq_of_lattice_eq (L' := idealPeriodPair σ₀ hK 𝔞)
+    (h.trans (lattice_idealPeriodPair σ₀ hK 𝔞).symm)).trans
+    (latticeEnd_idealPeriodPair σ₀ hK 𝔞)
+
 
 include hK in
-
 theorem exists_unit_of_forall_mem_iff (J : (FractionalIdeal (𝓞 K)⁰ K)ˣ) {c : ℂ}
     (hc : ∀ z, z ∈ idealLattice σ₀ J ↔ c * z ∈ idealLattice σ₀ J) :
     ∃ ε : (𝓞 K)ˣ, c = σ₀ (algebraMap (𝓞 K) K ε) := by
   have hP := lattice_idealPeriodPair σ₀ hK J
-  have hPend := latticeEnd_idealPeriodPair σ₀ hK J
+  have hPend : periodLatticeEnd (idealPeriodPair σ₀ hK J) = cmRingOfEmbedding σ₀ :=
+    latticeEnd_idealPeriodPair σ₀ hK J
   have hne : ∃ z, z ∉ idealLattice σ₀ J := by
     by_contra h
     push Not at h
@@ -85,7 +92,7 @@ theorem exists_unit_of_forall_mem_iff (J : (FractionalIdeal (𝓞 K)⁰ K)ˣ) {c
   have hc0 : c ≠ 0 := by
     rintro rfl
     exact hz₀ ((hc z₀).2 (by rw [zero_mul]; exact zero_mem _))
-  have mult : ∀ d : ℂ, (∀ l ∈ idealLattice σ₀ J, d * l ∈ idealLattice σ₀ J) → d ∈ cmRing σ₀ := by
+  have mult : ∀ d : ℂ, (∀ l ∈ idealLattice σ₀ J, d * l ∈ idealLattice σ₀ J) → d ∈ cmRingOfEmbedding σ₀ := by
     intro d hd
     rw [← hPend]
     intro l hl
@@ -101,8 +108,8 @@ theorem exists_unit_of_forall_mem_iff (J : (FractionalIdeal (𝓞 K)⁰ K)ˣ) {c
     rw [ha, hb, mul_inv_cancel₀ hc0])
   exact ⟨⟨a, b, hab, by rw [mul_comm]; exact hab⟩, ha.symm⟩
 
-include hK in
 
+include hK in
 theorem exists_unit_pointMap_vcPoint (𝔞 𝔟 : (FractionalIdeal (𝓞 K)⁰ K)ˣ) (L L' : PeriodPair)
     (hL : L.lattice = idealLattice σ₀ 𝔞) (hL' : L'.lattice = idealLattice σ₀ ↑(𝔟 * 𝔞))
     {A A' : WeierstrassCurve ℂ} [A.IsElliptic] [A'.IsElliptic]

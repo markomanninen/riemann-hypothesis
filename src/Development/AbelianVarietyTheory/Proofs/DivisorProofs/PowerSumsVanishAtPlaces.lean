@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
-import Development.AbelianVarietyTheory.BlockTheory.AbelianSchemeLaw.SemiAbelianSchemes
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EndCharpolyTateDetDegreeTrace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateModuleFreeFinrankTwoMulDim
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CardTorsionGeometricPointsEqPowTwoDim
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.SplitTori.SplitTorusAff
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EndCharpolyTateDetDegreeTrace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateModuleFreeFinrankTwoMulDim
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CardTorsionGeometricPointsEqPowTwoDim
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Cris GlobalTheory.DeRham
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct
@@ -42,7 +47,8 @@ theorem charpoly_reduce {R S : Type} [CommRing R] [CommRing S] (π : R →+* S)
   let b := Module.Free.chooseBasis R N
   have hsum : ∀ c : Module.Free.ChooseBasisIndex R N → R,
       e (∑ i, c i • b i) = ∑ i, π (c i) • e (b i) := fun c => by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun i _ => hsmul _ _
   have hli : LinearIndependent S fun i => e (b i) := by
     refine Fintype.linearIndependent_iff.2 fun s hs i => ?_
@@ -69,15 +75,15 @@ theorem charpoly_reduce {R S : Type} [CommRing R] [CommRing S] (π : R →+* S)
   simp only [← hb']
   rw [Module.Basis.repr_sum_self]
 
-open GlobalTheory.HTLat in
 
+open GlobalTheory.HTLat in
 theorem lev_pow_smul {M : Type} [CommGroup M] {l : ℕ} [Fact l.Prime]
     (s : Tate l M) (j n : ℕ) : (((l : ℤ_[l]) ^ j) • s).lev n = s.lev n ^ l ^ j := by
   rw [← Nat.cast_pow, Nat.cast_smul_eq_nsmul]
   rfl
 
-open GlobalTheory.HTLat in
 
+open GlobalTheory.HTLat in
 theorem tate_lev_eq_one_iff (M : Type) [CommGroup M] (l : ℕ) [Fact l.Prime]
     (t : GlobalTheory.HTLat.Tate l M) (j : ℕ) :
     t.lev j = 1 ↔ ∃ s : GlobalTheory.HTLat.Tate l M, t = ((l : ℤ_[l]) ^ j) • s := by
@@ -89,8 +95,8 @@ theorem tate_lev_eq_one_iff (M : Type) [CommGroup M] (l : ℕ) [Fact l.Prime]
   · rintro ⟨s, rfl⟩
     rw [lev_pow_smul, Tate.lev_pow]
 
-open GlobalTheory.HTLat in
 
+open GlobalTheory.HTLat in
 theorem tate_lev_surj (M : Type) [CommGroup M] (l : ℕ) [Fact l.Prime] (r : ℕ)
     (hc : ∀ n : ℕ, Nat.card {x : M // x ^ (l ^ n) = 1} = l ^ (r * n)) (j : ℕ) (x : M)
     (hx : x ^ (l ^ j) = 1) : ∃ t : GlobalTheory.HTLat.Tate l M, t.lev j = x := by
@@ -112,8 +118,8 @@ end GlobalTheory.CharpolyLattice
 
 namespace GlobalTheory.AV.AbVar
 
-open GlobalTheory.CharpolyLattice GlobalTheory.HTLat in
 
+open GlobalTheory.CharpolyLattice GlobalTheory.HTLat in
 theorem charpoly_eq_lattice_model : ∀ (k : Type) [Field k] [IsAlgClosed k] (B : GlobalTheory.AV.AbVar k) (f : B ⟶ B)
     (L : Type) [AddCommGroup L] [Module.Free ℤ L] [Module.Finite ℤ L]
     (φ : L →ₗ[ℤ] L) (l : ℕ), l.Prime → (l : k) ≠ 0 →
@@ -122,11 +128,11 @@ theorem charpoly_eq_lattice_model : ∀ (k : Type) [Field k] [IsAlgClosed k] (B 
     (∀ j x, ev j (φ x) = ev j x ≫ f.hom) →
     (∀ j x, ev j x = 1 ↔ ∃ y, x = l ^ j • y) →
     (∀ j (q : Over.mk (𝟙 (Sp k)) ⟶ B.X), q ^ (l ^ j) = 1 ↔ ∃ x, ev j x = q) →
-    LinearMap.charpoly φ = GlobalTheory.AV.AbVar.charpoly f := by
+    LinearMap.charpoly φ = GlobalTheory.AV.AbVar.charpoly (End.of f) := by
   intro k _ _ B f L _ _ _ φ l hl hlk ev hadd hequi hker him
   haveI : Fact l.Prime := ⟨hl⟩
   obtain ⟨e, he⟩ := pts_equiv k B
-  obtain ⟨hfree, hfin, -⟩ := tl_free_finrank k l hlk B
+  obtain ⟨hfree, hfin, -, hfinV, -⟩ := tl_free_finrank k l hlk B
   have hc : ∀ n : ℕ, Nat.card {x : B.Pt // x ^ (l ^ n) = 1} = l ^ (2 * B.dim * n) := by
     intro n
     rw [card_torsion_pt k B (l ^ n) (by push_cast; exact pow_ne_zero _ hlk), ← pow_mul, mul_comm n]
@@ -136,7 +142,7 @@ theorem charpoly_eq_lattice_model : ∀ (k : Type) [Field k] [IsAlgClosed k] (B 
   have hE : ∀ j (n : ℕ) x, e (ev j (n • x)) = e (ev j x) ^ n := fun j n x =>
     congrArg Additive.toMul (map_nsmul (E j) n x)
   have key : ∀ j : ℕ, (LinearMap.charpoly φ).map (Int.castRingHom (ZMod (l ^ j))) =
-      (LinearMap.charpoly (tend l B f)).map (PadicInt.toZModPow j) := by
+      (LinearMap.charpoly (tend l B (End.of f))).map (PadicInt.toZModPow j) := by
     intro j
     haveI : NeZero (l ^ j) := ⟨pow_ne_zero _ hl.ne_zero⟩
     let K := (powMonoidHom (l ^ j) : B.Pt →* B.Pt).ker
@@ -191,19 +197,35 @@ theorem charpoly_eq_lattice_model : ∀ (k : Type) [Field k] [IsAlgClosed k] (B 
         obtain ⟨s, hs⟩ := (tate_lev_eq_one_iff B.Pt l t j).1
           (congrArg Subtype.val (congrArg Additive.toMul ht))
         exact ⟨s, hs⟩)
-      (tend l B f) G (fun t => rfl)
+      (tend l B (End.of f)) G (fun t => rfl)
     exact h1.symm.trans h2
-  have hT := (charpoly_tate_det_trace k l hlk B f).2.1
+  have hT : (charpoly (End.of f)).map (algebraMap ℤ ℤ_[l]) =
+      (tend l B (End.of f)).charpoly := by
+    apply Polynomial.map_injective (algebraMap ℤ_[l] ℚ_[l]) (IsFractionRing.injective ℤ_[l] ℚ_[l])
+    rw [Polynomial.map_map, ← LinearMap.charpoly_baseChange]
+    have hcomp : (algebraMap ℤ_[l] ℚ_[l]).comp (algebraMap ℤ ℤ_[l]) = algebraMap ℤ ℚ_[l] :=
+      Subsingleton.elim _ _
+    rw [hcomp]
+    obtain ⟨⟨hm, hd, hev⟩, -⟩ := GlobalTheory.T.abelianVarietyEndCharpoly_spec k B (End.of f)
+    have hQ := GlobalTheory.T.abelianVariety_degreePolynomial_map_eq_charpoly_rationalTate k l
+      hlk B (End.of f) ((charpoly (End.of f)).map (algebraMap ℤ ℚ)) (hm.map _)
+      (by rw [Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int (algebraMap ℤ ℚ)), hd])
+      (fun n => by rw [Polynomial.eval_intCast_map, Int.cast_id, hev n]; simp)
+    rw [Polynomial.map_map] at hQ
+    have hcompQ : (algebraMap ℚ ℚ_[l]).comp (algebraMap ℤ ℚ) = algebraMap ℤ ℚ_[l] :=
+      Subsingleton.elim _ _
+    rw [hcompQ] at hQ
+    exact hQ
   have hinj : Function.Injective (Polynomial.map (Int.castRingHom ℤ_[l])) :=
     Polynomial.map_injective _ Int.cast_injective
   apply hinj
   rw [show Int.castRingHom ℤ_[l] = algebraMap ℤ ℤ_[l] from RingHom.ext_int _ _, hT]
-  ext i
-  rw [← PadicInt.ext_of_toZModPow]
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
+  intro i
+  apply PadicInt.ext_of_toZModPow.mp
   intro n
-  have h := congrArg (fun P => Polynomial.coeff P i) (key n)
-  simp only [Polynomial.coeff_map, eq_intCast] at h ⊢
-  rw [map_intCast]
-  exact h
+  have h := congrArg (fun P : Polynomial (ZMod (l ^ n)) => P.coeff i) (key n)
+  simpa only [Polynomial.coeff_map, eq_intCast, map_intCast] using h
 
 end GlobalTheory.AV.AbVar

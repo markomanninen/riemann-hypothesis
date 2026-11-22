@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.MemClosureImage
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.GpHerm
-import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.TermTiesEmptyOfLargeIndex
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.MemClosureImage
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.GpHerm
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.TermTiesEmptyOfLargeIndex
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem aaLb_inW {b : Fin D.R.rS} {y : (VS D).V} (hy : y ∈ aaLb X b) : InW X y
     simp only [map_zero, and_self]
   | add z w _ _ hz hw =>
     intro a
-    simp only [map_add, (hz a).1, (hz a).2, (hw a).1, (hw a).2, add_zero, and_self]
+    simp only [map_add (f := _), (hz a).1, (hz a).2, (hw a).1, (hw a).2, add_zero, and_self]
   | smul r z _ hz =>
     intro a
     simp only [LinearMap.map_smul_of_tower, (hz a).1, (hz a).2, smul_zero, and_self]
@@ -58,7 +62,7 @@ def imH (a : Fin D.R.rS) : AddSubgroup D.host.E where
   zero_mem' := ⟨Submodule.zero_mem _, by simp⟩
   add_mem' := by
     rintro s t ⟨hs1, hs2⟩ ⟨ht1, ht2⟩
-    exact ⟨Submodule.add_mem _ hs1 ht1, by rw [map_add, hs2, ht2, neg_add]⟩
+    exact ⟨Submodule.add_mem _ hs1 ht1, by rw [map_add (f := _), hs2, ht2, neg_add]⟩
   neg_mem' := by
     rintro s ⟨hs1, hs2⟩
     exact ⟨Submodule.neg_mem _ hs1, by rw [map_neg, hs2]⟩
@@ -74,8 +78,8 @@ theorem mem_cl_im (a : Fin D.R.rS) (z : InfinitePlace X.B.I.F → ℝ) :
 
 end Onto
 
-open Onto in
 
+open Onto in
 theorem fibOnto_holds : FibOnto := by
   intro D X u x hx
   have hA : ∀ p : LsNc5.LtPair D.R.rS, ∃ t ∈ aaD D p.1.1 * (aaD D p.1.2)⁻¹,

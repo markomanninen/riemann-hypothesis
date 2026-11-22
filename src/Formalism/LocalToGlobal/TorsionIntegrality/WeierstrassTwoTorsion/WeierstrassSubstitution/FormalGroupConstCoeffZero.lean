@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementI
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FlowTwoTorsionWp
-import Formalism.EllipticTorsion.FormalGroupPointsNoTorsion
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementI
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.FlowTwoTorsionWp
+public import Formalism.EllipticTorsion.FormalGroupPointsNoTorsion
+
+@[expose] public section
 
 open PowerSeries
 
@@ -19,6 +23,10 @@ local notation "cc" => MvPowerSeries.constantCoeff
 section Tools
 
 variable {σ : Type*} {A : Type u} {B : Type v} [CommRing A] [CommRing B]
+
+private theorem fgl_constantCoeff (W : WeierstrassCurve A) : cc (fgl W) = 0 := by
+  obtain ⟨_, _, _, _, h, _, _⟩ := fglChord A W
+  exact h
 
 theorem pair_vector_map (φ : A →+* B) (a b : MvPowerSeries σ A) :
     (fun i => MvPowerSeries.map φ ((![a, b] : Fin 2 → MvPowerSeries σ A) i))
@@ -40,7 +48,7 @@ theorem map_formal_group_subst (φ : A →+* B) (W : WeierstrassCurve A) {a b : 
 theorem formal_group_constCoeff_zero (W : WeierstrassCurve A) {a b : MvPowerSeries σ A} (ha : cc a = 0) (hb : cc b = 0) :
     cc (MvPowerSeries.subst (![a, b] : Fin 2 → MvPowerSeries σ A) (fgl W)) = 0 :=
   MvPowerSeries.constantCoeff_subst_eq_zero (hasSubst2 ha hb) (Fin.forall_fin_two.2 ⟨ha, hb⟩)
-    (Fgl1.fgl_cc W)
+    (fgl_constantCoeff W)
 
 theorem iSer_cc (W : WeierstrassCurve A) : constantCoeff (iSer W) = 0 := by
   simp [iSer]
@@ -127,7 +135,7 @@ theorem map_diff2 (φ : A →+* B) : MvPowerSeries.map φ (diff2 W) = diff2 (W.m
 
 theorem two_univ : ∃ c : MvPowerSeries (Fin 2) Z, cc c = -1 ∧ lhs2 W₀ = c * fgl W₀ * diff2 W₀ := by
   obtain ⟨c, hc, hc0, h⟩ := Formalism.ELL.cubeTwo K₀ WK (wSer WK) (fgl WK) (wSer_fixed WK)
-    (Fgl1.fgl_cc WK) (fglSum K₀ WK)
+    (fgl_constantCoeff WK) (fglSum K₀ WK)
   obtain ⟨c₀, rfl⟩ := lift c hc
   refine ⟨c₀, lift_cc hc0, mv_map_injective ι ι_injective ?_⟩
   rw [inv_wU_subst WK (MvPowerSeries.constantCoeff_X 0),
@@ -174,7 +182,7 @@ theorem three_univ : ∃ e : MvPowerSeries (Fin 3) Z, cc e = -1 ∧
     lhs3 W₀ = e * sum3 W₀ * (MvPowerSeries.X 0 - MvPowerSeries.X 1)
       * (MvPowerSeries.X 0 - MvPowerSeries.X 2) * (MvPowerSeries.X 1 - MvPowerSeries.X 2) := by
   obtain ⟨e, he, he0, h⟩ := Formalism.ELL.cubeThree K₀ WK (wSer WK) (fgl WK) (wSer_fixed WK)
-    (Fgl1.fgl_cc WK) (fglSum K₀ WK)
+    (fgl_constantCoeff WK) (fglSum K₀ WK)
   obtain ⟨e₀, rfl⟩ := lift e he
   refine ⟨e₀, lift_cc he0, mv_map_injective ι ι_injective ?_⟩
   simp only [inv_wU_subst WK (MvPowerSeries.constantCoeff_X _)] at h

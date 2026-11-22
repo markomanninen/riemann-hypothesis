@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.TraceInnerPosOfOrthonormalPair
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.ExistsSmallMemFractionalIdeal
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.ProdNormEmbeddingsEqAbsNorm
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.PlaneMassBoundOfFacts
-import Formalism.SharpRestriction.CuspSpanNormBounds.LatticeIndexAndWeightTheory
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.TraceInnerPosOfOrthonormalPair
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.ExistsSmallMemFractionalIdeal
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.ProdNormEmbeddingsEqAbsNorm
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.PlaneMassBoundOfFacts
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LatticeIndexAndWeightTheory
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,51 @@ namespace Formalism.MainNotions.BridgeLemma₂
 open NumberField Module Formalism.HermitianLatticesTheory
 
 theorem second_orthogonal_vector_holds (K : Type) [Field K] [NumberField K] [StarRing K] (hK : IsCMUnram K) : SecondOrthogonalVector K :=
-  fun V _ _ _ _ h L _ hL M hlat hint huni x hx hx0 => exists_orthogonal_second_vector K hK V h L hL M hlat hint huni x hx hx0
+  by
+    classical
+    intro V _ _ _ _ h L hs hL M hlat hint huni x hx hx0
+    obtain ⟨e, he, hspan, hLe, ho⟩ := hL
+    let b : Basis (Fin 2) K V := Basis.mk he (by rw [hspan])
+    have hfull : Submodule.IsFullLattice K M := by
+      refine { toIsLattice := hlat, span_eq_top := ?_ }
+      apply Submodule.dualAnnihilator_eq_bot_iff.mp
+      apply le_antisymm ?_ bot_le
+      intro f hf
+      let v : V := ∑ i : Fin 2, star (f (e i)) • e i
+      have hpair : h v = f := by
+        apply b.ext
+        intro i
+        fin_cases i <;> simp [v, LinearMap.map_smulₛₗ, starRingEnd_apply, ho, b, Basis.coe_mk]
+      have hline (r : K) : r • v ∈ M := by
+        rw [← huni]
+        simp only [dual, Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap]
+        intro y hy
+        have hy0 : h v y = 0 := by
+          rw [hpair]
+          exact (Submodule.mem_dualAnnihilator f).mp hf y (Submodule.subset_span hy)
+        have hz : h y v = 0 := by simpa [hy0] using (hs.eq v y).symm
+        simp [hz]
+      have hv : v = 0 := by
+        by_contra hv
+        obtain ⟨i, hi⟩ : ∃ i, b.repr v i ≠ 0 := by
+          by_contra hn
+          push_neg at hn
+          apply hv
+          apply b.repr.injective
+          ext i
+          simp [hn i]
+        let c := ((Finsupp.lapply i).comp b.repr.toLinearMap).restrictScalars (𝓞 K)
+        have htop : M.map c = ⊤ := by
+          rw [eq_top_iff]
+          intro a _
+          refine ⟨(a / b.repr v i) • v, hline _, ?_⟩
+          simp [c, div_mul_cancel₀ _ hi]
+        have : Module.Finite (𝓞 K) K := Module.finite_def.mpr (htop ▸ hlat.fg.map c)
+        exact RingOfIntegers.not_isField K
+          (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 K) K) (Field.toIsField K))
+      rw [Submodule.mem_bot]
+      simpa [hv] using hpair.symm
+    exact exists_orthogonal_second_vector K hK V h L ⟨e, he, hspan, hLe, ho⟩ M hfull hint huni x hx hx0
 
 theorem plane_class_count_holds (K : Type) [Field K] [NumberField K] [StarRing K] (hK : IsCMUnram K) : PlaneClassCount K :=
   fun V _ _ _ _ h L hs hL s hreps B₁ B₂ hint hshort => class_count_plane_bound K hK V h L hs hL s hreps B₁ B₂ hint hshort
@@ -44,34 +92,9 @@ theorem plane_mass_bound_parameters (D : D7) (large₂ : SizeData₂ D) (u u' : 
     (hC : 55 * max 1 (1 / Cl) ≤ C ^ 2) : UnitaryVolumeMass.stMass2 D large₂ u u' C' Cl Cg cb Cu cT CT C0 A C :=
   fun hH => plane_mass_le_height_pow D large₂ C' Cl Cg cb Cu cT CT C hC hH.1.1
 
-theorem plane_mass_bound_K2 (D : D7) (large₂ : SizeData₂ D) (C' Cl Cg cb Cu cT CT C0 C : ℝ)
-    (hC : 55 * max 1 (1 / Cl) ≤ C ^ 2) : UnitaryVolumeMass.stMass2K D large₂ C' Cl Cg cb Cu cT CT C0 C :=
-  fun hH => plane_mass_le_height_pow D large₂ C' Cl Cg cb Cu cT CT C hC hH.1.1
-
-theorem plane_mass_constant_le_sq (Cl : ℝ) : 55 * max 1 (1 / Cl) ≤ (55 * max 1 (1 / Cl)) ^ 2 := by
-  have h : (1 : ℝ) ≤ max 1 (1 / Cl) := le_max_left _ _
-  nlinarith
-
 section Family
 
 variable {eps : ℝ} (Fm : FamP eps)
-
-theorem family_plane_mass_admissible (Cg cb Cu cT CT C0 A : ℝ) : AuxiliaryNormPrimes.FamilyRankTwoMassBound Fm Cg cb Cu cT CT C0 A :=
-  ⟨55 * max 1 (1 / sCl Fm), 0, fun _ _ _ u u' => plane_mass_bound_parameters _ _ u u' _ _ _ _ _ _ _ _ _ _ (plane_mass_constant_le_sq _)⟩
-
-theorem family_plane_mass_admissible_alt (Cg cb Cu cT CT C0 A : ℝ) : VanishingOnXAndXPlus.FamilyRankTwoMassEstimate Fm Cg cb Cu cT CT C0 A :=
-  ⟨55 * max 1 (1 / sCl Fm), 0, fun _ _ _ u u' => plane_mass_bound_parameters _ _ u u' _ _ _ _ _ _ _ _ _ _ (plane_mass_constant_le_sq _)⟩
-
-theorem family_plane_mass_admissible_k2 : LatticeIndexAndWeightTheory.FamilyRankTwoMassHyp Fm := fun _ _ _ _ _ _ =>
-  ⟨55 * max 1 (1 / sCl Fm), 0, fun _ _ _ => plane_mass_bound_K2 _ _ _ _ _ _ _ _ _ _ _ (plane_mass_constant_le_sq _)⟩
-
-theorem family_genus_bound_of_mass_ratio (Cg cb Cu cT CT C0 A : ℝ) (h1 : VanishingOnXAndXPlusMass.familyUnitInput Fm) (hCl : 1 ≤ sCl Fm) :
-    VanishingOnXAndXPlusMass.Conclusion1Family Fm Cg cb Cu cT CT C0 A :=
-  BridgeLemma.family_first_bound_of_mass_ratio Fm Cg cb Cu cT CT C0 A h1 (family_plane_mass_admissible Fm Cg cb Cu cT CT C0 A) hCl
-
-theorem family_genus_bound_of_siegel_ratio (Cg cb Cu cT CT C0 A : ℝ) (hS : Formalism.HermitianLatticesTheory.SiegelMassRatio) (hCl : 1 ≤ sCl Fm) :
-    VanishingOnXAndXPlusMass.Conclusion1Family Fm Cg cb Cu cT CT C0 A :=
-  family_genus_bound_of_mass_ratio Fm Cg cb Cu cT CT C0 A (BridgeLemma.family_lattice_count_first_of_siegel Fm hS) hCl
 
 end Family
 

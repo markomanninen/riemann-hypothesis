@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField in
 theorem UpperTheory.Reformulated.B.FiniteAndNcardBound.finite_and_ncard_le :

@@ -1,14 +1,18 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.NilCard
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.CardTors
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.NilCard
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.CardTors
+
+@[expose] public section
 
 open UpperTheory.V.FW
 
 private theorem UpperTheory.V.FW.card_range_inf_torsion_le_index_pow (l : ℕ) [Fact l.Prime] (C : Type) [CommGroup C] [Finite C]
     (φ ψ : C →* C) (N : ℕ) (hc : ∀ x, φ (ψ x) = ψ (φ x))
     (hN : ∀ x, ∃ y, (φ y) ^ l = φ (ψ^[N] x)) :
-    Nat.card (φ.range ⊓ torK C l : Subgroup C) ≤ (powR C l ⊔ ψ.range).index ^ N := by
-  set U : Subgroup C := (powR φ.range l).comap φ.rangeRestrict with hUdef
+    Nat.card (φ.range ⊓ torK (C := C) l : Subgroup C) ≤ (powR (C := C) l ⊔ ψ.range).index ^ N := by
+  set U : Subgroup C := (powR (C := φ.range) l).comap φ.rangeRestrict with hUdef
   have hU : ∀ x, x ∈ U ↔ ∃ y, (φ y) ^ l = φ x := by
     intro x
     constructor
@@ -16,7 +20,7 @@ private theorem UpperTheory.V.FW.card_range_inf_torsion_le_index_pow (l : ℕ) [
       exact ⟨y, congrArg Subtype.val hy⟩
     · rintro ⟨y, hy⟩
       exact ⟨⟨φ y, y, rfl⟩, Subtype.ext hy⟩
-  have h1 : Nat.card (φ.range ⊓ torK C l : Subgroup C) = U.index := by
+  have h1 : Nat.card (φ.range ⊓ torK (C := C) l : Subgroup C) = U.index := by
     rw [hUdef, Subgroup.index_comap_of_surjective _ φ.rangeRestrict_surjective,
       (cardTors φ.range).1 l]
     refine Nat.card_congr ⟨fun x => ⟨⟨x.1, x.2.1⟩, Subtype.ext x.2.2⟩,
@@ -46,7 +50,7 @@ private theorem UpperTheory.V.FW.card_range_inf_torsion_le_index_pow (l : ℕ) [
     exact h
   have h2 := nilCard _ T N hT0
   have h3 : (AddMonoidHom.range T).index = S.range.index := rfl
-  have h4 : S.range.index ∣ (powR C l ⊔ ψ.range).index := by
+  have h4 : S.range.index ∣ (powR (C := C) l ⊔ ψ.range).index := by
     rw [← Subgroup.index_comap_of_surjective _ (QuotientGroup.mk'_surjective U)]
     refine Subgroup.index_dvd_of_le (sup_le ?_ ?_)
     · rintro _ ⟨x, rfl⟩
@@ -62,7 +66,7 @@ private theorem UpperTheory.V.FW.card_range_inf_torsion_le_index_pow (l : ℕ) [
     exact Nat.pow_le_pow_left (Nat.le_of_dvd (Nat.pos_of_ne_zero Subgroup.index_ne_zero_of_finite) h4) N
 
 theorem UpperTheory.V.FW.core :
-    ∀ (l : ℕ) [Fact l.Prime] (G C : Type) [CommGroup G] [CommGroup C] [Finite C] (ρ : Representation ℤ G (Additive C)) (J γ : G) (Jc γc : C →* C) (θ : MonoidAlgebra ℤ G) (N : ℕ), J * J = 1 → (∀ x, ρ J (Additive.ofMul x) = Additive.ofMul (Jc x)) → (∀ x, ρ γ (Additive.ofMul x) = Additive.ofMul (γc x)) → ρ.asAlgebraHom (θ * (1 - MonoidAlgebra.of ℤ G J)) = 0 → (MonoidAlgebra.of ℤ G γ - 1) ^ N ∈ Ideal.span {θ, 1 + MonoidAlgebra.of ℤ G J, (l : MonoidAlgebra ℤ G)} → Nat.card (difR Jc ⊓ torK C l : Subgroup C) ≤ (powR C l ⊔ difR γc).index ^ N := by
+    ∀ (l : ℕ) [Fact l.Prime] (G C : Type) [CommGroup G] [CommGroup C] [Finite C] (ρ : Representation ℤ G (Additive C)) (J γ : G) (Jc γc : C →* C) (θ : MonoidAlgebra ℤ G) (N : ℕ), J * J = 1 → (∀ x, ρ J (Additive.ofMul x) = Additive.ofMul (Jc x)) → (∀ x, ρ γ (Additive.ofMul x) = Additive.ofMul (γc x)) → ρ.asAlgebraHom (θ * (1 - MonoidAlgebra.of ℤ G J)) = 0 → (MonoidAlgebra.of ℤ G γ - 1) ^ N ∈ Ideal.span {θ, 1 + MonoidAlgebra.of ℤ G J, (l : MonoidAlgebra ℤ G)} → Nat.card (difR Jc ⊓ torK (C := C) l : Subgroup C) ≤ (powR (C := C) l ⊔ difR γc).index ^ N := by
   intro l _ G C _ _ _ ρ J γ Jc γc θ N hJJ hJ hγ hθ hmem
   have key : ∀ (g : G) (gc : C →* C), (∀ x, ρ g (Additive.ofMul x) = Additive.ofMul (gc x)) →
       ∀ x, ρ.asAlgebraHom (1 - MonoidAlgebra.of ℤ G g) (Additive.ofMul x) =
@@ -82,10 +86,10 @@ theorem UpperTheory.V.FW.core :
     | zero => intro x; simp
     | succ n ih =>
       intro x
-      rw [pow_succ, map_mul, Module.End.mul_apply, hψ, ih, Function.iterate_succ_apply]
+      rw [pow_succ, map_mul, mul_apply_eq_comp, hψ, ih, Function.iterate_succ_apply]
   refine card_range_inf_torsion_le_index_pow l C φ ψ N (fun x => ?_) (fun x => ?_)
   · apply Additive.ofMul.injective
-    rw [← hφ, ← hψ, ← hψ, ← hφ, ← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul,
+    rw [← hφ, ← hψ, ← hψ, ← hφ, ← mul_apply_eq_comp, ← mul_apply_eq_comp, ← map_mul,
       ← map_mul, mul_comm]
   · have hmem' : b ^ N ∈ Ideal.span {θ, 1 + MonoidAlgebra.of ℤ G J, (l : MonoidAlgebra ℤ G)} := by
       have : b = -(MonoidAlgebra.of ℤ G γ - 1) := by rw [hb, neg_sub]
@@ -100,6 +104,6 @@ theorem UpperTheory.V.FW.core :
       linear_combination (-v) * hJ2
     refine ⟨Additive.toMul (ρ.asAlgebraHom z (Additive.ofMul x)), ?_⟩
     apply Additive.ofMul.injective
-    rw [ofMul_pow, ← hφ, ← hφ, ← hit, ofMul_toMul, ← Module.End.mul_apply, ← Module.End.mul_apply,
+    rw [ofMul_pow, ← hφ, ← hφ, ← hit, ofMul_toMul, ← mul_apply_eq_comp, ← mul_apply_eq_comp,
       ← map_mul, ← map_mul, h3, map_add, map_mul _ u, hθ, mul_zero, zero_add, map_nsmul,
       LinearMap.smul_apply]

@@ -1,6 +1,10 @@
-import Formalism.LatticeSlopes.CovolAntiSameRank
-import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
-import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqGram
+module
+
+public import Formalism.LatticeSlopes.CovolAntiSameRank
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqGram
+
+@[expose] public section
 
 open Module Submodule MeasureTheory
 
@@ -68,7 +72,7 @@ theorem exists_short_vector_of_isZLattice (hC : CovolEqCovolume.{u}) {W : Type u
     simpa [map_neg] using hx i
   have hconv : Convex ℝ S := by
     intro x hx y hy a c ha hc hac i
-    simp only [map_add, map_smul, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]
+    simp only [map_add (f := _), map_smul, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]
     calc |a * o.repr x i + c * o.repr y i| ≤ |a * o.repr x i| + |c * o.repr y i| := abs_add_le _ _
       _ = a * |o.repr x i| + c * |o.repr y i| := by
           rw [abs_mul, abs_mul, abs_of_nonneg ha, abs_of_nonneg hc]

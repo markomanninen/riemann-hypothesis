@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThickTransComp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.AbelianSchemeQuotients.QSurjective
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThickTransComp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.AbelianSchemeQuotients.QSurjective
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -83,16 +87,6 @@ abbrev pG (g : GtCoord I D e G) : (Over.map (thick R I e)).obj (thickObj R I e G
   (Over.map (thick R I e)).map g.q ≫ D.prBe I e
 
 end GtCoord
-
-def GtCoordIsGt (D : DegPre R) (e : ℕ) (G : Over (Spec (CommRingCat.of R))) [GrpObj G]
-    [IsCommMonObj G] : Prop :=
-  Nonempty (GtCoord I D e G) ↔
-    ∃ (E : SplitExt (Spec (CommRingCat.of (R ⧸ I ^ (e + 1)))))
-      (β : E.B ≅ thickObj R I e D.P.A) (xe : D.X ≃+ E.X), IsMonHom β.hom ∧
-      (∀ χ : D.X, ∃ w : LB.Iso (E.O (xe χ)).L (LB.LinComb D.P.L
-          (fun k => ((Over.map (thick R I e)).map β.hom ≫ D.prBe I e).left ≫
-            D.Oφ (𝟙 _) χ k) Oε), w.IsGen) ∧
-      E.IsGt (thickObj R I e G)
 
 end Unif
 

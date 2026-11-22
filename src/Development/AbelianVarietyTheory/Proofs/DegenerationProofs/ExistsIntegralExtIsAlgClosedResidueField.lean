@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.ClosedResidueExt
 
@@ -9,53 +13,6 @@ variable {W Ω : Type} [CommRing W] [Field Ω] [Algebra W Ω]
 def Unram (π : W) (R : Subalgebra W Ω) : Prop :=
   (∀ x ∈ R, IsIntegral W x) ∧ (algebraMap W Ω π)⁻¹ ∉ R ∧
     ∀ x ∈ R, x ≠ 0 → ∃ (n : ℕ) (u : Ω), u ∈ R ∧ u⁻¹ ∈ R ∧ x = algebraMap W Ω π ^ n * u
-
-theorem Unram.isUnit {R : Subalgebra W Ω} {u : Ω} (hu : u ∈ R) (hu' : u⁻¹ ∈ R) (h0 : u ≠ 0) :
-    IsUnit (⟨u, hu⟩ : R) :=
-  IsUnit.of_mul_eq_one ⟨u⁻¹, hu'⟩ (Subtype.ext (mul_inv_cancel₀ h0))
-
-theorem Unram.factor {π : W} {R : Subalgebra W Ω} (h : Unram π R) (x : R) (hx : x ≠ 0) :
-    ∃ (n : ℕ) (u : Rˣ), algebraMap W R π ^ n * u = x := by
-  have hx' : (x : Ω) ≠ 0 := fun e => hx (Subtype.ext e)
-  obtain ⟨n, u, hu, hu', e⟩ := h.2.2 x x.2 hx'
-  have h0 : u ≠ 0 := by
-    rintro rfl
-    exact hx' (by simpa using e)
-  refine ⟨n, (Unram.isUnit hu hu' h0).unit, Subtype.ext ?_⟩
-  simp [e]
-
-theorem Unram.irreducible {π : W} {R : Subalgebra W Ω} (h : Unram π R)
-    (h0 : algebraMap W Ω π ≠ 0) : Irreducible (algebraMap W R π) := by
-  have h0' : algebraMap W R π ≠ 0 := fun e => h0 (congrArg Subtype.val e)
-  have hnu : ¬ IsUnit (algebraMap W R π) := by
-    intro hu
-    obtain ⟨v, hv⟩ := hu.exists_right_inv
-    have hv' : algebraMap W Ω π * (v : Ω) = 1 := congrArg Subtype.val hv
-    exact h.2.1 (eq_inv_of_mul_eq_one_right hv' ▸ v.2)
-  refine ⟨hnu, fun a b hab => ?_⟩
-  have ha : a ≠ 0 := by
-    rintro rfl
-    exact h0' (by simpa using hab)
-  have hb : b ≠ 0 := by
-    rintro rfl
-    exact h0' (by simpa using hab)
-  obtain ⟨n, u, rfl⟩ := h.factor a ha
-  obtain ⟨m, v, rfl⟩ := h.factor b hb
-  rcases n with _ | n
-  · left; simp
-  rcases m with _ | m
-  · right; simp
-  exfalso
-  refine hnu (IsUnit.of_mul_eq_one (algebraMap W R π ^ (n + m) * u * v) ?_)
-  refine mul_left_cancel₀ h0' ?_
-  rw [mul_one]
-  conv_rhs => rw [hab]
-  ring
-
-theorem Unram.dvr {π : W} {R : Subalgebra W Ω} (h : Unram π R)
-    (h0 : algebraMap W Ω π ≠ 0) : IsDiscreteValuationRing R :=
-  IsDiscreteValuationRing.ofHasUnitMulPowIrreducibleFactorization
-    ⟨_, h.irreducible h0, fun {x} hx => h.factor x hx⟩
 
 open Polynomial IsLocalRing in
 variable {W Ω : Type} [CommRing W] [Field Ω] [Algebra W Ω] in
@@ -149,7 +106,8 @@ private lemma isUnit_one_add_algebraMap_mul_of_not_isUnit [IsLocalRing W] {π : 
     (by rwa [Ne, Ideal.span_singleton_eq_top])
   haveI : Algebra.IsIntegral W N :=
     ⟨fun x => (isIntegral_algHom_iff N.val Subtype.val_injective).1 (hN x x.2)⟩
-  have hmax : (m.comap (algebraMap W N)).IsMaximal := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal m
+  have hmax : (m.comap (algebraMap W N)).IsMaximal :=
+    Ideal.isMaximal_under_of_isIntegral_of_isMaximal m
   have hc : m.comap (algebraMap W N) = IsLocalRing.maximalIdeal W := IsLocalRing.eq_maximalIdeal hmax
   have hπm : algebraMap W N π ∈ m := by
     rw [← Ideal.mem_comap, hc]; exact hπ
@@ -219,14 +177,14 @@ private lemma eq_pow_mul_unit_of_mem_adjoin [IsLocalRing W] {π : W}
   obtain ⟨A, rfl⟩ := Polynomial.map_surjective φ hφ a
   obtain ⟨B, rfl⟩ := Polynomial.map_surjective φ hφ b
   have hker2 : A * f + B * g1 - 1 ∈ RingHom.ker (mapRingHom φ) := by
-    rw [RingHom.mem_ker, coe_mapRingHom, Polynomial.map_sub, Polynomial.map_add, Polynomial.map_mul,
+    rw [RingHom.mem_ker, coe_mapRingHom, Polynomial.map_sub, Polynomial.map_add (f := _), Polynomial.map_mul,
       Polynomial.map_mul, Polynomial.map_one, hab, sub_self]
   rw [Polynomial.ker_mapRingHom, hker, Ideal.map_span, Set.image_singleton,
     Ideal.mem_span_singleton] at hker2
   obtain ⟨H, hH⟩ := hker2
   have hev : aeval α B * aeval α g1 = 1 + algebraMap W Ω π * aeval α H := by
     have h := congrArg (aeval α) hH
-    simp only [map_sub, map_add, map_mul, map_one, hα, mul_zero, zero_add, aeval_C] at h
+    simp only [map_sub, map_add (f := _), map_mul, map_one, hα, mul_zero, zero_add, aeval_C] at h
     rw [IsScalarTower.algebraMap_apply W M Ω]
     linear_combination h
   obtain ⟨v, hvN, hv⟩ : ∃ v ∈ N, v * (1 + algebraMap W Ω π * aeval α H) = 1 := by
@@ -242,9 +200,9 @@ private lemma eq_pow_mul_unit_of_mem_adjoin [IsLocalRing W] {π : W}
     exact N.mul_mem hvN (memN B)
   · rw [← hg, hgeq, map_mul, map_pow, aeval_C, IsScalarTower.algebraMap_apply W M Ω]
 
+
 open Polynomial IsLocalRing in
 variable {W Ω : Type} [CommRing W] [Field Ω] [Algebra W Ω] in
-
 theorem _root_.GlobalTheory.ClosedResidueExt.exists_unramified_ext (W : Type) [CommRing W] [IsDomain W]
     [IsDiscreteValuationRing W] {π : W} (hπ : Irreducible π) :
     ∃ (R : Type) (_ : CommRing R) (_ : IsDomain R) (_ : IsDiscreteValuationRing R)
@@ -327,9 +285,9 @@ theorem _root_.GlobalTheory.ClosedResidueExt.exists_unramified_ext (W : Type) [C
     exact Subtype.ext h
   rw [← hfp, Polynomial.eval_map, Polynomial.eval₂_hom, hev, map_zero]
 
+
 open Polynomial IsLocalRing in
 variable {W Ω : Type} [CommRing W] [Field Ω] [Algebra W Ω] in
-
 theorem _root_.GlobalTheory.ClosedResidueExt.exists_integral_ext_isAlgClosed_residueField : ∀ (W : Type) [CommRing W] [IsDomain W]
     [IsDiscreteValuationRing W] [IsAdicComplete (IsLocalRing.maximalIdeal W) W] [CharZero W],
     ∃ (R : Type) (_ : CommRing R) (_ : IsDomain R) (_ : IsDiscreteValuationRing R)

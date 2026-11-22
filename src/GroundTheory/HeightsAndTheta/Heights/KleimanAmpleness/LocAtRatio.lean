@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsMoreTail
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.MConeMapOverBaseRename
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsMoreTail
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.MConeMapOverBaseRename
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization

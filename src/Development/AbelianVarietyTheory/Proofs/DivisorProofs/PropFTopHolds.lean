@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LaurentMapIsIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LaurentMapIsIntegral
+
+@[expose] public section
+
 open GlobalTheory.EtC.GmStep
 
 namespace GlobalTheory.EtC.GmStep

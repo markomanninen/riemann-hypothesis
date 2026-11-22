@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.ColValMonomial
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExpansionBijectiveOverFields
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.TranslatePullbackEigensection
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ThreePointSeriesExponentialOfDefect
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.EigenEquationOfForallGeometricPoint
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.SecLinIffComb
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsGenMoveBack
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.ColValMonomial
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExpansionBijectiveOverFields
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.TranslatePullbackEigensection
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ThreePointSeriesExponentialOfDefect
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.EigenEquationOfForallGeometricPoint
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.SecLinIffComb
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsGenMoveBack
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.DVR ReciprocityTheory.ChartRestriction.G.Geo.Tor

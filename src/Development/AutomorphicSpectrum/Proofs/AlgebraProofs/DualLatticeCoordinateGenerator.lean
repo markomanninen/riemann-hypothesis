@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Num.HhGraded
 
@@ -25,7 +29,8 @@ theorem map_eq_sum {Ω : Type} [Field Ω] {n : ℕ} (ρ : (Fin n → Ω) →ₗ[
   have h : l = ∑ j, l j • (Pi.single j 1 : Fin n → Ω) := by
     ext k
     simp [Finset.sum_apply, Pi.single_apply]
-  conv_lhs => rw [h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [h, map_sum]
   simp only [map_smul]
 
 theorem main : ∀ {o Ω : Type} [CommRing o] [Field Ω] [Algebra o Ω] (R : Subalgebra o Ω) (n : ℕ)

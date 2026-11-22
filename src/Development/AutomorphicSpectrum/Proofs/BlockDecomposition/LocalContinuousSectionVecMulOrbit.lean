@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix
 open scoped Topology
@@ -42,8 +46,9 @@ theorem vecMul_shear (j : Fin n) (ζ ξ : Fin n → k) (h0 : ζ j ≠ 0) :
 theorem shear_self (j : Fin n) (c : k) (ζ : Fin n → k) : shear j c ζ ζ = 1 := by
   simp [shear]
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 noncomputable def orbitSection (j : Fin n) (ζ ξ : Fin n → k) : GL (Fin n) k :=
   if h : ζ j ≠ 0 ∧ ξ j ≠ 0 then
     ⟨shear j (ζ j)⁻¹ ζ ξ, shear j (-(ξ j)⁻¹) ζ ξ, shear_mul_shear j ζ ξ h.1 h.2,
@@ -52,11 +57,11 @@ noncomputable def orbitSection (j : Fin n) (ζ ξ : Fin n → k) : GL (Fin n) k 
 
 theorem coe_orbitSection (j : Fin n) (ζ ξ : Fin n → k) (h0 : ζ j ≠ 0) (h1 : ξ j ≠ 0) :
     (orbitSection j ζ ξ : Matrix (Fin n) (Fin n) k) = shear j (ζ j)⁻¹ ζ ξ := by
-  rw [orbitSection, dif_pos ⟨h0, h1⟩]
+  rw [orbitSection, dite_eq_left ⟨h0, h1⟩]
 
 theorem coe_orbitSection_inv (j : Fin n) (ζ ξ : Fin n → k) (h0 : ζ j ≠ 0) (h1 : ξ j ≠ 0) :
     ((orbitSection j ζ ξ)⁻¹ : (Matrix (Fin n) (Fin n) k)ˣ).val = shear j (-(ξ j)⁻¹) ζ ξ := by
-  rw [orbitSection, dif_pos ⟨h0, h1⟩]
+  rw [orbitSection, dite_eq_left ⟨h0, h1⟩]
   rfl
 
 end Shear

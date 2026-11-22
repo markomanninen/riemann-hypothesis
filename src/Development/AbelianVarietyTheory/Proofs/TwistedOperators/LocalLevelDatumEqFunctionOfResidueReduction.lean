@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsRedMap
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsRedMap
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting GlobalTheory.PlaceTensor GlobalTheory.StepVec
 open scoped TensorProduct ComplexOrder
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -23,8 +28,8 @@ theorem redRel_of_isRedMap {v : FinPl D} {φ : SplitProj D v} {PP : Formalism.L2
     (x : v.adicCompletionIntegers D.host.F) : RedRel φ PP (x : Fv D.host.F v) (r x) :=
   (hr.2.2.1 _ _).2 ⟨x.2, rfl⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem locDatum_eq_viaRed : ∀ (D : D7) (v : FinPl D) (φ : SplitProj D v) (PP : Formalism.L2.DIV.Pl D.host.E)
     (r : v.adicCompletionIntegers D.host.F →+* Formalism.L2.DIV.kP PP), IsRedMap φ PP r →
     ∀ (a b t : ℕ) (ht : a + t = b) (L : Formalism.L2.DIV.LevDat D.host.E ℂ a)
@@ -40,9 +45,9 @@ theorem locDatum_eq_viaRed : ∀ (D : D7) (v : FinPl D) (φ : SplitProj D v) (PP
   unfold viaRed
   by_cases hint : ∀ i j, Y i j ∈ v.adicCompletionIntegers D.host.F
   swap
-  · rw [dif_neg hint]
+  · rw [dite_eq_right hint]
     unfold localNewformFunction
-    rw [dif_neg]
+    rw [dite_eq_right]
     rintro ⟨⟨k, hk⟩, hbot⟩
     apply hint
     intro i j
@@ -56,14 +61,14 @@ theorem locDatum_eq_viaRed : ∀ (D : D7) (v : FinPl D) (φ : SplitProj D v) (PP
       rw [hinr] at h1
       have : (⟨a + (i.val - a), by omega⟩ : Fin b) = i := Fin.ext (by simp; omega)
       rwa [this] at h1
-  rw [dif_pos hint]
+  rw [dite_eq_left hint]
 
   set y : Matrix (Fin b) (Fin a) (Formalism.L2.DIV.kP PP) := Matrix.of fun i j => r ⟨Y i j, hint i j⟩ with hy
   let K : Matrix (Fin a) (Fin a) (v.adicCompletionIntegers D.host.F) := fun i j => ⟨Y ⟨i.val, by omega⟩ j, hint _ _⟩
   have hKr : K.map r = topL a y := by
     ext i j
     simp only [topL, Matrix.map_apply]
-    rw [dif_pos ⟨by omega, j.2⟩]
+    rw [dite_eq_left ⟨by omega, j.2⟩]
     rfl
 
   have hKk : ∀ k : GL (Fin a) (v.adicCompletionIntegers D.host.F),

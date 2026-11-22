@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPrismCoverReceivingBreuilKisinStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinHomEisensteinSpanAndNonZeroDivisorStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrismCoverInjectiveAndDescentStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteProjectiveModuleElementDescentEqualizerStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InjectiveAndRangeOfPrismCoverStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPrismCoverReceivingBreuilKisinStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinHomEisensteinSpanAndNonZeroDivisorStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrismCoverInjectiveAndDescentStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteProjectiveModuleElementDescentEqualizerStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InjectiveAndRangeOfPrismCoverStatement
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
 
@@ -49,14 +54,14 @@ theorem semiBC_cancel {C P : Type} [CommRing C] [AddCommGroup P] [Module C P] {�
   intro Q _ _ m
   obtain ⟨W, hW, hU⟩ := hw Q
     { toFun := fun x => m (u x)
-      map_add' := fun x y => by rw [map_add, map_add]
+      map_add' := fun x y => by rw [map_add (f := _), map_add (f := _)]
       map_smul' := fun a x => by rw [u.map_smulₛₗ, m.map_smulₛₗ, hρ] }
   refine ⟨W, fun y => ?_, fun W' hW' => hU W' fun x => by rw [← hκ]; exact hW' (u x)⟩
   refine induction_bc h (fun y => W (κ y) = m y) (fun x => ?_) (fun y z hy hz => ?_) (fun b y hy => ?_) y
   · show W (κ (u x)) = m (u x)
     rw [hκ]; exact hW x
   · show W (κ (y + z)) = m (y + z)
-    rw [map_add, map_add, map_add, hy, hz]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), hy, hz]
   · show W (κ (b • y)) = m (b • y)
     rw [κ.map_smulₛₗ, W.map_smul, m.map_smulₛₗ, hy]
 
@@ -81,7 +86,8 @@ theorem semiBC_frob {Q : Type} [CommRing Q] {d : ℕ} {α β : B →+* Q} (σ : 
   let e : Fin d → Q' := fun i => (W₁ (Pi.single i 1) : Q')
   have he : ∀ z : Fin d → Q, (W₁ z : Q') = ∑ i, σ (z i) • e i := fun z => by
     conv_lhs => rw [pi_eq_sum_univ' z]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun i _ => W₁.map_smul (z i) (Pi.single i 1)
   refine ⟨Fintype.linearCombination Q e, fun x => ?_, fun W' hW' => ?_⟩
   · rw [Fintype.linearCombination_apply]
@@ -94,7 +100,7 @@ theorem semiBC_frob {Q : Type} [CommRing Q] {d : ℕ} {α β : B →+* Q} (σ : 
       { toFun := fun z => (W' (fun i => σ (z i)) : Tw σ Q')
         map_add' := fun z z' => by
           show W' (fun i => σ ((z + z') i)) = W' (fun i => σ (z i)) + W' (fun i => σ (z' i))
-          rw [← map_add]; congr 1; funext i; simp
+          rw [← map_add (f := _)]; congr 1; funext i; simp
         map_smul' := fun c z => by
           show W' (fun i => σ ((c • z) i)) = σ c • W' (fun i => σ (z i))
           rw [← map_smul]; congr 1; funext i; simp }
@@ -299,8 +305,8 @@ theorem coord_relation {l : ℕ} [Fact l.Prime] {K : FinExt l} {bk : BK K} {d : 
         ((congrArg (fun v => c ^ S.a • (S.A.map (BK.hf f)) *ᵥ v) (κ.map_smulₛₗ b y)).trans
           ((congrArg (c ^ S.a • ·) (Matrix.mulVec_smul _ _ _)).trans (smul_comm _ _ _))).symm)
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem linFrob_inv_pow : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K) (d : ℕ) (S : Strat bk d)
     (B : Obj l ↥(OL K)) (N : Type) [AddCommGroup N] [Module B.A N] (V : Eval S B N) (t : B.A), t ∈ B.I →
     ∀ Ψ : N →ₛₗ[B.D.φ] N, IsPsi V t Ψ → ∀ (P : Type) [AddCommGroup P] [Module B.A P] (u : N →ₛₗ[B.D.φ] P),

@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.EtaleBaseChangeFractionFieldIndEtaleOverPolynomi
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteMaximalSpectrumOfFiniteOfIsLocalRing
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.EtaleBaseChangeFractionFieldIndEtaleOverPolynomi
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteMaximalSpectrumOfFiniteOfIsLocalRing
+
+@[expose] public section
 
 noncomputable section
 open IsLocalRing Polynomial
@@ -46,6 +50,7 @@ theorem maxIdeal_comap (A B : Type) [CommRing A] [CommRing B] [HenselianLocalRin
   haveI : Algebra.IsIntegral (Algebra.adjoin A (s : Set B)) B := Algebra.IsIntegral.tower_top A
   have : ((maximalIdeal B).comap (algebraMap (Algebra.adjoin A (s : Set B)) B)).IsMaximal :=
     Ideal.isMaximal_comap_of_isIntegral_of_isMaximal _
+      (fun x => Algebra.IsIntegral.isIntegral x) (maximalIdeal B)
   exact IsLocalRing.eq_maximalIdeal this
 
 theorem hens (A B : Type) [CommRing A] [CommRing B] [HenselianLocalRing A] [Nontrivial B] [Algebra A B]

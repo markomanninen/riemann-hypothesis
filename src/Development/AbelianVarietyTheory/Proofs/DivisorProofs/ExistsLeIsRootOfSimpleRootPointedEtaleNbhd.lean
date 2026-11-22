@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InstPreorder
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveResidueCompEtaleHenselian
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InstPreorder
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveResidueCompEtaleHenselian
+
+@[expose] public section
 
 open IsLocalRing Polynomial
 
@@ -23,7 +27,7 @@ theorem trans_algebraMap_eq_of_comp {i j : EtNbhd R} (hij : i ≤ j) (φ : i.A �
     apply GlobalTheory.EtaleHensel.algHom_eq_of_residue_eq
     intro x
     simp only [AlgHom.comp_apply, IsScalarTower.coe_toAlgHom']
-    rw [← sub_eq_zero, ← map_sub, residue_eq_zero_iff, ← map_sub,
+    rw [← sub_eq_zero, ← (residue j.B).map_sub (algebraMap j.A j.B (hij.choose x)) (algebraMap j.A j.B (φ x)), residue_eq_zero_iff, ← (algebraMap j.A j.B).map_sub (hij.choose x) (φ x),
       IsLocalization.AtPrime.to_map_mem_maximal_iff j.B j.q]
     show _ ∈ RingHom.ker j.pt
     rw [RingHom.mem_ker, map_sub, sub_eq_zero]
@@ -32,8 +36,8 @@ theorem trans_algebraMap_eq_of_comp {i j : EtNbhd R} (hij : i ≤ j) (φ : i.A �
 
 end StageHensel
 
-open StageHensel in
 
+open StageHensel in
 theorem exists_le_isRoot_of_simple_root (R : Type) [CommRing R] [IsLocalRing R] (i : EtNbhd R)
     (h : Polynomial i.A) (a₀ : i.A) (hm : h.Monic) (h0 : i.pt (h.eval a₀) = 0)
     (h1 : i.pt (h.derivative.eval a₀) ≠ 0) :
@@ -88,7 +92,7 @@ theorem exists_le_isRoot_of_simple_root (R : Type) [CommRing R] [IsLocalRing R] 
     change _ = (0 : j.B)
     rw [show eval₂ (algebraMap i.A P.Ring) P.X h = 0 from hX, map_zero]
   · haveI : j.q.IsPrime := RingHom.ker_isPrime _
-    rw [trans_algebraMap_eq_of_comp _ φ hφ, ← map_sub, IsLocalization.AtPrime.to_map_mem_maximal_iff j.B j.q]
+    rw [trans_algebraMap_eq_of_comp _ φ hφ, ← (algebraMap j.A j.B).map_sub (e.symm P.X) (φ a₀), IsLocalization.AtPrime.to_map_mem_maximal_iff j.B j.q]
     show _ ∈ RingHom.ker j.pt
     rw [RingHom.mem_ker, map_sub, hjpt, hxX, sub_eq_zero]
     exact (congr($hφ a₀)).symm

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.CompLeft
-import Development.EtaleCohomology.KummerTheory.InjSlice
-import Development.EtaleCohomology.WeilConjectures.AcycPf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeHomSectionsStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.CompLeft
+public import Development.EtaleCohomology.KummerTheory.InjSlice
+public import Development.EtaleCohomology.WeilConjectures.AcycPf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeHomSectionsStatement
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CochainComplex CochainComplex.HomComplex
 open LateralTheory.E.EtaleTopologySheaves LateralTheory.E.LeafGhostCut UpperTheory.Et.Loc

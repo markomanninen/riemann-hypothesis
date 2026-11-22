@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
-import Mathlib.LinearAlgebra.LinearIndependent.Basic
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
+public import Mathlib.LinearAlgebra.LinearIndependent.Basic
+
+@[expose] public section
 
 open Polynomial
 
@@ -124,7 +128,7 @@ theorem UpperTheory.V.Pr.charPerm :
   let f : (G →* k) →₀ ℤ := (∑ i, Finsupp.single (ψ' i) (1 : ℤ)) - ∑ i, Finsupp.single (ψ i) 1
   have hf : ∀ g, Finsupp.mapDomain (fun φ : G →* k => φ g) f = 0 := by
     intro g
-    simp only [f, Finsupp.mapDomain_sub, Finsupp.mapDomain_finset_sum, Finsupp.mapDomain_single]
+    simp only [f, Finsupp.mapDomain_sub, Finsupp.mapDomain_finsetSum, Finsupp.mapDomain_single]
     rw [sub_eq_zero]
     exact (charPerm_single (fun i => ψ' i g) (fun i => ψ i g)).mp (hroots g).symm
   have hs : (∑ i, Finsupp.single (ψ i) (1 : ℤ)) = ∑ i, Finsupp.single (ψ' i) 1 :=

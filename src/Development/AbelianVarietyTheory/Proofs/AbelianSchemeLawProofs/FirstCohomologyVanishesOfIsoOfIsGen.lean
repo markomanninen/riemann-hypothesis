@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
@@ -83,7 +87,7 @@ theorem firstCohomologyVanishes_pull_of_isIso (e : Y ⟶ X) [IsIso e] (M : LB X)
       have h := congrArg (pb (inv e) (le_pre_inf _ (le_pre_inf _ (inf_le_left.trans inf_le_left)
         (inf_le_left.trans inf_le_right)) inf_le_right : inv e ⁻¹ᵁ V a ⊓ inv e ⁻¹ᵁ V b ⊓ inv e ⁻¹ᵁ V d ≤
         inv e ⁻¹ᵁ (V a ⊓ V b ⊓ V d))) (hφ a b d)
-      simp only [map_add, map_mul, pull_g, rs_pb, pb_rs, pb_pb h1] at h
+      simp only [map_add (f := _), map_mul, pull_g, rs_pb, pb_rs, pb_pb h1] at h
       simp only [rs_pb]
       exact h)
   refine ⟨fun a => pb e (hb a) (ψ a), fun a b => ?_⟩
@@ -142,7 +146,7 @@ theorem firstCohomologyVanishes_of_iso_of_isGen {N M : LB X} (hN : ⨆ i, N.U i 
     exact TopologicalSpace.Opens.mem_iSup.2 ⟨(a, i), hi⟩
   have hφ0 : ∀ a, φ a a = 0 := fun a => by
     have h := congrArg (rs X (le_inf le_rfl inf_le_left : V a ⊓ V a ≤ V a ⊓ V a ⊓ V a)) (hφ a a a)
-    simp only [map_add, map_mul, rs_rs, rs_self, rs_g_self hM, _root_.one_mul] at h
+    simp only [map_add (f := _), map_mul, rs_rs, rs_self, rs_g_self hM, _root_.one_mul] at h
     exact add_eq_left.1 h
   obtain ⟨ψ, hψ⟩ := h0 (I × N.ι) (fun p => V p.1 ⊓ N.U p.2) (fun p => p.2) (fun _ => inf_le_right) hc'
     (fun p q => rs X (le_inf (inf_le_left.trans inf_le_right) ((inf_le_left.trans inf_le_left).trans (hV p.1)) :
@@ -159,7 +163,7 @@ theorem firstCohomologyVanishes_of_iso_of_isGen {N M : LB X} (hN : ⨆ i, N.U i 
         (inf_le_left.trans (inf_le_right.trans inf_le_right))
         (inf_le_left.trans (inf_le_left.trans (inf_le_left.trans (hV _))))
         (inf_le_left.trans (inf_le_right.trans (inf_le_left.trans (hV _))))
-      simp only [map_add, map_mul, rs_rs] at h
+      simp only [map_add (f := _), map_mul, rs_rs] at h
       simp only [map_mul, rs_rs]
       rw [← h, ← _root_.mul_assoc, ← h']
       ring)

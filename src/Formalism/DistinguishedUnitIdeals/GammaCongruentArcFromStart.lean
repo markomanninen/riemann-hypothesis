@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.DistinguishedUnitIdeals.ArcLiftOfLocalizationData
-import Formalism.DistinguishedUnitIdeals.FrobeniusDiffBijective
-import Formalism.DistinguishedUnitIdeals.ExistsConstOfInvariantMod
-import Formalism.DistinguishedUnitIdeals.LemmaCFull
-import Formalism.DistinguishedUnitIdeals.FrobeniusCoboundedArc
+module
+
+public import Mathlib
+public import Formalism.DistinguishedUnitIdeals.ArcLiftOfLocalizationData
+public import Formalism.DistinguishedUnitIdeals.FrobeniusDiffBijective
+public import Formalism.DistinguishedUnitIdeals.ExistsConstOfInvariantMod
+public import Formalism.DistinguishedUnitIdeals.LemmaCFull
+public import Formalism.DistinguishedUnitIdeals.FrobeniusCoboundedArc
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,11 +77,6 @@ def XMulIffOf : Prop :=
     (ell : ℕ) (hh H : ℕ → ℕ) (r : ℕ) (S : LevelData L c ell (Formalism.ExponentWindows.abelian₂ B.p H ell) r),
     (∀ s < ell, L.FrobeniusCobounded (c - (s : ZMod n)) (hh s)) → (∀ s < ell, hh s ≤ H s) →
     S.Mem → S.UnitsAt → S.XMulIff
-
-def TruncPullOf : Prop :=
-  ∀ (O : Type) [CommRing O] (B : Base O) (ell j M g sig : ℕ), j ≤ ell → B.Trunc j M g sig →
-    ∀ t a : ℕ, (B.ℓ - 1) * a ≤ B.ℓ * t → ∃ x : PowerSeries O,
-      B.lc ^ sig * ((⇑B.φ)^[ell] X) ^ t - B.lc ^ a * x ∈ Ideal.span {B.ff' ell j M g}
 
 def PartnerOf : Prop :=
   ∀ (O : Type) [CommRing O] (B : Base O) (n : ℕ) [NeZero n]

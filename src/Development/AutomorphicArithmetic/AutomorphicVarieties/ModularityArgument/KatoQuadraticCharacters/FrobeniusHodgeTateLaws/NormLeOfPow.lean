@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.RhoFrob
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.RhoFrob
+
+@[expose] public section
 
 open UpperTheory.V.Z.Kato.Joint
 
@@ -40,7 +44,8 @@ theorem UpperTheory.V.Z.Kato.Joint.hatW :
     have h1 := congrFun ((LinearEquiv.map_eq_zero_iff _).mp h0) 1
     simp at h1
   · have h2 : ι.symm 2 = 2 := map_ofNat _ 2
-    rw [map_div₀, norm_div, h2, norm_two' hl, div_one, hat_std, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_div₀, norm_div, h2, norm_two' hl, div_one, hat_std, map_sum]
     refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one fun y _ => ?_
     rw [map_mul, norm_mul]
     refine mul_le_one₀ ?_ (norm_nonneg _) ?_

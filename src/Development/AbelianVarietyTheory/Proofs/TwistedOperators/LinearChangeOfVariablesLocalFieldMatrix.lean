@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx
 open scoped Kronecker
@@ -119,7 +123,8 @@ private lemma map_mulVec_measure_pi_eq_distribHaarChar_smul {M : Matrix a a k} (
       ext
       simp [hu, Matrix.det_mul, mul_comm]
     rw [hfun, ← Measure.map_map (measurable_mulVec' A) (measurable_mulVec' B), IB (Units.mk0 _ hB) rfl,
-      Measure.map_smul, IA (Units.mk0 _ hA) rfl, hinv, map_mul, mul_smul]
+      Measure.map_smul _ (measurable_mulVec' A).aemeasurable, IA (Units.mk0 _ hA) rfl,
+      hinv, map_mul, mul_smul]
 
 private lemma integral_comp_mulVec_eq_nabs_inv_smul {M : Matrix a a k} (hM : M.det ≠ 0) (u : kˣ) (hu : (u : k) = M.det)
     (f : (a → k) → ℂ) :

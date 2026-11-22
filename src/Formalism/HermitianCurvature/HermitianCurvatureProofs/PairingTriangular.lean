@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.LatticeHerglotzBound
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HerglotzLowerSemicontinuous
+module
+
+public import Formalism.HermitianCurvature.LatticeHerglotzBound
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HerglotzLowerSemicontinuous
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PairingConjugationLemmas
 
@@ -98,7 +102,8 @@ lemma repr_Tl (y : Fin (finrank ℤ La) → ℝ) (j) : (bR La).repr (Tl La y) j 
 
 lemma pair_Tl (σ : V f) (y : Fin (finrank ℤ La) → ℝ) :
     pair σ (Tl La y) = ∑ j, y j * pair σ (bR La j) := by
-  rw [Tl_apply, ← pairL_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Tl_apply, ← pairL_apply, map_sum]
   simp only [map_smul, pairL_apply, smul_eq_mul]
 
 def Lm : V f →ₗ[ℝ] (Fin (finrank ℤ La) → ℝ) where
@@ -144,9 +149,7 @@ lemma ψd_inj : Function.Injective (ψd La) := by
 lemma ψd_sub (m m' : Fin (finrank ℤ La) → ℤ) : ψd La (m - m') = ψd La m - ψd La m' := by
   simp only [ψd]
   rw [← map_sub]
-  congr 1
-  funext j
-  simp
+  exact congrArg (Le La).symm (funext fun j => Int.cast_sub (m j) (m' j))
 
 lemma pair_ψd_Tl (m : Fin (finrank ℤ La) → ℤ) (y : Fin (finrank ℤ La) → ℝ) :
     pair (ψd La m) (Tl La y) = ∑ j, y j * (m j : ℝ) := by
@@ -331,7 +334,7 @@ theorem latticeHerglotzBound_statement : Formalism.FourierDecayAlt.crystallineCo
       rw [← hκ z hz]
       rfl
     simp only [hN']
-    rw [e1, map_add, hz₀', ContinuousLinearEquiv.apply_symm_apply, ContinuousLinearEquiv.apply_symm_apply]
+    rw [e1, map_add (f := _), hz₀', ContinuousLinearEquiv.apply_symm_apply, ContinuousLinearEquiv.apply_symm_apply]
     congr 1
     abel
   rw [Finset.sum_congr rfl hL] at H

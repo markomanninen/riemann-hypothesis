@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingInputs
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkDcrisLSumZero
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingInputs
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkDcrisLSumZero
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 
@@ -60,7 +64,7 @@ private theorem mulVB_add {V : Type} [AddCommGroup V] [Module LL V] [Module Qp V
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul w b => simp [mulVB, add_mul, TensorProduct.tmul_add]
-  | add x y hx hy => rw [map_add, map_add, map_add, hx, hy]; abel
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]; abel
 
 private theorem mulVB_smul {V : Type} [AddCommGroup V] [Module LL V] [Module Qp V]
     [IsScalarTower Qp LL V] (q : Qp) (c : K₀) (x : V ⊗[Qp] B) :
@@ -73,7 +77,7 @@ private theorem mulVB_smul {V : Type} [AddCommGroup V] [Module LL V] [Module Qp 
   | tmul w b =>
     simp only [mulVB, TensorProduct.AlgebraTensorModule.map_tmul, LinearMap.id_apply,
       LinearMap.mulLeft_apply, hq, smul_mul_assoc, TensorProduct.tmul_smul]
-  | add x y hx hy => rw [map_add, map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, smul_add]
 
 private theorem mulVB_mul {V : Type} [AddCommGroup V] [Module LL V] [Module Qp V]
     [IsScalarTower Qp LL V] (d c : K₀) (x : V ⊗[Qp] B) :
@@ -83,7 +87,7 @@ private theorem mulVB_mul {V : Type} [AddCommGroup V] [Module LL V] [Module Qp V
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul w b => simp [mulVB, map_mul, mul_assoc]
-  | add x y hx hy => rw [map_add, map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
 
 private theorem exists_linear_tensor_action_mulVB {V : Type} [AddCommGroup V] [Module LL V] [Module Qp V]
     [IsScalarTower Qp LL V] (x : V ⊗[Qp] B) :
@@ -180,26 +184,26 @@ theorem rk_fil_letter (hK : Function.Bijective (algebraMap K₀ K)) (hE : Formal
       induction z using TensorProduct.induction_on with
       | zero => simp
       | tmul l c => rw [hA₁, hA₂, map_smul, rk_mapVB_mulVB]
-      | add z z' hz hz' => rw [map_add, map_add, map_add, hz, hz']
+      | add z z' hz hz' => rw [map_add (f := _), map_add (f := _), map_add (f := _), hz, hz']
     have hA₂e : ∀ z, A₂ z = Li z • Formalism.MainNotions.RamifiedCoefficientChains.mapVB (B := B) LL F.f x := by
       intro z
       induction z using TensorProduct.induction_on with
       | zero => simp
       | tmul l c => rw [hA₂, hLi, hyL.2 c, smul_smul]
-      | add z z' hz hz' => rw [map_add, map_add, hz, hz', add_smul]
+      | add z z' hz hz' => rw [map_add (f := _), map_add (f := _), hz, hz', add_smul]
     have hmulA : ∀ (d : K₀) z, mulVB (K₀ := K₀) (B := B) (LL := LL) d (A₁ z) = A₁ ((1 ⊗ₜ d) * z) := by
       intro d z
       induction z using TensorProduct.induction_on with
       | zero => simp
       | tmul l c =>
         rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, hA₁, hA₁, map_smul, mulVB_mul]
-      | add z z' hz hz' => rw [map_add, map_add, hz, hz', mul_add, map_add]
+      | add z z' hz hz' => rw [map_add (f := _), map_add (f := _), hz, hz', mul_add, map_add (f := _)]
     have hFA : ∀ z, A₁ z ∈ FilCris PD T₁.ρ a := by
       intro z
       induction z using TensorProduct.induction_on with
       | zero => simp
       | tmul l c => rw [hA₁]; exact Submodule.smul_mem _ _ (rk_mulVB_FilCris (PD := PD) (ρ := T₁.ρ) c a hx)
-      | add z z' hz hz' => rw [map_add]; exact Submodule.add_mem _ hz hz'
+      | add z z' hz hz' => rw [map_add (f := _)]; exact Submodule.add_mem _ hz hz'
     refine ⟨A₁ e, Submodule.mem_inf.2 ⟨hFA e, ?_⟩, ?_⟩
     · rw [rk_mem_DcrisL]
       refine ⟨hFD T₁ a (hFA e), fun d => ?_⟩
@@ -227,7 +231,7 @@ theorem rk_jump_of (hK : Function.Bijective (algebraMap K₀ K)) (hE : Formalism
     | zero => simp
     | tmul v b => simp [Formalism.MainNotions.RamifiedCoefficientChains.mapVB, ιV]
     | add x y hx hy =>
-      simp only [LinearMap.comp_apply, map_add] at hx hy ⊢
+      simp only [LinearMap.comp_apply, map_add (f := _)] at hx hy ⊢
       rw [hx, hy]
   have key : ∀ b : ℤ, FildR PD T₂.ρ τ b =
       (FildR PD T₁.ρ τ b).map (Formalism.MainNotions.RamifiedCoefficientChains.mapVB (B := BdR) LL F.f) := by

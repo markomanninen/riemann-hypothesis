@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.InducedModelMorphismCompStructureMap
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MemRiemannRochSpaceIffRegularAtEverywhere
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.InducedModelMorphismCompStructureMap
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MemRiemannRochSpaceIffRegularAtEverywhere
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -115,7 +119,8 @@ theorem Par.map_mul_of (hg : Par k O g) (hh : Par k' O h) (v : K → K') (ψ : O
   have e : (g * h) τ i j = ((∑ l, (⟨_, (hg τ).1 i l⟩ * ⟨_, (hh τ).1 l j⟩ : O) : O) : K) := by
     simp [Matrix.mul_apply]
   show v ((g * h) τ i j) = ∑ l, v (g τ i l) * v (h τ l j)
-  rw [e, hv, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, hv, map_sum]
   exact Finset.sum_congr rfl fun l _ => by rw [_root_.map_mul, ← hv, ← hv]
 
 theorem Par.map_of (hg : Par k O g) (v : K → K') (ψ : O →+* K') (hv : ∀ x : O, v x = ψ x) :
@@ -149,12 +154,6 @@ structure Fr (M : RatModel F Ω) (m k : ι → ℕ) : Type where
 namespace Fr
 
 variable {M : RatModel F Ω} {k : ι → ℕ}
-
-def ofBasis (M : RatModel F Ω) (k : ι → ℕ) (A : Mat m Ω) (hA : ∀ τ, (A τ).det ≠ 0) : Fr M m k where
-  S z := {A' | Par k (M.O z).toSubring (A' * A⁻¹)}
-  loc _ := ⟨⊤, A, trivial, hA, fun _ _ _ => Iff.rfl⟩
-
-instance : Inhabited (Fr M m k) := ⟨ofBasis M k 1 fun _ => by simp⟩
 
 variable (S : Fr M m k)
 

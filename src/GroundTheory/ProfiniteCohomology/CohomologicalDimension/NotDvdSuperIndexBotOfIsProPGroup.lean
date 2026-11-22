@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite
-import GroundTheory.ProfiniteCohomology.Colimit
-import GroundTheory.ProfiniteCohomology.OfNatRelIndexSupAntitone
-import GroundTheory.ProfiniteCohomology.IsProPGroupSubgroupIffIsPGroupMap
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite
+public import GroundTheory.ProfiniteCohomology.Colimit
+public import GroundTheory.ProfiniteCohomology.OfNatRelIndexSupAntitone
+public import GroundTheory.ProfiniteCohomology.IsProPGroupSubgroupIffIsPGroupMap
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -18,8 +23,8 @@ section Simple
 
 attribute [local instance 2000] Rep.hV2
 
-omit [TotallyDisconnectedSpace G] in
 
+omit [TotallyDisconnectedSpace G] in
 theorem exists_bijective_hom_of_isProPGroup {p : ℕ} (hp : p.Prime) (hG : IsProPGroup p G)
     (A : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep A] (hsimple : IsSimpleOrder (Subrepresentation A.ρ))
     (hA : ∀ a : A, p • a = 0) :
@@ -118,7 +123,7 @@ theorem exists_bijective_hom_of_isProPGroup {p : ℕ} (hp : p.Prime) (hG : IsPro
         rw [← map_zsmul]
         rfl }
   refine ⟨Rep.ofHom ⟨F, fun g => LinearMap.ext fun x => (htriv g (F x)).symm⟩, ?_⟩
-  exact ⟨fun x y hxy => ULift.ext _ _ (e.injective hxy),
+  exact ⟨fun x y hxy => ULift.ext (e.injective hxy),
     fun a => ⟨⟨e.symm a⟩, e.apply_symm_apply a⟩⟩
 
 end Simple

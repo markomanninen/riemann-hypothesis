@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ExistsGaugeMeasureForEachRank
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CircleGaugeAction.DglApplyOff
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CircleGaugeAction.OfRealCoordsSmulCenterCoord
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ExistsGaugeMeasureForEachRank
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CircleGaugeAction.DglApplyOff
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CircleGaugeAction.OfRealCoordsSmulCenterCoord
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,9 +50,10 @@ lemma Gm_mem (θ : AddCircle (2 * π)) : Matrix.of (Gm r θ) ∈ UWb 0 r := by
 
 lemma continuous_lmulM (a : Mat 0 r) : Continuous (lmulM (k := 0) (r := r) a) := by
   refine continuous_pi fun i => continuous_pi fun j => ?_
-  simp only [lmulM, mul_apply, of_apply]
-  exact continuous_finsetSum _ fun l _ =>
-    continuous_const.mul ((continuous_apply j).comp (continuous_apply l))
+  change Continuous (fun x : Mt 0 r => ∑ l, a i l * x l j)
+  refine continuous_finsetSum _ fun l _ => continuous_const.mul ?_
+  have h : Continuous (fun x : Mt 0 r => x l) := continuous_apply l
+  exact (continuous_apply j).comp h
 
 lemma Gm_add (a b : AddCircle (2 * π)) :
     Gm r (a + b) = lmulM (dgl r ((AddCircle.toCircle a : Circle) : ℂ)) (Gm r b) := by

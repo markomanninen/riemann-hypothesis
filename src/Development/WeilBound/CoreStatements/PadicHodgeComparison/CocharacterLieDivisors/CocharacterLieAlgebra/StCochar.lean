@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.CocharacterLieDivisors.StGalW
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.CocharacterLieDivisors.StGalW
+
+@[expose] public section
 
 noncomputable section
 

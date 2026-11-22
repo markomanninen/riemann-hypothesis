@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.RaisingLoweringNormIdentities
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.OneParameterSubgroups.OneParam
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.ConjTransposeEqOfInG
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.RaisingLoweringNormIdentities
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.OneParameterSubgroups.OneParam
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.ConjTransposeEqOfInG
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,7 +88,7 @@ theorem matrixCoeffBounds_imply_bound : MatrixCoeffBoundsImplyBound := by
     { toFun := fun X => ((actM (smE ε σ) X ⟨w, hw⟩ : smD ε σ) : H)
       map_add' := fun X X' => by simp [actM, add_smul, sum_add_distrib]
       map_smul' := fun c X => by simp [actM, smul_sum, smul_smul] }
-  have hφ : ∀ X, phiW ε σ w X = φ X := fun X => by rw [phiW, dif_pos hw]; rfl
+  have hφ : ∀ X, phiW ε σ w X = φ X := fun X => by rw [phiW, dite_eq_left hw]; rfl
   let dl : Matrix (Fin n) (Fin n) ℂ →ₗ[ℂ] ℂ :=
     { toFun := fun X => trace (dMat d * X)
       map_add' := fun X X' => by rw [Matrix.mul_add, trace_add]
@@ -167,7 +171,8 @@ theorem matrixCoeffBounds_imply_bound : MatrixCoeffBoundsImplyBound := by
     (fun X X' => by simp [stJ, Matrix.mul_add, Matrix.add_mul])
     (fun X => by
       show trace (dMat d * stJ ε X) = starRingEnd ℂ (trace (dMat d * X))
-      rw [trace_dMat, trace_dMat, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [trace_dMat, trace_dMat, map_sum]
       refine sum_congr rfl fun a _ => ?_
       rw [stJ_apply]; split_ifs <;> simp)
     Yl Yp Ym (Y * Ym - Ym * Y)

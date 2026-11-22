@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SameFns
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LetterLiftOfParts
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HatLettersPassDiGIBoundedFactorsStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WordLDecompositionNfSpanStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WordMDecompositionSelfAdjointStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SameFns
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LetterLiftOfParts
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HatLettersPassDiGIBoundedFactorsStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WordLDecompositionNfSpanStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WordMDecompositionSelfAdjointStatement
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.R Formalism.FourierDecayAlt.Wd Formalism.FourierDecayAlt.Fr Formalism.REAL Formalism.QuantumDeterminants MeasureTheory GlobalTheory.HatNF
 
@@ -13,14 +17,14 @@ open Formalism.FourierDecayAlt.P.RuleGD Formalism.FourierDecayAlt.P.TLA
 
 variable {P : M.Par} {A : Type} [Ring A] [StarRing A] [Algebra ℂ A] [StarModule ℂ A]
 
-omit [StarModule ℂ A] in
 
+omit [StarModule ℂ A] in
 theorem gen_mem (d : Q.NFData P A) {T : Set A} {b X : A} (hb : b ∈ bmon d) (hX : X ∈ T) :
     b * d.L.Di * X ∈ nfSpan d T 1 0 1 :=
   Submodule.subset_span ⟨b, hb, [X], rfl, by simpa using hX, by simp⟩
 
-omit [StarModule ℂ A] in
 
+omit [StarModule ℂ A] in
 theorem bounded_induction (d : Q.NFData P A) (N : Submodule ℂ A) (hN : ∀ b ∈ bmon d, b ∈ N) {E : A}
     (hE : E ∈ nfSpan d ∅ 0 0 0) : E ∈ N := by
   refine (Submodule.span_le.mpr ?_ : nfSpan d ∅ 0 0 0 ≤ N) hE
@@ -59,7 +63,7 @@ theorem col_mem {N : Submodule ℂ A} {s X k V W : A} {E : SlopeTestRemainingCho
     (io s * ((io X + io k * E) * io V + io W) : SlopeTestRemainingChoices S A) e e' ∈ N := by
   have key : io s * ((io X + io k * E) * io V + io W) =
       (io (s * (X * V + W)) : SlopeTestRemainingChoices S A) + io (s * k) * E * io V := by
-    simp only [io, map_mul, map_add]; noncomm_ring
+    simp only [io, map_mul, map_add (f := _)]; noncomm_ring
   rw [key, Matrix.add_apply]
   refine N.add_mem (io_mem h1 e e') ?_
   have : (io (s * k) * E * io V : SlopeTestRemainingChoices S A) e e' = s * k * E e e' * V := by

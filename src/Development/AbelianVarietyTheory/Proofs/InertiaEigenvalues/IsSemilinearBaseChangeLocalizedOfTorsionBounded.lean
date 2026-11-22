@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,9 +24,9 @@ def fracMap {A : Type} [CommRing A] {N P : Type} [AddCommGroup N] [Module A N] [
 theorem isLocalizedModule_fracMap {A : Type} [CommRing A] (t : A) {N P : Type} [AddCommGroup N] [Module A N]
     [AddCommGroup P] [Module A P] (L : P →ₗ[A] N) (n : ℕ) (hk : ∀ y, L y = 0 → t ^ n • y = 0)
     (hc : ∀ x, ∃ y, L y = t ^ n • x) (s : ↥(Submonoid.powers t)) :
-    IsLocalizedModule (Submonoid.powers t) (fracMap (Submonoid.powers t) L s) where
-  map_units := IsLocalizedModule.map_units (LocalizedModule.mkLinearMap (Submonoid.powers t) N)
-  surj z := by
+    IsLocalizedModule (Submonoid.powers t) (fracMap (Submonoid.powers t) L s) := by
+  refine ⟨IsLocalizedModule.map_units (LocalizedModule.mkLinearMap (Submonoid.powers t) N), ?_, ?_⟩
+  · intro z
     induction z using LocalizedModule.induction_on with
     | _ m r =>
       obtain ⟨y, hy⟩ := hc m
@@ -33,7 +37,7 @@ theorem isLocalizedModule_fracMap {A : Type} [CommRing A] (t : A) {N P : Type} [
       simp only [Submonoid.smul_def, smul_smul]
       congr 1
       ring
-  exists_of_eq {x y} h := by
+  · intro x y h
     change LocalizedModule.mk (L x) s = LocalizedModule.mk (L y) s at h
     rw [LocalizedModule.mk_eq] at h
     obtain ⟨c, h⟩ := h

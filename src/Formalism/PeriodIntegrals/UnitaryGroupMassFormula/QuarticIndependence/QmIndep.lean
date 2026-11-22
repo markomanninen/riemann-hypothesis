@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.RTTIndependence
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuarticIndependence.IndepC
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuarticIndependence.IndepPoly
+module
+
+public import Formalism.PeriodIntegrals.RTTIndependence
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuarticIndependence.IndepC
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuarticIndependence.IndepPoly
+
+@[expose] public section
 
 namespace PI.QmIndepW
 
@@ -48,7 +52,8 @@ theorem qmIndep : PI.RTTIndependence := by
   intro φ
   refine scalar (fun A B => φ (x A B)) Y Y' hY (fun c hc β n => ?_) A B
   have h := congrArg φ (hx c hc β n)
-  simp only [map_sum, map_smul, smul_eq_mul, map_zero] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, smul_eq_mul, map_zero] at h
   exact h
 
 end PI.QmIndepW

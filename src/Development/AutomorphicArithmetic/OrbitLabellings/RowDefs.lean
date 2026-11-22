@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.RestNonneg
-import Formalism.LocalToGlobal.CharacterGerms.BlockMembershipSelfConjugate
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.RestNonneg
+public import Formalism.LocalToGlobal.CharacterGerms.BlockMembershipSelfConjugate
+
+@[expose] public section
 
 noncomputable section
 

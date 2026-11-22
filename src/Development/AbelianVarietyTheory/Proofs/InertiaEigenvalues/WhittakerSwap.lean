@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EtaleHermitianPairStructureFactsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSmallDualLattices
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuadraticStarStructure
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EtaleHermitianPairStructureFactsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSmallDualLattices
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuadraticStarStructure
+
+@[expose] public section
 
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
@@ -15,7 +19,7 @@ variable {F E : Type} [NontriviallyNormedField F] [NontriviallyNormedField E] [N
 theorem psiK_add (A : Et F E) (ψ : AddChar F ℂ) (u v : A.K) :
     A.psiK ψ (u + v) = A.psiK ψ u * A.psiK ψ v := by
   unfold psiK
-  rw [map_add, AddChar.map_add_eq_mul]
+  rw [map_add (f := _), AddChar.map_add_eq_mul]
 
 theorem psiK_continuous (A : Et F E) {ψ : AddChar F ℂ} (hψ : IsStdChar ψ) : Continuous (A.psiK ψ) := by
   have h1 : Continuous (Algebra.trace F A.K) := IsModuleTopology.continuous_of_linearMap _

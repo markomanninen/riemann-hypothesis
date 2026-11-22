@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsMChart
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsMChart
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -28,22 +33,22 @@ theorem chartMonomial_isMultiHomog (u : ∀ k, ι k) (b : K → ℕ) :
 
 variable (P : Ideal (MRing ι F)) [P.IsPrime]
 
-omit [Fintype K] [DecidableEq K] [P.IsPrime] in
 
+omit [Fintype K] [DecidableEq K] [P.IsPrime] in
 theorem map_eq_zero_iff (f : MRing ι F) :
     algebraMap (MRing ι F ⧸ P) (FractionRing (MRing ι F ⧸ P)) (Ideal.Quotient.mk P f) = 0 ↔ f ∈ P := by
   rw [IsFractionRing.to_map_eq_zero_iff, Ideal.Quotient.eq_zero_iff_mem]
 
-omit [DecidableEq K] [P.IsPrime] in
 
+omit [DecidableEq K] [P.IsPrime] in
 theorem map_chartMonomial (u : ∀ k, ι k) (b : K → ℕ) :
     algebraMap (MRing ι F ⧸ P) (FractionRing (MRing ι F ⧸ P)) (Ideal.Quotient.mk P (chartMonomial u b)) =
       ∏ k, algebraMap (MRing ι F ⧸ P) (FractionRing (MRing ι F ⧸ P))
         (Ideal.Quotient.mk P (X ⟨k, u k⟩)) ^ b k := by
   simp [chartMonomial, map_prod, map_pow]
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem map_chartMonomial_ne_zero (u : ∀ k, ι k) (hu : ∀ k, (X ⟨k, u k⟩ : MRing ι F) ∉ P)
     (b : K → ℕ) :
     algebraMap (MRing ι F ⧸ P) (FractionRing (MRing ι F ⧸ P))
@@ -90,7 +95,8 @@ theorem algebraicIndependent (hH : MChartHomog.Statement.{u}) (hP : IsMultiHomog
     rw [aeval_def, eval₂_eq'] at hp'
     calc φ G = ∑ m ∈ s, φ (chartMonomial u N) * (algebraMap (chartMap P u).range L (p.coeff m) *
           ∏ k, algebraMap (MRing ι F ⧸ P) L (Ideal.Quotient.mk P (X ⟨k, u k⟩)) ^ m k) := by
-          simp only [G, map_sum, map_mul, hval]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [G, map_sum, map_mul, hval]
           refine Finset.sum_congr rfl fun m hm => ?_
           rw [hφapp (chartMonomial u (b m)), hφapp (chartMonomial u (c m)), hφapp (chartMonomial u N),
             map_chartMonomial, map_chartMonomial, map_chartMonomial]
@@ -113,7 +119,8 @@ theorem algebraicIndependent (hH : MChartHomog.Statement.{u}) (hP : IsMultiHomog
   have hcomp : ∀ m ∈ s,
       weightedHomogeneousComponent (blockWeight ι) (N + ⇑m) G = h m * chartMonomial u (c m) := by
     intro m hm
-    simp only [G, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [G, map_sum]
     rw [Finset.sum_eq_single m]
     · exact IsWeightedHomogeneous.weightedHomogeneousComponent_same (hhomt m hm)
     · intro m' hm' hne
@@ -137,52 +144,53 @@ theorem algebraicIndependent (hH : MChartHomog.Statement.{u}) (hP : IsMultiHomog
   by_contra hne
   exact hne (by simpa using hzero m (mem_support_iff.2 (by simpa using hne)))
 
-omit [Fintype K] [DecidableEq K] in
 
+omit [Fintype K] [DecidableEq K] in
 theorem isAlgebraic_adjoin (u : ∀ k, ι k) (hu : ∀ k, (X ⟨k, u k⟩ : MRing ι F) ∉ P) :
     Algebra.IsAlgebraic (Algebra.adjoin (chartMap P u).range (Set.range fun k =>
       algebraMap (MRing ι F ⧸ P) (FractionRing (MRing ι F ⧸ P)) (Ideal.Quotient.mk P (X ⟨k, u k⟩))))
       (FractionRing (MRing ι F ⧸ P)) := by
-  set R := MRing ι F ⧸ P
-  set L := FractionRing R
-  set A₀ := (chartMap P u).range
-  set S' := Algebra.adjoin A₀ (Set.range fun k => algebraMap R L (Ideal.Quotient.mk P (X ⟨k, u k⟩)))
-  have hξS : ∀ v, algebraMap R L (Ideal.Quotient.mk P (X v)) ∈ S' := by
-    intro v
-    have hr : chartMap P u (X v) ∈ A₀ := AlgHom.mem_range_self _ _
-    have hne : algebraMap R L (Ideal.Quotient.mk P (X ⟨v.1, u v.1⟩)) ≠ 0 :=
-      fun h => hu v.1 ((map_eq_zero_iff P _).1 h)
-    have e : algebraMap R L (Ideal.Quotient.mk P (X v)) =
-        chartMap P u (X v) * algebraMap R L (Ideal.Quotient.mk P (X ⟨v.1, u v.1⟩)) := by
-      simp only [chartMap, aeval_X]
-      exact (div_mul_cancel₀ _ hne).symm
-    rw [e]
-    exact S'.mul_mem (S'.algebraMap_mem (⟨_, hr⟩ : A₀)) (Algebra.subset_adjoin ⟨v.1, rfl⟩)
-  have hRS : ∀ r : R, algebraMap R L r ∈ S' := by
-    intro r
-    obtain ⟨f, rfl⟩ := Ideal.Quotient.mk_surjective r
-    induction f using MvPolynomial.induction_on with
-    | C c =>
-      rw [show (Ideal.Quotient.mk P (C c) : R) = algebraMap F R c from rfl,
-        ← IsScalarTower.algebraMap_apply, IsScalarTower.algebraMap_apply F A₀ L]
-      exact S'.algebraMap_mem _
-    | add f g hf hg => rw [map_add, map_add]; exact S'.add_mem hf hg
-    | mul_X f i hf => rw [map_mul, map_mul]; exact S'.mul_mem hf (hξS i)
-  let _ : CommRing S' := Subalgebra.toCommRing S'
-  refine ⟨fun x => ?_⟩
-  obtain ⟨a, d, hd, rfl⟩ := IsFractionRing.div_surjective (A := R) x
-  have hd0 : algebraMap R L d ≠ 0 := IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors hd
-  refine ⟨Polynomial.C (⟨_, hRS d⟩ : S') * Polynomial.X - Polynomial.C (⟨_, hRS a⟩ : S'),
-    fun h => hd0 ?_, ?_⟩
-  · have := congrArg (Polynomial.coeff · 1) h
-    simp only [Polynomial.coeff_sub, Polynomial.coeff_C_mul_X, Polynomial.coeff_C, ↓reduceIte,
-      one_ne_zero, Polynomial.coeff_zero] at this
-    have h' := congrArg Subtype.val this
-    simp only [Subalgebra.coe_zero, sub_zero] at h'
-    exact h'
-  · simp only [map_sub, map_mul, Polynomial.aeval_C, Polynomial.aeval_X]
-    show algebraMap R L d * (algebraMap R L a / algebraMap R L d) - algebraMap R L a = 0
-    rw [mul_comm, div_mul_cancel₀ _ hd0, sub_self]
+  set_option synthInstance.maxHeartbeats 200000 in
+    set R := MRing ι F ⧸ P
+    set L := FractionRing R
+    set A₀ := (chartMap P u).range
+    set S' := Algebra.adjoin A₀ (Set.range fun k => algebraMap R L (Ideal.Quotient.mk P (X ⟨k, u k⟩)))
+    have hξS : ∀ v, algebraMap R L (Ideal.Quotient.mk P (X v)) ∈ S' := by
+      intro v
+      have hr : chartMap P u (X v) ∈ A₀ := AlgHom.mem_range_self _ _
+      have hne : algebraMap R L (Ideal.Quotient.mk P (X ⟨v.1, u v.1⟩)) ≠ 0 :=
+        fun h => hu v.1 ((map_eq_zero_iff P _).1 h)
+      have e : algebraMap R L (Ideal.Quotient.mk P (X v)) =
+          chartMap P u (X v) * algebraMap R L (Ideal.Quotient.mk P (X ⟨v.1, u v.1⟩)) := by
+        simp only [chartMap, aeval_X]
+        exact (div_mul_cancel₀ _ hne).symm
+      rw [e]
+      exact S'.mul_mem (S'.algebraMap_mem (⟨_, hr⟩ : A₀)) (Algebra.subset_adjoin ⟨v.1, rfl⟩)
+    have hRS : ∀ r : R, algebraMap R L r ∈ S' := by
+      intro r
+      obtain ⟨f, rfl⟩ := Ideal.Quotient.mk_surjective r
+      induction f using MvPolynomial.induction_on with
+      | C c =>
+        rw [show (Ideal.Quotient.mk P (C c) : R) = algebraMap F R c from rfl,
+          ← IsScalarTower.algebraMap_apply, IsScalarTower.algebraMap_apply F A₀ L]
+        exact S'.algebraMap_mem _
+      | add f g hf hg => rw [map_add (f := _), map_add (f := _)]; exact S'.add_mem hf hg
+      | mul_X f i hf => rw [map_mul, map_mul]; exact S'.mul_mem hf (hξS i)
+    let _ : CommRing S' := Subalgebra.toCommRing S'
+    refine ⟨fun x => ?_⟩
+    obtain ⟨a, d, hd, rfl⟩ := IsFractionRing.div_surjective (A := R) x
+    have hd0 : algebraMap R L d ≠ 0 := IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors hd
+    refine ⟨Polynomial.C (⟨_, hRS d⟩ : S') * Polynomial.X - Polynomial.C (⟨_, hRS a⟩ : S'),
+      fun h => hd0 ?_, ?_⟩
+    · have := congrArg (fun p : Polynomial S' => p.coeff 1) h
+      simp only [Polynomial.coeff_sub, Polynomial.coeff_C_mul_X, Polynomial.coeff_C, ↓reduceIte,
+        one_ne_zero, Polynomial.coeff_zero] at this
+      have h' := congrArg Subtype.val this
+      simp only [Subalgebra.coe_zero, sub_zero] at h'
+      exact h'
+    · simp only [map_sub, map_mul, Polynomial.aeval_C, Polynomial.aeval_X]
+      show algebraMap R L d * (algebraMap R L a / algebraMap R L d) - algebraMap R L a = 0
+      rw [mul_comm, div_mul_cancel₀ _ hd0, sub_self]
 
 end MChartTrdeg
 

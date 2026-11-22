@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RwAppend
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RwAppend
+
+@[expose] public section
+
 open MeasureTheory Matrix Finset Filter Topology
 open scoped ContDiff ComplexConjugate InnerProductSpace ZeroAtInfty
 open PositivityTheory.RgTw (Mat G)
@@ -49,22 +54,23 @@ theorem mol_bounded : ∀ (n : ℕ) [MeasurableSpace (G n)] [BorelSpace (G n)] (
   have hgc : Continuous g := kernel_continuous hφ.1.continuous z
   have hg2 : MemLp g 2 μ := hgc.memLp_of_hasCompactSupport (kernel_hasCompactSupport hφ hz)
   have hmem : ∀ x : Lp V 2 μ, MemLp (g • (x : G n → V)) 1 μ := fun x =>
-    (Lp.memLp x).smul hg2
+    hg2.smul (Lp.memLp x)
   have hint : ∀ x : Lp V 2 μ, Integrable (fun u => g u • (x : G n → V) u) μ := fun x =>
     memLp_one_iff_integrable.1 (hmem x)
   have hb : ∀ x : Lp V 2 μ,
       ‖∫ u, g u • (x : G n → V) u ∂μ‖ ≤ (eLpNorm g 2 μ).toReal * ‖x‖ := by
     intro x
     have h1 : eLpNorm (g • (x : G n → V)) 1 μ ≤ eLpNorm g 2 μ * eLpNorm x 2 μ :=
-      eLpNorm_smul_le_mul_eLpNorm (Lp.aestronglyMeasurable x) hg2.1
+      eLpNorm_smul_le_mul_eLpNorm hg2.aestronglyMeasurable (Lp.aestronglyMeasurable x)
     have h2 : ∫ u, ‖g u • (x : G n → V) u‖ ∂μ = (eLpNorm (g • (x : G n → V)) 1 μ).toReal := by
       rw [eLpNorm_one_eq_lintegral_enorm, integral_norm_eq_lintegral_enorm (hint x).1]
-      rfl
+      · rfl
+      · exact (hmem x).aestronglyMeasurable
     calc ‖∫ u, g u • (x : G n → V) u ∂μ‖ ≤ ∫ u, ‖g u • (x : G n → V) u‖ ∂μ :=
           norm_integral_le_integral_norm _
       _ = (eLpNorm (g • (x : G n → V)) 1 μ).toReal := h2
       _ ≤ (eLpNorm g 2 μ * eLpNorm x 2 μ).toReal :=
-          ENNReal.toReal_mono (ENNReal.mul_ne_top hg2.2.ne (Lp.eLpNorm_ne_top x)) h1
+          ENNReal.toReal_mono (ENNReal.mul_ne_top hg2.ne (Lp.eLpNorm_ne_top x)) h1
       _ = (eLpNorm g 2 μ).toReal * ‖x‖ := by
           rw [ENNReal.toReal_mul, Lp.norm_def]
   let Lin : Lp V 2 μ →ₗ[ℝ] V :=

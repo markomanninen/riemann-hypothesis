@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.Development
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.Development
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -14,8 +18,8 @@ theorem stepMonoFactor : StepMonoFactor := by
   suffices hμ : μ = ∑ t, Finsupp.mapDomain (fun c => (t, c)) (partS μ t) by
     rw [← MvPolynomial.monomial_sum_one, ← hμ]
   ext ⟨t, c⟩
-  rw [Finsupp.finset_sum_apply, Finset.sum_eq_single t]
-  · rw [Finsupp.mapDomain_apply (fun a b h => by simpa using h)]
+  rw [Finsupp.finsetSum_apply, Finset.sum_eq_single t]
+  · rw [Finsupp.mapDomain_apply_of_injective (fun a b h => by simpa using h)]
     simp [partS]
   · intro t' _ ht'
     rw [Finsupp.mapDomain_notin_range]

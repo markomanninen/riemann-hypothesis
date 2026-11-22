@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CupSurjectivity.CupK
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CupSurjectivity.CupK
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -68,7 +72,7 @@ theorem t1 (hC : CupLaws) (P : HTPre l K) {M : Model l K} (hM : M.Sm) {D : ℕ} 
       rw [tz p (h p) s s', map_zero, mul_zero]
   by_cases hj : j = n
   · subst hj
-    rw [dif_pos rfl, castT_rfl]
+    rw [dite_eq_left rfl, castT_rfl]
     by_cases hα : a' ≤ α
     · have hmem : (α - a', β) ∈ (Finset.HasAntidiagonal.antidiagonal A : Finset (ℕ × ℕ)) :=
         Finset.HasAntidiagonal.mem_antidiagonal.2 (by simp only; omega)
@@ -78,7 +82,7 @@ theorem t1 (hC : CupLaws) (P : HTPre l K) {M : Model l K} (hM : M.Sm) {D : ℕ} 
             ((-1 : ℤ) ^ (j * j)) • (Fx hC x φ' i (b (α - a') s) * ψ (b' β s')) := by
           intro s s'
           rw [r1 hC S x sl ψ _ rfl _ _ (Nat.sub_add_cancel hα) rfl hA rfl, hsl.1, map_smul, smul_eq_mul]
-          rw [Fx, dif_pos (And.intro hα rfl)]
+          rw [Fx, dite_eq_left (And.intro hα rfl)]
           simp only [LinearMap.comp_apply, LinearMap.flip_apply, cupL_apply]
         simp only [key, map_zsmul, map_mul]
         rw [dfac, kap, bsum (kC K) _ (fun k φ => P.lin' M _ _ k _ φ) (b (α - a')), bsum (kC K) _ (fun k φ => P.lin' M _ _ k _ φ) (b' β)]
@@ -92,7 +96,7 @@ theorem t1 (hC : CupLaws) (P : HTPre l K) {M : Model l K} (hM : M.Sm) {D : ℕ} 
       · intro h; exact absurd (Finset.mem_univ _) h
     · rw [allz fun p h => hα (by have := (Prod.ext_iff.1 h).1; simp only at this; omega)]
       simp [kap, Fx, hα]
-  · rw [dif_neg hj]
+  · rw [dite_eq_right hj]
     exact allz fun p h => hj (by have := (Prod.ext_iff.1 h).2; simp only at this; omega)
 
 end CrystallineSemistableComparison.Onto

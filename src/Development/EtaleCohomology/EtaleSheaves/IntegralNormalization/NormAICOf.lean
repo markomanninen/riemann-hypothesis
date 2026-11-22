@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.IntegralNormalization.OpenPf
-import Development.EtaleCohomology.EtaleSheaves.IntegralNormalization.AlgClosedOfAic
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.IntegralNormalization.OpenPf
+public import Development.EtaleCohomology.EtaleSheaves.IntegralNormalization.AlgClosedOfAic
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry LateralTheory.E.t_E2Cut

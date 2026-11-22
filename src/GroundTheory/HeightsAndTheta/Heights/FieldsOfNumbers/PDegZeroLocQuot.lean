@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDegZeroLocQuot
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDegZeroLocQuot
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -39,7 +44,7 @@ theorem DegZeroLocQuot.proof : DegZeroLocQuot.Statement := by
       · exact fun h => ((Ideal.IsPrime.mem_or_mem inferInstance h).elim hgP hgP')
       · intro W hW h
         exact ((h𝒲 W hW).mem_or_mem h).elim (hgW W hW) (hgW' W hW)
-      · rw [div_add_div _ _ (hne g hgP) (hne g' hgP'), map_add, map_mul, map_mul, map_mul]
+      · rw [div_add_div _ _ (hne g hgP) (hne g' hgP'), map_add (f := _), map_mul, map_mul, map_mul]
     · rintro y z - - ⟨b, f, g, hf, hg, hgP, hgW, rfl⟩ ⟨b', f', g', hf', hg', hgP', hgW', rfl⟩
       refine ⟨b + b', f * f', g * g', hf.mul hf', hg.mul hg', ?_, ?_, ?_⟩
       · exact fun h => ((Ideal.IsPrime.mem_or_mem inferInstance h).elim hgP hgP')

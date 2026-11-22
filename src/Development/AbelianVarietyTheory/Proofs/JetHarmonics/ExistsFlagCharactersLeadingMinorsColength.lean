@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
-import ReciprocityTheory.DualLattices.UpBrChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
+public import ReciprocityTheory.DualLattices.UpBrChar
+
+@[expose] public section
 
 set_option autoImplicit false
 

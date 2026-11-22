@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PHilbExactDivide
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumAdd
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PHilbExactDivide
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumAdd
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -17,27 +22,31 @@ namespace CutRegular
 
 variable {K : Type} [DecidableEq K] {ι : K → Type} {F : Type u} [Field F]
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem mixedDiff_snoc {n : ℕ} (bs : Fin n → K → ℤ) (c : K → ℤ) (h : (K → ℤ) → ℤ) :
     mixedDiff (Fin.snoc (α := fun _ => K → ℤ) bs c) h = mixedDiff bs (diffStep c h) := by
   unfold mixedDiff
   rw [List.ofFn_succ', List.concat_eq_append, List.foldr_concat]
   simp only [Fin.snoc_castSucc, Fin.snoc_last]
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem foldr_diffStep_eventually_zero {h : (K → ℤ) → ℤ}
     (hh : ∀ᶠ m in Filter.atTop, h m = 0) :
-    ∀ l : List (K → ℤ), ∀ᶠ m in Filter.atTop, l.foldr diffStep h m = 0
-  | [] => hh
-  | b :: l => by
-    have ih := foldr_diffStep_eventually_zero hh l
-    filter_upwards [ih, (tendsto_sub_const_atTop b).eventually ih] with m h1 h2
+    ∀ l : List (K → ℤ), ∀ᶠ m in Filter.atTop, l.foldr diffStep h m = 0 := by
+  intro l
+  induction l with
+  | nil => exact hh
+  | cons b l ih =>
+    have hshift : Filter.Tendsto (fun m : K → ℤ => m - b) Filter.atTop Filter.atTop := by
+      simpa only [sub_eq_add_neg, id_eq] using
+        Filter.tendsto_atTop_add_const_right Filter.atTop (-b) Filter.tendsto_id
+    filter_upwards [ih, hshift.eventually ih] with m h1 h2
     simp only [List.foldr_cons, diffStep, h1, h2, sub_self]
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem eventualValue_eq_zero {f : (K → ℤ) → ℤ} (hf : ∀ᶠ m in Filter.atTop, f m = 0) :
     eventualValue f = 0 := by
   unfold eventualValue
@@ -114,22 +123,31 @@ theorem isMultiHomogIdeal_sup_span {P : Ideal (MRing ι F)} (hP : IsMultiHomogId
   intro f hf b
   obtain ⟨a, ha, t', ht', rfl⟩ := Submodule.mem_sup.mp hf
   obtain ⟨t, rfl⟩ := Ideal.mem_span_singleton'.mp ht'
-  rw [map_add, HilbExactDivide.component_mul_form hs]
+  have hcomponent : weightedHomogeneousComponent (blockWeight ι) b (t * s) =
+      if c ≤ b then weightedHomogeneousComponent (blockWeight ι) (b - c) t * s else 0 := by
+    letI := MvPolynomial.weightedGradedAlgebra F (blockWeight ι)
+    have hs' : s ∈ weightedHomogeneousSubmodule F (blockWeight ι) c :=
+      (mem_weightedHomogeneousSubmodule _ _ _ _).mpr hs
+    rw [← weightedDecomposition.decompose'_apply, ← weightedDecomposition.decompose'_apply]
+    exact DirectSum.coe_decompose_mul_of_right_mem
+      (𝒜 := weightedHomogeneousSubmodule F (blockWeight ι)) b (a := t) hs'
+  rw [map_add (f := _), hcomponent]
   refine Ideal.add_mem _ (Ideal.mem_sup_left (hP a ha b)) ?_
   split_ifs
   · exact Ideal.mem_sup_right (Ideal.mul_mem_left _ _ (Ideal.mem_span_singleton_self s))
   · exact Ideal.zero_mem _
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem colon_eq_of_not_mem {P : Ideal (MRing ι F)} [hP : P.IsPrime] {s : MRing ι F}
     (hs : s ∉ P) : P.colon (Ideal.span {s}) = P := by
+  classical
   ext g
   rw [HilbExactDivide.mem_colon_span_iff]
   exact ⟨fun h => (hP.mem_or_mem h).resolve_right hs, fun h => P.mul_mem_right s h⟩
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem relDim_eq_natCast_iff [Fintype K] (I : Ideal (MRing ι F)) (d : ℕ) :
     relDim I = ((d : ℕ) : WithBot (WithTop ℤ)) ↔
       ringKrullDim (MRing ι F ⧸ I) = ((d + Fintype.card K : ℕ) : WithBot ℕ∞) := by
@@ -201,8 +219,8 @@ theorem le_of_height_add {h : ℕ∞} {x : WithBot ℕ∞} {e : ℕ} (hh : h ≤
         have : e ≤ y := by omega
         exact_mod_cast this
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem ringKrullDim_sup_span_add_one_le {P : Ideal (MRing ι F)} [P.IsPrime] {s : MRing ι F}
     (hs : s ∉ P) :
     ringKrullDim (MRing ι F ⧸ (P ⊔ Ideal.span {s})) + 1 ≤ ringKrullDim (MRing ι F ⧸ P) := by
@@ -244,8 +262,8 @@ theorem ringKrullDim_minimalPrime [Fintype K] [∀ k, Fintype (ι k)] {P W : Ide
 
 end CutRegular
 
-open CutRegular in
 
+open CutRegular in
 theorem CutRegular.proof (h1 : HilbExactDivide.Statement.{u}) (h2 : MultEqualsCoeff.Statement.{u})
     (_h3 : IntNumSymm.Statement.{u}) : CutRegular.Statement.{u} := by
   intro F _ K _ _ ι _ P hP n hdim c s hs hsP bs
@@ -287,8 +305,8 @@ theorem CutRegular.proof (h1 : HilbExactDivide.Statement.{u}) (h2 : MultEqualsCo
     by_cases hW : W ∈ I.minimalPrimes ∧ IsRelevant W
     · have hWd : relDim W = ((n : ℕ) : WithBot (WithTop ℤ)) :=
         (relDim_eq_natCast_iff W n).mpr (hmin W hW.1)
-      rw [dif_pos ⟨hW.1, hW.2, hWd⟩, dif_pos hW]
-    · rw [dif_neg (fun h => hW ⟨h.1, h.2.1⟩), dif_neg hW]
+      rw [dite_eq_left ⟨hW.1, hW.2, hWd⟩, dite_eq_left hW]
+    · rw [dite_eq_right (fun h => hW ⟨h.1, h.2.1⟩), dite_eq_right hW]
   · have hzero : ∀ᶠ m in Filter.atTop, hilbFn I m = 0 := by
       by_cases htop : I = ⊤
       · rw [htop]
@@ -299,7 +317,7 @@ theorem CutRegular.proof (h1 : HilbExactDivide.Statement.{u}) (h2 : MultEqualsCo
       funext W
       simp only [Pi.zero_apply]
       unfold divCycle
-      rw [dif_neg]
+      rw [dite_eq_right]
       rintro ⟨hWm, hWr⟩
       have hIW : I ≤ W := hWm.1.2
       by_cases htop : I = ⊤

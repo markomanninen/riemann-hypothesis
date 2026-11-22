@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.ExpIntW
-import Formalism.PeriodIntegrals.AddIntG
+module
+
+public import Formalism.PeriodIntegrals.ExpIntW
+public import Formalism.PeriodIntegrals.AddIntG
+
+@[expose] public section
 
 noncomputable section
 

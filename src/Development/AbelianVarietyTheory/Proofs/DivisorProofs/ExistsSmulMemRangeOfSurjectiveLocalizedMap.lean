@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open IsLocalRing TensorProduct
 
 namespace GlobalTheory
@@ -28,7 +33,7 @@ theorem exists_smul_mem_range_of_surjective_localization_map
         simp only [π, Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
         exact ⟨y, rfl⟩
       rw [this, TensorProduct.tmul_zero]
-    | add x y hx hy => rw [map_add, map_add, hx, hy, add_zero]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, add_zero]
   have h0 : (TensorProduct.mk R L (B ⧸ N) 1) (π b) = 0 := by
     have := key z
     rw [hz] at this

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.DescSt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.DescSt
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FreeQuotientRank
 
@@ -29,7 +33,7 @@ lemma sum_galAct [FiniteDimensional K K₂] [IsGalois K K₂] (y : K₂ ⊗[K] V
     rw [← TensorProduct.sum_tmul, ← trace_eq_sum_automorphisms,
       Algebra.algebraMap_eq_smul_one, TensorProduct.smul_tmul]
   | add y z hy hz =>
-    simp only [map_add, Finset.sum_add_distrib, hy, hz, TensorProduct.tmul_add]
+    simp only [map_add (f := _), Finset.sum_add_distrib, hy, hz, TensorProduct.tmul_add]
 
 lemma expand [FiniteDimensional K K₂] [Algebra.IsSeparable K K₂] {ι : Type*} [Fintype ι]
     [DecidableEq ι] (b : Module.Basis ι K K₂) (w : K₂ ⊗[K] V) :
@@ -49,7 +53,7 @@ lemma expand [FiniteDimensional K K₂] [Algebra.IsSeparable K K₂] {ι : Type*
     simp only [TensorProduct.smul_tmul', smul_eq_mul, mul_one, trT_tmul]
     exact TensorProduct.smul_tmul _ _ _
   | add y z hy hz =>
-    simp only [smul_add, map_add, TensorProduct.tmul_add, Finset.sum_add_distrib]
+    simp only [smul_add, map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib]
     rw [← hy, ← hz]
 
 end DescPf

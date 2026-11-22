@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.IdBlocks
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.Vanish
-import Formalism.SharpRestriction.CuspSpanNormBounds.StandingNumericalData
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.IdBlocks
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.Vanish
+public import Formalism.SharpRestriction.CuspSpanNormBounds.StandingNumericalData
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,8 +65,8 @@ theorem eq_of_inner_tens (tens : (∀ i, V i) → W) (hspan : Submodule.span ℂ
 variable (tens : (∀ i, V i) → W) (hin : ∀ x y, ⟪tens x, tens y⟫_ℂ = ∏ i, ⟪x i, y i⟫_ℂ)
   (hspan : Submodule.span ℂ (Set.range tens) = ⊤)
 
-include hin in
 
+include hin in
 theorem inner_tens_update (z x : ∀ i, V i) (i : ι) (p : V i) :
     ⟪tens z, tens (Function.update x i p)⟫_ℂ =
       ⟪z i, p⟫_ℂ * ∏ j ∈ Finset.univ \ {i}, ⟪z j, x j⟫_ℂ := by
@@ -74,8 +78,8 @@ theorem inner_tens_update (z x : ∀ i, V i) (i : ι) (p : V i) :
     have hji : j ≠ i := by simpa using hj
     simp [Function.update_apply, hji]
 
-include hin hspan in
 
+include hin hspan in
 theorem tens_update_add (x : ∀ i, V i) (i : ι) (p q : V i) :
     tens (Function.update x i (p + q)) = tens (Function.update x i p) + tens (Function.update x i q) := by
   apply eq_of_inner_tens tens hspan
@@ -83,8 +87,8 @@ theorem tens_update_add (x : ∀ i, V i) (i : ι) (p q : V i) :
   rw [inner_add_right, inner_tens_update tens hin, inner_tens_update tens hin, inner_tens_update tens hin,
     inner_add_right, add_mul]
 
-include hin hspan in
 
+include hin hspan in
 theorem tens_update_smul (x : ∀ i, V i) (i : ι) (c : ℂ) (p : V i) :
     tens (Function.update x i (c • p)) = c • tens (Function.update x i p) := by
   apply eq_of_inner_tens tens hspan
@@ -98,8 +102,8 @@ def intersection_update_fsHerm_neg_one (x : ∀ i, V i) (i : ι) : V i →ₗ[�
 
 def fill (e x : ∀ i, V i) (s : Finset ι) : ∀ i, V i := fun i => if i ∈ s then e i else x i
 
-include hin hspan in
 
+include hin hspan in
 theorem commutant_scalar [FiniteDimensional ℂ W] [∀ i, FiniteDimensional ℂ (V i)] [∀ i, Nontrivial (V i)]
     {G : Type*} (H : Set G) (π : G → (W →ₗ[ℂ] W)) (hiso : ∀ s ∈ H, ∀ p q, ⟪π s p, π s q⟫_ℂ = ⟪p, q⟫_ℂ)
     (A : ∀ i, Set (V i →ₗ[ℂ] V i)) (hAiso : ∀ i, ∀ a ∈ A i, ∀ p q, ⟪a p, a q⟫_ℂ = ⟪p, q⟫_ℂ)
@@ -179,8 +183,8 @@ theorem commutant_scalar [FiniteDimensional ℂ W] [∀ i, FiniteDimensional ℂ
   rw [LinearMap.smul_apply, LinearMap.id_apply] at h2
   exact h2
 
-include hin hspan in
 
+include hin hspan in
 theorem tens_irr [FiniteDimensional ℂ W] [∀ i, FiniteDimensional ℂ (V i)] [∀ i, Nontrivial (V i)]
     {G : Type*} (H : Set G) (π : G → (W →ₗ[ℂ] W)) (hiso : ∀ s ∈ H, ∀ p q, ⟪π s p, π s q⟫_ℂ = ⟪p, q⟫_ℂ)
     (hinv : ∀ s ∈ H, ∃ s' ∈ H, ∀ w, π s' (π s w) = w)
@@ -796,8 +800,8 @@ variable {D : D7} {X : HidaSetting D} {u u' : D.what₂.Word}
   {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)} {F0' : FlagG (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)}
   {what₂ rows' : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
 
-variable (F0 F0' what₂ rows') in
 
+variable (F0 F0' what₂ rows') in
 def IdOffLift : Prop :=
   u ≠ u' → ∀ t : GTerm X u u' F0 F0' what₂ rows', t.isId → ∀ v : InfinitePlace X.B.I.F,
     ∃ A ∈ Formalism.REAL.Kset (allPos D.R.k), ∀ h ∈ ((Hinf X u : Subgroup X.B.I.Ginf) : Set X.B.I.Ginf),
@@ -841,9 +845,6 @@ theorem piIrrC_holds : PiIrrC := by
   intro D X u
   exact Formalism.L2.SG.Pf.IdBlocks2.Geo.piIrr X u
 
-theorem distinct_words_distinct_parameters (D : D7) (u u' : D.what₂.Word) (hu : u ≠ u') (τ : D.what₂.Tau) : uS D u τ ≠ uS D u' τ := by
-  exact Formalism.L2.SG.Pf.IdBlocks2.Geo.uS_ne hu τ
-
 theorem idMeetRO_of (hN : Formalism.L2.SG.TermOp.Vanish.NLamNinf) (D : D7) (X : HidaSetting D) (Y : Full X)
     (u : D.what₂.Word) : IdMeetRO (X.Fu u) (Y.cs u) := by
   intro _ t _ _
@@ -886,10 +887,6 @@ theorem idMeetC_of_steps3 (hL : Formalism.L2.SG.TermOp.Vanish.NLamNinf) (h1 : Id
     (h3 : IdMeetVolC) : IdMeetC := by
   intro D X Y u hC hFE
   exact ⟨h1 D X Y u hC hFE, h2 D X Y u hC hFE, idMeetRO_of hL D X Y u, h3 D X Y u hC hFE⟩
-
-theorem idCellDiagNeatC_of_steps3 (hL : Formalism.L2.SG.TermOp.Vanish.NLamNinf) (hV : VolPosC) (h1 : IdMeetOneC)
-    (h2 : IdMeetPhaseC) (h3 : IdMeetVolC) : IdCellDiagNeatC := by
-  exact idCellDiagNeatC_of hV piIrrC_holds (idMeetC_of_steps3 hL h1 h2 h3)
 
 theorem idCellDiagC_of_steps3 (hL : Formalism.L2.SG.TermOp.Vanish.NLamNinf) (hV : VolPosC) (h1 : IdMeetOneC)
     (h2 : IdMeetPhaseC) (h3 : IdMeetVolC) (hN : NeatC) : IdCellDiagC := by

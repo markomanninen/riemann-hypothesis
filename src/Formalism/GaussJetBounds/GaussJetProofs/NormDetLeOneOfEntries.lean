@@ -1,5 +1,9 @@
-import Formalism.GaussJetBounds.GenLogInverse
-import Formalism.GaussJetBounds.StatementD
+module
+
+public import Formalism.GaussJetBounds.GenLogInverse
+public import Formalism.GaussJetBounds.StatementD
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -31,8 +35,6 @@ section DegProdSec
 
 variable {σ κ : Type} [DecidableEq κ] (blk : σ → Option κ)
 
-def bdeg (k : κ) (mono : σ →₀ ℕ) : ℕ := (mono.support.filter (fun v => blk v = some k)).sum mono
-
 end DegProdSec
 
 section BasisSec
@@ -46,7 +48,7 @@ lemma norm_det_le_one_of_entries {n : Type*} [Fintype n] [DecidableEq n] (M : Ma
   intro p _
   have hp : ‖∏ i, M (p i) i‖ ≤ 1 := by
     rw [norm_prod]
-    exact Finset.prod_le_one (fun _ _ => norm_nonneg _) (fun i _ => h _ _)
+    exact Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) (fun i _ => h _ _)
   rcases Int.units_eq_one_or (Equiv.Perm.sign p) with hs | hs <;> rw [hs]
   · rw [one_smul]; exact hp
   · rw [Units.neg_smul, one_smul, norm_neg]; exact hp

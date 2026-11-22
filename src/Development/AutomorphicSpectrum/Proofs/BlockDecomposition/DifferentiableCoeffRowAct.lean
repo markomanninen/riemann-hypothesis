@@ -1,9 +1,14 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.SwapLaws
-import Formalism.GelfandTransference.HadamardGelfand.Highest
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EventuallyLineUnit
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousCoeffRowAct
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.SwapLaws
+public import Formalism.GelfandTransference.Statement
+public import Formalism.GelfandTransference.GelfandCentral
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EventuallyLineUnit
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousCoeffRowAct
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,23 +39,23 @@ theorem differentiable_det {r : ℕ} :
 
 theorem differentiable_coeff_rowAct {r m : ℕ} (f : MvPolynomial (Fin r × Fin m) ℂ) :
     ∀ s : (Fin r × Fin m) →₀ ℕ, Differentiable ℂ fun M : Matrix (Fin r) (Fin r) ℂ =>
-      MvPolynomial.coeff s (Formalism.GradedWeylDivisibility.rowAct ℂ (n := m) Mᵀ f) := by
+      AddMonoidAlgebra.coeff (Formalism.GradedWeylDivisibility.rowAct ℂ (n := m) Mᵀ f) s := by
   induction f using MvPolynomial.induction_on with
   | C a =>
     intro s
     simpa [MvPolynomial.algebraMap_eq] using
-      (differentiable_const (MvPolynomial.coeff s (MvPolynomial.C a : MvPolynomial (Fin r × Fin m) ℂ)) :
+      (differentiable_const (AddMonoidAlgebra.coeff (MvPolynomial.C a : MvPolynomial (Fin r × Fin m) ℂ) s) :
         Differentiable ℂ fun _ : Matrix (Fin r) (Fin r) ℂ => _)
   | add p q hp hq =>
     intro s
-    simp only [map_add, MvPolynomial.coeff_add]
+    simp only [map_add (f := _), MvPolynomial.coeff_add]
     exact (hp s).add (hq s)
   | mul_X p v hp =>
     intro s
     have key : ∀ M : Matrix (Fin r) (Fin r) ℂ,
-        MvPolynomial.coeff s (Formalism.GradedWeylDivisibility.rowAct ℂ (n := m) Mᵀ (p * MvPolynomial.X v)) =
+        AddMonoidAlgebra.coeff (Formalism.GradedWeylDivisibility.rowAct ℂ (n := m) Mᵀ (p * MvPolynomial.X v)) s =
         ∑ b : Fin r, M b v.1 * (if (b, v.2) ∈ s.support then
-          MvPolynomial.coeff (s - Finsupp.single (b, v.2) 1) (Formalism.GradedWeylDivisibility.rowAct ℂ (n := m) Mᵀ p) else 0) := by
+          AddMonoidAlgebra.coeff (Formalism.GradedWeylDivisibility.rowAct ℂ (n := m) Mᵀ p) (s - Finsupp.single (b, v.2) 1) else 0) := by
       intro M
       have hX : Formalism.GradedWeylDivisibility.rowAct ℂ (n := m) Mᵀ (MvPolynomial.X v) =
           ∑ b : Fin r, MvPolynomial.C (M b v.1) * MvPolynomial.X (b, v.2) := by
@@ -75,7 +80,7 @@ theorem holRm (n : ℕ) (lam : Fin n → ℤ) : HolRm lam := by
   obtain ⟨S, c, hc⟩ := GlobalTheory.CompanionTheory.WInfCont.exists_finset_factor (Formalism.BasicNotions.nablaSq ℂ n (dw lam)) ((wb lam).coord i)
   have hev : (fun x : Mat n => Rm lam x i j) =ᶠ[𝓝 g] fun x : Mat n =>
       ∑ s : S, c s * (x.det ^ (dw lam).detShift *
-        MvPolynomial.coeff s.1 (Formalism.GradedWeylDivisibility.rowAct ℂ (n := n) xᵀ (wb lam j).1)) := by
+        AddMonoidAlgebra.coeff (Formalism.GradedWeylDivisibility.rowAct ℂ (n := n) xᵀ (wb lam j).1) s.1) := by
     filter_upwards [isOpen_GLs.mem_nhds hg] with x hx
     have hu := isUnit_det_of_mem hx
     rw [Rm_of_unit lam hu, LinearMap.toMatrix_apply, ← Module.Basis.coord_apply, hc]

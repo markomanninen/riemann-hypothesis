@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.EqOfLeOfAbsNormEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.EqOfLeOfAbsNormEq
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
@@ -48,7 +52,8 @@ theorem sum_eq_trace (D : D7) : TraceMapNormalisation D := fun y => by
   have hE := D.host.hostE_isGalois
   have h := trace_eq_sum_automorphisms (K := D.host.K) (L := D.host.E) y
   change _ = D.host.φ₀ (algebraMap D.host.K D.host.E _)
-  rw [h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, map_sum]
   exact Fintype.sum_bijective (galK D.host ∘ D.eTau) ((galK_bijective D.host).comp D.eTau.bijective) _ _
     (fun τ => rfl)
 
@@ -58,7 +63,7 @@ theorem permutes (D : D7) : EmbeddingPermutesTypes D := fun M ρ hK hM => by
     rwa [embT, Equiv.apply_symm_apply, emb_apply, Subgroup.coe_one, sigmaOf_one] at this
   let ψ : D.host.E →+* ℂ := (ρ : M →+* ℂ).comp (D.host.φ₀.codRestrict M h0)
   have hψ : ∀ x, cj M ρ (D.host.φ₀ x) = ψ x := fun x => by
-    rw [cj, TaylorLogMetric.liftM, dif_pos (h0 x)]
+    rw [cj, TaylorLogMetric.liftM, dite_eq_left (h0 x)]
     rfl
   obtain ⟨g, hg⟩ := (factEmb D.R D.host).1.2 ψ
   have hgP : g ∈ D.R.Psi := by

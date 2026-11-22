@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UJClassFin
+module
+
+public import Formalism.PeriodIntegrals.UJClassFin
+
+@[expose] public section
 
 noncomputable section
 

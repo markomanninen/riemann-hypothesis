@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.OrthogonalDecomposition.HodgeTateFromSandwich
-import Development.WeilBound.ThetaLifts.FrameEstimates.ThickFrames
-import Development.WeilBound.ThetaLifts.LatticeBasics.SchToPol
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.ExistsFull
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.OrthogonalDecomposition.HodgeTateFromSandwich
+public import Development.WeilBound.ThetaLifts.FrameEstimates.ThickFrames
+public import Development.WeilBound.ThetaLifts.LatticeBasics.SchToPol
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.ExistsFull
+
+@[expose] public section
 
 noncomputable section
 

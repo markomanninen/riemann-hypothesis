@@ -1,14 +1,18 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartFH
-import ReciprocityTheory.DualLattices.TowerZeroSurjective
-import ReciprocityTheory.DualLattices.LinPairStatement
-import ReciprocityTheory.DualLattices.LengthDegreeAbelianVariety
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.IsEigBasisIff
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.GmLawCharsMul
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.MvPowerSeriesExistsPolynomialTotalDegreeLeSubMem
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.MvPowerSeriesEvalOfPowMem
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartFH
+public import ReciprocityTheory.DualLattices.TowerZeroSurjective
+public import ReciprocityTheory.DualLattices.LinPairStatement
+public import ReciprocityTheory.DualLattices.LengthDegreeAbelianVariety
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.IsEigBasisIff
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.GmLawCharsMul
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.MvPowerSeriesExistsPolynomialTotalDegreeLeSubMem
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.MvPowerSeriesEvalOfPowMem
+
+@[expose] public section
 
 set_option autoImplicit false
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.Pdiv.ChartF GlobalTheory.ChF
@@ -78,7 +82,7 @@ private theorem map_coe_mem_span {O Q : Type} [CommRing O] [CommRing Q] [Algebra
       exact ψ.commutes a
     rw [this]
     exact S.smul_mem a h1
-  | add f g hf hg => rw [MvPolynomial.coe_add, map_add]; exact S.add_mem hf hg
+  | add f g hf hg => rw [MvPolynomial.coe_add, map_add (f := _)]; exact S.add_mem hf hg
   | mul_X f j hf =>
     rw [MvPolynomial.coe_mul, MvPolynomial.coe_X, map_mul]
     have := S.sub_mem (hmul j _ hf) hf
@@ -142,7 +146,7 @@ theorem fh_gmF : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed 
     refine map_coe_mem_span hN π (fun i => ?_) P
     have h0 : π ((1 + MvPowerSeries.X i : PS O 1 r) ^ p ^ k - 1) = 0 :=
       Ideal.Quotient.eq_zero_iff_mem.2 (hrel i)
-    rw [map_sub, map_pow, map_add, map_one] at h0
+    rw [map_sub, map_pow, map_add (f := _), map_one] at h0
     exact sub_eq_zero.1 h0
 
   have hpt : ∀ b : Fin 1 × Fin r → ℕ, ∃ φ : (PS O 1 r ⧸ I) →ₐ[O] O,
@@ -161,7 +165,7 @@ theorem fh_gmF : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed 
       rw [hI, Ideal.span_le]
       rintro _ ⟨i, rfl⟩
       show ψ _ = 0
-      rw [hmul, map_sub, map_pow, map_add, map_one, hψ]
+      rw [hmul, map_sub, map_pow, map_add (f := _), map_one, hψ]
       exact hone _
     exact ⟨Ideal.Quotient.liftₐ I ψ (fun a ha => hker ha), fun i => hψ i⟩
   have hsep : ∀ c : (Fin 1 × Fin r → Fin (p ^ k)) → O,
@@ -170,7 +174,8 @@ theorem fh_gmF : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed 
     refine coeff_eq_zero_of_roots hζ c fun b => ?_
     obtain ⟨φ, hφ⟩ := hpt b
     have := hcφ φ
-    simpa only [map_sum, map_smul, m, map_prod, map_pow, map_add, map_one, hφ, add_sub_cancel,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [map_sum, map_smul, m, map_prod, map_pow, map_add (f := _), map_one, hφ, add_sub_cancel,
       smul_eq_mul] using this
   have hli : LinearIndependent O m := by
     rw [Fintype.linearIndependent_iff]

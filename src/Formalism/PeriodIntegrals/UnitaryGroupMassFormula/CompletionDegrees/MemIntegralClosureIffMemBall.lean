@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CompletionDegrees.DenseSurj
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CompletionDegrees.DenseSurj
+
+@[expose] public section
 
 namespace PI.CompDegEF
 
@@ -74,7 +78,7 @@ theorem mem_integralClosure_iff_mem_ball (K : FinExt l) (x : ↥K.1) :
   show IsIntegral ℤ_[l] x ↔ ‖((x : ↥K.1) : Om l)‖ ≤ 1
   rw [norm_le_one_iff_isIntegral]
   first
-    | exact (isIntegral_algebraMap_iff (A := ↥K.1) (B := Om l) (algebraMap (↥K.1) (Om l)).injective).symm
+    | exact (isIntegral_algebraMap_iff (A := ↥K.1) (B := Om l) ).symm
     | exact (isIntegral_algHom_iff ((K.1.val).restrictScalars ℤ_[l]) K.1.val.injective).symm
 
 theorem card_quot_l {C : Type} [CommRing C] [Algebra ℤ_[l] C] {n : ℕ} (b : Basis (Fin n) ℤ_[l] C) :

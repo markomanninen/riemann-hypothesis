@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.TwistedKernels.ExPhiPlusOnto
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.TwistedKernels.ExPhiPlusOnto
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.BZMir GlobalTheory.BZMir.Fun Matrix
 
@@ -27,9 +31,5 @@ theorem continuous_mirProj (n : ℕ) : Continuous (mirabolicProjection k n) := b
   show Continuous (fun g : Mir k n => (((mirabolicProjection k n g)⁻¹ : GL (Fin n) k) : Matrix (Fin n) (Fin n) k))
   rw [this]
   exact hblock.comp hinv
-
-theorem smPsiPlus : SmPsiPlus k := by
-  intro n W _ _ σ hσ w
-  exact (hσ w).preimage (continuous_mirProj k n)
 
 end GlobalTheory.CompanionTheory.BZMirFun

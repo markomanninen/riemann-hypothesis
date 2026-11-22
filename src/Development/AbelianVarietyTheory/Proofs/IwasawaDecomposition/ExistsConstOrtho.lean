@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.FWTie
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FibExtMarked
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowGeneratorEqConstMulVacuumTheta
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.EmbeddingsDifferOnInteger
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.SupAtUnit
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.InputExistsOfMemberExists
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsLevelTranslateJetNeZero
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsCoprimeZpow
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.FWTie
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FibExtMarked
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowGeneratorEqConstMulVacuumTheta
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.EmbeddingsDifferOnInteger
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.SupAtUnit
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.InputExistsOfMemberExists
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsLevelTranslateJetNeZero
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsCoprimeZpow
+
+@[expose] public section
 
 namespace GlobalTheory.OneMapRef.Kappa
 
@@ -36,7 +40,7 @@ theorem exists_root {L : Lt E r} {mk : Dw.La →ₗ[𝓞 E] (Fin r → E)} (hmk 
   obtain ⟨⟨a', ha', hq, h'⟩, -⟩ := hY (fun b => Submodule.Quotient.mk (a b)) b
   obtain ⟨d, hd⟩ := LevCover.modN_of_mem_both l ((Submodule.Quotient.eq _).1 hq) (Submodule.sub_mem _ ha' (ha b))
   have e₀ : mk a' = mk (a b) + (l.M : E) • mk d := by
-    rw [Nat.cast_smul_eq_nsmul, ← map_nsmul, ← hd, ← map_add, add_sub_cancel]
+    rw [Nat.cast_smul_eq_nsmul, ← map_nsmul, ← hd, ← map_add (f := _), add_sub_cancel]
   have e₁ : y b = (l.M : E)⁻¹ • mk (a b) + t b := by
     rw [← inv_smul_smul₀ hM0 (y b), h, smul_add, ← Nat.cast_smul_eq_nsmul E, inv_smul_smul₀ hM0]
   rw [e₀, smul_add, inv_smul_smul₀ hM0] at h'

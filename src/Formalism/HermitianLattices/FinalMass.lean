@@ -1,6 +1,10 @@
-import Formalism.HermitianLattices.FinalNeighbourConstruct
-import Formalism.HermitianLattices.HermitianLatticesProofs.MassBasic
-import Formalism.HermitianLattices.HermitianLatticesProofs.MassTelescope
+module
+
+public import Formalism.HermitianLattices.FinalNeighbourConstruct
+public import Formalism.HermitianLattices.HermitianLatticesProofs.MassBasic
+public import Formalism.HermitianLattices.HermitianLatticesProofs.MassTelescope
+
+@[expose] public section
 
 namespace Formalism.HermitianLatticesTheory
 

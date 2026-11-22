@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.InertKernelTheory.FrameInt
-import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.FinalFree
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.ExistsCoprimePowEqOne
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.FrobeniusSqIterateTeichmuller
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.FrameInt
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.FinalFree
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.ExistsCoprimePowEqOne
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.FrobeniusSqIterateTeichmuller
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,7 +82,26 @@ theorem eq_one_of_root {u : ℂ_[p]} {N : ℕ} (hc : Nat.Coprime N p) (hu : u ^ 
   exact zero_ne_one h4
 
 theorem wToC_mem_kur (x : WW p) : Formalism.L2.G.Pend.wToC p x ∈ MaximalUnramifiedExtension p := by
-  have hx := Formalism.L2.G.Pend.wToC_mem_Wp p x
+  have hx : Formalism.L2.G.Pend.wToC p x ∈ closure ((Subring.closure
+      {ζ : ℂ_[p] | ∃ n : ℕ, 0 < n ∧ Nat.Coprime n p ∧ ζ ^ n = 1} : Subring ℂ_[p]) : Set ℂ_[p]) := by
+    rw [Metric.mem_closure_iff]
+    intro ε hε
+    obtain ⟨N, hN⟩ := exists_pow_lt_of_lt_one hε (Formalism.L2.G.Pend.r_lt_one p)
+    obtain ⟨c, hc⟩ := WittVector.dvd_sub_sum_teichmuller_iterateFrobeniusEquiv_coeff x N
+    refine ⟨Formalism.L2.G.Pend.wToC p (∑ i ∈ Finset.Iic N, (WittVector.teichmuller p
+      (((_root_.frobeniusEquiv (kb p) p).symm ^ i) (x.coeff i)) * (p : WW p) ^ i)), ?_, ?_⟩
+    · rw [map_sum]
+      refine Subring.sum_mem _ fun i _ => ?_
+      rw [map_mul, map_pow, map_natCast]
+      refine Subring.mul_mem _ ?_ (Subring.pow_mem _ (natCast_mem _ p) i)
+      by_cases hy : (((_root_.frobeniusEquiv (kb p) p).symm ^ i) (x.coeff i)) = 0
+      · rw [hy, WittVector.teichmuller_zero, map_zero]
+        exact Subring.zero_mem _
+      · obtain ⟨m, hm, hcop, hpow⟩ := Formalism.L2.G.Pend.exists_coprime_pow_eq_one p hy
+        exact Subring.subset_closure ⟨m, hm, hcop, by rw [← map_pow, ← map_pow, hpow, map_one, map_one]⟩
+    · rw [dist_eq_norm, ← map_sub, hc]
+      refine lt_of_le_of_lt (Formalism.L2.G.Pend.norm_wToC_pow_mul p (N + 1) c) (lt_of_le_of_lt ?_ hN)
+      exact pow_le_pow_of_le_one (Formalism.L2.G.Pend.r_nonneg p) (Formalism.L2.G.Pend.r_lt_one p).le (Nat.le_succ N)
   have hpp : p.Prime := Fact.out
   have hle : Subring.closure {ζ : ℂ_[p] | ∃ n : ℕ, 0 < n ∧ Nat.Coprime n p ∧ ζ ^ n = 1} ≤
       (Subfield.closure {ζ : ℂ_[p] | ∃ n : ℕ, 0 < n ∧ ¬ p ∣ n ∧ ζ ^ n = 1}).toSubring := by
@@ -90,8 +113,8 @@ theorem wToC_mem_kur (x : WW p) : Formalism.L2.G.Pend.wToC p x ∈ MaximalUnrami
       Set ℂ_[p]) := fun y hy => hle hy
   exact closure_mono hsub hx
 
-variable (p) in
 
+variable (p) in
 def wK : WW p →+* MaximalUnramifiedExtension p := (Formalism.L2.G.Pend.wToC p).codRestrict (MaximalUnramifiedExtension p) wToC_mem_kur
 
 theorem wK_coe (x : WW p) : ((wK p x : MaximalUnramifiedExtension p) : ℂ_[p]) = Formalism.L2.G.Pend.wToC p x := rfl
@@ -152,13 +175,14 @@ theorem frob_wK {σ : MaximalUnramifiedExtension p →+* MaximalUnramifiedExtens
   set S := ∑ i ∈ Finset.Iic N, (WittVector.teichmuller p
         (((_root_.frobeniusEquiv (Formalism.MainNotions.FormalGroupSystem.kb p) p).symm ^ i) (x.coeff i)) * (p : WW p) ^ i) with hS
   have hfS : f S = g S := by
-    rw [hS, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hS, map_sum, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, map_mul, ht, map_pow, map_pow, map_natCast, map_natCast]
   have hx : x = S + (p : WW p) ^ (N + 1) * c := by rw [← hc]; ring
   have e : ((f x : MaximalUnramifiedExtension p) : ℂ_[p]) - ((g x : MaximalUnramifiedExtension p) : ℂ_[p]) =
       (p : ℂ_[p]) ^ (N + 1) * (((f c : MaximalUnramifiedExtension p) : ℂ_[p]) - ((g c : MaximalUnramifiedExtension p) : ℂ_[p])) := by
-    rw [hx, map_add, map_add, map_mul, map_mul, map_pow, map_pow, map_natCast, map_natCast, hfS]
+    rw [hx, map_add (f := _), map_add (f := _), map_mul, map_mul, map_pow, map_pow, map_natCast, map_natCast, hfS]
     push_cast; ring
   rw [e, norm_mul, norm_pow, Formalism.L2.G.Pend.norm_p_C]
   have h1 : ‖((f c : MaximalUnramifiedExtension p) : ℂ_[p]) - ((g c : MaximalUnramifiedExtension p) : ℂ_[p])‖ ≤ 1 := nsub1 (hfl c) (hgl c)

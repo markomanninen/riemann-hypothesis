@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.IntegralNormSmallIdeal
 
@@ -33,7 +37,7 @@ def smallIdeal {l : ℕ} [Fact (Nat.Prime l)] {E : Type} [Field E]
     intro a b ha hb
     simp only [Set.mem_ofPred_eq] at ha hb ⊢
     have : ((a + b : 𝓞 E) : E) = (a : E) + (b : E) := map_add (algebraMap (𝓞 E) E) a b
-    rw [this, map_add]
+    rw [this, map_add (f := _)]
     exact lt_of_le_of_lt (IsUltrametricDist.norm_add_le_max _ _) (max_lt ha hb)
   zero_mem' := by
     simp only [Set.mem_ofPred_eq]

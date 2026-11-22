@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.DixmierMalliavinBasic
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.DixmierMalliavinBasic
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -32,8 +36,8 @@ theorem contDiff_prodExpVal {d : ℕ} (X : Fin d → 𝔸) : ContDiff ℝ ∞ (p
     have e : prodExpVal X = fun t => exp (t 0 • X 0) *
         prodExpVal (fun i => X i.succ) (fun i => t i.succ) := funext (prodExpVal_succ X)
     rw [e]
-    exact ((contDiff_exp ℝ 𝔸).comp ((contDiff_apply ℝ ℝ 0).smul contDiff_const)).mul
-      ((ih _).comp (contDiff_pi.2 fun i => contDiff_apply ℝ ℝ i.succ))
+    exact ((contDiff_exp ℝ 𝔸).comp ((contDiff_apply ℝ (fun _ => ℝ) 0).smul contDiff_const)).mul
+      ((ih _).comp (contDiff_pi.2 fun i => contDiff_apply ℝ (fun _ => ℝ) i.succ))
 
 theorem hasFDerivAt_prodExpVal_zero {d : ℕ} (X : Fin d → 𝔸) :
     HasFDerivAt (prodExpVal X)
@@ -195,8 +199,8 @@ theorem isEmbedding_coe_coe :
     Topology.IsEmbedding (fun x : G => ((x : 𝔸ˣ) : 𝔸)) :=
   Units.isOpenEmbedding_val.isEmbedding.comp Topology.IsEmbedding.subtypeVal
 
-include h in
 
+include h in
 theorem secondCountableTopology : SecondCountableTopology G :=
   isEmbedding_coe_coe.secondCountableTopology
 
@@ -269,8 +273,8 @@ theorem contDiff_smul_of_tsupport {V F : Type*} [NormedAddCommGroup V] [NormedSp
       simp [hy]
     exact contDiffAt_const.congr_of_eventuallyEq this
 
-open MeasureTheory in
 
+open MeasureTheory in
 theorem contDiff_integral_comp_of_hasCompactSupport {X : Type*} [MeasurableSpace X]
     [TopologicalSpace X] [OpensMeasurableSpace X] [SecondCountableTopology X] (ν : Measure X)
     [IsFiniteMeasure ν] {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] {u : X → V}

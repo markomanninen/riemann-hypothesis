@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.PhiItSmul
-import Formalism.SharpRestriction.LevelLetterCocycles.LiftFOf
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.PhiItSmul
+public import Formalism.SharpRestriction.LevelLetterCocycles.LiftFOf
+
+@[expose] public section
 
 noncomputable section
 

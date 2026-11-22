@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+
+@[expose] public section
 
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
@@ -100,7 +104,7 @@ theorem okCompact : ∀ (F E : Type) [NontriviallyNormedField F] [NontriviallyNo
       ((isClosed_le continuous_const continuous_norm).inter (isClosed_le continuous_norm continuous_const))
       (fun v hv => mem_closedBall_zero_iff.2 hv.2)
   let h : (Fin n → F) → ℝ := fun v => ∑ k ∈ Finset.range n, ‖P k (e.symm v)‖
-  have hc : Continuous h := continuous_finset_sum _ fun k _ => continuous_norm.comp ((hPc k).comp hes)
+  have hc : Continuous h := continuous_finsetSum _ fun k _ => continuous_norm.comp ((hPc k).comp hes)
   have hpos : ∀ v ∈ T, 0 < h v := by
     intro v hv
     by_contra hle

@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.FlagGramNonneg
+module
+
+public import Formalism.PeriodIntegrals.FlagGramNonneg
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.IdeleRoots.ConstantFrames.GaugeExistence.RotationOfDiagonalGenerator
+module
+
+public import Mathlib
+public import GroundTheory.IdeleRoots.ConstantFrames.GaugeExistence.RotationOfDiagonalGenerator
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open Polynomial Formalism.REAL
@@ -31,7 +36,8 @@ theorem evU_tmPoly {n : ℕ} (E : Fin n → Fin n → A) (u : ℂ) (k : ℕ) (a 
 
 theorem evU_qdetPoly {n : ℕ} (E : Fin n → Fin n → A) (u : ℂ) : evU u (qdetPoly E) = qdet E u := by
   unfold qdetPoly qdet qminor
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [map_mul, map_list_prod, List.map_ofFn]
   congr 1
@@ -72,8 +78,8 @@ theorem natDegree_prod_ne_one {n : ℕ} (E : Fin n → Fin n → A) {σ : Equiv.
   have h3 := Equiv.Perm.two_le_card_support_of_ne_one hσ
   omega
 
-omit [Algebra ℂ A] in
 
+omit [Algebra ℂ A] in
 theorem prod_linear (m : ℕ) (c : Fin m → A) :
     (List.ofFn fun k : Fin m => X + C (c k)).prod.natDegree ≤ m ∧
       (List.ofFn fun k : Fin m => X + C (c k)).prod.coeff m = 1 ∧
@@ -142,7 +148,8 @@ theorem quantum_determinant_leading_terms : QdetSub := by
   obtain ⟨-, htop, hsub⟩ := prod_linear n fun k => Eo k k - algebraMap ℂ A ((k : ℕ) : ℂ)
   have hN : (qdetPoly Eo).coeff n = 1 := by rw [coeff_qdetPoly_top Eo n (by omega), htop]
   have hN1 : (qdetPoly Eo).coeff (n - 1) = ∑ i, Eo i i - algebraMap ℂ A (((n : ℂ) * ((n : ℂ) - 1)) / 2) := by
-    rw [coeff_qdetPoly_top Eo (n - 1) (by omega), hsub (n - 1) (by omega), Finset.sum_sub_distrib,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [coeff_qdetPoly_top Eo (n - 1) (by omega), hsub (n - 1) (by omega), Finset.sum_sub_distrib,
       ← map_sum, sum_fin_cast]
   refine ⟨fun j => (qdetPoly Eo).coeff j, fun u => ?_⟩
   have hdeg : (qdetPoly Eo).natDegree < n - 1 + 1 + 1 := by

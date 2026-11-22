@@ -1,6 +1,10 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.DHFinish2Of
-import Formalism.LFunctionBounds.LFunctionBoundsProofs.LPartialSum
-import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.LGrowth
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.DHFinish2Of
+public import Formalism.LFunctionBounds.LFunctionBoundsProofs.LPartialSum
+public import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.LGrowth
+
+@[expose] public section
 
 open Finset Complex Classical
 

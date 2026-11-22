@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ConstSectionStatement
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ConstSectionStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem rhoUnique : RhoUniqueStatement := by
   ext n
   obtain ⟨q, r, hqr⟩ := exists_pow_mul_add_polynomial P hP (n + 1) a
   have hd : ρ a - ρ' a = ρ (P : PowerSeries O) ^ (n + 1) * (ρ q - ρ' q) := by
-    rw [hqr, map_add, map_add, map_mul, map_mul, map_pow, map_pow, hpoly r, ← hpoly P]
+    rw [hqr, map_add (f := _), map_add (f := _), map_mul, map_mul, map_pow, map_pow, hpoly r, ← hpoly P]
     ring
   have hX' : X ^ (n + 1) ∣ ρ a - ρ' a := by
     rw [hd]

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ClassInjectiveOfDegree
-import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ClassInjectiveOfDegree
+public import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,11 +25,11 @@ theorem T_sub_one_ge (D : D7) (u : D.what₂.Word) :
     rw [← hM] at this
     linear_combination -this
   have hcπ : cj (π : D.host.E) = 1 + (M : D.host.E) * cj (α : D.host.E) := by
-    rw [hαE, map_add, map_mul, map_one, map_natCast]
+    rw [hαE, map_add (f := _), map_mul, map_one, map_natCast]
   have hT : ((D.mem u).A.T : D.host.E) - 1 = (M : D.host.E) * (b : D.host.E) := by
     have hπ' : (π : D.host.E) * cj (π : D.host.E) = ((D.mem u).A.T : D.host.E) := hπ
     rw [← hπ', hcπ, hαE]
-    simp only [b, αb, map_add, map_mul, map_natCast, RingOfIntegers.coe_eq_algebraMap]
+    simp only [b, αb, map_add (f := _), map_mul, map_natCast, RingOfIntegers.coe_eq_algebraMap]
     show _ = (M : D.host.E) * ((α : D.host.E) + cj (α : D.host.E) + (M : D.host.E) * (α : D.host.E) * cj (α : D.host.E))
     ring
   have hMpos : 0 < M := by

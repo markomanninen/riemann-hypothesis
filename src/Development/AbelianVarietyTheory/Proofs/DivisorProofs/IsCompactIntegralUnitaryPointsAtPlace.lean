@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvMemIntV
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.T2SpaceTensorRatFiniteAlgebraModuleTopology
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvMemIntV
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.T2SpaceTensorRatFiniteAlgebraModuleTopology
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,14 +48,14 @@ theorem isCompact_IntV : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p) (v : AwayP
   have hσ : Continuous (fun y : Qv v ⊗[ℚ] G.C ↦ (starT G.star (Qv v) y).unop) := by
     let σl : (Qv v ⊗[ℚ] G.C) →ₗ[Qv v] (Qv v ⊗[ℚ] G.C) :=
       { toFun := fun y ↦ (starT G.star (Qv v) y).unop
-        map_add' := fun x y ↦ by simp only [map_add, MulOpposite.unop_add]
+        map_add' := fun x y ↦ by simp only [map_add (f := _), MulOpposite.unop_add]
         map_smul' := by
           intro r x
           induction x using TensorProduct.induction_on with
           | zero => simp
           | tmul a y =>
             simp only [TensorProduct.smul_tmul', smul_eq_mul, starT_tmul, RingHom.id_apply]
-          | add x y hx hy => simp only [smul_add, map_add, MulOpposite.unop_add, hx, hy, RingHom.id_apply] }
+          | add x y hx hy => simp only [smul_add, map_add (f := _), MulOpposite.unop_add, hx, hy, RingHom.id_apply] }
     exact IsModuleTopology.continuous_of_linearMap σl
   have hj : Continuous (algebraMap (Qv v) (Qv v ⊗[ℚ] G.C)) :=
     IsModuleTopology.continuous_of_linearMap (Algebra.linearMap (Qv v) (Qv v ⊗[ℚ] G.C))

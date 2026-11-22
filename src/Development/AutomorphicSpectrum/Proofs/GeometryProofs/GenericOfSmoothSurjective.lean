@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularSmooth
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PushInvertibleOfDensePart
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularSmooth
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PushInvertibleOfDensePart
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Flat
 open Topology
 

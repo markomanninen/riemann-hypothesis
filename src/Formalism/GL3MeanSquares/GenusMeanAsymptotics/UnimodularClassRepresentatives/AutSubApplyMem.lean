@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ConjMemAutSub
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ConjMemAutSub
+
+@[expose] public section
 
 open NumberField Module Filter
 
@@ -113,7 +117,7 @@ theorem exists_on_orbit (hs : h.IsSymm) (S : VecSplit h h') {A : Submodule (𝓞
   · show _ ∈ Formalism.HermitianLatticesTheory.isom h ∧ _
     refine ⟨mul_mem (mul_mem (inv_mem hg) (SplitBAux.extOf_mem_isom hs S hg')) hγ, ?_⟩
     rw [autSub_gmap_mul, autSub_gmap_mul, e, ← autSub_gmap_mul, inv_mul_cancel, autSub_gmap_one]
-  · rw [LinearEquiv.mul_apply, LinearEquiv.mul_apply, LinearEquiv.apply_symm_apply, SplitBAux.extOf_x₀,
+  · rw [mul_apply_eq_comp, mul_apply_eq_comp, LinearEquiv.apply_symm_apply, SplitBAux.extOf_x₀,
       ← hy]
     exact g.symm_apply_apply y
 

@@ -1,6 +1,10 @@
-import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.HatCap
-import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.HatKBSOf
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFHatProdKBStmt
+module
+
+public import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.HatCap
+public import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.HatKBSOf
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFHatProdKBStmt
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 

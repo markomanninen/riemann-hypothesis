@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPermOfSumMonomialEq
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPermOfSumMonomialEq
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+
+@[expose] public section
+
 open scoped UpperHalfPlane MatrixGroups ModularForm Manifold BigOperators
 open GlobalTheory.QFam
 set_option maxHeartbeats 1000000 in

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct Classical
 
 namespace GlobalTheory
@@ -13,7 +18,7 @@ theorem exists_integral_inv_one_add_prime_mul :
     by_contra hn
     obtain ⟨M, hM, hmem⟩ := exists_max_ideal_of_mem_nonunits (mem_nonunits_iff.mpr hn)
     have hmax : (M.comap (algebraMap ℤ_[ℓ] B)).IsMaximal :=
-      Ideal.isMaximal_comap_of_isIntegral_of_isMaximal M
+      Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := ℤ_[ℓ]) M
     have heq := IsLocalRing.eq_maximalIdeal hmax
     have hl : (ℓ : ℤ_[ℓ]) ∈ M.comap (algebraMap ℤ_[ℓ] B) := by
       rw [heq, PadicInt.maximalIdeal_eq_span_p]

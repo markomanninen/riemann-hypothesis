@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CompactCasimirLeTensorOperatorRaiseStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CompactCasimirLeTensorOperatorRaiseStatement
+
+@[expose] public section
+
 open Finset BranchingSupport Formalism.REAL Formalism.QuantumDeterminants
 open scoped InnerProductSpace
 
@@ -48,7 +53,8 @@ theorem casKLe_proj_single : ∀ (M : Type) [NormedAddCommGroup M] [InnerProduct
   · intro a b _ j v
     simp only [LinearMap.comp_apply, LinearMap.single_apply, Matrix.of_apply]
     rw [← hT.pr_comm]
-    simp only [← map_smul, ← map_sum, ← map_add]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← map_smul, ← map_sum, ← map_add (f := _)]
     congr 1
     funext i
     rw [Finset.sum_eq_single b]

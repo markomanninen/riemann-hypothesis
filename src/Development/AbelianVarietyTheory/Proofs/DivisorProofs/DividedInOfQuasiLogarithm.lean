@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PderivSubstChainRuleStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffSubstRestrictSumVariablesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffsInIdealSolutionOfUnipotentSeriesMatrixStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PderivSubstChainRuleStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffSubstRestrictSumVariablesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffsInIdealSolutionOfUnipotentSeriesMatrixStatement
+
+@[expose] public section
 
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
@@ -14,9 +18,9 @@ namespace GlobalTheory.QLogDiff
 
 theorem restr_inL_inR {R : Type} [CommRing R] {d : ℕ} (f : MvPowerSeries (Fin d) R) (i : Fin d) :
     subst (Sum.elim (fun j => (X j : MvPowerSeries (Fin d) R)) (fun _ => 0))
-        (pderiv R (Sum.inr i) (inL f)) = 0 ∧
+        (pderiv (R := R) (Sum.inr i) (inL f)) = 0 ∧
     subst (Sum.elim (fun j => (X j : MvPowerSeries (Fin d) R)) (fun _ => 0))
-        (pderiv R (Sum.inr i) (inR f)) = C (lin f i) := by
+        (pderiv (R := R) (Sum.inr i) (inR f)) = C (lin f i) := by
   classical
   have hl : ∀ s : Fin d, constantCoeff (X (Sum.inl s) : MvPowerSeries (Fin d ⊕ Fin d) R) = 0 :=
     fun s => by simp
@@ -26,11 +30,13 @@ theorem restr_inL_inR {R : Type} [CommRing R] {d : ℕ} (f : MvPowerSeries (Fin 
     hasSubst_of_constantCoeff_zero (fun s => by cases s <;> simp)
   constructor
   · unfold inL
-    rw [GlobalTheory.T.pderiv_subst_chain_rule _ hl f (Sum.inr i),
+    have hchain := GlobalTheory.PSChain.pderiv_subst_chain _ hl f (Sum.inr i)
+    rw [hchain,
       Finset.sum_eq_zero (fun j _ => by rw [pderiv_X_of_ne (by simp), mul_zero]),
       ← substAlgHom_apply hρ, map_zero]
   · unfold inR
-    rw [GlobalTheory.T.pderiv_subst_chain_rule _ hr f (Sum.inr i), Finset.sum_eq_single i
+    have hchain := GlobalTheory.PSChain.pderiv_subst_chain _ hr f (Sum.inr i)
+    rw [hchain, Finset.sum_eq_single i
       (fun j _ hj => by rw [pderiv_X_of_ne (by simpa using hj), mul_zero]) (by simp),
       pderiv_X_self, mul_one, subst_comp_subst_apply (hasSubst_of_constantCoeff_zero hr) hρ]
     have e : (fun s : Fin d => subst (Sum.elim (fun j => (X j : MvPowerSeries (Fin d) R))
@@ -45,14 +51,15 @@ end GlobalTheory.QLogDiff
 namespace GlobalTheory.QLogDiff
 
 theorem pderiv_map_eq {R S σ : Type} [CommRing R] [CommRing S] (h : R →+* S)
-    (f : MvPowerSeries σ R) (i : σ) : pderiv S i (map h f) = map h (pderiv R i f) := by
+    (f : MvPowerSeries σ R) (i : σ) :
+    pderiv (R := S) i (map h f) = map h (pderiv (R := R) i f) := by
   ext n; simp [coeff_pderiv, coeff_map]
 
 theorem in_add {B Q σ : Type} [CommRing B] [CommRing Q] [Algebra B Q] {N : Ideal B}
     {f g : MvPowerSeries σ Q} (hf : In N f) (hg : In N g) : In N (f + g) := fun α => by
   obtain ⟨a, ha, ea⟩ := hf α
   obtain ⟨b, hb, eb⟩ := hg α
-  exact ⟨a + b, N.add_mem ha hb, by rw [map_add, ea, eb, map_add]⟩
+  exact ⟨a + b, N.add_mem ha hb, by rw [map_add (f := _), ea, eb, map_add (f := _)]⟩
 
 theorem coeff_inr_of_unit {B : Type} [CommRing B] {d : ℕ} (μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) B)
     (hu : op μ (fun i => (X i : MvPowerSeries (Fin d) B)) (fun _ => 0) = fun i => X i)
@@ -108,20 +115,23 @@ theorem dIn_of_QL : ∀ (p : ℕ) [Fact p.Prime] (B O Q : Type) [CommRing B] [Co
     rw [hmapsub, map_X] at h2
     exact h2
   let M : Matrix (Fin d) (Fin d) (MvPowerSeries (Fin d) B) :=
-    fun j i => subst ρB (pderiv B (Sum.inr i) (μ j))
+    fun j i => subst ρB (pderiv (R := B) (Sum.inr i) (μ j))
   have hM : ∀ j i, constantCoeff (M j i) = if j = i then 1 else 0 := by
     intro j i
-    have h2 := (GlobalTheory.T.coeff_subst_restrict_sum_variables (R := B) (pderiv B (Sum.inr i) (μ j))).1 0
+    have h2 := (GlobalTheory.T.coeff_subst_restrict_sum_variables (R := B) (pderiv (R := B) (Sum.inr i) (μ j))).1 0
     rw [← hρBe] at h2
     rw [← coeff_zero_eq_constantCoeff_apply]
     simp only [M]
     rw [h2, Finsupp.mapDomain_zero, coeff_pderiv, zero_add, coeff_inr_of_unit μ hμ.unit hμ.comm i j]
     simp [eq_comm]
-  let g : Fin d → MvPowerSeries (Fin d) Q := fun i => subst ρ (pderiv Q (Sum.inr i) (subst (up Q μ) f))
-  have hvg : ∀ i, ∑ j, pderiv Q j f * map (algebraMap B Q) (M j i) = g i := by
+  let g : Fin d → MvPowerSeries (Fin d) Q :=
+    fun i => subst ρ (pderiv (R := Q) (Sum.inr i) (subst (up Q μ) f))
+  have hvg : ∀ i, ∑ j, pderiv (R := Q) j f * map (algebraMap B Q) (M j i) = g i := by
     intro i
     simp only [g, M]
-    rw [GlobalTheory.T.pderiv_subst_chain_rule (up Q μ) hμ0 f (Sum.inr i), ← substAlgHom_apply hρ, map_sum]
+    have hchain := GlobalTheory.PSChain.pderiv_subst_chain (up Q μ) hμ0 f (Sum.inr i)
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hchain, ← substAlgHom_apply hρ, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, substAlgHom_apply, substAlgHom_apply, subst_comp_subst_apply haμ hρ, hmapsub]
     have e : (fun s => subst ρ (up Q μ s)) = X := funext hunit
@@ -133,12 +143,13 @@ theorem dIn_of_QL : ∀ (p : ℕ) [Fact p.Prime] (B O Q : Type) [CommRing B] [Co
     have l4 := restr_inL_inR f i
     rw [← hρe] at l4
     simp only [g]
-    rw [hsplit, map_add, map_add, ← substAlgHom_apply hρ, map_add, map_add]
+    rw [hsplit, map_add (f := _), map_add (f := _), ← substAlgHom_apply hρ, map_add (f := _), map_add (f := _)]
     simp only [substAlgHom_apply]
     rw [l4.1, l4.2, add_zero]
     refine in_add ?_ ?_
     · intro α
-      have h2 := (GlobalTheory.T.coeff_subst_restrict_sum_variables (R := Q) (pderiv Q (Sum.inr i) (cob1 (up Q μ) f))).1 α
+      have h2 := (GlobalTheory.T.coeff_subst_restrict_sum_variables (R := Q)
+        (pderiv (R := Q) (Sum.inr i) (cob1 (up Q μ) f))).1 α
       rw [← hρe] at h2
       rw [h2, coeff_pderiv]
       obtain ⟨b, hb, e⟩ := hcob (Finsupp.mapDomain Sum.inl α + Finsupp.single (Sum.inr i) 1)
@@ -148,8 +159,9 @@ theorem dIn_of_QL : ∀ (p : ℕ) [Fact p.Prime] (B O Q : Type) [CommRing B] [Co
       obtain ⟨b, hb, e⟩ := hlin i
       by_cases h0 : α = 0
       · exact ⟨b, hb, by rw [h0, coeff_zero_C, e]⟩
-      · exact ⟨0, N.zero_mem, by rw [coeff_C, if_neg h0, map_zero]⟩
-  have hv := GlobalTheory.T.coeffsInIdeal_solution_of_unipotent_series_matrix N M hM (fun j => pderiv Q j f) g hvg hg
+      · exact ⟨0, N.zero_mem, by rw [coeff_C, ite_eq_right h0, map_zero]⟩
+  have hv := GlobalTheory.T.coeffsInIdeal_solution_of_unipotent_series_matrix N M hM
+    (fun j => pderiv (R := Q) j f) g hvg hg
   intro α i
   by_cases hi : α i = 0
   · exact ⟨0, N.zero_mem, by rw [hi, Nat.cast_zero, zero_mul, map_zero]⟩

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Domination
 
@@ -21,7 +25,7 @@ theorem isMaximal_of_comap {K : Type} [Field K] (R T : Subring K) (hRT : R ≤ T
   have : Algebra.IsIntegral R T := ⟨fun t ↦ by
     let f : T →ₐ[R] K := { T.subtype with commutes' := fun r ↦ rfl }
     exact (isIntegral_algHom_iff f Subtype.val_injective).1 (hint t t.2)⟩
-  exact Ideal.isMaximal_of_isIntegral_of_isMaximal_comap P hc
+  exact Ideal.isMaximal_of_isIntegral_of_isMaximal_under P hc
 
 theorem eq_ofPrime {K : Type} [Field K] (T D : Subring K) (P : Ideal T) [P.IsPrime]
     (hP : ∀ t : T, t ∈ P ↔ ¬ ((t : K) ≠ 0 ∧ (t : K)⁻¹ ∈ D)) (hTD : T ≤ D)

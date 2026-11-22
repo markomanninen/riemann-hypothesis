@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SphericalThetaInertPlace
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitaryGl1UnitValuation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SphericalThetaInertPlace
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitaryGl1UnitValuation
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,28 +37,18 @@ def lowBlock {n : ℕ} (g : Matrix (Fin n) (Fin n) L) : Matrix (Fin (n / 2)) (Fi
 def pairing (σ : L →+* L) (δ : L) (ψ : AddChar L ℂ) {n n' : ℕ} (x y : Matrix (Fin n') (Fin n) L) : ℂ :=
   ψ (δ * (∑ i, ∑ j, x i j * σ (y i.rev j.rev)) + σ (δ * (∑ i, ∑ j, x i j * σ (y i.rev j.rev))))
 
-def conjU {σ : L →+* L} (hσ : ∀ x, σ (σ x) = x) (n : ℕ) : GU σ n →* GU σ n :=
-  ((bc σ).comp (GU σ n).subtype).codRestrict _ fun g => by
-    have h := congrArg (fun M : Matrix (Fin n) (Fin n) L => M.map σ) (show cT σ g.1.1 * antiJ L n * g.1.1 = antiJ L n from g.2)
-    have hJ : (antiJ L n).map σ = antiJ L n := by
-      ext i j
-      simp only [Matrix.map_apply, antiJ]
-      split_ifs <;> simp
-    simp only [Matrix.map_mul, hJ] at h
-    exact h
-
 variable [Valued L (WithZero (Multiplicative ℤ))]
 
-variable (L) in
 
+variable (L) in
 def intMat (α β : Type) : Submodule (intL L) (Matrix α β L) where
   carrier := {x | ∀ i j, x i j ∈ intL L}
   add_mem' h h' i j := add_mem (h i j) (h' i j)
   zero_mem' _ _ := zero_mem _
   smul_mem' r _ h i j := mul_mem r.2 (h i j)
 
-variable (L) in
 
+variable (L) in
 def mixLat (n' n : ℕ) : Submodule (intL L) (Matrix (Fin n') (Fin n) L) where
   carrier := {x | ∀ r c, (n' - n' / 2 ≤ r.1 ∨ n' / 2 ≤ r.1 ∧ c.1 < n / 2 → x r c = 0) ∧
     (n' / 2 ≤ r.1 → c.1 < n - n / 2 → x r c ∈ intL L)}
@@ -111,33 +105,37 @@ theorem isHeis_of (hσ : ∀ x, σ (σ x) = x) (hv : ∀ x, Valued.v (σ x) = Va
     (hδ : σ δ = -δ) {ρ : Matrix (Fin n') (Fin n) L → Module.End ℂ M} (h0 : ρ 0 = 1)
     (hm : ∀ x y, ρ x * ρ y = ψ ((locH σ δ (antiG L n) (antiG L n') x y +
       σ (locH σ δ (antiG L n) (antiG L n') x y)) / 2) • ρ (x + y)) :
-    IsHeis (intConj hv) (half h2) (pairing σ δ ψ) ρ where
-  sg_sg r := Subtype.ext (hσ r)
-  w_add := Subtype.ext (by
+    IsHeis (intConj hv) (half h2) (pairing σ δ ψ) ρ := by
+  refine { sg_sg := fun r => Subtype.ext (hσ r)
+           w_add := ?_, add_left := ?_, add_right := ?_, alt := ?_
+           adj := ?_, zero := ?_, comp := ?_ }
+  · apply Subtype.ext
     have := two_ne_zero_of h2
     show (2⁻¹ : L) + σ 2⁻¹ = 1
-    rw [map_inv₀, map_ofNat]; field_simp; norm_num)
-  add_left x y z := by
-    simp only [pairing, ← AddChar.map_add_eq_mul, Matrix.add_apply, add_mul, Finset.sum_add_distrib, mul_add, map_add]
+    rw [map_inv₀, map_ofNat]; field_simp; norm_num
+  · intro x y z
+    simp only [pairing, ← AddChar.map_add_eq_mul, Matrix.add_apply, add_mul, Finset.sum_add_distrib, mul_add, map_add (f := _)]
     congr 1; ring
-  add_right x y z := by
-    simp only [pairing, ← AddChar.map_add_eq_mul, Matrix.add_apply, add_mul, Finset.sum_add_distrib, mul_add, map_add]
+  · intro x y z
+    simp only [pairing, ← AddChar.map_add_eq_mul, Matrix.add_apply, add_mul, Finset.sum_add_distrib, mul_add, map_add (f := _)]
     congr 1; ring
-  alt x := by
+  · intro x
     have : σ (∑ i, ∑ j, x i j * σ (x i.rev j.rev)) = ∑ i, ∑ j, x i j * σ (x i.rev j.rev) := by
-      simp only [map_sum, map_mul, hσ]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, hσ]
       rw [← Equiv.sum_comp Fin.revPerm]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [← Equiv.sum_comp Fin.revPerm]
       simp [mul_comm]
     rw [pairing, map_mul, this, hδ, neg_mul, add_neg_cancel, AddChar.map_zero_eq_one]
-  adj r x y := by
+  · intro r x y
     have : ∀ i j, (r • x) i j * σ (y i.rev j.rev) = x i j * σ ((intConj hv r • y) i.rev j.rev) := fun i j => by
       show (r : L) * x i j * _ = x i j * σ (σ r * y i.rev j.rev)
       rw [map_mul, hσ]; ring
     simp only [pairing, this]
-  zero v := by rw [h0]; rfl
-  comp x y v := by
+  · intro v
+    rw [h0]; rfl
+  · intro x y v
     have e : ∀ i j, (half h2 • x) i j * σ (y i.rev j.rev) = 2⁻¹ * (x i j * σ (y i.rev j.rev)) := fun i j =>
       mul_assoc _ _ _
     rw [← Module.End.mul_apply, hm, locH_antiG, pairing]
@@ -185,7 +183,7 @@ theorem selfDual_intMat (hU : IsUnramInv ϖ σ q) (h2 : Valued.v (2 : L) = 1) (h
   refine fun x => ⟨fun hx y hy => ?_, fun h i j => ?_⟩
   · have : δ * ∑ i, ∑ j, x i j * σ (y i.rev j.rev) ∈ intL L :=
       mul_mem (mem_intL.2 hδ.le) (sum_mem fun i _ => sum_mem fun j _ => mul_mem (hx i j) (hs _ (hy _ _)))
-    exact hψ0 _ (add_mem this (hs _ this)) (by rw [map_add, hU.1, add_comm])
+    exact hψ0 _ (add_mem this (hs _ this)) (by rw [map_add (f := _), hU.1, add_comm])
   · by_contra hx
     obtain ⟨u, hu, hne⟩ := exists_pairing_single_ne hU h2 hδ hψ x hx
     refine hne (h _ fun i' j' => ?_)

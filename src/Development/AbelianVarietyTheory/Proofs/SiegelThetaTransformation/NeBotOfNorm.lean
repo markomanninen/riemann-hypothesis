@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CycOfPrime
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CycOfPrime
+
+@[expose] public section
 
 open Matrix Complex NumberField GlobalTheory.SW Filter Topology
 open ReciprocityTheory.ChartRestriction.G.FD (cc herm)
@@ -238,8 +242,8 @@ omit [IsCMField E] in
 theorem relIndex_eq (Λ Λ' : Lt E n) : Λ'.toAddSubgroup.relIndex Λ.toAddSubgroup =
     (Λ'.comap Λ.subtype).toAddSubgroup.index := rfl
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem index_iff {q : ℕ} {P : Ideal (𝓞 E)} (hq : q.Prime) (hP : Ideal.absNorm P = q)
     {Λ : Lt E n} (N : Submodule (𝓞 E) Λ) :
     ((∀ c ∈ P, ∀ x, c • x ∈ N) ∧ N.toAddSubgroup.index = q) ↔
@@ -250,10 +254,11 @@ theorem index_iff {q : ℕ} {P : Ideal (𝓞 E)} (hq : q.Prime) (hP : Ideal.absN
     obtain ⟨v, hv, hc⟩ := Hyper.cyc_of_prime N hq h2
     exact Hyper.exists_fun P N v hv (fun c hc => h1 c hc v) hc
   · rintro ⟨f, hf, rfl⟩
-    refine ⟨fun c hc x => ?_, (Hyper.index_ker P f hf).trans hP⟩
-    rw [LinearMap.mem_ker, map_smul, Algebra.smul_def]
-    have : algebraMap (𝓞 E) (𝓞 E ⧸ P) c = 0 := Ideal.Quotient.eq_zero_iff_mem.2 hc
-    rw [this, zero_mul]
+    refine ⟨fun c hc x => ?_, (Hyper.index_ker P f hf).trans ?_⟩
+    · rw [LinearMap.mem_ker, map_smul, Algebra.smul_def]
+      have : algebraMap (𝓞 E) (𝓞 E ⧸ P) c = 0 := Ideal.Quotient.eq_zero_iff_mem.2 hc
+      rw [this, zero_mul]
+    · rw [← Ideal.absNorm_eq_natCard]; exact hP
 
 def nbOf (P : Ideal (𝓞 E)) (Λ₀ : Lt E n) : Lt E n where
   carrier := {x | (∀ y ∈ Λ₀, Int' x y) ∧ ∀ c ∈ conjI P, c • x ∈ Λ₀}
@@ -370,7 +375,7 @@ theorem index_symm {M q : ℕ} {P : Ideal (𝓞 E)} (hP : GoodPrime M q P) {Λ �
       rw [h4]
       exact hint x x.2 c hc
   rw [relIndex_eq, ← hk, Hyper.index_ker _ f hf]
-  exact hQ.2.2.1
+  simpa [← Ideal.absNorm_eq_natCard] using hQ.2.2.1
 
 theorem nb_symm {M q : ℕ} {P : Ideal (𝓞 E)} (hP : GoodPrime M q P) {Λ Λ' : Lt E n}
     (h : Λ ∈ Vset E n M) (h' : Λ' ∈ Nb M P Λ) : Λ ∈ Nb M (conjI P) Λ' :=
@@ -382,7 +387,8 @@ theorem nb_count {M q : ℕ} {P : Ideal (𝓞 E)} (hP : GoodPrime M q P) {Λ : L
   have := max_of_norm hP.1 hP.2.2.1
   have := proj h.1
   have : Module.Finite (𝓞 E) Λ := Module.Finite.iff_fg.mpr h.1
-  have hc : Nat.card (𝓞 E ⧸ P) = q := hP.2.2.1
+  have hc : Nat.card (𝓞 E ⧸ P) = q := by
+    simpa [← Ideal.absNorm_eq_natCard] using hP.2.2.1
   have : Finite (𝓞 E ⧸ P) := Nat.finite_of_card_ne_zero (hc ▸ hP.1.ne_zero)
   obtain ⟨h1, h2⟩ := Hyper.count (M := Λ) P
   rw [hc, finrank_eq h] at h2

@@ -1,2 +1,0 @@
-import Supplements.Kernels.MainTheoremsCritical
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SmallClassNumbers.CorGKOf

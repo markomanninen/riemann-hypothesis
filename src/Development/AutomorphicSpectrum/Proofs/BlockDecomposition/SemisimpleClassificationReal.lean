@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.LeviCommutantWordReduction
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CreqAnnqTopqSame
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.LeviCommutantWordReduction
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CreqAnnqTopqSame
+
+@[expose] public section
 
 open Finset
 open CompanionTheory.D.LK (Pos)

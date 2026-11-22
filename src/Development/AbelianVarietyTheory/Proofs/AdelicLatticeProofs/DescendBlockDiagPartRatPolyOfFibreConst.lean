@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RatComponentMemRatPolysVanishingOnMatrixSetStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsComplexPolyBlockDiagPartOfFibreConstStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RatComponentMemRatPolysVanishingOnMatrixSetStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsComplexPolyBlockDiagPartOfFibreConstStatement
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
@@ -9,9 +14,9 @@ namespace GlobalTheory.ClassFin
 
 theorem exists_component_subst {σ : Type} (s : σ → MvPolynomial σ ℚ) (l : ℂ →ₗ[ℚ] ℚ)
     (b : MvPolynomial σ ℂ) :
-    ∃ b' : MvPolynomial σ ℚ, ∀ m, MvPolynomial.coeff m (MvPolynomial.aeval s b') =
-      l (MvPolynomial.coeff m
-        (MvPolynomial.aeval (fun i => MvPolynomial.map (algebraMap ℚ ℂ) (s i)) b)) := by
+    ∃ b' : MvPolynomial σ ℚ, ∀ m, AddMonoidAlgebra.coeff (MvPolynomial.aeval s b') m =
+      l (AddMonoidAlgebra.coeff (MvPolynomial.aeval (fun i => MvPolynomial.map (algebraMap ℚ ℂ) (s i)) b)
+        m) := by
   induction b using MvPolynomial.induction_on' with
   | monomial u a =>
     refine ⟨MvPolynomial.monomial u (l a), fun m => ?_⟩
@@ -26,7 +31,7 @@ theorem exists_component_subst {σ : Type} (s : σ → MvPolynomial σ ℚ) (l :
     obtain ⟨p', hp'⟩ := hp
     obtain ⟨q', hq'⟩ := hq
     refine ⟨p' + q', fun m => ?_⟩
-    rw [map_add, map_add, MvPolynomial.coeff_add, MvPolynomial.coeff_add, map_add, hp', hq']
+    rw [map_add (f := _), map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, map_add (f := _), hp', hq']
 
 theorem exists_poly_blk {ι : Type} [Fintype ι] [DecidableEq ι] (e : Matrix ι ι ℚ) :
     ∃ s : ι × ι → MvPolynomial (ι × ι) ℚ, ∀ (x : Matrix ι ι ℂ) (ij : ι × ι),
@@ -43,7 +48,7 @@ theorem exists_poly_blk {ι : Type} [Fintype ι] [DecidableEq ι] (e : Matrix ι
   have h3 : φ.mapMatrix (blk e (Matrix.of fun i j => (MvPolynomial.X (i, j) : MvPolynomial (ι × ι) ℚ)))
       = blk e x := by
     unfold blk
-    simp only [map_add, map_mul, map_sub, map_one, h1, h2]
+    simp only [map_add (f := _), map_mul, map_sub, map_one, h1, h2]
   rw [← h3]
   rfl
 

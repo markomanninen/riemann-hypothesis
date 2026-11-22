@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.BaseSt
-import Formalism.LocalToGlobal.UnitaryNorms.RealPl
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.InfEmbUnique
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.BaseSt
+public import Formalism.LocalToGlobal.UnitaryNorms.RealPl
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.InfEmbUnique
+
+@[expose] public section
 
 noncomputable section
 
@@ -182,7 +186,7 @@ theorem betaT_im_ne (τ : D.what₂.Tau) : (betaT D τ).im ≠ 0 := by
 theorem thetaC_decomp (τ : D.what₂.Tau) (x : Ainf D.host.F ⊗[D.host.F] D.host.E) :
     thetaC D τ x = gW D (plW D τ) ((basA D).repr x 0) + gW D (plW D τ) ((basA D).repr x 1) * betaT D τ := by
   conv_lhs => rw [decomp D x]
-  rw [map_add, thetaC_tmul, thetaC_tmul, map_one, mul_one]
+  rw [map_add (f := _), thetaC_tmul, thetaC_tmul, map_one, mul_one]
   rfl
 
 theorem thetaC_inj (x : Ainf D.host.F ⊗[D.host.F] D.host.E) (h : ∀ τ, thetaC D τ x = 0) : x = 0 := by
@@ -238,7 +242,7 @@ theorem archimedean_image_imaginary (y : D.what₂.Tau → ℂ) (τ : D.what₂.
   rw [if_neg (by decide), gW_symm, symm_plW]
 
 theorem thetaC_splitInv (y : D.what₂.Tau → ℂ) (τ : D.what₂.Tau) : thetaC D τ (splitInv D y) = y τ := by
-  rw [splitInv, map_add, thetaC_tmul, thetaC_tmul, map_one, mul_one, archimedean_image_real, archimedean_image_imaginary,
+  rw [splitInv, map_add (f := _), thetaC_tmul, thetaC_tmul, map_one, mul_one, archimedean_image_real, archimedean_image_imaginary,
     show tauE D τ (alphaE D) = betaT D τ from rfl]
   apply Complex.ext
   · simp [Complex.mul_re, betaT_re]

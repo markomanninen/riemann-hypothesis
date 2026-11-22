@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.EulerCharDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.EulerCharDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh

@@ -1,4 +1,8 @@
-import Formalism.TruncatedSeriesCounting.LengthQuotientLeOfPowSMul
+module
+
+public import Formalism.TruncatedSeriesCounting.LengthQuotientLeOfPowSMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ theorem mem_span_of_C_pow_mul : CancelC := by
     rw [PowerSeries.X_pow_dvd_iff]
     intro n hn
     have h1 := congrArg (PowerSeries.coeff n) hpq
-    simp only [map_add, PowerSeries.coeff_mul_C, PowerSeries.coeff_C_mul, PowerSeries.coeff_mul_X_pow',
+    simp only [map_add (f := _), PowerSeries.coeff_mul_C, PowerSeries.coeff_C_mul, PowerSeries.coeff_mul_X_pow',
       if_neg (show ¬ b ≤ n by omega), add_zero] at h1
     rw [map_sub, PowerSeries.coeff_mul_C, sub_eq_zero]
     apply mul_left_cancel₀ (pow_ne_zero v ha)

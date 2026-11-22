@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CongruenceNumberRankThree
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsRatOfForallComplexRingEquivFixed
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CongruenceNumberRankThree
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsRatOfForallComplexRingEquivFixed
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial GlobalTheory.GalOfCusp UpperTheory.V.Af
 
 theorem UpperTheory.exists_int_eq_prod_of_galois_permuted_integral :
@@ -14,7 +19,7 @@ theorem UpperTheory.exists_int_eq_prod_of_galois_permuted_integral :
   obtain ⟨q, hq⟩ := GlobalTheory.ClassFin.exists_rat_of_forall_ringEquiv_fixed _ hfix
   have hq' : algebraMap ℚ ℂ q = ∏ t, f t := by simpa using hq.symm
   rw [← hq'] at hint
-  have hqi : IsIntegral ℤ q := (isIntegral_algebraMap_iff (algebraMap ℚ ℂ).injective).mp hint
+  have hqi : IsIntegral ℤ q := (isIntegral_algebraMap_iff ).mp hint
   obtain ⟨n, hn⟩ := IsIntegrallyClosed.algebraMap_eq_of_integral (K := ℚ) hqi
   refine ⟨n, ?_⟩
   rw [← hq', ← hn]

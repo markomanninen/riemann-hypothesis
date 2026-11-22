@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.MemLam
-import Development.WeilBound.ThetaLifts.LatticeBasics.BadStmt
-import Development.WeilBound.ThetaLifts.LatticeBasics.LocMeas
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.PfDict
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactOpenAddSubgroup
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.MemLam
+public import Development.WeilBound.ThetaLifts.LatticeBasics.BadStmt
+public import Development.WeilBound.ThetaLifts.LatticeBasics.LocMeas
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.PfDict
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactOpenAddSubgroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem near_UA (h : PositivityTheory.KCo.IsSec σ t sec) {X : Spc F E n} (hu : 
     · rw [← sub_sub]
       exact hg.kd_sub (kd_at_matrix.2 fun i j => (at_sgl_smul _ _).kd_add (at_sgl_smul _ _))
     · ext i j
-      simp [S, (h.smul _ _).1, h.fst, ev_sgl, one_apply, apply_ite (piW t)]
+      by_cases hij : i = j <;> simp [S, (h.smul _ _).1, h.fst, ev_sgl, hij, map_sub]
     · have e1 := h.unit_rel g
       have e2 : ((mat g⁻¹).map (piW t))ᵀ * ((mat g).map (piW t))ᵀ = 1 := by
         rw [← transpose_mul, ← Matrix.map_mul, show mat g * mat g⁻¹ = 1 from g.1.mul_inv, Matrix.map_one _ (map_zero _) (map_one _),
@@ -60,7 +64,7 @@ theorem near_UA (h : PositivityTheory.KCo.IsSec σ t sec) {X : Spc F E n} (hu : 
         rfl
       rw [e3]
       ext i j
-      simp [S, (h.smul _ _).2, h.snd, ev_sgl, one_apply, apply_ite (piW (t.comp σ))]
+      by_cases hij : i = j <;> simp [S, (h.smul _ _).2, h.snd, ev_sgl, hij, map_sub]
   have c2 := cS.prodMk (cS.comp continuous_swap)
   filter_upwards [(c2.tendsto' (1, 1) (1, 1) (by simp [S1])).eventually (near_units h1)] with p hp g hg e1 e2
   have hg' : At (evFin F v) (mat g⁻¹ - 1) := by
@@ -116,7 +120,11 @@ theorem bump : Bump := by
   obtain ⟨⟨ι, hι⟩, -, -, k⟩ := dictX F E σ n d B X W M om χX χW hp.base ⟨_, _, hp.herm⟩ ⟨_, _, hp.skew⟩ hp.weil v t
   obtain ⟨⟨sec, h⟩, hsm⟩ := section_statement F E σ hp.base.cm v t
   have hG := grams h hp.herm hp.skew
-  have n1 := near_UA h hG.uA ((Euler.isOpen_int (σ := σ) hp.herm.lat v).mem_nhds (one_mem _))
+  have hopen : IsOpen (Euler.intGrp σ X v : Set (UA σ X.J)) := by
+    first
+    | exact Euler.isOpen_int (Euler.herm_full hp.herm) v
+    | exact Euler.isOpen_int hp.herm.lat v
+  have n1 := near_UA h hG.uA (hopen.mem_nhds (one_mem _))
   have hv1 : ∀ᶠ y in 𝓝 (1 : Fv F v), ValuativeRel.valuation (Fv F v) y = 1 := by
     simpa [Filter.Eventually] using (ValuativeRel.valuation (Fv F v)).locally_const (x := 1) (by simp)
   have n2 := near_units (A := Matrix (Fin n) (Fin n) (Fv F v))
@@ -134,8 +142,8 @@ theorem bump : Bump := by
   obtain ⟨φ, hφ, e⟩ := hι.bij.2.2 (ind_mem a0 Y₀)
   have mult : ∀ u, At (evFin F v) u → u.map (piW (t.comp σ)) = 0 → ∀ c : ℂ, (∀ Y, Y - Y₀ ∈ lam (Fv F v) a n d →
       psiV B.ψ v (trace (Yᵀ * -u.map (piW t))) = c) → Acts (evFin F v) (M.co.rho B.ψ u) φ (c • φ) := fun u hu h0 c hc => by
-    have ac := adjoint_statement.Heisenberg₂ F _ B.ψ v _ (hu.kd_map M.co.e.toLinearMap) φ
-    have mem := schr_mem ((adjoint_statement.psi F _ hp.base.std).2 v).1 (locW v (M.co.e.toLinearMap u)) hφ
+    have ac := PositivityTheory.KCo.adjoint_statement.Heisenberg₂ F _ B.ψ v _ (hu.kd_map M.co.e.toLinearMap) φ
+    have mem := schr_mem ((PositivityTheory.KCo.adjoint_statement.psi F _ hp.base.std).2 v).1 (locW v (M.co.e.toLinearMap u)) hφ
     rw [← hι.bij.2.1 mem ((SB _).smul_mem c hφ) (funext fun Y => ?_)]
     · exact ac
     obtain ⟨x, hx, hcx, -⟩ := exists_coord h hG (ofM Y, 0)
@@ -171,15 +179,16 @@ theorem bump : Bump := by
     let u₀ : Matrix (Fin n) (Fin d) (Fv F v) := of fun i j => -l (single i j 1)
     have el : ∀ Y, trace (Yᵀ * -u₀) = l Y := fun Y => by
       conv_rhs => rw [matrix_eq_sum_single Y]
-      simp only [← dot_ofM, dotProduct, ofM, Fintype.sum_prod_type, map_sum, u₀, Matrix.neg_apply, of_apply, neg_neg]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [← dot_ofM, dotProduct, ofM, Fintype.sum_prod_type, map_sum, u₀, Matrix.neg_apply, of_apply, neg_neg]
       exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by rw [← smul_eq_mul, ← map_smul]; simp
     refine Or.inr ⟨secM sec u₀ 0, psiV B.ψ v (l Y₀), psiV B.ψ v (l (g₀.1ᵀ * Y₀)), h.atM _ _, fun H => h2 ?_,
       mult _ (h.atM _ _) (h.sndM _ _) _ fun Y hY => ?_,
       mult _ ((h.atM _ _).kd_mul_left _) (by rw [Matrix.map_mul, h.sndM, Matrix.mul_zero]) _ fun Y hY => ?_⟩
     · refine mul_right_cancel₀ ((psiV B.ψ v).val_isUnit (l Y₀)).ne_zero ?_
-      rw [← AddChar.map_add_eq_mul, ← map_add, sub_add_cancel, one_mul, H]
+      rw [← AddChar.map_add_eq_mul, ← map_add (f := _), sub_add_cancel, one_mul, H]
       rfl
-    · rw [h.fstM, el, ← sub_add_cancel Y Y₀, map_add, AddChar.map_add_eq_mul, (h1 _ hY).1, one_mul]
+    · rw [h.fstM, el, ← sub_add_cancel Y Y₀, map_add (f := _), AddChar.map_add_eq_mul, (h1 _ hY).1, one_mul]
     · rw [Matrix.map_mul, h.fstM, ← Matrix.mul_neg, ← Matrix.mul_assoc, ← transpose_transpose (Yᵀ * _), transpose_mul,
         transpose_transpose, el, ← sub_add_cancel Y Y₀, Matrix.mul_add, map_add, AddChar.map_add_eq_mul]
       exact (congrArg (· * _) (h1 _ hY).2).trans (one_mul _)

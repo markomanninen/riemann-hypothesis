@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplitsPullbackSndOfSplitsDiagonalComplement
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FibrePointsLEId
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplitsPullbackSndOfSplitsDiagonalComplement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FibrePointsLEId
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.splits_pullbackSnd_of_splits_diagonalComplement : ∀ {Z X V : Scheme.{0}} (f : Z ⟶ X) [IsFinite f] [Etale f] (v : V ⟶ Z), GlobalTheory.EtC.Tr.Splits (GlobalTheory.EtC.Tr.diagComplHom f) v → GlobalTheory.EtC.Tr.Splits (pullback.snd f f) v := by

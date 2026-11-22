@@ -1,7 +1,18 @@
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.LatDefs
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.MulEarlyModP
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.Vanish
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.DischargeHeightBound
+module
+
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.LatDefs
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.GramBoundOfRestrictionOfProj
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.HighestVectorProjection
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementC
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.InitPartZeroXMul
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.DerivativeKeepsSpaceHolds
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.OmegaInjectiveHolds
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.FiltrationBotHolds
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.ResInto
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.Vanish
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.DischargeHeightBound
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.L4
 
@@ -105,7 +116,7 @@ theorem derivative_kills_degree_zero (a : Fin (s + 1)) : ∀ x ∈ XSp p (setLas
   rw [Pol, MvPolynomial.mem_restrictSupport_iff] at hP
   show pderiv (Fin.last K, a) x = 0
   have hnv : (Fin.last K, a) ∉ x.vars := by
-    rw [MvPolynomial.mem_vars]
+    rw [MvPolynomial.mem_vars_iff_mem_support]
     rintro ⟨d, hd, hda⟩
     have h1 : MultiDeg (setLast LL 0) d := hP hd
     have h2 : ∑ b, d (Fin.last K, b) = 0 := by simpa [setLast] using h1 (Fin.last K)
@@ -222,7 +233,7 @@ theorem wtot_fd (hs : 1 ≤ s) (hv : LL.vec (Fin.last K) = true) (k0 : Fin q) (h
   exact Submodule.finiteDimensional_of_le hle
 
 theorem isWt_supp (G : GlW ℚ_[p] (MvPolynomial (Fin (K + 1) × Fin (s + 1)) ℚ_[p]) (s + 1))
-    (hcomp : ∀ μ x m, coeff m (G.comp μ x) = if wtX LL c m = μ then coeff m x else 0)
+    (hcomp : ∀ μ x m, AddMonoidAlgebra.coeff (G.comp μ x) m = if wtX LL c m = μ then AddMonoidAlgebra.coeff x m else 0)
     (μ : Fin (s + 1) → ℤ) (x : MvPolynomial (Fin (K + 1) × Fin (s + 1)) ℚ_[p]) (hx : G.IsWt μ x) :
     ∀ m ∈ x.support, wtX LL c m = μ := by
   intro m hm
@@ -292,7 +303,7 @@ theorem wtX_range (hv : LL.vec (Fin.last K) = true) (m : Fin (K + 1) × Fin (s +
 theorem wtot_bound (hs : 1 ≤ s) (hv : LL.vec (Fin.last K) = true) (k0 : Fin q) (hk0 : K + 1 ≤ J k0)
     (hc : M k0 = ((c : ℤ) : WithTop ℤ)) (hcd : c < LL.total)
     (G : GlW ℚ_[p] (MvPolynomial (Fin (K + 1) × Fin (s + 1)) ℚ_[p]) (s + 1))
-    (hcomp : ∀ μ x m, coeff m (G.comp μ x) = if wtX LL c m = μ then coeff m x else 0) :
+    (hcomp : ∀ μ x m, AddMonoidAlgebra.coeff (G.comp μ x) m = if wtX LL c m = μ then AddMonoidAlgebra.coeff x m else 0) :
     ∀ (μ ν : Fin (s + 1) → ℤ) (x y : MvPolynomial (Fin (K + 1) × Fin (s + 1)) ℚ_[p]), x ≠ 0 → y ≠ 0 →
       x ∈ Wtot p LL J M (Fin.last s) → y ∈ Wtot p LL J M (Fin.last s) → G.IsWt μ x → G.IsWt ν y →
       ∀ i, |ν i - μ i| ≤ ((4 * LL.total : ℕ) : ℤ) := by
@@ -316,14 +327,14 @@ theorem wtot_bound (hs : 1 ≤ s) (hv : LL.vec (Fin.last K) = true) (k0 : Fin q)
 theorem wtot_finW (hs : 1 ≤ s) (hv : LL.vec (Fin.last K) = true) (k0 : Fin q) (hk0 : K + 1 ≤ J k0)
     (hc : M k0 = ((c : ℤ) : WithTop ℤ))
     (G : GlW ℚ_[p] (MvPolynomial (Fin (K + 1) × Fin (s + 1)) ℚ_[p]) (s + 1))
-    (hcomp : ∀ μ x m, coeff m (G.comp μ x) = if wtX LL c m = μ then coeff m x else 0) :
+    (hcomp : ∀ μ x m, AddMonoidAlgebra.coeff (G.comp μ x) m = if wtX LL c m = μ then AddMonoidAlgebra.coeff x m else 0) :
     G.FinW (Wtot p LL J M (Fin.last s)) := by
   refine ⟨Fintype.piFinset fun _ => Finset.Icc (-dEarly LL) (2 * dEarly LL + c), ?_⟩
   intro x hx μ hμ
   by_contra hne
   obtain ⟨m, hm⟩ := Finset.nonempty_iff_ne_empty.2 (mt MvPolynomial.support_eq_empty.1 hne)
   have h1 := hcomp μ x m
-  have hcm : coeff m (G.comp μ x) ≠ 0 := MvPolynomial.mem_support_iff.1 hm
+  have hcm : AddMonoidAlgebra.coeff (G.comp μ x) m ≠ 0 := MvPolynomial.mem_support_iff.1 hm
   by_cases hw : wtX LL c m = μ
   · rw [if_pos hw] at h1
     have hmx : m ∈ x.support := MvPolynomial.mem_support_iff.2 (by rwa [h1] at hcm)
@@ -341,14 +352,18 @@ theorem latData (hU : UDivInt) (hD : DWDivInt) (hs : 1 ≤ s) (hv : LL.vec (Fin.
     (hk0 : K + 1 ≤ J k0) (hc : M k0 = ((c : ℤ) : WithTop ℤ)) (hmin : ∀ k, K + 1 ≤ J k → M k0 ≤ M k)
     (hcd : c < LL.total)
     (G : GlW ℚ_[p] (MvPolynomial (Fin (K + 1) × Fin (s + 1)) ℚ_[p]) (s + 1)) (hE : G.E = EX p LL c)
-    (hcomp : ∀ μ x m, coeff m (G.comp μ x) = if wtX LL c m = μ then coeff m x else 0) :
-    LatData p G (Wtot p LL J M (Fin.last s)) (IntPol p (Fin (K + 1) × Fin (s + 1))).toAddSubgroup (4 * LL.total) where
-  stable := wtot_stable LL J M c hs hv k0 hk0 hc hmin G hE
-  fd := wtot_fd LL J M c hs hv k0 hk0 hc
-  finW := wtot_finW LL J M c hs hv k0 hk0 hc G hcomp
-  bound := wtot_bound LL J M c hs hv k0 hk0 hc hcd G hcomp
-  closed := fun a ha x hx => smul_int a ha x hx
-  div := by
+    (hcomp : ∀ μ x m, AddMonoidAlgebra.coeff (G.comp μ x) m = if wtX LL c m = μ then AddMonoidAlgebra.coeff x m else 0) :
+    LatData p G (Wtot p LL J M (Fin.last s)) (IntPol p (Fin (K + 1) × Fin (s + 1))).toAddSubgroup (4 * LL.total) := by
+  refine {
+    stable := wtot_stable LL J M c hs hv k0 hk0 hc hmin G hE
+    fd := wtot_fd LL J M c hs hv k0 hk0 hc
+    finW := wtot_finW LL J M c hs hv k0 hk0 hc G hcomp
+    bound := wtot_bound LL J M c hs hv k0 hk0 hc hcd G hcomp
+    closed := fun a ha x hx => smul_int a ha x hx
+    div := ?_
+    graded := ?_
+    basis := ?_ }
+  ·
     rw [hE]
     intro a b hab k x hx
     show _ ∈ IntPol p (Fin (K + 1) × Fin (s + 1))
@@ -364,7 +379,7 @@ theorem latData (hU : UDivInt) (hD : DWDivInt) (hs : 1 ≤ s) (hv : LL.vec (Fin.
       · rw [EX_succ_succ]
         refine Formalism.InvariantFactorPaths.PW.Top.divInt p (K + 1) (s + 1) LL (K + 1) _ _ (fun h => hab ?_) k x hx'
         rw [Fin.castSucc_injective s h]
-  graded := by
+  ·
     intro μ x hx
     show _ ∈ IntPol p (Fin (K + 1) × Fin (s + 1))
     have hx' : x ∈ IntPol p (Fin (K + 1) × Fin (s + 1)) := hx
@@ -374,7 +389,7 @@ theorem latData (hU : UDivInt) (hD : DWDivInt) (hs : 1 ≤ s) (hv : LL.vec (Fin.
     split_ifs
     · exact hx' m
     · simp
-  basis := by
+  ·
     intro U hUW
     have := wtot_fd (p := p) LL J M c hs hv k0 hk0 hc
     exact Formalism.InvariantFactorPaths.PW.Top.latBasisPol p _ U (Submodule.finiteDimensional_of_le hUW)
@@ -382,7 +397,7 @@ theorem latData (hU : UDivInt) (hD : DWDivInt) (hs : 1 ≤ s) (hv : LL.vec (Fin.
 theorem wtot_le_iso (hs : 1 ≤ s) (hv : LL.vec (Fin.last K) = true) (k0 : Fin q)
     (hk0 : K + 1 ≤ J k0) (hc : M k0 = ((c : ℤ) : WithTop ℤ)) (hmin : ∀ k, K + 1 ≤ J k → M k0 ≤ M k)
     (G : GlW ℚ_[p] (MvPolynomial (Fin (K + 1) × Fin (s + 1)) ℚ_[p]) (s + 1)) (hE : G.E = EX p LL c)
-    (hcomp : ∀ μ x m, coeff m (G.comp μ x) = if wtX LL c m = μ then coeff m x else 0) :
+    (hcomp : ∀ μ x m, AddMonoidAlgebra.coeff (G.comp μ x) m = if wtX LL c m = μ then AddMonoidAlgebra.coeff x m else 0) :
     Wtot p LL J M (Fin.last s) ≤ ⨆ la, IsoW G (Wtot p LL J M (Fin.last s)) la := by
   obtain ⟨S, hS⟩ := wtot_finW LL J M c hs hv k0 hk0 hc G hcomp
   have hst := wtot_stable LL J M c hs hv k0 hk0 hc hmin G hE
@@ -402,7 +417,7 @@ theorem wtot_le_iso (hs : 1 ≤ s) (hv : LL.vec (Fin.last K) = true) (k0 : Fin q
   exact G.subset_gS _ ⟨z.2.1, z.2.2.1⟩
 
 theorem hw_deg_zero (G : GlW ℚ_[p] (MvPolynomial (Fin (K + 1) × Fin (s + 1)) ℚ_[p]) (s + 1)) (hE : G.E = EX p LL c)
-    (hcomp : ∀ μ x m, coeff m (G.comp μ x) = if wtX LL c m = μ then coeff m x else 0)
+    (hcomp : ∀ μ x m, AddMonoidAlgebra.coeff (G.comp μ x) m = if wtX LL c m = μ then AddMonoidAlgebra.coeff x m else 0)
     (la : Fin (s + 1) → ℤ) (h : MvPolynomial (Fin (K + 1) × Fin (s + 1)) ℚ_[p]) (hh : G.IsHW la h)
     (hW : h ∈ Wtot p LL J M (Fin.last s)) : h ∈ XSp p (setLast LL 0) J M (Fin.last s) := by
   by_cases h0 : h = 0

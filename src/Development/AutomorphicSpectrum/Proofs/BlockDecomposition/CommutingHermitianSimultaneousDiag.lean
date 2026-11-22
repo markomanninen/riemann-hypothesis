@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.EigenDecomposition
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.EigenDecomposition
+
+@[expose] public section
 
 open Matrix Topology Filter
 

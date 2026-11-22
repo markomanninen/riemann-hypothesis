@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GlobSpecOfExists
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GlobSpecOfExists
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.MainNotions.G Formalism.L2.Col Formalism.BasicNotions
 
@@ -17,7 +21,11 @@ theorem exists_finite_ext_numberField_sqrt (Qq E K : Type) [Field Qq] [Field E] 
   letI : Algebra E Ω := ((algebraMap Qq Ω).comp i).toAlgebra
   haveI : CharZero E := RingHom.charZero e
   haveI : Module.Finite E K := Module.Finite.of_restrictScalars_finite ℚ E K
-  let f : K →ₐ[E] Ω := IsAlgClosed.lift
+  let f : K →ₐ[E] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   obtain ⟨s, hs⟩ := IsAlgClosed.exists_pow_nat_eq (algebraMap Qq Ω a) (n := 2) two_pos
   obtain ⟨T, hT⟩ := Module.Finite.fg_top (R := E) (M := K)
   let S : Set Ω := insert s (f '' (T : Set K))

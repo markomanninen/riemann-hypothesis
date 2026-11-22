@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSpMapEv
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PluckerVectorBlockTriangularFrameChange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSpMapEv
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PluckerVectorBlockTriangularFrameChange
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory TopologicalSpace Limits NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Reg GlobalTheory.FlagEmb GlobalTheory.ProjSpace GlobalTheory.FlagMod GlobalTheory.FlagMod.FieldFlag
 open GlobalTheory.FlagMod.LowRank (ECh Proj str)
 
@@ -51,7 +56,20 @@ theorem g_cellPt (hZ : Cells A π g κ) (ht : FlagCellFrameChangeTriangular hZ) 
     rintro f _ v _ hv rfl rfl
     exact ⟨hv, rfl⟩
   conv => enter [1, hu']; lhs; rw [← eq_spMap_ev k z hz]
-  rw [Category.assoc, e, spMap_pt]
+  rw [Category.assoc, e]
+  have hspan : Ideal.span (Set.range (φ ∘ plk (uvec (A.cv k.1) k.2) en.2.1)) = ⊤ := by
+    rw [Set.range_comp, ← Ideal.map_span, hu, Ideal.map_top]
+  letI : GradedAlgebra (MvPolynomial.homogeneousSubmodule (Fin (plN A.N en.1 + 1)) c.F) := MvPolynomial.gradedAlgebra
+  have hmap : spMap φ ≫ pt (MvPolynomial.C.comp ((A.alpha k.1).comp (RingHom.id c.F)))
+      (plk (uvec (A.cv k.1) k.2) en.2.1) hu =
+      pt (φ.comp (MvPolynomial.C.comp ((A.alpha k.1).comp (RingHom.id c.F))))
+        (φ ∘ plk (uvec (A.cv k.1) k.2) en.2.1)
+        hspan := by
+    refine (ProjPoint.SpecMap_ofHom _ _ _ φ).trans ?_
+    unfold pt
+    congr 1
+    exact MvPolynomial.ringHom_ext (fun r => by simp) (fun i => by simp)
+  rw [hmap]
   refine key _ _ _ _ _ (by rw [hstr]; rfl) ?_
   rw [map_plk]
   congr 1

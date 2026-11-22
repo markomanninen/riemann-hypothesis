@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ContrFactor
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.AllPositions
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierTransformInversionLocalFieldPi
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ContrFactor
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.AllPositions
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierTransformInversionLocalFieldPi
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.SymChain
 open scoped Topology
@@ -32,8 +36,8 @@ theorem eventually_add_invariant {X : Type*} [TopologicalSpace X] [AddCommGroup 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
   [MeasurableSpace k] [BorelSpace k]
 
-omit [BorelSpace k] in
 
+omit [BorelSpace k] in
 theorem partial_mem_SB {I J : Type} [Fintype I] [Fintype J] (ν : Measure k) {f : (I → k) × (J → k) → ℂ}
     (hf : f ∈ SB ((I → k) × (J → k))) :
     (fun x₁ : I → k => ∫ y : J → k, f (x₁, y) ∂(Measure.pi fun _ => ν)) ∈ SB (I → k) := by
@@ -78,8 +82,9 @@ theorem partial_fourier_inversion : ∀ (k : Type) [Field k] [ValuativeRel k] [T
         (Filter.Eventually.of_forall fun q => (Circle.norm_coe _).le)
     rw [integral_prod _ hi]
     congr 1
-    funext x₁
-    simp only [hgdef, ← integral_mul_const, dotProduct_comm l]
+    funext x
+    simp only
+    rw [integral_mul_const, dotProduct_comm l x]
   simp only [hF]
   refine ⟨?_, ?_⟩
   · have := FourierPi.fourier_mem_SB μI hc hg

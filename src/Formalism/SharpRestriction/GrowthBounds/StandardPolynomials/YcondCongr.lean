@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.SegmentBlockOfMonomial
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.SegmentBlockOfMonomial
+
+@[expose] public section
 
 noncomputable section
 

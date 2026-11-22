@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.LocStep
-import GroundTheory.AutomorphicForms.GLnLocal
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.LocStep
+public import GroundTheory.AutomorphicForms.GLnLocal
+
+@[expose] public section
 
 noncomputable section
 

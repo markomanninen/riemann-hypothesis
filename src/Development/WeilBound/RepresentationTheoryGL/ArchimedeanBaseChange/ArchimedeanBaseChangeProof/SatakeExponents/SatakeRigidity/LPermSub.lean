@@ -1,11 +1,15 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SatakeRigidity.ThetaOfCsdR
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivOfIsSubquotient
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.PublishedTheoremStatements.ProvedMore
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.PublishedTheoremStatements.BridgesMore
-import Development.WeilBound.CoreStatements.AutomorphicKernels.GrothendieckRingPolynomial.GrothendieckRingPolynomialOfSeg
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.ComplementarySeries.SegmentJacquetSubquotients.SegmentRepresentation
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SatakeRigidity.ThetaOfCsdR
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivOfIsSubquotient
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.PublishedTheoremStatements.ProvedMore
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.PublishedTheoremStatements.BridgesMore
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.GrothendieckRingPolynomial.GrothendieckRingPolynomialOfSeg
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.ComplementarySeries.SegmentJacquetSubquotients.SegmentRepresentation
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,8 +62,8 @@ theorem permSub : PermSub := by
 theorem sat_of_cls {E : Type} [Field E] [NumberField E] {w : HeightOneSpectrum (𝓞 E)} {m m' : ℕ}
     (σ : SmIrr (GL (Fin m) (w.adicCompletion E))) (σ' : SmIrr (GL (Fin m') (w.adicCompletion E)))
     (h : IrrGL.of σ.ρ σ.smooth σ.irred = IrrGL.of σ'.ρ σ'.smooth σ'.irred) (b : Multiset ℂˣ)
-    (hb : GlobalTheory.LGrp.IsSpherical σ.ρ (GlobalTheory.LFun.KGL w m) ∧ GlobalTheory.LFun.HasSatGL w σ.ρ b) :
-    GlobalTheory.LGrp.IsSpherical σ'.ρ (GlobalTheory.LFun.KGL w m') ∧ GlobalTheory.LFun.HasSatGL w σ'.ρ b := by
+    (hb : GlobalTheory.LGrp.IsSpherical σ.ρ (GlobalTheory.LFun.KGL w (n := m)) ∧ GlobalTheory.LFun.HasSatGL w σ.ρ b) :
+    GlobalTheory.LGrp.IsSpherical σ'.ρ (GlobalTheory.LFun.KGL w (n := m')) ∧ GlobalTheory.LFun.HasSatGL w σ'.ρ b := by
   have hm : m = m' := congrArg Sigma.fst h
   subst hm
   obtain ⟨φ⟩ := IrrGL.of_eq_of.1 h

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormInverseCounting.FormCAddRight
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormInverseCounting.FormCAddRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ def sumMap (g gs : (Fin (r + 1) → O) →ₗ[O] (Fin (r + 1) → O)) : (Ix r �
   map_add' Y W := by
     have h1 : (fun j => (Y + W) (Sum.inl j)) = (fun j => Y (Sum.inl j)) + (fun j => W (Sum.inl j)) := rfl
     have h2 : (fun j => (Y + W) (Sum.inr j)) = (fun j => Y (Sum.inr j)) + (fun j => W (Sum.inr j)) := rfl
-    rw [h1, h2, map_add, map_add]
+    rw [h1, h2, map_add (f := _), map_add (f := _)]
     funext i; cases i <;> rfl
   map_smul' c Y := by
     have h1 : (fun j => (c • Y) (Sum.inl j)) = c • (fun j => Y (Sum.inl j)) := rfl

@@ -1,9 +1,14 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ExistsIsCGBases
-import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.InTwSt
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.YbOfEqOfCls
-import Formalism.LocalToGlobal.GroupLattices.ClassLocalOfEq
-import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ExistsIsCGBases
+public import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.InTwSt
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.KerLabelsMu
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.BadQNotOver
+public import Formalism.LocalToGlobal.GroupLattices.ClassLocalOfEq
+public import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +25,6 @@ section Cast
 variable {R : Ranks} {ι : Type} [Fintype ι] {hc : ι → HCParam R}
 
 def castCls {C C' : ColumnChain R ι hc} (h : C = C') (j : ℕ) (c : C.cls j) : C'.cls j := h ▸ c
-
-theorem castCls_rfl {C : ColumnChain R ι hc} (j : ℕ) (c : C.cls j) : castCls (rfl : C = C) j c = c := rfl
 
 theorem castCls_inj {C C' : ColumnChain R ι hc} (h : C = C') (j : ℕ) : Function.Injective (castCls h j) := by
   subst h; exact fun _ _ h => h
@@ -113,30 +116,16 @@ def kaAtAny (X : LabIn I) (H : CmpJHyp c I) (Gt : GatTies D) (Ch : Chain Lv)
     TwTie.KerAtMu D c Tw u μ w h Ch :=
   kerAtMu_any (labAt X H) H Formalism.L2.G.RelativeIndexFlags.blockRationality_holds Gt Ch hCh
 
-theorem kaAt_cls (X : LabIn I) (H : CmpJHyp c I) (Gt : GatTies D) : (kaAt X H Gt).cls = clsAt X H := rfl
+theorem kaAt_cls (X : LabIn I) (H : CmpJHyp c I) (Gt : GatTies D) : (kaAt X H Gt).cls = clsAt X H := by
+  simp [kaAt, kerAtMu_cmpJ, kerAtMu, kerAtMu_of, labAt]
 
 theorem kaAtAny_cls (X : LabIn I) (H : CmpJHyp c I) (Gt : GatTies D) (Ch : Chain Lv) (hCh) :
-    (kaAtAny X H Gt Ch hCh).cls = clsAt X H := rfl
-
-theorem kaAtAny_cmp_eq (X : LabIn I) (H : CmpJHyp c I) (Gt : GatTies D) (Ch : Chain Lv) (hCh) :
-    (kaAtAny X H Gt Ch hCh).cmp = (kaAt X H Gt).cmp := rfl
+    (kaAtAny X H Gt Ch hCh).cls = clsAt X H := by
+  simp [kaAtAny, kerAtMu_any, labAt]
 
 theorem kaAt_cmp (X : LabIn I) (H : CmpJHyp c I) (Gt : GatTies D) (j : ℕ) (hj : j + 1 ≤ D.R.m) (x : ((Tw.fm u μ).lat (j + 1)).V) :
     (kaAt X H Gt).cmp (j + 1) x = (I.at' j hj).st.cmpJ (c.embW u w h) ((I.at' j hj).eps.symm x) :=
   kerAtMu_cmpJ_cmp (labAt X H) H Formalism.L2.G.RelativeIndexFlags.blockRationality_holds Gt j hj x
-
-theorem kaAt_chart (X : LabIn I) (H : CmpJHyp c I) (Gt : GatTies D) (j : ℕ) (hj : j + 1 ≤ D.R.m) (a : Lv.comp (j + 1))
-    (L : (Fl.Pj (j + 1)).Tup) (hL : (Fl.Pj (j + 1)).IsLatTup L) :
-    ∃ c₀ : (I.at' j hj).C.cls (j + 1), (kaAt X H Gt).cls (j + 1) a L = castCls (X.onCh j hj) (j + 1) c₀ ∧
-      (I.at' j hj).st.chOf c₀ = ((I.at' j hj).st.eC.symm a).1 ∧ IsCG (I.at' j hj).st a L c₀ (levelChartElement H j hj a L) :=
-  ⟨_, clsAt_succ X H j hj a L, clsOf_chart (S := (I.at' j hj).st) (H.core j hj) a L hL,
-    cg_spec (S := (I.at' j hj).st) (H.core j hj) a L hL⟩
-
-theorem kaAt_sameChart (X : LabIn I) (H : CmpJHyp c I) (Gt : GatTies D) (j : ℕ) (hj : j + 1 ≤ D.R.m) (a a' : Lv.comp (j + 1))
-    (L L' : (Fl.Pj (j + 1)).Tup) (hL : (Fl.Pj (j + 1)).IsLatTup L) (hL' : (Fl.Pj (j + 1)).IsLatTup L')
-    (e : (kaAt X H Gt).cls (j + 1) a L = (kaAt X H Gt).cls (j + 1) a' L') :
-    ((I.at' j hj).st.eC.symm a).1 = ((I.at' j hj).st.eC.symm a').1 := by
-  rw [((kaAt X H Gt).cls_iff (j + 1) hj a a' L L' hL hL').1 e |>.1]
 
 theorem kaAt_pt (H : CmpJHyp c I) (j : ℕ) (hj : j + 1 ≤ D.R.m) (β : (I.at' j hj).st.Ch) (a0 : (I.at' j hj).st.cmpt β)
     (L : (Fl.Pj (j + 1)).Tup) (g : ∀ v, GL (Fin ((Fl.Pj (j + 1)).m + 1)) ((Fl.Pj (j + 1)).Qq v))
@@ -156,30 +145,9 @@ theorem kaAt_pt (H : CmpJHyp c I) (j : ℕ) (hj : j + 1 ≤ D.R.m) (β : (I.at' 
   obtain ⟨κ, e⟩ := hs.pt (H.core j hj) hc g hL x hx
   exact ⟨hc, κ, hs.mem, e⟩
 
-theorem isCG_smul_at (H : CmpJHyp c I) (j : ℕ) (hj : j + 1 ≤ D.R.m) (β : (I.at' j hj).st.Ch) (a0 : (I.at' j hj).st.cmpt β)
-    (L : (Fl.Pj (j + 1)).Tup) (hL : (Fl.Pj (j + 1)).IsLatTup L) (γ : (Lv.lev (j + 1) ((I.at' j hj).st.eC ⟨β, a0⟩)).Γ) :
-    IsCG (I.at' j hj).st ((I.at' j hj).st.eC ⟨β, a0⟩) ((Lv.lev (j + 1) ((I.at' j hj).st.eC ⟨β, a0⟩)).smul γ L)
-      (clsOf (S := (I.at' j hj).st) (H.core j hj) ((I.at' j hj).st.eC ⟨β, a0⟩) L)
-      (((I.at' j hj).st.loc β).gamI a0 γ * levelChartElement H j hj ((I.at' j hj).st.eC ⟨β, a0⟩) L) :=
-  (cg_spec (S := (I.at' j hj).st) (H.core j hj) ((I.at' j hj).st.eC ⟨β, a0⟩) L hL).smul (H.core j hj) γ
-
 section OnTw
 
 variable {st : ∀ j (hj : j + 1 ≤ D.R.m), StepIn (Tw.fm u μ) (j + 1) hj (gatJ Lv (j + 1))}
-
-theorem labAt_chOf (X : LabIn (inTw st)) (H : CmpJHyp c (inTw st)) (j : ℕ) (hj : j + 1 ≤ D.R.m) (a : Lv.comp (j + 1))
-    (L : (Fl.Pj (j + 1)).Tup) (hL : (Fl.Pj (j + 1)).IsLatTup L) :
-    (st j hj).chOf ((labAt X H).cls (j + 1) a L) = ((st j hj).eC.symm a).1 := by
-  have e : (labAt X H).cls (j + 1) a L = clsOf (S := (st j hj)) (H.core j hj) a L := clsAt_succ X H j hj a L
-  rw [e]
-  exact clsOf_chart (S := (st j hj)) (H.core j hj) a L hL
-
-theorem clsPt_labAt (X : LabIn (inTw st)) (H : CmpJHyp c (inTw st)) : ClsPt (labAt X H) st := by
-  intro j hj β a L g hL c₀ γ₀ κ₀ hγ₀ hpt
-  have e : (labAt X H).cls (j + 1) ((st j hj).eC ⟨β, a⟩) L = clsOf (S := (st j hj)) (H.core j hj) ((st j hj).eC ⟨β, a⟩) L :=
-    clsAt_succ X H j hj _ L
-  rw [e]
-  exact clsOf_eq (S := (st j hj)) (H.core j hj) ⟨β, a, c₀.2, g, κ₀, rfl, hL, hγ₀, hpt⟩
 
 end OnTw
 
@@ -188,26 +156,7 @@ section Yb
 variable {inQ : D.what₂.Tup → HeightOneSpectrum (𝓞 D.host.F) → Prop} (T : Formalism.L2.Herm.TwChTied D inQ)
   {st : ∀ j (hj : j + 1 ≤ D.R.m), StepIn (Tw.fm u μ) (j + 1) hj (gatJ Lv (j + 1))}
 
-structure ChTie (st : ∀ j (hj : j + 1 ≤ D.R.m), StepIn (Tw.fm u μ) (j + 1) hj (gatJ Lv (j + 1))) where
-  eCh : ∀ j hj, (st j hj).Ch → T.Ch u μ (j + 1)
-  chOf : ∀ j hj x, T.chOf u μ (j + 1) x = eCh j hj ((st j hj).chOf x)
-
 variable {T}
-
-theorem clsCharted_labAt (X : LabIn (inTw st)) (H : CmpJHyp c (inTw st)) (E : ChTie T st) (ch : ∀ j, Lv.comp j → T.Ch u μ j)
-    (h0 : ∀ (a : Lv.comp 0) (L : (Fl.Pj 0).Tup), (Fl.Pj 0).IsLatTup L → T.chOf u μ 0 (X.c0.cls a L) = ch 0 a)
-    (hch : ∀ j hj a, ch (j + 1) a = E.eCh j hj ((st j hj).eC.symm a).1) : ClsCharted T (labAt X H) ch := by
-  intro j hj a L hL
-  cases j with
-  | zero => exact h0 a L hL
-  | succ j => rw [E.chOf j hj, labAt_chOf X H j hj a L hL, hch j hj]
-
-theorem ybOf_eq_labAt (X : LabIn (inTw st)) (H : CmpJHyp c (inTw st)) (ch : ∀ j, Lv.comp j → T.Ch u μ j)
-    (h1 : 1 ≤ D.R.m - 1) (a a' : Lv.comp (D.R.m - 1)) (L L' : (Fl.Pj (D.R.m - 1)).Tup)
-    (hL : (Fl.Pj (D.R.m - 1)).IsLatTup L) (hL' : (Fl.Pj (D.R.m - 1)).IsLatTup L')
-    (he : (labAt X H).cls (D.R.m - 1) a L = (labAt X H).cls (D.R.m - 1) a' L') : ybOf T ch h1 a = ybOf T ch h1 a' := by
-  have := ((labAt X H).cls_iff (D.R.m - 1) (Nat.sub_le _ _) a a' L L' hL hL').1 he
-  rw [this.1]
 
 end Yb
 

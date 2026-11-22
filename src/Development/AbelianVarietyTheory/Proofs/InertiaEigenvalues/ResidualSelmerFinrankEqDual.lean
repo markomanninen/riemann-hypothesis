@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsFCocIff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalDualityFiniteDiscreteModulesStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemDualBlochKatoOfOrthogonalResidualStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ResidualBlochKatoLatticeDualOrthogonalStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ResidualSelmerBaseChangeCoefficientFieldStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalCountOfSetupStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousAlgebraMapPadicInt
+module
+
+public import Mathlib
+public import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsFCocIff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalDualityFiniteDiscreteModulesStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemDualBlochKatoOfOrthogonalResidualStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ResidualBlochKatoLatticeDualOrthogonalStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ResidualSelmerBaseChangeCoefficientFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalCountOfSetupStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousAlgebraMapPadicInt
+
+@[expose] public section
 
 noncomputable section
 
@@ -112,7 +116,7 @@ theorem cupCob_of_mk_eq_zero {Γ k M M' : Type} [Group Γ] [TopologicalSpace Γ]
   obtain ⟨m, hm⟩ := (mem_coboundaries1 ρ x.1).1 hx
   refine ⟨fun g => P m (y.1 g), ((IsLocallyConstant.iff_continuous _).2 y.2.1).comp (P m), fun g h => ?_⟩
   have e : x.1 g = ρ g m - m := hm g
-  simp only [e, y.2.2 g h, map_sub, map_add, LinearMap.sub_apply, hP]
+  simp only [e, y.2.2 g h, map_sub, map_add (f := _), LinearMap.sub_apply, hP]
   ring
 
 theorem residue_globalCyclotomicCharacter (i : X.Tw) (g : GE N) :
@@ -142,7 +146,7 @@ theorem Tmat_eq_one {bkP : BKPh X} {i : X.Tw} {s : X.Sig i} (h : GalHyp bkP i s)
   rw [Tmat, h.1.1 v hl h1 B hB σ hσ, chiS, X.twistCharacterFamily_unramified i _ _ v hl h1 h2 B hB σ hσ]
   simp
 
-theorem nrComplexPlaces_host (D : Formalism.BasicNotions.D7) [IsTotallyComplex D.host.E] :
+theorem nrComplexPlaces_host (D : Formalism.BasicNotions.D7) [_root_.NumberField.IsTotallyComplex D.host.E] :
     InfinitePlace.nrComplexPlaces D.host.E = D.R.f := by
   have h1 := IsTotallyComplex.finrank D.host.E
   have h2 : Module.finrank ℚ D.host.E = 2 * D.R.f := by
@@ -150,8 +154,8 @@ theorem nrComplexPlaces_host (D : Formalism.BasicNotions.D7) [IsTotallyComplex D
     ring
   omega
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem card_eq (hPT : PoitouTateTotallyComplex) (hLF : LocalFiniteness) (hLD : LocalTateDuality) (hLE : LocalEulerChar)
     (hGF : GlobalFiniteness) (hGE : GlobalEulerChar) (h4 : Gen.ArchimedeanSignatureMatching) (bkP : BKPh X) (i : X.Tw) (s : X.Sig i)
     (h : GalHyp bkP i s) [TopologicalSpace (IsLocalRing.ResidueField (X.O0 i))]

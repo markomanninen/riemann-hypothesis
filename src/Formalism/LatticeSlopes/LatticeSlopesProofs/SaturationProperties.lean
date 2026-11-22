@@ -1,8 +1,12 @@
-import Formalism.LatticeSlopes.Statement
-import Formalism.LatticeSlopes.CovolAntiSameRank
-import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
-import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqGram
-import Formalism.LatticeSlopes.LatticeSlopesProofs.SlopeInequality
+module
+
+public import Formalism.LatticeSlopes.Statement
+public import Formalism.LatticeSlopes.CovolAntiSameRank
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqGram
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.SlopeInequality
+
+@[expose] public section
 
 open Module Submodule
 
@@ -108,9 +112,9 @@ theorem covol_anti_same_rank : CovolAntiSameRank := by
       nlinarith
     exact_mod_cast h2
   have hcovN' : covol N' = Real.sqrt (Matrix.gram ℝ (fun i => (e i : E))).det := by
-    rw [covol, dif_pos hN']
+    rw [covol, dite_eq_left hN']
   have hcovN : covol N = Real.sqrt (Matrix.gram ℝ (fun j => (f j : E))).det := by
-    rw [covol, dif_pos hN, det_gram_basis_eq N (Module.finBasis ℤ N) f]
+    rw [covol, dite_eq_left hN, det_gram_basis_eq N (Module.finBasis ℤ N) f]
   rw [hcovN', hcovN, hdet]
   apply Real.sqrt_le_sqrt
   nlinarith

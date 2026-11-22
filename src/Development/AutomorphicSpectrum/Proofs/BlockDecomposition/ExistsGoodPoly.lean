@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 
 namespace GlobalTheory.CompanionTheory.TraceJac
@@ -14,7 +19,7 @@ theorem deriv_aeval {R S L : Type*} [CommRing R] [CommRing S] [Field L] [Algebra
     obtain ⟨s1, h1, e1⟩ := hp
     obtain ⟨s2, h2, e2⟩ := hq
     refine ⟨s1 + s2, I.add_mem h1 h2, ?_⟩
-    simp only [map_add, derivative_add, e1, e2]
+    simp only [map_add (f := _), derivative_add, e1, e2]
     ring
   | monomial n a =>
     obtain ⟨s, hs, es⟩ := hI a

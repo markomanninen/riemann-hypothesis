@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSubquotientCompMulSingle
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LanglandsClassificationCuspidalSupport
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LanglandsDistinctCuspidalPairEmbedding
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ParabolicProductEquivProductOfPartitionStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CuspidalPairIrreducibleProduct
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
-import CompanionTheory.AutomorphicTheory.HeckeStandardModules.EqZeroOfCompAt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSubquotientCompMulSingle
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LanglandsClassificationCuspidalSupport
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LanglandsDistinctCuspidalPairEmbedding
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ParabolicProductEquivProductOfPartitionStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CuspidalPairIrreducibleProduct
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+public import CompanionTheory.AutomorphicTheory.HeckeStandardModules.EqZeroOfCompAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -109,7 +113,7 @@ theorem isIrreducible_of_jhMult_eq_one {s N : ℕ} {d : Fin s → ℕ} (e : (Σ 
   exact absurd h2 (by norm_num)
 
 theorem isIrreducible_of_occurs (hG : GeometricLemma) (hBZ : BernsteinZelevinskyFiniteness) {d : Fin 2 → ℕ}
-    (p : ∀ i, Irr k (d i)) {A : Fin 2 → Multiset (IrrGL k)} (hA : ∀ i, HasSupport (p i).π (A i))
+    (p : ∀ i, Irr k (d i)) {A : Fin 2 → Multiset (IrrGL (k := k))} (hA : ∀ i, HasSupport (p i).π (A i))
     (hAB : ∀ x ∈ A 0, x ∉ A 1) {N : ℕ} (e : (Σ i, Fin (d i)) ≃ Fin N)
     (hOcc : ∀ Q : Irr k N, IsSubquotient Q.π (multiProd e fun i => (p i).π) →
       IsSubquotient (piTensor fun i => (p i).π) (jac e Q.π)) :
@@ -128,7 +132,7 @@ theorem isIrreducible_of_occurs (hG : GeometricLemma) (hBZ : BernsteinZelevinsky
       (GlobalTheory.JacquetExact.isSubquotient_jac e hρs hs)
 
 theorem occurs_of_embedding (hG : GeometricLemma) (hBZ : BernsteinZelevinskyFiniteness) {d : Fin 2 → ℕ}
-    (p : ∀ i, Irr k (d i)) {A : Fin 2 → Multiset (IrrGL k)} (hA : ∀ i, HasSupport (p i).π (A i))
+    (p : ∀ i, Irr k (d i)) {A : Fin 2 → Multiset (IrrGL (k := k))} (hA : ∀ i, HasSupport (p i).π (A i))
     (hAB : ∀ x ∈ A 0, x ∉ A 1) {N : ℕ} (e : (Σ i, Fin (d i)) ≃ Fin N) (Q : Irr k N)
     (hQ : IsSubquotient Q.π (multiProd e fun i => (p i).π))
     {X : Fin 2 → Type} [∀ i, AddCommGroup (X i)] [∀ i, Module ℂ (X i)]
@@ -188,7 +192,7 @@ theorem occurs_of_embedding (hG : GeometricLemma) (hBZ : BernsteinZelevinskyFini
   exact (IsSubquotient.of_injective θ.toIntertwiningMap θ.toLinearEquiv.injective).trans hτJ
 
 theorem occurs_of_prod₂ (hG : GeometricLemma) (hBZ : BernsteinZelevinskyFiniteness) {d : Fin 2 → ℕ}
-    (p : ∀ i, Irr k (d i)) {A : Fin 2 → Multiset (IrrGL k)} (hA : ∀ i, HasSupport (p i).π (A i))
+    (p : ∀ i, Irr k (d i)) {A : Fin 2 → Multiset (IrrGL (k := k))} (hA : ∀ i, HasSupport (p i).π (A i))
     (hAB : ∀ x ∈ A 0, x ∉ A 1) (e : (Σ i, Fin (d i)) ≃ Fin (d 0 + d 1)) (Q : Irr k (d 0 + d 1))
     (hQ : IsSubquotient Q.π (multiProd e fun i => (p i).π))
     (F₀ : SmRep (GL (Fin (d 0)) k)) (F₁ : SmRep (GL (Fin (d 1)) k))
@@ -226,7 +230,7 @@ theorem isIrreducible_multiProd_of_prod₂ {n : Type} [Fintype n] [DecidableEq n
     (piTensor fun i => (σ i).π)
   exact GlobalTheory.Parabolic.isIrreducible_of_equiv E₃ h4
 
-theorem unlinked_symm {x y : IrrGL k} (h : ∀ j : ℤ, |j| ≤ 1 → x ≠ y.nu (j : ℂ)) (j : ℤ) (hj : |j| ≤ 1) :
+theorem unlinked_symm {x y : IrrGL (k := k)} (h : ∀ j : ℤ, |j| ≤ 1 → x ≠ y.nu (j : ℂ)) (j : ℤ) (hj : |j| ≤ 1) :
     y ≠ x.nu (j : ℂ) := by
   intro e
   refine h (-j) (by rwa [abs_neg]) ?_

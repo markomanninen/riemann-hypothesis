@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDictZAbs
-import Formalism.HermitianLattices.HermitianLatticesProofs.LocDual
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDictZAbs
+public import Formalism.HermitianLattices.HermitianLatticesProofs.LocDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ def hJ (J : Matrix (Fin n) (Fin n) E) : (Fin n → E) →ₗ⋆[E] (Fin n → E)
   LinearMap.mk₂'ₛₗ (starRingEnd E) (RingHom.id E) (fun x y => Formalism.UG.hform (starRingEnd E) J x y)
     (by
       intro x y z
-      simp only [Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib])
+      simp only [Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib])
     (by
       intro c x y
       simp only [Formalism.UG.hform, Pi.smul_apply, smul_eq_mul, map_mul, Finset.mul_sum]
@@ -39,7 +43,8 @@ theorem hJ_symm {J : Matrix (Fin n) (Fin n) E} (hJh : Formalism.UG.IsHerm (starR
     simpa [Formalism.UG.cT] using this
   refine ⟨fun x y => ?_⟩
   change starRingEnd E (Formalism.UG.hform (starRingEnd E) J x y) = Formalism.UG.hform (starRingEnd E) J y x
-  simp only [Formalism.UG.hform, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.UG.hform, map_sum, map_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [starRingEnd_self_apply, hJij]
@@ -86,7 +91,10 @@ theorem selfDualMod_loc {J : Matrix (Fin n) (Fin n) E} (hJh : Formalism.UG.IsHer
     IsSelfDualMod (locRing p) (hJ J) (Formalism.HermitianLatticesTheory.loc (K := E) p L).toAddSubgroup := by
   have hu := (Formalism.HermitianLatticesTheory.locDual (𝓞 E) E (Fin n → E) (hJ J) (hJ_symm hJh) star_int L hfg).2.1
     (unimod_of_selfDual hL) p hp
-  exact isSelfDualMod_loc ⟨hfg, hsp⟩ hp.isPrime hu
+  have hfull : Submodule.IsFullLattice E L :=
+    { toIsLattice := Submodule.IsLattice.of_fg E hfg
+      span_eq_top := hsp }
+  exact isSelfDualMod_loc hfull hp.isPrime hu
 
 theorem gl_of_isom {J : Matrix (Fin n) (Fin n) E} (g : (Fin n → E) ≃ₗ[E] (Fin n → E))
     (hg : ∀ x y, hJ J (g x) (g y) = hJ J x y) :

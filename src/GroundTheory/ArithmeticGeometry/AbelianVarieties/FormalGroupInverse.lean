@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.FormalGroupLaw
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.FormalGroupLaw
+
+@[expose] public section
 
 namespace GroundTheory.Arith.Abelian
 
@@ -37,11 +41,11 @@ theorem map_C_algHom :
 
 theorem apply_wAt_X_zero :
     ψ (wAt W (MvPowerSeries.X 0)) = ψ (addSlope W) * ψ (MvPowerSeries.X 0) + ψ (addIntercept W) := by
-  rw [wAt_X_zero_eq, map_add, map_mul]
+  rw [wAt_X_zero_eq, map_add (f := _), map_mul]
 
 theorem apply_wAt_X_one :
     ψ (wAt W (MvPowerSeries.X 1)) = ψ (addSlope W) * ψ (MvPowerSeries.X 1) + ψ (addIntercept W) := by
-  rw [wAt_X_one_eq, map_add, map_mul]
+  rw [wAt_X_one_eq, map_add (f := _), map_mul]
 
 theorem zwPoly_apply_wAt_X (i : Fin 2) :
     zwPoly (W.map (algebraMap R T)) (ψ (MvPowerSeries.X i)) (ψ (wAt W (MvPowerSeries.X i))) = 0 := by
@@ -67,7 +71,7 @@ theorem apply_thirdZ :
   rw [thirdZ, map_sub, map_sub, map_neg, map_mul, h']
 
 theorem apply_thirdW : ψ (thirdW W) = ψ (addSlope W) * ψ (thirdZ W) + ψ (addIntercept W) := by
-  rw [thirdW, map_add, map_mul]
+  rw [thirdW, map_add (f := _), map_mul]
 
 theorem negDen_apply_mul :
     (1 - algebraMap R T W.a₁ * ψ (thirdZ W) - algebraMap R T W.a₃ * ψ (thirdW W)) *

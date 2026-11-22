@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.InertDef
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAddCharSymplecticLocalLatticeEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianTensorSkewHermitianLatticeOpenCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianSelfDualLatticeSpaceFormHermitianNondeg
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
+module
+
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.InertDef
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAddCharSymplecticLocalLatticeEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianTensorSkewHermitianLatticeOpenCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianSelfDualLatticeSpaceFormHermitianNondeg
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ open NumberField IsDedekindDomain Topology GlobalTheory.WeilM GlobalTheory.Adeli
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {n d : ℕ}
 
-open scoped nonZeroDivisors in
 
+open scoped nonZeroDivisors in
 theorem exists_dual_frame {R K V : Type} [CommRing R] [IsDedekindDomain R] [Field K] [Algebra R K] [IsFractionRing R K]
     [AddCommGroup V] [Module K V] [Module R V] [IsScalarTower R K V] (L : Submodule R V) [Module.Finite R L]
     (hden : ∀ z : V, ∃ a : R, a ≠ 0 ∧ a • z ∈ L) :
@@ -45,7 +49,8 @@ theorem exists_dual_frame {R K V : Type} [CommRing R] [IsDedekindDomain R] [Fiel
   obtain ⟨a, ha, h⟩ := hden x
   refine canc a ha _ _ ?_
   have h1 : f (g ⟨_, h⟩) = ⟨_, h⟩ := LinearMap.congr_fun hfg _
-  rw [← Finset.univ_sum_single (g ⟨_, h⟩), map_sum] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Finset.univ_sum_single (g ⟨_, h⟩), map_sum] at h1
   have h2 := congrArg Subtype.val h1
   rw [Submodule.coe_sum] at h2
   rw [Finset.smul_sum]
@@ -70,7 +75,8 @@ theorem rep_E {J : Matrix (Fin n) (Fin n) E} (hJ : J.det ≠ 0) (g : (Fin n → 
     ∃ x', ∀ x, form σ J x' x = σ (g x) := by
   obtain ⟨x', h⟩ := exists_form (σ := σ) hJ fun i => σ (g fun j => if i = j then 1 else 0)
   refine ⟨x', fun x => ?_⟩
-  rw [h, g.pi_apply_eq_sum_univ x, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, g.pi_apply_eq_sum_univ x, map_sum]
   exact Finset.sum_congr rfl fun i _ => by rw [smul_eq_mul, map_mul, mul_comm]
 
 theorem rep_F (hσ : ∀ z, σ (σ z) = z) {J : Matrix (Fin n) (Fin n) E} (hJ : J.det ≠ 0) (g : (Fin n → E) →ₗ[F] F) :
@@ -79,8 +85,10 @@ theorem rep_F (hσ : ∀ z, σ (σ z) = z) {J : Matrix (Fin n) (Fin n) E} (hJ : 
   obtain ⟨x', h⟩ := exists_form (σ := σ) hJ fun i =>
     ((Algebra.traceForm F E).toDual hn).symm (g ∘ₗ LinearMap.single F (fun _ => E) i ∘ₗ σ.toLinearMap)
   refine ⟨x', fun x => ?_⟩
-  rw [h, map_sum]
-  conv_rhs => rw [← Finset.univ_sum_single x, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [← Finset.univ_sum_single x, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [← Algebra.traceForm_apply, LinearMap.BilinForm.apply_toDual_symm_apply]
   simp [hσ]
@@ -169,7 +177,8 @@ theorem exists_frames {B : Base F E} {X : Spc F E n} {W : Spc F E d} {r s r' s' 
     simp only [hs']
     conv_lhs => rw [key]
     ext i j
-    simp only [incM, Matrix.map_apply, Matrix.sum_apply, Matrix.smul_apply, map_sum, algebraMap_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [incM, Matrix.map_apply, Matrix.sum_apply, Matrix.smul_apply, map_sum, algebraMap_smul]
     refine Finset.sum_congr rfl fun p _ => ?_
     exact map_smul (Algebra.TensorProduct.includeRight : E →ₐ[F] AF F ⊗[F] E) _ _
   | zero => simp [GlobalTheory.LatVacArith.symp_zero_right]
@@ -203,7 +212,11 @@ theorem mem_latAtV_of_dual {B : Base F E} {X : Spc F E n} {W : Spc F E d} {r s r
   have h2 := GlobalTheory.LatVac.symp_smul_smul σ (incM F X.J) (incM F W.J) (-1) (GlobalTheory.LatVac.liftV v a) 1
     (incM F (Matrix.vecMulVec (x' i) (y' i))) u
   rw [one_smul, mul_one] at h2
-  rw [h2, GlobalTheory.StdVacuum.psi_eq_psiLoc _ v _ (GlobalTheory.VacAny.at_mul_left _ hat), map_mul, GlobalTheory.LatVac.evFin_liftV, mul_comm] at h1
+  have hat' : At (evFin F v) (GlobalTheory.LatVac.liftV v a *
+      symp (R := AF F) (cA σ) (-1) (incM F X.J) (incM F W.J)
+        (incM F (Matrix.vecMulVec (x' i) (y' i))) u) := fun t ht => by
+    rw [smul_eq_mul, mul_left_comm, ← smul_eq_mul t _, hat t ht, mul_zero]
+  rw [h2, GlobalTheory.StdVacuum.psi_eq_psiLoc _ v _ hat', map_mul, GlobalTheory.LatVac.evFin_liftV, mul_comm] at h1
   exact h1
 
 end PositivityTheory.ThKH.Evl

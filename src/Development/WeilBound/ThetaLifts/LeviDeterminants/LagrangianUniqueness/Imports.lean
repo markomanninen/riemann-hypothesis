@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+
+@[expose] public section
 
 open GlobalTheory.WeilM Filter Topology
 open scoped Classical
@@ -19,7 +23,7 @@ theorem ind_mem {U₀ U : OpenAddSubgroup G} (h₀ : IsCompact (U₀ : Set G)) (
       exact (if_pos hz).trans (if_pos hx).symm
     · filter_upwards [hc.isClosed.isOpen_compl.mem_nhds hx] with z hz
       exact (if_neg hz).trans (if_neg hx).symm
-  · refine HasCompactSupport.intro (h₀.image (continuous_add_right a)) fun y hy => if_neg fun h => hy ?_
+  · refine HasCompactSupport.intro (h₀.image (continuous_add_const a)) fun y hy => if_neg fun h => hy ?_
     exact ⟨y - a, hU h, sub_add_cancel y a⟩
 
 theorem uniform {φ : G → ℂ} (hφ : φ ∈ SB G) : ∃ U : OpenAddSubgroup G, ∀ u ∈ U, ∀ x, φ (x + u) = φ x := by
@@ -75,7 +79,7 @@ theorem off (h2 : ∀ a ∉ P, ∃ χ : G → ℂ, IsLocallyConstant χ ∧ χ a
     by_cases ha : a ∈ P
     · exact ⟨⊤, fun h => absurd ha h⟩
     have : ∀ᶠ u in 𝓝 (0 : G), χ a (a + u) = χ a a := by
-      simpa using (((hχ a ha).comp_continuous (continuous_add_left a)).eventually_eq 0)
+      simpa using (((hχ a ha).comp_continuous (continuous_const_add a)).eventually_eq 0)
     obtain ⟨V, hV⟩ := NonarchimedeanAddGroup.is_nonarchimedean _ this
     exact ⟨V, fun _ u hu => hV hu⟩
   choose V hV using hV
@@ -88,7 +92,8 @@ theorem off (h2 : ∀ a ∉ P, ∃ χ : G → ℂ, IsLocallyConstant χ ∧ χ a
   obtain ⟨U, hU⟩ := NonarchimedeanAddGroup.is_nonarchimedean ((U₀ : Set G) ∩ U₁ ∩ ⋂ a ∈ s, (V a : Set G))
     (inter_mem (inter_mem U₀.mem_nhds_zero U₁.mem_nhds_zero) ((biInter_finset_mem s).2 fun a _ => (V a).mem_nhds_zero))
   obtain ⟨t, ht, e⟩ := decomp hφ U fun u hu => hU₁ u (hU hu).1.2
-  rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   refine Finset.sum_eq_zero fun q hq => ?_
   obtain ⟨a, ha, hqa⟩ := Set.mem_iUnion₂.mp (hcov ((ht q).1 hq))
   have haP : a ∉ P := hP a (hs a ha)
@@ -103,8 +108,8 @@ theorem off (h2 : ∀ a ∉ P, ∃ χ : G → ℂ, IsLocallyConstant χ ∧ χ a
   rw [h4, map_smul, smul_eq_mul] at h3
   rw [map_smul, (mul_left_eq_self₀.1 h3).resolve_left (hne a haP), smul_zero]
 
-include h₀ in
 
+include h₀ in
 theorem test (hP0 : (0 : G) ∈ P) (h1 : ∀ p ∈ P, ∀ φ ∈ SB G, l (fun x => φ (x + p)) = l φ)
     (h2 : ∀ a ∉ P, ∃ χ : G → ℂ, IsLocallyConstant χ ∧ χ a ≠ 1 ∧ ∀ φ ∈ SB G, l (fun x => χ x * φ x) = l φ)
     (h0 : l (ind U₀ 0) = 0) {φ : G → ℂ} (hφ : φ ∈ SB G) : l φ = 0 := by
@@ -115,7 +120,8 @@ theorem test (hP0 : (0 : G) ∈ P) (h1 : ∀ p ∈ P, ∀ φ ∈ SB G, l (fun x 
       rw [← h1 p hp _ (ind_mem h₀ hU a)]
       congr 1
       funext x
-      simp only [ind, sub_zero, add_sub_assoc]
+      simp only [ind, sub_zero]
+      rw [show x + p - a = x + (p - a) by abel]
       exact if_congr (U.toAddSubgroup.add_mem_cancel_right hpa) rfl rfl
     · refine off h₀ h2 (ind_mem h₀ hU a) fun b hb hbP => h ⟨b, hbP, ?_⟩
       by_contra hc
@@ -131,7 +137,8 @@ theorem test (hP0 : (0 : G) ∈ P) (h1 : ∀ p ∈ P, ∀ φ ∈ SB G, l (fun x 
       split_ifs at this ⊢ with h
       · rfl
       · exact absurd rfl this
-    rw [e, map_sum, Finset.sum_congr rfl fun q hq => by rw [h3 q hq, one_smul, key U hU], ← Finset.sum_filter,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum, Finset.sum_congr rfl fun q hq => by rw [h3 q hq, one_smul, key U hU], ← Finset.sum_filter,
       Finset.sum_const, nsmul_eq_mul] at h0
     refine (mul_eq_zero.1 h0).resolve_left (Nat.cast_ne_zero.2 (Finset.card_ne_zero.2 ⟨0, ?_⟩))
     have h4 : (0 : G ⧸ U.toAddSubgroup).out ∈ U :=
@@ -140,7 +147,8 @@ theorem test (hP0 : (0 : G) ∈ P) (h1 : ∀ p ∈ P, ∀ φ ∈ SB G, l (fun x 
     simp [ind, hU h4]
   obtain ⟨U₁, hU₁⟩ := uniform hφ
   obtain ⟨t, -, e⟩ := decomp hφ (U₀ ⊓ U₁) fun u hu => hU₁ u hu.2
-  rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   refine Finset.sum_eq_zero fun q _ => ?_
   rw [map_smul, key _ inf_le_left, zero _ inf_le_left, ite_self, smul_zero]
 

@@ -1,19 +1,22 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseKummerDefs
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.SInvariantToInvariantsEqZeroIff
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.SPicFinite
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.ClassFieldGSPresentation
-import GroundTheory.ProfiniteCohomology.CyclicCupProf
-import GroundTheory.ProfiniteCohomology.LocalTateDuality.Bockstein
-import GroundTheory.ProfiniteCohomology.InflationRestriction.DegreeOne
-import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.ConePairing
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseKummerDefs
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.SInvariantToInvariantsEqZeroIff
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.SPicFinite
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.ClassFieldGSPresentation
+public import GroundTheory.ProfiniteCohomology.CyclicCupProf
+public import GroundTheory.ProfiniteCohomology.LocalTateDuality.Bockstein
+public import GroundTheory.ProfiniteCohomology.InflationRestriction.DegreeOne
+public import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.ConePairing
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory IsDedekindDomain NumberField GroundTheory.Global IdeleGroup
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 noncomputable section
 
@@ -56,7 +59,7 @@ theorem hom_res_sub {F F' : Type} [Monoid F] [Monoid F'] (ψ : F →* F') {X : R
 
 theorem ρ_add_sub_of_invariant {F : Type} [Monoid F] (B : Rep.{0} k F) (g : F) {A M : B} (hA : B.ρ g A = A) :
     B.ρ g (A + M) - (A + M) = B.ρ g M - M := by
-  rw [map_add, hA]
+  rw [map_add (f := _), hA]
   abel
 
 theorem comp_hom_apply' {F : Type} [Monoid F] {A B C : Rep.{0} k F} (f : A ⟶ B) (g : B ⟶ C) (x : A) :
@@ -114,14 +117,6 @@ theorem iCycles_dataCycle (x : (cochainsComplex U).X 1) (y : ∀ v, Ωᵥ v)
     ((compactCochains φ U Ωᵥ _).iCycles 1).hom (dataCycle φ j Ωᵥ l x y hx hy) = dataCochain φ j Ωᵥ l x y :=
   (compactCochains φ U Ωᵥ _).i_cyclesMk _ _ _ _
 
-theorem dataCochain_fst (x : (cochainsComplex U).X 1) (y : ∀ v, Ωᵥ v) :
-    (dataCochain φ j Ωᵥ l x y).1 = x :=
-  rfl
-
-theorem dataCochain_snd (x : (cochainsComplex U).X 1) (y : ∀ v, Ωᵥ v) :
-    (dataCochain φ j Ωᵥ l x y).2 = piConst Ωᵥ y :=
-  rfl
-
 theorem dataCochain_add (x x' : (cochainsComplex U).X 1) (y y' : ∀ v, Ωᵥ v) :
     dataCochain φ j Ωᵥ l (x + x') (y + y') = dataCochain φ j Ωᵥ l x y + dataCochain φ j Ωᵥ l x' y' :=
   rfl
@@ -139,7 +134,7 @@ theorem dataCycle_congr {x x' : (cochainsComplex U).X 1} {y y' : ∀ v, Ωᵥ v}
 
 theorem d_add_eq_zero {x x' : (cochainsComplex U).X 1} (hx : ((cochainsComplex U).d 1 2).hom x = 0)
     (hx' : ((cochainsComplex U).d 1 2).hom x' = 0) : ((cochainsComplex U).d 1 2).hom (x + x') = 0 := by
-  rw [map_add, hx, hx', add_zero]
+  rw [map_add (f := _), hx, hx', add_zero]
 
 omit [∀ v, IsTopologicalGroup (H v)] [∀ v, IsDiscreteRep (Ωᵥ v)] in
 theorem hy_add {x x' : (cochainsComplex U).X 1} {y y' : ∀ v, Ωᵥ v}
@@ -147,7 +142,7 @@ theorem hy_add {x x' : (cochainsComplex U).X 1} {y y' : ∀ v, Ωᵥ v}
     (hy' : ∀ v (σ : H v), (l v).hom (j.hom (cochainOf U x' ![(φ v).toMonoidHom σ])) = (Ωᵥ v).ρ σ (y' v) - y' v) :
     ∀ v (σ : H v), (l v).hom (j.hom (cochainOf U (x + x') ![(φ v).toMonoidHom σ])) =
       (Ωᵥ v).ρ σ ((y + y') v) - (y + y') v := fun v σ => by
-  rw [cochainOf_add, Pi.add_apply, map_add, map_add, hy v σ, hy' v σ, Pi.add_apply, map_add]
+  rw [cochainOf_add, Pi.add_apply, map_add (f := _), map_add (f := _), hy v σ, hy' v σ, Pi.add_apply, map_add (f := _)]
   abel
 
 theorem dataCycle_add (x x' : (cochainsComplex U).X 1) (y y' : ∀ v, Ωᵥ v)
@@ -160,7 +155,7 @@ theorem dataCycle_add (x x' : (cochainsComplex U).X 1) (y y' : ∀ v, Ωᵥ v)
     dataCycle φ j Ωᵥ l (x + x') (y + y') hxx' hyy' =
       dataCycle φ j Ωᵥ l x y hx hy + dataCycle φ j Ωᵥ l x' y' hx' hy' := by
   apply (ModuleCat.mono_iff_injective ((compactCochains φ U Ωᵥ _).iCycles 1)).1 inferInstance
-  rw [map_add, iCycles_dataCycle, iCycles_dataCycle, iCycles_dataCycle, dataCochain_add]
+  rw [map_add (f := _), iCycles_dataCycle, iCycles_dataCycle, iCycles_dataCycle, dataCochain_add]
 
 theorem dataCycle_zero (hx : ((cochainsComplex U).d 1 2).hom 0 = 0)
     (hy : ∀ v (σ : H v), (l v).hom (j.hom (cochainOf U (0 : (cochainsComplex U).X 1) ![(φ v).toMonoidHom σ])) =
@@ -253,6 +248,8 @@ end General
 
 section Concrete
 
+local notation "ℚ̄" => AlgebraicClosure ℚ
+
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
   (ιs : ∀ v : S, ℚ̄ →ₐ[K.1] AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1))
 
@@ -287,10 +284,6 @@ theorem isLocallyConstant_sInvRatio (t : sInvariantSubgroup (F := K.1) ℚ̄ S) 
 def sInvCochain (t : sInvariantSubgroup (F := K.1) ℚ̄ S) : (cochainsComplex (galSUnitsMax K.1 ℚ̄ S)).X 1 :=
   mkCochain _ (fun σ : Fin 1 → galUnramifiedOutside K.1 ℚ̄ S => sInvRatio S t (σ 0))
     ((isLocallyConstant_sInvRatio S t).comp_continuous (continuous_apply 0))
-
-theorem cochainOf_sInvCochain (t : sInvariantSubgroup (F := K.1) ℚ̄ S) (σ : Fin 1 → galUnramifiedOutside K.1 ℚ̄ S) :
-    cochainOf _ (sInvCochain S t) σ = sInvRatio S t (σ 0) :=
-  rfl
 
 theorem sInvCochain_mul (t t' : sInvariantSubgroup (F := K.1) ℚ̄ S) :
     sInvCochain S (t * t') = sInvCochain S t + sInvCochain S t' :=
@@ -345,12 +338,6 @@ def dataLocalUnit (t : sInvariantSubgroup (F := K.1) ℚ̄ S) (v : S)
       (AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)) :=
   localUnitsAlgHom S v a + sInvLocalHom S ιs v (Additive.ofMul t)
 
-theorem dataLocalUnit_add (t t' : sInvariantSubgroup (F := K.1) ℚ̄ S) (v : S)
-    (a a' : Additive ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)ˣ) :
-    dataLocalUnit S ιs (t * t') v (a + a') = dataLocalUnit S ιs t v a + dataLocalUnit S ιs t' v a' :=
-  (congrArg₂ (· + ·) (map_add (localUnitsAlgHom S v) a a') (map_add (sInvLocalHom S ιs v) _ _)).trans
-    (add_add_add_comm _ _ _ _)
-
 theorem galUnits_ρ_algebraMap (v : S)
     (σ : Gal(AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1) /
       (v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1))
@@ -392,29 +379,12 @@ def dataLocalHom :
   AddMonoidHom.pi fun v => (localUnitsAlgHom S v).comp ((Pi.evalAddMonoidHom _ v).comp (AddMonoidHom.snd _ _)) +
     (sInvLocalHom S ιs v).comp (AddMonoidHom.fst _ _)
 
-theorem dataLocalHom_apply (d : GsUnitsDatum S) (v : S) :
-    dataLocalHom S ιs d v = dataLocalUnit S ιs (Additive.toMul d.1) v (d.2 v) :=
-  rfl
-
 def gsUnitsData : GsUnitsDatum S →+ gsUnitsCompact S ιs 1 :=
   dataHom (gsFinFamily S ιs) (sUnitsToUnits S (maxUnramifiedOutside K.1 ℚ̄ S))
     (fun v : S => galUnits.{0, 0} ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)
       (AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1))) (gsUnitsLocalMor.{0} S ιs)
     ((sInvCochainHom S).comp (AddMonoidHom.fst _ _)) (dataLocalHom S ιs)
     (fun _ => d_sInvCochain S _) (fun d v σ => dataLocalUnit_compat S ιs (Additive.toMul d.1) d.2 v σ)
-
-theorem gsUnitsData_eq (d : GsUnitsDatum S) :
-    gsUnitsData S ιs d = ((compactCochains (gsFinFamily S ιs) (galSUnitsMax K.1 ℚ̄ S)
-      (fun v : S => galUnits.{0, 0} ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)
-        (AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)))
-      (fun v => (Rep.resFunctor (gsFinFamily S ιs v).toMonoidHom).map (sUnitsToUnits S (maxUnramifiedOutside K.1 ℚ̄ S)) ≫
-        gsUnitsLocalMor.{0} S ιs v)).homologyπ 1).hom
-      (dataCycle (gsFinFamily S ιs) (sUnitsToUnits S (maxUnramifiedOutside K.1 ℚ̄ S))
-        (fun v : S => galUnits.{0, 0} ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)
-          (AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1))) (gsUnitsLocalMor.{0} S ιs)
-        (sInvCochain S (Additive.toMul d.1)) (fun v => dataLocalUnit S ιs (Additive.toMul d.1) v (d.2 v))
-        (d_sInvCochain S _) (fun v σ => dataLocalUnit_compat S ιs (Additive.toMul d.1) d.2 v σ)) :=
-  rfl
 
 theorem gsUnitsData_zero_local (a : ∀ v : S, Additive ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)ˣ) :
     gsUnitsData S ιs (0, a) =

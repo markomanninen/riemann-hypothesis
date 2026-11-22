@@ -1,8 +1,12 @@
-import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.TheoremMXB
+module
+
+public import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.TheoremMXB
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.MC
 
-open Formalism.GM Formalism.GM.TM Formalism.GM.M Formalism.InvariantFactorPaths.OddLevelGainBounds.TB MvPolynomial Finset
+open Formalism.GM Formalism.GM.TM Formalism.GM.M MvPolynomial Finset
 
 theorem theoremMXB_of_point (hMG : MeanGamX) (hMono : WeightSpaceDimMonotone) (hCount : MonoCount) (hSmith : SmithZp)
     (hAd : AdaptedBasisExists) (hPW : PointMX) : TheoremMXB := by
@@ -105,7 +109,7 @@ theorem theoremMXB_of_point (hMG : MeanGamX) (hMono : WeightSpaceDimMonotone) (h
     have hL0tot : ((LL.setTies T n).takeD (T.pos i + 1)).total ≤ n₀ i := hL0S.trans (hS i)
     have hvec : ((LL.setTies T n).takeD (T.pos i + 1)).vec (Fin.last (T.pos i)) = true := by
       simp only [Letters.takeD, Fin.val_last]
-      rw [dif_pos (by omega)]
+      rw [dite_eq_left (by omega)]
       exact hvW
     have h2S : 2 * ((LL.setTies T n).takeD (T.pos i + 1)).total ≤ Xb := by
       exact (Nat.mul_le_mul_left 2 hL0S).trans (hsz i).1
@@ -114,7 +118,7 @@ theorem theoremMXB_of_point (hMG : MeanGamX) (hMono : WeightSpaceDimMonotone) (h
       have h2 : ((LL.setTies T n).takeD (T.pos i + 1)).deg (Fin.last (T.pos i)) =
           (LL.setTies T n).deg ⟨T.pos i, by omega⟩ := by
         simp only [Letters.takeD, Fin.val_last]
-        rw [dif_pos (by omega)]
+        rw [dite_eq_left (by omega)]
       have h3 := setTies_deg_mono LL T n top hnt ⟨T.pos i, by omega⟩
       rw [h2]
       exact (Nat.add_le_add_left h3 _).trans h1

@@ -1,6 +1,10 @@
-import Formalism.AdmissibleDesigns.IdempotentPartRepresentationAt
-import Formalism.AdmissibleDesigns.IdempotentPartFiniteAndFree
-import Formalism.AdmissibleDesigns.PiEquiv2
+module
+
+public import Formalism.AdmissibleDesigns.IdempotentPartRepresentationAt
+public import Formalism.AdmissibleDesigns.IdempotentPartFiniteAndFree
+public import Formalism.AdmissibleDesigns.PiEquiv2
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core] [hH0Fin : Fact Formalism.MainNotions.N.K.H0.FinCore]
 
@@ -56,22 +60,23 @@ variable {D : D7} (i : D.nd.Loc) (r : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV)
 
 include hD
 
+
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem rowSub_S :
     haveI := Topo.rTop_addGroup_RD i r π g0 eB e₁ s Dd hD
     KRow.RowSub (ρ₁ := rho1 i Dd) i dc r := by
-  haveI := Topo.rTop_addGroup_RD i r π g0 eB e₁ s Dd hD
-  obtain ⟨hr', hsm, hχ⟩ := KLift.ringDef_lift i r Dd hD
-  haveI := (idempotent_part_finite_and_free i r π g0 eB e₁ s Dd hD).1
-  haveI := (idempotent_part_finite_and_free i r π g0 eB e₁ s Dd hD).2
-  intro n _ hn
-  exact rowSub_at i dc r Dd hr' hsm hχ hn
+  set_option maxHeartbeats 16000000 in
+    haveI := Topo.rTop_addGroup_RD i r π g0 eB e₁ s Dd hD
+    obtain ⟨hr', hsm, hχ⟩ := KLift.ringDef_lift i r Dd hD
+    haveI := (idempotent_part_finite_and_free i r π g0 eB e₁ s Dd hD).1
+    haveI := (idempotent_part_finite_and_free i r π g0 eB e₁ s Dd hD).2
+    intro n _ hn
+    exact rowSub_at i dc r Dd hr' hsm hχ hn
+
 
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem rowOrb_S (hc : TruncatedSeriesCountingIdentities.FamilyContinuous (D := D) i r) :
     haveI := Topo.rTop_addGroup_RD i r π g0 eB e₁ s Dd hD
     KRow.RowOrb (ρ₁ := rho1 i Dd) i dc := by
@@ -80,23 +85,12 @@ theorem rowOrb_S (hc : TruncatedSeriesCountingIdentities.FamilyContinuous (D := 
   exact orb_of_sub (LL := Br.LLw (D.nbr i _ hw)) (rowSub_S i r π dc g0 eB e₁ s Dd hD n hn hw)
     (fun x => by exact locC_du_cont i r hc hw (TruncatedSeriesCountingIdentities.CoefExt.self i _ hw) x) v
 
-set_option maxHeartbeats 4000000 in
-set_option synthInstance.maxHeartbeats 400000 in
-
-theorem rowTop_S :
-    haveI := Topo.rTop_addGroup_RD i r π g0 eB e₁ s Dd hD
-    KRow.RowTop i dc (KLat.VT (O := D.nd.O i) (RepresentationBoundsCohomology.blk D.R)) (T₁ := FirstSummandSubmodule (D.nd.O i) Dd.e₁) := by
-  apply KRow.rowTop_of
-  · intro n _ hn
-    exact KOrb.topMatch_pi (i := i) (hw := hn) _
-  · exact rowTop1_S (i := i) (r := r) (π := π) (dc := dc) (g0 := g0) (eB := eB) (e₁ := e₁) (s := s)
-      (Dd := Dd) (hD := hD)
 
 variable [∀ k, SMulCommClass Dd.R' (D.nd.O i) (blockRestrictedRepresentationType (RepresentationBoundsCohomology.blk D.R) Dd.ρk k)] (hc : TruncatedSeriesCountingIdentities.FamilyContinuous (D := D) i r)
 
+
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem row_lattice_finite_free (n : ℕ) :
     Module.Finite (D.nd.O i) (DatS i r π dc g0 eB e₁ s Dd hD hc n).T' ∧
     Module.Free (D.nd.O i) (DatS i r π dc g0 eB e₁ s Dd hD hc n).T' ∧
@@ -111,9 +105,9 @@ theorem row_lattice_finite_free (n : ℕ) :
   rw [hy a]
   rfl
 
+
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem rowFin_S :
     KRow.RowFin i dc (KLat.VT (O := D.nd.O i) (RepresentationBoundsCohomology.blk D.R)) (KLat.VT (O := D.nd.O i) (RepresentationBoundsCohomology.blk D.R))
       (DatS i r π dc g0 eB e₁ s Dd hD hc) (T₁ := FirstSummandSubmodule (D.nd.O i) Dd.e₁) := by

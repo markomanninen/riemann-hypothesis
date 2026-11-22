@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFlatNormalFibres
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFlatNormalFibres
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -38,12 +43,5 @@ instance primeFibreLocalRing.isLocalRing (R : Type*) {S : Type*} [CommRing R] [C
   have : Nontrivial (primeFibreLocalRing R P) :=
     Ideal.Quotient.nontrivial_iff.mpr (primeFibreLocalRing_ideal_ne_top R P)
   exact IsLocalRing.of_surjective' (Ideal.Quotient.mk _) Ideal.Quotient.mk_surjective
-
-noncomputable def localizationAtPrimeComplexEquiv (P : Ideal ℂ) [P.IsPrime] :
-    Localization.AtPrime P ≃+* ℂ := by
-  have hP : P = ⊥ := (Ideal.eq_bot_or_top P).resolve_right (Ideal.IsPrime.ne_top ‹_›)
-  exact (IsLocalization.atUnits ℂ P.primeCompl (fun x hx => by
-    subst hP
-    exact isUnit_iff_ne_zero.2 (by simpa using hx))).toRingEquiv.symm
 
 end GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
+
+@[expose] public section
 
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
@@ -26,7 +30,7 @@ private theorem locOne_nak {L : Type} [Field L] [Algebra ℂ L] (B O : Subalgebr
       | mem y hy => exact Submodule.subset_span ⟨y, hy, rfl⟩
       | algebraMap r => simp
       | add y z _ _ hy hz =>
-        rw [Subalgebra.coe_add, map_add]
+        rw [Subalgebra.coe_add, map_add (f := _)]
         exact Submodule.add_mem _ hy hz
       | mul y z _ _ hy hz =>
         rw [Subalgebra.coe_mul, Derivation.leibniz]
@@ -66,7 +70,8 @@ private theorem locOne_nak {L : Type} [Field L] [Algebra ℂ L] (B O : Subalgebr
         have h5 := congrArg (fun u : O => (u : L)) ha
         push_cast at h5
         linear_combination h5
-      rw [h1, map_add, Derivation.map_algebraMap, zero_add, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [h1, map_add (f := _), Derivation.map_algebraMap, zero_add, map_sum]
       refine Finset.sum_congr rfl fun l _ => ?_
       rw [Derivation.leibniz]
       rfl
@@ -108,7 +113,7 @@ theorem UpperTheory.Gal.productCup_of_system.locOne_of :
     intro v h0
     obtain ⟨a, ha, hv'⟩ := hMax F L d x hc hred e v ((hev _ _).2 ⟨v.2, h0⟩)
     refine ⟨fun l => ⟨a l, ha l⟩, Subtype.ext ?_⟩
-    rw [hv', AddSubmonoidClass.coe_finset_sum]
+    rw [hv', AddSubmonoidClass.coe_finsetSum]
     rfl
   have hmem := locOne_nak _ _ hle ev hunit hden t ht hmax ⟨v, hv⟩
   obtain ⟨c, hc'⟩ := (Submodule.mem_span_range_iff_exists_fun _).1 hmem

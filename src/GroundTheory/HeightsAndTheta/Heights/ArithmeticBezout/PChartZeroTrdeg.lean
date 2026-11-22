@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChartZeroTrdeg
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.ImportsAlt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChartZeroTrdeg
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.ImportsAlt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -14,13 +19,14 @@ namespace ChartZeroTrdeg
 variable {F : Type} [Field F] {n : ℕ}
 
 def homogAt (p : MvPolynomial (Fin n) F) (j : Fin n) (N : ℕ) : MvPolynomial (Fin n) F :=
-  ∑ α ∈ p.support, monomial α (coeff α p) * X j ^ (N - α.sum fun _ e => e)
+  ∑ α ∈ p.support, monomial α (AddMonoidAlgebra.coeff p α) * X j ^ (N - α.sum fun _ e => e)
 
 theorem aeval_homogAt {L : Type} [Field L] [Algebra F L] (p : MvPolynomial (Fin n) F) (j : Fin n)
     (N : ℕ) (hN : p.totalDegree ≤ N) (z : Fin n → L) (hz : z j ≠ 0) :
     aeval z (homogAt p j N) = z j ^ N * aeval (fun m => z m * (z j)⁻¹) p := by
   conv_rhs => rw [p.as_sum]
-  rw [homogAt, map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [homogAt, map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun α hα => ?_
   have hk := (le_totalDegree hα).trans hN
   simp only [map_mul, aeval_monomial, map_pow, aeval_X, mul_pow, Finsupp.prod_mul]
@@ -44,8 +50,8 @@ theorem aeval_genPt_eq_zero_iff' (P : Ideal (MvPolynomial (Fin n) F)) (f : MvPol
 
 end ChartZeroTrdeg
 
-open ChartZeroTrdeg in
 
+open ChartZeroTrdeg in
 theorem ChartZeroTrdeg.proof (hA : AffineChartTrdeg.Statement) : ChartZeroTrdeg.Statement := by
   intro F _ n d Q hQ hdim Ω _ _ y j hy hyj
   have := hQ.isPrime

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open TensorProduct Polynomial
 
@@ -28,7 +32,7 @@ theorem convPow_sub_nsmul_mem_augIdeal_sq : ∀ (A B : Type) [CommRing A] [CommR
         induction t using TensorProduct.induction_on with
         | zero => simp
         | tmul b c => simp [Algebra.TensorProduct.lift_tmul, ih, hεu]
-        | add s t hs ht => simp only [map_add, hs, ht]
+        | add s t hs ht => simp only [map_add (f := _), hs, ht]
       rw [hS n, AlgHom.comp_apply, key, hL' b]
 
   have hright : ∀ (ψ : B →ₐ[A] B) (t : B ⊗[A] B),
@@ -39,7 +43,7 @@ theorem convPow_sub_nsmul_mem_augIdeal_sq : ∀ (A B : Type) [CommRing A] [CommR
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul b c => simp [Algebra.TensorProduct.lift_tmul]
-    | add s t hs ht => simp only [map_add, hs, ht]
+    | add s t hs ht => simp only [map_add (f := _), hs, ht]
 
   have gen : ∀ (φ : B →ₐ[A] B), (∀ b, ε (φ b) = ε b) → ∀ t : B ⊗[A] B,
       Algebra.TensorProduct.lift φ (AlgHom.id A B) (fun _ _ => Commute.all _ _) t
@@ -62,7 +66,7 @@ theorem convPow_sub_nsmul_mem_augIdeal_sq : ∀ (A B : Type) [CommRing A] [CommR
         (by rw [RingHom.mem_ker]; simp [hεu])
     | add s t hs ht =>
       have e := add_mem hs ht
-      simp only [map_add]
+      simp only [map_add (f := _)]
       convert e using 1
       abel
   intro n

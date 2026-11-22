@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EntireEqOfHalfPlane
-import Development.AbelianVarietyTheory.BlockTheory.AdelicCMFields.UnitaryHeckeCharacterIdele
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EntireEqOfHalfPlane
+public import Development.AbelianVarietyTheory.BlockTheory.AdelicCMFields.UnitaryHeckeCharacterIdele
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,8 +54,8 @@ theorem cpow_eq_exp (x : Ideles K) (t : ℝ) :
   push_cast
   ring
 
-variable (K) in
 
+variable (K) in
 def normChar (t : ℝ) : HChar K :=
   ⟨Circle.toUnits.comp (GlobalTheory.IndefiniteRowSideFullHecke.UnitaryHeckeCharacterIdele.UnitaryHeckeChar.normPow K t).toHom,
     Units.continuous_iff.2

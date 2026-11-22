@@ -1,9 +1,14 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsLimHom
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EpsilonCyclotomicElementPropertiesStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsContinuousEpsilonPowerStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SharpEpsilonRootIdempotentSumStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IdempotentsUniqueForEpsilonRootStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IdempotentsCoarsenToLowerLevelStatement
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsLimHom
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EpsilonCyclotomicElementPropertiesStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsContinuousEpsilonPowerStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SharpEpsilonRootIdempotentSumStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IdempotentsUniqueForEpsilonRootStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IdempotentsCoarsenToLowerLevelStatement
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry DividedPowers GroundTheory.PAdicHodge GlobalTheory.LogCris GlobalTheory.PDA CrystallineSemistableComparison CrystallineSemistableComparison.CH CrystallineSemistableComparison.PAlg CrystallineSemistableComparison.B
 
@@ -45,7 +50,7 @@ def stage {A : PAlg l} {T : Type} [CommRing T] (φ : A.A →+* T) {m : ℕ} (e :
     simp only [map_mul]
   map_zero' := by simp only [map_zero, mul_zero, Finset.sum_const_zero]
   map_add' f g := by
-    simp only [map_add, mul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 theorem stage_apply {A : PAlg l} {T : Type} [CommRing T] (φ : A.A →+* T) {m : ℕ} (e : ZMod (l ^ m) → T)
     (he : CompleteOrthogonalIdempotents e) (f : (A.cont ℤ_[l]).A) :
@@ -133,11 +138,13 @@ theorem map_unique {A t : PAlg l} (ψ ψ' : A.cont ℤ_[l] ⟶ t)
   obtain ⟨M, hM⟩ := exists_period A f k
   let g : (A.cont ℤ_[l]).A := ∑ c, ind A M c * Hom.f (A.toCont ℤ_[l]) (Hom.f (A.evCont (rep c)) f)
   have hg : Hom.f ψ g = Hom.f ψ' g := by
-    simp only [g, map_sum, map_mul, h2, hconst]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [g, map_sum, map_mul, h2, hconst]
   have hfg : f - g ∈ Ideal.span {(A.cont ℤ_[l]).pi ^ k} := by
     refine (mem_span_pi_pow A k _).2 fun z => ?_
     have : Hom.f (A.evCont z) g = Hom.f (A.evCont (rep (PadicInt.toZModPow M z))) f := by
-      simp only [g, map_sum, map_mul, ev_toCont, ev_ind]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [g, map_sum, map_mul, ev_toCont, ev_ind]
       rw [Finset.sum_eq_single (PadicInt.toZModPow M z)]
       · simp
       · intro c _ hc
@@ -184,7 +191,8 @@ theorem formula (ε : Eps l) {ρ : ℕ → ((base l).cont ℤ_[l]).A}
     t.sharp (Hom.f ψ (Hom.f (contMap A.fromBase ℤ_[l]) (ρ m))) =
       ∑ c : ZMod (l ^ m), t.sharp (Hom.f ψ (ind A m c)) * t.sharp (t.s (ε.e m)) ^ c.val := by
   have h := congrArg (mapU (contMap A.fromBase ℤ_[l] ≫ ψ)) (hF m)
-  rw [mapU_sharp, map_sum] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [mapU_sharp, map_sum] at h
   refine h.trans (Finset.sum_congr rfl fun c _ => ?_)
   rw [map_mul, map_pow, mapU_sharp, mapU_sharp]
   have h1 : Hom.f (contMap A.fromBase ℤ_[l] ≫ ψ) (ind (base l) m c) = Hom.f ψ (ind A m c) :=
@@ -233,9 +241,27 @@ theorem continuous_algebra_universal_existsUnique (ε : Eps l) {ρ : ℕ → ((b
     have := rel_of_formula (coi_map ψ' m) (formula ε hF ψ' m) c
     rwa [show Hom.f ψ' (Hom.f (contMap A.fromBase ℤ_[l]) (ρ m)) = r m from congrFun key m] at this
 
-theorem main : ∀ {l : ℕ} [Fact l.Prime] (ε : Eps l), ∃ η : (((base l).cont ℤ_[l]).A)ˣ, ((base l).cont ℤ_[l]).sharp η = 1 ∧ PAlg.Hom.f (contShift (base l)) η = ((base l).cont ℤ_[l]).s (ε.e 0) * η ∧ ∀ (A t : PAlg l), t.IsTest → ∀ (φ : A ⟶ t) (u : (t.A)ˣ), t.sharp u = 1 → ∃! ψ : A.cont ℤ_[l] ⟶ t, A.toCont ℤ_[l] ≫ ψ = φ ∧ PAlg.Hom.f ψ (PAlg.Hom.f (contMap A.fromBase ℤ_[l]) η) = u := by
+theorem main : ∀ {l : ℕ} [Fact l.Prime] (ε : Eps l),
+    ∃ η : (((base l).cont ℤ_[l]).A)ˣ, ((base l).cont ℤ_[l]).sharp η = 1 ∧
+      PAlg.Hom.f (CrystallineSemistableComparison.B.contShift (base l)) η =
+        ((base l).cont ℤ_[l]).s (ε.e 0) * (η : ((base l).cont ℤ_[l]).A) ∧
+      ∀ (A t : PAlg l), t.IsTest → ∀ (φ : A ⟶ t) (u : (t.A)ˣ), t.sharp u = 1 →
+        ∃! ψ : A.cont ℤ_[l] ⟶ t, A.toCont ℤ_[l] ≫ ψ = φ ∧
+          PAlg.Hom.f ψ (PAlg.Hom.f (contMap A.fromBase ℤ_[l]) η) = u := by
   intro l _ ε
-  obtain ⟨η, hη, hs⟩ := GlobalTheory.T.exists_continuous_epsilon_power ε
+  have hx : (base l).s (ε.e 0) - 1 ∈ Ideal.span {(base l).pi} :=
+    ((RL.sharp_cong (base l)).2.1 _ 1).1 (by
+      rw [ε.sharp_e (base l), map_one, sub_self]
+      exact zero_mem _)
+  obtain ⟨η, hη, hshift⟩ := EtaFn.exists_fn (base l) _ hx
+  have hs : PAlg.Hom.f (CrystallineSemistableComparison.B.contShift (base l)) η =
+      ((base l).cont ℤ_[l]).s (ε.e 0) * η := by
+    refine cont_ext fun z => ?_
+    have hev : Hom.f ((base l).evCont z) (((base l).cont ℤ_[l]).s (ε.e 0)) =
+        (base l).s (ε.e 0) :=
+      RingHom.congr_fun (Hom.comm ((base l).evCont z)) _
+    rw [map_mul, hev]
+    exact hshift z
   obtain ⟨ρ, h0, hρ⟩ := exists_roots ((base l).cont ℤ_[l]) η
   have hF := GlobalTheory.T.sharp_epsilon_root_idempotent_sum ε ρ (fun m z => h0 ▸ hη m z) hρ
   have h1 : ((base l).cont ℤ_[l]).sharp η = 1 := by

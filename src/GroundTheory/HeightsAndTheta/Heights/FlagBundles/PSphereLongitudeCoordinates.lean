@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FlagBundles.Statements
-import GroundTheory.HeightsAndTheta.Heights.FlagBundles.StatementsSphereLongitude
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FlagBundles.Statements
+public import GroundTheory.HeightsAndTheta.Heights.FlagBundles.StatementsSphereLongitude
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FlagBundles
@@ -324,6 +329,7 @@ theorem SphereLongitudeCoordinates.proof : SphereLongitudeCoordinates.Statement 
     ring
   unfold SphereLongitudeCoordinates.Statement sphereMeasure
   rw [Measure.map_smul, hM, huniv]
+  exact measurable_subtype_coe.aemeasurable
 
 end
 

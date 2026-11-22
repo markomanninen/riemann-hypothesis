@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField Module
 
@@ -24,7 +28,8 @@ theorem sum_repr_smul_dual (E : Type) [Field E] [NumberField E] {ι : Type} [Fin
     intro k
     rw [hB k, ← map_mul]
     conv_lhs => rw [← b.sum_repr (a * b k)]
-    simp [map_sum, hB, zsmul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, hB, zsmul_eq_mul]
   have hterm : ∀ k i, Algebra.trace ℚ E (D l * (((b.repr (a * b k) i : ℤ) : E) * B i)) =
       (b.repr (a * b k) i : ℚ) * (if i = l then 1 else 0) := by
     intro k i
@@ -34,7 +39,8 @@ theorem sum_repr_smul_dual (E : Type) [Field E] [NumberField E] {ι : Type} [Fin
       LinearMap.map_smul, smul_eq_mul]
   have hcoord : ∀ k, D.repr (algebraMap (𝓞 E) E a * D l) k = (b.repr (a * b k) l : ℚ) := by
     intro k
-    rw [hrepr, Algebra.traceForm_apply, mul_comm (algebraMap (𝓞 E) E a) (D l), mul_assoc, hB' k,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hrepr, Algebra.traceForm_apply, mul_comm (algebraMap (𝓞 E) E a) (D l), mul_assoc, hB' k,
       Finset.mul_sum, map_sum]
     simp only [hterm, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
   calc ∑ k, ((b.repr (a * b k) l : ℤ) : E) * D k
@@ -61,7 +67,8 @@ theorem exists_coeff (E : Type) [Field E] [NumberField E] (K : Type) [Field K] [
   have h1 : ∑ k, D k * B k = 1 := by
     have h0 : ∑ k, D k * B k - 1 = 0 := by
       refine hnd.1 _ fun x => ?_
-      rw [Algebra.traceForm_apply, sub_mul, one_mul, map_sub, sub_eq_zero, Finset.sum_mul, map_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Algebra.traceForm_apply, sub_mul, one_mul, map_sub, sub_eq_zero, Finset.sum_mul, map_sum,
         Algebra.trace_eq_matrix_trace D x, Matrix.trace]
       simp only [Matrix.diag, Algebra.leftMulMatrix_eq_repr_mul, hrepr, Algebra.traceForm_apply]
       refine Finset.sum_congr rfl fun k _ => ?_
@@ -71,7 +78,8 @@ theorem exists_coeff (E : Type) [Field E] [NumberField E] (K : Type) [Field K] [
   · calc ∑ k, σ' (D k) * σ (b k) = σ' (∑ k, D k * B k) := by simp [map_sum, hB, hσ']
       _ = 1 := by rw [h1, map_one]
   · have h := congrArg σ' (sum_repr_smul_dual E b B D hB hD hrepr a l)
-    simpa [map_sum, map_mul, hσ'] using h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, map_mul, hσ'] using h
 
 theorem exists_eigen_projector : ∀ (E : Type) [Field E] [NumberField E] (K : Type) [Field K] [CharZero K]
     (σ : 𝓞 E →+* K), ∃ (n : ℕ) (e : Fin n → 𝓞 E) (c : Fin n → K), ∑ k, c k * σ (e k) = 1 ∧
@@ -92,14 +100,17 @@ theorem exists_eigen_projector : ∀ (E : Type) [Field E] [NumberField E] (K : T
       intro i
       rw [← Module.End.mul_apply, ← map_mul]
       conv_lhs => rw [← b.sum_repr (a * b i)]
-      simp [map_sum, LinearMap.sum_apply, Int.cast_smul_eq_zsmul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, LinearMap.sum_apply, Int.cast_smul_eq_zsmul]
     have hj : ∀ l, ∑ i, j (c i) * ((b.repr (a * b i) l : ℤ) : L) = j (σ a) * j (c l) := by
       intro l
       have h := congrArg j (hc2 a l)
-      simp only [map_sum, map_mul, map_intCast] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, map_intCast] at h
       rw [← h]
       exact Finset.sum_congr rfl fun i _ => mul_comm _ _
-    simp only [map_sum, map_smul, hmul, Finset.smul_sum, smul_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, hmul, Finset.smul_sum, smul_smul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [← Finset.sum_smul, hj l]

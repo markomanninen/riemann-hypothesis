@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumA
-import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumA
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
+
+@[expose] public section
 
 noncomputable section
 

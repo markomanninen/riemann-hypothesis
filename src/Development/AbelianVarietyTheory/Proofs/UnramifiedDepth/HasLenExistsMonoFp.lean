@@ -1,18 +1,22 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartFH
-import ReciprocityTheory.DualLattices.TowerZeroSurjective
-import ReciprocityTheory.DualLattices.LinPairStatement
-import ReciprocityTheory.DualLattices.LengthDegreeAbelianVariety
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
-import ReciprocityTheory.DualLattices.SubMemOfCompat
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.Biextensions.GenericFiberCubeInclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSeparatedOfIsQProjOver
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.IsEigBasisIff
-import ReciprocityTheory.DualLattices.HasLenLeOfSurj
-import ReciprocityTheory.DualLattices.UpSmith
-import ReciprocityTheory.DualLattices.HasLenCokerDet
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartFH
+public import ReciprocityTheory.DualLattices.TowerZeroSurjective
+public import ReciprocityTheory.DualLattices.LinPairStatement
+public import ReciprocityTheory.DualLattices.LengthDegreeAbelianVariety
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
+public import ReciprocityTheory.DualLattices.SubMemOfCompat
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.Biextensions.GenericFiberCubeInclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSeparatedOfIsQProjOver
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.IsEigBasisIff
+public import ReciprocityTheory.DualLattices.HasLenLeOfSurj
+public import ReciprocityTheory.DualLattices.UpSmith
+public import ReciprocityTheory.DualLattices.HasLenCokerDet
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry TensorProduct Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.Pdiv.ChartF ReciprocityTheory.ChartRestriction.G.Pdiv.AvDefs
@@ -28,8 +32,26 @@ private theorem hasLen_of_fp {C : Type} [Field C] {v : Valuation C NNReal} {O : 
   obtain ⟨n, f, hf⟩ := Module.Finite.exists_fin' O M
   have hk : (LinearMap.ker f).FG := Module.FinitePresentation.fg_ker f hf
   obtain ⟨m, g, hg⟩ := Submodule.fg_iff_exists_fin_generating_family.1 hk
+  have hsmith : ∀ (b : ℕ) {idx : Type} [Fintype idx] (g : idx → Fin b → O),
+      ∃ c : Fin b → O, Nonempty (((Fin b → O) ⧸ Submodule.span O (Set.range g)) ≃ₗ[O]
+        ((i : Fin b) → O ⧸ Ideal.span {c i})) := by
+    intro b
+    induction b with
+    | zero =>
+      intro idx _ g
+      exact ⟨Fin.elim0, ⟨LinearEquiv.ofSubsingleton _ _⟩⟩
+    | succ b ih =>
+      intro idx _ g
+      obtain ⟨i0, a, u, s, hu, hau, hs, -, -⟩ := Smith.exists_pivot hv g
+      obtain ⟨e1⟩ := Smith.pivot_equiv g i0 a u s hu hau hs
+      obtain ⟨c, ⟨e2⟩⟩ := ih (fun j => Fin.removeNth i0 (g j - s j • a • u))
+      exact ⟨Fin.cons a c, ⟨(e1.trans ((LinearEquiv.refl O _).prodCongr e2)).trans
+        (Smith.consEquiv a c)⟩⟩
+  obtain ⟨c, e⟩ := hsmith n g
+  have hc : HasLen v O ((Fin n → O) ⧸ Submodule.span O (Set.range g))
+      (∏ i, v (algebraMap O C (c i))) := ⟨n, c, e, rfl⟩
   exact ⟨_, hasLen_of_equiv ((Submodule.quotEquivOfEq _ _ hg).trans
-    (f.quotKerEquivOfSurjective hf)).symm (Smith.hasLen_coker_gen hv g)⟩
+    (f.quotKerEquivOfSurjective hf)).symm hc⟩
 
 private theorem hasLen_mono {C : Type} [Field C] {v : Valuation C NNReal} {R : Type} [CommRing R]
     [Algebra R C] (hv : v.Integers R) {M M' : Type} [AddCommGroup M] [Module R M]
@@ -52,7 +74,8 @@ private theorem hasLen_mono {C : Type} [Field C] {v : Valuation C NNReal} {R : T
         _ = e.symm (∑ i, (Quotient.out (e x i) : R) • (Pi.single i (1 : R ⧸ Ideal.span {c i}) :
             (i : Fin m) → R ⧸ Ideal.span {c i})) := congrArg e.symm hx
         _ = _ := by simp only [map_sum, map_smul]
-    rw [this, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [this, map_sum]
     exact Submodule.sum_mem _ fun i _ => by
       rw [map_smul]; exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
   have hT : ∀ k, ∑ i, (Matrix.diagonal c) k i • y i = 0 := by

@@ -1,5 +1,9 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.RootOnFund
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.SplitComps
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.RootOnFund
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.SplitComps
+
+@[expose] public section
 
 noncomputable section
 
@@ -92,8 +96,8 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {D : Da
   {RM : Top.RootModel (CMType H) (D.p + D.q)} {Sys : PB.AnSys (Top.dimFl (CMType H) (D.p + D.q)) (Option (RootIx D))}
   {Fx : FixedData Y Sys}
 
-open Classical in
 
+open Classical in
 def tieOf (Or : RootOrigin Y S RM Fx) (h₀ : 0 < Sys.t₀) (hvb : Or.𝔐.OmVB)
     (hd : ∀ p : ℕ, p.Prime → (p : ℤ) ∣ NumberField.discr E → p ∈ S) (hA : AlgOver (Or.Re.comap some)) :
     HodgeTie Y S (Module.finrank ℚ c.F) RM where

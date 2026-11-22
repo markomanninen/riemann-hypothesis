@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.InterlacingEquivariance
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TensorMapDescent
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SplitLastBlockActX
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.WeightedLeadingTermSplitZMinor
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EquivariantMapEqSmul
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsBasisAtBlock
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NonnegSubOfLt
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.FiniteIntertwining
-import Formalism.LocalToGlobal.Columns.PolyFnLemmas
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.InterlacingEquivariance
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TensorMapDescent
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SplitLastBlockActX
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.WeightedLeadingTermSplitZMinor
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EquivariantMapEqSmul
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsBasisAtBlock
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NonnegSubOfLt
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.FiniteIntertwining
+public import Formalism.LocalToGlobal.Columns.PolyFnLemmas
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+
+@[expose] public section
 
 open MvPolynomial NumberField IsDedekindDomain
 
@@ -46,17 +50,11 @@ theorem isBlock_mul_lastGL {R : Type} [CommRing R] {N n : ℕ} {hN : N = n + 1} 
   · rw [(h.2.1 a).2, zero_mul]
   · rw [if_pos hl, h.2.2, one_mul]
 
-theorem isBlock_lastGL (R : Type) [CommRing R] {N n : ℕ} (hN : N = n + 1) (t : Rˣ) :
-    IsBlock hN ((lastGL R N t : GL (Fin N) R) : Matrix (Fin N) (Fin N) R) ((1 : GL (Fin n) R) : Matrix (Fin n) (Fin n) R)
-      (t : R) := by
-  have h := isBlock_mul_lastGL (isBlock_embGL R hN 1) t
-  rwa [map_one, one_mul] at h
-
 theorem sum_bExp {N n : ℕ} (hN : N = n + 1) {lam : DomWeight N} {sg : DomWeight n} (hI : Interlace hN lam sg) :
     ((∑ s, (bBr hN lam sg s).toNat : ℕ) : ℤ) + lam.detShift = nBr lam sg := by
   have h1 : lam.detShift = lam.w (iL hN) := by
     unfold DomWeight.detShift
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
     congr 1
     exact Fin.ext (by simp only [iL]; omega)
   have h2 : ∑ s, (((bBr hN lam sg s).toNat : ℕ) : ℤ) = ∑ s, (lam.w (iC hN s) - sg.w s) :=
@@ -100,19 +98,10 @@ theorem brAt_eq_pullback {K : Type} [Field K] [CharZero K] {ι : Type} [Fintype 
     (h : ∀ τ, IsBlock hN (g' τ : Matrix (Fin N) (Fin N) K) (g τ : Matrix (Fin n) (Fin n) K) (t τ)) (G : VV K lam) :
     brStd hN lam sg (rhoK lam g'⁻¹ G) = rhoK sg g⁻¹ (brAt hN lam sg t G) := by
   have h1 := brStd_rhoK hN hI hS g g' t h (rhoK lam g'⁻¹ G)
-  rw [← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply] at h1
+  rw [← mul_apply_eq_comp, ← map_mul, mul_inv_cancel, map_one, one_apply_eq_self] at h1
   rw [brAt, LinearMap.smul_apply, h1, smul_smul, ← Finset.prod_mul_distrib,
     Finset.prod_eq_one fun τ _ => by rw [← zpow_add₀ (ht τ), neg_add_cancel, zpow_zero], one_smul,
-    ← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply]
-
-theorem homogeneity : Homogeneity := by
-  intro K _ _ ι _ N n hN lam sg hI hS t
-  refine ⟨?_, brAt_eq hN lam sg t⟩
-  ext1 G
-  have h := brAt_eq_pullback hN hI hS 1 (fun τ => lastGL K N (t τ)) (fun τ => (t τ : K)) (fun τ => (t τ).ne_zero)
-    (fun τ => isBlock_lastGL K hN (t τ)) G
-  rw [inv_one, map_one, Module.End.one_apply] at h
-  exact h
+    ← mul_apply_eq_comp, ← map_mul, inv_mul_cancel, map_one, one_apply_eq_self]
 
 section One
 
@@ -231,7 +220,7 @@ theorem map_mem_delSq {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) {n
     simp only
     rw [← Formalism.GradedWeylDivisibility.lclosedeq_applyWord_map, Formalism.GradedWeylDivisibility.lclosedeq_hw_map]
   | zero => rw [map_zero]; exact zero_mem _
-  | add y z _ _ hy hz => rw [map_add]; exact add_mem hy hz
+  | add y z _ _ hy hz => rw [map_add (f := _)]; exact add_mem hy hz
   | smul a y _ hy =>
     rw [smul_eq_C_mul, map_mul, map_C, ← smul_eq_C_mul]
     exact Submodule.smul_mem _ _ hy
@@ -294,27 +283,21 @@ theorem onePlace (h6 : Formalism.MainNotions.PrimeDegreeVariant.Conclusion6) : O
   · rw [e _ (st _ f hf), e f hf]; exact b5 a f hf
   · rw [e f hf]; exact b6 f hf
 
-theorem transposed (h6 : Formalism.MainNotions.PrimeDegreeVariant.Conclusion6) : Transposed := by
-  intro N n hN lam sg hI hS
-  obtain ⟨hc, -, hx, -, io, br, hio, hbr, hT⟩ := h6 n N hN.symm lam sg ((interlace_iff hN lam sg).1 hI)
-  refine ⟨io, hio, fun s hs f hf => ?_⟩
-  rw [brOne_eq_transpose hN hI hS hc hx hio hbr hT f hf]
-  exact hT s hs f hf
-
 theorem coeff_prod_rename {A ι : Type} [CommRing A] [Fintype ι] {n : ℕ} (b : ι → Fin n → ℕ)
     (P : ι → MvPolynomial (Unit × Fin n) A) :
-    coeff (expOf b) (∏ τ, rename (fun p : Unit × Fin n => (τ, p.2)) (P τ)) =
-      ∏ τ, coeff (expOf fun _ : Unit => b τ) (P τ) := by
+    AddMonoidAlgebra.coeff (∏ τ, rename (fun p : Unit × Fin n => (τ, p.2)) (P τ)) (expOf b) =
+      ∏ τ, AddMonoidAlgebra.coeff (P τ) (expOf fun _ : Unit => b τ) := by
   classical
   have hinj : ∀ τ : ι, Function.Injective (fun p : Unit × Fin n => (τ, p.2)) :=
     fun τ p q h => Prod.ext rfl (Prod.mk.inj h).2
   have h1 : ∀ τ, rename (fun p : Unit × Fin n => (τ, p.2)) (P τ) =
-      ∑ m ∈ (P τ).support, monomial (m.mapDomain fun p : Unit × Fin n => (τ, p.2)) (coeff m (P τ)) := by
+      ∑ m ∈ (P τ).support, monomial (m.mapDomain fun p : Unit × Fin n => (τ, p.2)) (AddMonoidAlgebra.coeff (P τ) m) := by
     intro τ
     conv_lhs => rw [(P τ).as_sum]
-    simp only [map_sum, rename_monomial]
-  have h2 : ∀ τ, coeff (expOf fun _ : Unit => b τ) (P τ) =
-      ∑ m ∈ (P τ).support, if m = expOf (fun _ : Unit => b τ) then coeff m (P τ) else 0 := by
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, rename_monomial]
+  have h2 : ∀ τ, AddMonoidAlgebra.coeff (P τ) (expOf fun _ : Unit => b τ) =
+      ∑ m ∈ (P τ).support, if m = expOf (fun _ : Unit => b τ) then AddMonoidAlgebra.coeff (P τ) m else 0 := by
     intro τ
     conv_lhs => rw [(P τ).as_sum]
     simp only [coeff_sum, coeff_monomial]
@@ -325,7 +308,7 @@ theorem coeff_prod_rename {A ι : Type} [CommRing A] [Fintype ι] {n : ℕ} (b :
   have h3 : ∀ τ s, (∑ τ', (p τ').mapDomain fun q : Unit × Fin n => (τ', q.2)) (τ, s) = p τ ((), s) := by
     intro τ s
     rw [Finsupp.finsetSum_apply, Finset.sum_eq_single τ]
-    · exact Finsupp.mapDomain_apply (hinj τ) (p τ) ((), s)
+    · exact Finsupp.mapDomain_apply_of_injective (hinj τ) (p τ) ((), s)
     · intro τ' _ h
       refine Finsupp.mapDomain_of_notMem_range _ _ ?_
       rintro ⟨q, hq⟩
@@ -350,7 +333,7 @@ theorem splitLast_blockEmb {K ι : Type} [Field K] {N n : ℕ} (hN : N = n + 1) 
           (splitLast K Unit hN (rename (fun v : Fin N × Fin N => (((), v) : Unit × Fin N × Fin N)) f))) := by
   induction f using MvPolynomial.induction_on with
   | C a => simp only [Formalism.GradedWeylDivisibility.blockEmb, rename_C, splitLast_C, map_C, AlgHom.toRingHom_eq_coe, RingHom.coe_coe]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     have : splitLast K ι hN (Formalism.GradedWeylDivisibility.blockEmb K τ (X v)) =
       rename (fun p : Unit × Fin n => (τ, p.2))
@@ -410,7 +393,7 @@ theorem tensor : Tensor := by
     simp only [Finset.univ_unique, Finset.prod_singleton]
     rfl
   | zero => simp only [← fockBL_apply, map_zero]
-  | add y z _ _ hy hz => simp only [← fockBL_apply, map_add] at *; rw [hy, hz]
+  | add y z _ _ hy hz => simp only [← fockBL_apply, map_add (f := _)] at *; rw [hy, hz]
   | smul a y _ hy => simp only [← fockBL_apply, map_smul] at *; rw [hy]
 
 theorem brOne_mem_del (h1 : OnePlace) {K : Type} [Field K] [NumberField K] {N n : ℕ} (hN : N = n + 1) {lam : DomWeight N}
@@ -436,7 +419,7 @@ theorem brOne_mem_del (h1 : OnePlace) {K : Type} [Field K] [NumberField K] {N n 
     simp only
     rw [hf0, hk, hk, hm K f0, hm K g, GlobalTheory.Proof.TensorMapDescent.brOne_map, e']
   | zero => rw [map_zero, map_zero]; exact zero_mem _
-  | add y z _ _ hy hz => rw [map_add, map_add]; exact add_mem hy hz
+  | add y z _ _ hy hz => rw [map_add (f := _), map_add (f := _)]; exact add_mem hy hz
   | smul a y _ hy =>
     rw [map_smul, LinearMap.map_smul_of_tower]
     exact Submodule.smul_mem _ _ hy
@@ -459,7 +442,7 @@ theorem brStd_mem_delStd (h1 : OnePlace) {K : Type} [Field K] [NumberField K] {�
     rw [← e τ]
     exact brOne_mem_del h1 hN (hI τ) (hS τ) (hf0 τ)
   | zero => rw [map_zero]; exact zero_mem _
-  | add y z _ _ hy hz => rw [map_add]; exact add_mem hy hz
+  | add y z _ _ hy hz => rw [map_add (f := _)]; exact add_mem hy hz
   | smul a y _ hy =>
     rw [LinearMap.map_smul_of_tower]
     exact Submodule.smul_mem _ _ hy
@@ -479,8 +462,5 @@ theorem integrality (h6 : Formalism.MainNotions.PrimeDegreeVariant.Conclusion6) 
   have h2 := brStd_mem_delStd (onePlace h6) hN hI hS (s • _) h1
   rw [LinearMap.map_smul_of_tower] at h2
   exact h2
-
-theorem statement_of_branching (h6 : Formalism.MainNotions.PrimeDegreeVariant.Conclusion6) : Statement :=
-  ⟨onePlace h6, equivariance, integrality h6, homogeneity, GlobalTheory.BranchMembers.members⟩
 
 end GlobalTheory.BranchFormula

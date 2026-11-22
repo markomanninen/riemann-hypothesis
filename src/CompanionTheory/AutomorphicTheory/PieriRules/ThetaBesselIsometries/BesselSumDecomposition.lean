@@ -1,8 +1,12 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.Imports
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.SmoothMapsClosureStatement
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.IsDSOfIsDG
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.Imports
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.SmoothMapsClosureStatement
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.IsDSOfIsDG
+
+@[expose] public section
 
 namespace GlobalTheory
 end GlobalTheory
@@ -26,20 +30,26 @@ theorem dsigW_zero (R : Rep k r) (W : List (Mx k r)) :
     rw [ih]
     simp [PI.UpqRep.dsig]
 
-theorem smMap_zero (R R' : Rep k r) : SmMap R R' (fun _ => 0) where
-  mem := fun _ _ => Formalism.FourierDecayAlt.P.DDSmoothness.smooth_zero R'.σ
-  add := by intros; simp
-  smul := by intros; simp
-  cont := fun W _ => ⟨0, [], by simp, fun v _ => by simp [dsigW_zero]⟩
+theorem smMap_zero (R R' : Rep k r) : SmMap R R' (fun _ => 0) := by
+  refine ⟨fun _ _ => Formalism.FourierDecayAlt.P.DDSmoothness.smooth_zero R'.σ, ?_, ?_, ?_⟩
+  · intros
+    simp
+  · intros
+    simp
+  · intro W _
+    exact ⟨0, [], by simp, fun _ _ => by simp [dsigW_zero]⟩
 
 theorem smMap_congr {R R' : Rep k r} {T T' : R.H → R'.H} (h : SmMap R R' T)
-    (e : ∀ v ∈ R.sm, T' v = T v) : SmMap R R' T' where
-  mem := fun v hv => by rw [e v hv]; exact h.mem v hv
-  add := fun v hv w hw => by
+    (e : ∀ v ∈ R.sm, T' v = T v) : SmMap R R' T' := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro v hv
+    rw [e v hv]
+    exact h.mem v hv
+  · intro v hv w hw
     rw [e v hv, e w hw, e _ (Formalism.FourierDecayAlt.P.DDSmoothness.smooth_add hv hw), h.add v hv w hw]
-  smul := fun a v hv => by
+  · intro a v hv
     rw [e v hv, e _ (Formalism.FourierDecayAlt.P.DDSmoothness.smooth_smul a hv), h.smul a v hv]
-  cont := fun W hW => by
+  · intro W hW
     obtain ⟨C, Ws, h1, h2⟩ := h.cont W hW
     exact ⟨C, Ws, h1, fun v hv => by
       have := h2 v hv
@@ -111,7 +121,8 @@ theorem main : PI.KFinSmooth → ∀ (k r : ℕ) (ι κ : Type) [Fintype ι] [De
   · have hG := mem_GG_of_mem_Sset hs
     rw [hT.io_eq I s hG y hy, ev_eq, ev_eq]
     have hv := vecMul_inv Γ (ρ s) om (hF.2.2.2.2.1 s hG) (hom s hs)
-    simp only [act, map_sum, map_smul, Finset.smul_sum, smul_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [act, map_sum, map_smul, Finset.smul_sum, smul_smul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← Finset.sum_smul, ← congrFun hv j]

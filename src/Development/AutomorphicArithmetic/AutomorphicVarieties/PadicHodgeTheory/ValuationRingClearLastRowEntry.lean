@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.KisinCrTrivial
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.CommutingUpperTriangularDistinct
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.RtBasic
-open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.Published IsLocalRing Polynomial
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.CommutingUpperTriangularDistinct
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.RtBasic
+
+@[expose] public section
+
+open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg IsLocalRing Polynomial
 
 namespace UpperTheory.V.Loc
 
@@ -119,7 +124,7 @@ private theorem exists_common_ring_same_kernel {A K L : Type} [CommRing A] [Fiel
   letI : Algebra (A ⧸ RingHom.ker f) K := (RingHom.kerLift f).toAlgebra
   letI : Algebra (A ⧸ RingHom.ker f) L := (Ideal.Quotient.lift _ g fun a ha => by rwa [h] at ha).toAlgebra
   have h2 : Function.Injective (algebraMap (A ⧸ RingHom.ker f) L) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective a
     rw [Ideal.Quotient.eq_zero_iff_mem, h]
@@ -188,7 +193,7 @@ private theorem triangular_form_specialization {ι A F K : Type} [CommRing A] [F
   exact triangular_form_finite_extension f i _ H3
 
 private theorem triangular_in_iff_triangular_form {O A C D : Type} [CommRing O] [CommRing A] [CommRing C] [Algebra O A] [Algebra O C] [Group D]
-    (η : D →* ℤˣ) (Ψ : D →* Oˣ) (I : Subgroup D) (u : D →* GG 3 A) (hu : HasMult η u) (φ : A →ₐ[O] C)
+    (η : D →* ℤˣ) (Ψ : D →* Oˣ) (I : Subgroup D) (u : D →* GG (m := 3) (R := A)) (hu : HasMult η u) (φ : A →ₐ[O] C)
     (h : GL (Fin 3) C) : UpperTheory.V.UnitaryThreeInertia.TriIn η Ψ I (push φ u) h ↔
       TriangularForm (fun g => (u g).mat) (fun g a => algebraMap O A (UpperTheory.V.UnitaryThreeInertia.psi Ψ a g)) {g | η g = 1}
         {g | g ∈ I ∧ η g = 1} φ h := by
@@ -217,7 +222,7 @@ private theorem triangular_in_iff_triangular_form {O A C D : Type} [CommRing O] 
 end UpperTheory.V.Loc
 
 theorem UpperTheory.V.Loc.lemma2c :
-    LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CharZero O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (U : D.Univ) (K : Type) [Field K] [Algebra O K] (r : GQ l →* GG 3 K), D.On U r → ∃ (K' : Type) (_ : Field K') (_ : Algebra K K') (_ : Algebra O K') (_ : IsScalarTower O K K') (_ : FiniteDimensional K K') (h : GL (Fin 3) K'), UpperTheory.V.UnitaryThreeInertia.TriIn D.η D.Ψ (Iq l) ((GG.map (algebraMap K K')).comp r) h := by
+    LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CharZero O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (U : _root_.UpperTheory.V.U3.Univ (_root_.UpperTheory.V.U3.GCond.noCondition O D.η D.Ψ)) (K : Type) [Field K] [Algebra O K] (r : GQ l →* GG (m := 3) (R := K)), D.On U r → ∃ (K' : Type) (_ : Field K') (_ : Algebra K K') (_ : Algebra O K') (_ : IsScalarTower O K K') (_ : FiniteDimensional K K') (h : GL (Fin 3) K'), UpperTheory.V.UnitaryThreeInertia.TriIn D.η D.Ψ (Iq l) ((GG.map (algebraMap K K')).comp r) h := by
   intro hP l _ O _ _ _ _ _ _ _ D U K _ _ r ⟨f, hr, hf⟩
   obtain ⟨-, hp, hl, -⟩ := UpperTheory.V.Loc.rtBasic hP D U
   haveI : IsDomain (D.Rt U) := Ideal.Quotient.isDomain _
@@ -238,7 +243,9 @@ theorem UpperTheory.V.Loc.lemma2c :
     exact mul_ne_zero ((Units.isUnit _).map _).ne_zero (pow_ne_zero _ hl0) h2.symm
   obtain ⟨⟨h, H⟩, -⟩ := UpperTheory.V.Loc.lemma2b hP D U _ (push φ U.r.hom) ⟨φ, rfl, hφ.ge⟩
   rw [UpperTheory.V.Loc.triangular_in_iff_triangular_form _ _ _ _ U.r.hasMult] at H
-  obtain ⟨K', _, _, _, h', H'⟩ := UpperTheory.V.Loc.triangular_form_specialization (fun g hg => hg.2) _ (f : U.R →+* K) (hφ.le.trans hf) h H
+  have hT : {g : GQ l | g ∈ Iq l ∧ D.η g = 1} ⊆ {g | D.η g = 1} := fun _ hg => hg.2
+  obtain ⟨K', _, _, _, h', H'⟩ :=
+    UpperTheory.V.Loc.triangular_form_specialization hT _ (f : U.R →+* K) (hφ.le.trans hf) h H
   letI : Algebra O K' := ((algebraMap K K').comp (algebraMap O K)).toAlgebra
   haveI : IsScalarTower O K K' := IsScalarTower.of_algebraMap_eq fun _ => rfl
   refine ⟨K', inferInstance, inferInstance, inferInstance, inferInstance, inferInstance, h', ?_⟩

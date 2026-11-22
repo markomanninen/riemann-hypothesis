@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem sum_graph_eq_sum_entN {A : Type} [AddCommMonoid A] {N : ℕ} (M : Matrix
       · rw [Finset.sum_eq_single ⟨f a, hf⟩]
         · split_ifs with hc
           · unfold entN
-            rw [dif_pos ⟨a.isLt, hf⟩]
+            rw [dite_eq_left ⟨a.isLt, hf⟩]
           · exact absurd ⟨ha, rfl⟩ hc
         · intro b _ hb
           rw [if_neg]
@@ -31,7 +35,7 @@ theorem sum_graph_eq_sum_entN {A : Type} [AddCommMonoid A] {N : ℕ} (M : Matrix
           exact absurd (Finset.mem_univ _) h
       · rw [Finset.sum_eq_zero]
         · unfold entN
-          rw [dif_neg (fun hh => hf hh.2)]
+          rw [dite_eq_right (fun hh => hf hh.2)]
         · intro b _
           rw [if_neg]
           intro h
@@ -47,7 +51,7 @@ theorem sum_graph_eq_sum_entN {A : Type} [AddCommMonoid A] {N : ℕ} (M : Matrix
   · intro a haS hnot
     have hlt : ¬ a < N := fun hlt => hnot (Finset.mem_filter.mpr ⟨Finset.mem_range.mpr hlt, haS⟩)
     unfold entN
-    rw [dif_neg (fun hh => hlt hh.1)]
+    rw [dite_eq_right (fun hh => hlt hh.1)]
 
 theorem phI_last_iff {N : ℕ} (k s : ℕ) (a b : Fin N) :
     phI k s s a b ↔ (a : ℕ) < b ∧ ¬ (s ≤ (a : ℕ) ∧ (a : ℕ) < s + k ∧ (b : ℕ) = s + k) := by
@@ -94,7 +98,7 @@ theorem inPat_phI_last_iff {N : ℕ} (k s : ℕ) (M : Mt g N) :
       obtain ⟨hw1, hw2, rfl⟩ := hw
       have h0 := hz a hw1 hw2
       unfold entN at h0
-      rw [dif_pos ⟨ha, hb⟩] at h0
+      rw [dite_eq_left ⟨ha, hb⟩] at h0
       rw [Matrix.one_apply_ne]
       · exact h0
       · intro e

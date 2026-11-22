@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafConsPf
-import Development.EtaleCohomology.EtaleSheaves.LeafConsPfA
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafConsPf
+public import Development.EtaleCohomology.EtaleSheaves.LeafConsPfA
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -41,9 +45,7 @@ set_option maxHeartbeats 800000 in
 theorem L1 {B Y0 Y1 Y2 : Scheme.{0}} (p : Y0 ⟶ B) (g1 : Y1 ⟶ Y0) (g2 : Y2 ⟶ Y1) :
     pullback.fst (g2 ≫ g1 ≫ p) (top B).hom ≫ g2 ≫ g1 =
       mY (g1 ≫ p) g2 (top B) ≫ mY p g1 (top B) ≫ pullback.fst p (top B).hom := by
-  simp only [mY, pullback.map]
-  erw [pullback.lift_fst, pullback.lift_fst_assoc]
-  simp only [Category.assoc]
+  simp only [mY, pullback.map, Category.assoc, pullback.lift_fst, pullback.lift_fst_assoc]
 
 set_option maxHeartbeats 800000 in
 theorem L3 {B W Y : Scheme.{0}} (p : Y ⟶ B) (ι : W ⟶ B) :

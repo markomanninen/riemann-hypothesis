@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.RingOfIntegersSqrtNegThreeModFour
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.RingOfIntegersSqrtNegThreeModFour
+
+@[expose] public section
 
 open NumberField Module
 
@@ -74,7 +78,7 @@ theorem exists_imagQuad_integers : ∀ d : ℕ, d.Prime → d % 4 = 3 →
       have htK : (t : K) ≠ 0 := by exact_mod_cast ht
       set q : ℚ := -(2 * s + t) / t with hqdef
       have hrq : r = algebraMap ℚ K q := by
-        simp only [hqdef, map_div₀, map_neg, map_add, map_mul, map_ofNat, map_intCast]
+        simp only [hqdef, map_div₀, map_neg, map_add (f := _), map_mul, map_ofNat, map_intCast]
         field_simp
         linear_combination (2 : K) * hK + (-(t : K)) * hwr
       have hq : q ^ 2 = -(d : ℚ) := by
@@ -101,7 +105,7 @@ theorem exists_imagQuad_integers : ∀ d : ℕ, d.Prime → d % 4 = 3 →
     intro s t
     have : (s : 𝓞 K) + t * w = s • B 0 + t • B 1 := by
       rw [hB0, hB1]; simp [zsmul_eq_mul]
-    rw [this, map_add, map_zsmul, map_zsmul, B.repr_self, B.repr_self]
+    rw [this, map_add (f := _), map_zsmul, map_zsmul, B.repr_self, B.repr_self]
     simp
   refine ⟨K, inferInstance, inferInstance, w, ?_, h2, ?_, hw2, hspan, ?_⟩
   · refine ⟨fun v => ?_⟩

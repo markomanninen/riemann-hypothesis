@@ -1,6 +1,13 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Function
+
+-- Mathlib now indexes multilinear maps by a ring homomorphism.
+local notation "MultilinearMap " "ℂ " M:max N:max => _root_.MultilinearMap (RingHom.id ℂ) M N
 
 namespace GlobalTheory.FactorwiseExtension
 
@@ -41,7 +48,7 @@ theorem toLinearMap_update_smul (T : MultilinearMap ℂ H E) {i j : ι} (h : i �
     (c : ℂ) (x : H i) : T.toLinearMap (update w i (c • x)) j = c • T.toLinearMap (update w i x) j := by
   ext a
   simp only [MultilinearMap.toLinearMap_apply, LinearMap.smul_apply]
-  rw [update_comm h, update_comm h, T.map_update_smul]
+  rw [update_comm h, update_comm h, T.map_update_smul, RingHom.id_apply]
 
 end GlobalTheory.FactorwiseExtension
 
@@ -100,7 +107,7 @@ theorem invariant_insert (A B : ∀ τ, Submodule ℂ (H τ)) (hAB : ∀ τ, A �
     intro L₁ L₂ h₁ h₂ b hb
     have h₁₂ : ∀ r ∈ Rk τ₀, ∀ x ∈ A τ₀, (L₁ + L₂) (r.1 x) = r.2 ((L₁ + L₂) x) := by
       intro r hr x hx
-      simp only [LinearMap.add_apply, map_add, h₁ r hr x hx, h₂ r hr x hx]
+      simp only [LinearMap.add_apply, map_add (f := _), h₁ r hr x hx, h₂ r hr x hx]
     have := huniq τ₀ (Ext (L₁ + L₂) - Ext L₁ - Ext L₂)
       (sub_mem (sub_mem (hExtC _ h₁₂) (hExtC _ h₁)) (hExtC _ h₂))
       (by
@@ -155,11 +162,12 @@ theorem invariant_insert (A B : ∀ τ, Submodule ℂ (H τ)) (hAB : ∀ τ, A �
       intro v i x y
       by_cases hi : i = τ₀
       · subst hi
-        rw [h0position, h0position, h0position, map_add, map_add]
-      · rw [hiposition i hi, hiposition i hi, hiposition i hi, map_add, toLinearMap_update_add T hi,
+        rw [h0position, h0position, h0position, map_add (f := _), map_add (f := _)]
+      · rw [hiposition i hi, hiposition i hi, hiposition i hi, map_add (f := _), toLinearMap_update_add T hi,
           ExtAdd _ _ (hgU v i x) (hgU v i y) _ (hRB _)])
     (by
       intro v i c x
+      simp only [RingHom.id_apply]
       by_cases hi : i = τ₀
       · subst hi
         rw [h0position, h0position, map_smul, map_smul]
@@ -241,9 +249,9 @@ theorem invariant_insert (A B : ∀ τ, Submodule ℂ (H τ)) (hAB : ∀ τ, A �
     constructor
     · let F : H τ →ₗ[ℂ] H τ₀ →ₗ[ℂ] E := LinearMap.mk₂ ℂ (fun w b => T' (update (update u τ w) τ₀ b))
         (by intro w₁ w₂ b; rw [update_comm hne, update_comm hne, update_comm hne, T'.map_update_add])
-        (by intro c w b; rw [update_comm hne, update_comm hne, T'.map_update_smul])
+        (by intro c w b; rw [update_comm hne, update_comm hne, T'.map_update_smul, RingHom.id_apply])
         (by intro w b₁ b₂; rw [T'.map_update_add])
-        (by intro c w b; rw [T'.map_update_smul])
+        (by intro c w b; rw [T'.map_update_smul, RingHom.id_apply])
       have hF1 : ∀ w ∈ B τ, F w ∈ C τ₀ := by
         intro w hw
         have h := (hposition0 (update u τ w) (fun τ' _ => hgen τ u hu w (hBDτ w hw) τ')).1

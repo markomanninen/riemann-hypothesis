@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.PieceEqPieceT
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.PieceEqPieceT
+
+@[expose] public section
 
 noncomputable section
 

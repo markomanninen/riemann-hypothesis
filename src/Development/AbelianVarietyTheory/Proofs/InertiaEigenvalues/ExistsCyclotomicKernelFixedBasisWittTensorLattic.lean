@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltWittEqZeroOfPrimeMulEqZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsContinuousGaloisLatticeMatrixIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicActionOnRootTower
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltWittEqZeroOfPrimeMulEqZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsContinuousGaloisLatticeMatrixIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicActionOnRootTower
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct GlobalTheory.HWL
 
@@ -17,7 +21,8 @@ theorem shift_mem (τ : H → M →+ M) (hmul : ∀ g h x, τ (g * h) x = τ g (
     (J : AddSubgroup M) (hJ : ∀ g, ∀ x ∈ J, τ g x ∈ J) (N : Subgroup H) [Fintype (H ⧸ N)] (x : M)
     (hx : ∀ ν ∈ N, τ ν x - x ∈ J) (h : H) :
     τ h (∑ q : H ⧸ N, τ q.out x) - ∑ q : H ⧸ N, τ q.out x ∈ J := by
-  rw [map_sum, ← Equiv.sum_comp (MulAction.toPerm h) (fun q : H ⧸ N => τ q.out x),
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← Equiv.sum_comp (MulAction.toPerm h) (fun q : H ⧸ N => τ q.out x),
     ← Finset.sum_sub_distrib]
   refine J.sum_mem fun q _ => ?_
   obtain ⟨ν, hν⟩ := QuotientGroup.mk_out_eq_mul N (h * q.out)
@@ -48,7 +53,8 @@ theorem exists_fixed (σ : H → R → R) (τ : H → M →+ M) (hmul : ∀ g h 
     · obtain ⟨N₁, hN₁, h₁⟩ := hx k
       obtain ⟨N₂, hN₂, hle, hle'⟩ := hdir N hN N₁ hN₁
       refine ⟨N₂, hN₂, fun ν hν => ?_⟩
-      rw [map_sum, ← Finset.sum_sub_distrib]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, ← Finset.sum_sub_distrib]
       refine (J k).sum_mem fun q _ => ?_
       have hν' := (hnorm N₂ hN₂).conj_mem' ν hν q.out
       have e : ν * q.out = q.out * (q.out⁻¹ * ν * q.out) := by group
@@ -163,9 +169,11 @@ theorem surjective_of_matrix {W : Type} [CommRing W] [DecidableEq ι] (j : W →
   rw [← LinearMap.range_eq_top, eq_top_iff, ← hm, Submodule.span_le]
   rintro _ ⟨k, rfl⟩
   refine ⟨∑ a, j (U⁻¹ a k) • m a, ?_⟩
-  simp only [map_sum, map_smul, hu, Finset.smul_sum, smul_smul, ← map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, hu, Finset.smul_sum, smul_smul, ← map_mul]
   rw [Finset.sum_comm]
-  simp only [← Finset.sum_smul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← Finset.sum_smul, ← map_sum]
   have : ∀ i, ∑ a, U⁻¹ a k * U i a = (1 : Matrix ι ι W) i k := fun i => by
     rw [← Matrix.mul_nonsing_inv U hU, Matrix.mul_apply]
     exact Finset.sum_congr rfl fun a _ => mul_comm _ _
@@ -253,7 +261,7 @@ theorem generic (b : Module.Basis ι O T) (c : Module.Basis κ Z T) (ρ : H →*
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul r' t => simp only [TensorProduct.smul_tmul', hτ, smul_eq_mul, map_mul]
-    | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+    | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
   let bM := Algebra.TensorProduct.basis (O ⊗[Z] W) b
   have hbM : ∀ i, bM i = 1 ⊗ₜ[O] b i := fun i => Algebra.TensorProduct.basis_apply b i
   let J := mult ((O ⊗[Z] W) ⊗[O] T) (p : O ⊗[Z] W)
@@ -328,7 +336,8 @@ theorem generic (b : Module.Basis ι O T) (c : Module.Basis κ Z T) (ρ : H →*
       rw [hz]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
     · rw [hut]
-      simp only [Matrix.sum_apply, map_sum, Finset.sum_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.sum_apply, map_sum, Finset.sum_smul]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun q _ => ?_
       conv_lhs => rw [← c.sum_repr (ρ q.out (c k)), TensorProduct.tmul_sum, Finset.smul_sum]
@@ -394,7 +403,7 @@ theorem base (hF : FaithH AI) {H : Type} [Group H] (f : H →* GQ l) (hf : ∀ h
     { carrier := {x | ∀ ν ∈ N, AI.actT (f ν) x = x}
       mul_mem' := fun hx hy ν hν => by rw [map_mul, hx ν hν, hy ν hν]
       one_mem' := fun ν _ => map_one _
-      add_mem' := fun hx hy ν hν => by rw [map_add, hx ν hν, hy ν hν]
+      add_mem' := fun hx hy ν hν => by rw [map_add (f := _), hx ν hν, hy ν hν]
       zero_mem' := fun ν _ => map_zero _
       neg_mem' := fun hx ν hν => by rw [map_neg, hx ν hν] }
   let s : H ⧸ N → A →+* Cb l := fun q =>
@@ -432,7 +441,8 @@ theorem base (hF : FaithH AI) {H : Type} [Group H] (f : H →* GQ l) (hf : ∀ h
     refine fun h0 => hy (Eq.trans (congrArg Matrix.det ?_) h0)
     symm
     ext i k
-    simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.sum_apply, Matrix.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.sum_apply, Matrix.smul_apply,
       smul_eq_mul, map_sum, map_mul, act_teich, hs]
     refine Finset.sum_congr rfl fun q _ => ?_
     rw [WittVector.constantCoeff_apply, WittVector.teichmuller_coeff_zero]
@@ -447,7 +457,7 @@ variable {G L O : Type} [Group G] [TopologicalSpace G] [Field L] [Algebra ℚ_[l
 theorem small (hc : ∀ c : ℤ_[l], algebraMap O L (algebraMap ℤ_[l] O c) =
       algebraMap ℚ_[l] L (algebraMap ℤ_[l] ℚ_[l] c)) (T : LocLat G ℚ_[l] L O) {ι κ : Type}
     [Fintype ι] [Fintype κ] (x : ι → ↥T.L.T) (m : ℕ) :
-    letI := Module.compHom ↥T.L.T (algebraMap ℤ_[l] O)
+    letI := Module.compHom ↥T.L.T (algebraMap ℤ_[l] O);
     ∀ _ : Module.Basis κ ℤ_[l] ↥T.L.T, ∀ᶠ g : G in nhds 1,
       ∀ i, T.actT g (x i) - x i ∈ mult ↥T.L.T (l : ℤ_[l]) m := by
   letI := Module.compHom ↥T.L.T (algebraMap ℤ_[l] O)

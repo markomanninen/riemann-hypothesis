@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.HoloWeakStatement
+module
+
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.HoloWeakStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.C
 
@@ -38,9 +42,6 @@ theorem mvPow : MVPowStatement := by
   rw [integrableOn_congr_fun hcongr measurableSet_Ioo,
     intervalIntegral.integrableOn_Ioo_rpow_iff one_pos]
   constructor <;> intro h <;> linarith
-
-noncomputable def mvDivIntegrand (n : ℕ) (δ : ℝ) (z : V n) : ℝ≥0∞ :=
-  ENNReal.ofReal ((‖z‖ ^ 2 + δ) ^ (-(n : ℝ)))
 
 theorem mvDiv : MVDivStatement := by
   intro n hn

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.TwoChartSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaPt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsGoodConst
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsUniqueNormPrim
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PowerSeriesExpIntegralCanonGaugeAdditiveSecond
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.TwoChartSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaPt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsGoodConst
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsUniqueNormPrim
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PowerSeriesExpIntegralCanonGaugeAdditiveSecond
+
+@[expose] public section
 
 noncomputable section
 
@@ -198,7 +202,7 @@ theorem isExpOf_canonical_gauge (hh : B.IsCanonGauge k h) (b c c' : O) :
     rw [← constantCoeff_ev_eq (cz2 (x := (0 : Pt k 1 d)) (fun _ => by simp) (constantCoeff_point 0)),
       hh.ax0, map_zero]
   have key := isExpOf_ev (cz3 (B.A.const b) (B.A.const c) (B.A.const c')) (by
-    rw [map_sub, map_add, constantCoeff_ev_eq (cz2 (p0 0) (p0 1)), constantCoeff_ev_eq (cz2 (p0 0) (p0 2)),
+    rw [map_sub, map_add (f := _), constantCoeff_ev_eq (cz2 (p0 0) (p0 1)), constantCoeff_ev_eq (cz2 (p0 0) (p0 2)),
       constantCoeff_ev_eq (cz2 (p0 0) c0), h0]
     simp) hh.ph2
   have e : (fun j i => FB.toK k ((![B.A.act b, B.A.act c, B.A.act c'] : Fin 3 → Pt R 1 d) j i)) =
@@ -292,8 +296,8 @@ theorem series_ext_one (hJet : JetAlgSt) (hRep : RepSt) (Lr : RigLB G) (c : Cubi
 
 end Key
 
-open ReciprocityTheory.ChartRestriction.G.Geo.Tor (isCub_cubV cubV val₂) in
 
+open ReciprocityTheory.ChartRestriction.G.Geo.Tor (isCub_cubV cubV val₂) in
 theorem frame_pullback_geo : JetAlgSt → RepSt → SerSt → SerExSt → RosIdSt → ∀ (R : Type) [CommRing R] (G : Over (Spec (CommRingCat.of R))) [GrpObj G] [IsCommMonObj G], Function.Surjective G.hom.appTop.hom → Function.Surjective (G ⊗ G).hom.appTop.hom → Function.Surjective (G ⊗ G ⊗ G).hom.appTop.hom → ∀ (Lr : RigLB G) (c : CubicalStr G Lr) (O : Type) [CommRing O] [StarRing O] (act : ReciprocityTheory.ChartRestriction.G.Geo.Tor.OAct O G) (u : ∀ a : O, LB.Gen (LB.LinComb Lr.L (rosatiφ G (act.act a) (act.act (star a))) rosatiε)), (∀ a, IsNormRos Lr.L _ _ (u a)) → ∀ (d : ℕ) (x : Fam G (Fin d)), IsUnivChart G d x → ∀ j : Lr.L.ι, ⊤ ≤ η[G].left ⁻¹ᵁ Lr.L.U j → ∀ B : FB R d O, IsFBOf Lr c act u x j B → ∀ (w0 : O) (ρ : LB.Gen (LB.LinComb Lr.L (primφ (act.act w0)) primε)), ρ.IsGen → ∀ (a : O) (N : ℕ), a * star a = (N : O) → (∃ mu : LB.Gen (LB.LinComb Lr.L (K := Fin 2) ![𝟙 G.left, (act.act a).left] ![(N : ℤ), -1]), mu.IsGen) ∧ ∀ mu : LB.Gen (LB.LinComb Lr.L (K := Fin 2) ![𝟙 G.left, (act.act a).left] ![(N : ℤ), -1]), mu.IsGen → ∀ M r : PS R 1 d, IsSer1 x _ (mu.s (fun _ => j)).val M → IsSer1 x _ (ρ.s (fun _ => j)).val r → ∃ (w : PS R 1 d) (κ : Rˣ), w * r ^ N = C (κ : R) * M * ev (n := 1) ![B.A.act a] r ∧ ∀ (k : Type) [CommRing k] [Algebra ℚ k] [Algebra R k] (h : PS k 2 d), B.IsCanonGauge k h → FB.toK k w = FB.expS k (ev (n := 1) ![B.actK k a] (B.hL k h w0) - (N : k) • B.hL k h w0) := by
   intro hJet hRep _ _ _ R _ G _ _ s1 _ _ Lr c O _ _ act u hu d x hx j _ B hB w0 ρ hρ a N hN
   obtain ⟨mu₀, h₀, v₀⟩ := exists_gen_pull Lr c act a w0 N hN (u a) (hu a).1 ρ hρ

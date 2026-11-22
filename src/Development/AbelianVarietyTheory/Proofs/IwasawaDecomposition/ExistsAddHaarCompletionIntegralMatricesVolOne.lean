@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.Divisibility.QLocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.HostPins
-import Formalism.DoubleCosetMeasures.LatticeCoset
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TopoAF
-import ReciprocityTheory.GeneralLinearIntegers.AlgebraMapIntMemOint
+module
+
+public import Formalism.LocalToGlobal.Divisibility.QLocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.HostPins
+public import Formalism.DoubleCosetMeasures.LatticeCoset
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TopoAF
+public import ReciprocityTheory.GeneralLinearIntegers.AlgebraMapIntMemOint
+
+@[expose] public section
 
 noncomputable section
 

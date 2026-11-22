@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleRightZeroThd
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleRightZeroThd
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,7 +20,7 @@ variable (k : Type) [CommRing k] [Algebra ℚ k] [Algebra R k]
 def liftX (f : PS k 1 d) : AA k d := MvPowerSeries.subst (fun p : Fin 1 × Fin d => (X (Sum.inl p.2) : AA k d)) f
 
 def sgOf (h : PS k 2 d) (i : Fin d) : PS k 1 d :=
-  -ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), i) h)
+  -ev (n := 1) ![pt k d 0, 0] (pderiv (R := k) ((1 : Fin 2), i) h)
 
 def sg1 (h : PS k 2 d) : Matrix (Fin d) (Fin d) k :=
   fun i j => coeff (Finsupp.single ((0 : Fin 1), j) 1) (sgOf k h i)
@@ -25,12 +29,12 @@ def dAct (B : FB R d O) (a : O) : Matrix (Fin d) (Fin d) k :=
   fun i j => coeff (Finsupp.single ((0 : Fin 1), j) 1) (B.actK k a i)
 
 def Dx (B : FB R d O) (u : Fin d → k) (G : AA k d) : AA k d :=
-  ∑ j : Fin d, liftX k (∑ i : Fin d, C (u i) * ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), i) (B.FK k j))) *
-    pderiv k (Sum.inl j) G
+  ∑ j : Fin d, liftX k (∑ i : Fin d, C (u i) * ev (n := 1) ![pt k d 0, 0]
+    (pderiv (R := k) ((1 : Fin 2), i) (B.FK k j))) * pderiv (R := k) (Sum.inl j) G
 
 def nabla (B : FB R d O) (h : PS k 2 d) (m : ℕ) (u φ : Fin d → k) (G : AA k d) : AA k d :=
-  Dx k B u G + ∑ i : Fin d, liftX k (Dof (B.FK k) u (sgOf k h i)) * pderiv k (Sum.inr i) G +
-    ∑ i : Fin d, C (φ i) * pderiv k (Sum.inr i) G -
+  Dx k B u G + ∑ i : Fin d, liftX k (Dof (B.FK k) u (sgOf k h i)) * pderiv (R := k) (Sum.inr i) G +
+    ∑ i : Fin d, C (φ i) * pderiv (R := k) (Sum.inr i) G -
     C (m : k) * (∑ i : Fin d, (X (Sum.inr i) - liftX k (sgOf k h i)) * C (u i)) * G
 
 def nablaPoly (B : FB R d O) (h : PS k 2 d) (m : ℕ) {ι : Type} [Fintype ι] (u : ι → Fin d → k)
@@ -87,11 +91,6 @@ def HStableSt : Prop :=
     [Algebra R k], IsRQ (R := R) k → ∀ (B : FB R d O) (h : PS k 2 d), B.IsCanonGauge k h →
     ∀ (a : O) ξ, ξ ∈ Hset (R := R) k h → OactH k B a ξ ∈ Hset (R := R) k h
 
-def BetaIntSt : Prop :=
-  ∀ (R : Type) [CommRing R] (d : ℕ) (O : Type) [CommRing O] [StarRing O] (k : Type) [CommRing k] [Algebra ℚ k]
-    [Algebra R k], IsRQ (R := R) k → ∀ (B : FB R d O) (h : PS k 2 d), B.IsCanonGauge k h →
-    ∀ ξ η, ξ ∈ Hset (R := R) k h → η ∈ Hset (R := R) k h → betaH k ξ η ∈ (algebraMap R k).range
-
 def secondOrder {ι : Type} [Fintype ι] (c : ι → ι → k) (P : MvPolynomial ι k) : MvPolynomial ι k :=
   ∑ l, ∑ l', MvPolynomial.C (c l l') * MvPolynomial.pderiv l (MvPolynomial.pderiv l' P)
 
@@ -106,32 +105,5 @@ def AdmissibilitySecond : Prop :=
     secondOrder k (fun l l' => dotProduct (u l) ((bilinPart k (h' - h)).mulVec ((dAct k B w0).mulVec (u l'))) +
       dotProduct (u l') ((bilinPart k (h' - h)).mulVec ((dAct k B w0).mulVec (u l)))) P = 0 →
     ∀ f : PS k 1 d, B.nabVal k h w0 m f u P = B.nabVal k h' w0 m f u P
-
-theorem isRQ_int : IsRQ (R := ℤ) ℚ := by
-  unfold IsRQ
-  refine ⟨(algebraMap ℤ ℚ).injective_int, fun y => ⟨y.num, y.den, Nat.pos_of_ne_zero y.den_nz, ?_⟩⟩
-  rw [eq_intCast]
-  exact Rat.den_mul_eq_num y
-
-def fglZero (R : Type) [CommRing R] : FGLaw R 0 where
-  F := fun i => i.elim0
-  const := fun i => i.elim0
-  unit := fun i => i.elim0
-  comm := fun i => i.elim0
-  assoc := fun i => i.elim0
-
-def oactZero (R : Type) [CommRing R] : OAct ℤ (fglZero R) where
-  act := fun _ i => i.elim0
-  const := fun _ i => i.elim0
-  hom := fun _ => funext fun i => i.elim0
-  add_act := fun _ _ => funext fun i => i.elim0
-  mul_act := fun _ _ => funext fun i => i.elim0
-  one_act := funext fun i => i.elim0
-
-def fbZero : FB ℤ 0 ℤ := FB.triv (fglZero ℤ) (oactZero ℤ)
-
-theorem zero_mem_Hset (h : PS ℚ 2 0) : (0 : (Fin 0 → ℚ) × (Fin 0 → ℚ)) ∈ Hset (R := ℤ) ℚ h := by
-  simp only [Hset, Set.mem_setOf_eq]
-  exact ⟨0, 0, Prod.ext (funext fun i => i.elim0) (funext fun i => i.elim0)⟩
 
 end ReciprocityTheory.ChartRestriction.G.TB

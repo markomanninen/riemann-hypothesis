@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RatBasisLinearIndependentInt
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.DpOfPre
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.ChooseFac
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RatBasisLinearIndependentInt
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.DpOfPre
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.ChooseFac
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -83,7 +87,8 @@ private theorem dpowSeries_add_arg_eq_mul {R A : Type} [CommRing R] [CommRing A]
         PowerSeries.mk fun n => y ^ n * algebraMap R A (κ.dpow n r') := by
   ext n
   simp only [PowerSeries.coeff_mk, PowerSeries.coeff_mul]
-  rw [κ.dpow_add hr hr', map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [κ.dpow_add hr hr', map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun k hk => ?_
   rw [Finset.HasAntidiagonal.mem_antidiagonal] at hk
   rw [← hk, pow_add, map_mul]

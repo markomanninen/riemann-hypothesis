@@ -1,10 +1,19 @@
-import Mathlib
-import Formalism.QuotientMetricDivisors.RatHermLcvTwist
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.DivIntoDual
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.BoundsChain
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.JwConj
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.DualMu
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.TheoremDivIneq
+module
+
+public import Mathlib
+public import Formalism.QuotientMetricDivisors.RatHermLcvTwist
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.DivIntoDual
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.BoundsChain
+public import Formalism.QuotientMetricDivisors.ProdFormula
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.RatHerm
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.LocBasis
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.IdxChange
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.DualMu
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.TheoremDivIneq
+import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ImageLcv
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder
@@ -40,7 +49,8 @@ theorem jwGramW_of (hIC : IdxChange) : JwGramW := by
     have hmul : M * M⁻¹ = 1 := Matrix.mul_nonsing_inv M hMu
     have := congrFun (congrFun hmul a) b
     rw [Matrix.mul_apply, Matrix.one_apply] at this
-    rw [← this, hfs, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← this, hfs, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, smul_eq_mul, mul_comm]
     rfl
@@ -48,14 +58,18 @@ theorem jwGramW_of (hIC : IdxChange) : JwGramW := by
     rw [Fintype.linearIndependent_iff]
     intro g hg i
     have := congrArg (h (f i)) hg
-    rw [map_sum, map_zero] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at this
     simp only [map_smul, hpair, smul_eq_mul, mul_ite, mul_one, mul_zero,
       Finset.sum_ite_eq, Finset.mem_univ, if_true] at this
     exact this
   have hspK : Submodule.span K (Set.range f) = ⊤ :=
     hf.1.span_eq_top_of_card_eq_finrank' (by simp)
-  have hspan_f : Submodule.IsLattice K (Submodule.span (𝓞 K) (Set.range f)) :=
-    ⟨Submodule.fg_span (Set.finite_range f), by rw [Submodule.span_span_of_tower, hspK]⟩
+  have hspan_f : Submodule.IsFullLattice K (Submodule.span (𝓞 K) (Set.range f)) := by
+    refine
+      { toIsLattice := Submodule.IsLattice.of_fg K (Submodule.fg_span (Set.finite_range f))
+        span_eq_top := ?_ }
+    rwa [Submodule.span_span_of_tower]
   have hone : ∀ c : K, c ∈ (1 : Submodule (𝓞 K) K) → ∀ r : 𝓞 K,
       star (algebraMap (𝓞 K) K r) * c ∈ (1 : Submodule (𝓞 K) K) := by
     intro c hc r
@@ -88,15 +102,15 @@ theorem jwGramW_of (hIC : IdxChange) : JwGramW := by
         · exact Submodule.mem_one.mpr ⟨1, map_one _⟩
         · exact Submodule.zero_mem _
       | zero => rw [map_zero, LinearMap.zero_apply]; exact Submodule.zero_mem _
-      | add x y _ _ hx hy => rw [map_add, LinearMap.add_apply]; exact Submodule.add_mem _ hx hy
+      | add x y _ _ hx hy => rw [map_add (f := _), LinearMap.add_apply]; exact Submodule.add_mem _ hx hy
       | smul r x _ hx =>
         rw [Formalism.HermitianLatticesTheory.locDual_h_smul_left]
         exact hone _ hx r
-  have hdualT : Submodule.IsLattice K (Formalism.HermitianLatticesTheory.dual h T) :=
+  have hdualT : Submodule.IsFullLattice K (Formalism.HermitianLatticesTheory.dual h T) :=
     (Formalism.HermitianLatticesTheory.dualLattice (𝓞 K) K (Fin d → K) h hs hnd hstar T hT).1
   have hLD := Formalism.HermitianLatticesTheory.locDual (𝓞 K) K (Fin d → K) h hs hstar
-  have A := (hLD _ hspan_f.fg).1 w.asIdeal w.isPrime
-  have B := (hLD _ hT.fg).1 w.asIdeal w.isPrime
+  have A := (hLD _ hspan_f.toIsLattice.fg).1 w.asIdeal w.isPrime
+  have B := (hLD _ hT.toIsLattice.fg).1 w.asIdeal w.isPrime
   have hlocfs : IsLocBasis (Formalism.HermitianLatticesTheory.dual h T) w fs := by
     refine ⟨hfsli, ?_⟩
     calc Formalism.HermitianLatticesTheory.loc (K := K) w.asIdeal (Submodule.span (𝓞 K) (Set.range fs))
@@ -110,8 +124,9 @@ theorem jwGramW_of (hIC : IdxChange) : JwGramW := by
   have hone_f : (fun i => ∑ k, (1 : Matrix (Fin d) (Fin d) K) k i • f k) = f := by
     funext i
     simp [Matrix.one_apply]
-  have i1 := (hIC K d T hT f hf.1 w 1 (by rw [hone_f]; exact hf)).1
-  have i2 := (hIC K d (Formalism.HermitianLatticesTheory.dual h T) hdualT f hf.1 w M⁻¹ hlocfs).1
+  have i1 := (hIC K d T hT.toIsLattice f hf.1 w 1 (by rw [hone_f]; exact hf)).1
+  have i2 := (hIC K d (Formalism.HermitianLatticesTheory.dual h T)
+    hdualT.toIsLattice f hf.1 w M⁻¹ hlocfs).1
   have : w.asIdeal.IsMaximal := w.isMaximal
   have hIB := Formalism.HermitianLatticesTheory.indexBasic (𝓞 K) K (Fin d → K) h hs hnd hstar w.asIdeal T
     (Submodule.span (𝓞 K) (Set.range f)) (Formalism.HermitianLatticesTheory.dual h T) hT hspan_f hdualT
@@ -131,10 +146,12 @@ section LocalW
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K]
 
-theorem isHermAt_of_ratHerm {K0 : Subfield K} {n : ℕ} {H : Matrix (Fin n) (Fin n) K}
-    {X : InfinitePlace K → Matrix (Fin n) (Fin n) ℂ} (h : IsRatHerm K0 H X) (v0 : InfinitePlace K) :
-    IsHermAt v0 H X :=
-  ⟨fun v => (h.2 v).1, (h.2 v0).2⟩
+omit [StarRing K] in
+private theorem matLat_full_of_det {d : ℕ} (φ : Matrix (Fin d) (Fin d) K)
+    (hφ : IsUnit φ.det) (L : Submodule (𝓞 K) (Fin d → K)) (hL : Submodule.IsFullLattice K L) :
+    Submodule.IsFullLattice K (matLat φ L) :=
+  matLat_isFullLattice φ
+    (Matrix.mulVec_surjective_iff_isUnit.mpr ((Matrix.isUnit_iff_isUnit_det φ).mpr hφ)) L hL
 
 theorem herm_of_hermAt {v0 : InfinitePlace K} (hv0 : IsConjAt v0) {n : ℕ}
     {H : Matrix (Fin n) (Fin n) K} {X : InfinitePlace K → Matrix (Fin n) (Fin n) ℂ}
@@ -166,12 +183,13 @@ theorem gram_hermAt {d : ℕ} (H : Matrix (Fin d) (Fin d) K)
   rw [gramR, RingHom.map_det]
   congr 1
   ext a b
-  simp only [gram, Formalism.HN.gramPl, Matrix.of_apply, StepBAux.majAt_eq, hm, RingHom.mapMatrix_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [gram, Formalism.HN.gramPl, Matrix.of_apply, StepBAux.majAt_eq, hm, RingHom.mapMatrix_apply,
     Matrix.map_apply, dotProduct, Matrix.mulVec, cvec, Pi.star_apply, map_sum, map_mul]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [hv0, Complex.star_def]
 
-theorem local_idW (hV : ValBasic) (hIC : IdxChange) (hJw : JwGramW) [IsTotallyComplex K]
+theorem local_idW (hV : ValBasic) (hIC : IdxChange) (hJw : JwGramW) [_root_.NumberField.IsTotallyComplex K]
     (v0 : InfinitePlace K) (hv0 : IsConjAt v0)
     (D : ℕ) (XE : InfinitePlace K → Matrix (Fin D) (Fin D) ℂ) (hXE : ∀ v, IsUnit (XE v).det)
     (XQ0 XQ1 : InfinitePlace K → Matrix (Fin D) (Fin D) ℂ) (hXQ0 : ∀ v, IsUnit (XQ0 v).det)
@@ -181,12 +199,12 @@ theorem local_idW (hV : ValBasic) (hIC : IdxChange) (hJw : JwGramW) [IsTotallyCo
     (J : Type) [Fintype J] (d : J → ℕ)
     (XW : ∀ j, InfinitePlace K → Matrix (Fin (d j)) (Fin (d j)) ℂ)
     (hXW : ∀ j v, IsUnit (XW j v).det)
-    (M : ∀ j, Submodule (𝓞 K) (Fin (d j) → K)) (hM : ∀ j, Submodule.IsLattice K (M j))
+    (M : ∀ j, Submodule (𝓞 K) (Fin (d j) → K)) (hM : ∀ j, Submodule.IsFullLattice K (M j))
     (HT0 HT1 : ∀ j, Matrix (Fin (d j)) (Fin (d j)) K)
     (XT0 XT1 : ∀ j, InfinitePlace K → Matrix (Fin (d j)) (Fin (d j)) ℂ)
     (hHT0 : ∀ j, IsHermAt v0 (HT0 j) (XT0 j)) (hHT1 : ∀ j, IsHermAt v0 (HT1 j) (XT1 j))
     (T0 T1 : ∀ j, Submodule (𝓞 K) (Fin (d j) → K))
-    (hT0 : ∀ j, Submodule.IsLattice K (T0 j)) (hT1 : ∀ j, Submodule.IsLattice K (T1 j))
+    (hT0 : ∀ j, Submodule.IsFullLattice K (T0 j)) (hT1 : ∀ j, Submodule.IsFullLattice K (T1 j))
     (θ0 θ1 : ∀ j, Matrix (Fin (d j)) (Fin (d j)) K) (hθ0 : ∀ j, IsUnit (θ0 j).det)
     (hθ1 : ∀ j, IsUnit (θ1 j).det)
     (κ0 ρr : ℝ) (hκ : 0 < κ0) (ρ : K) (hρ : v0.embedding ρ = (ρr : ℂ)) (hρpos : 0 < ρr)
@@ -208,11 +226,11 @@ theorem local_idW (hV : ValBasic) (hIC : IdxChange) (hJw : JwGramW) [IsTotallyCo
   obtain ⟨hmul, hstar, -, -, -, -, -⟩ := hV K w
   obtain ⟨γ, hγ, hy1, hy2⟩ := idx_change_img hIC ι0 ι1 hι0 hι1 Lam0 Lam1 hL1 w e0 e1 he0 he1
   choose δ hδ hz1 hz2 using fun j => idx_change_img hIC (θ0 j) (θ1 j) (hθ0 j) (hθ1 j) (T0 j)
-    (T1 j) (hT1 j) w (f0 j) (f1 j) (hf0 j) (hf1 j)
+    (T1 j) (hT1 j).toIsLattice w (f0 j) (f1 j) (hf0 j) (hf1 j)
   have hc : ∀ j (u : HeightOneSpectrum (𝓞 K)), idx u (M j) (matLat (θ1 j) (T1 j)) =
       idx u (M j) (matLat (θ0 j) (T0 j)) + idx u (matLat (θ0 j) (T0 j)) (matLat (θ1 j) (T1 j)) :=
-    fun j u => lidx_add (K := K) u.asIdeal _ _ _ (hM j) (matLat_lattice _ (hθ0 j) _ (hT0 j))
-      (matLat_lattice _ (hθ1 j) _ (hT1 j))
+    fun j u => lidx_add (K := K) u.asIdeal _ _ _ (hM j) (matLat_full_of_det _ (hθ0 j) _ (hT0 j))
+      (matLat_full_of_det _ (hθ1 j) _ (hT1 j))
   have hj0 : ∀ j, jw (HT0 j) w (T0 j) = - vw w (gramR (HT0 j) (f0 j)) := fun j =>
     hJw K (d j) (HT0 j) (herm_of_hermAt hv0 (hHT0 j)) (det_ne_of_hermAt (hHT0 j)) (T0 j) (hT0 j) w (f0 j) (hf0 j)
   have hj1 : ∀ j, jw (HT1 j) w (T1 j) = - vw w (gramR (HT1 j) (f1 j)) := fun j =>
@@ -328,10 +346,10 @@ theorem stepBW_of (hPF : ProdFormula) (hLB : LcvBasis) (hIC : IdxChange) (hV : V
     HT XT hHT0 hHTw T hT θ hθ κ hκ ρ ρr hρ hρ1 hρpos hρv hdetAll hdetV0 G e he hG hR R hRlat hRloc
   classical
   have hlw : ∀ w : HeightOneSpectrum (𝓞 K), lw (conjPl w) = lw w := fun w => (hV K w).2.2.1
-  have hΛ0 : Submodule.IsLattice K (matLat (ι μ0) (abelian₂ μ0)) :=
-    matLat_lattice _ (hι μ0) _ (hLam μ0)
-  have hA0 : ∀ j, Submodule.IsLattice K (matLat (θ j μ0) (T j μ0)) := fun j =>
-    matLat_lattice _ (hθ j μ0) _ (hT j μ0)
+  have hΛ0 : Submodule.IsFullLattice K (matLat (ι μ0) (abelian₂ μ0)) :=
+    matLat_full_of_det _ (hι μ0) _ (hLam μ0)
+  have hA0 : ∀ j, Submodule.IsFullLattice K (matLat (θ j μ0) (T j μ0)) := fun j =>
+    matLat_full_of_det _ (hθ j μ0) _ (hT j μ0)
   have hXT : ∀ j t v, IsUnit (XT j t v).det := fun j t v => (hHTw j t).1 v
   choose f hf using fun j t w => hLoc K (d j) (T j t) (hT j t) w
 
@@ -353,7 +371,8 @@ theorem stepBW_of (hPF : ProdFormula) (hLB : LcvBasis) (hIC : IdxChange) (hV : V
       lidx_congr _ _ _ _ _ rfl hRc
     rw [hx1, hx2]
     exact local_idW hV hIC hJw v0 hv0 D XE hXE (XQ μ0) (XQ (μ w)) (hXQ μ0) (hXQ (μ w))
-      (abelian₂ μ0) (abelian₂ (μ w)) (hLam (μ w)) (ι μ0) (ι (μ w)) (hι μ0) (hι (μ w)) J d XW hXW M hM
+      (abelian₂ μ0) (abelian₂ (μ w)) (hLam (μ w)).toIsLattice
+      (ι μ0) (ι (μ w)) (hι μ0) (hι (μ w)) J d XW hXW M hM
       (fun j => HT j μ0) (fun j => HT j (μ w)) (fun j => XT j μ0) (fun j => XT j (μ w))
       (fun j => hHTw j μ0) (fun j => hHTw j (μ w)) (fun j => T j μ0) (fun j => T j (μ w))
       (fun j => hT j μ0) (fun j => hT j (μ w)) (fun j => θ j μ0) (fun j => θ j (μ w))
@@ -407,8 +426,8 @@ theorem stepBW_of (hPF : ProdFormula) (hLB : LcvBasis) (hIC : IdxChange) (hV : V
 
   have sx := (hIL K D XE hXE _ R hΛ0 hRlat).1
   have sx' := supp_conj hV _ sx
-  have sa := G_finite hV hIC hLB hPF v0 hv0 D (XQ μ0) (hXQ μ0) (abelian₂ μ0) (hLam μ0) (G μ0) (e μ0)
-    (he μ0) (hG μ0)
+  have sa := G_finite hV hIC hLB hPF v0 hv0 D (XQ μ0) (hXQ μ0) (abelian₂ μ0) (hLam μ0).toIsLattice
+    (G μ0) (e μ0) (he μ0) (hG μ0)
   have sb : ∀ j, (Function.support fun w : HeightOneSpectrum (𝓞 K) =>
       lw w * (idx w (M j) (matLat (θ j μ0) (T j μ0)) : ℝ)).Finite := fun j =>
     (hIL K (d j) (XW j) (hXW j) (M j) _ (hM j) (hA0 j)).1
@@ -508,7 +527,8 @@ theorem second_step_refined_weak : StepBRW := by
     M hM HT XT hHT0 hHTw T hT θ hθ κ hκ ρ ρr hρr hρ0 hρpos hρv hdet0 hdet G e hLB hG n H hH hHpos P hP
     hQ Mt hMt hLamP hGR R hR hRloc
   have hLB0 : ∀ w, IsLocBasis (matLat P Mt) w (e μ0 w) := fun w => hLamP ▸ hLB μ0 w
-  have hRb := (lemmaRb K K0 hK0 v0 hv0 n D H hH hHpos P hP (XQ μ0) hQ Mt hMt (e μ0) hLB0).2
+  have hRb := (lemmaRb K K0 hK0 v0 hv0 n D H hH hHpos P hP (XQ μ0) hQ Mt hMt.toIsLattice
+    (e μ0) hLB0).2
   have hbase : lcv (XQ μ0) (abelian₂ μ0) ≤ ∑ᶠ w, lw w * (vw w (G μ0 w) : ℝ) := by
     rw [hLamP]
     simpa only [hGR] using hRb
@@ -545,8 +565,6 @@ variable {K : Type} [Field K] [NumberField K] [StarRing K]
 
 theorem isCMSub_cmMax : IsCMSub (cmMax K) := fun σ _ ha => ha σ
 
-theorem le_cmMax (K0 : Subfield K) (h : IsCMSub K0) : K0 ≤ cmMax K := fun a ha σ => h σ a ha
-
 theorem star_mem_cmMax {a : K} (ha : a ∈ cmMax K) : star a ∈ cmMax K := by
   intro σ
   rw [star_star, ha σ, Complex.conj_conj]
@@ -564,10 +582,6 @@ theorem mem_cmMax_iff_twist (a : K) : a ∈ cmMax K ↔ ∀ σ : K →+* ℂ, tw
 end Field
 
 end ConjugateWeightGram
-
-theorem cm_maximal_order_spec : CmMaxSpec := fun _ _ _ _ =>
-  ⟨ConjugateWeightGram.isCMSub_cmMax, ConjugateWeightGram.le_cmMax, fun _ ha => ConjugateWeightGram.star_mem_cmMax ha,
-    ConjugateWeightGram.mem_cmMax_iff_twist⟩
 
 namespace ConjugateWeightGram
 
@@ -685,122 +699,10 @@ section Restrict
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K]
 
-def colMat {n d : ℕ} (z : Fin d → Fin n → K) : Matrix (Fin n) (Fin d) K := Matrix.of fun i a => z a i
-
-theorem comb_eq {n d : ℕ} (z : Fin d → Fin n → K) (x : Fin d → K) :
-    comb z x = (colMat z).mulVec x := by
-  funext i
-  simp [comb, colMat, Matrix.mulVec, dotProduct, Finset.sum_apply, mul_comm]
-
-theorem gramMat_eq {n d : ℕ} (H : Matrix (Fin n) (Fin n) K) (z : Fin d → Fin n → K) :
-    gramMat H z = (colMat z)ᴴ * H * colMat z := by
-  ext a b
-  simp only [gramMat, colMat, Matrix.of_apply, Matrix.mul_apply, Matrix.conjTranspose_apply,
-    dotProduct, Matrix.mulVec, Pi.star_apply, Finset.mul_sum, Finset.sum_mul]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_
-  ring
-
-theorem exists_left_inv {n d : ℕ} (z : Fin d → Fin n → K) (hz : LinearIndependent K z) :
-    ∃ L : Matrix (Fin d) (Fin n) K, L * colMat z = 1 := by
-  have hinj : Function.Injective (Matrix.mulVecLin (colMat z)) := by
-    rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']
-    intro x hx
-    rw [Matrix.mulVecLin_apply, ← comb_eq] at hx
-    funext a
-    exact (Fintype.linearIndependent_iff.mp hz) x hx a
-  obtain ⟨g, hg⟩ := LinearMap.exists_leftInverse_of_injective _ (LinearMap.ker_eq_bot.mpr hinj)
-  refine ⟨LinearMap.toMatrix' g, ?_⟩
-  have : LinearMap.toMatrix' (g ∘ₗ Matrix.mulVecLin (colMat z)) = 1 := by
-    rw [hg, LinearMap.toMatrix'_id]
-  rw [LinearMap.toMatrix'_comp, ← Matrix.toLin'_apply', LinearMap.toMatrix'_toLin'] at this
-  exact this
-
-theorem map_gramMat {n d : ℕ} (H : Matrix (Fin n) (Fin n) K) (z : Fin d → Fin n → K) (σ : K →+* ℂ)
-    (hz : ∀ a i, σ (star (z a i)) = starRingEnd ℂ (σ (z a i))) :
-    (gramMat H z).map σ = ((colMat z).map σ)ᴴ * (H.map σ) * (colMat z).map σ := by
-  have hT : ((colMat z)ᴴ).map σ = ((colMat z).map σ)ᴴ := by
-    ext a i
-    simp only [Matrix.map_apply, Matrix.conjTranspose_apply, colMat, Matrix.of_apply]
-    rw [hz a i]
-    rfl
-  rw [gramMat_eq, Matrix.map_mul, Matrix.map_mul, hT]
-
-open scoped MatrixOrder in
-theorem exists_frame {d : ℕ} (A : Matrix (Fin d) (Fin d) ℂ) (hA : A.PosDef) :
-    ∃ Y : Matrix (Fin d) (Fin d) ℂ, IsUnit Y.det ∧ (Y⁻¹)ᴴ * Y⁻¹ = A := by
-  obtain ⟨B, hB⟩ := CStarAlgebra.nonneg_iff_eq_star_mul_self.mp hA.posSemidef.nonneg
-  have hB' : A = Bᴴ * B := by rw [hB, Matrix.star_eq_conjTranspose]
-  have hdet : IsUnit B.det := by
-    have h1 : A.det ≠ 0 := hA.det_pos.ne'
-    rw [hB', Matrix.det_mul] at h1
-    exact isUnit_iff_ne_zero.mpr (right_ne_zero_of_mul h1)
-  refine ⟨B⁻¹, Matrix.isUnit_nonsing_inv_det _ hdet, ?_⟩
-  rw [Matrix.nonsing_inv_nonsing_inv _ hdet, hB']
-
-theorem exists_restrict {K0 : Subfield K} {n d : ℕ} {H : Matrix (Fin n) (Fin n) K}
-    {X : InfinitePlace K → Matrix (Fin n) (Fin n) ℂ} (hH : IsRatHerm K0 H X)
-    (z : Fin d → Fin n → K) (hzli : LinearIndependent K z) :
-    ∃ XT : InfinitePlace K → Matrix (Fin d) (Fin d) ℂ, ∀ v, IsUnit (XT v).det ∧
-      ((XT v)⁻¹)ᴴ * (XT v)⁻¹ =
-        ((colMat z).map v.embedding)ᴴ * (H.map v.embedding) * (colMat z).map v.embedding := by
-  classical
-  obtain ⟨L, hL⟩ := exists_left_inv z hzli
-  have hinj : ∀ v : InfinitePlace K, Function.Injective ((colMat z).map v.embedding).mulVec := by
-    intro v x y hxy
-    have h1 : (L.map v.embedding) * (colMat z).map v.embedding = 1 := by
-      rw [← Matrix.map_mul, hL, Matrix.map_one _ (map_zero _) (map_one _)]
-    have := congrArg (L.map v.embedding).mulVec hxy
-    simpa [Matrix.mulVec_mulVec, h1] using this
-  have hHpos : ∀ v : InfinitePlace K, (H.map v.embedding).PosDef := by
-    intro v
-    rw [← (hH.2 v).2]
-    apply Matrix.PosDef.conjTranspose_mul_self
-    exact Matrix.mulVec_injective_of_isUnit
-      ((Matrix.isUnit_iff_isUnit_det _).mpr (Matrix.isUnit_nonsing_inv_det _ (hH.2 v).1))
-  choose XT hXT1 hXT2 using fun v =>
-    exists_frame _ ((hHpos v).conjTranspose_mul_mul_same (hinj v))
-  exact ⟨XT, fun v => ⟨hXT1 v, hXT2 v⟩⟩
-
-theorem majAt_restrict {K0 : Subfield K} {n d : ℕ} {H : Matrix (Fin n) (Fin n) K}
-    {X : InfinitePlace K → Matrix (Fin n) (Fin n) ℂ} (hH : IsRatHerm K0 H X)
-    (z : Fin d → Fin n → K) (XT : InfinitePlace K → Matrix (Fin d) (Fin d) ℂ) (v : InfinitePlace K)
-    (hXT : ((XT v)⁻¹)ᴴ * (XT v)⁻¹ =
-      ((colMat z).map v.embedding)ᴴ * (H.map v.embedding) * (colMat z).map v.embedding)
-    (x y : Fin d → K) :
-    Formalism.HermitianLatticesTheory.majAt (Pi.basisFun K (Fin d)) XT v x y =
-      Formalism.HermitianLatticesTheory.majAt (Pi.basisFun K (Fin n)) X v (comb z x) (comb z y) := by
-  rw [StepBAux.majAt_eq, StepBAux.majAt_eq]
-  have hm1 : met XT v =
-      ((colMat z).map v.embedding)ᴴ * (H.map v.embedding) * (colMat z).map v.embedding := hXT
-  have hm2 : met X v = H.map v.embedding := (hH.2 v).2
-  have hc : ∀ u : Fin d → K, cvec v.embedding (comb z u) =
-      ((colMat z).map v.embedding).mulVec (cvec v.embedding u) := by
-    intro u
-    funext i
-    simp [cvec, comb_eq, Matrix.mulVec, dotProduct]
-  rw [hm1, hm2, hc, hc, Matrix.star_mulVec, ← Matrix.dotProduct_mulVec,
-    Matrix.mulVec_mulVec, Matrix.mulVec_mulVec]
-
-theorem hform_restrict {n d : ℕ} (H : Matrix (Fin n) (Fin n) K) (z : Fin d → Fin n → K)
-    (x y : Fin d → K) : hform (gramMat H z) x y = hform H (comb z x) (comb z y) := by
-  rw [RationalHermitianForm.hform_eq_dot, RationalHermitianForm.hform_eq_dot, comb_eq, comb_eq, gramMat_eq,
-    Matrix.star_mulVec, ← Matrix.dotProduct_mulVec, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec]
 
 end Restrict
 
 end ConjugateWeightGram
 
-open ConjugateWeightGram in
-theorem restriction_rational_hermitian : RestrictRatHerm := by
-  intro K _ _ _ K0 hcm hstar n H X hH d z hzli hz
-  obtain ⟨XT, hXT⟩ := exists_restrict hH z hzli
-  refine ⟨XT, ⟨?_, fun v => ⟨(hXT v).1, ?_⟩⟩, fun v x y => majAt_restrict hH z XT v (hXT v).2 x y,
-    hform_restrict H z⟩
-  · intro a b
-    simp only [gramMat, Matrix.of_apply, dotProduct, Matrix.mulVec, Pi.star_apply]
-    exact Subfield.sum_mem _ fun i _ => Subfield.mul_mem _ (hstar _ (hz a i))
-      (Subfield.sum_mem _ fun j _ => Subfield.mul_mem _ (hH.1 i j) (hz b j))
-  · rw [(hXT v).2, map_gramMat H z v.embedding fun a i => hcm _ _ (hz a i)]
 
 end Formalism.DivisionValues

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.UnlinkedHalfIntegral.UnitFormC
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.UnlinkedHalfIntegral.UnitFormC
+
+@[expose] public section
 
 open scoped ComplexConjugate
 
@@ -99,7 +103,7 @@ private theorem abs_ratio_ne_of_sqrt_flip (p m : ℕ) (a x α β : ℂ) (σ : �
     rw [← hprod, ← hsum, hαs]
     ring
   have k3 := congrArg σ k2
-  simp only [map_mul, map_add, map_pow, map_natCast, map_one, hσ] at k3
+  simp only [map_mul, map_add (f := _), map_pow, map_natCast, map_one, hσ] at k3
   rw [sq_of_conj hσa] at k3
   push_cast at k3
   have k4 : (-(s * ‖σ a‖ ^ 2 : ℝ) : ℂ) * σ x = ((1 - s) ^ 2 * (p : ℝ) ^ m : ℝ) * σ x := by

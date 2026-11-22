@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverAct
-import ReciprocityTheory.Automorphisms.SplitCoeAlgebraMap
-import ReciprocityTheory.Automorphisms.InstMainA
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PSplitT
+module
+
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverAct
+public import ReciprocityTheory.Automorphisms.SplitCoeAlgebraMap
+public import ReciprocityTheory.Automorphisms.InstMainA
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PSplitT
+
+@[expose] public section
 
 noncomputable section
 
@@ -149,14 +153,14 @@ def belowE (v : PlE D.host) : HeightOneSpectrum (𝓞 Fp) where
 theorem fixed_of_cO {x : 𝓞 D.host.E} (hx : cO x = x) : ∃ y : 𝓞 Fp, algebraMap (𝓞 Fp) (𝓞 D.host.E) y = x :=
   (IsCMField.ringOfIntegersComplexConj_eq_self_iff D.host.E _).1 hx
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 200000 in
-
 theorem exists_splitPlace (v : PlE D.host) (x0 : 𝓞 D.host.E) (hx0 : x0 ∈ v.asIdeal) (hc0 : cO x0 ∉ v.asIdeal) :
     ∃ s : SplitPlace D.host.E, s.v = belowE v := by
   classical
   set v₀ := belowE v
-  obtain ⟨a, ha⟩ := fixed_of_cO (x := x0 + cO x0) (by rw [map_add, cO_cO, add_comm])
+  obtain ⟨a, ha⟩ := fixed_of_cO (x := x0 + cO x0) (by rw [map_add (f := _), cO_cO, add_comm])
   obtain ⟨b, hb⟩ := fixed_of_cO (x := x0 * cO x0) (by rw [map_mul, cO_cO, mul_comm])
   have hbv : b ∈ v₀.asIdeal := by
     show algebraMap _ _ b ∈ v.asIdeal

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.ClosedAtLConclusionOfMem
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.ClosedAtLConclusionOfMem
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,9 +22,9 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
 theorem RU_mul (x : UA E n) (a b : UA E n → ℂ) : RU E n x (a * b) = RU E n x a * RU E n x b := rfl
 
-theorem isOpen_fix_of {ψ : UA E n → ℂ} (U : Set (finU E n)) (hU : IsOpen U) (h1 : (1 : finU E n) ∈ U)
-    (hs : ∀ k ∈ U, RU E n k ψ = ψ) : IsOpen {k : finU E n | RU E n k ψ = ψ} := by
-  let St : Subgroup (finU E n) :=
+theorem isOpen_fix_of {ψ : UA E n → ℂ} (U : Set (finU (E := E) (n := n))) (hU : IsOpen U) (h1 : (1 : finU (E := E) (n := n)) ∈ U)
+    (hs : ∀ k ∈ U, RU E n k ψ = ψ) : IsOpen {k : finU (E := E) (n := n) | RU E n k ψ = ψ} := by
+  let St : Subgroup (finU (E := E) (n := n)) :=
     { carrier := {k | RU E n k ψ = ψ}
       mul_mem' := fun {a b} ha hb => by
         change RU E n ((a : UA E n) * b) ψ = ψ
@@ -28,13 +32,13 @@ theorem isOpen_fix_of {ψ : UA E n → ℂ} (U : Set (finU E n)) (hU : IsOpen U)
         change RU E n a (RU E n b ψ) = ψ
         rw [hb]; exact ha
       one_mem' := by
-        change RU E n ((1 : finU E n) : UA E n) ψ = ψ
+        change RU E n ((1 : finU (E := E) (n := n)) : UA E n) ψ = ψ
         simp
       inv_mem' := fun {a} ha => by
         change RU E n ((a : UA E n)⁻¹) ψ = ψ
         conv_lhs => rw [← (show RU E n (a : UA E n) ψ = ψ from ha)]
         rw [RU_RU, inv_mul_cancel, map_one, Module.End.one_apply] }
-  have : (St : Set (finU E n)) ∈ nhds (1 : finU E n) :=
+  have : (St : Set (finU (E := E) (n := n))) ∈ nhds (1 : finU (E := E) (n := n)) :=
     Filter.mem_of_superset (hU.mem_nhds h1) hs
   exact Subgroup.isOpen_of_mem_nhds St this
 

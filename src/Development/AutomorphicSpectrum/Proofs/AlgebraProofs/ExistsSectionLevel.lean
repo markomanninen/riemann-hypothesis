@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.ProIsoAt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.ProIsoAt
+
+@[expose] public section
 
 open NumberField TensorProduct GlobalTheory.CompanionTheory.Ar
 
@@ -52,7 +56,7 @@ theorem ProIso.exists_isInv (O : Type) [CommRing O] (L L' : Type) [AddCommGroup 
     have d₁ := f.4 n hn (h n x) (h n y)
     have d₂ : (n : ℤ) ∣ B' (f.a n (h n x)) (f.a n (h n y)) - B' x y := by
       rw [he₁, he₂]
-      simp only [map_add, map_nsmul, LinearMap.add_apply, LinearMap.smul_apply, nsmul_eq_mul]
+      simp only [map_add (f := _), map_nsmul, LinearMap.add_apply, LinearMap.smul_apply, nsmul_eq_mul]
       exact ⟨B' x e₂ + B' e₁ y + n * B' e₁ e₂, by ring⟩
     have key : B (h n x) (h n y) - B' x y =
         (B' (f.a n (h n x)) (f.a n (h n y)) - B' x y) -

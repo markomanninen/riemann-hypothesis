@@ -1,28 +1,32 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.IndexExponentDegree
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EmbHInjective
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralDensEqZero
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteDivLatticeQuotient
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PerOComponents
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SmulMemLocPPerO
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsSdLatTwOExpS
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsNatMulIntegral
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RelIndexEqProdLocP
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CrdSurjective
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RelIndexLocPNeZero
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsTransvSurjInv
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.XiIndEqInter
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SignedLiftWEq
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LatSumReindexOfLeSup
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.JetOpIdentityOfEntire
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AbsNormEqOfSplit
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SplitOfConjPNe
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NotDvdDifferent
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnderEqIffMapLe
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsLocalIdele
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LevelNotMemRowSG
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DeltaNeZero
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.IndexExponentDegree
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EmbHInjective
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralDensEqZero
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteDivLatticeQuotient
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PerOComponents
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SmulMemLocPPerO
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsSdLatTwOExpS
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsNatMulIntegral
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RelIndexEqProdLocP
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CrdSurjective
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RelIndexLocPNeZero
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsTransvSurjInv
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.XiIndEqInter
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SignedLiftWEq
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LatSumReindexOfLeSup
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.JetOpIdentityOfEntire
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AbsNormEqOfSplit
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SplitOfConjPNe
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NotDvdDifferent
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnderEqIffMapLe
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsLocalIdele
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LevelNotMemRowSG
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DeltaNeZero
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -111,12 +115,43 @@ theorem dom_per {M₁ M₂ : Submodule (𝓞 E) (Sp E a)} {M₁' M₂' : Submodu
   ⟨fun P hP => (GlobalTheory.ThetaMove.PeriodComp.perO_components E a b AA).1 P _ _ _ _ h₁.1.fg (h.1 P hP) (h'.1 P hP),
     fun Q hQ => (GlobalTheory.ThetaMove.PeriodComp.perO_components E a b AA).1 Q _ _ _ _ h₂.1.fg (h.2 Q hQ) (h'.2 Q hQ)⟩
 
+theorem full_of_sd : ∀ {n : ℕ} {L : Submodule (𝓞 E) (Sp E n)}, IsSdLat L → Submodule.IsFullLattice E L := by
+  intro n L hL
+  let := hL.1
+  refine { span_eq_top := ?_ }
+  let W := Submodule.span E (L : Set (Sp E n))
+  change W = ⊤
+  by_contra hW
+  let e : Sp E n ≃ₗ⋆[E] Sp E n := starLinearEquiv E
+  let g : Sp E n →ₗ[E] Module.Dual E W :=
+    (LinearMap.domRestrict' W).comp ((hStd E n).comp e.toLinearMap)
+  have hdim : Module.finrank E (Module.Dual E W) < Module.finrank E (Sp E n) := by
+    rw [Subspace.dual_finrank_eq]
+    exact Submodule.finrank_lt hW
+  obtain ⟨x, hx, hx₀⟩ :=
+    Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+  have hsmul (a : E) : a • e x ∈ L := by
+    rw [← hL.2, dualBasic_mem_dual]
+    intro y hy
+    apply hStd_mem_one_symm
+    have hxy : hStd E n (e x) y = 0 :=
+      congrArg (fun f : Module.Dual E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+    simp [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hxy]
+  let i : E →ₗ[𝓞 E] L :=
+    ((LinearMap.toSpanSingleton E _ (e x)).restrictScalars (𝓞 E)).codRestrict L hsmul
+  let : Module.Finite (𝓞 E) L := Module.Finite.iff_fg.mpr hL.1.fg
+  let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
+    smul_left_injective E (fun hz => hx₀ (e.map_eq_zero_iff.mp hz)) (congrArg Subtype.val hab)
+  exact RingOfIntegers.not_isField E
+    (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
+
 theorem full_per {M : Submodule (𝓞 E) (Sp E a)} {M' : Submodule (𝓞 E) (Sp E b)} (h : IsSdLat M) (h' : IsSdLat M') (hA : AA ≠ ⊥) :
-    Full (perO AA M M') := (GlobalTheory.ThetaMove.PeriodComp.perO_components E a b AA).2.2 M M' h.1.fg h'.1 hA
+    Full (perO AA M M') := (GlobalTheory.ThetaMove.PeriodComp.perO_components E a b AA).2.2 M M' h.1.fg (full_of_sd h') hA
 
 theorem perO_fg {M : Submodule (𝓞 E) (Sp E a)} {M' : Submodule (𝓞 E) (Sp E b)} (h : IsSdLat M) (h' : IsSdLat M') (hA : AA.FG) :
     (perO AA M M').FG := by
   classical
+  let := full_of_sd h
   obtain ⟨s, hs⟩ := h.1.fg
   let ev : HomE E a b →ₗ[𝓞 E] (s → Sp E b) :=
     { toFun := fun x i => x i.1
@@ -125,7 +160,7 @@ theorem perO_fg {M : Submodule (𝓞 E) (Sp E a)} {M' : Submodule (𝓞 E) (Sp E
   have hinj : Function.Injective ev := by
     intro x y hxy
     have h1 : Submodule.span E (s : Set (Sp E a)) = ⊤ := by
-      rw [← h.1.span_eq_top, ← hs, Submodule.span_span_of_tower]
+      rw [← (Submodule.IsFullLattice.span_eq_top (A := E) (M := M)), ← hs, Submodule.span_span_of_tower]
     exact LinearMap.ext_on h1 fun i hi => congrFun hxy ⟨i, hi⟩
   have hfg : (homO M M').FG := by
     refine Submodule.fg_of_fg_map_injective ev hinj ?_
@@ -149,8 +184,12 @@ theorem idx_formula (hU : ∀ P ∈ S, localization₂ P.asIdeal AA = localizati
   refine Finset.prod_congr rfl fun P hP => ?_
   have hle := h.1 P hP
   rw [(GlobalTheory.ThetaMove.PeriodComp.perO_components E a b AA).2.1 P _ _ h₁.1.fg (hU P hP), (GlobalTheory.ThetaMove.PeriodComp.perO_components E a b AA).2.1 P _ _ h₂.1.fg (hU P hP)] at hle ⊢
-  have := GlobalTheory.IdxHom.relIndex_homAt E a b P M₁ M₂ M₁' M₂' h₁.1 h₂.1 h₁'.1 h₂'.1 hle
-  simpa using congrArg (fun q : ℚ => (q : ℝ)) this
+  have hidx : (((homAt {P} M₂ M₂').toAddSubgroup.relIndex (homAt {P} M₁ M₁').toAddSubgroup : ℕ) : ℚ) =
+      ((Ideal.absNorm P.asIdeal : ℕ) : ℚ) ^ (volExp P M₁ M₁' - volExp P M₂ M₂') := by
+    first
+    | exact GlobalTheory.IdxHom.relIndex_homAt E a b P M₁ M₂ M₁' M₂' h₁ h₂ h₁' h₂' hle
+    | exact GlobalTheory.IdxHom.relIndex_homAt E a b P M₁ M₂ M₁' M₂' h₁.1 h₂.1 h₁'.1 h₂'.1 hle
+  simpa using congrArg (fun q : ℚ => (q : ℝ)) hidx
 
 omit [StarRing E] in
 theorem norm_pos (P : HeightOneSpectrum (𝓞 E)) : (0 : ℝ) < ((Ideal.absNorm P.asIdeal : ℕ) : ℝ) := by
@@ -252,7 +291,38 @@ theorem thInd_eq (hA : Moves A a b) (hS : ∀ P ∈ S, conjPrime₂ P ∉ S) (hU
     rfl
   have d1 : Dom S (perO A.AA N (twist₂ N' c fun Q => -expS S Q)) (perO A.AA N N') := dom_per h h (Dom.refl _ _) (tw_dom _ hc)
   have d2 : Dom S (perO A.AA N N') (perO A.AA N (twist₂ N' c (expS S))) := dom_per h h (Dom.refl _ _) (dom_tw _ hc)
-  have hvol := GlobalTheory.ThetaMove.VolumePos.volC_pos X.E a b A.AA S N N' h.1.fg h'.1.fg h.1.span_eq_top h'.1.span_eq_top hfg hne
+  have full_of_sd : ∀ {n : ℕ} {L : Submodule (𝓞 X.E) (Sp X.E n)}, IsSdLat L → Submodule.IsFullLattice X.E L := by
+    intro n L hL
+    let := hL.1
+    refine { span_eq_top := ?_ }
+    let W := Submodule.span X.E (L : Set (Sp X.E n))
+    change W = ⊤
+    by_contra hW
+    let e : Sp X.E n ≃ₗ⋆[X.E] Sp X.E n := starLinearEquiv X.E
+    let g : Sp X.E n →ₗ[X.E] Module.Dual X.E W :=
+      (LinearMap.domRestrict' W).comp ((hStd X.E n).comp e.toLinearMap)
+    have hdim : Module.finrank X.E (Module.Dual X.E W) < Module.finrank X.E (Sp X.E n) := by
+      rw [Subspace.dual_finrank_eq]
+      exact Submodule.finrank_lt hW
+    obtain ⟨x, hx, hx₀⟩ :=
+      Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+    have hsmul (a : X.E) : a • e x ∈ L := by
+      rw [← hL.2, dualBasic_mem_dual]
+      intro y hy
+      apply hStd_mem_one_symm
+      have hxy : hStd X.E n (e x) y = 0 :=
+        congrArg (fun f : Module.Dual X.E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+      simp [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hxy]
+    let i : X.E →ₗ[𝓞 X.E] L :=
+      ((LinearMap.toSpanSingleton X.E _ (e x)).restrictScalars (𝓞 X.E)).codRestrict L hsmul
+    let : Module.Finite (𝓞 X.E) L := Module.Finite.iff_fg.mpr hL.1.fg
+    let : Module.Finite (𝓞 X.E) X.E := Module.Finite.of_injective i fun a b hab =>
+      smul_left_injective X.E (fun hz => hx₀ (e.map_eq_zero_iff.mp hz)) (congrArg Subtype.val hab)
+    exact RingOfIntegers.not_isField X.E
+      (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 X.E) X.E) (Field.toIsField X.E))
+  let := full_of_sd h
+  let := full_of_sd h'
+  have hvol := GlobalTheory.ThetaMove.VolumePos.volC_pos X.E a b A.AA S N N' h.1.fg h'.1.fg (Submodule.IsFullLattice.span_eq_top (A := X.E) (M := N)) (Submodule.IsFullLattice.span_eq_top (A := X.E) (M := N')) hfg hne
   have i1 : relIdx (lam A N (twist₂ N' c (expS S))) (lam A N N') =
       (perO A.AA N (twist₂ N' c (expS S))).toAddSubgroup.relIndex (perO A.AA N N').toAddSubgroup :=
     AddSubgroup.relIndex_map_map_of_injective _ _ inj
@@ -262,9 +332,9 @@ theorem thInd_eq (hA : Moves A a b) (hS : ∀ P ∈ S, conjPrime₂ P ∉ S) (hU
       have f3 : Module.Finite ℤ (perO A.AA N (twist₂ N' c (expS S))) := Module.Finite.trans (𝓞 X.E) _
       have f4 : (perO A.AA N (twist₂ N' c (expS S))).toAddSubgroup.FG :=
         (AddGroup.fg_iff_addSubgroup_fg _).1 (Module.Finite.iff_addGroup_fg.1 f3)
-      obtain ⟨T, hT⟩ := f4
-      classical
-      exact ⟨T.image (embH (X.embC A.σ₀) A.δ), by rw [Finset.coe_image, ← AddMonoidHom.map_closure, hT]; rfl⟩
+      letI := f4
+      change IsAddFG ((perO A.AA N (twist₂ N' c (expS S))).toAddSubgroup.map (embH (X.embC A.σ₀) A.δ))
+      infer_instance
     have := GlobalTheory.ThetaInter.finite_quot (A₁ := lam A N N') f1 (by
       rintro _ ⟨y, -, rfl⟩
       obtain ⟨n, hn, hy⟩ := full_per h h' hne y
@@ -273,7 +343,7 @@ theorem thInd_eq (hA : Moves A a b) (hS : ∀ P ∈ S, conjPrime₂ P ∉ S) (hU
   have hsup : lam A N N' ≤ (lam A N N' ⊓ lam A N (twist₂ N' c fun Q => -expS S Q)) ⊔ (lam A N N' ⊓ lam A N (twist₂ N' c (expS S))) := by
     rintro _ ⟨y, hy, rfl⟩
     obtain ⟨u, hu, w, hw, rfl⟩ := Submodule.mem_sup.1 (d1.le_sup d2 (full_per h tw' hne) (full_per h h' hne) (full_per h tw hne) hy)
-    rw [map_add]
+    rw [map_add (f := _)]
     exact AddSubgroup.add_mem_sup ⟨⟨_, hu.1, rfl⟩, _, hu.2, rfl⟩ ⟨⟨_, hw.1, rfl⟩, _, hw.2, rfl⟩
   have key := GlobalTheory.XiIndZero.xiInd_eq_inter _ (Formalism.L2.Ker.HV A.sc) (alV A.d A.sc) _ _ _ _ (vac A N N') (embH (X.embC A.σ₀) A.δ (A.liftW S N N' c x)) z
     (isHerm_HV _) (hv N _ h tw).2.2.1 (hv N _ h tw).2.2.2 (hv N N' h h').2.2.1 (hv N N' h h').2.1.2 hvol hsup
@@ -437,16 +507,7 @@ theorem mUof_conj {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R)
   have e2 := GlobalTheory.UnifConj.unifVal_conj X.F X.E X.K (mu : Chr X.F X.E X.K) _ P (conjPrime₂ P) hmu.1.1.2
     (hmu.2 _ fun hgood => hgood.2.2 (hplc ▸ hT)) hne.symm hv
   unfold mUof
-  rw [dif_pos hi, dif_pos hi, e1, e2, mul_inv]
-
-def EqAll : Prop :=
-  ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (B : Base D cc δ) (χ : TaylorLogMetric.IdE D → ℂ), TaylorLogMetric.IsCurveIdeal D cc → TaylorLogMetric.IsChi D χ → B.EqP χ
-
-def LatFactsAll : Prop :=
-  ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (B : Base D cc δ), TaylorLogMetric.IsCurveIdeal D cc → B.LatAll
-
-def ThZeroAll : Prop :=
-  ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (B : Base D cc δ) (a b : ℕ), TaylorLogMetric.IsCurveIdeal D cc → Even a → Even b → B.ThZeroMem a b
+  rw [dite_eq_left hi, dite_eq_left hi, e1, e2, mul_inv]
 
 theorem kerOf_eq {X : Fields} (A : Amb X) {a b : ℕ} (Sa SB : Finset (HeightOneSpectrum (𝓞 X.E))) (cA cB : ℕ)
     (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) (mU : HeightOneSpectrum (𝓞 X.E) → X.Kˣ) (mI : SB → X.E → X.K)

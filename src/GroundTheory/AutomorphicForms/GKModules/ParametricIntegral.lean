@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -34,8 +38,8 @@ end ParamIntegral
 
 open ParamIntegral
 
-set_option synthInstance.maxHeartbeats 200000 in
 
+set_option synthInstance.maxHeartbeats 200000 in
 theorem hasFDerivAt_integral_iter (F : P → α → F')
     (hF : ∀ a, ContDiff ℝ ∞ (fun Y => F Y a))
     (hcont : ∀ k : ℕ, Continuous (fun p : P × α => iter F k p.1 p.2))

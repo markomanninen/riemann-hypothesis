@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.GlobalIrreducibility.MulMemBall
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.MulMemBall
+
+@[expose] public section
 
 noncomputable section
 

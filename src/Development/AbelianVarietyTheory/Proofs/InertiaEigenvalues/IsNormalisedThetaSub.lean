@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsNormalisedOfIsDiscrete
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsCsdOfCharOfRes
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.GlRelNegTAndQdet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsNormalisedOfIsDiscrete
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsCsdOfCharOfRes
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.GlRelNegTAndQdet
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,8 +70,8 @@ variable {E : Type} [Field E] [NumberField E] {a : ℕ}
 
 def invL (x : Lie E a) : Lie E a := toL (Matrix.of x)⁻¹
 
-attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra in
 
+attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra in
 theorem invL_smooth : (∀ x ∈ invSet E a, ContDiffAt ℝ ∞ invL x) ∧
     HasFDerivAt (invL : Lie E a → Lie E a) (-ContinuousLinearMap.id ℝ _) (oneL E a) := by
   let e : Lie E a ≃L[ℝ] Matrix (Fin a) (Fin a) (Cinf E) := (Matrix.ofLinearEquiv ℝ).toContinuousLinearEquiv
@@ -137,8 +141,8 @@ theorem continuous_conjAd : Continuous (conjAd E) := by
       (continuous_apply w)
   exact ((continuous_infEq E).comp (continuous_star.comp h)).prodMap (continuous_conjFin _)
 
-variable (E a) in
 
+variable (E a) in
 def thetaA : GA E a →* GA E a := thetaGL a (conjAd E)
 
 theorem thetaA_thetaA (g : GA E a) : thetaA E a (thetaA E a g) = g := thetaGL_thetaGL _ conjAd_conjAd g
@@ -182,8 +186,8 @@ theorem theta_mem_Sm {φ : GA E a → ℂ} (hφ : φ ∈ Sm E a) : (fun g => φ 
   ((hφ (thetaA E a g)).comp (fun x hx => (adjL.contDiff.contDiffAt.comp x (invL_smooth.1 x hx)).contDiffWithinAt)
     fun _ hx => (chart_theta φ g hx).2).congr fun _ hx => (chart_theta φ g hx).1
 
-variable (E a) in
 
+variable (E a) in
 def pull : Sm E a ≃ₗ[ℂ] Sm E a where
   toFun φ := ⟨fun g => φ.1 (thetaA E a g), theta_mem_Sm φ.2⟩
   invFun φ := ⟨fun g => φ.1 (thetaA E a g), theta_mem_Sm φ.2⟩
@@ -284,8 +288,8 @@ theorem Zalg_pull {z : Module.End ℂ (Sm E a)} (hz : z ∈ Zalg E a) :
     obtain ⟨y', h3, h4⟩ := hy
     exact ⟨x' * y', mul_mem h1 h3, fun φ => by simp [h2, h4]⟩
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem height_theta (y : GL (Fin a) (Cinf E)) : height (thetaGL a (starRingEnd (Cinf E)) y) = height y := by
   have h1 : ∀ y : GL (Fin a) (Cinf E), ‖toL (thetaGL a (starRingEnd (Cinf E)) y).val‖ ≤ ‖toL (y⁻¹).val‖ := fun y =>
     (pi_norm_le_iff_of_nonneg (norm_nonneg _)).2 fun i => (pi_norm_le_iff_of_nonneg (norm_nonneg _)).2 fun j => by
@@ -318,18 +322,22 @@ theorem kfin_pull {φ : Sm E a} (h : FiniteDimensional ℂ (Submodule.span ℂ (
   rintro _ ⟨k, rfl⟩
   exact ⟨_, Submodule.subset_span ⟨_, rfl⟩, (act_pull (.cpt k) φ).symm⟩
 
-theorem isAutForm_pull {φ : Sm E a} (h : IsAutForm φ) : IsAutForm (pull E a φ) where
-  left γ g := by rw [pull_apply, map_mul, thetaA_ratGL, h.left, pull_apply]
-  level := level_pull h.level
-  kfin := kfin_pull h.kfin
-  zfin := by
+theorem isAutForm_pull {φ : Sm E a} (h : IsAutForm φ) : IsAutForm (pull E a φ) := by
+  constructor
+  case left =>
+    intro γ g
+    rw [pull_apply, map_mul, thetaA_ratGL, h.left, pull_apply]
+  case level => exact level_pull h.level
+  case kfin => exact kfin_pull h.kfin
+  case zfin =>
     have := h.zfin
     refine Submodule.finiteDimensional_of_le (S₂ := (Submodule.span ℂ ((fun z : Module.End ℂ (Sm E a) => z φ) ''
       Zalg E a)).map (pull E a).toLinearMap) (Submodule.span_le.2 ?_)
     rintro _ ⟨z, hz, rfl⟩
     obtain ⟨z', h1, h2⟩ := Zalg_pull hz
     exact ⟨_, Submodule.subset_span ⟨z', h1, rfl⟩, (h2 φ).symm⟩
-  growth g := by
+  case growth =>
+    intro g
     obtain ⟨C, N, h1⟩ := h.growth (thetaA E a g)
     refine ⟨C, N, fun y => ?_⟩
     rw [pull_apply, map_mul, thetaA_infGL, ← height_theta]
@@ -345,7 +353,7 @@ def revIx (h : r + s = a) (p : BlockIx a s) : BlockIx a r :=
 def blockMap (h : r + s = a) (c : R →+* R) : (BlockIx a r → R) →+ (BlockIx a s → R) where
   toFun x p := (-1) ^ ((p.1.1 : ℕ) + p.1.2) * c (-x (revIx h p))
   map_zero' := funext fun p => by simp
-  map_add' x y := funext fun p => by simp only [Pi.add_apply, neg_add, map_add, mul_add]
+  map_add' x y := funext fun p => by simp only [Pi.add_apply, neg_add, map_add (f := _), mul_add]
 
 theorem thetaGL_unip (h : r + s = a) (c : R →+* R) (x : BlockIx a r → R) :
     thetaGL a c (unip x) = unip (blockMap h c x) := by
@@ -357,10 +365,10 @@ theorem thetaGL_unip (h : r + s = a) (c : R →+* R) (x : BlockIx a r → R) :
   have hj := j.2
   simp only [Matrix.sub_apply, Matrix.add_apply, nilM, Matrix.of_apply, Matrix.one_apply, Fin.rev_inj]
   by_cases h1 : (i : ℕ) < s ∧ s ≤ (j : ℕ)
-  · rw [dif_pos h1, dif_pos (by simp only [Fin.val_rev]; omega), if_neg (fun e => by subst e; omega),
+  · rw [dite_eq_left h1, dite_eq_left (by simp only [Fin.val_rev]; omega), if_neg (fun e => by subst e; omega),
       if_neg (fun e => by subst e; omega), zero_sub, zero_add]
     rfl
-  · rw [dif_neg h1, dif_neg (by simp only [Fin.val_rev]; omega), sub_zero, add_zero]
+  · rw [dite_eq_right h1, dite_eq_right (by simp only [Fin.val_rev]; omega), sub_zero, add_zero]
     by_cases h2 : i = j
     · subst h2
       rw [if_pos rfl, map_one, mul_one, Even.neg_one_pow ⟨_, rfl⟩]
@@ -386,8 +394,8 @@ theorem blockMap_mem_ratN (h : r + s = a) {x : BlockIx a r → Ad E} (hx : x ∈
 
 end Block
 
-open MeasureTheory in
 
+open MeasureTheory in
 theorem isCuspidal_pull {φ : GA E a → ℂ} (hφ : IsCuspidal φ) : IsCuspidal fun g => φ (thetaA E a g) := by
   intro r h0 h1 _ _ μ 𝓕 hμ hF g
   obtain ⟨s, h⟩ : ∃ s, r + s = a := ⟨a - r, by omega⟩
@@ -410,7 +418,7 @@ theorem isCuspidal_pull {φ : GA E a → ℂ} (hφ : IsCuspidal φ) : IsCuspidal
   have h2 := hφ s (by omega) (by omega) (μ.map m) (m '' 𝓕) (β.isAddHaarMeasure_map μ)
     (hF.image_of_equiv m.toEquiv (MeasurePreserving.symm m ⟨m.measurable, rfl⟩).quasiMeasurePreserving e fun y x => by
       change β (β.symm y + x) = y + β x
-      rw [map_add, β.apply_symm_apply]) (thetaA E a g)
+      rw [map_add (f := _), β.apply_symm_apply]) (thetaA E a g)
   rw [m.measurableEmbedding.setIntegral_map, m.injective.preimage_image] at h2
   rw [← h2]
   congr 1
@@ -487,8 +495,10 @@ theorem isAbsPow_thetaChar {χ : HChar E} {s : ℝ} (h : χ.IsAbsPow s) : (theta
   · obtain ⟨v, rfl⟩ := hs v
     have e : Ideal.absNorm (conjSrc (IsCMField.complexConj E).toRingEquiv v).asIdeal = Ideal.absNorm v.asIdeal := by
       rw [(GlobalTheory.Mem.Chr.conjPl_iff_comap _ _ _).1 (conjPl_conjSrc (IsCMField.complexConj E).toRingEquiv v)]
-      exact Nat.card_congr (Ideal.quotientEquiv _ _ (RingOfIntegers.mapRingEquiv _)
-        (Ideal.map_comap_of_surjective _ (RingEquiv.surjective _) _).symm).toEquiv
+      simp only [Ideal.absNorm_eq_natCard]
+      let c := RingOfIntegers.mapRingEquiv (IsCMField.complexConj E).toRingEquiv
+      exact Nat.card_congr (Ideal.quotientEquiv _ _ c
+        (Ideal.map_comap_of_surjective (c : 𝓞 E →+* 𝓞 E) c.surjective v.asIdeal).symm).toEquiv
     have hu : ∀ x, IsUnifAt (conjSrc (IsCMField.complexConj E).toRingEquiv v) x →
         IsUnifAt v (Units.map (conjLoc _ v).toMonoidHom x) := fun x hx => ((conjLoc_spec _ v).2.2 x.val).trans hx
     rw [HChar.val, HChar.locK, MonoidHom.comp_apply, hl, χ.val_eq (h.1 v) _ (hu _ (unif_spec _)), Units.val_inv_eq_inv_val, h.2.1, e,
@@ -529,15 +539,24 @@ theorem blocks_sign (h : ∑ _ : Fin d, a = N) (b : Fin d) (i j : Fin a) :
 theorem thetaGL_leviEmb (h : ∑ _ : Fin d, a = N) (c : R →+* R) (m : Fin d → GL (Fin a) R) :
     thetaGL N c (leviEmb R (stdBlocks (fun _ : Fin d => a) h) m) =
       leviEmb R (stdBlocks (fun _ : Fin d => a) h) fun b => thetaGL a c (m b.rev) := by
+  have entry_same (g : Fin d → GL (Fin a) R) (b : Fin d) (i j : Fin a) :
+      (leviEmb R (stdBlocks (fun _ : Fin d => a) h) g).val
+        (stdBlocks (fun _ : Fin d => a) h ⟨b, i⟩) (stdBlocks (fun _ : Fin d => a) h ⟨b, j⟩) =
+      (g b).val i j := by
+    simp [leviEmb, Matrix.blockDiagonal'_apply_eq]
+  have entry_ne (g : Fin d → GL (Fin a) R) {b b' : Fin d} (hne : b ≠ b') (i j : Fin a) :
+      (leviEmb R (stdBlocks (fun _ : Fin d => a) h) g).val
+        (stdBlocks (fun _ : Fin d => a) h ⟨b, i⟩) (stdBlocks (fun _ : Fin d => a) h ⟨b', j⟩) = 0 := by
+    simp [leviEmb, Matrix.blockDiagonal'_apply', hne]
   ext i j
   obtain ⟨⟨b, i⟩, rfl⟩ := (stdBlocks (fun _ : Fin d => a) h).surjective i
   obtain ⟨⟨b', j⟩, rfl⟩ := (stdBlocks (fun _ : Fin d => a) h).surjective j
   rw [thetaGL_apply, blocks_rev, blocks_rev, ← map_inv]
   by_cases e : b = b'
   · subst e
-    rw [leviEmb_apply_same, leviEmb_apply_same, thetaGL_apply, blocks_sign]
+    rw [entry_same, entry_same, thetaGL_apply, blocks_sign]
     rfl
-  · rw [leviEmb_apply_ne _ _ _ e, leviEmb_apply_ne _ _ _ (fun e' => e (Fin.rev_injective e').symm), map_zero, mul_zero]
+  · rw [entry_ne _ e, entry_ne _ (fun e' => e (Fin.rev_injective e').symm), map_zero, mul_zero]
 
 theorem thetaGL_mem_unipRad (h : ∑ _ : Fin d, a = N) (c : R →+* R) {u : GL (Fin N) R}
     (hu : u ∈ unipRad R (stdBlocks (fun _ : Fin d => a) h)) :
@@ -584,7 +603,7 @@ theorem isNormalised_thetaSub {π : CuspSub E a} (h : IsNormalised π) : IsNorma
   change φ.1 (thetaA E a _) = φ.1 (thetaA E a g)
   rw [map_mul, thetaA_splitCentre, h φ hφ]
 
-theorem isSpehOf_thetaSub {N d : ℕ} {V : Submodule ℂ (Sm E N)} (hV : IsStable V) (hc : IsCsdGL V) {π : CuspSub E a}
+theorem isSpehOf_thetaSub {N d : ℕ} {V : Submodule ℂ (Sm E N)} (hV : _root_.GlobalTheory.CuspRep.IsStable V) (hc : IsCsdGL V) {π : CuspSub E a}
     (h : IsSpehOf V π d) : IsSpehOf V (thetaSub π) d := by
   obtain ⟨h, ν, hν, f, hf, hf'⟩ := h
   obtain ⟨T, hT⟩ := hc

@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.ConjugateCuspidalReps.IsConjRepRefl
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.ConjugateCuspidalReps.MapInfChar
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WindowBoundReduction.ExistsAlgRepQdetEqSmulOneOfIsReg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WindowBoundReduction.WindowLinearEntryEstimate
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WindowBoundReduction.WindowIntegerGapBound
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylAlgebraQuantumDet.ExistsScalar
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.ConjugateCuspidalReps.IsConjRepRefl
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.ConjugateCuspidalReps.MapInfChar
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WindowBoundReduction.ExistsAlgRepQdetEqSmulOneOfIsReg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WindowBoundReduction.WindowLinearEntryEstimate
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WindowBoundReduction.WindowIntegerGapBound
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylAlgebraQuantumDet.ExistsScalar
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ private theorem ex_pad {d D : ℕ} (h : d ∣ D) :
       fun c A => Matrix.blockDiagonal_smul c fun _ : Fin k => A
   exact ⟨(Matrix.reindexAlgEquiv ℂ ℂ finProdFinEquiv).toAlgHom.comp b⟩
 
-private theorem ex_tens {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ} (P : (E →+* ℂ) → Weyl.Pre a)
+private theorem ex_tens {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ} (P : (E →+* ℂ) → Weyl.Pre a)
     (hP : ∀ τ, 0 < (P τ).d) (ν : (E →+* ℂ) → Fin a → ℂ) (hν : ∀ τ, (P τ).HasWt (ν τ)) (N : ℕ) :
     ∃ Ξ : AlgRep E a, ∀ τ u, Formalism.REAL.qdet (eOf Ξ.mat τ) u = (∏ k : Fin a, (u - N - (k : ℂ) + ν τ k)) • 1 := by
   classical

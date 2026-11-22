@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityUnitary
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityReal
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairInfApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinHasTemperateGrowth
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsArchimedeanAdeleCMPrescribedEmbeddingValue
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MaximalCompactOneParameterLinesOfLieLines
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityUnitary
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityReal
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairInfApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinHasTemperateGrowth
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsArchimedeanAdeleCMPrescribedEmbeddingValue
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MaximalCompactOneParameterLinesOfLieLines
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
@@ -52,7 +56,7 @@ theorem eq_liftA_of_mul {a : AF F} (ha : ∀ c : AF F, evI F c = 0 → c * a = 0
   · simp [liftA, h2]
 
 theorem liftA_add (a b : mixedEmbedding.mixedSpace F) : liftA (a + b) = liftA a + liftA b := by
-  unfold liftA; rw [map_add, map_add]; rfl
+  unfold liftA; rw [map_add (f := _), map_add (f := _)]
 
 theorem liftA_mul (a b : mixedEmbedding.mixedSpace F) : liftA (a * b) = liftA a * liftA b := by
   refine Prod.ext ?_ ?_
@@ -111,7 +115,7 @@ theorem Phi_Psi (M : Model σ X W) {u : Matrix (Fin n) (Fin d) (AE F E)} (hu : A
   rw [Phi, ← e_eq_lift M hu, LinearEquiv.symm_apply_apply]
 
 theorem Phi_add (M : Model σ X W) (w w') : Phi M (w + w') = Phi M w + Phi M w' := by
-  rw [Phi, Phi, Phi, ← map_add]; congr 1
+  rw [Phi, Phi, Phi, ← map_add (f := _)]; congr 1
   ext i <;> simp [lift, liftA_add]
 
 theorem Phi_smul (M : Model σ X W) (t : ℝ) (w) : Phi M (t • w) = realAd F t • Phi M w := by
@@ -119,7 +123,7 @@ theorem Phi_smul (M : Model σ X W) (t : ℝ) (w) : Phi M (t • w) = realAd F t
   ext i <;> simp [lift, liftA_smul]
 
 theorem Psi_add (M : Model σ X W) (u v : Matrix (Fin n) (Fin d) (AE F E)) : Psi M (u + v) = Psi M u + Psi M v := by
-  ext i <;> simp [Psi, arc, ← evIHom_apply, map_add]
+  ext i <;> simp [Psi, arc, ← evIHom_apply, map_add (f := _)]
 
 theorem Psi_neg (M : Model σ X W) (u : Matrix (Fin n) (Fin d) (AE F E)) : Psi M (-u) = -Psi M u := by
   ext i <;> simp [Psi, arc, ← evIHom_apply, map_neg]
@@ -131,7 +135,9 @@ section Places
 theorem exists_mat_at (hcm : IsCMExt F E σ) (τ : ∀ w : InfinitePlace F, GlobalTheory.AdelicU.EmbOver E w)
     {m k : Type} (z : InfinitePlace F → Matrix m k ℂ) :
     ∃ u : Matrix m k (AE F E), At (evI F) u ∧ ∀ w, u.map (piInf (τ w)) = z w := by
-  choose a ha using fun i j => GlobalTheory.PolRangeInf.exists_at_inf_values hcm τ (fun w => z w i j)
+  have hex : ∀ i j, ∃ a, At (evI F) a ∧ ∀ w, piInf (τ w) a = z w i j :=
+    fun i j => GlobalTheory.PolRangeInf.exists_at_inf_values hcm τ (fun w => z w i j)
+  choose a ha using hex
   refine ⟨Matrix.of a, fun x hx => ?_, fun w => ?_⟩
   · ext i j
     simp only [Matrix.smul_apply, Matrix.of_apply, Matrix.zero_apply]
@@ -154,7 +160,8 @@ theorem eq_of_map_piInf (hcm : IsCMExt F E σ) (τ : ∀ w : InfinitePlace F, Gl
 
 theorem map_smul_piInf {w : InfinitePlace F} (τ : GlobalTheory.AdelicU.EmbOver E w) {m k : Type} (c : AF F) (u : Matrix m k (AE F E)) :
     (c • u).map (piInf τ) = piInf τ (algebraMap (AF F) (AE F E) c) • u.map (piInf τ) := by
-  ext i j
+  apply Matrix.ext
+  intro i j
   simp [Algebra.smul_def, map_mul]
 
 end Places
@@ -164,7 +171,7 @@ section Line
 variable {n d : ℕ} {X : Spc F E n} {W : Spc F E d}
 
 theorem evI_add' (a b : AF F) : evI F (a + b) = evI F a + evI F b := by
-  rw [← evIHom_apply, map_add]; rfl
+  rw [← evIHom_apply, map_add (f := _)]; rfl
 
 theorem evI_realAd_mul (t : ℝ) (a : AF F) : evI F (realAd F t * a) = t • evI F a := by
   rw [← evIHom_apply, map_mul, evIHom_apply, evIHom_apply, evI_realAd, Algebra.smul_def]
@@ -198,18 +205,19 @@ theorem actsD_Phi {ψ : AddChar (AF F) ℂ} (hψ : IsStd ψ) (M : Model σ X W)
       rw [harg, smul_eq_mul, mul_add, at_realAd_mul hc, at_realAd_mul hc, add_zero]
     have hdot : evI F (z ⬝ᵥ (lift w).2) = ∑ i, x i * w.2 i := by
       simp only [dotProduct, lift]
-      rw [← evIHom_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← evIHom_apply, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_mul, evIHom_apply, evIHom_apply, evI_liftA]
     have hev : Algebra.trace ℝ (mixedEmbedding.mixedSpace F) (evI F (z ⬝ᵥ (realAd F t • lift w).2 +
         ⅟(2 : AF F) * ((realAd F t • lift w).1 ⬝ᵥ (realAd F t • lift w).2))) = t * A + t ^ 2 * B0 := by
-      rw [harg, evI_add', evI_realAd_mul, evI_realAd_mul, evI_realAd_mul, hdot, map_add, map_smul, map_smul, map_smul,
+      rw [harg, evI_add', evI_realAd_mul, evI_realAd_mul, evI_realAd_mul, hdot, map_add (f := _), map_smul, map_smul, map_smul,
         ← hA, ← hB0, smul_eq_mul, smul_eq_mul, smul_eq_mul]
       ring
     have hpt : (fun i => evI F ((z + (realAd F t • lift w).1) i)) = x + t • w.1 := by
       funext i
       simp only [Pi.add_apply, Prod.smul_fst, Pi.smul_apply, smul_eq_mul, lift]
-      rw [← evIHom_apply, map_add, map_mul, evIHom_apply, evIHom_apply, evIHom_apply, evI_realAd, evI_liftA,
+      rw [← evIHom_apply, map_add (f := _), map_mul, evIHom_apply, evIHom_apply, evIHom_apply, evI_realAd, evI_liftA,
         ← Algebra.smul_def]
     simp only [Model.heisLine, GlobalTheory.WeilM.Darboux.rho, GlobalTheory.WeilM.schr, he]
     rw [hψ.2.2 _ hAt2, hev, tens, hr', hpt]
@@ -248,7 +256,9 @@ theorem exists_complex_structure : ∀ {F E : Type} [Field F] [NumberField F] [F
   obtain ⟨ε, hε⟩ := hG
   let rel : Matrix (Fin a) (Fin (a + a')) (AE F E) → InfinitePlace F → Matrix (Fin a) (Fin (a + a')) ℂ :=
     fun u w => (((ε w : ℤ) : ℂ) * Complex.I) • (G.V.θ w * u.map (piInf (B.emb w)) * (G.W.θ w)ᵀ)
-  choose R hRat hRmap using fun u => exists_mat_at hcm B.emb (rel u)
+  have hex : ∀ u : Matrix (Fin a) (Fin (a + a')) (AE F E), ∃ v : Matrix (Fin a) (Fin (a + a')) (AE F E), At (evI F) v ∧ ∀ w, v.map (piInf (B.emb w)) = rel u w :=
+    fun u => exists_mat_at hcm B.emb (rel u)
+  choose R hRat hRmap using hex
   have hRadd : ∀ u v, R (u + v) = R u + R v := by
     intro u v
     refine eq_of_map_piInf hcm B.emb (hRat _) (fun c hc => by rw [smul_add, hRat u c hc, hRat v c hc, add_zero])

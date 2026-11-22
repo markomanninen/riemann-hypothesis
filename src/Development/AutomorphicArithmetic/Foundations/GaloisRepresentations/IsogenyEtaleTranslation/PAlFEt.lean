@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IsogenyEtaleTranslation.EtCancel
-import Development.AbelianVarietyTheory.Definitions.Divisors.NontrivialOfArtinQE
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IsogenyEtaleTranslation.EtCancel
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NontrivialOfArtinQE
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -38,11 +42,13 @@ private theorem list_prod_ofFn_eq_of_eq_one_of_ne' {M : Type*} [Monoid M] :
 private theorem matEnd_diagonal_pr {S : Scheme.{0}} {O : Type} [Ring O] {A : Over S} [GrpObj A] (act : OActN O A) {m : ℕ}
     (d : Fin m → O) (i : Fin m) :
     GlobalTheory.KS.matEnd act (Matrix.diagonal d) ≫ GlobalTheory.KS.pr A i = GlobalTheory.KS.pr A i ≫ act.act (d i) := by
-  simp only [GlobalTheory.KS.matEnd, GlobalTheory.KS.pr, Pi.lift_π]
+  change (Pi.lift (fun i => (List.ofFn fun j => GlobalTheory.KS.pr A j ≫
+    act.act (if i = j then d i else 0)).prod)) ≫ GlobalTheory.KS.pr A i = _
+  rw [Pi.lift_comp_π]
   rw [list_prod_ofFn_eq_of_eq_one_of_ne' _ i]
-  · simp [Matrix.diagonal_apply_eq]
+  · simp
   · intro j hj
-    rw [Matrix.diagonal_apply_ne d (Ne.symm hj), KS.Model.act_zero, comp_one]
+    simp [Ne.symm hj, KS.Model.act_zero, comp_one]
 
 end UpperTheory.Gal.FixZ
 

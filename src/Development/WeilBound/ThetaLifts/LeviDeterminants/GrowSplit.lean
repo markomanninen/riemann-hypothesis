@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+
+@[expose] public section
 
 open IsDedekindDomain NumberField MeasureTheory
 open scoped ENNReal Classical

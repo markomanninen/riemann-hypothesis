@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.SplitLineAlt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalFixedOpenSubgroupGLw
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.SplitLineAlt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalFixedOpenSubgroupGLw
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,7 +90,7 @@ private theorem trc_ind_ne (ρ : Representation ℂ G V) (K K' : Subgroup G) (hl
     ext v
     simp [LinearMap.restrict_apply, levOp_ind ρ K K' v v.2]
   unfold twTr
-  rw [dif_pos hc, hr, map_smul, LinearMap.trace_id, smul_eq_mul]
+  rw [dite_eq_left hc, hr, map_smul, LinearMap.trace_id, smul_eq_mul]
   have hpos : Module.finrank ℂ (fixed ρ K') ≠ 0 := by
     intro h0
     exact hne (Submodule.finrank_eq_zero.1 h0)
@@ -124,10 +128,10 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.levelFn :
         rw [← Module.End.mul_apply, ← map_mul]
         simp }
   have hU : IsOpen (U : Set (GLw n w)) := τ.smooth v
-  let K' : Subgroup (GLw n w) := U ⊓ GlobalTheory.LFun.KGL w n
+  let K' : Subgroup (GLw n w) := U ⊓ GlobalTheory.LFun.KGL w (n := n)
   have hKo : IsOpen (K' : Set (GLw n w)) := hU.inter ho
   have hKc : IsCompact (K' : Set (GLw n w)) := hc.inter_left (U.isClosed_of_isOpen hU)
-  have hle : K' ≤ GlobalTheory.LFun.KGL w n := inf_le_right
+  have hle : K' ≤ GlobalTheory.LFun.KGL w (n := n) := inf_le_right
   have hfd : FiniteDimensional ℂ (fixed τ.ρ K') := finiteDimensional_fixed_openSubgroup_GLw E n w τ K' hKo
   have hne : fixed τ.ρ K' ≠ ⊥ := by
     intro hb
@@ -136,11 +140,11 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.levelFn :
       simpa using h1
     rw [hb] at hm
     exact hv ((Submodule.mem_bot ℂ).1 hm)
-  have hi : K'.relIndex (GlobalTheory.LFun.KGL w n) ≠ 0 := by
-    haveI : CompactSpace (GlobalTheory.LFun.KGL w n) := isCompact_iff_compactSpace.1 hc
-    haveI : Finite ((GlobalTheory.LFun.KGL w n) ⧸ K'.subgroupOf (GlobalTheory.LFun.KGL w n)) :=
+  have hi : K'.relIndex (GlobalTheory.LFun.KGL w (n := n)) ≠ 0 := by
+    haveI : CompactSpace (GlobalTheory.LFun.KGL w (n := n)) := isCompact_iff_compactSpace.1 hc
+    haveI : Finite ((GlobalTheory.LFun.KGL w (n := n)) ⧸ K'.subgroupOf (GlobalTheory.LFun.KGL w (n := n))) :=
       Subgroup.quotient_finite_of_isOpen _ (hKo.preimage continuous_subtype_val)
-    exact (Subgroup.finiteIndex_of_finite_quotient (H := K'.subgroupOf (GlobalTheory.LFun.KGL w n))).index_ne_zero
+    exact (Subgroup.finiteIndex_of_finite_quotient (H := K'.subgroupOf (GlobalTheory.LFun.KGL w (n := n)))).index_ne_zero
   refine ⟨(K' : Set (GLw n w)).indicator 1, ⟨K', hKo, hle, ?_, ?_⟩, UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.trc_ind_ne τ.ρ _ K' hle hi hfd hne⟩
   · exact HasCompactSupport.intro' hKc (K'.isClosed_of_isOpen hKo) fun x hx => Set.indicator_of_notMem hx _
   · classical

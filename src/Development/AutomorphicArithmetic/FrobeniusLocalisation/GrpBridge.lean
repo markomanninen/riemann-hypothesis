@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.ArtLSpec
+module
+
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.ArtLSpec
+
+@[expose] public section
 
 open UpperTheory.HF
 

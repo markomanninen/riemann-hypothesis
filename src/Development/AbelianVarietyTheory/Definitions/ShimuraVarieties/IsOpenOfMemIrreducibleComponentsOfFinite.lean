@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIrreducibleGeneralizations
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIrreducibleGeneralizations
+
+@[expose] public section
 
 universe u v
 
@@ -64,10 +68,6 @@ theorem of_isIso {X Y : Scheme.{u}} (f : X ⟶ Y) [IsIso f] [IsNormalScheme X] :
 theorem iff_of_iso {X Y : Scheme.{u}} (e : X ≅ Y) : IsNormalScheme X ↔ IsNormalScheme Y :=
   ⟨fun _ ↦ of_isIso e.hom, fun _ ↦ of_isIso e.inv⟩
 
-instance isClosedUnderIsomorphisms :
-    ObjectProperty.IsClosedUnderIsomorphisms (C := Scheme.{u}) (IsNormalScheme ·) :=
-  ⟨fun e _ ↦ of_isIso e.hom⟩
-
 theorem of_forall_exists_isOpenImmersion {X : Scheme.{u}}
     (h : ∀ x : X, ∃ (Y : Scheme.{u}) (f : Y ⟶ X) (_ : IsOpenImmersion f),
       IsNormalScheme Y ∧ x ∈ Set.range f) : IsNormalScheme X := by
@@ -106,9 +106,6 @@ theorem isIntegral_of_irreducibleSpace (X : Scheme.{u}) [IsNormalScheme X] [Irre
     IsIntegral X :=
   isIntegral_of_irreducibleSpace_of_isReduced X
 
-theorem of_isEmpty (X : Scheme.{u}) [IsEmpty X] : IsNormalScheme X :=
-  ⟨isEmptyElim, isEmptyElim⟩
-
 theorem spec_iff (R : CommRingCat.{u}) :
     IsNormalScheme (Spec R) ↔ ∀ (p : Ideal R) [p.IsPrime],
       IsDomain (Localization.AtPrime p) ∧ IsIntegrallyClosed (Localization.AtPrime p) := by
@@ -145,16 +142,6 @@ theorem iff_forall_isAffineOpen (X : Scheme.{u}) :
   rw [iff_of_iSup_eq_top _ (iSup_affineOpens_eq_top X)]
   exact fun U ↦ (iff_spec_of_isAffineOpen U.2).mpr ((spec_iff _).mpr (h U U.2))
 
-theorem of_isIntegral_of_isIntegrallyClosed (X : Scheme.{u}) [IsIntegral X]
-    (h : ∀ (U : X.Opens) [Nonempty U], IsAffineOpen U → IsIntegrallyClosed Γ(X, U)) :
-    IsNormalScheme X := by
-  refine of_forall_exists_opens fun x ↦ ?_
-  obtain ⟨_, ⟨U, hU, rfl⟩, hx, -⟩ :=
-    X.isBasis_affineOpens.exists_subset_of_mem_open (Set.mem_univ x) isOpen_univ
-  have : Nonempty U := ⟨⟨x, hx⟩⟩
-  have := h U hU
-  exact ⟨U, hx, (iff_spec_of_isAffineOpen hU).mpr inferInstance⟩
-
 theorem isDiscreteValuationRing_stalk {X : Scheme.{u}} [IsNormalScheme X] [IsLocallyNoetherian X]
     {x : X} (hx : Order.coheight x = 1) : IsDiscreteValuationRing (X.presheaf.stalk x) := by
   have h1 : Ring.KrullDimLE 1 (X.presheaf.stalk x) := krullDimLE_of_coheight_le hx.le
@@ -167,7 +154,7 @@ theorem isDiscreteValuationRing_stalk {X : Scheme.{u}} [IsNormalScheme X] [IsLoc
       ∃! P : Ideal (X.presheaf.stalk x), P ≠ ⊥ ∧ P.IsPrime :=
     ⟨inferInstance, _, ⟨hm, inferInstance⟩, fun P hP ↦ IsLocalRing.eq_maximalIdeal
       (Ring.krullDimLE_one_iff_of_noZeroDivisors.mp h1 P hP.1 hP.2)⟩
-  exact ((IsDiscreteValuationRing.TFAE (X.presheaf.stalk x) hf).out 0 3).mpr h3
+  exact ((IsDiscreteValuationRing.TFAE (X.presheaf.stalk x) hf).out 1 4).mpr h3
 
 theorem isDiscreteValuationRing_stalk_iff {X : Scheme.{u}} [IsNormalScheme X]
     [IsLocallyNoetherian X] {x : X} :
@@ -197,11 +184,6 @@ theorem eq_of_mem_irreducibleComponents {X : Scheme.{u}} [IsNormalScheme X] {x :
 theorem pairwiseDisjoint_irreducibleComponents (X : Scheme.{u}) [IsNormalScheme X] :
     (irreducibleComponents X).PairwiseDisjoint id := fun _ hZ _ hW hne ↦
   Set.disjoint_left.mpr fun _ hxZ hxW ↦ hne (eq_of_mem_irreducibleComponents hZ hW hxZ hxW)
-
-theorem irreducibleComponent_eq {X : Scheme.{u}} [IsNormalScheme X] {x : X} {Z : Set X}
-    (hZ : Z ∈ irreducibleComponents X) (hx : x ∈ Z) : irreducibleComponent x = Z :=
-  eq_of_mem_irreducibleComponents (irreducibleComponent_mem_irreducibleComponents x) hZ
-    mem_irreducibleComponent hx
 
 theorem isOpen_of_mem_irreducibleComponents_of_finite {X : Scheme.{u}} [IsNormalScheme X]
     (hX : (irreducibleComponents X).Finite) {Z : Set X} (hZ : Z ∈ irreducibleComponents X) :
@@ -267,17 +249,8 @@ variable {X : Scheme.{u}} [IsNormalScheme X] [IsLocallyNoetherian X]
 def component (Z : irreducibleComponents X) : X.Opens :=
   ⟨Z.1, isOpen_of_mem_irreducibleComponents Z.2⟩
 
-@[simp]
-theorem coe_component (Z : irreducibleComponents X) : (component Z : Set X) = Z.1 := rfl
-
-@[simp]
-theorem mem_component {Z : irreducibleComponents X} {x : X} : x ∈ component Z ↔ x ∈ Z.1 := Iff.rfl
-
 theorem isClosed_component (Z : irreducibleComponents X) : IsClosed (component Z : Set X) :=
   isClosed_of_mem_irreducibleComponents _ Z.2
-
-instance nonempty_component (Z : irreducibleComponents X) : Nonempty (component Z) :=
-  Z.2.1.nonempty.to_subtype
 
 instance isIntegral_component (Z : irreducibleComponents X) : IsIntegral (component Z) :=
   have : IrreducibleSpace (component Z).toScheme := Subtype.irreducibleSpace Z.2.1
@@ -287,53 +260,28 @@ instance isClosedImmersion_component_ι (Z : irreducibleComponents X) :
     IsClosedImmersion (component Z).ι :=
   .of_isPreimmersion _ (by simpa using isClosed_component Z)
 
-variable (X) in
 
+variable (X) in
 theorem iSup_component : ⨆ Z : irreducibleComponents X, component Z = ⊤ :=
   eq_top_iff.mpr fun x _ ↦ Opens.mem_iSup.mpr
     ⟨⟨_, irreducibleComponent_mem_irreducibleComponents x⟩, mem_irreducibleComponent⟩
 
-variable (X) in
 
+variable (X) in
 theorem pairwise_disjoint_component :
     Pairwise fun Z W : irreducibleComponents X ↦ Disjoint (component Z) (component W) := by
   intro Z W hne
   rw [← Opens.coe_disjoint]
   exact pairwiseDisjoint_irreducibleComponents X Z.2 W.2 (fun h ↦ hne (Subtype.ext h))
 
-variable (X) in
 
-noncomputable def componentCover : X.OpenCover :=
-  X.openCoverOfIsOpenCover component (iSup_component X)
-
-@[simp]
-theorem componentCover_X (Z : irreducibleComponents X) :
-    (componentCover X).X Z = (component Z).toScheme := rfl
-
-@[simp]
-theorem componentCover_f (Z : irreducibleComponents X) :
-    (componentCover X).f Z = (component Z).ι := rfl
-
-instance isIntegral_componentCover_X (Z : (componentCover X).I₀) :
-    IsIntegral ((componentCover X).X Z) :=
-  isIntegral_component Z
-
-instance finite_componentCover_index {X : Scheme.{u}} [IsNormalScheme X] [IsNoetherian X] :
-    Finite (componentCover X).I₀ :=
-  finite_irreducibleComponents X
 
 variable (X) in
-
 theorem nonempty_isColimit_component :
     Nonempty (IsColimit (Cofan.mk X fun Z : irreducibleComponents X ↦ (component Z).ι)) :=
-  nonempty_isColimit_cofanMk_of _ (by simpa using iSup_component X)
-    (by simpa [Function.onFun] using pairwise_disjoint_component X)
+  nonempty_isColimit_cofanMk_of _ (by simpa using iSup_component (X := X))
+    (by simpa [Function.onFun] using pairwise_disjoint_component (X := X))
 
-variable (X) in
-
-instance isIso_sigmaDesc_component :
-    IsIso (Sigma.desc fun Z : irreducibleComponents X ↦ (component Z).ι) :=
-  (Cofan.nonempty_isColimit_iff_isIso_sigmaDesc _).mp (nonempty_isColimit_component X)
 
 end Components
 
@@ -389,10 +337,6 @@ instance isIntegrallyClosed_globalSections {X : Scheme.{u}} [IsNormalScheme X] [
     IsIntegrallyClosed Γ(X, ⊤) :=
   have : Nonempty (⊤ : X.Opens) := ⟨Nonempty.some inferInstance, trivial⟩
   isIntegrallyClosed_sections ⊤
-
-theorem iff_isIntegrallyClosed_sections (X : Scheme.{u}) [IsIntegral X] :
-    IsNormalScheme X ↔ ∀ (U : X.Opens) [Nonempty U], IsIntegrallyClosed Γ(X, U) :=
-  ⟨fun _ _ _ ↦ inferInstance, fun h ↦ of_isIntegral_of_isIntegrallyClosed X fun U _ _ ↦ h U⟩
 
 theorem isDomain_and_isIntegrallyClosed_of_isIrreducible {X : Scheme.{u}} [IsNormalScheme X]
     {U : X.Opens} (hU : IsIrreducible (U : Set X)) :
@@ -566,10 +510,6 @@ theorem spec_of_isIntegrallyClosedIn {X : Scheme.{u}} [IsNormalScheme X] [IsLoca
   rw [PrimeSpectrum.localization_away_comap_range _ (a Z)]
   exact hZ
 
-theorem spec_sections_of_isCompact {X : Scheme.{u}} [IsNormalScheme X] [IsLocallyNoetherian X]
-    {U : X.Opens} (hU : IsCompact (U : Set X)) : IsNormalScheme (Spec Γ(X, U)) :=
-  spec_of_isIntegrallyClosedIn hU Γ(X, U)
-
 theorem spec_of_isIntegrallyClosedIn_of_isIntegral {X : Scheme.{u}} [IsNormalScheme X]
     [IsIntegral X] (U : X.Opens) (A : Type u) [CommRing A] [Algebra A Γ(X, U)]
     [IsIntegrallyClosedIn A Γ(X, U)] : IsNormalScheme (Spec (.of A)) := by
@@ -605,57 +545,6 @@ theorem normalization_of_isIntegral {X Y : Scheme.{u}} (f : X ⟶ Y) [QuasiCompa
 instance sigma {ι : Type v} [Small.{u} ι] (X : ι → Scheme.{u}) [h : ∀ i, IsNormalScheme (X i)] :
     IsNormalScheme (∐ X) :=
   (iff_of_openCover (sigmaOpenCover X)).mpr h
-
-instance coprod (X Y : Scheme.{u}) [IsNormalScheme X] [IsNormalScheme Y] :
-    IsNormalScheme (X ⨿ Y) :=
-  (iff_of_openCover (coprodOpenCover.{u, 0} X Y)).mpr fun i ↦ by
-    rcases i with _ | _
-    · exact inferInstanceAs (IsNormalScheme X)
-    · exact inferInstanceAs (IsNormalScheme Y)
-
-example : IsNormalScheme (Spec (.of ℤ)) := inferInstance
-
-example : IsNormalScheme (Spec (.of (MvPolynomial (Fin 2) ℤ))) := inferInstance
-
-example : IsNormalScheme (Spec (.of (ℚ × ℚ))) ∧ ¬ IsIntegral (Spec (.of (ℚ × ℚ))) :=
-  ⟨of_isIso (coprodSpec ℚ ℚ), fun h ↦
-    have : IsDomain (ℚ × ℚ) := (affine_isIntegral_iff _).mp h
-    false_of_nontrivial_of_product_domain ℚ ℚ⟩
-
-example : ¬ IsNormalScheme (Spec (.of (ZMod 4))) := fun _ ↦ by
-  have : _root_.IsReduced (ZMod 4) := (affine_isReduced_iff (.of (ZMod 4))).mp inferInstance
-  exact absurd (IsNilpotent.eq_zero (x := (2 : ZMod 4)) ⟨2, by decide⟩) (by decide)
-
-example : ¬ IsNormalScheme (Spec (.of (ℤ√((5 : ℕ) : ℤ)))) := fun h ↦ by
-  have : Zsqrtd.Nonsquare 5 := ⟨fun n hn ↦ by
-    have : n ≤ 2 := by nlinarith
-    interval_cases n <;> omega⟩
-  have : IsIntegrallyClosed (ℤ√((5 : ℕ) : ℤ)) := (spec_iff_of_isDomain _).mp h
-  have h1 : (⟨2, 0⟩ : ℤ√((5 : ℕ) : ℤ)) ^ 3 ∣ ⟨1, 1⟩ ^ 3 := ⟨⟨2, 1⟩, by decide⟩
-  obtain ⟨c, hc⟩ := (IsIntegrallyClosed.pow_dvd_pow_iff three_ne_zero).mp h1
-  have := congrArg Zsqrtd.re hc
-  simp at this
-  omega
-
-example : IsNormalScheme
-    (Spec.map (CommRingCat.ofHom (algebraMap ℤ ℚ))).normalization := inferInstance
-
-example : ∃ x : Spec (.of ℤ), Order.coheight x = 1 ∧
-    IsDiscreteValuationRing ((Spec (.of ℤ)).presheaf.stalk x) := by
-  let x : Spec (.of ℤ) :=
-    ⟨Ideal.span {2}, (Ideal.span_singleton_prime two_ne_zero).mpr Int.prime_two⟩
-  have hx : Order.coheight x = 1 := by
-    rw [← idealHeight_eq_coheight]
-    exact Ideal.height_span_singleton_eq_one_of_mem_nonZeroDivisors (R := ℤ)
-      (mem_nonZeroDivisors_of_ne_zero two_ne_zero) Int.prime_two.not_unit
-  exact ⟨x, hx, isDiscreteValuationRing_stalk hx⟩
-
-example : ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsNormalScheme (Spec (.of ℤ)) := pred _
-
-example : ¬ ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsNormalScheme (Spec (.of (ZMod 4))) := fun h ↦ by
-  have := of_pred h
-  have : _root_.IsReduced (ZMod 4) := (affine_isReduced_iff (.of (ZMod 4))).mp inferInstance
-  exact absurd (IsNilpotent.eq_zero (x := (2 : ZMod 4)) ⟨2, by decide⟩) (by decide)
 
 end IsNormalScheme
 

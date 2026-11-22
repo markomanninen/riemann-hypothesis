@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.D2Apply
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.D2Apply
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -36,7 +40,7 @@ theorem main : ∀ (R R' : Type) [CommRing R] [CommRing R'] [Algebra R R'] (C : 
         LinearEquiv.coe_coe, hE₁]
       funext T T' T'' φ ψ
       dsimp only
-      rw [d1_apply, d1_apply, map_add, map_sub, m.naturality])
+      rw [d1_apply, d1_apply, map_add (f := _), map_sub, m.naturality])
     exact LinearMap.congr_fun h x
 
 end GlobalTheory.CompanionTheory.CochainBC

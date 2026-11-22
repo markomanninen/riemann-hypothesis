@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.TestSideExplicitIdentification
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OneSidedLemma4OfAdmittedTheoremII
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.TestSideExplicitIdentification
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OneSidedLemma4OfAdmittedTheoremII
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.ConvexCones.VorFunValueLe
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HostGeneratorPowFourTraceNormModEight
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.ConvexCones.VorFunValueLe
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HostGeneratorPowFourTraceNormModEight
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -30,7 +34,7 @@ theorem exists_least_points {X : Type} [AddCommGroup X] {n : ℕ} (r : (Fin n �
   obtain ⟨d, rfl⟩ := hr x
   have h := hm y (a y + (((1 : ℕ) : ℤ) + 1) • d) (by rw [redV_add_smul, ha])
   have e : r (a y + (((1 : ℕ) : ℤ) + 1) • d) = r (a y) + (r d + r d) := by
-    rw [map_add, map_smul, show (((1 : ℕ) : ℤ) + 1) = 2 by norm_num, two_smul]
+    rw [map_add (f := _), map_smul, show (((1 : ℕ) : ℤ) + 1) = 2 by norm_num, two_smul]
   rw [e] at h
   simp only [toReal, LinearMap.compr₂_apply, Algebra.linearMap_apply, eq_intCast]
   exact_mod_cast h
@@ -39,7 +43,7 @@ theorem apply_eq_zero_of_self {X : Type} [AddCommGroup X] (β : LinearMap.BilinF
     (hβ : ∀ y, 0 ≤ β y y) {z : X} (hz : β z z = 0) (w : X) : β z w = 0 := by
   by_contra ht
   have h := hβ (w + (-(β w w + 1) * β z w) • z)
-  simp only [map_add, LinearMap.add_apply, map_smul, LinearMap.smul_apply, smul_eq_mul, hz, hs w z] at h
+  simp only [map_add (f := _), LinearMap.add_apply, map_smul, LinearMap.smul_apply, smul_eq_mul, hz, hs w z] at h
   have h1 : 1 ≤ β z w * β z w := mul_self_pos.2 ht
   have h2 := hβ w
   nlinarith
@@ -55,7 +59,7 @@ theorem eq_zero_of_covers {X : Type} [AddCommGroup X] (β : LinearMap.BilinForm 
       obtain ⟨i, x, rfl⟩ := hc z
       obtain ⟨m, hm⟩ := ih x w
       refine ⟨m, ?_⟩
-      simp only [map_add, LinearMap.add_apply, apply_eq_zero_of_self β hs hβ (h0 i) w, hm]
+      simp only [map_add (f := _), LinearMap.add_apply, apply_eq_zero_of_self β hs hβ (h0 i) w, hm]
       ring
   refine LinearMap.ext₂ fun z w => ?_
   refine Int.eq_zero_of_abs_lt_dvd (hdiv (β z w).natAbs z w) ?_

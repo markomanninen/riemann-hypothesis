@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.ContractionFirstOperatorAdjoint
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.ContractionFirstOperatorAdjoint
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ theorem dop_split (ε : Fin m → Bool) (c : ℝ) (a b : Fin m) {f g : PX m n} (
       simp only [Finset.sum_mul, Finset.mul_sum, smul_mul_assoc, mul_smul_comm, Finset.smul_sum, neg_mul, mul_neg,
         neg_smul, ← Finset.sum_neg_distrib, ← Finset.sum_add_distrib, ← Finset.sum_sub_distrib]
       refine Finset.sum_congr rfl fun i _ => ?_
-      rw [hL, map_add, hL2 _ f, hL2 _ g, partial_deriv_zero_second_family ε (k := (a, i, true)) (by simp [inF1, ha]) hg,
+      rw [hL, map_add (f := _), hL2 _ f, hL2 _ g, partial_deriv_zero_second_family ε (k := (a, i, true)) (by simp [inF1, ha]) hg,
         partial_deriv_zero_second_family ε (k := (b, i, false)) (by simp [inF1, hb]) hg]
       simp only [mul_zero, zero_add, add_zero, zero_mul, map_zero, smul_eq_C_mul]
       ring
@@ -84,7 +88,11 @@ theorem centre (ε : Fin m → Bool) (c : ℝ) (Λ : PX m n →ₗ[ℂ] ℂ) (h�
   have h0 := hΛ a a (monomial (s + u) 1)
   rw [hD, map_smul, smul_eq_mul] at h0
   refine (mul_eq_zero.mp h0).resolve_left ?_
-  simp only [rdeg, Finsupp.mapDomain_equiv_apply, pE_symm, pE_apply, Bool.not_not] at ha
+  have hm (k : Fin m × Fin n × Bool) : (u.mapDomain pE) k = u (pE.symm k) :=
+    Finsupp.mapDomain_equiv_apply u k
+  simp only [rdeg] at ha
+  simp only [hm] at ha
+  simp only [pE_symm, pE_apply, Bool.not_not] at ha
   rw [← ne_eq, sub_ne_zero]
   simp only [Finsupp.add_apply, Nat.cast_add, Finset.sum_add_distrib]
   cases hεa : ε a

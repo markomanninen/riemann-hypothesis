@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ManyEdges
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ManyEdges
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.FrameMatching.HeckeEigenvalueFiniteness.StrictCommon
+module
+
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.FrameMatching.HeckeEigenvalueFiniteness.StrictCommon
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem joins_fin (hSJ : StrictJoin)
 
 theorem same_of_strict (hSPr : StrictProd) (hII : IsoInv) (hAd : AdmProd)
     {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} (w : Pl E) (K : Subgroup (GLw n w))
-    (ho : IsOpen (K : Set (GLw n w))) (hle : K ≤ GlobalTheory.LFun.KGL w n) (D D' : Pre E n) (hs : Strict D D') :
+    (ho : IsOpen (K : Set (GLw n w))) (hle : K ≤ GlobalTheory.LFun.KGL w (n := n)) (D D' : Pre E n) (hs : Strict D D') :
     (∀ τ : SmIrr (GLw n w), GlobalTheory.SmGL.IsSubquotient τ.ρ (prodAt D w) ↔ GlobalTheory.SmGL.IsSubquotient τ.ρ (prodAt D' w)) ∧
       Module.finrank ℂ ↥(fixed (prodAt D w) K) = Module.finrank ℂ ↥(fixed (prodAt D' w) K) ∧
       FiniteDimensional ℂ ↥(fixed (prodAt D' w) K) := by

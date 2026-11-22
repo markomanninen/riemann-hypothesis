@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LamRange
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividingThetaConstantsGenerateIntegralTorsionLabStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaConstantsTorusTranslatesTwistedSumsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SurjectiveLabelHomLatticeModLevelThetaMemberStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsAdaptedBasisTestLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LamRange
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividingThetaConstantsGenerateIntegralTorsionLabStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaConstantsTorusTranslatesTwistedSumsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SurjectiveLabelHomLatticeModLevelThetaMemberStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsAdaptedBasisTestLattice
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg
@@ -211,7 +216,8 @@ theorem exists_classSum_fun : ∀ (g n : ℕ) (F : SFam g n (zetaAway n)) (W : M
         (fun a' mu ha' => by simp only [hwt]; rw [hdiff a' mu ha' τ τ.2])
     have hhe : h = ∑ τ : X₁.S.TT X₁.M z₁, ι₀ (u * (X₁.S.ζ ^ (X₁.S.r * X₁.S.N)) ^ (K a τ).val) * hτ τ := by
       apply X₁.M.stalkHom_injective z₁
-      rw [hh, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hh, map_sum]
       refine Finset.sum_congr rfl fun τ _ => ?_
       rw [(X₁.M.stalkHom z₁).map_mul, hι, hhτ']
     have hsum := sumI_sum (I := maximalIdeal V) Finset.univ
@@ -219,7 +225,8 @@ theorem exists_classSum_fun : ∀ (g n : ℕ) (F : SFam g n (zetaAway n)) (W : M
         (ev (ι₀ (X₁.S.ζ ^ (X₁.S.r * X₁.S.N))) ^ (wt τ mu).val * T mu c))
       (fun τ => ev (ι₀ (u * (X₁.S.ζ ^ (X₁.S.r * X₁.S.N)) ^ (K a τ).val)) • ev (hτ τ)) (fun τ _ => sumI_smul _ (hS τ))
     have hev : ∑ τ ∈ Finset.univ, ev (ι₀ (u * (X₁.S.ζ ^ (X₁.S.r * X₁.S.N)) ^ (K a τ).val)) • ev (hτ τ) = ev h := by
-      rw [hhe, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hhe, map_sum]
       exact Finset.sum_congr rfl fun τ _ => by simp only [smul_eq_mul, map_mul]
     rw [hev] at hsum
     set q := ev (ι₀ (X₁.S.ζ ^ (X₁.S.r * X₁.S.N))) with hq_def

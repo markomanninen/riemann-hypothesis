@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.NormalizedValuationMul
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveInstSt
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.NormalizedValuationMul
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveInstSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,7 +90,7 @@ theorem depthAtSec_of {G : GlobalFamilyData (xplus X E hM) ka wL wF} {la : Heigh
       exact le_add_of_nonneg_right (hnn k)
     | zero => rw [map_zero, E.vAt'_zero]; exact le_top
     | add x z _ _ hx hz =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact (le_min hx hz).trans (E.vAt'_add la _ _ _)
     | smul a x _ hx =>
       by_cases ha : ((a : 𝓞 B.KO) : B.KO) = 0

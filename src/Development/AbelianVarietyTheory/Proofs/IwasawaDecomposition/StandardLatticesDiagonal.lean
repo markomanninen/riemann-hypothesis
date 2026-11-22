@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksLemmas
-import Formalism.LocalToGlobal.IndefiniteReal.IsFDiagIffDiagonal
-import Formalism.LocalToGlobal.IndefiniteReal.FrameExistence.FramesExistOfDiagonalTypePlaces
-import Formalism.LocalToGlobal.IndefiniteReal.FrameExistence.NormalFrameClauses
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DiagSpacesOfOver
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksLemmas
+public import Formalism.LocalToGlobal.IndefiniteReal.IsFDiagIffDiagonal
+public import Formalism.LocalToGlobal.IndefiniteReal.FrameExistence.FramesExistOfDiagonalTypePlaces
+public import Formalism.LocalToGlobal.IndefiniteReal.FrameExistence.NormalFrameClauses
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DiagSpacesOfOver
+
+@[expose] public section
 
 noncomputable section
 
@@ -180,10 +184,10 @@ theorem hostHyp_of_gaps (D : D7) (h Δ : ℕ)
     have a3 : D.R.k - 1 - (D.R.k - 1) < D.R.m := by omega
     have hm : 0 < D.R.m := by omega
     have l1 : Formalism.L2.NTheta.lamAt (D.hc τ) (D.R.k - 2) = 0 := by
-      rw [Formalism.L2.NTheta.lamAt, dif_pos a1, eh, (hg _ τ).2.2 ⟨D.R.k - 2, a1⟩]
+      rw [Formalism.L2.NTheta.lamAt, dite_eq_left a1, eh, (hg _ τ).2.2 ⟨D.R.k - 2, a1⟩]
       simp
     have l2 : Formalism.L2.NTheta.lamAt (D.hc τ) (D.R.k - 1) = -(D.hc τ).b ⟨0, hm⟩ := by
-      rw [Formalism.L2.NTheta.lamAt, dif_neg a2, dif_pos a3]
+      rw [Formalism.L2.NTheta.lamAt, dite_eq_right a2, dite_eq_left a3]
       congr 2
       exact Fin.ext (by simp)
     rw [l1, l2, eh]
@@ -202,7 +206,7 @@ theorem hostHyp_of_gaps (D : D7) (h Δ : ℕ)
     linarith
   · rcases lt_trichotomy (n + 1) (D.R.k - 1) with c | c | c
     · have a1 : n < D.R.k - 1 := by omega
-      rw [Formalism.L2.NTheta.lamAt, Formalism.L2.NTheta.lamAt, dif_pos a1, dif_pos c, eh, (hg _ τ).2.2 ⟨n, a1⟩, (hg _ τ).2.2 ⟨n + 1, c⟩]
+      rw [Formalism.L2.NTheta.lamAt, Formalism.L2.NTheta.lamAt, dite_eq_left a1, dite_eq_left c, eh, (hg _ τ).2.2 ⟨n, a1⟩, (hg _ τ).2.2 ⟨n + 1, c⟩]
       have e : ((D.R.k - 2 - n : ℕ) : ℚ) = ((D.R.k - 2 - (n + 1) : ℕ) : ℚ) + 1 := by
         have : D.R.k - 2 - n = D.R.k - 2 - (n + 1) + 1 := by omega
         rw [this]; push_cast; ring
@@ -220,7 +224,7 @@ theorem hostHyp_of_gaps (D : D7) (h Δ : ℕ)
       have a4 : n - (D.R.k - 1) < D.R.m := by simp only [Ranks.r] at hn; omega
       have a5 : n + 1 - (D.R.k - 1) < D.R.m := by simp only [Ranks.r] at hn; omega
       have a6 : (n - (D.R.k - 1)) + 1 < D.R.m := by omega
-      rw [Formalism.L2.NTheta.lamAt, Formalism.L2.NTheta.lamAt, dif_neg a2, dif_neg a3, dif_pos a4, dif_pos a5, eh]
+      rw [Formalism.L2.NTheta.lamAt, Formalism.L2.NTheta.lamAt, dite_eq_right a2, dite_eq_right a3, dite_eq_left a4, dite_eq_left a5, eh]
       have := two D.u₀ τ ⟨n - (D.R.k - 1), a4⟩ a6
       have f : (⟨n + 1 - (D.R.k - 1), a5⟩ : Fin D.R.m) = ⟨n - (D.R.k - 1) + 1, a6⟩ := Fin.ext (by simp; omega)
       rw [f]
@@ -292,23 +296,6 @@ theorem hostHyp_frames_ev : Ev fun K => ∀ X : Stages, K.Over X.B.toPre →
     obtain ⟨d, -, h⟩ := hV.gram_eq X.toD7.host.F
     exact ⟨d, h⟩
   exact ⟨hyp, hF, fun i => ⟨fd _ (hWV i).1, fd _ (hWV i).2⟩, hP, hst, hstX, hVf, hXf⟩
-
-theorem frames_by_cases_stdW {D : D7} (hY : ∀ j, Formalism.IndefR.Seed.FrmC.StdLat (D.sp.Y j))
-    (hX : Formalism.IndefR.Seed.FrmC.StdLat D.sp.X') (hV : ∀ j, Formalism.IndefR.Seed.FrmC.StdLat (D.sp.V j))
-    (hW : ∀ i : Fin D.R.m, Formalism.IndefR.Seed.FrmC.StdLat (Wc D i)) (Pg : Finset (Formalism.L2.DIV.Pl D.host.E)) :
-    ∃ ΛY ΛW βY βW,
-      Formalism.IndefR.Seed.Frm.SDFrames ΛY (Formalism.IndefR.Seed.FrmP.coordL D.sp.X') (fun i => Formalism.IndefR.Seed.FrmP.coordL (Vc D i)) ΛW βY 1
-        (fun _ => 1) βW ∧
-        (Formalism.IndefR.Seed.Frm.FramesExistDiagonal D Pg → Formalism.IndefR.Seed.Frm.NormalFrameConditionsDiagonal Pg βY βW) := by
-  by_cases h : Formalism.IndefR.Seed.Frm.FramesExistDiagonal D Pg
-  · obtain ⟨ΛY, -, -, ΛW, βY, -, -, βW, ⟨h1, -, -, h4⟩, h2⟩ := h
-    exact ⟨ΛY, ΛW, βY, βW, ⟨h1, Formalism.IndefR.Seed.FrmP.isSDFrame_std _ hX 1,
-      fun i => Formalism.IndefR.Seed.FrmP.isSDFrame_std _ (hV _) 1, h4⟩, fun _ => h2⟩
-  · exact ⟨fun j => Formalism.IndefR.Seed.FrmP.coordL _, fun i => Formalism.IndefR.Seed.FrmP.coordL (Wc D i),
-      fun _ => 1, fun _ => 1,
-      ⟨fun j _ => Formalism.IndefR.Seed.FrmP.isSDFrame_std _ (hY _) _, Formalism.IndefR.Seed.FrmP.isSDFrame_std _ hX 1,
-        fun i => Formalism.IndefR.Seed.FrmP.isSDFrame_std _ (hV _) 1, fun i => Formalism.IndefR.Seed.FrmP.isSDFrame_std _ (hW i) 1⟩,
-      fun h' => absurd h' h⟩
 
 end GlobalTheory.Mem.HostFrames
 

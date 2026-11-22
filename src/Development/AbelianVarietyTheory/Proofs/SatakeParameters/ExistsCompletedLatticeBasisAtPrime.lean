@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
-import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
-import Formalism.LocalToGlobal.Columns.HeckeSp
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntegralTensorAdelesEqAdelicCompletionOne
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
+public import Formalism.LocalToGlobal.Columns.HeckeSp
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntegralTensorAdelesEqAdelicCompletionOne
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Formalism.L2.Theta Formalism.L2.NTheta Formalism.IndefR.Mult
 open scoped TensorProduct
@@ -26,14 +30,15 @@ theorem exists_gens {E : Type} [Field E] [NumberField E] (P : HeightOneSpectrum 
     IsLocalization.AtPrime.isDiscreteValuationRing_of_dedekind_domain (𝓞 E) P.ne_bot _
   have : IsFractionRing (locRing P) E := Localization.subalgebra.isFractionRing_ofField E _ _
   let M := Submodule.span (locRing P) (L : Set (Fin n → E))
-  have hM : Submodule.IsLattice E M := by
-    refine ⟨?_, ?_⟩
-    · obtain ⟨s, rfl⟩ := hfg
-      exact ⟨s, (Submodule.span_span_of_tower (𝓞 E) (locRing P) _).symm⟩
-    · rw [Submodule.span_span_of_tower, hsp]
+  have hM : Submodule.IsLattice E M := Submodule.IsLattice.of_fg E (by
+    obtain ⟨s, rfl⟩ := hfg
+    exact ⟨s, (Submodule.span_span_of_tower (𝓞 E) (locRing P) _).symm⟩)
+  have : Submodule.IsFullLattice E M :=
+    { hM with span_eq_top := by rw [Submodule.span_span_of_tower, hsp] }
+  have : Module.Finite (locRing P) M := Submodule.IsLattice.finite E M
   have : Module.Free (locRing P) M := Submodule.IsLattice.free E M
   have hr : Module.finrank (locRing P) M = n := by
-    simpa using Submodule.IsLattice.finrank_of_pi E M
+    simpa using ((Submodule.IsFullLattice.finrank_eq E M).trans (Module.finrank_fintype_fun_eq_card E))
   let b := Module.finBasisOfFinrankEq (locRing P) M hr
   refine ⟨fun i => b i, fun i => (b i).2, fun x hx => ?_⟩
   refine ⟨b.repr ⟨x, Submodule.subset_span hx⟩, fun a => ?_⟩
@@ -98,8 +103,8 @@ theorem idem_mul_span_mem {D : D7} (V : HSp D) {P : HeightOneSpectrum (𝓞 D.ho
     rw [mul_mul_mul_comm, hee, Algebra.TensorProduct.tmul_mul_tmul, one_mul]
     rfl
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_loc_basis : ∀ {D : D7} (V : HSp D) (P : HeightOneSpectrum (𝓞 D.host.E)) (e : Formalism.L2.Theta.AE D), IsIdemAt e P → ∃ B : Matrix (Fin V.rank) (Fin V.rank) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F ⊗[D.host.F] D.host.E), (∀ z, IntVec z → (fun a => finPart D e * B.mulVec z a) ∈ LamHat V) ∧ ∀ y ∈ LamHat V, ∃ z, IntVec z ∧ (fun a => finPart D e * y a) = fun a => finPart D e * B.mulVec z a := by
   intro D V P e h
   have hee : finPart D e * finPart D e = finPart D e := by rw [← RingHom.map_mul, h.1.1]
@@ -113,7 +118,7 @@ theorem exists_loc_basis : ∀ {D : D7} (V : HSp D) (P : HeightOneSpectrum (𝓞
       GlobalTheory.LatDual.smul_mem_lamHat V _ (hz i) _ (idem_mul_span_mem V h (hb i))
     convert this using 1
     funext a
-    simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, Finset.sum_apply, Finset.mul_sum]
+    simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, Finset.mul_sum, Finset.sum_apply]
     exact Finset.sum_congr rfl fun i _ => by ring
   · rw [GlobalTheory.LatDual.lamHat_eq_hat] at hy
     induction hy using AddSubgroup.closure_induction with

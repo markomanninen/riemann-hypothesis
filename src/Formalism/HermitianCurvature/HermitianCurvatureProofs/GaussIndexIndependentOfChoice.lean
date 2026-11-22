@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelQuotientFinite
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelNonzeroModulusDeterminantEq
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralLatticeRefinementIdentity
+module
+
+public import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelQuotientFinite
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelNonzeroModulusDeterminantEq
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralLatticeRefinementIdentity
+
+@[expose] public section
 
 noncomputable section
 
@@ -399,7 +403,7 @@ theorem main (hGM : GaussModulus) (hGI : GaussIndep) (hHD : HessDet) (hMM : ModM
     have hc := hex.choose_spec
     have hγa : γ a = intK R hex.choose.2 m (gaussF ψ hex.choose.1 (hessM m a)) / ((N a : ℝ) : ℂ) := by
       simp only [hγ]
-      rw [dif_pos hex]
+      rw [dite_eq_left hex]
     rw [hγa, div_mul_cancel₀ _ (hNC a)]
     exact hGI K R ψ hD hch m (hessM m a) (hessM_symm m a) (hdetU a) p.1 p.2 hex.choose.1
       hex.choose.2 hp.1 hp.2.1 hc.1 hc.2.1 hp.2.2.1 hp.2.2.2 hc.2.2.1 hc.2.2.2
@@ -424,7 +428,7 @@ theorem main (hGM : GaussModulus) (hGI : GaussIndep) (hHD : HessDet) (hMM : ModM
       rw [h1, hdetN a, norm_mul, Complex.norm_real, Real.norm_of_nonneg (hNpos a).le] at h2
       exact mul_right_cancel₀ (hNpos a).ne' (h2.trans (one_mul _).symm)
     · simp only [hγ]
-      rw [dif_neg hex, norm_one]
+      rw [dite_eq_right hex, norm_one]
   · intro a b
     have hNab : N (a * b ^ 2) = N a * modK R (b : K) ^ m := by
       simp only [hN]
@@ -454,7 +458,7 @@ theorem main (hGM : GaussModulus) (hGI : GaussIndep) (hHD : HessDet) (hMM : ModM
         rw [h2] at h1
         exact ⟨_, h1⟩
       simp only [hγ]
-      rw [dif_neg hex, dif_neg hex']
+      rw [dite_eq_right hex, dite_eq_right hex']
   · intro a L Λ hL hΛ hA hI
     exact key a (L, Λ) ⟨hL, hΛ, hA, hI⟩
 
@@ -660,8 +664,8 @@ open Matrix Formalism.DoubleCosetMeasures Formalism.FourierDecayAlt.A5 Formalism
 
 namespace Formalism.FourierDecayAlt.P.A6x7.Ind
 
-open Classical in
 
+open Classical in
 theorem finsum_zero_of_fibres {X Y : Type} (κ : X → Y) (g : X → ℂ)
     (hfin : (Function.support g).Finite)
     (h : ∀ c, ∑ᶠ x, (if κ x = c then g x else 0) = 0) : ∑ᶠ x, g x = 0 := by

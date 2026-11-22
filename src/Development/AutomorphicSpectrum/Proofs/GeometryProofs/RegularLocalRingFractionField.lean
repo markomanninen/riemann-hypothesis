@@ -1,4 +1,9 @@
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SpecStalkSpecializesComp
+module
+
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SpecStalkSpecializesComp
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.LieStalk

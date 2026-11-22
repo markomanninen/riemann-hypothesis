@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyIntersectionEqLineBundleIntersectiStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyAmpleClassCechPicardClassIffAmple
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyIsIntegralNoetherianCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopologicalKrullDimEqDim
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StrHomEqAndIsProjOver
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntersectionNumberGlobalSectionEqSumCycle
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntersectionNumberZeroSmallImage
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumMultResCycIndicatorSymm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DimClosureOfCoheightField
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.NefEffectiveCones.EventuallyEvalNegOfCoeffNeg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyIntersectionEqLineBundleIntersectiStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyAmpleClassCechPicardClassIffAmple
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyIsIntegralNoetherianCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopologicalKrullDimEqDim
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StrHomEqAndIsProjOver
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntersectionNumberGlobalSectionEqSumCycle
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntersectionNumberZeroSmallImage
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumMultResCycIndicatorSymm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DimClosureOfCoheightField
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.NefEffectiveCones.EventuallyEvalNegOfCoeffNeg
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -67,10 +72,10 @@ theorem interNumRed_pos {K : Type} [Field K] (A : AbVar K) (n : ℕ) (hdim : A.d
   letI := A.algΓ
   obtain ⟨hint, hnoeth, -⟩ := isIntegral_isLocallyNoetherian_compactSpace K A
   obtain ⟨hstr, hproj⟩ := AbVarProj.strHom_eq_and_isProjOver K A
-  have hp : IsProjOver (strHom K A.X.left) := hstr ▸ hproj
+  have hp : IsProjOver (strHom K (X := A.X.left)) := hstr ▸ hproj
   have hX : topologicalKrullDim A.X.left = ((n + 1 : ℕ) : WithBot ℕ∞) := by
     rw [topologicalKrullDim_eq_dim, hdim]
-  have : LocallyOfFiniteType (strHom K A.X.left) := by
+  have : LocallyOfFiniteType (strHom K (X := A.X.left)) := by
     obtain ⟨N, j, _, h⟩ := hp
     exact h ▸ inferInstance
   set C : Closeds A.X.left := ⟨closure {w}, isClosed_closure⟩ with hC
@@ -92,7 +97,7 @@ theorem inter_cons_pos : ∀ (K : Type) [Field K] (A : AbVar K) (n : ℕ), A.dim
   letI := A.algΓ
   obtain ⟨hint, hnoeth, hcpt⟩ := isIntegral_isLocallyNoetherian_compactSpace K A
   obtain ⟨hstr, hproj⟩ := AbVarProj.strHom_eq_and_isProjOver K A
-  have hp : IsProjOver (strHom K A.X.left) := hstr ▸ hproj
+  have hp : IsProjOver (strHom K (X := A.X.left)) := hstr ▸ hproj
   have hX : topologicalKrullDim A.X.left = ((n + 1 : ℕ) : WithBot ℕ∞) := by
     rw [topologicalKrullDim_eq_dim, hdim]
   have hcons : ∀ j, ((Fin.cons M (fun _ : Fin n => L) : Fin (n + 1) → LB A.X.left) j).IsLB :=

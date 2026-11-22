@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.FineJacquetModules.SegDefs
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SegmentRepresentation
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubsingletonJacquetOfPerm
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsInSupportOfMultiProd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JhMultSubAddQuot
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.FineJacquetModules.SegDefs
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SegmentRepresentation
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubsingletonJacquetOfPerm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsInSupportOfMultiProd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JhMultSubAddQuot
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,15 +90,15 @@ theorem jhMult_one (h : ∑ _ : Fin 1, n = n) (τ : Representation ℂ (GL (Fin 
       jhMult (lv τ) (lv π) := by
   rw [← jhMult_congr_left (piTensorEquiv τ), ← jhMult_congr_right _ (jacEquiv h π)]
 
-theorem jm_eq_one (x : IrrGL k) (π : Representation ℂ (GL (Fin x.1) k) V) (φ : π.Equiv x.rep)
-    (y : Fin 1 → IrrGL k) (hy : ∑ a, (y a).1 = x.1) (hyx : y = fun _ => x) : jm y hy π = 1 := by
+theorem jm_eq_one (x : IrrGL (k := k)) (π : Representation ℂ (GL (Fin x.1) k) V) (φ : π.Equiv x.rep)
+    (y : Fin 1 → IrrGL (k := k)) (hy : ∑ a, (y a).1 = x.1) (hyx : y = fun _ => x) : jm y hy π = 1 := by
   subst hyx
   refine (jhMult_one hy x.rep π).trans ?_
   rw [jhMult_congr_right _ (compEquiv φ (ev k x.1))]
   exact jhMult_self (isIrreducible_comp x.2.rep.irr)
 
-theorem eq_of_one_le_jm (x : IrrGL k) (π : Representation ℂ (GL (Fin x.1) k) V) (φ : π.Equiv x.rep)
-    (y : Fin 1 → IrrGL k) (hy : ∑ a, (y a).1 = x.1) (h : 1 ≤ jm y hy π) : y 0 = x := by
+theorem eq_of_one_le_jm (x : IrrGL (k := k)) (π : Representation ℂ (GL (Fin x.1) k) V) (φ : π.Equiv x.rep)
+    (y : Fin 1 → IrrGL (k := k)) (hy : ∑ a, (y a).1 = x.1) (h : 1 ≤ jm y hy π) : y 0 = x := by
   obtain ⟨z, rfl⟩ : ∃ z, y = fun _ => z := ⟨y 0, funext fun a => by rw [Subsingleton.elim a 0]⟩
   obtain ⟨d, c⟩ := z
   obtain ⟨m, b⟩ := x
@@ -109,12 +113,12 @@ theorem eq_of_one_le_jm (x : IrrGL k) (π : Representation ℂ (GL (Fin x.1) k) 
   have E' : c.rep.ρ.Equiv b.rep.ρ := (equivOfBijective f E.toLinearEquiv.bijective).symm.trans φ
   exact congrArg (Sigma.mk d) (irrCl_eq_iff.2 ⟨E'⟩)
 
-theorem dec_single (ρ : IrrGL k) (hρ : ρ.IsCusp) : dec (Segment.single ρ hρ) = fun _ => ρ := funext fun a => by
+theorem dec_single (ρ : IrrGL (k := k)) (hρ : ρ.IsCusp) : dec (Segment.single ρ hρ) = fun _ => ρ := funext fun a => by
   show ρ.nu (((Fin.rev (a : Fin 1) : Fin 1) : ℕ) : ℂ) = ρ
   simp [Fin.val_eq_zero]
 
 theorem not_one_le_jm {N c : ℕ} {π : Representation ℂ (GL (Fin N) k) V} (hπ : IsCuspidal π)
-    (y : Fin (c + 2) → IrrGL k) (hy : ∑ a, (y a).1 = N) (hc : ∀ a, (y a).IsCusp) : ¬ 1 ≤ jm y hy π := by
+    (y : Fin (c + 2) → IrrGL (k := k)) (hy : ∑ a, (y a).1 = N) (hc : ∀ a, (y a).IsCusp) : ¬ 1 ≤ jm y hy π := by
   intro h
   have hne : unipRad k (stdBlocks (fun a => (y a).1) hy) ≠ ⊥ := CuspMax.unipRad_ne_bot_iff.2
     ⟨stdBlocks (fun a => (y a).1) hy ⟨0, ⟨0, (hc 0).1⟩⟩, stdBlocks (fun a => (y a).1) hy ⟨1, ⟨0, (hc 1).1⟩⟩, by simp⟩
@@ -135,7 +139,7 @@ theorem fineJac_one (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (Δ : 
   refine ⟨fun hd => jm_eq_one ρ π φ _ hd (dec_single ρ hρ), fun c y hy hc h1 => ?_⟩
   rcases c with _ | _ | c
   · exact absurd hy (by simpa using hρ.1.ne)
-  · have key : ∀ (z : Fin 1 → IrrGL k) (hz : ∑ a, (z a).1 = ρ.1), 1 ≤ jm z hz π →
+  · have key : ∀ (z : Fin 1 → IrrGL (k := k)) (hz : ∑ a, (z a).1 = ρ.1), 1 ≤ jm z hz π →
         ∀ a, z a = ρ := fun z hz h1 a => by
       rw [Subsingleton.elim a 0]
       exact eq_of_one_le_jm ρ π φ z hz h1

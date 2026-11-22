@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SurjectiveOfIsPullbackSqZero
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsNoetherianRingDualNumber
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystallineCocycleFirstOrderTaylorSqZeroStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgHomLiftsSqZeroClassifiedByDifferentialsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SurjectiveOfIsPullbackSqZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsNoetherianRingDualNumber
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystallineCocycleFirstOrderTaylorSqZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgHomLiftsSqZeroClassifiedByDifferentialsStatement
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry KaehlerDifferential DividedPowers ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.DeRham GlobalTheory.SqLift GlobalTheory.LiftSys GlobalTheory.Published
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -34,7 +38,7 @@ theorem eq_of_sub_mem_map {R : Type} [CommRing R] {I : Ideal R} {A B : Type} [Co
     obtain ⟨r, -, rfl⟩ := hy
     rw [AlgHom.commutes, AlgHom.commutes]
   | zero => rw [map_zero, map_zero]
-  | add y y' _ _ h1 h2 => rw [map_add, map_add, h1, h2]
+  | add y y' _ _ h1 h2 => rw [map_add (f := _), map_add (f := _), h1, h2]
   | smul a y hy ih =>
     rw [smul_eq_mul, map_mul, map_mul, ← ih, ← sub_eq_zero, ← sub_mul]
     exact mul_eq_zero_of_mem_sqMap hJ (h a) (algHom_apply_mem_map f hy)
@@ -53,7 +57,7 @@ theorem locIso_transport : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀] (I :
     refine ⟨⟨fun U V a ↦ Φ.φ V (z.1 U V a), ?_⟩, fun U V a ↦ ?_, fun _ _ _ ↦ rfl⟩
     · intro U V W a b
       show Φ.φ W (z.1 U W (a ≫ b)) = mp S'.F b (Φ.φ V (z.1 U V a)) + Φ.φ W (z.1 V W b)
-      rw [Z1.comp z a b, map_add, hcomm V W b _ (hz U V a)]
+      rw [Z1.comp z a b, map_add (f := _), hcomm V W b _ (hz U V a)]
     · exact algHom_apply_mem_map (Φ.φ V : S.F.obj V →ₐ[R] S'.F.obj V) (hz U V a)
   have c2 : ∀ g : C0 S.F, S.IsIdealValuedLiftSystemCochain g → ∀ U V a,
       d0 S'.F (fun W ↦ Φ.φ W (g W)) U V a = Φ.φ V (d0 S.F g U V a) := by
@@ -111,9 +115,9 @@ theorem locIso_transport : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀] (I :
     refine ⟨z₁ + z₂, z₁' + z₂', fun U V a ↦ ?_, ?_, ?_, fun U V a ↦ ?_⟩
     · show z₁.1 U V a + z₂.1 U V a ∈ _
       exact Ideal.add_mem _ (h₁ U V a) (h₂ U V a)
-    · rw [map_add, map_add, hx₁, hy₂]
-    · rw [map_add, map_add, hx₁', hy₂']
+    · rw [map_add (f := _), map_add (f := _), hx₁, hy₂]
+    · rw [map_add (f := _), map_add (f := _), hx₁', hy₂']
     · show z₁'.1 U V a + z₂'.1 U V a = Φ.φ V (z₁.1 U V a + z₂.1 U V a)
-      rw [map_add, e₁, e₂]
+      rw [map_add (f := _), e₁, e₂]
 
 end GlobalTheory.LiftSys

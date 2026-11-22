@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTorsionFreePDThickeningFrameValuationIntegers
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocalizationAway
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowEqOfIntegers
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UpPull2Cob1
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NmulSucc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupDualTangentLinearKillsIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubstFormalGroupLawNatMultipleEqCoboundarySumStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapPowerSeriesFamilyToFractionsFormalGroupLawNatStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffSubstOfForallConstantCoeffZeroStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualBasisCoordMemMaximalIdealOfForallApplyStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsQuasiLogarithmBasisReductionThickeningStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuasiLogarithmTangentVectorsBasisDualLieStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTorsionFreePDThickeningFrameValuationIntegers
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocalizationAway
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowEqOfIntegers
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UpPull2Cob1
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NmulSucc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupDualTangentLinearKillsIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubstFormalGroupLawNatMultipleEqCoboundarySumStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapPowerSeriesFamilyToFractionsFormalGroupLawNatStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffSubstOfForallConstantCoeffZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualBasisCoordMemMaximalIdealOfForallApplyStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsQuasiLogarithmBasisReductionThickeningStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuasiLogarithmTangentVectorsBasisDualLieStatement
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
 set_option autoImplicit false
@@ -124,11 +129,11 @@ theorem QL_comb' (O E : Type) [CommRing O] [CommRing E] [Algebra O E] (d : ℕ)
     obtain ⟨y, -, hy⟩ := hg.2.1 i
     refine ⟨x + a * y, trivial, ?_⟩
     simp only [lin] at hx hy ⊢
-    rw [map_add, coeff_smul, hx, hy, map_add, map_mul]
+    rw [map_add (f := _), coeff_smul, hx, hy, map_add (f := _), map_mul]
   · obtain ⟨x, -, hx⟩ := hf.2.2 α
     obtain ⟨y, -, hy⟩ := hg.2.2 α
     refine ⟨x + a * y, trivial, ?_⟩
-    rw [formalCoboundary_add hμE, formalCoboundary_smul hμE, map_add, coeff_smul, hx, hy, map_add, map_mul]
+    rw [formalCoboundary_add hμE, formalCoboundary_smul hμE, map_add (f := _), coeff_smul, hx, hy, map_add (f := _), map_mul]
 
 theorem isLie_comb (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C]
     (v : Valuation C NNReal) (O : Type) [CommRing O] [Algebra O C] [Fact ¬IsUnit (p : O)]
@@ -230,7 +235,8 @@ theorem defect_level_one_nonunit : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Fiel
       AddMonoidHom.mk' (cob1 (up C c.μ)) (formalCoboundary_add hμC)
     change Φ (comb _ e') = 0
     unfold comb
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero fun l _ => ?_
     change cob1 (up C c.μ) _ = 0
     rw [formalCoboundary_smul hμC]
@@ -240,7 +246,8 @@ theorem defect_level_one_nonunit : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Fiel
   have hsplit : map Θ (comb w e) = comb (Sum.elim (fun i => F.θ (w (Sum.inl i))) 0) e' + f := by
     have h1 : map Θ (comb w e) = ∑ l, algebraMap O C (F.θ (w l)) • e' l := by
       unfold comb
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun l _ => ?_
       rw [map_smul', hΘ]
     rw [h1, hf]
@@ -254,7 +261,7 @@ theorem defect_level_one_nonunit : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Fiel
     intro w0
     obtain ⟨φ₀, hφ₀⟩ := AugCot.d_surjective _ (w0.1 1)
     set φ : CartierDual O (G.A 1) := φ₀ - algebraMap O _ (Coalgebra.counit (R := O) φ₀) with hφdef
-    have hφd : PDiv.dUnit O φ = w0.1 1 := by
+    have hφd : PDiv.dUnit (R := O) φ = w0.1 1 := by
       rw [hφdef, PDiv.dUnit, map_sub, AugCot.d_algebraMap, sub_zero]; exact hφ₀
     obtain ⟨q, hq⟩ := hfl.2 1 w0 φ (map F.θ a) hφd hs
     have hx := span_le_smul (G.A 1) (IsLocalRing.maximalIdeal O) {o | ¬IsUnit o}

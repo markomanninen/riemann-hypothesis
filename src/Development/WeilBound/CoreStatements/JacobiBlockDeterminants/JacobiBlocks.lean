@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.MultihomogeneousSquares.SingSt
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.MinorIJConjTranspose
+module
+
+public import Development.WeilBound.CoreStatements.MultihomogeneousSquares.SingSt
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.MinorIJConjTranspose
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem jacobi_lead {q : ℕ} (O : Matrix (Fin q) (Fin q) ℂ) (hO : O.PosDef) {
     O.det.re * leadMinor (revDual O) l = leadMinor O k := by
   subst e
   unfold leadMinor
-  rw [dif_pos (Nat.le_add_left l k), dif_pos (Nat.le_add_right k l), ← jacobi O hO.det_pos.ne',
+  rw [dite_eq_left (Nat.le_add_left l k), dite_eq_left (Nat.le_add_right k l), ← jacobi O hO.det_pos.ne',
     re_mul_pos hO.det_pos]
 
 theorem grN_rev {q : ℕ} (O : Matrix (Fin q) (Fin q) ℂ) (hO : O.PosDef) {k l : ℕ} (e : k + l + 1 = q) :
@@ -82,7 +86,7 @@ theorem minor_w (Γ : Matrix (Fin (p + q)) (Fin (p + q)) ℂ) (i : Fin (p + q)) 
     (minorIJ Γ (stepCols (p + q) p i) (stepCols (p + q) p i)).re = leadMinor (wBlock Γ) (i + 1) := by
   rw [minor_emb Γ _ (fun s => wEmb p q (Fin.castLE hi s)) (fun a b h => wEmb_strictMono p q h) fun a => ?_]
   · unfold leadMinor
-    rw [dif_pos hi]
+    rw [dite_eq_left hi]
     rfl
   · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_pos hi]
     constructor
@@ -98,7 +102,7 @@ theorem minor_om (Γ : Matrix (Fin (p + q)) (Fin (p + q)) ℂ) (i : Fin (p + q))
   have hq : (i : ℕ) + 1 - p ≤ q := by have := i.2; omega
   rw [minor_emb Γ _ (fun s => omEmb p q (Fin.castLE hq s)) (fun a b h => omEmb_strictMono p q h) fun a => ?_]
   · unfold leadMinor
-    rw [dif_pos hq]
+    rw [dite_eq_left hq]
     rfl
   · simp only [stepCols, Finset.mem_filter, Finset.mem_univ, true_and, if_neg hi]
     constructor

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechGluingOfKodairaSpencerRelation
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PreModelChartFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechGluingOfKodairaSpencerRelation
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PreModelChartFrame
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.LogKS Formalism.L2.Pj
@@ -17,21 +21,13 @@ end GlobalTheory.KSRechart
 
 namespace GlobalTheory.KSRechart
 
-open scoped Classical in
-
-noncomputable def corr {Z : Scheme.{0}} {n : ℕ} (δ : Fin n → ∀ O : Z.Opens, Γ(Z, O) → Γ(Z, O)) (W₂ : Z.Opens)
-    (θ : Matrix (Fin n) (Fin n) Γ(Z, W₂)) (u : Γ(Z, W₂)ˣ) : ∀ O : Z.Opens, Γ(Z, O) → Γ(Z, O) :=
-  fun O f => if h : O ≤ W₂ then
-    ∑ a, ∑ b, resG Z h (θ a b) *
-      (δ b O ((Semi.res h u : Γ(Z, O)ˣ) : Γ(Z, O)) * (((Semi.res h u)⁻¹ : Γ(Z, O)ˣ) : Γ(Z, O))) * δ a O f
-  else 0
 
 private theorem valR_comp_eq_valR_app' {A : Type} [CommRing A] {X Z : Scheme.{0}} (x : Sp A ⟶ Z) (m : Z ⟶ X)
     (U : X.Opens) (O : Z.Opens) (h : O ≤ m ⁻¹ᵁ U) (hO : ⊤ ≤ x ⁻¹ᵁ O) (r : Γ(X, U)) :
     valR x O ((m.appLE U O h).hom r) = valR (x ≫ m) U r := by
   have hU : ⊤ ≤ (x ≫ m) ⁻¹ᵁ U := fun p hp => h (hO hp)
   unfold valR
-  rw [dif_pos hO, dif_pos hU]
+  rw [dite_eq_left hO, dite_eq_left hU]
   congr 1
   show ((m.appLE U O h) ≫ x.appLE O ⊤ hO).hom r = _
   rw [Scheme.Hom.appLE_comp_appLE]

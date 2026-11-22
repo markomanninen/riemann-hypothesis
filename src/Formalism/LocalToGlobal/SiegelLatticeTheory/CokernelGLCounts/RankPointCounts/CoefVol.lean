@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CoefCut
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocUnramB
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CoefCut
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocUnramB
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ variable {D : Formalism.BasicNotions.D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP 
 def VolIdxProd : Prop :=
   (∀ p, Agree δ M p) → (D.mem u).A.T ≡ (D.mem u').A.T [MOD (Lat.gS D) ^ 2] → IsRowReps D F0 what₂ →
   ∀ (γ : TermDef.Term D u u' F0 what₂) (w : Point D.host.E (D.R.rS + 1))
-    (F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) (L U : PairVal.MatR D),
+    (F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)) (L U : PairVal.MatR D),
     EligAt γ w → PairVal.NormRep γ w F' L U →
       PairVal.volIdx D u u' F0 what₂ δ M γ w F' L =
         ((PairVal.orbT D u u' F0 what₂ γ (ZhatL (lf D F0) F')).ncard : ℝ) *
@@ -34,8 +38,8 @@ section Good
 variable {D : Formalism.BasicNotions.D7} {δ : ∀ p : PlF D, (D.s.atP p).Fp}
   {M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep}
 
-open Formalism.L2.SG.Pf.LocUnramB in
 
+open Formalism.L2.SG.Pf.LocUnramB in
 theorem wtL_good (T T' : ℕ) (w : Point D.host.E (D.R.rS + 1)) (p : PlF D) (hA : Agree δ M p)
     (hg : Good δ M w p) {Y : MatP D p} (hYi : IntP M p Y) (hYo : InOrbP δ T T' p w Y) :
     wtL M δ T T' p w Y = 1 := by
@@ -133,6 +137,7 @@ theorem volProd_of (hA : ∀ p, Agree δ M p)
     Complex.ofRealHom.toMonoidHom.map_finprod_of_injective Complex.ofReal_injective _
   rw [← hcast, hv, key, ← hw]
   simp only [yT, hz, Complex.ofReal_mul, Complex.ofReal_natCast]
+  rfl
 
 end Good
 

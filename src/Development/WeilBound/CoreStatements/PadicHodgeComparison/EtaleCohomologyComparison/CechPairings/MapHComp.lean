@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.CechAugRow
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.CechAugRow
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Opposite CrystallineSemistableComparison CrystallineSemistableComparison.CH
 universe w w' w'' t t' v u v' u' v'' u''
@@ -111,7 +116,7 @@ theorem CrystallineSemistableComparison.P.pow_upTo : ∀ {R : Type} [CommRing R]
       (fun r a ha x hx => by rw [mul_smul, ha x hx, smul_zero])
   have h3 : ∀ y, (∀ a ∈ I, ∃ x, f x = a ^ N • y) → ∀ s ∈ I, ∃ x, f x = s • y := fun y =>
     CrystallineSemistableComparison.P.pow_ideal I hI N (fun s => ∃ x, f x = s • y) ⟨0, by simp⟩
-      (fun a b ⟨x, hx⟩ ⟨x', hx'⟩ => ⟨x + x', by rw [map_add, hx, hx', add_smul]⟩)
+      (fun a b ⟨x, hx⟩ ⟨x', hx'⟩ => ⟨x + x', by rw [map_add (f := _), hx, hx', add_smul]⟩)
       (fun r a ⟨x, hx⟩ => ⟨r • x, by rw [map_smul, hx, mul_smul]⟩)
   have h2 : (∀ a ∈ I, SurjUpTo (a ^ N) f) → ∀ s ∈ I, SurjUpTo s f := fun h s hs y => h3 y (fun a ha => h a ha y) s hs
   exact ⟨h1, h2, fun h s hs => ⟨h1 (fun a ha => (h a ha).1) s hs, h2 (fun a ha => (h a ha).2) s hs⟩,

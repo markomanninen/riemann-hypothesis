@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.OpenCellDecomposition.OpenCellUnipotents.LevZZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistedJacquetTensorProductEquivStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.OpenCellDecomposition.OpenCellUnipotents.LevZZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistedJacquetTensorProductEquivStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,6 +84,7 @@ theorem piPair_levZ (A : Representation ℂ (GL (Fin r) k) V) (x : Representatio
         rw [Function.update_self]
         exact hx z (v 1)
     rw [hv, MultilinearMap.map_update_smul, Function.update_eq_self]
+    rfl
   rw [key]
   rfl
 

@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.MapEta
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.PlSub
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ProLUnits
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.ChEltOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DToDetCH
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.MapEta
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.PlSub
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ProLUnits
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.ChEltOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DToDetCH
+
+@[expose] public section
+
 open IsLocalRing Matrix Filter UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
 private theorem exists_prime_power_pow_eq_one (l n N : ℕ) {B E : Type} [CommRing B] [Ring E] [Algebra B E] (m : Ideal B)
@@ -78,7 +83,7 @@ private theorem chi_diag {n : ℕ} {k G : Type} [CommRing k] [Group G] (χ : Fin
       show diagonal (fun i => (χ i g : k)) = 1
       simp [h]
     ext1 a b
-    by_cases hab : a = b <;> simp [GDet.repAlg, e, hab, Matrix.one_apply]
+    by_cases hab : a = b <;> simp [GDet.repAlg, e, hab]
   rw [this, det_diagonal]
   simp
 
@@ -105,7 +110,7 @@ theorem UpperTheory.V.Pa.pl_chBar :
       isNormal' := MonoidHom.normal_ker f }
   refine (hf k).1 (pl_sub l G.Γ H G.η.ker G.η_open hH U (fun h hh => ?_) k hk)
   have hl : (l : B) ∈ maximalIdeal B := by
-    haveI := hO.char
+    have := hO.char
     rw [← res_eq_zero_iff O, map_natCast, CharP.cast_eq_zero]
   have hchi : (u.D.chi (MonoidAlgebra.single h 1)).map (res O B : B →+* ResidueField O) = (Polynomial.X - 1) ^ n := by
     rw [← ((UpperTheory.V.CA.d_gmap u.D).2.2.1 _ _).1, u.red, MonoidAlgebra.mapRingHom_single, map_one]

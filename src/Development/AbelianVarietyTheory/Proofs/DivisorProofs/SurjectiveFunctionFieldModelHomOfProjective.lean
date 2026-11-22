@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotSymEOfNe
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnifAlong
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotSymEOfNe
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnifAlong
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.ZH GlobalTheory.UMin GlobalTheory.SiegTh Classical
@@ -30,6 +35,3 @@ theorem surjective_of_isProjOver (o Ω : Type) [CommRing o] [Field Ω] [Algebra 
   exact ⟨y, hy⟩
 
 end GlobalTheory.ProjModelSurj
-
-example : ∀ (o Ω : Type) [CommRing o] [Field Ω] [Algebra o Ω] (X M : RatModel o Ω) (f : M.Z ⟶ X.Z),
-    X.IsHom M (AlgHom.id o Ω) f → IsProjOver M.s → Function.Surjective f := GlobalTheory.ProjModelSurj.surjective_of_isProjOver

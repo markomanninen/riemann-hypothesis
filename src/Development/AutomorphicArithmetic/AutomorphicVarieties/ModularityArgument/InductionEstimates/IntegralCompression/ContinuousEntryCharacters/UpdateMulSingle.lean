@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.LAbove
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.LongWeylSwapsBlockDiagonal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.LAbove
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.LongWeylSwapsBlockDiagonal
+
+@[expose] public section
 
 open MeasureTheory NumberField Filter Topology Matrix
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace GroundTheory.Automorphic.AutomorphicForm
@@ -82,7 +86,7 @@ private theorem fix_prod [μ.IsMulLeftInvariant] [μ.IsMulRightInvariant] {M : T
           · simp [hi]
         rw [Finset.prod_insert ha, e1, e2, Function.update_self]
         ring
-      · refine (continuous_finset_prod _ fun i _ => (ht i).comp (continuous_apply i)).mul
+      · refine (continuous_finsetProd _ fun i _ => (ht i).comp (continuous_apply i)).mul
           (hΨ.comp (continuous_const.mul (continuous_pi fun i => ?_)))
         split_ifs
         · exact hj.comp (continuous_apply i)
@@ -119,7 +123,7 @@ private theorem fix_slice [μ.IsMulLeftInvariant] (e : ι → G → ℂ) (he : �
   · apply integ_of_cont
     refine ((he i).cont.comp continuous_fst).mul (((he i).cont.comp
       (continuous_fst.inv.mul ((continuous_apply i).comp continuous_snd))).mul
-      ((continuous_finset_prod _ fun j _ => (he j).cont.comp ((continuous_apply j).comp continuous_snd)).mul
+      ((continuous_finsetProd _ fun j _ => (he j).cont.comp ((continuous_apply j).comp continuous_snd)).mul
         (hΦ.comp (continuous_const.mul continuous_snd))))
 
 private theorem aboveSlice {ι : Type} {j : U2 → U4} {n : ℕ} {q : ℤ} {Φ : (ι → U4) → ℂ} (c : ι) (k : ι → U4)
@@ -171,7 +175,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.EA.extPi :
     · subst hj; simp
     · simp [hj]
   have hidem : ∀ i, Idem μ (e i) := fun i => (hE i).idem
-  refine ⟨⟨continuous_finset_prod _ fun i _ => (hE i).idem.cont.comp (continuous_apply i), ?_, ?_⟩, ?_, ?_, ?_⟩
+  refine ⟨⟨continuous_finsetProd _ fun i _ => (hE i).idem.cont.comp (continuous_apply i), ?_, ?_⟩, ?_, ?_, ?_⟩
   · intro k
     simp only [Pi.inv_apply, (hE _).idem.star, map_prod]
   · intro k
@@ -223,7 +227,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.EA.extPi :
     funext k
     exact key Finset.univ k fun i hi => absurd (Finset.mem_univ i) hi
   · choose ψ hc hfix hval using fun i => (hE i).ex
-    refine ⟨fun k => ∏ i, ψ i (k i), continuous_finset_prod _ fun i _ => (hc i).comp (continuous_apply i), ?_, ?_⟩
+    refine ⟨fun k => ∏ i, ψ i (k i), continuous_finsetProd _ fun i _ => (hc i).comp (continuous_apply i), ?_, ?_⟩
     · intro g
       have h1 : ∀ k : ι → U4, (∏ i, e i (k i)) * ∏ i, ψ i ((g * k) i) = ∏ i, e i (k i) * ψ i (g i * k i) := by
         intro k

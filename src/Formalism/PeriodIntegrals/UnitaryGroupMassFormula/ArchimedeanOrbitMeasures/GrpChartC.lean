@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.GrpTube
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.GrpTube
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,8 +76,8 @@ theorem tubeChart_of (μ : Measure G) [μ.IsHaarMeasure] (H : Subgroup G) (hH : 
       prod_mono (ball_subset_ball hρr) (ball_subset_ball hsr)
     have hc : ContinuousOn (fun p : EuclideanSpace ℝ ι × EuclideanSpace ℝ η => κ p.1 * (χ p.2 : G))
         (ball 0 ρ ×ˢ ball 0 s) :=
-      (hκc.comp continuousOn_fst fun p hp => ball_subset_ball hρr hp.1).mul
-        (continuous_subtype_val.comp_continuousOn (hχc.comp continuousOn_snd fun p hp => ball_subset_ball hsr hp.2))
+      (hκc.comp continuousOn_fst fun p (hp : p ∈ ball 0 ρ ×ˢ _) => ball_subset_ball hρr hp.1).mul
+        (continuous_subtype_val.comp_continuousOn (hχc.comp continuousOn_snd fun p (hp : p ∈ _ ×ˢ ball 0 s) => ball_subset_ball hsr hp.2))
     exact (measurableSet_ball.prod measurableSet_ball).image_of_continuousOn_injOn hc (hΦinj.mono hsub)
   · intro ρ hρ hρr
     have : PolishSpace (H : Set G) := hH.polishSpace
@@ -88,7 +92,7 @@ theorem tubeChart_of (μ : Measure G) [μ.IsHaarMeasure] (H : Subgroup G) (hH : 
         exact ⟨κ x, ⟨x, hx, rfl⟩, h, mem_univ _, rfl⟩
     rw [e1]
     have hc : ContinuousOn (fun p : EuclideanSpace ℝ ι × H => κ p.1 * (p.2 : G)) (ball 0 ρ ×ˢ univ) :=
-      (hκc.comp continuousOn_fst fun p hp => ball_subset_ball hρr hp.1).mul
+      (hκc.comp continuousOn_fst fun p (hp : p ∈ ball 0 ρ ×ˢ _) => ball_subset_ball hρr hp.1).mul
         (continuous_subtype_val.comp continuous_snd).continuousOn
     have hi : InjOn (fun p : EuclideanSpace ℝ ι × H => κ p.1 * (p.2 : G)) (ball 0 ρ ×ˢ univ) := by
       intro p hp q hq he

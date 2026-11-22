@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Qf17.heckePol :
     {A : Type} → [inst : CommRing A] → ℕ → ℕ → (ℕ → A) → Polynomial A :=
@@ -12,7 +16,8 @@ theorem UpperTheory.Reformulated.B.Qf17.hecke_map :
       Polynomial.map f (UpperTheory.Reformulated.B.Qf17.heckePol n q a) = UpperTheory.Reformulated.B.Qf17.heckePol n q fun (j : ℕ) ↦ (f : A → B) (a j) := by
   intro A B _ _ f n q a
   unfold UpperTheory.Reformulated.B.Qf17.heckePol
-  rw [Polynomial.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Polynomial.map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [Polynomial.map_mul, Polynomial.map_pow, Polynomial.map_X, Polynomial.map_C,
     map_mul f, map_mul f, map_pow f, map_pow f, map_neg f, map_one f, map_natCast f]

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.DualIsConjByOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.DualIsConjByOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,23 +34,23 @@ theorem map_unip {r : ℕ} (c : R →+* R) (x : BlockIx a r → R) :
   ext i j
   change c ((1 + nilM x : Matrix (Fin a) (Fin a) R) i j) =
     (1 + nilM fun p => c (x p) : Matrix (Fin a) (Fin a) R) i j
-  simp only [nilM, Matrix.add_apply, Matrix.of_apply, Matrix.one_apply, map_add]
+  simp only [nilM, Matrix.add_apply, Matrix.of_apply, Matrix.one_apply, map_add (f := _)]
   split_ifs <;> simp
 
 end Ring
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {a : ℕ}
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 def barL : Lie E a →L[ℝ] Lie E a :=
   LinearMap.toContinuousLinearMap
     { toFun := fun X i j => star (X i j)
       map_add' := fun X Y => by funext i j; simp
       map_smul' := fun t X => by funext i j; simp }
 
-variable (E a) in
 
+variable (E a) in
 def barA : GA E a →* GA E a := GeneralLinearGroup.map (conjAd E)
 
 theorem barA_barA (g : GA E a) : barA E a (barA E a g) = g := by
@@ -79,8 +83,8 @@ theorem bar_mem_Sm {φ : GA E a → ℂ} (hφ : φ ∈ Sm E a) : (fun g => φ (b
   ((hφ (barA E a g)).comp (barL (E := E) (a := a)).contDiff.contDiffOn
     fun _ hx => (chart_bar φ g hx).2).congr fun _ hx => (chart_bar φ g hx).1
 
-variable (E a) in
 
+variable (E a) in
 def pull : Sm E a ≃ₗ[ℂ] Sm E a where
   toFun φ := ⟨fun g => φ.1 (barA E a g), bar_mem_Sm φ.2⟩
   invFun φ := ⟨fun g => φ.1 (barA E a g), bar_mem_Sm φ.2⟩
@@ -174,8 +178,8 @@ theorem Zalg_pull {z : Module.End ℂ (Sm E a)} (hz : z ∈ Zalg E a) :
     obtain ⟨y', h3, h4⟩ := hy
     exact ⟨x' * y', mul_mem h1 h3, fun φ => by simp [h2, h4]⟩
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem height_bar (y : GL (Fin a) (Cinf E)) :
     height (GeneralLinearGroup.map (starRingEnd (Cinf E)) y) = height y := by
   have h1 : ∀ y : GL (Fin a) (Cinf E), ‖toL (GeneralLinearGroup.map (starRingEnd (Cinf E)) y).val‖ = ‖toL y.val‖ :=
@@ -183,26 +187,30 @@ theorem height_bar (y : GL (Fin a) (Cinf E)) :
   unfold height
   rw [← map_inv, h1, h1]
 
-theorem isAutForm_pull {φ : Sm E a} (h : IsAutForm φ) : IsAutForm (pull E a φ) where
-  left γ g := by rw [pull_apply, map_mul, barA_ratGL, h.left, pull_apply]
-  level := by
+theorem isAutForm_pull {φ : Sm E a} (h : IsAutForm φ) : IsAutForm (pull E a φ) := by
+  constructor
+  case left =>
+    intro γ g
+    rw [pull_apply, map_mul, barA_ratGL, h.left, pull_apply]
+  case level =>
     convert h.level.preimage (continuous_mapGL (cFin E) (continuous_conjFin _)) using 1
     ext k
     exact (Eq.congr_left (act_pull (.fin k) φ)).trans (pull E a).injective.eq_iff
-  kfin := by
+  case kfin =>
     have := h.kfin
     refine Submodule.finiteDimensional_of_le (S₂ := (Submodule.span ℂ (Set.range fun k => cptRep E a k φ)).map
       (pull E a).toLinearMap) (Submodule.span_le.2 ?_)
     rintro _ ⟨k, rfl⟩
     exact ⟨_, Submodule.subset_span ⟨_, rfl⟩, (act_pull (.cpt k) φ).symm⟩
-  zfin := by
+  case zfin =>
     have := h.zfin
     refine Submodule.finiteDimensional_of_le (S₂ := (Submodule.span ℂ ((fun z : Module.End ℂ (Sm E a) => z φ) ''
       Zalg E a)).map (pull E a).toLinearMap) (Submodule.span_le.2 ?_)
     rintro _ ⟨z, hz, rfl⟩
     obtain ⟨z', h1, h2⟩ := Zalg_pull hz
     exact ⟨_, Submodule.subset_span ⟨z', h1, rfl⟩, (h2 φ).symm⟩
-  growth g := by
+  case growth =>
+    intro g
     obtain ⟨C, N, h1⟩ := h.growth (barA E a g)
     refine ⟨C, N, fun y => ?_⟩
     rw [pull_apply, map_mul, barA_infGL, ← height_bar]
@@ -213,8 +221,8 @@ theorem bar_mem_ratN {r : ℕ} {x : BlockIx a r → Ad E} (hx : x ∈ ratN E a r
   obtain ⟨y, rfl⟩ := hx
   exact ⟨fun p => IsCMField.complexConj E (y p), funext fun p => (conjAd_algebraMap (y p)).symm⟩
 
-open MeasureTheory in
 
+open MeasureTheory in
 theorem isCuspidal_pull {φ : GA E a → ℂ} (hφ : IsCuspidal φ) : IsCuspidal fun g => φ (barA E a g) := by
   intro r h0 h1 _ _ μ 𝓕 hμ hF g
   let β : (BlockIx a r → Ad E) ≃ₜ+ (BlockIx a r → Ad E) :=
@@ -234,7 +242,7 @@ theorem isCuspidal_pull {φ : GA E a → ℂ} (hφ : IsCuspidal φ) : IsCuspidal
   have h2 := hφ r h0 h1 (μ.map m) (m '' 𝓕) (β.isAddHaarMeasure_map μ)
     (hF.image_of_equiv m.toEquiv (MeasurePreserving.symm m ⟨m.measurable, rfl⟩).quasiMeasurePreserving e fun y x => by
       change β (β.symm y + x) = y + β x
-      rw [map_add, β.apply_symm_apply]) (barA E a g)
+      rw [map_add (f := _), β.apply_symm_apply]) (barA E a g)
   rw [m.measurableEmbedding.setIntegral_map, m.injective.preimage_image] at h2
   rw [← h2]
   congr 1
@@ -242,23 +250,6 @@ theorem isCuspidal_pull {φ : GA E a → ℂ} (hφ : IsCuspidal φ) : IsCuspidal
   beta_reduce
   rw [map_mul, barA, map_unip]
   rfl
-
-def barSub (π : CuspSub E a) : CuspSub E a where
-  V := π.V.map (pull E a).toLinearMap
-  cusp := by rintro _ ⟨φ, hφ, rfl⟩; exact ⟨isAutForm_pull (π.cusp φ hφ).1, isCuspidal_pull (π.cusp φ hφ).2⟩
-  stable := by
-    rintro o _ ⟨φ, hφ, rfl⟩
-    exact ⟨_, π.stable _ φ hφ, (act_pull o φ).symm⟩
-  ne_bot h := π.ne_bot ((Submodule.map_eq_bot_iff (e := pull E a)).1 h)
-  irred W hW hs := by
-    have h := π.irred (W.comap (pull E a).toLinearMap) (fun φ hφ => by
-      obtain ⟨ψ, h1, h2⟩ := hW hφ
-      rwa [← (pull E a).injective h2]) fun o φ hφ => by
-      change pull E a (act o φ) ∈ W
-      rw [pull_act]
-      exact hs _ _ hφ
-    have e := Submodule.map_comap_eq_of_surjective (f := (pull E a).toLinearMap) (pull E a).surjective W
-    exact h.imp (fun h => by rw [← e, h, Submodule.map_bot]) fun h => by rw [← e, h]
 
 end GlobalTheory.BarPull
 

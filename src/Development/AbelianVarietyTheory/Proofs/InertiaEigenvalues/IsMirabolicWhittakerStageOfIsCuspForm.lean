@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnipotentBlockColumnIndex
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfIsOpenStab
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFundamentalDomainMassOneCocompactLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SetIntegralFundamentalDomainEqMassMulAverageStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuotientAverageMapLatticeEquivStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnipotentBlockColumnIndex
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfIsOpenStab
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFundamentalDomainMassOneCocompactLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SetIntegralFundamentalDomainEqMassMulAverageStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuotientAverageMapLatticeEquivStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,7 +66,7 @@ theorem blkIxHomeo_mem (r : ℕ) (x : BlockIx a r → Ad E) :
   · rintro ⟨c, rfl⟩
     exact ⟨fun t => c (blkIxEquiv r t), rfl⟩
 
-theorem good_of_isCuspForm : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ)
+theorem good_of_isCuspForm : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ)
     (ψ : AddChar (Ad E) ℂ) (φ : Sm E a), IsCuspForm φ → Good ψ (a - 1) φ.1 := by
   intro E _ _ _ a ψ φ h
   have hcont : Continuous φ.1 := ContAut.continuous_of_isOpen_stab E a φ h.1.level
@@ -80,7 +84,7 @@ theorem good_of_isCuspForm : ∀ (E : Type) [Field E] [NumberField E] [IsTotally
     have hper := per_blk (E := E) (r := r) (m := a - 1) hcont (fun c g => h.1.left _ g) g
     have hper2 : Per (ratN E a r) (fun x => φ.1 (blkU (blkIxHomeo r x) * g)) :=
       ⟨hper.1.comp (blkIxHomeo r).continuous, fun γ hγ x => by
-        simp only [map_add]
+        simp only [map_add (f := _)]
         exact hper.2 _ ((blkIxHomeo_mem r γ).2 hγ) _⟩
     have key := GlobalTheory.T.quotientAverage_map_lattice_equiv _ _ (ratN E a r) (ratV E _) (isCoLat_ratV E (BlockIx a r))
       (isCoLat_ratV E _) (blkIxHomeo r) (blkIxHomeo_mem r) _ hper

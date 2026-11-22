@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.E5
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTraceFiniteEtaleGaloisCoverLadicStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsStrictlySemistableAlt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTraceFiniteEtaleGaloisCoverLadicStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 
 namespace GlobalTheory
@@ -28,7 +33,7 @@ theorem pullHQ_galoisCover_inv : ∀ (l : ℕ) [Fact l.Prime] {Y X : Scheme.{0}}
     | tmul r m =>
       rw [hF, pullHQ, hT, LinearMap.baseChange_tmul, LinearMap.baseChange_tmul, h1, Nat.cast_smul_eq_nsmul]
       exact TensorProduct.tmul_smul _ _ _
-    | add x y hx hy => rw [map_add, map_add, hx, hy, smul_add]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, smul_add]
   have key2 : ∀ y, F (T y) = ∑ g, pullHQ l (sch.map (a g)) n i y := by
     intro y
     induction y using TensorProduct.induction_on with
@@ -36,7 +41,7 @@ theorem pullHQ_galoisCover_inv : ∀ (l : ℕ) [Fact l.Prime] {Y X : Scheme.{0}}
     | tmul r m =>
       rw [hF, pullHQ, hT, LinearMap.baseChange_tmul, LinearMap.baseChange_tmul, h2, TensorProduct.tmul_sum]
       simp only [pullHQ, LinearMap.baseChange_tmul]
-    | add x y hx hy => rw [map_add, map_add, hx, hy, ← Finset.sum_add_distrib]; simp only [map_add]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, ← Finset.sum_add_distrib]; simp only [map_add (f := _)]
   have comp : ∀ g, (pullHQ l (sch.map (a g)) n i).comp F = F := by
     intro g
     rw [hF, ← pqc, ha g]

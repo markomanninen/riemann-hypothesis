@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL6.ValuationDetBasisChange
-import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.PowSmulLatticeLeWeightLatticeTop
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.ValuationDetBasisChange
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.PowSmulLatticeLeWeightLatticeTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -111,7 +115,8 @@ theorem det_basis_change_mem_prime_zero (Tt : Forms0 D u) (w : D.what₂.places.
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [Algebra.smul_def]; rfl
     have := congrArg (fun y => (D.fm u).fv i v c (P.pr v c y)) hz
-    simp only [P.pr_smul, map_smul, map_sum, smul_eq_mul] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [P.pr_smul, map_smul, map_sum, smul_eq_mul] at this
     exact this
 
   have hφ : φ ≠ 0 := by

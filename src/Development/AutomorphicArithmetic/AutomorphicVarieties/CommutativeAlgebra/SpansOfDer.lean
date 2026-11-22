@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -79,12 +83,12 @@ theorem UpperTheory.V.Alg.spans_of_der :
     show (satSq x).mkQ (GradedAlgebra.proj 𝒜 j (r (f * g))) =
       x f • (satSq x).mkQ (GradedAlgebra.proj 𝒜 j (r g)) + x g • (satSq x).mkQ (GradedAlgebra.proj 𝒜 j (r f))
     rw [e]
-    simp only [map_add, map_smul, hz, zero_add]
+    simp only [map_add (f := _), map_smul, hz, zero_add]
   let T' : A →ₗ[O] cotLat x 𝒜 j := T.codRestrict _ hTL
   have hD0 : φ ∘ₗ T' = 0 := by
     refine hD _ (fun f g => ?_) (fun i hi f hf => ?_) (fun i => ?_)
     · have : T' (f * g) = x f • T' g + x g • T' f := Subtype.ext (hTm f g)
-      simp only [LinearMap.comp_apply, this, map_add, map_smul]
+      simp only [LinearMap.comp_apply, this, map_add (f := _), map_smul]
     · have : T' f = 0 := Subtype.ext (hTi i hi f hf)
       simp only [LinearMap.comp_apply, this, map_zero]
     · refine hφS _ ?_

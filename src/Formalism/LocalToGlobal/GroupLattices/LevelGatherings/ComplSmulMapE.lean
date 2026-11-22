@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.IdemMulCompl
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.IdemMulCompl
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,8 @@ variable (F : Type) [Field F] [NumberField F]
 theorem adele_ext {x y : FiniteAdeleRing (𝓞 F) F} (h : ∀ v, evalV F v x = evalV F v y) : x = y := by
   exact Subtype.ext (funext fun v => h v)
 
-open Classical in
 
+open Classical in
 def sglFun (w : HeightOneSpectrum (𝓞 F)) (a : w.adicCompletion F) : FiniteAdeleRing (𝓞 F) F :=
   ⟨Pi.single w a, by
     refine Filter.eventually_cofinite.2 ((Set.finite_singleton w).subset ?_)
@@ -42,7 +46,7 @@ def sgl (w : HeightOneSpectrum (𝓞 F)) : w.adicCompletion F →ₗ[F] FiniteAd
   map_add' a b := by
     apply adele_ext
     intro v
-    rw [map_add]
+    rw [map_add (f := _)]
     by_cases h : v = w
     · subst h; simp only [sgl_same]
     · simp only [sgl_ne F w _ h, add_zero]
@@ -83,28 +87,28 @@ theorem iE_mul (w : HeightOneSpectrum (𝓞 F)) (x y : E ⊗[F] w.adicCompletion
     induction y using TensorProduct.induction_on with
     | zero => simp only [mul_zero, map_zero]
     | tmul e' b => simp only [Algebra.TensorProduct.tmul_mul_tmul, iE_tmul, sgl_mul]
-    | add y y' hy hy' => simp only [mul_add, map_add, hy, hy']
-  | add x x' hx hx' => simp only [add_mul, map_add, hx, hx']
+    | add y y' hy hy' => simp only [mul_add, map_add (f := _), hy, hy']
+  | add x x' hx hx' => simp only [add_mul, map_add (f := _), hx, hx']
 
 theorem prV_iE_same (w : HeightOneSpectrum (𝓞 F)) (x : E ⊗[F] w.adicCompletion F) : prV (E := E) w (iE F E w x) = x := by
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul e a => simp [prV, iE_tmul, sgl_apply_same]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem prV_iE_ne (w : HeightOneSpectrum (𝓞 F)) (x : E ⊗[F] w.adicCompletion F) {v : HeightOneSpectrum (𝓞 F)} (h : v ≠ w) :
     prV (E := E) v (iE F E w x) = 0 := by
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul e a => simp [prV, iE_tmul, sgl_apply_ne F w a h]
-  | add x y hx hy => simp only [map_add, hx, hy, add_zero]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, add_zero]
 
 theorem sig_iE (σE : E →ₐ[F] E) (w : HeightOneSpectrum (𝓞 F)) (x : E ⊗[F] w.adicCompletion F) :
     sigR σE (FiniteAdeleRing (𝓞 F) F) (iE F E w x) = iE F E w (sigR σE (w.adicCompletion F) x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul e a => simp [sigR, iE_tmul]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 def epsW (w : HeightOneSpectrum (𝓞 F)) : E ⊗[F] FiniteAdeleRing (𝓞 F) F := iE F E w 1
 
@@ -136,7 +140,8 @@ def mapE (X : Matrix n n (E ⊗[F] w.adicCompletion F)) : Matrix n n (E ⊗[F] F
 theorem mapE_mul (X Y : Matrix n n (E ⊗[F] w.adicCompletion F)) :
     mapE F E w (X * Y) = mapE F E w X * mapE F E w Y := by
   ext i j
-  simp only [mapE, Matrix.map_apply, Matrix.mul_apply, map_sum, iE_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mapE, Matrix.map_apply, Matrix.mul_apply, map_sum, iE_mul]
 
 theorem eps_smul_mapE (X : Matrix n n (E ⊗[F] w.adicCompletion F)) : epsW F E w • mapE F E w X = mapE F E w X := by
   ext i j
@@ -188,42 +193,6 @@ theorem bc_sec_ne (X : GL n (E ⊗[F] w.adicCompletion F)) {v : HeightOneSpectru
   simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, mapE,
     map_add, map_mul, map_sub, map_one, prV_epsW_ne F E w h, prV_iE_ne F E w _ h, sub_zero, one_mul, add_zero]
   by_cases hij : i = j <;> simp [hij, Matrix.one_apply]
-
-private theorem cT_sec_lemma (σE : E →ₐ[F] E) (X : Matrix n n (E ⊗[F] w.adicCompletion F)) :
-    cT (sigR σE (FiniteAdeleRing (𝓞 F) F)) ((1 - epsW F E w) • (1 : Matrix n n (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) +
-      mapE F E w X) = (1 - epsW F E w) • 1 + mapE F E w (cT (sigR σE (w.adicCompletion F)) X) := by
-  have hε : sigR σE (FiniteAdeleRing (𝓞 F) F) (epsW F E w) = epsW F E w := by
-    rw [epsW, sig_iE, map_one]
-  ext i j
-  simp only [cT, Matrix.transpose_apply, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, mapE,
-    map_add, map_mul, map_sub, map_one, hε, sig_iE]
-  by_cases hij : i = j
-  · subst hij; simp
-  · simp [Matrix.one_apply_ne hij, Matrix.one_apply_ne (Ne.symm hij)]
-
-private theorem epsJ_lemma_4 (J : Matrix n n E) :
-    epsW F E w • J.map (inclE (F := F) (FiniteAdeleRing (𝓞 F) F)) =
-      mapE F E w (J.map (inclE (F := F) (w.adicCompletion F))) := by
-  ext i j
-  simp only [Matrix.smul_apply, smul_eq_mul, Matrix.map_apply, mapE, epsW_mul_incl]
-
-private theorem triple_lemma_2 (Y X Jw : Matrix n n (E ⊗[F] w.adicCompletion F))
-    (J' : Matrix n n (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) (hJ : epsW F E w • J' = mapE F E w Jw) :
-    ((1 - epsW F E w) • 1 + mapE F E w Y) * J' * ((1 - epsW F E w) • 1 + mapE F E w X) =
-      (1 - epsW F E w) • J' + mapE F E w (Y * Jw * X) := by
-  have h2 : ∀ (Z : Matrix n n (E ⊗[F] w.adicCompletion F)) (M : Matrix n n (E ⊗[F] FiniteAdeleRing (𝓞 F) F)),
-      (1 - epsW F E w) • (M * mapE F E w Z) = 0 := by
-    intro Z M
-    rw [← Matrix.mul_smul, compl_smul_mapE, Matrix.mul_zero]
-  have h3 : mapE F E w Y * J' = mapE F E w (Y * Jw) := by
-    rw [← eps_smul_mapE F E w Y, Matrix.smul_mul, ← Matrix.mul_smul, hJ, mapE_mul]
-  simp only [Matrix.add_mul, Matrix.mul_add, h3, Matrix.smul_mul, Matrix.mul_smul, Matrix.one_mul, Matrix.mul_one,
-    smul_add, smul_smul, compl_idem _ (epsW_idem F E w), h2, compl_smul_mapE, ← mapE_mul, add_zero, zero_add, smul_zero]
-
-private theorem split_lemma_3 (Jw : Matrix n n (E ⊗[F] w.adicCompletion F))
-    (J' : Matrix n n (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) (hJ : epsW F E w • J' = mapE F E w Jw) :
-    (1 - epsW F E w) • J' + mapE F E w Jw = J' := by
-  rw [← hJ, ← add_smul, sub_add_cancel, one_smul]
 
 theorem sec_mem_UPts (σE : E →ₐ[F] E) (J : Matrix n n E) {X : GL n (E ⊗[F] w.adicCompletion F)}
     (hX : X ∈ UPts σE J (w.adicCompletion F)) : sec F E w X ∈ UPts σE J (FiniteAdeleRing (𝓞 F) F) := by

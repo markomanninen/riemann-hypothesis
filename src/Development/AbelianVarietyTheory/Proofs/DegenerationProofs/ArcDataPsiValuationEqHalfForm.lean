@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsFrameIff
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ArcDatumMatchLengthSymmPreimages
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocalB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsFrameIff
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ArcDatumMatchLengthSymmPreimages
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocalB
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj BigOperators
@@ -33,6 +37,24 @@ theorem value_of_qVal {R : Type} [CommRing R] [IsDomain R] [IsDiscreteValuationR
       (gm (Out.jFK (R := R) F) z
         (LB.wchart P.P.L (K := PUnit) (fun _ => Out.ptK (P.c χ)) (fun _ => j))
         ((P.psi χ).s (fun _ => j))).val = toStk z (algebraMap (FractionRing R) F c) := by
+  have exists_unit_gm_spMap {A F : Type} [CommRing A] [Field F] {X : Scheme.{0}}
+      (f : A →+* F) (x : Sp A ⟶ X) (U : X.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U)
+      (a : Γ(X, U)ˣ) (z : Sp F) :
+      ∃ u : Aˣ, (gm (spMap f ≫ x) z U a).val = toStk z (f u) := by
+    let g : Γ(X, U) →+* A := (Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom.comp (x.appLE U ⊤ h).hom
+    refine ⟨Units.map g.toMonoidHom a, ?_⟩
+    have hz : (spMap f ≫ x) z ∈ U := h (show spMap f z ∈ (⊤ : (Sp A).Opens) from trivial)
+    rw [← toStk_valF _ U z hz]
+    congr 1
+    have ht := (top_le_iff_mem (spMap f ≫ x) U z).2 hz
+    rw [valF, dite_eq_left ht]
+    have e1 : (spMap f ≫ x).appLE U ⊤ ht = x.appLE U ⊤ h ≫ (spMap f).appTop := by
+      rw [Scheme.Hom.appTop, Scheme.Hom.app_eq_appLE]
+      exact (Scheme.Hom.appLE_comp_appLE _ _ _ _ _ _ _).symm
+    have e2 := Scheme.ΓSpecIso_naturality (CommRingCat.ofHom f)
+    have e3 := congrArg (fun q => q.hom ((x.appLE U ⊤ h).hom a.val)) e2
+    rw [e1]
+    exact e3
   obtain ⟨e, -, c, hc, hC⟩ := genHasVal_units _ _ _ _ _ _ h
   obtain ⟨C, hCv, hCt⟩ := hC (fun _ => j)
   let g : R →+* F := (algebraMap (FractionRing R) F).comp (algebraMap R _)
@@ -76,6 +98,24 @@ theorem psi_value (a : ArcIn D l β O' b) {R : Type} [CommRing R] [IsDomain R] [
         ((P.psi χ).s (fun _ => j))).val =
       toStk z ((algebraMap (FractionRing R) F (algebraMap R _ u)) ^ (a.be y y / 2) *
         algebraMap (FractionRing R) F (algebraMap R _ v.val)) := by
+  have exists_unit_gm_spMap {A F : Type} [CommRing A] [Field F] {X : Scheme.{0}}
+      (f : A →+* F) (x : Sp A ⟶ X) (U : X.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U)
+      (a : Γ(X, U)ˣ) (z : Sp F) :
+      ∃ u : Aˣ, (gm (spMap f ≫ x) z U a).val = toStk z (f u) := by
+    let g : Γ(X, U) →+* A := (Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom.comp (x.appLE U ⊤ h).hom
+    refine ⟨Units.map g.toMonoidHom a, ?_⟩
+    have hz : (spMap f ≫ x) z ∈ U := h (show spMap f z ∈ (⊤ : (Sp A).Opens) from trivial)
+    rw [← toStk_valF _ U z hz]
+    congr 1
+    have ht := (top_le_iff_mem (spMap f ≫ x) U z).2 hz
+    rw [valF, dite_eq_left ht]
+    have e1 : (spMap f ≫ x).appLE U ⊤ ht = x.appLE U ⊤ h ≫ (spMap f).appTop := by
+      rw [Scheme.Hom.appTop, Scheme.Hom.app_eq_appLE]
+      exact (Scheme.Hom.appLE_comp_appLE _ _ _ _ _ _ _).symm
+    have e2 := Scheme.ΓSpecIso_naturality (CommRingCat.ofHom f)
+    have e3 := congrArg (fun q => q.hom ((x.appLE U ⊤ h).hom a.val)) e2
+    rw [e1]
+    exact e3
   obtain ⟨hp, hv⟩ := (genRel_iff w _ _ _ z).1 hG
   let g : R →+* F := (algebraMap (FractionRing R) F).comp (algebraMap R _)
   let x : Sp R ⟶ P.P.A.left := (P.c χ).left

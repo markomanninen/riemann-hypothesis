@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FsvMulFsvNeg
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FsvMulFsvNeg
+
+@[expose] public section
 
 open scoped ComplexConjugate ContDiff
 open Filter Topology
@@ -293,13 +297,13 @@ theorem tprod_mem (L : R.LevelData (Pr (RadSp k r z z' π π')) r) (Tc : Subalge
   induction n with
   | zero =>
     intro j hn hj a b
-    rw [tprod, dif_neg (by omega), Matrix.one_apply]
+    rw [tprod, dite_eq_right (by omega), Matrix.one_apply]
     split_ifs
     · exact Tc.one_mem
     · exact Tc.zero_mem
   | succ n ih =>
     intro j hn hj a b
-    rw [tprod, dif_pos (by omega), Matrix.mul_apply]
+    rw [tprod, dite_eq_left (by omega), Matrix.mul_apply]
     refine Subalgebra.sum_mem _ fun c _ => Subalgebra.mul_mem _ (ih (j + 1) (by omega) (by omega) a c) ?_
     have hh := hs ⟨j, by omega⟩ hj
     exact Ts_mem _ Y hh.1 hh.2.1 hh.2.2 c b

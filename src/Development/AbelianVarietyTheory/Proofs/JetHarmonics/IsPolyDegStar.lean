@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementD
-import Formalism.HermitianCurvature.StatementQ
-import Formalism.HermitianCurvature.BigCellVanishingOfCommute
-import Formalism.HermitianCurvature.StatementU
-import Development.AbelianVarietyTheory.Definitions.Jets.WigMap
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsPolyDegPrW
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.OmgMulLeft
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HpkConjTranspose
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.OmgEquivariant
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementD
+public import Formalism.HermitianCurvature.StatementQ
+public import Formalism.HermitianCurvature.BigCellVanishingOfCommute
+public import Formalism.HermitianCurvature.StatementU
+public import Development.AbelianVarietyTheory.Definitions.Jets.WigMap
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsPolyDegPrW
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.OmgMulLeft
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HpkConjTranspose
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.OmgEquivariant
+
+@[expose] public section
 
 open Matrix Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q
 

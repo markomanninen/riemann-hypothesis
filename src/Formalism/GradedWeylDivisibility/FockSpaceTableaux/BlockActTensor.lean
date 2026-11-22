@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.StatementD
+module
+
+public import Formalism.GradedWeylDivisibility.StatementD
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -12,7 +16,8 @@ theorem ldtensor_blockAct_comp (K : Type*) [CommRing K] {S : Type*} {k n : ℕ}
       (blockEmb K s).comp (rowAct K (g s)) := by
   apply MvPolynomial.algHom_ext
   intro v
-  simp [blockEmb, blockAct, rowAct, map_sum, rename_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [blockEmb, blockAct, rowAct, map_sum, rename_C]
 
 theorem ldtensor_blockAct_blockEmb (K : Type*) [CommRing K] {S : Type*} {k n : ℕ}
     (g : S → Matrix (Fin k) (Fin k) K) (s : S) (F : MvPolynomial (Fin k × Fin n) K) :
@@ -34,7 +39,7 @@ theorem block_action_tensor : BlockActTensor := by
     rw [map_zero]
     exact Submodule.zero_mem _
   | add x y _ _ hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ hx hy
   | smul a x _ hx =>
     rw [← algebraMap_smul K a x, map_smul, algebraMap_smul]

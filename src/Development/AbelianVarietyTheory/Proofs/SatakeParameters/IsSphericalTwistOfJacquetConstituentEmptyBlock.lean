@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.UnlinkedProductIrreducible
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.DepthZeroJacquetInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.UnlinkedProductIrreducible
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.DepthZeroJacquetInjective
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain Polynomial GlobalTheory.HeightCounting GlobalTheory.RowTie GlobalTheory.SplitRead GlobalTheory.NPin
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil
@@ -24,9 +29,6 @@ def trueEquiv (f : (Σ j, Fin (c j)) ≃ Fin t) (hc : c false = 0) : Fin (c true
     cases b with
     | false => exact absurd i.2 (by omega)
     | true => exact ⟨i, rfl⟩⟩
-
-@[simp] theorem trueEquiv_apply (f : (Σ j, Fin (c j)) ≃ Fin t) (hc : c false = 0) (i : Fin (c true)) :
-    trueEquiv f hc i = f ⟨true, i⟩ := rfl
 
 def reindexGL {m n : Type} [Fintype m] [DecidableEq m] [Fintype n] [DecidableEq n] (e : m ≃ n) :
     GL m R →* GL n R :=
@@ -60,7 +62,8 @@ theorem leviEmb_liftT (f : (Σ j, Fin (c j)) ≃ Fin t) (hc : c false = 0) (h : 
     | false => exact absurd j.2 (by omega)
     | true =>
       rw [SmGL.leviEmb_apply_same]
-      simp [liftT, val_reindexGL]
+      simp [liftT, val_reindexGL, trueEquiv]
+      rfl
 
 theorem eq_one_of_mem_unipRad (f : (Σ j, Fin (c j)) ≃ Fin t) (hc : c false = 0) {g : GL (Fin t) R}
     (hg : g ∈ SmGL.unipRad R f) : g = 1 := by
@@ -215,6 +218,7 @@ theorem isSpherical_twist_of_empty_block : ∀ (k : Type) [Field k] [ValuativeRe
         · simp [liftT, x]
         · simp [liftT, x, hz _ hg', hdet]
       rw [hfun, MultilinearMap.map_update_smul, Function.update_eq_self]
+      rfl
     have h1 : G (SmGL.jac f π (liftT f hc h) (Submodule.Quotient.mk v)) =
         G ((χ (Matrix.GeneralLinearGroup.det h) : ℂ) • Submodule.Quotient.mk v) := by
       rw [G.isIntertwining, hu, map_smul, hu, htens]

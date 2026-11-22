@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJFEBlockConv
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJFEBlockConv
+
+@[expose] public section
 
 noncomputable section
 

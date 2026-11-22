@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsBiSmooth
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConjugateAdjointDagger
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsGLSubmatrix
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsBiSmooth
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConjugateAdjointDagger
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsGLSubmatrix
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,13 +41,13 @@ theorem finPart_conj (z : AE D) : finPart D (cA D z) = sigR (Formalism.MainNotio
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a x => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem infPart_conj (z : AE D) : infPart D (cA D z) = sigR (Ainf D.host.F) D.sp.cm.sig (infPart D z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a x => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem fin_dagger (S T : HSp D) {x : WO S T} (hx : x.map (finPart D) = 0) : (dagger S T x).map (finPart D) = 0 := by
   refine map_mul_eq_zero_right _ _ (map_mul_eq_zero_left _ ?_ _)
@@ -65,9 +69,6 @@ def daggerHom (S T : HSp D) : WO S T →+ WO T S where
   toFun := dagger S T
   map_zero' := by simp [dagger]
   map_add' x y := by simp only [dagger, adj_add, Matrix.add_mul, Matrix.mul_add]
-
-theorem dagger_add (S T : HSp D) (x y : WO S T) : dagger S T (x + y) = dagger S T x + dagger S T y :=
-  (daggerHom S T).map_add x y
 
 theorem dagger_zero (S T : HSp D) : dagger S T 0 = 0 := (daggerHom S T).map_zero
 
@@ -154,16 +155,16 @@ theorem join_symm (C : WO A S → WO S A' → ℂ) (u : WO A S) (y : WO (negSp A
 
 theorem join_inl_inr (C : WO A S → WO S A' → ℂ) (u : WO A S) (v : WO S A') :
     join d S C (inlH d S u + inrH d S v) = C u v := by
-  rw [join_apply, map_add, map_add, fst_inl, fst_inr, snd_inl, snd_inr, add_zero, zero_add]
+  rw [join_apply, map_add (f := _), map_add (f := _), fst_inl, fst_inr, snd_inl, snd_inr, add_zero, zero_add]
 
 variable {S} {ψ : AddChar (AF D.host.F) ℂ} {C : WO A S → WO S A' → ℂ}
 
-theorem isThetaFunO_join (h : IsBiTheta ψ A S A' C) : IsThetaFunO ψ W S (join d S C) where
+theorem isThetaFunO_join (h : IsBiTheta ψ A S A' C) : IsThetaFunO ψ W S (join d S C) := {
   quasi γ w := by
     have e₁ : fstH d S (ratW S W γ) = ratW S A (γ * d.iA) := (rat_mul γ d.iA).symm
     have e₂ : sndH d S (ratW S W γ) = ratW A' S (A'.gram⁻¹ * ((γ * d.iB)ᴴ * S.gram)) := by
       rw [ratW_eq A' S, ← dagger_rat A' S, rat_mul]; rfl
-    rw [join_apply, join_apply, map_add, map_add, symplOH_split d, e₁, e₂, h.quasiL, h.quasiR, neg_add,
+    rw [join_apply, join_apply, map_add (f := _), map_add (f := _), symplOH_split d, e₁, e₂, h.quasiL, h.quasiR, neg_add,
       AddChar.map_add_eq_mul, mul_assoc]
   level := by
     obtain ⟨U₁, hU₁, k₁⟩ := h.levL
@@ -174,14 +175,14 @@ theorem isThetaFunO_join (h : IsBiTheta ψ A S A' C) : IsThetaFunO ψ W S (join 
     have e₁ := congrFun (k₁ _ hu.1 (map_mul_eq_zero_left _ h0 _) (sndH d S w + sndH d S u)) (fstH d S w)
     have e₂ := congrFun (k₂ _ hu.2 (inf_dagger A' S (map_mul_eq_zero_left _ h0 _)) (fstH d S w)) (sndH d S w)
     simp only [heisO] at e₁ e₂ ⊢
-    rw [join_apply, join_apply, ← e₂, ← e₁, symplOH_split d, AddChar.map_add_eq_mul, map_add, map_add]
+    rw [join_apply, join_apply, ← e₂, ← e₁, symplOH_split d, AddChar.map_add_eq_mul, map_add (f := _), map_add (f := _)]
     ring
   cont := h.cont.comp ((continuous_fstH d S).prodMk (continuous_sndH d S))
   smooth k L hL h0 w := by
-    simp only [join_apply, map_add]
+    simp only [join_apply, map_add (f := _)]
     exact h.smooth k ((fstH d S).comp L) ((sndH d S).comp L) ((continuous_fstH d S).comp hL)
       ((continuous_sndH d S).comp hL) (fun t => map_mul_eq_zero_left _ (h0 t) _)
-      (fun t => fin_dagger A' S (map_mul_eq_zero_left _ (h0 t) _)) _ _
+      (fun t => fin_dagger A' S (map_mul_eq_zero_left _ (h0 t) _)) _ _ }
 
 theorem cont_of_join (h : IsThetaFunO ψ W S (join d S C)) : Continuous fun p : WO A S × WO S A' => C p.1 p.2 := by
     have := h.cont.comp (((continuous_inlH d S).comp continuous_fst).add ((continuous_inrH d S).comp continuous_snd))
@@ -191,17 +192,17 @@ theorem smooth_of_join (h : IsThetaFunO ψ W S (join d S C)) : IsBiSmooth C := f
     have := h.smooth n ((inlH d S).comp L + (inrH d S).comp L')
       (((continuous_inlH d S).comp hL).add ((continuous_inrH d S).comp hL')) (fun t => by
         change (inlH d S (L t) + inrH d S (L' t)).map _ = 0
-        rw [Matrix.map_add _ (finPart D).map_add, map_inlH d S _ (h0 t), fin_inrH d S (h0' t), add_zero])
+        rw [Matrix.map_add (finPart D) (fun _ _ => map_add (finPart D) _ _), map_inlH d S _ (h0 t), fin_inrH d S (h0' t), add_zero])
       (inlH d S u + inrH d S v)
     convert this using 2 with t
-    rw [← join_inl_inr d S C, (inlH d S).map_add, (inrH d S).map_add, add_add_add_comm]; rfl
+    rw [← join_inl_inr d S C, map_add (f := inlH d S), map_add (f := inrH d S), add_add_add_comm]; rfl
 
 theorem quasiL_of_join (h : IsThetaFunO ψ W S (join d S C)) (γ) (u : WO A S) (v : WO S A') :
     C (ratW S A γ + u) v = ψ (-(symplOH A S (ratW S A γ) u)) * C u v := by
     have e : inlH d S (ratW S A γ) = ratW S W (γ * d.qA) := by
       rw [inlH_apply, d.resS_symm_apply, Matrix.zero_mul, add_zero, ratW_eq S W, rat_mul]; rfl
     have := h.quasi (γ * d.qA) (inlH d S u + inrH d S v)
-    rw [← e, ← add_assoc, ← (inlH d S).map_add, join_inl_inr, join_inl_inr, symplOH_split d, (fstH d S).map_add, fst_inl, fst_inl, fst_inr,
+    rw [← e, ← add_assoc, ← map_add (f := inlH d S), join_inl_inr, join_inl_inr, symplOH_split d, map_add (f := fstH d S), fst_inl, fst_inl, fst_inr,
       snd_inl, symplOH_zero_left, add_zero, add_zero] at this
     exact this
 
@@ -210,7 +211,7 @@ theorem quasiR_of_join (h : IsThetaFunO ψ W S (join d S C)) (γ) (u : WO A S) (
     have e : inrH d S (ratW A' S γ) = ratW S W (S.gram⁻¹ * (γᴴ * A'.gram) * d.qB) := by
       rw [inrH_apply, d.resS_symm_apply, Matrix.zero_mul, zero_add, ratW_eq S W, rat_mul, ← dagger_rat S A']; rfl
     have := h.quasi (S.gram⁻¹ * (γᴴ * A'.gram) * d.qB) (inlH d S u + inrH d S v)
-    rw [← e, add_left_comm, ← (inrH d S).map_add, join_inl_inr, join_inl_inr, symplOH_split d, (sndH d S).map_add, fst_inr, snd_inr,
+    rw [← e, add_left_comm, ← map_add (f := inrH d S), join_inl_inr, join_inl_inr, symplOH_split d, map_add (f := sndH d S), fst_inr, snd_inr,
       snd_inl, snd_inr, symplOH_zero_left, zero_add, zero_add] at this
     exact this
 
@@ -220,7 +221,7 @@ theorem levL_of_join (h : IsThetaFunO ψ W S (join d S C)) : ∃ U : AddSubgroup
     refine ⟨U.comap (inlH d S), hU.preimage (continuous_inlH d S), fun a ha h0 v => funext fun u => ?_⟩
     have := congrFun (k _ ha (map_inlH d S _ h0)) (inlH d S u + inrH d S v)
     simp only [heisO] at this ⊢
-    rw [add_right_comm, ← (inlH d S).map_add, join_inl_inr, join_inl_inr, symplOH_split d, (fstH d S).map_add, fst_inl, fst_inl, fst_inr,
+    rw [add_right_comm, ← map_add (f := inlH d S), join_inl_inr, join_inl_inr, symplOH_split d, map_add (f := fstH d S), fst_inl, fst_inl, fst_inr,
       snd_inl d S a, symplOH_zero_right, add_zero, add_zero] at this
     exact this
 
@@ -231,7 +232,7 @@ theorem levR_of_join (h : IsThetaFunO ψ W S (join d S C)) : ∃ U : AddSubgroup
     have := congrFun (k _ ha (inf_inrH d S h0))
       (inlH d S u + inrH d S v)
     simp only [heisO] at this ⊢
-    rw [add_assoc, ← (inrH d S).map_add, join_inl_inr, join_inl_inr, symplOH_split d, (sndH d S).map_add, fst_inr d S a, snd_inl,
+    rw [add_assoc, ← map_add (f := inrH d S), join_inl_inr, join_inl_inr, symplOH_split d, map_add (f := sndH d S), fst_inr d S a, snd_inl,
       snd_inr, snd_inr, symplOH_zero_right, zero_add, zero_add] at this
     exact this
 

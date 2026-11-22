@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.TowerModels.ExistsHaarOfIsCompact
-import Development.WeilBound.ThetaLifts.TowerModels.LeviAd
+module
+
+public import Development.WeilBound.ThetaLifts.TowerModels.ExistsHaarOfIsCompact
+public import Development.WeilBound.ThetaLifts.TowerModels.LeviAd
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,15 +74,17 @@ attribute [local instance] ae_ring ae_t2 ae_smul
 
 theorem evI_eq_zero {a : AF F} : evI F a = 0 ↔ a.1 = 0 := map_eq_zero_iff _ (RingEquiv.injective _)
 
-variable (F) in
 
+variable (F) in
 def intF : AddSubgroup (AF F) where
   carrier := {a | evI F a = 0 ∧ ∀ v, evFin F v a ∈ v.adicCompletionIntegers F}
   zero_mem' := ⟨evI_eq_zero.2 rfl, fun v => by rw [map_zero]; exact zero_mem _⟩
   add_mem' := fun {a b} ha hb => ⟨evI_eq_zero.2 (by
       change a.1 + b.1 = 0
       rw [evI_eq_zero.1 ha.1, evI_eq_zero.1 hb.1, add_zero]),
-    fun v => by rw [map_add]; exact add_mem (ha.2 v) (hb.2 v)⟩
+    fun v => by
+      rw [map_add]
+      exact add_mem (ha.2 v) (hb.2 v)⟩
   neg_mem' := fun {a} ha => ⟨evI_eq_zero.2 (by
       change -a.1 = 0
       rw [evI_eq_zero.1 ha.1, neg_zero]),
@@ -130,7 +136,8 @@ theorem isCompact_latHat (X : Spc F E n) (hX : X.L.FG) : IsCompact (latHat X : S
       obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun ℤ).1 hy'
       refine ⟨fun j => c j • ⟨a, ha, ha'⟩, funext fun i => ?_⟩
       change (∑ j, (c j • a) • incV F (s j)) i = a • inclR (F := F) (AF F) ((∑ j, c j • s j) i)
-      rw [Finset.sum_apply, Finset.sum_apply, map_sum, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finset.sum_apply, Finset.sum_apply, map_sum, Finset.smul_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       change (c j • a) • inclR (F := F) (AF F) (s j i) = _
       rw [Pi.smul_apply, map_zsmul, smul_assoc, smul_comm]
@@ -140,19 +147,19 @@ theorem isCompact_latHat (X : Spc F E n) (hX : X.L.FG) : IsCompact (latHat X : S
   rw [e, AddMonoidHom.coe_range]
   exact isCompact_range hf
 
-variable (F) in
 
+variable (F) in
 def eF : AF F := pairA F 0 1
 
 theorem eF_mem : eF F ∈ intF F := ⟨evI_eq_zero.2 rfl, fun v => by
   have : evFin F v (eF F) = 1 := map_one (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F v)
   rw [this]; exact one_mem _⟩
 
-theorem vec_bound (X : Spc F E n) (hX : X.L.IsLattice E) (x : Fin n → E) :
+theorem vec_bound (X : Spc F E n) (hX : X.L.IsFullLattice E) (x : Fin n → E) :
     ∃ C : Set (Fin n → AE F E), IsCompact C ∧ ∀ M : Matrix (Fin n) (Fin n) (AE F E),
       (∀ y ∈ latHat X, M *ᵥ y ∈ latHat X) → M *ᵥ (eF F • incV F x) ∈ C := by
   have hx : x ∈ Submodule.span E (X.L : Set (Fin n → E)) := by
-    rw [Submodule.IsLattice.span_eq_top (A := E)]; trivial
+    rw [hX.span_eq_top]; trivial
   induction hx using Submodule.span_induction with
   | mem y hy => exact ⟨_, isCompact_latHat X hX.fg, fun M hM => hM _ (mem_latHat X eF_mem hy)⟩
   | zero =>
@@ -176,7 +183,7 @@ theorem vec_bound (X : Spc F E n) (hX : X.L.IsLattice E) (x : Fin n → E) :
     rw [this]
     exact (Matrix.mulVec_smul _ _ _).symm
 
-theorem fin_bound (X : Spc F E n) (hX : X.L.IsLattice E) (i j : Fin n) :
+theorem fin_bound (X : Spc F E n) (hX : X.L.IsFullLattice E) (i j : Fin n) :
     ∃ C : Set (AE F E), IsCompact C ∧ ∀ M : Matrix (Fin n) (Fin n) (AE F E),
       (∀ y ∈ latHat X, M *ᵥ y ∈ latHat X) → eF F • M i j ∈ C := by
   obtain ⟨C, hC, h⟩ := vec_bound X hX (Pi.single j 1)
@@ -227,16 +234,61 @@ theorem exists_section (h : IsCMExt F E σ) (τ : ∀ w : InfinitePlace F, EmbOv
     exact ((h3 1).comp h1).add ((h3 a).comp h2)
   · refine Levi.ad_ext h τ (fun w => ?_) fun v => ?_
     · have e0 : (eF F).1 w = 0 := rfl
-      rw [map_add, map_add, piInf_smul, piInf_smul, piInf_smul, eρ, eρ, ha, e0, map_zero, map_one, zero_mul, mul_one,
+      rw [map_add (f := _), map_add (f := _), piInf_smul, piInf_smul, piInf_smul, eρ, eρ, ha, e0, map_zero, map_one, zero_mul, mul_one,
         add_zero, Complex.re_add_im]
     · have e0 : compFin F E v ((1 - eF F) • z) = 0 := compFin_smul v (sub_self (1 : Af F)) z
       rw [sub_smul, one_smul, map_sub, sub_eq_zero] at e0
-      rw [map_add, map_add, compFin_smul v rfl, compFin_smul v rfl, zero_add, zero_add, e0]
+      rw [map_add (f := _), map_add (f := _), compFin_smul v rfl, compFin_smul v rfl, zero_add, zero_add, e0]
 
 theorem exists_compact_mat {B : Base F E} {X : Spc F E n} {r s : ℕ} (hB : B.IsGood σ) (hX : X.IsHerm σ B r s) :
     ∃ S : Set (Matrix (Fin n) (Fin n) (AE F E)), IsCompact S ∧ ∀ k ∈ stabK (σ := σ) B X, mat k ∈ S := by
   obtain ⟨Φ, hΦ, eΦ⟩ := exists_section hB.cm B.emb
-  choose C hC h using fin_bound X hX.lat
+  have hFull : X.L.IsFullLattice E := by
+    let := hX.lat
+    refine { span_eq_top := ?_ }
+    let W := Submodule.span E (X.L : Set (Fin n → E))
+    change W = ⊤
+    by_contra hW
+    let g : (Fin n → E) →ₗ[E] Module.Dual E W :=
+      ((dotProductBilin E E).compl₂ (Matrix.mulVecLin X.Jᵀ)).domRestrict₂ W
+    have hdim : Module.finrank E (Module.Dual E W) < Module.finrank E (Fin n → E) := by
+      rw [Subspace.dual_finrank_eq]
+      exact Submodule.finrank_lt hW
+    obtain ⟨z, hz, hz₀⟩ :=
+      Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+    let y : Fin n → E := fun i => σ (z i)
+    have hy₀ : y ≠ 0 := by
+      intro hy
+      apply hz₀
+      exact funext fun i => σ.injective ((congrFun hy i).trans (map_zero σ).symm)
+    have hJ : X.Jᵀ.map σ = X.J := Matrix.ext hX.herm
+    -- Self-duality puts every scalar multiple of an orthogonal vector in the lattice.
+    have hline (a : E) : a • y ∈ X.L := (hX.dual _).2 fun x hx => by
+      have hz' : z ⬝ᵥ X.Jᵀ *ᵥ x = 0 :=
+        congrArg (fun f : Module.Dual E W => f ⟨x, Submodule.subset_span hx⟩)
+          (LinearMap.mem_ker.mp hz)
+      have horth : form σ X.J y x = 0 := by
+        have he := σ.toRingHom.map_dotProduct z (X.Jᵀ *ᵥ x)
+        rw [hz', map_zero] at he
+        have hm : σ.toRingHom ∘ (X.Jᵀ *ᵥ x) = X.J *ᵥ (fun i => σ (x i)) := by
+          funext i
+          rw [Function.comp_apply, σ.toRingHom.map_mulVec]
+          exact congrFun (congrArg (fun M => M *ᵥ (fun j => σ (x j))) hJ) i
+        rw [hm] at he
+        exact he.symm
+      have : form σ X.J (a • y) x = 0 := by
+        simpa only [form, smul_dotProduct, smul_eq_mul] using
+          (show a * form σ X.J y x = 0 by rw [horth, mul_zero])
+      rw [this]
+      exact isIntegral_zero
+    let i : E →ₗ[𝓞 E] X.L :=
+      ((LinearMap.toSpanSingleton E _ y).restrictScalars (𝓞 E)).codRestrict X.L hline
+    let : Module.Finite (𝓞 E) X.L := Module.Finite.iff_fg.mpr hX.lat.fg
+    let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
+      smul_left_injective E hy₀ (congrArg Subtype.val hab)
+    exact RingOfIntegers.not_isField E
+      (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
+  choose C hC h using fin_bound X hFull
   choose R hR using fun w => cartan_bound (hX.cartan w)
   have hD : IsCompact (Φ '' Set.univ.pi fun w => Metric.closedBall (0 : ℂ) (R w)) :=
     (isCompact_univ_pi fun w => isCompact_closedBall _ _).image hΦ

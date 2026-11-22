@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Qm12.vandermondeOf.{u_1} :
     {R : Type u_1} → [CommRing R] → {m : ℕ} → (Fin m → R) → R :=

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.HeisenbergTheta.HeisenbergThetaConstant.ThetaC
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormLeNormInfCModuleSectionMul
-import GroundTheory.GlobalFields.TateThesis.TateThetaDecay
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsTailFurther
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.HeisenbergTheta.HeisenbergThetaConstant.ThetaC
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormLeNormInfCModuleSectionMul
+public import GroundTheory.GlobalFields.TateThesis.TateThetaDecay
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsTailFurther
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open NumberField NumberField.mixedEmbedding IsDedekindDomain IsDedekindDomain.HeightOneSpectrum
@@ -37,14 +42,14 @@ theorem apply_eq_of_mulVec (h : GL ι 𝔸[k]) (v : ι → 𝔸[k]) (j : ι) :
   conv_lhs => rw [← h1]
   simp only [Matrix.mulVec, dotProduct]
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem summable_prod_coord {f : k → ℝ} (hf : Summable f) (h0 : ∀ a, 0 ≤ f a) :
     Summable fun ξ : ι → k ↦ ∏ i, f (ξ i) :=
   _root_.UpperTheory.Reformulated.B.Yva3.main hf h0
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem decay_real_bound {A B Z t κ : ℝ} {X : ι → ℝ} {m n r : ℕ} (hA : 0 ≤ A) (hB : 0 < B)
     (hX : ∀ j, 0 < X j) (ht : 0 < t) (hκ : 0 < κ) (hZ : 0 < Z) (h₀ : ∀ j, X j / B ≤ Z)
     (h₂ : t * κ ≤ Z ^ n) :
@@ -52,7 +57,7 @@ theorem decay_real_bound {A B Z t κ : ℝ} {X : ι → ℝ} {m n r : ℕ} (hA :
       (t ^ r)⁻¹ * (A * B ^ (Fintype.card ι * m) * (κ ^ r)⁻¹ * ∏ j, ((X j) ^ m)⁻¹) := by
   have htκ : 0 < t * κ := mul_pos ht hκ
   have g₁ : ∏ _j : ι, (Z ^ m)⁻¹ ≤ ∏ j, ((X j / B) ^ m)⁻¹ :=
-    Finset.prod_le_prod (fun _ _ ↦ by positivity) fun j _ ↦
+    Finset.prod_le_prod₀ (fun _ _ ↦ by positivity) fun j _ ↦
       inv_anti₀ (pow_pos (div_pos (hX j) hB) m) (pow_le_pow_left₀ (div_pos (hX j) hB).le (h₀ j) m)
   have e₁ : ∏ _j : ι, (Z ^ m)⁻¹ = (Z ^ (Fintype.card ι * m))⁻¹ := by
     rw [Finset.prod_const, Finset.card_univ, inv_pow, ← pow_mul, mul_comm m]
@@ -85,8 +90,8 @@ theorem infC_sum {α : Type} (s : Finset α) (f : α → 𝔸[k]) :
     exact map_zero (InfiniteAdeleRing.ringEquiv_mixedSpace k)
   | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, infC_add, ih]
 
-open scoped Classical in
 
+open scoped Classical in
 theorem exists_decay_boundC_tensor (w : InfinitePlace k) (φ : 𝓢(ι → mixedSpace k, ℂ))
     (I : (FractionalIdeal (𝓞 k)⁰ k)ˣ) (b : ι → 𝔸ᶠ[k]) {C : Set (GL ι 𝔸[k])}
     (hC : IsCompact C) (r : ℕ) :
@@ -111,12 +116,12 @@ theorem exists_decay_boundC_tensor (w : InfinitePlace k) (φ : 𝓢(ι → mixed
   set S : Set 𝔸ᶠ[k] := ⋃ j : ι,
     (fun p : Matrix ι ι 𝔸[k] × (ι → 𝔸ᶠ[k]) ↦ ∑ i, (p.1 j i).2 * p.2 i) '' (Ci ×ˢ Set.pi Set.univ T)
   have hS : IsCompact S := isCompact_iUnion fun j ↦ (hCi.prod hTpi).image
-    (continuous_finset_sum _ fun i _ ↦ ((hent j i).comp continuous_fst).mul
+    (continuous_finsetSum _ fun i _ ↦ ((hent j i).comp continuous_fst).mul
       ((continuous_apply i).comp continuous_snd))
   obtain ⟨J, κ₀, hκ₀, hJ, hN⟩ := exists_ideal_of_isCompact hS
 
   have hcont : Continuous fun M : Matrix ι ι 𝔸[k] ↦ ∑ j, ∑ i, ‖infC (M j i)‖ :=
-    continuous_finset_sum _ fun j _ ↦ continuous_finset_sum _ fun i _ ↦
+    continuous_finsetSum _ fun j _ ↦ continuous_finsetSum _ fun i _ ↦
       continuous_norm.comp (continuous_infC.comp (continuous_id.matrix_elem j i))
   obtain ⟨B, hB⟩ := hCi.exists_bound_of_continuousOn hcont.continuousOn
   set B' := max B 1
@@ -251,7 +256,7 @@ theorem exists_decay_boundC_tensor (w : InfinitePlace k) (φ : 𝓢(ι → mixed
     exact hnn
 
 theorem exists_decay_boundC (w : InfinitePlace k) {F : (ι → 𝔸[k]) → ℂ}
-    (hF : F ∈ schwartzBruhatPi k ι) {C : Set (GL ι 𝔸[k])} (hC : IsCompact C) (r : ℕ) :
+    (hF : F ∈ schwartzBruhatPi (K := k) (ι := ι)) {C : Set (GL ι 𝔸[k])} (hC : IsCompact C) (r : ℕ) :
     ∃ u : (ι → k) → ℝ, Summable u ∧ ∀ h ∈ C, ∀ t : {x : ℝ // 0 < x}, 1 ≤ (t : ℝ) →
       ∀ ξ : ι → k, ξ ≠ 0 →
         ‖F (((scalC (moduleSection w t) * h : GL ι 𝔸[k]) : Matrix ι ι 𝔸[k]) *ᵥ ratV ξ)‖ ≤
@@ -275,7 +280,7 @@ theorem exists_decay_boundC (w : InfinitePlace k) {F : (ι → 𝔸[k]) → ℂ}
     exact mul_le_mul_of_nonneg_left (hGu a ha t ht ξ hξ) (norm_nonneg c)
 
 theorem exists_norm_thetaC_sub_le : ∀ {k : Type} [Field k] [NumberField k], ∀ {ι : Type} [Fintype ι]
-    [DecidableEq ι], ∀ (w : InfinitePlace k) {F : (ι → 𝔸[k]) → ℂ} (hF : F ∈ schwartzBruhatPi k ι)
+    [DecidableEq ι], ∀ (w : InfinitePlace k) {F : (ι → 𝔸[k]) → ℂ} (hF : F ∈ schwartzBruhatPi (K := k) (ι := ι))
     {C : Set (GL ι 𝔸[k])} (hC : IsCompact C) (r : ℕ), ∃ M : ℝ, ∀ h ∈ C,
       ∀ t : {x : ℝ // 0 < x}, 1 ≤ (t : ℝ) →
       ‖thetaC F (scalC (moduleSection w t) * h) - F 0‖ ≤ ((t : ℝ) ^ r)⁻¹ * M := by

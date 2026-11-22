@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StatementsPullback
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StatementsPullback
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit
@@ -93,47 +98,49 @@ theorem local_c2_convergence_pullback {ι : Type*} {p : Filter ι} {W : Set X} (
       (τ '' K)) :
     TendstoUniformlyOn F Ψ p K ∧ TendstoUniformlyOn (fun t => fderiv ℝ (F t)) (fderiv ℝ Ψ) p K ∧
       TendstoUniformlyOn (fun t => fderiv ℝ (fderiv ℝ (F t))) (fderiv ℝ (fderiv ℝ Ψ)) p K := by
-  have hsub : K ⊆ τ ⁻¹' (τ '' K) := subset_preimage_image τ K
-  have c0 := (h0.comp τ).mono hsub
-  have c1 := (h1.comp τ).mono hsub
-  have c2 := (h2.comp τ).mono hsub
-  have hτc : ContDiffOn ℝ 2 τ W := fun y hy => (hτ y hy).contDiffWithinAt
-  have hD1 : ContinuousOn (fderiv ℝ τ) W := hτc.continuousOn_fderiv_of_isOpen hW (by norm_num)
-  have hD2 : ContinuousOn (fderiv ℝ (fderiv ℝ τ)) W :=
-    (hτc.fderiv_of_isOpen hW (m := 1) (by norm_num)).continuousOn_fderiv_of_isOpen hW le_rfl
-  obtain ⟨M1, hM1⟩ := hK.exists_bound_of_continuousOn (hD1.mono hKW)
-  obtain ⟨M2, hM2⟩ := hK.exists_bound_of_continuousOn
-    (f := fderiv ℝ (fderiv ℝ τ)) (by exact hD2.mono hKW)
-  have hP : ∀ y ∈ K, ‖(compL ℝ X Y ℝ).flip (fderiv ℝ τ y)‖ ≤ ‖(compL ℝ X Y ℝ).flip‖ * M1 :=
-    fun y hy => ((compL ℝ X Y ℝ).flip.le_opNorm _).trans
-      (mul_le_mul_of_nonneg_left (hM1 y hy) (norm_nonneg _))
-  refine ⟨?_, ?_, ?_⟩
-  · refine (c0.congr ?_).congr_right ?_
-    · exact Eventually.of_forall fun t y hy => (hF t y (hKW hy)).symm
-    · exact fun y hy => (hΨ y (hKW hy)).symm
-  · have hA := tendstoUniformlyOn_bilin (compL ℝ X Y ℝ) c1 (fderiv ℝ τ) M1 hM1
-    refine (hA.congr ?_).congr_right ?_
-    · filter_upwards [hG] with t ht y hy
-      rw [(fderiv_fderiv_comp_eq hW hτ hWU ht (hF t) (hKW hy)).1]
-      simp only [Function.comp_apply, compL_apply]
-    · intro y hy
-      rw [(fderiv_fderiv_comp_eq hW hτ hWU hΦ hΨ (hKW hy)).1]
-      simp only [Function.comp_apply, compL_apply]
-  · have hA := tendstoUniformlyOn_bilin (R := X →L[ℝ] X →L[ℝ] ℝ)
-      (by exact (compL ℝ X (X →L[ℝ] Y) (X →L[ℝ] ℝ)).comp (compL ℝ X Y ℝ)) c1 (fderiv ℝ (fderiv ℝ τ)) M2 hM2
-    have hI := tendstoUniformlyOn_bilin (P := Y →L[ℝ] Y →L[ℝ] ℝ) (Q := X →L[ℝ] Y)
-      (R := X →L[ℝ] Y →L[ℝ] ℝ) (by exact compL ℝ X Y (Y →L[ℝ] ℝ)) (by exact c2) (fderiv ℝ τ) M1 hM1
-    have hB := tendstoUniformlyOn_bilin' (P := X →L[ℝ] Y →L[ℝ] ℝ)
-      (Q := (Y →L[ℝ] ℝ) →L[ℝ] (X →L[ℝ] ℝ)) (R := X →L[ℝ] X →L[ℝ] ℝ)
-      (by exact compL ℝ X (Y →L[ℝ] ℝ) (X →L[ℝ] ℝ)) (by exact hI)
-      (fun y => (compL ℝ X Y ℝ).flip (fderiv ℝ τ y)) _ (by exact hP)
-    refine ((hA.add hB).congr ?_).congr_right ?_
-    · filter_upwards [hG] with t ht y hy
-      rw [(fderiv_fderiv_comp_eq hW hτ hWU ht (hF t) (hKW hy)).2]
-      simp only [Pi.add_apply, Function.comp_apply, compL_apply, ContinuousLinearMap.comp_apply]
-    · intro y hy
-      rw [(fderiv_fderiv_comp_eq hW hτ hWU hΦ hΨ (hKW hy)).2]
-      simp only [Pi.add_apply, Function.comp_apply, compL_apply, ContinuousLinearMap.comp_apply]
+  set_option maxSynthPendingDepth 8 in
+    have hsub : K ⊆ τ ⁻¹' (τ '' K) := subset_preimage_image τ K
+    have c0 := (h0.comp τ).mono hsub
+    have c1 := (h1.comp τ).mono hsub
+    have c2 := (h2.comp τ).mono hsub
+    have hτc : ContDiffOn ℝ 2 τ W := fun y hy => (hτ y hy).contDiffWithinAt
+    have hD1 : ContinuousOn (fderiv ℝ τ) W := hτc.continuousOn_fderiv_of_isOpen hW (by norm_num)
+    have hD2 : ContinuousOn (fderiv ℝ (fderiv ℝ τ)) W :=
+      (hτc.fderiv_of_isOpen hW (m := 1) (by norm_num)).continuousOn_fderiv_of_isOpen hW le_rfl
+    obtain ⟨M1, hM1⟩ := hK.exists_bound_of_continuousOn (hD1.mono hKW)
+    obtain ⟨M2, hM2⟩ := hK.exists_bound_of_continuousOn
+      (f := fderiv ℝ (fderiv ℝ τ)) (by exact hD2.mono hKW)
+    have hP : ∀ y ∈ K, ‖(compL ℝ X Y ℝ).flip (fderiv ℝ τ y)‖ ≤ ‖(compL ℝ X Y ℝ).flip‖ * M1 := by
+      intro y hy
+      exact ((compL ℝ X Y ℝ).flip.le_opNorm _).trans
+        (mul_le_mul_of_nonneg_left (hM1 y hy) (norm_nonneg _))
+    refine ⟨?_, ?_, ?_⟩
+    · refine (c0.congr ?_).congr_right ?_
+      · exact Eventually.of_forall fun t y hy => (hF t y (hKW hy)).symm
+      · exact fun y hy => (hΨ y (hKW hy)).symm
+    · have hA := tendstoUniformlyOn_bilin (compL ℝ X Y ℝ) c1 (fderiv ℝ τ) M1 hM1
+      refine (hA.congr ?_).congr_right ?_
+      · filter_upwards [hG] with t ht y hy
+        rw [(fderiv_fderiv_comp_eq hW hτ hWU ht (hF t) (hKW hy)).1]
+        simp only [Function.comp_apply, compL_apply]
+      · intro y hy
+        rw [(fderiv_fderiv_comp_eq hW hτ hWU hΦ hΨ (hKW hy)).1]
+        simp only [Function.comp_apply, compL_apply]
+    · have hA := tendstoUniformlyOn_bilin (R := X →L[ℝ] X →L[ℝ] ℝ)
+        (by exact (compL ℝ X (X →L[ℝ] Y) (X →L[ℝ] ℝ)).comp (compL ℝ X Y ℝ)) c1 (fderiv ℝ (fderiv ℝ τ)) M2 hM2
+      have hI := tendstoUniformlyOn_bilin (P := Y →L[ℝ] Y →L[ℝ] ℝ) (Q := X →L[ℝ] Y)
+        (R := X →L[ℝ] Y →L[ℝ] ℝ) (by exact compL ℝ X Y (Y →L[ℝ] ℝ)) (by exact c2) (fderiv ℝ τ) M1 hM1
+      have hB := tendstoUniformlyOn_bilin' (P := X →L[ℝ] Y →L[ℝ] ℝ)
+        (Q := (Y →L[ℝ] ℝ) →L[ℝ] (X →L[ℝ] ℝ)) (R := X →L[ℝ] X →L[ℝ] ℝ)
+        (by exact compL ℝ X (Y →L[ℝ] ℝ) (X →L[ℝ] ℝ)) (by exact hI)
+        (fun y => (compL ℝ X Y ℝ).flip (fderiv ℝ τ y)) _ (by exact hP)
+      refine ((hA.add hB).congr ?_).congr_right ?_
+      · filter_upwards [hG] with t ht y hy
+        rw [(fderiv_fderiv_comp_eq hW hτ hWU ht (hF t) (hKW hy)).2]
+        simp only [Pi.add_apply, Function.comp_apply, compL_apply, ContinuousLinearMap.comp_apply]
+      · intro y hy
+        rw [(fderiv_fderiv_comp_eq hW hτ hWU hΦ hΨ (hKW hy)).2]
+        simp only [Pi.add_apply, Function.comp_apply, compL_apply, ContinuousLinearMap.comp_apply]
 
 end C2ConvergencePullback
 

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicArithmetic.LocalEmbeddings.ArchSz
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OppositePathLocalTotalTensorMemCoefficientField
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralRamifiedCharDetSingularMatrixCosetEqZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PartialFourierSumInverseOfLatticeDepth
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGlLatCongMove
-import Development.AutomorphicArithmetic.DivisorFrames.ExistsMemKOEqStdFrameMulOfIsPrimFrameFin
-import Development.AutomorphicArithmetic.DivisorFrames.HaarVolKOLeResCardPowOfCongruenceLe
-import Development.AutomorphicArithmetic.DivisorFrames.UnramifiedCharacterInvariant
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.LocalEmbeddings.ArchSz
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OppositePathLocalTotalTensorMemCoefficientField
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralRamifiedCharDetSingularMatrixCosetEqZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PartialFourierSumInverseOfLatticeDepth
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGlLatCongMove
+public import Development.AutomorphicArithmetic.DivisorFrames.ExistsMemKOEqStdFrameMulOfIsPrimFrameFin
+public import Development.AutomorphicArithmetic.DivisorFrames.HaarVolKOLeResCardPowOfCongruenceLe
+public import Development.AutomorphicArithmetic.DivisorFrames.UnramifiedCharacterInvariant
+
+@[expose] public section
 
 noncomputable section
 
@@ -154,7 +158,7 @@ theorem sz_zeta {A : Type} [Fintype A] [DecidableEq A] {J : Subgroup (GL A k)} (
   by_cases hint : Integrable (fun g : GL A k => φ g.val * f g) (haarVol J)
   · have hI : ∫ g, φ g.val * (ν (gdet g) : ℂ) * apow (gdet g) ((n : ℂ) / 2) ∂(haarVol J) =
         ∑ T, φ (liftRes T) * ∫ g in S T, f g ∂(haarVol J) := by
-      rw [hF, integral_finset_sum _ (fun T _ => hint.indicator (hSm T))]
+      rw [hF, integral_finsetSum _ (fun T _ => hint.indicator (hSm T))]
       refine Finset.sum_congr rfl fun T _ => ?_
       rw [integral_indicator (hSm T)]
       rw [setIntegral_congr_fun (hSm T) (g := fun g => φ (liftRes T) * f g) (fun g hg => by
@@ -210,8 +214,8 @@ theorem row_mul' {A B C : Type} [Fintype B] (Y : Matrix A B k) (M : Matrix B C k
   ext j
   rfl
 
-omit [MeasurableSpace k] [BorelSpace k] in
 
+omit [MeasurableSpace k] [BorelSpace k] in
 theorem isNatDatum_comp {A A' D : Type} [Fintype A'] [DecidableEq A'] [Fintype D] [DecidableEq D] (σ : A ⊕ A' ≃ D)
     {ϖ : kˣ} {e : ℕ} (c : D → kˣ) {Ψ : Matrix A' D k → ℂ} (hΨ : HasDepth ϖ e (diagLat c) Ψ) {κ : GL D k} (hκ : κ ∈ KO k D) :
     IsNatDatum ϖ e fun g : Matrix A' A' k => Ψ (g * (Y0 k σ * (κ * diagGL c).val)) := by

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -6,9 +10,11 @@ namespace GlobalTheory.PlaceModel
 
 variable {G : Type} [AddCommGroup G]
 
-open Classical in
 
-def ind (L : AddSubgroup G) (t : G) : ℂ := if t ∈ L then 1 else 0
+open Classical in
+def ind (L : AddSubgroup G) (t : G) : ℂ := by
+  classical
+  exact if t ∈ L then 1 else 0
 
 def wave (χ : G → G → ℂ) (L : AddSubgroup G) (x y : G) : G → ℂ := fun t => χ (t + x) y * ind L (t + x)
 
@@ -20,17 +26,6 @@ structure IsBichar (χ : G → G → ℂ) : Prop where
   right : ∀ a y z, χ a (y + z) = χ a y * χ a z
   zero_left : ∀ y, χ 0 y = 1
   zero_right : ∀ a, χ a 0 = 1
-
-theorem isBichar_one : IsBichar (fun _ _ : G => (1 : ℂ)) := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> intros <;> simp
-
-theorem isBichar_neg_one_zpow : IsBichar (fun a b : ℤ => (-1 : ℂ) ^ (a * b)) := by
-  have h0 : (-1 : ℂ) ≠ 0 := by norm_num
-  refine ⟨fun a b y => ?_, fun a y z => ?_, fun y => ?_, fun a => ?_⟩
-  · rw [add_mul, zpow_add₀ h0]
-  · rw [mul_add, zpow_add₀ h0]
-  · simp
-  · simp
 
 variable {χ : G → G → ℂ} {X Y L L' : AddSubgroup G}
 
@@ -348,8 +343,7 @@ theorem mem_of_finite_cosets {K : AddSubgroup G} (hK : ind K ∈ waveSpan χ X Y
       have hsum := add_mem hΨ (Submodule.smul_mem _ (Φ (s + u0)) htr)
       convert hsum using 1
       funext t
-      simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
-      ring
+      simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, sub_add_cancel]
     · push Not at hex
       refine ih Φ hΦX hinv fun t ht => ?_
       obtain ⟨s', hs', u, hu, rfl⟩ := hP t ht
@@ -387,7 +381,7 @@ theorem exists_intertwiner {V : Type} [AddCommGroup V] [Module ℂ V] (h : IsBic
     | add Φ₁ Φ₂ _ _ h₁ h₂ =>
       have e : (fun t => (Φ₁ + Φ₂) (t + x)) = (fun t => Φ₁ (t + x)) + (fun t => Φ₂ (t + x)) := rfl
       rw [e]
-      simp only [map_add, h₁, h₂]
+      simp only [map_add (f := _), h₁, h₂]
     | smul a Φ₁ _ h₁ =>
       have e : (fun t => (a • Φ₁) (t + x)) = a • (fun t => Φ₁ (t + x)) := rfl
       rw [e]
@@ -413,7 +407,7 @@ theorem exists_intertwiner {V : Type} [AddCommGroup V] [Module ℂ V] (h : IsBic
         funext t
         simp [mul_add]
       rw [e]
-      simp only [map_add, h₁, h₂]
+      simp only [map_add (f := _), h₁, h₂]
     | smul a Φ₁ _ h₁ =>
       have e : (fun t => χ t y * (a • Φ₁) t) = a • (fun t => χ t y * Φ₁ t) := by
         funext t

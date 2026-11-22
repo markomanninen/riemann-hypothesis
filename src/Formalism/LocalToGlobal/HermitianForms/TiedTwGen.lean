@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.HermitianForms.RankEqFirstLevel
-import Formalism.LocalToGlobal.HermitianColumns.TiedQC
+module
+
+public import Formalism.LocalToGlobal.HermitianForms.RankEqFirstLevel
+public import Formalism.LocalToGlobal.HermitianColumns.TiedQC
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,8 +28,8 @@ def badQ (D : D7) (Q : Finset (HeightOneSpectrum (𝓞 D.host.F))) : Set (Height
 
 variable {D : D7}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 structure LevelChart (D : D7) (T : ℕ) (bad : Set (HeightOneSpectrum (𝓞 D.host.F))) (i : ℕ) (hi : i ≤ D.R.m) {cl : Type}
     (stab : cl → Type) [∀ c, Group (stab c)] (lat : cl → Submodule (𝓞 D.host.E) (Fin (D.R.N i) → D.host.E)) where
   lev : StepLevel D.host.F D.host.E (sigD D) (gramN D i hi) T D.R.f bad
@@ -65,10 +69,8 @@ variable {u : D.what₂.Word} {C : ColumnChain D.R D.what₂.Tau (D.hcW u)} {A :
 def lamTG (i : ℕ) : D.what₂.Tau → DomWeight (D.R.N i) :=
   fun τ => shW (M.lam i τ) ((i * (D.R.t + 1) / 2 : ℕ) : ℤ)
 
-theorem lamTG_fm (u : D.what₂.Word) (i : ℕ) : lamTG (D.fm u) i = lamT u i := rfl
 
 set_option maxHeartbeats 1000000 in
-
 structure ValuationCompatibleChart {T : ℕ} {bad : Set (HeightOneSpectrum (𝓞 D.host.F))} {i : ℕ} {hi : i ≤ D.R.m} (eY : C.Y i ≃ Fr D i hi)
     (okW : D.what₂.places.Pl → Prop) {Ch : Type} (chOf : C.cls i → Ch) {lat : C.cls i → Submodule (𝓞 D.host.E) (Fin (D.R.N i) → D.host.E)}
     (K : ∀ β : Ch, LevelChart D T bad i hi (fun c : {c // chOf c = β} => C.stab i c.1) (fun c => lat c.1)) : Prop where
@@ -103,8 +105,8 @@ def NormTieG {i : ℕ} {hi : i ≤ D.R.m} (eY : C.Y i ≃ Fr D i hi) : Prop :=
         ∑ c, (C.wt i c).re * (∏ τ, ‖(o.1 τ).det‖ ^ (2 * shiftOf (lamTG M i) τ)) *
           (nfAll (M.lam i) (subP o.1 (MvPolynomial.map s (Pc c))) (subP o.1 (MvPolynomial.map s (Pc c)))).re
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 structure DilationCompatibleChart {T : ℕ} {bad : Set (HeightOneSpectrum (𝓞 D.host.F))} {i : ℕ} {hi : i ≤ D.R.m} (eY : C.Y i ≃ Fr D i hi)
     (eV : A.vT ≃ {v : HeightOneSpectrum (𝓞 D.host.F) // (T : 𝓞 D.host.F) ∈ v.asIdeal})
     {Ch : Type} (chOf : C.cls i → Ch) {lat : C.cls i → Submodule (𝓞 D.host.E) (Fin (D.R.N i) → D.host.E)}

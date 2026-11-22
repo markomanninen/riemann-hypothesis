@@ -1,6 +1,10 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SExpDefs
-import GroundTheory.GlobalFields.TateThesis.EulerFactorsInfinite
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.HasTemperateGrowthArchPoly
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SExpDefs
+public import GroundTheory.GlobalFields.TateThesis.EulerFactorsInfinite
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.HasTemperateGrowthArchPoly
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,10 +81,11 @@ theorem translate_mem {f : Ad F → ℂ} (hf : f ∈ schwartzBruhat F) (d : Ad F
       ⟨hg.1.comp_continuous (continuous_add_const _), hg.2.comp_homeomorph (Homeomorph.addRight d.2)⟩
     convert schwartzBruhatTensor_mem (SchwartzMap.compSubConstCLM ℂ (-(homeomorphMixedSpace F d.1)) φ) hg' using 1
     funext B
-    simp only [schwartzBruhatTensor, SchwartzMap.compSubConstCLM_apply, sub_neg_eq_add]
+    simp only [schwartzBruhatTensor]
     rw [homeomorphMixedSpace_apply, homeomorphMixedSpace_apply, homeomorphMixedSpace_apply]
     have hB : (B + d).1 = B.1 + d.1 := rfl
     rw [hB, (InfiniteAdeleRing.ringEquiv_mixedSpace F).map_add]
+    simp only [SchwartzMap.compSubConstCLM_apply, sub_neg_eq_add]
     rfl
   | zero => exact zero_mem _
   | add G H _ _ hG hH => exact add_mem hG hH
@@ -121,7 +126,9 @@ theorem char_xAd (ξ : F) (x : UpperTheory.V.TR.Rinf F) :
       show InfinitePlace.Completion.extensionEmbedding w ((algebraMap F (Ad F) ξ).1 w * UpperTheory.V.TR.infEq F x w) = _
       rw [map_mul]
       congr 1
-      · exact InfinitePlace.Completion.extensionEmbedding_coe w _
+      · change InfinitePlace.Completion.extensionEmbedding w ((algebraMap F (InfiniteAdeleRing F) ξ) w) = _
+        rw [InfiniteAdeleRing.algebraMap_apply, InfinitePlace.Completion.extensionEmbedding_coe]
+        rfl
       · have := ext_pInf (xAd x) w
         rw [pInf_xAd] at this
         exact this
@@ -146,7 +153,7 @@ theorem arch_le (a z : InfinitePlace F → ℝ) :
       2 ^ Fintype.card (InfinitePlace F) *
         ‖∏ v, (((a v : ℂ) + Complex.I * (z v : ℂ)) * Complex.exp (-(Real.pi : ℂ) * ((a v : ℂ) ^ 2 + (z v : ℂ) ^ 2)))‖ := by
   rw [norm_prod, norm_prod, ← Finset.card_univ, ← Finset.prod_const, ← Finset.prod_mul_distrib]
-  refine Finset.prod_le_prod (fun v _ => norm_nonneg _) fun v _ => ?_
+  refine Finset.prod_le_prod₀ (fun v _ => norm_nonneg _) fun v _ => ?_
   rw [norm_mul, norm_mul, ← mul_assoc]
   refine mul_le_mul_of_nonneg_right ?_ (norm_nonneg _)
   have hre : ((a v : ℂ) + Complex.I * (z v : ℂ)).re = a v := by simp
@@ -286,8 +293,8 @@ theorem summable_kern {ω : HChar F} {c : HeightOneSpectrum (𝓞 F) → ℕ} (h
         exact kernF_le c _ _
     _ = _ := by ring
 
-open Classical in
 
+open Classical in
 def rowEquiv : Fˣ ⊕ (Fˣ × F) ≃ {ξ : Fin 2 → F // ξ ≠ 0} where
   toFun s := match s with
     | Sum.inl b => ⟨![0, (b : F)], fun h => b.ne_zero (by simpa using congrFun h 1)⟩

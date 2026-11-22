@@ -1,8 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatTranslateOfPrime
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecondLinkOfWeightRows
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsLevelDatumReferenceTupleSmallField
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaLiftLevelsGoodPrimesProperties
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatTranslateOfPrime
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.SingleIndexPlacesAreTwisted
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitPartRealisationWithScalarsCharOfWeakStatement
+public import Formalism.LocalToGlobal.IndefiniteReal.PrimitivePackageFullHecke
+public import Formalism.LocalToGlobal.IndefiniteReal.PackageFromPrimitiveStatements
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CharacterUpdateOfWeakRealisation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitRowsBarPhaseCompatibility
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsLevelDatumReferenceTupleSmallField
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaLiftLevelsGoodPrimesProperties
+
+@[expose] public section
+
 set_option autoImplicit false
 noncomputable section
 open NumberField IsDedekindDomain
@@ -30,8 +40,8 @@ theorem lev_isConjPl_iff {P P' : Pl D.host.E} : Lev.IsConjPl P P' ↔ P' = Forma
 theorem isConjPl_conjPl_divisor (P : Pl D.host.E) : Formalism.BasicNotions.IsConjPl D.host P (Formalism.L2.DIV.conjPl P) :=
   isConjPl_of_lev (lev_isConjPl_iff.2 rfl)
 
-open Classical in
 
+open Classical in
 theorem disjoint_conj {X : Finset (Pl D.host.E)} (hX : SplitSet X) : Disjoint X (X.image Formalism.L2.DIV.conjPl) := by
   refine Finset.disjoint_left.2 fun P hP hQ => ?_
   obtain ⟨P₀, h0, rfl⟩ := Finset.mem_image.1 hQ
@@ -44,14 +54,14 @@ theorem disjoint_conj {X : Finset (Pl D.host.E)} (hX : SplitSet X) : Disjoint X 
   rw [a2, zero_mul, map_zero]
   exact zero_mem _
 
-open Classical in
 
+open Classical in
 theorem idem_add_cA {X : Finset (Pl D.host.E)} (hX : SplitSet X) :
     idem X + cA D (idem X) = idem (X ∪ X.image Formalism.L2.DIV.conjPl) := by
   rw [← idem_eq (GlobalTheory.RefDatumLev.isIdemSum_conjPl hX.isIdemSum), idem, idem, idem, Finset.sum_union (disjoint_conj hX)]
 
-open Classical in
 
+open Classical in
 theorem idem_add_cA_eq {X Y : Finset (Pl D.host.E)} (hX : SplitSet X) (hY : SplitSet Y)
     (h : ∀ P, P ∈ X ∪ X.image Formalism.L2.DIV.conjPl ↔ P ∈ Y ∪ Y.image Formalism.L2.DIV.conjPl) :
     idem X + cA D (idem X) = idem Y + cA D (idem Y) := by
@@ -60,8 +70,8 @@ theorem idem_add_cA_eq {X Y : Finset (Pl D.host.E)} (hX : SplitSet X) (hY : Spli
   ext P
   exact h P
 
-open Classical in
 
+open Classical in
 theorem mem_half_closure {ch : Set (Pl D.host.E)}
     (hch : ∀ P P', Formalism.BasicNotions.IsConjPl D.host P P' → P ≠ P' → (P ∈ ch ↔ P' ∉ ch)) {A B : Finset (Pl D.host.E)}
     (hcl : ∀ P, P ∈ A ∨ P ∈ B → Formalism.L2.DIV.conjPl P ∈ A ∨ Formalism.L2.DIV.conjPl P ∈ B)
@@ -99,57 +109,5 @@ theorem not_mem_of_coprime {P : Pl D.host.E} {l q : ℕ} (hq : (q : 𝓞 D.host.
   rw [← e]
   exact add_mem (Ideal.mul_mem_left _ _ hl) (Ideal.mul_mem_left _ _ hq)
 
-open Classical in
-
-theorem placesSt : PlacesSt := by
-  intro D L hT Gi Gl Kc Y cX ex Csz p j hr hm w hw hok ρ hρ hpin _ _
-  have hPA := placesAt (j := j) hw hρ hpin
-  have hL := links2_of_rows _ _ _ _ _ _ _ _ _ _ p hr hm.1
-  have hC : GlobalTheory.Hk3.Core (R2 p) (F2 p) := ⟨hL.1.lev, hL.1.grp, hL.1.fam, hL.1.models, hL.1.chain, hL.1.thP⟩
-  have hXs : SplitSet (p.R.Q (p.R.mu (D.plEq w))) := by
-    obtain ⟨-, e, he, -⟩ := hC.thP.vP j (p.R.mu (D.plEq w))
-    exact SplitSet.mono ⟨e, he⟩ Finset.subset_union_right
-  have hl : ∀ P ∈ p.R.Q (p.R.mu (D.plEq w)), ((D.ntw.l (ex.nch.twI w) : ℕ) : 𝓞 D.host.E) ∉ P.asIdeal := by
-    intro P hP
-    rcases (hPA.2 P).1 (Or.inl hP) with hD | hQ
-    · have h1 : P ∈ (↑(D.ntw.pD (ex.nch.twI w)) : Set (Pl D.host.E)) := hD
-      rw [D.ntw.pD_eq] at h1
-      have hlp := (D.ntw.lPrime (ex.nch.twI w)).out
-      refine not_mem_of_coprime h1 ?_
-      split_ifs with h
-      · exact (Nat.coprime_primes hlp D.host.pde'_prime).2 (by rw [h]; exact D.host.pde_ne)
-      · exact (Nat.coprime_primes hlp D.host.pde_prime).2 h
-    · exact fun hlP => Finset.disjoint_left.1 hok.2.1 hQ (D.ntw.twistExcludedPlaces_contains_residueChar _ hlP)
-  refine ⟨hXs, hl, ?_⟩
-  obtain ⟨-, hadm, -⟩ := GlobalTheory.TwistGood.tw_good D _ D.ntw ρ hρ _ j (ex.nch.sd w) _ _ _ hok
-  obtain ⟨R, -, hR, hRs⟩ := hadm.1.split
-  have hYs := hRs.mono hR
-  have hXC : ∀ P, P ∈ p.R.Q (p.R.mu (D.plEq w)) ∪ (p.R.Q (p.R.mu (D.plEq w))).image Formalism.L2.DIV.conjPl ↔
-      (P ∈ D.ntw.pD (ex.nch.twI w) ∨ P ∈ ex.nch.Q w) := fun P => by
-    rw [← hPA.2 P, Finset.mem_union, Finset.mem_image]
-    refine or_congr Iff.rfl (exists_congr fun P' => and_congr Iff.rfl ?_)
-    rw [lev_isConjPl_iff, eq_comm]
-  have hne : ∀ P, P ∈ D.ntw.pD (ex.nch.twI w) ∨ P ∈ ex.nch.Q w → Formalism.L2.DIV.conjPl P ≠ P := fun P hP e => by
-    rcases Finset.mem_union.1 ((hXC P).2 hP) with h | h
-    · exact Finset.disjoint_left.1 (disjoint_conj hXs) h (Finset.mem_image.2 ⟨P, h, e⟩)
-    · obtain ⟨P', hP', rfl⟩ := Finset.mem_image.1 h
-      rw [Formalism.L2.DIV.conjPl_conjPl] at e
-      exact Finset.disjoint_left.1 (disjoint_conj hXs) hP' (Finset.mem_image.2 ⟨P', hP', e.symm⟩)
-  have hcl : ∀ P, P ∈ D.ntw.pD (ex.nch.twI w) ∨ P ∈ ex.nch.Q w →
-      Formalism.L2.DIV.conjPl P ∈ D.ntw.pD (ex.nch.twI w) ∨ Formalism.L2.DIV.conjPl P ∈ ex.nch.Q w := fun P hP => by
-    rw [← hXC] at hP ⊢
-    rcases Finset.mem_union.1 hP with h | h
-    · exact Finset.mem_union_right _ (Finset.mem_image_of_mem _ h)
-    · obtain ⟨P', hP', rfl⟩ := Finset.mem_image.1 h
-      rw [Formalism.L2.DIV.conjPl_conjPl]
-      exact Finset.mem_union_left _ hP'
-  have hY : (ρ.B (ex.nch.twI w) j (ex.nch.sd w)).de.Q ∪
-      (ρ.tw (ex.nch.twI w) (ex.nch.sd w) (ex.nch.k' w) (ex.nch.Q w) (GlobalTheory.TwistIndex.chosenChar ex.nch w)).Q =
-      half (ρ.ch (ex.nch.twI w)) (D.ntw.pD (ex.nch.twI w)) ∪ half (ρ.ch (ex.nch.twI w)) (ex.nch.Q w) := by
-    rw [hρ.delta]
-    rfl
-  rw [hY] at hYs ⊢
-  exact idem_add_cA_eq hXs hYs fun P =>
-    (hXC P).trans (mem_half_closure ((hρ.ch _).pair) hcl hne P).symm
 
 end GlobalTheory.BigOn.Exp.TupLe

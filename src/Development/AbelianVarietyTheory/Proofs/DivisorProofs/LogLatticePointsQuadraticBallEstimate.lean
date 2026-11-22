@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VolumeEqLintegral
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntNearOfClosureShort
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VolumeSumSqBallPosLtTop
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VolumeEqLintegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntNearOfClosureShort
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VolumeSumSqBallPosLtTop
+
+@[expose] public section
+
 open Filter Topology MeasureTheory GlobalTheory.HSAmp
 open scoped ComplexOrder Matrix
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.AlternatingProductCocycle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.AlternatingProductCocycle
+
+@[expose] public section
 
 open GlobalTheory GlobalTheory.DI
 
@@ -34,7 +38,7 @@ theorem d_smul_pow (p : ℕ) [Fact p.Prime] [CharP K p] (d : ExteriorAlgebra K V
 theorem Dtot_add (d : ExteriorAlgebra K V →+ ExteriorAlgebra K V) (a b : Finset ι → ExteriorAlgebra K V) :
     Dtot d (a + b) = Dtot d a + Dtot d b := by
   funext t
-  simp only [Dtot, delta, Pi.add_apply, smul_add, Finset.sum_add_distrib, map_add]
+  simp only [Dtot, delta, Pi.add_apply, smul_add, Finset.sum_add_distrib, map_add (f := _)]
   abel
 
 theorem Dtot_smul_pow (p : ℕ) [Fact p.Prime] [CharP K p] (d : ExteriorAlgebra K V →+ ExteriorAlgebra K V)
@@ -73,7 +77,7 @@ theorem GlobalTheory.DI.phi_closed : ∀ {K : Type} [CommRing K] {V : Type} [Add
       simp [hz0]
     | add y z _ _ hy hz =>
       intro c
-      rw [smul_add, map_add]
+      rw [smul_add, map_add (f := _)]
       exact ⟨by rw [Pi.add_apply, (hy c).1, (hz c).1, add_zero],
         by rw [PhiClosed.Dtot_add, (hy c).2, (hz c).2, add_zero]⟩
     | smul a y _ hy =>

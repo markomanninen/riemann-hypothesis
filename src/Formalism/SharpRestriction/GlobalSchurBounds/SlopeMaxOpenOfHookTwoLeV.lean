@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.IntegrableOfContinuousCircleMeasure
-import Formalism.GradedWeylDivisibility.StatementB
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.IntegrableOfContinuousCircleMeasure
+public import Formalism.GradedWeylDivisibility.StatementB
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ theorem natWeight_cast_eq_sub_last {N : ℕ} (lam : DomWeight N) (hN : 0 < N) (i
   have h1 : ((lam.w i - lam.w ⟨N - 1, by omega⟩).toNat : ℤ) = lam.w i - lam.w ⟨N - 1, by omega⟩ :=
     Int.toNat_of_nonneg (by omega)
   unfold DomWeight.natW DomWeight.detShift
-  rw [dif_pos hN]
+  rw [dite_eq_left hN]
   have h2 : (((lam.w i - lam.w ⟨N - 1, by omega⟩).toNat : ℕ) : ℝ) =
       (((lam.w i - lam.w ⟨N - 1, by omega⟩).toNat : ℤ) : ℝ) := by norm_cast
   rw [h2, h1]
@@ -196,15 +200,6 @@ theorem familySlopeLowerOpen_of_std (hS : StdSlopeLow) (hH : HookBound) {eps : �
   obtain ⟨x0, hx0⟩ := h
   exact ⟨x0, fun x hx hx1 i => slopeLowerOpen_of_std_hook hS hH _ (hx0 x hx hx1 i)⟩
 
-theorem familySlopeMaxOpen_of_hook_v (hH : HookBound) {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps)
-    (h : fam0 Fm fun D => 2 ≤ D.host.v ∧ SlopeMaxC D) : FamilySlopeMaxOpenPart Fm 4 := by
-  obtain ⟨x0, hx0⟩ := h
-  exact ⟨x0, fun x hx hx1 i => slopeMaxOpen_of_hook_two_le_v hH _ (hx0 x hx hx1 i).1 (hx0 x hx hx1 i).2⟩
-
-theorem familySlopeMaxOpen_of_hook (hH : HookBound) {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) (h : fam0 Fm SlopeMaxC) : FamilySlopeMaxOpenPart Fm 4 := by
-  obtain ⟨x0, hx0⟩ := h
-  exact ⟨x0, fun x hx hx1 i => slopeMaxOpen_of_hook hH _ (hx0 x hx hx1 i)⟩
-
 section ShortVec
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -227,11 +222,6 @@ def SlopeMaxGiven (D : D7) : Prop :=
 theorem slopeMaxC_of (D : D7) (hS : ShortDual D) (hG : SlopeMaxGiven D) : SlopeMaxC D := fun u hu => hG u hu (fun c => hS u c (hu.latT c))
 
 theorem slope_max_open_four_of_hookBound (hH : HookBound) (D : D7) (hS : ShortDual D) (hG : SlopeMaxGiven D) : SlopeMaxOpenPart D 4 := slopeMaxOpen_of_hook hH D (slopeMaxC_of D hS hG)
-
-theorem family_slope_max_open_four_of_hookBound (hH : HookBound) {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps)
-    (h : fam0 Fm fun D => ShortDual D ∧ SlopeMaxGiven D) : FamilySlopeMaxOpenPart Fm 4 := by
-  obtain ⟨x0, hx0⟩ := h
-  exact ⟨x0, fun x hx hx1 i => slope_max_open_four_of_hookBound hH _ (hx0 x hx hx1 i).1 (hx0 x hx hx1 i).2⟩
 
 end ShortVec
 

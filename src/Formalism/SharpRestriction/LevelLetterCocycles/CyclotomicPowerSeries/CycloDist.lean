@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ConstSectionStatement
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ConstSectionStatement
+
+@[expose] public section
 
 noncomputable section
 

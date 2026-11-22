@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.AltInv
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.AltInv
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

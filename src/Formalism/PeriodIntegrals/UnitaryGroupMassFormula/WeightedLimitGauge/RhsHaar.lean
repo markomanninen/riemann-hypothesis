@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PeriodIntegrals.RhsWLim
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.VolumeLieE
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.MBaseMem
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.TBallMeas
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.HaarUniq
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.RhsWLim
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.VolumeLieE
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.MBaseMem
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.TBallMeas
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.HaarUniq
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 
@@ -81,7 +85,7 @@ theorem cont_emb : Continuous (embWb k r) := by
 
 theorem meas_invM : Measurable (HU.invM : Mt k r → Mt k r) := by
   rw [HU.invM_smul]
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   simp only [Pi.smul_apply, smul_eq_mul]
   exact (measurable_inv.comp HU.detF_cont.measurable).mul
     ((measurable_pi_apply j).comp ((measurable_pi_apply i).comp HU.adjF_cont.measurable))
@@ -350,8 +354,8 @@ theorem nu_ball (hD : WbData k r z z' μW μW' a a' μsec) :
 
 end ZetaZeros
 
-open ZetaZeros in
 
+open ZetaZeros in
 theorem rhsHaar_of (hInv : RhsWInv) : RhsHaar := by
   intro k r z z' μW μW' a a' μsec hD
   have := hD.haarW.1
@@ -360,6 +364,7 @@ theorem rhsHaar_of (hInv : RhsWInv) : RhsHaar := by
     nu_ball hD, fun φ hφ => repr hD φ hφ⟩
   rw [nuR, Measure.map_apply (meas_chartF hD.sec) (s := {x : Mt k r | Matrix.of x ∉ UWb k r})
     HU.amb_closed.isOpen_compl.measurableSet]
-  exact measure_mono_null (fun q hq hg => hq (mem_chart hD hg)) (src_null hD)
+  exact measure_mono_null (t := (goodS k r z z')ᶜ)
+    (fun q hq hg => hq (mem_chart hD hg)) (src_null hD)
 
 end PI.RhsWLim.W

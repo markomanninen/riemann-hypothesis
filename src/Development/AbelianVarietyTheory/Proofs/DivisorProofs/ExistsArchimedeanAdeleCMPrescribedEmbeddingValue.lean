@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+
+@[expose] public section
+
 open scoped TensorProduct Matrix Classical
 open NumberField Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.BasicNotions.TH GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.FockAlg GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.RealLift
 
@@ -35,7 +40,7 @@ theorem ext_symm_real {w : InfinitePlace F} (hw : w.IsReal) (t : ℝ) :
     ← InfinitePlace.Completion.ringEquivRealOfIsReal_apply, RingEquiv.apply_symm_apply]
 
 theorem smul_adAt_tmul (u : AF F) (hu : evI F u = 0) (w : InfinitePlace F) (c : w.Completion) (x : E) :
-    u • (adAt w c ⊗ₜ[F] x : AE F E) = 0 := by
+    u • (adAt w c ⊗ₜ[F] x : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) = 0 := by
   have hu1 : u.1 = 0 := (InfiniteAdeleRing.ringEquiv_mixedSpace F).injective (hu.trans (map_zero _).symm)
   rw [TensorProduct.smul_tmul', smul_eq_mul]
   have : u * adAt w c = 0 := by
@@ -48,7 +53,7 @@ theorem smul_adAt_tmul (u : AF F) (hu : evI F u = 0) (w : InfinitePlace F) (c : 
 
 theorem exists_at_inf_values : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     {σ : E →ₐ[F] E}, IsCMExt F E σ → ∀ (τ : ∀ w : InfinitePlace F, EmbOver E w) (z : InfinitePlace F → ℂ),
-    ∃ a : AE F E, At (evI F) a ∧ ∀ w, piInf (τ w) a = z w := by
+    ∃ a : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E), At (evI F) a ∧ ∀ w, piInf (τ w) a = z w := by
   intro F E _ _ _ _ _ σ h τ z
   haveI : IsTotallyReal F := h.1
   haveI : IsTotallyComplex E := h.2.1
@@ -67,18 +72,19 @@ theorem exists_at_inf_values : ∀ {F E : Type} [Field F] [NumberField F] [Field
     rw [Finset.smul_sum]
     refine Finset.sum_eq_zero fun w _ => ?_
     rw [smul_add, smul_adAt_tmul u hu, smul_adAt_tmul u hu, add_zero]
-  · rw [map_sum, Finset.sum_eq_single v]
-    · rw [map_add, piInf_adAt_same, piInf_adAt_same]
-      simp only [cR, ext_symm_real, map_one, mul_one]
-      have h0 := hξ v
-      apply Complex.ext
-      · simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.ofReal_im, zero_mul, sub_zero, r]
-        ring
-      · simp only [Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re, zero_add, zero_mul,
-          add_zero, s]
-        field_simp
-    · intro w _ hw
-      rw [map_add, piInf_adAt_ne (Ne.symm hw), piInf_adAt_ne (Ne.symm hw), add_zero]
-    · intro hv; exact absurd (Finset.mem_univ v) hv
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum, Finset.sum_eq_single v]
+      · rw [map_add (f := _), piInf_adAt_same, piInf_adAt_same]
+        simp only [cR, ext_symm_real, map_one, mul_one]
+        have h0 := hξ v
+        apply Complex.ext
+        · simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.ofReal_im, zero_mul, sub_zero, r]
+          ring
+        · simp only [Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re, zero_add, zero_mul,
+            add_zero, s]
+          field_simp
+      · intro w _ hw
+        rw [map_add (f := _), piInf_adAt_ne (Ne.symm hw), piInf_adAt_ne (Ne.symm hw), add_zero]
+      · intro hv; exact absurd (Finset.mem_univ v) hv
 
 end GlobalTheory.PolRangeInf

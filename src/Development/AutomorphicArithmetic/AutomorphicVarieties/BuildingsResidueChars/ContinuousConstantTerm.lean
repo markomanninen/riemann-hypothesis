@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.OrderedCechToCatCochainsOneApplyValueAtSubset
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.OrderedCechToCatCochainsOneApplyValueAtSubset
+
+@[expose] public section
 
 open NumberField NumberField.mixedEmbedding Matrix MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm UpperTheory.V.Af.Fin
 open scoped TensorProduct
@@ -26,7 +30,8 @@ private theorem cont_setIntegral {X Y : Type*} [TopologicalSpace X] [Topological
       nlinarith
 
 theorem UpperTheory.continuous_constantTerm :
-    ∀ (K : Type) [Field K] [NumberField K] (n r : ℕ) (φ : AdelicGLn.AdelicGL K n → ℂ), Continuous φ → Continuous (constantTerm r φ) := by
+    ∀ (K : Type) [Field K] [NumberField K] (n r : ℕ) (φ : AdelicGLn.AdelicGL K n → ℂ),
+      Continuous φ → Continuous (constantTerm (r := r) φ) := by
   intro K _ _ n r φ hφ
   obtain ⟨C, hC, hDC⟩ := exists_isCompact_superset_unipFundamentalDomain (K := K) (n := n) (r := r)
   exact cont_setIntegral (unipMeasure K n r) (fun g X => φ (unipGL X * g))

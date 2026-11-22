@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseKummerDefs
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.EqZeroOfBrauerLocalApplyEqZero
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.IsZeroGroupCohomologyQuotientToInvariantsGalAdd
-import GroundTheory.ProfiniteCohomology.Characters
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BrauerSplit
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseKummerDefs
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.EqZeroOfBrauerLocalApplyEqZero
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.IsZeroGroupCohomologyQuotientToInvariantsGalAdd
+public import GroundTheory.ProfiniteCohomology.Characters
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BrauerSplit
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -12,9 +17,9 @@ open CategoryTheory IsDedekindDomain NumberField GroundTheory.Global
 
 universe u
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 section RootsMap
 
@@ -76,36 +81,6 @@ theorem compactCohomologyMap_congr {g g' : A ⟶ B} {gᵥ gᵥ' : ∀ v, Aᵥ v 
   subst h2
   rfl
 
-theorem compactCohomologyMap_nsmul_id (m : ℕ)
-    (hg : ∀ v, a v ≫ (m • 𝟙 (Aᵥ v)) = (Rep.resFunctor (φ v).toMonoidHom).map (m • 𝟙 A) ≫ a v) (n : ℕ) :
-    compactCohomologyMap φ (m • 𝟙 A) (fun v => m • 𝟙 (Aᵥ v)) hg n = m • 𝟙 _ := by
-  have h : compactCochainsMap φ (m • 𝟙 A) (fun v => m • 𝟙 (Aᵥ v)) hg = m • 𝟙 _ := by
-    ext n : 1
-    refine ModuleCat.hom_ext (LinearMap.ext fun (p : (cochainsComplex A).X n ×
-      shiftNegOneX (piComplex fun v => cochainsComplex (Aᵥ v)) n) => ?_)
-    have hR : ((m • 𝟙 (compactCochains φ A Aᵥ a) : compactCochains φ A Aᵥ a ⟶ _).f n).hom p = m • p := by
-      simp only [HomologicalComplex.smul_f_apply, HomologicalComplex.id_f, ModuleCat.hom_nsmul, ModuleCat.hom_id]
-      rfl
-    rw [hR]
-    obtain ⟨x, y⟩ := p
-    refine Prod.ext ?_ ?_
-    · change ((cochainsMap (m • 𝟙 A)).f n).hom x = m • x
-      rw [cochainsMap_nsmul, cochainsMap_id]
-      simp [Module.End.mul_apply, Module.End.natCast_apply]
-    · cases n with
-      | zero => rfl
-      | succ n =>
-        change ((piMap fun v => cochainsMap (m • 𝟙 (Aᵥ v))).f n).hom y = m • y
-        funext v
-        change ((cochainsMap (m • 𝟙 (Aᵥ v))).f n).hom (y v) = m • y v
-        rw [cochainsMap_nsmul, cochainsMap_id]
-        simp [Module.End.mul_apply, Module.End.natCast_apply]
-  change HomologicalComplex.homologyMap (compactCochainsMap φ (m • 𝟙 A) (fun v => m • 𝟙 (Aᵥ v)) hg) n = _
-  rw [h]
-  change (HomologicalComplex.homologyFunctor _ _ n).map (m • 𝟙 _) = _
-  rw [Functor.map_nsmul, CategoryTheory.Functor.map_id]
-  rfl
-
 end CompactMap
 
 section ULiftCompare
@@ -139,11 +114,11 @@ variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
   (ιs : ∀ v : S, ℚ̄ →ₐ[K.1] AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)) (n : ℕ)
   [NeZero n] (hnS : ∀ v ∉ S, ((n : ℕ) : 𝓞 K.1) ∉ v.asIdeal)
 
+
 set_option maxHeartbeats 1600000 in
 include hnS in
-
 theorem bijective_gsRootsOmegaMor (v : S) : Function.Bijective (gsRootsOmegaMor S ιs n v).hom := by
-  obtain ⟨z, hz⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot ℚ̄ n
+  obtain ⟨z, hz⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot ℚ̄ n
   have hzS : z ∈ maxUnramifiedOutside K.1 ℚ̄ S :=
     mem_maxUnramifiedOutside_of_pow_eq_one S (NeZero.ne n) hnS hz.pow_eq_one
   have hzS' : IsPrimitiveRoot (⟨z, hzS⟩ : maxUnramifiedOutside K.1 ℚ̄ S) n :=
@@ -222,9 +197,9 @@ theorem gsLocalRes_sUnitsToUnits_eq (v : S) (z : cohomology (galSUnitsMax K.1 �
 variable (ℓ : ℕ) (hℓ : ℓ.Prime)
   (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
 
+
 set_option maxHeartbeats 4000000 in
 include hℓ hS in
-
 theorem eq_zero_of_gsUnitsCompact_two (hodd : Odd ℓ ∨ IsTotallyComplex K.1) (y : gsUnitsCompact S ιs 2) (j : ℕ)
     (hy : ℓ ^ j • y = 0) : y = 0 := by
   classical

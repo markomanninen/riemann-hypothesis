@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GlobalTheoremInputs
-import Development.AutomorphicArithmetic.CharacterBoxes.ExistsPageN
+module
+
+public import Formalism.SharpRestriction.GlobalTheoremInputs
+public import Development.AutomorphicArithmetic.CharacterBoxes.ExistsPageN
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +84,11 @@ theorem divinN_at {D : D7} (L : SizeData₂ D) (j : ℕ) (C : ℝ) (hj : j ∈ S
   have hx : 0 < L.sc.x := lt_trans one_pos L.sc.one_lt_alt
   have hy : 1 ≤ L.sc.x ^ L.sc.eps := Real.one_le_rpow L.sc.one_lt_alt.le L.sc.eps_pos.le
   have hf : (1 : ℝ) ≤ D.R.f := by
-    have : 0 < D.R.f := by unfold Ranks.f Ranks.n; positivity
+    have : 0 < D.R.f := by
+      unfold Ranks.f Ranks.n
+      have := D.R.two_le_m
+      have := D.R.m_le_f
+      omega
     exact_mod_cast this
   have hm : (1 : ℝ) ≤ D.R.m := by
     have h := Finset.mem_Icc.1 hj

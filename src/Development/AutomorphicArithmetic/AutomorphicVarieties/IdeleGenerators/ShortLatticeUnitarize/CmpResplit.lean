@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,9 +16,6 @@ def nu {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) : Valuation ℂ ℝ≥0 
   (NormedField.valuation (K := Qbar l)).comap ι.symm.toRingHom
 
 theorem nu_apply {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (x : ℂ) : nu ι x = ‖ι.symm x‖₊ := rfl
-
-def IsPos {W : Type} [AddCommGroup W] [Module ℂ W] (B : W →ₗ⋆[ℂ] W →ₗ[ℂ] ℂ) : Prop :=
-  (∀ x y, B y x = starRingEnd ℂ (B x y)) ∧ ∀ x, x ≠ 0 → 0 < (B x x).re
 
 section Weight
 
@@ -46,7 +47,7 @@ theorem act_mul (g h : I → GL (Fin 2) ℂ) (x : I × Fin 2 → ℂ) : act (g *
 
 def Wt (n : I → ℕ) : Submodule ℂ (MvPolynomial (I × Fin 2) ℂ) where
   carrier := {P | ∀ (s : I → ℂ) (x : I × Fin 2 → ℂ), eval (fun p => s p.1 * x p) P = (∏ v, s v ^ n v) * eval x P}
-  add_mem' h h' s x := by rw [map_add, map_add, h, h', mul_add]
+  add_mem' h h' s x := by rw [map_add (f := _), map_add (f := _), h, h', mul_add]
   zero_mem' s x := by simp
   smul_mem' c P h s x := by rw [smul_eval, smul_eval, h]; ring
 
@@ -78,14 +79,6 @@ theorem eval_wRep (n : I → ℕ) (e : I → ℤ) (g : I → GL (Fin 2) ℂ) (P 
   change eval x ((detE e g : ℂ) • sbs g P.1) = _
   rw [smul_eval, eval_sbs]
 
-def rowE (I : Type) : I × Fin 2 → ℂ := fun p => ![0, 1] p.2
-
-def tc (n : I → ℕ) : Wt n →ₗ[ℂ] ℂ := (aeval (rowE I)).toLinearMap.comp (Wt n).subtype
-
-theorem tc_apply (n : I → ℕ) (P : Wt n) : tc n P = eval (rowE I) P.1 := rfl
-
-def eY (n : I → ℕ) : Wt n := ⟨∏ v, X (v, 1) ^ n v, fun s x => by simp [mul_pow, Finset.prod_mul_distrib]⟩
-
 end Weight
 
 section Abs
@@ -98,17 +91,7 @@ def AF (j : Γ →* G) (R : Representation ℂ G W) : Submodule ℂ (G → W) wh
   zero_mem' γ g := by simp
   smul_mem' c f h γ g := by simp [h γ g]
 
-def psi (R : Representation ℂ G W) (t : W →ₗ[ℂ] ℂ) : (G → W) →ₗ[ℂ] (G → ℂ) where
-  toFun f g := t (R g⁻¹ (f g))
-  map_add' f f' := by funext g; simp
-  map_smul' c f := by funext g; simp
-
-theorem psi_apply (R : Representation ℂ G W) (t : W →ₗ[ℂ] ℂ) (f : G → W) (g : G) : psi R t f g = t (R g⁻¹ (f g)) := rfl
-
 def stab (j : Γ →* G) (H : Subgroup G) (g : G) : Subgroup Γ := H.comap ((MulAut.conj g⁻¹).toMonoidHom.comp j)
-
-theorem mem_stab {j : Γ →* G} {H : Subgroup G} {g : G} {γ : Γ} : γ ∈ stab j H g ↔ g⁻¹ * j γ * g ∈ H := by
-  simp [stab]
 
 end Abs
 
@@ -130,8 +113,8 @@ section Sp
 
 variable {W : Type} [AddCommGroup W] [Module ℂ W]
 
-variable (W) in
 
+variable (W) in
 def Cen (ω : (Af F)ˣ →* ℂˣ) : Submodule ℂ (GF F → W) where
   carrier := {f | ∀ z g, f (g * zc F z) = (ω z : ℂ) • f g}
   add_mem' h h' z g := by simp [h z g, h' z g]
@@ -141,18 +124,11 @@ def Cen (ω : (Af F)ˣ →* ℂˣ) : Submodule ℂ (GF F → W) where
 def Sp (Q : DefQuat F) (R : Representation ℂ (GF F) W) (c : Pl F → ℕ) (ω : (Af F)ˣ →* ℂˣ) : Submodule ℂ (GF F → W) :=
   AF Q.toFin R ⊓ Hi.fixd (Hi.rtr ℂ (GF F) W) (Kc c) ⊓ Cen W ω
 
-variable (W) in
-
-def Hk (w : Pl F) (c : ℕ) : Module.End ℂ (GF F → W) := Uop w ((Hi.rtr ℂ (GF F) W).comp (locGL F 2 w)) c
 
 end Sp
 
-structure CC (c : Pl F → ℕ) (ω : (Af F)ˣ →* ℂˣ) (k : ℤ) : Prop where
-  lev : ∀ z, zc F z ∈ Kc c → ω z = 1
-  rat : ∀ x : Fˣ, (ω (ratU F x) : ℂ) = ∏ v : InfinitePlace F, v.embedding (x : F) ^ k
 
 variable (F) in
-
 structure LDat {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) where
 
   pl : InfinitePlace F → Pl F
@@ -179,29 +155,11 @@ def gl : GF F →* (InfinitePlace F → GL (Fin 2) ℂ) := Pi.monoidHom fun v =>
 
 def R (n : InfinitePlace F → ℕ) (e : InfinitePlace F → ℤ) : Representation ℂ (GF F) (Wt n) := (wRep n e).comp D.gl
 
-def Cmp (Q : DefQuat F) : Prop := ∀ v y, Q.jc v y = (Q.jf y).map (D.ea v)
+
 
 open Classical in
-
-def nz (e : InfinitePlace F → ℤ) (w : Pl F) : ℂ := ∏ v, if D.pl v = w then (l : ℂ) ^ (-e v) else 1
-
-open Classical in
-
 def uf (e : InfinitePlace F → ℤ) (w : Pl F) : ℂ :=
   ∏ v, if D.pl v = w then (v.embedding (Formalism.L2.Host.unif w : Fˣ) / (l : ℂ)) ^ e v else 1
-
-def resplit (Q : DefQuat F) : DefQuat F :=
-  { Q with
-    jc := fun v => (D.ea v).mapMatrix.comp Q.jf.toRingHom
-    jc_alg := fun v x => by
-      have h : D.ea v (algebraMap F (Af F) x) = v.embedding x := D.em_alg v x
-      ext i j
-      simp [Matrix.algebraMap_matrix_apply, apply_ite (D.ea v), h] }
-
-theorem cmp_resplit (Q : DefQuat F) : D.Cmp (D.resplit Q) := fun _ _ => rfl
-
-theorem Cmp.toInf {D : LDat F ι} {Q : DefQuat F} (h : D.Cmp Q) (γ : Q.Dˣ) : Q.toInf γ = D.gl (Q.toFin γ) :=
-  funext fun v => Units.ext (h v γ)
 
 end LDat
 

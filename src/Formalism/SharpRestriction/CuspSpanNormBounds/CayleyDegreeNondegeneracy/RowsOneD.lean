@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.RowsOneC
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.RowsOneC
+
+@[expose] public section
 
 noncomputable section
 
@@ -210,8 +214,8 @@ theorem small_term_of_corank_one_pair (hH : Cnt.Hyp D large₂ u u' C' Cl Cg cb 
   · exact absurd ((X.scal_iff p hs).2 hsc) hns
   · exact rowsT_small Y hSt (d_rdE_pos hH.1) _ _ hG1 hr1 hG2 hr2 hB
 
-open Classical in
 
+open Classical in
 theorem corank_one_bound_of_fibres (h : rows_Hyps Y C' Cl Cg cb Cu cT CT C0 A c Cpr Ca C2 Ch δ δm q)
     (hSW : UnitaryVolumeMass.stSW D large₂ u u' C' Cl Cg cb Cu cT CT C0 A c) (hC4 : UnitaryVolumeMass.PartnerCountBound D large₂ u u' C' Cl Cg cb Cu cT CT C0 A c)
     (hF : rowsSingleFibre X Y) (hF' : wordPairTermSingleFibre X Y) (h7 : VanishingOnXAndXPlus.adm7 D large₂ C' Cl Cg cb Cu cT CT C0)

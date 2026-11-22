@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.AdelicCompactOpens.HermDefONFamily
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.AdelicCompactOpens.HermDefONFamily
+
+@[expose] public section
 
 namespace PI.UnitaryGroupMassFormula.HermDefON
 

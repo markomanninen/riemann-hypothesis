@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensFactor
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.EigBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensFactorAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CommPrj
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.FinTens
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OpBasics
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensFactor
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.EigBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensFactorAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CommPrj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.FinTens
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OpBasics
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,7 +83,7 @@ variable {Γ : Type*} [Group Γ] [TopologicalSpace Γ]
 theorem lift_int {X : Type*} (π : UnitaryRep Γ H) (A : H → H) (f f' : X → Γ) (h : ∀ x v, A (π (f x) v) = π (f' x) (A v))
     (g : FreeGroup X) : ∀ v, A (π (FreeGroup.lift f g) v) = π (FreeGroup.lift f' g) (A v) := by
   induction g using FreeGroup.induction_on with
-  | C1 => intro v; simp only [map_one, UnitaryRep.map_one_apply]
+  | one => intro v; simp only [map_one, UnitaryRep.map_one_apply]
   | of x => simpa using h x
   | inv_of x ih =>
     intro v
@@ -100,10 +104,10 @@ end Hil
 theorem lift_commute {X Γ : Type*} [Group Γ] (f f' : X → Γ) (h : ∀ x y, Commute (f x) (f' y)) (a b : FreeGroup X) :
     Commute (FreeGroup.lift f a) (FreeGroup.lift f' b) := by
   induction a using FreeGroup.induction_on with
-  | C1 => simp
+  | one => simp
   | of x =>
     induction b using FreeGroup.induction_on with
-    | C1 => simp
+    | one => simp
     | of y => simpa using h x y
     | inv_of y ih => rw [map_inv]; exact ih.inv_right
     | mul c d ihc ihd => rw [map_mul]; exact ihc.mul_right ihd
@@ -182,7 +186,7 @@ theorem cyc_le {α : Type*} [Preorder α] {m : ℕ} (J : Fin (m + 1) → α) (h 
   simpa [h2] using h1 k (i + 1)
 
 section Loc
-variable {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+variable {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
 theorem rhoL_adj (w : Pl K) (g : Gw n w) : ContinuousLinearMap.adjoint (rhoL μ w g) = rhoL μ w g⁻¹ := by
   have := (UpperTheory.ConvolutionTheory.Tf.commPrj K n μ ⊥).2.2.2.2.2.2.2.1 (AdelicGLn.localEmbedding w g)
@@ -260,7 +264,7 @@ theorem GA_mem {V : Submodule ℂ (LL μ)} (hV : IsSummand μ V) (A : Set (Pl K)
   exact prj_mem hV.closed _
 
 theorem GA_arch (A : Set (Pl K)) (a : archGroup K n) :
-    Commute (rightRegularRep (rationalGLOne K n) μ (archP K n a)) (prj (GA μ J χ A)) :=
+    Commute (rightRegularRep (rationalGLOne (K := K) (n := n)) μ (archP K n a)) (prj (GA μ J χ A)) :=
   GA_commute μ _ fun u _ x => ContinuousLinearMap.ext fun y => by
     simp only [ContinuousLinearMap.mul_apply, rhoL, rhoF]
     rw [← UnitaryRep.map_mul_apply, ← UnitaryRep.map_mul_apply, (arch_fin _ _).eq]
@@ -297,7 +301,7 @@ theorem compact_typed (hn : 0 < n) (ν : Measure (archGroup K n)) [ν.IsHaarMeas
     List.prod_nil, ContinuousLinearMap.one_apply]
   rw [inv_smul_smul₀ (Complex.ofReal_ne_zero.2 hκ.ne')]
 
-theorem split_fin (M : Submonoid (normOneGL K n)) (B : Finset (Pl K))
+theorem split_fin (M : Submonoid (normOneGL (K := K) (n := n))) (B : Finset (Pl K))
     (hM : ∀ b ∈ B, ∀ y, MultiplicityOne.finProj K n (AdelicGLn.localEmbedding b y) ∈ M) (h : AdelicGLn.FiniteAdelicGL K n) :
     ∃ x ∈ M, ∃ h', MultiplicityOne.finProj K n h = x * MultiplicityOne.finProj K n h' ∧
       ∀ w ∈ B, finAt w (finEmb K n h') = 1 := by
@@ -317,12 +321,12 @@ end Loc
 
 section Two
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {n : ℕ}
-  (μ : Measure (normOneGL E n)) [μ.IsHaarMeasure]
+  (μ : Measure (normOneGL (K := E) (n := n))) [μ.IsHaarMeasure]
 
 theorem operatorAt_int {s s' : archGroup F n →* archGroup E n} (hs : Continuous s) (hs' : Continuous s')
     (ν : Measure (archGroup F n)) [ν.IsHaarMeasure] (a : TI F n) (T : LL μ →L[ℂ] LL μ)
-    (h : ∀ x u, T (rightRegularRep (rationalGLOne E n) μ (archP E n (s x)) u) =
-      rightRegularRep (rationalGLOne E n) μ (archP E n (s' x)) (T u)) (v : LL μ) :
+    (h : ∀ x u, T (rightRegularRep (rationalGLOne (K := E) (n := n)) μ (archP E n (s x)) u) =
+      rightRegularRep (rationalGLOne (K := E) (n := n)) μ (archP E n (s' x)) (T u)) (v : LL μ) :
     T (OComponent μ s hs ν a v) = OComponent μ s' hs' ν a (T v) := by
   have key : T ∘L OComponent μ s hs ν a = OComponent μ s' hs' ν a ∘L T := by
     refine UnitaryRep.comp_integrated_of_mem_intertwiners _ _ ?_ _

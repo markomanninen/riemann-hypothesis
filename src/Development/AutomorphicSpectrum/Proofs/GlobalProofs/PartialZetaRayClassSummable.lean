@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
-import ReciprocityTheory.Chebotarev.EulerSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
+public import ReciprocityTheory.Chebotarev.EulerSum
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -25,7 +29,7 @@ theorem classSummable : ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal 
       Summable (fun I : {I : Ideal (𝓞 F) // CoprimeTo F 𝔣 I ∧ RayRel F 𝔣 I 𝔞} => ((Ideal.absNorm I.1 : ℕ) : ℂ) ^ (-s)) := by
   intro F _ _ _ 𝔣 𝔞 𝔟 J _ r y v _ s hs
   have h := (ReciprocityTheory.Cheb.summable_absNorm_rpow_ideal F hs).subtype
-    {I : Ideal (𝓞 F) | CoprimeTo F 𝔣 I ∧ RayRel F 𝔣 I 𝔞}
+    (fun I : Ideal (𝓞 F) => CoprimeTo F 𝔣 I ∧ RayRel F 𝔣 I 𝔞)
   refine Summable.of_norm (h.congr fun I => ?_)
   exact (norm_natCast_cpow_neg _ hs).symm
 

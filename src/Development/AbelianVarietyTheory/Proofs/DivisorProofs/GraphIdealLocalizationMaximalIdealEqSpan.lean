@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLocModelIsPrimeOf
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotDominatesTopPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToQMemMaximalIdealIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MinOrdLeOrdAdd
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.EqZeroOfForallLTensorEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLocModelIsPrimeOf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotDominatesTopPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToQMemMaximalIdealIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MinOrdLeOrdAdd
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.EqZeroOfForallLTensorEqZero
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.TopForm GlobalTheory.Discrepancy GlobalTheory.FieldPair GlobalTheory.GraphLocal
@@ -80,8 +85,8 @@ theorem exists_mul_mem_radical {R : Type} [CommRing R] {I p : Ideal R} (hp : p �
 
 variable {K κ' : Type} [Field K] [Field κ'] [Algebra ℂ K] [Algebra ℂ κ']
 
-variable (κ') in
 
+variable (κ') in
 def inl (E : Place (algebraMap ℂ K)) : E.ring →+* tens (κ' := κ') (placeAlg E) where
   toFun e := ⟨(e : K) ⊗ₜ 1, tmul_mem e.2 1⟩
   map_one' := rfl
@@ -116,7 +121,7 @@ theorem tens_ringHom_ext (E : Place (algebraMap ℂ K)) {T : Type} [CommRing T]
   induction w using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul e b => rw [tensEquiv_tmul, map_mul, map_mul, h₁, h₂]
-  | add u v hu hv => simp only [map_add, hu, hv]
+  | add u v hu hv => simp only [map_add (f := _), hu, hv]
 
 theorem exists_tens_lift (E : Place (algebraMap ℂ K)) {T : Type} [CommRing T] (u : E.ring →+* T)
     (v : κ' →+* T) (h : ∀ a, u (E.const a) = v (algebraMap ℂ κ' a)) :

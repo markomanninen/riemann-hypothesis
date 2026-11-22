@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.SiegelWeilUnitaryConvergent
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.SiegelWeilUnitaryConvergent
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,8 +60,8 @@ def coordHerm (σ : E →ₐ[F] E) {d : ℕ} (b : Module.Basis (Fin d) F E) (lam
         (fun p : {p : Fin n × Fin n // p.1 < p.2} => (S : Matrix (Fin n) (Fin n) (R ⊗[F] E)) p.1.1 p.1.2)))
     ((Measure.pi fun _ => lam).prod (Measure.pi fun _ => coordK R b lam))
 
-omit [MeasurableSpace R] in
 
+omit [MeasurableSpace R] in
 def IsGramFib (σ : E →ₐ[F] E) {M : ℕ} (J : Matrix (Fin M) (Fin M) E) (n : ℕ)
     (μ : Measure (Fin n → Fin M → R ⊗[F] E)) (ν : Measure (HermR R σ n))
     (m : HermR R σ n → Measure (Fin n → Fin M → R ⊗[F] E)) : Prop :=

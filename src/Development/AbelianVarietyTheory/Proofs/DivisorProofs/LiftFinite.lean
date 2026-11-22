@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SymTupOne
-import Development.AbelianVarietyTheory.Statements.TorsionEndomorphisms.EndDeterminedOnTorsion
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.MinSt2
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SymTupOne
+public import Development.AbelianVarietyTheory.Statements.TorsionEndomorphisms.EndDeterminedOnTorsion
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem exists_retraction {R K A : Type} [CommRing R] [IsDomain R] [IsIntegrally
       map_one' := inj (by rw [hs, map_one, map_one])
       map_mul' := fun a b => inj (by rw [map_mul, hs, hs, hs, map_mul])
       map_zero' := inj (by rw [hs, map_zero, map_zero])
-      map_add' := fun a b => inj (by rw [map_add, hs, hs, hs, map_add]) }
+      map_add' := fun a b => inj (by rw [map_add (f := _), hs, hs, hs, map_add (f := _)]) }
   refine ⟨σ, RingHom.ext hs, RingHom.ext fun r => inj ?_⟩
   exact (hs (φ r)).trans (RingHom.congr_fun h r)
 

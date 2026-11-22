@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.LiftingTheory
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.RationalDualityOfAllCoefficients
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TransferCocycleFormula
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TransferContinuousOfContinuousOn
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.LiftingTheory
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.RationalDualityOfAllCoefficients
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TransferCocycleFormula
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TransferContinuousOfContinuousOn
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations TensorProduct
 
@@ -23,7 +27,7 @@ def trCochain (ι : G →* G') [Fintype (G' ⧸ ι.range)] (T : LocLat G' Qp LL 
     T.ρ (g • q).out (f (Function.invFun ι ((g • q).out⁻¹ * g * q.out)))
   map_add' f f' := by
     funext g
-    simp only [Pi.add_apply, map_add, Finset.sum_add_distrib]
+    simp only [Pi.add_apply, map_add (f := _), Finset.sum_add_distrib]
   map_smul' a f := by
     funext g
     simp only [Pi.smul_apply, LinearMap.map_smul_of_tower, RingHom.id_apply, Finset.smul_sum]
@@ -120,7 +124,8 @@ theorem corH1_natural [IsTopologicalGroup G'] (ι : G →* G') (hι : Continuous
         (F.f (c.1 (Function.invFun ι ((g • q).out⁻¹ * g * q.out))))
     = F.f (∑ q : G' ⧸ ι.range, T₁.ρ (g • q).out
         (c.1 (Function.invFun ι ((g • q).out⁻¹ * g * q.out))))
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun q _ => (F.equiv _ _).symm
 
 variable {K₀ K K₀' K' : Type} [Field K₀] [Field K] [Field K₀'] [Field K']
@@ -155,7 +160,7 @@ theorem actVB_res (PD : PeriodData G Qp K₀ K B BdR) (PD' : PeriodData G' Qp K�
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [actVB, hact]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem coreCor_of_isOpen [IsTopologicalGroup G'] (PD : PeriodData G Qp K₀ K B BdR)
     (PD' : PeriodData G' Qp K₀' K' B BdR) (ι : G →* G') (hι : Continuous ι)

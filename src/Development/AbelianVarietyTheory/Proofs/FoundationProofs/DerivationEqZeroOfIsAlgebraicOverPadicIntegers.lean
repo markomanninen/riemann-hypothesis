@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
+
+@[expose] public section
+
 open GlobalTheory.K5
 
 noncomputable section
@@ -14,7 +19,7 @@ abbrev phiZ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra (O0 p) Ω] 
   (algebraMap (O0 p) Ω).comp (algebraMap ℤ_[p] (O0 p))
 
 theorem phiZ_injective [CharZero Ω] : Function.Injective (phiZ p Ω) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro c hc
   by_contra h0
   rw [PadicInt.unitCoeff_spec h0, map_mul, map_pow, map_natCast] at hc
@@ -29,7 +34,7 @@ theorem der_eval₂ (E : Derivation ℤ Ω Ω)
     (x : Ω) (Q : ℤ_[p][X]) :
     E (eval₂ (phiZ p Ω) x Q) = eval₂ (phiZ p Ω) x (derivative Q) * E x := by
   induction Q using Polynomial.induction_on' with
-  | add P Q hP hQ => rw [eval₂_add, map_add, hP, hQ, derivative_add, eval₂_add, add_mul]
+  | add P Q hP hQ => rw [eval₂_add, map_add (f := _), hP, hQ, derivative_add, eval₂_add, add_mul]
   | monomial n c =>
     have hc : E (phiZ p Ω c) = 0 := hE c
     rw [eval₂_monomial, Derivation.leibniz, Derivation.leibniz_pow, hc, smul_zero, add_zero,
@@ -39,7 +44,7 @@ theorem der_eval₂ (E : Derivation ℤ Ω Ω)
 
 theorem der_algZp : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →
     ∀ E : Derivation ℤ Ω Ω, (∀ r : ℤ_[p], E (algebraMap (O0 p) Ω (algebraMap ℤ_[p] (O0 p) r)) = 0) →
-    ∀ x : Ω, IsAlgZp p x → E x = 0 := by
+    ∀ x : Ω, IsAlgZp (p := p) x → E x = 0 := by
   intro p _ Ω _ _ hC E hE x hx
   haveI : CharZero Ω := GlobalTheory.K5.Basic.charZero_of_isClo hC
   obtain ⟨P, hP0, hPx⟩ := hx

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.FramesOf
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.FramesOf
+
+@[expose] public section
 
 noncomputable section
 

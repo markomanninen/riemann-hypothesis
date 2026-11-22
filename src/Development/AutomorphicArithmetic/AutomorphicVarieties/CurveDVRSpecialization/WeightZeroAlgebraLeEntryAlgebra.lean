@@ -1,14 +1,18 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.RatTorsionFree
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.KisinCrTrivial
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.TriangularOfReducibleRankThree
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocGood
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.MopBase
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ConjTor
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoordGrading
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartSpan
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PointsFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.DvrIntClosure
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.RatTorsionFree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.TriangularOfReducibleRankThree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocGood
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.MopBase
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ConjTor
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoordGrading
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartSpan
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PointsFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.DvrIntClosure
+
+@[expose] public section
 
 section SlopeTestRemainingChoices
 
@@ -55,7 +59,7 @@ private theorem exists_dvr {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [Alg
       exact hB _ (Or.inr ⟨x, hx, rfl⟩)
         ((Algebra.IsIntegral.isIntegral x).map (IsScalarTower.toAlgHom ℤ_[l] O (PadicAlgCl l)))
     | zero => simpa using B.zero_mem
-    | add x y _ _ hx hy => rw [map_add]; exact B.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact B.add_mem hx hy
     | smul c x _ hx => rw [Algebra.smul_def, map_mul, ← IsScalarTower.algebraMap_apply]; exact B.mul_mem (B.algebraMap_mem c) hx
   let A : Subalgebra O (PadicAlgCl l) := { B.toSubsemiring with algebraMap_mem' := hO }
   have d1 : IsDiscreteValuationRing B := IsDiscreteValuationRing.RingEquivClass.isDiscreteValuationRing e
@@ -82,7 +86,7 @@ private theorem mem_range_of_approx {l : ℕ} [Fact l.Prime] {R : Type} [CommRin
       rw [Pi.add_apply, Pi.smul_apply, nsmul_eq_mul, Nat.cast_pow]
       linear_combination -this
     have h3 : y - φ v = (y - φ w) + (l : R) ^ n * φ u := by
-      rw [h2, map_add, map_nsmul, nsmul_eq_mul, Nat.cast_pow]
+      rw [h2, map_add (f := _), map_nsmul, nsmul_eq_mul, Nat.cast_pow]
       ring
     show y - φ v ∈ J ^ n
     rw [h3]
@@ -159,7 +163,8 @@ private theorem exists_pres {O : Type} [CommRing O] [IsDomain O] [IsLocalRing O]
       ∀ g a b, (S.r.hom g).mat a b ∈ W.part (wt a b) := by
   have hm : ∀ s : Γ × Fin 3 × Fin 3, (S.r.hom s.1).mat s.2.1 s.2.2 -
       algebraMap O S.R ((r0 η Ψ s.1).mat s.2.1 s.2.2) ∈ maximalIdeal S.R := fun ⟨g, a, b⟩ => by
-    have h1 := congrArg (fun x : GG 3 (ResidueField O) => x.mat a b) ((S.r.red g).trans (map_reducible_three_dim η Ψ g).symm)
+    have h1 := congrArg (fun x : GG (m := 3) (R := ResidueField O) => x.mat a b)
+      ((S.r.red g).trans (map_reducible_three_dim η Ψ g).symm)
     rw [← res_eq_zero_iff O, map_sub, AlgHom.commutes, sub_eq_zero]
     exact h1
   obtain ⟨W, u, hu, he⟩ := coord_grading O ℤ S.R (Γ × Fin 3 × Fin 3)
@@ -211,7 +216,8 @@ private theorem exists_pres {O : Type} [CommRing O] [IsDomain O] [IsLocalRing O]
         exact zero_mem _
     simpa only [sub_add_cancel] using add_mem h1 h2
 
-private theorem span_le_ent {O Γ R : Type} [CommRing O] [Group Γ] [CommRing R] [Algebra O R] (r : Γ →* GG 3 R) (j : ℤ) :
+private theorem span_le_ent {O Γ R : Type} [CommRing O] [Group Γ] [CommRing R] [Algebra O R]
+    (r : Γ →* GG (m := 3) (R := R)) (j : ℤ) :
     Submodule.span O (entMon r j) ≤ Subalgebra.toSubmodule (entAlg O r) := by
   refine Submodule.span_le.2 ?_
   rintro _ ⟨L, -, rfl⟩
@@ -219,13 +225,14 @@ private theorem span_le_ent {O Γ R : Type} [CommRing O] [Group Γ] [CommRing R]
   obtain ⟨s, -, rfl⟩ := List.mem_map.1 hy
   exact Algebra.subset_adjoin ⟨_, _, _, rfl⟩
 
-private theorem weight_zero_algebra_le_entry_algebra {O Γ R : Type} [CommRing O] [Group Γ] [CommRing R] [Algebra O R] (r : Γ →* GG 3 R) :
+private theorem weight_zero_algebra_le_entry_algebra {O Γ R : Type} [CommRing O] [Group Γ] [CommRing R] [Algebra O R]
+    (r : Γ →* GG (m := 3) (R := R)) :
     weightZeroSubalgebra O r ≤ entAlg O r :=
   Algebra.adjoin_le fun _ hx => span_le_ent r 0 (Submodule.subset_span hx)
 
 private theorem part_zero_le {l : ℕ} [Fact l.Prime] {O Γ R : Type} [CommRing O] [Algebra ℤ_[l] O]
     [Module.Finite ℤ_[l] O] [Group Γ] [CommRing R] [Algebra O R] (J : Ideal R) [IsHausdorff J R] (hl : (l : R) ∈ J)
-    (r : Γ →* GG 3 R) (W : WPres O ℤ R) (hz : ∀ i, W.z i ∈ J)
+    (r : Γ →* GG (m := 3) (R := R)) (W : WPres O ℤ R) (hz : ∀ i, W.z i ∈ J)
     (hs : ∀ i, W.z i ∈ Submodule.span O (entMon r (W.wt i))) (hfin : Module.Finite O (weightZeroSubalgebra O r)) :
     ∀ x ∈ W.part 0, x ∈ weightZeroSubalgebra O r := by
   rintro _ ⟨F, hF, rfl⟩
@@ -267,7 +274,8 @@ private theorem A_le {O R : Type} [CommRing O] [CommRing R] [Algebra O R] (W : W
     obtain ⟨μ, -, hd⟩ := part_span O R ℤ W {n | Finsupp.weight W.wt n = j} j fun _ h => h
     obtain ⟨b, hb, rfl⟩ := hd f hf
     show W.π _ ∈ T
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact sum_mem fun m _ => by
       rw [map_mul]
       exact mul_mem (h0 _ ⟨_, hb m, rfl⟩) (hm m)
@@ -280,12 +288,12 @@ private theorem exists_range {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [A
       IsAdicComplete (@maximalIdeal A _ h.toIsLocalRing) A ∧ ∀ x, (f x : PadicAlgCl l) = Ξ x := by
   obtain ⟨n, p, hp⟩ := Module.Finite.exists_fin' O Ξ.range
   have hint : ∀ x : Ξ.range, ‖(x : PadicAlgCl l)‖ ≤ 1 := fun x =>
-    (int_iff_norm _).1 (isIntegral_trans (A := O) _ ((Algebra.IsIntegral.isIntegral x).map Ξ.range.val))
+    (int_iff_norm _).1 (isIntegral_trans (A := O) _ ((IsIntegral.of_finite O x).map Ξ.range.val))
   obtain ⟨A, hA1, hA2, hbA⟩ := exists_dvr (O := O) (fun i => (p (Pi.single i 1) : PadicAlgCl l)) fun i => hint _
   have hmem : ∀ x, Ξ x ∈ A := fun x => by
     obtain ⟨v, hv⟩ := hp ⟨Ξ x, x, rfl⟩
     have h1 : Ξ x = (p v : PadicAlgCl l) := (congrArg Subtype.val hv).symm
-    rw [h1, LinearMap.pi_apply_eq_sum_univ, AddSubmonoidClass.coe_finset_sum]
+    rw [h1, LinearMap.pi_apply_eq_sum_univ, AddSubmonoidClass.coe_finsetSum]
     refine sum_mem fun i _ => A.smul_mem ?_ _
     convert hbA i using 3
     funext j
@@ -294,8 +302,9 @@ private theorem exists_range {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [A
   exact ⟨A, hA1, hA2, Ξ.codRestrict A hmem, (UpperTheory.V.abelian₂.dvr_finite l A).1, fun _ => rfl⟩
 
 private theorem push_eq {O Γ R K : Type} [CommRing O] [Group Γ] [CommRing R] [Algebra O R] [CommRing K] [Algebra O K]
-    (u : Γ →* GG 3 R) (W : WPres O ℤ R) (hent : ∀ g a b, (u g).mat a b ∈ W.part (wt a b)) {T : Subalgebra O R}
-    (hA : W.A ≤ T) (ξ : T →ₐ[O] K) (r : Γ →* GG 3 K) (hr : IsPush ξ u r) (t : Multiplicative ℤ →* Kˣ) (Ξ : R →ₐ[O] K)
+    (u : Γ →* GG (m := 3) (R := R)) (W : WPres O ℤ R) (hent : ∀ g a b, (u g).mat a b ∈ W.part (wt a b)) {T : Subalgebra O R}
+    (hA : W.A ≤ T) (ξ : T →ₐ[O] K) (r : Γ →* GG (m := 3) (R := K)) (hr : IsPush ξ u r)
+    (t : Multiplicative ℤ →* Kˣ) (Ξ : R →ₐ[O] K)
     (hΞ : Ξ.comp W.A.val = act W.gr t (ξ.comp (Subalgebra.inclusion hA))) (A : Subalgebra O K) (f : R →ₐ[O] A)
     (hf : ∀ x, (f x : K) = Ξ x) :
     push A.val (push f u) = conjBy (tor _ (t (Multiplicative.ofAdd 1))) r := by
@@ -313,10 +322,14 @@ end SlopeTestRemainingChoices
 
 open NumberField IsLocalRing Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Aut UpperTheory.V.Pr UpperTheory.V
 
+set_option synthInstance.maxHeartbeats 100000 in
 theorem UpperTheory.V.Pr.exists_ordPt_of_point :
-    Loc.LocalPublishedTheorems → ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {K : Type} [Field K] [NumberField K] [Algebra K Ω] {l : ℕ} [Fact l.Prime] {c : Coef l} {N : ℕ} [NeZero N] {e : ℕ} {ψ : DirichletCharacter c.O N} (D : Dat Ω K c e ψ) (g₁ : G ℚ Ω), D.Marked g₁ → ∀ (U : D.ULoc) (S : D.Ring U g₁),
-    FinA D g₁ → ∀ (B : ValuationSubring Ω), (∀ x, x ∈ B ↔ ‖D.j x‖ ≤ 1) → ∀ (ξ : entAlg c.O S.r.hom →ₐ[c.O] PadicAlgCl l) (r : G ℚ Ω →* GG 3 (PadicAlgCl l)), U3.IsPush ξ S.r.hom r →
-      ∃ (A : Subalgebra c.O (PadicAlgCl l)) (_ : IsDiscreteValuationRing A) (_ : Module.Finite c.O A) (t : (PadicAlgCl l)ˣ) (r' : G ℚ Ω →* GG 3 A), OrdPt l D.η D.Ψ D.cc g₁ B r' ∧ UnitaryThreeInertia.push A.val r' = conjBy (tor _ t) r := by
+    Loc.LocalPublishedTheorems → ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {K : Type} [Field K] [NumberField K] [Algebra K Ω] {l : ℕ} [Fact l.Prime] {c : Coef l} {N : ℕ} [NeZero N] {e : ℕ} {ψ : DirichletCharacter c.O N} (D : Dat Ω K c e ψ) (g₁ : G ℚ Ω), D.Marked g₁ → ∀ (U : (_root_.UpperTheory.V.U3.Univ (_root_.UpperTheory.V.U3.GCond.noCondition _ (D.η.comp D.ι) (D.Ψ.comp D.ι)))) (S : D.Ring U g₁),
+    FinA D g₁ → ∀ (B : ValuationSubring Ω), (∀ x, x ∈ B ↔ ‖D.j x‖ ≤ 1) →
+    ∀ (ξ : entAlg c.O S.r.hom →ₐ[c.O] PadicAlgCl l) (r : G ℚ Ω →* GG (m := 3) (R := PadicAlgCl l)), U3.IsPush ξ S.r.hom r →
+      ∃ (A : Subalgebra c.O (PadicAlgCl l)) (_ : IsDiscreteValuationRing A) (_ : Module.Finite c.O A)
+        (t : (PadicAlgCl l)ˣ) (r' : G ℚ Ω →* GG (m := 3) (R := A)),
+        OrdPt l D.η D.Ψ D.cc g₁ B r' ∧ UnitaryThreeInertia.push A.val r' = conjBy (tor _ t) r := by
   intro hP Ω _ _ _ K _ _ _ l _ c N _ e ψ D g₁ hg U S hfin B hB ξ r hr
   obtain ⟨hc, -, hl, hinj, -⟩ := UpperTheory.V.abelian₂.dvr_finite l c.O
   haveI : IsNoetherianRing c.O := PrincipalIdealRing.isNoetherianRing
@@ -339,5 +352,6 @@ theorem UpperTheory.V.Pr.exists_ordPt_of_point :
   obtain ⟨t, Ξ, hΞ, hr'⟩ := Alg.points_finite c.O ℤ S.R W hz (PadicAlgCl l) _ hfg
   obtain ⟨A, hA1, hA2, f, hA3, hf⟩ := exists_range Ξ hr'
   haveI : IsLocalRing A := hA1.toIsLocalRing
+  have : Algebra.IsIntegral c.O A := Algebra.IsIntegral.of_finite c.O A
   exact ⟨A, hA1, hA2, t (Multiplicative.ofAdd 1), U3.push f S.r.hom,
     ordPt_of_gd hP D g₁ hg U S B hB A f (loc_of_int f), push_eq _ W hent hA ξ r hr t Ξ hΞ A f hf⟩

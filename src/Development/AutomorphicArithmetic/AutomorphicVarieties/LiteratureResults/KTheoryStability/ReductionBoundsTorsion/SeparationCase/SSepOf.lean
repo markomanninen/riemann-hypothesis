@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.SBridgeAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.EvaluationSums.EvhEqSum
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.SBridgeAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.EvaluationSums.EvhEqSum
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,8 @@ theorem sSep : SSep := by
     have key : dC (fun y : Fin (k + 2) → G =>
         φ (Finsupp.single (fun i : Fin (k + 1) => (y i.castSucc)⁻¹ * y i.succ) 1)) y
         = φ (bd G (k + 1) (Finsupp.single (fun i : Fin (k + 2) => (y i.castSucc)⁻¹ * y i.succ) 1)) := by
-      simp only [dC, bd, Finsupp.linearCombination_single, one_smul, map_add, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [dC, bd, Finsupp.linearCombination_single, one_smul, map_add (f := _), map_sum, map_smul]
       rw [Fin.sum_univ_succ]
       congr 1
       · simp only [Fin.val_zero, pow_zero, one_mul, Fin.succAbove_zero, Fin.succ_castSucc]
@@ -59,7 +64,8 @@ theorem sSep : SSep := by
       unfold ev
       simp only [MonoidHom.id_apply, smul_eq_mul, mul_one]
       conv_rhs => rw [← Finsupp.sum_single z]
-      simp only [Finsupp.sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Finsupp.sum, map_sum]
       refine Finset.sum_congr rfl (fun g _ => ?_)
       have hg : (fun i : Fin (k + 1) => (Fin.partialProd g i.castSucc)⁻¹ * Fin.partialProd g i.succ) = g := by
         funext i

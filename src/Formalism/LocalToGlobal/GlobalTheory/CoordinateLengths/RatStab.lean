@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.IntSpanLeRat
-import Formalism.LocalToGlobal.GlobalTheory.GL6.BwAValIntegralNonneg
-import Formalism.LocalToGlobal.GlobalTheory.GL6.WeylLengthDiagonalUnitUniformiser
-import Formalism.LocalToGlobal.GroupLattices.FockModels.SwRowGenMonomial
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.RankConditionsOfLayerTwo
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.IntSpanLeRat
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.BwAValIntegralNonneg
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.WeylLengthDiagonalUnitUniformiser
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.SwRowGenMonomial
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.RankConditionsOfLayerTwo
+
+@[expose] public section
 
 noncomputable section
 
@@ -159,7 +163,7 @@ theorem rat_ten (D : D7) {N : ℕ} (lam : D.what₂.Tau → DomWeight N) (s : Fi
       | add x y _ _ hx hy =>
         intro r
         have e : Formalism.L2.Forms.ten (Function.update g τv (x + y)) = Formalism.L2.Forms.ten (Function.update g τv x) + Formalism.L2.Forms.ten (Function.update g τv y) := by
-          rw [bwA_ten_update, bwA_ten_update, bwA_ten_update, map_add, add_mul]
+          rw [bwA_ten_update, bwA_ten_update, bwA_ten_update, map_add (f := _), add_mul]
         rw [e, smul_add]
         exact add_mem (hx r) (hy r)
       | smul o x _ hx =>
@@ -210,7 +214,7 @@ theorem ratGL_holds (D : D7) (u : D.what₂.Word) : RatGL D u := by
     · intro τ hτ
       exact absurd (Finset.mem_univ τ) hτ
   | zero => rw [map_zero, smul_zero]; exact zero_mem _
-  | add x y _ _ hx hy => rw [map_add, smul_add]; exact add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _), smul_add]; exact add_mem hx hy
   | neg x _ hx => rw [map_neg, smul_neg]; exact neg_mem hx
 
 end Formalism.L2.GlobalTheoryTheory.LemB

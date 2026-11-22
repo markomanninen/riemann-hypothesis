@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TensorProduct
 open UpperTheory.Gal.crystallineComparison
 
 private lemma coeff_lin_form {A ι : Type} [CommRing A] [Fintype ι] (a : ι → A) (k₀ : ι) :
-    MvPolynomial.coeff (Finsupp.single k₀ 1) (∑ k, MvPolynomial.C (a k) * MvPolynomial.X k : MvPolynomial ι A) = a k₀ := by
+    AddMonoidAlgebra.coeff (∑ k, MvPolynomial.C (a k) * MvPolynomial.X k : MvPolynomial ι A) (Finsupp.single k₀ 1) = a k₀ := by
   classical
   simp only [MvPolynomial.coeff_sum, MvPolynomial.coeff_C_mul]
   rw [Finset.sum_eq_single k₀]

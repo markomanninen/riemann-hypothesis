@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.SUnits
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.SUnits
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

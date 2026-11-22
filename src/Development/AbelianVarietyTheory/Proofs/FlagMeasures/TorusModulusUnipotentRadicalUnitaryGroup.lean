@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
-import Formalism.RealPlaceAnalysis.FinalF
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormPosOfIsUnit
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnipotentRadicalVolumeGrowth
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
+public import Formalism.RealPlaceAnalysis.FinalF
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormPosOfIsUnit
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnipotentRadicalVolumeGrowth
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec GlobalTheory.DSId
 open scoped InnerProductSpace ComplexOrder ContDiff
@@ -53,7 +57,7 @@ theorem eq_smul_map (N : Subgroup G) (hN : IsClosed (N : Set G)) {ν : Measure G
   have hemb : MeasurableEmbedding (Subtype.val : N → G) := MeasurableEmbedding.subtype_coe hN.measurableSet
   haveI : LocallyCompactSpace N := hN.locallyCompactSpace
   haveI : SecondCountableTopology N := TopologicalSpace.Subtype.secondCountableTopology (N : Set G)
-  haveI : BorelSpace N := Subtype.borelSpace (N : Set G)
+  haveI : BorelSpace N := Subtype.borelSpace (fun x => x ∈ (N : Set G))
   set ν₀ : Measure N := ν.comap Subtype.val with hν₀
 
   have hback : ν₀.map Subtype.val = ν := by
@@ -75,7 +79,7 @@ theorem eq_smul_map (N : Subgroup G) (hN : IsClosed (N : Set G)) {ν : Measure G
   have hsm := Measure.isMulLeftInvariant_eq_smul ν₀ μ
   calc ν = ν₀.map Subtype.val := hback.symm
     _ = (Measure.haarScalarFactor ν₀ μ • μ).map Subtype.val := congrArg (Measure.map Subtype.val) hsm
-    _ = Measure.haarScalarFactor ν₀ μ • μ.map Subtype.val := Measure.map_smul _ _ _
+    _ = Measure.haarScalarFactor ν₀ μ • μ.map Subtype.val := Measure.map_smul _ hemb.measurable.aemeasurable
 
 theorem exists_exp_smul (N : Subgroup G) (hN : IsClosed (N : Set G)) {ν ν' : Measure G}
     (h : IsHaarSub (N : Set G) ν) (h' : IsHaarSub (N : Set G) ν') :
@@ -97,8 +101,8 @@ theorem exists_exp_smul (N : Subgroup G) (hN : IsClosed (N : Set G)) {ν ν' : M
   simp only [ENNReal.smul_def, Measure.smul_apply, smul_eq_mul]
   rw [← mul_assoc, ← ENNReal.coe_mul, div_mul_cancel₀ _ hc0]
 
-omit [LocallyCompactSpace G] [SecondCountableTopology G] in
 
+omit [LocallyCompactSpace G] [SecondCountableTopology G] in
 theorem isHaarSub_conj {N : Set G} {ν : Measure G} (hν : IsHaarSub N ν) (g : G)
     (h1 : ∀ m ∈ N, g * m * g⁻¹ ∈ N) (h2 : ∀ m ∈ N, g⁻¹ * m * g ∈ N) :
     IsHaarSub N (ν.map fun m => g * m * g⁻¹) := by
@@ -186,7 +190,7 @@ theorem modulus (N : Subgroup G) (hN : IsClosed (N : Set G)) {ν : Measure G} (h
   have hadd : ∀ s t, T (s + t) = T s + T t := by
     intro s t
     apply eq_of_exp_smul_measure_eq hr0 hStop
-    rw [← hT (s + t), hcomp, ← Measure.map_map (e s).measurable (e t).measurable, hT t, Measure.map_smul, hT s,
+    rw [← hT (s + t), hcomp, ← Measure.map_map (e s).measurable (e t).measurable, hT t, Measure.map_smul _ (e s).measurable.aemeasurable, hT s,
       smul_smul, ← ENNReal.ofReal_mul (Real.exp_pos _).le, ← Real.exp_add, add_comm (T t) (T s)]
 
   have hm0 : 0 < (ν S).toReal := ENNReal.toReal_pos hr0 hStop

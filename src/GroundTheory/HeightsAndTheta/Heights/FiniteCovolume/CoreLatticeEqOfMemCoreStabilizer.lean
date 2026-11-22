@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.DefiniteClassNumber.AdelicLattice
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.DefiniteClassNumber.AdelicLattice
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -20,8 +24,8 @@ variable {κ : Type*} [Fintype κ] (b : Basis κ K E)
 
 section Core
 
-variable (ι) in
 
+variable (ι) in
 def stdSub : AddSubgroup (ι → FinAdele K ⊗[K] E) where
   carrier := stdLattice ι (FinAdele K) b (intAdeles K)
   add_mem' hx hy := stdLattice_add b hx hy
@@ -35,8 +39,8 @@ def stdSub : AddSubgroup (ι → FinAdele K ⊗[K] E) where
 theorem mem_stdSub {x : ι → FinAdele K ⊗[K] E} :
     x ∈ stdSub ι b ↔ x ∈ stdLattice ι (FinAdele K) b (intAdeles K) := Iff.rfl
 
-variable (ι) in
 
+variable (ι) in
 def integralCore : AddSubgroup (ι → FinAdele K ⊗[K] E) where
   carrier := {u | ∀ β : 𝓞 E, ((1 : FinAdele K) ⊗ₜ[K] (β : E)) • u ∈ stdSub ι b}
   add_mem' {u v} hu hv β := by
@@ -76,7 +80,8 @@ theorem mem_integralCore_iff_basis {u : ι → FinAdele K ⊗[K] E} :
   have hβ : (β : E) = ∑ s, ((RingOfIntegers.basis E).repr β s) •
       ((RingOfIntegers.basis E s : 𝓞 E) : E) := by
     have := congrArg (algebraMap (𝓞 E) E) ((RingOfIntegers.basis E).sum_repr β)
-    rw [map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
     simp only [map_zsmul] at this
     exact this.symm
   rw [hβ, tmul_sum, Finset.sum_smul]
@@ -244,7 +249,8 @@ theorem isCompact_coreStabilizer (hH : IsUnit H.det) :
   show _ = unitaryCoords H (FinAdele K) b g (i, j, m)
   rw [unitaryCoords_apply]
   conv_rhs => rw [← mul_one (unitaryMat g i j), hone]
-  simp only [Finset.mul_sum, mul_smul_comm, map_sum, map_smul, Finsupp.coe_finsetSum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.mul_sum, mul_smul_comm, map_sum, map_smul, Finsupp.coe_finsetSum,
     Finset.sum_apply, Finsupp.smul_apply, smul_eq_mul]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [← mul_assoc, ← map_mul, mul_assoc, inv_mul_cancel₀ (hd0 (j, k)), mul_one]
@@ -263,7 +269,7 @@ def coreLattice (g : unitaryPoints K E H (FinAdele K)) : AddSubgroup (ι → K �
     exact zero_mem _
   add_mem' {x y} hx hy := by
     show unitaryMat g⁻¹ *ᵥ toFinAdele K E ι (x + y) ∈ integralCore ι b
-    rw [map_add, mulVec_add]
+    rw [map_add (f := _), mulVec_add]
     exact add_mem hx hy
   neg_mem' {x} hx := by
     show unitaryMat g⁻¹ *ᵥ toFinAdele K E ι (-x) ∈ integralCore ι b
@@ -300,8 +306,8 @@ theorem mulVec_mem_coreLattice_iff (γ : unitaryPoints K E H K) (g : unitaryPoin
   rw [mem_coreLattice, mem_coreLattice, toFinAdele_mulVec, _root_.mul_inv_rev, unitaryMat_mul,
     mulVec_mulVec, Matrix.mul_assoc, unitaryMat_inv_mul, Matrix.mul_one]
 
-variable (H) in
 
+variable (H) in
 def transCore (g : unitaryPoints K E H (FinAdele K)) : Set (ι → FinAdele K ⊗[K] E) :=
   {z | unitaryMat g⁻¹ *ᵥ z ∈ integralCore ι b}
 
@@ -367,8 +373,8 @@ theorem coreLattice_eq_iff {g g' : unitaryPoints K E H (FinAdele K)} :
     coreLattice b H g = coreLattice b H g' ↔ g⁻¹ * g' ∈ coreStabilizer b H :=
   ⟨mem_coreStabilizer_of_coreLattice_eq b, coreLattice_eq_of_mem_coreStabilizer b⟩
 
-variable (H) in
 
+variable (H) in
 theorem exists_int_smul_mem_coreLattice : ∃ N : ℤ, N ≠ 0 ∧
     ∀ (g : unitaryPoints K E H (FinAdele K)) (x : ι → K ⊗[K] E), x ∈ adelicLattice b H g →
       (N : K) • x ∈ coreLattice b H g := by
@@ -381,7 +387,8 @@ theorem exists_int_smul_mem_coreLattice : ∃ N : ℤ, N ≠ 0 ∧
   have hβ : (β : E) = ∑ s, ((RingOfIntegers.basis E).repr β s) •
       ((RingOfIntegers.basis E s : 𝓞 E) : E) := by
     have := congrArg (algebraMap (𝓞 E) E) ((RingOfIntegers.basis E).sum_repr β)
-    rw [map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
     simp only [map_zsmul] at this
     exact this.symm
   rw [hβ, tmul_sum, Finset.sum_smul]

@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DExtPoly
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DCorner
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DTrCoeff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.BcChiTmul
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DExtPoly
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DCorner
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DTrCoeff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.BcChiTmul
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -88,7 +92,6 @@ theorem UpperTheory.V.CA.d_gma_det :
     · rw [eq_top_iff]
       rintro y -
       induction y with
-      | zero => exact zero_mem _
       | add a b ha hb => exact add_mem ha hb
       | tmul s z =>
         have hz : z = ∑ i, ∑ j, e i * z * e j := by
@@ -114,7 +117,7 @@ theorem UpperTheory.V.CA.d_gma_det :
         intro B _ _ b
         letI : Algebra A B := ((algebraMap S B).comp (algebraMap A S)).toAlgebra
         haveI : IsScalarTower A S B := .of_algebraMap_eq fun _ => rfl
-        rw [(d_bc D S).1 B, hrep, map_add, map_add (Det.repS _ _), map_one, map_one (Det.repS _ _),
+        rw [(d_bc D S).1 B, hrep, map_add (f := _), map_add (Det.repS _ _), map_one, map_one (Det.repS _ _),
           Det.cancel_tmul, Det.repS_tmul, rS_tmul, map_one, mul_one, ← smul_tmul, ev_one_add D _ (h1 i), map_smul, hr, one_smul,
           ← det_one_add_single i (a • b)]
         congr 2
@@ -132,5 +135,6 @@ theorem UpperTheory.V.CA.d_gma_det :
         rw [h0, h0, Det.lam, Det.lam, chi_zero, chi_zero]
   have h2 := (d_bc D S).1 T (∑ a, t a ⊗ₜ ((1 : S) ⊗ₜ[A] x a))
   rw [main, hrep] at h2
-  simp only [map_sum, Det.cancel_tmul, Det.repS_tmul, rS_tmul, map_one, mul_one, one_smul] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Det.cancel_tmul, Det.repS_tmul, rS_tmul, map_one, mul_one, one_smul] at h2
   exact h2.symm

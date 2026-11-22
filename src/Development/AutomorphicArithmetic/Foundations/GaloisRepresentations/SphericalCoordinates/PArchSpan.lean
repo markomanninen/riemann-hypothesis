@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LineBasis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveRealTensorToProdMatrixAlgebrasInfPlaces
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SumOverPlacesFibre
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LineBasis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveRealTensorToProdMatrixAlgebrasInfPlaces
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SumOverPlacesFibre
+
+@[expose] public section
 
 noncomputable section
 

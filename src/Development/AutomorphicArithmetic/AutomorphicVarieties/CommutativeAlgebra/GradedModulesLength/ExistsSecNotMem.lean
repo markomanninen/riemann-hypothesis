@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+
+@[expose] public section
 
 open IsLocalRing Filter Formalism.MainNotions.V.Pf.V2.Calc UpperTheory.V.Alg UpperTheory.V.Alg.M
 
@@ -24,7 +28,7 @@ private theorem exists_sec_notMem {p : Ideal (rees N)} (hp : ¬ Irr (reesGr N) �
   have hle : Ideal.span (reesGr N (e i) : Set (rees N)) ≤ p := by
     rw [Ideal.span_le]
     intro q hq
-    have hc : MvPolynomial.coeff (Finsupp.single i 1) (q : MvPolynomial (Fin k) A) ∈ N i := by
+    have hc : AddMonoidAlgebra.coeff (q : MvPolynomial (Fin k) A) (Finsupp.single i 1) ∈ N i := by
       have := q.2 (Finsupp.single i 1)
       rwa [lat_single] at this
     have hq' : q = sec N i _ hc := by
@@ -134,7 +138,7 @@ theorem UpperTheory.V.Alg.M.zi_holds :
         rw [h0, map_zero]
         exact P.zero_mem
     | add a a' ha ha' =>
-      rw [add_mul, DirectSum.decompose_add, DirectSum.add_apply, map_add]
+      rw [add_mul, DirectSum.decompose_add, DirectSum.add_apply, map_add (f := _)]
       exact P.add_mem ha ha'
   intro b hb
   have hall : ∀ y ∈ Q.ideal, ∀ a : A, algebraMap (𝒜 0) (mR Q) (DirectSum.decompose 𝒜 (a * y) 0) ∈ P := by
@@ -185,7 +189,7 @@ theorem UpperTheory.V.Alg.M.zi_holds :
     | zero => intro a; simp
     | add y z _ _ hy hz =>
       intro a
-      rw [mul_add, DirectSum.decompose_add, DirectSum.add_apply, map_add]
+      rw [mul_add, DirectSum.decompose_add, DirectSum.add_apply, map_add (f := _)]
       exact P.add_mem (hy a) (hz a)
     | smul c y _ hy =>
       intro a

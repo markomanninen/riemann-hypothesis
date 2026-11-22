@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.WordFrameBounds.WordIdAt
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.Imports
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.DoubleSumFinprodFactor
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.WordFrameBounds.WordIdAt
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.Imports
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.DoubleSumFinprodFactor
+
+@[expose] public section
 
 noncomputable section
 
@@ -214,10 +218,12 @@ theorem hL_off {a : ℕ} (ha : a ≤ n) {w w' : Pl E} (hne : w ≠ w') (k : ℕ)
 
 theorem offB (hd : d.Ok) {a : ℕ} (ha : a ≤ n) {w : Pl E} (hP : w ∉ d.P) : ∀ ls : List (LL d),
     ((ls.map (locL d a ha)).foldr LM.mul (d.eL a)).s w = (MLM.wordLS d a ha w (atPlace d w ls)).s w ∧
-    ((ls.map (locL d a ha)).foldr LM.mul (d.eL a)).t w = (MLM.wordLS d a ha w (atPlace d w ls)).t w
-  | [] => ⟨rfl, rfl⟩
-  | p :: ls => by
-    obtain ⟨ih1, ih2⟩ := offB hd ha hP ls
+    ((ls.map (locL d a ha)).foldr LM.mul (d.eL a)).t w = (MLM.wordLS d a ha w (atPlace d w ls)).t w := by
+  intro ls
+  induction ls with
+  | nil => exact ⟨rfl, rfl⟩
+  | cons p ls ih =>
+    obtain ⟨ih1, ih2⟩ := ih
     have hX := hg_foldr d hd ha ls
     have fin : ∀ l : LM d.kap a (n - a), l.s w = idem (d.lev a w) → l.t w = idem (d.lev₂ a w) →
         (l.mul ((ls.map (locL d a ha)).foldr LM.mul (d.eL a))).s w = (MLM.wordLS d a ha w (atPlace d w ls)).s w ∧
@@ -281,7 +287,7 @@ theorem locWord : LocWord := by
     simp only [LocData.B, LocData.P, Finset.mem_union] at h ⊢
     tauto)
   have hprod : prodL d ls a = (d.fixL a).mul ((ls.map (locL d a ha)).foldr LM.mul (d.eL a)) := by
-    rw [prodL, dif_pos ha]
+    rw [prodL, dite_eq_left ha]
     rfl
   refine ⟨fun p => ⟨?_, (unit_eqv d hd ha (hgL d hd ha p)).1, ?_⟩, fun w hw => ?_, fun w hw => ?_,
     fun w hw => atPlace_nil d hw ls⟩

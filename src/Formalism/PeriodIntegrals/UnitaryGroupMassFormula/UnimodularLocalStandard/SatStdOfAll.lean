@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.ExistsGoodForm
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.ExistsGoodForm
+
+@[expose] public section
 
 noncomputable section
 open scoped ComplexConjugate
@@ -91,7 +95,7 @@ lemma sat_std_of_all (hok : CmOK a b c d) {l : ℕ} (hl : l.Prime) (x y : ℤ)
   · intro hdvd
     rcases (Nat.Prime.dvd_mul hl).mp hdvd with h | h
     · rcases (Nat.Prime.dvd_mul hl).mp h with h' | h' <;> exact hQ (Int.natCast_dvd.mpr h')
-    · obtain ⟨j, _, hj⟩ := (Prime.dvd_finset_prod_iff hl.prime _).mp h
+    · obtain ⟨j, _, hj⟩ := (Prime.dvd_finsetProd_iff hl.prime _).mp h
       exact hNl j hj
   · intro v hv
     have hvd : v ∈ dualLat (stdH (cmL a b d ha hd lam hlam) m) Λ := by

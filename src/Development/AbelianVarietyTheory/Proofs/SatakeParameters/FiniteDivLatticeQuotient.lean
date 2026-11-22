@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col
 
 namespace GlobalTheory
@@ -40,7 +45,7 @@ theorem exists_mem_one_sub_loc_dvd {R : Type} [CommRing R] [IsDedekindDomain R] 
   · rw [← hr]; ring
 
 theorem finite_divLat_quot_mulLat_homAt :
-    ∀ (E : Type) [Field E] [NumberField E] [StarRing E] (a b : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E))) (N : Submodule (𝓞 E) (Sp E a)) (N' : Submodule (𝓞 E) (Sp E b)) (cA cB : ℕ), Submodule.IsLattice E N → Submodule.IsLattice E N' → 0 < cA → 0 < cB → Finite (↥(divLat cA (homAt S N N')) ⧸ (mulLat cB (homAt S N N')).comap (divLat cA (homAt S N N')).subtype) := by
+    ∀ (E : Type) [Field E] [NumberField E] [StarRing E] (a b : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E))) (N : Submodule (𝓞 E) (Sp E a)) (N' : Submodule (𝓞 E) (Sp E b)) (cA cB : ℕ), Submodule.IsFullLattice E N → Submodule.IsLattice E N' → 0 < cA → 0 < cB → Finite (↥(divLat cA (homAt S N N')) ⧸ (mulLat cB (homAt S N N')).comap (divLat cA (homAt S N N')).subtype) := by
   intro E _ _ _ a b S N N' cA cB hN hN' hA hB
   classical
   obtain ⟨G, hG⟩ := hN.fg
@@ -57,7 +62,7 @@ theorem finite_divLat_quot_mulLat_homAt :
       map_add' := by intro x y; funext g; simp
       map_smul' := by intro r x; funext g; simp [smul_comm r] }
   have ev_inj : Function.Injective ev := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     have hsp : Submodule.span E (G : Set (Sp E a)) = ⊤ := by
       rw [← hN.span_eq_top, ← hG, Submodule.span_span_of_tower]
@@ -88,7 +93,7 @@ theorem finite_divLat_quot_mulLat_homAt :
       induction hw using Submodule.span_induction with
       | mem g hg => exact (memZ x).1 hx ⟨g, hg⟩
       | zero => simp
-      | add u v _ _ hu hv => rw [map_add, smul_add]; exact N'.add_mem hu hv
+      | add u v _ _ hu hv => rw [map_add (f := _), smul_add]; exact N'.add_mem hu hv
       | smul r u _ hu => rw [LinearMap.map_smul_of_tower, smul_comm]; exact N'.smul_mem r hu
     refine (mem_locP P N' _).2 ⟨s, hs, ?_⟩
     have h := this _ hsy

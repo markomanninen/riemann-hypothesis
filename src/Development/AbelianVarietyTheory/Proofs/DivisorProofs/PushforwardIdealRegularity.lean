@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLogMult
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtCoord
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumOrdSubOneLeOrdWedgeDifferentials
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntersectionNumberPullbackProportionalOfProporti
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLogMult
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtCoord
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumOrdSubOneLeOrdWedgeDifferentials
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntersectionNumberPullbackProportionalOfProporti
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry TopologicalSpace Filter
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -39,8 +44,8 @@ theorem cd_rel {W : Y.Opens} (σ : Γ(twist (GlobalTheory.structureModule Y) (to
   rw [fnOf_resG, fnOf_resG, fnOf_resG, fnOf_toLB_g] at e
   exact e
 
-open Classical in
 
+open Classical in
 def ratOf {W : Y.Opens} (σ : Γ(twist (GlobalTheory.structureModule Y) (toLB D), W)) : Y.functionField :=
   if h : genericPoint Y ∈ W then
     fnOf _ (memInf h (genChart_mem D)) (cd σ (genChart D)) / ((genChart D).1.2 : Y.functionField)
@@ -51,7 +56,7 @@ theorem ratOf_mul {W : Y.Opens} (σ : Γ(twist (GlobalTheory.structureModule Y) 
     ratOf σ * (i.1.2 : Y.functionField) = fnOf _ h (cd σ i) := by
   have hj : genericPoint Y ∈ W ⊓ (toLB D).U i ⊓ (toLB D).U (genChart D) := ⟨h, genChart_mem D⟩
   have hW : genericPoint Y ∈ W := h.1
-  rw [ratOf, dif_pos hW, cd_rel σ i (genChart D) hj]
+  rw [ratOf, dite_eq_left hW, cd_rel σ i (genChart D) hj]
   have := Units.ne_zero (genChart D).1.2
   field_simp
 
@@ -74,7 +79,7 @@ theorem ratOf_add {W : Y.Opens} (σ τ : Γ(twist (GlobalTheory.structureModule 
   by_cases hW : genericPoint Y ∈ W
   · have h : genericPoint Y ∈ W ⊓ (toLB D).U (genChart D) := ⟨hW, genChart_mem D⟩
     apply mul_right_cancel₀ (Units.ne_zero (genChart D).1.2)
-    rw [add_mul, ratOf_mul _ _ h, ratOf_mul _ _ h, ratOf_mul _ _ h, ← map_add]
+    rw [add_mul, ratOf_mul _ _ h, ratOf_mul _ _ h, ratOf_mul _ _ h, ← map_add (f := _)]
     congr 1
   · simp [ratOf, dif_neg hW]
 
@@ -140,14 +145,14 @@ theorem fnMap_fnOf {U : X.Opens} {y : Y} (hy : y ∈ s ⁻¹ᵁ U) (a : Γ(X, U)
   congr 1
   exact Scheme.Hom.germ_stalkMap_apply s U y hy a
 
-variable (s D) in
 
+variable (s D) in
 def tw {V : X.Opens}
     (σ : Γ((Scheme.Modules.pushforward s).obj (twist (GlobalTheory.structureModule Y) (toLB D)), V)) :
     Γ(twist (GlobalTheory.structureModule Y) (toLB D), s ⁻¹ᵁ V) := σ
 
-variable (s D) in
 
+variable (s D) in
 def untw {V : X.Opens} (σ : Γ(twist (GlobalTheory.structureModule Y) (toLB D), s ⁻¹ᵁ V)) :
     Γ((Scheme.Modules.pushforward s).obj (twist (GlobalTheory.structureModule Y) (toLB D)), V) := σ
 
@@ -175,8 +180,8 @@ theorem regAt_finv {V : X.Opens} (σ : Γ(twist (GlobalTheory.structureModule Y)
     rw [fnMap_finv]
     exact regularAt_ratOf σ (show s y ∈ V from hy.mem_open V.isOpen hx)
 
-open Classical in
 
+open Classical in
 def funOf (V : X.Opens) (σ : Γ(twist (GlobalTheory.structureModule Y) (toLB D), s ⁻¹ᵁ V)) : Γ(X, V) :=
   if hV : genericPoint X ∈ V then
     (exists_fnOf_eq hV fun x hx => regAt_finv hbij hReg σ hx).choose else 0
@@ -184,12 +189,12 @@ def funOf (V : X.Opens) (σ : Γ(twist (GlobalTheory.structureModule Y) (toLB D)
 theorem fnOf_funOf {V : X.Opens} (hV : genericPoint X ∈ V)
     (σ : Γ(twist (GlobalTheory.structureModule Y) (toLB D), s ⁻¹ᵁ V)) :
     fnOf V hV (funOf hbij hReg V σ) = finv hbij (ratOf σ) := by
-  rw [funOf, dif_pos hV]
+  rw [funOf, dite_eq_left hV]
   exact (exists_fnOf_eq hV fun x hx => regAt_finv hbij hReg σ hx).choose_spec
 
 theorem funOf_add {V : X.Opens} (σ τ : Γ(twist (GlobalTheory.structureModule Y) (toLB D), s ⁻¹ᵁ V)) :
     funOf hbij hReg V (σ + τ) = funOf hbij hReg V σ + funOf hbij hReg V τ :=
-  GlobalTheory.Cartier.fn_ext fun hV => by rw [map_add, fnOf_funOf, fnOf_funOf, fnOf_funOf, ratOf_add, map_add]
+  GlobalTheory.Cartier.fn_ext fun hV => by rw [map_add (f := _), fnOf_funOf, fnOf_funOf, fnOf_funOf, ratOf_add, map_add (f := _)]
 
 theorem funOf_smul {V : X.Opens} (a : Γ(X, V))
     (σ : Γ(twist (GlobalTheory.structureModule Y) (toLB D), s ⁻¹ᵁ V)) :
@@ -277,7 +282,7 @@ theorem pushforward_twist_iso_idealModule : ∀ (X Y : Scheme.{0}) [IsIntegral X
         Γ(idealModule J, V) := fun V =>
     { toFun := l V
       map_add' := fun σ τ => hι V (by
-        simp only [map_add, hl]
+        simp only [map_add (f := _), hl]
         exact funOf_add hbij hReg (tw s D σ) (tw s D τ))
       map_smul' := fun a σ => hι V (by
         simp only [Scheme.Modules.Hom.app_smul, LinearEquiv.map_smul, hl, smul_eq_mul,

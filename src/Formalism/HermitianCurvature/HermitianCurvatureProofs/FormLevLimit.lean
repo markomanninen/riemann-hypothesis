@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplySub
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveDensityModerateGrowth
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplySub
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveDensityModerateGrowth
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ContDiff

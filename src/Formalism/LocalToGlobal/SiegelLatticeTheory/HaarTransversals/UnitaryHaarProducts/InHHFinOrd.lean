@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHNeat
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ReHermitianCombinationNonpos
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHNeat
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ReHermitianCombinationNonpos
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,8 @@ theorem matE_crdC (M : GL (Fin X.B.I.n) X.B.I.E) (y : (VS D).V) :
   funext i
   have h := congrFun (matE_reprC X M y) i
   simp only [Module.Basis.equivFun_apply] at h
-  simp only [Formalism.L2.SG.HidaSetting.HidaSetting.crd, Formalism.L2.SG.HidaSetting.crdOf, h, Matrix.mulVec, dotProduct, mapMC,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.L2.SG.HidaSetting.HidaSetting.crd, Formalism.L2.SG.HidaSetting.crdOf, h, Matrix.mulVec, dotProduct, mapMC,
     RingHom.mapMatrix_apply, Matrix.map_apply, map_sum, map_mul, RingEquiv.coe_toRingHom,
     RingEquiv.symm_apply_apply, Module.Basis.equivFun_apply]
 
@@ -78,7 +83,8 @@ theorem hT_expandC (x y : (VS D).V) :
     (VS D).hT x y =
       ∑ i, ∑ j, star (X.bas.equivFun x i) * (X.bas.equivFun y j * (VS D).hT (X.bas i) (X.bas j)) := by
   conv_lhs => rw [← X.bas.sum_equivFun x, ← X.bas.sum_equivFun y]
-  simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply,
     map_smul, smul_eq_mul, starRingEnd_apply, Finset.mul_sum]
   refine Finset.sum_comm.trans (Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_)
   ring
@@ -146,7 +152,7 @@ def latOfC (h : Hfin X u) : Set (VS D).V :=
 
 def LatOfLattice : Prop :=
   ∀ h : Hfin X u, ∃ Λ : Submodule (NumberField.RingOfIntegers D.host.E) (VS D).V,
-    (Λ : Set (VS D).V) = latOfC X u h ∧ Submodule.IsLattice D.host.E Λ
+    (Λ : Set (VS D).V) = latOfC X u h ∧ Submodule.IsFullLattice D.host.E Λ
 
 theorem gf_eq_one_of_snd (y : X.B.I.GA) (hy : y ∈ X.B.I.GFset) (h2 : y.2 = 1) : y = 1 := by
   obtain ⟨γ, -, hinf, hfin⟩ := hy
@@ -236,19 +242,22 @@ theorem decomp (v : (VS D).V) : ∃ s ∈ Submodule.span D.host.E (Set.range X.e
           ((VS D).hT (X.zu u) v / (VS D).hT (X.zu u) (X.zu u)) • X.zu u)) = 0 := by
       intro x hx
       rcases hx with (⟨b, rfl⟩ | ⟨b, rfl⟩) | hz
-      · simp [map_sub, map_add, map_sum, map_smul, smul_eq_mul, X.ee, X.ef, (X.zu_orth u b).1,
+      set_option synthInstance.maxHeartbeats 100000 in
+        · simp [map_sub, map_add (f := _), map_sum, map_smul, smul_eq_mul, X.ee, X.ef, (X.zu_orth u b).1,
           mul_ite, Finset.sum_ite_eq, Finset.sum_ite_eq']
-      · simp [map_sub, map_add, map_sum, map_smul, smul_eq_mul, X.ff, hfe, (X.zu_orth u b).2,
+      set_option synthInstance.maxHeartbeats 100000 in
+        · simp [map_sub, map_add (f := _), map_sum, map_smul, smul_eq_mul, X.ff, hfe, (X.zu_orth u b).2,
           mul_ite, Finset.sum_ite_eq, Finset.sum_ite_eq']
       · rw [Set.mem_singleton_iff] at hz
         subst hz
-        simp [map_sub, map_add, map_sum, map_smul, smul_eq_mul, hze, hzf, hzz]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp [map_sub, map_add (f := _), map_sum, map_smul, smul_eq_mul, hze, hzf, hzz]
     simp only [Formalism.MainNotions.S.Lat.orth, Submodule.mem_iInf, LinearMap.mem_ker]
     intro x hx
     induction hx using Submodule.span_induction with
     | mem y hy => exact key y hy
     | zero => simp
-    | add y z _ _ hy hz => rw [map_add, LinearMap.add_apply, hy, hz, add_zero]
+    | add y z _ _ hy hz => rw [map_add (f := _), LinearMap.add_apply, hy, hz, add_zero]
     | smul c y _ hy => rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hy, smul_zero]
 
 theorem fmat_one' : X.B.I.fmat 1 = 1 := by
@@ -256,7 +265,7 @@ theorem fmat_one' : X.B.I.fmat 1 = 1 := by
 
 theorem delta_finOrd (δ : (VS D).V ≃ₗ[D.host.E] (VS D).V) (hδiso : δ ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT)
     (hUfix : ∀ w ∈ Submodule.span D.host.E (Set.range X.eX ∪ Set.range X.fY ∪ {X.zu u}), δ w = w)
-    (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hΛlat : Submodule.IsLattice D.host.E Λ)
+    (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hΛlat : Submodule.IsFullLattice D.host.E Λ)
     (hδΛ : ∀ v, δ v ∈ Λ ↔ v ∈ Λ) : ∃ m : ℕ, 0 < m ∧ δ ^ m = 1 := by
   have hdec := fun v => decomp X u v
   set U : Submodule D.host.E (VS D).V := Submodule.span D.host.E (Set.range X.eX ∪ Set.range X.fY ∪ {X.zu u})
@@ -293,7 +302,8 @@ theorem delta_finOrd (δ : (VS D).V ≃ₗ[D.host.E] (VS D).V) (hδiso : δ ∈ 
     have hc0 : ∀ b, cf b = 0 := by
       intro b
       have h1 := (mem_orth_iff_bl.1 hw) (X.fY b) (Submodule.subset_span (Or.inl (Or.inr ⟨b, rfl⟩)))
-      rw [← hcf, map_sum] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hcf, map_sum] at h1
       simp only [map_smul, smul_eq_mul, hT_f_e, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
         Finset.mem_univ, if_true] at h1
       exact h1
@@ -301,7 +311,21 @@ theorem delta_finOrd (δ : (VS D).V ≃ₗ[D.host.E] (VS D).V) (hδiso : δ ∈ 
     simp [hc0]
   haveI := hΛlat
   set Q := qEquiv δ W ⊥ hWmap hX with hQ
-  have hlat := qLat_isLattice Λ W ⊥
+  haveI : Submodule.IsFullLattice D.host.E (qLat Λ W ⊥) := by
+    refine { toIsLattice := qLat_isLattice Λ W ⊥, span_eq_top := ?_ }
+    rw [eq_top_iff]
+    intro q _
+    induction q using Submodule.Quotient.induction_on with | H w => ?_
+    obtain ⟨s, hs, hsw⟩ := Formalism.L2.SG.Pf.exists_smul_mem Λ (w : (VS D).V)
+    have hmem : Submodule.Quotient.mk (s • w) ∈ qLat Λ W ⊥ :=
+      mem_qLat.2 ⟨s • w, hsw, rfl⟩
+    have hsE : algebraMap (𝓞 D.host.E) D.host.E s ≠ 0 := by simpa using hs
+    have e : (Submodule.Quotient.mk w : QW W ⊥) =
+        (algebraMap (𝓞 D.host.E) D.host.E s)⁻¹ • (Submodule.Quotient.mk (s • w) : QW W ⊥) := by
+      rw [Submodule.Quotient.mk_smul, ← algebraMap_smul D.host.E s, smul_smul,
+        inv_mul_cancel₀ hsE, one_smul]
+    rw [e]
+    exact Submodule.smul_mem _ _ (Submodule.subset_span hmem)
   have hiso : Q ∈ Formalism.HermitianLatticesTheory.isom (qForm (VS D).hT W ⊥ hR hLb) := by
     have : ∀ a b, qForm (VS D).hT W ⊥ hR hLb (Q a) (Q b) = qForm (VS D).hT W ⊥ hR hLb a b := by
       intro a b
@@ -341,7 +365,7 @@ theorem delta_finOrd (δ : (VS D).V ≃ₗ[D.host.E] (VS D).V) (hδiso : δ ∈ 
     exact this
   have hQfin : IsOfFinOrder Q :=
     Formalism.L2.Col.isOfFinOrder_of_isom (qForm (VS D).hT W ⊥ hR hLb) (qForm_isSymm (VS D).hT (VS D).herm W ⊥ hR hLb)
-      hpq hlat hiso haut
+      hpq inferInstance hiso haut
   obtain ⟨m, hm, hQm⟩ := (isOfFinOrder_iff_pow_eq_one).1 hQfin
   have hpowQ : ∀ j : ℕ, ∀ w : W, ∃ hw' : (δ ^ j) (w : (VS D).V) ∈ W,
       (Q ^ j) (Submodule.Quotient.mk w) = Submodule.Quotient.mk ⟨(δ ^ j) (w : (VS D).V), hw'⟩ := by
@@ -370,7 +394,7 @@ theorem delta_finOrd (δ : (VS D).V ≃ₗ[D.host.E] (VS D).V) (hδiso : δ ∈ 
   refine ⟨m, hm, LinearEquiv.ext fun v => ?_⟩
   obtain ⟨s, hs, hws⟩ := hdec v
   have e : v = (v - s) + s := by abel
-  rw [LinearEquiv.coe_one, id, e, map_add, hWm _ hws, hUm m s hs]
+  rw [LinearEquiv.coe_one, id, e, map_add (f := _), hWm _ hws, hUm m s hs]
 
 theorem gam_pow_eq_one (γ : X.B.I.GA) (hGF : γ ∈ Formalism.MainNotions.LeviCoordinates.rr_GF X.B.I)
     (δ : (VS D).V ≃ₗ[D.host.E] (VS D).V)
@@ -440,7 +464,7 @@ theorem gamFinKu_of (hK : X.LevelSubgroupCharacter) (hL : LatOfLattice X u) : Ga
     induction hw using Submodule.span_induction with
     | mem x hx => exact hfixS x hx
     | zero => exact map_zero _
-    | add x y _ _ hx hy => rw [map_add, hx, hy]
+    | add x y _ _ hx hy => rw [map_add (f := _), hx, hy]
     | smul c x _ hx => rw [map_smul, hx]
 
   obtain ⟨Λ, hΛ, hΛlat⟩ := hL h

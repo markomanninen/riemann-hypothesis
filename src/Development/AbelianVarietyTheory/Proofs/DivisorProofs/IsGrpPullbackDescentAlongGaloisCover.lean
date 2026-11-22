@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDefiniteDatumGoodObj
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.GaloisCoverDescentAndCartesianSquares
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDefiniteDatumGoodObj
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.GaloisCoverDescentAndCartesianSquares
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
@@ -20,9 +25,12 @@ theorem epi_pullback_fst {X Y : Scheme.{0}} {Ga : Type} [Group Ga] {ρ : Ga → 
   let ρ' : Ga → (pullback t π ⟶ pullback t π) := fun a ↦
     pullback.map t π t π (𝟙 _) (ρ a) (𝟙 _) (by simp) (by simp [h.inv])
   have hg : GlobalTheory.ZM.IsGaloisCover Ga ρ' (pullback.fst t π) :=
-    h.of_isPullback (IsPullback.of_hasPullback t π).flip
-      (fun a ↦ by simp only [ρ', pullback.map, pullback.lift_snd])
-      (fun a ↦ by simp only [ρ', pullback.map, pullback.lift_fst, Category.comp_id])
+    by
+      let hp := (IsPullback.of_hasPullback t π).flip
+      have hu : ∀ a, ρ' a ≫ pullback.snd t π = pullback.snd t π ≫ ρ a :=
+        fun a ↦ by simp only [ρ', pullback.map, pullback.lift_snd]
+      exact ((GlobalTheory.ZM.galoisCover_descent _ _ _ _ _ h).2.2 _ _ _ _ _ _ hu hp.w).2 hp
+        (fun a ↦ by simp only [ρ', pullback.map, pullback.lift_fst, Category.comp_id])
   exact epi_of_isGaloisCover hg
 
 theorem isGrpPullback_of_galoisCover : ∀ (S S₁ Y : Scheme.{0}) (π₁ : S₁ ⟶ S) (Ga : Type) [Group Ga] (ρ₁ : Ga → (S₁ ⟶ S₁)) (f : S ⟶ Y)
@@ -35,7 +43,7 @@ theorem isGrpPullback_of_galoisCover : ∀ (S S₁ Y : Scheme.{0}) (π₁ : S₁
     hφ₁.1.lift φ₁ (A'.hom ≫ ρ₁ a) (by rw [hφ₁.1.w, Category.assoc, hG.inv])
   have hτ₁ : ∀ a, τ a ≫ φ₁ = φ₁ := fun a ↦ hφ₁.1.lift_fst _ _ _
   have hτ₂ : ∀ a, τ a ≫ A'.hom = A'.hom ≫ ρ₁ a := fun a ↦ hφ₁.1.lift_snd _ _ _
-  have gφ₁ : GlobalTheory.ZM.IsGaloisCover Ga τ φ₁ := hG.of_isPullback hφ₁.1.flip hτ₂ hτ₁
+  have gφ₁ : GlobalTheory.ZM.IsGaloisCover Ga τ φ₁ := ((GlobalTheory.ZM.galoisCover_descent _ _ _ _ _ hG).2.2 _ _ _ _ _ _ hτ₂ hφ₁.1.flip.w).2 hφ₁.1.flip hτ₁
   have eφ₁ : Epi φ₁ := epi_of_isGaloisCover gφ₁
 
   have w : φ ≫ B.hom = A.hom ≫ f := by
@@ -52,7 +60,7 @@ theorem isGrpPullback_of_galoisCover : ∀ (S S₁ Y : Scheme.{0}) (π₁ : S₁
     apply pullback.hom_ext
     · rw [Category.assoc, hq₁, ← hφ, reassoc_of% hτ₁ a]
     · rw [Category.assoc, hq₂, reassoc_of% hτ₂ a, hG.inv]
-  have gq : GlobalTheory.ZM.IsGaloisCover Ga τ q := hG.of_isPullback hsq.flip hτ₂ hτq
+  have gq : GlobalTheory.ZM.IsGaloisCover Ga τ q := ((GlobalTheory.ZM.galoisCover_descent _ _ _ _ _ hG).2.2 _ _ _ _ _ _ hτ₂ hsq.flip.w).2 hsq.flip hτq
   have eq : Epi q := epi_of_isGaloisCover gq
   obtain ⟨d, hd, -⟩ := gq.existsUnique_desc φ₁ hτ₁
   let c : A.left ⟶ pullback B.hom f := pullback.lift φ A.hom w

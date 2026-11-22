@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.Reductions.MetaplecticDerivatives.ContinuousPair
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.MetaplecticDerivatives.ContinuousPair
+
+@[expose] public section
 
 noncomputable section
 
@@ -185,9 +189,9 @@ theorem exists_det_ne (s : Mat l) (h : dd s ≠ 0) : ∃ t : ℝ, (s.toBlocks₁
   push Not at hall
   apply hP
   apply Polynomial.eq_zero_of_infinite_isRoot
-  convert Set.infinite_univ (α := ℝ)
-  ext t
-  simp only [Set.mem_setOf_eq, Polynomial.IsRoot.def, hev, hall, Set.mem_univ]
+  apply Set.Infinite.mono ?_ (Set.infinite_univ (α := ℝ))
+  intro t ht
+  simpa only [Set.mem_setOf_eq, Polynomial.IsRoot.def, hev] using hall t
 
 end C
 

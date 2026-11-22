@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.HeckeInj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.IdempotentTraces.SwapAt
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.FamSat
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.FamParts
-import Development.AutomorphicArithmetic.Foundations.Convolution.NormCharacterPowers.NormCharPowHolds
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.AtInj
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SSatIff
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.JacquetShalikaRigidity
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.HeckeInj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.IdempotentTraces.SwapAt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.FamSat
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.FamParts
+public import Development.AutomorphicArithmetic.Foundations.Convolution.NormCharacterPowers.NormCharPowHolds
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.AtInj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SSatIff
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.JacquetShalikaRigidity
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -17,10 +21,15 @@ open scoped ComplexConjugate Classical
 
 open UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E
 
+private theorem normV_eq_absNorm {K : Type} [Field K] [NumberField K]
+    (v : HeightOneSpectrum (𝓞 K)) : Formalism.ConjugateSelfDual.normV v = Ideal.absNorm v.asIdeal := by
+  rw [Ideal.absNorm_apply, Submodule.cardQuot_apply]
+  rfl
+
 private theorem normV_split {K M : Type} [Field K] [NumberField K] [Field M] [NumberField M] [Algebra K M]
     (w : HeightOneSpectrum (𝓞 M)) (h : GM.Split M (w.under (𝓞 K))) :
     Formalism.ConjugateSelfDual.normV w = Formalism.ConjugateSelfDual.normV (w.under (𝓞 K)) := by
-  haveI hl : w.asIdeal.LiesOver (w.under (𝓞 K)).asIdeal := ⟨rfl⟩
+  have hl : w.asIdeal.LiesOver (w.under (𝓞 K)).asIdeal := ⟨rfl⟩
   have := w.isMaximal
   have := (w.under (𝓞 K)).isMaximal
   have hs : Function.Surjective (completionMap (w.under (𝓞 K)) w) := h ⟨w, hl⟩
@@ -29,7 +38,7 @@ private theorem normV_split {K M : Type} [Field K] [NumberField K] [Field M] [Nu
   have h1 : w.asIdeal.ramificationIdx (𝓞 K) * w.asIdeal.inertiaDeg (𝓞 K) = 1 := by
     rw [← finrank_eq_ramificationIdx_mul_inertiaDeg M (w.under (𝓞 K)) w,
       ← (LinearEquiv.ofBijective _ hb).finrank_eq, Module.finrank_self]
-  show Ideal.absNorm w.asIdeal = Ideal.absNorm (w.under (𝓞 K)).asIdeal
+  simp only [normV_eq_absNorm]
   rw [← Ideal.absNorm_relNorm (𝓞 K) (𝓞 M) w.asIdeal,
     Ideal.relNorm_eq_pow_of_isMaximal w.asIdeal (w.under (𝓞 K)).asIdeal, Nat.eq_one_of_mul_eq_one_left h1, pow_one]
 
@@ -37,7 +46,7 @@ private theorem summand_of_irr {K : Type} [Field K] [NumberField K] {n : ℕ} {�
     {τ : Submodule ℂ (L2 μ)} (h : CuspIrr μ τ) : IsSummand μ τ :=
   ⟨h.le, h.closed, h.inv, h.ne, h.irr⟩
 
-private theorem sat_single {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {ι : Type} {κ : ι → Type}
+private theorem sat_single {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {ι : Type} {κ : ι → Type}
     [∀ i, Fintype (κ i)] {m : (Σ i, κ i) → ℕ} (Q : ∀ a, CG E (m a))
     (hinj : Function.Injective (Sigma.fst : (Σ i, κ i) → ι)) (a : Σ i, κ i) {w : HeightOneSpectrum (𝓞 E)}
     {C : Multiset ℂˣ} (h : R.sumSat (m := fun k : κ a.1 => m ⟨a.1, k⟩) (fun k => Q ⟨a.1, k⟩) w C) : (Q a).HasSat w C := by
@@ -49,7 +58,7 @@ private theorem sat_single {E : Type} [Field E] [NumberField E] [IsTotallyComple
   rw [Fintype.sum_eq_single k₀ fun k hk => absurd (hu k) hk]
   exact hD k₀
 
-private theorem sat_of_sigma {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n n' : ℕ} {p : CG E n} {q : CG E n'}
+private theorem sat_of_sigma {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n n' : ℕ} {p : CG E n} {q : CG E n'}
     (h : (⟨n, p⟩ : Σ a, CG E a) = ⟨n', q⟩) {w : HeightOneSpectrum (𝓞 E)} {B : Multiset ℂˣ} (hq : q.HasSat w B) :
     p.HasSat w B := by
   cases h
@@ -57,7 +66,9 @@ private theorem sat_of_sigma {E : Type} [Field E] [NumberField E] [IsTotallyComp
 
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.rigidF :
     T.LiftAll → RigidF := by
-  intro hL F E _ _ _ _ _ _ _ _ σ h2 hgen τ₁ τ₂ θ₂ hP hgal h12 h21 SE SF hSE hSF m₁ m₂ B₁ B₂ hA₁ hA₂ b Λ' t' hb hbc
+  intro hL
+  unfold RigidF ForSwap
+  intro F E _ _ _ _ _ _ _ _ σ h2 hgen τ₁ τ₂ θ₂ hP hgal h12 h21 SE SF hSE hSF m₁ m₂ B₁ B₂ hA₁ hA₂ b Λ' t' hb hbc
   have hp : (Module.finrank F E).Prime := h2 ▸ Nat.prime_two
   obtain ⟨-, hsw⟩ := swapAt F E σ h2 hgen τ₁ τ₂ θ₂ hP hgal h12 h21
   have s₁ := summand_of_irr hP.irr₁
@@ -73,7 +84,8 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.rigidF :
       (∀ i, ((![CG.mk π₁, CG.mk π₂] : Fin 2 → CG E 2) i).HasSat w (B i)) ∧ (∀ a, (Q a.1 a.2).HasSat w (B' a)) ∧
         ∑ i, B i = ∑ a, B' a := by
     filter_upwards [hsum, hSE.eventually_cofinite_notMem, hund.eventually hSF.eventually_cofinite_notMem] with w hw hwE hwF
-    obtain ⟨B, ⟨B1, hB1, e1⟩, D, hD, eD⟩ := hw (UpperTheory.ConvolutionTheory.resDeg F w) (hN w)
+    obtain ⟨B, ⟨B1, hB1, e1⟩, D, hD, eD⟩ := hw (UpperTheory.ConvolutionTheory.resDeg F w) (by
+      simpa only [normV_eq_absNorm] using hN w)
     obtain ⟨C, ⟨C1, hC1, e2⟩, e⟩ := hPt _ hwF
     obtain ⟨A₁, a₁, h₁⟩ := (Dp.sSatIff E 2 _ π₁ τ₁ c₁ w _).1 (hA₁.2 w hwE)
     obtain ⟨A₂, a₂, h₂⟩ := (Dp.sSatIff E 2 _ π₂ τ₂ c₂ w _).1 (hA₂.2 w hwE)
@@ -114,7 +126,9 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.rigidF :
     refine ⟨hwE, ?_⟩
     have hg : ∀ w' : HeightOneSpectrum (𝓞 E), w'.under (𝓞 F) = w.under (𝓞 F) → w' ∉ X :=
       fun w' hu hc => hy ⟨w', hc, hu⟩
-    have hq : 1 < Formalism.ConjugateSelfDual.normV (w.under (𝓞 F)) := NumberField.HeightOneSpectrum.one_lt_absNorm _
+    have hq : 1 < Formalism.ConjugateSelfDual.normV (w.under (𝓞 F)) := by
+      rw [normV_eq_absNorm]
+      exact NumberField.HeightOneSpectrum.one_lt_absNorm _
     rcases hd with ⟨hc, hn⟩ | ⟨-, hn⟩
     · obtain ⟨⟨w', hu⟩, hne', -⟩ := (Nat.card_eq_two_iff' (⟨w, rfl⟩ : {u : HeightOneSpectrum (𝓞 E) // u.under (𝓞 F) = w.under (𝓞 F)})).1
         (hc.trans h2)

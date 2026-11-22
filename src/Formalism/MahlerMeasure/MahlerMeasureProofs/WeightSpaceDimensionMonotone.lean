@@ -1,8 +1,12 @@
-import Formalism.MahlerMeasure.StatementTM
-import Formalism.MahlerMeasure.MahlerMeasureProofs.FreezeY
-import Formalism.MahlerMeasure.MahlerMeasureProofs.FreezeBij
-import Formalism.MahlerMeasure.MahlerMeasureProofs.FreezeInto
-import Mathlib
+module
+
+public import Formalism.MahlerMeasure.StatementTM
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.FreezeY
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.FreezeBij
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.FreezeInto
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.GM.DimensionMonotonicity
 
@@ -160,7 +164,7 @@ theorem E_Cas (c d : Fin r) (x : V) : G.E c d (G.Cas x) = G.Cas (G.E c d x) := b
       (((if d = b then G.E a d (G.E c a x) else 0) - (if b = c then G.E a d (G.E c a x) else 0)) -
         ((if a = c then G.E c b (G.E b d x) else 0) - (if d = a then G.E c b (G.E b d x) else 0))) := by
     intro a b
-    rw [G.comm' c d a b, G.comm' c d b a x, map_add, map_sub]
+    rw [G.comm' c d a b, G.comm' c d b a x, map_add (f := _), map_sub]
     split_ifs <;> subst_vars <;> (try simp only [map_zero]) <;> abel
   have h1 : ∀ a, ∑ b, ((if d = b then G.E a d (G.E c a x) else 0) - (if b = c then G.E a d (G.E c a x) else 0)) = 0 := by
     intro a
@@ -170,8 +174,10 @@ theorem E_Cas (c d : Fin r) (x : V) : G.E c d (G.Cas x) = G.Cas (G.E c d x) := b
     refine Finset.sum_eq_zero fun b _ => ?_
     simp only [Finset.sum_sub_distrib, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true, sub_self]
   calc G.E c d (G.Cas x) = ∑ a, ∑ b, G.E c d (G.E a b (G.E b a x)) := by
-        rw [Cas_apply, map_sum]
-        simp only [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [Cas_apply, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum]
     _ = ∑ a, ∑ b, (G.E a b (G.E b a (G.E c d x)) +
         (((if d = b then G.E a d (G.E c a x) else 0) - (if b = c then G.E a d (G.E c a x) else 0)) -
           ((if a = c then G.E c b (G.E b d x) else 0) - (if d = a then G.E c b (G.E b d x) else 0)))) := by
@@ -188,9 +194,11 @@ lemma Cas_mem {U : Submodule K V} (hU : G.Stable U) {x : V} (hx : x ∈ U) : G.C
   exact Submodule.sum_mem _ fun a _ => Submodule.sum_mem _ fun b _ => hU a b _ (hU b a x hx)
 
 lemma comp_Cas (μ : Fin r → ℤ) (x : V) : G.comp μ (G.Cas x) = G.Cas (G.comp μ x) := by
-  rw [Cas_apply, Cas_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Cas_apply, Cas_apply, map_sum]
   refine Finset.sum_congr rfl fun a _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun b _ => ?_
   have e : μ - dl a b - dl b a = μ := by
     funext c
@@ -504,7 +512,7 @@ theorem sl2 {a b : Fin r} (hab : a ≠ b) {ν : Fin r → ℤ} {x : V} (hx : G.I
     push_cast
     ring
   | succ k ih =>
-    rw [← hp (k + 1) x, ← hp (k + 1) (G.E a b x), hcomm, ih, hdiag (k + 1), map_add, map_smul, hp k x,
+    rw [← hp (k + 1) x, ← hp (k + 1) (G.E a b x), hcomm, ih, hdiag (k + 1), map_add (f := _), map_smul, hp k x,
       add_assoc, ← add_smul]
     congr 2
     push_cast
@@ -560,7 +568,7 @@ def Low (la : Fin r → ℤ) : Submodule K V where
   add_mem' := by
     intro x y hx hy ν hν
     simp only [Set.mem_ofPred_eq] at hx hy
-    rw [map_add, hx ν hν, hy ν hν, add_zero]
+    rw [map_add (f := _), hx ν hν, hy ν hν, add_zero]
   zero_mem' := by intro ν _; simp
   smul_mem' := by
     intro c x hx ν hν
@@ -584,7 +592,7 @@ theorem Lw_stable {la : Fin r → ℤ} {v : V} (hv : G.IsHW la v) : G.Stable (G.
   let U' : Submodule K V :=
     { carrier := {x | x ∈ G.Lw v ∧ ∀ a b, G.E a b x ∈ G.Lw v}
       add_mem' := fun {x y} hx hy => ⟨(G.Lw v).add_mem hx.1 hy.1, fun a b => by
-        rw [map_add]; exact (G.Lw v).add_mem (hx.2 a b) (hy.2 a b)⟩
+        rw [map_add (f := _)]; exact (G.Lw v).add_mem (hx.2 a b) (hy.2 a b)⟩
       zero_mem' := ⟨(G.Lw v).zero_mem, fun a b => by rw [map_zero]; exact (G.Lw v).zero_mem⟩
       smul_mem' := fun c x hx => ⟨(G.Lw v).smul_mem c hx.1, fun a b => by
         rw [map_smul]; exact (G.Lw v).smul_mem c (hx.2 a b)⟩ }
@@ -620,7 +628,7 @@ theorem Lw_le_low {la : Fin r → ℤ} {v : V} (hv : G.IsWt la v) :
   · intro a b hab x hx
     obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.mp hx
     obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.mp hy
-    rw [map_add, map_smul]
+    rw [map_add (f := _), map_smul]
     apply Submodule.mem_sup_right
     refine (G.Low la).add_mem ((G.Low la).smul_mem c ?_) ?_
     · show ∀ ν, ¬ (Dle ν la ∧ ν ≠ la) → G.comp ν (G.E a b v) = 0
@@ -652,7 +660,7 @@ theorem wt_le_of_mem {la : Fin r → ℤ} {v : V} (hv : G.IsHW la v) {x : V} (hx
   apply h
   have hz' : ∀ ν, ¬ (Dle ν la ∧ ν ≠ la) → G.comp ν z = 0 := hz
   have hne : ν ≠ la := fun e => hle (by rw [e]; exact Dle_refl la)
-  rw [map_add, map_smul, G.comp_of_isWt hv.1, if_neg hne, smul_zero, zero_add]
+  rw [map_add (f := _), map_smul, G.comp_of_isWt hv.1, if_neg hne, smul_zero, zero_add]
   exact hz' ν (fun h' => hle h'.1)
 
 theorem comp_top_of_mem {la : Fin r → ℤ} {v : V} (hv : G.IsHW la v) {x : V} (hx : x ∈ G.gS {v}) :
@@ -662,7 +670,7 @@ theorem comp_top_of_mem {la : Fin r → ℤ} {v : V} (hv : G.IsHW la v) {x : V} 
   obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.mp hy
   have hz' : ∀ ν, ¬ (Dle ν la ∧ ν ≠ la) → G.comp ν z = 0 := hz
   refine ⟨c, ?_⟩
-  rw [map_add, map_smul, show G.comp la v = v from hv.1, hz' la (fun h => h.2 rfl), add_zero]
+  rw [map_add (f := _), map_smul, show G.comp la v = v from hv.1, hz' la (fun h => h.2 rfl), add_zero]
 
 theorem Cas_gS {la : Fin r → ℤ} {v : V} (hv : G.IsHW la v) {x : V} (hx : x ∈ G.gS {v}) :
     G.Cas x = ((casI la : ℤ) : K) • x := by
@@ -811,7 +819,7 @@ lemma comp_cprod (μ : Fin r → ℤ) (cs : List ℤ) (x : V) :
 lemma sup_stable {U U' : Submodule K V} (hU : G.Stable U) (hU' : G.Stable U') : G.Stable (U ⊔ U') := by
   intro a b x hx
   obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.mp hx
-  rw [map_add]
+  rw [map_add (f := _)]
   exact Submodule.add_mem_sup (hU a b y hy) (hU' a b z hz)
 
 theorem chain {W V0 : Submodule K V} [FiniteDimensional K W] (hW : G.Stable W) (hWf : G.FinW W)
@@ -854,7 +862,7 @@ theorem chain {W V0 : Submodule K V} [FiniteDimensional K W] (hW : G.Stable W) (
       · exact hcs c h
     · rw [cprod_cons]
       obtain ⟨y, hy, z, hz, hyz⟩ := Submodule.mem_sup.mp (hx x hxW)
-      rw [← hyz, map_add, smul_add, add_sub_add_comm]
+      rw [← hyz, map_add (f := _), smul_add, add_sub_add_comm]
       refine U.add_mem (U.sub_mem (G.Cas_mem hU hy) (U.smul_mem _ hy)) ?_
       let Q : Submodule K V := Submodule.comap (G.Cas - ((casI μ : ℤ) : K) • LinearMap.id) U
       have hQ : G.gS {v} ≤ Q := by
@@ -876,7 +884,7 @@ theorem inj_of {la : Fin r → ℤ} {v : V} (hv : G.IsHW la v) {W : Submodule K 
   have hgr : G.Graded (G.gS {v}) := G.graded_of (G.gS_stable {v})
   let K0 : Submodule K V :=
     { carrier := {y | y ∈ G.gS {v} ∧ Φ y = 0}
-      add_mem' := fun {y z} hy hz => ⟨(G.gS {v}).add_mem hy.1 hz.1, by rw [map_add, hy.2, hz.2, add_zero]⟩
+      add_mem' := fun {y z} hy hz => ⟨(G.gS {v}).add_mem hy.1 hz.1, by rw [map_add (f := _), hy.2, hz.2, add_zero]⟩
       zero_mem' := ⟨(G.gS {v}).zero_mem, map_zero Φ⟩
       smul_mem' := fun c y hy => ⟨(G.gS {v}).smul_mem c hy.1, by rw [map_smul, hy.2, smul_zero]⟩ }
   have hmemK : ∀ y, y ∈ K0 ↔ y ∈ G.gS {v} ∧ Φ y = 0 := fun y => Iff.rfl
@@ -930,7 +938,7 @@ private theorem pderiv_comm_lemma (y y' : σ) (F : MvPolynomial σ K) :
       simp only [Finsupp.tsub_apply, Finsupp.single_apply, if_neg h, if_neg (Ne.symm h), tsub_zero]
       ring
   · intro p q hp hq
-    rw [map_add, map_add, hp, hq, map_add, map_add]
+    rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _), map_add (f := _)]
 
 theorem XD_comm (x y x' y' : σ) (F : MvPolynomial σ K) :
     X x * pderiv y (X x' * pderiv y' F) - X x' * pderiv y' (X x * pderiv y F) =
@@ -1018,7 +1026,7 @@ theorem wh_XD (w : σ → M) (x y : σ) (d : σ →₀ ℕ) (a : K) :
   by_cases h : d x = 0
   · rw [h, Nat.cast_zero, mul_zero, monomial_zero]
     intro m hm
-    rw [coeff_zero] at hm
+    rw [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at hm
     exact absurd rfl hm
   · apply isWeightedHomogeneous_monomial
     have e : d - Finsupp.single x 1 + Finsupp.single x 1 = d := by
@@ -1032,8 +1040,8 @@ theorem wh_XD (w : σ → M) (x y : σ) (d : σ →₀ ℕ) (a : K) :
       rw [Finsupp.weight_apply, Finsupp.sum_single_index (by simp), one_smul]
     have h2 : Finsupp.weight w (d - Finsupp.single x 1) = Finsupp.weight w d - w x := by
       conv_rhs => rw [← e]
-      rw [map_add, hs, add_sub_cancel_right]
-    rw [map_add, h2, hs]
+      rw [map_add (f := _), hs, add_sub_cancel_right]
+    rw [map_add (f := _), h2, hs]
 
 theorem XD_diag (x : σ) (d : σ →₀ ℕ) (a : K) :
     X x * pderiv x (monomial d a) = (d x : K) • monomial d a := by
@@ -1077,14 +1085,15 @@ theorem glAct_wh (LL : Letters N) (j : ℕ) (a b : Fin r) {ν : Fin r → ℤ} {
     (hx : x ∈ weightedHomogeneousSubmodule ℚ_[p] (wv LL j) ν) :
     glAct p LL j a b x ∈ weightedHomogeneousSubmodule ℚ_[p] (wv LL j) (ν + dl a b) := by
   rw [mem_weightedHomogeneousSubmodule] at hx
-  rw [x.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [x.as_sum, map_sum]
   refine Submodule.sum_mem _ fun d hd => ?_
   have hwd : Finsupp.weight (wv LL j) d = ν := hx (mem_support_iff.mp hd)
   unfold glAct
   rw [LinearMap.sum_apply]
   refine Submodule.sum_mem _ fun i _ => ?_
   split_ifs with h1 h2
-  · have h3 := wh_XD (K := ℚ_[p]) (wv LL j) (i, b) (i, a) d (coeff d x)
+  · have h3 := wh_XD (K := ℚ_[p]) (wv LL j) (i, b) (i, a) d (AddMonoidAlgebra.coeff x d)
     have e : ν + dl a b = Finsupp.weight (wv LL j) d - wv LL j (i, b) + wv LL j (i, a) := by
       rw [hwd]
       funext c
@@ -1093,7 +1102,7 @@ theorem glAct_wh (LL : Letters N) (j : ℕ) (a b : Fin r) {ν : Fin r → ℤ} {
       split_ifs <;> omega
     rw [e]
     exact h3
-  · have h3 := wh_XD (K := ℚ_[p]) (wv LL j) (i, a) (i, b) d (coeff d x)
+  · have h3 := wh_XD (K := ℚ_[p]) (wv LL j) (i, a) (i, b) d (AddMonoidAlgebra.coeff x d)
     have e : ν + dl a b = Finsupp.weight (wv LL j) d - wv LL j (i, a) + wv LL j (i, b) := by
       rw [hwd]
       funext c
@@ -1126,8 +1135,8 @@ noncomputable def GA (p : ℕ) [Fact p.Prime] (LL : Letters N) (j : ℕ) :
     rw [Finset.sum_ite_eq]
     split_ifs with h
     · rfl
-    · have := congrArg (coeff d) (hS _ h)
-      rw [coeff_weightedHomogeneousComponent, if_pos rfl, coeff_zero] at this
+    · have := congrArg (AddMonoidAlgebra.coeff · d) (hS _ h)
+      rw [coeff_weightedHomogeneousComponent, if_pos rfl, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at this
       exact this.symm
   idem := by
     classical
@@ -1135,12 +1144,13 @@ noncomputable def GA (p : ℕ) [Fact p.Prime] (LL : Letters N) (j : ℕ) :
     ext d
     by_cases h : μ = ν
     · subst h; simp only [if_true, coeff_weightedHomogeneousComponent]; split_ifs <;> rfl
-    · simp only [if_neg h, coeff_zero, coeff_weightedHomogeneousComponent]
+    · simp only [if_neg h, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, coeff_weightedHomogeneousComponent]
       split_ifs with h1 h2 <;> first | rfl | (exfalso; exact h (h1.symm.trans h2))
   diag := by
     classical
     intro c μ x
-    rw [weightedHomogeneousComponent_apply, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [weightedHomogeneousComponent_apply, map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun d hd => ?_
     rw [glAct_diag_monomial, ← weight_wv, (Finset.mem_filter.mp hd).2]
   shift := by
@@ -1156,7 +1166,8 @@ noncomputable def GA (p : ℕ) [Fact p.Prime] (LL : Letters N) (j : ℕ) :
       · by_contra hne
         exact h (Finset.mem_image.mpr ⟨d, mem_support_iff.mpr hne, rfl⟩)
     conv_lhs => rw [hx]
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     have e : ∀ ν, weightedHomogeneousComponent (wv LL j) μ (glAct p LL j a b (weightedHomogeneousComponent (wv LL j) ν x)) =
         if ν = μ - dl a b then glAct p LL j a b (weightedHomogeneousComponent (wv LL j) ν x) else 0 := by
       intro ν
@@ -1187,7 +1198,7 @@ theorem deriv_transfer {K σ τ : Type} [CommRing K] (φ : MvPolynomial σ K →
     rw [C_eq_smul_one, map_smul φ, map_one φ, map_smul D1, map_smul D0, hD1one, hD0one, smul_zero, smul_zero,
       map_zero]
   · rename_i p q hp hq
-    simp only [map_add, hp, hq]
+    simp only [map_add (f := _), hp, hq]
   · rename_i p v hp
     rw [map_mul φ, h1, hg v, hp, h0, map_add φ, map_mul φ, map_mul φ]
 
@@ -1241,25 +1252,16 @@ theorem supp_of_supported {K σ : Type} [CommSemiring K] {s : Set σ} {q : MvPol
   intro m hm v hv
   rw [mem_supported] at hq
   apply hq
-  rw [Finset.mem_coe, mem_vars]
+  rw [Finset.mem_coe, MvPolynomial.mem_vars_iff_mem_support]
   exact ⟨m, hm, Finsupp.mem_support_iff.mpr hv⟩
 
 theorem pderiv_eq_zero_of {K σ : Type} [CommRing K] {q : MvPolynomial σ K} {v : σ}
     (h : ∀ m ∈ q.support, m v = 0) : pderiv v q = 0 := by
   classical
-  rw [q.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [q.as_sum, map_sum]
   refine Finset.sum_eq_zero fun m hm => ?_
   rw [pderiv_monomial, h m hm, Nat.cast_zero, mul_zero, monomial_zero]
-
-theorem glAct_kill (LL : Letters N) (j : ℕ) (c d : Fin r) {q : MvPolynomial (Fin N × Fin r) ℚ_[p]}
-    (hq : ∀ m ∈ q.support, ∀ v : Fin N × Fin r, (v.1 : ℕ) < j → m v = 0) : glAct p LL j c d q = 0 := by
-  unfold glAct
-  rw [LinearMap.sum_apply]
-  refine Finset.sum_eq_zero fun i _ => ?_
-  split_ifs with h1 h2
-  · simp [pderiv_eq_zero_of (fun m hm => hq m hm (i, d) h1)]
-  · simp [pderiv_eq_zero_of (fun m hm => hq m hm (i, c) h1)]
-  · simp
 
 theorem glAct_mul_kill (LL : Letters N) (j : ℕ) (c d : Fin r) (x : MvPolynomial (Fin N × Fin r) ℚ_[p])
     {q : MvPolynomial (Fin N × Fin r) ℚ_[p]}
@@ -1280,17 +1282,17 @@ theorem indep_B (j0 : ℕ) (s : Finset (Fin N × Fin r →₀ ℕ)) (a : (Fin N 
   classical
   intro b0 hb0
   ext m
-  rw [coeff_zero]
+  rw [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
   by_contra hne
   have hmA : ∀ v : Fin N × Fin r, j0 ≤ (v.1 : ℕ) → m v = 0 := ha b0 hb0 m (mem_support_iff.mpr hne)
-  have := congrArg (coeff (m + b0)) h0
-  rw [coeff_zero, coeff_sum, Finset.sum_eq_single b0] at this
+  have := congrArg (AddMonoidAlgebra.coeff · (m + b0)) h0
+  rw [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, coeff_sum, Finset.sum_eq_single b0] at this
   · rw [coeff_mul_monomial', if_pos le_add_self, add_tsub_cancel_right, mul_one] at this
     exact hne this
   · intro b hb hbne
     rw [coeff_mul_monomial']
     split_ifs with hle
-    · have : coeff (m + b0 - b) (a b) = 0 := by
+    · have : AddMonoidAlgebra.coeff (a b) (m + b0 - b) = 0 := by
         by_contra hc
         have hA := ha b hb (m + b0 - b) (mem_support_iff.mpr hc)
         apply hbne
@@ -1339,20 +1341,21 @@ theorem glAct_wL (LL : Letters N) (j : ℕ) (a b : Fin r) {D : Fin N → ℤ} {x
     (hx : x ∈ weightedHomogeneousSubmodule ℚ_[p] (wL N r) D) :
     glAct p LL j a b x ∈ weightedHomogeneousSubmodule ℚ_[p] (wL N r) D := by
   rw [mem_weightedHomogeneousSubmodule] at hx
-  rw [x.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [x.as_sum, map_sum]
   refine Submodule.sum_mem _ fun d hd => ?_
   have hwd : Finsupp.weight (wL N r) d = D := hx (mem_support_iff.mp hd)
   unfold glAct
   rw [LinearMap.sum_apply]
   refine Submodule.sum_mem _ fun i _ => ?_
   split_ifs with h1 h2
-  · have h3 := wh_XD (K := ℚ_[p]) (wL N r) (i, b) (i, a) d (coeff d x)
+  · have h3 := wh_XD (K := ℚ_[p]) (wL N r) (i, b) (i, a) d (AddMonoidAlgebra.coeff x d)
     have e : D = Finsupp.weight (wL N r) d - wL N r (i, b) + wL N r (i, a) := by
       rw [hwd]
       simp [wL]
     rw [e]
     exact h3
-  · have h3 := wh_XD (K := ℚ_[p]) (wL N r) (i, a) (i, b) d (coeff d x)
+  · have h3 := wh_XD (K := ℚ_[p]) (wL N r) (i, a) (i, b) d (AddMonoidAlgebra.coeff x d)
     have e : D = Finsupp.weight (wL N r) d - wL N r (i, a) + wL N r (i, b) := by
       rw [hwd]
       simp [wL]
@@ -1389,7 +1392,8 @@ theorem glAct_wh' (LL : Letters N) {j J : ℕ} (hjJ : j ≤ J) (a b : Fin r) {ν
     (hx : x ∈ weightedHomogeneousSubmodule ℚ_[p] (wv LL J) ν) :
     glAct p LL j a b x ∈ weightedHomogeneousSubmodule ℚ_[p] (wv LL J) (ν + dl a b) := by
   rw [mem_weightedHomogeneousSubmodule] at hx
-  rw [x.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [x.as_sum, map_sum]
   refine Submodule.sum_mem _ fun d hd => ?_
   have hwd : Finsupp.weight (wv LL J) d = ν := hx (mem_support_iff.mp hd)
   unfold glAct
@@ -1397,7 +1401,7 @@ theorem glAct_wh' (LL : Letters N) {j J : ℕ} (hjJ : j ≤ J) (a b : Fin r) {ν
   refine Submodule.sum_mem _ fun i _ => ?_
   split_ifs with h1' h2
   · have h1 : (i : ℕ) < J := by omega
-    have h3 := wh_XD (K := ℚ_[p]) (wv LL J) (i, b) (i, a) d (coeff d x)
+    have h3 := wh_XD (K := ℚ_[p]) (wv LL J) (i, b) (i, a) d (AddMonoidAlgebra.coeff x d)
     have e : ν + dl a b = Finsupp.weight (wv LL J) d - wv LL J (i, b) + wv LL J (i, a) := by
       rw [hwd]
       funext c
@@ -1407,7 +1411,7 @@ theorem glAct_wh' (LL : Letters N) {j J : ℕ} (hjJ : j ≤ J) (a b : Fin r) {ν
     rw [e]
     exact h3
   · have h1 : (i : ℕ) < J := by omega
-    have h3 := wh_XD (K := ℚ_[p]) (wv LL J) (i, a) (i, b) d (coeff d x)
+    have h3 := wh_XD (K := ℚ_[p]) (wv LL J) (i, a) (i, b) d (AddMonoidAlgebra.coeff x d)
     have e : ν + dl a b = Finsupp.weight (wv LL J) d - wv LL J (i, a) + wv LL J (i, b) := by
       rw [hwd]
       funext c
@@ -1469,7 +1473,8 @@ theorem ycond_of_comm [NeZero r] (LL : Letters N) (J : ℕ) (M : WithTop ℤ)
         · rfl
         · by_contra hne
           exact h (Finset.mem_image.mpr ⟨d, mem_support_iff.mpr hne, rfl⟩)
-      rw [hsum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hsum, map_sum]
       refine Submodule.sum_mem _ fun ν hν => ?_
       obtain ⟨m, hm, rfl⟩ := Finset.mem_image.mp hν
       apply rM_of_wh_lemma LL J M
@@ -1549,7 +1554,8 @@ private theorem top_comm_lemma (LL : Letters N) (i i' : Fin N) (hne : i ≠ i') 
 theorem midAct_comm (LL : Letters N) (J j0 : ℕ) (c d c' d' : Fin r) (F : MvPolynomial (Fin N × Fin r) ℚ_[p]) :
     midAct p LL J j0 c d (glAct p LL J c' d' F) = glAct p LL J c' d' (midAct p LL J j0 c d F) := by
   unfold midAct glAct
-  simp only [LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.sum_apply, map_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun i' _ => ?_
   by_cases h1 : J ≤ (i : ℕ) ∧ (i : ℕ) < j0
@@ -1565,7 +1571,8 @@ theorem midAct_wh (LL : Letters N) (J j0 : ℕ) (c d : Fin r) {ν : Fin r → �
     (hx : x ∈ weightedHomogeneousSubmodule ℚ_[p] (wv LL J) ν) :
     midAct p LL J j0 c d x ∈ weightedHomogeneousSubmodule ℚ_[p] (wv LL J) ν := by
   rw [mem_weightedHomogeneousSubmodule] at hx
-  rw [x.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [x.as_sum, map_sum]
   refine Submodule.sum_mem _ fun m hm => ?_
   have hwd : Finsupp.weight (wv LL J) m = ν := hx (mem_support_iff.mp hm)
   unfold midAct Formalism.GM.FrozenVariableComponents.top
@@ -1573,14 +1580,14 @@ theorem midAct_wh (LL : Letters N) (J j0 : ℕ) (c d : Fin r) {ν : Fin r → �
   refine Submodule.sum_mem _ fun i _ => ?_
   split_ifs with h1 h2
   · have hnJ : ¬ ((i : ℕ) < J) := by omega
-    have h3 := wh_XD (K := ℚ_[p]) (wv LL J) (i, d) (i, c) m (coeff m x)
+    have h3 := wh_XD (K := ℚ_[p]) (wv LL J) (i, d) (i, c) m (AddMonoidAlgebra.coeff x m)
     have e : ν = Finsupp.weight (wv LL J) m - wv LL J (i, d) + wv LL J (i, c) := by
       rw [hwd]
       simp [wv, hnJ]
     rw [e]
     exact h3
   · have hnJ : ¬ ((i : ℕ) < J) := by omega
-    have h3 := wh_XD (K := ℚ_[p]) (wv LL J) (i, c) (i, d) m (coeff m x)
+    have h3 := wh_XD (K := ℚ_[p]) (wv LL J) (i, c) (i, d) m (AddMonoidAlgebra.coeff x m)
     have e : ν = Finsupp.weight (wv LL J) m - wv LL J (i, c) + wv LL J (i, d) := by
       rw [hwd]
       simp [wv, hnJ]
@@ -1607,12 +1614,14 @@ variable {p : ℕ} [Fact p.Prime] {N r : ℕ}
 
 theorem Cas_comm_glAct (LL : Letters N) {j0 J : ℕ} (hJ : j0 ≤ J) (c d : Fin r) (F : MvPolynomial (Fin N × Fin r) ℚ_[p]) :
     (GA p LL j0).Cas (glAct p LL J c d F) = glAct p LL J c d ((GA p LL j0).Cas F) := by
-  rw [glAct_split LL hJ c d, LinearMap.add_apply, LinearMap.add_apply, map_add]
+  rw [glAct_split LL hJ c d, LinearMap.add_apply, LinearMap.add_apply, map_add (f := _)]
   congr 1
   · exact ((GA p LL j0).E_Cas c d F).symm
-  · rw [GlW.Cas_apply, GlW.Cas_apply, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [GlW.Cas_apply, GlW.Cas_apply, map_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun b _ => ?_
     show glAct p LL j0 a b (glAct p LL j0 b a (midAct p LL j0 J c d F)) =
       midAct p LL j0 J c d (glAct p LL j0 a b (glAct p LL j0 b a F))
@@ -1653,19 +1662,20 @@ theorem glAct_lw {M : Type} [AddCommGroup M] (LL : Letters N) (j : ℕ) (a b : F
     (hx : x ∈ weightedHomogeneousSubmodule ℚ_[p] w D) :
     glAct p LL j a b x ∈ weightedHomogeneousSubmodule ℚ_[p] w D := by
   rw [mem_weightedHomogeneousSubmodule] at hx
-  rw [x.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [x.as_sum, map_sum]
   refine Submodule.sum_mem _ fun d hd => ?_
   have hwd : Finsupp.weight w d = D := hx (mem_support_iff.mp hd)
   unfold glAct
   rw [LinearMap.sum_apply]
   refine Submodule.sum_mem _ fun i _ => ?_
   split_ifs with h1 h2
-  · have h3 := wh_XD (K := ℚ_[p]) w (i, b) (i, a) d (coeff d x)
+  · have h3 := wh_XD (K := ℚ_[p]) w (i, b) (i, a) d (AddMonoidAlgebra.coeff x d)
     have e : D = Finsupp.weight w d - w (i, b) + w (i, a) := by
       rw [hwd, hw i b a, sub_add_cancel]
     rw [e]
     exact h3
-  · have h3 := wh_XD (K := ℚ_[p]) w (i, a) (i, b) d (coeff d x)
+  · have h3 := wh_XD (K := ℚ_[p]) w (i, a) (i, b) d (AddMonoidAlgebra.coeff x d)
     have e : D = Finsupp.weight w d - w (i, a) + w (i, b) := by
       rw [hwd, hw i a b, sub_add_cancel]
     rw [LinearMap.neg_apply, e]
@@ -1730,7 +1740,7 @@ theorem ycond_mul_cov [NeZero r] (LL : Letters N) (J : ℕ) (M : WithTop ℤ) (i
       rw [mul_comm]
       exact Submodule.subset_span ⟨_, hH c d e he, y, hy, rfl⟩
     | zero => rw [map_zero]; exact S.zero_mem
-    | add x y _ _ hx hy => rw [map_add]; exact S.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact S.add_mem hx hy
     | smul a x _ hx => rw [map_smul]; exact S.smul_mem a hx
   have hS : S ≤ YCond p LL J M := le_sSup ⟨hS1, hS2⟩
   intro F hF
@@ -1764,7 +1774,7 @@ theorem pol_fd (LL : Letters N) : FiniteDimensional ℚ_[p] (Pol p r LL) := by
   rw [MvPolynomial.mem_restrictSupport_iff] at hx
   rw [x.as_sum]
   refine Submodule.sum_mem _ fun m hm => ?_
-  rw [show monomial m (coeff m x) = coeff m x • monomial m (1 : ℚ_[p]) by rw [smul_monomial, smul_eq_mul, mul_one]]
+  rw [show monomial m (AddMonoidAlgebra.coeff x m) = AddMonoidAlgebra.coeff x m • monomial m (1 : ℚ_[p]) by rw [smul_monomial, smul_eq_mul, mul_one]]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨m, hx hm, rfl⟩)
 
 theorem pol_finW (LL : Letters N) (j : ℕ) : (GA p LL j).FinW (Pol p r LL) := by
@@ -1792,7 +1802,8 @@ theorem aeval_isWH' {σ τ R M : Type} [CommSemiring R] [AddCommMonoid M] (w' : 
     {f : MvPolynomial σ R} {d : M} (hf : IsWeightedHomogeneous w' f d) :
     IsWeightedHomogeneous w (aeval g f) d := by
   classical
-  rw [f.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [f.as_sum, map_sum]
   apply IsWeightedHomogeneous.sum
   intro m hm
   rw [aeval_monomial, MvPolynomial.algebraMap_eq]
@@ -1805,7 +1816,8 @@ theorem isWH_hom {σ R M M' : Type} [CommSemiring R] [AddCommMonoid M] [AddCommM
     (w : σ → M) {F : MvPolynomial σ R} {ν : M} (h : IsWeightedHomogeneous w F ν) :
     IsWeightedHomogeneous (E ∘ w) F (E ν) := by
   intro d hd
-  rw [← h hd, Finsupp.weight_apply, Finsupp.weight_apply, Finsupp.sum, Finsupp.sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← h hd, Finsupp.weight_apply, Finsupp.weight_apply, Finsupp.sum, Finsupp.sum, map_sum]
   simp only [Function.comp_apply, map_nsmul]
 
 private theorem glAct_leib_lemma {N r : ℕ} {p : ℕ} [Fact p.Prime] (LL : Letters N) (j : ℕ) (c d : Fin r)
@@ -1835,7 +1847,8 @@ theorem glAct_freezeSub_gen (LL : Letters K) (n : ℕ) (ρ a b : Fin r) (ha : a 
   by_cases h1 : LL.vec i
   · by_cases h2 : c' = ρ
     · subst h2
-      simp only [freezeSub, h1, if_true, map_sum, glAct_mul, glAct_X, snoc_vec_last, snoc_vec_castSucc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [freezeSub, h1, if_true, map_sum, glAct_mul, glAct_X, snoc_vec_last, snoc_vec_castSucc]
       simp [mul_ite, Finset.sum_add_distrib, ha, hb, Ne.symm hb, Ne.symm ha]
       try ring
     · simp only [freezeSub, h1, h2, if_true, if_false, glAct_mul, glAct_X, snoc_vec_last, snoc_vec_castSucc]
@@ -2187,7 +2200,7 @@ theorem Ffull_pol (ρ : Fin r) (n : Fin T.t → ℕ) (f : MvPolynomial (Fin (T.p
       rw [this, Formalism.GM.M.FB.snoc_deg_last]
       have hb3 : b = ⟨T.pos i + 1, by omega⟩ := by apply Fin.ext; simp; omega
       rw [hb3, setTies_deg_eta LL T hadm i n]
-  · rw [dif_neg hb, if_neg hb]; simp
+  · rw [dite_eq_right hb, if_neg hb]; simp
 
 theorem Ffull_ycond [NeZero r] (ρ : Fin r) (n : Fin T.t → ℕ) (w : Fin r → ℤ)
     (f : MvPolynomial (Fin (T.pos i + 1) × Fin r) ℚ_[p])
@@ -2264,12 +2277,12 @@ theorem comp_mul_hom {σ M K : Type} [AddCommGroup M] [CommRing K] (w : σ → M
   split_ifs with hd
   · refine Finset.sum_congr rfl fun ab hab => ?_
     rw [coeff_weightedHomogeneousComponent]
-    by_cases h0 : coeff ab.1 φ = 0
+    by_cases h0 : AddMonoidAlgebra.coeff φ ab.1 = 0
     · rw [h0, zero_mul, zero_mul]
     · have h1 : Finsupp.weight w ab.1 = κ := hφ h0
       have hab' : ab.1 + ab.2 = d := by simpa using hab
       have h2 : Finsupp.weight w ab.1 + Finsupp.weight w ab.2 = Finsupp.weight w d := by
-        rw [← map_add, hab']
+        rw [← map_add (f := _), hab']
       have h3 : Finsupp.weight w ab.2 = ν := by
         rw [h1, hd, add_comm] at h2
         exact add_right_cancel h2
@@ -2277,12 +2290,12 @@ theorem comp_mul_hom {σ M K : Type} [AddCommGroup M] [CommRing K] (w : σ → M
   · symm
     refine Finset.sum_eq_zero fun ab hab => ?_
     rw [coeff_weightedHomogeneousComponent]
-    by_cases h0 : coeff ab.1 φ = 0
+    by_cases h0 : AddMonoidAlgebra.coeff φ ab.1 = 0
     · rw [h0, zero_mul]
     · have h1 : Finsupp.weight w ab.1 = κ := hφ h0
       have hab' : ab.1 + ab.2 = d := by simpa using hab
       have h2 : Finsupp.weight w ab.1 + Finsupp.weight w ab.2 = Finsupp.weight w d := by
-        rw [← map_add, hab']
+        rw [← map_add (f := _), hab']
       rw [if_neg, mul_zero]
       intro h3
       apply hd
@@ -2363,7 +2376,7 @@ theorem rep_span (VF : Submodule ℚ_[p] (MvPolynomial (Fin N × Fin r) ℚ_[p])
   induction hz using Submodule.span_induction with
   | mem x hx =>
     obtain ⟨g, hg, q, hq, rfl⟩ := hx
-    refine ⟨q.support, fun b => coeff b q • g, ?_, fun b => VF.smul_mem _ hg, ?_⟩
+    refine ⟨q.support, fun b => AddMonoidAlgebra.coeff q b • g, ?_, fun b => VF.smul_mem _ hg, ?_⟩
     · intro b hb v hv
       by_contra hne
       have := supp_of_supported hq b hb v hne
@@ -2434,7 +2447,7 @@ theorem weight_zero_span_highest [NeZero r] (LL : Letters N) (j0 : ℕ) (iK : Fi
     { carrier := {x | (∀ μ, ¬ Dle μ la' → G.comp μ x = 0) ∧ G.comp la' x ∈ Submodule.span ℚ_[p] {X (iK, ρ) ^ u * F}}
       add_mem' := by
         intro x y hx hy
-        exact ⟨fun μ hμ => by rw [map_add, hx.1 μ hμ, hy.1 μ hμ, add_zero], by rw [map_add]; exact Submodule.add_mem _ hx.2 hy.2⟩
+        exact ⟨fun μ hμ => by rw [map_add (f := _), hx.1 μ hμ, hy.1 μ hμ, add_zero], by rw [map_add (f := _)]; exact Submodule.add_mem _ hx.2 hy.2⟩
       zero_mem' := ⟨fun μ _ => map_zero _, by rw [map_zero]; exact Submodule.zero_mem _⟩
       smul_mem' := by
         intro c x hx
@@ -2459,12 +2472,12 @@ theorem weight_zero_span_highest [NeZero r] (LL : Letters N) (j0 : ℕ) (iK : Fi
     exact_mod_cast this
   set wm : Fin r → ℤ := fun c => -((m (iK, c) : ℕ) : ℤ) with hwm
   have hwmm : Finsupp.weight (wv LL j0) m = wm := weight_cov_monomial LL j0 iK hiK hvK m hm1
-  have hy : G.comp ν g * monomial m (coeff m s) ∈ weightedHomogeneousSubmodule ℚ_[p] (wv LL j0) (ν + wm) := by
+  have hy : G.comp ν g * monomial m (AddMonoidAlgebra.coeff s m) ∈ weightedHomogeneousSubmodule ℚ_[p] (wv LL j0) (ν + wm) := by
     have := (weightedHomogeneousComponent_isWeightedHomogeneous (w := wv LL j0) ν g).mul
-      (isWeightedHomogeneous_monomial (wv LL j0) m (coeff m s) hwmm)
+      (isWeightedHomogeneous_monomial (wv LL j0) m (AddMonoidAlgebra.coeff s m) hwmm)
     exact this
-  have hcomp : ∀ μ, G.comp μ (G.comp ν g * monomial m (coeff m s)) =
-      if μ = ν + wm then G.comp ν g * monomial m (coeff m s) else 0 := fun μ =>
+  have hcomp : ∀ μ, G.comp μ (G.comp ν g * monomial m (AddMonoidAlgebra.coeff s m)) =
+      if μ = ν + wm then G.comp ν g * monomial m (AddMonoidAlgebra.coeff s m) else 0 := fun μ =>
     weightedHomogeneousComponent_of_mem hy
   by_cases h0 : G.comp ν g = 0
   · rw [h0, zero_mul]; exact Ωs.zero_mem
@@ -2528,7 +2541,7 @@ theorem weight_zero_span_highest [NeZero r] (LL : Letters N) (j0 : ℕ) (iK : Fi
         · simp [hmc c hc, hc]
       have hνla : ν = la := by rw [hν', hwmρ, hla']; abel
       obtain ⟨c', hc'⟩ := G.comp_top_of_mem hF hg
-      have hmono : monomial m (coeff m s) = coeff m s • (X (iK, ρ) ^ u : MvPolynomial (Fin N × Fin r) ℚ_[p]) := by
+      have hmono : monomial m (AddMonoidAlgebra.coeff s m) = AddMonoidAlgebra.coeff s m • (X (iK, ρ) ^ u : MvPolynomial (Fin N × Fin r) ℚ_[p]) := by
         rw [hmeq, X_pow_eq_monomial, smul_monomial, smul_eq_mul, mul_one]
       rw [hνla, hc', hmono, smul_mul_smul_comm, mul_comm F]
       exact Submodule.smul_mem _ _ (Submodule.mem_span_singleton_self _)
@@ -2679,7 +2692,7 @@ theorem highest_weight_dim_monotone : WeightSpaceDimMonotone := by
       rw [mul_comm]
       exact Submodule.subset_span ⟨_, G.gS_stable _ a b g hg, s, hs, rfl⟩
     | zero => rw [map_zero]; exact W0.zero_mem
-    | add x y _ _ hx hy => rw [map_add]; exact W0.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact W0.add_mem hx hy
     | smul c x _ hx => rw [map_smul]; exact W0.smul_mem c hx
   have hW0pol : W0 ≤ Pol p r L1 := by
     rw [hW0, Submodule.span_le]
@@ -2781,7 +2794,7 @@ theorem highest_weight_dim_monotone : WeightSpaceDimMonotone := by
       refine Submodule.subset_span ⟨Φ g, ?_, q, hq, rfl⟩
       rw [gSpan_eq]; rw [gSpan_eq] at hg; exact hΦg g hg
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ c hx
   have hmaps : ∀ z ∈ T.YYsp p LL i ρ n f, Φ z ∈ T.YYsp p LL i ρ nU f := by
     intro z hz
@@ -2827,7 +2840,8 @@ theorem highest_weight_dim_monotone : WeightSpaceDimMonotone := by
     simp only [gSpan_eq] at hzS
     obtain ⟨s, a, hs, ha, rfl⟩ := rep_span (G.gS {F}) (T.pos i + 1 + 1) hzS
     have hsum : ∑ b ∈ s, Φ (a b) * monomial b 1 = 0 := by
-      rw [← h0, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← h0, map_sum]
       refine Finset.sum_congr rfl fun b hb => ?_
       rw [hΦB _ _ ?_]
       intro m hm v hv
@@ -2858,7 +2872,5 @@ theorem highest_weight_dim_monotone : WeightSpaceDimMonotone := by
 end Formalism.GM.DimensionMonotonicity
 
 namespace Formalism.GM
-
-theorem weight_space_dimension_monotone : M.WeightSpaceDimMonotone := DimensionMonotonicity.highest_weight_dim_monotone
 
 end Formalism.GM

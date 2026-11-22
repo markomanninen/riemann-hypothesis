@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeftMulMatrixTransfer
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeftMulMatrixTransfer
+
+@[expose] public section
+
 open Polynomial Matrix
 
 namespace GlobalTheory.LocalCommutant
@@ -15,7 +20,8 @@ theorem krylov_mulVec (Y : Matrix (Fin n) (Fin n) S) (v c : Fin n → S) :
 
 theorem aeval_sum_monomial (Y : Matrix (Fin n) (Fin n) S) (c : Fin n → S) :
     aeval Y (∑ j : Fin n, monomial (j : ℕ) (c j)) = ∑ j : Fin n, c j • Y ^ (j : ℕ) := by
-  simp [map_sum, aeval_monomial, Algebra.smul_def]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, aeval_monomial, Algebra.smul_def]
 
 theorem exists_isUnit_krylov (R : Type) [CommRing R] [IsLocalRing R] (Y : Matrix (Fin n) (Fin n) R)
     (hs : Y.charpoly.Separable) : ∃ v, IsUnit (krylov Y v) := by
@@ -58,8 +64,5 @@ theorem exists_aeval_of_comm (R : Type) [CommRing R] [IsLocalRing R] (n : ℕ)
     calc D = D * K * K⁻¹ := by rw [mul_assoc, Matrix.mul_nonsing_inv _ hdet, mul_one]
       _ = 0 := by rw [hDK, zero_mul]
   exact sub_eq_zero.1 hD
-
-example : ∀ (R : Type) [CommRing R] [IsLocalRing R] (n : ℕ) (Y T : Matrix (Fin n) (Fin n) R),
-    Y.charpoly.Separable → T * Y = Y * T → ∃ p : R[X], T = aeval Y p := exists_aeval_of_comm
 
 end GlobalTheory.LocalCommutant

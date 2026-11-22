@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutER
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FiniteSumLocalExpansion
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedLocSec
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.BesselUnitaryEquivHolds
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutER
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FiniteSumLocalExpansion
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedLocSec
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.BesselUnitaryEquivHolds
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.ER
 

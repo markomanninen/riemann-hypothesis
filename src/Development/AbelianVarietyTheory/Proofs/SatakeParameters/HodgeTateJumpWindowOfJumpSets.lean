@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.AdmissibleParameterJ
-import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypeJumps
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.JumpWindow
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.AdmissibleParameterJ
+public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypeJumps
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.JumpWindow
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations Formalism.ConjugateSelfDual ReciprocityTheory.Gal
 
 namespace GlobalTheory.BlockWindow
 
-open Formalism.MainNotions.AdmissibleParameterJ in
 
+open Formalism.MainNotions.AdmissibleParameterJ in
 theorem JJ_finite_ncard {D : D7} (L : SizeData₂ D) (hb : AdmissibleParameterJ.CloudCentreDistance L) (hn : 0 < D.R.nV) (up : Bool) (j : ℕ) (h1 : 1 ≤ j)
     (h2 : j ≤ D.R.m) (ρ : D.what₂.Tau) : (JJ D up j ρ).Finite ∧ (JJ D up j ρ).ncard = D.R.nV := by
   have hc : (Jp D j ρ).ncard = D.R.nV := (hb j h1 h2 ρ).2.2.2.2.2

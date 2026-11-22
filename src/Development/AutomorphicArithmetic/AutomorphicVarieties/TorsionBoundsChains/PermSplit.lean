@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.FaceDSingle
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.FaceDSingle
+
+@[expose] public section
 
 open CategoryTheory UpperTheory.V.KH
 
@@ -25,10 +29,10 @@ theorem UpperTheory.V.KH.permSplit :
           (Finsupp.mapDomain (fun v : V => g • v) (Finsupp.subtypeDomain (· ∈ V) f)) ⟨y, hy⟩
         have hy' : g⁻¹ • y ∈ V := V.smul_mem _ hy
         have e2 : (⟨y, hy⟩ : V) = g • (⟨g⁻¹ • y, hy'⟩ : V) := Subtype.ext (by simp)
-        rw [e2, Finsupp.mapDomain_apply (MulAction.injective g), Finsupp.subtypeDomain_apply]
+        rw [e2, Finsupp.mapDomain_apply_of_injective (MulAction.injective g), Finsupp.subtypeDomain_apply]
         have e1 : y = g • (g⁻¹ • y) := (smul_inv_smul g y).symm
         conv_lhs => rw [e1]
-        rw [Finsupp.mapDomain_apply (MulAction.injective g)] }
+        rw [Finsupp.mapDomain_apply_of_injective (MulAction.injective g)] }
   refine ⟨Rep.ofHom F, Rep.ofHom Gm, ?_, ?_, ?_⟩
   · rw [Rep.hom_ofHom]
     change Function.Injective (Finsupp.mapDomain (Subtype.val : U → X) : (U →₀ ℤ) → (X →₀ ℤ))
@@ -42,7 +46,7 @@ theorem UpperTheory.V.KH.permSplit :
       refine ⟨Finsupp.subtypeDomain (· ∈ U) y, ?_⟩
       ext x
       by_cases hx : x ∈ U
-      · rw [show x = ((⟨x, hx⟩ : U) : X) from rfl, Finsupp.mapDomain_apply Subtype.val_injective,
+      · rw [show x = ((⟨x, hx⟩ : U) : X) from rfl, Finsupp.mapDomain_apply_of_injective Subtype.val_injective,
           Finsupp.subtypeDomain_apply]
       · rw [Finsupp.mapDomain_notin_range _ _ (by rintro ⟨u, rfl⟩; exact hx u.2)]
         have hxV : x ∈ V := (hUV x).2 hx
@@ -60,4 +64,4 @@ theorem UpperTheory.V.KH.permSplit :
     refine ⟨Finsupp.mapDomain (Subtype.val : V → X) h, ?_⟩
     ext ⟨y, hy⟩
     change Finsupp.mapDomain (Subtype.val : V → X) h ((⟨y, hy⟩ : V) : X) = h ⟨y, hy⟩
-    exact Finsupp.mapDomain_apply Subtype.val_injective _ _
+    exact Finsupp.mapDomain_apply_of_injective Subtype.val_injective _ _

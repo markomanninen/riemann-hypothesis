@@ -1,13 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.RelAmpleOfLocallyOnBase
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ProperRelAmpleKTrivOfFieldExtension
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsProjBySmoothIsProperGeometricallyIntegral
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfIsGrpPullback
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RelAmpleNearFibreFlatProjectiveStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.RelAmpleOfLocallyOnBase
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ProperRelAmpleKTrivOfFieldExtension
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsProjBySmoothIsProperGeometricallyIntegral
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfIsGrpPullback
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RelAmpleNearFibreFlatProjectiveStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,17 +38,17 @@ theorem lbIso_pull_comp {φ : X₂ ⟶ X₁} (hφ : π₂ = φ ≫ π₁) {L₁ 
 
 theorem lbIso_pull_pull (hM : M.IsLB) (φ : X₂ ⟶ X₁) (π₁ : X₁ ⟶ X) :
     LBIso ((M.pull π₁).pull φ) (M.pull (φ ≫ π₁)) :=
-  (lbIso_pull_comp rfl (GlobalTheory.lbIso_refl (pull_isLB hM π₁))).symm
+  (lbIso_pull_comp rfl (GlobalTheory.lbIso_refl (LB.isLB_pull hM π₁))).symm
 
 theorem relAmple_of_factor [IsProper f] (hM : M.IsLB) (h₁ : IsPullback π₁ f₁ f t₁) (h₂ : IsPullback π₂ f₂ f t₂)
     (u : T₂ ⟶ T₁) (hu : u ≫ t₁ = t₂) {L₁ : LB X₁} (hL₁ : L₁.IsLB) (e : LBIso L₁ (M.pull π₁))
     (hA : Out.RelAmple (Over.mk f₁) L₁) : Out.RelAmple (Over.mk f₂) (M.pull π₂) := by
   obtain ⟨φ, hφ, H⟩ := exists_isPullback h₁ h₂ u hu
   have hp : IsProper (Over.mk f₂).hom := MorphismProperty.of_isPullback (P := @IsProper) h₂ ‹_›
-  refine AmpleLocal.relAmple_of_locally T₂ (Over.mk f₂) (M.pull π₂) (pull_isLB hM π₂)
+  refine AmpleLocal.relAmple_of_locally T₂ (Over.mk f₂) (M.pull π₂) (LB.isLB_pull hM π₂)
     inferInstance inferInstance fun s => ?_
   obtain ⟨V, hV, hs, -⟩ := exists_isAffineOpen_mem_and_subset (X := T₁) (U := ⊤) (x := u s) trivial
-  exact ⟨u ⁻¹ᵁ V, hs, PolPull.relAmple_restrict (G := Over.mk f₁) (G' := Over.mk f₂) H hL₁ (pull_isLB hM π₂)
+  exact ⟨u ⁻¹ᵁ V, hs, PolPull.relAmple_restrict (G := Over.mk f₁) (G' := Over.mk f₂) H hL₁ (LB.isLB_pull hM π₂)
     (lbIso_pull_comp hφ e) hA V hV⟩
 
 theorem relAmple_of_fieldExtension [IsProper f] (hM : M.IsLB) {K₀ K : Type} [Field K₀] [Field K] (i : K₀ →+* K)
@@ -62,7 +66,7 @@ theorem relAmple_of_fieldExtension [IsProper f] (hM : M.IsLB) {K₀ K : Type} [F
   have : CompactSpace X₁ := QuasiCompact.compactSpace_of_compactSpace f₁
   have : QuasiSeparatedSpace X₁ := quasiSeparatedSpace_of_quasiSeparated f₁
   refine (relAmple_iff_isAmpleLB_of_isAffine (Over.mk f₁) hL₁).2 (AmpleDescent.isAmpleLB_of_pull i H hL₁ ?_)
-  exact (isAmpleLB_of_relAmple_of_isAffine (Over.mk f₂) (pull_isLB hM π₂) hA).of_lbIso (LB.isLB_pull hL₁ φ)
+  exact (isAmpleLB_of_relAmple_of_isAffine (Over.mk f₂) (LB.isLB_pull hM π₂) hA).of_lbIso (LB.isLB_pull hL₁ φ)
     (lbIso_pull_comp hφ e).symm
 
 theorem residueField_fraction {R : Type} [CommRing R] (p : Ideal R) [p.IsPrime] (y : p.ResidueField) :
@@ -85,7 +89,7 @@ theorem relAmple_of_geometricFibres : Out.Laws → ∀ (S : Scheme.{0}) [IsLocal
   let t : Spec (CommRingCat.of Γ(S, V)) ⟶ S := hV.fromSpec
   obtain ⟨p, hp⟩ : s ∈ Set.range t := by rw [hV.range_fromSpec]; exact hs
   have hB := IsPullback.of_hasPullback P.A.hom t
-  have hL := pull_isLB hM (pullback.fst P.A.hom t)
+  have hL := LB.isLB_pull hM (pullback.fst P.A.hom t)
   have := p.isPrime
   let g := algebraMap Γ(S, V) p.asIdeal.ResidueField
   let i := algebraMap p.asIdeal.ResidueField (AlgebraicClosure p.asIdeal.ResidueField)
@@ -95,7 +99,7 @@ theorem relAmple_of_geometricFibres : Out.Laws → ∀ (S : Scheme.{0}) [IsLocal
     hL _ g (residueField_fraction p.asIdeal)
     (relAmple_of_fieldExtension hM i
       ((IsPullback.of_hasPullback (pullback.snd P.A.hom t) (spMap g)).paste_horiz hB)
-      (IsPullback.of_hasPullback P.A.hom _) (pull_isLB hL _) (lbIso_pull_pull hM _ _) (hfib _ _))
+      (IsPullback.of_hasPullback P.A.hom _) (LB.isLB_pull hL _) (lbIso_pull_pull hM _ _) (hfib _ _))
   let D : (Spec (CommRingCat.of Γ(S, V))).Opens := PrimeSpectrum.basicOpen r
   have hD : p ∈ D := fun h => hr (Ideal.algebraMap_residueField_eq_zero.2 h)
   have hrange : Set.range (t ''ᵁ D).ι ⊆ Set.range (D.ι ≫ t) := by
@@ -104,6 +108,6 @@ theorem relAmple_of_geometricFibres : Out.Laws → ∀ (S : Scheme.{0}) [IsLocal
   refine ⟨t ''ᵁ D, ⟨p, hD, hp⟩, ?_⟩
   exact relAmple_of_factor hM ((IsPullback.of_hasPullback (pullback.snd P.A.hom t) D.ι).paste_horiz hB)
     (isPullback_morphismRestrict P.A.hom (t ''ᵁ D)).flip (IsOpenImmersion.lift (D.ι ≫ t) _ hrange)
-    (IsOpenImmersion.lift_fac _ _ _) (pull_isLB hL _) (lbIso_pull_pull hM _ _) hA
+    (IsOpenImmersion.lift_fac _ _ _) (LB.isLB_pull hL _) (lbIso_pull_pull hM _ _) hA
 
 end GlobalTheory.FibreAmple

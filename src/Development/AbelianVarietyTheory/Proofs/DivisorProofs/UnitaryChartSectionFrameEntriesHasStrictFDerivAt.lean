@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemDomOfOrth
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContDiffOnGramSchmidtUpperTriangularFactorStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemDomOfOrth
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContDiffOnGramSchmidtUpperTriangularFactorStatement
+
+@[expose] public section
+
 open NumberField Matrix ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates GlobalTheory.SUVol GlobalTheory.RiemConst GlobalTheory.SUChartSection
 open scoped ComplexConjugate ContDiff
 
@@ -29,6 +34,6 @@ theorem yF_hasStrictFDerivAt {E : Type} [Field E] [NumberField E] [IsCMField E] 
     simp only [Matrix.mul_apply]
     refine ContDiffAt.sum fun k _ => ?_
     exact (hN τ a k).mul (hB τ k b)
-  exact hY.hasStrictFDerivAt (by simp)
+  exact hY.hasStrictFDerivAt_fderiv (by simp)
 
 end GlobalTheory.SUChartSection

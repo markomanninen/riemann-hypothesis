@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleSheafInjectiveResolutionInitialShortComplex
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleSheafInjectiveResolutionInitialShortComplex
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 

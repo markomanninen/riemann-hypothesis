@@ -1,4 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.SiegelOneDescent.Descend2
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.SiegelOneDescent.Descend2
+
+@[expose] public section
+
 open PositivityTheory.RgEis PositivityTheory.RgEis.So
 open NumberField Matrix
 open scoped NumberField.AdeleRing

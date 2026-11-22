@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsGradedRingKernelLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsGradedRingKernelLift
+
+@[expose] public section
 
 open Polynomial
 
@@ -57,7 +61,8 @@ theorem exists_leading_generators {R : Type} [CommRing R] (I : Ideal R) (hI : I.
   have hz : (⟨monomial n g, reesAlgebra.monomial_mem.mpr hgn⟩ : reesAlgebra I) -
       ∑ q : s, p q * ⟨monomial (pre q).1.1 (pre q).1.2, reesAlgebra.monomial_mem.mpr (pre q).2.2⟩
       ∈ reesShiftIdeal I := by
-    rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_sum]
     have hq : ∀ q : s, Ideal.Quotient.mk (reesShiftIdeal I) (p q *
         ⟨monomial (pre q).1.1 (pre q).1.2, reesAlgebra.monomial_mem.mpr (pre q).2.2⟩) =
         c q • (q : reesAlgebra I ⧸ reesShiftIdeal I) := by
@@ -77,7 +82,7 @@ theorem exists_leading_generators {R : Type} [CommRing R] (I : Ideal R) (hI : I.
   · convert hz n using 1
     simp only [AddSubgroupClass.coe_sub, AddSubmonoidClass.coe_finsetSum, MulMemClass.coe_mul,
       coeff_sub, finsetSum_coeff, coeff_mul_monomial_eq_ite, ite_mul, zero_mul]
-    rw [coeff_monomial, if_pos rfl]
+    rw [coeff_monomial_same]
 
 theorem mem_span_of_leading {R : Type} [CommRing R] (I : Ideal R) [hc : IsAdicComplete I R]
     (J : Ideal R) {ι : Type} [Fintype ι] (f : ι → R) (d : ι → ℕ) (hf : ∀ i, f i ∈ J)

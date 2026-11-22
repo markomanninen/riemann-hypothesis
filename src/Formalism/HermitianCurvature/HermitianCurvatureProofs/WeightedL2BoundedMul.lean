@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.StatementLE
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasIterDeriv
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaLimit
+module
+
+public import Formalism.HermitianCurvature.StatementLE
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasIterDeriv
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaLimit
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.LEx2
 open Formalism.FourierDecayAlt.LE
@@ -12,7 +16,7 @@ theorem interp1 (s : Finset ℝ) (n k : ℕ) (hs : s.card = n + 1) (hk : k ≤ n
     (Function.injective_id.injOn) (by
       rw [Polynomial.degree_X_pow, hs]; exact_mod_cast Nat.lt_succ_of_le hk)
   have h2 := congrArg (Polynomial.eval y) h
-  simp only [Lagrange.interpolate_apply, Polynomial.eval_finset_sum, Polynomial.eval_mul, Polynomial.eval_C,
+  simp only [Lagrange.interpolate_apply, Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_C,
     Polynomial.eval_pow, Polynomial.eval_X, id] at h2
   rw [h2]; apply Finset.sum_congr rfl; intros; ring
 
@@ -45,7 +49,7 @@ theorem gridConvergence : GridConvergence := by
     fun t => interpN N n grid hg (Q t) (hQ t) Y
   rw [interpN N n grid hg Q₀ hQ0 Y]
   simp_rw [h1]
-  apply tendsto_finset_sum
+  apply tendsto_finsetSum
   intro g hgm
   exact (hconv g (fun a => (Fintype.mem_piFinset.1 hgm) a)).const_mul _
 
@@ -119,8 +123,8 @@ theorem coeff_id (s : Finset ℝ) (d k j : ℕ) (hs : s.card = d + 1) (hk : k �
   have h := Lagrange.eq_interpolate (s := s) (v := id) (f := (Polynomial.X : Polynomial ℝ) ^ k)
     (Function.injective_id.injOn) (by
       rw [Polynomial.degree_X_pow, hs]; exact_mod_cast Nat.lt_succ_of_le hk)
-  have h2 := congrArg (fun p => Polynomial.coeff p j) h
-  simp only [Lagrange.interpolate_apply, Polynomial.finset_sum_coeff, Polynomial.coeff_C_mul, Polynomial.eval_pow,
+  have h2 := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p j) h
+  simp only [Lagrange.interpolate_apply, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul, Polynomial.eval_pow,
     Polynomial.eval_X, id, Polynomial.coeff_X_pow] at h2
   rw [h2]; apply Finset.sum_congr rfl; intros; ring
 
@@ -239,7 +243,7 @@ theorem coefIntegrable : CoefIntegrable := by
       fun ω => ∑ k, (th ε σ (B.G ω) * S.d Y ω k) * ‖S.ds Y p ω k‖ ^ 2 := by
     funext ω; unfold LE.sq; rw [Finset.mul_sum]; apply Finset.sum_congr rfl; intros; ring
   rw [he]
-  exact integrable_finset_sum _ (fun k _ => (hk k).2)
+  exact MeasureTheory.integrable_finsetSum _ (fun k _ => (hk k).2)
 
 end Formalism.FourierDecayAlt.P.LEx2
 
@@ -405,7 +409,7 @@ theorem domConv : DomConv := by
     simpa [Step.term] using this
   have lsum : Tendsto (fun ε => ∑ p ∈ range (S.r + 2), S.term ε σ Y p) (𝓝[>] 0)
       (𝓝 (∑ p ∈ range (S.r + 2), if p = 0 then ((∫ ω, LE.sq B (S.d Y) (S.gX Y) ω ∂B.μ : ℝ) : ℂ) else 0)) := by
-    apply tendsto_finset_sum
+    apply tendsto_finsetSum
     intro p _
     by_cases hp : p = 0
     · subst hp
@@ -558,7 +562,8 @@ theorem adj : Adj := by
     intro ε₂ ω
     unfold pr
     simp_rw [hLeib B _ _ (S.g Y) S.X (S.r + 1) (hJet Y hY) (hI4 Y hY) _ (hsm ε₂) ω]
-    simp only [map_sum, map_div₀, map_mul, Complex.conj_ofReal, map_natCast, Finset.mul_sum, Finset.sum_div]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_div₀, map_mul, Complex.conj_ofReal, map_natCast, Finset.mul_sum, Finset.sum_div]
     rw [Finset.sum_comm]
     apply Finset.sum_congr rfl
     intro p _
@@ -572,7 +577,7 @@ theorem adj : Adj := by
     filter_upwards [self_mem_nhdsWithin] with ε₂ h2
     have h := hAdj Y hY ε ε₂ hε h2
     simp_rw [hleft ε₂, hright ε₂] at h
-    rw [h, integral_finset_sum _ (fun p _ => ((lp p).1 ε₂ h2).div_const _)]
+    rw [h, MeasureTheory.integral_finsetSum _ (fun p _ => ((lp p).1 ε₂ h2).div_const _)]
     apply Finset.sum_congr rfl
     intro p _
     rw [integral_div]
@@ -580,7 +585,7 @@ theorem adj : Adj := by
       (∫ ω, (ld p (fun y => c.sc ε₂ 1 y * th ε σ y) (B.G ω) : ℂ) *
         pr B (S.d Y) (S.gX Y) (S.ds Y p) ω ∂B.μ) / p.factorial) (𝓝[>] 0)
       (𝓝 (∑ p ∈ range (S.r + 2), S.term ε σ Y p)) := by
-    apply tendsto_finset_sum
+    apply tendsto_finsetSum
     intro p _
     exact ((lp p).2).div_const _
   have hfin := tendsto_nhds_unique (l0.2.congr' heq) lsum
@@ -737,7 +742,7 @@ theorem limitA : LimitA := by
         fun ω => ∑ i, F.cw Y i * (F.Wt ω ^ N * ‖dS B (F.gw Y) F.u p ω i‖ ^ 2) := by
       funext ω; unfold LE.sq Fam.dw; apply Finset.sum_congr rfl; intros; ring
     rw [he]
-    exact integrable_finset_sum _ fun i _ => (hdL2 i).2.const_mul _
+    exact MeasureTheory.integrable_finsetSum _ fun i _ => (hdL2 i).2.const_mul _
 
 end Formalism.FourierDecayAlt.P.LEx2
 
@@ -800,7 +805,7 @@ theorem markovTerm : MarkovTerm := by
       apply Finset.sum_congr rfl; intro q _
       apply Finset.sum_congr rfl; intro k _
       ring
-    rw [h1, integral_finset_sum _ (fun q _ => ((hpi q).div_const _).const_mul _)]
+    rw [h1, MeasureTheory.integral_finsetSum _ (fun q _ => ((hpi q).div_const _).const_mul _)]
     apply Finset.sum_congr rfl; intro q _
     rw [integral_const_mul, integral_div]
   have hbound : ∀ s : ℝ, Y + s ∈ S.J →

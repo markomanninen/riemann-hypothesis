@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResChiIndex
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ResSymGram
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ResChiIndexLattice
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResChiIndex
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ResSymGram
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ResChiIndexLattice
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -27,7 +32,7 @@ theorem exists_int_mul (f : MvPolynomial J ℚ) :
   · obtain ⟨N₁, g₁, h₁, e₁⟩ := hp
     obtain ⟨N₂, g₂, h₂, e₂⟩ := hq
     refine ⟨N₁ * N₂, C (N₂ : ℤ) * g₁ + C (N₁ : ℤ) * g₂, mul_ne_zero h₁ h₂, ?_⟩
-    rw [map_add, map_mul, map_mul, map_C, map_C, e₁, e₂]
+    rw [map_add (f := _), map_mul, map_mul, map_C, map_C, e₁, e₂]
     simp only [eq_intCast, Int.cast_natCast, Nat.cast_mul, C_mul]
     ring
 
@@ -37,7 +42,7 @@ theorem isHomogeneous_of_map {f : MvPolynomial J ℚ} {n : ℕ} (hf : f.IsHomoge
   apply hf
   intro h0
   apply hs
-  have h := congrArg (coeff s) hg
+  have h := congrArg (AddMonoidAlgebra.coeff · s) hg
   rw [coeff_map, coeff_C_mul, h0, mul_zero] at h
   simpa using h
 
@@ -112,7 +117,8 @@ theorem resGram_change (d : HSMDatum D Ω κ) {n r : ℕ} {b : Fin r → MvPolyn
     intro z hz k l
     have e1 : ∀ p q : MvPolynomial (Ix κ) ℚ, pairVal d.m n p q z =
         secFun p z * starRingEnd ℂ (secFun q z) / ((d.m.ρ z ^ (2 * n) : ℝ) : ℂ) := fun p q => rfl
-    simp only [e1, hc k z hz, hc l z hz, map_sum, map_mul, map_ratCast, Finset.sum_mul, Finset.mul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [e1, hc k z hz, hc l z hz, map_sum, map_mul, map_ratCast, Finset.sum_mul, Finset.mul_sum,
       Finset.sum_div]
     conv_lhs => rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -237,7 +243,8 @@ theorem resChi_sub_of_bases (d d' : HSMDatum D Ω κ) (B : Matrix (Ix κ) (Ix κ
       rw [map_sub, aeval_matSubst, ← hx, hTΩ k]
       simp
     have h0 := secFun_eq_zero hh hx0 hz
-    simp only [secFun, map_sub, map_sum, map_mul, map_C, eval_C, eq_ratCast]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [secFun, map_sub, map_sum, map_mul, map_C, eval_C, eq_ratCast]
       at h0 ⊢
     exact sub_eq_zero.1 h0
   have hchange : resGram d' n b' =
@@ -247,7 +254,8 @@ theorem resChi_sub_of_bases (d d' : HSMDatum D Ω κ) (B : Matrix (Ix κ) (Ix κ
 
   have hGpos : 0 < (resGram d n b).det := by
     rw [ResSym.det_resGram d hb.1]
-    exact (Complex.pos_iff.1 (ResSym.posDef_gram d hb).det_pos).1
+    open scoped ComplexOrder in
+      exact (Complex.pos_iff.1 (ResSym.posDef_gram d hb).det_pos).1
   have hTd : ((Matrix.of T).map (Rat.cast : ℚ → ℝ)).det = ((Matrix.of T).det : ℝ) :=
     (RingHom.map_det (Rat.castHom ℝ) (Matrix.of T)).symm
   have hTr : ((Matrix.of T).det : ℝ) ≠ 0 := by exact_mod_cast hdet
@@ -267,7 +275,7 @@ theorem proof : ResChiIndex.Statement := by
   have h' : ∃ p : (Σ r : ℕ, Fin r → MvPolynomial (Ix κ) ℚ), IsSecBasis d'.x n p.2 :=
     ⟨⟨_, _⟩, (exists_isSecBasis d'.x n).choose_spec⟩
   unfold resChi
-  rw [dif_pos h, dif_pos h']
+  rw [dite_eq_left h, dite_eq_left h']
   exact resChi_sub_of_bases d d' B hB hx hG n h.choose_spec h'.choose_spec
 
 end

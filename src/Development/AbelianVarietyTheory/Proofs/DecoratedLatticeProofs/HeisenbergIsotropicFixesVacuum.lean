@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleExact
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HomLatticeCompletionSelfAnnihilatorAtPlaces
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymplOHEqZeroOfHO
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleExact
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HomLatticeCompletionSelfAnnihilatorAtPlaces
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymplOHEqZeroOfHO
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.FinPl
 open scoped TensorProduct
@@ -37,8 +42,8 @@ theorem finite_two (P : Pl D → Prop) : {v : Pl D | P v ∧ (2 : 𝓞 D.host.F)
   refine (Ideal.finite_factors h0).subset fun v hv => ?_
   exact (Ideal.dvd_span_singleton).2 hv.2
 
-open Classical in
 
+open Classical in
 def halfOff (P : Pl D → Prop) : Af D.host.F :=
   RestrictedProduct.mk (fun w => if P w ∧ (2 : 𝓞 D.host.F) ∉ w.asIdeal then (2⁻¹ : Fv D.host.F w) else 0)
     (Filter.Eventually.of_forall fun w => by
@@ -78,7 +83,8 @@ theorem indicatorIdempotent_eq_add_sum (P : Pl D → Prop) (Qs : Finset (Pl D)) 
   congr 1
   refine FiniteAdeleRing.ext (R := 𝓞 D.host.F) D.host.F fun w => ?_
   change evalV D.host.F w (GlobalTheory.SelfDualAt.indP P) = evalV D.host.F w (halfOff P + halfOff P + ∑ i ∈ Qs, α i)
-  rw [map_add, map_add, map_sum, GlobalTheory.SelfDualAt.evalV_indP, evalV_halfOff]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), map_add (f := _), map_sum, GlobalTheory.SelfDualAt.evalV_indP, evalV_halfOff]
   by_cases hw : w ∈ Qs
   · obtain ⟨hP, h2⟩ := (hQ w).1 hw
     rw [Finset.sum_eq_single_of_mem w hw (fun v hv hvw => h0 v hv w (Ne.symm hvw)), h1 w hw, if_pos hP,
@@ -108,8 +114,8 @@ theorem fix_add {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D} {f : WO S T → �
 
 end GlobalTheory.FinPl.FlatFix
 
-open GlobalTheory.FinPl.FlatFix in
 
+open GlobalTheory.FinPl.FlatFix in
 theorem GlobalTheory.FinPl.FlatFix.fix_of_isotropic : ∀ {D : D7} (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (LS : Lat S) (LT : Lat T) (P : Pl D → Prop), IsSelfDualC S LS → IsSelfDualC T LT → (∀ v, P v → Tame D v) → ∀ f : WO S T → ℂ, IsLatVac (heisO ψ S T) (latO S T (LS : Set _) (LT : Set _) P) f → ∀ z ∈ latO S T (LS : Set _) (LT : Set _) P, (∀ c c' : AE D, symplOH S T (c • z) (c' • z) = 0) → heisO ψ S T z f = f := by
   intro D ψ S T LS LT P _ _ hT f hf z hz hiso
   classical
@@ -131,12 +137,13 @@ theorem GlobalTheory.FinPl.FlatFix.fix_of_isotropic : ∀ {D : D7} (ψ : AddChar
     ext i j
     rw [Matrix.smul_apply, smul_eq_mul]
     exact GlobalTheory.SelfDualAt.algebraMap_placeIdempotent_mul P _ (LatMem.latO_mxAt hz i j)
-  rw [← hzc, hdec, map_add, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hzc, hdec, map_add (f := _), map_sum]
   refine fix_add hiso ?_ ?_
   · have hm := GlobalTheory.LatticeStable.smul_mem_latO D S T _ _ P _ (int_alg_pair (halfOff_int P)) z hz
     have e2 : algebraMap (AF D.host.F) (AE D) (pairA D.host.F 0 (halfOff P + halfOff P)) • z =
         2 • (algebraMap (AF D.host.F) (AE D) (pairA D.host.F 0 (halfOff P)) • z) := by
-      rw [pair_add, map_add, add_smul, two_nsmul]
+      rw [pair_add, map_add (f := _), add_smul, two_nsmul]
     rw [e2]
     exact hf.1 _ hm
   · refine Finset.sum_induction _ (fun c => heisO ψ S T (c • z) f = f) (fun a b ha hb => fix_add hiso ha hb) ?_ ?_

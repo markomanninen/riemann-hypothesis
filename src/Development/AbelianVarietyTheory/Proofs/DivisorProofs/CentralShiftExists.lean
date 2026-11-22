@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParahoricLevelLiftsExist
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormLiftFormsFiniteGroupAction
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InjectiveOfIndep
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameHeckeIntegralUnitsEqResidueCharProduct
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdempotentSumAuxiliaryPlaces
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TypePlacesNotPairwiseConjugate
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParahoricLevelLiftsExist
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormLiftFormsFiniteGroupAction
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InjectiveOfIndep
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameHeckeIntegralUnitsEqResidueCharProduct
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdempotentSumAuxiliaryPlaces
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TypePlacesNotPairwiseConjugate
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
+
+@[expose] public section
 
 noncomputable section
 
@@ -144,7 +148,8 @@ theorem exists_idemSum (P : Finset (Pl D.host.E)) (h : ∀ Q ∈ P, ∀ Q' ∈ P
 
 theorem sum_mul_mem {R R' ι : Type} [CommRing R] [CommRing R'] (f : R →+* R') (B : Subring R') (p : ι → R) (c : R)
     (s : Finset ι) (h : ∀ i ∈ s, f (p i * c) ∈ B) : f ((∑ i ∈ s, p i) * c) ∈ B := by
-  rw [Finset.sum_mul, map_sum]; exact sum_mem h
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_mul, map_sum]; exact sum_mem h
 
 theorem idemSum_div_int {e : Formalism.L2.Theta.AE D} {S : Finset (Pl D.host.E)} (he : IsIdemSum e S) {a : 𝓞 D.host.E}
     (h0 : a ≠ 0) (ha : ∀ P ∈ S, a ∉ P.asIdeal) :
@@ -160,10 +165,10 @@ theorem unit_aux {R T : Type} [CommRing R] [CommRing T] (c : R →+* R) (hc : �
   have h3 : c e * c e = c e := by rw [← map_mul, h1]
   have hb : c a * c ai = 1 := by rw [← map_mul, ha, map_one]
   refine ⟨e * a + c e * c ai + (1 - e - c e), ?_, ?_, ?_, ?_⟩
-  · simp only [map_add, map_mul, map_sub, map_one, hc]
+  · simp only [map_add (f := _), map_mul, map_sub, map_one, hc]
     rw [sub_right_comm 1 (c e) e]
     exact glued_idempotent_units_mul_eq_one h1 h2 h3 ha hb
-  · rw [← map_mul c, map_add, map_add, map_sub, map_sub, map_one, map_mul]
+  · rw [← map_mul c, map_add (f := _), map_add (f := _), map_sub, map_sub, map_one, map_mul]
     exact add_mem (add_mem (mul_mem i1 i2) (hB _ i3)) (sub_mem (sub_mem (one_mem _) i1) (hB _ i1))
   · linear_combination (a - 1) * h1 + (a + c ai - 2) * h2 + (c ai - 1) * h3
   · linear_combination (a - 1) * h1 + (c ai - 1) * h2
@@ -207,7 +212,7 @@ theorem exists_central_lift (V : HSp D) (β : GL (Fin V.rank) (Lev.EAf D)) (L : 
     exact smul_one_supp u2 i j
   have h0 := GlobalTheory.PlaceDatum.infPart_idemSum he
   have hf : ζ ∈ GfC V := GlobalTheory.IdemSupport.mem_GfC_of_suppF V (f := e + cA D e)
-    (by rw [RingHom.map_add, h0, GlobalTheory.PlaceDatum.infPart_cA h0, add_zero]) hs
+    (by rw [RingHom.map_add (f := _), h0, GlobalTheory.PlaceDatum.infPart_cA h0, add_zero]) hs
   have huv : (⟨finSw D u, hu⟩ : Formalism.L2.Herm.intAf D.host.F D.host.E) * ⟨finSw D (cA D u), finSw_cA_int u hu⟩ = 1 :=
     Subtype.ext (((finSw D).map_mul _ _).symm.trans ((congrArg (finSw D) u1).trans (finSw D).map_one))
   have hx : (Lev.finE V ζ).1 = finSw D u • (1 : Matrix (Fin V.rank) (Fin V.rank) (Lev.EAf D)) := by
@@ -236,23 +241,6 @@ theorem map_center {G H : Type*} [Group G] [Group H] (φ : G ≃* H) {z : G} (hz
     x * φ z = φ z * x := by
   obtain ⟨g, rfl⟩ := φ.surjective x
   rw [← map_mul, ← map_mul, Subgroup.mem_center_iff.1 hz g]
-
-theorem exists_isCentralShift : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T0 : Type} {A : FamIn D.what₂.LL G Pl0 T0 D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A), R.Char F → ∀ (i : Fin D.R.m), ∀ (σ : D.what₂.LL →+* ℂ), ∀ z ∈ Subgroup.center G, ∃ ζ, IsCentralShift R i σ z ζ := by
-  intro D G _ _ Pl0 T0 A Ks _ _ _ R F hC i σ z hz
-  obtain ⟨e, he⟩ := exists_idemSum R.Pg (GlobalTheory.TypePlaces.not_isConjPl R.C.P R.Pg hC.lev.Pg)
-  have h := exists_central_lift (Wc D i) (R.βW i) (R.datWp i R.triv) he (g := R.eG z) (map_center R.eG hz)
-  obtain ⟨ζ, hc, hs, hl⟩ := h
-  have ht : ∀ y v h, (R.HW i σ).e (R.gW i σ z y) v h = (R.HW i σ).e y v (h * ζ) := fun y v h =>
-    (congrArg (fun T : MMap (R.MW i σ) => T v h) (hC.models.gW i σ z y)).trans
-      (GlobalTheory.GeoActCompare.actW_apply R hC.models.HW σ hl y v h)
-  refine ⟨ζ, hz, hc, hl.1, ⟨e, he, hs⟩, hl, ht,
-    inner_eq_of_norm (R.gW i σ z) (GlobalTheory.gW_norm_eq R hC.models.HW hC.models.gW hC.models.νW i σ z),
-    comm_of_center (R.gW i σ) hz, fun _ _ S _ y y' h => ?_⟩
-  refine MultilinearMap.ext fun v => funext fun g => (ht y' v g).trans ?_
-  refine (congrArg (fun T : MMap (R.MW i σ) => T v (g * ζ)) h).trans ?_
-  show ∑ γ ∈ S, (R.HW i σ).e y v (g * ζ * γ) = ∑ γ ∈ S, (R.HW i σ).e (R.gW i σ z y) v (g * γ)
-  refine Finset.sum_congr rfl fun γ _ => ?_
-  rw [ht, mul_assoc, mul_assoc, Subgroup.mem_center_iff.1 hc γ]
 
 end GlobalTheory.CentralShift
 

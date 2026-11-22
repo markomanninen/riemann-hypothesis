@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.IwaChol
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.IwaChol
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexOrder

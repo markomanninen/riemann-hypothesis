@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.EtaleKummerDegreeZeroCohomologyOfTwistSectionCla
+module
+
+public import Development.EtaleCohomology.KummerTheory.EtaleKummerDegreeZeroCohomologyOfTwistSectionCla
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -10,7 +14,7 @@ def TwRes0 : Prop := ∀ (q : ℕ) [NeZero q] {U X : Scheme.{0}} (x : U ⟶ X) (
 
 def DegreeZeroSectionExists : Prop := ∀ (R : Type) [CommRing R] (F : Shv R) (X : Scheme.{0}) (s : Sec F X),
   ∃ α : Cocycle ((chains R).obj (sch.obj X)) (res R F) 0,
-    ∀ (U : Scheme.{0}) (x : U ⟶ X), ev α.1 0 0 (by simp) U x = Sec.res x (Sec.map (resι R F) s)
+    ∀ (U : Scheme.{0}) (x : U ⟶ X), ev (R := R) α.1 0 0 (by simp) U x = Sec.res x (Sec.map (resι R F) s)
 
 theorem sec_res_map {R : Type} [CommRing R] {F G : Shv R} (φ : F ⟶ G) {V U : Scheme.{0}} (g : V ⟶ U) (s : Sec F U) :
     Sec.res g (Sec.map φ s) = Sec.map φ (Sec.res g s) := by

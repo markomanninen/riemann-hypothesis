@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.CutIdentityRightSideCongrOfSubMem
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.CutIdentityRightSideCongrOfSubMem
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -18,7 +23,8 @@ def ResidualComparison.Statement : Prop :=
       (P : Ideal (MRing ι O)) (d : ℕ), IsModelOver P (d + 1) →
     ∀ (b : K → ℤ) (f g : MRing ι O), IsEffectiveVertical P ϖ b f g →
     ∀ (c : K → ℕ) (s : MRing ι O), IsMultiHomog s c → s ∉ P →
-    (∀ H, divCycle P s H ≠ 0 → (C ϖ : MRing ι O) ∉ H → IsVerticalDivisor H ϖ b f g) →
+    (∀ H, divCycle P s H ≠ 0 → (C ϖ : MRing ι O) ∉ H →
+      IsVerticalDivisor H ϖ b f g) →
     ∀ e : K → ℕ, (∀ k, (c k : ℤ) = b k + e k) →
     ∀ m : MRing ι O, IsMultiHomog m e → m ∉ P →
     (∀ H, divCycle P s H ≠ 0 → (C ϖ : MRing ι O) ∉ H → m ∉ H) →
@@ -38,7 +44,8 @@ def ExceptionalComparison.Statement : Prop :=
       (P : Ideal (MRing ι O)) (d : ℕ), IsModelOver P (d + 1) →
     ∀ (b : K → ℤ) (f g : MRing ι O), IsEffectiveVertical P ϖ b f g →
     ∀ (c : K → ℕ) (s : MRing ι O), IsMultiHomog s c → s ∉ P →
-    (∀ H, divCycle P s H ≠ 0 → (C ϖ : MRing ι O) ∉ H → IsVerticalDivisor H ϖ b f g) →
+    (∀ H, divCycle P s H ≠ 0 → (C ϖ : MRing ι O) ∉ H →
+      IsVerticalDivisor H ϖ b f g) →
     ∀ e : K → ℕ, (∀ k, (c k : ℤ) = b k + e k) →
     ∀ m : MRing ι O, IsMultiHomog m e → m ∉ P →
     (∀ H, divCycle P s H ≠ 0 → (C ϖ : MRing ι O) ∉ H → m ∉ H) →
@@ -79,15 +86,6 @@ variable {K : Type} {ι : K → Type} {J : Type} {O : Type*} [CommRing O] [IsDom
 
 theorem liftForm_const (a : O) : liftForm (J := J) (C a : MRing ι O) = C a :=
   (liftForm (J := J) (ι := ι) (R := O)).commutes a
-
-def constChart (ϖ : O) (n : J → ℕ) (j₀ : J) : MRing (extIdx ι J) O →ₐ[O] MRing (extIdx ι J) O :=
-  aeval fun v => match v with
-    | ⟨none, j⟩ => C (ϖ ^ (n j - n j₀)) * X (⟨none, j₀⟩ : Σ o, extIdx ι J o)
-    | ⟨some k, i⟩ => X ⟨some k, i⟩
-
-def constChartPrime (ϖ : O) (n : J → ℕ) (j₀ : J) : Ideal (MRing (extIdx ι J) O) :=
-  RingHom.ker ((MvPolynomial.map (Ideal.Quotient.mk (Ideal.span {ϖ}))).comp
-    (constChart ϖ n j₀).toRingHom)
 
 end Constants
 

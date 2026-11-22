@@ -1,5 +1,9 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.LeafGlueIsProperPf
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.LeafGlueIsProperPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4 LateralTheory.E.LeafGlueProperPf

@@ -1,19 +1,24 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.NoetherianBlowup
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.IrreducibleComponentsFlatPreimage
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.SupportFlatPullback
-import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.KernelFlatBaseChange
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialPrincipalization
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialGeometryHypotheses
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.CenterInvariant
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.SupportsAlongSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.DetachedLocus
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.NoetherianBlowup
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.IrreducibleComponentsFlatPreimage
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.SupportFlatPullback
+public import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.KernelFlatBaseChange
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialPrincipalization
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialGeometryHypotheses
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.CenterInvariant
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.SupportsAlongSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.DetachedLocus
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace
@@ -255,7 +260,7 @@ theorem exists_isIrreducibleComponentOf_preimage {X Y : Scheme.{u}} (g : Y ⟶ X
   exact ((specializes_iff_mem_closure.mpr hm2).antisymm
     (specializes_iff_mem_closure.mpr hm1)).eq
 
-private theorem exists_isPullback_comapSubscheme {X Y : Scheme.{u}} (W : X.IdealSheafData)
+theorem exists_isPullback_comapSubscheme {X Y : Scheme.{u}} (W : X.IdealSheafData)
     (g : Y ⟶ X) :
     ∃ c : (W.comap g).subscheme ⟶ W.subscheme,
       IsPullback c (W.comap g).subschemeι W.subschemeι g := by
@@ -270,12 +275,25 @@ private theorem exists_isPullback_comapSubscheme {X Y : Scheme.{u}} (W : X.Ideal
   exact (IsPullback.of_iso_pullback ⟨hsq⟩ e he rfl).flip
 
 def comapSubschemeHom {X Y : Scheme.{u}} (W : X.IdealSheafData) (g : Y ⟶ X) :
-    (W.comap g).subscheme ⟶ W.subscheme :=
-  (exists_isPullback_comapSubscheme W g).choose
+    (W.comap g).subscheme ⟶ W.subscheme := by
+  have h : ∃ c : (W.comap g).subscheme ⟶ W.subscheme,
+      IsPullback c (W.comap g).subschemeι W.subschemeι g := by
+    let e := W.comapIso g
+    refine ⟨e.hom ≫ Limits.pullback.snd g W.subschemeι, ?_⟩
+    have he : e.hom ≫ Limits.pullback.fst g W.subschemeι =
+        (W.comap g).subschemeι := W.comapIso_hom_fst g
+    have hsq : (W.comap g).subschemeι ≫ g =
+        (e.hom ≫ Limits.pullback.snd g W.subschemeι) ≫ W.subschemeι := by
+      rw [← he]
+      simp only [Category.assoc, Limits.pullback.condition]
+    exact (IsPullback.of_iso_pullback ⟨hsq⟩ e he rfl).flip
+  exact h.choose
 
 theorem isPullback_comapSubschemeHom {X Y : Scheme.{u}} (W : X.IdealSheafData) (g : Y ⟶ X) :
-    IsPullback (comapSubschemeHom W g) (W.comap g).subschemeι W.subschemeι g :=
-  (exists_isPullback_comapSubscheme W g).choose_spec
+    IsPullback (comapSubschemeHom W g) (W.comap g).subschemeι W.subschemeι g := by
+  change IsPullback (exists_isPullback_comapSubscheme W g).choose
+    (W.comap g).subschemeι W.subschemeι g
+  exact (exists_isPullback_comapSubscheme W g).choose_spec
 
 theorem comapSubschemeHom_comp_subschemeι {X Y : Scheme.{u}} (W : X.IdealSheafData) (g : Y ⟶ X) :
     comapSubschemeHom W g ≫ W.subschemeι = (W.comap g).subschemeι ≫ g :=

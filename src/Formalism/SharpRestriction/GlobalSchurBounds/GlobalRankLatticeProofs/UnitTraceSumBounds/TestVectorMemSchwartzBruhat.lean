@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.EqOfLeOfAbsNormEq
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.FamilyLogGammaSmallHolds
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.EqOfLeOfAbsNormEq
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.FamilyLogGammaSmallHolds
+
+@[expose] public section
 
 namespace Formalism.MainNotions.Ext
 
@@ -20,9 +24,9 @@ theorem exists_conj_OK (a : 𝓞 D.host.K) : ∃ a' : 𝓞 D.host.K, (((a' : D.h
   have hK : D.host.conj ((a : D.host.K) : D.host.E) ∈ D.host.K :=
     hmap ((IntermediateField.mem_map _).2 ⟨_, hx, rfl⟩)
   have hint : IsIntegral ℤ (⟨_, hK⟩ : D.host.K) := by
-    rw [← isIntegral_algebraMap_iff (algebraMap D.host.K D.host.E).injective]
+    rw [← isIntegral_algebraMap_iff (B := D.host.E)]
     have ha : IsIntegral ℤ ((a : D.host.K) : D.host.E) :=
-      (isIntegral_algebraMap_iff (algebraMap D.host.K D.host.E).injective).2 a.isIntegral_coe
+      a.isIntegral_coe.algebraMap
     exact ha.map D.host.conj.toAlgHom.toRingHom.toIntAlgHom
   let b : integralClosure ℤ D.host.K := ⟨⟨_, hK⟩, hint⟩
   exact ⟨b, rfl⟩
@@ -45,12 +49,12 @@ theorem test_vector_mem_schwartz_bruhat (z : D.host.E) : D.host.φ₀ z ∈ Qbar
 
 theorem lamPhi_add (x y : D.host.E) : lamC lam (D.host.φ₀ (x + y)) = lamC lam (D.host.φ₀ x) + lamC lam (D.host.φ₀ y) := by
   unfold lamC
-  rw [dif_pos (test_vector_mem_schwartz_bruhat D (x + y)), dif_pos (test_vector_mem_schwartz_bruhat D x), dif_pos (test_vector_mem_schwartz_bruhat D y), ← map_add lam]
+  rw [dite_eq_left (test_vector_mem_schwartz_bruhat D (x + y)), dite_eq_left (test_vector_mem_schwartz_bruhat D x), dite_eq_left (test_vector_mem_schwartz_bruhat D y), ← map_add lam]
   exact congrArg lam (Subtype.ext (by simp))
 
 theorem lamPhi_mul (x y : D.host.E) : lamC lam (D.host.φ₀ (x * y)) = lamC lam (D.host.φ₀ x) * lamC lam (D.host.φ₀ y) := by
   unfold lamC
-  rw [dif_pos (test_vector_mem_schwartz_bruhat D (x * y)), dif_pos (test_vector_mem_schwartz_bruhat D x), dif_pos (test_vector_mem_schwartz_bruhat D y), ← map_mul lam]
+  rw [dite_eq_left (test_vector_mem_schwartz_bruhat D (x * y)), dite_eq_left (test_vector_mem_schwartz_bruhat D x), dite_eq_left (test_vector_mem_schwartz_bruhat D y), ← map_mul lam]
   exact congrArg lam (Subtype.ext (by simp))
 
 theorem okp_add (α β : ℂ_[p] × ℂ_[p]) (hα : α ∈ OKp D lam) (hβ : β ∈ OKp D lam) : α + β ∈ OKp D lam := by
@@ -70,19 +74,5 @@ theorem okp_mul (α β : ℂ_[p] × ℂ_[p]) (hα : α ∈ OKp D lam) (hβ : β 
   have hab : (((a * b : 𝓞 D.host.K) : D.host.K) : D.host.E)
       = ((a : D.host.K) : D.host.E) * ((b : D.host.K) : D.host.E) := by simp
   simp only [tauK, tauKc, hab, map_mul D.host.conj, lamPhi_mul, Prod.mk_mul_mk]
-
-theorem okp_zero : (0 : ℂ_[p] × ℂ_[p]) ∈ OKp D lam := by
-  have h0 : lamC lam (0 : ℂ) = 0 := by
-    simpa using lamPhi_add D lam (0 : D.host.E) 0
-  unfold OKp
-  apply subset_closure
-  refine ⟨0, ?_⟩
-  simp [tauK, tauKc, h0]
-
-theorem okp_hP {ι : Type} [Fintype ι] (x y : ι → ℂ_[p] × ℂ_[p]) (hx : InOKp D lam x) (hy : InOKp D lam y) :
-    hP x y ∈ OKp D lam := by
-  show (∑ k, x k * (y k).swap) ∈ OKp D lam
-  exact Finset.sum_induction _ (· ∈ OKp D lam) (fun a b ha hb => okp_add D lam a b ha hb)
-    (okp_zero D lam) (fun k _ => okp_mul D lam _ _ (hx k) (okp_swap D lam _ (hy k)))
 
 end Formalism.MainNotions.Ext

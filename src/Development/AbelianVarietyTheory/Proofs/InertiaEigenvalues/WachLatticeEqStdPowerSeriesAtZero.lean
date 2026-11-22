@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnramifiedSubfieldLeCyclotomicExt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionsSpanFullLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionLatticeFullDescendsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionLatticeGradedOfLevelLeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsPtPrimitiveRoot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicNormZpowSubOnePadicValInt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.T2SpaceLocLatV
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnramifiedSubfieldLeCyclotomicExt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionsSpanFullLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionLatticeFullDescendsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionLatticeGradedOfLevelLeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsPtPrimitiveRoot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicNormZpowSubOnePadicValInt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.T2SpaceLocLatV
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc TensorProduct GlobalTheory.NL
 
@@ -148,8 +152,8 @@ theorem chi_gam_zpow_ne_one
   rw [h, sub_self, norm_zero] at h3
   exact (zpow_pos (Nat.cast_pos.mpr (Fact.out : l.Prime).pos) _).ne h3
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem lower (C : LocCmpT l P AI H F) (h : Good K s LL) (T : Lt K LL) (hT : IsCrys (P.PD K) T.ρ)
     (i : Let K) (S : Submodule ↥LL.1 (T.V ⊗[ℚ_[l]] P.R.B)) (k : ℤ) (hk : k ≠ 0)
     (hS : ∀ y, ∀ j < k, ex C h T i 1 y j ∈ S) (x : ↥((H.W K s LL h).N T)) :
@@ -164,12 +168,29 @@ theorem lower (C : LocCmpT l P AI H F) (h : Good K s LL) (T : Lt K LL) (hT : IsC
     apply Subtype.ext
     change _ = (x : (H.W K s LL h).DD T) + (letπ : AA K LL) • y
     rw [← hxy]; simp
-  rw [h2, map_add] at h1
+  rw [h2, (C.C K s LL h).tie.levB T i 1 |>.map_add] at h1
   have h3 : ex C h T i 1 x k + ex C h T i 1 ((letπ : AA K LL) • ⟨y, hy⟩) k =
       (algebraMap ↥(OL LL) ↥LL.1 ((H.W K s LL h).χΓ (H.W K s LL h).gam : ↥(OL LL))) ^ k •
         ex C h T i 1 x k := h1
+  have hex : ∀ (a : AA K LL) (x : ↥((H.W K s LL h).N T)),
+      ex C h T i 1 (a • x) = conv ((H.W K s LL h).lev i 1 a) (ex C h T i 1 x) := by
+    intro a x
+    funext k
+    have hinj : Function.Injective (ιV (P.PD K) : T.V ⊗[ℚ_[l]] P.R.B →ₗ[↥LL.1] T.V ⊗[ℚ_[l]] P.R.BdR) := by
+      have hf : Function.Injective (((P.PD K).ι.toLinearMap).restrictScalars ℚ_[l]) := (P.PD K).ι_inj
+      exact Module.Flat.lTensor_preserves_injective_linearMap (M := T.V) _ hf
+    apply hinj
+    obtain ⟨m, hm⟩ := (C.C K s LL h).tie.levB_supp T i 1 x
+    unfold ex
+    rw [← (C.C K s LL h).tie.levN_eq, (H.W K s LL h).levN_smul, conv,
+      map_finsum _ (Model.conv_finite _ hm k)]
+    simp only [map_smul]
+    congr 1
+    funext j
+    exact congrArg (fun z => PowerSeries.coeff j ((H.W K s LL h).lev i 1 a) • z)
+      ((C.C K s LL h).tie.levN_eq T i 1 x (k - j))
   have h4 : ex C h T i 1 ((letπ : AA K LL) • ⟨y, hy⟩) k ∈ S := by
-    rw [Model.ex_smul]
+    rw [hex (letπ : AA K LL) ⟨y, hy⟩]
     obtain ⟨m, hm⟩ := (C.C K s LL h).tie.levB_supp T i 1 ⟨y, hy⟩
     refine conv_mem _ hm k S fun j hj => hS _ _ ?_
     have h0 := (Model.mem_van _ _ _ _ _).1 (Model.pi_van_one (H.W K s LL h) i).1 0 (by omega)
@@ -201,8 +222,26 @@ theorem lat_one_std : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F :
   have hF := down s i ζ hζ (GlobalTheory.T.wach_expansions_span_full_lattice D HW F Cm l K s LL h T hT _ ζ hζ)
   have hG := GlobalTheory.T.wachExpansionLattice_graded_of_level_le D HW F Cm l K s LL h T hT i 1 (one_pow _) hF
   haveI : Module.Finite (AA K LL) ↥(W.N T) := Module.Finite.iff_fg.2 (W.N_fg T)
+  set_option synthInstance.maxHeartbeats 200000 in
+  have hex : ∀ (a : AA K LL) (x : ↥(W.N T)),
+      ex C h T i 1 (a • x) = conv (W.lev i 1 a) (ex C h T i 1 x) := by
+    intro a x
+    funext k
+    have hinj : Function.Injective (ιV ((D.loc l).PD K) : T.V ⊗[ℚ_[l]] (D.loc l).R.B →ₗ[↥LL.1] T.V ⊗[ℚ_[l]] (D.loc l).R.BdR) := by
+      have hf : Function.Injective ((((D.loc l).PD K).ι.toLinearMap).restrictScalars ℚ_[l]) := ((D.loc l).PD K).ι_inj
+      exact Module.Flat.lTensor_preserves_injective_linearMap (M := T.V) _ hf
+    apply hinj
+    obtain ⟨m, hm⟩ := (C.C K s LL h).tie.levB_supp T i 1 x
+    unfold ex
+    rw [← (C.C K s LL h).tie.levN_eq, W.levN_smul, conv,
+      map_finsum _ (Model.conv_finite _ hm k)]
+    simp only [map_smul]
+    congr 1
+    funext j
+    exact congrArg (fun z => PowerSeries.coeff j (W.lev i 1 a) • z)
+      ((C.C K s LL h).tie.levN_eq T i 1 x (k - j))
   obtain ⟨m₀, hm₀⟩ := uniform_supp ((C.C K s LL h).tie.levB T i 1) (W.lev i 1)
-    ((C.C K s LL h).tie.levB_supp T i 1) (Model.ex_smul C h T i 1)
+    ((C.C K s LL h).tie.levB_supp T i 1) hex
   exact std_of_lower (ex C h T i 1) _ (fun x k => (C.C K s LL h).tie.levB_mem T i 1 x k) m₀ hm₀
     (lower C h T hT i) hF hG
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.TsumThree
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.LogbNn
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.TsumThree
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.LogbNn
+
+@[expose] public section
 
 noncomputable section
 

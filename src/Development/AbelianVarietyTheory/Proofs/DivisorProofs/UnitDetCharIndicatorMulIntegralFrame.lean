@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsApprox
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralActionUnitCharacterEigen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsApprox
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralActionUnitCharacterEigen
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped Classical Pointwise
@@ -62,8 +66,8 @@ private lemma eq_lr_take_drop_of_map_fst_eq_replicate {D : D7} : ∃ Ψ : AE D �
   | tmul a b => exact ⟨rfl, rfl⟩
   | add z z' h1 h2 =>
     constructor
-    · simp only [map_add, Prod.fst_add, h1.1, h2.1]
-    · simp only [map_add, Prod.snd_add, h1.2, h2.2]
+    · simp only [map_add (f := _), Prod.fst_add, h1.1, h2.1]
+    · simp only [map_add (f := _), Prod.snd_add, h1.2, h2.2]
 
 private lemma units_eq_of_res_eq_of_le_iSup {D : D7} {z z' : AE D} (hi : infPart D z = infPart D z') (ht : toEAf D z = toEAf D z') :
     z = z' := by
@@ -107,7 +111,7 @@ private lemma unitChar_eq_inv_of_isUnitDet {D : D7} (ν : (AE D)ˣ →* Circle) 
     {x : (AE D)ˣ} (hx : IsUnitDet e M x) : unitChar ν e M = (((ν x)⁻¹ : Circle) : ℂ) := by
   have hex : ∃ x, IsUnitDet e M x := ⟨x, hx⟩
   unfold unitChar
-  rw [dif_pos hex, isUnitDet_unique' hex.choose_spec hx]
+  rw [dite_eq_left hex, isUnitDet_unique' hex.choose_spec hx]
 
 theorem unitChar_mul : ∀ {D : D7} (ν : (AE D)ˣ →* Circle) (e : AE D), e * e = e → toEAf D e ∈ Formalism.L2.Herm.intAf D.host.F D.host.E →
   ∀ {k : ℕ} (N : Matrix (Fin k) (Fin k) (EAf D)) (β : GL (Fin k) (EAf D)), IsIntM β.val → IsIntM (β⁻¹).val →
@@ -123,7 +127,7 @@ theorem unitChar_mul : ∀ {D : D7} (ν : (AE D)ˣ →* Circle) (e : AE D), e * 
       rintro ⟨z, hz⟩
       exact hN ⟨_, isUnitDet_mul he (by rw [det_mul', mul_assoc, det_gl, mul_one]) hz hy'⟩
     unfold unitChar
-    rw [dif_neg hN, dif_neg hNβ, zero_mul]
+    rw [dite_eq_right hN, dite_eq_right hNβ, zero_mul]
 
 end GlobalTheory.StdRead.CharMul
 

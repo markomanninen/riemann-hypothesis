@@ -1,26 +1,35 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.KummerSha
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.KummerSeq
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseTransportGS
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteOpen
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.KummerSha
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.KummerSeq
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseTransportGS
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteOpen
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory NumberField IsDedekindDomain GroundTheory.Global
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
 
 attribute [local instance 2000] Rep.hV2
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
+
+local instance kummerShaOpenScalarTower {K L : FiniteSubfield} [Fact (K ≤ L)] :
+    IsScalarTower K.1 L.1 ℚ̄ :=
+  IsScalarTower.of_algebraMap_eq fun _ => rfl
 
 variable {K L : FiniteSubfield} [Fact (K ≤ L)] {S : Set (HeightOneSpectrum (𝓞 K.1))}
   (hL : ∀ x : L.1, algebraMap L.1 ℚ̄ x ∈ maxUnramifiedOutside K.1 ℚ̄ S)
   (ιs : ∀ v : S, ℚ̄ →ₐ[K.1] AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1))
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem ptCompactToGlobal_gsMackeyCompactIso (ℓ : ℕ)
     (c : compactCohomologyRes (gsFinFamily (placesOver S) (gsMackeyEmbeddings hL ιs))
       (gsRoots (placesOver S : Set (HeightOneSpectrum (𝓞 L.1))) ℓ) 2) :
@@ -51,8 +60,8 @@ theorem ptCompactToGlobal_gsMackeyCompactIso (ℓ : ℕ)
   have s2 := congrArg (fun φ => φ.hom c) hT
   exact s1.trans (s2.trans s3.symm)
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem mem_ptSha_mackey_iff (ℓ : ℕ)
     (x : cohomology (gsRoots (placesOver S : Set (HeightOneSpectrum (𝓞 L.1))) ℓ) 2) :
     (gsRootsOfUnityCohomologyIso S hL ℓ 2).hom.hom x ∈
@@ -92,8 +101,8 @@ theorem gsRootsOfUnityIso_symm_comp_rootsOfUnityToSUnits (ℓ : ℕ) [NeZero ℓ
         (gsSUnitsIso S hL).symm.hom :=
   Rep.hom_ext (Representation.IntertwiningMap.ext (LinearMap.ext fun _ => rfl))
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem cohomologyMap_rootsOfUnityToSUnits_gsRootsOfUnityCohomologyIso (ℓ : ℕ) [NeZero ℓ]
     (x : cohomology (gsRoots (placesOver S : Set (HeightOneSpectrum (𝓞 L.1))) ℓ) 2) :
     (cohomologyMap ((Rep.resFunctor (gsSubtype S hL)).map
@@ -132,8 +141,8 @@ theorem gsRootsOfUnityCohomologyIso_hom_inv_apply (ℓ : ℕ)
     (gsRootsOfUnityCohomologyIso S hL ℓ 2).hom.hom ((gsRootsOfUnityCohomologyIso S hL ℓ 2).inv.hom x) = x :=
   congrArg (fun φ => φ.hom x) (gsRootsOfUnityCohomologyIso S hL ℓ 2).inv_hom_id
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem mem_ptSha_mackey_iff_of_eq (ℓ : ℕ)
     {x' : cohomology (gsRoots (placesOver S : Set (HeightOneSpectrum (𝓞 L.1))) ℓ) 2}
     {x : cohomology (Rep.res (gsSubtype S hL) (gsRoots S ℓ)) 2}
@@ -145,8 +154,8 @@ theorem mem_ptSha_mackey_iff_of_eq (ℓ : ℕ)
   subst hx
   exact mem_ptSha_mackey_iff hL ιs ℓ x'
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem cohomologyMap_rootsOfUnityToSUnits_eq_zero_iff_of_eq (ℓ : ℕ) [NeZero ℓ]
     {x' : cohomology (gsRoots (placesOver S : Set (HeightOneSpectrum (𝓞 L.1))) ℓ) 2}
     {x : cohomology (Rep.res (gsSubtype S hL) (gsRoots S ℓ)) 2}
@@ -163,8 +172,8 @@ theorem cohomologyMap_rootsOfUnityToSUnits_eq_zero_iff_of_eq (ℓ : ℕ) [NeZero
   · intro h0
     exact (gsSUnitsCohomologyIso S hL 2).toLinearEquiv.injective (h0.trans (map_zero _).symm)
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem mem_ptSha_mackey_iff_exists_kummerModN {ℓ : ℕ} [NeZero ℓ] (hℓ : ℓ.Prime)
     (hℓS : ∀ v ∉ S, ((ℓ : ℕ) : 𝓞 K.1) ∉ v.asIdeal) (hK : Odd ℓ ∨ IsTotallyComplex L.1)
     (x : cohomology (Rep.res (gsSubtype S hL) (gsRoots S ℓ)) 2) :

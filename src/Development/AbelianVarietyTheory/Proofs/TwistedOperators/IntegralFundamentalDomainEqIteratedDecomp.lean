@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MeanXMulStarRat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MeanXMulStarRat
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,10 +19,9 @@ theorem isAddFundamentalDomain_prod {A B : Type} [AddGroup A] [AddGroup B] [Meas
     {μ : Measure A} {ν : Measure B} [SFinite μ] [SigmaFinite ν]
     {Γ : AddSubgroup A} {Δ : AddSubgroup B} {s : Set A} {t : Set B}
     (hs : IsAddFundamentalDomain Γ s μ) (ht : IsAddFundamentalDomain Δ t ν) :
-    IsAddFundamentalDomain (Γ.prod Δ) (s ×ˢ t) (μ.prod ν) where
-  nullMeasurableSet := hs.nullMeasurableSet.prod ht.nullMeasurableSet
-  ae_covers := by
-    have h1 : ∀ᵐ p ∂(μ.prod ν), ∃ g : Γ, g +ᵥ p.1 ∈ s :=
+    IsAddFundamentalDomain (Γ.prod Δ) (s ×ˢ t) (μ.prod ν) := by
+  refine ⟨hs.nullMeasurableSet.prod ht.nullMeasurableSet, ?_, ?_⟩
+  · have h1 : ∀ᵐ p ∂(μ.prod ν), ∃ g : Γ, g +ᵥ p.1 ∈ s :=
       Measure.quasiMeasurePreserving_fst.ae hs.ae_covers
     have h2 : ∀ᵐ p ∂(μ.prod ν), ∃ d : Δ, d +ᵥ p.2 ∈ t :=
       Measure.quasiMeasurePreserving_snd.ae ht.ae_covers
@@ -26,8 +29,7 @@ theorem isAddFundamentalDomain_prod {A B : Type} [AddGroup A] [AddGroup B] [Meas
     obtain ⟨g, hg⟩ := hg
     obtain ⟨d, hd⟩ := hd
     exact ⟨⟨((g : A), (d : B)), g.2, d.2⟩, hg, hd⟩
-  aedisjoint := by
-    rintro ⟨⟨g, d⟩, hg, hd⟩ ⟨⟨g', d'⟩, hg', hd'⟩ hne
+  · rintro ⟨⟨g, d⟩, hg, hd⟩ ⟨⟨g', d'⟩, hg', hd'⟩ hne
     have key : ((⟨(g, d), hg, hd⟩ : Γ.prod Δ) +ᵥ s ×ˢ t) ∩ ((⟨(g', d'), hg', hd'⟩ : Γ.prod Δ) +ᵥ s ×ˢ t) =
         (((⟨g, hg⟩ : Γ) +ᵥ s) ∩ ((⟨g', hg'⟩ : Γ) +ᵥ s)) ×ˢ (((⟨d, hd⟩ : Δ) +ᵥ t) ∩ ((⟨d', hd'⟩ : Δ) +ᵥ t)) := by
       ext ⟨x, y⟩
@@ -47,9 +49,9 @@ theorem isAddFundamentalDomain_prod {A B : Type} [AddGroup A] [AddGroup B] [Meas
       have := hs.aedisjoint hgg
       rw [show μ _ = 0 from this, zero_mul]
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 200000 in
-
 theorem integral_fundamentalDomain_eq_iterated : ∀ (D : D7) (V W : HSp D) (a b k : ℕ) (f₁ f₃ : Mx D a b → WO V W) (f₂ : Mx D 1 k → WO V W), Continuous f₁ → Continuous f₂ → Continuous f₃ → (∀ s s', f₁ (s + s') = f₁ s + f₁ s') → (∀ z z', f₂ (z + z') = f₂ z + f₂ z') → (∀ y y', f₃ (y + y') = f₃ y + f₃ y') → (∀ x : WO V W, ∃ s z y, x = f₁ s + f₂ z + f₃ y) → (∀ s z y, f₁ s + f₂ z + f₃ y = 0 → s = 0 ∧ z = 0 ∧ y = 0) → (∀ s z y, f₁ s + f₂ z + f₃ y ∈ ratL W V ↔ s ∈ GlobalTheory.MixModel.ratMx D a b ∧ z ∈ GlobalTheory.MixModel.ratMx D 1 k ∧ y ∈ GlobalTheory.MixModel.ratMx D a b) → ∀ (μ : Measure (Mx D a b)) (𝓨 : Set (Mx D a b)), IsCovolOne (GlobalTheory.MixModel.ratMx D a b) μ 𝓨 → ∀ (η : Measure (Mx D 1 k)) (𝓩 : Set (Mx D 1 k)), η.IsAddHaarMeasure → IsAddFundamentalDomain (GlobalTheory.MixModel.ratMx D 1 k) 𝓩 η → ∀ (ν : Measure (WO V W)) (𝓕 : Set (WO V W)), ν.IsAddHaarMeasure → IsAddFundamentalDomain (ratL W V) 𝓕 ν → ∃ κ : ℝ, 0 < κ ∧ ∀ T : WO V W → ℂ, Continuous T → (∀ γ ∈ ratL W V, ∀ u, T (γ + u) = T u) → ∫ u in 𝓕, T u ∂ν = κ * ∫ s in 𝓨, (∫ z in 𝓩, (∫ y in 𝓨, T (f₁ s + f₂ z + f₃ y) ∂μ) ∂η) ∂μ := by
   intro D V W a b k f₁ f₃ f₂ hc₁ hc₂ hc₃ ha₁ ha₂ ha₃ hsurj hinj hrat μ 𝓨 hμ η 𝓩 hη h𝓩 ν 𝓕 hν h𝓕
   obtain ⟨i1, i2, i3, i4, i5, -⟩ := GlobalTheory.MixModel.lattice_Mx D a b
@@ -92,7 +94,7 @@ theorem integral_fundamentalDomain_eq_iterated : ∀ (D : D7) (V W : HSp D) (a b
     ((hc₁.comp continuous_fst).add (hc₂.comp (continuous_fst.comp continuous_snd))).add
       (hc₃.comp (continuous_snd.comp continuous_snd))
   have hEi : Function.Injective Ehom := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     rintro ⟨s, z, y⟩ h
     obtain ⟨h1, h2, h3⟩ := hinj s z y h
     simp [h1, h2, h3]
@@ -129,7 +131,7 @@ theorem integral_fundamentalDomain_eq_iterated : ∀ (D : D7) (V W : HSp D) (a b
     intro s hs
     rw [hνm, Measure.smul_apply] at hs
     exact (smul_eq_zero.1 hs).resolve_left hc.ne'
-  have hqmp : Measure.QuasiMeasurePreserving Me lam ν := ⟨Me.measurable, hac⟩
+  have hqmp : QuasiMeasurePreserving Me lam ν := ⟨Me.measurable.aemeasurable, hac⟩
   let eΓ : ratL W V → Γ := fun g => ⟨Ec.symm g, (hmemΓ _).2 (by simpa using g.2)⟩
   have heΓ : Function.Bijective eΓ := by
     refine ⟨fun g g' h => Subtype.ext ?_, fun p => ⟨⟨Ec p, (hmemΓ p).1 p.2⟩, Subtype.ext ?_⟩⟩
@@ -140,7 +142,7 @@ theorem integral_fundamentalDomain_eq_iterated : ∀ (D : D7) (V W : HSp D) (a b
   have hFDE : IsAddFundamentalDomain Γ (Me ⁻¹' 𝓕) lam :=
     h𝓕.preimage_of_equiv hqmp heΓ (fun g p => by
       show Me ((Ec.symm g : _) + p) = (g : WO V W) + Me p
-      rw [hMe, hMe, map_add, Ec.apply_symm_apply])
+      rw [hMe, hMe, map_add (f := _), Ec.apply_symm_apply])
   refine ⟨(c : ℝ), by exact_mod_cast hc, fun T hT hper => ?_⟩
   obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn hT.continuousOn
   have hbd : ∀ x, ‖T x‖ ≤ C := fun x => by
@@ -151,10 +153,13 @@ theorem integral_fundamentalDomain_eq_iterated : ∀ (D : D7) (V W : HSp D) (a b
   have e1 : ∫ u in 𝓕, T u ∂ν = (c : ℝ) • ∫ u in 𝓕, T u ∂m := by
     rw [hνm, Measure.restrict_smul, integral_smul_nnreal_measure, NNReal.smul_def]
   have e2 : ∫ u in 𝓕, T u ∂m = ∫ p in Me ⁻¹' 𝓕, T (Me p) ∂lam := setIntegral_map_equiv Me T 𝓕
+  haveI : VAddInvariantMeasure Γ _ lam :=
+    ⟨fun g _ hs => Measure.measure_preimage_of_map_eq_self (map_add_left_eq_self lam g.1)
+      (measurable_const_vadd g).aemeasurable hs.nullMeasurableSet⟩
   have e3 : ∫ p in Me ⁻¹' 𝓕, T (Me p) ∂lam = ∫ p in 𝓨 ×ˢ (𝓩 ×ˢ 𝓨), T (Me p) ∂lam :=
     hFDE.setIntegral_eq hFDP (fun g p => by
       show T (Me ((g : _) + p)) = T (Me p)
-      rw [hMe, hMe, map_add]
+      rw [hMe, hMe, map_add (f := _)]
       exact hper _ ((hmemΓ _).1 g.2) _)
   have e4 : lam.restrict (𝓨 ×ˢ (𝓩 ×ˢ 𝓨)) = (μ.restrict 𝓨).prod ((η.restrict 𝓩).prod (μ.restrict 𝓨)) := by
     rw [Measure.prod_restrict, Measure.prod_restrict]

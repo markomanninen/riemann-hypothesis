@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelDensities.IsEulerProdConstIff
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SiegelWeilMeasureOfCongruentForm
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelDensities.IsEulerProdConstIff
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SiegelWeilMeasureOfCongruentForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,8 +84,12 @@ theorem isomC : IsomC := by
     (measurable_actTup σ hCM (AF F) _) (measurable_of_loc σ hCM (Ainf F) hLi _)
     (fun v => measurable_of_loc σ hCM (Fv F v) (hLv v) _) hproj
     ((GlobalTheory.CompanionTheory.SW.LatRat.latV_rational F E σ hCM d b n M).2.1 g) cinf c hUP
-    (by rw [Measure.map_smul, hlocI, smul_comm])
-    (fun v => by rw [Measure.map_smul, hlocV v, smul_comm]) hfin
+    (by
+      rw [Measure.map_smul, hlocI, smul_comm]
+      exact (measurable_of_loc σ hCM (Ainf F) hLi _).aemeasurable)
+    (fun v => by
+      rw [Measure.map_smul, hlocV v, smul_comm]
+      exact (measurable_of_loc σ hCM (Fv F v) (hLv v) _).aemeasurable) hfin
     ((isEulerProd_const_iff b _ κ _ _).1 hEul)
   have hth := theta_map (n := n) σ hCM J hJ g He hmat μ 𝓕 T
   rw [hth] at key

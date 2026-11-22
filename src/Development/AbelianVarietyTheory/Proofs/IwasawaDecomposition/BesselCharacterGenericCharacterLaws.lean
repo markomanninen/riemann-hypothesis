@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.EmbRelExistsUnique
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.EmbRelExistsUnique
+
+@[expose] public section
 
 noncomputable section
 
@@ -148,7 +152,8 @@ theorem superSum_mul (c : Fin ρ → R) {T T' : Matrix (Fin ρ) (Fin ρ) R} (hT 
 
 theorem superSum_map {S : Type} [CommRing S] (φ : R →+* S) (c : Fin ρ → R) (T : Matrix (Fin ρ) (Fin ρ) R)
     (b : Fin ρ → R) : superSum (fun i => φ (c i)) (T.map φ) (fun i => φ (b i)) = φ (superSum c T b) := by
-  simp only [superSum, map_add, map_sum, apply_ite φ, map_mul, map_zero, Matrix.map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [superSum, map_add (f := _), map_sum, apply_ite φ, map_mul, map_zero, Matrix.map_apply]
 
 theorem continuous_superSum [TopologicalSpace R] [IsTopologicalRing R] {X : Type} [TopologicalSpace X]
     (c : Fin ρ → R) {T : X → Matrix (Fin ρ) (Fin ρ) R} {b : X → Fin ρ → R} (hT : Continuous T) (hb : Continuous b) :
@@ -249,8 +254,6 @@ section Adelic
 
 variable {D : D7}
 
-local infixl:70 " *ₘ " => HMul.hMul
-
 theorem mt_mul (B : HSp D) (g h : GA D B) : Formalism.L2.Theta.mt B (g * h) = Formalism.L2.Theta.mt B g * Formalism.L2.Theta.mt B h := by
   simp [Formalism.L2.Theta.mt]
 
@@ -271,7 +274,7 @@ theorem subOne_vec (B : HSp D) (g : GA D B) (y w : Fin B.rank → AE D) :
 theorem subOne_cols (B : HSp D) {ρ : ℕ} (e : Matrix (Fin B.rank) (Fin ρ) D.host.E) (g : GA D B)
     (a : Fin ρ → Fin ρ → AE D) :
     (∀ i, subOne B g *ᵥ (ratV fun k => e k i) = e.map (incA D) *ᵥ a i) ↔
-      Formalism.L2.Theta.mt B g *ₘ e.map (incA D) = e.map (incA D) + e.map (incA D) *ₘ (Matrix.of a)ᵀ := by
+      Formalism.L2.Theta.mt B g * e.map (incA D) = e.map (incA D) + e.map (incA D) * (Matrix.of a)ᵀ := by
   simp only [subOne_vec]
   constructor
   · intro h
@@ -325,7 +328,7 @@ variable {A B : HSp D} {ι : A.V →ₗ[D.host.E] B.V}
 
 theorem besChar_eq (ψ : AddChar (AF D.host.F) ℂ) (d : BesDat A B ι) (g : GA D B)
     (T : Matrix (Fin d.ρ) (Fin d.ρ) (AE D)) (b : Fin d.ρ → AE D)
-    (hT : Formalism.L2.Theta.mt B g *ₘ d.e.map (incA D) = d.e.map (incA D) + d.e.map (incA D) *ₘ T)
+    (hT : Formalism.L2.Theta.mt B g * d.e.map (incA D) = d.e.map (incA D) + d.e.map (incA D) * T)
     (hb : Formalism.L2.Theta.mt B g *ᵥ ratV d.z = ratV d.z + d.e.map (incA D) *ᵥ b) :
     besChar ψ d g = ψ (Algebra.trace (AF D.host.F) (AE D) (superSum (fun i => incA D (d.c i)) T b)) := by
   obtain ⟨L, hL⟩ := exists_leftInv d.e d.e_iso.1
@@ -333,7 +336,7 @@ theorem besChar_eq (ψ : AddChar (AF D.host.F) ℂ) (d : BesDat A B ι) (g : GA 
   have hex : ∃ v, IsBesVal ψ d g v :=
     ⟨_, fun i j => T j i, b, (subOne_cols B d.e g (fun i j => T j i)).2 hT, (subOne_vec B g _ _).2 hb, rfl⟩
   unfold besChar
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   obtain ⟨a, b', h1, h2, h3⟩ := hex.choose_spec
   have e1 := (subOne_cols B d.e g a).1 h1
   have e2 := (subOne_vec B g _ _).1 h2
@@ -349,7 +352,7 @@ theorem flagOrthogonalComplementEquations_mulVec_bessel_eq_zero (d : BesDat A B 
 
 theorem exists_coords (d : BesDat A B ι) (g : GA D B) (hg : g ∈ NFlag B d.e) :
     ∃ (T : Matrix (Fin d.ρ) (Fin d.ρ) (AE D)) (b : Fin d.ρ → AE D), StrictUp T ∧
-      Formalism.L2.Theta.mt B g *ₘ d.e.map (incA D) = d.e.map (incA D) + d.e.map (incA D) *ₘ T ∧
+      Formalism.L2.Theta.mt B g * d.e.map (incA D) = d.e.map (incA D) + d.e.map (incA D) * T ∧
       Formalism.L2.Theta.mt B g *ᵥ ratV d.z = ratV d.z + d.e.map (incA D) *ᵥ b := by
   obtain ⟨⟨T, hT, h1⟩, h2⟩ := (mem_NFlag_iff B d.e d.e_iso.1 g).1 hg
   obtain ⟨b, hb⟩ := h2 _ (flagOrthogonalComplementEquations_mulVec_bessel_eq_zero d)
@@ -399,9 +402,9 @@ theorem besChar_continuous (ψ : AddChar (AF D.host.F) ℂ) (hψ : IsCharAF D.ho
   exact this.congr fun n => (besChar_formula ψ d L hL n n.2).symm
 
 theorem perp_fixed {ρ : ℕ} (e : Matrix (Fin B.rank) (Fin ρ) D.host.E) (g : GA D B)
-    (hg : Formalism.L2.Theta.mt B g *ₘ e.map (incA D) = e.map (incA D)) :
-    (perpMat B e).map (incA D) *ₘ Formalism.L2.Theta.mt B g = (perpMat B e).map (incA D) := by
-  have h2 : (perpMat B e).map (incA D) = Formalism.UG.cT (cA D) (e.map (incA D)) *ₘ B.gram.map (incA D) := by
+    (hg : Formalism.L2.Theta.mt B g * e.map (incA D) = e.map (incA D)) :
+    (perpMat B e).map (incA D) * Formalism.L2.Theta.mt B g = (perpMat B e).map (incA D) := by
+  have h2 : (perpMat B e).map (incA D) = Formalism.UG.cT (cA D) (e.map (incA D)) * B.gram.map (incA D) := by
     rw [Matrix.map_mul, GlobalTheory.AutFunCounterexample.cT_map_gen]
   rw [h2]
   exact perp_fixed_gen (cA D) g.2 hg
@@ -409,7 +412,7 @@ theorem perp_fixed {ρ : ℕ} (e : Matrix (Fin B.rank) (Fin ρ) D.host.E) (g : G
 theorem besChar_conj (ψ : AddChar (AF D.host.F) ℂ) (d : BesDat A B ι) (g : GA D B) (h : GA D A)
     (hg : EmbRel B A ι g h) (n : GA D B) (hn : n ∈ NFlag B d.e) :
     g * n * g⁻¹ ∈ NFlag B d.e ∧ besChar ψ d (g * n * g⁻¹) = besChar ψ d n := by
-  have he : Formalism.L2.Theta.mt B g *ₘ d.e.map (incA D) = d.e.map (incA D) := by
+  have he : Formalism.L2.Theta.mt B g * d.e.map (incA D) = d.e.map (incA D) := by
     ext k i
     exact congr_fun (hg.2 (fun k => d.e k i) (by funext k; exact congr_fun (congr_fun d.e_perp k) i)) k
   have hz : Formalism.L2.Theta.mt B g *ᵥ ratV d.z = ratV d.z := hg.2 d.z d.z_perpA

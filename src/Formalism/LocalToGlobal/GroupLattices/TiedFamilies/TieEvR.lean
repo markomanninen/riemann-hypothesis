@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.EvenBlockRowActionEval
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.NatActRVtupR
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.EvenBlockRowActionEval
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.NatActRVtupR
+
+@[expose] public section
 
 open MvPolynomial Matrix Formalism.GradedWeylDivisibility Formalism.MainNotions.G Formalism.BasicNotions Formalism.L2.Forms
 
@@ -77,7 +81,7 @@ theorem evRat_of_blocks {h : P.m + 1 = n} {pos : (Σ v : Fin P.nV, Fin (P.n' v))
     obtain ⟨Q, hQ, e⟩ := hx
     obtain ⟨Q', hQ', e'⟩ := hy
     exact ⟨Q + Q', Submodule.add_mem _ hQ hQ', fun z => by
-      rw [map_add, map_add, map_add, Pi.add_apply, Pi.add_apply, e z, e' z]⟩
+      rw [map_add (f := _), map_add (f := _), map_add (f := _), Pi.add_apply, Pi.add_apply, e z, e' z]⟩
   | neg x _ hx =>
     obtain ⟨Q, hQ, e⟩ := hx
     exact ⟨-Q, Submodule.neg_mem _ hQ, fun z => by
@@ -94,8 +98,8 @@ def BlockRationalityAtPlace (X : Formalism.L2.Herm.Herm0 D) (Gt : GatTies D) (u 
   BlockRational (D.gat u w hg).P (locAt X u w hg B).rk (Gt.gat_pos u w hg) (gramC (gramN D 0 (Nat.zero_le _)) (embT D))
     (crdB (embT D) (locAt X u w hg B).B) D.what₂.embLL ((D.fm u).lam 0)
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem evRatRep_rec (T : ∀ u : D.what₂.Word, Forms0 D u) (Gt : GatTies D) (u : D.what₂.Word) (w : D.what₂.places.Pl)
     (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) (B : GL (Fin D.R.k) D.host.E)
     (hb : BlockRationalityAtPlace X Gt u w hg B) :

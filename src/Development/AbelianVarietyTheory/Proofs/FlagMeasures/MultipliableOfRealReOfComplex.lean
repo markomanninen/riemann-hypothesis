@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open scoped TensorProduct ENNReal
 

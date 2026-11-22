@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeGram
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeGram
+
+@[expose] public section
 
 noncomputable section
 

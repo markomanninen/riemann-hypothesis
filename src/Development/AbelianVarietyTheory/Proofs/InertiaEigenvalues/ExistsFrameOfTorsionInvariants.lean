@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardLeOfSpan
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.StableLeSpanInvariantsOfSemilinearFamily
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardLeOfSpan
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.StableLeSpanInvariantsOfSemilinearFamily
+
+@[expose] public section
+
 open GlobalTheory.PhiGam GlobalTheory.AdmLoc GlobalTheory.Models GlobalTheory.TopSteps GlobalTheory.Present GlobalTheory.RedFun Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 open scoped LaurentSeries PowerSeries TensorProduct
 
@@ -61,7 +66,8 @@ theorem exists_invariant_basis {F₀ F R M D : Type} [Field F₀] [Field F] [Com
   have h4 : ∀ j d, σ d (c j) = c j := by
     intro j d
     have h5 := hinv d
-    rw [map_sum] at h5
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h5
     simp only [hsl, fun j => (hb (e j).2).2 d] at h5
     have h6 := hind (fun j => σ d (c j) - c j) (by
       simp only [map_sub, sub_smul, Finset.sum_sub_distrib, h5, sub_self])
@@ -88,7 +94,8 @@ theorem exists_frame_of_invariants : ∀ {G : Type} [Group G] [TopologicalSpace 
   have hsum : ∀ x, ∑ δ, t δ (f x) = f (∑ δ ∈ W.DelF, W.γD T δ x) := by
     intro x
     simp only [ht]
-    rw [map_sum, Finset.sum_coe_sort W.DelF (fun δ => f (W.γD T δ x))]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_coe_sort W.DelF (fun δ => f (W.γD T δ x))]
   have hinv : ∀ x ∈ DΔ W T, ∀ δ, t δ (f x) = f x := by
     intro x hx δ
     rw [ht, hx δ.1 δ.2]
@@ -158,7 +165,8 @@ theorem exists_frame_of_invariants : ∀ {G : Type} [Group G] [TopologicalSpace 
       obtain ⟨x, hx⟩ := hβV c
       have hi : ∀ δ, t δ (β c) = β c := by
         intro δ
-        rw [hβ, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hβ, map_sum]
         refine Finset.sum_congr rfl fun j _ => ?_
         rw [hsl, hwi, (hD.σ_fix _).2 ⟨_, rfl⟩]
       obtain ⟨r, hr⟩ := hR.res_surj ((W.DelF.card : k)⁻¹)

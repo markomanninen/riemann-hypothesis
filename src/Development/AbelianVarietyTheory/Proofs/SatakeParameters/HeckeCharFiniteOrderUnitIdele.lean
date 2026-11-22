@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InfDiagMulFinPartI
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InfDiagMulFinPartI
+
+@[expose] public section
 
 noncomputable section
 

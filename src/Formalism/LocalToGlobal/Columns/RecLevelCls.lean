@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.RecLevel
-import Formalism.LocalToGlobal.Columns.CoefColLemmas
+module
+
+public import Formalism.LocalToGlobal.Columns.RecLevel
+public import Formalism.LocalToGlobal.Columns.CoefColLemmas
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix
 open scoped TensorProduct
@@ -13,15 +17,15 @@ open Formalism.L2.DIV (Pl kP St redAt redFn)
 section Cls
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
-variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] (ST SG : Finset (Pl E)) (H : Subgroup (GLG E n SG))
+variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] (ST SG : Finset (Pl E)) (H : Subgroup (GLG (E := E) (n := n) (SG := SG)))
 
 theorem rlc_decoOf_val {x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)} (hx : x ∈ UAd hc n) :
     (decoOf ST SG x).1 = decoRaw ST SG x := by
   unfold decoOf
-  rw [dif_pos (decorated_lattice_exists hc n ST SG x hx)]
+  rw [dite_eq_left (decorated_lattice_exists hc n ST SG x hx)]
 
-theorem rlc_smul_val (a : UF E n × H) (d : DecoSet E n ST SG) :
-    (a • d).1 = d.1.act a.1.1 (a.2 : GLG E n SG) := rfl
+theorem rlc_smul_val (a : UF E n × H) (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) :
+    (a • d).1 = d.1.act a.1.1 (a.2 : GLG (E := E) (n := n) (SG := SG)) := rfl
 
 theorem rlc_decoOf_sm (γ : URat hc n) (k : levU hc n ST SG H) (x : UAd hc n) :
     decoOf ST SG (Formalism.UG.bc (iA F E) (γ : GL (Fin n) E) * (x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) *
@@ -77,11 +81,11 @@ theorem rlc_rel_of_orbit {x y : UAd hc n} (a : UF E n × H)
     congr 1
     rw [Prod.mk_mul_mk, one_mul, mul_one, hγ]
   have h3 : decoRaw ST SG (x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) =
-      (decoRaw ST SG (y' : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F))).act 1 (a.2 : GLG E n SG) := by
+      (decoRaw ST SG (y' : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F))).act 1 (a.2 : GLG (E := E) (n := n) (SG := SG)) := by
     have := congrArg Subtype.val h2
     rw [rlc_decoOf_val hc n ST SG x.2, rlc_smul_val, rlc_decoOf_val hc n ST SG y'.2] at this
     exact this
-  obtain ⟨hJ, hr⟩ := mem_congruence_of_action hc ST SG x.2 y'.2 (a.2 : GLG E n SG) h3
+  obtain ⟨hJ, hr⟩ := mem_congruence_of_action hc ST SG x.2 y'.2 (a.2 : GLG (E := E) (n := n) (SG := SG)) h3
   have hkU : (x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F))⁻¹ * (y' : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) ∈
       levU hc n ST SG H := (mem_levU hc n ST SG H).2 ⟨hJ, by rw [hr]; exact a.2.2⟩
   refine ⟨γ, ⟨_, hkU⟩, hγ, Subtype.ext hr, ?_⟩
@@ -109,30 +113,22 @@ theorem adToCls_injective : Function.Injective (adToCls hc n ST SG H) := by
     obtain ⟨γ, k, -, -, e⟩ := rlc_rel_of_orbit hc n ST SG H a ha.symm
     exact (rlc_mk_eq hc n ST SG H γ k e).symm
 
-theorem decoOf_ptOf (hS : DecoPtSurj hc n ST SG) (d : DecoSet E n ST SG) :
+theorem decoOf_ptOf (hS : DecoPtSurj hc n ST SG) (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) :
     decoOf ST SG (ptOf hc n ST SG d : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) = d := by
   have hex : ∃ x : UAd hc n, decoOf ST SG (x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) = d := by
     obtain ⟨q, hq⟩ := hS d
     induction q using QuotientGroup.induction_on with
     | H x => exact ⟨x, by rw [← decoPt_mk hc n ST SG x]; exact hq⟩
   unfold ptOf
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hex.choose_spec
 
-theorem adToCls_adClsOf (hS : DecoPtSurj hc n ST SG) (d : DecoSet E n ST SG) :
+theorem adToCls_adClsOf (hS : DecoPtSurj hc n ST SG) (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) :
     adToCls hc n ST SG H (adClsOf hc n ST SG H d) = decoCls n ST SG H d := by
   unfold adClsOf
   rw [adToCls_mk, decoOf_ptOf hc n ST SG hS]
 
-theorem adToCls_surjective (hS : DecoPtSurj hc n ST SG) : Function.Surjective (adToCls hc n ST SG H) := by
-  intro c
-  induction c using Quotient.inductionOn' with
-  | h d => exact ⟨adClsOf hc n ST SG H d, adToCls_adClsOf hc n ST SG H hS d⟩
-
-theorem adToCls_bijective (hS : DecoPtSurj hc n ST SG) : Function.Bijective (adToCls hc n ST SG H) :=
-  ⟨adToCls_injective hc n ST SG H, adToCls_surjective hc n ST SG H hS⟩
-
-theorem levU_y_bij (hS : DecoPtSurj hc n ST SG) (s : DecoCl n ST SG H → DecoSet E n ST SG)
+theorem levU_y_bij (hS : DecoPtSurj hc n ST SG) (s : DecoCl n ST SG H → DecoSet (E := E) (n := n) (ST := ST) (SG := SG))
     (hs : ∀ c, decoCls n ST SG H (s c) = c) :
     Function.Bijective (fun c : DecoCl n ST SG H =>
       (Quotient.mk'' (ptOf hc n ST SG (s c)) : Formalism.UG.ClassSet
@@ -149,20 +145,20 @@ theorem levU_y_bij (hS : DecoPtSurj hc n ST SG) (s : DecoCl n ST SG H → DecoSe
     refine ⟨adToCls hc n ST SG H q, ?_⟩
     exact adToCls_injective hc n ST SG H (hinv _)
 
-theorem rlc_ratHom_stabRat (d : DecoSet E n ST SG) (a : MulAction.stabilizer (UF E n × H) d) :
+theorem rlc_ratHom_stabRat (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (a : MulAction.stabilizer (UF E n × H) d) :
     ratHom hc n (stabRat hc n ST SG H d a) = a.1.1 :=
   (ratEquiv hc n).apply_symm_apply a.1.1
 
-theorem stabRat_injective (d : DecoSet E n ST SG) : Function.Injective (stabRat hc n ST SG H d) := by
+theorem stabRat_injective (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) : Function.Injective (stabRat hc n ST SG H d) := by
   intro a b hab
   have h1 : a.1.1 = b.1.1 := by
     rw [← rlc_ratHom_stabRat hc n ST SG H d a, ← rlc_ratHom_stabRat hc n ST SG H d b, hab]
-  have ha : ((a.1.1, (a.1.2 : GLG E n SG)) : UF E n × GLG E n SG) • d = d := a.2
-  have hb : ((b.1.1, (b.1.2 : GLG E n SG)) : UF E n × GLG E n SG) • d = d := b.2
+  have ha : ((a.1.1, (a.1.2 : GLG (E := E) (n := n) (SG := SG))) : UF E n × GLG (E := E) (n := n) (SG := SG)) • d = d := a.2
+  have hb : ((b.1.1, (b.1.2 : GLG (E := E) (n := n) (SG := SG))) : UF E n × GLG (E := E) (n := n) (SG := SG)) • d = d := b.2
   have h2 := DecoSet.stab_fst_injective d ha hb h1
   exact Subtype.ext (Prod.ext h1 (Subtype.ext (congrArg Prod.snd h2)))
 
-theorem stabRat_range (d : DecoSet E n ST SG) (y : UAd hc n)
+theorem stabRat_range (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (y : UAd hc n)
     (hy : decoOf ST SG (y : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) = d) (γ : URat hc n) :
     γ ∈ (stabRat hc n ST SG H d).range ↔
       Formalism.UG.bc (Formalism.UG.inclE (F := F) (FiniteAdeleRing (𝓞 F) F)) (γ : GL (Fin n) E) ∈
@@ -202,7 +198,7 @@ theorem rlc_ratHom_apply (γ : URat hc n) (x : Fin n → E) :
     ((ratHom hc n γ : UF E n) : Sp E n ≃ₗ[E] Sp E n) x = ((γ : GL (Fin n) E) : Matrix (Fin n) (Fin n) E) *ᵥ x := by
   simp [ratHom, Formalism.UG.glEquiv]
 
-theorem stabRat_lat (d : DecoSet E n ST SG) (a : MulAction.stabilizer (UF E n × H) d) (x : Fin n → E) :
+theorem stabRat_lat (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (a : MulAction.stabilizer (UF E n × H) d) (x : Fin n → E) :
     x ∈ d.1.L ↔ (((stabRat hc n ST SG H d a : GL (Fin n) E) : Matrix (Fin n) (Fin n) E) *ᵥ x) ∈ d.1.L := by
   have h0 : a.1 • d = d := MulAction.mem_stabilizer_iff.1 a.2
   have h1 : (a.1 • d).1.L = d.1.L := by rw [h0]
@@ -217,10 +213,6 @@ section Base
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
 variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] (ST SG : Finset (Pl E))
-
-theorem base_L : (Deco.base E n ST SG).L = baseLb E n ST := rfl
-
-theorem base_Lsh : (Deco.base E n ST SG).Lsh = baseSh E n ST := rfl
 
 theorem rlc_dualSet (L : Submodule (𝓞 E) (Fin n → E)) :
     Formalism.BasicNotions.dualSet (hc.sig : E →+* E) (1 : Matrix (Fin n) (Fin n) E) L =
@@ -238,14 +230,37 @@ theorem rlc_span_dualSet (L : Submodule (𝓞 E) (Fin n → E)) :
       Formalism.HermitianLatticesTheory.dual (hStd E n) L := by
   rw [rlc_dualSet, Submodule.span_eq]
 
-theorem baseDual_eq : baseDual hc n ST = baseSh E n ST := rlc_span_dualSet hc n _
-
 theorem baseLb_lattice : Submodule.IsLattice E (baseLb E n ST) :=
   (Deco.base_ok (E := E) (n := n) (ST := ST) (SG := ∅)).L_lattice
 
 theorem baseLb_fin : Module.Finite (𝓞 E) (baseLb E n ST) := Module.Finite.iff_fg.2 (baseLb_lattice n ST).fg
 
-theorem baseLb_span : Submodule.span E (baseLb E n ST : Set (Fin n → E)) = ⊤ := (baseLb_lattice n ST).span_eq_top
+theorem baseLb_span : Submodule.span E (baseLb E n ST : Set (Fin n → E)) = ⊤ := by
+  classical
+  have hex : ∀ P : ST, ∃ p ∈ P.1.asIdeal, p ≠ 0 := fun P =>
+    Submodule.exists_mem_ne_zero_of_ne_bot P.1.ne_bot
+  choose g hg hg0 using hex
+  let a : 𝓞 E := ∏ P, g P
+  have ha : a ≠ 0 := Finset.prod_ne_zero_iff.mpr fun P _ => hg0 P
+  have haE : algebraMap (𝓞 E) E a ≠ 0 := by
+    intro h
+    apply ha
+    exact (FaithfulSMul.algebraMap_injective (𝓞 E) E) (by simpa using h)
+  have hmem : ∀ P : ST, a ∈ P.1.asIdeal := by
+    intro P
+    change (∏ P : ST, g P) ∈ P.1.asIdeal
+    rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ P)]
+    exact Ideal.mul_mem_right _ _ (hg P)
+  apply top_unique
+  rw [← (Pi.basisFun E (Fin n)).span_eq]
+  apply Submodule.span_le.mpr
+  rintro _ ⟨i, rfl⟩
+  have h := (Deco.base_ok (E := E) (n := n) (ST := ST) (SG := ∅)).smul_N_mem_L hmem (single_mem_stdLat (E := E) (n := n) i 1)
+  have hs : (algebraMap (𝓞 E) E a) • Pi.single i (1 : E) ∈ Submodule.span E (baseLb E n ST : Set (Fin n → E)) :=
+    Submodule.subset_span h
+  have := (Submodule.span E (baseLb E n ST : Set (Fin n → E))).smul_mem (algebraMap (𝓞 E) E a)⁻¹ hs
+  rw [smul_smul, inv_mul_cancel₀ haE, one_smul] at this
+  simpa using this
 
 theorem baseLb_int : ∀ x ∈ baseLb E n ST,
     x ∈ Formalism.BasicNotions.dualSet (hc.sig : E →+* E) (1 : Matrix (Fin n) (Fin n) E) (baseLb E n ST) := by
@@ -390,7 +405,7 @@ theorem rlc_mem_hat_baseLb (z : Fin n → E ⊗[F] Formalism.L2.Herm.Af F) :
       refine ⟨fun i => Subring.add_mem _ (ha i) (hb i), fun P hP => ?_⟩
       have e : (⟨(a + b) (lastIdx n), Subring.add_mem _ (ha _) (hb _)⟩ : Formalism.L2.Herm.intAf F E) =
           ⟨a (lastIdx n), ha _⟩ + ⟨b (lastIdx n), hb _⟩ := rfl
-      rw [e, map_add, ha0 P hP, hb0 P hP, add_zero]
+      rw [e, map_add (f := _), ha0 P hP, hb0 P hP, add_zero]
     · rintro c a _ ⟨ha, ha0⟩
       refine ⟨fun i => Subring.mul_mem _ c.2 (ha i), fun P hP => ?_⟩
       have e : (⟨(c • a) (lastIdx n), Subring.mul_mem _ c.2 (ha _)⟩ : Formalism.L2.Herm.intAf F E) =
@@ -462,7 +477,7 @@ theorem decoRaw_carries {x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)} (hx :
   exact Formalism.UG.P.span_recovery_of_integral_adelic_approx Formalism.UG.P.integral_adele_approximation_holds F E (Fin n) (baseLb E n ST) (baseLb_fin n ST)
     (baseLb_span n ST) x z
 
-theorem levU_y_lat (hS : DecoPtSurj hc n ST SG) (d : DecoSet E n ST SG) (x : Fin n → E ⊗[F] FiniteAdeleRing (𝓞 F) F) :
+theorem levU_y_lat (hS : DecoPtSurj hc n ST SG) (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (x : Fin n → E ⊗[F] FiniteAdeleRing (𝓞 F) F) :
     x ∈ Formalism.UG.latS (F := F) (FiniteAdeleRing (𝓞 F) F)
       (Formalism.UG.tensInt (F := F) (FiniteAdeleRing (𝓞 F) F) (Formalism.UG.intOE E) (Formalism.UG.intAd F)) d.1.L ↔
     ((((ptOf hc n ST SG d : GL (Fin n) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)))⁻¹ : GL (Fin n) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) :
@@ -478,41 +493,13 @@ end Hat
 section Fin
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
-variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] (ST SG : Finset (Pl E)) (H : Subgroup (GLG E n SG))
-
-theorem decoCl_finite (hE : PosStar E) : Finite (DecoCl n ST SG H) := by
-  have h := DecoSet.finite_orbits (ST := ST) (SG := SG) (n := n) hE ((⊤ : Subgroup (UF E n)).prod H)
-    (fun g => ⟨Subgroup.mem_top _, Subgroup.one_mem _⟩)
-  have hrel : ∀ d d' : DecoSet E n ST SG,
-      (MulAction.orbitRel ((⊤ : Subgroup (UF E n)).prod H) (DecoSet E n ST SG)) d d' →
-      (MulAction.orbitRel (UF E n × H) (DecoSet E n ST SG)) d d' := by
-    intro d d' hdd
-    obtain ⟨a, ha⟩ := MulAction.orbitRel_apply.1 hdd
-    exact MulAction.orbitRel_apply.2 ⟨(a.1.1, ⟨a.1.2, a.2.2⟩), ha⟩
-  refine Finite.of_surjective (Quotient.map' (s₁ := MulAction.orbitRel ((⊤ : Subgroup (UF E n)).prod H) (DecoSet E n ST SG))
-    (s₂ := MulAction.orbitRel (UF E n × H) (DecoSet E n ST SG)) id hrel) ?_
-  intro c
-  induction c using Quotient.inductionOn' with
-  | h d => exact ⟨Quotient.mk'' d, rfl⟩
-
-theorem adCl_finite (hE : PosStar E) : Finite (AdCl hc n ST SG H) :=
-  have := decoCl_finite n ST SG H hE
-  Finite.of_injective _ (adToCls_injective hc n ST SG H)
-
-theorem adToCls_one : adToCls hc n ST SG H (Quotient.mk'' (1 : UAd hc n)) = decoCls n ST SG H (DecoSet.base E n ST SG) := by
-  rw [adToCls_mk]
-  exact congrArg _ (decoOf_one ST SG)
+variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] (ST SG : Finset (Pl E)) (H : Subgroup (GLG (E := E) (n := n) (SG := SG)))
 
 end Fin
 
 section AtPrimes
 
 variable {X : Fields} {Pr : Primes X} (hc : Formalism.BasicNotions.CMData X.F X.E) (n : ℕ) [NeZero n]
-
-theorem colBase_dual (hPr : Pr.Ok) (u : Pr.Word) :
-    ∀ y ∈ Formalism.BasicNotions.dualSet (hc.sig : X.E →+* X.E) (1 : Matrix (Fin n) (Fin n) X.E) (baseLb X.E n (Pr.vT u)),
-      (Pr.T u : X.E) • y ∈ baseLb X.E n (Pr.vT u) :=
-  baseLb_dual hc n (Pr.vT u) (fun _ hP => decoFin_mem_of_mem_divs hP) (hPr.piT_norm u)
 
 theorem colBase_index (hPr : Pr.Ok) (u : Pr.Word) :
     (baseLb X.E n (Pr.vT u)).toAddSubgroup.relIndex

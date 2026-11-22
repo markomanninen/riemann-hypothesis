@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DecompositionData
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DecompositionData
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
-import Formalism.LocalToGlobal.HermitianForms.TiedStep
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SplitIntLoc
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DualLatticeLocalCharacterization
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
+public import Formalism.LocalToGlobal.HermitianForms.TiedStep
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SplitIntLoc
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DualLatticeLocalCharacterization
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.UG Formalism.L2.Forms NumberField IsDedekindDomain Matrix GlobalTheory.St.G
 open scoped TensorProduct
@@ -37,11 +41,13 @@ theorem expand (hσ : ∀ a, σ (σ a) = a) (x y : Fin n → Fin n → A)
     simp only [h5, h2, Matrix.one_apply]
     simp
   rw [← hσ (w k), h3]
-  simp only [map_sum, map_mul, hσ, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, hσ, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
 
 theorem conj_symm (hσ : ∀ a, σ (σ a) = a) (hJ : ∀ i j, σ (J i j) = J j i) (x y : Fin n → A) :
     hform σ J y x = σ (hform σ J x y) := by
-  simp only [hform, map_sum, map_mul, hσ, hJ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hform, map_sum, map_mul, hσ, hJ]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring
@@ -109,9 +115,11 @@ theorem dual_components_iff : ∀ (F E : Type) [Field F] [NumberField F] [Field 
       ∑ i, ∑ j, (sp (x i)).2 * (sp (inclE (F := F) (v.adicCompletion F) (J i j))).1 * (sp (y j)).1 := by
     intro x y
     unfold hR hform
-    rw [map_sum, Prod.fst_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Prod.fst_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [map_sum, Prod.fst_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Prod.fst_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, map_mul, hsig]
     rfl
@@ -119,9 +127,11 @@ theorem dual_components_iff : ∀ (F E : Type) [Field F] [NumberField F] [Field 
       ∑ i, ∑ j, (sp (x i)).1 * (sp (inclE (F := F) (v.adicCompletion F) (J i j))).2 * (sp (y j)).2 := by
     intro x y
     unfold hR hform
-    rw [map_sum, Prod.snd_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Prod.snd_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [map_sum, Prod.snd_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Prod.snd_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, map_mul, hsig]
     rfl

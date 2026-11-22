@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameCoeffsRegularInChart
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordsJoinBlocksStatement
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DetT
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameCoeffsRegularInChart
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordsJoinBlocksStatement
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DetT
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,8 @@ theorem exists_unitAt_of_sum (hg : IsCptGen ξ) (p : Cpt ξ) {ι : Type} (s : Fi
     · exact ⟨0, fun h => absurd h hi⟩
   choose g hgf using hf'
   have hs : ∑ i ∈ s, g i = 1 := hg.inj p (by
-    rw [map_sum, map_one, Finset.sum_congr rfl (fun i hi => hgf i hi), h1])
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_one, Finset.sum_congr rfl (fun i hi => hgf i hi), h1])
   by_contra hcon
   push_neg at hcon
   have hnu : ∀ i ∈ s, g i ∈ IsLocalRing.maximalIdeal (X.presheaf.stalk p.1) := by
@@ -86,7 +91,8 @@ theorem exists_inChart_minors (hg : IsCptGen ξ) {κ : Type} (x : κ → Ω) (L 
       ext i a
       simp only [Matrix.mul_apply, Matrix.submatrix_apply, Matrix.transpose_apply, id, Matrix.smul_apply,
         smul_eq_mul, hA, hC, hT', Matrix.of_apply]
-      rw [mul_div_cancel₀ _ hxm, ← hTb a, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [mul_div_cancel₀ _ hxm, ← hTb a, map_sum]
       exact Finset.sum_congr rfl fun l _ => by rw [map_smul, smul_eq_mul, mul_comm]
     have := congrArg Matrix.det e
     rwa [Matrix.det_mul, Matrix.det_transpose, Matrix.det_smul, Fintype.card_fin] at this
@@ -195,9 +201,9 @@ theorem exists_blkF_of_not_full (K₀ : Type) (t : StepIx Ψ p q) (ht : (t.2 : �
     congr 2
     exact congrArg (fun z => (⟨.inr τ, z⟩ : StepIx Ψ p q)) (Fin.ext (by simp))
 
-variable (Ψ p q) in
 
-def baseFun (K₀ : Type) : K₀ ⊕ FullStep Ψ p q → NonPluckerBlocks (blkF Ψ p q K₀)
+variable (Ψ p q) in
+def baseFun (K₀ : Type) : K₀ ⊕ FullStep Ψ p q → NonPluckerBlocks (blkF (Ψ := Ψ) (p := p) (q := q) K₀)
   | .inl k => ⟨.inl k, fun r => by
       classical
       unfold blkF
@@ -219,9 +225,9 @@ theorem baseFun_bijective (K₀ : Type) : Function.Bijective (baseFun Ψ p q K�
       · obtain ⟨r, hr⟩ := exists_blkF_of_not_full K₀ t ht
         exact absurd hr (hk r)
 
-variable (Ψ p q) in
 
-def baseEquiv (K₀ : Type) : K₀ ⊕ FullStep Ψ p q ≃ NonPluckerBlocks (blkF Ψ p q K₀) :=
+variable (Ψ p q) in
+def baseEquiv (K₀ : Type) : K₀ ⊕ FullStep Ψ p q ≃ NonPluckerBlocks (blkF (Ψ := Ψ) (p := p) (q := q) K₀) :=
   Equiv.ofBijective _ (baseFun_bijective K₀)
 
 variable {Ω : Type} [Field Ω] {n : Ψ ⊕ Ψ → ℕ}

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicOutsideLine
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicOutsideLine
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -116,7 +120,8 @@ theorem exists_emb_eq (z : X.Ψ → ℂ)
   have htr : ∀ j, Algebra.trace ℚ E (ω * b j) = 2 * q j := by
     intro j
     have h : Algebra.traceForm ℚ E ω (b j) = 2 * q j := by
-      simp only [hωdef, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hddef,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hωdef, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hddef,
         LinearMap.BilinForm.apply_dualBasis_left, smul_eq_mul, mul_ite, mul_one, mul_zero,
         Finset.sum_ite_eq, Finset.mem_univ, if_true]
     simpa [Algebra.traceForm_apply] using h

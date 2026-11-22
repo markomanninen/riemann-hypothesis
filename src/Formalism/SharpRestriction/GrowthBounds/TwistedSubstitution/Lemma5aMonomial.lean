@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.MemRed
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.MemRed
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,8 @@ theorem symP_eq_sum (p : ℕ) {n' m r K : ℕ} [NeZero n'] (O : Type) [CommRing 
         MvPolynomial.map (algebraMap O (KK O)) (rename (castV hk) P * monomial ga 1) := by
   unfold symP
   conv_lhs => rw [(SPR O p F hrk c' Q).as_sum]
-  rw [Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.mul_sum, map_sum]
   refine Finset.sum_congr rfl fun ga _ => ?_
   rw [MvPolynomial.smul_eq_C_mul, ← MvPolynomial.map_C, ← map_mul]
   congr 1

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.SeamDefs
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.TraceChart
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.ChartExt
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.ResR
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.InfinityCoordAlgebraicIndependent
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.SeamDefs
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.TraceChart
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.ChartExt
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.ResR
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.InfinityCoordAlgebraicIndependent
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -104,8 +108,10 @@ theorem resid_alg : ∀ (K : Type) [Field K] [CharZero K] (n : ℕ) (R : Type) [
       ∑ i, a i + ∑ k : Fin (n + 1), ((-1 : ℤ) ^ (k : ℕ)) • b k := by
     apply IsFractionRing.injective R (FractionRing R)
     have h1 := congrArg Φ heq
-    simp only [map_add, map_sum, hsign] at h1
-    rw [map_nsmul, map_add, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sum, hsign] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_nsmul, map_add (f := _), map_sum, map_sum]
     simp only [map_zsmul]
     simp only [map_zsmul, fun i => (ha i).1, fun k => (hb k).1] at h1
     rw [← h1, hΦ]
@@ -113,7 +119,8 @@ theorem resid_alg : ∀ (K : Type) [Field K] [CharZero K] (n : ℕ) (R : Type) [
         algebraMap (fldF K t) (FractionRing R) pF := rfl
     rw [h2, Algebra.trace_algebraMap, map_nsmul]
   have hres := congrArg res hrel
-  rw [map_nsmul, hres1, map_add, map_sum, map_sum] at hres
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_nsmul, hres1, map_add (f := _), map_sum, map_sum] at hres
   simp only [map_zsmul, fun i => (ha i).2, fun k => (hb k).2, smul_zero, Finset.sum_const_zero, add_zero,
     nsmul_eq_mul, mul_one] at hres
   rw [Nat.cast_eq_zero] at hres

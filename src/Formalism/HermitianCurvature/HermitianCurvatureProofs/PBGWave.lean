@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveDensityModerateGrowth
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGCongr
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVnice
+module
+
+public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveDensityModerateGrowth
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGCongr
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVnice
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ComplexConjugate

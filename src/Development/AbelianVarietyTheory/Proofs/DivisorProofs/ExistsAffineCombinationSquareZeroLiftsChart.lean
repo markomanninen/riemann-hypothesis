@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCombIn
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreimageEqOfSquareZeroThickening
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCombIn
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreimageEqOfSquareZeroThickening
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
@@ -66,13 +70,14 @@ def combHom {A S T : Type} [CommRing A] [CommRing S] [CommRing T] (q : S →+* T
   map_one' := by simp
   map_zero' := by simp
   map_add' x y := by
-    simp only [map_add, mul_sub, mul_add, Finset.sum_add_distrib, Finset.sum_sub_distrib]
+    simp only [map_add (f := _), mul_sub, mul_add, Finset.sum_add_distrib, Finset.sum_sub_distrib]
     ring
   map_mul' x y := by
     have hd : ∀ i z, q (ψ i z - φ z) = 0 := fun i z => by
       rw [map_sub, ← RingHom.comp_apply, hq i, RingHom.comp_apply, sub_self]
     have hD : ∀ z, q (∑ i, a i * (ψ i z - φ z)) = 0 := fun z => by
-      simp only [map_sum, map_mul, hd, mul_zero, Finset.sum_const_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, hd, mul_zero, Finset.sum_const_zero]
     have e1 : ∀ i, ψ i (x * y) - φ (x * y) = φ x * (ψ i y - φ y) + (ψ i x - φ x) * φ y := fun i => by
       have := mul_eq_zero_of_sq q hsq (hd i x) (hd i y)
       rw [map_mul, map_mul]; linear_combination this
@@ -97,7 +102,8 @@ theorem comp_combHom {A S T : Type} [CommRing A] [CommRing S] [CommRing T] (q : 
   ext x
   have hd : ∀ i, q (ψ i x - φ x) = 0 := fun i => by
     rw [map_sub, ← RingHom.comp_apply, hq i, RingHom.comp_apply, sub_self]
-  simp only [RingHom.comp_apply, combHom_apply, map_add, map_sum, map_mul, hd, mul_zero,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [RingHom.comp_apply, combHom_apply, map_add (f := _), map_sum, map_mul, hd, mul_zero,
     Finset.sum_const_zero, add_zero]
 
 theorem combHom_comp_eq {R A S T : Type} [CommRing R] [CommRing A] [CommRing S] [CommRing T] (q : S →+* T)

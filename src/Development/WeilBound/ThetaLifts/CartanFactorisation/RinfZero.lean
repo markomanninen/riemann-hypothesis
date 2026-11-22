@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.CartanFactorisation.ExistsBeta
-import Development.WeilBound.CoreStatements.LocalThetaKernels.Locrep
+module
+
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.ExistsBeta
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.Locrep
+
+@[expose] public section
 
 noncomputable section
 
@@ -137,9 +141,26 @@ theorem maxFinP (m : IsMatched B G X om om' R Rf) (v : Pl F) :
     Maximal (fun P => GlobalTheory.Published.ThetaSub om v P ∧ P ≠ SB _) (LinearMap.ker (Rf.p v) ⊓ SB _) ∧
       Maximal (fun P => GlobalTheory.Published.ThetaSub om' v P ∧ P ≠ SB _) (LinearMap.ker (Rf.p' v) ⊓ SB _) := by
   haveI := m.fin.nontriv v
+  have hecke_div {χ χ' : Chr F E} (h : IsHecke F E χ) (h' : IsHecke F E χ') : IsHecke F E (χ / χ') :=
+    ⟨h.1.div' h'.1, fun x => by rw [MonoidHom.div_apply, h.2, h'.2, div_one]⟩
+  have res_div {K : Subgroup (AF F)ˣ} {χ χ' : Chr F E} {n k l : ℕ}
+      (h : ResEtaPow K χ n) (h' : ResEtaPow K χ' k) (e : l = n + k) : ResEtaPow K (χ / χ') l := by
+    intro x
+    rw [MonoidHom.div_apply, Circle.coe_div, h, h', e]
+    split_ifs
+    · simp
+    · rw [pow_add, div_eq_mul_inv, ← inv_pow, inv_neg, inv_one]
+  have p1 : IsPair B G.M X.β (X.β / X.α) om (a - G.p) G.p (a + a' - (G.p + G.q)) (G.p + G.q) :=
+    ⟨m.triple.base, m.triple.geo.hV, m.triple.geo.hW, m.triple.geo.hM, m.triple.chars.heckeβ,
+      hecke_div m.triple.chars.heckeβ m.triple.chars.heckeα, m.triple.chars.resβ,
+      res_div m.triple.chars.resβ m.triple.chars.resα rfl, m.triple.weil⟩
+  have p2 : IsPair B G.M' X.α (X.α / X.β) om' G.q (a' - G.q) (a + a' - (G.p + G.q)) (G.p + G.q) :=
+    ⟨m.triple.base, m.triple.geo.hV', m.triple.geo.hW, m.triple.geo.hM', m.triple.chars.heckeα,
+      hecke_div m.triple.chars.heckeα m.triple.chars.heckeβ, m.triple.chars.resα,
+      res_div m.triple.chars.resα m.triple.chars.resβ (add_comm _ _), m.triple.weil'⟩
   have := absMax (R := fun (i : UAt σ G.W (evFin F v)) x y => y ∈ SB _ ∧ Acts (evFin F v) (om (1, i.1)) x y)
     (R' := fun (i : UAt σ G.W (evFin F v)) x y => y ∈ SB _ ∧ Acts (evFin F v) (om' (1, i.1)) x y) (m.fin.onto v) (m.fin.onto' v)
-    (ex_fin (PositivityTheory.ThKG.pairV m.triple) v) (ex_fin (PositivityTheory.ThKG.pairV' m.triple) v)
+    (ex_fin p1 v) (ex_fin p2 v)
     (fun _ => ⟨zero_mem _, acts_zero _ _⟩) (fun _ => ⟨zero_mem _, acts_zero _ _⟩)
     (fun i x hx x' hx' y y' h h' => m.fin.equiv v i i.2 x hx x' hx' y h.1 y' h'.1 h.2 h'.2)
     fun N hN => m.fin.irred v N fun h hh x hx y hy e => hN ⟨h, hh⟩ x hx y ⟨hy, e⟩
@@ -151,8 +172,23 @@ theorem maxInfP (hO : ArchOp) (hL : ArchLie) (hQ : ArchUniq) (m : IsMatched B G 
       Maximal (fun P => GlobalTheory.Published.ThetaSubInf G.M' B.ψ B.emb om' P ∧ P ≠ G.M'.Pol B.ψ B.emb)
         (LinearMap.ker R.p' ⊓ G.M'.Pol B.ψ B.emb) := by
   haveI := m.real.nontriv
-  have p1 := PositivityTheory.ThKG.pairV m.triple
-  have p2 := PositivityTheory.ThKG.pairV' m.triple
+  have hecke_div {χ χ' : Chr F E} (h : IsHecke F E χ) (h' : IsHecke F E χ') : IsHecke F E (χ / χ') :=
+    ⟨h.1.div' h'.1, fun x => by rw [MonoidHom.div_apply, h.2, h'.2, div_one]⟩
+  have res_div {K : Subgroup (AF F)ˣ} {χ χ' : Chr F E} {n k l : ℕ}
+      (h : ResEtaPow K χ n) (h' : ResEtaPow K χ' k) (e : l = n + k) : ResEtaPow K (χ / χ') l := by
+    intro x
+    rw [MonoidHom.div_apply, Circle.coe_div, h, h', e]
+    split_ifs
+    · simp
+    · rw [pow_add, div_eq_mul_inv, ← inv_pow, inv_neg, inv_one]
+  have p1 : IsPair B G.M X.β (X.β / X.α) om (a - G.p) G.p (a + a' - (G.p + G.q)) (G.p + G.q) :=
+    ⟨m.triple.base, m.triple.geo.hV, m.triple.geo.hW, m.triple.geo.hM, m.triple.chars.heckeβ,
+      hecke_div m.triple.chars.heckeβ m.triple.chars.heckeα, m.triple.chars.resβ,
+      res_div m.triple.chars.resβ m.triple.chars.resα rfl, m.triple.weil⟩
+  have p2 : IsPair B G.M' X.α (X.α / X.β) om' G.q (a' - G.q) (a + a' - (G.p + G.q)) (G.p + G.q) :=
+    ⟨m.triple.base, m.triple.geo.hV', m.triple.geo.hW, m.triple.geo.hM', m.triple.chars.heckeα,
+      hecke_div m.triple.chars.heckeα m.triple.chars.heckeβ, m.triple.chars.resα,
+      res_div m.triple.chars.resα m.triple.chars.resβ (add_comm _ _), m.triple.weil'⟩
   have := absMax (R := RInf B om) (R' := RInf B om') m.real.quot.onto m.real.quot'.onto
     (fun i x hx => let ⟨g, _, e⟩ := rinf_ex hO hL hQ p1 i hx; ⟨g, (e g).2 rfl⟩)
     (fun i x hx => let ⟨g, _, e⟩ := rinf_ex hO hL hQ p2 i hx; ⟨g, (e g).2 rfl⟩) rinf_zero rinf_zero

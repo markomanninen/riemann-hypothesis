@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.EqOrConjOfPlaceOf
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.MemAdelicLatticeIffLocalSelfDualCompletion
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.EqOrConjOfPlaceOf
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.MemAdelicLatticeIffLocalSelfDualCompletion
+
+@[expose] public section
 
 noncomputable section
 
@@ -130,7 +134,7 @@ theorem absFin_mul_le (x y : Fv F v ⊗[F] E) : absFin F v (x * y) ≤ absFin F 
   exact mul_le_mul' (le_absFin F v τ x) (le_absFin F v τ y)
 
 theorem absFin_add_le (x y : Fv F v ⊗[F] E) : absFin F v (x + y) ≤ max (absFin F v x) (absFin F v y) := (absFin_le_iff F v).2 fun τ => by
-  rw [map_add]
+  rw [map_add (f := _)]
   exact (absBar_add_le F v _ _).trans (max_le_max (le_absFin F v τ x) (le_absFin F v τ y))
 
 @[simp] theorem absFin_zero : absFin F v (0 : Fv F v ⊗[F] E) = 0 := le_antisymm ((absFin_le_iff F v).2 fun τ => by
@@ -188,15 +192,19 @@ end Finite
 
 section Infinite
 
-variable {F} (E) in
 
+variable {F} (E) in
 abbrev EmbOver (w : InfinitePlace F) : Type := {τ : E →+* ℂ // τ.comp (algebraMap F E) = w.embedding}
 
 variable (w : InfinitePlace F)
 
 instance nonempty_embOver : Nonempty (EmbOver E w) := by
   letI : Algebra F ℂ := w.embedding.toAlgebra
-  let τ : E →ₐ[F] ℂ := IsAlgClosed.lift
+  let τ : E →ₐ[F] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   exact ⟨⟨τ, RingHom.ext τ.commutes⟩⟩
 
 variable {F w}
@@ -205,7 +213,12 @@ def infEmb (τ : EmbOver E w) : w.Completion ⊗[F] E →+* ℂ :=
   letI : Algebra F ℂ := w.embedding.toAlgebra
   (Algebra.TensorProduct.productMap
     ({ InfinitePlace.Completion.extensionEmbedding w with
-        commutes' := fun a => InfinitePlace.Completion.extensionEmbedding_coe w ((WithAbs.equiv w.1).symm a) } :
+        commutes' := fun a => by
+          change InfinitePlace.Completion.extensionEmbedding w (algebraMap F w.Completion a) =
+            w.embedding a
+          rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+            Algebra.algebraMap_self_apply, ← WithAbs.equiv_symm_apply,
+            InfinitePlace.Completion.extensionEmbedding_coe, RingEquiv.apply_symm_apply] } :
       w.Completion →ₐ[F] ℂ)
     ({ τ.1 with commutes' := fun a => RingHom.congr_fun τ.2 a } : E →ₐ[F] ℂ)).toRingHom
 
@@ -229,8 +242,8 @@ theorem opNorm_one_le {n : Type} [Fintype n] [DecidableEq n] : opNorm (1 : Matri
 
 variable (F w)
 
-open Classical in
 
+open Classical in
 def normInf {n : Type} [Fintype n] [DecidableEq n] (y : Matrix n n (w.Completion ⊗[F] E)) : ℝ≥0 :=
   Finset.univ.sup fun τ : EmbOver E w => opNorm (y.map (infEmb τ))
 
@@ -255,7 +268,8 @@ theorem opNorm_map_conj_le {n : Type} [Fintype n] [DecidableEq n] (y : Matrix n 
   let xs : EuclideanSpace ℂ n := WithLp.toLp 2 fun i => starRingEnd ℂ (x i)
   have hcomp : ∀ i, (Matrix.toEuclideanCLM (n := n) (𝕜 := ℂ) (y.map (starRingEnd ℂ)) x) i =
       starRingEnd ℂ ((Matrix.toEuclideanCLM (n := n) (𝕜 := ℂ) y xs) i) := fun i => by
-    simp [xs, Matrix.mulVec, dotProduct, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [xs, Matrix.mulVec, dotProduct, map_sum]
   have h1 : ‖Matrix.toEuclideanCLM (n := n) (𝕜 := ℂ) (y.map (starRingEnd ℂ)) x‖₊ =
       ‖Matrix.toEuclideanCLM (n := n) (𝕜 := ℂ) y xs‖₊ := by
     rw [EuclideanSpace.nnnorm_eq, EuclideanSpace.nnnorm_eq]
@@ -273,8 +287,8 @@ theorem opNorm_map_conj_le {n : Type} [Fintype n] [DecidableEq n] (y : Matrix n 
   rw [h1, ← h2]
   exact ContinuousLinearMap.le_opNNNorm _ _
 
-variable {F w} in
 
+variable {F w} in
 theorem infEmb_eq_or_conj {σ : E →ₐ[F] E} (h : IsCMExt F E σ) (τ τ' : EmbOver E w) :
     infEmb τ' = infEmb τ ∨ infEmb τ' = (starRingEnd ℂ).comp (infEmb τ) := by
   obtain ⟨hF, hE, h2, hc⟩ := h
@@ -328,10 +342,10 @@ theorem infEmb_eq_or_conj {σ : E →ₐ[F] E} (h : IsCMExt F E σ) (τ τ' : Em
       simp only [RingHom.comp_apply]
       rw [infEmb_tmul, map_mul, hext]
       try rfl
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
+
 
 variable {F w} in
-
 theorem normInf_eq_opNorm {σ : E →ₐ[F] E} (h : IsCMExt F E σ) (τ : EmbOver E w) {n : Type} [Fintype n] [DecidableEq n]
     (y : Matrix n n (w.Completion ⊗[F] E)) : normInf F w y = opNorm (y.map (infEmb τ)) := by
   refine le_antisymm ((normInf_le_iff F w).2 fun τ' => ?_) ((normInf_le_iff F w).1 le_rfl τ)
@@ -350,13 +364,13 @@ def evFin (v : HeightOneSpectrum (𝓞 F)) : AF F →ₐ[F] Fv F v := (Formalism
 
 def evInf (w : InfinitePlace F) : AF F →ₐ[F] w.Completion := (GlobalTheory.AutFunCompare.evW w).comp (fstA F)
 
-variable (E) in
 
+variable (E) in
 def compFin (v : HeightOneSpectrum (𝓞 F)) : AF F ⊗[F] E →+* Fv F v ⊗[F] E :=
   (Algebra.TensorProduct.map (evFin F v) (AlgHom.id F E)).toRingHom
 
-variable (E) in
 
+variable (E) in
 def compInf (w : InfinitePlace F) : AF F ⊗[F] E →+* w.Completion ⊗[F] E :=
   (Algebra.TensorProduct.map (evInf F w) (AlgHom.id F E)).toRingHom
 
@@ -366,7 +380,7 @@ theorem eventually_absFin_le_one (z : AF F ⊗[F] E) :
   | zero => exact Filter.Eventually.of_forall fun v => by rw [map_zero, absFin_zero]; exact zero_le
   | add x y hx hy =>
     exact (hx.and hy).mono fun v h => by
-      rw [map_add]
+      rw [map_add (f := _)]
       exact (absFin_add_le F v _ _).trans (max_le h.1 h.2)
   | tmul a x =>
     have hxa : IsAlgebraic ℤ x := by
@@ -457,7 +471,7 @@ theorem heightGL_mul_le (g h : GL n (AF F ⊗[F] E)) : heightGL F (g * h) ≤ he
   have e2 : (∏ᶠ v, htFin F v (bc (compFin F E v) (g * h))) ≤
       (∏ᶠ v, htFin F v (bc (compFin F E v) g)) * ∏ᶠ v, htFin F v (bc (compFin F E v) h) := by
     rw [← finprod_mul_distrib fg1 fh1]
-    exact finprod_le_finprod fg (fun _ => zero_le) ((fg1.union fh1).subset (Function.mulSupport_mul _ _)) hM
+    exact finprod_le_finprod₀ fg (fun _ => zero_le) ((fg1.union fh1).subset (Function.mulSupport_mul _ _)) hM
   unfold heightGL
   calc _ ≤ _ := mul_le_mul' e1 e2
     _ = _ := mul_mul_mul_comm _ _ _ _

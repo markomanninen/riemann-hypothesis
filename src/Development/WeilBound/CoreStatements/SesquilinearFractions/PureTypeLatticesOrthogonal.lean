@@ -1,5 +1,10 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsTransition
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PrincipalRootReZeroImSq
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsTransition
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PrincipalRootReZeroImSq
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open Matrix GlobalTheory GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl
@@ -11,7 +16,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
 
 theorem symplectic_form_skew (D : Datum H) (x y : D.La) : D.EF x y = -D.EF y x := by
   have h := D.alt (x + y)
-  simp only [map_add, LinearMap.add_apply, D.alt x, D.alt y, zero_add, add_zero] at h
+  simp only [map_add (f := _), LinearMap.add_apply, D.alt x, D.alt y, zero_add, add_zero] at h
   linarith
 
 theorem Host_rt0_ne_neg : H.rt0 ≠ -H.rt0 := by

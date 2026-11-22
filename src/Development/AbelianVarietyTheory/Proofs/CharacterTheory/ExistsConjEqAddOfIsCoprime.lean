@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+
+@[expose] public section
 
 open Polynomial GlobalTheory.CuspGL
 
@@ -37,10 +41,10 @@ theorem nilRad_eq_zero_of_commute {F : Type} [Field F] {V : Type} [AddCommGroup 
     simpa using this
   ext x
   have hx : x = aeval g p₁ (aeval g a x) + aeval g p₂ (aeval g b x) := by
-    rw [← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul, ← map_mul, ← LinearMap.add_apply, ← map_add,
+    rw [← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul, ← map_mul, ← LinearMap.add_apply, ← map_add (f := _),
       mul_comm p₁, mul_comm p₂, hab]
     simp
-  rw [hx, map_add, hu.2 _ (h2 _), intertwine_aeval_apply u g g hug, h1 _ (hu.1 _)]
+  rw [hx, map_add (f := _), hu.2 _ (h2 _), intertwine_aeval_apply u g g hug, h1 _ (hu.1 _)]
   simp
 
 theorem exists_conj_eq_add_of_isCoprime : ∀ (F : Type) [Field F] [Finite F] (V : Type) [AddCommGroup V] [Module F V]
@@ -62,7 +66,7 @@ theorem exists_conj_eq_add_of_isCoprime : ∀ (F : Type) [Field F] [Finite F] (V
     · rw [hD]; exact A.sub_mem (hu.1 _) (hg _ (hu.1 _))
     · rw [hD, hu.2 _ hx, hu.2 _ (hg _ hx)]; simp
   have hinj : Function.Injective (D.restrict hDN) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro u hu
     apply Subtype.ext
     refine nilRad_eq_zero_of_commute A g hg hc u.1 u.2 fun x => ?_

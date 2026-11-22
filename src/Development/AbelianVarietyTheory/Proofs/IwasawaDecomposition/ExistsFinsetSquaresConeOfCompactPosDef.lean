@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSiegelZeroFront
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PosDefQuadMargin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSiegelZeroFront
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PosDefQuadMargin
+
+@[expose] public section
 
 open Matrix GlobalTheory.RedTh NumberField GlobalTheory.PolFan ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
@@ -121,8 +125,8 @@ theorem tendsto_floor_div (x : ℝ) :
     have := Int.floor_le ((N : ℝ) * x)
     linarith [mul_comm x (N : ℝ)]
 
-open scoped MatrixOrder in
 
+open scoped MatrixOrder in
 theorem local_step (P₀ : Matrix ι ι ℝ) (h : P₀.PosDef) :
     ∃ S : Finset (ι → ℤ), ∀ᶠ P in 𝓝 P₀, P.IsHermitian → P ∈ cone S := by
   have hP₀s : ∀ a b, P₀ a b = P₀ b a := fun a b => by
@@ -168,12 +172,12 @@ theorem local_step (P₀ : Matrix ι ι ℝ) (h : P₀.PosDef) :
     rw [star_trivial] at this
     exact this.symm
   have hGsum : ∀ a b, G a b = ∑ k, R k a * R k b := fun a b => by
-    rw [← hRR, mul_apply]
+    rw [← hRR, Matrix.mul_apply]
     exact Finset.sum_congr rfl fun k _ => by rw [hRs a k]
   have hconv : ∀ a b, Tendsto (fun N : ℕ => ∑ k, ((⌊(N : ℝ) * R k a⌋ : ℤ) : ℝ) / N *
       (((⌊(N : ℝ) * R k b⌋ : ℤ) : ℝ) / N)) atTop (𝓝 (G a b)) := fun a b => by
     rw [hGsum]
-    exact tendsto_finset_sum _ fun k _ => (tendsto_floor_div _).mul (tendsto_floor_div _)
+    exact tendsto_finsetSum _ fun k _ => (tendsto_floor_div _).mul (tendsto_floor_div _)
   have hev : ∀ᶠ N : ℕ in atTop, 0 < N ∧ ∀ a b, |∑ k, ((⌊(N : ℝ) * R k a⌋ : ℤ) : ℝ) / N *
       (((⌊(N : ℝ) * R k b⌋ : ℤ) : ℝ) / N) - G a b| < t :=
     (eventually_gt_atTop 0).and (eventually_all.2 fun a => eventually_all.2 fun b =>

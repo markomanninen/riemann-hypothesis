@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSplitK
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHaarMeasure
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LocalRankOneDensityUniformizerPower
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CoordinateMeasureScalingTensor
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HermitianMeasureScalingTransform
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSplitK
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHaarMeasure
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LocalRankOneDensityUniformizerPower
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CoordinateMeasureScalingTensor
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HermitianMeasureScalingTransform
+
+@[expose] public section
+
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC GlobalTheory.CompanionTheory.SiegelND
@@ -39,7 +44,8 @@ theorem map_mul_scale {A : Type} [CommRing A] [TopologicalSpace A] [IsTopologica
   have e : (fun y => u * v * y) = (fun y => u * y) ∘ (fun y => v * y) := by
     funext y
     simp [mul_assoc]
-  rw [e, ← Measure.map_map (hm u) (hm v), hv, Measure.map_smul, hu, smul_smul, mul_comm]
+  rw [e, ← Measure.map_map (hm u) (hm v), hv,
+    Measure.map_smul c' (hm u).aemeasurable, hu, smul_smul, mul_comm]
 
 def mulU (A : Type) [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
     [MeasurableSpace A] [BorelSpace A] (u : Aˣ) : A ≃ᵐ A :=
@@ -133,7 +139,7 @@ theorem coordHerm_map_diag (σ : E →ₐ[F] E) (hσ : HeckeCharacterZeroLocus.S
   have hcond : Function.Injective φ ∧ ∀ s, MeasurableSet s → NullMeasurableSet (φ '' s) P := by
     by_contra hc
     have h0 : GlobalTheory.CompanionTheory.SW.coordHerm R σ b lam n = 0 := by
-      rw [hν, Measure.comap, dif_neg hc]
+      rw [hν, Measure.comap, dite_eq_right hc]
     have := isOpen_univ.measure_pos (GlobalTheory.CompanionTheory.SW.coordHerm R σ b lam n) Set.univ_nonempty
     simp [h0] at this
   let D1 : (Fin n → R) ≃ᵐ (Fin n → R) :=

@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianTraceFormVanishing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.OrthogonalFrameDomain
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImEmbHermSelf
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianTraceFormVanishing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.OrthogonalFrameDomain
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImEmbHermSelf
+
+@[expose] public section
 
 open NumberField Complex ReciprocityTheory.ChartRestriction.G.FD
 open scoped ComplexConjugate
@@ -87,7 +91,8 @@ theorem gsStep_self (G : Matrix (Fin r) (Fin r) E) (v : Fin r → Fin r → E) (
 theorem frm_gsStep (Ψ : Finset (E →+* ℂ)) (G : Matrix (Fin r) (Fin r) E) (v : Fin r → Fin r → E)
     (m : Fin r) : frm Ψ (gsStep G v m) = rmul (frm Ψ v) (fun τ j a => τ.1 (gsMat G v m j a)) := by
   funext τ k a
-  simp [frm, rmul, mat, Matrix.mul_apply, gsStep, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [frm, rmul, mat, Matrix.mul_apply, gsStep, map_sum, map_mul]
 
 theorem gsB_mem (Ψ : Finset (E →+* ℂ)) (G : Matrix (Fin r) (Fin r) E) (v : Fin r → Fin r → E)
     (m : Fin r) : (fun (τ : Ψ) j a => τ.1 (gsMat G v m j a)) ∈ Bor Ψ r := by

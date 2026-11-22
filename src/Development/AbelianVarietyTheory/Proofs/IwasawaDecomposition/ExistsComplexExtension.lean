@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NuInRange
-import Formalism.LocalRingCardinality.DataExtra
-import Formalism.LocalRingCardinality.DataTies
-import Formalism.LocalRingCardinality.Lemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NuInRange
+public import Formalism.LocalRingCardinality.DataExtra
+public import Formalism.LocalRingCardinality.DataTies
+public import Formalism.LocalRingCardinality.Lemmas
+
+@[expose] public section
 
 open Formalism.BasicNotions NumberField IsDedekindDomain GlobalTheory.Mem
 
@@ -29,7 +33,8 @@ theorem exists_complex_extension [Fintype ι] (e : V →ₛₗ[σ] M) (b : Modul
     exact h1
   refine ⟨G, fun x => ?_⟩
   rw [← b.sum_repr x]
-  simp only [map_sum, LinearMap.map_smulₛₗ, hb, RingHom.id_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.map_smulₛₗ, hb, RingHom.id_apply]
 
 theorem mem_span_of_kernel [Fintype ι] {J : Type} [Fintype J] (e : V →ₛₗ[σ] M)
     (b : Module.Basis ι K V) (hli : LinearIndependent ℂ (fun i => e (b i)))
@@ -56,7 +61,8 @@ theorem mem_span_of_kernel [Fintype ι] {J : Type} [Fintype J] (e : V →ₛₗ[
     intro x
     have h1 : g x = ∑ j, Pi.single j (f j x) := (Finset.univ_sum_single (g x)).symm
     rw [h1]
-    simp only [P, LinearMap.sub_apply, LinearMap.id_apply, LinearMap.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [P, LinearMap.sub_apply, LinearMap.id_apply, LinearMap.sum_apply,
       LinearMap.comp_apply, map_sub, map_sum, ← hf, hH, LinearMap.coe_single]
   have hPm : P m = m := by
     simp [P, LinearMap.sum_apply, h0]
@@ -109,7 +115,8 @@ theorem span_ramSub {R : Ranks} {LL : Type} [Field LL] [NumberField LL] [StarRin
       exact ⟨∑ a, y a, by simp only [map_sum, hy, ColumnsAtT.Nm, LinearMap.sum_apply]⟩
     have hall : ∀ x, M.emb 0 x ∈ A.Mu0 := by
       intro x
-      rw [← hsp, ← (M.lat 0).b.sum_repr x, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hsp, ← (M.lat 0).b.sum_repr x, map_sum]
       refine Submodule.sum_mem _ fun i _ => ?_
       rw [LinearMap.map_smulₛₗ]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PmatIsHermitian
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PmatIsHermitian
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ theorem volU_factProd_mul_le (p q : ℕ) :
       ∏ i ∈ range (p + q), i.factorial := by
   rw [Finset.prod_range_add]
   exact Nat.mul_le_mul le_rfl
-    (Finset.prod_le_prod (fun i _ => Nat.zero_le _) (fun i _ => Nat.factorial_le (by omega)))
+    (Finset.prod_le_prod₀ (fun i _ => Nat.zero_le _) (fun i _ => Nat.factorial_le (by omega)))
 
 theorem volU_pOf_add_qOf (ε : Fin n → Bool) : pOf ε + qOf ε = n := by
   unfold pOf qOf

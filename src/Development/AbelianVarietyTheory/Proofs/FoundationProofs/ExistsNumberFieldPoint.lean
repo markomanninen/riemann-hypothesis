@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsFlatSecRankZero
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameLawsOfModuli
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
-import Formalism.LocalToGlobal.ProjectiveLattices.LocFld
-import Formalism.LocalToGlobal.ProjectiveLattices.LocFrLoc
-import Formalism.LocalToGlobal.ProjectiveLattices.GenSpecCut
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsFlatSecRankZero
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameLawsOfModuli
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+public import Formalism.LocalToGlobal.ProjectiveLattices.LocFld
+public import Formalism.LocalToGlobal.ProjectiveLattices.LocFrLoc
+public import Formalism.LocalToGlobal.ProjectiveLattices.GenSpecCut
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,7 +94,11 @@ theorem framesOn_nonempty {r : ℕ} {σ : c.F →+* ℂ} {U : Unf Xo c σ r} (hU
   letI : Field (CAt σ) := inferInstanceAs (Field ℂ)
   haveI : IsAlgClosed (CAt σ) := inferInstanceAs (IsAlgClosed ℂ)
   letI : Algebra c.F L := j.toAlgebra
-  let k : L →ₐ[c.F] CAt σ := IsAlgClosed.lift
+  let k : L →ₐ[c.F] CAt σ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   obtain ⟨h1, h2⟩ := point_ext hg hZ k.toRingHom
   have e : k.toRingHom.comp j = algebraMap c.F (CAt σ) := k.comp_algebraMap
   rw [e] at h1

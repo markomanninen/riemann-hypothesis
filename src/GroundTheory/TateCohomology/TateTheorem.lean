@@ -1,7 +1,16 @@
-import Mathlib
-import GroundTheory.TateCohomology.SplittingCohTrivial
-import GroundTheory.TateCohomology.TateDeltaZero
-import GroundTheory.TateCohomology.TateSubgroupMaps
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.SplittingCohTrivial
+public import GroundTheory.TateCohomology.TateDeltaZero
+public import GroundTheory.TateCohomology.CohTrivialBasic
+public import GroundTheory.TateCohomology.DimensionShift
+public import GroundTheory.TateCohomology.TateGroupIso
+public import GroundTheory.TateCohomology.TateLow
+public import GroundTheory.TateCohomology.CoresRes
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open CategoryTheory Limits Rep
@@ -12,10 +21,10 @@ section Basics
 
 variable {G : Type} [Group G] [Fintype G] (S : Subgroup G) [Fintype S]
 
-omit [Fintype G] in
 
+omit [Fintype G] in
 noncomputable def tateOneClass : tateCohomology (Rep.trivial ℤ S ℤ) 0 :=
-  ((tateCohomologyZeroIso ℤ S).app (Rep.trivial ℤ S ℤ)).inv.hom
+  ((tateCohomologyZeroIso (R := ℤ) (G := S)).app (Rep.trivial ℤ S ℤ)).inv.hom
     (Submodule.Quotient.mk ⟨(1 : ℤ), fun _ => rfl⟩)
 
 end Basics
@@ -93,10 +102,6 @@ theorem tateTheoremIso_zero_apply :
   refine Eq.trans ?_ key
   exact congrArg (groupCohomology.δ ((shortExact_res S.subtype).2
     (splittingSES_shortExact M u)) 1 2 rfl).hom (ha.trans (congrArg _ hcoc))
-
-noncomputable def tateReciprocityIso :
-    tateCohomology (Rep.trivial ℤ S ℤ) (-2) ≅ tateCohomology (res S.subtype M) 0 :=
-  tateTheoremIso M u h1 h2 h3 S (-2) ≪≫ eqToIso (congrArg (tateCohomology (res S.subtype M)) (by norm_num))
 
 end Tate
 

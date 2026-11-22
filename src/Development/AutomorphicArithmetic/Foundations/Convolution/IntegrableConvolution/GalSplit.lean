@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DeterminantNonzero
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DeterminantNonzero
+
+@[expose] public section
 
 open scoped TensorProduct
 open PositivityTheory.Rg.Tf.Loc PositivityTheory.Rg.Tf.Geo
@@ -14,15 +18,6 @@ variable {F E : Type} [Field F] [Field E] [Algebra F E] [FiniteDimensional F E] 
 private theorem orderOf_gen (σ : E ≃ₐ[F] E) (hσ : ∀ τ : E ≃ₐ[F] E, τ ∈ Subgroup.zpowers σ) {m : ℕ}
     (hm : Module.finrank F E = m + 1) : orderOf σ = m + 1 := by
   rw [orderOf_eq_card_of_forall_mem_zpowers hσ, IsGalois.card_aut_eq_finrank, hm]
-
-private theorem pow_inj (σ : E ≃ₐ[F] E) (hσ : ∀ τ : E ≃ₐ[F] E, τ ∈ Subgroup.zpowers σ) {m : ℕ}
-    (hm : Module.finrank F E = m + 1) :
-    Function.Injective (fun i : Fin (m + 1) => σ ^ (i : ℕ)) := by
-  have ho := orderOf_gen σ hσ hm
-  intro i j hij
-  have := pow_injOn_Iio_orderOf (x := σ) (by simp only [ho, Set.mem_Iio]; exact i.2)
-    (by simp only [ho, Set.mem_Iio]; exact j.2) hij
-  exact Fin.ext this
 
 private theorem det_ne (σ : E ≃ₐ[F] E) (hσ : ∀ τ : E ≃ₐ[F] E, τ ∈ Subgroup.zpowers σ) {m : ℕ}
     (hm : Module.finrank F E = m + 1) (b : Module.Basis (Fin (m + 1)) F E) :
@@ -52,10 +47,12 @@ private theorem phi_bij (σ : E ≃ₐ[F] E) (hσ : ∀ τ : E ≃ₐ[F] E, τ �
   have hr : Function.RightInverse Ψ (phi σ p m) := by
     intro f
     funext k
-    simp only [Ψ, map_sum, Finset.sum_apply, phi_tmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Ψ, map_sum, Finset.sum_apply, phi_tmul]
     have h1 : ∀ i, ∑ j, p ((σ ^ (k : ℕ)) (b j)) * p (N j i) = if k = i then 1 else 0 := fun i => by
       have h2 := congrArg p (congrFun (congrFun hMN k) i)
-      simp only [Matrix.mul_apply, Matrix.one_apply, M, Matrix.of_apply, map_sum, map_mul] at h2
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mul_apply, Matrix.one_apply, M, Matrix.of_apply, map_sum, map_mul] at h2
       rw [h2]
       split_ifs <;> simp
     calc _ = ∑ i, (∑ j, p ((σ ^ (k : ℕ)) (b j)) * p (N j i)) * f i := by
@@ -70,13 +67,14 @@ private theorem phi_bij (σ : E ≃ₐ[F] E) (hσ : ∀ τ : E ≃ₐ[F] E, τ �
     intro t
     induction t using TensorProduct.induction_on with
     | zero => simp [Ψ]
-    | add s t hs ht => rw [map_add, hadd, hs, ht]
+    | add s t hs ht => rw [map_add (f := _), hadd, hs, ht]
     | tmul x a =>
       let c : Fin (m + 1) → E := fun l => algebraMap F E (b.repr x l)
       have hx : (fun i : Fin (m + 1) => (σ ^ (i : ℕ)) x) = M.mulVec c := by
         funext i
         conv_lhs => rw [← b.sum_repr x]
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         simp only [Matrix.mulVec, dotProduct, M, Matrix.of_apply, c]
         refine Finset.sum_congr rfl fun j _ => ?_
         rw [map_smul, Algebra.smul_def, mul_comm]
@@ -86,7 +84,8 @@ private theorem phi_bij (σ : E ≃ₐ[F] E) (hσ : ∀ τ : E ≃ₐ[F] E, τ �
         exact congrFun this j
       have h3 : ∀ j, ∑ i, p (N j i) * (p ((σ ^ (i : ℕ)) x) * a) = b.repr x j • a := fun j => by
         calc _ = p (∑ i, N j i * (σ ^ (i : ℕ)) x) * a := by
-              simp only [map_sum, map_mul, Finset.sum_mul, mul_assoc]
+              set_option synthInstance.maxHeartbeats 100000 in
+                simp only [map_sum, map_mul, Finset.sum_mul, mul_assoc]
           _ = _ := by rw [hc]; simp only [c, p.commutes, Algebra.smul_def]
       simp only [Ψ, phi_tmul, h3, TensorProduct.tmul_smul, TensorProduct.smul_tmul']
       rw [← TensorProduct.sum_tmul, b.sum_repr]
@@ -99,7 +98,7 @@ private theorem phi_shift (σ : E ≃ₐ[F] E) (hσ : ∀ τ : E ≃ₐ[F] E, τ
   have hv : ((i + 1 : Fin (m + 1)) : ℕ) = ((i : ℕ) + 1) % (m + 1) := by simp [Fin.val_add]
   induction t using TensorProduct.induction_on with
   | zero => simp
-  | add s t hs ht => simp only [map_add, Pi.add_apply, hs, ht]
+  | add s t hs ht => simp only [map_add (f := _), Pi.add_apply, hs, ht]
   | tmul x a =>
     rw [Algebra.TensorProduct.map_tmul, phi_tmul, phi_tmul, hv, ← pow_eq_pow_mod _ h1, pow_succ]
     rfl

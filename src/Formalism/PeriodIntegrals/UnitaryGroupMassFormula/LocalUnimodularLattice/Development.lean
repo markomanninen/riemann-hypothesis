@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.NUnimodLoc
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnimodularLattice.NonstandardUnimodularLattice
+module
+
+public import Formalism.PeriodIntegrals.NUnimodLoc
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnimodularLattice.NonstandardUnimodularLattice
+
+@[expose] public section
 
 open MeasureTheory Matrix
 

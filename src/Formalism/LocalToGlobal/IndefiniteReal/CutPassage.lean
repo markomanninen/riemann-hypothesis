@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.CutTuples2
-import Formalism.LocalToGlobal.IndefiniteReal.CxLemmas
-import Formalism.LocalToGlobal.IndefiniteReal.NonGenericAndKTwoTheorems
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
-import Formalism.LocalToGlobal.GlobalTheory.DivPassageP
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.CutTuples2
+public import Formalism.LocalToGlobal.IndefiniteReal.CxLemmas
+public import Formalism.LocalToGlobal.IndefiniteReal.NonGenericAndKTwoTheorems
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
+public import Formalism.LocalToGlobal.GlobalTheory.DivPassageP
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder InnerProductSpace
@@ -29,7 +33,7 @@ theorem rinv_spec {d n : ℕ} (P : Matrix (Fin d) (Fin n) K) (h : Function.Surje
     rw [Matrix.one_apply, ← h1]
     simp only [Matrix.mul_apply, Matrix.mulVec, dotProduct, Matrix.of_apply]
   unfold rinv
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hex.choose_spec
 
 variable {Bs : DefBase K} {A : DefAmb Bs} (X : CxData A) {fc : DefSub A → DefFace Bs} (cr : Crd A fc)

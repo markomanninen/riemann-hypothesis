@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMixModelB
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAwayUnitOfPowEqOne
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmallRouteDatumMemAlgebraicVectorsGridFrames
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralFlipVacuumEqMultipleOfTranslateMean
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMixModelB
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAwayUnitOfPowEqOne
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmallRouteDatumMemAlgebraicVectorsGridFrames
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralFlipVacuumEqMultipleOfTranslateMean
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Theta Formalism.L2.DIV IsDedekindDomain NumberField MeasureTheory Matrix
 open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTheory.RowTest GlobalTheory.SqTop GlobalTheory.SqTower GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.StdFrames GlobalTheory.ChainFr GlobalTheory.SquareDict GlobalTheory.SquareComm GlobalTheory.BigNZ GlobalTheory.FlipMatch GlobalTheory.AdelicU
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
@@ -83,7 +88,33 @@ theorem vac_eq_smul_vacB : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : GlobalT
   have cV₁ : (negFr AV₁).cart = fun s => -W.cart (.grid (i + 1) j) s := funext fun s => by rw [negFr_cart, (hV₁ s).2]
   have w1 : IsVacF W.ψ W.θ A₁ AV (ρ.vT i j) := ⟨v1.2.theta, fun s => by rw [c₁, cV]; exact v1.2.fock s⟩
   have w2 : IsVacF W.ψ W.θ (negFr AV₁) A₁ (ρ.vX i j) := ⟨v2.2.theta, fun s => by rw [c₁, cV₁]; exact v2.2.fock s⟩
-  have key := fockVacuum_externalProductOnHermitianSum AV AV₁ W.ψ_std W.θ_is A₁ w1 (rd_vac W.ψ_std W.θ_is A₁ AV₁ w2)
+  have w2' := rd_vac W.ψ_std W.θ_is A₁ AV₁ w2
+  have key : IsVacF W.ψ W.θ A₁ (frSum AV AV₁) (box2 (ρ.vT i j) (rd _ _ (ρ.vX i j))) := by
+    rw [← GlobalTheory.SeesawSumTarget.boxT_sumDec]
+    let o := GlobalTheory.BiTransfer.sumDec (spV G i j) (spV₁ G i j)
+    refine ⟨o.isThetaFunO_boxT w1.1 w2'.1, fun τ z => ?_⟩
+    have h1 := w1.2 τ (o.qA.map (tauE D τ) * z)
+    have h2 := w2'.2 τ (o.qB.map (tauE D τ) * z)
+    have e1 : o.qA.map (tauE D τ) = prL (spV G i j).rank (spV₁ G i j).rank := by
+      rw [GlobalTheory.SeesawSumTarget.qA_sumDec]
+      ext a b
+      obtain ⟨s, rfl⟩ := finSumFinEquiv.surjective b
+      rcases s with s | s <;> simp [prL, Matrix.one_apply, apply_ite (tauE D τ)]
+    have e2 : o.qB.map (tauE D τ) = prR (spV G i j).rank (spV₁ G i j).rank := by
+      rw [GlobalTheory.SeesawSumTarget.qB_sumDec]
+      ext a b
+      obtain ⟨s, rfl⟩ := finSumFinEquiv.surjective b
+      rcases s with s | s <;> simp [prR, Matrix.one_apply, apply_ite (tauE D τ)]
+    unfold annih at h1 h2 ⊢
+    rw [GlobalTheory.Core.Rk.FockBoxT.dRho_boxT o W.θ_is W.ψ_std τ _ w1.1 w2'.1,
+      GlobalTheory.Core.Rk.FockBoxT.dRho_boxT o W.θ_is W.ψ_std τ _ w1.1 w2'.1,
+      GlobalTheory.Core.Rk.FockBoxT.mul_cplxO (by rw [e1]; exact prL_cart AV AV₁ τ),
+      GlobalTheory.Core.Rk.FockBoxT.mul_cplxO (by rw [e2]; exact prR_cart AV AV₁ τ)]
+    funext x
+    have k1 := congrFun h1 (o.resT _ x).1
+    have k2 := congrFun h2 (o.resT _ x).2
+    simp only [GlobalTheory.MixModel.OrthDec.boxT, Pi.add_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply] at k1 k2 ⊢
+    linear_combination (rd _ _ (ρ.vX i j)) (o.resT _ x).2 * k1 + (ρ.vT i j) (o.resT _ x).1 * k2
   have e : vacB ρ i j = box2 (ρ.vT i j) (rd (spW₁ G i j) (spV₁ G i j) (ρ.vX i j)) := rfl
   have s0 := (node_isV G hL (X := .grid (i : ℕ) (j : ℕ)) ⟨i.2.le, j.2.le⟩).sd
   have hl : IsLatVac (heisO W.ψ (spW₁ G i j) (spX G i j))

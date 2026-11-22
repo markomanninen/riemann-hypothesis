@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PerfectPairingQuotients
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PerfectPairingQuotients
+
+@[expose] public section
+
 open Classical GlobalTheory.FinWeil
 open scoped BigOperators
 
 namespace GlobalTheory.FinWeil
 
+
 open Classical in
 open scoped BigOperators in
-
 theorem _root_.GlobalTheory.FinWeil.sumOp_sumOp_eq_idx_smul : ∀ {R X M : Type} [CommRing R]
     [AddCommGroup X] [Module R X] [AddCommGroup M] [Module ℂ M] {σ : R →+* R} {w : R}
     {γ : X → X → ℂ} {W : X → M →ₗ[ℂ] M}, _root_.GlobalTheory.FinWeil.IsHeis σ w γ W →
@@ -32,7 +37,8 @@ theorem _root_.GlobalTheory.FinWeil.sumOp_sumOp_eq_idx_smul : ∀ {R X M : Type}
   letI := Fintype.ofFinite (B.toAddSubgroup ⧸ A.toAddSubgroup.addSubgroupOf B.toAddSubgroup)
   letI := Fintype.ofFinite (A.toAddSubgroup ⧸ B.toAddSubgroup.addSubgroupOf A.toAddSubgroup)
   unfold _root_.GlobalTheory.FinWeil.sumOp
-  simp_rw [finsum_eq_sum_of_fintype, map_sum] at hsum ⊢
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [finsum_eq_sum_of_fintype, map_sum] at hsum ⊢
   have hcomm : ∀ a ∈ A, ∀ b : X, W a (W b v) = γ a b • W b v := by
     intro a ha b
     rw [hW.comm, hv a ha]

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.GenericMultiplicityOne
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CuspidalInducedCharacter
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.GenericMultiplicityOne
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CuspidalInducedCharacter
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,8 @@ variable {W : Type} [AddCommGroup W] [Module K W]
 theorem asAlgebraHom_lvlIdem (τ : Representation K G W) (H : Subgroup G) (ψ : H →* Kˣ) [Fintype H] :
     τ.asAlgebraHom (lvlIdem H ψ) = (Nat.card H : K)⁻¹ • ∑ h : H, (((ψ h)⁻¹ : Kˣ) : K) • τ (h : G) := by
   unfold lvlIdem
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   refine Finset.sum_congr (by congr!) fun h _ => ?_
   rw [Representation.asAlgebraHom_single, smul_smul, map_inv]
 
@@ -83,7 +88,8 @@ theorem finrank_eq_one_iff [CharZero K] [FiniteDimensional K W] (τ : Representa
   have h := (LinearMap.IsIdempotentElem.isProj_range _ (isIdempotentElem_lvlIdem τ H ψ)).trace
   have e : LinearMap.trace K W (τ.asAlgebraHom (lvlIdem H ψ)) =
       (Nat.card H : K)⁻¹ * ∑ h : H, LinearMap.trace K W (τ (h : G)) * (((ψ h)⁻¹ : Kˣ) : K) := by
-    rw [asAlgebraHom_lvlIdem, map_smul, map_sum, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [asAlgebraHom_lvlIdem, map_smul, map_sum, smul_eq_mul]
     simp [mul_comm]
   rw [← Nat.cast_eq_one (R := K), ← h, e, inv_mul_eq_one₀ hc, eq_comm]
 

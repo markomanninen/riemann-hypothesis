@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsArtinianRingTsze
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GroupObjectLiftDividedPowers
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHodgeFiltrationIffReductionGluedFilHtObject
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystalGluedHodgeGraphFiltrationOrderStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsArtinianRingTsze
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GroupObjectLiftDividedPowers
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHodgeFiltrationIffReductionGluedFilHtObject
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystalGluedHodgeGraphFiltrationOrderStable
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.UPel.Sm GlobalTheory.Cris GlobalTheory.DeRham
@@ -18,7 +23,7 @@ theorem ext_of_liftSemi_surj {K C : Type} [Field K] [CommRing C] [Algebra K C] {
   obtain ⟨u, rfl⟩ := hP c'
   induction u using TensorProduct.induction_on with
   | zero => simp
-  | add u v hu hv => rw [map_add, map_add, map_add, hu, hv]
+  | add u v hu hv => rw [map_add (f := _), map_add (f := _), map_add (f := _), hu, hv]
   | tmul r c => rw [liftSemi_tmul, map_smul, map_smul, h c]
 
 variable {k : Type} [Field k] {V : Type} [AddCommGroup V] [Module k V] [Module kᵐᵒᵖ V] [IsCentralScalar k V]
@@ -27,7 +32,7 @@ variable {k : Type} [Field k] {V : Type} [AddCommGroup V] [Module k V] [Module k
 def fstC : Crys (divided₂ (GlobalTheory.FODef.sqZero k V)) (spMap (TrivSqZeroExt.fstHom k k V).toRingHom) A₀ →+ HdR A₀ where
   toFun e :=
     { toFun c := (e ((GlobalTheory.FODef.constMorV k V A₀).pull c)).fst
-      map_add' c c' := by rw [map_add, map_add, TrivSqZeroExt.fst_add]
+      map_add' c c' := by rw [map_add (f := _), map_add (f := _), TrivSqZeroExt.fst_add]
       map_smul' r c := by
         rw [LinearMap.map_smulₛₗ, map_smul, smul_eq_mul, RingHom.id_apply, TrivSqZeroExt.algebraMap_eq_inl,
           TrivSqZeroExt.fst_mul, TrivSqZeroExt.fst_inl, smul_eq_mul] }
@@ -38,7 +43,7 @@ def sndC : Crys (divided₂ (GlobalTheory.FODef.sqZero k V)) (spMap (TrivSqZeroE
     (primDR A₀ →ₗ[k] V) where
   toFun e :=
     { toFun c := (e ((GlobalTheory.FODef.constMorV k V A₀).pull c)).snd
-      map_add' c c' := by rw [map_add, map_add, TrivSqZeroExt.snd_add]
+      map_add' c c' := by rw [map_add (f := _), map_add (f := _), TrivSqZeroExt.snd_add]
       map_smul' r c := by
         rw [LinearMap.map_smulₛₗ, map_smul, algebraMap_smul, TrivSqZeroExt.snd_smul, RingHom.id_apply] }
   map_zero' := by ext c; rfl

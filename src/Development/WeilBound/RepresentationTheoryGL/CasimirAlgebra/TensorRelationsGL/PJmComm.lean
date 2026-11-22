@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -131,18 +135,28 @@ theorem swap_mul_xJ (hT : TensorGl) {E : Fin n → Fin n → Module.End ℂ M} (
 
 theorem list_prod_comm {A : Type} [Monoid A] (x : A) : ∀ (L : List A) (k : ℕ) (hk : k + 1 < L.length),
     (∀ t (ht : t < L.length), t ≠ k → t ≠ k + 1 → Commute L[t] x) → Commute (L[k] * L[k + 1]) x →
-      Commute L.prod x
-  | [], k, hk, _, _ => by simp at hk
-  | [a], k, hk, _, _ => by simp at hk
-  | a :: b :: L, 0, hk, h1, h2 => by
-    rw [List.prod_cons, List.prod_cons, ← mul_assoc]
-    refine h2.mul_left (Commute.list_prod_left _ _ fun y hy => ?_)
-    obtain ⟨t, ht, rfl⟩ := List.getElem_of_mem hy
-    exact h1 (t + 2) (by simp; omega) (by omega) (by omega)
-  | a :: L, k + 1, hk, h1, h2 => by
-    rw [List.prod_cons]
-    exact (h1 0 (by simp) (by omega) (by omega)).mul_left (list_prod_comm x L k (by simpa using hk)
-      (fun t ht h h' => h1 (t + 1) (by simpa using ht) (by omega) (by omega)) h2)
+      Commute L.prod x := by
+  intro L
+  induction L with
+  | nil =>
+    intro k hk
+    simp at hk
+  | cons a L ih =>
+    intro k hk h1 h2
+    cases k with
+    | zero =>
+      cases L with
+      | nil => simp at hk
+      | cons b L =>
+        rw [List.prod_cons, List.prod_cons, ← mul_assoc]
+        change Commute (a * b) x at h2
+        refine h2.mul_left (Commute.list_prod_left L x fun y hy => ?_)
+        obtain ⟨t, ht, rfl⟩ := List.getElem_of_mem hy
+        exact h1 (t + 2) (by simp; omega) (by omega) (by omega)
+    | succ k =>
+      rw [List.prod_cons]
+      exact (h1 0 (by simp) (by omega) (by omega)).mul_left (ih k (by simpa using hk)
+        (fun t ht h h' => h1 (t + 1) (by simpa using ht) (by omega) (by omega)) h2)
 
 theorem pair_comm {A : Type} [Ring A] [Algebra ℂ A] (u : ℂ) (a b p : A) (hab : Commute a b)
     (h1 : b * p = p * a + 1) (h2 : p * b = a * p + 1) :

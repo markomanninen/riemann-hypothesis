@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,9 +11,6 @@ open scoped ENNReal Classical
 namespace Formalism.L2.SG.Pf.StabilizerMassQuotient
 
 variable (Γ : Type*) [Group Γ]
-
-def mass (A : Type*) [MulAction Γ A] : ℝ≥0∞ :=
-  ∑' o : Quotient (MulAction.orbitRel Γ A), ((Nat.card (MulAction.stabilizer Γ o.out) : ℝ≥0∞))⁻¹
 
 variable {Γ}
 
@@ -37,15 +38,15 @@ section Fibre
 variable {A B : Type*} [MulAction Γ A] [MulAction Γ B] (f : A → B)
   (hf : ∀ (g : Γ) (a : A), f (g • a) = g • f a)
 
-include hf in
 
+include hf in
 @[reducible] def fibAct (b : B) : MulAction (MulAction.stabilizer Γ b) {a : A // f a = b} where
   smul s a := ⟨(s : Γ) • a.1, by rw [hf, a.2]; exact s.2⟩
   one_smul a := Subtype.ext (one_smul Γ a.1)
   mul_smul s t a := Subtype.ext (mul_smul (s : Γ) (t : Γ) a.1)
 
-include hf in
 
+include hf in
 def qmap : Quotient (MulAction.orbitRel Γ A) → Quotient (MulAction.orbitRel Γ B) :=
   Quotient.map' f fun a a' ⟨g, hg⟩ => ⟨g, by
     have hg' : g • a' = a := hg
@@ -54,8 +55,8 @@ def qmap : Quotient (MulAction.orbitRel Γ A) → Quotient (MulAction.orbitRel �
 
 theorem qmap_mk (a : A) : qmap f hf (Quotient.mk _ a) = Quotient.mk (MulAction.orbitRel Γ B) (f a) := rfl
 
-include hf in
 
+include hf in
 def stabEquiv (b : B) (x : {a : A // f a = b}) :
     (letI := fibAct f hf b; MulAction.stabilizer (MulAction.stabilizer Γ b) x) ≃ MulAction.stabilizer Γ x.1 := by
   letI := fibAct f hf b
@@ -76,8 +77,8 @@ def stabEquiv (b : B) (x : {a : A // f a = b}) :
       left_inv := fun s => rfl
       right_inv := fun g => rfl }
 
-include hf in
 
+include hf in
 def orbEquiv (oB : Quotient (MulAction.orbitRel Γ B)) :
     (letI := fibAct f hf oB.out; Quotient (MulAction.orbitRel (MulAction.stabilizer Γ oB.out) {a : A // f a = oB.out})) ≃
       ↥(qmap f hf ⁻¹' {oB}) := by
@@ -116,24 +117,6 @@ end Fibre
 section Sub
 
 variable {Y : Type*} [MulAction Γ Y]
-
-@[reducible] def subAct (X : Set Y) (hX : ∀ (g : Γ) y, y ∈ X → g • y ∈ X) : MulAction Γ X where
-  smul g y := ⟨g • y.1, hX g y.1 y.2⟩
-  one_smul y := Subtype.ext (one_smul Γ y.1)
-  mul_smul g h y := Subtype.ext (mul_smul g h y.1)
-
-def subStab (X : Set Y) (hX : ∀ (g : Γ) y, y ∈ X → g • y ∈ X) (y : X) :
-    (letI := subAct X hX; MulAction.stabilizer Γ y) ≃ MulAction.stabilizer Γ y.1 := by
-  letI := subAct X hX
-  exact
-    { toFun := fun g => ⟨g.1, by
-        have h := MulAction.mem_stabilizer_iff.1 g.2
-        exact MulAction.mem_stabilizer_iff.2 (congrArg Subtype.val h)⟩
-      invFun := fun g => ⟨g.1, by
-        rw [MulAction.mem_stabilizer_iff]
-        exact Subtype.ext (MulAction.mem_stabilizer_iff.1 g.2)⟩
-      left_inv := fun _ => rfl
-      right_inv := fun _ => rfl }
 
 end Sub
 

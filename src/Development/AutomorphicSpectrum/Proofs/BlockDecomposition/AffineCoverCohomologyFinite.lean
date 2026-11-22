@@ -1,11 +1,15 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.Coords
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperFiniteness
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechSeparated
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.NaturalLeray
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.BijectiveSmulChartSec
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSheafSecPresheaf
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.Coords
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperFiniteness
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechSeparated
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.NaturalLeray
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.BijectiveSmulChartSec
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSheafSecPresheaf
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -181,7 +185,8 @@ theorem coc3 (i : Fin 3 → ι) (W : X.Opens) (hW : W ≤ capO U i) (h₁ : W �
       refine Finset.sum_congr rfl fun k' _ => ?_
       rw [V.e_chg 2 1 2 x i k', Finset.mul_sum]
       exact Finset.sum_congr rfl fun k'' _ => mul_assoc _ _ _) v
-  simp only [map_sum, map_mul, rs_trans, Finset.sum_mul] at key
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, rs_trans, Finset.sum_mul] at key
   simp only [Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Eq.trans (Finset.sum_congr rfl fun k'' _ => Finset.sum_congr rfl fun k' _ => (mul_assoc _ _ _).symm) key
@@ -283,7 +288,7 @@ def toCochain (n : ℕ) : K.X n ≃+ Cochain (modulesAb (toMod V.g)).obj U n whe
     exact (congrArg (secRes V.g (inter_le_capO U i)) h).trans
       ((secRes_secRes V.g (capO_le_inter U i) (inter_le_capO U i) le_rfl _).trans (secRes_self V.g le_rfl _))
   map_add' a b := funext fun i => by
-    rw [map_add]
+    rw [map_add (f := _)]
     exact map_add (secRes V.g (inter_le_capO U i)) _ _
 
 end Bridge
@@ -292,8 +297,8 @@ theorem str_eq {O : Type} [CommRing O] {X : Scheme.{0}} (q : X ⟶ Spec (CommRin
     ((Scheme.ΓSpecIso (CommRingCat.of O)).inv ≫ q.appLE ⊤ W le_top).hom c =
       rs (le_top : W ≤ ⊤) (q.appTop.hom ((Scheme.ΓSpecIso (CommRingCat.of O)).inv.hom c)) := rfl
 
-attribute [local instance] VB.fin algebraOfOver in
 
+attribute [local instance] VB.fin algebraOfOver in
 theorem finite_H_cx : ∀ {O : Type} [CommRing O] [IsNoetherianRing O] {X : Scheme.{0}} (q : X ⟶ Spec (CommRingCat.of O)) [IsProper q]
     {ι : Type} [Fintype ι] (U : ι → X.Opens) (hU : (⨆ α, U α) = ⊤) (ha : ∀ n (i : Fin (n + 1) → ι), IsAffineOpen (capO U i))
     (K : Cos.{1} O) (V : VB (fun W => ((Scheme.ΓSpecIso (CommRingCat.of O)).inv ≫ q.appLE ⊤ W le_top).hom) U K) (p : ℕ),
@@ -317,7 +322,8 @@ theorem finite_H_cx : ∀ {O : Type} [CommRing O] [IsNoetherianRing O] {X : Sche
     funext i
     rw [d_apply]
     change secRes V.g (inter_le_capO U i) (toSec V (n + 1) (K.d n x) i) = _
-    rw [Cos.d_apply, map_sum, Finset.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Cos.d_apply, map_sum, Finset.sum_apply, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_zsmul, Pi.smul_apply, map_zsmul, toSec_δ]
     have H := (inter_le_comp (X := X.toTopCat) U i k.succAbove).trans (inter_le_capO U (i ∘ k.succAbove))

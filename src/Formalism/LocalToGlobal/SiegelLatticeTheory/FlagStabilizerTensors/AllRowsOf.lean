@@ -1,11 +1,17 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RowDict
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowDictPf
-import Formalism.SharpRestriction.LevelLetterCocycles.StatementFamilies.ArithmeticCylinders
-import Formalism.SharpRestriction.LevelLetterCocycles.CylinderCountFamily
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.JCountP
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.BunExists
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUniUpMul
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RowDict
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowDictPf
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PlaceDegreeData
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.SharpRestriction.LevelLetterCocycles.CylinderCountFamily
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.JCountP
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.BunExists
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUniUpMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +24,8 @@ section Events
 
 variable {D : D7} (X : HidaSetting D)
 
-open Classical in
 
+open Classical in
 def egA (a : MonoidAlgebra ℂ (G0g D.nd)) (x : X.B.I.Gf) : ℂ :=
   if h : x ∈ X.B.I.Kset ∧ ∃ γ : G0g D.nd, GoodAt X x γ then
     a.coeff (Classical.choose h.2) / ((X.B.μf (X.B.I.Kg X.B.g)).toReal : ℂ)
@@ -44,8 +50,8 @@ theorem ES_good : ES (D := D) {t | D.ntypes.goodTuple t} = D.ntypes.e0 := rfl
 def eT (S : Set (Tup2 D)) : X.B.I.Gf → ℂ :=
   X.B.I.convF X.B.μf X.B.e (egA X (ES S))
 
-open Classical in
 
+open Classical in
 def ReT (S : Set (Tup2 D)) : X.B.I.L2 X.B.μf X.B.fund →L[ℂ] X.B.I.L2 X.B.μf X.B.fund :=
   if h : ∃ T, X.B.I.IsRConvF X.B.μf X.B.fund X.B.R (eT X S) T then Classical.choose h else 0
 
@@ -163,7 +169,7 @@ theorem entN_mul_add {R : Type} [CommRing R] {N : ℕ} {M M' : Matrix (Fin N) (F
     rw [dif_pos ⟨j.2, h.2⟩] at h0
     simp only [Fin.eta] at h0
     rw [h0, mul_zero]
-  · rw [dif_neg h, dif_neg h, dif_neg h, add_zero]
+  · rw [dite_eq_right h, dite_eq_right h, dite_eq_right h, add_zero]
 
 theorem entN_one_ne' {R : Type} [CommRing R] {N : ℕ} {a b : ℕ} (h : a ≠ b) :
     entN (1 : Matrix (Fin N) (Fin N) R) a b = 0 := by
@@ -261,17 +267,17 @@ theorem egA_mul (a : MonoidAlgebra ℂ (G0g D.nd)) (x : X.B.I.Gf) {k : X.B.I.Gf}
     · have hE' : ∃ γ, GoodAt X (x * k) γ := by rw [hpred]; exact hE
       rw [dif_pos ⟨hxk, hE'⟩, dif_pos ⟨hx, hE⟩, choose_congr hpred hE' hE]
     · have hE' : ¬ ∃ γ, GoodAt X (x * k) γ := by rw [hpred]; exact hE
-      rw [dif_neg (fun h => hE' h.2), dif_neg (fun h => hE h.2)]
+      rw [dite_eq_right (fun h => hE' h.2), dite_eq_right (fun h => hE h.2)]
   · have hxk : x * k ∉ X.B.I.Kset := by
       intro h
       apply hx
       have := K_mul _ h (K_inv _ hk.1)
       rwa [mul_inv_cancel_right] at this
-    rw [dif_neg (fun h => hxk h.1), dif_neg (fun h => hx h.1)]
+    rw [dite_eq_right (fun h => hxk h.1), dite_eq_right (fun h => hx h.1)]
 
 theorem egA_of_not_mem (a : MonoidAlgebra ℂ (G0g D.nd)) {x : X.B.I.Gf} (hx : x ∉ X.B.I.Kset) : egA X a x = 0 := by
   unfold egA
-  rw [dif_neg (fun h => hx h.1)]
+  rw [dite_eq_right (fun h => hx h.1)]
 
 theorem eT_mul (S : Set (Tup2 D)) (x : X.B.I.Gf) {k : X.B.I.Gf} (hk : k ∈ X.B.I.Kg X.B.g) :
     eT X S (x * k) = eT X S x := by
@@ -344,8 +350,8 @@ theorem Kg_inv {k : X.B.I.Gf} (hk : k ∈ X.B.I.Kg X.B.g) : k⁻¹ ∈ X.B.I.Kg 
 theorem one_mem_Kg : (1 : X.B.I.Gf) ∈ X.B.I.Kg X.B.g :=
   ⟨K_one _, fun y _ => ⟨0, zero_mem _, by rw [fmat_one, sub_self, Matrix.zero_mulVec, smul_zero]⟩⟩
 
-open Classical in
 
+open Classical in
 theorem conv_Kg (x : X.B.I.Gf) :
     X.B.I.convF X.B.μf X.B.e
       (fun z => if z ∈ X.B.I.Kg X.B.g then 1 / ((X.B.μf (X.B.I.Kg X.B.g)).toReal : ℂ) else 0) x = X.B.e x := by
@@ -355,7 +361,7 @@ theorem conv_Kg (x : X.B.I.Gf) :
   have hK : IsCompact X.B.I.Kset := Formalism.L2.SG.Closed.AutKCompact_holds X.B.I
   have hne : X.B.μf (X.B.I.Kg X.B.g) ≠ 0 := hopen.measure_ne_zero X.B.μf ⟨1, one_mem_Kg X⟩
   have hfin : X.B.μf (X.B.I.Kg X.B.g) ≠ ⊤ :=
-    (lt_of_le_of_lt (measure_mono fun z hz => hz.1) hK.measure_lt_top).ne
+    (lt_of_le_of_lt (measure_mono (show X.B.I.Kg X.B.g ⊆ X.B.I.Kset from fun z hz => hz.1)) hK.measure_lt_top).ne
   have hV0 : (V : ℂ) ≠ 0 := by
     rw [hV]; exact_mod_cast (ENNReal.toReal_pos hne hfin).ne'
   set T : Set X.B.I.Gf := (fun y => x⁻¹ * y) ⁻¹' X.B.I.Kg X.B.g with hT
@@ -424,8 +430,8 @@ theorem ES_univ_coeff (γ : G0g D.nd) : (ES (D := D) Set.univ).coeff γ = if γ 
   congr 1
   exact propext ⟨fun h => funext fun kv => h kv (Finset.mem_univ _), fun h kv _ => by rw [h]; rfl⟩
 
-open Classical in
 
+open Classical in
 theorem egA_univ (hK : RedKer X) (x : X.B.I.Gf) :
     egA X (ES Set.univ) x =
       if x ∈ X.B.I.Kg X.B.g then 1 / ((X.B.μf (X.B.I.Kg X.B.g)).toReal : ℂ) else 0 := by
@@ -449,7 +455,7 @@ theorem egA_univ (hK : RedKer X) (x : X.B.I.Gf) :
     · have hc : Classical.choose hE ≠ 1 := fun h : Classical.choose hE = 1 => hk ((hK x hx).1 (by rw [← h]; exact hγ))
       rw [if_neg hc, if_neg hk, zero_div]
   · unfold egA
-    rw [dif_neg (fun h => hx h.1), if_neg (fun h => hx h.1)]
+    rw [dite_eq_right (fun h => hx h.1), if_neg (fun h => hx h.1)]
 
 theorem etUniv_of (hK : RedKer X) : EtUniv X := by
   classical
@@ -524,22 +530,6 @@ variable {X} {ψ₀ : ∀ k : Fin 2, AddChar (ZMod (D.host.g k)) ℂ} {hJ : EJId
 theorem thirdTie_allRows : LabelCountGoodInjective (allRowsOf X ψ₀ hJ hU hO hI hL) :=
   (Classical.choose_spec (Classical.choose_spec hL)).2
 
-theorem admissibleLevel_allRows (hψ : ∀ k, ψ₀ k ≠ 1) (hL6 : ConclusionL D) (hg : ∀ k, 2 * D.R.r ≤ D.host.g k) :
-    PlaceLawIdempotents (allRowsOf X ψ₀ hJ hU hO hI hL) 6 :=
-  place_law_of_statement _ hL6 hg fun k _ => ⟨ψ₀ k, hψ k, Or.inr rfl⟩
-
-theorem thirdTieNumbers_allRows : LabelCountSpace (allRowsOf X ψ₀ hJ hU hO hI hL).toAt :=
-  labelCountSpace_toAt_of_labelCountGoodInjective _ thirdTie_allRows
-
-theorem admissibleCount_allRows (hψ : ∀ k, ψ₀ k ≠ 1) {n₀ : ℕ} {Alev C₃ c₃ cb : ℝ}
-    (h1 : Formalism.MainNotions.S.CountE.CountIdempotentsClass Formalism.MainNotions.S.CountE.PCount D n₀ Alev C₃ c₃ cb) (hL6 : ConclusionL D)
-    (hg : ∀ k, 2 * D.R.r ≤ D.host.g k) (hC : TieCountAt (allRowsOf X ψ₀ hJ hU hO hI hL).toAt n₀ Alev C₃ cb)
-    (hP : Formalism.MainNotions.N.CylinderCountFamily.PCountTie D (allRowsOf X ψ₀ hJ hU hO hI hL).toAt) (hA : TieAdmG D) :
-    Formalism.MainNotions.N.CylinderCountFamily.CylinderCountUniformAt D (allRowsOf X ψ₀ hJ hU hO hI hL).toAt n₀ Alev C₃ c₃ cb 6 :=
-  ⟨Formalism.MainNotions.N.CylinderCountFamily.countCylAt_of D _ h1 hC hP,
-    admissibleLevel_allRows (X := X) (hJ := hJ) (hU := hU) (hO := hO) (hI := hI) (hL := hL) hψ hL6 hg,
-    thirdTieNumbers_allRows (X := X) (hJ := hJ) (hU := hU) (hO := hO) (hI := hI) (hL := hL), hC, hA⟩
-
 end Ctor
 
 section Ctor2
@@ -608,56 +598,6 @@ def KgN (m : ℕ) : Subgroup (KSub I) where
 
 instance KgN_normal (m : ℕ) : (KgN I m).Normal := ⟨fun _ hn g => Kg_conj' I m g.2 hn⟩
 
-instance KSub_compact : CompactSpace (KSub I) :=
-  isCompact_iff_compactSpace.mp (Formalism.L2.SG.Closed.AutKCompact_holds I)
-
-theorem finite_quot (m : ℕ) (hm : 1 ≤ m) : Finite (KSub I ⧸ KgN I m) :=
-  Subgroup.quotient_finite_of_isOpen _ ((I.topf_open m hm).preimage continuous_subtype_val)
-
-def KCRT (m₁ m₂ : ℕ) : Prop := ∀ x ∈ I.Kset, ∃ k₁ ∈ I.Kg m₁, ∃ k₂ ∈ I.Kg m₂, x = k₁ * k₂
-
-open Classical in
-
-def redQ (m₁ m₂ : ℕ) (x : I.Gf) : (KSub I ⧸ KgN I m₁) × (KSub I ⧸ KgN I m₂) :=
-  if hx : x ∈ I.Kset then
-    ((QuotientGroup.mk (⟨x, hx⟩ : KSub I) : KSub I ⧸ KgN I m₁), (QuotientGroup.mk (⟨x, hx⟩ : KSub I) : KSub I ⧸ KgN I m₂))
-  else 1
-
-def redDatumQ (m₁ m₂ : ℕ) (h₁ : 1 ≤ m₁) (h₂ : 1 ≤ m₂) (hC : KCRT I m₁ m₂) : I.RedDatum m₁ m₂ where
-  G₁ := KSub I ⧸ KgN I m₁
-  G₂ := KSub I ⧸ KgN I m₂
-  fin₁ := haveI := finite_quot I m₁ h₁; Fintype.ofFinite _
-  fin₂ := haveI := finite_quot I m₂ h₂; Fintype.ofFinite _
-  red := redQ I m₁ m₂
-  red_mul := fun x hx y hy => by
-    simp only [redQ, dif_pos hx, dif_pos hy, dif_pos (K_mul I hx hy)]
-    rfl
-  red_surj := fun a => by
-    obtain ⟨u₁, hu₁⟩ := QuotientGroup.mk_surjective a.1
-    obtain ⟨u₂, hu₂⟩ := QuotientGroup.mk_surjective a.2
-    obtain ⟨k₁, hk₁, k₂, hk₂, he⟩ := hC _ (K_mul I (K_inv I u₁.2) u₂.2)
-    have hxK : (u₁ : I.Gf) * k₁ ∈ I.Kset := K_mul I u₁.2 hk₁.1
-    refine ⟨(u₁ : I.Gf) * k₁, hxK, ?_⟩
-    have hu₂' : (u₂ : I.Gf) = (u₁ : I.Gf) * (k₁ * k₂) := by rw [← he]; group
-    simp only [redQ, dif_pos hxK]
-    refine Prod.ext ?_ ?_
-    · rw [← hu₁]
-      refine QuotientGroup.eq.mpr ?_
-      show ((u₁ : I.Gf) * k₁)⁻¹ * (u₁ : I.Gf) ∈ I.Kg m₁
-      have : ((u₁ : I.Gf) * k₁)⁻¹ * (u₁ : I.Gf) = k₁⁻¹ := by group
-      rw [this]; exact Kg_inv' I m₁ hk₁
-    · rw [← hu₂]
-      refine QuotientGroup.eq.mpr ?_
-      show ((u₁ : I.Gf) * k₁)⁻¹ * (u₂ : I.Gf) ∈ I.Kg m₂
-      rw [hu₂']
-      have : ((u₁ : I.Gf) * k₁)⁻¹ * ((u₁ : I.Gf) * (k₁ * k₂)) = k₂ := by group
-      rw [this]; exact hk₂
-  red_fib₁ := fun x hx y hy => by
-    simp only [redQ, dif_pos hx, dif_pos hy]
-    exact QuotientGroup.eq
-  red_fib₂ := fun x hx y hy => by
-    simp only [redQ, dif_pos hx, dif_pos hy]
-    exact QuotientGroup.eq
 
 end RedQ
 
@@ -730,36 +670,18 @@ theorem tieCountAt_allRowsOf {n₀ : ℕ} {Alev C₃ cb : ℝ} (hB : CountBase X
     fun v => X.ds v, fun v => X.low v, X.B.tens_spec, inferInstance, X.B.fund_spec, X.B.R_spec,
     reT_spec X hI _⟩, hgap, hC, hf, hb, hpos⟩
 
-theorem admissibleCount_allRows_alt (hψ : ∀ k, ψ₀ k ≠ 1) {n₀ : ℕ} {Alev C₃ c₃ cb : ℝ}
-    (h1 : Formalism.MainNotions.S.CountE.CountIdempotentsClass Formalism.MainNotions.S.CountE.PCount D n₀ Alev C₃ c₃ cb) (hL6 : ConclusionL D)
-    (hg : ∀ k, 2 * D.R.r ≤ D.host.g k) (hB : CountBase X n₀ Alev C₃ cb)
-    (hA : ∀ (k : Fin 2) (S : Set (Tup D k)), EtAlg X (cyl D k S)) (hUn : ∀ (k : Fin 2) (S : Set (Tup D k)), EtUnip X k S)
-    (hP : Formalism.MainNotions.N.CylinderCountFamily.PCountTie D (allRowsOf X ψ₀ hJ hU hO hI hL).toAt) (hAd : TieAdmG D) :
-    Formalism.MainNotions.N.CylinderCountFamily.CylinderCountUniformAt D (allRowsOf X ψ₀ hJ hU hO hI hL).toAt n₀ Alev C₃ c₃ cb 6 :=
-  admissibleCount_allRows (X := X) (hJ := hJ) (hU := hU) (hO := hO) (hI := hI) (hL := hL) hψ h1 hL6 hg
-    (tieCountAt_allRowsOf hB hA hUn) hP hAd
-
 end CountPf
 
 section FinalK
 
 variable {D : D7} (X : HidaSetting D)
 
-theorem admissibleCount_allRows_unipotent (ψ₀ : ∀ k : Fin 2, AddChar (ZMod (D.host.g k)) ℂ) (hK : RedKerOne X) (hO : EtOne X ψ₀)
-    (hL : RowsLab X) (hψ : ∀ k, ψ₀ k ≠ 1) {n₀ : ℕ} {Alev C₃ c₃ cb : ℝ}
-    (h1 : Formalism.MainNotions.S.CountE.CountIdempotentsClass Formalism.MainNotions.S.CountE.PCount D n₀ Alev C₃ c₃ cb) (hL6 : ConclusionL D)
-    (hg : ∀ k, 2 * D.R.r ≤ D.host.g k) (hB : CountBase X n₀ Alev C₃ cb)
-    (hA : ∀ (k : Fin 2) (S : Set (Tup D k)), EtAlg X (cyl D k S)) (hUn : ∀ (k : Fin 2) (S : Set (Tup D k)), EtUnip X k S)
-    (hP : Formalism.MainNotions.N.CylinderCountFamily.PCountTie D (allRowsOfK X ψ₀ hK hO hL).toAt) (hAd : TieAdmG D) :
-    Formalism.MainNotions.N.CylinderCountFamily.CylinderCountUniformAt D (allRowsOfK X ψ₀ hK hO hL).toAt n₀ Alev C₃ c₃ cb 6 :=
-  admissibleCount_allRows_alt hψ h1 hL6 hg hB hA hUn hP hAd
-
 end FinalK
 
 section Count
 
-open Classical in
 
+open Classical in
 theorem exists_lab {α : Type} [DecidableEq α] (T : Finset α) (m : α → ℕ) (good : α → Prop) [DecidablePred good]
     (Dg N : ℕ) (G : Fin Dg → α) (hGT : ∀ σ, G σ ∈ T) (hGg : ∀ σ, good (G σ))
     (hcnt : ∀ t ∈ T, good t → (Finset.univ.filter fun σ => G σ = t).card = m t)
@@ -835,18 +757,18 @@ open Formalism.L2.SG.Pf.RowDictPf
 
 variable {D : D7} (X : HidaSetting D)
 
-open Classical in
 
+open Classical in
 def labT : Finset (Tup2 D) :=
   haveI : ∀ k, NeZero (D.host.g k) := fun k => ⟨(D.host.g_prime k).ne_zero⟩
   (Finset.univ.image (tupOf (D := D))).filter (fun t => ∀ k v, IsLabel D k (t k v))
 
-open Classical in
 
+open Classical in
 def RowsAdd : Prop := ∀ S : Set (Tup2 D), dimX X S = ∑ t ∈ labT, if t ∈ S then dimX X {t} else 0
 
-open Classical in
 
+open Classical in
 def RowsGood : Prop :=
   (∀ σ k v, IsLabel D k (D.nd.lab k (D.what₂.ft σ) v)) ∧ (∀ σ, D.ntypes.goodTuple (fun k => D.nd.lab k (D.what₂.ft σ))) ∧
     ∀ t ∈ (labT (D := D)), D.ntypes.goodTuple t →
@@ -1025,7 +947,7 @@ theorem etUnip_of (k : Fin 2) (hR : RedKerP X (1 - k)) (S : Set (Tup D k)) : EtU
   unfold egA at hz
   by_cases hzK : y⁻¹ * x ∈ X.B.I.Kset ∧ ∃ γ, GoodAt X (y⁻¹ * x) γ
   swap
-  · rw [dif_neg hzK] at hz; exact absurd rfl hz
+  · rw [dite_eq_right hzK] at hz; exact absurd rfl hz
   rw [dif_pos hzK] at hz
   obtain ⟨hzK1, hzE⟩ := hzK
   have hγ := Classical.choose_spec hzE
@@ -1104,16 +1026,6 @@ variable {D : D7} (X : HidaSetting D)
 def allRowsOfP (ψ₀ : ∀ k : Fin 2, AddChar (ZMod (D.host.g k)) ℂ) (h0 : RedKerP X 0) (h1 : RedKerP X 1)
     (hO : EtOne X ψ₀) (hL : RowsLab X) : AllRows D :=
   allRowsOfK X ψ₀ (redKerOne_of X h0 h1) hO hL
-
-theorem admissibleCount_allRows_partner (ψ₀ : ∀ k : Fin 2, AddChar (ZMod (D.host.g k)) ℂ) (h0 : RedKerP X 0) (h1 : RedKerP X 1)
-    (hO : EtOne X ψ₀) (hL : RowsLab X) (hψ : ∀ k, ψ₀ k ≠ 1) {n₀ : ℕ} {Alev C₃ c₃ cb : ℝ}
-    (hC1 : Formalism.MainNotions.S.CountE.CountIdempotentsClass Formalism.MainNotions.S.CountE.PCount D n₀ Alev C₃ c₃ cb) (hL6 : ConclusionL D)
-    (hg : ∀ k, 2 * D.R.r ≤ D.host.g k) (hB : CountBase X n₀ Alev C₃ cb)
-    (hA : ∀ (k : Fin 2) (S : Set (Tup D k)), EtAlg X (cyl D k S))
-    (hP : Formalism.MainNotions.N.CylinderCountFamily.PCountTie D (allRowsOfP X ψ₀ h0 h1 hO hL).toAt) (hAd : TieAdmG D) :
-    Formalism.MainNotions.N.CylinderCountFamily.CylinderCountUniformAt D (allRowsOfP X ψ₀ h0 h1 hO hL).toAt n₀ Alev C₃ c₃ cb 6 :=
-  admissibleCount_allRows_unipotent X ψ₀ _ hO hL hψ hC1 hL6 hg hB hA
-    (fun k S => etUnip_of X k (by fin_cases k; exacts [h1, h0]) S) hP hAd
 
 end FinalP
 

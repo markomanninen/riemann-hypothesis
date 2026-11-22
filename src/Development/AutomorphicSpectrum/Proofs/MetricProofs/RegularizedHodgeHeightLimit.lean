@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.PositionPot
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedIntegralModelFormulaStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularChartDataPropertiesStatement
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PNbarLeviChartReg
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PositionPot
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedIntegralModelFormulaStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularChartDataPropertiesStatement
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PNbarLeviChartReg
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
 open GroundTheory.Heights₂.Heights.LowerBoundFree GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp
@@ -61,7 +66,7 @@ theorem log_norm_section_local (A : FinHolAtlas e X) {U : Set X} (hU : IsOpen U)
     have hsw : AnalyticAt ℂ (fun w => s ((A.chart j).symm w)) w :=
       analyticAt_pi_iff.2 fun p => hs p j w ⟨hw.1, hw.2.1⟩
     have hcomp : AnalyticAt ℂ (fun w => L (s ((A.chart j).symm w))) w :=
-      AnalyticAt.comp' (hNsub hw.2.2).1 hsw
+      AnalyticAt.comp (f := fun w => s ((A.chart j).symm w)) (hNsub hw.2.2).1 hsw
     exact hcomp.add analyticAt_const
   · intro y hy
     have hTy := (hNsub hy.2).2.1
@@ -192,7 +197,7 @@ theorem ptsIntegral_word_eq_mInt : ∀ (K : Type) [Fintype K] (J : K → Type) [
     funext j z
     simp [pot]
   unfold ptsIntegral
-  rw [dif_pos hex, ← hfun]
+  rw [dite_eq_left hex, ← hfun]
   exact h
 
 end GlobalTheory.CompanionTheory.Ar.Cusp

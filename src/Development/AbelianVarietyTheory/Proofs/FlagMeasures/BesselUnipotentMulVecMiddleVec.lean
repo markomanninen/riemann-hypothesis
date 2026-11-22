@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,8 @@ theorem gramProj_comb {n r : ℕ} (P : Submodule ℂ (EuclideanSpace ℂ (Fin n)
   have hlin : (fun a => P.starProjection (WithLp.toLp 2 (∑ b, U b a • v b))) =
       fun a => ∑ b, U b a • P.starProjection (WithLp.toLp 2 (v b)) := by
     funext a
-    simp [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_smul]
   rw [hlin, gram_sum_smul_eq_conjTranspose_mul_gram_mul, Matrix.det_mul, Matrix.det_mul, Matrix.det_conjTranspose, hU]
   simp
 
@@ -331,7 +336,8 @@ theorem Yv_K (z z' : Fin (2 * r + k + 1) → ℂ) (γ x : Mat k r) {κ : Mat k r
   rw [gramProj_unitary (Ppos k r z z' γ x) (Ppos k r z z' γ (x * κ)) _ κ hκ hQ]
   congr 1
   funext a
-  simp only [Matrix.mul_inv_rev, hinv, Matrix.mulVec_mulVec, ← Matrix.mul_assoc, hu', Matrix.one_mul]
+  simp only [Matrix.mul_inv_rev, ← Matrix.mulVec_mulVec, hinv]
+  rw [Matrix.mulVec_mulVec, hu', Matrix.one_mulVec]
 
 private theorem inv_mul_mul_eq_of_eq_conj {k r : ℕ} {m γ ρ : Mat k r} (um : IsUnit m.det) (uγ : IsUnit γ.det)
     (hm : m = γ * ρ * γ⁻¹) : m⁻¹ * γ * ρ = γ := by

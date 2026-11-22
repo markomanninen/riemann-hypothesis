@@ -1,13 +1,18 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.TraceFormulas.LatDefs
-import ReciprocityTheory.GaloisValuations.Global
-import Formalism.WachLatticeTwists.CoprimeLiftBounds.Statement
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import ReciprocityTheory.NeutralLocalFields.HilbertClassField
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HilbertClassFieldOfGlobalArtinReciprocityStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LengthAddMonoidHomFiniteGroupFractionQuotientLeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HilbertSubgroupLeKerOfKillsInertiaStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GaloisAddHomVanishesComplexConjugationStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.TraceFormulas.LatDefs
+public import ReciprocityTheory.GaloisValuations.Global
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.Statement
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import ReciprocityTheory.NeutralLocalFields.HilbertClassField
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HilbertClassFieldOfGlobalArtinReciprocityStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LengthAddMonoidHomFiniteGroupFractionQuotientLeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HilbertSubgroupLeKerOfKillsInertiaStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GaloisAddHomVanishesComplexConjugationStatement
+
+@[expose] public section
+
 open Formalism.NG Formalism.RepresentationBoundsCohomology.BR NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal
 
 namespace GlobalTheory.UnramifiedClassBound
@@ -21,7 +26,7 @@ theorem vhE_of_globalArtinReciprocity (hA : GlobalTheory.Published.GlobalArtinRe
   let ψ : (Additive (ClassGroup (𝓞 E)) →+ M) →ₗ[O] coZ1s ρ :=
     { toFun := fun f => ⟨fun g => f (Additive.ofMul (art g)), fun g h => by
         show f (Additive.ofMul (art (g * h))) = f (Additive.ofMul (art g)) + ρ g (f (Additive.ofMul (art h)))
-        rw [hρ, map_mul, ofMul_mul, map_add]⟩
+        rw [hρ, map_mul, ofMul_mul, map_add (f := _)]⟩
       map_add' := fun f f' => rfl
       map_smul' := fun r f => rfl }
   let Φ := (Submodule.mkQ ((coB1 ρ).comap (coZ1s ρ).subtype)) ∘ₗ ψ

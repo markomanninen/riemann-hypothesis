@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatOpA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliWordSumExpansion
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HomogeneityNaturalDegree
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatOpA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliWordSumExpansion
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HomogeneityNaturalDegree
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -55,8 +59,8 @@ theorem hsv_smul (c : ℂ) (A : Wq →L[ℂ] Wp) : B.hsVec (c • A) = c • B.h
   ext i
   simp
 
-open Classical in
 
+open Classical in
 def pTerm (P : B.Mat k r → ℂ) (w : List (B.Mat k r)) : B.DTerm k r Wp Wq where
   coef := fun g => P g • ContinuousLinearMap.id ℂ _
   coefAdj := fun g => star (P g) • ContinuousLinearMap.id ℂ _
@@ -208,13 +212,6 @@ theorem opOrder_append (Θ₁ Θ₂ : B.DiffOp k r Wp Wq) :
   exact foldr_max_init_lemma_3 _ _
 
 end basic₂
-
-def QMinorCov : Prop :=
-  ∀ (A : Type) [Ring A] [Algebra ℂ A] (n t : ℕ) (E : Fin n → Fin n → A) (Pm Qm : Matrix (Fin n) (Fin n) ℂ),
-    Qm * Pm = 1 → ∀ (a b : Fin t → Fin n) (u : ℂ),
-      qminor (Formalism.FourierDecayAlt.Q.Econj E Pm Qm) a b u =
-        ∑ a' : Fin t → Fin n, ∑ b' : Fin t → Fin n,
-          ((∏ k, Pm (a' k) (a k)) * ∏ k, Qm (b k) (b' k)) • qminor E a' b' u
 
 end
 

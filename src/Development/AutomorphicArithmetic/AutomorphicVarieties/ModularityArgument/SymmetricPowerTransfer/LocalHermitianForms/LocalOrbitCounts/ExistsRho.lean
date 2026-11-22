@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.CintIdx
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.CintIdx
+
+@[expose] public section
 
 open QuadraticAlgebra UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc
 
@@ -263,10 +267,10 @@ theorem UpperTheory.V.Z.Sym.Loc.stabU :
     have hp : ((1, ofE Δ (1 + algebraMap O K e • r)) : Sp Δ τ) =
         1 + e • ((0, ofEA O Δ τ r) : Sp Δ τ) := by
       change ((1, ofEA O Δ τ (1 + algebraMap O K e • r)) : Sp Δ τ) = _
-      rw [algebraMap_smul, map_add, map_one, map_smul]
+      rw [algebraMap_smul, map_add (f := _), map_one, map_smul]
       refine Prod.ext ?_ ?_ <;> simp
     change ρO _ = _
-    rw [hp, map_add, map_one, map_smul]
+    rw [hp, map_add (f := _), map_one, map_smul]
     rfl
   have hent : ∀ i j, IsIntegral O (((y⁻¹ * ι z * y : U3 Δ) : Matrix (Fin 3) (Fin 3) (Lsq K Δ)) i j) := by
     intro i j

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.IsCombAt
-import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsCombAt
+public import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 
@@ -129,10 +133,6 @@ def imgV {la : HeightOneSpectrum (𝓞 c.F)} (y : PtV Xo c cls PY lies la) : PY 
 def PtV.mk (la : HeightOneSpectrum (𝓞 c.F)) {T : CDVR} {io : c.F →+* T.Fr} {e : ℕ} (ho : OverLa la T.V io e)
     (y : IntFr Xo c T io) (hy : cls T io y) (eta : PY) (heta : lies T io y eta) : PtV Xo c cls PY lies la :=
   ⟨profI Xo c PY e y eta, T, io, e, ho, y, hy, eta, heta, rfl⟩
-
-theorem vAtV_mk (la : HeightOneSpectrum (𝓞 c.F)) {T : CDVR} {io : c.F →+* T.Fr} {e : ℕ}
-    (ho : OverLa la T.V io e) (y : IntFr Xo c T io) (hy : cls T io y) (eta : PY) (heta : lies T io y eta)
-    (f : Rul Xo c) : vAtV (PtV.mk la ho y hy eta heta) f = nval T.V e (evI y f) := rfl
 
 variable {la : HeightOneSpectrum (𝓞 c.F)}
 

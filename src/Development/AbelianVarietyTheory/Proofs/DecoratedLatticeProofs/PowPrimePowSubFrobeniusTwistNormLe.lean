@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EndOmega
-import Formalism.TorsionNormIteration.InverseIntegralClasses.MemSpanOfNormLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EndOmega
+public import Formalism.TorsionNormIteration.InverseIntegralClasses.MemSpanOfNormLe
+
+@[expose] public section
+
 open PowerSeries GlobalTheory.Honda
 
 namespace GlobalTheory.Honda

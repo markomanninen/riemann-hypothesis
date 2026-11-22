@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
+
+@[expose] public section
 
 open GlobalTheory.FockCompare
 open scoped ContDiff
@@ -47,7 +51,7 @@ theorem hD_formula_smooth : ∀ (G R : Type) [AddCommGroup G] [NormedAddCommGrou
     rw [← this]
     congr 1
     funext y
-    rw [map_add, add_assoc]
+    rw [map_add (f := _), add_assoc]
   rw [e]
   have h1 : ContDiff ℝ ∞ fun x : R => (om.flip u (π w + x) : ℝ) :=
     (LinearMap.toContinuousLinearMap (om.flip u)).contDiff.comp (contDiff_const.add contDiff_id)

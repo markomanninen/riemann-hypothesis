@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GoodConstOfAniso
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SumFrameIdem
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GoodConstOfAniso
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SumFrameIdem
+
+@[expose] public section
 
 noncomputable section
 

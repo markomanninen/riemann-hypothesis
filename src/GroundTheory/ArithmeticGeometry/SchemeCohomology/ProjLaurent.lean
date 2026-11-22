@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjSpace
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjSpace
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -16,13 +21,13 @@ namespace ProjSpace
 
 variable {A : Type u} [CommRing A] {n : ℕ}
 
-variable (A n) in
 
-abbrev Laurent : Type u := AddMonoidAlgebra A (Fin (n + 1) → ℤ)
+variable (A n) in
+abbrev Laurent (A : Type u) [CommRing A] (n : ℕ) : Type u := AddMonoidAlgebra A (Fin (n + 1) → ℤ)
+
 
 variable (n) in
-
-def expHom : (Fin (n + 1) →₀ ℕ) →+ (Fin (n + 1) → ℤ) where
+def expHom (n : ℕ) : (Fin (n + 1) →₀ ℕ) →+ (Fin (n + 1) → ℤ) where
   toFun e j := e j
   map_zero' := by ext; simp
   map_add' _ _ := by ext; simp
@@ -38,20 +43,20 @@ lemma sum_expHom (e : Fin (n + 1) →₀ ℕ) : ∑ j, expHom n e j = (e.degree 
   push_cast
   rfl
 
-variable (A n) in
 
+variable (A n) in
 def toLaurent : MvPolynomial (Fin (n + 1)) A →+* Laurent A n :=
   AddMonoidAlgebra.mapDomainRingHom A (expHom n)
 
-lemma toLaurent_injective : Function.Injective (toLaurent A n) :=
+lemma toLaurent_injective : Function.Injective (toLaurent (A := A) (n := n)) :=
   AddMonoidAlgebra.mapDomain_injective expHom_injective
 
 lemma toLaurent_monomial (e : Fin (n + 1) →₀ ℕ) (c : A) :
-    toLaurent A n (monomial e c) = AddMonoidAlgebra.single (expHom n e) c := by
+    toLaurent (A := A) (n := n) (monomial e c) = AddMonoidAlgebra.single (expHom n e) c := by
   rw [← single_eq_monomial]
   exact AddMonoidAlgebra.mapDomain_single
 
-def mult {p : ℕ} (i : Fin p → Fin (n + 1)) : Fin (n + 1) → ℤ := ∑ a, Pi.single (i a) 1
+def mult {p : ℕ} (i : Fin p → Fin (n + 1)) : Fin (n + 1) → ℤ := ∑ a, Pi.single (i a) (1 : ℤ)
 
 lemma mult_apply {p : ℕ} (i : Fin p → Fin (n + 1)) (j : Fin (n + 1)) :
     mult i j = ((Finset.univ.filter fun a => i a = j).card : ℤ) := by
@@ -80,14 +85,14 @@ lemma sum_nsmul_mult {p : ℕ} (i : Fin p → Fin (n + 1)) (N : ℕ) :
   rw [← Finset.smul_sum, sum_mult, nsmul_eq_mul]
 
 lemma toLaurent_X (j : Fin (n + 1)) :
-    toLaurent A n (X j) = AddMonoidAlgebra.single (Pi.single j 1) 1 := by
+    toLaurent (A := A) (n := n) (X j) = AddMonoidAlgebra.single (Pi.single j 1) 1 := by
   rw [X, toLaurent_monomial]
   congr 1
   ext j'
   simp [expHom, Finsupp.single_apply, Pi.single_apply, eq_comm]
 
 lemma toLaurent_xprod {p : ℕ} (i : Fin p → Fin (n + 1)) :
-    toLaurent A n (xprod i) = AddMonoidAlgebra.single (mult i) 1 := by
+    toLaurent (A := A) (n := n) (xprod i) = AddMonoidAlgebra.single (mult i) 1 := by
   rw [xprod, map_prod]
   simp_rw [toLaurent_X]
   rw [AddMonoidAlgebra.prod_single]
@@ -103,7 +108,7 @@ lemma isUnit_single (m : Fin (n + 1) → ℤ) :
   IsUnit.of_mul_eq_one _ (single_mul_single_neg m)
 
 lemma isUnit_toLaurent_xprod {p : ℕ} (i : Fin p → Fin (n + 1)) :
-    IsUnit (toLaurent A n (xprod i)) := by
+    IsUnit (toLaurent (A := A) (n := n) (xprod i)) := by
   rw [toLaurent_xprod]
   exact isUnit_single _
 
@@ -112,39 +117,39 @@ def awayToLaurent {p : ℕ} (i : Fin p → Fin (n + 1)) :
   IsLocalization.Away.lift (xprod i) (isUnit_toLaurent_xprod i)
 
 lemma awayToLaurent_algebraMap {p : ℕ} (i : Fin p → Fin (n + 1)) (a : MvPolynomial (Fin (n + 1)) A) :
-    awayToLaurent i (algebraMap _ _ a) = toLaurent A n a :=
+    awayToLaurent (n := n) i (algebraMap _ _ a) = toLaurent (A := A) (n := n) a :=
   IsLocalization.lift_eq _ _
 
 lemma awayToLaurent_mk {p : ℕ} (i : Fin p → Fin (n + 1)) (a : MvPolynomial (Fin (n + 1)) A) (N : ℕ) :
-    awayToLaurent i (Localization.mk a (ProjTwist.fpow (xprod i) N)) =
-      toLaurent A n a * AddMonoidAlgebra.single (-(N • mult i)) 1 := by
+    awayToLaurent (n := n) i (Localization.mk a (ProjTwist.fpow (xprod i) N)) =
+      toLaurent (A := A) (n := n) a * AddMonoidAlgebra.single (-(N • mult i)) 1 := by
   have h1 : (Localization.mk a (ProjTwist.fpow (xprod i) N) : Localization.Away (xprod (A := A) i)) *
       algebraMap (MvPolynomial (Fin (n + 1)) A) _ (xprod i ^ N) =
       algebraMap (MvPolynomial (Fin (n + 1)) A) (Localization.Away (xprod (A := A) i)) a := by
     rw [← Localization.mk_one_eq_algebraMap, ← Localization.mk_one_eq_algebraMap,
       Localization.mk_mul, Localization.mk_eq_mk_iff, Localization.r_iff_exists]
     exact ⟨1, by simp [mul_comm]⟩
-  have h2 := congrArg (awayToLaurent i) h1
+  have h2 := congrArg (awayToLaurent (n := n) i) h1
   rw [map_mul, awayToLaurent_algebraMap, awayToLaurent_algebraMap, map_pow, toLaurent_xprod,
     AddMonoidAlgebra.single_pow, one_pow] at h2
   rw [← h2, mul_assoc, AddMonoidAlgebra.single_mul_single, add_neg_cancel, one_mul,
     ← AddMonoidAlgebra.one_def, mul_one]
 
 lemma awayToLaurent_injective {p : ℕ} (i : Fin p → Fin (n + 1)) :
-    Function.Injective (awayToLaurent (A := A) i) := by
-  rw [injective_iff_map_eq_zero]
+    Function.Injective ((awayToLaurent (n := n) i : Localization.Away (xprod (A := A) i) →+* Laurent A n)) := by
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro z hz
   induction z using Localization.induction_on with
   | H x =>
     obtain ⟨a, ⟨s, N, rfl⟩⟩ := x
-    change awayToLaurent i (Localization.mk a (ProjTwist.fpow (xprod i) N)) = 0 at hz
+    change awayToLaurent (n := n) i (Localization.mk a (ProjTwist.fpow (xprod i) N)) = 0 at hz
     rw [awayToLaurent_mk] at hz
-    have ha : toLaurent A n a = 0 := by
+    have ha : toLaurent (A := A) (n := n) a = 0 := by
       have := congrArg (· * AddMonoidAlgebra.single (N • mult i) (1 : A)) hz
       simp only [zero_mul, mul_assoc] at this
       rwa [AddMonoidAlgebra.single_mul_single, neg_add_cancel, mul_one, ← AddMonoidAlgebra.one_def,
         mul_one] at this
-    rw [← map_zero (toLaurent A n)] at ha
+    rw [← map_zero (toLaurent (A := A) (n := n))] at ha
     rw [toLaurent_injective ha]
     exact Localization.mk_zero _
 
@@ -155,8 +160,8 @@ lemma Allowed.mono {s t : Set (Fin (n + 1))} {k : ℤ} {m : Fin (n + 1) → ℤ}
     (hst : s ⊆ t) : Allowed t k m :=
   ⟨h.1, fun j hj => h.2 j fun hs => hj (hst hs)⟩
 
-variable (A) in
 
+variable (A) in
 def LDeg (s : Set (Fin (n + 1))) (k : ℤ) : AddSubgroup (Laurent A n) where
   carrier := {ℓ | ∀ m, ℓ.coeff m ≠ 0 → Allowed s k m}
   zero_mem' m h := (h rfl).elim
@@ -167,11 +172,11 @@ def LDeg (s : Set (Fin (n + 1))) (k : ℤ) : AddSubgroup (Laurent A n) where
     · exact ha m h1
   neg_mem' {a} ha m h := ha m fun h1 => h (by simp [AddMonoidAlgebra.coeff_neg, h1])
 
-lemma LDeg_mono {s t : Set (Fin (n + 1))} (hst : s ⊆ t) (k : ℤ) : LDeg A s k ≤ LDeg A t k :=
+lemma LDeg_mono {s t : Set (Fin (n + 1))} (hst : s ⊆ t) (k : ℤ) : LDeg (A := A) (n := n) s k ≤ LDeg (A := A) (n := n) t k :=
   fun _ hℓ m hm => (hℓ m hm).mono hst
 
 lemma single_mem_LDeg {s : Set (Fin (n + 1))} {k : ℤ} {m : Fin (n + 1) → ℤ} (hm : Allowed s k m)
-    (c : A) : AddMonoidAlgebra.single m c ∈ LDeg A s k := by
+    (c : A) : AddMonoidAlgebra.single m c ∈ LDeg (A := A) (n := n) s k := by
   classical
   intro m' h
   rw [AddMonoidAlgebra.coeff_single, Finsupp.single_apply] at h
@@ -180,23 +185,23 @@ lemma single_mem_LDeg {s : Set (Fin (n + 1))} {k : ℤ} {m : Fin (n + 1) → ℤ
   · exact (h rfl).elim
 
 lemma coeff_toLaurent_eq_zero {a : MvPolynomial (Fin (n + 1)) A} {m : Fin (n + 1) → ℤ}
-    (hm : m ∉ Set.range (expHom n)) : (toLaurent A n a).coeff m = 0 :=
+    (hm : m ∉ Set.range (expHom n)) : (toLaurent (A := A) (n := n) a).coeff m = 0 :=
   Finsupp.mapDomain_of_notMem_range _ _ hm
 
 lemma coeff_toLaurent_expHom (a : MvPolynomial (Fin (n + 1)) A) (e : Fin (n + 1) →₀ ℕ) :
-    (toLaurent A n a).coeff (expHom n e) = a.coeff e :=
-  Finsupp.mapDomain_apply expHom_injective _ _
+    (toLaurent (A := A) (n := n) a).coeff (expHom n e) = a.coeff e :=
+  Finsupp.mapDomain_apply_of_injective expHom_injective _ _
 
 theorem mem_LDeg_iff {p : ℕ} (i : Fin (p + 1) → Fin (n + 1)) (k : ℤ) (ℓ : Laurent A n) :
-    ℓ ∈ LDeg A (Set.range i) k ↔
+    ℓ ∈ LDeg (A := A) (n := n) (Set.range i) k ↔
       ∃ z ∈ ProjTwist.awayDeg (grading A n) (xprod_mem i) (Nat.succ_pos p) k,
-        awayToLaurent i z = ℓ := by
+        awayToLaurent (n := n) i z = ℓ := by
   classical
   constructor
   · intro hℓ
     let G := (ProjTwist.awayDeg (grading A n) (xprod_mem (A := A) i) (Nat.succ_pos p) k).map
-      (awayToLaurent i).toAddMonoidHom
-    suffices h : ∀ ℓ ∈ LDeg A (Set.range i) k, ℓ ∈ G by
+      (awayToLaurent (n := n) i).toAddMonoidHom
+    suffices h : ∀ ℓ ∈ LDeg (A := A) (n := n) (Set.range i) k, ℓ ∈ G by
       obtain ⟨z, hz, rfl⟩ := h ℓ hℓ
       exact ⟨z, hz, rfl⟩
     intro ℓ hℓ
@@ -233,7 +238,7 @@ theorem mem_LDeg_iff {p : ℕ} (i : Fin (p + 1) → Fin (n + 1)) (k : ℤ) (ℓ 
       ring
     refine ⟨Localization.mk (monomial e c) (ProjTwist.fpow (xprod i) N),
       ProjTwist.mk_mem_awayDeg _ _ (isHomogeneous_monomial c rfl) hdeg, ?_⟩
-    change awayToLaurent i _ = _
+    change awayToLaurent (n := n) i _ = _
     rw [awayToLaurent_mk, toLaurent_monomial, AddMonoidAlgebra.single_mul_single, hexp, mul_one,
       add_neg_cancel_right]
   · rintro ⟨z, ⟨N, j, a, ha, hj, rfl⟩, rfl⟩ m hm
@@ -269,13 +274,13 @@ lemma isUnit_algebraMap_xprod {p q : ℕ} {i : Fin p → Fin (n + 1)} {i' : Fin 
 lemma locMap_eq_of_awayToLaurent_eq {p q : ℕ} {i : Fin p → Fin (n + 1)}
     {i' : Fin q → Fin (n + 1)} (h : Set.range i ⊆ Set.range i')
     {z : Localization.Away (xprod (A := A) i)} {z' : Localization.Away (xprod (A := A) i')}
-    (hzz : awayToLaurent i z = awayToLaurent i' z') (x : ProjectiveSpectrum (grading A n))
+    (hzz : awayToLaurent (n := n) i z = awayToLaurent (n := n) i' z') (x : ProjectiveSpectrum (grading A n))
     (hx : xprod i ∉ x.asHomogeneousIdeal) (hx' : xprod i' ∉ x.asHomogeneousIdeal) :
     ProjTwist.locMap x hx z = ProjTwist.locMap x hx' z' := by
   let can : Localization.Away (xprod (A := A) i) →+* Localization.Away (xprod (A := A) i') :=
     IsLocalization.Away.lift (xprod i) (isUnit_algebraMap_xprod h)
   have hcan : can.comp (algebraMap _ _) = algebraMap _ _ := IsLocalization.lift_comp _
-  have h1 : (awayToLaurent i').comp can = awayToLaurent i := by
+  have h1 : (awayToLaurent (n := n) i').comp can = awayToLaurent (n := n) i := by
     apply IsLocalization.ringHom_ext (Submonoid.powers (xprod (A := A) i))
     rw [RingHom.comp_assoc, hcan]
     ext a

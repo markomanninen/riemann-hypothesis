@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.ActLPos
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.ActLPos
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,8 @@ theorem bd_eC (m : ℕ) :
       map_add] at hx hy ⊢
     rw [hx, hy]
   | single g a =>
-    simp only [LinearMap.coe_comp, Function.comp_apply, LinearEquiv.coe_coe,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.coe_comp, Function.comp_apply, LinearEquiv.coe_coe,
       LinearMap.baseChange_tmul, eC_single, bdZ_single, tmul_add, tmul_sum, map_add, map_sum,
       bd, Finsupp.linearCombination_single, smul_add, Finset.smul_sum, Finsupp.smul_single,
       smul_eq_mul, mul_one]

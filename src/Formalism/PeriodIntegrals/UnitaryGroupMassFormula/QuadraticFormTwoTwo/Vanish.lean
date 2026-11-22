@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticFormTwoTwo.CbStrictMonoOfAnti
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticFormTwoTwo.CbStrictMonoOfAnti
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ContDiff
@@ -26,7 +30,7 @@ private theorem linearMap_coeAddMonoidHom_eq_mapRange_smul {ι : Type*} [Decidab
     change _ = DirectSum.coeAddMonoidHom S (DirectSum.of (fun j => S j) i _)
     rw [DirectSum.coeAddMonoidHom_of]
     rfl
-  | add f g hf hg => simp only [map_add, hf, hg]
+  | add f g hf hg => simp only [map_add (f := _), hf, hg]
 
 theorem vanish_match (hBr : Branching) {P : M.Par} (hP : P.OK) {Wp : Type} [NormedAddCommGroup Wp]
     [NormedSpace ℂ Wp] [FiniteDimensional ℂ Wp] {z : Fin (2 * P.r + P.k + 1) → ℂ} {π : Mx P.k P.r → (Wp →L[ℂ] Wp)}

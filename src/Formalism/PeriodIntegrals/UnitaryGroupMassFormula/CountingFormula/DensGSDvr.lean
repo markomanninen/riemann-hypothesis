@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ def resF (x : F) : 𝓀[F] := if h : x ∈ 𝒪[F] then IsLocalRing.residue 𝒪
 def liftF (c : 𝓀[F]) : F := ((IsLocalRing.residue_surjective c).choose : 𝒪[F])
 
 theorem resF_coe (o : 𝒪[F]) : resF F (o : F) = IsLocalRing.residue 𝒪[F] o := by
-  rw [resF, dif_pos o.2]
+  rw [resF, dite_eq_left o.2]
 
 theorem liftF_mem (c : 𝓀[F]) : liftF F c ∈ 𝒪[F] :=
   (IsLocalRing.residue_surjective c).choose.2
@@ -36,7 +40,8 @@ theorem resF_sum_mul {ι : Type} [Fintype ι] (c x : ι → F) (hc : ∀ i, c i 
     resF F (∑ i, c i * x i) = ∑ i, resF F (c i) * resF F (x i) := by
   have hs : ((∑ i, (⟨c i, hc i⟩ : 𝒪[F]) * ⟨x i, hx i⟩ : 𝒪[F]) : F) = ∑ i, c i * x i := by
     simp
-  rw [← hs, resF_coe, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hs, resF_coe, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, ← resF_coe F ⟨c i, hc i⟩, ← resF_coe F ⟨x i, hx i⟩]
 

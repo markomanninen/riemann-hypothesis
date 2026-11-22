@@ -1,23 +1,28 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.Generic
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.GamAt
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.TheoremZeroOfReducedInputs
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.LiftIndexPowFourLeDegree
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.AdmissibleModuleIffLatticeQuotients
-import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.MaximalCuspKernels.KerExistsStatement
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.SupBoundPageRows
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.LocalUnfoldBStatementHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.JInjRdOf
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspMulOf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.CurvNumStatementPf
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.FirstMinimumInvariantContinuousPosOnFrames
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.RunWeightDom
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.MarginsOfGaps
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsBaseEmbeddingReadingForms
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsIsHomogeneousAevalEqZero
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.MemSpanCuspReadingsIffComponents
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ComponentModelWeightDimensionDictionary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.Generic
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.GamAt
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.TheoremZeroOfReducedInputs
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.LiftIndexPowFourLeDegree
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.AdmissibleModuleIffLatticeQuotients
+public import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.ArcLineFunctions.ArcDatumIsArcPointBasis
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.SupBoundPageRows
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.LocalUnfoldBStatementHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.JInjRdOf
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspMulOf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.CurvNumStatementPf
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.FirstMinimumInvariantContinuousPosOnFrames
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.RunWeightDom
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.MarginsOfGaps
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsBaseEmbeddingReadingForms
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsIsHomogeneousAevalEqZero
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.MemSpanCuspReadingsIffComponents
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ComponentModelWeightDimensionDictionary
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.WeightAlgebra Formalism.MainNotions.Gaps Formalism.MainNotions.Gaps.EtaleWeightGaps Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up GlobalTheory.RunIn GlobalTheory.Shares
 
 noncomputable section
@@ -203,7 +208,11 @@ theorem finrank_host (D : D7) : Module.finrank ℚ D.host.E / 2 = D.R.f := by
   have h' : Module.finrank ℚ D.host.E = 2 * D.R.f := by exact_mod_cast h
   omega
 
-theorem f_pos (D : D7) : 0 < D.R.f := by unfold Ranks.f Ranks.n; positivity
+theorem f_pos (D : D7) : 0 < D.R.f := by
+  have := D.R.two_le_m
+  have := D.R.m_le_f
+  show 0 < 2 * D.R.ord
+  omega
 
 theorem two_mul_half (p : ℕ) : (2 : ℝ) * ((p * (p - 1) / 2 : ℕ) : ℝ) = p * (p - 1) := by
   rw [← Nat.choose_two_right, Nat.cast_choose_two]; ring
@@ -225,7 +234,7 @@ theorem wt_ext {u v : WeightFamilies.Wt D j} (h1 : u.aP = v.aP) (h2 : u.aM = v.a
 def valAt (k : (T.U j T.σ₀).Comp) (x : ((T.U j T.σ₀).X k).dom) : T.R j →+* ℂ where
   toFun f := rdU (T.U j T.σ₀) f k x.1
   map_zero' := by rw [map_zero]; rfl
-  map_add' f g := by rw [map_add]; rfl
+  map_add' f g := by rw [map_add (f := _)]; rfl
   map_mul' f g := by rw [rdU_mul]; rfl
   map_one' := by
     rw [ReciprocityTheory.ChartRestriction.G.PullbackSections.rdU_apply_dom]
@@ -240,8 +249,8 @@ theorem valAt_algebraMap (k : (T.U j T.σ₀).Comp) (x : ((T.U j T.σ₀).X k).d
   change T.σ₀ a * rdU (T.U j T.σ₀) 1 k x.1 = _
   rw [h1, mul_one]
 
-include h hj in
 
+include h hj in
 theorem homRel_of_cusp (u : WeightFamilies.Wt D j) {m : ℕ} (hm : WeightFamilies.dimY D j + 2 ≤ m) (F : Fin m → T.R j)
     (hF : ∀ a, F a ∈ T.C j u) (k : (T.U j T.σ₀).Comp) (v : Fin m → Frame ((T.U j T.σ₀).X k).Ψ D.R.r → ℂ)
     (hv : ∀ a (x : ((T.U j T.σ₀).X k).dom), v a x.1 = valAt h j hj k x (F a)) :

@@ -1,11 +1,16 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.ZeroC
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.GlobSerreSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RepUnique
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeCocycleClassIndependent
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CupListRepresentativeOfForms
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CechDOneZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StCocycle
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.ZeroC
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.GlobSerreSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RepUnique
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeCocycleClassIndependent
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CupListRepresentativeOfForms
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CechDOneZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StCocycle
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 set_option autoImplicit false
 open CategoryTheory AlgebraicGeometry GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb GlobalTheory.CompanionTheory.ConeLocal
@@ -70,15 +75,20 @@ theorem cupList_diff (hF : IsFil Φ Fil) : ∀ {m : ℕ} (ℓ : Fin m → CH.Cn 
       (fun i => hd _) (fun i => hα _)
     have hl' : ℓ (Fin.last m) + CH.d _ 0 (α (Fin.last m)) ∈ FC (Fil ((1 : ℕ) : ℤ)) 1 :=
       add_mem (hℓ _) (d_mem (hα _))
-    have hdl' : CH.d _ 1 (ℓ (Fin.last m) + CH.d _ 0 (α (Fin.last m))) = 0 := by
-      rw [map_add, hd, CH.d_d, add_zero]
-    obtain ⟨H₁, hH₁, e₁⟩ := bd_cup hF ih hl' hdl'
-    obtain ⟨H₂, hH₂, e₂⟩ := cup_d hF (cupList_mem hF (fun i : Fin m => ℓ i.castSucc) fun i => hℓ _)
-      (d_cupList Φ.A _ fun i => hd _) (hα (Fin.last m))
+    have hdl' : CH.d (CH.modF Φ.A) 1
+        (ℓ (Fin.last m) + CH.d (CH.modF Φ.A) 0 (α (Fin.last m))) = 0 := by
+      rw [map_add (f := _), hd, CH.d_d, add_zero]
+    have h₁ := bd_cup (m := m) (Fil := Fil) hF ih hl' hdl'
+    rcases h₁ with ⟨H₁, hH₁, e₁⟩
+    let ℓ' : Fin m → CH.Cn (CH.modF Φ.A) 1 := fun i => ℓ i.castSucc
+    have h₂ := cup_d (Φ := Φ) (Fil := Fil) (m := m) (B := cupListC Φ.A ℓ')
+      (a := α (Fin.last m)) hF (cupList_mem hF ℓ' fun i => hℓ i.castSucc)
+      (d_cupList Φ.A ℓ' fun i => hd i.castSucc) (hα (Fin.last m))
+    rcases h₂ with ⟨H₂, hH₂, e₂⟩
     refine ⟨H₁ + H₂, add_mem hH₁ hH₂, ?_⟩
-    rw [map_add, ← e₁, ← e₂]
+    rw [map_add (f := _), ← e₁, ← e₂]
     change (CH.mulP Φ.A).cupC rfl _ (ℓ (Fin.last m) + CH.d _ 0 (α (Fin.last m))) - (CH.mulP Φ.A).cupC rfl _ (ℓ (Fin.last m)) = _
-    simp only [map_sub, map_add, LinearMap.sub_apply]
+    simp only [map_sub, map_add (f := _), LinearMap.sub_apply]
     abel
 
 theorem rep_of_bd : ∀ {m : ℕ} {z z' : CH.Cn (CH.modF Φ.A) m} {c : CH.H (sq (Fil (m : ℤ)) (Fil ((m : ℤ) + 1))) m},
@@ -89,7 +99,9 @@ theorem rep_of_bd : ∀ {m : ℕ} {z z' : CH.Cn (CH.modF Φ.A) m} {c : CH.H (sq 
     rw [e]
     exact h
   | n + 1, z, z', c, hb, h => by
-    obtain ⟨H, hH, e⟩ := hb
+    change ∃ H : CH.Cn (CH.modF Φ.A) n,
+      H ∈ FC (Fil ((n + 1 : ℕ) : ℤ)) n ∧ z' - z = CH.d (CH.modF Φ.A) n H at hb
+    rcases hb with ⟨H, hH, e⟩
     have h2 := rep_add h (rep_d (a := Fil ((n + 1 : ℕ) : ℤ)) (b := Fil (((n + 1 : ℕ) : ℤ) + 1)) H (mem_FC.1 hH))
     rw [add_zero] at h2
     have e' : z' = z + CH.d _ n H := by rw [← e]; abel

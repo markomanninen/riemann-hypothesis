@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.JPMemAwayP
-import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.RepTie
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.JPMemAwayP
+public import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.RepTie
+
+@[expose] public section
 
 noncomputable section
 

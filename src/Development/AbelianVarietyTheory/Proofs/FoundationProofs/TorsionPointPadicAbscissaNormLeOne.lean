@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DifferentiableSqTh
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.Cval
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralJAndAlgebraicData
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.WeierstrassPTorsionIntegralAndDistinctMod
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DifferentiableSqTh
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.Cval
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralJAndAlgebraicData
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.WeierstrassPTorsionIntegralAndDistinctMod
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
 
@@ -30,7 +35,7 @@ theorem Rel.map_iff {K L : Type*} [CommRing K] [CommRing L] {f : K →+* L} (hf 
     (W : WeierstrassCurve K) (X₁ Z₁ X₂ Z₂ X₃ Z₃ X₄ Z₄ : K) :
     Rel (W.map f) (f X₁) (f Z₁) (f X₂) (f Z₂) (f X₃) (f Z₃) (f X₄) (f Z₄) ↔
       Rel W X₁ Z₁ X₂ Z₂ X₃ Z₃ X₄ Z₄ := by
-  simp only [Rel, prodF, sumF, ← hf.eq_iff, map_mul, map_add, map_sub, map_pow, map_ofNat,
+  simp only [Rel, prodF, sumF, ← hf.eq_iff, map_mul, map_add (f := _), map_sub, map_pow, map_ofNat,
     WeierstrassCurve.map_b₂, WeierstrassCurve.map_b₄, WeierstrassCurve.map_b₆, WeierstrassCurve.map_b₈]
 
 theorem Rel.variableChange {K : Type*} [CommRing K] {W : WeierstrassCurve K}
@@ -55,8 +60,8 @@ theorem Rel.variableChange {K : Type*} [CommRing K] {W : WeierstrassCurve K}
   rw [hp, hs]
   linear_combination ((C.u⁻¹ : Kˣ) : K) ^ 10 * (h1 - 2 * C.r * h2 + C.r ^ 2 * h3)
 
-open IsLocalRing in
 
+open IsLocalRing in
 theorem multiples {K : Type*} [Field K] (O : ValuationSubring K) (W : WeierstrassCurve K)
     (h2 : W.b₂ ∈ O) (h4 : W.b₄ ∈ O) (h6 : W.b₆ ∈ O) (h8 : W.b₈ ∈ O) (X Z : ℕ → K)
     (hne : ∀ k, X k = 0 → Z k ≠ 0) (hZ : Z 0 = 0)

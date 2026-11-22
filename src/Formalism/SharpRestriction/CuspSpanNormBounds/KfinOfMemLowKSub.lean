@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.PairOfInputs
-import Formalism.SharpRestriction.CuspSpanNormBounds.ExpansionFromLemmaB
-import Formalism.SharpRestriction.CuspSpanNormBounds.LowestKTypeMultiplicity
-import Formalism.SharpRestriction.CuspSpanNormBounds.UnimodularSchurMeasures.SmoothVectorsTranslateUnitary
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.DoubleBoundAndExtensionOfSmooth
+public import Formalism.SharpRestriction.CuspSpanNormBounds.ExpansionFromLemmaB
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LowestKTypeMultiplicity
+public import Formalism.SharpRestriction.CuspSpanNormBounds.UnimodularSchurMeasures.SmoothVectorsTranslateUnitary
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset
 open scoped InnerProductSpace ContDiff
@@ -42,7 +46,7 @@ theorem finset_sup_kstable {n : ℕ} (ε : Fin n → Bool) (τ : Matrix (Fin n) 
       infer_instance
     · intro g hg v hv
       obtain ⟨x, hx, y, hy, rfl⟩ := Submodule.mem_sup.1 hv
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem_sup (hA.2 g hg x hx) (hS.2 g hg y hy)
 
 theorem kfin_of_mem_lowKSub {n : ℕ} {ε : Fin n → Bool} {lam : Fin n → ℝ}
@@ -70,17 +74,6 @@ def smoothSub (σ : Mx k r → (H →L[ℂ] H)) : Submodule ℂ H where
   add_mem' := fun h1 h2 => Formalism.MainNotions.LeviCoordinates.smooth_vectors_add h1 h2
   zero_mem' := zero_mem_smoothVecs σ
   smul_mem' := fun c _ h => Formalism.MainNotions.LeviCoordinates.smooth_vectors_smul c h
-
-theorem ddSmooth_of [CompleteSpace H] (hKS : Formalism.MainNotions.DiscreteSeriesInnerProducts.KFinSmooth) {ε : Fin (2 * r + k + 1) → Bool}
-    {lam : Fin (2 * r + k + 1) → ℝ} {σ : Mx k r → (H →L[ℂ] H)} {w0 : H} (hσ : IsDSHpk k r ε lam σ)
-    (hw0 : IsLowUnitH k r ε lam σ w0) : DDSmoothAt σ w0 := by
-  have hw : w0 ∈ smoothVecs (k := k) (r := r) σ := hKS k r ε lam H σ hσ w0 (kfinHpk_of_lowUnitH hw0)
-  have hle : DDsp σ w0 ≤ smoothSub σ := by
-    refine Submodule.span_le.2 ?_
-    rintro _ ⟨g, hg, rfl⟩
-    exact Formalism.MainNotions.LeviCoordinates.smooth_vectors_translate_unitary (fun _ ha _ hb => Formalism.MainNotions.LeviCoordinates.discrete_series_map_mul hσ ha hb) hw hg
-  intro u hu
-  exact hle hu
 
 end Smooth
 

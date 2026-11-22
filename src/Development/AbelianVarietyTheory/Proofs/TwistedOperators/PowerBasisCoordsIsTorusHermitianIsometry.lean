@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CoordEquivApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CoordEquivApply
+
+@[expose] public section
+
 open MeasureTheory Set Filter Polynomial NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.IndefiniteRowSideFullHecke.PlusPolynomialRoots GlobalTheory.TrEll
@@ -15,13 +20,16 @@ theorem trace_mul_star_eq_sum (z z' : Fld P) :
       Algebra.trace E (Fld P) (z * star' P z') := by
   have hs : star' P z' = ∑ i, σ ((powB P).repr z' i) • star' P (powB P i) := by
     conv_lhs => rw [← (powB P).sum_repr z']
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun i _ => by
       rw [Algebra.smul_def, map_mul, star'_algebraMap, ← Algebra.smul_def]
-  rw [hs, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hs, Finset.mul_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   conv_rhs => rw [← (powB P).sum_repr z]
-  rw [Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_mul, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [smul_mul_smul_comm, map_smul, smul_eq_mul, gramOne, Matrix.of_apply]
   ring
@@ -34,12 +42,12 @@ theorem isIsom_coordEquiv : ∀ (F E : Type) [Field F] [Field E] [Algebra F E] (
   induction y using TensorProduct.induction_on with
   | zero => simp
   | add y₁ y₂ h₁ h₂ =>
-    simp only [map_add, mul_add, add_mul, Finset.sum_add_distrib, h₁, h₂]
+    simp only [map_add (f := _), mul_add, add_mul, Finset.sum_add_distrib, h₁, h₂]
   | tmul a z =>
     induction y' using TensorProduct.induction_on with
     | zero => simp
     | add y₁ y₂ h₁ h₂ =>
-      simp only [map_add, mul_add, add_mul, Finset.sum_add_distrib, h₁, h₂]
+      simp only [map_add (f := _), mul_add, add_mul, Finset.sum_add_distrib, h₁, h₂]
     | tmul a' z' =>
       have e1 : ∀ e : E, sigR k σ (a' ⊗ₜ[F] e) = a' ⊗ₜ[F] σ e := fun e => rfl
       have e2 : sigR k (star' P) (a' ⊗ₜ[F] z') = a' ⊗ₜ[F] star' P z' := rfl

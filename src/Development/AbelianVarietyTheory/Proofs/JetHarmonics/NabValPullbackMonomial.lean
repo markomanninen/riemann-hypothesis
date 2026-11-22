@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.NabTrans
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.InvariantDerivAlongEndo
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.NabTrans
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.InvariantDerivAlongEndo
+
+@[expose] public section
 
 set_option autoImplicit false
 

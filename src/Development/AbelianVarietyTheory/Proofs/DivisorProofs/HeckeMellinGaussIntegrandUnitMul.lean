@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CompletedLStripBounds
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormWt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousTerm
+module
+
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CompletedLStripBounds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormWt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousTerm
+
+@[expose] public section
+
 open NumberField MeasureTheory
 
 noncomputable section
@@ -37,7 +42,7 @@ theorem factor_shift (n : ℤ) (y : ℝ) {z : ℂ} (hz : z ≠ 0) (w : ℂ) :
     rw [hE]; push_cast; field_simp
   rw [hv, hmon_mul_unit hζ, norm_mul, hζ, one_mul, mul_assoc]
 
-theorem sum_ulog {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] {I : Type} [Fintype I]
+theorem sum_ulog {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] {I : Type} [Fintype I]
     (φ : I → K →+* ℂ) (hφ : GlobalTheory.CMVal.IsCMType φ) (u : (𝓞 K)ˣ) : ∑ i, GlobalTheory.HeckeTheta.ulog φ u i = 0 := by
   have hbij : Function.Bijective (fun i => InfinitePlace.mk (φ i)) := by
     constructor

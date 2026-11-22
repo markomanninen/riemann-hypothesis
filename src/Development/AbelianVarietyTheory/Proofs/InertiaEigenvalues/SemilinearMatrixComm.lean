@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MapCSmulMulVec
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBin
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoordApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MapCSmulMulVec
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBin
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoordApply
+
+@[expose] public section
+
 open PowerSeries Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.NB GlobalTheory.CycFr GlobalTheory.WachTie
 
 namespace GlobalTheory.WachTie
@@ -15,12 +20,14 @@ theorem semilinear_matrix_comm {A D : Type} [CommRing A] [AddCommGroup D] [Modul
     (p k : Fin r) :
     e * ∑ m, Q p m * τ (P m k) = τ e * ∑ m, P p m * σ (Q m k) := by
   have h1 : τ e • g (f (b k)) = ∑ p, (∑ m, Q p m * τ (P m k)) • b p := by
-    rw [← hg, hP, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hg, hP, map_sum]
     simp only [hg, hQ, Finset.smul_sum, Finset.sum_smul, smul_smul]
     rw [Finset.sum_comm]
     simp only [mul_comm]
   have h2 : e • f (g (b k)) = ∑ p, (∑ m, P p m * σ (Q m k)) • b p := by
-    rw [hQ, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hQ, map_sum, Finset.smul_sum]
     simp only [hf, smul_comm e, hP, Finset.smul_sum, Finset.sum_smul, smul_smul]
     rw [Finset.sum_comm]
     simp only [mul_comm]
@@ -50,7 +57,8 @@ theorem matrices_comm : ∀ {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K
   apply hj
   have h := congrFun (key p k) i
   simp only [Pi.mul_apply, Finset.sum_apply, Pi.pow_apply, map_pow] at h
-  simp only [Matrix.smul_apply, Matrix.mul_apply, Matrix.map_apply, smul_eq_mul, map_mul, map_pow,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.smul_apply, Matrix.mul_apply, Matrix.map_apply, smul_eq_mul, map_mul, map_pow,
     map_sum, hφ, hγ]
   exact h
 

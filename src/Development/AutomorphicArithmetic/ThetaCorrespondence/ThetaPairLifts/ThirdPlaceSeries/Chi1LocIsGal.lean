@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormVEqAbsNorm
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormVEqAbsNorm
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -37,9 +41,9 @@ theorem chi1_loc_isGal_alt : ∀ (D : D7) (cf : CharFrame D) (jE : D.host.E →+
     rw [hj] at h1
     have h4 : D.ntw.l (T.twOf i) = X.nd.l i := T.twOf_l i
     rw [h4] at h2
-    simp only [Formalism.L2.NC.NChiData.firstHeckeCharacter, Formalism.L2.NC.HC.mul_χ, Formalism.L2.NC.HC.inv_χ, MonoidHom.mul_apply,
-      MonoidHom.inv_apply, h1, h2, h3]
-    rfl
+    change (Bs.chiD.mu0 (X.nd.j i)).χ x * (Bs.chiD.del (T.twOf i)).χ x *
+      (Bs.chiD.etaT.χ x)⁻¹ = (cf.mu0 j').1 x * (cf.delAt (X.nd.l i)).1 x * (cf.eta.1 x)⁻¹
+    rw [h1, h2, h3]
   set χb := GlobalTheory.GalChar.block (cf.mu0 j' * cf.delAt (X.nd.l i)) cf.eta D.R.r with hχb
   have key : ∀ P ∉ B1, ∃ x : ↥D.LL0, Formalism.L2.NC.complexEmbeddingRestrictedToSubfield D x = ((χb.val P : ℂˣ) : ℂ)⁻¹ ∧
       ∀ σ : Formalism.ConjugateSelfDual.G D.host.E D.nd.Om, IsFrob (F := D.host.E) (D.nd.plOm.1 P) (normV P) σ →

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.Params
-import Formalism.HermitianLattices.StatementLat
-import Formalism.HermitianLattices.StatementMass
-import Formalism.SatakeDualWeyl.Statement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.Params
+public import Formalism.HermitianLattices.StatementLat
+public import Formalism.HermitianLattices.StatementMass
+public import Formalism.SatakeDualWeyl.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,9 +67,6 @@ def IsDefinite (S : HSpace E) : Prop :=
   ∀ τ : E →+* ℂ, S.sig τ = (S.rank, 0) ∨ S.sig τ = (0, S.rank)
 
 def IsPosDef (S : HSpace E) : Prop := ∀ τ : E →+* ℂ, S.sig τ = (S.rank, 0)
-
-def IsDefOneSign (S : HSpace E) : Prop :=
-  (∀ τ : E →+* ℂ, S.sig τ = (S.rank, 0)) ∨ (∀ τ : E →+* ℂ, S.sig τ = (0, S.rank))
 
 def IsIsomEmb (S S' : HSpace E) (ι : S.V →ₗ[E] S'.V) : Prop :=
   ∀ x y, S'.hT (ι x) (ι y) = S.hT x y

@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.BasicLiftAll
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BasicLift
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorRepresentations
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAlgebraFacts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftCapelliOperators
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftOfFunctions
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutFpmDecay
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianHaarMeasure.SumFourCommVersion
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.JdPolyOKPolynomialOperators
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QuantumMinorSumPolynomialOperator
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.BasicLiftAll
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BasicLift
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorRepresentations
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAlgebraFacts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftCapelliOperators
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftOfFunctions
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutFpmDecay
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianHaarMeasure.SumFourCommVersion
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.JdPolyOKPolynomialOperators
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QuantumMinorSumPolynomialOperator
+
+@[expose] public section
 
 namespace GlobalTheory.CapelliLead
 
@@ -23,7 +27,7 @@ def Der (μ : R →ₐ[ℂ] A) (a : A) (x x' : R) : Prop := a * μ x - μ x * a 
 theorem Der.mul {μ : R →ₐ[ℂ] A} {a : A} {x x' y y' : R} (h : Der μ a x x') (h' : Der μ a y y') :
     Der μ a (x * y) (x' * y + x * y') := by
   unfold Der at *
-  rw [map_add, map_mul, map_mul, map_mul, ← h, ← h']
+  rw [map_add (f := _), map_mul, map_mul, map_mul, ← h, ← h']
   noncomm_ring
 
 theorem der_intCast (μ : R →ₐ[ℂ] A) (a : A) (n : ℤ) : Der μ a n 0 := by
@@ -33,7 +37,8 @@ theorem der_intCast (μ : R →ₐ[ℂ] A) (a : A) (n : ℤ) : Der μ a n 0 := b
 theorem der_sum {μ : R →ₐ[ℂ] A} {a : A} {ι : Type} (s : Finset ι) {x x' : ι → R}
     (h : ∀ i ∈ s, Der μ a (x i) (x' i)) : Der μ a (∑ i ∈ s, x i) (∑ i ∈ s, x' i) := by
   unfold Der at *
-  rw [map_sum, map_sum, Finset.mul_sum, Finset.sum_mul, ← Finset.sum_sub_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.mul_sum, Finset.sum_mul, ← Finset.sum_sub_distrib]
   exact Finset.sum_congr rfl h
 
 theorem der_prod_zero {μ : R →ₐ[ℂ] A} {a : A} {ι : Type} (s : Finset ι) {x : ι → R}
@@ -225,7 +230,8 @@ theorem lead_std {p t : ℕ} (μ : R →ₐ[ℂ] A) (E : Fin (p + t) → Fin (p 
       push_cast; ring
     have e2 : (∑ π : Equiv.Perm (Fin p), ((Equiv.Perm.sign π : ℤ) : A) * H fun i => σ (Fin.castAdd t (π i))) =
         μ (Matrix.of fun a j : Fin p => fi * η a (σ (Fin.castAdd t j))).det := by
-      rw [← Matrix.det_transpose, Matrix.det_apply', map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← Matrix.det_transpose, Matrix.det_apply', map_sum]
       refine Finset.sum_congr rfl fun π _ => ?_
       rw [map_mul, map_intCast, ← List.prod_ofFn, map_list_prod, List.map_ofFn]
       rfl
@@ -249,10 +255,13 @@ theorem lead_std {p t : ℕ} (μ : R →ₐ[ℂ] A) (E : Fin (p + t) → Fin (p 
 
 theorem exists_completion {p : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V] (β : Fin p → V)
     (hβ : LinearIndependent ℂ β) : ∀ t : ℕ, p + t ≤ Module.finrank ℂ V →
-      ∃ γ : Fin (p + t) → V, LinearIndependent ℂ γ ∧ ∀ j, γ (Fin.castAdd t j) = β j
-  | 0, _ => ⟨β, hβ, fun _ => rfl⟩
-  | t + 1, h => by
-    obtain ⟨γ, hγ, e⟩ := exists_completion β hβ t (by omega)
+      ∃ γ : Fin (p + t) → V, LinearIndependent ℂ γ ∧ ∀ j, γ (Fin.castAdd t j) = β j := by
+  intro t
+  induction t with
+  | zero => exact fun _ => ⟨β, hβ, fun _ => rfl⟩
+  | succ t ih =>
+    intro h
+    obtain ⟨γ, hγ, e⟩ := ih (by omega)
     obtain ⟨x, hx⟩ := exists_linearIndependent_snoc_of_lt_finrank hγ (by omega)
     refine ⟨Fin.snoc (α := fun _ => V) γ x, hx, fun j => ?_⟩
     rw [← e j]
@@ -275,7 +284,8 @@ theorem lead_conj_qdet {n p t : ℕ} (hn : n = p + t) (μ : R →ₐ[ℂ] A) (E 
   obtain ⟨F, c, hF, hs, hc⟩ := lead_std μ (Econj E Q⁻¹ Q) (Formalism.QuantumDeterminants.gl_relation_adjoint_holds A _ E _ _ hE h1)
     (fun i a => ∑ c, Q a c • Y i c) (fun i a b c => by
       have := PI.QnHermHaar.leibVec E (fun c => μ (Y i c)) Q⁻¹ Q h1 (hY i) a b c
-      simpa only [PI.QnHermHaar.vecC, map_sum, map_smul] using this) f fi
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa only [PI.QnHermHaar.vecC, map_sum, map_smul] using this) f fi
     (by rw [hf]; simp only [Q, Matrix.of_apply, e]) hfi u
   refine ⟨F, c, hF, fun s => ?_, ?_⟩
   · rw [hs, (Formalism.FourierDecayAlt.P.contractions_covariant A _ E _ _ hE h1 h2 u 0 0 0 0).1]
@@ -367,9 +377,9 @@ theorem b_top {r : ℕ} (L : LevelData A r) (st : Start A) (h : AHyp L st) (Y : 
     have q10 : cZb L (st.QQ Y 1 0) = st.QQ Y 1 0 := cj_fix _ _ _ _ b10.eq
     have q11 : cZb L (st.QQ Y 1 1) = st.QQ Y 1 1 := cj_fix _ _ _ _ b11.eq
     have n1 : cZb L (cDrb L (nP L st Y 1)) = nP L st Y 1 := by
-      simp only [nP, map_add, map_mul, (qq_Dr h Y _ _).2, (e2.P Y).1, (e2.P Y).2, (e4.P Y).1, (e4.P Y).2, add_zero, q10, q11]
+      simp only [nP, map_add (f := _), map_mul, (qq_Dr h Y _ _).2, (e2.P Y).1, (e2.P Y).2, (e4.P Y).1, (e4.P Y).2, add_zero, q10, q11]
     have n0 : cZb L (cDrb L (nP L st Y 0)) = nP L st Y 0 + bP L st Y := by
-      simp only [bP, nP, map_add, map_mul, (qq_Dr h Y _ _).2, (e2.P Y).1, (e2.P Y).2, (e4.P Y).1, (e4.P Y).2, add_zero,
+      simp only [bP, nP, map_add (f := _), map_mul, (qq_Dr h Y _ _).2, (e2.P Y).1, (e2.P Y).2, (e4.P Y).1, (e4.P Y).2, add_zero,
         q00, q01]
       noncomm_ring
     have nb : cZb L (cDrb L (bP L st Y)) = bP L st Y := by
@@ -380,7 +390,7 @@ theorem b_top {r : ℕ} (L : LevelData A r) (st : Start A) (h : AHyp L st) (Y : 
       have : L.Dbi ^ (s + 1) * cst L st Y * L.Db ^ (s + 1) = L.Dbi * (L.Dbi ^ s * cst L st Y * L.Db ^ s) * L.Db := by
         rw [pow_succ', pow_succ]; simp only [mul_assoc]
       rw [this, ih, ← hχ]
-      simp only [map_add, map_mul, e2.smul, e4.smul, n0, n1, nb, (e2.M _).1, (e2.M _).2, (e4.M _).1, (e4.M _).2, sub_zero]
+      simp only [map_add (f := _), map_mul, e2.smul, e4.smul, n0, n1, nb, (e2.M _).1, (e2.M _).2, (e4.M _).1, (e4.M _).2, sub_zero]
       push_cast
       rw [sub_sub, add_smul, one_smul]
       noncomm_ring
@@ -415,8 +425,8 @@ theorem smooth_inv {i : Fin (r + 1)} {c : Mx k r → ℂ} (hc : SmoothLev k r i 
   rw [← he g₀ hgU hg₀.1]
   exact h0 g₀ hg₀
 
-variable (k r D) in
 
+variable (k r D) in
 def smAlg : Subalgebra ℂ (Mx k r → ℂ) where
   carrier := {c | SmoothLev k r 0 D c}
   mul_mem' := fun ha hb => smooth_coef ha hb
@@ -426,8 +436,8 @@ def smAlg : Subalgebra ℂ (Mx k r → ℂ) where
 theorem rep_mul (hD : IsOpen D) (c : smAlg k r D) : Rep (opV k r 0 D (mulF (E := E) c.1)) (mulF c.1) :=
   rep_opV hD (good_mulF c.2)
 
-variable (E) in
 
+variable (E) in
 def mulHom (hD : IsOpen D) : smAlg k r D →ₐ[ℂ] Module.End ℂ (SV k r 0 D E) where
   toFun := fun c => opV k r 0 D (mulF c.1)
   map_one' := (rep_mul hD 1).ext rep_one fun φ g _ => one_smul _ _
@@ -559,8 +569,8 @@ def evAt (g : Mx k r) : smAlg k r D →+* ℂ := (Pi.evalRingHom (fun _ : Mx k r
 
 theorem evAt_apply (g : Mx k r) (c : smAlg k r D) : evAt g c = c.1 g := rfl
 
-variable (D) in
 
+variable (D) in
 def yF (z : Fin (2 * r + k + 1) → ℂ) (i : Fin (r + 1)) (c : Fin (mdim k r 0)) : smAlg k r D :=
   ⟨invL k r (fvec k r z i) (posL k r 0 c), smooth_of_contDiff (invL k r (fvec k r z i) (posL k r 0 c)).contDiff⟩
 
@@ -570,11 +580,12 @@ theorem det_yF (z : Fin (2 * r + k + 1) → ℂ) (γ : Fin (r + 1) → Fin (mdim
   rw [← evAt_apply, RingHom.map_det]
   congr 1
   ext i j
-  simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, map_sum]
   rfl
 
-variable (E) in
 
+variable (E) in
 theorem group_identity (z z' : Fin (2 * r + k + 1) → ℂ) (hz' : inWb k r z') (hT : 0 < Tz k r z) (hT' : 0 < Tz k r z')
     (Y : ℂ) : ∃ (m : ℕ) (co : Fin m → Mx k r → ℂ) (a b : Fin m → Fin (r + k) → Fin (2 * r + k + 1)),
       (∀ i, U.IsPolyDeg (r + 1) (co i)) ∧ ∀ F : Mx k r → E, B.CkOn ⊤ (B.GV k r) F → ∀ g ∈ B.GV k r, 0 < Gf k r z z' g →
@@ -654,8 +665,8 @@ variable {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [Norm
   [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] {P : M.Par}
   {Bs : B.RealPlaceData P.k P.r Wp Wq} {ε : ℝ}
 
-variable (Bs ε) in
 
+variable (Bs ε) in
 def RadOp (a : RA P Bs) (T : (B.Mat P.k P.r → (Wq →L[ℂ] Wp)) → B.Mat P.k P.r → (Wq →L[ℂ] Wp)) : Prop :=
   ∀ F, JC.NiceCoef Bs ε F → JC.NiceCoef Bs ε (T F) ∧ ∀ Φ, Top.IsRadOf P Bs Φ F → Top.IsRadOf P Bs (a.1 Φ) (T F)
 
@@ -800,8 +811,8 @@ theorem db_pow_rh (X : Q.ActualOps P.k P.r Bs.z Bs.z' Bs.π Bs.π') (μ : Measur
 
 end lift
 
-open Formalism.FourierDecayAlt.P Formalism.FourierDecayAlt.P.TLB MeasureTheory in
 
+open Formalism.FourierDecayAlt.P Formalism.FourierDecayAlt.P.TLB MeasureTheory in
 theorem polyLift_rh : ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (P : M.Par) (Bs : B.RealPlaceData P.k P.r Wp Wq) (X : Q.ActualOps P.k P.r Bs.z Bs.z' Bs.π Bs.π') (μ : Measure (Mt P.k P.r)) (L : LevelData (RA P Bs) P.r) (st : Start (RA P Bs)) (l0 : ℕ) (d : Q.NFData P (RA P Bs)), P5.IsData P Bs.z Bs.z' Bs.π Bs.π' X μ L st l0 → IsNF X d → ∀ y : ℝ, PolyLift P Bs (2 * P.r + P.k + 1) (8 * (P.r + 1) * (2 * P.r + P.k + 1)) (rh d y) := by
   intro Wp Wq _ _ _ _ _ _ P Bs X μ L st l0 d hD hN y
   obtain ⟨m, co, a, b, hco, hid⟩ := group_identity (Wq →L[ℂ] Wp) Bs.z Bs.z' Bs.z'_mem Bs.T_pos Bs.T'_pos (y : ℂ)

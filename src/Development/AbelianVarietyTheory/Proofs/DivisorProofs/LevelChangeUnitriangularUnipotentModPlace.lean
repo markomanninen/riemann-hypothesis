@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RunModel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLatPIffMulVec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeCoordinatesModPrimeSelfDualStabilizerStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDetOfMemSt
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRightActFunPull
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsCoprimeOfNatCast
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CardLatticeQuotientHalfLevel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RunModel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLatPIffMulVec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeCoordinatesModPrimeSelfDualStabilizerStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDetOfMemSt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRightActFunPull
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsCoprimeOfNatCast
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CardLatticeQuotientHalfLevel
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.IndefiniteRowSideFullHecke.FrameWeightGapBounds
 open Formalism.BasicNotions Formalism.MainNotions Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links GlobalTheory.BigTop GlobalTheory.BigOn GlobalTheory.CovTop Formalism.L2.Pj GlobalTheory.FormTies GlobalTheory.Shares GlobalTheory.ShareOn
@@ -43,9 +47,9 @@ theorem pow_apply_eq_zero_of_strict {K : Type} [CommRing K] {n : ℕ} (S : Matri
 end GlobalTheory.ShareOn.UnipLevel
 namespace GlobalTheory.ShareOn.UnipLevel
 
+
 set_option maxHeartbeats 800000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem levUnip_mod_place : ∀ {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst D L} {Gl : Formalism.MainNotions.G.LatInst D} {Kc : Formalism.MainNotions.G.Consts}
     {Y : DivX D} {cX : ExtraC} {ex : Extra D L hT Gi Gl Kc Y cX} {Csz : ℝ} (p : PtAt ex Csz) (r : TwoRuns p.T p.P.Gp),
     RunsOk (fw2 p) r → ∀ (i : Fin D.R.m) (u : p.P.Gp) (k : Fin 2) (v : D.nd.PlG k),
@@ -89,10 +93,10 @@ theorem levUnip_mod_place : ∀ {D : D7} {L : SizeData₂ D} {hT : GatTies D} {G
     have h1 := hφk κ hSt p.T.Q.l.M hM (w • a) (f (w • a)) (hκa (w • a) (Submodule.smul_mem_smul hw Submodule.mem_top))
     have h2 : φ (w • a) = φ a := by
       conv_rhs => rw [ha]
-      rw [map_add, hkill c₁ (hMbP hc₁), zero_add]
+      rw [map_add (f := _), hkill c₁ (hMbP hc₁), zero_add]
     have h3 : φ (f a) = φ (f (w • a)) := by
       conv_lhs => rw [ha]
-      rw [map_add, map_add, map_smul, hkill c₁ (hMbP hc₁), zero_add]
+      rw [map_add (f := _), map_add (f := _), map_smul, hkill c₁ (hMbP hc₁), zero_add]
     rw [h3, h1, h2]
   have hrank : (Wc D i).rank = D.R.r := Formalism.IndefR.FWT.rank_Wc i
   have h5 : (R2 p).eG u PPs = upperLeftBlock ((R2 p).datWp i (R2 p).triv).hr (redFn ((R2 p).βW i) PPs.1 (Lev.finE (Wc D i) κ)) :=

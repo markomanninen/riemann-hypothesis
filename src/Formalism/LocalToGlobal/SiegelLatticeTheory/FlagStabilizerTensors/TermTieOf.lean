@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.ParametersTermRelations
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SaturatedPf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalSplitTypeMixedSecond
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.GenericRatioOfBoundHolds
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.CntLocal
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.ParametersTermRelations
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SaturatedPf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalSplitTypeMixedSecond
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.GenericRatioOfBoundHolds
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.CntLocal
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,7 +121,7 @@ section Terms
 variable {D : D7} {X : HidaSetting D} {Y : Formalism.L2.SG.Full.Full X} {hF : FinX Y}
 
 theorem ex_rep_iff {u u' : D.what₂.Word} (t : RT Y u u')
-    (Q : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) → Prop)
+    (Q : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E) → Prop)
     (hQ : ∀ x y : TermDef.Carrier (TermDef.PD D t.lam (lf D (X.Fu u)) u'),
       TermDef.Rel t.lam (lf D (X.Fu u)) (TermDef.PD D t.lam (lf D (X.Fu u)) u') x y → (Q x.1 ↔ Q y.1)) :
     (∃ F', TermDef.Rep t.lam (lf D (X.Fu u)) (TermDef.PD D t.lam (lf D (X.Fu u)) u') t.cls F' ∧ Q F') ↔
@@ -135,17 +139,17 @@ variable (W : WittDat X) (hI : SIso D.s (sOf hF))
 
 def tc {u u' : D.what₂.Word} (t : D.s.Term u u') : RT Y u u' := hI.eT u u' t
 
-def repF {u u' : D.what₂.Word} (t : RT Y u u') : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) :=
+def repF {u u' : D.what₂.Word} (t : RT Y u u') : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E) :=
   (Quot.out t.cls).1
 
 def lamOf {u u' : D.what₂.Word} (t : D.s.Term u u') : Submodule (𝓞 D.host.E) (VS D).V :=
   Formalism.HermitianLatticesTheory.gmap (W.δ u) (tc hI t).lam
 
-def fl'Of {u u' : D.what₂.Word} (t : D.s.Term u u') : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) :=
+def fl'Of {u u' : D.what₂.Word} (t : D.s.Term u u') : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E) :=
   mapL (W.δ u) (W.isom u) (repF (tc hI t))
 
-variable (D) in
 
+variable (D) in
 def LatIso : Prop :=
   ∀ (β : (VS D).V ≃ₗ[D.host.E] (VS D).V), β ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT →
     ∀ Λ : Submodule (𝓞 D.host.E) (VS D).V,
@@ -248,20 +252,20 @@ theorem FeqF_iffC {u u' : D.what₂.Word} (t : D.s.Term u u') :
   refine (TermDef.isFeqF_mk (PI.TermAttrConst.UnitaryGroupMassFormula.feqFFun_all _ _ _) _).trans ?_
   exact (Formalism.L2.SG.Pf.flag_equivalence_isomorphism _ _ (W.δ u) (W.isom u) (tc hI t).lam (lf D (X.Fu u)) (repF (tc hI t))).symm
 
-variable (Y) in
 
+variable (Y) in
 def IdentityCellVanishes (u u' : D.what₂.Word) : Prop := ∀ t : RT Y u u', Formalism.L2.SG.FourParts.termIsId t → t.G = 0
 
-include hI in
 
+include hI in
 theorem id_GC (hId : ∀ u u', IdentityCellVanishes Y u u') {u u' : D.what₂.Word} (t : D.s.Term u u') (h : D.s.isId t) :
     D.s.Gterm t = 0 := by
   apply (algebraMap D.host.F D.host.E).injective
   rw [map_zero, gterm_val hI t]
   exact hId u u' _ ((hI.isId t).1 h)
 
-variable (Y) in
 
+variable (Y) in
 def AtSome (u u' : D.what₂.Word) : Prop := ∀ t : RT Y u u', t.G ≠ 0 → t.relevant → ∃ w, t.atPt w
 
 theorem cellQ {u u' : D.what₂.Word} (t : RT Y u u') (w : Formalism.MainNotions.S.Point D.host.E (D.R.rS + 1)) :
@@ -286,7 +290,7 @@ theorem pt_cellC (hAt : ∀ u u', AtSome Y u u') {u u' : D.what₂.Word} (t : D.
   rw [hI.ptOf t]
   show IsInCell _ (Formalism.L2.SG.PairVal.ptOf (tc hI t))
   unfold Formalism.L2.SG.PairVal.ptOf
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   obtain ⟨h2, -⟩ := hex.choose_spec
   generalize hex.choose = w0 at h2 ⊢
   unfold TermDef.Term.atPt at h2
@@ -315,8 +319,8 @@ section Pairs
 variable {D : D7} {X : HidaSetting D} {Y : Formalism.L2.SG.Full.Full X} {hF : FinX Y} (W : WittDat X)
   (hI : SIso D.s (sOf hF))
 
-def mvOf {T T' : D.host.E} (Λ : Submodule (𝓞 D.host.E) (VS D).V) (F : LFlag (VS D) D.R.rS T)
-    (F₁ F₂ : LFlag (VS D) D.R.rS T') : (VS D).V ≃ₗ[D.host.E] (VS D).V :=
+def mvOf {T T' : D.host.E} (Λ : Submodule (𝓞 D.host.E) (VS D).V) (F : LFlag (D.sp.Y 0) D.R.rS T)
+    (F₁ F₂ : LFlag (D.sp.Y 0) D.R.rS T') : (VS D).V ≃ₗ[D.host.E] (VS D).V :=
   if h : TermDef.DCRel Λ F F₁ F₂ then h.choose * h.choose_spec.2.choose else 1
 
 def betaOf {u u' : D.what₂.Word} (p : D.s.Pair u u') : (VS D).V ≃ₗ[D.host.E] (VS D).V :=
@@ -346,8 +350,8 @@ theorem lamOf_mem {u u' : D.what₂.Word} (t : D.s.Term u u') : lamOf W hI t ∈
 theorem wRowOf_pos (hA : ∀ u, Formalism.L2.SG.PairVal.AutFin D (FlagOfWord W u) (rowsRec W Y u)) {u u' : D.what₂.Word}
     (p : D.s.Pair u u') : 0 < wRowOf W hI p := Formalism.L2.SG.PairVal.wRow_pos (h := hA u _ (lamOf_mem W hI (D.s.pfst p)))
 
-variable (X) in
 
+variable (X) in
 structure AmpDat where
   chi : ∀ {u u' : D.what₂.Word}, D.s.Pair u u' → ℂ
   chi_norm : ∀ {u u' : D.what₂.Word} (p : D.s.Pair u u'), ‖chi p‖ = 1
@@ -406,43 +410,20 @@ section Loc
 variable {D : D7} {X : HidaSetting D} {Y : Formalism.L2.SG.Full.Full X} {hF : FinX Y} (W : WittDat X)
   (hI : SIso D.s (sOf hF))
 
-variable (D) in
 
+variable (D) in
 def WRowIso : Prop :=
   ∀ (β : (VS D).V ≃ₗ[D.host.E] (VS D).V) (hβ : β ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT) {T : D.host.E}
     (F0 : FlagG (VS D) D.R.rS T) (Λ : Submodule (𝓞 D.host.E) (VS D).V),
     Formalism.MainNotions.S.wRow D (Formalism.L2.SG.Saturated.mapFlag β hβ F0) (Formalism.HermitianLatticesTheory.gmap β Λ) = Formalism.MainNotions.S.wRow D F0 Λ
 
-variable (D) in
 
+variable (D) in
 def RowRepsIso : Prop :=
   ∀ (β : (VS D).V ≃ₗ[D.host.E] (VS D).V) (hβ : β ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT) {T : D.host.E}
     (F0 : FlagG (VS D) D.R.rS T) (what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)),
     IsRowReps D F0 what₂ → IsRowReps D (Formalism.L2.SG.Saturated.mapFlag β hβ F0) (what₂.image (Formalism.HermitianLatticesTheory.gmap β))
 
-variable (Y) in
-
-def massTotOf (u : D.what₂.Word) : ℝ := Formalism.MainNotions.S.Cnt.massRows D (FlagOfWord W u) (rowsRec W Y u)
-
-theorem massTot_eq (hW : WRowIso D) (u : D.what₂.Word) :
-    massTotOf Y W u = Formalism.MainNotions.S.Cnt.massRows D (X.Fu u) (Y.what₂ u) := by
-  unfold massTotOf Formalism.MainNotions.S.Cnt.massRows rowsRec
-  rw [Finset.sum_image (by
-    intro A _ B _ h
-    exact PI.TermAttrConst.UnitaryGroupMassFormula.gmap_injective (W.δ u) h)]
-  refine Finset.sum_congr rfl (fun Λ _ => ?_)
-  exact hW (W.δ u) (W.isom u) (X.Fu u) Λ
-
-theorem massPair_val (hW : WRowIso D) {u u' : D.what₂.Word} (P : D.s.Pair u u') :
-    D.s.massPair P = Formalism.MainNotions.S.wRow D (FlagOfWord W u) (lamOf W hI (D.s.pfst P)) / massTotOf Y W u := by
-  rw [hI.massPair P, massTot_eq W hW u]
-  have h1 : Formalism.MainNotions.S.wRow D (FlagOfWord W u) (lamOf W hI (D.s.pfst P)) =
-      Formalism.MainNotions.S.wRow D (X.Fu u) (hI.eP u u' P).1.1.lam := by
-    unfold lamOf tc
-    rw [hI.pfst P]
-    exact hW (W.δ u) (W.isom u) (X.Fu u) _
-  rw [h1]
-  rfl
 
 theorem term_injC {u u' : D.what₂.Word} (γ γ' : D.s.Term u u') (hL : lamOf W hI γ = lamOf W hI γ')
     (h : ∃ n ∈ NLam (lamOf W hI γ) (lf D (FlagOfWord W u)), ∃ m ∈ NLam (lamOf W hI γ) (fl'Of W hI γ),
@@ -469,53 +450,6 @@ theorem term_injC {u u' : D.what₂.Word} (γ γ' : D.s.Term u u') (hL : lamOf W
     rfl
   exact key (tc hI γ) (tc hI γ') hlam hdc'
 
-include hI in
-
-theorem ptOfConvC (u u' : D.what₂.Word) : Formalism.L2.SG.Pf.AtPt.PtOfConv D u u' := by
-  intro γ hγ
-  rw [hI.ptOf γ]
-  show Formalism.MainNotions.S.LocalSplitGroups.Gpt _ _ (Formalism.L2.SG.PairVal.ptOf (tc hI γ)) = 0
-  unfold Formalism.L2.SG.PairVal.ptOf
-  rw [dif_neg]
-  · exact Formalism.L2.SG.PairVal.Gpt_junkPoint_eq_zero D u u'
-  · rintro ⟨w, hw, hrel⟩
-    apply hγ
-    refine ⟨?_, (hI.relevant γ).mpr hrel⟩
-    have hG : (tc hI γ).G ≠ 0 := by
-      unfold TermDef.Term.atPt at hw
-      rw [← Quot.out_eq (tc hI γ).cls] at hw
-      exact ((TermDef.atPt_mk (PI.TermAttrConst.UnitaryGroupMassFormula.gFun_all _ _ _) (PI.TermAttrConst.UnitaryGroupMassFormula.cellFun_all _ _ _) _
-        w).mp hw).1
-    intro h0
-    rw [hI.Gterm γ] at h0
-    have h1 : (((sOf hF).Gterm (hI.eT u u' γ) : D.host.F) : D.host.E) = (tc hI γ).G := rfl
-    rw [h0] at h1
-    exact hG (by simpa using h1.symm)
-
-def locDatOf (Y : Formalism.L2.SG.Full.Full X) : Formalism.L2.SG.TermLoc.LocDat D := ⟨Y.δ, Y.M, Y.agree⟩
-
-def massDatOf (H : TieHyp W hI) (A : AmpDat X) (hV : PvalForm W hI A) (hW : WRowIso D) (hR : RowRepsIso D)
-    (hne : ∀ u, (Y.what₂ u).Nonempty) (u u' : D.what₂.Word) :
-    Formalism.L2.SG.TermLoc.MassDat D (termTieOf W hI H A hV) u u' where
-  massT γ := Formalism.MainNotions.S.wRow D (FlagOfWord W u) (lamOf W hI γ) / massTotOf Y W u
-  massT_nonneg γ := div_nonneg (inv_nonneg.2 (Nat.cast_nonneg _))
-    (Formalism.L2.SG.PairVal.massRows_pos D (FlagOfWord W u) (rowsRec W Y u) (H.autFin u) ((hne u).image _)).le
-  massTot := massTotOf Y W u
-  massTot_pos := Formalism.L2.SG.PairVal.massRows_pos D (FlagOfWord W u) (rowsRec W Y u) (H.autFin u) ((hne u).image _)
-  massPair_eq P := ⟨massPair_val W hI hW P, (massPair_val W hI hW P).trans (by rw [pLamC W hI P]),
-    massPair_val W hI hW P⟩
-  mass_def := ⟨FlagOfWord W u, rowsRec W Y u, F0rec_e W u, F0rec_z_eq_zmOf W u,
-    hR (W.δ u) (W.isom u) (X.Fu u) (Y.what₂ u) (Y.rowsOK u), rfl, fun _ => rfl⟩
-  term_inj γ γ' hL h := term_injC W hI γ γ' hL h
-
-def termLocOf (H : TieHyp W hI) (A : AmpDat X) (hV : PvalForm W hI A) (hW : WRowIso D) (hR : RowRepsIso D)
-    (hne : ∀ u, (Y.what₂ u).Nonempty) (u u' : D.what₂.Word)
-    (hgen : Formalism.L2.SG.TermLoc.GenLocC D (locDatOf Y) (termTieOf W hI H A hV) u u')
-    (hsc : Formalism.L2.SG.TermLoc.ScalarC D (locDatOf Y) (termTieOf W hI H A hV) u u') :
-    Formalism.MainNotions.S.LocalSplitGroups.TermLoc D (termTieOf W hI H A hV) Y.δ Y.M u u' :=
-  Formalism.L2.SG.TermLoc.mkTermLoc (locDatOf Y) (termTieOf W hI H A hV) u u'
-    (Formalism.L2.SG.Pf.termLoc_gPtC_of (termTieOf W hI H A hV) u u' (ptOfConvC hI u u')) hgen
-    (Formalism.L2.SG.Pf.termLoc_atPtC (locDatOf Y) (termTieOf W hI H A hV) u u') hsc (massDatOf W hI H A hV hW hR hne u u')
 
 end Loc
 
@@ -523,187 +457,19 @@ section WittEquiv
 
 variable {D : D7} {X : HidaSetting D} (W : WittDat X) (Y : Formalism.L2.SG.Full.Full X)
 
-abbrev RTrec (u u' : D.what₂.Word) : Type := TermDef.Term D u u' (FlagOfWord W u) (rowsRec W Y u)
-
-def mvCar {u u' : D.what₂.Word} (Λ : Submodule (𝓞 D.host.E) (VS D).V)
-    (x : TermDef.Carrier (TermDef.PD D Λ (lf D (X.Fu u)) u')) :
-    TermDef.Carrier (TermDef.PD D (Formalism.HermitianLatticesTheory.gmap (W.δ u) Λ) (lf D (FlagOfWord W u)) u') :=
-  ⟨mapL (W.δ u) (W.isom u) x.1, (Formalism.L2.SG.Pf.positive_definite_isomorphism D u' (W.δ u) (W.isom u) Λ (lf D (X.Fu u)) x.1).2 x.2⟩
-
-def mvCls {u u' : D.what₂.Word} (Λ : Submodule (𝓞 D.host.E) (VS D).V) :
-    TermDef.TermsOf D u' (X.Fu u) Λ → TermDef.TermsOf D u' (FlagOfWord W u) (Formalism.HermitianLatticesTheory.gmap (W.δ u) Λ) :=
-  Quot.lift (fun x => TermDef.mk _ _ _ (mvCar W Λ x)) (fun x y h =>
-    Quot.sound ((Formalism.L2.SG.Pf.double_coset_isomorphism _ _ (W.δ u) (W.isom u) Λ (lf D (X.Fu u)) x.1 y.1).2 h))
-
-def toRec {u u' : D.what₂.Word} (t : RT Y u u') : RTrec W Y u u' :=
-  ⟨Formalism.HermitianLatticesTheory.gmap (W.δ u) t.lam, Finset.mem_image_of_mem _ t.mem, mvCls W t.lam t.cls⟩
-
-theorem toRec_mk {u u' : D.what₂.Word} (t : RT Y u u') :
-    TermDef.mk _ _ _ (mvCar W t.lam (Quot.out t.cls)) = (toRec W Y t).cls := congrArg (mvCls W t.lam) (Quot.out_eq t.cls)
-
-theorem ex_rep_iff_of {u' : D.what₂.Word} {T : D.host.E} {F0 : FlagG (VS D) D.R.rS T}
-    (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hrow : TermDef.EqIff Λ (lf D F0) (TermDef.PD D Λ (lf D F0) u'))
-    (c : TermDef.TermQ Λ (lf D F0) (TermDef.PD D Λ (lf D F0) u')) (x : TermDef.Carrier (TermDef.PD D Λ (lf D F0) u'))
-    (hx : TermDef.mk _ _ _ x = c) (Q : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) → Prop)
-    (hQ : ∀ x y : TermDef.Carrier (TermDef.PD D Λ (lf D F0) u'),
-      TermDef.Rel Λ (lf D F0) (TermDef.PD D Λ (lf D F0) u') x y → (Q x.1 ↔ Q y.1)) :
-    (∃ F', TermDef.Rep Λ (lf D F0) (TermDef.PD D Λ (lf D F0) u') c F' ∧ Q F') ↔ Q x.1 := by
-  constructor
-  · rintro ⟨F', ⟨h, hm⟩, hF'⟩
-    have hr := (hrow ⟨F', h⟩ x).1 (hm.trans hx.symm)
-    exact (hQ ⟨F', h⟩ x hr).1 hF'
-  · intro hq
-    exact ⟨x.1, Exists.intro x.2 hx, hq⟩
-
 variable {W Y}
 
 theorem rowLat_rec (hL : LatIso D) {u : D.what₂.Word} (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hm : Λ ∈ Y.what₂ u) :
     IsRowLat D (FlagOfWord W u) (Formalism.HermitianLatticesTheory.gmap (W.δ u) Λ) := rowLat_map hL (W.δ u) (W.isom u) (X.Fu u) Λ ((Y.rowsOK u).1 Λ hm)
 
-theorem eqIff_rec (hL : LatIso D) {u u' : D.what₂.Word} (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hm : Λ ∈ Y.what₂ u) :
-    TermDef.EqIff (Formalism.HermitianLatticesTheory.gmap (W.δ u) Λ) (lf D (FlagOfWord W u))
-      (TermDef.PD D (Formalism.HermitianLatticesTheory.gmap (W.δ u) Λ) (lf D (FlagOfWord W u)) u') := PI.DCRelEquiv.UnitaryGroupMassFormula.eqIffAll_holds _ _ _ _ _ _ _ _
-
 theorem eqIff_base {u u' : D.what₂.Word} (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hm : Λ ∈ Y.what₂ u) :
     TermDef.EqIff Λ (lf D (X.Fu u)) (TermDef.PD D Λ (lf D (X.Fu u)) u') := PI.DCRelEquiv.UnitaryGroupMassFormula.eqIffAll_holds _ _ _ _ _ _ _ _
 
-theorem mapL_mapL_inv {u : D.what₂.Word} {T : D.host.E} (F : LFlag (VS D) D.R.rS T) :
-    mapL (W.δ u) (W.isom u) (mapL (W.δ u)⁻¹ (Subgroup.inv_mem _ (W.isom u)) F) = F := by
-  obtain ⟨fl, zt⟩ := F
-  have h : ∀ x, W.δ u ((W.δ u)⁻¹ x) = x := fun x => (W.δ u).apply_symm_apply x
-  simp only [Formalism.L2.SG.Saturated.mapL, Formalism.L2.SG.Saturated.mapFlag, h]
-
 variable (W Y)
-
-theorem toRec_inj (hL : LatIso D) {u u' : D.what₂.Word} : Function.Injective (toRec W Y (u := u) (u' := u')) := by
-  intro t₁ t₂ h
-  obtain ⟨l₁, m₁, c₁⟩ := t₁
-  obtain ⟨l₂, m₂, c₂⟩ := t₂
-  have hl : l₁ = l₂ := PI.TermAttrConst.UnitaryGroupMassFormula.gmap_injective (W.δ u) (congrArg TermDef.Term.lam h)
-  subst hl
-  obtain ⟨x₁, rfl⟩ := Quot.exists_rep c₁
-  obtain ⟨x₂, rfl⟩ := Quot.exists_rep c₂
-  have hc : TermDef.mk (Formalism.HermitianLatticesTheory.gmap (W.δ u) l₁) (lf D (FlagOfWord W u)) _ (mvCar W l₁ x₁) =
-      TermDef.mk (Formalism.HermitianLatticesTheory.gmap (W.δ u) l₁) (lf D (FlagOfWord W u)) _ (mvCar W l₁ x₂) := by
-    injection h with h1 h2
-  have hr := (eqIff_rec (W := W) (u' := u') hL _ m₁ _ _).1 hc
-  have hd := (Formalism.L2.SG.Pf.double_coset_isomorphism _ _ (W.δ u) (W.isom u) _ (lf D (X.Fu u)) x₁.1 x₂.1).1 hr
-  exact congrArg (TermDef.Term.mk _ m₁) (Quot.sound hd)
-
-theorem toRec_surj {u u' : D.what₂.Word} : Function.Surjective (toRec W Y (u := u) (u' := u')) := by
-  intro s
-  obtain ⟨lam, mem, cls⟩ := s
-  obtain ⟨Λ, hΛ, rfl⟩ := Finset.mem_image.1 mem
-  obtain ⟨x, rfl⟩ := Quot.exists_rep cls
-  have hx : TermDef.PD D Λ (lf D (X.Fu u)) u' (mapL (W.δ u)⁻¹ (Subgroup.inv_mem _ (W.isom u)) x.1) := by
-    apply (Formalism.L2.SG.Pf.positive_definite_isomorphism D u' (W.δ u) (W.isom u) Λ (lf D (X.Fu u)) _).1
-    rw [mapL_mapL_inv]
-    exact x.2
-  refine ⟨⟨Λ, hΛ, TermDef.mk _ _ _ ⟨_, hx⟩⟩, ?_⟩
-  have hc : mvCar W Λ ⟨_, hx⟩ = x := Subtype.ext (mapL_mapL_inv _)
-  have hc' : mvCls W Λ (TermDef.mk _ _ _ ⟨_, hx⟩) = TermDef.mk _ _ _ x := congrArg (TermDef.mk _ _ _) hc
-  show TermDef.Term.mk (Formalism.HermitianLatticesTheory.gmap (W.δ u) Λ) _ (mvCls W Λ (TermDef.mk _ _ _ ⟨_, hx⟩)) = _
-  rw [hc']
-  rfl
-
-def termWitt (hL : LatIso D) (u u' : D.what₂.Word) : RT Y u u' ≃ RTrec W Y u u' :=
-  Equiv.ofBijective (toRec W Y) ⟨toRec_inj W Y hL, toRec_surj W Y⟩
-
-theorem termWitt_apply (hL : LatIso D) {u u' : D.what₂.Word} (t : RT Y u u') : termWitt W Y hL u u' t = toRec W Y t := rfl
 
 variable {W Y}
 
-theorem toRec_rel (hL : LatIso D) {u u' : D.what₂.Word} (t : RT Y u u') :
-    TermDef.Rel (Formalism.HermitianLatticesTheory.gmap (W.δ u) t.lam) (lf D (FlagOfWord W u))
-      (TermDef.PD D (Formalism.HermitianLatticesTheory.gmap (W.δ u) t.lam) (lf D (FlagOfWord W u)) u')
-      (mvCar W t.lam (Quot.out t.cls)) (Quot.out (toRec W Y t).cls) := (eqIff_rec (W := W) (u' := u') hL t.lam t.mem _ _).1 ((toRec_mk W Y t).trans (Quot.out_eq _).symm)
-
-theorem toRec_G (hL : LatIso D) {u u' : D.what₂.Word} (t : RT Y u u') : (toRec W Y t).G = t.G := by
-  have h : TermDef.DCRel _ _ _ _ := toRec_rel (W := W) (Y := Y) hL t
-  have e : ∀ l, Formalism.MainNotions.S.Dl (FlagOfWord W u) (Quot.out (toRec W Y t).cls).1.fl l =
-      Formalism.MainNotions.S.Dl (FlagOfWord W u) (mvCar W t.lam (Quot.out t.cls)).1.fl l := PI.TermAttrConst.UnitaryGroupMassFormula.dl_eq _ h
-  have hx : (toRec W Y t).G = Gval (lf D (FlagOfWord W u)) (mvCar W t.lam (Quot.out t.cls)).1 := by
-    show Formalism.MainNotions.S.Gflag _ _ = Formalism.MainNotions.S.Gflag _ _
-    simp only [Formalism.MainNotions.S.Gflag, e]
-  rw [hx]
-  exact gval_mapL (W.δ u) (W.isom u) (lf D (X.Fu u)) (Quot.out t.cls).1
-
-theorem toRec_relevant (hL : LatIso D) {u u' : D.what₂.Word} (t : RT Y u u') :
-    (toRec W Y t).relevant ↔ t.relevant := by
-  unfold TermDef.Term.relevant
-  show TermDef.IsRel (Formalism.HermitianLatticesTheory.gmap (W.δ u) t.lam) (lf D (FlagOfWord W u))
-      (TermDef.PD D (Formalism.HermitianLatticesTheory.gmap (W.δ u) t.lam) (lf D (FlagOfWord W u)) u') _ (toRec W Y t).cls ↔ _
-  have hx : t.cls = TermDef.mk _ _ _ (Quot.out t.cls) := (Quot.out_eq t.cls).symm
-  rw [← toRec_mk W Y t]
-  conv_rhs => rw [hx]
-  refine (TermDef.isRel_mk _ (PI.TermAttrConst.UnitaryGroupMassFormula.relFun_all _ _ _ _) _).trans
-    (Iff.trans ?_ (TermDef.isRel_mk _ (PI.TermAttrConst.UnitaryGroupMassFormula.relFun_all _ _ _ _) _).symm)
-  exact Formalism.L2.SG.Pf.relevant_mapFlag (β := W.δ u) (hβ := W.isom u) _ _ _
-
-theorem toRec_generic (hL : LatIso D) {u u' : D.what₂.Word} (t : RT Y u u') :
-    (toRec W Y t).generic ↔ t.generic := by
-  show TermDef.IsGen (Formalism.HermitianLatticesTheory.gmap (W.δ u) t.lam) (lf D (FlagOfWord W u))
-      (TermDef.PD D (Formalism.HermitianLatticesTheory.gmap (W.δ u) t.lam) (lf D (FlagOfWord W u)) u') (gS D) (toRec W Y t).cls ↔
-    TermDef.IsGen t.lam (lf D (X.Fu u)) (TermDef.PD D t.lam (lf D (X.Fu u)) u') (gS D) t.cls
-  have hx : t.cls = TermDef.mk _ _ _ (Quot.out t.cls) := (Quot.out_eq t.cls).symm
-  rw [← toRec_mk W Y t]
-  conv_rhs => rw [hx]
-  refine (TermDef.isGen_mk (gS D)
-      ((term_function_const D u u' (FlagOfWord W u) _ (rowLat_rec hL t.lam t.mem)).2.2.2.1) _).trans
-    (Iff.trans ?_ (TermDef.isGen_mk (gS D)
-      ((term_function_const D u u' (X.Fu u) t.lam ((Y.rowsOK u).1 t.lam t.mem)).2.2.2.1) _).symm)
-  show IsGeneric (Formalism.HermitianLatticesTheory.gmap (W.δ u) t.lam) (gS D) (mapL (W.δ u) (W.isom u) (lf D (X.Fu u)))
-      (mapL (W.δ u) (W.isom u) (Quot.out t.cls).1) ↔ IsGeneric t.lam (gS D) (lf D (X.Fu u)) (Quot.out t.cls).1
-  exact Formalism.L2.SG.Pf.generic_isomorphism_holds (gS D) _ _ (W.δ u) (W.isom u) t.lam (lf D (X.Fu u)) (Quot.out t.cls).1
-
-theorem toRec_atPt (hL : LatIso D) {u u' : D.what₂.Word} (t : RT Y u u') (w : Formalism.MainNotions.S.Point D.host.E (D.R.rS + 1)) :
-    (toRec W Y t).atPt w ↔ t.atPt w := by
-  show TermDef.AtPt (Formalism.HermitianLatticesTheory.gmap (W.δ u) t.lam) (lf D (FlagOfWord W u))
-      (TermDef.PD D (Formalism.HermitianLatticesTheory.gmap (W.δ u) t.lam) (lf D (FlagOfWord W u)) u') (toRec W Y t).cls w ↔
-    TermDef.AtPt t.lam (lf D (X.Fu u)) (TermDef.PD D t.lam (lf D (X.Fu u)) u') t.cls w
-  have hx : t.cls = TermDef.mk _ _ _ (Quot.out t.cls) := (Quot.out_eq t.cls).symm
-  rw [← toRec_mk W Y t]
-  conv_rhs => rw [hx]
-  refine (TermDef.atPt_mk (PI.TermAttrConst.UnitaryGroupMassFormula.gFun_all _ _ _) (PI.TermAttrConst.UnitaryGroupMassFormula.cellFun_all _ _ _) _ _).trans
-    (Iff.trans ?_ (TermDef.atPt_mk (PI.TermAttrConst.UnitaryGroupMassFormula.gFun_all _ _ _)
-      (PI.TermAttrConst.UnitaryGroupMassFormula.cellFun_all _ _ _) _ _).symm)
-  show Gval (mapL (W.δ u) (W.isom u) (lf D (X.Fu u))) (mapL (W.δ u) (W.isom u) (Quot.out t.cls).1) ≠ 0 ∧
-      IsInCell (ZhatOM (ZhatL (mapL (W.δ u) (W.isom u) (lf D (X.Fu u)))
-        (mapL (W.δ u) (W.isom u) (Quot.out t.cls).1))) w ↔ _
-  rw [Formalism.L2.SG.Saturated.gval_mapL, Formalism.L2.SG.Saturated.zhat_mapL]
-
-theorem toRec_ptOf (hL : LatIso D) {u u' : D.what₂.Word} (t : RT Y u u') :
-    Formalism.L2.SG.PairVal.ptOf (toRec W Y t) = Formalism.L2.SG.PairVal.ptOf t := by
-  unfold Formalism.L2.SG.PairVal.ptOf
-  have e : (fun w => (toRec W Y t).atPt w ∧ (toRec W Y t).relevant) = (fun w => t.atPt w ∧ t.relevant) := by
-    funext w
-    rw [toRec_atPt hL, toRec_relevant hL]
-  rw [e]
-
-theorem toRec_massTerm (hW : WRowIso D) {u u' : D.what₂.Word} (t : RT Y u u') :
-    Formalism.L2.SG.PairVal.massTerm (toRec W Y t) = Formalism.L2.SG.PairVal.massTerm t := by
-  show Formalism.MainNotions.S.wRow D (FlagOfWord W u) (Formalism.HermitianLatticesTheory.gmap (W.δ u) t.lam) / Formalism.MainNotions.S.Cnt.massRows D (FlagOfWord W u) (rowsRec W Y u) =
-    Formalism.MainNotions.S.wRow D (X.Fu u) t.lam / Formalism.MainNotions.S.Cnt.massRows D (X.Fu u) (Y.what₂ u)
-  rw [← massTot_eq W hW u]
-  exact congrArg (· / massTotOf Y W u) (hW (W.δ u) (W.isom u) (X.Fu u) t.lam)
-
 variable (W Y)
-
-def WittPhase (u u' : D.what₂.Word) : Prop :=
-  ∀ (t : RT Y u u') w, Formalism.L2.SG.PairVal.phaseAt (toRec W Y t) w = Formalism.L2.SG.PairVal.phaseAt t w
-
-def WittVR (u u' : D.what₂.Word) : Prop :=
-  ∀ (δ : ∀ p : Formalism.MainNotions.S.LocalSplitGroups.PlF D, (D.s.atP p).Fp)
-    (M : ∀ p : Formalism.MainNotions.S.LocalSplitGroups.PlF D, Formalism.MainNotions.S.Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (t : RT Y u u'),
-    Formalism.L2.SG.PairVal.vRdef D u u' (FlagOfWord W u) (rowsRec W Y u) δ M (toRec W Y t) =
-      Formalism.L2.SG.PairVal.vRdef D u u' (X.Fu u) (Y.what₂ u) δ M t
-
-def WittScal (u u' : D.what₂.Word) : Prop :=
-  ∀ t₁ t₂ : RT Y u u', Formalism.L2.SG.Corank.TermScal D (toRec W Y t₁) (toRec W Y t₂) ↔ Formalism.L2.SG.Corank.TermScal D t₁ t₂
-
-def WittNu (u : D.what₂.Word) : Prop :=
-  ∀ (T' : D.host.E) (Z : Formalism.L2.SG.CntLocal.MatZ D),
-    Formalism.L2.SG.CntLocal.nu T' (FlagOfWord W u) (rowsRec W Y u) Z = Formalism.L2.SG.CntLocal.nu T' (X.Fu u) (Y.what₂ u) Z
 
 end WittEquiv
 
@@ -780,18 +546,18 @@ theorem gval_of_isIdF (hTs : star T = T) (Λ : Submodule (𝓞 E) S.V) (F : LFla
       exact F.fl.z_norm
     have hD1 : Formalism.MainNotions.S.Dl F.fl F'.fl (0 + 1) = -T := by
       unfold Formalism.MainNotions.S.Dl Formalism.MainNotions.S.leadMinorE
-      rw [dif_pos le_rfl]
+      rw [dite_eq_left le_rfl]
       exact (Matrix.det_fin_one _).trans hZ
     have hD0 : Formalism.MainNotions.S.Dl F.fl F'.fl 0 = 1 := by
       unfold Formalism.MainNotions.S.Dl Formalism.MainNotions.S.leadMinorE
-      rw [dif_pos (Nat.zero_le _), Matrix.det_isEmpty]
+      rw [dite_eq_left (Nat.zero_le _), Matrix.det_isEmpty]
     unfold Formalism.MainNotions.S.Gflag
     rw [hD1, hD0, hT', star_neg, hTs, star_one]
     ring
   · have hD : ∀ l, (hl : l ≤ r + 1) → r ≤ l → Formalism.MainNotions.S.Dl F.fl F'.fl l = 0 := by
       intro l hl hrl
       unfold Formalism.MainNotions.S.Dl Formalism.MainNotions.S.leadMinorE
-      rw [dif_pos hl]
+      rw [dite_eq_left hl]
       apply Matrix.det_eq_zero_of_column_eq_zero (⟨0, by omega⟩ : Fin l)
       intro i
       simp only [Matrix.submatrix_apply]

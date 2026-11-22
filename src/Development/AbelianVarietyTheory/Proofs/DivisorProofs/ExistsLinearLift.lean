@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.MassNumeric
-import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.HostTorsionOrderLe
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormOfClassSums
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.MassNumeric
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.HostTorsionOrderLe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormOfClassSums
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,12 +38,85 @@ theorem zeta_eval {V W : HSp D} {S : D.what₂.Tau → SPar} {M : DSModel W S} {
         ∂(Measure.pi mR) =
       c0 * z * starRingEnd ℂ (ipM M μW 𝓖 (HW.e U₂) (HW.e U₁)) *
         ((∏ ρ, ∫ b, ‖⟪(v ρ : M.H ρ), M.rep ρ (realMat W Fr ρ b) (v ρ : M.H ρ)⟫_ℂ‖ ^ 2 ∂(mR ρ) : ℝ) : ℂ) := by
+  have hIP : IsMultIP M μW 𝓖 (HW.e U₂) (HW.e U₁) (ipM M μW 𝓖 (HW.e U₂) (HW.e U₁)) := by
+    have existsIP (x y : HW.H) (hxy : inner ℂ x y ≠ 0) : ∃ c, IsMultIP M μW 𝓖 (HW.e x) (HW.e y) c := by
+      by_contra h
+      apply hxy
+      rw [hW, ipM, dite_eq_right h, mul_zero]
+    apply ipM_spec
+    by_cases hx : U₂ = 0
+    · subst U₂
+      exact ⟨0, fun v₁ v₂ => by simp⟩
+    by_cases hxy : inner ℂ U₂ U₁ = 0
+    · obtain ⟨c, hc⟩ := existsIP U₂ (U₂ + U₁) (by
+        rw [inner_add_right, hxy, add_zero]
+        exact inner_self_ne_zero.2 hx)
+      obtain ⟨c', hc'⟩ := existsIP U₂ U₂ (inner_self_ne_zero.2 hx)
+      refine ⟨c - c', fun v₁ v₂ => ?_⟩
+      have hsub : (fun x => star (HW.e U₂ v₁ x) * HW.e U₁ v₂ x) =
+          fun x => star (HW.e U₂ v₁ x) * HW.e (U₂ + U₁) v₂ x - star (HW.e U₂ v₁ x) * HW.e U₂ v₂ x := by
+        funext x
+        simp [mul_add]
+      rw [hsub]
+      exact ⟨(hc v₁ v₂).1.sub (hc' v₁ v₂).1, by
+        rw [integral_sub (hc v₁ v₂).1 (hc' v₁ v₂).1, (hc v₁ v₂).2, (hc' v₁ v₂).2, sub_mul]⟩
+    · exact existsIP U₂ U₁ hxy
   have := fun ρ => sigmaFinite_haar (mR ρ) (hmR ρ).1
   refine integral_pi_eval mR (fun ρ b => ⟪(v ρ : M.H ρ), M.rep ρ (realMat W Fr ρ b) (v ρ : M.H ρ)⟫_ℂ) _ c0 z _ fun b => ?_
-  obtain ⟨w, h1, h2⟩ := coef_translate HW hW θ U₁ U₂ hU (fun ρ => realMat W Fr ρ (b ρ)) (fun ρ => hFr ρ _) v
+  let g := fun ρ => realMat W Fr ρ (b ρ)
+  have hg : ∀ ρ, g ρ ∈ Formalism.QuantumDeterminants.UH (gramAt D W ρ) := fun ρ => hFr ρ (b ρ)
+  let w : M.Vec := fun ρ => ⟨_, rep_mem_sm M ρ (g ρ) (hg ρ) _ (v ρ).2⟩
+  have hTranslate (U : MMap M) (hU : U ∈ Mult θ M J χ) : U w = rTr W (realElt θ W g) (U v) := by
+    classical
+    induction hU using Submodule.span_induction with
+    | mem U hU =>
+      change IsMultMap θ M J χ U at hU
+      have hList (l : List D.what₂.Tau) (hl : l.Nodup) :
+          U (fun ρ => if ρ ∈ l then w ρ else v ρ) =
+            rTr W (l.map fun ρ => atTau θ W ρ (g ρ)).prod (U v) := by
+        induction l with
+        | nil =>
+          funext x
+          simp [rTr]
+        | cons a l ih =>
+          rw [List.nodup_cons] at hl
+          have he := hU.equiv a (g a) (hg a) (fun ρ => if ρ ∈ l then w ρ else v ρ) (w a) (by
+            simp only [ite_eq_right hl.1]
+            rfl)
+          rw [ih hl.2] at he
+          rw [List.map_cons, List.prod_cons, rTr_mul, ← he]
+          congr 1
+          funext ρ
+          by_cases hρ : ρ = a
+          · subst hρ
+            simp
+          · rw [Function.update_of_ne hρ]
+            simp [hρ]
+      unfold realElt
+      rw [← hList _ (Finset.nodup_toList _)]
+      congr 1
+      funext ρ
+      simp
+    | zero =>
+      funext x
+      simp [rTr]
+    | add U U' _ _ h₁ h₂ =>
+      funext x
+      have he₁ := congrFun h₁ x
+      have he₂ := congrFun h₂ x
+      simp only [rTr, add_apply, Pi.add_apply] at he₁ he₂ ⊢
+      rw [he₁, he₂]
+    | smul c U _ h =>
+      funext x
+      have he := congrFun h x
+      simp only [rTr, smul_apply, Pi.smul_apply] at he ⊢
+      rw [he]
+  have h2 : l2 μW 𝓖 (HW.e U₁ w) (HW.e U₂ v) =
+      ipM M μW 𝓖 (HW.e U₂) (HW.e U₁) * ∏ ρ, ⟪(v ρ : M.H ρ), M.rep ρ (g ρ) (v ρ : M.H ρ)⟫_ℂ :=
+    (l2_eq_star μW 𝓖 _ _).trans (hIP v w).2
   rw [← h2]
   refine tsum_eval _ _ _ _ _ (fun x => ?_) (hZ w v)
-  rw [hF x.rep x.out.2 _ fun ρ => hFr ρ _, rTr_mul, h1]
+  rw [hF x.rep x.out.2 _ hg, rTr_mul, ← hTranslate (HW.e U₁) hU]
 
 theorem eventually_grpOf (V : HSp D) (β : GL (Fin V.rank) (Lev.EAf D)) (L : LevDat D.host.E ℂ V.rank) :
     ∀ᶠ κ in nhds (1 : GA D V), ∃ h : (finHom V).rangeRestrict κ ∈ grpOf V β L, chrOf V β L ⟨_, h⟩ = 1 := by
@@ -52,8 +129,8 @@ theorem eventually_grpOf (V : HSp D) (β : GL (Fin V.rank) (Lev.EAf D)) (L : Lev
   exact ⟨hk, GlobalTheory.ThetaIntegrand.levFn_eq_one β (Lev.finE V κ) L (fun PP hP => h3 PP (Finset.mem_union_left _ hP))
     fun PP hP => h3 PP (Finset.mem_union_right _ hP)⟩
 
-open scoped ComplexOrder in
 
+open scoped ComplexOrder in
 theorem integrableOn_lift {ψ : AddChar (AF D.host.F) ℂ} {V W : HSp D} {χS χT : (AE D)ˣ →* Circle}
     {ω : GA D V × GA D W →* Module.End ℂ (Datum.WO V W → ℂ)} (hω : Datum.IsWeilDatumO ψ V W χS χT ω) (hs : V.SigOK)
     (hp : V.IsPosDef) (c : CoefA V) (hc : c.Is) (β : GL (Fin V.rank) (Lev.EAf D)) (L : LevDat D.host.E ℂ V.rank)
@@ -85,8 +162,8 @@ theorem exists_linear_lift {X X' Y B W Z κ₁ κ₂ : Type} [AddCommGroup X] [M
   obtain ⟨th, h⟩ := exists_linear_section (fun x y => ∀ a b, val a b (e y) = ∫ h in 𝓕, k a b h (E₂ (E₁ x) h) ∂ν)
     (fun a b => by simpa [k0] using hsm a b 0 0)
     (fun x x' y y' h h' a b => by
-      rw [map_add, hadd, h, h', ← integral_add (hint x a b) (hint x' a b)]
-      simp only [map_add, Pi.add_apply, kadd])
+      rw [map_add (f := _), hadd, h, h', ← integral_add (hint x a b) (hint x' a b)]
+      simp only [map_add (f := _), Pi.add_apply, kadd])
     (fun t x y h a b => by
       rw [map_smul, hsm, h, ← integral_const_mul]
       simp only [map_smul, Pi.smul_apply, ksm]) hex
@@ -127,7 +204,7 @@ def ptL (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ) (BW : D.what₂.Tau → Ma
     (f : Datum.WO (Vc D i) (Wc D i) → ℂ) {X : Type} [AddCommGroup X] [Module ℂ X]
     (u : X →ₗ[ℂ] PolF D (Wc D i).rank (Vc D i).rank) : X →ₗ[ℂ] (Datum.WO (Vc D i) (Wc D i) → ℂ) where
   toFun w := ptAt R i σ BW f (u w)
-  map_add' w w' := by rw [map_add]; exact map_add _ _ _
+  map_add' w w' := by rw [map_add (f := _)]; exact map_add _ _ _
   map_smul' a w := by rw [map_smul]; exact map_smul _ _ _
 
 theorem ptL_apply (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ) (BW : D.what₂.Tau → Matrix (Fin (Wc D i).rank) (Fin (Wc D i).rank) ℂ)

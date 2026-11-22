@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
 
@@ -40,7 +45,7 @@ theorem det_eq_sd_mul (T : Matrix (Fin N) (Fin N) ℂ) (Q : Fin N → Prop) [Dec
 theorem minor_eq_sd (T : Matrix (Fin N) (Fin N) ℂ) (S : Finset (Fin N)) :
     minorIJ T S S = sd T (· ∈ S) := by
   unfold minorIJ sd
-  rw [dif_pos rfl]
+  rw [dite_eq_left rfl]
   let e : Fin S.card ≃ {a // a ∈ S} := (S.orderIsoOfFin rfl).toEquiv
   letI : Fintype {a // a ∈ S} := Subtype.fintype (· ∈ S)
   refine Eq.trans ?_ (Matrix.det_submatrix_equiv_self e (sq T (· ∈ S)))
@@ -185,8 +190,8 @@ end GlobalTheory.CompanionTheory.Ar.PB.StepBlock
 
 namespace GlobalTheory.CompanionTheory.Ar.PB
 
-open StepBlock in
 
+open StepBlock in
 theorem stepPot_mul_eq_blockPot : ∀ (N j : ℕ) (i : Fin N) (Pi G h : Matrix (Fin N) (Fin N) ℂ), j ≤ N →
     IsPeriodGram j Pi G → IsBlockDiag j G → G.PosDef → IsBlockDiag j h → h.det ≠ 0 →
     InFlagDomain N j (Pi * h) ∧ stepPot N j i (Pi * h) = blockPot j i G h + Real.log ‖detFac j i h‖ := by

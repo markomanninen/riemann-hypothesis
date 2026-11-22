@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.SmoothSeminormAndSobolevBounds
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.HarishChandraModulesIndefiniteUnitaryGroup
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.SmoothSeminormAndSobolevBounds
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.HarishChandraModulesIndefiniteUnitaryGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,21 +18,25 @@ variable {n : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 
 theorem actM_single {M : Type*} [AddCommGroup M] [Module ℂ M] (E : Fin n → Fin n → Module.End ℂ M) (a b : Fin n) :
     actM E (Matrix.single a b 1) = E a b := by
-  simp [actM, Matrix.single_apply, ite_and, Finset.sum_ite_eq]
+  delta actM
+  simp [Matrix.single_apply, ite_and, Finset.sum_ite_eq]
 
 theorem actM_add' {M : Type*} [AddCommGroup M] [Module ℂ M] (E : Fin n → Fin n → Module.End ℂ M)
     (X Y : Matrix (Fin n) (Fin n) ℂ) : actM E (X + Y) = actM E X + actM E Y := by
-  simp [actM, add_smul, Finset.sum_add_distrib]
+  delta actM
+  simp [add_smul, Finset.sum_add_distrib]
 
 theorem actM_smul' {M : Type*} [AddCommGroup M] [Module ℂ M] (E : Fin n → Fin n → Module.End ℂ M) (c : ℂ)
     (X : Matrix (Fin n) (Fin n) ℂ) : actM E (c • X) = c • actM E X := by
-  simp [actM, Finset.smul_sum, smul_smul]
+  delta actM
+  simp [Finset.smul_sum, smul_smul]
 
 theorem dS_eq_dRep (σ : Mx n → (H →L[ℂ] H)) (X : Mx n) (v : H) : dS σ X v = dRep σ X v := by
   have h : ∀ t : ℝ, ((t : ℂ) • X) = t • X := fun t => by
     ext i j
     simp
-  simp only [dS, dRep, h]
+  delta dS dRep
+  simp only [h]
 
 theorem key {ε : Fin n → Bool} {σ : Mx n → (H →L[ℂ] H)} (hσ : IsURepOn (UJset ε) σ)
     (E : Fin n → Fin n → Module.End ℂ (kfin ε σ)) (hE : KDer ε σ E) (v : kfin ε σ) (hv : (v : H) ∈ smD ε σ)

@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.SphOff
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.SphOff
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ def ForG (P : ∀ (G : Type) [Group G] [MeasurableSpace G], Measure G → Prop) 
   ∀ (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [LocallyCompactSpace G] [SecondCountableTopology G]
     [MeasurableSpace G] [BorelSpace G] (μ : Measure G) [μ.IsHaarMeasure], P G μ
 
-def ForMu (P : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (k : ℕ), Measure (GA E k) → Prop) : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (k : ℕ) (μ : Measure (GA E k)) [μ.IsHaarMeasure], P E k μ
+def ForMu (P : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (k : ℕ), Measure (GA E k) → Prop) : Prop :=
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (k : ℕ) (μ : Measure (GA E k)) [μ.IsHaarMeasure], P E k μ
 
 def Q1 : Prop := ForG fun G _ _ μ => ∀ (ν ρ : Measure G) [SFinite ν] [SFinite ρ] (H : Set G) (β β₁ : G → ℝ≥0∞),
   Measure.map (fun h => h⁻¹) ν = ν → (∀ᵐ h ∂ν, h ∈ H) → IsWt ν β → Measurable β₁ →
@@ -257,8 +261,8 @@ def InfinitePlaceStep : Prop := ForE fun E _ _ _ k => ∀ w ρ J, WRep (E := E) 
       ∃ x' C₀, C₀ ⊆ U ∧ J x' ∈ Y ∧ SmV (ρ.comp (infGL E k)) x' ∧ Lev S (J x') ∧ (∀ c ∈ C₀, GlobalTheory (n + 1) c) ∧
         Bump ψ S (Om (n + 1) m) (Set.image2 (· * ·) C C₀) (Wh ψ (J x'))
 
-open Classical in
 
+open Classical in
 def FinitePlaceStep : Prop := ForE fun E _ _ _ k => ∀ w ρ J, WRep (E := E) (k := k) w ρ J → ∀ ψ, StdPsi ψ →
   ∀ (S : Finset (Pl E)) (Y : Submodule ℂ (XB E k)), YOK ψ S Y → ∀ n m, ∀ v ∈ S, m v + 1 < k → (∀ v, v ∉ S → m v = 0) →
     ∀ U ∈ 𝓝 (1 : GA E k), ∀ x C, J x ∈ Y → SmV (ρ.comp (infGL E k)) x → Lev S (J x) → Bump ψ S (Om n m) C (Wh ψ (J x)) →
@@ -276,7 +280,7 @@ def K9 : Prop := ForE fun E _ _ _ k => 1 ≤ k → ∀ ψ, StdPsi ψ → (∀ᶠ
     ∀ α : Off E S → Fin k → ℂˣ, SatOff (CG.mk π) S α → ∃ φ ∈ π.V, ∃ (h : GA E k) (x : XB E k), InS S h ∧
       (x : GA E k → ℂ) = φ.1 ∧ (∀ w : Off E S, SatFn w.1 (Finset.univ.val.map (α w)) x) ∧ Lev S x ∧ Wh ψ (Rt E k h x) 1 = 1
 
-structure Prep {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {k : ℕ} (ψ : AddChar (Ad E) ℂ) (S : Finset (Pl E))
+structure Prep {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {k : ℕ} (ψ : AddChar (Ad E) ℂ) (S : Finset (Pl E))
     (α : Off E S → Fin k → ℂˣ) (M j : ℕ) (U : Set (GA E k)) (φ : XB E k) : Prop where
   good : Good ψ (k - 1) φ
   inv : RatInv (φ : GA E k → ℂ)
@@ -292,7 +296,7 @@ def KIR : Prop := ForE fun E _ _ _ k => 1 ≤ k → ∀ ψ, StdPsi ψ → (∀�
       (∀ g, ∀ x ∈ Y, Rt E k g x ∈ Y) → (∀ x : XB E k, (∃ φ ∈ π.V, (x : GA E k → ℂ) = φ.1) → x ∈ Y) →
       ∃ φ ∈ Y, Prep ψ S α M j U φ
 
-structure Sec {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {k : ℕ} (ψ : AddChar (Ad E) ℂ) (S : Finset (Pl E))
+structure Sec {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {k : ℕ} (ψ : AddChar (Ad E) ℂ) (S : Finset (Pl E))
     (α : Off E S → Fin k → ℂˣ) (φ : XB E k) : Prop where
   good : Good ψ (k - 1) φ
   inv : RatInv (φ : GA E k → ℂ)
@@ -307,7 +311,7 @@ def KSec : Prop := ForE fun E _ _ _ k => 1 ≤ k → ∀ ψ, StdPsi ψ → (∀�
     ∀ α : Off E S → Fin k → ℂˣ, SatOff (CG.mk π) S α →
       ∃ φ₀ ∈ π.V, ∃ (h : GA E k) (φ : XB E k), (∀ g, φ g = φ₀.1 (g * h)) ∧ Sec ψ S α φ
 
-def CornerEmbedding : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (m k : ℕ), k ≤ m →
+def CornerEmbedding : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (m k : ℕ), k ≤ m →
   (∀ (R : Type) [CommRing R], ∃ ι : GL (Fin k) R →* GL (Fin m) R, IsEmb ι) ∧ ∀ ι : GA E k →* GA E m, IsEmb ι →
     Continuous ι ∧ (∀ g, GlobalTheory k (ι g)) ∧ (∀ x : GA E m, GlobalTheory k x → ∃ g, x = ι g) ∧ (∀ g, Dt (ι g) = Dt g) ∧
     (∀ U ∈ 𝓝 (1 : GA E k), ∃ U' ∈ 𝓝 (1 : GA E m), ∀ g, ι g ∈ U' → g ∈ U) ∧
@@ -320,7 +324,7 @@ def CornerEmbedding : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotall
       ∀ l, ιw (Iwasawa.torusPow _ k l) = Iwasawa.torusPow _ m (pad m l)) ∧
     (∀ κ : GA E k, jumpWindows.cInf κ = 1 → jumpWindows.cInf (ι κ) = 1) ∧ (∀ n, UU 0 (ι n) ↔ UU 0 n) ∧ ∀ ψ n, psN ψ (ι n) = psN ψ n
 
-def TransformsEmbedding : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (m k : ℕ), 1 ≤ k → k < m →
+def TransformsEmbedding : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (m k : ℕ), 1 ≤ k → k < m →
   ∀ ψ, StdPsi ψ → ∀ ι : GA E k →* GA E m, IsEmb ι → ∀ φ : GA E m → ℂ, Good ψ (m - 1) φ →
     Good ψ k (pT ψ (k + 1) (m - (k + 1)) φ) ∧ pT ψ k (m - k) φ = colT ψ k (pT ψ (k + 1) (m - (k + 1)) φ) ∧
     Pre ψ (k - 1) (fun g => pT ψ k (m - k) φ (ι g)) ∧
@@ -328,18 +332,18 @@ def TransformsEmbedding : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTo
     (∀ g, pT ψ k (m - k) φ (ι g) ≠ 0 → ∃ p : GA E k, Mir (k - 1) p ∧ whit ψ (m - 1) φ (ι (p * g)) ≠ 0) ∧
     ∀ (j : ℕ) (x : GA E m) (B : ℝ), 1 ≤ j → j ≤ m → (∀ u, UU j u → ‖φ (u * x)‖ ≤ B) → ‖pT ψ j (m - j) φ x‖ ≤ B
 
-def FourierSeriesColumn : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (m k : ℕ), 1 ≤ k → k < m →
+def FourierSeriesColumn : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (m k : ℕ), 1 ≤ k → k < m →
   ∀ ψ, StdPsi ψ → ∀ ι : GA E k →* GA E m, IsEmb ι → ∀ F : GA E m → ℂ, Good ψ k F → ∀ g : GA E k,
     (∀ B : ℝ, (∀ x : UnipotentBlockColumnIndex m k k → Ad E, ‖F (blkU x * ι g)‖ ≤ B) →
       ∑' ξ : RowT E k k, ‖colT ψ k F (ι (ratGL E k (gam ξ) * g))‖ₑ ^ 2 ≤ ENNReal.ofReal (B ^ 2)) ∧
     ({ξ : RowT E k k | colT ψ k F (ι (ratGL E k (gam ξ) * g)) ≠ 0}.Finite → sumF (fun h => colT ψ k F (ι h)) g = F (ι g))
 
-def ShortRowsEmbedding : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (m k : ℕ), 1 ≤ k → k < m →
+def ShortRowsEmbedding : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (m k : ℕ), 1 ≤ k → k < m →
   ∀ ι : GA E k →* GA E m, IsEmb ι → ∃ C : ℝ, ∀ (g : GA E k) (u : GA E m),
     (UU 0 u → dmin (u * ι g) ≤ Dt g ^ (-(m : ℝ)⁻¹)) ∧
     (UU (k + 1) u → dmin (u * ι g) ≤ C * Dt g ^ (((m : ℝ) - 1)⁻¹ - (m : ℝ)⁻¹))
 
-def K6 : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (m k : ℕ), 1 ≤ k → k < m →
+def K6 : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (m k : ℕ), 1 ≤ k → k < m →
   ∀ ψ, StdPsi ψ → ∀ S : Finset (Pl E), (∀ w, w ∉ S → Cond ψ w) → ∀ ι : GA E k →* GA E m, IsEmb ι →
     ∀ (α : Off E S → Fin m → ℂˣ) M U (φ : XB E m), Prep ψ S α M k U φ →
       ∃ C : Set (Fin k → Ad E), IsCompact C ∧ ∀ g, Wh ψ φ (ι g) ≠ 0 → lastRow g ∈ C
@@ -357,13 +361,13 @@ def LocalHeckeAlgebra : Prop := ∀ (E : Type) [Field E] [NumberField E] (S : Fi
 def KU : Prop := ForE fun E _ _ _ k => ∀ ψ, StdPsi ψ → ∀ (φ : XB E k) (u : ℝ), Good ψ (k - 1) φ → Wh ψ φ 1 = 1 →
   ∃ U ∈ 𝓝 (1 : GA E k), ∀ c ∈ U, 1 / 2 ≤ Dt c ∧ Dt c ≤ 2 ∧ 0 < (conj (Wh ψ φ c) * (Dt c : ℂ) ^ ((u : ℂ) * Complex.I)).re
 
-def KLt1 : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (m k : ℕ), 1 ≤ k → k < m →
+def KLt1 : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (m k : ℕ), 1 ≤ k → k < m →
   ∀ ψ, StdPsi ψ → ∀ S : Finset (Pl E), (∀ w, w ∉ S → Cond ψ w) → ∀ ι : GA E k →* GA E m, IsEmb ι →
     ∀ (α : Off E S → Fin m → ℂˣ) (α' : Off E S → Fin k → ℂˣ) (u : ℝ) (φ' : XB E k), Sec ψ S α' φ' →
       ∃ U ∈ 𝓝 (1 : GA E m), ∀ M, 1 ≤ M → ∀ φ : XB E m, Prep ψ S α M k U φ →
         Dat ψ S α α' u (fun g => pT ψ k (m - k) φ (ι g)) φ'
 
-def KLt2 : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (m k : ℕ), 1 ≤ k → k < m →
+def KLt2 : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (m k : ℕ), 1 ≤ k → k < m →
   ∀ ψ, StdPsi ψ → ∀ S : Finset (Pl E), (∀ w, w ∉ S → Cond ψ w) → ∀ ι : GA E k →* GA E m, IsEmb ι →
     ∀ (α : Off E S → Fin m → ℂˣ) (α' : Off E S → Fin k → ℂˣ) (φ' : XB E k), Sec ψ S α' φ' →
       ∀ U (φ : XB E m), Prep ψ S α (m ^ 3) k U φ →

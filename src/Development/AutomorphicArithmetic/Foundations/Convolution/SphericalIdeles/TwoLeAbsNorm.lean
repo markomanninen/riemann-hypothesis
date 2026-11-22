@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SphConj
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.LiftAll
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.LiftAt
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SameSat
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.PowSat
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SmoEq
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.CarryLift
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PowTwist
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SSatIff
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SSatUnit
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.AtInj
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SphConj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.LiftAll
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.LiftAt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SameSat
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.PowSat
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SmoEq
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.CarryLift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PowTwist
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SSatIff
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SSatUnit
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.AtInj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction
@@ -19,14 +23,16 @@ open PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Geo UpperTheory.Convolut
 open UpperTheory.V.Published UpperTheory.CBC PositivityTheory.RgJS
 
 private theorem same_sat {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-    [IsTotallyComplex F] [IsGalois F E] {n : ℕ} (hp : (Module.finrank F E).Prime) (π : CuspSub F n)
+    [_root_.NumberField.IsTotallyComplex F] [IsGalois F E] {n : ℕ} (hp : (Module.finrank F E).Prime) (π : CuspSub F n)
     {sat sat' : Pl E → Multiset ℂˣ → Prop}
     (H : WeakBC (CG.mk π).HasSat sat) (H' : WeakBC (CG.mk π).HasSat sat') :
     ∀ᶠ w : Pl E in cofinite, ∃ B, sat w B ∧ sat' w B := by
   have hN := (places F E hp).2.2.2.2.1
   filter_upwards [H, H'] with w a b
-  obtain ⟨B, hB, hB'⟩ := a _ (hN w)
-  obtain ⟨C, hC, hC'⟩ := b _ (hN w)
+  have hn : normV w = normV (w.under (𝓞 F)) ^ resDeg F w := by
+    simpa only [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply] using hN w
+  obtain ⟨B, hB, hB'⟩ := a _ hn
+  obtain ⟨C, hC, hC'⟩ := b _ hn
   obtain rfl := hB.unique hC
   exact ⟨_, hB', hC'⟩
 
@@ -39,10 +45,10 @@ theorem UpperTheory.ConvolutionTheory.Sph.up :
     UpperTheory.ConvolutionTheory.Sph.Up := by
   classical
   intro F E _ _ _ _ _ _ _ _ σ hσ hp n hn π P hW v hv B hB w hw f hf
-  let μE : Measure (normOneGL E n) := Measure.haar
-  let μF : Measure (normOneGL F n) := Measure.haar
-  obtain ⟨s, χ, χ', V, V', θ, hχ, hχ', hV, -, hθ, -, hW', hOff, -⟩ :=
-    Sph.norm F E σ hσ hp n hn μE μF π P hW
+  let μE : Measure (normOneGL (K := E) (n := n)) := Measure.haar
+  let μF : Measure (normOneGL (K := F) (n := n)) := Measure.haar
+  have hnorm := Sph.norm F E σ hσ hp n hn μE μF π P hW
+  obtain ⟨s, χ, χ', V, V', θ, hχ, hχ', hV, -, hθ, -, hW', hOff, -⟩ := hnorm
   obtain ⟨c1, -, c3, -⟩ := carryLift F E σ hσ hp n hn μE μF
   obtain ⟨Λ, t, S, hS, hAt⟩ := c1 V hV.summand
   have hN := (places F E hp).2.2.2.2.1
@@ -74,7 +80,8 @@ theorem UpperTheory.ConvolutionTheory.Sph.up :
   obtain ⟨B', hB'e, hB'⟩ := (Dp.sSatIff E n μE (P.twist χ') V'' hP' w _).1 (hup w hw)
   have h1 := hN w
   rw [hw] at h1
-  have hf' : Ideal.absNorm w.asIdeal = Ideal.absNorm v.asIdeal ^ f := hf
+  have hf' : Ideal.absNorm w.asIdeal = Ideal.absNorm v.asIdeal ^ f := by
+    simpa only [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply] using hf
   have hg : f = resDeg F w := Nat.pow_right_injective (two_le_absNorm v) (hf'.symm.trans h1)
   have hB'' : B' = B.map fun b => (b * χ.val v) ^ f := by
     refine Multiset.map_injective Units.val_injective ?_

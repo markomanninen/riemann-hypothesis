@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.FunctionalCalculusLaws
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.FunctionalCalculusLaws
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,7 @@ lemma pt (hgl : IsGlRep E) (huni : IsInfUnitary ε E)
       + (if c = a then inner ℂ (E a b x) (A (E d b y)) else 0)
       - (if b = d then inner ℂ (E a b x) (A (E a c y)) else 0) := by
     rw [huni c d, hsgn, one_mul, ← hA d c hcd.symm, comm_apply hgl d c a b y]
-    rw [map_add, map_sub, inner_add_right, inner_sub_right]
+    rw [map_add (f := _), map_sub, inner_add_right, inner_sub_right]
     split_ifs <;> (try simp) <;> ring
   rw [comm_apply hgl a b c d x, inner_add_left, h1, inner_sub_left]
   split_ifs <;> (try simp) <;> ring
@@ -92,12 +96,14 @@ lemma key (hgl : IsGlRep E) (huni : IsInfUnitary ε E)
 
 lemma beta_sum_left {ι : Type*} (s : Finset ι) (f : ι → V) (w : V) :
     beta ε E A (∑ i ∈ s, f i) w = ∑ i ∈ s, beta ε E A (f i) w := by
-  simp only [beta, map_sum, sum_inner]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [beta, map_sum, sum_inner]
   exact Finset.sum_comm
 
 lemma beta_sum_right {ι : Type*} (s : Finset ι) (f : ι → V) (v : V) :
     beta ε E A v (∑ i ∈ s, f i) = ∑ i ∈ s, beta ε E A v (f i) := by
-  simp only [beta, map_sum, inner_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [beta, map_sum, inner_sum]
   exact Finset.sum_comm
 
 lemma Lsym (hgl : IsGlRep E) (huni : IsInfUnitary ε E)

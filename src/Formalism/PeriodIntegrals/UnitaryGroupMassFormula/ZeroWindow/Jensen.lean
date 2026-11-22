@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ZeroWindow.RightHalfWith
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ZeroWindow.RightHalfWith
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,7 @@ theorem jensenCount : JensenCount := by
     exact_mod_cast (by omega : analyticOrderNatAt f u ≠ 0)
   have hSfin : S.Finite := hfin.subset hSsub
   refine ⟨hSfin, ?_⟩
-  have hJ := AnalyticOnNhd.circleAverage_log_norm (c := c) (R := 19 / 10) (by norm_num) hf' hfc
+  have hJ := AnalyticOnNhd.circleAverage_log_norm (R := 19 / 10) hf' hfc
   have hup : Real.circleAverage (fun x => Real.log ‖f x‖) c (19 / 10) ≤ Real.log M := by
     apply Real.circleAverage_mono_on_of_le_circle
     · exact MeromorphicOn.circleIntegrable_log_norm (hf'.mono sphere_subset_closedBall).meromorphicOn

@@ -1,23 +1,27 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdxEqRelIndex
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSplitPart
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaPullbackFirstGroupRationalPointEqSmul
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsNormOneScalarAvoidingMatrixEigenvalues
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaSpanRationalTranslatesVacuum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OmEqPullOfVacuum
-import Formalism.SharpRestriction.Divisibility.BoundaryLocalData
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FrameEmbeddingUniqueFixed
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ConstOfEquivariant
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RelIndexImageOneSubComplexLinearEquiv
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CharacterAtInertComponent
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RelIndexNeZeroOfMoves
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaLatticeIndex
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ProdSqNormEmbT
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.WeilRepresentationVacuumSignInertPlaces
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DetRationalMatrixTwoSidedMulEqProdEmbeddings
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RationalMatrixMulThetaLattices
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdxEqRelIndex
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSplitPart
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaPullbackFirstGroupRationalPointEqSmul
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsNormOneScalarAvoidingMatrixEigenvalues
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaSpanRationalTranslatesVacuum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OmEqPullOfVacuum
+public import Formalism.SharpRestriction.Divisibility.BoundaryLocalData
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FrameEmbeddingUniqueFixed
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ConstOfEquivariant
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RelIndexImageOneSubComplexLinearEquiv
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CharacterAtInertComponent
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RelIndexNeZeroOfMoves
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaLatticeIndex
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ProdSqNormEmbT
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.WeilRepresentationVacuumSignInertPlaces
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DetRationalMatrixTwoSidedMulEqProdEmbeddings
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RationalMatrixMulThetaLattices
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum GlobalTheory.RatEqui GlobalTheory.InertParity
 open scoped BigOperators Pointwise
@@ -43,7 +47,7 @@ theorem ev_norm {y : 𝓞 D.host.E} (hy : y ≠ 0) :
     Ev D (Ideal.absNorm (Ideal.span {y})) ∧ Ideal.absNorm (Ideal.span {y}) ≠ 0 := by
   have h0 : Ideal.span {y} ≠ ⊥ := by simpa using hy
   haveI : Finite (𝓞 D.host.E ⧸ Ideal.span {y}) := Ideal.finiteQuotientOfFreeOfNeBot _ h0
-  exact ⟨(GlobalTheory.InertParity.FiniteOrder.ev_card_and_sgn_card D (𝓞 D.host.E ⧸ Ideal.span {y})).1, Ideal.absNorm_eq_zero_iff.not.2 h0⟩
+  exact ⟨by rw [Ideal.absNorm_eq_natCard]; exact (GlobalTheory.InertParity.FiniteOrder.ev_card_and_sgn_card D (𝓞 D.host.E ⧸ Ideal.span {y})).1, Ideal.absNorm_eq_zero_iff.not.2 h0⟩
 
 theorem inertPrimeOrderParitySign_radical_integral_form {n i k : ℕ} {w : D.host.E} {w₁ c : 𝓞 D.host.E} (h1 : w₁ ≠ 0) (hc : c ≠ 0) (h : w * c = w₁)
     (hi : Ev D i) (hi0 : i ≠ 0) (hn : (n : ℝ) = (i : ℝ) ^ k * (∏ τ, ‖embT D τ w‖ ^ 2) ^ k) :
@@ -89,8 +93,8 @@ theorem chi_inert {n : ℕ} (χ : HeckeU D n) {y : 𝓞 D.host.E} (hy : y ≠ 0)
     change (1 - e) * inc D y + (1 - (1 - e)) * 1 - _ = _
     ring
 
-include h3 in
 
+include h3 in
 theorem chi_split {n : ℕ} (χ : HeckeU D n) {y : D.host.E} (hy : y ≠ 0) {y₁ c : 𝓞 D.host.E} (a1 : y₁ ≠ 0)
     (a2 : c ≠ 0) (h : y * c = y₁) :
     ((χ.f (Units.map (cut e h1) (prin hy)) : ℂˣ) : ℂ) =
@@ -126,11 +130,11 @@ theorem split_part (g : GA D N) {x : (AE D)ˣ}
     ring
   · rw [Units.val_mul, det_cutG, ← hdef]
     change e * x + (1 - e) * 1 = _ * sgA D (e * x + (1 - e) * 1)
-    rw [map_add, map_mul, map_mul, map_sub, map_one, h2]
+    rw [map_add (f := _), map_mul, map_mul, map_sub, map_one, h2]
     linear_combination e * hxv + (d + sgA D x - 1 - d * sgA D x) * h1
 
-include h2 h3 in
 
+include h2 h3 in
 theorem vac (hc : Crv D cc δ) (hN : Even (N * N')) {e0 : VC D N N' → ℂ}
     (he : e0 ∈ Th D (tor0 D cc δ) (stdL D N) (stdL D N')) (W : WeilO D cc δ N N' e0) {g : GA D N} {g' : GA D N'}
     {x x' : (AE D)ˣ} {L L'} (hx : x = Matrix.GeneralLinearGroup.det (g : GL (Fin N) (AE D)) * sgU D x)
@@ -165,7 +169,7 @@ end Idem
 theorem exists_idem (D : D7) : ∃ e : AE D, e * e = e ∧ sgA D e = e ∧
     ∀ q : ℕ, q.Prime → (InertQ D q → ZeroAt D q e) ∧ (¬ InertQ D q → ZeroAt D q (1 - e)) := by
   obtain ⟨ε, -, a1, a2, h3⟩ := exists_half_idem D
-  refine ⟨_, ?_, by rw [map_add, sgA_sgA, add_comm], h3⟩
+  refine ⟨_, ?_, by rw [map_add (f := _), sgA_sgA, add_comm], h3⟩
   have a3 : sgA D ε * sgA D ε = sgA D ε := by rw [← map_mul, a1]
   linear_combination a1 + a3 + 2 * a2
 
@@ -457,16 +461,5 @@ theorem oddEq_of_mem (hc : Crv D cc δ) (hN : Even (N * N')) {e0 : VC D N N' →
 theorem exact_equivariance : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ t0 : ℂ) (N N' : ℕ) (e0 : VC D N N' → ℂ),
     Crv D cc δ → GL3Theta.IsTwoTorsionPointUnkilled D (lamOf D cc δ) t0 → Even (N * N') → oddE0 D cc δ t0 N N' e0 → oddEq D cc δ N N' e0 :=
   fun _ _ _ _ _ _ _ hc _ hN hv => oddEq_of_mem hc hN hv.1
-
-theorem poisson : ∀ D : D7, admissible_poisson D := by
-  intro D cc δ hc N N' hN e0 he W
-  have h : ∀ (ε n : ℤ) (k : ℕ), (ε = 1 ∨ ε = -1) → Even (n - k) →
-      (∃ a, 2 * a = ε * n + k) ∧ ∃ a, 2 * a = ε * n - k := by
-    rintro ε n k (rfl | rfl) ⟨j, hj⟩
-    · exact ⟨⟨j + k, by omega⟩, ⟨j, by omega⟩⟩
-    · exact ⟨⟨-j, by omega⟩, ⟨-j - k, by omega⟩⟩
-  choose a' ha' using fun τ => (h _ _ N W.ep_pm.1 (W.chV.par τ)).1
-  choose a ha using fun τ => (h _ _ N' W.ep_pm.2 (W.chV'.par τ)).2
-  exact ⟨a, a', fun g g' γ γ' hr hr' => oddEq_of_mem hc hN he W g g' γ γ' a a' hr hr' ha' ha⟩
 
 end GlobalTheory.OddRank

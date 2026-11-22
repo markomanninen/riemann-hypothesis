@@ -1,4 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+
+@[expose] public section
+
 open PositivityTheory.Rg.Tf.Geo
 open MeasureTheory
 open scoped ENNReal
@@ -26,7 +31,7 @@ private theorem finite_fiber_integral {X T : Type} [Group X] [TopologicalSpace X
   convert hi using 3 with x
   rw [enorm_mul]
   congr 1
-  simp [enorm]
+  simp [eNorm_eq_nnNorm]
 
 private theorem prod_isInvInvariant {T T' : Type} [Group T] [MeasurableSpace T] [MeasurableInv T] [Group T'] [MeasurableSpace T']
     [MeasurableInv T'] (ν : Measure T) (ν' : Measure T') [SFinite ν] [SFinite ν'] [ν.IsInvInvariant] [ν'.IsInvInvariant] :

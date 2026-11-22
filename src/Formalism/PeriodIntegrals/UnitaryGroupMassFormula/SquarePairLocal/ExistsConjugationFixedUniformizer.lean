@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SquarePairLocal.MemFixSub
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SquarePairLocal.MemFixSub
+
+@[expose] public section
 
 noncomputable section
 open NumberField
@@ -40,7 +44,7 @@ theorem exists_conjugation_fixed_uniformizer (hE : PI.IsCMUnram E) (Q : Ideal (�
     · rw [hrad] at h
       exact absurd h hθt
   have hfix : ∀ y, cj E (y + cj E y) = y + cj E y := fun y => by
-    rw [map_add, cj_cj, add_comm]
+    rw [map_add (f := _), cj_cj, add_comm]
   have hcomb : (θ * x + cj E (θ * x)) - cj E θ * (x + cj E x) = (θ - cj E θ) * x := by
     rw [map_mul]; ring
   by_cases h2 : x + cj E x ∈ Q ^ 2

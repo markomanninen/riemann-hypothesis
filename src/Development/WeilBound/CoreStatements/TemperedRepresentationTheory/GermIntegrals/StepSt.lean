@@ -1,4 +1,9 @@
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GermIntegrals.IsGerm
+module
+
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GermIntegrals.IsGerm
+
+@[expose] public section
+
 open MeasureTheory GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.ThetaGL ValuativeRel PositivityTheory.Tls2.Ming3
 
 namespace PositivityTheory.Tls2.Ming3

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SupWOfSup
-import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SupWOfSup
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
+
+@[expose] public section
+
 open BpJoin Formalism.FourierDecayAlt Formalism.MainNotions.S.ThB
 
 namespace GlobalTheory.BpStdNum

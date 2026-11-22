@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelCext
-import Formalism.RealPlaceAnalysis.StatementKT
-import Formalism.RealPlaceAnalysis.QuotientSettingHolds
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelGenA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelCext
+public import Formalism.RealPlaceAnalysis.StatementKT
+public import Formalism.RealPlaceAnalysis.QuotientSettingHolds
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelGenA
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,11 +30,6 @@ variable [FiniteDimensional ℂ V] {ε : Fin n → Bool} (τ : KG ε →* unitar
   (hder : ∀ X, inK ε X → ∀ γ : ℝ → KG ε, (∀ t : ℝ, toMK (γ t) = NormedSpace.exp ((t : ℂ) • X)) →
     HasDerivAt (fun t => ((τ (γ t) : unitary (V →L[ℂ] V)) : V →L[ℂ] V)) (dτ X) 0)
 
-include hcont hder in
-theorem pre_op_eq_exp (k : KG ε) :
-    ∃ Y : Matrix (Fin n) (Fin n) ℂ, inK ε Y ∧
-      ((τ k : unitary (V →L[ℂ] V)) : V →L[ℂ] V) = NormedSpace.exp (dτ Y) := by
-  exact pre_op_eq_exp' τ dτ hder k
 
 include hcont hder in
 theorem pre_kRel : Formalism.REAL.KRel ε (preUnits dτ) := by
@@ -63,9 +62,11 @@ theorem pre_kUnit : Formalism.REAL.KUnit ε (preUnits dτ) := by
 theorem pre_dτ_stable_of_kStable (W : Submodule ℂ V) (hW : Formalism.REAL.KStable ε (preUnits dτ) W) :
     ∀ Y, inK ε Y → ∀ v ∈ W, dτ Y v ∈ W := by
   intro Y hY v hv
-  rw [Matrix.matrix_eq_sum_single Y, map_sum, _root_.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.matrix_eq_sum_single Y, map_sum, _root_.sum_apply]
   refine W.sum_mem fun a _ => ?_
-  rw [map_sum, _root_.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, _root_.sum_apply]
   refine W.sum_mem fun b _ => ?_
   by_cases hab : ε a = ε b
   · have e : Matrix.single a b (Y a b) = Y a b • Matrix.single a b 1 := by
@@ -77,8 +78,8 @@ theorem pre_dτ_stable_of_kStable (W : Submodule ℂ V) (hW : Formalism.REAL.KSt
     rw [e, map_zero, _root_.zero_apply]
     exact W.zero_mem
 
-include hcont hder in
 
+include hcont hder in
 theorem pre_kStable_of_stable (W : Submodule ℂ V)
     (hW : ∀ k : KG ε, ∀ v ∈ W, ((τ k : unitary (V →L[ℂ] V)) : V →L[ℂ] V) v ∈ W) :
     Formalism.REAL.KStable ε (preUnits dτ) W := by
@@ -119,8 +120,8 @@ theorem pre_kStable_of_stable (W : Submodule ℂ V)
     _root_.smul_apply]
   exact W.sub_mem (W.smul_mem _ (hK _ h1 v hv)) (W.smul_mem _ (hK _ h2 v hv))
 
-include hcont hder in
 
+include hcont hder in
 theorem pre_kSpan_stable (x : V) (k : KG ε) :
     ∀ v ∈ Formalism.REAL.kSpan ε (preUnits dτ) x,
       ((τ k : unitary (V →L[ℂ] V)) : V →L[ℂ] V) v ∈ Formalism.REAL.kSpan ε (preUnits dτ) x := by
@@ -134,8 +135,8 @@ theorem pre_kSpan_stable (x : V) (k : KG ε) :
   rw [show ((τ k : unitary (V →L[ℂ] V)) : V →L[ℂ] V) = NormedSpace.exp (dτ Y) from he]
   exact exp_mem_of_stable _ _ (pre_dτ_stable_of_kStable dτ _ hS Y hY)
 
-include hcont hder in
 
+include hcont hder in
 theorem irred_of_gen {Λ : Fin n → ℝ} (w : V)
     (hwt : ∀ a, dτ (Matrix.single a a 1) w = ((Λ a : ℝ) : ℂ) • w)
     (hhw : ∀ a b, a < b → ε a = ε b → dτ (Matrix.single a b 1) w = 0)
@@ -178,11 +179,5 @@ def kTypeOfGen {ε : Fin n → Bool} {Λ : Fin n → ℝ} (V : Type) [NormedAddC
   w_norm := hw
   w_wt := hwt
   w_hw := hhw
-
-example (ε : Fin n → Bool) : KType ε 0 :=
-  kTypeOfGen ℂ 1 continuous_const 0
-    (fun _ _ _ _ => by simpa using hasDerivAt_const (0 : ℝ) (1 : ℂ →L[ℂ] ℂ)) 1 (by simp) (fun a => by simp)
-    (fun _ _ _ _ => by simp)
-    (fun W _ h => eq_top_iff.2 fun x _ => by simpa using W.smul_mem x h)
 
 end ReciprocityTheory.ChartRestriction.DS.HW

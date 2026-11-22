@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.MvPowerSeriesSubstConstTermsLocalAlgHomSpecStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.MaximalIdealFormalPointsFormModuleStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.MvPowerSeriesSubstConstTermsLocalAlgHomSpecStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.MaximalIdealFormalPointsFormModuleStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -35,10 +39,6 @@ instance : Add (SP B m) :=
 instance : SMul O (SP B m) :=
   ⟨fun a x => ⟨compV (B.A.act a) x.val,
     ((GlobalTheory.T.maximal_ideal_formal_points_form_module V d O B m x.val x.val x.val x.sm x.sm x.sm).2.2.2.2.2.2.2 a a).1⟩⟩
-
-lemma val_zero : (0 : SP B m).val = 0 := rfl
-lemma val_add (x y : SP B m) : (x + y).val = addV B.G.F x.val y.val := rfl
-lemma val_smul (a : O) (x : SP B m) : (a • x).val = compV (B.A.act a) x.val := rfl
 
 lemma add_comm' (x y : SP B m) : x + y = y + x :=
   SP.ext (GlobalTheory.T.maximal_ideal_formal_points_form_module V d O B m x.val y.val x.val x.sm y.sm x.sm).2.1
@@ -108,8 +108,8 @@ lemma evV_const {n : ℕ} (x : Fin n → Pt V m d) (hx : ∀ b i, MvPowerSeries.
   rw [h]
   exact MvPowerSeries.constantCoeff_subst_eq_zero (MvPowerSeries.hasSubst_of_constantCoeff_zero ha) ha hf
 
-variable (B) in
 
+variable (B) in
 def evL {n : ℕ} (x : Fin n → Pt V m d) (hx : ∀ b, Sm (x b)) : SP B n →ₗ[O] SP B m where
   toFun a := ⟨fun i => evV x (a.val i), fun i => evV_sm x hx _ (a.sm i)⟩
   map_add' a b := by
@@ -178,7 +178,8 @@ lemma evV_matV {n : ℕ} (p : Matrix (Fin n) (Fin n) O) (x : Fin n → Pt V m d)
     matV_val B p fun j => (⟨x j, hx j⟩ : SP B m)
   rw [h1, h2]
   show (evL B x hx (∑ j, p b j • (⟨pt V (n := n) d j, sm_pt j⟩ : SP B n))).val i = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul, he]
 
 lemma foldr_const (l : List (Pt V m d)) (hl : ∀ a ∈ l, ∀ i, MvPowerSeries.constantCoeff (a i) = 0) (i : Fin d) :

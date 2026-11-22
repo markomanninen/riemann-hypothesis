@@ -1,12 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.TanGlob
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ASmooth
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CotFg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ChartRank
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSqz
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.DerHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.DerExtend
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.SpansOfDer
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.TanGlob
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ASmooth
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CotFg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ChartRank
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSqz
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.DerHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.DerExtend
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.SpansOfDer
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
 section
@@ -26,7 +31,7 @@ private theorem m1bLin_sat (h : IsChart 𝒜 x wt φ) (i : τ) : ∀ f ∈ satSq
   have h2 : ∀ f ∈ RingHom.ker x ^ 2, powerSeriesCoefficientLinear φ i f = 0 := by
     intro f hf
     rw [sq] at hf
-    refine Submodule.mul_induction_on hf (fun a ha b hb => ?_) (fun a b ha hb => by rw [map_add, ha, hb, add_zero])
+    refine Submodule.mul_induction_on hf (fun a ha b hb => ?_) (fun a b ha hb => by rw [map_add (f := _), ha, hb, add_zero])
     have ha' : MvPowerSeries.coeff 0 (φ a) = 0 := by
       rw [MvPowerSeries.coeff_zero_eq_constantCoeff_apply, h.const, show x a = 0 from ha, map_zero]
     have hb' : MvPowerSeries.coeff 0 (φ b) = 0 := by
@@ -49,7 +54,7 @@ private theorem cotangent_rank_le_weight_count [Fintype τ] (h : IsChart 𝒜 x 
   let ψ : cotLat x 𝒜 j →ₗ[O] ({i // wt i = j} → FractionRing O) :=
     LinearMap.pi fun i => ((satSq x).liftQ (powerSeriesCoefficientLinear φ i.1) (m1bLin_sat h i.1)) ∘ₗ (cotLat x 𝒜 j).subtype
   have hinj : Function.Injective ψ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     rintro ⟨_, f, hf, rfl⟩ h0
     apply Subtype.ext
     refine (Submodule.Quotient.mk_eq_zero _).2 (h.inj f hf.2 fun i => ?_)
@@ -209,8 +214,10 @@ private theorem spans_cotangent_of_derivation_test (hD : D.Good) (hSo : SoV Ω l
   · obtain ⟨δ', ⟨h1, rfl⟩, -⟩ := (der_extend c.O M.R (ℤ × ℤ) M.W M.org c.O).1 δ hδ
     have hwt' : HasWt M.W.part w δ' := fun i hi f hf => hwt i hi ⟨f, M.W.part_le_A hf⟩ hf
     obtain ⟨a, b, e⟩ := h δ' hwt' h0
-    rw [derivation_zero_of_killing_generators hD hSo M w hw δ' h1 hwt' a b e, LinearMap.zero_comp]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [derivation_zero_of_killing_generators hD hSo M w hw δ' h1 hwt' a b e, LinearMap.zero_comp]
 
+set_option synthInstance.maxHeartbeats 100000 in
 private theorem cotangent_rank_at_weight_eq_dims (M : Model D) (w : ℤ × ℤ) :
     Module.rank c.O (cotLat (M.W.originA M.org) M.W.gr w) = (tDims M.r M.r' M.m w : ℕ) := by
   obtain ⟨τ, _, wt, φ, hc, hn⟩ := M.smooth

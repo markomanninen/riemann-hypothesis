@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.IsAdmissiblePrimeListNil
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.IsAdmissiblePrimeListNil
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.V.Odd UpperTheory.V.Stick UpperTheory.V.ML
 open scoped nonZeroDivisors Pointwise
@@ -87,6 +91,6 @@ theorem UpperTheory.V.ML.radEqv :
     have hc : (chiO ℚ Ω l O g : O) = algebraMap ℤ_[l] O ((cycZ ℚ Ω l g : ℤ_[l]ˣ) : ℤ_[l]) := rfl
     have hlm : ((l : O) ^ m) • f u = 0 := by
       rw [← Nat.cast_pow, Nat.cast_smul_eq_nsmul O (l ^ m) (f u), htor u hu]
-    rw [hc, hz, map_add, map_mul, map_pow, map_natCast, map_natCast, add_smul, mul_comm, mul_smul, hlm,
+    rw [hc, hz, map_add (f := _), map_mul, map_pow, map_natCast, map_natCast, add_smul, mul_comm, mul_smul, hlm,
       smul_zero, add_zero, Nat.cast_smul_eq_nsmul O k (f u)]
   rw [sub_smul, hγ, hχ, sub_self]

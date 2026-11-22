@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.GrpBridge
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdTameWild
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDifferentExponentDenominator
+module
+
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.GrpBridge
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdTameWild
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDifferentExponentDenominator
+
+@[expose] public section
 
 open UpperTheory.HF
 
@@ -30,7 +34,7 @@ theorem UpperTheory.HF.diff_mult :
   have hvd : H.vdH l = (multiplicity P (differentIdeal ℤ (𝓞 H.E)) : ℝ) / H.el l := by
     have hr := congrArg (fun q : ℚ => (q : ℝ)) hrat
     push_cast at hr
-    simp only [HostRaw.vdH]
+    simp only [HostRaw.vdH, Nat.padicValNat_def]
     exact hr.symm
   have h1 : (multiplicity P (differentIdeal ℤ (𝓞 H.E)) : ℝ) = H.el l * H.vdH l := by
     rw [hvd]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.StripEntire
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.StripEntire
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem isCh_one {Γ P : Subgroup G} {c : G → ℂ} (h : IsCh Γ P c) : c 1 = 1
 
 def fixSp (K Q : Subgroup G) (π : Q →* G') (c₀ : G → ℂ) (ρ : K →* (W →L[ℂ] W)) : Submodule ℂ W where
   carrier := {w | ∀ r : K, ∀ hr : (r : G) ∈ Q, π ⟨r, hr⟩ = 1 → c₀ r • ρ r w = w}
-  add_mem' := fun {a b} ha hb r hr h1 => by rw [map_add, smul_add, ha r hr h1, hb r hr h1]
+  add_mem' := fun {a b} ha hb r hr h1 => by rw [map_add (f := _), smul_add, ha r hr h1, hb r hr h1]
   zero_mem' := fun r _ _ => by simp
   smul_mem' := fun a w hw r hr h1 => by rw [map_smul, smul_comm, hw r hr h1]
 
@@ -30,17 +34,8 @@ variable {Γ K Q : Subgroup G} {Γ' K' : Subgroup G'} {π : Q →* G'} {ι : G' 
 def kι (hL : IsLevi Γ K Q Γ' K' π ι c₀) : K' →* K :=
   (Q.subtype.comp (ι.comp K'.subtype)).codRestrict K (fun m => hL.ιK m m.2)
 
-@[simp] theorem kι_coe (hL : IsLevi Γ K Q Γ' K' π ι c₀) (m : K') : ((kι hL m : K) : G) = ι m := rfl
-
 theorem c₀_mul (hL : IsLevi Γ K Q Γ' K' π ι c₀) (a b : Q) :
     c₀ ((a * b : Q) : G) = c₀ a * c₀ b := hL.par.ch.mul a a.2 b b.2
-
-theorem c₀_inv (hL : IsLevi Γ K Q Γ' K' π ι c₀) (a : Q) : c₀ ((a⁻¹ : Q) : G) = (c₀ a)⁻¹ := by
-  have h := c₀_mul hL a⁻¹ a
-  rw [inv_mul_cancel] at h
-  have h1 : c₀ ((1 : Q) : G) = 1 := isCh_one hL.par.ch
-  rw [h1] at h
-  exact eq_inv_of_mul_eq_one_left h.symm
 
 theorem c₀_ι_left (hL : IsLevi Γ K Q Γ' K' π ι c₀) (m : G') (a : Q) :
     c₀ ((ι m * a : Q) : G) = c₀ a := by
@@ -56,12 +51,12 @@ theorem fix_stable (hL : IsLevi Γ K Q Γ' K' π ι c₀) (ρ : K →* (W →L[�
   set u : K := kι hL m with hu
   have hconj : (((u⁻¹ * r * u : K)) : G) ∈ Q := by
     have : (((u⁻¹ * r * u : K)) : G) = (((ι (m : G'))⁻¹ * ⟨r, hr⟩ * ι (m : G') : Q) : G) := by
-      simp [hu]
+      simp [hu, kι, MonoidHom.codRestrict, MonoidHom.comp, Subgroup.subtype]
     rw [this]
     exact Subtype.property _
   have hval : (⟨((u⁻¹ * r * u : K) : G), hconj⟩ : Q) = (ι (m : G'))⁻¹ * ⟨r, hr⟩ * ι (m : G') := by
     apply Subtype.ext
-    simp [hu]
+    simp [hu, kι, MonoidHom.codRestrict, MonoidHom.comp, Subgroup.subtype]
   have hπ : π ⟨((u⁻¹ * r * u : K) : G), hconj⟩ = 1 := by
     rw [hval, map_mul, map_mul, h1, map_inv, hL.sect]
     simp
@@ -117,12 +112,12 @@ theorem am_move (hL : IsLevi Γ K Q Γ' K' π ι c₀) (ρ : K →* (W →L[ℂ]
   set s : K := r * (kι hL m)⁻¹ with hs
   have hsQ : (s : G) ∈ Q := by
     have : (s : G) = ((⟨r, hr⟩ * (ι (π ⟨r, hr⟩))⁻¹ : Q) : G) := by
-      simp [hs, hm]
+      simp [hs, hm, kι, MonoidHom.codRestrict, MonoidHom.comp, Subgroup.subtype]
     rw [this]
     exact Subtype.property _
   have hsval : (⟨(s : G), hsQ⟩ : Q) = ⟨r, hr⟩ * (ι (π ⟨r, hr⟩))⁻¹ := by
     apply Subtype.ext
-    simp [hs, hm]
+    simp [hs, hm, kι, MonoidHom.codRestrict, MonoidHom.comp, Subgroup.subtype]
   have hsπ : π ⟨s, hsQ⟩ = 1 := by
     rw [hsval, map_mul, map_inv, hL.sect]
     simp
@@ -373,7 +368,7 @@ theorem sec_pull (hL : IsLevi Γ K Q Γ' K' π ι c₀) (hP : IsPull Q P P' π c
     rw [hπp]
     exact hp'⟩
   have hqk : (q : G) * k = p * ((kι hL m * k : K) : G) := by
-    simp [hpd, hm]
+    simp [hpd, hm, kι, MonoidHom.codRestrict, MonoidHom.comp, Subgroup.subtype]
   have hcp : c p = c₀ q * c' p' := by
     rw [hP.ch p (by rw [hπp]; exact hp'), hπp, hpd, c₀_ι_right hL]
   have hsec' := h2 _ hv p' hp' m
@@ -464,7 +459,7 @@ theorem mem_secSp_iff (hL : IsLevi Γ K Q Γ' K' π ι c₀) (hP : IsPull Q P P'
     set m : K' := ⟨π ⟨r, hrQ⟩, hL.πK ⟨r, hrQ⟩ r.2⟩ with hm
     set s : K := r * (kι hL m)⁻¹ with hs
     have hsval : (s : G) = ((⟨r, hrQ⟩ * (ι (π ⟨r, hrQ⟩))⁻¹ : Q) : G) := by
-      simp [hs, hm]
+      simp [hs, hm, kι, MonoidHom.codRestrict, MonoidHom.comp, Subgroup.subtype]
     have hsQ : (s : G) ∈ Q := by
       rw [hsval]
       exact Subtype.property _
@@ -511,7 +506,7 @@ theorem isPar_pull [IsTopologicalGroup G] (hL : IsLevi Γ K Q Γ' K' π ι c₀)
         simp [map_mul, map_inv, hL.sect, hq]
       rw [this]
       exact hp'
-    · simp [hg, hm]
+    · simp [hg, hm, kι, MonoidHom.codRestrict, MonoidHom.comp, Subgroup.subtype]
   · intro p hp q hq
     obtain ⟨hp1, hp2⟩ := (hP.mem _).1 hp
     obtain ⟨hq1, hq2⟩ := (hP.mem _).1 hq

@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.HoloContDiffStatement
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.IntegralMollProfBall
+module
+
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.HoloContDiffStatement
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.IntegralMollProfBall
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.C
 

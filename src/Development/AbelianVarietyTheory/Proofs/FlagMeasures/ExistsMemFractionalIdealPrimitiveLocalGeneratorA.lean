@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LatExistsSat
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsMemFractionalIdealGeneratorAtPrimesOverStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUnimodularLiftOfUnimodularMod
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LatExistsSat
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsMemFractionalIdealGeneratorAtPrimesOverStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUnimodularLiftOfUnimodularMod
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 
 namespace GlobalTheory
@@ -14,34 +19,8 @@ theorem fractionalIdeal_restrictScalars_isLattice_of_tower (F E : Type) [Field F
   · exact (FractionalIdeal.fg_of_isNoetherianRing le_rfl c).restrictScalars
   · obtain ⟨x, hxc, hx0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot (p := (c : Submodule (𝓞 E) E))
       (by rwa [Ne, FractionalIdeal.coeToSubmodule_eq_bot])
-    rw [eq_top_iff]
-    intro y _
-    obtain ⟨⟨r, s⟩, hrs⟩ := IsLocalization.surj (nonZeroDivisors (𝓞 E)) (y / x)
-    dsimp only at hrs
-    have hs0 : (s : 𝓞 E) ≠ 0 := nonZeroDivisors.coe_ne_zero s
-    have hspan : Ideal.span {(s : 𝓞 E)} ≠ ⊥ := by simpa using hs0
-    have hm0 : Ideal.absNorm (Ideal.span {(s : 𝓞 E)}) ≠ 0 := by
-      rwa [Ne, Ideal.absNorm_eq_zero_iff]
-    obtain ⟨u, hu⟩ := Ideal.mem_span_singleton'.mp (Ideal.absNorm_mem (Ideal.span {(s : 𝓞 E)}))
-    set m := Ideal.absNorm (Ideal.span {(s : 𝓞 E)})
-    have hmem : (algebraMap (𝓞 E) E (u * r)) * x ∈ c :=
-      (c : Submodule (𝓞 E) E).smul_mem (u * r) hxc
-    have hyeq : y = ((m : F)⁻¹) • ((algebraMap (𝓞 E) E (u * r)) * x) := by
-      have hu' : algebraMap (𝓞 E) E u * algebraMap (𝓞 E) E s = (m : E) := by
-        rw [← map_mul, hu, map_natCast]
-      have hmE : (m : E) ≠ 0 := Nat.cast_ne_zero.mpr hm0
-      rw [Algebra.smul_def, map_inv₀, map_natCast, map_mul]
-      have hyx : y = algebraMap (𝓞 E) E r / algebraMap (𝓞 E) E s * x := by
-        have hsE : algebraMap (𝓞 E) E s ≠ 0 := by simpa using hs0
-        rw [← hrs]; field_simp
-      rw [hyx, ← hu']
-      have hsE : algebraMap (𝓞 E) E s ≠ 0 := by simpa using hs0
-      have huE : algebraMap (𝓞 E) E u ≠ 0 := by
-        intro h; rw [h, zero_mul] at hu'; exact hmE hu'.symm
-      field_simp
-    rw [hyeq]
-    exact Submodule.smul_mem _ _ (Submodule.subset_span hmem)
-
+    intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
 theorem exists_basis_latSpanV_eq_of_finrank_two (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E]
     [Algebra F E] (hE : Module.finrank F E = 2) (c : FractionalIdeal (nonZeroDivisors (𝓞 E)) E) (hc : c ≠ 0) :
     ∃ (e : Fin 2 → E) (b : FractionalIdeal (nonZeroDivisors (𝓞 F)) F), LinearIndependent F e ∧ b ≠ 0 ∧
@@ -49,8 +28,27 @@ theorem exists_basis_latSpanV_eq_of_finrank_two (F E : Type) [Field F] [NumberFi
         latSpanV (Fin.snoc (α := fun _ => FractionalIdeal (nonZeroDivisors (𝓞 F)) F) (fun _ => 1) b) e := by
   have hL := fractionalIdeal_restrictScalars_isLattice_of_tower F E c hc
   haveI : FiniteDimensional F E := Module.finite_of_finrank_eq_succ hE
+  have hfull : Submodule.IsFullLattice F ((c : Submodule (𝓞 E) E).restrictScalars (𝓞 F)) := by
+    letI := hL
+    refine ⟨?_⟩
+    apply top_le_iff.mp
+    intro z _
+    obtain ⟨x, hxc, hx0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot (p := (c : Submodule (𝓞 E) E))
+      (by rwa [Ne, FractionalIdeal.coeToSubmodule_eq_bot])
+    obtain ⟨n, hn, hi⟩ := (IsFractionRing.isAlgebraic_iff ℤ ℚ E |>.mpr (.of_finite ℚ (z / x))).exists_integral_multiple
+    let y : 𝓞 E := ⟨n • (z / x), hi⟩
+    have hym : (y : E) * x ∈ (c : Submodule (𝓞 E) E) :=
+      (c : Submodule (𝓞 E) E).smul_mem y hxc
+    have hs : (n : F) • z ∈ Submodule.span F
+        (((c : Submodule (𝓞 E) E).restrictScalars (𝓞 F)) : Set E) := by
+      apply Submodule.subset_span
+      convert hym using 1
+      simp [y, Algebra.smul_def, div_eq_mul_inv, hx0, mul_assoc]
+    have hnF : (n : F) ≠ 0 := Int.cast_ne_zero.mpr hn
+    have := (Submodule.span F (((c : Submodule (𝓞 E) E).restrictScalars (𝓞 F)) : Set E)).smul_mem (n : F)⁻¹ hs
+    simpa [smul_smul, hnF] using this
   let w := Module.finBasisOfFinrankEq F E hE
-  obtain ⟨e, b, he, -, hb, heq⟩ := satBasisV_holds F E _ hL 1 w w.linearIndependent (fun _ => 1)
+  obtain ⟨e, b, he, -, hb, heq⟩ := satBasisV_holds F E _ hfull 1 w w.linearIndependent (fun _ => 1)
     (fun _ => one_ne_zero)
   refine ⟨e, b, he, hb, ?_⟩
   rw [← heq, w.span_eq]
@@ -68,7 +66,7 @@ theorem basis_repr_mem_of_mem_latSpanV_two {F E : Type} [Field F] [NumberField F
     · rw [smul_zero]; exact (C i : Submodule (𝓞 F) F).zero_mem
   | zero => rw [map_zero, Finsupp.zero_apply]; exact (C i : Submodule (𝓞 F) F).zero_mem
   | add x y _ _ hx hy =>
-    rw [map_add, Finsupp.add_apply]; exact (C i : Submodule (𝓞 F) F).add_mem hx hy
+    rw [map_add (f := _), Finsupp.add_apply]; exact (C i : Submodule (𝓞 F) F).add_mem hx hy
   | smul r x _ hx =>
     rw [← algebraMap_smul F r x, map_smul, Finsupp.smul_apply, algebraMap_smul]
     exact (C i : Submodule (𝓞 F) F).smul_mem r hx
@@ -102,7 +100,7 @@ theorem basis_repr_mem_of_mem_map_mul_two {F E : Type} [Field F] [NumberField F]
       exact hgen π hπ
     | zero => intro z _; simp [T.zero_mem]
     | add x y _ _ hx hy =>
-      intro z hz; rw [map_add, add_mul, map_add, Finsupp.add_apply]; exact T.add_mem (hx z hz) (hy z hz)
+      intro z hz; rw [map_add (f := _), add_mul, map_add (f := _), Finsupp.add_apply]; exact T.add_mem (hx z hz) (hy z hz)
     | smul r x _ hx =>
       intro z hz
       have e1 : algebraMap (𝓞 E) E (r * x) * z = algebraMap (𝓞 E) E x * (algebraMap (𝓞 E) E r * z) := by
@@ -114,7 +112,7 @@ theorem basis_repr_mem_of_mem_map_mul_two {F E : Type} [Field F] [NumberField F]
     obtain ⟨q, hq', rfl⟩ := (FractionalIdeal.mem_coeIdeal _).mp hu
     exact hq q hq' z hz
   · intro x y hx hy
-    simp only [map_add, Finsupp.add_apply]
+    simp only [map_add (f := _), Finsupp.add_apply]
     exact T.add_mem hx hy
 
 theorem mem_map_mul_of_basis_repr_mem_two {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E]
@@ -207,14 +205,14 @@ theorem exists_mem_fractionalIdeal_primitive_local_generator : ∀ (F E : Type) 
     have hr : ∀ i, B.repr (a₀ + (m : F) • w) i = B.repr a₀ i + (m : F) * ((algebraMap (𝓞 F) F s) *
         (Finsupp.single 0 1 : Fin 2 →₀ F) i + t * (Finsupp.single 1 1 : Fin 2 →₀ F) i) := by
       intro i
-      simp only [w, map_add, map_smul, B.repr_self, Finsupp.add_apply, Finsupp.smul_apply, smul_eq_mul]
+      simp only [w, map_add (f := _), map_smul, B.repr_self, Finsupp.add_apply, Finsupp.smul_apply, smul_eq_mul]
     refine hst p hp ⟨?_, ?_⟩
     · have h0 := h 0
       rw [hC0, mul_one, hr 0] at h0
       obtain ⟨x', hx'p, hx'⟩ := (FractionalIdeal.mem_coeIdeal _).mp h0
       have : x' = x₀ + (m : 𝓞 F) * s := by
         apply IsFractionRing.injective (𝓞 F) F
-        rw [hx', map_add, map_mul, map_natCast, hx₀]
+        rw [hx', map_add (f := _), map_mul, map_natCast, hx₀]
         simp
       exact this ▸ hx'p
     · have h1 := h 1

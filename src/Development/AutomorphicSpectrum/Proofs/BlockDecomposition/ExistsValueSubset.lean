@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.ElementaryCosets.JPred
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MonomialOfConjTorus
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PermEqOneOfMonomialMem
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PowUnifLeOne
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CongruenceSubgroupBasisNhds
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.ElementaryCosets.CosetMap
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MonomialOfConjTorus
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PermEqOneOfMonomialMem
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PowUnifLeOne
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CongruenceSubgroupBasisNhds
+
+@[expose] public section
 
 noncomputable section
 

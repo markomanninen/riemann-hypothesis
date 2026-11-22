@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreClosureNumber
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreClosureNumber
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -124,9 +129,6 @@ def SegreFlagClosurePullback.Statement : Prop :=
         else 0
 
 section Examples
-
-def cutExpansion : Fin (1 + (1 + 1)) → MvPolynomial (Fin (1 + (1 + 1)) ⊕ Fin (1 + (1 + 1))) ℤ :=
-  fun i => if (i : ℕ) < 2 then 1 else 0
 
 end Examples
 

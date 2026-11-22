@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.GoodPartHermitianSpec
-import Formalism.LocalToGlobal.Divisibility.Frames
-import Formalism.LocalToGlobal.Columns.HeckeSp
-import Formalism.LocalToGlobal.Columns.AlgebraMapMemMaximalIdealPowIff
-import Formalism.LocalToGlobal.IndefiniteForms.IndefSide
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.GoodPartHermitianSpec
+public import Formalism.LocalToGlobal.Divisibility.Frames
+public import Formalism.LocalToGlobal.Columns.HeckeSp
+public import Formalism.LocalToGlobal.Columns.AlgebraMapMemMaximalIdealPowIff
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefSide
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain Polynomial
 open scoped Matrix ComplexOrder
@@ -22,7 +26,7 @@ def perpOf (H : Matrix (Fin n) (Fin n) K) (Z : Submodule K (Fin n → K)) : Subm
   carrier := {x | ∀ z ∈ Z, hform H z x = 0}
   add_mem' := by
     intro x y hx hy z hz
-    rw [map_add, hx z hz, hy z hz, add_zero]
+    rw [map_add (f := _), hx z hz, hy z hz, add_zero]
   zero_mem' := by
     intro z _
     rw [map_zero]
@@ -118,8 +122,8 @@ def invariantGoodPart : Submodule K (Fin (B.nV ℓ) → K) := B.inV0 ℓ B.ZH
 def resSet (X : Finset (G → K)) : Set (Pl0 → K[X]) :=
   {Sg | (∀ P0, P0 ∉ Set.range B.pl → Sg P0 = 1) ∧ B.inV0 (Lvl.full X) (B.partF Sg) ≠ ⊥}
 
-open Classical in
 
+open Classical in
 def ixFin (X : Finset (G → K)) : Finset (Pl0 → K[X]) :=
   if h : (B.resSet X).Finite then h.toFinset else ∅
 
@@ -168,10 +172,6 @@ def toF : (Fin (B.dZ ℓ Z) → K) →ₗ[K] B.S.Forms :=
     (B.zE ℓ Z).mulVecLin
 
 end Sub
-
-def PrIsSpectral (hc : Col.PairComm B.op) (hs : Col.SplitOver B.op) : Prop :=
-  ∀ u : Fin (B.nV ℓ) → K, B.toF ℓ B.ZH ((B.Pq ℓ B.ZH).mulVec u) =
-    Col.eigProj hc hs (Col.HasBlocks B.n B.q B.t B.bl) (B.S.basis.equivFun.symm ((B.vE ℓ).mulVec u))
 
 structure Ok (s : ℕ) : Prop where
 
@@ -261,9 +261,6 @@ def side (P : Subgroup G) (ψ : P →* Kˣ) (Zs : DefSub F.amb) : DefSide F.base
   Tl j t := (F.L j t).Tl (F.lvlA P ψ) (Zs.Zl j t)
   Zp j t p := (F.L j t).part (F.lvlA P ψ) (Zs.Zl j t) (F.tr j p.1)
 
-def J0 (P : Subgroup G) (ψ : P →* Kˣ) (Zs : DefSub F.amb) (t : T) (w : HeightOneSpectrum (𝓞 K)) (j : J) : ℝ :=
-  (((F.L j t).JexpU (F.lvlA P ψ) (Zs.Zl j t) w : ℚ) : ℝ)
-
 structure Ok (s : ℕ) : Prop where
 
   conj : IsConjAt F.v0
@@ -276,22 +273,12 @@ structure Ok (s : ℕ) : Prop where
 
   lifts : ∀ j t, (F.L j t).Ok s
 
-def RowsExist (P : Subgroup G) (ψ : P →* Kˣ) (Zs : DefSub F.amb) : Prop :=
-  0 < (F.R F.μ0).dZ (F.lvl P ψ) (Zs.Z F.μ0)
-
 def IsType (B : BlockDat K G Pl0) (f : (Pl0 → K[X]) → Pl0 → K[X]) (x : B.Pl × ℕ → K) : Prop :=
   ∃ Sg ∈ (F.R F.μ0).ixFin F.X, B.HasRes (f Sg) x
-
-def SameTypes (P : Subgroup G) (ψ : P →* Kˣ) (Zs : DefSub F.amb) : Prop :=
-  ∀ j, (F.L j F.μ0).Z0 (F.lvlA P ψ) (Zs.Zl j F.μ0) ≤
-    (F.L j F.μ0).inV0 (F.lvlA P ψ) (Col.eigSum (F.L j F.μ0).op (F.IsType (F.L j F.μ0) (F.tr j)))
 
 def TypesSep : Prop :=
   ∀ Sg ∈ (F.R F.μ0).ixFin F.X, ∀ Sg' ∈ (F.R F.μ0).ixFin F.X, Sg ≠ Sg' →
     ∀ j, ∃ P : (F.L j F.μ0).Pl, F.tr j Sg ((F.L j F.μ0).pl P) ≠ F.tr j Sg' ((F.L j F.μ0).pl P)
-
-def LiftRat (P : Subgroup G) (ψ : P →* Kˣ) (Zs : DefSub F.amb) : Prop :=
-  ∀ j, SubHasRatBasis ((F.L j F.μ0).Z0 (F.lvlA P ψ) (Zs.Zl j F.μ0))
 
 end DefFam
 
@@ -299,8 +286,8 @@ section Side
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K] {Bs : DefBase K} (Df : DefSide Bs)
 
-open Classical in
 
+open Classical in
 def locBasisOf {D : ℕ} (L : Submodule (𝓞 K) (Fin D → K)) (w : HeightOneSpectrum (𝓞 K)) :
     Fin D → Fin D → K :=
   if h : ∃ e, IsLocBasis L w e then h.choose else 0
@@ -310,8 +297,8 @@ def ebOf (t : Bs.Tup) (w : HeightOneSpectrum (𝓞 K)) : Fin (Df.dQ t) → Fin (
 
 def GmOf (t : Bs.Tup) (w : HeightOneSpectrum (𝓞 K)) : K := Df.Gm (ebOf Df) t w
 
-open Classical in
 
+open Classical in
 def partPr (t : Bs.Tup) (p : Bs.Ix) : Matrix (Fin (Df.dQ t)) (Fin (Df.dQ t)) K :=
   if h : IsCompl (Df.Qp t p) (⨆ (p' : Bs.Ix) (_ : p' ≠ p), Df.Qp t p') then
     LinearMap.toMatrix' ((Df.Qp t p).subtype ∘ₗ Submodule.projectionOnto _ _ h)
@@ -323,15 +310,6 @@ def rowXE (Y : Matrix (Fin (Df.dQ Bs.μ0)) (Fin (Df.dQ Bs.μ0)) ℂ) (κ : Infin
   rowFrame Bs.v0 Y 1 (partPr Df Bs.μ0) (fun p v => κ v * ∏ j, lam j p v) (Df.XQ Bs.μ0)
 
 variable {Df}
-
-def XEDefined (S : IndefData Df) : Prop :=
-  ∀ v, v ≠ Bs.v0 → ∀ x y : Fin (Df.dQ Bs.μ0) → K,
-    Formalism.HermitianLatticesTheory.majAt (Pi.basisFun K (Fin S.D)) S.XE v ((S.ι Bs.μ0).mulVec x) ((S.ι Bs.μ0).mulVec y) =
-      ∑ p, ((S.κ v * ∏ j, S.lam j Bs.μ0 p v : ℝ) : ℂ) *
-        Formalism.HermitianLatticesTheory.majAt (Pi.basisFun K (Fin (Df.dQ Bs.μ0))) (Df.XQ Bs.μ0) v
-          ((partPr Df Bs.μ0 p).mulVec x) ((partPr Df Bs.μ0 p).mulVec y)
-
-def ccOf (S : IndefData Df) := Formalism.HN.dualLat S.RR
 
 end Side
 

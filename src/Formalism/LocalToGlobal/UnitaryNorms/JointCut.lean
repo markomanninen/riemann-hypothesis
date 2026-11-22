@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.UnitaryNorms.MemFIffReal
+module
+
+public import Formalism.LocalToGlobal.UnitaryNorms.MemFIffReal
+
+@[expose] public section
 
 noncomputable section
 

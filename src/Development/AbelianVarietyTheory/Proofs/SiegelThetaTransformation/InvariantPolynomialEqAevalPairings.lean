@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+
+@[expose] public section
+
 open Matrix Complex NumberField GlobalTheory.SW Filter Topology
 open ReciprocityTheory.ChartRestriction.G.FD (cc herm)
 open scoped ComplexConjugate ComplexOrder Real Classical
@@ -73,7 +78,7 @@ theorem differentiable_eval {σ : Type} (p : MvPolynomial σ ℂ) (f : ℂ → �
     Differentiable ℂ (fun c => MvPolynomial.eval (f c) p) := by
   induction p using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => simp only [map_add]; exact hp.fun_add hq
+  | add p q hp hq => simp only [map_add (f := _)]; exact hp.fun_add hq
   | mul_X p v hp => simp only [map_mul, MvPolynomial.eval_X]; exact hp.fun_mul (hf v)
 
 theorem eval_act_diagonal (p : MvPolynomial (T × Bool × Fin n × Fin N) ℂ)
@@ -238,12 +243,13 @@ theorem eval_eq_base [Finite T] (hN : N ≤ n) (p : MvPolynomial (T × Bool × F
 
 end GlobalTheory.PairingInvariants
 
-open GlobalTheory.PairingInvariants in
 
+open GlobalTheory.PairingInvariants in
 theorem GlobalTheory.invariant_polynomial_eq_aeval_pairings :
     ∀ (T : Type) [Fintype T] [DecidableEq T] (n N : ℕ), N ≤ n → ∀ p : MvPolynomial (T × Bool × Fin n × Fin N) ℂ, (∀ u : T → Matrix (Fin n) (Fin n) ℂ, (∀ t, u t ∈ Matrix.unitaryGroup (Fin n) ℂ) → ∀ z : T × Bool × Fin n × Fin N → ℂ, MvPolynomial.eval (fun v => ∑ l, (if v.2.1 then u v.1 v.2.2.1 l else conj (u v.1 v.2.2.1 l)) * z (v.1, v.2.1, l, v.2.2.2)) p = MvPolynomial.eval z p) → ∃ s : MvPolynomial (T × Fin N × Fin N) ℂ, p = MvPolynomial.aeval (fun v : T × Fin N × Fin N => ∑ k, (MvPolynomial.X (v.1, false, k, v.2.1) * MvPolynomial.X (v.1, true, k, v.2.2) : MvPolynomial (T × Bool × Fin n × Fin N) ℂ)) s := by
   intro T _ _ n N hN p hp
-  have key := eval_eq_base hN p (eval_act_of_mul_eq_one p hp)
+  have key := GlobalTheory.PairingInvariants.eval_eq_base hN p
+    (GlobalTheory.PairingInvariants.eval_act_of_mul_eq_one p hp)
   refine ⟨MvPolynomial.aeval (fun v : T × Bool × Fin n × Fin N =>
     if v.2.1 then (if v.2.2.1.val = v.2.2.2.val then 1 else 0) else
       if h : v.2.2.1.val < N then MvPolynomial.X (v.1, v.2.2.2, ⟨v.2.2.1.val, h⟩) else 0) p, ?_⟩
@@ -254,6 +260,6 @@ theorem GlobalTheory.invariant_polynomial_eq_aeval_pairings :
   simp only [RingHom.coe_coe]
   rw [← AlgHom.comp_apply, MvPolynomial.comp_aeval]
   congr 2
-  funext v
-  simp only [base]
+  funext i
+  simp only [GlobalTheory.PairingInvariants.base]
   split_ifs <;> simp

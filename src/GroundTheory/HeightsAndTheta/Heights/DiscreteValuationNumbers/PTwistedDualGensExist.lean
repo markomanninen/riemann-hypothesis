@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsTwistedDualGensExist
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsTwistedDualGensExist
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -198,7 +203,7 @@ theorem TwistedDualGensExist.exists_twist [Fintype τ] {x : τ → Ω} (B : Char
         (Finset.single_le_sum (f := m) (fun _ _ => Nat.zero_le _) hw)
     | zero => simp
     | add w z _ _ hw hz =>
-      rw [map_add, mul_add]
+      rw [map_add (f := _), mul_add]
       exact add_mem hw hz
     | smul a w _ hw =>
       show (x c / x c') ^ _ * ψ ((a : Ω) • w) ∈ _

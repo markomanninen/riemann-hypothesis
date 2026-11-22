@@ -1,6 +1,10 @@
-import Mathlib.Analysis.Fourier.Inversion
-import Mathlib.Analysis.Fourier.FourierTransformDeriv
-import Mathlib.Analysis.SpecialFunctions.JapaneseBracket
+module
+
+public import Mathlib.Analysis.Fourier.Inversion
+public import Mathlib.Analysis.Fourier.FourierTransformDeriv
+public import Mathlib.Analysis.SpecialFunctions.JapaneseBracket
+
+@[expose] public section
 
 open MeasureTheory Real Module
 open scoped FourierTransform

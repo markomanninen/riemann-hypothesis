@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafReducedSmooth
-import Development.EtaleCohomology.EtaleSheaves.LeafSpreadProperPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafReducedSmooth
+public import Development.EtaleCohomology.EtaleSheaves.LeafSpreadProperPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4 LateralTheory.E.LeafDescendVCut

@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightStabilizerMem
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormRankZeroApply
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasMOfCont
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightStabilizerMem
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormRankZeroApply
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasMOfCont
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.StabilizerDisintegration.ME
 

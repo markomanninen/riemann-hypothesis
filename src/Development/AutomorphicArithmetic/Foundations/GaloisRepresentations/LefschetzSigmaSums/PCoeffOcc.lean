@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LefschetzSigmaSums.HeckeTraceSemi
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LefschetzSigmaSums.HeckeTraceSemi
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -14,13 +18,13 @@ theorem coeffOcc_of : CoeffOcc := by
   have hPQ : P = Q := by
     apply Polynomial.funext
     intro y
-    simp only [hPdef, hQdef, eval_finset_sum, eval_mul, eval_C, eval_pow, eval_X]
+    simp only [hPdef, hQdef, eval_finsetSum, eval_mul, eval_C, eval_pow, eval_X]
     rw [← Finset.mul_sum, ← hEq y]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [neg_pow]
     ring
   have hQ : Q.coeff (h i) = c := by
-    simp only [hQdef, finset_sum_coeff, coeff_C_mul, coeff_X_pow]
+    simp only [hQdef, finsetSum_coeff, coeff_C_mul, coeff_X_pow]
     rw [Finset.sum_eq_single i]
     · simp
     · intro j _ hji
@@ -28,7 +32,7 @@ theorem coeffOcc_of : CoeffOcc := by
     · intro hi
       exact absurd (Finset.mem_univ i) hi
   have hP : P.coeff (h i) = if h i ∈ Finset.range (d + 1) then (-1) ^ (h i) * t (h i) else 0 := by
-    simp only [hPdef, finset_sum_coeff, coeff_C_mul, coeff_X_pow, mul_ite, mul_one, mul_zero]
+    simp only [hPdef, finsetSum_coeff, coeff_C_mul, coeff_X_pow, mul_ite, mul_one, mul_zero]
     rw [Finset.sum_ite_eq]
   intro ht
   rw [hPQ, hQ] at hP

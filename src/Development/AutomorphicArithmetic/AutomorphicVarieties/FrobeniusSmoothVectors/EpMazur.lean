@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpresGr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.SgWeight
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpNosec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrDualb
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpresGr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.SgWeight
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpNosec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrDualb
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -50,7 +54,8 @@ private theorem small {O : Type} [CommRing O] [IsLocalRing O] (h2 : IsUnit (2 : 
   have hεe : ∀ u, τ (ε u) = sg C (wf u) * ε u := fun u => hε u
   have hτsum : ∀ a : κ → O, τ (∑ u, a u • ε u) = ∑ u, (a u * sg O (wf u)) • ε u := by
     intro a
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun u _ => ?_
     rw [map_smul, hεe, sg_smul (O := O), smul_smul]
   have hzero : ∀ (y : ↥(RingHom.ker p)) (i : ZMod 2), τ (y : C) = sg C i * y → ∀ u, wf u ≠ i → co u y = 0 := by
@@ -98,7 +103,7 @@ private theorem small {O : Type} [CommRing O] [IsLocalRing O] (h2 : IsUnit (2 : 
           rintro y z ⟨hy, hy'⟩ ⟨hz, hz'⟩
           refine ⟨Ideal.add_mem _ hy hz, ?_⟩
           have : (⟨y + z, Ideal.add_mem _ hy hz⟩ : ↥(RingHom.ker p)) = ⟨y, hy⟩ + ⟨z, hz⟩ := rfl
-          rw [this, map_add, hy', hz', add_zero]
+          rw [this, map_add (f := _), hy', hz', add_zero]
         zero_mem' := ⟨Ideal.zero_mem _, by
           have : (⟨0, Ideal.zero_mem _⟩ : ↥(RingHom.ker p)) = 0 := rfl
           rw [this, map_zero]⟩
@@ -183,7 +188,7 @@ theorem UpperTheory.V.Fr.ep_mazur :
     rw [sg1, neg_one_mul] at hpb
     rw [hty, map_sub]
     conv_rhs => rw [hy]
-    rw [map_add, map_add, hpa, hpb, sub_eq_add_neg]
+    rw [map_add (f := _), map_add (f := _), hpa, hpb, sub_eq_add_neg]
   have hτk : ∀ y ∈ RingHom.ker P.p, τ0 y ∈ RingHom.ker P.p := by
     intro y hy
     rw [RingHom.mem_ker] at hy ⊢
@@ -259,7 +264,8 @@ theorem UpperTheory.V.Fr.ep_mazur :
   · intro c hc
     apply P.indep c
     have h' : Ideal.Quotient.mkₐ O J (∑ u, c u • P.f u) = 0 := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [map_smul]
       exact hc
     exact Ideal.Quotient.eq_zero_iff_mem.1 h'

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,32 +53,6 @@ lemma _root_.GlobalTheory.JacobiDeriv.derivAtZero_add_one (τ : ℂ) :
   refine ⟨m, ?_⟩
   have hm' : ((n : ℂ) * (n + 1)) = (m : ℂ) + m := by exact_mod_cast hm
   linear_combination (π * I) * hm'
-
-theorem norm_term_eq (n : ℤ) (τ : ℂ) :
-    ‖jacobiTheta₂'_term n ((τ + 1) / 2) τ‖ =
-      2 * π * |(n : ℝ)| * Real.exp (-(π * (n * (n + 1)) * τ.im)) := by
-  rw [jacobiTheta₂'_term, norm_mul, norm_jacobiTheta₂_term]
-  congr 1
-  · simp [abs_of_pos Real.pi_pos]
-  · congr 1
-    simp
-    ring
-
-theorem norm_term_le {T : ℝ} (hT : 0 < T) (n : ℤ) {τ : ℂ} (hτ : T ≤ τ.im) :
-    ‖jacobiTheta₂'_term n ((τ + 1) / 2) τ‖ ≤
-      2 * π * (|(n : ℝ)| ^ 1 * Real.exp (-π * (T * n ^ 2 - 2 * (T / 2) * |(n : ℝ)|))) := by
-  rw [norm_term_eq, pow_one, mul_assoc]
-  have h0 : (0 : ℝ) ≤ n * (n + 1) := by
-    have : 0 ≤ n * (n + 1) := by
-      rcases le_or_gt 0 n with h | h
-      · positivity
-      · exact mul_nonneg_of_nonpos_of_nonpos h.le (by omega)
-    exact_mod_cast this
-  gcongr
-  have h1 := neg_abs_le (n : ℝ)
-  have h2 : π * (n * (n + 1)) * T ≤ π * (n * (n + 1)) * τ.im :=
-    mul_le_mul_of_nonneg_left hτ (mul_nonneg Real.pi_pos.le h0)
-  nlinarith [mul_le_mul_of_nonneg_left h1 (mul_pos Real.pi_pos hT).le]
 
 open Complex Filter in
 open scoped UpperHalfPlane MatrixGroups ModularForm Manifold Topology Real in
@@ -325,9 +303,9 @@ private lemma deriv_thetaChar_pow_eight_eq (τ : ℍ) :
   push_cast
   ring
 
+
 open Complex Filter in
 open scoped UpperHalfPlane MatrixGroups ModularForm Manifold Topology Real in
-
 theorem _root_.GlobalTheory.JacobiDeriv.deriv_thetaChar_pow_eight : ∀ τ : UpperHalfPlane,
     (deriv (fun z : ℂ => _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.thetaChar (g := 1) !![(τ : ℂ)] ![1 / 2] ![1 / 2] ![z]) 0) ^ 8 =
       (2 * Real.pi : ℂ) ^ 8 * ModularForm.discriminant τ := by

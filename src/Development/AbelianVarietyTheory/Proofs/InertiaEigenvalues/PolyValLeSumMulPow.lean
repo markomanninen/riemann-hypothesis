@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BoundAtTwoThreeFamily
-import Formalism.SharpRestriction.GlobalTheoremInputs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BoundAtTwoThreeFamily
+public import Formalism.SharpRestriction.GlobalTheoremInputs
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,9 @@ theorem starG_of_thmB : ∀ (D : D7) (L : SizeData₂ D) (P : ParameterChoice' D
     have := D.R.m_add_three_le_k
     omega
   have hf1 : 1 ≤ D.R.f := by
-    have : 0 < D.R.f := by unfold Ranks.f Ranks.n; positivity
+    have := D.R.two_le_m
+    have := D.R.m_le_f
+    unfold Ranks.f Ranks.n
     omega
   have htr : 1 ≤ D.R.t * D.R.r := by simpa using Nat.mul_le_mul ht1 hr1
 

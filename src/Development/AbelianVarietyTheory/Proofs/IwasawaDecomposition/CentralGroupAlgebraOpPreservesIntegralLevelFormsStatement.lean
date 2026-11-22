@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CentralGroupAlgebraOpPreservesIntegralLevelForms
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CentralGroupAlgebraOpPreservesIntegralLevelForms
+public import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+
+@[expose] public section
+
 open NumberField
 open scoped Matrix ComplexOrder
 set_option maxHeartbeats 1000000 in

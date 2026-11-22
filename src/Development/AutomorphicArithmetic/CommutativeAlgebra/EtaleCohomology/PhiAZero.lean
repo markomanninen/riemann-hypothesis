@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.AbsInvOf
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.FiltrationSpanDividedPowers
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.AbsInvOf
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.FiltrationSpanDividedPowers
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 set_option maxHeartbeats 1000000
@@ -209,13 +213,13 @@ private theorem phiA_zero (a : Acris l) : Pb.Mid.phiA l 0 a = a := by rw [Pb.Mid
 private theorem gK_succ (k : ℕ) (σ : WittVector l r.k →+* Acris l) (h : ∀ w, Pb.Mid.phiA l k (r.w w) = σ w) (j : ℕ)
     (y : CH.H (Wc.OM l (B.schFn M.p) r.ρ n) j) :
     phiH (PQ M.p (gRes r)) n j ((gK r M n k σ h).pull j y) =
-      (gK r M n (k + 1) ((ACris.phi ℂ_[l] l).comp σ) fun w => by
+      (gK r M n (k + 1) ((ACris.phi (K := ℂ_[l]) (p := l)).comp σ) fun w => by
         rw [Pb.Mid.phiA_succ, h]; rfl).pull j y := by
-  haveI : RingHomCompTriple σ (ACris.phi ℂ_[l] l) ((ACris.phi ℂ_[l] l).comp σ) := ⟨rfl⟩
+  haveI : RingHomCompTriple σ (ACris.phi (K := ℂ_[l]) (p := l)) ((ACris.phi (K := ℂ_[l]) (p := l)).comp σ) := ⟨rfl⟩
   change (phiMor (PQ M.p (gRes r)) n).pull j ((gK r M n k σ h).pull j y) = _
-  refine (pull_pull ((ACris.phi ℂ_[l] l).comp σ) (gK r M n k σ h) (phiMor (PQ M.p (gRes r)) n) j y).trans ?_
-  exact cr_pull_eq ((gK r M n k σ h).comp (σ'' := (ACris.phi ℂ_[l] l).comp σ) (phiMor (PQ M.p (gRes r)) n))
-    (gK r M n (k + 1) ((ACris.phi ℂ_[l] l).comp σ) fun w => by rw [Pb.Mid.phiA_succ, h]; rfl) (fun T => 𝟙 (gObj r M n T)) (fun _ _ => rfl)
+  refine (pull_pull ((ACris.phi (K := ℂ_[l]) (p := l)).comp σ) (gK r M n k σ h) (phiMor (PQ M.p (gRes r)) n) j y).trans ?_
+  exact cr_pull_eq ((gK r M n k σ h).comp (σ'' := (ACris.phi (K := ℂ_[l]) (p := l)).comp σ) (phiMor (PQ M.p (gRes r)) n))
+    (gK r M n (k + 1) ((ACris.phi (K := ℂ_[l]) (p := l)).comp σ) fun w => by rw [Pb.Mid.phiA_succ, h]; rfl) (fun T => 𝟙 (gObj r M n T)) (fun _ _ => rfl)
     (fun (T : El (PQ M.p (gRes r))) x => phK_succ T.1.obj n k x) j y
 
 private theorem phiA_zero' (w : WittVector l r.k) : Pb.Mid.phiA l 0 (r.w w) = r.w w := phiA_zero _
@@ -229,7 +233,7 @@ private theorem gK_iter (k : ℕ) (σ : WittVector l r.k →+* Acris l) (h : ∀
     subst e
     exact congrFun (Function.iterate_zero _) _
   | succ k ih =>
-    have e : σ = (ACris.phi ℂ_[l] l).comp ((Pb.Mid.phiA l k).comp r.w) := RingHom.ext fun w => by
+    have e : σ = (ACris.phi (K := ℂ_[l]) (p := l)).comp ((Pb.Mid.phiA l k).comp r.w) := RingHom.ext fun w => by
       rw [← h, Pb.Mid.phiA_succ]; rfl
     subst e
     have h' : ∀ w, Pb.Mid.phiA l k (r.w w) = ((Pb.Mid.phiA l k).comp r.w) w := fun w => (RingHom.comp_apply _ _ _).symm

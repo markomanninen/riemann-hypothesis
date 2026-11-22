@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.QuadraticSplitting.QuadSplit
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.QuadraticSplitting.QuadSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ private def embeddingPrimeIdeal (σ : K →+* k) : Ideal (𝓞 K) where
   add_mem' := by
     intro x y hx hy
     change ‖σ (algebraMap (𝓞 K) K (x + y))‖ < 1
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     exact lt_of_le_of_lt (IsUltrametricDist.norm_add_le_max _ _) (max_lt hx hy)
   zero_mem' := by
     change ‖σ (algebraMap (𝓞 K) K 0)‖ < 1
@@ -55,7 +59,11 @@ private theorem exists_embedding_prime_above [NumberField K] [CharZero k] [IsAlg
   classical
   by_contra hne
   push Not at hne
-  have σ0 : K →ₐ[ℚ] k := IsAlgClosed.lift
+  have σ0 : K →ₐ[ℚ] k := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hnot : ¬ ((w.asIdeal : Set (𝓞 K)) ⊆ ⋃ σ ∈ ((Finset.univ : Finset (K →ₐ[ℚ] k)) : Set (K →ₐ[ℚ] k)),
       (embeddingPrimeIdeal (σ : K →+* k) : Set (𝓞 K))) := by
     rw [Ideal.subset_union_prime σ0 σ0 (fun σ _ _ _ => embedding_ideal_prime _)]

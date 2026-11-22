@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.KatoTwistedClassNormCompatibleCyclotomic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.KmapComp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.SCls
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.CdFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.CoeffSlD
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.SCycZ
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.KatoTwistedClassNormCompatibleCyclotomic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.KmapComp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.SCls
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.CdFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.CoeffSlD
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.SCycZ
+
+@[expose] public section
 
 open scoped MatrixGroups Matrix Classical
 open GlobalTheory.KZ GlobalTheory.K4 UpperTheory.V.Z.Kato.Sym UpperTheory.Kd.K4 UpperTheory.V.Z.Kato.Nb
@@ -44,7 +48,7 @@ private theorem term {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ �
         k' • X.kmap l (X.gal s) (clsK X l n (slD X N (f : X.K)))) := by
     rw [smul_sub, smul_smul]
     abel
-  rw [hsplit, map_add, map_smul, hApi (k * c) k' _ h, add_zero]
+  rw [hsplit, map_add (f := _), map_smul, hApi (k * c) k' _ h, add_zero]
   convert smul_zero k using 2
 
 private theorem dvd_iff (l : ℕ) [Fact l.Prime] (n : ℕ) (k k' : ℤ_[l]) :
@@ -92,9 +96,11 @@ theorem UpperTheory.V.Z.Kato.Nb.sXiTw :
   unfold Xi UpperTheory.Kd.K4.CgF
   intro u
   simp only [Tower.galB, LinearMap.coe_mk, AddHom.coe_mk]
-  rw [Finset.sum_filter, Finset.sum_filter, map_sum, map_sub, sub_eq_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_filter, Finset.sum_filter, map_sum, map_sub, sub_eq_zero]
   conv_rhs => rw [← Fintype.sum_equiv (Equiv.mulRight (dg d⁻¹)) _ _ (fun _ => rfl)]
-  rw [← sub_eq_zero, ← map_sub, ← Finset.sum_sub_distrib, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← sub_eq_zero, ← map_sub, ← Finset.sum_sub_distrib, map_sum]
   apply Finset.sum_eq_zero
   intro m _
   simp only [Equiv.coe_mulRight]
@@ -122,7 +128,7 @@ theorem UpperTheory.V.Z.Kato.Nb.sXiTw :
     rw [hgr x m, hgr y m]
     refine term X l n N hN s _ _ _ _ ?_
     rw [dvd_iff]
-    simp only [map_sub, map_mul, map_pow, map_add, map_natCast, (hent 0).1, (hent 0).2]
+    simp only [map_sub, map_mul, map_pow, map_add (f := _), map_natCast, (hent 0).1, (hent 0).2]
     have hdl : Units.map (ZMod.castHom hlM (ZMod (l ^ n)) : ZMod M →* ZMod (l ^ n)) d = cycM (l ^ n) s :=
       (hcyc M s).2.2.2.2 (l ^ n) hlM
     have hχ : PadicInt.toZModPow n (((cyclotomicCharacter Ω l) s.toRingEquiv : ℤ_[l]ˣ) : ℤ_[l]) =

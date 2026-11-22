@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.LocalQuotientIntegrals.OneVanish
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.LocalQuotientIntegrals.OneVanish
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ theorem gam_abs_le {m : ℕ} (y : (Fin m → SignType) → ℝ) (a : Fin m → �
   refine (Finset.sum_le_card_nsmul _ _ 1 ?_).trans ?_
   · intro s _
     rw [abs_mul, abs_pow, abs_neg, abs_one, one_pow, one_mul, Finset.abs_prod]
-    exact Finset.prod_le_one (fun _ _ => abs_nonneg _) (fun e _ => by split_ifs <;> simp)
+    exact Finset.prod_le_one₀ (fun _ _ => abs_nonneg _) (fun e _ => by split_ifs <;> simp)
   · rw [nsmul_eq_mul, mul_one]
     exact_mod_cast Finset.card_le_univ _
 

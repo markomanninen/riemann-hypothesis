@@ -1,4 +1,8 @@
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocalRingPointsExistsUnique
+module
+
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocalRingPointsExistsUnique
+
+@[expose] public section
 
 noncomputable section
 

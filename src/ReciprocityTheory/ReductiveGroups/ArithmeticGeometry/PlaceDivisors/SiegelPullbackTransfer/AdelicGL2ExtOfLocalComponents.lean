@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StSiegPull
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StSiegPull
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -15,7 +19,6 @@ variable {S S' : Scheme.{0}} (f : S' ⟶ S) (G : Over S) [GrpObj G] [IsCommMonOb
 theorem pullback_map_left_fst' {A B : Over S} (g : A ⟶ B) :
     ((Over.pullback f).map g).left ≫ pullback.fst B.hom f = pullback.fst A.hom f ≫ g.left := by
   simp
-  exact pullback.lift_fst _ _ _
 
 def pφ : ((Over.pullback f).obj G).left ⟶ G.left := pullback.fst G.hom f
 

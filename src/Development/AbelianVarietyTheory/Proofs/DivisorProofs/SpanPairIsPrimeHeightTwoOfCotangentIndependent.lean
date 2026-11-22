@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.CentreAtOfIsAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLogMult
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.QuotientSpanRange
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.RegDom
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CentreAtOfIsAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLogMult
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.QuotientSpanRange
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.RegDom
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Filter
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -51,7 +56,7 @@ theorem span_pair_isPrime_and_height_eq_two : ∀ (R : Type) [CommRing R] [IsReg
     have hc' : (maximalIdeal R).toCotangent (c 0 • ⟨a, ha⟩ + c 1 • ⟨b, hb⟩) = 0 := by
       rw [Ideal.toCotangent_eq_zero]
       simpa [Fin.sum_univ_two] using hc
-    rw [map_add, hsmul, hsmul] at hc'
+    rw [map_add (f := _), hsmul, hsmul] at hc'
     obtain ⟨h0, h1⟩ := hp _ _ hc'
     intro i
     fin_cases i

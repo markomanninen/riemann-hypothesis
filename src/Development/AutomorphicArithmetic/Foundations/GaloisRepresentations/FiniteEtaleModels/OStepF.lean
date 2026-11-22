@@ -1,19 +1,23 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.OEpsEx
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.ODownEx
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsGenericModuliPoint
-import Development.AutomorphicArithmetic.CommutativeAlgebra.LatticeGeneration
-import Development.AutomorphicArithmetic.CommutativeAlgebra.QuotientModuliObjectExists
-import Development.AutomorphicArithmetic.CommutativeAlgebra.QuotientMapComp
-import Development.AutomorphicArithmetic.CommutativeAlgebra.QuotientUniqueOfComp
-import Development.AutomorphicArithmetic.CommutativeAlgebra.QuotientModuliIso
-import Development.AutomorphicArithmetic.CommutativeAlgebra.QuotientLevelOfLatticeGeneration
-import Development.AutomorphicArithmetic.CommutativeAlgebra.IsogenyClassExistsOfQuotient
-import Development.AutomorphicArithmetic.CommutativeAlgebra.TraceEtaIdentity
-import Development.AutomorphicArithmetic.CommutativeAlgebra.MultiplierIsUnit
-import Development.AutomorphicArithmetic.CommutativeAlgebra.TracePullbackIdentity
-import Development.AutomorphicArithmetic.CommutativeAlgebra.TraceUnitOfPullbackMultiplier
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelPosOfCoprime
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.OEpsEx
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.ODownEx
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsGenericModuliPoint
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.LatticeGeneration
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.QuotientModuliObjectExists
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.QuotientMapComp
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.QuotientUniqueOfComp
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.QuotientModuliIso
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.QuotientLevelOfLatticeGeneration
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.IsogenyClassExistsOfQuotient
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.TraceEtaIdentity
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.MultiplierIsUnit
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.TracePullbackIdentity
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.TraceUnitOfPullbackMultiplier
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelPosOfCoprime
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -77,7 +81,7 @@ private theorem stepF_of (hGen : GenEx) (hComp : QComp) (hIso : QIso) (hCls : Cl
     have e1 : (algebraMap (𝓞 D.F) D.O) (a₁ * ε) • y = (algebraMap (𝓞 D.F) D.O) ((t : 𝓞 D.F) * a₂) • y +
         (M₁ : ℕ) • ((algebraMap (𝓞 D.F) D.O) z • y) := by
       have h' : a₁ * ε = (t : 𝓞 D.F) * a₂ + ((M₁ : ℕ) : 𝓞 D.F) * z := by linear_combination hz
-      rw [h', map_add, add_smul, map_mul (algebraMap (𝓞 D.F) D.O) ((M₁ : ℕ) : 𝓞 D.F) z, mul_smul,
+      rw [h', map_add (f := _), add_smul, map_mul (algebraMap (𝓞 D.F) D.O) ((M₁ : ℕ) : 𝓞 D.F) z, mul_smul,
         map_natCast, Nat.cast_smul_eq_nsmul]
     have h1 := (T.M M₁).univ.eta_add ((algebraMap (𝓞 D.F) D.O) ((t : 𝓞 D.F) * a₂) • y)
       ((M₁ : ℕ) • ((algebraMap (𝓞 D.F) D.O) z • y))

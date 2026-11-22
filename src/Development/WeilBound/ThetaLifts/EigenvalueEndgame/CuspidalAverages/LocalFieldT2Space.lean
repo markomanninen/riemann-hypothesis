@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.CuspidalAverages.ZariskiLocallyAffineLine
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.CuspidalAverages.ZariskiLocallyAffineLine
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,8 +34,8 @@ theorem loc_neBot : NeBot (𝓝[≠] (0 : k)) := by
   rw [map_mul]
   exact mul_lt_of_lt_one_right (zero_lt_iff.2 hr) hp
 
-variable (k n d) in
 
+variable (k n d) in
 def intM : AddSubgroup (Matrix (Fin n) (Fin d) k) where
   carrier := {Y | ∀ a b, ValuativeRel.valuation k (Y a b) ≤ 1}
   zero_mem' := fun a b => by simp
@@ -149,7 +153,7 @@ theorem kills_indep (hψ : ψ ≠ 1) (hL : LeftLaw ξ l) (hC : ColLaw ψ {i₀} 
   have cN : ContinuousAt N Y₀ := continuousAt_pi.2 fun a => continuousAt_pi.2 fun b =>
     (show Continuous fun Y => (-t • c₀ Y) a by simp only [c₀]; fun_prop).continuousAt.mul (continuousAt_pi.1 cl b)
   have hAe : ∀ Y v a b, A Y v a b = -t * Y a i₀ * (lam Y ⬝ᵥ fun a => v a b) := fun Y v a b => by
-    simp only [hA, N, c₀, mul_apply, vecMulVec_apply, dotProduct, Finset.mul_sum, Pi.smul_apply, smul_eq_mul, mul_assoc]
+    simp only [hA, N, c₀, Matrix.mul_apply, vecMulVec_apply, dotProduct, Finset.mul_sum, Pi.smul_apply, smul_eq_mul, mul_assoc]
   refine deadM (U := ∅) (fun φ _ h => by
     rw [show φ = 0 from funext fun y => by by_contra e; exact h y e, map_zero]) Y₀ A (fun Y => colL i₀ (ρ Y)) (fun v => ?_)
     (fun v => ?_) (hAA Y₀) (fun v => colL_colL (r0 Y₀) v) (fun v => ?_) ?_
@@ -162,7 +166,7 @@ theorem kills_indep (hψ : ψ ≠ 1) (hL : LeftLaw ξ l) (hC : ColLaw ψ {i₀} 
       (continuous_fst.dotProduct continuous_snd).continuousAt (cl.prodMk (continuous_pi fun a =>
         show Continuous fun Y : Matrix (Fin n) (Fin d) k => Y a b by fun_prop).continuousAt)
   · ext a b
-    simp only [hA, colL_apply, mul_apply, Finset.sum_mul, mul_assoc]
+    simp only [hA, colL_apply, Matrix.mul_apply, Finset.sum_mul, mul_assoc]
   · filter_upwards [cD.continuousAt.eventually_ne hD] with Y hDY
     refine fun _ => ⟨hAA Y, colL_colL (r0 Y), ?_, ψ t, ht, fun φ hφ => ?_⟩
     · ext a b
@@ -229,7 +233,7 @@ theorem kills_ne (hψ : ψ ≠ 1) (h01 : i₀ ≠ i₁) (h02 : i₀ ≠ i₂) (h
     · simp
   · have e1 := hC' φ hφ (Pi.single i₂ t) (by rintro s (rfl | rfl); exacts [s0 _, s1 _])
     have e2 := hC _ (sb_sq hφ (colL i₁ (Pi.single i₂ t)) (continuous_matrix fun a b =>
-      show Continuous fun Y : Matrix (Fin n) (Fin d) k => Y a i₁ * (Pi.single i₂ t : Fin d → k) b by fun_prop) (colL_colL (s1 _))) (ρ Y) (by simpa using s0 _)
+      show Continuous fun Y : Matrix (Fin n) (Fin d) k => Y a i₁ * (Pi.single i₂ t : Fin d → k) b by fun_prop) (colL_colL (s1 _))) (ρ Y) (by intro s hs; simp only [Set.mem_singleton_iff] at hs; subst s; exact s0 _)
     rw [show ρ Y i₁ = 0 from s1 _, AddChar.map_zero_eq_one, one_mul] at e2
     rw [Pi.single_eq_same] at e1
     exact e2.trans e1

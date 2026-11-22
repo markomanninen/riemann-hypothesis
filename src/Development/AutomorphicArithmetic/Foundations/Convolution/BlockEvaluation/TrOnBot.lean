@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.TruncSpec
-import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.PowLeExpEventually
-import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.Degree
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.AbsDAtTop
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.SideEst
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.TotalDegreeAevalLe
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.TruncSpec
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.PowLeExpEventually
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.Degree
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.AbsDAtTop
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.SideEst
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.TotalDegreeAevalLe
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter Topology UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.C UpperTheory.ConvolutionTheory.Ci
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction PositivityTheory.Rg.Fx PositivityTheory.Rg.Tf.Core
@@ -182,7 +186,8 @@ private theorem UpperTheory.ConvolutionTheory.Ci.eig_bot {H : Type*} [NormedAddC
   have h2 : ‖v‖ ≤ 0 := by nlinarith [norm_nonneg v, norm_nonneg A]
   exact norm_le_zero_iff.1 h2
 
-private theorem UpperTheory.ConvolutionTheory.Ci.ptCard {K : Type} [Field K] [NumberField K] {n : ℕ} (b : Datum K n) (S : Set (Pl K)) (Λ) (t)
+private theorem UpperTheory.ConvolutionTheory.Ci.ptCard {K : Type} [Field K] [NumberField K] {n : ℕ}
+    (b : Datum K n) (S : Set (Pl K)) (Λ : (K →+* ℂ) → Multiset ℂ) (t : Pl K → Multiset ℂ)
     (h : b.Pt S Λ t) : ∀ w ∉ S, (t w).card = n := by
   obtain ⟨lam, m, B, h1, -, h3⟩ := h
   intro w hw
@@ -203,7 +208,7 @@ private theorem UpperTheory.ConvolutionTheory.Ci.valC {K : Type} [Field K] [Numb
   ext c
   simp
 
-set_option maxHeartbeats 1600000 in
+set_option maxHeartbeats 6400000 in
 theorem UpperTheory.ConvolutionTheory.Ci.ciOf :
     TrExp → EvVal → ValBc → KillEx → KfBc → TruncSpec → SepPoly → OneSide → EvEx → Kill → CI := by
   classical
@@ -232,11 +237,11 @@ theorem UpperTheory.ConvolutionTheory.Ci.ciOf :
   · filter_upwards [key] with j hj
     unfold Side.tr
     convert hj using 1
-    · refine finsum_mem_inter_support_eq' _ _ _ fun V hV0 => ?_
+    · refine finsum_mem_inter_support_eq' (fun V : Submodule ℂ (LL μE) => trOn (eigIn V 𝔢.toAmp.A x) ((𝔢.Uq 0 ^ j) ∘L Rop μE 𝔢.g ∘L θ.U)) {V | IsSummand μE V ∧ V.map (θ.U : LL μE →ₗ[ℂ] LL μE) = V ∧ At μE 𝔢.S V (msOf L) t} {V | (IsSummand μE V ∧ V.map (θ.U : LL μE →ₗ[ℂ] LL μE) = V ∧ eigIn V 𝔢.toAmp.A x ≠ ⊥) ∧ At μE 𝔢.S V (msOf L) t} fun V hV0 => ?_
       have : eigIn V 𝔢.toAmp.A x ≠ ⊥ := fun h => hV0 (by simp only [h, trOn_bot])
       exact ⟨fun h => ⟨⟨h.1, h.2.1, this⟩, h.2.2⟩, fun h => ⟨h.1.1, h.1.2.1, h.2⟩⟩
     · congr 1
-      refine finsum_mem_inter_support_eq' _ _ _ fun V hV0 => ?_
+      refine finsum_mem_inter_support_eq' (fun V : Submodule ℂ (LL μF) => trOn (eigIn V 𝔣.toAmp.A x) ((𝔣.Uq 0 ^ j) ∘L Rop μF 𝔣.g ∘L (Twist.id μF).U)) {V | IsSummand μF V ∧ V.map ((Twist.id μF).U : LL μF →ₗ[ℂ] LL μF) = V ∧ ∃ Λ' t', At μF 𝔣.S V Λ' t' ∧ msOf L = bcInf Λ' ∧ ∀ w ∉ 𝔢.S, t w = bcSat t' w} {V | (IsSummand μF V ∧ V.map ((Twist.id μF).U : LL μF →ₗ[ℂ] LL μF) = V ∧ eigIn V 𝔣.toAmp.A x ≠ ⊥) ∧ ∃ Λ' t', At μF 𝔣.S V Λ' t' ∧ msOf L = bcInf Λ' ∧ ∀ w ∉ 𝔢.S, t w = bcSat t' w} fun V hV0 => ?_
       have : eigIn V 𝔣.toAmp.A x ≠ ⊥ := fun h => hV0 (by simp only [h, trOn_bot])
       exact ⟨fun h => ⟨⟨h.1, h.2.1, this⟩, h.2.2⟩, fun h => ⟨h.1.1, h.1.2.1, h.2⟩⟩
   · intro y hy h0
@@ -348,7 +353,10 @@ theorem UpperTheory.ConvolutionTheory.Ci.ciOf :
     have q1 : (map C γ * (chebP η (j / (2 * p) + m) * (trunc (d j) G * P₀)) : PR E n) =
         chebP η (j / (2 * p) + m) * (trunc (d j) G * (map C γ * P₀)) := by ring
     rw [q1] at g1 g2
-    rw [map_mul (bcPR F), hB0.2.2, map_mul (bcPR F), ← htr] at g2
+    rw [map_mul (bcPR F)] at g2
+    rw [hB0.2.2] at g2
+    rw [map_mul (bcPR F) (trunc (d j) G) (map C γ * P₀)] at g2
+    rw [← htr] at g2
     refine ⟨twInt (Twist.id μF) fF, ?_, bdF j (d j) m hm m' hm' fF g2⟩
     rw [← g3]
     exact bdE j (d j) m hm m' hm' fE g1

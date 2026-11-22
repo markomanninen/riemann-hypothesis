@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightConjugacy.ConjugationSwap
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightConjugacy.ConjugationSwap
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ theorem eval_aeval_eq {σ' : Type} (y : σ' → ℂ) (f : Vars L n → MvPolynom
     MvPolynomial.eval y (MvPolynomial.aeval f Q) = MvPolynomial.eval (fun p => MvPolynomial.eval y (f p)) Q := by
   induction Q using MvPolynomial.induction_on with
   | C c => rw [MvPolynomial.aeval_C, MvPolynomial.algebraMap_eq, MvPolynomial.eval_C, MvPolynomial.eval_C]
-  | add p q hp hq => rw [map_add, map_add, hp, hq, map_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _)]
   | mul_X p i hp => rw [map_mul, map_mul, hp, MvPolynomial.aeval_X, map_mul, MvPolynomial.eval_X]
 
 def tInv (g : GL (Fin n) ℂ) : GL (Fin n) ℂ :=
@@ -62,8 +66,8 @@ theorem inV_ratPt (γ₀ : GL (Fin n) L) (hg : γ₀ ∈ GQ0 L n) : InV (ratPt (
   rw [← map_inv]
   exact conj_ratPt γ₀ hg σ i j
 
-open Classical in
 
+open Classical in
 def trivAt (τ : L →+* ℂ) (y : Vars L n → ℂ) : Vars L n → ℂ := fun p =>
   if p.1 = τ ∨ p.1 = ComplexEmbedding.conjugate τ then (if p.2.1 = p.2.2 then 1 else 0) else y p
 
@@ -132,10 +136,6 @@ theorem evPt_mul (τ : L →+* ℂ) (g h : GL (Fin n) ℂ) : evPt τ (g * h) = v
     · subst h2
       simp [vmul, evPt, conj_ne τ, Matrix.mul_apply, mul_comm]
     · simp [vmul, evPt, h1, h2]
-
-theorem vmul_ratPt (γ₀ δ₀ : Matrix (Fin n) (Fin n) L) : vmul (ratPt γ₀) (ratPt δ₀) = ratPt (γ₀ * δ₀) := by
-  funext p
-  simp [vmul, ratPt, Matrix.mul_apply]
 
 end
 

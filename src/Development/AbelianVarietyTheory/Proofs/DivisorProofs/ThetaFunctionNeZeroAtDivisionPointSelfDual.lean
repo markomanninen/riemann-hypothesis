@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsUnitOfLagrangian
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsThetaDivisionPointNeZeroStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsUnitOfLagrangian
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsThetaDivisionPointNeZeroStatement
+
+@[expose] public section
 
 open Complex Matrix
 
@@ -62,7 +66,7 @@ theorem exists_ne_zero_of_principal {g : ℕ} (Λ : Submodule ℤ (Fin g → ℂ
       · simp [h, Matrix.mulVec, dotProduct]
     have e := hf ⟨_, hm⟩ (φ z)
     rw [h1 i ⟨_, hm⟩ z rfl] at e
-    simp only [map_add]
+    simp only [map_add (f := _)]
     rw [e, ← Complex.exp_nat_mul, mul_right_comm, ← Complex.exp_add, mul_comm]
     congr 2
     ring
@@ -79,7 +83,7 @@ theorem exists_ne_zero_of_principal {g : ℕ} (Λ : Submodule ℤ (Fin g → ℂ
       simp
     have e := hf ⟨_, hm⟩ (φ z)
     rw [h2 j ⟨_, hm⟩ z rfl] at e
-    simp only [map_add]
+    simp only [map_add (f := _)]
     rw [e, mul_pow, mul_pow, ← Complex.exp_nat_mul, ← Complex.exp_nat_mul]
     have : cexp (n * (Q (z + τ.mulVec (Pi.single j 1)) - Q z)) *
         cexp (-(n * Q (z + τ.mulVec (Pi.single j 1)))) = cexp (-(n * Q z)) := by
@@ -128,7 +132,7 @@ theorem exists_ne_zero_of_selfDual : ∀ (V : Type) [AddCommGroup V] [Module ℚ
     rw [e]
     refine isOpen_biInter_finset fun m _ => isOpen_lt ?_ continuous_const
     refine (Complex.continuous_im.comp ?_).abs
-    exact continuous_finset_sum _ fun i _ =>
+    exact continuous_finsetSum _ fun i _ =>
       ((continuous_apply i).comp continuous_subtype_val).mul continuous_const
   have hBinj : Function.Injective B := by
     refine (injective_iff_map_eq_zero B).2 fun u hu => hp ?_

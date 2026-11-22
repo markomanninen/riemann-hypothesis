@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.BirationalYPt
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ImportsFurther
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PConstantShift
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.IsSemipositiveRelConstShift
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.BirationalYPt
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ImportsFurther
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PConstantShift
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.IsSemipositiveRelConstShift
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

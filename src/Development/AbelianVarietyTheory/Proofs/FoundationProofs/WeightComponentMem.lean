@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.HeckeCharacterParameters
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.HeckeCharacterParameters
+
+@[expose] public section
 
 namespace GlobalTheory.WeightSubspaceComponent
 
@@ -29,7 +33,8 @@ theorem weight_component_mem {p q : ℕ} {V : Type} [AddCommGroup V] [Module ℂ
       have hg : ∀ l, g l ∈ wtSub act l := fun l => Submodule.smul_mem _ _ (hf l)
       have hsum : ∑ l ∈ S.erase μ, g l
           = act (Eab a a) (∑ l ∈ S, f l) - ((μ a : ℚ) : ℂ) • ∑ l ∈ S, f l := by
-        rw [Finset.sum_erase S (by simp [g]), map_sum, Finset.smul_sum, ← Finset.sum_sub_distrib]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [Finset.sum_erase S (by simp [g]), map_sum, Finset.smul_sum, ← Finset.sum_sub_distrib]
         refine Finset.sum_congr rfl fun l _ => ?_
         rw [(mem_wtSub_iff act l (f l)).mp (hf l) a]
         exact sub_smul _ _ _

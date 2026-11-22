@@ -1,11 +1,20 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.VolumeInputs
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.TowerOrigin
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SumFundCoMulSumIic
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointsIffCentres
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIffChartLocalizationStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RootOriginCoordField
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AlgebraicElementHomogRelation
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEmbeddingPieces
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.HasMultiplier
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.TowerOrigin
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SumFundCoMulSumIic
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointsIffCentres
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIffChartLocalizationStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RootOriginCoordField
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AlgebraicElementHomogRelation
+
+@[expose] public section
+
 open MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Top GlobalTheory.CompanionTheory.Ar.Small
 open ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P GlobalTheory.CompanionTheory.Ar.Small.Fund
 
@@ -29,7 +38,7 @@ theorem valAt_iff {a : Ω} {r : ℂ} : ValAt ξ z a r ↔ ∃ (h : genPt ξ ⤳ 
 theorem valAt_add {a b : Ω} {r s : ℂ} (ha : ValAt ξ z a r) (hb : ValAt ξ z b s) : ValAt ξ z (a + b) (r + s) := by
   obtain ⟨h, g, hg, hr⟩ := valAt_iff.1 ha
   obtain ⟨h', g', hg', hs⟩ := valAt_iff.1 hb
-  exact valAt_iff.2 ⟨h, g + g', by rw [map_add, hg, hg'], by rw [map_add, hr, hs]⟩
+  exact valAt_iff.2 ⟨h, g + g', by rw [map_add (f := _), hg, hg'], by rw [map_add (f := _), hr, hs]⟩
 
 theorem valAt_mul {a b : Ω} {r s : ℂ} (ha : ValAt ξ z a r) (hb : ValAt ξ z b s) : ValAt ξ z (a * b) (r * s) := by
   obtain ⟨h, g, hg, hr⟩ := valAt_iff.1 ha
@@ -190,9 +199,9 @@ theorem exists_form_of_mem (hz : genPt ξ ⤳ centre z) (hw : CoordsAt ξ y z w)
       form_add (form_mul f₁ (form_mono c _)) ?_, ?_, ?_⟩
     · rw [← e₂]
       exact form_mul f₂ (form_mono c _)
-    · simp only [map_add, map_mul, y₁, y₂, aeval_mono, Finset.prod_pow]
+    · simp only [map_add (f := _), map_mul, y₁, y₂, aeval_mono, Finset.prod_pow]
       ring
-    · simp only [map_add, map_mul, w₁, w₂, aeval_mono, Finset.prod_pow]
+    · simp only [map_add (f := _), map_mul, w₁, w₂, aeval_mono, Finset.prod_pow]
       ring
   | mul a b _ _ ha hb =>
     obtain ⟨r₁, d₁, F₁, v₁, f₁, y₁, w₁⟩ := ha

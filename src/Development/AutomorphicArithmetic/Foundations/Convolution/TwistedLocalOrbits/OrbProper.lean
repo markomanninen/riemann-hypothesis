@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Match
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Bridge
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.SeparableOfMap
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalField
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.TwistedOrbitalIntegrals.HeckeRepresentationSatake
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.TwistedOrbitalIntegrals.ExtCont
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Match
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Bridge
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.SeparableOfMap
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalField
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.TwistedOrbitalIntegrals.HeckeRepresentationSatake
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.TwistedOrbitalIntegrals.ExtCont
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.IndefiniteRowSideFullHecke.IwahoriDoubleCosets PositivityTheory.Rg.Tf.Loc UpperTheory.ConvolutionTheory.Loc
 
@@ -56,7 +60,7 @@ private theorem openOrbit {G : Type} [Group G] [TopologicalSpace G] [IsTopologic
     (fun g => ho _ isOpen_interior) fun y _ => by
       obtain ⟨g, rfl⟩ := hx y
       exact Set.mem_iUnion.2 ⟨g, g, mem_interior_iff_mem_nhds.2 (hN' g), rfl⟩
-  refine ⟨(⋃ g ∈ s, N g)⁻¹, (s.isCompact_biUnion fun g _ => hN g).inv, fun x hxC => ?_⟩
+  refine ⟨Inv.inv '' (⋃ g ∈ s, N g), (s.isCompact_biUnion fun g _ => hN g).image continuous_inv, fun x hxC => ?_⟩
   have := hs' (show (x⁻¹ • x₀ : X) ∈ Subtype.val ⁻¹' C by
     rw [Set.mem_preimage, hs, inv_inv]; exact hxC)
   simp only [Set.mem_iUnion] at this
@@ -67,8 +71,7 @@ private theorem openOrbit {G : Type} [Group G] [TopologicalSpace G] [IsTopologic
   refine ⟨x * a, ?_, a⁻¹, ?_, by group⟩
   · change twConj θ (x * a) δ = δ
     rw [hm, ← e', ← hm, inv_mul_cancel, h1]
-  · rw [Set.mem_inv, inv_inv]
-    exact Set.mem_biUnion hg (interior_subset ha)
+  · exact ⟨a, Set.mem_biUnion hg (interior_subset ha), rfl⟩
 
 private theorem contCoeff {K : Type} [CommRing K] [TopologicalSpace K] [IsTopologicalRing K] (n i : ℕ) :
     Continuous fun M : Matrix (Fin n) (Fin n) K => M.charpoly.coeff i := by

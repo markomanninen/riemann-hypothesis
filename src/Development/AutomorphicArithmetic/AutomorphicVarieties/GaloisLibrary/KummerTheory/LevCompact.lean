@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.TotallyRealRoots.PrincTop
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.TotallyRealRoots.PrincTop
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum
 
@@ -27,8 +31,8 @@ private theorem princ_antitone (l : ℕ) [Fact l.Prime] {a b : ℕ} (hab : a ≤
 
 private theorem eq_one_of_mem_all_princ (l : ℕ) [Fact l.Prime] (x : ℤ_[l]ˣ)
     (hx : ∀ a, x ∈ KStar.TotallyRealRoots.princ l a) : x = 1 := by
-  ext
-  refine PadicInt.ext_of_toZModPow.mp fun a => ?_
+  apply Units.ext
+  refine (PadicInt.ext_of_toZModPow (x := (x : ℤ_[l])) (y := 1)).mp fun a => ?_
   have h := hx a
   simp only [KStar.TotallyRealRoots.princ, KStar.TotallyRealRoots.redPow, MonoidHom.mem_ker, Units.ext_iff] at h
   simpa using h
@@ -68,7 +72,7 @@ theorem UpperTheory.V.Kum.levCompact :
     apply h0 s u
     rw [memC]
     refine ⟨((memL n u.1).1 u.2).1, eq_one_of_mem_all_princ l _ fun a => ((memL a u.1).1 (hall a)).2⟩
-  obtain ⟨v, hv⟩ := hKc.isCompact.elim_finite_subfamily_closed t htc hst
+  obtain ⟨v, hv⟩ := hKc.isCompact.elim_finite_subfamily_closed t htc (Set.disjoint_iff_inter_eq_empty.mpr hst)
   refine ⟨max n (v.sup id), le_max_left _ _, ?_⟩
   intro s u hu
   by_contra hne
@@ -80,5 +84,4 @@ theorem UpperTheory.V.Kum.levCompact :
     rw [memL] at hu ⊢
     refine ⟨hu.1, princ_antitone l ?_ _ hu.2⟩
     exact (Finset.le_sup (f := id) hi).trans (le_max_right _ _)
-  rw [hv] at hmem
-  exact hmem
+  exact Set.disjoint_left.mp hv hmem.1 hmem.2

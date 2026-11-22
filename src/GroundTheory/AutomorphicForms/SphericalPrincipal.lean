@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.SphericalCommutative
-import GroundTheory.AutomorphicForms.InductionParabolic
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.SphericalCommutative
+public import GroundTheory.AutomorphicForms.InductionParabolic
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,14 +30,14 @@ theorem charRep_apply (χ : levi F n (id : Fin n → Fin n) →* ℂ) (t : levi 
     (z : ℂ) : charRep χ t z = χ t * z := by
   simp [charRep]
 
-variable (F n) in
 
+variable (F n) in
 abbrev principalSeriesSpace (χ : levi F n (id : Fin n → Fin n) →* ℂ) :
     Submodule ℂ (GL (Fin n) F → ℂ) :=
   parabolicIndSpace F n (id : Fin n → Fin n) (charRep χ)
 
-variable (F n) in
 
+variable (F n) in
 abbrev principalSeries (χ : levi F n (id : Fin n → Fin n) →* ℂ) :
     Representation ℂ (GL (Fin n) F) (principalSeriesSpace F n χ) :=
   parabolicInd F n (id : Fin n → Fin n) (charRep χ)
@@ -109,8 +113,8 @@ theorem exists_borel_mul (g : GL (Fin n) F) :
     monotone_id g
   exact ⟨⟨p, hp⟩, k, hk, h⟩
 
-variable (χ) in
 
+variable (χ) in
 def sphericalFun (g : GL (Fin n) F) : ℂ :=
   borelChar χ (exists_borel_mul g).choose
 
@@ -186,13 +190,13 @@ theorem fixedVectors_eq_span (hχ : IsUnramified χ) :
 variable [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)]
   {μ : Measure (GL (Fin n) F)} [μ.IsHaarMeasure]
 
-variable (μ) in
 
+variable (μ) in
 abbrev SphericalHecke : Type _ :=
   HeckeAlgebraLevel μ (integralGL F n) (isCompact_integralGL F n) (isOpen_integralGL F n)
 
-variable (μ χ) in
 
+variable (μ χ) in
 def sphericalEigen (h : SphericalHecke μ (F := F) (n := n)) : ℂ :=
   ∫ g, (h : HeckeAlgebra μ) g * sphericalFun χ g ∂μ
 
@@ -211,8 +215,8 @@ theorem heckeAct_sphericalVector (hχ : IsUnramified χ) (h : SphericalHecke μ 
   simp only [evalOne_apply, coe_indRep_apply, one_mul, coe_sphericalVector] at this
   exact this
 
-variable (μ) in
 
+variable (μ) in
 def sphericalCharacter (hχ : IsUnramified χ) : SphericalHecke μ (F := F) (n := n) →ₐ[ℂ] ℂ :=
   have hs := isSmooth_parabolicInd (F := F) (n := n) (β := (id : Fin n → Fin n)) (charRep χ)
   have hne := sphericalVector_ne_zero hχ

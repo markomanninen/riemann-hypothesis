@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.TransposeInverse.TransposeInv
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsOpenStabilizer
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.TransposeInverse.TransposeInv
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsOpenStabilizer
+
+@[expose] public section
 
 noncomputable section
 

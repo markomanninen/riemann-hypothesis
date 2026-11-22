@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open TensorProduct
 
@@ -35,7 +39,7 @@ theorem exists_idempotent_tmul_one_eq (R A : Type) [CommRing R] [IsDomain R]
     | add u w hu hw =>
       obtain ⟨a, ha⟩ := hu
       obtain ⟨b, hb⟩ := hw
-      exact ⟨a + b, by rw [TensorProduct.add_tmul, ha, hb, map_add]⟩
+      exact ⟨a + b, by rw [TensorProduct.add_tmul, ha, hb, map_add (f := _)]⟩
   obtain ⟨a, ha⟩ := hdesc t
   rw [hε'] at ha
   refine ⟨a, ?_, ha⟩

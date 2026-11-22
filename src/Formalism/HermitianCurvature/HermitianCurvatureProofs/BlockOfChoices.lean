@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.StatementKB
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockOfCauchySchwarz
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGWave
+module
+
+public import Formalism.HermitianCurvature.StatementKB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockOfCauchySchwarz
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGWave
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBL
 
@@ -100,7 +104,8 @@ theorem psd_mix {α N : Type} [Fintype N] {Y : Finset α} (A : N → α → α �
     TB.PSDOn Y (fun p q => (M : ℂ) * ∑ n, (θ n : ℂ) * A n p q) := by
   rw [PBA.psd_iff_qf]
   refine ⟨fun a ha b hb => ?_, fun c => ?_⟩
-  · rw [map_mul, Complex.conj_ofReal, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_mul, Complex.conj_ofReal, map_sum]
     congr 1
     refine Finset.sum_congr rfl fun n _ => ?_
     rw [map_mul, Complex.conj_ofReal, ((PBA.psd_iff_qf Y (A n)).1 (hA n)).1 a ha b hb]

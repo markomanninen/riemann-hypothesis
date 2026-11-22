@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.ElementaryCosets.JPred
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BlockDiagonalLeviEmbedding
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.ElementaryCosets.CosetMap
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BlockDiagonalLeviEmbedding
+
+@[expose] public section
 
 noncomputable section
 
@@ -196,7 +200,16 @@ theorem uniq {e : (Σ a, m a) ≃ n} :
     ∀ a ∈ unipRadLower R e, ∀ a' ∈ unipRadLower R e, ∀ b ∈ (leviEmb R e).range,
       ∀ b' ∈ (leviEmb R e).range, ∀ c ∈ unipRad R e, ∀ c' ∈ unipRad R e,
       a * b * c = a' * b' * c' → a = a' ∧ b = b' ∧ c = c' :=
-  _root_.UpperTheory.Reformulated.B.Qf33.uniq
+  by
+    classical
+    have hl : unipRadLower R e = _root_.UpperTheory.Reformulated.B.Qf33.unipRadLower R e := by rfl
+    have hu : unipRad R e = _root_.UpperTheory.Reformulated.B.Qf33.unipRad R e := by rfl
+    have he : leviEmb R e = _root_.UpperTheory.Reformulated.B.Qf33.leviEmb R e := by
+      ext x i j
+      simp [leviEmb, _root_.UpperTheory.Reformulated.B.Qf33.leviEmb, Matrix.blockDiagonal']
+    have ht : (leviEmb R e).range = (_root_.UpperTheory.Reformulated.B.Qf33.leviEmb R e).range := by rw [he]
+    rw [hl, hu, ht]
+    exact _root_.UpperTheory.Reformulated.B.Qf33.uniq
 
 end Matrices
 
@@ -301,7 +314,7 @@ theorem killN : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [
     exact Subgroup.mem_inf.2 ⟨h', mul_mem (mul_mem (inv_mem htT) (show torEmb k N y ∈ Tor k N from ⟨y, rfl⟩)) htT⟩
   have nlo : ∀ σ ∈ Tor k N, ∀ n ∈ Nlo k N, σ * n * σ⁻¹ ∈ Nlo k N := by
     rintro _ ⟨y, rfl⟩ n hn
-    exact (Subgroup.mem_normalizer_iff.1 (leviEmb_mem_normalizer_lower k _ y) n).1 hn
+    exact (Subgroup.mem_normalizer_iff.1 (parab_le_normalizer k (opp _) ((mem_parabLower_iff k).2 fun _ _ i j hab => by simp [leviEmb, Matrix.blockDiagonal'_apply_ne, hab.ne])) n).1 hn
   have hmJ : J ⊓ Nlo k N ≤ J := inf_le_left
   have htJ : J ⊓ Tor k N ≤ J := inf_le_left
   have hpJ : J ⊓ Nup k N ≤ J := inf_le_left

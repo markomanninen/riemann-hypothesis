@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.UnramifiedCocycleIsCoboundaryOfBernoulliUnit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.Counts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GeneratorCountTuples.LemmaK
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ExistsPrimitiveRootPow
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.LxCore
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.LxPartial
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.ExistsResidueMapPadicAlgClIntegers
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.PrimitiveTwoPowCharacterOneAddHalfEqNegOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.BOneSum
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.UnramifiedCocycleIsCoboundaryOfBernoulliUnit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.Counts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GeneratorCountTuples.LemmaK
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ExistsPrimitiveRootPow
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.LxCore
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.LxPartial
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.ExistsResidueMapPadicAlgClIntegers
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.PrimitiveTwoPowCharacterOneAddHalfEqNegOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.BOneSum
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.V.Odd UpperTheory.V.ML UpperTheory.V.X
 
@@ -294,7 +298,8 @@ theorem UpperTheory.V.X.lemmaX :
   have hSA : (∑ u, ξ u * g u) ∈ A := A.sum_mem (fun u _ => A.mul_mem (hξA u) (hgA u))
   have hred_sum : red ⟨∑ u, ξ u * g u, hSA⟩ = ∑ u, ξk u * red ⟨g u, hgA u⟩ := by
     have e0 : (⟨∑ u, ξ u * g u, hSA⟩ : A) = ∑ u, (⟨ξ u, hξA u⟩ * ⟨g u, hgA u⟩ : A) := Subtype.ext (by simp)
-    rw [e0, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e0, map_sum]
     simp only [map_mul]
     rfl
   apply le_antisymm ((hA _).1 hSA)

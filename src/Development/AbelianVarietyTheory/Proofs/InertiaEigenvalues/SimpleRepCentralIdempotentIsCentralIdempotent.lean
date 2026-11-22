@@ -1,9 +1,14 @@
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoeffZeroNeOfMonicIrr
-import Formalism.PadicSubsetSums.CentralIdempotents.HCDisjointO
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.DetCharacterMemPrincipalCongruenceFixedVectors
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwoBlockEqZeroIff
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.CharIdem
-open Formalism.IrreducibleCountingLemmas.TYPES Formalism.L2.NT GlobalTheory.SerOSys
+module
+
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoeffZeroNeOfMonicIrr
+public import Formalism.PadicSubsetSums.CentralIdempotents.HCDisjointO
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.DetCharacterMemPrincipalCongruenceFixedVectors
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.CharIdem
+
+@[expose] public section
+
+open Formalism.IrreducibleCountingLemmas.TYPES (zIdem)
+open Formalism.L2.NT
 open Polynomial CategoryTheory
 
 namespace GlobalTheory.SerOSys

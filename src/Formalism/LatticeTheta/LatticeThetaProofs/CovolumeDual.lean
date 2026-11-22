@@ -1,4 +1,8 @@
-import Formalism.LatticeTheta.Statement
+module
+
+public import Formalism.LatticeTheta.Statement
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped RealInnerProductSpace

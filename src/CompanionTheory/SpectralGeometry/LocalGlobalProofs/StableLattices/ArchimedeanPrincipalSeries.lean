@@ -1,10 +1,14 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StDefinite
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.FinalAll
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SignFrameUnitaryIso
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsLatticeFrameIsMajorantFrame
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DenseKFiniteVectorsUnitaryGroupRep
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StDefinite
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.FinalAll
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SignFrameUnitaryIso
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsLatticeFrameIsMajorantFrame
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DenseKFiniteVectorsUnitaryGroupRep
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
+
+@[expose] public section
 
 open MeasureTheory Matrix NumberField
 open scoped InnerProductSpace ComplexConjugate
@@ -203,7 +207,8 @@ theorem rFin_coef {K : Type} [Group K] [TopologicalSpace K] {H : Type} [NormedAd
   show d * ⟪σ (x * k⁻¹) s, s⟫_ℂ = _
   rw [map_mul, ContinuousLinearMap.mul_apply]
   conv_lhs => rw [e1]
-  simp only [map_sum, map_smul, sum_inner, inner_smul_left, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, sum_inner, inner_smul_left, Finset.mul_sum]
   exact Finset.sum_congr rfl fun i _ => by ring
 
 theorem exists_projAvg (K : Type) [Group K] [TopologicalSpace K] [IsTopologicalGroup K] [CompactSpace K] [T2Space K]
@@ -250,8 +255,8 @@ theorem isPIProj_of_equiv {G G' H : Type} [Group G] [Group G'] [NormedAddCommGro
   refine ⟨h0, h1, h2, fun T hT => h3 T fun g => hT _, M, fun g => ?_⟩
   simpa using h4 fun i => φ (g i)
 
-open PI.UpqRep in
 
+open PI.UpqRep in
 theorem exists_isPIProj_UJ {n : ℕ} (ε : Fin n → Bool) (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     [CompleteSpace H] [Nontrivial H] (ρ : UJ ε →* (H →L[ℂ] H)) (hiso : ∀ g v, ‖ρ g v‖ = ‖v‖)
     (hc : ∀ v, Continuous fun g => ρ g v) : ∃ P, IsPIProj ρ P := by

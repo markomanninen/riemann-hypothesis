@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementB
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.XiExistsOfIn
+module
+
+public import Formalism.HermitianCurvature.StatementB
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.XiExistsOfIn
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 

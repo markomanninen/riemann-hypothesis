@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsMChart
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsMChart
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -12,8 +17,8 @@ universe u
 
 variable {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} {F : Type*} [Field F]
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem chartMonomial_add (u : ∀ k, ι k) (a c : K → ℕ) :
     (chartMonomial u (a + c) : MRing ι F) = chartMonomial u a * chartMonomial u c := by
   simp only [chartMonomial, Pi.add_apply, pow_add, Finset.prod_mul_distrib]
@@ -34,7 +39,7 @@ theorem finsuppProd_chartVar (u : ∀ k, ι k) (e : (Σ k, ι k) →₀ ℕ) :
   induction e using Finsupp.induction_linear with
   | zero => simp [chartMonomial]
   | add f g hf hg =>
-    rw [Finsupp.prod_add_index' (fun _ => pow_zero _) (fun _ _ _ => pow_add _ _ _), hf, hg, map_add,
+    rw [Finsupp.prod_add_index' (fun _ => pow_zero _) (fun _ _ _ => pow_add _ _ _), hf, hg, map_add (f := _),
       chartMonomial_add]
   | single v n =>
     rw [Finsupp.prod_single_index (by simp), Finsupp.weight_single]
@@ -69,9 +74,9 @@ theorem MChartHomog.proof : MChartHomog.Statement.{u} := by
     ⟨fun k => p.support.sup fun e => Finsupp.weight (blockWeight ι) e k, fun e he k =>
       Finset.le_sup (f := fun e => Finsupp.weight (blockWeight ι) e k) he⟩
   refine ⟨b, ∑ e ∈ p.support,
-    monomial e (coeff e p) * chartMonomial u (b - Finsupp.weight (blockWeight ι) e), ?_, ?_⟩
+    monomial e (AddMonoidAlgebra.coeff p e) * chartMonomial u (b - Finsupp.weight (blockWeight ι) e), ?_, ?_⟩
   · refine IsWeightedHomogeneous.sum _ _ _ fun e he => ?_
-    have := (isWeightedHomogeneous_monomial (blockWeight ι) e (coeff e p) rfl).mul
+    have := (isWeightedHomogeneous_monomial (blockWeight ι) e (AddMonoidAlgebra.coeff p e) rfl).mul
       (chartMonomial_isMultiHomog (F := F) u (b - Finsupp.weight (blockWeight ι) e))
     rwa [add_tsub_cancel_of_le (hle e he)] at this
   · intro P _ hu
@@ -83,7 +88,8 @@ theorem MChartHomog.proof : MChartHomog.Statement.{u} := by
       exact hu k
     rw [eq_div_iff (hY b)]
     conv_lhs => rw [p.as_sum]
-    rw [map_sum, Finset.sum_mul, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_mul, map_sum, map_sum]
     refine Finset.sum_congr rfl fun e he => ?_
     have key : (chartMonomial u b : MRing ι F) = chartMonomial u (Finsupp.weight (blockWeight ι) e) *
         chartMonomial u (b - Finsupp.weight (blockWeight ι) e) := by

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsQuasiInv
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsQuasiInv
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.ES
@@ -127,17 +131,33 @@ private theorem triv_iff {p : ℕ} [Fact p.Prime] {D : Datum p} {R : Type} [Comm
       (snd B (Over.mk (T₁.hom ≫ t)) ≫ x ≫ ψ')).left).IsLB :=
     LB.isLB_linComb o.isLB _ _
   have hP' : (o.P.pull m.φ₂).IsLB := LB.isLB_linComb o.isLB _ _
-  have c₁ := GlobalTheory.CechPic.cls_pull o₁.isLB _ hL₁
-  rw [(GlobalTheory.CechPic.cls_eq_iff o₁.isLB hP').mpr m.pol, GlobalTheory.CechPic.cls_pull o.isLB _ hP',
-    ← GlobalTheory.CechPic.pull_comp] at c₁
-  have c := GlobalTheory.CechPic.cls_pull o.isLB _ hL
+  let pull {X Y : Scheme.{0}} (f : Y ⟶ X) : GlobalTheory.CechPic.Pic X → GlobalTheory.CechPic.Pic Y :=
+    Quotient.map (fun A => ⟨A.1.pull f, LB.isLB_pull A.2 f⟩)
+      (fun A B h => LBIso.chartPull (chartPullPull A.1 f f rfl) (chartPullPull B.1 f f rfl) h)
+  have cls_pull {X Y : Scheme.{0}} {L : LB X} (hL : L.IsLB) (f : Y ⟶ X) (h : (L.pull f).IsLB) :
+      GlobalTheory.CechPic.cls (L.pull f) h = pull f (GlobalTheory.CechPic.cls L hL) := rfl
+  have pull_zero {X Y : Scheme.{0}} (f : Y ⟶ X) : pull f 0 = 0 := by
+    apply (GlobalTheory.CechPic.cls_eq_zero_iff _).2
+    obtain ⟨a, ha⟩ := (GlobalTheory.CechPic.cls_eq_zero_iff (LB.isLB_triv X)).1 rfl
+    exact gen_chartPull (chartPullPull (LB.triv X) f f rfl) a ha
+  have pull_comp {X Y Z : Scheme.{0}} (g : Z ⟶ Y) (f : Y ⟶ X) (c : GlobalTheory.CechPic.Pic X) :
+      pull (g ≫ f) c = pull g (pull f c) := by
+    obtain ⟨A, hA, rfl⟩ := GlobalTheory.CechPic.cls_surj c
+    exact ((GlobalTheory.CechPic.cls_eq_iff (LB.isLB_pull (LB.isLB_pull hA _) _) (LB.isLB_pull hA _)).2
+      (GlobalTheory.CechPic.iso_of_chart (LB.isLB_pull hA _)
+        (chartPullLinComb A f (fun _ : PUnit => g) (fun _ => g ≫ f) (fun _ => 1) (𝟙 _)
+          fun _ => (Category.id_comp _).symm))).symm
+  have c₁ := cls_pull o₁.isLB _ hL₁
+  rw [(GlobalTheory.CechPic.cls_eq_iff o₁.isLB hP').mpr m.pol, cls_pull o.isLB _ hP',
+    ← pull_comp] at c₁
+  have c := cls_pull o.isLB _ hL
   rw [show PullPolTriv o₁ ψ₁' x₁ ↔ _ from (GlobalTheory.CechPic.cls_eq_zero_iff hL₁).symm,
     show PullPolTriv o ψ' x ↔ _ from (GlobalTheory.CechPic.cls_eq_zero_iff hL).symm, c₁, c]
   constructor
   · intro h0
-    rw [← E2, GlobalTheory.CechPic.pull_comp, h0, map_zero]
+    rw [← E2, pull_comp, h0, pull_zero]
   · intro h0
-    rw [E1, GlobalTheory.CechPic.pull_comp, h0, map_zero]
+    rw [E1, pull_comp, h0, pull_zero]
 
 end UpperTheory.Cb.PairEqualityCriteria
 

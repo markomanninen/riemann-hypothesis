@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.ExistsCoprimePowEqOne
-import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.ExistsCoprimePowEqOne
+public import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+
+@[expose] public section
 
 noncomputable section
 

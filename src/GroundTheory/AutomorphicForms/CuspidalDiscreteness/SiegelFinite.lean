@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SmoothingFinite
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SmoothingFinite
+
+@[expose] public section
 
 open Set Filter Topology
 open NumberField IsDedekindDomain
@@ -15,8 +19,8 @@ open Reduction AutomorphicForm
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
-variable (K) in
 
+variable (K) in
 theorem exists_natCast_mul_mem_of_mem_nhds {W : Set (FiniteAdeleRing (𝓞 K) K)}
     (hW : W ∈ 𝓝 (0 : FiniteAdeleRing (𝓞 K) K)) :
     ∃ M : ℕ, 0 < M ∧ ∀ a ∈ GroundTheory.Global.integralFiniteAdeles (𝓞 K) K,

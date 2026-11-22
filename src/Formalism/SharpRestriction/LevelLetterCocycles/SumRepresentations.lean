@@ -1,7 +1,11 @@
-import Formalism.ConjugateSelfDual.StatementRest
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
-import ReciprocityTheory.GaloisValuations.SeparatedDvrSecondCohomologyMem
+module
+
+public import Formalism.ConjugateSelfDual.StatementRest
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+public import ReciprocityTheory.GaloisValuations.SeparatedDvrSecondCohomologyMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,14 +121,6 @@ def G1 (i : N.Loc) (r : N.X i → (G H.E N.Om →* GL (Fin R.nV) (N.O i))) : Pro
     (f : N.X i → N.O i) x =
       ((r x g : GL (Fin R.nV) (N.O i)) : Matrix (Fin R.nV) (Fin R.nV) (N.O i)).charpolyRev.coeff k
 
-def G2 (i : N.Loc) (r : N.X i → (G H.E N.Om →* GL (Fin R.nV) (N.O i))) : Prop :=
-  ∀ w ∈ placesOver H.E (N.l i),
-    (N.l i ≠ H.g 0 → N.l i ≠ H.g 1 → ∀ x, A.IsCrysW i (mapRep (iotaOQ N A i) (r x)) w ∧
-      ∀ τ, InducesW N i τ w → A.jumpsW i (mapRep (iotaOQ N A i) (r x)) τ = A.locAutHodgeTateWeightsLevelZero i τ) ∧
-    ((N.l i = H.g 0 ∨ N.l i = H.g 1) → ∀ x,
-      (∀ P Pa, A.ptV i P = some x → IsBCV N A i P Pa → A.mono0 (isoLoc N A Pa w)) →
-      A.IsPotCrysW i (mapRep (iotaOQ N A i) (r x)) w)
-
 def G3 (i : N.Loc) (r : N.X i → (G H.E N.Om →* GL (Fin R.nV) (N.O i))) : Prop :=
   (∃ (K' : Type) (_ : Field K') (_ : Algebra (Kf N i) K') (_ : FiniteDimensional (Kf N i) K'),
     ∀ x, (∀ W, IsIrrSub (mapRep ((algebraMap (Kf N i) K').comp (algebraMap (N.O i) (Kf N i))) (r x)) W →
@@ -141,28 +137,6 @@ def G3 (i : N.Loc) (r : N.X i → (G H.E N.Om →* GL (Fin R.nV) (N.O i))) : Pro
 
 def G4 (i : N.Loc) (r : N.X i → (G H.E N.Om →* GL (Fin R.nV) (N.O i))) : Prop :=
   ∀ x w, w ∉ placesOver H.E (N.l i) → w ∉ N.S i → w ∉ N.Q i → UnramAt (F := H.E) (r x) w
-
-def Conclusion41 (i : N.Loc) : Prop :=
-  ((∃ rq : N.X i → (G H.E N.Om →* GL (Fin R.nV) (Qbar (N.l i))), ∀ x, IsHeckeGaloisQ N A i x (rq x)) ∧
-    ∃ r, GoodR N i r) ∧
-  (∀ P P' : A.AV i, A.ptV i P ≠ none → A.ptV i P = A.ptV i P' →
-    (∀ Pa Pa', IsBCV N A i P Pa → IsBCV N A i P' Pa' → Pa.Perm Pa') ∧
-    ∀ w, w ∉ N.S i → w ∉ N.Q i →
-      (IsSplitPl H w → A.locV i P w = A.locV i P' w) ∧
-      (¬ IsSplitPl H w → ubc R.nV (A.satV i P w) = ubc R.nV (A.satV i P' w))) ∧
-  ∀ r, GoodR N i r → G1 N i r ∧ G2 N A i r ∧ G3 N i r ∧ G4 N i r
-
-def CuspidalGaloisUnramified (i : N.Loc) : Prop :=
-  ∀ r, GoodR N i r → ∀ x, (x ∈ ZgoodN N A i ∨ (x ∈ ZN N A i ∧ ∃ Sig, HasParamX N A i x Sig ∧ IsCuspIso N A Sig)) →
-    ∀ ρ : G H.E N.Om →* GL (Fin R.r) (N.O i),
-    IsSSRep (mapRep (algebraMap (N.O i) (Kf N i)) ρ) →
-    (∀ g, ((r x g : GL _ _) : Matrix (Fin R.nV) (Fin R.nV) (N.O i)).charpoly =
-      ((ρ g : GL _ _) : Matrix (Fin R.r) (Fin R.r) (N.O i)).charpoly *
-        ∏ c ∈ Finset.Icc 1 R.t, (X - C ((N.chi i c g : (N.O i)ˣ) : N.O i))) →
-    ∀ w : PlE H,
-      H0 ((Formalism.MainNotions.N.Glob.WpK N i ρ).comp (Dec (F := H.E) (N.plOm.1 w)).subtype) = ⊥ ∧
-      H0 ((Formalism.MainNotions.N.coefRep (Formalism.MainNotions.N.Glob.T2 N i ρ) (Kf N i)).comp
-        (Dec (F := H.E) (N.plOm.1 w)).subtype) = ⊥
 
 def Conclusion42 (i : N.Loc) : Prop :=
   ∀ σ, what₂.isot (N.j i) σ ≠ ⊥ →
@@ -272,8 +246,8 @@ def ConclusionG6 (i : N.Loc) : Prop :=
         Matrix (Fin R.nV) (Fin R.nV) (Kf N i)).mulVec v = algebraMap (N.O i) (Kf N i) (chi1 N i g) • v) →
     x ∈ ZN N A i ∧ ∀ Sig, HasParamX N A i x Sig → IsCuspIso N A Sig
 
-open Classical in
 
+open Classical in
 def ConclusionZ (i : N.Loc) : Prop :=
   HG N A i →
     (∀ x ∈ ZgoodN N A i, ∀ Sig, HasParamX N A i x Sig →
@@ -283,25 +257,6 @@ def ConclusionZ (i : N.Loc) : Prop :=
     ∑ x : N.X i, (if x ∈ ZgoodN N A i then N.mult i x else 0) = dM N A i
 
 def admBC : Prop := ∀ i (P : A.AV i), ∃ Pa, IsBCV N A i P Pa
-
-def exists_galois_rep_local_global_compatible : Prop :=
-  ∀ i, (∀ a, 1 ≤ a → ∀ π : A.CG a, A.csd π → A.ralg π →
-      ∃ ρ : G H.E N.Om →* GL (Fin a) (Qbar (N.l i)),
-        Continuous (fun g => ((ρ g : GL _ _) : Matrix (Fin a) (Fin a) (Qbar (N.l i)))) ∧
-        IsSSRep ρ ∧
-        (∀ w, w ∉ placesOver H.E (N.l i) →
-          A.wdOf i ρ w = A.lpTw (A.locG π w) ((1 - (a : ℝ)) / 2) ∧ A.tempered (A.locG π w)) ∧
-        (∀ w ∈ placesOver H.E (N.l i), A.IsdRW i ρ w ∧
-          (∀ τ, InducesW N i τ w → A.jumpsW i ρ τ = A.jumpsInf i π τ) ∧
-          A.wdOf i ρ w = A.lpTw (A.locG π w) ((1 - (a : ℝ)) / 2))) ∧
-    (∀ a (π : A.CG a), A.ralg π → ∃ w₀ : ℂ, ∀ τ : H.E →+* ℂ,
-      A.infG π (τ.comp (H.conj : H.E ≃ₐ[ℚ] H.E).toRingEquiv.toRingHom) = (A.infG π τ).map (w₀ - ·)) ∧
-    (∀ (χ : A.CG 1) (s : ℝ), (∀ τ : H.E →+* ℂ, ∀ z ∈ A.infG χ τ, ∃ k : ℤ, z + (s : ℂ) = (k : ℂ)) →
-      ∃ ρ : G H.E N.Om →* GL (Fin 1) (Qbar (N.l i)), ContQ N i ρ ∧
-        (∀ w, w ∉ placesOver H.E (N.l i) → A.wdOf i ρ w = A.lpTw (A.locG χ w) s) ∧
-        ∀ w ∈ placesOver H.E (N.l i), A.IsdRW i ρ w ∧ A.wdOf i ρ w = A.lpTw (A.locG χ w) s ∧
-          ∀ τ, InducesW N i τ w → (A.jumpsW i ρ τ).map (fun n : ℤ => (n : ℂ)) =
-            (A.infG χ ((A.iotaQC i).toRingHom.comp τ)).map (fun z => -(z + (s : ℂ))))
 
 def ThetaLocalSplit : Prop :=
   ∀ i σ P, thetaOf N A i σ P →
@@ -337,15 +292,6 @@ def JacquetShalikaStrongMultOne : Prop :=
 def TemperedCuspidal : Prop :=
   ∀ (a : ℕ) (π : A.CG a), 1 ≤ a → A.csd π → A.ralg π → ∀ w, A.tempered (A.locG π w)
 
-def IrreducibilityParameter : Prop :=
-  ∀ i σ, what₂.isot (N.j i) σ ≠ ⊥ → N.goodRow σ → ∀ Sig, HasParamW N A i σ Sig →
-    ∀ ρ, IsRepOfSig N A i Sig ρ →
-      Formalism.CyclotomicNorms.IrredOn (mapRep ((A.kFbar i).comp (IsLocalRing.residue (N.O i))) ρ) ⊤ ∧
-      ∀ k, N.l i ≠ H.g k → ∀ v : N.PlG k, TameGen N (N.plOm.1 (A.plGw k v)) (N.gam0 i (A.plGw k v)) →
-        ¬ (((mapRep ((A.kFbar i).comp (IsLocalRing.residue (N.O i))) ρ (N.gam0 i (A.plGw k v)) :
-            GL _ _) : Matrix (Fin R.r) (Fin R.r) _).charpoly).IsRoot
-          ((A.kFbar i) (IsLocalRing.residue (N.O i) (chi1 N i (N.gam0 i (A.plGw k v)))))
-
 def ResidualIrreducibility : Prop :=
   ∀ i, HG N A i → ∀ rb : Formalism.ConjugateSelfDual.G H.E N.Om →* GL (Fin R.r) (IsLocalRing.ResidueField (N.O i)), IsRhoBar N i rb →
     Formalism.CyclotomicNorms.IrredOn (mapRep (A.kFbar i) rb) ⊤ ∧
@@ -363,8 +309,6 @@ def hypO (D : D7) : Prop := At.OLarge D.nd D.naut
 
 def adm1 (D : D7) : Prop := At.admBC D.nd D.naut
 
-def adm2 (D : D7) : Prop := At.exists_galois_rep_local_global_compatible D.nd D.naut
-
 def adm3 (D : D7) : Prop := At.ThetaLocalSplit D.nd D.naut
 
 def ArchimedeanSignatureMatching (D : D7) : Prop := At.MonodromyInertiaType D.nd D.naut
@@ -377,10 +321,6 @@ def adm7 (D : D7) : Prop := At.TemperedCuspidal D.nd D.naut
 
 def adm8 (D : D7) : Prop := Rows.IsotInternal D.what₂
 
-def Conclusion41 (D : D7) : Prop := ∀ i, At.Conclusion41 D.nd D.naut i
-
-def CuspidalGaloisUnramified (D : D7) : Prop := ∀ i, At.CuspidalGaloisUnramified D.nd D.naut i
-
 def Conclusion42 (D : D7) : Prop := ∀ i, At.Conclusion42 D.nd D.naut i
 
 def ConclusionG5 (D : D7) : Prop := ∀ i, At.ConclusionG5 D.nd D.naut i
@@ -389,20 +329,7 @@ def ConclusionG6 (D : D7) : Prop := ∀ i, At.ConclusionG6 D.nd D.naut i
 
 def ConclusionZ (D : D7) : Prop := ∀ i, At.ConclusionZ D.nd D.naut i
 
-def Conclusion1 (D : D7) : Prop := Conclusion41 D ∧ CuspidalGaloisUnramified D ∧ Conclusion42 D
-
 def Conclusion2 (D : D7) : Prop := ConclusionG5 D ∧ ConclusionG6 D ∧ ConclusionZ D
-
-def AdmA (D : D7) : Prop := tie0 D ∧ hypO D ∧ adm1 D ∧ adm2 D ∧ adm3 D ∧ ArchimedeanSignatureMatching D ∧ adm5 D
-
-def AdmAt (D : D7) : Prop := AdmA D ∧ adm7 D
-
-def admitted (D : D7) : Prop := AdmAt D ∧ adm6 D ∧ adm8 D
-
-def IntegralityFromMetric (D : D7) : Prop := AdmAt D → Conclusion1 D
-def HodgeTateFromSandwich (D : D7) : Prop := admitted D → Conclusion2 D
-
-def Stmt (D : D7) : Prop := IntegralityFromMetric D ∧ HodgeTateFromSandwich D
 
 end Formalism.MainNotions.SumRepresentations
 

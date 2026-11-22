@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsAlgebraMapEqRoot
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsAlgebraMapEqRoot
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,8 +49,8 @@ def KillsAll {D₁ : BKDat O K l e a ι η H} {D₂ : BKDat O K l e a κ η H} (
   KillsCoker F.app n D₁.Y D₂.Y ∧
   KillsCoker F.app n D₁.Y' D₂.Y'
 
-omit [NormedAlgebra ℚ_[l] K] [NeZero e] [NeZero a] [TameDescentExponentData K l e a] in
 
+omit [NormedAlgebra ℚ_[l] K] [NeZero e] [NeZero a] [TameDescentExponentData K l e a] in
 theorem killsCoker_M_iff {P : PhiMod O K l e a ι} {Q : PhiMod O K l e a κ} (F : Hom P Q) (n : ℕ) :
     KillsCoker F.app n P.M Q.M ↔ ∀ q : F.coker, n • q = 0 := by
   constructor
@@ -71,9 +75,5 @@ def Stmt : Prop :=
       D₁.IsOfType (Sig : Set (ZMod e)) (U : Set ℤ) → (∀ τ, D₂.desc.chars τ ⊆ (Sig : Set (ZMod e))) →
       ∀ F : BKHom D₁ D₂, IsFiniteLength (A O K) F.coker →
         KillsAll F (l ^ rho l Sig N)
-
-example (l e N : ℕ) : rho l ({0} : Finset (ZMod e)) N = 2 * (N - 1) := by
-  simp [rho, maxPeriod, frobPeriod, Function.minimalPeriod_eq_one_iff_isFixedPt.2
-    (show Function.IsFixedPt (fun x => (l : ZMod e) * x) 0 from mul_zero _)]
 
 end GlobalTheory.IndefiniteRowSideFullHecke.RepresentationBounds

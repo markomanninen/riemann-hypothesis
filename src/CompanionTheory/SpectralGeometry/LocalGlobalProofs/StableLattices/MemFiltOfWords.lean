@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
 
 open Finset
 
@@ -40,8 +44,8 @@ theorem homotopy_ring (A D an cr : ι → R)
   simp only [key, Finset.sum_add_distrib]
   simp
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem sq_ring (A an : ι → R)
     (h1 : ∀ i j, Commute (an i) (A j)) (h2 : ∀ i j, Commute (A i) (A j))
     (h4 : ∀ i j, an i * an j + an j * an i = 0) :
@@ -214,7 +218,9 @@ theorem koszul : CAR → Koszul := by
       refine ⟨0, fun _ _ => rfl, ?_⟩
       rw [map_zero]
       funext A
-      simpa [filt, eq_comm] using hy A
+      have hA : y A ∈ (⊥ : Submodule ℂ Z) := hy A
+      have hA0 : y A = 0 := by simpa only [Submodule.mem_bot] using hA
+      exact hA0.symm
     | succ m ih =>
       intro y hy hdeg hc
       have hne : ((m : ℂ) + (j + 1 : ℕ)) ≠ 0 := by

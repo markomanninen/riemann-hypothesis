@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.LvlDef
-import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.GramWindow2Proved
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.FinPosEqCast
-import Formalism.MahlerMeasure.FinalM
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.LvlDef
+public import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.GramWindow2Proved
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.FinPosEqCast
+public import Formalism.MahlerMeasure.FinalM
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,7 +106,7 @@ theorem norm_fock_le (U v : MvPolynomial σ ℚ_[p]) (dF : ℕ) (hdF : dF ≠ 0)
       apply zpow_le_zpow_right₀ hp1
       have := hval m hm
       omega
-    calc ‖coeff m U‖ * ‖coeff m v‖ *
+    calc ‖AddMonoidAlgebra.coeff U m‖ * ‖AddMonoidAlgebra.coeff v m‖ *
           (p : ℝ) ^ (-(padicValNat p (m.prod fun _ i => i.factorial) : ℤ) - -(padicValNat p dF : ℤ))
         ≤ (p : ℝ) ^ k * 1 * (p : ℝ) ^ E := by
           gcongr

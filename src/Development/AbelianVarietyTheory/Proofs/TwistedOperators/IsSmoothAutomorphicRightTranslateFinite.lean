@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
-import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
-import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.EmbRelExistsUnique
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.EmbRelExistsUnique
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,8 @@ theorem foldr_comm {α : Type} (T : α → α) (l : List (α → α)) (hl : ∀ 
 theorem gelf_rTr (hκ : κ ∈ GfC V) (τ : D.what₂.Tau) (k : ℕ) (φ : GA D V → ℂ) :
     gelf θ V τ k (rTr V κ φ) = rTr V κ (gelf θ V τ k φ) := by
   unfold gelf
-  rw [← rTrL_apply V κ (∑ _, _), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← rTrL_apply V κ (∑ _, _), map_sum]
   refine Finset.sum_congr rfl fun idx _ => ?_
   rw [rTrL_apply]
   refine foldr_comm (rTr V κ) _ ?_ φ

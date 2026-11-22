@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LogIntSt
+module
+
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LogIntSt
+
+@[expose] public section
 
 open MeasureTheory Set
 
@@ -144,13 +148,9 @@ theorem logCoordLocInt_thm : LogCoordLocIntStatement := fun D i => locallyIntegr
 
 theorem logMonoLocInt_thm : LogMonoLocIntStatement := by
   intro D m
-  exact locallyIntegrable_finset_sum (μ := volume) Finset.univ
+  exact MeasureTheory.locallyIntegrable_finsetSum (μ := volume) Finset.univ
     (f := fun i (z : Fin D → ℂ) => (m i : ℝ) * Real.log ‖z i‖)
     (fun i _ => (logCoordLocInt_thm D i).smul (m i : ℝ))
-
-theorem logMonoTestInt_thm : LogMonoTestIntStatement := by
-  intro D m f hf hfs
-  exact (logMonoLocInt_thm D m).integrable_smul_left_of_hasCompactSupport hf hfs
 
 theorem log_norm_prod_zpow_eq_logMono {D : ℕ} (m : Fin D → ℤ) (z : Fin D → ℂ)
     (hz : ∀ i, z i ≠ 0) : Real.log ‖∏ i, z i ^ m i‖ = logMono m z := by

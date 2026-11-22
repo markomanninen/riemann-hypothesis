@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ColInst
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.StdOK
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.PeriodLatticeFinitelyGenerated
-import Formalism.LocalToGlobal.Columns.CyclotomicIsCyclotomicExtension
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ColInst
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.StdOK
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.PeriodLatticeFinitelyGenerated
+public import Formalism.LocalToGlobal.Columns.CyclotomicIsCyclotomicExtension
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MvPolynomial
 
@@ -116,13 +120,43 @@ theorem finite_quot_of_reps {H : Type} [AddCommGroup H] [Module (𝓞 E) H] (M :
 
 variable [StarRing E] {a b : ℕ}
 
+theorem full_of_sd {n : ℕ} {L : Submodule (𝓞 E) (Sp E n)}
+    (hL : IsSdLat L) : Submodule.IsFullLattice E L := by
+  let := hL.1
+  refine { span_eq_top := ?_ }
+  let W := Submodule.span E (L : Set (Sp E n))
+  change W = ⊤
+  by_contra hW
+  let e : Sp E n ≃ₗ⋆[E] Sp E n := starLinearEquiv E
+  let g : Sp E n →ₗ[E] Module.Dual E W :=
+    (LinearMap.domRestrict' W).comp ((hStd E n).comp e.toLinearMap)
+  have hdim : Module.finrank E (Module.Dual E W) < Module.finrank E (Sp E n) := by
+    rw [Subspace.dual_finrank_eq]
+    exact Submodule.finrank_lt hW
+  obtain ⟨x, hx, hx₀⟩ :=
+    Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+  have hsmul (a : E) : a • e x ∈ L := by
+    rw [← hL.2, dualBasic_mem_dual]
+    intro y hy
+    apply hStd_mem_one_symm
+    have hxy : hStd E n (e x) y = 0 :=
+      congrArg (fun f : Module.Dual E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+    simp [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hxy]
+  let i : E →ₗ[𝓞 E] L :=
+    ((LinearMap.toSpanSingleton E _ (e x)).restrictScalars (𝓞 E)).codRestrict L hsmul
+  let : Module.Finite (𝓞 E) L := Module.Finite.iff_fg.mpr hL.1.fg
+  let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
+    smul_left_injective E (fun hz => hx₀ (e.map_eq_zero_iff.mp hz)) (congrArg Subtype.val hab)
+  exact RingOfIntegers.not_isField E
+    (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
+
 def homG (N : Submodule (𝓞 E) (Sp E a)) (N' : Submodule (𝓞 E) (Sp E b)) : Submodule (𝓞 E) (HomE E a b) where
   carrier := {x | ∀ y ∈ N, x y ∈ N'}
   add_mem' := fun hx hx' y hy => add_mem (hx y hy) (hx' y hy)
   zero_mem' := fun _ _ => zero_mem _
   smul_mem' := fun r _ hx y hy => Submodule.smul_mem _ r (hx y hy)
 
-theorem homG_fg (N : Submodule (𝓞 E) (Sp E a)) (N' : Submodule (𝓞 E) (Sp E b)) (hN : Submodule.IsLattice E N)
+theorem homG_fg (N : Submodule (𝓞 E) (Sp E a)) (N' : Submodule (𝓞 E) (Sp E b)) (hN : Submodule.IsFullLattice E N)
     (hN' : Submodule.IsLattice E N') : (homG N N').FG := by
   obtain ⟨G, hG⟩ := hN.fg
   have : Module.Finite (𝓞 E) ↥N' := Module.Finite.iff_fg.2 hN'.fg
@@ -134,8 +168,8 @@ theorem homG_fg (N : Submodule (𝓞 E) (Sp E a)) (N' : Submodule (𝓞 E) (Sp E
     intro x x' h
     apply Subtype.ext
     have hspan : Submodule.span E (G : Set (Sp E a)) = ⊤ := by
-      rw [eq_top_iff, ← hN.span_eq_top, Submodule.span_le, ← hG]
-      exact fun y hy => Submodule.span_subset_span (𝓞 E) E _ hy
+      rw [← Submodule.span_span_of_tower (𝓞 E), hG]
+      exact hN.span_eq_top
     refine LinearMap.ext_on hspan fun g hg => ?_
     exact congrArg Subtype.val (congrFun h ⟨g, hg⟩)
   have : Module.Finite (𝓞 E) ↥(homG N N') := Module.Finite.of_injective ev hinj
@@ -173,7 +207,7 @@ theorem homAt_clear (S : Finset (HeightOneSpectrum (𝓞 E))) (N : Submodule (�
       rw [hc, mul_comm, mul_smul]
       exact N'.smul_mem _ (hsx g hg)
     | zero => rw [map_zero]; exact N'.zero_mem
-    | add y y' _ _ h h' => rw [map_add]; exact N'.add_mem h h'
+    | add y y' _ _ h h' => rw [map_add (f := _)]; exact N'.add_mem h h'
     | smul r y _ h => rw [LinearMap.map_smul_of_tower]; exact N'.smul_mem _ h
 
 theorem homAt_div (S : Finset (HeightOneSpectrum (𝓞 E))) (N : Submodule (𝓞 E) (Sp E a)) (N' : Submodule (𝓞 E) (Sp E b)) (k : ℕ) (hk : 0 < k)
@@ -202,7 +236,7 @@ theorem homAt_div (S : Finset (HeightOneSpectrum (𝓞 E))) (N : Submodule (𝓞
 
 theorem lattice_classes_finite_refinement (X : Fields) (a b : ℕ) (Sall : Finset (HeightOneSpectrum (𝓞 X.E))) : LatFin (X := X) a b Sall := by
   intro N N' c c' hN hN' _ hc'
-  obtain ⟨F, hF, hFM⟩ := semilocal_reps Sall (homG N N') (homAt Sall N N') (homG_fg N N' hN.1 hN'.1) (homG_le Sall N N')
+  obtain ⟨F, hF, hFM⟩ := semilocal_reps Sall (homG N N') (homAt Sall N N') (homG_fg N N' (full_of_sd hN) hN'.1) (homG_le Sall N N')
     (fun x hx P hP => homAt_clear Sall N N' hN.1.fg x hx P hP) c' hc' (fun x hx j hj => homAt_div Sall N N' c' hc' x hx j hj)
   exact finite_quot_of_reps _ c c' F hF hFM
 
@@ -339,21 +373,6 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Ch
   (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu)) (L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K)))
   (A : Amb X) (u : Pr.Word) (m2 : ℕ)
 
-theorem muqTie_of_allG (h : ∀ P : rowSG Pr sel mu, P.1 ∈ Pr.vGs) : MuqTie Ch sel mu cst :=
-  fun _ _ P hP => absurd (h P) hP
-
-theorem stepHyp_of {a b : ℕ} {Sall : Finset (HeightOneSpectrum (𝓞 X.E))} {D : ℕ} (hD : 0 < D) (h : A.AnaStep a b Sall D) : A.StepHyp a b Sall D :=
-  stepHyp_of_la A a b Sall D hD h.1 (lattice_classes_finite_refinement X a b Sall) h.2.1 h.2.2
-
-theorem chTh_ok_amb (hm : m2 + 1 < R.m) (hT : 0 < Pr.T u) (hq : MuqTie Ch sel mu cst) (h : ThHyp W Ch sel mu cst A u m2) :
-    ChTh.Ok (Ch := Ch) cst (chTh W Ch sel mu cst A u m2) :=
-  chTh_ok W Ch sel mu cst A u m2 hm hT hq (fun i hi => stepHyp_of A (modulus_pos sel mu cst u hT) (h.1 i hi))
-    (stepHyp_of A (modulus_pos sel mu cst u hT) h.2.1) h.2.2.1 h.2.2.2
-
-theorem kerEquivC_of (b : L.β (m2 + 1)) (hY : YbHyp (R := R) sel mu cst L u m2 b) (P : LevFam X.E X.K R.r Pr.vGs)
-    (h : KerHypOn W Ch sel mu cst L A u m2 b hY P) : KerEquivC W Ch sel mu cst L A u m2 b hY P :=
-  ⟨h.1, cp1Equiv_of_on W Ch sel mu cst L _ b hY h.2.1, cp2Equiv_of_on W Ch sel mu cst L _ b hY P h.2.2⟩
-
 end Inst
 
 section SeamLat
@@ -444,7 +463,8 @@ theorem Seam.stdH_vec (hok : s.Ok) {n : ℕ} (x y : Sp X.E n) :
     (letI := D.host.cmStar; stdH D.host.E n (s.vec x) (s.vec y)) = s.iE (hStd X.E n x y) := by
   rw [Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.SD.stdH_eq]
   show _ = s.iE (∑ i, star (x i) * y i)
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, hok.2]
   rfl
@@ -466,7 +486,7 @@ theorem Seam.sd_lat (hok : s.Ok) {n : ℕ} {N : Submodule (𝓞 X.E) (Sp X.E n)}
   · rw [eq_top_iff]
     intro y _
     have h1 : (fun i => s.iE.symm (y i) : Sp X.E n) ∈ Submodule.span X.E (N : Set (Sp X.E n)) := by
-      rw [hN.1.span_eq_top]; trivial
+      rw [(full_of_sd hN).span_eq_top]; trivial
     have h2 := s.vec_spanE _ h1
     rw [s.vec_surj] at h2
     exact Submodule.span_mono (fun z hz => Submodule.subset_span hz) h2
@@ -544,7 +564,7 @@ theorem finite_div_quot {E : Type} [Field E] [NumberField E] {H : Type} [AddComm
 theorem kerFin {E : Type} [Field E] [NumberField E] [StarRing E] {a b : ℕ} (Sall : Finset (HeightOneSpectrum (𝓞 E)))
     (N : Submodule (𝓞 E) (Sp E a)) (N' : Submodule (𝓞 E) (Sp E b)) (hN : IsSdLat N) (hN' : IsSdLat N') (cA cB : ℕ) (hA : 0 < cA) (hB : 0 < cB) :
     Finite (↥(divLat cA (homAt Sall N N')) ⧸ (mulLat cB (homAt Sall N N')).comap (divLat cA (homAt Sall N N')).subtype) := by
-  obtain ⟨F, hF, hFM⟩ := semilocal_reps Sall (homG N N') (homAt Sall N N') (homG_fg N N' hN.1 hN'.1) (homG_le Sall N N')
+  obtain ⟨F, hF, hFM⟩ := semilocal_reps Sall (homG N N') (homAt Sall N N') (homG_fg N N' (full_of_sd hN) hN'.1) (homG_le Sall N N')
     (fun x hx P hP => homAt_clear Sall N N' hN.1.fg x hx P hP) (cA * cB) (Nat.mul_pos hA hB)
     (fun x hx j hj => homAt_div Sall N N' (cA * cB) (Nat.mul_pos hA hB) x hx j hj)
   exact finite_div_quot _ cA cB hA F hF hFM
@@ -556,36 +576,7 @@ theorem jetLin_smul {K : Type} [Field K] {ι : Type} [Fintype ι] {a b : ℕ} (c
   rw [LinearMap.smul_apply]
   simp only [coe_basisMonomials, jetLin_monomial, one_mul, smul_monomial, smul_eq_mul]
 
-theorem jetOp_smul {K : Type} [Field K] {ι : Type} [Fintype ι] {a b : ℕ} (lam : ι → DomWeight a) (lam' : ι → DomWeight b) (c : K)
-    (J : (DVar ι a b →₀ ℕ) → K) (n : ι → ℕ) : jetOp lam lam' (fun m => c * J m) n = c • jetOp lam lam' J n := by
-  unfold jetOp jetMap
-  rw [jetLin_smul]
-  ext P
-  simp only [LinearMap.comp_apply, LinearMap.smul_apply, map_smul]
-
 variable {X : Fields} (A : Amb X) {a b : ℕ} (Sall SB : Finset (HeightOneSpectrum (𝓞 X.E)))
-
-theorem kerOf_tab (cA cB : ℕ) (hA : 0 < cA) (hB : 0 < cB) (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) (mU : HeightOneSpectrum (𝓞 X.E) → X.Kˣ)
-    (mI : SB → X.E → X.K) (lam : X.Tau → DomWeight a) (lam' : X.Tau → DomWeight b) (n : X.Tau → ℕ)
-    (N : Submodule (𝓞 X.E) (Sp X.E a)) (fr : Frs X.E a SB) (N' : Submodule (𝓞 X.E) (Sp X.E b)) (fr' : Frs X.E b SB) (hN : IsSdLat N) (hN' : IsSdLat N')
-    (Ξ : HomE X.E a b → X.K) :
-    kerOf (thDistC A Sall SB (cA * cB) sel mU mI lam lam' n) Sall cA cB N fr N' fr' Ξ =
-      (muInvDet sel SB mU mI N fr * (muInvDet sel SB mU mI N' fr')⁻¹) • jetOp lam lam' (A.tabK Sall cA cB N N' Ξ) n := by
-  rw [kerOf_thDistC]
-  have := kerFin Sall N N' hN hN' cA cB hA hB
-  let _ := Fintype.ofFinite (↥(divLat cA (homAt Sall N N')) ⧸ (mulLat cB (homAt Sall N N')).comap (divLat cA (homAt Sall N N')).subtype)
-  have hJ : A.tabK Sall cA cB N N' Ξ = fun m => ∑ z : ↥(divLat cA (homAt Sall N N')) ⧸ (mulLat cB (homAt Sall N N')).comap (divLat cA (homAt Sall N N')).subtype,
-      Ξ ((Function.surjInv (Submodule.Quotient.mk_surjective ((mulLat cB (homAt Sall N N')).comap (divLat cA (homAt Sall N N')).subtype)) z :
-        ↥(divLat cA (homAt Sall N N'))) : HomE X.E a b) *
-      A.jetK Sall N N' cB ((Function.surjInv (Submodule.Quotient.mk_surjective ((mulLat cB (homAt Sall N N')).comap (divLat cA (homAt Sall N N')).subtype)) z :
-        ↥(divLat cA (homAt Sall N N'))) : HomE X.E a b) m := by
-    funext m
-    unfold Amb.tabK latSum
-    rw [finsum_eq_sum_of_fintype]
-  unfold latSum
-  rw [finsum_eq_sum_of_fintype, hJ, jetOp_sum, Finset.smul_sum]
-  refine Finset.sum_congr rfl fun z _ => ?_
-  rw [jetOp_smul, smul_comm]
 
 end Tab
 
@@ -603,12 +594,6 @@ theorem cBof_pos (hT : 0 < Pr.T u) : 0 < cBof sel mu cst u := Nat.mul_pos hT (po
 end Ne
 
 section Zero
-
-theorem jetOp_zero {K : Type} [Field K] {ι : Type} [Fintype ι] {a b : ℕ} (lam : ι → DomWeight a) (lam' : ι → DomWeight b) (n : ι → ℕ) :
-    jetOp lam lam' (fun _ => (0 : K)) n = 0 := by
-  have h := jetOp_smul lam lam' (0 : K) (fun _ => (0 : K)) n
-  simp only [zero_mul, zero_smul] at h
-  exact h
 
 variable {X : Fields} (A : Amb X) {a b : ℕ}
 
@@ -728,88 +713,6 @@ section JetNe
 
 variable {K : Type} [Field K] {ι : Type} [Fintype ι] {a b : ℕ}
 
-def specY (K : Type) [Field K] (ι : Type) (a b : ℕ) : MvPolynomial ((ι × Fin b × Fin b) ⊕ DVar ι a b) K →ₐ[K] MvPolynomial (DVar ι a b) K :=
-  aeval (Sum.elim (fun v => if v.2.1 = v.2.2 then 1 else 0) fun k => X k)
-
-theorem specY_subD (hab : a ≤ b) :
-    (specY K ι a b).comp (subD K ι a b) = rename fun v : ι × Fin a × Fin a => ((v.1, Fin.castLE hab v.2.2, v.2.1) : DVar ι a b) := by
-  apply MvPolynomial.algHom_ext
-  intro v
-  have hv : v.2.2.1 < b := lt_of_lt_of_le v.2.2.2 hab
-  rw [AlgHom.comp_apply, rename_X]
-  unfold subD specY
-  rw [aeval_X, dif_pos hv, map_sum, Finset.sum_eq_single (⟨v.2.2.1, hv⟩ : Fin b)]
-  · rw [map_mul, aeval_X, aeval_X]
-    simp only [Sum.elim_inl, Sum.elim_inr, if_true, one_mul]
-    rfl
-  · intro β _ hβ
-    rw [map_mul, aeval_X, aeval_X]
-    simp only [Sum.elim_inl, if_neg hβ, zero_mul]
-  · intro h
-    exact absurd (Finset.mem_univ _) h
-
-theorem subD_injective (hab : a ≤ b) : Function.Injective (subD K ι a b) := by
-  have h1 : Function.Injective ((specY K ι a b).comp (subD K ι a b)) := by
-    rw [specY_subD hab]
-    refine rename_injective _ fun v w h => ?_
-    simp only [Prod.mk.injEq] at h
-    exact Prod.ext h.1 (Prod.ext h.2.2 (Fin.castLE_injective hab h.2.1))
-  exact Function.Injective.of_comp (f := specY K ι a b) (by simpa using h1)
-
-theorem frDet_ne_zero (τ : ι) : frDet K a τ ≠ 0 := by
-  classical
-  intro h
-  have h1 := congrArg (eval fun v : ι × Fin a × Fin a => if v.2.1 = v.2.2 then (1 : K) else 0) h
-  unfold frDet at h1
-  rw [RingHom.map_det, map_zero] at h1
-  have h2 : (eval fun v : ι × Fin a × Fin a => if v.2.1 = v.2.2 then (1 : K) else 0).mapMatrix
-      (Matrix.of fun α s : Fin a => (X (τ, α, s) : Pol K ι a)) = 1 := by
-    ext α s
-    simp [Matrix.one_apply]
-  rw [h2, Matrix.det_one] at h1
-  exact one_ne_zero h1
-
-theorem exists_jetLin_ne (Q : MvPolynomial ((ι × Fin b × Fin b) ⊕ DVar ι a b) K) (hQ : Q ≠ 0) : ∃ J : (DVar ι a b →₀ ℕ) → K, jetLin J Q ≠ 0 := by
-  classical
-  obtain ⟨m, hm⟩ := exists_coeff_ne_zero hQ
-  refine ⟨fun m' => if m' = m.comapDomain Sum.inr Sum.inr_injective.injOn then 1 else 0, fun h => hm ?_⟩
-  have h1 := congrArg (coeff (m.comapDomain Sum.inl Sum.inl_injective.injOn)) h
-  rw [coeff_zero] at h1
-  conv at h1 => lhs; rw [← support_sum_monomial_coeff Q, map_sum, coeff_sum]
-  rw [Finset.sum_eq_single m] at h1
-  · rw [jetLin_monomial, coeff_monomial, if_pos rfl, if_pos rfl, mul_one] at h1
-    exact h1
-  · intro m' _ hne
-    rw [jetLin_monomial, coeff_monomial]
-    by_cases hl : m'.comapDomain Sum.inl Sum.inl_injective.injOn = m.comapDomain Sum.inl Sum.inl_injective.injOn
-    · rw [if_pos hl]
-      have hr : m'.comapDomain Sum.inr Sum.inr_injective.injOn ≠ m.comapDomain Sum.inr Sum.inr_injective.injOn := by
-        intro hr
-        apply hne
-        ext i
-        rcases i with i | i
-        · have := DFunLike.congr_fun hl i
-          simpa [Finsupp.comapDomain_apply] using this
-        · have := DFunLike.congr_fun hr i
-          simpa [Finsupp.comapDomain_apply] using this
-      rw [if_neg hr, mul_zero]
-    · rw [if_neg hl]
-  · intro hns
-    rw [jetLin_monomial, notMem_support_iff.1 hns, zero_mul, monomial_zero, coeff_zero]
-
-theorem exists_jetMap_ne (hab : a ≤ b) (n : ι → ℕ) (P : Pol K ι a) (hP : P ≠ 0) : ∃ J : (DVar ι a b →₀ ℕ) → K, jetMap J n P ≠ 0 := by
-  have h1 : P * ∏ τ, frDet K a τ ^ n τ ≠ 0 :=
-    mul_ne_zero hP (Finset.prod_ne_zero_iff.2 fun τ _ => pow_ne_zero _ (frDet_ne_zero τ))
-  have h2 : subD K ι a b (P * ∏ τ, frDet K a τ ^ n τ) ≠ 0 := fun h => h1 (subD_injective hab (h.trans (map_zero _).symm))
-  obtain ⟨J, hJ⟩ := exists_jetLin_ne _ h2
-  exact ⟨J, hJ⟩
-
-theorem exists_tabNe (hab : a ≤ b) (lam : ι → DomWeight a) (n : ι → ℕ) (hV : DIV.VV K lam ≠ ⊥) :
-    ∃ J : (DVar ι a b →₀ ℕ) → K, TabNe lam n J := by
-  obtain ⟨P, hP, hP0⟩ := (Submodule.ne_bot_iff _).1 hV
-  obtain ⟨J, hJ⟩ := exists_jetMap_ne hab n P hP0
-  exact ⟨J, P, hP, hJ⟩
-
 end JetNe
 
 section Wt
@@ -833,7 +736,7 @@ theorem nuW_last_nonneg (u : Pr.Word) (i : ℕ) (hi : i < R.m) (τ : X.Tau) : 0 
     have gen : ∀ (c : ℕ) (hc : c < R.m), c = i → -wG R ((W.hc u τ).e ⟨c, hc⟩) (c + 1) = -wG R ((W.hc u τ).e ⟨i, hi⟩) (i + 1) := by
       rintro c hc rfl; rfl
     unfold Examples₂.wtN
-    rw [dif_neg (by unfold Ranks.N; omega), dif_pos (by rw [hb]; exact hi)]
+    rw [dite_eq_right (by unfold Ranks.N; omega), dif_pos (by rw [hb]; exact hi)]
     exact gen _ _ hb
   have hlt : R.N i < R.N (i + 1) := by unfold Ranks.N; rw [Nat.succ_mul]; omega
   have hle : R.N (i + 1) ≤ R.N R.m := by
@@ -856,9 +759,6 @@ theorem nuW_last_nonneg (u : Pr.Word) (i : ℕ) (hi : i < R.m) (τ : X.Tau) : 0 
 
 theorem nuLast_eq (u : Pr.Word) (i : ℕ) (hi : i < R.m) (τ : X.Tau) : ((nuLast W u i τ : ℕ) : ℤ) = (W.nuW u (i + 1) τ).detShift :=
   Int.toNat_of_nonneg (nuW_last_nonneg W u i hi τ)
-
-theorem exists_tabNe_step (u : Pr.Word) (i : ℕ) : ∃ J : (DVar X.Tau (R.N i) (R.N (i + 1)) →₀ ℕ) → X.K, TabNe (W.lamTrue u i) (nuLast W u i) J :=
-  exists_tabNe (by unfold Ranks.N; rw [Nat.succ_mul]; omega) _ _ (Submodule.nontrivial_iff_ne_bot.1 (VV_nontrivial X.K _))
 
 end Wt
 
@@ -902,7 +802,7 @@ theorem lamTrue_natW (u : Pr.Word) {i : ℕ} (hi : i < R.m) (τ : X.Tau) (r : Fi
     show (_ : ℤ).toNat = ((W.lamTrue u i τ).w ⟨r.1, h⟩ - (W.lamTrue u i τ).detShift).toNat + nuLast W u i τ
     rw [d0]
     omega
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     have eo := W.lamTrue_new u hi τ r h
     have key : (W.lamTrue u (i + 1) τ).w r - (W.lamTrue u (i + 1) τ).detShift = 0 := by
       have : (((W.lamTrue u (i + 1) τ).w r - (W.lamTrue u (i + 1) τ).detShift : ℤ) : ℚ) = ((0 : ℤ) : ℚ) := by
@@ -941,16 +841,6 @@ section Red
 
 variable {E : Type} [Field E] [NumberField E] {P : HeightOneSpectrum (𝓞 E)} {q : ℕ}
 
-theorem xqIntAt_q : IntAt P (q : E) := by
-  have := IntAt.coe P ((q : ℕ) : 𝓞 E)
-  rwa [map_natCast] at this
-
-theorem reduction_natCast_eq_zero₂ (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) : redP P (q : E) = 0 := by
-  have := reduction_coe P ((q : ℕ) : 𝓞 E)
-  rw [map_natCast] at this
-  rw [this]
-  exact Ideal.Quotient.eq_zero_iff_mem.2 hq
-
 theorem xqIntAt_zero : IntAt P (0 : E) := by
   have := IntAt.coe P 0
   rwa [map_zero] at this
@@ -970,54 +860,6 @@ theorem reduction_one₃ : redP P (1 : E) = 1 := by
 theorem xqIntAt_intCast (z : ℤ) : IntAt P (z : E) := by
   have := IntAt.coe P (z : 𝓞 E)
   rwa [map_intCast] at this
-
-theorem reduction_intCast (z : ℤ) : redP P (z : E) = (z : 𝓞 E ⧸ P.asIdeal) := by
-  have := reduction_coe P (z : 𝓞 E)
-  rwa [map_intCast, map_intCast] at this
-
-theorem xqIntAt_sum {ι : Type} (s : Finset ι) (f : ι → E) (h : ∀ i ∈ s, IntAt P (f i)) : IntAt P (∑ i ∈ s, f i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simpa using (xqIntAt_zero (P := P))
-  | insert a s ha ih =>
-    rw [Finset.sum_insert ha]
-    exact (h a (Finset.mem_insert_self a s)).add (ih fun i hi => h i (Finset.mem_insert_of_mem hi))
-
-theorem reduction_sum₃ {ι : Type} (s : Finset ι) (f : ι → E) (h : ∀ i ∈ s, IntAt P (f i)) :
-    redP P (∑ i ∈ s, f i) = ∑ i ∈ s, redP P (f i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simpa using (reduction_zero₂ (P := P))
-  | insert a s ha ih =>
-    rw [Finset.sum_insert ha, Finset.sum_insert ha,
-      reduction_add (h a (Finset.mem_insert_self a s)) (xqIntAt_sum s f fun i hi => h i (Finset.mem_insert_of_mem hi)),
-      ih fun i hi => h i (Finset.mem_insert_of_mem hi)]
-
-theorem xqIntAt_prod {ι : Type} (s : Finset ι) (f : ι → E) (h : ∀ i ∈ s, IntAt P (f i)) : IntAt P (∏ i ∈ s, f i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simpa using (xqIntAt_one (P := P))
-  | insert a s ha ih =>
-    rw [Finset.prod_insert ha]
-    exact (h a (Finset.mem_insert_self a s)).mul (ih fun i hi => h i (Finset.mem_insert_of_mem hi))
-
-theorem reduction_prod {ι : Type} (s : Finset ι) (f : ι → E) (h : ∀ i ∈ s, IntAt P (f i)) :
-    redP P (∏ i ∈ s, f i) = ∏ i ∈ s, redP P (f i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simpa using (reduction_one₃ (P := P))
-  | insert a s ha ih =>
-    rw [Finset.prod_insert ha, Finset.prod_insert ha,
-      reduction_mul (h a (Finset.mem_insert_self a s)) (xqIntAt_prod s f fun i hi => h i (Finset.mem_insert_of_mem hi)),
-      ih fun i hi => h i (Finset.mem_insert_of_mem hi)]
-
-theorem reduction_det₂ {n : Type} [Fintype n] [DecidableEq n] (N : Matrix n n E) (h : ∀ i j, IntAt P (N i j)) :
-    redP P N.det = (N.map (redP P)).det := by
-  rw [Matrix.det_apply', Matrix.det_apply', reduction_sum₃ _ _ fun σ _ => (xqIntAt_intCast _).mul (xqIntAt_prod _ _ fun i _ => h _ _)]
-  refine Finset.sum_congr rfl fun σ _ => ?_
-  rw [reduction_mul (xqIntAt_intCast _) (xqIntAt_prod _ _ fun i _ => h _ _), reduction_intCast,
-    reduction_prod _ _ fun i _ => h _ _]
-  rfl
 
 end Red
 
@@ -1105,26 +947,12 @@ section Phi
 
 variable {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K] {P : HeightOneSpectrum (𝓞 E)} {q : ℕ}
 
-variable (P) in
-
-def xqPhiCond (q : ℕ) (sharp : Bool) (k₀ r t j c n : ℕ) (M : ℕ → ℕ → E) : Prop :=
-  (∀ p p', p < n + c → p' < r + (j - 1) * t → IntAt P (M p p')) ∧
-    (∀ p p', r + (j - 1) * t ≤ p → p < n + c → p' < r + (j - 1) * t → IntAt P (M p p' / (q : E))) ∧
-    (∀ p', p' < r → redP P (M p' p') = 1 ∧ ∀ p, p' < p → p < r + (j - 1) * t → redP P (M p p') = 0) ∧
-    (∀ p p', r ≤ p' → p' < r + (j - 1) * t → p < r + (j - 1) * t → (p' - r) / t < (p - r) / t → redP P (M p p') = 0) ∧
-    (sharp = true → ∀ p, p < n + c → redP P (M p k₀) = if p = k₀ then 1 else 0)
 
 end Phi
 
 section XiLoc
 
 variable {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K] {P : HeightOneSpectrum (𝓞 E)} {q : ℕ}
-
-theorem addChar_ne_zero {A : Type} [AddCommGroup A] (ψ : AddChar A K) (a : A) : ψ a ≠ 0 := by
-  intro h
-  have h1 : ψ a * ψ (-a) = 1 := by rw [← AddChar.map_add_eq_mul, add_neg_cancel, AddChar.map_zero_eq_one]
-  rw [h, zero_mul] at h1
-  exact zero_ne_one h1
 
 end XiLoc
 
@@ -1134,23 +962,6 @@ variable {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K] {P : Heig
 
 def Cong1 {n : ℕ} (P : HeightOneSpectrum (𝓞 E)) (f : Sp E n ≃ₗ[E] Sp E n) : Prop :=
   (∀ x, f x ∈ stdAt E n P ↔ x ∈ stdAt E n P) ∧ ∀ x ∈ stdAt E n P, redV P (f x) = redV P x
-
-theorem Cong1.symm {n : ℕ} {f : Sp E n ≃ₗ[E] Sp E n} (h : Cong1 P f) : Cong1 P f.symm := by
-  refine ⟨fun x => ?_, fun x hx => ?_⟩
-  · have := h.1 (f.symm x)
-    rw [LinearEquiv.apply_symm_apply] at this
-    exact this.symm
-  · have h1 : f.symm x ∈ stdAt E n P := by
-      have := h.1 (f.symm x)
-      rw [LinearEquiv.apply_symm_apply] at this
-      exact this.1 hx
-    have := h.2 _ h1
-    rw [LinearEquiv.apply_symm_apply] at this
-    exact this.symm
-
-def xInc {n' : ℕ} (n : ℕ) (hn' : 0 < n') (a : E) : HomE E n' n :=
-  LinearMap.pi fun l : Fin n => if h : l.1 < n' then LinearMap.proj ⟨l.1, h⟩
-    else if l.1 = n - 1 then a • LinearMap.proj ⟨n' - 1, by omega⟩ else 0
 
 theorem redV_single {n : ℕ} (i : Fin n) : redV P (Pi.single i (1 : E) : Sp E n) = Pi.single i 1 := xqRedV_single i
 
@@ -1199,13 +1010,6 @@ theorem qe_one : QE sel (1 : Chr X.F X.E X.K) = ∅ := by
   rw [dif_pos (by rw [h]; exact Set.finite_empty)]
   simp [h]
 
-theorem bad_primes_over_g_trivial_tuple (P : rowSG Pr sel (mu0 X.F X.E X.K S)) : P.1 ∈ Pr.vGs := by
-  classical
-  rcases Finset.mem_union.1 P.2 with h | h
-  · exact h
-  · rw [show ((mu0 X.F X.E X.K S : Tup X.F X.E X.K S) : Chr X.F X.E X.K) = 1 from rfl, qe_one] at h
-    exact absurd h (Finset.notMem_empty P.1)
-
 variable (cst : LocCst X (rowSG Pr sel (mu0 X.F X.E X.K S)))
   (L : ChIdx X Pr R (QE sel ((mu0 X.F X.E X.K S : Tup X.F X.E X.K S) : Chr X.F X.E X.K))) (A : Amb X) (u : Pr.Word)
 
@@ -1234,47 +1038,6 @@ end NeCons
 section TabSpec
 
 variable {X : Fields} (A : Amb X) {a b : ℕ} (Sall : Finset (HeightOneSpectrum (𝓞 X.E)))
-
-theorem derivAt0_const_mul {ι : Type} [Fintype ι] {a b : ℕ} (c : ℂ) (f : VCx ι a b → ℂ) (hf : ∀ k : ℕ, ContDiff ℂ k f) (m : DVar ι a b →₀ ℕ) :
-    derivAt0 (fun w => c * f w) m = c * derivAt0 f m := by
-  unfold derivAt0
-  have h : (fun w => c * f w) = c • f := rfl
-  rw [h, iteratedFDeriv_const_smul_apply (hf _).contDiffAt]
-  rfl
-
-theorem tabK_spec (cA cB : ℕ) (hA : 0 < cA) (hB : 0 < cB) (hsm : A.ESmooth a b) (hrat : A.JetsRat a b Sall (cA * cB))
-    (N : Submodule (𝓞 X.E) (Sp X.E a)) (N' : Submodule (𝓞 X.E) (Sp X.E b)) (hN : IsSdLat N) (hN' : IsSdLat N') (Ξ : HomE X.E a b → X.K)
-    (m : DVar X.Tau a b →₀ ℕ) :
-    A.σ₀ (A.tabK Sall cA cB N N' Ξ m) = (A.chiF a b N N')⁻¹ * jetC A.cD (A.thDat Sall cA cB N N' Ξ) m := by
-  have := kerFin Sall N N' hN hN' cA cB hA hB
-  let _ := Fintype.ofFinite (↥(divLat cA (homAt Sall N N')) ⧸ (mulLat cB (homAt Sall N N')).comap (divLat cA (homAt Sall N N')).subtype)
-  set rep := fun z : ↥(divLat cA (homAt Sall N N')) ⧸ (mulLat cB (homAt Sall N N')).comap (divLat cA (homAt Sall N N')).subtype =>
-    ((Function.surjInv (Submodule.Quotient.mk_surjective ((mulLat cB (homAt Sall N N')).comap (divLat cA (homAt Sall N N')).subtype)) z :
-      ↥(divLat cA (homAt Sall N N'))) : HomE X.E a b) with hrep
-  have hR : ∀ z, InRange Sall (cA * cB) cB N N' (rep z) := fun z =>
-    ⟨hN, hN', hB, Dvd.intro_left _ rfl, divLat_mul_of cA cB _ (Subtype.coe_prop _)⟩
-  have hs := indSmooth_of A a b Sall (cA * cB) hsm
-  have h1 : A.thDat Sall cA cB N N' Ξ = fun w => ∑ z, A.σ₀ (Ξ (rep z)) * A.thInd Sall N N' cB (rep z) w := by
-    funext w
-    unfold Amb.thDat latSum
-    rw [finsum_eq_sum_of_fintype]
-  have h2 : derivAt0 (A.thDat Sall cA cB N N' Ξ) m = ∑ z, A.σ₀ (Ξ (rep z)) * derivAt0 (A.thInd Sall N N' cB (rep z)) m := by
-    have h3 : derivAt0 (A.thDat Sall cA cB N N' Ξ) m = ∑ z, derivAt0 (fun w => A.σ₀ (Ξ (rep z)) * A.thInd Sall N N' cB (rep z) w) m := by
-      unfold derivAt0
-      rw [h1, iteratedFDeriv_sum (fun z _ => contDiff_const.mul (hs N N' cB (rep z) (hR z) _))]
-      rw [Finset.sum_apply, _root_.sum_apply]
-    rw [h3]
-    exact Finset.sum_congr rfl fun z _ => derivAt0_const_mul _ _ (hs N N' cB (rep z) (hR z)) m
-  have h4 : A.tabK Sall cA cB N N' Ξ m = ∑ z, Ξ (rep z) * A.jetK Sall N N' cB (rep z) m := by
-    unfold Amb.tabK latSum
-    rw [finsum_eq_sum_of_fintype]
-  rw [h4, map_sum]
-  unfold jetC
-  rw [h2, Finset.mul_sum, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun z _ => ?_
-  rw [map_mul, jetK_spec A Sall (cA * cB) hrat N N' cB (rep z) (hR z) m]
-  unfold jetC
-  ring
 
 end TabSpec
 

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.GaussianComplex
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.GaussianComplex
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -39,10 +43,11 @@ theorem complexFourier_mul_self {f : ℂ → ℂ} (hf : Integrable f complexPlac
     ← integral_const_mul]
   congr 1
   funext z
-  simp only [Circle.smul_def, smul_eq_mul, Complex.real_smul, mul_one, mul_I_re]
+  simp only [Circle.smul_def, smul_eq_mul, Complex.real_smul, mul_I_re]
   push_cast
   have hz : (z : ℂ) = z.re + z.im * I := (re_add_im z).symm
-  linear_combination (-4 * π * I * (𝐞 (-(2 * (z * w).re)) : ℂ) * f z) * hz
+  linear_combination (norm := skip) (-4 * π * I * (𝐞 (-(2 * (z * w).re)) : ℂ) * f z) * hz
+  ring_nf
 
 theorem cexp_neg_two_pi_norm_sq (w : ℂ) :
     Complex.exp (-2 * π * (‖w‖ : ℂ) ^ 2) = Complex.exp (-2 * π * (w * conj w)) := by
@@ -130,12 +135,9 @@ theorem complexFourier_conj (f : ℂ → ℂ) (w : ℂ) :
   rw [complexFourier, complexFourier, ← integral_conj]
   congr 1
   funext z
-  simp only [Circle.smul_def, smul_eq_mul, map_mul, Real.fourierChar_apply, ← exp_conj]
-  congr 2
-  simp only [conj_ofReal, conj_I]
-  push_cast
-  simp only [neg_mul, mul_neg, neg_re, mul_re, ofReal_neg, ofReal_sub, ofReal_mul]
-  ring
+  simp [Circle.smul_def, Real.fourierChar_apply, ← exp_conj, map_ofNat, neg_re, neg_im,
+    mul_re, ofReal_sub, ofReal_mul]
+  congr 2 <;> try ring <;> simp
 
 theorem conj_cexp_neg_two_pi_norm_sq (z : ℂ) :
     conj (Complex.exp (-2 * π * (‖z‖ : ℂ) ^ 2)) = Complex.exp (-2 * π * (‖z‖ : ℂ) ^ 2) := by

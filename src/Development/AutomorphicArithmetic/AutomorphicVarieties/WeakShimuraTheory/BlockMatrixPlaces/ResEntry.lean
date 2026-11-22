@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.BlockMatrixPlaces.BlockDiagonalOrdinaryGSpRep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.BlockMatrixPlaces.UMFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.BlockMatrixPlaces.BlockDiagonalOrdinaryGSpRep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.BlockMatrixPlaces.UMFacts
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws UpperTheory.V.Ws.Bl
 
@@ -11,7 +15,8 @@ private theorem res_entry {R : Type} [CommRing R] [IsLocalRing R] {X X' : M4 R} 
   have kr : ∀ (A B : M4 R), (∀ a b, a ≠ b → residue R (B a b) = 0) →
       ∀ a b, residue R ((A * B) a b) = residue R (A a b) * residue R (B b b) := by
     intro A B hB a b
-    rw [Matrix.mul_apply, map_sum, Finset.sum_eq_single b]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.mul_apply, map_sum, Finset.sum_eq_single b]
     · rw [map_mul]
     · intro c _ hc
       rw [map_mul, hB c b hc, mul_zero]
@@ -20,7 +25,8 @@ private theorem res_entry {R : Type} [CommRing R] [IsLocalRing R] {X X' : M4 R} 
   have kl : ∀ (A B : M4 R), (∀ a b, a ≠ b → residue R (A a b) = 0) →
       ∀ a b, residue R ((A * B) a b) = residue R (A a a) * residue R (B a b) := by
     intro A B hA a b
-    rw [Matrix.mul_apply, map_sum, Finset.sum_eq_single a]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.mul_apply, map_sum, Finset.sum_eq_single a]
     · rw [map_mul]
     · intro c _ hc
       rw [map_mul, hA a c (Ne.symm hc), zero_mul]
@@ -70,7 +76,7 @@ theorem UpperTheory.V.Ws.Bl.adBij :
     exact Submodule.smul_mono le_rfl le_top
   let ψ := Submodule.mapQ _ _ φ hS
   have hψinj : Function.Injective ψ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro q hq
     obtain ⟨Y, rfl⟩ := Submodule.mkQ_surjective _ q
     rw [Submodule.mkQ_apply, Submodule.mapQ_apply, Submodule.Quotient.mk_eq_zero] at hq

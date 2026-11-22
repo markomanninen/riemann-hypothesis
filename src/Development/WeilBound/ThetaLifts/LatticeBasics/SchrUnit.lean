@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.ThetaBox
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.EvFinIdemSelf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorPureTensorComponentAtPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ThetaBox
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.EvFinIdemSelf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorPureTensorComponentAtPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,7 +82,7 @@ theorem fix_real {S} (h : Acts (evI F) S f f) : S (pure f φ) = pure f φ := by
   refine finprod_congr fun v => congrArg _ (funext fun i => ?_)
   have := congrArg (evFin F v) (congrFun (hz (idem F v) (evI_idem v)) i)
   rw [Pi.smul_apply, smul_eq_mul, map_mul, evFin_idem_self, one_mul, Pi.zero_apply, map_zero] at this
-  rw [Pi.add_apply, map_add, this, add_zero]
+  rw [Pi.add_apply, map_add (f := _), this, add_zero]
 
 theorem fix_box {v : Pl F} {S} (h : Acts (evFin F v) S (boxFun (φ v) (star (φ v))) (boxFun (φ v) (star (φ v)))) :
     S (boxFun (pure f φ) (star (pure f φ))) = boxFun (pure f φ) (star (pure f φ)) := by

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.BoundedHalfModels.EqOffBound
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.BoundedHalfModels.EqOffBound
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

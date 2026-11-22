@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.FaceDSingle
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.AltDoubleSum
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.BdMem
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.FaceDSingle
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.AltDoubleSum
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.BdMem
+
+@[expose] public section
 
 open CategoryTheory UpperTheory.V.KH
 
@@ -14,7 +18,7 @@ private theorem UpperTheory.V.KH.tupJ_mem {A : Type} (s : Set A) (c : s →₀ �
     tupJ s c ∈ Finsupp.supported ℤ ℤ s := by
   induction c using Finsupp.induction_linear with
   | zero => simp
-  | add a b ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+  | add a b ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
   | single x c =>
     rw [Finsupp.lmapDomain_apply, Finsupp.mapDomain_single]
     exact Finsupp.single_mem_supported ℤ _ x.2
@@ -34,9 +38,10 @@ private theorem UpperTheory.V.KH.tupJ_faceD {I : Type} (S : ∀ n, Set (Fin n �
       UpperTheory.V.ConeExtensionAcyclic.bd I n (tupJ (S (n + 1)) c) := by
   induction c using Finsupp.induction_linear with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | single x c =>
-    rw [faceD_single, map_sum, Finsupp.lmapDomain_apply, Finsupp.mapDomain_single,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [faceD_single, map_sum, Finsupp.lmapDomain_apply, Finsupp.mapDomain_single,
       UpperTheory.V.ConeExtensionAcyclic.bd, Finsupp.linearCombination_single, Finset.smul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, Finsupp.lmapDomain_apply, Finsupp.mapDomain_single, smul_comm c,
@@ -46,7 +51,7 @@ private theorem UpperTheory.V.KH.bd_zero_tupJ {I : Type} (s : Set (Fin (0 + 1) �
     UpperTheory.V.ConeExtensionAcyclic.bd I 0 (tupJ s c) = Finsupp.single default (aug s c) := by
   induction c using Finsupp.induction_linear with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb, Finsupp.single_add]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb, Finsupp.single_add]
   | single x c =>
     rw [Finsupp.lmapDomain_apply, Finsupp.mapDomain_single,
       UpperTheory.V.ConeExtensionAcyclic.bd, Finsupp.linearCombination_single, aug_single]

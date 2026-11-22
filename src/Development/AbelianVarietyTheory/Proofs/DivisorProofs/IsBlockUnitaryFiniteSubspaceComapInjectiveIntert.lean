@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ActAtApply
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ActAtApply
+
+@[expose] public section
+
 open scoped TensorProduct
 open Formalism.BasicNotions.TH GlobalTheory.FockAlg GlobalTheory.RealLift GlobalTheory.HoweR
 

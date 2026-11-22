@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.QuotientIntegrationFormulaDiscreteSubgroupLeft
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.QuotientIntegrationFormulaDiscreteSubgroupLeft
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.Grow GlobalTheory.Tw
 open scoped ENNReal
@@ -110,7 +114,7 @@ theorem exists_quotientIntegrable_fold_unimodular (hΓR : Γ ≤ R) (hR : IsClos
       hq.comp (((measurable_subtype_coe.comp measurable_snd).mul_const h).prodMk
         ((measurable_subtype_coe.comp measurable_snd).mul (hj.comp measurable_fst.inv)))
     calc ‖((∫ u, ‖P (j u * h)‖ ∂ν : ℝ) : ℂ)‖ₑ = ‖∫ u, ‖P (j u * h)‖ ∂ν‖ₑ := by
-          simp only [enorm, Complex.nnnorm_real]
+          simp [eNorm_eq_nnNorm]
       _ ≤ ∫⁻ u, ‖‖P (j u * h)‖‖ₑ ∂ν := enorm_integral_le_lintegral_enorm _
       _ ≤ ∫⁻ u, ∫⁻ r in 𝓡, q (r * h) (r * j u⁻¹) ∂μR ∂ν := by
           refine lintegral_mono fun u => ?_

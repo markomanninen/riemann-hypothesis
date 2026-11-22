@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.InfinitesimalCharacterPaths.TensDecomp
-import GroundTheory.IdeleRoots.ConstantFrames.GaugeExistence.QdetSub
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.InfinitesimalCharacterPaths.TensDecomp
+public import GroundTheory.IdeleRoots.ConstantFrames.GaugeExistence.QdetSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,9 +38,11 @@ theorem extract (W' : Submodule ℂ (Module.Dual ℂ V)) (φ : Module.Dual ℂ V
         ∑ j ∈ range (m - 1), (Y + a) ^ j • (φ ∘ₗ Cc j) := by
       refine LinearMap.ext fun v => ?_
       rw [hC (Y + a)]
-      simp [Algebra.algebraMap_eq_smul_one, LinearMap.sum_apply, map_sum, ← ht]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Algebra.algebraMap_eq_smul_one, LinearMap.sum_apply, map_sum, ← ht]
     rw [e]
-    simp [hR, eval_finset_sum, map_sum, map_add, map_sub, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hR, eval_finsetSum, map_sum, map_add (f := _), map_sub, map_smul]
   have hR0 : R = 0 := Polynomial.funext fun Y => by
     rw [hRe, hW' _ (h Y)]; simp
   have hc : R.coeff (m - 1) = 0 := by rw [hR0]; simp
@@ -47,14 +53,14 @@ theorem extract (W' : Submodule ℂ (Module.Dual ℂ V)) (φ : Module.Dual ℂ V
   have c3 : ∀ j ∈ range (m - 1), ((X + C a) ^ j).coeff (m - 1) = 0 := fun j hj => by
     rw [coeff_X_add_C_pow, Nat.choose_eq_zero_of_lt (mem_range.1 hj)]; simp
   rw [hR] at hc
-  simp only [coeff_sub, coeff_add, coeff_mul_C, finset_sum_coeff, c1, c2] at hc
+  simp only [coeff_sub, coeff_add, coeff_mul_C, finsetSum_coeff, c1, c2] at hc
   rw [Finset.sum_eq_zero (fun j hj => by rw [c3 j hj, zero_mul])] at hc
   apply hf
   have et : φ ∘ₗ (∑ k, E k k) = φ ∘ₗ t + (((m : ℂ) * ((m : ℂ) - 1)) / 2) • φ := by
     refine LinearMap.ext fun v => ?_
     simp [ht, Algebra.algebraMap_eq_smul_one]
   rw [et]
-  simp only [map_sub, map_add, map_smul, smul_eq_mul]
+  simp only [map_sub, map_add (f := _), map_smul, smul_eq_mul]
   linear_combination hc
 
 end Extract
@@ -104,9 +110,9 @@ theorem actL_comm {E : Fin n → Fin n → Module.End ℂ M} (hE : GlRel E) (Y Z
   · intro p q hp hq
     have e1 : actL E (p + q) * actL E Z - actL E Z * actL E (p + q) =
         (actL E p * actL E Z - actL E Z * actL E p) + (actL E q * actL E Z - actL E Z * actL E q) := by
-      rw [map_add, add_mul, mul_add]; abel
+      rw [map_add (f := _), add_mul, mul_add]; abel
     have e2 : actL E ((p + q) * Z - Z * (p + q)) = actL E (p * Z - Z * p) + actL E (q * Z - Z * q) := by
-      rw [← map_add]; congr 1; rw [add_mul, mul_add]; abel
+      rw [← map_add (f := _)]; congr 1; rw [add_mul, mul_add]; abel
     rw [e1, e2, hp, hq]
   · intro i j x
     refine Matrix.induction_on' Z ?_ ?_ ?_
@@ -115,11 +121,11 @@ theorem actL_comm {E : Fin n → Fin n → Module.End ℂ M} (hE : GlRel E) (Y Z
       have e1 : actL E (Matrix.single i j x) * actL E (p + q) - actL E (p + q) * actL E (Matrix.single i j x) =
           (actL E (Matrix.single i j x) * actL E p - actL E p * actL E (Matrix.single i j x)) +
             (actL E (Matrix.single i j x) * actL E q - actL E q * actL E (Matrix.single i j x)) := by
-        rw [map_add, add_mul, mul_add]; abel
+        rw [map_add (f := _), add_mul, mul_add]; abel
       have e2 : actL E (Matrix.single i j x * (p + q) - (p + q) * Matrix.single i j x) =
           actL E (Matrix.single i j x * p - p * Matrix.single i j x) +
             actL E (Matrix.single i j x * q - q * Matrix.single i j x) := by
-        rw [← map_add]; congr 1; rw [add_mul, mul_add]; abel
+        rw [← map_add (f := _)]; congr 1; rw [add_mul, mul_add]; abel
       rw [e1, e2, hp, hq]
     · intro k l y
       have hm : ∀ (a b c d : Fin n) (x y : ℂ), Matrix.single a b x * Matrix.single c d y =
@@ -343,15 +349,18 @@ theorem mem_Wm (F : Filt X A) (B : GradBasis A) (c : ℝ) {φ : Module.Dual ℂ 
     refine ⟨hTφ, fun Y => ?_⟩
     have e : actM X.E Y = ∑ p, ∑ q, (B.Ui * Y * B.U) p q • Eb X B p q := by
       conv_lhs => rw [mat_sum B Y]
-      rw [← actL_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← actL_apply, map_sum]
       refine Finset.sum_congr rfl fun p _ => ?_
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun q _ => ?_
       rw [map_smul]
       rfl
     have e2 : φ ∘ₗ actM X.E Y = ∑ p, ∑ q, (B.Ui * Y * B.U) p q • (φ ∘ₗ Eb X B p q) := by
       refine LinearMap.ext fun v => ?_
-      simp [e, LinearMap.sum_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [e, LinearMap.sum_apply, map_sum]
     rw [e2]
     refine sum_mem fun p _ => sum_mem fun q _ => Submodule.smul_mem _ _ ?_
     by_cases h : bl B p < bl B q
@@ -571,7 +580,8 @@ theorem A_eq (B : GradBasis A) : A = ∑ p, (dz (bl B p) : ℂ) • Ym B p p := 
 
 theorem act_A (X : GMod n) (B : GradBasis A) : actM X.E A = trB X B 2 - trB X B 0 := by
   conv_lhs => rw [A_eq B]
-  rw [← actL_apply, map_sum, sum_blocks B]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← actL_apply, map_sum, sum_blocks B]
   simp only [map_smul, block_standard]
   have e : ∀ p, actL X.E (Ym B p p) = Eb X B p p := fun _ => rfl
   simp only [e, ← Finset.smul_sum]

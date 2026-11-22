@@ -1,18 +1,24 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
-import Mathlib.Algebra.Module.Lattice
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
+public import Mathlib.Algebra.Module.Lattice
+
+@[expose] public section
+
 open Matrix IsLocalRing UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 
 private theorem exists_stable_lattice {A F G : Type} [CommRing A] [IsDomain A] [IsDiscreteValuationRing A]
     [Field F] [Algebra A F] [IsFractionRing A F] [Group G] {m : ℕ} (r : G →* GL (Fin m) F) (d : A)
     (hd : d ≠ 0) (h : ∀ g i j, ∃ a : A, algebraMap A F d * r g i j = algebraMap A F a) :
-    ∃ L : Submodule A (Fin m → F), Submodule.IsLattice F L ∧
+    ∃ L : Submodule A (Fin m → F), Submodule.IsFullLattice F L ∧
       ∀ g, ∀ x ∈ L, (r g : Matrix (Fin m) (Fin m) F) *ᵥ x ∈ L := by
   classical
   let S : Set (Fin m → F) :=
     Set.range fun p : G × Fin m => (r p.1 : Matrix (Fin m) (Fin m) F) *ᵥ (Pi.single p.2 1)
   have hd' : algebraMap A F d ≠ 0 := by
     rwa [Ne, map_eq_zero_iff _ (IsFractionRing.injective A F)]
-  refine ⟨Submodule.span A S, ⟨?_, ?_⟩, ?_⟩
+  refine ⟨Submodule.span A S,
+    { toIsLattice := Submodule.IsLattice.of_fg F ?_, span_eq_top := ?_ }, ?_⟩
   · let N : Submodule A (Fin m → F) :=
       Submodule.span A (Set.range fun i : Fin m => (Pi.single i (algebraMap A F d)⁻¹ : Fin m → F))
     have hN : N.FG := Submodule.fg_span (Set.finite_range _)
@@ -51,9 +57,11 @@ theorem UpperTheory.V.Pa.Det.latInt :
   classical
   obtain ⟨L, hL, hst⟩ := exists_stable_lattice r d hd h
   have hr : Module.finrank A L = m := by
-    simpa using Submodule.IsLattice.finrank_of_pi F L
+    simpa using ((Submodule.IsFullLattice.finrank_eq F L).trans (Module.finrank_fintype_fun_eq_card F))
+  have := Submodule.IsLattice.free F L
+  have := Submodule.IsLattice.finite F L
   let bL : Module.Basis (Fin m) A L := Module.finBasisOfFinrankEq A L hr
-  let b : Module.Basis (Fin m) F (Fin m → F) := bL.extendOfIsLattice F
+  let b : Module.Basis (Fin m) F (Fin m → F) := bL.extendOfIsFullLattice F
   let Q₀ : Matrix (Fin m) (Fin m) F := (Pi.basisFun F (Fin m)).toMatrix b
   have hQ : IsUnit Q₀ := by
     letI := (Pi.basisFun F (Fin m)).invertibleToMatrix b

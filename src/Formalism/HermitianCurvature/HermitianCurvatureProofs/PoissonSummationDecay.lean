@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.LevelRecursionCondNeeded
-import Formalism.LatticeTheta.ThetaShiftInversion
+module
+
+public import Formalism.HermitianCurvature.LevelRecursionCondNeeded
+public import Formalism.LatticeTheta.ThetaShiftInversion
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PoissonSummationDecay
 
@@ -131,19 +135,19 @@ theorem gP_pos (π : ι → V →L[ℝ] ℂ) (c : V) : 0 < gP π c :=
 theorem gP_mul_le_gP_add (π : ι → V →L[ℝ] ℂ) (c u : V) : gP π c * gP π u ≤ gP π (c + u) := by
   unfold gP
   rw [← Finset.prod_mul_distrib]
-  refine Finset.prod_le_prod (fun v _ => by positivity) (fun v _ => ?_)
+  refine Finset.prod_le_prod₀ (fun v _ => by positivity) (fun v _ => ?_)
   rw [← mul_inv, ← mul_pow]
   apply inv_anti₀ (by positivity)
   apply pow_le_pow_left₀ (by positivity)
   have := norm_add_le (π v c) (π v u)
-  rw [map_add]
+  rw [map_add (f := _)]
   nlinarith [norm_nonneg (π v c), norm_nonneg (π v u), mul_nonneg (norm_nonneg (π v c)) (norm_nonneg (π v u))]
 
 theorem le_gP_of_norm_le (π : ι → V →L[ℝ] ℂ) (R : ℝ) (x : V) (hx : ‖x‖ ≤ R) :
     ∏ v, ((1 + ‖π v‖ * R)^3)⁻¹ ≤ gP π x := by
   have hR0 : 0 ≤ R := (norm_nonneg x).trans hx
   unfold gP
-  refine Finset.prod_le_prod (fun v _ => inv_nonneg.mpr (pow_nonneg (by positivity) 3)) (fun v _ => ?_)
+  refine Finset.prod_le_prod₀ (fun v _ => inv_nonneg.mpr (pow_nonneg (by positivity) 3)) (fun v _ => ?_)
   apply inv_anti₀ (pow_pos (by positivity) 3)
   apply pow_le_pow_left₀ (by positivity)
   have h1 := (π v).le_opNorm x
@@ -264,10 +268,6 @@ theorem productDecay : ProductDecaySummable := by
   haveI : BorelSpace V := ⟨rfl⟩
   exact locSummable_of_norm_le_mul_gP π hπ Λ φ C hφ
 
-theorem stepDecay (h : PoissonStep) : PoissonStepDecay := by
-  intro V _ _ _ _ _ hP Λ _ _ φ b x hc hb h1 h2 hnn S
-  exact h V Λ φ x (hP Λ (fun v => (φ v : ℂ)) (Complex.continuous_ofReal.comp hc) b hb h1 h2 x) hnn S
-
 theorem stepText (h : PoissonStep) (h2 : PoissonSummable) (h3 : ProductDecaySummable) :
     PoissonStepText := by
   intro V _ _ _ _ _ ι _ π hπ Λ _ _ φ C x hc hφ hsum hnn
@@ -279,15 +279,6 @@ theorem stepText (h : PoissonStep) (h2 : PoissonSummable) (h3 : ProductDecaySumm
 end Formalism.FourierDecayAlt.P.PoissonSummationDecay
 
 namespace Formalism.FourierDecayAlt.P
-
-theorem poisson_summation_level : Formalism.FourierDecayAlt.F7.PoissonStep := PoissonSummationDecay.poissonStep
-
-theorem poisson_level_decay : Formalism.FourierDecayAlt.F7.PoissonStepDecay :=
-  PoissonSummationDecay.stepDecay PoissonSummationDecay.poissonStep
-
-theorem poisson_series_summable : Formalism.FourierDecayAlt.F7.PoissonSummable := PoissonSummationDecay.poissonSummable
-
-theorem product_decay_summable : Formalism.FourierDecayAlt.F7.ProductDecaySummable := PoissonSummationDecay.productDecay
 
 theorem poisson_summation_level_statement : Formalism.FourierDecayAlt.F7.PoissonStepText :=
   PoissonSummationDecay.stepText PoissonSummationDecay.poissonStep PoissonSummationDecay.poissonSummable PoissonSummationDecay.productDecay

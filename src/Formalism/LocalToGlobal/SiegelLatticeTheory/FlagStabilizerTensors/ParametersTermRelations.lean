@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermOp
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.Saturated
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.PairVal
-import Formalism.LocalToGlobal.SiegelLatticeTheory.EFSymmCont
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PackageTie
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PoincareConstantEq
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.MassDataConc
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermOp
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.Saturated
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.PairVal
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.EFSymmCont
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PackageTie
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PoincareConstantEq
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.MassDataConc
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ variable {D : D7} (X : HidaSetting D) (u : D.what₂.Word) (hK : X.LevelSubgroup
 
 theorem sharp_add (T T' : Cu X u hK) : sharp hK cs (T + T') = sharp hK cs T + sharp hK cs T' := by
   ext ρ
-  simp [sharp, LinearMap.comp_add, map_add]
+  simp [sharp, LinearMap.comp_add, map_add (f := _)]
 
 theorem sharp_smul (c : ℂ) (T : Cu X u hK) : sharp hK cs (c • T) = (starRingEnd ℂ c) • sharp hK cs T := by
   ext ρ
@@ -100,8 +104,8 @@ theorem shInv_smul (c : ℂ) (x : CM cs) : shInv hb (c • x) = (starRingEnd ℂ
 
 def shInvAdd : CM cs →+ ColT hinj := AddMonoidHom.mk' (shInv hb) (shInv_add hb)
 
-include hb in
 
+include hb in
 theorem finiteDimensional_colT : FiniteDimensional ℂ (ColT hinj) := by
   classical
   let b := Module.finBasis ℂ (CM cs)
@@ -110,7 +114,8 @@ theorem finiteDimensional_colT : FiniteDimensional ℂ (ColT hinj) := by
   intro T _
   rw [← shInv_shT hb T, ← b.sum_repr (shT hinj T)]
   show shInvAdd hb _ ∈ _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Submodule.sum_mem _ fun i _ => ?_
   show shInv hb _ ∈ _
   rw [shInv_smul]
@@ -128,13 +133,13 @@ variable {D : D7} {X : HidaSetting D} {u u' : D.what₂.Word} {hK : X.LevelSubgr
 
 def trL (A : CM cs' →L[ℂ] CM cs) : ColT hinj' →ₗ[ℂ] ColT hinj where
   toFun T' := shInv hb (A (shT hinj' T'))
-  map_add' T T' := by rw [shT_add, map_add, shInv_add]
+  map_add' T T' := by rw [shT_add, map_add (f := _), shInv_add]
   map_smul' c T := by
     rw [shT_smul, map_smul, shInv_smul, starRingEnd_self_apply]
     rfl
 
-include hb' in
 
+include hb' in
 def tr (A : CM cs' →L[ℂ] CM cs) : ColT hinj' →L[ℂ] ColT hinj :=
   haveI := finiteDimensional_colT hb'
   LinearMap.toContinuousLinearMap (trL hb A)
@@ -188,8 +193,8 @@ variable {Y : Full X}
 theorem FinX.shBij (hF : FinX Y) (u : D.what₂.Word) : Function.Bijective (shT (hF.shInj u)) :=
   ⟨hF.shInj u, hF.shSurj u⟩
 
-variable (Y) in
 
+variable (Y) in
 def RP (u u' : D.what₂.Word) : Type :=
   {q : RT Y u u' × RT Y u u' // ∃ (s₁ : fib Y q.1) (s₂ : fib Y q.2),
     rowOf Y.TR (Y.cs u) (Y.cs u') s₁.1 = rowOf Y.TR (Y.cs u) (Y.cs u') s₂.1}
@@ -224,8 +229,8 @@ def aR (u u' : D.what₂.Word) (t : RT Y u u') : ColT (hF.shInj u') →L[ℂ] Co
   haveI := hF.fibFT t
   ∑ s : fib Y t, aT hF u u' s.1
 
-variable (Y) in
 
+variable (Y) in
 def vT (u u' : D.what₂.Word) (s : TT Y u u') : H1 X u u' (Y.what₂ u) (Y.what₂ u') :=
   vec (Y.cs u) (Y.cs u') (Y.FN u) (Y.FN u') s
 
@@ -316,12 +321,6 @@ structure SIso (s s' : Formalism.MainNotions.S.Draft.SData R F E sig Word Tau hc
 
 end Iso
 
-def SConc (D : D7) : Prop :=
-  ∃ (X : HidaSetting D) (hb : Formalism.L2.SG.AdBridge.AdBridgeIso X.B.I) (Y : Formalism.L2.SG.Full.Full X) (hF : FinX Y),
-    Formalism.MainNotions.S.AutTie D X.B X.pl ∧ X.LevelSubgroupNormalized ∧ (∀ u, ColsLink X u Y.hK) ∧
-    X.MeasTie hb ∧ Formalism.L2.SG.MassDataConc.MeasCompat X ∧ Formalism.L2.SG.WuDecay.WuDecay X ∧
-    Integrable X.ph (Formalism.L2.SG.ProjRows.muInf X.B.I) ∧ Nonempty (SIso D.s (sOf hF))
-
 section Ties
 
 open Formalism.L2.SG.Full
@@ -334,12 +333,6 @@ theorem finrank_cols (hI : SIso D.s (sOf hF)) (u : D.what₂.Word) :
 
 def DimTie (u : D.what₂.Word) : Prop :=
   (Module.finrank ℂ (X.Vpi u) : ℝ) = Formalism.MainNotions.S.dimPi (hc := D.hcW) u
-
-def KTie (u u' : D.what₂.Word) : Prop :=
-  DimTie (X := X) u → DimTie (X := X) u' →
-  Formalism.L2.SG.TermOp.KExpansion (X.Fu u) (X.Fu u') (Y.cs u) (Y.cs u') (Y.FN u) (Y.FN u') Y.hK (Y.Dt u) (Y.Dt u') →
-  Formalism.L2.SG.TermOp.AbsConvT (X.Fu u) (X.Fu u') Y.TR (Y.cs u) (Y.cs u') (Y.FN u) (Y.FN u') →
-    Formalism.MainNotions.S.KExpansion (sOf hF) u u' ∧ Formalism.MainNotions.S.KAbsConv (sOf hF) u u'
 
 def NormTie (u u' : D.what₂.Word) : Prop :=
   DimTie (X := X) u → DimTie (X := X) u' →

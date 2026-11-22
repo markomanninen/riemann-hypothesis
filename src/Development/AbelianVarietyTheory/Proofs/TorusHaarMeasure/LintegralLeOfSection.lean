@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates MeasureTheory Topology
 open scoped ContDiff ENNReal Matrix
@@ -79,7 +83,7 @@ theorem frameSplit : (∀ (r : ℕ) (X : Data E r) (R : ℝ), ∃ K : ℝ≥0∞
     simp only [Set.mem_setOf_eq, Pi.add_apply]
     refine forall_congr' fun τ => forall_congr' fun a => forall_congr' fun c =>
       forall_congr' fun h => ?_
-    rw [dif_neg h, zero_add]
+    rw [dite_eq_right h, zero_add]
   · intro C
     refine ⟨max (max C R) 0, fun x hx hC => ?_⟩
     have h0 : 0 ≤ max (max C R) 0 := le_max_right _ _

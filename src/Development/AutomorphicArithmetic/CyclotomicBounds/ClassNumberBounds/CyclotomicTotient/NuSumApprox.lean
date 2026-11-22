@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.CyclotomicTotient.NuInf
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.CyclotomicTotient.NuInf
+
+@[expose] public section
 
 namespace KStar.Tree
 

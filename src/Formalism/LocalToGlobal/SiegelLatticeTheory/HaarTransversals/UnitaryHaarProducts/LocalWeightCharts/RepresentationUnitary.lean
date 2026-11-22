@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.WavePacketL1L2
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.ColOfLeftInv
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.WavePacketL1L2
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.ColOfLeftInv
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset
 open scoped InnerProductSpace
@@ -48,18 +52,18 @@ theorem blockW_in {h : Matrix (Fin k) (Fin k) ℂ} {i j : Fin (2 * r + k + 1)} (
     blockW k r h i j = h ⟨i.val - r, by unfold inB at hi; omega⟩ ⟨j.val - r, by unfold inB at hj; omega⟩ := by
   have hi' : r ≤ i.val ∧ i.val < r + k := hi
   have hj' : r ≤ j.val ∧ j.val < r + k := hj
-  unfold blockW; rw [dif_pos hi', dif_pos hj']
+  unfold blockW; rw [dite_eq_left hi', dite_eq_left hj']
 
 theorem blockW_in_out {h : Matrix (Fin k) (Fin k) ℂ} {i j : Fin (2 * r + k + 1)} (hi : inB k r i) (hj : ¬ inB k r j) :
     blockW k r h i j = 0 := by
   have hi' : r ≤ i.val ∧ i.val < r + k := hi
   have hj' : ¬ (r ≤ j.val ∧ j.val < r + k) := hj
-  unfold blockW; rw [dif_pos hi', dif_neg hj']
+  unfold blockW; rw [dite_eq_left hi', dite_eq_right hj']
 
 theorem blockW_out {h : Matrix (Fin k) (Fin k) ℂ} {i j : Fin (2 * r + k + 1)} (hi : ¬ inB k r i) :
     blockW k r h i j = if i = j then 1 else 0 := by
   have hi' : ¬ (r ≤ i.val ∧ i.val < r + k) := hi
-  unfold blockW; rw [dif_neg hi']
+  unfold blockW; rw [dite_eq_right hi']
 
 theorem blockW_eB (h : Matrix (Fin k) (Fin k) ℂ) (m m' : Fin k) : blockW k r h (eB k r m) (eB k r m') = h m m' := by
   rw [blockW_in (eB_inB m) (eB_inB m')]

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+
+@[expose] public section
+
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun
 
 noncomputable section
@@ -17,16 +22,16 @@ theorem mix_mul {S A : Type} [CommRing S] [Ring A] [Algebra S A] {e : S} (he : e
 
 variable {F : Type} [Field F] [NumberField F]
 
-def idemAt (v : Pl F) : AF F := LinearMap.inr F (Ainf F) (Af F) (singleFin v 1)
+def idemAt (v : Pl (F := F)) : AF F := LinearMap.inr F (Ainf F) (Af F) (singleFin v 1)
 
-theorem evFin_idemAt (v : Pl F) : evFin F v (idemAt v) = 1 := evalV_singleFin_self v 1
+theorem evFin_idemAt (v : Pl (F := F)) : evFin F v (idemAt v) = 1 := evalV_singleFin_self v 1
 
-theorem idemAt_mul_self (v : Pl F) : idemAt v * idemAt v = idemAt v := by
+theorem idemAt_mul_self (v : Pl (F := F)) : idemAt v * idemAt v = idemAt v := by
   refine Prod.ext (show (0 : Ainf F) * 0 = 0 from mul_zero 0) ?_
   change singleFin v 1 * singleFin v 1 = singleFin v 1
   rw [← singleFin_mul, one_mul]
 
-theorem mul_idemAt_of_evFin (v : Pl F) {u : AF F} (hu : evFin F v u = 0) : u * idemAt v = 0 := by
+theorem mul_idemAt_of_evFin (v : Pl (F := F)) {u : AF F} (hu : evFin F v u = 0) : u * idemAt v = 0 := by
   refine Prod.ext (show u.1 * (0 : Ainf F) = 0 from mul_zero _) ?_
   change u.2 * singleFin v 1 = 0
   refine af_ext fun w => ?_
@@ -46,7 +51,7 @@ namespace GlobalTheory.UnitaryPlaceSplit
 open Matrix
 
 theorem exists_split_at (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-    (σ : E →ₐ[F] E) (n : ℕ) (J : Matrix (Fin n) (Fin n) E) (v : Pl F) (g : UA σ J) :
+    (σ : E →ₐ[F] E) (n : ℕ) (J : Matrix (Fin n) (Fin n) E) (v : Pl (F := F)) (g : UA σ J) :
     ∃ g₁ g₂ : UA σ J, g = g₁ * g₂ ∧ At (evFin F v) (mat g₁ - 1) ∧
       ∀ u : AF F, At (evFin F v) u → u • (mat g₂ - 1) = 0 := by
   have hee : idemAt v * idemAt v = idemAt v := idemAt_mul_self v
@@ -70,7 +75,7 @@ theorem exists_split_at (F E : Type) [Field F] [NumberField F] [Field E] [Number
     have hT : Mᵀ = e • Gᵀ + (1 - e) • (1 : Matrix (Fin n) (Fin n) (AE F E)) := by
       rw [hM, transpose_add, transpose_smul, transpose_smul, transpose_one]
     have hc : M.map (cA σ) = e • G.map (cA σ) + (1 - e) • (1 : Matrix (Fin n) (Fin n) (AE F E)) := by
-      rw [← AlgHom.mapMatrix_apply, hM, map_add, map_smul, map_smul, map_one, AlgHom.mapMatrix_apply]
+      rw [← AlgHom.mapMatrix_apply, hM, map_add (f := _), map_smul, map_smul, map_one, AlgHom.mapMatrix_apply]
     rw [hT, hc, split (incM F J), mix_mul hee, mix_mul hee, hg, one_mul, mul_one]
   let g₁ : UA σ J := ⟨g1gl, hmem⟩
   have hm1 : mat g₁ - 1 = e • (G - 1) := by

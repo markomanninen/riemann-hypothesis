@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Theta.FundDomain
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Theta.FundDomain
+
+@[expose] public section
 
 noncomputable section
 

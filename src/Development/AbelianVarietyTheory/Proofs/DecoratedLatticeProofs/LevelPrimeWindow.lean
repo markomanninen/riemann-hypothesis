@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.KerInclOn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.KerInclOn
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,10 @@ theorem levelPrime_window : ∀ (D : D7) (u : D.what₂.Word),
     (∀ L C : ℝ, RankMu D u → 1 + 2 * C * mfL D L ≤ 2 * Real.log (D.mem u).A.GamP → Small D u L C) := by
   intro D u
   have hfN : 1 ≤ D.R.f := by
-    apply Nat.one_le_iff_ne_zero.2
-    unfold Ranks.f Ranks.n; positivity
+    unfold Ranks.f Ranks.n
+    have := Nat.one_le_two_pow (n := D.R.e)
+    have := D.R.ord_pos
+    omega
   have hkN : 5 ≤ D.R.k := by have := D.R.m_add_three_le_k; have := D.R.two_le_m; omega
   have hf : (1 : ℝ) ≤ D.R.f := by exact_mod_cast hfN
   have hk : (5 : ℝ) ≤ D.R.k := by exact_mod_cast hkN

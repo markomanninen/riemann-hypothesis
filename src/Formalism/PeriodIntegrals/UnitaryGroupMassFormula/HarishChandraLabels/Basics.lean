@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PadicSubsetSums.CentralIdempotents.IsConstituent
-import Formalism.PadicSubsetSums.CentralIdempotents.GaloisConjCentralIdempotent
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HarishChandraLabels.SupportExistsOf
+module
+
+public import Mathlib
+public import Formalism.PadicSubsetSums.CentralIdempotents.IsConstituent
+public import Formalism.PadicSubsetSums.CentralIdempotents.GaloisConjCentralIdempotent
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HarishChandraLabels.SupportExistsOf
+
+@[expose] public section
 
 open Formalism.IrreducibleCountingLemmas.TYPES CategoryTheory Polynomial
 noncomputable section

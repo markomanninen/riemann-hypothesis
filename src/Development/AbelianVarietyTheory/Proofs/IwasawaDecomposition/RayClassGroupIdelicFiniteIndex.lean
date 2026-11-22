@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteChars
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.HCFFromRecipA
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdicIntegersCompact.IsCompactAdicCompletionIntegers
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteChars
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.HCFFromRecipA
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdicIntegersCompact.IsCompactAdicCompletionIntegers
+
+@[expose] public section
+
 open IsDedekindDomain NumberField
 
 namespace GlobalTheory.LevelChars

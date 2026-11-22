@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivialIff
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivialIff
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 open scoped TensorProduct
 
@@ -21,14 +26,14 @@ theorem isZModTorsor_baseChange : ∀ (B B' D : Type) [CommRing B] [CommRing B']
         induction x using TensorProduct.induction_on with
         | zero => simp
         | tmul b x => simp [Algebra.TensorProduct.congr_apply]
-        | add x y hx hy => rw [map_add, map_add, hx, hy]
+        | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
       map_mul' := by
         intro g h
         apply AlgEquiv.ext; intro x
         induction x using TensorProduct.induction_on with
         | zero => simp
         | tmul b x => simp [Algebra.TensorProduct.congr_apply, AlgEquiv.mul_apply]
-        | add x y hx hy => rw [map_add, map_add, hx, hy] }
+        | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy] }
   have hact : ∀ (g : Multiplicative (ZMod q)) (b : B') (x : D),
       act' g (b ⊗ₜ[B] x) = b ⊗ₜ[B] act g x := by
     intro g b x
@@ -56,8 +61,8 @@ theorem isZModTorsor_baseChange : ∀ (B B' D : Type) [CommRing B] [CommRing B']
           Algebra.TensorProduct.productMap_apply_tmul, hact, Algebra.TensorProduct.tmul_mul_tmul,
           LinearEquiv.ofBijective_apply]
         rfl
-      | add s t hs ht => rw [TensorProduct.tmul_add, map_add, map_add, map_add, map_add, hs, ht]
-    | add s t hs ht => rw [map_add, map_add, map_add, map_add, hs, ht]
+      | add s t hs ht => rw [TensorProduct.tmul_add, map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hs, ht]
+    | add s t hs ht => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hs, ht]
   have hfun : ⇑(Algebra.TensorProduct.productMap
       (Pi.algHom B' (fun _ : Multiplicative (ZMod q) => B' ⊗[B] D) (fun _ => AlgHom.id B' _))
       (Pi.algHom B' (fun _ : Multiplicative (ZMod q) => B' ⊗[B] D) (fun g => (act' g).toAlgHom)))

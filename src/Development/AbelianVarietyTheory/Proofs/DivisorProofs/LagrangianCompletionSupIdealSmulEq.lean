@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GroupObjectLiftDividedPowers
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorModOfTmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GroupObjectLiftDividedPowers
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorModOfTmul
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.UPel.Sm GlobalTheory.Cris GlobalTheory.DeRham
@@ -101,7 +106,7 @@ theorem lagrangian_of_idempotent_split_univ :
     have hy : e y ∈ G ⊔ M := by rw [hGMr]; exact LinearMap.mem_range_self e y
     obtain ⟨g, hg, m, hm, hgm⟩ := Submodule.mem_sup.1 hy
     have : y = g + m + (y - e y) := by rw [hgm]; abel
-    rw [this, map_add, map_add, hrefl _ _ (hkG g hg), hrefl _ _ (hkM m hm),
+    rw [this, map_add (f := _), map_add (f := _), hrefl _ _ (hkG g hg), hrefl _ _ (hkM m hm),
       hkk k hk _ (hker y)]
     simp
   refine ⟨⟨M ⊔ (K ⊓ ⨅ x ∈ M, LinearMap.ker (φ x)), ?_, ?_⟩, ?_, ?_, ?_⟩
@@ -109,8 +114,8 @@ theorem lagrangian_of_idempotent_split_univ :
     intro x hxE hxN
     obtain ⟨g, hg, k₁, hk₁, rfl⟩ := Submodule.mem_sup.1 hxE
     obtain ⟨m, hm, k₂, hk₂, hmk⟩ := Submodule.mem_sup.1 hxN
-    have he1 : e (g + k₁) = g := by rw [map_add, hG g hg, LinearMap.mem_ker.1 hk₁.1, add_zero]
-    have he2 : e (m + k₂) = m := by rw [map_add, hM m hm, LinearMap.mem_ker.1 hk₂.1, add_zero]
+    have he1 : e (g + k₁) = g := by rw [map_add (f := _), hG g hg, LinearMap.mem_ker.1 hk₁.1, add_zero]
+    have he2 : e (m + k₂) = m := by rw [map_add (f := _), hM m hm, LinearMap.mem_ker.1 hk₂.1, add_zero]
     have hgm : g = m := by rw [← he1, ← he2, hmk]
     have hg0 : g = 0 := by
       have : g ∈ G ⊓ M := ⟨hg, hgm ▸ hm⟩
@@ -132,7 +137,7 @@ theorem lagrangian_of_idempotent_split_univ :
     · rintro x ⟨hxE, hxr⟩
       obtain ⟨g, hg, k₁, hk₁, rfl⟩ := Submodule.mem_sup.1 hxE
       have h1 := hrange _ hxr
-      rw [map_add, hG g hg, LinearMap.mem_ker.1 hk₁.1, add_zero] at h1
+      rw [map_add (f := _), hG g hg, LinearMap.mem_ker.1 hk₁.1, add_zero] at h1
       have : k₁ = 0 := by
         have := congrArg (· - g) h1
         simpa using this.symm
@@ -150,7 +155,7 @@ theorem lagrangian_of_idempotent_split_univ :
     simp [h1, h2, h3, h4]
   · intro a x hx
     obtain ⟨g, hg, k, hk, rfl⟩ := Submodule.mem_sup.1 hx
-    rw [map_add]
+    rw [map_add (f := _)]
     refine Submodule.add_mem_sup (hGst a g hg) ⟨?_, ?_⟩
     · show e (ρ a k) = 0
       have := LinearMap.congr_fun (hρe a) k
@@ -254,7 +259,8 @@ theorem lagrangian_completion_sup_smul_eq : ∀ (C : Type) [CommRing C] (I : Ide
     have hfI : ∀ x, f x ∈ I := fun x => by rw [hf]; exact hFiso _ (hGF' (hPmem x)) _ hkF
     refine ⟨∑ j, f (v j) • (y j - e (y j)), ?_, ?_, ?_⟩
     · exact Submodule.sum_mem _ fun j _ => Submodule.smul_mem_smul (hfI _) Submodule.mem_top
-    · simp [map_sum, map_smul, hker]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp [map_sum, map_smul, hker]
     · intro g hg
       have h1 : ∀ j, φ g (y j - e (y j)) = s g j := by
         intro j
@@ -263,8 +269,10 @@ theorem lagrangian_completion_sup_smul_eq : ∀ (C : Type) [CommRing C] (I : Ide
         rw [← this, hy]
       have h2 : f g = ∑ j, f (v j) * s g j := by
         conv_lhs => rw [hexp g]
-        simp [map_sum, map_smul, mul_comm]
-      rw [map_sub, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp [map_sum, map_smul, mul_comm]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum]
       simp only [map_smul, h1, smul_eq_mul]
       rw [← h2, hf, hPG g hg, sub_self]
   refine ⟨G ⊔ (LinearMap.ker e ⊓ ⨅ x ∈ G, LinearMap.ker (φ x)), hcompl, hEr, ?_, hiso, hEst, ?_⟩
@@ -277,7 +285,7 @@ theorem lagrangian_completion_sup_smul_eq : ∀ (C : Type) [CommRing C] (I : Ide
       intro z hz
       obtain ⟨g, hg, t, ht, hgt⟩ := hdecomp z hz
       have hz' : z = g + t + (z - e z) := by rw [hgt]; abel
-      rw [hz', map_add, map_add, hskew w g, hwp' g hg, neg_zero, zero_add,
+      rw [hz', map_add (f := _), map_add (f := _), hskew w g, hwp' g hg, neg_zero, zero_add,
         hkk w _ hwk (hker z), add_zero]
       exact hIfun (φ w) t ht
     · intro z hz
@@ -291,7 +299,7 @@ theorem lagrangian_completion_sup_smul_eq : ∀ (C : Type) [CommRing C] (I : Ide
       · exact (memPerp _).2 ht'p
   · intro x hx
     obtain ⟨g, hg, k, hk, rfl⟩ := Submodule.mem_sup.1 hx
-    rw [map_add, hG g hg, LinearMap.mem_ker.1 hk.1, add_zero]
+    rw [map_add (f := _), hG g hg, LinearMap.mem_ker.1 hk.1, add_zero]
     exact le_sup_left (a := G) hg
 
 end GlobalTheory

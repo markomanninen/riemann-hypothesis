@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDefs
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -203,7 +207,7 @@ theorem gN_nonneg (g : Mat k r) : 0 ≤ gN g := Real.sqrt_nonneg _
 theorem gN_continuous : Continuous (fun g : Mat k r => gN g) := by
   show Continuous fun g : Mat k r => Real.sqrt (∑ i, ∑ j, Complex.normSq (g i j))
   first
-  | exact Real.continuous_sqrt.comp (continuous_finset_sum _ fun i _ => continuous_finset_sum _
+  | exact Real.continuous_sqrt.comp (continuous_finsetSum _ fun i _ => continuous_finsetSum _
       fun j _ => Complex.continuous_normSq.comp (continuous_id.matrix_elem i j))
   | fun_prop
   | continuity

@@ -1,19 +1,23 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.AffineGLForms.CuspInvariantsFinite.CuspInvFin
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspRapidDecaySiegelGL
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.DecayUniform
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStable
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmMemArchSmooth
-import Development.AutomorphicSpectrum.Proofs.HermitianForms.CasOfCapelliVec
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OmegaOpCommLiB
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ArchLieDerivativeExists
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactSpanFiniteDimStable
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OmegaOperatorEqCasimirSum
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CasimirMemCenterEnveloping
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsMonicAevalMemOfLeSup
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AveragePreservesKFiniteness
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAdelicGLHomeomorphInfiniteFinite
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.AffineGLForms.CuspInvariantsFinite.CuspInvFin
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspRapidDecaySiegelGL
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.DecayUniform
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStable
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmMemArchSmooth
+public import Development.AutomorphicSpectrum.Proofs.HermitianForms.CasOfCapelliVec
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OmegaOpCommLiB
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ArchLieDerivativeExists
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactSpanFiniteDimStable
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OmegaOperatorEqCasimirSum
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CasimirMemCenterEnveloping
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsMonicAevalMemOfLeSup
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AveragePreservesKFiniteness
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAdelicGLHomeomorphInfiniteFinite
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 
@@ -73,8 +77,10 @@ theorem exists_monic_aeval_add_of_kill {M : Type*} [AddCommGroup M] [Module ℂ 
     · exact hc'
     · exact hc'.symm
     · rfl
-  letI : CommRing (Algebra.adjoin ℂ ({A', B'} : Set (Module.End ℂ N))) :=
-    Algebra.adjoinCommRingOfComm ℂ hcomm
+  letI : IsMulCommutative (Algebra.adjoin ℂ ({A', B'} : Set (Module.End ℂ N))) :=
+    Algebra.isMulCommutative_adjoin ℂ (fun x hx y hy _ => hcomm x hx y hy)
+  open scoped IsMulCommutative in
+  letI : CommRing (Algebra.adjoin ℂ ({A', B'} : Set (Module.End ℂ N))) := inferInstance
   let a' : Algebra.adjoin ℂ ({A', B'} : Set (Module.End ℂ N)) :=
     ⟨A', Algebra.subset_adjoin (Set.mem_insert _ _)⟩
   let b' : Algebra.adjoin ℂ ({A', B'} : Set (Module.End ℂ N)) :=
@@ -104,7 +110,7 @@ theorem exists_monic_aeval_add_of_kill {M : Type*} [AddCommGroup M] [Module ℂ 
     rw [map_mul, Module.End.mul_apply, Polynomial.aeval_X]
     exact h3.symm
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 def evK (g : GA E a) : Sm E a →ₗ[ℂ] (Kinf E a → ℂ) where
   toFun φ k := (cptRep E a k φ).1 g
@@ -140,7 +146,7 @@ theorem exists_K_curve (Z : (isExpLieAlgebra E a).lieSubalgebra) (hZ : Z ∈ arc
 def typeSub {W : Type} [AddCommGroup W] [Module ℂ W] (ρ : Representation ℂ (Kinf E a) W) :
     Submodule ℂ (Sm E a) where
   carrier := {φ | ∀ g : GA E a, evK g φ ∈ GlobalTheory.Published.AutFin.coeffSpan ρ}
-  add_mem' hx hy g := by rw [map_add]; exact Submodule.add_mem _ (hx g) (hy g)
+  add_mem' hx hy g := by rw [map_add (f := _)]; exact Submodule.add_mem _ (hx g) (hy g)
   zero_mem' g := by rw [map_zero]; exact Submodule.zero_mem _
   smul_mem' c _ hx g := by rw [map_smul]; exact Submodule.smul_mem _ c (hx g)
 
@@ -239,7 +245,8 @@ theorem exists_monic_compact_part {W : Type} [AddCommGroup W] [Module ℂ W] [Fi
     intro g m
     apply Subtype.ext
     change evK g (T m.1) = _
-    rw [hTe, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hTe, map_sum]
     simp only [T', LinearMap.sum_apply, LinearMap.smul_apply, Module.End.mul_apply,
       Submodule.coe_sum, Submodule.coe_smul_of_tower, map_smul]
     refine Finset.sum_congr rfl fun i _ => ?_
@@ -271,8 +278,8 @@ theorem exists_monic_compact_part {W : Type} [AddCommGroup W] [Module ℂ W] [Fi
   rw [evK_one] at e4
   exact e4
 
-variable (E a) in
 
+variable (E a) in
 def archHomeo : archGroup E a ≃ₜ* GL (Fin a) (Cinf E) where
   toFun := toGL E a
   invFun y := archEquiv E a (Matrix.GeneralLinearGroup.map (infEq E).toRingHom y)
@@ -296,7 +303,7 @@ def archHomeo : archGroup E a ≃ₜ* GL (Fin a) (Cinf E) where
       Continuous.units_map _ (continuous_id.matrix_map (continuous_infEq E))
     exact (archEquiv E a).continuous.comp c1
 
-theorem unifAlpha : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), UnifAlpha E a := by
+theorem unifAlpha : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), UnifAlpha E a := by
   intro E _ _ _ a W _ _ _ ρ _ J hJ _ _ μ hμ
   obtain ⟨d, b, ε, hε, horth, hskew⟩ := exists_archCartanBasis (K := E) (n := a)
   set Ω := omegaOp (E := E) (a := a) (⇑b) ε with hΩ

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
-import Formalism.LocalToGlobal.HermitianForms.TiedStep
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SplitPlaceLatticeComponentsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
+public import Formalism.LocalToGlobal.HermitianForms.TiedStep
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SplitPlaceLatticeComponentsStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.UG Formalism.L2.Forms NumberField IsDedekindDomain Matrix GlobalTheory.St.G
 open scoped TensorProduct
 
@@ -15,7 +20,7 @@ theorem match_of_coprime {A K ι : Type} [CommRing A] [CommRing K] (p : A →+* 
   obtain ⟨u, w, huw⟩ := hc
   refine ⟨u • z + w • (T • y), H.add_mem (H.zsmul_mem hz u) (H.zsmul_mem hy w), fun b => ?_⟩
   have h' : (u : K) * k + w * T = 1 := by exact_mod_cast congrArg (Int.cast : ℤ → K) huw
-  simp only [Pi.add_apply, Pi.smul_apply, map_add, map_zsmul, h b]
+  simp only [Pi.add_apply, Pi.smul_apply, map_add (f := _), map_zsmul, h b]
   simp only [zsmul_eq_mul]
   linear_combination (p (y b)) * h'
 
@@ -42,14 +47,14 @@ theorem cyclic_of_components {A K ι : Type} [CommRing A] [CommRing K] (sp : A �
   have hdb : ∀ b, sp (d b) = ((sp (y₁ b)).1, (sp (y₂ b)).2) := by
     intro b
     have : d b = e * y₁ b + (1 - e) * y₂ b := rfl
-    rw [this, map_add, map_mul, map_mul, map_sub, map_one, hsp]
+    rw [this, map_add (f := _), map_mul, map_mul, map_sub, map_one, hsp]
     ext <;> simp
   let a : Fin T × Fin T → O := fun ij => ((ij.1 : ℕ) : O) * eO + ((ij.2 : ℕ) : O) * (1 - eO)
   have ha : ∀ ij, sp (a ij : A) = (((ij.1 : ℕ) : K), ((ij.2 : ℕ) : K)) := by
     intro ij
     have : (a ij : A) = ((ij.1 : ℕ) : A) * e + ((ij.2 : ℕ) : A) * (1 - e) := by
       simp [a, eO]
-    rw [this, map_add, map_mul, map_mul, map_sub, map_one, hsp, map_natCast, map_natCast]
+    rw [this, map_add (f := _), map_mul, map_mul, map_sub, map_one, hsp, map_natCast, map_natCast]
     ext <;> simp
   let φ : Fin T × Fin T → D.toAddSubgroup ⧸ M.toAddSubgroup.addSubgroupOf D.toAddSubgroup :=
     fun ij => QuotientAddGroup.mk ⟨a ij • d, D.smul_mem _ hd⟩
@@ -64,7 +69,7 @@ theorem cyclic_of_components {A K ι : Type} [CommRing A] [CommRing K] (sp : A �
           (((t.2 : ℕ) : K) - ((s.2 : ℕ) : K)) * (sp (y₂ b)).2) := by
       intro b
       have : (-(a s • d) + a t • d) b = -((a s : A) * d b) + (a t : A) * d b := rfl
-      rw [this, map_add, map_neg, map_mul, map_mul, ha, ha, hdb]
+      rw [this, map_add (f := _), map_neg, map_mul, map_mul, ha, ha, hdb]
       ext <;> simp <;> ring
     by_contra hne
     by_cases h1 : t.1 = s.1

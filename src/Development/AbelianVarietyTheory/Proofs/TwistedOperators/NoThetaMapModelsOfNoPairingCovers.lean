@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,10 +81,10 @@ theorem noLift_of_pairNo : ∀ (D : D7) (V : HSp D) (S : D.what₂.Tau → SPar)
       (hK.der Y hY _ _).2 (by simp only [hw_right, ht_def])
     have h0 := hQ _ hX _ _ _ _ hpol hvec
     have e1 : Q (κ.symm (a₁ Y P + t • P)) (w x) = Q (κ.symm (a₁ Y P)) (w x) + t • Q (κ.symm P) (w x) := by
-      rw [map_add, map_smul, map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply]
+      rw [map_add (f := _), map_smul, map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply]
     have e2 : Q (κ.symm P) (w (R₁.HK.act Y x + t • x)) =
         Q (κ.symm P) (w (R₁.HK.act Y x)) - t • Q (κ.symm P) (w x) := by
-      rw [map_add, map_add, map_smulₛₗ, ht, map_smul, neg_smul, sub_eq_add_neg]
+      rw [map_add (f := _), map_add (f := _), map_smulₛₗ, ht, map_smul, neg_smul, sub_eq_add_neg]
     rw [e1, e2] at h0
     rw [hB, hB, ← h0]
     abel

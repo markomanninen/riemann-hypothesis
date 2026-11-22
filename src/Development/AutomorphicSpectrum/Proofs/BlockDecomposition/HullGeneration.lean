@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankPosOfLeaves
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankPosOfLeaves
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem typeB_of_mem_span {E : Type} [Field E] [NumberField E] [IsCMField E] {N 
 
 theorem hullGen : HullGen := by
   intro E _ _ _ N K W S hS hfd
-  have hst : IsStable (hull S) := fun o φ hφ =>
+  have hst : _root_.GlobalTheory.CuspRep.IsStable (hull S) := fun o φ hφ =>
     Submodule.mem_sInf.2 fun U hU => hU.2 o φ (Submodule.mem_sInf.1 hφ U hU)
   refine ⟨hst, ?_⟩
   have hsub : S ⊆ hull S := fun φ hφ => Submodule.mem_sInf.2 fun U hU => hU.1 hφ

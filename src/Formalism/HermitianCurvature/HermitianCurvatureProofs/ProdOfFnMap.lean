@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ToStdAppendBlk
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ToStdAppendBlk
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.LiftDegreeLemmas
 

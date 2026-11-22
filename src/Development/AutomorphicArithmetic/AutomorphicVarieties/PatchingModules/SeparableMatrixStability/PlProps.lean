@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.SecondSelmerSpanBoundAtAllLevels
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ResNormal
-import Mathlib
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.SecondSelmerSpanBoundAtAllLevels
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ResNormal
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing Matrix Filter UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
 private theorem mem_PL {l : ℕ} {Γ : Type} [Group Γ] [TopologicalSpace Γ] {H : Subgroup Γ} {x : Γ} :
-    x ∈ PL l H ↔ ∀ U : OpenNormalSubgroup Γ, (∀ h ∈ H, ∃ e : ℕ, h ^ l ^ e ∈ U) → x ∈ U.toSubgroup := by
+    x ∈ PL (l := l) H ↔ ∀ U : OpenNormalSubgroup Γ, (∀ h ∈ H, ∃ e : ℕ, h ^ l ^ e ∈ U) → x ∈ U.toSubgroup := by
   simp only [PL, Subgroup.mem_iInf]
 
 private theorem pq_iff (l : ℕ) (G : Type) [Group G] (N : Subgroup G) [N.Normal] :
@@ -20,8 +24,8 @@ private theorem pq_iff (l : ℕ) (G : Type) [Group G] (N : Subgroup G) [N.Normal
 private theorem exists_core {Γ : Type} [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ]
     (K P : Subgroup Γ) [P.Normal] (hK : IsOpen (K : Set Γ)) (hP : P ≤ K) :
     ∃ U : OpenNormalSubgroup Γ, P ≤ U.toSubgroup ∧ U.toSubgroup ≤ K := by
-  haveI : Finite (Γ ⧸ K) := K.quotient_finite_of_isOpen hK
-  haveI : K.FiniteIndex := K.finiteIndex_of_finite_quotient
+  have : Finite (Γ ⧸ K) := K.quotient_finite_of_isOpen hK
+  have : K.FiniteIndex := K.finiteIndex_of_finite_quotient
   have hKc : IsClosed (K : Set Γ) := OpenSubgroup.isClosed ⟨K, hK⟩
   have hCo : IsOpen (K.normalCore : Set Γ) :=
     Subgroup.isOpen_of_isClosed_of_finiteIndex _ (K.normalCore_isClosed hKc)
@@ -31,28 +35,88 @@ private theorem exists_core {Γ : Type} [Group Γ] [TopologicalSpace Γ] [IsTopo
   exact ⟨C, Subgroup.normal_le_normalCore.mpr hP, K.normalCore_le⟩
 
 theorem UpperTheory.V.Pa.pl_props :
-    ∀ (l : ℕ) [Fact l.Prime] (Γ : Type) [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [TotallyDisconnectedSpace Γ] (H : Subgroup Γ) [H.Normal], IsOpen (H : Set Γ) → (PL l H).Normal ∧ IsClosed (PL l H : Set Γ) ∧ PL l H ≤ H ∧ (∀ U : OpenNormalSubgroup Γ, PL l H ≤ U.toSubgroup ↔ ∀ h ∈ H, ∃ e : ℕ, h ^ l ^ e ∈ U) ∧ (PL l H = ⊥ ↔ IsProL l H) ∧ PL l H = proLResOf l H := by
+    ∀ (l : ℕ) [Fact l.Prime] (Γ : Type) [Group Γ] [TopologicalSpace Γ]
+      [IsTopologicalGroup Γ] [CompactSpace Γ] [TotallyDisconnectedSpace Γ]
+      (H : Subgroup Γ) [H.Normal], IsOpen (H : Set Γ) →
+      (PL (l := l) H).Normal ∧ IsClosed (PL (l := l) H : Set Γ) ∧ PL (l := l) H ≤ H ∧
+      (∀ U : OpenNormalSubgroup Γ, PL (l := l) H ≤ U.toSubgroup ↔ ∀ h ∈ H, ∃ e : ℕ, h ^ l ^ e ∈ U) ∧
+      (PL (l := l) H = ⊥ ↔ IsProL l H) ∧ PL (l := l) H = proLResOf l H := by
   intro l _ Γ _ _ _ _ _ H _ hHo
   have hHc : IsClosed (H : Set Γ) := OpenSubgroup.isClosed ⟨H, hHo⟩
   have cond_le : ∀ U : OpenNormalSubgroup Γ, (∀ h ∈ H, ∃ e : ℕ, h ^ l ^ e ∈ U) →
-      PL l H ≤ U.toSubgroup :=
+      PL (l := l) H ≤ U.toSubgroup :=
     fun U hU x hx => mem_PL.mp hx U hU
-  have hnorm : (PL l H).Normal :=
+  have hnorm : (PL (l := l) H).Normal :=
     ⟨fun x hx g => mem_PL.mpr fun U hU => U.isNormal'.conj_mem _ (mem_PL.mp hx U hU) g⟩
-  have hclosed : IsClosed (PL l H : Set Γ) := by
+  have hclosed : IsClosed (PL (l := l) H : Set Γ) := by
     simp only [PL, Subgroup.coe_iInf]
     exact isClosed_iInter fun U => isClosed_iInter fun _ => U.toOpenSubgroup.isClosed
   let HU : OpenNormalSubgroup Γ := { toOpenSubgroup := ⟨H, hHo⟩, isNormal' := inferInstance }
-  have hle : PL l H ≤ H := by
+  have hle : PL (l := l) H ≤ H := by
     have hc : ∀ h ∈ H, ∃ e : ℕ, h ^ l ^ e ∈ HU := by
       intro h hh
       refine ⟨0, ?_⟩
       rw [pow_zero, pow_one]
       exact hh
     exact cond_le HU hc
-  obtain ⟨hPn, hPc, -, hPcond⟩ := proLResOf_normal l Γ H hHc
-  have heq : PL l H = proLResOf l H := by
-    haveI := hPn
+  have hPn : (proLResOf l H).Normal := by
+    constructor
+    intro x hx g
+    obtain ⟨y, hy, rfl⟩ := Subgroup.mem_map.mp hx
+    let c : H →* H := (MulAut.conjNormal g).toMonoidHom
+    have hc : Continuous c := by
+      apply Continuous.subtype_mk
+      exact (continuous_const.mul continuous_subtype_val).mul continuous_const
+    refine Subgroup.mem_map.mpr ⟨c y, mem_proLRes.mpr ?_, ?_⟩
+    · intro N hN
+      let M : OpenNormalSubgroup H :=
+        { toSubgroup := N.toSubgroup.comap c
+          isOpen' := N.isOpen.preimage hc
+          isNormal' := Subgroup.Normal.comap N.isNormal' c }
+      have hM : IsPGroup l (H ⧸ M.toSubgroup) := by
+        rw [pq_iff] at hN ⊢
+        intro z
+        obtain ⟨k, hk⟩ := hN (c z)
+        exact ⟨k, by simpa [M, map_pow] using hk⟩
+      exact mem_proLRes.mp hy M hM
+    · simp [c, MulAut.conjNormal_apply]
+  have hPc : IsClosed (proLResOf l H : Set Γ) := by
+    unfold proLResOf
+    rw [Subgroup.coe_map, Subgroup.coe_subtype]
+    exact hHc.isClosedEmbedding_subtypeVal.isClosedMap _ (isClosed_proLRes l H)
+  have hPcond (U : OpenNormalSubgroup Γ) (hU : proLResOf l H ≤ U.toSubgroup)
+      (h : Γ) (hh : h ∈ H) : ∃ e : ℕ, h ^ l ^ e ∈ U.toSubgroup := by
+    classical
+    have : CompactSpace H := isCompact_iff_compactSpace.mp hHc.isCompact
+    let K := U.toSubgroup.comap H.subtype
+    have hKo : IsOpen (K : Set H) := U.isOpen.preimage continuous_subtype_val
+    have hleK : proLRes l H ≤ K := Subgroup.map_le_iff_le_comap.mp hU
+    let ι := {N : OpenNormalSubgroup H // IsPGroup l (H ⧸ N.toSubgroup)}
+    let t : ι → Set H := fun i => i.1.toSubgroup
+    have hdisjoint : Disjoint (K : Set H)ᶜ (⋂ i, t i) := by
+      simp only [Set.disjoint_left, Set.mem_compl_iff, Set.mem_iInter]
+      intro y hy hall
+      exact hy (hleK (mem_proLRes.mpr fun N hN => hall ⟨N, hN⟩))
+    obtain ⟨s, hs⟩ := hKo.isClosed_compl.isCompact.elim_finite_subfamily_closed t
+      (fun i => i.1.toOpenSubgroup.isClosed) hdisjoint
+    let g : H := ⟨h, hh⟩
+    have hk (i : ι) : ∃ k : ℕ, g ^ l ^ k ∈ i.1.toSubgroup :=
+      (pq_iff l H _).mp i.2 g
+    choose k hk using hk
+    refine ⟨∑ i ∈ s, k i, ?_⟩
+    change g ^ l ^ (∑ i ∈ s, k i) ∈ K
+    by_contra hg
+    apply Set.disjoint_left.mp hs hg
+    simp only [Set.mem_iInter]
+    intro i hi
+    have hki : k i ≤ ∑ j ∈ s, k j := Finset.single_le_sum (fun _ _ => Nat.zero_le _) hi
+    have hpow : l ^ (∑ j ∈ s, k j) = l ^ k i * l ^ (∑ j ∈ s, k j - k i) := by
+      rw [← pow_add, Nat.add_sub_cancel' hki]
+    change g ^ l ^ (∑ j ∈ s, k j) ∈ i.1.toSubgroup
+    rw [hpow, pow_mul]
+    exact Subgroup.pow_mem _ (hk i) _
+  have heq : PL (l := l) H = proLResOf l H := by
+    have := hPn
     apply le_antisymm
     · intro x hx
       by_contra hxP
@@ -60,7 +124,7 @@ theorem UpperTheory.V.Pa.pl_props :
         (⟨proLResOf l H, hPc⟩ : ClosedSubgroup Γ)
       have h2 : x ∉ ((⟨proLResOf l H, hPc⟩ : ClosedSubgroup Γ) : Subgroup Γ) := hxP
       rw [hsI, Subgroup.mem_sInf] at h2
-      push_neg at h2
+      push Not at h2
       obtain ⟨K, ⟨hKo, hPK⟩, hxK⟩ := h2
       obtain ⟨U, hPU, hUK⟩ := exists_core K (proLResOf l H) hKo hPK
       exact hxK (hUK (mem_PL.mp hx U (hPcond U hPU)))
@@ -71,16 +135,16 @@ theorem UpperTheory.V.Pa.pl_props :
         { toOpenSubgroup := ⟨U.toSubgroup.comap H.subtype,
             U.toOpenSubgroup.isOpen.preimage continuous_subtype_val⟩
           isNormal' := Subgroup.Normal.comap U.isNormal' _ }
-      haveI : N.toSubgroup.Normal := N.isNormal'
+      have : N.toSubgroup.Normal := N.isNormal'
       have hpg : IsPGroup l (H ⧸ N.toSubgroup) :=
         (pq_iff l H _).mpr fun g => hU g g.2
       exact mem_proLRes.mp hy N hpg
   have hiff : ∀ U : OpenNormalSubgroup Γ,
-      PL l H ≤ U.toSubgroup ↔ ∀ h ∈ H, ∃ e : ℕ, h ^ l ^ e ∈ U := by
+      PL (l := l) H ≤ U.toSubgroup ↔ ∀ h ∈ H, ∃ e : ℕ, h ^ l ^ e ∈ U := by
     intro U
     refine ⟨fun h => ?_, cond_le U⟩
     exact hPcond U (heq ▸ h)
-  have hbot : PL l H = ⊥ ↔ IsProL l H := by
+  have hbot : PL (l := l) H = ⊥ ↔ IsProL l H := by
     rw [isProL_iff]
     constructor
     · intro hb N g

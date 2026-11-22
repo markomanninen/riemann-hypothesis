@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BddOfMemLdivSet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BddOfMemLdivSet
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 
@@ -73,14 +78,6 @@ theorem isUnit_of_norm_eq_one (x : 𝒪) (hx : ‖(x : K)‖ = 1) : IsUnit x := 
   refine IsUnit.of_mul_eq_one (⟨(x : K)⁻¹, (mem_ball _).2 (by rw [norm_inv, hx, inv_one])⟩ : 𝒪) ?_
   exact Subtype.ext (by simp [hx0])
 
-end GlobalTheory.GcdGen
-
-namespace GlobalTheory.GcdGen
-
-variable {K : Type} [NormedField K] [IsUltrametricDist K]
-
-local notation "𝒪" => Valuation.valuationSubring (NormedField.valuation (K := K))
-
 theorem wdiv [CompleteSpace K] (g h : K⟦X⟧) (d : ℕ) (hg1 : ∀ n, ‖coeff n g‖ ≤ 1)
     (hgd : ‖coeff d g‖ = 1) (hlt : ∀ n < d, ‖coeff n g‖ < 1) (hh : ∀ n, ‖coeff n h‖ ≤ 1) :
     ∃ q r : K⟦X⟧, (∀ n, ‖coeff n q‖ ≤ 1) ∧ (∀ n, ‖coeff n r‖ ≤ 1) ∧
@@ -134,7 +131,7 @@ theorem wdiv [CompleteSpace K] (g h : K⟦X⟧) (d : ℕ) (hg1 : ∀ n, ‖coeff
     rw [hord, ENat.toNat_coe] at hdl
     exact lt_of_lt_of_le hdl (by exact_mod_cast hn)
   · have e := congrArg (PowerSeries.map ι) hdiv.eq_mul_add
-    rw [hh', map_add, map_mul, hg'] at e
+    rw [hh', map_add (f := _), map_mul, hg'] at e
     exact e
 
 theorem first_unit_index (g : K⟦X⟧) (m : ℕ) (hg1 : ∀ n, ‖coeff n g‖ ≤ 1)

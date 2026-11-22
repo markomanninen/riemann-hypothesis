@@ -1,5 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatIffOfSelfDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatIffOfSelfDual
+
+import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GluedHermitianLatticeUnique
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +51,7 @@ theorem fin_cA (z : Formalism.L2.Theta.AE D) :
   | zero => simp only [map_zero]
   | tmul a e =>
     simp [cA, cjA, finPart, swapAE, Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR, Formalism.UG.sigR]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem finE_unitary (V : HSp D) (g : GA D V) :
     Formalism.UG.cT (cjA D) (finE V g).val * V.gram.map (inc D) * (finE V g).val = V.gram.map (inc D) := by
@@ -83,12 +89,15 @@ theorem imageSt (D : D7) : ImageSt D := by
     rw [mem_hat_lat, mem_hat_lat, inv_mul_mulVec]
   have hgram : GlobalTheory.StdFrames.gramOf V (finE V d * β) = 1 :=
     (gram_mul (cjA D) (V.gram.map (inc D)) (finE V d) β (finE_unitary V d)).trans hβ
-  refine ⟨⟨lat (finE V d * β), GlobalTheory.NormSum.AdLattice.lat_isLattice _, hcar⟩, fun Λ' hΛ' hc => ?_⟩
+  have hlat := GlobalTheory.NormSum.AdLattice.lat_isLattice (finE V d * β)
+  refine ⟨⟨lat (finE V d * β), hlat.toIsLattice, hcar⟩, fun Λ' hΛ' hc => ?_⟩
+  have hhat : hat (D := D) Λ' = hat (lat (finE V d * β)) := by
+    ext y
+    exact ((carries_iff _ _ _).1 hc y).trans (((carries_iff _ _ _).1 hcar y).symm)
   have heq : Λ' = lat (finE V d * β) := by
     ext x
-    rw [← inc_mem_hat_iff hΛ' x, ← inc_mem_hat_iff (GlobalTheory.NormSum.AdLattice.lat_isLattice (finE V d * β)) x]
-    rw [carries_iff] at hc hcar
-    rw [hc, hcar]
+    rw [← inc_mem_hat_iff hlat x, ← hhat]
+    exact ⟨inc_mem_hat, GlobalTheory.GlueUnique.mem_of_inc_mem_hat hΛ'.fg⟩
   rw [heq]
   exact isSelfDualC_lat (by rw [hgram]; exact unimod_one)
 

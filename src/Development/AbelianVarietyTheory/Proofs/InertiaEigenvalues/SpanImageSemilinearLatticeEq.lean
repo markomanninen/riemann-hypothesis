@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory
@@ -15,7 +20,7 @@ theorem span_image_span_eq_of_integral (K : Type) [Field K] [NumberField K] (O :
     induction hv using Submodule.span_induction with
     | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul a x _ hx =>
       obtain ⟨z, hz⟩ := he a
       have h1 : a • x = ((a : K)) • x := (algebraMap_smul K a x).symm

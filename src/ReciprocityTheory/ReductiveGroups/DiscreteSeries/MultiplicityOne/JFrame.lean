@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JFrameA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JFrameA
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,13 +43,13 @@ theorem stFrame : StFrame := by
       Finset.sum_ite_eq', Finset.mem_univ, if_true, Pi.smul_apply, smul_eq_mul]
     unfold embWb
     by_cases hi : r ≤ i.val ∧ i.val ≤ r + k
-    · rw [dif_pos ⟨hi, by omega, by omega⟩]
+    · rw [dite_eq_left ⟨hi, by omega, by omega⟩]
       rw [show ∀ p, (⟨(wI k r (Fin.last k)).val - r, p⟩ : Fin (k + 1)) = Fin.last k from
         fun p => Fin.ext (by simp only [Fin.val_last]; omega)]
       rw [frameMat_col]
       rw [show ∀ p, wI k r (⟨i.val - r, p⟩ : Fin (k + 1)) = i from
         fun p => Fin.ext (by rw [frame_wI_val]; show r + (i.val - r) = i.val; omega)]
-    · rw [dif_neg (fun h => hi h.1)]
+    · rw [dite_eq_right (fun h => hi h.1)]
       have hne : ¬ (i = wI k r (Fin.last k) ∧ ¬ (r ≤ i.val ∧ i.val ≤ r + k)) := by
         rintro ⟨rfl, h⟩
         exact h ⟨by omega, by omega⟩

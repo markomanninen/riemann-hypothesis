@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RestrictedTensorBasePointNormSq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VacuumFockOfThetaSquareIntegrable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RestrictedTensorBasePointNormSq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VacuumFockOfThetaSquareIntegrable
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting GlobalTheory.PlaceTensor
 open scoped TensorProduct ComplexOrder
@@ -130,22 +134,27 @@ theorem ipO_pureTensorO : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : In
     refine (Finset.prod_ne_zero_iff.mpr fun a _ => ?_) hd.symm
     rcases hεS1 ρ a with h | h <;> simp [h]
 
-  let a : FVar D T.rank S.rank → Module.End ℂ (thetaSub S T ψ) := fun k =>
+  let thetaSub : Submodule ℂ (WO S T → ℂ) :=
+    { carrier := {g | IsThetaFunO ψ S T g}
+      add_mem' := GlobalTheory.OrientedHeis.theta_add
+      zero_mem' := GlobalTheory.OrientedHeis.theta_zero
+      smul_mem' := fun c _ h => GlobalTheory.OrientedHeis.theta_smul c h }
+  let a : FVar D T.rank S.rank → Module.End ℂ (thetaSub) := fun k =>
     { toFun := fun g => ⟨aPlus (heisO ψ S T) θ k.1 (cplxO (sS k.1) (sT k.1)) (unitMap (BS k.1) (BT k.1) k.2.1 k.2.2) g,
         GlobalTheory.FockIndep.aPlus_theta hψ hθ k.1 (cplxO (sS k.1) (sT k.1)) (unitMap (BS k.1) (BT k.1) k.2.1 k.2.2) g.2⟩
       map_add' := fun g g' => Subtype.ext (GlobalTheory.FockIndep.aPlus_add hψ hθ k.1 (cplxO (sS k.1) (sT k.1))
         (unitMap (BS k.1) (BT k.1) k.2.1 k.2.2) g.2 g'.2)
       map_smul' := fun c g => Subtype.ext (GlobalTheory.FockIndep.aPlus_smul hψ hθ k.1 (cplxO (sS k.1) (sT k.1))
         (unitMap (BS k.1) (BT k.1) k.2.1 k.2.2) c g.2) }
-  let e : FVar D T.rank S.rank → Module.End ℂ (thetaSub S T ψ) := fun k =>
+  let e : FVar D T.rank S.rank → Module.End ℂ (thetaSub) := fun k =>
     { toFun := fun g => ⟨annih (heisO ψ S T) θ k.1 (cplxO (sS k.1) (sT k.1)) (unitMap (BS k.1) (BT k.1) k.2.1 k.2.2) g,
         GlobalTheory.FockIndep.annih_theta hψ hθ k.1 (cplxO (sS k.1) (sT k.1)) (unitMap (BS k.1) (BT k.1) k.2.1 k.2.2) g.2⟩
       map_add' := fun g g' => Subtype.ext (GlobalTheory.FockIndep.annih_add hψ hθ k.1 (cplxO (sS k.1) (sT k.1))
         (unitMap (BS k.1) (BT k.1) k.2.1 k.2.2) g.2 g'.2)
       map_smul' := fun c g => Subtype.ext (GlobalTheory.FockIndep.annih_smul hψ hθ k.1 (cplxO (sS k.1) (sT k.1))
         (unitMap (BS k.1) (BT k.1) k.2.1 k.2.2) c g.2) }
-  let b : FVar D T.rank S.rank → Module.End ℂ (thetaSub S T ψ) := fun k => (-(fockScale D k.1 : ℂ)⁻¹) • e k
-  have haa : ∀ i j g, a i (a j g) = a j (a i g) := fun i j g => Subtype.ext
+  let b : FVar D T.rank S.rank → Module.End ℂ (thetaSub) := fun k => (-(fockScale D k.1 : ℂ)⁻¹) • e k
+  have haa : ∀ i j (g : thetaSub), a i (a j g) = a j (a i g) := fun i j g => Subtype.ext
     (GlobalTheory.FockIndep.aPlus_comm' (hψ := hψ) (hθ := hθ) (hS := hcS) (hT := hcT) (τ := i.1)
       (z := unitMap (BS i.1) (BT i.1) i.2.1 i.2.2) (τ' := j.1) (z' := unitMap (BS j.1) (BT j.1) j.2.1 j.2.2) (hf := g.2))
   have hba : ∀ i j g, b i (a j g) = a j (b i g) + (if i = j then (1 : ℂ) else 0) • g := by
@@ -167,7 +176,7 @@ theorem ipO_pureTensorO : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : In
     change (-(fockScale D i.1 : ℂ)⁻¹) • annih (heisO ψ S T) θ i.1 (cplxO (sS i.1) (sT i.1))
       (unitMap (BS i.1) (BT i.1) i.2.1 i.2.2) f = 0
     rw [hvac i.1 (unitMap (BS i.1) (BT i.1) i.2.1 i.2.2), smul_zero])
-  obtain ⟨hmem, hip⟩ := fock_of_ccr (thetaSub S T ψ) (aPlusAll (heisO ψ S T) θ (fun τ => cplxO (sS τ) (sT τ)) BS BT)
+  obtain ⟨hmem, hip⟩ := fock_of_ccr (thetaSub) (aPlusAll (heisO ψ S T) θ (fun τ => cplxO (sS τ) (sT τ)) BS BT)
     a b (fun _ _ => rfl) haa (fun i j g => by convert hba i j g) ⟨f, hf⟩ hvac'
 
   have thd : ∀ τ z (x : WO S T → ℂ), IsThetaFunO ψ S T x →
@@ -182,7 +191,7 @@ theorem ipO_pureTensorO : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : In
         I • Formalism.IndefR.Datum.dRho (heisO ψ S T) θ τ (cplxO (sS τ) (sT τ) z) g := fun _ _ _ => rfl
   have hconj : ∀ τ, starRingEnd ℂ (-(fockScale D τ : ℂ)⁻¹) = -(fockScale D τ : ℂ)⁻¹ := fun τ => by
     rw [map_neg, map_inv₀, Complex.conj_ofReal]
-  have hadj1 : ∀ i (x y : thetaSub S T ψ), GlobalTheory.Ker.ipO μ 𝓕 (a i x) y = GlobalTheory.Ker.ipO μ 𝓕 x (b i y) := by
+  have hadj1 : ∀ i (x y : thetaSub), GlobalTheory.Ker.ipO μ 𝓕 (a i x) y = GlobalTheory.Ker.ipO μ 𝓕 x (b i y) := by
     intro i x y
     have hx : IsThetaFunO ψ S T x := x.2
     have hy : IsThetaFunO ψ S T y := y.2
@@ -196,7 +205,7 @@ theorem ipO_pureTensorO : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : In
       GlobalTheory.Size.ipO_add_right hψ hHaar hFD hx (thd _ _ _ hy) (GlobalTheory.OrientedHeis.theta_smul _ (thd _ _ _ hy)),
       GlobalTheory.Size.ipO_smul_right, hconj, Complex.conj_I]
     ring
-  have hadj2 : ∀ i (x y : thetaSub S T ψ), GlobalTheory.Ker.ipO μ 𝓕 x (a i y) = GlobalTheory.Ker.ipO μ 𝓕 (b i x) y := by
+  have hadj2 : ∀ i (x y : thetaSub), GlobalTheory.Ker.ipO μ 𝓕 x (a i y) = GlobalTheory.Ker.ipO μ 𝓕 (b i x) y := by
     intro i x y
     have hx : IsThetaFunO ψ S T x := x.2
     have hy : IsThetaFunO ψ S T y := y.2
@@ -237,7 +246,7 @@ theorem ipO_pureTensorO : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : In
         simp [hu]
     rw [hF]
     ring
-  · rw [map_add, GlobalTheory.Size.ipO_add_right hψ hHaar hFD (mem P) (mem p) (mem q), hp, hq]
-    simp only [fockIp, MvPolynomial.coeff_add, map_add, mul_add, add_mul, Finset.sum_add_distrib]
+  · rw [map_add (f := _), GlobalTheory.Size.ipO_add_right hψ hHaar hFD (mem P) (mem p) (mem q), hp, hq]
+    simp only [fockIp, MvPolynomial.coeff_add, map_add (f := _), mul_add, add_mul, Finset.sum_add_distrib]
 
 end GlobalTheory.FockIsometry

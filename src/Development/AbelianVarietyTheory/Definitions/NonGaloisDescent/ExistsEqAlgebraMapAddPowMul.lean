@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.InstTameDescentExponentDataPadicThree
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapMemNonZeroDivisorsAdicCompletion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.InstTameDescentExponentDataPadicThree
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapMemNonZeroDivisorsAdicCompletion
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,8 +99,8 @@ theorem toHat_derivative (f : Rpi O K l e) :
   obtain ⟨g, hg⟩ := Ideal.Quotient.mk_surjective (AdicCompletion.evalₐ _ (n + 1) (toHat O K l e f))
   rw [dHat, evalₐ_complDer _ _ hg.symm, evalₐ_toHat_eq_iff]
   obtain ⟨h, hh, H⟩ := (evalₐ_toHat_eq_iff l e (n + 1) f g).1 hg.symm
-  refine ⟨E K l e * PowerSeries.derivative K h +
-    h * (((n + 1 : ℕ) : K⟦X⟧) * PowerSeries.derivative K (E K l e)), add_mem
+  refine ⟨E K l e * PowerSeries.derivative (R := K) h +
+    h * (((n + 1 : ℕ) : K⟦X⟧) * PowerSeries.derivative (R := K) (E K l e)), add_mem
       (mul_mem (E_mem l e _) (derivative_mem_R l hh)) (mul_mem hh (mul_mem (natCast_mem _ _)
         (derivative_mem_R l (E_mem l e _)))), ?_⟩
   rw [coe_derAl, ← map_sub, H, Derivation.leibniz, derivative_pow]
@@ -129,8 +133,8 @@ theorem hat_N {f : K⟦X⟧} (hf : f ∈ RpiE O K l e) :
     show hat O l e (1 : K⟦X⟧) = 1 from (hat_coe l e 1).trans (map_one _), mul_one, map_pow] at h1
   exact ((IsLocalization.Away.algebraMap_isUnit (Ehat O K l e)).pow n).mul_left_cancel h1
 
-variable (K) in
 
+variable (K) in
 def Ezpow (i : ℤ) : K⟦X⟧ := (((isUnit_E (K := K) l e).unit ^ i : K⟦X⟧ˣ) : K⟦X⟧)
 
 omit [IsUltrametricDist K] [CompleteSpace K]
@@ -150,8 +154,8 @@ section DivE
 
 variable {R : Type} [Semiring R] [Module R (Vec K a ι)] [SMulCommClass R K⟦X⟧ (Vec K a ι)]
 
-variable (l e) in
 
+variable (l e) in
 def divE (n : ℕ) (W : Submodule R (Vec K a ι)) : Submodule R (Vec K a ι) where
   carrier := {y | E K l e ^ n • y ∈ W}
   add_mem' hv hw := by simpa only [Set.mem_ofPred_eq, smul_add] using W.add_mem hv hw
@@ -164,8 +168,8 @@ theorem mem_divE {n : ℕ} {W : Submodule R (Vec K a ι)} {y : Vec K a ι} :
 
 variable [Fact l.Prime] [NormedAlgebra ℚ_[l] K] [NeZero e]
 
-variable (l e) in
 
+variable (l e) in
 def shiftE (i : ℤ) (W : Submodule R (Vec K a ι)) : Submodule R (Vec K a ι) where
   carrier := {y | Ezpow K l e (-i) • y ∈ W}
   add_mem' hv hw := by simpa only [Set.mem_ofPred_eq, smul_add] using W.add_mem hv hw
@@ -178,8 +182,8 @@ theorem mem_shiftE {i : ℤ} {W : Submodule R (Vec K a ι)} {y : Vec K a ι} :
 
 end DivE
 
-variable (K a ι) in
 
+variable (K a ι) in
 def mulV (f : K⟦X⟧) : Module.End K (Vec K a ι) where
   toFun v := f • v
   map_add' := smul_add f
@@ -215,9 +219,6 @@ def PolEta (η : ℕ) : Submodule K P.Pol := (divE l e η P.Man).map P.cls
 
 def mulPol (f : Rpi O K l e) : Module.End K P.Pol :=
   P.Man.mapQ P.Man (mulV K a ι f) fun _ => P.smul_mem_Man f.2
-
-@[simp] theorem mulPol_cls (f : Rpi O K l e) (v : Vec K a ι) :
-    P.mulPol f (P.cls v) = P.cls ((f : K⟦X⟧) • v) := rfl
 
 def vPol : Module.End K P.Pol := P.mulPol (uIn _ ^ e)
 
@@ -318,7 +319,8 @@ theorem exists_sub_hatTot_mem_Mhat (η : ℕ) {w : ZMod a → ι → AhatE O K l
     have h2 : algebraMap _ _ (x τ i) = algebraMap _ _ (Ehat O K l e ^ η) * w τ i :=
       (hx τ i).trans (Algebra.smul_def (Ehat O K l e ^ η) (w τ i))
     have h3 : x τ i = ofAl O K l e (g τ i) + Ehat O K l e ^ η * x' τ i := hg τ i
-    rw [h3, map_add, map_mul, h1, add_comm, ← eq_sub_iff_add_eq, ← mul_sub, map_pow] at h2
+    set_option synthInstance.maxHeartbeats 200000 in
+      rw [h3, map_add (f := algebraMap (Ahat O K l e) (AhatE O K l e)), map_mul, h1, add_comm, ← eq_sub_iff_add_eq, ← mul_sub, map_pow] at h2
     exact ((IsLocalization.Away.algebraMap_isUnit (Ehat O K l e)).pow η).mul_left_cancel h2
 
 def connHat (w : ZMod a → ι → AhatE O K l e) : ZMod a → ι → AhatE O K l e :=
@@ -338,7 +340,8 @@ theorem hatTot_conn (hN : ∀ j, P.conn (bas j) ∈ P.Mext (RpiE O K l e)) {v : 
   have h3 : ∑ j, v τ j * P.conn (bas j) τ i =
       ((∑ j, ⟨_, h1 j⟩ * ⟨_, h2 j⟩ : RpiE O K l e) : K⟦X⟧) := by simp
   change hat O l e (P.conn v τ i) = NHatE O K l e (hat O l e _) + ∑ j, hat O l e _ * hat O l e _
-  rw [conn_apply_eq, hat_add l e (N_mem_RpiE l e (h1 i))
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [conn_apply_eq, hat_add l e (N_mem_RpiE l e (h1 i))
     (sum_mem fun j _ => mul_mem (h1 j) (h2 j)), hat_N l e (h1 i), h3, hat_coe, map_sum]
   simp only [map_mul, hat_of_mem l e (h1 _), hat_of_mem l e (h2 _)]
 
@@ -366,12 +369,6 @@ theorem app_mem_EM {η : ℕ} {y : Vec K a ι} (hy : y ∈ P.EM η) : F.app y �
   rw [mem_divE, ← map_smul]
   exact F.app_mem_M hy
 
-theorem onPol_mem_PolEta {η : ℕ} {w : P.Pol} (hw : w ∈ P.PolEta η) : F.onPol w ∈ Q.PolEta η := by
-  obtain ⟨y, hy, rfl⟩ := hw
-  refine ⟨F.app y, ?_, rfl⟩
-  rw [SetLike.mem_coe, mem_divE, ← map_smul]
-  exact F.app_mem_Mext (A_le_Rpi l e) hy
-
 omit [NormedAlgebra ℚ_[l] K] [NeZero e]
 
 def imM : Submodule (A O K) (Vec K a κ) := P.M.map (F.app.restrictScalars (A O K))
@@ -379,8 +376,6 @@ def imM : Submodule (A O K) (Vec K a κ) := P.M.map (F.app.restrictScalars (A O 
 def imL : Submodule (A O K) (Vec K a κ) := P.L.map (F.app.restrictScalars (A O K))
 
 abbrev coker : Type := Q.M ⧸ F.imM.submoduleOf Q.M
-
-abbrev cokerL : Type := Q.L ⧸ F.imL.submoduleOf Q.L
 
 end Hom
 

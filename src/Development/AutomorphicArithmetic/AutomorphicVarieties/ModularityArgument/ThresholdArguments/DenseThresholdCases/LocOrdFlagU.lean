@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OrdFlagU
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LocCharDR
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OrdFlagU
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LocCharDR
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -24,7 +28,8 @@ private theorem exists_trace {k U D : Type} [Field k] [Field U] [AddCommGroup D]
     have h2 := Matrix.eq_zero_of_forall_pow_sum_mul_pow_eq_zero (f := fun i : Fin n => t i)
       (v := fun i : Fin n => f ((φ ^ (i : ℕ)) x)) ht (fun j => by
         have h3 := congrArg f (hc j)
-        rw [map_zero, LinearMap.sum_apply, map_sum, Finset.sum_range] at h3
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_zero, LinearMap.sum_apply, map_sum, Finset.sum_range] at h3
         rw [← h3]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [hφ, mul_comm, ← smul_eq_mul, ← map_smul]
@@ -36,7 +41,8 @@ private theorem exists_trace {k U D : Type} [Field k] [Field U] [AddCommGroup D]
     rw [hφ, htn, End.mul_apply, hp, pow_zero, one_mul]
   have h5 := Finset.sum_range_succ (fun i => (φ ^ i * m (t 0 ^ j)) x) n
   rw [Finset.sum_range_succ', h4, add_left_inj] at h5
-  rw [LinearMap.sum_apply, map_sum, ← h5]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.sum_apply, map_sum, ← h5]
   conv_rhs => rw [h5, ← h5]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [pow_succ', mul_assoc, End.mul_apply φ]
@@ -231,18 +237,17 @@ private theorem core (hB : DeRhamPotSemistable) {n : ℕ} (r : ↥(Dec (F := F) 
 omit [IsAlgClosure F Ω] in
 private theorem ordChar_inv {a : ↥(Weil h) →* (w.adicCompletion F)ˣ} {ω : (w.adicCompletion F)ˣ →* ℂˣ}
     {hh : (F →+* Qbar l) → ℤ} {ψ : ↥(Dec (F := F) A) →* (Qbar l)ˣ} (H : OrdChar ι a ω hh ψ) :
-    OrdChar ι a ω⁻¹ (-hh) ψ⁻¹ where
-  smooth := by
-    have := H.smooth
-    unfold GlobalTheory.SmGL.IsSmoothChar at this ⊢
-    convert this using 1
+    OrdChar ι a ω⁻¹ (-hh) ψ⁻¹ := by
+  refine ⟨?_, H.cont.inv, ?_⟩
+  · have hsmooth := H.smooth
+    unfold GlobalTheory.SmGL.IsSmoothChar at hsmooth ⊢
+    convert hsmooth using 1
     ext x
     simp
-  cont := H.cont.inv
-  val := fun s g hg hs => by
-    have := H.val s g hg hs
-    simp only [MonoidHom.comp_apply, Units.coeHom_apply, MonoidHom.inv_apply, Units.val_inv_eq_inv_val] at this ⊢
-    rw [this, mul_inv, map_inv₀]
+  · intro s g hg hs
+    have hval := H.val s g hg hs
+    simp only [MonoidHom.comp_apply, Units.coeHom_apply, MonoidHom.inv_apply, Units.val_inv_eq_inv_val] at hval ⊢
+    rw [hval, mul_inv, map_inv₀]
     congr 1
     unfold algPow
     rw [← finprod_inv_distrib]

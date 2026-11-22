@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NotSqMulUnit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NotSqMulUnit
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 
 namespace GlobalTheory.SqrtNegRam

@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.OrderInfRes
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.OrderScalars
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.UnramifiedRes
-import GroundTheory.LocalFields.UnramifiedExistence
-import GroundTheory.LocalFields.FiniteExtension
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.OrderInfRes
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.OrderScalars
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.UnramifiedRes
+public import GroundTheory.LocalFields.UnramifiedExistence
+public import GroundTheory.LocalFields.FiniteExtension
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -122,6 +127,7 @@ theorem finrank_le_natCard_groupCohomology_two_galUnits :
     exact this ▸ hy
   have : IsUnramified L M0 := by
     have h1 : IsUnramified L L⟮ζM⟯ := (isUnramified_iff _ _).2 hF.1.ramificationIndex_eq_one
+    set_option synthInstance.maxHeartbeats 200000 in
     have hfr : Module.finrank L⟮ζM⟯ M0 = 1 := by
       have h := Module.finrank_mul_finrank L L⟮ζM⟯ M0
       have h' : Module.finrank L L⟮ζM⟯ = Module.finrank L M0 := by

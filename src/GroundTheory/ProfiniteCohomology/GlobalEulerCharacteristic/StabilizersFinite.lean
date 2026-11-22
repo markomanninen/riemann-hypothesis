@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.StabilizersDefs
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.OrbitInvariants
-import GroundTheory.ProfiniteCohomology.RealPlaces.VanishingMackeyPlaces
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.StabilizersDefs
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.OrbitInvariants
+public import GroundTheory.ProfiniteCohomology.RealPlaces.VanishingMackeyPlaces
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -79,15 +84,15 @@ theorem stabilizer_gsLocalPlace (v : S) :
     MulAction.stabilizer (L ≃ₐ[F] L) (gsLocalPlace hL ιs v 1) = gsDecompGroup hL ιs v :=
   Subgroup.ext fun τ => mem_stabilizer_gsLocalPlace_iff hL ιs v τ
 
-omit [NumberField F] [NumberField L] [IsGalois F L] in
 
+omit [NumberField F] [NumberField L] [IsGalois F L] in
 theorem galSmul_mem_placesOver (τ : L ≃ₐ[F] L) {w : HeightOneSpectrum (𝓞 L)}
     (hw : w ∈ placesOver S) : τ • w ∈ placesOver S := by
   obtain ⟨v, hv, hlies⟩ := hw
   exact ⟨v, hv, (τ • (⟨w, hlies⟩ : PlacesOver L v)).2⟩
 
-variable (S) in
 
+variable (S) in
 abbrev placesOverAction : MulAction (L ≃ₐ[F] L) (placesOver S : Set (HeightOneSpectrum (𝓞 L))) :=
   stableMulAction (placesOver S) fun τ _ hw => galSmul_mem_placesOver τ hw
 
@@ -103,8 +108,8 @@ theorem stabilizer_gsPlaceAbove (v : S) :
   rw [mem_stabilizer_iff, mem_stabilizer_iff, Subtype.ext_iff, Subtype.ext_iff]
   rfl
 
-omit [IsGalois F L] in
 
+omit [IsGalois F L] in
 theorem finite_placesOver [Finite S] :
     Finite (placesOver S : Set (HeightOneSpectrum (𝓞 L))) := by
   refine Finite.of_surjective (fun p : Σ v : S, PlacesOver L (v : HeightOneSpectrum (𝓞 F)) =>

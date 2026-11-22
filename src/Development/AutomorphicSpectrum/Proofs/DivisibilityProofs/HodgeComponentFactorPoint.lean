@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.RootOnFund
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.RootOnFund
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,7 @@ theorem factor_of_epi {O F Ω₀ Ω : Type} [CommRing O] [Field F] [Field Ω₀]
             map_one' := inj (by rw [hg, map_one, map_one])
             map_mul' := fun x y => inj (by rw [hg, map_mul, map_mul, hg, hg])
             map_zero' := inj (by rw [hg, map_zero, map_zero])
-            map_add' := fun x y => inj (by rw [hg, map_add, map_add, hg, hg]) }, ?_⟩
+            map_add' := fun x y => inj (by rw [hg, map_add (f := _), map_add (f := _), hg, hg]) }, ?_⟩
   ext o
   apply inj
   change fn (g (β o)) = fn (a o)

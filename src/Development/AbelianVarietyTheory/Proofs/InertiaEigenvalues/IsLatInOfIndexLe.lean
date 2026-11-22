@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LengthCommensurableOfIsLatIn
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LenRBaseChangeSubquotient
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthCommensurableSpanSpanOfDetNeZero
-import Development.AbelianVarietyTheory.Counterexamples.NonGaloisSurvey.MemTypeSubspaceIffUnipotentCharacter
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LengthCommensurableOfIsLatIn
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LenRBaseChangeSubquotient
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthCommensurableSpanSpanOfDetNeZero
+public import Development.AbelianVarietyTheory.Counterexamples.NonGaloisSurvey.MemTypeSubspaceIffUnipotentCharacter
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,7 +88,7 @@ theorem torsionFree_tensor {O R W : Type} [CommRing O] [IsDomain O] [CommRing R]
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a w => simp [TensorProduct.smul_tmul']
-    | add a b ha hb => rw [map_add, ha, hb, smul_add]
+    | add a b ha hb => rw [map_add (f := _), ha, hb, smul_add]
   rw [this, hx, map_zero]
 
 section Tower
@@ -98,7 +102,7 @@ theorem cancel_one_tmul (x : R ⊗[O] W) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a w => simp [Algebra.smul_def]
-  | add a b ha hb => rw [TensorProduct.tmul_add, map_add, map_add, ha, hb]
+  | add a b ha hb => rw [TensorProduct.tmul_add, map_add (f := _), map_add (f := _), ha, hb]
 
 theorem span_rTensor (L : Submodule R (R ⊗[O] W)) :
     Submodule.span S ((LinearMap.rTensor W (IsScalarTower.toAlgHom O R S).toLinearMap) '' (L : Set (R ⊗[O] W))) =
@@ -155,7 +159,7 @@ theorem index_unscale {R W : Type} [CommRing R] [IsDomain R] [IsDiscreteValuatio
     (hB : IsLatIn B V) (hT : IsLatIn T V) (hL : IsLatIn L V) {c : R} (hc : c ≠ 0) {e : ℝ}
     (h : sIdx l B (L.map (c • LinearMap.id)) ≤ sIdx l B (T.map (c • LinearMap.id)) + e) : sIdx l T L ≤ e := by
   have hi : Function.Injective (c • (LinearMap.id : W →ₗ[R] W)) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro w hw
     exact htf c w hc hw
   rw [(sIdx_add_and_mono R _ l _ _ _ _ hB (isLatIn_smul hT hc) (isLatIn_smul hL hc)).1, sIdx_map _ hi] at h
@@ -238,10 +242,6 @@ theorem card_ne_zero (i : X.Tw) : ((D.what₂.restRowsFiniteGroupCard : ℕ) : X
 theorem AO_apply (i : X.Tw) (j : ℕ) (b : Bool) (x : Y.Fm i j b) :
     AO Y i j b x = ((D.what₂.restRowsFiniteGroupCard : ℕ) : X.O i) • eG Y i j b x := rfl
 
-theorem eG_idem (i : X.Tw) (j : ℕ) (b : Bool) (x : Y.Fm i j b) : eG Y i j b (eG Y i j b x) = eG Y i j b x := by
-  have he : eG Y i j b = act Y i j b (Y.eAlg i b) := rfl
-  rw [he, ← Module.End.mul_apply, ← map_mul, Y.eAlg_idem]
-
 theorem zO_eq (i : X.Tw) (j : ℕ) (b : Bool) (z : MonoidAlgebra (X.O i) (G0g N))
     (hz : MonoidAlgebra.map (algebraMap (X.O i) (FractionRing (X.O i))).toAddMonoidHom z =
       ((D.what₂.restRowsFiniteGroupCard : ℕ) : FractionRing (X.O i)) • Y.eAlg i b) : zO Y i j b z = AO Y i j b := by
@@ -271,7 +271,7 @@ theorem zO_mem (i : X.Tw) (j : ℕ) (b : Bool) (L : Submodule (X.O i) (Y.Fm i j 
   rw [h]
   induction z using MonoidAlgebra.induction_linear with
   | zero => simp
-  | add f g hf hg => rw [map_add, map_add]; exact L.add_mem hf hg
+  | add f g hf hg => rw [map_add (f := _), map_add (f := _)]; exact L.add_mem hf hg
   | single g r =>
     have : act Y i j b (MonoidAlgebra.mapRingHom (G0g N) (algebraMap (X.O i) (FractionRing (X.O i)))
         (MonoidAlgebra.single g r)) x = r • Y.actG i j b g x := by
@@ -453,46 +453,6 @@ theorem psiAt_comp {Γ Δ A : Type} [Group Γ] [Group Δ] [CommGroup A] (b : Boo
     psiAt b (χ.comp f) = (psiAt b χ).comp f := by
   cases b <;> rfl
 
-theorem export_at_setting (bkP : BKPh X) (E : ExpDat Y) (N0 : X.Tw → ℕ) (h2 : TwistingCharacterExistence Y bkP N0) (h3 : IsotypicPartsInternalDirectSum Y E)
-    (h5 : GroupAlgebraIntegrality Y) (h7 : admT4 Y E) (h10 : TwistedSeriesSpecialisation Y) (h11 : GoodLatticePoints Y) (i : X.Tw) (hi : X.NonzeroIndexPlace i) :
-    TwistTheoremAtIndex Y bkP E N0 i := by
-  classical
-  intro hs eps' he hF S hS A
-  choose z hz using fun b => (h5 i hi b).1
-  have hAB := fun j hj b => abHyp_fam Y E i hi j hj b z (hz b) S h3 h5 h11 (hF j hj b) (hS j hj b)
-  obtain ⟨Q, k, ψ', hok, ha, hc, hd, M, χ, hχ, epsB, h0, hsum, H⟩ :=
-    h2 i hi hs eps' he (fam Y i z S) hAB (levs Y i S ∪ A)
-  have key : ∀ j ∈ Finset.Icc 1 D.R.m, ∀ b : Bool, _ := fun j hj b => by
-    obtain ⟨htw, hu, hdis⟩ := twOK_of_psiOk i _ Q k ψ' hok b
-    refine export_at Y E i hi j hj b (S j b) h3 h7 (hF j hj b) (hS j hj b) k Q _ htw hu (epsB j b) ?_
-    intro T hT hle
-    obtain ⟨-, hfg, hsp, -⟩ := h3 i hi j hj b
-    have hA : (fam Y i z S).A j b = AO Y i j b := zO_eq Y i j b _ (hz b)
-    have hTh : (fam Y i z S).Th j b = (Th Y i j b (SgJ Y E i j b)).map (AO Y i j b) := by
-      rw [← (hS j hj b).2.2, RFam.Th, hA]; rfl
-    rw [← hTh]
-    refine H j hj b T ?_ fun a ha => ?_
-    · have : Submodule.span (FractionRing (X.O i)) ((fam Y i z S).B j b : Set (Y.Fm i j b)) = V0 Y i j b :=
-        span_of_isLatIn (isLatIn_B Y i j b hfg hsp)
-      rw [this]; exact hT
-    · have ha' : a ∈ S j b := ha
-      rw [hχ, psiAt_comp] at htw hle
-      have hlev : Disjoint Q (Y.lev i j b a) := by
-        refine hdis.mono_right (le_trans ?_ Finset.subset_union_left)
-        intro v hv
-        simp only [levs, Finset.mem_biUnion]
-        exact ⟨j, hj, b, Finset.mem_univ _, a, ha', hv⟩
-      rw [hA]
-      refine hle ⟨_, ?_, rfl⟩
-      refine Submodule.span_mono ?_ (h10 i hi j hj b k Q M _ htw a hlev)
-      exact Set.biUnion_subset_biUnion_left (Set.singleton_subset_iff.2 ((hS j hj b).1 ha'))
-  exact ⟨Q, k, ψ', hok, ⟨epsB, h0, hsum, fun j hj b => (key j hj b).1⟩, fun j hj b => (key j hj b).2, ha, hc, hd⟩
-
 end GlobalTheory.ExportFromInputs
-
-theorem GlobalTheory.export_of_inputs :
-    ∀ (D : Formalism.BasicNotions.D7) (bkP : Formalism.MainNotions.BlochKatoReduction.BK D) (E : Formalism.MainNotions.IntegralHeckeForms.XD D), Formalism.MainNotions.IntegralHeckeForms.Stmt D bkP E := by
-  rintro D bkP E N0 ⟨-, h2, h3, -, h5, h7, -, -, h10, h11⟩ i hi
-  exact GlobalTheory.ExportFromInputs.export_at_setting D.nexp _ E N0 h2 h3 h5 h7 h10 h11 i hi
 
 end

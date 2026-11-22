@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ClosedDiscGaugeCompletionZeroOnePropertiesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ClosedDiscGaugeCompletionZeroOnePropertiesStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem Div.add {t : ℝ} {y y'} (h : Div l ρ E e t y) (h' : Div l ρ E e t y')
   obtain ⟨q, hq, c, hc, rfl⟩ := h
   obtain ⟨q', hq', c', hc', rfl⟩ := h'
   refine ⟨q + q', add_mem hq hq', c + c', fun i => add_mem (hc i) (hc' i), ?_⟩
-  simp only [Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
   ring
 
 theorem Div.zero {t : ℝ} : Div l ρ E e t 0 :=
@@ -77,7 +81,8 @@ theorem div_monomial (hl : 0 < l) (he : 0 < e) (hρ0 : 0 < ρ) (hρ1 : ρ ≤ 1)
     refine Div.mono (s := 1) ⟨algebraMap _ _ q, by simpa using alg_mem_ball (l := l) (X : R⟦X⟧) ρ 0 q,
       fun i => algebraMap _ _ (c i), fun i => by simpa using alg_mem_ball (l := l) (0 : R) 1 0 (c i), ?_⟩ ?_
     · rw [h]
-      simp only [preMap_alg, map_add, map_mul, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [preMap_alg, map_add (f := _), map_mul, map_sum]
     · rw [one_le_div (by positivity)]
       exact pow_le_pow_of_le_one h0.le h1 hb.le
   · obtain ⟨b, rfl⟩ := Nat.exists_eq_add_of_le' hb
@@ -85,7 +90,7 @@ theorem div_monomial (hl : 0 < l) (he : 0 < e) (hρ0 : 0 < ρ) (hρ1 : ρ ≤ 1)
         algebraMap R⟦X⟧ _ E * algebraMap R⟦X⟧ _ (X ^ b * a) +
         algebraMap R⟦X⟧ _ ((l : R⟦X⟧) ^ 1) * IsLocalization.Away.invSelf (l : R⟦X⟧) ^ 0 *
           algebraMap R⟦X⟧ _ (X ^ b * (-z * a)) := by
-      rw [pow_zero, mul_one, ← map_mul, ← map_mul, ← map_add, hE]
+      rw [pow_zero, mul_one, ← map_mul, ← map_mul, ← map_add (f := _), hE]
       congr 1
       ring
     rw [e1]
@@ -117,12 +122,12 @@ theorem div_ball (hl : 0 < l) (hρ0 : 0 < ρ)
 
 theorem norm_C_zero : ‖toDisc l (X : R⟦X⟧) ρ (C (0 : R))‖ ≤ ((1 : ℝ≥0) : ℝ) := norm_toDisc_le _
 
-variable (l ρ R) in
 
+variable (l ρ R) in
 def cMap [Fact l.Prime] : Disc l (0 : R) 1 →+* Disc l (X : R⟦X⟧) ρ :=
   Disc.map (u := (0 : R)) (ρ := 1) (C : R →+* R⟦X⟧) norm_C_zero
 
-theorem isDiscMap_cMap [Fact l.Prime] : IsDiscMap (C : R →+* R⟦X⟧) (cMap l R ρ) := isDiscMap_map _ _
+theorem isDiscMap_cMap [Fact l.Prime] : IsDiscMap (l := _) (u := _) (ρ := _) (C : R →+* R⟦X⟧) (cMap l R ρ) := isDiscMap_map _ _
 
 theorem div_disc [hl : Fact l.Prime] (hρ0 : 0 < ρ)
     (hm : ∀ (b : ℕ) (a : R⟦X⟧), Div l ρ E e ((ρ : ℝ) ^ b / (ρ : ℝ) ^ e) (algebraMap R⟦X⟧ _ (X ^ b * a)))
@@ -130,7 +135,7 @@ theorem div_disc [hl : Fact l.Prime] (hρ0 : 0 < ρ)
       y = toDisc l X ρ E * q + ∑ i, cMap l R ρ (c i) * toDisc l X ρ (X ^ (i : ℕ)) := by
   have h0 : (0 : ℝ) < ρ := hρ0
   set ι : Disc l (0 : R) 1 →+* Disc l (X : R⟦X⟧) ρ := cMap l R ρ with hι
-  have hιm : IsDiscMap C ι := isDiscMap_cMap
+  have hιm : IsDiscMap (l := _) (u := _) (ρ := _) C ι := isDiscMap_cMap
   have hιp : ∀ x, ι (ofPre l (0 : R) 1 x) = ofPre l X ρ (preMap l (0 : R) 1 (X : R⟦X⟧) ρ C x) := by
     have e : ι.comp (ofPre l (0 : R) 1) = (ofPre l X ρ).comp (preMap l (0 : R) 1 (X : R⟦X⟧) ρ C) :=
       IsLocalization.ringHom_ext (Submonoid.powers (l : R)) (RingHom.ext fun a =>
@@ -141,7 +146,7 @@ theorem div_disc [hl : Fact l.Prime] (hρ0 : 0 < ρ)
     { toFun := fun g => toDisc l X ρ E * g.1 + ∑ i, ι (g.2 i) * toDisc l X ρ (X ^ (i : ℕ))
       map_zero' := by simp
       map_add' := fun g g' => by
-        simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+        simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
         ring }
   have hb : ∀ g, ‖f0 g‖ ≤ (1 + e) * ‖g‖ := fun g => by
     refine (norm_add_le _ _).trans ?_
@@ -164,7 +169,8 @@ theorem div_disc [hl : Fact l.Prime] (hρ0 : 0 < ρ)
       have hp : 0 < 2 * ‖ofPre l X ρ x‖ / (ρ : ℝ) ^ e := by positivity
       refine ⟨(ofPre _ _ _ q, fun i => ofPre _ _ _ (c i)), ?_, ?_⟩
       · conv_rhs => rw [h2]
-        simp only [f0, AddMonoidHom.coe_mk, ZeroHom.coe_mk, map_add, map_mul, map_sum, hιp]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [f0, AddMonoidHom.coe_mk, ZeroHom.coe_mk, map_add (f := _), map_mul, map_sum, hιp]
         rfl
       · rw [div_mul_eq_mul_div]
         refine max_le ?_ ((pi_norm_le_iff_of_nonneg hp.le).2 fun i => ?_)
@@ -175,7 +181,8 @@ theorem div_disc [hl : Fact l.Prime] (hρ0 : 0 < ρ)
 
 theorem coe_sum_fin (c : Fin e → R) :
     ((∑ i, Polynomial.C (c i) * Polynomial.X ^ (i : ℕ) : Polynomial R) : R⟦X⟧) = ∑ i, C (c i) * X ^ (i : ℕ) := by
-  rw [← Polynomial.coeToPowerSeries.ringHom_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Polynomial.coeToPowerSeries.ringHom_apply, map_sum]
   simp [Polynomial.coeToPowerSeries.ringHom_apply]
 
 theorem div_disc_poly [hl : Fact l.Prime] (hρ0 : 0 < ρ)
@@ -202,7 +209,8 @@ theorem div_disc_poly [hl : Fact l.Prime] (hρ0 : 0 < ρ)
   choose w hw using hw
   refine ⟨((l : ℕ) : Disc l (X : R⟦X⟧) ρ) ^ (k + 1) * q, k + 1,
     ∑ i, Polynomial.C (w i) * Polynomial.X ^ (i : ℕ), Polynomial.degree_sum_fin_lt w, ?_⟩
-  rw [h, coe_sum_fin, map_sum, mul_add, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, coe_sum_fin, map_sum, mul_add, Finset.mul_sum]
   congr 1
   · ring
   · refine Finset.sum_congr rfl fun i _ => ?_

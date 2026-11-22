@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.ThetaFixedGlobalOfTraceInputs
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.ThetaFixedGlobalOfTraceInputs
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,16 +71,13 @@ theorem exists_integral_eq_sum {G : Type} [Group G] [TopologicalSpace G] [Contin
         integral_congr_ae (Filter.Eventually.of_forall hsum)
     _ = ∑ q ∈ Q, ∫ g,
         ({g : G | (QuotientGroup.mk g : G ⧸ K) = q}).indicator (fun _ => F (Quotient.out q)) g ∂μ :=
-        integral_finset_sum Q hint
+        integral_finsetSum Q hint
     _ = _ := by
       rw [Finset.mul_sum]
       refine Finset.sum_congr rfl fun q _ => ?_
       rw [integral_indicator_const _ (hmeas q), Measure.real, Measure.real, hvol, Complex.real_smul]
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
-
-def transOp (S : Finset (GL (Fin n) (Af E))) (c : GL (Fin n) (Af E) → ℂ) : Module.End ℂ (Sm E n) :=
-  ∑ s ∈ S, c s • finRep E n s
 
 end GlobalTheory.CompanionTheory.HeckeStabY
 

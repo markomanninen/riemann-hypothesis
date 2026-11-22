@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StSemilocResidueFrac
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PSemilocRankAdjoin
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StSemilocResidueFrac
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PSemilocRankAdjoin
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -30,7 +35,7 @@ theorem SemilocResidueAdjoin.exists_int_mul {σ F : Type} [Field F]
     obtain ⟨g₁, d₁, h₁, e₁⟩ := hf
     obtain ⟨g₂, d₂, h₂, e₂⟩ := hg
     refine ⟨C d₂ * g₁ + C d₁ * g₂, d₁ * d₂, by push_cast; exact mul_ne_zero h₁ h₂, ?_⟩
-    rw [map_add, map_mul, map_mul, map_C, map_C, ← e₁, ← e₂, eq_intCast, eq_intCast]
+    rw [map_add (f := _), map_mul, map_mul, map_C, map_C, ← e₁, ← e₂, eq_intCast, eq_intCast]
     push_cast
     rw [C_mul]
     ring

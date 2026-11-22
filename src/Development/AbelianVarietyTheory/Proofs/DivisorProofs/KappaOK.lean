@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsQProjOverCompImmersion
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormMulTransposeMulFormInvMem
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsAdditiveOfUniversal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegProd
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsQProjOverCompImmersion
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormMulTransposeMulFormInvMem
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsAdditiveOfUniversal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegProd
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,14 +64,14 @@ def incZ : A ⟶ Zob A B := mkZ A B (fun i => if i = 0 then 𝟙 A else 1) (fun 
 def prZ : Zob A B ⟶ A := pa A B 0
 
 def zCls {P : LB (A ⊗ A).left} (hP : P.IsLB) {Q : LB (A ⊗ B).left} (hQ : Q.IsLB) (d : ℕ) (mu : B ⟶ A) :
-    Pic (Zob A B ⊗ Zob A B).left :=
-  (∑ i, pull (lift (fst (Zob A B) (Zob A B) ≫ pa A B i) (snd (Zob A B) (Zob A B) ≫ pa A B i)).left
+    CechPic.Pic (Zob A B ⊗ Zob A B).left :=
+  (∑ i, CechPic.pull (lift (fst (Zob A B) (Zob A B) ≫ pa A B i) (snd (Zob A B) (Zob A B) ≫ pa A B i)).left
       (cls P hP)) +
-    (∑ i, ∑ j, quat d j i • pull (lift (fst (Zob A B) (Zob A B) ≫ pa A B i)
+    (∑ i, ∑ j, quat d j i • CechPic.pull (lift (fst (Zob A B) (Zob A B) ≫ pa A B i)
       (snd (Zob A B) (Zob A B) ≫ pb A B j)).left (cls Q hQ)) +
-    (∑ i, ∑ j, quat d j i • pull (lift (snd (Zob A B) (Zob A B) ≫ pa A B i)
+    (∑ i, ∑ j, quat d j i • CechPic.pull (lift (snd (Zob A B) (Zob A B) ≫ pa A B i)
       (fst (Zob A B) (Zob A B) ≫ pb A B j)).left (cls Q hQ)) +
-    ∑ j, pull (lift (snd (Zob A B) (Zob A B) ≫ pb A B j ≫ mu) (fst (Zob A B) (Zob A B) ≫ pb A B j)).left
+    ∑ j, CechPic.pull (lift (snd (Zob A B) (Zob A B) ≫ pb A B j ≫ mu) (fst (Zob A B) (Zob A B) ≫ pb A B j)).left
       (cls Q hQ)
 
 def zP {P : LB (A ⊗ A).left} (hP : P.IsLB) {Q : LB (A ⊗ B).left} (hQ : Q.IsLB) (d : ℕ) (mu : B ⟶ A) :

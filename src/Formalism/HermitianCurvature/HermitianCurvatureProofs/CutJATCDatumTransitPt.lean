@@ -1,10 +1,14 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDatumTransitFam
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepDatumUnit
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepThtFacts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameEntries
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParametersUPrimeForULower
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDatumTransitFam
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepDatumUnit
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepThtFacts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameEntries
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParametersUPrimeForULower
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField
 open scoped ComplexConjugate Matrix
@@ -20,15 +24,15 @@ def mk3 (k : ℕ) {n : ℕ} (v0 : Fin n → ℂ) (F : Fin (k - 1) → Fin n → 
 
 theorem three_part_frame_zero {n : ℕ} {v0 zz : Fin n → ℂ} {F : Fin (k - 1) → Fin n → ℂ} {a : Fin (k + 1)} (h : a.val = 0) :
     mk3 k v0 F zz a = v0 := by
-  unfold mk3; rw [dif_pos h]
+  unfold mk3; rw [dite_eq_left h]
 
 theorem three_part_frame_last {n : ℕ} {v0 zz : Fin n → ℂ} {F : Fin (k - 1) → Fin n → ℂ} (hk : 1 ≤ k) {a : Fin (k + 1)}
     (h : a.val = k) : mk3 k v0 F zz a = zz := by
-  unfold mk3; rw [dif_neg (by omega), dif_pos h]
+  unfold mk3; rw [dite_eq_right (by omega), dite_eq_left h]
 
 theorem three_part_frame_middle {n : ℕ} {v0 zz : Fin n → ℂ} {F : Fin (k - 1) → Fin n → ℂ} {a : Fin (k + 1)} (h0 : a.val ≠ 0)
     (hk : a.val ≠ k) : mk3 k v0 F zz a = F ⟨a.val - 1, by have := a.isLt; omega⟩ := by
-  unfold mk3; rw [dif_neg h0, dif_neg hk]
+  unfold mk3; rw [dite_eq_right h0, dite_eq_right hk]
 
 theorem three_part_frame_orthonormal (hk : 2 ≤ k) {v0 zz : Fin (2 * r + k + 1) → ℂ} {F : Fin (k - 1) → Fin (2 * r + k + 1) → ℂ}
     (hv0 : inWb k r v0) (hzz : inWb k r zz) (hF : ∀ j, inWb k r (F j))

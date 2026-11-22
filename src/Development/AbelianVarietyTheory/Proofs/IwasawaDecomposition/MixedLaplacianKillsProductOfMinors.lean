@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqTopOfTranslates
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqTopOfTranslates
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ theorem pderiv_comm {σ R : Type*} [CommRing R] (i j : σ) (f : MvPolynomial σ 
   classical
   induction f using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p k hp =>
     have h : ∀ a b : σ, MvPolynomial.pderiv a (MvPolynomial.pderiv b (MvPolynomial.X k : MvPolynomial σ R)) = 0 := by
       intro a b
@@ -24,7 +28,7 @@ theorem pderiv_comm {σ R : Type*} [CommRing R] (i j : σ) (f : MvPolynomial σ 
       by_cases hk : k = b
       · subst hk; simp
       · simp [Pi.single_eq_of_ne hk]
-    simp only [Derivation.leibniz, map_add, smul_eq_mul, hp, h]
+    simp only [Derivation.leibniz, map_add (f := _), smul_eq_mul, hp, h]
     ring
 
 def ker {σ : Type*} (v : σ) : Subring (MvPolynomial σ ℂ) where

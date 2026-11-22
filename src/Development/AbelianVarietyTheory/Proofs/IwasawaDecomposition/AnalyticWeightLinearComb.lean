@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingKrullDimIntegers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingKrullDimIntegers
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -24,15 +28,15 @@ theorem pullW_φ (i : PUnit → B.ι) (z : CxPts q σ') :
     (pullW hΦ φ).φ i z = φ.φ (i PUnit.unit) (Φ z) :=
   (Fintype.sum_unique fun a : PUnit.{1} => ((1 : ℤ) : ℝ) * φ.φ (i a) (Φ z)).trans (by simp)
 
-include hΦ in
 
+include hΦ in
 theorem ev_app' (W : X.Opens) (g : Γ(X, W)) (z : CxPts q σ') :
     ev q σ' (j ⁻¹ᵁ W) (j.app W g) z = ev p σ W g (Φ z) := by
   rw [ev, ev, hΦ]
   exact (valR_comp z.1 j W g).symm
 
-include hΦ in
 
+include hΦ in
 theorem mem_preimage_iff (W : X.Opens) (z : CxPts q σ') :
     z ∈ ptsIn q σ' (j ⁻¹ᵁ W) ↔ Φ z ∈ ptsIn p σ W := by
   change _ ↔ ⊤ ≤ (Φ z).1 ⁻¹ᵁ W
@@ -49,12 +53,12 @@ theorem isCInf_pullW (h : φ.IsCInf) : (pullW hΦ φ).IsCInf := fun i z hz => by
     filter_upwards [Φ.continuous.continuousAt.eventually h₅] with w hw
     exact (pullW_φ hΦ i w).trans hw
 
-include hΦ in
 
+include hΦ in
 theorem holo_trans (c : AlgChart p σ D) (c' : AlgChart q σ' D) :
     DifferentiableOn ℂ (Φ.transOpenPartialHomeomorph c.e ∘ c'.e.symm)
       (c'.e.target ∩ c'.e.symm ⁻¹' (Φ.transOpenPartialHomeomorph c.e).source) :=
-  differentiableOn_euclidean.2 fun a => ((c'.holo _ (j.app c.U (c.x a))).mono fun _ hv =>
+  differentiableOn_euclidean.2 fun a => ((c'.holo _ (j.app c.U (c.x a))).mono fun _ (hv : _ ∈ c'.e.target ∩ c'.e.symm ⁻¹' (Φ.transOpenPartialHomeomorph c.e).source) =>
     ⟨hv.1, (mem_preimage_iff hΦ _ _).2 (c.source_subset hv.2)⟩).congr fun _ hv =>
       (c.apply_eq _ hv.2 a).trans (ev_app' hΦ _ _ _).symm
 
@@ -123,19 +127,3 @@ theorem chernPart_pullW (R : AnRead p σ D) (R' : AnRead q σ' D) (h : φ.IsCInf
 
 end GlobalTheory.ChernTransfer
 
-open GlobalTheory GlobalTheory.ChernTransfer in
-
-theorem GlobalTheory.chernInt_transfer (k k' : Type) [CommRing k] [CommRing k'] (X Y : Scheme.{0})
-    (p : X ⟶ Sp k) (q : Y ⟶ Sp k') (σ : k →+* ℂ) (σ' : k' →+* ℂ) (D : ℕ) (j : Y ⟶ X)
-    (Φ : CxPts q σ' ≃ₜ CxPts p σ) (hΦ : ∀ z, (Φ z).1 = z.1 ≫ j)
-    [SecondCountableTopology (CxPts p σ)] [SecondCountableTopology (CxPts q σ')]
-    (hR : Nonempty (AnRead p σ D)) (hR' : Nonempty (AnRead q σ' D)) (B : LB X) (φ : Weight p σ B)
-    (h : φ.IsCInf) :
-    (φ.linComb (κ := PUnit) (fun _ => j) (fun _ => 1) (fun _ => Φ) (fun _ => hΦ)).IsCInf ∧
-      (φ.linComb (κ := PUnit) (fun _ => j) (fun _ => 1) (fun _ => Φ) (fun _ => hΦ)).chernInt D
-        Set.univ (fun _ => 1) = φ.chernInt D Set.univ (fun _ => 1) := by
-  obtain ⟨R⟩ := hR
-  obtain ⟨R'⟩ := hR'
-  refine ⟨isCInf_pullW hΦ h, ?_⟩
-  change (pullW hΦ φ).chernInt D _ _ = _
-  simp only [Weight.chernInt, Measure.restrict_univ, chernPart_pullW hΦ R R' h, integral_map_equiv]

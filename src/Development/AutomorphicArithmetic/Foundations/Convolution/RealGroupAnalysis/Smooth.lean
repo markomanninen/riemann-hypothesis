@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaLiftTrivialOrbitTermsVanish
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaLiftTrivialOrbitTermsVanish
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,10 +41,10 @@ def Decay : Prop :=
 
 end Base
 
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E]
+variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
+
 
 variable (F E) in
-
 def DatEx : Prop := Module.finrank F E = 2 → Nonempty (Dat F E)
 
 def WeilEx (D : Dat F E) : Prop := Nonempty (Weil D)
@@ -58,7 +62,7 @@ structure Hat : Prop where
   aE : ∀ (α : (A E)ˣ) φ y x z₀ z₁, hat (W.L (aE α) φ).1 ![y, x, z₀, z₁] =
     hat φ.1 ![y, (ideleNorm F E α : (A F)ˣ) * x, D.co (((α⁻¹ : (A E)ˣ) : A E) * D.mkE z₀ z₁) 0,
       D.co (((α⁻¹ : (A E)ˣ) : A E) * D.mkE z₀ z₁) 1]
-  mem : ∀ φ : S4 F, hat φ.1 ∈ schwartzBruhatPi F (Fin 4)
+  mem : ∀ φ : S4 F, hat φ.1 ∈ schwartzBruhatPi (K := F) (ι := Fin 4)
   th : ∀ φ : S4 F, Th φ.1 = Th (hat φ.1)
   row : ∀ γ (r : Fin 2 → F) φ, ThRow (rt (r 0)) (rt (r 1)) (W.Om (ratS F γ) φ).1 =
     ThRow (rt ((r ᵥ* γ.1) 0)) (rt ((r ᵥ* γ.1) 1)) φ.1

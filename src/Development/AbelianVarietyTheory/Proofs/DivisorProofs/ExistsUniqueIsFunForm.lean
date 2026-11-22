@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.KernelNormConstantSpec
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsCofactorTwistDualWeyl
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeylLatticeExistsCofactorTwistDual
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CofactorTwistRelationDualWeightInvolutive
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CofactorTwistRelationRowActEquivariant
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualIsoDetGenMNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.KernelNormConstantSpec
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsCofactorTwistDualWeyl
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeylLatticeExistsCofactorTwistDual
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CofactorTwistRelationDualWeightInvolutive
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CofactorTwistRelationRowActEquivariant
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualIsoDetGenMNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -211,7 +215,7 @@ theorem funRel_ten {a : ι → ℕ} {f g : ι → MP K n} (h : ∀ τ, (genM K n
 theorem FunRel.add {a : ι → ℕ} {F F' G G' : Pol K ι n} (h : FunRel a F G) (h' : FunRel a F' G') :
     FunRel a (F + F') (G + G') := by
   unfold FunRel at *
-  rw [mul_add, map_add, h, h']
+  rw [mul_add, map_add (f := _), h, h']
 
 theorem FunRel.smul {a : ι → ℕ} {F G : Pol K ι n} (c : K) (h : FunRel a F G) : FunRel a (c • F) (c • G) := by
   unfold FunRel at *
@@ -488,8 +492,8 @@ theorem funEquiv_mem_delStd (F : VV K σ) : F.1 ∈ delStd K σ ↔ (funEquiv σ
   funEquiv_mem_iff σ _ _ (delStd_mem_VV σ)
     (fun τ => funMap_fwd _ _ (funPos_weyl _ (σ τ))) (fun τ => funMap_rev _ _ (funPos_weyl_rev _ (σ τ))) F
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem funForm : ∃ Φ : VV K σ ≃ₗ[K] VV K (fun τ => (σ τ).dual),
     (∀ F f, IsFunForm σ F f ↔ f = Φ F) ∧
     (∀ g F, Φ (rhoK σ g F) = rhoK (fun τ => (σ τ).dual) (invTrK g) (Φ F)) ∧

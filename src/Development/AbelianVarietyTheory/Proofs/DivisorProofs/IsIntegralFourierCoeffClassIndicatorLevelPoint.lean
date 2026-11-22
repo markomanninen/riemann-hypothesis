@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThFamMono
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmulShortNonneg
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmulNonnegOfSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThFamMono
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmulShortNonneg
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmulNonnegOfSpan
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Theta
 open GlobalTheory GlobalTheory.CompHS GlobalTheory.CovTop GlobalTheory.HSApp GlobalTheory.DegVal GlobalTheory.DegCmp
@@ -38,7 +43,7 @@ theorem sum_padicValNat_mul_le (v : ℕ → ℤ) (hv : ∀ a b, a ≠ 0 → b �
     intro N
     induction N using Nat.recOnMul with
     | zero => exact fun h => absurd rfl h
-    | one => intro _; simp [h1]
+    | one => intro _; simp [Nat.padicValNat_def, h1]
     | prime l hl =>
       intro _
       have : ∀ p ∈ s, (padicValNat p l : ℤ) * v p = if p = l then v l else 0 := by
@@ -46,8 +51,8 @@ theorem sum_padicValNat_mul_le (v : ℕ → ℤ) (hv : ∀ a b, a ≠ 0 → b �
         haveI := Fact.mk (hs p hp)
         haveI := Fact.mk hl
         split_ifs with h
-        · subst h; simp
-        · rw [padicValNat_primes h]; simp
+        · subst h; simp [Nat.padicValNat_def, Nat.Prime.multiplicity_self]
+        · simp [Nat.padicValNat_def, multiplicity_primes h]
       rw [Finset.sum_congr rfl this, Finset.sum_ite_eq']
       split_ifs
       exacts [le_rfl, h0 _]
@@ -58,7 +63,7 @@ theorem sum_padicValNat_mul_le (v : ℕ → ℤ) (hv : ∀ a b, a ≠ 0 → b �
       have : ∀ p ∈ s, (padicValNat p (a * b) : ℤ) * v p = (padicValNat p a : ℤ) * v p + (padicValNat p b : ℤ) * v p := by
         intro p hp
         haveI := Fact.mk (hs p hp)
-        rw [padicValNat.mul ha hb]; push_cast; ring
+        rw [(show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) ha hb]; push_cast; ring
       rw [Finset.sum_congr rfl this, Finset.sum_add_distrib, hv a b ha hb]
       exact add_le_add (iha ha) (ihb hb)
   exact key N hN

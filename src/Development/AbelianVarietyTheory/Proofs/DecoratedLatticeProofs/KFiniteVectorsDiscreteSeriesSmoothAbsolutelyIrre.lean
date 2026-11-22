@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteSupport
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ModelsAreCoverSeries
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AbsIrrOfEquiv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsKActOfStable
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NonemptyGrpData
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiscreteSeriesHarishChandra
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteSupport
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ModelsAreCoverSeries
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AbsIrrOfEquiv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsKActOfStable
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NonemptyGrpData
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiscreteSeriesHarishChandra
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR.Mult
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 

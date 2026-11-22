@@ -1,13 +1,17 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LeviMatchingWords.SplitPlaceGeneratorPowers
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MatchingSecondBlockOf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PowersDiagonalAtTBlock
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DoubleCosetMultiplication
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgEqZeroOfInfiniteRange
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MatchingTransferOf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaGLMemIwGL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCompactClosureZpowersMap
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalizationQuotientSeparatedDvd
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LeviMatchingWords.SplitPlaceGeneratorPowers
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MatchingSecondBlockOf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PowersDiagonalAtTBlock
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DoubleCosetMultiplication
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgEqZeroOfInfiniteRange
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MatchingTransferOf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaGLMemIwGL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCompactClosureZpowersMap
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalizationQuotientSeparatedDvd
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,8 +28,8 @@ namespace GlobalTheory.CompanionTheory.RegPow
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
-open GlobalTheory.CompanionTheory.MatchPow in
 
+open GlobalTheory.CompanionTheory.MatchPow in
 theorem hasVals_nrm (hU : Unr E) {w : Pl E} (hw : ¬ IsSplitAt w) {ϖ : (w.adicCompletion E)ˣ} (hϖ : IsUnifAt ϖ) {a : ℕ}
     {y : Fin a → ℤ} (hy : StrictAnti y) {δ : GLw a w} (hδ : dcos a w (tdiag ϖ y) δ ≠ 0) :
     HasVals (nrmL a w δ).val.charpoly (nv y) := by
@@ -46,8 +50,8 @@ theorem hasVals_nrm (hU : Unr E) {w : Pl E} (hw : ¬ IsSplitAt w) {ϖ : (w.adicC
     Matrix.charpoly_diagonal]
   exact ⟨fun i => _, rfl, fun i => ⟨Units.ne_zero _, GlobalTheory.CompanionTheory.TwSide.ordL_norm_entry hU _ y hord i⟩⟩
 
-open GlobalTheory.CompanionTheory.MatchPow in
 
+open GlobalTheory.CompanionTheory.MatchPow in
 theorem mpow_entT {w : Pl E} {n : ℕ} (a : ℕ) {ϖ : (w.adicCompletion E)ˣ} (hϖ : IsUnifAt ϖ) {J : Type} [Fintype J]
     (c : J → ℂ) (x : J → Fin n → ℤ) (hx : ∀ j, StrictAnti (x j) ∧ Cone (lOf (x j))) (k : ℕ) :
     ∃ (J' : Type) (_ : Fintype J') (c' : J' → ℂ) (x' : J' → Fin n → ℤ),
@@ -83,7 +87,7 @@ theorem regPowT : RegPowT := by
   swap
   · exact absurd (dif_neg hA) h1
   unfold entT at h1
-  rw [dif_pos hA] at h1
+  rw [dite_eq_left hA] at h1
   obtain ⟨j, -, hj⟩ := Finset.exists_ne_zero_of_sum_ne_zero h1
   have hd2 : dcos (n - a) w (tdiag (d.ϖ w) (restr (x' j) _ hA.2.2.2.2)) y.2 ≠ 0 := right_ne_zero_of_mul hj
   have hd1 : dcos a w (tdiag (d.ϖ w) (restr (x' j) _ hA.2.2.2.1)) y.1 ≠ 0 := right_ne_zero_of_mul (left_ne_zero_of_mul hj)

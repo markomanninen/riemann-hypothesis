@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ReframeSt
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsIntegralDegenerationValues
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ReframeSt
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsIntegralDegenerationValues
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -50,7 +54,7 @@ theorem tau_eq (a b : N.X) : (N.τ a b : F) = vF (D.tau (ν.eX a) (ν.eX b)) (jF
   have hψ : ∀ y, N.ψ y = e (p (ν.eX y) * ρ) := fun y => Units.ext ((psi_eq ν y).trans
     ((coe_val _ _ hJ).symm.trans (congrArg (fun q => ((e q : Fˣ) : F)) (val_mul hJ _ _ _))))
   refine Eq.trans ?_ (coe_val _ _ hJ)
-  rw [hτ, NumD.τ, hψ, hψ, hψ, ← map_div, ← map_div, map_add]
+  rw [hτ, NumD.τ, hψ, hψ, hψ, ← map_div, ← map_div, map_add (f := _)]
   refine congrArg (fun q => ((e q : Fˣ) : F)) (Additive.ofMul.injective ?_)
   simp only [ofMul_mul, ofMul_inv, ofMul_div]
   abel

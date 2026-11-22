@@ -1,4 +1,8 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.FundamentalDomainCusps.NilpAlg
+module
+
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.FundamentalDomainCusps.NilpAlg
+
+@[expose] public section
 
 open Matrix
 
@@ -218,7 +222,8 @@ theorem exists_dual (hJ : Jᴴ = J) (hd : IsUnit J.det) {κ : Type} [Fintype κ]
   have h3 : v j = ∑ k, v j k • (Pi.single k 1 : Fin n → K) := by
     ext l; simp [Finset.sum_apply, Pi.single_apply]
   have h4 := congrFun h1 i
-  rw [h3, map_sum, Finset.sum_apply] at h4
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h3, map_sum, Finset.sum_apply] at h4
   rw [Pi.single_apply] at h4
   rw [← h4]
   simp only [dotProduct, map_smul, Pi.smul_apply, smul_eq_mul, mul_comm]

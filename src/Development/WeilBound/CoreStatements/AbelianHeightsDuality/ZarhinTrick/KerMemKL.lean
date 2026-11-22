@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.FibLamC
+module
+
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.FibLamC
+
+@[expose] public section
 
 set_option autoImplicit false
 

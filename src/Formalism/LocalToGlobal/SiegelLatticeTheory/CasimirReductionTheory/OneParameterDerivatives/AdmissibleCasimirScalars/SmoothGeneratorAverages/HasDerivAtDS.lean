@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.AdmissibleCasimirScalars.CompactDerivativesBounded
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.AdmissibleCasimirScalars.CompactDerivativesBounded
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Topology
 open scoped InnerProductSpace
@@ -109,7 +113,8 @@ theorem der_comb (Φ : Matrix (Fin n) (Fin n) ℂ → ℂ) (z : Fin n × Fin n �
     refine Finset.sum_congr rfl fun p _ => ?_
     rw [Matrix.smul_mul, Matrix.neg_mul, smul_neg, RCLike.real_smul_eq_coe_smul (K := ℂ)]
     rfl
-  rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   refine Finset.sum_congr rfl fun p _ => ?_
   rw [map_smul, Complex.real_smul]
 

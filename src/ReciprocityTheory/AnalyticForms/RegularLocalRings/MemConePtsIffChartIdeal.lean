@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.IsOpenAlt
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.IsOpenAlt
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -34,7 +38,7 @@ theorem eval_smul_of_isMultiHomog {f : MvPolynomial (Σ k, ι k) ℂ} {a : K →
   have key : ∏ q, (c q.1 * y q) ^ d q = (∏ k, c k ^ a k) * ∏ q, y q ^ d q := by
     rw [← hc, ← Finset.prod_mul_distrib]
     exact Finset.prod_congr rfl (fun q _ => mul_pow _ _ _)
-  linear_combination (coeff d f) * key
+  linear_combination (AddMonoidAlgebra.coeff f d) * key
 
 theorem eval_eq_zero_of_smul {P : Ideal (MvPolynomial (Σ k, ι k) ℂ)} (hP : IsMultiHomogIdeal P)
     (c : K → ℂ) (y : (Σ k, ι k) → ℂ) (hy : ∀ f ∈ P, eval y f = 0) :
@@ -46,7 +50,7 @@ theorem eval_eq_zero_of_smul {P : Ideal (MvPolynomial (Σ k, ι k) ℂ)} (hP : I
     obtain ⟨a, ha⟩ := hS g hg
     rw [eval_smul_of_isMultiHomog ha, hy g (Ideal.subset_span hg), mul_zero]
   | zero => simp
-  | add g h _ _ hg hh => rw [map_add, hg, hh, add_zero]
+  | add g h _ _ hg hh => rw [map_add (f := _), hg, hh, add_zero]
   | smul a g _ hg => rw [smul_eq_mul, map_mul, hg, mul_zero]
 
 theorem mem_conePts_iff_chartIdeal {P : Ideal (MvPolynomial (Σ k, ι k) ℂ)} (hP : IsMultiHomogIdeal P)

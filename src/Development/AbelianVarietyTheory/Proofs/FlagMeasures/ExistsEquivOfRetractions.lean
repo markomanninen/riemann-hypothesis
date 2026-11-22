@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsGlIsometryCompEqOfNondegenerate
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsIntegralValIntegerIff
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsGlIsometryCompEqOfNondegenerate
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsIntegralValIntegerIff
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical
@@ -82,7 +86,7 @@ private theorem exists_inv_pair_mul_eq_of_mul_eq {K n m : Type*} [Field K] [Fint
     have hpX : p (X *ᵥ w) = 0 := by
       apply Subtype.ext
       rw [hp_eq, hNAX, sub_self, ZeroMemClass.coe_zero]
-    rw [hφ_eq, hpX, map_zero, ZeroMemClass.coe_zero, add_zero, hNAX]
+    rw [hφ_eq, hpX, ψ.map_zero, ZeroMemClass.coe_zero, add_zero, hNAX]
   refine ⟨LinearMap.toMatrix' φ, LinearMap.toMatrix' φ', ?_, ?_, ?_, ?_⟩
   · rw [← LinearMap.toMatrix'_comp, ← LinearMap.toMatrix'_id]
     congr 1
@@ -111,10 +115,10 @@ private theorem matrix_eq_of_map_fst_snd {K E p q : Type*} [Field K] [CommRing E
   apply e.injective
   exact Prod.ext (congrFun (congrFun h₁ a) b) (congrFun (congrFun h₂ a) b)
 
+
 open ValuativeRel MeasureTheory in
 open scoped Pointwise ENNReal Classical in
 open Matrix Module in
-
 theorem _root_.GlobalTheory.HermTuple.exists_matrix_split {K E n m : Type*} [Field K] [CommRing E]
     [Fintype n] [DecidableEq n]
     [Fintype m] [DecidableEq m] (c : E →+* E) (e : E ≃+* K × K) (he : ∀ x, e (c x) = (e x).swap)
@@ -176,23 +180,6 @@ theorem _root_.GlobalTheory.HermTuple.exists_matrix_split {K E n m : Type*} [Fie
       ← Matrix.transpose_mul, hTT', Matrix.transpose_one, Matrix.one_mul, ← Matrix.mul_assoc,
       hGG', Matrix.one_mul]
 
-theorem exists_matrix {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [CharZero F]
-    {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] (L : LocE F E) {n m : ℕ}
-    (G : Matrix (Fin n) (Fin n) E) (hG : ∀ a b, L.cj (G a b) = G b a) (hdet : IsUnit G.det)
-    (X Y : Matrix (Fin n) (Fin m) E)
-    (hu : IsUnit (Xᵀ * G * X.map L.cj).det) (h : Yᵀ * G * Y.map L.cj = Xᵀ * G * X.map L.cj) :
-    ∃ γ : Matrix (Fin n) (Fin n) E, γᵀ * G * γ.map L.cj = G ∧ γ * X = Y := by
-  rcases GlobalTheory.SgLoc.LocE_isField_or_split L with hE | ⟨e, he⟩
-  · letI := hE.toField
-    have h2 : (2 : E) ≠ 0 := by
-      have : (algebraMap F E 2) ≠ 0 := by
-        rw [map_ne_zero]; exact two_ne_zero
-      rwa [map_ofNat] at this
-    obtain ⟨γ, h1, h3⟩ := GlobalTheory.HermWitt.exists_gl_isometry_mul_eq_of_det_ne_zero
-      (c := (L.cj : E →+* E)) h2 L.cj_cj hG (X := X) (Y := Y) hu.ne_zero h
-    exact ⟨γ, h1, h3⟩
-  · exact exists_matrix_split (L.cj : E →+* E) e.toRingEquiv he G hG hdet X Y hu h
-
 open ValuativeRel MeasureTheory in
 open scoped Pointwise ENNReal Classical in
 open Matrix Module in
@@ -218,7 +205,7 @@ private theorem isField_or_exists_swap_ringEquiv {F : Type} [Field F] [Valuative
     by_contra hcon
     push_neg at hcon
     exact hfield ⟨exists_pair_ne E, mul_comm, fun ha => hcon _ ha⟩
-  obtain ⟨t, ht⟩ := (L.cj_fix (u + L.cj u)).1 (by rw [map_add, L.cj_cj, add_comm])
+  obtain ⟨t, ht⟩ := (L.cj_fix (u + L.cj u)).1 (by rw [map_add (f := _), L.cj_cj, add_comm])
   obtain ⟨s, hs⟩ := (L.cj_fix (u * L.cj u)).1 (by rw [map_mul, L.cj_cj, mul_comm])
   have hs0 : s = 0 := by
     by_contra hs0
@@ -266,7 +253,7 @@ private theorem isField_or_exists_swap_ringEquiv {F : Type} [Field F] [Valuative
     intro a b
     simp [φ, _root_.GlobalTheory.SgLoc.idemPairHom, Algebra.smul_def]
   have hinj : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     rintro ⟨a, b⟩ hab
     rw [hφ] at hab
     have ha : algebraMap F E a * p = 0 := by
@@ -283,7 +270,7 @@ private theorem isField_or_exists_swap_ringEquiv {F : Type} [Field F] [Valuative
   have hcj : ∀ w : F × F, L.cj (φ w) = φ w.swap := by
     rintro ⟨a, b⟩
     rw [hφ, Prod.swap_prod_mk, hφ]
-    simp only [map_add, map_mul, AlgEquiv.commutes, hcp, hcq]
+    simp only [map_add (f := _), map_mul, AlgEquiv.commutes, hcp, hcq]
     ring
   let eφ := AlgEquiv.ofBijective φ hbij
   have hsymm : ∀ w, eφ.symm (φ w) = w := fun w => eφ.symm_apply_apply w
@@ -292,10 +279,10 @@ private theorem isField_or_exists_swap_ringEquiv {F : Type} [Field F] [Valuative
   change eφ.symm (L.cj (φ w)) = (eφ.symm (φ w)).swap
   rw [hcj, hsymm, hsymm]
 
+
 open ValuativeRel MeasureTheory in
 open scoped Pointwise ENNReal Classical in
 open Matrix Module in
-
 theorem _root_.GlobalTheory.HermTuple.witt_tuples : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] [CharZero F] {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] (L : _root_.Formalism.MainNotions.S.Loc.LocE F E), ∀ {n : ℕ} (Hm : Matrix (Fin n) (Fin n) E), _root_.GlobalTheory.HL.IsHermND L Hm → ∀ (m : ℕ) (x y : Fin m → Fin n → E), (∀ i j, _root_.GlobalTheory.HL.hf L Hm (x i) (x j) = _root_.GlobalTheory.HL.hf L Hm (y i) (y j)) → IsUnit (Matrix.of fun i j => _root_.GlobalTheory.HL.hf L Hm (x i) (x j)).det → ∃ g ∈ _root_.GlobalTheory.HL.isomG L Hm, ∀ i, g (x i) = y i := by
   intro F _ _ _ _ _ E _ _ _ L n Hm hHm m x y hxy hunit
   haveI : Nontrivial E := Module.nontrivial_of_finrank_eq_succ L.rank

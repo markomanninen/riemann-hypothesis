@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.GaloisCohomology.LocalTateDualityK
-import ReciprocityTheory.Hypotheses.GalCoh
+module
+
+public import Mathlib
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import ReciprocityTheory.Hypotheses.GalCoh
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Representation Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology
 
 noncomputable section
@@ -20,8 +25,6 @@ def rh0 : H0 σ →ₗ[R] H0 σ' :=
   Submodule.inclusion fun m hm g => by
     show σ' g m = m
     rw [hσ]; exact hm (φ g)
-
-@[simp] theorem rh0_coe (m : H0 σ) : ((rh0 σ σ' φ hσ m : H0 σ') : N) = m := rfl
 
 variable (hφ : Continuous φ)
 
@@ -121,7 +124,7 @@ theorem dualityClauses_of_mulEquiv : ∀ (R : Type) [CommRing R] [TopologicalSpa
   have hB : ∀ g φ, ((twDual (χ.comp e.toMonoidHom) (ρ.comp e.toMonoidHom)).comp
       (MonoidHom.id Γ')) g φ = ((twDual χ ρ).comp (MonoidHom.id Γ)) (e g) φ := by
     intro g φ
-    refine TDual.ext fun m => ?_
+    refine DFunLike.ext _ _ fun m => ?_
     simp [twDual_apply, map_inv]
   have hC : ∀ g x, ((charRep (χ.comp e.toMonoidHom)).comp (MonoidHom.id Γ')) g x =
       ((charRep χ).comp (MonoidHom.id Γ)) (e g) x := fun _ _ => rfl

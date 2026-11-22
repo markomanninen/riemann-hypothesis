@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.BesselNonvanishingReduction
+module
+
+public import Formalism.HermitianCurvature.BesselNonvanishingReduction
+
+@[expose] public section
 
 namespace Formalism.L2.SG.BesselDiscreteSeries
 

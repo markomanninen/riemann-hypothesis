@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Bl.general_b_fact_second'''''
 
@@ -7,7 +11,7 @@ theorem goal1 :
   [inst_4 : Module.{0, 0} K V] [inst_5 : Module.{0, 0} (NumberField.RingOfIntegers.{0} K) V]
   [inst_6 : IsScalarTower.{0, 0, 0} (NumberField.RingOfIntegers.{0} K) K V]
   (M : Submodule.{0, 0} (NumberField.RingOfIntegers.{0} K) V),
-  Submodule.IsLattice.{0, 0, 0} K M →
+  Submodule.IsFullLattice.{0, 0, 0} K M →
     ∀ (x : V), Exists.{1} fun (n : Int) ↦ And (Ne.{1} n 0) (Membership.mem.{0, 0} M (HSMul.hSMul.{0, 0, 0} n x)) := by
   intro K V _ _ _ _ _ _ _ M hM x
   have hx : x ∈ Submodule.span K (M : Set V) := by

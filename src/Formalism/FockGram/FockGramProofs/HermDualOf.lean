@@ -1,4 +1,8 @@
-import Formalism.FockGram.StatementHerm
+module
+
+public import Formalism.FockGram.StatementHerm
+
+@[expose] public section
 
 open Matrix LinearMap Module
 
@@ -26,7 +30,7 @@ private theorem mem_hdual_span_iff_forall_pairing_mem_range {S K V ι : Type} [C
     | add y z _ _ hy hz =>
       obtain ⟨p, hp⟩ := hy
       obtain ⟨q, hq⟩ := hz
-      exact ⟨p + q, by rw [map_add, hp, hq, map_add, LinearMap.add_apply]⟩
+      exact ⟨p + q, by rw [map_add (f := _), hp, hq, map_add (f := _), LinearMap.add_apply]⟩
     | smul s y _ hy =>
       obtain ⟨p, hp⟩ := hy
       obtain ⟨t, ht⟩ := hstar s
@@ -43,7 +47,8 @@ private theorem eq_zero_of_gram_det_ne_zero_of_pairing_basis_eq_zero {K V ι : T
     simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, Pi.zero_apply]
     rw [← hz i]
     conv_rhs => rw [← b.sum_repr z]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, smul_eq_mul, mul_comm]
   have hv := Matrix.eq_zero_of_mulVec_eq_zero hG hc
@@ -98,7 +103,8 @@ theorem hermDual_of (h : SubIndexNorm) : HermDual := by
     intro i k
     have e := congrFun (congrFun (Matrix.mul_nonsing_inv G (isUnit_iff_ne_zero.2 hGdet0)) i) k
     rw [Matrix.mul_apply, Matrix.one_apply] at e
-    rw [← e, hd, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← e, hd, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, smul_eq_mul, hGij, mul_comm]
   have hdM : ∀ k, d k ∈ M := fun k => (hmemM _).2 fun i =>
@@ -107,7 +113,8 @@ theorem hermDual_of (h : SubIndexNorm) : HermDual := by
     ⟨fun k => ⟨d k, hdM k⟩, fun k => rfl⟩
   have hBsum : ∀ (g : ι → S) i, B (b i) (∑ k, g k • d k) = algebraMap S K (g i) := by
     intro g i
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp_rw [LinearMap.map_smul_of_tower, hBd]
     simp [Algebra.smul_def]
   have hliD : LinearIndependent S dM := by

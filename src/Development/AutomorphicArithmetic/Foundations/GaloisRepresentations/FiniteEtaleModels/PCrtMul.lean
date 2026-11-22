@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.IsEtIdealOfPlace
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.IsEtIdealOfPlace
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.EtLev GlobalTheory.UPel.HT.ES
@@ -19,7 +23,7 @@ theorem UpperTheory.Gal.FiniteEtaleModels.crtMul_holds :
   have split : ∀ {X : Over S} (f : X ⟶ o.A),
       f ≫ o.act.act (algebraMap (𝓞 D.F) D.O a) * f ≫ o.act.act (algebraMap (𝓞 D.F) D.O b') = f := by
     intro X f
-    rw [← MonObj.comp_mul, ← o.act.add, ← map_add, habe, map_one, o.act.one, Category.comp_id]
+    rw [← MonObj.comp_mul, ← o.act.add, ← map_add (f := _), habe, map_one, o.act.one, Category.comp_id]
   have gen : ∀ (I : Ideal (𝓞 D.F)) (c : 𝓞 D.F), c ∈ I → ∀ y : D.La,
       algebraMap (𝓞 D.F) D.O c • y ∈ wSub D I 1 := by
     intro I c hc y
@@ -74,7 +78,7 @@ theorem UpperTheory.Gal.FiniteEtaleModels.crtMul_holds :
     have y1 := (h1.2.2.2 k x).1 y hu
     have y2 := (h2.2.2.2 k x).1 y hv
     have hsplit : y = algebraMap (𝓞 D.F) D.O a • y + algebraMap (𝓞 D.F) D.O b' • y := by
-      rw [← add_smul, ← map_add, habe, map_one, one_smul]
+      rw [← add_smul, ← map_add (f := _), habe, map_one, one_smul]
     rw [hsplit]
     refine Submodule.add_mem _ (mulsub 𝔞 𝔟 a ha y y2) ?_
     have h3 := mulsub 𝔟 𝔞 b' hb y y1

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory
 
 namespace GlobalTheory
@@ -263,16 +268,17 @@ theorem LFunction_eq (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q) (hχ :
   rfl
 
 end LLeft
+open LLeft
+
 
 open LLeft in
-
 theorem norm_LFunction_le_poly_left :
     ∃ C : ℝ, 0 < C ∧ ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q), χ ≠ 1 → ∀ s : ℂ,
       -(7/4 : ℝ) ≤ s.re → ‖LFunction χ s‖ ≤ C * (q : ℝ) ^ 4 * (‖s‖ + 2) ^ 4 := by
   set Z : ℝ := ∑' n : ℕ, ((n : ℝ) + 1) ^ (-(9 / 8 : ℝ)) with hZ
   have hZ0 : 0 ≤ Z := tsum_nonneg fun n => by positivity
   refine ⟨15 + 64 * Z, by positivity, fun q _ χ hχ s hs => ?_⟩
-  obtain ⟨b, μ₁, μ₂, μ₃, hb, m₁, m₂, m₃, he⟩ := LFunction_eq q χ hχ
+  obtain ⟨b, μ₁, μ₂, μ₃, hb, m₁, m₂, m₃, he⟩ := LLeft.LFunction_eq q χ hχ
   have hq : (1 : ℝ) ≤ q := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne q)
   have hn := norm_nonneg s
   set A : ℝ := (q : ℝ) ^ 4 with hA

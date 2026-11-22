@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HomExtOfIsOpenImmersion
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsAffineOpenRingOnEqAdjoinInv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HomExtOfIsOpenImmersion
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsAffineOpenRingOnEqAdjoinInv
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -113,7 +117,8 @@ def pairing (φ : Ω →ₐ[o] Ω') (s : J → Ω') (v : J → Ω) : Ω' := ∑ 
 
 theorem pairing_sum {I : Type} [Fintype I] (s : J → Ω') (c : I → Ω) (a : I → J → Ω) :
     pairing φ s (∑ i, c i • a i) = ∑ i, φ (c i) * pairing φ s (a i) := by
-  simp only [pairing, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, Finset.sum_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [pairing, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, Finset.sum_mul,
     Finset.mul_sum, _root_.mul_assoc]
   exact Finset.sum_comm
 
@@ -144,7 +149,7 @@ theorem IsHom.exists_div_pairing {f : M'.Z ⟶ M.Z} (hf : M.IsHom M' φ f) (s : 
       a i ∈ Submodule.span (M.O (f z)) (Set.range b))
   have e1 : ∑ k, (⟨φ (d k), hf.map_mem_O (hd k)⟩ * ⟨_, h1 k⟩ : M'.O z) = 1 := by
     refine Subtype.ext ?_
-    simp only [AddSubmonoidClass.coe_finset_sum, MulMemClass.coe_mul, OneMemClass.coe_one, ← mul_div_assoc,
+    simp only [AddSubmonoidClass.coe_finsetSum, MulMemClass.coe_mul, OneMemClass.coe_one, ← mul_div_assoc,
       ← Finset.sum_div, ← e, div_self h0]
   obtain ⟨k, -, hk⟩ := IsLocalRing.exists_of_isUnit_sum (e1 ▸ isUnit_one)
   obtain ⟨hk0, hk1⟩ := (isUnit_O_iff _).1 (isUnit_of_mul_isUnit_right hk)
@@ -171,7 +176,8 @@ theorem Lat.exists_eq_sum_pairing [DecidableEq J] (EE : M.Lat J) (s : J → Ω')
   refine ⟨fun i => ∑ l, b⁻¹ j l * c l i, ?_⟩
   rw [← e2, e]
   refine (pairing_sum s (fun l => b⁻¹ j l) fun l => b l).trans ?_
-  simp only [hc, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum, _root_.mul_assoc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hc, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum, _root_.mul_assoc]
   exact Finset.sum_comm
 
 theorem Lat.eq_top_of_pairing_mem [DecidableEq J] (EE : M.Lat J) {s : J → Ω'}

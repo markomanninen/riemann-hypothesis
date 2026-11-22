@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IntFormsSubset
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.XiValIffXiAt
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RdIndepOfLawsM
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspMulOf
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearRelationSectionsSpanEqStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IntFormsSubset
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.XiValIffXiAt
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RdIndepOfLawsM
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspMulOf
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearRelationSectionsSpanEqStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Pj GlobalTheory.CoverRead GlobalTheory.Member GlobalTheory.CompRat GlobalTheory.FinalJoin
 open scoped TensorProduct Matrix
 
@@ -45,9 +50,11 @@ theorem glue_rules {K : Type} [Field K] {ι : Type} [Fintype ι]
   refine ⟨h, ⟨?_, ?_⟩, ?_⟩
   · intro p q φ y z hyz
     have e1 : ∑ i, φ (s p y i) * t i q z = 1 := by
-      simp_rw [(ht _).1 p q φ y z hyz, ← map_mul, ← map_sum, hs, map_one]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp_rw [(ht _).1 p q φ y z hyz, ← map_mul, ← map_sum, hs, map_one]
     show ∑ i, s q z i * g i q z = φ (∑ i, s p y i * g i p y)
-    rw [← indep q z _ e1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← indep q z _ e1, map_sum]
     simp_rw [(hg _).1 p q φ y z hyz, map_mul]
   · intro p u y y' hyy
     have hw : ∀ e : ι → ℕ, wchar e u = ((∏ i, u i ^ e i : (p.R)ˣ) : p.R) := by
@@ -104,7 +111,8 @@ theorem exists_evalAt_ne_zero {K : Type} [Field K] (pts : ∀ (S : Type) [CommRi
   by_contra hall
   push Not at hall
   have h1 := congrArg (fun r => h.choose_spec.choose r) hs
-  simp only [map_sum, map_one, smul_eq_mul, map_mul, hall, mul_zero, Finset.sum_const_zero] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_one, smul_eq_mul, map_mul, hall, mul_zero, Finset.sum_const_zero] at h1
   exact zero_ne_one h1
 
 theorem exists_rdU_t_ne_zero : ∀ (D : D7) (T : CoreJ D), LawsJ T → ∀ j, Formalism.L2.Pj.InR D j → ∀ σ : T.Q.c.F →+* ℂ, GoodEmb T.Q.c σ →
@@ -210,7 +218,8 @@ theorem span_of_products : ∀ (D : D7) (T : CoreJ D), LawsJ T → ∀ j, Formal
     obtain ⟨h, hh, hht⟩ := glue_frPt D T j a b n m N t g' ht hunit hg' hcomp
     refine ⟨rdU (T.U j σ) h, Submodule.subset_span ⟨h, hh, rfl⟩, fun i => ?_⟩
     rw [← rdU_mul, hht]
-    simp [g', map_sum, map_smulₛₗ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [g', map_sum, map_smulₛₗ]
   obtain ⟨Q, hQ, hQe⟩ := hle hzspan
 
   have hQoff : Q ∈ offZero (T.U j σ).X := by

@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConstMemBddAut
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsParamFunVIffIsSysParamDOfLevel
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEquality.CommensuratedOfIsOpenIsCompact
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HostPrimeSplitting.FinrankOE
+module
+
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConstMemBddAut
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsParamFunVIffIsSysParamDOfLevel
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEquality.CommensuratedOfIsOpenIsCompact
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HostPrimeSplitting.FinrankOE
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum GlobalTheory.LFun GlobalTheory.AdelicU GlobalTheory.PRep GlobalTheory.FinZeta GlobalTheory.AdelicScalar GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues GlobalTheory.LiftRows
 open Formalism.IndefR.Lev (levG levChi IsBaseFrame)
@@ -23,7 +28,7 @@ theorem isUnram_of_not_isSplit {v : HeightOneSpectrum (𝓞 D.host.F)} (hs : ¬ 
       Q ∈ Formalism.L2.Host.aboveF (L := D.host.E) D.host.F (P.under (𝓞 D.host.F)) ↔ Q.under (𝓞 D.host.F) = v := by
     intro Q
     rw [hPv]
-    simp only [Formalism.L2.Host.aboveF, Set.Finite.mem_toFinset, Set.mem_setOf_eq]
+    simp only [Formalism.L2.Host.aboveF, Set.Finite.mem_toFinset, Set.mem_ofPred_eq]
   have h1 : (Formalism.L2.Host.aboveF (L := D.host.E) D.host.F (P.under (𝓞 D.host.F))).card = 1 := by
     refine Finset.card_eq_one.2 ⟨P, Finset.eq_singleton_iff_unique_mem.2 ⟨(hmem P).2 hPv, fun Q hQ => ?_⟩⟩
     by_contra hne
@@ -38,12 +43,47 @@ theorem exists_cartan (V : HSp D) (v : HeightOneSpectrum (𝓞 D.host.F)) :
         (a⁻¹ * locMat D.sp.cm.sig V.gram h g' * a).1 = Matrix.diagonal u ∧ g = k₁ * g' * k₂ := by
   have hL := GlobalTheory.HeckeDual.isLattice_frameLat V
   have hH := (GlobalTheory.Mem.Vol.cmData_isCMExt_and_gram_isHermND _ _ D.sp.cm).2 V
+  have hspan : Submodule.span D.host.E (frameLat V : Set (Fin V.rank → D.host.E)) = ⊤ := by
+    have hfull : Submodule.span D.host.E (V.L0 : Set V.V) = ⊤ := by
+      let W := Submodule.span D.host.E (V.L0 : Set V.V)
+      change W = ⊤
+      by_contra h
+      let e : V.V ≃ₗ⋆[D.host.E] V.V :=
+        (V.frame.equivFun.trans (starLinearEquiv D.host.E)).trans V.frame.equivFun.symm
+      let g : V.V →ₗ[D.host.E] Module.Dual D.host.E W :=
+        (LinearMap.domRestrict' W).comp (V.hT.comp e.toLinearMap)
+      have hdim : Module.finrank D.host.E (Module.Dual D.host.E W) < Module.finrank D.host.E V.V := by
+        rw [Subspace.dual_finrank_eq]
+        exact Submodule.finrank_lt h
+      obtain ⟨x, hx, hx₀⟩ :=
+        Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+      have hsmul (a : D.host.E) : a • e x ∈ V.L0 := by
+        rw [← V.baseLattice_isUnimodular]
+        rw [Formalism.HermitianLatticesTheory.dualBasic_mem_dual]
+        intro y hy
+        have hxy : V.hT (e x) y = 0 :=
+          congrArg (fun f : Module.Dual D.host.E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+        have hyx : V.hT y (e x) = 0 := by
+          rw [(V.herm.eq (e x) y).symm, hxy, map_zero]
+        simp [hyx]
+      let i : D.host.E →ₗ[𝓞 D.host.E] V.L0 :=
+        ((LinearMap.toSpanSingleton D.host.E _ (e x)).restrictScalars (𝓞 D.host.E)).codRestrict V.L0 hsmul
+      let : Module.Finite (𝓞 D.host.E) V.L0 := Module.Finite.iff_fg.mpr V.standardTuple_isLattice.fg
+      let : Module.Finite (𝓞 D.host.E) D.host.E := Module.Finite.of_injective i fun a b hab =>
+        smul_left_injective D.host.E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+      exact RingOfIntegers.not_isField D.host.E
+        (isField_of_isIntegral_of_isField (R := 𝓞 D.host.E) (S := D.host.E)
+          (FaithfulSMul.algebraMap_injective _ _) (Field.toIsField _))
+    have heq : (frameLat V : Set (Fin V.rank → D.host.E)) =
+        V.frame.equivFun.toLinearMap '' (V.L0 : Set V.V) :=
+      (V.frame.equivFun.toEquiv.image_eq_preimage_symm _).symm
+    rw [heq, ← Submodule.map_span, hfull, Submodule.map_top, LinearEquiv.range]
   have hd := GlobalTheory.AdelicU.SelfDual.isSelfDualAt_frameLat D V v
   by_cases hsp : IsSplit (E := D.host.E) v
   · obtain ⟨w, -, -, hw, -⟩ := id hsp
     have h : w.under (𝓞 D.host.F) = v := HeightOneSpectrum.ext hw
     obtain ⟨e, ⟨⟨a, ha, e1⟩, e2⟩, -⟩ :=
-      GlobalTheory.LFun.SplitChart.exists_isSplitChart (isCMExt_host D) hH hL.fg hL.span_eq_top h hsp hd
+      GlobalTheory.LFun.SplitChart.exists_isSplitChart (isCMExt_host D) hH hL.fg hspan h hsp hd
     refine ⟨w, h, fun g => ?_⟩
     obtain ⟨ϖ, hϖ⟩ := exists_isUnifV w
     obtain ⟨d, hdA, k₁, h₁, k₂, h₂, eg⟩ := Formalism.UG.Final.CartanDecomp D.host.E w V.rank ϖ (mem_Ov_of_isUnifV hϖ) hϖ (e g)
@@ -61,7 +101,7 @@ theorem exists_cartan (V : HSp D) (v : HeightOneSpectrum (𝓞 D.host.F)) :
     have h : w.under (𝓞 D.host.F) = v := (GlobalTheory.LFun.InertChart.under_eq_iff hw w).2 rfl
     obtain ⟨-, ⟨c, hc, -⟩, -, -, hrest⟩ := (exists_isInertChart _ (isCMExt_host D) v).2 w h hw
     obtain ⟨⟨ϖ, hU⟩, hch⟩ := hrest c hc
-    obtain ⟨e, ⟨-, ⟨a, ha, -, e1⟩, e2⟩, -⟩ := hch _ _ _ hH hL.fg hL.span_eq_top hd
+    obtain ⟨e, ⟨-, ⟨a, ha, -, e1⟩, e2⟩, -⟩ := hch _ _ _ hH hL.fg hspan hd
     refine ⟨w, h, fun g => ?_⟩
     obtain ⟨d, t, hdA, ht, k₁, h₁, k₂, h₂, eg⟩ := GlobalTheory.LFun.cartanU hU (e g)
     refine ⟨e.symm k₁, (e2 _).2 (by simpa using h₁), e.symm k₂, (e2 _).2 (by simpa using h₂),
@@ -78,7 +118,7 @@ theorem eigen_heckeAlg : ∀ (D : D7) (V : HSp D) (J : Set (GA D V)) (χ : GA D 
   refine ⟨hfix, fun x hx => ?_⟩
   obtain ⟨w, h, hcart⟩ := exists_cartan V v
   have hs := isEigenSys_of_heckeLin hJ hv h hfix (hc w)
-  have := GlobalTheory.HeckeDual.isLattice_frameLat V
+  have := GlobalTheory.AdelicU.SelfDual.isLattice_frameLat V
   have hK : IsCommensurated (Kv V v) := PI.UnitaryGroupMassFormula.AdIndexEq.commensurated_of_isOpen_isCompact _
     (isOpen_stabLoc D.sp.cm.sig V.gram (frameLat V) v) (isCompact_stabLoc D.sp.cm.sig V.gram (frameLat V) v)
   have hm := Formalism.UG.Final.DosetIndMem (Gv V v) (Kv V v) ℂ

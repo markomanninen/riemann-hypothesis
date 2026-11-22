@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFormalFibreQuotient
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFormalFibreQuotient
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -157,7 +162,7 @@ theorem exists_adicCompletion_surjection_of_surjective
         Submodule.coe_subtype, AdicCompletion.ofTensorProduct_tmul]
       exact Ideal.mul_mem_left _ r (Ideal.mem_map_of_mem _ k.2)
     | add t₁ t₂ h₁ h₂ =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact add_mem h₁ h₂
 
 theorem FormalFibreQuotient.proof : FormalFibreQuotient.Statement := by

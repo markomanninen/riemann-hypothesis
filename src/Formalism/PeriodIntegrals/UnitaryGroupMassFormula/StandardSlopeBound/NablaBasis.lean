@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.HookBound
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.WeTransposeWordTransposeWord
+module
+
+public import Formalism.PeriodIntegrals.HookBound
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.WeTransposeWordTransposeWord
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,10 +32,5 @@ def GramDual : Prop :=
 
 def NablaBasis : Prop :=
   ∀ (N : ℕ) (ν : Fin N → ℕ), ∃ (r : ℕ), Nonempty (Module.Basis (Fin r) ℤ (dualWeyl ℤ N N ν))
-
-def StdSlopeLowOf : Prop := NablaGramLow → GramDual → NablaBasis → PI.StdSlopeLow
-
-example {N : ℕ} (ν : Fin N → ℕ) {r : ℕ} (e : Module.Basis (Fin r) ℤ (weyl ℤ N N le_rfl ν)) :
-    PI.stdGram ν e = gramOf ν fun i => (e i : MvPolynomial (Fin N × Fin N) ℤ) := rfl
 
 end PI.SlopeSteps

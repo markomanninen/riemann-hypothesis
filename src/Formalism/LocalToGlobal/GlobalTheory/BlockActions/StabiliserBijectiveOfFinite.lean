@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.StabiliserBijectiveOfFixed
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ClassInjectiveOfSelfDual
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.StabiliserBijectiveOfFixed
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ClassInjectiveOfSelfDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,8 @@ def StabLF (Tf : FormsTiedSym D u Ch chOf) : Prop :=
       (D.fm u).fv D.R.m v ((D.fm u).til c) ((Tf.lv D.R.m le_rfl).pr v _ ⟨γ.1.1 *ᵥ x.1, hx⟩) =
         (D.fm u).fv D.R.m v ((D.fm u).til c) ((Tf.lv D.R.m le_rfl).pr v _ x)
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem stabFix_of (Tf : FormsTiedSym D u Ch chOf)
     (hSD : ∀ c, dualSet (sigD D : D.host.E →+* D.host.E) (gramP D) (Tf.clsP.lat c) = (Tf.clsP.lat c : Set (Fin (D.R.N D.R.m - 1) → D.host.E)))
     (hLF : StabLF Tf) : StabFix Tf := by

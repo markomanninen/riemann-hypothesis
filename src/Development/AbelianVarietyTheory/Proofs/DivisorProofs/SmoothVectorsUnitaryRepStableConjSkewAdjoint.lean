@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothReal
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfInnerSmooth
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothReal
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfInnerSmooth
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ theorem smooth_calculus : ∀ (n : ℕ) (H : Type) [NormedAddCommGroup H] [Inner
     unfold dRep
     congr 1
     funext t
-    simp only [Function.comp, smul_smul]
+    simp [Function.comp_def, smul_smul]
   · have hw' : w ∈ GlobalTheory.SmVec.smSub J π := hw
     rw [GlobalTheory.SmVec.inner_dRep hG hπ hv' hw' hX', neg_neg]
   · have hw' : w ∈ GlobalTheory.SmVec.smSub J π := hw

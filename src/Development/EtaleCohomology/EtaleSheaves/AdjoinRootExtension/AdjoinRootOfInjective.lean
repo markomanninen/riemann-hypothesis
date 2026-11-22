@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 open Polynomial
@@ -31,7 +35,7 @@ lemma step_root (p : MonP R) :
 
 lemma adjoinRoot_of_injective {T : Type u} [CommRing T] (q : T[X]) (hq : q.Monic)
     (hd : 0 < q.natDegree) : Function.Injective (AdjoinRoot.of q) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro r hr
   by_contra h
   have h1 : AdjoinRoot.mk q (C r) = 0 := hr
@@ -63,7 +67,7 @@ lemma finite_roots (F : Finset (MonP R)) : ∃ (T : Type u) (_ : CommRing T) (φ
 
 theorem stepHom_injective : Function.Injective (stepHom R) := by
   classical
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro r hr
   have hmem : MvPolynomial.C r ∈ stepIdeal R := Ideal.Quotient.eq_zero_iff_mem.1 hr
   obtain ⟨S, hS, hx⟩ := Submodule.mem_span_finite_of_mem_span hmem
@@ -92,7 +96,7 @@ theorem stepHom_isIntegral : (stepHom R).IsIntegral := by
   obtain ⟨q, rfl⟩ := Ideal.Quotient.mk_surjective z
   induction q using MvPolynomial.induction_on with
   | C a => exact isIntegral_algebraMap
-  | add a b ha hb => rw [map_add]; exact ha.add hb
+  | add a b ha hb => rw [map_add (f := _)]; exact ha.add hb
   | mul_X a p ha =>
     rw [map_mul]
     refine ha.mul ⟨p.1, p.2.1, ?_⟩

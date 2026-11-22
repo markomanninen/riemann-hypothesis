@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TailRd
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PairForm
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.UnitRatio
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TailRd
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PairForm
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.UnitRatio
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum MeasureTheory NumberField IsDedekindDomain Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.FinPl GlobalTheory.SeeSaw ValuativeRel IsLocalRing
@@ -23,8 +27,8 @@ def sOpLin (β : Frame p S n) (P : Pair k n) (q : Unif k) (χ : AddChar 𝓀[k] 
   toFun := sOp β P q χ ε
   map_add' a b := by
     have h : formAt β P (a + b) = formAt β P a + formAt β P b := by
-      funext P₁; simp [formAt, map_add]
-    simp only [sOp, h, map_add, Pi.add_apply]
+      funext P₁; simp [formAt, map_add (f := _)]
+    simp only [sOp, h, map_add (f := _), Pi.add_apply]
   map_smul' c a := by
     have h : formAt β P (c • a) = c • formAt β P a := by
       funext P₁; simp [formAt, map_smul]
@@ -51,7 +55,8 @@ theorem S_smul (o : TDat c k ι) (ε : ℕ → ι → 𝓀[k]ˣ) (j : ℕ) (a : 
 theorem S_sum (o : TDat c k ι) (ε : ℕ → ι → 𝓀[k]ˣ) (j : ℕ) {α : Type} (s : Finset α) (f : α → GA D (c.X j) → ℂ) :
     o.S ε j (∑ a ∈ s, f a) = ∑ a ∈ s, o.S ε j (f a) := by
   obtain ⟨L, hL⟩ := S_lin o ε j
-  rw [hL, map_sum]; simp only [hL]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hL, map_sum]; simp only [hL]
 
 theorem lift_smul {S T : HSp D} (kd : KerDat S T) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (x : DefSp S) (y : DefSp T)
     (P : PolF D T.rank S.rank) (a : ℂ) (φ : GA D S → ℂ) :

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSubringEqOK
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIntegralPi
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSubringEqOK
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIntegralPi
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 noncomputable section
@@ -73,7 +78,8 @@ theorem main : ∀ (F E : Type) [NontriviallyNormedField F] [NontriviallyNormedF
     rw [map_mul, hf, hf, map_zero]
     exact single_mul_single_of_ne (e.symm.injective.ne hij) _ _
   · apply ψ.injective
-    rw [map_sum, map_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_one]
     simp_rw [hf]
     rw [Equiv.sum_comp e.symm (fun I => (Pi.single I 1 : ∀ J : MaximalSpectrum A.K, A.K ⧸ J.asIdeal))]
     exact Finset.univ_sum_single 1
@@ -89,7 +95,7 @@ theorem main : ∀ (F E : Type) [NontriviallyNormedField F] [NontriviallyNormedF
       change ψ (algebraMap F A.K c * f i) (e.symm i) = _
       rw [map_mul, AlgEquiv.commutes, hf, Pi.mul_apply, Pi.single_eq_same, mul_one, Pi.algebraMap_apply]
     rw [h2] at h1
-    have h3 := (isIntegral_algebraMap_iff (algebraMap F (A.K ⧸ (e.symm i).asIdeal)).injective).1 h1
+    have h3 := (isIntegral_algebraMap_iff ).1 h1
     have h4 := (Valuation.integer.integers (NormedField.valuation (K := F))).mem_of_integral h3
     rw [Valuation.mem_integer_iff, NormedField.valuation_apply] at h4
     have h5 : ‖c‖ ≤ 1 := by exact_mod_cast h4

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.BasisCombinationMemInvariants
-import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantLattices
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.BasisCombinationMemInvariants
+public import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantLattices
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,7 +92,8 @@ theorem exists_lift_of_onto (hs : W.s = 1) (hLem3 : Formalism.MainNotions.DeltaI
     rw [map_smul, hz', smul_smul, hunit.val_inv_mul, one_smul]
   choose v hv using hi
   refine ⟨∑ i, v i, ?_⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [hv]
   rw [← Finset.sum_smul, sum_letE, one_smul]
 
@@ -108,13 +113,15 @@ theorem exists_invariant_lift_average (hcu : IsUnit ((W.DelF.card : ℕ) : W.EE)
       calc W.γE δ' (↑hcu.unit⁻¹ : W.EE)
           = W.γE δ' (↑hcu.unit⁻¹ : W.EE) * (↑hcu.unit * ↑hcu.unit⁻¹) := by rw [Units.mul_inv, mul_one]
         _ = ↑hcu.unit⁻¹ := by rw [← mul_assoc, h1, one_mul]
-    rw [W.γD_smul, hinv, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [W.γD_smul, hinv, map_sum]
     congr 1
     simp only [← W.γD_mul]
     exact Finset.sum_nbij' (fun δ => δ' * δ) (fun δ => δ'⁻¹ * δ)
       (fun δ hδ => finiteDelta_mul_mem hδ' hδ) (fun δ hδ => finiteDelta_mul_mem (finiteDelta_inv_mem hδ') hδ)
       (fun δ _ => by group) (fun δ _ => by group) (fun δ _ => rfl)
-  · rw [map_smul, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_sum]
     rw [Finset.sum_congr rfl fun δ hδ => by rw [W.map_γ, hw, hy δ hδ]]
     rw [Finset.sum_const, ← Nat.cast_smul_eq_nsmul W.EE, smul_smul, hcu.val_inv_mul, one_smul]
 

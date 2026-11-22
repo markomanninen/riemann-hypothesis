@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqTopOfTranslates
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNonvanishingFiniteDatumDefiniteLift
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceAnnihilatorRelativelyCompact
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSelfDualCoordLatticeOfSelfDualFrame
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmPureTensorOOfFinite
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsSplitFrameSelfDualLatticeCompletion
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsPlaceChartOfSplitIdempotent
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsInvariantForm
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicCharacterFrequenciesAndConductorProduct
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnderEqOrSmulUnderEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqTopOfTranslates
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNonvanishingFiniteDatumDefiniteLift
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceAnnihilatorRelativelyCompact
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSelfDualCoordLatticeOfSelfDualFrame
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmPureTensorOOfFinite
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsSplitFrameSelfDualLatticeCompletion
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsPlaceChartOfSplitIdempotent
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsInvariantForm
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicCharacterFrequenciesAndConductorProduct
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnderEqOrSmulUnderEq
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ExistsNatSmulSingle
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +66,7 @@ theorem psiV_add (ψ : AddChar (AF D.host.F) ℂ) (he : SplitAt D v e) (x y : Fv
     psiV D.host.F ψ v (x + y) = psiV D.host.F ψ v x * psiV D.host.F ψ v y := by
   obtain ⟨a, rfl⟩ := (GlobalTheory.SplitChart.chart_comp he).1 x
   obtain ⟨b, rfl⟩ := (GlobalTheory.SplitChart.chart_comp he).1 y
-  rw [← RingHom.map_add, ← char_trace, ← char_trace, ← char_trace, mul_add, map_add, AddChar.map_add_eq_mul]
+  rw [← RingHom.map_add (f := _), ← char_trace, ← char_trace, ← char_trace, mul_add, map_add (f := _), AddChar.map_add_eq_mul]
 
 theorem psiV_natCast (ψ : AddChar (AF D.host.F) ℂ) (he : SplitAt D v e) (n : ℕ) (x : Fv D.host.F v) :
     psiV D.host.F ψ v (n * x) = psiV D.host.F ψ v x ^ n := by
@@ -114,7 +119,7 @@ theorem exists_chart_levels (he : Formalism.L2.NTheta.IsIdemAt e PP) (hπ : Char
     exact val_lt_one_of_mem he hπ hx
   · simp
   · intro x y _ _ hx hy
-    rw [Subring.coe_add, RingHom.map_add]
+    rw [Subring.coe_add, RingHom.map_add (f := _)]
     exact Valuation.map_add_lt _ hx hy
   · intro c x _ hx
     rw [smul_eq_mul, Subring.coe_mul, RingHom.map_mul, Valuation.map_mul]
@@ -156,7 +161,7 @@ theorem val_sub_lt (φ : Datum.EAf D →+* Fv D.host.F v)
     {U : Matrix (Fin b) (Fin a) (Datum.EAf D)} (hU : IsIntM U) (hU' : topL a (redM PP U) = 1) (j i : Fin a) :
     Valued.v (U.map φ (Fin.castLE hr j) i - if j = i then 1 else 0) < 1 := by
   have h1 := congrFun (congrFun hU' j) i
-  rw [topL, dif_pos ⟨(Fin.castLE hr j).2, i.2⟩, redM, dif_pos (hU _ _), Matrix.one_apply] at h1
+  rw [topL, dite_eq_left ⟨(Fin.castLE hr j).2, i.2⟩, redM, dite_eq_left (hU _ _), Matrix.one_apply] at h1
   by_cases h : j = i
   · rw [if_pos h] at h1 ⊢
     have h2 := hres (⟨_, hU (Fin.castLE hr j) i⟩ - 1) (by
@@ -167,8 +172,8 @@ theorem val_sub_lt (φ : Datum.EAf D →+* Fv D.host.F v)
     rw [sub_zero]
     exact hres ⟨_, hU (Fin.castLE hr j) i⟩ h1
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_const {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsCharAF D.host.F ψ) (S T : HSp D)
     (βS : GL (Fin S.rank) (Datum.EAf D)) (βT : GL (Fin T.rank) (Datum.EAf D)) (he : Formalism.L2.NTheta.IsIdemAt e PP)
     (c : Fin T.rank → AE D) (hc : ∃ i, e * c i ≠ 0) (hr : T.rank ≤ S.rank) :
@@ -236,9 +241,9 @@ theorem exists_const {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsCharAF D.host.F �
     exact mul_lt_of_lt_one_right (zero_lt_iff.2 hx0)
       ((div_lt_one₀ (zero_lt_iff.2 ((Valuation.ne_zero_iff _).2 hj0))).2 hrow)
 
+
 set_option maxHeartbeats 1000000 in
 open Classical in
-
 theorem exists_eigen {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} {S T : HSp D}
     {sS : D.what₂.Tau → Matrix (Fin S.rank) (Fin S.rank) ℂ} {sT : D.what₂.Tau → Matrix (Fin T.rank) (Fin T.rank) ℂ}
     {ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)} {ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)}
@@ -251,7 +256,9 @@ theorem exists_eigen {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} {S T : HSp
   obtain ⟨hv, e, he, ⟨Tm, hTm⟩, hall⟩ := h
   have ho := GlobalTheory.PlaceModelSum.isOrthSum_of_isIdemSum he
   have hinf := ho.conj.infPart_eq
-  have hSB := GlobalTheory.PlaceVec.isSBHalf_of_red hS.1 hT.1 hinf (frMapAdj S T βS βT) (GlobalTheory.PlaceVec.frMapAdj_add S T βS βT)
+  have hSB := GlobalTheory.PlaceVec.isSBHalf_of_red
+    (Formalism.IndefR.Fin.PDA.selfDual_isFullLattice S ΛS hS)
+    (Formalism.IndefR.Fin.PDA.selfDual_isFullLattice T ΛT hT) hinf (frMapAdj S T βS βT) (GlobalTheory.PlaceVec.frMapAdj_add S T βS βT)
     (GlobalTheory.PlaceVec.frMapAdj_up S T βS βT) (GlobalTheory.PlaceVec.frMapAdj_down S T βS βT) (Pg ∪ Q)
     (fun y => omegaK Pg y * omegaQ Q T.rank ξ (-1) y) fun y y' h => by
       rw [GlobalTheory.PlaceVec.omegaK_congr Pg fun PP hPP => h PP (Finset.mem_union_left _ hPP),

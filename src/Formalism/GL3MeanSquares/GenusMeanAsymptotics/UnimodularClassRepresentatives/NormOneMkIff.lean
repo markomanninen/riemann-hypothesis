@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.SmulGenMemIff
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.SmulGenMemIff
+
+@[expose] public section
 
 open NumberField Module
 
@@ -49,8 +53,8 @@ theorem cond_of_mem (hF : IsFixF K F) (hs : h.IsSymm) (hLi : Formalism.Hermitian
       obtain ⟨⟨z1, hz1, ez1⟩, ⟨z1', hz1', ez1'⟩⟩ := h1
       obtain ⟨⟨z2, hz2, ez2⟩, ⟨z2', hz2', ez2'⟩⟩ := h2
       refine ⟨⟨z1 + z2, add_mem hz1 hz2, ?_⟩, ⟨z1' + z2', add_mem hz1' hz2', ?_⟩⟩
-      · rw [map_add, ez1, ez2, Submodule.coe_add, map_add, LinearMap.add_apply]
-      · rw [map_add, ez1', ez2', Submodule.coe_add, map_add]
+      · rw [map_add (f := _), ez1, ez2, Submodule.coe_add, map_add (f := _), LinearMap.add_apply]
+      · rw [map_add (f := _), ez1', ez2', Submodule.coe_add, map_add (f := _)]
   have hB : ∀ u w : ↥L, ∃ t : 𝓞 F, t ∉ 𝔭 ∧ ∃ r ∈ extP K 𝔭 ^ v,
       algebraMap (𝓞 K) K r = algebraMap F K (t : F) * h (u : V) (w : V) := by
     intro u w
@@ -71,7 +75,7 @@ theorem cond_of_mem (hF : IsFixF K F) (hs : h.IsSymm) (hLi : Formalism.Hermitian
       rw [← pow_add, Nat.sub_add_cancel hvk]
     rw [hpow]
     exact Ideal.mul_mem_mul hc hr
-  · rw [map_add, map_mul, map_mul, map_add, ez1, ez2, er, map_sub, map_mul, map_one, e3, eφ]
+  · rw [map_add (f := _), map_mul, map_mul, map_add (f := _), ez1, ez2, er, map_sub, map_mul, map_one, e3, eφ]
     simp only [Submodule.coe_sub, Submodule.coe_smul, map_sub, LinearMap.sub_apply, hsmul1, hsmul2]
     ring
 

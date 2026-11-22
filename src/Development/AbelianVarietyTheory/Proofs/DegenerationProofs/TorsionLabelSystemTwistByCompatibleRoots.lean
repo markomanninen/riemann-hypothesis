@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsStrict
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsStrict
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -34,7 +38,7 @@ theorem rel_mul {p q : N.QT j} {p' q' : (N.twist β u).QT j} (hp : TwRel β u r 
     rw [hp.2.1, hq.2.1]; rfl
   · change p'.1.2.s z * q'.1.2.s z / N.θ (N.c z) p'.1.2.b q'.1.2.b =
       p.1.2.s z * q.1.2.s z / N.θ (N.c z) p.1.2.b q.1.2.b * r ^ β.be (p.1.1.toAdd + q.1.1.toAdd) z
-    rw [hp.2.2, hq.2.2, hp.2.1, hq.2.1, map_add, LinearMap.add_apply, zpow_add]
+    rw [hp.2.2, hq.2.2, hp.2.1, hq.2.1, map_add (f := _), LinearMap.add_apply, zpow_add]
     apply Additive.ofMul.injective
     simp only [ofMul_mul, ofMul_div]
     abel
@@ -76,7 +80,7 @@ theorem rel_surj (h : r ^ j = u) (p' : (N.twist β u).QT j) : ∃ p : N.QT j, Tw
   let y : N.X := p'.1.1.toAdd
   let g : N.Gt := ⟨p'.1.2.b, fun z => p'.1.2.s z / r ^ β.be y z, fun χ χ' => by
     have a : p'.1.2.s (χ + χ') * N.θ (N.c χ) (N.c χ') p'.1.2.b = p'.1.2.s χ * p'.1.2.s χ' := p'.1.2.mult χ χ'
-    rw [map_add, zpow_add, div_mul_eq_mul_div, a, div_mul_div_comm]⟩
+    rw [map_add (f := _), zpow_add, div_mul_eq_mul_div, a, div_mul_div_comm]⟩
   have hs : ∀ z : N.X, p'.1.2.s z = g.s z * r ^ β.be y z := fun z => (div_mul_cancel _ _).symm
   have hp : p'.1.2 ^ j = (N.twist β u).io y := p'.2
   refine ⟨⟨(Multiplicative.ofAdd y, g), ?_⟩, rfl, rfl, hs⟩

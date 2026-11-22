@@ -1,34 +1,41 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntDerApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivationTaylorPowerSeriesOfDerivationsKill
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TaylorIsRingHom
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfForallMemFilt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoeffwiseDerivationMvPowerSeriesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSolveMvPowerSeriesMatrixIdentityConstStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffSingleDerivationTaylorPowerSeriesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvPowerSeriesDegreeAdicFiltrationMulLeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoordinatePolynomialSubMemMaximalIdealPowStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntDerApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivationTaylorPowerSeriesOfDerivationsKill
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TaylorIsRingHom
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfForallMemFilt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoeffwiseDerivationMvPowerSeriesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSolveMvPowerSeriesMatrixIdentityConstStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffSingleDerivationTaylorPowerSeriesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvPowerSeriesDegreeAdicFiltrationMulLeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoordinatePolynomialSubMemMaximalIdealPowStatement
+
+@[expose] public section
+
 open IsLocalRing GlobalTheory.FormalOrigin GlobalTheory.FormalOrigin.Extend
 
 namespace GlobalTheory.FormalOrigin.Extend
 
 noncomputable def pdZ {σ R : Type} [CommRing R] (j : σ) : Derivation ℤ (MvPowerSeries σ R) (MvPowerSeries σ R) where
-  toFun := MvPowerSeries.pderiv R j
+  toFun := MvPowerSeries.pderiv (R := R) j
   map_add' := map_add _
-  map_smul' m x := by simpa using map_zsmul (MvPowerSeries.pderiv R j) m x
+  map_smul' m x := by simpa using map_zsmul (MvPowerSeries.pderiv (R := R) j) m x
   map_one_eq_zero' := MvPowerSeries.pderiv_one
-  leibniz' := (MvPowerSeries.pderiv R j).leibniz
+  leibniz' := (MvPowerSeries.pderiv (R := R) j).leibniz
 
 theorem pdZ_apply {σ R : Type} [CommRing R] (j : σ) (F : MvPowerSeries σ R) :
-    pdZ j F = MvPowerSeries.pderiv R j F := rfl
+    pdZ j F = MvPowerSeries.pderiv (R := R) j F := rfl
 
 theorem add_sum_apply {σ R ι : Type} [CommRing R] [Fintype ι] (E : Derivation ℤ (MvPowerSeries σ R) (MvPowerSeries σ R))
     (G : ι → MvPowerSeries σ R) (P : ι → Derivation ℤ (MvPowerSeries σ R) (MvPowerSeries σ R))
     (F : MvPowerSeries σ R) : (E + ∑ j, G j • P j) F = E F + ∑ j, G j * P j F := by
   rw [Derivation.add_apply]
   congr 1
-  rw [← Derivation.coeFnAddMonoidHom_apply, map_sum, Finset.sum_apply]
-  simp [Derivation.smul_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Derivation.coeFnAddMonoidHom_apply, map_sum, Finset.sum_apply]
+  change ∑ j, (G j • P j) F = ∑ j, G j * P j F
+  simp [Derivation.smul_apply, smul_eq_mul]
 
 theorem derivation_extends : ∀ (R A : Type) [CommRing R] [IsLocalRing R] [IsNoetherianRing R] [IsAdicComplete (maximalIdeal R) R] [Algebra ℚ R] [CommRing A] [IsLocalRing A] [IsNoetherianRing A] (inc : R →+* A) (ev : A →+* R), (∀ r, ev (inc r) = r) → ∀ (n : ℕ) (ds : Fin n → Derivation ℤ A A) (z : Fin n → A), (∀ i, ev (z i) = 0) → (∀ a i, ev (ds a (z i)) = if a = i then 1 else 0) → maximalIdeal A = (maximalIdeal R).map inc ⊔ Ideal.span (Set.range z) → (∀ a r, ds a (inc r) = 0) → ∀ (d : Derivation ℤ A A) (D : Derivation ℤ R R), (∀ r, d (inc r) = inc (D r)) → ∃ dΩ : Derivation ℤ (MvPowerSeries (Fin n) R) (MvPowerSeries (Fin n) R), (∀ r, dΩ (MvPowerSeries.C r) = MvPowerSeries.C (D r)) ∧ ∀ f, dΩ (taylor ev (fun i => ⇑(ds i)) f) = taylor ev (fun i => ⇑(ds i)) (d f) := by
   intro R A _ _ _ _ _ _ _ _ inc ev hev n ds z hz hdz hm hinc d D hdD
@@ -54,9 +61,9 @@ theorem derivation_extends : ∀ (R A : Type) [CommRing R] [IsLocalRing R] [IsNo
   ·
     set e : A → MvPowerSeries (Fin n) R := fun f => dΩ (T f) - T (d f) with he
     have e_add : ∀ f g, e (f + g) = e f + e g := by
-      intro f g; simp only [he, map_add]; ring
+      intro f g; simp only [he, map_add (f := _)]; ring
     have e_mul : ∀ f g, e (f * g) = T f * e g + T g * e f := by
-      intro f g; simp only [he, map_mul, Derivation.leibniz, smul_eq_mul, map_add]; ring
+      intro f g; simp only [he, map_mul, Derivation.leibniz, smul_eq_mul, map_add (f := _)]; ring
     have e_neg : ∀ f, e (-f) = - e f := by
       intro f; simp only [he, map_neg]; ring
     have e_one : e 1 = 0 := by simp [he]
@@ -113,7 +120,7 @@ theorem derivation_extends : ∀ (R A : Type) [CommRing R] [IsLocalRing R] [IsNo
         refine Submodule.mul_induction_on hx (fun a ha b hb => ?_) (fun a b ha hb => ?_)
         · rw [map_mul, add_comm]
           exact GlobalTheory.T.mvPowerSeriesDegreeAdicFiltration_mul_le (Fin n) R _ 1 k (Ideal.mul_mem_mul (hT1 a ha) (ih b hb))
-        · rw [map_add]; exact Ideal.add_mem _ ha hb
+        · rw [map_add (f := _)]; exact Ideal.add_mem _ ha hb
     have hek : ∀ k, ∀ x ∈ maximalIdeal A ^ (k + 1), e x ∈ filt (maximalIdeal R) k := by
       intro k
       induction k with

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.Params
-import Formalism.LocalRingCardinality.DataHost
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.Params
+public import Formalism.LocalRingCardinality.DataHost
+
+@[expose] public section
 
 noncomputable section
 

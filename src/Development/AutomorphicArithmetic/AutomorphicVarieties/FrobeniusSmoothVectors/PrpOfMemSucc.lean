@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpresGr
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpresGr
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -36,7 +40,7 @@ theorem UpperTheory.V.Fr.ep_prp :
     apply Subtype.ext
     rw [Box.Ev.ad_apply]
     conv_lhs => rw [prp_add j X]
-    rw [map_add, map_add, Submodule.coe_add,
+    rw [map_add (f := _), map_add (f := _), Submodule.coe_add,
       prp_of_mem j _ (h.stab j s (prp K j X).2),
       prp_of_mem_succ j _ (h.stab (j + 1) s (prp K (j + 1) X).2), add_zero]
   refine ⟨P1, ?_⟩

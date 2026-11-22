@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.M3bExpHolds
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.M3bExpHolds
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.SublatticeCoefficients
 
@@ -82,8 +86,6 @@ theorem subCoeff {r : ℕ} (X : Data E r) (la : Wt X.Ψ r) (P : Frame X.Ψ r →
   have h0t : (0 : Fin (Fintype.card X.Ψ) → ℂ) ∈ tube (Fintype.card X.Ψ) (Om X ξ x β) := by
     show (fun j => ((0 : Fin (Fintype.card X.Ψ) → ℂ) j).im) ∈ Om X ξ x β
     convert h0 using 1
-    funext j
-    simp
   obtain ⟨hsumβ, -⟩ := tube_expansion _ _ hΩo hΩc h0 (hline_diff X la P ξ x β hP hξh hx)
     (hline_periodic X la P ξ x β hP hξΛ hξh hx hβp) 0 h0t
   have hak : ∀ k', a k' = fourCoeff (hline X P ξ x β) 0 k' := fun k' =>

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SquarePairLocal.MemFixSub
-import Formalism.LocalRingCardinality.SpanPowerMembership.Adelic
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SquarePairLocal.MemFixSub
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Adelic
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain HeightOneSpectrum WithZero IsLocalRing Topology Filter
@@ -60,8 +64,8 @@ theorem val_star (a : E) : v.valuation E (star a) = v.valuation E a := by
   rw [star_div₀, hs, hs, map_div₀, map_div₀, valuation_of_algebraMap, valuation_of_algebraMap,
     valuation_of_algebraMap, valuation_of_algebraMap, intVal_cj v hv, intVal_cj v hv]
 
-omit hv in
 
+omit hv in
 def tau : WithVal (v.valuation E) →+* WithVal (v.valuation E) :=
   WithVal.map (v.valuation E) (v.valuation E) (starRingEnd E)
 

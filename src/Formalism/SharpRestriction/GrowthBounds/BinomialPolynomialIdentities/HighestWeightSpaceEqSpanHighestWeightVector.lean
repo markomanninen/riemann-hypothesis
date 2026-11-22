@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.DualWeightVectorApplyEqZeroOfNeNeg
-import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightConditionFromIntegralForm
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.DualWeightVectorApplyEqZeroOfNeNeg
+public import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightConditionFromIntegralForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -127,7 +131,7 @@ theorem highestWeightSpace_eq_span_highestWeightVector [CharZero (KK O)] {E : GL
       exact Submodule.subset_span ⟨u * w, L.mul_mem hu hw, rfl⟩
     | zero => simp
     | add y z _ _ hy hz =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact U.add_mem hy hz
     | smul c y _ hy =>
       rw [map_smul]
@@ -170,7 +174,7 @@ theorem highestWeightSpace_eq_span_highestWeightVector [CharZero (KK O)] {E : GL
       exact key u hu c d
     | zero => simp
     | add y z _ _ hy hz =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact U.add_mem hy hz
     | smul t y _ hy =>
       rw [map_smul]
@@ -272,7 +276,7 @@ theorem contragredient_span_highestWeight_eq_top (D : Formalism.BasicNotions.D7)
       exact Submodule.subset_span ⟨dualOps E a b * u,
         Submonoid.mul_mem _ (Submonoid.subset_closure ⟨(a, b), rfl⟩) hu, rfl⟩
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ _ hx
   have hv'G : v' ∈ G' := Submodule.subset_span ⟨1, Submonoid.one_mem _, rfl⟩
   set Z : Submodule (KK O) V := G'.dualCoannihilator with hZ
@@ -283,7 +287,7 @@ theorem contragredient_span_highestWeight_eq_top (D : Formalism.BasicNotions.D7)
     have := hx _ (hG'st a b φ hφ)
     rw [dualOperators_apply, neg_eq_zero] at this
     exact this
-  obtain ⟨Z', hc, hZ'st⟩ := weight_condition_from_integral_form D (KK O) V n E hI.1 Z hZst
+  obtain ⟨Z', hc, hZ'st⟩ := cr_compl E hI.1.1 hI.1.2.2 Z hZst
   have hvtop : v ∈ Z ⊔ Z' := hc.sup_eq_top ▸ Submodule.mem_top
   obtain ⟨z, hz, z', hz', hsum⟩ := Submodule.mem_sup.1 hvtop
   have hzw : z ∈ weightSp E mu := by
@@ -294,7 +298,7 @@ theorem contragredient_span_highestWeight_eq_top (D : Formalism.BasicNotions.D7)
       Submodule.sub_mem _ (hZ'st a a z' hz') (Submodule.smul_mem _ _ hz')
     have h3 : (E a a z - (mu a : KK O) • z) + (E a a z' - (mu a : KK O) • z') = 0 := by
       have := mem_weightSpace_iff_diag_scalar.1 hI.2.2.1.2.1 a
-      rw [← hsum, map_add, smul_add] at this
+      rw [← hsum, map_add (f := _), smul_add] at this
       rw [← sub_eq_zero] at this
       rw [← this]
       abel

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.HTAaLbMem
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NOfibLatCut
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.GenusMassPosOfMassLowerBound
-import Formalism.HermitianLattices.HermitianLatticesProofs.IsomAct
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.HTAaLbMem
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NOfibLatCut
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.GenusMassPosOfMassLowerBound
+public import Formalism.HermitianLattices.HermitianLatticesProofs.IsomAct
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,42 @@ open Alg LatA
 
 variable {D : D7} {X : HidaSetting D} {u : D.what₂.Word} {n : (VS D).V ≃ₗ[D.host.E] (VS D).V}
 
+local notation "FI" => FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E
+
+private def starStable (I : FI) : Prop := ∀ x ∈ I, star x ∈ I
+
+private theorem starStable_one : starStable (1 : FI) := by
+  intro x hx
+  obtain ⟨o, rfl⟩ := (FractionalIdeal.mem_one_iff _).1 hx
+  obtain ⟨o', ho'⟩ := Formalism.L2.SG.NGCut.LeadingMinorIntegrality.star_int o
+  exact (FractionalIdeal.mem_one_iff _).2 ⟨o', ho'⟩
+
+private theorem starStable_inv {I : FI} (hI : starStable I) : starStable I⁻¹ := by
+  by_cases h0 : I = 0
+  · subst h0
+    intro x hx
+    rw [_root_.inv_zero] at hx ⊢
+    rw [(FractionalIdeal.mem_zero_iff _).1 hx, star_zero]
+    exact (FractionalIdeal.mem_zero_iff _).2 rfl
+  intro x hx
+  rw [FractionalIdeal.mem_inv_iff h0] at hx ⊢
+  intro y hy
+  have h := starStable_one _ (hx _ (hI y hy))
+  rwa [star_mul, star_star, mul_comm] at h
+
+private theorem starStable_aaD (a : Fin D.R.rS) : starStable (aaD D a) := by
+  rw [Formalism.L2.SG.SplitPrimeNormLemmas.IntG.aaD_eq]
+  have : ddS D ^ (D.R.rS - (a : ℕ)) = (((Formalism.L2.SG.NGCut.LeadingMinorIntegrality.dI D ^ (D.R.rS - (a : ℕ)) : Ideal (𝓞 D.host.E)) : FI)) := by
+    rw [FractionalIdeal.coeIdeal_pow]; rfl
+  rw [this]
+  apply starStable_inv
+  intro x hx
+  obtain ⟨y, hy, rfl⟩ := (FractionalIdeal.mem_coeIdeal _).1 hx
+  obtain ⟨y', hy', ey⟩ := Formalism.L2.SG.NGCut.LeadingMinorIntegrality.star_mem_pow _ y hy
+  exact (FractionalIdeal.mem_coeIdeal _).2 ⟨y', hy', ey⟩
+
 theorem inW_add {v w : (VS D).V} (hv : InW X v) (hw : InW X w) : InW X (v + w) := fun c =>
-  ⟨by rw [map_add, (hv c).1, (hw c).1, add_zero], by rw [map_add, (hv c).2, (hw c).2, add_zero]⟩
+  ⟨by rw [map_add (f := _), (hv c).1, (hw c).1, add_zero], by rw [map_add (f := _), (hv c).2, (hw c).2, add_zero]⟩
 
 theorem inW_sum (s : Finset (Fin D.R.rS)) (c : Fin D.R.rS → D.host.E) (v : Fin D.R.rS → (VS D).V)
     (hv : ∀ d, InW X (v d)) : InW X (∑ d ∈ s, c d • v d) := fun e =>
@@ -33,11 +71,11 @@ theorem pW_nf (hn : NFl X u n) (a : Fin D.R.rS) :
   have hvW : InW X v := inW_add (pW_inW X _) (inW_sum _ _ _ fun d => xq_inW (X := X) d)
   have horth : ∀ w, InW X w → (VS D).hT v w = 0 := by
     intro w hw
-    rw [hv, map_add, LinearMap.add_apply, hT_sumL, omega_rel hn a hw]
+    rw [hv, map_add (f := _), LinearMap.add_apply, hT_sumL, omega_rel hn a hw]
     simp only [neg_add_cancel]
   have hall : ∀ y, (VS D).hT v y = 0 := by
     intro y
-    rw [decomp X y, map_add, map_add, hT_sumR, hT_sumR, horth _ (pW_inW X y)]
+    rw [decomp X y, map_add (f := _), map_add (f := _), hT_sumR, hT_sumR, horth _ (pW_inW X y)]
     have h1 : ∀ c, (VS D).hT v (X.eX c) = 0 := fun c => by rw [hsw, (hvW c).1, star_zero]
     have h2 : ∀ c, (VS D).hT v (X.fY c) = 0 := fun c => by rw [hsw, (hvW c).2, star_zero]
     simp only [h1, h2, mul_zero, Finset.sum_const_zero, add_zero]
@@ -57,7 +95,7 @@ theorem pW_sum (s : Finset (Fin D.R.rS)) (c : Fin D.R.rS → D.host.E) (v : Fin 
 theorem inv_up (X0 : Matrix (Fin D.R.rS) (Fin D.R.rS) D.host.E) (hup : ∀ b a, a < b → X0 b a = 0)
     (hd : ∀ a, X0 a a = 1) : (∀ b a, a < b → X0⁻¹ b a = 0) ∧ ∀ a, X0⁻¹ a a = 1 := by
   have hdet : X0.det = 1 := by
-    rw [Matrix.det_of_upperTriangular (fun i j hij => hup i j hij)]
+    rw [Matrix.det_of_isUpperTriangular (fun i j hij => hup i j hij)]
     simp [hd]
   have hU : IsUnit X0.det := by rw [hdet]; exact isUnit_one
   have hXY : X0 * X0⁻¹ = 1 := Matrix.mul_nonsing_inv _ hU
@@ -78,8 +116,8 @@ theorem inv_up (X0 : Matrix (Fin D.R.rS) (Fin D.R.rS) D.host.E) (hup : ∀ b a, 
 
 end LatB
 
-open LatB LatA Alg in
 
+open LatB LatA Alg in
 theorem dictLatB_holds : DictLatB := by
   intro D X u n hn hLQ
   obtain ⟨hXs, hxs, hMs⟩ := hLQ
@@ -102,7 +140,14 @@ theorem dictLatB_holds : DictLatB := by
     intro d a
     rw [hBeq, Matrix.conjTranspose_apply]
     rcases lt_trichotomy a d with h | h | h
-    · rw [mul_comm]; exact SS_mul (SS_aaD a) (SS_inv (SS_aaD d)) _ (hXinv a d h)
+    · rw [mul_comm]
+      refine FractionalIdeal.mul_induction_on (hXinv a d h) ?_ ?_
+      · intro x hx y hy
+        rw [star_mul']
+        exact FractionalIdeal.mul_mem_mul (starStable_aaD a x hx) (starStable_inv (starStable_aaD d) y hy)
+      · intro x y hx hy
+        rw [star_add]
+        exact Submodule.add_mem _ hx hy
     · subst h; rw [hYd, star_one, mul_comm]; exact one_mem_aa a
     · rw [hYup a d h, star_zero]; exact Submodule.zero_mem _
 
@@ -113,10 +158,11 @@ theorem dictLatB_holds : DictLatB := by
     have hnx : n x = ∑ c, (VS D).hT (X.fY c) x • n (X.eX c) + ∑ c, (VS D).hT (X.eX c) x • n (X.fY c) +
         n (pW X x) := by
       conv_lhs => rw [decomp X x]
-      simp only [map_add, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_add (f := _), map_sum, map_smul]
     rw [mem_hermitianStandardLattice_iff_pairing_integral X]
     refine ⟨fun b => ?_, fun b => ?_, ?_⟩
-    · rw [hnx, map_add, map_add, hT_sumR, hT_sumR, row hn b hwW]
+    · rw [hnx, map_add (f := _), map_add (f := _), hT_sumR, hT_sumR, row hn b hwW]
       refine Submodule.add_mem _ (Submodule.add_mem _ (Submodule.sum_mem _ fun c _ => ?_)
         (Submodule.sum_mem _ fun c _ => ?_)) (hT_aaLb_mem X (hxs b) hw)
       · show (VS D).hT (X.fY c) x * Xq X n b c ∈ aaD D b
@@ -130,11 +176,11 @@ theorem dictLatB_holds : DictLatB := by
         have e : (aaD D c)⁻¹ * (aaD D b * aaD D c) = aaD D b := by
           rw [mul_comm, mul_assoc, mul_inv_cancel₀ (aa_ne c), mul_one]
         rw [← e]; exact FractionalIdeal.mul_mem_mul (he c) (hA b c)
-    · rw [hnx, map_add, map_add, hT_sumR, hT_sumR]
+    · rw [hnx, map_add (f := _), map_add (f := _), hT_sumR, hT_sumR]
       have h1 : ∀ c, (VS D).hT (X.eX b) (n (X.eX c)) = 0 := fun c => by
         rw [Xq_expand hn c, hT_sumR]; simp only [X.ee, mul_zero, Finset.sum_const_zero]
       have h2 : (VS D).hT (X.eX b) (n (pW X x)) = 0 := by
-        rw [nw hn hwW, map_add, hT_sumR, (hwW b).1, zero_add]
+        rw [nw hn hwW, map_add (f := _), hT_sumR, (hwW b).1, zero_add]
         simp only [X.ee, mul_zero, Finset.sum_const_zero]
       simp only [h1, h2, mul_zero, Finset.sum_const_zero, zero_add, add_zero]
       refine Submodule.sum_mem _ fun c _ => ?_

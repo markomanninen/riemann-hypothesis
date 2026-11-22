@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.ModDepthGE
+module
+
+public import Mathlib
+public import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.ModDepthGE
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory
@@ -43,7 +48,7 @@ theorem injective_and_saturated_of_injective_mod_regular :
       rw [Ideal.span_le, Set.singleton_subset_iff]
       exact hf
     have hK0 : K = ⊥ := Submodule.eq_bot_of_le_smul_of_le_jacobson_bot _ K hFG hle hjac
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     have : a ∈ K := ha
     rw [hK0] at this

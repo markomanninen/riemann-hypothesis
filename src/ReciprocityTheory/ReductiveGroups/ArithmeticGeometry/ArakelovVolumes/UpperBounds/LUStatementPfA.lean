@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetMeasStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.DetSubUpper
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetMeasStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.DetSubUpper
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.LUPf
 
@@ -47,7 +51,7 @@ theorem row_expand (N M : Matrix (Fin n) (Fin n) ℂ) (i j : Fin n)
 theorem Lm_up (M : Matrix (Fin n) (Fin n) ℂ) (i k : Fin n) (h : i < k) : Lm M i k = 0 := by
   simp only [Lm, Matrix.of_apply]
   have h' : ¬ ((k : ℕ) < i) := by rw [Fin.lt_iff_val_lt_val] at h; omega
-  rw [dif_neg h', if_neg (ne_of_gt h)]
+  rw [dite_eq_right h', if_neg (ne_of_gt h)]
 
 theorem Lm_diag (M : Matrix (Fin n) (Fin n) ℂ) (i : Fin n) : Lm M i i = 1 := by
   simp [Lm]
@@ -74,7 +78,7 @@ theorem Lm_mul_up (M : Matrix (Fin n) (Fin n) ℂ) (hM : ∀ k : Fin (n + 1), lm
   have hL : ∀ k : Fin i, Lm M i (Fin.castLE i.isLt.le k) = -wv M i k := by
     intro k
     simp only [Lm, Matrix.of_apply]
-    rw [dif_pos (by simp)]
+    rw [dite_eq_left (by simp)]
     rfl
   simp_rw [hL]
   have key : vecMul (wv M i) (lb M i) = fun j : Fin i => M i (Fin.castLE i.isLt.le j) := by
@@ -108,7 +112,7 @@ theorem lminor_nb (N B : Matrix (Fin n) (Fin n) ℂ) (hup : ∀ i k : Fin n, i <
   have hmono : ∀ a b : Fin k, a < b → e a < e b := fun a b h => h
   have hsub : (N * B).submatrix e e = N.submatrix e e * B.submatrix e e := by
     ext a b
-    simp only [submatrix_apply, mul_apply]
+    simp only [submatrix_apply, Matrix.mul_apply]
     symm
     refine Fintype.sum_of_injective e (Fin.castLE_injective _) _ _ (fun c hc => ?_) (fun _ => rfl)
     have hc' : (k : ℕ) ≤ c := by

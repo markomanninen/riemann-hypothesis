@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.GeoTransport
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.GeoTransport
+
+@[expose] public section
 
 open MeasureTheory Topology PositivityTheory.Rg.Tf.Loc
 open scoped ENNReal
@@ -76,5 +80,5 @@ theorem UpperTheory.V.Z.Tf.Orb.alongIndep :
     UpperTheory.V.Z.Tf.Orb.AlongIndep := by
   intro G T _ _ _ _ _ _ _ μ _ _ ν _ _ j hj F hF hFH ρ hρ
   have hex : ∃ ρ, PositivityTheory.Rg.Tf.Geo.IsNormAlong id (fun t => j t) ν ρ := ⟨ρ, hρ⟩
-  rw [PositivityTheory.Rg.Tf.Geo.quotInt, dif_pos hex]
+  rw [PositivityTheory.Rg.Tf.Geo.quotInt, dite_eq_left hex]
   exact wd_eq hj hF hFH hex.choose_spec.1 hex.choose_spec.2 hρ.1 hρ.2

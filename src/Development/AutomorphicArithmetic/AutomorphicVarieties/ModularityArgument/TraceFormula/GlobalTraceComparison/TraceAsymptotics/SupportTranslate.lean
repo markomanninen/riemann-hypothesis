@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.BlkOneMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.HintSph
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.CvHecke
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.UnitHecke
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeCosetSumCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemULOfSplit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralLeviConstantTerm
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.BlkOneMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.HintSph
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.CvHecke
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.UnitHecke
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeCosetSumCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemULOfSplit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralLeviConstantTerm
+
+@[expose] public section
 
 noncomputable section
 
@@ -120,12 +124,12 @@ private def Sm (h : a + b = n) (w : Pl E) (φ : GLw n w → ℂ) (m : GLw a w ×
 
 private theorem K_of_int (h : a + b = n) (w : Pl E)
     (l : Multiplicative (Matrix (Fin a) (Fin b) (w.adicCompletion E))) (hl : l ∈ intMat a b w) :
-    blk h w 1 (Multiplicative.toAdd l) ∈ KGL w n := by
+    blk h w 1 (Multiplicative.toAdd l) ∈ KGL w (n := n) := by
   have e := (GlobalTheory.CompanionTheory.LeviInt.comap_uN_and_map_sM E a b n h w).1
   rw [← e] at hl
   exact hl
 
-private theorem right_L (h : a + b = n) (w : Pl E) (φ : GLw n w → ℂ) (hφ : ∀ k ∈ KGL w n, ∀ x, φ (x * k) = φ x)
+private theorem right_L (h : a + b = n) (w : Pl E) (φ : GLw n w → ℂ) (hφ : ∀ k ∈ KGL w (n := n), ∀ x, φ (x * k) = φ x)
     (m : GLw a w × GLw b w) (x l : Multiplicative (Matrix (Fin a) (Fin b) (w.adicCompletion E)))
     (hl : l ∈ intMat a b w) :
     φ (blk h w m (Multiplicative.toAdd (x * l))) = φ (blk h w m (Multiplicative.toAdd x)) := by
@@ -139,13 +143,13 @@ private theorem inv_blk (h : a + b = n) (w : Pl E) (c m : GLw a w × GLw b w)
   rw [inv_mul_eq_iff_eq_mul, GlobalTheory.LeviFubini.blk_mul_blk]
   simp
 
-private theorem ct_bi (h : a + b = n) (w : Pl E) (F : GLw n w → ℂ) (hF : IsHecke (KGL w n) F)
+private theorem ct_bi (h : a + b = n) (w : Pl E) (F : GLw n w → ℂ) (hF : IsHecke (KGL w (n := n)) F)
     (k : GLw a w × GLw b w) (hk : k ∈ K2 a b w) (m : GLw a w × GLw b w) :
     ct h w F (k * m) = ct h w F m ∧ ct h w F (m * k) = ct h w F m := by
-  have hkN : GlobalTheory.BCT.CtLevel.dgM h w k ∈ KGL w n := by
+  have hkN : GlobalTheory.BCT.CtLevel.dgM h w k ∈ KGL w (n := n) := by
     rw [← GlobalTheory.CompanionTheory.IntDec.blk_zero_eq_dgM]
     exact (GlobalTheory.CompanionTheory.LeviInt.comap_uN_and_map_sM E a b n h w).2 (Subgroup.mem_map_of_mem _ hk)
-  exact GlobalTheory.BCT.CtLevel.ct_inv h w (KGL w n) F
+  exact GlobalTheory.BCT.CtLevel.ct_inv h w (KGL w (n := n)) F
     (fun k hk x hx => mul_mem (mul_mem (inv_mem hk) hx) hk) (fun y hy x => hF.2 y hy x) k
     (Subgroup.mem_prod.1 hk).1 (Subgroup.mem_prod.1 hk).2 hkN m
 
@@ -154,10 +158,10 @@ end Conc
 theorem ctMul : CtMul := by
   intro E _ _ _ w n a b h f g hf hg
   obtain ⟨-, -, hKo, hKc, -, -, -⟩ := unitHecke E n a b w
-  have hfg : IsHecke (KGL w n) (cv (KGL w n) f g) := cvHecke _ (KGL w n) hKo hKc f g hf hg
-  have hct : ∀ φ, IsHecke (KGL w n) φ → ∀ m, ct h w φ m = dl w m * Sm h w φ m :=
+  have hfg : IsHecke (KGL w (n := n)) (cv (KGL w (n := n)) f g) := cvHecke _ (KGL w (n := n)) hKo hKc f g hf hg
+  have hct : ∀ φ, IsHecke (KGL w (n := n)) φ → ∀ m, ct h w φ m = dl w m * Sm h w φ m :=
     fun φ hφ m => (ctSph E w n a b h φ hφ m).1
-  have hsup : ∀ φ : GLw n w → ℂ, IsHecke (KGL w n) φ → ∀ m : GLw a w × GLw b w,
+  have hsup : ∀ φ : GLw n w → ℂ, IsHecke (KGL w (n := n)) φ → ∀ m : GLw a w × GLw b w,
       (Function.support fun q : Multiplicative (Matrix (Fin a) (Fin b) (w.adicCompletion E)) ⧸ intMat a b w =>
         φ (blk h w m (Multiplicative.toAdd q.out))).Finite :=
     fun φ hφ m => (ctSph E w n a b h φ hφ m).2
@@ -168,28 +172,28 @@ theorem ctMul : CtMul := by
     have e : (x * k)⁻¹ * m = k⁻¹ * (x⁻¹ * m) := by group
     show ct h w f (x * k) * ct h w g ((x * k)⁻¹ * m) = ct h w f x * ct h w g (x⁻¹ * m)
     rw [e, (ct_bi h w f hf k hk x).2, (ct_bi h w g hg k⁻¹ (inv_mem hk) _).1]
-  have hinv : ∀ y, ∀ k ∈ KGL w n, ∀ x, f (x * k) * g ((x * k)⁻¹ * y) = f x * g (x⁻¹ * y) := by
+  have hinv : ∀ y, ∀ k ∈ KGL w (n := n), ∀ x, f (x * k) * g ((x * k)⁻¹ * y) = f x * g (x⁻¹ * y) := by
     intro y k hk x
     have e : (x * k)⁻¹ * y = k⁻¹ * (x⁻¹ * y) := by group
     rw [e, (hf.2 k hk x).2, (hg.2 k⁻¹ (inv_mem hk) _).1]
-  have hcv : ∀ y, cv (KGL w n) f g y =
-      ∑ᶠ c : (GLw a w × GLw b w) ⧸ (KGL w a).prod (KGL w b),
+  have hcv : ∀ y, cv (KGL w (n := n)) f g y =
+      ∑ᶠ c : (GLw a w × GLw b w) ⧸ (KGL w (n := a)).prod (KGL w (n := b)),
         ∑ᶠ x : Multiplicative (Matrix (Fin a) (Fin b) (w.adicCompletion E)) ⧸ intMat a b w,
           f (blk h w c.out (Multiplicative.toAdd x.out)) *
             g ((blk h w c.out (Multiplicative.toAdd x.out))⁻¹ * y) := by
     intro y
-    have e1 : cv (KGL w n) f g y = ∑ᶠ p : GLw n w ⧸ KGL w n, f p.out * g (p.out⁻¹ * y) :=
-      hintSph _ (KGL w n) (fun z => f z * g (z⁻¹ * y)) fun k hk x => hinv y k hk x
+    have e1 : cv (KGL w (n := n)) f g y = ∑ᶠ p : GLw n w ⧸ KGL w (n := n), f p.out * g (p.out⁻¹ * y) :=
+      hintSph _ (KGL w (n := n)) (fun z => f z * g (z⁻¹ * y)) fun k hk x => hinv y k hk x
     rw [e1]
     refine GlobalTheory.CompanionTheory.IntDec.iwasawa_sum h w (fun z => f z * g (z⁻¹ * y)) (fun k hk x => hinv y k hk x) ?_
-    refine (GlobalTheory.CompanionTheory.IntDec.finite_mk_support (KGL w n) hKo f hf.1).subset fun p hp => ?_
+    refine (GlobalTheory.CompanionTheory.IntDec.finite_mk_support (KGL w (n := n)) hKo f hf.1).subset fun p hp => ?_
     exact ⟨p.out, left_ne_zero_of_mul hp, QuotientGroup.out_eq' p⟩
-  have hCs : {c : (GLw a w × GLw b w) ⧸ (KGL w a).prod (KGL w b) |
+  have hCs : {c : (GLw a w × GLw b w) ⧸ (KGL w (n := a)).prod (KGL w (n := b)) |
       ∃ Y, f (blk h w c.out Y) ≠ 0}.Finite := by
-    refine GlobalTheory.CompanionTheory.IntDec.finite_lev h w _ (GlobalTheory.CompanionTheory.IntDec.finite_mk_support (KGL w n) hKo f hf.1) _ ?_
+    refine GlobalTheory.CompanionTheory.IntDec.finite_lev h w _ (GlobalTheory.CompanionTheory.IntDec.finite_mk_support (KGL w (n := n)) hKo f hf.1) _ ?_
     rintro c ⟨Y, hY⟩
     exact ⟨c.out, Y, QuotientGroup.out_eq' c, _, hY, rfl⟩
-  have hgR : ∀ k ∈ KGL w n, ∀ x, g (x * k) = g x := fun k hk x => (hg.2 k hk x).2
+  have hgR : ∀ k ∈ KGL w (n := n), ∀ x, g (x * k) = g x := fun k hk x => (hg.2 k hk x).2
   have hv : ∀ (c : GLw a w × GLw b w) (Y : Matrix (Fin a) (Fin b) (w.adicCompletion E))
       (X : Multiplicative (Matrix (Fin a) (Fin b) (w.adicCompletion E))),
       g ((blk h w c Y)⁻¹ * blk h w m (Multiplicative.toAdd X)) =
@@ -198,8 +202,8 @@ theorem ctMul : CtMul := by
     intro c Y X
     rw [inv_blk]
     rfl
-  have hS : Sm h w (cv (KGL w n) f g) m =
-      ∑ᶠ c : (GLw a w × GLw b w) ⧸ (KGL w a).prod (KGL w b),
+  have hS : Sm h w (cv (KGL w (n := n)) f g) m =
+      ∑ᶠ c : (GLw a w × GLw b w) ⧸ (KGL w (n := a)).prod (KGL w (n := b)),
         Sm h w f c.out * Sm h w g (c.out⁻¹ * m) := by
     unfold Sm
     simp_rw [hcv]

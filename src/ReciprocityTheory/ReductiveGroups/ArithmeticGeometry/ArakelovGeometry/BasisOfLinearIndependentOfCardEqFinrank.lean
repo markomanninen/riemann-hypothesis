@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ProjectiveFrameCoordNeZero
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ProjectiveFrameCoordNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,7 @@ private theorem gens_lemma_2 [Fintype κ] (x : κ → Ω) (e : Fin (D + 1) → �
            exact IntermediateField.algebraMap_mem _ a)
         | simpa using IntermediateField.algebraMap_mem (fnField (x ∘ e)) a
     next p1 p2 h1 h2 =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact add_mem h1 h2
     next p1 k h1 =>
       rw [map_mul, map_mul]
@@ -300,7 +304,8 @@ theorem eq_zero_of_trace [Fintype κ] (x : κ → Ω) (e : Fin (D + 1) → κ) (
   have key : ∀ n, Algebra.traceForm (fnField (x ∘ e))
       (IntermediateField.extendScalars (fnField_comp_le' x e)) t n = 0 := by
     intro n
-    rw [Algebra.traceForm_apply, ← B.sum_repr n, Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Algebra.traceForm_apply, ← B.sum_repr n, Finset.mul_sum, map_sum]
     refine Finset.sum_eq_zero fun j _ => ?_
     rw [mul_smul_comm, map_smul, hB j, h0 j, smul_zero]
   first
@@ -309,27 +314,6 @@ theorem eq_zero_of_trace [Fintype κ] (x : κ → Ω) (e : Fin (D + 1) → κ) (
     | exact hnd.1.1 t key
     | (unfold LinearMap.BilinForm.Nondegenerate LinearMap.Nondegenerate LinearMap.SeparatingLeft at hnd
        exact hnd.1 t key)
-
-theorem isRat_of_isProj (x : κ → Ω) (e : Fin (D + 1) → κ) (h : IsProjFrame x e) :
-    IsRatProjFrame x e := by
-  refine ⟨h.inj, h.free, fun i => ?_⟩
-  have hmem : ∀ v ∈ coneRing ℤ (x ∘ e), v ∈ coneRing ℚ (x ∘ e) := by
-    rintro v ⟨q, rfl⟩
-    refine ⟨MvPolynomial.map (algebraMap ℤ ℚ) q, ?_⟩
-    unfold coneMap
-    exact MvPolynomial.aeval_map_algebraMap ℚ _ _
-  let φ : coneRing ℤ (x ∘ e) →+* coneRing ℚ (x ∘ e) :=
-    { toFun := fun s => ⟨s.1, hmem s.1 s.2⟩
-      map_one' := rfl
-      map_mul' := fun _ _ => rfl
-      map_zero' := rfl
-      map_add' := fun _ _ => rfl }
-  obtain ⟨p, hm, hp⟩ := h.integral i
-  refine ⟨p.map φ, hm.map _, ?_⟩
-  have hc : (algebraMap (coneRing ℚ (x ∘ e)) (Polynomial Ω)).comp φ =
-      algebraMap (coneRing ℤ (x ∘ e)) (Polynomial Ω) := RingHom.ext fun _ => rfl
-  rw [Polynomial.eval₂_map, hc]
-  exact hp
 
 def chartGen (x : κ → Ω) (e : Fin (D + 1) → κ) (l : Fin (D + 1)) (k : {k // k ≠ l}) :
     fnField (x ∘ e) :=
@@ -375,7 +359,8 @@ theorem chartGen_indep (x : κ → Ω) (e : Fin (D + 1) → κ) (hfree : coordId
       coneMap ℤ (x ∘ e) F = Polynomial.C (MvPolynomial.aeval (x ∘ e) F) * Polynomial.X ^ n := by
     intro F n hF
     unfold coneMap
-    rw [MvPolynomial.aeval_def, MvPolynomial.aeval_def, MvPolynomial.eval₂_eq',
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [MvPolynomial.aeval_def, MvPolynomial.aeval_def, MvPolynomial.eval₂_eq',
       MvPolynomial.eval₂_eq', map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun d hd => ?_
     have h1 := hF (MvPolynomial.mem_support_iff.1 hd)
@@ -424,7 +409,8 @@ theorem chartGen_indep (x : κ → Ω) (e : Fin (D + 1) → κ) (hfree : coordId
     field_simp
     try ring
   have hHy : MvPolynomial.aeval (x ∘ e) H = 0 := by
-    rw [hH, map_sum, Finset.sum_congr rfl hterm, ← Finset.mul_sum, ← map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hH, map_sum, Finset.sum_congr rfl hterm, ← Finset.mul_sum, ← map_sum,
       MvPolynomial.sum_homogeneousComponent, hQ, MvPolynomial.aeval_rename]
     have h3 : MvPolynomial.aeval ((fun i => (x ∘ e) i / x (e l)) ∘ Subtype.val) P = 0 := hPΩ
     rw [h3, mul_zero]
@@ -447,9 +433,11 @@ theorem chartGen_indep (x : κ → Ω) (e : Fin (D + 1) → κ) (hfree : coordId
   have hQ0 : Q = 0 := by
     have h4 := congrArg (MvPolynomial.aeval fun k => if k = l then (1 : MvPolynomial (Fin (D + 1)) ℤ)
       else MvPolynomial.X k) hH0
-    rw [hH, map_sum, map_zero] at h4
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hH, map_sum, map_zero] at h4
     simp only [map_mul, map_pow, MvPolynomial.aeval_X, ↓reduceIte, one_pow, mul_one] at h4
-    rw [← map_sum, MvPolynomial.sum_homogeneousComponent, hQ, ← AlgHom.comp_apply, hψ] at h4
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, MvPolynomial.sum_homogeneousComponent, hQ, ← AlgHom.comp_apply, hψ] at h4
     rw [hQ]
     exact h4
   rw [hQ] at hQ0
@@ -565,7 +553,7 @@ theorem coord_div_isIntegral (x : κ → Ω) (e : Fin (D + 1) → κ) (h : IsPro
       rw [MvPolynomial.aeval_C, eq_intCast, map_intCast]
       exact intCast_mem R a
     next p1 p2 h1 h2 =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact add_mem h1 h2
     next p1 k h1 =>
       rw [map_mul, map_mul]

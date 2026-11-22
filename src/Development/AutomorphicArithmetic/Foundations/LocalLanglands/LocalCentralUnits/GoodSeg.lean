@@ -1,19 +1,23 @@
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.Multi
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalLanglandsExtensionPreservesCuspidal
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ClBasic
-import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.IrreducibleAdmissibleGL
+module
+
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.Multi
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalLanglandsExtensionPreservesCuspidal
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ClBasic
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.IrreducibleAdmissibleGL
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.LocLanglands
 
 theorem UpperTheory.Zero.LLC.goodSeg :
     UpperTheory.Zero.LLC.GoodSeg := by
   intro k _ _ _ _ _
-  have huniq : ∀ (x : IrrGL k) (s s' : Multiset (IrrGL k)),
+  have huniq : ∀ (x : IrrGL (k := k)) (s s' : Multiset (IrrGL (k := k))),
       HasSupport x.rep s → HasSupport x.rep s' → s = s' :=
     fun x s s' hs hs' =>
       GlobalTheory.CompanionTheory.Hypotheses₂.TD.hasSupport_unique PositivityTheory.Exh.geometricLemmaGL UpperTheory.Zero.LLC.Pr.bz hs hs'
-  have hgood : ∀ (x : IrrGL k) (s : Multiset (IrrGL k)), HasSupport x.rep s →
+  have hgood : ∀ (x : IrrGL (k := k)) (s : Multiset (IrrGL (k := k))), HasSupport x.rep s →
       (UpperTheory.Zero.LLC.Good x ↔ ∀ y ∈ s, UpperTheory.Zero.LLC.GoodCusp y) := by
     intro x s hs
     unfold UpperTheory.Zero.LLC.Good
@@ -23,7 +27,7 @@ theorem UpperTheory.Zero.LLC.goodSeg :
       exact hy
     · intro hy
       exact ⟨s, hs, hy⟩
-  have htw : ∀ (y : IrrGL k) (a : ℂ),
+  have htw : ∀ (y : IrrGL (k := k)) (a : ℂ),
       UpperTheory.Zero.LLC.GoodCusp (y.nu a) ↔ UpperTheory.Zero.LLC.GoodCusp y := by
     intro y a
     unfold IrrGL.nu

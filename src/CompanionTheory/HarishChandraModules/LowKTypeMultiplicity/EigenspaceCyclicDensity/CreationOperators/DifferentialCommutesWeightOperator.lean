@@ -1,4 +1,8 @@
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.DifferentialBoundedSupport
+module
+
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.DifferentialBoundedSupport
+
+@[expose] public section
 
 open Finset
 
@@ -57,7 +61,7 @@ theorem differential_commutes_weight_operator : ∀ (n : ℕ) (ε₀ ε : Fin n 
         funext A
         have := congrArg (fun T : Module.End ℂ V => T (y A)) (hE c c i.1.1 i.1.2 rfl hi)
         simp only [LinearMap.sub_apply, Module.End.mul_apply] at this
-        simp only [Ft_apply, lift_apply, Pi.add_apply, Pi.smul_apply, map_add, map_smul, sub_eq_iff_eq_add.1 this, al]
+        simp only [Ft_apply, lift_apply, Pi.add_apply, Pi.smul_apply, map_add (f := _), map_smul, sub_eq_iff_eq_add.1 this, al]
         have hne := i.2.ne
         by_cases h1 : c = i.1.1
         · subst h1; simp [hne.symm]; module
@@ -85,7 +89,7 @@ theorem free_inter {ι : Type} (φ : V →ₗ[ℂ] W) (S : ι → Module.End ℂ
   | grade0 r => intro x; simp [Module.algebraMap_end_apply]
   | grade1 c => intro x; simp [h]
   | mul a b ha hb => intro x; simp only [map_mul, Module.End.mul_apply, ha, hb]
-  | add a b ha hb => intro x; simp only [map_add, LinearMap.add_apply, ha, hb]
+  | add a b ha hb => intro x; simp only [map_add (f := _), LinearMap.add_apply, ha, hb]
 
 theorem evK_inter {ε : Fin n → Bool} (φ : V →ₗ[ℂ] W) (E : Fin n → Fin n → Module.End ℂ V)
     (F : Fin n → Fin n → Module.End ℂ W) (h : ∀ a b x, φ (E a b x) = F a b (φ x)) (a : FreeAlgebra ℂ (Fin n × Fin n))

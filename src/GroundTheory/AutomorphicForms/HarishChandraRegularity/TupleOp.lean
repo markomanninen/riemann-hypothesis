@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.PartialDifferential.AnalyticHypoCalc
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.PartialDifferential.AnalyticHypoCalc
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.Sobolev
 
@@ -123,7 +127,8 @@ theorem eq_sum_ev (v : 𝔼) : v = ∑ j, v j • ev j := by
 theorem fderiv_apply_eq_sum (f : 𝔼 → ℂ) (x v : 𝔼) :
     fderiv ℝ f x v = ∑ j, ((v j : ℝ) : ℂ) * fderiv ℝ f x (ev j) := by
   conv_lhs => rw [eq_sum_ev v]
-  simp [map_sum, map_smul, Complex.real_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul, Complex.real_smul]
 
 theorem analyticOnNhd_coord {Ω : Set 𝔼} {c : 𝔼 → 𝔼} (hc : AnalyticOnNhd ℝ c Ω) (j : Fin n) :
     AnalyticOnNhd ℝ (fun x => ((c x j : ℝ) : ℂ)) Ω := by
@@ -164,7 +169,7 @@ theorem tupleOp_shiftCoeff (c : 𝔼 → 𝔼) (m : ℕ) (a : (k : ℕ) → (Fin
   simp only [shiftCoeff, zero_mul, sum_const_zero, add_zero]
   refine sum_congr rfl fun k hk => ?_
   have hkm : k ≤ m := Nat.lt_succ_iff.1 (mem_range.1 hk)
-  simp only [if_pos hkm]
+  simp only [ite_eq_left hkm]
   rw [← (Fin.consEquiv fun _ : Fin (k + 1) => Fin n).sum_comp, Fintype.sum_prod_type]
   refine sum_congr rfl fun j _ => sum_congr rfl fun J _ => ?_
   simp [Fin.consEquiv]
@@ -173,7 +178,7 @@ theorem tupleSymbol_shiftCoeff (c : 𝔼 → 𝔼) (m : ℕ) (a : (k : ℕ) → 
     (x ξ : 𝔼) :
     tupleSymbol (m + 1) (shiftCoeff c m a) x ξ =
       (∑ j, ((c x j : ℝ) : ℂ) * ((ξ j : ℝ) : ℂ)) * tupleSymbol m a x ξ := by
-  simp only [tupleSymbol, shiftCoeff, le_refl, if_true]
+  simp only [tupleSymbol, shiftCoeff, le_refl, ite_true]
   rw [← (Fin.consEquiv fun _ : Fin (m + 1) => Fin n).sum_comp, Fintype.sum_prod_type, sum_mul]
   refine sum_congr rfl fun j _ => ?_
   rw [mul_sum]
@@ -203,10 +208,14 @@ theorem vfOp_tupleOp_eq {Ω : Set 𝔼} {c : 𝔼 → 𝔼} {m : ℕ}
     vfOp c (tupleOp m a u) x = ∑ k ∈ range (m + 1), ∑ J : Fin k → Fin n,
       (fderiv ℝ (a k J) x (c x) * pdT J u x +
         a k J x * ∑ j : Fin n, ((c x j : ℝ) : ℂ) * pdT (Fin.cons j J) u x) := by
+  have hdiff (k : ℕ) : DifferentiableAt ℝ (iteratedFDeriv ℝ k u) x :=
+    hu.differentiable_iteratedFDeriv (by exact_mod_cast WithTop.coe_lt_top k) x
   have hterm : ∀ (k : ℕ) (J : Fin k → Fin n), HasFDerivAt (fun y => a k J y * pdT J u y)
-      (a k J x • fderiv ℝ (pdT J u) x + pdT J u x • fderiv ℝ (a k J) x) x := fun k J =>
-    ((ha k J x hx).differentiableAt.hasFDerivAt).mul
-      (((contDiff_pdT hu J).differentiable (by simp)) x).hasFDerivAt
+      (a k J x • fderiv ℝ (pdT J u) x + pdT J u x • fderiv ℝ (a k J) x) x := by
+    intro k J
+    have hpd : DifferentiableAt ℝ (pdT J u) x :=
+      (hdiff k).continuousMultilinear_apply_const (fun l => ev (J l))
+    exact ((ha k J x hx).differentiableAt.hasFDerivAt).mul hpd.hasFDerivAt
   have hsum : HasFDerivAt (tupleOp m a u) (∑ k ∈ range (m + 1), ∑ J : Fin k → Fin n,
       (a k J x • fderiv ℝ (pdT J u) x + pdT J u x • fderiv ℝ (a k J) x)) x :=
     HasFDerivAt.fun_sum fun k _ => HasFDerivAt.fun_sum fun J _ => hterm k J
@@ -216,7 +225,9 @@ theorem vfOp_tupleOp_eq {Ω : Set 𝔼} {c : 𝔼 → 𝔼} {m : ℕ}
   refine sum_congr rfl fun k _ => sum_congr rfl fun J _ => ?_
   rw [fderiv_apply_eq_sum (pdT J u) x (c x)]
   have e : ∀ j, fderiv ℝ (pdT J u) x (ev j) = pdT (Fin.cons j J) u x := fun j => by
-    rw [pdT_cons hu j J]; rfl
+    rw [pdT_apply, (hdiff k).iteratedFDeriv_succ_apply_left']
+    simp only [Fin.cons_zero, Fin.tail_def, Fin.cons_succ]
+    rfl
   simp only [e]
   ring
 
@@ -260,7 +271,8 @@ def dList : List 𝔼 → (𝔼 → ℂ) → 𝔼 → ℂ
 
 theorem contDiff_dList {f : 𝔼 → ℂ} (hf : ContDiff ℝ ∞ f) : ∀ L : List 𝔼, ContDiff ℝ ∞ (dList L f)
   | [] => hf
-  | a :: L => contDiff_fderiv_apply (contDiff_dList hf L) a
+  | a :: L =>
+      (contDiff_infty_iff_fderiv.1 (contDiff_dList hf L)).2.clm_apply (contDiff_const (c := a))
 
 theorem dT_eq_dList {f : 𝔼 → ℂ} (hf : ContDiff ℝ ∞ f) :
     ∀ {k : ℕ} (v : Fin k → 𝔼), dT v f = dList (List.ofFn v) f
@@ -270,8 +282,15 @@ theorem dT_eq_dList {f : 𝔼 → ℂ} (hf : ContDiff ℝ ∞ f) :
         rw [List.ofFn_succ]
         rfl
       rw [e]
+      have hcons : dT (Fin.cons (v 0) (Fin.tail v)) f =
+          fun x => fderiv ℝ (dT (Fin.tail v) f) x (v 0) := by
+        funext x
+        have hd : DifferentiableAt ℝ (iteratedFDeriv ℝ k f) x :=
+          hf.differentiable_iteratedFDeriv (by exact_mod_cast WithTop.coe_lt_top k) x
+        rw [dT_apply, hd.iteratedFDeriv_succ_apply_left', Fin.cons_zero, Fin.tail_cons]
+        rfl
       conv_lhs => rw [← Fin.cons_self_tail v]
-      rw [dT_cons hf, dT_eq_dList hf (Fin.tail v)]
+      rw [hcons, dT_eq_dList hf (Fin.tail v)]
       rfl
 
 theorem dList_perm {f : 𝔼 → ℂ} (hf : ContDiff ℝ ∞ f) {L L' : List 𝔼} (h : L.Perm L') :
@@ -283,7 +302,18 @@ theorem dList_perm {f : 𝔼 → ℂ} (hf : ContDiff ℝ ∞ f) {L L' : List �
     rw [ih]
   | swap a b L =>
     funext z
-    exact fderiv_fderiv_apply_comm (contDiff_dList hf L) z b a
+    change fderiv ℝ (fun y => fderiv ℝ (dList L f) y a) z b =
+      fderiv ℝ (fun y => fderiv ℝ (dList L f) y b) z a
+    have hL := contDiff_dList hf L
+    have hd : DifferentiableAt ℝ (fderiv ℝ (dList L f)) z :=
+      (contDiff_infty_iff_fderiv.1 hL).2.differentiable (by simp) z
+    have heval (c d : 𝔼) :
+        fderiv ℝ (fun y => fderiv ℝ (dList L f) y d) z c =
+          fderiv ℝ (fderiv ℝ (dList L f)) z c d := by
+      rw [fderiv_clm_apply hd (differentiableAt_const d)]
+      simp
+    rw [heval, heval]
+    exact ((contDiff_infty.1 hL 2).contDiffAt.isSymmSndFDerivAt (by simp)) b a
   | trans _ _ ih1 ih2 => exact ih1.trans ih2
 
 def tupleCount {k : ℕ} (J : Fin k → Fin n) : Fin n → ℕ :=
@@ -320,7 +350,8 @@ theorem ofFn_mdir (α : Fin n → ℕ) : List.ofFn (mdir α) = mdirList α := by
 
 theorem pdT_eq_pderiv {u : 𝔼 → ℂ} (hu : ContDiff ℝ ∞ u) {k : ℕ} (J : Fin k → Fin n) :
     pdT J u = pderiv (tupleCount J) u := by
-  rw [pdT, pderiv_eq_dT', dT_eq_dList hu, dT_eq_dList hu, ofFn_mdir, mdirList_eq_map]
+  have hp : pderiv (tupleCount J) u = dT (mdir (tupleCount J)) u := rfl
+  rw [pdT, hp, dT_eq_dList hu, dT_eq_dList hu, ofFn_mdir, mdirList_eq_map]
   apply dList_perm hu
   rw [show List.ofFn (fun l => ev (J l)) = (List.ofFn J).map ev by simp [List.map_ofFn, Function.comp_def]]
   exact (ofFn_perm_flatMap J).map ev
@@ -385,15 +416,15 @@ theorem exists_diffOp_eq_tupleOp {Ω : Set 𝔼} (m : ℕ) (a : (k : ℕ) → (F
       rw [sum_comm]
       split_ifs with hkm
       · refine sum_congr rfl fun J _ => ?_
-        rw [sum_ite_eq, if_pos]
+        rw [sum_ite_eq, ite_eq_left]
         exact mem_filter.2 ⟨hmemA k hk J, by rw [mabs_tupleCount, hkm]⟩
       · refine sum_eq_zero fun J _ => ?_
-        rw [sum_ite_eq, if_neg]
+        rw [sum_ite_eq, ite_eq_right]
         intro h
         have := (mem_filter.1 h).2
         rw [mabs_tupleCount] at this
         exact hkm this
-    rw [sum_congr rfl e2, sum_ite_eq' (range (m + 1)) m, if_pos (self_mem_range_succ m)]
+    rw [sum_congr rfl e2, sum_ite_eq' (range (m + 1)) m, ite_eq_left (self_mem_range_succ m)]
     refine sum_congr rfl fun J _ => ?_
     rw [prod_eq_mpow]
   · intro u hu x
@@ -402,7 +433,7 @@ theorem exists_diffOp_eq_tupleOp {Ω : Set 𝔼} (m : ℕ) (a : (k : ℕ) → (F
     refine sum_congr rfl fun k hk => ?_
     rw [sum_comm]
     refine sum_congr rfl fun J _ => ?_
-    rw [sum_ite_eq, if_pos (hmemA k hk J), pdT_eq_pderiv hu]
+    rw [sum_ite_eq, ite_eq_left (hmemA k hk J), pdT_eq_pderiv hu]
 
 end
 

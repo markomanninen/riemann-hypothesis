@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.QpEqUnit
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.MemCrit
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.QpEqUnit
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.MemCrit
+
+@[expose] public section
 
 noncomputable section
 open Classical

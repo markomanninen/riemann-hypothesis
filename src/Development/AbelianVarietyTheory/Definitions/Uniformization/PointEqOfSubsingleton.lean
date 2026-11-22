@@ -1,13 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LinCombTrivG
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsSplitTorusPointsMulEquiv
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LocallyOfFinitePresentationDiagMap
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CubicalSymmetryTransport
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.WeilIsGrpPullbackIff
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LinCombTrivG
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsSplitTorusPointsMulEquiv
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LocallyOfFinitePresentationDiagMap
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CubicalSymmetryTransport
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.WeilIsGrpPullbackIff
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -204,8 +208,6 @@ def CP.triv : CP G where
       fun r => val_unitGen _ _ _ _ _
     simp only [cubV_trivCub, e, _root_.mul_one]
 
-instance : Inhabited (CP G) := ⟨CP.triv G⟩
-
 theorem val_sym_triv {Z : Scheme.{0}} (r : Z ⟶ G.left) (z : Z) (J) : val (CP.triv G).sym r z J = 1 := by
   exact val_unitGen _ _ _ _ _
 
@@ -214,16 +216,6 @@ variable {G} {H : Over S} [GrpObj H]
 theorem CP.val_sym_one (P : CP G) {T : Over S} {z : T.left} {J} (hJ : Good P.L.L z J) :
     val P.sym (1 : T ⟶ G).left z J = 1 := by
   rw [one_left, ← val_pull hJ, val_corr hJ P.sym_rig, val_one]
-
-def BiTriv.triv (i : H ⟶ G) : BiTriv (trivCub G) i where
-  s := unitGen _ _
-  gen := unitGen_isGen _ _
-  law1 T t t' x z J _ := by
-    have e : ∀ r, val (L := (trivRig G).L) (unitGen (lamφ i) Oε) r z J = 1 := fun r => val_unitGen _ _ _ _ _
-    simp only [cubV_trivCub, e, _root_.mul_one]
-  law2 T t x x' z J _ := by
-    have e : ∀ r, val (L := (trivRig G).L) (unitGen (lamφ i) Oε) r z J = 1 := fun r => val_unitGen _ _ _ _ _
-    simp only [cubV_trivCub, e, _root_.mul_one]
 
 def CubTriv.triv (i : H ⟶ G) : CubTriv (trivCub G) i where
   s := unitGen _ _
@@ -262,18 +254,16 @@ theorem toBase_mul_pullback (G : Over S) [GrpObj G] (f : S' ⟶ S) (T : Over S')
   map_mul (pushHom (isGrpPullback_pullback G f) T) x y
 
 theorem IsCPMap.triv (mul : ∀ (T : Over S') (x y : T ⟶ G'), toBase hw (x * y) = toBase hw x * toBase hw y) :
-    IsCPMap (CP.triv G') (CP.triv G) f F hw ⟨fun _ => 1⟩ where
-  mul := mul
-  gen := by
-    rw [isGen_iff]
+    IsCPMap (CP.triv G') (CP.triv G) f F hw ⟨fun _ => 1⟩ := by
+  refine ⟨mul, ?_, ?_⟩
+  · rw [isGen_iff]
     intro Y f' y j j' k k' _ _ _ _
     have e1 : gw (⟨fun _ => 1⟩ : LB.Iso (CP.triv G').L.L ((CP.triv G).L.L.pull F)) f' y j k = 1 := map_one _
     have e2 : gw (⟨fun _ => 1⟩ : LB.Iso (CP.triv G').L.L ((CP.triv G).L.L.pull F)) f' y j' k' = 1 := map_one _
     have e3 : gm (f' ≫ F) y _ ((CP.triv G).L.L.g j j') = 1 := map_one _
     have e4 : gm f' y _ ((CP.triv G').L.L.g k k') = 1 := map_one _
     rw [e1, e2, e3, e4, inv_one, _root_.mul_one, _root_.mul_one]
-  vals := by
-    intro T z J' J _ _ W hW
+  · intro T z J' J _ _ W hW
     have hW1 : ∀ x, W x = 1 := fun x => (hW x).trans (map_one _)
     refine ⟨?_, fun x => ?_, fun x y u => ?_⟩
     · rw [hW1, _root_.one_mul]
@@ -326,11 +316,9 @@ theorem prod_sym {T : Over S} (x : T ⟶ G) {U : Type} [CommGroup U] (h : (T.lef
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, zpow_one, zpow_neg, Category.comp_id]
   rfl
 
-theorem IsCPMap.id (P : CP G) : IsCPMap P P (𝟙 S) (𝟙 G.left) (by simp) (idIso P.L.L) where
-  mul := fun T x y => toBase_mul_of_isMonHom (𝟙 G) _ T x y
-  gen := idIso_isGen P.L.isLB
-  vals := by
-    intro T z J' J hJ' hJ W hW
+theorem IsCPMap.id (P : CP G) : IsCPMap P P (𝟙 S) (𝟙 G.left) (by simp) (idIso P.L.L) := by
+  refine ⟨fun T x y => toBase_mul_of_isMonHom (𝟙 G) _ T x y, idIso_isGen P.L.isLB, ?_⟩
+  · intro T z J' J hJ' hJ W hW
     simp only [Category.comp_id] at hW
     have hW1 : ∀ x : T ⟶ G, W x = gm x.left z _ (P.L.L.g (J x.left) (J' x.left)) := fun x =>
       (hW x).trans (gw_idIso P.L.L x.left z (hJ x.left) (hJ' x.left))
@@ -550,7 +538,41 @@ theorem exists_isCPMap (P : CP G)
       IsCub (CubTransport.thV (L := ⟨L', rig, hL', hr⟩) t' z J) := by
     intro T z J hJ
     obtain ⟨J0, hJ0⟩ := exists_good_pt hL z
-    exact CubTransport.isCub_of_twist (isCub_cubV (T := Over.mk (T.hom ≫ f)) P.c hJ0) (toBaseHom mul T)
+    have hCub : IsCub (cubV P.c (T := Over.mk (T.hom ≫ f)) z J0) := by
+      constructor
+      · intro x y
+        have e := val_corr hJ0 (P.c.face 0) (lift x y).left
+        rw [val_one] at e
+        refine Eq.trans ?_ e
+        refine Eq.trans ?_ (val_cub P.c (lift x y) hJ0 (pzero G _) (x2 G 0) (x2 G 1)).symm
+        congr 1 <;> simp [x2, pzero, Hom.one_def]
+      · intro x y u
+        have e := (val_corr hJ0 P.c.cubeSymmetric_swap_first (lift x (lift y u)).left).trans
+          (val_cub P.c (lift x (lift y u)) hJ0 _ _ _)
+        refine e.trans ?_
+        congr 1 <;> simp [x3]
+      · intro x y u
+        have e := (val_corr hJ0 P.c.cubeSymmetric_swap_last (lift x (lift y u)).left).trans
+          (val_cub P.c (lift x (lift y u)) hJ0 _ _ _)
+        refine e.trans ?_
+        congr 1 <;> simp [x3]
+      · intro x x' x'' y
+        let r := lift x (lift x' (lift x'' y))
+        have e := val_corr hJ0 P.c.cocycle r.left
+        have e' := ((val_mul hJ0 _ _ _).trans
+            (congrArg₂ (· * ·) (val_cub P.c r hJ0 _ _ _) (val_cub P.c r hJ0 _ _ _))).symm.trans
+          (e.trans ((val_mul hJ0 _ _ _).trans
+            (congrArg₂ (· * ·) (val_cub P.c r hJ0 _ _ _) (val_cub P.c r hJ0 _ _ _))))
+        have a₀ : r ≫ x4 G 0 = x := by simp [r, x4]
+        have a₁ : r ≫ x4 G 1 = x' := by simp [r, x4]
+        have a₂ : r ≫ x4 G 2 = x'' := by simp [r, x4]
+        have a₃ : r ≫ x4 G 3 = y := by simp [r, x4]
+        have b₀ : r ≫ padd G (x4 G 0) (x4 G 1) = x * x' :=
+          (MonObj.comp_mul r (x4 G 0) (x4 G 1)).trans (by rw [a₀, a₁])
+        have b₁ : r ≫ padd G (x4 G 1) (x4 G 2) = x' * x'' :=
+          (MonObj.comp_mul r (x4 G 1) (x4 G 2)).trans (by rw [a₁, a₂])
+        rwa [b₀, b₁, a₀, a₁, a₂, a₃] at e'
+    exact CubTransport.isCub_of_twist hCub (toBaseHom mul T)
       (fun a => gw w a.left z (J0 (a.left ≫ F)) (J a.left)) (fun a b c => key3 T z J0 J hJ0 hJ a b c)
   let c : CubicalStr G' ⟨L', rig, hL', hr⟩ := CubTransport.cubicalOfVal t' ht' hcub
   have hsr : LB.Gen.Corr L' _ _ _ _ (LB.pullGen L' _ _ s (eSec G')) (LB.oneGen L') := by
@@ -622,8 +644,23 @@ theorem pullIso_isGen {X Y : Scheme.{0}} {L : LB X} (hL : L.IsLB) (F : Y ⟶ X) 
 theorem exists_pull (P : CP G)
     (mul : ∀ (T : Over S') (x y : T ⟶ G'), toBase hw (x * y) = toBase hw x * toBase hw y) :
     ∃ (P' : CP G') (w : _), IsCPMap P' P f F hw w := by
+  have hL : (P.L.L.pull F).IsLB := by
+    refine { cover := top_le_iff.1 ?_, g_self := ?_, cocycle := ?_ }
+    · intro y _
+      obtain ⟨i, hi⟩ := exists_chart P.L.isLB (F y)
+      exact TopologicalSpace.Opens.mem_iSup.2 ⟨fun _ => i, mem_pull.2 hi⟩
+    · intro J
+      refine unit_ext fun y hy => ?_
+      rw [gm_res (𝟙 _) y _ hy, map_one, gm_pull_g P.L.L F (𝟙 _) y J J hy hy]
+      exact gm_self P.L.isLB _ y (mem_pull.1 hy)
+    · intro I J K
+      refine unit_ext fun y hy => ?_
+      rw [map_mul, gm_res (𝟙 _) y _ hy, gm_res (𝟙 _) y _ hy, gm_res (𝟙 _) y _ hy,
+        gm_pull_g P.L.L F (𝟙 _) y I J hy.1.1 hy.1.2,
+        gm_pull_g P.L.L F (𝟙 _) y J K hy.1.2 hy.2, gm_pull_g P.L.L F (𝟙 _) y I K hy.1.1 hy.2]
+      exact gm_cocycle P.L.isLB _ y (mem_pull.1 hy.1.1) (mem_pull.1 hy.1.2) (mem_pull.1 hy.2)
   obtain ⟨rig, hr, c, s, h₁, h₂, h₃, H⟩ :=
-    exists_isCPMap P mul (P.L.L.pull F) (pull_isLB P.L.isLB F) (pullIso P.L.L F) (pullIso_isGen P.L.isLB F)
+    exists_isCPMap P mul (P.L.L.pull F) hL (pullIso P.L.L F) (pullIso_isGen P.L.isLB F)
   exact ⟨_, _, H⟩
 
 end Maps
@@ -697,7 +734,13 @@ theorem sym_cub_of_surjective (h3 : Function.Surjective (G3 G).hom.appTop.hom) {
       val g2 (lift (1 : 𝟙_ (Over S) ⟶ G) (lift 1 1)).left w J' := by
     intro w J' hJ'
     rw [(vals3 1 1 1 w J' hJ').1, (vals3 1 1 1 w J' hJ').2]
-    simp only [inv_one, _root_.mul_one, hone w J' hJ', (isCub_cubV c hJ').face]
+    have hface : cubV c w J' (1 : 𝟙_ (Over S) ⟶ G) 1 1 = 1 := by
+      let r := lift (1 : 𝟙_ (Over S) ⟶ G) (1 : 𝟙_ (Over S) ⟶ G)
+      have e := val_corr hJ' (c.face 0) r.left
+      rw [val_one] at e
+      refine Eq.trans ?_ ((val_cub c r hJ' (pzero G _) (x2 G 0) (x2 G 1)).symm.trans e)
+      congr 1 <;> simp [r, x2, pzero, Hom.one_def]
+    simp only [inv_one, _root_.mul_one, hone w J' hJ', hface]
   have key : val g1 (lift x (lift y u)).left z J = val g2 (lift x (lift y u)).left z J := by
     refine gen_unique' L.isLB ?_ (G3 G).hom (lift (1 : 𝟙_ (Over S) ⟶ G) (lift 1 1)).left
       (Over.w (lift (1 : 𝟙_ (Over S) ⟶ G) (lift 1 1))) h3 hg1 hg2 hagree T.left _ z J hJ
@@ -791,19 +834,42 @@ variable {i : H ⟶ G} {z : T.left} {J : (T.left ⟶ G.left) → L.L.ι}
 theorem BiTriv.val_one_right (σ : BiTriv c i) (hJ : Good L.L z J) (t : T ⟶ H) :
     val σ.s (lift t (1 : T ⟶ G)).left z J = 1 := by
   have e := σ.law2 T t 1 1 z J hJ
-  simp only [_root_.mul_one, (isCub_cubV c hJ).face₂, _root_.one_mul] at e
+  have hface : cubV c z J (t ≫ i) 1 1 = 1 := by
+    let r := lift (t ≫ i) (1 : T ⟶ G)
+    have h := val_corr hJ (c.face 1) r.left
+    rw [val_one] at h
+    refine Eq.trans ?_ ((val_cub c r hJ (x2 G 0) (pzero G _) (x2 G 1)).symm.trans h)
+    congr 1 <;> simp [r, x2, pzero, Hom.one_def]
+  simp only [_root_.mul_one, hface, _root_.one_mul] at e
   exact mul_left_cancel (e.symm.trans (_root_.mul_one _).symm)
 
 theorem BiTriv.val_one_left [IsMonHom i] (σ : BiTriv c i) (hJ : Good L.L z J) (x : T ⟶ G) :
     val σ.s (lift (1 : T ⟶ H) x).left z J = 1 := by
   have e := σ.law1 T 1 1 x z J hJ
-  simp only [_root_.mul_one, MonObj.one_comp, (isCub_cubV c hJ).face, _root_.one_mul] at e
+  have hface : cubV c z J (1 : T ⟶ G) 1 x = 1 := by
+    let r := lift (1 : T ⟶ G) x
+    have h := val_corr hJ (c.face 0) r.left
+    rw [val_one] at h
+    refine Eq.trans ?_ ((val_cub c r hJ (pzero G _) (x2 G 0) (x2 G 1)).symm.trans h)
+    congr 1 <;> simp [r, x2, pzero, Hom.one_def]
+  simp only [_root_.mul_one, MonObj.one_comp, hface, _root_.one_mul] at e
   exact mul_left_cancel (e.symm.trans (_root_.mul_one _).symm)
 
 theorem BiTriv.cubWeil [IsMonHom i] (σ : BiTriv c i) {t : T ⟶ H} (ht : t ^ N = 1) (hx : x ^ N = 1) :
     CubWeil c N (t ≫ i) x 1 := by
   refine ⟨by rw [← MonObj.pow_comp, ht, MonObj.one_comp], hx, fun z J hJ => ?_⟩
-  have hcub := isCub_cubV c hJ
+  have rotate (a b d : T ⟶ G) : cubV c z J a b d = cubV c z J d a b := by
+    have h₁ : cubV c z J a b d = cubV c z J a d b := by
+      have e := (val_corr hJ c.cubeSymmetric_swap_last (lift a (lift b d)).left).trans
+        (val_cub c (lift a (lift b d)) hJ _ _ _)
+      refine e.trans ?_
+      congr 1 <;> simp [x3]
+    have h₂ : cubV c z J a d b = cubV c z J d a b := by
+      have e := (val_corr hJ c.cubeSymmetric_swap_first (lift a (lift d b)).left).trans
+        (val_cub c (lift a (lift d b)) hJ _ _ _)
+      refine e.trans ?_
+      congr 1 <;> simp [x3]
+    exact h₁.trans h₂
   have tele : ∀ (f g : ℕ → (T.left.presheaf.stalk z)ˣ) (a : (T.left.presheaf.stalk z)ˣ), f N = f 0 →
       (∀ k, g k = f (k + 1) / f k * a⁻¹) → ∏ k ∈ Finset.range N, g k = (a ^ N)⁻¹ := by
     intro f g a hN hg
@@ -825,7 +891,7 @@ theorem BiTriv.cubWeil [IsMonHom i] (σ : BiTriv c i) {t : T ⟶ H} (ht : t ^ N 
     have e := σ.law2 T t (x ^ k) x z J hJ
     rw [← pow_succ] at e
     simp only [_root_.one_mul]
-    rw [hcub.s12 (x ^ k) x (t ≫ i), hcub.s01 (x ^ k) (t ≫ i) x, e]
+    rw [rotate (x ^ k) x (t ≫ i), e]
     apply Additive.ofMul.injective
     simp only [ofMul_mul, ofMul_div, ofMul_inv]
     abel
@@ -833,7 +899,13 @@ theorem BiTriv.cubWeil [IsMonHom i] (σ : BiTriv c i) {t : T ⟶ H} (ht : t ^ N 
 
 theorem CubTriv.val_one [IsMonHom i] (σ : CubTriv c i) (hJ : Good L.L z J) : val σ.s (1 : T ⟶ H).left z J = 1 := by
   have e := σ.cub T 1 1 1 z J hJ
-  simp only [_root_.mul_one, MonObj.one_comp, (isCub_cubV c hJ).face, _root_.one_mul] at e
+  have hface : cubV c z J (1 : T ⟶ G) 1 1 = 1 := by
+    let r := lift (1 : T ⟶ G) (1 : T ⟶ G)
+    have h := val_corr hJ (c.face 0) r.left
+    rw [ReciprocityTheory.ChartRestriction.G.Geo.Tor.val_one] at h
+    refine Eq.trans ?_ ((val_cub c r hJ (pzero G _) (x2 G 0) (x2 G 1)).symm.trans h)
+    congr 1 <;> simp [r, x2, pzero, Hom.one_def]
+  simp only [_root_.mul_one, MonObj.one_comp, hface, _root_.one_mul] at e
   exact mul_left_cancel (e.trans (_root_.mul_one _).symm)
 
 end Weil
@@ -926,24 +998,6 @@ def CP.twistSym (P : CP (splitTorus S X)) (χ : X) : CP (splitTorus S X) where
     simp only [ofMul_mul] at e' ⊢
     linear_combination (norm := abel) e'
 
-theorem CubTriv.twist_even_twistSym {P : CP (splitTorus S X)} {σ : CubTriv P.c (𝟙 _)} (hσ : σ.Even) (ψ : X) :
-    CubTriv.Even (P := P.twistSym (-(ψ + ψ))) (σ.twist ψ) := by
-  intro T x
-  show ∀ (z : T.left) (J : (T.left ⟶ (splitTorus S X).left) → P.L.L.ι), Good P.L.L z J →
-    val (scaleGen (charUnit S X ψ) σ.s) (x⁻¹).left z J =
-      val (scaleGen (charUnit S X (-(ψ + ψ))) P.sym) (x ≫ 𝟙 _).left z J *
-        val (scaleGen (charUnit S X ψ) σ.s) x.left z J
-  intro z J hJ
-  have hn : chV (x ≫ 𝟙 _) (-(ψ + ψ)) = (chV x ψ * chV x ψ)⁻¹ := by
-    rw [Category.comp_id]
-    exact eq_inv_of_mul_eq_one_left (by rw [← chV_add, ← chV_add, neg_add_cancel, chV_zero])
-  rw [val_scaleGen _ _ _ hJ, val_scaleGen _ _ _ hJ, val_scaleGen _ _ _ hJ, gm_charUnit, gm_charUnit, gm_charUnit,
-    hσ T x z J hJ, chV_inv, hn]
-  simp only [map_inv, map_mul]
-  apply Additive.ofMul.injective
-  simp only [ofMul_mul, ofMul_inv]
-  abel
-
 end Twist
 
 section Wt
@@ -967,7 +1021,7 @@ theorem IsWt.mul {u v : Γ(G.left, V)} {χ χ' : X} (hu : IsWt i V u χ) (hv : I
 
 theorem IsWt.add {u v : Γ(G.left, V)} {χ : X} (hu : IsWt i V u χ) (hv : IsWt i V v χ) : IsWt i V (u + v) χ := by
   intro Z t g h₁ h₂
-  simp only [map_add]
+  simp only [map_add (f := _)]
   rw [hu Z t g h₁ h₂, hv Z t g h₁ h₂]
   ring
 
@@ -1077,44 +1131,10 @@ def TQ.abelian (G : Over S) [GrpObj G] (hG : IsAbelianScheme G) (X : Type) [AddC
     exact IsPullback.of_vert_isIso ⟨Category.comp_id _⟩
   loc _ χ := ⟨⊤, trivial, 1, Subsingleton.elim 0 χ ▸ isWt_one⟩
 
-def TQ.prod (X : Type) [AddCommGroup X] (A : Over S) [GrpObj A] (hA : IsAbelianScheme A) :
-    TQ (splitTorus S X ⊗ A) X where
-  B := A
-  comm := hA.comm
-  isAb := hA
-  q := snd _ _
-  i := lift (𝟙 _) (toUnit _ ≫ η[A])
-  q_hom := inferInstance
-  i_hom := inferInstance
-  q_flat := by show Flat (pullback.snd _ _); infer_instance
-  q_surj := by show Surjective (pullback.snd _ _); infer_instance
-  q_affine := isAffineHom_isStableUnderBaseChange.of_isPullback
-    (IsPullback.of_hasPullback (splitTorus S X).hom A.hom) (Diag.isAffineHom_hom S X)
-  isKernel := IsPullback.of_isLimit' ⟨lift_snd _ _⟩ (PullbackCone.IsLimit.mk _ (fun s => s.fst ≫ fst _ _)
-    (fun s => by
-      ext
-      · simp
-      · simp only [Category.assoc, lift_snd]
-        rw [s.condition, ← Category.assoc, ← Category.assoc, toUnit_unique (_ ≫ toUnit _) s.snd])
-    (fun s => toUnit_unique _ _) (fun s m h _ => by rw [← h]; simp))
-  loc _ χ := ⟨⊤, trivial, chV (fst _ _) χ, isWt_of_retraction (fst _ _) (lift_fst _ _) χ⟩
-
 def TQ.Desc.triv {G : Over S} [GrpObj G] [IsCommMonObj G] (Q : TQ G X) : Q.Desc (CP.triv G) where
   M := CP.triv Q.B
   w := ⟨fun _ => 1⟩
   map := IsCPMap.triv (have := Q.q_hom; toBase_mul_of_isMonHom Q.q _)
-
-def TQ.Desc.abelian {G : Over S} [GrpObj G] [IsCommMonObj G] (hG : IsAbelianScheme G) [Subsingleton X] (P : CP G) :
-    (TQ.abelian G hG X).Desc P where
-  M := P
-  w := idIso P.L.L
-  map := IsCPMap.id P
-
-theorem TQ.exists_desc {G : Over S} [GrpObj G] [IsCommMonObj G] (Q : TQ G X) (M : CP Q.B) :
-    ∃ (P : CP G) (D : Q.Desc P), D.M = M := by
-  have := Q.q_hom
-  obtain ⟨P, w, hw⟩ := exists_pull (f := 𝟙 S) (F := Q.q.left) (hw := by simp) M (toBase_mul_of_isMonHom Q.q (by simp))
-  exact ⟨P, ⟨M, w, hw⟩, rfl⟩
 
 theorem TQ.genWt_triv {G : Over S} [GrpObj G] (Q : TQ G X) (u : Γ(G.left, ⊤)ˣ) {χ : X} (hu : IsWt Q.i ⊤ u.val χ) :
     Q.GenWt (Inh.trivLB _) (scaleGen u (unitGen _ _)) χ := by
@@ -1122,9 +1142,6 @@ theorem TQ.genWt_triv {G : Over S} [GrpObj G] (Q : TQ G X) (u : Γ(G.left, ⊤)�
   show IsWt Q.i _ (res le_top u * 1).val χ
   rw [_root_.mul_one]
   exact hu.res le_top
-
-example (χ : X) : (TQ.torus S X).GenWt (Inh.trivLB _) (scaleGen (charUnit S X χ) (unitGen _ _)) χ :=
-  (TQ.torus S X).genWt_triv _ (isWt_charUnit χ)
 
 end Torus
 
@@ -1144,37 +1161,6 @@ theorem exists_point_two : ∃ t : 𝟙_ (Over (Spec (CommRingCat.of ℚ))) ⟶ 
     have h4 := congrArg Units.val h2
     rwa [Units.val_zpow_eq_zpow_val, Units.val_mk0, Units.val_one] at h4
   exact zpow_right_injective₀ (by norm_num : (0:ℚ) < 2) (by norm_num) (h3.trans (zpow_zero (2:ℚ)).symm)
-
-example : ¬ CubTriv.Even (P := CP.triv (splitTorus (Spec (CommRingCat.of ℚ)) ℤ))
-    ((CubTriv.triv (𝟙 _)).twist (1 : ℤ)) := fun h => by
-  obtain ⟨t, ht⟩ := exists_point_two
-  exact absurd (ht _ ((CubTriv.twist_even_iff (CubTriv.triv_even _) 1).1 h _ t)) (by norm_num)
-
-example : ¬ CubTriv.Even (P := (CP.triv (splitTorus (Spec (CommRingCat.of ℚ)) ℤ)).twistSym 1)
-    (CubTriv.triv (𝟙 _)) := fun h => by
-  obtain ⟨t, ht⟩ := exists_point_two
-  refine absurd (ht 1 (unit_ext fun z _ => ?_)) one_ne_zero
-  obtain ⟨J, hJ⟩ := exists_good_pt (Inh.trivLB_isLB (splitTorus (Spec (CommRingCat.of ℚ)) ℤ).left) z
-  have e := ((val_unitGen _ _ _ _ _).symm.trans (h _ t z J hJ)).trans (congrArg₂ (· * ·)
-    ((val_scaleGen _ _ _ hJ).trans (congrArg₂ (· * ·) (gm_charUnit _ z _) (val_unitGen _ _ _ _ _)))
-    (val_unitGen _ _ _ _ _))
-  rw [_root_.mul_one, _root_.mul_one, Category.comp_id] at e
-  exact e.symm.trans (map_one _).symm
-
-example : IsWt (𝟙 _) ⊤ (charUnit (Spec (CommRingCat.of ℚ)) ℤ 1).val (1 : ℤ) ∧
-    ¬ IsWt (𝟙 _) ⊤ (charUnit (Spec (CommRingCat.of ℚ)) ℤ 1).val (-1 : ℤ) := by
-  refine ⟨isWt_charUnit 1, fun h => ?_⟩
-  obtain ⟨t, ht⟩ := exists_point_two
-  have a := isWt_top_iff.1 h _ t t
-  rw [Category.comp_id, ← chV_val, ← chV_val, chV_mul, ← Units.val_mul, Units.val_inj, mul_left_inj] at a
-  have b : chV t (1 + 1) = 1 := by
-    rw [chV_add]
-    exact (congrArg (· * chV t 1) a).trans (by rw [← chV_add, neg_add_cancel, chV_zero])
-  exact absurd (ht _ b) (by norm_num)
-
-example : Nonempty (TQ (splitTorus S ℤ) ℤ) := ⟨TQ.torus S ℤ⟩
-
-example (G : Over S) [GrpObj G] (hG : IsAbelianScheme G) : Nonempty (TQ G PUnit) := ⟨TQ.abelian G hG PUnit⟩
 
 end Basic₂
 

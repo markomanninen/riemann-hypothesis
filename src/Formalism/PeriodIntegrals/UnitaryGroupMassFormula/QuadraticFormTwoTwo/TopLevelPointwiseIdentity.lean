@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticFormTwoTwo.GANormSqStar
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticFormTwoTwo.GANormSqStar
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ContDiff
@@ -83,7 +87,7 @@ theorem ffa_nlev_fix {n : Mx k r} (hn : n ∈ Nlev k r (Fin.last r)) {w : Fin (2
 
 theorem ffa_fvec_last (z : Fin (2 * r + k + 1) → ℂ) : fvec k r z (Fin.last r) = z := by
   unfold fvec
-  rw [dif_neg (by simp)]
+  rw [dite_eq_right (by simp)]
 
 theorem ffa_zeta_left {z z' : Fin (2 * r + k + 1) → ℂ} {h : Mx k r} (hh : h ∈ UH (Hpk k r)) (hz : h *ᵥ z = z)
     (g : Mx k r) : zetaL k r z z' (Fin.last r) (h * g) = zetaL k r z z' (Fin.last r) g := by
@@ -117,11 +121,12 @@ def ffaZetaLin (z z' : Fin (2 * r + k + 1) → ℂ) : Mx k r →ₗ[ℝ] ℂ whe
 theorem ffa_GG_contDiff (z z' : Fin (2 * r + k + 1) → ℂ) :
     ContDiff ℝ ∞ (fun x : Mx k r => (GGl k r z z' x : ℂ)) := by
   have hζ : ContDiff ℝ ∞ (fun x : Mx k r => zetaL k r z z' (Fin.last r) x) := by
-    have h1 := (LinearMap.toContinuousLinearMap (ffaZetaLin z z')).contDiff (n := ∞)
+    let f : Mx k r →L[ℝ] ℂ := LinearMap.toContinuousLinearMap (ffaZetaLin z z')
+    have h1 := f.contDiff (n := ∞)
     convert h1 using 1
     funext x
     simp only [zetaL, ffa_fvec_last]
-    rfl
+    with_unfolding_all rfl
   have hc : ContDiff ℝ ∞ (fun x : Mx k r => Complex.conjCLE (zetaL k r z z' (Fin.last r) x)) :=
     Complex.conjCLE.contDiff.comp hζ
   have he : (fun x : Mx k r => (GGl k r z z' x : ℂ)) = fun x =>

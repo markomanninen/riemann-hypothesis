@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsAlgHomValuationSubring
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsLieCoordinates
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsToJetEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsAlgHomValuationSubring
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsLieCoordinates
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsToJetEq
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry IsLocalRing
@@ -50,8 +54,8 @@ theorem existsUnique_jet [IsLocalRing V] {x : Fam G (Fin d)} (hx : IsUnivChart G
 
 variable {O : Type} [CommRing O] [Algebra V O]
 
-variable (V O d) in
 
+variable (V O d) in
 def jetIn (m : ℕ) : JetR V (Fin d) m →ₐ[V] JetR O (Fin 1 × Fin d) m :=
   jetLift V (RingHom.ker (jetAug O _ m)) (ker_jetAug_pow _ m) (fun j => zR m (0, j)) (fun _ => zR_mem_ker m _)
 
@@ -266,8 +270,8 @@ theorem exists_lim {R : Type} [CommRing R] (I : Ideal R) [IsPrecomplete I R] (x 
   rw [← ha e]
   exact (Ideal.Quotient.eq.2 h₂).symm
 
-variable (V) in
 
+variable (V) in
 def res {B : Type} [CommRing B] [Algebra O B] (θ : A →ₐ[O] B) :
     specV (algebraMap V O) B ⟶ specV (algebraMap V O) A :=
   Over.homMk (Spec.map (CommRingCat.ofHom θ.toRingHom)) (by

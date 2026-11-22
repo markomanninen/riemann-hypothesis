@@ -1,6 +1,10 @@
-import Formalism.LatticeSlopes.CovolAntiSameRank
-import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
-import Formalism.LatticeSlopes.LatticeSlopesProofs.MuMaxAttained
+module
+
+public import Formalism.LatticeSlopes.CovolAntiSameRank
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.MuMaxAttained
+
+@[expose] public section
 
 open Module
 

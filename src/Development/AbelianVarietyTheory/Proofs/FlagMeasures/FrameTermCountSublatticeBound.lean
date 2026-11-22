@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EncardBiUnionLe
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CardExactGramIntegralFrameClassesLeStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsExactGramFrameInTermClassStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFrameFixingIsometrySplitRowLatticeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EncardBiUnionLe
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CardExactGramIntegralFrameClassesLeStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsExactGramFrameInTermClassStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFrameFixingIsometrySplitRowLatticeStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -121,7 +125,7 @@ theorem conj_mem_NLam {F : LFlag S r T} {n m : S.V ≃ₗ[E] S.V} {Λ : Submodul
   · ext x
     rw [mem_gmap, ← ap_mem_gmap n, ← aut_mem_iff hm.1, mem_gmap]
     change (n.symm * (m * n)) ((n.symm * (m * n)).symm x) ∈ Λ ↔ _
-    simp
+    rw [LinearEquiv.apply_symm_apply]
   · have h1 : n x = x := fix_X hf (Xflag_le_X F _ hx)
     have h2 := hm.2.1 j x hx
     have h3 : m x ∈ Xsp F := by
@@ -224,7 +228,57 @@ theorem main : ∀ (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ : LatV D),
     obtain ⟨c, ⟨c1, c2, c3, c4⟩, hc⟩ := GlobalTheory.T.exists_exactGram_frame_in_termClass D u u' F0 Λ hS hB hR P Z a ha
     refine ⟨c, hc, ⟨(ap_mem_gmap n _).2 c1.1, congrArg n c1.2⟩, fun a => (ap_mem_gmap n _).2 (c2 a),
       (Zhat_mapFlag c hn hf).trans c3, c4.trans ?_⟩
-    exact Submodule.comap_mono (Thp_sup_le c hR.2.1.1.span_eq_top hn hf ho rfl)
+    apply Submodule.comap_mono
+    have hX : Xsp (lf D F0) ≤ Submodule.span D.host.E (Λ : Set (VS D).V) := by
+      refine Submodule.span_le.mpr ?_
+      rintro _ ⟨i, rfl⟩
+      apply Submodule.subset_span
+      have hmem : F0.e i ∈ XS D F0 := by
+        apply Submodule.subset_span
+        refine ⟨i, 1, ?_, (one_smul _ _).symm⟩
+        have hk : (-((D.R.rS : ℤ) - ((i : ℕ) : ℤ))) = -(((D.R.rS - (i : ℕ) : ℕ)) : ℤ) := by
+          rw [Nat.cast_sub i.isLt.le]
+        rw [hk]
+        have hI0 : ddS D ≠ 0 := by
+          unfold ddS
+          rw [Ne, FractionalIdeal.coeIdeal_eq_zero, Ideal.map_eq_bot_iff_of_injective]
+          · exact differentIdeal_ne_bot
+          · exact FaithfulSMul.algebraMap_injective _ _
+        have hJ0 : ddS D ^ (D.R.rS - (i : ℕ)) ≠ 0 := pow_ne_zero _ hI0
+        have hJ1 : ddS D ^ (D.R.rS - (i : ℕ)) ≤ 1 :=
+          pow_le_one' FractionalIdeal.coeIdeal_le_one _
+        rw [_root_.zpow_neg, zpow_natCast]
+        have h1 : (1 : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E) ≤
+            (ddS D ^ (D.R.rS - (i : ℕ)))⁻¹ := by
+          calc
+            1 = ddS D ^ (D.R.rS - (i : ℕ)) * (ddS D ^ (D.R.rS - (i : ℕ)))⁻¹ := (mul_inv_cancel₀ hJ0).symm
+            _ ≤ 1 * (ddS D ^ (D.R.rS - (i : ℕ)))⁻¹ := by gcongr
+            _ = _ := one_mul _
+        exact h1 ((FractionalIdeal.mem_one_iff _).2 ⟨1, map_one _⟩)
+      rw [← hR.2.2] at hmem
+      exact hmem.1
+    have hU : Xsp (lf D F0) ≤ UUE Λ (lf D F0) c := by
+      intro x hx
+      obtain ⟨t, ht⟩ := multiple_mem_span_of_mem_localization_span (nonZeroDivisors (𝓞 D.host.E)) D.host.E _ x (hX hx)
+      rw [Submodule.span_eq] at ht
+      have h1 : (t : 𝓞 D.host.E) • x ∈ UU Λ (lf D F0) c :=
+        Submodule.mem_sup_left (Submodule.mem_sup_left (Submodule.mem_sup_left
+          ⟨ht, (toO (VS D) (Xsp (lf D F0))).smul_mem (t : 𝓞 D.host.E) hx⟩))
+      have h2 : ((t : 𝓞 D.host.E) : D.host.E) • x ∈ UUE Λ (lf D F0) c := by
+        rw [algebraMap_smul D.host.E (t : 𝓞 D.host.E) x]
+        exact Submodule.subset_span h1
+      have h3 : ((t : 𝓞 D.host.E) : D.host.E) ≠ 0 := by
+        have := nonZeroDivisors.ne_zero t.2
+        exact_mod_cast this
+      exact (Submodule.smul_mem_iff _ h3).1 h2
+    refine sup_le ?_ le_sup_right
+    intro t ht
+    have h1 : t ∈ orth (VS D) (Xsp (lf D F0)) :=
+      mem_orth'.2 fun x hx => mem_orth'.1 ht.2 x (hU hx)
+    have e : t = n t - (n t - t) := by abel
+    rw [e]
+    exact Submodule.sub_mem _ (Submodule.mem_sup_left (Thp_map c hn hf rfl ht))
+      (Submodule.mem_sup_right (ho t h1))
   · rintro c c' ⟨m, hm, ξ, h1, h2, h3⟩
     refine ⟨_, conj_mem_NLam hn hf ho hm, ξ, h1, h2, ?_⟩
     have h4 := map_frameAct n.symm (fun a => m (frame (mapFlag n hn c) a)) ξ

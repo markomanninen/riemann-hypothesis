@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.IsEtIdealOfPlace
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.IsEtIdealOfPlace
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.EtLev GlobalTheory.UPel.HT.ES
 open UpperTheory.Gal.FiniteEtaleModels
@@ -48,7 +53,7 @@ theorem UpperTheory.Gal.FiniteEtaleModels.crtProj_holds :
   · rw [hcomm, h2]
   · have hE := wSub_mul_le D 𝔞 𝔟 ((h4 k x).1 _ hy)
     have hy' : y = algebraMap (𝓞 D.F) D.O (1 - e) • y + algebraMap (𝓞 D.F) D.O e • y := by
-      rw [← add_smul, ← map_add, sub_add_cancel, map_one, one_smul]
+      rw [← add_smul, ← map_add (f := _), sub_add_cancel, map_one, one_smul]
     rw [hy']
     exact Submodule.add_mem _ (Submodule.subset_span ⟨1 - e, he1, y, rfl⟩) hE
   · obtain ⟨y, hy⟩ := (h4 k x).2 g (fun c hc => hg c (by
@@ -58,7 +63,7 @@ theorem UpperTheory.Gal.FiniteEtaleModels.crtProj_holds :
     rw [h2, ← Category.assoc, hy]
     have key : g = (g ≫ o.act.act (algebraMap (𝓞 D.F) D.O (1 - e))) *
         (g ≫ o.act.act (algebraMap (𝓞 D.F) D.O e)) := by
-      rw [← MonObj.comp_mul, ← o.act.add, ← map_add, sub_add_cancel, map_one, o.act.one,
+      rw [← MonObj.comp_mul, ← o.act.add, ← map_add (f := _), sub_add_cancel, map_one, o.act.one,
         Category.comp_id]
     rw [hg (1 - e) he1, _root_.one_mul] at key
     exact key.symm

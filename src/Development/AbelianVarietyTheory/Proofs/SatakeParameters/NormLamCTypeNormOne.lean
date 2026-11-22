@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SameOffRefl
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NatCastMemOfPlace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SameOffRefl
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NatCastMemOfPlace
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,9 +76,9 @@ theorem norm_lamC_type_normOne : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (X : Sys 
       push_cast
       rfl
     unfold TaylorLogMetric.lamC
-    rw [dif_pos hprod, e1, map_prod]
+    rw [dite_eq_left hprod, e1, map_prod]
     refine Finset.prod_congr rfl fun τ _ => ?_
-    rw [dif_pos (hmem τ), map_zpow₀]
+    rw [dite_eq_left (hmem τ), map_zpow₀]
   have hρ : ∀ v, ρ v z * ρ v (D.host.conj z) = 1 := fun v => by rw [← map_mul, hz, map_one]
   have hρ0 : ∀ v, ρ v z ≠ 0 := fun v h => by have := hρ v; rw [h, zero_mul] at this; exact zero_ne_one this
   have hf : ∀ v s, ‖TaylorLogMetric.lamC lam (TaylorLogMetric.embT D (pos ⟨v, s⟩) z)‖ ^ e (pos ⟨v, s⟩) =

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColLieApply
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsEqMulProdMinors
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColLieApply
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsEqMulProdMinors
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,8 @@ namespace GlobalTheory.DefLift.Joint
 theorem X_mul_pderiv_mem {σ : Type} (u v : σ) (N : ℕ) (Q : MvPolynomial σ ℂ)
     (hQ : Q ∈ restrictTotalDegree σ ℂ N) : X u * pderiv v Q ∈ restrictTotalDegree σ ℂ N := by
   classical
-  rw [Q.as_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Q.as_sum, map_sum, Finset.mul_sum]
   refine Submodule.sum_mem _ fun m hm => ?_
   rw [mem_restrictTotalDegree] at hQ ⊢
   have hd : (m.sum fun _ e => e) ≤ N := (le_totalDegree hm).trans hQ
@@ -43,7 +48,7 @@ theorem antitone_rowOp {σ J : Type} [Fintype σ] [Fintype J] {p : ℕ} (z : Fin
 theorem degree_of_mem_support {σ J : Type} [Fintype J] (z : J → σ) {P : MvPolynomial σ ℂ} {w : ℤ}
     (h : ∑ k, X (z k) * pderiv (z k) P = (w : ℂ) • P) {m : σ →₀ ℕ} (hm : m ∈ P.support) :
     ((∑ k, m (z k) : ℕ) : ℤ) = w := by
-  have := congrArg (coeff m) h
+  have := congrArg (AddMonoidAlgebra.coeff · m) h
   rw [coeff_sum, coeff_smul] at this
   simp only [coeff_X_mul_pderiv, ← Finset.sum_mul, smul_eq_mul] at this
   have h2 := mul_right_cancel₀ (mem_support_iff.1 hm) this
@@ -77,7 +82,7 @@ theorem exists_eq_smul_base {T : Type} [Fintype T] {p n : ℕ} (h : p + 0 ≤ n)
       bind₁ (fun v => X v + ∑ k, if v = z t (j, k) then C s * X (z t (i, k)) else 0) P = P :=
     fun t i j hij => ((rowAdd_invariant_iff (fun k => z t (i, k)) (fun k => z t (j, k))
       (fun k l e => by simpa using hz t e)
-      (fun k l e => hij.ne (congrArg Prod.fst (hz t e))) P).out 2 1).1 (hup' t i j hij)
+      (fun k l e => hij.ne (congrArg Prod.fst (hz t e))) P).out 3 2).1 (hup' t i j hij)
   have hw : ∀ t, κ t = mixedWeight n (a t) (fun _ : Fin 0 => 0) := fun t =>
     weight_eq_mixedWeight h (z t) (hz t) (y t) (hy t) (hzy t) (a t) _ (ha t) (fun i => i.elim0)
       (hdeg t) (fun i => i.elim0) (hinv t) (fun i => i.elim0) (fun _ i => i.elim0) (κ t) (hκ t)
@@ -116,12 +121,14 @@ theorem joint_highest_proportional (ι : Type) [Fintype ι] (m n : ℕ) (hnm : n
     exact Prod.ext e.1 (Prod.ext e.2.2 e.2.1)
   have hr : ∀ τ k l (R : Pol ι m n), rename f (rowLie n τ k l R) =
       ∑ a, X (xVar τ a k) * pderiv (xVar τ a l) (rename f R) := fun τ k l R => by
-    rw [rowLie_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [rowLie_apply, map_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [map_mul, rename_X, ← pderiv_rename hf]
   have hc : ∀ τ k l (R : Pol ι m n), rename f (colLie m τ k l R) =
       ∑ a, X (xVar τ k a) * pderiv (xVar τ l a) (rename f R) := fun τ k l R => by
-    rw [colLie_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [colLie_apply, map_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [map_mul, rename_X, ← pderiv_rename hf]
   have hi := rename_injective (R := ℂ) f hf

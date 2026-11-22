@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BlockTriangularOneAddMat
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwasawaBlockTriangular
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BlockTriangularOneAddMat
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwasawaBlockTriangular
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL Topology
 open scoped ENNReal
@@ -41,7 +45,7 @@ theorem exists_invariant_form (G W : Type) [Group G] [TopologicalSpace G] [IsTop
   let a : Module.Dual ℂ W :=
     { toFun := fun w => ∫ h : H, l₀ (σ ((h : G)⁻¹) w) ∂η
       map_add' := fun v w => by
-        simp only [map_add]
+        simp only [map_add (f := _)]
         exact integral_add (hint v) (hint w)
       map_smul' := fun c w => by
         simp only [map_smul, RingHom.id_apply]

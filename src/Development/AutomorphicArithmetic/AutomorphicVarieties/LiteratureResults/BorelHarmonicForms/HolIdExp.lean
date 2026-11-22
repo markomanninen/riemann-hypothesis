@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.LieDecomp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.LieDecomp
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible UpperTheory.V.Lit UpperTheory.V.Lit.Bor
 open scoped TensorProduct
 
-private theorem emb_split {E : Type} [Field E] [IsTotallyComplex E] (z : (E →+* ℂ) → ℂ) :
+private theorem emb_split {E : Type} [Field E] [_root_.NumberField.IsTotallyComplex E] (z : (E →+* ℂ) → ℂ) :
     ∃ u v : Cinf E, z = emb E u + Complex.I • emb E v := by
   refine ⟨fun w => (z w.embedding + starRingEnd ℂ (z (ComplexEmbedding.conjugate w.embedding))) / 2,
     fun w => -Complex.I * (z w.embedding - starRingEnd ℂ (z (ComplexEmbedding.conjugate w.embedding))) / 2, ?_⟩
@@ -18,7 +23,7 @@ private theorem emb_split {E : Type} [Field E] [IsTotallyComplex E] (z : (E →+
     linear_combination ((z w.embedding - starRingEnd ℂ (z (ComplexEmbedding.conjugate w.embedding))) / 2) * Complex.I_mul_I
   · rw [UpperTheory.V.FieldIso.coord_conj, UpperTheory.V.FieldIso.coord_conj, UpperTheory.V.FieldIso.coord_embedding,
       UpperTheory.V.FieldIso.coord_embedding]
-    simp only [map_div₀, map_add, map_sub, map_mul, map_neg, Complex.conj_I, Complex.conj_conj, map_ofNat]
+    simp only [map_div₀, map_add (f := _), map_sub, map_mul, map_neg, Complex.conj_I, Complex.conj_conj, map_ofNat]
     linear_combination (-(starRingEnd ℂ (z w.embedding) - z (ComplexEmbedding.conjugate w.embedding)) / 2) * Complex.I_mul_I
 
 private theorem emb_cont {E : Type} [Field E] : Continuous (emb E) := by
@@ -37,6 +42,7 @@ private theorem exp_map_emb {E : Type} [Field E] [NumberField E] {a : ℕ} (Y : 
 open scoped Matrix.Norms.Operator in
 private theorem exp_diff {T : Type} [Fintype T] {a : ℕ} (P Q : Matrix (Fin a) (Fin a) (T → ℂ)) :
     Differentiable ℂ fun s : ℂ => (fun i j => NormedSpace.exp (P + s • Q) i j : Fin a → Fin a → T → ℂ) := by
+  set_option synthInstance.maxHeartbeats 200000 in
   have h : Differentiable ℂ fun s : ℂ => NormedSpace.exp (P + s • Q) := fun s =>
     (NormedSpace.exp_analytic (𝕂 := ℂ) (P + s • Q)).differentiableAt.comp s
       (f := fun s : ℂ => P + s • Q) ((differentiableAt_const P).add (differentiableAt_id.smul_const Q))
@@ -58,7 +64,7 @@ theorem UpperTheory.V.Lit.Bor.holIdExp :
     have e : P + (t : ℂ) • Q = (Matrix.of A + t • Matrix.of B).map (emb E) := by
       ext i j τ
       change coord τ (A i j) + (t : ℂ) * coord τ (B i j) = coord τ (A i j + t • B i j)
-      rw [map_add, UpperTheory.V.FieldIso.coord_smul, Complex.real_smul]
+      rw [map_add (f := _), UpperTheory.V.FieldIso.coord_smul, Complex.real_smul]
     rw [e, ← exp_map_emb]
     exact h0 (Matrix.isUnit_exp (Matrix.of A + t • Matrix.of B)).unit
   have hf : ∃ᶠ s in nhdsWithin (0 : ℂ) {0}ᶜ, (Φ fun i j => NormedSpace.exp (P + s • Q) i j) = (fun _ => 0) s := by

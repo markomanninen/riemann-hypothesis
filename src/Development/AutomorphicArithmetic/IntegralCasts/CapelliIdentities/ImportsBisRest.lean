@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.DYlb6.main :
     ∀ {R W T : Type} [inst : CommRing R] [inst_1 : AddCommGroup W] [inst_2 : AddCommGroup T] [inst_3 : _root_.Module R T]
@@ -16,5 +20,5 @@ theorem UpperTheory.Reformulated.B.DYlb6.main :
     rw [h, map_smul]
     exact Submodule.smul_mem _ r (Submodule.subset_span ⟨w, rfl⟩)
   | add x y hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ hx hy

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsPointedOfIsHkIsog
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsPointedOfIsHkIsog
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -59,11 +63,11 @@ section Basic₂
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
 
+
 set_option autoImplicit false in
 open AlgebraicGeometry CategoryTheory NumberField in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Datum H}
   {l : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H} in
-
 theorem _root_.GlobalTheory.IndefiniteRowSideFullHecke.HeckePrimeDetection.isHeckePrime_iff {P : Ideal (𝓞 E)} {p : ℕ} :
     _root_.GlobalTheory.IndefiniteRowSideFullHecke.HeckePrimeDetection.IsHeckePrime l P p ↔ P.IsMaximal ∧ P ⊔ P.map (H.bar : 𝓞 E →+* 𝓞 E) = ⊤ ∧
       p.Prime ∧ (p : 𝓞 E) ∈ P ∧ ¬ p ∣ l.M' := by
@@ -82,10 +86,6 @@ theorem _root_.GlobalTheory.IndefiniteRowSideFullHecke.HeckePrimeDetection.isHec
     rw [Ideal.eq_top_iff_one, ← huv]
     simp only [eq_intCast, Int.cast_natCast]
     exact P.add_mem (P.mul_mem_left _ hpP) (P.mul_mem_left _ hM)
-
-example (Xo : Moduli Dw l) (c : Coeff l) (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) :
-    DetectAt Xo c a n ↔ ∀ g ∈ sec Xo c a n,
-      (∀ (Ω : Type) [Field Ω] [IsAlgClosed Ω] [Algebra c.F Ω] (y : FrPt Xo c Ω), evR Xo c g y = 0) → g = 0 := Iff.rfl
 
 end Basic₂
 

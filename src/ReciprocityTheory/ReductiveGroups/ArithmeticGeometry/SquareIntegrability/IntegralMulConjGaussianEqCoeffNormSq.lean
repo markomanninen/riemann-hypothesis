@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.IntegrableNormPowMulExpNegMulNormSq
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.IntegrableNormPowMulExpNegMulNormSq
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -20,7 +24,7 @@ noncomputable def fa1K {g : ℕ} (p : MvPolynomial (Fin g) ℂ) (z : EuclideanSp
   ∑ α ∈ p.support, ‖monomialOfMultiindex α z‖ ^ 2 / fa1M α
 
 noncomputable def fa1N {g : ℕ} (p : MvPolynomial (Fin g) ℂ) : ℝ :=
-  ∑ α ∈ p.support, ‖MvPolynomial.coeff α p‖ ^ 2 * fa1M α
+  ∑ α ∈ p.support, ‖AddMonoidAlgebra.coeff p α‖ ^ 2 * fa1M α
 
 theorem monomialKernel_nonneg {g : ℕ} (p : MvPolynomial (Fin g) ℂ) (z : EuclideanSpace ℂ (Fin g)) :
     0 ≤ fa1K p z := by
@@ -32,7 +36,7 @@ theorem coeffNormSq_nonneg {g : ℕ} (p : MvPolynomial (Fin g) ℂ) : 0 ≤ fa1N
   exact Finset.sum_nonneg fun α _ => mul_nonneg (by positivity) (monomialMass_pos α).le
 
 theorem eval_eq_sum_coeff_mul_monomial {g : ℕ} (p : MvPolynomial (Fin g) ℂ) (z : EuclideanSpace ℂ (Fin g)) :
-    MvPolynomial.eval (fun i => z i) p = ∑ α ∈ p.support, MvPolynomial.coeff α p * monomialOfMultiindex α z := by
+    MvPolynomial.eval (fun i => z i) p = ∑ α ∈ p.support, AddMonoidAlgebra.coeff p α * monomialOfMultiindex α z := by
   first
   | (simp [MvPolynomial.eval_eq', monomialOfMultiindex]; done)
   | (simp [MvPolynomial.eval_eq, monomialOfMultiindex, Finsupp.prod]; done)
@@ -42,8 +46,8 @@ theorem norm_eval_sq_le {g : ℕ} (p : MvPolynomial (Fin g) ℂ) (z : EuclideanS
     ‖MvPolynomial.eval (fun i => z i) p‖ ^ 2 ≤ fa1N p * fa1K p z := by
   rw [eval_eq_sum_coeff_mul_monomial]
   have hM : ∀ α : Fin g →₀ ℕ, 0 < fa1M α := monomialMass_pos
-  have h1 : ‖∑ α ∈ p.support, MvPolynomial.coeff α p * monomialOfMultiindex α z‖ ≤
-      ∑ α ∈ p.support, (‖MvPolynomial.coeff α p‖ * Real.sqrt (fa1M α)) *
+  have h1 : ‖∑ α ∈ p.support, AddMonoidAlgebra.coeff p α * monomialOfMultiindex α z‖ ≤
+      ∑ α ∈ p.support, (‖AddMonoidAlgebra.coeff p α‖ * Real.sqrt (fa1M α)) *
         (‖monomialOfMultiindex α z‖ / Real.sqrt (fa1M α)) := by
     refine (norm_sum_le _ _).trans (le_of_eq (Finset.sum_congr rfl fun α _ => ?_))
     have hs : Real.sqrt (fa1M α) ≠ 0 := (Real.sqrt_pos.mpr (hM α)).ne'
@@ -52,14 +56,14 @@ theorem norm_eval_sq_le {g : ℕ} (p : MvPolynomial (Fin g) ℂ) (z : EuclideanS
     | (field_simp; done)
     | (field_simp; ring)
   have h2 := Finset.sum_mul_sq_le_sq_mul_sq p.support
-    (fun α => ‖MvPolynomial.coeff α p‖ * Real.sqrt (fa1M α)) (fun α => ‖monomialOfMultiindex α z‖ / Real.sqrt (fa1M α))
-  have h3 : ∀ α, (‖MvPolynomial.coeff α p‖ * Real.sqrt (fa1M α)) ^ 2 = ‖MvPolynomial.coeff α p‖ ^ 2 * fa1M α :=
+    (fun α => ‖AddMonoidAlgebra.coeff p α‖ * Real.sqrt (fa1M α)) (fun α => ‖monomialOfMultiindex α z‖ / Real.sqrt (fa1M α))
+  have h3 : ∀ α, (‖AddMonoidAlgebra.coeff p α‖ * Real.sqrt (fa1M α)) ^ 2 = ‖AddMonoidAlgebra.coeff p α‖ ^ 2 * fa1M α :=
     fun α => by rw [mul_pow, Real.sq_sqrt (hM α).le]
   have h4 : ∀ α, (‖monomialOfMultiindex α z‖ / Real.sqrt (fa1M α)) ^ 2 = ‖monomialOfMultiindex α z‖ ^ 2 / fa1M α :=
     fun α => by rw [div_pow, Real.sq_sqrt (hM α).le]
   simp only [h3, h4] at h2
   unfold fa1N fa1K
-  calc _ ≤ (∑ α ∈ p.support, (‖MvPolynomial.coeff α p‖ * Real.sqrt (fa1M α)) *
+  calc _ ≤ (∑ α ∈ p.support, (‖AddMonoidAlgebra.coeff p α‖ * Real.sqrt (fa1M α)) *
         (‖monomialOfMultiindex α z‖ / Real.sqrt (fa1M α))) ^ 2 := by gcongr
     _ ≤ _ := h2
 
@@ -88,7 +92,7 @@ theorem integral_monomialKernel_mul_gaussian {g : ℕ} (p : MvPolynomial (Fin g)
     rw [Finset.sum_mul]
     refine Finset.sum_congr rfl fun α _ => ?_
     ring
-  rw [hfun, MeasureTheory.integral_finset_sum _ (fun α _ => (hint α).const_mul _)]
+  rw [hfun, MeasureTheory.integral_finsetSum _ (fun α _ => (hint α).const_mul _)]
   have h2 : ∀ α ∈ p.support,
       ∫ z, (fa1M α)⁻¹ * (‖monomialOfMultiindex α z‖ ^ 2 * Real.exp (-‖z‖ ^ 2)) = Real.pi ^ g := by
     intro α _
@@ -121,24 +125,25 @@ theorem integral_mul_conj_gaussian_eq_coeffNormSq {g : ℕ} (p : MvPolynomial (F
       ((fa1N p : ℝ) : ℂ) := by
   have hexp : ∀ z, F z * (starRingEnd ℂ) (F z) * (Real.exp (-‖z‖ ^ 2) : ℂ) =
       ∑ α ∈ p.support, ∑ β ∈ p.support,
-        (MvPolynomial.coeff α p * (starRingEnd ℂ) (MvPolynomial.coeff β p)) *
+        (AddMonoidAlgebra.coeff p α * (starRingEnd ℂ) (AddMonoidAlgebra.coeff p β)) *
           (monomialOfMultiindex α z * (starRingEnd ℂ) (monomialOfMultiindex β z) * (Real.exp (-‖z‖ ^ 2) : ℂ)) := by
     intro z
-    rw [hF, eval_eq_sum_coeff_mul_monomial, map_sum, Finset.sum_mul, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hF, eval_eq_sum_coeff_mul_monomial, map_sum, Finset.sum_mul, Finset.sum_mul]
     refine Finset.sum_congr rfl (fun α _ => ?_)
     rw [Finset.mul_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl (fun β _ => ?_)
     rw [map_mul]; ring
   simp only [hexp]
   have hint : ∀ α β : Fin g →₀ ℕ, Integrable (fun z : EuclideanSpace ℂ (Fin g) =>
-      (MvPolynomial.coeff α p * (starRingEnd ℂ) (MvPolynomial.coeff β p)) *
+      (AddMonoidAlgebra.coeff p α * (starRingEnd ℂ) (AddMonoidAlgebra.coeff p β)) *
         (monomialOfMultiindex α z * (starRingEnd ℂ) (monomialOfMultiindex β z) * (Real.exp (-‖z‖ ^ 2) : ℂ))) :=
     fun α β => (integrable_monomial_mul_conj_gaussian α β).const_mul _
   rw [integral_finsetSum _ (fun α _ => integrable_finsetSum _ (fun β _ => hint α β))]
   have hin : ∀ α ∈ p.support, ∫ z : EuclideanSpace ℂ (Fin g), ∑ β ∈ p.support,
-      (MvPolynomial.coeff α p * (starRingEnd ℂ) (MvPolynomial.coeff β p)) *
+      (AddMonoidAlgebra.coeff p α * (starRingEnd ℂ) (AddMonoidAlgebra.coeff p β)) *
         (monomialOfMultiindex α z * (starRingEnd ℂ) (monomialOfMultiindex β z) * (Real.exp (-‖z‖ ^ 2) : ℂ)) =
-      (((‖MvPolynomial.coeff α p‖ ^ 2 * (Real.pi ^ g * fa1M α)) : ℝ) : ℂ) := by
+      (((‖AddMonoidAlgebra.coeff p α‖ ^ 2 * (Real.pi ^ g * fa1M α)) : ℝ) : ℂ) := by
     intro α hα
     rw [integral_finsetSum _ (fun β _ => hint α β)]
     rw [Finset.sum_eq_single_of_mem α hα (fun β _ hβ => by

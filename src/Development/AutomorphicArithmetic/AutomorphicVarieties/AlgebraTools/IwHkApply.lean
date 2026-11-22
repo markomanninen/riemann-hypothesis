@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.DcSumEqOfMk
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.DcSumEqOfMk
+
+@[expose] public section
+
 open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 
 private theorem hkApply_dc_congr {A G M : Type} [CommRing A] [Group G] [AddCommGroup M] [Module A M]
@@ -23,7 +28,7 @@ theorem UpperTheory.V.AlgebraTools.hkApply :
   have hv : ∀ v : fixd ρ K', (hk2 ρ K K' x v : M) = dc ρ K K' x v := by
     intro v
     unfold hk2
-    rw [dif_pos h2]
+    rw [dite_eq_left h2]
     rfl
   refine ⟨hv, fun s hs hu v => ?_, fun a ha b hb => ?_⟩
   · rw [hv, h1 s hs hu v v.2]

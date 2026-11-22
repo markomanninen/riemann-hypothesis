@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ConstantCoeffResidueUXPow
-import Mathlib.Analysis.SpecialFunctions.Log.Base
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ConstantCoeffResidueUXPow
+public import Mathlib.Analysis.SpecialFunctions.Log.Base
+
+@[expose] public section
 
 noncomputable section
 
@@ -103,8 +107,8 @@ theorem realA (L w' Bq hh lg wS : ℝ) (hL : 11 ≤ L) (hw' : 0 ≤ w') (hBq : 0
     nlinarith [mul_nonneg (show (0 : ℝ) ≤ L - 11 by linarith) hS, mul_nonneg (show (0 : ℝ) ≤ L - 11 by linarith) hhh,
       mul_nonneg (show (0 : ℝ) ≤ L - 11 by linarith) hlg, mul_nonneg (show (0 : ℝ) ≤ L - 11 by linarith) hBq]
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem exists_s1_bound_choice (l b w S η b₀ b₁ w' : ℕ) (hl : 11 ≤ l) (Sg : ℝ)
     (hSg : Sg = ((b + η + S : ℕ) : ℝ) / (l : ℝ) ^ 2 + ((w : ℝ) + S + η) / l +
       Real.logb l (2 * ((b + η + S : ℕ) : ℝ)) + 1)

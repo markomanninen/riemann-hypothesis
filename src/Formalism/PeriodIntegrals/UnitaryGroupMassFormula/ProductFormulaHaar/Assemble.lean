@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ProdFormulaE
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.ProdFormulaEOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.NormSt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.SumLocalTrace
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.NormTraceLeOne
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.ResChar
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ProdFormulaE
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.ProdFormulaEOf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.NormSt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.SumLocalTrace
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.NormTraceLeOne
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.ResChar
+
+@[expose] public section
 
 namespace PI.ProdFormulaE.Assemble
 

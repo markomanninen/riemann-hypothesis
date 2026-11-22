@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsComb
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsComb
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.RestTerms
@@ -33,8 +38,8 @@ theorem prod_factorial_update_sub_one {m : ℕ} (l v : Fin m → ℕ) (i : Fin m
 
 end CombCfMonomialPsumOne
 
-open CombCfMonomialPsumOne in
 
+open CombCfMonomialPsumOne in
 theorem CombCfMonomialPsumOne.proof : CombCfMonomialPsumOne.Statement := by
   intro m n v l
   induction n generalizing l with

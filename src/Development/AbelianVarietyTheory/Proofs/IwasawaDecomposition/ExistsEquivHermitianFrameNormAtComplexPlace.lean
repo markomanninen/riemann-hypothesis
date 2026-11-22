@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SameForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SameForm
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Df
 attribute [local instance] GlobalTheory.Mem.Col2.starE
@@ -10,7 +14,8 @@ theorem ambSpace_map_eq_sum {K : Type} [Field K] [NumberField K] [StarRing K] {�
     {W : Type} [AddCommGroup W] [Module ℂ W] (j : A.V →ₛₗ[σ] W) (x : A.V) :
     j x = ∑ i, σ (A.b.repr x i) • j (A.b i) := by
   conv_lhs => rw [← A.b.sum_repr x]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [LinearMap.map_smulₛₗ]
 
 private lemma exists_linearEquiv_euclidean_norm_eq_mulVec {ι W : Type} [Fintype ι] [DecidableEq ι] [AddCommGroup W]
@@ -58,6 +63,7 @@ theorem exists_equiv_normAt_eq_norm : ∀ (K : Type) [Field K] [NumberField K] [
     congr 1
     rw [← Complex.norm_conj]
     congr 1
-    simp [Matrix.mulVec, dotProduct, map_sum, ComplexEmbedding.conjugate_coe_eq]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mulVec, dotProduct, map_sum, ComplexEmbedding.conjugate_coe_eq]
 
 end GlobalTheory

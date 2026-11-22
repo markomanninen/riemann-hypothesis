@@ -1,6 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.WinUpDown
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.MatchBCX
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.MatchIndOf
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.WinUpDown
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.MatchBCX
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.MatchIndOf
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.MatchBCX
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.MatchIndOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,14 +27,14 @@ namespace UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter
 
 variable {K M : Type} [Field K] [NumberField K] [Field M] [NumberField M] [Algebra K M]
 
-private theorem indCore [IsTotallyComplex K] [IsTotallyComplex M]
+private theorem indCore [_root_.NumberField.IsTotallyComplex K] [_root_.NumberField.IsTotallyComplex M]
     (h2 : Module.finrank K M = 2) (P : CuspSub K (2 * 2)) (π : CuspSub M 2) (S : Finset (HeightOneSpectrum (𝓞 K)))
     (hkey : ∀ w : HeightOneSpectrum (𝓞 M), w.under (𝓞 K) ∉ S → Key (CG.mk π).HasSat (CG.mk P).HasSat w)
     (hK : GroundTheory.Automorphic.GJStandardL.ramifiedPlaces K ⊆ S)
     (hM : ∀ w ∈ GroundTheory.Automorphic.GJStandardL.ramifiedPlaces M, w.under (𝓞 K) ∈ S)
     (v : HeightOneSpectrum (𝓞 K)) (hv : v ∈ S)
-    (sK : ∀ u : HeightOneSpectrum (𝓞 K), Multiset (IrrGL (u.adicCompletion K)))
-    (sM : ∀ w : HeightOneSpectrum (𝓞 M), Multiset (IrrGL (w.adicCompletion M)))
+    (sK : ∀ u : HeightOneSpectrum (𝓞 K), Multiset (IrrGL (k := u.adicCompletion K)))
+    (sM : ∀ w : HeightOneSpectrum (𝓞 M), Multiset (IrrGL (k := w.adicCompletion M)))
     (hsK : ∀ u, SuppAt P u (sK u)) (hsM : ∀ w, SuppAt π w (sM w))
     (zK : ∀ u ∈ S, u ≠ v → cnt (sK u) 1 = 0)
     (zM : ∀ w : HeightOneSpectrum (𝓞 M), w.under (𝓞 K) ∈ S → w.under (𝓞 K) ≠ v → cnt (sM w) 1 = 0) :
@@ -77,12 +83,12 @@ private theorem indCore [IsTotallyComplex K] [IsTotallyComplex M]
       · left
         refine ⟨hN, w', hne, hu, ?_⟩
         have s3 := satM w' fun h => hw' (hu ▸ (memSM w').1 h)
-        rw [cx, cx, cx, sat_unique P s1 h4, sat_unique π s2 h1, sat_unique π s3 h3, Multiset.map_add]
+        rw [cx, cx, cx, sat_unique P s1 h4, sat_unique π s2 h1, sat_unique π s3 h3, Multiset.map_add (f := _)]
       · right
         refine ⟨hN, B'.map fun b : ℂˣ => (b : ℂ), ?_, ?_⟩
         · rw [cx, sat_unique π s2 h1, Multiset.map_map, Multiset.map_map]
           exact Multiset.map_congr rfl fun b _ => by simp
-        · rw [cx, sat_unique P s1 h4, h3, Multiset.map_add, Multiset.map_map, Multiset.map_map]
+        · rw [cx, sat_unique P s1 h4, h3, Multiset.map_add (f := _), Multiset.map_map, Multiset.map_map]
           congr 1)
   have pM' := hOps.2.2.1 _ _ _ _ _ _ _ c pM (fun s hs => ((hc s).1 hs).symm) (fun s hs => ((hc s).2 hs).symm)
   have e1 : ∏ w ∈ SM, (pol (sM w) 1).comp (X ^ v.asIdeal.inertiaDeg' w.asIdeal) =

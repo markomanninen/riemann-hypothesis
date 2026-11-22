@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PRiemannExtensionSlices
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PRiemannExtensionSlices
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -37,7 +42,7 @@ theorem cauchy_torus : ∀ (n : ℕ) (G : (Fin n → ℂ) → ℂ) (c : Fin n �
       refine Continuous.mul ?_ (hc.comp_continuous (continuous_torusMap c r) htor)
       refine continuous_finsetProd _ fun i _ => Continuous.inv₀ ?_ fun θ => torusMap_sub_ne hr0 hz θ i
       exact ((continuous_apply i).comp (continuous_torusMap c r)).sub continuous_const
-    rw [torusIntegral_succ hint]
+    refine (torusIntegral_succ hint).trans ?_
     have hz' : Fin.tail z ∈ ball (Fin.tail c) r :=
       (mem_ball_pi_iff hr0).mpr fun i => by simpa [Fin.tail] using (mem_ball_pi_iff hr0).mp hz i.succ
     have hz'R : Fin.tail z ∈ ball (Fin.tail c) R := ball_subset_ball hrR.le hz'
@@ -84,8 +89,8 @@ theorem cauchy_torus : ∀ (n : ℕ) (G : (Fin n → ℂ) → ℂ) (c : Fin n �
 
 end OsgoodSeparate
 
-open OsgoodSeparate in
 
+open OsgoodSeparate in
 theorem analyticOnNhd_of_continuousOn_of_separately {n : ℕ} {U : Set (Fin n → ℂ)}
     {g : (Fin n → ℂ) → ℂ} (hU : IsOpen U) (hc : ContinuousOn g U)
     (hs : ∀ z ∈ U, ∀ i, DifferentiableAt ℂ (fun t => g (Function.update z i t)) (z i)) :
@@ -107,14 +112,8 @@ theorem analyticOnNhd_of_continuousOn_of_separately {n : ℕ} {U : Set (Fin n �
   refine han.congr ?_
   filter_upwards [isOpen_ball.mem_nhds (mem_ball_self hr)] with z hz
   show ((2 * π * I : ℂ) ^ n)⁻¹ * fctl c (ε / 2) g (kern c (ε / 2) z) = g z
-  rw [fctl_kern hr g hz, cauchy_torus n g c ε hcb hsb (ε / 2) hr hrε z hz, ← mul_assoc,
+  rw [fctl_kern hr g hz, OsgoodSeparate.cauchy_torus n g c ε hcb hsb (ε / 2) hr hrε z hz, ← mul_assoc,
     inv_mul_cancel₀ hne, one_mul]
-
-theorem differentiableOn_of_continuousOn_of_separately {n : ℕ} {U : Set (Fin n → ℂ)}
-    {g : (Fin n → ℂ) → ℂ} (hU : IsOpen U) (hc : ContinuousOn g U)
-    (hs : ∀ z ∈ U, ∀ i, DifferentiableAt ℂ (fun t => g (Function.update z i t)) (z i)) :
-    DifferentiableOn ℂ g U :=
-  (analyticOnNhd_of_continuousOn_of_separately hU hc hs).differentiableOn
 
 end
 

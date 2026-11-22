@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.TraceLatticePoisson
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.TraceLatticePoisson
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.GJMatrix
 
@@ -46,7 +50,6 @@ instance : (mixedMeasurePi K : Measure (ι → mixedSpace K)).IsAddHaarMeasure :
   infer_instance
 
 variable (ι) in
-
 abbrev EuclidPi : Type _ := EuclideanSpace ℝ (ι × Fin (finrank ℝ (euclidean.mixedSpace K)))
 
 def euclidPiEquiv : (ι → euclidean.mixedSpace K) ≃L[ℝ] EuclidPi K ι :=
@@ -356,7 +359,7 @@ theorem idealLatticePi_poisson_summation (I : ι → (FractionalIdeal (𝓞 K)�
     rw [← Equiv.tsum_eq eL]
     refine tsum_congr fun α ↦ ?_
     have heL : (eL α : EuclidPi K ι) = toEuclidPi K α := rfl
-    rw [heL, hFx, ← map_add, ContinuousLinearEquiv.symm_apply_apply]
+    rw [heL, hFx, ← map_add (f := _), ContinuousLinearEquiv.symm_apply_apply]
   have hrhs : ∑' μ : dualLattice L,
       𝓕 (F : EuclidPi K ι → ℂ) μ * 𝐞 ⟪(μ : EuclidPi K ι), toEuclidPi K a⟫ =
       ∑' β : idealLatticePi (fun i ↦ traceDualIdeal K (I i)),
@@ -369,11 +372,9 @@ theorem idealLatticePi_poisson_summation (I : ι → (FractionalIdeal (𝓞 K)�
   exact h
 
 variable (K) in
-
 def embPi (ξ : ι → K) : ι → mixedSpace K := fun i ↦ mixedEmbedding K (ξ i)
 
 variable (K) in
-
 def cosetPi (I : ι → (FractionalIdeal (𝓞 K)⁰ K)ˣ) (c : ι → K) : Set (ι → K) :=
   {ξ | ∀ i, ξ i - c i ∈ (I i : FractionalIdeal (𝓞 K)⁰ K)}
 
@@ -383,7 +384,6 @@ theorem embPi_zero : embPi K (0 : ι → K) = 0 := by
   simp [embPi]
 
 omit [Fintype ι] in
-
 theorem summable_norm_iff_and_tsum_eq_cosetPi (I : ι → (FractionalIdeal (𝓞 K)⁰ K)ˣ)
     (c : ι → K) (g : (ι → mixedSpace K) → ℂ) :
     (Summable (fun ξ ↦ ‖(cosetPi K I c).indicator (fun ξ ↦ g (embPi K ξ)) ξ‖) ↔
@@ -407,7 +407,7 @@ theorem summable_norm_iff_and_tsum_eq_cosetPi (I : ι → (FractionalIdeal (𝓞
   have hemb : ∀ α, embPi K (h α) = (α : ι → mixedSpace K) + embPi K c := by
     intro α
     funext i
-    simp only [embPi, hh, Pi.add_apply, map_add, hy α i, add_comm]
+    simp only [embPi, hh, Pi.add_apply, map_add (f := _), hy α i, add_comm]
   set G : (ι → K) → ℂ := (cosetPi K I c).indicator (fun ξ ↦ g (embPi K ξ))
   have hsupp : ∀ ξ ∉ Set.range h, G ξ = 0 := by
     intro ξ hξ

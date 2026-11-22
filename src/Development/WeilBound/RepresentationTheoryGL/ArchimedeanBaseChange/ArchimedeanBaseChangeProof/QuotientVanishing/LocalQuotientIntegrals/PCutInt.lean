@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.LocalQuotientIntegrals.OneVanish
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MeasurableSdot
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.LocalQuotientIntegrals.OneVanish
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MeasurableSdot
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix MeasureTheory
 open GlobalTheory.CuspRep GlobalTheory.UnitaryBC PositivityTheory.Rg.Tf.Loc PositivityTheory.Rg.BcB
@@ -100,6 +104,9 @@ theorem PositivityTheory.Rg.BcB.CV.pf_CutInt : PositivityTheory.Rg.BcB.D4.KerFin
   have := hT2
   have := hSC
   have := hRd
+  have : T1Space (GA E n) := T2Space.t1Space
+  have : MeasurableSingletonClass (GA E n) := ⟨fun x => isClosed_singleton.measurableSet⟩
+  have : MeasurableSingletonClass (ratCent d) := Subtype.instMeasurableSingletonClass
   have : IsFiniteMeasureOnCompacts (Measure.count : Measure (ratCent d)) :=
     ⟨fun K hK => Measure.count_apply_lt_top.2 hK.finite_of_discrete⟩
   have : (Measure.count : Measure (ratCent d)).IsOpenPosMeasure :=

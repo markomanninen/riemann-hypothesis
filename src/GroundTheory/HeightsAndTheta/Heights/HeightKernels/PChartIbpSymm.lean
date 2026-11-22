@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartIbpSymm
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartIbpSteps
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ChartCutoffParts
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartIbpSymm
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartIbpSteps
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ChartCutoffParts
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

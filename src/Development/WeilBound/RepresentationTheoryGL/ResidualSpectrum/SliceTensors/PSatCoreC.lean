@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatDefs
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicGLIwasawaDecompositionStandardParabolic
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFixedOfMemISup
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatDefs
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicGLIwasawaDecompositionStandardParabolic
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFixedOfMemISup
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,6 +20,19 @@ variable {R S : Type} [CommRing R] [CommRing S]
 theorem cc_cornerGL_leviEmb {c N : ℕ} (n : Fin c → ℕ) (h : ∑ i, n i = N) (s : R →ₙ+* S)
     (l : ∀ i, GL (Fin (n i)) R) :
     cornerGL N s (leviEmb R (stdBlocks n h) l) = leviEmb S (stdBlocks n h) (fun i => cornerGL (n i) s (l i)) := by
+  have leviEmb_apply_same (T : Type) [CommRing T] (g : ∀ i, GL (Fin (n i)) T)
+      (a : Fin c) (i j : Fin (n a)) :
+      (leviEmb T (stdBlocks n h) g : Matrix (Fin N) (Fin N) T)
+        (stdBlocks n h ⟨a, i⟩) (stdBlocks n h ⟨a, j⟩) = (g a : Matrix _ _ T) i j := by
+    simp [leviEmb, Matrix.blockDiagonal'_apply_eq]
+  have leviEmb_apply_ne (T : Type) [CommRing T] (g : ∀ i, GL (Fin (n i)) T)
+      {a b : Fin c} (hab : a ≠ b) (i : Fin (n a)) (j : Fin (n b)) :
+      (leviEmb T (stdBlocks n h) g : Matrix (Fin N) (Fin N) T)
+        (stdBlocks n h ⟨a, i⟩) (stdBlocks n h ⟨b, j⟩) = 0 := by
+    classical
+    simp [leviEmb]
+    letI : DecidableEq (Fin c) := Classical.typeDecidableEq _
+    exact Matrix.blockDiagonal'_apply_ne _ _ _ hab
   apply Units.ext
   ext p q
   obtain ⟨⟨a, i⟩, rfl⟩ := (stdBlocks n h).surjective p
@@ -32,7 +49,7 @@ theorem cc_cornerGL_leviEmb {c N : ℕ} (n : Fin c → ℕ) (h : ∑ i, n i = N)
         leviEmb_apply_same]
   · have hne : stdBlocks n h ⟨a, i⟩ ≠ stdBlocks n h ⟨b, j⟩ := fun he =>
       hab (congrArg Sigma.fst ((stdBlocks n h).injective he))
-    rw [leviEmb_apply_ne _ _ _ hab, GlobalTheory.IwasawaAdelic.cornerGL_entry_ne _ _ hne, leviEmb_apply_ne _ _ _ hab, map_zero]
+    rw [leviEmb_apply_ne _ _ hab, GlobalTheory.IwasawaAdelic.cornerGL_entry_ne _ _ hne, leviEmb_apply_ne _ _ hab, map_zero]
 
 theorem cc_cornerGL_mem_unipRad {c N : ℕ} (n : Fin c → ℕ) (h : ∑ i, n i = N) (s : R →ₙ+* S) {u : GL (Fin N) R}
     (hu : u ∈ unipRad R (stdBlocks n h)) : cornerGL N s u ∈ unipRad S (stdBlocks n h) := by
@@ -53,7 +70,7 @@ theorem cc_cornerGL_mem_unipRad {c N : ℕ} (n : Fin c → ℕ) (h : ∑ i, n i 
 
 end Corner
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem iwasawa_inf {c N : ℕ} (n : Fin c → ℕ) (h : ∑ i, n i = N) (x : GA E N) :
     ∃ u ∈ unipRad (Ad E) (stdBlocks n h), ∃ (m : ∀ i, GL (Fin (n i)) (Cinf E)) (k : Kinf E N),
@@ -62,15 +79,39 @@ theorem iwasawa_inf {c N : ℕ} (n : Fin c → ℕ) (h : ∑ i, n i = N) (x : GA
   obtain ⟨b, hb, k, hy⟩ :=
     GlobalTheory.IwasawaAdelic.exists_upper_mul_unitary_inf E N (Matrix.GeneralLinearGroup.map (pInf E) x)
   have hbP := GlobalTheory.IwasawaAdelic.mem_parab_of_upper n h b hb
-  obtain ⟨u, hu, hbu⟩ := exists_levi_mul_unip (Cinf E) (stdBlocks n h) ⟨b, hbP⟩
+  have hLmem (g : ∀ i, GL (Fin (n i)) (Cinf E)) :
+      leviEmb (Cinf E) (stdBlocks n h) g ∈ parab (Cinf E) (stdBlocks n h) := by
+    apply mem_parab_iff.2
+    intro a b i j hab
+    classical
+    simp [leviEmb]
+    letI : DecidableEq (Fin c) := Classical.typeDecidableEq _
+    exact Matrix.blockDiagonal'_apply_ne _ _ _ (ne_of_gt hab)
+  have hproj (g : ∀ i, GL (Fin (n i)) (Cinf E)) :
+      leviProj (Cinf E) (stdBlocks n h) ⟨leviEmb (Cinf E) (stdBlocks n h) g, hLmem g⟩ = g := by
+    funext a
+    ext i j
+    simp [leviProj_apply, leviEmb, Matrix.blockDiagonal'_apply_eq]
+  have hdec : ∃ u ∈ unipRad (Cinf E) (stdBlocks n h),
+      b = leviEmb (Cinf E) (stdBlocks n h) (leviProj (Cinf E) (stdBlocks n h) ⟨b, hbP⟩) * u := by
+    let L : parab (Cinf E) (stdBlocks n h) :=
+      ⟨leviEmb (Cinf E) (stdBlocks n h) (leviProj (Cinf E) (stdBlocks n h) ⟨b, hbP⟩),
+        hLmem _⟩
+    refine ⟨((L⁻¹ * ⟨b, hbP⟩ : parab (Cinf E) (stdBlocks n h)) : GL (Fin N) (Cinf E)), ?_, ?_⟩
+    · change ((L⁻¹ * ⟨b, hbP⟩ : parab (Cinf E) (stdBlocks n h)) : GL (Fin N) (Cinf E)) ∈ _
+      apply (coe_mem_unipRad (Cinf E) _).2
+      change leviProj (Cinf E) (stdBlocks n h) (L⁻¹ * ⟨b, hbP⟩) = 1
+      rw [map_mul, map_inv, hproj, inv_mul_cancel]
+    · rw [Subgroup.coe_mul, Subgroup.coe_inv]
+      exact (mul_inv_cancel_left _ _).symm
+  obtain ⟨u, hu, hbu⟩ := hdec
   set L := leviEmb (Cinf E) (stdBlocks n h) (leviProj (Cinf E) (stdBlocks n h) ⟨b, hbP⟩) with hL
-  have hN := leviEmb_mem_normalizer (Cinf E) (stdBlocks n h) (leviProj (Cinf E) (stdBlocks n h) ⟨b, hbP⟩)
+  have hN := parab_le_normalizer (Cinf E) (stdBlocks n h) (hLmem (leviProj (Cinf E) (stdBlocks n h) ⟨b, hbP⟩))
   have hu' : L * u * L⁻¹ ∈ unipRad (Cinf E) (stdBlocks n h) := (Subgroup.mem_normalizer_iff.1 hN u).1 hu
   refine ⟨infGL E N (L * u * L⁻¹), GlobalTheory.IwasawaAdelic.infGL_mem_unipRad E n h _ hu',
     fun i => leviProj (Cinf E) (stdBlocks n h) ⟨b, hbP⟩ i, k, ?_⟩
   rw [← GlobalTheory.IwasawaAdelic.infGL_leviEmb, ← hL]
   conv_lhs => rw [← infGL_mul_finGL x, hy]
-  simp only [Subtype.coe_mk] at hbu
   rw [hbu]
   simp only [map_mul, map_inv]
   group

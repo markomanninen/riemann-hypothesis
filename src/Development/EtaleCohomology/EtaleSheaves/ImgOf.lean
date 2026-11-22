@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.ChowCut
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.FlatImageOfOverFractionFieldOfValuationRing
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ChowCut
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.FlatImageOfOverFractionFieldOfValuationRing
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry
 

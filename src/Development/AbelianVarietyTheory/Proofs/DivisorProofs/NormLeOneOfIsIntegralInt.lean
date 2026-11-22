@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CongWtLvLac
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OverPair
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,7 +77,11 @@ theorem exists_embedding (w : HeightOneSpectrum (𝓞 K)) (hw : (p : 𝓞 K) ∈
   have hnle : ∀ σ : K →ₐ[ℚ] PadicAlgCl p, ¬ w.asIdeal ≤ smallIdeal (σ : K →+* PadicAlgCl p) := by
     intro σ hle
     exact hcon (σ : K →+* PadicAlgCl p) (w.isMaximal.eq_of_le (smallIdeal_isPrime _).ne_top hle)
-  have σ0 : K →ₐ[ℚ] PadicAlgCl p := IsAlgClosed.lift
+  have σ0 : K →ₐ[ℚ] PadicAlgCl p := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hav : ¬ ((w.asIdeal : Set (𝓞 K)) ⊆
       ⋃ σ ∈ ((Finset.univ : Finset (K →ₐ[ℚ] PadicAlgCl p)) : Set (K →ₐ[ℚ] PadicAlgCl p)),
         (smallIdeal (σ : K →+* PadicAlgCl p) : Set (𝓞 K))) := by

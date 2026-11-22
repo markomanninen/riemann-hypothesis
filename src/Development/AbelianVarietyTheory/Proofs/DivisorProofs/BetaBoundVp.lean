@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ZetaValueIdeals
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ZetaValueIdeals
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem finite_support (d s : ℕ) {I : Type} [Fintype I] (κ : I → ℕ) (𝔣
     apply Nat.eq_zero_of_le_zero
     apply csSup_le'
     rintro _ ⟨v, h1, rfl⟩
-    simp [expIn, multiplicity_eq_zero.2 (hv v h1)]
+    simp [expIn, multiplicity_eq_zero_of_not_dvd (hv v h1)]
   have hcv : c_vp 𝔣 l = 0 := by
     have hd : ¬ l ∣ (discr E).natAbs := fun h => hlB (Finset.mem_union_right _
       (Nat.mem_primeFactors.2 ⟨hl, h, by simpa using discr_ne_zero E⟩))

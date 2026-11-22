@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TranslationBySection
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsGtExtOfTorsion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.GeometricallyReducedOfPerfectField
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsPullbackOfFpqcLeft
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsGenOfFieldExtension
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.PolAVIsoExtendsOfIsIntegrallyClosed
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsRigidifiedIso
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsoEqOfMapsAlongSection
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TranslationBySection
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsGtExtOfTorsion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.GeometricallyReducedOfPerfectField
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsPullbackOfFpqcLeft
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsGenOfFieldExtension
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.PolAVIsoExtendsOfIsIntegrallyClosed
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsRigidifiedIso
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsoEqOfMapsAlongSection
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -103,8 +108,8 @@ theorem exists_polPull (hP : PolBaseChangeSt) {S S' : Scheme.{0}} (f : S' ⟶ S)
     have e₂ : y₀ = Out.toBase pA.w y := Over.OverMorphism.ext hy
     rw [e₁, e₂, ← mA]; rfl⟩, LBIso.symm tA⟩
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_desc_pol (hL : Laws) (h2 : Laws2) (hH : HomExtSt) {O' R V : Type} [CommRing O'] [CommRing R] [IsDomain R]
     [IsNoetherianRing R] [IsIntegrallyClosed R] [IsLocalRing R] [CharZero R] [CommRing V] [IsDomain V] (f : O' →+* R)
     {g : R →+* V} (hg : Function.Injective g) (P₀ : PolAV (Sp O')) (P : PolAV (Sp R)) (P' : PolAV (Sp V))
@@ -159,29 +164,29 @@ theorem exists_desc_pol (hL : Laws) (h2 : Laws2) (hH : HomExtSt) {O' R V : Type}
       (by rw [← cancel_epi π, ← Category.assoc, hψ, bs])
   have ab : IsAbelianScheme AK := ⟨by have := P.isAb.comm; infer_instance, MorphismProperty.of_isPullback gK.1 inferInstance,
     MorphismProperty.of_isPullback gK.1 inferInstance, MorphismProperty.of_isPullback gK.1 P.isAb.geomConnected⟩
-  have lK := pull_isLB P.isLB (pullback.fst P.A.hom (jK R))
-  have l₀ := pull_isLB P₀.isLB ψ
+  have lK := LB.isLB_pull P.isLB (pullback.fst P.A.hom (jK R))
+  have l₀ := LB.isLB_pull P₀.isLB ψ
   have wK : LBIso (P.L.pull (pullback.fst P.A.hom (jK R))) (P₀.L.pull ψ) := by
     refine FieldTriv.exists_gen_of_field_extension _ _ gam AK ab _ π AL.hom gπ.1 _ (LB.isLB_div l₀ lK) ?_
     have u : LBIso ((P.L.pull (pullback.fst P.A.hom (jK R))).pull π) ((P₀.L.pull ψ).pull π) :=
-      LBIso.trans (pull_isLB lK _) (pull_isLB P.isLB _) (pull_isLB l₀ _) (lbIso_pull_pull P.isLB _ π rfl)
-        (LBIso.trans (pull_isLB P.isLB _) (pull_isLB P'.isLB _) (pull_isLB l₀ _)
+      LBIso.trans (LB.isLB_pull lK _) (LB.isLB_pull P.isLB _) (LB.isLB_pull l₀ _) (lbIso_pull_pull P.isLB _ π rfl)
+        (LBIso.trans (LB.isLB_pull P.isLB _) (LB.isLB_pull P'.isLB _) (LB.isLB_pull l₀ _)
           (LBIso.symm (lbIso_pull w (pullback.fst P'.A.hom (jK V)) hπ₁))
-          (LBIso.trans (pull_isLB P'.isLB _) (pull_isLB P₀.isLB _) (pull_isLB l₀ _)
+          (LBIso.trans (LB.isLB_pull P'.isLB _) (LB.isLB_pull P₀.isLB _) (LB.isLB_pull l₀ _)
             (lbIso_pull w' (pullback.fst P'.A.hom (jK V)) hψ) (LBIso.symm (lbIso_pull_pull P₀.isLB ψ π rfl))))
     obtain ⟨t, ht⟩ := u
     exact gen_chartPull (chartQuot _ _ π) t ht
   obtain ⟨P₁, g₁, gp₁, w₁⟩ := exists_polPull hL.polBaseChange (spMap f) P₀
   obtain ⟨e, me, he⟩ := grpPullback_iso gψ ((isGrpPullback_pullback P₁.A (jK R)).comp gp₁)
   obtain ⟨Ψ, mΨ, hΨ, wΨ⟩ := polAV_iso_extends_of_isIntegrallyClosed hL h2 R P₁ P e me
-    (LBIso.trans lK l₀ (pull_isLB P₁.isLB _) wK
+    (LBIso.trans lK l₀ (LB.isLB_pull P₁.isLB _) wK
       (LBIso.symm (lbIso_pull w₁ _ (he.symm.trans (Category.assoc _ _ _).symm)))) hH
   have hΨ' : pullback.fst P.A.hom (jK R) ≫ Ψ.hom.left = e.hom.left ≫ pullback.fst P₁.A.hom (jK R) := by
     rw [← hΨ]; exact (pullback.lift_fst _ _ _).symm
   have gφ : IsGrpPullback P.A P₀.A (spMap f) (Ψ.hom.left ≫ g₁) :=
     ((isGrpPullback_of_iso Ψ).comp gp₁).congr (Category.id_comp _) rfl
   refine ⟨Ψ.hom.left ≫ g₁, gφ, ?_,
-    LBIso.trans P.isLB (pull_isLB P₁.isLB _) (pull_isLB P₀.isLB _) wΨ (lbIso_pull w₁ _ rfl)⟩
+    LBIso.trans P.isLB (LB.isLB_pull P₁.isLB _) (LB.isLB_pull P₀.isLB _) wΨ (lbIso_pull w₁ _ rfl)⟩
   refine ext_of_injective (IsFractionRing.injective V (FractionRing V)) gL.1 P₀.A.hom ?_ ?_
   · rw [Category.assoc, gφ.1.w, ← Category.assoc, gp.1.w, gp'.1.w, spMap_comp, Category.assoc]
   · rw [← hψ, ← he, ← reassoc_of% hπ₁, reassoc_of% hΨ']

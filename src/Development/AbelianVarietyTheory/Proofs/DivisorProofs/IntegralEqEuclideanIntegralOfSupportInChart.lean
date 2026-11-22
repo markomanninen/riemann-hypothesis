@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopDegreeDensityPullbackEqNormSqDetMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopDegreeDensityPullbackEqNormSqDetMul
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -78,7 +82,10 @@ theorem integral_eq_integral_chart_of_support : ∀ {M : Type} [TopologicalSpace
       have hnK : (A.e i).symm v ∉ K := fun hk => hv ⟨_, hk, (A.e i).right_inv ht⟩
       have := hz i _ hs hnK
       rwa [(A.e i).right_inv ht] at this
-    · simp [hr, loc, ht, dens_zero]
+    · have hl : A.loc α i v = 0 := by
+        unfold loc
+        exact dif_neg ht
+      simp only [hr, hl, dens_zero, Complex.zero_re]
   have hcon : ContinuousOn (r i) (A.e i).target :=
     Complex.continuous_re.comp_continuousOn ((hα.smooth i Finset.univ).continuousOn.div_const _)
   have hHc : Continuous (r i) := continuous_iff_continuousAt.2 fun v => by

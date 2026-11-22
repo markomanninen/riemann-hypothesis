@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.CubePullbacks.CubePull
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SmoothIsMultiplicative
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RigidifiedSymBoxLB
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.KTrivExternalTensorPowerLineBundleStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RelAmpleExternalTensorPowerGroupPowerStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.CubePullbacks.CubePull
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SmoothIsMultiplicative
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RigidifiedSymBoxLB
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.KTrivExternalTensorPowerLineBundleStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RelAmpleExternalTensorPowerGroupPowerStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -46,16 +50,6 @@ def powPol (P : PolAV S) (j : ℕ) : PolAV S :=
 
 def isPowPolAV_powPol (P : PolAV S) (j : ℕ) : IsPowPolAV (powPol P j) P j :=
   isPowPolAV_powPolOf P (powObj P.A j) (powIsPowGrp P.A j)
-
-@[simp] theorem powPolOf_A (P : PolAV S) {j : ℕ} (A' : Over S) [GrpObj A'] (p : IsPowGrp A' P.A j) :
-    (powPolOf P A' p).A = A' := rfl
-
-@[simp] theorem powPolOf_g (P : PolAV S) {j : ℕ} (A' : Over S) [GrpObj A'] (p : IsPowGrp A' P.A j) :
-    (powPolOf P A' p).g = j * P.g := rfl
-
-@[simp] theorem powPol_A (P : PolAV S) (j : ℕ) : (powPol P j).A = powObj P.A j := rfl
-
-@[simp] theorem powPol_g (P : PolAV S) (j : ℕ) : (powPol P j).g = j * P.g := rfl
 
 theorem exists_powPolAV : ∀ (S : Scheme.{0}) (P : PolAV S) (j : ℕ),
     ∃ (P' : PolAV S) (_ : IsPowPolAV P' P j), P'.g = j * P.g :=

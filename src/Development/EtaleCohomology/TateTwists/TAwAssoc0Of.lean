@@ -1,6 +1,10 @@
-import Development.EtaleCohomology.TateTwists.EtaleCochainCupAssocOfCupSpecAndAlexanderWhitney
-import Development.EtaleCohomology.TateTwists.EtaleCochainEvaluationLinear
-import Development.EtaleCohomology.TateTwists.EtaleSimplexSubfaceComposition
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleCochainCupAssocOfCupSpecAndAlexanderWhitney
+public import Development.EtaleCohomology.TateTwists.EtaleCochainEvaluationLinear
+public import Development.EtaleCohomology.TateTwists.EtaleSimplexSubfaceComposition
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -54,7 +58,7 @@ theorem t_aw_assoc0_of (hev : EtaleCochainEvaluationLinear) (hsub : EtaleSimplex
           have hp := p.is_lt
           have hq := q.is_lt
           simp only [Φ]
-          rw [dif_pos (by omega), Units.smul_def, Units.smul_def, bil_zsmul_left, smul_smul,
+          rw [dite_eq_left (by omega), Units.smul_def, Units.smul_def, bil_zsmul_left, smul_smul,
             hsg _ _ (m * ((p : ℕ) : ℤ) + k * (((p : ℕ) : ℤ) + (((q : ℕ) - (p : ℕ) : ℕ) : ℤ)))
               (by push_cast [Nat.cast_sub (show (p : ℕ) ≤ q by omega)]; ring)]
           congr 1
@@ -72,12 +76,13 @@ theorem t_aw_assoc0_of (hev : EtaleCochainEvaluationLinear) (hsub : EtaleSimplex
           exact Finset.sum_congr rfl fun p _ => (Fin.sum_univ_eq_sum_range (fun r => Φ p r) _).symm
     _ = _ := by
           refine Finset.sum_congr rfl fun p _ => ?_
-          rw [hbc, map_sum, Finset.smul_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [hbc, map_sum, Finset.smul_sum]
           refine Finset.sum_congr rfl fun r _ => ?_
           have hp := p.is_lt
           have hr := r.is_lt
           simp only [Φ]
-          rw [dif_pos (by omega), Units.smul_def, Units.smul_def, map_zsmul, smul_smul,
+          rw [dite_eq_left (by omega), Units.smul_def, Units.smul_def, map_zsmul, smul_smul,
             hsg _ _ (m * ((p : ℕ) : ℤ) + k * (((p : ℕ) : ℤ) + ((r : ℕ) : ℤ))) (by subst h3; ring)]
           rw [(hsub z).1 p (N - p) 0 r, (hsub z).1 p (N - p) r (N - p - r)]
           simp only [Nat.add_zero]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.LConvKirStep
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvKirStep
+
+@[expose] public section
 
 noncomputable section
 open GlobalTheory.SmGL GlobalTheory.Whittaker GlobalTheory.LocLanglands GlobalTheory.PRep

@@ -1,25 +1,34 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.SiegelWeilUnitaryConvergent
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LevelMatchIff
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InstExists
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocalAdditiveCharContinuous
-import Formalism.PeriodIntegrals.BesselMapUniq
-import Formalism.LocalToGlobal.SiegelLatticeTheory.WeightedGaugeFactors.FactsDS
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.CoefWeightedLocHolds
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuDecayClosed
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.JExistsAll
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LatExistsOfForms0
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MExistsHolds
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RealPlaceFunctionBlockExistsOfBesselCoef
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GenusMatchHolds
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HcExistsAll
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LevelConjHolds
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.WittExistsHolds
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RescaleStep3
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ColDictCoreHolds
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FullExistsOfLocTied
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ColumnLevelStabTriv
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FinXOfDecay
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.SiegelWeilUnitaryConvergent
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LevelMatchIff
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InstExists
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocalAdditiveCharContinuous
+public import Formalism.PeriodIntegrals.BesselMapUniq
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.WeightedGaugeFactors.FactsDS
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.CoefWeightedLocHolds
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuDecayAll
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FamilyDoubleCosetBesselBoundOfGap
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BesselOfWPf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.SettingExistsOfGap
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocUniqGen
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocScalarPf
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.JExistsAll
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LatExistsOfForms0
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MExistsHolds
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RealPlaceFunctionBlockExistsOfBesselCoef
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GenusMatchHolds
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HcExistsAll
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LevelConjHolds
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.WittExistsHolds
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RescaleStep3
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ColDictCoreHolds
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FullExistsOfLocTied
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ColumnLevelStabTriv
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FinXOfDecay
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,8 +49,8 @@ theorem exists_transport {D : D7} (F : ∀ u, Formalism.L2.Forms.Forms0 D u)
   obtain ⟨J, hJ1, hJ2, hJ3⟩ := GlobalTheory.jExists_all D F X u wt hw
   exact ⟨⟨wt, hw.1, hw.2.1, hw.2.2.1, hw.2.2.2, ιA, hι.1, hι.2, h0, hcf, hcr, J, hJ1, hJ2, hJ3⟩, hL, hKm⟩
 
-open Formalism.L2.SG.SplitPrimeNormLemmas in
 
+open Formalism.L2.SG.SplitPrimeNormLemmas in
 theorem exists_setting (hSW : HeckeCharacterZeroLocus.SiegelWeilU.SiegelWeilUnitaryConvergent)
     (D : D7) (F : ∀ u, Formalism.L2.Forms.Forms0 D u) (hG : Formalism.L2.SG.ConcreteSettingExists.GapHyp D) :
       ∃ (X : HidaSetting D) (hb : Formalism.L2.SG.AdBridge.AdBridgeIso X.B.I)
@@ -67,17 +76,5 @@ theorem exists_setting (hSW : HeckeCharacterZeroLocus.SiegelWeilU.SiegelWeilUnit
   refine ⟨Formalism.L2.SG.SettingExistsMeasured.withMeas (mk A L P Rf Xu Bu Pi Mu Wb Mb) mg hg mw hw, hb, ψ, rfl,
     fun _ => HEq.rfl, hM', hψ, hstd, hCm, hL, fun hK u => ?_⟩
   exact exists_transport F _ hK ⟨RingEquiv.refl _, fun _ => rfl, fun _ => Iff.rfl⟩ u
-
-theorem exists_spectralData : HeckeCharacterZeroLocus.SiegelWeilU.SiegelWeilUnitaryConvergent → PI.BesselMapUniq.BesselMapUniq → Formalism.L2.SG.RowsDef.RowsFinDim → ∀ (D : D7) (F : ∀ u, Formalism.L2.Forms.Forms0 D u), Formalism.L2.SG.ConcreteSettingExists.GapHyp D → Formalism.L2.SG.Pf.LocCP.LocTied D → ∃ (X : HidaSetting D) (hb : Formalism.L2.SG.AdBridge.AdBridgeIso X.B.I) (ψ : AddChar (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF X.B.I.F) ℂ) (Y : Formalism.L2.SG.Full.Full X) (hF : FinX Y) (tr : ∀ u, Transport X u (F u)), X.B.I = Formalism.L2.SG.InstExistsPf.instOf D ∧ (∀ x : X.B.I.E, HEq (X.ιE x) x) ∧ X.MeasTie hb ∧ Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.IsCharAF X.B.I.F ψ ∧ Formalism.L2.SG.LocVol.IsStdChar ψ ∧ Formalism.L2.SG.MassDataConc.MeasCompatψ X ψ ∧ (∀ w, Formalism.L2.SG.LocVol.LocCompatX X ψ w) ∧ Integrable X.ph (Formalism.L2.SG.ProjRows.muInf X.B.I) ∧ ∀ u, LevelMatch X (tr u) Y.hK ∧ ColDictInto X (tr u) Y.hK ∧ ColDictBij X (tr u) Y.hK ∧ ColDictIsom X (tr u) Y.hK (Y.cs u) (hF.shInj u) := by
-  intro hSW hMU hRF D F hG hLT
-  obtain ⟨X, hb, ψ, hI, hι, hM, hψ, hstd, hCm, hL, hT⟩ := exists_setting hSW D F hG
-  obtain ⟨Y⟩ := GlobalTheory.fullExists_of_locTied D X hLT
-  obtain ⟨hWD, hph⟩ := Formalism.L2.SG.Pf.wuDecayOfGap_of_jsz hMU D hG X
-  have hF : FinX Y := GlobalTheory.FinitenessBundle.finX_of_decay hRF D X Y hWD hph
-  choose tr htr using hT Y.hK
-  refine ⟨X, hb, ψ, Y, hF, tr, hI, hι, hM, hψ, hstd, hCm, hL, hph, fun u => ?_⟩
-  obtain ⟨-, h1, h2, h3⟩ := GlobalTheory.St.colDictCore_holds D X u (F u) (tr u) Y.hK (htr u)
-    (GlobalTheory.columnLevel_stabTriv D X Y.hK u)
-  exact ⟨htr u, h1, h2, h3 _ (Y.cs u) (hF.shInj u) (Y.colReps u)⟩
 
 end GlobalTheory.St.SpectralData

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.BrJoint
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.BrJoint
+
+@[expose] public section
 
 namespace GlobalTheory.LvT.BuiltChain
 

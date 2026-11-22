@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalIdeleMemNsUnits
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnitaryCharOfOpenSubgroupAndHom
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitOpenAndCongrOpen
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommGroupDivEqMulDivMulInvDiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalIdeleMemNsUnits
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnitaryCharOfOpenSubgroupAndHom
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitOpenAndCongrOpen
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommGroupDivEqMulDivMulInvDiv
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -69,18 +74,18 @@ theorem embedding_comp_algebraMap (w : InfinitePlace E) :
 theorem extensionEmbedding_completionMap (w : InfinitePlace E)
     (x : (w.comap (algebraMap (maximalRealSubfield E) E)).Completion) :
     InfinitePlace.Completion.extensionEmbedding w
-      (NumberField.LiesOver.completionMap (v := w.comap (algebraMap (maximalRealSubfield E) E)) (w := w) x) =
+      (AbsoluteValue.Completion.map (w.comap (algebraMap (maximalRealSubfield E) E)).1 w.1 x) =
     ((InfinitePlace.Completion.extensionEmbeddingOfIsReal (IsTotallyReal.isReal _) x : ℝ) : ℂ) := by
-  induction x using InfinitePlace.Completion.induction_on with
+  induction x using AbsoluteValue.Completion.induction_on with
   | hp =>
     exact isClosed_eq ((InfinitePlace.Completion.isometry_extensionEmbedding w).continuous.comp
-        NumberField.LiesOver.continuous_completionMap)
+        (AbsoluteValue.Completion.continuous_map _ _))
       (Complex.continuous_ofReal.comp (InfinitePlace.Completion.isometry_extensionEmbeddingOfIsReal _).continuous)
   | ih a =>
-    rw [NumberField.LiesOver.completionMap_coe, InfinitePlace.Completion.extensionEmbedding_coe,
+    rw [AbsoluteValue.Completion.map_coe, InfinitePlace.Completion.extensionEmbedding_coe,
       InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe, InfinitePlace.embedding_of_isReal_apply,
       embedding_comp_algebraMap]
-    simp [WithAbs.algebraMap_left_apply, WithAbs.algebraMap_right_apply]
+    rfl
 
 theorem unitDir_ofReal (r : ℝ) (hr : r ≠ 0) (u : ℂˣ) (hu : (u : ℂ) = r) :
     GlobalTheory.ConsEta.unitDir u = Units.map (Int.castRingHom ℂ).toMonoidHom (if 0 < r then 1 else -1) := by
@@ -95,8 +100,8 @@ theorem unitDir_ofReal (r : ℝ) (hr : r ≠ 0) (u : ℂˣ) (hu : (u : ℂ) = r)
 
 end GlobalTheory.EtaInfSign
 
-open GlobalTheory.QuadSymbol in
 
+open GlobalTheory.QuadSymbol in
 theorem GlobalTheory.EtaInfSign.quadChar_eq_infSign : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
     (b : Neutral.B1.Ideles (maximalRealSubfield E)),
     (∀ v, (b : AdeleRing (𝓞 (maximalRealSubfield E)) (maximalRealSubfield E)).2 v = 1) →
@@ -113,7 +118,7 @@ theorem GlobalTheory.EtaInfSign.quadChar_eq_infSign : ∀ (E : Type) [Field E] [
         eta (maximalRealSubfield E) E (v.adicCompletion _) ((1 : FinFam (maximalRealSubfield E)) v)) = fun _ => 1 :=
       funext fun v => eta_eq_one_iff.2 (one_mem _)
     rw [h1, finprod_one, one_mul]
-  rw [hL, map_prod, GlobalTheory.ConsEta.infSign, MonoidHom.finset_prod_apply]
+  rw [hL, map_prod, GlobalTheory.ConsEta.infSign, MonoidHom.finsetProd_apply]
   symm
   refine Fintype.prod_equiv (IsCMField.equivInfinitePlace E) _ _ fun w => ?_
   rw [IsCMField.equivInfinitePlace_apply, GlobalTheory.EtaInfSign.eta_real]

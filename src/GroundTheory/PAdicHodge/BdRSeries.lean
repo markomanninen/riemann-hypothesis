@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -34,7 +39,7 @@ def truncEval {n : ℕ} (s : S) (hs : s ^ n = 0) : ℚ⟦X⟧ →ₐ[ℚ] S wher
   map_zero' := by
     rw [map_zero, map_zero]
   map_add' f g := by
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
   commutes' r := by
     rw [Algebra.algebraMap_eq_smul_one, map_smul, map_smul, ← Polynomial.coe_one,
       aeval_trunc_coe_of_pow_eq_zero hs, map_one, ← Algebra.algebraMap_eq_smul_one]
@@ -119,23 +124,14 @@ theorem mk_seriesEval {z : B} (hz : z ∈ I) (f : ℚ⟦X⟧) (n : ℕ) :
   have h := IsAdicComplete.mk_liftAlgHom I
     (fun n => truncEval (Ideal.Quotient.mk (I ^ n) z) (pow_mk_eq_zero I hz n))
     (fun hle => factorₐ_comp_truncEval I hz hle) n f
-  rw [seriesEval, h, truncEval_eq_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [seriesEval, h, truncEval_eq_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, map_pow, ← Ideal.Quotient.algebraMap_eq, ← IsScalarTower.algebraMap_apply]
 
 theorem seriesEval_sub_sum_mem {z : B} (hz : z ∈ I) (f : ℚ⟦X⟧) (n : ℕ) :
     seriesEval I z hz f - ∑ i ∈ Finset.range n, algebraMap ℚ B (coeff i f) * z ^ i ∈ I ^ n :=
   Ideal.Quotient.eq.1 (mk_seriesEval hz f n)
-
-theorem tendsto_seriesEval {z : B} (hz : z ∈ I) (f : ℚ⟦X⟧) :
-    @Filter.Tendsto ℕ B (fun n => ∑ i ∈ Finset.range n, algebraMap ℚ B (coeff i f) * z ^ i)
-      Filter.atTop (@nhds B I.adicTopology (seriesEval I z hz f)) := by
-  let _ := I.adicTopology
-  rw [(Ideal.hasBasis_nhds_adic I (seriesEval I z hz f)).tendsto_right_iff]
-  intro n _
-  filter_upwards [Filter.eventually_ge_atTop n] with N hN
-  refine ⟨_, Ideal.pow_le_pow_right hN (neg_mem (seriesEval_sub_sum_mem hz f N)), ?_⟩
-  simp
 
 @[simp]
 theorem seriesEval_X {z : B} (hz : z ∈ I) : seriesEval I z hz X = z := by
@@ -146,12 +142,6 @@ theorem seriesEval_X {z : B} (hz : z ∈ I) : seriesEval I z hz X = z := by
     coeff_one_X, map_zero, map_one, zero_mul, add_zero, pow_one, one_mul, zero_add] at h
   intro i _
   rw [coeff_X, if_neg (by omega), map_zero, zero_mul]
-
-theorem seriesEval_mem {z : B} (hz : z ∈ I) {f : ℚ⟦X⟧} (hf : constantCoeff f = 0) :
-    seriesEval I z hz f ∈ I := by
-  have h := seriesEval_sub_sum_mem hz f 1
-  rwa [Finset.sum_range_one, coeff_zero_eq_constantCoeff_apply, hf, map_zero, zero_mul, sub_zero,
-    pow_one] at h
 
 theorem seriesEval_subst {z : B} (hz : z ∈ I) {g : ℚ⟦X⟧} (hg : constantCoeff g = 0) {w : B}
     (hw : w ∈ I) (hgw : seriesEval I z hz g = w) (f : ℚ⟦X⟧) :
@@ -167,13 +157,14 @@ theorem seriesEval_subst {z : B} (hz : z ∈ I) {g : ℚ⟦X⟧} (hg : constantC
         rw [AlgHom.comp_apply, AlgHom.comp_apply, coe_substAlgHom, subst_X hS, hgw])]
   rw [key, AlgHom.comp_apply, coe_substAlgHom]
 
-omit [IsAdicComplete I B] in
 
+omit [IsAdicComplete I B] in
 theorem map_partialSum {B' : Type*} [CommRing B'] [Algebra ℚ B'] (F : B →+* B') (z : B)
     (f : ℚ⟦X⟧) (n : ℕ) :
     F (∑ i ∈ Finset.range n, algebraMap ℚ B (coeff i f) * z ^ i) =
       ∑ i ∈ Finset.range n, algebraMap ℚ B' (coeff i f) * F z ^ i := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, map_pow, RingHom.map_rat_algebraMap]
 
@@ -197,7 +188,7 @@ section Log
 
 theorem one_add_X_mul_geom : (1 + X : ℚ⟦X⟧) * mk (fun n => algebraMap ℚ ℚ ((-1) ^ n)) = 1 := by
   ext n
-  rw [add_mul, one_mul, map_add, coeff_one]
+  rw [add_mul, one_mul, map_add (f := _), coeff_one]
   rcases n with _ | n
   · simp
   · rw [coeff_succ_X_mul, coeff_mk, coeff_mk, if_neg (Nat.succ_ne_zero n)]
@@ -208,16 +199,16 @@ theorem log_subst_one_add_X_pow_sub_one (k : ℕ) :
   have hg : constantCoeff ((1 + X) ^ k - 1 : ℚ⟦X⟧) = 0 := by simp
   have hS := HasSubst.of_constantCoeff_zero' hg
   apply derivative.ext
-  · set G : ℚ⟦X⟧ := mk (fun n => algebraMap ℚ ℚ ((-1) ^ n)) with hG
+  · set G : ℚ⟦X⟧ := mk (fun n => (-1 : ℚ) ^ n) with hG
     have hsub : ((1 + X : ℚ⟦X⟧) ^ k) * G.subst ((1 + X) ^ k - 1 : ℚ⟦X⟧) = 1 := by
       have h := congrArg (substAlgHom hS) one_add_X_mul_geom
-      rw [map_mul, map_one, map_add, map_one, coe_substAlgHom, subst_X hS, add_sub_cancel] at h
+      rw [map_mul, map_one, map_add (f := _), map_one, coe_substAlgHom, subst_X hS, add_sub_cancel] at h
       exact h
-    rw [derivative_subst hS, deriv_log, ← hG]
-    have hd : d⁄dX ℚ ((k : ℚ⟦X⟧) * log ℚ) = (k : ℚ⟦X⟧) * G := by
-      rw [Derivation.leibniz, deriv_log, ← hG, Derivation.map_natCast, smul_zero, add_zero,
+    rw [derivative_subst hS, derivative_log, ← hG]
+    have hd : d⁄dX ((k : ℚ⟦X⟧) * log ℚ) = (k : ℚ⟦X⟧) * G := by
+      rw [Derivation.leibniz, derivative_log, ← hG, Derivation.map_natCast, smul_zero, add_zero,
         smul_eq_mul]
-    rw [hd, map_sub, derivative_pow, derivative_one, sub_zero, map_add, derivative_one,
+    rw [hd, map_sub, derivative_pow, derivative_one, sub_zero, map_add (f := _), derivative_one,
       derivative_X, zero_add, mul_one]
     have hne : ((1 + X : ℚ⟦X⟧) ^ k) ≠ 0 := by
       refine pow_ne_zero _ fun h => ?_
@@ -240,8 +231,8 @@ theorem log_subst_one_add_X_pow_sub_one (k : ℕ) :
 
 variable {B : Type*} [CommRing B] [Algebra ℚ B] {I : Ideal B} [IsAdicComplete I B]
 
-variable (I) in
 
+variable (I) in
 def logOnePlus (z : B) (hz : z ∈ I) : B :=
   seriesEval I z hz (log ℚ)
 
@@ -259,9 +250,6 @@ theorem logOnePlus_sub_sum_mem {z : B} (hz : z ∈ I) (n : ℕ) :
         RingHom.id_apply]
   rw [hs]
   exact seriesEval_sub_sum_mem hz (log ℚ) n
-
-theorem logOnePlus_mem {z : B} (hz : z ∈ I) : logOnePlus I z hz ∈ I :=
-  seriesEval_mem hz constantCoeff_log
 
 theorem logOnePlus_eq_mul {z : B} (hz : z ∈ I) : ∃ u, u - 1 ∈ I ∧ logOnePlus I z hz = z * u := by
   set h : ℚ⟦X⟧ := mk fun n => coeff (n + 1) (log ℚ)

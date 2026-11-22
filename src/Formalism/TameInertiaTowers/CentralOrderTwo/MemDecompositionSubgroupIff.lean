@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.TameInertiaTowers.StatementGroup
+module
+
+public import Mathlib
+public import Formalism.TameInertiaTowers.StatementGroup
+
+@[expose] public section
 
 open Subgroup
 

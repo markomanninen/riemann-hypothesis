@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GodementSectionFactor
-import GroundTheory.GlobalFields.TateThesis.AdelicCharLocal
-import GroundTheory.GlobalFields.TateThesis.AdeleMeasure
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GodementSectionFactor
+public import GroundTheory.GlobalFields.TateThesis.AdelicCharLocal
+public import GroundTheory.GlobalFields.TateThesis.AdeleMeasure
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.GodementSection
 
@@ -34,14 +38,15 @@ def adeleSingleS : ((v : S) → v.1.adicCompletion K) →+ FiniteAdeleRing (𝓞
   toFun a := ∑ v : S, finiteAdeleSingleAdd v.1 (a v)
   map_zero' := by simp
   map_add' a a' := by
-    simp only [Pi.add_apply, map_add]
+    simp only [Pi.add_apply, map_add (f := _)]
     exact Finset.sum_add_distrib
 
 theorem adeleSingleS_apply_of_mem (a : (v : S) → v.1.adicCompletion K) (w : S) :
     adeleSingleS S a w.1 = a w := by
   classical
   change (∑ v : S, finiteAdeleSingleAdd v.1 (a v)) w.1 = a w
-  rw [show (∑ v : S, finiteAdeleSingleAdd v.1 (a v)) w.1 =
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [show (∑ v : S, finiteAdeleSingleAdd v.1 (a v)) w.1 =
       ∑ v : S, (finiteAdeleSingleAdd v.1 (a v)) w.1 from
     map_sum (RestrictedProduct.evalAddMonoidHom _ w.1) _ _]
   rw [Finset.sum_eq_single w]
@@ -54,7 +59,8 @@ theorem adeleSingleS_apply_of_mem (a : (v : S) → v.1.adicCompletion K) (w : S)
 theorem adeleSingleS_apply_of_notMem (a : (v : S) → v.1.adicCompletion K)
     {w : HeightOneSpectrum (𝓞 K)} (hw : w ∉ S) : adeleSingleS S a w = 0 := by
   change (∑ v : S, finiteAdeleSingleAdd v.1 (a v)) w = 0
-  rw [show (∑ v : S, finiteAdeleSingleAdd v.1 (a v)) w =
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [show (∑ v : S, finiteAdeleSingleAdd v.1 (a v)) w =
       ∑ v : S, (finiteAdeleSingleAdd v.1 (a v)) w from
     map_sum (RestrictedProduct.evalAddMonoidHom _ w) _ _]
   exact Finset.sum_eq_zero fun u _ ↦
@@ -63,7 +69,7 @@ theorem adeleSingleS_apply_of_notMem (a : (v : S) → v.1.adicCompletion K)
 theorem adeleAtS_adeleSingleS_add (a : (v : S) → v.1.adicCompletion K)
     (x : FiniteAdeleRing (𝓞 K) K) : adeleAtS S (adeleSingleS S a + x) = a + adeleAtS S x := by
   funext w
-  rw [map_add, Pi.add_apply, Pi.add_apply]
+  rw [map_add (f := _), Pi.add_apply, Pi.add_apply]
   simp only [adeleAtS_apply, adeleSingleS_apply_of_mem]
 
 theorem apply_adeleSingleS_add {E : Type*} {G : FiniteAdeleRing (𝓞 K) K → E}

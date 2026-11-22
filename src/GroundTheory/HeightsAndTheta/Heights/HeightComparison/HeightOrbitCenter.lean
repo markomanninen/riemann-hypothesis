@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightObjects
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightObjects
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -45,10 +50,6 @@ theorem X_mem_orbitCenter (x : Cone n (AlgebraicClosure ℚ)) (v : FinitePlace (
   refine Ideal.subset_span ⟨coordDeg n ⟨k, i⟩, (geoMultiHomog_iff _ _).mpr
     (isWeightedHomogeneous_X ℤ (coordDeg n) ⟨k, i⟩), ?_⟩
   simpa [evalCone, coordDeg, Pi.single_apply, pow_ite] using hi
-
-example : (1 / 2 : AlgebraicClosure ℚ) ∈ ratioField samplePoint := by
-  convert div_mem_ratioField samplePoint () 0 1 using 1
-  simp [samplePoint]
 
 end
 

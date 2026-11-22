@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.InstCommRingR
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.InstCommRingR
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -100,7 +104,7 @@ theorem LeafLine_of (hA : LeafA6nat) : LeafLine := by
   have hx : P.map σ h h' (P.deg1 h' (c1 q (PB.line L))) = P.deg1 h (c1 q L) := by
     rw [Collected.deg1, P.map_ι, pull_cast, (hA q).2.2.1 σ (PB.line L) h', hline]
   have := congrArg (P.map σ h h') heq
-  simp only [Finset.sum_range_succ, Finset.sum_range_zero, map_add, map_mul, map_pow, map_zero, zero_add, hm, hx,
+  simp only [Finset.sum_range_succ, Finset.sum_range_zero, map_add (f := _), map_mul, map_pow, map_zero, zero_add, hm, hx,
     map_one, h0] at this
   simp only [one_mul, Nat.sub_zero, Nat.sub_self, pow_one, pow_zero, mul_one] at this
   linear_combination this

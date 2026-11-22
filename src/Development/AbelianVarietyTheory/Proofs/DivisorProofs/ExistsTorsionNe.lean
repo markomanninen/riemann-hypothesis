@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GsAppTopOfSection
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDominantToUnitLeft
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GmSpMapUnitOn
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaNonvanishTorsion
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsIntegralSectionUnitAt
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPullbackDegPreStrictLineBundleIso
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGenOfIsoRel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GsAppTopOfSection
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDominantToUnitLeft
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GmSpMapUnitOn
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaNonvanishTorsion
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsIntegralSectionUnitAt
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPullbackDegPreStrictLineBundleIso
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGenOfIsoRel
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg
@@ -106,8 +111,8 @@ theorem exists_sec_fibre {K : Type} [Field K] (ev : V₁ →+* K) (θ : LB.Sec (
   rw [← v₁ _ _ z J hJ]
   exact (sval_of θ₁ _ z J _ (fun _ => by rw [Category.comp_id]; rfl)).symm
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem exists_torsion_ne {K : Type} [Field K] [IsAlgClosed K] (ev : V₁ →+* K)
     (θ : FieldBaseChange.SecOver D.P.A.hom (LB.LinComb D.P.L (D.famφB 0) (DegPre.famε 1)))
     (hθ : ∃ j, (ThetaOne.pullTo D ev θ).f j ≠ 0) (N : ℕ) (hN : 2 ≤ N) (hNK : (N : K) ≠ 0) :
@@ -231,8 +236,8 @@ theorem gs_ev (ev : V₁ →+* K) (a : Γ(Sp V₁, ⊤)) (z : Sp K) :
     gs (Y := Sp K) (toUnit (Over.mk (spMap ev))).left z ⊤ a = toStk z (ev ((Scheme.ΓSpecIso (CommRingCat.of V₁)).hom.hom a)) :=
   GlobalTheory.RatioVal.gs_specMap ev z a
 
-omit [IsAlgClosed K] in
 
+omit [IsAlgClosed K] in
 theorem triv_elt (ev : V₁ →+* K) {P v} (G : GRep D.P.L (𝟙_ (Over (Sp V₁))) P v)
     (hP : ∀ (U : Type) [CommGroup U] (h : _ → U), P U h = 1) :
     ∃ a : V₁, (∀ z J, Good D.P.L z J → (v (TF (R := V₁) (FractionRing V₁)) (toUnit _) z J).val =

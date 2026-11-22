@@ -1,13 +1,18 @@
-import Mathlib
-import Formalism.LocalToGlobal.InertKernelTheory.DefsRepDict
-import Formalism.LocalToGlobal.InertKernelTheory.GenusOneModelExistsLattice
-import Formalism.LocalToGlobal.InertKernelTheory.StatementJets
-import Formalism.LocalToGlobal.InertKernelTheory.StatementAlgT
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.HasPartAnd
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.JointCmpEmbeddingY
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TuplesHaveLocalModelsAtConstructedPointOverTrueCStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RowTwUHolds
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RowAtOfStdTie
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsRepDict
+public import Formalism.LocalToGlobal.InertKernelTheory.GenusOneModelExistsLattice
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementJets
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementAlgT
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.HasPartAnd
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.JointCmpEmbeddingY
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TuplesHaveLocalModelsAtConstructedPointOverTrueCStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RowTwUHolds
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RowAtOfStdTie
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.L2.Ker Formalism.L2.Forms GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.Bl GlobalTheory.Fc GlobalTheory.Svd NumberField IsDedekindDomain
 
 namespace GlobalTheory.Svd

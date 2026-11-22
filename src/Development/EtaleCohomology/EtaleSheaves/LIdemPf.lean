@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.HensIdemCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.HensIdemCut
+
+@[expose] public section
 
 noncomputable section
 open Polynomial
@@ -31,7 +35,7 @@ theorem LIdem_of : LateralTheory.E.HensIdemCut.LIdem := by
   obtain ⟨v', rfl⟩ := Ideal.Quotient.mk_surjective v
   set s := u' * G + v' * H with hsdef
   have hs : π s = π 1 := by
-    simp only [hsdef, map_add, map_mul, hG, hH, map_one]
+    simp only [hsdef, map_add (f := _), map_mul, hG, hH, map_one]
     exact huv
   have hsJ : s - 1 ∈ Ideal.jacobson (⊥ : Ideal B) := hJ (Ideal.Quotient.eq.mp hs)
   have hunit : IsUnit s := by
@@ -48,7 +52,7 @@ theorem LIdem_of : LateralTheory.E.HensIdemCut.LIdem := by
   · rw [← Ideal.Quotient.eq]
     change π ((↑w⁻¹ * u') * G) = e
     have hsum' := congrArg π hsum
-    simp only [map_add, map_mul, map_one, hG, hH] at hsum' ⊢
+    simp only [map_add (f := _), map_mul, map_one, hG, hH] at hsum' ⊢
     set α := π ↑w⁻¹ * π u'
     set γ := π ↑w⁻¹ * π v'
     cases N with

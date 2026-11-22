@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecDefs
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.GalBasic
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecDefs
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.GalBasic
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -61,9 +65,19 @@ theorem isAbLK_of_cyclic (hL : FiniteDimensional ℚ_[p] L) (h : K ≤ L) [(subG
   obtain ⟨j, rfl⟩ := hg b
   exact (zpow_mul_comm g₀ i j)
 
-theorem isAbLK_Kn (hK : FiniteDimensional ℚ_[p] K) {n : ℕ} (hn : 0 < n) : IsAbLK p K (Kn p K n) :=
-  isAbLK_of_cyclic (finiteDimensional_Kn p K hK hn) (le_Kn p K n) (frobLK p K (Kn p K n))
-    (mem_zpowers_frobLK_Kn hK hn)
+theorem isAbLK_Kn (hK : FiniteDimensional ℚ_[p] K) {n : ℕ} (hn : 0 < n) : IsAbLK p K (Kn p K n) := by
+  letI : (subG p K (Kn p K n)).Normal :=
+    subG_normal_of_stable (Kn_stable p K n)
+  exact isAbLK_of_cyclic (finiteDimensional_Kn p K hK hn) (le_Kn p K n)
+    (frobLK p K (Kn p K n)) (by
+      intro g
+      obtain ⟨σ, rfl⟩ := QuotientGroup.mk_surjective g
+      obtain ⟨i, -, hi⟩ := IsFrobOn.exists_pow p K hK hn
+        ((isFrob_frobK hK).isFrobOn n) σ
+      refine ⟨i, ?_⟩
+      change frobLK p K (Kn p K n) ^ (i : ℤ) = _
+      rw [zpow_natCast, frobLK_pow]
+      exact ((mk_eq_mk_iff _ _).2 hi).symm)
 
 theorem toAbK_surjective : Surjective (toAbK p K) := QuotientGroup.mk'_surjective _
 
@@ -120,13 +134,13 @@ theorem exists_subG_subset (hK : FiniteDimensional ℚ_[p] K) (O : Set (GK p K))
     (h : ((commutator (GK p K)).topologicalClosure : Set (GK p K)) ⊆ O) :
     ∃ L, IsAbLK p K L ∧ (subG p K L : Set (GK p K)) ⊆ O := by
   have : Nonempty {L // IsAbLK p K L} := ⟨⟨K, isAbLK_self hK⟩⟩
-  obtain ⟨i, hi⟩ := hO.isClosed_compl.isCompact.elim_directed_family_closed
+  obtain ⟨i, hi⟩ := (hO.isClosed_compl.isCompact.elim_directed_family_closed
     (fun L : {L // IsAbLK p K L} => (subG p K L.1 : Set (GK p K))) (fun i => isClosed_subG p K i.1)
     (by
-      rw [Set.eq_empty_iff_forall_notMem]
+      rw [Set.disjoint_iff_inter_eq_empty, Set.eq_empty_iff_forall_notMem]
       rintro g ⟨hg1, hg2⟩
       exact hg1 (h ((mem_closure_commutator_iff hK g).2 fun L hL => Set.mem_iInter.1 hg2 ⟨L, hL⟩)))
-    (fun i j => ⟨⟨i.1 ⊔ j.1, i.2.sup j.2⟩, subG_anti le_sup_left, subG_anti le_sup_right⟩)
+    (fun i j => ⟨⟨i.1 ⊔ j.1, i.2.sup j.2⟩, subG_anti le_sup_left, subG_anti le_sup_right⟩)).imp (fun _ => Disjoint.inter_eq)
   refine ⟨i.1, i.2, fun g hg => ?_⟩
   by_contra hgO
   exact (Set.eq_empty_iff_forall_notMem.1 hi g) ⟨hgO, hg⟩

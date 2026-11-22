@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocallyFreeOfFiniteProjective
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocallyFreeFiniteProjectiveBaseChange
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocallyFreeOfFiniteProjective
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocallyFreeFiniteProjectiveBaseChange
+
+@[expose] public section
 
 open GlobalTheory.CompanionTheory.Ar.Num
 
@@ -41,7 +45,8 @@ theorem exists_dual {r : ℕ} {L : AddSubgroup E} (h : LocFree R r L) :
         ((d i.1 : Ω) * ((f i.1 : Ω) ^ (Finset.univ.sup m) * (B i.1).repr e i.2)) *
           (B l).coord p ((f i.1 : Ω) ^ N0 • B i.1 i.2) := by
       conv_lhs => rw [← hexp]
-      simp only [map_sum, map_smul, smul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, smul_eq_mul]
     rw [← Module.Basis.coord_apply, key, Finset.mul_sum]
     refine R.sum_mem fun i _ => ?_
     rw [mul_left_comm]
@@ -87,7 +92,8 @@ theorem PositivityTheory.Xgn.summand_iff_locFree_quot : ∀ {o Ω : Type} [CommR
     choose w hw hwv using hlift
     have hkey : ∀ x : V ⧸ U, U.mkQ (∑ i, φ i x • w i) = x := by
       intro x
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [map_smul, hwv]
       exact hsum x
     refine ⟨LinearMap.id - (∑ i, LinearMap.smulRight (φ i) (w i)) ∘ₗ U.mkQ, ?_, ?_, ?_⟩
@@ -143,6 +149,7 @@ theorem PositivityTheory.Xgn.summand_iff_locFree_quot : ∀ {o Ω : Type} [CommR
           LinearMap.id_apply]
         have h1 : ∑ i, φ i (e - ρ e) • (Submodule.Quotient.mk (v i) : V ⧸ U) =
             U.mkQ (∑ i, φ i (e - ρ e) • v i) := by
-          simp [map_sum, map_smul]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp [map_sum, map_smul]
         rw [h1, hsum, map_sub, Submodule.mkQ_apply, Submodule.mkQ_apply,
           (Submodule.Quotient.mk_eq_zero U).2 (hρU e), sub_zero]

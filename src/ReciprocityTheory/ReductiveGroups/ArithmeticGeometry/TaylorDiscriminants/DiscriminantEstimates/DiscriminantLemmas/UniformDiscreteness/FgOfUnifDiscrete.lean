@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.RatIntUnifDiscrete
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.RatIntUnifDiscrete
+
+@[expose] public section
 
 namespace PI.UnitaryGroupMassFormula.TBDisc
 
@@ -118,7 +122,5 @@ theorem fg_of_unifDiscrete [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (Nf 
 end FG
 
 theorem fGOfDisc : FGOfDiscSt := fun _ _ _ _ _ _ _ _ _ Nf M hM => fg_of_unifDiscrete Nf M hM
-
-theorem isLatticeOfDisc : IsLatticeOfDiscSt := fun _ _ _ _ _ _ _ _ _ Nf M hM hsp => ⟨fg_of_unifDiscrete Nf M hM, hsp⟩
 
 end PI.UnitaryGroupMassFormula.TBDisc

@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAutomorphicFunctionTranslateAtRealPlace
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsQuadOfPlane
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralEqOfNorms
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAutomorphicFunctionTranslateAtRealPlace
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsQuadOfPlane
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralEqOfNorms
+
+@[expose] public section
 
 noncomputable section
 
@@ -159,38 +163,32 @@ structure IsKerSys (θ : InfF D) (V W : HSp D) {M : Type} [AddCommGroup M] [Modu
 def swapKer {V W : HSp D} {M : Type} [AddCommGroup M] [Module ℂ M] (κ : M →ₗ[ℂ] (GA D V → GA D W → ℂ)) :
     M →ₗ[ℂ] (GA D W → GA D V → ℂ) where
   toFun f h g := κ f g h
-  map_add' f f' := by rw [map_add]; rfl
+  map_add' f f' := by rw [map_add (f := _)]; rfl
   map_smul' c f := by rw [map_smul]; rfl
 
 theorem IsKerSys.swap {θ : InfF D} {V W : HSp D} {M : Type} [AddCommGroup M] [Module ℂ M]
-    {κ : M →ₗ[ℂ] (GA D V → GA D W → ℂ)} (h : IsKerSys θ V W κ) : IsKerSys θ W V (swapKer κ) where
-  cont f := (h.cont f).comp continuous_swap
-  left f γ hγ δ hδ g g' := h.left f δ hδ γ hγ g' g
-  level f := by
+    {κ : M →ₗ[ℂ] (GA D V → GA D W → ℂ)} (h : IsKerSys θ V W κ) : IsKerSys θ W V (swapKer κ) := by
+  refine ⟨fun f => (h.cont f).comp continuous_swap, fun f γ hγ δ hδ g g' =>
+    h.left f δ hδ γ hγ g' g, ?_, ?_, ?_, ?_, ?_⟩
+  · intro f
     obtain ⟨U, U', hU, hU', hk⟩ := h.level f
     exact ⟨U', U, hU', hU, fun k hk1 hk2 k' hk1' hk2' g g' => hk k' hk1' hk2' k hk1 hk2 g' g⟩
-  growth := by
-    obtain ⟨N, hN⟩ := h.growth
+  · obtain ⟨N, hN⟩ := h.growth
     refine ⟨N, fun f => ?_⟩
     obtain ⟨C, hC⟩ := hN f
     refine ⟨C, fun g g' => ?_⟩
     have hb := hC g' g
     rw [mul_comm (height θ V g' : ℝ)] at hb
     exact hb
-  derV τ X hX f := by
+  · intro τ X hX f
     obtain ⟨f', hf'⟩ := h.derW τ X hX f
     exact ⟨f', fun g g' => hf' g' g⟩
-  derW τ X hX f := by
+  · intro τ X hX f
     obtain ⟨f', hf'⟩ := h.derV τ X hX f
     exact ⟨f', fun g g' => hf' g' g⟩
-  cap τ := by
+  · intro τ
     obtain ⟨a, b, ha, hb, hab⟩ := h.cap τ
     exact ⟨b, a, fun k f g' => hb k f g', fun k f g => ha k f g, hab.symm⟩
-
-def constKer (V W : HSp D) : ℂ →ₗ[ℂ] (GA D V → GA D W → ℂ) where
-  toFun c _ _ := c
-  map_add' _ _ := rfl
-  map_smul' _ _ := rfl
 
 def OmCont (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)) : Prop :=
   ∀ f, IsThetaFunO ψ S T f → ∀ w, Continuous fun p : GA D S × GA D T => om p f w

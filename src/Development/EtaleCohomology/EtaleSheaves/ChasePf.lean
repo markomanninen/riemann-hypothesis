@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.DiagramChase
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.DiagramChase
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E2Cut LateralTheory.E.ContPf LateralTheory.E.StepSPf
@@ -24,12 +28,6 @@ theorem psi_hom_fst {Z : Scheme.{0}} (A B C : Z.Opens) (hC : C = A ⊓ B) :
     (psi A B C hC).hom ≫ C.ι = pullback.fst A.ι B.ι ≫ A.ι :=
   IsOpenImmersion.isoOfRangeEq_hom_fac _ _ _
 
-@[reassoc]
-theorem psi_hom_snd {Z : Scheme.{0}} (A B C : Z.Opens) (hC : C = A ⊓ B) :
-    (psi A B C hC).hom ≫ C.ι = pullback.snd A.ι B.ι ≫ B.ι := by
-  rw [psi_hom_fst, pullback.condition]
-
-@[reassoc (attr := simp)]
 theorem psi_inv_fst {Z : Scheme.{0}} (A B C : Z.Opens) (hC : C = A ⊓ B) :
     (psi A B C hC).inv ≫ pullback.fst A.ι B.ι ≫ A.ι = C.ι :=
   IsOpenImmersion.isoOfRangeEq_inv_fac _ _ _
@@ -65,12 +63,6 @@ theorem rL_rT {l k : J} (g : l ⟶ k) (f : k ⟶ j0) (f' : l ⟶ j0) (h : g ≫ 
   rw [← cancel_mono (Scheme.Opens.ι _)]
   simp [rL, rT, Scheme.Hom.resLE_comp_ι, Scheme.Hom.resLE_comp_ι_assoc]
 
-theorem rT_rT {l' l k : J} (g' : l' ⟶ l) (g : l ⟶ k) (f : k ⟶ j0) (f' : l ⟶ j0) (f'' : l' ⟶ j0)
-    (h : g ≫ f = f') (h' : g' ≫ f' = f'') :
-    rT D j0 W g' f' f'' h' ≫ rT D j0 W g f f' h = rT D j0 W (g' ≫ g) f f'' (by rw [Category.assoc, h, h']) := by
-  rw [← cancel_mono (Scheme.Opens.ι _)]
-  simp [rT, Scheme.Hom.resLE_comp_ι, Scheme.Hom.resLE_comp_ι_assoc]
-
 end
 
 theorem pp3' {R : Type} [CommRing R] {F : Shv R} {n : ℤ} {A B C E B' C' : Scheme.{0}} {f : A ⟶ B} {g : B ⟶ C}
@@ -101,12 +93,6 @@ theorem pp24 {R : Type} [CommRing R] {F : Shv R} {n : ℤ} {A B E B' C' E' : Sch
     pull R (sch.map f) F n (pull R (sch.map g) F n y) = pull R (sch.map f') F n (pull R (sch.map g') F n
       (pull R (sch.map k') F n (pull R (sch.map l') F n y))) := by
   simp only [← pull_comp, ← Functor.map_comp]; rw [h]
-
-macro "meq" : tactic => `(tactic| first
-  | (apply pullback.hom_ext <;> rw [← cancel_mono (Scheme.Opens.ι _)] <;>
-      simp [rL, rT, Scheme.Hom.resLE_comp_ι_assoc, pullback.condition_assoc, ← Functor.map_comp_assoc, Cone.w_assoc, Cone.w, pullback.map])
-  | (rw [← cancel_mono (Scheme.Opens.ι _)];
-      simp [rL, rT, Scheme.Hom.resLE_comp_ι_assoc, pullback.condition_assoc, ← Functor.map_comp_assoc, Cone.w_assoc, Cone.w, pullback.map]))
 
 theorem Chase_of : DiagramChase₂ := by
   intro hH hmv q J _ _ D c hc ha hcs hqs hu j0 X e U V hUV pU pV pW n i
@@ -139,8 +125,14 @@ theorem Chase_of : DiagramChase₂ := by
       (pull _ (sch.map (pullback.fst _ _)) _ _ a2 - pull _ (sch.map (pullback.snd _ _)) _ _ b2) := ⟨_, rfl⟩
   have hd : pull _ (sch.map (rL D c j0 (e.hom ⁻¹ᵁ (U ⊓ V)) (g1 ≫ f1))) (tw q i) (m + 1) dC = 0 := by
     rw [hdC, map_sub, map_sub,
-      pp3' (f' := (psi _ _ _ (hinf (c.π.app j0))).inv) (g' := pullback.fst _ _) (k' := rL D c j0 (e.hom ⁻¹ᵁ U) (g1 ≫ f1)) (by meq),
-      pp3' (f' := (psi _ _ _ (hinf (c.π.app j0))).inv) (g' := pullback.snd _ _) (k' := rL D c j0 (e.hom ⁻¹ᵁ V) (g1 ≫ f1)) (by meq),
+      pp3' (f' := (psi _ _ _ (hinf (c.π.app j0))).inv) (g' := pullback.fst _ _) (k' := rL D c j0 (e.hom ⁻¹ᵁ U) (g1 ≫ f1)) (by
+        apply (cancel_mono (Scheme.Opens.ι _)).1
+        simp [Category.assoc, rL, rT, Scheme.Hom.resLE_comp_ι_assoc, psi_inv_fst, (reassoc_of% psi_inv_fst), psi_inv_snd, pullback.condition_assoc, Cone.w]
+        all_goals simp [← Category.assoc, psi_inv_fst, pullback.condition]),
+      pp3' (f' := (psi _ _ _ (hinf (c.π.app j0))).inv) (g' := pullback.snd _ _) (k' := rL D c j0 (e.hom ⁻¹ᵁ V) (g1 ≫ f1)) (by
+        apply (cancel_mono (Scheme.Opens.ι _)).1
+        simp [Category.assoc, rL, rT, Scheme.Hom.resLE_comp_ι_assoc, psi_inv_fst, (reassoc_of% psi_inv_fst), psi_inv_snd, pullback.condition_assoc, Cone.w]
+        all_goals simp [← Category.assoc, psi_inv_fst, pullback.condition]),
       ha2, hb2, pp3 (psi_inv_fst _ _ _ _), pp3 (psi_inv_snd _ _ _ _), sub_self]
   obtain ⟨k4, g4, hk4⟩ := (pW (m + 1) i).2 k3 (g1 ≫ f1) dC hd
 
@@ -156,10 +148,14 @@ theorem Chase_of : DiagramChase₂ := by
           (pull _ (sch.map (rT D j0 (e.hom ⁻¹ᵁ (U ⊓ V)) g4 (g1 ≫ f1) (g4 ≫ g1 ≫ f1) rfl)) _ _ dC) := by
       have E3 : (pullback.fst (D.map (g4 ≫ g1 ≫ f1) ⁻¹ᵁ (e.hom ⁻¹ᵁ U)).ι (D.map (g4 ≫ g1 ≫ f1) ⁻¹ᵁ (e.hom ⁻¹ᵁ V)).ι ≫ rT D j0 (e.hom ⁻¹ᵁ U) g4 (g1 ≫ f1) (g4 ≫ g1 ≫ f1) rfl =
         (psi _ _ _ (hinf (D.map (g4 ≫ g1 ≫ f1)))).hom ≫ rT D j0 (e.hom ⁻¹ᵁ (U ⊓ V)) g4 (g1 ≫ f1) (g4 ≫ g1 ≫ f1) rfl ≫
-          (psi _ _ _ (hinf (D.map (g1 ≫ f1)))).inv ≫ pullback.fst (D.map (g1 ≫ f1) ⁻¹ᵁ (e.hom ⁻¹ᵁ U)).ι (D.map (g1 ≫ f1) ⁻¹ᵁ (e.hom ⁻¹ᵁ V)).ι) := by meq
+          (psi _ _ _ (hinf (D.map (g1 ≫ f1)))).inv ≫ pullback.fst (D.map (g1 ≫ f1) ⁻¹ᵁ (e.hom ⁻¹ᵁ U)).ι (D.map (g1 ≫ f1) ⁻¹ᵁ (e.hom ⁻¹ᵁ V)).ι) := by
+        apply (cancel_mono (Scheme.Opens.ι _)).1
+        simp [Category.assoc, rL, rT, Scheme.Hom.resLE_comp_ι_assoc, psi_inv_fst, (reassoc_of% psi_inv_fst), psi_inv_snd, pullback.condition_assoc, Cone.w]
       have E4 : (pullback.snd (D.map (g4 ≫ g1 ≫ f1) ⁻¹ᵁ (e.hom ⁻¹ᵁ U)).ι (D.map (g4 ≫ g1 ≫ f1) ⁻¹ᵁ (e.hom ⁻¹ᵁ V)).ι ≫ rT D j0 (e.hom ⁻¹ᵁ V) g4 (g1 ≫ f1) (g4 ≫ g1 ≫ f1) rfl =
         (psi _ _ _ (hinf (D.map (g4 ≫ g1 ≫ f1)))).hom ≫ rT D j0 (e.hom ⁻¹ᵁ (U ⊓ V)) g4 (g1 ≫ f1) (g4 ≫ g1 ≫ f1) rfl ≫
-          (psi _ _ _ (hinf (D.map (g1 ≫ f1)))).inv ≫ pullback.snd (D.map (g1 ≫ f1) ⁻¹ᵁ (e.hom ⁻¹ᵁ U)).ι (D.map (g1 ≫ f1) ⁻¹ᵁ (e.hom ⁻¹ᵁ V)).ι) := by meq
+          (psi _ _ _ (hinf (D.map (g1 ≫ f1)))).inv ≫ pullback.snd (D.map (g1 ≫ f1) ⁻¹ᵁ (e.hom ⁻¹ᵁ U)).ι (D.map (g1 ≫ f1) ⁻¹ᵁ (e.hom ⁻¹ᵁ V)).ι) := by
+        apply (cancel_mono (Scheme.Opens.ι _)).1
+        simp [Category.assoc, rL, rT, Scheme.Hom.resLE_comp_ι_assoc, psi_inv_fst, (reassoc_of% psi_inv_fst), psi_inv_snd, pullback.condition_assoc, Cone.w]
       rw [hdC, ha3d, hb3d]; simp only [map_sub]; rw [pp24 E3, pp24 E4]
     rw [hk4, map_zero] at key
     exact sub_eq_zero.mp key
@@ -190,10 +186,9 @@ theorem Chase_of : DiagramChase₂ := by
     rw [hw6, pp32 (f' := (psi _ _ _ (hinf (c.π.app j0))).hom) (g' := rL D c j0 _ f5) (by
       rw [← cancel_mono (Scheme.Opens.ι _)]
       simp only [Category.assoc, rT, rL, Scheme.Hom.resLE_comp_ι, psi_hom_fst_assoc]
-      erw [pullback.lift_fst_assoc]
       simp [Scheme.Hom.resLE_comp_ι_assoc, Cone.w]), hw5,
       pp_comp (Iso.hom_inv_id _), pp_id rfl]
   refine ⟨k6, δ _ _ m w6 + pull _ (sch.map (D.map h4)) _ _ xk, ?_⟩
-  rw [map_add, ← hn, hpb, hw, pp_comp (c.w h4), hx', sub_add_cancel]
+  rw [map_add (f := _), ← hn, hpb, hw, pp_comp (c.w h4), hx', sub_add_cancel]
 
 end LateralTheory.E.ChasePf

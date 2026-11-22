@@ -1,5 +1,9 @@
-import Formalism.LogFactorialIndices.StatementIdx
-import Lemmata.GeneralBFactSecondFurther.Imports
+module
+
+public import Formalism.LogFactorialIndices.StatementIdx
+public import Lemmata.GeneralBFactSecondFurther.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -172,9 +176,11 @@ theorem lattice_index_add : IdxAdd := by
 
 theorem lattice_has_basis : LatBasis := by
   intro O K X _ _ _ _ _ _ _ _ _ _ _ A hA
-  have : Submodule.IsLattice K A := ⟨hA.1, hA.2⟩
+  have : Submodule.IsFullLattice K A := { toIsLattice := Submodule.IsLattice.of_fg K hA.1, span_eq_top := hA.2 }
+  have := Submodule.IsLattice.finite K A
+  have := Submodule.IsLattice.free K A
   let b := Module.Free.chooseBasis O A
-  let b' := b.extendOfIsLattice K
+  let b' := b.extendOfIsFullLattice K
   have hcard : Fintype.card (Module.Free.ChooseBasisIndex O A) = finrank K X :=
     (Module.finrank_eq_card_basis b').symm
   refine ⟨b'.reindex (Fintype.equivFinOfCardEq hcard), ?_⟩

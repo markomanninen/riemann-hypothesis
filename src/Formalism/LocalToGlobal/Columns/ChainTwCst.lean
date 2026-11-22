@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.ChainTwOk
+module
+
+public import Formalism.LocalToGlobal.Columns.ChainTwOk
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -84,15 +88,16 @@ theorem twCst_weil (hX : X.Ok) (hPr : Pr.Ok) (hCh : Ch.Ok) (hW : Ch.WeilTied G.�
     exact hK.weil P hP a b ha hab
 
 theorem twCst_base (hX : X.Ok) (hPr : Pr.Ok) (hCh : Ch.Ok) (h4 : ∀ w ∈ Pr.vGs, qOf w % 4 = 1) (hK : TwCstQ (Pr := Pr) sel mu G) {m2 : ℕ}
-    (hm : R.m = m2 + 2) : OcbBase Ch sel mu (twCst Ch sel mu G) m2 where
-  hX := hX
-  hPr := hPr
-  hCh := hCh
-  hm := hm
-  cst_ok := twCst_ok hPr hCh h4 hK
-  sharp := rfl
-  psi0 P a hP ha := localConstants_psi_depth_one hPr P hP a ha
-  depthG _ hP := twCst_D_g hP
+    (hm : R.m = m2 + 2) : OcbBase Ch sel mu (twCst Ch sel mu G) m2 := by
+  exact
+    { hX := hX
+      hPr := hPr
+      hCh := hCh
+      hm := hm
+      cst_ok := twCst_ok hPr hCh h4 hK
+      sharp := rfl
+      psi0 := fun P a hP ha => localConstants_psi_depth_one hPr P hP a ha
+      depthG := fun _ hP => twCst_D_g hP }
 
 end TwCstL
 

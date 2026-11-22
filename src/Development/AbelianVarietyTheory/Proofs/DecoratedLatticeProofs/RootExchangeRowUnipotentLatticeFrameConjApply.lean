@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.StandardOrderExtendedBasisApplyLowBlock
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.StandardOrderExtendedBasisApplyLowBlock
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData
 
 namespace GlobalTheory
@@ -31,11 +36,12 @@ theorem typeFrame_conj_symm_rowE_apply : ∀ (k : Type) [Field k] (κ t : Type) 
     rw [← haux]; exact ord.apply_eq_iff_eq.symm
   have h1 : (1 : Matrix (Ix (κ ⊕ Fin l) t j) (Ix (κ ⊕ Fin l) t j) k) a b =
       (1 : Matrix (XIx κ t j ⊕ Fin c) (XIx κ t j ⊕ Fin c) k) (ord a) (ord b) := by
-    simp [one_apply, ord.apply_eq_iff_eq]
+    rw [Matrix.one_apply, Matrix.one_apply]
+    simp only [ord.apply_eq_iff_eq]
   rw [h1]
   simp only [hcond]
   generalize ord a = x
   generalize ord b = y
-  rcases x with x | i <;> rcases y with y | i' <;> simp [one_apply, Fin.ext_iff]
+  rcases x with x | i <;> rcases y with y | i' <;> simp [Matrix.one_apply, Fin.ext_iff]
 
 end GlobalTheory

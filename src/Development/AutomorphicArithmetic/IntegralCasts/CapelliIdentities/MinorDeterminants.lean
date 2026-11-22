@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.MinorDeterminants.aux1 :
     ∀ {N : ℕ} (J : Finset (Fin N)), J.card = J.card := by
@@ -22,7 +26,7 @@ theorem UpperTheory.Reformulated.B.MinorDeterminants.main :
   have e : (Finset.image f Finset.univ).card = S.card := by
     rw [Finset.card_image_of_injective _ hf]; simp
   unfold UpperTheory.Reformulated.B.MinorDeterminants.minorIJ at h0
-  rw [dif_pos e] at h0
+  rw [dite_eq_left e] at h0
   set I := Finset.image f Finset.univ with hI
   have mem : ∀ i, f i ∈ I := fun i => by simp [hI]
   let σf : Fin S.card → Fin S.card := fun i => (I.orderIsoOfFin e).symm ⟨f i, mem i⟩

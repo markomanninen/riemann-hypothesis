@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementM
-import Formalism.HermitianCurvature.StatementI
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Interlace
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.Imports
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.TwoBracketsLePowMulProdEntries
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementM
+public import Formalism.HermitianCurvature.StatementI
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Interlace
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.Imports
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.TwoBracketsLePowMulProdEntries
+
+@[expose] public section
+
 open Formalism.FourierDecayAlt Finset
 
 namespace GlobalTheory.NormaliserCutBound

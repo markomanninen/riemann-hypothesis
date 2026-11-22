@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.InertKernelTheory.SecondKernelEntrywiseLastLevel
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.SecondKernelEntrywiseLastLevel
+
+@[expose] public section
 
 noncomputable section
 

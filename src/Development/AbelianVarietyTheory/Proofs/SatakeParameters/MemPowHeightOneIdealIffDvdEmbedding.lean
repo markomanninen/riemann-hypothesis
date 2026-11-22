@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EqZeroOfForallLeExp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EqZeroOfForallLeExp
+
+@[expose] public section
 
 open NumberField IsDedekindDomain WithZero
 
@@ -59,7 +63,7 @@ theorem ordIdeal_of_embedding {E : Type} [Field E] [NumberField E] (P : HeightOn
         rw [map_mul, ← (hF (a * b)).1, ← (hF a).1, ← (hF b).1]; simp)
       map_zero' := hinj (by rw [← (hF 0).1]; simp)
       map_add' := fun a b => hinj (by
-        rw [map_add, ← (hF (a + b)).1, ← (hF a).1, ← (hF b).1]; simp) }
+        rw [map_add (f := _), ← (hF (a + b)).1, ← (hF a).1, ← (hF b).1]; simp) }
   have hfx : ∀ a : 𝓞 E, algebraMap W Qq (f a) = ρ a := fun a => ((hF a).1).symm
   have hP : ∀ a : 𝓞 E, a ∈ P.asIdeal ↔ (p : W) ∣ f a := fun a => (hF a).2
   have hd : ∀ (b : W) (n : ℕ), ∃ (a : 𝓞 E) (c : W), f a = b + (p : W) ^ n * c := by

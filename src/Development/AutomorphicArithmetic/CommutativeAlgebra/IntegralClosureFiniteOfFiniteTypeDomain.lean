@@ -1,8 +1,12 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.H0TwistOverClosedField
-import Development.EtaleCohomology.EtaleSheaves.LeafIntClosureAlgPf
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.NoetherReduction
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.NoetherCharP
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.H0TwistOverClosedField
+public import Development.EtaleCohomology.EtaleSheaves.LeafIntClosureAlgPf
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.NoetherReduction
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.NoetherCharP
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.E.E4
 

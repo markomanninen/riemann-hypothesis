@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.WhittakerLSpace
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.BernsteinExponentBounds.IsInvForm
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.WhittakerLSpace
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.BernsteinExponentBounds.IsInvForm
+
+@[expose] public section
 
 noncomputable section
 

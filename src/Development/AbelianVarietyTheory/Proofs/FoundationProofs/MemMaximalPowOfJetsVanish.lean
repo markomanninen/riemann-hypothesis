@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 
@@ -49,7 +53,7 @@ theorem mem_pow_of_jets_vanish (k A : Type) [Field k] [IsAlgClosed k] [CharZero 
           rw [this, (hmemQ y).mp hy]; simp
       · intro x y hx hy
         show Δ l (x + y) = 0
-        rw [map_add, hx, hy, add_zero]
+        rw [map_add (f := _), hx, hy, add_zero]
   set π' : A := π - algebraMap k A (Δ 0 π) with hπ'
   have hπ'Q : π' ∈ Q := by
     rw [hmemQ, hπ', map_sub, halg, sub_self]
@@ -106,7 +110,7 @@ theorem mem_pow_of_jets_vanish (k A : Type) [Field k] [IsAlgClosed k] [CharZero 
       have e : f = (Δ 0 d) • π' ^ m + ((d - algebraMap k A (Δ 0 d)) * π' ^ m + g) := by
         rw [← hyg, Algebra.smul_def]; ring
       have hΔ : Δ m f = Δ 0 d * m.factorial := by
-        rw [e, map_add, map_smul, hb m (by omega), ha (m + 1) _ hrg m (by omega) (by omega),
+        rw [e, map_add (f := _), map_smul, hb m (by omega), ha (m + 1) _ hrg m (by omega) (by omega),
           smul_eq_mul, add_zero]
       have hc0 : Δ 0 d = 0 := by
         have := hf m (by omega); rw [hΔ] at this

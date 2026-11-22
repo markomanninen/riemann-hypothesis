@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreFurther
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreAlt
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IntCastMemRegMaxAt
-import GroundTheory.HeightsAndTheta.Heights.Intersections.LeOfHeightMapEqZero
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreFurther
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreAlt
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IntCastMemRegMaxAt
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.LeOfHeightMapEqZero
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -56,7 +61,7 @@ theorem RegularityMaximalSurjective.proof (h₁ : RegularityOrder.Statement) (h�
   have hmZ : (m.comap (algebraMap ℤ (regRing P))).IsMaximal := by
     have : Module.Finite ℤ (regRing P) := (h₁ K ι P hP).2.1
     have : Algebra.IsIntegral ℤ (regRing P) := Algebra.IsIntegral.of_finite ℤ _
-    exact Ideal.isMaximal_comap_of_isIntegral_of_isMaximal m
+    exact Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := ℤ) m
   have hp := Submodule.IsPrincipal.prime_generator_of_isPrime (is_prime := hmZ.isPrime) _
     (Ring.ne_bot_of_isMaximal_of_not_isField hmZ Int.not_isField)
   set p := Submodule.IsPrincipal.generator (m.comap (algebraMap ℤ (regRing P)))

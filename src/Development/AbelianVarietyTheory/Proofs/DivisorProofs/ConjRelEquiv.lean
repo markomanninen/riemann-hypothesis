@@ -1,6 +1,28 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
-import Development.AbelianVarietyTheory.Definitions.Divisors.GaloisRepOfPolarizedCuspidal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SimpleTwistedTraceFormulaStable
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsNormalisedOfIsDiscrete
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BernsteinUnitaryProductIrreducible
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.IsTemperedGLOfIsUnitaryLSeg
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GaloisRepOfPolarizedCuspidal
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RadfordShufflePolynomialHolds
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.ClozelPurity
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.ClozelCohomologicalModel
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LocalLanglandsGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChebotarevDegreeOneIffCheb
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CuspidalMultiplicityOne
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HeckeLEntireAndNonzeroAtOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BorelCasselman
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.QuadraticClassFieldTheory
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsOrthonormalOfUnimodular
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,15 +51,14 @@ def IsModel (w : Pl E) {K : GlobalTheory.UnitLemma.UQ} (e : K.E ≃+* w.adicComp
     (∀ y, ψ (u * y) = γ.val *ᵥ ψ y) ∧ ∀ y z, stdH w (ψ y) (ψ z) = e (B.herm x y z)
 
 def congSet (w : Pl E) (n k : ℕ) : Set (GLw n w) :=
-  {g | g ∈ GlobalTheory.LFun.KGL w n ∧ ∀ i j, Valued.v (g.val i j - (1 : Matrix (Fin n) (Fin n) (w.adicCompletion E)) i j) ≤
+  {g | g ∈ GlobalTheory.LFun.KGL w (n := n) ∧ ∀ i j, Valued.v (g.val i j - (1 : Matrix (Fin n) (Fin n) (w.adicCompletion E)) i j) ≤
     WithZero.exp (-(k : ℤ))}
 
 theorem clRel_equiv {K : GlobalTheory.UnitLemma.UQ} (B : GlobalTheory.UnitLemma.InvAlg K) :
     Equivalence (fun x y : {x : B.Aˣ // B.σ (x : B.A) = x} =>
-      ∃ u : B.Aˣ, (y.1 : B.A) = x.1 * (u * B.σ (u : B.A))) where
-  refl x := ⟨1, by simp⟩
-  symm := by
-    rintro x y ⟨u, hu⟩
+      ∃ u : B.Aˣ, (y.1 : B.A) = x.1 * (u * B.σ (u : B.A))) := by
+  refine ⟨fun x => ⟨1, by simp⟩, ?_, ?_⟩
+  · rintro x y ⟨u, hu⟩
     refine ⟨u⁻¹, ?_⟩
     have h1 : ((u : B.A) * ((u⁻¹ : B.Aˣ) : B.A)) * (B.σ (u : B.A) * B.σ ((u⁻¹ : B.Aˣ) : B.A)) = 1 := by
       rw [← map_mul, Units.mul_inv, map_one, one_mul]
@@ -45,18 +66,15 @@ theorem clRel_equiv {K : GlobalTheory.UnitLemma.UQ} (B : GlobalTheory.UnitLemma.
     calc (x.1 : B.A) = x.1 * (((u : B.A) * ((u⁻¹ : B.Aˣ) : B.A)) * (B.σ (u : B.A) * B.σ ((u⁻¹ : B.Aˣ) : B.A))) := by
           rw [h1, mul_one]
       _ = _ := by ring
-  trans := by
-    rintro x y z ⟨u, hu⟩ ⟨v, hv⟩
+  · rintro x y z ⟨u, hu⟩ ⟨v, hv⟩
     exact ⟨u * v, by rw [hv, hu, Units.val_mul, map_mul]; ring⟩
 
 theorem conjRel_equiv (G : Type) [Group G] :
-    Equivalence (fun x y : G => ∃ g, y = g⁻¹ * x * (MonoidHom.id G) g) where
-  refl x := ⟨1, by simp⟩
-  symm := by
-    rintro x y ⟨g, rfl⟩
+    Equivalence (fun x y : G => ∃ g, y = g⁻¹ * x * (MonoidHom.id G) g) := by
+  refine ⟨fun x => ⟨1, by simp⟩, ?_, ?_⟩
+  · rintro x y ⟨g, rfl⟩
     exact ⟨g⁻¹, by simp [mul_assoc]⟩
-  trans := by
-    rintro x y z ⟨g, rfl⟩ ⟨h, rfl⟩
+  · rintro x y z ⟨g, rfl⟩ ⟨h, rfl⟩
     exact ⟨g * h, by simp [mul_assoc]⟩
 
 theorem cast_finsum {α : Type*} (f : α → ℚ) : ((∑ᶠ a, f a : ℚ) : ℂ) = ∑ᶠ a, (f a : ℂ) := by

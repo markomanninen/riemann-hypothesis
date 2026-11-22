@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafClCut
-import Development.EtaleCohomology.KummerTheory.DictNormalPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafClCut
+public import Development.EtaleCohomology.KummerTheory.DictNormalPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CochainComplex.HomComplex
@@ -109,8 +113,8 @@ end LateralTheory.CohomologicalPurity.Cl.DiscPf
 
 namespace LateralTheory.CohomologicalPurity.Cl
 
-open DiscPf in
 
+open DiscPf in
 def LeafDiscNrm : Prop := ∀ (R : Type) [CommRing R] (K : Cx R) (n : ℤ) (P : PSh)
   (z : Cocycle ((chains R).obj (disc.obj P)) K n),
   ∃ (a : (free R).obj P ⟶ K.X n) (β : Cochain ((chains R).obj (disc.obj P)) K (n - 1)),

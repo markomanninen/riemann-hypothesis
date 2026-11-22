@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.CauchyHW
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.LoweringPartRightActionInlInr
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.EqZeroOfFockInnerSelfRe
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.CauchyHW
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.LoweringPartRightActionInlInr
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.EqZeroOfFockInnerSelfRe
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,8 @@ theorem EF_expand (hι : Function.Injective ι) (a b : Fin m) (P : MvPolynomial 
         ∑ k : Fin n, X (ι (a, k)) * pderiv (ι (a, k)) P := by
   classical
   rw [bRow_apply' ι a b, bRow_apply' ι b a]
-  simp only [map_sum, pd_X_mul, Finset.sum_add_distrib, sum_ite_row ι hι, mul_add, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, pd_X_mul, Finset.sum_add_distrib, sum_ite_row ι hι, mul_add, Finset.mul_sum]
 
 private theorem pderiv_pderiv_comm' {σ : Type} (i j : σ) (p : MvPolynomial σ ℂ) :
     pderiv i (pderiv j p) = pderiv j (pderiv i p) := by
@@ -70,7 +75,8 @@ theorem euler_row (a : Fin m) (c : ℕ) (P : MvPolynomial σ ℂ)
     ∑ k : Fin n, X (ι (a, k)) * pderiv (ι (a, k)) P = (c : ℂ) • P := by
   conv_lhs => rw [P.as_sum]
   conv_rhs => rw [P.as_sum]
-  simp only [map_sum, Finset.mul_sum, X_mul_pderiv_monomial]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.mul_sum, X_mul_pderiv_monomial]
   rw [Finset.sum_comm, Finset.smul_sum]
   refine Finset.sum_congr rfl fun e he => ?_
   rw [← Finset.sum_smul, hP e he]
@@ -95,7 +101,8 @@ theorem inner_sum_right {ι : Type*} (t : Finset ι) (P : MvPolynomial σ ℂ) (
 
 theorem inner_conj (P Q : MvPolynomial σ ℂ) : fockInner Q P = starRingEnd ℂ (fockInner P Q) := by
   classical
-  rw [FockRaiseLowInner.fockInner_eq_sum_left Q P (P.support ∪ Q.support) Finset.subset_union_right,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [FockRaiseLowInner.fockInner_eq_sum_left Q P (P.support ∪ Q.support) Finset.subset_union_right,
     FockRaiseLowInner.fockInner_eq_sum_left P Q (P.support ∪ Q.support) Finset.subset_union_left, map_sum]
   refine Finset.sum_congr rfl fun α _ => ?_
   rw [map_mul, map_mul, Complex.conj_conj, FockRaiseLowInner.wt_conj]

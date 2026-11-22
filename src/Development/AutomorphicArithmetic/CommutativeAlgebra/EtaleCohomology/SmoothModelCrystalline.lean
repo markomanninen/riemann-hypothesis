@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.CIn
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.FinAllOf
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PGeoSide
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.PhiStepOf
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.CstSmooth2
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.CIn
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.FinAllOf
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PGeoSide
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.PhiStepOf
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.CstSmooth2
+
+@[expose] public section
 
 namespace UpperTheory.Ru.crystallineComparison
 

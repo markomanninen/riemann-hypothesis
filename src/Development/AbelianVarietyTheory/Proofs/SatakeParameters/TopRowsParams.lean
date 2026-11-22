@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.ParConsts
-import Formalism.LocalRingCardinality.DataKerI
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.LocalRingCardinality.DataKerI
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+
+@[expose] public section
 
 open Formalism.MainNotions Formalism.BasicNotions Formalism.MainNotions.G Classical
 
@@ -21,11 +25,11 @@ theorem nuRow_tauPl_of_isTopPl {D : D7} (L : SizeData₂ D) (u : D.what₂.Word)
     simp [plGG, hz1]
   obtain ⟨hu1, huk⟩ := L.top_u (tauPl D z) ⟨z.2, hz2⟩ hk hτ
   obtain ⟨-, hw⟩ := L.win_top (j + 1) (by omega) (by omega) (tauPl D z) ⟨z.2, hz2⟩ hτ
-  have ha : aL L z.2 = L.aT ⟨z.2, hz2⟩ := by unfold aL; rw [dif_pos hz2]
-  have hb : bL L z.2 = L.bT ⟨z.2, hz2⟩ := by unfold bL; rw [dif_pos hz2]
+  have ha : aL L z.2 = L.aT ⟨z.2, hz2⟩ := by unfold aL; rw [dite_eq_left hz2]
+  have hb : bL L z.2 = L.bT ⟨z.2, hz2⟩ := by unfold bL; rw [dite_eq_left hz2]
   have hwe : wPl D (j + 1) z = (((D.hcW u (tauPl D z)).e ⟨j, hj⟩ : ℚ) : ℝ) := by
     unfold wPl wj
-    rw [dif_pos (by simpa using hj), D.hcW_e]
+    rw [dite_eq_left (by simpa using hj), D.hcW_e]
     rfl
   have hkc : ((D.R.k - 1 : ℕ) : ℝ) = (D.R.k : ℝ) - 1 := by
     rw [Nat.cast_sub (by omega)]; simp

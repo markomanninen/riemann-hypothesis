@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreSectionLift
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreSectionLift
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -75,7 +80,8 @@ def redLoc (y : (Σ k, ι k) → Ω) (p : ℕ) (I : ∀ k, Finset (ι k)) :
   map_add' x x' := by
     induction x, x' using LocalizedModule.induction_on₂ with
     | h m m' s s' =>
-      rw [LocalizedModule.mk_add_mk, redLocFun_mk, redLocFun_mk, redLocFun_mk, LocalizedModule.mk_add_mk, map_add]
+      rw [LocalizedModule.mk_add_mk, redLocFun_mk, redLocFun_mk, redLocFun_mk,
+        LocalizedModule.mk_add_mk, (redRing y p).map_add]
       simp only [Submonoid.smul_def, redRing_smul]
       congr 1
       exact Subtype.ext (map_mul _ _ _)
@@ -117,10 +123,6 @@ def ReductionComplex.Statement : Prop :=
     (∀ (n : ℕ) (w : KH.CechC ℤ ι (MRingOver ℤ ι ⧸ GenOnFibres.idealOver y ℤ) n), (p : ℤ) • w = 0 → w = 0) ∧
     (∀ (n : ℕ) (w : KH.CechC ℤ ι (MRingOver ℤ ι ⧸ GenOnFibres.idealOver y ℤ) n),
       FibreReduction.redCoch y p n ((p : ℤ) • w) = 0)
-
-theorem ReductionComplex.hyps_inhabited :
-    IsArithVar (mCoordIdeal (ι := PtIdx) unitPoint) (0 + 1) ∧ Nat.Prime 2 :=
-  ⟨FibreSectionLift.hyps_inhabited.1, FibreSectionLift.hyps_inhabited.2.1⟩
 
 end
 

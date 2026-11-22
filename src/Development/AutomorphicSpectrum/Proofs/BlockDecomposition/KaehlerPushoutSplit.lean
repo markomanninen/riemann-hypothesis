@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open TensorProduct
 
 namespace GlobalTheory.CompanionTheory.KaehlerPushout
@@ -16,8 +21,7 @@ theorem exists_retraction (K A B R : Type) [CommRing K] [CommRing A] [CommRing B
   · intro x
     have key : KaehlerDifferential.map K B R R (KaehlerDifferential.mapBaseChange K A R x) = e x := by
       induction x with
-      | zero => simp
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]
       | tmul s w =>
         have hw : w ∈ Submodule.span A (Set.range (KaehlerDifferential.D K A)) := by
           rw [KaehlerDifferential.span_range_derivation]; trivial
@@ -26,15 +30,14 @@ theorem exists_retraction (K A B R : Type) [CommRing K] [CommRing A] [CommRing B
           obtain ⟨a, rfl⟩ := hw
           simp [e, KaehlerDifferential.mapBaseChange_tmul, KaehlerDifferential.map_D]
         | zero => simp
-        | add u v _ _ hu hv => simp only [tmul_add, map_add, hu, hv]
+        | add u v _ _ hu hv => simp only [tmul_add, map_add (f := _), hu, hv]
         | smul a u _ hu =>
           rw [← TensorProduct.smul_tmul]
           exact hu _
     simp [key]
   · intro y
     induction y with
-    | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy, add_zero]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, add_zero]
     | tmul s w =>
       have hw : w ∈ Submodule.span B (Set.range (KaehlerDifferential.D K B)) := by
         rw [KaehlerDifferential.span_range_derivation]; trivial
@@ -43,7 +46,7 @@ theorem exists_retraction (K A B R : Type) [CommRing K] [CommRing A] [CommRing B
         obtain ⟨b, rfl⟩ := hw
         simp [KaehlerDifferential.mapBaseChange_tmul, KaehlerDifferential.map_D]
       | zero => simp
-      | add u v _ _ hu hv => simp only [tmul_add, map_add, hu, hv, add_zero]
+      | add u v _ _ hu hv => simp only [tmul_add, map_add (f := _), hu, hv, add_zero]
       | smul b u _ hu =>
         rw [← TensorProduct.smul_tmul]
         exact hu _
@@ -64,12 +67,11 @@ theorem range_sup_range (K A B R : Type) [CommRing K] [CommRing A] [CommRing B] 
   have hD : ∀ r : R, KaehlerDifferential.D K R r ∈ S := by
     intro r
     induction r using h.out.inductionOn with
-    | zero => simp
     | tmul b => exact hB b
     | smul a y hy =>
       rw [Algebra.smul_def, Derivation.leibniz]
       exact S.add_mem (S.smul_mem _ hy) (S.smul_mem _ (hA a))
-    | add x y hx hy => rw [map_add]; exact S.add_mem hx hy
+    | add x y hx hy => rw [map_add (f := _)]; exact S.add_mem hx hy
   rw [eq_top_iff, ← KaehlerDifferential.span_range_derivation, Submodule.span_le]
   rintro _ ⟨r, rfl⟩
   exact hD r

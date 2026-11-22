@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMapAllComparison
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLevelAtEachIndex
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMapAllComparison
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLevelAtEachIndex
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -82,8 +86,8 @@ theorem exists_matrix_hat {F E : Type} [Field F] [NumberField F] [Field E] [Numb
   refine ⟨N.map (Algebra.TensorProduct.comm F _ E).symm, fun z hz => ?_, Matrix.ext fun i j => ?_⟩
   · have h4 := GlobalTheory.PrincInLevel.swap_symm_mem_hat Λ _ (hN _ (GlobalTheory.PrincInLevel.swap_mem_hatL Λ z hz))
     convert h4 using 1
-    funext i
-    simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, AlgEquiv.symm_apply_apply, Matrix.map_apply]
+    ext i
+    simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
   · apply (Algebra.TensorProduct.comm F _ E).injective
     rw [Matrix.smul_apply, Matrix.smul_apply, map_nsmul, Matrix.map_apply, AlgEquiv.apply_symm_apply, smul_eq_mul, map_mul,
       Matrix.sub_apply, map_sub, ← hK, ← hK']

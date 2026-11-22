@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnramifiedH1CardInvariantsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedDualEvalBidualApply
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardKerMulCardEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnramifiedH1CardInvariantsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedDualEvalBidualApply
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardKerMulCardEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ def fix : Submodule R M where
   zero_mem' := fun σ _ => map_zero _
   add_mem' := fun {a b} ha hb σ hσ => by
     show ρ σ (a + b) = a + b
-    rw [map_add, ha σ hσ, hb σ hσ]
+    rw [map_add (f := _), ha σ hσ, hb σ hσ]
   smul_mem' := fun c m hm σ hσ => by
     show ρ σ (c • m) = c • m
     rw [map_smul, hm σ hσ]
@@ -48,8 +52,6 @@ def fixRep : Representation R D (fix ρ J) where
     refine LinearMap.ext fun m => Subtype.ext ?_
     show ρ (g * h) m = ρ g (ρ h m)
     rw [map_mul]; rfl
-
-@[simp] theorem fixRep_apply (g : D) (m : fix ρ J) : ((fixRep ρ J g m : fix ρ J) : M) = ρ g m := rfl
 
 theorem contAction_fixRep (h : ContAction ρ) : ContAction (fixRep ρ J) :=
   continuous_induced_rng.2 (h.comp (continuous_fst.prodMk (continuous_subtype_val.comp continuous_snd)))

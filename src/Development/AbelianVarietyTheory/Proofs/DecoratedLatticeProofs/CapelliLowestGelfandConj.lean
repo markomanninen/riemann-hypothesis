@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SobContId
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CommuteGelfandInvariantMatrixUnitsOfGlRel
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CenterActionTransportChart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SobContId
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CommuteGelfandInvariantMatrixUnitsOfGlRel
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CenterActionTransportChart
+
+@[expose] public section
+
 open scoped ComplexConjugate Matrix NNReal ENNReal TensorProduct Classical
 open MeasureTheory NumberField IsDedekindDomain Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.Eis GlobalTheory.MixModel GlobalTheory.RegSW GlobalTheory.RegSch
@@ -38,7 +43,7 @@ theorem lie_of_glRel {A : Type} [Ring A] [Algebra ℂ A] {N : ℕ} (Q : Matrix (
   · simp
   · intro p q hp hq
     have e : (p + q) * Y - Y * (p + q) = (p * Y - Y * p) + (q * Y - Y * q) := by noncomm_ring
-    rw [e, map_add, map_add, ← hp, ← hq]
+    rw [e, map_add (f := _), map_add (f := _), ← hp, ← hq]
     noncomm_ring
   · intro i j x
     refine Matrix.induction_on' Y ?_ ?_ ?_
@@ -47,7 +52,7 @@ theorem lie_of_glRel {A : Type} [Ring A] [Algebra ℂ A] {N : ℕ} (Q : Matrix (
       have e : Matrix.single i j x * (p + q) - (p + q) * Matrix.single i j x =
           (Matrix.single i j x * p - p * Matrix.single i j x) + (Matrix.single i j x * q - q * Matrix.single i j x) := by
         noncomm_ring
-      rw [e, map_add, map_add, ← hp, ← hq]
+      rw [e, map_add (f := _), map_add (f := _), ← hp, ← hq]
       noncomm_ring
     · intro k l y
       have hx : Matrix.single i j x = x • Matrix.single i j (1 : ℂ) := by rw [Matrix.smul_single, smul_eq_mul, mul_one]
@@ -72,25 +77,5 @@ theorem glRel_conj {A : Type} [Ring A] [Algebra ℂ A] (N : ℕ) (Q : Matrix (Fi
   simp only
   rw [lie_of_glRel Q h, key, key, ← sub_mul, ← mul_sub, single_comm]
   split_ifs <;> simp [mul_sub, sub_mul]
-
-theorem gelfA_conj {A : Type} [Ring A] [Algebra ℂ A] (N : ℕ) (Q : Matrix (Fin N) (Fin N) ℂ →ₗ[ℂ] A)
-    (g : GL (Fin N) ℂ) :
-    GlobalTheory.SmoothForms.gelfA (fun i j => Q (g.1 * Matrix.single i j 1 * (g⁻¹).1)) =
-      GlobalTheory.SmoothForms.gelfA (fun i j => Q (Matrix.single i j 1)) := by
-  have hGH : g.1 * (g⁻¹).1 = 1 := g.mul_inv
-  funext k
-  rw [GlobalTheory.SmoothForms.gelfA_eq_sum_pow, GlobalTheory.SmoothForms.gelfA_eq_sum_pow]
-  have hE' : (fun a b => Q (g.1 * Matrix.single a b 1 * (g⁻¹).1)) =
-      fun a b => ∑ c, ∑ d, ((g.1)ᵀ a c * ((g⁻¹).1)ᵀ d b) • Q (Matrix.single c d 1) := by
-    funext a b
-    simp only [← map_smul, ← map_sum]
-    congr 1
-    rw [Matrix.matrix_eq_sum_single (g.1 * _ * (g⁻¹).1)]
-    refine Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun d _ => ?_
-    rw [Matrix.smul_single, smul_eq_mul, mul_one]
-    congr 1
-    simp [Matrix.mul_apply, Matrix.single, ite_and]
-  rw [hE', GlobalTheory.RegSch.GChart.trace_pow_conj _ (g.1)ᵀ ((g⁻¹).1)ᵀ
-    (by rw [← Matrix.transpose_mul, hGH, Matrix.transpose_one])]
 
 end GlobalTheory.CapelliLowest

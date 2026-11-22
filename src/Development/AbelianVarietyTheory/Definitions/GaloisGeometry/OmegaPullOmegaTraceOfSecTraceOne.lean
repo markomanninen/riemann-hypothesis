@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SurjectiveOfLocallySurjective
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSecImageNonzeroLocus
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.OmegaPullId
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SurjectiveOfLocallySurjective
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSecImageNonzeroLocus
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.OmegaPullId
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -39,21 +43,13 @@ theorem sec_etale [IsFinite f] [Etale f] {U : X.Opens} (hU : IsAffineOpen U) :
 
 variable [IsFinite f] [Etale f]
 
-variable (s s') in
 
+variable (s s') in
 def secTrace {U : X.Opens} (hU : IsAffineOpen U) : Sec s' (f ⁻¹ᵁ U) →+ Sec s U :=
   letI := secAlg s s' f U
   haveI := sec_finite (s := s) (s' := s') (f := f) hU
   haveI := sec_etale (s := s) (s' := s') (f := f) hU
   (etTrace (Sec s U) (Sec s' (f ⁻¹ᵁ U))).toAddMonoidHom
-
-theorem secTrace_mul {U : X.Opens} (hU : IsAffineOpen U) (b : Sec s U) (b' : Sec s' (f ⁻¹ᵁ U)) :
-    secTrace s s' hU (appSec s s' f U b * b') = b * secTrace s s' hU b' := by
-  letI := secAlg s s' f U
-  haveI := sec_finite (s := s) (s' := s') (f := f) hU
-  haveI := sec_etale (s := s) (s' := s') (f := f) hU
-  change etTrace (Sec s U) (Sec s' (f ⁻¹ᵁ U)) (b • b') = b * etTrace (Sec s U) (Sec s' (f ⁻¹ᵁ U)) b'
-  exact ((etTrace (Sec s U) (Sec s' (f ⁻¹ᵁ U))).map_smul b b').trans (smul_eq_mul _ _)
 
 theorem secTrace_res {U V : X.Opens} (hU : IsAffineOpen U) (hV : IsAffineOpen V) (h : V ≤ U)
     (b' : Sec s' (f ⁻¹ᵁ U)) :
@@ -127,8 +123,8 @@ theorem formOm_induction (hf : f ≫ s = s') {U : X.Opens} (hU : IsAffineOpen U)
   have hb := isBaseChange_formLin k (Sec s U) (Sec s' (f ⁻¹ᵁ U)) j
   obtain ⟨z, rfl⟩ := hb.equiv.surjective y
   induction z using TensorProduct.induction_on with
-  | zero => rw [map_zero]; exact h0
-  | add a b ha' hb' => rw [map_add]; exact ha _ _ ha' hb'
+  | zero => rw [hb.equiv.map_zero]; exact h0
+  | add a b ha' hb' => rw [hb.equiv.map_add]; exact ha _ _ ha' hb'
   | tmul b' x => rw [hb.equiv_tmul]; exact hm b' x
 
 theorem formTraceU_res (hf : f ≫ s = s') {U V : X.Opens} (hU : IsAffineOpen U)
@@ -139,7 +135,7 @@ theorem formTraceU_res (hf : f ≫ s = s') {U V : X.Opens} (hU : IsAffineOpen U)
       formTraceU hf hV j (formRes s' (f.preimage_mono h) j y)) hf hU ?_ (fun y z hy hz ↦ ?_)
     (fun b' x ↦ ?_) y
   · simp only [map_zero]
-  · simp only [map_add, hy, hz]
+  · simp only [map_add (f := _), hy, hz]
   · rw [formTraceU_smul_formPull, formRes_smul, formRes_smul, formRes_formPull,
       formTraceU_smul_formPull, secTrace_res hU hV h]
 
@@ -252,8 +248,8 @@ theorem secTrace_appSec_of_bijective {U : X.Opens} (hU : IsAffineOpen U)
   haveI := projective_of_etale (Sec s U) (Sec s' (f ⁻¹ᵁ U))
   exact algTrace_algebraMap_of_bijective h b
 
-variable (s) in
 
+variable (s) in
 theorem secTrace_id {U : X.Opens} (hU : IsAffineOpen U) (b : Sec s U) :
     secTrace (f := 𝟙 X) s s hU b = b := by
   have h : Function.Bijective (appSec s s (𝟙 X) U) :=
@@ -264,8 +260,8 @@ theorem secTrace_id {U : X.Opens} (hU : IsAffineOpen U) (b : Sec s U) :
   conv_lhs => rw [← e]
   exact secTrace_appSec_of_bijective hU h b
 
-variable (s) in
 
+variable (s) in
 theorem omegaTrace_id (j : ℕ) :
     omegaTrace (f := 𝟙 X) (Category.id_comp s) j =
       (Scheme.Modules.pushforwardId X).hom.app (Omega s j) := by
@@ -276,8 +272,8 @@ theorem omegaTrace_id (j : ℕ) :
   erw [secTrace_id s hU, formPull_id]
   rfl
 
-variable (s) in
 
+variable (s) in
 theorem hodgeTrace_id (j q : ℕ) (x : hodgeH s j q) :
     hodgeTrace (f := 𝟙 X) (Category.id_comp s) j q x = x := by
   letI := algΓ s
@@ -292,60 +288,6 @@ section Degree
 variable {k : Type} [CommRing k] {X X' : Scheme.{0}} {s : X ⟶ Sp k} {s' : X' ⟶ Sp k}
   {f : X' ⟶ X} [IsFinite f] [Etale f]
 
-theorem nsmul_app {F G : X.Modules} (φ : F ⟶ G) (d : ℕ) (U : X.Opens) (y : Γ(F, U)) :
-    (d • φ).app U y = d • φ.app U y := by
-  induction d with
-  | zero => rw [zero_smul, zero_smul]; rfl
-  | succ n ih =>
-    rw [succ_nsmul, succ_nsmul, Scheme.Modules.Hom.add_app]
-    exact congrArg (· + φ.app U y) ih
-
-theorem omegaPull_omegaTrace_of_secTrace_one (hf : f ≫ s = s') (j d : ℕ)
-    (hd : ∀ (U : X.Opens) (hU : IsAffineOpen U), secTrace (f := f) s s' hU 1 = d) :
-    omegaPull hf j ≫ omegaTrace hf j = d • 𝟙 (Omega s j) := by
-  refine hom_ext_affine fun U hU y ↦ ?_
-  obtain ⟨x, rfl⟩ := toOm_surjective (s := s) (j := j) hU y
-  rw [nsmul_app, Scheme.Modules.Hom.comp_app]
-  have e := omegaPull_toOmega hf j U x
-  change (omegaTrace hf j).app U ((omegaPull hf j).val.app (op U) ((toOmega s j).app (op U) x)) = _
-  rw [e, ← one_smul (Sec s' (f ⁻¹ᵁ U)) (formPull hf U j x)]
-  erw [omegaTrace_toOm_smul_formPull hf j hU, hd U hU, Nat.cast_smul_eq_nsmul, map_nsmul]
-  rfl
-
-theorem hodgeTrace_hodgePull_of_secTrace_one (hf : f ≫ s = s') (j q d : ℕ)
-    (hd : ∀ (U : X.Opens) (hU : IsAffineOpen U), secTrace (f := f) s s' hU 1 = d) (x : hodgeH s j q) :
-    hodgeTrace hf j q (hodgePull hf j q x) = d • x := by
-  letI := algΓ s
-  have hmap : ∀ n : ℕ, cohOn.map k (n • 𝟙 (Omega s j)) ⊤ q = n • LinearMap.id := fun n ↦ by
-    induction n with
-    | zero => rw [zero_smul, zero_smul]; exact cohOn.map_zero_hom k _ _ ⊤ q
-    | succ n ih => rw [succ_nsmul, succ_nsmul, cohOn.map_add_hom, ih, cohOn.map_id]
-  rw [hodgeTrace_hodgePull, omegaPull_omegaTrace_of_secTrace_one hf j d hd, hmap]
-  rfl
-
 end Degree
-
-example : algTrace ℚ (ℚ × ℚ) 1 = 2 := by
-  rw [algTrace_eq_trace, ← map_one (algebraMap ℚ (ℚ × ℚ)), Algebra.trace_algebraMap]
-  simp
-
-example : algTrace ℚ (ℚ × ℚ) (1, 0) = 1 := by
-  rw [algTrace_eq_trace, Algebra.trace_eq_matrix_trace (Module.Basis.finTwoProd ℚ)]
-  simp [Matrix.trace_fin_two, Algebra.leftMulMatrix_eq_repr_mul]
-
-example {k : Type} [CommRing k] {X X' : Scheme.{0}} (s : X ⟶ Sp k) (f : X' ⟶ X) [IsFinite f]
-    [Etale f] (r : k) (x : hodgeH (f ≫ s) 1 1) :
-    hodgeTrace (s := s) rfl 1 1 (r • x) = r • hodgeTrace (s := s) rfl 1 1 x :=
-  map_smul _ r x
-
-example : hodgeTrace (f := 𝟙 (Sp ℤ)) (Category.id_comp (𝟙 (Sp ℤ))) 0 0 ≠ 0 := by
-  intro h
-  letI : Nontrivial Γ(Sp ℤ, ⊤) :=
-    (Scheme.ΓSpecIso (CommRingCat.of ℤ)).commRingCatIsoToRingEquiv.toEquiv.nontrivial
-  haveI : Nontrivial (hodgeH (𝟙 (Sp ℤ)) 0 0) := (hodgeZeroZeroEquiv (𝟙 (Sp ℤ))).toEquiv.nontrivial
-  obtain ⟨x, hx⟩ := exists_ne (0 : hodgeH (𝟙 (Sp ℤ)) 0 0)
-  have := hodgeTrace_id (𝟙 (Sp ℤ)) 0 0 x
-  rw [h] at this
-  exact hx (this.symm.trans rfl)
 
 end GlobalTheory.HodgeCoh

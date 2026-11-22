@@ -1,19 +1,23 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.SfiniteOfFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.OmBdReal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.OmMeas
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.CtVanish
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.CuspTrInt
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.IntEst
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KerId
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.NormLeOfSq
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KvCont
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.RopAe
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.QhtTw
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.QhtBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.QmapPres
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.PolyBdAll
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.SmoothDecay
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.SfiniteOfFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.OmBdReal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.OmMeas
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.CtVanish
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.CuspTrInt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.IntEst
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KerId
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.NormLeOfSq
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KvCont
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.RopAe
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.QhtTw
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.QhtBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.QmapPres
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.PolyBdAll
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.SmoothDecay
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -142,6 +146,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.kernX :
       ⟪UpperTheory.ConvolutionTheory.K.kv μ a (Quotient.out y), M (UpperTheory.ConvolutionTheory.K.kv μ (CuspidalProjection.ccStar g) (θ.e (Quotient.out y)))⟫_ℂ := by
     funext y
     rw [twKQ, twK, kerId K (2 + 2) μ f a g M hf]
+  set_option synthInstance.maxHeartbeats 400000 in
   have est := intEst' (quotientMeasure (Gam K (2 + 2)) μ) _ (twKQ θ f) _ w
     (C1 * C0 ^ N1 * Real.exp ((N0 * N1 : ℕ) * T) * ‖M ∘L (1 - Pc μ - P)‖) ((C2 + C3) * Real.exp (-(N' * T)) * ‖M‖)
     (omMeas (K := K) T).2.2 hi hw (by rw [hk]; exact (ker_cont μ θ a _ M).aestronglyMeasurable) (by positivity) (by positivity)

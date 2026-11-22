@@ -1,12 +1,18 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPairDefs
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.PairKEqZeroOfMemNormGrp
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.NormLimit
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.NormOpen
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.Kummer
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.BaseCase
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistenceA
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistenceB
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPairDefs
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.PairKEqZeroOfMemNormGrp
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.NormLimit
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.NormOpen
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.Kummer
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsIntEKMulVbar
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.FinCoh
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.EqZeroOfResEqZeroOfCoprime
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistenceA
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistenceB
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 

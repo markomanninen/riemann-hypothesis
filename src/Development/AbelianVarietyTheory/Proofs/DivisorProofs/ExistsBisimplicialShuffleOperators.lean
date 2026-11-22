@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTotalBiChains
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConeContractingHomotopy
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTotalBiChains
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConeContractingHomotopy
+
+@[expose] public section
+
 open CategoryTheory Limits Opposite AlgebraicTopology GlobalTheory.EZ
 universe u v
 
@@ -178,8 +183,8 @@ theorem exists_shuffle : ∃ G : ∀ a b n : ℕ, bo a b ⟶ bo n n, G 0 0 0 = �
       dsimp only
       rw [hid, Category.comp_id]
       obtain ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ : (a = 0 ∧ b = 1) ∨ (a = 1 ∧ b = 0) := by omega
-      · simp [dT, dH, dV, Finset.sum_range_succ, map_add, map_zsmul, hε]
-      · simp [dT, dH, dV, Finset.sum_range_succ, map_add, map_zsmul, hε]
+      · simp [dT, dH, dV, Finset.sum_range_succ, map_add (f := _), map_zsmul, hε]
+      · simp [dT, dH, dV, Finset.sum_range_succ, map_add (f := _), map_zsmul, hε]
     rw [hr, zero_smul, sub_zero]
   | succ n ih =>
     intro hab

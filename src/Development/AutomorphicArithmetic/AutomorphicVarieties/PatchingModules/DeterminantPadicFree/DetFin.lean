@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.PhiSub
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.AcConst
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.SubMulAddEpM
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FinSub
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.PhiSub
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.AcConst
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.SubMulAddEpM
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FinSub
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 
@@ -14,7 +18,7 @@ private theorem ac_mul {G R : Type} [TopologicalSpace G] [CommRing R] {I : Ideal
 private theorem ac_add {G R : Type} [TopologicalSpace G] [CommRing R] {I : Ideal R} {f h : G → R}
     (hf : AdicCont I f) (hh : AdicCont I h) : AdicCont I fun g => f g + h g := by
   intro N
-  simpa only [map_add] using (hf N).comp₂ (hh N) (· + ·)
+  simpa only [map_add (f := _)] using (hf N).comp₂ (hh N) (· + ·)
 
 private theorem ac_const {G R : Type} [TopologicalSpace G] [CommRing R] {I : Ideal R} (c : R) :
     AdicCont I fun _ : G => c := fun _ => IsLocallyConstant.const _
@@ -89,7 +93,7 @@ private theorem charK (l : ℕ) [Fact l.Prime] (K : Type) [Field K] [Finite K] [
   have hl : (algebraMap ℤ_[l] K) (l : ℤ_[l]) = 0 := by
     by_contra hne
     have hinj : Function.Injective (algebraMap ℤ_[l] K) := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro a ha
       by_contra ha0
       have hker : RingHom.ker (algebraMap ℤ_[l] K) ≠ ⊥ := by
@@ -121,7 +125,7 @@ private theorem lc_zp {l : ℕ} [Fact l.Prime] {G R : Type} [TopologicalSpace G]
     rw [Metric.mem_ball, dist_eq_norm, PadicInt.norm_lt_one_iff_dvd] at hy
     obtain ⟨c, hc⟩ := hy
     have hy' : y = x + (l : ℤ_[l]) * c := by rw [← hc]; ring
-    rw [hy', map_add, map_mul, map_natCast, hl, zero_mul, add_zero]
+    rw [hy', map_add (f := _), map_mul, map_natCast, hl, zero_mul, add_zero]
   exact hφ.comp_continuous he
 
 theorem UpperTheory.V.Pa.Det.detFin :

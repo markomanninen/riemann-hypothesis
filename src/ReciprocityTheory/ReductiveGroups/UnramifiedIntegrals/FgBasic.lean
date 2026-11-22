@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgDefs
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ theorem divByMv_zero (x : K) : DivByMv x (0 : MvPowerSeries ι K) := by
 theorem divByMv_add {x : K} {F G : MvPowerSeries ι K} (hF : DivByMv x F) (hG : DivByMv x G) :
     DivByMv x (F + G) := by
   intro d
-  rw [map_add]
+  rw [map_add (f := _)]
   exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hF d) (hG d))
 theorem divByMv_sub {x : K} {F G : MvPowerSeries ι K} (hF : DivByMv x F) (hG : DivByMv x G) :
     DivByMv x (F - G) := by
@@ -155,7 +159,7 @@ private theorem norm_natCast_le_one_unramified_integrals (n : ℕ) : ‖(n : K)�
     exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ih (by simp))
 
 theorem divBy_derivative {x : K} {f : PowerSeries K} (hf : DivBy x f) :
-    DivBy x (derivative K f) := by
+    DivBy x (derivative f) := by
   unfold DivBy at hf ⊢
   intro n
   rw [PowerSeries.coeff_derivative, norm_mul]
@@ -167,7 +171,7 @@ theorem divBy_derivative {x : K} {f : PowerSeries K} (hf : DivBy x f) :
         mul_le_mul (hf _) h1 (norm_nonneg _) (norm_nonneg _)
     _ = ‖x‖ := mul_one _
 theorem integralPS_derivative {f : PowerSeries K} (hf : IntegralPS f) :
-    IntegralPS (derivative K f) := by
+    IntegralPS (derivative f) := by
   rw [integralPS_iff_divBy_one] at *
   exact divBy_derivative hf
 

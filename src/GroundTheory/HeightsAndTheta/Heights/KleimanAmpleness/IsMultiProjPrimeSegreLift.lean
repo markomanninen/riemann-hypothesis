@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTailFurther
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsSideRest
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTailExtra
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSegreFibresNef
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SegreInclWeightedHomogeneousComponent
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SegreLiftMapMap
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PModelGenericPoint
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTailFurther
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsSideRest
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTailExtra
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSegreFibresNef
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SegreInclWeightedHomogeneousComponent
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SegreLiftMapMap
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PModelGenericPoint
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization

@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CapelliEigenvalues.Smooth
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CapelliEigenvalues.Smooth
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
+
+@[expose] public section
 
 open Matrix Formalism.REAL Formalism.QuantumDeterminants
 
@@ -35,7 +39,8 @@ theorem qminorOp_rel
     {t : ℕ} (a b : Fin t → Fin n) (u : ℂ) :
     φ (qminorOp Eop a b u f g) = qminorOp Eop' a b u f' g := by
   unfold qminorOp
-  simp only [Finset.sum_apply, Pi.smul_apply, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_apply, Pi.smul_apply, map_sum, map_smul]
   refine Finset.sum_congr rfl fun σ _ => ?_
   congr 1
   exact hg _ _ (foldr_rel Rel hT h t (fun k => u - ((k : ℕ) : ℂ)) (fun k => a (σ k)) b)
@@ -66,7 +71,7 @@ theorem eab_clm (φ : E →L[ℂ] E') {f : Matrix (Fin n) (Fin n) ℂ → E} (hf
     {g : Matrix (Fin n) (Fin n) ℂ} (hg : inUJ ε g) : φ (EabV ε a b f g) = EabV ε a b (fun x => φ (f x)) g := by
   obtain ⟨h1, h2, -, -⟩ := cpartMem n ε (Matrix.single a b 1)
   unfold EabV EcV
-  rw [map_add, map_smul, (rdVPair n ε E E' φ f _ g hf h1 hg).2, (rdVPair n ε E E' φ f _ g hf h2 hg).2]
+  rw [map_add (f := _), map_smul, (rdVPair n ε E E' φ f _ g hf h1 hg).2, (rdVPair n ε E E' φ f _ g hf h2 hg).2]
 
 theorem capelli_clm (φ : E →L[ℂ] E') {f : Matrix (Fin n) (Fin n) ℂ → E} (hf : SmoothOnGV ε f) (u : ℂ)
     {g : Matrix (Fin n) (Fin n) ℂ} (hg : inUJ ε g) : φ (capelli ε u f g) = capelli ε u (fun x => φ (f x)) g := by
@@ -76,7 +81,7 @@ theorem capelli_clm (φ : E →L[ℂ] E') {f : Matrix (Fin n) (Fin n) ℂ → E}
   rintro u a b f f' ⟨hs, he⟩
   refine ⟨top_smooth hs u a b, fun x hx => ?_⟩
   unfold Formalism.QuantumDeterminants.Top
-  rw [map_add, eab_clm φ hs a b hx, io_eab_congr he a b hx]
+  rw [map_add (f := _), eab_clm φ hs a b hx, io_eab_congr he a b hx]
   congr 1
   split_ifs
   · rw [map_smul, he x hx]
@@ -99,7 +104,9 @@ theorem capelli_localization : PI.UnitaryGroupMassFormula.CapelliEig.Loc := by
 theorem capelli_transport : PI.UnitaryGroupMassFormula.CapelliEig.CapTransport := by
   intro n ε E _ _ H P Q F u g hQP hPQ hH hsm hg
   have hg' := ioh_inUJ ε H P Q g hPQ hH hg
-  obtain ⟨x, hx⟩ := io_rep_mk hsm
+  let x : _root_.Formalism.QuantumDeterminants.ioS ε E := ⟨fun y => F (Q * y.1 * P), by
+    exact io_smooth_congr (fun y hy => (ioExt_at (φ := fun z => F (Q * z.1 * P)) hy).symm) hsm⟩
+  have hx : IORep (fun y => F (Q * y * P)) x.1 := fun y hy => rfl
   have h1 := ioh_qminor_rep (ioh_repr (ε := ε) (E := E) P Q) id id u hx _ hg'
   have h2 := io_qminor_rep id id u hx _ hg'
   have hc := (Formalism.FourierDecayAlt.P.contractions_covariant (Module.End ℂ (ioS ε E)) n (ioE ε E) P Q (io_gl ε E)

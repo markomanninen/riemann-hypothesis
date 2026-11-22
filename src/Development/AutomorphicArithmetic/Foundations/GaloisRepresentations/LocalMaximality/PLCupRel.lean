@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechDeltaCupProduct
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechDeltaCupProduct
+
+@[expose] public section
 
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
@@ -168,7 +172,8 @@ private theorem delta_cupE {σ E E' E'' : Type} [LinearOrder σ] [AddCommGroup E
     intro x t
     show GlobalTheory.DI.delta (fun s => μ x.1 (b s)) t = 0
     have : GlobalTheory.DI.delta (fun s => μ x.1 (b s)) t = μ x.1 (GlobalTheory.DI.delta b t) := by
-      simp [GlobalTheory.DI.delta, map_sum, map_zsmul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [GlobalTheory.DI.delta, map_sum, map_zsmul]
     rw [this, hd]
     simp
   have h4 : ∀ j ∈ u, ((-1 : ℤ) ^ (u.filter (· < j)).card •

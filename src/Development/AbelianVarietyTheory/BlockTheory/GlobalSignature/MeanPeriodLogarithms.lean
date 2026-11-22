@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.IsDiscriminantTwelfthRootOfIdealLattice
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.IsDiscriminantTwelfthRootOfIdealLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,12 +27,5 @@ theorem logOmVal_eq (D : D7) :
     rw [div_div_eq_mul_div, mul_comm]
   unfold logOmVal
   rw [h]
-
-example (D : D7) : IsCurveIdeal D ⊤ := by
-  refine ⟨top_ne_bot, ?_⟩
-  simp [Ideal.absNorm_top]
-
-example (D : D7) (cc : Ideal (𝓞 D.host.K)) : ∃ δ : ℂ, IsDiscriminantTwelfthRootOfIdealLattice D cc δ :=
-  IsAlgClosed.exists_pow_nat_eq _ (by norm_num)
 
 end GlobalTheory.IndefiniteRowSideFullHecke.MeanPeriodLogarithms

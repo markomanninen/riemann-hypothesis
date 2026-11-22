@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsArtinianRingFibQuot
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.TcoMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsArtinianRingFibQuot
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.TcoMem
+
+@[expose] public section
+
 open GlobalTheory.PD
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.isArtinianRing_rB_quot_span_tco_of_isFinCover : ∀ (k K : Type) [Field k] [Field K] [Algebra k K] (F : Type) [Field F] [Algebra k F] [Algebra F K]

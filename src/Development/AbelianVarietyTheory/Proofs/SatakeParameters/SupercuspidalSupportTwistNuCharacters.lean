@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CyclicStrongAtCusp
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CyclicStrongAtCusp
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.GLq
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.GalCut GlobalTheory.RoadU GlobalTheory.AboveL
@@ -12,11 +17,11 @@ namespace GlobalTheory.RoadU.TwistSupp
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-theorem nu_nu_neg (x : IrrGL k) (s : ℂ) : (x.nu s).nu (-s) = x := by
+theorem nu_nu_neg (x : IrrGL (k := k)) (s : ℂ) : (x.nu s).nu (-s) = x := by
   rw [IrrGL.nu_nu, add_neg_cancel, IrrGL.nu_zero]
 
-theorem nu_injective (s : ℂ) : Function.Injective fun x : IrrGL k => x.nu s := fun x y h => by
-  have := congrArg (fun z : IrrGL k => z.nu (-s)) h
+theorem nu_injective (s : ℂ) : Function.Injective fun x : IrrGL (k := k) => x.nu s := fun x y h => by
+  have := congrArg (fun z : IrrGL (k := k) => z.nu (-s)) h
   simpa only [nu_nu_neg] using this
 
 theorem chars_eq_map_nu {n : ℕ} (ξ ξ' : Fin n → (kˣ →* ℂˣ)) (hξ : ∀ j, IsSmoothChar (ξ j))
@@ -28,7 +33,7 @@ theorem chars_eq_map_nu {n : ℕ} (ξ ξ' : Fin n → (kˣ →* ℂˣ)) (hξ : �
   simp only [Function.comp_apply, IrrGL.nu, IrrGL.tw_ofChar]
   exact IrrGL.ofChar_inj.2 (h j)
 
-theorem unlinked_map_nu (m : Multiset (IrrGL k)) (s : ℂ) :
+theorem unlinked_map_nu (m : Multiset (IrrGL (k := k))) (s : ℂ) :
     Unlinked (m.map fun y => y.nu s) ↔ Unlinked m := by
   constructor
   · intro h y hy z hz e
@@ -41,7 +46,7 @@ theorem unlinked_map_nu (m : Multiset (IrrGL k)) (s : ℂ) :
     simp only
     rw [e, IrrGL.nu_nu, IrrGL.nu_nu, add_comm]
 
-theorem supp_nu_chars : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k] (x : IrrGL k) (n : ℕ) (ξ ξ' : Fin n → (kˣ →* ℂˣ)) (hξ : ∀ j, IsSmoothChar (ξ j)) (hξ' : ∀ j, IsSmoothChar (ξ' j)) (s : ℂ), (∀ j, ξ' j = ξ j * absPow k s) → (HasSupport x.rep (chars ξ hξ) ↔ HasSupport (x.nu s).rep (chars ξ' hξ')) ∧ (Unlinked (chars ξ hξ) ↔ Unlinked (chars ξ' hξ')) := by
+theorem supp_nu_chars : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k] (x : IrrGL (k := k)) (n : ℕ) (ξ ξ' : Fin n → (kˣ →* ℂˣ)) (hξ : ∀ j, IsSmoothChar (ξ j)) (hξ' : ∀ j, IsSmoothChar (ξ' j)) (s : ℂ), (∀ j, ξ' j = ξ j * absPow k s) → (HasSupport x.rep (chars ξ hξ) ↔ HasSupport (x.nu s).rep (chars ξ' hξ')) ∧ (Unlinked (chars ξ hξ) ↔ Unlinked (chars ξ' hξ')) := by
   intro k _ _ _ _ _ x n ξ ξ' hξ hξ' s h
   rw [chars_eq_map_nu ξ ξ' hξ hξ' s h, unlinked_map_nu]
   refine ⟨⟨fun H => SupportRing.hasSupport_nu H s, fun H => ?_⟩, Iff.rfl⟩

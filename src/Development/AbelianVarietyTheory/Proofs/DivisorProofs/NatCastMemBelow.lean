@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ClassTermBoundBetaOfToricDenominator
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjugateEmbeddingIsCMTypeSqrtMinusD
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitsCOfModEqOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CompletelySplitPrimeHostPlaceProperties
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NcardPrimesOverOfStabilizer
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsNormSubEqOne
-import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.FourMulQLeCondN
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ClassTermBoundBetaOfToricDenominator
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjugateEmbeddingIsCMTypeSqrtMinusD
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitsCOfModEqOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CompletelySplitPrimeHostPlaceProperties
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NcardPrimesOverOfStabilizer
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsNormSubEqOne
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.FourMulQLeCondN
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,23 +44,28 @@ theorem natCast_mem_below {E : Type} [Field E] [NumberField E] (P : HeightOneSpe
 
 variable {D : D7} {T : Type} {L : Formalism.IndefR.Links.LevCh D T}
 
-open Classical in
 
+open Classical in
 theorem expIn_condF' (P : Places L) (v : HeightOneSpectrum (𝓞 D.host.F)) :
     expIn (condF P) v = if v ∈ P.S0 then condExp P v else 0 := by
   have key : ∀ S : Finset (HeightOneSpectrum (𝓞 D.host.F)), v ∉ S →
       ¬ v.asIdeal ∣ ∏ u ∈ S, u.asIdeal ^ condExp P u := fun S hS h => by
-    obtain ⟨u, hu, h⟩ := (v.prime.dvd_finset_prod_iff _).1 h
-    have h2 := v.prime.dvd_of_dvd_pow h
-    have : v = u := HeightOneSpectrum.ext (associated_iff_eq.1 (v.irreducible.associated_of_dvd u.irreducible h2))
-    exact hS (this ▸ hu)
+    induction S using Finset.induction_on with
+    | empty => exact v.prime.not_dvd_one (by simpa using h)
+    | @insert u S hu ih =>
+      rw [Finset.prod_insert hu] at h
+      rcases v.prime.dvd_mul.mp h with h | h
+      · have h2 := v.prime.dvd_of_dvd_pow h
+        have : v = u := HeightOneSpectrum.ext (associated_iff_eq.1 (v.irreducible.associated_of_dvd u.irreducible h2))
+        exact hS (this ▸ Finset.mem_insert_self u S)
+      · exact ih (fun hv => hS (Finset.mem_insert_of_mem hv)) h
   show multiplicity v.asIdeal (∏ u ∈ P.S0, u.asIdeal ^ condExp P u) = _
   split_ifs with h
   · rw [← Finset.mul_prod_erase _ _ h]
     refine multiplicity_eq_of_dvd_of_not_dvd (dvd_mul_right _ _) fun h' => ?_
     rw [pow_succ, mul_dvd_mul_iff_left (pow_ne_zero _ v.ne_bot)] at h'
     exact key _ (Finset.notMem_erase _ _) h'
-  · exact multiplicity_eq_zero.2 (key _ h)
+  · exact multiplicity_eq_zero_of_not_dvd (key _ h)
 
 theorem isBaseCond_condF (P : Places L) (hg : ∀ i, D.host.g i % LevelStarExponents.condE D = 1)
     (hpde : ((Ideal.span {(D.host.pde : ℤ)}).primesOver (𝓞 D.host.E)).ncard = Module.finrank ℚ D.host.E ∧
@@ -108,7 +117,8 @@ theorem isBaseCond_condF (P : Places L) (hg : ∀ i, D.host.g i % LevelStarExpon
     by_contra h
     have e := expIn_condF' P v
     rw [if_neg h] at e
-    have := multiplicity_eq_zero.1 e
+    have hne : condF P ≠ 0 := Finset.prod_ne_zero_iff.2 fun u _ => pow_ne_zero _ u.ne_bot
+    have := (multiplicity_eq_zero (FiniteMultiplicity.of_prime_left v.prime hne)).1 e
     exact this hv
   refine ⟨?_, ?_, fun v hv => ?_⟩
   · exact Finset.prod_ne_zero_iff.2 fun v _ => pow_ne_zero _ v.ne_bot
@@ -117,7 +127,7 @@ theorem isBaseCond_condF (P : Places L) (hg : ∀ i, D.host.g i % LevelStarExpon
     have e1 := expIn_condF' P P.v0
     rw [if_pos h0, condExp, if_pos rfl] at e1
     have e2 : expIn (condF P) P.v0 = 0 := by
-      rw [e]; exact multiplicity_eq_zero.2 fun h => P.v0.isPrime.ne_top (top_le_iff.1 (Ideal.le_of_dvd h))
+      rw [e]; exact multiplicity_eq_zero_of_not_dvd fun h => P.v0.isPrime.ne_top (top_le_iff.1 (Ideal.le_of_dvd h))
     omega
   · have hS := hexp v hv
     have hle : expIn (condF P) v ≤ 2 := by

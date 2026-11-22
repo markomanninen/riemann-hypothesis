@@ -1,25 +1,29 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BddGood
-import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
-import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CuspFormBoundGoodPointsExtendsAllPoints
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SupSetFinitelyGenerated
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.SubsingletonOfScalar
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsFiniteMchartCover
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsChartFiniteType
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NonemptyLift
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LieBasisCoordinatesBijectiveTangent
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.IsCombAtIffCoordinateCombinationStatement
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.IsEigenvectorIffLieBasisCoordinates
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsFrPtTie
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.TieBaseChange
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.TieIntegral
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.TriangularInvOfDiagNe
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsFlagCellChartOverModelChart
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsFiniteIntegralChartCoverFlagSpace
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsIntegralPivotDecomposition
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvaluationLawsGenericFramesAtlasHold
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FramedPointEvalNaturalWeightScaling
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BddGood
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
+public import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CuspFormBoundGoodPointsExtendsAllPoints
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SupSetFinitelyGenerated
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.SubsingletonOfScalar
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsFiniteMchartCover
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsChartFiniteType
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NonemptyLift
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LieBasisCoordinatesBijectiveTangent
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.IsCombAtIffCoordinateCombinationStatement
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.IsEigenvectorIffLieBasisCoordinates
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsFrPtTie
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.TieBaseChange
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.TieIntegral
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.TriangularInvOfDiagNe
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsFlagCellChartOverModelChart
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsFiniteIntegralChartCoverFlagSpace
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsIntegralPivotDecomposition
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvaluationLawsGenericFramesAtlasHold
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FramedPointEvalNaturalWeightScaling
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -78,8 +82,8 @@ end GlobalTheory.EqCharGood
 
 namespace GlobalTheory.EqCharGood
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem inV_of_extIn_eqChar : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) (f : Rul Xo c), f ∈ sec Xo c a n → ∀ (la : HeightOneSpectrum (𝓞 c.F)) (Y : Model Xo c (la.valuation c.F).valuationSubring.subtype), PushInvertible Y.t.G Y.t.PP.L → ∀ (T : CDVR) (io : c.F →+* T.Fr), (∀ k : c.F, io k ∈ (algebraMap T.V T.Fr).range) → ∀ y : IntFr Xo c T io, (letI := io.toAlgebra; ExtIn Y (abLocus Y.t.G) T io y.1.x) → evI y f ∈ (algebraMap T.V T.Fr).range := by
   intro E _ _ _ H Dw l Xo c a n f hf la Y hP T io hio y hy
   classical

@@ -1,7 +1,11 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SExpDefs
-import GroundTheory.GlobalFields.TateThesis.EulerFactorsInfinite
-import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
-import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SExpDefs
+public import GroundTheory.GlobalFields.TateThesis.EulerFactorsInfinite
+public import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
+public import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,20 +20,20 @@ namespace UpperTheory.HilbertEisensteinWeightOne.FourierExpansionEisenstein.L5
 
 variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F]
 
-variable (F) in
 
+variable (F) in
 def wpoly (x : mixedSpace F) : ℂ :=
   ∏ v : InfinitePlace F, (1 + ((x.1 ⟨v, IsTotallyReal.isReal v⟩ : ℝ) : ℂ) ^ 2)
 
-variable (F) in
 
+variable (F) in
 def phi1 : 𝓢(mixedSpace F, ℂ) :=
   SchwartzMap.smulLeftCLM ℂ (wpoly F)
     (SchwartzMap.compCLMOfContinuousLinearEquiv ℂ (mixedToEuclidean F)
       (gaussianSchwartz (euclidean.mixedSpace F)))
 
-variable (F) in
 
+variable (F) in
 def H1 : Ad F → ℂ := schwartzBruhatTensor (phi1 F) (cosetIndicator 1 0)
 
 def condZ (c : HeightOneSpectrum (𝓞 F) → ℕ) (Z : Ad F) : Prop :=

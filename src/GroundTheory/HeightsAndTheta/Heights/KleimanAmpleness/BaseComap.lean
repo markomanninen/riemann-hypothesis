@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsFieldSubalgebraSelf
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsFieldSubalgebraSelf
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -26,18 +31,5 @@ def ModelCurves.Statement : Prop :=
           mIdealOver F (IndefiniteRowSideFullHecke.Kleiman2.oneBlock x) ≤ P → relDim P = ((d : ℕ) : WithBot (WithTop ℤ)) →
             ∃ W : Ideal (NumbersDVR.MRing ι F), NumbersDVR.IsMultiProjPrime W ∧ mIdealOver F y ≤ W ∧
               relDim W = ((d : ℕ) : WithBot (WithTop ℤ)) ∧ baseComap F k₀ e W = P)
-
-theorem ModelCurves.hyps (F : Type) [Field F] :
-    IndefiniteRowSideFullHecke.Kleiman2.IsModelWithBase F (IndefiniteRowSideFullHecke.Kleiman2.pnPt F 1) () ∧
-      NumbersDVR.IsMultiProjPrime (mIdealOver F (IndefiniteRowSideFullHecke.Kleiman2.pnPt F 1)) ∧
-      relDim (mIdealOver F (IndefiniteRowSideFullHecke.Kleiman2.pnPt F 1)) = ((1 : ℕ) : WithBot (WithTop ℤ)) ∧
-      baseComap F () (Equiv.refl (Fin (1 + 1))) (mIdealOver F (IndefiniteRowSideFullHecke.Kleiman2.pnPt F 1)) = ⊥ := by
-  refine ⟨IndefiniteRowSideFullHecke.Kleiman2.isModelWithBase_pnPt F 1, ?_, IndefiniteRowSideFullHecke.Kleiman2.relDim_pnPt F 1, ?_⟩
-  · rw [IndefiniteRowSideFullHecke.Kleiman2.mIdealOver_pnPt]
-    exact NumbersDVR.isMultiProjPrime_bot
-  · rw [IndefiniteRowSideFullHecke.Kleiman2.mIdealOver_pnPt, baseComap]
-    refine Ideal.comap_bot_of_injective _ (rename_injective _ ?_)
-    rintro ⟨⟨⟩, i⟩ ⟨⟨⟩, j⟩ h
-    simpa using h
 
 end GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization

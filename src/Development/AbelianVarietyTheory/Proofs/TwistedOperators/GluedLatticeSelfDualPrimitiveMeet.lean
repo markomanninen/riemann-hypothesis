@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatGlueLatIffDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GluedHermitianLatticeUnique
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatGlueLatIffDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +42,7 @@ theorem coords_of_mem_hat (h : IsLine Y X ι z u) {L₀ : Lat X} (hL : Submodule
   obtain ⟨e1, e2⟩ := flat_inj h e
   have e3 : a = inc D (t * Tu D u) := by
     rw [RingHom.map_mul, e2, mul_assoc, inc_inv_mul, mul_one]
-  refine ⟨(inc_mem_iff _).1 (e3 ▸ ha), (inc_mem_hat_iff hL _).1 ?_⟩
+  refine ⟨(inc_mem_iff _).1 (e3 ▸ ha), GlobalTheory.GlueUnique.mem_of_inc_mem_hat hL.fg ?_⟩
   change vA X (x - (t * Tu D u) • x₀) ∈ _
   have e4 : vA X (x - (t * Tu D u) • x₀) = x₁ := by
     rw [sub_eq_add_neg, ← neg_smul, vA_add, vA_smul, RingHom.map_neg, ← e3, e1, neg_smul, add_neg_cancel_right]
@@ -72,22 +77,22 @@ theorem glueLat_fg {L₀ : Lat X} (hL : Submodule.IsLattice D.host.E L₀) (x₀
   rw [e]
   exact hL.fg.map _
 
-theorem span_glueLat {L₀ : Lat X} (hL : Submodule.IsLattice D.host.E L₀) (x₀ : X.V) :
+theorem span_glueLat {L₀ : Lat X} (hL : Submodule.IsFullLattice D.host.E L₀) (x₀ : X.V) :
     Submodule.span D.host.E (glueLat Y X ι z u L₀ x₀ : Set Y.V) = flatSp Y X ι z := by
   have h1 : ∀ x : X.V, ι x ∈ Submodule.span D.host.E (glueLat Y X ι z u L₀ x₀ : Set Y.V) := by
     intro x
     obtain ⟨y, rfl⟩ := (Formalism.L2.Herm.crd X).symm.surjective x
-    have hy : y ∈ Submodule.span D.host.E (L₀ : Set (Fin X.rank → D.host.E)) := hL.span_eq_top ▸ Submodule.mem_top
+    have hy : y ∈ Submodule.span D.host.E (L₀ : Set (Fin X.rank → D.host.E)) := (Submodule.IsFullLattice.span_eq_top (self := hL)) ▸ Submodule.mem_top
     induction hy using Submodule.span_induction with
     | mem y hy =>
       exact Submodule.subset_span ((mem_glueLat _).2 ⟨_, by rwa [LinearEquiv.apply_symm_apply], 0, by simp⟩)
     | zero => rw [map_zero, map_zero]; exact zero_mem _
-    | add a b _ _ ha hb => rw [map_add, map_add]; exact add_mem ha hb
+    | add a b _ _ ha hb => rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
     | smul c a _ ha => rw [map_smul, map_smul]; exact Submodule.smul_mem _ c ha
   refine le_antisymm (Submodule.span_le.2 fun y hy => ?_) fun y hy => ?_
   · obtain ⟨x, -, a, rfl⟩ := (mem_glueLat y).1 hy
     refine (mem_flatSp _).2 ⟨x + (a : D.host.E) • x₀, a * (Tu D u)⁻¹, ?_⟩
-    rw [map_add, map_smul, smul_add, smul_smul]
+    rw [map_add (f := _), map_smul, smul_add, smul_smul]
     abel
   · obtain ⟨x, t, rfl⟩ := (mem_flatSp y).1 hy
     refine add_mem (h1 x) (Submodule.smul_mem _ t ?_)
@@ -96,9 +101,9 @@ theorem span_glueLat {L₀ : Lat X} (hL : Submodule.IsLattice D.host.E L₀) (x�
     have h3 := Submodule.smul_mem _ (Tu D u) (sub_mem h2 (h1 x₀))
     rwa [add_sub_cancel_right, smul_smul, mul_inv_cancel₀ (Tu_ne_zero u), one_smul] at h3
 
-theorem isSDIn_glueLat (h : IsLine Y X ι z u) {L₀ : Lat X} (hL : Submodule.IsLattice D.host.E L₀) {x₀ : X.V}
+theorem isSDIn_glueLat (h : IsLine Y X ι z u) {L₀ : Lat X} (hL : Submodule.IsFullLattice D.host.E L₀) {x₀ : X.V}
     (hg : IsGlueVec X u L₀ (vA X x₀)) : IsSDIn Y (flatSp Y X ι z) (glueLat Y X ι z u L₀ x₀) := by
-  refine ⟨glueLat_fg hL x₀, span_glueLat hL x₀, fun y hy => ?_⟩
+  refine ⟨glueLat_fg hL.toIsLattice x₀, span_glueLat hL x₀, fun y hy => ?_⟩
   obtain ⟨x, t, rfl⟩ := (mem_flatSp y).1 hy
   have key := mem_hat_glueLat_iff_dual h hg (vA X x) (inc D t)
   rw [← vA_flat] at key
@@ -107,7 +112,7 @@ theorem isSDIn_glueLat (h : IsLine Y X ι z u) {L₀ : Lat X} (hL : Submodule.Is
     rw [← inc_mem_iff, ← hA_vA]
     exact key.1 (vA_mem_hat Y hm) _ (vA_mem_hat Y hx')
   · intro H
-    have h1 := coords_of_mem_hat h hL (key.2 (hA_mem_of_forall ?_))
+    have h1 := coords_of_mem_hat h hL.toIsLattice (key.2 (hA_mem_of_forall ?_))
     · exact mem_of_coords h1.1 h1.2
     · rintro _ ⟨x', hx', rfl⟩
       change hA Y (vA Y x') _ ∈ _
@@ -131,7 +136,9 @@ theorem isPrim_glueLat (h : IsLine Y X ι z u) {L₀ : Lat X} (hL : Submodule.Is
     (hg : IsGlueVec X u L₀ (vA X x₀)) : IsPrim Y z (glueLat Y X ι z u L₀ x₀) := by
   intro a
   have e : a • z = ι 0 + a • z := by rw [map_zero, zero_add]
-  rw [e, mem_iff_coords h hL, ← inc_mem_hat_iff hL, ← inc_mem_iff, ← inc_mem_iff]
+  have hmem (x : Fin X.rank → D.host.E) : (fun i => inc D (x i)) ∈ hat L₀ ↔ x ∈ L₀ :=
+    ⟨GlobalTheory.GlueUnique.mem_of_inc_mem_hat hL.fg, inc_mem_hat⟩
+  rw [e, mem_iff_coords h hL, ← hmem, ← inc_mem_iff, ← inc_mem_iff]
   change _ ∧ vA X (0 - (a * Tu D u) • x₀) ∈ _ ↔ _
   rw [zero_sub, ← neg_smul, vA_smul, RingHom.map_neg, RingHom.map_mul]
   generalize inc D a = b
@@ -150,10 +157,10 @@ theorem isPrim_glueLat (h : IsLine Y X ι z u) {L₀ : Lat X} (hL : Submodule.Is
     exact smul_mem_hat (neg_mem hb) hg.mul_mem
 
 theorem glueLat_selfDual_prim_cap : ∀ (D : D7) (u : D.what₂.Word) (Y X : HSp D) (ι : X.V →ₗ[D.host.E] Y.V) (z : Y.V),
-    IsLine Y X ι z u → ∀ (L₀ : Lat X) (x₀ : X.V), Submodule.IsLattice D.host.E L₀ → IsGlueVec X u L₀ (vA X x₀) →
+    IsLine Y X ι z u → ∀ (L₀ : Lat X) (x₀ : X.V), Submodule.IsFullLattice D.host.E L₀ → IsGlueVec X u L₀ (vA X x₀) →
       IsSDIn Y (flatSp Y X ι z) (glueLat Y X ι z u L₀ x₀) ∧ IsPrim Y z (glueLat Y X ι z u L₀ x₀) ∧
         capX Y X ι (glueLat Y X ι z u L₀ x₀) = L₀ :=
-  fun _ _ _ _ _ _ h _ x₀ hL hg => ⟨isSDIn_glueLat h hL hg, isPrim_glueLat h hL hg, capX_glueLat h hL x₀⟩
+  fun _ _ _ _ _ _ h _ x₀ hL hg => ⟨isSDIn_glueLat h hL hg, isPrim_glueLat h hL.toIsLattice hg, capX_glueLat h hL.toIsLattice x₀⟩
 
 end GlobalTheory.GlueVecLattice
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 open Module
@@ -70,7 +74,7 @@ theorem dichotomy (hr : finrank K L = 2) (hred : IsReduced L) :
   · obtain ⟨r, hr2⟩ := hroot
     have hfac : (x - algebraMap K L r) * (x - algebraMap K L (q - r)) = 0 := by
       have h' : algebraMap K L (r ^ 2) = algebraMap K L (p + q * r) := by rw [hr2]
-      simp only [map_add, map_mul, map_pow, map_sub] at h' ⊢
+      simp only [map_add (f := _), map_mul, map_pow, map_sub] at h' ⊢
       linear_combination hpq - h'
     by_cases hrs : r = q - r
     · exfalso
@@ -124,7 +128,7 @@ theorem dichotomy (hr : finrank K L = 2) (hred : IsReduced L) :
     have hprod : (algebraMap K L a + algebraMap K L c * x) *
         (algebraMap K L (a + c * q) - algebraMap K L c * x) =
         algebraMap K L (a * a + a * c * q - c ^ 2 * p) := by
-      simp only [map_add, map_mul, map_sub, map_pow]
+      simp only [map_add (f := _), map_mul, map_sub, map_pow]
       linear_combination (-(algebraMap K L c) ^ 2) * hpq
     refine ⟨algebraMap K L (a * a + a * c * q - c ^ 2 * p)⁻¹ *
       (algebraMap K L (a + c * q) - algebraMap K L c * x), ?_⟩

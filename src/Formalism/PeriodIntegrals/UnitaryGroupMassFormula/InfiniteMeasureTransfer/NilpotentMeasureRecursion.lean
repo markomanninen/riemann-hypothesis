@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InfiniteMeasureTransfer.ConjSubMulVec
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InfiniteMeasureTransfer.ConjSubMulVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -142,9 +146,6 @@ theorem hermitian_measure_recursion : HStep := by
     exact (fix_iff I _ x).2 fun v => by
       rw [← uMat_toInf I hb s v]
       exact h v x hx
-
-theorem span_lt_eq {m : ℕ} (b : Fin m) : {a : Fin m | a < b} = {c : Fin m | c.1 < b.1} :=
-  Set.ext fun _ => Fin.lt_iff_val_lt_val
 
 theorem span_univ_eq (m : ℕ) : (Set.univ : Set (Fin m)) = {c : Fin m | c.1 < m} :=
   Set.ext fun c => ⟨fun _ => c.2, fun _ => Set.mem_univ _⟩

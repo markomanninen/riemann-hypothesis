@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsIndepSections
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsIndepSections
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
@@ -37,7 +41,8 @@ theorem exists_isHomogeneous_eval₂Hom_eq (c : R →+* A) (x : σ → A) (i : �
     have hd' := Finset.mem_range.1 hd
     rwa [show d + (t - d) = t by omega] at h
   · conv_rhs => rw [← MvPolynomial.sum_homogeneousComponent p]
-    simp only [map_sum, map_mul, map_pow, MvPolynomial.eval₂Hom_X', hi, one_pow, _root_.mul_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_pow, MvPolynomial.eval₂Hom_X', hi, one_pow, _root_.mul_one]
 
 end Poly
 

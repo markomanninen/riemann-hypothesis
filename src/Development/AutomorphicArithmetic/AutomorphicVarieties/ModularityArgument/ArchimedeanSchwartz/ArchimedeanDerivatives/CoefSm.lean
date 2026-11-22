@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.HodgeTateFromSandwich
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.HodgeTateFromSandwich
+
+@[expose] public section
 
 attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
 
@@ -34,12 +38,12 @@ private theorem abs_deriv (hU : IsOpen U) (hA : ∀ b, ContinuousOn (A b) U)
     (F' := fun z x => ∑ b, (A b z).smulRight (f (D b v) z x))
     (bound := fun _ => ∑ b, (‖A b y‖ + 1) * C (D b v)) hs
     (Filter.eventually_of_mem (hU.mem_nhds hy) (hm v)) (hi v)
-    (integrable_finset_sum _ fun b _ => hL b).aestronglyMeasurable
+    (integrable_finsetSum _ fun b _ => hL b).aestronglyMeasurable
     (Filter.Eventually.of_forall fun x z hz => (norm_sum_le _ _).trans (Finset.sum_le_sum fun b _ => by
       rw [ContinuousLinearMap.norm_smulRight_apply]
       exact mul_le_mul (hz.2 b).le (hC _ z hz.1 x) (norm_nonneg _) (by positivity)))
     (integrable_const _) (Filter.Eventually.of_forall fun x z hz => hd v x z hz.1)
-  rw [integral_finset_sum _ fun b _ => hL b] at key
+  rw [integral_finsetSum _ fun b _ => hL b] at key
   refine key.congr_fderiv (Finset.sum_congr rfl fun b _ => ?_)
   exact ((ContinuousLinearMap.smulRightL ℝ P ℂ (A b y)).integral_comp_comm (hi _))
 
@@ -60,7 +64,7 @@ end Abs
 
 section Con
 
-variable {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] {n : ℕ}
+variable {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] {n : ℕ}
 
 private def lm (K : Type) [Field K] [NumberField K] (n : ℕ) : Lie K n →L[ℝ] Lie K n →L[ℝ] Lie K n :=
   LinearMap.toContinuousLinearMap
@@ -71,7 +75,7 @@ private def lm (K : Type) [Field K] [NumberField K] (n : ℕ) : Lie K n →L[ℝ
       map_add' := fun y z => ContinuousLinearMap.ext fun X => map_add (rmul X) y z
       map_smul' := fun c y => ContinuousLinearMap.ext fun X => map_smul (rmul X) c y }
 
-omit [IsTotallyComplex K] in
+omit [_root_.NumberField.IsTotallyComplex K] in
 private theorem lm_equiv {y : Lie K n} (hy : y ∈ invSet K n) : ∃ e : Lie K n ≃L[ℝ] Lie K n, (e : Lie K n →L[ℝ] Lie K n) = lm K n y := by
   obtain ⟨u, hu⟩ := hy
   obtain rfl : y = toL u.val := hu.symm
@@ -81,7 +85,7 @@ private theorem lm_equiv {y : Lie K n} (hy : y ∈ invSet K n) : ∃ e : Lie K n
 private def cf (K : Type) [Field K] [NumberField K] (n : ℕ) (b : Fin (Module.finrank ℝ (Lie K n))) (y : Lie K n) : Lie K n →L[ℝ] ℝ :=
   (LinearMap.toContinuousLinearMap ((Module.finBasis ℝ (Lie K n)).coord b)).comp (lm K n y).inverse
 
-omit [IsTotallyComplex K] in
+omit [_root_.NumberField.IsTotallyComplex K] in
 private theorem cf_smooth (b : Fin (Module.finrank ℝ (Lie K n))) : ContDiffOn ℝ ∞ (cf K n b) (invSet K n) := by
   intro y hy
   obtain ⟨e, he⟩ := lm_equiv hy
@@ -102,10 +106,11 @@ private theorem chart_deriv (φ : Sm K n) (g : GA K n) {y : Lie K n} (hy : y ∈
     exact chart_lieD φ.2 Y g hy
   have e2 : ∀ b, cf K n b y (e X) = (Module.finBasis ℝ (Lie K n)).repr X b := fun b => by
     simp [cf, ← he]
-  simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smulRight_apply, e1, e2, ← map_smul, ← map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [sum_apply, ContinuousLinearMap.smulRight_apply, e1, e2, ← map_smul, ← map_sum,
     Module.Basis.sum_repr]
 
-omit [IsTotallyComplex K] in
+omit [_root_.NumberField.IsTotallyComplex K] in
 private theorem cf_one (b : Fin (Module.finrank ℝ (Lie K n))) (X : Lie K n) :
     cf K n b (oneL K n) X = (Module.finBasis ℝ (Lie K n)).repr X b := by
   have : lm K n (oneL K n) = ContinuousLinearMap.id ℝ _ := ContinuousLinearMap.ext fun X => Matrix.one_mul (Matrix.of X)
@@ -115,31 +120,31 @@ end Con
 
 section Main
 
-variable {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] {n : ℕ}
+variable {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] {n : ℕ}
 
 private theorem cusp_facts (hn : 1 ≤ n) {σ : CuspSub K n} (h : Cm.carrier σ ≤ centralCuspForms K n) (φ : σ.V) :
     Continuous φ.1.1 ∧ ∃ C, ∀ y, ‖φ.1.1 y‖ ≤ C := by
   obtain ⟨ψ, rfl⟩ := (Cm.carrierEq σ).surjective φ
   exact ⟨ψ.1.2.1.continuous, exists_norm_le_of_cusp hn ψ.1.2 (h ψ.2)⟩
 
-private theorem coef_deriv (hn : 1 ≤ n) (μ : Measure (Reduction.normOneGL K n)) [μ.IsHaarMeasure] {σ : CuspSub K n}
+private theorem coef_deriv (hn : 1 ≤ n) (μ : Measure (Reduction.normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] {σ : CuspSub K n}
     (h : Cm.carrier σ ≤ centralCuspForms K n) (φ₂ : cuspForms K n) (g : GA K n) (φ : σ.V) {y : Lie K n}
     (hy : y ∈ invSet K n) :
     HasFDerivAt (chart (GJGlobal.matrixCoeff μ φ.1.1 φ₂.1) g) (∑ b, (cf K n b y).smulRight
       (chart (GJGlobal.matrixCoeff μ (σ.op (.lie (Module.finBasis ℝ (Lie K n) b)) φ).1.1 φ₂.1) g y)) y := by
-  have : IsFiniteMeasure (μ.restrict (RightCosetSpace.fundamentalDomain (Reduction.rationalGLOne K n))) :=
+  have : IsFiniteMeasure (μ.restrict (RightCosetSpace.fundamentalDomain (Reduction.rationalGLOne (K := K) (n := n)))) :=
     isFiniteMeasure_restrict.2 (GJGlobal.measure_fundamentalDomain_rationalGLOne_lt_top μ).ne
   obtain ⟨C₂, hC₂⟩ := CuspidalSpectrum.exists_norm_le_of_mem_cuspForms φ₂.2
   have h2c : Continuous φ₂.1 := φ₂.2.1.continuous
-  let f : σ.V → Lie K n → Reduction.normOneGL K n → ℂ := fun v z x =>
+  let f : σ.V → Lie K n → Reduction.normOneGL (K := K) (n := n) → ℂ := fun v z x =>
     chart v.1.1 ((x : AdelicGLn.AdelicGL K n) * g) z * (starRingEnd ℂ) (φ₂.1 x)
   have hf : ∀ (v : σ.V), ∀ z ∈ invSet K n, chart (GJGlobal.matrixCoeff μ v.1.1 φ₂.1) g z =
-      ∫ x in RightCosetSpace.fundamentalDomain (Reduction.rationalGLOne K n), f v z x ∂μ := by
+      ∫ x in RightCosetSpace.fundamentalDomain (Reduction.rationalGLOne (K := K) (n := n)), f v z x ∂μ := by
     intro v z hz
     obtain ⟨u, hu⟩ := hz
     obtain rfl : z = toL u.val := hu.symm
     simp only [f, chart_val, GJGlobal.matrixCoeff, mul_assoc]
-  have key := abs_deriv (ν := μ.restrict (RightCosetSpace.fundamentalDomain (Reduction.rationalGLOne K n)))
+  have key := abs_deriv (ν := μ.restrict (RightCosetSpace.fundamentalDomain (Reduction.rationalGLOne (K := K) (n := n))))
     (f := f) (D := fun b v => σ.op (.lie (Module.finBasis ℝ (Lie K n) b)) v) (A := cf K n) isOpen_invSet
     (fun b => (cf_smooth b).continuousOn) ?_ ?_ ?_ φ hy
   · simp only [hf _ y hy]
@@ -162,17 +167,17 @@ private theorem coef_deriv (hn : 1 ≤ n) (μ : Measure (Reduction.normOneGL K n
   · intro v x z hz
     refine ((chart_deriv v.1 ((x : AdelicGLn.AdelicGL K n) * g) hz).mul_const _).congr_fderiv ?_
     ext1 Z
-    simp only [f, ContinuousLinearMap.sum_apply, ContinuousLinearMap.smulRight_apply, ContinuousLinearMap.smul_apply,
+    simp only [f, sum_apply, ContinuousLinearMap.smulRight_apply, ContinuousLinearMap.smul_apply,
       smul_eq_mul, Finset.mul_sum, Complex.real_smul]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [mul_comm, mul_assoc]
     rfl
 
-private theorem coef_int (hn : 1 ≤ n) (μ : Measure (Reduction.normOneGL K n)) [μ.IsHaarMeasure] {σ : CuspSub K n}
+private theorem coef_int (hn : 1 ≤ n) (μ : Measure (Reduction.normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] {σ : CuspSub K n}
     (h : Cm.carrier σ ≤ centralCuspForms K n) (φ₂ : cuspForms K n) (g : GA K n) (φ : σ.V) :
-    Integrable (fun x : Reduction.normOneGL K n => φ.1.1 ((x : AdelicGLn.AdelicGL K n) * g) * (starRingEnd ℂ) (φ₂.1 x))
-      (μ.restrict (RightCosetSpace.fundamentalDomain (Reduction.rationalGLOne K n))) := by
-  have : IsFiniteMeasure (μ.restrict (RightCosetSpace.fundamentalDomain (Reduction.rationalGLOne K n))) :=
+    Integrable (fun x : Reduction.normOneGL (K := K) (n := n) => φ.1.1 ((x : AdelicGLn.AdelicGL K n) * g) * (starRingEnd ℂ) (φ₂.1 x))
+      (μ.restrict (RightCosetSpace.fundamentalDomain (Reduction.rationalGLOne (K := K) (n := n)))) := by
+  have : IsFiniteMeasure (μ.restrict (RightCosetSpace.fundamentalDomain (Reduction.rationalGLOne (K := K) (n := n)))) :=
     isFiniteMeasure_restrict.2 (GJGlobal.measure_fundamentalDomain_rationalGLOne_lt_top μ).ne
   obtain ⟨C₂, hC₂⟩ := CuspidalSpectrum.exists_norm_le_of_mem_cuspForms φ₂.2
   have h2c : Continuous φ₂.1 := φ₂.2.1.continuous
@@ -183,7 +188,7 @@ private theorem coef_int (hn : 1 ≤ n) (μ : Measure (Reduction.normOneGL K n))
   · rw [norm_mul, Complex.norm_conj]
     exact mul_le_mul (hC _) (hC₂ _ x.2) (norm_nonneg _) ((norm_nonneg _).trans (hC 1))
 
-private def coefMap (hn : 1 ≤ n) (μ : Measure (Reduction.normOneGL K n)) [μ.IsHaarMeasure] {σ : CuspSub K n}
+private def coefMap (hn : 1 ≤ n) (μ : Measure (Reduction.normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] {σ : CuspSub K n}
     (h : Cm.carrier σ ≤ centralCuspForms K n) (φ₂ : cuspForms K n) : σ.V →ₗ[ℂ] Sm K n where
   toFun φ := ⟨GJGlobal.matrixCoeff μ φ.1.1 φ₂.1, fun g =>
     abs_smooth (G := fun v : σ.V => chart (GJGlobal.matrixCoeff μ v.1.1 φ₂.1) g) isOpen_invSet cf_smooth
@@ -195,7 +200,7 @@ private def coefMap (hn : 1 ≤ n) (μ : Measure (Reduction.normOneGL K n)) [μ.
     refine Eq.trans ?_ (integral_const_mul c _)
     exact integral_congr_ae (Filter.Eventually.of_forall fun x => mul_assoc _ _ _))
 
-private theorem coefMap_lie (hn : 1 ≤ n) (μ : Measure (Reduction.normOneGL K n)) [μ.IsHaarMeasure] {σ : CuspSub K n}
+private theorem coefMap_lie (hn : 1 ≤ n) (μ : Measure (Reduction.normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] {σ : CuspSub K n}
     (h : Cm.carrier σ ≤ centralCuspForms K n) (φ₂ : cuspForms K n) (X : Lie K n) (φ : σ.V) :
     coefMap hn μ h φ₂ (σ.op (.lie X) φ) = lie K n X (coefMap hn μ h φ₂ φ) := by
   have e : σ.op (.lie X) φ = ∑ b, (((Module.finBasis ℝ (Lie K n)).repr X b : ℝ) : ℂ) •
@@ -204,14 +209,16 @@ private theorem coefMap_lie (hn : 1 ≤ n) (μ : Measure (Reduction.normOneGL K 
     rw [Submodule.coe_sum]
     change lie K n X φ.1 = ∑ b, (((Module.finBasis ℝ (Lie K n)).repr X b : ℝ) : ℂ) • lie K n (Module.finBasis ℝ (Lie K n) b) φ.1
     conv_lhs => rw [← (Module.finBasis ℝ (Lie K n)).sum_repr X]
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, Complex.coe_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, Complex.coe_smul]
   refine Subtype.ext (funext fun g => ?_)
   have h1 : oneL K n ∈ invSet K n := val_mem_invSet (1 : GL (Fin n) (Cinf K))
   have hc : ∀ F : GA K n → ℂ, chart F g (oneL K n) = F g := fun F =>
     (chart_val F g 1).trans (by rw [map_one, mul_one])
   have h2 := congrArg (fun L : Lie K n →L[ℝ] ℂ => L X) (coef_deriv hn μ h φ₂ g φ h1).fderiv
   refine Eq.trans ?_ h2.symm
-  simp only [e, map_sum, map_smul, ContinuousLinearMap.sum_apply, ContinuousLinearMap.smulRight_apply, cf_one, hc,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [e, map_sum, map_smul, sum_apply, ContinuousLinearMap.smulRight_apply, cf_one, hc,
     Submodule.coe_sum, Finset.sum_apply, Submodule.coe_smul, Pi.smul_apply, Complex.real_smul, smul_eq_mul]
   rfl
 
@@ -227,7 +234,7 @@ private theorem cap_comm {σ : CuspSub K n} (T : σ.V →ₗ[ℂ] Sm K n)
       add_mem' := fun {x y} hx hy ψ => by
         obtain ⟨a, ha, ha'⟩ := hx ψ
         obtain ⟨b, hb, hb'⟩ := hy ψ
-        exact ⟨a + b, by rw [Submodule.coe_add, hb, ha]; rfl, by rw [map_add, hb', ha']; rfl⟩
+        exact ⟨a + b, by rw [Submodule.coe_add, hb, ha]; rfl, by rw [map_add (f := _), hb', ha']; rfl⟩
       algebraMap_mem' := fun c ψ => ⟨c • ψ, rfl, map_smul T c ψ⟩ }
   have hl : ∀ X, lie K n X ∈ S := fun X ψ => ⟨σ.op (.lie X) ψ, rfl, hT X ψ⟩
   have hE : ∀ i j : Fin n, Eop τ i j ∈ S := fun i j => by

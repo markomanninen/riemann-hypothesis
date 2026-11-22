@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsClaimSeq
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsZeroIdealChart
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistBundleToSubSystem
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsClaimSeq
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsZeroIdealChart
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistBundleToSubSystem
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -20,7 +25,8 @@ variable {R : Type u} [CommRing R] {N : ℕ}
 theorem homogeneousComponent_mul_form (r g : Poly R N) {d : ℕ} (hg : g.IsHomogeneous d) (e : ℕ) :
     homogeneousComponent e (r * g) ∈ Submodule.span R
       {z | ∃ (h : Poly R N) (d' : ℕ), h.IsHomogeneous d' ∧ d' + d = e ∧ z = h * g} := by
-  rw [show r * g = ∑ i ∈ Finset.range (r.totalDegree + 1), homogeneousComponent i r * g by
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [show r * g = ∑ i ∈ Finset.range (r.totalDegree + 1), homogeneousComponent i r * g by
     rw [← Finset.sum_mul, sum_homogeneousComponent], map_sum]
   refine Submodule.sum_mem _ fun i _ => ?_
   have hm : homogeneousComponent i r * g ∈ homogeneousSubmodule (Fin (N + 1)) R (i + d) :=
@@ -36,7 +42,8 @@ theorem mem_span_forms_of_mem_ideal {G : Set (Poly R N)} (deg : Poly R N → ℕ
     f ∈ Submodule.span R {z | ∃ g ∈ G, ∃ (h : Poly R N) (d' : ℕ), h.IsHomogeneous d' ∧
       d' + deg g = e ∧ z = h * g} := by
   obtain ⟨c, t, htG, -, rfl⟩ := Submodule.mem_span_iff_exists_finset_subset.mp hf
-  rw [← homogeneousComponent_eq_self he, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← homogeneousComponent_eq_self he, map_sum]
   refine Submodule.sum_mem _ fun g hg => ?_
   have hc := homogeneousComponent_mul_form (c g) g (hG g (htG hg)) e
   rw [smul_eq_mul]
@@ -99,7 +106,7 @@ theorem StepData.form_mem_J {f : Poly k N} {e : ℕ} (hf : f ∈ T.J) (he : f.Is
     rwa [show (c : ℤ) + d' = e by omega] at this
   · exact ⟨0, Submodule.zero_mem _, by rw [map_zero, zero_mul, mul_zero]⟩
   · rintro _ _ _ _ ⟨o, ho, h1⟩ ⟨o', ho', h2⟩
-    exact ⟨o + o', Submodule.add_mem _ ho ho', by rw [map_add, add_mul, h1, h2, mul_add]⟩
+    exact ⟨o + o', Submodule.add_mem _ ho ho', by rw [map_add (f := _), add_mul, h1, h2, mul_add]⟩
   · rintro a _ _ ⟨o, ho, h1⟩
     refine ⟨a • o, (twistMod k x e I).smul_of_tower_mem a ho, ?_⟩
     rw [map_smul, smul_mul_assoc, h1, mul_smul_comm]
@@ -139,7 +146,7 @@ def StepData.Jg : FinGradedSub (S := k) (x := x) Ω where
         · simp only [gj, Equiv.symm_apply_apply]; omega
         · simp only [gj, Equiv.symm_apply_apply, map_mul, smul_eq_mul]
       · rw [map_zero]; exact Submodule.zero_mem _
-      · intro a b _ _ ha hb; rw [map_add]; exact Submodule.add_mem _ ha hb
+      · intro a b _ _ ha hb; rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
       · intro a z _ hz; rw [map_smul]; exact Submodule.smul_mem _ a hz
 
 theorem StepData.Jg_tilde (I : Chart x) : (T.Jg.tildeSys 0).sub I = idealMod T.J I := by

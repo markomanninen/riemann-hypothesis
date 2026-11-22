@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.ContinuousExpG
-import Development.WeilBound.ThetaLifts.TowerModels.LeviAd
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.ContinuousExpG
+public import Development.WeilBound.ThetaLifts.TowerModels.LeviAd
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,13 +22,14 @@ open PositivityTheory.ThKG.Tow.Levi
 
 variable {d d₁ : ℕ} {W : Spc F E d} {W₁ : Spc F E d₁} {H : Plane E d d₁}
 
-variable (σ) in
 
+variable (σ) in
 def fa (J : Matrix (Fin d) (Fin d) E) (w z : Fin d → AE F E) : AE F E := w ⬝ᵥ incM F J *ᵥ fun i => cA σ (z i)
 
 theorem fa_inc (J : Matrix (Fin d) (Fin d) E) (w z : Fin d → E) :
     fa σ J (incV F w) (incV F z) = inclR (F := F) (AF F) (form σ J w z) := by
-  simp only [fa, form, dotProduct, Matrix.mulVec, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [fa, form, dotProduct, Matrix.mulVec, map_sum, map_mul]
   rfl
 
 theorem fa_mat {J : Matrix (Fin d) (Fin d) E} (g : UA σ J) (w z : Fin d → AE F E) : fa σ J (mat g *ᵥ w) (mat g *ᵥ z) = fa σ J w z := by
@@ -80,7 +85,8 @@ theorem form_yx (h : IsCMExt F E σ) (hJ : (∀ i j, σ (W.J j i) = W.J i j) ∨
   have hs := sig_sig h
   rcases hJ with hJ | hJ
   · have : form σ W.J H.y H.x = σ (form σ W.J H.x H.y) := by
-      simp only [form, dotProduct, Matrix.mulVec, map_sum, map_mul, Finset.mul_sum, hs, hJ]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [form, dotProduct, Matrix.mulVec, map_sum, map_mul, Finset.mul_sum, hs, hJ]
       rw [Finset.sum_comm]
       exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
     rw [this, hH.xy, map_one]; exact one_ne_zero

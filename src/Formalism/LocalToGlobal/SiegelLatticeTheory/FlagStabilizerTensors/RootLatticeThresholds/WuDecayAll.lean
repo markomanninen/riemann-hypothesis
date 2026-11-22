@@ -1,16 +1,20 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.ConcreteSettingExists
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.WuDecayPf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SettingBlocks
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.GgExistsAddCharNeOne
-import Formalism.SharpRestriction.CuspSpanNormBounds.ThresholdCubicInequalitySignPattern
-import Formalism.SharpRestriction.CuspSpanNormBounds.StandingHypothesesHoldFamily
-import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.NumericSettingWithGapSatisfiable
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.TensInt
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHDef
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LocWSOf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.QuotRaw
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LintegralFinProd
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.ConcreteSettingExists
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.WuDecayPf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SettingBlocks
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.GgExistsAddCharNeOne
+public import Formalism.SharpRestriction.CuspSpanNormBounds.ThresholdCubicInequalitySignPattern
+public import Formalism.SharpRestriction.CuspSpanNormBounds.StandingHypothesesHoldFamily
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.NumericSettingWithGapSatisfiable
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.TensInt
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHDef
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LocWSOf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.QuotRaw
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LintegralFinProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -313,7 +317,7 @@ theorem nuInf_le_prod (x : X.B.I.Ginf) : nuInf X u x ≤ ∏ v, nuLocX X u v (x 
     calc nuInf X u x ≤ normInf X ((fun v => (t v : Formalism.REAL.UJ (X.B.I.ε v))) * x) := nuInf_le X u x _ hmem
       _ = ∏ v, opn (uMat ((t v : Formalism.REAL.UJ (X.B.I.ε v)) * x v)) := rfl
       _ ≤ ∏ v, (nuLocX X u v (x v) + δ) :=
-          Finset.prod_le_prod (fun v _ => opn_nonneg _) (fun v _ => (ht v).le)
+          Finset.prod_le_prod₀ (fun v _ => opn_nonneg _) (fun v _ => (ht v).le)
   have hc : Continuous fun δ : ℝ => ∏ v, (nuLocX X u v (x v) + δ) :=
     continuous_finsetProd _ fun v _ => continuous_const.add continuous_id
   have ht := (hc.tendsto 0).mono_left (nhdsWithin_le_nhds (s := Set.Ioi (0 : ℝ)))
@@ -496,7 +500,7 @@ theorem wuReprod_of_loc {νl : ∀ v, Measure (Formalism.REAL.UJ (X.B.I.ε v))} 
     exact hαs v (z v) ((Finset.prod_ne_zero_iff.1 hz) v (Finset.mem_univ v))
   · intro z
     rw [norm_prod, NNReal.coe_prod]
-    exact Finset.prod_le_prod (fun v _ => norm_nonneg _)
+    exact Finset.prod_le_prod₀ (fun v _ => norm_nonneg _)
       (fun v _ => (hαb v (z v)).trans (Real.le_coe_toNNReal _))
   · intro x
     have hT := integrable_and_integral_pi_apply (InfinitePlace X.B.I.F) (fun v => Formalism.REAL.UJ (X.B.I.ε v))
@@ -1038,28 +1042,10 @@ theorem locReprodStep_of (hS : LocScalarStep) : LocReprodStep := by
   refine ⟨(hc xv).1, ?_⟩
   rw [(hc xv).2, h1, one_smul]
 
-theorem wuDecay_of_gap_steps (hB : BesselNVGap) (hC : CoefWeightedLoc) (hW : WlocExists)
-    (hBW : Formalism.L2.SG.LocWSOf.BesselOfW) (hM1 : Formalism.L2.SG.LitS.BesselMultOne)
-    (hQ : QuotAll) (hR : LocReprodStep) (hU : LocUniqStep) : Formalism.L2.SG.Pf.WuDecayOfGap :=
-  wuDecayOfGap_of_steps hC hQ (locDecayStep_of hB hC hW hBW hM1 hR hU)
-
-theorem wuDecay_of_gap (hB : BesselNVGap) (hC : CoefWeightedLoc) (hW : WlocExists)
-    (hBW : Formalism.L2.SG.LocWSOf.BesselOfW) (hM1 : Formalism.L2.SG.LitS.BesselMultOne)
-    (hQK : Formalism.L2.SG.Pf.WFL.QuotProdK) (hHN : Formalism.L2.SG.Pf.WFL.LocHNProps) (hNU : Formalism.L2.SG.Pf.WFL.NUnimodLoc)
-    (hR : LocReprodStep) (hU : LocUniqStep) : Formalism.L2.SG.Pf.WuDecayOfGap :=
-  wuDecay_of_gap_steps hB hC hW hBW hM1 (quotAll_of hQK hHN hNU) hR hU
-
 end Formalism.L2.SG.Pf.WuDec
 
 namespace Formalism.L2.SG.Pf
 
 open Formalism.L2.SG.SplitPrimeNormLemmas Formalism.L2.SG.Pf.WuDec
-
-theorem wuDecay_of_gap (hB : BesselNVGap) (hC : CoefWeightedLoc) (hW : WlocExists)
-    (hBW : Formalism.L2.SG.LocWSOf.BesselOfW) (hM1 : Formalism.L2.SG.LitS.BesselMultOne)
-    (hQK : Formalism.L2.SG.Pf.WFL.QuotProdK) (hHN : Formalism.L2.SG.Pf.WFL.LocHNProps) (hNU : Formalism.L2.SG.Pf.WFL.NUnimodLoc)
-    (hS : LocScalarStep) (hU : LocUniqStep) : WuDecayOfGap :=
-  WuDec.wuDecay_of_gap_steps hB hC hW hBW hM1 (quotAll_of hQK hHN hNU)
-    (locReprodStep_of hS) hU
 
 end Formalism.L2.SG.Pf

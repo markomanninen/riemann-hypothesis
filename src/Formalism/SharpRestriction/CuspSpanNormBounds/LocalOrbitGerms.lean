@@ -1,13 +1,17 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermExpansionMatrixFunction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.EqZeroOfIdealCompact
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelQuotientFinite
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AddedBlockKernelSupport
-import Formalism.DoubleCosetMeasures.LatticeCoset
-import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.IsIntOfLatOfLe
-import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.MulInvBlockDiagApplySameBlock
-import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.ExistsContinuousLowerUpperEntry
-import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermExpansionMatrixFunction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.EqZeroOfIdealCompact
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelQuotientFinite
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AddedBlockKernelSupport
+public import Formalism.DoubleCosetMeasures.LatticeCoset
+public import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.IsIntOfLatOfLe
+public import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.MulInvBlockDiagApplySameBlock
+public import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.ExistsContinuousLowerUpperEntry
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,12 +90,6 @@ def OrbitParametrisationsAgree : Prop :=
             (sLow (mk (PW sb) xy.1) + sUp (mk (PU s.sum) xy.2))
             ∂((Measure.pi fun _ => μ).prod (Measure.pi fun _ => μ))
 
-example {E : Type} [CommRing E] {n : ℕ} (x : Formalism.MainNotions.S.Loc.IL n → E) :
-    Formalism.MainNotions.S.Loc.uLow x = mk (PL n) x := rfl
-
-example {E : Type} [CommRing E] {n : ℕ} (w : Formalism.MainNotions.S.Loc.Pt E n) (y : Formalism.MainNotions.S.Loc.IN w → E) :
-    Formalism.MainNotions.S.Loc.uUp w y = mk (PN fun a b => Formalism.MainNotions.S.Loc.sameBlock w.blocks a b) y := rfl
-
 end Formalism.MainNotions.LocalOrbitGerms
 
 end
@@ -168,15 +166,15 @@ theorem skew (S : ι → Prop) [DecidablePred S] (g : (ι → E) → ι → E) (
   show x i + g x i = (if h : S i then (G (fun j : {i // ¬ S i} => x j) + fun j : Subtype S => x j) ⟨i, h⟩
     else (fun j : {i // ¬ S i} => x j) ⟨i, h⟩)
   by_cases h : S i
-  · rw [dif_pos h]
+  · rw [dite_eq_left h]
     have hx : g (Φ.symm (0, fun j : {i // ¬ S i} => x j)) = g x := by
       apply hdep
       intro j hj
       show (if h' : S j then (0 : Subtype S → E) ⟨j, h'⟩ else (fun j : {i // ¬ S i} => x j) ⟨j, h'⟩) = x j
-      rw [dif_neg hj]
+      rw [dite_eq_right hj]
     show x i + g x i = g (Φ.symm (0, fun j : {i // ¬ S i} => x j)) i + x i
     rw [hx, add_comm]
-  · rw [dif_neg h, hsupp x i h, add_zero]
+  · rw [dite_eq_right h, hsupp x i h, add_zero]
 
 theorem measurePreserving_of_card (ρ : ι → ℕ) (N : ℕ) : ∀ (g : (ι → E) → ι → E), Measurable g →
     (∀ i x x', (∀ j, ρ j < ρ i → x j = x' j) → g x i = g x' i) →
@@ -454,10 +452,11 @@ theorem isLowUni_mk {P : Fin n × Fin n → Prop} [DecidablePred P] (hP : ∀ p,
   have hij' : i < j := hij
   exact mk_neg P x hij'.ne (fun hp => lt_asymm hij' (hP (i, j) hp))
 
-theorem isCoord_up (n : ℕ) : IsCoord (K := K) (PU n) (upUniG K n) where
-  ne p hp := ne_of_lt hp
-  det x := isUpUni_det K (isUpUni_mk (fun _ hp => hp) x)
-  mem g := by
+theorem isCoord_up (n : ℕ) : IsCoord (K := K) (PU n) (upUniG K n) := by
+  refine { ne := fun _ hp => ne_of_lt hp
+           det := fun x => isUpUni_det K (isUpUni_mk (fun _ hp => hp) x)
+           mem := ?_ }
+  · intro g
     constructor
     · intro hg
       have hg' : IsUpUni (g : Matrix (Fin n) (Fin n) K) := hg
@@ -476,10 +475,11 @@ theorem isCoord_up (n : ℕ) : IsCoord (K := K) (PU n) (upUniG K n) where
 
 theorem isCoord_low (s : List ℕ) (t : ℕ → Kˣ) (sb : Fin s.sum → Fin s.sum → Bool)
     (hsb : ∀ a b, sb a b = true ↔ blk s a = blk s b) :
-    IsCoord (K := K) (PW sb) (lowW K s t) where
-  ne p hp := ne_of_gt hp.1
-  det x := isLowUni_det K (isLowUni_mk (fun _ hp => hp.1) x)
-  mem g := by
+    IsCoord (K := K) (PW sb) (lowW K s t) := by
+  refine { ne := fun _ hp => ne_of_gt hp.1
+           det := fun x => isLowUni_det K (isLowUni_mk (fun _ hp => hp.1) x)
+           mem := ?_ }
+  · intro g
     rw [Formalism.DoubleCosetMeasures.P.Supp.mem_lowW_iff s t (Formalism.DoubleCosetMeasures.P.Phase.ptI s t) (Formalism.DoubleCosetMeasures.P.Phase.ptI_mul_pt s t)
       (Formalism.DoubleCosetMeasures.P.Phase.pt_mul_ptI s t) g]
     constructor
@@ -670,9 +670,9 @@ theorem grp (hS : TriangularShearMeasurePreserving) : UnipotentProductMeasureInv
       | exact inferInstanceAs (SFinite ((Measure.pi fun _ => μ).map (Grp.homeo hcU).toMeasurableEquiv))
   refine ⟨Grp.meas hcL μ, Grp.meas hcU μ, ⟨fun g => ?_⟩, ⟨fun g => ?_⟩, inferInstance, inferInstance,
     Grp.meas_int hcL μ R hR, Grp.meas_int hcU μ R hR, fun G => ?_⟩
-  · exact Grp.meas_map_of hcL hS μ (· * g) (continuous_mul_right g)
+  · exact Grp.meas_map_of hcL hS μ (· * g) (continuous_mul_const g)
       (fun i x x' h => Grp.dep_right (P := PW sb) (fun p hp => hp.1) _ g.2.1 i x x' h)
-  · exact Grp.meas_map_of hcU hS μ (g * ·) (continuous_mul_left g)
+  · exact Grp.meas_map_of hcU hS μ (g * ·) (continuous_const_mul g)
       (fun i x x' h => Grp.dep_left (P := PU s.sum) (fun p hp => hp) _ g.2 i x x' h)
   · have h1 : MeasurePreserving (Grp.homeo hcL).toMeasurableEquiv (Measure.pi fun _ => μ) (Grp.meas hcL μ) :=
       ⟨(Grp.homeo hcL).toMeasurableEquiv.measurable, rfl⟩
@@ -706,26 +706,30 @@ structure Tri (P : Fin n × Fin n → Prop) : Prop where
   rk1 : ∀ a c b, P (a, c) → P (c, b) → rk (a, c) < rk (a, b)
   rk2 : ∀ a c b, P (a, c) → P (c, b) → rk (c, b) < rk (a, b)
 
-theorem tri_PL : Tri (PL n) where
-  irr a := lt_irrefl a
-  trans a c b h1 h2 := lt_trans h2 h1
-  rk1 a c b h1 h2 := by
+theorem tri_PL : Tri (PL n) := by
+  refine { irr := lt_irrefl
+           trans := fun _ _ _ h1 h2 => lt_trans h2 h1
+           rk1 := ?_
+           rk2 := ?_ }
+  · intro a c b h1 h2
     have h1' : (c : ℕ) < a := h1
     have h2' : (b : ℕ) < c := h2
     simp only [rk]; omega
-  rk2 a c b h1 h2 := by
+  · intro a c b h1 h2
     have h1' : (c : ℕ) < a := h1
     have h2' : (b : ℕ) < c := h2
     simp only [rk]; omega
 
-theorem tri_PU : Tri (PU n) where
-  irr a := lt_irrefl a
-  trans a c b h1 h2 := lt_trans h1 h2
-  rk1 a c b h1 h2 := by
+theorem tri_PU : Tri (PU n) := by
+  refine { irr := lt_irrefl
+           trans := fun _ _ _ h1 h2 => lt_trans h1 h2
+           rk1 := ?_
+           rk2 := ?_ }
+  · intro a c b h1 h2
     have h1' : (a : ℕ) < c := h1
     have h2' : (c : ℕ) < b := h2
     simp only [rk]; omega
-  rk2 a c b h1 h2 := by
+  · intro a c b h1 h2
     have h1' : (a : ℕ) < c := h1
     have h2' : (c : ℕ) < b := h2
     simp only [rk]; omega
@@ -909,7 +913,7 @@ theorem prodEquiv [TopologicalSpace K] [IsTopologicalRing K] [SecondCountableTop
       first
         | simp [splitEquiv, q.2]
         | (show (if h : Q₁ q.1 then Sum.inl ⟨q.1, h⟩ else Sum.inr ⟨q.1, _⟩) = Sum.inl q
-           rw [dif_pos q.2])
+           rw [dite_eq_left q.2])
     rw [hs]
     try rfl
   have hres2 : res h₂ (m (x, y)) = y := by
@@ -921,7 +925,7 @@ theorem prodEquiv [TopologicalSpace K] [IsTopologicalRing K] [SecondCountableTop
       first
         | simp [splitEquiv, hn]
         | (show (if h : Q₁ q.1 then Sum.inl ⟨q.1, h⟩ else Sum.inr ⟨q.1, _⟩) = Sum.inr q
-           rw [dif_neg hn])
+           rw [dite_eq_right hn])
     rw [hs]
     try rfl
   have hx : (m.trans e) (x, y) = T (m (x, y)) := by
@@ -1383,8 +1387,8 @@ theorem isUnit_det_sub {n : ℕ} (w : Pt E n) (p : lowW E (tr w).1 (tr w).2 × u
   rw [Matrix.det_submatrix_equiv_self, det_orbZ]
   exact Matrix.isUnit_det_of_right_inverse (Formalism.DoubleCosetMeasures.P.Phase.pt_mul_ptI _ _)
 
-open scoped Classical in
 
+open scoped Classical in
 def GG (M : Model F E) {m : ℕ} (c : M.Cls m) (Z : Matrix (Fin (m + 1)) (Fin (m + 1)) E) (a : E) : ℂ :=
   if h : (∀ a b, Z a b ∈ M.R) ∧ IsUnit Z.det then
     (M.nIso (toMat M Z h.1 h.2) (Quotient.out c) : ℂ) * M.psiR a
@@ -1410,12 +1414,12 @@ theorem GG_eq_phi (M : Model F E) {m : ℕ} (w : Pt E (m + 1)) (c : M.Cls m)
   · have h1 := hi.2 hI
     have hI' : IsInt M.R (((p.1 : GL (Fin (tr w).1.sum) E) : Matrix (Fin (tr w).1.sum) (Fin (tr w).1.sum) E) *
       pt (tr w).1 (tr w).2 * ((p.2 : GL (Fin (tr w).1.sum) E) : Matrix (Fin (tr w).1.sum) (Fin (tr w).1.sum) E)) := hI
-    rw [GG, dif_pos ⟨h1, isUnit_det_sub w p⟩, phi, if_pos hI']
+    rw [GG, dite_eq_left ⟨h1, isUnit_det_sub w p⟩, phi, if_pos hI']
     congr 2
     exact Nat.card_congr ((isoEquiv M _ _).trans eq)
   · have hI' : ¬ IsInt M.R (((p.1 : GL (Fin (tr w).1.sum) E) : Matrix (Fin (tr w).1.sum) (Fin (tr w).1.sum) E) *
       pt (tr w).1 (tr w).2 * ((p.2 : GL (Fin (tr w).1.sum) E) : Matrix (Fin (tr w).1.sum) (Fin (tr w).1.sum) E)) := hI
-    rw [GG, dif_neg (fun h => hI (hi.1 h.1)), phi, if_neg hI', zero_mul]
+    rw [GG, dite_eq_right (fun h => hI (hi.1 h.1)), phi, if_neg hI', zero_mul]
 
 theorem BB_eq (M : Model F E) {m : ℕ} (w : Pt E (m + 1))
     (μ₁ : Measure (lowW E (tr w).1 (tr w).2)) (μ₂ : Measure (upUniG E (tr w).1.sum))
@@ -1559,56 +1563,12 @@ section Mk
 
 variable {K : Type} [CommRing K] {n : ℕ}
 
-theorem mk_diag (P : Fin n × Fin n → Prop) [DecidablePred P] (x : {p // P p} → K) (a : Fin n) :
-    mk P x a a = 1 := by
-  simp [mk]
-
-theorem mk_pos (P : Fin n × Fin n → Prop) [DecidablePred P] (x : {p // P p} → K) {a b : Fin n}
-    (hab : a ≠ b) (h : P (a, b)) : mk P x a b = x ⟨(a, b), h⟩ := by
-  simp [mk, hab, h]
-
-theorem mk_neg (P : Fin n × Fin n → Prop) [DecidablePred P] (x : {p // P p} → K) {a b : Fin n}
-    (hab : a ≠ b) (h : ¬ P (a, b)) : mk P x a b = 0 := by
-  simp [mk, hab, h]
-
-theorem mk_coords (P : Fin n × Fin n → Prop) [DecidablePred P] (A : Matrix (Fin n) (Fin n) K)
-    (h1 : ∀ a, A a a = 1) (h0 : ∀ a b, a ≠ b → ¬ P (a, b) → A a b = 0) :
-    mk P (fun p : {p // P p} => A p.1.1 p.1.2) = A := by
-  ext a b
-  by_cases hab : a = b
-  · subst hab
-    rw [mk_diag, h1]
-  · by_cases h : P (a, b)
-    · rw [mk_pos P _ hab h]
-    · rw [mk_neg P _ hab h, h0 a b hab h]
-
-theorem isLowUni_mk (P : Fin n × Fin n → Prop) [DecidablePred P] (hP : ∀ p, P p → p.2 < p.1)
-    (x : {p // P p} → K) : IsLowUni (mk P x) := by
-  refine ⟨fun i j hij => ?_, mk_diag P x⟩
-  have hij' : i < j := hij
-  exact mk_neg P x hij'.ne (fun hp => lt_asymm hij' (hP (i, j) hp))
-
-theorem isUpUni_mk (P : Fin n × Fin n → Prop) [DecidablePred P] (hP : ∀ p, P p → p.1 < p.2)
-    (x : {p // P p} → K) : IsUpUni (mk P x) := by
-  refine ⟨fun i j hij => ?_, mk_diag P x⟩
-  have hij' : j < i := hij
-  exact mk_neg P x hij'.ne' (fun hp => lt_asymm hij' (hP (i, j) hp))
-
 end Mk
 
 section Trans
 
 variable {K : Type} [CommRing K] [TopologicalSpace K] [IsTopologicalRing K] [SecondCountableTopology K]
   [MeasurableSpace K] [BorelSpace K] (μ : Measure K) [SigmaFinite μ] [μ.IsAddLeftInvariant] {n : ℕ}
-
-theorem continuous_mk (P : Fin n × Fin n → Prop) [DecidablePred P] :
-    Continuous (fun x : {p // P p} → K => mk P x) := by
-  refine continuous_pi fun a => continuous_pi fun b => ?_
-  simp only [mk]
-  split_ifs
-  · exact continuous_const
-  · exact continuous_apply _
-  · exact continuous_const
 
 end Trans
 
@@ -1633,40 +1593,12 @@ section Shapes
 
 variable {K : Type} [CommRing K] {n : ℕ}
 
-theorem mul_mem_left (R : Subring K) (L : Submodule R K) {A Y : Matrix (Fin n) (Fin n) K} (hA : IsInt R A)
-    (hY : ∀ i j, Y i j ∈ L) : ∀ i j, (A * Y) i j ∈ L := by
-  intro i j
-  rw [Matrix.mul_apply]
-  refine sum_mem fun k _ => ?_
-  first
-    | exact L.smul_mem (⟨A i k, hA i k⟩ : R) (hY k j)
-    | (have h := L.smul_mem (⟨A i k, hA i k⟩ : R) (hY k j); simpa [Subring.smul_def] using h)
-
-theorem mul_mem_right (R : Subring K) (L : Submodule R K) {A Y : Matrix (Fin n) (Fin n) K} (hA : IsInt R A)
-    (hY : ∀ i j, Y i j ∈ L) : ∀ i j, (Y * A) i j ∈ L := by
-  intro i j
-  rw [Matrix.mul_apply]
-  refine sum_mem fun k _ => ?_
-  rw [mul_comm]
-  first
-    | exact L.smul_mem (⟨A k j, hA k j⟩ : R) (hY i k)
-    | (have h := L.smul_mem (⟨A k j, hA k j⟩ : R) (hY i k); simpa [Subring.smul_def] using h)
-
 end Shapes
 
 section Avg
 
 variable {K : Type} [CommRing K] [TopologicalSpace K] [IsTopologicalRing K] [SecondCountableTopology K]
   [MeasurableSpace K] [BorelSpace K] (μ : Measure K) [SigmaFinite μ] [μ.IsAddLeftInvariant] (R : Subring K) {n : ℕ}
-
-def nu0 (n : ℕ) : Measure (({p // PL n p} → K) × ({p // PU n p} → K)) :=
-  (Measure.pi fun _ => μ).prod (Measure.pi fun _ => μ)
-
-def SR (n : ℕ) : Set (({p // PL n p} → K) × ({p // PU n p} → K)) :=
-  {xy | (∀ p, xy.1 p ∈ R) ∧ ∀ p, xy.2 p ∈ R}
-
-def avg (Φ : Matrix (Fin n) (Fin n) K → ℂ) (Z : Matrix (Fin n) (Fin n) K) : ℂ :=
-  ∫ xy in SR R n, Φ (mk (PL n) xy.1 * Z * mk (PU n) xy.2) ∂(nu0 μ n)
 
 end Avg
 
@@ -1692,18 +1624,6 @@ section Orb
 variable {K : Type} [CommRing K] [TopologicalSpace K] [IsTopologicalRing K] [SecondCountableTopology K]
   [MeasurableSpace K] [BorelSpace K] (μ : Measure K) [SigmaFinite μ] [μ.IsAddLeftInvariant] (R : Subring K)
   (ψ : AddChar K ℂ) (s : List ℕ) (t : ℕ → Kˣ) (sb : Fin s.sum → Fin s.sum → Bool)
-
-def I1 (H : Matrix (Fin s.sum) (Fin s.sum) K → ℂ) : ℂ :=
-  ∫ xy : ({p // PL s.sum p} → K) × ({p // PN sb p} → K),
-    H (mk (PL s.sum) xy.1 * pt s t * mk (PN sb) xy.2) *
-      ψ (sLow (mk (PL s.sum) xy.1) + sUp (mk (PN sb) xy.2))
-    ∂((Measure.pi fun _ => μ).prod (Measure.pi fun _ => μ))
-
-def I2 (H : Matrix (Fin s.sum) (Fin s.sum) K → ℂ) : ℂ :=
-  ∫ xy : ({p // PW sb p} → K) × ({p // PU s.sum p} → K),
-    H (mk (PW sb) xy.1 * pt s t * mk (PU s.sum) xy.2) *
-      ψ (sLow (mk (PW sb) xy.1) + sUp (mk (PU s.sum) xy.2))
-    ∂((Measure.pi fun _ => μ).prod (Measure.pi fun _ => μ))
 
 variable {sb}
 
@@ -1731,13 +1651,6 @@ section Fub
 variable {K : Type} [CommRing K] [TopologicalSpace K] [IsTopologicalRing K] [SecondCountableTopology K]
   [MeasurableSpace K] [BorelSpace K] (μ : Measure K) [SigmaFinite μ] [μ.IsAddLeftInvariant] (R : Subring K)
   (ψ : AddChar K ℂ) (s : List ℕ) (t : ℕ → Kˣ) {sb : Fin s.sum → Fin s.sum → Bool}
-
-instance unipotentProductMeasureLocallyFinite [IsLocallyFiniteMeasure μ] (n : ℕ) :
-    IsLocallyFiniteMeasure (nu0 μ n : Measure (({p // PL n p} → K) × ({p // PU n p} → K))) := by
-  unfold nu0; infer_instance
-
-instance unipotentProductMeasureSFinite (n : ℕ) : SFinite (nu0 μ n : Measure (({p // PL n p} → K) × ({p // PU n p} → K))) := by
-  unfold nu0; infer_instance
 
 end Fub
 
@@ -1781,9 +1694,6 @@ namespace Formalism.MainNotions.LocalOrbitGerms
 
 namespace Germ
 
-def fam {E : Type} {n : ℕ} (Φ : Matrix (Fin n) (Fin n) E → ℂ) : ∀ k : ℕ, Matrix (Fin k) (Fin k) E → ℂ :=
-  fun k Z => if h : k = n then Φ (Z.submatrix (finCongr h.symm) (finCongr h.symm)) else 0
-
 section Loc
 
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
@@ -1813,12 +1723,6 @@ section Loc
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
 variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E]
 
-def rhs (M : Model F E) (m : ℕ) (ga : Eˣ → ℂ) (Φ : Matrix (Fin (m + 2)) (Fin (m + 2)) E → ℂ) (t c : Eˣ) : ℂ :=
-  ((M.modK (t : E) ^ (-(((m : ℝ) + 1) ^ 2 / 2)) * M.modK ((m : E) + 2) ^ (-(1 / 2 : ℝ)) : ℝ) : ℂ) *
-    ∑ᶠ (z : Eˣ) (_ : (z : E) ^ (m + 2) = (-1) ^ (m + 1) * ((c : E) * (t : E) ^ (m + 1))),
-      ((M.modK (z : E) ^ (((m : ℝ) + 1) ^ 2 / 2) : ℝ) : ℂ) * ga (z * t) *
-        M.psiR (((m : E) + 2) * (z : E) * ((t⁻¹ : Eˣ) : E)) * Formalism.MainNotions.ThinScalesBound.Om M Φ (Formalism.MainNotions.ThinScalesBound.ptZ m z)
-
 end Loc
 
 end Germ
@@ -1842,18 +1746,6 @@ section Loc
 
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
 variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E]
-
-def AvgAt (M : Model F E) : Prop :=
-  ∀ (n : ℕ) (Φ : Matrix (Fin n) (Fin n) E → ℂ) (Ω : Set E) (L₀ Λ₀ : Submodule M.R E),
-    A6.IsLat L₀.toAddSubgroup → A6.IsLat Λ₀.toAddSubgroup →
-    (∀ Z, Φ Z ≠ 0 → ∀ i j, Z i j ∈ L₀) →
-    (∀ Z Y : Matrix (Fin n) (Fin n) E, (Z.det ∈ Ω ∨ -Z.det ∈ Ω) → (∀ i j, Y i j ∈ Λ₀) → Φ (Z + Y) = Φ Z) →
-    ∃ Φ' : Matrix (Fin n) (Fin n) E → ℂ,
-      (∀ Z a b : Matrix (Fin n) (Fin n) E, IsLowUni a → IsInt M.R a → IsUpUni b → IsInt M.R b →
-        Φ' (a * Z * b) = Φ' Z) ∧
-      (∀ Z, Φ' Z ≠ 0 → ∀ i j, Z i j ∈ L₀) ∧
-      (∀ Z Y : Matrix (Fin n) (Fin n) E, (Z.det ∈ Ω ∨ -Z.det ∈ Ω) → (∀ i j, Y i j ∈ Λ₀) → Φ' (Z + Y) = Φ' Z) ∧
-      ∀ w : Pt E n, (w.mat.det ∈ Ω ∨ -w.mat.det ∈ Ω) → Formalism.MainNotions.ThinScalesBound.Om M Φ' w = Formalism.MainNotions.ThinScalesBound.Om M Φ w
 
 end Loc
 
@@ -1878,44 +1770,12 @@ section Comb
 
 variable {E : Type} [CommRing E]
 
-theorem sameBlock_iff : ∀ (bs : List (Eˣ × ℕ+)) (a b : ℕ), a < (bs.map (fun b => (b.2 : ℕ))).sum →
-    b < (bs.map (fun b => (b.2 : ℕ))).sum →
-    (sameBlock bs a b = true ↔ blk (bs.map (fun b => (b.2 : ℕ))) a = blk (bs.map (fun b => (b.2 : ℕ))) b)
-  | [], a, b, h, _ => by simp at h
-  | (t, s) :: bs, a, b, ha, hb => by
-    simp only [List.map_cons, List.sum_cons] at ha hb
-    simp only [sameBlock, List.map_cons, blk, Bool.or_eq_true, Bool.and_eq_true, decide_eq_true_eq]
-    by_cases h1 : a < (s : ℕ)
-    · by_cases h2 : b < (s : ℕ)
-      · simp [h1, h2]
-      · have h3 : ¬ ((s : ℕ) ≤ a) := by omega
-        simp only [h1, h2, h3, and_false, false_and, or_self, if_true, if_false, false_iff]
-        omega
-    · by_cases h2 : b < (s : ℕ)
-      · have h3 : ¬ ((s : ℕ) ≤ b) := by omega
-        simp only [h1, h2, h3, and_false, false_and, or_self, if_true, if_false, false_iff]
-        omega
-      · have h3 : (s : ℕ) ≤ a := by omega
-        have h4 : (s : ℕ) ≤ b := by omega
-        have := sameBlock_iff bs (a - s) (b - s) (by omega) (by omega)
-        simp [h1, h2, h3, h4, this]
-
-theorem simpleLow_eq {n : ℕ} (A : Matrix (Fin n) (Fin n) E) : simpleLow A = sLow A := by
-  exact Cls.simpleLow_eq A
-
-theorem simpleUp_eq {n : ℕ} (A : Matrix (Fin n) (Fin n) E) : simpleUp A = sUp A := by
-  exact Cls.simpleUp_eq A
-
 end Comb
 
 section Loc
 
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
 variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E]
-
-abbrev szL (bl : List (Eˣ × ℕ+)) : List ℕ := bl.map (fun b : Eˣ × ℕ+ => (b.2 : ℕ))
-
-abbrev scL (bl : List (Eˣ × ℕ+)) : ℕ → Eˣ := fun i => (bl.map Prod.fst).getD i 1
 
 end Loc
 

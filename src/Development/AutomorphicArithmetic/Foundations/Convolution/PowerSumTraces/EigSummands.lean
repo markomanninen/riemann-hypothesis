@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.TraceSum
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.TraceSum
+
+@[expose] public section
 
 open MeasureTheory NumberField GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.ConvolutionTheory.C
@@ -45,8 +49,8 @@ private theorem prj_comm {V : Submodule ℂ H} (hV : IsClosed (V : Set H)) {A : 
     rw [← ContinuousLinearMap.adjoint_inner_left, hadj]
     exact hu _ (hinv w hw)
   have h : A v = A (prj V v) + A (v - prj V v) := by
-    rw [← map_add]; congr 1; abel
-  rw [h, map_add, prj_eq_zero hAu, add_zero, prj_self (hinv _ (prj_mem hV v))]
+    rw [← map_add (f := _)]; congr 1; abel
+  rw [h, map_add (f := _), prj_eq_zero hAu, add_zero, prj_self (hinv _ (prj_mem hV v))]
 
 end SlopeTestRemainingChoices
 
@@ -84,7 +88,8 @@ theorem UpperTheory.ConvolutionTheory.C.eigSummands :
     have hw : v - ∑ i ∈ s, prj (V i) v ∈ W := sub_mem (mem_eigIn.1 hv).1 (mem_eigIn.1 huE).1
     have hPw : ∀ j, prj (V j) (v - ∑ i ∈ s, prj (V i) v) = 0 := by
       intro j
-      rw [map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum]
       by_cases hj : j ∈ s
       · rw [Finset.sum_eq_single_of_mem j hj (fun i _ hij => hPP i j hij v), prj_self (prj_mem (hc j) v), sub_self]
       · have h0 : prj (V j) v = 0 := by

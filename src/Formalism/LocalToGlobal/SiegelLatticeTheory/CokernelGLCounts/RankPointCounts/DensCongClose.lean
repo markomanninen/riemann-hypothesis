@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DensCongPf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CoefDens
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DensCongPf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CoefDens
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,8 @@ theorem density_congruence_holds : Coef.DensCong := by
   have hm : ∀ X Y : Matrix ι ι E, (X * Y).map M.L.cj = X.map M.L.cj * Y.map M.L.cj := by
     intro X Y
     ext i j
-    simp [Matrix.mul_apply, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mul_apply, map_sum, map_mul]
   have hone : (1 : Matrix ι ι E).map M.L.cj = 1 := Matrix.map_one _ (map_zero _) (map_one _)
   have hG : (B.map M.L.cj).transpose * ((A.map M.L.cj).transpose * G * A) * B = G := by
     calc _ = ((A * B).map M.L.cj).transpose * G * (A * B) := by

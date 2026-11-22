@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianSchemeDescentDataChartsCommonStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussPropertySemiAbelianFlatBaseChangeDvrStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsVertOfMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfEmbeddings
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianSchemeDescentDataChartsCommonStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussPropertySemiAbelianFlatBaseChangeDvrStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsVertOfMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfEmbeddings
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef
@@ -38,18 +43,22 @@ theorem rel_transfer {T E F₁ FH Ω : Type} [CommRing T] [IsDomain T] [IsPrinci
       simpa [Algebra.smul_def] using hs)
     exact funext hli) (fun t => ∑ i, r i * b (B.repr (x' i) t)) (by
       rw [← h]
-      simp only [map_sum, map_mul, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, Finset.sum_mul]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun i _ => ?_
       conv_rhs => rw [hx i]
-      simp only [AddSubmonoidClass.coe_finsetSum, Submodule.coe_smul, Algebra.smul_def, map_sum, map_mul, hb,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [AddSubmonoidClass.coe_finsetSum, Submodule.coe_smul, Algebra.smul_def, map_sum, map_mul, hb,
         Finset.mul_sum, _root_.mul_assoc])
   have h1 : ∑ i, v (r i) * lam (x i) = ∑ t, v (∑ i, r i * b (B.repr (x' i) t)) * lam (B t) := by
-    simp only [map_sum, map_mul, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, Finset.sum_mul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => ?_
     conv_lhs => rw [hx i]
-    simp only [map_sum, map_smul, Algebra.smul_def, hvb, Finset.mul_sum, _root_.mul_assoc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Algebra.smul_def, hvb, Finset.mul_sum, _root_.mul_assoc]
   rw [h1]
   refine Finset.sum_eq_zero fun t _ => ?_
   rw [show (∑ i, r i * b (B.repr (x' i) t)) = 0 from congrFun h0 t, map_zero, zero_mul]
@@ -69,7 +78,8 @@ theorem key_of_gauss {T E F F₁ FH Ω : Type} [CommRing T] [IsDomain T] [IsPrin
   have hθ' : ∀ t, θa (θ t) = θb (θ t) := fun t => RingHom.congr_fun hθ t
   have h1 : cE (a π) * θa y = ∑ i, cE (a (r i)) * θb (θ (w i)) := by
     have := congrArg θa h
-    simp only [map_sum, map_mul, ha', hθ'] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, ha', hθ'] at this
     exact this.symm
   obtain ⟨s, hs, m, r', t, ht, e⟩ :=
     (hG (θa y) ⟨a π, hπ, n, fun i => a (r i), fun i => θb (θ (w i)), fun i => ⟨_, rfl⟩, h1⟩).1 (hW y hy)
@@ -127,7 +137,7 @@ theorem dvr_of_span {T : Type} [CommRing T] [IsDomain T] [IsNoetherianRing T] [I
   have hf : ¬ IsField T := by
     rw [isField_iff_maximalIdeal_eq, h, Ideal.span_singleton_eq_bot]; exact ht
   have h2 : Submodule.IsPrincipal (maximalIdeal T) := ⟨t, h⟩
-  exact ((IsDiscreteValuationRing.TFAE T hf).out 0 4).2 h2
+  exact ((IsDiscreteValuationRing.TFAE T hf).out 1 5).2 h2
 
 theorem exists_dvd_pow {A : Type} [CommRing A] [IsDomain A] [IsLocalRing A] (hA : ringKrullDim A = 1) {b t : A}
     (hb : b ≠ 0) (ht : t ∈ maximalIdeal A) : ∃ n : ℕ, b ∣ t ^ n := by
@@ -180,7 +190,7 @@ theorem cst_comm {R₁ : Type} [CommRing R₁] {Y V : Scheme.{0}} [IsIntegral Y]
   simp only [Category.assoc]
 
 theorem cst_injective [IsDomain R] (p : X ⟶ Sp R) [Surjective p] : Function.Injective (GlobalTheory.Desc.cst p) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro r hr
   obtain ⟨y, hy⟩ := p.surjective ⟨⊥, Ideal.isPrime_bot⟩
   have h1 : cstAt p y r = 0 :=
@@ -255,7 +265,7 @@ theorem exists_unram {R T : Type} [CommRing R] [IsDomain R] [IsNoetherianRing R]
   have h3 : IsIntegrallyClosed A ∧ ∀ P : Ideal A, P ≠ ⊥ → P.IsPrime → P = maximalIdeal A :=
     ⟨hic, fun P h h' => eq_maximalIdeal (Ring.krullDimLE_one_iff_of_noZeroDivisors.1 hd P h h')⟩
   have h4 : Submodule.IsPrincipal (maximalIdeal A) :=
-    ((tfae_of_isNoetherianRing_of_isLocalRing_of_isDomain A).out 3 4).1 h3
+    ((tfae_of_isNoetherianRing_of_isLocalRing_of_isDomain A).out 4 5).1 h3
   obtain ⟨π, hπ⟩ := h4
   refine ⟨A, inferInstance, inferInstance, inferInstance, hA, (Scheme.stalkClosedPointTo (spMap ρ)).hom, π,
     inferInstance, congrArg (·.hom) e, ?_, etc.2.2, unr⟩
@@ -279,8 +289,8 @@ theorem pff_refl (X : Scheme.{0}) [IsIntegral X] : PFF (𝟙 X) (𝟙 X) (RingHo
 
 end GaussDvr
 
-open GaussDvr in
 
+open GaussDvr in
 theorem gaussAt_chart_of_height_one : ∀ (σ : Setup) (p : Sp σ.R) (z : (σ.C p).G.left), p.asIdeal.height = 1 → Vert (σ.C p).G.hom (σ.ρ p σ.f) z → GaussAt (GlobalTheory.Desc.cst (σ.C p).G.hom) (maximalIdeal (σ.C p).R) (σ.θ p) (σ.W p) (regSet z) := by
   intro σ p z hp hz
   haveI : p.asIdeal.IsPrime := PrimeSpectrum.isPrime p

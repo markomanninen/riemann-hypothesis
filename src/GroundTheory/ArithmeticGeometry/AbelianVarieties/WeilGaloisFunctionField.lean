@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.DivisorsPullback
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.TorsionGalois
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.DivisorsPullback
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.TorsionGalois
+
+@[expose] public section
 
 namespace GroundTheory.Arith.Abelian
 
@@ -69,10 +73,6 @@ theorem galFF_algebraMap_base (σ : L ≃ₐ[K] L) (k : K) :
     galFF W₀ σ (algebraMap K (W₀.baseChange L).toAffine.FunctionField k) =
       algebraMap K (W₀.baseChange L).toAffine.FunctionField k := by
   rw [IsScalarTower.algebraMap_apply K L, galFF_algebraMap, AlgEquiv.commutes]
-
-noncomputable def galFFAlg (σ : L ≃ₐ[K] L) :
-    (W₀.baseChange L).toAffine.FunctionField ≃ₐ[K] (W₀.baseChange L).toAffine.FunctionField :=
-  AlgEquiv.ofRingEquiv (f := galFF W₀ σ) (galFF_algebraMap_base W₀ σ)
 
 theorem galFF_symm_algebraMap (σ : L ≃ₐ[K] L) (c : L) :
     (galFF W₀ σ).symm (algebraMap L (W₀.baseChange L).toAffine.FunctionField c) =
@@ -190,16 +190,16 @@ noncomputable def galFFPoint (σ : L ≃ₐ[K] L) :
       ((W₀.baseChange L).baseChange (W₀.baseChange L).toAffine.FunctionField).toAffine.Point :=
   autPoint _ (galFF W₀ σ) (map_galFF_curve W₀ σ)
 
-omit [DecidableEq L] in
 
+omit [DecidableEq L] in
 theorem galFFPoint_genericPoint (σ : L ≃ₐ[K] L) :
     galFFPoint W₀ σ (genericPoint (W₀.baseChange L)) = genericPoint (W₀.baseChange L) := by
   rw [genericPoint, galFFPoint, autPoint_some]
   simp only [Affine.Point.some.injEq]
   exact ⟨galFF_genX W₀ σ, galFF_genY W₀ σ⟩
 
-omit [W₀.IsElliptic] in
 
+omit [W₀.IsElliptic] in
 theorem galFFPoint_constPoint (σ : L ≃ₐ[K] L) (R : (W₀.baseChange L).toAffine.Point) :
     galFFPoint W₀ σ (constPoint (W₀.baseChange L) R) =
       constPoint (W₀.baseChange L) (galPointsHom K L W₀ σ R) := by
@@ -229,7 +229,7 @@ theorem galConj_translate (σ : L ≃ₐ[K] L) (R : (W₀.baseChange L).toAffine
     galConj W₀ σ (translate (W₀.baseChange L) R) =
       translate (W₀.baseChange L) (galPointsHom K L W₀ σ R) := by
   apply algHom_eq_of_map_genericPoint
-  rw [map_galConj_genericPoint, map_translate_genericPoint, map_add, galFFPoint_genericPoint,
+  rw [map_galConj_genericPoint, map_translate_genericPoint, map_add (f := _), galFFPoint_genericPoint,
     galFFPoint_constPoint, map_translate_genericPoint]
 
 theorem galFF_translate (σ : L ≃ₐ[K] L) (R : (W₀.baseChange L).toAffine.Point)

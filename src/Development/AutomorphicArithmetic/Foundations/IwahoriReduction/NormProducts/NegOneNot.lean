@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.LUnH
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.ProdEqNorm
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.EvalSmulCong
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.CauchyFar
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.LUnH
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.ProdEqNorm
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.EvalSmulCong
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.CauchyFar
+
+@[expose] public section
+
 open GlobalTheory.KZ GlobalTheory.K4 UpperTheory.Kd.K4 Polynomial
 open scoped Matrix MatrixGroups
 

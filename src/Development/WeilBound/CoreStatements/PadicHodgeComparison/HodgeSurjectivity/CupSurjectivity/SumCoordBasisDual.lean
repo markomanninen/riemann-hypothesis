@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace CrystallineSemistableComparison.Onto
 
@@ -26,7 +30,8 @@ theorem la_kill {K V U W : Type*} [Field K] [AddCommGroup V] [Module K V] [AddCo
 
 theorem sum_coord_basis_dual {K C V : Type*} [Field K] [CommRing C] [AddCommGroup V] [Module K V] (κ : K →+* C) (h : Module.Dual K V →+ C) (l : ∀ (k : K) φ, h (k • φ) = κ k * h φ) {m : ℕ} (b : Module.Basis (Fin m) K V) (F : Module.Dual K V) : ∑ s, h (b.coord s) * κ (F (b s)) = h F := by
   conv_rhs => rw [← b.sum_dual_apply_smul_coord F]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun s _ => ?_
   rw [l, mul_comm]
 

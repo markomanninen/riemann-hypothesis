@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.FiniteLengthLeviBlock
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.FiniteLengthLeviBlock
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -127,8 +132,8 @@ theorem blockEmb_mem_cellLeviSub {a : Set.range δ} {y : GL (Fin (blockSize δ a
   Subgroup.mem_subgroupOf.2 ⟨(blockEmb F δ a y).2,
     unipotentRadical_le_blockUpper (blockEmb_mem_unipotentRadical (β ∘ w) hy)⟩
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem intertwiningMap_blockEmb_eq_zero {a : Set.range δ} {V₀ : Type*} [AddCommGroup V₀]
     [Module ℂ V₀] {π₀ : Representation ℂ (GL (Fin (blockSize δ a)) F) V₀}
     (hsc : Subsingleton (JacquetModule F (blockSize δ a) (restrictFun δ (β ∘ w) a) π₀))
@@ -144,7 +149,7 @@ theorem intertwiningMap_blockEmb_eq_zero {a : Set.range δ} {V₀ : Type*} [AddC
       { toFun := fun v => (φ v).1 m'
         map_add' := fun x y => by
           show (φ (x + y)).1 m' = (φ x).1 m' + (φ y).1 m'
-          rw [map_add]
+          rw [map_add (f := _)]
           rfl
         map_smul' := fun c x => by
           show (φ (c • x)).1 m' = c • (φ x).1 m'

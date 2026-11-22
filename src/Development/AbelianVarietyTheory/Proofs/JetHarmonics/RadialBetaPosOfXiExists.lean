@@ -1,13 +1,18 @@
-import Mathlib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BetaIntegrandIntegrableOfXiExists
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BetaIntegrandIntegrableOfXiExists
+
+@[expose] public section
+
 open MeasureTheory
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.P Formalism.REAL Formalism.QuantumDeterminants
 
 namespace GlobalTheory.WeightedFormPos
 
-open Formalism.FourierDecayAlt.P.JCx2 in
 
+open Formalism.FourierDecayAlt.P.JCx2 in
 theorem radialBetaPos_of_xiExists (hXi : B.XiExists) : JC.RadialBetaPos := by
   intro Wp Wq _ _ _ _ _ _ P0 T j μ hμ
   obtain ⟨C1, hC1, hpair⟩ := rb_pairAt (T.bs j) μ hμ

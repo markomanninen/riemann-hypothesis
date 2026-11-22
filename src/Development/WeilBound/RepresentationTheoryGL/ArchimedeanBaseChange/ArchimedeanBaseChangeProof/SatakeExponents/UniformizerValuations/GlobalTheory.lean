@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.CompatFub
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.CutTrDZero
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.CompatFub
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.CutTrDZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -154,10 +158,6 @@ def AdjWords : Prop := ∀ (A Γ : Type) [Ring A] [StarRing A] [Algebra ℂ A] [
   ∀ a ∈ StarAlgebra.adjoin ℂ (Set.range gen), ∃ (J : Type) (_ : Fintype J) (c : J → ℂ) (w : J → List (Γ × Bool)) (L : ℕ),
     (∀ j, (w j).length ≤ L) ∧ a = ∑ j, c j • wdVal gen (w j) ∧
       ∀ k : ℕ, a ^ k = ∑ f : Fin k → J, (∏ i, c (f i)) • wdVal gen (List.ofFn fun i => w (f i)).flatten
-
-def BlockEx : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (a b : ℕ) (D : Dom E a b) (Ma : Mods E a)
-  (Mb : Mods E b) (κ : Type) [Fintype κ] (μa : Measure (G a)) (μb : Measure (G b)), μa.IsHaarMeasure → μb.IsHaarMeasure →
-  ∃ ν ha hb hν hν' hc c h0 ca cb, (⟨a, b, D, Ma, Mb, κ, μa, μb, ν, ha, hb, hν, hν', hc, c, h0, ca, cb⟩ : Block E).c = c
 
 end PositivityTheory.Rg.BcB.F
 

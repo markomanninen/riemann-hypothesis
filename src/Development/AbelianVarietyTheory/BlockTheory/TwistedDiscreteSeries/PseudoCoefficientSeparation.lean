@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PseudoCoefficientUpqTrivial
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesCharacter
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LanglandsClassification
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PseudoCoefficientUpqTrivial
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesCharacter
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LanglandsClassification
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,33 +35,6 @@ def PseudoCoeffSeparation : Prop :=
       (π : Matrix (Fin r) (Fin r) ℂ → (V →L[ℂ] V)) (hπ : IsIrrAdm ε π) (c : ℂ),
       HasTrace (repOp (groupRep ε hπ.2.1.1) μ f) c → c ≠ 0 →
         HasInfChar ε (fun a => (lam a : ℂ)) π ∧ (IsURepOn (UJset ε) π → UEquiv ε π D ∧ c = 1)
-
-theorem hasWideGaps_mul (r : ℕ) : HasWideGaps fun i : Fin r => -((r : ℤ) * (i : ℕ)) := by
-  refine ⟨fun i j h => ?_, fun i j h => ?_⟩
-  · have h1 : ((i : ℕ) : ℤ) < (j : ℕ) := by exact_mod_cast h
-    have h2 : (0 : ℤ) < r := by exact_mod_cast i.pos
-    simp only [neg_lt_neg_iff]
-    exact mul_lt_mul_of_pos_left h1 h2
-  · simp only [h]
-    push_cast
-    ring_nf
-    rfl
-
-example : ¬ HasWideGaps ![1, 0, -1] := fun h => by simpa using h.2 0 1 rfl
-
-theorem exists_data_rank_one (μ : Measure (UJ (allPos 1))) [μ.IsHaarMeasure] :
-    HasWideGaps (fun _ : Fin 1 => (0 : ℤ)) ∧
-      ∃ hD : IsDiscreteWithInfChar (allPos 1) (fun _ => 0) fun _ => ContinuousLinearMap.id ℂ ℂ,
-        ∃ f, IsPseudoCoeff (ujMat (allPos 1)) μ (ujRep hD.1.2.2.1) f ∧
-          ∃ hπ : IsIrrAdm (allPos 1) fun _ => ContinuousLinearMap.id ℂ ℂ,
-            HasTrace (repOp (groupRep (allPos 1) hπ.2.1.1) μ f) 1 := by
-  obtain ⟨h, f, -, hf⟩ := GlobalTheory.Published.pseudoCoefficientUpq_trivial 1 μ
-  refine ⟨⟨Subsingleton.strictAnti _, fun i j e => by omega⟩, ⟨h, fun v w _ _ => ?_⟩, f, hf,
-    ⟨h.2.1, ⟨h.2.2.1.1, h.2.2.1.2.2, fun _ _ _ => rfl, fun _ => inferInstance⟩, h.2.2.2.1⟩, hf.trace_self⟩
-  have := GlobalTheory.Dec.isZEigen_const (allPos 1) (inner ℂ w v)
-  convert this using 2 with a
-  · simp [Formalism.QuantumDeterminants.rhoStd]
-  · rfl
 
 end GlobalTheory.IndefiniteRowSideFullHecke.PseudoCoefficientSeparation
 

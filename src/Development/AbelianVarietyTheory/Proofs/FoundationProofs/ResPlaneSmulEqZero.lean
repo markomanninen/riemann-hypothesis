@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PowMulMemAdd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoLevFacts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PowMulMemAdd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoLevFacts
+
+@[expose] public section
+
 set_option synthInstance.maxHeartbeats 400000
 set_option maxHeartbeats 1000000
 
@@ -15,8 +20,8 @@ variable {Ω : Type} [Field Ω] [Algebra ℚ Ω] {l : ℕ} [Fact l.Prime]
 
 abbrev ResL (c : Coef l) : Type := c.O ⧸ Ideal.span {((l : ℕ) : c.O)}
 
-open Classical in
 
+open Classical in
 def redL (c : Coef l) (x : Qbar l) : ResL c :=
   if h : x ∈ c.O then Ideal.Quotient.mk _ ⟨x, h⟩ else 0
 
@@ -26,7 +31,7 @@ theorem redL_of_mem (c : Coef l) {x : Qbar l} (h : x ∈ c.O) :
 
 theorem redL_add (c : Coef l) {x y : Qbar l} (hx : x ∈ c.O) (hy : y ∈ c.O) :
     redL c (x + y) = redL c x + redL c y := by
-  rw [redL_of_mem c hx, redL_of_mem c hy, redL_of_mem c (c.O.add_mem hx hy), ← map_add]; rfl
+  rw [redL_of_mem c hx, redL_of_mem c hy, redL_of_mem c (c.O.add_mem hx hy), ← map_add (f := _)]; rfl
 
 theorem redL_sub (c : Coef l) {x y : Qbar l} (hx : x ∈ c.O) (hy : y ∈ c.O) :
     redL c (x - y) = redL c x - redL c y := by

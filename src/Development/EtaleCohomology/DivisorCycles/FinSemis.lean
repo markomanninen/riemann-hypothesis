@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.DivisorCycles.SemisPf
+module
+
+public import Development.EtaleCohomology.DivisorCycles.SemisPf
+
+@[expose] public section
 
 namespace LateralTheory.Fin.Semis
 theorem etale_semisimplicity_instance : LateralTheory.DivDb.Semis := by

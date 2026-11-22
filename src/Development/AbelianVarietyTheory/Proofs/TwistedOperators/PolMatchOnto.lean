@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityUnitary
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityUnitary
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityReal
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
@@ -44,10 +48,10 @@ theorem polMatch_onto : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [Nu
   have hφ'SB : ∀ i v, φ' i v ∈ GlobalTheory.WeilM.SB _ := by
     intro i v
     by_cases hv : v ∈ T
-    · simp only [φ', if_pos hv]; exact hφ₀ i v
-    · simp only [φ', if_neg hv]; exact hvac' v
+    · simpa only [φ', ite_eq_left hv] using hφ₀ i v
+    · simpa only [φ', ite_eq_right hv] using hvac' v
   have hφ'out : ∀ i, ∀ v ∉ T, φ' i v = G.M'.vac v := by
-    intro i v hv; simp only [φ', if_neg hv]
+    intro i v hv; simp only [φ', ite_eq_right hv]
   have hpure : ∀ i, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (c i • f i) (φ i) = c i • (g i : (Fin a × Fin (a + a') → AF F) → ℂ) := by
     intro i
     rw [hg i]
@@ -62,9 +66,10 @@ theorem polMatch_onto : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [Nu
   · exact Finset.sum_congr rfl fun i _ => (hpure i).symm
   · refine Finset.sum_congr rfl fun i _ => ?_
     rw [hf'eq i]
-    congr 2
+    apply congrArg (fun z => R.p (c i • f i) ⊗ₜ[ℂ] z)
+    apply congrArg (PiTensorProduct.tprod ℂ)
     funext v
-    simp only [φ', if_pos v.2]
+    simp only [φ', ite_eq_left v.property]
     exact (hφ₀eq i v).symm
 
 end GlobalTheory.SquareAgree

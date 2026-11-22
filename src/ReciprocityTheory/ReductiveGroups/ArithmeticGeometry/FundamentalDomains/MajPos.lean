@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.UnitaryComplementMoveOfIsotropic
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LminorSubmatrixCastSucc
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.UnitaryComplementMoveOfIsotropic
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LminorSubmatrixCastSucc
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -20,7 +24,8 @@ lemma Hf_self {x : Frame X.Ψ r} (hx : x ∈ X.dom) (τ : X.Ψ) (v : Fin r → �
   have hS : ∀ u : Fin X.p0 → ℂ, conj (∑ a, ∑ b, u a * (X.gramPos x τ)⁻¹ a b * conj (u b)) =
       ∑ a, ∑ b, u a * (X.gramPos x τ)⁻¹ a b * conj (u b) := by
     intro u
-    simp only [map_sum, map_mul, Complex.conj_conj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, Complex.conj_conj]
     refine Finset.sum_comm.trans (Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_)
     rw [hM]
     ring
@@ -52,7 +57,8 @@ private theorem hermC_finset_sum_left' (τ : E →+* ℂ) (G : Matrix (Fin r) (F
 private theorem hermC_finset_sum_right_of_conj_symm (τ : E →+* ℂ) {G : Matrix (Fin r) (Fin r) E}
     (hG : ∀ a b, cc (G a b) = G b a) {ι : Type*} [Fintype ι] (c : ι → ℂ) (u : ι → Fin r → ℂ)
     (w : Fin r → ℂ) : hermC τ G w (∑ i, c i • u i) = ∑ i, conj (c i) * hermC τ G w (u i) := by
-  rw [← ReciprocityTheory.ChartRestriction.G.FD.hermC_conj τ hG, hermC_finset_sum_left', map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← ReciprocityTheory.ChartRestriction.G.FD.hermC_conj τ hG, hermC_finset_sum_left', map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, ReciprocityTheory.ChartRestriction.G.FD.hermC_conj τ hG]
 

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementTL
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellVanishingOfCommute
+module
+
+public import Formalism.HermitianCurvature.StatementTL
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellVanishingOfCommute
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 

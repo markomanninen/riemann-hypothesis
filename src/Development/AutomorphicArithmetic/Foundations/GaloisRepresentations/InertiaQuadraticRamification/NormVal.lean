@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.UnrCharAtOf
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.UnrCharAtOf
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.HeckeGal GlobalTheory.CuspRep UpperTheory.V.Published
 open UpperTheory.Gal.UnramifiedFromSplittingCriterion
@@ -17,8 +21,9 @@ theorem UpperTheory.Gal.UnramifiedFromSplittingCriterion.normVal :
   have hq0 : q ≠ 0 := by omega
   have hpp : q.minFac.Prime := Nat.minFac_prime (by omega)
   haveI : Fact q.minFac.Prime := ⟨hpp⟩
-  have ha : 0 < padicValNat q.minFac q :=
-    one_le_padicValNat_of_dvd hq0 (Nat.minFac_dvd q)
+  have ha : 0 < padicValNat q.minFac q := by
+    rw [Nat.padicValNat_def]
+    exact one_le_multiplicity_of_dvd hq0 (Nat.minFac_dvd q)
   refine ⟨Module.finrank ℚ K * padicValNat q.minFac q, Nat.mul_pos Module.finrank_pos ha, ?_⟩
   intro z n c hz hzq
   rcases n with _ | k
@@ -45,6 +50,6 @@ theorem UpperTheory.Gal.UnramifiedFromSplittingCriterion.normVal :
     padicValRat.of_nat] at hv
   have hd : ((k + 1 : ℕ) : ℤ) ∣ ((c * (Module.finrank ℚ K * padicValNat q.minFac q) : ℕ) : ℤ) := by
     refine ⟨-padicValRat q.minFac (Algebra.norm ℚ w), ?_⟩
-    rw [Nat.cast_mul, Nat.cast_mul]
+    rw [Nat.padicValNat_def, Nat.cast_mul, Nat.cast_mul]
     linear_combination hv
   exact Int.natCast_dvd_natCast.1 hd

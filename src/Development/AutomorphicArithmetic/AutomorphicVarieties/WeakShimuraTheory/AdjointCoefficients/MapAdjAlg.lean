@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointCoefficients.ContLift
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointMemSp4
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointCoefficients.ContLift
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointMemSp4
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -156,7 +160,7 @@ theorem UpperTheory.V.Ws.X1.obCoc :
   obtain ⟨-, hadj, -, -, -, -, -, hgs, -⟩ := grp A
   have resp : ∀ Z : M4 A, Z.map (res Λ A) = (Z.map p).map (res Λ R) := fun Z => by
     ext a b
-    exact (res_map p _).symm
+    exact (UpperTheory.V.Alg.res_map p _).symm
   have rinv : ∀ s, rb s⁻¹ * rb s = 1 := fun s => by rw [← map_mul, inv_mul_cancel, map_one]
   have rinv' : ∀ s, rb s * rb s⁻¹ = 1 := fun s => by rw [← map_mul, mul_inv_cancel, map_one]
   have rtres : ∀ s, (D.rt s).map (res Λ A) = rb s := fun s => by rw [resp, D.rt_map, hrb]

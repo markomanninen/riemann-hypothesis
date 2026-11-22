@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemClosureUnitary
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RealAdelesCmFieldEquivComplexCmType
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryEqRealMulFiniteSplit
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemClosureUnitary
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RealAdelesCmFieldEquivComplexCmType
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryEqRealMulFiniteSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,8 +36,8 @@ theorem closure_preimage_eq_top {Γ G : Type} [Group Γ] [Group G] [TopologicalS
   have h3 : h⁻¹ * γ ∈ H := Subgroup.subset_closure (by simpa using hx)
   simpa using H.mul_mem hh h3
 
-open Formalism.UG GlobalTheory.UnRep.WeakApprox in
 
+open Formalism.UG GlobalTheory.UnRep.WeakApprox in
 theorem preconnected_unitary {K R A : Type} [Field K] [CharZero K] [CommRing R] [TopologicalSpace R]
     [IsTopologicalRing R] [IsArtinianRing R] (ι : K →+* R) (c : K →+* K) (σ : R →+* R)
     (hσι : ∀ x, σ (ι x) = ι (c x)) (hc : ∀ x, c (c x) = x) (hne : ∃ z, c z ≠ z) (hσ : ∀ x, σ (σ x) = x)
@@ -92,7 +96,7 @@ theorem preconnected_unitary {K R A : Type} [Field K] [CharZero K] [CommRing R] 
         one_smul, Matrix.map_one _ (map_zero σ) (map_one σ), Matrix.transpose_one, one_mul, mul_one])
     have m1 := step s (by
       have : (1 : Matrix (Fin n) (Fin n) R) + ι lam • 1 = ι (1 + lam) • 1 := by
-        rw [map_add, map_one, add_smul, one_smul]
+        rw [map_add (f := _), map_one, add_smul, one_smul]
       rw [hs, this, Matrix.det_smul, Matrix.det_one, mul_one]
       exact (hl1.isUnit.map ι).pow _)
     have m2 := step (s * g) (by
@@ -235,7 +239,7 @@ theorem rational_points_generate : ∀ (D : D7) (V : HSp D) (c : CoefA V), V.IsP
     have htr : Continuous fun h : GA D V => LinearMap.trace ℂ c.W (c.ρ h) := by
       let b := Module.finBasis ℂ c.W
       simp only [LinearMap.trace_eq_matrix_trace ℂ b, Matrix.trace, Matrix.diag, LinearMap.toMatrix_apply]
-      exact continuous_finset_sum _ fun i _ => (b.coord i).continuous_of_finiteDimensional.comp (hcont (b i))
+      exact continuous_finsetSum _ fun i _ => (b.coord i).continuous_of_finiteDimensional.comp (hcont (b i))
     have hc : Continuous fun x : HA (Ainf D.host.F) D.sp.cm.sig V.gram => e.symm (x, 1) :=
       e.symm.continuous.comp (continuous_id.prodMk continuous_const)
     have key := closure_preimage_eq_top φ hd {x | LinearMap.trace ℂ c.W (c.ρ (e.symm (x, 1))) ≠ 0}

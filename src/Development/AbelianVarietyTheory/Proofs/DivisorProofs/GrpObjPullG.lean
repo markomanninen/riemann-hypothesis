@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExOfHodgeWt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExOfHodgeWt
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.BasicNotions
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -49,7 +54,7 @@ variable {Γ : Type} [Group Γ]
 
 def IsEqvAct {X' : Scheme.{0}} (ρ' : Γ →* Aut X') (G' : Over X') [GrpObj G'] (act' : OAct (𝓞 E) G')
     (m : Γ → (G'.left ⟶ G'.left)) : Prop :=
-  (∀ γ, IsGrpPullback G' G' (ρ' γ).hom (m γ)) ∧ (∀ γ a, (act'.act a).left ≫ m γ = m γ ≫ (act'.act a).left) ∧
+  (∀ γ, IsGrpPullback G' G' (ρ' γ).asIso.hom (m γ)) ∧ (∀ γ a, (act'.act a).left ≫ m γ = m γ ≫ (act'.act a).left) ∧
     ∀ γ₁ γ₂, m (γ₁ * γ₂) = m γ₂ ≫ m γ₁
 
 def MovesEta (TF : TorFlag Xo c) (Z : Comp Xo c) (ι : Γ →* LevelAut Dw l) (ρ : Γ →* Aut (V₀ TF.Y Z))
@@ -59,7 +64,7 @@ def MovesEta (TF : TorFlag Xo c) (Z : Comp Xo c) (ι : Γ →* LevelAut Dw l) (�
     ∀ w w' : V₀ TF.Y Z ⟶ G'.left, w ≫ G'.hom = ℓ → w' ≫ G'.hom = ℓ →
       w ≫ ψ = i₀ TF.Y Z ≫ (TF.Y.oF.eta b).left ≫ TF.Y.m.φ →
       w' ≫ ψ = i₀ TF.Y Z ≫ (TF.Y.oF.eta a).left ≫ TF.Y.m.φ →
-      w ≫ m γ = (ρ γ).hom ≫ w'
+      w ≫ m γ = (ρ γ).asIso.hom ≫ w'
 
 def IsTorsI (I : Ideal (𝓞 E)) {X' : Scheme.{0}} {G' : Over X'} [GrpObj G'] (act' : OAct (𝓞 E) G') {T : Over X'}
     (P : T ⟶ G') : Prop :=
@@ -71,7 +76,7 @@ def TorsLevel (I : Ideal (𝓞 E)) (ι : Γ →* LevelAut Dw l) {X' : Scheme.{0}
     (∀ P Q, IsTorsI I act' P → IsTorsI I act' Q → e (P * Q) = e P + e Q) ∧
     (∀ P (a : 𝓞 E), IsTorsI I act' P → e (P ≫ act'.act a) = a • e P) ∧
     (∀ P Q, IsTorsI I act' P → IsTorsI I act' Q → e P = e Q → P = Q) ∧
-    ∀ γ, t ≫ (ρ' γ).hom = t → ∀ P Q : Over.mk t ⟶ G', IsTorsI I act' P → Q.left = P.left ≫ m γ →
+    ∀ γ, t ≫ (ρ' γ).asIso.hom = t → ∀ P Q : Over.mk t ⟶ G', IsTorsI I act' P → Q.left = P.left ≫ m γ →
       e Q = ι γ (e P)
 
 end GlobalTheory.EqvAct

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmulEqZeroOfLTensorSubtypeEqZero
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmulEqZeroOfLTensorSubtypeEqZero
+
+@[expose] public section
+
 open TensorProduct CrystallineSemistableComparison.D
 open scoped LaurentPolynomial
 
@@ -56,12 +61,11 @@ theorem smul_mem_range_lTensor_of_lTensor_eq_zero :
       r (k + 1) • (LinearMap.ker d₁).subtype.lTensor N u ∈ LinearMap.range (d₀.lTensor N) := by
     intro u
     induction u with
-    | zero => simp
     | tmul n z =>
       obtain ⟨y, hy⟩ := h1 z z.2 (k + 1)
       exact ⟨n ⊗ₜ y, by simp [hy, TensorProduct.tmul_smul]⟩
     | add a b ha hb =>
-      rw [map_add, smul_add]
+      rw [map_add (f := _), smul_add]
       exact Submodule.add_mem _ ha hb
   rw [hrk k, mul_smul, mul_smul, ← hu]
   exact Submodule.smul_mem _ _ (h7 u)

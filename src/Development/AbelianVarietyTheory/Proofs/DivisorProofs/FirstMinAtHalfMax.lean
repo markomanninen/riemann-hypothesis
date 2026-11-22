@@ -1,22 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnifOfSpaceEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSelfDualDataTransvectionPrincipalLevel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightedFrameSumPositive
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MaxBoundPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FinrankRieszBounds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajorantConjugateTransfer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.FirstMinimumInvariantContinuousPos
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.SupAtUnit
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.UnitaryDatumNumbersForSupBounds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnifOfSpaceEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSelfDualDataTransvectionPrincipalLevel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightedFrameSumPositive
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MaxBoundPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FinrankRieszBounds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajorantConjugateTransfer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.FirstMinimumInvariantContinuousPos
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.SupAtUnit
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.UnitaryDatumNumbersForSupBounds
+
+@[expose] public section
 
 open NumberField MeasureTheory Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.L2.Theta Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.AllWt GlobalTheory.LevGeo
 open scoped nonZeroDivisors
 
 namespace GlobalTheory.RawThetaSup
 
-set_option maxHeartbeats 800000 in
 
-theorem exists_small_inv (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (ξ : K) (x : ℝ) (hx : 0 < x)
+set_option maxHeartbeats 800000 in
+theorem exists_small_inv (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (ξ : K) (x : ℝ) (hx : 0 < x)
     (hξ : ∀ τ : K →+* ℂ, ‖τ ξ‖ = x) (A B : FractionalIdeal (𝓞 K)⁰ K)
     (h : FractionalIdeal.spanSingleton (𝓞 K)⁰ ξ * A * B * (differentIdeal ℤ (𝓞 K) : FractionalIdeal (𝓞 K)⁰ K) = 1)
     (hAB : FractionalIdeal.absNorm B ≤ FractionalIdeal.absNorm A) :
@@ -94,13 +98,6 @@ theorem exists_small_inv_AA (D : D7) : ∃ b : D.host.E, b ≠ 0 ∧ (∀ a ∈ 
     · have := (hb _ (conj_mem_AAbar D ha)).map (D.host.conj : D.host.E →+* D.host.E).toIntAlgHom
       simpa [conj_conj] using this
     · exact hτ (τ.comp (D.host.conj : D.host.E →+* D.host.E))
-
-theorem epsLev_pos (E : Type) [Field E] [NumberField E] {d M : ℕ} (hd : 0 < d) (hM : 0 < M) {w : ℝ} (hw : 0 < w) :
-    0 < epsLev E d M w := by
-  unfold epsLev epStar
-  have h2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
-  have hd' : (0 : ℝ) < d := by exact_mod_cast hd
-  exact lt_min one_pos (div_pos Real.pi_pos (by positivity))
 
 section Level
 

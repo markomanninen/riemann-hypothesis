@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EndValuedForm11Coeffs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EndValuedForm11Coeffs
+
+@[expose] public section
+
 open MeasureTheory Filter Topology GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts GlobalTheory.ChartGlue GlobalTheory.FlagBundle GlobalTheory.HermFrame GlobalTheory.GoodMetric GlobalTheory.GoodTop
 open ReciprocityTheory.L2DbarEstimates (V)
 open scoped ContDiff Matrix
@@ -22,7 +27,7 @@ theorem norm_det_le_of_weighted {n : ℕ} (M : Matrix (Fin n) (Fin n) ℂ) (u : 
       rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h1 | h1 <;> simp [h1]
     rw [norm_mul, hs, one_mul, norm_prod]
     calc ∏ i, ‖M (σ i) i‖ ≤ ∏ i, |c| * ((w (u (σ i)))⁻¹ * (w i)⁻¹) :=
-          Finset.prod_le_prod (fun _ _ => norm_nonneg _) (fun i _ => hM _ _)
+          Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) (fun i _ => hM _ _)
       _ = |c| ^ n * ∏ a, (w a)⁻¹ ^ 2 := by
           rw [Finset.prod_mul_distrib, Finset.prod_mul_distrib, Finset.prod_const,
             Finset.card_univ, Fintype.card_fin]

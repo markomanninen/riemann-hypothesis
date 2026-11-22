@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJStandardLEngine
-import GroundTheory.AutomorphicForms.GL2.GJStandardLDual
-import GroundTheory.AutomorphicForms.GL2.GJStandardLFourier
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJStandardLEngine
+public import GroundTheory.AutomorphicForms.GL2.GJStandardLDual
+public import GroundTheory.AutomorphicForms.GL2.GJStandardLFourier
+
+@[expose] public section
 
 open MeasureTheory Filter Set Topology IsDedekindDomain NumberField NumberField.mixedEmbedding
 open scoped NumberField.AdeleRing RestrictedProduct SchwartzMap Classical ENNReal NNReal
@@ -45,7 +49,7 @@ section Pair
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
-theorem integrable_zetaIntegrand_coeff (hn : 2 ≤ n) (μ : Measure (Reduction.normOneGL K n))
+theorem integrable_zetaIntegrand_coeff (hn : 2 ≤ n) (μ : Measure (Reduction.normOneGL (K := K) (n := n)))
     [μ.IsHaarMeasure] (ν : Measure (AdelicGLn.AdelicGL K n)) [ν.IsHaarMeasure]
     {φ₁ φ₂ : AdelicGLn.AdelicGL K n → ℂ} (h₁ : φ₁ ∈ AutomorphicForm.cuspForms K n)
     (h₂ : φ₂ ∈ AutomorphicForm.cuspForms K n)
@@ -66,7 +70,7 @@ theorem adelicMatrixFourier_four {Ψ : Matrix (Fin n) (Fin n) 𝔸[K] → ℂ}
   funext x
   simp
 
-theorem integrable_zetaIntegrand_coeff_inv (hn : 2 ≤ n) (μ : Measure (Reduction.normOneGL K n))
+theorem integrable_zetaIntegrand_coeff_inv (hn : 2 ≤ n) (μ : Measure (Reduction.normOneGL (K := K) (n := n)))
     [μ.IsHaarMeasure] (ν : Measure (AdelicGLn.AdelicGL K n)) [ν.IsHaarMeasure]
     {φ₁ φ₂ : AdelicGLn.AdelicGL K n → ℂ} (h₁ : φ₁ ∈ AutomorphicForm.cuspForms K n)
     (h₂ : φ₂ ∈ AutomorphicForm.cuspForms K n)
@@ -94,7 +98,7 @@ def dualPartialL (S : Finset (HeightOneSpectrum (𝓞 K))) {V : HeightOneSpectru
   ∏' v : {v : HeightOneSpectrum (𝓞 K) // v ∉ S},
     LFunction (F := (v : HeightOneSpectrum (𝓞 K)).adicCompletion K) (contragredient (π v)) s
 
-theorem exists_unramified (hn : 2 ≤ n) (μ : Measure (Reduction.normOneGL K n))
+theorem exists_unramified (hn : 2 ≤ n) (μ : Measure (Reduction.normOneGL (K := K) (n := n)))
     [μ.IsHaarMeasure] {φ₁ φ₂ : AdelicGLn.AdelicGL K n → ℂ} (h₁ : φ₁ ∈ AutomorphicForm.cuspForms K n)
     (h₂ : φ₂ ∈ AutomorphicForm.cuspForms K n)
     (hA : ∀ (t : {r : ℝ // 0 < r}) (x : AdelicGLn.AdelicGL K n),

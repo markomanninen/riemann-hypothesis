@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Qf10.GlRel.{u_1} :
     {A : Type u_1} → [Ring A] → {n : Nat} → (Fin n → Fin n → A) → Prop :=
@@ -350,13 +354,13 @@ theorem UpperTheory.Reformulated.B.Qf10.casimir :
   have rbc : E 0 1 (E 1 0 φ) - E 1 0 (E 0 1 φ) = E 0 0 φ - E 1 1 φ := by simpa using rel 0 1 1 0
   have rad : E 0 0 (E 1 1 φ) - E 1 1 (E 0 0 φ) = 0 := by simpa using rel 0 0 1 1
   have t1 : ∀ X : Module.End ℂ V, X (E 0 0 φ) + X (E 1 1 φ) = 0 := fun X => by
-    rw [← map_add, h1, map_zero]
+    rw [← map_add (f := _), h1, map_zero]
   have t2 : ∀ X : Module.End ℂ V,
       X (E 0 1 φ) - X (E 1 0 φ) = (Complex.I * k) • X φ := fun X => by
     rw [← map_sub, h2, map_smul]
   have t3 : ∀ X : Module.End ℂ V, X (E 0 0 φ) - X (E 1 1 φ) =
       Complex.I • (X (E 0 1 φ) + X (E 1 0 φ)) := fun X => by
-    rw [← map_sub, h3, map_smul, map_add]
+    rw [← map_sub, h3, map_smul, map_add (f := _)]
   have hc : (E 0 0 (E 0 0 φ) - E 0 0 (E 1 1 φ) - E 1 1 (E 0 0 φ) + E 1 1 (E 1 1 φ)) +
       (E 0 1 (E 0 1 φ) + E 0 1 (E 1 0 φ) + E 1 0 (E 0 1 φ) + E 1 0 (E 1 0 φ)) =
       (-2 * k) • φ := by

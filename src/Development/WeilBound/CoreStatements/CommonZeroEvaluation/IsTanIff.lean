@@ -1,11 +1,15 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.CommonZeroEvaluation.CombComb
-import Development.WeilBound.CoreStatements.CommonZeroEvaluation.ExistsLeftInv
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ConjEmbRtOfNe
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CompleteDvrPullbackSemiabelianStatement
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsAffineLieBasisBaseChange
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsChartFiniteType
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.CommonZeroEvaluation.CombComb
+public import Development.WeilBound.CoreStatements.CommonZeroEvaluation.ExistsLeftInv
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ConjEmbRtOfNe
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CompleteDvrPullbackSemiabelianStatement
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsAffineLieBasisBaseChange
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsChartFiniteType
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+
+@[expose] public section
 
 noncomputable section
 

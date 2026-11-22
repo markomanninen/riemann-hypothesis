@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.SectionsHaveFiniteDimension
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsHeckeQuotientTriple
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SectionsHaveFiniteDimensionInvarianceIsomorphism
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PrincipalPolarisationVolumeFormSymmetricAmpleStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SectionsCountSqEqDetFormOnTorsionStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SqIsPowGrp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.SectionsHaveFiniteDimension
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsHeckeQuotientTriple
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SectionsHaveFiniteDimensionInvarianceIsomorphism
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PrincipalPolarisationVolumeFormSymmetricAmpleStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SectionsCountSqEqDetFormOnTorsionStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SqIsPowGrp
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,8 +33,8 @@ section Algebra
 
 variable {G H σ κ : Type} [CommGroup G] [CommGroup H] [Fintype σ] [DecidableEq σ] [Fintype κ] [DecidableEq κ]
 
-omit [DecidableEq κ] in
 
+omit [DecidableEq κ] in
 theorem apply_prod_single (Φ : H ≃* (σ → G)) (pt : κ → G) (a : σ × κ → ℕ) (b : σ) :
     Φ (∏ x : σ × κ, Φ.symm (Pi.mulSingle x.1 (pt x.2)) ^ a x) b = ∏ j, pt j ^ a (b, j) := by
   rw [map_prod, Finset.prod_apply, Fintype.prod_prod_type, Finset.prod_eq_single b]
@@ -39,8 +43,8 @@ theorem apply_prod_single (Φ : H ≃* (σ → G)) (pt : κ → G) (a : σ × κ
     simp [Pi.mulSingle_eq_of_ne' hc]
   · simp
 
-omit [DecidableEq κ] in
 
+omit [DecidableEq κ] in
 theorem existsUnique_prod_single (Φ : H ≃* (σ → G)) {k : ℕ} (pt : κ → G)
     (h : ∀ y : G, y ^ k = 1 → ∃! c : κ → ZMod k, ∏ j, pt j ^ (c j).val = y) (y : H) (hy : y ^ k = 1) :
     ∃! c : σ × κ → ZMod k, ∏ x : σ × κ, Φ.symm (Pi.mulSingle x.1 (pt x.2)) ^ (c x).val = y := by
@@ -98,25 +102,19 @@ def pointsEquiv (e : B ≅ A ⊗ A) [IsMonHom (e.hom ≫ fst A A)] [IsMonHom (e.
     · exact MonObj.mul_comp x y (e.hom ≫ fst A A)
     · exact MonObj.mul_comp x y (e.hom ≫ snd A A)
 
-omit [IsCommMonObj B] in
 
-theorem isMonHom_mul (p q : B ⟶ A) [IsMonHom p] [IsMonHom q] : IsMonHom (p * q) where
-  one_hom := by
-    rw [MonObj.comp_mul, IsMonHom.one_hom, IsMonHom.one_hom]
-    have e₁ : (η[A] : 𝟙_ _ ⟶ A) = 1 := by rw [Hom.one_def]; simp
-    rw [e₁, _root_.mul_one]
-  mul_hom := by
-    have e₁ : μ[B] = fst B B * snd B B := by simp [Hom.mul_def]
-    have e₂ : ((p * q) ⊗ₘ (p * q)) ≫ μ[A] = (fst B B ≫ (p * q)) * (snd B B ≫ (p * q)) := by
-      rw [Hom.mul_def (fst B B ≫ (p * q))]
-      congr 1
-    rw [e₂, e₁]
+omit [IsCommMonObj B] in
+theorem isMonHom_mul (p q : B ⟶ A) [IsMonHom p] [IsMonHom q] : IsMonHom (p * q) := by
+  refine ⟨?_, ?_⟩
+  · rw [MonObj.comp_mul, IsMonHom.one_hom p, IsMonHom.one_hom q,
+      MonObj.one_eq_one A, _root_.mul_one]
+  · rw [← lift_fst_comp_snd_comp (p * q) (p * q), ← Hom.mul_def, MonObj.mul_eq_mul B]
     simp only [MonObj.comp_mul, MonObj.mul_comp]
     exact mul_mul_mul_comm _ _ _ _
 
 omit [IsCommMonObj A] [IsCommMonObj B] in
 theorem lam_add {T : Over S} (c d : Pic B.left) (x y : T ⟶ B) : lam (c + d) x y = lam c x y + lam d x y := by
-  simp only [lam, map_add]
+  simp only [lam, map_add (f := _)]
   abel
 
 end Geometry
@@ -174,7 +172,7 @@ theorem sectionsDim_additionGraph_principalPolarisation : Out.Laws → Out.Laws2
         pull (GrpObj.inv : Q.A ⟶ Q.A).left (pull r.left c) = pull r.left c := fun r _ => by
       rw [← pull_comp, ← Over.comp_left, GrpObj.inv_hom, Over.comp_left, pull_comp, e₁]
     refine (cls_eq_iff hM (pull_isLB hM _)).1 ?_
-    rw [cls_pull hM, cM, map_nsmul, map_add, map_add, e₂, e₂, e₂]
+    rw [cls_pull hM, cM, map_nsmul, map_add (f := _), map_add (f := _), e₂, e₂, e₂]
 
   let C : Matrix (Fin 2) (Fin 2) ℕ := !![2 * N, N; N, 2 * N]
   let s : Q.A ⟶ Q.A := (Φ Q.A).symm ![p ^ (2 * N) * q ^ N, p ^ N * q ^ (2 * N)]
@@ -251,7 +249,7 @@ theorem sectionsDim_additionGraph_principalPolarisation : Out.Laws → Out.Laws2
   rw [cls_pull hMe', cls_lbPow hM, cls_lbPow hM', cM, cls_linComb hL, Fin.sum_univ_three]
   have e₁ : ∀ r : P.A ⊗ P.A ⟶ P.A, pull φ.hom.left (pull r.left c) = pull (φ.hom ≫ r).left c := fun r => by
     rw [Over.comp_left, pull_comp]
-  simp only [← hc, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, map_nsmul, map_add, map_zsmul, e₁,
+  simp only [← hc, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, map_nsmul, map_add (f := _), map_zsmul, e₁,
     MonObj.comp_mul, ← hpd, ← hqd]
   module
 

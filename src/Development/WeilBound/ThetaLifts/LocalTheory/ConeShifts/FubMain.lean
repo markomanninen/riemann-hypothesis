@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.FubLoc
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.FubLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -183,8 +187,6 @@ theorem euler {ν : Chr F E} {z : ℕ} (hz : 2 ≤ z) (𝔞 : FractionalIdeal (�
     have := @hT (w.under (𝓞 F))
     tauto
 
-theorem wt_mul (ν : Chr F E) (z : ℕ) (a b : (AE F E)ˣ) : wt ν z (a * b) = wt ν z a * wt ν z b := map_mul (wtH ν z) a b
-
 set_option maxHeartbeats 1000000 in
 theorem ideleFub : IdeleFub := by
   classical
@@ -196,7 +198,7 @@ theorem ideleFub : IdeleFub := by
   have di := idAt_eq (E := E) (evI F) real_idem fun _ => at_inf_iff
   have df := fun v => idAt_eq (E := E) (evFin F v) (idem_idem v) fun _ => at_fin_iff
   have e1 : (⊤ : Subgroup (AE F E)ˣ) = part PI ⊤ (io (realAd F 1) + io (rest ∅)) := by
-    rw [io, io, ← map_add, real_add_rest, map_one]
+    rw [io, io, ← map_add (f := _), real_add_rest, map_one]
     exact Subgroup.ext fun g => ⟨fun h => ⟨h, unitInvariant_one g⟩, fun h => h.1⟩
   have sp := sy.split hr (hi ∅) (io_orth (real_rest ∅))
   let et : (⊤ : Subgroup (AE F E)ˣ) ≃ₜ* (AE F E)ˣ :=
@@ -233,11 +235,12 @@ theorem ideleFub : IdeleFub := by
       κa * (idealVal ν 𝔞 : ℂ) * charL ν (S₀ : Set (Pl F)) (z : ℂ) :=
     euler hz 𝔞 fin hS hT hν hram _ hu2 _ t2
   have hsum : (io (rest ∅) : AE F E) = ∑ v ∈ T, io (idem F v) + io (rest T) := by
-    rw [sum_rest T, io, map_add, map_sum]; rfl
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [sum_rest T, io, map_add (f := _), map_sum]; rfl
   obtain ⟨p1, p2⟩ := sy.prod (fun v => io (idem F v)) hv (fun _ _ h => io_orth (idem_orth h)) _ (hi T) γ hγ (β T) (hβ T) T
     (fun v h => io_orth (idem_rest h))
     (fun T' h => co_I (sy.good_sum _ hv (fun _ _ h => io_orth (idem_orth h)) _ (hi T) T' fun v h' => io_orth (idem_rest (h h')))
-      (by rw [map_add, inf_io (rest_fst T), add_zero, map_sum, Finset.sum_eq_zero fun v _ => inf_io rfl]))
+      (by rw [map_add (f := _), inf_io (rest_fst T), add_zero, map_sum, Finset.sum_eq_zero fun v _ => inf_io rfl]))
     _ hsum (β ∅) (hβ ∅) (fun v l => ext0 _ (g v) l * wt ν z l)
     (fun l => (if ∀ v ∉ T, InAt 𝔞 v (l : AE F E) then (1 : ℂ) else 0) * wt ν z l)
     (fun v h => (g3 v fun l => ext0 _ (g v) l * wt ν z l).1.2 (by simp only [extendByZeroOnSubset_apply_coe]; exact i2 v h)) t1

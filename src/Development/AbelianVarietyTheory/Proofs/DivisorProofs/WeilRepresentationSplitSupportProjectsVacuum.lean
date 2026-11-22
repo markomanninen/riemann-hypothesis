@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PerCEmb
-import Development.AbelianVarietyTheory.Definitions.Divisors.MarkAd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilDatumSplitPlaceReadsThetaClassicallyStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicVacuumReadsMultipleClassicalVacuumStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjAGphiEqSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaReadingLinearInjectiveAtOrthonormalFrame
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenMapTranspose
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSelfDualCHLat
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ProjProjOfGood
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SqNormIntegralFundamentalDomainEqL2NormSq
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOrEqOfPlaceIdem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PerCEmb
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MarkAd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilDatumSplitPlaceReadsThetaClassicallyStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicVacuumReadsMultipleClassicalVacuumStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjAGphiEqSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaReadingLinearInjectiveAtOrthonormalFrame
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenMapTranspose
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSelfDualCHLat
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ProjProjOfGood
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SqNormIntegralFundamentalDomainEqL2NormSq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOrEqOfPlaceIdem
+
+@[expose] public section
 
 open NumberField Matrix Complex MeasureTheory IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Dict GlobalTheory.AdTh
@@ -88,31 +92,26 @@ omit [NumberField E] in
 theorem hat_mono {L L' : Set (Fin n → E)} (h : L ⊆ L') : hat F L ≤ hat F L' :=
   AddSubgroup.closure_mono fun _ ⟨a, ha, x, hx, e⟩ => ⟨a, ha, x, h hx, e⟩
 
-theorem exists_split {A B C : Submodule (𝓞 E) (Fin n → E)} (hA : Submodule.IsLattice E A)
-    (hB : Submodule.IsLattice E B) (hC : Submodule.IsLattice E C) {v : Fin n → E} {z : Fin n → RA F E}
+theorem exists_split {A B C : Submodule (𝓞 E) (Fin n → E)} (hA : Submodule.IsFullLattice E A)
+    (hB : Submodule.IsFullLattice E B) (hC : Submodule.IsFullLattice E C) {v : Fin n → E} {z : Fin n → RA F E}
     (h1 : z ∈ hat F (A : Set (Fin n → E))) (h2 : z ∈ hat F (B : Set (Fin n → E)))
     (h3 : fv F v - z ∈ hat F (C : Set (Fin n → E))) : ∃ x, x ∈ A ∧ x ∈ B ∧ v - x ∈ C := by
-  have hM : Submodule.IsLattice E ((A ⊓ B) ⊓ C : Submodule (𝓞 E) (Fin n → E)) := by
-    refine ⟨hC.fg.of_le inf_le_right, eq_top_iff.2 fun x _ => ?_⟩
-    obtain ⟨a, ha, h1⟩ := cap_exists_denom A hA.span_eq_top x
-    obtain ⟨b, hb, h2⟩ := cap_exists_denom B hB.span_eq_top (a • x)
-    obtain ⟨c, hc, h3⟩ := cap_exists_denom C hC.span_eq_top (b • a • x)
-    have h4 : c • b • a • x ∈ (A ⊓ B) ⊓ C := ⟨⟨nsmul_mem (nsmul_mem h1 b) c, nsmul_mem h2 c⟩, h3⟩
-    have h5 : x = ((c * b * a : ℕ) : E)⁻¹ • c • b • a • x := by
-      rw [smul_smul c, smul_smul (c * b), ← Nat.cast_smul_eq_nsmul E, inv_smul_smul₀ (Nat.cast_ne_zero.2 (by positivity))]
-    rw [h5]
-    exact Submodule.smul_mem _ _ (Submodule.subset_span h4)
+  have hM : Submodule.IsFullLattice E ((A ⊓ B) ⊓ C : Submodule (𝓞 E) (Fin n → E)) := by
+    letI := hA
+    letI := hB
+    letI := hC
+    infer_instance
   obtain ⟨x, hx⟩ := (hat_rational_points_and_approx F E n _ hM.fg hM.span_eq_top).2.2.1 z
   refine ⟨x, ?_, ?_, ?_⟩
   · rw [← (hat_rational_points_and_approx F E n _ hA.fg hA.span_eq_top).1, ← sub_sub_cancel z (fv F x)]
-    exact sub_mem h1 (hat_mono (fun _ h => h.1.1) hx)
+    exact sub_mem h1 (hat_mono (fun _ (h : _ ∈ ((A ⊓ B) ⊓ C : Submodule (𝓞 E) (Fin n → E))) => h.1.1) hx)
   · rw [← (hat_rational_points_and_approx F E n _ hB.fg hB.span_eq_top).1, ← sub_sub_cancel z (fv F x)]
-    exact sub_mem h2 (hat_mono (fun _ h => h.1.2) hx)
+    exact sub_mem h2 (hat_mono (fun _ (h : _ ∈ ((A ⊓ B) ⊓ C : Submodule (𝓞 E) (Fin n → E))) => h.1.2) hx)
   · rw [← (hat_rational_points_and_approx F E n _ hC.fg hC.span_eq_top).1]
     have : fv F (v - x) = (fv F v - z) + (z - fv F x) := by
       funext i; simp [fv, TensorProduct.tmul_sub]
     rw [this]
-    exact add_mem h3 (hat_mono (fun _ h => h.2) hx)
+    exact add_mem h3 (hat_mono (fun _ (h : _ ∈ ((A ⊓ B) ⊓ C : Submodule (𝓞 E) (Fin n → E))) => h.2) hx)
 
 end Lat
 
@@ -298,8 +297,14 @@ theorem hLat_split (V : HSp D) {e : AE D} (he : IsSplitIdem D e) {h h' : GA D V}
     ext i j
     have := congrArg (finPart D) (congrFun (congrFun hM i) j)
     simpa only [Matrix.smul_apply, smul_eq_mul, Matrix.map_apply, map_mul] using this
-  refine exists_split (F := D.host.F) (GlobalTheory.RepsCompare.isLattice_hLat V _) (GlobalTheory.RepsCompare.isLattice_hLat V _)
-    (GlobalTheory.RepsCompare.isLattice_hLat V _) (z := finPart D t • fv D.host.F v) ?_ (hst _ _ hv') ?_
+  have hLat (g : Bridge.Gf V) : Submodule.IsFullLattice D.host.E (Bridge.hLat V g) := by
+    obtain ⟨-, -, hfg, hsp, -⟩ := GlobalTheory.Member.latHat_eq_hat_and_gram D V
+    obtain ⟨Λ, hΛ, h1, h2, -⟩ := GlobalTheory.AdLat.exists_lattice_latOf D.host.F D.host.E V.rank (GlobalTheory.Member.latC V) g.1 hfg hsp
+    rw [SetLike.coe_injective ((GlobalTheory.RepsCompare.coe_hLat V g).trans hΛ.symm)]
+    letI : Submodule.IsLattice D.host.E Λ := Submodule.IsLattice.of_fg D.host.E h1
+    exact { span_eq_top := h2 }
+  refine exists_split (F := D.host.F) (hLat _) (hLat _)
+    (hLat _) (z := finPart D t • fv D.host.F v) ?_ (hst _ _ hv') ?_
   · have := key _ _ _ h1
     rw [e0]
     exact this ▸ MovedLat.fwd V 1 _ (hst _ _ hw)
@@ -342,8 +347,8 @@ theorem conj_std {n : ℕ} (v : Fin n → D.host.E) :
 
 end Adelic
 
-open Formalism.IndefR in
 
+open Formalism.IndefR in
 theorem om_reads_projA : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (V W : HSp D) (χV χW : (AE D)ˣ →* Circle) (om : GA D V × GA D W →* Module.End ℂ (WO V W → ℂ)), IsPair ψ θ V W χV χW om → ∀ (r g : ℕ) (hr : W.rank = r) (X : Data D.host.E r) (bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.Λ) (idx : Fin g ≃ X.Ψ × Fin r), IsMod W hr X → IsSympl X bas → ∀ (H : Geo.Tor.Host D.host.E), (H.rt : D.host.E) = D.host.sqrtMinusD → ∀ (ΛV : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)) (ΛW : Submodule (𝓞 D.host.E) (Fin W.rank → D.host.E)) (Λ₁ : Lt D.host.E V.rank) (L : Lt D.host.E r), (ΛV : Set (Fin V.rank → D.host.E)) = L0c D V → IsSelfDualC V ΛV → IsSelfDualC W ΛW → (ΛV : Set (Fin V.rank → D.host.E)) = (Formalism.L2.Pj.stdLat D.host.E V.rank : Set (Fin V.rank → D.host.E)) → (∀ L₀ : Submodule (𝓞 D.host.E) (Fin W.rank → D.host.E), L₀ = Submodule.span (𝓞 D.host.E) {w | ∃ a : D.host.E, a ∈ D.host.AA ∧ ∃ v ∈ ΛW, w = a • v} → L = latR hr L₀) → ∀ (x : Frame X.Ψ r) (s : D.what₂.Tau → Matrix (Fin W.rank) (Fin W.rank) ℂ), IsONFr X x → IsInvOf W hr X x s → ∀ f, IsVacO ψ θ V W (fun _ => 1) s (ΛV : Set (Fin V.rank → D.host.E)) (ΛW : Set (Fin W.rank → D.host.E)) f → ∀ φ : TF V.rank g, Reads θ V W hr X bas idx f φ x → ∀ (e : AE D) (P : Finset (Formalism.L2.DIV.Pl D.host.E)) (h : GA D V) (y : (AE D)ˣ), IsIdemSum e P → SuppAt e V h → IsDetAt e V h y → (∀ v : Fin V.rank → D.host.E, v ∈ Λ₁ ↔ (fun j => star (v j)) ∈ (Formalism.IndefR.Bridge.hLat V (Formalism.IndefR.FWT.fin V h))) → Reads θ V W hr X bas idx (om (h, 1) f) ((((χW y : Circle) : ℂ)⁻¹ * (Real.sqrt ((((Λ₁ ⊓ Formalism.L2.Pj.stdLat D.host.E V.rank).toAddSubgroup.addSubgroupOf Λ₁.toAddSubgroup).index : ℝ) ^ r) : ℂ)) • projA X bas (H.w0 : D.host.E) (tens Λ₁ L) φ) x := by
   intro D ψ θ V W χV χW om hP r g hr X bas idx hX hs H hH ΛV ΛW Λ₁ L hV0 hV hW hstd hL x s hx hinv f hf φ hφ
     e P h y he hsupp hdet hΛ₁
@@ -426,7 +431,7 @@ theorem om_reads_projA : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : Inf
     have o2 : cA D a * cA D a = cA D a := by rw [← RingHom.map_mul, o1]
     have o5 : cA D a' * cA D a' = cA D a' := by rw [← RingHom.map_mul, o4]
     have o8 : cA D a * cA D a' = 0 := by rw [← RingHom.map_mul, o7, RingHom.map_zero]
-    rw [RingHom.map_add] at h3
+    rw [RingHom.map_add (f := _)] at h3
     have o9 : a * cA D a' = 0 := by
       linear_combination (a * cA D a') * h3 - (cA D a' * (cA D a + cA D a')) * o1 -
         (cA D a' * (cA D a + cA D a')) * o7 - a * o8 - a * o5
@@ -435,12 +440,12 @@ theorem om_reads_projA : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : Inf
       rwa [RingHom.map_mul, cA_cA, RingHom.map_zero] at this
     have o6 : a' * cA D a' = 0 := by linear_combination h3 - o3 - o9 - o10
     have hε : (a + cA D a) * (a + cA D a) = a + cA D a := by linear_combination o1 + o2 + 2 * o3
-    have hcε : cA D (a + cA D a) = a + cA D a := by rw [RingHom.map_add, cA_cA, add_comm]
+    have hcε : cA D (a + cA D a) = a + cA D a := by rw [RingHom.map_add (f := _), cA_cA, add_comm]
     obtain ⟨h₀, e₀⟩ := exists_part V hε hcε h
     obtain ⟨h', e'⟩ := exists_part V (ε := 1 - (a + cA D a)) (by linear_combination hε)
       (by rw [RingHom.map_sub, RingHom.map_one, hcε]) h
     have hsupp' := (suppAt_iff _ _ _).1 hsupp
-    rw [RingHom.map_add] at hsupp'
+    rw [RingHom.map_add (f := _)] at hsupp'
     obtain ⟨b1, b2, b3, b4, b5, b6⟩ := alg_parts o1 o2 o3 o4 o5 o6 o7 o8 o9 o10 hsupp' e₀ e'
     obtain ⟨y₀, hy₀⟩ := exists_detAt V o1 h₀
     obtain ⟨y', hy'⟩ := exists_detAt V o4 h'

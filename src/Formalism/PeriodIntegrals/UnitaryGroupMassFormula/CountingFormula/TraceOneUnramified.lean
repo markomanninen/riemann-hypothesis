@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.HermFormShiftedVectorZero
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.LTheta
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.LisoSmulMem
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.LadjFrame
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.LretrCancel
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.HermFormShiftedVectorZero
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.LTheta
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.LisoSmulMem
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.LadjFrame
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.LretrCancel
+
+@[expose] public section
 
 open NumberField Module Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.BasicNotions Formalism.L2.SG.CntLocal
 open Classical
@@ -35,7 +39,8 @@ theorem exists_dual0 : ∃ g0 : Fin D.R.rS → (VS D).V, IsDual0 F0 g0 := by
     have hx : ∑ a, star (μ a) • F0.e a = 0 := by
       apply (VS D).nondeg.1
       intro v
-      rw [map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, LinearMap.sum_apply]
       simp only [map_smulₛₗ, LinearMap.smul_apply, starRingEnd_apply, star_star, smul_eq_mul]
       rw [← hv v]
       exact Finset.sum_congr rfl (fun a _ => mul_comm _ _)
@@ -84,12 +89,14 @@ theorem row_dual_frame : RowDualFrame := by
   · intro v hv
     have hg0' : ∀ a b, (VS D).hT (F0.e a) (g0 b) = if a = b then 1 else 0 := hg0
     have hyc : ycL F0 (fun b => P' (g0 b)) v = P' (ycL F0 g0 v) := by
-      rw [ycL_apply, ycL_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [ycL_apply, ycL_apply, map_sum]
       exact Finset.sum_congr rfl (fun b _ => by rw [map_smul])
     have hperp : v - ycL F0 g0 v ∈ perpS (VS D) F0.X := by
       apply mem_perp_of F0
       intro a
-      rw [map_sub, ycL_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, ycL_apply, map_sum]
       simp [hg0']
     have h1 : P' (ycL F0 g0 v) = P' v := by
       have := hker _ hperp

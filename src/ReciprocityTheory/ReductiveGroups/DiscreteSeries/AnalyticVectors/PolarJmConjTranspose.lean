@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DefsRep
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DefsRep
+
+@[expose] public section
 
 noncomputable section
 

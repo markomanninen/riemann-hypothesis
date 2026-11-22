@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsUnitaryOfCharIff
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QdetTopThreeOrders
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsUnitaryOfCharIff
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QdetTopThreeOrders
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,11 +25,12 @@ theorem trace_mem {A : Type} [Ring A] [Algebra ℂ A] {n : ℕ} (X : Fin n → F
       Fintype.card_fin]
   have hP : ∑ T, f (CapelliTop.subdet X T) • p T = 0 := Polynomial.funext fun u => by
     have h2 := hf0 _ (h u)
-    rw [CapelliTop.qdet_expand, map_sum] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [CapelliTop.qdet_expand, map_sum] at h2
     rw [Polynomial.eval_zero, ← h2, Polynomial.eval_finsetSum]
     refine Finset.sum_congr rfl fun T _ => ?_
     simp [p, Polynomial.eval_prod, mul_comm]
-  have h3 := congrArg (fun q => Polynomial.coeff q n) hP
+  have h3 := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q n) hP
   simp only [Polynomial.finsetSum_coeff, Polynomial.coeff_smul, Polynomial.coeff_zero, smul_eq_mul] at h3
   have hz : ∀ T : Finset (Fin (n + 1)), 2 ≤ T.card → (p T).coeff n = 0 := fun T hT =>
     Polynomial.coeff_eq_zero_of_natDegree_lt (by
@@ -43,7 +48,7 @@ theorem trace_mem {A : Type} [Ring A] [Algebra ℂ A] {n : ℕ} (X : Fin n → F
   simp only [ho, CapelliTop.subdet_single, mul_one] at h3
   exact hf ((map_sum f _ _).trans h3)
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 abbrev scL (a : ℕ) (z : Cinf E) : Lie E a := toL (Matrix.diagonal fun _ => z)
 
@@ -58,7 +63,7 @@ theorem lie_mem_Zalg (x : Cinf E) : lie E a (scL a x) ∈ Zalg E a := by
       rw [atEmb_eq]; simp
     have e2 : ∀ i, lieS E a i i (atEmb τ z) =
         z • Eop τ i i + starRingEnd ℂ z • Eop (ComplexEmbedding.conjugate τ) i i := fun i => by
-      rw [atEmb_eq, map_add, map_smul, map_smul]
+      rw [atEmb_eq, map_add (f := _), map_smul, map_smul]
       simp only [Eop, atEmb_conj, map_one, Complex.conj_I, e, map_neg, ← Complex.coe_smul]
       match_scalars
       · rw [Complex.re_eq_add_conj]; ring
@@ -71,10 +76,12 @@ theorem lie_mem_Zalg (x : Cinf E) : lie E a (scL a x) ∈ Zalg E a := by
       simp only [InfinitePlace.mk_embedding, if_true]
     simp [this, Finset.univ_sum_single]
   have e2 : lie E a (scL a x) = ∑ i, lieS E a i i x := by
-    simp only [lieS_apply, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [lieS_apply, ← map_sum]
     exact congrArg (lie E a) (Matrix.sum_single_eq_diagonal (fun _ : Fin a => x)).symm
   rw [e2, e]
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   rw [Finset.sum_comm]
   exact sum_mem fun w _ => h1 _ _
 
@@ -288,7 +295,7 @@ theorem continuous_char (π : CuspSub E a) (ω : Ideles E →* ℂˣ) (h : ∀ z
   exact (hinf.comp (Continuous.units_map _ RankOne.continuous_pInf)).mul
     (hfin.comp (Continuous.units_map _ continuous_snd))
 
-theorem exists_hasCentral : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ)
+theorem exists_hasCentral : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ)
     (π : GlobalTheory.CuspRep.CuspSub E a), ∃ ω : Formalism.L2.Host.HChar E, π.HasCentral ω := by
   intro E _ _ _ a π
   obtain ⟨φ, hφ, h0⟩ := (Submodule.ne_bot_iff _).1 π.ne_bot

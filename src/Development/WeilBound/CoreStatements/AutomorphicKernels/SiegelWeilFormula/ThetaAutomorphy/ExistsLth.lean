@@ -1,12 +1,16 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaAutomorphy.ThetaSumSRat
-import Development.WeilBound.ThetaLifts.LatticeBasics.FdEqZero
-import Development.WeilBound.ThetaLifts.FrameEstimates.GrpTop
-import Development.WeilBound.ThetaLifts.FrameEstimates.BlockForm
-import Development.WeilBound.ThetaLifts.FrameEstimates.SiegelAll
-import Development.WeilBound.ThetaLifts.FrameEstimates.FundamentalDomainFiniteVolume
-import Development.WeilBound.ThetaLifts.CartanFactorisation.Unimod
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdmittedFormEqAdelicThetaDistributionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzMapBarrelledSpaceStatement
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaAutomorphy.ThetaSumSRat
+public import Development.WeilBound.ThetaLifts.LatticeBasics.FdEqZero
+public import Development.WeilBound.ThetaLifts.FrameEstimates.GrpTop
+public import Development.WeilBound.ThetaLifts.FrameEstimates.BlockForm
+public import Development.WeilBound.ThetaLifts.FrameEstimates.SiegelAll
+public import Development.WeilBound.ThetaLifts.FrameEstimates.FundamentalDomainFiniteVolume
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.Unimod
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdmittedFormEqAdelicThetaDistributionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzMapBarrelledSpaceStatement
+
+@[expose] public section
 
 noncomputable section
 

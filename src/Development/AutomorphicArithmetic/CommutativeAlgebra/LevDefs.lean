@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGDatumOneOneOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsGHeckeMapForget
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsGaloisCover
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGDatumOneOneOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsGHeckeMapForget
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsGaloisCover
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
 
@@ -29,16 +34,5 @@ structure GSim (G : GDatum) where
   νtower : ∀ n m : ℕ, 0 < n → 0 < m → (n : ℤ) ∣ ν (n * m) - ν n
 
 variable {R : Type} [CommRing R] [Algebra ℚ R] {S : Scheme.{0}}
-
-abbrev TAt {gb : GBase G R} {N : ℕ} {s : S ⟶ Sp R} (o : GObj gb N s) {K : Type} [Field K] (x : Sp K ⟶ S) : Type :=
-  GTateIso G K (Over.mk x ⟶ o.A) (fun c g => g ≫ o.act.act c)
-    (fun n g g' z => Out.WeilIs o.A (o.P.pull (lift (𝟙 o.A) (𝟙 o.A)).left) n g g' (unitOn z))
-
-def GLift {gb : GBase G R} {N : ℕ} {s : S ⟶ Sp R} (o : GObj gb N s) (k : ℕ) (T : Over S)
-    (lv : G.La → (T ⟶ o.A)) : Prop :=
-  (∀ x y, lv (x + y) = lv x * lv y) ∧ (∀ x, lv ((N * k) • x) = 1) ∧
-  (∀ (c : G.O) x, lv (c • x) = lv x ≫ o.act.act c) ∧ (∀ x, lv (k • x) = toUnit T ≫ o.eta x) ∧
-  ∀ (K : Type) [Field K] [IsAlgClosed K] (x : Sp K ⟶ T.left), ∃ I : TAt o (x ≫ T.hom),
-    ∀ y, (Over.homMk x rfl : Over.mk (x ≫ T.hom) ⟶ T) ≫ lv y = I.ev (N * k) y
 
 end UpperTheory.Lev

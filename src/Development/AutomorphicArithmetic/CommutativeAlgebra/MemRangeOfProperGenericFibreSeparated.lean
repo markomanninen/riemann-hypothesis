@@ -1,6 +1,10 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.H0TwistOverClosedField
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsSpecializesLiftGenericBaseChange
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.H0TwistOverClosedField
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsSpecializesLiftGenericBaseChange
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4
 

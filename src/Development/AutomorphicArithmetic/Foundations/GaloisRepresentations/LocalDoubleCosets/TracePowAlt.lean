@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.TracePow
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.TracePow
+
+@[expose] public section
 
 namespace UpperTheory.Gal.LocD
 
@@ -17,7 +21,7 @@ theorem tracePow : TracePow := by
   have hinv : φ * Polynomial.aeval φ t = 1 := by
     have h := congrArg (Polynomial.aeval φ) (Polynomial.X_mul_divX_add p)
     rw [hp, LinearMap.aeval_self_charpoly, ← hp] at h
-    simp only [map_add, map_mul, Polynomial.aeval_X, Polynomial.aeval_C] at h
+    simp only [map_add (f := _), map_mul, Polynomial.aeval_X, Polynomial.aeval_C] at h
     have h' : φ * Polynomial.aeval φ (Polynomial.divX p) = -(algebraMap ℂ _ (p.coeff 0)) :=
       eq_neg_of_add_eq_zero_left h
     rw [ht, map_mul, map_neg, Polynomial.aeval_C, neg_mul, mul_neg, ← mul_assoc,
@@ -27,7 +31,8 @@ theorem tracePow : TracePow := by
   have hQ1 : Polynomial.aeval φ Q = 1 := by
     rw [hQ, map_pow, map_mul, Polynomial.aeval_X, hinv, one_pow]
   have htr : LinearMap.trace ℂ J (Polynomial.aeval φ Q) = 0 := by
-    rw [Polynomial.aeval_eq_sum_range, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Polynomial.aeval_eq_sum_range, map_sum]
     refine Finset.sum_eq_zero (fun i _ => ?_)
     rw [map_smul, smul_eq_mul]
     by_cases hi : k₀ ≤ i

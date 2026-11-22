@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLocModelIsPrimeOf
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotDominatesTopPlace
-import Development.AbelianVarietyTheory.Definitions.Divisors.DominatesIffIsLocalHom
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLocModelIsPrimeOf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotDominatesTopPlace
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DominatesIffIsLocalHom
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.TopForm GlobalTheory.Discrepancy GlobalTheory.FieldPair
@@ -175,7 +180,7 @@ private lemma isDomain_of_formallyEtale_of_isLocalRing {A B : Type} [CommRing A]
   let q' : Ideal (Localization.Away f) := q.map (algebraMap S _)
   haveI hq' : q'.IsPrime := IsLocalization.isPrime_of_isPrime_disjoint (Submonoid.powers f) _ q hq hdisj
   have hcomap : q'.comap (algebraMap S (Localization.Away f)) = q :=
-    IsLocalization.comap_map_of_isPrime_disjoint (Submonoid.powers f) _ hq hdisj
+    IsLocalization.under_map_of_isPrime_disjoint (Submonoid.powers f) _ hq hdisj
   obtain ⟨hdom, -⟩ := _root_.GlobalTheory.isDomain_and_isIntegrallyClosed_atPrime_of_etale A q' (Localization.AtPrime q')
   haveI : IsLocalization q.primeCompl (Localization.AtPrime q') := by
     have h1 : IsLocalization (q'.comap (algebraMap S (Localization.Away f))).primeCompl
@@ -188,11 +193,11 @@ private lemma isDomain_of_formallyEtale_of_isLocalRing {A B : Type} [CommRing A]
     (IsLocalization.algEquiv q.primeCompl (Localization.AtPrime q') B).toRingEquiv
   exact e'.symm.toMulEquiv.isDomain
 
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace in
 open scoped TensorProduct in
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1600000 in
-
 theorem _root_.GlobalTheory.FieldPair.IsEtTower.exists_quotient_last :
     ∀ {K L : Type} [Field K] [Field L] (cK : ℂ →+* K) (cL : ℂ →+* L) (r : ℕ) (R : Subring K)
     (T : Subring L) (ι : R →+* T) (ψ : T →+* R) (τ : Fin (r + 1) → T)

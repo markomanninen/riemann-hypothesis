@@ -1,11 +1,15 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsAlgClosedBaseChange
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsEqnIffGeneratesAtInv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCartierDivisorDominantPullbackWithClass
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsValuationSubringDominatingSubring
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsFiniteLengthOfIsArtinianRingAnnihilator
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsAmpleLBOfRelAmpleOfIsAffine
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteCohOfForallModification
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsAlgClosedBaseChange
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsEqnIffGeneratesAtInv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCartierDivisorDominantPullbackWithClass
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsValuationSubringDominatingSubring
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsFiniteLengthOfIsArtinianRingAnnihilator
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsAmpleLBOfRelAmpleOfIsAffine
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteCohOfForallModification
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -25,15 +29,15 @@ theorem finite_app (f : M ⟶ W) [IsProper f] [IsLocallyNoetherian W] {L : Recip
 
 variable [IsIntegral M] [IsIntegral W]
 
-omit [IsIntegral W] in
 
+omit [IsIntegral W] in
 theorem gen_mem_preimage (f : M ⟶ W) [IsDominant f] {U : W.Opens} {y : W} (hy : y ∈ U) :
     genericPoint M ∈ f ⁻¹ᵁ U := by
   obtain ⟨m, hm⟩ := f.denseRange.exists_mem_open U.isOpen ⟨y, hy⟩
   exact gen_mem (U := f ⁻¹ᵁ U) (x := m) hm
 
-omit [IsIntegral W] in
 
+omit [IsIntegral W] in
 theorem fnOf_map {U V : M.Opens} (e : V ≤ U) (h : genericPoint M ∈ V) (a : Γ(M, U)) :
     fnOf V h (M.presheaf.map (homOfLE e).op a) = fnOf U (e h) a := by
   exact fnOf_resG e h a
@@ -71,7 +75,7 @@ theorem exists_denominator_all (f : M ⟶ W) [IsDominant f] {V : W.Opens} (hV : 
   | add x x' _ _ hx hx' =>
     obtain ⟨a, ha⟩ := hx
     obtain ⟨a', ha'⟩ := hx'
-    exact ⟨a + a', by rw [map_add, map_add, map_add, ha, ha', mul_add]⟩
+    exact ⟨a + a', by rw [map_add (f := _), map_add (f := _), map_add (f := _), ha, ha', mul_add]⟩
   | smul t x _ hx =>
     obtain ⟨a, ha⟩ := hx
     refine ⟨t * a, ?_⟩
@@ -112,8 +116,8 @@ theorem exists_pow_mul_eq (f : M ⟶ W) [IsDominant f] [QuasiCompact f] [QuasiSe
   · rw [map_pow, ← GlobalTheory.Cartier.DomPull.fnOf_app f hg' g]
     exact h1
 
-omit [IsIntegral M] [IsIntegral W] in
 
+omit [IsIntegral M] [IsIntegral W] in
 theorem exists_local_denominator (M W : Scheme.{0}) [IsIntegral M] [IsIntegral W] (f : M ⟶ W) [IsDominant f]
     [IsProper f] [IsLocallyNoetherian W] (L : ReciprocityTheory.ChartRestriction.G.Semi.LB M) (hL : IsAmpleLB L) {r : ℕ}
     (co : Fin r → M.functionField →+ W.functionField)

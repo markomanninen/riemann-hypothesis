@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialPullbackStatement
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.PairRelationOfScaledRatio
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.InFlagDomainOne
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialPullbackStatement
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.PairRelationOfScaledRatio
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.InFlagDomainOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,7 +78,7 @@ def potT (a : σ) (t : ℝ) : LocPot S.X := S.th a + LocPot.ofFun (S.phT a t)
 
 def potH (a : σ) : LocPot S.X := S.th a + LocPot.ofFun (S.ph a)
 
-def degNum (w : Fin e → σ) : ℝ := mInt S.A (fun j => S.th (w j)) fun _ => 1
+def degNum (w : Fin e → σ) : ℝ := ReciprocityTheory.AnForm.M.mInt S.A (fun j => S.th (w j)) fun _ => 1
 
 def degPoly [Fintype σ] : MvPolynomial σ ℝ := formPoly e S.degNum
 

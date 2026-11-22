@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuasiLogFirstBlockSmallOfFrobeniusStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmallModMaximalOfFrobeniusImageSmallStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuasiLogFirstBlockSmallOfFrobeniusStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmallModMaximalOfFrobeniusImageSmallStatement
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
 namespace GlobalTheory.FrobUnit
@@ -49,7 +54,7 @@ theorem frob_matrix_isUnit : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [
   have hσm : ∀ b, F.θ b ∈ IsLocalRing.maximalIdeal O → F.θ (F.σ b) ∈ IsLocalRing.maximalIdeal O := by
     intro b hb
     obtain ⟨z, hz⟩ := hσ b
-    rw [hz, map_add, map_pow, map_mul, map_natCast]
+    rw [hz, map_add (f := _), map_pow, map_mul, map_natCast]
     exact Ideal.add_mem _ (Ideal.pow_mem_of_mem _ hb _ (Fact.out : p.Prime).pos)
       (Ideal.mul_mem_right _ _ hpm)
   have key : ∀ w : Fin d ⊕ Fin k → F.B, (∀ l, ¬IsUnit (F.θ (U.mulVec (fun j => F.σ (w j)) l))) →
@@ -69,7 +74,8 @@ theorem frob_matrix_isUnit : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [
         cases m <;> simp
       rw [hsplit, map_sub]
       refine Ideal.sub_mem _ ((hm _).1 (hw l)) ?_
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Ideal.sum_mem _ fun m _ => ?_
       rw [map_mul]
       refine Ideal.mul_mem_left _ _ (hσm _ ?_)
@@ -99,14 +105,15 @@ theorem frob_matrix_isUnit : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [
   have hres : ∀ b, IsLocalRing.residue O (F.θ (F.σ b)) = IsLocalRing.residue O (F.θ b) ^ p := by
     intro b
     obtain ⟨z, hz⟩ := hσ b
-    rw [hz, map_add, map_pow, map_mul, map_natCast, map_add, map_pow, map_mul,
+    rw [hz, map_add (f := _), map_pow, map_mul, map_natCast, map_add (f := _), map_pow, map_mul,
       (IsLocalRing.residue_eq_zero_iff _).2 hpm, zero_mul, add_zero]
   have hk := key w (by
     intro l
     rw [hm, ← IsLocalRing.residue_eq_zero_iff]
     have := congrFun hx l
     simp only [Matrix.mulVec, dotProduct, hMdef, Matrix.map_apply, Pi.zero_apply] at this ⊢
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     simpa [hres, hw] using this)
   apply hx0
   funext l

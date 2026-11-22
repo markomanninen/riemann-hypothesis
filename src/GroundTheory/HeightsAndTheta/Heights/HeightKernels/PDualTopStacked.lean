@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualTopStacked
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualTopBasisChange
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedDegree
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualTopSimpleSub
-import GroundTheory.PowerSubgroups.CountableNeighbourhoods.ExistsCover
-import GroundTheory.PowerSubgroups.CountableNeighbourhoods.ExistsSmulMemHermitianLattice
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualTopStacked
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualTopBasisChange
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedDegree
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualTopSimpleSub
+public import GroundTheory.PowerSubgroups.CountableNeighbourhoods.ExistsCover
+public import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -64,10 +69,6 @@ theorem degForm_of_cover (hSimple : DualTopSimpleSub.Statement) {F G : HermLatti
     DegForm F G :=
   fun T T' _ _ _ _ b hb b' hb' II hi hII => hSimple K i F G T T' b hb b' hb' II hi hII hlt hcov
 
-theorem exists_smul_mem (X : HermLattice K i) (v : Fin i → K) :
-    ∃ c : 𝓞 K, c ≠ 0 ∧ c • v ∈ X.lattice :=
-  _root_.GroundTheory.Variant₂.N1.exists_smul_mem_hermitianLattice X v
-
 theorem exists_cover {F X : HermLattice K i} (hlt : X.lattice < F.lattice) :
     ∃ w ∈ F.lattice, w ∉ X.lattice ∧ ∀ N : Submodule (𝓞 K) (Fin i → K), X.lattice ≤ N →
       N ≤ X.lattice ⊔ Submodule.span (𝓞 K) {w} → N = X.lattice ∨ N = X.lattice ⊔ Submodule.span (𝓞 K) {w} :=
@@ -117,8 +118,8 @@ theorem degForm_of_le (hSimple : DualTopSimpleSub.Statement) (hBasis : DualTopBa
 
 end TopDualStacked
 
-open TopDualStacked in
 
+open TopDualStacked in
 theorem DualTopStacked.proof (hSimple : DualTopSimpleSub.Statement) (hBasis : DualTopBasisChange.Statement)
     (hDeg : DualStackedDegree.Statement) : DualTopStacked.Statement := by
   intro K _ _ i F F' T _ _ b hb b' hb' a II hi hII hle hab

@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubPairRight
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsHomLocBijectiveGrSum
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFinsetSum
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmulEqZeroOfMem
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsHomogeneousFamilySaturating
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CubeComplexGradedModuleExactAtOfLargeDegree
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubPairRight
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsHomLocBijectiveGrSum
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFinsetSum
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmulEqZeroOfMem
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsHomogeneousFamilySaturating
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CubeComplexGradedModuleExactAtOfLargeDegree
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.AbLaw PositivityTheory.FormalThickening
 open GlobalTheory.ProjSpace GlobalTheory.QCoh.Qcqs GlobalTheory.Cartier GlobalTheory.CompanionTheory.FormalAlg GlobalTheory.CompanionTheory.FormalAlg.Lift
 
@@ -92,8 +97,8 @@ theorem isGradedMap_glueD (hgr : ∀ S S' (h : S ⊆ S'), IsGradedMap (𝒢 S) (
   exact ((hgr _ _ _).comp (isGradedMap_piProj _ _ k.1)).add
     ((hgr _ _ _).comp (isGradedMap_piProj _ _ k.2)).neg
 
-variable (res) in
 
+variable (res) in
 def glueGr : ℤ → Submodule A (glue res) := grSub (grPi fun i : ι => 𝒢 {i}) (glue res)
 
 @[instance_reducible]

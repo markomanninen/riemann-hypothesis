@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialModelIsometry.IsPolyMon
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialModelIsometry.IsPolyMon
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,11 +50,9 @@ theorem detSplit_prodMem {N K : ℕ} (sz : Fin K → ℕ) (hsz : ∀ k, sz k ≤
     rw [Finset.prod_insert ha]
     convert h2 using 2
     funext t
-    simp only [shapeDeg, Pi.add_apply, Finset.filter_insert]
-    split_ifs with ht
-    · rw [Finset.card_insert_of_notMem (by simp [ha])]
-      simp [ht, add_comm]
-    · simp [ht]
+    by_cases ht : t.val < sz a
+    · simp [shapeDeg, ht, ha, Finset.filter_insert, add_comm]
+    · simp [shapeDeg, ht, Finset.filter_insert]
 
 theorem determinant_splitting_formula : DetSplit := by
   intro N ν c hν f hf

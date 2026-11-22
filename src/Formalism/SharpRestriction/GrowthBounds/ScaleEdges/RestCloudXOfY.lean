@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.OrdMaxRest
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.OrdMaxRest
+
+@[expose] public section
 
 noncomputable section
 

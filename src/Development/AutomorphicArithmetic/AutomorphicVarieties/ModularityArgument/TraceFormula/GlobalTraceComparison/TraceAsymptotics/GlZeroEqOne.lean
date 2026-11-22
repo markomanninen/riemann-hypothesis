@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.BlkOneMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeOperatorConstantTermSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalFixedOpenSubgroupGLw
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvenOrdLConjGramDetOfUnitGramAdicCompletion
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.BlkOneMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeOperatorConstantTermSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalFixedOpenSubgroupGLw
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvenOrdLConjGramDetOfUnitGramAdicCompletion
+
+@[expose] public section
 
 noncomputable section
 
@@ -158,7 +162,7 @@ private theorem bblk_eq (h : a + b = n) (m : GLw a w × GLw b w) (X : Matrix (Fi
   apply Units.ext
   unfold GlobalTheory.BCT.blk
   simp only
-  rw [dif_pos hu, IsUnit.unit_spec, e]
+  rw [dite_eq_left hu, IsUnit.unit_spec, e]
 
 private theorem mem_intMat {X : Multiplicative (Matrix (Fin a) (Fin b) (w.adicCompletion E))} :
     X ∈ intMat a b w ↔ ∀ i j, (Multiplicative.toAdd X) i j ∈ Ov E w := by
@@ -173,11 +177,11 @@ private theorem mem_intMat {X : Multiplicative (Matrix (Fin a) (Fin b) (w.adicCo
   · exact fun hX => Subgroup.subset_closure fun i j => (hO _).1 (hX i j)
 
 private def FF (h : a + b = n) (m : GLw a w × GLw b w) (g : GLw n w) : ℂ :=
-  if ∃ k ∈ GlobalTheory.LFun.KGL w n, Tri h (g * k) m then 1 else 0
+  if ∃ k ∈ GlobalTheory.LFun.KGL w (n := n), Tri h (g * k) m then 1 else 0
 
-private theorem FF_right (h : a + b = n) (m : GLw a w × GLw b w) (g : GLw n w) (k : GLw n w) (hk : k ∈ GlobalTheory.LFun.KGL w n) :
+private theorem FF_right (h : a + b = n) (m : GLw a w × GLw b w) (g : GLw n w) (k : GLw n w) (hk : k ∈ GlobalTheory.LFun.KGL w (n := n)) :
     FF h m (g * k) = FF h m g := by
-  have : (∃ k' ∈ GlobalTheory.LFun.KGL w n, Tri h (g * k * k') m) ↔ ∃ k' ∈ GlobalTheory.LFun.KGL w n, Tri h (g * k') m := by
+  have : (∃ k' ∈ GlobalTheory.LFun.KGL w (n := n), Tri h (g * k * k') m) ↔ ∃ k' ∈ GlobalTheory.LFun.KGL w (n := n), Tri h (g * k') m := by
     constructor
     · rintro ⟨k', hk', t⟩
       exact ⟨k * k', mul_mem hk hk', by rwa [← mul_assoc]⟩
@@ -186,7 +190,7 @@ private theorem FF_right (h : a + b = n) (m : GLw a w × GLw b w) (g : GLw n w) 
   simp only [FF, this]
 
 private theorem triangular_decomposition_right_translate {h : a + b = n} {m m' : GLw a w × GLw b w} {g g' : GLw n w} (t : Tri h g m') (t' : Tri h g' m') :
-    (∃ k ∈ GlobalTheory.LFun.KGL w n, Tri h (g * k) m) → ∃ k ∈ GlobalTheory.LFun.KGL w n, Tri h (g' * k) m := by
+    (∃ k ∈ GlobalTheory.LFun.KGL w (n := n), Tri h (g * k) m) → ∃ k ∈ GlobalTheory.LFun.KGL w (n := n), Tri h (g' * k) m := by
   rintro ⟨k, hk, u⟩
   refine ⟨k, hk, ?_⟩
   have := (t'.mul (tri_inv t)).mul u
@@ -195,20 +199,20 @@ private theorem triangular_decomposition_right_translate {h : a + b = n} {m m' :
 private theorem FF_tri (h : a + b = n) (m : GLw a w × GLw b w) (g : GLw n w) (m' : GLw a w × GLw b w) (t : Tri h g m') :
     FF h m g = FF h m (GlobalTheory.ResW.blk h m') := by
   have t' := GlobalTheory.ResW.HeckeCT.tri_blk h m'
-  simp only [FF, show (∃ k ∈ GlobalTheory.LFun.KGL w n, Tri h (g * k) m) ↔ _ from ⟨triangular_decomposition_right_translate t t', triangular_decomposition_right_translate t' t⟩]
+  simp only [FF, show (∃ k ∈ GlobalTheory.LFun.KGL w (n := n), Tri h (g * k) m) ↔ _ from ⟨triangular_decomposition_right_translate t t', triangular_decomposition_right_translate t' t⟩]
 
 private theorem FF_bblk (h : a + b = n) (m : GLw a w × GLw b w) (X) : FF h m (GlobalTheory.BCT.blk h w m X) = 1 := by
   rw [FF, if_pos]
   exact ⟨1, one_mem _, by rw [mul_one, bblk_eq]; exact tri_blk_nU m X⟩
 
 private theorem sum_left (h : a + b = n) (m : GLw a w × GLw b w) (f : GLw n w → ℂ)
-    (hf : ∀ g, ∀ k ∈ GlobalTheory.LFun.KGL w n, f (g * k) = f g) :
-    ∑ᶠ c : GLw n w ⧸ GlobalTheory.LFun.KGL w n, f c.out * FF h m c.out =
+    (hf : ∀ g, ∀ k ∈ GlobalTheory.LFun.KGL w (n := n), f (g * k) = f g) :
+    ∑ᶠ c : GLw n w ⧸ GlobalTheory.LFun.KGL w (n := n), f c.out * FF h m c.out =
       ∑ᶠ q : Multiplicative (Matrix (Fin a) (Fin b) (w.adicCompletion E)) ⧸ intMat a b w,
         f (GlobalTheory.BCT.blk h w m (Multiplicative.toAdd q.out)) := by
-  let φ : Multiplicative (Matrix (Fin a) (Fin b) (w.adicCompletion E)) ⧸ intMat a b w → GLw n w ⧸ GlobalTheory.LFun.KGL w n :=
-    fun q => ((GlobalTheory.BCT.blk h w m (Multiplicative.toAdd q.out) : GLw n w) : GLw n w ⧸ GlobalTheory.LFun.KGL w n)
-  let u : GLw n w ⧸ GlobalTheory.LFun.KGL w n → ℂ := fun c => f c.out * FF h m c.out
+  let φ : Multiplicative (Matrix (Fin a) (Fin b) (w.adicCompletion E)) ⧸ intMat a b w → GLw n w ⧸ GlobalTheory.LFun.KGL w (n := n) :=
+    fun q => ((GlobalTheory.BCT.blk h w m (Multiplicative.toAdd q.out) : GLw n w) : GLw n w ⧸ GlobalTheory.LFun.KGL w (n := n))
+  let u : GLw n w ⧸ GlobalTheory.LFun.KGL w (n := n) → ℂ := fun c => f c.out * FF h m c.out
   have hinj : Function.Injective φ := by
     intro q q' e
     have e' := QuotientGroup.eq.1 e
@@ -222,7 +226,7 @@ private theorem sum_left (h : a + b = n) (m : GLw a w × GLw b w) (f : GLw n w �
   have hsup : Function.support u ⊆ Set.range φ := by
     intro c hc
     have h1 : FF h m c.out ≠ 0 := right_ne_zero_of_mul hc
-    have h2 : ∃ k ∈ GlobalTheory.LFun.KGL w n, Tri h (c.out * k) m := by
+    have h2 : ∃ k ∈ GlobalTheory.LFun.KGL w (n := n), Tri h (c.out * k) m := by
       by_contra h3
       exact h1 (by rw [FF, if_neg h3])
     obtain ⟨k, hk, Y, hY⟩ := h2
@@ -235,7 +239,7 @@ private theorem sum_left (h : a + b = n) (m : GLw a w × GLw b w) (f : GLw n w �
     have e2 : GlobalTheory.BCT.blk h w m (Multiplicative.toAdd q.out) = c.out * k * nU h (Multiplicative.toAdd t.1) := by
       rw [bblk_eq, e, show q.out = Multiplicative.ofAdd X * t.1 from ht, mul_assoc, ← nU_add]
       rfl
-    change ((GlobalTheory.BCT.blk h w m (Multiplicative.toAdd q.out) : GLw n w) : GLw n w ⧸ GlobalTheory.LFun.KGL w n) = c
+    change ((GlobalTheory.BCT.blk h w m (Multiplicative.toAdd q.out) : GLw n w) : GLw n w ⧸ GlobalTheory.LFun.KGL w (n := n)) = c
     rw [e2]
     conv_rhs => rw [← QuotientGroup.out_eq' c]
     refine QuotientGroup.eq.2 ?_
@@ -244,7 +248,7 @@ private theorem sum_left (h : a + b = n) (m : GLw a w × GLw b w) (f : GLw n w �
     exact inv_mem (mul_mem hk (nU_mem (mem_intMat.1 t.2)))
   have hval : ∀ q, u (φ q) = f (GlobalTheory.BCT.blk h w m (Multiplicative.toAdd q.out)) := by
     intro q
-    obtain ⟨κ, hκ⟩ := QuotientGroup.mk_out_eq_mul (GlobalTheory.LFun.KGL w n) (GlobalTheory.BCT.blk h w m (Multiplicative.toAdd q.out))
+    obtain ⟨κ, hκ⟩ := QuotientGroup.mk_out_eq_mul (GlobalTheory.LFun.KGL w (n := n)) (GlobalTheory.BCT.blk h w m (Multiplicative.toAdd q.out))
     change f (Quotient.out (φ q)) * FF h m (Quotient.out (φ q)) = _
     have : Quotient.out (φ q) = GlobalTheory.BCT.blk h w m (Multiplicative.toAdd q.out) * κ.1 := hκ
     rw [this, hf _ _ κ.2, FF_right h m _ _ κ.2, FF_bblk, mul_one]
@@ -255,9 +259,9 @@ private theorem sum_left (h : a + b = n) (m : GLw a w × GLw b w) (f : GLw n w �
 
 private theorem FF_blk (h : a + b = n) (m : GLw a w × GLw b w) (x : GLw a w) (y : GLw b w) :
     FF h m (GlobalTheory.ResW.blk h (x, y)) =
-      if (x : GLw a w ⧸ GlobalTheory.LFun.KGL w a) = (m.1 : GLw a w) ∧ (y : GLw b w ⧸ GlobalTheory.LFun.KGL w b) = (m.2 : GLw b w) then 1 else 0 := by
-  have : (∃ k ∈ GlobalTheory.LFun.KGL w n, Tri h (GlobalTheory.ResW.blk h (x, y) * k) m) ↔
-      (x : GLw a w ⧸ GlobalTheory.LFun.KGL w a) = (m.1 : GLw a w) ∧ (y : GLw b w ⧸ GlobalTheory.LFun.KGL w b) = (m.2 : GLw b w) := by
+      if (x : GLw a w ⧸ GlobalTheory.LFun.KGL w (n := a)) = (m.1 : GLw a w) ∧ (y : GLw b w ⧸ GlobalTheory.LFun.KGL w (n := b)) = (m.2 : GLw b w) then 1 else 0 := by
+  have : (∃ k ∈ GlobalTheory.LFun.KGL w (n := n), Tri h (GlobalTheory.ResW.blk h (x, y) * k) m) ↔
+      (x : GLw a w ⧸ GlobalTheory.LFun.KGL w (n := a)) = (m.1 : GLw a w) ∧ (y : GLw b w ⧸ GlobalTheory.LFun.KGL w (n := b)) = (m.2 : GLw b w) := by
     rw [QuotientGroup.eq, QuotientGroup.eq]
     constructor
     · rintro ⟨k, hk, t⟩
@@ -272,18 +276,18 @@ private theorem FF_blk (h : a + b = n) (m : GLw a w × GLw b w) (x : GLw a w) (y
       exact GlobalTheory.ResW.HeckeCT.tri_blk h m
   simp only [FF, this]
 
-private theorem out_inv {k : ℕ} (A : GLw k w → ℂ) (hA : ∀ g, ∀ c ∈ GlobalTheory.LFun.KGL w k, A (g * c) = A g) (x : GLw k w) :
-    A (Quotient.out ((x : GLw k w ⧸ GlobalTheory.LFun.KGL w k))) = A x := by
-  obtain ⟨κ, hκ⟩ := QuotientGroup.mk_out_eq_mul (GlobalTheory.LFun.KGL w k) x
-  have : Quotient.out ((x : GLw k w ⧸ GlobalTheory.LFun.KGL w k)) = x * κ.1 := hκ
+private theorem out_inv {k : ℕ} (A : GLw k w → ℂ) (hA : ∀ g, ∀ c ∈ GlobalTheory.LFun.KGL w (n := k), A (g * c) = A g) (x : GLw k w) :
+    A (Quotient.out ((x : GLw k w ⧸ GlobalTheory.LFun.KGL w (n := k)))) = A x := by
+  obtain ⟨κ, hκ⟩ := QuotientGroup.mk_out_eq_mul (GlobalTheory.LFun.KGL w (n := k)) x
+  have : Quotient.out ((x : GLw k w ⧸ GlobalTheory.LFun.KGL w (n := k))) = x * κ.1 := hκ
   rw [this, hA _ _ κ.2]
 
 private theorem sum_right (h : a + b = n) (m : GLw a w × GLw b w) (A : GLw a w → ℂ) (B : GLw b w → ℂ)
-    (hA : ∀ g, ∀ k ∈ GlobalTheory.LFun.KGL w a, A (g * k) = A g) (hB : ∀ g, ∀ k ∈ GlobalTheory.LFun.KGL w b, B (g * k) = B g) :
-    ∑ᶠ c₁ : GLw a w ⧸ GlobalTheory.LFun.KGL w a, ∑ᶠ c₂ : GLw b w ⧸ GlobalTheory.LFun.KGL w b,
+    (hA : ∀ g, ∀ k ∈ GlobalTheory.LFun.KGL w (n := a), A (g * k) = A g) (hB : ∀ g, ∀ k ∈ GlobalTheory.LFun.KGL w (n := b), B (g * k) = B g) :
+    ∑ᶠ c₁ : GLw a w ⧸ GlobalTheory.LFun.KGL w (n := a), ∑ᶠ c₂ : GLw b w ⧸ GlobalTheory.LFun.KGL w (n := b),
       A c₁.out * B c₂.out * FF h m (GlobalTheory.ResW.blk h (c₁.out, c₂.out)) = A m.1 * B m.2 := by
-  rw [finsum_eq_single _ ((m.1 : GLw a w) : GLw a w ⧸ GlobalTheory.LFun.KGL w a),
-    finsum_eq_single _ ((m.2 : GLw b w) : GLw b w ⧸ GlobalTheory.LFun.KGL w b)]
+  rw [finsum_eq_single _ ((m.1 : GLw a w) : GLw a w ⧸ GlobalTheory.LFun.KGL w (n := a)),
+    finsum_eq_single _ ((m.2 : GLw b w) : GLw b w ⧸ GlobalTheory.LFun.KGL w (n := b))]
   · rw [FF_blk, if_pos ⟨QuotientGroup.out_eq' _, QuotientGroup.out_eq' _⟩, mul_one, out_inv A hA, out_inv B hB]
   · intro c hc
     rw [FF_blk, if_neg, mul_zero]
@@ -308,7 +312,7 @@ private theorem unif_spec (w : Pl E) : IsUnifV E w (unif w) := by
     rfl
   exact Classical.epsilon_spec this
 
-private theorem tj_right (k i : ℕ) (ϖ : w.adicCompletion E) (g : GLw k w) (c : GLw k w) (hc : c ∈ KGL w k) :
+private theorem tj_right (k i : ℕ) (ϖ : w.adicCompletion E) (g : GLw k w) (c : GLw k w) (hc : c ∈ KGL w (n := k)) :
     Tj ℂ k (Ov E w) ϖ i (g * c) = Tj ℂ k (Ov E w) ϖ i g := by
   have : g * c ∈ satakeTset w ϖ i ↔ g ∈ satakeTset w ϖ i :=
     ⟨fun t => by simpa using satake_Tset_right w t (inv_mem (show c ∈ GLint (Fin k) (Ov E w) from hc)),
@@ -317,7 +321,7 @@ private theorem tj_right (k i : ℕ) (ϖ : w.adicCompletion E) (g : GLw k w) (c 
   · rw [satake_Tj_eq, satake_Tj_eq, Set.indicator_of_mem (this.2 hg), Set.indicator_of_mem hg]; rfl
   · rw [satake_Tj_eq, satake_Tj_eq, Set.indicator_of_notMem (fun t => hg (this.1 t)), Set.indicator_of_notMem hg]
 
-private theorem tj_left (k i : ℕ) (ϖ : w.adicCompletion E) (g : GLw k w) (c : GLw k w) (hc : c ∈ KGL w k) :
+private theorem tj_left (k i : ℕ) (ϖ : w.adicCompletion E) (g : GLw k w) (c : GLw k w) (hc : c ∈ KGL w (n := k)) :
     Tj ℂ k (Ov E w) ϖ i (c * g) = Tj ℂ k (Ov E w) ϖ i g := by
   have : c * g ∈ satakeTset w ϖ i ↔ g ∈ satakeTset w ϖ i :=
     ⟨fun t => by simpa using satake_Tset_left w t (inv_mem (show c ∈ GLint (Fin k) (Ov E w) from hc)),
@@ -326,7 +330,7 @@ private theorem tj_left (k i : ℕ) (ϖ : w.adicCompletion E) (g : GLw k w) (c :
   · rw [satake_Tj_eq, satake_Tj_eq, Set.indicator_of_mem (this.2 hg), Set.indicator_of_mem hg]; rfl
   · rw [satake_Tj_eq, satake_Tj_eq, Set.indicator_of_notMem (fun t => hg (this.1 t)), Set.indicator_of_notMem hg]
 
-private theorem isHecke_Tj (k i : ℕ) (ϖ : w.adicCompletion E) : IsHecke (KGL w k) (Tj ℂ k (Ov E w) ϖ i) := by
+private theorem isHecke_Tj (k i : ℕ) (ϖ : w.adicCompletion E) : IsHecke (KGL w (n := k)) (Tj ℂ k (Ov E w) ϖ i) := by
   have hc := (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL (E := E) w k).2
   refine ⟨?_, fun c hc x => ⟨tj_left k i ϖ x c hc, tj_right k i ϖ x c hc⟩⟩
   rcases (satakeTset w ϖ i : Set (GLw k w)).eq_empty_or_nonempty with h0 | ⟨d, a', ha', b', hb', hd⟩
@@ -408,7 +412,7 @@ end Main
 
 theorem ctT : CtT := by
   intro E _ _ _ w n a b h j m
-  have hH : IsHecke (KGL w n) (Tj ℂ n (Ov E w) (unif w) j) := isHecke_Tj _ _ _
+  have hH : IsHecke (KGL w (n := n)) (Tj ℂ n (Ov E w) (unif w) j) := isHecke_Tj _ _ _
   rw [(ctSph E w n a b h _ hH m).1, ← sum_left h m _ (fun g k hk => tj_right _ _ _ g k hk),
     GlobalTheory.ResW.HeckeCT.finsum_Tj_levi (unif_spec w) h (Nat.lt_succ_iff.1 j.2) (FF h m)
       (fun g k hk => FF_right h m g k hk) (fun g m' t => FF_tri h m g m' t)]

@@ -1,25 +1,28 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalLimits.IsScalarTowerFiniteSubfieldAlgebraicClosure
-import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms.InfiniteAdeleRingMapInfiniteAdeleRingMap
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalLimits.IsScalarTowerFiniteSubfieldAlgebraicClosure
+public import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms.InfiniteAdeleRingMapInfiniteAdeleRingMap
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open IsDedekindDomain NumberField GroundTheory.Global GroundTheory.Global.SemiLocal FiniteSubfield
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
 
 variable {K : FiniteSubfield} {v : HeightOneSpectrum (𝓞 K.1)}
-  (ι : ℚ̄ →ₐ[K.1] AlgebraicClosure (v.adicCompletion K.1))
+  (ι : AlgebraicClosure ℚ →ₐ[K.1] AlgebraicClosure (v.adicCompletion K.1))
   {F E : FiniteSubfield} [Fact (K ≤ F)] [Fact (K ≤ E)] [Fact (F ≤ E)]
 
 instance isScalarTower_finiteSubfield_of_fact : IsScalarTower K.1 F.1 E.1 :=
   IsScalarTower.of_algebraMap_eq fun _ ↦ rfl
 
-variable (F E) in
 
+variable (F E) in
 def completionEmbeddingBelow (u : PlacesOver F.1 v)
     [(placeOfEmbedding ι E).1.asIdeal.LiesOver u.1.asIdeal] :
     u.1.adicCompletion F.1 →ₐ[v.adicCompletion K.1] AlgebraicClosure (v.adicCompletion K.1) :=

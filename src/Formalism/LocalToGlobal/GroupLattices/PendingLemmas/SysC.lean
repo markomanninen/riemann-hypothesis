@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.WeightUpdateAtPlace
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.FrobeniusSqIterateTeichmuller
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.WeightUpdateAtPlace
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.FrobeniusSqIterateTeichmuller
+
+@[expose] public section
 
 noncomputable section
 

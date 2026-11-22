@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
-import Formalism.LocalToGlobal.Columns.CoefColLemmas
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsEquiv
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+public import Formalism.LocalToGlobal.Columns.CoefColLemmas
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsEquiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,10 +51,12 @@ theorem fockSubst_mul (p : D.what₂.Tau → ℕ) (u u' : GLR D n) :
   refine MvPolynomial.algHom_ext fun v => ?_
   rw [AlgHom.comp_apply, fockSubst, fockSubst, fockSubst, aeval_X, aeval_X]
   split_ifs with h
-  · simp only [map_sum, map_mul, aeval_C, aeval_X, if_pos h, Pi.mul_apply, _root_.mul_inv_rev, Units.val_mul,
+  · set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, aeval_C, aeval_X, ite_eq_left h, Pi.mul_apply, _root_.mul_inv_rev, Units.val_mul,
       Matrix.mul_apply, algebraMap_eq, Finset.mul_sum, Finset.sum_mul, mul_assoc]
     exact Finset.sum_comm
-  · simp only [map_sum, map_mul, aeval_C, aeval_X, if_neg h, Pi.mul_apply, Units.val_mul,
+  · set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, aeval_C, aeval_X, ite_eq_right h, Pi.mul_apply, Units.val_mul,
       Matrix.mul_apply, algebraMap_eq, Finset.mul_sum, Finset.sum_mul]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
@@ -91,7 +97,7 @@ theorem fockGL_mem_harm (w : Weight D n) (B u : GLR D n) {P : PolF D m n} (h : P
     beta_reduce
     rw [MonoidHom.map_mul, Module.End.mul_apply]
   | zero => rw [LinearMap.map_zero]; exact zero_mem _
-  | add _ _ _ _ h1 h2 => rw [LinearMap.map_add]; exact add_mem h1 h2
+  | add _ _ _ _ h1 h2 => rw [LinearMap.map_add (f := _)]; exact add_mem h1 h2
   | smul c _ _ h1 => rw [LinearMap.map_smul]; exact Submodule.smul_mem _ c h1
 
 def fockPt (p : D.what₂.Tau → ℕ) (y : GLR D n) (v : FVar D m n) : ℂ :=
@@ -144,7 +150,8 @@ theorem coefFn_rhoVr {emb : D.what₂.Tau → (D.host.E →+* K)} (hemb : ∀ τ
       eval₂Hom σ (fun v => (((embGL (tauE D) γ)⁻¹ * x) v.1).val v.2.1 v.2.2) := by
     refine MvPolynomial.ringHom_ext (fun a => by simp [trAct, Formalism.GradedWeylDivisibility.blockAct]) fun v => ?_
     have : ∀ a b, σ (((embGL emb γ v.1)⁻¹).val a b) = ((embGL (tauE D) γ v.1)⁻¹).val a b := fun a b => he _ _
-    simp only [RingHom.comp_apply, RingHom.coe_coe, trAct, Formalism.GradedWeylDivisibility.blockAct, aeval_X, map_sum, map_mul, eval₂Hom_C,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [RingHom.comp_apply, RingHom.coe_coe, trAct, Formalism.GradedWeylDivisibility.blockAct, aeval_X, map_sum, map_mul, eval₂Hom_C,
       eval₂Hom_X', Pi.mul_apply, Pi.inv_apply, Units.val_mul, Matrix.mul_apply]
     exact Finset.sum_congr rfl fun b _ => congrArg (· * _) (this _ _)
   have e3 : σ (detTwK lam (invTrK (embGL emb γ))) =
@@ -236,26 +243,12 @@ def Weight.first (D : D7) (n : ℕ) (p q : D.what₂.Tau → ℕ) (c : D.what₂
     split_ifs <;> omega⟩
 
 theorem Weight.first_good {p q : D.what₂.Tau → ℕ} (c : D.what₂.Tau → ℤ) (hp : ∀ τ, 0 < p τ) (h : ∀ τ, p τ + q τ ≤ n) :
-    (Weight.first D n p q c).Good where
-  le := h
-  lam_eq τ i := by
-    have := hp τ
-    simp only [Weight.first]
-    split_ifs <;> first | omega | simp
-
-example (p : D.what₂.Tau → ℕ) (y : GLR D n) (τ : D.what₂.Tau) (i a : Fin n) (hi : i.val < p τ) :
-    aeval (fockPt (m := n) p y) (X (τ, i, a) : PolF D n n) = (y τ).val a i := by
-  simp [fockPt, hi]
-
-example (y : GLR D (n + 1)) (τ : D.what₂.Tau) (a : Fin (n + 1)) :
-    aeval (fockPt (m := 1) (fun _ => 0) y) (X (τ, 0, a) : PolF D 1 (n + 1)) = ((y τ)⁻¹).val (Fin.last n) a := by
-  simp [fockPt]
-
-example (w : Weight D n) (B u : GLR D n) :
-    fockGL m w B u 1 = ((∏ τ, GeneralLinearGroup.det (u τ) ^ (-w.c τ) : ℂˣ) : ℂ) • (1 : PolF D m n) := by
-  rw [fockGL_apply, map_one]
-  congr 2
-  simp [detFam, Finset.prod_inv_distrib]
+    (Weight.first D n p q c).Good := by
+  refine ⟨h, ?_⟩
+  intro τ i
+  have := hp τ
+  simp only [Weight.first]
+  split_ifs <;> omega
 
 end GlobalTheory.ExportSeries
 

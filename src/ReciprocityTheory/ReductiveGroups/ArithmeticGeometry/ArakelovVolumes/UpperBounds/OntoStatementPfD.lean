@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.NormFibrations.MvBlowup
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ImportsAlt
+module
+
+public import ReciprocityTheory.L2DbarEstimates.NormFibrations.MvBlowup
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ImportsAlt
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.OntoD
 

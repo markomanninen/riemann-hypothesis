@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MemRangeOfForallHeightEqOneOfIsReflexive
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsBasicOpenEqZeroOfMemIInfPowSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MemRangeOfForallHeightEqOneOfIsReflexive
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsBasicOpenEqZeroOfMemIInfPowSmul
+
+@[expose] public section
 
 open IsLocalRing TensorProduct
 
@@ -77,7 +81,7 @@ theorem exists_isDomain_isDiscreteValuationRing_of_maximalIdeal_eq_span {S : Typ
   have hf : ¬ IsField S := by
     rw [IsLocalRing.isField_iff_maximalIdeal_eq, ht]
     simpa using ht0
-  refine ((IsDiscreteValuationRing.TFAE S hf).out 4 0).mp ?_
+  refine ((IsDiscreteValuationRing.TFAE S hf).out 5 1).mp ?_
   exact ⟨t, ht⟩
 
 theorem exists_isDiscreteValuationRing_of_mem_associatedPrimes_quotient :

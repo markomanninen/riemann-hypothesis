@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsEqnIffGeneratesAtInv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModificationLineBundleGlobalSectionsDimPullEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsEqnIffGeneratesAtInv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModificationLineBundleGlobalSectionsDimPullEq
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,7 +21,7 @@ theorem finrank_eq_one_of_isDomain_tensor {F L : Type} [Field F] [Field L] [Alge
     (Algebra.IsIntegral.isField_iff_isField hinj).1 (Field.toIsField L)
   let f : L ⊗[F] L →ₐ[L] L := Algebra.TensorProduct.lmul'' F
   have hf : Function.Injective f := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     by_contra h
     obtain ⟨y, hy⟩ := hT.mul_inv_cancel h

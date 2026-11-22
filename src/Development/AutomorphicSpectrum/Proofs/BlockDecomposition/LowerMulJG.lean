@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobData
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousLowG
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobData
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousLowG
+
+@[expose] public section
 
 noncomputable section
 

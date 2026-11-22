@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToBidualNaturalityDualSheafTranspose
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EigenDecompositionVectorBundle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToBidualNaturalityDualSheafTranspose
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EigenDecompositionVectorBundle
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.CechPic
@@ -24,7 +29,8 @@ theorem resM_mem_spanRes (s : ∀ k : L.ι, Fin r → Γ(F, L.U k)) {k : L.ι} {
     resM F hW x ∈ spanRes s k (hW.trans hk) := by
   obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun _).1 hx
   refine (Submodule.mem_span_range_iff_exists_fun _).2 ⟨fun i => resG X hW (c i), ?_⟩
-  simp only [map_sum, resM_smul, resM_resM]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, resM_smul, resM_resM]
 
 theorem spanRes_le (s : ∀ k : L.ι, Fin r → Γ(F, L.U k))
     (A : ∀ k k' : L.ι, Matrix (Fin r) (Fin r) Γ(X, L.U k ⊓ L.U k'))
@@ -35,7 +41,8 @@ theorem spanRes_le (s : ∀ k : L.ι, Fin r → Γ(F, L.U k))
   rw [spanRes, Submodule.span_le]
   rintro _ ⟨i, rfl⟩
   have e := congrArg (resM F (le_inf hk hk')) (hA k k' i)
-  simp only [resM_resM, map_sum, resM_smul] at e
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [resM_resM, map_sum, resM_smul] at e
   change resM F hk' (s k' i) ∈ spanRes s k hk
   rw [show resM F hk' (s k' i) = _ from e]
   exact Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
@@ -56,7 +63,7 @@ def sub (hL : L.IsLB) (s : ∀ k : L.ι, Fin r → Γ(F, L.U k))
         obtain ⟨k, W, h, hk, hpW, hxW⟩ := hx p hp
         obtain ⟨k', W', h', hk', hpW', hyW'⟩ := hy p hp
         refine ⟨k, W ⊓ W', inf_le_left.trans h, inf_le_left.trans hk, ⟨hpW, hpW'⟩, ?_⟩
-        rw [map_add]
+        rw [map_add (f := _)]
         refine add_mem ?_ (hmono k k' _ (inf_le_left.trans hk) (inf_le_right.trans hk') ?_)
         · have := resM_mem_spanRes s (inf_le_left : W ⊓ W' ≤ W) hk hxW
           rw [resM_resM] at this
@@ -101,12 +108,14 @@ theorem mem_spanRes_of_mem (hL : L.IsLB) (s : ∀ k : L.ι, Fin r → Γ(F, L.U 
     have hl := hli k (W p ⊓ W q) (inf_le_left.trans ((hW p).trans hV))
     have e1 := congrArg (resM F (inf_le_left : W p ⊓ W q ≤ W p)) (hc' p)
     have e2 := congrArg (resM F (inf_le_right : W p ⊓ W q ≤ W q)) (hc' q)
-    simp only [map_sum, resM_smul, resM_resM] at e1 e2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, resM_smul, resM_resM] at e1 e2
     exact Fintype.linearIndependent_iffₛ.1 hl _ _ (e1.trans e2.symm) i
   choose b hb using fun i => exists_fun_of_cover W hW hc (fun p => c p i) fun p q => key p q i
   refine (Submodule.mem_span_range_iff_exists_fun _).2 ⟨b, ?_⟩
   refine sec_ext_of_cover W hW hc fun p => ?_
-  simp only [map_sum, resM_smul, resM_resM, hb]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, resM_smul, resM_resM, hb]
   exact hc' p
 
 end GlobalTheory.SubGlue
@@ -131,7 +140,8 @@ theorem exists_sub_isVB_lbIso_det : ∀ (X : Scheme.{0}) (F : X.Modules) (r : �
     rw [VB.IsFrame.basis_equivFun_symm]
     apply N.incl_app_injective
     rw [app_resM, VB.Sub.incl_app_mkSec, hA]
-    rw [← appLinear_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← appLinear_apply, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, appLinear_apply, app_resM, VB.Sub.incl_app_mkSec]
   refine ⟨N.toMod, N.incl, inferInstance, ?_⟩

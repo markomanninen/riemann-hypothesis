@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
-import Development.DiscreteGroups.GlobalIrreducibility.DzGalRes
-import Development.DiscreteGroups.GlobalIrreducibility.DzIneEq
-import Development.DiscreteGroups.GlobalIrreducibility.ExistsIneOfVEqOne
-import Development.DiscreteGroups.GlobalIrreducibility.DzNormV
-import Development.DiscreteGroups.GlobalIrreducibility.DzTameRec
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ArtEx
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.TameArt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RestrictsExists
+module
+
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
+public import Development.DiscreteGroups.GlobalIrreducibility.DzGalRes
+public import Development.DiscreteGroups.GlobalIrreducibility.DzIneEq
+public import Development.DiscreteGroups.GlobalIrreducibility.ExistsIneOfVEqOne
+public import Development.DiscreteGroups.GlobalIrreducibility.DzNormV
+public import Development.DiscreteGroups.GlobalIrreducibility.DzTameRec
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ArtEx
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.TameArt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RestrictsExists
+
+@[expose] public section
 
 noncomputable section
 

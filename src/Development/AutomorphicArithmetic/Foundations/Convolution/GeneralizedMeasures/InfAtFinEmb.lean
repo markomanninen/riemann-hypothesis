@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.RepOne
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.TensF
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.TensHt
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.WordHt
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.PolyMem
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.TensApply
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.RepOne
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.TensF
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.TensHt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.WordHt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.PolyMem
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.TensApply
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -154,7 +158,7 @@ private theorem ht_le (q : Pl K) (T : Finset (Pl K)) (B : Pl K → ℝ) (hB : �
     rfl
   simp only [hg]
   rw [finprod_eq_prod_of_mulSupport_subset (s := T)]
-  · refine Finset.prod_le_prod (fun v _ => ?_) fun v hv => ?_
+  · refine Finset.prod_le_prod₀ (fun v _ => ?_) fun v hv => ?_
     · split_ifs
       · exact (locHeight_pos _).le
       · exact zero_le_one
@@ -179,9 +183,9 @@ private theorem ind_inv {G : Type*} [Group G] (H : Subgroup G) {k : G} (hk : k �
       Set.indicator_of_notMem (show x ∉ (H : Set G) from hx)]
 end SlopeTestRemainingChoices
 theorem UpperTheory.ConvolutionTheory.GM.termF :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [IsTotallyComplex F] [IsTotallyComplex E] (σ : E ≃ₐ[F] E),
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [_root_.NumberField.IsTotallyComplex F] [_root_.NumberField.IsTotallyComplex E] (σ : E ≃ₐ[F] E),
     (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime → ∀ n : ℕ, 0 < n →
-    ∀ (μ : Measure (normOneGL F n)) [μ.IsHaarMeasure] (q : Pl F) (w₀ : PlacesOver E q) (q₀ : PlacesOver F q)
+    ∀ (μ : Measure (normOneGL (K := F) (n := n))) [μ.IsHaarMeasure] (q : Pl F) (w₀ : PlacesOver E q) (q₀ : PlacesOver F q)
       (νF : Measure (archGroup F n)) [νF.IsHaarMeasure] (aF : TI F n) (L : Loc σ n q w₀) (ν : Fin n → ℤ), Good ν →
     ∀ 𝔣 : Side (Twist.id μ) (Module.finrank F E), IsSideF L νF aF ν 𝔣 → ∃ Y₀ : ℝ, 1 ≤ Y₀ ∧ ∀ κ : Finset (Pl F), (∀ w ∈ κ, w ∉ 𝔣.S) →
     ∀ (p : Pl F → MvPolynomial (Fin n) ℂ) (h : ∀ w : Pl F, GL (Fin n) (w.adicCompletion F) → ℂ), (∀ w ∈ κ, IsSph w (p w) (h w)) →

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHasCls
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CxRootsInjective
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CompletionTensorAllRootsMapBijectiveCmStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TorusFieldComplexRootsNormEqOneCompactStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHasCls
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CxRootsInjective
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CompletionTensorAllRootsMapBijectiveCmStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TorusFieldComplexRootsNormEqOneCompactStatement
+
+@[expose] public section
 
 open MeasureTheory Set Filter Polynomial NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -61,8 +65,8 @@ theorem ext_real (a : w.Completion) (hw : w.IsReal) :
 
 end GlobalTheory.TrEll.RealTorus
 
-open GlobalTheory.TrEll.RealTorus in
 
+open GlobalTheory.TrEll.RealTorus in
 theorem GlobalTheory.TrEll.realTorus_split : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (r : ℕ) (P : PPol σ r) (w : InfinitePlace F) (τ : EmbOver E w), CompactSpace (Tor P w.Completion) → ∃ Ψ : w.Completion ⊗[F] Fld P ≃+* (Fin r → ℂ), (∀ y i, Ψ (sigR w.Completion (star' P) y) i = conj (Ψ y i)) ∧ (∀ e i, Ψ (algebraMap (w.Completion ⊗[F] E) _ e) i = infEmb τ e) ∧ Ψ (1 ⊗ₜ[F] alpha P) = cxRoots τ.1 P ∧ (∀ y, infEmb τ (trBase P w.Completion y) = ∑ i, Ψ y i) ∧ Function.Injective (cxRoots τ.1 P) ∧ ∀ i, ‖cxRoots τ.1 P i‖ = 1 := by
   intro F E _ _ _ _ _ σ hCM r P w τ hc
   have hbij := GlobalTheory.T.completionTensorAllRootsMap_bijective_cm F E σ hCM r P w τ
@@ -76,7 +80,7 @@ theorem GlobalTheory.TrEll.realTorus_split : ∀ (F E : Type) [Field F] [NumberF
     | tmul a y =>
       rw [show sigR w.Completion (star' P) (a ⊗ₜ[F] y) = a ⊗ₜ[F] star' P y from rfl]
       rw [Psi_tmul, Psi_tmul, psiL_star P τ hCM i (hnorm i), map_mul, ext_real a hw]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   · intro e i
     simp only [RingEquiv.ofBijective_apply, PsiAll_apply]
     induction e using TensorProduct.induction_on with
@@ -85,7 +89,7 @@ theorem GlobalTheory.TrEll.realTorus_split : ∀ (F E : Type) [Field F] [NumberF
       rw [show algebraMap (w.Completion ⊗[F] E) (w.Completion ⊗[F] Fld P) (a ⊗ₜ[F] e) =
         a ⊗ₜ[F] algebraMap E (Fld P) e from rfl]
       rw [Psi_tmul, infEmb_tmul, psiL_algebraMap]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   · funext i
     simp only [RingEquiv.ofBijective_apply, PsiAll_apply, Psi_tmul, map_one, psiL_alpha, one_mul]
   · intro y
@@ -96,4 +100,4 @@ theorem GlobalTheory.TrEll.realTorus_split : ∀ (F E : Type) [Field F] [NumberF
       rw [show trBase P w.Completion (a ⊗ₜ[F] y) = a ⊗ₜ[F] Algebra.trace E (Fld P) y from rfl]
       rw [infEmb_tmul, trace_eq_sum P τ y, Finset.mul_sum]
       simp only [Psi_tmul]
-    | add x y hx hy => simp only [map_add, hx, hy, Finset.sum_add_distrib]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, Finset.sum_add_distrib]

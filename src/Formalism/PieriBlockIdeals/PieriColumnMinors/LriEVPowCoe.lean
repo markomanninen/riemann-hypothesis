@@ -1,4 +1,8 @@
-import Formalism.PieriBlockIdeals.PieriColumnMinors.XiOfDepth2
+module
+
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.XiOfDepth2
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -129,7 +133,7 @@ theorem wt_of_hom (p q w : ℕ) (lam2 : Fin q → ℕ) (x : MvPolynomial (Fin (p
   apply hμ
   intro h0
   apply hd
-  change coeff d (intQ _ _ x) = 0
+  change AddMonoidAlgebra.coeff (intQ _ _ x) d = 0
   rw [lrc_intQ_apply, coeff_map, h0, map_zero]
 
 theorem dominant_xi {p q : ℕ} (ξ : Fin (p + q) → ℤ) (hξ : Antitone ξ) (α : Fin p) (b : Fin q) :

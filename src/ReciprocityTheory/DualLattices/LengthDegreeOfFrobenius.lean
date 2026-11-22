@@ -1,9 +1,16 @@
-import ReciprocityTheory.DualLattices.InvolutionPermApplyZero
-import ReciprocityTheory.DualLattices.WdetDegreeOfSmithRestrict
-import ReciprocityTheory.DualLattices.RestrictHopfOrderLength
-import ReciprocityTheory.DualLattices.BasechangeProjectorIdempotentAction
-import ReciprocityTheory.DualLattices.SmithNormalFormStatement
-import ReciprocityTheory.DualLattices.LengthDegreeOfWdetFrobenius
+module
+
+public import ReciprocityTheory.DualLattices.InvolutionPermApplyZero
+public import ReciprocityTheory.DualLattices.WdetDegreeOfSmithRestrict
+public import ReciprocityTheory.DualLattices.RestrictHopfOrderLength
+public import ReciprocityTheory.DualLattices.BasechangeProjectorIdempotentAction
+public import ReciprocityTheory.DualLattices.SmithNormalFormStatement
+public import ReciprocityTheory.DualLattices.KilledGen
+public import ReciprocityTheory.DualLattices.IdemGen
+public import ReciprocityTheory.DualLattices.LenEx
+public import ReciprocityTheory.DualLattices.CokernelLengthComparisonOf
+
+@[expose] public section
 
 namespace ReciprocityTheory.PGsh.Up
 
@@ -11,7 +18,5 @@ theorem wdet_of_smith_normal_form (hS : EigenQuotientSmithStatement) : CokernelL
   cokernelLengthComparison_of wdetLen (wdetDegree_of_smith_restrict hS restrict_hopfOrder_length restrictedHopfOrderApproximation)
 
 theorem u6 : CokernelLengthComparisonStatement := wdet_of_smith_normal_form smith_normal_form_statement
-
-theorem lengthDegree_of_frobenius (hU7 : UnramifiedCokernelLengthStatement) : CokernelLowerBoundStatement := lengthDegree_of_wdet_frobenius u6 hU7
 
 end ReciprocityTheory.PGsh.Up

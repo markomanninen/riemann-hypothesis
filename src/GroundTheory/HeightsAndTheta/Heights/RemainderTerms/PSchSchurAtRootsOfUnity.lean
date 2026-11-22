@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsSchur
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsSchur
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.RestTerms
@@ -32,7 +37,7 @@ theorem SchSchurAtRootsOfUnity.proof (h1 : SchSchurRowsToK.Statement)
     · have hi : (i : ℕ) < r := lt_of_le_of_lt (Fin.le_def.mp hij) hj
       rw [dif_pos hi, dif_pos hj]
       exact hanti (Fin.le_def.mpr (Fin.le_def.mp hij))
-    · rw [dif_neg hj]; exact Nat.zero_le _
+    · rw [dite_eq_right hj]; exact Nat.zero_le _
 
   have hsum' : ∑ i, nu' i = k := by
     set g : ℕ → ℕ := fun i => if h : i < r then nu ⟨i, h⟩ else 0 with hg
@@ -51,7 +56,7 @@ theorem SchSchurAtRootsOfUnity.proof (h1 : SchSchurRowsToK.Statement)
         simp at this; omega
       · rfl
     have hgr : ∀ i, r ≤ i → g i = 0 := by
-      intro i hi; simp only [hg]; rw [dif_neg (by omega)]
+      intro i hi; simp only [hg]; rw [dite_eq_right (by omega)]
     have e3 : ∑ i ∈ range k, g i = ∑ i ∈ range (r + k), g i :=
       Finset.sum_subset (Finset.range_mono (by omega)) fun i _ hni =>
          hgk i (not_lt.mp (fun h => hni (Finset.mem_range.mpr h)))
@@ -81,7 +86,7 @@ theorem SchSchurAtRootsOfUnity.proof (h1 : SchSchurRowsToK.Statement)
     refine Finset.card_bij'
       (fun i hi => ⟨i, by
         simp only [Finset.mem_filter, Finset.mem_univ, true_and, hnu'] at hi
-        by_contra h; rw [dif_neg h] at hi; omega⟩)
+        by_contra h; rw [dite_eq_right h] at hi; omega⟩)
       (fun i hi => ⟨i, by
         simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi
         exact hplace i (by omega)⟩) ?_ ?_ ?_ ?_

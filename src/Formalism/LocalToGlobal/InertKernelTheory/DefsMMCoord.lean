@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.InertKernelTheory.OneCopyTh1
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.OneCopyTh1
+
+@[expose] public section
 
 noncomputable section
 

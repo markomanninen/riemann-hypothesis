@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.CartanFactorisation.TensOfEval
+module
+
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.TensOfEval
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem exists_section {A P : Type} [AddCommGroup A] [Module ℂ A] [AddCommGrou
   exact this
 
 theorem ml_congr {ι : Type} [Fintype ι] {Y : ι → Type} [∀ v, AddCommGroup (Y v)] [∀ v, Module ℂ (Y v)] {Z : Type}
-    [AddCommGroup Z] [Module ℂ Z] (l : MultilinearMap ℂ Y Z) (S K : ∀ v, Submodule ℂ (Y v))
+    [AddCommGroup Z] [Module ℂ Z] (l : MultilinearMap (RingHom.id ℂ) Y Z) (S K : ∀ v, Submodule ℂ (Y v))
     (h : ∀ ψ, (∀ v, ψ v ∈ S v) → (∃ v, ψ v ∈ K v) → l ψ = 0) (ψ ψ' : ∀ v, Y v) (hψ : ∀ v, ψ v ∈ S v) (hψ' : ∀ v, ψ' v ∈ S v)
     (hk : ∀ v, ψ v - ψ' v ∈ K v) : l ψ = l ψ' := by
   have e : ψ = (ψ - ψ') + ψ' := (sub_add_cancel _ _).symm
@@ -36,7 +40,7 @@ theorem ml_congr {ι : Type} [Fintype ι] {Y : ι → Type} [∀ v, AddCommGroup
 
 theorem desc {ι : Type} [Fintype ι] {A P Z : Type} {Y Q : ι → Type} [AddCommGroup A] [Module ℂ A] [AddCommGroup P] [Module ℂ P]
     [AddCommGroup Z] [Module ℂ Z] [∀ v, AddCommGroup (Y v)] [∀ v, Module ℂ (Y v)] [∀ v, AddCommGroup (Q v)]
-    [∀ v, Module ℂ (Q v)] (l : A →ₗ[ℂ] MultilinearMap ℂ Y Z) (p : A →ₗ[ℂ] P) (q : ∀ v, Y v →ₗ[ℂ] Q v) (S₀ : Submodule ℂ A)
+    [∀ v, Module ℂ (Q v)] (l : A →ₗ[ℂ] MultilinearMap (RingHom.id ℂ) Y Z) (p : A →ₗ[ℂ] P) (q : ∀ v, Y v →ₗ[ℂ] Q v) (S₀ : Submodule ℂ A)
     (S : ∀ v, Submodule ℂ (Y v)) (h : ∀ f ∈ S₀, ∀ ψ, (∀ v, ψ v ∈ S v) → (p f = 0 ∨ ∃ v, q v (ψ v) = 0) → l f ψ = 0) :
     ∃ L : P ⊗[ℂ] (PiTensorProduct ℂ Q) →ₗ[ℂ] Z, ∀ f ∈ S₀, ∀ ψ, (∀ v, ψ v ∈ S v) →
       L (p f ⊗ₜ[ℂ] PiTensorProduct.tprod ℂ fun v => q v (ψ v)) = l f ψ := by
@@ -87,7 +91,8 @@ theorem tens_eq_map {w : ∀ v : Pl F, (κ → Fv F v) → ℂ} (hne : ∀ v, w 
     ∑ i, p (f i) ⊗ₜ[ℂ] (PiTensorProduct.tprod ℂ fun v : T => q v (φ i v)) =
       ∑ i, p (f' i) ⊗ₜ[ℂ] (PiTensorProduct.tprod ℂ fun v : T => q v (φ' i v)) := by
   have := congrArg (TensorProduct.map p (PiTensorProduct.map fun v : T => q v)) (tens_eq hne hw T f φ f' φ' h h' e)
-  simpa only [map_sum, TensorProduct.map_tmul, PiTensorProduct.map_tprod] using this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa only [map_sum, TensorProduct.map_tmul, PiTensorProduct.map_tprod] using this
 
 def ext (w : ∀ v : Pl F, (κ → Fv F v) → ℂ) (T : Finset (Pl F)) (ψ : ∀ v : T, (κ → Fv F v) → ℂ) (v : Pl F) :
     (κ → Fv F v) → ℂ := if h : v ∈ T then ψ ⟨v, h⟩ else w v
@@ -110,13 +115,13 @@ theorem pure_ext {w : ∀ v : Pl F, (κ → Fv F v) → ℂ} (hw : Std w) (T : F
     finprod_mem_union' disjoint_compl_right (hf.inter_of_right _) (hf.inter_of_right _), finprod_mem_coe_finset,
     ← Finset.prod_coe_sort T]
   congr 1
-  · exact Finset.prod_congr rfl fun v _ => by unfold ext; rw [dif_pos v.2]
+  · exact Finset.prod_congr rfl fun v _ => by unfold ext; rw [dite_eq_left v.2]
   · exact finprod_congr fun v => finprod_congr fun hv => by rw [ext_off w T ψ v hv]
 
 theorem exists_pureML {w : ∀ v : Pl F, (κ → Fv F v) → ℂ} (hw : Std w) (T : Finset (Pl F)) :
-    ∃ l : SInf F κ →ₗ[ℂ] MultilinearMap ℂ (fun v : T => (κ → Fv F v) → ℂ) ((κ → AF F) → ℂ),
+    ∃ l : SInf F κ →ₗ[ℂ] MultilinearMap (RingHom.id ℂ) (fun v : T => (κ → Fv F v) → ℂ) ((κ → AF F) → ℂ),
       ∀ f ψ, l f ψ = pure f (ext w T ψ) := by
-  let m : (κ → AF F) → MultilinearMap ℂ (fun v : T => (κ → Fv F v) → ℂ) ℂ := fun x =>
+  let m : (κ → AF F) → MultilinearMap (RingHom.id ℂ) (fun v : T => (κ → Fv F v) → ℂ) ℂ := fun x =>
     (MultilinearMap.mkPiAlgebra ℂ T ℂ).compLinearMap fun v => LinearMap.proj fun i => evFin F v (x i)
   refine ⟨{ toFun := fun f => MultilinearMap.pi fun x =>
               (f (fun i => evI F (x i)) * ∏ᶠ (v) (_ : v ∉ T), w v fun i => evFin F v (x i)) • m x
@@ -141,7 +146,7 @@ theorem exists_factorOp (v : Pl F) (π : Module.End ℂ ((κ → Fv F v) → ℂ
   have e2 : (fun y => tens (evFin F v) (φ v) r (sh x y)) = r x • φ v := by
     funext y
     have h1 : (fun i => evFin F v (sh x y i)) = y := funext fun i => by
-      simp only [sh, map_add, GlobalTheory.EmbChart.evFin_atPlace, add_sub_cancel]
+      simp only [sh, map_add (f := _), GlobalTheory.EmbChart.evFin_atPlace, add_sub_cancel]
     have h2 : r (sh x y) = r x := hr x (fun i => GlobalTheory.EmbChart.atPlace v (y i - evFin F v (x i))) fun u hu => by
       funext i
       show u * GlobalTheory.EmbChart.atPlace v (y i - evFin F v (x i)) = 0

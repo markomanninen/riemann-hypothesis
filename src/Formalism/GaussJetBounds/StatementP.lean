@@ -1,4 +1,8 @@
-import Formalism.GaussJetBounds.StatementM
+module
+
+public import Formalism.GaussJetBounds.StatementM
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -18,7 +22,7 @@ def thetaZ {K : Type} [NormedField K] [CharZero K] {d N0 N1 : ℕ} [NeZero d]
 
 def jetPairPoly {K : Type} [Field K] {σ ι : Type} (P : MvPolynomial ι (MvPolynomial σ K))
     (Th : MvPowerSeries ι K) : MvPolynomial σ K :=
-  ∑ κ ∈ P.support, MvPolynomial.coeff κ P *
+  ∑ κ ∈ P.support, AddMonoidAlgebra.coeff P κ *
     MvPolynomial.C (((mfact κ : ℕ) : K) * MvPowerSeries.coeff κ Th)
 
 def frameJet {K : Type} [Field K] {d N0 N1 : ℕ} [NeZero d] (colN : ZMod d → ℕ)
@@ -44,7 +48,7 @@ def ThmAGauss : Prop :=
       (∀ s, nu2 s = (Finset.univ.filter (fun c => 2 ≤ p s c)).card) → (∀ s, size s = ∑ c, p s c) →
     ∀ a : ℕ, 1 ≤ a → (∀ s, size s ≤ a) → 2 * Real.logb l a + 2 ≤ (N0 : ℝ) - 1 →
     ∀ n : (ZMod d × Fin N0 × Fin N0) →₀ ℕ,
-      ‖MvPolynomial.coeff n (frameJet colN p hp I (thetaZ g U ε be))‖ ≤
+      ‖AddMonoidAlgebra.coeff (frameJet colN p hp I (thetaZ g U ε be)) n‖ ≤
         ‖(l : ℂ_[l])‖ ^ ((∑ s ∈ TT, (topTerm l d TT nu1 nu2 s -
             gam l * (Wcap l d TT nu1 nu2 size s : ℝ))) +
           Fnum l d (fun s => (Dl d TT nu1 size s : ℝ)) -

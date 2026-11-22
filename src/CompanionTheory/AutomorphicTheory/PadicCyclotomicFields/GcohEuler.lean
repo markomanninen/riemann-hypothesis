@@ -1,5 +1,9 @@
-import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohDefs
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.EulerCharGaloisOfCardEq
+module
+
+public import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohDefs
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.EulerCharGaloisOfCardEq
+
+@[expose] public section
 
 open CategoryTheory GroundTheory.ProfCoh ReciprocityTheory.Gal ValuativeRel
 

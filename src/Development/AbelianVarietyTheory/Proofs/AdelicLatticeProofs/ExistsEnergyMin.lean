@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EntriesBoundedOfConjSpanningBoundedStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsClosedIsHermitianLogOfPosDefStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MatrixEntriesBoundedOfHermitianLogTraceSqLeStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsHermitianLogOfPosDefGramStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EntriesBoundedOfConjSpanningBoundedStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsClosedIsHermitianLogOfPosDefStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MatrixEntriesBoundedOfHermitianLogTraceSqLeStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsHermitianLogOfPosDefGramStatement
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
@@ -17,14 +22,14 @@ theorem energy_nonneg {H A : Matrix ι ι ℂ} (h : IsLog H A) : 0 ≤ (Matrix.t
     rw [hH]
     simp only [conjTranspose_mul, conjTranspose_conjTranspose, diagonal_conjTranspose, Matrix.mul_assoc]
     congr 3
-    funext i
+    ext i
     simp
   have h1 := (Matrix.posSemidef_conjTranspose_mul_self H).trace_nonneg
   rw [hh] at h1
   exact (Complex.le_def.mp h1).1
 
-omit [Fintype ι] [DecidableEq ι] in
 
+omit [Fintype ι] [DecidableEq ι] in
 theorem isCompact_box (C : ℝ) : IsCompact {x : Matrix ι ι ℂ | ∀ i j, ‖x i j‖ ≤ C} := by
   have h : IsCompact (Set.pi Set.univ fun _ : ι => Set.pi Set.univ fun _ : ι => Metric.closedBall (0 : ℂ) C) :=
     isCompact_univ_pi fun _ => isCompact_univ_pi fun _ => isCompact_closedBall _ _
@@ -58,14 +63,14 @@ theorem inv_eq_adj {P : Matrix ι ι ℂ} (hP : P.det = 1) : P⁻¹ = P.adjugate
 
 end GlobalTheory.ClassFin.EnergyMin
 
-open GlobalTheory.ClassFin.EnergyMin in
 
+open GlobalTheory.ClassFin.EnergyMin in
 theorem GlobalTheory.ClassFin.exists_energy_min : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (σ : Type) [Fintype σ] (g : σ → Matrix ι ι ℂ), (∀ s, IsUnit (g s).det) → Submodule.span ℂ (Set.range g) = ⊤ → ∃ (P : Matrix ι ι ℂ) (H : σ → Matrix ι ι ℂ), IsUnit P.det ∧ (∀ s, IsLog (H s) ((P * g s * P⁻¹)ᴴ * (P * g s * P⁻¹))) ∧ ∀ (P' : Matrix ι ι ℂ) (H' : σ → Matrix ι ι ℂ), IsUnit P'.det → (∀ s, IsLog (H' s) ((P' * g s * P'⁻¹)ᴴ * (P' * g s * P'⁻¹))) → ∑ s, (Matrix.trace (H s * H s)).re ≤ ∑ s, (Matrix.trace (H' s * H' s)).re := by
   intro ι _ _ σ _ g hg hspan
   choose H₀ hH₀ using fun s => GlobalTheory.T.exists_isHermitianLogOfPosDef_gram ι (g s) (hg s)
   let En : Matrix ι ι ℂ × (σ → Matrix ι ι ℂ) → ℝ := fun p => ∑ s, (Matrix.trace (p.2 s * p.2 s)).re
   have hEn : Continuous En := by
-    refine continuous_finset_sum _ fun s _ => Complex.continuous_re.comp ?_
+    refine continuous_finsetSum _ fun s _ => Complex.continuous_re.comp ?_
     have h : Continuous fun p : Matrix ι ι ℂ × (σ → Matrix ι ι ℂ) => p.2 s :=
       (continuous_apply s).comp continuous_snd
     exact (h.matrix_mul h).matrix_trace
@@ -73,23 +78,32 @@ theorem GlobalTheory.ClassFin.exists_energy_min : ∀ (ι : Type) [Fintype ι] [
   let Z : Set (Matrix ι ι ℂ × (σ → Matrix ι ι ℂ)) := {p | p.1.det = 1 ∧
     (∀ s, IsLog (p.2 s) ((p.1 * g s * p.1.adjugate)ᴴ * (p.1 * g s * p.1.adjugate))) ∧ En p ≤ E₀}
   have hZc : IsClosed Z := by
-    refine IsClosed.inter (isClosed_eq continuous_fst.matrix_det continuous_const)
-      (IsClosed.inter ?_ (isClosed_le hEn continuous_const))
-    have : IsClosed (⋂ s, {p : Matrix ι ι ℂ × (σ → Matrix ι ι ℂ) |
+    have hlog : IsClosed {p : Matrix ι ι ℂ × (σ → Matrix ι ι ℂ) |
+        ∀ s, IsLog (p.2 s) ((p.1 * g s * p.1.adjugate)ᴴ * (p.1 * g s * p.1.adjugate))} := by
+      have : IsClosed (⋂ s, {p : Matrix ι ι ℂ × (σ → Matrix ι ι ℂ) |
         IsLog (p.2 s) ((p.1 * g s * p.1.adjugate)ᴴ * (p.1 * g s * p.1.adjugate))}) := by
-      refine isClosed_iInter fun s => ?_
-      have h : Continuous fun p : Matrix ι ι ℂ × (σ → Matrix ι ι ℂ) => p.2 s :=
-        (continuous_apply s).comp continuous_snd
-      have h2 : Continuous fun p : Matrix ι ι ℂ × (σ → Matrix ι ι ℂ) => p.1 * g s * p.1.adjugate :=
-        (continuous_fst.matrix_mul continuous_const).matrix_mul continuous_fst.matrix_adjugate
-      exact (GlobalTheory.T.isClosed_isHermitianLogOfPosDef ι).preimage (h.prodMk (h2.matrix_conjTranspose.matrix_mul h2))
-    rw [← Set.setOf_forall] at this
-    exact this
+        refine isClosed_iInter fun s => ?_
+        have h : Continuous fun p : Matrix ι ι ℂ × (σ → Matrix ι ι ℂ) => p.2 s :=
+          (continuous_apply s).comp continuous_snd
+        have h2 : Continuous fun p : Matrix ι ι ℂ × (σ → Matrix ι ι ℂ) => p.1 * g s * p.1.adjugate :=
+          (continuous_fst.matrix_mul continuous_const).matrix_mul continuous_fst.matrix_adjugate
+        exact (GlobalTheory.T.isClosed_isHermitianLogOfPosDef ι).preimage (h.prodMk (h2.matrix_conjTranspose.matrix_mul h2))
+      rw [← Set.setOf_forall] at this
+      exact this
+    have heq : Z = ({p | p.1.det = 1} ∩
+        ({p | ∀ s, IsLog (p.2 s) ((p.1 * g s * p.1.adjugate)ᴴ * (p.1 * g s * p.1.adjugate))} ∩
+          {p | En p ≤ E₀})) := by
+      ext p
+      simp [Z]
+    rw [heq]
+    exact (isClosed_eq continuous_fst.matrix_det continuous_const).inter
+      (hlog.inter (isClosed_le hEn continuous_const))
   obtain ⟨C, hC⟩ := GlobalTheory.T.matrix_entries_bounded_of_hermitian_log_trace_sq_le ι E₀
   obtain ⟨C', hC'⟩ := GlobalTheory.T.entries_bounded_of_conj_spanning_bounded' ι σ g hspan C
   have hK : IsCompact ({x : Matrix ι ι ℂ | ∀ i j, ‖x i j‖ ≤ C'} ×ˢ
       (Set.pi Set.univ fun _ : σ => {x : Matrix ι ι ℂ | ∀ i j, ‖x i j‖ ≤ C})) :=
-    (isCompact_box C').prod (isCompact_univ_pi fun _ => isCompact_box C)
+    (GlobalTheory.ClassFin.EnergyMin.isCompact_box C').prod
+      (isCompact_univ_pi fun _ => GlobalTheory.ClassFin.EnergyMin.isCompact_box C)
   have hZ : IsCompact Z := by
     refine hK.of_isClosed_subset hZc ?_
     rintro ⟨P, H⟩ ⟨hd, hl, hE⟩
@@ -97,22 +111,24 @@ theorem GlobalTheory.ClassFin.exists_energy_min : ∀ (ι : Type) [Fintype ι] [
       intro s
       refine hC _ _ (hl s) (le_trans ?_ hE)
       exact Finset.single_le_sum (f := fun s => (Matrix.trace (H s * H s)).re)
-        (fun t _ => energy_nonneg (hl t)) (Finset.mem_univ s)
+        (fun t _ => GlobalTheory.ClassFin.EnergyMin.energy_nonneg (hl t)) (Finset.mem_univ s)
     refine ⟨hC' P hd fun s i j => ?_, fun s _ i j => (hb s i j).2⟩
-    rw [inv_eq_adj hd]
+    rw [GlobalTheory.ClassFin.EnergyMin.inv_eq_adj hd]
     exact (hb s i j).1
   have h0 : ((1, H₀) : Matrix ι ι ℂ × (σ → Matrix ι ι ℂ)) ∈ Z := by
     refine ⟨Matrix.det_one, fun s => ?_, le_rfl⟩
     simpa using hH₀ s
   obtain ⟨⟨P, H⟩, ⟨hd, hl, hE⟩, hmin⟩ := hZ.exists_isMinOn ⟨_, h0⟩ hEn.continuousOn
   have hd' : P.det = 1 := hd
-  refine ⟨P, H, by rw [hd']; exact isUnit_one, fun s => by rw [inv_eq_adj hd']; exact hl s, ?_⟩
-  intro P' H' hP' hl'
-  obtain ⟨Q, hQ, hQx⟩ := exists_det_one P' hP'
-  change En (P, H) ≤ En (Q, H')
-  by_cases hle : En (Q, H') ≤ E₀
-  · refine hmin (a := (Q, H')) ⟨hQ, fun s => ?_, hle⟩
-    have := hl' s
-    rw [← hQx, inv_eq_adj hQ] at this
-    exact this
-  · exact hE.trans (not_le.mp hle).le
+  have hP : IsUnit P.det := hd'.symm ▸ isUnit_one
+  refine ⟨P, H, hP, ?_, ?_⟩
+  · intro s
+    rw [GlobalTheory.ClassFin.EnergyMin.inv_eq_adj hd']
+    exact hl s
+  · intro P' H' hP' hl'
+    obtain ⟨Q, hQ, hQx⟩ := GlobalTheory.ClassFin.EnergyMin.exists_det_one P' hP'
+    change En (P, H) ≤ En (Q, H')
+    by_cases hle : En (Q, H') ≤ E₀
+    · refine hmin (a := (Q, H')) ⟨hQ, fun s => ?_, hle⟩
+      simpa only [← hQx (g s), GlobalTheory.ClassFin.EnergyMin.inv_eq_adj hQ] using hl' s
+    · exact hE.trans (not_le.mp hle).le

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.EquivFunOM
-import Formalism.LocalToGlobal.IndefiniteReal.PrimitiveStatementsWithPassage
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.EquivFunOM
+public import Formalism.LocalToGlobal.IndefiniteReal.PrimitiveStatementsWithPassage
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain Polynomial
 open scoped Matrix ComplexOrder InnerProductSpace
@@ -16,20 +20,19 @@ section Inst3
 variable {K : Type} [Field K] [NumberField K] [StarRing K] {G : Type} [Group G] [Fintype G] {Pl0 I0 Ty : Type}
 
 theorem okOp_opAll {B : BlockDat K G Pl0} {D : InertDat3 B I0 Ty} {s : ℕ} (h : B.Ok s) (hD : D.Ok3) (hH : B.OkH)
-    (hH3 : D.InertRationalAdjoint) : OkOp B D.opAll where
-  rat i a b := by
+    (hH3 : D.InertRationalAdjoint) : OkOp B D.opAll := by
+  refine ⟨?_, ?_, hD.comm, InertDat3.splitOver_opAll D h hD, ?_⟩
+  · intro i a b
     rcases i with p | k
     · exact hH.rat p a b
     · exact hH3.rat k a b
-  adj i := by
+  · intro i
     rcases i with p | k
     · obtain ⟨p', hp'⟩ := hH.adj p
       exact ⟨Sum.inl p', hp'⟩
     · obtain ⟨k', hk'⟩ := hH3.adj k
       exact ⟨Sum.inr k', hk'⟩
-  comm := hD.comm
-  split := InertDat3.splitOver_opAll D h hD
-  opG i g := by
+  · intro i g
     rcases i with p | k
     · exact h.opG p g
     · exact hD.opG k g

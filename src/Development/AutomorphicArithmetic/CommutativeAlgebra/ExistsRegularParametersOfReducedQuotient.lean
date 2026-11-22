@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.EFam
-import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.IsSeparatedOfProj
-import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.IsIntegralRBIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BoundaryChartHodgeMatrix
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.EFam
+public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.IsSeparatedOfProj
+public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.IsIntegralRBIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BoundaryChartHodgeMatrix
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.HodgeCoh GlobalTheory.CechDR GlobalTheory.PD KaehlerDifferential GlobalTheory.W1 GlobalTheory.WH
 
@@ -16,7 +20,8 @@ theorem UpperTheory.exists_regular_parameters_of_reduced_quotient :
     intro a ha
     rw [hI, Ideal.mem_span_range_iff_exists_fun] at ha
     obtain ⟨g, rfl⟩ := ha
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_eq_zero fun j _ => by rw [map_mul, hφ j, mul_zero]
   let ψ : (rB ℂ K x {0} ⧸ I) →ₐ[ℂ] ℂ := Ideal.Quotient.liftₐ I φ hφI
   have hψ : ∀ a, ψ (Ideal.Quotient.mk I a) = φ a := fun a => rfl
@@ -60,9 +65,9 @@ theorem UpperTheory.exists_regular_parameters_of_reduced_quotient :
       obtain ⟨c2, h2⟩ := ihz hz1
       refine ⟨c1 + c2, ?_⟩
       have : ι ⟨y + z, hy⟩ = ι ⟨y, hy1⟩ + ι ⟨z, hz1⟩ := by
-        rw [← map_add]
+        rw [← map_add (f := _)]
         rfl
-      rw [this, map_add, h1, h2, map_add]
+      rw [this, map_add (f := _), h1, h2, map_add (f := _)]
     | mul y z hy1 hz1 ihy ihz =>
       obtain ⟨c1, h1⟩ := ihy hy1
       obtain ⟨c2, h2⟩ := ihz hz1

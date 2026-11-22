@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsEqOfNatCastMulMem
-import GroundTheory.GlobalFields.ComplexMultiplication.MainTheorem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PeriodExistenceCm
-import CompanionTheory.AutomorphicTheory.PlaceSeparation.IsOpenQuotientMapArt0
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsEqOfNatCastMulMem
+public import GroundTheory.GlobalFields.ComplexMultiplication.MainTheorem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PeriodExistenceCm
+public import CompanionTheory.AutomorphicTheory.PlaceSeparation.IsOpenQuotientMapArt0
+
+@[expose] public section
+
 open NumberField
 open scoped nonZeroDivisors
 open scoped GlobalTheory.Idele

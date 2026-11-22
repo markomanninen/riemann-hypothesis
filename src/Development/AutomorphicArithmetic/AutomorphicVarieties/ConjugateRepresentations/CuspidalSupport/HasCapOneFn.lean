@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HasCohomology
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HasCohomology
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,16 +17,13 @@ abbrev locOf {V : Type} [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ
     (w : HeightOneSpectrum (𝓞 E)) : Representation ℂ (GL (Fin a) (w.adicCompletion E)) V :=
   ρ.comp (locGL E a w)
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 def HasCap (φ : Sm E a) (m : (E →+* ℂ) → Multiset ℂ) : Prop :=
   ∀ t, Multiset.card (m t) = a ∧ ∀ u, cap t u φ = ((m t).map (u + ·)).prod • φ
 
-theorem hasCap_oneFn : HasCap (oneFn E a) fun _ => Finset.univ.val.map fun k : Fin a => ((a : ℂ) - 1) / 2 - (k : ℕ) :=
-  fun t => ⟨by simp, fun u => by rw [cap_oneFn, Multiset.map_map]; rfl⟩
-
 def CuspSupport : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), 1 ≤ a →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), 1 ≤ a →
     ∀ (τ : SmIrr (GL (Fin a) (Af E))) (m : (E →+* ℂ) → Multiset ℂ) (j : τ.V →ₗ[ℂ] Sm E a), j ≠ 0 →
       (∀ g v, j (τ.ρ g v) = finRep E a g (j v)) → (∀ v, IsAutForm (j v)) → (∀ v, HasCap (j v) m) →
       (∃ π : CuspSub E a, UpperTheory.V.Af.IsFinComp π τ ∧ ∀ t, π.HasInfChar t (m t)) ∨

@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.CgeZeroIffIntegral
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.ProjKeepsLetter
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.AddMemSupportOfMemSupportCoefOut
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.DigitPartMonomial
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.CgeZeroIffIntegral
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.ProjKeepsLetter
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.AddMemSupportOfMemSupportCoefOut
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.DigitPartMonomial
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,10 +16,6 @@ namespace Formalism.MainNotions.PlaneGram
 namespace TwistData
 
 variable {K : Type} [Field K] (D : TwistData K)
-
-theorem Lam_sub (p : ℕ) (F : MvPolynomial (D.OL × Fin D.r) K) (Z W : MvPolynomial (D.ML × Fin D.r) K) :
-    D.abelian₂ p F (Z - W) = D.abelian₂ p F Z - D.abelian₂ p F W := by
-  unfold abelian₂; simp only [gaAct_eq_dg, map_sub, fock_sub_right]
 
 theorem Lam_smul (p : ℕ) (F : MvPolynomial (D.OL × Fin D.r) K) (a : K) (Z : MvPolynomial (D.ML × Fin D.r) K) :
     D.abelian₂ p F (a • Z) = a * D.abelian₂ p F Z := by
@@ -29,7 +29,8 @@ theorem Lam_monomial (p : ℕ) (F : MvPolynomial (D.OL × Fin D.r) K) (ζ : D.EM
 theorem ph_eq_sum (p : ℕ) (Z : MvPolynomial (D.ML × Fin D.r) K) :
     D.ph p Z = ∑ ζ ∈ Z.support, monomial (D.phE p ζ) (Z.coeff ζ) := by
   conv_lhs => rw [Z.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun ζ _ => D.ph_monomial p ζ _
 
 theorem monomial_mem_PolK {L : Type} {r : ℕ} (d : L → ℕ) (α : L × Fin r →₀ ℕ) (c : K)

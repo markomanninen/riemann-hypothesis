@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsIntZero
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ReadMod
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsIntZero
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ReadMod
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC GlobalTheory.BCT GlobalTheory.LFun Formalism.L2.Host
@@ -28,7 +32,7 @@ theorem ctT_split_eq : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n
   have hv : ∀ y : GLw n w, ((toSub (UL n w) y : UL n w) : GLw n w) = y := fun y => by
     have hy : y ∈ UL n w := hT ▸ Subgroup.mem_top y
     simp [toSub, hy]
-  have hc : ∀ (x : GLw n w) (g : GlobalTheory.LFun.KGL w n),
+  have hc : ∀ (x : GLw n w) (g : GlobalTheory.LFun.KGL w (n := n)),
       Tj ℂ n (Ov E w) ϖ k ((g : GLw n w)⁻¹ * x * g) = Tj ℂ n (Ov E w) ϖ k x := fun x g =>
     (Tj_mem_hecke (n := n) hϖ k).1 g⁻¹ g x
   unfold ctT ctMu ct
@@ -36,7 +40,7 @@ theorem ctT_split_eq : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n
   congr 1
   funext X
   simp only [hv, hc]
-  exact avg_const _
+  exact avg_const (H := GlobalTheory.LFun.KGL w (n := n)) _
 
 end GlobalTheory.CompanionTheory.CtS
 

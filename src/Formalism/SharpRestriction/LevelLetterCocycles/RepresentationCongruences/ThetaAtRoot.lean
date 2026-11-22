@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsGLLatBasisOfIsSplitEquiv
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ThetaAtRootAlt
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsGLLatBasisOfIsSplitEquiv
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ThetaAtRootAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,10 +34,10 @@ private theorem ringHom_eq_of_eq_on_C_X_of_pow_dvd_eq_zero {A B : Type*} [CommRi
       obtain ⟨r, hr⟩ := ih g'
       have e1 : ψ₁ g = ψ₁ (C (constantCoeff g)) + ψ₁ X * ψ₁ g' := by
         calc ψ₁ g = ψ₁ (C (constantCoeff g) + X * g') := by rw [← hg']
-          _ = _ := by rw [map_add, map_mul]
+          _ = _ := by rw [map_add (f := _), map_mul]
       have e2 : ψ₂ g = ψ₂ (C (constantCoeff g)) + ψ₂ X * ψ₂ g' := by
         calc ψ₂ g = ψ₂ (C (constantCoeff g) + X * g') := by rw [← hg']
-          _ = _ := by rw [map_add, map_mul]
+          _ = _ := by rw [map_add (f := _), map_mul]
       exact ⟨r, by linear_combination e1 - e2 + hC (constantCoeff g) + ψ₂ g' * hX + ψ₁ X * hr⟩
   exact sub_eq_zero.mp (hsep _ (fun n => key n f))
 
@@ -84,7 +88,7 @@ theorem theta_at_root (l : ℕ) [Fact l.Prime] (hl : ((l : ℕ) : O) ∈ IsLocal
     rw [hc0, map_zero, map_zero]
   have hπφX : Ideal.Quotient.mk I (φ₀ X) = 0 := by
     have h3 : Ideal.Quotient.mk I (φ₀ X) = Ideal.Quotient.mk I (C ((1 + x₀) ^ l - 1)) := by
-      rw [hφ₀]; simp only [map_sub, map_pow, map_add, map_one, hπX]
+      rw [hφ₀]; simp only [map_sub, map_pow, map_add (f := _), map_one, hπX]
     rw [h3, hroot, sub_self, map_zero, map_zero]
   have hφπ : ∀ f, Ideal.Quotient.mk I (φ₀ f) = Ideal.Quotient.mk I (C (constantCoeff f)) := by
     intro f
@@ -92,7 +96,7 @@ theorem theta_at_root (l : ℕ) [Fact l.Prime] (hl : ((l : ℕ) : O) ∈ IsLocal
     calc Ideal.Quotient.mk I (φ₀ f)
         = Ideal.Quotient.mk I (φ₀ (C (constantCoeff f) + X * f')) := by rw [← hf']
       _ = _ := by
-        simp only [map_add, map_mul, Formalism.MainNotions.N.FrobeniusPowerSeries.LTA.alg_C, hπφX, zero_mul, add_zero]
+        simp only [map_add (f := _), map_mul, Formalism.MainNotions.N.FrobeniusPowerSeries.LTA.alg_C, hπφX, zero_mul, add_zero]
   obtain ⟨g1, hg1⟩ := (PowerSeries.X_dvd_iff).mpr h0
   have hg1χ : constantCoeff g1 = χ := by
     rw [← h1, hg1]
@@ -101,7 +105,7 @@ theorem theta_at_root (l : ℕ) [Fact l.Prime] (hl : ((l : ℕ) : O) ∈ IsLocal
   obtain ⟨t, ht⟩ := exists_eq_C_constantCoeff_add_X_mul g1
   obtain ⟨e, he⟩ := hsurj t
   have hπg1 : Ideal.Quotient.mk I g1 = Ideal.Quotient.mk I (C (χ + x₀ * e)) := by
-    rw [ht, hg1χ]; simp only [map_add, map_mul, hπX, he]
+    rw [ht, hg1χ]; simp only [map_add (f := _), map_mul, hπX, he]
   have hπg : Ideal.Quotient.mk I (γ X) = Ideal.Quotient.mk I (C (x₀ * (χ + x₀ * e))) := by
     rw [hg1, map_mul, hπg1, hπX]; simp only [map_mul]
   have hry : (1 + x₀ * (χ + x₀ * e)) ^ l = 1 := by
@@ -109,7 +113,7 @@ theorem theta_at_root (l : ℕ) [Fact l.Prime] (hl : ((l : ℕ) : O) ∈ IsLocal
       rw [← hc X, hφπ, h0, map_zero, map_zero]
     have h5 : Ideal.Quotient.mk I (γ (φ₀ X))
         = Ideal.Quotient.mk I (C ((1 + x₀ * (χ + x₀ * e)) ^ l - 1)) := by
-      rw [hφ₀]; simp only [map_sub, map_pow, map_add, map_one, hπg]
+      rw [hφ₀]; simp only [map_sub, map_pow, map_add (f := _), map_one, hπg]
     have h6 := hinj ((1 + x₀ * (χ + x₀ * e)) ^ l - 1) 0 (by rw [← h5, h4, map_zero, map_zero])
     exact sub_eq_zero.mp h6
   have hχm : χ - 1 ∈ IsLocalRing.maximalIdeal O :=

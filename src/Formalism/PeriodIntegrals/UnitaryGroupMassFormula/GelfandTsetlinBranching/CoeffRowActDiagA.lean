@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.ExtremalFacts
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.ExtremalFactsProofA
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwlineLemmas
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DetEmbUnitriA
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.ExtremalFacts
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.ExtremalFactsProofA
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwlineLemmas
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DetEmbUnitriA
+
+@[expose] public section
 
 noncomputable section
 
@@ -124,7 +128,7 @@ theorem weight_row_A {r c : ℕ} (m : Fin r × Fin c →₀ ℕ) (ρ : Fin r) :
 
 theorem coeff_rowAct_diag_A {r c : ℕ} (s : Fin r → ℂ) (f : MvPolynomial (Fin r × Fin c) ℂ)
     (m : Fin r × Fin c →₀ ℕ) :
-    coeff m (rowAct ℂ (Matrix.diagonal s) f) = (∏ ρ, s ρ ^ (∑ j : Fin c, m (ρ, j))) * coeff m f := by
+    AddMonoidAlgebra.coeff (rowAct ℂ (Matrix.diagonal s) f) m = (∏ ρ, s ρ ^ (∑ j : Fin c, m (ρ, j))) * AddMonoidAlgebra.coeff f m := by
   induction f using MvPolynomial.induction_on' with
   | monomial m' k =>
     rw [rowActDiagWeight ℂ r c s _ _ (isWeightedHomogeneous_monomial _ _ _ rfl), coeff_smul, coeff_monomial,
@@ -134,7 +138,7 @@ theorem coeff_rowAct_diag_A {r c : ℕ} (s : Fin r → ℂ) (f : MvPolynomial (F
       simp only [weight_row_A]
     · simp
   | add p q hp hq =>
-    rw [map_add, coeff_add, coeff_add, hp, hq, mul_add]
+    rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, mul_add]
 
 theorem zpow_two_inj_A (a b : ℤ) (h : (2 : ℂ) ^ a = 2 ^ b) : a = b := by
   have h2 := congrArg (fun z : ℂ => ‖z‖) h
@@ -173,10 +177,10 @@ theorem fixed_rowDeg_A (lam : DomWeight (n + 1)) (mu : DomWeight n) (f : MvPolyn
       Fintype.prod_ite_eq']
   unfold sqAct detPow at hg
   rw [hdiag] at hg
-  have hc := congrArg (coeff m) hg
+  have hc := congrArg (AddMonoidAlgebra.coeff · m) hg
   rw [coeff_smul, coeff_smul, coeff_rowAct_diag_A, smul_eq_mul, smul_eq_mul, Units.val_zpow_eq_zpow_val, hdet]
     at hc
-  have hcf : coeff m f ≠ 0 := mem_support_iff.mp hm
+  have hcf : AddMonoidAlgebra.coeff f m ≠ 0 := mem_support_iff.mp hm
   have hprod : (∏ ρ : Fin (n + 1), (if ρ = Fin.castSucc a then (2 : ℂ) else 1) ^ (∑ j, m (ρ, j))) =
       2 ^ (∑ j, m (Fin.castSucc a, j)) := by
     rw [Finset.prod_eq_single (Fin.castSucc a)]

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.UnitaryConeEstimates.OmG
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.UnitaryConeEstimates.OmG
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ theorem cpt_box (R : ℝ) : IsCompact {A : Matrix (Fin N) (Fin N) ℂ | ∀ i j,
   have : {A : Matrix (Fin N) (Fin N) ℂ | ∀ i j, ‖A i j‖ ≤ R} =
       Set.univ.pi (fun _ => Set.univ.pi fun _ => Metric.closedBall (0 : ℂ) R) := by
     ext A
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     exact ⟨fun h i _ j _ => by simpa using h i j, fun h i j => by simpa using h i trivial j trivial⟩
   rw [this]
   exact isCompact_univ_pi fun _ => isCompact_univ_pi fun _ => isCompact_closedBall _ _
@@ -64,7 +68,7 @@ theorem cpt_Om [Fintype ι] (M : ℝ) : IsCompact (OmG (ι := ι) (N := N) M) :=
       · rintro ⟨h1, h2, h3, h4⟩; exact ⟨⟨⟨fun w i j hij => h1 w hij, h2⟩, h3⟩, h4⟩
       · rintro ⟨⟨⟨h1, h2⟩, h3⟩, h4⟩; exact ⟨fun w i j hij => h1 w i j hij, h2, h3, h4⟩
     rw [this]
-    simp only [Set.setOf_forall]
+    simp only [Set.ofPred_forall]
     refine ((IsClosed.inter ?_ ?_).inter ?_).inter ?_
     · exact isClosed_iInter fun w => isClosed_iInter fun i => isClosed_iInter fun j => isClosed_iInter fun _ =>
         isClosed_eq (cont_mt w i j) continuous_const
@@ -73,7 +77,7 @@ theorem cpt_Om [Fintype ι] (M : ℝ) : IsCompact (OmG (ι := ι) (N := N) M) :=
     · exact isClosed_iInter fun w => isClosed_iInter fun i =>
         isClosed_le continuous_const (cont_mt w i i).norm
     · exact isClosed_iInter fun i =>
-        isClosed_eq (continuous_finset_prod _ fun w _ => (cont_mt w i i).norm) continuous_const
+        isClosed_eq (continuous_finsetProd _ fun w _ => (cont_mt w i i).norm) continuous_const
   · intro p hp
     exact hp.2.1
 
@@ -85,7 +89,7 @@ theorem cont_dg : Continuous fun s : {s : Fin N → ℝ // ∑ i, s i = 0} => (d
 theorem cpt_S (T : ℝ) (m : Fin N → ℤ) : IsCompact
     {s : {s : Fin N → ℝ // ∑ i, s i = 0} | Cone T s.1 ∧ ∀ i, (m i : ℝ) ≤ s.1 i ∧ s.1 i ≤ m i + 1} := by
   have hemb : Topology.IsClosedEmbedding (Subtype.val : {s : Fin N → ℝ // ∑ i, s i = 0} → (Fin N → ℝ)) :=
-    (isClosed_eq (continuous_finset_sum _ fun i _ => continuous_apply i) continuous_const).isClosedEmbedding_subtypeVal
+    (isClosed_eq (continuous_finsetSum _ fun i _ => continuous_apply i) continuous_const).isClosedEmbedding_subtypeVal
   have hbox : IsCompact {s : Fin N → ℝ | Cone T s ∧ ∀ i, (m i : ℝ) ≤ s i ∧ s i ≤ m i + 1} := by
     refine (isCompact_univ_pi fun i => isCompact_Icc (a := (m i : ℝ)) (b := m i + 1)).of_isClosed_subset ?_ ?_
     · have hc1 : IsClosed {s : Fin N → ℝ | Cone T s} := by

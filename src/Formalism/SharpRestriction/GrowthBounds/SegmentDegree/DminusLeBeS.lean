@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.TauDegreeOnPathBound
-import Formalism.ThetaLogCoordinates.ResidueClassEstimates.VandermondeRankEstimates.LDigits
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.TauDegreeOnPathBound
+public import Formalism.ThetaLogCoordinates.ResidueClassEstimates.VandermondeRankEstimates.LDigits
+
+@[expose] public section
 
 noncomputable section
 

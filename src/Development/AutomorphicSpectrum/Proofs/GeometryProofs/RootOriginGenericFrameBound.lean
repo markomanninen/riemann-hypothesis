@@ -1,11 +1,77 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LabelSigBijective
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PartnerPointIntegralModel
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.FirstFormIffSecondForm
-import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.FrMapComp
-import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.NaturalOfChartIndep
-import Development.WeilBound.CoreStatements.AdicCompleteSpans.MinorC
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LabelSigBijective
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LargeFor
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JEvExists
+public import Formalism.LocalToGlobal.ProjectiveLattices.ParCanon
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecCond
+public import Formalism.SharpRestriction.Divisibility.PrinLevClass
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FormsOver
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordProportionality
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LatticePeriodFormIndependentOfModels
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsFlagModelBaseChangeIntegralFramedPoint
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsCdvrFiniteExtension
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsAlgebraMapEqOfValVLeOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NatCastMemNonunitsOfInduces
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FinrankEqZeroIff
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsEmbeddingCompleteAlgClosedFixedCarrier
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.FirstFormIffSecondForm
+public import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.FrMapComp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.ThValDescIn
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsExpChart
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndExp
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndFrFix
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.ExpBCChart
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.PullSec
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.VtUniq
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermCut
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsFramedPointBaseChangeAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ThetaValueNaturalAlgebraMap
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.SupGenTies
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.FrBCField
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.WtFieldPfA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.PlaceIdem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.Semichar
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.EigenLiftsOfDirectionsBiext
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsIsNabUncond
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpUniqChart
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ConstantCoeffPolyAdd
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTiePf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpChartOf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpActOf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.LinEig
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GaugeUniqPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.KillAdd
+public import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.PrimitiveGermFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DifBijectiveOfParam
+public import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.SymmetricAdjointUnits
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FrameBiextDictionarySecondPartialLaw
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsGermGIffExistsFrame
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsProjBySmoothIsProperGeometricallyIntegral
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemNonzeroLocusIffPowFn
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTie
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleRightZeroThd
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasSubstEv
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsTorusAndQuotientHom
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GaugeUniq
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GaugeBeta
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermDJet
+public import Development.WeilBound.CoreStatements.AdicCompleteSpans.MinorC
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Filter Topology
 open Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.ChartRestriction.G.AR.Inst Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Rec
@@ -72,9 +138,11 @@ theorem zpow_eq_rpow {b : ℝ} (hb : 0 < b) {n m : ℤ} (h : b ^ n = (p : ℝ)�
 
 variable (L : IntermediateField ℚ_[p] (PadicAlgCl p))
 
-theorem unitBall : GlobalTheory.BK.IsUnitBall 𝒪[L] L where
-  inj := Subtype.val_injective
-  mem_range_iff x := ⟨fun ⟨y, h⟩ => h ▸ Valued.integer.mem_iff.1 y.2, fun h => ⟨⟨x, Valued.integer.mem_iff.2 h⟩, rfl⟩⟩
+theorem unitBall : GlobalTheory.BK.IsUnitBall 𝒪[L] L := by
+  refine ⟨Subtype.val_injective, fun x => ?_⟩
+  change x ∈ Set.range ((↑) : 𝒪[L] → L) ↔ ‖x‖ ≤ 1
+  rw [Subtype.range_coe_subtype]
+  exact Valued.integer.mem_iff
 
 attribute [local instance] unitBall
 
@@ -141,7 +209,7 @@ theorem aeval_mem {σ : Type} {z : σ → PadicAlgCl p} {L : IntermediateField �
     rw [MvPolynomial.aeval_C]
     simp [intCast_mem L a]
   | add f g hf hg =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact L.add_mem hf hg
   | mul_X f i hf =>
     rw [map_mul, MvPolynomial.aeval_X]
@@ -154,111 +222,10 @@ theorem hasVal_mem {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι 
   rw [eq_div_of_mul_eq h0 e.symm]
   exact L.div_mem (aeval_mem hz g) (aeval_mem hz f)
 
-theorem finite_adjoin {σ : Type} [Finite σ] (z : σ → PadicAlgCl p) :
-    FiniteDimensional ℚ_[p] (IntermediateField.adjoin ℚ_[p] (Set.range z)) := by
-  have : Finite (Set.range z) := Set.finite_range z |>.to_subtype
-  exact IntermediateField.finiteDimensional_adjoin fun x _ => Algebra.IsIntegral.isIntegral x
-
-theorem vLa_p {F : Type} [Field F] [NumberField F] {la : HeightOneSpectrum (𝓞 F)} (hla : (p : 𝓞 F) ∈ la.asIdeal) :
-    vLa la ((p : ℕ) : F) = ramOverZ la := by
-  have hres : Formalism.L2.Pj.resCharOf la = p := by
-    by_contra h
-    refine Formalism.L2.Pj.Crude.crv_not_mem la (fun hd => h ?_) hla
-    exact (Nat.prime_dvd_prime_iff_eq (Formalism.L2.Pj.Crude.resCharOf_prime la) hp.out).1 hd
-  have := Formalism.L2.Pj.Crude.crv_vLa_char la
-  rw [hres] at this
-  exact this
-
 end Main
 
 end GlobalTheory.CompanionTheory.Ar.Rec.FinRd.Pt
 
 namespace GlobalTheory.CompanionTheory.Ar.Rec.FinRd
-
-theorem exists_isIntPt : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (O : Type) [CommRing O] (β : O →+* c.F) (Y : Model Xo c β) (SS : Finset ℕ) (RM : Top.RootModel (CMType H) (Dw.p + Dw.q)) (Sys : PB.AnSys (Top.dimFl (CMType H) (Dw.p + Dw.q)) (Option (RootIx Dw))) (Fx : FixedData Y Sys) (Or : RootOrigin Y SS RM Fx) (Fr : Small.GenFrame Or), IntAll Xo c → Ref.UnifAll Xo c → ∀ (A : Subring RM.Ω) (p : ℕ) [Fact p.Prime] (z : (Σ k, RM.ι k) → PadicAlgCl p) (ev : A →+* PadicAlgCl p), z ∈ Small.algPts p (mCoordIdeal RM.y) → (∀ x : A, Small.HasVal RM.y 0 (x : RM.Ω) z (ev x)) → FinRd.GoodRing Fr A → ∃ (la : HeightOneSpectrum (𝓞 c.F)) (T : CDVR) (io : c.F →+* T.Fr) (e : ℕ) (y : IntFr Xo c T io) (evT : A →+* T.Fr) (zT : letI := io.toAlgebra; FrPt Xo c T.Fr) (t : Ix Dw → T.Frˣ), FinRd.IsIntPt Fr A ev la T io e y evT zT t := by
-  intro E _ _ _ H Dw l Xo c O _ β Y SS RM Sys Fx Or Fr hInt hUnif A p _ z ev hz hv hG
-  obtain ⟨hc1, hc2, -, -⟩ := hG
-  have hzL : ∀ i, z i ∈ IntermediateField.adjoin ℚ_[p] (Set.range z) := fun i =>
-    IntermediateField.subset_adjoin _ _ ⟨i, rfl⟩
-  have := Pt.finite_adjoin z
-  obtain ⟨T₀, j, hfin, hpm, hL, hnorm⟩ := Pt.exists_cdvr (IntermediateField.adjoin ℚ_[p] (Set.range z))
-  have hev : ∀ x : A, ∃ a, j a = ev x := fun x => hL _ (Pt.hasVal_mem hzL (hv x))
-  choose f hf using hev
-  have hinj : Function.Injective j := j.injective
-  let ev₀ : A →+* T₀.Fr :=
-    { toFun := f
-      map_one' := hinj (by rw [hf, map_one, map_one])
-      map_mul' := fun a b => hinj (by rw [hf, map_mul, map_mul, hf, hf])
-      map_zero' := hinj (by rw [hf, map_zero, map_zero])
-      map_add' := fun a b => hinj (by rw [hf, map_add, map_add, hf, hf]) }
-  have hev₀ : ∀ x, j (ev₀ x) = ev x := hf
-  let cA : c.F →+* A := Or.𝔐.cst.codRestrict A hc1
-  let io₀ : c.F →+* T₀.Fr := ev₀.comp cA
-  obtain ⟨la, e₀, ho₀, hpla⟩ := GlobalTheory.PartnerIn.exists_overLa T₀ io₀ (Fact.out : p.Prime) hpm
-  obtain ⟨q, φq, yq, hyq, hφA⟩ := hc2
-  letI a0 : Algebra c.F T₀.Fr := io₀.toAlgebra
-  letI aΩ : Algebra c.F RM.Ω := Small.cstAlg Or
-  let ψ₀ : q.R →ₐ[c.F] T₀.Fr :=
-    { ev₀.comp (φq.toRingHom.codRestrict A hφA) with
-      commutes' := fun a => by
-        show ev₀ _ = ev₀ (cA a)
-        exact congrArg ev₀ (Subtype.ext (φq.commutes a)) }
-  obtain ⟨y₁, hy₁⟩ := GlobalTheory.ThetaExprBaseChangeTest.frBCField Xo c q.R yq T₀.Fr ψ₀
-  obtain ⟨T', io', e', y', ho', hy', φ, z₁, t, -, hφy, hb⟩ := hInt la T₀ io₀ e₀ ho₀ hfin y₁
-  obtain ⟨T, φV, φ₂, r, yy, τ, hfe, hbc, hyA, hτ⟩ := hUnif la T' io' e' ho' y' hy'
-  letI a1 : Algebra c.F T'.Fr := io'.toAlgebra
-  letI a2 : Algebra c.F T.Fr := (φ₂.comp io').toAlgebra
-  let φ₂A : T'.Fr →ₐ[c.F] T.Fr := { φ₂ with commutes' := fun _ => rfl }
-  obtain ⟨zT, hzT⟩ := GlobalTheory.ThetaExprBaseChangeTest.frBCField Xo c T'.Fr z₁ T.Fr φ₂A
-  have hFB := frBorBC T'.Fr T.Fr φ₂A t z₁ y'.1 zT yy.1 hb hzT hbc
-  refine ⟨la, T, φ₂.comp io', r * e', yy, (φ₂.comp φ.toRingHom).comp ev₀, zT,
-    fun i => Units.map (φ₂A : T'.Fr →* T.Fr) (t i), ?_⟩
-  unfold FinRd.IsIntPt
-  refine ⟨hpla, hfe.overLa ho', hyA, ⟨τ, hτ⟩, fun a h => ?_, fun x => ?_,
-    ⟨q, φq, φ₂A.comp (φ.comp ψ₀), yq, hyq, ?_, fun r => ⟨hφA r, rfl⟩⟩, hFB⟩
-  · show φ₂ (φ (ev₀ ⟨_, h⟩)) = φ₂ (io' a)
-    have h1 : φ (io₀ a) = io' a := φ.commutes a
-    rw [← h1]
-    rfl
-  · have hio : φ.toRingHom.comp io₀ = io' := RingHom.ext fun a => φ.commutes a
-    have ho'' : OverLa la T'.V (φ.toRingHom.comp io₀) e' := by
-      rw [hio]
-      exact ho'
-    obtain ⟨r', ⟨hr'0, hr'⟩, he'⟩ :=
-      (GlobalTheory.ThetaValueIdentityCompare.overLa_iff ho₀ hfin φ.toRingHom e').1 ho''
-    have hr0 := hfe.2.2.2.2.1
-    have hram := FinRd.ram_pos hpla
-    by_cases hx : ev₀ x = 0
-    · have h1 : ev x = 0 := by rw [← hev₀ x, hx, map_zero]
-      have h2 : ((φ₂.comp φ.toRingHom).comp ev₀) x = 0 := by
-        show φ₂ (φ (ev₀ x)) = 0
-        rw [hx, map_zero, map_zero]
-      rw [h1, norm_zero]
-      unfold FinRd.absT
-      rw [if_pos h2]
-    · have h2 : ((φ₂.comp φ.toRingHom).comp ev₀) x ≠ 0 := by
-        show φ₂ (φ (ev₀ x)) ≠ 0
-        exact (map_ne_zero φ₂).2 ((map_ne_zero φ).2 hx)
-      rw [← hev₀ x, hnorm _ hx]
-      unfold FinRd.absT
-      rw [if_neg h2]
-      have hv1 : vV T.V (((φ₂.comp φ.toRingHom).comp ev₀) x) = r * (r' * vV T₀.V (ev₀ x)) := by
-        show vV T.V (φ₂ (φ (ev₀ x))) = _
-        rw [hfe.2.2.2.2.2]
-        congr 1
-        exact hr' _ hx
-      have hv2 : vV T₀.V ((p : ℕ) : T₀.Fr) = e₀ * ramOverZ la := by
-        have h3 := ho₀.2 ((p : ℕ) : c.F)
-        rw [map_natCast, Pt.vLa_p hpla] at h3
-        exact h3
-      have he0 : (e₀ : ℝ) ≠ 0 := by exact_mod_cast ho₀.1.ne'
-      have hr1 : (r : ℝ) ≠ 0 := by exact_mod_cast hr0.ne'
-      have hr2 : (r' : ℝ) ≠ 0 := by exact_mod_cast hr'0.ne'
-      have hr3 : (ramOverZ la : ℝ) ≠ 0 := by exact_mod_cast hram.ne'
-      rw [hv1, hv2, he']
-      push_cast
-      congr 2
-      field_simp
-  · exact ReciprocityTheory.ChartRestriction.G.PullbackSections.frMap_trans _ _ (ReciprocityTheory.ChartRestriction.G.PullbackSections.frMap_trans _ _ hy₁ hφy) hzT
 
 end GlobalTheory.CompanionTheory.Ar.Rec.FinRd

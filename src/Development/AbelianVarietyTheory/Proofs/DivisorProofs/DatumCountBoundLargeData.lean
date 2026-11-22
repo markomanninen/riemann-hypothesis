@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfCountAtOf
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardQuotPowSmulBoundsDvrFgModule
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfCountAtOf
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardQuotPowSmulBoundsDvrFgModule
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,7 +94,7 @@ theorem absNorm_modul_le : (Ideal.absNorm G.modul : ℝ) ≤ Real.exp (2 * sig G
   rw [Finset.mul_sum, Real.exp_sum]
   show ((Ideal.absNorm (∏ v ∈ G.pl.S0, (G.pl.w v).asIdeal ^ G.pl.depth sc v) : ℕ) : ℝ) ≤ _
   rw [map_prod, Nat.cast_prod]
-  refine Finset.prod_le_prod (fun _ _ => Nat.cast_nonneg _) fun v hv => ?_
+  refine Finset.prod_le_prod₀ (fun _ _ => Nat.cast_nonneg _) fun v hv => ?_
   have h1 := absNorm_le_sq D.sp.cm.deg2 (G.pl.w v)
   rw [G.pl.under_w hv] at h1
   have hpos : (0 : ℝ) < Ideal.absNorm v.asIdeal := by
@@ -131,7 +135,7 @@ theorem card_cosAt_le {i : ℕ} (hi : i < D.R.m) :
 
 theorem card_datum_le : (Nat.card G.Datum : ℝ) ≤ Real.exp (D.R.m * ((bigN D : ℝ) ^ 2 * (2 * sig G))) := by
   rw [Nat.card_pi, Nat.cast_prod, Real.exp_nat_mul]
-  refine (Finset.prod_le_prod (fun _ _ => Nat.cast_nonneg _) fun i _ => card_cosAt_le G i.2).trans (le_of_eq ?_)
+  refine (Finset.prod_le_prod₀ (fun _ _ => Nat.cast_nonneg _) fun i _ => card_cosAt_le G i.2).trans (le_of_eq ?_)
   rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
 
 theorem card_datum_le_aOne {C b : ℝ} (hC : 2 ≤ C) (hb : 1 ≤ b) : (Nat.card G.Datum : ℝ) ≤ Real.exp (D.R.m * aOne G C b) := by

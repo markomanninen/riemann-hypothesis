@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.OrbitPushCut
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.OrbitPushE
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.OrbitPushI
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.PhiDiff
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.PolarDec
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.TBallMeas
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DensityInChart
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LieAlgebraBesselModelMiddleUnitaryEntries
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.OrbitPushCut
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.OrbitPushE
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.OrbitPushI
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.PhiDiff
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.PolarDec
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.TBallMeas
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DensityInChart
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LieAlgebraBesselModelMiddleUnitaryEntries
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ theorem tube_identity (G K : Set (Mat k r)) (μ ν : Measure (Mt k r)) [SFinite 
       conv_rhs => rw [← hL _ hh0, Measure.map_apply (HU.lmulM_cont h0).measurable hS]
       refine measure_congr ?_
       filter_upwards [aν] with h hh
-      exact propext (H h hh)
+      exact H h hh
     · rw [Set.indicator_of_notMem hgT]
       refine measure_mono_null (fun h hh => ?_) hν
       exact fun hK => h2 g hg hgT h hK hh
@@ -105,7 +109,7 @@ theorem mem_lieOf_UWb (X : Mat k r) : X ∈ lieOf (UWb k r) ↔
 theorem tau_mid {i : Fin (2 * r + k + 1)} (hi : MB.mid k r i) : HU.tau k r i = i := by
   apply Fin.ext
   simp only [HU.tau]
-  rw [if_neg (by have := hi.1; have := hi.2; omega)]
+  rw [ite_eq_right (by have := hi.1; have := hi.2; omega)]
 
 theorem tau_not_mid {i : Fin (2 * r + k + 1)} (hi : ¬ MB.mid k r i) : ¬ MB.mid k r (HU.tau k r i) := fun h => by
   have := tau_mid h
@@ -125,7 +129,7 @@ theorem wc_ne (a : Fin k) : wI k r a.castSucc ≠ pw k r := fun h => Fin.castSuc
 
 theorem sgn_wc (a : Fin k) : HU.sgn k r (wI k r a.castSucc) = 1 := by
   have := a.isLt
-  exact if_neg (by simp only [wI, Fin.val_castSucc]; omega)
+  exact ite_eq_right (by simp only [wI, Fin.val_castSucc]; omega)
 
 theorem gen_off (q : TrE k) {i j : Fin (2 * r + k + 1)} (hi : i ≠ pw k r) (hj : j ≠ pw k r) :
     opGen k r q i j = 0 := by
@@ -280,7 +284,7 @@ theorem measurePreserving_of_norm {A B D : Type} [NormedAddCommGroup A] [InnerPr
     Function.Injective f ∧ MeasurePreserving f (volume.prod volume) volume := by
   let J : WithLp 2 (A × B) →ₗᵢ[ℝ] D :=
     { toFun := fun p => f (p.fst, p.snd)
-      map_add' := fun p q => by rw [← map_add]; rfl
+      map_add' := fun p q => by rw [← map_add (f := _)]; rfl
       map_smul' := fun c p => by rw [← map_smul]; rfl
       norm_map' := fun p => by
         rw [← sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _), WithLp.prod_norm_sq_eq_of_L2]
@@ -297,6 +301,7 @@ theorem measurePreserving_tang : MeasurePreserving (tang k r) (volume.prod volum
 theorem tang_injective : Function.Injective (tang k r) :=
   (measurePreserving_of_norm _ norm_tang tang_surjective).1
 
+set_option synthInstance.maxHeartbeats 100000 in
 def tangEquiv (k r : ℕ) : (TrE k × lieE (Kw k r)) ≃L[ℝ] lieE (UWb k r) :=
   (LinearEquiv.ofBijective _ ⟨tang_injective, tang_surjective⟩).toContinuousLinearEquiv
 

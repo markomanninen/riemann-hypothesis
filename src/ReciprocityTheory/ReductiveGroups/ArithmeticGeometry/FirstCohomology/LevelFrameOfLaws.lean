@@ -1,9 +1,13 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.OneCHyp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullGenPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.QuadraticAlgebraValuation
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.GenCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.OneCHyp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullGenPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.QuadraticAlgebraValuation
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.GenCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
+
+@[expose] public section
 
 noncomputable section
 
@@ -103,7 +107,7 @@ theorem cst_stalkMap {V : Type} [CommRing V] {X Z : Scheme.{0}} (r : Z ⟶ X) (p
   have hp : p (r z) ∈ (⊤ : (Sp V).Opens) := trivial
   have hrp : (r ≫ p) z ∈ (⊤ : (Sp V).Opens) := trivial
   simp only [cst, gs, dif_pos hp, dif_pos hrp]
-  first
+  all_goals first
     | (rw [Scheme.Hom.germ_stalkMap_apply]; rfl)
     | (erw [Scheme.Hom.germ_stalkMap_apply]; rfl)
     | (rw [Scheme.stalkMap_germ_apply]; rfl)
@@ -114,7 +118,8 @@ theorem cst_stalkMap {V : Type} [CommRing V] {X Z : Scheme.{0}} (r : Z ⟶ X) (p
 
 theorem gs_sum {X Z : Scheme.{0}} (r : Z ⟶ X) (z : Z) (U : X.Opens) (h : r z ∈ U) {n : ℕ} (a : Fin n → Γ(X, U)) :
     gs r z U (∑ i, a i) = ∑ i, gs r z U (a i) := by
-  simp [gs, h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [gs, h, map_sum]
 
 theorem gs_spec {A C : Type} [CommRing A] [CommRing C] (φ : A →+* C) (z : Sp C) (a : A) :
     cst (spMap φ) z a = cst (𝟙 _) z (φ a) := by
@@ -216,7 +221,8 @@ theorem dvd_of_comb {ϖ : V} (hϖ : Irreducible ϖ) (D : DegPre V) (F : Type) [F
     have t := fun s : LB.Sec (LB.LinComb D.P.L φ ε) => ((gs_fromSpec hU le (spMap iL) z (s.f j)).trans
       (gs_spec iL z _)).symm.trans (sec_trans s (spMap iL ≫ hU.fromSpec) z hm (Good.mem hJ φ _))
     refine (t σ).trans ((congrArg _ e).trans ?_)
-    rw [Finset.mul_sum, cst, map_sum, gs_sum _ z ⊤ trivial]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.mul_sum, cst, map_sum, gs_sum _ z ⊤ trivial]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [mul_left_comm]
     refine (congrArg₂ (· * ·) (gs_spec iR z (b i)) (t (τ i)).symm).trans ((cst_mul _ z _ _).symm.trans ?_)

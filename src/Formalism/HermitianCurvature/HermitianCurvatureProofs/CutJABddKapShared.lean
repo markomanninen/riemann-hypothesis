@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddKapFinal
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddKapNrmW
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddKapFinal
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddKapNrmW
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.WachLatticeTwists.LatticeDualFibres.FibreDualStable
-import Formalism.GaloisCohomology.StatementLoc
-import ReciprocityTheory.ReductiveGroups.TraceFormulas.LatDefs
+module
+
+public import Mathlib
+public import Formalism.WachLatticeTwists.LatticeDualFibres.FibreDualStable
+public import Formalism.GaloisCohomology.StatementLoc
+public import ReciprocityTheory.ReductiveGroups.TraceFormulas.LatDefs
+
+@[expose] public section
 
 open ReciprocityTheory.Gal Formalism.RepresentationBoundsCohomology.LOC
 

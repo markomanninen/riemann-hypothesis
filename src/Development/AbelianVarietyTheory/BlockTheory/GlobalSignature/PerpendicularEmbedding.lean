@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataCD
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataCD
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,11 +90,5 @@ def SelfDualReal : Prop :=
 def SphereMass : Prop :=
   ∀ M : ℕ, 1 ≤ M → AllSome (fun fib : ℝ → Measure (Sp M 0) => IsDxDq fib)
     (fun fib => fib 1 Set.univ = ENNReal.ofReal (cM M))
-
-example : cM 1 = 2 * Real.pi := by simp [cM]
-
-example (P Q : ℕ) : qf (Pi.single (Sum.inl 0) 1 : Sp (P + 1) Q) = 1 ∧
-    qf (Pi.single (Sum.inr 0) 1 : Sp P (Q + 1)) = -1 := by
-  constructor <;> simp [qf, Fin.sum_univ_succ, Pi.single_apply]
 
 end GlobalTheory.IndefiniteRowSideFullHecke.PerpendicularEmbedding

@@ -1,5 +1,9 @@
-import Formalism.EllipticTorsion.UnitCancel
-import Formalism.EllipticTorsion.EllipticTorsionProofs.IntegralPSBserSubOne
+module
+
+public import Formalism.EllipticTorsion.UnitCancel
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.IntegralPSBserSubOne
+
+@[expose] public section
 
 universe u
 

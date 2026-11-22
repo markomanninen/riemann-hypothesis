@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPinnedOfIsUnf
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.AbsGeneratorRatioEqOneOfUnitFrameMove
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPinnedOfIsUnf
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.AbsGeneratorRatioEqOneOfUnitFrameMove
+
+@[expose] public section
 
 open NumberField AlgebraicGeometry CategoryTheory ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj GlobalTheory.GeoLevel GlobalTheory.LevelCusp GlobalTheory.FrameUnif
 open GlobalTheory.Dict (castFr)
@@ -12,8 +16,8 @@ noncomputable section
 
 namespace GlobalTheory.GeoLevel
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem cabs_gen_eq_one_of_normPin : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H) (Xo : Moduli Dw l) (c : Coeff l) (σ : c.F →+* ℂ) (σ' : KA l →+* ℂ) (g : ℕ) (ty : Fin g → (E →+* ℂ)) (F : FamilyUnif Xo σ' ty) (i i' : Fin F.n) (P : (F.Di i).La →+ (Fin g → ℂ)) (P' : (F.Di i').La →+ (Fin g → ℂ)) (ρ : Xo.X ⟶ Xo.X) (ν : SABMap Xo.univ.t Xo.univ.t ρ) (y z y' : FrPt Xo c (CAt σ)) (t : Ix Dw → (CAt σ)ˣ), IsPeriod (F.Di i) ty P → IsPeriod (F.Di i') ty P' → y.x = F.u i P → z.x = F.u i' P' → NormPin F i P y → NormPin F i' P' z → FrMove ρ ν y y' → FrBor t z y' → cabs (t none : CAt σ) = 1 := by
   intro E _ _ _ H Dw l Xo c σ σ' g ty F i i' P P' ρ ν y₀ z₀ y' t hp hp' hu hu' hx hx' hmv hb
   obtain ⟨Hm, χ, fr, θ, Fd, hH, -, him, hd, hn, hc, h0, ha, hv, hF, hI⟩ := hx

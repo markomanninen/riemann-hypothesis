@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.InjectiveDecompositionAction
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.InjectiveDecompositionAction
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ theorem linIndep_one_delta (hδ : σ δ = -δ) (hδ0 : δ ≠ 0) : LinearIndepen
   rw [LinearIndependent.pair_iff]
   intro s t h
   have h' : σ (s • (1 : E) + t • δ) = 0 := by rw [h, map_zero]
-  rw [map_add, map_smul, map_smul, map_one, hδ] at h'
+  rw [map_add (f := _), map_smul, map_smul, map_one, hδ] at h'
   have hs : (2 : F) • (s • (1 : E)) = 0 := by
     rw [two_smul]
     calc s • (1 : E) + s • 1 = (s • 1 + t • δ) + (s • 1 + t • -δ) := by rw [smul_neg]; abel
@@ -152,14 +156,9 @@ theorem smul_mkE (r a b : R) : algebraMap R (R ⊗[F] E) r * mkE (F := F) δ R a
 include hδ in
 theorem conj_mkE (a b : R) :
     (Algebra.TensorProduct.map (AlgHom.id F R) σ) (mkE (F := F) δ R a b) = mkE (F := F) δ R a (-b) := by
-  simp only [mkE, map_add, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, map_one, hδ,
+  simp only [mkE, map_add (f := _), Algebra.TensorProduct.map_tmul, AlgHom.id_apply, map_one, hδ,
     TensorProduct.tmul_neg, TensorProduct.neg_tmul]
 
-include hΔ in
-theorem mkE_norm (a b : R) :
-    mkE (F := F) δ R a b * mkE (F := F) δ R a (-b) = mkE (F := F) δ R (a * a - algebraMap F R Δ * (b * b)) 0 := by
-  rw [mkE_mul δ Δ hΔ R, show a * a + algebraMap F R Δ * (b * -b) = a * a - algebraMap F R Δ * (b * b) by ring,
-    show a * -b + b * a = 0 by ring]
 
 theorem incl_eq_mkE (α β : F) :
     (Algebra.TensorProduct.includeRight : E →ₐ[F] R ⊗[F] E) (algebraMap F E α + algebraMap F E β * δ) =

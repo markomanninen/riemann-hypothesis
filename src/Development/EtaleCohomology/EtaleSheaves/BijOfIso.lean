@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.PushColim
-import Development.EtaleCohomology.EtaleSheaves.CokernelKilling.KillCokOf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.PushColim
+public import Development.EtaleCohomology.EtaleSheaves.CokernelKilling.KillCokOf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E3Cut LateralTheory.E.StalkCut LateralTheory.E.DescLocPf

@@ -1,4 +1,9 @@
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
+module
+
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
+
+@[expose] public section
+
 open MvPolynomial Filter Topology GlobalTheory.CompanionTheory.Ar.Top
 
 noncomputable section
@@ -21,7 +26,7 @@ theorem pderiv_linRoot_pow (u : Wt Ψ N) (τ : Ψ) (i : Fin N) (D : ℕ) :
       C (-(((D : ℝ) + 1) * u τ i)) * linRoot u ^ D := by
   rw [Derivation.leibniz_pow, pderiv_linRoot]
   simp only [Nat.add_sub_cancel, nsmul_eq_mul, smul_eq_mul]
-  simp only [map_neg, map_mul, map_add, map_natCast, map_one]
+  simp only [map_neg, map_mul, map_add (f := _), map_natCast, map_one]
   push_cast
   ring
 

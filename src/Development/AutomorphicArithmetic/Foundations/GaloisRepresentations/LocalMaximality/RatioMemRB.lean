@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KahlerFormsOverSubalgebraStandardOpenIffPowSmulStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KahlerFormsOverSubalgebraStandardOpenIffPowSmulStatement
+
+@[expose] public section
 
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
@@ -97,7 +101,7 @@ private lemma key {F K : Type} [Field F] [Field K] [Algebra ℂ F] [Algebra ℂ 
     obtain ⟨N1, h1⟩ := h1
     obtain ⟨N2, h2⟩ := h2
     exact ⟨max N1 N2, fun N hN => by
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ (h1 N (le_of_max_le_left hN)) (h2 N (le_of_max_le_right hN))⟩
   | smul c w _ h =>
     obtain ⟨N1, h⟩ := h

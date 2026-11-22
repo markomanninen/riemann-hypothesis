@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormsJointContinuity
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormsJointContinuity
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP
 

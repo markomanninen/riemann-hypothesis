@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StepTwoPieceSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StepTwoPieceSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -126,8 +131,8 @@ section Tilde
 variable {S : Type u} [CommRing S] {Ω : Type w} [Field Ω] [Algebra S Ω] {N : ℕ} {x : Fin (N + 1) → Ω}
   {E : Type v} [AddCommGroup E] [Module Ω E] [Module S E] [IsScalarTower S Ω E]
 
-omit [IsScalarTower S Ω E] in
 
+omit [IsScalarTower S Ω E] in
 theorem zpow_smul_mem_tilde (M : FinGradedSub (S := S) (x := x) E) (I : Chart x) {i : Fin (N + 1)}
     (hi : i ∈ I.1) {a : ℤ} {n : E} (hn : n ∈ M.piece a) : x i ^ (-a) • n ∈ M.tilde 0 I := by
   obtain ⟨k, rfl | rfl⟩ := Int.eq_nat_or_neg a
@@ -140,8 +145,8 @@ theorem zpow_smul_mem_tilde (M : FinGradedSub (S := S) (x := x) E) (I : Chart x)
       h1, by simp, ?_⟩
     rw [map_one, inv_one, one_smul, neg_neg, map_pow, aeval_X, zpow_natCast]
 
-omit [IsScalarTower S Ω E] in
 
+omit [IsScalarTower S Ω E] in
 theorem exists_of_mem_tilde (M : FinGradedSub (S := S) (x := x) E) (I : Chart x) {c : ℤ} {y : E}
     (hy : y ∈ M.tilde c I) : ∃ (t : Poly S N) (d : ℕ), t ∈ monos I.1 ∧ t.IsHomogeneous d ∧
       ∃ n ∈ M.piece (d + c), y = (aeval x t)⁻¹ • n := by
@@ -178,8 +183,8 @@ theorem exists_of_mem_tilde (M : FinGradedSub (S := S) (x := x) E) (I : Chart x)
       congr 1
       field_simp
 
-omit [IsScalarTower S Ω E] in
 
+omit [IsScalarTower S Ω E] in
 theorem zpow_mul_smul_mem_tilde (M : FinGradedSub (S := S) (x := x) E) (Q : SubSystem S x Ω) (I : Chart x)
     {i : Fin (N + 1)} (hi : i ∈ I.1) {c : ℤ} {q' : Ω} (hq' : ∀ a ∈ Q.sub I, q' * a ∈ chartRing S x I) {y : E}
     (hy : y ∈ ((M.tildeSys 0).twist (Q.twist (twistSys S x c))).sub I) :
@@ -211,8 +216,8 @@ variable {S : Type u} [CommRing S] {Ω : Type w} [Field Ω] [Algebra S Ω] {N : 
   (N₀ N₁ : FinGradedSub (S := S) (x := x) E) {g : E} {e : ℤ} (pp : Ideal (Poly S N)) (Q : SubSystem S x Ω)
   (c : ℤ)
 
-omit [IsScalarTower S Ω E] in
 
+omit [IsScalarTower S Ω E] in
 theorem smul_mem_of_mem (hg : g ∈ N₁.piece e) (I : Chart x) {q : Ω}
     (hq : q ∈ (Q.twist (twistSys S x (c - e))).sub I) :
     q • g ∈ ((N₁.tildeSys 0).twist (Q.twist (twistSys S x c))).sub I := by
@@ -223,8 +228,8 @@ theorem smul_mem_of_mem (hg : g ∈ N₁.piece e) (I : Chart x) {q : Ω}
   refine Submodule.subset_span ⟨q * x i ^ e, h1, x i ^ (-e) • g, zpow_smul_mem_tilde N₁ I hi hg, ?_⟩
   rw [smul_smul, mul_assoc, ← zpow_add₀ hxi, add_neg_cancel, zpow_zero, mul_one]
 
-omit [IsScalarTower S Ω E] in
 
+omit [IsScalarTower S Ω E] in
 theorem smul_mem_of_mem_ideal
     (hiff : ∀ (f : Poly S N) (d : ℕ), f.IsHomogeneous d → (f ∈ pp ↔ aeval x f • g ∈ N₀.piece (e + d)))
     (I : Chart x) {z : Ω} (hz : z ∈ ((Q.twist (twistSys S x (c - e))).twist (idealSys x pp)).sub I) :

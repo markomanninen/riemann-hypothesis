@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntDerApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntDerApply
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry IsLocalRing
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -45,8 +50,8 @@ theorem tv_closedPoint (v : TanM (𝟙 (Sp R)) G) :
   refine h2.trans ?_
   exact congrArg (fun y => (η[G]).left y) e1
 
-open Classical in
 
+open Classical in
 def tanDer (v : TanM (𝟙 (Sp R)) G) (f : G.left.presheaf.stalk (origin G)) : R :=
   if h : (tv v).left (IsLocalRing.closedPoint (DualNumber R)) = origin G then
     (((G.left.presheaf.stalkCongr (Inseparable.of_eq h.symm)).hom ≫
@@ -56,6 +61,6 @@ def tanDer (v : TanM (𝟙 (Sp R)) G) (f : G.left.presheaf.stalk (origin G)) : R
 theorem tanDer_eq (v : TanM (𝟙 (Sp R)) G) (f : G.left.presheaf.stalk (origin G)) :
     tanDer G v f = (((G.left.presheaf.stalkCongr (Inseparable.of_eq (tv_closedPoint G v).symm)).hom ≫
       Scheme.stalkClosedPointTo (R := CommRingCat.of (DualNumber R)) (tv v).left).hom f).snd := by
-  rw [tanDer, dif_pos (tv_closedPoint G v)]
+  rw [tanDer, dite_eq_left (tv_closedPoint G v)]
 
 end GlobalTheory.CoordsOrigin

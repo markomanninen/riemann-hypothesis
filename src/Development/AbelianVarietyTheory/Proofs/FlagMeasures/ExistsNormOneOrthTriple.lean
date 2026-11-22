@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EichlerIsometry
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrthonormalBasisAndOneOrbit
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EichlerIsometry
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrthonormalBasisAndOneOrbit
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical
@@ -35,11 +39,11 @@ theorem exists_gram_unit (S : Subring E) (σ : E →+* E) (φ : o →+* E) (hσ 
   by_cases ha : IsUnit (n0 + n1 + n2)
   · by_cases h0 : IsUnit (n1 + n2)
     · refine ⟨1, S.one_mem, 0, S.zero_mem, 0, S.zero_mem, n1 + n2, h0, ?_⟩
-      simp only [map_one, map_zero, map_add, ← hn1, ← hn2]
+      simp only [map_one, map_zero, map_add (f := _), ← hn1, ← hn2]
       ring
     by_cases h1 : IsUnit (n0 + n2)
     · refine ⟨0, S.zero_mem, 1, S.one_mem, 0, S.zero_mem, n0 + n2, h1, ?_⟩
-      simp only [map_one, map_zero, map_add, ← hn0, ← hn2]
+      simp only [map_one, map_zero, map_add (f := _), ← hn0, ← hn2]
       ring
     have u0 : IsUnit n0 := by
       have := (hu _ _ h0 ha).neg
@@ -54,16 +58,16 @@ theorem exists_gram_unit (S : Subring E) (σ : E →+* E) (φ : o →+* E) (hσ 
     · have g0 : n1 + n2 ∈ IsLocalRing.maximalIdeal o := h0
       have g1 : n0 + n2 ∈ IsLocalRing.maximalIdeal o := h1
       exact Ideal.add_mem _ g0 (Ideal.mul_mem_right _ _ g1)
-    · simp only [map_one, map_zero, map_add, map_sub, map_mul, hσ, ← hn0, ← hn1, ← hn2, ← ht]
+    · simp only [map_one, map_zero, map_add (f := _), map_sub, map_mul, hσ, ← hn0, ← hn1, ← hn2, ← ht]
       linear_combination (-(y0 * σ y0 * (y1 * σ y1))) * hτ
   · obtain ⟨m0, hm0⟩ := hN c0 hc0
     obtain ⟨m1, hm1⟩ := hN c1 hc1
     obtain ⟨m2, hm2⟩ := hN c2 hc2
     have h' := congrArg σ h
-    simp only [map_add, map_mul, hσ, map_one] at h'
+    simp only [map_add (f := _), map_mul, hσ, map_one] at h'
     refine ⟨c0, hc0, c1, hc1, c2, hc2, (n0 + n1 + n2) * (m0 + m1 + m2) - 1,
       hu _ _ (fun hh => ha (isUnit_of_mul_isUnit_left hh)) isUnit_one, ?_⟩
-    simp only [map_one, map_add, map_sub, map_mul, ← hn0, ← hn1, ← hn2, ← hm0, ← hm1, ← hm2]
+    simp only [map_one, map_add (f := _), map_sub, map_mul, ← hn0, ← hn1, ← hn2, ← hm0, ← hm1, ← hm2]
     rw [h]
     linear_combination -h'
 
@@ -91,8 +95,8 @@ theorem exists_norm_one_orth (S : Subring E) (σ : E →+* E) (φ : o →+* E) (
   · simp only [map_mul, map_sub]
     ring
 
-omit [IsLocalRing o] in
 
+omit [IsLocalRing o] in
 theorem exists_primitive [IsArtinianRing E] [IsReduced E] (S : Subring E) [IsPrincipalIdealRing S]
     (hid : ∀ e : E, e * e = e → e ∈ S) {y0 y1 y2 : E} (hy0 : y0 ∈ S) (hy1 : y1 ∈ S)
     (hy2 : y2 ∈ S) :
@@ -241,7 +245,7 @@ theorem exists_triple (h : IsHerm L Hm) (M : Submodule L.O (Fin n → E)) {e0 e1
   obtain ⟨t0, ht0, t1, ht1, t2, ht2, l1, l2⟩ :=
     exists_norm_one_orth_triple L (L.cj u0) (L.cj u1) (L.cj u2)
   have l3 := congrArg L.cj l2
-  simp only [map_add, map_mul, map_zero, L.cj_cj] at l3
+  simp only [map_add (f := _), map_mul, map_zero, L.cj_cj] at l3
   refine ⟨_, hM u0 hu0 u1 hu1 u2 hu2, _, hM t0 ht0 t1 ht1 t2 ht2, _,
     hM (L.cj (u1 * t2 - u2 * t1)) (cj_mem L ?_) (L.cj (u2 * t0 - u0 * t2)) (cj_mem L ?_)
       (L.cj (u0 * t1 - u1 * t0)) (cj_mem L ?_), ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩

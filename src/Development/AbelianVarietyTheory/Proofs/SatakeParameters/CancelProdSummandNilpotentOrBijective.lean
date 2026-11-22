@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -24,7 +28,7 @@ theorem linearEquiv_of_prod_corner_bijective (e : (M × P) ≃ₗ[R] (M' × P))
     intro x
     have hx : x = ((x.1, 0) : M × P) + (0, x.2) := by simp
     conv_lhs => rw [hx]
-    rw [map_add]
+    rw [map_add (f := _)]
     rfl
   have hdd : ∀ p : P, d (dE.symm p) = p := fun p => dE.apply_symm_apply p
   have key : ∀ m : M, e (m, -dE.symm (c m)) = (φ m, 0) := by
@@ -81,7 +85,7 @@ theorem linearEquiv_cancel_of_nilpotent_or_bijective
       · simp; rfl
       · simp; rfl
     have h2 := congrArg Prod.snd (e.symm_apply_apply (0, p))
-    rw [h, map_add] at h2
+    rw [h, map_add (f := _)] at h2
     show c' (b p) = p - d' (d p)
     rw [eq_sub_iff_add_eq]
     exact h2

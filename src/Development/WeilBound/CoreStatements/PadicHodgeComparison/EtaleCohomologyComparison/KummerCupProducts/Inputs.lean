@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothSurjectiveCechDescentCohomology
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NeZeroOfDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistSectionsLocallyGenerated
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchClsCocycleSec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistResolutionPairingSpecAndCupUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistReductionResolutionMapGenerator
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsKummerTorsorSplittingKummerTorsorSplitting
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FirstChernClassTateTwistCocycleUniqueNaturalAddi
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.EvExt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothSurjectiveCechDescentCohomology
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NeZeroOfDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistSectionsLocallyGenerated
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchClsCocycleSec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistResolutionPairingSpecAndCupUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistReductionResolutionMapGenerator
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsKummerTorsorSplittingKummerTorsorSplitting
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FirstChernClassTateTwistCocycleUniqueNaturalAddi
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.EvExt
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 set_option backward.isDefEq.respectTransparency false
@@ -16,8 +20,10 @@ open CategoryTheory GlobalTheory.EtC
 
 namespace CrystallineSemistableComparison.E
 
-theorem inGen : InGen := fun q _ i =>
-  let t := GlobalTheory.EtC.twist_sections q i; ⟨t.2.1, t.2.2.1, t.2.2.2.2.1⟩
+theorem inGen : InGen := by
+  intro q _ i
+  let t := GlobalTheory.EtC.twist_sections q i
+  exact ⟨t.2.1, t.2.2.1, t.2.2.2.2.1⟩
 
 theorem inSch : InSch := GlobalTheory.EtC.sch_cls_cocycle_sec
 

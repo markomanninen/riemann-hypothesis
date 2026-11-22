@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.LatInt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.SelfdualRamified
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.OrthonormalLocal
-import Mathlib.RingTheory.PowerSeries.Ideal
-import Mathlib.RingTheory.AdicCompletion.Completeness
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.LatInt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.SelfdualRamified
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.OrthonormalLocal
+public import Mathlib.RingTheory.PowerSeries.Ideal
+public import Mathlib.RingTheory.AdicCompletion.Completeness
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMemChart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMemChart
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -59,9 +63,5 @@ theorem smooth_of_etale {k : Type} [CommRing k] {X : Scheme.{0}} (p : X ⟶ Sp k
       (X.presheaf.map_comp _ _))).trans (Category.assoc _ _ _).symm
   rw [e]
   exact h₂
-
-theorem smooth_chart (k : Type) [CommRing k] (X : Scheme.{0}) (p : X ⟶ Sp k) (σ : k →+* ℂ) (D : ℕ)
-    (c : AlgChart p σ D) : SmoothOfRelativeDimension D (c.U.ι ≫ p) :=
-  smooth_of_etale p c.affine c.x c.etale
 
 end GlobalTheory.ChartSmooth

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MooreNorm
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RowTEqRowS
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MooreNorm
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RowTEqRowS
+
+@[expose] public section
+
 open GlobalTheory.PMonE
 
 namespace GlobalTheory.PMonE
@@ -15,7 +20,7 @@ theorem norm_det_le_one_of_entries {F : Type} [NormedField F] [IsUltrametricDist
   have hs : ‖((Equiv.Perm.sign σ : ℤ) : F)‖ = 1 := by
     rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h | h <;> simp [h]
   rw [hs, one_mul]
-  exact Finset.prod_le_one (fun _ _ => norm_nonneg _) (fun i _ => hA _ _)
+  exact Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) (fun i _ => hA _ _)
 
 theorem norm_adjugate_le_one {F : Type} [NormedField F] [IsUltrametricDist F] {m : Type} [Fintype m]
     [DecidableEq m] (A : Matrix m m F) (hA : ∀ i j, ‖A i j‖ ≤ 1) (i j : m) : ‖A.adjugate i j‖ ≤ 1 := by

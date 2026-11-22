@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.SemiAlg
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.SemiAlg
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,7 +75,8 @@ theorem N_le_S' (hP : P.IsStd σ J T) : Nsub R σ J P ≤ Ssub R σ J P := by
     unfold hR ratV hE at *
     unfold Formalism.UG.hform sigR JR inclR at *
     have h3 := congrArg (Algebra.TensorProduct.includeRight (R := F) (A := R) (B := E)) this
-    simpa [Algebra.TensorProduct.includeRight_apply, Algebra.TensorProduct.map_tmul, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [Algebra.TensorProduct.includeRight_apply, Algebra.TensorProduct.map_tmul, map_sum,
       map_mul] using h3
   unfold Ssub uniFlag F0
   intro b
@@ -196,7 +201,8 @@ theorem Pi_lin_one : (datR R σ J P T).Pi (lin R σ J 1) = LinearMap.id := by
   have hsym : ∀ x y : Fin M → E, hE σ J y x = σ (hE σ J x y) := by
     intro x y
     unfold hE Formalism.UG.hform
-    simp only [map_sum, map_mul, AlgHom.coe_toRingHom, RingHom.coe_coe, hσσ, hJ.1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, AlgHom.coe_toRingHom, RingHom.coe_coe, hσσ, hJ.1]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     ring
@@ -205,7 +211,8 @@ theorem Pi_lin_one : (datR R σ J P T).Pi (lin R σ J 1) = LinearMap.id := by
     intro x y
     show (datR R σ J P T).h (ratV (F := F) R x) (ratV (F := F) R y) = _
     unfold SemiG.Dat.h datR ratV hE Formalism.UG.hform sigR JR inclR
-    simp [Algebra.TensorProduct.includeRight_apply, Algebra.TensorProduct.map_tmul, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Algebra.TensorProduct.includeRight_apply, Algebra.TensorProduct.map_tmul, map_sum,
       map_mul]
   have hee : ∀ b a, (datR R σ J P T).hL ((datR R σ J P T).e b) ((datR R σ J P T).e a) = 0 := by
     intro b a
@@ -261,16 +268,19 @@ theorem Pi_lin_one : (datR R σ J P T).Pi (lin R σ J 1) = LinearMap.id := by
     have c1 : ∀ b, (datR R σ J P T).hL ((datR R σ J P T).f b) ((datR R σ J P T).pU v) = (datR R σ J P T).hL ((datR R σ J P T).f b) v := by
       intro b
       rw [hpU v]
-      simp only [map_add, map_sum, map_smul, smul_eq_mul, hfe b, hff b, hfz b]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_add (f := _), map_sum, map_smul, smul_eq_mul, hfe b, hff b, hfz b]
       simp
     have c2 : ∀ b, (datR R σ J P T).hL ((datR R σ J P T).e b) ((datR R σ J P T).pU v) = (datR R σ J P T).hL ((datR R σ J P T).e b) v := by
       intro b
       rw [hpU v]
-      simp only [map_add, map_sum, map_smul, smul_eq_mul, hee b, hef b, hez b]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_add (f := _), map_sum, map_smul, smul_eq_mul, hee b, hef b, hez b]
       simp
     have c3 : (datR R σ J P T).tz * (datR R σ J P T).hL (datR R σ J P T).z ((datR R σ J P T).pU v) = (datR R σ J P T).tz * (datR R σ J P T).hL (datR R σ J P T).z v := by
       rw [hpU v]
-      simp only [map_add, map_sum, map_smul, smul_eq_mul, hze, hzf, mul_zero,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_add (f := _), map_sum, map_smul, smul_eq_mul, hze, hzf, mul_zero,
         Finset.sum_const_zero, zero_add]
       linear_combination ((datR R σ J P T).tz * (datR R σ J P T).hL (datR R σ J P T).z v) * hzz
     rw [hpU ((datR R σ J P T).pU v), c3]

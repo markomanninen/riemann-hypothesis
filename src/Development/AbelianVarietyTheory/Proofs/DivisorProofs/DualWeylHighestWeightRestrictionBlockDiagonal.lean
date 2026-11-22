@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NablaSchur
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NablaSchur
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility TensorProduct
 
@@ -72,7 +76,7 @@ theorem nuNext_castAdd (p q : ℕ) (ν : Fin (p + q) → ℕ) (i : Fin p) (hi : 
     nuNext ν (Fin.castAdd q i) = nuNext (fun i => ν (Fin.castAdd q i)) i := by
   unfold nuNext
   simp only [Fin.val_castAdd]
-  rw [dif_pos (by omega), dif_pos hi]
+  rw [dite_eq_left (by omega), dite_eq_left hi]
   rfl
 
 theorem sum_sub_nuNext (q : ℕ) (μ : Fin (q + 1) → ℕ) (hμ : Antitone μ) :
@@ -89,7 +93,7 @@ theorem sum_sub_nuNext (q : ℕ) (μ : Fin (q + 1) → ℕ) (hμ : Antitone μ) 
     simp_rw [h1]
     rw [ih (fun j => μ j.succ) (fun a b hab => hμ (Fin.succ_le_succ_iff.mpr hab))]
     have h0 : nuNext μ 0 = μ (Fin.succ 0) := by
-      unfold nuNext; rw [dif_pos (by simp)]; rfl
+      unfold nuNext; rw [dite_eq_left (by simp)]; rfl
     rw [h0]
     have := hμ (Fin.zero_le (Fin.succ 0 : Fin (q + 2)))
     omega
@@ -122,7 +126,7 @@ theorem hw_first (p q : ℕ) (ν : Fin (p + q) → ℕ) (hν : Antitone ν) :
     · refine Finset.prod_congr rfl fun k _ => ?_
       rw [nuNext_castAdd (p + 1) q ν k.castSucc (by simp)]
     · have hl : nuNext (fun i => ν (Fin.castAdd q i)) (Fin.last p) = 0 := by
-        unfold nuNext; rw [dif_neg (by simp)]
+        unfold nuNext; rw [dite_eq_right (by simp)]
       rw [hl, Nat.sub_zero]
       congr 1
       simp_rw [nuNext_natAdd]
@@ -131,7 +135,7 @@ theorem hw_first (p q : ℕ) (ν : Fin (p + q) → ℕ) (hν : Antitone ν) :
       · rw [sum_sub_nuNext q (fun j => ν (Fin.natAdd (p + 1) j))
           (fun a b hab => hν (by rw [Fin.le_def] at hab ⊢; simp only [Fin.val_natAdd]; omega))]
         have h0 : nuNext ν (Fin.castAdd (q + 1) (Fin.last p)) = ν (Fin.natAdd (p + 1) 0) := by
-          unfold nuNext; rw [dif_pos (by simp <;> omega)]; congr 1
+          unfold nuNext; rw [dite_eq_left (by simp <;> omega)]; congr 1
         have := hν (show Fin.castAdd (q + 1) (Fin.last p) ≤ Fin.natAdd (p + 1) 0 by
           simp [Fin.le_def])
         rw [h0]

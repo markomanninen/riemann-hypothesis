@@ -1,10 +1,15 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ConstantCoeffSurjective
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.GaloisTwistIdentitySection
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PeriodRingComparisonOfBaseStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralRingAdicCompletePrimeRegular
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExpansionSurjectiveAdditiveLinearStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExpansionEqZeroIffCoeffsMemStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ConstantCoeffSurjective
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.GaloisTwistIdentitySection
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PeriodRingComparisonOfBaseStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralRingAdicCompletePrimeRegular
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExpansionSurjectiveAdditiveLinearStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExpansionEqZeroIffCoeffsMemStatement
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory GroundTheory.PAdicHodge CrystallineSemistableComparison CrystallineSemistableComparison.PAlg
 
@@ -46,15 +51,14 @@ theorem gsum_add (d : ℕ → S) (w w' : ℕ →₀ W) :
 theorem exists_gsum (p : ℕ) (d : ℕ → S)
     (hsurj : ∀ a : S, ∃ (s : Finset ℕ) (c : ℕ → R), a - ∑ k ∈ s, algebraMap R S (c k) * d k ∈ Ideal.span {(p : S)})
     (z : S ⊗[R] W) : ∃ w : ℕ →₀ W, z - gsum d w ∈ Ideal.span {(p : S ⊗[R] W)} := by
-  induction z using TensorProduct.induction_on with
-  | zero => exact ⟨0, by simp [gsum]⟩
+  induction z using TensorProduct.inductionOn with
   | tmul a x =>
     obtain ⟨s, c, hc⟩ := hsurj a
     obtain ⟨e, he⟩ := Ideal.mem_span_singleton'.1 hc
     refine ⟨∑ k ∈ s, Finsupp.single k (c k • x), ?_⟩
     have h1 : (gsum d (∑ k ∈ s, Finsupp.single k (c k • x)) : S ⊗[R] W) =
         (∑ k ∈ s, algebraMap R S (c k) * d k) ⊗ₜ[R] x := by
-      rw [gsum, ← Finsupp.sum_finset_sum_index (fun _ => TensorProduct.tmul_zero _ _)
+      rw [gsum, ← Finsupp.sum_finsetSum_index (fun _ => TensorProduct.tmul_zero _ _)
         (fun _ _ _ => TensorProduct.tmul_add _ _ _), TensorProduct.sum_tmul]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [Finsupp.sum_single_index (h := fun k x => d k ⊗ₜ[R] x) (TensorProduct.tmul_zero _ _), ← Algebra.smul_def,
@@ -82,7 +86,8 @@ theorem generic (p : ℕ) (d : ℕ → S) (r0 : R) (f : S →ₐ[R] C) (g : W �
   have hL : Algebra.TensorProduct.lift f g (fun _ _ => Commute.all _ _) (z - gsum d w) = 0 := by
     obtain ⟨y, hy⟩ := Ideal.mem_span_singleton'.1 hw
     rw [← hy, map_mul, map_natCast, hC, mul_zero]
-  rw [map_sub, hz, zero_sub, neg_eq_zero, gsum, Finsupp.sum, map_sum] at hL
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, hz, zero_sub, neg_eq_zero, gsum, Finsupp.sum, map_sum] at hL
   have hsum : ∑ k ∈ w.support, f (d k) * g (w k) = 0 := by
     rw [← hL]
     refine Finset.sum_congr rfl fun k _ => ?_
@@ -144,7 +149,8 @@ theorem hsurj (a : Acris l) : ∃ (s : Finset ℕ) (c : ℕ → Ainf l),
   refine ⟨c.support, fun k => WittVector.teichmuller l (c k), mem_of_cris _ ?_⟩
   have e : (base (l := l)).expand c =
       ∑ k ∈ c.support, (base (l := l)).aTo1 (c k) * (base (l := l)).dxi 1 (l * k) := rfl
-  rw [map_sub, ← hc, e, sub_eq_zero, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, ← hc, e, sub_eq_zero, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_mul, cris_teich, cris_d]
 

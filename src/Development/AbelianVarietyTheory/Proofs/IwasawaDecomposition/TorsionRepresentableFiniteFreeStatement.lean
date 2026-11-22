@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TorsionRepresentableFiniteFree
-import Development.AbelianVarietyTheory.Statements.HeightBoundStatement.HTBoundSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TorsionRepresentableFiniteFree
+public import Development.AbelianVarietyTheory.Statements.HeightBoundStatement.HTBoundSt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonObj
 open ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open Formalism.MainNotions.DIV.Cons (intO)

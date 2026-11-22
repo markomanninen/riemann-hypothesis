@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousAdelicUnitaryEmbedding
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAutomorphicFunctionTranslateAtRealPlace
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousAdelicUnitaryEmbedding
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAutomorphicFunctionTranslateAtRealPlace
+
+@[expose] public section
 
 noncomputable section
 
@@ -177,9 +181,6 @@ def kapF (g : GA D V) : GA D V' :=
 
 theorem mat_kapF (g : GA D V) : (matHom V' (I.kapF g)).1 = I.conjM (matHom V g).1 := rfl
 
-theorem kapF_one : I.kapF 1 = 1 :=
-  GlobalTheory.AutFunCounterexample.GA_ext V' (by simp only [mat_kapF, map_one, Units.val_one])
-
 theorem kapF_mul (a b : GA D V) : I.kapF (a * b) = I.kapF a * I.kapF b :=
   GlobalTheory.AutFunCounterexample.GA_ext V' (by
     rw [map_mul (matHom V'), Units.val_mul, mat_kapF, mat_kapF, mat_kapF, map_mul, Units.val_mul, map_mul])
@@ -330,8 +331,6 @@ def phi : WO S V ≃+ WO S V' where
     rw [← Matrix.mul_assoc, I.aP_aQ, Matrix.one_mul]
   map_add' x y := Matrix.mul_add _ _ _
 
-theorem phi_apply (x : WO S V) : I.phi S x = HMul.hMul I.aP x := rfl
-
 theorem phi_symm_apply (y : WO S V') : (I.phi S).symm y = I.symm.phi S y := rfl
 
 theorem continuous_phi : Continuous (I.phi S) := by
@@ -367,7 +366,7 @@ theorem heisO_trW (ψ : AddChar (AF D.host.F) ℂ) (u : WO S V) (f : WO S V → 
     heisO ψ S V' (I.phi S u) (I.trW S f) = I.trW S (heisO ψ S V u f) := by
   funext w
   obtain ⟨w, rfl⟩ := (I.phi S).surjective w
-  simp only [heisO, trW, ← map_add, AddEquiv.symm_apply_apply, symplOH_phi]
+  simp only [heisO, trW, ← map_add (f := _), AddEquiv.symm_apply_apply, symplOH_phi]
 
 theorem actO_phi (g : GA D S) (h : GA D V) (x : WO S V) :
     I.phi S (actO S V g h x) = actO S V' g (I.kap h) (I.phi S x) :=

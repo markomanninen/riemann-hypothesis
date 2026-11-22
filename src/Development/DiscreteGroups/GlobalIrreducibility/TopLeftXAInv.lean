@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.GlobalIrreducibility.RankOneTopLeftZero
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.RankOneTopLeftZero
+
+@[expose] public section
 
 noncomputable section
 

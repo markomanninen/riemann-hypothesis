@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.Columns.RecLevelCls
-import Formalism.LocalToGlobal.Columns.RecLevelTop
-import Formalism.LocalToGlobal.Columns.RecLevelDiv
-import Formalism.LocalToGlobal.Columns.RecLevelHost
+module
+
+public import Formalism.LocalToGlobal.Columns.RecLevelCls
+public import Formalism.LocalToGlobal.Columns.RecLevelTop
+public import Formalism.LocalToGlobal.Columns.RecLevelDiv
+public import Formalism.LocalToGlobal.Columns.RecLevelHost
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix
 open scoped TensorProduct
@@ -45,37 +49,37 @@ end Pack
 section Dia
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
-variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] (ST SG : Finset (Pl E)) (H : Subgroup (GLG E n SG))
+variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] (ST SG : Finset (Pl E)) (H : Subgroup (GLG (E := E) (n := n) (SG := SG)))
 
-theorem rla_dia_inv (c : DiaG E ST) (d : DecoSet E n ST SG) : (d.dia c⁻¹).dia c = d := by
+theorem rla_dia_inv (c : DiaG (E := E) (ST := ST)) (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) : (d.dia c⁻¹).dia c = d := by
   apply Subtype.ext
   show (d.1.dia c⁻¹).dia c = d.1
   ext <;> simp [Deco.dia, ← mul_assoc]
 
-theorem rla_dia_inv' (c : DiaG E ST) (d : DecoSet E n ST SG) : (d.dia c).dia c⁻¹ = d := by
+theorem rla_dia_inv' (c : DiaG (E := E) (ST := ST)) (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) : (d.dia c).dia c⁻¹ = d := by
   apply Subtype.ext
   show (d.1.dia c).dia c⁻¹ = d.1
   ext <;> simp [Deco.dia, ← mul_assoc]
 
-theorem rla_dia_inj (c : DiaG E ST) {d d' : DecoSet E n ST SG} (h : d.dia c = d'.dia c) : d = d' := by
+theorem rla_dia_inj (c : DiaG (E := E) (ST := ST)) {d d' : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)} (h : d.dia c = d'.dia c) : d = d' := by
   rw [← rla_dia_inv' n ST SG c d, h, rla_dia_inv' n ST SG c d']
 
-theorem DecoSet.dia_L (c : DiaG E ST) (d : DecoSet E n ST SG) : (d.dia c).1.L = d.1.L := by
+theorem DecoSet.dia_L (c : DiaG (E := E) (ST := ST)) (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) : (d.dia c).1.L = d.1.L := by
   show (d.1.dia c).L = d.1.L
   unfold Deco.L
   congr 1
   ext x
   simp only [Deco.dia, Set.mem_setOf_eq, Units.mul_right_eq_zero]
 
-theorem decoOfD_ptOfD (hS : DecoPtSurj hc n ST SG) (c : DiaG E ST) (d : DecoSet E n ST SG) :
+theorem decoOfD_ptOfD (hS : DecoPtSurj hc n ST SG) (c : DiaG (E := E) (ST := ST)) (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) :
     decoOfD n ST SG c (ptOfD hc n ST SG c d : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) = d := by
   show (decoOf ST SG (ptOf hc n ST SG (d.dia c⁻¹) : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F))).dia c = d
   rw [decoOf_ptOf hc n ST SG hS (d.dia c⁻¹)]
   exact rla_dia_inv n ST SG c d
 
-theorem rla_dia_smulH (c : DiaG E ST) (g : UF E n × H) (d : DecoSet E n ST SG) : (g • d).dia c = g • d.dia c := rfl
+theorem rla_dia_smulH (c : DiaG (E := E) (ST := ST)) (g : UF E n × H) (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) : (g • d).dia c = g • d.dia c := rfl
 
-theorem rla_cls_eq {d d' : DecoSet E n ST SG} :
+theorem rla_cls_eq {d d' : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)} :
     decoCls n ST SG H d = decoCls n ST SG H d' ↔ ∃ g : UF E n × H, g • d' = d := by
   constructor
   · intro h
@@ -83,7 +87,7 @@ theorem rla_cls_eq {d d' : DecoSet E n ST SG} :
   · rintro ⟨g, hg⟩
     exact Quotient.sound (MulAction.orbitRel_apply.mpr (MulAction.mem_orbit_iff.mpr ⟨g, hg⟩))
 
-theorem levU_y_bijD (hS : DecoPtSurj hc n ST SG) (c₀ : DiaG E ST) (s : DecoCl n ST SG H → DecoSet E n ST SG)
+theorem levU_y_bijD (hS : DecoPtSurj hc n ST SG) (c₀ : DiaG (E := E) (ST := ST)) (s : DecoCl n ST SG H → DecoSet (E := E) (n := n) (ST := ST) (SG := SG))
     (hs : ∀ c, decoCls n ST SG H (s c) = c) :
     Function.Bijective (fun c : DecoCl n ST SG H =>
       (Quotient.mk'' (ptOfD hc n ST SG c₀ (s c)) : AdCl hc n ST SG H)) := by
@@ -114,7 +118,7 @@ theorem levU_y_bijD (hS : DecoPtSurj hc n ST SG) (c₀ : DiaG E ST) (s : DecoCl 
       rw [rla_dia_inv n ST SG c₀ d]
       rfl
   have hΦ : Function.Bijective Φ := Function.bijective_iff_has_inverse.mpr ⟨Ψ, hΨΦ, hΦΨ⟩
-  let s' : DecoCl n ST SG H → DecoSet E n ST SG := fun c => (s (Ψ c)).dia c₀⁻¹
+  let s' : DecoCl n ST SG H → DecoSet (E := E) (n := n) (ST := ST) (SG := SG) := fun c => (s (Ψ c)).dia c₀⁻¹
   have hs' : ∀ c, decoCls n ST SG H (s' c) = c := by
     intro c
     calc decoCls n ST SG H (s' c) = Φ (decoCls n ST SG H (s (Ψ c))) := rfl
@@ -130,7 +134,7 @@ theorem levU_y_bijD (hS : DecoPtSurj hc n ST SG) (c₀ : DiaG E ST) (s : DecoCl 
   rw [heq]
   exact hF.comp hΦ
 
-theorem rla_mem_stab_dia (c : DiaG E ST) (d : DecoSet E n ST SG) (g : UF E n × H) :
+theorem rla_mem_stab_dia (c : DiaG (E := E) (ST := ST)) (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (g : UF E n × H) :
     g ∈ MulAction.stabilizer (UF E n × H) (d.dia c) ↔ g ∈ MulAction.stabilizer (UF E n × H) d := by
   simp only [MulAction.mem_stabilizer_iff]
   constructor
@@ -140,7 +144,7 @@ theorem rla_mem_stab_dia (c : DiaG E ST) (d : DecoSet E n ST SG) (g : UF E n × 
     show (g • d).dia c = d.dia c
     rw [h]
 
-theorem rla_mem_range_stabRat (d : DecoSet E n ST SG) (γ : URat hc n) :
+theorem rla_mem_range_stabRat (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (γ : URat hc n) :
     γ ∈ (stabRat hc n ST SG H d).range ↔ ∃ h : H, (ratHom hc n γ, h) ∈ MulAction.stabilizer (UF E n × H) d := by
   constructor
   · rintro ⟨a, rfl⟩
@@ -152,7 +156,7 @@ theorem rla_mem_range_stabRat (d : DecoSet E n ST SG) (γ : URat hc n) :
     apply (ratHom_bijective hc n).1
     rw [rlc_ratHom_stabRat]
 
-theorem stabRat_rangeD (c : DiaG E ST) (d : DecoSet E n ST SG) (y : UAd hc n)
+theorem stabRat_rangeD (c : DiaG (E := E) (ST := ST)) (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (y : UAd hc n)
     (hy : decoOfD n ST SG c (y : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) = d) (γ : URat hc n) :
     γ ∈ (stabRat hc n ST SG H d).range ↔
       Formalism.UG.bc (Formalism.UG.inclE (F := F) (FiniteAdeleRing (𝓞 F) F)) (γ : GL (Fin n) E) ∈
@@ -163,7 +167,7 @@ theorem stabRat_rangeD (c : DiaG E ST) (d : DecoSet E n ST SG) (y : UAd hc n)
   rw [← stabRat_range hc n ST SG H (d.dia c⁻¹) y hy' γ, rla_mem_range_stabRat, rla_mem_range_stabRat]
   simp only [rla_mem_stab_dia]
 
-theorem levU_y_latD (hS : DecoPtSurj hc n ST SG) (c : DiaG E ST) (d : DecoSet E n ST SG)
+theorem levU_y_latD (hS : DecoPtSurj hc n ST SG) (c : DiaG (E := E) (ST := ST)) (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG))
     (x : Fin n → E ⊗[F] FiniteAdeleRing (𝓞 F) F) :
     x ∈ Formalism.UG.latS (F := F) (FiniteAdeleRing (𝓞 F) F)
       (Formalism.UG.tensInt (F := F) (FiniteAdeleRing (𝓞 F) F) (Formalism.UG.intOE E) (Formalism.UG.intAd F)) d.1.L ↔
@@ -174,7 +178,7 @@ theorem levU_y_latD (hS : DecoPtSurj hc n ST SG) (c : DiaG E ST) (d : DecoSet E 
   rw [← DecoSet.dia_L n ST SG c⁻¹ d]
   exact levU_y_lat hc n ST SG hS (d.dia c⁻¹) x
 
-def recCls (hS : DecoPtSurj hc n ST SG) (c₀ : DiaG E ST) (s : DecoCl n ST SG H → DecoSet E n ST SG)
+def recCls (hS : DecoPtSurj hc n ST SG) (c₀ : DiaG (E := E) (ST := ST)) (s : DecoCl n ST SG H → DecoSet (E := E) (n := n) (ST := ST) (SG := SG))
     (hs : ∀ c, decoCls n ST SG H (s c) = c) :
     RecCls hc (1 : Matrix (Fin n) (Fin n) E) (baseLb E n ST) (levU hc n ST SG H)
       (fun c => MulAction.stabilizer (UF E n × H) (s c)) (fun c => (s c).1.L) where

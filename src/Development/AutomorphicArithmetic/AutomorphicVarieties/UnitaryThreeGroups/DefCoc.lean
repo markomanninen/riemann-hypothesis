@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+
+@[expose] public section
 
 open Matrix UpperTheory.V.U3
 
@@ -63,7 +67,7 @@ private theorem sgnAct_one_add (I : Ideal C) (hI : I * I = ⊥) (q : GL (Fin m) 
 end SlopeTestRemainingChoices
 
 theorem UpperTheory.V.U3.exists_isCoc :
-    ∀ {G C : Type} [Group G] [CommRing C] {m : ℕ} (I : Ideal C) (r r' : G →* GG m C), I * I = ⊥ →
+    ∀ {G C : Type} [Group G] [CommRing C] {m : ℕ} (I : Ideal C) (r r' : G →* GG (m := m) (R := C)), I * I = ⊥ →
       (GG.map (Ideal.Quotient.mk I)).comp r' = (GG.map (Ideal.Quotient.mk I)).comp r →
       ∃ γ : G → Matrix (Fin m) (Fin m) C, (∀ g, EntIn I (γ g)) ∧ IsCoc r γ ∧ IsDeform r γ r' := by
   intro G C _ _ m I r r' hI hr

@@ -1,21 +1,39 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.L2Cusps.AbsCompactAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.L2Cusps.LiftCmp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.L2Cusps.AbsCompactAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.L2Cusps.QuotMk
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.AutomorphicL2Unitary GlobalTheory.CuspRep GlobalTheory.CuspRep.CuspidalL2GL GlobalTheory.UnitaryBC GlobalTheory.DiscSpec
 open GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum
 
-theorem UpperTheory.V.KernelIndexFullLattice.cmpEquiv_holds :
-    UpperTheory.V.KernelIndexFullLattice.CmpEquiv := by
+namespace UpperTheory.V.KernelIndexFullLattice
+
+theorem cmpEquiv_holds : CmpEquiv := by
   intro E _ _ _ a μ _ _ μ₁ _ hp g v
-  rw [l2DiscreteQuotient_ext_iff_lift_ae_eq]
-  have h1 := UpperTheory.V.KernelIndexFullLattice.liftCmp_holds E a μ μ₁ hp v _ (Filter.EventuallyEq.refl _ _)
-  have h2 := (MeasureTheory.measurePreserving_mul_right μ g).quasiMeasurePreserving.ae h1
-  have h3 : (toLp μ₁ (cuspRepT μ₁ (retractOne g) v) : RightCosetSpace (UpperTheory.V.KernelIndexFullLattice.Γ1 E a) → ℂ)
-      =ᵐ[RightCosetSpace.quotientMeasure (UpperTheory.V.KernelIndexFullLattice.Γ1 E a) μ₁] fun x =>
-        (toLp μ₁ v : RightCosetSpace (UpperTheory.V.KernelIndexFullLattice.Γ1 E a) → ℂ)
-          (RightCosetSpace.rightMul (UpperTheory.V.KernelIndexFullLattice.Γ1 E a) (retractOne g) x) := by
+  have hquot (q : Quot (latticeGL E a)) :
+      quotMap E a (rmul (latticeGL E a) g q) =
+        RightCosetSpace.rightMul (Γ1 E a) (retractOne g) (quotMap E a q) := by
+    refine Quotient.inductionOn q fun x => ?_
+    simp only [rmul_mk, quotMk_holds E a, RightCosetSpace.rightMul_mk, retractOne_mul]
+  have hcmp (w : CuspL2 μ₁) :
+      (cmp hp w : Quot (latticeGL E a) → ℂ) =ᵐ[quotMeasure (latticeGL E a) μ]
+        (toLp μ₁ w : RightCosetSpace (Γ1 E a) → ℂ) ∘ quotMap E a :=
+    Lp.coeFn_compMeasurePreserving (toLp μ₁ w) hp
+  have hpres := measurePreserving_rmul (Γ := latticeGL E a) (μ := μ) g
+  have htranslated := hpres.quasiMeasurePreserving.ae (hcmp v)
+  have hrep :
+      (toLp μ₁ (cuspRepT μ₁ (retractOne g) v) : RightCosetSpace (Γ1 E a) → ℂ)
+        =ᵐ[RightCosetSpace.quotientMeasure (Γ1 E a) μ₁] fun x =>
+          (toLp μ₁ v : RightCosetSpace (Γ1 E a) → ℂ)
+            (RightCosetSpace.rightMul (Γ1 E a) (retractOne g) x) := by
     rw [toLp_cuspRepT]
     exact RightCosetSpace.coeFn_rightTranslate _ μ₁ (retractOne g) (toLp μ₁ v)
-  have h4 := UpperTheory.V.KernelIndexFullLattice.liftCmp_holds E a μ μ₁ hp _ _ h3
-  filter_upwards [lift_R g (UpperTheory.V.KernelIndexFullLattice.cmp hp v), h2, h4] with x hx1 hx2 hx4
-  rw [hx1, hx4, hx2, RightCosetSpace.rightMul_mk, retractOne_mul]
+  apply Lp.ext
+  filter_upwards [coeFn_R g (cmp hp v), htranslated, hcmp (cuspRepT μ₁ (retractOne g) v),
+    hp.quasiMeasurePreserving.ae hrep] with q hR hleft hright hrepq
+  simp only [Function.comp_apply] at hleft hright
+  rw [hR, hleft, hright, hrepq, hquot]
+
+end UpperTheory.V.KernelIndexFullLattice

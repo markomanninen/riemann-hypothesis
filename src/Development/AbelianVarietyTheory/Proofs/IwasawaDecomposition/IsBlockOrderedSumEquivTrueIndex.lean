@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FirstIndexEqOfUnfolded
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FirstIndexEqOfUnfolded
+
+@[expose] public section
 
 noncomputable section
 
@@ -137,12 +141,12 @@ theorem measurable_moeb_zero {α : Type} [TopologicalSpace α] [MeasurableSpace 
     {g : α → Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ} (hg : Continuous g) (a : Fin p) (b : Fin q) :
     Measurable fun x => moeb (g x) 0 a b := by
   have h2 : Continuous fun x => (g x).toBlocks₂₂ := continuous_matrix fun _ _ => hg.matrix_elem _ _
-  simp only [moeb_zero, mul_apply, inv_def, Ring.inverse_eq_inv', Matrix.smul_apply, smul_eq_mul]
+  simp only [moeb_zero, Matrix.mul_apply, inv_def, Ring.inverse_eq_inv', Matrix.smul_apply, smul_eq_mul]
   exact Finset.measurable_sum _ fun c _ => (hg.matrix_elem (.inl a) (.inr c)).measurable.mul
     (h2.matrix_det.measurable.inv.mul (h2.matrix_adjugate.matrix_elem _ _).measurable)
 
 theorem measurable_base (e : Fin r ≃ Fin p ⊕ Fin q) : Measurable (base e) :=
-  measurable_pi_lambda _ fun s => measurable_moeb_zero (continuous_uni.matrix_submatrix _ _) s.1 s.2
+  Measurable.of_eval fun s => measurable_moeb_zero (continuous_uni.matrix_submatrix _ _) s.1 s.2
 
 theorem det_shear (A : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) (Z : Matrix (Fin p) (Fin q) ℂ) :
     (shear A Z).det = A.det := by
@@ -187,7 +191,7 @@ def proj (z : V (nd X)) : Tau × Fin j × Fin (r - j) → ℂ := flat (domPt X h
 theorem mat_nmat (z : V (nd X)) (t : Tau) : mat (nmat X z) (ι t) = uni (coords X ι z t) := rfl
 
 theorem measurable_domPt : Measurable fun x : Frame X.Ψ r => flat (domPt X hj ι x) :=
-  measurable_pi_lambda _ fun s => measurable_moeb_zero
+  Measurable.of_eval fun s => measurable_moeb_zero
     ((continuous_const.matrix_mul (KU.cont_mat X (ι s.1))).matrix_submatrix _ _) s.2.1 s.2.2
 
 theorem measurable_proj : Measurable (proj X hj ι) := (measurable_domPt X hj ι).comp (KU.cont_cpt X _).measurable

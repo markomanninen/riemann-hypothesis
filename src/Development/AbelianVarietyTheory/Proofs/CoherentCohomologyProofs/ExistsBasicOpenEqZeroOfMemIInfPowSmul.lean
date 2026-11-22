@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open TensorProduct
 
@@ -99,7 +103,7 @@ theorem under_eq_of_mem_associatedPrimes_tensor_quotient (p : Ideal A) [hp : p.I
     obtain ⟨n, hn⟩ := ha
     rw [Submodule.mem_colon_singleton, Submodule.mem_bot, key] at hn
     have hinj : Function.Injective (a ^ n • LinearMap.id : (A ⧸ p) →ₗ[A] (A ⧸ p)) := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro z hz
       rw [LinearMap.smul_apply, LinearMap.id_apply, Algebra.smul_def, mul_eq_zero,
         Ideal.Quotient.algebraMap_eq, Ideal.Quotient.eq_zero_iff_mem] at hz
@@ -147,7 +151,6 @@ theorem associatedPrimes_tensor_residueField (p : Ideal A) [hp : p.IsPrime] :
   have hinj : Function.Injective φ := injective_lTensor_residueField p
   have hsurj : ∀ x : M ⊗[A] p.ResidueField, ∃ r ∉ p, ∃ y, φ y = r • x := fun x ↦ by
     induction x with
-    | zero => exact ⟨1, (Ideal.ne_top_iff_one p).1 hp.ne_top, 0, by simp⟩
     | tmul m c =>
       obtain ⟨a, b, hb, rfl⟩ := IsFractionRing.div_surjective (A := A ⧸ p) c
       obtain ⟨b, rfl⟩ := Ideal.Quotient.mk_surjective b
@@ -162,11 +165,11 @@ theorem associatedPrimes_tensor_residueField (p : Ideal A) [hp : p.IsPrime] :
       obtain ⟨r, hr, x', hx'⟩ := hx
       obtain ⟨s, hs, y', hy'⟩ := hy
       refine ⟨r * s, p.primeCompl.mul_mem hr hs, s • x' + r • y', ?_⟩
-      rw [map_add, LinearMap.map_smul_of_tower, LinearMap.map_smul_of_tower, hx', hy', smul_add,
+      rw [map_add (f := _), LinearMap.map_smul_of_tower, LinearMap.map_smul_of_tower, hx', hy', smul_add,
         smul_smul, smul_smul, mul_comm s r]
   have hreg : ∀ r ∉ p, ∀ x : M ⊗[A] p.ResidueField, r • x = 0 → x = 0 := fun r hr x hx ↦ by
     have h1 : Function.Injective (r • LinearMap.id : p.ResidueField →ₗ[A] p.ResidueField) := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro z hz
       simpa [Algebra.smul_def, hr] using hz
     exact Module.Flat.lTensor_preserves_injective_linearMap (M := M) _ h1 (by simpa using hx)
@@ -333,46 +336,46 @@ section Symbolic
 
 variable {R : Type*} [CommRing R]
 
-noncomputable def symbolicPower (P : Ideal R) [P.IsPrime] (m : ℕ) : Ideal R :=
-  (IsLocalRing.maximalIdeal (Localization.AtPrime P) ^ m).comap
-    (algebraMap R (Localization.AtPrime P))
 
 open IsLocalRing in
-
 theorem exists_sup_maximalIdeal_pow_stable [IsNoetherianRing R] [IsLocalRing R]
     (J : ℕ → Ideal R) (hJ : Antitone J) (k : ℕ) :
-    ∃ m, ∀ m' ≥ m, J m' ⊔ maximalIdeal R ^ k = J m ⊔ maximalIdeal R ^ k := by
-  have hdim : Ring.KrullDimLE 0 (R ⧸ maximalIdeal R ^ k) := by
+    ∃ m, ∀ m' ≥ m, J m' ⊔ IsLocalRing.maximalIdeal R ^ k =
+      J m ⊔ IsLocalRing.maximalIdeal R ^ k := by
+  have hdim : Ring.KrullDimLE 0 (R ⧸ IsLocalRing.maximalIdeal R ^ k) := by
     rw [Ring.krullDimLE_zero_iff]
     intro Q hQ
-    have h1 : maximalIdeal R ^ k ≤ Q.comap (Ideal.Quotient.mk (maximalIdeal R ^ k)) :=
+    have h1 : IsLocalRing.maximalIdeal R ^ k ≤
+        Q.comap (Ideal.Quotient.mk (IsLocalRing.maximalIdeal R ^ k)) :=
       fun x hx ↦ by simp [Ideal.Quotient.eq_zero_iff_mem.2 hx]
-    have h2 : maximalIdeal R = Q.comap (Ideal.Quotient.mk (maximalIdeal R ^ k)) :=
-      (maximalIdeal.isMaximal R).eq_of_le (Ideal.IsPrime.ne_top inferInstance)
+    have h2 : IsLocalRing.maximalIdeal R =
+        Q.comap (Ideal.Quotient.mk (IsLocalRing.maximalIdeal R ^ k)) :=
+      (IsLocalRing.maximalIdeal.isMaximal R).eq_of_le (Ideal.IsPrime.ne_top inferInstance)
         (Ideal.IsPrime.le_of_pow_le h1)
-    have h3 : (Q.comap (Ideal.Quotient.mk (maximalIdeal R ^ k))).IsMaximal :=
-      h2 ▸ maximalIdeal.isMaximal R
+    have h3 : (Q.comap (Ideal.Quotient.mk (IsLocalRing.maximalIdeal R ^ k))).IsMaximal :=
+      h2 ▸ IsLocalRing.maximalIdeal.isMaximal R
     have h4 := Ideal.IsMaximal.map_of_surjective_of_ker_le
-      (f := Ideal.Quotient.mk (maximalIdeal R ^ k)) Ideal.Quotient.mk_surjective
-      (m := Q.comap (Ideal.Quotient.mk (maximalIdeal R ^ k))) (by simpa using h1)
+      (f := Ideal.Quotient.mk (IsLocalRing.maximalIdeal R ^ k)) Ideal.Quotient.mk_surjective
+      (m := Q.comap (Ideal.Quotient.mk (IsLocalRing.maximalIdeal R ^ k))) (by simpa using h1)
     rwa [Ideal.map_comap_of_surjective _ Ideal.Quotient.mk_surjective] at h4
-  have hart : IsArtinianRing (R ⧸ maximalIdeal R ^ k) :=
+  have hart : IsArtinianRing (R ⧸ IsLocalRing.maximalIdeal R ^ k) :=
     IsNoetherianRing.isArtinianRing_of_krullDimLE_zero
   obtain ⟨m, hm⟩ := monotone_stabilizes_iff_artinian.2 hart
-    ⟨fun n ↦ OrderDual.toDual ((J n).map (Ideal.Quotient.mk (maximalIdeal R ^ k))),
+    ⟨fun n ↦ OrderDual.toDual ((J n).map (Ideal.Quotient.mk (IsLocalRing.maximalIdeal R ^ k))),
       fun a b hab ↦ Ideal.map_mono (hJ hab)⟩
   refine ⟨m, fun m' hm' ↦ ?_⟩
-  have h : (J m).map (Ideal.Quotient.mk (maximalIdeal R ^ k)) =
-      (J m').map (Ideal.Quotient.mk (maximalIdeal R ^ k)) := hm m' hm'
-  have := congrArg (Ideal.comap (Ideal.Quotient.mk (maximalIdeal R ^ k))) h
+  have h : (J m).map (Ideal.Quotient.mk (IsLocalRing.maximalIdeal R ^ k)) =
+      (J m').map (Ideal.Quotient.mk (IsLocalRing.maximalIdeal R ^ k)) := hm m' hm'
+  have := congrArg (Ideal.comap (Ideal.Quotient.mk (IsLocalRing.maximalIdeal R ^ k))) h
   simpa [Ideal.comap_map_quotientMk, sup_comm] using this.symm
 
-open IsLocalRing in
 
+open IsLocalRing in
 theorem exists_le_maximalIdeal_pow_of_iInf_eq_bot [IsNoetherianRing R] [IsLocalRing R]
-    [IsPrecomplete (maximalIdeal R) R] (J : ℕ → Ideal R) (hJ : Antitone J) (h0 : ⨅ m, J m = ⊥)
-    (k : ℕ) : ∃ m, J m ≤ maximalIdeal R ^ k := by
-  set 𝔪 := maximalIdeal R
+    [IsPrecomplete (IsLocalRing.maximalIdeal R) R] (J : ℕ → Ideal R)
+    (hJ : Antitone J) (h0 : ⨅ m, J m = ⊥)
+    (k : ℕ) : ∃ m, J m ≤ IsLocalRing.maximalIdeal R ^ k := by
+  set 𝔪 := IsLocalRing.maximalIdeal R
   choose s hs using exists_sup_maximalIdeal_pow_stable J hJ
   let B : ℕ → Ideal R := fun k ↦ J (s k) ⊔ 𝔪 ^ k
   have hB : ∀ k m, B k ≤ J m ⊔ 𝔪 ^ k := fun k m ↦ by
@@ -405,7 +408,7 @@ theorem exists_le_maximalIdeal_pow_of_iInf_eq_bot [IsNoetherianRing R] [IsLocalR
     intro m
     rw [← Ideal.Quotient.eq_zero_iff_mem, ← Submodule.mem_bot R,
       ← Ideal.iInf_pow_smul_eq_bot_of_isLocalRing (M := R ⧸ J m) 𝔪
-        (maximalIdeal.isMaximal R).ne_top, Submodule.mem_iInf]
+        (IsLocalRing.maximalIdeal.isMaximal R).ne_top, Submodule.mem_iInf]
     intro n
     obtain ⟨y, hy, z, hz, e⟩ := Submodule.mem_sup.1 (hB (k + n) m (hf n))
     have hz' : z - (f n - L) ∈ 𝔪 ^ n :=

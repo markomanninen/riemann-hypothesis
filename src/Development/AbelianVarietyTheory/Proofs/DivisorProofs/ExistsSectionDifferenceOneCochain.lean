@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsCharZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniquePushoutTorsorSectionDifferenceStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsCharZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniquePushoutTorsorSectionDifference
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -22,7 +26,7 @@ namespace GlobalTheory.PtExt
 theorem isSec_pull {R : Type} [CommRing R] {A : Over (Sp R)} [GrpObj A] (n : ℕ) (b : Fn0 A)
     {D : Type} [CommRing D] [Algebra R D] {D' : Type} [CommRing D'] [Algebra R D'] (φ : D →ₐ[R] D')
     (x : Pt A D) (s : RootFn A D) (hs : IsSec n b x s) :
-    IsSec n b (spOver φ ≫ x) (fun E _ _ ψ z ↦ s E (ψ.comp φ) z) := by
+    IsSec n b (D := D') (spOver φ ≫ x) (fun E _ _ ψ z ↦ s E (ψ.comp φ) z) := by
   refine ⟨?_, ?_⟩
   · intro E _ _ E' _ _ α β z hz
     have hz' : z ^ n = spOver (α.comp φ) ≫ x := by rw [hz, ← spOver_comp, Category.assoc]
@@ -36,11 +40,15 @@ theorem exists_isSecDiff : ∀ (R : Type) [CommRing R] (A : Over (Sp R)) [GrpObj
     (∀ (D : Type) [CommRing D] [Algebra R D] (x : Pt A D), IsSec n b x (S D x)) → ∃ u : Fn1 A, IsSecDiff n S u := by
   intro R _ A _ _ n hR b _ S hS
   have key : ∀ (D : Type) [CommRing D] [Algebra R D] (D' : Type) [CommRing D'] [Algebra R D']
-      (φ : D →ₐ[R] D') (x : Pt A D), ∃ e : D', ∀ (E : Type) [CommRing E] [Algebra R E] (ψ : D' →ₐ[R] E)
+      (φ : D →ₐ[R] D') (x : Pt A D),
+      let x' : Pt A D' := spOver φ ≫ x
+      ∃ e : D', ∀ (E : Type) [CommRing E] [Algebra R E] (ψ : D' →ₐ[R] E)
         (z : Pt A E), z ^ n = spOver ψ ≫ spOver φ ≫ x →
-          S D' (spOver φ ≫ x) E ψ z - S D x E (ψ.comp φ) z = ψ e :=
-    fun D _ _ D' _ _ φ x ↦ (GlobalTheory.T.existsUnique_pushoutTorsorSection_difference R A n hR b D' (spOver φ ≫ x) (S D' (spOver φ ≫ x))
-      (fun E _ _ ψ z ↦ S D x E (ψ.comp φ) z) (hS D' _) (isSec_pull n b φ x _ (hS D x))).exists
+          S D' x' E ψ z - S D x E (ψ.comp φ) z = ψ e := by
+    intro D _ _ D' _ _ φ x x'
+    exact (isSec_sub_existsUnique R A n hR b D' x' (S D' x')
+      (fun E _ _ ψ z ↦ S D x E (ψ.comp φ) z) (hS D' x')
+      (isSec_pull n b φ x (S D x) (hS D x))).exists
   refine ⟨fun D _ _ D' _ _ φ x ↦ Classical.choose (key D D' φ x), ?_⟩
   intro D _ _ D' _ _ φ x E _ _ ψ z hz
   exact (Classical.choose_spec (key D D' φ x) E ψ z hz).symm

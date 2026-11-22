@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GramTransformOfCoordinateChangeImports
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExpFourClauses
-import Formalism.LocalToGlobal.ProjectiveLattices.OpenRowsFree
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GramTransformOfCoordinateChangeImports
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExpFourClauses
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
+public import Formalism.LocalToGlobal.ProjectiveLattices.IntegrableOnIntegrand
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory NumberField Matrix
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formalism.L2.Pj GlobalTheory GlobalTheory.CxPts GlobalTheory.Toroidal GlobalTheory.LieMet GlobalTheory.ShFam
@@ -69,11 +74,13 @@ theorem perFr_comb (X : Data E r) {x x' : Frame X.Ψ r} (hx : x ∈ X.dom)
       rw [dif_neg h, dif_pos h', dif_pos hb']
       conv_lhs => rw [← mul_nonsing_inv_cancel_left (mat x ⟨_, h'⟩) (mat x' ⟨_, h'⟩) hd]
       generalize (mat x ⟨_, h'⟩)⁻¹ * mat x' ⟨_, h'⟩ = n
+      change Matrix (Fin r) (Fin r) ℂ at n
       simp only [hermC, ReciprocityTheory.ChartRestriction.G.FD.col, mul_apply, Finset.sum_mul, Finset.mul_sum]
       symm
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [Finset.sum_comm]
+      simp only [Matrix.mul_apply, Finset.sum_mul]
       exact Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun d _ => by ring
     rw [e1]
     refine Eq.trans (sum_rev hp _ fun c hc => ?_) ?_
@@ -143,8 +150,8 @@ theorem isDerivAt0_comp {g : ℕ} {X : Scheme.{0}} (e e' : (Fin g → ℂ) → (
 
 end GlobalTheory.FramePairGram.Comb
 
-open GlobalTheory.FramePairGram.Comb in
 
+open GlobalTheory.FramePairGram.Comb in
 theorem GlobalTheory.FramePairGram.lie_comb_of_block : ∀ {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} {H : Host E} {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {σ : c.F →+* ℂ} {U : Formalism.L2.PjFree.Unf Xo c σ r}, Formalism.L2.PjFree.IsUnf U → Formalism.L2.PjFree.GoodEmb c σ → ∀ (k : U.Comp) (x x' : (U.X k).dom), (∀ τ (a b : Fin r), (U.X k).p0 ≤ a → (b : ℕ) < (U.X k).p0 → ((mat x.1 τ)⁻¹ * mat x'.1 τ) a b = 0) → (∀ τ (a b : Fin r), (U.X k).p0 ≤ a → (b : ℕ) < (U.X k).p0 → ((mat x'.1 τ)⁻¹ * mat x.1 τ) a b = 0) → ∀ (τ : E →+* ℂ) (i : Fin (Dw.mult τ)), Formalism.L2.Pj.IsCombAt (U.un k x').x ((U.un k x').u τ) (fun b => (coef (U.X k) x.1 x'.1 (Formalism.L2.PjFree.relab c σ τ) b i : CAt σ)) ((U.un k x).u τ i) := by
   intro E _ _ _ r H Dw l Xo c σ U hU hσ k x x' h1 h2 τ i
   obtain ⟨hr, hty, -, -, -, g, e, F, ik, φ, -, hF⟩ := hU

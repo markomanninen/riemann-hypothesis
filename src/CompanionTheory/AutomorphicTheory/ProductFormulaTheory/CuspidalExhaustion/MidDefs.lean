@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.CuspidalExhaustion.CuspEmbP
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.CuspidalExhaustion.CuspEmbP
+
+@[expose] public section
 
 noncomputable section
 

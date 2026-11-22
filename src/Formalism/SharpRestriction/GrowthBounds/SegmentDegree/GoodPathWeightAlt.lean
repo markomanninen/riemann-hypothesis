@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.GoodPathWeightOfTopCount
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DiscriminantNonzeroModUniformiser
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.GoodPathWeightOfTopCount
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DiscriminantNonzeroModUniformiser
+
+@[expose] public section
 
 noncomputable section
 

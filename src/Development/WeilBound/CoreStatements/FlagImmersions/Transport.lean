@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifDefs
-import Development.AutomorphicSpectrum.Statements.TowerExistence.GoodTowerExistsX
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifDefs
+public import Development.AutomorphicSpectrum.Statements.TowerExistence.GoodTowerExistsX
+
+@[expose] public section
 
 noncomputable section
 

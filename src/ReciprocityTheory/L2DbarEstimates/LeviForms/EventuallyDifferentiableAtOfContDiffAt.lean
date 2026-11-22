@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.IsLocalHomeomorph
+module
+
+public import ReciprocityTheory.L2DbarEstimates.IsLocalHomeomorph
+
+@[expose] public section
 
 open Complex ComplexConjugate Filter Topology
 
@@ -193,12 +197,5 @@ theorem differentiableAt_deriv_of_contDiffAt {k : ℝ → ℝ} {t : ℝ} (hk : C
 theorem eventually_differentiableAt_of_contDiffAt {E F : Type*} [NormedAddCommGroup E]
     [NormedSpace ℝ E] [NormedAddCommGroup F] [NormedSpace ℝ F] {f : E → F} {x : E}
     (hf : ContDiffAt ℝ 2 f x) : ∀ᶠ y in 𝓝 x, DifferentiableAt ℝ f y := (hf.eventually (by simp)).mono fun _ hy => hy.differentiableAt (by simp)
-
-theorem leviNonnegOn_const (c : ℝ) (U : Set (V n)) : LeviNonnegOn n (fun _ => c) U := by
-  intro x _ ξ
-  have h0 : ∀ k, wdb n k (fun _ : V n => ((c : ℝ) : ℂ)) = fun _ => 0 := fun k => by
-    funext y
-    simp [wdb]
-  simp [leviV, h0, wd]
 
 end ReciprocityTheory.L2DbarEstimates

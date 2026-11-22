@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.ContinuousOnRationalWeight
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.ContinuousOnRationalWeight
+
+@[expose] public section
 
 noncomputable section
 

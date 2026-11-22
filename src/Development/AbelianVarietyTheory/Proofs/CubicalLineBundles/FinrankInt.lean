@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TwoMulEqOfIsTypeFn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TwoMulEqOfIsTypeFn
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
 open scoped CategoryTheory.Obj
@@ -36,7 +41,8 @@ theorem trace_eq (H : Host E) {g : ℕ} {ty : Fin g → (E →+* ℂ)} (hty : Is
     rw [← eq_ratCast (algebraMap ℚ ℂ), trace_eq_sum_embeddings (E := ℂ), Equiv.sum_comp e (fun τ => τ a)]
     exact (Equiv.sum_comp (RingHom.equivRatAlgHom E ℂ) (fun σ => σ a)).symm
   simp only [Nat.cast_one, _root_.one_mul, Nat.cast_zero, zero_mul, add_zero] at h1 h2
-  rw [h2, Finset.sum_add_distrib, ← map_sum, ← h1] at h3
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h2, Finset.sum_add_distrib, ← map_sum, ← h1] at h3
   have := congrArg Complex.re h3
   simp only [Complex.add_re, Complex.conj_re, Complex.ratCast_re] at this
   linarith
@@ -49,7 +55,7 @@ theorem exists_form (𝔄 : Submodule (𝓞 E) E) (ξ : E) (hξ0 : ξ ≠ 0)
   let EF : LinearMap.BilinForm ℤ 𝔄 := LinearMap.mk₂ ℤ f
     (fun x x' y => by
       apply Int.cast_injective (α := ℚ)
-      rw [Int.cast_add, ← hf, ← hf, ← hf, Submodule.coe_add, mul_add, add_mul, map_add])
+      rw [Int.cast_add, ← hf, ← hf, ← hf, Submodule.coe_add, mul_add, add_mul, map_add (f := _)])
     (fun c x y => by
       apply Int.cast_injective (α := ℚ)
       rw [smul_eq_mul, Int.cast_mul c, ← hf, ← hf, ← zsmul_eq_mul _ c, ← map_zsmul]
@@ -58,7 +64,7 @@ theorem exists_form (𝔄 : Submodule (𝓞 E) E) (ξ : E) (hξ0 : ξ ≠ 0)
       ring)
     (fun x y y' => by
       apply Int.cast_injective (α := ℚ)
-      rw [Int.cast_add, ← hf, ← hf, ← hf, Submodule.coe_add, map_add, mul_add, map_add])
+      rw [Int.cast_add, ← hf, ← hf, ← hf, Submodule.coe_add, map_add (f := _), mul_add, map_add (f := _)])
     (fun c x y => by
       apply Int.cast_injective (α := ℚ)
       rw [smul_eq_mul, Int.cast_mul c, ← hf, ← hf, ← zsmul_eq_mul _ c, ← map_zsmul]
@@ -102,8 +108,8 @@ theorem exists_form (𝔄 : Submodule (𝓞 E) E) (ξ : E) (hξ0 : ξ ≠ 0)
     apply Int.cast_injective (α := ℚ)
     rw [hEF, hz', hg']
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem finrank_int (𝔄 : Submodule (𝓞 E) E) (hfg : 𝔄.FG) (hne : 𝔄 ≠ ⊥) :
     Module.finrank ℤ 𝔄 = Module.finrank ℚ E := by
   obtain ⟨N, hN, ψ, hψ⟩ := PrincipalDatum.exists_clear 𝔄 hfg

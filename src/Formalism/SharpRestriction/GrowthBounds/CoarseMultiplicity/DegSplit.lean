@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FTDefs
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentChainDegreeEven
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FTDefs
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentChainDegreeEven
+
+@[expose] public section
 
 noncomputable section
 
@@ -130,7 +134,7 @@ theorem tie_sum (S : SegData s) (jl : Fin S.t → ℕ) (ωL : Fin (2 * s + 1 + 1
     simp
   · intro a ha
     unfold jE
-    rw [dif_neg]
+    rw [dite_eq_right]
     · simp
     · rintro ⟨h1, h2⟩
       apply ha
@@ -145,7 +149,7 @@ theorem tie_sum (S : SegData s) (jl : Fin S.t → ℕ) (ωL : Fin (2 * s + 1 + 1
     have hdiv : (2 * (S.sigma + l.val) + b.val) / 2 = S.sigma + l.val := by omega
     simp only [e, hdiv]
     unfold jE
-    rw [dif_pos ⟨by omega, by omega⟩]
+    rw [dite_eq_left ⟨by omega, by omega⟩]
     congr 1
     · congr 1
       apply Fin.ext

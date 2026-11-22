@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -46,7 +50,7 @@ theorem surj_mod_of_surj_mod_map_sup_of_pow_map_le :
           obtain ⟨b2, h2⟩ := hy c
           refine ⟨b1 + b2, ?_⟩
           have e : c * (x + y) - f (b1 + b2) = (c * x - f b1) + (c * y - f b2) := by
-            rw [map_add]; ring
+            rw [map_add (f := _)]; ring
           rw [e]; exact add_mem h1 h2
         | smul d x _ hx =>
           intro c
@@ -59,7 +63,7 @@ theorem surj_mod_of_surj_mod_map_sup_of_pow_map_le :
       obtain ⟨b2, hb2⟩ := hspan x hx 1
       refine ⟨b + b2, ?_⟩
       have e : a - f (b + b2) = (1 * x - f b2) + k := by
-        rw [map_add, one_mul]; linear_combination -hxk
+        rw [map_add (f := _), one_mul]; linear_combination -hxk
       rw [e]
       refine add_mem hb2 (Submodule.mem_sup_right hk)
   intro a

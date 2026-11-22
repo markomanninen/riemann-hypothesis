@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -77,7 +82,7 @@ theorem IntNumAssoc.proof (h1 : PrimeFiltration.Statement.{u})
     by_contra hn
     apply Function.mem_support.mp hW
     unfold idealCycle
-    rw [dif_neg (fun h => hn h.1), zero_mul]
+    rw [dite_eq_right (fun h => hn h.1), zero_mul]
   unfold cycEval
   rw [finsum_eq_finsetSum_of_support_subset _ hsupp]
   refine Finset.sum_congr rfl fun W hW => ?_
@@ -86,7 +91,7 @@ theorem IntNumAssoc.proof (h1 : PrimeFiltration.Statement.{u})
   rw [IntNumAssoc.list_sum_ite_mul]
   unfold idealCycle
   by_cases hr : IsRelevant W
-  · rw [dif_pos ⟨hWm, hr⟩, if_pos hr]
+  · rw [dite_eq_left ⟨hWm, hr⟩, if_pos hr]
     have hcount : multAt J W = (l.map fun p => if p.1 = W then (1 : ℕ∞) else 0).sum := by
       rw [hmult W]
       congr 1
@@ -95,7 +100,7 @@ theorem IntNumAssoc.proof (h1 : PrimeFiltration.Statement.{u})
       have := (hl p hpl).1
       exact h3 F K ι J p.1 W (hl p hpl).2.2 hWm
     rw [hcount, IntNumAssoc.list_sum_ite_enat, ENat.toNat_natCast]
-  · rw [dif_neg (fun h => hr h.2), if_neg hr]
+  · rw [dite_eq_right (fun h => hr h.2), if_neg hr]
     simp
 
 end GroundTheory.Heights₂.Heights.NumbersDVR

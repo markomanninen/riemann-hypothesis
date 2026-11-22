@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.InstCommRingR
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.InstCommRingR
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -88,7 +92,8 @@ theorem ι_yExpr (P : Collected q) {E E' : Spc} (hE : Inv q E) (hE' : Inv q E') 
     (c : ∀ j : ℕ, Ht q E (2 * j) j) (a : ℕ) :
     P.ι hE' a (yExpr g L c a) = ∑ j ∈ Finset.range (a + 1), P.map g hE' hE (P.ι hE j (c j)) * P.deg1 hE' (c1 q L) ^ (a - j) := by
   unfold yExpr
-  rw [map_sum, ← Fin.sum_univ_eq_sum_range (fun j => P.map g hE' hE (P.ι hE j (c j)) * P.deg1 hE' (c1 q L) ^ (a - j))]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← Fin.sum_univ_eq_sum_range (fun j => P.map g hE' hE (P.ι hE j (c j)) * P.deg1 hE' (c1 q L) ^ (a - j))]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [ι_ccup, P.map_ι, P.ι_cpow]
 
@@ -96,7 +101,8 @@ theorem pull_yExpr (hA : DivisorNaturality) {E E' E'' : Spc} (f : E'' ⟶ E') (h
     (L : E' ⟶ ofCat (glCat 1)) (c : ∀ j : ℕ, Ht q E (2 * j) j) (a : ℕ) :
     pull _ f _ _ (yExpr g L c a) = yExpr (f ≫ g) (f ≫ L) c a := by
   unfold yExpr
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [pull_ccup hA, pull_cpow hA f hE', (hA q).2.2.1 f L hE', pull_comp]
 
@@ -115,7 +121,8 @@ def eExpr {E : Spc} (c d : ∀ j : ℕ, Ht q E (2 * j) j) (k : ℕ) : Ht q E (2 
 theorem ι_eExpr (P : Collected q) {E : Spc} (h : Inv q E) (c d : ∀ j : ℕ, Ht q E (2 * j) j) (k : ℕ) :
     P.ι h k (eExpr c d k) = ∑ p ∈ Finset.HasAntidiagonal.antidiagonal k, P.ι h p.1 (c p.1) * P.ι h p.2 (d p.2) := by
   unfold eExpr
-  rw [map_sum, ← Finset.sum_attach (Finset.HasAntidiagonal.antidiagonal k)
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← Finset.sum_attach (Finset.HasAntidiagonal.antidiagonal k)
     (fun p => P.ι h p.1 (c p.1) * P.ι h p.2 (d p.2))]
   exact Finset.sum_congr rfl fun p _ => ι_ccup P h _ _ _
 
@@ -157,7 +164,8 @@ theorem LeafWhitney_of (hG : LeafGeom) (hC2 : LeafCover2) (hS : LeafA6supp) (hA 
         (fun j hj => by simp only [hd.2.1 j hj, map_zero])] at key
     refine Eq.trans ?_ key
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [he, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [he, map_sum]
     simp only [map_mul]
 
 end LateralTheory.E.D2

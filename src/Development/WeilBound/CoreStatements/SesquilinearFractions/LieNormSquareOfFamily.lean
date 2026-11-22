@@ -1,4 +1,9 @@
-import Development.WeilBound.CoreStatements.SesquilinearFractions.HermFormSelfEqRe
+module
+
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.HermFormSelfEqRe
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open Matrix GlobalTheory GlobalTheory.CM GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl
@@ -96,7 +101,8 @@ theorem lie_norm_square_of_family : ∀ (E : Type) [Field E] [NumberField E] [Is
       exact sub_eq_zero.1 ((smul_eq_zero.1 e').resolve_right hne)
     obtain ⟨⟨m, k⟩, hx, -⟩ := existsUnique_coord H x
     rw [← hj, hx]
-    simp only [map_add, map_mul, map_intCast]
+    rw [j.map_add, κ.map_add, j.map_mul, κ.map_mul]
+    simp only [map_intCast]
     rw [hj, hw, hκ]
   refine ⟨Q, ψQ, fun k => v' ≫ f (a k), uT, HmT, χT, fun k => F (a k) (K w), hQpb, hQLB, hAHT,
     fun k => ⟨?_, ?_⟩, fun k k' => ?_⟩

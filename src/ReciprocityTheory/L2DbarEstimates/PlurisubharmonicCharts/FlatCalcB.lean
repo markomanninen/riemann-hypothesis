@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FlatCalcA
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.ContinuousOnSec
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FlatCalcA
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.ContinuousOnSec
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 

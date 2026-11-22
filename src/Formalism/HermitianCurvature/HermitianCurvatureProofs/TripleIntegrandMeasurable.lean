@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InnerBound
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InnerBound
+
+@[expose] public section
 
 noncomputable section
 

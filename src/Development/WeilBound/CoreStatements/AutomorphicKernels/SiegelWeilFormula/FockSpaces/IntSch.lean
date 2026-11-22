@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
-import Development.WeilBound.ThetaLifts.SmallCones.IdeleTop
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicFourierRealisesWeylElement
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
+public import Development.WeilBound.ThetaLifts.SmallCones.IdeleTop
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicFourierRealisesWeylElement
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,7 @@ theorem continuous_cmb : Continuous d.cmb := by
   obtain ⟨i1, -, -, -⟩ := (PositivityTheory.ThKCT.ideleTop F E).1
   refine continuous_pi fun i => continuous_pi fun j => ?_
   simp only [cmb_eq]
-  exact continuous_finset_sum _ fun k _ => ((continuous_apply (i, j, k)).smul continuous_const)
+  exact continuous_finsetSum _ fun k _ => ((continuous_apply (i, j, k)).smul continuous_const)
 
 theorem continuous_crd : Continuous d.crd := by
   obtain ⟨i1, -, -, -⟩ := (PositivityTheory.ThKCT.ideleTop F E).1

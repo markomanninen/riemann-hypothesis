@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.LetterShift
-import Formalism.FormalGroupWitt.WeightInvariance
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
-import Lemmata.GeneralBFactUpper.Imports
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.LetterShift
+public import Formalism.FormalGroupWitt.WeightInvariance
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
+public import Lemmata.GeneralBFactUpper.Imports
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -46,7 +50,7 @@ variable {K : Type} [NormedField K] {τ : Type}
 
 theorem ip_integral_add [IsUltrametricDist K] {f g : MvPowerSeries τ K} (hf : Integral f)
     (hg : Integral g) : Integral (f + g) := fun n => by
-  rw [map_add]
+  rw [map_add (f := _)]
   exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hf n) (hg n))
 
 theorem ip_integral_C_mul {c : K} {g : MvPowerSeries τ K} (hc : ‖c‖ ≤ 1) (hg : Integral g) :
@@ -69,7 +73,7 @@ theorem ip_op_add (l : ℕ) (σ : K →+* K) (g g' : MvPowerSeries τ K) :
   rcases Nat.eq_zero_or_pos l with rfl | hl
   · simp
   · have hq : l ^ 2 ≠ 0 := by positivity
-    rw [frobVar_eq_expand hq, frobVar_eq_expand hq, frobVar_eq_expand hq, map_add, map_add,
+    rw [frobVar_eq_expand hq, frobVar_eq_expand hq, frobVar_eq_expand hq, map_add (f := _), map_add (f := _),
       mul_add]
 
 theorem ip_op_C_mul (l : ℕ) (σ : K →+* K) (c : K) (g : MvPowerSeries τ K) :
@@ -93,7 +97,7 @@ theorem integral_part_closure : IPClosure := by
     intro n
     simp
   · rintro g g' ⟨h0, hI⟩ ⟨h0', hI'⟩
-    refine ⟨by rw [map_add, h0, h0', add_zero], ?_⟩
+    refine ⟨by rw [map_add (f := _), h0, h0', add_zero], ?_⟩
     rw [ip_op_add, add_sub_add_comm]
     exact ip_integral_add hI hI'
   · rintro c g hc hσ ⟨h0, hI⟩
@@ -107,7 +111,8 @@ theorem ip_map_lgF {K : Type} [Field K] (l : ℕ) (φ : K →+* K) :
   ext n
   rw [PowerSeries.coeff_map]
   unfold lgF
-  rw [PowerSeries.coeff_mk, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [PowerSeries.coeff_mk, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   split_ifs
   · rw [map_inv₀, map_pow, map_natCast]

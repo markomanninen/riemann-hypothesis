@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ExpTri
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExponentialTriangular.SortedSpec
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ExpTri
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExponentialTriangular.SortedSpec
+
+@[expose] public section
 
 open Matrix Finset
 open scoped MatrixOrder ComplexOrder
@@ -35,7 +39,7 @@ lemma conj_herm (W : Matrix (Fin n) (Fin n) ℂ) (r : Fin n → ℝ) :
     Matrix.mul_assoc]
   congr 3
   funext i
-  simp
+  rw [Pi.star_apply, Complex.star_def, Complex.conj_ofReal]
 
 lemma exp_conj {W : Matrix (Fin n) (Fin n) ℂ} (hW : W ∈ unitaryGroup (Fin n) ℂ) (d : Fin n → ℝ) :
     NormedSpace.exp (W * diagonal (fun i => (d i : ℂ)) * Wᴴ) =
@@ -55,7 +59,7 @@ lemma sq_conj {W : Matrix (Fin n) (Fin n) ℂ} (hW : W ∈ unitaryGroup (Fin n) 
   rw [conj_mul_conj hW]
   congr 3
   funext i
-  simp only [two_mul, Real.exp_add, Complex.ofReal_mul]
+  rw [← Complex.ofReal_mul, ← Real.exp_add, two_mul]
 
 lemma det_conj {W : Matrix (Fin n) (Fin n) ℂ} (hW : W ∈ unitaryGroup (Fin n) ℂ) (d : Fin n → ℂ) :
     (W * diagonal d * Wᴴ).det = ∏ i, d i := by
@@ -248,31 +252,31 @@ lemma key (hK : KyFanDet) {Wx Wy Wz : Matrix (Fin n) (Fin n) ℂ}
 
 end HornW
 
-open HornW in
 
+open HornW in
 theorem horn_of (hK : KyFanDet) : Horn := by
   intro n X Y Z U ξ η ζ hX hY hZ hU hE
   obtain ⟨hξ, Wx, hWx, rfl⟩ := hX
   obtain ⟨hη, Wy, hWy, rfl⟩ := hY
   obtain ⟨hζ, Wz, hWz, rfl⟩ := hZ
-  rw [exp_conj hWx, exp_conj hWy, exp_conj hWz] at hE
+  rw [HornW.exp_conj hWx, HornW.exp_conj hWy, HornW.exp_conj hWz] at hE
   have hcc : (Wz * diagonal (fun i => (Real.exp (ζ i) : ℂ)) * Wzᴴ) * (Wz * diagonal (fun i => (Real.exp (ζ i) : ℂ)) * Wzᴴ) = (Wy * diagonal (fun i => (Real.exp (η i) : ℂ)) * Wyᴴ) * ((Wx * diagonal (fun i => (Real.exp (ξ i) : ℂ)) * Wxᴴ) * (Wx * diagonal (fun i => (Real.exp (ξ i) : ℂ)) * Wxᴴ)) * (Wy * diagonal (fun i => (Real.exp (η i) : ℂ)) * Wyᴴ) := by
     have h1 : ((Wx * diagonal (fun i => (Real.exp (ξ i) : ℂ)) * Wxᴴ) * (Wy * diagonal (fun i => (Real.exp (η i) : ℂ)) * Wyᴴ))ᴴ * ((Wx * diagonal (fun i => (Real.exp (ξ i) : ℂ)) * Wxᴴ) * (Wy * diagonal (fun i => (Real.exp (η i) : ℂ)) * Wyᴴ)) = (U * (Wz * diagonal (fun i => (Real.exp (ζ i) : ℂ)) * Wzᴴ))ᴴ * (U * (Wz * diagonal (fun i => (Real.exp (ζ i) : ℂ)) * Wzᴴ)) := by rw [hE]
-    rw [conjTranspose_mul (Wx * diagonal (fun i => (Real.exp (ξ i) : ℂ)) * Wxᴴ) (Wy * diagonal (fun i => (Real.exp (η i) : ℂ)) * Wyᴴ), conjTranspose_mul U (Wz * diagonal (fun i => (Real.exp (ζ i) : ℂ)) * Wzᴴ), conj_herm, conj_herm, conj_herm] at h1
-    calc (Wz * diagonal (fun i => (Real.exp (ζ i) : ℂ)) * Wzᴴ) * (Wz * diagonal (fun i => (Real.exp (ζ i) : ℂ)) * Wzᴴ) = (Wz * diagonal (fun i => (Real.exp (ζ i) : ℂ)) * Wzᴴ) * (Uᴴ * U) * (Wz * diagonal (fun i => (Real.exp (ζ i) : ℂ)) * Wzᴴ) := by rw [unit_star_mul hU, Matrix.mul_one]
+    rw [conjTranspose_mul (Wx * diagonal (fun i => (Real.exp (ξ i) : ℂ)) * Wxᴴ) (Wy * diagonal (fun i => (Real.exp (η i) : ℂ)) * Wyᴴ), conjTranspose_mul U (Wz * diagonal (fun i => (Real.exp (ζ i) : ℂ)) * Wzᴴ), HornW.conj_herm, HornW.conj_herm, HornW.conj_herm] at h1
+    calc (Wz * diagonal (fun i => (Real.exp (ζ i) : ℂ)) * Wzᴴ) * (Wz * diagonal (fun i => (Real.exp (ζ i) : ℂ)) * Wzᴴ) = (Wz * diagonal (fun i => (Real.exp (ζ i) : ℂ)) * Wzᴴ) * (Uᴴ * U) * (Wz * diagonal (fun i => (Real.exp (ζ i) : ℂ)) * Wzᴴ) := by rw [HornW.unit_star_mul hU, Matrix.mul_one]
       _ = (Wy * diagonal (fun i => (Real.exp (η i) : ℂ)) * Wyᴴ) * (Wx * diagonal (fun i => (Real.exp (ξ i) : ℂ)) * Wxᴴ) * ((Wx * diagonal (fun i => (Real.exp (ξ i) : ℂ)) * Wxᴴ) * (Wy * diagonal (fun i => (Real.exp (η i) : ℂ)) * Wyᴴ)) := by rw [h1]; simp only [Matrix.mul_assoc]
       _ = (Wy * diagonal (fun i => (Real.exp (η i) : ℂ)) * Wyᴴ) * ((Wx * diagonal (fun i => (Real.exp (ξ i) : ℂ)) * Wxᴴ) * (Wx * diagonal (fun i => (Real.exp (ξ i) : ℂ)) * Wxᴴ)) * (Wy * diagonal (fun i => (Real.exp (η i) : ℂ)) * Wyᴴ) := by simp only [Matrix.mul_assoc]
-  refine ⟨fun k hk => key hK hWx hWy hWz hξ hη hcc k hk, ?_⟩
+  refine ⟨fun k hk => HornW.key hK hWx hWy hWz hξ hη hcc k hk, ?_⟩
   have hd : ‖((Wx * diagonal (fun i => (Real.exp (ξ i) : ℂ)) * Wxᴴ) * (Wy * diagonal (fun i => (Real.exp (η i) : ℂ)) * Wyᴴ)).det‖ = ‖(U * (Wz * diagonal (fun i => (Real.exp (ζ i) : ℂ)) * Wzᴴ)).det‖ := by rw [hE]
   have hUd : ‖U.det‖ = 1 := by
     have h2 : ‖star U.det * U.det‖ = 1 := by
-      rw [← Matrix.det_conjTranspose, ← Matrix.det_mul, unit_star_mul hU, Matrix.det_one, norm_one]
+      rw [← Matrix.det_conjTranspose, ← Matrix.det_mul, HornW.unit_star_mul hU, Matrix.det_one, norm_one]
     rw [norm_mul, norm_star] at h2
     rcases mul_self_eq_one_iff.mp h2 with h | h
     · exact h
     · linarith [norm_nonneg U.det]
-  rw [Matrix.det_mul (Wx * diagonal (fun i => (Real.exp (ξ i) : ℂ)) * Wxᴴ) (Wy * diagonal (fun i => (Real.exp (η i) : ℂ)) * Wyᴴ), Matrix.det_mul U (Wz * diagonal (fun i => (Real.exp (ζ i) : ℂ)) * Wzᴴ), norm_mul, norm_mul, norm_det_conj_exp hWx,
-    norm_det_conj_exp hWy, norm_det_conj_exp hWz, hUd, one_mul, ← Real.exp_add] at hd
+  rw [Matrix.det_mul (Wx * diagonal (fun i => (Real.exp (ξ i) : ℂ)) * Wxᴴ) (Wy * diagonal (fun i => (Real.exp (η i) : ℂ)) * Wyᴴ), Matrix.det_mul U (Wz * diagonal (fun i => (Real.exp (ζ i) : ℂ)) * Wzᴴ), norm_mul, norm_mul, HornW.norm_det_conj_exp hWx,
+    HornW.norm_det_conj_exp hWy, HornW.norm_det_conj_exp hWz, hUd, one_mul, ← Real.exp_add] at hd
   rw [Finset.sum_add_distrib]
   exact (Real.exp_injective hd).symm
 

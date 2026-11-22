@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
@@ -39,7 +44,7 @@ theorem flat_comap_map_of_one_tmul_mem {B C R : Type} [CommRing B] [CommRing C] 
       simp only [f, LinearMap.coe_comp, Function.comp_apply, Algebra.linearMap_apply,
         AlgHom.toLinearMap_apply, Ideal.Quotient.mkₐ_eq_mk, Ideal.Quotient.eq_zero_iff_mem] at hi
       exact hi
-    | add a b ha hb => simpa [map_add] using Ideal.add_mem _ ha hb
+    | add a b ha hb => simpa [map_add (f := _)] using Ideal.add_mem _ ha hb
   have := key x
   rwa [hx, TensorProduct.lid_tmul, one_smul] at this
 

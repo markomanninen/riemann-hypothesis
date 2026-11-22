@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsRootOfIsAlgClosed
-import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsRootOfIsAlgClosed
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
+
+@[expose] public section
 
 noncomputable section
 open scoped MatrixGroups
@@ -23,7 +27,7 @@ theorem theta_mul (s : ℚ) (x y : HahnSeries ℚ Ω) :
   obtain ⟨-, -, h⟩ := hij
   show algebraMap ℚ Ω (s * a) * (x.coeff ij.1 * y.coeff ij.2) =
     algebraMap ℚ Ω (s * ij.1) * x.coeff ij.1 * y.coeff ij.2 + x.coeff ij.1 * (algebraMap ℚ Ω (s * ij.2) * y.coeff ij.2)
-  rw [← h, mul_add, map_add]; ring
+  rw [← h, mul_add, map_add (f := _)]; ring
 
 def Ig (A : ValuationSubring Ω) (φ : HahnSeries ℚ Ω) : Prop := ∀ r, φ.coeff r ∈ A
 
@@ -213,7 +217,7 @@ theorem isThB_add : ∀ (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosed Ω]
   refine ⟨f ^ (c.appr n) * f' ^ (c'.appr n), ?_, ?_, ?_, ?_⟩
   · simp only [Units.val_mul, Units.val_pow_eq_pow_val]
     exact inv_mul (inv_pow hfi _) (inv_pow hfi' _)
-  · rw [← cls_comb, ← hfc, ← hfc', ← map_smul, ← map_smul, ← map_add]
+  · rw [← cls_comb, ← hfc, ← hfc', ← map_smul, ← map_smul, ← map_add (f := _)]
     rfl
   · intro δ hδ hδ'
     obtain ⟨g, hgi, hg⟩ := hfd δ hδ hδ'

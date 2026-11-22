@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.HermitianLattices.StatementLat
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.StatementLat
+
+@[expose] public section
 
 noncomputable section
 
@@ -125,7 +129,7 @@ def locBasic_sigma (hinj : Function.Injective (algebraMap R K))
       (hstar b).choose_spec, star_mul'])
   map_zero' := hinj (by rw [(hstar 0).choose_spec, map_zero, star_zero])
   map_add' a b := hinj (by
-    rw [(hstar (a + b)).choose_spec, map_add, map_add, (hstar a).choose_spec,
+    rw [(hstar (a + b)).choose_spec, map_add (f := _), map_add (f := _), (hstar a).choose_spec,
       (hstar b).choose_spec, star_add])
 
 theorem locBasic_sigma_spec (hinj : Function.Injective (algebraMap R K))
@@ -219,7 +223,7 @@ theorem locBasic : LocBasic := by
         · refine key (s + t) (by rw [add_smul]; exact L.add_mem hsx htx) ?_ ?_
           · intro h
             exact hs' (by simpa using p.sub_mem h h2)
-          · rw [map_add]
+          · rw [map_add (f := _)]
             intro h
             exact ht' (by simpa using p.sub_mem h h1)
         · exact key t htx h2 ht'

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open PowerSeries
 
 namespace GlobalTheory
@@ -14,7 +19,8 @@ theorem padicInt_eq_one_of_pow_eq_one_of_toZMod_eq_one {l : ℕ} [hl : Fact l.Pr
       exact (mul_eq_zero.mp this).resolve_right (sub_ne_zero.mpr hne)
     have hp0 : (p : ZMod l) = 0 := by
       have := congrArg PadicInt.toZMod hsum
-      simpa [map_sum, map_pow, he1] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum, map_pow, he1] using this
     have hpl : l = p := (Nat.prime_dvd_prime_iff_eq hl.out hp).mp ((ZMod.natCast_eq_zero_iff _ _).mp hp0)
     subst hpl
     have hmem : ∀ z : ℤ_[l], (l : ℤ_[l]) ∣ z ↔ PadicInt.toZMod z = 0 := by

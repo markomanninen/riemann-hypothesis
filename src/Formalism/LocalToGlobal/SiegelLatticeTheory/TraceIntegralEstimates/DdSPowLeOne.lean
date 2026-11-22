@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.LatSpanLeSpan
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.LatSpanLeSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem levi_mem (Λ : Submodule (𝓞 E) S.V) (aa : Fin r → FractionalIdeal (
     unfold latSpan at hy ⊢
     induction hy using Submodule.span_induction with
     | zero => simp
-    | add y y' _ _ h h' => rw [map_add]; exact Submodule.add_mem _ h h'
+    | add y y' _ _ h h' => rw [map_add (f := _)]; exact Submodule.add_mem _ h h'
     | smul o y _ h => rw [LinearMap.map_smul_of_tower]; exact Submodule.smul_mem _ o h
     | mem y hy =>
     obtain ⟨a, x, hx, rfl⟩ := hy
@@ -56,7 +60,7 @@ theorem levi_mem (Λ : Submodule (𝓞 E) S.V) (aa : Fin r → FractionalIdeal (
     unfold latSpan at hy ⊢
     induction hy using Submodule.span_induction with
     | zero => simp
-    | add y y' _ _ h h' => rw [map_add]; exact Submodule.add_mem _ h h'
+    | add y y' _ _ h h' => rw [map_add (f := _)]; exact Submodule.add_mem _ h h'
     | smul o y _ h => rw [LinearMap.map_smul_of_tower]; exact Submodule.smul_mem _ o h
     | mem y hy =>
     obtain ⟨a, x, hx, rfl⟩ := hy
@@ -68,14 +72,14 @@ theorem levi_mem (Λ : Submodule (𝓞 E) S.V) (aa : Fin r → FractionalIdeal (
       exact Submodule.zero_mem _
     · obtain ⟨o, ho⟩ := (hU' c a).2
       refine Submodule.subset_span ⟨c, x * U' c a, ?_, rfl⟩
-      have hle : (aa a)⁻¹ ≤ (aa c)⁻¹ := FractionalIdeal.inv_anti_mono (haa0 c) (haa0 a) (haa c a h)
+      have hle : (aa a)⁻¹ ≤ (aa c)⁻¹ := FractionalIdeal.inv_anti_mono (haa0 c) (haa c a h)
       refine hle ?_
       rw [← ho, mul_comm, ← Algebra.smul_def]
       exact Submodule.smul_mem _ o hx
   rw [hΛ] at hv ⊢
   obtain ⟨v12, hv12, v3, hv3, rfl⟩ := Submodule.mem_sup.mp hv
   obtain ⟨v1, hv1, v2, hv2, rfl⟩ := Submodule.mem_sup.mp hv12
-  rw [map_add, map_add, psiF_fix e f U U' v2 (fun a => (hL v2 hv2 a).2) (fun a => (hL v2 hv2 a).1)]
+  rw [map_add (f := _), map_add (f := _), psiF_fix e f U U' v2 (fun a => (hL v2 hv2 a).2) (fun a => (hL v2 hv2 a).1)]
   exact Submodule.add_mem _ (Submodule.add_mem _ (Submodule.mem_sup_left (Submodule.mem_sup_left (hA _ hv1)))
     (Submodule.mem_sup_left (Submodule.mem_sup_right hv2))) (Submodule.mem_sup_right (hC _ hv3))
 
@@ -92,7 +96,7 @@ theorem ddS_pow_le_one (D : D7) (n : ℕ) : ddS D ^ n ≤ 1 := by
 
 theorem aaS_mono (D : D7) (a c : Fin D.R.rS) (h : c ≤ a) : aaS D a ≤ aaS D c := by
   rw [PI.TermsAtPtFiniteW.FrameW.aaS_eq, PI.TermsAtPtFiniteW.FrameW.aaS_eq]
-  refine FractionalIdeal.inv_anti_mono (pow_ne_zero _ (PI.SRW.ddS_ne D)) (pow_ne_zero _ (PI.SRW.ddS_ne D)) ?_
+  refine FractionalIdeal.inv_anti_mono (pow_ne_zero _ (PI.SRW.ddS_ne D)) ?_
   have e : ddS D ^ (D.R.rS - c.1) = ddS D ^ (D.R.rS - a.1) * ddS D ^ (a.1 - c.1) := by
     rw [← pow_add]
     congr 1

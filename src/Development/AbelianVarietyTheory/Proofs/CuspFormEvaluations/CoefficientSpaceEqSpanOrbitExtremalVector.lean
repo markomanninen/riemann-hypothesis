@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.LetAct
-import Formalism.LocalToGlobal.Columns.PolyFnLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.LetAct
+public import Formalism.LocalToGlobal.Columns.PolyFnLemmas
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -23,8 +27,9 @@ theorem coeff_mem_of_eval_mem {K A : Type} [Field K] [CharZero K] [CommRing A] [
       (Set.infinite_range_of_injective Nat.cast_injective)
     rintro _ ⟨c, rfl⟩
     have h1 := hφ _ (h c)
-    rw [Polynomial.eval_eq_sum_range, map_sum] at h1
-    simp only [Set.mem_setOf_eq, Polynomial.IsRoot.def, hq, Polynomial.eval_finset_sum, Polynomial.eval_monomial]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Polynomial.eval_eq_sum_range, map_sum] at h1
+    simp only [Set.mem_setOf_eq, Polynomial.IsRoot.def, hq, Polynomial.eval_finsetSum, Polynomial.eval_monomial]
     rw [← h1]
     refine Finset.sum_congr rfl fun i _ => ?_
     have : p.coeff i * (c : A) ^ i = ((c : K) ^ i) • p.coeff i := by
@@ -32,7 +37,7 @@ theorem coeff_mem_of_eval_mem {K A : Type} [Field K] [CharZero K] [CommRing A] [
     rw [this, map_smul, smul_eq_mul, mul_comm]
   by_cases hk : k ≤ p.natDegree
   · have := congrArg (fun r => r.coeff k) hq0
-    simp only [hq, Polynomial.finset_sum_coeff, Polynomial.coeff_monomial, Finset.sum_ite_eq', Finset.mem_range,
+    simp only [hq, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial, Finsupp.single_apply, Finset.sum_ite_eq', Finset.mem_range,
       Polynomial.coeff_zero] at this
     rwa [if_pos (by omega)] at this
   · rw [Polynomial.coeff_eq_zero_of_natDegree_lt (by omega), map_zero]
@@ -41,11 +46,11 @@ theorem eval_rowGen {K : Type} [Field K] {r n : ℕ} (a b : Fin r) (c : K) (f : 
     (rowGen K a b f).eval (C c) = rowAct K (1 + Matrix.single b a c) f := by
   induction f using MvPolynomial.induction_on with
   | C x => simp [rowGen, rowAct]
-  | add f g hf hg => simp only [map_add, Polynomial.eval_add, hf, hg]
+  | add f g hf hg => simp only [map_add (f := _), Polynomial.eval_add, hf, hg]
   | mul_X f v hf =>
     simp only [map_mul, Polynomial.eval_mul, hf]
     congr 1
-    simp only [rowGen, rowAct, aeval_X, Matrix.add_apply, map_add, add_mul, Finset.sum_add_distrib,
+    simp only [rowGen, rowAct, aeval_X, Matrix.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib,
       Polynomial.eval_add, Polynomial.eval_C]
     congr 1
     · rw [Finset.sum_eq_single v.1]
@@ -131,7 +136,7 @@ theorem orbit_stable {K : Type} [Field K] {r m : ℕ} (v : MvPolynomial (Fin r �
     beta_reduce
     rw [this, Units.val_mul, trGL_coe, Matrix.transpose_mul, Matrix.transpose_transpose]
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ _ hx
 
 theorem dualWeyl_le_span_orbit (K : Type) [Field K] [CharZero K] {r m : ℕ} (hm : m ≤ r) (ν : Fin m → ℕ)

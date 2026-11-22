@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.NormOneCompact
-import GroundTheory.GlobalFields.TateThesis.IdeleMeasureNormOne
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.NormOneCompact
+public import GroundTheory.GlobalFields.TateThesis.IdeleMeasureNormOne
+
+@[expose] public section
 
 open NumberField Set
 open GroundTheory.Global GroundTheory.Global.IdeleGroup

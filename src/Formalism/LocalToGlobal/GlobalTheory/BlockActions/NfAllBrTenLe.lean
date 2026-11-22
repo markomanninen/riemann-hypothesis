@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NormBoundOfClasses
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NormBoundOfClasses
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,12 +1,44 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.GlobalGen
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.PSpaceFinite
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.ModulesAbExact
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.SheafH
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.CechFunctor
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.GlobalGen
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.PSpaceFinite
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.ModulesAbExact
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.SheafH
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.CechFunctor
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
+
+section
+
+open AlgebraicGeometry CategoryTheory TopologicalSpace
+
+universe c236Ext c236Scheme
+
+private noncomputable def H.linearMapV436 {X : Scheme.{c236Scheme}}
+    [HasExt.{c236Ext} (Sheaf (Opens.grothendieckTopology X.toTopCat) AddCommGrpCat.{c236Scheme})]
+    (A : Type*) [CommRing A] [Algebra A Γ(X, ⊤)]
+    {F G : X.Modules} (φ : F ⟶ G) (n : ℕ) :
+    Sheaf.H.{c236Ext} (modulesAb F) n →ₗ[A] Sheaf.H.{c236Ext} (modulesAb G) n where
+  toFun := Sheaf.H.map.{c236Ext} (modulesAbMap φ) n
+  map_add' := map_add _
+  map_smul' a x := by
+    change Sheaf.H.map.{c236Ext} (modulesAbMap φ) n (a • x) =
+      a • Sheaf.H.map.{c236Ext} (modulesAbMap φ) n x
+    rw [H.smul_def, H.smul_def, ← Sheaf.H.map_comp_apply, ← Sheaf.H.map_comp_apply,
+      ← modulesAbMap_comp, ← modulesAbMap_comp, smulHom_comp]
+
+private lemma H.linearMapV436_apply {X : Scheme.{c236Scheme}}
+    [HasExt.{c236Ext} (Sheaf (Opens.grothendieckTopology X.toTopCat) AddCommGrpCat.{c236Scheme})]
+    (A : Type*) [CommRing A] [Algebra A Γ(X, ⊤)]
+    {F G : X.Modules} (φ : F ⟶ G) (n : ℕ) (x : Sheaf.H.{c236Ext} (modulesAb F) n) :
+    H.linearMapV436 A φ n x = Sheaf.H.map.{c236Ext} (modulesAbMap φ) n x := rfl
+
+end
 
 open AlgebraicGeometry CategoryTheory Opposite TopologicalSpace Limits MonoidalCategory
   MvPolynomial
@@ -128,8 +160,8 @@ variable {X : Scheme.{u}}
   (A : Type*) [CommRing A] [Algebra A Γ(X, ⊤)]
   {S : ShortComplex X.Modules} (hS : S.ShortExact)
 
-include hS in
 
+include hS in
 theorem finite_H_X₃ [IsNoetherianRing A] (p : ℕ)
     [Module.Finite A (Sheaf.H.{w'} (modulesAb S.X₂) p)]
     [Module.Finite A (Sheaf.H.{w'} (modulesAb S.X₁) (p + 1))] :
@@ -137,8 +169,8 @@ theorem finite_H_X₃ [IsNoetherianRing A] (p : ℕ)
   finite_of_exact_noetherian (H.linearMap A S.g p) (H.δLinear A (shortExact_abSC hS) p)
     fun y hy => H.exact₃ (shortExact_abSC hS) rfl y hy
 
-include hS in
 
+include hS in
 theorem subsingleton_H_X₃ (p : ℕ) [Subsingleton (Sheaf.H.{w'} (modulesAb S.X₂) p)]
     [Subsingleton (Sheaf.H.{w'} (modulesAb S.X₁) (p + 1))] :
     Subsingleton (Sheaf.H.{w'} (modulesAb S.X₃) p) := by
@@ -168,8 +200,8 @@ lemma twistEquiv_obj (k : ℤ) (M : (projectiveSpace A n).Modules) :
 lemma twistEquiv_additive (k : ℤ) : (twistEquiv (A := A) (n := n) k).functor.Additive :=
   Functor.additive_of_preserves_binary_products _
 
-variable (A n) in
 
+variable (A n) in
 abbrev freeP (I : Type u) : (projectiveSpace A n).Modules :=
   SheafOfModules.free (R := (projectiveSpace A n).ringCatSheaf) I
 
@@ -177,7 +209,8 @@ def ιP {I : Type u} (i : I) : 𝟙_ (projectiveSpace A n).Modules ⟶ freeP A n
   SheafOfModules.ιFree i
 
 def πP {I : Type u} [DecidableEq I] (i : I) : freeP A n I ⟶ 𝟙_ (projectiveSpace A n).Modules :=
-  Cofan.IsColimit.desc (SheafOfModules.isColimitFreeCofan I) fun j => if j = i then 𝟙 _ else 0
+  Cofan.IsColimit.desc (A := SheafOfModules.unit (projectiveSpace A n).ringCatSheaf)
+    (SheafOfModules.isColimitFreeCofan I) fun j => if j = i then 𝟙 _ else 0
 
 lemma freeSheaf_hom_ext {I : Type u} {M : (projectiveSpace A n).Modules} (f g : freeP A n I ⟶ M)
     (h : ∀ j, ιP j ≫ f = ιP j ≫ g) : f = g :=
@@ -196,9 +229,9 @@ lemma free_total {I : Type u} [Fintype I] [DecidableEq I] :
     ∑ i, πP (A := A) (n := n) i ≫ ιP i = 𝟙 (freeP A n I) := by
   refine freeSheaf_hom_ext _ _ fun j => ?_
   rw [Preadditive.comp_sum, Category.comp_id, Finset.sum_eq_single j]
-  · rw [← Category.assoc, ιP_πP, if_pos rfl, Category.id_comp]
+  · rw [← Category.assoc, ιP_πP, ite_eq_left rfl, Category.id_comp]
   · intro b _ hb
-    rw [← Category.assoc, ιP_πP, if_neg (Ne.symm hb), zero_comp]
+    rw [← Category.assoc, ιP_πP, ite_eq_right (Ne.symm hb), zero_comp]
   · intro h
     exact absurd (Finset.mem_univ j) h
 

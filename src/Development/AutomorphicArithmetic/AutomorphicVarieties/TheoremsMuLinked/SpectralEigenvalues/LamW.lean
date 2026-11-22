@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.OrdinaryHeckeAlgebraIntegral
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.OrdinaryHeckeAlgebraIntegral
+
+@[expose] public section
 
 open IsLocalRing Matrix Filter UpperTheory.V UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.Pa.Lev UpperTheory.V.AlgebraTools UpperTheory.V.Th
 open scoped TensorProduct
@@ -31,7 +35,7 @@ theorem UpperTheory.V.Th.Sp.lamW :
     induction z using TensorProduct.induction_on with
     | zero => rw [smul_zero, map_zero, mul_zero]
     | tmul a' m => rw [TensorProduct.smul_tmul', smul_eq_mul, hΛt, hΛt, map_mul, mul_assoc]
-    | add z₁ z₂ h₁ h₂ => rw [smul_add, map_add, map_add, h₁, h₂, mul_add]
+    | add z₁ z₂ h₁ h₂ => rw [smul_add, map_add (f := _), map_add (f := _), h₁, h₂, mul_add]
   refine ⟨Λ.toAddMonoidHom.comp ψ, φ (1 ⊗ₜ m₀), ?_, ?_⟩
   · intro τ w
     show Λ (ψ (act τ w)) = _ * Λ (ψ w)

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaPartD
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SecondOnCommonRangeOfSecond
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousHermPart
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaPartD
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SecondOnCommonRangeOfSecond
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousHermPart
+
+@[expose] public section
+
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC GlobalTheory.CompanionTheory.SiegelND
@@ -106,7 +111,8 @@ theorem pairing_tup (V : HSp D) (ψ : AddChar (AF D.host.F) ℂ) (x y : Mx D V.r
   unfold GlobalTheory.IndefiniteRowSideFullHecke.GramMatrixBlocks.pairing GlobalTheory.IndefiniteRowSideFullHecke.GramMatrixBlocks.trA
   rw [GlobalTheory.SiegelWeilLitCompare.gramQ_eq]
   congr 1
-  simp only [BR, Matrix.trace, Matrix.diag, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [BR, Matrix.trace, Matrix.diag, map_sum]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [← hR_tup]
   rfl
@@ -152,17 +158,18 @@ theorem trF_comm (a b : Mx D r r) : trF a b = trF b a := by
 
 theorem trF_add_left (a a' b : Mx D r r) : trF (a + a') b = trF a b + trF a' b := by
   unfold trF
-  rw [Matrix.add_mul, Matrix.trace_add, map_add]
+  rw [Matrix.add_mul, Matrix.trace_add, map_add (f := _)]
 
 theorem trF_add_right (a b b' : Mx D r r) : trF a (b + b') = trF a b + trF a b' := by
   unfold trF
-  rw [Matrix.mul_add, Matrix.trace_add, map_add]
+  rw [Matrix.mul_add, Matrix.trace_add, map_add (f := _)]
 
 theorem trF_adj (a b : Mx D r r) : trF (adj a) (adj b) = trF a b := by
   have h : Matrix.trace (adj a * adj b) = cA D (Matrix.trace (b * a)) := by
     have e : adj a * adj b = adj (b * a) := (adj_mul b a).symm
     rw [e]
-    simp only [Matrix.trace, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.trace, map_sum]
     rfl
   unfold trF
   rw [h, GlobalTheory.DualPairCheck.trace_cA, Matrix.trace_mul_comm]
@@ -234,9 +241,9 @@ theorem pairH_annih {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsCharAF D.host.F ψ
       exact trF_adj _ _
     rw [e, half_add_self]
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem sdHerm_map {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsCharAF D.host.F ψ) {lam : Measure (hermA D r)}
     {𝓖 : Set (hermA D r)} (hl : IsCovolOneH lam 𝓖) :
     SdHerm D.host.F D.host.E D.sp.cm.sig (AF D.host.F) ψ r (lam.map hermTo) := by
@@ -274,9 +281,9 @@ theorem sdHerm_map {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsCharAF D.host.F ψ)
 
 end Herm
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem whit_eq_coefN : ∀ (D : D7) (r : ℕ) (V : HSp D) (ψ : AddChar (AF D.host.F) ℂ), IsCharAF D.host.F ψ →
   ∀ μ : Measure (Mx D V.rank r), (∃ 𝓕, IsCovolOne (ratMx D V.rank r) μ 𝓕) →
   ∀ lam : Measure (hermA D r), (∃ 𝓖, IsCovolOneH lam 𝓖) →

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FiltrationZeroMembership
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnitDetResMat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FiltrationZeroMembership
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnitDetResMat
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,8 @@ theorem exists_matrix_of_span {F B n N : Type} [Field F] [CommRing B] [Algebra F
   choose g hg using hc
   refine ⟨Matrix.of fun e c => g c e, ?_⟩
   intro ψ c i
-  rw [← hg c, Finset.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hg c, Finset.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun e _ => ?_
   rw [Pi.smul_apply, map_smul, Algebra.smul_def, mul_comm, Matrix.of_apply]
 
@@ -148,7 +153,8 @@ theorem abstract {F B R n : Type} [Field F] [CommRing B] [Algebra F B] [CommRing
   have hY : ∀ (i : n) (m : Fin r) (e : n × Fin r), (p * (A₀ : Matrix (n × Fin r) (n × Fin r) B)) (i, m) e =
       (φ ^ (m : ℕ)) (∑ k, w k * (A₀ : Matrix (n × Fin r) (n × Fin r) B) (i, k) e) := by
     intro i m e
-    rw [Matrix.mul_apply, Fintype.sum_prod_type, Finset.sum_comm, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.mul_apply, Fintype.sum_prod_type, Finset.sum_comm, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     simp only [hp, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true, map_mul, hfix _ _ (hA₀ _ _)]
   have hZ : ∀ (i : n) (m : Fin r) (c : n × Fin r), (D * p) (i, m) c = (φ ^ (m : ℕ)) (w c.2 * a c.1 i) := by
@@ -217,7 +223,8 @@ theorem abstract {F B R n : Type} [Field F] [CommRing B] [Algebra F B] [CommRing
     have hyfix : ∀ e : n × Fin r, (φ ^ r) (∑ k, w k * (A₀ : Matrix (n × Fin r) (n × Fin r) B) (i, k) e) =
         ∑ k, w k * (A₀ : Matrix (n × Fin r) (n × Fin r) B) (i, k) e := by
       intro e
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_mul, hw k, hfix _ _ (hA₀ _ _)]
     have h1 := hG (φ ^ r) (j, ⟨0, hr⟩) i

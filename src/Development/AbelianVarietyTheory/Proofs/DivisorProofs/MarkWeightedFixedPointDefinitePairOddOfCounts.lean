@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DPairOneIrr
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.MarkWeightedFixedPointEqDefinitePairOdd
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.FinitelyManyMarkedClassesTermDegreeOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MarkedFieldPairsEquivDefiniteFieldPairsOdd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MarkedRootRealSignatureOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DotConjTransposeMulMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DPairOneIrr
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.MarkWeightedFixedPointEqDefinitePairOdd
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.FinitelyManyMarkedClassesTermDegreeOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MarkedFieldPairsEquivDefiniteFieldPairsOdd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MarkedRootRealSignatureOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DotConjTransposeMulMul
+
+@[expose] public section
 
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount GlobalTheory.LKCx GlobalTheory.LKDef
 open scoped TensorProduct Classical
@@ -55,7 +59,7 @@ theorem markWeightedFixedPoint_definitePair_odd_of_counts : GlobalTheory.LKDef.M
     · refine finsum_congr fun q => ?_
       set P : Pair G := Quot.out q
       by_cases hm : ∃ μ, P.Mark μ
-      · rw [dif_pos hm]
+      · rw [dite_eq_left hm]
         by_cases hi : Irreducible P.pol
         · have hμ := hm.choose_spec
           obtain ⟨j, hj⟩ := (hmem P.pol (hmon _) P.reg.1 _).1 (mark_isRoot_pol p G P _ ha hμ v hv)
@@ -75,7 +79,7 @@ theorem markWeightedFixedPoint_definitePair_odd_of_counts : GlobalTheory.LKDef.M
           · intro h; exact absurd (Finset.mem_univ _) h
         · rw [h0 P hm hi, mul_zero]
           exact (Finset.sum_eq_zero fun i _ => if_neg fun h => hi h.1).symm
-      · rw [dif_neg hm]
+      · rw [dite_eq_right hm]
         exact (Finset.sum_eq_zero fun i _ => if_neg fun h => hm ⟨_, h.2⟩).symm
     · intro i _
       refine hF.subset fun q hq => ?_

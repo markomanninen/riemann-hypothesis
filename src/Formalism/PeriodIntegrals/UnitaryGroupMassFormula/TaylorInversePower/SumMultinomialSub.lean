@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.TayInvPow
+module
+
+public import Formalism.PeriodIntegrals.TayInvPow
+
+@[expose] public section
 
 namespace PI.UnitaryGroupMassFormula.TayInvPow
 
@@ -134,7 +138,8 @@ theorem L_mul_F (c : σ →₀ A) (s t : A) (hst : s * t = 1) (k : ℕ) :
     (C s + c.sum (fun p a => C a * X p)) * F c t (k + 1) = F c t k := by
   classical
   ext β
-  rw [add_mul, map_add, coeff_C_mul, Finsupp.sum, Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [add_mul, map_add (f := _), coeff_C_mul, Finsupp.sum, Finset.sum_mul, map_sum]
   have hterm : ∀ p, coeff β (C (c p) * X p * F c t (k + 1)) =
       if Finsupp.single p 1 ≤ β then c p * cf c t (k + 1) (β - Finsupp.single p 1 : σ →₀ ℕ) else 0 := by
     intro p

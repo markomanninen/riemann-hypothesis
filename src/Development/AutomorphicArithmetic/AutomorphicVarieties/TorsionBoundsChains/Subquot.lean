@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.FaceDSingle
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.FaceDSingle
+
+@[expose] public section
 
 open CategoryTheory UpperTheory.V.KH
 
@@ -27,7 +31,8 @@ theorem UpperTheory.V.KH.subquot :
     · have h1 := Int.emod_nonneg (b.repr z k) hn0.ne'
       have h2 := Int.emod_lt_of_pos (b.repr z k) hn0
       omega
-    · conv_rhs => rw [← b.sum_repr z, map_sum]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        conv_rhs => rw [← b.sum_repr z, map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       have h1 := Int.emod_nonneg (b.repr z k) hn0.ne'
       rw [map_zsmul]

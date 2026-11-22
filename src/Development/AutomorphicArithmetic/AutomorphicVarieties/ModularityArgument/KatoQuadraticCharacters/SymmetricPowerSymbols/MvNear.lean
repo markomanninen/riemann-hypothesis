@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SymmetricPowerSymbols.SymExOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SymmetricPowerSymbols.CycSpec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SymmetricPowerSymbols.ExistsAlgebraicClosureLift
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SymmetricPowerSymbols.SymExOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SymmetricPowerSymbols.CycSpec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SymmetricPowerSymbols.ExistsAlgebraicClosureLift
+
+@[expose] public section
 
 open scoped MatrixGroups Matrix
 open GlobalTheory.KZ GlobalTheory.K4 UpperTheory.V.Z.Kato.Sym
@@ -8,7 +12,8 @@ open GlobalTheory.KZ GlobalTheory.K4 UpperTheory.V.Z.Kato.Sym
 private theorem semi_aeval {K L : Type} [Field K] [Field L] [Algebra K L] (σ : RingAut L) (τ : K ≃+* K)
     (hσ : ∀ f, σ (algebraMap K L f) = algebraMap K L (τ f)) (p : Polynomial K) (hp : ∀ c ∈ p.coeffs, τ c = c) (x : L) :
     σ (Polynomial.aeval x p) = Polynomial.aeval (σ x) p := by
-  rw [Polynomial.aeval_eq_sum_range, Polynomial.aeval_eq_sum_range, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Polynomial.aeval_eq_sum_range, Polynomial.aeval_eq_sum_range, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Algebra.smul_def, Algebra.smul_def, map_mul, map_pow, hσ]
   by_cases h : p.coeff i = 0

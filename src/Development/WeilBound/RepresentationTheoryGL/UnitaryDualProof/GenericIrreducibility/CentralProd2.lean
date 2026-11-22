@@ -1,10 +1,15 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.BernsteinExponentBounds.IsInvForm
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.LUnlinkedComm
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnlinkedCommuteOfIrreducible
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductIrreducibleAppendEquiv
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIrreducibleSecondFactorOfIrreducibleProduct
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.SwapProducts.SwapProd
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.BernsteinZelevinskyGL.TopAdm
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.BernsteinExponentBounds.IsInvForm
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.LUnlinkedComm
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnlinkedCommuteOfIrreducible
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductIrreducibleAppendEquiv
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIrreducibleSecondFactorOfIrreducibleProduct
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.SegmentCuspLines.ProdIrrFiniteLength
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ReverseOrderedProductPermEquiv
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.BernsteinZelevinskyGL.TopAdm
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,16 +25,16 @@ def FactorIrr : Prop :=
     (prod₂ A B).IsIrreducible → A.IsIrreducible ∧ B.IsIrreducible
 
 def Comm2Irr : Prop :=
-  ∀ (x y : IrrGL k) (N : ℕ) (hd : ∑ a, (![x, y] a).1 = N) (hd' : ∑ a, (![y, x] a).1 = N),
+  ∀ (x y : IrrGL (k := k)) (N : ℕ) (hd : ∑ a, (![x, y] a).1 = N) (hd' : ∑ a, (![y, x] a).1 = N),
     (prodIrr ![x, y] hd).IsIrreducible → (prodIrr ![y, x] hd').IsIrreducible
 
 def MoveLast : Prop :=
-  ∀ (h N : ℕ) (x : Fin h → IrrGL k) (hd : ∑ a, (x a).1 = N), (prodIrr x hd).IsIrreducible → ∀ j : Fin h,
-    ∃ (y : IrrGL k) (hd2 : ∑ a, (![y, x j] a).1 = N), Nonempty ((prodIrr x hd).Equiv (prodIrr ![y, x j] hd2))
+  ∀ (h N : ℕ) (x : Fin h → IrrGL (k := k)) (hd : ∑ a, (x a).1 = N), (prodIrr x hd).IsIrreducible → ∀ j : Fin h,
+    ∃ (y : IrrGL (k := k)) (hd2 : ∑ a, (![y, x j] a).1 = N), Nonempty ((prodIrr x hd).Equiv (prodIrr ![y, x j] hd2))
 
 def MoveFirst : Prop :=
-  ∀ (h N : ℕ) (x : Fin h → IrrGL k) (hd : ∑ a, (x a).1 = N), (prodIrr x hd).IsIrreducible → ∀ j : Fin h,
-    ∃ (y : IrrGL k) (hd2 : ∑ a, (![x j, y] a).1 = N), Nonempty ((prodIrr x hd).Equiv (prodIrr ![x j, y] hd2))
+  ∀ (h N : ℕ) (x : Fin h → IrrGL (k := k)) (hd : ∑ a, (x a).1 = N), (prodIrr x hd).IsIrreducible → ∀ j : Fin h,
+    ∃ (y : IrrGL (k := k)) (hd2 : ∑ a, (![x j, y] a).1 = N), Nonempty ((prodIrr x hd).Equiv (prodIrr ![x j, y] hd2))
 
 def ThetaProd : Prop :=
   ∀ (r t : ℕ) (V W : Type) [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
@@ -44,7 +49,7 @@ def ThetaFacts : Prop :=
     HasCentralChar π ω → HasCentralChar (π.comp (Zc.Cos.thetaW k N)) ω⁻¹
 
 def CentralProd2 : Prop :=
-  ∀ (x y : IrrGL k) (N : ℕ) (hd : ∑ a, (![x, y] a).1 = N) (ω ω' : kˣ →* ℂˣ), HasCentralChar x.rep ω →
+  ∀ (x y : IrrGL (k := k)) (N : ℕ) (hd : ∑ a, (![x, y] a).1 = N) (ω ω' : kˣ →* ℂˣ), HasCentralChar x.rep ω →
     HasCentralChar y.rep ω' → HasCentralChar (prodIrr ![x, y] hd) (ω * ω')
 
 end PositivityTheory.RgUd.Exp

@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.GrowthOfBasic
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.DetFactsPAlt
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.MemInvariantSectionsIffIntegral
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideFinal
-import Formalism.LocalToGlobal.GroupLattices.FockModels.WeylDim
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.GrowthOfBasic
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.DetFactsPAlt
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.MemInvariantSectionsIffIntegral
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideFinal
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.WeylDim
+
+@[expose] public section
 
 noncomputable section
 

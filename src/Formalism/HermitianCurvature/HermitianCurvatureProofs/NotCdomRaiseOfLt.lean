@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowKAllPos
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowKAllPos
+
+@[expose] public section
 
 open Matrix Finset
 

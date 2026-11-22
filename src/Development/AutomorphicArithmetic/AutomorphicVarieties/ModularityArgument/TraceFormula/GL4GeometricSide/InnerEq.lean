@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.ThetaFixedGlobalCharacter
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.HarmTop
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.ClozelCohomologicalOf
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.ThetaFixedGlobalCharacter
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.ExpansionTerms
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.ClozelCohomologicalOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -119,11 +123,6 @@ def AbsGlob : Prop :=
         (∀ x, ((univ : Finset ι).toList.map P).prod x ∈ (⨅ i, isoSp (σ i) (E i) : Submodule ℂ U)) ∧
         ∀ j, trOn (⨅ i, isoSp (σ i) (E i)) (((univ : Finset ι).toList.map P).prod * R j * Θ) = c * trOn Y (R j * Θ)
 
-def DiracP : Prop :=
-  ∀ (n : ℕ) (lam : Fin n → ℤ), Antitone lam → ∀ (V : Type) [NormedAddCommGroup V] [InnerProductSpace ℂ V]
-    (E1 E2 : Fin n → Fin n → Module.End ℂ V) (σ : Un n →* (V →ₗ[ℂ] V)) (A : V →ₗ[ℂ] V), IsLoc (infOf lam) E1 E2 σ A →
-      ∀ ν : Fin n → ℝ, hwSp E1 E2 ν ≠ ⊥ → LSq lam ≤ spinSq ν
-
 def LowIso : Prop :=
   ∀ (n : ℕ) (lam : Fin n → ℤ), Antitone lam → ∀ (E : KMod n) (T : E.V →L[ℂ] E.V), IsLefK lam E T →
     ∀ (V : Type) [NormedAddCommGroup V] [InnerProductSpace ℂ V] (E1 E2 : Fin n → Fin n → Module.End ℂ V)
@@ -230,8 +229,8 @@ def LocAct : Prop := ForRl fun _ _ _ _ n π _ _ _ D => ∀ w lam, ChAt π w lam 
     (P : Module.End ℂ D.U), IsAvg ν (D.σ w) M T P → ∀ k val T', IsMult μC M k val T' → ∀ u g,
       ∫ y : G n, phiOf M T k y * along w g (D.i u).1.1 y.val ∂μC = val (infOf lam) * (D.i (P u)).1.1 g
 
-attribute [local instance] PositivityTheory.Rg.BcB.E.borelH in
 
+attribute [local instance] PositivityTheory.Rg.BcB.E.borelH in
 def OpForm : Prop := ForRl fun E _ _ _ n π K _ μf D => ∀ lam : InfinitePlace E → Fin n → ℤ, (∀ w, ChAt π w (lam w)) →
   ∀ [MeasurableSpace (Un n)] [BorelSpace (Un n)] (ν : Measure (Un n)) [ν.IsHaarMeasure], ν Set.univ = 1 →
   ∀ [MeasurableSpace (G n)] [BorelSpace (G n)] (μC : Measure (G n)) [μC.IsHaarMeasure]

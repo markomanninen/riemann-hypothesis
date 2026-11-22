@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.HermitianForms.RankEqFirstLevel
+module
+
+public import Formalism.LocalToGlobal.HermitianForms.RankEqFirstLevel
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,26 +49,11 @@ def lv : ∀ (i : ℕ) (hi : i ≤ D.R.m), i = 0 → LvTied u T.atT i hi
 def fMe : ∀ (i : ℕ) (hi : i ≤ D.R.m) (h : i = 0) v, (T.cls i hi h).lev.fM (T.atT.eV v).1 (T.atT.eV v).2 ≃+ (D.mem u).A.Fv v
   | 0, _, _ => T.fMe0
 
-theorem fv : ∀ (i : ℕ) (hi : i ≤ D.R.m) (h : i = 0), FvTie (T.lv i hi h) (T.cls i hi h) (T.fMe i hi h)
-  | 0, _, _ => T.fv0
-
-theorem upN : ∀ (i : ℕ) (hi : i ≤ D.R.m) (h : i = 0), UpNatTie (T.lv i hi h) (T.cls i hi h) (T.val i hi h)
-  | 0, _, _ => T.up_natural_level_zero
-
-theorem dnN : ∀ (i : ℕ) (hi : i ≤ D.R.m) (h : i = 0), DnNatTie (T.lv i hi h) (T.cls i hi h) (T.val i hi h)
-  | 0, _, _ => T.down_natural_level_zero
-
 theorem norm : ∀ (i : ℕ) (hi : i ≤ D.R.m) (h : i = 0), NormTie (T.val i hi h)
   | 0, _, _ => T.norm0
 
 theorem bw : ∀ (i : ℕ) (hi : i ≤ D.R.m) (h : i = 0), BwTie T.atT (T.val i hi h)
   | 0, _, _ => T.bw0
-
-theorem cls_zero : T.cls 0 (Nat.zero_le _) rfl = T.cls0 := rfl
-
-theorem val_zero : T.val 0 (Nat.zero_le _) rfl = T.val0 := rfl
-
-theorem lv_zero : T.lv 0 (Nat.zero_le _) rfl = T.lv0 := rfl
 
 end Forms0
 
@@ -95,8 +84,5 @@ def Joint0 {D : D7} (L0 : LevelData D) (u : D.what₂.Word) (T : Forms0 D u) : P
   SameCar (rank_eq_first_level D.R) (L0 u).Lb T.cls0.lev.Lb (L0 u).Uloc T.cls0.lev.Uloc (L0 u).U T.cls0.lev.U
     (fun c => ((L0 u).y c).1) (fun c => (T.cls0.y c).1)
     (fun c s => ((L0 u).stabI c s).1) (fun c s => (T.cls0.stabI c s).1)
-
-theorem Joint.to0 {D : D7} {X : Formalism.L2.Herm.ColsHerm D} {u : D.what₂.Word} {T : FormsTied D u} (h : Joint X u T) :
-    Joint0 X.base.lev0 u T.to0 := h.car0
 
 end Formalism.L2.Forms

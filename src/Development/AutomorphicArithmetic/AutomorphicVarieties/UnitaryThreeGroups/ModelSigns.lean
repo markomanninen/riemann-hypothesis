@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.Rigid0
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ConjTor
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.Rigid0
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ConjTor
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.HV
 
@@ -41,7 +45,7 @@ private theorem exists_rho {f : R →ₐ[O] K} (hf : IsLocPt f) :
     | zero => intro x; simp
     | add a b _ _ ha hb =>
       intro x
-      rw [mul_add, map_add]
+      rw [mul_add, map_add (f := _)]
       exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (ha x) (hb x))
     | smul a b _ hb =>
       intro x
@@ -62,7 +66,7 @@ private theorem exists_pow {f : R →ₐ[O] K} (hf : IsLocPt f) {ε : ℝ} (hε 
       refine Submodule.mul_induction_on hz (fun a ha b hb => ?_) (fun a b ha hb => ?_)
       · rw [map_mul, norm_mul, pow_succ]
         exact mul_le_mul (ih a ha) (h b hb) (norm_nonneg _) (pow_nonneg h0 _)
-      · rw [map_add]
+      · rw [map_add (f := _)]
         exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ha hb)
   obtain ⟨n, hn⟩ := exists_pow_lt_of_lt_one hε h1
   exact ⟨n + 1, fun z hz => (key n z hz).trans_lt
@@ -76,7 +80,7 @@ private theorem eq_of_dense {f f' : R →ₐ[O] K} (hf : IsLocPt f) (hf' : IsLoc
     induction hy using Submodule.span_induction with
     | mem z hz => exact hT z hz
     | zero => simp
-    | add a b _ _ ha hb => rw [map_add, map_add, ha, hb, mul_add]
+    | add a b _ _ ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, mul_add]
     | smul a b _ hb => rw [map_smul, map_smul, hb, mul_smul_comm]
   rw [← sub_eq_zero, ← norm_le_zero_iff]
   refine le_of_forall_pos_le_add fun ε hε => ?_
@@ -101,7 +105,7 @@ section Mon
 
 variable {O R K Γ : Type} [CommRing O] [CommRing R] [Algebra O R] [Field K] [Algebra O K] [Group Γ]
 
-private theorem mon_zero (r : Γ →* GG 3 R) (f : R →ₐ[O] K) (e : ℤ)
+private theorem mon_zero (r : Γ →* GG (m := 3) (R := R)) (f : R →ₐ[O] K) (e : ℤ)
     (h : ∀ g a b, e * wt a b < 0 → f ((r g).mat a b) = 0) (j : ℤ) (hj : e * j < 0) :
     ∀ y ∈ entMon r j, f y = 0 := by
   rintro y ⟨L, rfl, rfl⟩
@@ -114,7 +118,7 @@ private theorem mon_zero (r : Γ →* GG 3 R) (f : R →ₐ[O] K) (e : ℤ)
     · rw [h _ _ _ hs, zero_mul]
     · rw [ih (by omega), mul_zero]
 
-private theorem mon_tor (r : Γ →* GG 3 R) (f f' : R →ₐ[O] K) (t : Kˣ)
+private theorem mon_tor (r : Γ →* GG (m := 3) (R := R)) (f f' : R →ₐ[O] K) (t : Kˣ)
     (h : ∀ g a b, f' ((r g).mat a b) = ((t ^ wt a b : Kˣ) : K) * f ((r g).mat a b)) (j : ℤ) :
     ∀ y ∈ entMon r j, f' y = ((t ^ j : Kˣ) : K) * f y := by
   rintro y ⟨L, rfl, rfl⟩
@@ -125,7 +129,7 @@ private theorem mon_tor (r : Γ →* GG 3 R) (f f' : R →ₐ[O] K) (t : Kˣ)
       Units.val_mul]
     ring
 
-private theorem mat_ker (η : Γ →* ℤˣ) (r : Γ →* GG 3 R) (c : Γ) (hc : η c = -1) (h1 : (r c).mat = 1) (g : Γ) :
+private theorem mat_ker (η : Γ →* ℤˣ) (r : Γ →* GG (m := 3) (R := R)) (c : Γ) (hc : η c = -1) (h1 : (r c).mat = 1) (g : Γ) :
     ∃ g' ∈ η.ker, (r g).mat = (r g').mat := by
   rcases Int.units_eq_one_or (η g) with h | h
   · exact ⟨g, h, rfl⟩
@@ -180,7 +184,7 @@ theorem UpperTheory.V.U3.model_signs :
     refine AlgHom.ext fun x => ?_
     induction x using DirectSum.Decomposition.inductionOn M.𝒜 with
     | zero => rw [map_zero, map_zero]
-    | add a b ha hb => rw [map_add, map_add, ha, hb]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
     | @homogeneous j x =>
       rw [act_of_mem M.𝒜 _ _ x.2]
       exact eq_of_dense hf hf' _ (M.q x) (entMon S.r.hom j) (mon_tor _ f f' t h' j) (M.dense j x x.2)

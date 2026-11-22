@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSupercuspidalOfIsCuspidal
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnitDiagOfLower
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSupercuspidalOfIsCuspidal
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnitDiagOfLower
+
+@[expose] public section
 
 open Polynomial ValuativeRel
 

@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -13,6 +18,6 @@ theorem lam_symm_nat_add : ∀ (K : Type) [Field K] (A B : AbVar K) (c c' : Pic 
   · rw [AbVar.lam_eq, AbVar.lam_eq]; exact CechPic.lam_comm c x y
   · rw [AbVar.lam_eq, AbVar.lam_eq]; exact CechPic.pull_lam u c x y
   · rw [AbVar.lam_eq, AbVar.lam_eq]; exact (CechPic.lam_pull f.hom d x y).symm
-  · simp only [AbVar.lam, map_add]; abel
+  · simp only [AbVar.lam, map_add (f := _)]; abel
 
 end GlobalTheory.AV

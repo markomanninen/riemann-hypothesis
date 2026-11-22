@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount
 open scoped TensorProduct Classical
 
@@ -27,27 +32,27 @@ theorem finsum_dc_translate {G : Type} [Group G] (H H' K : Subgroup G) (a : G)
       ∑ᶠ q : DoubleCoset.Quotient (H : Set G) (K : Set G), F (Quotient.out q) := by
   have key : ∀ x, F' (Quotient.out (DoubleCoset.mk H' K (a * x))) = F x := by
     intro x
-    obtain ⟨h', hh', k, hk, he⟩ := (DoubleCoset.eq H' K _ _).1
-      (DoubleCoset.out_eq' H' K (DoubleCoset.mk H' K (a * x))).symm
+    obtain ⟨h', hh', k, hk, he⟩ := (@DoubleCoset.eq _ _ H' K _ _).1
+      (DoubleCoset.out_eq' (DoubleCoset.mk H' K (a * x))).symm
     rw [he]
     have : h' * (a * x) * k = a * ((a⁻¹ * h' * a) * x * k) := by group
     rw [this, hF', hF _ (hH' _ hh') _ hk]
   refine (finsum_eq_of_bijective (fun q : DoubleCoset.Quotient (H : Set G) (K : Set G) =>
     DoubleCoset.mk H' K (a * Quotient.out q)) ⟨?_, ?_⟩ (fun q => (key _).symm)).symm
   · intro q₁ q₂ h
-    obtain ⟨h', hh', k, hk, he⟩ := (DoubleCoset.eq H' K _ _).1 h
-    rw [← DoubleCoset.out_eq' H K q₁, ← DoubleCoset.out_eq' H K q₂]
-    refine (DoubleCoset.eq H K _ _).2 ⟨a⁻¹ * h' * a, hH' _ hh', k, hk, ?_⟩
+    obtain ⟨h', hh', k, hk, he⟩ := (@DoubleCoset.eq _ _ H' K _ _).1 h
+    rw [← DoubleCoset.out_eq' q₁, ← DoubleCoset.out_eq' q₂]
+    refine (@DoubleCoset.eq _ _ H K _ _).2 ⟨a⁻¹ * h' * a, hH' _ hh', k, hk, ?_⟩
     have : Quotient.out q₂ = a⁻¹ * (a * Quotient.out q₂) := by group
     rw [this, he]; group
   · intro q'
     refine ⟨DoubleCoset.mk H K (a⁻¹ * Quotient.out q'), ?_⟩
-    obtain ⟨h, hh, k, hk, he⟩ := (DoubleCoset.eq H K _ _).1
-      (DoubleCoset.out_eq' H K (DoubleCoset.mk H K (a⁻¹ * Quotient.out q'))).symm
+    obtain ⟨h, hh, k, hk, he⟩ := (@DoubleCoset.eq _ _ H K _ _).1
+      (DoubleCoset.out_eq' (DoubleCoset.mk H K (a⁻¹ * Quotient.out q'))).symm
     simp only
     rw [he]
-    conv_rhs => rw [← DoubleCoset.out_eq' H' K q']
-    exact (DoubleCoset.eq H' K _ _).2 ⟨(a * h * a⁻¹)⁻¹, H'.inv_mem (hH _ hh), k⁻¹, K.inv_mem hk, by group⟩
+    conv_rhs => rw [← DoubleCoset.out_eq' q']
+    exact (@DoubleCoset.eq _ _ H' K _ _).2 ⟨(a * h * a⁻¹)⁻¹, H'.inv_mem (hH _ hh), k⁻¹, K.inv_mem hk, by group⟩
 
 end GlobalTheory.PointSumConj
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -66,7 +70,8 @@ theorem exists_rat_intertwiner {ι J : Type*} [Fintype ι] [DecidableEq ι]
     intro t
     ext a b
     rw [AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply]
-    rw [hMx, Matrix.of_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hMx, Matrix.of_apply, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_mul, MvPolynomial.aeval_X, MvPolynomial.aeval_C]
   have hPof : P = Matrix.of fun a b => ∑ k, (c k : ℝ) * algebraMap ℚ ℝ (Bm k a b) := by
@@ -92,7 +97,8 @@ theorem exists_rat_intertwiner {ι J : Type*} [Fintype ι] [DecidableEq ι]
     have hevq : (MvPolynomial.eval q).mapMatrix Mx =
         Matrix.of fun a b => ∑ k, q k * algebraMap ℚ ℚ (Bm k a b) := by
       ext a b
-      rw [RingHom.mapMatrix_apply, Matrix.map_apply, hMx, Matrix.of_apply, Matrix.of_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [RingHom.mapMatrix_apply, Matrix.map_apply, hMx, Matrix.of_apply, Matrix.of_apply,
         map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_mul, MvPolynomial.eval_X, MvPolynomial.eval_C, Algebra.algebraMap_self,

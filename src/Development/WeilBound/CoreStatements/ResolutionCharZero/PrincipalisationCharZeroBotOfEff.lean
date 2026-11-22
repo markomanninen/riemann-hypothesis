@@ -1,13 +1,17 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Statements
-import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.NotSubsetOfDenseCompl
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupCoproduct
-import Development.WeilBound.CoreStatements.ResolutionCharZero.SupportStrictTransformUnion
-import Development.ResolutionOfSingularities.HasSimpleNormalCrossingsOfInStrictNormalCrossing
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PrincipalisationOfCharZero
-import Development.WeilBound.CoreStatements.ResolutionCharZero.ExistsFinsetComapProdIdealEqSpanProdCoord
-import Development.WeilBound.CoreStatements.ResolutionCharZero.FromResIso
-import Development.WeilBound.CoreStatements.ResolutionCharZero.FromResSnc
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Statements
+public import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.NotSubsetOfDenseCompl
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupCoproduct
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.SupportStrictTransformUnion
+public import Development.ResolutionOfSingularities.HasSimpleNormalCrossingsOfInStrictNormalCrossing
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PrincipalisationOfCharZero
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.ExistsFinsetComapProdIdealEqSpanProdCoord
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.FromResIso
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.FromResSnc
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,8 +50,6 @@ end PositivityTheory.ResPlug.WeightsCompactStabilizer
 namespace PositivityTheory.ResPlug.WeightsCompactStabilizer
 
 open GlobalTheory.CompanionTheory.Hypotheses₂ GlobalTheory.CompanionTheory.Hypotheses₂.SncBlowup FunctorialResolution
-
-example (k : Type) [Field k] : Sp k = Spec (CommRingCat.of k) := rfl
 
 theorem isIso_structMap_zero {X : Scheme.{0}} (s : BlowupSequence X) : IsIso (s.structMap 0) := by
   have : IsIso (s.down (le_refl 0)) := by

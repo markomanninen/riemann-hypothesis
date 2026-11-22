@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.LocalNormGroups
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.LocalNormGroups
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -12,9 +16,9 @@ namespace IdeleNorm
 
 variable {K : Type*} [Field K] [NumberField K] {L : Type*} [Field L] [NumberField L] [Algebra K L]
 
+
 attribute [local instance] FractionRing.liftAlgebra in
 variable (K L) in
-
 theorem eventually_ramificationIdx_eq_one :
     ∀ᶠ w : HeightOneSpectrum (𝓞 L) in cofinite, w.asIdeal.ramificationIdx (𝓞 K) = 1 := by
   rw [eventually_cofinite]
@@ -42,8 +46,8 @@ theorem map_integerUnitsOver_eq_of_ramificationIdx_eq_one (v : HeightOneSpectrum
   · rw [finiteLocalNorm_mulSingle]
     exact Units.ext hyu
 
-variable (L) in
 
+variable (L) in
 theorem eventually_map_integerUnitsOver_eq :
     ∀ᶠ v : HeightOneSpectrum (𝓞 K) in cofinite,
       (integerUnitsOver L v).map (finiteLocalNorm L v) =
@@ -53,8 +57,8 @@ theorem eventually_map_integerUnitsOver_eq :
   obtain ⟨w⟩ := nonempty_placesOver L v
   exact map_integerUnitsOver_eq_of_ramificationIdx_eq_one v w (hv w)
 
-variable (L) in
 
+variable (L) in
 theorem mem_range_ideleNorm_iff_forall (x : IdeleGroup K) :
     x ∈ (ideleNorm K L).range ↔
       (∀ v, IdeleGroup.finiteProj v x ∈ (finiteLocalNorm L v).range) ∧

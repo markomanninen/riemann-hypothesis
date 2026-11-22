@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField IsDedekindDomain TensorProduct Polynomial
 
 namespace GlobalTheory
@@ -58,7 +63,7 @@ theorem exists_tensor_idem_of_algHom (E K E' : Type) [Field E] [CharZero E] [Fie
   have Qadd : ∀ a b, Q a → Q b → Q (a + b) := by
     intro a b ha hb
     show e * (a + b) = algebraMap K A (ψ (a + b)) * e
-    rw [map_add, map_add, mul_add, ha, hb, add_mul]
+    rw [map_add (f := _), map_add (f := _), mul_add, ha, hb, add_mul]
   have Qalg : ∀ k : K, Q (algebraMap K A k) := by
     intro k
     show e * algebraMap K A k = algebraMap K A (ψ (algebraMap K A k)) * e
@@ -74,7 +79,7 @@ theorem exists_tensor_idem_of_algHom (E K E' : Type) [Field E] [CharZero E] [Fie
           = algebraMap K A (algebraMap E K r) := by
         rw [AlgHom.commutes, IsScalarTower.algebraMap_apply E K A]
       rw [this]; exact Qalg _
-    | add y z _ _ hy hz => rw [map_add]; exact Qadd _ _ hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _)]; exact Qadd _ _ hy hz
     | mul y z _ _ hy hz => rw [map_mul]; exact Qmul _ _ hy hz
   refine ⟨e, hψe, fun a => ?_⟩
   induction a using TensorProduct.induction_on with

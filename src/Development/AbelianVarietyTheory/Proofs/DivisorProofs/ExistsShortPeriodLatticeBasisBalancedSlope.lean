@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PolyBetween
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LocalValuationColumns
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasPhiExistsExtAndUnique
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsMulEqSmulOne
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GramSpace
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExistsRosatiGen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PolyBetween
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LocalValuationColumns
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasPhiExistsExtAndUnique
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsMulEqSmulOne
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GramSpace
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExistsRosatiGen
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory NumberField IsLocalRing IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj ReciprocityTheory.PGsh
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.DVR ReciprocityTheory.ChartRestriction.G.DVR.QForm Formalism.MainNotions.ModuliIntegralCharts.H1
@@ -31,9 +35,9 @@ theorem exists_shortBasis : ∀ (E : Type) [Field E] [NumberField E] [IsCMField 
     rw [← H.bar_eq, HostModel.bar_rt]; simp
   have hw : (H.w0 : E) + IsCMField.complexConj E (H.w0 : E) = 1 := by
     have h2 : (2 : E) * (H.w0 : E) = 1 + (H.rt : E) := by
-      simpa only [map_mul, map_add, map_one, map_ofNat] using congrArg (algebraMap (𝓞 E) E) H.two_weight_eq_one_add_root
+      simpa only [map_mul, map_add (f := _), map_one, map_ofNat] using congrArg (algebraMap (𝓞 E) E) H.two_weight_eq_one_add_root
     have h3 := congrArg (IsCMField.complexConj E) h2
-    rw [map_mul, map_add, map_one, map_ofNat, hrt] at h3
+    rw [map_mul, map_add (f := _), map_one, map_ofNat, hrt] at h3
     linear_combination (h2 + h3) / 2
   have hne : ∃ z : E, IsCMField.complexConj E z ≠ z := by
     by_contra! h

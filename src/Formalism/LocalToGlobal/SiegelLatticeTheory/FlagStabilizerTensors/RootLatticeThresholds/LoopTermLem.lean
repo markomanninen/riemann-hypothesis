@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LocWSOf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HermitianETransportInvariant
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHAlg
-import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LocWSOf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HermitianETransportInvariant
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHAlg
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,6 @@ open Matrix MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotio
 namespace Formalism.L2.SG.Pf.LTL
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-def pt0 (D : D7) : Point ℂ (D.R.rS + 1) := ⟨[(1, D.R.rS + 1)], by simp, by simp⟩
 
 section Lemmas
 
@@ -104,14 +106,14 @@ theorem Q_fvec (u : D.what₂.Word) (τ : D.what₂.Tau) (a : Fin (D.R.rS + 1)) 
       simp only [Formalism.MainNotions.S.FlagG.fvec, Fin.snoc_castSucc]
       exact congrFun (X.Fu_e u) _
     rw [← ha] at h2
-    rw [h2, ← frS_pow D a h, Formalism.QuantumDeterminants.fvec, dif_pos h, Formalism.QuantumDeterminants.bvec, h1]
+    rw [h2, ← frS_pow D a h, Formalism.QuantumDeterminants.fvec, dite_eq_left h, Formalism.QuantumDeterminants.bvec, h1]
     rfl
   · have ha : a = Fin.last D.R.rS := Fin.ext (by have := a.isLt; simp; omega)
     subst ha
     have h3 : (X.Fu u).fvec (Fin.last D.R.rS) = X.zu u := by
       simp only [Formalism.MainNotions.S.FlagG.fvec, Fin.snoc_last]
       exact X.flagZVector u
-    rw [h3, rhoF_last, Formalism.QuantumDeterminants.fvec, dif_neg h]
+    rw [h3, rhoF_last, Formalism.QuantumDeterminants.fvec, dite_eq_right h]
     simp only [zB, Complex.ofReal_one, one_smul]
     rw [Matrix.mulVec_mulVec, hQQi, Matrix.one_mulVec]
     rfl

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HbApply
-import Formalism.SharpRestriction.CuspSpanNormBounds.KappaEndpoints
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HbApply
+public import Formalism.SharpRestriction.CuspSpanNormBounds.KappaEndpoints
+
+@[expose] public section
+
 open scoped Classical ENNReal Pointwise
 open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full
   Formalism.L2.SG.LocWSOf Formalism.MainNotions.S.Cnt Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.LatticeGluingRadicals
@@ -18,7 +23,8 @@ theorem eq_zero_of_mem_span_eX (X : HidaSetting D) (w : (VS D).V)
   have hc : ∀ b, c b = 0 := by
     intro b
     have h := hf b
-    simp only [map_sum, map_smul, smul_eq_mul] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul] at h
     have hfe : ∀ a, (VS D).hT (X.fY b) (X.eX a) = if a = b then 1 else 0 := by
       intro a
       rw [a_herm, X.ef a b]

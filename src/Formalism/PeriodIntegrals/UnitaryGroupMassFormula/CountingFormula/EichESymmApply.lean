@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.EichLApply
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.EichLApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -108,8 +112,8 @@ theorem eichE_mem (D : Formalism.BasicNotions.D7) {T : D.host.E} (F0 : FlagG (VS
       obtain ⟨c, rfl⟩ := hx
       exact ⟨fun b => D.sp.hyp_ee b c, by rw [← (VS D).herm.eq (D.sp.hypE c) y0, hy.1 c, map_zero]⟩
     | zero => simp
-    | add x z _ _ hx hz => exact ⟨fun b => by rw [map_add, hx.1 b, hz.1 b, add_zero], by
-        rw [map_add, hx.2, hz.2, add_zero]⟩
+    | add x z _ _ hx hz => exact ⟨fun b => by rw [map_add (f := _), hx.1 b, hz.1 b, add_zero], by
+        rw [map_add (f := _), hx.2, hz.2, add_zero]⟩
     | smul c x _ hx => exact ⟨fun b => by rw [map_smul, hx.1 b, smul_zero], by
         rw [map_smul, hx.2, smul_zero]⟩
   have hspan : ∀ x ∈ Submodule.span D.host.E (Set.range D.sp.hypE), eichE D a y0 hy x = x := by

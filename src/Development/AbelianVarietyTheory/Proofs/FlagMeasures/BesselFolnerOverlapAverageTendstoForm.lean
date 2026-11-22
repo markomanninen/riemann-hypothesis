@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselFormConvergesEquivariantHermitianStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FolnerSingleTranslateProportionTendstoOneStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselFormConvergesEquivariantHermitianStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FolnerSingleTranslateProportionTendstoOneStatement
+
+@[expose] public section
+
 open MeasureTheory Matrix Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf
 open scoped InnerProductSpace
 
@@ -30,7 +35,7 @@ theorem DD_stable {k r : ℕ} {H : Type} [NormedAddCommGroup H] [InnerProductSpa
     rw [h2]
     exact mem_DD σ w (mul_mem_GG hg hg')
   | zero => simp
-  | add x y hx hy ihx ihy => rw [map_add]; exact (DD σ w).add_mem (ihx hx) (ihy hy)
+  | add x y hx hy ihx ihy => rw [map_add (f := _)]; exact (DD σ w).add_mem (ihx hx) (ihy hy)
   | smul c x hx ih => rw [map_smul]; exact (DD σ w).smul_mem c (ih hx)
 
 theorem measurable_overlap {k r : ℕ} (μ : Measure (Mt k r)) [SFinite μ] {Ω : Set (Mt k r)}

@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations
 
 namespace GlobalTheory.Per
 
-open PowerSeries in
 
+open PowerSeries in
 theorem exists_div_X_sub_C {O : Type} [CommRing O] [IsLocalRing O]
     [IsAdicComplete (IsLocalRing.maximalIdeal O) O] (x : O) (hx : ¬ IsUnit x) (a : PowerSeries O) :
     ∃ (b : PowerSeries O) (c : O), a = (PowerSeries.X - PowerSeries.C x) * b + PowerSeries.C c := by
@@ -45,7 +49,7 @@ theorem X_dvd_ev_iff (hinj : Function.Injective (algebraMap O L)) {x : O} (hx : 
   constructor
   · intro h
     obtain ⟨b, c, rfl⟩ := exists_div_X_sub_C x hx a
-    rw [map_add, map_mul, hXev, ev_C] at h
+    rw [map_add (f := _), map_mul, hXev, ev_C] at h
     have h2 : PowerSeries.X ∣ PowerSeries.C (algebraMap O L c) :=
       (dvd_add_right (dvd_mul_of_dvd_left (dvd_mul_right _ _) _)).1 h
     rw [PowerSeries.X_dvd_iff, PowerSeries.constantCoeff_C] at h2

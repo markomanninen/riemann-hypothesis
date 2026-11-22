@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.EigInert
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.EigInert
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,8 @@ theorem fixSub_open [TopologicalSpace H] (ρ : Representation ℂ H V)
 theorem avg_left (ρ : Representation ℂ H V) (S : Subgroup H) [Fintype (H ⧸ S)] (z : V)
     (hz : ∀ h ∈ S, ρ h z = z) (j : H) :
     ρ j (∑ r : H ⧸ S, ρ r.out z) = ∑ r : H ⧸ S, ρ r.out z := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Fintype.sum_equiv (MulAction.toPerm j) _ _ (fun r => ?_)
   obtain ⟨s, hs⟩ := QuotientGroup.mk_out_eq_mul S (j * r.out)
   have e : (MulAction.toPerm j r : H ⧸ S) = (QuotientGroup.mk (j * r.out) : H ⧸ S) := by
@@ -76,7 +81,8 @@ theorem sep_span [TopologicalSpace H] [IsTopologicalGroup H] [CompactSpace H]
     (mem_fixSub ρ _ h).1 (Subgroup.normalCore_le _ hh) (v i) ⟨i, rfl⟩
   have h0 : ∑ r : H ⧸ (fixSub ρ (Set.range v)).normalCore, ρ r.out w = 0 := by
     rw [← hg]
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
     rw [Finset.sum_comm]
     refine Finset.sum_eq_zero (fun i _ => ?_)
     rw [← Finset.smul_sum, hjv i]
@@ -206,7 +212,8 @@ theorem key [TopologicalSpace G] [IsTopologicalGroup G] (ρ : Representation ℂ
   have hφ : ∀ φ : Module.Dual ℂ V, (∀ h, φ ∘ₗ ρJ h = φ) →
       φ (∑ r : J ⧸ Dsub J t, ρJ r.out (ρ t y) - Fintype.card (J ⧸ Dsub J t) • (U y : V)) = 0 := by
     intro φ hφ
-    rw [map_sub, map_nsmul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_nsmul, map_sum]
     have e1 : ∀ r : J ⧸ Dsub J t, φ (ρJ r.out (ρ t y)) = φ (ρ t y) := fun r => by
       rw [← LinearMap.comp_apply, hφ]
     simp only [e1, Finset.sum_const, Finset.card_univ]

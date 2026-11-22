@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DimFormC
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.PairBdNonneg
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MomAllP
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ConstC
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowsMeanC
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DimFormC
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.PairBdNonneg
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MomAllP
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ConstC
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowsMeanC
+
+@[expose] public section
 
 noncomputable section
 open scoped Classical ENNReal Pointwise

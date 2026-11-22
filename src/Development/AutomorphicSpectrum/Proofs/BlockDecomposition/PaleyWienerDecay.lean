@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.CalcSteps
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FunctionalCalculusCurve
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.CalcSteps
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FunctionalCalculusCurve
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,6 @@ open scoped ZeroAtInfty ContDiff
 namespace GlobalTheory.CompanionTheory.WaveCurve.Decay
 
 open PositivityTheory.RgBcC PositivityTheory.RgBcC.Fc GlobalTheory.CompanionTheory.WaveCurve
-
-local notation "sg(" y ")" => (((y : ℝ) : ℂ) ^ (1 / 2 : ℂ))
 
 def ct (φ : ℝ → ℝ) (y : ℝ) : ℂ := ∫ t, (φ t : ℂ) * chj 0 t y
 
@@ -27,14 +29,14 @@ lemma Tst.cs {φ : ℝ → ℝ} (h : Tst φ) : HasCompactSupport fun t => (φ t 
   h.2.comp_left Complex.ofReal_zero
 
 lemma chj_add_two (j : ℕ) (t y : ℝ) : chj (j + 2) t y = (y : ℂ) * chj j t y := by
-  have h : (sg(y)) ^ 2 = (y : ℂ) := by
-    simpa using Complex.cpow_nat_inv_pow (y : ℂ) (n := 2) (by norm_num)
+  have h : ((y : ℂ) ^ (1 / 2 : ℂ)) ^ 2 = (y : ℂ) := by
+    simp [one_div]
   have hp : Even (j + 2) ↔ Even j := by simp [Nat.even_add]
   unfold chj
   simp only [hp, pow_add, h]
   ring
 
-lemma chj_zero (t y : ℝ) : chj 0 t y = Complex.cosh ((t : ℂ) * sg(y)) := by
+lemma chj_zero (t y : ℝ) : chj 0 t y = Complex.cosh ((t : ℂ) * (y : ℂ) ^ (1 / 2 : ℂ)) := by
   simp [chj]
 
 lemma chj_cont (j : ℕ) (y : ℝ) : Continuous fun t => chj j t y :=
@@ -73,9 +75,11 @@ lemma ct_pow (m : ℕ) {φ : ℝ → ℝ} (h : Tst φ) :
 
 lemma ct_continuous {φ : ℝ → ℝ} (h : Tst φ) : Continuous (ct φ) := by
   have hc : Continuous fun p : ℝ × ℝ => chj 0 p.2 p.1 := by
+    have hs : Continuous fun y : ℝ => (y : ℂ) ^ (1 / 2 : ℂ) :=
+      Complex.continuous_ofReal_cpow_const (by norm_num [Complex.div_re])
     simp only [chj_zero]
     exact Complex.continuous_cosh.comp ((Complex.continuous_ofReal.comp continuous_snd).mul
-      (sg_continuous.comp continuous_fst))
+      (hs.comp continuous_fst))
   have hf : Continuous (Function.uncurry fun (y t : ℝ) => (φ t : ℂ) * chj 0 t y) :=
     (h.cont.comp continuous_snd).mul hc
   have := continuous_parametric_integral_of_continuous (μ := volume) hf h.2
@@ -97,9 +101,28 @@ lemma ct_bound (c : ℝ) {φ : ℝ → ℝ} (h : Tst φ) :
       refine norm_integral_le_of_norm_le hi (Eventually.of_forall fun t => ?_)
       rw [norm_mul]
       refine mul_le_mul_of_nonneg_left ?_ (norm_nonneg _)
-      have h2 := hyp_le 0 t y
       rw [chj_zero]
-      simp only [Even.zero, if_true] at h2
+      set z : ℂ := (t : ℂ) * (y : ℂ) ^ (1 / 2 : ℂ) with hz_def
+      have hre : ((y : ℂ) ^ (1 / 2 : ℂ)).re = Real.sqrt (max y 0) := by
+        have hhalf : (1 / 2 : ℂ) = ((1 / 2 : ℝ) : ℂ) := by norm_num
+        rw [hhalf]
+        rcases le_or_gt 0 y with hy | hy
+        · rw [max_eq_left hy, Real.sqrt_eq_rpow, ← Complex.ofReal_cpow hy, Complex.ofReal_re]
+        · rw [max_eq_right hy.le, Real.sqrt_zero, Complex.cpow_ofReal,
+            Complex.arg_ofReal_of_neg hy, show Real.pi * (1 / 2 : ℝ) = Real.pi / 2 by ring]
+          simp [Complex.mul_re]
+      have hz : |z.re| = |t| * Real.sqrt (max y 0) := by
+        rw [hz_def, Complex.re_ofReal_mul, hre, abs_mul, abs_of_nonneg (Real.sqrt_nonneg _)]
+      have h2 : ‖Complex.cosh z‖ ≤ Real.exp |z.re| := by
+        have hcosh : Complex.cosh z = (Complex.exp z + Complex.exp (-z)) / 2 := by
+          rw [← Complex.two_cosh]
+          ring
+        rw [hcosh, norm_div, Complex.norm_ofNat]
+        have hsum := norm_add_le (Complex.exp z) (Complex.exp (-z))
+        rw [Complex.norm_exp, Complex.norm_exp, Complex.neg_re] at hsum
+        linarith [Real.exp_le_exp.mpr (le_abs_self z.re),
+          Real.exp_le_exp.mpr (neg_le_abs z.re)]
+      rw [hz] at h2
       refine h2.trans (Real.exp_le_exp.2 ?_)
       exact mul_le_mul_of_nonneg_left
         (Real.sqrt_le_sqrt (max_le_max_right _ hy.le)) (abs_nonneg _)

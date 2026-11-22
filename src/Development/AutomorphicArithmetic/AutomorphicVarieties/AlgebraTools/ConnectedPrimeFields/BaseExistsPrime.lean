@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.CommutativeAlgebra.ChainConnInDim
-import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.IsSaturatedChain
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ConnectedPrimeFields.IsWeaklyRegularPairModOneLeft
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ConnectedPrimeFields.CorePowMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ConnectedPrimeFields.ExistsSystemOfParameters
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ConnectedPrimeFields.CplFinite
+module
+
+public import Mathlib
+public import ReciprocityTheory.CommutativeAlgebra.ChainConnInDim
+public import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.IsSaturatedChain
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ConnectedPrimeFields.IsWeaklyRegularPairModOneLeft
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ConnectedPrimeFields.CorePowMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ConnectedPrimeFields.ExistsSystemOfParameters
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ConnectedPrimeFields.CplFinite
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.AlgebraTools.Conn
 
@@ -40,7 +44,8 @@ private theorem base_exists_out {A R : Type} [CommRing A] [IsLocalRing A] [CommR
   have hmax : (P.comap (algebraMap A R)).IsMaximal := by
     rw [heq]
     exact maximalIdeal.isMaximal A
-  exact hm (Ideal.isMaximal_of_isIntegral_of_isMaximal_comap P hmax)
+  exact hm (Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (algebraMap A R)
+    (RingHom.Finite.to_isIntegral (RingHom.finite_algebraMap.mpr inferInstance)) P hmax)
 
 private theorem base_ofList_le {A : Type} [CommRing A] {xs : List A} {I : Ideal A}
     (h : ∀ x ∈ xs, x ∈ I) : Ideal.ofList xs ≤ I :=
@@ -67,7 +72,7 @@ theorem UpperTheory.V.AlgebraTools.Conn.base :
   obtain ⟨y, hy, hyP⟩ := base_exists_out (A := A) P hP hPm
   obtain ⟨z, hz, hzQ⟩ := base_exists_out (A := A) Q hQ hQm
   have hcom : (maximalIdeal R).comap (algebraMap A R) = maximalIdeal A := by
-    haveI := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := A) (maximalIdeal R)
+    haveI := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := A) (algebraMap _ _) (RingHom.Finite.to_isIntegral (RingHom.finite_algebraMap.mpr inferInstance)) (maximalIdeal R)
     exact IsLocalRing.eq_maximalIdeal this
   have hmem : ∀ a ∈ maximalIdeal A, algebraMap A R a ∈ (b ⊔ c).radical := by
     intro a ha

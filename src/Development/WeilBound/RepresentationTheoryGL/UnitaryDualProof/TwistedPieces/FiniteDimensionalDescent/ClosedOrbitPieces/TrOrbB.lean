@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.ClosedOrbitPieces.TrOrbA
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.ClosedOrbitPieces.TrOrbA
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem orbClosed_gen (N r : ℕ) (A : Type) [CommRing A] [Algebra k A] [FiniteD
   have Φsingle : ∀ w i, Φ w (Pi.single i 1) = w i := fun w i => by
     simp [Φ, Pi.single_apply]
   have hΦc : ∀ c : Fin r → k, Continuous fun w : Fin r → Matrix (Fin N) (Fin N) k => Φ w c := fun c =>
-    continuous_finset_sum _ fun i _ => (continuous_apply i).const_smul (c i)
+    continuous_finsetSum _ fun i _ => (continuous_apply i).const_smul (c i)
   let S : Set (Fin r → Matrix (Fin N) (Fin N) k) :=
     (⋂ c, ⋂ (_ : L c = 0), {w | Φ w c = 0}) ∩ ((⋂ a, ⋂ a', {w | Φ w (s (a * a')) = Φ w (s a) * Φ w (s a')}) ∩
       ({w | Φ w (s 1) = 1} ∩ ⋂ e, ⋂ (_ : IsIdempotentElem e),
@@ -77,7 +81,8 @@ theorem orbClosed_gen (N r : ℕ) (A : Type) [CommRing A] [Algebra k A] [FiniteD
   constructor
   · rintro ⟨g, hg⟩
     have hΦ : ∀ c, Φ w c = g.val * ρ₀ (L c) * g⁻¹.val := fun c => by
-      simp only [Φ, L, hg, map_sum, map_smul, Finset.mul_sum, Finset.sum_mul, mul_smul_comm, smul_mul_assoc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Φ, L, hg, map_sum, map_smul, Finset.mul_sum, Finset.sum_mul, mul_smul_comm, smul_mul_assoc]
     have hgi : g⁻¹.val * g.val = 1 := Units.inv_mul g
     refine ⟨fun c hc => by rw [hΦ, hc, map_zero, mul_zero, zero_mul], fun a a' => ?_, ?_, fun e he => ?_⟩
     · rw [hΦ, hΦ, hΦ, hs, hs, hs, map_mul]

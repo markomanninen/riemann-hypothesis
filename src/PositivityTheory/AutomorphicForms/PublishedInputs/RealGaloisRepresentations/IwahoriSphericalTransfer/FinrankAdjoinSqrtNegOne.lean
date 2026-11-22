@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.BcDefs
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.BcDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,8 +38,8 @@ theorem QCM.sq_ne_neg_one_of_isReal {E : Type} [Field E] {v : InfinitePlace E} (
   rw [map_pow, map_neg, map_one] at this
   nlinarith [sq_nonneg (InfinitePlace.embedding_of_isReal hv x)]
 
-omit [NumberField F] in
 
+omit [NumberField F] in
 theorem QCM.isIntegral_sqrt_neg_one {i : Ω} (hi : i ^ 2 = -1) : IsIntegral F i :=
   ⟨X ^ 2 - C (-1), monic_X_pow_sub_C _ two_ne_zero, by simp [hi]⟩
 
@@ -44,7 +48,7 @@ theorem QCM.finrank_adjoin_sqrt_neg_one [IsTotallyReal F] {i : Ω} (hi : i ^ 2 =
   have hirr : Irreducible (X ^ 2 - C (-1) : F[X]) :=
     X_pow_sub_C_irreducible_of_prime Nat.prime_two (QCM.sq_ne_neg_one_of_isReal (IsTotallyReal.isReal v))
   rw [IntermediateField.adjoin.finrank (QCM.isIntegral_sqrt_neg_one hi),
-    ← minpoly.eq_of_irreducible_of_monic hirr (by simp [hi]) (monic_X_pow_sub_C _ two_ne_zero), natDegree_X_pow_sub_C]
+    ← minpoly.eq_of_irreducible_of_monic hirr (by simp [hi]) (monic_X_pow_sub_C _ two_ne_zero), natDegree_X_pow_sub_C _]
 
 def QCM.gauss [IsTotallyReal F] {i : Ω} (hi : i ^ 2 = -1) : QCM F Ω :=
   haveI := IntermediateField.adjoin.finiteDimensional (QCM.isIntegral_sqrt_neg_one (F := F) hi)
@@ -58,26 +62,10 @@ def QCM.gauss [IsTotallyReal F] {i : Ω} (hi : i ^ 2 = -1) : QCM F Ω :=
     cm := IsCMField.ofCMExtension F _
     two := QCM.finrank_adjoin_sqrt_neg_one hi }
 
-theorem QCM.gauss_K [IsTotallyReal F] {i : Ω} (hi : i ^ 2 = -1) : (QCM.gauss (F := F) hi).K = F⟮i⟯ := rfl
-
 theorem QCM.nonempty [IsTotallyReal F] [IsAlgClosure F Ω] : Nonempty (QCM F Ω) := by
   haveI : IsAlgClosed Ω := IsAlgClosure.isAlgClosed F
   obtain ⟨i, hi⟩ := IsAlgClosed.exists_pow_nat_eq (-1 : Ω) two_pos
   exact ⟨QCM.gauss hi⟩
-
-def QCM.cyclo {Ω : Type} [Field Ω] [CharZero Ω] [Algebra.IsIntegral ℚ Ω] {n : ℕ} (hn : 2 < n) (h2 : n.totient = 2) {ζ : Ω}
-    (hζ : IsPrimitiveRoot ζ n) : QCM ℚ Ω :=
-  haveI : NeZero n := ⟨by omega⟩
-  haveI hc : IsCyclotomicExtension {n} ℚ ℚ⟮ζ⟯ := hζ.intermediateField_adjoin_isCyclotomicExtension ℚ
-  haveI nf : NumberField ℚ⟮ζ⟯ := IsCyclotomicExtension.numberField {n} ℚ _
-  { K := ℚ⟮ζ⟯
-    nf := nf
-    cm := IsCyclotomicExtension.Rat.isCMField _ (S := {n}) ⟨n, rfl, hn⟩
-    two := (IsCyclotomicExtension.Rat.finrank n _).trans h2 }
-
-example : (QCM.gauss (F := ℚ) Complex.I_sq).K = ℚ⟮Complex.I⟯ := rfl
-
-example [IsTotallyReal F] : Nonempty (QCM F (AlgebraicClosure F)) := QCM.nonempty
 
 end Gauss
 
@@ -95,22 +83,13 @@ theorem AttRes.normV_eq_pow (w : HeightOneSpectrum (𝓞 L)) :
   have : w.asIdeal.LiesOver (w.under (𝓞 F)).asIdeal := ⟨rfl⟩
   have := w.isMaximal
   have := (w.under (𝓞 F)).isMaximal
-  show Ideal.absNorm w.asIdeal = Ideal.absNorm (w.under (𝓞 F)).asIdeal ^ w.asIdeal.inertiaDeg (𝓞 F)
+  have nv {K : Type} [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K)) :
+      normV v = Ideal.absNorm v.asIdeal := by
+    rw [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
+  rw [nv, nv]
   rw [← Ideal.absNorm_relNorm (𝓞 F) (𝓞 L) w.asIdeal,
     Ideal.relNorm_eq_pow_of_isMaximal w.asIdeal (w.under (𝓞 F)).asIdeal, map_pow]
 
-omit [Algebra F Ω] in
-
-theorem AttRes.iff_inertiaDeg [IsTotallyReal F] [Algebra L Ω] {l : ℕ} [Fact l.Prime] {a : ℕ} (π : TR.CuspSub F a)
-    (ι : Qbar l ≃+* ℂ) (r : G L Ω →* GL (Fin a) (Qbar l)) :
-    AttRes π ι L r ↔ ∀ᶠ w : HeightOneSpectrum (𝓞 L) in Filter.cofinite, ∃ B, π.HasSat (w.under (𝓞 F)) B ∧
-      FrobEig ι r w ((algSat a (normV (w.under (𝓞 F))) B).map (· ^ w.asIdeal.inertiaDeg (𝓞 F))) := by
-  refine Filter.eventually_congr (Filter.Eventually.of_forall fun w =>
-    ⟨fun h => h _ (AttRes.normV_eq_pow w), fun h f hf => ?_⟩)
-  obtain rfl : f = w.asIdeal.inertiaDeg (𝓞 F) :=
-    Nat.pow_right_injective (NumberField.HeightOneSpectrum.one_lt_absNorm (w.under (𝓞 F)))
-      (hf.symm.trans (AttRes.normV_eq_pow w))
-  exact h
 
 theorem AttRes.hasSat_trivial [IsTotallyReal F] (v : HeightOneSpectrum (𝓞 F)) :
     (TR.CuspSub.triv F (le_refl 1)).HasSat v {1} := by
@@ -133,16 +112,13 @@ theorem AttRes.hasSat_trivial [IsTotallyReal F] (v : HeightOneSpectrum (𝓞 F))
     (fun b g k _ _ => by simp [f, Formalism.UG.chiDelta]; rfl) (fun h => h0 (hi (by rw [h, map_zero])))
   simpa using this
 
-omit [Algebra F Ω] in
 
+omit [Algebra F Ω] in
 theorem AttRes.one_triv [IsTotallyReal F] [Algebra L Ω] {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) :
     AttRes (Ω := Ω) (TR.CuspSub.triv F (le_refl 1)) ι L 1 := by
   refine Filter.Eventually.of_forall fun w f _ =>
     ⟨{1}, AttRes.hasSat_trivial _, fun A _ => ⟨fun _ _ => rfl, fun σ _ => ?_⟩⟩
   simp [algSat, Matrix.charpoly_one]
-
-example [IsTotallyReal F] (Q : QCM F Ω) {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) :
-    AttRes (Ω := Ω) (TR.CuspSub.triv F (le_refl 1)) ι Q.K 1 := AttRes.one_triv ι
 
 end Att
 

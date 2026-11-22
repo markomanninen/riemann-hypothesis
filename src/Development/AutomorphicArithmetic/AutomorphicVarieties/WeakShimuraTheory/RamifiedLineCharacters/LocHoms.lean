@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RamifiedLineCharacters.MemRamLine
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RamifiedLineCharacters.CharRep
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RamifiedLineCharacters.MemRamLine
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RamifiedLineCharacters.CharRep
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -22,12 +26,14 @@ theorem UpperTheory.V.Ws.Gys.locHoms :
   have hinj := (hT F Ω l 1 (ZMod (l ^ 1)) A ρ v one_pos hA hc).2.2.1.1
   let T : ZMod (l ^ 1) → TDual (ZMod (l ^ 1)) (ZMod (l ^ 1)) := fun t => TDual.mk (LinearMap.mul _ _ t)
   have htriv : ∀ g (m : TDual (ZMod (l ^ 1)) (ZMod (l ^ 1))), twDual χ ρ g m = m := fun g m => by
-    ext t
+    apply DFunLike.ext
+    intro t
     rw [twDual_apply, hχ, Units.val_one, one_mul]
     rfl
   let y : Z1 (twDual χ ρ) := ⟨fun g => T (f g), (continuous_of_discreteTopology (f := T)).comp hf.1, fun g h => by
     rw [htriv]
-    ext m
+    apply DFunLike.ext
+    intro m
     change f (g * h) * m = f g * m + f h * m
     rw [hf.2, add_mul]
     rfl⟩
@@ -55,7 +61,8 @@ theorem UpperTheory.V.Ws.Gys.locHoms :
         H1ur (twDual χ ρ) ((Ine (F := F) A).subgroupOf (Dec (F := F) A)) := by
       refine (Submodule.Quotient.mk_eq_zero _).2 ((mem_coboundaries1 _ _).2 ⟨0, fun j => ?_⟩)
       rw [map_zero, sub_zero]
-      ext m
+      apply DFunLike.ext
+      intro m
       change f j.1 * m = 0
       rw [H f hf j.1 j.2, zero_mul]
     have h0 : (Submodule.Quotient.mk y : H1 (twDual χ ρ)) = 0 := by

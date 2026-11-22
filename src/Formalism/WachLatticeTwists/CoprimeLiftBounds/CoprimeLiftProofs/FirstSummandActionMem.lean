@@ -1,4 +1,8 @@
-import Formalism.WachLatticeTwists.CoprimeLiftBounds.FirstSummandRepresentation
+module
+
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.FirstSummandRepresentation
+
+@[expose] public section
 
 open Finset
 

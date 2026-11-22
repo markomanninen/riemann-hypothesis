@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.TwistedMonomialFiltration.AlmostEverywhereSpherical
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.TwistedMonomialFiltration.AlmostEverywhereSpherical
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,7 @@ theorem flt_g_pascal (R : Type*) [CommRing R] {σ : Type*} (m be : σ →₀ ℕ
             omega
           · simp only [Finsupp.tsub_apply, Finsupp.add_apply, Finsupp.single_apply, if_neg (Ne.symm hk)]
             omega
-        rw [e2, e3, ← map_add]
+        rw [e2, e3, ← map_add (f := _)]
         congr 1
         push_cast
         ring
@@ -88,14 +92,14 @@ theorem flt_g_pascal (R : Type*) [CommRing R] {σ : Type*} (m be : σ →₀ ℕ
     rw [e2, hc]
 
 theorem flt_tay_monomial (R : Type*) [CommRing R] {σ : Type*} (m : σ →₀ ℕ) :
-    ∀ be, coeff be (flt_tay R σ (monomial m 1)) = flt_g R m be := by
+    ∀ be, AddMonoidAlgebra.coeff (flt_tay R σ (monomial m 1)) be = flt_g R m be := by
   classical
   have htx : ∀ a, flt_tay R σ (X a) = C (X a) + X a := fun a => by simp [flt_tay]
-  have step : ∀ m : σ →₀ ℕ, (∀ be, coeff be (flt_tay R σ (monomial m 1)) = flt_g R m be) →
-      ∀ a be, coeff be (flt_tay R σ (monomial (m + Finsupp.single a 1) 1)) =
+  have step : ∀ m : σ →₀ ℕ, (∀ be, AddMonoidAlgebra.coeff (flt_tay R σ (monomial m 1)) be = flt_g R m be) →
+      ∀ a be, AddMonoidAlgebra.coeff (flt_tay R σ (monomial (m + Finsupp.single a 1) 1)) be =
         flt_g R (m + Finsupp.single a 1) be := by
     intro m hm a be
-    rw [flt_g_pascal, monomial_add_single, pow_one, map_mul, htx, mul_add, coeff_add,
+    rw [flt_g_pascal, monomial_add_single, pow_one, map_mul, htx, mul_add, MvPolynomial.coeff_add,
       mul_comm _ (C (X a)), coeff_C_mul, coeff_mul_X', hm, mul_comm (X a)]
     by_cases ha : a ∈ be.support
     · simp [ha, hm]
@@ -126,12 +130,13 @@ theorem flt_tay_monomial (R : Type*) [CommRing R] {σ : Type*} (m : σ →₀ �
       exact step _ ihb a
 
 theorem flt_tay_coeff (R : Type*) [CommRing R] {σ : Type*} (F : MvPolynomial σ R) (be : σ →₀ ℕ) :
-    coeff be (flt_tay R σ F) = divDer be F := by
+    AddMonoidAlgebra.coeff (flt_tay R σ F) be = divDer be F := by
   conv_lhs => rw [F.as_sum]
-  rw [map_sum, coeff_sum, divDer]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, coeff_sum, divDer]
   refine Finset.sum_congr rfl fun m _ => ?_
-  rw [show monomial m (coeff m F) = C (coeff m F) * monomial m 1 by rw [C_mul_monomial, mul_one], map_mul]
-  have hC : flt_tay R σ (C (coeff m F)) = C (C (coeff m F)) := by simp [flt_tay]
+  rw [show monomial m (AddMonoidAlgebra.coeff F m) = C (AddMonoidAlgebra.coeff F m) * monomial m 1 by rw [C_mul_monomial, mul_one], map_mul]
+  have hC : flt_tay R σ (C (AddMonoidAlgebra.coeff F m)) = C (C (AddMonoidAlgebra.coeff F m)) := by simp [flt_tay]
   rw [hC, coeff_C_mul, flt_tay_monomial, flt_g, C_mul_monomial]
   split_ifs with hle
   · rfl
@@ -144,8 +149,8 @@ theorem flt_tay_coeff (R : Type*) [CommRing R] {σ : Type*} (F : MvPolynomial σ
       exact Finset.prod_eq_zero (Finsupp.mem_support_iff.2 (by omega)) (Nat.choose_eq_zero_of_lt hk)
     rw [hz, Nat.cast_zero, mul_zero, monomial_zero]
 
-open Classical in
 
+open Classical in
 def flt_Th {R : Type*} [CommRing R] {ι : Type*} {n : ℕ} (LL : Letters ι) (S : Set ι) (j : Fin n) :
     MvPolynomial (ι × Fin n) (GLLaurent R n) →+*
       MvPolynomial (ι × Fin n) (MvPolynomial (ι × Fin n) (GLLaurent R n)) :=
@@ -160,7 +165,8 @@ theorem sum_C_C_mul_sum_of_mul_eq_one {B : Type*} [CommRing B] {σ' σ'' : Type*
     ∑ b, C (C (P b d)) * ∑ c, C (C (Q c b)) * Y c = Y d := by
   simp_rw [Finset.mul_sum, ← mul_assoc, ← map_mul]
   rw [Finset.sum_comm]
-  simp_rw [← Finset.sum_mul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [← Finset.sum_mul, ← map_sum]
   have hcd : ∀ c, ∑ b, P b d * Q c b = (1 : Matrix (Fin n) (Fin n) B) c d := fun c => by
     rw [← h, Matrix.mul_apply]
     exact Finset.sum_congr rfl fun b _ => mul_comm _ _
@@ -223,13 +229,14 @@ theorem flt_Th_mem {R : Type*} [CommRing R] {ι : Type*} {n : ℕ} (LL : Letters
         rw [h0, sub_zero]
         exact (laurentCoeffFiltration R n (ι × Fin n) e).one_mem
       exact flt_monomial_mem h1
-  rw [P.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [P.as_sum, map_sum]
   refine AddSubgroup.sum_mem _ fun m _ => ?_
-  rw [show monomial m (coeff m P) = C (coeff m P) * monomial m 1 by rw [C_mul_monomial, mul_one], map_mul]
-  have hc : coeff m P ∈ (flt_L (GLCoord R n) e).F t := by
+  rw [show monomial m (AddMonoidAlgebra.coeff P m) = C (AddMonoidAlgebra.coeff P m) * monomial m 1 by rw [C_mul_monomial, mul_one], map_mul]
+  have hc : AddMonoidAlgebra.coeff P m ∈ (flt_L (GLCoord R n) e).F t := by
     have h3 := (flt_lift_mem.1 hP) m
     simpa using h3
-  have h1 : flt_Th LL S j (C (coeff m P)) ∈
+  have h1 : flt_Th LL S j (C (AddMonoidAlgebra.coeff P m)) ∈
       (flt_lift (laurentCoeffFiltration R n (ι × Fin n) e) (flt_cost LL S (!bm))).F t := by
     simp only [flt_Th, eval₂Hom_C, RingHom.comp_apply]
     exact flt_C_mem (flt_C_mem hc)
@@ -243,8 +250,8 @@ theorem flt_divDer_mem {R : Type*} [CommRing R] {ι : Type*} {n : ℕ} (LL : Let
     (hF : twistSub LL S j F ∈ (laurentCoeffFiltration R n (ι × Fin n) e).F t) (be : ι × Fin n →₀ ℕ) :
     twistSub LL S j (divDer be F) ∈ (laurentCoeffFiltration R n (ι × Fin n) e).F (t - flt_cost LL S (!bm) be) := by
   have h1 := flt_lift_mem.1 (flt_Th_mem LL S j h hF) be
-  have e1 : twistSub LL S j (divDer be F) = coeff be (flt_Th LL S j (twistSub LL S j F)) := by
-    have h2 := congrArg (fun φ => coeff be (φ F)) (flt_Th_twist (R := R) LL S j)
+  have e1 : twistSub LL S j (divDer be F) = AddMonoidAlgebra.coeff (flt_Th LL S j (twistSub LL S j F)) be := by
+    have h2 := congrArg (fun φ => AddMonoidAlgebra.coeff (φ F) be) (flt_Th_twist (R := R) LL S j)
     simp only [RingHom.comp_apply, coeff_map] at h2
     rw [← h2, flt_tay_coeff]
   rw [e1]

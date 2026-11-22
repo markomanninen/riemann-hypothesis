@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.AevalSurjectiveOfSpanCotangent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.AevalSurjectiveOfSpanCotangent
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -49,7 +53,8 @@ theorem finrank_quot_frobKerIdeal_le : ∀ (q : ℕ) (K H : Type) [Field K] [Com
   choose x hx using fun i => (RingHom.ker ε).toCotangent_surjective (b i)
   have hsum : ∀ l : Fin d → K, AugCot.d ε (∑ i, l i • (x i : H)) = ∑ i, l i • b i := by
     intro l
-    simp [map_sum, hx]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, hx]
   have hmem : ∀ l : Fin d → K, (∑ i, l i • (x i : H)) ∈ RingHom.ker ε := by
     intro l
     refine Ideal.sum_mem _ fun i _ => ?_
@@ -78,7 +83,8 @@ theorem finrank_quot_frobKerIdeal_le : ∀ (q : ℕ) (K H : Type) [Field K] [Com
       Ideal.mem_map_of_mem _ hl
     rw [Ideal.map_pow] at h1
     have h2 := Ideal.pow_right_mono hmapI 2 h1
-    simpa [y, map_sub, map_sum, map_smul] using h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [y, map_sub, map_sum, map_smul] using h2
   have hsurj := GlobalTheory.HeightOneHopf.aeval_surjective_of_span_cotangent εQ hnil y hy hspan
   have hyq : ∀ i, y i ^ q = 0 := fun i => hpowQ _ (hy i)
 
@@ -98,7 +104,7 @@ theorem finrank_quot_frobKerIdeal_le : ∀ (q : ℕ) (K H : Type) [Field K] [Com
           have h0 : y i ^ u i = 0 := pow_eq_zero_of_le hi (hyq i)
           rw [Finset.prod_eq_zero (i := i) (Finset.mem_univ i) h0]
           exact Submodule.zero_mem _
-      | add P Q hP hQ => rw [map_add]; exact Submodule.add_mem _ hP hQ
+      | add P Q hP hQ => rw [map_add (f := _)]; exact Submodule.add_mem _ hP hQ
     refine eq_top_iff.2 fun z _ => ?_
     obtain ⟨P, rfl⟩ := hsurj z
     exact hall P

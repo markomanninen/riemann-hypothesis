@@ -1,5 +1,9 @@
-import Formalism.ThetaLogCoordinates.BihomogeneousPairs.LetterChainEmbeddings.PairStep
-import Formalism.MahlerMeasure.MahlerMeasureProofs.PhiInt
+module
+
+public import Formalism.ThetaLogCoordinates.BihomogeneousPairs.LetterChainEmbeddings.PairStep
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.PhiInt
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.KP.LL
 

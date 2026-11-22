@@ -1,5 +1,9 @@
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshMollA
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshBasic
+module
+
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshMollA
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshBasic
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.A
 

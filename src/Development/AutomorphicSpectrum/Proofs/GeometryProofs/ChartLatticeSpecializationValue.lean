@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LabelSigBijective
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LabelSigBijective
+
+@[expose] public section
+
 open ReciprocityTheory.ChartRestriction.G.Geo GlobalTheory.CompanionTheory.Ar
 
 noncomputable section
@@ -57,7 +62,7 @@ def unitBall (A : Subring Ω) (ev : A →+* 𝕜) : Subring Ω where
     rintro a b ⟨ha, ha1⟩ ⟨hb, hb1⟩
     refine ⟨A.add_mem ha hb, ?_⟩
     have e : (⟨a + b, A.add_mem ha hb⟩ : A) = ⟨a, ha⟩ + ⟨b, hb⟩ := rfl
-    rw [e, map_add]
+    rw [e, map_add (f := _)]
     exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ha1 hb1)
   zero_mem' := by
     refine ⟨A.zero_mem, ?_⟩

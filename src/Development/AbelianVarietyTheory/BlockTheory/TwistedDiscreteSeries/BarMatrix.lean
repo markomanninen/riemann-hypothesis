@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,8 +25,8 @@ variable {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar}
 def toFrame (M : DSModel V S) (τ : D.what₂.Tau) (Y : Matrix (Fin V.rank) (Fin V.rank) ℂ) :
     Matrix (Fin V.rank) (Fin V.rank) ℂ := (M.fr τ)⁻¹ * Y * M.fr τ
 
-open Classical in
 
+open Classical in
 structure Matches {p q : ℕ} {T : GrpData p q} (R : DSRep T) (M : DSModel V S) (τ : D.what₂.Tau)
     (φ : Mat p q → Matrix (Fin V.rank) (Fin V.rank) ℂ) (m : ℤ) (U : M.H τ → R.U.H) : Prop where
 
@@ -88,10 +92,6 @@ theorem barMat_mem {p q n : ℕ} {ε : Fin n → Bool} {e : Ix p q ≃ Fin n} (h
   have h1 := congrArg (fun A : Mat p q => A.map (starRingEnd ℂ)) hg
   simp only [Matrix.map_mul, hJ] at h1
   exact h1
-
-example : dualPar (GlobalTheory.Chain.signed [2] [-3] (1 / 2)) = {(-5 / 2, true), (5 / 2, false)} := by
-  simp [dualPar, GlobalTheory.Chain.signed]
-  norm_num
 
 end GlobalTheory.IndefiniteRowSideFullHecke.BarMatrix
 

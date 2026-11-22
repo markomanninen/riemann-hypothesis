@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.MemFIffReal
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.OverOnePrimeOfCardLeOne
-open NumberField IsDedekindDomain GlobalTheory.Formalism.L2.Col
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.MemFIffReal
+public import Formalism.LocalToGlobal.Columns.AbelianHostFieldConditions
+
+@[expose] public section
+
+open NumberField IsDedekindDomain
 open _root_.Formalism.BasicNotions _root_.Formalism.L2.Host _root_.Formalism.FrobeniusOrbits
 open _root_.Formalism.L2.DIV
 
@@ -16,14 +21,6 @@ theorem sigma_conj (σ : H.E ≃ₐ[ℚ] H.E) (x : H.E) : σ (H.conj x) = H.conj
   have h1 := H.conjE_apply (H.φ₀.comp (σ : H.E →+* H.E)) x
   have h2 := H.conjE_apply H.φ₀ (σ x)
   exact h1.trans h2.symm
-
-theorem conj_conj (x : H.E) : H.conj (H.conj x) = x := by
-  apply H.φ₀.injective
-  have h1 := H.conjE_apply H.φ₀ (H.conj x)
-  have h2 := H.conjE_apply H.φ₀ x
-  refine h1.trans ?_
-  show starRingEnd ℂ (H.φ₀ (H.conj x)) = _
-  rw [h2, Complex.conj_conj]
 
 theorem galE_sigmaOf (g : R.GG) : H.galE (H.sigmaOf g) = g :=
   (H.gal).apply_symm_apply g
@@ -56,10 +53,6 @@ theorem b_ne (H : _root_.Formalism.BasicNotions.Host R) : H.sqrtMinusD ≠ -H.sq
   exact (d_pos H).ne' h3
 
 variable (ι : Qb →+* ℂ) (LL : Fld) [FiniteDimensional ℚ LL] [Normal ℚ LL] (hE : H.EQ ≤ LL)
-
-theorem conjK : ∃ σ₀ : (hostFields H.toHostRaw ι LL hE).K →+* ℂ, ∀ x : (hostFields H.toHostRaw ι LL hE).K,
-    σ₀ (star x) = starRingEnd ℂ (σ₀ x) :=
-  ⟨sig0 ι LL, fun x => (congrArg ι (CoF.val_star ι LL x)).trans (conjQb_spec ι _)⟩
 
 end HostOk
 

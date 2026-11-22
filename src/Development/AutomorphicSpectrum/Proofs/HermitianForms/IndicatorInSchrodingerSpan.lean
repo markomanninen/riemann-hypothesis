@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.SWXSDefs
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSelfDualOfDualSubgroups
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.SWXSDefs
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSelfDualOfDualSubgroups
+
+@[expose] public section
 
 open MeasureTheory HeckeCharacterZeroLocus.SiegelWeilU Filter Topology
 

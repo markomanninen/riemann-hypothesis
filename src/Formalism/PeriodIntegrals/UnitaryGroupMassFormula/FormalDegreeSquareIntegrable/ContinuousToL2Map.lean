@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalDegreeSquareIntegrable.FormalDegreeFromOrthogonality
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalDegreeSquareIntegrable.FormalDegreeFromOrthogonality
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ def toL2Map (c : H →ₗ[ℂ] (X → ℂ)) (hL : ∀ v, MemLp (c v) 2 μ) : H �
     apply Lp.ext
     filter_upwards [(hL (u + v)).coeFn_toLp, Lp.coeFn_add ((hL u).toLp (c u)) ((hL v).toLp (c v)),
       (hL u).coeFn_toLp, (hL v).coeFn_toLp] with x h1 h2 h3 h4
-    rw [h1, h2, Pi.add_apply, h3, h4, map_add, Pi.add_apply]
+    rw [h1, h2, Pi.add_apply, h3, h4, map_add (f := _), Pi.add_apply]
   map_smul' a u := by
     apply Lp.ext
     filter_upwards [(hL (a • u)).coeFn_toLp, Lp.coeFn_smul a ((hL u).toLp (c u)),

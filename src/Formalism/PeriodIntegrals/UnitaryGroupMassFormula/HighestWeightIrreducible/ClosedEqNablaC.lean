@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataCoeff
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.GradedWeylDivisibility.FinalB
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataCoeff
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.GradedWeylDivisibility.FinalB
+
+@[expose] public section
 
 noncomputable section
 

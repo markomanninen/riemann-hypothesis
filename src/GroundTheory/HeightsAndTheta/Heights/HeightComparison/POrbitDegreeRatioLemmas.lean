@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitDegreeRatio
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitDegree
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCurve
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitDegreeRatio
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitDegree
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCurve
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -14,7 +19,7 @@ variable {ι : Type} {n : ι → ℕ}
 
 def chartHomogQ (c : (k : ι) → Fin (n k + 1)) (f : MvPolynomial (Coord n) ℚ)
     [Fintype ι] : MvPolynomial (Coord n) ℚ :=
-  ∑ m ∈ f.support, C (coeff m f) * ∏ p : Coord n, (X p ^ m p * X ⟨p.1, c p.1⟩ ^ (f.totalDegree - m p))
+  ∑ m ∈ f.support, C (AddMonoidAlgebra.coeff f m) * ∏ p : Coord n, (X p ^ m p * X ⟨p.1, c p.1⟩ ^ (f.totalDegree - m p))
 
 theorem le_totalDegree_of_mem_support {f : MvPolynomial (Coord n) ℚ} {m : Coord n →₀ ℕ}
     (hm : m ∈ f.support) (p : Coord n) : m p ≤ f.totalDegree :=
@@ -24,9 +29,10 @@ variable [Fintype ι]
 
 theorem aeval_chartHomogQ {S : Type*} [CommRing S] [Algebra ℚ S] (c : (k : ι) → Fin (n k + 1))
     (f : MvPolynomial (Coord n) ℚ) (y : Coord n → S) :
-    aeval y (chartHomogQ c f) = ∑ m ∈ f.support, algebraMap ℚ S (coeff m f) *
+    aeval y (chartHomogQ c f) = ∑ m ∈ f.support, algebraMap ℚ S (AddMonoidAlgebra.coeff f m) *
       ∏ p : Coord n, (y p ^ m p * y ⟨p.1, c p.1⟩ ^ (f.totalDegree - m p)) := by
-  simp [chartHomogQ, map_sum, map_prod]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [chartHomogQ, map_sum, map_prod]
 
 theorem aeval_chartHomogQ_field {K : Type*} [Field K] [Algebra ℚ K] (c : (k : ι) → Fin (n k + 1))
     (f : MvPolynomial (Coord n) ℚ) (y : Coord n → K) (hy : ∀ k, y ⟨k, c k⟩ ≠ 0) :
@@ -48,7 +54,8 @@ theorem coneMapQ_chartHomogQ (x : Cone n (AlgebraicClosure ℚ)) (c : (k : ι) �
     (f : MvPolynomial (Coord n) ℚ) :
     OrbitCurve.coneMapQ x (chartHomogQ c f) =
       C (aeval (flatCone x) (chartHomogQ c f)) * ∏ p : Coord n, X p.1 ^ f.totalDegree := by
-  rw [OrbitCurve.coneMapQ, aeval_chartHomogQ, aeval_chartHomogQ, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [OrbitCurve.coneMapQ, aeval_chartHomogQ, aeval_chartHomogQ, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun m hm ↦ ?_
   have h : ∀ p : Coord n,
       (C (flatCone x p) * X p.1 : MvPolynomial ι (AlgebraicClosure ℚ)) ^ m p *

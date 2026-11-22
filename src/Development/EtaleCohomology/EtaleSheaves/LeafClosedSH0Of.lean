@@ -1,6 +1,10 @@
-import Development.EtaleCohomology.EtaleSheaves.EmptySec
-import Development.EtaleCohomology.EtaleSheaves.DerivUnit
-import Development.EtaleCohomology.EtaleSheaves.HensQuot
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.EmptySec
+public import Development.EtaleCohomology.EtaleSheaves.DerivUnit
+public import Development.EtaleCohomology.EtaleSheaves.HensQuot
+
+@[expose] public section
 
 namespace LateralTheory.E.LeafClosedSH0PfCut
 open LateralTheory.E.LeafClosedSH0Pf

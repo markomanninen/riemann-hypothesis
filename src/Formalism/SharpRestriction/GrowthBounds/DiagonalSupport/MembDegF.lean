@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.HomCompRename
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.HomCompRename
+
+@[expose] public section
 
 noncomputable section
 
@@ -142,6 +146,6 @@ theorem restDegG : RestDegG := by
     rw [hid] at h1
     obtain ⟨bp, hbp, bn, hbn, h2⟩ := asm_support Fr p O hk Dt.nL rho _ _ _ h1
     refine normDeg_bigM Fr p hk Dt.nL hinj htop rho dPl dNo bp bn (hAd hbp) (hNd hbn) mm fun v => ?_
-    rw [← h2, Finsupp.mapDomain_apply (castVK_inj hk)]
+    rw [← h2, Finsupp.mapDomain_apply_of_injective (castVK_inj hk)]
 
 end Formalism.MainNotions.Proposition5Numerics

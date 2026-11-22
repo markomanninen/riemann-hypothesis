@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanOfPowMul
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinSectionTrivialisesInvertPrimeTensor
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanOfPowMul
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinSectionTrivialisesInvertPrimeTensor
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 
@@ -19,7 +24,8 @@ theorem YD_xiExt (P : PhiMod O K l e a ι) (α : ℕ)
   funext i
   simp only [YD, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
   simp only [← map_mul]
-  rw [← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum]
   congr 1
   funext τ
   have hw' : ∀ k, w τ k ∈ Rpi O K l e := fun k => invL_S_le_Rpi l e (mem_tot.1 hw τ k)
@@ -41,20 +47,21 @@ theorem YD_xiExt (P : PhiMod O K l e a ι) (α : ℕ)
     Subalgebra.sum_mem _ fun k _ => mul_mem (hw' k) (hb' k)
   rw [hs, hatR_of_mem (O := O) hm, Finset.sum_apply]
   simp only [Pi.mul_apply, hatR_of_mem (O := O) (hw' _), hatR_of_mem (O := O) (hb' _), ← map_mul]
-  rw [← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum]
   congr 1
   apply Subtype.ext
   rw [AddSubmonoidClass.coe_finsetSum]
   rfl
 
-omit [NeZero a] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] in
 
+omit [NeZero a] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] in
 theorem cst_mem_Mext (P : PhiMod O K l e a ι) (d : P.D) : (cst d : Vec K a ι) ∈ P.Mext (invL l (S O K e)) := by
   refine mem_tot.2 fun τ i => ?_
   exact HasK.C_mem (d τ i)
 
-omit [NeZero a] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] in
 
+omit [NeZero a] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] in
 theorem descN_mem_Mext (P : PhiMod O K l e a ι) (i : ℕ) (w : Vec K a ι) (hw : w ∈ P.Mext (invL l (S O K e))) :
     (fun τ j => descN K i (w τ j)) ∈ P.Mext (invL l (S O K e)) := by
   refine mem_tot.2 fun τ j => ?_
@@ -97,7 +104,8 @@ theorem taylor_vec (P : PhiMod O K l e a ι) (α : ℕ)
     ρ (YD t ϖ (E K l e ^ α • P.xiExt w)) j - c * ∑ i ∈ Finset.range R, μ i *
       YD t ϖ (E K l e ^ α • P.xiExt (fun τ k => descN K i (w τ k))) j ∈ J := by
   have hb : ∀ d : P.D, E K l e ^ α • P.xi d ∈ P.Man := fun d => hman _ (cst_mem_Mext P d)
-  rw [YD_xiExt t ϖ P α hb hw, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [YD_xiExt t ϖ P α hb hw, map_sum]
   simp only [YD_xiExt t ϖ P α hb (hdesc _ w hw), hρ, hor, Finset.sum_apply, Pi.smul_apply, smul_eq_mul,
     Finset.mul_sum]
   rw [Finset.sum_comm, ← Finset.sum_sub_distrib]
@@ -114,9 +122,9 @@ end GlobalTheory.GalStep
 
 namespace GlobalTheory.GalStep
 variable {l : ℕ} [Fact l.Prime]
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
-
 def rhoDHom {LL : FinExt l} {ι : Type} (T : QLat LL)
     (jD : (ι → OD l ↥(OL LL)) ≃ₗ[OD l ↥(OL LL)] TW (OD l ↥(OL LL)) T) (g : Gl l) :
     (ι → OD l ↥(OL LL)) →+ (ι → OD l ↥(OL LL)) :=

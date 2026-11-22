@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.DetEqMulMinorOfColZero
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.DetEqMulMinorOfColZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -106,7 +110,7 @@ theorem gN_unitary (k r : ℕ) {κ : Mat k r} (hκ : κᴴ * κ = 1) (X : Mat k 
 
 theorem gN_cont (k r : ℕ) : Continuous (fun g : Mat k r => gN g) := by
   unfold gN
-  exact Real.continuous_sqrt.comp (continuous_finset_sum _ fun i _ => continuous_finset_sum _
+  exact Real.continuous_sqrt.comp (continuous_finsetSum _ fun i _ => continuous_finsetSum _
     fun j _ => Complex.continuous_normSq.comp (continuous_id.matrix_elem i j))
 
 end gn

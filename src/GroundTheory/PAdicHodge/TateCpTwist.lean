@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.PAdicHodge.GaloisOnCp
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.GaloisOnCp
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.PAdicHodge
@@ -8,30 +13,10 @@ open UniformSpace
 
 variable {p : ℕ} [Fact p.Prime]
 
-instance uniformContinuousConstSMul_intermediateField
-    (K : IntermediateField ℚ_[p] (PadicAlgCl p)) : UniformContinuousConstSMul K (PadicAlgCl p) :=
-  ⟨fun k => by
-    have h : (fun y : PadicAlgCl p => k • y) = fun y => (k : PadicAlgCl p) * y := funext fun _ => rfl
-    rw [h]
-    exact uniformContinuous_addMonoidHom_of_continuous (f := AddMonoidHom.mulLeft (k : PadicAlgCl p))
-      (continuous_const.mul continuous_id)⟩
-
 variable (K : IntermediateField ℚ_[p] (PadicAlgCl p))
 
 theorem algebraMap_intermediateField_cp (k : K) :
     algebraMap K ℂ_[p] k = ((k : PadicAlgCl p) : ℂ_[p]) := rfl
-
-instance : IsScalarTower K (PadicAlgCl p) ℂ_[p] := IsScalarTower.of_algebraMap_eq fun _ => rfl
-
-theorem continuous_algebraMap_intermediateField_cp : Continuous (algebraMap K ℂ_[p]) :=
-  (Completion.continuous_coe _).comp continuous_subtype_val
-
-instance : ContinuousSMul K ℂ_[p] :=
-  ⟨by
-    have h : (fun q : K × ℂ_[p] => q.1 • q.2) = fun q => algebraMap K ℂ_[p] q.1 * q.2 :=
-      funext fun q => Algebra.smul_def _ _
-    rw [h]
-    exact ((continuous_algebraMap_intermediateField_cp K).comp continuous_fst).mul continuous_snd⟩
 
 theorem gal_smul_algebraMap_intermediateField (σ : Gal(PadicAlgCl p/K)) (k : K) :
     σ • algebraMap K ℂ_[p] k = algebraMap K ℂ_[p] k :=
@@ -91,12 +76,7 @@ noncomputable def cpTwistRep (j : ℤ) : ContRepresentation K Gal(PadicAlgCl p/K
         simp only [cpTwistMap_apply, twistScalar_mul, smul_mul', gal_smul_twistScalar, mul_smul]
         ring }
 
-noncomputable abbrev cpTwist (j : ℤ) : TopRep K Gal(PadicAlgCl p/K) := TopRep.of (cpTwistRep K j)
-
 theorem cpTwistRep_apply (j : ℤ) (σ : Gal(PadicAlgCl p/K)) (x : ℂ_[p]) :
     cpTwistRep K j σ x = twistScalar K j σ * (σ • x) := rfl
-
-theorem cpTwist_ρ_apply (j : ℤ) (σ : Gal(PadicAlgCl p/K)) (x : ℂ_[p]) :
-    (cpTwist K j).ρ σ x = twistScalar K j σ * (σ • x) := rfl
 
 end GroundTheory.PAdicHodge

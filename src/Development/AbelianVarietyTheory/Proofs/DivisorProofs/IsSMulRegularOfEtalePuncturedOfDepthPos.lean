@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.ModDepthGE
-import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.ExistsIsRegularAppendOfModDepthGE
-import ReciprocityTheory.CommutativeAlgebra.MaximalIdealSquares.RingKrullDimQuotientSpanSingletonAddOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PurityFree
+module
+
+public import Mathlib
+public import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.ModDepthGE
+public import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.ExistsIsRegularAppendOfModDepthGE
+public import ReciprocityTheory.CommutativeAlgebra.MaximalIdealSquares.RingKrullDimQuotientSpanSingletonAddOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PurityFree
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory

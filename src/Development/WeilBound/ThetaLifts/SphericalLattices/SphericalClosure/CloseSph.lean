@@ -1,29 +1,39 @@
-import Development.WeilBound.ThetaLifts.AgreeOfLeaves
-import Development.WeilBound.ThetaLifts.LeviDeterminants.ThetaEvaluationZeroCone
-import Development.WeilBound.ThetaLifts.WeilDomination.ExistsUnitChrWNe
-import Development.WeilBound.ThetaLifts.CartanFactorisation.InjPure
-import Mathlib
-import Development.WeilBound.ThetaLifts.CartanFactorisation.PolCountFinal
-import Development.WeilBound.ThetaLifts.LatticeBasics.HgtInt
-import Development.WeilBound.ThetaLifts.WeilDomination.SwAnisoXOf
-import Development.WeilBound.ThetaLifts.LatticeBasics.BadFin
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.SoCoinvariantsOfBernstein
-import Development.WeilBound.ThetaLifts.SmallCones.SplitInv
-import Development.WeilBound.ThetaLifts.LocalTheory.HypOf
-import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedCohomology.FLocBOf
-import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.BumpAFin
-import Development.WeilBound.ThetaLifts.LocalTheory.ToralCohomology.DarbouxExt
-import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedCohomology.UnramifiedDeterminedBySphericalHolds
-import Development.WeilBound.ThetaLifts.LocalTheory.DixmierCommutants.RamifiedMultiplicityOneOfBernstein
-import Development.WeilBound.ThetaLifts.LocalTheory.ToralCohomology.ArchimedeanMultiplicityOneOfLie
-import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.ExistsVol
-import Development.WeilBound.ThetaLifts.LocalTheory.LocAOf
-import Development.WeilBound.ThetaLifts.LocalTheory.LocBOf
-import Development.WeilBound.ThetaLifts.Reductions.TopPolarZero.PolZero
-import Development.WeilBound.ThetaLifts.Reductions.JoinTriOf
-import Development.WeilBound.ThetaLifts.SphericalLattices.SphericalClosure.EndCore
-import Development.WeilBound.ThetaLifts.SphericalLattices.ThetaKillsCuspFormsSpherical
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HoweMaximalTori.MaxFinTOfPublished
+module
+
+public import Development.WeilBound.ThetaLifts.AgreeOfLeaves
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.ThetaEvaluationZeroCone
+public import Development.WeilBound.ThetaLifts.WeilDomination.ExistsUnitChrWNe
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.InjPure
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.PolCountFinal
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HgtInt
+public import Development.WeilBound.ThetaLifts.WeilDomination.SwAnisoXOf
+public import Development.WeilBound.ThetaLifts.LatticeBasics.BadFin
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfSurj
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.ExistsExtZ
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.ContinuousFinId
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.SoStatement
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfSplit
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDict
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.FullOfSoLoc
+public import Development.WeilBound.ThetaLifts.SmallCones.SplitInv
+public import Development.WeilBound.ThetaLifts.LocalTheory.HypOf
+public import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedCohomology.FLocBOf
+public import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.BumpAFin
+public import Development.WeilBound.ThetaLifts.LocalTheory.ToralCohomology.DarbouxExt
+public import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedCohomology.UnramifiedDeterminedBySphericalHolds
+public import Development.WeilBound.ThetaLifts.LocalTheory.DixmierCommutants.RamifiedMultiplicityOneOfBernstein
+public import Development.WeilBound.ThetaLifts.LocalTheory.ToralCohomology.ArchimedeanMultiplicityOneOfLie
+public import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.ExistsVol
+public import Development.WeilBound.ThetaLifts.LocalTheory.LocAOf
+public import Development.WeilBound.ThetaLifts.LocalTheory.LocBOf
+public import Development.WeilBound.ThetaLifts.Reductions.TopPolarZero.PolZero
+public import Development.WeilBound.ThetaLifts.Reductions.JoinTriOf
+public import Development.WeilBound.ThetaLifts.SphericalLattices.SphericalClosure.EndCore
+public import Development.WeilBound.ThetaLifts.SphericalLattices.ThetaKillsCuspFormsSpherical
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HoweMaximalTori.MaxFinTOfPublished
+
+@[expose] public section
 
 theorem PositivityTheory.Sph.Tr.closeSph
     (hKCo : PositivityTheory.KCo.DictSt → GlobalTheory.ThK.KCoinv)

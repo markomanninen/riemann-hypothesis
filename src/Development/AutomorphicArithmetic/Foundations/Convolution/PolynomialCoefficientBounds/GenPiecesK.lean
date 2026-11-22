@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.AffineCharacterGenerators.Generators
-import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.GenPieces
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.AffineCharacterGenerators.Generators
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.GenPieces
+
+@[expose] public section
 
 open MvPolynomial Filter Topology PositivityTheory.Rg.Fx
 
@@ -12,7 +16,7 @@ theorem UpperTheory.ConvolutionTheory.FX.gen_piecesK :
       aeval blockE (G k) = piece k (F.coeff β) ∧ (G k).totalDegree ≤ k ∧
         l1 (G k) ≤ K ^ (k + 1) / k.factorial := fun β =>
     UpperTheory.ConvolutionTheory.FX.gen_pieces τ n (F.coeff β) (fun w => by
-      have := congrArg (fun P => MvPolynomial.coeff β P) (hF w)
+      have := congrArg (fun P => AddMonoidAlgebra.coeff P β) (hF w)
       simpa only [coeff_map] using this)
   choose K G hG using h
   have hc : ∀ k β, (∑ γ ∈ F.support, monomial γ (G γ k) :
@@ -21,10 +25,11 @@ theorem UpperTheory.ConvolutionTheory.FX.gen_piecesK :
     simp only [coeff_sum, coeff_monomial, Finset.sum_ite_eq']
   have hK0 : 0 ≤ ∑ γ ∈ F.support, |K γ| := Finset.sum_nonneg fun _ _ => abs_nonneg _
   refine ⟨∑ γ ∈ F.support, |K γ|, fun k => ∑ γ ∈ F.support, monomial γ (G γ k), fun k => ⟨?_, ?_, fun β => ?_⟩⟩
-  · rw [map_sum, pieceK]
-    refine Finset.sum_congr rfl fun γ _ => ?_
-    rw [map_monomial, ← (hG γ k).1]
-    rfl
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum, pieceK]
+      refine Finset.sum_congr rfl fun γ _ => ?_
+      rw [map_monomial, ← (hG γ k).1]
+      rfl
   · intro β hβ
     rw [mem_support_iff, hc] at hβ
     by_contra hn

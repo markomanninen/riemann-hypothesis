@@ -1,5 +1,9 @@
-import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohTop
-import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohEuler
+module
+
+public import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohTop
+public import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohEuler
+
+@[expose] public section
 
 namespace CompanionTheory.LocalTateOrthogonality.Gcoh
 

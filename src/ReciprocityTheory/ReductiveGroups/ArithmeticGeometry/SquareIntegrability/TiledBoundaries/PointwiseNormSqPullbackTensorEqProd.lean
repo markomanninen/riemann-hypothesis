@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.LemmaNA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.DimStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.LemmaNA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.DimStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2.TiledBoundaries
 
@@ -140,7 +144,7 @@ theorem l2Inner_sum_left (hI : StepI) (X : PT E) (q : ℕ) {n : ℕ} {ι : Type}
     funext v
     rw [Finset.sum_mul, Finset.sum_mul]
     exact Finset.sum_congr rfl fun j _ => by ring
-  rw [hsum, MeasureTheory.integral_finset_sum _ (fun j _ => (hi j).const_mul (g j)), Finset.smul_sum]
+  rw [hsum, MeasureTheory.integral_finsetSum _ (fun j _ => (hi j).const_mul (g j)), Finset.smul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [MeasureTheory.integral_const_mul, mul_smul_comm]
 

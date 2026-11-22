@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+module
+
+public import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights.TorusLexOrder
 

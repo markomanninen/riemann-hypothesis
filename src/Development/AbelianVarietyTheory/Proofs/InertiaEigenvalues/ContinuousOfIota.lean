@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NotMemPlacesOverOfNe
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NormEqOneOfCompact
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CuspidalStrongMultiplicityOneOfAnalytic
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CharpolyFactorizationSemisimple
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplitPlaceGoodSignature
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NotMemPlacesOverOfNe
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NormEqOneOfCompact
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CuspidalStrongMultiplicityOneOfAnalytic
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CharpolyFactorizationSemisimple
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplitPlaceGoodSignature
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,59 +16,6 @@ namespace GlobalTheory.ResLoc
 section
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial NumberField IsDedekindDomain GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.RowTie
   GlobalTheory.SplitRead GlobalTheory.XiOver Formalism.L2.Host
-
-theorem xiOverO (D : D7) (C : Formalism.L2.Host.CharFrame D) (nch : NChoice D) (Tp : Formalism.L2.Host.TupTied D C nch)
-    (T : Formalism.L2.Host.NCharTied D C nch Tp) (V : Formalism.L2.Host.ValLL0 D C) (hA : Formalism.MainNotions.SumRepresentations.At.TieAut D.nd D.naut)
-    (h2 : Formalism.MainNotions.SumRepresentations.adm2 D) (h5 : ChebSplit D.nd) : XiOverO D.nd D.naut := by
-  intro i
-  obtain ⟨ρ, hρ, hwd, -⟩ := (h2 i).2.2 D.naut.etaTinv (-(D.R.t : ℝ) / 2) (inf_int D hA)
-  have hun : ∀ w, w ∉ placesOver D.host.E (D.nd.l i) → D.naut.unr (D.naut.wdOf i ρ w) := fun w hw => by
-    rw [hwd w hw]
-    exact (D.naut.unr_tw _ _).2 (D.naut.etaTinv_def w).1
-  have hfrob : ∀ w, w ∉ placesOver D.host.E (D.nd.l i) → ∀ (B : ValuationSubring D.nd.Om) (σ : G D.host.E D.nd.Om),
-      IsPlaceOver (F := D.host.E) B w → IsFrob (F := D.host.E) B (normV w) σ →
-      D.naut.frobEig (D.naut.lpTw (D.naut.locG D.naut.etaTinv w) (-(D.R.t : ℝ) / 2)) =
-        {D.naut.iotaQC i (((ρ σ : GL (Fin 1) (Qbar (D.nd.l i))) : Matrix (Fin 1) (Fin 1) (Qbar (D.nd.l i))) 0 0)} := by
-    intro w hw B σ hB hσ
-    have e := D.naut.wdOf_frob i ρ w hw hρ (hun w hw) B σ hB hσ
-    obtain ⟨a, ha⟩ := Multiset.card_eq_one.1
-      ((D.naut.frobEig_card _ (hun w hw)).trans (D.naut.wdOf_dim i ρ w))
-    rw [ha, charpoly_fin_one] at e
-    simp only [Multiset.map_singleton, Multiset.prod_singleton, Polynomial.map_sub, Polynomial.map_X,
-      Polynomial.map_C] at e
-    have e2 := C_injective (sub_right_injective e)
-    rw [← hwd w hw, ha]
-    exact congrArg _ e2.symm
-  let d : G D.host.E D.nd.Om →* Qbar (D.nd.l i) :=
-    (Units.coeHom _).comp (Matrix.GeneralLinearGroup.det.comp ρ)
-  have hde : ∀ g, d g = ((ρ g : GL (Fin 1) (Qbar (D.nd.l i))) : Matrix (Fin 1) (Fin 1) (Qbar (D.nd.l i))) 0 0 :=
-    fun g => Matrix.det_fin_one _
-  have hd : Continuous d := by
-    have : (d : G D.host.E D.nd.Om → Qbar (D.nd.l i)) = fun g =>
-        ((ρ g : GL (Fin 1) (Qbar (D.nd.l i))) : Matrix (Fin 1) (Fin 1) (Qbar (D.nd.l i))) 0 0 := funext hde
-    rw [this]
-    exact (continuous_apply_apply 0 0).comp hρ
-  have hfin : (placesOver D.host.E (D.nd.l i)).Finite :=
-    GlobalTheory.SplitRead.finite_placesOver _ (Fact.out : (D.nd.l i).Prime).ne_zero
-  have hS : closure {σ : G D.host.E D.nd.Om | ∃ w ∉ placesOver D.host.E (D.nd.l i), IsSplitPl D.host w ∧
-      ∃ B : ValuationSubring D.nd.Om, IsPlaceOver (F := D.host.E) B w ∧ IsFrob (F := D.host.E) B (normV w) σ} = Set.univ := by
-    have hd := (h5 hfin.toFinset).closure_eq
-    convert hd using 4 with σ
-    simp [Set.Finite.mem_toFinset]
-  obtain ⟨ξ, hξc, hξ⟩ := exists_integral_char D.nd D.naut i d hd _ hS (by
-    rintro σ ⟨w, hw, -, B, hB, hσ⟩
-    obtain ⟨x, hx⟩ := frob_value D C nch Tp T V w
-    have e := hfrob w hw B σ hB hσ
-    rw [hx, Multiset.singleton_inj, ← D.naut.iota_LL i x, ← hde] at e
-    exact ⟨_, (D.naut.iotaQC i).injective e⟩)
-  refine ⟨ξ, hξc, fun w hw => ⟨fun σ hσ => ?_, fun B σ hB hσ => ?_⟩⟩
-  · have h1 := (D.naut.wdOf_unr i ρ w hw hρ).1 (hun w hw) σ hσ
-    apply Units.ext
-    apply iota_inj D.nd D.naut i
-    rw [hξ, hde, h1]
-    simp
-  · rw [hfrob w hw B σ hB hσ, ← hde, ← hξ]
-    rfl
 
 end
 
@@ -121,8 +72,43 @@ theorem continuous_of_iota (i : N.Loc) {Y : Type} [TopologicalSpace Y] (u : Y �
   rw [map_sub]
   exact hx
 
+private theorem diagM_ss_local {Γ k : Type} [Group Γ] [Field k] :
+    ∀ {t : ℕ} (χ : Fin t → Γ →* kˣ), IsSSRep (GlobalTheory.SSComplement.diagM χ).toHomUnits := by
+  have scalar_ss {a : ℕ} (ρ : Γ →* GL (Fin a) k) (c : Γ → k)
+      (h : ∀ g v, (ρ g : Matrix (Fin a) (Fin a) k).mulVec v = c g • v) : IsSSRep ρ := by
+    intro W _
+    obtain ⟨W', hW'⟩ := W.exists_isCompl
+    exact ⟨W', fun g v hv => by rw [h]; exact W'.smul_mem _ hv, hW'⟩
+  intro t
+  induction t with
+  | zero =>
+    intro χ
+    exact scalar_ss _ (fun _ => 0) fun g v => funext fun c => c.elim0
+  | succ t ih =>
+    intro χ
+    refine GlobalTheory.Proof.SemisimpleRepresentationIntegralConjugate.isSSRep_of_prod
+      (ρ₁ := (GlobalTheory.SSComplement.diagM fun c : Fin t => χ (Fin.castAdd 1 c)).toHomUnits)
+      (ρ₂ := (GlobalTheory.SSComplement.diagM fun c : Fin 1 => χ (Fin.natAdd t c)).toHomUnits)
+      ((LinearEquiv.funCongrLeft k k finSumFinEquiv).trans
+        (LinearEquiv.sumArrowLequivProdArrow _ _ k k)) (fun g v => ?_) (ih _)
+      (scalar_ss _ (fun g => ((χ (Fin.last t) g : kˣ) : k)) fun g v => ?_)
+    · show _ = _
+      ext i <;> simp [GlobalTheory.SSComplement.diagM, Matrix.mulVec_diagonal, LinearMap.funLeft]
+    · funext c
+      obtain rfl : c = 0 := Subsingleton.elim _ _
+      change (Matrix.diagonal fun c : Fin 1 => ((χ (Fin.natAdd t c) g : kˣ) : k)).mulVec v 0 = _
+      exact Matrix.mulVec_diagonal _ _ _
+
 theorem lattice_of_point (hLaw : GlobalTheory.ThetaExh.ParamLaws N A) (hO : Formalism.MainNotions.SumRepresentations.At.OLarge N A)
-    (hXi : GlobalTheory.SplitRead.XiOverO N A) (a : N.Loc) (x : N.X a) (P : A.AV a) (hP : A.ptV a P = some x) (π : A.CG R.r)
+    (hXi : ∀ i : N.Loc, ∃ ξ : G H.E N.Om →* (N.O i)ˣ,
+      Continuous (fun g => ((ξ g : (N.O i)ˣ) : N.O i)) ∧
+      ∀ w : PlE H, w ∉ placesOver H.E (N.l i) →
+        (∀ σ ∈ Ine (F := H.E) (N.plOm.1 w), ξ σ = 1) ∧
+        ∀ (B : ValuationSubring N.Om) (σ : G H.E N.Om),
+          IsPlaceOver (F := H.E) B w → IsFrob (F := H.E) B (normV w) σ →
+          A.frobEig (A.lpTw (A.locG A.etaTinv w) (-(R.t : ℝ) / 2)) =
+            {iotaO N A i ((ξ σ : (N.O i)ˣ) : N.O i)})
+    (a : N.Loc) (x : N.X a) (P : A.AV a) (hP : A.ptV a P = some x) (π : A.CG R.r)
     (hloc : ∀ w, IsSplitPl H w → A.locV a P w = GlobalTheory.ThetaExh.liftPar N A a w (A.locG π w))
     (hun : ∀ w, (∀ k, w ∉ placesOver H.E (H.g k)) → A.unr (A.locG π w))
     (ρ₀ : G H.E N.Om →* GL (Fin R.r) (Qbar (N.l a)))
@@ -168,7 +154,7 @@ theorem lattice_of_point (hLaw : GlobalTheory.ThetaExh.ParamLaws N A) (hO : Form
     refine Continuous.matrix_fromBlocks hR1c continuous_const continuous_const ?_
     exact Continuous.matrix_diagonal (continuous_pi fun c => hιc.comp (N.chi_cont a _))
   have hRqs : IsSSRep Rq :=
-    GlobalTheory.SSComplement.blockM_ss _ _ _ (isSSRep_twGL _ _ hs0) (GlobalTheory.SSComplement.diagM_ss χ)
+    GlobalTheory.SSComplement.blockM_ss _ _ _ (isSSRep_twGL _ _ hs0) (diagM_ss_local χ)
   have hq : Formalism.MainNotions.SumRepresentations.At.IsHeckeGaloisQ N A a x Rq := by
     refine ⟨hRqc, hRqs, fun v hso B g hBv hg => ?_⟩
     have h4 : A.unr (A.locG π v) := hun v fun k hk => hso.2.2.1 ((N.S_def a v).2 ⟨by

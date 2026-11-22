@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.EtaKer
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostNumber
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompCond
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcPrimProd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcXiSq
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.Th1Facts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.EtaKer
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostNumber
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompCond
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcPrimProd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcXiSq
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.Th1Facts
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.X
 

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -21,8 +26,8 @@ def IsFraction (k : ℤ) {U : Opens (ProjectiveSpectrum.top 𝒜)} (f : ∀ x : 
   ∃ (i j : ℕ) (_ : (j : ℤ) = i + k) (r s : A) (_ : r ∈ 𝒜 j) (_ : s ∈ 𝒜 i)
     (s_nin : ∀ x : U, s ∉ x.1.asHomogeneousIdeal), ∀ x : U, f x = Localization.mk r ⟨s, s_nin x⟩
 
-variable (𝒜) in
 
+variable (𝒜) in
 def isFractionPrelocal (k : ℤ) :
     PrelocalPredicate fun x : ProjectiveSpectrum.top 𝒜 => Loc 𝒜 x where
   pred f := IsFraction k f
@@ -30,8 +35,8 @@ def isFractionPrelocal (k : ℤ) :
     rintro V U i f ⟨a, b, hab, r, s, hr, hs, h, w⟩
     exact ⟨a, b, hab, r, s, hr, hs, (h <| i ·), (w <| i ·)⟩
 
-variable (𝒜) in
 
+variable (𝒜) in
 def isLocallyFraction (k : ℤ) : LocalPredicate fun x : ProjectiveSpectrum.top 𝒜 => Loc 𝒜 x :=
   (isFractionPrelocal 𝒜 k).sheafify
 
@@ -98,8 +103,8 @@ theorem neg_mem' (k : ℤ) (U : Opens (ProjectiveSpectrum.top 𝒜)) (a : ∀ x 
   refine ⟨V, m, iV, i, j, hij, -r, s, neg_mem hr, hs, hsn, fun y => ?_⟩
   simp only [Pi.neg_apply, w y, Localization.neg_mk]
 
-variable (𝒜) in
 
+variable (𝒜) in
 def twistSheafInType (k : ℤ) : Sheaf (Type u) (ProjectiveSpectrum.top 𝒜) :=
   subsheafToTypes (isLocallyFraction 𝒜 k)
 
@@ -110,14 +115,15 @@ def sectionsSubgroup (k : ℤ) (U : Opens (ProjectiveSpectrum.top 𝒜)) :
   add_mem' := add_mem' k U _ _
   neg_mem' := neg_mem' k U _
 
+open ProjectiveSpectrum in
 instance (k : ℤ) (U : (Opens (ProjectiveSpectrum.top 𝒜))ᵒᵖ) :
     AddCommGroup ((twistSheafInType 𝒜 k).obj.obj U) :=
   (sectionsSubgroup k U.unop).toAddCommGroup
 
-open ProjectiveSpectrum in
 
+open ProjectiveSpectrum in
 def toLocFun (U : Opens (ProjectiveSpectrum.top 𝒜)) :
-    (Proj.structureSheaf 𝒜).obj.obj (op U) →+* (∀ x : U, Loc 𝒜 x.1) where
+    (ProjectiveSpectrum.Proj.structureSheaf 𝒜).obj.obj (op U) →+* (∀ x : U, Loc 𝒜 x.1) where
   toFun t x := (t.1 x).val
   map_one' := by funext x; exact HomogeneousLocalization.val_one
   map_mul' a b := by funext x; exact HomogeneousLocalization.val_mul _ _
@@ -126,17 +132,14 @@ def toLocFun (U : Opens (ProjectiveSpectrum.top 𝒜)) :
 
 open ProjectiveSpectrum in
 instance (U : Opens (ProjectiveSpectrum.top 𝒜)) :
-    Module ((Proj.structureSheaf 𝒜).obj.obj (op U)) (∀ x : U, Loc 𝒜 x.1) :=
+    Module ((ProjectiveSpectrum.Proj.structureSheaf 𝒜).obj.obj (op U)) (∀ x : U, Loc 𝒜 x.1) :=
   Module.compHom _ (toLocFun U)
 
-open ProjectiveSpectrum in
-lemma smul_apply' {U : Opens (ProjectiveSpectrum.top 𝒜)} (t : (Proj.structureSheaf 𝒜).obj.obj (op U))
-    (f : ∀ x : U, Loc 𝒜 x.1) (x : U) : (t • f) x = (t.1 x).val * f x := rfl
+
 
 open ProjectiveSpectrum in
-
 def sectionsSubmodule (k : ℤ) (U : Opens (ProjectiveSpectrum.top 𝒜)) :
-    Submodule ((Proj.structureSheaf 𝒜).obj.obj (op U)) (∀ x : U, Loc 𝒜 x.1) where
+    Submodule ((ProjectiveSpectrum.Proj.structureSheaf 𝒜).obj.obj (op U)) (∀ x : U, Loc 𝒜 x.1) where
   __ := sectionsSubgroup k U
   smul_mem' t f hf x := by
     obtain ⟨V, hxV, iV, l, ⟨a, ha⟩, ⟨b, hb⟩, hbn, wt⟩ := t.2 x
@@ -150,13 +153,9 @@ def sectionsSubmodule (k : ℤ) (U : Opens (ProjectiveSpectrum.top 𝒜)) :
     rw [e1, e2, HomogeneousLocalization.val_mk, Localization.mk_mul]
     rfl
 
-open ProjectiveSpectrum in
-instance (k : ℤ) (U : (Opens (ProjectiveSpectrum.top 𝒜))ᵒᵖ) :
-    Module ((Proj.structureSheaf 𝒜).obj.obj U) ((twistSheafInType 𝒜 k).obj.obj U) :=
-  (sectionsSubmodule k U.unop).module
+
 
 variable (𝒜) in
-
 def twistPresheafAb (k : ℤ) : (Opens (ProjectiveSpectrum.top 𝒜))ᵒᵖ ⥤ AddCommGrpCat.{u} where
   obj U := AddCommGrpCat.of ((twistSheafInType 𝒜 k).obj.obj U)
   map i := AddCommGrpCat.ofHom
@@ -166,15 +165,13 @@ def twistPresheafAb (k : ℤ) : (Opens (ProjectiveSpectrum.top 𝒜))ᵒᵖ ⥤ 
 
 end ProjTwist
 
-open ProjTwist in
 
+open ProjTwist in
 noncomputable def twistingSheaf (k : ℤ) : (Proj 𝒜).Modules where
   val :=
     letI (U : (Opens (Proj 𝒜))ᵒᵖ) :
         Module ((Proj 𝒜).ringCatSheaf.obj.obj U) ((twistPresheafAb 𝒜 k).obj U) :=
-      let U' : (Opens (ProjectiveSpectrum.top 𝒜))ᵒᵖ := U
-      inferInstanceAs (Module ((ProjectiveSpectrum.Proj.structureSheaf 𝒜).obj.obj U')
-        ((twistSheafInType 𝒜 k).obj.obj U'))
+      (sectionsSubmodule k U.unop).module
     PresheafOfModules.ofPresheaf (R := (Proj 𝒜).ringCatSheaf.obj) (twistPresheafAb 𝒜 k)
       fun _ _ _ _ _ => rfl
   isSheaf := (TopCat.Presheaf.isSheaf_iff_isSheaf_comp (forget AddCommGrpCat) _).2
@@ -192,24 +189,8 @@ lemma isLocallyFraction_val (s : Γ(twistingSheaf 𝒜 k, U)) :
 def mkSection (f : ∀ x : U, Loc 𝒜 x.1) (hf : (isLocallyFraction 𝒜 k).pred f) :
     Γ(twistingSheaf 𝒜 k, U) := ⟨f, hf⟩
 
-@[simp] lemma val_mkSection (f : ∀ x : U, Loc 𝒜 x.1) (hf : (isLocallyFraction 𝒜 k).pred f) :
-    val (mkSection f hf) = f := rfl
-
-@[ext] lemma ext {s t : Γ(twistingSheaf 𝒜 k, U)} (h : val s = val t) : s = t := Subtype.ext h
-
-@[simp] lemma val_add (s t : Γ(twistingSheaf 𝒜 k, U)) : val (s + t) = val s + val t := rfl
-
-@[simp] lemma val_zero : val (0 : Γ(twistingSheaf 𝒜 k, U)) = 0 := rfl
-
-@[simp] lemma val_neg (s : Γ(twistingSheaf 𝒜 k, U)) : val (-s) = -val s := rfl
-
-@[simp] lemma val_sub (s t : Γ(twistingSheaf 𝒜 k, U)) : val (s - t) = val s - val t := rfl
-
 lemma val_smul (t : Γ(Proj 𝒜, U)) (s : Γ(twistingSheaf 𝒜 k, U)) (x : U) :
     val (t • s) x = (t.1 x).val * val s x := rfl
-
-lemma val_res (h : V ≤ U) (s : Γ(twistingSheaf 𝒜 k, U)) (x : V) :
-    val ((twistingSheaf 𝒜 k).presheaf.map (homOfLE h).op s) x = val s ⟨x.1, h x.2⟩ := rfl
 
 end ProjTwist
 

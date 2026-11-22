@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.KerMtPin
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
-import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.KernelEntryUnramifiedUnit
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeckeCharFiniteOrderUnitIdele
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CharacterCmInfinityType
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.KerMtPin
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.KernelEntryUnramifiedUnit
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeckeCharFiniteOrderUnitIdele
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CharacterCmInfinityType
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Ker Formalism.L2.Host Formalism.L2.Col Formalism.L2.DIV
 

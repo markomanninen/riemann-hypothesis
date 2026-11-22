@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.GroupCoh
@@ -67,14 +72,6 @@ variable (S : ShortComplex (ModuleCat.{u} R))
     (hrange : LinearMap.range ι = LinearMap.ker S.g.hom) (N : Submodule R K)
     (hN : ∀ x, x ∈ N ↔ ι x ∈ LinearMap.range S.f.hom)
 
-@[simp]
-lemma moduleLeftHomologyData_i_hom :
-    (moduleLeftHomologyData S K ι hι hrange N hN).i.hom = ι := rfl
-
-@[simp]
-lemma moduleLeftHomologyData_π_hom :
-    (moduleLeftHomologyData S K ι hι hrange N hN).π.hom = N.mkQ := rfl
-
 lemma moduleLeftHomologyData_homologyIso_hom_homologyπ [S.HasHomology]
     (z : S.cycles) (x : K) (hx : ι x = S.iCycles.hom z) :
     (moduleLeftHomologyData S K ι hι hrange N hN).homologyIso.hom.hom (S.homologyπ.hom z) =
@@ -140,7 +137,6 @@ lemma homologyFunctorIso'_moduleLeftHomologyData_apply {ιc : Type*} {c : Comple
   have h1 : (HomologicalComplex.homologyFunctorIso' _ c i j k hi hk).hom.app C =
       ShortComplex.homologyMap e := by
     simp [HomologicalComplex.homologyFunctorIso', e]
-    exact Category.id_comp _
   have h2 : (ShortComplex.homologyMap e).hom ((C.sc j).homologyπ.hom z) =
       (C.sc' i j k).homologyπ.hom ((ShortComplex.cyclesMap e).hom z) :=
     congr(($(ShortComplex.homologyπ_naturality e)).hom z)
@@ -174,7 +170,6 @@ lemma exists_cycles_of_moduleLeftHomologyData {ιc : Type*} {c : ComplexShape ι
   refine h3.trans ?_
   rw [h4]
   simp [e]
-  rfl
 
 end Complexes
 

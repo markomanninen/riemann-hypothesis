@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EsymmInvMulEsymmCard
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EsymmInvMulEsymmCard
+
+@[expose] public section
 
 open GlobalTheory.LatHecke GlobalTheory.SatakeInv
 

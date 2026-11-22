@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
-import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingStalkGeneric
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingStalkGeneric
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -18,7 +22,7 @@ namespace GlobalTheory.SS.Ord
 section Algebra
 
 theorem multilinear_mem {S P Q I : Type} [CommRing S] [AddCommGroup P] [Module S P] [AddCommGroup Q]
-    [Module S Q] [Fintype I] [DecidableEq I] (f : MultilinearMap S (fun _ : I => P) Q) (G : Set P)
+    [Module S Q] [Fintype I] [DecidableEq I] (f : (I → P) →ₘₗ[S] Q) (G : Set P)
     (N : Submodule S Q) (h : ∀ v : I → P, (∀ i, v i ∈ G) → f v ∈ N) (v : I → P)
     (hv : ∀ i, v i ∈ Submodule.span S G) : f v ∈ N := by
   have key : ∀ s : Finset I, ∀ v : I → P, (∀ i, v i ∈ Submodule.span S G) → (∀ i, i ∉ s → v i ∈ G) → f v ∈ N := by
@@ -47,7 +51,7 @@ theorem det_mem {B S L I : Type} [CommRing B] [CommRing S] [CommRing L] [Fintype
     (Matrix.of fun i j => δ i (φ (t j))).det ∈ N := by
   letI := φ.toAlgebra
   let N' : Submodule S L := { N with smul_mem' := fun s x hx => hN s x hx }
-  let f : MultilinearMap S (fun _ : I => I → L) L :=
+  let f : (I → I → L) →ₘₗ[S] L :=
     (Matrix.detRowAlternating (n := I) (R := L)).toMultilinearMap.restrictScalars S
   have hf : ∀ v : I → I → L, f v = (Matrix.of fun i j => v j i).det := fun v =>
     (Matrix.det_transpose (Matrix.of v)).symm
@@ -91,11 +95,11 @@ theorem exists_pow_mul_mem {R B L I : Type} [CommRing R] [CommRing B] [CommRing 
   | add x y _ _ hx hy =>
     obtain ⟨s, hs⟩ := hx
     obtain ⟨s', hs'⟩ := hy
-    exact ⟨s + s', by simp only [map_add, hs, hs']; ring⟩
+    exact ⟨s + s', by simp only [map_add (f := _), hs, hs']; ring⟩
   | mul x y _ _ hx hy =>
     obtain ⟨s, hs⟩ := hx
     obtain ⟨s', hs'⟩ := hy
-    exact ⟨x * s' + y * s, by simp only [map_add, map_mul, hδ, hs, hs']; ring⟩
+    exact ⟨x * s' + y * s, by simp only [map_add (f := _), map_mul, hδ, hs, hs']; ring⟩
 
 theorem exists_prime_iInf {B : Type} [CommRing B] {p : B} (hp : Prime p) (h0 : p ∈ nonZeroDivisors B) :
     ∃ J : Ideal B, J.IsPrime ∧ p ∉ J ∧ ∀ b, (∀ n : ℕ, p ^ n ∣ b) → b ∈ J := by
@@ -248,8 +252,8 @@ variable {R : Type} [CommRing R] [IsDomain R] [IsDiscreteValuationRing R] {K : T
 theorem isOpenImmersion_j (M : Model R A) : IsOpenImmersion M.j :=
   DvrModel.isOpenImmersion_generic (isPullback_j M)
 
-omit [IsFractionRing R K] in
 
+omit [IsFractionRing R K] in
 theorem mem_basicOpen_cst (hπ : Irreducible π) (M : Model R A) (U : M.Y.left.Opens) (x : M.Y.left) :
     x ∈ M.Y.left.basicOpen (cst M U π) ↔ x ∈ U ∧ x ∉ M.sp := by
   rw [← rs_cst M (le_top : U ≤ ⊤)]
@@ -304,8 +308,8 @@ theorem exists_pow_mul_eq (hπ : Irreducible π) (M : Model R A) {U : M.Y.left.O
   simp only [hid, map_pow] at this
   rw [← this, _root_.mul_comm]
 
-omit [IsFractionRing R K] in
 
+omit [IsFractionRing R K] in
 theorem prime_cst (hπ : Irreducible π) (M : Model R A) (hM : M.Irr) {U : M.Y.left.Opens} (hU : IsAffineOpen U)
     (h : ((U : Set M.Y.left) ∩ M.sp).Nonempty) : Prime (cst M U π) := by
   have := M.smooth
@@ -325,8 +329,8 @@ theorem prime_cst (hπ : Irreducible π) (M : Model R A) (hM : M.Irr) {U : M.Y.l
   have := isIntegral_of_smooth_field (pullback.snd M.Y.hom (Spec.map (CommRingCat.ofHom (IsLocalRing.residue R))))
   exact DvrModel.prime_res hπ hp hU hx hs
 
-omit [IsFractionRing R K] in
 
+omit [IsFractionRing R K] in
 theorem nonempty_basicOpen_inter (hπ : Irreducible π) (M : Model R A) (hM : M.Irr) {U : M.Y.left.Opens}
     (hU : IsAffineOpen U) (h : ((U : Set M.Y.left) ∩ M.sp).Nonempty) {b : Γ(M.Y.left, U)}
     (hb : ¬ cst M U π ∣ b) : ((M.Y.left.basicOpen b : Set M.Y.left) ∩ M.sp).Nonempty := by
@@ -339,14 +343,14 @@ theorem nonempty_basicOpen_inter (hπ : Irreducible π) (M : Model R A) (hM : M.
       (mem_basicOpen_cst hπ M U _).2 ⟨hU.range_fromSpec.le ⟨p, rfl⟩, hn⟩
     exact (hU.fromSpec_preimage_basicOpen _).le this (Ideal.mem_span_singleton_self _)
 
-omit [IsFractionRing R K] in
 
+omit [IsFractionRing R K] in
 theorem dvd_of_dvd_rs (hπ : Irreducible π) (M : Model R A) (hM : M.Irr) {U W : M.Y.left.Opens}
     (hU : IsAffineOpen U) (hW : W ≤ U) (h : ((W : Set M.Y.left) ∩ M.sp).Nonempty) {b : Γ(M.Y.left, U)}
     (hb : cst M W π ∣ rs _ hW b) : cst M U π ∣ b := by
   by_contra hn
-  obtain ⟨x, hx, hx'⟩ := nonempty_basicOpen_inter hπ M hM hU (h.mono fun x hx => ⟨hW hx.1, hx.2⟩) hn
   obtain ⟨y, hy, hy'⟩ := h
+  obtain ⟨x, hx, hx'⟩ := nonempty_basicOpen_inter hπ M hM hU ⟨y, hW hy, hy'⟩ hn
   obtain ⟨z, hz, hz1, hz2⟩ := hM.2 _ _ (M.Y.left.basicOpen b).isOpen W.isOpen ⟨x, hx', hx⟩ ⟨y, hy', hy⟩
   have h1 : z ∈ M.Y.left.basicOpen (rs _ hW b) := (M.Y.left.basicOpen_res b (homOfLE hW).op).ge ⟨hz2, hz1⟩
   obtain ⟨c, hc⟩ := hb
@@ -373,8 +377,8 @@ section Order
 variable {R : Type} [CommRing R] [IsDomain R] [IsDiscreteValuationRing R] {K : Type} [Field K] [Algebra R K]
   [IsFractionRing R K] {A : Over (Sp K)} {π : R} {I : Type} [Fintype I] [DecidableEq I]
 
-omit [IsDomain R] [IsDiscreteValuationRing R] [IsFractionRing R K] in
 
+omit [IsDomain R] [IsDiscreteValuationRing R] [IsFractionRing R K] in
 theorem jac_mem_basicOpen (M : Model R A) (D : I → VF A) {U : M.Y.left.Opens} (hU : IsAffineOpen U)
     (g : Γ(M.Y.left, U)) (N : AddSubgroup Γ(A.left, M.j ⁻¹ᵁ M.Y.left.basicOpen g))
     (hN : ∀ s, ∀ x ∈ N, (M.j.app (M.Y.left.basicOpen g)).hom s * x ∈ N)

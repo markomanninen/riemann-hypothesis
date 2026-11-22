@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.BlockMatrixPlaces.BlockDiagonalOrdinaryGSpRep
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.BlockMatrixPlaces.BlockDiagonalOrdinaryGSpRep
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws UpperTheory.V.Ws.Bl
 
@@ -42,7 +46,8 @@ theorem UpperTheory.V.Ws.Bl.gwIneq :
   have htw : Nat.card (H0 (twDual μ ρ)) = 1 := by
     refine card_one_of _ (fun φ hφ => ?_)
     have hfix := (mem_riemannRochSpace_iff_regularAt_everywhere _ φ).mp hφ (toGS Ω _ s)
-    apply TDual.ext
+    change (φ : Module.Dual (ZMod (l ^ r)) M) = 0
+    apply LinearMap.ext
     intro m
     obtain ⟨x, rfl⟩ := hsbij.2 m
     have hx : φ (ρ (toGS Ω _ s) x) = φ x := by
@@ -84,7 +89,7 @@ theorem UpperTheory.V.Ws.Bl.gwIneq :
   set P' := ∏ v ∈ Finset.univ.erase v0, Nat.card (H0 (ρ.comp (locFam S Av v)))
   set Q' := ∏ v ∈ Finset.univ.erase v0, Nat.card (L v)
   have hP'pos : 0 < P' := Finset.prod_pos (fun v _ => hH0pos v)
-  have hPQ : P' ≤ Q' := Finset.prod_le_prod (fun v _ => Nat.zero_le _)
+  have hPQ : P' ≤ Q' := Finset.prod_le_prod₀ (fun v _ => Nat.zero_le _)
     (fun v hv => hL v (Finset.ne_of_mem_erase hv))
   rw [← hP, ← hQ] at key
   set a := Nat.card (Sel ρ (locFam S Av) (continuous_locFam S Av) L)

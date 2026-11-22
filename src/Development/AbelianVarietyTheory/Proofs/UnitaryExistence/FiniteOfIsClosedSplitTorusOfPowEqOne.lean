@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.Torus2GammaBijective
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteOfIsClosedTorusZariskiOfPowEqOne
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.Torus2GammaBijective
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteOfIsClosedTorusZariskiOfPowEqOne
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -116,8 +120,8 @@ theorem splitTorusPoint_mul (s t : Multiplicative X →* kˣ) :
   rw [splitTorusDown_mul, splitTorusDown_point, splitTorusDown_point, splitTorusDown_point,
     torusEvalInt_mul, map_mul]
 
-variable (k X) in
 
+variable (k X) in
 noncomputable def splitTorusPointEquiv :
     (Multiplicative X →* kˣ) ≃* (𝟙_ (Over (Sp k)) ⟶ splitTorus (Sp k) X) :=
   { Equiv.ofBijective _ splitTorusPoint_bijective with map_mul' := splitTorusPoint_mul }
@@ -144,7 +148,7 @@ theorem finite_of_isClosed_splitTorus_of_pow_eq_one :
         (∀ x ∈ C, x ^ n = 1 → x = 1) → Finite C := by
   intro k _ _ X _ _ _ n hp hn C Z hZ hC htors
   haveI : NeZero (n : k) := ⟨hn⟩
-  let e := splitTorusPointEquiv k X
+  let e := splitTorusPointEquiv (k := k) (X := X)
   have hcl : @IsClosed _ (torusZariski k X)
       (C.comap e.toMonoidHom : Set (Multiplicative X →* kˣ)) := by
     refine isClosed_induced_iff.2 ⟨(torusIso k X).hom ⁻¹' Z,

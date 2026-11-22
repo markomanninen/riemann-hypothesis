@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.TwoChartSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.TwoChartSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+
+@[expose] public section
 
 noncomputable section
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Chart
@@ -33,8 +37,8 @@ theorem toJet_coe (m : ℕ) (Q : MvPolynomial κ R) :
     toJet m (Q : MvPowerSeries κ R) = Ideal.Quotient.mk _ Q :=
   (toJet_eq_mk_iff m _ Q).2 fun e _ => MvPolynomial.coeff_coe Q e
 
-variable (R κ) in
 
+variable (R κ) in
 def toJetHom (m : ℕ) : MvPowerSeries κ R →ₐ[R] JetR R κ m :=
   (truncTotalAlgHom κ R (m + 1)).restrictScalars R
 

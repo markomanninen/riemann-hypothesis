@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntBTmulBasis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyAdicIntegralSpanClosedMulStar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntBTmulBasis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyAdicIntegralSpanClosedMulStar
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount IsDedekindDomain GlobalTheory.AdicSpan
 open scoped TensorProduct Classical
 
@@ -28,11 +33,12 @@ theorem isIntB_one_mul_eventually : ∀ (A : Type) [Ring A] [Algebra ℚ A] [Fin
   refine ⟨fun k => ?_, fun y z hy hz k => ?_⟩
   · rw [Algebra.TensorProduct.one_def, repr_tmul_apply, one_mul]
     exact h1v k
-  · rw [eq_sum_tmul b v y, eq_sum_tmul b v z, Finset.sum_mul_sum, map_sum, Finsupp.finset_sum_apply]
-    refine sum_mem fun i _ => ?_
-    rw [map_sum, Finsupp.finset_sum_apply]
-    refine sum_mem fun j _ => ?_
-    rw [Algebra.TensorProduct.tmul_mul_tmul, repr_tmul_apply]
-    exact mul_mem (mul_mem (hy i) (hz j)) (hcv (i, j, k))
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [eq_sum_tmul b v y, eq_sum_tmul b v z, Finset.sum_mul_sum, map_sum, Finsupp.finsetSum_apply]
+      refine sum_mem fun i _ => ?_
+      rw [map_sum, Finsupp.finsetSum_apply]
+      refine sum_mem fun j _ => ?_
+      rw [Algebra.TensorProduct.tmul_mul_tmul, repr_tmul_apply]
+      exact mul_mem (mul_mem (hy i) (hz j)) (hcv (i, j, k))
 
 end GlobalTheory.AdicSpan

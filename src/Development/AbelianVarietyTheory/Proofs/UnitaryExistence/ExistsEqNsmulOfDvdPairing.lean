@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+
+@[expose] public section
 
 open NumberField Matrix
 open scoped nonZeroDivisors
@@ -8,9 +12,9 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.G
 
 namespace GlobalTheory.LevelHalf
 
+
 open NumberField Matrix in
 open scoped nonZeroDivisors in
-
 theorem _root_.GlobalTheory.LevelHalf.trivial_mod_of_trivial_on_half :
     ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (D : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Datum H)
       (l : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H) (gam : D.La ≃ₗ[𝓞 E] D.La), (∀ a b, D.EF (gam a) (gam b) = D.EF a b) →
@@ -35,13 +39,13 @@ theorem _root_.GlobalTheory.LevelHalf.trivial_mod_of_trivial_on_half :
       simpa using Ideal.mem_map_of_mem (H.bar : 𝓞 E →+* 𝓞 E) hi
     obtain ⟨e₂, he₂⟩ := hhalf (H.bar i • z) (Submodule.smul_mem_smul hmem Submodule.mem_top)
     refine ⟨-EF (gam x) e₂, ?_⟩
-    rw [hy, map_sub, LinearMap.sub_apply, ← hiso x (H.bar i • z), he₂, map_add, map_nsmul,
+    rw [hy, map_sub, LinearMap.sub_apply, ← hiso x (H.bar i • z), he₂, map_add (f := _), map_nsmul,
       nsmul_eq_mul]
     ring
   let ψ : La →ₗ[ℤ] ℤ :=
     { toFun := fun z => EF (i • y) z / M
       map_add' := fun a b => by
-        simp only [map_add]
+        simp only [map_add (f := _)]
         exact Int.add_ediv_of_dvd_left (hdiv a)
       map_smul' := fun c a => by
         simp only [map_zsmul, smul_eq_mul, eq_intCast, Int.cast_id]

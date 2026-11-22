@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,7 +80,8 @@ theorem S_conj {H K : Subgroup G} {w : G} (h1 : ∀ u ∈ H, w * u * w⁻¹ ∈ 
     (v : V) : π w (S π H v) = S π K (π w v) := by
   haveI := Fintype.ofFinite H
   haveI := Fintype.ofFinite K
-  rw [S_apply, S_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [S_apply, S_apply, map_sum]
   refine Fintype.sum_equiv ⟨fun u => ⟨_, h1 u u.2⟩, fun u => ⟨_, h2 u u.2⟩, fun u => Subtype.ext (by simp [mul_assoc]),
     fun u => Subtype.ext (by simp [mul_assoc])⟩ _ _ fun u => ?_
   simp [← Module.End.mul_apply, ← map_mul]
@@ -98,7 +103,8 @@ theorem S_comm {H : Subgroup G} {h : G} (hh : ∀ u ∈ H, h * u = u * h) (v : V
 
 theorem S_S {H K : Subgroup G} (hle : H ≤ K) {v : V} (hv : S π K v = 0) : S π K (S π H v) = 0 := by
   haveI := Fintype.ofFinite H
-  rw [S_apply π H, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [S_apply π H, map_sum]
   exact Finset.sum_eq_zero fun u _ => by rw [S_right (hle u.2), hv]
 
 theorem eq_zero_of_S {H : Subgroup G} {v : V} (hv : ∀ h ∈ H, π h v = v) (h0 : S π H v = 0) : v = 0 := by
@@ -114,8 +120,8 @@ theorem S_U {p q p' q' : R} {w : Rˣ} (hp : w.val * p' = p * w.val) (hq : w.val 
     π w (S π (U p' q') v) = S π (U p q) (π w v) :=
   S_conj (fun _ => conj_mem hp hq) (fun _ => conj_mem (inv_rel hp) (inv_rel hq)) v
 
-variable (π) in
 
+variable (π) in
 def OppInj (p q : R) : Prop := ∀ v : V, (∀ u ∈ U p q, π u v = v) → S π (U q p) v = 0 → v = 0
 
 theorem step {a b c d : R} (aa : a * a = a) (bb : b * b = b) (cc : c * c = c) (dd : d * d = d)
@@ -148,7 +154,8 @@ theorem step {a b c d : R} (aa : a * a = a) (bb : b * b = b) (cc : c * c = c) (d
       simp [mem_U, mul_add, add_mul, mul_assoc, H] <;> abel
   have k3 : S π (U (c + d) (a + b)) z = 0 := by
     haveI := Fintype.ofFinite (U (a + c) (b + d))
-    rw [hz, S_apply π (U (a + c) (b + d)), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hz, S_apply π (U (a + c) (b + d)), map_sum]
     refine Finset.sum_eq_zero fun u _ => ?_
     obtain ⟨x, hx⟩ := dec u.2
     have e : u.1 = un (c * (x * b)) (by simp [mul_assoc, H]) *
@@ -167,7 +174,8 @@ theorem step {a b c d : R} (aa : a * a = a) (bb : b * b = b) (cc : c * c = c) (d
     simp [mem_U, hx, mul_add, add_mul, mul_assoc, H]
   refine h1 z k1 (h2 _ (fun u hu => ?_) (eq_zero_of_S (fun u hu => ?_) (S_S l2 (S_S l1 k3))))
   · haveI := Fintype.ofFinite (U c a)
-    rw [S_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [S_apply, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     obtain ⟨x, hx⟩ := dec hu
     obtain ⟨y, hy⟩ := dec (inv_mem k.2)
@@ -196,7 +204,8 @@ theorem oppInj (hreg : ∀ x : R, ∃ y, x * y * x = x) {p q : R} (pp : p * p = 
   intro v hv h0
   haveI := Fintype.ofFinite (U q p)
   have h1 : S π (U p q) (S π (U q p) v) = 0 := by rw [h0, map_zero]
-  rw [S_apply π (U q p), map_sum, Finset.sum_eq_single 1 (fun u _ hu => ?_) (by simp)] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [S_apply π (U q p), map_sum, Finset.sum_eq_single 1 (fun u _ hu => ?_) (by simp)] at h1
   · exact eq_zero_of_S hv (by simpa using h1)
   obtain ⟨X, hX⟩ : ∃ X, u.1.val = 1 + X := ⟨u.1.val - 1, by simp⟩
   have X0 : X ≠ 0 := fun e => hu (Subtype.ext (Units.ext (by simpa [e] using hX)))

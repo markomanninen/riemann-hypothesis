@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.InjSlice
+module
+
+public import Development.EtaleCohomology.KummerTheory.InjSlice
+
+@[expose] public section
 
 open CategoryTheory Limits
 

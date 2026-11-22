@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qh30.artin :
     ∀ {P : Type} [inst : Mul P] (T : Finset (P → ℂ))

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.GaugeGap
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegerSubgroupIntersection.IntInter
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.FrameTransport
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegerSubgroupIntersection.IntInter
+
+@[expose] public section
 
 namespace PI.GaugeCharW
 

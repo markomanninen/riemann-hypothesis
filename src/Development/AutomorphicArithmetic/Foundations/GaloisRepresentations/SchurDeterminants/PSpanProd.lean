@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PairSplit
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PairSplit
+
+@[expose] public section
 
 open Finset MvPolynomial UpperTheory.Gal.Schur
 
@@ -16,7 +20,8 @@ theorem UpperTheory.Gal.Schur.spanProd_of :
       (w t m * ∏ s, (-1 : K) ^ (m s : ℕ)) • ∏ s, ((-1) ^ (m s : ℕ) * aeval (g t) (esymm (Fin n) K (m s))) := by
     intro t
     conv_lhs => rw [hw t]
-    simp only [map_sum, map_smul, map_prod]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, map_prod]
     refine sum_congr rfl fun m _ => ?_
     rw [prod_mul_distrib, Algebra.smul_def, Algebra.smul_def, map_mul, map_prod]
     simp only [map_pow, map_neg, map_one]

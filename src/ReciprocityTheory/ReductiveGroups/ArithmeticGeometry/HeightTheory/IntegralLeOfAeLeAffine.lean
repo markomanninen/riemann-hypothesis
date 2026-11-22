@@ -1,10 +1,14 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtDefs
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.UniformizerOfResidueIndep
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GoodPrimesProperties
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HNormPts
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.IntNsg
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FsumEqSum
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtDefs
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.UniformizerOfResidueIndep
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GoodPrimesProperties
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HNormPts
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.IntNsg
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FsumEqSum
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -74,14 +78,14 @@ theorem sg_one (hd : d.AxH 𝒜) (h : d.S1) (hI2be : d.HeightIntegralBoundEstima
     (hint.1 (d.n1 • d.wde) (d.et c) (by simp) (hd.et_mem c) (hd.et_ne c))
   set κ := d.tableLineDegreeFive * d.DF + d.cc * d.tableLineDegreeTwo
   refine integral_le_of_ae_le_affine _ _ _ _ _ _ I1 I2 I3 ?_
-  filter_upwards [d.norm_at_sg hd h c sg] with z hz
-  obtain ⟨hfin0, hcard0, -, -⟩ := hz
-  have hfin : (d.ST c sg (fun i j => ReciprocityTheory.MultiplicativeHeights.spherePoint (z i) j)).Finite := hfin0
-  have hcard : (d.ST c sg (fun i j => ReciprocityTheory.MultiplicativeHeights.spherePoint (z i) j)).ncard = d.delc c := hcard0
-  rw [finsum_mem_eq_finite_toFinset_sum _ hfin, finsum_mem_eq_finite_toFinset_sum _ hfin,
-    finsum_mem_eq_finite_toFinset_sum _ hfin]
-  rw [Set.ncard_eq_toFinset_card _ hfin] at hcard
-  have e : (d.delc c : ℝ) * κ = ∑ P ∈ hfin.toFinset, κ := by
+  filter_upwards [d.hint_fs hd h c sg] with z hz
+  obtain ⟨s, hcard, -, hsum⟩ := hz
+  change d.hintSm c sg (fun P => -Real.log (d.nrm c d.wL (f c) P)) z ≤
+    d.hintSm c sg (fun P => -Real.log (d.nrm c d.wL (f c) P / d.be c P)) z +
+    d.delc c * κ + d.cc / d.i *
+      d.hintSm c sg (fun P => -Real.log (d.nrm c (d.n1 • d.wde) (d.et c) P)) z
+  simp only [hsum]
+  have e : (d.delc c : ℝ) * κ = ∑ P ∈ s, κ := by
     rw [Finset.sum_const, nsmul_eq_mul, hcard]
   rw [e, Finset.mul_sum, ← Finset.sum_add_distrib, ← Finset.sum_add_distrib]
   refine Finset.sum_le_sum fun P _ => ?_

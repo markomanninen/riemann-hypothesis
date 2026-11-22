@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
-import Formalism.HermitianCurvature.FrameExists2
+module
+
+public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+public import Formalism.HermitianCurvature.FrameExists2
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.TL
 
@@ -320,8 +324,6 @@ def LetterLiftOfParts : Prop := BasicLift → LShape → MShape → LetterLift
 def WordLiftOfParts : Prop := WordStep → LetterLift → WordLift
 def LiftXOfParts : Prop := LiftZero → LiftClosed → XFibFacts → LiftX
 def XFibOfParts : Prop := CellVals → OmFacts → CapVFrame → CapVEquiv → XFibFacts
-
-def TopLiftOfParts : Prop := WordLift → LiftClosed → IdOp → LiftFns → LiftCap → ActualAlg → LiftX → TopLiftExists3
 
 end
 

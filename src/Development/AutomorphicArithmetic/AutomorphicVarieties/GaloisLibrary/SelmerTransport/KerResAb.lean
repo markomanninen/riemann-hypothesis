@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.LenCokerLe
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.LenCokerLe
+
+@[expose] public section
 
 open ReciprocityTheory.Gal UpperTheory.V.Base
 
@@ -66,7 +70,7 @@ theorem UpperTheory.V.Base.kerResAb :
   let ev : Z0 →ₗ[R] (T → M) := LinearMap.pi fun t =>
     (LinearMap.proj (⟨t.1, hT t.2⟩ : U)).comp ((Z1U ρ U).subtype.comp Z0.subtype)
   have hev : Function.Injective ev := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro z hz
     have h1 : z.1.1 1 = 0 := z.2 1 U'.one_mem
     let K : Subgroup U :=
@@ -137,7 +141,7 @@ theorem UpperTheory.V.Base.kerResAb :
       exact hkill u z
     · simp
     · intro x y _ _ hx hy
-      rw [add_smul, map_add, hx, hy, add_zero]
+      rw [add_smul, map_add (f := _), hx, hy, add_zero]
     · intro r x _ hx
       rw [smul_assoc, map_smul, hx, smul_zero]
   · intro u

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapPairDetCovec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjectionStatementHolds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapPairDetCovec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjectionStatementHolds
+
+@[expose] public section
 
 set_option autoImplicit false
 open CategoryTheory Limits AlgebraicGeometry NumberField IsDedekindDomain
@@ -23,8 +27,8 @@ def IsProjMat {X : Scheme.{0}} (t : SAB H X) {R : Type} [CommRing R] (ξ : Sp R 
     ∀ w v, IsCombAtG t (spMap φ ≫ ξ) (bcV t φ e) w v → IsEigG t (φ.comp σ) v →
       Matrix.vecMul w (U.map φ) = ((discr E : ℤ) : S) • w
 
-open GlobalTheory.FlatModel.Proj in
 
+open GlobalTheory.FlatModel.Proj in
 theorem exists_isProjMat {X : Scheme.{0}} {t : SAB H X} {R : Type} [CommRing R] {ξ : Sp R ⟶ X} {g : ℕ}
     {e : Fin g → (Sp (DualNumber R) ⟶ t.G.left)} (he : IsTanBasis t ξ e) (σ : 𝓞 E →+* R) :
     ∃ U : Matrix (Fin g) (Fin g) R, IsProjMat t ξ σ e U := by
@@ -54,7 +58,8 @@ theorem exists_isProjMat {X : Scheme.{0}} {t : SAB H X} {R : Type} [CommRing R] 
     rw [e1] at this
     exact this
   have hU : ∀ k, ∑ j, φ (∑ i, σ (c i) * ρ (b i) k j) • T j = ∑ i, (φ.comp σ) (c i) • actR t.act (b i) (T k) := fun k => by
-    simp only [hA, map_sum, map_mul, Finset.sum_smul, Finset.smul_sum, smul_smul, RingHom.comp_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hA, map_sum, map_mul, Finset.sum_smul, Finset.smul_sum, smul_smul, RingHom.comp_apply]
     exact Finset.sum_comm
   refine ⟨fun k u hu a => ?_, fun w v hw hv => ?_⟩
   · rw [hT] at hu
@@ -77,7 +82,8 @@ theorem exists_isProjMat {X : Scheme.{0}} {t : SAB H X} {R : Type} [CommRing R] 
       simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Finset.sum_smul, mul_smul]
       rw [Finset.sum_comm]
       simp only [← Finset.smul_sum, hU]
-      simp only [map_sum, map_smul, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, Finset.smul_sum]
       rw [Finset.sum_comm]
       exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun k _ => smul_comm _ _ _
     have hu := he.2 S φ _ (GlobalTheory.LieMet.isTan_tv (∑ j, (((discr E : ℤ) : S) • w) j • T j))

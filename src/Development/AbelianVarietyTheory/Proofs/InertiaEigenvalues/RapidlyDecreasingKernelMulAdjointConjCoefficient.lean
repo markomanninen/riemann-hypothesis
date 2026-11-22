@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumLieCoord
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumLieCoord
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,9 +49,9 @@ theorem inv_val_eq (y : GL (Fin a) (Cinf E)) :
 
 end RapidCoef
 
-open RapidCoef in
 
-theorem isRapidInf_mul_adCoef : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (X : Type)
+open RapidCoef in
+theorem isRapidInf_mul_adCoef : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (X : Type)
     [MeasurableSpace X] (ν : Measure X) (k : X → ℂ) (γ : X → GL (Fin a) (Cinf E)), IsRapidInf ν k γ →
       ∀ p, IsRapidInf ν (fun x => k x * adCoef (γ x) p) γ := by
   intro E _ _ _ a X _ ν k γ hr p
@@ -59,7 +63,7 @@ theorem isRapidInf_mul_adCoef : ∀ (E : Type) [Field E] [NumberField E] [IsTota
   have hA : Measurable fun x => toL (γ x).val := hγ
   have hdet : Measurable fun x => ((γ x).val).det := contDiff_det.continuous.measurable.comp hA
   have hc : Measurable fun x => (fun v => (((γ x).val).det v)⁻¹ : Cinf E) :=
-    measurable_pi_lambda _ fun v => ((measurable_pi_apply v).comp hdet).inv
+    Measurable.of_eval fun v => ((measurable_pi_apply v).comp hdet).inv
   have hinv : Measurable fun x => toL (γ x)⁻¹.val := by
     have : (fun x => toL (γ x)⁻¹.val) =
         (fun q : Cinf E × Lie E a => toL (q.1 • (Matrix.of q.2).adjugate)) ∘

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StdLvPr
-import Formalism.LocalToGlobal.HermitianForms.TiedTwJSym
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsForgetsFrames
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StepZeroClassesBijectiveSameDeco
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StdLvPr
+public import Formalism.LocalToGlobal.HermitianForms.TiedTwJSym
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsForgetsFrames
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StepZeroClassesBijectiveSameDeco
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
@@ -23,45 +27,45 @@ theorem redEq_rfl {N : Submodule (𝓞 X.E) (Fin n → X.E)} (P : HeightOneSpect
   induction x using Submodule.Quotient.induction_on
   rfl
 
-def redN {d' d : DecoSet X.E n ST SG} (h : d' = d) (P : ST) : TDat.Red d'.1.N P.1 ≃+ TDat.Red d.1.N P.1 :=
-  redEq (congrArg (fun e : DecoSet X.E n ST SG => e.1.N) h) P.1
+def redN {d' d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)} (h : d' = d) (P : ST) : TDat.Red d'.1.N P.1 ≃+ TDat.Red d.1.N P.1 :=
+  redEq (congrArg (fun e : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG) => e.1.N) h) P.1
 
-def redK {d' d : DecoSet X.E n ST SG} (h : d' = d) (P : ST) :
+def redK {d' d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)} (h : d' = d) (P : ST) :
     TDat.Red (d'.1.dnN P) P.1 ≃+ TDat.Red (d.1.dnN P) P.1 :=
-  redEq (congrArg (fun e : DecoSet X.E n ST SG => e.1.dnN P) h) P.1
+  redEq (congrArg (fun e : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG) => e.1.dnN P) h) P.1
 
-theorem redN_rfl (d : DecoSet X.E n ST SG) (P : ST) (x : TDat.Red d.1.N P.1) : redN (rfl : d = d) P x = x := redEq_rfl _ x
+theorem redN_rfl (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) (P : ST) (x : TDat.Red d.1.N P.1) : redN (rfl : d = d) P x = x := redEq_rfl _ x
 
-theorem redK_rfl (d : DecoSet X.E n ST SG) (P : ST) (x : TDat.Red (d.1.dnN P) P.1) : redK (rfl : d = d) P x = x := redEq_rfl _ x
+theorem redK_rfl (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) (P : ST) (x : TDat.Red (d.1.dnN P) P.1) : redK (rfl : d = d) P x = x := redEq_rfl _ x
+
 
 open Classical in
-
-def fvD (d : DecoSet X.E n ST SG) (P : ST) : Module.Dual (Res P.1) (TDat.Red d.1.N P.1) :=
+def fvD (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) (P : ST) : Module.Dual (Res P.1) (TDat.Red d.1.N P.1) :=
   if h : ∃ φ : Module.Dual (Res P.1) (TDat.Red d.1.N P.1), ∀ x : d.1.N, φ (Submodule.Quotient.mk x) = d.1.f P x then h.choose else 0
 
-open Classical in
 
-def teD (d : DecoSet X.E n ST SG) (T : ℕ) (P : ST) : TDat.Red (d.1.dnN P) P.1 :=
+open Classical in
+def teD (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) (T : ℕ) (P : ST) : TDat.Red (d.1.dnN P) P.1 :=
   if h : ∃ t : d.1.dnN P, ∃ e ∈ d.1.N, d.1.f P e = 1 ∧ (t : Fin n → X.E) = (T : 𝓞 X.E) • e
   then Submodule.Quotient.mk h.choose else 0
 
-theorem fvD_cast {d' d : DecoSet X.E n ST SG} (h : d' = d) (P : ST) (x : TDat.Red d'.1.N P.1) :
+theorem fvD_cast {d' d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)} (h : d' = d) (P : ST) (x : TDat.Red d'.1.N P.1) :
     fvD d' P x = fvD d P (redN h P x) := by subst h; rw [redN_rfl]
 
-theorem teD_cast {d' d : DecoSet X.E n ST SG} (h : d' = d) (T : ℕ) (P : ST) :
+theorem teD_cast {d' d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)} (h : d' = d) (T : ℕ) (P : ST) :
     redK h P (teD d' T P) = teD d T P := by subst h; rw [redK_rfl]
 
-theorem redN_smul {d' d : DecoSet X.E n ST SG} (h : d' = d) (P : ST) (r : Res P.1) (x : TDat.Red d'.1.N P.1) :
+theorem redN_smul {d' d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)} (h : d' = d) (P : ST) (r : Res P.1) (x : TDat.Red d'.1.N P.1) :
     redN h P (r • x) = r • redN h P x := by subst h; rw [redN_rfl, redN_rfl]
 
-theorem redK_smul {d' d : DecoSet X.E n ST SG} (h : d' = d) (P : ST) (r : Res P.1) (x : TDat.Red (d'.1.dnN P) P.1) :
+theorem redK_smul {d' d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)} (h : d' = d) (P : ST) (r : Res P.1) (x : TDat.Red (d'.1.dnN P) P.1) :
     redK h P (r • x) = r • redK h P x := by subst h; rw [redK_rfl, redK_rfl]
 
-theorem up_cast {d' d : DecoSet X.E n ST SG} (h : d' = d) (P : ST) (q : 𝓞 X.E) (x : TDat.Red d'.1.N P.1) :
+theorem up_cast {d' d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)} (h : d' = d) (P : ST) (q : 𝓞 X.E) (x : TDat.Red d'.1.N P.1) :
     d'.up P q ((Quotient.out x : d'.1.N) : Fin n → X.E) = d.up P q ((Quotient.out (redN h P x) : d.1.N) : Fin n → X.E) := by
   subst h; rw [redN_rfl]
 
-theorem dn_cast {d' d : DecoSet X.E n ST SG} (h : d' = d) (P : ST) (g : Module.Dual (Res P.1) (TDat.Red (d'.1.dnN P) P.1))
+theorem dn_cast {d' d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)} (h : d' = d) (P : ST) (g : Module.Dual (Res P.1) (TDat.Red (d'.1.dnN P) P.1))
     (g' : Module.Dual (Res P.1) (TDat.Red (d.1.dnN P) P.1)) (hg : ∀ x, g x = g' (redK h P x)) :
     d'.dn P (TDat.extF _ P.1 g) = d.dn P (TDat.extF _ P.1 g') := by
   subst h
@@ -284,7 +288,7 @@ theorem locW_of_map {LL : Type} [Field LL] [NumberField LL] (Pl : Rows.Places LL
   induction hx using Submodule.span_induction with
   | mem z hz => exact Submodule.subset_span (hg z hz)
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
   | smul r a _ ha =>
     rw [Subring.smul_def, map_smul]
     exact Submodule.smul_mem _ r ha
@@ -315,7 +319,7 @@ theorem bwA (e : ((I.fm l u I.mu0).lat 0).V ≃ₗ[B.LL] ((I.fm l u a).lat 0).V)
     rfl
   have hker : ∀ c, ((I.atIn u a).A 0).ker (I.eCls0 l u a c).1 (((I.chIn u a).S 0).rep (I.eCls0 l u a c)) v =
       ((I.atIn u I.mu0).A 0).ker c.1 (((I.chIn u I.mu0).S 0).rep c) v :=
-    fun c => congrArg (fun d : DecoSet B.fields.E (B.R.N 0) ((B.primes X).vT u) (B.primes X).vGs => d.1.LshKer v) (rep_eCls0 I hOk l u a c)
+    fun c => congrArg (fun d : DecoSet (E := B.fields.E) (n := B.R.N 0) (ST := (B.primes X).vT u) (SG := (B.primes X).vGs) => d.1.LshKer v) (rep_eCls0 I hOk l u a c)
   refine locW_iff _ w e _ _ (fun y => ?_) x
   constructor
   · intro h c

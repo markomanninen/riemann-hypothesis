@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.HoweInert
-import Development.WeilBound.CoreStatements.LocalThetaKernels.Locrep
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.HoweInert
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.Locrep
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ variable {S A : Submodule ℂ V} {U : Set H} {T : H → Module.End ℂ V}
 theorem Stab.sup {P P' : Submodule ℂ V} (h : Stab S A U T P) (h' : Stab S A U T P') : Stab S A U T (P ⊔ P') := by
   refine ⟨le_sup_of_le_left h.1, sup_le h.2.1 h'.2.1, fun i hi x hx => ?_⟩
   obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hx
-  rw [map_add]
+  rw [map_add (f := _)]
   exact Submodule.add_mem_sup (h.2.2 i hi y hy) (h'.2.2 i hi z hz)
 
 theorem Stab.not_mem {s : V} (hgen : ∀ φ ∈ S, φ ∈ A ⊔ Submodule.span ℂ {z | ∃ h ∈ U, z = T h s}) {P : Submodule ℂ V}
@@ -41,7 +45,7 @@ theorem Stab.sup_ne {s : V} (hs : s ∈ S) (hgen : ∀ φ ∈ S, φ ∈ A ⊔ Su
   have hyP : ∑ i, w i • T (k i) y ∈ P' := P'.sum_mem fun i _ => P'.smul_mem _ (h'.2.2 _ (hw i).1 y hy)
   have hsum : ∑ i, w i • T (k i) x + ∑ i, w i • T (k i) y = ((m + 1 : ℕ) : ℂ) • s := by
     rw [← Finset.sum_add_distrib]
-    simp_rw [← smul_add, ← map_add, hxy, (hw _).2]
+    simp_rw [← smul_add, ← map_add (f := _), hxy, (hw _).2]
     rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, Nat.cast_smul_eq_nsmul]
   have h1 : c • s ∈ P := by
     have := P.sub_mem hxP (h.1 hc)

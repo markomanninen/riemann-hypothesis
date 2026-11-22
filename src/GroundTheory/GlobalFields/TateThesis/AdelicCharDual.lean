@@ -1,10 +1,14 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.AdelicCharLocal
-import GroundTheory.GlobalFields.TateThesis.TracePairing
-import GroundTheory.GlobalFields.TateThesis.ArchChars
-import GroundTheory.GlobalFields.TateThesis.NoSmallSubgroups
-import GroundTheory.GlobalFields.Adele.IdeleBasis
-import GroundTheory.GlobalFields.Adele.Compact
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.AdelicCharLocal
+public import GroundTheory.GlobalFields.TateThesis.TracePairing
+public import GroundTheory.GlobalFields.TateThesis.ArchChars
+public import GroundTheory.GlobalFields.TateThesis.NoSmallSubgroups
+public import GroundTheory.GlobalFields.Adele.IdeleBasis
+public import GroundTheory.GlobalFields.Adele.Compact
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -16,8 +20,8 @@ noncomputable section
 
 variable {K : Type*} [Field K] [NumberField K]
 
-variable (K) in
 
+variable (K) in
 def mixedToInfinite : mixedSpace K →+ InfiniteAdeleRing K :=
   (InfiniteAdeleRing.ringEquiv_mixedSpace K).symm.toAddMonoidHom
 
@@ -49,10 +53,6 @@ theorem mixedToInfinite_mixedEmbedding (k : K) :
   rw [InfiniteAdeleRing.mixedEmbedding_eq_algebraMap_comp]
   exact (InfiniteAdeleRing.ringEquiv_mixedSpace K).symm_apply_apply _
 
-omit [NumberField K] in
-theorem mixedToInfinite_mul (m m' : mixedSpace K) :
-    mixedToInfinite K (m * m') = mixedToInfinite K m * mixedToInfinite K m' :=
-  map_mul (InfiniteAdeleRing.ringEquiv_mixedSpace K).symm m m'
 
 theorem mixedTrace_homeomorphMixedSpace (x : InfiniteAdeleRing K) :
     mixedTrace K (homeomorphMixedSpace K x) = infiniteTrace K x := by
@@ -100,16 +100,19 @@ theorem exists_mixedSpace_char_eq (χ : AddChar (mixedSpace K) Circle) (hχ : Co
     have : ∀ j, Algebra.trace ℚ K (ωd j * ω i) = if i = j then 1 else 0 := fun j => by
       rw [← Algebra.traceForm_apply]
       exact LinearMap.BilinForm.apply_dualBasis_left _ _ _ _
-    simp only [ξ, neg_mul, map_neg, Finset.sum_mul, map_sum, smul_mul_assoc, map_smul, this,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [ξ, neg_mul, map_neg, Finset.sum_mul, map_sum, smul_mul_assoc, map_smul, this,
       smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
   refine ⟨ξ, fun a => ?_, fun m => ?_⟩
   · have ha : algebraMap (𝓞 K) K a = ∑ i, ((RingOfIntegers.basis K).repr a i : ℤ) • ω i := by
       conv_lhs => rw [← (RingOfIntegers.basis K).sum_repr a]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_zsmul, hω]
     refine ⟨-∑ i, ((RingOfIntegers.basis K).repr a i : ℤ) * n i, ?_⟩
-    rw [eq_intCast, ha, Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [eq_intCast, ha, Finset.mul_sum, map_sum]
     push_cast
     rw [← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
@@ -121,7 +124,8 @@ theorem exists_mixedSpace_char_eq (χ : AddChar (mixedSpace K) Circle) (hχ : Co
     rw [addChar_map_finsetSum]
     have hT : mixedTrace K (mixedEmbedding K ξ * ∑ i, b.repr m i • b i) =
         -∑ i, b.repr m i * n i := by
-      rw [Finset.mul_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finset.mul_sum, map_sum]
       simp only [mul_smul_comm, map_smul, hbω, ← map_mul, mixedTrace_mixedEmbedding, hξω,
         smul_eq_mul, Rat.cast_neg, Rat.cast_intCast, mul_neg, Finset.sum_neg_distrib]
     conv_rhs => rw [← b.sum_repr m, hT, neg_neg, addChar_map_finsetSum]
@@ -274,13 +278,12 @@ theorem exists_eq_adelicChar_mul_of_integral (χ : AddChar 𝔸[K] Circle) (hχ 
   have hx : x = algebraMap K 𝔸[K] k + infiniteAdeleInl (x.1 - algebraMap K _ k) +
       finiteAdeleInr (x.2 - algebraMap K _ k) := by
     conv_lhs => rw [← infiniteAdeleInl_add_finiteAdeleInr x]
-    refine Prod.ext (α := InfiniteAdeleRing K) (β := FiniteAdeleRing (𝓞 K) K) ?_ ?_
-    · simp only [adeleRing_add_fst, infiniteAdeleInl_fst, finiteAdeleInr_fst,
-        adeleRing_algebraMap_fst]
-      abel
-    · simp only [adeleRing_add_snd, infiniteAdeleInl_snd, finiteAdeleInr_snd,
-        adeleRing_algebraMap_snd]
-      abel
+    rw [← infiniteAdeleInl_add_finiteAdeleInr x,
+      ← infiniteAdeleInl_add_finiteAdeleInr (algebraMap K 𝔸[K] k)]
+    simp only [map_sub, infiniteAdeleInl_fst, infiniteAdeleInl_snd,
+      finiteAdeleInr_fst, finiteAdeleInr_snd, adeleRing_algebraMap_fst,
+      adeleRing_algebraMap_snd]
+    abel
   have hinf : ∀ z, χ (infiniteAdeleInl z) =
       adelicChar K (infiniteAdeleInl (algebraMap K (InfiniteAdeleRing K) ξ * z)) := by
     intro z
@@ -343,25 +346,6 @@ theorem existsUnique_eq_adelicChar_mul (χ : AddChar 𝔸[K] Circle) (hχ : Cont
     rw [h, ← mul_assoc, ← map_mul, div_eq_mul_inv]
   exact ⟨ξ' / δ, hex, fun η hη => eq_of_forall_adelicChar_mul_eq fun x =>
     (hη x).symm.trans (hex x)⟩
-
-theorem existsUnique_adeleQuotient_char_eq (χ : AddChar (AdeleQuotient K) Circle)
-    (hχ : Continuous χ) :
-    ∃! ξ : K, ∀ x : 𝔸[K],
-      χ (QuotientAddGroup.mk x) = adelicChar K (algebraMap K 𝔸[K] ξ * x) :=
-  existsUnique_eq_adelicChar_mul (χ.compAddMonoidHom (QuotientAddGroup.mk' _))
-    (hχ.comp continuous_quot_mk) fun k => by
-      show χ (QuotientAddGroup.mk (algebraMap K 𝔸[K] k)) = 1
-      have hk : algebraMap K 𝔸[K] k ∈ AdeleRing.principalSubgroup (𝓞 K) K :=
-        RingHom.mem_range_self _ k
-      rw [(QuotientAddGroup.eq_zero_iff _).mpr hk, AddChar.map_zero_eq_one]
-
-theorem continuous_adelicChar_mul (ξ : K) :
-    Continuous fun x : 𝔸[K] => adelicChar K (algebraMap K 𝔸[K] ξ * x) :=
-  (continuous_adelicChar (K := K)).comp (continuous_const.mul continuous_id)
-
-theorem adelicChar_mul_algebraMap (ξ k : K) :
-    adelicChar K (algebraMap K 𝔸[K] ξ * algebraMap K 𝔸[K] k) = 1 := by
-  rw [← map_mul, adelicChar_algebraMap]
 
 end
 

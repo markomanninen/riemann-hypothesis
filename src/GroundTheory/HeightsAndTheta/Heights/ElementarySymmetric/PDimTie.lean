@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GenericPointSectionHypotheses
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GenericPointSectionHypotheses
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -22,8 +27,8 @@ theorem ratio_mem (y : Fin (N + 1) → Ω) {i : Fin (N + 1)} (hi : y i ≠ 0) (j
     y j / y i ∈ ratioRing (k := k) y :=
   Algebra.subset_adjoin ⟨i, j, hi, rfl⟩
 
-open scoped IntermediateField.algebraAdjoinAdjoin in
 
+open scoped IntermediateField.algebraAdjoinAdjoin in
 theorem trdeg_funField (y : Fin (N + 1) → Ω) :
     trdeg k (funField (k := k) y) = trdeg k (ratioRing (k := k) y) := by
   have : FaithfulSMul k (ratioRing (k := k) y) :=
@@ -60,8 +65,8 @@ def ratio (j : Fin (N + 1)) : ratioRing (k := k) y := ⟨y j / y i₀, ratio_mem
 def dehom : Poly k N →ₐ[k] Polynomial (ratioRing (k := k) y) :=
   aeval fun j => Polynomial.C (ratio y hi₀ j) * Polynomial.X
 
-variable (i₀) in
 
+variable (i₀) in
 def rehom : Polynomial (ratioRing (k := k) y) →ₐ[k] Polynomial Ω :=
   ((Polynomial.aeval (R := Ω) (Polynomial.C (y i₀) * Polynomial.X)).restrictScalars k).comp
     (Polynomial.mapAlgHom (ratioRing (k := k) y).val)
@@ -164,7 +169,7 @@ theorem ringKrullDim_eq (y : Fin (N + 1) → Ω) (hy : y ≠ 0) :
     (A' := (dehom (k := k) y hi₀).range) e
   rw [trdeg_range (k := k) y hi₀, ← trdeg_funField] at h
   have h2 := congrArg Cardinal.toENat h
-  simp only [toENat_lift, map_add, map_one] at h2
+  simp only [toENat_lift, map_add (f := _), map_one] at h2
   rw [h2]
 
 end DimTie

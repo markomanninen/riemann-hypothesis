@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.MulVecApplyOfRow
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.MulVecApplyOfRow
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped InnerProductSpace ENNReal ComplexConjugate

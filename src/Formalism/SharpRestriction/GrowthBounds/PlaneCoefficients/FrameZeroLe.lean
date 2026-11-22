@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.SymGSupport
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PosTLSurj
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembDd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.SymGSupport
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PosTLSurj
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembDd
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,9 +31,16 @@ theorem frame_zero_le (hV : Fr.Valid L₁ N₁) (j : ℤ) : Fr.fr j 0 ≤ Fr.fr 
 theorem zstep (hV : Fr.Valid L₁ N₁) (a : ℤ) : Fr.fr a (r - 1) < Fr.fr (a + 1) (r - 1) := (hV.2.2.2.1 a).trans_le (frame_zero_le hV (a + 1))
 
 theorem zmono (hV : Fr.Valid L₁ N₁) (a b : ℤ) (hab : a ≤ b) : Fr.fr a (r - 1) ≤ Fr.fr b (r - 1) := by
-  induction b, hab using Int.le_induction with
-  | base => exact le_rfl
-  | succ b _ ih => exact ih.trans (zstep hV b).le
+  have key : ∀ k : ℕ, Fr.fr a (r - 1) ≤ Fr.fr (a + k) (r - 1) := by
+    intro k
+    induction k with
+    | zero => simpa using (le_rfl : Fr.fr a (r - 1) ≤ Fr.fr a (r - 1))
+    | succ k ih =>
+      have h := ih.trans (zstep hV (a + k)).le
+      simpa only [Nat.cast_succ, add_assoc] using h
+  have h := key (b - a).toNat
+  have heq : a + (↑(b - a).toNat : ℤ) = b := by omega
+  simpa only [heq] using h
 
 theorem seg' (hV : Fr.Valid L₁ N₁) {J : ℕ} [NeZero J] {nL : ZMod J → ℕ}
     (hnL : ∀ j, nL j = (Fr.LLset (segZ j)).card) (x : TL J nL r) :

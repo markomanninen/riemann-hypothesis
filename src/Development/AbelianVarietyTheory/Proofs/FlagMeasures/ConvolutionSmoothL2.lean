@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelicUnitaryCongruenceTopology
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RightRegularRepUnitaryStronglyContinuous
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RightConvolutionOperatorAeEqIntegralAdelicStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TruncatedLeastLatticeSizeLipschitzPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SmoothContinuousConvolutionRealPointsUnitaryStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalL2BoundHeightStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelicUnitaryCongruenceTopology
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RightRegularRepUnitaryStronglyContinuous
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RightConvolutionOperatorAeEqIntegralAdelicStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TruncatedLeastLatticeSizeLipschitzPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SmoothContinuousConvolutionRealPointsUnitaryStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalL2BoundHeightStatement
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec
 open scoped InnerProductSpace ComplexOrder ContDiff
@@ -29,7 +33,8 @@ theorem integrableOn_of_sq {X : Type} [MeasurableSpace X] (μ : Measure X) (U : 
     refine ENNReal.rpow_le_rpow (le_trans (le_of_eq ?_) hb) (by norm_num)
     refine lintegral_congr fun g => ?_
     rw [← ENNReal.rpow_natCast]
-    norm_num [enorm]
+    simp [eNorm_eq_nnNorm]
+    exact hm.restrict
   have e2 := eLpNorm_le_eLpNorm_mul_rpow_measure_univ (μ := μ.restrict U) (p := 1) (q := 2)
     (f := h) (by norm_num) hm.restrict
   rw [Measure.restrict_apply_univ] at e2
@@ -44,7 +49,8 @@ theorem integrableOn_of_sq {X : Type} [MeasurableSpace X] (μ : Measure X) (U : 
   have hi : IntegrableOn h U μ := ⟨hm.restrict, lt_of_le_of_lt e3 ENNReal.ofReal_lt_top⟩
   refine ⟨hi, ?_⟩
   rw [integral_norm_eq_lintegral_enorm hm.restrict]
-  exact ENNReal.toReal_le_of_le_ofReal (by positivity) e3
+  · exact ENNReal.toReal_le_of_le_ofReal (by positivity) e3
+  · exact hm.restrict
 
 theorem integrable_mul_of_support {X : Type} [MeasurableSpace X] (μ : Measure X) (U : Set X)
     (hU : MeasurableSet U) (h φ : X → ℂ) (hφ : AEStronglyMeasurable φ μ) (M : ℝ) (hM : ∀ x, ‖φ x‖ ≤ M)
@@ -112,8 +118,8 @@ theorem conv_right_invariant [MeasurableMul (G₁ × G₂)] (a : G₁ → ℂ) (
   refine integral_congr_ae (Filter.Eventually.of_forall fun g => ?_)
   simp only [Prod.fst_mul, Prod.snd_mul, one_mul, hk, mul_assoc]
 
-omit [MeasurableMul G₂] [μ₂.IsMulLeftInvariant] in
 
+omit [MeasurableMul G₂] [μ₂.IsMulLeftInvariant] in
 theorem conv_eq_partial (a : G₁ → ℂ) (e : G₂ → ℂ) (Y : G₁ × G₂ → ℂ) (z : G₁) (b : G₂)
     (hi : Integrable (fun g => (a g.1 * e g.2) * Y ((z, b) * g)) (μ₁.prod μ₂)) :
     ∫ g, (a g.1 * e g.2) * Y ((z, b) * g) ∂(μ₁.prod μ₂) =

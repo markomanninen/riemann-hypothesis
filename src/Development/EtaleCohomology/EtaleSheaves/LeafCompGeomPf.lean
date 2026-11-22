@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafCompPf
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineBundleGlobalSectionsDimCongrPicardClass
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafCompPf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineBundleGlobalSectionsDimCongrPicardClass
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite Topology TopologicalSpace

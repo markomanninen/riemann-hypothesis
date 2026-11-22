@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.DefUTest
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.DefUSel
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.DefUTest
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.DefUSel
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
@@ -28,7 +32,7 @@ theorem UpperTheory.V.Pa.alSel :
     rw [← Finset.sum_mul]
     congr 1
     ext i j
-    simp [Matrix.map_apply, Matrix.sum_apply, AddMonoidHom.finset_sum_apply]
+    simp [Matrix.map_apply, Matrix.sum_apply]
   · intro ι _ c μ
     funext g
     rw [Finset.sum_apply]
@@ -37,4 +41,4 @@ theorem UpperTheory.V.Pa.alSel :
     rw [← Finset.sum_mul]
     congr 1
     ext i j
-    simp [Matrix.map_apply, Matrix.sum_apply, AddMonoidHom.finset_sum_apply]
+    simp [Matrix.map_apply, Matrix.sum_apply]

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
+
+@[expose] public section
+
 open GlobalTheory.CompanionTheory.Ar.BT TensorProduct
 
 namespace GlobalTheory.CompanionTheory.Ar.BT.CharExt
@@ -62,13 +67,15 @@ lemma conv_mem {A : Subalgebra R (T → R)} (hc : ∀ f ∈ A, (fun z : T × T =
   refine ⟨r, ?_⟩
   rw [hr, sum_conv_mul l m (fun t => algebraMap R K (f t))]
 
-open Classical in
 
+open Classical in
 noncomputable def psi {A : Subalgebra R (T → R)} (d : R) (hd : ∀ f : T → R, d • f ∈ A) :
-    Module.Dual R A →ₗ[R] (T → K) where
-  toFun l t := algebraMap R K (l ⟨d • Pi.single t 1, hd _⟩) / algebraMap R K d
-  map_add' := by intros; ext; simp [add_div]
-  map_smul' := by intros; ext; simp [mul_div_assoc, Algebra.smul_def]
+    Module.Dual R A →ₗ[R] (T → K) := by
+  classical
+  exact {
+    toFun := fun l t => algebraMap R K (l ⟨d • Pi.single t 1, hd _⟩) / algebraMap R K d
+    map_add' := by intros; ext; simp [add_div]
+    map_smul' := by intros; ext; simp [mul_div_assoc, Algebra.smul_def] }
 
 lemma psi_pair [FaithfulSMul R K] {A : Subalgebra R (T → R)} {d : R} (hd0 : d ≠ 0) (hd : ∀ f : T → R, d • f ∈ A)
     (l : Module.Dual R A) (f : T → R) (hf : f ∈ A) :
@@ -81,7 +88,8 @@ lemma psi_pair [FaithfulSMul R K] {A : Subalgebra R (T → R)} {d : R} (hd0 : d 
     funext s
     simp [Finset.sum_apply, Pi.single_apply, mul_comm]
   have e2 := congrArg (fun a => algebraMap R K (l a)) e
-  simp only [map_smul, map_sum, smul_eq_mul, map_mul] at e2
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_smul, map_sum, smul_eq_mul, map_mul] at e2
   simp only [psi, LinearMap.coe_mk, AddHom.coe_mk]
   rw [eq_comm, ← mul_right_inj' hdK, e2, Finset.mul_sum]
   refine Finset.sum_congr rfl fun t _ => ?_
@@ -147,8 +155,9 @@ lemma isIntegral_pairWith [FaithfulSMul R K] {A : Subalgebra R (T → R)} (hA : 
 
 end GlobalTheory.CompanionTheory.Ar.BT.CharExt
 
-open GlobalTheory.CompanionTheory.Ar.BT.CharExt in
+open GlobalTheory.CompanionTheory.Ar.BT.CharExt
 
+open GlobalTheory.CompanionTheory.Ar.BT.CharExt in
 theorem GlobalTheory.CompanionTheory.Ar.BT.char_mem_hopfOrder : ∀ (R : Type) [CommRing R] [IsDomain R] (T : Type) [CommGroup T] [Finite T]
     [IsIntegrallyClosed R] (A : Subalgebra R (T → R)), IsHopfOrder A →
     ∀ χ : T →* Rˣ, (fun t => ((χ t : Rˣ) : R)) ∈ A := by

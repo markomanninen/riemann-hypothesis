@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.NegWeightLe
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.NegWeightLe
+
+@[expose] public section
 
 open IsLocalRing Filter Formalism.MainNotions.V.Pf.V2.Calc UpperTheory.V.Alg UpperTheory.V.Alg.M
 
@@ -36,7 +40,7 @@ private theorem sp_zero (w : τ → ℕ) (hw : ∀ i, w i ≠ 0) (ν : τ →₀
 private theorem sp_one (w : τ → ℕ) (hw : ∀ i, w i ≠ 0) (ν : τ →₀ ℕ) (h : Finsupp.weight w ν = 1) :
     ∃ i, ν = Finsupp.single i 1 := by
   obtain ⟨i, ν', hi, rfl⟩ := sp_peel w ν (by rw [h]; exact one_ne_zero)
-  rw [map_add, sp_ws] at h
+  rw [map_add (f := _), sp_ws] at h
   have h0 : Finsupp.weight w ν' = 0 := by omega
   exact ⟨i, by rw [sp_zero w hw ν' h0, add_zero]⟩
 
@@ -44,7 +48,7 @@ private theorem sp_two (w : τ → ℕ) (hw : ∀ i, w i ≠ 0) (ν : τ →₀ 
     (∃ i, ν = Finsupp.single i 1) ∨
       ∃ i k, w i = 1 ∧ w k = 1 ∧ ν = Finsupp.single i 1 + Finsupp.single k 1 := by
   obtain ⟨i, ν', hi, rfl⟩ := sp_peel w ν (by rw [h]; exact two_ne_zero)
-  rw [map_add, sp_ws] at h
+  rw [map_add (f := _), sp_ws] at h
   rcases (by omega : w i = 2 ∨ w i = 1) with h2 | h1
   · left
     exact ⟨i, by rw [sp_zero w hw ν' (by omega), add_zero]⟩
@@ -57,20 +61,20 @@ private theorem sp_split (w w' : τ → ℕ) (hw : ∀ i, w i ≤ 2) (hw' : ∀ 
     (h : Finsupp.weight w ν = 2 * (a + 1)) :
     ∃ μ ν', ν = μ + ν' ∧ Finsupp.weight w μ = 2 ∧ Finsupp.weight w' μ = 0 := by
   obtain ⟨i, ν1, hi, rfl⟩ := sp_peel w ν (by rw [h]; omega)
-  rw [map_add, sp_ws] at h
+  rw [map_add (f := _), sp_ws] at h
   have hi2 := hw i
   rcases (by omega : w i = 2 ∨ w i = 1) with h2 | h1
   · exact ⟨Finsupp.single i 1, ν1, rfl, by rw [sp_ws]; exact h2, by rw [sp_ws]; exact hw' i hi⟩
   · obtain ⟨k, ν2, hk, rfl⟩ := sp_peel w ν1 (by omega)
-    rw [map_add, sp_ws] at h
+    rw [map_add (f := _), sp_ws] at h
     have hk2 := hw k
     rcases (by omega : w k = 2 ∨ w k = 1) with h2 | h1'
     · exact ⟨Finsupp.single k 1, Finsupp.single i 1 + ν2, add_left_comm _ _ _, by rw [sp_ws]; exact h2,
         by rw [sp_ws]; exact hw' k hk⟩
     · refine ⟨Finsupp.single i 1 + Finsupp.single k 1, ν2, by rw [add_assoc], ?_, ?_⟩
-      · rw [map_add, sp_ws, sp_ws]
+      · rw [map_add (f := _), sp_ws, sp_ws]
         omega
-      · rw [map_add, sp_ws, sp_ws, hw' i hi, hw' k hk]
+      · rw [map_add (f := _), sp_ws, sp_ws, hw' i hi, hw' k hk]
 
 private theorem sp_wt (wt : τ → ℤ) (ν : τ →₀ ℕ) :
     Finsupp.weight wt ν = (Finsupp.weight (posW wt) ν : ℕ) - (Finsupp.weight (negW wt) ν : ℕ) ∧
@@ -105,7 +109,7 @@ private theorem Lead.coeff_mul_of_lead_add_and_vanishing {E : Type} [Field E] {w
     rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
     have hs : Finsupp.weight (negW wt) p.1 + Finsupp.weight (negW wt) p.2 =
         Finsupp.weight (negW wt) ν + Finsupp.weight (negW wt) μ := by
-      rw [← map_add, hp, hν']
+      rw [← map_add (f := _), hp, hν']
     by_cases h1 : Finsupp.weight (negW wt) p.1 < Finsupp.weight (negW wt) ν
     · rw [hg1 p.1 h1, zero_mul]
     by_cases h2 : Finsupp.weight (negW wt) p.2 < Finsupp.weight (negW wt) μ
@@ -133,12 +137,12 @@ private theorem Lead.mul {E : Type} [Field E] {wt : τ → ℤ} {g h : MvPowerSe
   obtain ⟨hh1, hh2, -⟩ := hh
   unfold Lead
   refine ⟨?_, ?_, ?_⟩
-  · rw [map_add]
+  · rw [map_add (f := _)]
     exact (fil_holds E τ wt _ _ g h hg1 hh1).1
   · rw [hc.1]
     exact mul_ne_zero hg2 hh2
   · intro ν' hν' hne
-    exact hc.2 ν' (by rw [hν', map_add]) hne
+    exact hc.2 ν' (by rw [hν', map_add (f := _)]) hne
 
 private theorem Lead.one {E : Type} [Field E] (wt : τ → ℤ) : Lead wt (1 : MvPowerSeries τ E) 0 := by
   classical
@@ -159,7 +163,8 @@ private theorem sp_comp (H : IsChart0 𝒜 x wt φ) (ν : τ →₀ ℕ) (f : A)
     MvPowerSeries.coeff ν (φ (DirectSum.decompose 𝒜 f (Finsupp.weight wt ν))) = MvPowerSeries.coeff ν (φ f) := by
   classical
   conv_rhs => rw [← DirectSum.sum_support_decompose 𝒜 f]
-  rw [map_sum, map_sum, Finset.sum_eq_single (Finsupp.weight wt ν)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.sum_eq_single (Finsupp.weight wt ν)]
   · intro j _ hj
     exact H.graded j _ (SetLike.coe_mem _) ν (Ne.symm hj)
   · intro hnot
@@ -304,7 +309,7 @@ private theorem chart_leading_weight_two [Fintype τ] (H : IsChart0 𝒜 x wt φ
         · exact hf2 k (fun h => hne (by rw [h]))
         · exfalso
           apply hnot
-          rw [map_add, finsupp_weight_single_one, finsupp_weight_single_one] at hw
+          rw [map_add (f := _), finsupp_weight_single_one, finsupp_weight_single_one] at hw
           exact Finset.mem_image.mpr ⟨(k, l), Finset.mem_filter.mpr ⟨by simp, hk, hl, hw⟩, rfl⟩
       · exact H.graded (wt i) f hf ν' hw)
   refine ⟨f', hf', ?_⟩
@@ -327,7 +332,7 @@ private theorem sp_l [Fintype τ] (H : IsChart0 𝒜 x wt φ) (μ : τ →₀ �
   · rw [finsupp_weight_single_one] at hwj
     obtain ⟨f, hf, hfl⟩ := chart_leading_weight_two H k (by rw [hwj]; exact hj)
     exact ⟨f, hwj ▸ hf, hfl⟩
-  · rw [map_add, finsupp_weight_single_one, finsupp_weight_single_one] at hwj
+  · rw [map_add (f := _), finsupp_weight_single_one, finsupp_weight_single_one] at hwj
     obtain ⟨f, hf, hfl⟩ := chart_leading_weight_sum H k l hk hl
     exact ⟨f, hwj ▸ hf, hfl⟩
 
@@ -354,7 +359,7 @@ private theorem sp_main [Fintype τ] (H : IsChart0 𝒜 x wt φ) (a b : ℕ) :
     | succ b ih =>
       obtain ⟨μ, ν', rfl, hμ1, hμ2⟩ := sp_split (posW wt) (negW wt) (fun k => (posW_negW_le_two_and_disjoint_of_isChart0 H k).1)
         (fun k hk => (posW_negW_le_two_and_disjoint_of_isChart0 H k).2.2.2 hk) b ν hp
-      rw [map_add] at hn hp
+      rw [map_add (f := _)] at hn hp
       obtain ⟨g, hg, hgl⟩ := ih ν' (by omega) (by omega)
       obtain ⟨f1, hf1, hf1l⟩ := sp_l H μ 2 rfl (by rw [hμ2]; rfl) (by rw [hμ1]; rfl)
       refine ⟨f1 * g, ?_, ?_⟩
@@ -365,7 +370,7 @@ private theorem sp_main [Fintype τ] (H : IsChart0 𝒜 x wt φ) (a b : ℕ) :
   | succ a ih =>
     obtain ⟨μ, ν', rfl, hμ1, hμ2⟩ := sp_split (negW wt) (posW wt) (fun k => (posW_negW_le_two_and_disjoint_of_isChart0 H k).2.1)
       (fun k hk => (posW_negW_le_two_and_disjoint_of_isChart0 H k).2.2.1 hk) a ν hn
-    rw [map_add] at hn hp
+    rw [map_add (f := _)] at hn hp
     obtain ⟨g, hg, hgl⟩ := ih ν' (by omega) (by omega)
     obtain ⟨f1, hf1, hf1l⟩ := sp_l H μ (-2) rfl (by rw [hμ1]; rfl) (by rw [hμ2]; rfl)
     refine ⟨f1 * g, ?_, ?_⟩

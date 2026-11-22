@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.ComplementarySeries.Complementary
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantModulus
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.ComplementarySeries.Complementary
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantModulus
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,8 +72,11 @@ theorem rc_of_KO (q : parab k (blk2 d)) (hq : (q : GL (Fin (d + d)) k) ∈ KO k 
 theorem exists_pw (x : GL (Fin (d + d)) k) :
     ∃ p : parab k (blk2 d), ∃ w ∈ KO k (Fin (d + d)), x = (p : GL (Fin (d + d)) k) * w := by
   obtain ⟨u, g, w, hw, rfl⟩ := GlobalTheory.SmGL.UnitInd.exists_iwasawa (blk2 d) x
+  have hg : leviEmb k (blk2 d) g ∈ parab k (blk2 d) :=
+    mem_parab_iff.2 fun _ _ i j hab => by
+      simp [leviEmb, Matrix.blockDiagonal'_apply', hab.ne']
   exact ⟨⟨(u : GL (Fin (d + d)) k) * leviEmb k (blk2 d) g,
-    mul_mem (unipRad_le_parab k (blk2 d) u.2) (leviEmb_mem_parab k (blk2 d) g)⟩, w, hw, rfl⟩
+    mul_mem (unipRad_le_parab k (blk2 d) u.2) hg⟩, w, hw, rfl⟩
 
 def hh (x : GL (Fin (d + d)) k) : ℝ := rc (leviProj k (blk2 d) (Classical.choose (exists_pw x)))
 

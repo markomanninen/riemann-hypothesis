@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwSimpleOrbit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwPermCard
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwLenStep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHeckePairIwC
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwSimpleOrbit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwPermCard
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwLenStep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHeckePairIwC
+
+@[expose] public section
 
 open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 

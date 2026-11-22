@@ -1,23 +1,31 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
-import Development.AutomorphicArithmetic.TwistedTraces.ExistsNhdsDisplacementLeHalfOfDerivOpBound
-import Development.AutomorphicArithmetic.TwistedTraces.ExistsNhdsOneNormOneGLFactorization
-import Development.AutomorphicArithmetic.TwistedTraces.ExistsApproximateIdentityIntegrated
-import Development.AutomorphicArithmetic.TwistedTraces.FiniteDimensionalOfCompactNearIdentity
-import GroundTheory.AutomorphicForms.UnitaryAdmissible.CuspFinite
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
+public import Development.AutomorphicArithmetic.TwistedTraces.ExistsNhdsDisplacementLeHalfOfDerivOpBound
+public import Development.AutomorphicArithmetic.TwistedTraces.ExistsNhdsOneNormOneGLFactorization
+public import Development.AutomorphicArithmetic.TwistedTraces.ExistsApproximateIdentityIntegrated
+public import Development.AutomorphicArithmetic.TwistedTraces.FiniteDimensionalOfCompactNearIdentity
+public import GroundTheory.AutomorphicForms.UnitaryAdmissible.CuspFinite
+
+@[expose] public section
 
 open MeasureTheory NumberField GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.ConvolutionTheory.C Polynomial Topology
 
+set_option maxHeartbeats 20000000 in
 theorem UpperTheory.finiteDimensional_cuspForms_of_level_and_derivOp_bound :
-    ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (d : ℕ) (b : Module.Basis (Fin d) ℝ (isExpLieAlgebra K n).lieSubalgebra) (C : ℝ) (U : Subgroup (AdelicGLn.integralFiniteGL K n)) (S : Submodule ℂ (cuspForms K n)), IsOpen (U : Set (AdelicGLn.integralFiniteGL K n)) → S ≤ centralCuspForms K n → (∀ φ ∈ S, ∀ u ∈ U, finRepCusp K n (u : AdelicGLn.integralFiniteGL K n) φ = φ) → (∀ φ ∈ S, ∀ i, ‖cuspVecL μ ((gkModuleCusp K n).ρ (b i) φ)‖ ≤ C * ‖cuspVecL μ φ‖) → FiniteDimensional ℂ S := by
+    ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (d : ℕ) (b : Module.Basis (Fin d) ℝ (isExpLieAlgebra K n).lieSubalgebra) (C : ℝ) (U : Subgroup (AdelicGLn.integralFiniteGL K n)) (S : Submodule ℂ (cuspForms K n)), IsOpen (U : Set (AdelicGLn.integralFiniteGL K n)) → S ≤ centralCuspForms K n → (∀ φ ∈ S, ∀ u ∈ U, finRepCusp K n (u : AdelicGLn.integralFiniteGL K n) φ = φ) → (∀ φ ∈ S, ∀ i, ‖cuspVecL μ ((gkModuleCusp K n).ρ (b i) φ)‖ ≤ C * ‖cuspVecL μ φ‖) → FiniteDimensional ℂ S := by
   intro K _ _ n μ _ d b C U S hU hS hfix hbound
   obtain ⟨N, hN, hNv⟩ := UpperTheory.exists_nhds_displacement_le_half_of_derivOp_bound _ _ _ (isExpLieAlgebra K n) d b C
   obtain ⟨N', hN', hN'd⟩ := UpperTheory.exists_nhds_one_normOneGL_factorization K n N U hN hU
-  obtain ⟨f, hf⟩ := UpperTheory.exists_approximate_identity_integrated (normOneGL K n) (CuspL2 μ) (cuspRepT μ) μ N' hN'
+  have hApprox := UpperTheory.exists_approximate_identity_integrated
+    (normOneGL (K := K) (n := n)) (CuspL2 μ) (cuspRepT μ) μ N' hN'
+  obtain ⟨f, hf⟩ := hApprox
   have key : ∀ v ∈ S.map (cuspVecL μ),
       ‖(cuspRepT μ).integrated μ (UnitaryRep.ccToL1 μ f) v - v‖ ≤ 1 / 2 * ‖v‖ := by
     rintro _ ⟨φ, hφ, rfl⟩
-    refine hf _ _ fun g hg => ?_
+    apply hf (cuspVecL μ φ) (1 / 2 * ‖cuspVecL μ φ‖)
+    intro g hg
     obtain ⟨a, ha, u, hu, rfl⟩ := hN'd g hg
     have hφ' : φ ∈ centralCuspForms K n := hS hφ
     have hfx : cuspRepT μ (retractOne (finEmb K n (u : AdelicGLn.integralFiniteGL K n))) (cuspVecL μ φ) =

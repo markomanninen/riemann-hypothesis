@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField
 open scoped TensorProduct
 
@@ -28,7 +33,8 @@ noncomputable def dualD (l : Fin n) : A := ∑ m, (gram b).adjugate m l • b m
 
 lemma trL_mul_dualD (u : A) (l : Fin n) :
     trL (u * dualD b l) = ∑ m, (gram b).adjugate m l * trL (u * b m) := by
-  simp only [dualD, Finset.mul_sum, mul_smul_comm, map_sum, map_zsmul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dualD, Finset.mul_sum, mul_smul_comm, map_sum, map_zsmul, smul_eq_mul]
 
 lemma trL_basis_mul_dualD (k l : Fin n) :
     trL (b k * dualD b l) = if k = l then (gram b).det else 0 := by
@@ -42,7 +48,8 @@ lemma trL_basis_mul_dualD (k l : Fin n) :
 lemma det_mul_repr (u : A) (k : Fin n) :
     (gram b).det * b.repr u k = trL (u * dualD b k) := by
   conv_rhs => rw [← b.sum_repr u]
-  simp only [Finset.sum_mul, smul_mul_assoc, map_sum, map_zsmul, trL_basis_mul_dualD, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_mul, smul_mul_assoc, map_sum, map_zsmul, trL_basis_mul_dualD, smul_eq_mul]
   simp [mul_comm]
 
 lemma det_smul_eq (u : A) : (gram b).det • u = ∑ l, trL (u * dualD b l) • b l := by
@@ -61,7 +68,8 @@ lemma eq_zero_of_trL_mul_basis (v : A) (hv : ∀ k, trL (v * b k) = 0) : v = 0 :
   intro y
   rw [← trL_apply]
   conv_lhs => rw [← b.sum_repr y]
-  simp only [Finset.mul_sum, mul_smul_comm, map_sum, map_zsmul, hv, smul_zero,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.mul_sum, mul_smul_comm, map_sum, map_zsmul, hv, smul_zero,
     Finset.sum_const_zero]
 
 lemma eq_zero_of_trL_basis_mul (v : A) (hv : ∀ k, trL (b k * v) = 0) : v = 0 :=
@@ -71,7 +79,8 @@ lemma det_smul_eq' (u : A) : (gram b).det • u = ∑ l, trL (b l * u) • dualD
   rw [← sub_eq_zero]
   apply eq_zero_of_trL_basis_mul b hnd
   intro k
-  simp only [mul_sub, Finset.mul_sum, mul_smul_comm, map_sub, map_sum, map_zsmul, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mul_sub, Finset.mul_sum, mul_smul_comm, map_sub, map_sum, map_zsmul, smul_eq_mul,
     trL_basis_mul_dualD, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
   ring
 
@@ -84,7 +93,8 @@ lemma det_ne_zero : (gram b).det ≠ 0 := by
     intro l
     have := congrFun hv l
     simp only [Matrix.vecMul, dotProduct, gram, Matrix.of_apply, Pi.zero_apply] at this
-    simp only [Finset.sum_mul, smul_mul_assoc, map_sum, map_zsmul, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.sum_mul, smul_mul_assoc, map_sum, map_zsmul, smul_eq_mul]
     exact this
   funext k
   exact Fintype.linearIndependent_iff.mp b.linearIndependent v hx k
@@ -93,7 +103,8 @@ lemma sum_mul_dualD : ∑ k, b k * dualD b k = ((gram b).det : A) := by
   rw [← sub_eq_zero]
   apply eq_zero_of_trL_mul_basis b hnd
   intro j
-  rw [sub_mul, map_sub, Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [sub_mul, map_sub, Finset.sum_mul, map_sum]
   have h1 : ∀ k, trL (b k * dualD b k * b j) = (gram b).det * b.repr (b j * b k) k := by
     intro k
     rw [trL_comm, ← mul_assoc, ← det_mul_repr]
@@ -126,8 +137,8 @@ end Nondeg
 
 end GlobalTheory.TraceCasimir
 
-open GlobalTheory.TraceCasimir in
 
+open GlobalTheory.TraceCasimir in
 theorem GlobalTheory.exists_separability_element_of_trace_nondegenerate :
     ∀ (A : Type) [Ring A] [Module.Free ℤ A] [Module.Finite ℤ A],
       (∀ x : A, (∀ y : A, LinearMap.trace ℤ A (LinearMap.mulLeft ℤ (x * y)) = 0) → x = 0) →

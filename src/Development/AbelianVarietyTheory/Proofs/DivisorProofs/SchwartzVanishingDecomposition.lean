@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped ContDiff
 open MeasureTheory Set Filter Topology Metric
@@ -91,7 +95,7 @@ theorem hasTemperateGrowth_invCut : invCut.HasTemperateGrowth := by
       filter_upwards [Iio_mem_nhds h1] with s hs
       exact invCut_of_le_half hs.le
     rw [(this.iteratedFDeriv ℝ n).eq_of_nhds]
-    simp only [iteratedFDeriv_zero_fun, Pi.zero_apply, norm_zero]
+    simp only [iteratedFDeriv_fun_zero, Pi.zero_apply, norm_zero]
     exact le_max_of_le_right (Nat.cast_nonneg _)
   rcases le_or_gt x 2 with h2 | h2
   · exact (hC x ⟨h1, h2⟩).trans (le_max_left _ _)
@@ -152,11 +156,12 @@ theorem hadamard (V : Type) [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDi
     rw [← h1]
     have h2 : ∀ t : ℝ, fderiv ℝ f (t • x) x = ∑ i, (L i x : ℂ) * fderiv ℝ f (t • x) (b i) := by
       intro t
-      rw [show fderiv ℝ f (t • x) x = fderiv ℝ f (t • x) (∑ i, b.repr x i • b i) by rw [b.sum_repr], map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [show fderiv ℝ f (t • x) x = fderiv ℝ f (t • x) (∑ i, b.repr x i • b i) by rw [b.sum_repr], map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_smul, Complex.real_smul, hL]
     simp_rw [h2]
-    rw [intervalIntegral.integral_finset_sum (f := fun i t => (L i x : ℂ) * fderiv ℝ f (t • x) (b i))
+    rw [intervalIntegral.integral_finsetSum (f := fun i t => (L i x : ℂ) * fderiv ℝ f (t • x) (b i))
       fun i _ => (continuous_const.mul (hc (b i))).intervalIntegrable _ _]
     exact Finset.sum_congr rfl fun i _ => intervalIntegral.integral_const_mul _ _
 

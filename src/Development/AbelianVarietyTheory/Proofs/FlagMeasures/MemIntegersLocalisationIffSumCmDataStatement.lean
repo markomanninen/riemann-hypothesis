@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemIntegersLocalisationIffSumCmData
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Formalism.LocalRingCardinality.DataSpaces
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemIntegersLocalisationIffSumCmData
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Formalism.LocalRingCardinality.DataSpaces
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.S.Loc ValuativeRel
 open scoped nonZeroDivisors
 set_option maxHeartbeats 1000000 in

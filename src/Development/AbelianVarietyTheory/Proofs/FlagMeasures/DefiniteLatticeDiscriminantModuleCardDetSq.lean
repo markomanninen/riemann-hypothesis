@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLatticeLatIn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLatticeLatIn
+
+@[expose] public section
 
 namespace GlobalTheory.LoopC.DetCard
 
@@ -25,20 +29,22 @@ theorem idxN_latIn {U : Submodule K V} {A B : Submodule (𝓞 K) V} (hA : ∀ x 
   rw [idxN, idxN, map_latIn hA, map_latIn hB, AddSubgroup.relIndex_map_map_of_injective _ _ U.injective_subtype]
 
 theorem isLattice_latIn_span {U : Submodule K V} {N : Submodule (𝓞 K) V} (hN : N.FG)
-    (hU : Submodule.span K (N : Set V) = U) : Submodule.IsLattice K (latIn U N) := by
-  refine ⟨?_, ?_⟩
-  · refine Submodule.fg_of_fg_map_injective (U.subtype.restrictScalars (𝓞 K)) U.injective_subtype ?_
+    (hU : Submodule.span K (N : Set V) = U) : Submodule.IsFullLattice K (latIn U N) := by
+  haveI : Submodule.IsLattice K (latIn U N) := by
+    apply Submodule.IsLattice.of_fg K
+    refine Submodule.fg_of_fg_map_injective (U.subtype.restrictScalars (𝓞 K)) U.injective_subtype ?_
     exact Submodule.FG.of_le hN (Submodule.map_comap_le _ _)
-  · apply Submodule.map_injective_of_injective U.injective_subtype
-    rw [Submodule.map_span, Submodule.map_top, Submodule.range_subtype]
-    refine Eq.trans ?_ hU
-    congr 1
-    ext x
-    constructor
-    · rintro ⟨y, hy, rfl⟩
-      exact hy
-    · intro hx
-      exact ⟨⟨x, hU ▸ Submodule.subset_span hx⟩, hx, rfl⟩
+  refine ⟨?_⟩
+  apply Submodule.map_injective_of_injective U.injective_subtype
+  rw [Submodule.map_span, Submodule.map_top, Submodule.range_subtype]
+  rw [← hU]
+  congr 1
+  ext x
+  constructor
+  · rintro ⟨y, hy, rfl⟩
+    exact hy
+  · intro hx
+    exact ⟨⟨x, hU ▸ Submodule.subset_span hx⟩, hx, rfl⟩
 
 variable [StarRing K]
 

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocLengthSum
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreDivSupp
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerBis
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocLengthSum
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreDivSupp
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerBis
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

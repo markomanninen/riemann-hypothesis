@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFontaineThetaOnAinfStatement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFontaineThetaOnAinfStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -118,7 +122,7 @@ theorem theta_lambda (θ : Ainf l →+* OC l) (hθ : IsTheta AI θ) (g : GQ l)
   obtain ⟨k, hk⟩ := Polynomial.powAddExpansion (z ^ a) (AI.ξ * b) (l ^ m)
   obtain ⟨k', hk'⟩ := Polynomial.powAddExpansion (1 : Ainf l) AI.μ a
   have h1 : 1 + AI.actW g AI.μ = (z ^ a + AI.ξ * b) ^ (l ^ m) := by
-    rw [← hb', ← map_pow, hzl, map_add, map_one]
+    rw [← hb', ← map_pow, hzl, map_add (f := _), map_one]
   rw [hk, ← pow_mul, mul_comm a, pow_mul, hzl, hk', AI.μ_eq, map_mul, hlam] at h1
   have h2 : AI.actW g AI.π₁ * lam = (a : Ainf l) * AI.π₁ +
       (l : Ainf l) ^ m * ((z ^ a) ^ (l ^ m - 1) * b) + AI.ξ * (k' * AI.π₁ ^ 2 + k * b ^ 2) := by
@@ -127,7 +131,7 @@ theorem theta_lambda (θ : Ainf l →+* OC l) (hθ : IsTheta AI θ) (g : GQ l)
     linear_combination h1
   have hξ : θ AI.ξ = 0 := (hker _).2 dvd_rfl
   have h3 := congrArg (fun t => ((θ t : OC l) : PadicComplex l)) h2
-  simp only [map_add, map_mul, hξ, hgπ, hπ, map_pow, map_natCast, zero_mul, add_zero] at h3
+  simp only [map_add (f := _), map_mul, hξ, hgπ, hπ, map_pow, map_natCast, zero_mul, add_zero] at h3
   set u : OC l := (θ z ^ a) ^ (l ^ m - 1) * θ b with hu
   have h4 : ((AI.ζ 1 - 1 : OC l) : PadicComplex l) * (((θ lam : OC l) : PadicComplex l) -
       algebraMap ℚ_[l] (PadicComplex l) (P.χQ g : ℚ_[l])) = (l : PadicComplex l) ^ m * (u : PadicComplex l) -

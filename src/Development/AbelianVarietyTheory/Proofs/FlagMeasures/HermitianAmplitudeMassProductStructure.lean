@@ -1,21 +1,26 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GFrames
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GlobalHermitianFramesTermsOrbitsLocalStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLatticeMassEqFinprodLocalStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CoordinateLatticeUniqueTermAlmostAllPlacesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NumberFieldLatticeDeterminedByLocalLatticesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetMassLeAndFiniteStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianFramesStabilizerActsOnTermsStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CommonStabilizerStabilizersCommensurableVolumeStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetTermBasicFactsStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianFramesComplementUnitaryNormalisesStabilStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AmplitudeMassEqOneOfSingleOrbitStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalAmplitudeSummandAtTermOrbitStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SumProdOfLocalChoicesBijectionStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GFrames
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GlobalHermitianFramesTermsOrbitsLocalStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLatticeMassEqFinprodLocalStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CoordinateLatticeUniqueTermAlmostAllPlacesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NumberFieldLatticeDeterminedByLocalLatticesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetMassLeAndFiniteStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianFramesStabilizerActsOnTermsStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CommonStabilizerStabilizersCommensurableVolumeStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetTermBasicFactsStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianFramesComplementUnitaryNormalisesStabilStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AmplitudeMassEqOneOfSingleOrbitStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalAmplitudeSummandAtTermOrbitStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SumProdOfLocalChoicesBijectionStatement
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL NumberField IsDedekindDomain
 open scoped Pointwise ENNReal Classical
 
@@ -75,9 +80,20 @@ theorem isLattice_of_LRel {A : Places F E sig} {r k : ℕ} (G : GFrames A r k) {
   obtain ⟨g, -, rfl⟩ := h
   refine ⟨hΓ.fg.map _, ?_⟩
   rw [Submodule.map_coe]
-  have : (((g : G.V →ₗ[E] G.V).restrictScalars (𝓞 E)) : G.V → G.V) = ((g : G.V →ₗ[E] G.V) : G.V → G.V) := rfl
-  rw [this, Submodule.span_image, hΓ.span_eq_top, Submodule.map_top, LinearMap.range_eq_top]
-  exact g.surjective
+  intro s hs hlin
+  let f : G.V →ₗ[E] G.V := g
+  let t : Set G.V := f ⁻¹' s
+  have ht : t ⊆ Γ := by
+    intro x hx
+    obtain ⟨y, hy, heq⟩ := hs hx
+    exact (g.injective heq) ▸ hy
+  have himage : f '' t = s := Set.image_preimage_eq _ g.surjective
+  have hR : LinearIndepOn (𝓞 E) id t := by
+    apply (linearIndepOn_id_imageₛ_iff (f := f.restrictScalars (𝓞 E)) g.injective.injOn).mp
+    simpa [himage] using hlin
+  have hE := hΓ.linearIndepOn t ht hR
+  have := (linearIndepOn_id_imageₛ_iff (f := f) g.injective.injOn).mpr hE
+  simpa [himage] using this
 
 theorem term_of_LRel {A : Places F E sig} {r k : ℕ} (G : GFrames A r k) (hk : 4 * r + 7 ≤ k) {d : G.Dat}
     (hex : ∃ Λ₀, G.IsTerm d Λ₀) {Γ Γ' : G.Lt} (hΓ : G.IsTerm d Γ) (h : G.LRel Γ Γ') : G.IsTerm d Γ' := by
@@ -93,12 +109,52 @@ end GlobalTheory.HL.ProdStruct
 namespace GlobalTheory.HL.ProdStruct
 attribute [local instance] instLf instChar0
 
+theorem full_lattice_of_term {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E]
+    [Algebra F E] {sig : E →ₐ[F] E} {A : Places F E sig} {r k : ℕ} (G : GFrames A r k)
+    {d : G.Dat} {Λ : G.Lt} (hΛ : G.IsTerm d Λ) : Submodule.IsFullLattice E Λ := by
+  refine { toIsLattice := hΛ.1, span_eq_top := ?_ }
+  by_contra hne
+  obtain ⟨φ, hφ, hzero⟩ :=
+    Submodule.exists_dual_map_eq_bot_of_lt_top (lt_top_iff_ne_top.mpr hne) inferInstance
+  obtain ⟨P, hP⟩ := Ideal.exists_maximal (𝓞 F)
+  let p : IsDedekindDomain.HeightOneSpectrum (𝓞 F) :=
+    ⟨P, hP.isPrime, Ring.ne_bot_of_isMaximal_of_not_isField hP (RingOfIntegers.not_isField F)⟩
+  have := (A.loc p).lf
+  have := (A.loc p).char0
+  have := PlacesInt.nontrivial_Ep (A.loc p)
+  have hspan := (TermBasic.term_basic (A.L p) r k (G.S p) (d p) (A.lat p Λ) (hΛ.2 p)).1.1.2
+  let ψ : (Fin (k + 2 * r + 1) → (A.loc p).Ep) →ₗ[(A.loc p).Ep] (A.loc p).Ep :=
+    ∑ i : Fin (k + 2 * r + 1), (A.loc p).ιE (φ fun j => if i = j then 1 else 0) • LinearMap.proj i
+  have hψ (z : G.V) : ψ (A.bc p z) = (A.loc p).ιE (φ z) := by
+    rw [φ.pi_apply_eq_sum_univ z, map_sum]
+    simp only [ψ, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.proj_apply,
+      smul_eq_mul, map_mul, Places.bc]
+    exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
+  have hlat : A.lat p Λ ≤ (LinearMap.ker ψ).restrictScalars (A.L p).O := by
+    apply Submodule.span_le.mpr
+    rintro _ ⟨z, hz, rfl⟩
+    have hz' : φ z ∈ (⊥ : Submodule E E) := by
+      rw [← hzero]
+      exact Submodule.mem_map_of_mem (Submodule.subset_span hz)
+    change ψ (A.bc p z) = 0
+    rw [hψ, (Submodule.mem_bot E).mp hz', map_zero]
+  have hker : Submodule.span (A.loc p).Ep (A.lat p Λ : Set _) ≤ LinearMap.ker ψ :=
+    Submodule.span_le.mpr hlat
+  rw [hspan] at hker
+  apply hφ
+  apply LinearMap.ext
+  intro z
+  have hz := LinearMap.mem_ker.mp (hker (Submodule.mem_top (x := A.bc p z)))
+  rw [hψ] at hz
+  exact (map_eq_zero_iff _ (A.loc p).ιE.injective).mp hz
+
+
 theorem product_structure : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {sig : E →ₐ[F] E} (A : Places F E sig), ∀ (r k : ℕ) (G : GFrames A r k), 4 * r + 7 ≤ k → ∀ d : G.Dat, (∃ Λ₀, G.IsTerm d Λ₀) → ∀ P : ∀ p, Submodule (A.L p).O (G.S p).V → Prop, (∀ p, ∀ h ∈ (G.S p).St, ∀ Λ, (G.S p).IsTerm (d p) Λ → P p Λ → P p (h • Λ)) → {p | ∃ Λ, (G.S p).IsTerm (d p) Λ ∧ ¬ P p Λ}.Finite → G.amp d (fun Λ => ∀ p, P p (A.lat p Λ)) = ∏ᶠ p, (G.S p).amp (d p) (P p) ∧ G.mass d (fun Λ => ∀ p, P p (A.lat p Λ)) = ∏ᶠ p, (G.S p).mass (d p) (P p) ∧ {p | (G.S p).amp (d p) (P p) ≠ 1 ∨ (G.S p).mass (d p) (P p) ≠ 1}.Finite ∧ {o : Quot G.LRel | G.IsTerm d o.out}.Finite := by
   intro F E _ _ _ _ _ sig A r k G hk d hex P hPinv hPfin
   obtain ⟨Λ₀, hΛ₀⟩ := id hex
   have orb := GlobalTheory.T.globalHermitianFrames_terms_orbits_local A r k G hk d hex
   have hstd := GlobalTheory.T.coordinateLattice_unique_term_almost_all_places A r k G hk
-  have hrec := GlobalTheory.T.numberField_lattice_determined_by_local_lattices A _ Λ₀ hΛ₀.1
+  have hrec := GlobalTheory.T.numberField_lattice_determined_by_local_lattices A _ Λ₀ (full_lattice_of_term G hΛ₀)
   have hfin := (hstd.union hrec.2.2).union hPfin
   set s := hfin.toFinset with hs_def
 
@@ -118,7 +174,7 @@ theorem product_structure : ∀ {F E : Type} [Field F] [NumberField F] [Field E]
       (fun Λ h1 => ⟨(KF p hp Λ Λ h1 h1).2.2.2, (KF p hp Λ Λ h1 h1).2.1, (KF p hp Λ Λ h1 h1).2.2.1⟩)
   have hmuG : ∀ Γ, G.IsTerm d Γ → G.mu Γ = ∏ p ∈ s, (G.S p).mu (A.lat p Γ) := by
     intro Γ hΓ
-    rw [(GlobalTheory.T.hermitianLattice_mass_eq_finprod_local A r k G hk Γ hΓ.1).2]
+    rw [(GlobalTheory.T.hermitianLattice_mass_eq_finprod_local A r k G hk Γ (by first | exact full_lattice_of_term G hΓ | exact hΓ.1)).2]
     apply finprod_eq_prod_of_mulSupport_subset
     intro p hp
     by_contra hps
@@ -154,7 +210,7 @@ theorem product_structure : ∀ {F E : Type} [Field F] [NumberField F] [Field E]
       gM p (Quotient.mk'' (A.lat p Γ)) = (if P p (A.lat p Γ) then ENNReal.ofReal ((G.S p).mu (A.lat p Γ)) else 0) := by
     intro Γ hΓ p
     have t := GlobalTheory.T.localAmplitude_summand_at_term_orbit (A.L p) r k (G.S p) (d p) (fun Λ => (G.S p).IsTerm (d p) Λ ∧ P p Λ) (hPinv' p)
-      (A.lat p Γ) (hΓ.2 p) ((GlobalTheory.T.numberField_lattice_determined_by_local_lattices A _ Γ hΓ.1).2.1 p) _ rfl
+      (A.lat p Γ) (hΓ.2 p) ((GlobalTheory.T.numberField_lattice_determined_by_local_lattices A _ Γ (full_lattice_of_term G hΓ)).2.1 p) _ rfl
     simp only [and_self_left, hΓ.2 p, true_and] at t
     exact ⟨t.1, t.2.2.1, t.2.2.2⟩
   have hUfin : ∀ p ∈ s, (U p).Finite := fun p _ => (GlobalTheory.T.hermitianDoubleCoset_mass_le_and_finite (A.L p) r k (G.S p) (by omega) (d p)).2

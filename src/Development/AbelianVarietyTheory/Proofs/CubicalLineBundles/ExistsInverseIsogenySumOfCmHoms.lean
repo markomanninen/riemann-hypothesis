@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.LamLetters
-import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsInverseIsogenyRingOfIntegersStatement
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsProdPolAVStatement
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsPolarisedAbelianSchemePowerStatement
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.PointsSumsEqProducts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.LamLetters
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsInverseIsogenyRingOfIntegersStatement
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsProdPolAVStatement
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsPolarisedAbelianSchemePowerStatement
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.PointsSumsEqProducts
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory Formalism.L2.LamCM
 open scoped CategoryTheory.Obj ComplexOrder
@@ -16,17 +21,14 @@ namespace GlobalTheory.LamF.IsogSum
 variable {S : Scheme.{0}}
 
 theorem isMonHom_of_points {G H : Over S} [GrpObj G] [GrpObj H] (f : G ⟶ H)
-    (h : ∀ (T : Over S) (a b : T ⟶ G), (a * b) ≫ f = a ≫ f * b ≫ f) : IsMonHom f where
-  one_hom := by
-    have h1 := h (𝟙_ _) 1 1
+    (h : ∀ (T : Over S) (a b : T ⟶ G), (a * b) ≫ f = a ≫ f * b ≫ f) : IsMonHom f := by
+  refine ⟨?_, ?_⟩
+  · have h1 := h (𝟙_ _) 1 1
     rw [_root_.mul_one] at h1
     have h2 : (1 : 𝟙_ _ ⟶ G) ≫ f = 1 := by simpa using h1
     simpa [Hom.one_def] using h2
-  mul_hom := by
-    have h1 := h (G ⊗ G) (fst G G) (snd G G)
-    have e : lift (fst G G ≫ f) (snd G G ≫ f) = f ⊗ₘ f := by ext1 <;> simp
-    rw [Hom.mul_def, Hom.mul_def, lift_fst_snd, Category.id_comp, e] at h1
-    exact h1
+  · simpa only [Hom.mul_def, lift_fst_snd, Category.id_comp, lift_fst_comp_snd_comp]
+      using h (G ⊗ G) (fst G G) (snd G G)
 
 theorem comp_prod {T G H : Over S} [GrpObj H] [IsCommMonObj H] {n : ℕ} (x : T ⟶ G)
     (a : Fin n → (G ⟶ H)) : x ≫ ∏ i, a i = ∏ i, x ≫ a i :=
@@ -71,22 +73,30 @@ theorem exists_inverse_isogeny_of_sum : ThetaUnifAV → Out.Laws → HomExtDvr �
     refine ⟨x, ?_⟩
     rw [hΦ, hab, List.prod_ofFn, List.prod_ofFn]
     simp only [hx, hx']
-  have H := points_sums_eq_products.1 (Sp (𝓞 K))
+  have padd_eq_mul {G T : Over (Sp (𝓞 K))} [GrpObj G] (a b : T ⟶ G) :
+      padd G a b = a * b := rfl
+  have pnsmulPt_eq_pow {G T : Over (Sp (𝓞 K))} [GrpObj G] (n : ℕ) (a : T ⟶ G) :
+      pnsmulPt n a = a ^ n := by
+    induction n with
+    | zero => rw [pow_zero]; rfl
+    | succ n ih => rw [pow_succ, ← ih]; rfl
+  have psumPt_eq_prod {G T : Over (Sp (𝓞 K))} [GrpObj G] {n : ℕ} (f : Fin n → (T ⟶ G)) :
+      psumPt f = (List.ofFn f).prod := by
+    rw [List.prod_eq_foldr]
+    rfl
   refine ⟨N, fun i => ψ ≫ u ≫ pP.pr i, fun i => ψ ≫ v ≫ pP'.pr i, hN, fun T x => ?_, fun T a b => ?_⟩
-  · obtain ⟨-, e1, e2, e3⟩ := H B.A T
-    rw [e1, e2, e3, e3, List.prod_ofFn, List.prod_ofFn]
+  · rw [padd_eq_mul, pnsmulPt_eq_pow, psumPt_eq_prod, psumPt_eq_prod, List.prod_ofFn, List.prod_ofFn]
     have := hΦ (x ≫ ψ)
     rw [Category.assoc, h2, MonObj.comp_pow, Category.comp_id] at this
     simpa only [Category.assoc] using this.symm
-  · obtain ⟨-, e1, -, e3⟩ := H B.A T
-    obtain ⟨x, hx, hx'⟩ := IsogSum.exists_point pP pP' u v a b
+  · obtain ⟨x, hx, hx'⟩ := IsogSum.exists_point pP pP' u v a b
     have key : padd B.A (psumPt fun k => a k ≫ φ k) (psumPt fun k => b k ≫ φ' k) ≫ ψ = x ^ N := by
       have : x ≫ Φ = padd B.A (psumPt fun k => a k ≫ φ k) (psumPt fun k => b k ≫ φ' k) := by
-        rw [e1, e3, e3, List.prod_ofFn, List.prod_ofFn, hΦ]
+        rw [padd_eq_mul, psumPt_eq_prod, psumPt_eq_prod, List.prod_ofFn, List.prod_ofFn, hΦ]
         simp only [hx, hx']
       rw [← this, Category.assoc, h1, MonObj.comp_pow, Category.comp_id]
     refine ⟨fun i => ?_, fun i => ?_⟩
-    · rw [← Category.assoc, key, MonObj.pow_comp, hx, (H A.A T).2.2.1]
-    · rw [← Category.assoc, key, MonObj.pow_comp, hx', (H A'.A T).2.2.1]
+    · rw [← Category.assoc, key, MonObj.pow_comp, hx, pnsmulPt_eq_pow]
+    · rw [← Category.assoc, key, MonObj.pow_comp, hx', pnsmulPt_eq_pow]
 
 end GlobalTheory.LamF

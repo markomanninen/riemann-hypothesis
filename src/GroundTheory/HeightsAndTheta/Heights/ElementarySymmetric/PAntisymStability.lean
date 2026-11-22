@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -14,28 +19,25 @@ def antisymEvalOn {T : Type*} {N : ℕ} (Ω : Set (T × Fin N → ℝ)) :
   map_add' p q := by ext x; simp
   map_smul' c p := by ext x; simp
 
-@[simp] lemma antisymEvalOn_apply {T : Type*} {N : ℕ} (Ω : Set (T × Fin N → ℝ))
-    (p : MvPolynomial (T × Fin N) ℝ) (x : Ω) : antisymEvalOn Ω p x = eval (x : T × Fin N → ℝ) p :=
-  rfl
-
 lemma abs_coeff_le_sum_abs_coeff {σ : Type*} (p : MvPolynomial σ ℝ) (m : σ →₀ ℕ) :
-    |coeff m p| ≤ ∑ m' ∈ p.support, |coeff m' p| := by
+    |p.coeff m| ≤ ∑ m' ∈ p.support, |p.coeff m'| := by
   by_cases hm : m ∈ p.support
-  · exact Finset.single_le_sum (f := fun m' => |coeff m' p|) (fun _ _ => abs_nonneg _) hm
+  · exact Finset.single_le_sum (f := fun m' => |p.coeff m'|) (fun _ _ => abs_nonneg _) hm
   · rw [notMem_support_iff.1 hm, abs_zero]
     exact Finset.sum_nonneg (fun _ _ => abs_nonneg _)
 
 lemma exists_uniform_coeff_bound {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [FiniteDimensional ℝ E] {σ : Type*} (G : E →ₗ[ℝ] MvPolynomial σ ℝ) :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ (y : E) (m : σ →₀ ℕ), |coeff m (G y)| ≤ C * ‖y‖ := by
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (y : E) (m : σ →₀ ℕ), |(G y).coeff m| ≤ C * ‖y‖ := by
   let b := Module.finBasis ℝ E
   let c : Fin (Module.finrank ℝ E) → (E →L[ℝ] ℝ) := fun i => LinearMap.toContinuousLinearMap (b.coord i)
-  refine ⟨∑ i, ‖c i‖ * ∑ m' ∈ (G (b i)).support, |coeff m' (G (b i))|,
+  refine ⟨∑ i, ‖c i‖ * ∑ m' ∈ (G (b i)).support, |(G (b i)).coeff m'|,
     Finset.sum_nonneg fun i _ => mul_nonneg (norm_nonneg _)
       (Finset.sum_nonneg fun _ _ => abs_nonneg _), fun y m => ?_⟩
   have hy : G y = ∑ i, b.repr y i • G (b i) := by
     conv_lhs => rw [← b.sum_repr y]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smul]
   rw [hy, coeff_sum, Finset.sum_mul]
   refine (Finset.abs_sum_le_sum_abs _ _).trans (Finset.sum_le_sum fun i _ => ?_)
@@ -43,11 +45,11 @@ lemma exists_uniform_coeff_bound {E : Type*} [NormedAddCommGroup E] [NormedSpace
   have h1 : |b.repr y i| ≤ ‖c i‖ * ‖y‖ := by
     have := (c i).le_opNorm y
     simpa [c, Real.norm_eq_abs] using this
-  calc |b.repr y i| * |coeff m (G (b i))|
-      ≤ (‖c i‖ * ‖y‖) * ∑ m' ∈ (G (b i)).support, |coeff m' (G (b i))| :=
+  calc |b.repr y i| * |(G (b i)).coeff m|
+      ≤ (‖c i‖ * ‖y‖) * ∑ m' ∈ (G (b i)).support, |(G (b i)).coeff m'| :=
         mul_le_mul h1 (abs_coeff_le_sum_abs_coeff _ _) (abs_nonneg _)
           (mul_nonneg (norm_nonneg _) (norm_nonneg _))
-    _ = ‖c i‖ * (∑ m' ∈ (G (b i)).support, |coeff m' (G (b i))|) * ‖y‖ := by ring
+    _ = ‖c i‖ * (∑ m' ∈ (G (b i)).support, |(G (b i)).coeff m'|) * ‖y‖ := by ring
 
 theorem AntisymStability.proof (hB1 : AntisymDivisible.Statement) : AntisymStability.Statement := by
   intro T _ _ N j Om hOm
@@ -75,7 +77,7 @@ theorem AntisymStability.proof (hB1 : AntisymDivisible.Statement) : AntisymStabi
   have hvan : ∀ x ∈ Ω, eval x ((P' - Q : antisymSpace T N j) : MvPolynomial (T × Fin N) ℝ) = 0 := by
     intro x hx
     have := congrArg (fun f : C(Ω, ℝ) => f ⟨x, hx⟩) hker
-    simpa [Φ] using this
+    simpa [Φ, antisymEvalOn] using this
   obtain ⟨l, hl, hPl⟩ := hB1 T N j _ (P' - Q).2 (fun τ a b ha hb => by
     obtain ⟨_, _, O, hO, hne, hOsub⟩ := hOm τ a b ha hb
     refine ⟨O, hO, hne, fun x hx => hvan x ?_⟩
@@ -93,8 +95,8 @@ theorem AntisymStability.proof (hB1 : AntisymDivisible.Statement) : AntisymStabi
     have hx' := hx
     simp only [hΩdef, Set.mem_iUnion] at hx'
     obtain ⟨τ, a, b, ⟨ha, hb⟩, hxO⟩ := hx'
-    simpa [Φ, P', Real.norm_eq_abs] using hbd τ a b ha hb x hxO
-  calc |coeff m (Q : MvPolynomial (T × Fin N) ℝ)| ≤ C * ‖y‖ := hC y m
+    simpa [Φ, P', antisymEvalOn, Real.norm_eq_abs] using hbd τ a b ha hb x hxO
+  calc |(Q : MvPolynomial (T × Fin N) ℝ).coeff m| ≤ C * ‖y‖ := hC y m
     _ ≤ C * M := mul_le_mul_of_nonneg_left hy hC0
 
 end GroundTheory.Heights₂.Heights

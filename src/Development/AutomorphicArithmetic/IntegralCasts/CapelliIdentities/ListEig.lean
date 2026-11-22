@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qk12.list_eig :
     ∀ {M ι : Type} [inst : AddCommGroup M]

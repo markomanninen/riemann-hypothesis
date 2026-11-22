@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBetaIIotaB
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBetaIIotaB
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,24 +22,41 @@ variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) {u u' : D.what₂.Word}
 
 namespace IotaBP
 
-theorem isLattice_NgX {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hΛ : Submodule.IsLattice D.host.E Λ) {T T' : D.host.E}
-    (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') : Submodule.IsLattice D.host.E (NgX Λ (gS D) F F') := by
+theorem isLattice_NgX_aux {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hΛ : Submodule.IsLattice D.host.E Λ) {T T' : D.host.E}
+    (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') :
+    Submodule.IsLattice D.host.E (NgX Λ (gS D) F F') := by
   have hle : NgX Λ (gS D) F F' ≤ Λ := by
     refine sup_le (sup_le ?_ inf_le_left) inf_le_left
     exact Submodule.smul_le_right
-  refine ⟨hΛ.fg.of_le hle, ?_⟩
-  rw [eq_top_iff, ← hΛ.span_eq_top, Submodule.span_le]
-  intro v hv
-  have h0 : ((gS D : ℕ) : D.host.E) ≠ 0 := Formalism.L2.SG.Pf.StabIntSh.gS_ne
-  have hm : ((gS D : ℕ) : 𝓞 D.host.E) • v ∈ NgX Λ (gS D) F F' :=
-    Submodule.mem_sup_left (Submodule.mem_sup_left (Submodule.smul_mem_smul (Ideal.mem_span_singleton_self _) hv))
-  have e : v = (((gS D : ℕ) : D.host.E))⁻¹ • (((gS D : ℕ) : 𝓞 D.host.E) • v) := by
-    rw [← algebraMap_smul D.host.E ((gS D : ℕ) : 𝓞 D.host.E) v, map_natCast, smul_smul, inv_mul_cancel₀ h0, one_smul]
-  rw [SetLike.mem_coe, e]
-  exact Submodule.smul_mem _ _ (Submodule.subset_span hm)
+  exact ⟨hΛ.fg.of_le hle, fun s hs hli => (LinearIndependent.iff_fractionRing _ _).mp hli⟩
 
-theorem NgX_dec {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T T' : D.host.E} {F : LFlag (VS D) D.R.rS T}
-    {F' : LFlag (VS D) D.R.rS T'} {x : (VS D).V} (hx : x ∈ NgX Λ (gS D) F F') :
+theorem isLattice_NgX {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hΛ : Submodule.IsFullLattice D.host.E Λ) {T T' : D.host.E}
+    (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') :
+    Submodule.IsFullLattice D.host.E (NgX Λ (gS D) F F') := by
+  have hle : NgX Λ (gS D) F F' ≤ Λ := by
+    refine sup_le (sup_le ?_ inf_le_left) inf_le_left
+    exact Submodule.smul_le_right
+  letI := Submodule.IsLattice.of_fg D.host.E (hΛ.toIsLattice.fg.of_le hle)
+  refine ⟨top_unique ?_⟩
+  rw [← hΛ.span_eq_top]
+  apply Submodule.span_le.2
+  intro x hx
+  rw [SetLike.mem_coe]
+  rw [SetLike.mem_coe] at hx
+  have hscaled : ((gS D : ℕ) : D.host.E) • x ∈ NgX Λ (gS D) F F' := by
+    have hle' : Ideal.span {((gS D : ℕ) : 𝓞 D.host.E)} • Λ ≤ NgX Λ (gS D) F F' :=
+      le_sup_left.trans le_sup_left
+    apply hle'
+    rw [Submodule.ideal_span_singleton_smul]
+    exact (Submodule.mem_smul_pointwise_iff_exists _ _ _).2 ⟨x, hx, by simp [Formalism.L2.SG.Pf.LocalDenominators.oE_smul]⟩
+  have hg : ((gS D : ℕ) : D.host.E) ≠ 0 := by
+    exact_mod_cast Formalism.L2.SG.Pf.Cnt.DualityBasisChange.gS_ne (D := D)
+  have h := (Submodule.span D.host.E (NgX Λ (gS D) F F' : Set (VS D).V)).smul_mem
+    ((gS D : ℕ) : D.host.E)⁻¹ (Submodule.subset_span hscaled)
+  change x ∈ Submodule.span D.host.E (NgX Λ (gS D) F F' : Set (VS D).V)
+  simpa only [smul_smul, inv_mul_cancel₀ hg, one_smul] using h
+theorem NgX_dec {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T T' : D.host.E} {F : LFlag (D.sp.Y 0) D.R.rS T}
+    {F' : LFlag (D.sp.Y 0) D.R.rS T'} {x : (VS D).V} (hx : x ∈ NgX Λ (gS D) F F') :
     ∃ l ∈ Λ, ∃ ξ ∈ XLam Λ F, ∃ ξ' ∈ XLam Λ F', x = ((gS D : ℕ) : D.host.E) • l + ξ + ξ' := by
   obtain ⟨a, ha, ξ', hξ', rfl⟩ := Submodule.mem_sup.1 hx
   obtain ⟨b, hb, ξ, hξ, rfl⟩ := Submodule.mem_sup.1 ha
@@ -57,14 +78,14 @@ theorem representative_admissible_one (hC : CtxP u u' F0 what₂) {γ : TermDef.
   rw [hrep]
   exact hex.choose_spec.2.1
 
-abbrev t2 (p : PlF D) (γ : TermDef.Term D u u' F0 what₂) (F'₂ : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E))
+abbrev t2 (p : PlF D) (γ : TermDef.Term D u u' F0 what₂) (F'₂ : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E))
     (Λ₂ : Submodule (𝓞 D.host.E) (VS D).V) : Loc.Term (Vp D p) (Zd.M p) D.R.rS :=
   ⟨lattice₂ D Zd.M p Λ₂, (tLoc Zd p γ).f, locF' Zd p F'₂, (tLoc Zd p γ).T, (tLoc Zd p γ).T'⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem fwd_typed (p : PlF D) (g : Loc.SplitG (Zd.M p).L) (hsp : (Zd.M p).split = some g)
-    (γ : TermDef.Term D u u' F0 what₂) (F'₂ : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E))
+    (γ : TermDef.Term D u u' F0 what₂) (F'₂ : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E))
     (Λ₂ : Submodule (𝓞 D.host.E) (VS D).V)
     (φ' : (locH Zd p).Wb (tLoc Zd p γ).f' ≃ₗ[(D.s.atP p).Ep] (locH Zd p).Wb (locF' Zd p F'₂))
     (hR : Prod.map φ' (LinearEquiv.refl (D.s.atP p).Ep ((locH Zd p).Wb (tLoc Zd p γ).f)) ''
@@ -119,14 +140,14 @@ theorem fwd_typed (p : PlF D) (g : Loc.SplitG (Zd.M p).L) (hsp : (Zd.M p).split 
     (hβΛ _ (add_mem hx'Λ (xi_mem hξ'))) hp₂ hq₂ hG2 hA2 hB2
   have hβξ : β ξ' ∈ NgX Λ₂ (gS D) (lf D F0) (liftF F'₂) :=
     Submodule.mem_sup_right (Submodule.mem_inf.2 ⟨hβΛ _ (xi_mem hξ'), hβX _ hξ'X⟩)
-  have e : l₂ - β x' = (l₂ - β (x' + ξ')) + β ξ' := by rw [map_add]; abel
-  rw [e, map_add]
+  have e : l₂ - β x' = (l₂ - β (x' + ξ')) + β ξ' := by rw [map_add (f := _)]; abel
+  rw [e, map_add (f := _)]
   exact add_mem hfin (Submodule.subset_span ⟨_, hβξ, rfl⟩)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem bwd_typed (p : PlF D) (g : Loc.SplitG (Zd.M p).L) (hsp : (Zd.M p).split = some g)
-    (γ : TermDef.Term D u u' F0 what₂) (F'₂ : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E))
+    (γ : TermDef.Term D u u' F0 what₂) (F'₂ : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E))
     (Λ₂ : Submodule (𝓞 D.host.E) (VS D).V)
     (φ' : (locH Zd p).Wb (tLoc Zd p γ).f' ≃ₗ[(D.s.atP p).Ep] (locH Zd p).Wb (locF' Zd p F'₂))
     (hR : Prod.map φ' (LinearEquiv.refl (D.s.atP p).Ep ((locH Zd p).Wb (tLoc Zd p γ).f)) ''
@@ -183,17 +204,16 @@ theorem bwd_typed (p : PlF D) (g : Loc.SplitG (Zd.M p).L) (hsp : (Zd.M p).split 
 
 end IotaBP
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem iotaB_of (hP : PinB Zd u u' F0 what₂) : IotaB Zd u u' F0 what₂ := by
   intro γ Z F'₂ φ φ' Λ₂ hB β₀ hiso hfr hW hO v hv hvf hvX hgm
   have hB0 := hB
   obtain ⟨hC, hZ, hS, hΛ₂, -, hT, hPD, -⟩ := hB
-  obtain ⟨hΛ₂lat, hloc₂⟩ := hΛ₂
+  obtain ⟨hΛ₂full, hloc₂⟩ := hΛ₂
   obtain ⟨-, hT2, hφ⟩ := hS
   have hrow := hC.2.1.1 γ.lam γ.mem
-  have hfix := hrow.2.1
-  have hΛlat : Submodule.IsLattice D.host.E γ.lam := hfix.1
+  have hΛfull : Submodule.IsFullLattice D.host.E γ.lam := hrow.1.1
   have hXS1 : XLam γ.lam (lf D F0) = XS D F0 := hrow.2.2
   have hXSx : XLam γ.lam (repF γ) = XS D (repF γ).fl := hPD.2.2.2
   have hXS2' : XLam Λ₂ (liftF F'₂) = XS D (liftF F'₂).fl := hT.2.2.2.2
@@ -211,8 +231,10 @@ theorem iotaB_of (hP : PinB Zd u u' F0 what₂) : IotaB Zd u u' F0 what₂ := by
     ext x
     simp only [XLam, Submodule.mem_inf]
     constructor
-    · rintro ⟨h1, h2⟩; exact ⟨memX Zd γ hpr2 hpr1 hΛlat hu h2 h1, h2⟩
-    · rintro ⟨h1, h2⟩; exact ⟨memX Zd γ hpr1 hpr2 hΛ₂lat hu h2 h1, h2⟩
+    · rintro ⟨h1, h2⟩; refine ⟨?_, h2⟩
+      first | exact memX Zd γ hpr2 hpr1 hΛfull hu h2 h1 | exact memX Zd γ hpr2 hpr1 hΛfull.toIsLattice hu h2 h1
+    · rintro ⟨h1, h2⟩; refine ⟨?_, h2⟩
+      first | exact memX Zd γ hpr1 hpr2 hΛ₂full hu h2 h1 | exact memX Zd γ hpr1 hpr2 hΛ₂full.toIsLattice hu h2 h1
 
   have hXmap : (Xsp (repF γ)).map (β₀ : (VS D).V →ₗ[D.host.E] (VS D).V) = Xsp (liftF F'₂) :=
     BwdBetaCut.Xsp_of_frame β₀ _ _ hfr
@@ -271,7 +293,9 @@ theorem iotaB_of (hP : PinB Zd u u' F0 what₂) : IotaB Zd u u' F0 what₂ := by
   constructor
   · intro hmem
     obtain ⟨μ, hμ, ξ, hξ, ξ', hξ', heq⟩ := NgX_dec hmem
-    refine mem_of_bcP Zd (IotaBP.isLattice_NgX hΛ₂lat _ _) fun p => ?_
+    first
+    | refine mem_of_bcP Zd (IotaBP.isLattice_NgX hΛ₂full _ _) fun p => ?_
+    | refine mem_of_bcP Zd (IotaBP.isLattice_NgX_aux hΛ₂full _ _) fun p => ?_
     rcases hsp : (Zd.M p).split with _ | g
     · exact untyped_mem Zd p hsp _ _ (BwdNP.baseChange_mem_localLattice Zd (sub_mem hl₂Λ (hβΛ _ hx'Λ)) p)
     · exact IotaBP.fwd_typed Zd p g hsp γ F'₂ Λ₂ (φ' p) (hRp p g hsp) β₀ (v * β₀)
@@ -279,7 +303,9 @@ theorem iotaB_of (hP : PinB Zd u u' F0 what₂) : IotaB Zd u u' F0 what₂ := by
         hx'Λ hx'o hlΛ hlo hl₂Λ hl₂o hll₂ hμ hξ hξ' heq
   · intro hmem
     obtain ⟨μ, hμ, ξ, hξ, ξ', hξ', heq⟩ := NgX_dec hmem
-    refine mem_of_bcP Zd (IotaBP.isLattice_NgX hΛlat _ _) fun p => ?_
+    first
+    | refine mem_of_bcP Zd (IotaBP.isLattice_NgX hΛfull _ _) fun p => ?_
+    | refine mem_of_bcP Zd (IotaBP.isLattice_NgX_aux hΛfull.toIsLattice _ _) fun p => ?_
     rcases hsp : (Zd.M p).split with _ | g
     · exact untyped_mem Zd p hsp _ _ (BwdNP.baseChange_mem_localLattice Zd (sub_mem hlΛ hx'Λ) p)
     · exact IotaBP.bwd_typed Zd p g hsp γ F'₂ Λ₂ (φ' p) (hRp p g hsp) β₀ (v * β₀)

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsK1PointCongruent
-import Formalism.LocalToGlobal.Columns.RecLevelTop
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsK1PointCongruent
+public import Formalism.LocalToGlobal.Columns.RecLevelTop
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 open scoped TensorProduct
 open scoped Topology
@@ -57,7 +62,8 @@ theorem exists_smallAt_subset (Q : Finset (HeightOneSpectrum (𝓞 E))) {V : Set
   set e : E ⊗[F] FiniteAdeleRing (𝓞 F) F := ∑ P ∈ Q, PtExist.idem F P with he_def
   have he : ∀ w, adAt F w e = if w ∈ Q then 1 else 0 := by
     intro w
-    rw [he_def, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [he_def, map_sum]
     simp only [PtExist.adAt_idem]
     exact Finset.sum_ite_eq Q w (fun _ => (1 : w.adicCompletion E))
   have hint : ∀ y ∈ Formalism.L2.Herm.intAf F E, ∀ w, Valued.v (adAt F w y) ≤ 1 := fun y hy w =>
@@ -70,7 +76,7 @@ theorem exists_smallAt_subset (Q : Finset (HeightOneSpectrum (𝓞 E))) {V : Set
     exact (map_ne_zero _).2 hb0
   let c : ℕ → E ⊗[F] FiniteAdeleRing (𝓞 F) F := fun m => e * ι b ^ m
   let K : ℕ → Set (E ⊗[F] FiniteAdeleRing (𝓞 F) F) := fun m => (c m * ·) '' (Formalism.L2.Herm.intAf F E : Set _)
-  have hKc : ∀ m, IsCompact (K m) := fun m => Formalism.L2.Col.rlt_isCompact_intAf.image (continuous_mul_left (c m))
+  have hKc : ∀ m, IsCompact (K m) := fun m => Formalism.L2.Col.rlt_isCompact_intAf.image (continuous_const_mul (c m))
   have hKa : Antitone K := by
     refine antitone_nat_of_succ_le fun m => ?_
     rintro _ ⟨y, hy, rfl⟩
@@ -93,7 +99,7 @@ theorem exists_smallAt_subset (Q : Finset (HeightOneSpectrum (𝓞 E))) {V : Set
         simp only [c, map_mul, he, if_neg hw, zero_mul]
     rw [this]
     exact hV
-  obtain ⟨m, hm⟩ := exists_subset_nhds_of_isCompact hKa.directed_ge hKc hK0
+  obtain ⟨m, hm⟩ := exists_subset_nhds_of_isCompact hKa.directed_ge hKc (mem_nhdsSet_iff_forall.2 hK0)
 
   let D : ℕ := ∑ w ∈ Q, (-(Valued.v (adAt F w (ι b))).log).toNat
   have hD : ∀ w ∈ Q, WithZero.exp (-(D : ℤ)) ≤ Valued.v (adAt F w (ι b)) := fun w hw => by

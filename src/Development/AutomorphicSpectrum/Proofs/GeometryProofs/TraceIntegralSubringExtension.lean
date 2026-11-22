@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TracePowerSumModEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TracePowerSumModEq
+
+@[expose] public section
 
 open Polynomial Module
 
@@ -23,7 +27,7 @@ theorem trace_aeval_of_isNilpotent {V : Type*} [AddCommGroup V] [Module C V] [Mo
         ((Commute.refl g).pow_left k) h
       rw [pow_succ, Module.End.mul_eq_comp, this, ih]; ring
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => simp only [map_add, hp, hq, eval_add]; ring
+  | add p q hp hq => simp only [map_add (f := _), hp, hq, eval_add]; ring
   | monomial k a =>
     rw [aeval_monomial, ← Algebra.smul_def, map_smul, hk, eval_monomial, smul_eq_mul]; ring
 
@@ -92,7 +96,8 @@ theorem repr_aeval {F S : Type*} [Field F] [CommRing S] [Algebra F S] (pb : Powe
     intro k
     rw [← pb.basis_eq_pow k]
     exact pb.basis.repr_self k
-  rw [aeval_eq_sum_range' hr, map_sum, Finsupp.finset_sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [aeval_eq_sum_range' hr, map_sum, Finsupp.finsetSum_apply]
   rw [Finset.sum_eq_single (i : ℕ)]
   · rw [map_smul, Finsupp.smul_apply, hrep i]
     simp

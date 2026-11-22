@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+
+@[expose] public section
 
 namespace GlobalTheory.SimMult
 
@@ -87,12 +91,12 @@ theorem exists_norm_finiteField {k : Type*} [Field k] [Finite k] (σ : k →+* k
   simp only [Polynomial.eval_sub, Polynomial.eval_pow, Polynomial.eval_X, Polynomial.eval_C,
     Polynomial.eval_mul] at hab
   have h4 := congrArg F.subtype hab
-  simp only [map_add, map_sub, map_mul, map_pow, map_neg, map_intCast, map_zero,
+  simp only [map_add (f := _), map_sub, map_mul, map_pow, map_neg, map_intCast, map_zero,
     Subfield.coe_subtype, D] at h4
   have ha : σ (a : k) = a := a.2
   have hb : σ (b : k) = b := b.2
   refine ⟨a + b * s, ?_⟩
-  rw [map_add, map_mul, ha, hb, hσs]
+  rw [map_add (f := _), map_mul, ha, hb, hσs]
   linear_combination h4
 
 section Dedekind
@@ -126,10 +130,10 @@ theorem exists_norm_maximal (hσ : ∀ x, σ (σ x) = x) (P : Ideal O) [hP : P.I
     obtain ⟨y, e, he, hy⟩ := hP.exists_inv (x := σ x) hx'
     refine ⟨e + ν * (y * σ x), ?_⟩
     have hy' := congrArg σ hy
-    rw [map_add, map_mul, hσ, map_one] at hy'
+    rw [map_add (f := _), map_mul, hσ, map_one] at hy'
     have : (e + ν * (y * σ x)) * σ (e + ν * (y * σ x)) - ν
         = ((1 - ν) * σ (e + ν * (y * σ x))) * e + (ν * (ν - 1) * σ y) * x := by
-      simp only [map_add, map_mul, map_intCast, hσ]
+      simp only [map_add (f := _), map_mul, map_intCast, hσ]
       linear_combination (ν * (σ e + ν * (σ y * x))) * hy + ν * hy'
     rw [this]
     exact P.add_mem (P.mul_mem_left _ he) (P.mul_mem_left _ hx)
@@ -153,7 +157,7 @@ theorem exists_norm_finset (hσ : ∀ x, σ (σ x) = x) (ν : ℤ) (S : Set (Ide
     obtain ⟨y, e, he, hy⟩ := hPm.exists_inv hcP
     set δ := c * σ c - ν
     have hy' := congrArg σ hy
-    rw [map_add, map_mul, hfix, map_one] at hy'
+    rw [map_add (f := _), map_mul, hfix, map_one] at hy'
 
     refine ⟨d + (c - d) * (e * σ e), fun Q hQ => ?_⟩
     rcases hQ with rfl | hQ
@@ -252,13 +256,13 @@ theorem exists_norm_level (hσ : ∀ x, σ (σ x) = x) {w : O} (hw : w + σ w = 
         have h3 : σ.comp σ = RingHom.id O := RingHom.ext hσ
         rwa [Ideal.map_pow, Ideal.map_map, h3, Ideal.map_id] at h2
       have hσee := congrArg σ hee
-      rw [map_add, map_one] at hσee
+      rw [map_add (f := _), map_one] at hσee
       have hc1 : e + ν * e' - 1 = (ν - 1) * e' := by linear_combination hee
       refine ⟨e + ν * e', ?_, ?_, ?_⟩
       · have h4 : (e + ν * e') * σ (e + ν * e') - ν ∈ J ^ k * J.map σ ^ k := by
           have : (e + ν * e') * σ (e + ν * e') - ν
               = (1 - ν) * (σ e * e) + (ν * ν - ν) * (e' * σ e') := by
-            rw [map_add, map_mul, map_intCast]
+            rw [map_add (f := _), map_mul, map_intCast]
             linear_combination (ν * (σ e' + σ e)) * hee + ν * hσee
           rw [this]
           exact Ideal.add_mem _ (Ideal.mul_mem_left _ _ (Ideal.mul_mem_mul hσe he))
@@ -416,7 +420,7 @@ theorem exists_sim_trivial_of_mult :
       congr 1
       linear_combination hu
     simp only [LinearMap.smul_apply, LinearMap.id_apply]
-    rw [D.adj, h1, map_add, map_zsmul, map_zsmul, smul_eq_mul, smul_eq_mul]
+    rw [D.adj, h1, map_add (f := _), map_zsmul, map_zsmul, smul_eq_mul, smul_eq_mul]
     ring)
   have hνg : ∀ m k : ℕ, 0 < m → 0 < k → N * l.M * l.A = m * k → (m : ℤ) ∣ g.ν m - r := by
     intro m k hm hk h

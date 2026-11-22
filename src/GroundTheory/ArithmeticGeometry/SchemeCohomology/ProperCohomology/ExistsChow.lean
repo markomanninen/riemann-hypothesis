@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ChowMulti
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ChowSegre
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ChowMulti
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ChowSegre
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh

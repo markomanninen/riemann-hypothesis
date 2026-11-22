@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupSplitting.Development
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupSplitting.Development
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ private theorem coeff_pow_eq_zero_of_degree_lt_formal_group_splitting {f : MvPow
     by_cases h2 : p.2 = 0
     · rw [h2, coeff_zero_eq_constantCoeff_apply, hf, mul_zero]
     · have hd : Finsupp.degree p.1 + Finsupp.degree p.2 = Finsupp.degree α := by
-        rw [← hp, map_add]
+        rw [← hp, map_add (f := _)]
       have h2' : 0 < Finsupp.degree p.2 := by
         rw [Nat.pos_iff_ne_zero]
         intro h0
@@ -39,7 +43,7 @@ theorem coeff_pow_mul_pow_eq_zero {f g : MvPowerSeries σ K} (hf : constantCoeff
   refine Finset.sum_eq_zero fun p hp => ?_
   rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
   have hd : Finsupp.degree p.1 + Finsupp.degree p.2 = Finsupp.degree α := by
-    rw [← hp, map_add]
+    rw [← hp, map_add (f := _)]
   by_cases h1 : Finsupp.degree p.1 < i
   · rw [coeff_pow_eq_zero_of_degree_lt_formal_group_splitting hf i h1, zero_mul]
   · rw [coeff_pow_eq_zero_of_degree_lt_formal_group_splitting hg j (by omega), mul_zero]
@@ -53,7 +57,8 @@ def expT (f : MvPowerSeries σ K) (N : ℕ) : MvPowerSeries σ K :=
 
 theorem coeff_expT (f : MvPowerSeries σ K) (N : ℕ) (α : σ →₀ ℕ) :
     coeff α (expT f N) = ∑ n ∈ range N, coeff α (f ^ n) / (n.factorial : K) := by
-  simp only [expT, map_sum, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [expT, map_sum, map_smul, smul_eq_mul]
   refine Finset.sum_congr rfl fun n _ => ?_
   rw [div_eq_inv_mul]
 
@@ -79,7 +84,8 @@ private theorem coeff_expT_add_eq_coeff_expT_mul_expT [CharZero K] {f g : MvPowe
   have lhs : coeff α (expT (f + g) N) = ∑ n ∈ range N, ∑ m ∈ range (n + 1), F m (n - m) := by
     rw [coeff_expT]
     refine Finset.sum_congr rfl fun n _ => ?_
-    rw [add_pow, map_sum, Finset.sum_div]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [add_pow, map_sum, Finset.sum_div]
     refine Finset.sum_congr rfl fun m hm => ?_
     have hmn : m ≤ n := Nat.lt_succ_iff.mp (Finset.mem_range.mp hm)
     have hc : ((n.choose m : ℕ) : K) * (m.factorial : K) * ((n - m).factorial : K) =
@@ -94,9 +100,11 @@ private theorem coeff_expT_add_eq_coeff_expT_mul_expT [CharZero K] {f g : MvPowe
     field_simp
   have rhs : coeff α (expT f N * expT g N) = ∑ i ∈ range N, ∑ j ∈ range N, F i j := by
     simp only [expT]
-    rw [Finset.sum_mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_mul_sum, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [smul_mul_smul_comm, map_smul, smul_eq_mul]
     show _ = coeff α (f ^ i * g ^ j) / ((i.factorial : K) * (j.factorial : K))
@@ -118,32 +126,18 @@ theorem expMv_add [CharZero K] {f g : MvPowerSeries σ K} (hf : constantCoeff f 
     (hg : constantCoeff g = 0) : expMv (f + g) = expMv f * expMv g := by
   classical
   ext α
-  have hfg : constantCoeff (f + g) = 0 := by rw [map_add, hf, hg, add_zero]
+  have hfg : constantCoeff (f + g) = 0 := by rw [map_add (f := _), hf, hg, add_zero]
   rw [coeff_expMv_eq_expT hfg (Nat.lt_succ_self (Finsupp.degree α)), coeff_mul]
   have key : ∀ p ∈ antidiagonal α, coeff p.1 (expMv f) * coeff p.2 (expMv g) =
       coeff p.1 (expT f (Finsupp.degree α + 1)) * coeff p.2 (expT g (Finsupp.degree α + 1)) := by
     intro p hp
     rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
     have hd : Finsupp.degree p.1 + Finsupp.degree p.2 = Finsupp.degree α := by
-      rw [← hp, map_add]
+      rw [← hp, map_add (f := _)]
     rw [coeff_expMv_eq_expT hf (N := Finsupp.degree α + 1) (by omega),
       coeff_expMv_eq_expT hg (N := Finsupp.degree α + 1) (by omega)]
   rw [Finset.sum_congr rfl key, ← coeff_mul]
   exact coeff_expT_add_eq_coeff_expT_mul_expT hf hg (Nat.lt_succ_self _)
-
-theorem simeqW_add [CharZero K] {W : Subring K} {f g f' g' : MvPowerSeries σ K}
-    (h : SimeqW W f g) (h' : SimeqW W f' g') : SimeqW W (f + f') (g + g') := by
-  classical
-  obtain ⟨h0, hW⟩ := h
-  obtain ⟨h0', hW'⟩ := h'
-  have e : f + f' - (g + g') = (f - g) + (f' - g') := by ring
-  refine ⟨by rw [e, map_add, h0, h0', add_zero], fun n => ?_⟩
-  rw [e, expMv_add h0 h0', coeff_mul]
-  exact W.sum_mem fun p _ => W.mul_mem (hW _) (hW' _)
-
-theorem addPreservesExpCongruence : S3 := by
-  intro K _ _ W σ f g f' g' h h'
-  exact simeqW_add h h'
 
 end PI.FglPhSplit.Wk
 

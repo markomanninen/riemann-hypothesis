@@ -1,8 +1,13 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnivChar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DualTypePlacesIsSplitNonconjugateOfAdmissible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ReductionTrivialOffSupport
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParahoricLevelLiftsExist
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CardInversePrimeRepsIntegralRightMulHecke
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnivChar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DualTypePlacesIsSplitNonconjugateOfAdmissible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ReductionTrivialOffSupport
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParahoricLevelLiftsExist
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CardInversePrimeRepsIntegralRightMulHecke
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links IsDedekindDomain NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.ExportSeries GlobalTheory.SeriesTie GlobalTheory.TwInputs GlobalTheory.TwSys GlobalTheory.TwAll GlobalTheory.SupLaw GlobalTheory.LiftLeaf
 open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ HkIdx V0 Fm0 FullRk SgJ BasisOf)
 open scoped TensorProduct
@@ -26,7 +31,8 @@ theorem idem_mul_idemAt {Q : Finset (Pl D.host.E)} (hQ : SplitSet Q) {PP : Pl D.
     rw [idem, Finset.sum_mul]
     exact Finset.sum_eq_zero fun q hq => hQ.mul_conj hq hP
   have h3 : cA D (idem Q) * idemAt PP = 0 := by
-    rw [idem, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [idem, map_sum, Finset.sum_mul]
     exact Finset.sum_eq_zero fun q hq => by rw [mul_comm]; exact hQ.mul_conj hP hq
   have h4 : cA D (idem Q) * cA D (idemAt PP) = cA D (idemAt PP) := by rw [← map_mul, h1]
   rw [add_mul, mul_add, mul_add, h1, h2, h3, h4, add_zero, zero_add]
@@ -51,8 +57,8 @@ open Formalism.MainNotions.S Formalism.IndefR.Mult Formalism.IndefR.Lev GlobalTh
 
 variable {D : D7}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_local_lift' {V : HSp D} {β : GL (Fin V.rank) (Lev.EAf D)}
     {Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)} (hf : IsFrame β Λ) (hsd : HatSelfDual D.sp.cm.sig V.gram Λ)
     {P : Pl D.host.E} {e : Formalism.L2.Theta.AE D} (he : IsIdemAt e P) (k : GL (Fin V.rank) (kP P)) :
@@ -73,7 +79,7 @@ theorem exists_local_lift' {V : HSp D} {β : GL (Fin V.rank) (Lev.EAf D)}
   have hsf := supp_fin V (f := e + cA D e) hs
   rw [← hp] at hκ
   have hfs : finSw D (e + cA D e) = p + Formalism.UG.sigR D.sp.cm.sig (Formalism.L2.Herm.Af D.host.F) p := by
-    rw [RingHom.map_add, finSw_cA, hp]
+    rw [RingHom.map_add (f := _), finSw_cA, hp]
   have hSt : Lev.finE V κ ∈ St β :=
     mem_St_of_part D.sp.cm.sig V.gram Λ β hf hsd p u hpp (sigR_int p.2) Y hu' (Lev.finE V κ)
       (finE_mem_UA V κ) _ hfs hsf hκ
@@ -119,7 +125,46 @@ theorem hatSelfDual_of {V : HSp D} {Λ : Submodule (𝓞 D.host.E) (Fin V.rank �
       change v j * V.gram i j * star (y i) = _
       ring
     rw [e]
-  exact hatL_selfDual_gen (GlobalTheory.Member.cF D) D.sp.cm.sig h3 V.gram Λ h.1.fg h.1.span_eq_top hcc hG hdet hmem h1 h2
+  have hsp : Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E)) = ⊤ := by
+    apply top_unique
+    intro y _
+    let pairing (x z : Fin V.rank → D.host.E) :=
+      ∑ a, ∑ b, star (x a) * V.gram a b * z b
+    obtain ⟨s, hgen⟩ := h.1.fg
+    obtain ⟨d, hdint⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors (𝓞 D.host.E)) s (pairing · y)
+    have hd0 : (d : 𝓞 D.host.E) ≠ 0 := mem_nonZeroDivisors_iff_ne_zero.mp d.property
+    have hdE : (d : 𝓞 D.host.E) • y ∈ Λ := by
+      apply (h.2 _).2
+      intro x hx
+      show IsLocalization.IsInteger (𝓞 D.host.E) (pairing x ((d : 𝓞 D.host.E) • y))
+      have hscale (z : Fin V.rank → D.host.E) :
+          pairing z ((d : 𝓞 D.host.E) • y) = (d : 𝓞 D.host.E) • pairing z y := by
+        simp only [pairing, Pi.smul_apply, Algebra.smul_def, Finset.mul_sum, Finset.sum_mul,
+          mul_assoc, mul_left_comm, mul_comm]
+      rw [hscale]
+      refine Submodule.span_induction
+        (p := fun z _ => IsLocalization.IsInteger (𝓞 D.host.E) ((d : 𝓞 D.host.E) • pairing z y))
+        ?_ ?_ ?_ ?_ (hgen.symm ▸ hx)
+      · intro z hz
+        exact hdint z hz
+      · simp [pairing, IsLocalization.isInteger_zero]
+      · intro z z' _ _ hz hz'
+        convert IsLocalization.isInteger_add hz hz' using 1
+        simp only [pairing, Pi.add_apply, star_add, add_mul, Finset.sum_add_distrib, smul_add]
+      · intro a z _ hz
+        have ha : IsLocalization.IsInteger (𝓞 D.host.E) (star (a : D.host.E)) := by
+          refine ⟨⟨star (a : D.host.E), ?_⟩, rfl⟩
+          exact a.2.map (starRingEnd D.host.E).toIntAlgHom
+        convert IsLocalization.isInteger_mul ha hz using 1
+        simp only [pairing, Pi.smul_apply, Algebra.smul_def, star_mul', Finset.mul_sum, Finset.sum_mul,
+          mul_assoc, mul_left_comm, mul_comm]
+    have hspan := Submodule.subset_span (R := D.host.E) hdE
+    have hn : ((d : 𝓞 D.host.E) : D.host.E) ≠ 0 := by exact_mod_cast hd0
+    have hy := (Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E))).smul_mem
+      (((d : 𝓞 D.host.E) : D.host.E)⁻¹) hspan
+    rwa [← IsScalarTower.algebraMap_smul D.host.E (d : 𝓞 D.host.E) y,
+      smul_smul, inv_mul_cancel₀ hn, one_smul] at hy
+  exact hatL_selfDual_gen (GlobalTheory.Member.cF D) D.sp.cm.sig h3 V.gram Λ h.1.fg hsp hcc hG hdet hmem h1 h2
 
 end LocalLift
 
@@ -132,8 +177,8 @@ theorem suppAt_list_prod {e : AE D} {V : HSp D} (L : List (GA D V)) (h : ∀ g �
     rw [List.prod_cons]
     exact GlobalTheory.SplitHecke.suppAt_mul (h a List.mem_cons_self) (ih fun g hg => h g (List.mem_cons_of_mem _ hg))
 
-open Classical in
 
+open Classical in
 theorem exists_lift_at (hB : B.Good) {Q : Finset (Pl D.host.E)} (hQ : B.admitted Q)
     (hb : ∀ PP : ↥Q, GL (Fin S.rank) (kP PP.1)) :
     ∃ k : GA D S, k ∈ GfC S ∧ Lev.finE S k ∈ St B.F.βS ∧ SuppAt (idem Q) S k ∧
@@ -224,9 +269,9 @@ theorem om_src_fock (hB : B.Good) (hS : S.SigOK) {ω : PairRep S T} (hω : B.IsW
   rw [Frame.fock, (GlobalTheory.OrientedHeis.om_pureTensorO D _ _ S T _ _ ω hω hB.frame.vac.2.inf (fun _ => 1) (fun _ => 1)
       (fun τ => (B.F.BS τ).val) (fun τ => (B.F.BS τ).val) B.F.sT B.F.sT B.F.BT B.F.BT k 1
       (fun τ => by simp [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ hk])
-      (fun τ => by simp [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ (one_mem _)])
+      (fun τ => by simp [GlobalTheory.WeilVacMove.compAt_one])
       (fun τ => by simp [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ hk])
-      (fun τ => by simp [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ (one_mem _)]) _ hth P).2,
+      (fun τ => by simp [GlobalTheory.WeilVacMove.compAt_one]) _ hth P).2,
     om_src_move hB hS hω hQ hb hk sk hs hr φ]
   rfl
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdmissibleIntegralBasisChangeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdmissibleIntegralBasisChangeOne
+
+@[expose] public section
 
 open scoped IntermediateField Polynomial RatFunc
 open GlobalTheory.Nef
@@ -41,7 +45,7 @@ theorem val_le_of_monic (t y : F) (P : F[X]) (hP : P.Monic) (hy : P.eval y = 0) 
   have hM : 1 ≤ Mx t v ^ c := one_le_pow₀ (one_le_Mx t v)
   have hy1 : 1 < v.1 y := lt_of_le_of_lt hM hlt
   have hy0 : v.1 y ≠ 0 := ne_of_gt (lt_trans zero_lt_one hy1)
-  rw [hP.as_sum, eval_add, eval_pow, eval_X, eval_finset_sum] at hy
+  rw [hP.as_sum, eval_add, eval_pow, eval_X, Polynomial.eval_finsetSum] at hy
   have heq := eq_neg_of_add_eq_zero_left hy
   have hlt2 : v.1 (∑ i ∈ Finset.range P.natDegree, (C (P.coeff i) * X ^ i).eval y) <
       v.1 y ^ P.natDegree := by

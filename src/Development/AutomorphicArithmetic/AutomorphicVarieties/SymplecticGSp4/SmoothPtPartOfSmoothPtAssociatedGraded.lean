@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ExDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.KerPow
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ExDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.KerPow
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
 private lemma order_pow {O A K τ : Type} [CommRing O] [CommRing A] [Algebra O A] [CommRing K] [Algebra O K]
@@ -19,7 +24,7 @@ private lemma order_pow {O A K τ : Type} [CommRing O] [CommRing A] [Algebra O A
       refine add_le_add (ih a ha) (MvPowerSeries.one_le_order_iff_constCoeff_eq_zero.2 ?_)
       rw [hc, hb, map_zero]
     · intro a b ha hb
-      rw [map_add]
+      rw [map_add (f := _)]
       exact le_trans (le_min ha hb) MvPowerSeries.min_order_le_add
 
 private lemma extend {O R K τ : Type} [CommRing O] [CommRing R] [Algebra O R] [CommRing K] [Algebra O K]
@@ -50,7 +55,7 @@ private lemma extend {O R K τ : Type} [CommRing O] [CommRing R] [Algebra O R] [
   have hadd : ∀ x x', ψ (x + x') = ψ x + ψ x' := fun x x' => by
     ext m
     have hm := Nat.lt_succ_self m.degree
-    rw [map_add, spec _ x _ (ha _ x) m hm, spec _ x' _ (ha _ x') m hm, ← map_add, ← map_add]
+    rw [map_add (f := _), spec _ x _ (ha _ x) m hm, spec _ x' _ (ha _ x') m hm, ← map_add (f := _), ← map_add (f := _)]
     refine spec _ _ _ ?_ m hm
     have := Ideal.add_mem _ (ha (m.degree + 1) x) (ha (m.degree + 1) x')
     rw [sub_add_sub_comm] at this
@@ -67,7 +72,7 @@ private lemma extend {O R K τ : Type} [CommRing O] [CommRing R] [Algebra O R] [
     rw [spec _ _ _ h1 m hm, map_mul, MvPowerSeries.coeff_mul, MvPowerSeries.coeff_mul]
     refine Finset.sum_congr rfl fun p hp => ?_
     have h2 : p.1.degree + p.2.degree = m.degree := by
-      rw [← Finset.HasAntidiagonal.mem_antidiagonal.1 hp, map_add]
+      rw [← Finset.HasAntidiagonal.mem_antidiagonal.1 hp, map_add (f := _)]
     rw [spec _ x _ (ha (m.degree + 1) x) p.1 (by omega), spec _ x' _ (ha (m.degree + 1) x') p.2 (by omega)]
   refine ⟨{ toFun := ψ
             map_one' := (onA 1).trans (map_one φ)

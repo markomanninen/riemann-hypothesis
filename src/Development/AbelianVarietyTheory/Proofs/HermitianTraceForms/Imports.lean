@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.TorsionNonvanishStatement
+module
+
+public import ReciprocityTheory.SemistableReduction.TorsionNonvanishStatement
+
+@[expose] public section
 
 namespace GlobalTheory.IntSmulIntegral
 

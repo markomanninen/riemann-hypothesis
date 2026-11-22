@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MaxVSpanSingleton
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AfsplitB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MaxVSpanSingleton
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AfsplitB
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker Formalism.MainNotions GlobalTheory.CharVal GlobalTheory.IndefiniteRowSideFullHecke.CharacterValuation
 open TensorProduct Formalism.UG Formalism.UG.P
@@ -81,8 +85,8 @@ end Base
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-variable (E) in
 
+variable (E) in
 def ofInt (x : FiniteAdeleRing (𝓞 F) F) (hx : x ∈ intAd F) : RInt F E :=
   ⟨(1 : E) ⊗ₜ[F] x, Subring.subset_closure (Or.inr ⟨⟨x, hx⟩, rfl⟩)⟩
 
@@ -146,7 +150,7 @@ theorem exists_supported_idele (F E : Type) [Field F] [NumberField F] [Field E] 
     intro w hw
     apply Units.ext
     show prV (E := E) w (1 + (ι b' - 1) * afsplitEps E v) = 1
-    rw [map_add, map_mul, afsplit_prV_eps_ne v w hw, mul_zero, add_zero, map_one]
+    rw [map_add (f := _), map_mul, afsplit_prV_eps_ne v w hw, mul_zero, add_zero, map_one]
   · obtain ⟨a, ha, r, hr, x, hx, hxe⟩ := one_sub_eps v
     have hle : ∀ c ∈ v.asIdeal ^ 2, toRInt F E (algebraMap (𝓞 F) (𝓞 E) c) ∈ (P.asIdeal ^ 2).map (toRInt F E) := by
       intro c hc

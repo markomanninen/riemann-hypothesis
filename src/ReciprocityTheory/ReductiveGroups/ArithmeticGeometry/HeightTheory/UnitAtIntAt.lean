@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.DiscLocal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscBDefs
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscAF
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NormFactorizationClause
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NormByPlaces
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.DiscLocal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscBDefs
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscAF
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NormFactorizationClause
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NormByPlaces
+
+@[expose] public section
 
 set_option linter.style.haveILetI false
 
@@ -151,7 +155,7 @@ theorem split_at (E : Ideal (KTp K d.D d.N) → ℤ) (hE : {q | q ∈ d.HtOne �
         simp [hp]
       · simp [hx]
     conv_lhs => rw [hins]
-    rw [finprod_mem_insert' _ (fun h => h.2 (Set.mem_singleton p)) hfin]
+    rw [finprod_mem_insert' _ (by simp) hfin]
 
 theorem b_mem_p (hd : d.AxH 𝒜) (h : d.S1) {p : Ideal (KTp K d.D d.N)} (hp : p ∈ d.HtOne)
     (k : Fin d.del) (c : ι) (w : AddValuation (OmS (Ω c) d.D d.N) (WithTop ℤ))
@@ -189,8 +193,14 @@ theorem de_local (hd : d.AxH 𝒜) (h : d.S1) {p : Ideal (KTp K d.D d.N)} (hp : 
       (2 * ∑ c, d.nP h c d.wF (hd.a4.choose c) p)) := by
   classical
   letI : ∀ c, Algebra (KTf K d.D d.N) (OmS (Ω c) d.D d.N) := fun c => (d.KTtoS h c).toAlgebra
-  haveI : ∀ c, FiniteDimensional (KTf K d.D d.N) (OmS (Ω c) d.D d.N) := fun c =>
-    (d.omS_finite hd h c).1
+  haveI : ∀ c, FiniteDimensional (KTf K d.D d.N) (OmS (Ω c) d.D d.N) := fun c => by
+    haveI := d.KT_finiteDimensional hd c
+    let e : KTf K d.D d.N ≃+* d.KT c :=
+      (d.KTtoS h c).rangeRestrictFieldEquiv.trans (RingEquiv.subfieldCongr (d.KTtoS_fieldRange h c))
+    apply Module.Finite.of_equiv_equiv e.symm (RingEquiv.refl (OmS (Ω c) d.D d.N))
+    refine RingHom.ext fun x => ?_
+    change d.KTtoS h c (e.symm x) = (x : OmS (Ω c) d.D d.N)
+    exact congrArg (fun y : d.KT c => (y : OmS (Ω c) d.D d.N)) (e.apply_symm_apply x)
   haveI : CharZero (KTf K d.D d.N) :=
     charZero_of_injective_algebraMap (algebraMap K (KTf K d.D d.N)).injective
   haveI : ∀ c, Algebra.IsSeparable (KTf K d.D d.N) (OmS (Ω c) d.D d.N) := fun c =>
@@ -200,11 +210,13 @@ theorem de_local (hd : d.AxH 𝒜) (h : d.S1) {p : Ideal (KTp K d.D d.N)} (hp : 
       (algebraMap (KTp K d.D d.N) (KTf K d.D d.N) x) := fun c x =>
     (IsFractionRing.lift_algebraMap (A := KTp K d.D d.N) (g := (d.sH c).toRingHom) (h c) x).symm
   have hOver : ∀ c, d.OverP c p =
-      HNm.OverR (KTp K d.D d.N) (KTf K d.D d.N) (OmS (Ω c) d.D d.N) p := by
+      HNm.OverR (R := KTp K d.D d.N) (F := KTf K d.D d.N)
+        (L := OmS (Ω c) d.D d.N) p := by
     intro c; ext w; simp only [OverP, HNm.OverR, Set.mem_ofPred_eq, hsH]
   let n : ∀ c, AddValuation (OmS (Ω c) d.D d.N) (WithTop ℤ) → ℤ := fun c w =>
     if w ∈ d.GoodP c p then d.ord c (d.Wres c w) d.wF (hd.a4.choose c) else 0
-  have hb : ∀ k c, ∀ w ∈ HNm.OverR (KTp K d.D d.N) (KTf K d.D d.N) (OmS (Ω c) d.D d.N) p,
+  have hb : ∀ k c, ∀ w ∈ HNm.OverR (R := KTp K d.D d.N) (F := KTf K d.D d.N)
+      (L := OmS (Ω c) d.D d.N) p,
       0 ≤ w (d.bvecG hd.sel hd.a4.choose k c) + (n c w : WithTop ℤ) := by
     intro k c w hw
     rw [← hOver c] at hw
@@ -219,8 +231,9 @@ theorem de_local (hd : d.AxH 𝒜) (h : d.S1) {p : Ideal (KTp K d.D d.N)} (hp : 
       · rw [hr, AddValuation.map_zero]; exact le_top
       · rw [hz _ hr]
   have hexp : ∀ c, (∑ᶠ (w : AddValuation (OmS (Ω c) d.D d.N) (WithTop ℤ))
-      (_ : w ∈ HNm.OverR (KTp K d.D d.N) (KTf K d.D d.N) (OmS (Ω c) d.D d.N) p),
-        (HNm.fz (KTf K d.D d.N) w : ℤ) * n c w) = d.nP h c d.wF (hd.a4.choose c) p := by
+      (_ : w ∈ HNm.OverR (R := KTp K d.D d.N) (F := KTf K d.D d.N)
+        (L := OmS (Ω c) d.D d.N) p),
+        (HNm.fz (F := KTf K d.D d.N) w : ℤ) * n c w) = d.nP h c d.wF (hd.a4.choose c) p := by
     intro c
     rw [← hOver c]
     simp only [nP]
@@ -232,7 +245,116 @@ theorem de_local (hd : d.AxH 𝒜) (h : d.S1) {p : Ideal (KTp K d.D d.N)} (hp : 
       simp only [hg, hg1, if_true]
       rfl
     · simp only [hg, if_false, mul_zero, ite_self]
-  obtain ⟨a, s, hs, he⟩ := HDiscOmL.disc_local (R := KTp K d.D d.N) (F := KTf K d.D d.N)
+  open IsDedekindDomain IsLocalRing Module in
+  have disc_local {R F : Type} [CommRing R] [IsDomain R] [UniqueFactorizationMonoid R] [Field F]
+        [Algebra R F] [IsFractionRing R F] {ι : Type} [Fintype ι] [DecidableEq ι]
+        {L : ι → Type} [∀ c, Field (L c)] [∀ c, Algebra F (L c)]
+        [∀ c, FiniteDimensional F (L c)] [∀ c, Algebra.IsSeparable F (L c)] (p : Ideal R) [p.IsPrime] (hp : p.height = 1) (g : R) (hg : p = Ideal.span {g})
+      (n : ∀ c, AddValuation (L c) (WithTop ℤ) → ℤ)
+      {m : ℕ} (hm : m = ∑ c, finrank F (L c)) (b : Fin m → ∀ c, L c) (hli : LinearIndependent F b)
+      (hb : ∀ k c, ∀ w ∈ HNm.OverR (R := R) (F := F) (L := L c) p,
+        0 ≤ w (b k c) + (n c w : WithTop ℤ)) :
+      ∃ a s : R, s ∉ p ∧
+        (Matrix.of fun k l : Fin m => ∑ c, Algebra.trace F (L c) (b k c * b l c)).det *
+          algebraMap R F g ^ (2 * ∑ c, ∑ᶠ (w : AddValuation (L c) (WithTop ℤ))
+            (_ : w ∈ HNm.OverR (R := R) (F := F) (L := L c) p), (HNm.fz (F := F) w : ℤ) * n c w) *
+          algebraMap R F s =
+          algebraMap R F a := by
+    classical
+    let O := Localization.AtPrime p
+    letI : Algebra O F := IsLocalization.localizationAlgebraOfSubmonoidLe O F p.primeCompl
+      (nonZeroDivisors R) (Ideal.primeCompl_le_nonZeroDivisors p)
+    haveI : IsScalarTower R O F := IsLocalization.localization_isScalarTower_of_submonoid_le O F
+      p.primeCompl (nonZeroDivisors R) (Ideal.primeCompl_le_nonZeroDivisors p)
+    haveI : IsFractionRing O F :=
+      IsFractionRing.isFractionRing_of_isDomain_of_isLocalization p.primeCompl O F
+    obtain ⟨hdvr, hirr⟩ := ValUFD.loc_dvr p hp g hg
+    haveI := hdvr
+    letI : ∀ c, Algebra O (L c) := fun c => ((algebraMap F (L c)).comp (algebraMap O F)).toAlgebra
+    haveI : ∀ c, IsScalarTower O F (L c) := fun c => IsScalarTower.of_algebraMap_eq' rfl
+    letI : ∀ c, Algebra R (L c) := fun c => ((algebraMap F (L c)).comp (algebraMap R F)).toAlgebra
+    haveI : ∀ c, IsScalarTower R O (L c) := fun c => IsScalarTower.of_algebraMap_eq (fun x => by
+      show algebraMap F (L c) (algebraMap R F x) =
+        algebraMap F (L c) (algebraMap O F (algebraMap R O x))
+      rw [IsScalarTower.algebraMap_apply R O F x])
+    have hded : ∀ c, IsDedekindDomain (integralClosure O (L c)) := fun c =>
+      (ReciprocityTheory.MultiplicativeHeights.Closed.dedekindRank O F (L c)).1
+    have hfr : ∀ c, IsFractionRing (integralClosure O (L c)) (L c) := fun c =>
+      integralClosure.isFractionRing_of_finite_extension F (L c)
+    have hset : ∀ c, ValPl.PlacesOver O (L c) = HNm.OverR (R := R) (F := F) (L := L c) p := fun c => by
+      ext w
+      simp only [ValPl.PlacesOver, HNm.OverR, Set.mem_ofPred_eq]
+      rw [← ValPl.placesOver_iff_loc (R := R) p w]
+      rfl
+    have hG : ∀ c, ∃ gc : L c, gc ≠ 0 ∧ (∀ w ∈ ValPl.PlacesOver O (L c), w gc = n c w) ∧
+        ∀ y, (∀ w ∈ ValPl.PlacesOver O (L c), 0 ≤ w y + (n c w : WithTop ℤ)) ↔
+          gc * y ∈ integralClosure O (L c) := fun c => by
+      haveI := hded c
+      haveI := hfr c
+      obtain ⟨gc, hg0, hgv⟩ := HDiscVal.exists_val_eq O F (n c)
+      refine ⟨gc, hg0, hgv, fun y => ?_⟩
+      rw [HDiscVal.mem_integralClosure_iff O F]
+      refine forall₂_congr fun w hw => ?_
+      rw [AddValuation.map_mul, hgv w hw, add_comm]
+    choose gc hgc0 hgcv hgciff using hG
+    have hbI : ∀ k c, gc c * b k c ∈ integralClosure O (L c) := fun k c =>
+      (hgciff c _).mp (fun w hw => hb k c w (hset c ▸ hw))
+    obtain ⟨nn, t, u, -, hdisc⟩ := HDiscLat.lattice_main (R := O) (F := F) hirr gc hgc0 hm b hbI hli
+    set Nc : ι → ℤ := fun c => ∑ᶠ (w : AddValuation (L c) (WithTop ℤ))
+      (_ : w ∈ HNm.OverR (R := R) (F := F) (L := L c) p), (HNm.fz (F := F) w : ℤ) * n c w with hNc
+    have hN : ∀ c, ∃ uc : O, IsUnit uc ∧ Algebra.norm F (gc c) =
+        algebraMap R F g ^ Nc c * algebraMap O F uc := fun c => by
+      haveI := hded c
+      haveI := hfr c
+      obtain ⟨uc, huc, hn⟩ := ValPl.norm_eq_places (O := O) (F := F) (gc c) (hgc0 c) hirr
+      refine ⟨uc, huc, ?_⟩
+      rw [hn, ← IsScalarTower.algebraMap_apply R O F g, hset c]
+      congr 2
+      refine finsum_congr fun w => finsum_congr fun hw => ?_
+      rw [← hset c] at hw
+      rw [hgcv c w hw, WithTop.untopD_coe]
+      rfl
+    choose uc huc hNe using hN
+    set X := algebraMap R F g with hX
+    have hX0 : X ≠ 0 := by
+      rw [hX, map_ne_zero_iff _ (IsFractionRing.injective R F)]
+      rintro rfl
+      have : p = ⊥ := by rw [hg, Ideal.span_singleton_eq_bot]
+      subst this
+      simp at hp
+    let U : Oˣ := ∏ c, (huc c).unit
+    have hprod : ∏ c, Algebra.norm F (gc c) = X ^ (∑ c, Nc c) * algebraMap O F (U : O) := by
+      rw [Finset.prod_congr rfl fun c _ => hNe c, Finset.prod_mul_distrib, HDiscOmL.prod_zpow hX0,
+        ← map_prod]
+      congr 2
+      simp only [U, Units.coe_prod, IsUnit.unit_spec]
+    rw [hprod] at hdisc
+    set Dt := (Matrix.of fun k l : Fin m => ∑ c, Algebra.trace F (L c) (b k c * b l c)).det with hDt
+    obtain ⟨⟨a, s⟩, has⟩ := IsLocalization.mk'_surjective p.primeCompl
+      ((u : O) * ((algebraMap R O g) ^ (2 * nn + t)) * ((U⁻¹ : Oˣ) : O) * ((U⁻¹ : Oˣ) : O))
+    refine ⟨a, s, s.2, ?_⟩
+    have hsF : algebraMap O F (IsLocalization.mk' O a s) * algebraMap R F s = algebraMap R F a := by
+      rw [IsScalarTower.algebraMap_apply R O F s, IsScalarTower.algebraMap_apply R O F a, ← map_mul,
+        IsLocalization.mk'_spec]
+    simp only at has
+    rw [← hsF, has]
+    congr 1
+    set V := algebraMap O F (U : O)
+    set V' := algebraMap O F ((U⁻¹ : Oˣ) : O)
+    have hU : V * V' = 1 := by
+      simp only [V, V']
+      rw [← map_mul, Units.mul_inv, map_one]
+    have h2 : X ^ (2 * ∑ c, Nc c) = (X ^ (∑ c, Nc c)) ^ 2 := by
+      rw [mul_comm, zpow_mul]
+      norm_cast
+    have e1 : algebraMap O F ((u : O) * (algebraMap R O g) ^ (2 * nn + t) * ((U⁻¹ : Oˣ) : O) *
+        ((U⁻¹ : Oˣ) : O)) = algebraMap O F ((u : O) * (algebraMap R O g) ^ (2 * nn + t)) * V' * V' := by
+      simp only [V', map_mul]
+    rw [h2, e1, ← hdisc]
+    calc Dt * (X ^ ∑ c, Nc c) ^ 2 = Dt * (X ^ ∑ c, Nc c) ^ 2 * (V * V') * (V * V') := by
+          rw [hU]; ring
+      _ = Dt * ((X ^ ∑ c, Nc c) * V) ^ 2 * V' * V' := by ring
+  obtain ⟨a, s, hs, he⟩ := disc_local (R := KTp K d.D d.N) (F := KTf K d.D d.N)
     (L := fun c => OmS (Ω c) d.D d.N) p hp.2 (d.gen p) (d.gen_span hp) n (d.del_eq hd h)
     (d.bvecG hd.sel hd.a4.choose) (d.b_linIndep hd h) hb
   refine ⟨a, s, hs, ?_⟩

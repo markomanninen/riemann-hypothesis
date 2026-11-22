@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSegreHilb
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSegreHilb
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -18,22 +23,22 @@ theorem weight_blockWeight_apply (e : (Σ k, ι k) →₀ ℕ) (k : K) :
     Fintype.sum_sigma]
   simp [blockWeight, Pi.single_apply]
 
-omit [Fintype K] [DecidableEq K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [DecidableEq K] [∀ k, Fintype (ι k)] in
 theorem blockWeight_unit (v : Σ _ : Unit, ∀ k, ι k) :
     blockWeight (fun _ : Unit => ∀ k, ι k) v = fun _ => 1 := by
   funext u
   simp [blockWeight]
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem segreMap_isMultiHomog {m : ℕ} {p : MRing (fun _ : Unit => ∀ k, ι k) F}
     (hp : IsWeightedHomogeneous (blockWeight (fun _ : Unit => ∀ k, ι k)) p (fun _ => m)) :
     IsWeightedHomogeneous (blockWeight ι) (segreMap F p) (fun _ => m) := by
   classical
   induction hp using IsWeightedHomogeneous.induction_on with
   | zero => rw [map_zero]; exact isWeightedHomogeneous_zero _ _ _
-  | add p q _ _ hp hq => rw [map_add]; exact hp.add hq
+  | add p q _ _ hp hq => rw [map_add (f := _)]; exact hp.add hq
   | monomial d r hr =>
     have hX : ∀ v : Σ _ : Unit, ∀ k, ι k,
         IsWeightedHomogeneous (blockWeight ι) (∏ k, (X ⟨k, v.2 k⟩ : MRing ι F)) (fun _ => 1) := by
@@ -57,8 +62,8 @@ theorem segreMap_isMultiHomog {m : ℕ} {p : MRing (fun _ : Unit => ∀ k, ι k)
     rw [← hdeg]
     exact IsWeightedHomogeneous.prod _ _ _ fun v _ => (hX v).pow _
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem monomial_mem_map_segreMap (m : ℕ) :
     ∀ e : (Σ k, ι k) →₀ ℕ, (∀ k, ∑ i, e ⟨k, i⟩ = m) →
       monomial e (1 : F) ∈ (weightedHomogeneousSubmodule F
@@ -135,10 +140,10 @@ def segreQuotMap (q : Ideal (MRing ι F)) :
     MRing (fun _ : Unit => ∀ k, ι k) F ⧸ segrePrime F q →ₐ[F] MRing ι F ⧸ q :=
   Ideal.quotientMapₐ (I := segrePrime F q) q (segreMap F) fun _ h => h
 
-omit [DecidableEq K] [∀ k, Fintype (ι k)] in
 
+omit [DecidableEq K] [∀ k, Fintype (ι k)] in
 theorem segreQuotMap_injective (q : Ideal (MRing ι F)) : Function.Injective (segreQuotMap F q) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective a
   change Ideal.Quotient.mk q (segreMap F x) = 0 at ha

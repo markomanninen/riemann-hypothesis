@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramAtPosDef
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsHeckeCharMulInv
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.CondStd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramAtPosDef
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsHeckeCharMulInv
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.CondStd
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links
 open IsDedekindDomain NumberField Matrix MvPolynomial
 open GlobalTheory.SignedHC GlobalTheory.ChiGrid Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.FunObj
@@ -39,9 +44,9 @@ theorem finPart_infTmul (x : Ainf D.host.F) (e : D.host.E) :
   show (0 : Af D.host.F) ⊗ₜ[D.host.F] _ = 0
   rw [TensorProduct.zero_tmul]
 
+
 set_option synthInstance.maxHeartbeats 160000 in
 set_option maxHeartbeats 1600000 in
-
 theorem decomp_AE (V : AddSubgroup (AE D)) (hV : IsOpen (V : Set (AE D))) (z : AE D) :
     ∃ e : D.host.E, ∃ u ∈ V, infPart D u = 0 ∧ ∃ r : AE D, finPart D r = 0 ∧ z = incA D e + u + r := by
   induction z using TensorProduct.induction_on with
@@ -78,9 +83,9 @@ theorem decomp_AE (V : AddSubgroup (AE D)) (hV : IsOpen (V : Set (AE D))) (z : A
   | add x y hx hy =>
     obtain ⟨e, u, hu, hu0, r, hr0, hx⟩ := hx
     obtain ⟨e', u', hu', hu0', r', hr0', hy⟩ := hy
-    refine ⟨e + e', u + u', V.add_mem hu hu', by rw [map_add, hu0, hu0', add_zero], r + r',
-      by rw [map_add, hr0, hr0', add_zero], ?_⟩
-    rw [hx, hy, map_add, add_add_add_comm _ r, add_add_add_comm (incA D e) u]
+    refine ⟨e + e', u + u', V.add_mem hu hu', by rw [map_add (f := _), hu0, hu0', add_zero], r + r',
+      by rw [map_add (f := _), hr0, hr0', add_zero], ?_⟩
+    rw [hx, hy, map_add (f := _), add_add_add_comm _ r, add_add_add_comm (incA D e) u]
 
 theorem continuous_single {m n : ℕ} (i : Fin m) (j : Fin n) :
     Continuous fun v : AE D => (Matrix.single i j v : Matrix (Fin m) (Fin n) (AE D)) := by

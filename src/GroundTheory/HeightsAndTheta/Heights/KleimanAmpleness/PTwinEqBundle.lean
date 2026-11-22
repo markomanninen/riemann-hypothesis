@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsBisAltAlt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTwinEqBundleLocal
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.EqZeroOrIsHomogeneousOfMemPolyPiece
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTwinEqBundleLocal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.TranslateEq
@@ -15,174 +20,9 @@ theorem div_mem_chartRing_of_mem (I : Kleiman.Chart x) {i : Fin (N + 1)} (hi : i
     (j : Fin (N + 1)) : x j / x i ∈ Kleiman.chartRing S x I :=
   ⟨X j, X i, 1, Kleiman.X_mem_monos hi, isHomogeneous_X S j, isHomogeneous_X S i, by simp⟩
 
-def pairChart {i j : Fin (N + 1)} (hi : x i ≠ 0) (hj : x j ≠ 0) : Kleiman.Chart x :=
-  ⟨{i, j}, Finset.insert_nonempty i {j}, by
-    intro l hl
-    rcases Finset.mem_insert.1 hl with h | h
-    · rw [h]; exact (Kleiman.mem_support x).2 hi
-    · rw [Finset.mem_singleton.1 h]; exact (Kleiman.mem_support x).2 hj⟩
-
-theorem exists_pow_mul_mem_of_pair {i j : Fin (N + 1)} (hi : x i ≠ 0) (hj : x j ≠ 0) {v : Ω}
-    (hv : v ∈ Kleiman.chartRing S x (pairChart hi hj)) :
-    ∃ m : ℕ, (x i / x j) ^ m * v ∈ ReciprocityTheory.ChartRestriction.G.Geo.chartRing S x j := by
-  rw [← chartRingI.equiv] at hv
-  have hij : x i / x j ∈ ReciprocityTheory.ChartRestriction.G.Geo.chartRing S x j := ReciprocityTheory.ChartRestriction.G.Geo.div_mem_chartRing x j i
-  induction hv using Algebra.adjoin_induction with
-  | mem y hy =>
-    obtain ⟨l, hl, k, rfl⟩ := hy
-    change l ∈ ({i, j} : Finset (Fin (N + 1))) at hl
-    rcases Finset.mem_insert.1 hl with h | h
-    · subst h
-      refine ⟨1, ?_⟩
-      have : x l / x j * (x k / x l) = x k / x j := by field_simp
-      rw [pow_one, this]
-      exact ReciprocityTheory.ChartRestriction.G.Geo.div_mem_chartRing x j k
-    · rw [Finset.mem_singleton.1 h]
-      exact ⟨0, by rw [pow_zero, one_mul]; exact ReciprocityTheory.ChartRestriction.G.Geo.div_mem_chartRing x j k⟩
-  | algebraMap r =>
-    exact ⟨0, by rw [pow_zero, one_mul]; exact Subalgebra.algebraMap_mem _ r⟩
-  | add y z _ _ hy hz =>
-    obtain ⟨m, hm⟩ := hy
-    obtain ⟨n, hn⟩ := hz
-    refine ⟨m + n, ?_⟩
-    have : (x i / x j) ^ (m + n) * (y + z) =
-        (x i / x j) ^ n * ((x i / x j) ^ m * y) + (x i / x j) ^ m * ((x i / x j) ^ n * z) := by
-      ring
-    rw [this]
-    exact add_mem (mul_mem (pow_mem hij _) hm) (mul_mem (pow_mem hij _) hn)
-  | mul y z _ _ hy hz =>
-    obtain ⟨m, hm⟩ := hy
-    obtain ⟨n, hn⟩ := hz
-    refine ⟨m + n, ?_⟩
-    have : (x i / x j) ^ (m + n) * (y * z) = ((x i / x j) ^ m * y) * ((x i / x j) ^ n * z) := by
-      ring
-    rw [this]
-    exact mul_mem hm hn
-
-theorem exists_sum_mul_eq {A : Subalgebra S Ω} {P P' : Submodule A Ω} {z : Ω} (hz : z ∈ P * P') :
-    ∃ (k : ℕ) (q q' : Fin k → Ω), (∀ l, q l ∈ P) ∧ (∀ l, q' l ∈ P') ∧ ∑ l, q l * q' l = z := by
-  refine Submodule.mul_induction_on hz
-    (fun p hp p' hp' => ⟨1, fun _ => p, fun _ => p', fun _ => hp, fun _ => hp', by simp⟩) ?_
-  intro u v hu hv
-  obtain ⟨k, q, q', hq, hq', rfl⟩ := hu
-  obtain ⟨k', r, r', hr, hr', rfl⟩ := hv
-  refine ⟨k + k', Fin.append q r, Fin.append q' r', fun l => ?_, fun l => ?_, ?_⟩
-  · induction l using Fin.addCases with
-    | left l => simpa using hq l
-    | right l => simpa using hr l
-  · induction l using Fin.addCases with
-    | left l => simpa using hq' l
-    | right l => simpa using hr' l
-  · rw [Fin.sum_univ_add]
-    simp
-
 section First
 
 variable (Q : Kleiman.LineBundle S x)
-
-theorem ofFirst_stable (i : Fin (N + 1)) (a : Ω) (ha : a ∈ ReciprocityTheory.ChartRestriction.G.Geo.chartRing S x i) (e : Ω)
-    (he : e ∈ toIndefiniteRowSideFullHecke Q.toSubSystem i) : a • e ∈ toIndefiniteRowSideFullHecke Q.toSubSystem i := by
-  by_cases h : x i ≠ 0
-  · rw [chartModule_of_ne_zero _ h, Submodule.restrictScalars_mem] at he ⊢
-    rw [chartRing.equiv S x h] at ha
-    exact (Q.sub _).smul_mem (⟨a, ha⟩ : Kleiman.chartRing S x _) he
-  · have h0 : toIndefiniteRowSideFullHecke Q.toSubSystem i = ⊥ := dif_neg h
-    rw [h0, Submodule.mem_bot] at he ⊢
-    rw [he, smul_zero]
-
-theorem ofFirst_overlap (i j : Fin (N + 1)) (hi : x i ≠ 0) (hj : x j ≠ 0) (e : Ω)
-    (he : e ∈ toIndefiniteRowSideFullHecke Q.toSubSystem i) : ∃ m : ℕ, (x i / x j) ^ m • e ∈ toIndefiniteRowSideFullHecke Q.toSubSystem j := by
-  rw [chartModule_of_ne_zero _ hi, Submodule.restrictScalars_mem] at he
-  have hiI : (Kleiman.singleChart hi).1 ⊆ (pairChart hi hj).1 := by
-    change ({i} : Finset (Fin (N + 1))) ⊆ {i, j}
-    simp
-  have hjI : (Kleiman.singleChart hj).1 ⊆ (pairChart hi hj).1 := by
-    change ({j} : Finset (Fin (N + 1))) ⊆ {i, j}
-    simp
-  obtain ⟨a, ⟨u, hu⟩, hae⟩ := (Q.mem_iff _ _ hjI e).1 (Q.mono _ _ hiI e he)
-  obtain ⟨m, hm⟩ := exists_pow_mul_mem_of_pair hi hj (↑u⁻¹ : Kleiman.chartRing S x (pairChart hi hj)).2
-  rw [chartRing.equiv S x hj] at hm
-  refine ⟨m, ?_⟩
-  have hinv : ((↑u⁻¹ : Kleiman.chartRing S x (pairChart hi hj)) : Ω) * (a : Ω) = 1 := by
-    have := congrArg Subtype.val (Units.inv_mul u)
-    rw [hu] at this
-    exact this
-  have key : (x i / x j) ^ m • e =
-      (⟨_, hm⟩ : Kleiman.chartRing S x (Kleiman.singleChart hj)) • ((a : Ω) • e) := by
-    rw [Subalgebra.smul_def, smul_eq_mul, smul_eq_mul, smul_eq_mul]
-    change (x i / x j) ^ m * e =
-      (x i / x j) ^ m * ((↑u⁻¹ : Kleiman.chartRing S x (pairChart hi hj)) : Ω) * ((a : Ω) * e)
-    rw [show ∀ w : Ω, (x i / x j) ^ m * w * ((a : Ω) * e) = (x i / x j) ^ m * (w * a) * e from
-      fun w => by ring, hinv, mul_one]
-  rw [chartModule_of_ne_zero _ hj, Submodule.restrictScalars_mem, key]
-  exact Submodule.smul_mem _ _ hae
-
-theorem ofFirst_frame (i : Fin (N + 1)) (h : x i ≠ 0) :
-    ∃ (k : ℕ) (f c : Fin k → Ω), (∀ l, f l ∈ ReciprocityTheory.ChartRestriction.G.Geo.chartRing S x i) ∧
-      (∀ l, c l ∈ ReciprocityTheory.ChartRestriction.G.Geo.chartRing S x i) ∧ ∑ l, c l * f l = 1 ∧
-      ∀ l, ∃ b : Fin 1 → Ω, LinearIndependent Ω b ∧ Submodule.span Ω (Set.range b) = ⊤ ∧
-        ∀ e, (∃ n : ℕ, f l ^ n • e ∈ (toIndefiniteRowSideFullHecke Q.toSubSystem i).toAddSubgroup) ↔
-          ∃ a : Fin 1 → Ω, (∀ q, ∃ n : ℕ, f l ^ n * a q ∈ ReciprocityTheory.ChartRestriction.G.Geo.chartRing S x i) ∧
-            e = ∑ q, a q • b q := by
-  obtain ⟨Q'', hQ⟩ := Q.invertible (Kleiman.singleChart h)
-  have h1 : (1 : Ω) ∈ Q.sub (Kleiman.singleChart h) * Q'' := hQ ▸ Submodule.mem_one.2 ⟨1, map_one _⟩
-  obtain ⟨k, q, q', hq, hq', hsum⟩ := exists_sum_mul_eq h1
-  have hprod : ∀ {p p' : Ω}, p ∈ Q.sub (Kleiman.singleChart h) → p' ∈ Q'' →
-      p * p' ∈ ReciprocityTheory.ChartRestriction.G.Geo.chartRing S x i := by
-    intro p p' hp hp'
-    have := Submodule.mul_mem_mul hp hp'
-    rw [hQ, Submodule.mem_one] at this
-    obtain ⟨a, ha⟩ := this
-    rw [chartRing.equiv S x h, ← ha]
-    exact a.2
-  have hmem : ∀ e, e ∈ (toIndefiniteRowSideFullHecke Q.toSubSystem i).toAddSubgroup ↔ e ∈ Q.sub (Kleiman.singleChart h) := by
-    intro e
-    rw [Submodule.mem_toAddSubgroup, chartModule_of_ne_zero _ h, Submodule.restrictScalars_mem]
-  refine ⟨k, fun l => q l * q' l, fun _ => 1, fun l => hprod (hq l) (hq' l), fun _ => one_mem _,
-    by simpa using hsum, fun l => ?_⟩
-  by_cases hq0 : q l = 0
-  · refine ⟨fun _ => 1, ?_, ?_, fun e => ⟨fun _ => ⟨fun _ => e, fun _ => ⟨1, by simp [hq0]⟩, by simp⟩,
-      fun _ => ⟨1, by simp [hq0]⟩⟩⟩
-    · rw [linearIndependent_unique_iff]
-      exact one_ne_zero
-    · rw [Set.range_const]
-      exact Ideal.span_singleton_eq_top.2 isUnit_one
-  · refine ⟨fun _ => q l, ?_, ?_, fun e => ⟨?_, ?_⟩⟩
-    · rw [linearIndependent_unique_iff]
-      exact hq0
-    · rw [Set.range_const]
-      exact Ideal.span_singleton_eq_top.2 (isUnit_iff_ne_zero.2 hq0)
-    · rintro ⟨n, hn⟩
-      rw [hmem] at hn
-      refine ⟨fun _ => e / q l, fun _ => ⟨n + 1, ?_⟩, ?_⟩
-      · have : (q l * q' l) ^ (n + 1) * (e / q l) = ((q l * q' l) ^ n • e) * q' l := by
-          rw [smul_eq_mul]
-          field_simp
-          ring
-        rw [this]
-        exact hprod hn (hq' l)
-      · rw [Fin.sum_univ_one, smul_eq_mul]
-        field_simp
-    · rintro ⟨a, ha, rfl⟩
-      obtain ⟨n, hn⟩ := ha 0
-      rw [chartRing.equiv S x h] at hn
-      refine ⟨n, ?_⟩
-      rw [hmem, Fin.sum_univ_one]
-      have : (q l * q' l) ^ n • (a 0 • q l) =
-          (⟨_, hn⟩ : Kleiman.chartRing S x (Kleiman.singleChart h)) • q l := by
-        rw [Subalgebra.smul_def, smul_eq_mul, smul_eq_mul, smul_eq_mul]
-        ring
-      rw [this]
-      exact Submodule.smul_mem _ _ (hq l)
-
-def ofFirst : IndefiniteRowSideFullHecke.Kleiman.LineBundle (S := S) x where
-  lat i := (toIndefiniteRowSideFullHecke Q.toSubSystem i).toAddSubgroup
-  stable i a ha e he := ofFirst_stable Q i a ha e he
-  frame i h := ofFirst_frame Q i h
-  overlap i j hi hj e he := ofFirst_overlap Q i j hi hj e he
-
-theorem ofFirst_mods (i : Fin (N + 1)) : (ofFirst Q).mods i = toIndefiniteRowSideFullHecke Q.toSubSystem i :=
-  Submodule.span_eq _
 
 end First
 
@@ -327,27 +167,8 @@ def ofSecond : Kleiman.LineBundle S x where
   fg I := subOf_fg Q' I
   invertible I := subOf_invertible Q' I
 
-theorem ofSecond_mods {i : Fin (N + 1)} (h : x i ≠ 0) : Q'.mods i = toIndefiniteRowSideFullHecke (ofSecond Q').toSubSystem i := by
-  rw [chartModule_of_ne_zero _ h]
-  ext z
-  change z ∈ Submodule.span S (Q'.lat i : Set Ω) ↔ z ∈ subOf Q' (Kleiman.singleChart h)
-  rw [subOf_eq Q' (Finset.mem_singleton_self i)]
-  constructor
-  · intro hz
-    have hle : Submodule.span S (Q'.lat i : Set Ω) ≤ (latSub Q' h).restrictScalars S :=
-      Submodule.span_le.2 fun e he => he
-    exact Submodule.subset_span (hle hz)
-  · intro hz
-    have hle : Submodule.span (Kleiman.chartRing S x (Kleiman.singleChart h)) (Q'.lat i : Set Ω) ≤
-        latSub Q' h := Submodule.span_le.2 fun e he => he
-    exact Submodule.subset_span (hle hz)
-
 end Second
 
 end
-
-theorem LineBundle.proof : LineBundle.Statement := by
-  intro S _ N Ω _ _ x
-  exact ⟨fun Q => ⟨ofFirst Q, ofFirst_mods Q⟩, fun Q' => ⟨ofSecond Q', fun i h => ofSecond_mods Q' h⟩⟩
 
 end GroundTheory.Heights₂.Heights.Kleiman.TranslateEq

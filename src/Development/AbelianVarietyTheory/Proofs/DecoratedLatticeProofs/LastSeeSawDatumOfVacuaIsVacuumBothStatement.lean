@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LastSeeSawDatumOfVacuaIsVacuumBoth
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LastSeeSawDatumOfVacuaIsVacuumBoth
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
+
+@[expose] public section
+
 open Formalism.BasicNotions
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.lastSeeSawDatum_of_vacua_is_vacuum_both : ∀ D : D7, GlobalTheory.FinPl.LastVac D := by

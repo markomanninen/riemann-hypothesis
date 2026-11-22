@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsNotCongPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsNotCongPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,7 @@ theorem aeval_dualMap (f : End ℂ V) (p : ℂ[X]) :
     | zero => ext; simp
     | succ n ih => rw [pow_succ, ih, pow_succ']; ext; simp
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, map_add, hp, hq]; ext; simp
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq]; ext; simp
   | monomial n a => rw [aeval_monomial, aeval_monomial, hp]; ext; simp
 
 theorem isSemisimple_dualMap [FiniteDimensional ℂ V] {f : End ℂ V} (hf : f.IsSemisimple) :

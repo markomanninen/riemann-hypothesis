@@ -1,6 +1,10 @@
-import CompanionTheory.AutomorphicTheory.SchurLimitBounds.ZuckermanDuality.ZuckDualTOfZuckDual
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimBdPf
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimBdPfKFin
+module
+
+public import CompanionTheory.AutomorphicTheory.SchurLimitBounds.ZuckermanDuality.ZuckDualTOfZuckDual
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimBdPf
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimBdPfKFin
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ theorem norm_capP_le {n : ℕ} {lam μ : Fin n → ℝ} {c : ℝ} (h : μ ∈ Bo
     ‖Formalism.QuantumDeterminants.capP (fun s => (μ s : ℂ)) (y : ℂ)‖ ≤ PStar lam c y := by
   unfold Formalism.QuantumDeterminants.capP PStar
   rw [norm_prod]
-  refine Finset.prod_le_prod (fun s _ => norm_nonneg _) fun s _ => ?_
+  refine Finset.prod_le_prod₀ (fun s _ => norm_nonneg _) fun s _ => ?_
   have e : (y : ℂ) + (μ s : ℂ) = ((y + μ s : ℝ) : ℂ) := by push_cast; ring
   rw [e, Complex.norm_real, Real.norm_eq_abs]
   obtain ⟨h1, h2⟩ := abs_le.mp (h s)
@@ -162,7 +166,7 @@ theorem smul_mem_iSup {lam : Fin (2 * r + k + 1) → ℝ} {e : ℝ} {ψ : B.Mat 
     exact (le_iSup (fun ν : Box lam e => Wsp k r Wp Wq ε ν) ⟨μ, hμ⟩) (Submodule.subset_span ⟨φ, T, hc, rfl⟩)
   | zero =>
     convert Submodule.zero_mem (⨆ ν : Box lam e, Wsp k r Wp Wq ε ν) using 1
-    funext g
+    ext g
     simp
   | add x y _ _ hx hy =>
     have hxy : (fun g => (x + y) g • T) = (fun g => x g • T) + (fun g => y g • T) := by
@@ -184,7 +188,8 @@ theorem op_expand (S : Wq →L[ℂ] Wp) :
   simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply, ContinuousLinearMap.smulRight_apply,
     innerSL_apply_apply]
   conv_lhs => rw [← (stdOrthonormalBasis ℂ Wq).sum_repr' v]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp_rw [map_smul]
   conv_lhs => arg 2; ext b; rw [← (stdOrthonormalBasis ℂ Wp).sum_repr' (S (stdOrthonormalBasis ℂ Wq b))]
   simp_rw [Finset.smul_sum]

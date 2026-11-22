@@ -1,4 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ResidEvFree
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ResidEvFree
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S
 
 namespace GlobalTheory

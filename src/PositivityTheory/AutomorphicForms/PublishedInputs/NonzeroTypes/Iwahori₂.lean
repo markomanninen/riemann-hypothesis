@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroLeviEigenvectorExists
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroLeviEigenvectorExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,8 +99,8 @@ def rowv (M : Matrix (Fin n) (Fin n) 𝒪[k]) (i : Fin n) : Lt G (G.bl i) → �
   -(Matrix.vecMul (fun j : Lt G (G.bl i) => M i j.1)
     (M.submatrix (Subtype.val : Lt G (G.bl i) → Fin n) Subtype.val)⁻¹)
 
-variable (G) in
 
+variable (G) in
 def Wm (M : Matrix (Fin n) (Fin n) 𝒪[k]) : Matrix (Fin n) (Fin n) 𝒪[k] :=
   Matrix.of fun i l => if h : G.bl l < G.bl i then rowv M i ⟨l, h⟩ else (1 : Matrix (Fin n) (Fin n) 𝒪[k]) i l
 
@@ -130,7 +134,7 @@ theorem Wm_mul (M : Matrix (Fin n) (Fin n) 𝒪[k]) (i j : Fin n) (hij : G.bl j 
       Matrix.vecMul (rowv M i) (M.submatrix (Subtype.val : Lt G (G.bl i) → Fin n) Subtype.val) (⟨j, hij⟩ : Lt G (G.bl i)) := by
     simp only [Matrix.vecMul, dotProduct, Wm, Matrix.of_apply, Matrix.submatrix_apply]
     refine Finset.sum_congr rfl fun l _ => ?_
-    rw [dif_pos l.2]
+    rw [dite_eq_left l.2]
   have h2 : ∑ l : {l : Fin n // ¬ G.bl l < G.bl i}, Wm G M i l.1 * M l.1 j = M i j := by
     rw [Finset.sum_eq_single ⟨i, lt_irrefl _⟩]
     · simp [Wm]

@@ -1,20 +1,24 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.IsConst
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.NotMem
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.Point
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.CohHomNatCastZero
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.NotLeSpanImage
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.KsCore
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.PullFrobIter
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.DualZeroOfSpan
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.RadicalStalk
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.OrdPull
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.Factor
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHarrisTaylorModuliObjectPullbackStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorObjectPullbackCompDiagonalBundleStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorExistsDeRhamPairingStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeFiltrationLiftDeterminesModFilStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorRealiseKodairaSpencerDirectionStatement
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.IsConst
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.NotMem
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.Point
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.CohHomNatCastZero
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.NotLeSpanImage
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.KsCore
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.PullFrobIter
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.DualZeroOfSpan
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.RadicalStalk
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.OrdPull
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.Factor
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHarrisTaylorModuliObjectPullbackStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorObjectPullbackCompDiagonalBundleStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorExistsDeRhamPairingStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeFiltrationLiftDeterminesModFilStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorRealiseKodairaSpencerDirectionStatement
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.ConjSeq GlobalTheory.UPel.HT GlobalTheory.UPel.HT.ES UpperTheory.Gal.Ord
@@ -91,7 +95,9 @@ theorem UpperTheory.Gal.Ord.ordGen :
   obtain ⟨π⟩ := par p D.F w f hwM hpw hf
   obtain ⟨o₀, ⟨a₀⟩⟩ := GlobalTheory.T.exists_harrisTaylorModuliObject_pullback p D R b N M.X (Sp k) M.s (spMap β) y hyβ M.univ
   apply ordPull p D R b N M.X M.s M.univ w k y (spMap β) o₀ a₀
-  rcases point p D R b N hN hNp hm k hk β o₀ i w f hkerw hnorm hf π with hW | hNO
+  have hpnt : IsWOrd o₀ w (𝟙 (Sp k)) ∨ NOo hk o₀ π :=
+    UpperTheory.Gal.Ord.point p D R b N hN hNp hm k hk β o₀ i w f hkerw hnorm hf π
+  rcases hpnt with hW | hNO
   · exact hW
   exfalso
   have hLin := lin p D R b N hN hNp hm k hk β o₀ i w f hkerw hnorm hf π

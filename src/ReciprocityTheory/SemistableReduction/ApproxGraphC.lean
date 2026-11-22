@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.ApproxGraphB
+module
+
+public import ReciprocityTheory.SemistableReduction.ApproxGraphB
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,7 @@ lemma jForm_zero_left (p : ℕ) {r : ℕ} (y : Fin r → ℂ) : jForm p 0 y = 0 
 
 lemma jForm_add_left (p : ℕ) {r : ℕ} (x x' y : Fin r → ℂ) :
     jForm p (x + x') y = jForm p x y + jForm p x' y := by
-  simp only [ReciprocityTheory.MultiplicativeHeights.jForm, Pi.add_apply, map_add, add_mul, mul_add, Finset.sum_add_distrib]
+  simp only [ReciprocityTheory.MultiplicativeHeights.jForm, Pi.add_apply, map_add (f := _), add_mul, mul_add, Finset.sum_add_distrib]
 
 lemma jForm_smul_left (p : ℕ) {r : ℕ} (c : ℂ) (x y : Fin r → ℂ) :
     jForm p (c • x) y = conj c * jForm p x y := by

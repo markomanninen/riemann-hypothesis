@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.ContragredientIrreducibleGeneratedByHighestWeigh
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.ContragredientIrreducibleGeneratedByHighestWeigh
+
+@[expose] public section
 
 noncomputable section
 
@@ -152,7 +156,8 @@ theorem stableLattice_weight_decomposition [CharZero (KK O)] (E : GLOps n (KK O)
   obtain ⟨P, hPM, hP1, hP0⟩ := exists_integral_weight_projections E F
   have hcomp : ∀ nu ∈ F, P nu (∑ mu ∈ F, f mu) = f nu := by
     intro nu hnu
-    rw [map_sum, Finset.sum_eq_single nu]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single nu]
     · exact hP1 nu _ (hf nu hnu).2
     · intro mu hmu hne
       exact hP0 nu mu hmu hne _ (hf mu hmu).2
@@ -187,7 +192,8 @@ theorem integral_dual_preserved_by_integralMonoid [CharZero (KK O)] (E : GLOps n
       exact Oval.mul (Oval.negOnePow k) (hψ _ (hM _ (Or.inl ⟨a, b, k, hab, rfl⟩) x hx))
     · intro ψ hψ x hx
       obtain ⟨f, hfw, hfM, rfl⟩ := stableLattice_weight_decomposition E hE M hM hx
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Oval.sum _ _ fun nu _ => by
         rw [binomialDual_apply_weightVector E a k ψ (hfw nu)]
         exact Oval.mul (Oval.int _) (hψ _ (hfM nu))

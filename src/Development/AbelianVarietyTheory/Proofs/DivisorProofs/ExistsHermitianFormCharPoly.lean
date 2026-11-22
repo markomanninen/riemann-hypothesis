@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EllipticCharpolySelfReciprocal
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfTraceMulOfSeparableGenerated
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EllipticCharpolySelfReciprocal
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfTraceMulOfSeparableGenerated
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter Formalism.UG GlobalTheory.BCT
 open scoped Classical
 
@@ -45,7 +50,8 @@ theorem trace_semilinear {A : Type} [CommRing A] [Algebra E A] {ι : Type} [Fint
       · subst h; simp
       · simp [h]
     rw [this]; simp [Module.Basis.equivFun_symm_apply, Pi.single_apply]
-  rw [Algebra.trace_eq_matrix_trace b', Algebra.trace_eq_matrix_trace b, Matrix.trace, Matrix.trace, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Algebra.trace_eq_matrix_trace b', Algebra.trace_eq_matrix_trace b, Matrix.trace, Matrix.trace, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   simp only [Matrix.diag, Algebra.leftMulMatrix_eq_repr_mul, hrep, hb', ← map_mul, hσσ]
 
@@ -65,7 +71,7 @@ theorem root_mul_rinv (h0 : P.coeff 0 ≠ 0) : AdjoinRoot.root P * rinv P = 1 :=
   have h := divX_mul_X_add P
   have key : X * (C (-(P.coeff 0)⁻¹) * divX P) = C (-(P.coeff 0)⁻¹) * P + 1 := by
     linear_combination (C (-(P.coeff 0)⁻¹)) * h - hC
-  rw [rinv, ← AdjoinRoot.mk_X, ← map_mul, key, map_add, map_mul, AdjoinRoot.mk_self, mul_zero, zero_add, map_one]
+  rw [rinv, ← AdjoinRoot.mk_X, ← map_mul, key, map_add (f := _), map_mul, AdjoinRoot.mk_self, mul_zero, zero_add, map_one]
 
 def sig (h0 : P.coeff 0 ≠ 0) (hr : C (c (P.coeff 0)) * P = (P.map c).reverse) : AdjoinRoot P →+* AdjoinRoot P :=
   AdjoinRoot.lift ((algebraMap E (AdjoinRoot P)).comp c) (rinv P) (by
@@ -140,7 +146,8 @@ theorem trace_expand {A : Type} [CommRing A] [Algebra E A] {ι : Type} [Fintype 
   have hsm : ∀ (e : E) (z : A), σ (e • z) = c e • σ z := by
     intro e z; rw [Algebra.smul_def, Algebra.smul_def, map_mul, hσ]
   conv_lhs => rw [← b.sum_repr x, ← b.sum_repr y]
-  simp only [map_sum, hsm, Finset.sum_mul, Finset.mul_sum, smul_mul_assoc, mul_smul_comm, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, hsm, Finset.sum_mul, Finset.mul_sum, smul_mul_assoc, mul_smul_comm, map_smul, smul_eq_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
   ring

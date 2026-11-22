@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LefschetzSigmaSums.HeckeTraceSemi
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LefschetzSigmaSums.HeckeTraceSemi
+
+@[expose] public section
+
 open UpperTheory.Gal.LocalSmoothExtension
 
 theorem UpperTheory.Gal.LocalSmoothExtension.rootW_of :

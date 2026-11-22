@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.GaussS
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.GaussS
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,8 @@ theorem herm_isHermitian (y : E n) : (herm y).IsHermitian := by
 
 theorem gramX_isHermitian (ε : Fin m → Bool) (x : Fin m → Fin n → ℂ) : (gramX ε x).IsHermitian := by
   ext i j
-  simp only [gramX, Qp, Qb, evX, conjTranspose_apply, map_sub, map_sum, map_mul, eval_X, star_sub, star_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [gramX, Qp, Qb, evX, conjTranspose_apply, map_sub, map_sum, map_mul, eval_X, star_sub, star_sum,
     star_mul', star_star]
   simp only [if_true, Bool.false_eq_true, if_false]
   congr 1 <;> (refine Finset.sum_congr rfl fun a _ => ?_; rw [star_star, mul_comm])
@@ -166,7 +171,7 @@ theorem key (hI : IntegP) (hW : Wick) (hR : Rot) (ε : Fin m → Bool) {c : ℝ}
         rintro P Q ⟨R1, h1⟩ ⟨R2, h2⟩
         refine ⟨R1 + R2, fun y => ?_⟩
         rw [sec_add hI hc (herm_isHermitian y), h1, h2]
-        simp [evUV, map_add]; ring
+        simp [evUV, map_add (f := _)]; ring
       zero_mem' := ⟨0, fun y => by simp [sec_zero, evUV]⟩
       smul_mem' := by
         rintro r P ⟨R1, h1⟩
@@ -221,7 +226,8 @@ theorem key (hI : IntegP) (hW : Wick) (hR : Rot) (ε : Fin m → Bool) {c : ℝ}
           MvPolynomial.X (if ε a then ((false, i, j) : Bool × Fin n × Fin n) else (true, i, j)) * R j, fun y => ?_⟩
         rw [hmul, hW m n ε c (s * c) hc _ (herm_isHermitian y)]
         simp_rw [hR]
-        simp only [evUV, map_sum, map_mul, MvPolynomial.eval_C, MvPolynomial.eval_X, Finset.mul_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [evUV, map_sum, map_mul, MvPolynomial.eval_C, MvPolynomial.eval_X, Finset.mul_sum]
         refine Finset.sum_congr rfl fun j _ => ?_
         rw [amat_inv_apply ε hc.ne' s (herm_isHermitian y), mm_inv]
         by_cases h : ε a = true <;> simp [h] <;> ring

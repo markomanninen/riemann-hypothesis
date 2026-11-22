@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ToricSymbols
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsRingEquivOfIsTranscendenceBasis
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenConnectedComponentOfOneInf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ToricSymbols
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsRingEquivOfIsTranscendenceBasis
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenConnectedComponentOfOneInf
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,11 @@ theorem exists_ext {R S : Type} [CommRing R] [IsDomain R] [CommRing S] [IsDomain
     obtain ⟨a, b, -, rfl⟩ := IsFractionRing.div_surjective (A := S) x
     rw [div_eq_mul_inv]
     exact ((hi a).mul (hi b).inv).isAlgebraic⟩
-  let j : FractionRing S →ₐ[FractionRing R] K := IsAlgClosed.lift
+  let j : FractionRing S →ₐ[FractionRing R] K := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   exact ⟨j.toRingHom, fun x => j.commutes x⟩
 
 theorem exists_unit {S : Type} [CommRing S] [IsDomain S] [ValuationRing S] (je : FractionRing S →+* K)
@@ -137,7 +145,7 @@ theorem exists_aut_centre [IsGalois ℚ L] (L0 : IntermediateField ℚ L) (β : 
 
 end Val
 
-theorem exists_symbol {K Ω : Type} [Field K] [NumberField K] [IsTotallyComplex K] [Field Ω] [Algebra K Ω]
+theorem exists_symbol {K Ω : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] [Field Ω] [Algebra K Ω]
     {art : Ideles K →* Gab K Ω} (ha : IsGlobalArtin art) (σ : Formalism.ConjugateSelfDual.G K Ω) :
     ∃ t, GlobalTheory.IndefiniteRowSideFullHecke.ToricSymbols.IsSymbol art t σ := by
   obtain ⟨x, hx⟩ := ha.quot.surjective (toAb K Ω σ)⁻¹
@@ -199,8 +207,8 @@ theorem exists_exponent {G : Type} [CommGroup G] (ψ : G →* ℂˣ) {l n : ℕ}
   show g (ψ q : ℂ) = _
   rw [Units.val_pow_eq_pow_val, ← hk, map_pow, ← he, ← pow_mul, ← pow_mul, mul_comm]
 
-open GlobalTheory.IndefiniteRowSideFullHecke.ToricSymbols in
 
+open GlobalTheory.IndefiniteRowSideFullHecke.ToricSymbols in
 theorem ratio_conj (hA : GlobalTheory.Published.GlobalArtinReciprocity) (hG : ToricRatioConjugates)
     (E : Type) [Field E] [NumberField E] [IsCMField E]
     (K : Type) [Field K] [NumberField K] [Algebra K E] (d : ℕ) (δ : K) (ι : K →+* ℂ)
@@ -223,7 +231,11 @@ theorem ratio_conj (hA : GlobalTheory.Published.GlobalArtinReciprocity) (hG : To
     nlinarith [sq_nonneg (InfinitePlace.embedding_of_isReal hw δ)]⟩
   let Ω := AlgebraicClosure K
   letI : Algebra K ℂ := ι.toAlgebra
-  let j : Ω →ₐ[K] ℂ := IsAlgClosed.lift
+  let j : Ω →ₐ[K] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   letI : Algebra Ω ℂ := j.toRingHom.toAlgebra
   haveI : IsScalarTower K Ω ℂ := IsScalarTower.of_algebraMap_eq fun x => (j.commutes x).symm
   have hg : ∀ x : K, g (algebraMap K ℂ x) = algebraMap K ℂ x := fun x => by

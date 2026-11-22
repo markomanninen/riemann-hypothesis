@@ -1,6 +1,10 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.CountSt
-import Formalism.LFunctionBounds.LFunctionBoundsProofs.LPartialSum
-import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.LGrowth
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.CountSt
+public import Formalism.LFunctionBounds.LFunctionBoundsProofs.LPartialSum
+public import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.LGrowth
+
+@[expose] public section
 
 open Complex Finset ArithmeticFunction
 open scoped ArithmeticFunction.Moebius

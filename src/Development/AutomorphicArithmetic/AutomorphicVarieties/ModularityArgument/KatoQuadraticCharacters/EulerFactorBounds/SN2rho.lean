@@ -1,26 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.SPushPsi
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.KmapComp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.DiamEx
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.MemAOfPow
-import Development.AbelianVarietyTheory.Definitions.Foundations.OpLDOneSubMemTriv
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.SPushPsi
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.KmapComp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.DiamEx
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.MemAOfPow
+public import Development.AbelianVarietyTheory.Definitions.Foundations.OpLDOneSubMemTriv
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ GlobalTheory.K4 GlobalTheory.KA UpperTheory.Kd.K4 UpperTheory.V.Z.Kato.Sym UpperTheory.V.Z.Kato.Nb
 open scoped Matrix MatrixGroups Classical
 
 namespace UpperTheory.V.Z.Kato.Nb.SquareNormRepresentation
-
-private def ZM {Ω : Type} [Field Ω] [Algebra ℚ Ω] {ε : Ω →+* ℂ} (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n : ℕ) :
-    Submodule ℤ_[l] (X.Fn l) where
-  carrier := {a | ∀ u, AdicCompletion.eval (idl l) (X.Kl l) n (a u) = 0}
-  add_mem' {a b} ha hb u := by
-    show AdicCompletion.eval (idl l) (X.Kl l) n (a u + b u) = 0
-    rw [map_add, ha u, hb u, add_zero]
-  zero_mem' u := by
-    show AdicCompletion.eval (idl l) (X.Kl l) n 0 = 0
-    exact map_zero _
-  smul_mem' c a ha u := by
-    show AdicCompletion.eval (idl l) (X.Kl l) n (c • a u) = 0
-    rw [map_smul, ha u, smul_zero]
 
 private def Sm {l : ℕ} [Fact l.Prime] (n : ℕ) (x : Fin 2 → Qbar l) : Prop := ∀ i, ‖x i‖ ≤ ‖((l : ℕ) : Qbar l) ^ n‖
 
@@ -193,7 +184,8 @@ theorem UpperTheory.V.Z.Kato.Nb.sN2rho :
   simp only [b]
   have hre : ∑ t, rhoK W e ψ s *ᵥ b2 ((t, y) * kT l r p s)
       = rhoK W e ψ s *ᵥ ∑ t, b2 (t, y * (cycMod ℚ Ω l r s)⁻¹) := by
-    rw [← Matrix.mulVecLin_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Matrix.mulVecLin_apply, map_sum]
     exact Fintype.sum_equiv (Equiv.mulRight (cycM p s)⁻¹) _ _ (fun t => rfl)
   rw [show y * i * (cycMod ℚ Ω l r s)⁻¹ = y * (cycMod ℚ Ω l r s)⁻¹ * i from mul_right_comm _ _ _,
     show y * i ^ 2 * (cycMod ℚ Ω l r s)⁻¹ = y * (cycMod ℚ Ω l r s)⁻¹ * i ^ 2 from mul_right_comm _ _ _]

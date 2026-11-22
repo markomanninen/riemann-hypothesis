@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjMemAdelicSchwartzSpaceNumberFieldOfMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatrixCoeffContinuousRapidDecayStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjMemAdelicSchwartzSpaceNumberFieldOfMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatrixCoeffContinuousRapidDecayStatement
+
+@[expose] public section
+
 open MeasureTheory GlobalTheory.RealWeil
 open scoped SchwartzMap
 
@@ -129,7 +134,7 @@ theorem moyal_pointwise : ∀ (n : ℕ) (f g g' : Sch (Fin n)) (x : EuclideanSpa
     _ = ∫ p, starRingEnd ℂ (g (x + p)) * g' x * f (x + p) := by
         congr 1
         funext p
-        simp only [hG]
+        dsimp only [G]
         rw [integral_mul_const, integral_phase_fourier, ambU_apply]
     _ = ∫ p, (fun y => f y * starRingEnd ℂ (g y)) (x + p) * g' x := by
         congr 1

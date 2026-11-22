@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.MatchIndOf
-import GroundTheory.GlobalFields.GlobalReciprocity.General
-import GroundTheory.GlobalFields.ClassFieldConsequences.RayClassFieldLocal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.MatchIndOf
+public import GroundTheory.GlobalFields.GlobalReciprocity.General
+public import GroundTheory.GlobalFields.ClassFieldConsequences.RayClassFieldLocal
+
+@[expose] public section
 
 noncomputable section
 
@@ -138,8 +142,12 @@ private theorem exists_eta [IsGalois K L] (hl : (Module.finrank K L).Prime) :
 
 private theorem loc_pow (η : HChar K) (j : ℕ) (x : (v.adicCompletion K)ˣ) : (η ^ j).loc v x = η.loc v x ^ j := by
   induction j with
-  | zero => simp
-  | succ j ih => rw [pow_succ, HChar.loc_mul, ih, pow_succ]
+  | zero => simp [HChar.loc]
+  | succ j ih =>
+    simp only [HChar.loc, MonoidHom.comp_apply] at ih ⊢
+    rw [pow_succ]
+    change (η ^ j).1 (Neutral.B1.localIdele K v x) * η.1 (Neutral.B1.localIdele K v x) = _
+    rw [ih, pow_succ]
 
 end UpperTheory.V.Z.Gam
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertPrimeTeichmuller.CFixRat
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertPrimeTeichmuller.CFixRat
+
+@[expose] public section
 
 open NumberField
 
@@ -42,11 +46,11 @@ theorem c_frob (hK : Module.finrank ℚ K = 2) (c : K →+* K) (hc : ∃ x, c x 
     obtain ⟨n2, hn2⟩ := add_c_int hK c hc (a ^ 2)
     have ht : Ideal.Quotient.mk (Ideal.span {(p : 𝓞 K)}) a +
         σ (Ideal.Quotient.mk (Ideal.span {(p : 𝓞 K)}) a) = (n : (𝓞 K ⧸ Ideal.span {(p : 𝓞 K)})) := by
-      rw [hσ, ← map_add, hn, map_intCast]
+      rw [hσ, ← map_add (f := _), hn, map_intCast]
     have ht2 : Ideal.Quotient.mk (Ideal.span {(p : 𝓞 K)}) a ^ 2 +
         σ (Ideal.Quotient.mk (Ideal.span {(p : 𝓞 K)}) a) ^ 2 = (n2 : (𝓞 K ⧸ Ideal.span {(p : 𝓞 K)})) := by
       have := congrArg (Ideal.Quotient.mk (Ideal.span {(p : 𝓞 K)})) hn2
-      rw [map_add, map_intCast, map_pow, map_pow] at this
+      rw [map_add (f := _), map_intCast, map_pow, map_pow] at this
       rw [hσ, ← this, map_pow (Ideal.Quotient.mk _) ((RingOfIntegers.mapRingHom c) a)]
     generalize Ideal.Quotient.mk (Ideal.span {(p : 𝓞 K)}) a = x at ht ht2 ⊢
     have hm : (2 : (𝓞 K ⧸ Ideal.span {(p : 𝓞 K)})) * (x * σ x) = (n : (𝓞 K ⧸ Ideal.span {(p : 𝓞 K)})) ^ 2 - n2 := by
@@ -59,7 +63,7 @@ theorem c_frob (hK : Module.finrank ℚ K = 2) (c : K →+* K) (hc : ∃ x, c x 
     have hzero : x ^ 2 - (n : (𝓞 K ⧸ Ideal.span {(p : 𝓞 K)})) * x + x * σ x = 0 := by
       rw [← ht]; ring
     have hfr := congrArg (frobenius (𝓞 K ⧸ Ideal.span {(p : 𝓞 K)}) p) hzero
-    rw [map_zero, map_add, map_sub, map_mul, map_pow, map_intCast, frobenius_def,
+    rw [map_zero, map_add (f := _), map_sub, map_mul, map_pow, map_intCast, frobenius_def,
       frobenius_def, hmp] at hfr
     have hq : (x ^ p - x) * (x ^ p - σ x) = 0 := by
       rw [← hfr, ← ht]; ring
@@ -75,12 +79,12 @@ theorem c_frob (hK : Module.finrank ℚ K = 2) (c : K →+* K) (hc : ∃ x, c x 
     have hp1 : 1 < p := hp.out.one_lt
     have hsub : (Finset.univ : Finset (𝓞 K ⧸ Ideal.span {(p : 𝓞 K)})) ⊆ ((Polynomial.X ^ p - Polynomial.X : Polynomial (𝓞 K ⧸ Ideal.span {(p : 𝓞 K)})).roots.toFinset) := by
       intro y _
-      rw [Multiset.mem_toFinset, Polynomial.mem_roots (FiniteField.X_pow_card_sub_X_ne_zero (𝓞 K ⧸ Ideal.span {(p : 𝓞 K)}) hp1)]
+      rw [Multiset.mem_toFinset, Polynomial.mem_roots (Polynomial.X_pow_sub_X_ne_zero hp1)]
       simp [Polynomial.IsRoot, hcon y]
     have h1 := Finset.card_le_card hsub
     rw [Finset.card_univ] at h1
     have h2 := (Multiset.toFinset_card_le _).trans (Polynomial.card_roots' (Polynomial.X ^ p - Polynomial.X : Polynomial (𝓞 K ⧸ Ideal.span {(p : 𝓞 K)})))
-    rw [FiniteField.X_pow_card_sub_X_natDegree_eq (𝓞 K ⧸ Ideal.span {(p : 𝓞 K)}) hp1] at h2
+    rw [Polynomial.natDegree_X_pow_sub_X (R := (𝓞 K ⧸ Ideal.span {(p : 𝓞 K)})) hp1] at h2
     have h3 : Fintype.card (𝓞 K ⧸ Ideal.span {(p : 𝓞 K)}) = p ^ 2 := by
       rw [← Nat.card_eq_fintype_card]; exact natCard_quot (K := K) (p := p) hK
     have h4 : p ^ 2 ≤ p := h3 ▸ h1.trans h2
@@ -95,7 +99,7 @@ theorem c_frob (hK : Module.finrank ℚ K = 2) (c : K →+* K) (hc : ∃ x, c x 
         intro h
         exact hy (add_left_cancel h)
       have h1 := (hdich (x + y)).resolve_left hxy
-      rw [add_pow_char, hx, hyσ, map_add] at h1
+      rw [add_pow_char, hx, hyσ, map_add (f := _)] at h1
       rw [hx]
       exact (add_right_cancel h1).symm
     · exact hx.symm

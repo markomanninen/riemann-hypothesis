@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsNotCongPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsNotCongPow
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.WeilDeligne
 
 namespace GlobalTheory.WeilDeligne
@@ -41,10 +46,11 @@ theorem exists_monic_base_root_near : ∀ (E Ω : Type) [Field E] [NumberField E
     rw [natDegree_add_eq_left_of_degree_lt (by rwa [degree_X_pow]), natDegree_X_pow]
   have h0 : f.eval β = β ^ n + ∑ i ∈ Finset.range n, f.coeff i * β ^ i := by
     conv_lhs => rw [hf.as_sum]
-    simp [eval_finset_sum, ← hn]
+    simp [Polynomial.eval_finsetSum, ← hn]
   have hga : aeval β g = β ^ n + ∑ i ∈ Finset.range n, algebraMap E Ω (c i) * β ^ i := by
     show aeval β (X ^ n + ∑ i : Fin n, C (c i) * X ^ (i : ℕ)) = _
-    simp only [map_add, map_pow, aeval_X, map_sum, map_mul, aeval_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_pow, aeval_X, map_sum, map_mul, aeval_C]
     rw [Fin.sum_univ_eq_sum_range (fun i => algebraMap E Ω (c i) * β ^ i) n]
   have hgβ : aeval β g = ∑ i ∈ Finset.range n, (algebraMap E Ω (c i) - f.coeff i) * β ^ i := by
     have : aeval β g = aeval β g - f.eval β := by rw [hβ, sub_zero]

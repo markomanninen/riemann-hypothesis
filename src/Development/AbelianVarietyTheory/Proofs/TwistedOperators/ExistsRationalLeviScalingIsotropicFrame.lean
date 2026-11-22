@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.EmbRelExistsUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.EmbRelExistsUnique
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,7 @@ theorem levi_alg (hσ : ∀ x, σ (σ x) = x) {n m r : ℕ} (hn : n = m + 2 * r)
     rw [hQ, fromRows_mul, fromRows_mul, h33, h13, as3, h23, Matrix.mul_zero]
   have hQP : Q * P = 1 := by
     rw [hP, mul_fromCols, mul_fromCols, hQC, hQB, hQC']
-    ext (i | i | i) (j | j | j) <;> simp [one_apply]
+    ext (i | i | i) (j | j | j) <;> simp [Matrix.one_apply]
   have hPQ : P * Q = 1 := by
     have e : (Fin r ⊕ (Fin m ⊕ Fin r)) ≃ Fin n := Fintype.equivOfCardEq (by simp; omega)
     exact (Matrix.mul_eq_one_comm_of_equiv e).1 hQP

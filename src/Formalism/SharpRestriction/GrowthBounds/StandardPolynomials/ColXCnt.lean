@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColsDef
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.ColOKOfPath
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColsDef
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.ColOKOfPath
+
+@[expose] public section
 
 noncomputable section
 

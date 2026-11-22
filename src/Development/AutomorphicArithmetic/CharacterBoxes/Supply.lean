@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.AuxiliaryPrimeMemAvoidedPrimes
-import Development.AutomorphicArithmetic.CharacterBoxes.TwistForm
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.AuxiliaryPrimeMemAvoidedPrimes
+public import Development.AutomorphicArithmetic.CharacterBoxes.TwistForm
+
+@[expose] public section
 
 noncomputable section
 

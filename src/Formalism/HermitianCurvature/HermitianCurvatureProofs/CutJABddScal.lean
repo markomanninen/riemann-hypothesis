@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddOp
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddOp
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 

@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.LeviForms.UnifInt
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PHyperplaneDivisible
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.LeviForms.UnifInt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PHyperplaneDivisible
+
+@[expose] public section
 
 open MeasureTheory Metric Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.AnForm.M.FinHolAtlas
 open scoped ContDiff
@@ -299,7 +303,7 @@ theorem slice_snc {e : ℕ} (A : FinHolAtlas (e + 1) X) (L L' : LocPot X) (s v :
   let P : X → ℂ := fun y => ∏ k : Fin n, (match σ k.castSucc with
     | some a => ψ y a ^ m k
     | none => 1)
-  have hP : ContinuousOn P ψ.source := continuousOn_finset_prod _ fun k _ => by
+  have hP : ContinuousOn P ψ.source := continuousOn_finsetProd _ fun k _ => by
     cases σ k.castSucc with
     | none => exact continuousOn_const
     | some a => exact ((continuous_apply a).comp_continuousOn ψ.continuousOn).pow _

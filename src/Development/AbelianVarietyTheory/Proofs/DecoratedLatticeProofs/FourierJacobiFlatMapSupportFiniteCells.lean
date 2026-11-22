@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CosInj
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatColumnMapEqRootExchangeOperatorTranslate
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LocalZetaIntegralOpenSubgroup
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CosInj
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatColumnMapEqRootExchangeOperatorTranslate
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LocalZetaIntegralOpenSubgroup
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx
 
 namespace GlobalTheory.LocFlat.CellSupport
@@ -63,7 +68,7 @@ theorem flCol_support_finite_cells : ∀ (k : Type) [Field k] [ValuativeRel k] [
     rw [← om_mul, mul_one]
   rw [e, om_eq_mul_om_triv, opE_const_mul] at hX
   obtain ⟨t, ht, hd⟩ := hT ((colE c p β)⁻¹ * x) (Function.ne_iff.2 ⟨X.toCols₁, right_ne_zero_of_mul hX⟩)
-  obtain ⟨r, hr, j, hj, hx'⟩ := (DoubleCoset.eq _ _ _ _).1 hd.symm
+  obtain ⟨r, hr, j, hj, hx'⟩ := (@DoubleCoset.eq _ _ _ _ _ _).1 hd.symm
   refine ⟨β, r, hr, t, ht, j, hj, ?_⟩
   rw [mul_assoc, mul_assoc, ← mul_assoc r, ← hx', mul_inv_cancel_left]
 

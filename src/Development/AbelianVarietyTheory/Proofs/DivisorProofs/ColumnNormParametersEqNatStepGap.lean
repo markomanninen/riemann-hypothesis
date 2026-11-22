@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsClassFam
-import Formalism.LocalToGlobal.Divisibility.NumbersLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsClassFam
+public import Formalism.LocalToGlobal.Divisibility.NumbersLemmas
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.L2.DIV
 
 namespace GlobalTheory.ColumnNormCompare

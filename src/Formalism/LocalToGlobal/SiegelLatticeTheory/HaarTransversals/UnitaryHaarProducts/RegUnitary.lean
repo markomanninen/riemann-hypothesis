@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.ProjRows
-import Formalism.SharpRestriction.CuspSpanNormBounds.UnimodularSchurMeasures.RightRegularIsometricMultiplicative
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.ProjRows
+public import Formalism.SharpRestriction.CuspSpanNormBounds.UnimodularSchurMeasures.RightRegularIsometricMultiplicative
+
+@[expose] public section
 
 noncomputable section
 
@@ -523,8 +527,8 @@ theorem reg_mul (a b : I.Ginf) : R (a * b, 1) = (R (a, 1)).comp (R (b, 1)) := by
   rw [e]
   exact rp_mul hFD hReg (rp_inst I μf a) (rp_inst_inv I μf a) (by rw [← e]; exact rp_inst I μf (a * b))
 
-include hfd hR in
 
+include hfd hR in
 theorem ind_tendsto {s : Set I.GA} (hs : MeasurableSet s) (hμs : (I.muA μf).restrict fund s ≠ ∞) :
     Tendsto (fun g : I.Ginf => R (g, 1) (indicatorConstLp 2 hs hμs (1 : ℂ))) (𝓝 1)
       (𝓝 (indicatorConstLp 2 hs hμs (1 : ℂ))) := by
@@ -779,11 +783,16 @@ theorem ind_tendsto {s : Set I.GA} (hs : MeasurableSet s) (hμs : (I.muA μf).re
     exact h0.comp hE0
   have hind : ∀ g : I.Ginf, eLpNorm ((E g).indicator fun _ => (1 : ℂ)) 2 ((I.muA μf).restrict fund)
       ≤ ((I.muA μf).restrict fund (E g)) ^ (1 / (2 : ℝ≥0∞).toReal) := fun g =>
-    (eLpNorm_indicator_const_le (1 : ℂ) 2).trans (by simp)
+    (eLpNorm_indicator_const_le (1 : ℂ) 2 (by
+      have hAm : MeasurableSet A := by
+        rw [hA]
+        exact MeasurableSet.iUnion fun γ => hs'.preimage (measurable_const_mul _)
+      rw [hE]
+      exact ((hAm.preimage (measurable_mul_const _)).symmDiff hAm).nullMeasurableSet)).trans (by simp)
   have he : Tendsto (fun g : I.Ginf =>
       eLpNorm ⇑(R (g, 1) X - X) 2 ((I.muA μf).restrict fund)) (𝓝 1) (𝓝 0) :=
     tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hpow (fun _ => zero_le)
-      (fun g => (eLpNorm_mono_ae (hpt g)).trans (hind g))
+      (fun g => (eLpNorm_mono_ae (Lp.aestronglyMeasurable (R (g, 1) X - X)) (hpt g)).trans (hind g))
   rw [tendsto_iff_norm_sub_tendsto_zero]
   have h2 : Tendsto (fun g : I.Ginf =>
       (eLpNorm ⇑(R (g, 1) X - X) 2 ((I.muA μf).restrict fund)).toReal) (𝓝 1) (𝓝 0) := by
@@ -796,8 +805,8 @@ theorem ind_tendsto {s : Set I.GA} (hs : MeasurableSet s) (hμs : (I.muA μf).re
   refine h2.congr (fun g => ?_)
   exact (Lp.norm_def _).symm
 
-include hfd hR in
 
+include hfd hR in
 theorem all_tendsto (F : I.L2 μf fund) : Tendsto (fun g : I.Ginf => R (g, 1) F) (𝓝 1) (𝓝 F) := by
   have hiso : ∀ (g : I.Ginf) (H : I.L2 μf fund), ‖R (g, 1) H‖ = ‖H‖ :=
     fun g H => reg_norm I μf fund hfd R hR g H
@@ -829,7 +838,7 @@ theorem all_tendsto (F : I.L2 μf fund) : Tendsto (fun g : I.Ginf => R (g, 1) F)
     have t₂ : Tendsto (fun g : I.Ginf => R (g, 1) (hf₂.toLp f₂)) (𝓝 1) (𝓝 (hf₂.toLp f₂)) := hP₂
     show Tendsto (fun g : I.Ginf => R (g, 1) (hf₁.toLp f₁ + hf₂.toLp f₂)) (𝓝 1)
       (𝓝 (hf₁.toLp f₁ + hf₂.toLp f₂))
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact t₁.add t₂
   · apply isClosed_of_closure_subset
     intro H hH
@@ -867,7 +876,7 @@ theorem regular_representation_unitary : Formalism.L2.SG.ProjRows.RegUnitary := 
     rw [continuous_iff_continuousAt]
     intro g₀
     have h1 : Tendsto (fun g : I.Ginf => g₀⁻¹ * g) (𝓝 g₀) (𝓝 1) := by
-      simpa using (continuous_mul_left g₀⁻¹).tendsto g₀
+      simpa using (continuous_const_mul g₀⁻¹).tendsto g₀
     have h4 := ((R (g₀, 1)).continuous.tendsto v).comp ((all_tendsto I μf fund hfd R hR v).comp h1)
     show Tendsto (fun g => R (g, 1) v) (𝓝 g₀) (𝓝 (R (g₀, 1) v))
     refine h4.congr (fun g => ?_)

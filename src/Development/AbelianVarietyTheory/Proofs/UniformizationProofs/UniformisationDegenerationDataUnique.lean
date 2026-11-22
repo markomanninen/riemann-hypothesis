@@ -1,15 +1,19 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleIdentityIso
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsFiniteCubeInduction
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UnifPreCharacterGroupIso
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationPolarisedAbelianSchemesIsoStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AbelianPartIsoIsMonHomAndRigidified
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UnifPreCAndCoordCorrespondStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTrivialisationsCorrespondStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IdentificationLinear
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleIdentityIso
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsFiniteCubeInduction
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UnifPreCharacterGroupIso
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationPolarisedAbelianSchemesIsoStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AbelianPartIsoIsMonHomAndRigidified
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UnifPreCAndCoordCorrespondStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTrivialisationsCorrespondStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IdentificationLinear
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,13 +104,55 @@ end GlobalTheory.UnifUniq
 
 namespace GlobalTheory
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem unifUniq : GlobalFnsSt → SecBaseChangeSt → AmpleSt → UnifUniqSt := by
   intro hG hS hA R _ _ _ I hR D D' A A' G _ _ hsa U U' wL hwg hwm
+  let gv {X : Scheme.{0}} {L' L : LB X} (w : LB.Iso L' L) {Y : Scheme.{0}} (f : Y ⟶ X) (y : Y) (j : L.ι) (k : L'.ι) : (Y.presheaf.stalk y)ˣ :=
+    gm f y _ (w.s (j, k))
+
+  have gm_isGen {X : Scheme.{0}} {L' L : LB X} {w : LB.Iso L' L} (hw : w.IsGen) {Y : Scheme.{0}} (f : Y ⟶ X) (y : Y) (j j' : L.ι)
+      (k k' : L'.ι) (hj : f y ∈ L.U j) (hj' : f y ∈ L.U j') (hk : f y ∈ L'.U k) (hk' : f y ∈ L'.U k') :
+      gv w f y j k = gm f y _ (L.g j j') * (gm f y _ (L'.g k k'))⁻¹ * gv w f y j' k' := by
+    have hV : f y ∈ (L.U j ⊓ L'.U k) ⊓ (L.U j' ⊓ L'.U k') := ⟨⟨hj, hk⟩, ⟨hj', hk'⟩⟩
+    have hw' : res (inf_le_left : (L.U j ⊓ L'.U k) ⊓ (L.U j' ⊓ L'.U k') ≤ L.U j ⊓ L'.U k) (w.s (j, k)) =
+        res (le_inf (inf_le_left.trans inf_le_left) (inf_le_right.trans inf_le_left) :
+          (L.U j ⊓ L'.U k) ⊓ (L.U j' ⊓ L'.U k') ≤ L.U j ⊓ L.U j') (L.g j j') *
+        (res (le_inf (inf_le_left.trans inf_le_right) (inf_le_right.trans inf_le_right) :
+          (L.U j ⊓ L'.U k) ⊓ (L.U j' ⊓ L'.U k') ≤ L'.U k ⊓ L'.U k') (L'.g k k'))⁻¹ *
+        res (inf_le_right : (L.U j ⊓ L'.U k) ⊓ (L.U j' ⊓ L'.U k') ≤ L.U j' ⊓ L'.U k') (w.s (j', k')) :=
+      hw (j, k) (j', k')
+    have key := congrArg (gm f y ((L.U j ⊓ L'.U k) ⊓ (L.U j' ⊓ L'.U k'))) hw'
+    simp only [map_mul, map_inv, gm_res f y _ hV] at key
+    rw [gm_res f y (U := L.U j ⊓ L'.U k) _ hV (w.s (j, k)),
+      gm_res f y (U := L.U j' ⊓ L'.U k') _ hV (w.s (j', k'))] at key
+    exact key
+
+  have gw_isoPullId {X : Scheme.{0}} {L' L : LB X} (w : LB.Iso L' L) {F : X ⟶ X} (hF : F = 𝟙 X) {Y : Scheme.{0}} (f : Y ⟶ X) (y : Y)
+      (j : L.ι) (k : L'.ι) (hj : f y ∈ L.U j) (hk : f y ∈ L'.U k) :
+      gw (isoPullId w hF) f y j k = gv w f y j k := by
+    have hmem : f y ∈ (L.pull F).U (fun _ => j) ⊓ L'.U k := ⟨mem_pull.2 (by rw [hF]; exact hj), hk⟩
+    exact gm_res f y _ hmem (w.s (j, k))
+
+  have res_eq_of_gm {Y : Scheme.{0}} {V U₁ U₂ U₃ U₄ : Y.Opens} {h₁ : V ≤ U₁} {h₂ : V ≤ U₂} {h₃ : V ≤ U₃}
+      {h₄ : V ≤ U₄} {a : Γ(Y, U₁)ˣ} {b : Γ(Y, U₂)ˣ} {c : Γ(Y, U₃)ˣ} {d : Γ(Y, U₄)ˣ}
+      (H : ∀ y ∈ V, gm (𝟙 Y) y U₁ a * gm (𝟙 Y) y U₂ b = gm (𝟙 Y) y U₃ c * gm (𝟙 Y) y U₄ d) :
+      res h₁ a * res h₂ b = res h₃ c * res h₄ d := by
+    apply Units.ext
+    refine TopCat.Presheaf.section_ext Y.sheaf V _ _ (fun y hy => ?_)
+    have key := H y hy
+    rw [← gm_res (𝟙 Y) y h₁ hy a, ← gm_res (𝟙 Y) y h₂ hy b, ← gm_res (𝟙 Y) y h₃ hy c, ← gm_res (𝟙 Y) y h₄ hy d,
+      ← map_mul, ← map_mul] at key
+    have hy' : (𝟙 Y) y ∈ V := hy
+    simp only [gm, dif_pos hy', MonoidHom.comp_apply] at key
+    have key2 := congrArg Units.val key
+    exact key2
   have hs := specOf_id R
   have he₀ : eSec G ≫ 𝟙 G.left = 𝟙 _ ≫ eSec G := (Category.comp_id _).trans (Category.id_comp _).symm
-  have g₁ := (isGen_iff _).2 (isoPullId_pgen hwg (rfl : 𝟙 G.left = 𝟙 _))
+  have g₁ := (isGen_iff _).2 (show PGen (isoPullId wL (rfl : 𝟙 G.left = 𝟙 _)) from by
+    intro Y f y j j' k k' hj hj' hk hk'
+    rw [gw_isoPullId wL rfl f y j k hj hk, gw_isoPullId wL rfl f y j' k' hj' hk', Category.comp_id]
+    exact gm_isGen hwg f y j j' k k' hj hj' hk hk')
   have m₁ := isoPullId_maps hwm (rfl : 𝟙 G.left = 𝟙 _) rfl he₀
   obtain ⟨Φ, w, hΦ⟩ := GlobalTheory.T.uniformisation_polarised_abelianSchemes_iso hG hS hA R I hR D D' A A' G hsa U.toUnifPre U'.toUnifPre _ he₀ g₁ m₁
   have hhom := abelianPartIso_isMonHom_and_rigidified R I hR D D' A A' G hsa U.toUnifPre U'.toUnifPre _ he₀ g₁ m₁

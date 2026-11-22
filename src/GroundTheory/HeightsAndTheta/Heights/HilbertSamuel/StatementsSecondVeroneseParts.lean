@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ArithRes
-import GroundTheory.HeightsAndTheta.Heights.FubiniStudy
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ArithRes
+public import GroundTheory.HeightsAndTheta.Heights.FubiniStudy
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -52,22 +57,22 @@ theorem scale_ne_zero {D : ℕ} {z : Ix (Idx D) → ℂ} (hz : z ≠ 0) : scale 
   simpa [scale, h2] using h1
 
 def metric (D : ℕ) : ConeMetric ℂ (Ix (Idx D)) where
-  ρ z := (fsMetric (Ix (Idx D))).ρ (scale D z)
-  pos z hz := (fsMetric (Ix (Idx D))).pos _ (scale_ne_zero hz)
+  ρ z := (fsMetric (ι := Ix (Idx D))).ρ (scale D z)
+  pos z hz := (fsMetric (ι := Ix (Idx D))).pos _ (scale_ne_zero hz)
   smul c z := by
     have : scale D (c • z) = c • scale D z := by
       funext q
       simp only [scale, Pi.smul_apply, smul_eq_mul]
       ring
-    rw [this, (fsMetric (Ix (Idx D))).smul]
+    rw [this, (fsMetric (ι := Ix (Idx D))).smul]
 
 def gram (D n : ℕ) {r : ℕ} (b : Fin r → MvPolynomial (Ix (Idx D)) ℚ) : Matrix (Fin r) (Fin r) ℝ :=
   fun k l => (1 / 2) *
     ((∫ p : CP D, pairVal (metric D) n (b k) (b l) (map D p.rep) ∂CP.fsMeasure D).re +
       (∫ p : CP D, pairVal (metric D) n (b k) (b l) (conjPt (map D p.rep)) ∂CP.fsMeasure D).re)
 
-open Classical in
 
+open Classical in
 def chi (D n : ℕ) : ℝ :=
   if h : ∃ p : (Σ r : ℕ, Fin r → MvPolynomial (Ix (Idx D)) ℚ), IsSecBasis (x D) n p.2 then
     -(1 / 2) * Real.log (gram D n h.choose.2).det
@@ -101,10 +106,6 @@ def VeroneseTop.Statement : Prop :=
 
 def VeroneseGenDeg.Statement : Prop :=
   ∀ D : ℕ, 1 ≤ D → genDeg (ι := GlobalTheory (Idx D)) (coordIdeal ℤ (Veronese.x D)) D 1 = 2 ^ D
-
-example : (1 : ℕ) ≤ 1 := le_rfl
-
-example (D : ℕ) : CharZero (Veronese.Fld D) := inferInstance
 
 end
 

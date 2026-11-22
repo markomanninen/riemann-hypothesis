@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.IsArchimedeanLocalEquivariantMap
-import Development.WeilBound.ThetaLifts.LocalTheory.DixmierCommutants.ChgApply
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.SplitCharacterFacts
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.IsArchimedeanLocalEquivariantMap
+public import Development.WeilBound.ThetaLifts.LocalTheory.DixmierCommutants.ChgApply
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.SplitCharacterFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem idele_one (hσ : IsCMExt F E σ) (t : E →ₐ[F] Fv F v) (x : (Fv F v)�
     rw [sub_smul, sub_smul, one_smul, one_smul] at o
     rw [← o, sub_add_cancel])
   have n1 : evFin F v (Algebra.norm (AF F) (z : AE F E)) = x := by
-    rw [norm_eq hσ t za z1 z2, map_add, map_sub, map_one, ev_sgl, ev_sgl, sub_self, zero_add]
+    rw [norm_eq hσ t za z1 z2, map_add (f := _), map_sub, map_one, ev_sgl, ev_sgl, sub_self, zero_add]
   rw [e1, GlobalTheory.Doubling.absE_ideleAt, GlobalTheory.Doubling.absEv_unitFin, n1]
   have := (val_eq_one_iff _).1 hx
   exact NNReal.eq (le_antisymm (Valued.toNormedField.norm_le_one_iff.2 this.le) (Valued.toNormedField.one_le_norm_iff.2 this.ge))
@@ -58,18 +62,19 @@ theorem idele_two (hσ : IsCMExt F E σ) (t : E →ₐ[F] Fv F v) (x y : (Fv F v
     exact At.kd_add (fun u hu => by rw [← smul_mul_assoc, a1 u hu, zero_mul]) b1
   · rw [map_mul, Circle.coe_mul, a5, b5, chrW_conj hσ t hχ, map_mul, map_inv, inv_inv, Units.val_mul]
 
-variable (H) in
 
+variable (H) in
 def fr : Matrix (Fin d) (Fin d) E := Matrix.of fun i c => Sum.elim (H.ι i) (fun b => cond b (H.y i) (H.x i)) (e.symm c)
 
-variable (W₁) in
 
+variable (W₁) in
 def gm : Matrix (Fin d) (Fin d) E := reindex e e (fromBlocks W₁.J 0 0 (Matrix.of fun b b' => cond b (cond b' 0 (-1)) (cond b' 1 0)))
 
 variable {e}
 
 theorem form_swap (hσ : IsCMExt F E σ) (hs : ∀ i j, σ (W.J j i) = -W.J i j) (x y : Fin d → E) : form σ W.J y x = -σ (form σ W.J x y) := by
-  simp only [form, dotProduct, mulVec, map_sum, map_mul, Finset.mul_sum, hs, Vac.sigma_sigma hσ, ← Finset.sum_neg_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [form, dotProduct, mulVec, map_sum, map_mul, Finset.mul_sum, hs, Vac.sigma_sigma hσ, ← Finset.sum_neg_distrib]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
@@ -201,7 +206,7 @@ theorem mem_unip (h : IsSec σ t sec) {C} (hC : Fr σ t W W₁ H e C) {g : UA σ
         funext i
         obtain ⟨i, rfl⟩ := e.surjective i
         simp only [mulVec, dotProduct, sum_e' (e := e)]
-        rcases i with s' | _ | _ <;> simp [gm, p1, p2, p3, p4, a, h.snd, Pi.single_apply, apply_ite])
+        rcases i with s' | _ | _ <;> simp [gm, p1, p2, p3, p4, a, h.snd, Pi.single_apply, apply_ite, -cond_eq_ite, cond])
       rw [fr_col, fr_mulVec] at this
       refine ⟨a, this.trans ?_⟩
       funext i
@@ -213,8 +218,8 @@ theorem mem_unip (h : IsSec σ t sec) {C} (hC : Fr σ t W W₁ H e C) {g : UA σ
     rw [e1, mulVec_sum, Finset.sum_smul, ← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl fun s _ => by rw [mulVec_smul, ha, smul_add, smul_smul]
 
-variable (e) in
 
+variable (e) in
 def bl {k : Type} [Field k] (g : Matrix (Fin d₁) (Fin d₁) k) (x y : k) : Matrix (Fin d) (Fin d) k :=
   reindex e e (fromBlocks g 0 0 (diagonal fun b => cond b y x))
 

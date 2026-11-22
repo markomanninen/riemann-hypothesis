@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -48,20 +52,19 @@ theorem IdealClassesFinite.proof (E) [Field E] [NumberField E] : IdealClassesFin
     have : b ≠ 0 := nonZeroDivisors.ne_zero hb0
     exact_mod_cast this
   have hint : ∀ x ∈ I, ∃ w : 𝓞 E, (w : E) = b * x := by
+    have hall : ∀ t : I, ∃ w : 𝓞 E, (w : E) = b * (t : E) := by
+      intro t
+      have ht : t ∈ AddSubsemigroup.closure (S : Set I) := by rw [hS]; trivial
+      induction ht using AddSubsemigroup.closure_induction with
+      | mem t ht =>
+        obtain ⟨w, hw⟩ := hb t (by simpa using Finset.mem_image_of_mem Subtype.val ht)
+        exact ⟨w, by rw [Algebra.smul_def] at hw; exact hw⟩
+      | add x y _ _ hx hy =>
+        obtain ⟨w, hw⟩ := hx
+        obtain ⟨v, hv⟩ := hy
+        exact ⟨w + v, by push_cast; linear_combination hw + hv⟩
     intro x hx
-    rw [← hS] at hx
-    induction hx using AddSubgroup.closure_induction with
-    | mem x hx =>
-      obtain ⟨w, hw⟩ := hb x hx
-      exact ⟨w, by rw [Algebra.smul_def] at hw; exact hw⟩
-    | zero => exact ⟨0, by simp⟩
-    | add x y _ _ hx hy =>
-      obtain ⟨w, hw⟩ := hx
-      obtain ⟨v, hv⟩ := hy
-      exact ⟨w + v, by push_cast; linear_combination hw + hv⟩
-    | neg x _ hx =>
-      obtain ⟨w, hw⟩ := hx
-      exact ⟨-w, by push_cast; linear_combination -hw⟩
+    exact hall ⟨x, hx⟩
   let 𝔞 := scaledIdeal I hI (b : E)
   have hmem : ∀ z ∈ I, ∀ w : 𝓞 E, (w : E) = b * z → w ∈ 𝔞 := by
     intro z hz w hw

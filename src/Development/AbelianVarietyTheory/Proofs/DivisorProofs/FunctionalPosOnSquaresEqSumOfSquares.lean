@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmulEqSumVecMulVecSpanningFamily
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmulEqSumVecMulVecSpanningFamily
+
+@[expose] public section
+
 open IsLocalRing GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.Poinc
 
 namespace GlobalTheory.Poinc.SumSqFunctional
@@ -119,7 +124,8 @@ theorem sumsq_functional : ∀ (X : Type) [AddCommGroup X] [Module.Free ℤ X] [
   have hbil : ∀ (β : LinearMap.BilinForm ℤ X) (c d : Fin r → ℤ),
       β (∑ i, c i • b i) (∑ j, d j • b j) = ∑ i, ∑ j, c i * d j * β (b i) (b j) := by
     intro β c d
-    simp [map_sum, map_smul, LinearMap.sum_apply, Finset.mul_sum, mul_comm, mul_left_comm, mul_assoc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_smul, LinearMap.sum_apply, Finset.mul_sum, mul_comm, mul_left_comm, mul_assoc]
     rw [Finset.sum_comm]
   let L : Matrix (Fin r) (Fin r) ℤ := Matrix.of fun i j => lam (C i j) + lam (C j i)
   have hlam : ∀ β : LinearMap.BilinForm ℤ X, (∀ x y, β x y = β y x) →
@@ -127,7 +133,8 @@ theorem sumsq_functional : ∀ (X : Type) [AddCommGroup X] [Module.Free ℤ X] [
     intro β hβ
     have h1 : lam β = ∑ i, ∑ j, β (b i) (b j) * lam (C i j) := by
       conv_lhs => rw [hexp β]
-      simp [map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, map_smul]
     have h2 : lam β = ∑ i, ∑ j, β (b i) (b j) * lam (C j i) := by
       rw [h1, Finset.sum_comm]
       refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_

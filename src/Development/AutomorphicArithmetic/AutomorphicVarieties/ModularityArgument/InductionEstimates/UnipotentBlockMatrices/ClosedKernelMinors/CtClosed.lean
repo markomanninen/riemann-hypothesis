@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -60,7 +64,7 @@ private theorem ctKer_closed {K : Type} [Field K] [NumberField K] {n : ℕ} (μ 
     exact ge_of_tendsto ht (eventually_nhdsWithin_of_forall fun ε hε => hle ε hε)
   have hI' : I = 0 := pow_eq_zero_iff two_ne_zero |>.1 hI0
   have hm : AEMeasurable (fun y => ‖constantTermL2 μ r φ y‖ₑ) (μ.restrict S) :=
-    (stronglyMeasurable_ctFun r (Lp.stronglyMeasurable φ)).measurable.enorm.aemeasurable
+    (stronglyMeasurable_ctFun r (Lp.stronglyMeasurable φ)).measurable.eNorm.aemeasurable
   filter_upwards [(lintegral_eq_zero_iff' hm).1 hI'] with y hy
   simpa using hy
 

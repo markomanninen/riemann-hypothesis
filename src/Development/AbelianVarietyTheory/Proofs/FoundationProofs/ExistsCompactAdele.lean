@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CdScaleTieIff
-import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LeftInvOfUnitary
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DiscreteTopologyRationalPointsHermitianSpace
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsCompactLatticeStabilizerBoundedReal
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsFinPartMat
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryEqRealMulFiniteSplit
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ArchimedeanMatrixUnitaryContinuousMultiplicative
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.InfAdeleTensorBijective
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIsFundamentalDomainAndQuotMeasureEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CdScaleTieIff
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LeftInvOfUnitary
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DiscreteTopologyRationalPointsHermitianSpace
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsCompactLatticeStabilizerBoundedReal
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsFinPartMat
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryEqRealMulFiniteSplit
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ArchimedeanMatrixUnitaryContinuousMultiplicative
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.InfAdeleTensorBijective
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIsFundamentalDomainAndQuotMeasureEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem infEmb_unique (h : IsCMExt F E σ) {τ : E →+* ℂ} {θ θ' : Ainf F �
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a x => rw [infEmb_tmul h hθ, infEmb_tmul h hθ']
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem infEmb_continuous {τ : E →+* ℂ} {θ : Ainf F ⊗[F] E →+* ℂ} (hθ : IsInfEmb τ θ) : Continuous θ :=
   haveI : IsModuleTopology (Ainf F) (Ainf F ⊗[F] E) := ⟨rfl⟩
@@ -48,7 +52,7 @@ theorem infEmb_sigR (h : IsCMExt F E σ) {τ : E →+* ℂ} {θ : Ainf F ⊗[F] 
     have e : sigR (Ainf F) σ (a ⊗ₜ x) = a ⊗ₜ σ x := rfl
     rw [e, infEmb_tmul h hθ, infEmb_tmul h hθ, map_mul, GlobalTheory.InfAdeleCM.conj_ext, h.2.2.2]
     rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem infEmb_bijective (h : IsCMExt F E σ) {I : Type} {τ : I → (E →+* ℂ)} (hτ : IsCMFam τ)
     {θ : I → (Ainf F ⊗[F] E →+* ℂ)} (hθ : ∀ ρ, IsInfEmb (τ ρ) (θ ρ)) :
@@ -137,37 +141,8 @@ theorem infMat_unitary (h : IsCMExt F E σ) {τ : E →+* ℂ} {θ : Ainf F ⊗[
   rw [← JR_map J hθ]
   exact h2.symm.trans (congrArg (fun X => X.map θ) hm)
 
-theorem exists_real_point (h : IsCMExt F E σ) (hJ : J.det ≠ 0) {I : Type} {τ : I → (E →+* ℂ)} (hτ : IsCMFam τ)
-    {θ : I → (Ainf F ⊗[F] E →+* ℂ)} (hθ : ∀ ρ, IsInfEmb (τ ρ) (θ ρ)) (u : I → Matrix (Fin M) (Fin M) ℂ)
-    (hu : ∀ ρ, (u ρ)ᴴ * J.map (τ ρ) * u ρ = J.map (τ ρ)) :
-    ∃ g : HA (AF F) σ J, finMat σ J g = 1 ∧ ∀ ρ, infMat σ J (θ ρ) g = u ρ := by
-  obtain ⟨a, ha, hau⟩ := GlobalTheory.Member.Arch.exists_lift (sigR (Ainf F) σ) θ (infEmb_bijective h hτ hθ)
-    (fun ρ => infEmb_sigR h (hθ ρ)) (JR (Ainf F) J) (fun ρ => by
-      rw [JR_map J (hθ ρ)]
-      have : (J.map (τ ρ)).det = τ ρ J.det := ((τ ρ).map_det J).symm
-      rw [this]
-      exact (map_ne_zero (τ ρ)).2 hJ) u (fun ρ => by rw [JR_map J (hθ ρ)]; exact hu ρ)
-  let p := (Algebra.TensorProduct.map (fstA F) (AlgHom.id F E)).toRingHom
-  let q := (Algebra.TensorProduct.map (sndA F) (AlgHom.id F E)).toRingHom
-  obtain ⟨e, he, -⟩ := GlobalTheory.AdSplit.exists_adele_equiv F E
-  have hi : ∀ x y, p x = p y → q x = q y → x = y := fun x y h1 h2 =>
-    e.injective (Prod.ext (((he x).1.trans h1).trans (he y).1.symm) (((he x).2.trans h2).trans (he y).2.symm))
-  have hs : ∀ a b, ∃ x, p x = a ∧ q x = b := fun a b => by
-    refine ⟨e.symm (a, b), (he _).1.symm.trans ?_, (he _).2.symm.trans ?_⟩ <;> simp
-  obtain ⟨g, g1, g2⟩ := GlobalTheory.UnitarySplit.gl_glue p q hi hs a 1
-  have hg : g ∈ HR (AF F) σ J := by
-    refine (GlobalTheory.UnitarySplit.mem_iff p q hi (sigR _ σ) (sigR _ σ) (sigR _ σ) (GlobalTheory.UnitarySplit.map_sig _ _)
-      (GlobalTheory.UnitarySplit.map_sig _ _) (JR _ J) g).2 ⟨?_, ?_⟩
-    · rw [g1, GlobalTheory.UnitarySplit.map_JR]
-      exact ha
-    · rw [g2]
-      exact one_mem _
-  refine ⟨⟨g, hg⟩, congrArg Units.val g2, fun ρ => ?_⟩
-  rw [← hau, ← g1]
-  rfl
 
 variable (σ) in
-
 def stab (L : Set (Fin M → E)) : Subgroup (HA (AF F) σ J) where
   carrier := {h | StabHat F L (finMat σ J h)}
   one_mem' := fun y => by rw [finMat_one, Matrix.one_mulVec]
@@ -217,7 +192,64 @@ theorem exists_lattice (W : HSpace E) : ∃ L : Submodule (𝓞 E) (Fin W.rank �
   let f := W.frame.equivFun.toLinearMap
   refine ⟨W.L0.map (f.restrictScalars (𝓞 E)), W.standardTuple_isLattice.fg.map _, ?_, ?_⟩
   · have : (W.L0.map (f.restrictScalars (𝓞 E)) : Set (Fin W.rank → E)) = f '' W.L0 := rfl
-    rw [this, ← Submodule.map_span, W.standardTuple_isLattice.span_eq_top, Submodule.map_top, LinearEquiv.range]
+    have hspan : Submodule.span E (W.L0 : Set W.V) = ⊤ := by
+      classical
+      by_contra hspan
+      obtain ⟨φ, hφ₀, hφ⟩ := Submodule.exists_le_ker_of_lt_top _ (lt_top_iff_ne_top.mpr hspan)
+      obtain ⟨bs, hbs⟩ := Formalism.HermitianLatticesTheory.dualLattice_dualBasis W.hT W.nondeg W.frame
+      let μ := ∑ j, star (φ (W.frame j)) • bs j
+      have hμ : ∀ v, W.hT μ v = φ v := by
+        have key : W.hT μ = φ := by
+          apply W.frame.ext
+          intro i
+          dsimp [μ]
+          rw [map_sum, LinearMap.sum_apply]
+          have hs : ∀ j, W.hT (star (φ (W.frame j)) • bs j) (W.frame i) =
+              φ (W.frame j) * (if i = j then 1 else 0) := by
+            intro j
+            rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, star_star]
+            congr 1
+            rw [← W.herm.eq (W.frame i) (bs j), hbs]
+            split_ifs <;> simp
+          simp only [hs, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+        intro v
+        rw [key]
+      have hμ₀ : μ ≠ 0 := by
+        intro h
+        apply hφ₀
+        ext y
+        simpa [h] using (hμ y).symm
+      have hline (a : E) : a • μ ∈ W.L0 := by
+        rw [← W.baseLattice_isUnimodular]
+        change a • μ ∈ Formalism.E.hdual W.hT W.L0
+        simp only [Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap,
+          LinearMap.restrictScalars_apply]
+        intro y hy
+        have hy₀ := LinearMap.mem_ker.mp (hφ (Submodule.subset_span hy))
+        simp [← W.herm.eq (a • μ) y, LinearMap.map_smulₛₗ, hμ, hy₀]
+      obtain ⟨ψ, hψ, -⟩ := Submodule.exists_le_ker_of_notMem
+        (show μ ∉ (⊥ : Submodule E W.V) by simpa using hμ₀)
+      let g := ψ.restrictScalars (𝓞 E)
+      have hmap (x : E) : x ∈ W.L0.map g := by
+        refine ⟨(x / ψ μ) • μ, hline _, ?_⟩
+        change ψ ((x / ψ μ) • μ) = x
+        rw [map_smul, smul_eq_mul, div_mul_cancel₀ _ hψ]
+      obtain ⟨d, hd₀, hd⟩ := FractionalIdeal.isFractional_of_fg
+        (S := nonZeroDivisors (𝓞 E)) (W.standardTuple_isLattice.fg.map g)
+      have hinj := IsFractionRing.injective (𝓞 E) E
+      have hne {a : 𝓞 E} (ha : a ≠ 0) : algebraMap (𝓞 E) E a ≠ 0 :=
+        fun h => ha (hinj (h.trans (map_zero _).symm))
+      have hinteger (x : E) : IsLocalization.IsInteger (𝓞 E) x := by
+        have hx := hd _ (hmap ((algebraMap (𝓞 E) E d)⁻¹ * x))
+        rwa [Algebra.smul_def, ← mul_assoc, mul_inv_cancel₀ (hne (nonZeroDivisors.ne_zero hd₀)),
+          one_mul] at hx
+      apply RingOfIntegers.not_isField E
+      refine ⟨⟨0, 1, zero_ne_one⟩, mul_comm, ?_⟩
+      intro a ha
+      obtain ⟨b, hb⟩ := hinteger ((algebraMap (𝓞 E) E a)⁻¹)
+      refine ⟨b, hinj ?_⟩
+      rw [map_mul, hb, map_one, mul_inv_cancel₀ (hne ha)]
+    rw [this, ← Submodule.map_span, hspan, Submodule.map_top, LinearEquiv.range]
   · ext v
     constructor
     · rintro ⟨x, hx, rfl⟩

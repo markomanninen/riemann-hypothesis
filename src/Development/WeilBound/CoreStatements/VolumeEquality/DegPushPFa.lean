@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.DegPushDefs
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PFnFieldTrdeg
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.DegPushDefs
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PFnFieldTrdeg
+
+@[expose] public section
 
 noncomputable section
 

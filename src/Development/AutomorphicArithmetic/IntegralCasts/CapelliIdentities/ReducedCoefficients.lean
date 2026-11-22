@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.DirichletPrimeToLPartMulLPowerPart
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsIntegralOfNormLeOne
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DvrOfNormIntegral
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.DirichletPrimeToLPartMulLPowerPart
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsIntegralOfNormLeOne
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DvrOfNormIntegral
+
+@[expose] public section
 
 namespace UpperTheory.Reformulated.B.CoefficientRingContainingIntegers
 

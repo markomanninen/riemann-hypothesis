@@ -1,10 +1,17 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ModelSmall
-import Development.AutomorphicSpectrum.Statements.TowerExistence.GoodTowerExistsX
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.VolumeInputs
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.OverLaUnique
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ModelSmall
+public import Development.AutomorphicSpectrum.Statements.TowerExistence.GoodTowerExistsX
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEmbeddingPieces
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.HasMultiplier
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.OverLaUnique
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -109,15 +116,16 @@ private theorem mConeMap_monomial' (y : (Σ k, ι k) → Ω) (m : (Σ k, ι k) �
 theorem cone_form (y : (Σ k, ι k) → Ω) {h : MRing ι} {d : K → ℕ} (hh : IsMultiHomog h d) :
     mConeMap y h = MvPolynomial.C (aeval y h) * ∏ k, (MvPolynomial.X k : MvPolynomial K Ω) ^ d k := by
   classical
-  have key : ∀ m ∈ MvPolynomial.support h, mConeMap y (MvPolynomial.monomial m (MvPolynomial.coeff m h)) =
-      MvPolynomial.C (aeval y (MvPolynomial.monomial m (MvPolynomial.coeff m h) : MRing ι)) *
+  have key : ∀ m ∈ MvPolynomial.support h, mConeMap y (MvPolynomial.monomial m (AddMonoidAlgebra.coeff h m)) =
+      MvPolynomial.C (aeval y (MvPolynomial.monomial m (AddMonoidAlgebra.coeff h m) : MRing ι)) *
         ∏ k, (MvPolynomial.X k : MvPolynomial K Ω) ^ d k := by
     intro m hm
     rw [mConeMap_monomial']
     simp only [hh m hm]
   conv_lhs => rw [MvPolynomial.as_sum h]
   conv_rhs => rw [MvPolynomial.as_sum h]
-  simp only [map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.sum_mul]
   exact Finset.sum_congr rfl key
 
 theorem sub_mem_coord (y : (Σ k, ι k) → Ω) {f g : MRing ι} {d : K → ℕ} (hf : IsMultiHomog f d)

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.ComparisonZeroWeightBase
-import Formalism.LocalRingCardinality.Lemmas
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.ComparisonZeroWeightBase
+public import Formalism.LocalRingCardinality.Lemmas
+
+@[expose] public section
 
 open Formalism.MainNotions.G Formalism.BasicNotions NumberField
 

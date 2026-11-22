@@ -1,15 +1,20 @@
-import Mathlib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameExtension
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Development.AbelianVarietyTheory.Definitions.Jets.Imports
-import Development.AbelianVarietyTheory.Definitions.Jets.WigMap
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NormSqContractLe
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HypAndAdj
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PieriLoweringStepGlTensorDualStandardStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsTypeOfIrreducibleStable
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HermExpHasDeriv
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.TensorOpContinuousOn
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameExtension
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Development.AbelianVarietyTheory.Definitions.Jets.Imports
+public import Development.AbelianVarietyTheory.Definitions.Jets.WigMap
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NormSqContractLe
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HypAndAdj
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PieriLoweringStepGlTensorDualStandardStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsTypeOfIrreducibleStable
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HermExpHasDeriv
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.TensorOpContinuousOn
+
+@[expose] public section
+
 open Matrix Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.Qr
 open Formalism.REAL (qdet GlRel IsHW)
 

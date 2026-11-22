@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.IntegralSquareRoots.CharSingle
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.JNoEig
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.IntegralSquareRoots.CharSingle
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.JNoEig
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.BasicNotions Classical Matrix
@@ -115,7 +119,7 @@ theorem gaussRow_of (hS : B.StdOK) (hL : B.LatAll) (hNeg : NegOneNorm D) : Gauss
         funext τ i j
         show TaylorLogMetric.embT D τ (star (lam : D.host.E)) * (TaylorLogMetric.embT D τ (lam : D.host.E) * x τ i j) =
           -x τ i j + (4 * S.card) • (TaylorLogMetric.embT D τ (s : D.host.E) * x τ i j)
-        rw [← mul_assoc, ← map_mul, hrel, map_add, map_neg, map_one, map_mul, map_natCast, nsmul_eq_mul]
+        rw [← mul_assoc, ← map_mul, hrel, map_add (f := _), map_neg, map_one, map_mul, map_natCast, nsmul_eq_mul]
         ring }
   exact gauss_sq hU₁ hM (fun x hx => card_smul_mem hS₁ hx)
     (fun x hx => alpha_mult hM (Real.sqrt D.host.d / 2) _ (fun _ => rfl) (B.qInt0 hS N 1) hx) hS₁

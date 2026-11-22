@@ -1,7 +1,11 @@
-import Mathlib
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.GIface
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LocalLanglandsGL
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.Brauer
+module
+
+public import Mathlib
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.GIface
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LocalLanglandsGL
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.Brauer
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ def ScalarOnInertiaProp : Prop :=
 def SphericalOfUnramifiedProp : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
     (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a)
-    (ε : EpsFamily A) (rc : IrrGL (w.adicCompletion E) → WD h), Laws a ha ε rc →
+    (ε : EpsFamily A) (rc : IrrGL (k := w.adicCompletion E) → WD h), Laws a ha ε rc →
     ∀ (d : ℕ) (v : WD h), v.unr → v.lpDim = d →
       ∃ (X : Type) (_ : AddCommGroup X) (_ : Module ℂ X) (σ : Representation ℂ (GL (Fin d) (w.adicCompletion E)) X)
         (hs : IsSmooth σ) (hi : σ.IsIrreducible), IsSpherical σ ∧ rc (IrrGL.of σ hs hi) = v
@@ -56,14 +60,14 @@ def SphericalOfUnramifiedProp : Prop :=
 def SphericalUnramifiedProp : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
     (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a)
-    (ε : EpsFamily A) (rc : IrrGL (w.adicCompletion E) → WD h), Laws a ha ε rc →
+    (ε : EpsFamily A) (rc : IrrGL (k := w.adicCompletion E) → WD h), Laws a ha ε rc →
     ∀ (d : ℕ) (X : Type) [AddCommGroup X] [Module ℂ X] (σ : Representation ℂ (GL (Fin d) (w.adicCompletion E)) X)
       (hs : IsSmooth σ) (hi : σ.IsIrreducible), IsSpherical σ → (rc (IrrGL.of σ hs hi)).unr
 
 def TwistRestrictionProp : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
     (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a)
-    (ε : EpsFamily A) (rc : IrrGL (w.adicCompletion E) → WD h), Laws a ha ε rc →
+    (ε : EpsFamily A) (rc : IrrGL (k := w.adicCompletion E) → WD h), Laws a ha ε rc →
     ∀ (d : ℕ) (X : Type) [AddCommGroup X] [Module ℂ X] (σ : Representation ℂ (GL (Fin d) (w.adicCompletion E)) X)
       (hs : IsSmooth σ) (hi : σ.IsIrreducible) (η : (w.adicCompletion E)ˣ →* ℂˣ) (hη : IsSmoothChar η),
       ∃ (hs' : IsSmooth (twist σ (detChar (Fin d) η))) (hi' : (twist σ (detChar (Fin d) η)).IsIrreducible),
@@ -73,7 +77,7 @@ def TwistRestrictionProp : Prop :=
 def UntwistRestrictionProp : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
     (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a)
-    (ε : EpsFamily A) (rc : IrrGL (w.adicCompletion E) → WD h), Laws a ha ε rc →
+    (ε : EpsFamily A) (rc : IrrGL (k := w.adicCompletion E) → WD h), Laws a ha ε rc →
     ∀ (d : ℕ) (X : Type) [AddCommGroup X] [Module ℂ X] (σ : Representation ℂ (GL (Fin d) (w.adicCompletion E)) X)
       (hs : IsSmooth σ) (hi : σ.IsIrreducible) (η : (w.adicCompletion E)ˣ →* ℂˣ) (hη : IsSmoothChar η),
       ∃ (hs' : IsSmooth (twist σ (detChar (Fin d) η⁻¹))) (hi' : (twist σ (detChar (Fin d) η⁻¹)).IsIrreducible),
@@ -83,7 +87,7 @@ def UntwistRestrictionProp : Prop :=
 def ProductRestrictionProp : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
     (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a)
-    (ε : EpsFamily A) (rc : IrrGL (w.adicCompletion E) → WD h), Laws a ha ε rc →
+    (ε : EpsFamily A) (rc : IrrGL (k := w.adicCompletion E) → WD h), Laws a ha ε rc →
     ∀ (s N : ℕ) (d : Fin s → ℕ) (hd : ∑ b, d b = N) (X : Fin s → Type) [∀ b, AddCommGroup (X b)] [∀ b, Module ℂ (X b)]
       (σ : ∀ b, Representation ℂ (GL (Fin (d b)) (w.adicCompletion E)) (X b)) (hs : ∀ b, IsSmooth (σ b))
       (hi : ∀ b, (σ b).IsIrreducible) (hI : (multiProd (stdBlocks d hd) σ).IsIrreducible),
@@ -116,10 +120,10 @@ def ArtinInertiaProp : Prop :=
 def GMain : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
     (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (a : Weil h →* (w.adicCompletion E)ˣ) (ha : IsLocalArtin h a)
-    (ε : EpsFamily A) (rc : IrrGL (w.adicCompletion E) → WD h), Laws a ha ε rc → GlobalTheory.Mem.LiteralAutomorphy.LitLoc →
+    (ε : EpsFamily A) (rc : IrrGL (k := w.adicCompletion E) → WD h), Laws a ha ε rc → GlobalTheory.Mem.LiteralAutomorphy.LitLoc →
     ∀ (s : ℕ) (d : Fin s → ℕ) (η : Fin s → (w.adicCompletion E)ˣ →* ℂˣ), (∀ b, IsSmoothChar (η b)) →
     (∀ b c, b ≠ c → ∃ t : Ine (F := E) A, η b (a (ineIncl h t)) ≠ η c (a (ineIncl h t))) →
-    ∀ (x : IrrGL (w.adicCompletion E)) (hd : ∑ b, d b = x.1),
+    ∀ (x : IrrGL (k := w.adicCompletion E)) (hd : ∑ b, d b = x.1),
       ((rc x).mono0 ∧ ∀ t : Ine (F := E) A,
           (rc x).charPol (ineIncl h t) = ∏ b, (X - C ((η b (a (ineIncl h t)) : ℂˣ) : ℂ)) ^ d b) ↔
         IsTwSphProd x.rep d hd η

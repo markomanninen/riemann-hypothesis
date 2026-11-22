@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdjoinLocalOrderTensorPadicMatrixAlmostAll
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentreCompat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdjoinLocalOrderTensorPadicMatrixAlmostAll
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentreCompat
+
+@[expose] public section
+
 open scoped TensorProduct
 open GlobalTheory.LKInvGood
 set_option maxHeartbeats 1000000 in

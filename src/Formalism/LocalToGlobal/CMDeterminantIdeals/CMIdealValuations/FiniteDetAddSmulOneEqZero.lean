@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementG
+module
+
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementG
+
+@[expose] public section
 
 noncomputable section
 
@@ -197,8 +201,8 @@ theorem ArchTie_of (hH : ReciprocityTheory.MultiplicativeHeights.LemmaHStatement
   exact hlim
 
 private theorem coeff_bind_scale {σ : Type} [Fintype σ] (c : ℂ) (P : MvPolynomial σ ℂ) (μ : σ →₀ ℕ) :
-    MvPolynomial.coeff μ (MvPolynomial.bind₁ (fun v => MvPolynomial.C c * MvPolynomial.X v) P) =
-      c ^ (∑ v, μ v) * MvPolynomial.coeff μ P := by
+    AddMonoidAlgebra.coeff (MvPolynomial.bind₁ (fun v => MvPolynomial.C c * MvPolynomial.X v) P) μ =
+      c ^ (∑ v, μ v) * AddMonoidAlgebra.coeff P μ := by
   classical
   refine MvPolynomial.induction_on' P (fun ν b => ?_) (fun p q hp hq => ?_)
   · rw [MvPolynomial.bind₁_monomial]
@@ -214,12 +218,12 @@ private theorem coeff_bind_scale {σ : Type} [Fintype σ] (c : ℂ) (P : MvPolyn
     · subst h
       ring
     · simp
-  · simp only [map_add, MvPolynomial.coeff_add, hp, hq, mul_add]
+  · simp only [map_add (f := _), MvPolynomial.coeff_add, hp, hq, mul_add]
 
 private theorem degree_of_scale {σ : Type} [Fintype σ] (P Δ : MvPolynomial σ ℂ) (n : ℕ) (x0 : σ → ℂ)
     (hx0 : MvPolynomial.eval x0 Δ ≠ 0)
     (h : ∀ x, MvPolynomial.eval x Δ ≠ 0 → MvPolynomial.eval (fun v => 2 * x v) P = 2 ^ n * MvPolynomial.eval x P) :
-    ∀ μ : σ →₀ ℕ, MvPolynomial.coeff μ P ≠ 0 → ∑ v, μ v = n := by
+    ∀ μ : σ →₀ ℕ, AddMonoidAlgebra.coeff P μ ≠ 0 → ∑ v, μ v = n := by
   intro μ hμ
   set Q := MvPolynomial.bind₁ (fun v => MvPolynomial.C (2 : ℂ) * MvPolynomial.X v) P -
     MvPolynomial.C ((2 : ℂ) ^ n) * P with hQ
@@ -237,9 +241,11 @@ private theorem degree_of_scale {σ : Type} [Fintype σ] (P Δ : MvPolynomial σ
     apply hx0
     rw [h0, map_zero]
   have hQ0 : Q = 0 := (mul_eq_zero.mp hΔQ).resolve_left hΔ
-  have hc := congrArg (MvPolynomial.coeff μ) hQ0
-  rw [hQ, MvPolynomial.coeff_sub, coeff_bind_scale, MvPolynomial.coeff_C_mul, MvPolynomial.coeff_zero,
-    sub_eq_zero] at hc
+  have hc := congrArg (AddMonoidAlgebra.coeff · μ) hQ0
+  rw [hQ, MvPolynomial.coeff_sub, coeff_bind_scale, MvPolynomial.coeff_C_mul] at hc
+  change (2 : ℂ) ^ (∑ v, μ v) * AddMonoidAlgebra.coeff P μ -
+    2 ^ n * AddMonoidAlgebra.coeff P μ = 0 at hc
+  rw [sub_eq_zero] at hc
   have h2 : (2 : ℂ) ^ (∑ v, μ v) = 2 ^ n := mul_right_cancel₀ hμ hc
   have h3 : ((2 ^ (∑ v, μ v) : ℕ) : ℂ) = ((2 ^ n : ℕ) : ℂ) := by
     push_cast
@@ -247,12 +253,12 @@ private theorem degree_of_scale {σ : Type} [Fintype σ] (P Δ : MvPolynomial σ
   exact Nat.pow_right_injective (le_refl 2) (Nat.cast_injective h3)
 
 private theorem eval_scale_of_degree {σ : Type} [Fintype σ] (P : MvPolynomial σ ℂ) (n : ℕ)
-    (h : ∀ μ : σ →₀ ℕ, MvPolynomial.coeff μ P ≠ 0 → ∑ v, μ v = n) (c : ℂ) (x : σ → ℂ) :
+    (h : ∀ μ : σ →₀ ℕ, AddMonoidAlgebra.coeff P μ ≠ 0 → ∑ v, μ v = n) (c : ℂ) (x : σ → ℂ) :
     MvPolynomial.eval (fun v => c * x v) P = c ^ n * MvPolynomial.eval x P := by
   have hb : MvPolynomial.bind₁ (fun v => MvPolynomial.C c * MvPolynomial.X v) P = MvPolynomial.C (c ^ n) * P := by
     ext μ
     rw [coeff_bind_scale, MvPolynomial.coeff_C_mul]
-    by_cases hμ : MvPolynomial.coeff μ P = 0
+    by_cases hμ : AddMonoidAlgebra.coeff P μ = 0
     · simp [hμ]
     · rw [h μ hμ]
   have h1 := eval_bind₁' (fun v => MvPolynomial.C c * MvPolynomial.X v) x P
@@ -324,7 +330,7 @@ theorem subst_homogeneous : SubstHomog := by
     congr 1
     ext k i
     simp [matOf]
-  have hP : ∀ ν : FrVar m →₀ ℕ, MvPolynomial.coeff ν P ≠ 0 → ∑ v, ν v = N := by
+  have hP : ∀ ν : FrVar m →₀ ℕ, AddMonoidAlgebra.coeff P ν ≠ 0 → ∑ v, ν v = N := by
     refine degree_of_scale P Δ N (fun v => if v.2.1 = v.2.2 then 1 else 0) ?_ ?_
     · rw [hevΔ]
       refine Finset.prod_ne_zero_iff.mpr fun b _ => ?_
@@ -354,7 +360,8 @@ theorem subst_homogeneous : SubstHomog := by
       (∑ j, MvPolynomial.C (U v.1 j v.2.2) * MvPolynomial.X (⟨v.1, (v.2.1, j)⟩ : FrVar m)) =
       2 * MvPolynomial.eval x (∑ j, MvPolynomial.C (U v.1 j v.2.2) * MvPolynomial.X (⟨v.1, (v.2.1, j)⟩ : FrVar m)) := by
     intro v
-    simp only [map_sum, map_mul, MvPolynomial.eval_C, MvPolynomial.eval_X, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, MvPolynomial.eval_C, MvPolynomial.eval_X, Finset.mul_sum]
     exact Finset.sum_congr rfl fun j _ => by ring
   simp only [hlin]
   exact eval_scale_of_degree P N hP 2 _

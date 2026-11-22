@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelDivisorGoodPoint
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelDivisorGoodPoint
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -15,12 +20,6 @@ def NormalCodimOneCompleteIntersection.Statement : Prop :=
       ∃ (c : ℕ) (f : Fin c → MvPolynomial σ ℂ) (h : MvPolynomial σ ℂ),
         c + (e + 1) = Fintype.card σ ∧ (∀ j, f j ∈ P) ∧ h ∉ Q ∧
           ∀ p ∈ P, ∃ k : ℕ, h ^ k * p ∈ Ideal.span (Set.range f)
-
-def lineOriginIdeal : Ideal (MvPolynomial (Fin 1 ⊕ Fin 1) ℂ) :=
-  RingHom.ker (eval (0 : Fin 1 ⊕ Fin 1 → ℂ))
-
-instance lineOriginIdeal_isMaximal : lineOriginIdeal.IsMaximal :=
-  RingHom.ker_isMaximal_of_surjective _ fun c ↦ ⟨C c, eval_C c⟩
 
 end
 

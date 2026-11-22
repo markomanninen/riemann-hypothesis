@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.InertKernelTheory.TranslatesOfInertKernelAtPlace
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.FirstKernelLawGlobal
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.K1RepresentativesLTOfDictionary
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.TranslatesOfInertKernelAtPlace
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.FirstKernelLawGlobal
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.K1RepresentativesLTOfDictionary
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ open Formalism.L2.PairingIndexBounds.F Formalism.L2.KerInert.KG
 
 variable {p : ℕ} [Fact p.Prime]
 
-variable [Fact _root_.Formalism.L2.Th1.CM.CM2] in
 
+variable [Fact _root_.Formalism.L2.Th1.CM.CM2] in
 theorem first_kernel_small_of_frame (D : D7) (h5 : 5 ≤ p) (X : Sys p) [IsFractionRing X.G.O X.G.Kf] (E : CEmbC X.G)
     (hfin : ∀ j c, (X.Lv.lev j c).FinClasses) (g : GL3Theta.G1 p) (hLT : LTIso g)
     (pos : (Σ v : X.Pl, Fin (X.G.P.n' v)) ≃ D.what₂.Tau) (fd : FData X D) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ)
@@ -82,8 +86,8 @@ theorem first_kernel_small_of_frame (D : D7) (h5 : 5 ≤ p) (X : Sys p) [IsFract
     hfin hLT cc δ hAt hIn hM B hcc hδ χ hχ hIn hLam pos large₂ Lg' F Fr
     (fun j La La' => by simp only [Fr]; rw [ltC_eq]) S hB hComb hFH
 
-variable [Fact _root_.Formalism.L2.Th1.CM.CM2] in
 
+variable [Fact _root_.Formalism.L2.Th1.CM.CM2] in
 theorem first_kernel_small_of_frame_twist (D : D7) (h5 : 5 ≤ p) (X : Sys p) [IsFractionRing X.G.O X.G.Kf] (E : CEmbC X.G)
     (hfin : ∀ j c, (X.Lv.lev j c).FinClasses) (g : GL3Theta.G1 p) (hLT : LTIso g)
     (pos : (Σ v : X.Pl, Fin (X.G.P.n' v)) ≃ D.what₂.Tau) (fd : FData X D) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ)
@@ -119,8 +123,8 @@ theorem first_kernel_small_of_frame_twist (D : D7) (h5 : 5 ≤ p) (X : Sys p) [I
   have := hK j hj L0 h0 La' hLa' φ
   rwa [hEq] at this
 
-variable [Fact _root_.Formalism.L2.Th1.CM.CM2] in
 
+variable [Fact _root_.Formalism.L2.Th1.CM.CM2] in
 theorem first_kernel_law_global_small : TranslatesOfInertKernelAtPlace := by
   intro D p _ h5 X _ E hfin hst g hLT pos fd cc δ B χ lam SS cl Ξ₀ muT ρ hAt hIn hM hcc hδ hχ hlam hLam hAdm hCl hXi hSc
     hρ hMI hL

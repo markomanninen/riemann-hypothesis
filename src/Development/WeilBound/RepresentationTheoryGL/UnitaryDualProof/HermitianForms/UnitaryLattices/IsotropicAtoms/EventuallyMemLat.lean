@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.IsotropicAtoms.InvSmulEqOfSmulEq
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.IsotropicAtoms.InvSmulEqOfSmulEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,12 +37,6 @@ theorem eventually_ge_lat (m : ℕ) (A₁ : AddSubgroup (Fin (m + 1) → k)) (h1
 
 end Lat
 
-theorem nabs_pos (z : kˣ) : 0 < nabs k z := by
-  unfold GlobalTheory.SplitWeil.nabs
-  have e : MeasureTheory.distribHaarChar k z * MeasureTheory.distribHaarChar k z⁻¹ = 1 := by
-    rw [← map_mul, mul_inv_cancel, map_one]
-  exact NNReal.coe_pos.2 (pos_iff_ne_zero.2 (left_ne_zero_of_mul_eq_one e))
-
 theorem nabs_one' : nabs k (1 : kˣ) = 1 := by
   simp [GlobalTheory.SplitWeil.nabs]
 
@@ -47,7 +45,7 @@ theorem bessel {V : Type} [AddCommGroup V] [Module ℂ V] (B : V →ₗ[ℂ] V �
   have key : B x x = B e e + B (x - e) (x - e) := by
     have hx : x = e + (x - e) := by abel
     conv_lhs => rw [hx]
-    simp only [map_add, map_sub, LinearMap.add_apply, LinearMap.sub_apply]
+    simp only [map_add (f := _), map_sub, LinearMap.add_apply, LinearMap.sub_apply]
     rw [h1, h2]
     ring
   rw [key, ← h1, Complex.add_re]
@@ -57,6 +55,8 @@ section Common
 
 variable {ψ : AddChar k Circle} {m N : ℕ} {h : m + 2 ≤ N} {V : Type} [AddCommGroup V] [Module ℂ V]
   {π : Representation ℂ (GL (Fin N) k) V} {s : ℝ} {B : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ}
+
+local notation "P" => avg (1 : AddChar k Circle) h π 0
 
 theorem colInv (hB : MirEq π (m + 1) h s B) (x : Fin (m + 1) → k) (v w : V) :
     B (π (colEl k m N h x) v) (π (colEl k m N h x) w) = B v w := by
@@ -70,8 +70,6 @@ theorem glInv (hB : MirEq π (m + 1) h s B) (g : GL (Fin (m + 1)) k) (v w : V) :
   have := hB (glEmb k (m + 1) g) (glEmb_mem_Mir' m g) v w
   rw [det_glEmb, blkAt_glEmb] at this
   exact this
-
-local notation "P" => avg (1 : AddChar k Circle) h π 0
 
 theorem one_zero_dot (a : Fin (m + 1) → k) : (1 : AddChar k Circle) ((0 : Fin (m + 1) → k) ⬝ᵥ a) = 1 := by
   simp
@@ -95,12 +93,6 @@ theorem P_mono {A A' : AddSubgroup (Fin (m + 1) → k)} (hA : IsLat A) (hA' : Is
 
 theorem P_idem {A : AddSubgroup (Fin (m + 1) → k)} (hA : IsLat A) (v : V) : P A (P A v) = P A v :=
   P_mono hπ hA hA le_rfl v
-
-theorem P_fix {A A' : AddSubgroup (Fin (m + 1) → k)} (hA : IsLat A) (hA' : IsLat A') (hAA' : A ≤ A') (v : V) :
-    P A (P A' v) = P A' v := by
-  have := avg_eigen h π 1 continuous_one_char hπ 0 0 hA (P A' v) (fun a ha => by
-    rw [colEl_avg h π 1 continuous_one_char hπ 0 hA' (hAA' ha)])
-  rw [this, if_pos (fun _ _ => rfl)]
 
 theorem P_colEl {A : AddSubgroup (Fin (m + 1) → k)} (hA : IsLat A) {a : Fin (m + 1) → k} (ha : a ∈ A) (v : V) :
     P A (π (colEl k m N h a) v) = P A v := by
@@ -151,7 +143,7 @@ theorem P_pol (A : LT) (v w : V) : B (P A.1 v) w =
     (B (P A.1 (v + w)) (v + w) - B (P A.1 (v - w)) (v - w) + Complex.I * B (P A.1 (v + Complex.I • w)) (v + Complex.I • w)
       - Complex.I * B (P A.1 (v - Complex.I • w)) (v - Complex.I • w)) / 4 := by
   rw [P_add hπ A.2, wirtinger_sub hπ A.2, P_add hπ A.2, wirtinger_sub hπ A.2, P_smul hπ A.2]
-  simp only [map_add, map_sub, map_smul, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply, map_smulₛₗ,
+  simp only [map_add (f := _), map_sub, map_smul, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply, map_smulₛₗ,
     smul_eq_mul, Complex.conj_I]
   linear_combination (B (P A.1 v) w - B (P A.1 w) v) / 2 * Complex.I_sq
 
@@ -182,13 +174,13 @@ def atomForm : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ :=
   LinearMap.mk₂'ₛₗ (RingHom.id ℂ) (starRingEnd ℂ) (lim₀ (h := h) (π := π) (B := B))
     (fun v₁ v₂ w => tendsto_nhds_unique (tendsto_lim₀ hπ hpsd hB (v₁ + v₂) w)
       (((tendsto_lim₀ hπ hpsd hB v₁ w).add (tendsto_lim₀ hπ hpsd hB v₂ w)).congr fun A => by
-        rw [P_add hπ A.2, map_add, LinearMap.add_apply]))
+        rw [P_add hπ A.2, map_add (f := _), LinearMap.add_apply]))
     (fun c v w => tendsto_nhds_unique (tendsto_lim₀ hπ hpsd hB (c • v) w)
       (((tendsto_lim₀ hπ hpsd hB v w).const_mul c).congr fun A => by
         rw [P_smul hπ A.2, map_smul, LinearMap.smul_apply, smul_eq_mul]))
     (fun v w₁ w₂ => tendsto_nhds_unique (tendsto_lim₀ hπ hpsd hB v (w₁ + w₂))
       (((tendsto_lim₀ hπ hpsd hB v w₁).add (tendsto_lim₀ hπ hpsd hB v w₂)).congr fun A => by
-        rw [map_add]))
+        rw [map_add (f := _)]))
     (fun c v w => tendsto_nhds_unique (tendsto_lim₀ hπ hpsd hB v (c • w))
       (((tendsto_lim₀ hπ hpsd hB v w).const_mul (starRingEnd ℂ c)).congr fun A => by
         rw [map_smulₛₗ, smul_eq_mul]))
@@ -274,7 +266,7 @@ theorem atom_kills_derKer (ψ : AddChar k Circle) (hkill : Kills ψ π (m + 2) B
     simp only [SetLike.mem_coe, LinearMap.mem_ker]
     rw [hsplit]
     ext w
-    rw [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply, atom_colEl hπ hpsd hB x,
+    rw [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply, atom_colEl hπ hpsd hB x,
       atom_kills_of hπ hpsd hB _ (fun w => hkill _ hz w) w, map_sub, LinearMap.sub_apply, atom_colEl hπ hpsd hB x,
       sub_self, smul_zero, add_zero, LinearMap.zero_apply]
   intro v hv w
@@ -326,8 +318,6 @@ section Split
 
 variable {ψ : AddChar k Circle} {m N : ℕ} {h : m + 2 ≤ N} {V : Type} [AddCommGroup V] [Module ℂ V]
   {π : Representation ℂ (GL (Fin N) k) V} {s : ℝ} {B : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ}
-
-local notation "LT" => {A : AddSubgroup (Fin (m + 1) → k) // IsLat A}
 
 variable (hψ : Continuous ψ) (hπ : IsSmooth π) (hpsd : IsPsd B) (hB : MirEq π (m + 1) h s B)
 include hψ hπ hpsd hB

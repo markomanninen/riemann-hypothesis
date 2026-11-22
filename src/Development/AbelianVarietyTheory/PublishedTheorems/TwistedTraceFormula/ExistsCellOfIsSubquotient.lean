@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.NotInSupportOfSubsingleton
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JhMultSubAddQuot
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NontrivialOfIrreducible
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.NotInSupportOfSubsingleton
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JhMultSubAddQuot
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NontrivialOfIrreducible
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,8 +39,8 @@ def relProj (f : ∀ i, (Σ j, c i j) ≃ m i) : relParab k f →* ∀ i, Levi k
 def relEmb (f : ∀ i, (Σ j, c i j) ≃ m i) : (∀ i, Levi k (c i)) →* Levi k m :=
   MonoidHom.pi fun i => (leviEmb k (f i)).comp (Pi.evalMonoidHom (fun i => Levi k (c i)) i)
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [Fintype α] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [Fintype α] in
 theorem relEmb_mem_normalizer (f : ∀ i, (Σ j, c i j) ≃ m i) (g : ∀ i, Levi k (c i)) :
     relEmb k f g ∈ Subgroup.normalizer (relUnip k f : Set (Levi k m)) :=
   Subgroup.mem_normalizer_iff.2 fun u => forall₂_congr fun i _ =>
@@ -63,8 +67,8 @@ def relInd (f : ∀ i, (Σ j, c i j) ≃ m i) (ρ : Representation ℂ (∀ i, L
       (smoothPart (ind (relParab k f) ((twist ρ (relDeltaHalf k c)).comp (relProj k f)))) :=
   smInd (relParab k f) ((twist ρ (relDeltaHalf k c)).comp (relProj k f))
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [Fintype α] [LinearOrder β] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [Fintype α] in
 theorem relEmb_apply (f : ∀ i, (Σ j, c i j) ≃ m i) (g : ∀ i, Levi k (c i)) (i : α) :
     relEmb k f g i = leviEmb k (f i) (g i) := rfl
 
@@ -134,18 +138,18 @@ def IrrRep.det (n : Type) [Fintype n] [DecidableEq n] (χ : kˣ →* ℂˣ) (h :
 def Segment.ofChar (χ : kˣ →* ℂˣ) (h : IsSmoothChar χ) (l : ℕ) (hl : 0 < l) : Segment k :=
   ⟨1, one_pos, (IrrRep.det (Fin 1) χ h).cl, ⟨_, rfl, isCuspidal_detRep_one h⟩, l, hl⟩
 
-omit [ValuativeRel k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [IsNonarchimedeanLocalField k] in
 theorem isSmoothChar_one {G : Type} [Group G] [TopologicalSpace G] : IsSmoothChar (1 : G →* ℂˣ) := by
   unfold IsSmoothChar; simp
 
-variable (k) in
 
+variable (k) in
 def GrothGL.unit : GrothGL k :=
   Finsupp.single ⟨0, (IrrRep.det (Fin 0) 1 isSmoothChar_one).cl⟩ 1
 
-variable (k) in
 
+variable (k) in
 def JacquetOfInducedFiltration : Prop :=
   ∀ (α β n : Type) [Fintype α] [LinearOrder α] [Fintype β] [LinearOrder β] [Fintype n] [DecidableEq n]
     (m : α → Type) [∀ i, Fintype (m i)] [∀ i, DecidableEq (m i)]
@@ -159,8 +163,8 @@ def JacquetOfInducedFiltration : Prop :=
               (g : ∀ j, (Σ i, Fin ((b t).1 i j)) ≃ m' j),
               Nonempty ((subQuot (S t.succ) (S t.castSucc)).Equiv (cellFunctor f g ρ))
 
-variable (k) in
 
+variable (k) in
 def CellSemisimplification : Prop :=
   ∀ (α β : Type) [Fintype α] [LinearOrder α] [Fintype β] [LinearOrder β]
     (m : α → Type) [∀ i, Fintype (m i)] [∀ i, DecidableEq (m i)]
@@ -177,8 +181,8 @@ def CellSemisimplification : Prop :=
             ∑ s ∈ T, (∏ i, jhMult (piTensor fun j => (s i j).rep.ρ) (jac (f i) (ρ i))) *
               jhMult τ.ρ (piTensor fun j => multiProd (g j) fun i => (s i j).rep.ρ)
 
-variable (k) in
 
+variable (k) in
 def IsSegmentClass (Z : ∀ Δ : Segment k, IrrCl (GL (Fin (Δ.len * Δ.d)) k)) : Prop :=
   ∀ (Δ : Segment k) (σ : IrrRep (GL (Fin Δ.d) k)), σ.cl = Δ.start →
     ∀ (e : (Σ _ : Fin Δ.len, Fin Δ.d) ≃ Fin (Δ.len * Δ.d)) (π : IrrRep (GL (Fin (Δ.len * Δ.d)) k)),
@@ -186,8 +190,8 @@ def IsSegmentClass (Z : ∀ Δ : Segment k, IrrCl (GL (Fin (Δ.len * Δ.d)) k)) 
         Function.Injective φ) ∧
       (π.cl = Z Δ ↔ Nonempty ((jac e π.ρ).Equiv (piTensor (segTerm σ.ρ Δ.len))))
 
-variable (k) in
 
+variable (k) in
 def IsProductIso {A : Type 1} [CommRing A] (Ψ : GrothGL k ≃+ A) : Prop :=
   Ψ (GrothGL.unit k) = 1 ∧
     ∀ (r t : ℕ) (V W : Type) [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
@@ -241,6 +245,7 @@ theorem JacquetOfInducedFiltration.jhMult_eq (h : JacquetOfInducedFiltration k)
     {Y : Type} [AddCommGroup Y] [Module ℂ Y] {τ : Representation ℂ (Levi k m') Y}
     (hτ : τ.IsIrreducible) :
     jhMult τ (jac e' (parInd e ρ)) = ∑ b, jhMult τ (cellFunctor (f b) (g b) ρ) := by
+  unfold JacquetOfInducedFiltration at h
   obtain ⟨N, b, hb⟩ := h α β n m m' e e'
   obtain ⟨S, h1, h2, h3, h4⟩ := hb W ρ hρ
   exact (jhMult_filtration hτ S h1 h2 h3).trans (Fintype.sum_equiv b _ _ fun t =>
@@ -259,9 +264,11 @@ theorem exists_cell_of_isSubquotient (h : JacquetOfInducedFiltration k) (h' : Ce
         IsSubquotient τ (piTensor fun j => multiProd (g j) fun i => (s i j).ρ) := by
   have := Fintype.ofFinite (SizeMatrix m m')
   have h0 := jhMult_ne_zero_iff.2 hs
-  rw [multiProd, h.jhMult_eq e e' (isSmooth_piTensor hρ) (fun b => b.nonempty_rows.some)
+  change jhMult τ (jac e' (parInd e (piTensor ρ))) ≠ 0 at h0
+  rw [h.jhMult_eq e e' (isSmooth_piTensor hρ) (fun b => b.nonempty_rows.some)
     (fun b => b.nonempty_cols.some) hτ] at h0
   obtain ⟨b, -, hb⟩ := Finset.exists_ne_zero_of_sum_ne_zero h0
+  unfold CellSemisimplification at h'
   obtain ⟨T, -, hT⟩ := h' α β m m' _ b.nonempty_rows.some b.nonempty_cols.some X ρ hρ hl
   rw [hT ⟨Y, τ, hs.isSmooth (isSmooth_jac _ (isSmooth_parInd _ _)), hτ⟩] at hb
   obtain ⟨s, -, hs⟩ := Finset.exists_ne_zero_of_sum_ne_zero hb
@@ -282,7 +289,7 @@ theorem clsGL_irr {n : ℕ} (σ : IrrRep (GL (Fin n) k)) (h : HasFiniteLength σ
 
 theorem clsGL_apply {n : ℕ} (π : Representation ℂ (GL (Fin n) k) V) (h : HasFiniteLength π)
     (c : IrrCl (GL (Fin n) k)) : clsGL π h ⟨n, c⟩ = cls π h c :=
-  Finsupp.mapDomain_apply sigma_mk_injective _ _
+  Finsupp.mapDomain_apply_of_injective sigma_mk_injective _ _
 
 theorem clsGL_congr {n : ℕ} {π : Representation ℂ (GL (Fin n) k) V}
     {τ : Representation ℂ (GL (Fin n) k) W} (φ : π.Equiv τ) (h : HasFiniteLength π)
@@ -290,27 +297,6 @@ theorem clsGL_congr {n : ℕ} {π : Representation ℂ (GL (Fin n) k) V}
   rw [clsGL, clsGL, cls_congr φ h h']
 
 variable {A : Type 1} [CommRing A] {Ψ : GrothGL k ≃+ A}
-
-theorem IsProductIso.comm (hΨ : IsProductIso k Ψ) {r t : ℕ} {π₁ : Representation ℂ (GL (Fin r) k) V}
-    {π₂ : Representation ℂ (GL (Fin t) k) W} (h₁ : HasFiniteLength π₁) (h₂ : HasFiniteLength π₂)
-    (s₁ : IsSmooth π₁) (s₂ : IsSmooth π₂) :
-    ∃ h h', clsGL (prod₂ π₁ π₂) h = clsGL (prod₂ π₂ π₁) h' := by
-  obtain ⟨h, e⟩ := hΨ.2 r t V W π₁ π₂ h₁ h₂ s₁ s₂
-  obtain ⟨h', e'⟩ := hΨ.2 t r W V π₂ π₁ h₂ h₁ s₂ s₁
-  exact ⟨h, h', Ψ.injective (by rw [e, e', mul_comm])⟩
-
-theorem IsProductIso.cancel [IsDomain A] (hΨ : IsProductIso k Ψ) {r t : ℕ}
-    (π₁ π₂ : IrrRep (GL (Fin r) k)) (τ : IrrRep (GL (Fin t) k))
-    (φ : (prod₂ π₁.ρ τ.ρ).Equiv (prod₂ π₂.ρ τ.ρ)) : Nonempty (π₁.ρ.Equiv π₂.ρ) := by
-  obtain ⟨h, e⟩ := hΨ.2 r t _ _ π₁.ρ τ.ρ π₁.hasFiniteLength τ.hasFiniteLength π₁.smooth τ.smooth
-  obtain ⟨h', e'⟩ := hΨ.2 r t _ _ π₂.ρ τ.ρ π₂.hasFiniteLength τ.hasFiniteLength π₂.smooth τ.smooth
-  have h0 : Ψ (clsGL τ.ρ τ.hasFiniteLength) ≠ 0 := by
-    rw [clsGL_irr, map_ne_zero_iff _ Ψ.injective]
-    exact Finsupp.single_ne_zero.2 one_ne_zero
-  rw [clsGL_congr φ h h', e'] at e
-  have h1 := Ψ.injective (mul_right_cancel₀ h0 e)
-  rw [clsGL_irr, clsGL_irr, Finsupp.single_left_inj one_ne_zero] at h1
-  exact IrrRep.cl_eq_iff.1 (sigma_mk_injective (β := fun n => IrrCl (GL (Fin n) k)) h1).symm
 
 end RingConsequences
 
@@ -327,11 +313,18 @@ theorem nonempty_jac_det_equiv (e : (Σ _ : Fin l, Fin 1) ≃ n) (χ : kˣ →* 
       (detLevi e (χ * absPow k (((l : ℂ) - 1) / 2)) g : ℂ) • y := by
     intro y
     induction y using PiTensorProduct.induction_on with
-    | add x y hx hy => rw [map_add, hx, hy, smul_add]
+    | add x y hx hy => rw [map_add (f := _), hx, hy, smul_add]
     | smul_tprod c x =>
-      rw [map_smul, smul_comm, piTensor_tprod, detLevi_apply, Units.coe_prod,
-        ← MultilinearMap.map_smul_univ]
-      congr 2
+      rw [map_smul, piTensor_tprod, detLevi_apply, Units.coe_prod,
+        smul_comm (∏ i, _) c]
+      congr 1
+      have hmap := (PiTensorProduct.tprod ℂ).map_smul_univ
+        (fun i => ((χ * absPow k (((l : ℂ) - 1) / 2) *
+          absPow k (-(modExp (fun _ : Fin l => Fin 1) i : ℂ) / 2))
+            (Matrix.GeneralLinearGroup.det (g i)) : ℂ)) x
+      simp only [RingHom.id_apply] at hmap
+      rw [← hmap]
+      congr 1
       funext i
       rw [modExp_fin _ (fun _ => by simp), mul_assoc, ← absPow_add,
         show ((l : ℂ) - 1) / 2 + -(((l : ℤ) - 1 - 2 * ((i : ℕ) : ℤ) : ℤ) : ℂ) / 2 = ((i : ℕ) : ℂ) by
@@ -340,20 +333,6 @@ theorem nonempty_jac_det_equiv (e : (Σ _ : Fin l, Fin 1) ≃ n) (χ : kˣ →* 
   refine LinearMap.ext fun x => ?_
   simp only [LinearMap.comp_apply]
   rw [key, Model.jac_detRep, map_smul]
-
-theorem exists_det_embedding (e : (Σ _ : Fin l, Fin 1) ≃ n) {χ : kˣ →* ℂˣ} (hχ : IsSmoothChar χ) :
-    ∃ φ : (detRep n (χ * absPow k (((l : ℂ) - 1) / 2))).IntertwiningMap
-      (multiProd e (segTerm (detRep (Fin 1) χ) l)), Function.Injective φ := by
-  obtain ⟨ψ⟩ := nonempty_jac_det_equiv e χ
-  obtain ⟨φ, hφ⟩ := (Model.evalOne_bijective e ((isSmooth_ofChar_iff _).2
-    (hχ.mul (isSmoothChar_of_isUnram (isUnram_absPow k _))).detChar) _).2 ψ.toIntertwiningMap
-  refine ⟨φ, (injective_iff_map_eq_zero _).2 fun v hv => ?_⟩
-  have h1 : ψ (Submodule.Quotient.mk v) = (φ v).1.1 1 :=
-    (congrArg (fun F => F (Submodule.Quotient.mk v)) hφ).symm
-  replace h1 : ψ (Submodule.Quotient.mk v) = 0 := h1.trans (congrArg (fun F => F.1.1 1) hv)
-  have h2 : v ∈ twKer (detRep n (χ * absPow k (((l : ℂ) - 1) / 2))) (unipRad k e) 1 :=
-    (Submodule.Quotient.mk_eq_zero _).1 ((map_eq_zero_iff ψ ψ.injective).1 h1)
-  rwa [twKer_detRep] at h2
 
 theorem IsSegmentClass.ofChar {Z : ∀ Δ : Segment k, IrrCl (GL (Fin (Δ.len * Δ.d)) k)}
     (hZ : IsSegmentClass k Z) {χ : kˣ →* ℂˣ} (hχ : IsSmoothChar χ) (hl : 0 < l) :
@@ -364,14 +343,6 @@ theorem IsSegmentClass.ofChar {Z : ∀ Δ : Segment k, IrrCl (GL (Fin (Δ.len * 
     (IrrRep.det (Fin (l * 1)) (χ * absPow k (((l : ℂ) - 1) / 2))
       (hχ.mul (isSmoothChar_of_isUnram (isUnram_absPow k _))))).2
   exact (h1.2 (nonempty_jac_det_equiv (l := l) (n := Fin (l * 1)) e χ)).symm
-
-example : Function.Injective fun l : ℕ =>
-    Segment.ofChar (1 : kˣ →* ℂˣ) isSmoothChar_one (l + 1) l.succ_pos :=
-  fun _ _ h => Nat.succ_injective (congrArg Segment.len h)
-
-example : ∃ b b' : SizeMatrix (fun _ : Fin 2 => Fin 1) (fun _ : Fin 2 => Fin 1), b ≠ b' :=
-  ⟨⟨![![1, 0], ![0, 1]], by decide⟩, ⟨![![0, 1], ![1, 0]], by decide⟩, fun h =>
-    absurd (congrArg (fun b => b.1 0 0) h) (by decide)⟩
 
 end Characters
 

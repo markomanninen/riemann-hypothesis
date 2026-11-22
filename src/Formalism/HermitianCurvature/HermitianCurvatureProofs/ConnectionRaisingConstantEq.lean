@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.StatementNF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuasiDeterminantFromEntries
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterlaceSignTwo
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsPFSum
+module
+
+public import Formalism.HermitianCurvature.StatementNF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuasiDeterminantFromEntries
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterlaceSignTwo
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsPFSum
+
+@[expose] public section
 
 open Matrix Finset Polynomial
 
@@ -28,11 +32,13 @@ theorem pj_orth {ρ σ : M.Ty P} (h : ρ ≠ σ) : proj κ ρ * proj κ σ = 0 :
 
 theorem sum_pj : ∑ ρ, proj κ ρ = 1 := by
   unfold proj
-  rw [← map_sum, ← map_one κ]; congr 1; funext x; simp
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, ← map_one κ]; congr 1; funext x; simp
 
 theorem kap_eq (f : M.Ty P → ℂ) : κ f = ∑ ρ, f ρ • proj κ ρ := by
   unfold proj
-  simp_rw [← map_smul, ← map_sum]; congr 1; funext x; simp
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [← map_smul, ← map_sum]; congr 1; funext x; simp
 
 theorem kap_mul_pj (f : M.Ty P → ℂ) (ρ : M.Ty P) : κ f * proj κ ρ = f ρ • proj κ ρ := by
   unfold proj
@@ -121,7 +127,8 @@ theorem isPF_zero {f : ℂ → A} (hf : IsPF f) {S : Set ℂ} (hS : S.Infinite) 
   let q : ℂ[X] := p.sum fun n a => monomial n (φ a)
   have hq : ∀ Z, q.eval Z = φ (ev p Z) := by
     intro Z
-    simp only [q, ev, eval₂_eq_sum, Polynomial.sum, eval_finsetSum, eval_monomial, map_sum, RingHom.id_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [q, ev, eval₂_eq_sum, Polynomial.sum, eval_finsetSum, eval_monomial, map_sum, RingHom.id_apply]
     refine Finset.sum_congr rfl fun n _ => ?_
     rw [← map_pow, ← Algebra.commutes, ← Algebra.smul_def, map_smul, smul_eq_mul, mul_comm]
   have : q = 0 := by
@@ -327,14 +334,9 @@ theorem blk_mul {R S : M.Ty P → M.Ty P → Prop} {X Y : A} (hX : GlobalTheory 
 theorem blk_mono {R S : M.Ty P → M.Ty P → Prop} {X : A} (hX : GlobalTheory κ R X) (hRS : ∀ τ σ, R τ σ → S τ σ) :
     GlobalTheory κ S X := fun σ τ h => hX σ τ fun h' => h (hRS τ σ h')
 
-theorem blk_add {R : M.Ty P → M.Ty P → Prop} {X Y : A} (hX : GlobalTheory κ R X) (hY : GlobalTheory κ R Y) : GlobalTheory κ R (X + Y) := by
-  intro σ τ h; rw [mul_add, add_mul, hX σ τ h, hY σ τ h, add_zero]
-
 theorem blk_sum {R : M.Ty P → M.Ty P → Prop} {ι : Type} (s : Finset ι) {X : ι → A} (hX : ∀ i ∈ s, GlobalTheory κ R (X i)) :
     GlobalTheory κ R (∑ i ∈ s, X i) := by
   intro σ τ h; rw [Finset.mul_sum, Finset.sum_mul]; exact Finset.sum_eq_zero fun i hi => hX i hi σ τ h
-
-theorem blk_zero (R : M.Ty P → M.Ty P → Prop) : GlobalTheory κ R (0 : A) := by intro σ τ _; simp
 
 theorem blk_diag {X : A} (hX : ∀ ρ, Commute (proj κ ρ) X) : GlobalTheory κ (fun τ σ => τ = σ) X := by
   intro σ τ h
@@ -444,12 +446,6 @@ theorem sb_pj_GGi (h : SHyp P L0 QQ κ) (ρ : M.Ty P) : proj κ ρ * L0.GGi = L0
 
 theorem sb_pj_ζb (h : SHyp P L0 QQ κ) (ρ : M.Ty P) : proj κ ρ * L0.ζb = L0.ζb * proj κ ρ :=
   (H_kops h _ _ sb_mem_ζb).eq
-
-theorem sb_x_ζb (h : SHyp P L0 QQ κ) (v : ℂ) : xA κ v * L0.ζb = L0.ζb * xA κ v :=
-  (H_kops h _ _ sb_mem_ζb).eq
-
-theorem sb_GG_ζb : L0.GG * L0.ζb = L0.ζb * L0.GG :=
-  L0.fns_comm _ (by simp) _ (by simp)
 
 theorem sb_GGi_ζb : L0.GGi * L0.ζb = L0.ζb * L0.GGi :=
   L0.fns_comm _ (by simp) _ (by simp)
@@ -1423,9 +1419,7 @@ theorem sc_fc (L0 : PreLevel A P.r) {x y : A} (hx : x ∈ L0.fns) (hy : y ∈ L0
 section Mem
 variable (L0 : PreLevel A P.r)
 theorem sc_mζ : L0.ζ ∈ L0.fns := by simp [PreLevel.fns]
-theorem sc_mζi : L0.ζi ∈ L0.fns := by simp [PreLevel.fns]
 theorem sc_mζb : L0.ζb ∈ L0.fns := by simp [PreLevel.fns]
-theorem sc_mζbi : L0.ζbi ∈ L0.fns := by simp [PreLevel.fns]
 theorem sc_mGG : L0.GG ∈ L0.fns := by simp [PreLevel.fns]
 theorem sc_mGGi : L0.GGi ∈ L0.fns := by simp [PreLevel.fns]
 theorem sc_mc (l) : L0.c l ∈ L0.fns := by simp [PreLevel.fns]
@@ -2011,7 +2005,7 @@ theorem sc_star_prod {Y : ℂ} (hY : star Y = Y) (s : Finset ℕ) (g : ℕ → �
     star (∏ i ∈ s, (Y + (g i : ℂ))) = ∏ i ∈ s, (Y + (g i : ℂ)) := by
   rw [show star (∏ i ∈ s, (Y + (g i : ℂ))) = starRingEnd ℂ (∏ i ∈ s, (Y + (g i : ℂ))) from rfl, map_prod]
   refine Finset.prod_congr rfl fun i _ => ?_
-  rw [map_add, Complex.conj_ofReal]
+  rw [map_add (f := _), Complex.conj_ofReal]
   congr 1
 
 theorem sc_star_xA (h : SHyp P L0 QQ κ) {Y : ℂ} (hY : star Y = Y) : star (xA κ Y) = xA κ Y := by
@@ -2580,12 +2574,6 @@ end
 end Formalism.FourierDecayAlt.P.NFx2
 
 namespace Formalism.FourierDecayAlt.P
-
-theorem shift_block : Formalism.FourierDecayAlt.NF.SBlock := NFx2.sb_main
-
-theorem shift_connection : Formalism.FourierDecayAlt.NF.SConn := NFx2.sc_main
-
-theorem shift_norm : Formalism.FourierDecayAlt.NF.SNorm := NFx2.sn_main
 
 theorem theorem_S_of_steps : Formalism.FourierDecayAlt.NF.ThmSOfSteps := NFx2.thmSOfSteps
 

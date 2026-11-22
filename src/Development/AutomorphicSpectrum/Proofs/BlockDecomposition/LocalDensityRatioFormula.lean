@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BaseOneSide.PsiSide
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BaseOneSide.PsiSide
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 
@@ -59,12 +63,12 @@ open Classical in
 theorem summable_ge (v : HeightOneSpectrum (𝓞 F)) (e : ℝ) (s : Fv F v) :
     Summable fun i : ℕ => if Ge v i s then e ^ i else 0 := by
   obtain ⟨N, hN⟩ := exists_not_ge s
-  refine summable_of_finite_support ((Set.finite_Iic N).subset fun i hi => ?_)
+  refine summable_of_hasFiniteSupport ((Set.finite_Iic N).subset fun i hi => ?_)
   by_contra h
   exact hi (if_neg (hN i (not_le.1 h)))
 
-open Classical in
 
+open Classical in
 theorem rv_form {v : HeightOneSpectrum (𝓞 F)} (s : Fv F v) :
     (¬ Ge v 0 s ∧ ∀ e, rv v e s = 0) ∨
       ∃ n : ℕ, (∀ i, Ge v i s ↔ i ≤ n) ∧ ∀ e, rv v e s = ∑ i ∈ Finset.range (n + 1), e ^ i := by
@@ -203,8 +207,8 @@ theorem ge_pow {v : HeightOneSpectrum (𝓞 F)} {u : (Fv F v)ˣ} (hu : Valued.v 
   | succ k ih =>
     rw [ge_shift hu, ih, pow_succ, Units.val_mul, mul_assoc]
 
-open Classical in
 
+open Classical in
 theorem rv_one_series {v : HeightOneSpectrum (𝓞 F)} {u : (Fv F v)ˣ} (hu : Valued.v (u : Fv F v) = WithZero.exp (1 : ℤ))
     (s : Fv F v) : rv v 1 s = ∑' k : ℕ, rv v 0 ((((u ^ k : (Fv F v)ˣ)) : Fv F v) * s) := by
   rw [rv_eq]
@@ -285,7 +289,7 @@ theorem continuous_pure (S : Finset (HeightOneSpectrum (𝓞 F))) {G : Ainf F �
   unfold PositivityTheory.Rg.Base1.pure
   refine ENNReal.continuous_ofReal.comp ?_
   refine ((hG.comp c1).mul ?_).mul ?_
-  · refine continuous_finset_prod _ fun v hv => (hg v hv).comp ?_
+  · refine continuous_finsetProd _ fun v hv => (hg v hv).comp ?_
     exact (RestrictedProduct.continuous_eval v).comp c2
   · refine continuous_of_inv _ fun a u hu => finprod_congr fun x => ?_
     exact (hw x.1).1 _ _ (val_mul_std a u hu x.1)
@@ -495,8 +499,8 @@ section Limit
 variable {S : Finset (HeightOneSpectrum (𝓞 F))} {G : Ainf F → ℝ} {g : ∀ v : HeightOneSpectrum (𝓞 F), Fv F v → ℝ}
   {e : HeightOneSpectrum (𝓞 F) → ℝ}
 
-open Classical in
 
+open Classical in
 def wT (e : HeightOneSpectrum (𝓞 F) → ℝ) (S : Finset (HeightOneSpectrum (𝓞 F))) (T : Finset (Off S))
     (v : HeightOneSpectrum (𝓞 F)) : Fv F v → ℝ :=
   if ∃ hv : v ∉ S, (⟨v, hv⟩ : Off S) ∈ T then rv v (e v) else rv v 0
@@ -556,7 +560,7 @@ theorem pure_le {w : ∀ v : HeightOneSpectrum (𝓞 F), Fv F v → ℝ} (hG0 : 
   set U := (finite_mulSupport_off hw a S).toFinset ∪ (finite_mulSupport_off h1 a S).toFinset with hU
   rw [finprod_eq_prod_of_mulSupport_subset (s := U) _ (fun x hx => by simp [hU, Set.Finite.mem_toFinset] at hx ⊢; exact Or.inl hx),
     finprod_eq_prod_of_mulSupport_subset (s := U) _ (fun x hx => by simp [hU, Set.Finite.mem_toFinset] at hx ⊢; exact Or.inr hx)]
-  exact Finset.prod_le_prod (fun x _ => (hw x.1).2.2.1 _) (fun x _ => (hw x.1).2.2.2 _)
+  exact Finset.prod_le_prod₀ (fun x _ => (hw x.1).2.2.1 _) (fun x _ => (hw x.1).2.2.2 _)
 
 theorem eventually_pure_eq (he : ∀ v, e v = 1 ∨ e v = -1) (a : (AF F)ˣ) :
     ∀ᶠ T : Finset (Off S) in atTop, PositivityTheory.Rg.Base1.pure S G g (wT e S T) a = PositivityTheory.Rg.Base1.pure S G g (fun v => rv v (e v)) a := by
@@ -620,7 +624,7 @@ theorem zi_one_ne_top (hG : Continuous G) (hG0 : ∀ y, 0 ≤ G y) (hg : ∀ v �
       have h1 : Real.exp (-(2 * ∑ x ∈ T, (Ideal.absNorm x.1.asIdeal : ℝ) ^ (-s))) ≤
           ∏ x ∈ T, (1 - (fun _ => (1 : ℝ)) x.1 * (Ideal.absNorm x.1.asIdeal : ℝ) ^ (-s)) := by
         rw [Finset.mul_sum, ← Finset.sum_neg_distrib, Real.exp_sum]
-        refine Finset.prod_le_prod (fun _ _ => (Real.exp_pos _).le) fun x _ => ?_
+        refine Finset.prod_le_prod₀ (fun _ _ => (Real.exp_pos _).le) fun x _ => ?_
         simp only [one_mul]
         exact exp_le_one_sub (by positivity) (q_le_half x.1 hs)
       refine le_trans ?_ h1

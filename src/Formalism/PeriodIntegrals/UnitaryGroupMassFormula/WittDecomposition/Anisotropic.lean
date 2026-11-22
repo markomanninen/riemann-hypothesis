@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.WittExtension
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.WittExtension
+
+@[expose] public section
 
 namespace PI.Witt
 

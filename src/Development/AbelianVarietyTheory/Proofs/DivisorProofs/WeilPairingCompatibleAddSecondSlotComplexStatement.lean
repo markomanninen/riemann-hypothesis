@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilPairingAddRightComplex
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PointShiftSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilPairingAddRightComplex
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointShiftSt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CM
 set_option maxHeartbeats 1000000 in

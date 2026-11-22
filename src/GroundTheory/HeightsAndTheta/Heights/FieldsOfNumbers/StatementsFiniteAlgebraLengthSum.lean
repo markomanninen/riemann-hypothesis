@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -18,11 +23,6 @@ def FiniteAlgebraLengthSum.Statement : Prop :=
         Module.length A (B ⧸ LinearMap.range (LinearMap.lsmul A B α)) =
           ∑ i, Ring.ord (C i) (algebraMap B (C i) (algebraMap A B α)) *
             Module.length A (B ⧸ 𝔪 i)
-
-instance span_two_isPrime : (Ideal.span {(2 : ℤ)}).IsPrime :=
-  (Ideal.span_singleton_prime (by norm_num)).mpr Int.prime_two
-
-abbrev ZLocTwo : Type := Localization.AtPrime (Ideal.span {(2 : ℤ)})
 
 end
 

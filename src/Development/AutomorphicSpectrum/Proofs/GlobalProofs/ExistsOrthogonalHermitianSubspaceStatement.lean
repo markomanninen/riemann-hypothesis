@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsOrthogonalHermitianSubspace
-import Mathlib
-import Formalism.RealPlaceAnalysis.SmoothOnGVIff
-import Formalism.FormalDegreeBessel.StatementG
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsOrthogonalHermitianSubspace
+public import Formalism.RealPlaceAnalysis.SmoothOnGVIff
+public import Formalism.FormalDegreeBessel.StatementG
+
+@[expose] public section
+
 open Matrix
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.involution_stable_subspace_coordinate : ∀ {n : ℕ} (ε : Fin n → Bool) (W : Submodule ℂ (Fin n → ℂ)), (∀ v ∈ W, Formalism.REAL.Jm ε *ᵥ v ∈ W) →

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsNoetherianRingOfIsAdicComplete
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsNoetherianRingOfIsAdicComplete
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.CA ReciprocityTheory.CA
 
@@ -21,7 +25,7 @@ private theorem exists_subalgebra_of_residue_constants (O : Type) [CommRing O] (
     refine ⟨a + b, ?_⟩
     have e : x + y - algebraMap O R (a + b)
         = (x - algebraMap O R a) + (y - algebraMap O R b) := by
-      rw [map_add]; ring
+      rw [map_add (f := _)]; ring
     rw [e]
     exact Ideal.add_mem _ ha hb
   · exact ⟨0, by simp⟩

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.ExtremalFacts
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.GradedWeylDivisibility.FinalD
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.ExtremalFacts
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.GradedWeylDivisibility.FinalD
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ theorem natW_add_A {N : ℕ} (lam : DomWeight N) (i : Fin N) :
   have hle : lam.w ⟨N - 1, by omega⟩ ≤ lam.w i :=
     lam.anti (show i ≤ ⟨N - 1, by omega⟩ by rw [Fin.le_def]; simp; omega)
   unfold DomWeight.natW DomWeight.detShift
-  rw [dif_pos hN, Int.toNat_of_nonneg (by omega)]
+  rw [dite_eq_left hN, Int.toNat_of_nonneg (by omega)]
   ring
 
 theorem natW_anti_A {N : ℕ} (lam : DomWeight N) : Antitone lam.natW := by

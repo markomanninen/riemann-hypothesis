@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -24,7 +28,7 @@ theorem iSupIndep_of_joint_eigen {E I : Type} [AddCommGroup E] [Module ℂ E]
       obtain ⟨w, hw, u, hu, hsum⟩ := hv
       obtain ⟨i, hi⟩ := Function.ne_iff.mp hx.1
       have e : (x i - y i) • v = h i u - y i • u := by
-        rw [sub_smul, ← hV x v hvx i, ← hsum, map_add, hV y w hw i, smul_add]; abel
+        rw [sub_smul, ← hV x v hvx i, ← hsum, map_add (f := _), hV y w hw i, smul_add]; abel
       have h0 := ih hx.2 ((x i - y i) • v) (Submodule.smul_mem _ _ hvx)
         (e ▸ Submodule.sub_mem _ (stab s i u hu) (Submodule.smul_mem _ _ hu))
       exact (smul_eq_zero.mp h0).resolve_left (sub_ne_zero.mpr hi)

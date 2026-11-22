@@ -1,11 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.MCoordIdealGenericPointEq
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PChartVelLift
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LeviChartRegularityStatementHolds
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.MCoordIdealGenericPointEq
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PChartVelLift
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LeviChartRegularityStatementHolds
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 
@@ -106,9 +110,7 @@ theorem potential_pos_of_section :
   have hc2 : ContDiffAt ℝ 2 (fun u => ((G ∘ e.symm) u).re) y := by
     have h := (Complex.reCLM.contDiff (n := 2)).contDiffAt.comp y
       (hg.restrictScalars.contDiffAt (n := 2))
-    convert h using 1
-    funext u
-    simp
+    simpa only [Function.comp_def, Complex.reCLM_apply] using h
   have hev : (Φ.φ x ∘ e.symm) =ᶠ[𝓝 y]
       fun u => ((fun z => Real.log (D.A'.h z)) ∘ τ) u + (1 : ℝ) * ((G ∘ e.symm) u).re := by
     filter_upwards [hVn] with u hu

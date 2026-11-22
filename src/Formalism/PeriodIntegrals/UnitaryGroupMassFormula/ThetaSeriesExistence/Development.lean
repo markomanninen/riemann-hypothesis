@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LatDefs
-import Formalism.PeriodIntegrals.SigmaStarEx
-import Formalism.PeriodIntegrals.AreaLat
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AreaLat
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ThetaSeriesExistence.ThetaDerivNe
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LatDefs
+public import Formalism.PeriodIntegrals.SigmaStarEx
+public import Formalism.PeriodIntegrals.AreaLat
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AreaLat
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ThetaSeriesExistence.ThetaDerivNe
+
+@[expose] public section
 
 noncomputable section
 

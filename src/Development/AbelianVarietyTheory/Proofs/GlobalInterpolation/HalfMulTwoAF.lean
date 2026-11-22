@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DecayZero
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DecayZero
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Topology Filter Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.GaugeEx GlobalTheory.SWQ
 open scoped TensorProduct NNReal ENNReal
@@ -59,7 +63,8 @@ theorem half_mul_two_AF : algebraMap F (AF F) (1 / 2) * 2 = 1 := by
   rw [← map_ofNat (algebraMap F (AF F)) 2, ← map_mul, one_div, inv_mul_cancel₀ two_ne_zero, map_one]
 
 theorem qd_rat (a : Fin N → F) (ξ : Fin N → F) : qd (AF F) a (rat ξ) = algebraMap F (AF F) (qd F a ξ) := by
-  simp only [qd, rat, map_sum, map_mul, map_pow]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [qd, rat, map_sum, map_mul, map_pow]
   rfl
 
 end HeisenbergBilinear

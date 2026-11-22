@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSettingBis
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParametersUPrimeForULower
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSettingBis
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParametersUPrimeForULower
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBI
 
@@ -161,7 +165,7 @@ theorem head_top_of_correspondence : PBI.HeadTopOfCorr := by
     have hm := Formalism.FourierDecayAlt.P.Topx1.act_mul ((Fr.ofWord L st (D.positionted w)).d L) (Fr.ofWord L st (D.positionted w)).F Φ
     rw [hm, ← hy, hd h hh y e, Formalism.FourierDecayAlt.P.Topx1.hsInner_sum_smul_left]
   unfold KB.Pl.RR D.RRplace
-  rw [dif_pos ⟨hp, hq⟩, dif_neg (by omega), if_pos rfl, hLHS]
+  rw [dite_eq_left ⟨hp, hq⟩, dite_eq_right (by omega), if_pos rfl, hLHS]
   by_cases hw : w = []
   · subst hw
     rw [if_pos rfl]

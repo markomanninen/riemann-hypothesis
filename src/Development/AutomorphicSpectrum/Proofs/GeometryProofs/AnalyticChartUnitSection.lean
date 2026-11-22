@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.GagaSections
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenPtSpecializesOfSpecializes
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueSection
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.UnLocal
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.UnitAtDivOfIsGenAt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.GagaSections
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenPtSpecializesOfSpecializes
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueSection
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.UnLocal
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.UnitAtDivOfIsGenAt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl GlobalTheory.CompanionTheory.Ar.Flat Filter Topology Metric
 open ReciprocityTheory.ChartRestriction.G.TB.ValAt ReciprocityTheory.ChartRestriction.G.PullbackSections
@@ -34,7 +39,23 @@ theorem exists_hChart_of_extendsUnitAt : ∀ (X : Scheme.{0}) (s : X ⟶ Sp ℂ)
   refine ⟨B ∩ (ball b₁ ε ∩ h' ⁻¹' {0}ᶜ), fun b => h' b * valAt' (Y b) N v,
     ⟨hb₁, Metric.mem_ball_self hε, h0⟩, ?_⟩
   refine
-    { chart := hY.mono hB₂ hsub
+    { chart := by
+        refine { isOpen := hB₂, hol := ?_, isOver := fun b hb => hY.isOver b (hsub hb), factor := ?_ }
+        · intro U f
+          have e : {b ∈ B ∩ (ball b₁ ε ∩ h' ⁻¹' {0}ᶜ) | ⊤ ≤ Y b ⁻¹ᵁ U} =
+              (B ∩ (ball b₁ ε ∩ h' ⁻¹' {0}ᶜ)) ∩ {b ∈ B | ⊤ ≤ Y b ⁻¹ᵁ U} := by
+            ext b
+            exact ⟨fun hb => ⟨hb.1, hsub hb.1, hb.2⟩, fun hb => ⟨hb.1, hb.2.2⟩⟩
+          rw [e]
+          exact ⟨hB₂.inter (hY.hol U f).1, (hY.hol U f).2.mono Set.inter_subset_right⟩
+        · intro m B' y oB hy ov b₀ h₀ b₂ h₂ e
+          obtain ⟨ε', κ, ε0, sub, dκ, k₀, hκ⟩ := hY.factor m B' y oB hy ov b₀ h₀ b₂ (hsub h₂) e
+          have c : ContinuousAt κ b₀ := (dκ.differentiableAt (ball_mem_nhds _ ε0)).continuousAt
+          have m₂ : κ ⁻¹' (B ∩ (ball b₁ ε ∩ h' ⁻¹' {0}ᶜ)) ∈ 𝓝 b₀ :=
+            c.preimage_mem_nhds (hB₂.mem_nhds (k₀ ▸ h₂))
+          obtain ⟨δ, δ0, hδ⟩ := Metric.mem_nhds_iff.1 (Filter.inter_mem m₂ (ball_mem_nhds b₀ ε0))
+          have sb : ball b₀ δ ⊆ ball b₀ ε' := fun b hb => (hδ hb).2
+          exact ⟨δ, κ, δ0, sb.trans sub, dκ.mono sb, k₀, fun b hb => ⟨(hδ hb).1, (hκ b (sb hb)).2⟩⟩
       inU := fun b hb => hNU (hN b hb.1).1
       cpt := fun b hb => (hN b hb.1).2
       dense := fun O oO sO nO => hW O oO (sO.trans hsub) nO

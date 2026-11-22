@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.RootEqOfSubMem
-import Mathlib
+module
+
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.RootEqOfSubMem
+public import Mathlib
+
+@[expose] public section
 
 open NumberField IntermediateField Ideal
 open scoped Pointwise
@@ -162,7 +166,7 @@ theorem cop_QSq_d : Nat.Coprime (H.QS * H.q) H.d := by
     rw [h] at h1
     omega
   have hq : Nat.Coprime H.q H.d := (Nat.coprime_primes H.hyp.1 H.hyp.2.1).mpr hqd
-  exact Nat.Coprime.mul (Nat.Coprime.coprime_mul_left_right H.QS_coprime) hq
+  exact Nat.Coprime.mul_left (Nat.Coprime.coprime_mul_left_right H.QS_coprime) hq
 
 theorem split_QSq (l : ℕ) (hl : l.Prime) (hl2 : l ≠ 2) (h : l ∣ H.QS * H.q) : jacobiSym (-(H.d : ℤ)) l = 1 := by
   rcases (Nat.Prime.dvd_mul hl).mp h with h1 | h1
@@ -350,7 +354,7 @@ theorem frob : ∀ (p : ℕ) [Fact p.Prime], ¬ p ∣ H.condN →
   refine ⟨?_, ?_, ?_⟩
   · rw [hg]
     unfold HostRaw.psAt
-    rw [dif_pos hcop]
+    rw [dite_eq_left hcop]
   · rw [hg, art_snd_lemma H, hu0, ZMod.val_natCast, jac_lemma hpodd hd4,
       jacobiSym.mod_left ((p % H.condN : ℕ) : ℤ), jacobiSym.mod_left (p : ℤ)]
     congr 1
@@ -469,7 +473,7 @@ theorem decomp_typeI : ∀ (l : ℕ), l.Prime → l ∣ H.QS * H.q →
   have hσω : σ • ω = 1 - ω := by
     apply NumberField.RingOfIntegers.ext
     show σ (ω : H.E) = 1 - (ω : H.E)
-    rw [hωc, map_div₀, map_add, map_one, hσX, show σ (2 : H.E) = 2 from map_ofNat σ 2]
+    rw [hωc, map_div₀, map_add (f := _), map_one, hσX, show σ (2 : H.E) = 2 from map_ofNat σ 2]
     ring
   have hprod : (ω - ((a + 1 : ℤ) : 𝓞 H.E)) * (ω - (1 - ((a + 1 : ℤ) : 𝓞 H.E))) =
       -((l : ℤ) : 𝓞 H.E) * ((k * c : ℤ) : 𝓞 H.E) := by

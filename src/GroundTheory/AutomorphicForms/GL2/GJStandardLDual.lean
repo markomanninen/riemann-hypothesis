@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJStandardLUnramified
-import GroundTheory.AutomorphicForms.WhittakerCriterion
-import GroundTheory.AutomorphicForms.SmoothRepContragredient
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJStandardLUnramified
+public import GroundTheory.AutomorphicForms.WhittakerCriterion
+public import GroundTheory.AutomorphicForms.SmoothRepContragredient
+
+@[expose] public section
 
 open MeasureTheory
 

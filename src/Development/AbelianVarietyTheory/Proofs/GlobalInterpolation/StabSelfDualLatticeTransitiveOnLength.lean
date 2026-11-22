@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.StabilizerLattices
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SelfDualStabilizer
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StabTransitiveOfLemmas
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SelfDualLatticesUnramifiedPlaceNoHypothesisStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.StabilizerLattices
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SelfDualStabilizer
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StabTransitiveOfLemmas
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SelfDualLatticesUnramifiedPlaceNoHypothesisStatement
+
+@[expose] public section
 
 namespace GlobalTheory.StabOrbit
 

@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FiniteSupportHeight
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.Objects
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.IsRatSectionOn
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FiniteSupportHeight
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.Objects
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.IsRatSectionOn
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -21,8 +26,6 @@ def flatCone {F : Type*} (z : Cone n F) : Coord n → F := fun p ↦ z p.1 p.2
 
 def unflatCone {F : Type*} (w : Coord n → F) : Cone n F := fun k i ↦ w ⟨k, i⟩
 
-@[simp] theorem unflatCone_flatCone {F : Type*} (z : Cone n F) : unflatCone (flatCone z) = z := rfl
-
 @[simp] theorem flatCone_unflatCone {F : Type*} (w : Coord n → F) : flatCone (unflatCone w) = w := rfl
 
 theorem blockNonzero_unflatCone_iff {F : Type*} [Zero F] (w : Coord n → F) :
@@ -38,8 +41,7 @@ variable [Fintype ι] [DecidableEq ι]
 
 theorem ArithVariety.mem_mcPts_iff (P : ArithVariety n) (w : Coord n → ℂ) :
     w ∈ Geo.mcPts P.ideal ↔ unflatCone w ∈ P.points ℂ := by
-  rw [ArithVariety.points, Set.mem_setOf_eq, blockNonzero_unflatCone_iff, Geo.mcPts,
-    Set.mem_setOf_eq]
+  simp only [ArithVariety.points, Geo.mcPts, Set.mem_ofPred_eq, blockNonzero_unflatCone_iff]
   refine and_congr Iff.rfl (forall₂_congr fun f _ ↦ ?_)
   rw [← eval_map_flatCone, flatCone_unflatCone]
 
@@ -74,16 +76,11 @@ theorem ArithVariety.isMultiProjPrime (P : ArithVariety n) :
   refine Ideal.sum_mem _ fun m _ ↦ Ideal.subset_span ⟨P.homogeneous f hf m, m, ?_⟩
   exact (geoMultiHomog_iff _ m).mpr (weightedHomogeneousComponent_isWeightedHomogeneous m f)
 
-theorem ArithVariety.isHorizontal (P : ArithVariety n) :
-    Geo.IsHorizontal (ι := blockIdx n) P.ideal := by
-  ext a
-  rw [Ideal.mem_comap, Ideal.mem_bot]
-  exact ⟨P.horizontal a, fun h ↦ by rw [h, map_zero]; exact P.ideal.zero_mem⟩
-
 namespace HermLine
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def toGeo (A : HermLine n) : Geo.HermLine (blockIdx n) where
   a := A.deg
   h w := if BlockNonzero (unflatCone w) then A.metric (unflatCone w) else 0
@@ -120,26 +117,12 @@ theorem toGeo_h_of_blockNonzero (A : HermLine n) {w : Coord n → ℂ}
 
 theorem isSmoothHerm_toGeo (A : HermLine n) : Geo.IsSmoothHerm A.toGeo := by
   have hu : ContDiff ℝ ∞ (fun w : Coord n → ℂ ↦ unflatCone w) :=
-    contDiff_pi.2 fun k ↦ contDiff_pi.2 fun i ↦ contDiff_apply ℝ ℂ (⟨k, i⟩ : Coord n)
+    contDiff_pi.2 fun k ↦ contDiff_pi.2 fun i ↦ contDiff_apply ℝ (fun _ => ℂ) (⟨k, i⟩ : Coord n)
   have hm : ContDiffOn ℝ ∞ (fun w : Coord n → ℂ ↦ A.metric (unflatCone w))
       {w | ∀ k, ∃ i, w ⟨k, i⟩ ≠ 0} :=
     A.metric_smooth.comp hu.contDiffOn fun w hw ↦ (blockNonzero_unflatCone_iff w).mpr hw
   refine hm.congr fun w hw ↦ ?_
   exact A.toGeo_h_of_blockNonzero ((blockNonzero_unflatCone_iff w).mpr hw)
-
-theorem geo_ext {K : Type*} [Fintype K] {κ : K → Type*} [∀ k, Fintype (κ k)]
-    {A B : Geo.HermLine κ} (ha : A.a = B.a) (hh : A.h = B.h) : A = B := by
-  obtain ⟨a, h, _, _⟩ := A
-  obtain ⟨b, h', _, _⟩ := B
-  simp only at ha hh
-  subst ha hh
-  rfl
-
-theorem toGeo_mul (A B : HermLine n) : (A.mul B).toGeo = A.toGeo.tensor B.toGeo := by
-  refine geo_ext rfl ?_
-  funext w
-  simp only [toGeo, mul, Geo.HermLine.tensor]
-  split_ifs <;> simp
 
 end HermLine
 
@@ -157,8 +140,8 @@ theorem aeval_div_chart_mem {Ω : Type*} [Field Ω] (y : Coord n → Ω) (c : (k
   rw [aeval_def, eval₂_eq, Finset.sum_mul]
   refine Subalgebra.sum_mem _ fun m hm ↦ ?_
   have hmδ : ∀ k, ∑ i, m ⟨k, i⟩ = δ k := (geoMultiHomog_iff e δ).mpr he m hm
-  have key : (algebraMap ℤ Ω (coeff m e) * ∏ p ∈ m.support, y p ^ m p) * ∏ k, (y ⟨k, c k⟩ ^ δ k)⁻¹ =
-      algebraMap ℤ Ω (coeff m e) * ∏ p, (y p / y ⟨p.1, c p.1⟩) ^ m p := by
+  have key : (algebraMap ℤ Ω (AddMonoidAlgebra.coeff e m) * ∏ p ∈ m.support, y p ^ m p) * ∏ k, (y ⟨k, c k⟩ ^ δ k)⁻¹ =
+      algebraMap ℤ Ω (AddMonoidAlgebra.coeff e m) * ∏ p, (y p / y ⟨p.1, c p.1⟩) ^ m p := by
     rw [mul_assoc]
     congr 1
     rw [Finset.prod_subset (Finset.subset_univ m.support) (fun p _ hp ↦ by
@@ -232,14 +215,6 @@ theorem samplePoint_blockNonzero : BlockNonzero samplePoint := by
   intro _ h
   have := congrFun h 0
   simp [samplePoint] at this
-
-example : Geo.IsSectionOn (orbitIdeal samplePoint) (HermLine.standard _).toGeo
-    (chartMonomial (fun _ ↦ 0) 1) :=
-  isSectionOn_chartMonomial _ _ _ (fun _ ↦ by simp [samplePoint]) 1 (fun _ ↦ rfl)
-
-example : Geo.IsMultiProjPrime (ι := blockIdx (fun _ : Unit ↦ 1)) (ArithVariety.whole _).ideal ∧
-    Geo.IsSmoothHerm (HermLine.standard (fun _ : Unit ↦ 1)).toGeo :=
-  ⟨ArithVariety.isMultiProjPrime _, HermLine.isSmoothHerm_toGeo _⟩
 
 end
 

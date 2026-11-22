@@ -1,10 +1,15 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
 
-open MvPolynomial in
 
+open MvPolynomial in
 theorem exists_field_combination_norm_ne_zero {k B A : Type} [Field k] [Infinite k] [CommRing B]
     [IsDomain B] [Algebra k B] [CommRing A] [Algebra B A] [Module.Free B A] [Module.Finite B A]
     {d : ℕ} (y : Fin d → A) (hx : ∃ x : Fin d → B, Algebra.norm B (∑ i, x i • y i) ≠ 0) :
@@ -20,7 +25,8 @@ theorem exists_field_combination_norm_ne_zero {k B A : Type} [Field k] [Infinite
     rw [Algebra.norm_eq_matrix_det b, RingHom.map_det]
     congr 1
     ext j l
-    simp [M, map_sum, Matrix.sum_apply, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [M, map_sum, Matrix.sum_apply, mul_comm]
   by_contra hcon
   push_neg at hcon
   have hinf : ∀ _ : Fin d, (Set.range (algebraMap k B)).Infinite := fun _ =>

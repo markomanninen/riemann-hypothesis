@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedVectorEqOfStandardData
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsTwIffCanonEq
-import Formalism.LocalToGlobal.HilbertRowConditions.TiedEMt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.H90USurjective
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValDetSubOneLt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DetMulConjDet
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RelDetAdelicOfPinned
-import Formalism.LocalToGlobal.Columns.RecLevelTop
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedVectorEqOfStandardData
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsTwIffCanonEq
+public import Formalism.LocalToGlobal.HilbertRowConditions.TiedEMt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.H90USurjective
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValDetSubOneLt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DetMulConjDet
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RelDetAdelicOfPinned
+public import Formalism.LocalToGlobal.Columns.RecLevelTop
+
+@[expose] public section
 
 noncomputable section
 

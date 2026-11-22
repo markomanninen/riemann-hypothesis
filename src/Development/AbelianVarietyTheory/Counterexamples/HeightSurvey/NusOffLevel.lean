@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.OEOsInjective
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.RPfVal
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.SpanResCharNeBot
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.WindowsAllowOffCentre
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.OEOsInjective
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.RPfVal
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.SpanResCharNeBot
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.WindowsAllowOffCentre
+
+@[expose] public section
 
 noncomputable section
 

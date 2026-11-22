@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsBaseChange
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsBaseChange
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -84,13 +89,13 @@ def coordPoly (φ : L →ₗ[K] K) : MvPolynomial Y L →+ MvPolynomial Y K wher
   toFun p := AddMonoidAlgebra.map φ.toAddMonoidHom p
   map_zero' := by
     ext m
-    rw [coeff_addMonoidAlgebraMap, coeff_zero, coeff_zero, map_zero]
+    simp [coeff_addMonoidAlgebraMap]
   map_add' p q := by
     ext m
-    simp only [coeff_addMonoidAlgebraMap, coeff_add, map_add]
+    simp only [coeff_addMonoidAlgebraMap, MvPolynomial.coeff_add, map_add (f := _)]
 
 theorem coeff_coordPoly (φ : L →ₗ[K] K) (p : MvPolynomial Y L) (m : Y →₀ ℕ) :
-    coeff m (coordPoly φ p) = φ (coeff m p) :=
+    AddMonoidAlgebra.coeff (coordPoly φ p) m = φ (AddMonoidAlgebra.coeff p m) :=
   rfl
 
 theorem coordPoly_C_mul_map (φ : L →ₗ[K] K) (a : L) (q : MvPolynomial Y K) :
@@ -102,7 +107,7 @@ theorem coordPoly_C_mul_map (φ : L →ₗ[K] K) (a : L) (q : MvPolynomial Y K) 
 variable {β : Type*} [DecidableEq β]
 
 def coordSupport (b : Module.Basis β K L) (p : MvPolynomial Y L) : Finset β :=
-  p.support.biUnion fun m => (b.repr (coeff m p)).support
+  p.support.biUnion fun m => (b.repr (AddMonoidAlgebra.coeff p m)).support
 
 theorem sum_coordPoly (b : Module.Basis β K L) (p : MvPolynomial Y L) :
     ∑ c ∈ coordSupport b p, C (b c) * map (algebraMap K L) (coordPoly (b.coord c) p) = p := by
@@ -110,7 +115,7 @@ theorem sum_coordPoly (b : Module.Basis β K L) (p : MvPolynomial Y L) :
   rw [coeff_sum]
   simp_rw [coeff_C_mul, coeff_map, coeff_coordPoly, Module.Basis.coord_apply, mul_comm (b _),
     ← Algebra.smul_def]
-  conv_rhs => rw [← b.linearCombination_repr (coeff m p)]
+  conv_rhs => rw [← b.linearCombination_repr (AddMonoidAlgebra.coeff p m)]
   rw [Finsupp.linearCombination_apply, Finsupp.sum]
   symm
   apply Finset.sum_subset
@@ -127,7 +132,8 @@ theorem sum_coordPoly (b : Module.Basis β K L) (p : MvPolynomial Y L) :
 theorem coordPoly_sum (b : Module.Basis β K L) (S : Finset β) (h : β → MvPolynomial Y K) (c : β) :
     coordPoly (b.coord c) (∑ c' ∈ S, C (b c') * map (algebraMap K L) (h c')) =
       if c ∈ S then h c else 0 := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp_rw [coordPoly_C_mul_map, Module.Basis.coord_apply, Module.Basis.repr_self, Finsupp.single_apply]
   simp [apply_ite C, ite_mul]
 
@@ -146,7 +152,7 @@ theorem coordPoly_mem_of_mem_map (b : Module.Basis β K L) (T : Ideal (MvPolynom
     rw [e]
     exact T.mul_mem_left _ ht
   | zero => intro c; rw [map_zero]; exact T.zero_mem
-  | add x y _ _ hx hy => intro c; rw [map_add]; exact T.add_mem (hx c) (hy c)
+  | add x y _ _ hx hy => intro c; rw [map_add (f := _)]; exact T.add_mem (hx c) (hy c)
   | smul r x _ hx =>
     intro c
     have e : r * x = ∑ c₁ ∈ coordSupport b r, ∑ c₂ ∈ coordSupport b x,
@@ -156,9 +162,11 @@ theorem coordPoly_mem_of_mem_map (b : Module.Basis β K L) (T : Ideal (MvPolynom
       refine Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => ?_
       rw [C_mul, map_mul]
       ring
-    rw [smul_eq_mul, e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [smul_eq_mul, e, map_sum]
     refine T.sum_mem fun c₁ _ => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine T.sum_mem fun c₂ _ => ?_
     rw [coordPoly_C_mul_map]
     exact T.mul_mem_left _ (T.mul_mem_left _ (hx c₂))
@@ -194,7 +202,8 @@ theorem isChowForm_map (h : RadicalBaseChange.Statement) {K L : Type} [Field K] 
       have e : X (Sum.inr j) * rename Sum.inl g = ∑ c' ∈ S,
           C (b c') * map (algebraMap K L) (X (Sum.inr j) * rename Sum.inl (hc c')) := by
         conv_lhs => rw [← hsum]
-        rw [map_sum, Finset.mul_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, Finset.mul_sum]
         refine Finset.sum_congr rfl fun c' _ => ?_
         rw [map_mul, rename_C, hmapX]
         ring

@@ -1,5 +1,9 @@
-import Formalism.UnipotentAdelicQuotients.EllReg
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferSmoothOfRegularity
+module
+
+public import Formalism.UnipotentAdelicQuotients.EllReg
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferSmoothOfRegularity
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 

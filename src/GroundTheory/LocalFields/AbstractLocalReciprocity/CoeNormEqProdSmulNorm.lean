@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.LocalFields.AbstractLocalReciprocity.NormFormula
-import GroundTheory.LocalFields.AbstractLocalReciprocity.Reciprocity
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.NormFormula
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.Reciprocity
+
+@[expose] public section
 
 namespace GroundTheory.LocalField.Abstract
 
@@ -126,8 +130,8 @@ namespace ClassFieldData
 variable [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G]
   {D : ClassFieldData G A} {K L : OpenSubgroup G}
 
-omit [TotallyDisconnectedSpace G] in
 
+omit [TotallyDisconnectedSpace G] in
 instance finiteIndex_inf_ker (d : G →* Multiplicative ℤ̂) (K L : OpenSubgroup G) :
     (((L : Subgroup G) ⊓ d.ker).subgroupOf ((K : Subgroup G) ⊓ d.ker)).FiniteIndex := by
   have h : ((L : Subgroup G) ⊓ d.ker).subgroupOf ((K : Subgroup G) ⊓ d.ker) =
@@ -138,8 +142,8 @@ instance finiteIndex_inf_ker (d : G →* Multiplicative ℤ̂) (K L : OpenSubgro
   rw [h]
   infer_instance
 
-omit [TotallyDisconnectedSpace G] in
 
+omit [TotallyDisconnectedSpace G] in
 theorem toAdd_deg_mem_multiples (K : OpenSubgroup G) {k : G} (hk : k ∈ (K : Subgroup G)) :
     Multiplicative.toAdd (D.deg k) ∈ multiples (inertiaDegree D.deg K) := by
   obtain ⟨y, hy⟩ := (D.mem_map_deg_iff K).1 ⟨k, hk, rfl⟩
@@ -155,10 +159,16 @@ theorem coe_norm_field_eq {φ : G} (hφK : φ ∈ (K : Subgroup G))
       ∏ ν : Fin s.deg, φ ^ (ν : ℕ) •
         (norm A ((K : Subgroup G) ⊓ D.deg.ker) ((L : Subgroup G) ⊓ D.deg.ker)
           ⟨a, fixedModule_anti le_frobeniusClosure a.2⟩ : A) := by
-  have hmap := map_frobeniusClosure D.continuous_deg (FrobeniusLift.mem_normalizer hLK s.mem)
-    s.deg_eq (L := (L : Subgroup G))
+  have hnormalizer := FrobeniusLift.mem_normalizer (D := D) hLK s.mem
+  have hmap := map_frobeniusClosure D.continuous_deg hnormalizer s.deg_eq (L := (L : Subgroup G))
+  have hfield_le : (s.field L hLK : Subgroup G) ≤ (K : Subgroup G) :=
+    frobeniusClosure_le K.isClosed s.mem (inf_le_left.trans hLK)
+  have hfield_inf_ker :
+      (s.field L hLK : Subgroup G) ⊓ D.deg.ker = (L : Subgroup G) ⊓ D.deg.ker :=
+    frobeniusClosure_inf_ker D.continuous_deg L.isOpen hnormalizer
+      (mul_ne_zero s.deg_pos.ne' (D.inertiaDegree_ne_zero K)) s.deg_eq
   refine coe_norm_eq_prod_smul_norm D.deg s.deg_pos (Nat.pos_of_ne_zero (D.inertiaDegree_ne_zero K))
-    (fun x hx => s.field_le hLK hx) ?_ ?_ (fun k hk => toAdd_deg_mem_multiples K hk) ?_ hφK hdφ a _
+    hfield_le ?_ ?_ (fun k hk => toAdd_deg_mem_multiples K hk) ?_ hφK hdφ a _
   · intro x hx
     have : D.deg x ∈ (frobeniusClosure D.deg L s.elt).map D.deg := ⟨x, hx, rfl⟩
     rw [hmap] at this
@@ -171,9 +181,7 @@ theorem coe_norm_field_eq {φ : G} (hφK : φ ∈ (K : Subgroup G))
   · intro q hq
     constructor
     · intro hqS
-      have : q ∈ ((s.field L hLK : OpenSubgroup G) : Subgroup G) ⊓ D.deg.ker := ⟨hqS, hq.2⟩
-      rw [s.field_inf_ker hLK] at this
-      exact this
+      exact hfield_inf_ker.le ⟨hqS, hq.2⟩
     · intro hqJ
       exact le_frobeniusClosure hqJ
 

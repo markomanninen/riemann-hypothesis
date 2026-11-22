@@ -1,4 +1,10 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.SigmaConstantAgrees
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.ChordSecondLogDeriv
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.PhNormClosed
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.JetExpShape
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -7,7 +13,7 @@ namespace Formalism.L2.Th1.C
 
 def LogDerivInt : Prop :=
   ∀ (K : Type) [Field K] [CharZero K] (R : Subring K) (l linv : PowerSeries K),
-    IsLogPair l linv → FGInt R l linv → IsOneUnit R (PowerSeries.derivative K l)
+    IsLogPair l linv → FGInt R l linv → IsOneUnit R (PowerSeries.derivative (R := K) l)
 
 def ThirdJetIntegral : Prop :=
   ∀ (K : Type) [Field K] [CharZero K] (R : Subring K) (l linv ph : PowerSeries K),
@@ -26,10 +32,5 @@ def JetsShape : Prop :=
     (∃ H : PowerSeries K, (∀ i : ℕ, jet l H i ∈ R) ∧
       (mvExp (-ph) : PowerSeries K) = mvExp (-(PowerSeries.C (jet l ph 2 / 2) * l ^ 2)) * H) ∧
     ∀ a b : K, AdjAt R l linv ph a b → (a - b) * jet l ph 2 ∈ R
-
-def SumTwoUnitsProd : Prop :=
-  ∀ (A B : Type) [CommRing A] [CommRing B],
-    (∀ a : A, ∃ u v : Aˣ, a = u + v) → (∀ b : B, ∃ u v : Bˣ, b = u + v) →
-    ∀ x : A × B, ∃ u v : (A × B)ˣ, x = u + v
 
 end Formalism.L2.Th1.C

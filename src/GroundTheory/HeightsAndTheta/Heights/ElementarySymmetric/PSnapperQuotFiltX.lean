@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.HomogeneousComponentMulForm
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PStepTwoFilt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPrimeFiltrationExists
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PExtension
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PStepTwoPiece
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PIdealTwistFamily
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.HomogeneousComponentMulForm
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PStepTwoFilt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPrimeFiltrationExists
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PExtension
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PStepTwoPiece
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PIdealTwistFamily
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -38,8 +43,8 @@ def pieceIso (N₀ N₁ : FinGradedSub (S := S) (x := x) E) {g : E} {e : ℤ} {p
 
 end SnapperQuotFilt
 
-open SnapperQuotFilt in
 
+open SnapperQuotFilt in
 theorem SnapperQuotFilt.proof : SnapperQuotFilt.Statement.{u, v, w} := by
   intro k _ Ω _ _ N x E _ _ _ _ F₁ F₂ hfg hle J hJ hxJ hJF
   classical

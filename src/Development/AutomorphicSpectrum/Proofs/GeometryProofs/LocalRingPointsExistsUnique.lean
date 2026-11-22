@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.Metric
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsUnitIffUnitAt
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIffChartLocalizationStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueCentreLocalHomStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PrimeChartExistsUniquePointStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.Metric
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsUnitIffUnitAt
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIffChartLocalizationStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueCentreLocalHomStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PrimeChartExistsUniquePointStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,7 +82,7 @@ theorem exists_homog {K : Type} [Fintype K] {J : K → Type} (c : ∀ k, J k)
     have hp : ∀ n, aeval v ((∏ k, X ⟨k, c k⟩ : MvPolynomial (Σ k, J k) ℤ) ^ n) = (∏ k, e k) ^ n := by
       intro n
       simp [map_prod, hc S v s e h1 h2]
-    rw [map_add, map_mul, map_mul, hF S v s e h1 h2, hG S v s e h1 h2, hp, hp, map_add]
+    rw [map_add (f := _), map_mul, map_mul, hF S v s e h1 h2, hG S v s e h1 h2, hp, hp, map_add (f := _)]
     simp only [pow_add, Finset.prod_mul_distrib, Finset.prod_pow]
     ring
   | mul_X f p hf =>
@@ -140,8 +144,8 @@ theorem aeval_eq_zero_of_ratio {K : Type} [Fintype K] {J : K → Type} (y : (Σ 
       rw [map_aeval_int, map_aeval_int]
       congr 2
       funext p
-      simp only [inc, σ, map_mul, map_C, map_X, eval₂Hom_C, eval₂Hom_X']
-      simp only [Subring.subtype_apply, hb, RingHom.id_apply]
+      simp only [inc, σ, map_mul, MvPolynomial.map_C, MvPolynomial.map_X,
+        eval₂Hom_C, eval₂Hom_X', Subring.subtype_apply, hb]
       rw [← mul_assoc, ← C_mul]
       congr 2
       have := hy p.1
@@ -155,8 +159,7 @@ theorem aeval_eq_zero_of_ratio {K : Type} [Fintype K] {J : K → Type} (y : (Σ 
     rw [map_aeval_int]
     congr 2
     funext p
-    simp only [th, map_mul, eval₂Hom_C, eval₂Hom_X']
-    exact hw p
+    simpa only [th, map_mul, eval₂Hom_C, eval₂Hom_X'] using hw p
   rw [h2, h1, map_zero]
 
 section Main
@@ -310,8 +313,8 @@ theorem exists_local_ext {o : Type} [CommRing o] [Algebra o Ω] {κ : Type} {x :
   change (a : Ω) * (((s : Algebra.adjoin o (Set.range fun j => x j / x c)) : Ω) * (b : Ω)⁻¹) = 1
   rw [← mul_assoc, ev, mul_inv_cancel₀ b0]
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem existsUnique_point (T : CoordTie ℤ ξ (fun c' : (k : K) → J k => ∏ k, y ⟨k, c' k⟩))
     (w : (Σ k, J k) → R) (hu : ∀ k, ∃ c, IsUnit (w ⟨k, c⟩))
     (hk : ∀ g ∈ mCoordIdeal y, aeval w g = 0) :

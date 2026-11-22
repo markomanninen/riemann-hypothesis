@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.IsHerm
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.IsHerm
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,10 +68,6 @@ def NmHasse : Prop :=
     (∀ v : InfinitePlace F, ∃ δ, cp (nm (ext v.Completion σ) (Module.finrank F E) (n := n) δ) =
       (cp γ).map ((inc v.Completion).comp (algebraMap F E))) →
     ∃ a : GL (Fin n) E, nm σ (Module.finrank F E) a = up E γ ∧ Commute a (up E γ)
-
-def NormAlmostAll : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] (A : Type) [CommRing A] [Algebra F A] [Module.Finite F A] [IsReduced A] (a : Aˣ),
-    {v : HeightOneSpectrum (𝓞 F) | ¬ IsNm F E ((1 : v.adicCompletion F) ⊗ₜ[F] (a : A))}.Finite
 
 def NmInt : Prop :=
   ∀ (O S k R : Type) [CommRing O] [IsLocalRing O] [CommRing S] [Algebra O S] [Field k] [CommRing R] [Algebra k R]

@@ -1,7 +1,23 @@
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.Live
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LevTrue
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+module
+
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.Live
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsStdFr
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PinColL
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.FrameTopAlt
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.XiEqXiOffMul
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HzUnit
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CosInj
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.UnitRatio
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChartZero
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TailRd
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.Placed
+public import Formalism.LocalToGlobal.IndefiniteReal.RealRec
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam GlobalTheory.SeeSaw GlobalTheory.StepData GlobalTheory.SplitWeil
 open scoped TensorProduct Classical
@@ -40,47 +56,7 @@ variable {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} {I : TC B X} {l : I.Laws
   {hT : GatTies (I.rec7 l Z)} {Gi : Formalism.MainNotions.G.Inst (I.rec7 l Z) L} {Gl : Formalism.MainNotions.G.LatInst (I.rec7 l Z)} {Kc : Formalism.MainNotions.G.Consts}
   {Yd : DivX (I.rec7 l Z)} {cX : ExtraC} {ex : Extra (I.rec7 l Z) L hT Gi Gl Kc Yd cX} {W : RealPack ex} {u : B.Word}
 
-def QJ.eps {a : GeoAll W u} {t : W.P.T} (J : QJ a t) (j : ℕ) (α : J.Ch j) : GA (I.rec7 l Z) (Yc (I.rec7 l Z) j) →₀ ℂ :=
-  if (∃ ρ, j + 2 * ρ + 2 = (I.rec7 l Z).R.m) ∨ j = 0 then J.wt j α • conv (List.ofFn fun i => (J.E i).εL j (α i)) else 0
-
 variable (a : GeoAll W u) (J : ∀ t, QJ a t)
-
-def colOf (kom : ∀ (_ : W.P.T) j, Om ((I.rec7 l Z).sp.X j) ((I.rec7 l Z).sp.X (j + 1)))
-    (dd : ∀ t j, (J t).Ch j → (J t).Ch (j + 1) → WO ((I.rec7 l Z).sp.X j) ((I.rec7 l Z).sp.X (j + 1)) →₀ ℂ)
-    (S : ∀ t j, GlobalTheory.AdForm.ColT I l u (W.P.I.tup t) j → GlobalTheory.AdForm.ColT I l u (W.P.I.tup t) j)
-    (s : ∀ t j, (J t).Ch j → ℂ) (cV cK : W.P.T → ℕ → ℂ) (cP : W.P.T → ℂ) (t : W.P.T) :
-    ColCh (D := I.rec7 l Z) u ((I.rec7 l Z).chTw u (W.P.I.tup t)) where
-  kom := kom t
-  Ch := (J t).Ch
-  dd := dd t
-  e := fun j α => (s t j α • (J t).eps j α).mapDomain (· * a.g.b j)
-  eT := fun n _ β => (s t n β • Finsupp.single (1 : GA (I.rec7 l Z) (I.rec7 l Z).sp.X') ((J t).wt n β)).mapDomain (· * a.g.bT)
-  Ram := fun j => {φ | (J t).A.RamL (J t).ι j φ}
-  S := S t
-  rd := fun j α φ y => if hj : j ≤ B.R.m then (J t).A.rd (pk W).θ j hj ((J t).ι j α) φ y else 0
-  cV := cV t
-  cK := cK t
-  cP := cP t
-
-def colNone (t : W.P.T) : ColCh (D := I.rec7 l Z) u ((I.rec7 l Z).chTw u (W.P.I.tup t)) where
-  kom := fun _ => 1
-  Ch := fun _ => Empty
-  dd := fun _ α => α.elim
-  e := fun _ α => α.elim
-  eT := fun _ _ α => α.elim
-  Ram := fun _ => ∅
-  S := fun _ φ => φ
-  rd := fun _ α => α.elim
-  cV := 0
-  cK := 0
-  cP := 0
-
-def famOf (row : ∀ t, RowCh (pk W) (lvP W) u a.g t) (col : ∀ t : W.P.T, ColCh (D := I.rec7 l Z) u ((I.rec7 l Z).chTw u (W.P.I.tup t)))
-    (hCh : ∀ t, (col t).Ch = (J t).Ch) (t : W.P.T) : GlobalTheory.QPl.QFam a.v ((a.fam row col).t t) where
-  χ := chrK W t
-  r := (J t).r
-  Q := fun i => ((J t).E i).toAt
-  eqv := fun j => Equiv.cast (congrFun (hCh t) j)
 
 end GlobalTheory.Fam
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RankOfMulEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WachRingFactsUnramifiedLevelOneStatement
-import Formalism.PieriBlockIdeals.PieriColumnMinors.HeckeLFunctionIdealEulerProduct
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RankOfMulEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WachRingFactsUnramifiedLevelOneStatement
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.HeckeLFunctionIdealEulerProduct
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -62,11 +66,13 @@ theorem coeff_comm {R M M' : Type} [CommRing R] [AddCommGroup M] [Module R M] [A
     (hA : ∀ k, g (e k) = ∑ m, A m k • (b' m : M')) (j : Fin n') (k : Fin n) :
     ∑ m, p m k * A j m = ∑ m, σ (A m k) * p' j m := by
   have h1 : g (u (e k)) = ∑ j, (∑ m, p m k * A j m) • (b' j : M') := by
-    rw [hp k, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hp k, map_sum]
     simp only [hg, hA]
     exact sum_smul_sum (fun m => p m k) (fun m j => A j m) (fun j => (b' j : M'))
   have h2 : u' (g (e k)) = ∑ j, (∑ m, σ (A m k) * p' j m) • (b' j : M') := by
-    rw [hA k, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hA k, map_sum]
     simp only [hu', hp']
     exact sum_smul_sum (fun m => σ (A m k)) (fun m j => p' j m) (fun j => (b' j : M'))
   have hc' := coeff_unique (c := fun j => ∑ m, p m k * A j m) (d := fun j => ∑ m, σ (A m k) * p' j m) b'
@@ -81,7 +87,8 @@ theorem mul_eq_of_inc {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [Algebra 
   apply (pi0Subst_laws_hold l O).2.2.2.2.2.2.2 hl
   simp only [Matrix.mul_apply]
   show incHom l O (∑ m, P' j m * A' m k) = incHom l O (∑ m, A j m * P m k)
-  simp only [map_sum, map_mul, incHom_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, incHom_apply]
   rw [Finset.sum_congr rfl fun m _ => mul_comm (inc l O (P' j m)) (inc l O (A' m k)), ← h j k]
   exact Finset.sum_congr rfl fun m _ => mul_comm _ _
 
@@ -129,7 +136,8 @@ theorem exists_mapMat (RF : ∀ a : O⟦X⟧, (∀ δ ∈ W.DelF, W.γ₀ δ a =
       (show (b' m : W.DD T') ∈ W.N T' ∧ ∀ δ ∈ W.DelF, W.γD T' δ (b' m : W.DD T') = b' m from hb' m).2 δ hδ
     have e1 : W.γD T' δ (W.map g (b k : W.DD T)) = W.map g (b k : W.DD T) := by
       rw [← W.map_γ, hk.2 δ hδ]
-    rw [hc, map_sum] at e1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hc, map_sum] at e1
     simp only [gamD_smul, hb2] at e1
     have e2 := coeff_unique (c := fun m => letγ (W.γ₀ δ) (c m)) (d := c) b' e1
     exact congrFun (congrFun e2 m) i
@@ -177,8 +185,8 @@ theorem red_frob (hl : l ≠ 2) (hred : ∀ z : ℤ_[l], red (algebraMap ℤ_[l]
     exact (hred' (A (i - 1) m k)).2 _ (hY m k)
   rw [← hYr, ← Matrix.map_mul, hM, Matrix.map_mul]
 
-omit [Algebra ℤ_[l] F] in
 
+omit [Algebra ℤ_[l] F] in
 theorem red_gam (hl : l ≠ 2) (γ : W.Gam) (u : ℤ_[l]) (un : O⟦X⟧) (hun : IsUn l O u un)
     (hγ : ∀ a, W.γ₀ γ a = act l O u a) (g : LatHom T.L T'.L) (D : ZMod f → Mx O⟦X⟧ n n)
     (D' : ZMod f → Mx O⟦X⟧ n' n') (A : ZMod f → Mx O⟦X⟧ n' n)
@@ -221,15 +229,16 @@ theorem charP_residueField_of_irreducible {l : ℕ} [Fact l.Prime] (LL : FinExt 
   have hl : l.Prime := Fact.out
   have : Algebra.IsIntegral ℤ_[l] ↥(OL LL) := ⟨fun x => integralClosure.isIntegral x⟩
   rw [CharP.charP_iff_prime_eq_zero hl, ← map_natCast (IsLocalRing.residue ↥(OL LL)), IsLocalRing.residue_eq_zero_iff]
-  have hmax := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := ℤ_[l]) (IsLocalRing.maximalIdeal ↥(OL LL))
+  have hmax := Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := ℤ_[l]) (IsLocalRing.maximalIdeal ↥(OL LL))
   have heq := IsLocalRing.eq_maximalIdeal hmax
   have hmem : (l : ℤ_[l]) ∈ (IsLocalRing.maximalIdeal ↥(OL LL)).comap (algebraMap ℤ_[l] ↥(OL LL)) := by
+    change (l : ℤ_[l]) ∈ (IsLocalRing.maximalIdeal ↥(OL LL)).under ℤ_[l]
     rw [heq, PadicInt.maximalIdeal_eq_span_p]
     exact Ideal.mem_span_singleton_self _
   simpa using hmem
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_mapMat_redHom : ∀ {l : ℕ} [Fact l.Prime] {P : LocPrime l} (H : LocHW l P) (K LL : FinExt l) (hA : CaseA K LL) (T T' : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)) (n n' : ℕ) (γ : (H.W K 1 LL hA.2.2).Gam) (b : Module.Basis (Fin n) (LetA ↥(OL LL) (Module.finrank ℚ_[l] ↥(K0 K))) ↥((H.W K 1 LL hA.2.2).N T)) (b' : Module.Basis (Fin n') (LetA ↥(OL LL) (Module.finrank ℚ_[l] ↥(K0 K))) ↥((H.W K 1 LL hA.2.2).N T')) (N : Lat (ZMod (Module.finrank ℚ_[l] ↥(K0 K))) n ↥(OL LL)) (N' : Lat (ZMod (Module.finrank ℚ_[l] ↥(K0 K))) n' ↥(OL LL)) (u : ℤ_[l]) (un : PowerSeries ↥(OL LL)) (g : LatHom T.L T'.L), IsCrys (P.PD K) T.ρ → IsCrys (P.PD K) T'.ρ → IsFrame (H.W K 1 LL hA.2.2) T γ b N → IsFrame (H.W K 1 LL hA.2.2) T' γ b' N' → ((H.W K 1 LL hA.2.2).χΓ γ : ↥(OL LL)) = algebraMap ℤ_[l] ↥(OL LL) u → IsUn l ↥(OL LL) u un → ∃ A : ZMod (Module.finrank ℚ_[l] ↥(K0 K)) → Mx (PowerSeries ↥(OL LL)) n' n, IsMapMat (H.W K 1 LL hA.2.2) g b b' A ∧ ∀ i, RedHom l ((PowerSeries.map (residue ↥(OL LL))) un) ((N.P i).map (PowerSeries.map (residue ↥(OL LL)))) ((N.D i).map (PowerSeries.map (residue ↥(OL LL)))) ((N'.P i).map (PowerSeries.map (residue ↥(OL LL)))) ((N'.D i).map (PowerSeries.map (residue ↥(OL LL)))) ((A i).map (PowerSeries.map (residue ↥(OL LL)))) ((A (i - 1)).map (PowerSeries.map (residue ↥(OL LL)))) := by
   intro l _ P H K LL hA T T' n n' γ b b' N N' u un g hT hT' hF hF' hχ hun
   have hl : l ≠ 2 := hA.2.1

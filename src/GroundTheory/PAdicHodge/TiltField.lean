@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.PAdicHodge.PerfectoidField
-import GroundTheory.PAdicHodge.TiltValuation
-import GroundTheory.PowerSubgroups.CountableNeighbourhoods.TiltCountableNeighbourhoods
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.PerfectoidField
+public import GroundTheory.PAdicHodge.TiltValuation
+public import GroundTheory.PowerSubgroups.CountableNeighbourhoods.TiltCountableNeighbourhoods
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -13,9 +18,10 @@ open Filter Topology NNReal
 variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [Fact p.Prime] [IsPerfectoidField K p]
 
-local notation "𝒪♭" => PreTilt (normInteger K) p
-local notation "K♭" => Tilt K NormedField.valuation (normInteger K) normInteger_integers p
-local notation "♮" x:max => ((PreTilt.untilt x : normInteger K) : K)
+local notation "𝒪" => normInteger K
+local notation "𝒪♭" => PreTilt 𝒪 p
+local notation "K♭" => FractionRing 𝒪♭
+local notation "♮" x:arg => ((PreTilt.untilt x : 𝒪) : K)
 
 instance isDomain_preTilt_of_isPerfectoidField : IsDomain 𝒪♭ :=
   IsPerfectoidField.isDomain_preTilt p
@@ -42,14 +48,14 @@ theorem exists_mul_algebraMap_eq (x : K♭) :
   ⟨_, _, nonZeroDivisors.ne_zero (IsLocalization.sec (nonZeroDivisors 𝒪♭) x).2.2,
     IsLocalization.sec_spec (nonZeroDivisors 𝒪♭) x⟩
 
-variable (K p) in
 
+variable (K p) in
 def tiltSharpFun (x : K♭) : K :=
   ♮(IsLocalization.sec (nonZeroDivisors 𝒪♭) x).1 /
     ♮((IsLocalization.sec (nonZeroDivisors 𝒪♭) x).2 : 𝒪♭)
 
 theorem tiltSharpFun_eq {x : K♭} {a b : 𝒪♭} (hb : b ≠ 0)
-    (h : x * algebraMap 𝒪♭ K♭ b = algebraMap 𝒪♭ K♭ a) : tiltSharpFun K p x = ♮a / ♮b := by
+    (h : x * algebraMap 𝒪♭ K♭ b = algebraMap 𝒪♭ K♭ a) : tiltSharpFun (K := K) (p := p) x = ♮a / ♮b := by
   have hs := IsLocalization.sec_spec (nonZeroDivisors 𝒪♭) x
   set a' := (IsLocalization.sec (nonZeroDivisors 𝒪♭) x).1
   set b' : 𝒪♭ := ((IsLocalization.sec (nonZeroDivisors 𝒪♭) x).2 : 𝒪♭) with hb'def
@@ -63,10 +69,10 @@ theorem tiltSharpFun_eq {x : K♭} {a b : 𝒪♭} (hb : b ≠ 0)
   change ♮a' / ♮b' = _
   rw [div_eq_div_iff (untiltK_ne_zero hb') (untiltK_ne_zero hb), key']
 
-variable (K p) in
 
+variable (K p) in
 def tiltSharp : K♭ →*₀ K where
-  toFun := tiltSharpFun K p
+  toFun := tiltSharpFun (K := K) (p := p)
   map_zero' := by
     rw [tiltSharpFun_eq (a := 0) (b := 1) one_ne_zero (by simp)]
     simp
@@ -82,14 +88,14 @@ def tiltSharp : K♭ →*₀ K where
       untiltK_mul, untiltK_mul, div_mul_div_comm]
 
 theorem tiltSharp_eq {x : K♭} {a b : 𝒪♭} (hb : b ≠ 0)
-    (h : x * algebraMap 𝒪♭ K♭ b = algebraMap 𝒪♭ K♭ a) : tiltSharp K p x = ♮a / ♮b :=
+    (h : x * algebraMap 𝒪♭ K♭ b = algebraMap 𝒪♭ K♭ a) : tiltSharp (K := K) (p := p) x = ♮a / ♮b :=
   tiltSharpFun_eq hb h
 
 @[simp]
-theorem tiltSharp_algebraMap (a : 𝒪♭) : tiltSharp K p (algebraMap 𝒪♭ K♭ a) = ♮a := by
+theorem tiltSharp_algebraMap (a : 𝒪♭) : tiltSharp (K := K) (p := p) (algebraMap 𝒪♭ K♭ a) = ♮a := by
   rw [tiltSharp_eq (a := a) (b := 1) one_ne_zero (by simp), untiltK_one, div_one]
 
-theorem tiltSharp_eq_zero_iff {x : K♭} : tiltSharp K p x = 0 ↔ x = 0 := by
+theorem tiltSharp_eq_zero_iff {x : K♭} : tiltSharp (K := K) (p := p) x = 0 ↔ x = 0 := by
   obtain ⟨a, b, hb, h⟩ := exists_mul_algebraMap_eq x
   rw [tiltSharp_eq hb h, div_eq_zero_iff, or_iff_left (untiltK_ne_zero hb)]
   constructor
@@ -104,7 +110,7 @@ theorem tiltSharp_eq_zero_iff {x : K♭} : tiltSharp K p x = 0 ↔ x = 0 := by
     rw [h, untilt_zero, ZeroMemClass.coe_zero]
 
 theorem norm_tiltSharp_add_le (x y : K♭) :
-    ‖tiltSharp K p (x + y)‖ ≤ max ‖tiltSharp K p x‖ ‖tiltSharp K p y‖ := by
+    ‖tiltSharp (K := K) (p := p) (x + y)‖ ≤ max ‖tiltSharp (K := K) (p := p) x‖ ‖tiltSharp (K := K) (p := p) y‖ := by
   obtain ⟨a, b, hb, h⟩ := exists_mul_algebraMap_eq x
   obtain ⟨c, d, hd, h'⟩ := exists_mul_algebraMap_eq y
   have hbd : b * d ≠ 0 := mul_ne_zero hb hd
@@ -113,7 +119,7 @@ theorem norm_tiltSharp_add_le (x y : K♭) :
     tiltSharp_eq (x := y) (a := c * b) (b := b * d) hbd
       (by rw [map_mul, map_mul, ← h']; ring),
     tiltSharp_eq (x := x + y) (a := a * d + c * b) (b := b * d) hbd
-      (by rw [map_add, map_mul, map_mul, map_mul, ← h, ← h']; ring),
+      (by rw [map_add (f := _), map_mul, map_mul, map_mul, ← h, ← h']; ring),
     norm_div, norm_div, norm_div, max_div_div_right (norm_nonneg _)]
   exact div_le_div_of_nonneg_right (norm_untilt_add_le _ _) (norm_nonneg _)
 
@@ -121,28 +127,23 @@ end Sharp
 
 section Norm
 
-variable (K p) in
 
+variable (K p) in
 def tiltAbv : AbsoluteValue K♭ ℝ where
-  toFun x := ‖tiltSharp K p x‖
+  toFun x := ‖tiltSharp (K := K) (p := p) x‖
   map_mul' x y := by simp only [map_mul, norm_mul]
   nonneg' x := norm_nonneg _
   eq_zero' x := by rw [norm_eq_zero, tiltSharp_eq_zero_iff]
   add_le' x y := (norm_tiltSharp_add_le x y).trans
     (max_le_add_of_nonneg (norm_nonneg _) (norm_nonneg _))
 
-instance normedFieldTilt : NormedField K♭ := (tiltAbv K p).toNormedField
+instance normedFieldTilt : NormedField K♭ := (tiltAbv (K := K) (p := p)).toNormedField
 
-theorem norm_tiltSharp (x : K♭) : ‖tiltSharp K p x‖ = ‖x‖ := rfl
+theorem norm_tiltSharp (x : K♭) : ‖tiltSharp (K := K) (p := p) x‖ = ‖x‖ := rfl
 
 @[simp]
 theorem norm_algebraMap_preTilt (a : 𝒪♭) : ‖algebraMap 𝒪♭ K♭ a‖ = ‖a‖ := by
   rw [← norm_tiltSharp, tiltSharp_algebraMap, preTilt_norm_def]
-
-theorem nnnorm_algebraMap_preTilt (a : 𝒪♭) : ‖algebraMap 𝒪♭ K♭ a‖₊ =
-    PreTilt.val K NormedField.valuation (normInteger K) normInteger_integers p a := by
-  rw [← nnnorm_eq_val]
-  exact NNReal.eq (norm_algebraMap_preTilt a)
 
 theorem dist_algebraMap_preTilt (a b : 𝒪♭) :
     dist (algebraMap 𝒪♭ K♭ a) (algebraMap 𝒪♭ K♭ b) = dist a b := by
@@ -169,25 +170,6 @@ theorem norm_le_one_iff_exists_algebraMap {x : K♭} :
     rw [norm_algebraMap_preTilt]
     exact preTilt_norm_le_one a
 
-theorem normInteger_tilt_eq_range : normInteger K♭ = (algebraMap 𝒪♭ K♭).range := by
-  ext x
-  rw [mem_normInteger, norm_le_one_iff_exists_algebraMap, RingHom.mem_range]
-
-variable (K p) in
-
-def preTiltEquivNormInteger : 𝒪♭ ≃+* normInteger K♭ :=
-  (RingEquiv.ofBijective (algebraMap 𝒪♭ K♭).rangeRestrict
-    ⟨fun _ _ h => IsFractionRing.injective 𝒪♭ K♭ (congrArg Subtype.val h),
-      RingHom.rangeRestrict_surjective _⟩).trans
-    (RingEquiv.subringCongr normInteger_tilt_eq_range.symm)
-
-@[simp]
-theorem coe_preTiltEquivNormInteger (a : 𝒪♭) :
-    ((preTiltEquivNormInteger K p a : normInteger K♭) : K♭) = algebraMap 𝒪♭ K♭ a := rfl
-
-theorem norm_preTiltEquivNormInteger (a : 𝒪♭) :
-    ‖((preTiltEquivNormInteger K p a : normInteger K♭) : K♭)‖ = ‖a‖ := by
-  rw [coe_preTiltEquivNormInteger, norm_algebraMap_preTilt]
 
 theorem exists_tilt_norm_mem_Ioo (r : ℝ) (hr : r < 1) : ∃ x : K♭, r < ‖x‖ ∧ ‖x‖ < 1 := by
   obtain ⟨ϖ, h1, h2⟩ := IsPerfectoidField.exists_norm_mem_Ioo (K := K) (p := p) (max r ‖(p : K)‖)
@@ -207,6 +189,7 @@ instance nontriviallyNormedFieldTilt : NontriviallyNormedField K♭ where
     exact one_lt_inv₀ hx0 |>.2 hx1
 
 instance completeSpace_tilt : CompleteSpace K♭ := by
+  letI : TopologicalSpace K♭ := PseudoMetricSpace.toUniformSpace.toTopologicalSpace
   refine Metric.complete_of_cauchySeq_tendsto fun u hu => ?_
   obtain ⟨N, hN⟩ := Metric.cauchySeq_iff'.1 hu 1 one_pos
   have hmem : ∀ m : ℕ, ∃ a : 𝒪♭, algebraMap 𝒪♭ K♭ a = u (m + N) - u N := fun m =>
@@ -245,9 +228,6 @@ instance perfectRing_tilt : PerfectRing K♭ p := by
     algebraMap 𝒪♭ K♭ ((frobeniusEquiv 𝒪♭ p).symm b), ?_⟩
   rw [frobenius_def, div_pow, ← map_pow (algebraMap 𝒪♭ K♭), ← map_pow (algebraMap 𝒪♭ K♭), ha, hb]
 
-instance isPerfectoidField_tilt : IsPerfectoidField K♭ p :=
-  IsPerfectoidField.of_perfectRing p exists_tilt_norm_mem_Ioo
-
 end Norm
 
 section ValueGroup
@@ -264,20 +244,6 @@ theorem exists_tilt_norm_eq {y : K} (hy : y ≠ 0) : ∃ x : K♭, ‖x‖ = ‖
       (by rw [norm_inv]; exact inv_le_one_of_one_le₀ h.le)
     refine ⟨(algebraMap 𝒪♭ K♭ a)⁻¹, ?_⟩
     rw [norm_inv, norm_algebraMap_preTilt, preTilt_norm_def, ha, norm_inv, inv_inv]
-
-theorem image_norm_tilt :
-    (fun x : K♭ => ‖x‖) '' {0}ᶜ = (fun y : K => ‖y‖) '' {0}ᶜ := by
-  ext r
-  constructor
-  · rintro ⟨x, hx, rfl⟩
-    refine ⟨tiltSharp K p x, fun h => hx ?_, rfl⟩
-    exact tiltSharp_eq_zero_iff.1 h
-  · rintro ⟨y, hy, rfl⟩
-    obtain ⟨x, hx⟩ := exists_tilt_norm_eq (K := K) (p := p) hy
-    refine ⟨x, fun h => hy ?_, hx⟩
-    rw [Set.mem_singleton_iff] at h
-    rw [h, norm_zero, eq_comm, norm_eq_zero] at hx
-    exact hx
 
 end ValueGroup
 

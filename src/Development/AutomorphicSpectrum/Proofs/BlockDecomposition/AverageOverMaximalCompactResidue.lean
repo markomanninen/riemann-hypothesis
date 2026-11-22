@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JpUnif
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformBoundednessStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JpUnif
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformBoundednessStatement
+
+@[expose] public section
 
 noncomputable section
 

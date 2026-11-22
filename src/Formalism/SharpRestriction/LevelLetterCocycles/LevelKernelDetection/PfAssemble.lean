@@ -1,29 +1,33 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RingStepsOf
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvDelta
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvGam
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvLoc
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvExp
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvFil
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvRhoC
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvEquiv
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvBasis
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvJumps
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfMapLoc
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfMapLocL
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfMapFl
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfMapHyp
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.GaloisActionFrobeniusComm
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfKapUnit
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLocReg
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfMem
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfHuZ
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfHOmega
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfJumpsLet
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.LvDataLocalizesConstOfCrystalline
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfSplit
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfCoeff
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfHOnil
-import Formalism.SharpRestriction.LevelLetterCocycles.CoordStepsOf
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RingStepsOf
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvDelta
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvGam
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvLoc
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvExp
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvFil
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvRhoC
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvEquiv
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvBasis
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvJumps
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfMapLoc
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfMapLocL
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfMapFl
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfMapHyp
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.GaloisActionFrobeniusComm
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfKapUnit
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLocReg
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfMem
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfHuZ
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfHOmega
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfJumpsLet
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.LvDataLocalizesConstOfCrystalline
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfSplit
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfCoeff
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfHOnil
+public import Formalism.SharpRestriction.LevelLetterCocycles.CoordStepsOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,16 +85,18 @@ theorem lvHyp_holds (Lb : LevB W) (hR : Ring9 W) (uZ : ℤ_[PD.p]ˣ) (ιZ : ℤ_
     (huZ : ∀ k : ℕ, (k : WithTop ℚ) ≤
       v (algebraMap O LL (W.χΓ W.gam : O) - ((PadicInt.toZModPow k (uZ : ℤ_[PD.p])).val : LL)))
     (m : ℕ) (hm : ∀ i, Mj i ≤ m) (hκ : κ = Λ * ∏ s ∈ Finset.range ell, (baseIdOf hR).Bs.p s ^ m) :
-    LvHyp Lb hR uZ ιZ C c ell Λ κ (lamOf C c ell e) where
-  delta := delta_holds hR uZ ιZ c lev_Γ hω valRing
-  gamInv := gamInv_holds uZ ιZ T c
-  gamRho := gamRho_holds hR uZ ιZ c lev_Γ hgamK huZ
-  kap := kap_holds C ell Λ κ hP5 hT hJl hs1 hR m hm hκ
-  expSemi := expSemi_holds Lb hR T c levN_eq
-  locInv := locInv_holds Lb C κ (delta_holds hR uZ ιZ c lev_Γ hω valRing) hT levB_Γ hω hv
-  loclInv := loclInv_holds hR uZ ιZ T c Λ _ (delta_holds hR uZ ιZ c lev_Γ hω valRing)
-  filAnti := filAnti_holds
-  rhoC := rhoC_holds hR c
+    LvHyp Lb hR uZ ιZ C c ell Λ κ (lamOf C c ell e) := by
+  have hΔ := delta_holds hR uZ ιZ c lev_Γ hω valRing
+  exact
+    { delta := hΔ
+      gamInv := gamInv_holds uZ ιZ T c
+      gamRho := gamRho_holds hR uZ ιZ c lev_Γ hgamK huZ
+      kap := kap_holds C ell Λ κ hP5 hT hJl hs1 hR m hm hκ
+      expSemi := expSemi_holds Lb hR T c levN_eq
+      locInv := locInv_holds Lb C κ hΔ hT levB_Γ hω hv
+      loclInv := loclInv_holds hR uZ ιZ T c Λ _ hΔ
+      filAnti := filAnti_holds
+      rhoC := rhoC_holds hR c }
 
 theorem levSteps_of_jumps [IsDomain O] [IsDiscreteValuationRing O] [IsAdicComplete (IsLocalRing.maximalIdeal O) O]
     [CharZero LL] [IsFractionRing O LL]
@@ -162,111 +168,6 @@ theorem levSteps_of_jumps [IsDomain O] [IsDiscreteValuationRing O] [IsAdicComple
       lamInd := lamInd_holds hP3 hP9 Assemble.frac_of hBasis hBasis_e rfl
       lamSpan := lamSpan_holds hP3 hP9 hBasis hBasis_e rfl }
 
-theorem levSteps_holds [IsDomain O] [IsDiscreteValuationRing O] [IsAdicComplete (IsLocalRing.maximalIdeal O) O]
-    [CharZero LL] [IsFractionRing O LL]
-    {T : LocLat G Qp LL O} {C : Coord W (baseIdOf hR) T} {c : ZMod n} {ell : ℕ} {H : ℕ → ℕ}
-    {κ : PowerSeries O} {r : ℕ} {e : Fin r → C.V}
-    (Hy : LvHyp Lb hR uZ ιZ C c ell (Formalism.ExponentWindows.abelian₂ (baseIdOf hR).Bs.p H ell) κ (lamOf C c ell e))
-    (ϖ : O) (j M g G₀ Sz η : ℕ) (ty : ZMod n → LT)
-
-    (levN_eq : ∀ (T : LocLat G Qp LL O) (i : ZMod n) (ζ : LL) (x : ↥(W.N T)) (k : ℤ),
-      W.levN T i ζ x k = ιV PD (LL := LL) (V := T.V) (Lb.levB T i ζ x k))
-    (levB_φ : ∀ (i : ZMod n) (ζ : LL), (∃ j : ℕ, IsPrimitiveRoot ζ (PD.p ^ j)) → ∀ (x : ↥(W.N T)) (m : ℕ)
-      (hx : W.Q ^ m • W.φD T (x : W.DD T) ∈ W.N T) (k : ℤ),
-      Lb.levB T i ζ ⟨W.Q ^ m • W.φD T (x : W.DD T), hx⟩ k =
-        ∑ᶠ j : ℕ, PowerSeries.coeff j (W.lev i ζ (W.Q ^ m)) •
-          (((PD.p : LL) ^ (k - (j : ℤ))) •
-            φVB PD (LL := LL) (V := T.V) (Lb.levB T (i - 1) (ζ ^ PD.p) x (k - (j : ℤ)))))
-    (lev_φ : ∀ (i : ZMod n) (ζ : LL), (∃ j : ℕ, IsPrimitiveRoot ζ (PD.p ^ j)) → ∀ f : LetA O n,
-      W.lev i ζ (W.φA f) = PowerSeries.rescale (PD.p : LL) (W.lev (i - 1) (ζ ^ PD.p) f))
-    (levB_Γ : ∀ T : LocLat G Qp LL O, IsCrys PD T.ρ → ∀ (g : W.Gam) (i : ZMod n) (ζ ζ' : LL) (j a : ℕ),
-      IsPrimitiveRoot ζ (PD.p ^ j) → (j : WithTop ℚ) ≤ v (algebraMap O LL (W.χΓ g : O) - (a : LL)) →
-      ζ' = ζ ^ a → ∀ (x : ↥(W.N T)) (hx : W.γD T g (x : W.DD T) ∈ W.N T) (k : ℤ),
-      Lb.levB T i ζ ⟨W.γD T g (x : W.DD T), hx⟩ k = (algebraMap O LL (W.χΓ g : O)) ^ k • Lb.levB T i ζ' x k)
-
-    (hs1 : W.s = 1) {Pt : ZMod n → LL → (K →ₐ[Qp] LL) → Prop} (hP4 : Formalism.MainNotions.DeltaInvariantLattices.p4 W Pt T)
-    (hP3 : Formalism.MainNotions.DeltaInvariantLattices.p3 W T) {π' : LetA O n} (hP9 : Formalism.MainNotions.DeltaInvariantLattices.wachModuleOverLetters W T π')
-    (hP5 : Formalism.MainNotions.DeltaInvariantLattices.P5W W) (hT : IsCrys PD T.ρ) {Mj hj : ZMod n → ℕ} (hJl : Formalism.MainNotions.DeltaInvariantLattices.JumpsLet W T Mj hj)
-    (hfin : FiniteDimensional LL ↥(Dcris PD T.ρ))
-
-    (hϖ : Irreducible ϖ) (hℓm : ((PD.p : ℕ) : O) ∈ IsLocalRing.maximalIdeal O)
-    (n0 : ℕ) (hn0 : ell ≤ n0) (hroot : ∃ ζ : LL, IsPrimitiveRoot ζ (PD.p ^ n0))
-    (G2 : ∃ w : (PowerSeries O)ˣ, (baseIdOf hR).ι (baseIdOf hR).Bs.q = (w : PowerSeries O) *
-      (((Polynomial.cyclotomic PD.p O).comp (Polynomial.X + 1) : Polynomial O) : PowerSeries O))
-    (hφ : W.φ₀ PowerSeries.X = (1 + PowerSeries.X) ^ PD.p - 1)
-    (hρζ : ∀ s < ell, ∀ ζ ∈ primitiveRoots (PD.p ^ (s + 1)) LL,
-      1 + rhoZ W c ζ PowerSeries.X = PowerSeries.C ζ * PowerSeries.exp LL)
-    (huZv : ((uZ : ℤ_[PD.p]) - 1).valuation = 1) (hutie : ιZ uZ = (W.χΓ W.gam : O))
-    (hom' : ∀ a : ZMod PD.p, a ≠ 0 → ∃ j : DeltaT PD.p, PadicInt.toZMod (j.1 : ℤ_[PD.p]) = a)
-
-    (hl : 5 ≤ PD.p) (huZ : ∀ k : ℕ, (k : WithTop ℚ) ≤
-      v (algebraMap O LL (W.χΓ W.gam : O) - ((PadicInt.toZModPow k (uZ : ℤ_[PD.p])).val : LL)))
-    (m : ℕ) (hm : ∀ i, Mj i ≤ m)
-    (hκ : κ = Formalism.ExponentWindows.abelian₂ (baseIdOf hR).Bs.p H ell * ∏ s ∈ Finset.range ell, (baseIdOf hR).Bs.p s ^ m)
-    (hBasis : Module.Basis (Fin r) (PowerSeries O) ↥((latOf C).N (c - (ell : ZMod n))))
-    (hBasis_e : ∀ k, (hBasis k : C.V) = e k)
-
-    (hmem : (lvData Hy ((baseIdOf hR).Bs.ff' ell j M g) (E.kindAt (kdOf ty) c) (E.sizeAt (bbOf ty) c) η).Mem)
-    (hpa1b : (lvData Hy ((baseIdOf hR).Bs.ff' ell j M g) (E.kindAt (kdOf ty) c) (E.sizeAt (bbOf ty) c) η).LocalizesConst M e)
-    (hK : Function.Surjective (algebraMap K₀ K)) (hJ : KindJumps PD T W.emb G₀ Sz η ty) :
-    LevSteps Hy ϖ j M g G₀ Sz η (E.kindAt (kdOf ty) c) (E.sizeAt (bbOf ty) c) e :=
-  levSteps_of_jumps Hy ϖ j M g G₀ Sz η _ _ levN_eq levB_φ lev_φ levB_Γ hs1 hP4 hP3 hP9 hP5 hT hJl hfin hϖ hℓm n0 hn0 hroot G2 hφ hρζ huZv hutie hom' hl huZ m hm hκ hBasis hBasis_e hmem hpa1b (jumps_holds hK c ell G₀ Sz η ty hJ)
-
-theorem levSteps_holds_quot [IsDomain O] [IsDiscreteValuationRing O] [IsAdicComplete (IsLocalRing.maximalIdeal O) O]
-    [CharZero LL] [IsFractionRing O LL]
-    {T : LocLat G Qp LL O} {C : Coord W (baseIdOf hR) T} {c : ZMod n} {ell : ℕ} {H : ℕ → ℕ}
-    {κ : PowerSeries O} {r : ℕ} {e : Fin r → C.V}
-    (Hy : LvHyp Lb hR uZ ιZ C c ell (Formalism.ExponentWindows.abelian₂ (baseIdOf hR).Bs.p H ell) κ (lamOf C c ell e))
-    (ϖ : O) (j M g G₀ Sz η : ℕ) (ty : ZMod n → LT)
-
-    (levN_eq : ∀ (T : LocLat G Qp LL O) (i : ZMod n) (ζ : LL) (x : ↥(W.N T)) (k : ℤ),
-      W.levN T i ζ x k = ιV PD (LL := LL) (V := T.V) (Lb.levB T i ζ x k))
-    (levB_φ : ∀ (i : ZMod n) (ζ : LL), (∃ j : ℕ, IsPrimitiveRoot ζ (PD.p ^ j)) → ∀ (x : ↥(W.N T)) (m : ℕ)
-      (hx : W.Q ^ m • W.φD T (x : W.DD T) ∈ W.N T) (k : ℤ),
-      Lb.levB T i ζ ⟨W.Q ^ m • W.φD T (x : W.DD T), hx⟩ k =
-        ∑ᶠ j : ℕ, PowerSeries.coeff j (W.lev i ζ (W.Q ^ m)) •
-          (((PD.p : LL) ^ (k - (j : ℤ))) •
-            φVB PD (LL := LL) (V := T.V) (Lb.levB T (i - 1) (ζ ^ PD.p) x (k - (j : ℤ)))))
-    (lev_φ : ∀ (i : ZMod n) (ζ : LL), (∃ j : ℕ, IsPrimitiveRoot ζ (PD.p ^ j)) → ∀ f : LetA O n,
-      W.lev i ζ (W.φA f) = PowerSeries.rescale (PD.p : LL) (W.lev (i - 1) (ζ ^ PD.p) f))
-    (levB_Γ : ∀ T : LocLat G Qp LL O, IsCrys PD T.ρ → ∀ (g : W.Gam) (i : ZMod n) (ζ ζ' : LL) (j a : ℕ),
-      IsPrimitiveRoot ζ (PD.p ^ j) → (j : WithTop ℚ) ≤ v (algebraMap O LL (W.χΓ g : O) - (a : LL)) →
-      ζ' = ζ ^ a → ∀ (x : ↥(W.N T)) (hx : W.γD T g (x : W.DD T) ∈ W.N T) (k : ℤ),
-      Lb.levB T i ζ ⟨W.γD T g (x : W.DD T), hx⟩ k = (algebraMap O LL (W.χΓ g : O)) ^ k • Lb.levB T i ζ' x k)
-
-    (hs1 : W.s = 1) {Pt : ZMod n → LL → (K →ₐ[Qp] LL) → Prop} (hP4 : Formalism.MainNotions.DeltaInvariantLattices.p4 W Pt T)
-    (hP3 : Formalism.MainNotions.DeltaInvariantLattices.p3 W T) {π' : LetA O n} (hP9 : Formalism.MainNotions.DeltaInvariantLattices.wachModuleOverLetters W T π')
-    (hP5 : Formalism.MainNotions.DeltaInvariantLattices.P5W W) (hT : IsCrys PD T.ρ) {Mj hj : ZMod n → ℕ} (hJl : Formalism.MainNotions.DeltaInvariantLattices.JumpsLet W T Mj hj)
-    (hfin : FiniteDimensional LL ↥(Dcris PD T.ρ))
-
-    (hϖ : Irreducible ϖ) (hℓm : ((PD.p : ℕ) : O) ∈ IsLocalRing.maximalIdeal O)
-    (n0 : ℕ) (hn0 : ell ≤ n0) (hroot : ∃ ζ : LL, IsPrimitiveRoot ζ (PD.p ^ n0))
-    (G2 : ∃ w : (PowerSeries O)ˣ, (baseIdOf hR).ι (baseIdOf hR).Bs.q = (w : PowerSeries O) *
-      (((Polynomial.cyclotomic PD.p O).comp (Polynomial.X + 1) : Polynomial O) : PowerSeries O))
-    (hφ : W.φ₀ PowerSeries.X = (1 + PowerSeries.X) ^ PD.p - 1)
-    (hρζ : ∀ s < ell, ∀ ζ ∈ primitiveRoots (PD.p ^ (s + 1)) LL,
-      1 + rhoZ W c ζ PowerSeries.X = PowerSeries.C ζ * PowerSeries.exp LL)
-    (huZv : ((uZ : ℤ_[PD.p]) - 1).valuation = 1) (hutie : ιZ uZ = (W.χΓ W.gam : O))
-    (hom' : ∀ a : ZMod PD.p, a ≠ 0 → ∃ j : DeltaT PD.p, PadicInt.toZMod (j.1 : ℤ_[PD.p]) = a)
-
-    (hl : 5 ≤ PD.p) (huZ : ∀ k : ℕ, (k : WithTop ℚ) ≤
-      v (algebraMap O LL (W.χΓ W.gam : O) - ((PadicInt.toZModPow k (uZ : ℤ_[PD.p])).val : LL)))
-    (m : ℕ) (hm : ∀ i, Mj i ≤ m)
-    (hκ : κ = Formalism.ExponentWindows.abelian₂ (baseIdOf hR).Bs.p H ell * ∏ s ∈ Finset.range ell, (baseIdOf hR).Bs.p s ^ m)
-    (hBasis : Module.Basis (Fin r) (PowerSeries O) ↥((latOf C).N (c - (ell : ZMod n))))
-    (hBasis_e : ∀ k, (hBasis k : C.V) = e k)
-
-    (hmem : (lvData Hy ((baseIdOf hR).Bs.ff' ell j M g) (E.kindAt (kdOf ty) c) (E.sizeAt (bbOf ty) c) η).Mem)
-    (hpa1b : (lvData Hy ((baseIdOf hR).Bs.ff' ell j M g) (E.kindAt (kdOf ty) c) (E.sizeAt (bbOf ty) c) η).LocalizesConst M e)
-    (hK : Function.Surjective (algebraMap K₀ K))
-    (hQuot : ∀ (T₁ T₂ : LocLat G Qp LL O) (F : LatHom T₁.L T₂.L), CrysLat PD T₁ → CrysLat PD T₂ → F.Onto →
-      ∀ (τ : K →ₐ[Qp] LL) (a : ℤ), IsJumpV PD T₂.ρ τ a → IsJumpV PD T₁.ρ τ a)
-    {T₀ : LocLat G Qp LL O} (F : LatHom T₀.L T.L) (hc₀ : CrysLat PD T₀) (hc : CrysLat PD T) (hon : F.Onto)
-    (hJ : KindJumps PD T₀ W.emb G₀ Sz η ty) :
-    LevSteps Hy ϖ j M g G₀ Sz η (E.kindAt (kdOf ty) c) (E.sizeAt (bbOf ty) c) e :=
-  levSteps_of_jumps Hy ϖ j M g G₀ Sz η _ _ levN_eq levB_φ lev_φ levB_Γ hs1 hP4 hP3 hP9 hP5 hT hJl hfin hϖ hℓm n0 hn0 hroot G2 hφ hρζ huZv hutie hom' hl huZ m hm hκ hBasis hBasis_e hmem hpa1b
-    (jumps_holds_quot hK hQuot F hc₀ hc hon c ell G₀ Sz η ty hJ)
-
 theorem mapSteps_holds {T₁ T₂ : LocLat G Qp LL O} {C₁ : Coord W (baseIdOf hR) T₁} {C₂ : Coord W (baseIdOf hR) T₂}
     {F : LatHom T₁.L T₂.L} {c : ZMod n} {ell : ℕ} {H : ℕ → ℕ} {κ₁ κ₂ : PowerSeries O} {r₁ r₂ : ℕ}
     (hC : CoordHom C₁ C₂ F) (e₁ : Fin r₁ → C₁.V) (e₂ : Fin r₂ → C₂.V)
@@ -288,15 +189,17 @@ theorem mapSteps_holds {T₁ T₂ : LocLat G Qp LL O} {C₁ : Coord W (baseIdOf 
     (he₂ : ∀ l, e₂ l ∈ (latOf C₂).N (c - (ell : ZMod n)))
     (hP : ∀ k, ∃ a : Fin r₂ → PowerSeries O, (latHomOf hC).f (e₁ k) = ∑ l, a l • e₂ l ∧
       ∀ l, LinearMap.toMatrix' P l k = PowerSeries.constantCoeff (a l)) :
-    MapSteps hC Hy₁ Hy₂ Mh j M g η kind b e₁ e₂ P where
-  locComm := locComm_holds hC Hy₁ Hy₂ Mh j M g η kind b levN_eq
-    (kapUnit_holds Hy₁ j M g η kind b m₁ hκ₁ hk1b₁ hUnits₁)
-    (kapUnit_holds Hy₂ j M g η kind b m₂ hκ₂ hk1b₂ hUnits₂)
-  loclComm := loclComm_holds hC Hy₁ Hy₂ Mh j M g η kind b e₁ e₂ P rfl rfl he₁ he₂ hP
-  mapFl := mapFl_holds Hy₁ Hy₂ Mh j M g η kind b
-  cMap := cMap_holds Mh.memD kind b η P
-    (lambda_of_matrixCongruences hC Mh.memD e₁ e₂ P he₁ he₂ (prLIs_holds hC e₁ e₂ P he₂ hP))
-  prLIs := prLIs_holds hC e₁ e₂ P he₂ hP
+    MapSteps hC Hy₁ Hy₂ Mh j M g η kind b e₁ e₂ P := by
+  have hprL := prLIs_holds hC e₁ e₂ P he₂ hP
+  exact
+    { locComm := locComm_holds hC Hy₁ Hy₂ Mh j M g η kind b levN_eq
+        (kapUnit_holds Hy₁ j M g η kind b m₁ hκ₁ hk1b₁ hUnits₁)
+        (kapUnit_holds Hy₂ j M g η kind b m₂ hκ₂ hk1b₂ hUnits₂)
+      loclComm := loclComm_holds hC Hy₁ Hy₂ Mh j M g η kind b e₁ e₂ P rfl rfl he₁ he₂ hP
+      mapFl := mapFl_holds Hy₁ Hy₂ Mh j M g η kind b
+      cMap := cMap_holds Mh.memD kind b η P
+        (lambda_of_matrixCongruences hC Mh.memD e₁ e₂ P he₁ he₂ hprL)
+      prLIs := hprL }
 
 theorem mapHyp_of (hR : Ring9 W) (uZ : ℤ_[PD.p]ˣ) (ιZ : ℤ_[PD.p] →+* O) {T₁ T₂ : LocLat G Qp LL O}
     (F : LatHom T₁.L T₂.L) (c : ZMod n) : MapHyp hR uZ ιZ F c :=

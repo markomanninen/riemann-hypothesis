@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.FourierCoeffIntSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.NatCastMulCoeffOfPderivEq
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.FourierCoeffIntSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.NatCastMulCoeffOfPderivEq
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -101,7 +105,7 @@ theorem ev_const {m n : ℕ} (f : PS R m d) :
 
 theorem pderiv_ev {m n : ℕ} {a : Fin m → Pt R n d} (ha : NoConst a) (f : PS R m d)
     (v : Fin n × Fin d) :
-    pderiv R v (ev a f) = ∑ j, ∑ i, ev a (pderiv R (j, i) f) * pderiv R v (a j i) := by
+    pderiv (R := R) v (ev a f) = ∑ j, ∑ i, ev a (pderiv (R := R) (j, i) f) * pderiv (R := R) v (a j i) := by
   unfold ev
   rw [GlobalTheory.FormalCalc.pderiv_subst ha.hasSubst, Fintype.sum_prod_type]
 
@@ -177,29 +181,29 @@ theorem germ_ev_restrict_axis_groupLaw (G : FGLaw R d) (h : PS R 1 d) :
   rw [ev_ev germPointsNoConstantTerm_first_zero (noConst_one G.const), hfam, ev_id]
 
 theorem pderiv_second_of_ev_first_point (h : PS R 1 d) (i : Fin d) :
-    pderiv R ((1 : Fin 2), i) (ev (n := 2) ![pt R d 0] h) = 0 := by
+    pderiv (R := R) ((1 : Fin 2), i) (ev (n := 2) ![pt R d 0] h) = 0 := by
   have hx : NoConst (![pt R (n := 2) d 0] : Fin 1 → Pt R 2 d) := noConst_one (cc_pt 0)
   rw [pderiv_ev hx]
   refine Finset.sum_eq_zero fun j _ => Finset.sum_eq_zero fun k _ => ?_
   rw [Fin.fin_one_eq_zero j]
-  show _ * pderiv R ((1 : Fin 2), i) (X ((0 : Fin 2), k)) = 0
+  show _ * pderiv (R := R) ((1 : Fin 2), i) (X ((0 : Fin 2), k)) = 0
   rw [pderiv_X_of_ne (by simp), mul_zero]
 
 theorem dy_y (h : PS R 1 d) (i : Fin d) :
-    pderiv R ((1 : Fin 2), i) (ev (n := 2) ![pt R d 1] h) =
-      ev (n := 2) ![pt R d 1] (pderiv R ((0 : Fin 1), i) h) := by
+    pderiv (R := R) ((1 : Fin 2), i) (ev (n := 2) ![pt R d 1] h) =
+      ev (n := 2) ![pt R d 1] (pderiv (R := R) ((0 : Fin 1), i) h) := by
   have hy : NoConst (![pt R (n := 2) d 1] : Fin 1 → Pt R 2 d) := noConst_one (cc_pt 1)
   rw [pderiv_ev hy, Fin.sum_univ_one, Finset.sum_eq_single i]
-  · show _ * pderiv R ((1 : Fin 2), i) (X ((1 : Fin 2), i)) = _
+  · show _ * pderiv (R := R) ((1 : Fin 2), i) (X ((1 : Fin 2), i)) = _
     rw [pderiv_X_self, mul_one]
   · intro k _ hk
-    show _ * pderiv R ((1 : Fin 2), i) (X ((1 : Fin 2), k)) = 0
+    show _ * pderiv (R := R) ((1 : Fin 2), i) (X ((1 : Fin 2), k)) = 0
     rw [pderiv_X_of_ne (by simp [hk]), mul_zero]
   · intro h
     exact absurd (Finset.mem_univ i) h
 
 theorem cc_pderiv (φ : Pt R 1 d) (b i : Fin d) :
-    constantCoeff (pderiv R ((0 : Fin 1), i) (φ b)) = dLin φ b i := by
+    constantCoeff (pderiv (R := R) ((0 : Fin 1), i) (φ b)) = dLin φ b i := by
   rw [← coeff_zero_eq_constantCoeff_apply, coeff_pderiv]
   simp [dLin]
 
@@ -231,9 +235,9 @@ private theorem ev_swap_of_constantCoeff_eq_zero (φ : Pt R 1 d) (hφ : ∀ i, c
 theorem jac_endo (G : FGLaw R d) (φ : Pt R 1 d) (hφ : ∀ i, constantCoeff (φ i) = 0)
     (hom : comp1 φ (G.add (pt R (n := 2) d 0) (pt R (n := 2) d 1)) =
       G.add (comp1 φ (pt R (n := 2) d 0)) (comp1 φ (pt R (n := 2) d 1))) (a i : Fin d) :
-    ∑ c, pderiv R ((0 : Fin 1), c) (φ a) *
-        ev (n := 1) ![pt R d 0, 0] (pderiv R ((1 : Fin 2), i) (G.F c)) =
-      ∑ b, ev (n := 1) ![φ] (ev (n := 1) ![pt R d 0, 0] (pderiv R ((1 : Fin 2), b) (G.F a))) *
+    ∑ c, pderiv (R := R) ((0 : Fin 1), c) (φ a) *
+        ev (n := 1) ![pt R d 0, 0] (pderiv (R := R) ((1 : Fin 2), i) (G.F c)) =
+      ∑ b, ev (n := 1) ![φ] (ev (n := 1) ![pt R d 0, 0] (pderiv (R := R) ((1 : Fin 2), b) (G.F a))) *
         C (dLin φ b i) := by
   have hF : NoConst (![G.F] : Fin 1 → Pt R 2 d) := noConst_one G.const
   have hx : NoConst (![pt R (n := 2) d 0] : Fin 1 → Pt R 2 d) := noConst_one (cc_pt 0)
@@ -241,12 +245,12 @@ theorem jac_endo (G : FGLaw R d) (φ : Pt R 1 d) (hφ : ∀ i, constantCoeff (φ
   have hxy : NoConst (![comp1 φ (pt R (n := 2) d 0), comp1 φ (pt R (n := 2) d 1)] :
       Fin 2 → Pt R 2 d) :=
     noConst_two (fun b => (cc_ev hx (φ b)).trans (hφ b)) (fun b => (cc_ev hy (φ b)).trans (hφ b))
-  have key : ev (n := 1) ![pt R d 0, 0] (pderiv R ((1 : Fin 2), i) (ev (n := 2) ![G.F] (φ a))) =
-      ev (n := 1) ![pt R d 0, 0] (pderiv R ((1 : Fin 2), i)
+  have key : ev (n := 1) ![pt R d 0, 0] (pderiv (R := R) ((1 : Fin 2), i) (ev (n := 2) ![G.F] (φ a))) =
+      ev (n := 1) ![pt R d 0, 0] (pderiv (R := R) ((1 : Fin 2), i)
         (ev (n := 2) ![comp1 φ (pt R (n := 2) d 0), comp1 φ (pt R (n := 2) d 1)] (G.F a))) := by
     have h2 := congrFun hom a
     rw [add_pt] at h2
-    exact congrArg (fun g => ev (n := 1) ![pt R d 0, 0] (pderiv R ((1 : Fin 2), i) g)) h2
+    exact congrArg (fun g => ev (n := 1) ![pt R d 0, 0] (pderiv (R := R) ((1 : Fin 2), i) g)) h2
   rw [pderiv_ev hF, pderiv_ev hxy, Fin.sum_univ_one, Fin.sum_univ_two] at key
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, comp1_apply_eq_ev, pderiv_second_of_ev_first_point,
     dy_y, mul_zero, Finset.sum_const_zero, zero_add] at key
@@ -254,8 +258,8 @@ theorem jac_endo (G : FGLaw R d) (φ : Pt R 1 d) (hφ : ∀ i, constantCoeff (φ
   exact key
 
 private theorem dof_eq_sum_C_mul_ev (F : Fin d → PS R 2 d) (u : Fin d → R) (g : PS R 1 d) :
-    Dof F u g = ∑ j, (∑ i, C (u i) * ev (n := 1) ![pt R d 0, 0] (pderiv R ((1 : Fin 2), i) (F j))) *
-      pderiv R ((0 : Fin 1), j) g := by
+    Dof F u g = ∑ j, (∑ i, C (u i) * ev (n := 1) ![pt R d 0, 0] (pderiv (R := R) ((1 : Fin 2), i) (F j))) *
+      pderiv (R := R) ((0 : Fin 1), j) g := by
   rfl
 
 theorem dof_comp_endo : ∀ (R : Type) [CommRing R] (d : ℕ) (G : FGLaw R d) (φ : Pt R 1 d),
@@ -271,16 +275,17 @@ theorem dof_comp_endo : ∀ (R : Type) [CommRing R] (d : ℕ) (G : FGLaw R d) (�
     Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun c _ => ?_
-  have step : ∀ i, ∑ x, C (u i) * ev (n := 1) ![pt R d 0, 0] (pderiv R ((1 : Fin 2), i) (G.F x)) *
-      (ev (n := 1) ![φ] (pderiv R ((0 : Fin 1), c) f) * pderiv R ((0 : Fin 1), x) (φ c)) =
-      C (u i) * ev (n := 1) ![φ] (pderiv R ((0 : Fin 1), c) f) *
-        ∑ x, pderiv R ((0 : Fin 1), x) (φ c) *
-          ev (n := 1) ![pt R d 0, 0] (pderiv R ((1 : Fin 2), i) (G.F x)) := by
+  have step : ∀ i, ∑ x, C (u i) * ev (n := 1) ![pt R d 0, 0] (pderiv (R := R) ((1 : Fin 2), i) (G.F x)) *
+      (ev (n := 1) ![φ] (pderiv (R := R) ((0 : Fin 1), c) f) * pderiv (R := R) ((0 : Fin 1), x) (φ c)) =
+      C (u i) * ev (n := 1) ![φ] (pderiv (R := R) ((0 : Fin 1), c) f) *
+        ∑ x, pderiv (R := R) ((0 : Fin 1), x) (φ c) *
+          ev (n := 1) ![pt R d 0, 0] (pderiv (R := R) ((1 : Fin 2), i) (G.F x)) := by
     intro i
     rw [Finset.mul_sum]
     exact Finset.sum_congr rfl fun x _ => by ring
   conv_lhs => rw [Finset.sum_comm]
-  simp only [step, jac_endo G φ hφ hom c, Matrix.mulVec, dotProduct, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [step, jac_endo G φ hφ hom c, Matrix.mulVec, dotProduct, map_sum, map_mul,
     Finset.mul_sum, Finset.sum_mul]
   conv_lhs => rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun i _ => by ring

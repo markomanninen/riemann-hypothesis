@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.RnStmt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.RnStmt
+
+@[expose] public section
 
 namespace UpperTheory.V.Br
 
@@ -62,7 +66,7 @@ private theorem bound (hL : W * L - L * W = (-2 : ℂ) • L)
   have hss : s * s = (c : ℂ) := by
     rw [hsdef, ← Complex.ofReal_mul, Real.mul_self_sqrt hcpos.le]
   have hy : H (s • x + L x) (s • x + L x) = 0 := by
-    simp only [map_add, LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul, hs,
+    simp only [map_add (f := _), LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul, hs,
       h1, h2, h3, RingHom.id_apply]
     ring_nf
     linear_combination (H x x) * hss

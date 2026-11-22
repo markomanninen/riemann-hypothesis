@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.IsAlgClosureField
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.IsAlgClosureField
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,8 @@ variable {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [F
 
 def Link.kapQ : G T.L Ω →* (PadicAlgCl l)ˣ := W.pushCh (algebraMap c'.O (PadicAlgCl l)) K.κ
 
-variable {K} in
 
+variable {K} in
 def Link.pt {X : Space (T.fr ∅) (inc h)} {B : W.UniversalOrdinaryDeterminantRing K.r} (φ : B.B →ₐ[c'.O] X.B) (y : X.A →ₐ[c'.O] PadicAlgCl l) : B.Pt :=
   (y.comp (IsScalarTower.toAlgHom c'.O X.B X.A)).comp φ
 

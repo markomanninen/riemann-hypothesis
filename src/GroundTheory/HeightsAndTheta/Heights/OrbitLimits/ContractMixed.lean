@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.ContractMixedFieldStatement
-import GroundTheory.HeightsAndTheta.Heights.Intersections.TableDegreeThreeBase
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsPFIntZero
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsPFVert
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.ContractMixedFieldStatement
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.TableDegreeThreeBase
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsPFIntZero
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsPFVert
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -22,15 +27,15 @@ def PrefixPull (κ : K → K') (v : (Σ k, ι k) → (Σ k', ι' k')) (p : ℕ) 
   ∃ (h : p ≤ n) (L : Fin p → HermLine ι), (∀ j, IsSmoothHerm (L j)) ∧
     ∀ j, IsPullHerm κ v (L j) (L' (Fin.castLE h j))
 
-omit [∀ k, Fintype (ι' k)] in
 
+omit [∀ k, Fintype (ι' k)] in
 theorem PrefixPull.mono {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} {p q n : ℕ} {L' : Fin n → HermLine ι'}
     (h : PrefixPull κ v p L') (hqp : q ≤ p) : PrefixPull κ v q L' := by
   obtain ⟨hpn, L, hL, hLL⟩ := h
   exact ⟨hqp.trans hpn, fun j => L (Fin.castLE hqp j), fun j => hL _, fun j => hLL (Fin.castLE hqp j)⟩
 
-omit [∀ k, Fintype (ι' k)] in
 
+omit [∀ k, Fintype (ι' k)] in
 theorem PrefixPull.init {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} {p n : ℕ} {L' : Fin (n + 1) → HermLine ι'}
     (h : PrefixPull κ v p L') (hpn : p ≤ n) : PrefixPull κ v p (Fin.init L') := by
   obtain ⟨_, L, hL, hLL⟩ := h

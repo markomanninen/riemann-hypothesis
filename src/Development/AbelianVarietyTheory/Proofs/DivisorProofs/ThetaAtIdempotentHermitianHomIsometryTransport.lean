@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegIdxOfIsStd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomMapApply
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousKapSymm
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HermitianSkewAdjointMemAdjointHomLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegIdxOfIsStd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomMapApply
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousKapSymm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HermitianSkewAdjointMemAdjointHomLattice
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Theta IsDedekindDomain NumberField Finset
 open Formalism.DivisionValues (vw)
@@ -49,7 +53,7 @@ private theorem heisO_move (ψ : AddChar (AF D.host.F) ℂ) (φ : WO S T ≃+ WO
     (hB : ∀ x y, symplO S' T' (φ x) (φ y) = symplO S T x y) (w₀ : WO S T) (f : WO S T → ℂ) :
     heisO ψ S' T' (φ w₀) (rd φ f) = rd φ (heisO ψ S T w₀ f) := by
   funext w
-  simp only [heisO, rd_apply, symplOH, map_add, AddEquiv.symm_apply_apply]
+  simp only [heisO, rd_apply, symplOH, map_add (f := _), AddEquiv.symm_apply_apply]
   rw [← hB (φ.symm w) w₀, AddEquiv.apply_symm_apply]
 
 private theorem placeModel_move (ψ : AddChar (AF D.host.F) ℂ) (e : AE D) (Λ : AddSubgroup (WO S T))
@@ -62,7 +66,7 @@ private theorem placeModel_move (ψ : AddChar (AF D.host.F) ℂ) (e : AE D) (Λ 
   have hSB : ∀ Φ', IsSBHalf e Λ' Φ' → IsSBHalf e Λ ((rd φ).symm Φ') := by
     rintro Φ' ⟨h1, k, hk, h2, h3⟩
     refine ⟨fun t ht => (hH e t).1 (h1 _ ht), k, hk, fun u hu hue t => ?_, fun t ht => ?_⟩
-    · simp only [rd_symm_apply, map_add, map_nsmul]
+    · simp only [rd_symm_apply, map_add (f := _), map_nsmul]
       exact h2 _ ((hΛ u).2 hu) ((hH e u).2 hue) _
     · have := h3 _ ht
       change k • φ t ∈ Λ' at this
@@ -70,7 +74,7 @@ private theorem placeModel_move (ψ : AddChar (AF D.host.F) ℂ) (e : AE D) (Λ 
       exact (hΛ _).1 this
   refine ⟨fun Φ' hΦ x hx => ?_, fun Φ' hΦ y hy => ?_, ?_⟩
   · have e1 : (rd φ).symm (fun t => Φ' (t + x)) = fun t => (rd φ).symm Φ' (t + φ.symm x) := by
-      funext t; simp only [rd_symm_apply, map_add, AddEquiv.apply_symm_apply]
+      funext t; simp only [rd_symm_apply, map_add (f := _), AddEquiv.apply_symm_apply]
     have hx' : IsHalf e (φ.symm x) := (hH e _).1 (by rwa [AddEquiv.apply_symm_apply])
     simp only [LinearMap.comp_apply, LinearEquiv.coe_coe]
     rw [e1, hT.trans _ (hSB Φ' hΦ) _ hx', ← heisO_move ψ φ hB, AddEquiv.apply_symm_apply]
@@ -86,8 +90,9 @@ private theorem placeModel_move (ψ : AddChar (AF D.host.F) ℂ) (e : AE D) (Λ 
       congr 1
       have key := and_congr (hΛ t) (hH e t)
       by_cases h : t ∈ Λ ∧ IsHalf e t
-      · rw [if_pos (key.2 h), if_pos h]
-      · rw [if_neg (fun h' => h (key.1 h')), if_neg h]
+      · simp [key.2 h, h]
+      · have h' : ¬ (φ t ∈ Λ' ∧ IsHalf e (φ t)) := fun ht => h (key.1 ht)
+        simp [h', h]
     simp only [LinearMap.comp_apply, LinearEquiv.coe_coe]
     rw [e1, hT.vac]
 

@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AntiJMulApply
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AntiJMulApply
+
+@[expose] public section
+
 open Formalism.UG GlobalTheory.SatakeWeyl
 
 namespace GlobalTheory.SatakeWeyl
@@ -43,7 +48,7 @@ theorem traceZeroIndex_of_intIndex : IntIndex → TraceZeroIndex := by
     · rintro ⟨y, hy, e⟩
       have e1 : (σ x - x) * (ϖ * y) = u.1 + x * w.1 := by rw [e]; field_simp
       have e2 := congrArg σ e1
-      rw [map_mul, map_sub, hσσ, map_mul, hϖ, map_add, map_mul, ((memT _).1 u.2).2, ((memT _).1 w.2).2] at e2
+      rw [map_mul, map_sub, hσσ, map_mul, hϖ, map_add (f := _), map_mul, ((memT _).1 u.2).2, ((memT _).1 w.2).2] at e2
       have e3 : ϖ * (σ y - y) = w.1 := mul_left_cancel₀ hδ0 (by linear_combination -e1 - e2)
       exact ⟨⟨_, hu y hy, by linear_combination e1 - x * e3⟩, _, hw y hy, e3⟩
     · rintro ⟨⟨a, ha, e1⟩, b, hb, e2⟩

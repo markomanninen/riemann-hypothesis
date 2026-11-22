@@ -1,6 +1,10 @@
-import Formalism.AdmissibleDesigns.RowTopOf
-import Formalism.AdmissibleDesigns.FiniteClassesLocalEq
-import Formalism.AdmissibleDesigns.EKSymmCont
+module
+
+public import Formalism.AdmissibleDesigns.RowTopOf
+public import Formalism.AdmissibleDesigns.FiniteClassesLocalEq
+public import Formalism.AdmissibleDesigns.EKSymmCont
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -72,6 +76,7 @@ def eL {n : ℕ} (hn : K.plOf i dc n ∈ placesOver D.host.E (D.nd.l i)) :
 
 theorem rowTop1_S (hD : RingDef (D.nd.O i) (D.nd.T i) (RepresentationBoundsCohomology.repX D.nd r) π (chiU D.nd i 1) (epsU D.nd i) g0 eB e₁ s Dd) :
     KRow.RowTop1 i dc (T₁ := FirstSummandSubmodule (D.nd.O i) Dd.e₁) := by
+  set_option synthInstance.maxHeartbeats 200000 in
   haveI := K.Topo.finite_RD i r π g0 eB e₁ s Dd hD
   haveI : Module.Free (D.nd.O i) Dd.R' := rFree
   haveI := K.Topo.rTop_isModuleTopology (D.nd.O i) Dd.R'

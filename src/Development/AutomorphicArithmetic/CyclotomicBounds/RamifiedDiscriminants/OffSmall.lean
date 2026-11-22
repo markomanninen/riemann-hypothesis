@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
-import Development.AutomorphicArithmetic.CyclotomicBounds.ZmodTwoQuadraticNeZero
-import Development.AutomorphicArithmetic.CyclotomicBounds.SmallFacts
-import Development.AutomorphicArithmetic.PrimeDiscriminants.RamDiscr
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ZmodTwoQuadraticNeZero
+public import Development.AutomorphicArithmetic.CyclotomicBounds.SmallFacts
+public import Development.AutomorphicArithmetic.PrimeDiscriminants.RamDiscr
+
+@[expose] public section
 
 open NumberField Ideal Formalism.BasicNotions
 open scoped Pointwise
@@ -23,10 +27,6 @@ theorem coprime_QSq {l : ℕ} (hl : l.Prime) (hs : l ∉ H.small) (hq : l ≠ H.
   rcases (H.toHostRaw.dvd_QSq_iff hl).1 h with h | h
   · exact UpperTheory.Small.not_dvd_QS H hl hs h
   · exact hq h
-
-theorem coprime_condN {l : ℕ} (hl : l.Prime) (hs : l ∉ H.small) (hq : l ≠ H.q) (hd : l ≠ H.d) :
-    Nat.Coprime (H.QS * H.q * H.d) l :=
-  ((Nat.Prime.coprime_iff_not_dvd hl).2 (UpperTheory.Small.not_dvd_condN H hl hs hq hd)).symm
 
 theorem QSq_notMem {A : Type} [CommRing A] {Q : Ideal A} (hQ : Q ≠ ⊤) {l : ℕ} (hl : l.Prime) (hs : l ∉ H.small) (hq : l ≠ H.q)
     (hlQ : (l : A) ∈ Q) : ((H.QS * H.q : ℕ) : A) ∉ Q :=
@@ -49,17 +49,6 @@ theorem half_not_le (Q : Ideal (𝓞 H.E)) [hQ : Q.IsPrime] (h : ((H.QS * H.q : 
   refine h (H.der.diffSupport Q hQ ?_)
   rw [H.𝔟_spec.1]
   exact (Ideal.dvd_iff_le.2 hle).mul_right _
-
-theorem exists_den (Q : Ideal (𝓞 H.E)) [Q.IsPrime] (h : ((H.QS * H.q : ℕ) : 𝓞 H.E) ∉ Q) :
-    ∃ z : 𝓞 H.E, z ∉ Q ∧ ∀ t ∈ H.AA0, ∃ w : 𝓞 H.E, (w : H.E) = t * (z : H.E) := by
-  obtain ⟨z, hz, hzP⟩ := Set.not_subset.1 (half_not_le H Q h)
-  have hB : ((H.𝔟 : Ideal (𝓞 H.E)) : FractionalIdeal (nonZeroDivisors (𝓞 H.E)) H.E) ≠ 0 :=
-    FractionalIdeal.coeIdeal_ne_zero.2 (half_ne_bot H)
-  refine ⟨z, hzP, fun t ha => ?_⟩
-  unfold Host.AA0 at ha
-  rw [FractionalIdeal.mem_inv_iff hB] at ha
-  obtain ⟨w, hw⟩ := (FractionalIdeal.mem_one_iff _).1 (ha _ ((FractionalIdeal.mem_coeIdeal _).2 ⟨z, hz, rfl⟩))
-  exact ⟨w, hw⟩
 
 theorem not_dvd_natAbs_discr {p : ℕ} (hp : p.Prime) (hs : p ∉ H.small) (hq : p ≠ H.q) (hd : p ≠ H.d) :
     ¬ p ∣ (discr H.E).natAbs :=

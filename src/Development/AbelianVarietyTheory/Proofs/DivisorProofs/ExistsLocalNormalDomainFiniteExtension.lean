@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsMumfordFamOfSubsingleton
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsThetaCompact
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsMinAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.MinSt5OfMinSt4
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsMumfordFamOfSubsingleton
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsThetaCompact
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsMinAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MinSt5OfMinSt4
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg GlobalTheory.Poinc
@@ -75,7 +80,7 @@ theorem exists_eq_of_mul_mem_integralClosure
     rw [← IsScalarTower.algebraMap_apply K K' L, ← hab, map_div₀]
     field_simp
   have hmax : ∀ (I : Ideal S) [I.IsMaximal], I.under R = IsLocalRing.maximalIdeal R :=
-    fun I _ => IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal I)
+    fun I _ => IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := R) I)
   have hJtop : J = ⊤ := by
     by_contra hne
     obtain ⟨N, hNmax, hJN⟩ := Ideal.exists_le_maximal J hne
@@ -83,6 +88,7 @@ theorem exists_eq_of_mul_mem_integralClosure
     haveI : Algebra.IsInvariant R S (S ≃ₐ[R] S) := Algebra.isInvariant_of_isGalois' R K L S
     obtain ⟨g, hg⟩ := Algebra.IsInvariant.exists_smul_of_under_eq (A := R) (B := S) (G := S ≃ₐ[R] S) Q N
       ((hmax Q).trans (hmax N).symm)
+    set_option synthInstance.maxHeartbeats 200000 in
     have h1 : g • f s ∈ g • Q := by
       rw [← hg]; exact hJN (hJg g _ htJ)
     have h2 : f s ∈ Q := (Ideal.smul_mem_pointwise_smul_iff).mp h1
@@ -141,7 +147,7 @@ theorem exists_local_normal_domain_of_finite_extension : ∀ (R : Type) [CommRin
   have hinjCR' : Function.Injective (algebraMap C R') :=
     IsLocalization.injective R' m'.primeCompl_le_nonZeroDivisors
   have hcomap : m'.comap (algebraMap R C) = IsLocalRing.maximalIdeal R :=
-    IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal m')
+    IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := R) m')
   refine ⟨R', inferInstance, inferInstance, inferInstance, inferInstance, inferInstance,
     (algebraMap C R').comp (algebraMap R C), e, ?_, hinjCR'.comp hinjRC, ?_, ?_⟩
   · refine ⟨fun r hr => ?_⟩

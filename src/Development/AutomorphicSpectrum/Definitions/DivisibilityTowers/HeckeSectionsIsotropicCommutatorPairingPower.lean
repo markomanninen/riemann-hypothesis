@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
+
+@[expose] public section
 
 noncomputable section
 

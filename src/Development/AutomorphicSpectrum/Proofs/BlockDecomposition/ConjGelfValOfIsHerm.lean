@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GelfandSeriesShiftIdentity
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GelfandSeriesShiftIdentity
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,8 @@ theorem conj_gelfVal {n : ℕ} (c : Fin n → ℂ) (m : ℕ) :
     congr 2
     funext a
     simp [map_ofNat]
-  simp only [GlobalTheory.Dec.gelfVal, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [GlobalTheory.Dec.gelfVal, map_sum]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rw [← h]
   rfl

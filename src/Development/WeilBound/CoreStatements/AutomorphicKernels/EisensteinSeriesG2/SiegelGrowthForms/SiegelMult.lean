@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.EisensteinGrowthForms.GrowForms
+module
+
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.EisensteinGrowthForms.GrowForms
+
+@[expose] public section
 
 noncomputable section
 

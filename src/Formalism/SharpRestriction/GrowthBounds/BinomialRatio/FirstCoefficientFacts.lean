@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.RankDefs
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.OtherStart
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreeAlternative
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.RankDefs
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.OtherStart
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreeAlternative
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,8 +77,8 @@ theorem prod_letters {n' : ℕ} (TT : Finset (Fin n')) (h2 : 2 ≤ numSeg TT) (f
   rw [prod_next TT g]
   ring
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem seg_num {k Q a b' Y E0 N1 La m cm A0 mN e1 e2 : ℝ} (hk5 : 5 ≤ k) (hQ1 : 1 ≤ Q) (hb : 0 < b') (hba : b' ≤ a)
     (hY1 : 1 ≤ Y) (hE : 0 ≤ E0) (hN1 : 1 ≤ N1) (hLa1 : 1 ≤ La) (hkm : k = mN + 1) (hm4 : 1 ≤ mN)
     (hA0lo : a / (2 * Q) ≤ A0) (hkQ : k ^ 3 * Q ≤ b') (hm : 0 ≤ m) (hcm : cm < m + 1) (hcm0 : 0 ≤ cm) (t1 : 0 < e1)
@@ -338,7 +342,7 @@ theorem rank_alternative_lower (h : Std C0 Cde CE1 CE2 1 X) {Ckap : ℝ} (hCk : 
       have h1 : 2 * brk C0 CE1 CE2 X m ≤ X.N * brk C0 CE1 CE2 X m := mul_le_mul_of_nonneg_right hN2 hB0
       have e : 3 * X.N * brk C0 CE1 CE2 X m = 3 * (X.N * brk C0 CE1 CE2 X m) := by ring
       linarith
-    have hprod := Finset.prod_le_prod (s := Finset.univ)
+    have hprod := Finset.prod_le_prod₀ (s := Finset.univ)
       (f := fun j : Fin (numSeg X.TT) => (1 - 3 * brk C0 CE1 CE2 X m) * ((sd X.m (X.aT (segStart X.TT j)) : ℝ) *
         ((∏ i, (sd X.m (X.bT (segPos X.TT j i)) : ℝ) * (sd X.m (X.aT (segPos X.TT j i)) : ℝ)) *
           (sd X.m (X.bT (segNext X.TT j)) : ℝ))))

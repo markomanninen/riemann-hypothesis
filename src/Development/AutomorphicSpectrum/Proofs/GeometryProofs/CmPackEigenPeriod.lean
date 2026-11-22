@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCMFrame
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelEigenvectorsActionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CmImageUniqueLatticeStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelWithCmActionStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.ExpRowsPf
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCMFrame
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelEigenvectorsActionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CmImageUniqueLatticeStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelWithCmActionStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.ExpRowsPf
+
+@[expose] public section
 
 noncomputable section
 

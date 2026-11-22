@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.RestLamOfRests
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.SelIsComplRestrictSupport
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.RestLamOfRests
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.SelIsComplRestrictSupport
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,8 +29,9 @@ theorem lam_dvd_of_res {O σ : Type} [CommRing O] [IsDomain O] [IsDiscreteValuat
   have hd : C ϖ ∣ P := by
     rw [MvPolynomial.C_dvd_iff_dvd_coeff]
     intro m
-    have h1 : IsLocalRing.residue O (coeff m P) = 0 := by
-      rw [← MvPolynomial.coeff_map, h, coeff_zero]
+    have h1 : IsLocalRing.residue O (AddMonoidAlgebra.coeff P m) = 0 := by
+      rw [← MvPolynomial.coeff_map, h]
+      simp
     rw [IsLocalRing.residue_eq_zero_iff, (IsDiscreteValuationRing.irreducible_iff_uniformizer ϖ).mp hϖ,
       Ideal.mem_span_singleton] at h1
     exact h1

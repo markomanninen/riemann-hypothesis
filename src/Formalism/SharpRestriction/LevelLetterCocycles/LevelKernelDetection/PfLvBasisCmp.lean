@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvBasisPhi
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvBasisPhi
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ theorem lvBasis_cmp_congr {a b : W.DD T} (ha : a ∈ W.N T) (hb : b ∈ W.N T) (
 
 theorem lvBasis_cmp_add {a b : W.DD T} (ha : a ∈ W.N T) (hb : b ∈ W.N T) (hab : a + b ∈ W.N T) :
     W.cmp T ⟨a + b, hab⟩ = W.cmp T ⟨a, ha⟩ + W.cmp T ⟨b, hb⟩ := by
-  rw [← map_add]
+  rw [← map_add (f := _)]
   rfl
 
 theorem lvBasis_letE_idem (i : ZMod n) (x : W.DD T) :
@@ -39,7 +43,7 @@ theorem lvBasis_cmp_of_eq {w z y : W.DD T} (hw : w ∈ W.N T) (hz : z ∈ W.N T)
     (o : O) (h : y = o • w + (letπ : LetA O n) • z) :
     W.cmp T ⟨y, hy⟩ = algebraMap O LL o • W.cmp T ⟨w, hw⟩ := by
   have e : (⟨y, hy⟩ : ↥(W.N T)) = o • ⟨w, hw⟩ + (letπ : LetA O n) • ⟨z, hz⟩ := Subtype.ext h
-  rw [e, map_add, W.cmp_smul, W.cmp_π, add_zero]
+  rw [e, map_add (f := _), W.cmp_smul, W.cmp_π, add_zero]
 
 theorem lvBasis_cmp_smul_const {w : W.DD T} (hw : w ∈ W.N T) (a : LetA O n) (o : O)
     (ha : ∀ j, PowerSeries.constantCoeff (a j) = o) (h : a • w ∈ W.N T) :
@@ -128,7 +132,8 @@ theorem lvBasis_letter_span (hspan : Submodule.span LL (Set.range (W.cmp T)) = D
     simp only [z, Finsupp.sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun x _ => ?_
-    rw [← Finset.smul_sum, ← map_sum, ← Finset.sum_smul, lvBasis_sum_letE, one_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.smul_sum, ← map_sum, ← Finset.sum_smul, lvBasis_sum_letE, one_smul]
   have key := lvBasis_indep W.emb W.emb_bij.1
     (fun i => z i - if i = j then (f.sum fun x a => a • W.cmp T x) else 0) (fun i c => by
       have h1 := ((lvBasis_mem_DcrisL PD T.ρ _ _).1 (hzi i)).2 c

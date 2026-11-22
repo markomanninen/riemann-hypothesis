@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.MeanDefs
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoLowerBoundOfEdgeCount
-import Formalism.PolynomialDimension.MultinomialDepth.WeylDimPosOfAntitone
-import Formalism.GradedWeylDivisibility.FinalD
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.MeanDefs
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoLowerBoundOfEdgeCount
+public import Formalism.PolynomialDimension.MultinomialDepth.WeylDimPosOfAntitone
+public import Formalism.GradedWeylDivisibility.FinalD
+
+@[expose] public section
 
 noncomputable section
 

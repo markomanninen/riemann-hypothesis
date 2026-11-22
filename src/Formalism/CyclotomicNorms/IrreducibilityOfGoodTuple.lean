@@ -1,18 +1,20 @@
-import Formalism.CyclotomicNorms.NonsquarefreeBounds.Newton
-import Formalism.CyclotomicNorms.NonsquarefreeBounds.SubstitutionBound
-import Formalism.CyclotomicNorms.NonsquarefreeBounds.SpanQuadraticOfImage
-import Formalism.CyclotomicNorms.NonsquarefreeBounds.Central
-import Formalism.CyclotomicNorms.NonsquarefreeBounds.Cycles
-import Formalism.TameInertiaTowers.FinalGroup
-import Formalism.CyclotomicNorms.NonsquarefreeBounds.Jordan
-import Formalism.CyclotomicNorms.NonsquarefreeBounds.RestrictionOfBlocksAndJordan
-import Formalism.CyclotomicNorms.NonsquarefreeBounds.NonsquarefreeMonicBoundHolds
-import Formalism.CyclotomicNorms.NonsquarefreeBounds.IrreducibilityOfRestriction
+module
+
+public import Mathlib
+public import Formalism.TameInertiaTowers.CentralOrderTwo.OrderOfThreeUnitsTwoPow
+public import Formalism.TameInertiaTowers.CentralOrderTwo.TwoAdic
+public import Formalism.TameInertiaTowers.CentralOrderTwo.MemDecompositionSubgroupIff
+public import Formalism.TameInertiaTowers.CentralOrderTwo.NegOneNeOneUnitsZmodFour
+public import Formalism.TameInertiaTowers.CentralOrderTwo.Groups
+public import Formalism.TameInertiaTowers.CentralOrderTwo.NormalOrderTwoCentral
+public import Formalism.CyclotomicNorms.NonsquarefreeBounds.Jordan
+public import Formalism.CyclotomicNorms.NonsquarefreeBounds.RestrictionOfBlocksAndJordan
+public import Formalism.CyclotomicNorms.NonsquarefreeBounds.NonsquarefreeMonicBoundHolds
+public import Formalism.CyclotomicNorms.NonsquarefreeBounds.IrreducibilityOfRestriction
+
+@[expose] public section
 
 namespace Formalism.CyclotomicNorms
-
-theorem evaluation : Evaluation := evaluation_bound
-theorem centralScalar : CentralScalar := central_scalar_holds
 
 theorem restriction : Restriction := restriction_of_blocks_and_jordan blocks_form_cycle jordan_transitivity
 

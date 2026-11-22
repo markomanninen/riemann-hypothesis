@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+
+@[expose] public section
 
 open Matrix ValuativeRel GlobalTheory.WeilM MeasureTheory
 open scoped ComplexConjugate NNReal
@@ -74,7 +78,7 @@ theorem exists_invariant_form : ∀ (k : Type) [Field k] [ValuativeRel k] [Topol
       isOpen_lt continuous_const (Complex.continuous_re.comp (cg.comp cp))
     have h0 : (0 : κ → k) ∈ {x : κ → k | 0 < (g (p x)).re} := by simp [hg]
     obtain ⟨K, hK, hK0, hKs⟩ := exists_compact_subset ho h0
-    obtain ⟨U, hU, hU0, hUs⟩ := (loc_compact_Haus_tot_disc_of_zero_dim (H := κ → k)).exists_subset_of_mem_open hK0
+    obtain ⟨U, hU, hU0, hUs⟩ := (loc_compact_Haus_tot_disc_of_zero_dim (X := κ → k)).exists_subset_of_mem_open hK0
       isOpen_interior
     have hU : IsClopen U := hU
     have hUK : U ⊆ K := hUs.trans interior_subset
@@ -101,7 +105,7 @@ theorem exists_invariant_form : ∀ (k : Type) [Field k] [ValuativeRel k] [Topol
       have e2 := hL _ (hσ t₁) w hw
       have e3 := hL _ (hσ t) _ (hσ t₁)
       simp only [← ht₁] at e1 e2 e3
-      simp only [hg, schr, ← ht₁, map_add, ← mul_assoc, ← AddChar.map_add_eq_mul, add_dotProduct, dotProduct_add]
+      simp only [hg, schr, ← ht₁, map_add (f := _), ← mul_assoc, ← AddChar.map_add_eq_mul, add_dotProduct, dotProduct_add]
       congr 2
       have h2 : ⅟(2 : k) * 2 = 1 := invOf_mul_self _
       linear_combination e1 + ⅟(2 : k) * e2 - ⅟(2 : k) * e3 - (j t₁ ⬝ᵥ σ t) * h2

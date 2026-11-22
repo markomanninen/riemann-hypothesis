@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TateProductRigidificationTrivial
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordConstruction
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPreUOfFibres
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsGenericSquare
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.NonemptyMumfordTorusQuotientTower
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsSemiAbelianOfLevel
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.UniformizationLawsAndExpansionStatements
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EgaHolds
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.UniformisationCompleteDVR
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TateProductRigidificationTrivial
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPreUOfFibres
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsGenericSquare
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.NonemptyMumfordTorusQuotientTower
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsSemiAbelianOfLevel
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.UniformizationLawsAndExpansionStatements
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EgaHolds
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.UniformisationCompleteDVR
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -22,8 +26,8 @@ namespace GlobalTheory.Mum.PreUnifEven
 
 open GlobalTheory.UU GlobalTheory.LN
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem nonempty_towerR_of_even {R : Type} [CommRing R] [IsDomain R] [IsLocalRing R]
     {G : Over (Spec (CommRingCat.of R))} [GrpObj G] [IsCommMonObj G] (P : CP G) (hs : IsSemiAbelian G)
     {X : Type} [AddCommGroup X] [Module.Free ℤ X] [Module.Finite ℤ X]
@@ -53,8 +57,8 @@ theorem nonempty_towerR_of_even {R : Type} [CommRing R] [IsDomain R] [IsLocalRin
   choose β hβ hq using fun e => TowerEx.exists_levelMap hs (l e).1 (l (e + 1)).1 (tor e)
   exact ⟨⟨fun e => (l e).1, tor, β, hβ, hq⟩⟩
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem fibres (laws : Laws) (hU : USt) (R : Type) [CommRing R] [IsDomain R] [IsLocalRing R] (I : Ideal R)
     (hR : admitted R I) (G : Over (Spec (CommRingCat.of R))) [GrpObj G] [IsCommMonObj G] (P : CP G) (hG : IsSemiAbelian G)
     (A : PolAV (Sp (FractionRing R))) (gen : (Over.pullback (jK R)).obj G ≅ A.A) (hgen : IsMonHom gen.hom)
@@ -79,7 +83,38 @@ theorem fibres (laws : Laws) (hU : USt) (R : Type) [CommRing R] [IsDomain R] [Is
     (N := (T.l 0).Pe) (N' := P₀) sq (isGrpPullback_pullback G (spMap φ))
     (isGrpPullback_pullback G (thick R I 0)) (isGrpPullback_pullback _ (thick V (IsLocalRing.maximalIdeal V) 0)) H hl H₀
   obtain ⟨Q₀, D₀, β, pβ, hβ⟩ := ClosedPol.exists_desc_pull pF (T.l 0).Q (T.l 0).D k₃
-  have hG' := IsSemiAbelian.pullback (spMap φ) G hG
+  have hG' : IsSemiAbelian ((Over.pullback (spMap φ)).obj G) := by
+    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+    · have := hG.comm; infer_instance
+    · have := hG.smooth; change Smooth (pullback.snd G.hom (spMap φ)); infer_instance
+    · have := hG.separated; change IsSeparated (pullback.snd G.hom (spMap φ)); infer_instance
+    · have := hG.quasiCompact; change QuasiCompact (pullback.snd G.hom (spMap φ)); infer_instance
+    · have := hG.geomConnected; change GeometricallyConnected (pullback.snd G.hom (spMap φ)); infer_instance
+    · intro Ω _ _ q
+      obtain ⟨E⟩ := hG.fibres Ω (q ≫ spMap φ)
+      let em := (Functor.mapMonNatIso (Over.pullbackComp q (spMap φ)) ≪≫ Functor.mapMonCompIso).app (Mon.mk G)
+      let e : (Over.pullback (q ≫ spMap φ)).obj G ≅ (Over.pullback q).obj ((Over.pullback (spMap φ)).obj G) := (Mon.forget _).mapIso em
+      haveI : IsMonHom e.hom := by
+        show IsMonHom em.hom.hom
+        infer_instance
+      letI := E.grpB
+      haveI := E.q_hom
+      haveI := E.i_hom
+      exact ⟨{ X := E.X
+               addCommGroup := E.addCommGroup
+               free := E.free
+               finite := E.finite
+               B := E.B
+               grpB := E.grpB
+               isAbelian := E.isAbelian
+               q := e.inv ≫ E.q
+               q_hom := inferInstance
+               q_flat := by rw [Over.comp_left]; have := E.q_flat; have : IsIso e.inv.left := Functor.map_isIso (Over.forget _) e.inv; infer_instance
+               q_surjective := by rw [Over.comp_left]; have := E.q_surjective; have : IsIso e.inv.left := Functor.map_isIso (Over.forget _) e.inv; infer_instance
+               q_quasiCompact := by rw [Over.comp_left]; have := E.q_quasiCompact; have : IsIso e.inv.left := Functor.map_isIso (Over.forget _) e.inv; infer_instance
+               i := E.i ≫ e.hom
+               i_hom := inferInstance
+               isKernel := by refine IsPullback.of_iso E.isKernel (Iso.refl _) e (Iso.refl _) (Iso.refl _) ?_ ?_ ?_ ?_ <;> simp }⟩
   have ev := UniformizationSetting.exists_even_of_desc D₀
   obtain ⟨wA, hwA⟩ := hA'
   have pol := ClosedPol.pol_dvr laws hU
@@ -97,8 +132,8 @@ theorem isAdmissibleCompleteLocalDomainPrime_of_completeNormal {R : Type} [CommR
 
 end GlobalTheory.Mum.PreUnifEven
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem GlobalTheory.Mum.exists_preU_even : ∀ (R : Type) [CommRing R] [IsDomain R] [IsLocalRing R], Base R → ∀ (G : Over (Sp R)) [GrpObj G] [IsCommMonObj G] (P : GlobalTheory.UU.CP G), IsSemiAbelian G → EvenOn P → ∀ (A : PolAV (Sp (FractionRing R))) (gen : (Over.pullback (jK R)).obj G ≅ A.A), IsMonHom gen.hom → LBIso (A.L.pull gen.hom.left) (P.L.L.pull (pullback.fst G.hom (jK R))) → ∃ (D : DegPre R) (U : GlobalTheory.UU.PreU (maximalIdeal R) D A G), U.P = P ∧ U.gen = gen := by
   intro R _ _ _ hB G _ _ P hs ⟨X, _, _, _, Q₀, P₀, hlev, hev⟩ A gen hgen hA
   obtain ⟨⟨hL, hL2, hL3, -, -⟩, -⟩ := GlobalTheory.lawsAndExpansions

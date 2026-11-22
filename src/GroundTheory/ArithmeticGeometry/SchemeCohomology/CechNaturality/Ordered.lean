@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechLeray
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.Chains
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechLeray
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.Chains
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -56,7 +61,7 @@ lemma cev_add {m n : ℕ} (σ τ : Cochain P U m) (i : Fin (n + 1) → ι) (c : 
     rw [AddMonoidHom.add_apply, cev_single, cev_single, cev_single, ← smul_add]
     congr 1
     by_cases h : inter U i ≤ inter U j
-    · rw [cval_of_le P U _ i j h, cval_of_le P U _ i j h, cval_of_le P U _ i j h, Pi.add_apply, map_add]
+    · rw [cval_of_le P U _ i j h, cval_of_le P U _ i j h, cval_of_le P U _ i j h, Pi.add_apply, map_add (f := _)]
     · simp only [cval, h, dif_neg, not_false_eq_true, add_zero]
   exact congrArg (fun L => L c) this
 
@@ -76,7 +81,8 @@ lemma cev_d {m n : ℕ} (σ : Cochain P U m) (i : Fin (n + 1) → ι) {c : Chain
     (hc : c ∈ Finsupp.supported ℤ ℤ (leSet U i)) :
     cev P U (d P U m σ) i c = cev P U σ i (bd m c) := by
   refine eq_of_supported (cev P U (d P U m σ) i) ((cev P U σ i).comp (bd m)) (fun j hj z => ?_) hc
-  rw [AddMonoidHom.comp_apply, cev_single, cval_of_le P U _ i j (mem_leSet.1 hj), d_apply, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [AddMonoidHom.comp_apply, cev_single, cval_of_le P U _ i j (mem_leSet.1 hj), d_apply, map_sum,
     Finset.smul_sum, bd_single, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   simp only [map_zsmul, res_res, cev_single]
@@ -84,7 +90,8 @@ lemma cev_d {m n : ℕ} (σ : Cochain P U m) (i : Fin (n + 1) → ι) {c : Chain
 
 lemma lin_bd_single {m n : ℕ} (f : (Fin (m + 1) → ι) → Chain ι n) (i : Fin (m + 2) → ι) :
     lin f (bd m (Finsupp.single i 1)) = ∑ k : Fin (m + 2), ((-1 : ℤ) ^ (k : ℕ)) • f (i ∘ k.succAbove) := by
-  rw [bd_single, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [bd_single, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_zsmul, lin_single, one_smul]
 
@@ -184,7 +191,8 @@ lemma cevO_od {m n : ℕ} (τ : OCochain P U m) (i : Fin (n + 1) → ι) {c : Ch
   refine eq_of_supported (cevO P U (od P U m τ) i) ((cevO P U τ i).comp (bd m))
     (fun j hj z => ?_) hc
   obtain ⟨hjm, hjle⟩ := mem_oleSet.1 hj
-  rw [AddMonoidHom.comp_apply, cevO_single, cvalO_of P U _ i j hjm hjle, od_apply, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [AddMonoidHom.comp_apply, cevO_single, cvalO_of P U _ i j hjm hjle, od_apply, map_sum,
     Finset.smul_sum, bd_single, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   simp only [map_zsmul, res_res, cevO_single]
@@ -219,8 +227,45 @@ theorem toOrd_fromOrd (n : ℕ) (τ : OCochain P U n) : toOrd P U n (fromOrd P U
 
 theorem d_fromOrd (n : ℕ) (τ : OCochain P U n) :
     d P U n (fromOrd P U n τ) = fromOrd P U (n + 1) (od P U n τ) := by
+  let rec bd_rho : ∀ (n : ℕ) (i : Fin (n + 2) → ι),
+      bd n (rho (n + 1) i) = lin (rho n) (bd n (Finsupp.single i 1))
+    | 0, i => by
+      have hx : lin (rho (ι := ι) 0) (bd 0 (Finsupp.single i 1)) ∈
+          Finsupp.supported ℤ ℤ (ordFrom (minIdx i)) := by
+        rw [lin_rho_zero]
+        refine Finsupp.supported_mono ?_ (bd_mem_rangeIn (n := 0) (single_mem_rangeIn i 1))
+        intro j hj
+        refine mem_ordFrom.2 ⟨strictMono_of_fin_one j, ?_⟩
+        obtain ⟨a, ha⟩ := (mem_rangeIn.1 hj) (Set.mem_range_self 0)
+        rw [← ha]
+        exact minIdx_le i a
+      change bd 0 (ocone (minIdx i) (lin (rho 0) (bd 0 (Finsupp.single i 1)))) = _
+      rw [bd_ocone_zero _ hx, lin_rho_zero, aug_bd, zero_smul, sub_zero]
+    | n + 1, i => by
+      have ih := bd_rho n
+      have hlin : ∀ c : Chain ι (n + 1), bd n (lin (rho (n + 1)) c) = lin (rho n) (bd n c) := by
+        intro c
+        have : (bd n).comp (lin (rho (ι := ι) (n + 1))) = (lin (rho (ι := ι) n)).comp (bd n) := by
+          refine Finsupp.addHom_ext fun j z => ?_
+          simp only [AddMonoidHom.comp_apply, lin_single, map_zsmul, ih]
+          rw [← Finsupp.smul_single_one j z, map_zsmul, map_zsmul]
+        exact congrArg (fun L => L c) this
+      set x := lin (rho (n + 1)) (bd (n + 1) (Finsupp.single i 1)) with hxdef
+      have hx : x ∈ Finsupp.supported ℤ ℤ (ordFrom (minIdx i)) := by
+        refine Finsupp.supported_mono (ordIn_subset_ordFrom i) ?_
+        refine map_mem_supported _ (fun j hj z => ?_) (bd_mem_rangeIn (single_mem_rangeIn i 1))
+        rw [lin_single]
+        exact Submodule.smul_mem _ z (Finsupp.supported_mono
+          (fun k hk => mem_ordIn.2 ⟨(mem_ordIn.1 hk).1, (mem_ordIn.1 hk).2.trans (mem_rangeIn.1 hj)⟩)
+          (rho_mem (n + 1) j))
+      have hbx : bd n x = 0 := by rw [hxdef, hlin, bd_bd, map_zero]
+      have key := bd_ocone_add_ocone_bd n (minIdx i) hx
+      rw [hbx, map_zero, add_zero] at key
+      change bd (n + 1) (ocone (minIdx i) x) = x
+      exact key
   funext i
-  rw [d_apply, fromOrd_apply, cevO_od P U τ i (rho_mem_oleSet U (n + 1) i), bd_rho, lin_bd_single,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [d_apply, fromOrd_apply, cevO_od P U τ i (rho_mem_oleSet U (n + 1) i), bd_rho, lin_bd_single,
     map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_zsmul, fromOrd_apply, res_cevO P U τ (inter_le_comp U i k.succAbove)
@@ -235,11 +280,77 @@ lemma fromOrd_toOrd_zero (σ : Cochain P U 0) : fromOrd P U 0 (toOrd P U 0 σ) =
 theorem d_hstar_add (n : ℕ) (σ : Cochain P U (n + 1)) :
     d P U n (hstar P U n σ) + hstar P U (n + 1) (d P U (n + 1) σ) =
       σ - fromOrd P U (n + 1) (toOrd P U (n + 1) σ) := by
+  let rec bd_rho : ∀ (n : ℕ) (i : Fin (n + 2) → ι),
+      bd n (rho (n + 1) i) = lin (rho n) (bd n (Finsupp.single i 1))
+    | 0, i => by
+      have hx : lin (rho (ι := ι) 0) (bd 0 (Finsupp.single i 1)) ∈
+          Finsupp.supported ℤ ℤ (ordFrom (minIdx i)) := by
+        rw [lin_rho_zero]
+        refine Finsupp.supported_mono ?_ (bd_mem_rangeIn (n := 0) (single_mem_rangeIn i 1))
+        intro j hj
+        refine mem_ordFrom.2 ⟨strictMono_of_fin_one j, ?_⟩
+        obtain ⟨a, ha⟩ := (mem_rangeIn.1 hj) (Set.mem_range_self 0)
+        rw [← ha]
+        exact minIdx_le i a
+      change bd 0 (ocone (minIdx i) (lin (rho 0) (bd 0 (Finsupp.single i 1)))) = _
+      rw [bd_ocone_zero _ hx, lin_rho_zero, aug_bd, zero_smul, sub_zero]
+    | n + 1, i => by
+      have ih := bd_rho n
+      have hlin : ∀ c : Chain ι (n + 1), bd n (lin (rho (n + 1)) c) = lin (rho n) (bd n c) := by
+        intro c
+        have : (bd n).comp (lin (rho (ι := ι) (n + 1))) = (lin (rho (ι := ι) n)).comp (bd n) := by
+          refine Finsupp.addHom_ext fun j z => ?_
+          simp only [AddMonoidHom.comp_apply, lin_single, map_zsmul, ih]
+          rw [← Finsupp.smul_single_one j z, map_zsmul, map_zsmul]
+        exact congrArg (fun L => L c) this
+      set x := lin (rho (n + 1)) (bd (n + 1) (Finsupp.single i 1)) with hxdef
+      have hx : x ∈ Finsupp.supported ℤ ℤ (ordFrom (minIdx i)) := by
+        refine Finsupp.supported_mono (ordIn_subset_ordFrom i) ?_
+        refine map_mem_supported _ (fun j hj z => ?_) (bd_mem_rangeIn (single_mem_rangeIn i 1))
+        rw [lin_single]
+        exact Submodule.smul_mem _ z (Finsupp.supported_mono
+          (fun k hk => mem_ordIn.2 ⟨(mem_ordIn.1 hk).1, (mem_ordIn.1 hk).2.trans (mem_rangeIn.1 hj)⟩)
+          (rho_mem (n + 1) j))
+      have hbx : bd n x = 0 := by rw [hxdef, hlin, bd_bd, map_zero]
+      have key := bd_ocone_add_ocone_bd n (minIdx i) hx
+      rw [hbx, map_zero, add_zero] at key
+      change bd (n + 1) (ocone (minIdx i) x) = x
+      exact key
+  let rec boundary_homotopy : ∀ (n : ℕ) (i : Fin (n + 2) → ι),
+      bd (n + 1) (hmt (n + 1) i) + lin (hmt n) (bd n (Finsupp.single i 1)) =
+        Finsupp.single i 1 - rho (n + 1) i
+    | n, i => by
+      set y := Finsupp.single i 1 - rho (n + 1) i - lin (hmt n) (bd n (Finsupp.single i 1))
+        with hydef
+      have hby : bd n y = 0 := by
+        rw [hydef, map_sub, map_sub, bd_rho]
+        cases n with
+        | zero => rw [lin_hmt_zero, lin_rho_zero, map_zero, sub_self, sub_zero]
+        | succ n =>
+          have ih := boundary_homotopy n
+          have hlin : ∀ c : Chain ι (n + 1), bd (n + 1) (lin (hmt (n + 1)) c) =
+              c - lin (rho (n + 1)) c - lin (hmt n) (bd n c) := by
+            intro c
+            have : (bd (n + 1)).comp (lin (hmt (ι := ι) (n + 1))) =
+                AddMonoidHom.id _ - lin (rho (ι := ι) (n + 1)) - (lin (hmt (ι := ι) n)).comp (bd n) := by
+              refine Finsupp.addHom_ext fun j z => ?_
+              simp only [AddMonoidHom.comp_apply, AddMonoidHom.sub_apply, AddMonoidHom.id_apply,
+                lin_single, map_zsmul]
+              rw [← Finsupp.smul_single_one j z, map_zsmul, map_zsmul, ← smul_sub, ← smul_sub,
+                ← ih j, add_sub_cancel_right]
+            exact congrArg (fun L => L c) this
+          rw [hlin, bd_bd, map_zero, sub_zero]
+          abel
+      have key := bd_cone_add_cone_bd n (i 0) y
+      rw [hby, map_zero, add_zero] at key
+      change bd (n + 1) (cone (i 0) y) + _ = _
+      rw [key, hydef, sub_add_cancel]
   funext i
   have hm : hmt (n + 1) i ∈ Finsupp.supported ℤ ℤ (leSet U i) :=
     Finsupp.supported_mono (rangeIn_subset_leSet U i) (hmt_mem (n + 1) i)
   have hsum : d P U n (hstar P U n σ) i = cev P U σ i (lin (hmt n) (bd n (Finsupp.single i 1))) := by
-    rw [d_apply, lin_bd_single, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [d_apply, lin_bd_single, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_zsmul, hstar_apply, res_cev P U σ (inter_le_comp U i k.succAbove)
       (Finsupp.supported_mono (rangeIn_subset_leSet U _) (hmt_mem n _))]

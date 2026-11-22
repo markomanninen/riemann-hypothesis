@@ -1,8 +1,12 @@
-import Mathlib.RingTheory.Ideal.KrullsHeightTheorem
-import Mathlib.RingTheory.Ideal.AssociatedPrime.Basic
-import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
-import Mathlib.RingTheory.Ideal.MinimalPrime.Noetherian
-import Mathlib.RingTheory.Localization.Integer
+module
+
+public import Mathlib.RingTheory.Ideal.KrullsHeightTheorem
+public import Mathlib.RingTheory.Ideal.AssociatedPrime.Basic
+public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
+public import Mathlib.RingTheory.Ideal.MinimalPrime.Noetherian
+public import Mathlib.RingTheory.Localization.Integer
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,16 +21,13 @@ def denIdeal {ι : Type*} (x : ι → K) : Ideal A where
     intro a b ha hb i
     obtain ⟨u, hu⟩ := ha i
     obtain ⟨v, hv⟩ := hb i
-    exact ⟨u + v, by rw [map_add, hu, hv, map_add, add_mul]⟩
+    exact ⟨u + v, by rw [map_add (f := _), hu, hv, map_add (f := _), add_mul]⟩
   zero_mem' := fun i => ⟨0, by simp⟩
   smul_mem' := by
     intro c a ha i
     obtain ⟨u, hu⟩ := ha i
     exact ⟨c * u, by rw [map_mul, hu, smul_eq_mul, map_mul, mul_assoc]⟩
 
-omit [IsDomain A] [IsFractionRing A K] in
-lemma mem_denIdeal {ι : Type*} {x : ι → K} {r : A} :
-    r ∈ denIdeal (A := A) x ↔ ∀ i, algebraMap A K r * x i ∈ (algebraMap A K).range := Iff.rfl
 
 lemma exists_assoc [IsNoetherianRing A] {ι : Type*} (x : ι → K)
     (hx : ∃ i, x i ∉ (algebraMap A K).range) :
@@ -143,8 +144,8 @@ theorem mem_range_of_forall_height_one [IsNoetherianRing A] [IsIntegrallyClosed 
   obtain ⟨s, hsP, hsx⟩ := h P hP h1
   exact hs s hsP hsx
 
-omit [IsFractionRing A K] in
 
+omit [IsFractionRing A K] in
 theorem finite_height_one [IsNoetherianRing A] {a : A} (ha : a ≠ 0) :
     {P : Ideal A | P.IsPrime ∧ P.height = 1 ∧ a ∈ P}.Finite := by
   classical
@@ -163,19 +164,14 @@ theorem finite_height_one [IsNoetherianRing A] {a : A} (ha : a ≠ 0) :
       rw [← hb] at h3
       exact Ideal.mem_bot.mp h3
     have h1' : Order.height (⟨P, hP⟩ : PrimeSpectrum A) = 1 := by
-      first
-      | (rw [Ideal.IsPrime.height_eq_primeHeight] at h1; exact h1)
-      | (rw [Ideal.height_eq_primeHeight_of_isPrime] at h1; exact h1)
-      | (rw [← Ideal.primeHeight_eq_height] at h1; exact h1)
-      | (rw [Ideal.IsPrime.height] at h1; exact h1)
-      | (simp only [Ideal.height, Ideal.minimalPrimes_eq_subsingleton_self, Set.mem_singleton_iff,
-          iInf_iInf_eq_left] at h1; exact h1)
+      rw [← PrimeSpectrum.height_eq_orderHeight]
+      exact h1
     have hlt' : (⟨Q, hQprime⟩ : PrimeSpectrum A) < ⟨P, hP⟩ := (PrimeSpectrum.asIdeal_lt_asIdeal _ _).mp hlt
     have hQ1 : Order.height (⟨Q, hQprime⟩ : PrimeSpectrum A) < 1 := by
       rw [← h1']
       exact Order.height_strictMono hlt'
         (lt_of_le_of_lt (Order.height_mono (le_of_lt hlt')) (by rw [h1']; exact ENat.one_lt_top))
-    have hne' : (⟨⊥, Ideal.bot_prime⟩ : PrimeSpectrum A) < ⟨Q, hQprime⟩ :=
+    have hne' : (⟨⊥, Ideal.isPrime_bot⟩ : PrimeSpectrum A) < ⟨Q, hQprime⟩ :=
       (PrimeSpectrum.asIdeal_lt_asIdeal _ _).mp hQne
     have hQ0 := Order.height_strictMono hne'
       (lt_of_le_of_lt (Order.height_mono (le_of_lt hne')) (lt_trans hQ1 ENat.one_lt_top))

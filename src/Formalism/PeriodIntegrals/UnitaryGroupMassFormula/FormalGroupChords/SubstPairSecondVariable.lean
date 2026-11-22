@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.FglChordFactor
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.SubstMem
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.FormalGroupLawExists
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.FglChordFactor
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.SubstMem
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.FormalGroupLawExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,7 +100,7 @@ theorem fact_div {S : Subring ℂ_[p]} {H : MvPowerSeries (Fin 2) ℂ_[p]} {f : 
   have haS : a ∈ SerS S (Fin 2) := X_mem_SerS S 0
   have hbS : b ∈ SerS S (Fin 2) := X_mem_SerS S 1
   have hsS : s ∈ SerS S (Fin 2) := subst_mem_SerS S ha0 haS (serS_unit hfS)
-  have hP : MvPowerSeries.HasSubst ![a, b + s] := hasSubst2 ha0 (by rw [map_add, hb0, hs0, add_zero])
+  have hP : MvPowerSeries.HasSubst ![a, b + s] := hasSubst2 ha0 (by rw [map_add (f := _), hb0, hs0, add_zero])
   have hM : MvPowerSeries.HasSubst ![a, b - s] := hasSubst2 ha0 (by rw [map_sub, hb0, hs0, sub_zero])
   have hZ : MvPowerSeries.HasSubst ![a, (0 : MvPowerSeries (Fin 2) ℂ_[p])] := hasSubst2 ha0 (map_zero _)
   set Hp := MvPowerSeries.subst ![a, b + s] H with hHp
@@ -114,7 +118,7 @@ theorem fact_div {S : Subring ℂ_[p]} {H : MvPowerSeries (Fin 2) ℂ_[p]} {f : 
   set r : PowerSeries ℂ_[p] := PowerSeries.mk fun n => MvPowerSeries.coeff (Finsupp.single 0 n) Hp with hr
   have hdec : Hp = Qt * b + PowerSeries.subst a r := by
     ext e
-    rw [map_add, hb, coeff_mul_second_variable, ha, PowerSeries.coeff_subst_single]
+    rw [map_add (f := _), hb, coeff_mul_second_variable, ha, PowerSeries.coeff_subst_single]
     by_cases he : e 1 = 0
     · have he' : e = Finsupp.single 0 (e 0) := (single0_iff e).2 he
       rw [if_neg (by omega), if_pos he', zero_add, hr, PowerSeries.coeff_mk, ← he']

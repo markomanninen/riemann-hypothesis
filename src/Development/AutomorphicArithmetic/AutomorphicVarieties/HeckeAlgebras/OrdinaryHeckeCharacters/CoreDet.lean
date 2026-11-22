@@ -1,13 +1,18 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.CoefficientRepTrivialOnUnramified
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.GalUnitary
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.CoreSep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.PartAct0
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.SpecIntIff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.HiAlgUnit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.CharExt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.GlueRep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.IsContIff
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CdNormLt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.CoefficientRepTrivialOnUnramified
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.GalUnitary
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.CoreSep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.PartAct0
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.SpecIntIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.HiAlgUnit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.CharExt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.GlueRep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.IsContIff
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CdNormLt
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel IsLocalRing GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V UpperTheory.V.Hi
 open UpperTheory.V.HV (Coef)
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -56,7 +61,7 @@ private theorem cd_pow {l : ℕ} [Fact l.Prime] (c : Coef l) {R : Type} [CommRin
     { carrier := {a | ‖y a‖ ≤ max b 0}
       add_mem' := fun {p q} hp hq => by
         change ‖y (p + q)‖ ≤ _
-        rw [map_add]
+        rw [map_add (f := _)]
         exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hp hq)
       zero_mem' := by simp
       smul_mem' := fun r p hp => by
@@ -169,8 +174,8 @@ private theorem cd_tel {M : Type} [CommGroup M] {n : ℕ} (U : Fin n → M) :
 
 private theorem cd_fin {l : ℕ} [Fact l.Prime] (c : Coef l) : Finite (ResidueField c.O) := by
   have h : (maximalIdeal c.O).comap (algebraMap ℤ_[l] c.O) = maximalIdeal ℤ_[l] :=
-    eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal _)
-  have : IsLocalHom (algebraMap ℤ_[l] c.O) := ((IsLocalRing.local_hom_TFAE _).out 4 0).1 h
+    eq_maximalIdeal (Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := ℤ_[l]) (maximalIdeal c.O))
+  have : IsLocalHom (algebraMap ℤ_[l] c.O) := ((IsLocalRing.local_hom_tfae _).out 5 1).1 h
   exact ResidueField.finite_of_finite (R := ℤ_[l]) inferInstance
 
 private theorem cd_eT {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {n : ℕ}
@@ -238,7 +243,7 @@ private theorem cd_psi (hN : GlobalTheory.Mem.LiteralAutomorphy.LitN) {L Ω : Ty
   obtain ⟨ψ, ⟨hψ, hψa⟩, -⟩ := Loc.charExt hN.aut.art (H.ovr v) (H.art v) (hH.art_spec v) T ξ hξ
   have hl : ((l : ℕ) : T) ∈ maximalIdeal T := by
     have h : (maximalIdeal c.O).comap (algebraMap ℤ_[l] c.O) = maximalIdeal ℤ_[l] :=
-      eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal _)
+      eq_maximalIdeal (Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := ℤ_[l]) (maximalIdeal c.O))
     have h1 : (l : ℤ_[l]) ∈ maximalIdeal ℤ_[l] := by
       rw [PadicInt.maximalIdeal_eq_span_p]; exact Ideal.mem_span_singleton_self _
     rw [← h, Ideal.mem_comap] at h1
@@ -294,7 +299,8 @@ private theorem cd_pol {T : Type} [CommRing T] {l : ℕ} [Fact l.Prime] (ι : Qb
     (Hi.heckePol n q a).map x = p := by
   apply Polynomial.map_injective ι.toRingHom ι.injective
   rw [hp]
-  simp only [Hi.heckePol, Polynomial.map_sum, Polynomial.map_mul, Polynomial.map_pow, map_C, map_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Hi.heckePol, Polynomial.map_sum, Polynomial.map_mul, Polynomial.map_pow, map_C, map_X]
   refine Finset.sum_congr rfl fun j hj => ?_
   simp [← h j (Nat.lt_succ_iff.1 (Finset.mem_range.1 hj))]
 
@@ -326,8 +332,8 @@ theorem UpperTheory.V.Hi.coreDet :
     refine ⟨Y.r, Y.cont, fun ⟨⟨w, B, σ⟩, hB, hσ⟩ => cd_pol ι _ n _ _ (Y.a w) (fun j hj => ?_) _ (Y.frob w B σ hB hσ)⟩
     change ι (x (H.genW θ a K w j)) = _
     rcases j with _ | j
-    · rw [HSet.genW, dif_neg (by omega), map_one, map_one, Y.a_zero]
-    · rw [HSet.genW, dif_pos ⟨j.succ_pos, hj⟩]
+    · rw [HSet.genW, dite_eq_right (by omega), map_one, map_one, Y.a_zero]
+    · rw [HSet.genW, dite_eq_left ⟨j.succ_pos, hj⟩]
       exact smul_left_injective ℂ hF ((hop (.inl (w, ⟨j, hj⟩))).symm.trans (Y.sph w (j + 1) F hFY.1))
   refine ⟨D, ψ, hD, hψ1, fun w B σ hB hσ => hDf ⟨(w, B, σ), hB, hσ⟩, hψ2, fun v j s g hg hs => ?_⟩
   rw [Finset.prod_congr rfl fun i _ => hψ3 v i s g hg hs, hu]

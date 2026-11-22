@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.LocCompareSplit
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.LocCompareSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem secPl_eq {S : Set (Pl E)} (hS : IsSection S) (u : S) :
     secPl S (secEquiv hS u) = some u.1 := by
   have hv : secEquiv hS u = u.1.under (𝓞 (maximalRealSubfield E)) := rfl
   have h : ∃ w ∈ S, w.under (𝓞 (maximalRealSubfield E)) = secEquiv hS u := ⟨u.1, u.2, hv.symm⟩
-  rw [secPl, dif_pos h]
+  rw [secPl, dite_eq_left h]
   obtain ⟨h1, h2⟩ := h.choose_spec
   exact congrArg some ((hS u.1).unique ⟨h1, h2.trans hv⟩ ⟨u.2, rfl⟩)
 

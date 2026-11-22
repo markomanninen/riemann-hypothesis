@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LeftMultiplication.Lmul
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LeftMultiplication.Lmul
+
+@[expose] public section
+
 open UpperTheory.V.ZK UpperTheory.V.ZK.PM
 
 section
@@ -35,7 +40,7 @@ private theorem lmul_hp (h k : G) : ∀ (m : ℕ) (y : Ch A G m),
   | m + 1, y => by
     induction y using Finsupp.induction_linear with
     | zero => simp
-    | add f g hf hg => simp only [map_add, hf, hg]
+    | add f g hf hg => simp only [map_add (f := _), hf, hg]
     | single x a =>
       rw [lmul_single]
       simp only [hp, Finsupp.linearCombination_single, map_smul]
@@ -48,11 +53,11 @@ private theorem lmul_hd (h k k' : G) : ∀ (m : ℕ) (y : Ch A G m),
   | m + 1, y => by
     induction y using Finsupp.induction_linear with
     | zero => simp
-    | add f g hf hg => simp only [map_add, hf, hg]
+    | add f g hf hg => simp only [map_add (f := _), hf, hg]
     | single x a =>
       rw [lmul_single]
       simp only [hd, Finsupp.linearCombination_single, map_smul]
-      rw [lmul_cone, map_add, lmul_hp, lmul_rmul, lmul_hd h k k' m, lmul_single, lmul_single]
+      rw [lmul_cone, map_add (f := _), lmul_hp, lmul_rmul, lmul_hd h k k' m, lmul_single, lmul_single]
       rfl
 
 end

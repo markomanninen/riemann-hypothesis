@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,20 +85,6 @@ def etale (ε : PreTilt O p) (h : ℕ) : Datum ε h ℤ_[p] where
   Ψ_mul := by simp
   F_act := by intro a; simp [Algebra.ofId_apply]
 
-def mult (ε : PreTilt O p) : Datum ε 1 ℤ_[p] where
-  F := Matrix.of fun _ _ => mu ε
-  G := 1
-  Ψ := Matrix.of fun _ _ => xi ε
-  Ψ' := 1
-  ρT := Algebra.ofId _ _
-  ρM := (RingHom.mapMatrix (ofPadic p O)).comp (algebraMap _ _)
-  G_mul_F := by ext1 i j; simp [Subsingleton.elim i j]
-  F_eq := by ext1 i j; simp [Matrix.mul_apply, phiInv_mu, xi_mul_nu]
-  Ψ_mul := by ext1 i j; simp [Subsingleton.elim i j]
-  F_act := by
-    intro a; ext1 i j
-    simp [Matrix.mul_apply, Algebra.ofId_apply, mul_comm, Subsingleton.elim i 0, Subsingleton.elim j 0]
-
 namespace Datum
 
 variable {ε : PreTilt O p} {h : ℕ} {Λ : Type} [CommRing Λ] [Algebra ℤ_[p] Λ] (D : Datum ε h Λ)
@@ -114,18 +104,6 @@ def Hsub (τ : Λ →+* O) : Submodule O (Fin h → O) :=
   ⨅ a : Λ, Module.End.eigenspace (Matrix.toLin' ((D.ρM a).map (fontaineTheta O p))) (τ a)
 
 def W (τ : Λ →+* O) : Submodule O (Fin h → O) := D.Tsub τ ⊓ LinearMap.ker D.al
-
-def lieRank (τ : Λ →+* O) : ℕ := Module.finrank O ↥(D.Lie ⊓ D.Tsub τ)
-
-def filRank (τ : Λ →+* O) : ℕ := Module.finrank O ↥(D.Fil ⊓ D.Hsub τ)
-
-abbrev QOne (τ : Λ →+* O) : Type := D.W τ ⧸ (D.Lie ⊓ D.Tsub τ).comap (D.W τ).subtype
-
-abbrev QTwo (τ : Λ →+* O) : Type :=
-  ↥(D.Fil ⊓ D.Hsub τ) ⧸ ((D.Tsub τ).map D.al).comap (D.Fil ⊓ D.Hsub τ).subtype
-
-abbrev QDel (τ : Λ →+* O) : Type :=
-  ↥(D.Lie ⊓ D.Tsub τ) ⧸ ((D.Hsub τ).map D.bb).comap (D.Lie ⊓ D.Tsub τ).subtype
 
 end Datum
 

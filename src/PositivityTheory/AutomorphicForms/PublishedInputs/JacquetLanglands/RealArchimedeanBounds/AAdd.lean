@@ -1,6 +1,10 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.RealArchimedeanBounds.ATrans
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.KLevTop
-import GroundTheory.AutomorphicForms.StrongApproximationSLDense
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.RealArchimedeanBounds.ATrans
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.KLevTop
+public import GroundTheory.AutomorphicForms.StrongApproximationSLDense
+
+@[expose] public section
 
 noncomputable section
 

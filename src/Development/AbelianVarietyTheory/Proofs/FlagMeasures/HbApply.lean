@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowsMeanC
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LatsDiscStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowsMeanC
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LatsDiscStable
+
+@[expose] public section
+
 noncomputable section
 open scoped Classical ENNReal Pointwise
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.Full
@@ -15,7 +20,7 @@ def Wb : Submodule D.host.E (VS D).V where
   carrier := {v | ∀ a, (VS D).hT (X.eX a) v = 0 ∧ (VS D).hT (X.fY a) v = 0}
   add_mem' := by
     intro x y hx hy a
-    exact ⟨by rw [map_add, (hx a).1, (hy a).1, add_zero], by rw [map_add, (hx a).2, (hy a).2, add_zero]⟩
+    exact ⟨by rw [map_add (f := _), (hx a).1, (hy a).1, add_zero], by rw [map_add (f := _), (hx a).2, (hy a).2, add_zero]⟩
   zero_mem' := fun a => ⟨map_zero _, map_zero _⟩
   smul_mem' := by
     intro c x hx a

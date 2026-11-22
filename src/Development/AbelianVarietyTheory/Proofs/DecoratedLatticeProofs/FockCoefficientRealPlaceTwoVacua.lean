@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockVectorsMatrixCoefficientsEqFockRepresentatio
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockVectorsAtOneRealPlaceOverVacuum
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LieAlgebrasAtPlaceActFockVectorsByFockOperators
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockVectorsRealPlaceActAsFockPolynomials
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealPlaceGroupsActUnitarilyWeaklyOnTheta
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplittingHeckeCharExistsArchimedeanExponent
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFockPolynomialIsoGradedIsometry
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsGrpDataMapHaar
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NonemptyGrpData
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonemptyFockModelUnitaryDualPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockVectorsMatrixCoefficientsEqFockRepresentatio
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockVectorsAtOneRealPlaceOverVacuum
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LieAlgebrasAtPlaceActFockVectorsByFockOperators
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockVectorsRealPlaceActAsFockPolynomials
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealPlaceGroupsActUnitarilyWeaklyOnTheta
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplittingHeckeCharExistsArchimedeanExponent
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFockPolynomialIsoGradedIsometry
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsGrpDataMapHaar
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NonemptyGrpData
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonemptyFockModelUnitaryDualPair
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField Matrix
 open GlobalTheory.Chain GlobalTheory.ChainFr GlobalTheory.PairLift GlobalTheory.Chain.RealIt
@@ -50,7 +54,7 @@ theorem pure_lin {ι X : Type} {A : ι → (X → ℂ) → (X → ℂ)} {P : (X 
     unfold opPow
     rw [foldr_lin hA hl a hf hf', smul_add, smul_comm c a]
   | add p q hp hq =>
-    rw [map_add, map_add, map_add, hp, hq, smul_add]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq, smul_add]
     abel
 
 theorem polar {Y : Type} [AddCommGroup Y] [Module ℂ Y] {vac : Y → Prop}
@@ -144,25 +148,72 @@ variable {D : D7} {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} {V W : HSp D}
 
 theorem ptAt_theta (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) (τ : D.what₂.Tau) (sS : Mn V.rank) (sT : Mn W.rank)
     (BS : Mn V.rank) (BT : Mn W.rank) {f : WO V W → ℂ} (hf : IsThetaFunO ψ V W f) (P : LPol W.rank V.rank) :
-    IsThetaFunO ψ V W (GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ptAt ψ θ V W τ sS sT BS BT f P) :=
-  GlobalTheory.FockIndep.pure_mem (fun _ _ => GlobalTheory.OrientedHeis.theta_add) (fun a _ => GlobalTheory.OrientedHeis.theta_smul a)
+    IsThetaFunO ψ V W (GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ptAt ψ θ V W τ sS sT BS BT f P) := by
+  have theta_add {f g : WO V W → ℂ} (hf : IsThetaFunO ψ V W f) (hg : IsThetaFunO ψ V W g) : IsThetaFunO ψ V W (f + g) := {
+    quasi γ w := by simp only [Pi.add_apply, hf.quasi, hg.quasi, mul_add]
+    level := by
+      obtain ⟨U, hU, h1⟩ := hf.level
+      obtain ⟨U', hU', h2⟩ := hg.level
+      refine ⟨U ⊓ U', hU.inter hU', fun u hu h0 => ?_⟩
+      funext w
+      have e1 := congrFun (h1 u hu.1 h0) w
+      have e2 := congrFun (h2 u hu.2 h0) w
+      unfold heisO at e1 e2 ⊢
+      rw [Pi.add_apply, Pi.add_apply, mul_add, e1, e2]
+    cont := hf.cont.add hg.cont
+    smooth k L h1 h2 w := (hf.smooth k L h1 h2 w).add (hg.smooth k L h1 h2 w) }
+  have theta_smul (c : ℂ) {f : WO V W → ℂ} (hf : IsThetaFunO ψ V W f) : IsThetaFunO ψ V W (c • f) := {
+    quasi γ w := by rw [Pi.smul_apply, Pi.smul_apply, hf.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
+    level := by
+      obtain ⟨U, hU, h1⟩ := hf.level
+      refine ⟨U, hU, fun u hu h0 => ?_⟩
+      funext w
+      have e1 := congrFun (h1 u hu h0) w
+      unfold heisO at e1 ⊢
+      rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+    cont := hf.cont.const_smul c
+    smooth k L h1 h2 w := contDiff_const.mul (hf.smooth k L h1 h2 w) }
+  exact GlobalTheory.FockIndep.pure_mem (fun _ _ => theta_add) (fun a _ => theta_smul a)
     (fun _ _ h => GlobalTheory.FockIndep.aPlus_theta hψ hθ _ _ _ h) hf P
 
 theorem ptAt_lin (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) (τ : D.what₂.Tau) (sS : Mn V.rank) (sT : Mn W.rank)
     (BS : Mn V.rank) (BT : Mn W.rank) (a : ℂ) {f f' : WO V W → ℂ} (hf : IsThetaFunO ψ V W f)
     (hf' : IsThetaFunO ψ V W f') (P : LPol W.rank V.rank) :
     GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ptAt ψ θ V W τ sS sT BS BT (a • f + f') P =
-      a • GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ptAt ψ θ V W τ sS sT BS BT f P + GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ptAt ψ θ V W τ sS sT BS BT f' P :=
-  pure_lin (P := IsThetaFunO ψ V W) (fun _ _ h => GlobalTheory.FockIndep.aPlus_theta hψ hθ _ _ _ h)
+      a • GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ptAt ψ θ V W τ sS sT BS BT f P + GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ptAt ψ θ V W τ sS sT BS BT f' P := by
+  have theta_smul (c : ℂ) {f : WO V W → ℂ} (hf : IsThetaFunO ψ V W f) : IsThetaFunO ψ V W (c • f) := {
+    quasi γ w := by rw [Pi.smul_apply, Pi.smul_apply, hf.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
+    level := by
+      obtain ⟨U, hU, h1⟩ := hf.level
+      refine ⟨U, hU, fun u hu h0 => ?_⟩
+      funext w
+      have e1 := congrFun (h1 u hu h0) w
+      unfold heisO at e1 ⊢
+      rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+    cont := hf.cont.const_smul c
+    smooth k L h1 h2 w := contDiff_const.mul (hf.smooth k L h1 h2 w) }
+  exact pure_lin (P := IsThetaFunO ψ V W) (fun _ _ h => GlobalTheory.FockIndep.aPlus_theta hψ hθ _ _ _ h)
     (fun _ b _ _ h h' => by
-      rw [GlobalTheory.FockIndep.aPlus_add hψ hθ _ _ _ (GlobalTheory.OrientedHeis.theta_smul b h) h',
+      rw [GlobalTheory.FockIndep.aPlus_add hψ hθ _ _ _ (theta_smul b h) h',
         GlobalTheory.FockIndep.aPlus_smul hψ hθ _ _ _ b h]) a hf hf' P
 
 theorem vac_lin (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) (τ : D.what₂.Tau)
     (J : Matrix (Fin W.rank) (Fin V.rank) ℂ → Matrix (Fin W.rank) (Fin V.rank) ℂ) (a : ℂ) {f f' : WO V W → ℂ}
     (hf : IsThetaFunO ψ V W f) (hf' : IsThetaFunO ψ V W f') (vf : IsFockVacAt (heisO ψ V W) θ τ J f)
-    (vf' : IsFockVacAt (heisO ψ V W) θ τ J f') : IsFockVacAt (heisO ψ V W) θ τ J (a • f + f') := fun z => by
-  rw [GlobalTheory.FockIndep.annih_add hψ hθ _ _ _ (GlobalTheory.OrientedHeis.theta_smul a hf) hf',
+    (vf' : IsFockVacAt (heisO ψ V W) θ τ J f') : IsFockVacAt (heisO ψ V W) θ τ J (a • f + f') := by
+  have theta_smul (c : ℂ) {f : WO V W → ℂ} (hf : IsThetaFunO ψ V W f) : IsThetaFunO ψ V W (c • f) := {
+    quasi γ w := by rw [Pi.smul_apply, Pi.smul_apply, hf.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
+    level := by
+      obtain ⟨U, hU, h1⟩ := hf.level
+      refine ⟨U, hU, fun u hu h0 => ?_⟩
+      funext w
+      have e1 := congrFun (h1 u hu h0) w
+      unfold heisO at e1 ⊢
+      rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+    cont := hf.cont.const_smul c
+    smooth k L h1 h2 w := contDiff_const.mul (hf.smooth k L h1 h2 w) }
+  intro z
+  rw [GlobalTheory.FockIndep.annih_add hψ hθ _ _ _ (theta_smul a hf) hf',
     GlobalTheory.FockIndep.annih_smul hψ hθ _ _ _ a hf, vf z, vf' z, smul_zero, add_zero]
 
 theorem coef_vac {S S' : D.what₂.Tau → SPar} (M : DSModel V S) (M' : DSModel W S') {χS χT : (AE D)ˣ →* Circle}
@@ -241,6 +292,35 @@ open GlobalTheory.ArchRec GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTens
 
 theorem coef_at_place : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPar) (M : DSModel V S) (M' : DSModel W S') (θ : InfFam D) (ψ : AddChar (AF D.host.F) ℂ) (χS χT : (AE D)ˣ →* Circle) (ω : (GA D V × GA D W →* Module.End ℂ (WO V W → ℂ))), IsInfFam θ → IsWeilDatumO ψ V W χS χT ω → ∀ (m : Measure (WO V W)) (X : Set (WO V W)), IsCovolOne (ratL W V) m X → ∀ (τ : D.what₂.Tau) (f F F' : WO V W → ℂ), (∀ x ∈ [f, F, F'], IsThetaFunO ψ V W x ∧ IsFockVacAt (heisO ψ V W) θ τ (cplxO (cart M τ) (cart M' τ)) x) → ∀ g ∈ Formalism.QuantumDeterminants.UH (gramAt D V τ), ∀ P Q : LPol W.rank V.rank, let pt := GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ptAt ψ θ V W τ (cart M τ) (cart M' τ) (onb M τ) (onb M' τ); GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ipTh m X (ω (atTau θ V τ g, 1) (pt F P)) (pt F' Q) * GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ipTh m X f f = GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ipTh m X (ω (atTau θ V τ g, 1) (pt f P)) (pt f Q) * GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ipTh m X F F' := by
   intro D V W S S' M M' θ ψ χS χT ω hθ hω m X hX τ f F F' hall g hg P Q pt
+  have theta_add {f g : WO V W → ℂ} (hf : IsThetaFunO ψ V W f) (hg : IsThetaFunO ψ V W g) : IsThetaFunO ψ V W (f + g) := {
+    quasi γ w := by simp only [Pi.add_apply, hf.quasi, hg.quasi, mul_add]
+    level := by
+      obtain ⟨U, hU, h1⟩ := hf.level
+      obtain ⟨U', hU', h2⟩ := hg.level
+      refine ⟨U ⊓ U', hU.inter hU', fun u hu h0 => ?_⟩
+      funext w
+      have e1 := congrFun (h1 u hu.1 h0) w
+      have e2 := congrFun (h2 u hu.2 h0) w
+      unfold heisO at e1 e2 ⊢
+      rw [Pi.add_apply, Pi.add_apply, mul_add, e1, e2]
+    cont := hf.cont.add hg.cont
+    smooth k L h1 h2 w := (hf.smooth k L h1 h2 w).add (hg.smooth k L h1 h2 w) }
+  have theta_smul (c : ℂ) {f : WO V W → ℂ} (hf : IsThetaFunO ψ V W f) : IsThetaFunO ψ V W (c • f) := {
+    quasi γ w := by rw [Pi.smul_apply, Pi.smul_apply, hf.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
+    level := by
+      obtain ⟨U, hU, h1⟩ := hf.level
+      refine ⟨U, hU, fun u hu h0 => ?_⟩
+      funext w
+      have e1 := congrFun (h1 u hu h0) w
+      unfold heisO at e1 ⊢
+      rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+    cont := hf.cont.const_smul c
+    smooth k L h1 h2 w := contDiff_const.mul (hf.smooth k L h1 h2 w) }
+  have theta_zero : IsThetaFunO ψ V W 0 := {
+    quasi γ w := by simp only [Pi.zero_apply, mul_zero]
+    level := ⟨⊤, isOpen_univ, fun u _ _ => by funext w; simp only [heisO, Pi.zero_apply, mul_zero]⟩
+    cont := continuous_const
+    smooth k L _ _ w := contDiff_const }
   have hψ := hω.std
   obtain ⟨K, hK⟩ := coef_vac M M' hθ hω hX τ hg P Q
   obtain ⟨hμ, h𝓕, -⟩ := hX
@@ -249,33 +329,33 @@ theorem coef_at_place : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPa
   have th : ∀ x y, vac x → vac y → IsThetaFunO ψ V W (ω (atTau θ V τ g, 1) (pt x P)) ∧ IsThetaFunO ψ V W (pt y Q) :=
     fun x y hx hy => ⟨hω.om_pres _ _ (ptAt_theta hψ hθ _ _ _ _ _ hx.1 P), ptAt_theta hψ hθ _ _ _ _ _ hy.1 Q⟩
   have hv : ∀ (a : ℂ) x y, vac x → vac y → vac (a • x + y) := fun a x y hx hy =>
-    ⟨GlobalTheory.OrientedHeis.theta_add (GlobalTheory.OrientedHeis.theta_smul a hx.1) hy.1, vac_lin hψ hθ τ _ a hx.1 hy.1 hx.2 hy.2⟩
+    ⟨theta_add (theta_smul a hx.1) hy.1, vac_lin hψ hθ τ _ a hx.1 hy.1 hx.2 hy.2⟩
   let E : (WO V W → ℂ) → (WO V W → ℂ) → ℂ := fun x y =>
     GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ipTh m X (ω (atTau θ V τ g, 1) (pt x P)) (pt y Q) - K * GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ipTh m X x y
   have h1 : ∀ (a : ℂ) x y z, vac x → vac y → vac z → E (a • x + y) z = a * E x z + E y z := by
     intro a x y z hx hy hz
     simp only [E, pt]
-    rw [ptAt_lin hψ hθ _ _ _ _ _ a hx.1 hy.1, map_add, map_smul]
+    rw [ptAt_lin hψ hθ _ _ _ _ _ a hx.1 hy.1, map_add (f := _), map_smul]
     simp only [GlobalTheory.ThetaL2InnerProduct.ipTh_eq]
-    rw [GlobalTheory.Size.ipO_add_left hψ hμ h𝓕 (GlobalTheory.OrientedHeis.theta_smul a (th x z hx hz).1) (th y z hy hz).1
+    rw [GlobalTheory.Size.ipO_add_left hψ hμ h𝓕 (theta_smul a (th x z hx hz).1) (th y z hy hz).1
         (th x z hx hz).2, GlobalTheory.Size.ipO_smul_left,
-      GlobalTheory.Size.ipO_add_left hψ hμ h𝓕 (GlobalTheory.OrientedHeis.theta_smul a hx.1) hy.1 hz.1, GlobalTheory.Size.ipO_smul_left]
+      GlobalTheory.Size.ipO_add_left hψ hμ h𝓕 (theta_smul a hx.1) hy.1 hz.1, GlobalTheory.Size.ipO_smul_left]
     ring
   have h2 : ∀ (a : ℂ) x y z, vac x → vac y → vac z → E z (a • x + y) = conj a * E z x + E z y := by
     intro a x y z hx hy hz
     simp only [E, pt]
     rw [ptAt_lin hψ hθ _ _ _ _ _ a hx.1 hy.1]
     simp only [GlobalTheory.ThetaL2InnerProduct.ipTh_eq]
-    rw [GlobalTheory.Size.ipO_add_right hψ hμ h𝓕 (th z x hz hx).1 (GlobalTheory.OrientedHeis.theta_smul a (th z x hz hx).2)
+    rw [GlobalTheory.Size.ipO_add_right hψ hμ h𝓕 (th z x hz hx).1 (theta_smul a (th z x hz hx).2)
         (th z y hz hy).2, GlobalTheory.Size.ipO_smul_right,
-      GlobalTheory.Size.ipO_add_right hψ hμ h𝓕 hz.1 (GlobalTheory.OrientedHeis.theta_smul a hx.1) hy.1, GlobalTheory.Size.ipO_smul_right]
+      GlobalTheory.Size.ipO_add_right hψ hμ h𝓕 hz.1 (theta_smul a hx.1) hy.1, GlobalTheory.Size.ipO_smul_right]
     ring
   have h0 : ∀ x, vac x → E x x = 0 := by
     intro x hx
     by_cases hx0 : x = 0
     · have z0 : ∀ R, pt 0 R = 0 := fun R => by
         have h := ptAt_lin hψ hθ τ (cart M τ) (cart M' τ) (onb M τ) (onb M' τ) (-1)
-          (GlobalTheory.ThetaL2InnerProduct.thetaSpace ψ V W).zero_mem (GlobalTheory.ThetaL2InnerProduct.thetaSpace ψ V W).zero_mem R
+          theta_zero theta_zero R
         rw [smul_zero, add_zero, neg_one_smul, neg_add_cancel] at h
         exact h
       simp only [E, hx0, z0, map_zero, GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ipTh]

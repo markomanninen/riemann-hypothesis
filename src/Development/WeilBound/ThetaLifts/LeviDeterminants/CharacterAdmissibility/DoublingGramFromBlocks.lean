@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.SiegelTransportAlg
+module
+
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.SiegelTransportAlg
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ variable {R : Type} [CommRing R] {E : Type} [CommRing E] [Algebra R E] {c : E �
   {β β₁ μ ν : Type} [Fintype β] [DecidableEq β] [Fintype β₁] [DecidableEq β₁] [Fintype μ] [DecidableEq μ]
   [Fintype ν] [DecidableEq ν]
 
-variable (c) in
 
+variable (c) in
 structure Fr (J : Matrix β β E) (J₁ : Matrix β₁ β₁ E) (H : Matrix μ μ E) (ι : Matrix β β₁ E) (Z : Matrix β μ E)
     (π : Matrix β₁ β E) (ρ : Matrix μ β E) : Prop where
   one : ι * π + Z * ρ = 1
@@ -34,16 +38,17 @@ theorem doubling_gram_fromBlocks {a b : Type} (A : Matrix β a E) (B : Matrix β
   simp only [dbl, fromBlocks_transpose, fromBlocks_map, Matrix.map_zero _ (map_zero c), fromBlocks_multiply]
   simp
 
-theorem Fr.dbl (h : Fr c J J₁ H ι Z π ρ) : Fr c (dbl J) (dbl J₁) (dbl H) (dd2 ι) (dd2 Z) (dd2 π) (dd2 ρ) where
-  one := by simp [fromBlocks_multiply, fromBlocks_add, h.one]
-  pi := by simp [fromBlocks_multiply, h.pi]
-  pz := by simp [fromBlocks_multiply, h.pz]
-  ri := by simp [fromBlocks_multiply, h.ri]
-  rz := by simp [fromBlocks_multiply, h.rz]
-  gii := by rw [doubling_gram_fromBlocks, h.gii]; rfl
-  giz := by rw [doubling_gram_fromBlocks, h.giz]; simp
-  gzi := by rw [doubling_gram_fromBlocks, h.gzi]; simp
-  gzz := by rw [doubling_gram_fromBlocks, h.gzz]; rfl
+theorem Fr.dbl (h : Fr c J J₁ H ι Z π ρ) : Fr c (dbl J) (dbl J₁) (dbl H) (dd2 ι) (dd2 Z) (dd2 π) (dd2 ρ) := by
+  exact
+    { one := by simp [fromBlocks_multiply, fromBlocks_add, h.one]
+      pi := by simp [fromBlocks_multiply, h.pi]
+      pz := by simp [fromBlocks_multiply, h.pz]
+      ri := by simp [fromBlocks_multiply, h.ri]
+      rz := by simp [fromBlocks_multiply, h.rz]
+      gii := by rw [doubling_gram_fromBlocks, h.gii]; rfl
+      giz := by rw [doubling_gram_fromBlocks, h.giz]; simp
+      gzi := by rw [doubling_gram_fromBlocks, h.gzi]; simp
+      gzz := by rw [doubling_gram_fromBlocks, h.gzz]; rfl }
 
 theorem Fr.mul (h : Fr c J J₁ H ι Z π ρ) (g g' : Matrix β₁ β₁ E) (k k' : Matrix μ μ E) :
     (ι * g * π + Z * k * ρ) * (ι * g' * π + Z * k' * ρ) = ι * (g * g') * π + Z * (k * k') * ρ := by

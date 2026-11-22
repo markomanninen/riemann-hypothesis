@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.RigidityTheorems.MultOne
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.RigidityTheorems.IrredA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Closure
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.RigidityTheorems.MultOne
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.RigidityTheorems.IrredA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Closure
+
+@[expose] public section
 
 noncomputable section
 

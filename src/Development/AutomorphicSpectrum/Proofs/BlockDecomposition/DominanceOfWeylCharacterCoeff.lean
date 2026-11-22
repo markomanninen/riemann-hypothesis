@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CPoly
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CPoly
+
+@[expose] public section
+
 open Matrix Finset
 open scoped InnerProductSpace
 open PositivityTheory.RgBcC PositivityTheory.RgBcC.Real PositivityTheory.RgBcC.RealD GlobalTheory.CompanionTheory.RealCount GlobalTheory.CompanionTheory.RealCount.Tope
@@ -30,7 +35,7 @@ theorem exists_top_add (φ : (Fin n → ℤ) →+ ℤ) (f g : LP n) (hf : f ≠ 
   have hadd : ∀ x y, D (x + y) = D x + D y := by
     intro x y
     show toLex (φ (x + y), toLex (x + y)) = toLex (φ x, toLex x) + toLex (φ y, toLex y)
-    rw [map_add]; rfl
+    rw [map_add (f := _)]; rfl
   have hmono : ∀ x y, D x ≤ D y → φ x ≤ φ y := by
     intro x y h
     rcases Prod.Lex.toLex_le_toLex.1 h with h | h
@@ -85,7 +90,7 @@ theorem Bd.mul {φ : (Fin n → ℤ) →+ ℤ} {f g : LP n} {B C : ℤ} (hf : Bd
   rw [Finsupp.sum] at hx'
   obtain ⟨y, hy, hy'⟩ := Finset.exists_ne_zero_of_sum_ne_zero hx'
   by_cases he : x + y = ν
-  · rw [← he, map_add]
+  · rw [← he, map_add (f := _)]
     exact add_le_add (hf x (Finsupp.mem_support_iff.1 hx)) (hg y (Finsupp.mem_support_iff.1 hy))
   · exact absurd (if_neg he) hy'
 
@@ -114,7 +119,7 @@ theorem bd_single (φ : (Fin n → ℤ) →+ ℤ) (m : Fin n → ℤ) (r : ℂ) 
 theorem Bd.sum {ι : Type*} {φ : (Fin n → ℤ) →+ ℤ} (s : Finset ι) (F : ι → LP n) {B : ℤ}
     (h : ∀ i ∈ s, Bd φ (F i) B) : Bd φ (∑ i ∈ s, F i) B := by
   intro ν hν
-  rw [AddMonoidAlgebra.coeff_sum, Finsupp.finset_sum_apply] at hν
+  rw [AddMonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply] at hν
   obtain ⟨i, hi, hi'⟩ := Finset.exists_ne_zero_of_sum_ne_zero hν
   exact h i hi ν hi'
 
@@ -173,7 +178,7 @@ theorem delZ_injective : Function.Injective (delZ n) := by
 theorem coeff_altL_delZ : (altL (delZ n)).coeff (delZ n) = 1 := by
   classical
   unfold altL
-  rw [AddMonoidAlgebra.coeff_sum, Finsupp.finset_sum_apply, Finset.sum_eq_single (1 : Equiv.Perm (Fin n))]
+  rw [AddMonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply, Finset.sum_eq_single (1 : Equiv.Perm (Fin n))]
   · simp
   · intro σ _ hσ
     rw [AddMonoidAlgebra.coeff_smul, Finsupp.smul_apply, AddMonoidAlgebra.coeff_single, Finsupp.single_apply,
@@ -210,8 +215,8 @@ theorem phw_le (w : Fin n → ℤ) (hw : Antitone w) (lam : Fin n → ℤ) (hlam
   have e3 := hcmax _ hab
   have e4 := hbmax _ hA1
   have e5 := hdmax _ hA1
-  rw [map_add] at e1 e3
-  rw [map_add] at e1
+  rw [map_add (f := _)] at e1 e3
+  rw [map_add (f := _)] at e1
   linarith
 
 end GlobalTheory.CompanionTheory.RealCountG.DomA

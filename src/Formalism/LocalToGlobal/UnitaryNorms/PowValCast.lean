@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.UnitaryNorms.Lemmas
+module
+
+public import Formalism.LocalToGlobal.UnitaryNorms.Lemmas
+
+@[expose] public section
 
 noncomputable section
 

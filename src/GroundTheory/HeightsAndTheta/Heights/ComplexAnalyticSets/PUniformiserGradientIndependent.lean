@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StUniformiserGradientIndependent
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalCurveJacobian
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalCurvePointDVR
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.GradientAtPoint
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PointLocalRingOrder
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StUniformiserGradientIndependent
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalCurveJacobian
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalCurvePointDVR
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.GradientAtPoint
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PointLocalRingOrder
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -26,7 +31,8 @@ theorem UniformiserGradientIndependent.proof (hjac : NormalCurveJacobian.Stateme
   have hpm : p ∈ RingHom.ker (eval w : MvPolynomial σ ℂ →+* ℂ) := by
     simp [hp, RingHom.mem_ker, htw, hfw]
   have hpg : GradientAtPoint.grad w p = 0 := by
-    rw [hp, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hp, map_sub, map_sum]
     simp_rw [GradientAtPoint.grad_mul_of_eval_eq_zero w _ _ (hfw _), eval_C]
     have hg : ∀ q, GradientAtPoint.grad w q = fun i ↦ eval w (pderiv i q) :=
       fun q ↦ funext (GradientAtPoint.grad_apply w q)

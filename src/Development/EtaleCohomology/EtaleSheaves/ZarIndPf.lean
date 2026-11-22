@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.StalkGerm
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.StalkGerm
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E2Cut LateralTheory.E.ZLGPf
@@ -66,12 +70,12 @@ theorem ZarInd_of_step (hS : Step) : ZarInd := by
   intro hM hH q Y X S f p _ _ _ _ _ _ hq i hg
   have P : ∀ n : ℤ, ∀ U : S.Opens, IsCompact (U : Set S) → Bij q i n f p U := by
     intro n
-    rcases lt_or_ge n 0 with hn | hn
-    · exact fun U _ => bij_neg hH hn f p U
-    induction n, hn using Int.le_induction with
-    | base => exact hS hM hH q f p hq i 0 (fun s => hg s 0) (fun U _ => bij_neg hH (by norm_num) f p U)
-    | succ m _ ih =>
+    induction n using Int.induction_on with
+    | zero => exact hS hM hH q f p hq i 0 (fun s => hg s 0) (fun U _ => bij_neg hH (by norm_num) f p U)
+    | succ m ih =>
       exact hS hM hH q f p hq i (m + 1) (fun s => hg s (m + 1)) (by simpa using ih)
+    | pred m ih =>
+      exact fun U _ => bij_neg hH (by omega) f p U
   intro n
   have : IsIso (⊤ : S.Opens).ι := (Scheme.topIso S).isIso_hom
   exact bij_top f p (P n ⊤ (by simpa using isCompact_univ))

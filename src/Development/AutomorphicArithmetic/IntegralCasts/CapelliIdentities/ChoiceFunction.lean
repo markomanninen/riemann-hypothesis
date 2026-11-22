@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.InterpolationPointsOfFinrankBound.pick :
     ∀ {k D : Type} [inst : Field k] (P : Set D) {p0 : D},

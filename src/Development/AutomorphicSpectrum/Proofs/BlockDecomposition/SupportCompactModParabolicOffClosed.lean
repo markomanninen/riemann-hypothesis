@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgVanish
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgVanish
+
+@[expose] public section
 
 open Matrix GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.BZMir GlobalTheory.BZMir.Leib GlobalTheory.RgGu.Leib GlobalTheory.CompanionTheory.BZPhiPG
 open scoped TensorProduct
@@ -24,7 +28,7 @@ theorem isClosed_support (H : Subgroup G) (σ : Representation ℂ H W) (f : smo
     rw [inv_mul_cancel, map_one]
     rfl
   refine Filter.mem_of_superset
-    ((continuous_mul_left c⁻¹).continuousAt.preimage_mem_nhds (hopen.mem_nhds h1)) ?_
+    ((continuous_const_mul c⁻¹).continuousAt.preimage_mem_nhds (hopen.mem_nhds h1)) ?_
   intro x hx
   have hx' : GlobalTheory.PRep.ind H σ (c⁻¹ * x) f.1 = f.1 := hx
   have hfx : f.1.1 x = 0 := by

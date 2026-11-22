@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.FullOfSoLoc
+module
+
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.FullOfSoLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,15 +78,17 @@ theorem dixmier_commutant_scalar (ι V : Type) [AddCommGroup V] [Module ℂ V] (
       rw [← Finset.mul_prod_erase s _ hc, mul_comm, map_mul, Module.End.mul_apply, hlin, hw]
     have h0 : aeval T (∑ c ∈ s, g c • q c) v₀ = 0 := by
       have h2 := congrArg (aeval T (∏ d ∈ s, (X - C d))) hsum
-      rw [map_zero, map_sum] at h2
-      rw [map_sum, LinearMap.sum_apply, ← h2]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_zero, map_sum] at h2
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, LinearMap.sum_apply, ← h2]
       refine Finset.sum_congr rfl fun c hc => ?_
       rw [LinearMap.map_smul, hq c hc, map_smul, LinearMap.smul_apply]
     have hp0 : ∑ c ∈ s, g c • q c = 0 := by
       by_contra hp
       exact hv₀ (dixmier_aeval_injective T hinj _ hp (by rw [h0, map_zero]))
     have h3 := congrArg (Polynomial.eval i) hp0
-    rw [eval_finset_sum, Finset.sum_eq_single i] at h3
+    rw [eval_finsetSum, Finset.sum_eq_single i] at h3
     · simp only [eval_smul, q, eval_prod, eval_sub, eval_X, eval_C, smul_eq_mul, eval_zero] at h3
       rcases mul_eq_zero.mp h3 with h | h
       · exact h

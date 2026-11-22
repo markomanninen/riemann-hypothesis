@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FactorResIEqResS
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CompletedLatticeEqAdelicCompletionAndGram
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IsPrincipalIdealRingLoc
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsRootNear
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NatMulIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FactorResIEqResS
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CompletedLatticeEqAdelicCompletionAndGram
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IsPrincipalIdealRingLoc
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsRootNear
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NatMulIntegral
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -198,7 +202,7 @@ theorem mem_hat_iff {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (z : Fin n 
           simp [hc]
       | zero => intro w _; rw [map_zero, zero_smul]; exact zero_mem _
       | one => intro w hw; rw [map_one, one_smul]; exact hw
-      | add s t _ _ hs ht => intro w hw; rw [map_add, add_smul]; exact add_mem (hs w hw) (ht w hw)
+      | add s t _ _ hs ht => intro w hw; rw [map_add (f := _), add_smul]; exact add_mem (hs w hw) (ht w hw)
       | neg s _ hs => intro w hw; rw [map_neg, neg_smul]; exact neg_mem (hs w hw)
       | mul s t _ _ hs ht => intro w hw; rw [map_mul, mul_smul]; exact hs _ (ht w hw)
     have main : ∀ y ∈ Submodule.span (Formalism.L2.Herm.intAf F E)
@@ -253,7 +257,9 @@ end GlobalTheory.LatAdelicBasis
 
 namespace GlobalTheory.LatAdelicBasis
 
-open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Pj Formalism.IndefR.Lev GlobalTheory.IndefiniteRowSideFullHecke GlobalTheory.GeoActCompare
+open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Pj Formalism.IndefR.Lev
+open GlobalTheory.IndefiniteRowSideFullHecke
+open GlobalTheory.GeoActCompare
 open scoped TensorProduct Matrix
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -20,7 +24,7 @@ theorem rightContract_map {F : Type} [Field F] {E E' : Type} [AddCommGroup E] [M
   induction w using TensorProduct.induction_on with
   | zero => simp
   | tmul x y => simp [rightContract_tmul]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem eq_zero_of_rightContract {F : Type} [Field F] {E E' : Type} [AddCommGroup E] [Module F E]
     [AddCommGroup E'] [Module F E'] (w : TensorProduct F E E')
@@ -33,7 +37,7 @@ theorem eq_zero_of_rightContract {F : Type} [Field F] {E E' : Type} [AddCommGrou
     induction v using TensorProduct.induction_on with
     | zero => simp
     | tmul x y => simp [rightContract_tmul]
-    | add a c ha hc => simp only [map_add, Finsupp.add_apply, ha, hc]
+    | add a c ha hc => simp only [map_add (f := _), Finsupp.add_apply, ha, hc]
   apply (TensorProduct.equivFinsuppOfBasisRight b).injective
   ext i
   rw [key, h]

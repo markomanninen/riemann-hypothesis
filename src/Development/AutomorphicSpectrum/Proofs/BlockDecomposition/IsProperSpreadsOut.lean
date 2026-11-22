@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.CubeTheorem.SchemeModels
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFiniteAffineCover
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.CubeTheorem.SchemeModels
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFiniteAffineCover
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -175,7 +179,7 @@ theorem ae_exists_lift [CompactSpace X] [Algebra.FiniteType ℤ R₀]
       rw [← r₂.2, ← hρ]
       exact RingHom.congr_fun hγ r
   have c2 := ae_pt_eq_of_pt_eq U hfp (rep_alg U (K := K) r₂) rP (by rw [← map_pt, e2])
-  filter_upwards [r₂.1, c1, c2, ha] with i ⟨p, hp⟩ d1 d2 ⟨q, hq, eq⟩
+  filter_upwards [r₂.1, c1, c2, ha] with i ⟨p, hp⟩ d1 d2 ⟨q, hq, hq_pt⟩
   have hb : p.comp (baseHom f₀ W₂) = (β i).comp (ψ i) := by
     refine RingHom.ext fun r => ?_
     have := congrFun d1 r
@@ -184,7 +188,7 @@ theorem ae_exists_lift [CompactSpace X] [Algebra.FiniteType ℤ R₀]
   refine ⟨pullback.lift (pt W₂ p) (Spec.map (CommRingCat.ofHom (β i)))
     (by rw [pt_comp, hb, spec_comp]), ?_, pullback.lift_snd _ _ _⟩
   apply pullback.hom_ext
-  · rw [Category.assoc, pullback.lift_fst, map_pt, eq]
+  · rw [Category.assoc, pullback.lift_fst, map_pt, hq_pt]
     exact d2 ((algebraMap (V i) (K i)).comp p) q (by funext b; simp [← hp]) hq
   · rw [Category.assoc, pullback.lift_snd, hsq, spec_comp]
 
@@ -368,8 +372,8 @@ lemma exists_limit_hom {R₀ R : Type} [CommRing R₀] [CommRing R] (φ : R₀ �
     exact map_one (β F)
   · intro a b
     filter_upwards [hmem a, hmem b, hmem (a + b)] with F ha hb hab
-    rw [hv F _ hab, hv F _ ha, hv F _ hb, ← map_add]
-    rfl
+    rw [hv F _ hab, hv F _ ha, hv F _ hb]
+    exact (β F).map_add ⟨a, ha⟩ ⟨b, hb⟩
   · intro a b
     filter_upwards [hmem a, hmem b, hmem (a * b)] with F ha hb hab
     rw [hv F _ hab, hv F _ ha, hv F _ hb, ← map_mul]

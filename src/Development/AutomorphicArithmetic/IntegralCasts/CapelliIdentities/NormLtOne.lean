@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace UpperTheory.Reformulated.B.NormLtOne
 
@@ -33,7 +37,8 @@ theorem norm_lt_one {l : ℕ} [Fact l.Prime] {O R : Type} [CommRing O] [Algebra 
   have hz' := congrArg (· * y a ^ P.natDegree) hz
   simp only [zero_mul, add_mul, Finset.sum_mul] at hz'
   rw [← mul_pow, inv_mul_cancel₀ hx0, one_pow] at hz'
-  rw [sub_neg_eq_add, map_add, map_one, map_sum, add_comm, ← hz']
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [sub_neg_eq_add, map_add (f := _), map_one, map_sum, add_comm, ← hz']
   congr 1
   refine Finset.sum_congr rfl fun i hi => ?_
   have hi' := (Finset.mem_range.mp hi).le

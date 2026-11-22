@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsDPMorphismBot
-import Development.AbelianVarietyTheory.Definitions.Divisors.CrystallineConnectionFormCoboundaryZero
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsStrictlySemistableAlt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsDPMorphismBot
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CrystallineConnectionFormCoboundaryZero
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsStrictlySemistableAlt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,8 +33,8 @@ def IsSSFun (ϖ : O) (X : Scheme.{0}) (q : X ⟶ Spec (CommRingCat.of O)) {k : T
     (∀ α i, F α i ∈ nonZeroDivisors Γ(X, U α)) ∧
     (∀ α (x : X), x ∈ U α → ∃ (V : X.Opens) (_ : IsAffineOpen V) (_ : x ∈ V) (hV : V ≤ U α) (m r : ℕ) (_ : 1 ≤ r)
       (_ : r ≤ m) (c : Fin r ↪ L.ι)
-      (ψ : (MvPolynomial (Fin m) O ⧸ Ideal.span {(∏ j ∈ Finset.univ.filter (fun j : Fin m => (j : ℕ) < r),
-        MvPolynomial.X j) - MvPolynomial.C ϖ}) →+* Γ(X, V)),
+      (ψ : (MvPolynomial (Fin m) O ⧸ Ideal.span {(((Finset.univ.filter (fun j : Fin m => (j : ℕ) < r)).prod
+        (fun j => MvPolynomial.X j)) - MvPolynomial.C ϖ)}) →+* Γ(X, V)),
       ψ.Etale ∧ ψ.comp (algebraMap O _) = ((Scheme.ΓSpecIso (CommRingCat.of O)).inv ≫ q.appLE ⊤ V le_top).hom ∧
       (∀ j : Fin r, ∃ u : Γ(X, V)ˣ, ψ (Ideal.Quotient.mk _ (MvPolynomial.X (Fin.castLE (by omega) j))) =
         u * X.presheaf.map (homOfLE hV).op (F α (c j))) ∧

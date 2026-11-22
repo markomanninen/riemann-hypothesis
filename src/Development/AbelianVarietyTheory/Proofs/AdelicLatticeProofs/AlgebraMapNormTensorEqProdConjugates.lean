@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.MemPowSub
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.MemPowSub
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Polynomial GlobalTheory.QNorm GlobalTheory.CNorm
 open scoped WithZero TensorProduct
 
 namespace GlobalTheory.CNorm
 
+
 open NumberField IsDedekindDomain Polynomial in
 open scoped WithZero TensorProduct in
-
 theorem _root_.GlobalTheory.CNorm.algebraMap_norm_tensor_eq_prod_conjugates (F E K : Type) [Field F] [Field E] [Algebra F E]
     [FiniteDimensional F E] [IsGalois F E] [CommRing K] [Algebra F K] (y : K ⊗[F] E) :
     algebraMap K (K ⊗[F] E) (Algebra.norm K y) =
@@ -28,7 +33,8 @@ theorem _root_.GlobalTheory.CNorm.algebraMap_norm_tensor_eq_prod_conjugates (F E
     have hx : ∀ x : E, ∑ g, v g * g x = 0 := fun x => by
       calc ∑ g, v g * g x = ∑ g, v g * g (∑ j, b.repr x j • b j) := by rw [b.sum_repr]
         _ = ∑ j, b.repr x j • ∑ g, v g * g (b j) := by
-          simp only [map_sum, Algebra.smul_def, map_mul, AlgEquiv.commutes, Finset.mul_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [map_sum, Algebra.smul_def, map_mul, AlgEquiv.commutes, Finset.mul_sum]
           rw [Finset.sum_comm]
           exact Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun g _ => by rw [AlgEquiv.commutes]; ring
         _ = 0 := by simp [hj]
@@ -49,7 +55,8 @@ theorem _root_.GlobalTheory.CNorm.algebraMap_norm_tensor_eq_prod_conjugates (F E
     have h1 : y * b' j = ∑ i, A i j • b' i := by
       simpa [A, Algebra.leftMulMatrix_eq_repr_mul] using (b'.sum_repr (y * b' j)).symm
     have h2 := congrArg (Algebra.TensorProduct.map (AlgHom.id K K) (g : E →ₐ[F] E)) h1
-    simp only [map_mul, map_sum, b', Algebra.TensorProduct.basis_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_mul, map_sum, b', Algebra.TensorProduct.basis_apply,
       Algebra.TensorProduct.map_tmul, AlgHom.id_apply, map_one, Algebra.smul_def,
       AlgHom.commutes] at h2
     rw [Matrix.diagonal_mul, Matrix.mul_apply]

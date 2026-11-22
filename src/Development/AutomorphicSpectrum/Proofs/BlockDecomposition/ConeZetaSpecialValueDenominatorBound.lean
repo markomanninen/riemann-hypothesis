@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsAvoidOne
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialSum
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WeightedSumDecompositionDenominatorsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeSeriesSpecialValueRationalStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.WeightSumAsFiniteDifferencesStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ConeSeriesSummableRightHalfPlaneStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsAvoidOne
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PartialSum
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WeightedSumDecompositionDenominatorsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeSeriesSpecialValueRationalStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.WeightSumAsFiniteDifferencesStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ConeSeriesSummableRightHalfPlaneStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -39,9 +43,11 @@ theorem eq_at_neg_of_eq_right (k p : ℕ) (hp : p < k) (T G : ℂ → ℂ)
     have h2 := hs.2
     simp [this] at h2
   have hAT₁ : AnalyticOnNhd ℂ T C₁ := (hT.mono hs₁).analyticOnNhd hO₁
-  have hAG₁ : AnalyticOnNhd ℂ G C₁ := (hG.mono fun s hs => hs.1).analyticOnNhd hO₁
+  have hAG₁ : AnalyticOnNhd ℂ G C₁ :=
+    (hG.mono (show C₁ ⊆ {s | -(k : ℝ) < s.re} from fun _ hs => hs.1)).analyticOnNhd hO₁
   have hAT₂ : AnalyticOnNhd ℂ T C₂ := (hT.mono hs₂).analyticOnNhd hO₂
-  have hAG₂ : AnalyticOnNhd ℂ G C₂ := (hG.mono fun s hs => hs.1).analyticOnNhd hO₂
+  have hAG₂ : AnalyticOnNhd ℂ G C₂ :=
+    (hG.mono (show C₂ ⊆ {s | -(k : ℝ) < s.re} from fun _ hs => hs.1)).analyticOnNhd hO₂
   have hz₁ : (2 + Complex.I : ℂ) ∈ C₁ := by
     refine ⟨?_, ?_⟩ <;> simp <;> linarith
   have hev₁ : T =ᶠ[nhds (2 + Complex.I : ℂ)] G := by

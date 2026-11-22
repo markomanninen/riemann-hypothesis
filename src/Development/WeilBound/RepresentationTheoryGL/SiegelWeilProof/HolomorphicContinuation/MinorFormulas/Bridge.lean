@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MinorFormulas.BridgeC
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MinorFormulas.BridgeC
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,8 @@ theorem cay_fQ (s : ℂ) (hs : s = 1 ∨ s = -1) (z : ℂ) (m : ℕ) (Q : Fm n) 
     rw [← this]
     congr 1
     funext k
-    simp
+    change eU (σ k) k = eU (σ k) (σ.symm (σ k))
+    rw [Equiv.symm_apply_apply]
   simp only [cay, hperm]
   rw [← Equiv.sum_comp (Equiv.inv (Equiv.Perm (Fin n)))]
   simp only [Equiv.inv_apply, inv_inv, Equiv.Perm.sign_inv]

@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.FerreroWashington
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CoefSup
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.FerreroWashington
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CoefSup
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -86,7 +90,8 @@ private theorem desc_ex (f : R →+* R') (hf : Function.Injective f) (P : PD ι 
         intro x y
         ext i j
         apply hf
-        rw [Matrix.of_apply, hr, map_mul, Matrix.mul_apply, Matrix.mul_apply, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [Matrix.of_apply, hr, map_mul, Matrix.mul_apply, Matrix.mul_apply, map_sum]
         simp only [map_mul, Matrix.of_apply, hr] }
   refine ⟨⟨q, fun v => Matrix.of (n v)⟩, ?_⟩
   apply PD.ext

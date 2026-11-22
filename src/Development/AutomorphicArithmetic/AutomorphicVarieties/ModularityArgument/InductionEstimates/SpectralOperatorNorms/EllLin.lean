@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.BloIn
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CuspUmg
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsContRep
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.BloIn
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CuspUmg
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsContRep
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -12,6 +16,7 @@ open PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Adel PositivityTheory.Rg
 private theorem memLp_out {K : Type} [Field K] [NumberField K] {n : ℕ} {μ : Measure (G1 K n)} [μ.IsHaarMeasure]
     {v : L2 μ} {φ : G1 K n → ℂ} (hc : Continuous φ) (hr : Reps μ v φ) :
     MemLp (fun m : RightCosetSpace (Gam K n) => φ (Quotient.out m)) 2 (quotientMeasure (Gam K n) μ) := by
+  set_option synthInstance.maxHeartbeats 200000 in
   have hinv : ∀ γ ∈ Gam K n, ∀ y, φ (γ * y) = φ y := fun γ hγ => by
     have h1 : (fun y => φ (γ * y)) =ᵐ[μ] φ := by
       filter_upwards [hr, (measurePreserving_mul_left μ γ).quasiMeasurePreserving.ae hr] with y a b
@@ -19,15 +24,27 @@ private theorem memLp_out {K : Type} [Field K] [NumberField K] {n : ℕ} {μ : M
       congr 1
       exact Quotient.sound ⟨⟨γ, hγ⟩, rfl⟩
     exact congrFun (((hc.comp (continuous_const_mul γ)).ae_eq_iff_eq μ hc).1 h1)
-  have h2 := IsContRep.ae_eq_quotFun (μ := μ) (φ := v) (F := φ) ⟨hc, hinv, hr⟩
-  have h3 : (fun m : RightCosetSpace (Gam K n) => φ (Quotient.out m)) = quotFun φ hinv := by
+  let q : RightCosetSpace (Gam K n) → ℂ := Quotient.lift φ (fun a b hab => by
+    obtain ⟨γ, rfl⟩ := hab
+    exact hinv γ γ.2 b)
+  have hq : Continuous q := (isOpenQuotientMap_mk (Gam K n)).isQuotientMap.continuous_iff.2 hc
+  have h2 : (v : RightCosetSpace (Gam K n) → ℂ) =ᵐ[quotientMeasure (Gam K n) μ] q := by
+    have hm : ∀ᵐ x ∂(Measure.map (mk (Gam K n)) (μ.restrict (fundamentalDomain (Gam K n)))),
+        (v : RightCosetSpace (Gam K n) → ℂ) x = q x := by
+      refine (ae_map_iff (measurable_mk (Gam K n)).aemeasurable
+        (measurableSet_eq_fun (Lp.stronglyMeasurable v).measurable hq.measurable)).2 ?_
+      exact ae_restrict_of_ae (hr.mono fun y hy => by
+        change v (mk (Gam K n) y) = φ y
+        exact hy)
+    rwa [map_restrict_eq_quotientMeasure μ (isFundamentalDomain_fundamentalDomain (Gam K n) μ)] at hm
+  have h3 : (fun m : RightCosetSpace (Gam K n) => φ (Quotient.out m)) = q := by
     funext m
     conv_rhs => rw [← Quotient.out_eq m]
     rfl
   rw [h3]
   exact (Lp.memLp v).ae_eq h2
 
-private theorem int_pair {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {S : Set (Pl E)} (b : BW.Blo S 2)
+private theorem int_pair {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {S : Set (Pl E)} (b : BW.Blo S 2)
     {τ : Submodule ℂ (L2 (BW.mu1 E 2))} {m B} (hb : BloIn b τ m B) {v : L2 (BW.mu1 E 2)} {φ : G1 E 2 → ℂ} (hc : Continuous φ)
     (hr : Reps (BW.mu1 E 2) v φ) :
     Integrable (fun x : RightCosetSpace (Gam E 2) => φ (Quotient.out x) *
@@ -40,8 +57,8 @@ private theorem zt_zero (K : Type) [Field K] [NumberField K] : UpperTheory.V.Z.I
   have : (⟨Real.exp 0, Real.exp_pos 0⟩ : {r : ℝ // 0 < r}) = 1 := Subtype.ext Real.exp_zero
   rw [UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.zt, this, map_one]
 
-theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.ellLin {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {μ : Measure (normOneGL E (2 + 2))}
-    [μ.IsHaarMeasure] {θ : Twist μ} {𝔢 : Side θ 2} (𝔵 : Fam 𝔢) (b b' : BW.Blo 𝔢.S 2) (hb : BloIn b 𝔵.τ₂ 𝔵.m₂ 𝔵.B₂)
+theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.ellLin {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {μ : Measure (normOneGL (K := E) (n := (2 + 2)))}
+    [μ.IsHaarMeasure] {θ : Twist μ} {𝔢 : Side θ 2} (𝔵 : _root_.UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.Fam 𝔢) (b b' : BW.Blo 𝔢.S 2) (hb : BloIn b 𝔵.τ₂ 𝔵.m₂ 𝔵.B₂)
     (hb' : BloIn b' 𝔵.τ₁ 𝔵.m₁ 𝔵.B₁) (k : G1 E (2 + 2)) :
     ∃ ℓ : Eu 𝔵.d' →L[ℂ] ℂ, ∀ v, ℓ v = ell b b' k (𝔵.A'.sec v) := by
   set Q := quotientMeasure (Gam E 2) (BW.mu1 E 2)
@@ -62,12 +79,12 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.ellLin {E : Type} [Fie
     have i₂ := fun i => int_pair b' hb' (hψ i).1 (hψ i).2.choose_spec.2
     refine ⟨fun m₁ => ?_, ?_⟩
     · rw [funext (e m₁)]
-      exact integrable_finset_sum _ fun i _ => (i₂ i).const_mul _
+      exact integrable_finsetSum _ fun i _ => (i₂ i).const_mul _
     · simp only [e]
-      have : ∀ m₁ : RightCosetSpace (Gam E 2), _ := fun m₁ => integral_finset_sum (μ := Q) Finset.univ fun i _ =>
+      have : ∀ m₁ : RightCosetSpace (Gam E 2), _ := fun m₁ => integral_finsetSum (μ := Q) Finset.univ fun i _ =>
         (i₂ i).const_mul (φ i (Quotient.out m₁) * starRingEnd ℂ (b.f.1 ((Quotient.out m₁ : G1 E 2) : GlobalTheory.CuspRep.GA E 2)))
       simp only [this, integral_const_mul]
-      exact integrable_finset_sum _ fun i _ => (i₁ i).mul_const _
+      exact integrable_finsetSum _ fun i _ => (i₁ i).mul_const _
   let l : Eu 𝔵.d' →ₗ[ℂ] ℂ :=
     { toFun := fun v => ∫ m₁, ∫ m₂, F v m₁ m₂ ∂Q ∂Q
       map_add' := fun v w => by
@@ -76,7 +93,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.ellLin {E : Type} [Fie
         simp only
         rw [← integral_add ((key v).1 m₁) ((key w).1 m₁)]
         refine integral_congr_ae (Eventually.of_forall fun m₂ => ?_)
-        simp only [F, map_add, Pi.add_apply]
+        simp only [F, map_add (f := _), Pi.add_apply]
         ring
       map_smul' := fun c v => by
         simp only [F, map_smul, Pi.smul_apply, smul_eq_mul, RingHom.id_apply, mul_assoc, integral_const_mul c] }

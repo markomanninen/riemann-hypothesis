@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.TraceUnique
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.TraceUnique
+
+@[expose] public section
 
 open UpperTheory.V.Z.Tf.GlobalTraceComparison UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi UpperTheory.Zero.ConvolutionTheory.EB PositivityTheory.Rg.BcB.Desc
 
@@ -15,7 +19,7 @@ private lemma lift_comm1 {X : Type} (u : X → Module.End ℂ Y) (z : Module.End
   | grade0 r => rw [AlgHom.commutes]; exact Algebra.commutes r z
   | grade1 x => simpa using h x
   | mul a b ha hb => rw [map_mul]; exact ha.mul_left hb
-  | add a b ha hb => rw [map_add]; exact ha.add_left hb
+  | add a b ha hb => rw [map_add (f := _)]; exact ha.add_left hb
 
 private lemma lift_comm2 {X X' : Type} (u : X → Module.End ℂ Y) (v : X' → Module.End ℂ Y)
     (h : ∀ x y, Commute (u x) (v y)) (p : FreeAlgebra ℂ X) (q : FreeAlgebra ℂ X') :
@@ -29,7 +33,7 @@ private lemma lift_conj {X : Type} (u v : X → Module.End ℂ Y) (A : Module.En
   | grade0 r => simpa using (Algebra.commutes r A).symm
   | grade1 x => simpa using h x
   | mul a b ha hb => rw [map_mul, map_mul, ← mul_assoc, ha, mul_assoc, hb, mul_assoc]
-  | add a b ha hb => rw [map_add, map_add, mul_add, add_mul, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), mul_add, add_mul, ha, hb]
 
 private lemma pullbackSymmetry_lift_map_comm (x x' y c A : Module.End ℂ Y) (hA : A * x' = y * A) (hAA : A * A = 1)
     (h1 : Commute x' c) (h2 : Commute y x) (h3 : Commute y c) :
@@ -275,7 +279,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.absCore_pf :
         rw [h0, mul_zero] at this
         exact (mul_eq_zero.1 this).resolve_left hDne
       | zero => simp
-      | add u v _ _ hu hv => rw [add_mul, map_add, hu, hv, add_zero]
+      | add u v _ _ hu hv => rw [add_mul, map_add (f := _), hu, hv, add_zero]
       | smul r u _ hu => rw [smul_mul_assoc, map_smul, hu, smul_zero]
     have := hz A (hLin A)
     rw [hAA, LinearMap.trace_one] at this

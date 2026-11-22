@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GoodPartEq
-import Formalism.LocalToGlobal.IndefiniteReal.BaseLiftsPackageOfPrimitiveLinks
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GoodPartEq
+public import Formalism.LocalToGlobal.IndefiniteReal.BaseLiftsPackageOfPrimitiveLinks
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,7 +93,10 @@ variable {R F}
 theorem isInert_tr (h : R.IsInert) : letI := alg b iK; (real3 b R).IsInert := by
   letI := alg b iK
   constructor
-  case tie => tr_clause a b h.tie
+  case tie =>
+    constructor
+    · exact (by with_unfolding_all exact (h.tie.plI_inj :))
+    · exact (by with_unfolding_all exact (h.tie.okI :))
   case onto => exact (by with_unfolding_all exact (h.onto :))
   case hR => exact (by with_unfolding_all exact (h.hR :))
   case hL => exact (by with_unfolding_all exact (h.hL :))
@@ -107,56 +114,57 @@ theorem isTup_tr (h : R.IsTup) : letI := alg b iK; (real3 b R).IsTup := by
 theorem isScal_tr (h : R.IsScal F) : letI := alg b iK; (real3 b R).IsScal (face3 b F) := by
   letI := alg b iK
   constructor
-  case lam0 => tr_via (fun W : type_of% R.Wp3 => ∀ i t p (l : ℝ), W i p ≠ ⊥ →
-      (∀ x ∈ W i p, R.thG i t (LinearMap.adjoint (R.thG i t) x) = (l : ℂ) • x) → R.lam3 i t p A.A.v0 = l) (wp3_apply_eq_sq_mul_sub_sq_mul b R) h.lam0
-  case kap => tr_via (fun E : type_of% R.EEp3 => ∀ κ : ℝ,
+  case lam0 => exact (by exact ((Eq.mp (congrArg (fun W : type_of% R.Wp3 => ∀ i t p (l : ℝ), W i p ≠ ⊥ →
+      (∀ x ∈ W i p, R.thG i t (LinearMap.adjoint (R.thG i t) x) = (l : ℂ) • x) → R.lam3 i t p A.A.v0 = l) (wp3_apply_eq_sq_mul_sub_sq_mul b R)) h.lam0) :))
+  case kap => exact (by exact ((Eq.mp (congrArg (fun E : type_of% R.EEp3 => ∀ κ : ℝ,
       Lift.IsKap a.D.R.m (fun t => R.Th t ∘ₗ LinearMap.adjoint (R.Th t)) E R.lamN κ →
-      (∃ t p, E p ≠ ⊥ ∧ ∏ j ∈ Finset.Icc 1 a.D.R.m, R.lamN t j p ≠ 0) → R.kap = κ) (realAdelicInertTransport_typeRows_eq b R) h.kap
-  case off => tr_via (fun X : Cx.CxData A.fam3.amb3 => ∀ i p v (l : ℝ), v ≠ A.A.v0 → partAtW F X i p v →
+      (∃ t p, E p ≠ ⊥ ∧ ∏ j ∈ Finset.Icc 1 a.D.R.m, R.lamN t j p ≠ 0) → R.kap = κ) (realAdelicInertTransport_typeRows_eq b R)) h.kap) :))
+  case off => exact (by exact ((Eq.mp (congrArg (fun X : Cx.CxData A.fam3.amb3 => ∀ i p v (l : ℝ), v ≠ A.A.v0 → partAtW F X i p v →
       (∀ x, X.tC F.cr false i A.A.μ0 (Cx.cpt A.A.v0.embedding x) ∈ X.Wp i p → ∀ y,
         inner ℂ (X.wC false i v (Cx.cpt v.embedding ((X.liftMat F.cr false i A.A.μ0).mulVec x)))
             (X.wC false i v (Cx.cpt v.embedding ((X.liftMat F.cr false i A.A.μ0).mulVec y))) =
           ((l : ℝ) : ℂ) * Formalism.HermitianLatticesTheory.majAt (Pi.basisFun a.D.what₂.LL _) ((Cx.lv (F.fc X.zs) false).XT i A.A.μ0) v x y) →
-      R.lam3 i A.A.μ0 p v = l) (toCx3_eq b R F) h.off
-  case abs0 => tr_via (fun u : Parts R => ∀ i t p, u.2.2 i p = ⊥ →
-      R.lam3 i t p A.A.v0 = Real.exp ((F.Zsc (cxW R F u).zs).l6m i)) (parts_eq b R F) h.abs0
-  case abs => tr_via (fun X : Cx.CxData A.fam3.amb3 => ∀ i p v, v ≠ A.A.v0 → ¬ partAtW F X i p v →
-      R.lam3 i A.A.μ0 p v = Real.exp ((F.Zsc X.zs).l6m i)) (toCx3_eq b R F) h.abs
+      R.lam3 i A.A.μ0 p v = l) (toCx3_eq b R F)) h.off) :))
+  case abs0 => exact (by exact ((Eq.mp (congrArg (fun u : Parts R => ∀ i t p, u.2.2 i p = ⊥ →
+      R.lam3 i t p A.A.v0 = Real.exp ((F.Zsc (cxW R F u).zs).l6m i)) (parts_eq b R F)) h.abs0) :))
+  case abs => exact (by exact ((Eq.mp (congrArg (fun X : Cx.CxData A.fam3.amb3 => ∀ i p v, v ≠ A.A.v0 → ¬ partAtW F X i p v →
+      R.lam3 i A.A.μ0 p v = Real.exp ((F.Zsc X.zs).l6m i)) (toCx3_eq b R F)) h.abs) :))
   case tup => exact (by with_unfolding_all exact (h.tup :))
 
 theorem primRows3_tr (h : PrimRows3 R F) : letI := alg b iK; PrimRows3 (real3 b R) (face3 b F) := by
-  letI := alg b iK
-  constructor
-  case heckeR => exact (by with_unfolding_all exact (h.heckeR :))
-  case heckeL => exact (by with_unfolding_all exact (h.heckeL :))
-  case hecke => tr_via (fun X : Cx.CxData A.fam3.amb3 => (∃ hE, Cx.HeckeIntertwiningDefinite A X hE) ∧ ∃ hW, Cx.HeckeIntertwiningLifts A X hW) (toCx3_eq b R F) h.hecke
-  case gUnit => exact (by with_unfolding_all exact (h.gUnit :))
-  case gEquiv => tr_via (fun u : Parts R => Cx.GEquiv3 A (cxW R F u) ((by with_unfolding_all exact ((R.gEx F) :))) ∧ Cx.LiftGroupEquivariance A (cxW R F u) ((by with_unfolding_all exact ((R.gWx F) :)))) (parts_eq b R F) h.gEquiv
-  case block => tr_via (fun X : Cx.CxData A.fam3.amb3 => X.zs.InBlock) (toCx3_eq b R F) h.block
-  case rowTest => tr_via (fun X : Cx.CxData A.fam3.amb3 => Rat.RowTest X) (toCx3_eq b R F) h.rowTest
-  case liftTest => tr_via (fun X : Cx.CxData A.fam3.amb3 => Rat.LiftTest X) (toCx3_eq b R F) h.liftTest
-  case liftTestB => tr_via (fun X : Cx.CxData A.fam3.amb3 => Rat.LiftTestB X false) (toCx3_eq b R F) h.liftTestB
-  case liftOnto => tr_via (fun X : Cx.CxData A.fam3.amb3 => ∀ hW, Cx.HeckeIntertwiningLifts A X hW →
-      U2.OntoC A X F.P0 F.ψ0 F.P1 F.ψ1 hW) (toCx3_eq b R F) h.liftOnto
-  case pos => tr_via (fun X : Cx.CxData A.fam3.amb3 => ∀ c, (Cx.lv (F.fc X.zs) c).Pos) (toCx3_eq b R F) h.pos
-  case posScal => exact (by with_unfolding_all exact (h.posScal :))
-  case levE => tr_via (fun u : Parts R =>
-      Cx.LevType3 A (cxW R F u) (P1 := F.P1) (ψ1 := F.ψ1) (Dc := F.Dc) (Sp := F.Sp) (Zsc := F.Zsc) ((by with_unfolding_all exact ((R.gEx F) :))) false F.P0 F.ψ0 ∧
-      Cx.LevType3 A (cxW R F u) (P1 := F.P1) (ψ1 := F.ψ1) (Dc := F.Dc) (Sp := F.Sp) (Zsc := F.Zsc) ((by with_unfolding_all exact ((R.gEx F) :))) true F.P1 F.ψ1) (parts_eq b R F) h.levE
-  case h2P => tr_via (fun X : Cx.CxData A.fam3.amb3 =>
-      Cx.PrincipalLevelBijectivity A X (P1 := F.P1) (ψ1 := F.ψ1) (Dc := F.Dc) (Sp := F.Sp) (Zsc := F.Zsc)) (toCx3_eq b R F) h.h2P
-  case thmB => tr_via (fun E : type_of% R.EEp3 =>
-      Lift.IsKap a.D.R.m (fun t => R.Th t ∘ₗ LinearMap.adjoint (R.Th t)) E R.lamN R.kap) (realAdelicInertTransport_typeRows_eq b R) h.thmB
-  case sumE => tr_via (fun X : Cx.CxData A.fam3.amb3 => ∀ c, X.PartsE c) (toCx3_eq b R F) h.sumE
-  case unif => exact (by with_unfolding_all exact (h.unif :))
-  case mLat => tr_via (fun X : Cx.CxData A.fam3.amb3 => X.MLat false) (toCx3_eq b R F) h.mLat
-  case levW => tr_via (fun u : Parts R =>
-      Cx.LevelTypeOfLifts A (cxW R F u) (P1 := F.P1) (ψ1 := F.ψ1) (Dc := F.Dc) (Sp := F.Sp) (Zsc := F.Zsc) ((by with_unfolding_all exact ((R.gWx F) :))) false F.P0 F.ψ0) (parts_eq b R F) h.levW
-  case thmA => tr_via (fun W : type_of% R.Wp3 => ∀ i t,
-      Lift.IsLamP (R.thG i t) (LinearMap.adjoint (R.thG i t)) (W i) fun p => R.lam3 i t p A.A.v0) (wp3_apply_eq_sq_mul_sub_sq_mul b R) h.thmA
-  case sumW => tr_via (fun X : Cx.CxData A.fam3.amb3 => X.PartsW false) (toCx3_eq b R F) h.sumW
-  case scalConj => tr_via (fun X : Cx.CxData A.fam3.amb3 => X.GalD F.cr false) (toCx3_eq b R F) h.scalConj
-  case dimParts => tr_via (fun X : Cx.CxData A.fam3.amb3 => X.DimParts false) (toCx3_eq b R F) h.dimParts
+  set_option maxHeartbeats 16000000 in
+   letI := alg b iK
+   constructor
+   case heckeR => exact (by with_unfolding_all exact (h.heckeR :))
+   case heckeL => exact (by with_unfolding_all exact (h.heckeL :))
+   case hecke => exact (by with_unfolding_all exact ((Eq.mp (congrArg (fun X : Cx.CxData A.fam3.amb3 => (∃ hE, Cx.HeckeIntertwiningDefinite A X hE) ∧ ∃ hW, Cx.HeckeIntertwiningLifts A X hW) (toCx3_eq b R F)) h.hecke) :))
+   case gUnit => exact (by with_unfolding_all exact (h.gUnit :))
+   case gEquiv => exact (by with_unfolding_all exact ((Eq.mp (congrArg (fun u : Parts R => Cx.GEquiv3 A (cxW R F u) (R.gEx F) ∧ Cx.LiftGroupEquivariance A (cxW R F u) (R.gWx F)) (parts_eq b R F)) h.gEquiv) :))
+   case block => exact (by with_unfolding_all exact ((Eq.mp (congrArg (fun X : Cx.CxData A.fam3.amb3 => X.zs.InBlock) (toCx3_eq b R F)) h.block) :))
+   case rowTest => exact (by with_unfolding_all exact ((Eq.mp (congrArg (fun X : Cx.CxData A.fam3.amb3 => Rat.RowTest X) (toCx3_eq b R F)) h.rowTest) :))
+   case liftTest => exact (by with_unfolding_all exact ((Eq.mp (congrArg (fun X : Cx.CxData A.fam3.amb3 => Rat.LiftTest X) (toCx3_eq b R F)) h.liftTest) :))
+   case liftTestB => exact (by with_unfolding_all exact ((Eq.mp (congrArg (fun X : Cx.CxData A.fam3.amb3 => Rat.LiftTestB X false) (toCx3_eq b R F)) h.liftTestB) :))
+   case liftOnto => exact (by with_unfolding_all exact ((Eq.mp (congrArg (fun X : Cx.CxData A.fam3.amb3 => ∀ hW, Cx.HeckeIntertwiningLifts A X hW →
+      U2.OntoC A X F.P0 F.ψ0 F.P1 F.ψ1 hW) (toCx3_eq b R F)) h.liftOnto) :))
+   case pos => exact (by with_unfolding_all exact ((Eq.mp (congrArg (fun X : Cx.CxData A.fam3.amb3 => ∀ c, (Cx.lv (F.fc X.zs) c).Pos) (toCx3_eq b R F)) h.pos) :))
+   case posScal => exact (by with_unfolding_all exact (h.posScal :))
+   case levE => exact (by with_unfolding_all exact ((Eq.mp (congrArg (fun u : Parts R =>
+      Cx.LevType3 A (cxW R F u) (P1 := F.P1) (ψ1 := F.ψ1) (Dc := F.Dc) (Sp := F.Sp) (Zsc := F.Zsc) (R.gEx F) false F.P0 F.ψ0 ∧
+      Cx.LevType3 A (cxW R F u) (P1 := F.P1) (ψ1 := F.ψ1) (Dc := F.Dc) (Sp := F.Sp) (Zsc := F.Zsc) (R.gEx F) true F.P1 F.ψ1) (parts_eq b R F)) h.levE) :))
+   case h2P => exact (by with_unfolding_all exact ((Eq.mp (congrArg (fun X : Cx.CxData A.fam3.amb3 =>
+      Cx.PrincipalLevelBijectivity A X (P1 := F.P1) (ψ1 := F.ψ1) (Dc := F.Dc) (Sp := F.Sp) (Zsc := F.Zsc)) (toCx3_eq b R F)) h.h2P) :))
+   case thmB => exact (by with_unfolding_all exact ((Eq.mp (congrArg (fun E : type_of% R.EEp3 =>
+      Lift.IsKap a.D.R.m (fun t => R.Th t ∘ₗ LinearMap.adjoint (R.Th t)) E R.lamN R.kap) (realAdelicInertTransport_typeRows_eq b R)) h.thmB) :))
+   case sumE => exact (by with_unfolding_all exact ((Eq.mp (congrArg (fun X : Cx.CxData A.fam3.amb3 => ∀ c, X.PartsE c) (toCx3_eq b R F)) h.sumE) :))
+   case unif => exact (by with_unfolding_all exact (h.unif :))
+   case mLat => exact (by with_unfolding_all exact ((Eq.mp (congrArg (fun X : Cx.CxData A.fam3.amb3 => X.MLat false) (toCx3_eq b R F)) h.mLat) :))
+   case levW => exact (by with_unfolding_all exact ((Eq.mp (congrArg (fun u : Parts R =>
+      Cx.LevelTypeOfLifts A (cxW R F u) (P1 := F.P1) (ψ1 := F.ψ1) (Dc := F.Dc) (Sp := F.Sp) (Zsc := F.Zsc) (R.gWx F) false F.P0 F.ψ0) (parts_eq b R F)) h.levW) :))
+   case thmA => exact (by with_unfolding_all exact ((Eq.mp (congrArg (fun W : type_of% R.Wp3 => ∀ i t,
+      Lift.IsLamP (R.thG i t) (LinearMap.adjoint (R.thG i t)) (W i) fun p => R.lam3 i t p A.A.v0) (wp3_apply_eq_sq_mul_sub_sq_mul b R)) h.thmA) :))
+   case sumW => exact (by with_unfolding_all exact ((Eq.mp (congrArg (fun X : Cx.CxData A.fam3.amb3 => X.PartsW false) (toCx3_eq b R F)) h.sumW) :))
+   case scalConj => exact (by with_unfolding_all exact ((Eq.mp (congrArg (fun X : Cx.CxData A.fam3.amb3 => X.GalD F.cr false) (toCx3_eq b R F)) h.scalConj) :))
+   case dimParts => exact (by with_unfolding_all exact ((Eq.mp (congrArg (fun X : Cx.CxData A.fam3.amb3 => X.DimParts false) (toCx3_eq b R F)) h.dimParts) :))
 
 theorem realAdelicInertTransport_furtherRows (h : UnusedChoiceStatements R F) : letI := alg b iK; UnusedChoiceStatements (real3 b R) (face3 b F) := by
   letI := alg b iK

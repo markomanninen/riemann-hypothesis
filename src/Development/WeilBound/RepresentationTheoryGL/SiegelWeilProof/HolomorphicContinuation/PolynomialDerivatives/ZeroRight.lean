@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.CoreSt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.CoreSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,8 +65,6 @@ def perp (W : Submodule ℂ V) : Submodule ℂ V where
   smul_mem' := by
     intro r v hv w hw
     rw [h.smul, hv w hw, mul_zero]
-
-theorem mem_perp (W : Submodule ℂ V) (v : V) : v ∈ h.perp W ↔ ∀ w ∈ W, φ w v = 0 := Iff.rfl
 
 theorem inf_perp (W : Submodule ℂ V) : W ⊓ h.perp W = ⊥ := by
   rw [eq_bot_iff]

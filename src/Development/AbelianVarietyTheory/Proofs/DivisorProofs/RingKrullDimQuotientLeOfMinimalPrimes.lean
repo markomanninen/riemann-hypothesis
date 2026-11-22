@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KrullDimQuotientMinimalPrimeOverL
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRatA
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KrullDimQuotientMinimalPrimeOverL
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRatA
+
+@[expose] public section
 
 namespace GlobalTheory.IntFiniteTypeDim
 

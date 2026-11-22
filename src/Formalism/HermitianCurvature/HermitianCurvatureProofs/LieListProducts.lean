@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.FrameExists2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliCoordinates
+module
+
+public import Formalism.HermitianCurvature.FrameExists2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliCoordinates
+
+@[expose] public section
 
 open Matrix Finset Filter Topology
 

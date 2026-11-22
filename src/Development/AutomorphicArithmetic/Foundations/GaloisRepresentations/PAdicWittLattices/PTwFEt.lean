@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.TransCancel
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.IsolateSpecHolds
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.TransCancel
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.IsolateSpecHolds
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen GlobalTheory.LKTrip GlobalTheory.LKGeo UpperTheory.Gal.G3
 open UpperTheory.Gal.Int.Geo (Lv IsTrans Integ KS Mem FEt KSEx KSNice)
@@ -34,12 +39,14 @@ private theorem fEt_normal (hb : FEtBasic) (hg : TwGal) {B : Scheme.{0}} {G : Ty
 
 theorem UpperTheory.Gal.G3.pTwFEt :
     FEtBasic → TwGal → TwFEt := by
-  intro hb hg B G _ X i j a
+  intro hb hg
+  unfold TwFEt
+  intro B G _ X i j a
   obtain ⟨m, hmj, hn, hS⟩ := X.deep j {(i, 1)}
   have hmi : X.K m ≤ X.K i := fun u hu => by simpa using hS (i, 1) (by simp) u hu
   have hij : X.K i ≤ X.K j := fun u hu => by simpa using a.2 u hu
-  have b : X.admitted m j 1 := ⟨a.1, fun u hu => by simpa using hmj hu⟩
-  have b' : X.admitted m i 1 := ⟨a.1, fun u hu => by simpa using hmi hu⟩
+  have b : X.admitted m j 1 := X.isAdmissibleIntegralBasisChange_one hmj
+  have b' : X.admitted m i 1 := X.isAdmissibleIntegralBasisChange_one hmi
   have h1 := fEt_normal hb hg X m j b hn
   have h2 := fEt_normal hb hg X m i b' (fun k hk u hu => hn k (hij hk) u hu)
   have hc : X.tr m i 1 b'.1 b'.2 ≫ X.tr i j 1 a.1 a.2 = X.tr m j 1 b.1 b.2 := by

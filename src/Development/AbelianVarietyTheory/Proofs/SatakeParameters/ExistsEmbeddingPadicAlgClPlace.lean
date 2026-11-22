@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NormSumLt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NormSumLt
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 
 namespace GlobalTheory
@@ -50,7 +55,7 @@ theorem exists_embedding_padicAlgCl_place (E : Type) [Field E] [NumberField E] (
         intro a b ha hb
         simp only [Set.mem_setOf_eq] at *
         push_cast
-        rw [map_add]
+        rw [map_add (f := _)]
         exact lt_of_le_of_lt (IsUltrametricDist.norm_add_le_max _ _) (max_lt ha hb)
       zero_mem' := by simp
       smul_mem' := by

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualStabiliserIndex
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualLatticeIndex
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualStabiliserIndex
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualLatticeIndex
+
+@[expose] public section
 
 noncomputable section
 

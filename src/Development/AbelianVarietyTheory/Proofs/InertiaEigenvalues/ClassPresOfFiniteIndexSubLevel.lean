@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksW
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RealSideCharacterMatch
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksW
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RealSideCharacterMatch
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped TensorProduct InnerProductSpace
@@ -110,9 +114,9 @@ def rhoGE (y : G) (g : stab ι J' y) : Module.End K S.V where
   toFun x := cinv P (rhoG P J' χ' y g x)
   map_add' x x' := by
     apply coef_injective P
-    rw [map_add, coef_cinv P (rhoG_rg P J' χ' hχ' hρ _ _ _), coef_cinv P (rhoG_rg P J' χ' hχ' hρ _ _ _),
+    rw [map_add (f := _), coef_cinv P (rhoG_rg P J' χ' hχ' hρ _ _ _), coef_cinv P (rhoG_rg P J' χ' hχ' hρ _ _ _),
       coef_cinv P (rhoG_rg P J' χ' hχ' hρ _ _ _)]
-    simp only [rhoG, map_add, smul_add]
+    simp only [rhoG, map_add (f := _), smul_add]
   map_smul' b x := by
     apply coef_injective P
     rw [map_smulₛₗ, coef_cinv P (rhoG_rg P J' χ' hχ' hρ _ _ _), coef_cinv P (rhoG_rg P J' χ' hχ' hρ _ _ _)]

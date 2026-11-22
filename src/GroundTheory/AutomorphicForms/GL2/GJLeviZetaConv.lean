@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJLeviZetaBlocks
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJLeviZetaBlocks
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -31,7 +36,7 @@ theorem integral_eq_zero_of_cuspidal (hc : IsCuspidal σ) (μ : Measure (levi F 
         rw [← integral_add (hint x) (hint y)]
         congr 1
         funext m
-        rw [map_add, map_add, mul_add]
+        rw [map_add (f := _), map_add (f := _), mul_add]
       map_smul' := fun c x => by
         rw [RingHom.id_apply, smul_eq_mul, ← integral_const_mul]
         congr 1

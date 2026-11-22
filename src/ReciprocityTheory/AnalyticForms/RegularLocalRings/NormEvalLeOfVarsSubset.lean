@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsClosedOfChartIdeal
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsClosedOfChartIdeal
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -14,7 +18,7 @@ theorem norm_eval_le_of_vars_subset {n : ℕ} (F : MvPolynomial (Fin n) ℂ) (S 
   rw [norm_mul]
   have h1 : ‖∏ i, y i ^ m i‖ ≤ 1 := by
     rw [norm_prod]
-    refine Finset.prod_le_one (fun i _ => norm_nonneg _) fun i _ => ?_
+    refine Finset.prod_le_one₀ (fun i _ => norm_nonneg _) fun i _ => ?_
     rw [norm_pow]
     by_cases h : m i = 0
     · simp [h]

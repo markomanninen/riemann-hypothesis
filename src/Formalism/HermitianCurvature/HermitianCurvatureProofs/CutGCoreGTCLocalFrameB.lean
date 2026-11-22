@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCLocalFrameA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeB
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCRadSpSmooth
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnTrSmooth
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormalFormOrderZeroOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCLocalFrameA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCRadSpSmooth
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnTrSmooth
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormalFormOrderZeroOfParts
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 open scoped ContDiff

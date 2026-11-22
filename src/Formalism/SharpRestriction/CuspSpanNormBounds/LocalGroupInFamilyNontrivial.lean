@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Formalism.SharpRestriction.CuspSpanNormBounds.LinQRawRange
-import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LinQRawRange
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,9 +121,6 @@ def dfac (δ : ∀ p, (D.s.atP p).Fp) (T T' : ℕ) (p : PlF D) (w : Point D.host
 def KtopP (δ : ∀ p, (D.s.atP p).Fp) (T T' : ℕ) (p : PlF D) (w w' : Point D.host.E (D.R.rS + 1)) : ℂ :=
   dfac M δ T T' p w * locK M δ T T' p (D.R.rS + 1) w w' * starRingEnd ℂ (dfac M δ T T' p w')
 
-def Ktop (δ : ∀ p, (D.s.atP p).Fp) (T T' : ℕ) (p : PlF D) (w w' : Point D.host.E (D.R.rS + 1)) : ℂ :=
-  if kind w = kind w' then KtopP M δ T T' p w w' else 0
-
 def KtopG (δ : ∀ p, (D.s.atP p).Fp) (T T' : ℕ) (w w' : Point D.host.E (D.R.rS + 1)) : ℂ :=
   if kind w = kind w' then ∏ᶠ p, KtopP M δ T T' p w w' else 0
 
@@ -138,9 +139,6 @@ def gdd (a b : ℤ) : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E
 
 def La (δ : ∀ p, (D.s.atP p).Fp) (ν s : ℕ) : Set D.host.E :=
   {t | ∀ p, tMod δ p ν s t ∈ (M p).R}
-
-def dualPsiG (S : Set D.host.E) : Set D.host.E :=
-  {l | ∀ t ∈ S, ∃ z : ℤ, Algebra.trace ℚ D.host.E (l * t / (Lat.gS D : D.host.E)) = z}
 
 def LaP (ν s : ℕ) : Set D.host.E :=
   {x | x ∈ gdd (D := D) (-1) (-(ν : ℤ)) ∧ x - (-1) ^ s * D.conjF x ∈ gdd (D := D) 0 (-(ν : ℤ))}

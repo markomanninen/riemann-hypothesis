@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,13 @@ theorem UpperTheory.Zero.ConvolutionTheory.EB.algEx :
   have hcs : ∀ a ∈ s, ∀ b ∈ s, a * star b = star b * a := by
     rintro _ ⟨x, rfl⟩ _ ⟨y, rfl⟩
     exact Prod.ext (hs x y).eq (mul_comm _ _)
-  letI : CommRing (StarAlgebra.adjoin ℂ s) := StarAlgebra.adjoinCommRingOfComm ℂ hcomm hcs
+  letI : IsMulCommutative (StarAlgebra.adjoin ℂ s) :=
+    StarAlgebra.isMulCommutative_adjoin ℂ
+      (fun x hx => ⟨(hcs x hx x hx).symm⟩)
+      (fun x hx y hy _ => hcomm x hx y hy)
+      (fun x hx y hy _ => hcs x hx y hy)
+  letI : CommRing (StarAlgebra.adjoin ℂ s) := { (inferInstance : Ring _) with
+    mul_comm := fun a b => mul_comm' a b }
   have keep : ∀ y : StarAlgebra.adjoin ℂ s, (∀ f ∈ Q, y.1.1 f ∈ Q) ∧ ∀ f ∈ Q, (star y.1.1) f ∈ Q :=
     fun y => UpperTheory.Zero.ConvolutionTheory.EB.keepQ hQ y.2
   let res : StarAlgebra.adjoin ℂ s → (Q →L[ℂ] Q) := fun y =>

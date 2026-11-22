@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ThetaFunctionEqZeroOfMeanSquareZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurLemmaThetaFunctionsOrientedPair
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisThetaLaws
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasDerivAtZeroAndIsTheta
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ThetaFunctionEqZeroOfMeanSquareZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurLemmaThetaFunctionsOrientedPair
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisThetaLaws
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasDerivAtZeroAndIsTheta
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
@@ -70,7 +75,7 @@ theorem orth_periodic (hψ : IsStdChar D ψ (-1)) {μ : Measure (WO S T)} {𝓕 
       exact this.const_mul (c a)
     have hP : ∫ x in 𝓕, star (h x) * ((∑ a ∈ s, c a * ψ (symplO S T x a)) * k x) ∂μ = 0 := by
       simp_rw [hsum]
-      rw [integral_finset_sum s hint_a]
+      rw [integral_finsetSum s hint_a]
       refine Finset.sum_eq_zero fun a _ => ?_
       rw [integral_const_mul]
       have := horth a a.2
@@ -78,7 +83,7 @@ theorem orth_periodic (hψ : IsStdChar D ψ (-1)) {μ : Measure (WO S T)} {𝓕 
       rw [this, mul_zero]
     have hPint : Integrable (fun x => star (h x) * ((∑ a ∈ s, c a * ψ (symplO S T x a)) * k x)) (μ.restrict 𝓕) := by
       simp_rw [hsum]
-      exact integrable_finset_sum s hint_a
+      exact integrable_finsetSum s hint_a
     have hdiff : I = ∫ x in 𝓕, (star (h x) * (q x * k x) -
         star (h x) * ((∑ a ∈ s, c a * ψ (symplO S T x a)) * k x)) ∂μ := by
       rw [integral_sub hint hPint, hP, sub_zero]
@@ -135,7 +140,27 @@ theorem pointwise (hψ : IsStdChar D ψ (-1)) {μ : Measure (WO S T)} {𝓕 : Se
     simpa using this
   have hae : ∀ᵐ x ∂(μ.restrict 𝓕), F x = 0 :=
     (integral_eq_zero_iff_of_nonneg (fun x => by positivity) hFi).1 hz
-  have hf := GlobalTheory.ThetaSchurBdd.isTheta_star_mul_mul hψ hk hk hh
+  have hf : IsThetaFunO ψ S T (fun x => star (k x) * k x * h x) := {
+    quasi γ w := by
+      rw [hk.quasi, hh.quasi, star_mul']
+      linear_combination (star (k w) * k w * h w * ψ (-(symplOH S T (ratW T S γ) w))) *
+        GlobalTheory.ThetaSchur.mul_star_psi hψ (-(symplOH S T (ratW T S γ) w))
+    level := by
+      obtain ⟨U1, o1, h1⟩ := hk.level
+      obtain ⟨U2, o2, h2⟩ := hh.level
+      refine ⟨U1 ⊓ U2, o1.inter o2, fun u hu hfin => ?_⟩
+      funext x
+      have e1 := congrFun (h1 u hu.1 hfin) x
+      have e2 := congrFun (h2 u hu.2 hfin) x
+      simp only [heisO] at e1 e2 ⊢
+      have hs := GlobalTheory.ThetaSchur.mul_star_psi hψ (symplOH S T x u)
+      rw [← e1, ← e2, star_mul']
+      linear_combination (-(ψ (symplOH S T x u) * (star (k (x + u)) * k (x + u) * h (x + u)))) * hs
+    cont := (hk.cont.star.mul hk.cont).mul hh.cont
+    smooth n L hL hL0 w := by
+      have hs : ContDiff ℝ (⊤ : ℕ∞) (fun t => star (k (w + L t))) :=
+        Complex.conjCLE.contDiff.comp (hk.smooth n L hL hL0 w)
+      exact ContDiff.mul (ContDiff.mul hs (hk.smooth n L hL hL0 w)) (hh.smooth n L hL hL0 w) }
   have h0 : nrm2 μ 𝓕 (fun x => star (k x) * k x * h x) = 0 := by
     unfold nrm2
     refine integral_eq_zero_of_ae ?_

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OverLatticeIffSelfDualOverBase
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemIffForallMemLocalizeRingOfIntegers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OverLatticeIffSelfDualOverBase
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemIffForallMemLocalizeRingOfIntegers
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix
 open scoped TensorProduct nonZeroDivisors
@@ -71,7 +75,10 @@ theorem exists_frame {k : ℕ} (L : Submodule (𝓞 E) (Fin k → E)) (h1 : L.FG
     constructor
     · obtain ⟨s, rfl⟩ := h1
       exact ⟨s, (Submodule.span_span_of_tower (𝓞 E) _ _).symm⟩
-    · rw [Submodule.span_span_of_tower, h2]
+    · exact fun _ _ => (LinearIndependent.iff_fractionRing (semiLoc E v) E).mp
+  haveI : Submodule.IsFullLattice E (Submodule.span (semiLoc E v) (L : Set (Fin k → E))) := by
+    constructor
+    rw [Submodule.span_span_of_tower, h2]
   obtain ⟨g, hg⟩ := exists_eq_frameLattice (Submodule.span (semiLoc E v) (L : Set (Fin k → E)))
   refine ⟨g, fun x => ?_⟩
   rw [← mem_span_semiLoc_iff, hg, mem_frameLattice_iff_inv]

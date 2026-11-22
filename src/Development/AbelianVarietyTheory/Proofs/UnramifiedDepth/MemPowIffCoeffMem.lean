@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 universe u_1 u_2
 
@@ -14,7 +18,7 @@ def coeffIdeal (I : Ideal R) (n : ℕ) : Ideal (MvPowerSeries κ R) where
   carrier := {f | ∀ e : κ →₀ ℕ, coeff e f ∈ I ^ (n - e.degree)}
   add_mem' := by
     intro f g hf hg e
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Ideal.add_mem _ (hf e) (hg e)
   zero_mem' := by
     intro e
@@ -26,7 +30,7 @@ def coeffIdeal (I : Ideal R) (n : ℕ) : Ideal (MvPowerSeries κ R) where
     refine Ideal.sum_mem _ (fun p hp => ?_)
     rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
     refine Ideal.mul_mem_left _ _ (Ideal.pow_le_pow_right ?_ (hf p.2))
-    have : e.degree = p.1.degree + p.2.degree := by rw [← hp, map_add]
+    have : e.degree = p.1.degree + p.2.degree := by rw [← hp, map_add (f := _)]
     omega
 
 theorem mem_coeffIdeal {I : Ideal R} {n : ℕ} {f : MvPowerSeries κ R} :
@@ -45,7 +49,7 @@ theorem coeffIdeal_mul_le (I : Ideal R) (a b : ℕ) :
   have h1 := Ideal.mul_mem_mul (hf p.1) (hg p.2)
   rw [← pow_add] at h1
   refine Ideal.pow_le_pow_right ?_ h1
-  have : e.degree = p.1.degree + p.2.degree := by rw [← hp, map_add]
+  have : e.degree = p.1.degree + p.2.degree := by rw [← hp, map_add (f := _)]
   omega
 
 theorem le_coeffIdeal_one (I : Ideal R) :
@@ -92,7 +96,7 @@ theorem pick_eq (d : κ →₀ ℕ) (h : d ≠ 0) (k k' : κ) : pick d k = pick 
 
 theorem pick_mem (d : κ →₀ ℕ) (h : d ≠ 0) (k : κ) : pick d k ∈ d.support := by
   have h' : d.support.Nonempty := Finsupp.support_nonempty_iff.2 h
-  rw [pick, dif_pos h']
+  rw [pick, dite_eq_left h']
   exact h'.choose_spec
 
 noncomputable def cof [DecidableEq κ] (f : MvPowerSeries κ R) (k : κ) : MvPowerSeries κ R :=
@@ -107,7 +111,8 @@ theorem decomp [Fintype κ] [DecidableEq κ] (f : MvPowerSeries κ R) :
     f = C (coeff 0 f) + ∑ k, X k * cof f k := by
   classical
   ext d
-  rw [map_add, map_sum, coeff_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), map_sum, coeff_C]
   simp_rw [X, coeff_monomial_mul, one_mul, coeff_cof]
   by_cases hd : d = 0
   · subst hd
@@ -151,7 +156,7 @@ theorem mem_pow_of_coeff [Finite κ] (I : Ideal R) (n : ℕ) (f : MvPowerSeries 
       rw [coeff_cof]
       split_ifs
       · have h2 := hf (e + single k 1)
-        rw [map_add, degree_single] at h2
+        rw [map_add (f := _), degree_single] at h2
         have h3 : n + 1 - (e.degree + 1) = n - e.degree := by omega
         rwa [h3] at h2
       · exact Ideal.zero_mem _

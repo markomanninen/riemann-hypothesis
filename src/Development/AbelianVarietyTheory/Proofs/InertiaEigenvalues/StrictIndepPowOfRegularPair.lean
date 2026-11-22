@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+
+@[expose] public section
 
 namespace GlobalTheory.BSP.StrictIndep
 
@@ -20,7 +24,7 @@ theorem sum_decomp (s : S →+* A) {ι : Type} (b : ι → A) (T : Finset ι) (u
       = s P * ∑ i ∈ T, s (u i) * b i + s Q * ∑ i ∈ T, s (v i) * b i := by
   rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun i _ => ?_
-  simp only [map_add, map_mul]
+  simp only [map_add (f := _), map_mul]
   ring
 
 theorem indep_finset (s : S →+* A) (p q : S) {ι : Type} (b : ι → A)
@@ -160,8 +164,8 @@ end GlobalTheory.BSP.StrictIndep
 
 namespace GlobalTheory.BSP
 
-open GlobalTheory.BSP.StrictIndep in
 
+open GlobalTheory.BSP.StrictIndep in
 theorem strict_indep_pow : ∀ (S A : Type) [CommRing S] [CommRing A] (s : S →+* A) (p q : S)
     (ι : Type) (b : ι → A), (∀ x : A, s p * x = 0 → x = 0) →
     (∀ x : A, s p ∣ s q * x → s p ∣ x) →

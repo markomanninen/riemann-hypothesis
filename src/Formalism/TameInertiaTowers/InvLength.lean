@@ -1,4 +1,8 @@
-import Formalism.TameInertiaTowers.StatementGroup
+module
+
+public import Formalism.TameInertiaTowers.StatementGroup
+
+@[expose] public section
 
 namespace Formalism.TwoAdicCyclotomicDecomposition
 

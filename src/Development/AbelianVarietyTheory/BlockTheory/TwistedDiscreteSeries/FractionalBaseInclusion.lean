@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataNChTie
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataNChTie
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,14 +43,6 @@ def EmbCompat : Prop :=
     ∀ (K : Type) [Field K] [NumberField K] [Algebra K D.what₂.LL] (κ : K →+* D.LL0), IsInclusion D K κ →
       ∀ (w : D.what₂.places.Pl) (ιK : K →+* FractionRing (D.ntw.O (c.twI w))), ιK = smallEmb c w κ →
         CompatAt c w K ιK
-
-example (D : D7) : IsInclusion D D.LL0 (RingHom.id _) := fun _ => rfl
-
-example (c : NChoice D) (w : D.what₂.places.Pl) (y : D.ntw.O0 (c.twI w)) :
-    fracExt c w (fracBase D (c.twI w) (algebraMap _ (FractionRing (D.ntw.O0 (c.twI w))) y)) =
-      algebraMap (c.Oe w) (FractionRing (c.Oe w))
-        (algebraMap (D.ntw.O (c.twI w)) (c.Oe w) (algebraMap (D.ntw.O0 (c.twI w)) (D.ntw.O (c.twI w)) y)) := by
-  simp [fracExt, fracBase, IsFractionRing.map]
 
 end GlobalTheory.IndefiniteRowSideFullHecke.FractionalBaseInclusion
 

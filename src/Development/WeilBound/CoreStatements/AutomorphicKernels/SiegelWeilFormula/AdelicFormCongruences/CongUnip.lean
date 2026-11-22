@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LowerRankDatum
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FourierCompactness.SigmaSigmaOfGood
-import Development.WeilBound.ThetaLifts.LatticeBasics.IsCompactIntV
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AdelicFormCongruences.ExistsGlCol
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AdelicFormCongruences.IncMFromBlocks
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LowerRankDatum
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FourierCompactness.SigmaSigmaOfGood
+public import Development.WeilBound.ThetaLifts.LatticeBasics.IsCompactIntV
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AdelicFormCongruences.ExistsGlCol
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AdelicFormCongruences.IncMFromBlocks
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -53,7 +57,7 @@ theorem fc_U {d : SD σ} (L : LD d) {nb : nA σ d.Y d.b → d.G} {lam : Measure 
   have hσ := sigma_sigma_of_good d.ok.good
   have hb : IsFrame2 σ d.Y d.b := d.ok.frame
   have hψ : ∀ z : F, d.B.ψ (algebraMap F (AF F) z) = 1 := d.ok.good.std.2.1
-  have hcc : ∀ z, cA σ (cA σ z) = z := GlobalTheory.EisBL.DoubledUnipotentRadical.cA_cA σ hσ
+  have hcc : ∀ z, cA σ (cA σ z) = z := kfour.cA_cA' σ hσ
   obtain ⟨v, rfl⟩ := (mem_ratV_iff L u).1 hu
   obtain ⟨a', ha'⟩ := hU.1 (GlobalTheory.ThK.incV F v)
   set N0 : Matrix (Fin d.n) (Fin d.n) E := ∑ j, Matrix.single L.i₀ (L.em j) (v j) with hN0
@@ -108,7 +112,8 @@ theorem nCond_rat {n : ℕ} {ε : ℤˣ} (T0 : Matrix (Fin n) (Fin n) E) (h : in
   have := congrFun (congrFun h' i) j
   simp only [Matrix.transpose_apply, incM, Matrix.map_apply, Matrix.neg_apply, Matrix.smul_apply, smul_eq_mul] at this
   apply kfour.inclR_injective (F := F)
-  rw [this, map_neg, map_mul, map_intCast, GlobalTheory.EisBL.DoubledUnipotentRadical.cA_inclR]
+  rw [this, map_neg, map_mul, map_intCast]
+  rw [kfour.cA_inclR' σ (T0 i j)]
 
 theorem fc_deg {d : SD σ} (L : LD d) {nb : nA σ d.Y d.b → d.G} {lam : Measure (nA σ d.Y d.b)} {𝓖 : Set (nA σ d.Y d.b)}
     (hc : CoefData (σ := σ) (Y := d.Y) d.b nb lam 𝓖) (T : nF σ d.Y d.b) (hT : ¬ IsND T) :
@@ -146,7 +151,8 @@ theorem fc_deg {d : SD σ} (L : LD d) {nb : nA σ d.Y d.b → d.G} {lam : Measur
   have hrow : ∀ k, M0 L.i₀ k = 0 := fun k => by
     have e0 : ∀ l, ∑ p, σ (v p) * T0 p l = 0 := fun l => by
       have h1 := congrArg σ (congrFun hTv l)
-      simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Pi.zero_apply, map_zero] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Pi.zero_apply, map_zero] at h1
       calc ∑ p, σ (v p) * T0 p l = ∑ p, σ (v p) * -(((ε : ℤ) : E) * σ (T0 l p)) :=
             Finset.sum_congr rfl fun p _ => by rw [nCond_rat T0 hC l p]
         _ = -(((ε : ℤ) : E) * ∑ p, σ (T0 l p) * σ (v p)) := by

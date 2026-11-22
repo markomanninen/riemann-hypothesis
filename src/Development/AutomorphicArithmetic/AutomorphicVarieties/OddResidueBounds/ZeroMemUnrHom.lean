@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimeSetBoundDataOfPrimitiveChar
-import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerCharacterEval.MemZpowersIff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimeSetBoundDataOfPrimitiveChar
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerCharacterEval.MemZpowersIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,8 +59,6 @@ theorem actRep_piQ (D : LData E Ω l) (e : ℤ) {N : ℕ} (ρ : (ZMod N)ˣ →* 
 
 end Act
 
-example (Ω : Type) [Field Ω] [Algebra ℚ Ω] (N : ℕ) : IsCycAct (E := ℚ) Ω N 1 := fun _ σ _ x => by simp
-
 def UnrHom (K Ω : Type) [Field K] [NumberField K] [Field Ω] [Algebra K Ω] (l : ℕ) : Set (G K Ω → ZMod l) :=
   {φ | IsLocallyConstant φ ∧ (∀ a b, φ (a * b) = φ a + φ b) ∧
     ∀ A : ValuationSubring Ω, ¬ A.valuation (l : Ω) < 1 → ∀ g ∈ Ine (F := K) A, φ g = 0}
@@ -83,7 +85,7 @@ def parE {N : ℕ} (ρ : (ZMod N)ˣ →* (E ≃ₐ[ℚ] E)) (k : ℕ) : Set (Sub
 variable (Ω : Type) [Field Ω] [Algebra E Ω] [Algebra ℚ Ω] [IsScalarTower ℚ E Ω] [Normal ℚ E]
 
 def psiLen {O : Type} [CommRing O] [Algebra ℤ_[l] O] (e : ℕ) (ψ : (E ≃ₐ[ℚ] E) →* Oˣ) : ℕ∞ :=
-  Module.length O (shaEig (twist₂ l (chiO ℚ Ω l O ^ (-(e : ℤ)))) l (galOf ℚ E Ω) ⊤
+  Module.length O (shaEig (twist₂ l (UpperTheory.V.Base.chiO ℚ Ω l O ^ (-(e : ℤ)))) l (galOf ℚ E Ω) ⊤
     ((ψ.comp (AlgEquiv.restrictNormalHom E)).comp (⊤ : Subgroup (G ℚ Ω)).subtype))
 
 end Psi

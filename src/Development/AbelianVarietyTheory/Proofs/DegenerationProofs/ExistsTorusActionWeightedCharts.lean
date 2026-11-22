@@ -1,18 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.BaseFacts
-import Development.AbelianVarietyTheory.Definitions.Degenerations.IsAffineSplitTorusLeft
-import Development.AbelianVarietyTheory.Definitions.Degenerations.CompanionTheory
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.UTorsSt
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUniqueIsRatio
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsClosedImmersionBySectionsOfSpan
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsClosedImmersionAbelianPartBundleStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsPartPartSec
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.EqOfWeightEq
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPureWeightSectionNeZeroAtStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPointTranslatePure
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsBasisUniqueMinAndSumsSeparated
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsIsPowGrpSplitTorus
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.NonemptyTorusExtensionOfIsGt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.BaseFacts
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.IsAffineSplitTorusLeft
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.CompanionTheory
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.UTorsSt
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUniqueIsRatio
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsClosedImmersionBySectionsOfSpan
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsClosedImmersionAbelianPartBundleStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsPartPartSec
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.EqOfWeightEq
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPureWeightSectionNeZeroAtStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPointTranslatePure
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsBasisUniqueMinAndSumsSeparated
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsIsPowGrpSplitTorus
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.NonemptyTorusExtensionOfIsGt
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -65,7 +70,8 @@ theorem isLin_comp {k : Type} [CommRing k] {X : Scheme.{0}} {p : X ⟶ Sp k} {H 
     IsLin p F' b φ := by
   intro l
   rw [h l]
-  simp only [fun i => hF i l, hab, constFn_eq, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [fun i => hF i l, hab, constFn_eq, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum,
     _root_.mul_assoc]
   exact Finset.sum_comm
 
@@ -76,7 +82,7 @@ theorem cf_mul {A R X : Type} [CommRing A] [CommRing R] [AddCommGroup X]
   obtain ⟨a, rfl⟩ := hb.2 s
   induction a using AddMonoidAlgebra.induction_linear with
   | zero => simp only [map_zero, mul_zero, WtPart.cf_zero]
-  | add x y hx hy => simp only [map_add, mul_add, WtPart.cf_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), mul_add, WtPart.cf_add, hx, hy]
   | single ψ c =>
     rw [AddMonoidAlgebra.liftNCRingHom_single, ← _root_.mul_assoc, ← map_mul, WtPart.cf_mono, WtPart.cf_mono,
       mul_ite, mul_zero]
@@ -320,7 +326,8 @@ theorem exists_mem_of_isLin {k : Type} [CommRing k] {X : Scheme.{0}} {p : X ⟶ 
   have hl' : x ∈ H.U l := X.basicOpen_le _ hl
   by_contra hn
   have h1 := (Scheme.mem_basicOpen X _ x hl').1 hl
-  rw [h l, map_sum] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h l, map_sum] at h1
   refine (IsLocalRing.mem_maximalIdeal _).1 (Ideal.sum_mem _ fun i _ => ?_) h1
   rw [map_mul]
   refine Ideal.mul_mem_left _ _ ((IsLocalRing.mem_maximalIdeal _).2 fun hu => hn ⟨i, ?_⟩)

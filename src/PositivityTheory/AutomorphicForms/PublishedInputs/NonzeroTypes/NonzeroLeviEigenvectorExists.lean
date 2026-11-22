@@ -1,7 +1,11 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.CIface
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.GIface
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.TensorProductVectors
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.Brauer
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.CIface
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.GIface
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.TensorProductVectors
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.Brauer
+
+@[expose] public section
 
 noncomputable section
 

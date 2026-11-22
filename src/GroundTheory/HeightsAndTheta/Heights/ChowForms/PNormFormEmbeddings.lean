@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsNormForm
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsNormForm
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -21,7 +26,8 @@ theorem NormFormEmbeddings.proof (h : NormFormEval.Statement) : NormFormEmbeddin
     rw [eval₂_comp_left]
     rfl
   rw [hl, h K L n η u, Algebra.norm_eq_prod_embeddings]
-  simp only [map_prod, map_sum, map_mul, eval_X, eval_C, Function.comp_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_prod, map_sum, map_mul, eval_X, eval_C, Function.comp_apply]
   refine Finset.prod_congr rfl fun σ _ => Finset.sum_congr rfl fun m _ => ?_
   rw [map_smul, Algebra.smul_def]
 

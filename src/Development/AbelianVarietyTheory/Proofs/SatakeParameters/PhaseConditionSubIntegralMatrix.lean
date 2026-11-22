@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemIntMat
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MulSelfEqOneIffOfLinearOrderedCommGroupWithZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemIntMat
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MulSelfEqOneIffOfLinearOrderedCommGroupWithZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem phase_shift (σ : L →+* L) (hσσ : ∀ x, σ (σ x) = x) (hσ : ∀ x
     show Valued.v (σ (u - u')) ≤ 1
     rw [hσ]; exact hd
   have hs : σ (((u - u') + σ (u - u')) / 2) = ((u - u') + σ (u - u')) / 2 := by
-    rw [map_div₀, map_add, hσσ, map_ofNat]; ring
+    rw [map_div₀, map_add (f := _), hσσ, map_ofNat]; ring
   have heq : (u' + σ u') / 2 = (u + σ u) / 2 - ((u - u') + σ (u - u')) / 2 := by
     rw [map_sub]; ring
   rw [heq, AddChar.map_sub_eq_div, h, hψ _ he hs, div_one]
@@ -58,7 +62,8 @@ theorem conjT_mul_int {L : Type} [Field L] [Valued L (WithZero (Multiplicative �
     ∀ i j, (Matrix.transpose (x.map σ) * C) i j ∈ Formalism.UG.intL L := by
   intro j k
   have h : (Matrix.transpose (x.map σ) * C) j k = - σ ((C * x) k j) := by
-    simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul, hC,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul, hC,
       ← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
     ring

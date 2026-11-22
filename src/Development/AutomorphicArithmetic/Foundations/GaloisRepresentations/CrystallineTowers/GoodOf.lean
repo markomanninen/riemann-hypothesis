@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.LocTower
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.SmoothGaloisGeometry.NormLtOneOfIrreducible
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.LocTower
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.SmoothGaloisGeometry.NormLtOneOfIrreducible
+
+@[expose] public section
 
 noncomputable section
 
@@ -118,6 +122,8 @@ theorem goodOf : GoodOf := by
       (RingHom.Etale.of_bijective (chartEquiv (OK l K) ϖ k).bijective) hg
   · rw [← hgC]
     ext a
-    simp [chartEquiv_algebraMap]
+    change g (chartEquiv (OK l K) ϖ k (algebraMap (OK l K) _ a)) = g (MvPolynomial.C a)
+    congr 1
+    exact chartEquiv_algebraMap (OK l K) ϖ k a
 
 end UpperTheory.Gal.Seam

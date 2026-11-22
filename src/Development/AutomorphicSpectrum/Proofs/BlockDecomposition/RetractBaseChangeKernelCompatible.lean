@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open TensorProduct
 
@@ -29,7 +33,7 @@ theorem constants_of_retract :
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul m a => simp [LinearMap.baseChange_tmul]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   refine ⟨?_, ?_⟩
   · intro m m' h
     have h0 : m ⊗ₜ[R] e = m' ⊗ₜ[R] e := h

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FourExist
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FourExist
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem map_finsum' (φ : M →ₗ[ℂ] M') {f : α → M} (hf : (Function.suppo
 
 theorem smul_finsum' (c : ℂ) {f : α → M} (hf : (Function.support f).Finite) :
     c • ∑ᶠ i, f i = ∑ᶠ i, c • f i := by
-  exact map_finsum (DistribMulAction.toAddMonoidHom M c) hf
+  exact map_finsum (DistribSMul.toAddMonoidHom M c) hf
 
 end FinsumAux
 
@@ -205,9 +209,9 @@ theorem tfun_vac : tfun ρ χ L X Y f₀ (fun t => if t ∈ L ∧ t ∈ X then (
     · show (if q2.out ∈ Y then _ else _) = 0
       rw [if_neg hy]
 
-include hX hY hXY hfX hfY hχl hχr hχ0 hLL hdY hoX hoY hfinX hfinY htf in
-open Classical in
 
+include hX hY hXY hχl hχr hχ0 hLL hdY hfinX hfinY htf hoX hoY hfX hfY in
+open Classical in
 theorem exists_model : ∃ T : (W → ℂ) →ₗ[ℂ] V,
     (∀ Φ, IsSB L X Φ → T Φ = tfun ρ χ L X Y f₀ Φ) ∧
     (∀ Φ, IsSB L X Φ → ∀ x ∈ X, T (fun t => Φ (t + x)) = ρ x (T Φ)) ∧

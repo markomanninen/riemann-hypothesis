@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.LatticeGeometry.NormDetInf
-import Formalism.LocalToGlobal.LatticeGeometry.ArVolEqOfNef
-import Formalism.LocalToGlobal.LatticeGeometry.AmpleOnAbelianBase
+module
+
+public import Formalism.LocalToGlobal.LatticeGeometry.NormDetInf
+public import Formalism.LocalToGlobal.LatticeGeometry.ArVolEqOfNef
+public import Formalism.LocalToGlobal.LatticeGeometry.AmpleOnAbelianBase
+
+@[expose] public section
 
 noncomputable section
 

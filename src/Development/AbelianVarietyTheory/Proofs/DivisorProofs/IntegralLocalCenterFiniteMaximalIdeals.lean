@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntVZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralTensorPointsSharpStableRing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupActionRingHom
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntVZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralTensorPointsSharpStableRing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupActionRingHom
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
+
+@[expose] public section
 
 noncomputable section
 open Matrix NumberField IsDedekindDomain GlobalTheory.LKTrip GlobalTheory.LKMid GlobalTheory.OrbFinAf
@@ -35,7 +39,7 @@ def intFCoord (G : HTGroup p) (v : AwayP p) (h1 : IsIntV G v 1)
   { toFun := fun m i => ⟨(basV G v).repr (iotaF G v m) i, (mem_intF G v h1 hm m).1 m.2 i⟩
     map_add' := fun a b => by
       funext i; apply Subtype.ext
-      simp [map_add]
+      simp [map_add (f := _)]
     map_smul' := fun c m => by
       funext i; apply Subtype.ext
       show (basV G v).repr (iotaF G v (algebraMap (Qv v) (Qv v ⊗[ℚ] G.F) (c : Qv v) * m)) i =

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.GrowthBounds.WeilJacquetShalikaLaw
-import Formalism.SharpRestriction.ParConsts
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsPlaceCofactorValuationLowerBound
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PrimeOfLiesOver
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GrowthBounds.WeilJacquetShalikaLaw
+public import Formalism.SharpRestriction.ParConsts
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsPlaceCofactorValuationLowerBound
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PrimeOfLiesOver
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formalism.MainNotions.FormalGroupSystem Formalism.FrobeniusOrbits GlobalTheory.TwU Classical
 

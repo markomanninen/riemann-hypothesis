@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AdUnique
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AdBasic
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalTwistEx
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AdUnique
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AdBasic
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalTwistEx
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
+
+@[expose] public section
 
 open MeasureTheory NumberField PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Geo UpperTheory.ConvolutionTheory.K
 

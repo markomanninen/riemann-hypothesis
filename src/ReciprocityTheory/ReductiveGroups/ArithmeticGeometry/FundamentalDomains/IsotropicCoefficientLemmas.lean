@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicCoefficientSplitting
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicCoefficientSplitting
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -101,7 +105,7 @@ theorem isotropicCoefficientSplitting_holds : IsotropicCoefficientSplitting (E :
     apply huniq
     rw [← hcoef, add_smul, ← hcoef, ← hcoef]
     have : (⟨μ + μ', hs'⟩ : Mp X ξ) = ⟨μ, hmemMp μ hμ⟩ + ⟨μ', hmemMp μ' hμ'⟩ := rfl
-    rw [this, map_add]
+    rw [this, map_add (f := _)]
     rfl
   · intro α μ hμ
     have hs' : (α : E) • μ ∈ Mp X ξ := by

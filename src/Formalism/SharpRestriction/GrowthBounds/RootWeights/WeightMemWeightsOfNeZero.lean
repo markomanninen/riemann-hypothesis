@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.LatticeTheoremOfAdmitted
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightEntriesBetweenExtremeHighest
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.InvariantDenominatorLinftyBound
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicProjectorTraceFormula
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightEntriesBetweenExtremeHighest
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.InvariantDenominatorLinftyBound
+
+@[expose] public section
 
 noncomputable section
 

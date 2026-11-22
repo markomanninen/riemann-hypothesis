@@ -1,12 +1,15 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.EqZeroOfBrauerLocalApplyEqZero
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.EqZeroOfBrauerLocalApplyEqZero
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory NumberField IntermediateField GroundTheory.Global FiniteSubfield
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 noncomputable section
 
@@ -16,35 +19,25 @@ section Level
 
 variable {F : FiniteSubfield} [Fact (K ≤ F)] [F.1.fixingSubgroup.Normal]
 
-variable (K F) in
 
+variable (K F) in
 def unitsLevelMor :
     Rep.res (restrictHom (F := K) (E := F)) (galUnitsZ K.1 F.1) ⟶ unitsLimitRep K :=
   Rep.ofHom ⟨(MonoidHom.toAdditive (IdeleLimit.unitsIncl F)).toIntLinearMap, fun _ => LinearMap.ext fun _ =>
     congrArg Additive.ofMul (Units.ext rfl)⟩
 
-@[simp]
-theorem unitsLevelMor_hom_apply (x : Additive F.1ˣ) :
-    (unitsLevelMor K F).hom x = Additive.ofMul (IdeleLimit.unitsIncl F x.toMul) :=
-  rfl
 
 variable (K F) in
-
 def unitsLevelInfl (n : ℕ) : cohomology (galUnitsZ K.1 F.1) n ⟶ cohomology (unitsLimitRep K) n :=
   cohomologyMapAlong restrictHom continuous_restrictHom (unitsLevelMor K F) n
 
-variable (K F) in
 
+variable (K F) in
 def levelDiag : galUnitsZ K.1 F.1 ⟶ ideleRep K.1 F.1 :=
   Rep.ofHom ⟨(MonoidHom.toAdditive (IdeleGroup.diagonal F.1)).toIntLinearMap, fun σ => LinearMap.ext fun x =>
     congrArg Additive.ofMul ((congrArg (IdeleGroup.diagonal F.1) (Units.ext rfl)).trans
       (smul_diagonal σ x.toMul).symm)⟩
 
-omit [F.1.fixingSubgroup.Normal] in
-@[simp]
-theorem levelDiag_hom_apply (x : Additive F.1ˣ) :
-    (levelDiag K F).hom x = Additive.ofMul (IdeleGroup.diagonal F.1 x.toMul) :=
-  rfl
 
 theorem levelDiag_cochains_comp :
     cochainsMap (levelDiag K F) ≫ cochainsMapAlong restrictHom continuous_restrictHom (levelMor K F) =
@@ -109,12 +102,12 @@ theorem exists_unitsLevelCochains_eq (m : ℕ) (x : (cochainsComplex (unitsLimit
   set f := ((cochainsComplexι (unitsLimitRep K)).f m).hom x with hf
   obtain ⟨U, hU⟩ := exists_openNormalSubgroup_fin_of_isLocallyConstant hx
   obtain ⟨t, ht, htU⟩ := isOpen_induced_iff.1 U.isOpen
-  have h1t : (1 : ℚ̄ ≃ₐ[ℚ] ℚ̄) ∈ t := by
+  have h1t : (1 : (AlgebraicClosure ℚ) ≃ₐ[ℚ] (AlgebraicClosure ℚ)) ∈ t := by
     have : (1 : K.1.fixingSubgroup) ∈ Subtype.val ⁻¹' t := by
       rw [htU]
       exact U.one_mem
     exact this
-  obtain ⟨E₀, hE₀fin, hE₀⟩ := (krullTopology_mem_nhds_one_iff ℚ ℚ̄ t).1 (ht.mem_nhds h1t)
+  obtain ⟨E₀, hE₀fin, hE₀⟩ := (krullTopology_mem_nhds_one_iff ℚ (AlgebraicClosure ℚ) t).1 (ht.mem_nhds h1t)
   have hfin : (Set.range f).Finite := hx.range_finite
   choose idx x' hx' using fun a : unitsLimitRep K => IdeleLimit.exists_unitsIncl (Additive.toMul a)
   choose lev hlev using fun E : FiniteSubfield => GLevel.exists_le (K := K) E

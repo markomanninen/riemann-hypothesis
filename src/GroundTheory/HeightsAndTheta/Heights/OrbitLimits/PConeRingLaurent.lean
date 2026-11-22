@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StConeRingLaurent
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StConeRingLaurent
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

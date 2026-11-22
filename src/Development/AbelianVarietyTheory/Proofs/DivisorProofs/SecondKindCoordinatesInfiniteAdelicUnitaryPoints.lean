@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableIffMemL2
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSecondKindCoordinatesUnitaryArchimedeanPlaStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableIffMemL2
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSecondKindCoordinatesUnitaryArchimedeanPlaStatement
+
+@[expose] public section
+
 open NumberField MeasureTheory Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet GlobalTheory.UAut Filter Topology
 open scoped TensorProduct ContDiff
 
@@ -12,11 +17,13 @@ theorem concat {G X ι : Type*} [Monoid G] (l : Filter X) (P : (ℝ → G) → P
     ∀ L : List ι, ∃ (m : ℕ) (η' : Fin m → ℝ → G) (s' : X → Fin m → ℝ),
       (∀ i, P (η' i)) ∧ Tendsto s' l (𝓝 0) ∧
       ∀ x, (List.ofFn fun i => η' i (s' x i)).prod =
-        (L.map fun j => (List.ofFn fun i => η j i (s j x i)).prod).prod
-  | [] => ⟨0, Fin.elim0, fun _ => Fin.elim0, fun i => i.elim0,
+        (L.map fun j => (List.ofFn fun i => η j i (s j x i)).prod).prod := by
+  intro L
+  induction L with
+  | nil => exact ⟨0, Fin.elim0, fun _ => Fin.elim0, fun i => i.elim0,
       tendsto_pi_nhds.2 fun i => i.elim0, fun x => by simp⟩
-  | j :: L => by
-    obtain ⟨m, η', s', hP', hs', he⟩ := concat l P d η s hP hs L
+  | cons j L ih =>
+    obtain ⟨m, η', s', hP', hs', he⟩ := ih
     refine ⟨d j + m, Fin.append (η j) η', fun x => Fin.append (s j x) (s' x), ?_, ?_, ?_⟩
     · intro i
       refine Fin.addCases (fun i => ?_) (fun i => ?_) i
@@ -72,18 +79,67 @@ end GlobalTheory.InfChartConcat
 theorem GlobalTheory.infPts_secondKind_chart : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E]
     [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (n : ℕ) (J : Matrix (Fin n) (Fin n) E),
     IsHermND σ J → ∃ (m : ℕ) (η : Fin m → ℝ → GAd σ J) (s : GAd σ J → Fin m → ℝ),
-    (∀ i, IsRealLine σ J (η i)) ∧ Tendsto s (𝓝[(infPts σ J : Set (GAd σ J))] 1) (𝓝 0) ∧
+    (∀ i, GlobalTheory.SiegelSet.IsRealLine σ J (η i)) ∧
+    Tendsto s (𝓝[(infPts σ J : Set (GAd σ J))] 1) (𝓝 0) ∧
     ∀ᶠ x in 𝓝[(infPts σ J : Set (GAd σ J))] 1, x = (List.ofFn fun i => η i (s x i)).prod := by
   intro F E _ _ _ _ _ σ hCM n J hJ
   classical
-  have hp := fun w => GlobalTheory.T.exists_secondKindCoordinates_unitaryArchimedeanPlace F E σ hCM n J hJ w
+  have hp : ∀ w : InfinitePlace F, ∃ (d : ℕ) (η : Fin d → ℝ → GAd σ J)
+      (s : GArch σ J w → Fin d → ℝ), (∀ i, GlobalTheory.SiegelSet.IsRealLine σ J (η i)) ∧
+      Tendsto s (𝓝 1) (𝓝 0) ∧
+      ∀ᶠ y in 𝓝 1, embArch σ J w y = (List.ofFn fun i => η i (s y i)).prod := by
+    intro w
+    obtain ⟨τ⟩ : Nonempty (EmbOver E w) := inferInstance
+    let A : Matrix (Fin n) (Fin n) ℂ := J.map τ.1
+    obtain ⟨d, Z, s₀, hZ, hs, hev⟩ := GlobalTheory.T.coordsSecondKind_formPreservingGroup n A
+    have hd : IsUnit A.det := by
+      rw [show A = J.map τ.1 from rfl, ← RingHom.mapMatrix_apply, ← RingHom.map_det]
+      exact (IsUnit.mk0 _ hJ.2).map _
+    have hy : ∀ (i : Fin d) (t : ℝ), ∃ y : GArch σ J w,
+        GlobalTheory.Orb.archMat σ J τ y = NormedSpace.exp (t • Z i) := by
+      intro i t
+      obtain ⟨u, hu⟩ := Matrix.isUnit_exp (t • Z i)
+      have hskew : (t • Z i)ᴴ * A + A * (t • Z i) = 0 := by
+        rw [conjTranspose_smul, star_trivial, Matrix.smul_mul, Matrix.mul_smul, ← smul_add,
+          hZ i, smul_zero]
+      have hpres := GlobalTheory.SmoothForms.exp_mem_UH (X := t • Z i) hd hskew
+      refine ⟨(archEquiv J hCM τ).symm ⟨u, show _ * _ * _ = _ from hu ▸ hpres⟩, ?_⟩
+      rw [GlobalTheory.Orb.archMat_eq_archEquiv J hCM, MulEquiv.apply_symm_apply]
+      exact hu
+    choose y hy using hy
+    have hS (g : GArch σ J w) :
+        GlobalTheory.Orb.archMat σ J τ g ∈ {X : Matrix (Fin n) (Fin n) ℂ | Xᴴ * A * X = A} := by
+      rw [Set.mem_ofPred_eq, GlobalTheory.Orb.archMat_eq_archEquiv J hCM]
+      exact (archEquiv J hCM τ g).2
+    have hc : Tendsto (GlobalTheory.Orb.archMat σ J τ) (𝓝 1)
+        (𝓝[{X : Matrix (Fin n) (Fin n) ℂ | Xᴴ * A * X = A}] 1) := by
+      refine tendsto_nhdsWithin_iff.2 ⟨?_, Eventually.of_forall hS⟩
+      simpa using (GlobalTheory.Orb.continuous_archMat σ J τ).tendsto 1
+    have hinj : Function.Injective (GlobalTheory.Orb.archMat σ J τ) := fun a b e =>
+      (GlobalTheory.Orb.isEmbedding_archMat J hCM τ).injective (by
+        show (fun i j => GlobalTheory.Orb.archMat σ J τ a i j) = fun i j =>
+          GlobalTheory.Orb.archMat σ J τ b i j
+        rw [e])
+    refine ⟨d, fun i t => embArch σ J w (y i t), fun g => s₀ (GlobalTheory.Orb.archMat σ J τ g),
+      fun i => ⟨w, τ, Z i, hZ i, fun t => ⟨y i t, rfl, hy i t⟩⟩, hs.comp hc, ?_⟩
+    filter_upwards [hc.eventually hev] with g hg
+    have e : (List.ofFn fun i => embArch σ J w (y i (s₀ (GlobalTheory.Orb.archMat σ J τ g) i))).prod =
+        embArch σ J w (List.ofFn fun i => y i (s₀ (GlobalTheory.Orb.archMat σ J τ g) i)).prod := by
+      rw [map_list_prod, List.map_ofFn]
+      rfl
+    rw [e]
+    congr 1
+    apply hinj
+    rw [map_list_prod, List.map_ofFn]
+    refine hg.trans (congrArg List.prod ?_)
+    exact List.ofFn_inj.2 (funext fun i => (hy i _).symm)
   choose d η s hη hs he using hp
   have hproj : ∀ w, Tendsto (projArch σ J w) (𝓝[(infPts σ J : Set (GAd σ J))] 1) (𝓝 1) := fun w => by
     have := (continuous_projArch σ J w).tendsto 1
     rw [map_one] at this
     exact this.mono_left nhdsWithin_le_nhds
   obtain ⟨m, η', s', hP', hs', heq⟩ := GlobalTheory.InfChartConcat.concat
-    (𝓝[(infPts σ J : Set (GAd σ J))] 1) (IsRealLine σ J) d η
+    (𝓝[(infPts σ J : Set (GAd σ J))] 1) (GlobalTheory.SiegelSet.IsRealLine σ J) d η
     (fun w x => s w (projArch σ J w x)) hη (fun w => (hs w).comp (hproj w))
     (Finset.univ : Finset (InfinitePlace F)).toList
   refine ⟨m, η', s', hP', hs', ?_⟩

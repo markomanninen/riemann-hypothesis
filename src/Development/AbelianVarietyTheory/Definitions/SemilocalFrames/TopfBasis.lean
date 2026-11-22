@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,29 +39,5 @@ structure InstData (cm : CMData F E) (W : HSpace E) (ε : InfinitePlace F → Fi
   topf_group : @IsTopologicalGroup _ topf _
   topf_open : ∀ g : ℕ, 1 ≤ g → @IsOpen _ topf (congSet cm W g)
   topf_basis : ∀ U ∈ @nhds _ topf 1, ∃ g : ℕ, 1 ≤ g ∧ congSet cm W g ⊆ U
-
-@[reducible] def InstData.inst {cm : CMData F E} {W : HSpace E} {ε : InfinitePlace F → Fin W.rank → Bool}
-    {φ : InfinitePlace F → (E →+* ℂ)} (X : InstData cm W ε φ) : AutInst where
-  F := F
-  E := E
-  cm := cm
-  n := W.rank
-  J := W.gram
-  J_herm := X.J_herm
-  J_det := X.J_det
-  L := coordLat W
-  L_span := X.L_span
-  L_fg := X.L_fg
-  L_dual := X.L_dual
-  ε := ε
-  φ := φ
-  φ_over := X.φ_over
-  P := X.P
-  P_unit := X.P_unit
-  P_spec := X.P_spec
-  topf := X.topf
-  topf_group := X.topf_group
-  topf_open := X.topf_open
-  topf_basis := X.topf_basis
 
 end GlobalTheory.RowLev

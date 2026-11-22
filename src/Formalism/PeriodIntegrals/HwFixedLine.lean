@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.CoefMod
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.ExtremalFactsProofA
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.CoefMod
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.ExtremalFactsProofA
+
+@[expose] public section
 
 noncomputable section
 

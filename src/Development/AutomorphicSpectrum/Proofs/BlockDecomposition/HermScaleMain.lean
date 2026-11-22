@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.EmDefs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianMeasureConjugation
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousSmulH
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.EmDefs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianMeasureConjugation
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousSmulH
+
+@[expose] public section
+
 noncomputable section
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory
@@ -15,9 +20,9 @@ section Main
 
 open GlobalTheory.CompanionTheory.IwaAd GlobalTheory.CompanionTheory.HermVol GlobalTheory.CompanionTheory.CgMod PositivityTheory.Rg.Rsw.L PositivityTheory.Rg.Rsw.Em
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
-
 theorem hermScale_main : PositivityTheory.Rg.Rsw.L.IdemEx → PositivityTheory.Rg.Rsw.Em.TopX → PositivityTheory.Rg.Rsw.Em.HermScale := by
   intro hid htop D t S e he lam hlam g hg
   obtain ⟨hee, hce⟩ := (hid D S).2 e he

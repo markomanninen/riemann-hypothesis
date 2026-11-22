@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.RatActGOf
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ProdMemSpan
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.RatActGOf
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ProdMemSpan
+
+@[expose] public section
 
 noncomputable section
 

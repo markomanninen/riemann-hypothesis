@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
+
+@[expose] public section
 
 open GlobalTheory.K5 GlobalTheory.Glue
 
@@ -73,7 +77,7 @@ theorem thL_part (N i : ℕ) (b : Lau p) :
     thL (HahnSeries.single (i : ℤ) (1 : ℤ_[p]) * sh N i (fun _ => 1) b) =
       (i : Lau p) * (HahnSeries.single (i : ℤ) (1 : ℤ_[p]) * sh N i (fun _ => 1) b) +
       (N : Lau p) * (HahnSeries.single (i : ℤ) (1 : ℤ_[p]) * sh N i (fun r => ((r / N : ℤ) : ℤ_[p])) b) := by
-  ext s
+  ext s : 2
   rw [HahnSeries.coeff_add, coeff_natCast_mul, coeff_natCast_mul]
   change (s : ℤ_[p]) * _ = _
   simp only [HahnSeries.coeff_single_mul, sh, one_mul]
@@ -145,7 +149,7 @@ theorem smul_D_psi : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebr
       map_zero' := by simp [thL_zero]
       map_add' := by
         intro a c
-        simp only [thL_add, map_add, add_smul, smul_add]
+        simp only [thL_add, map_add (f := _), add_smul, smul_add]
         abel }
   have hpart : ∀ i ∈ Finset.range (p ^ L),
       E (HahnSeries.single (i : ℤ) (1 : ℤ_[p]) * sh (p ^ L) i (fun _ => 1) b) = 0 := by
@@ -154,7 +158,8 @@ theorem smul_D_psi : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebr
     rw [thL_part, map_add Ψ, map_mul Ψ (i : Lau p), map_mul Ψ ((p ^ L : ℕ) : Lau p), map_mul Ψ, map_natCast Ψ, map_natCast Ψ, hmono]
     exact part_eq_zero D qL _ _ i (p ^ L) (hsub i) hND
   have hE : E b = 0 := by
-    rw [decomp (p ^ L) hN b, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [decomp (p ^ L) hN b, map_sum]
     exact Finset.sum_eq_zero hpart
   exact sub_eq_zero.1 hE
 

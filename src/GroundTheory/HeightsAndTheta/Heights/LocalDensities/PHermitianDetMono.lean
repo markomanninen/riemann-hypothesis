@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.LocalDensities.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.LocalDensities.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FourB
@@ -17,17 +22,16 @@ theorem HermitianDetMono.one_le_det_one_add {n : ℕ} {M : Matrix (Fin n) (Fin n
       rw [dotProduct_comm, ← EuclideanSpace.inner_eq_star_dotProduct, inner_self_eq_norm_sq_to_K,
         hH.eigenvectorBasis.orthonormal.1 i]
       simp
-    rw [add_mulVec, one_mulVec, dotProduct_add, map_add, hv, RCLike.one_re]
+    rw [add_mulVec, one_mulVec, dotProduct_add, map_add (f := _), hv, RCLike.one_re]
     linarith [hM.re_dotProduct_nonneg (hH.eigenvectorBasis i)]
   rw [hH.det_eq_prod_eigenvalues]
   have hprod : (1 : ℝ) ≤ ∏ i, hH.eigenvalues i := by
     calc (1 : ℝ) = ∏ _i : Fin n, (1 : ℝ) := by simp
       _ ≤ ∏ i, hH.eigenvalues i :=
-        Finset.prod_le_prod (fun _ _ => zero_le_one) (fun i _ => hev i)
+        Finset.prod_le_prod₀ (fun _ _ => zero_le_one) (fun i _ => hev i)
   have key : ((1 : ℝ) : ℂ) ≤ ((∏ i, hH.eigenvalues i : ℝ) : ℂ) := Complex.real_le_real.mpr hprod
   convert key using 1
   · simp
-  · simp [Complex.ofReal_prod]
 
 theorem HermitianDetMono.proof : HermitianDetMono.Statement := by
   intro n A B hB hAB

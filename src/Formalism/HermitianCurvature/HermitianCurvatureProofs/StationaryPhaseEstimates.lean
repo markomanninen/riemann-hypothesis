@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementG
+module
+
+public import Formalism.HermitianCurvature.StatementG
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.DiagonalPointSigmaFinite
 
@@ -10,9 +14,6 @@ instance sigmaFinite_mu (β : ℂ) : SigmaFinite (mu β) := by unfold mu; infer_
 
 instance sigmaFinite_muPi (β : ℂ) (ι : Type) [Fintype ι] : SigmaFinite (muPi β ι) := by
   unfold muPi; infer_instance
-
-instance sigmaFinite_muXY (β : ℂ) (m : ℕ) : SigmaFinite (muXY β m) := by
-  unfold muXY; infer_instance
 
 section
 
@@ -79,7 +80,7 @@ theorem smooth_cutoff_mem_unit_interval (r : ℝ) : 0 ≤ chi0 r ∧ chi0 r ≤ 
 
 theorem critCut_mem_Icc {n : ℕ} (δ : ℝ) (z : ℂ) (x : Fin n → ℂ) : 0 ≤ critCut δ z x ∧ critCut δ z x ≤ 1 :=
   ⟨Finset.prod_nonneg fun _ _ => (smooth_cutoff_mem_unit_interval _).1,
-    Finset.prod_le_one (fun _ _ => (smooth_cutoff_mem_unit_interval _).1) fun _ _ => (smooth_cutoff_mem_unit_interval _).2⟩
+    Finset.prod_le_one₀ (fun _ _ => (smooth_cutoff_mem_unit_interval _).1) fun _ _ => (smooth_cutoff_mem_unit_interval _).2⟩
 
 theorem integrable_cut_smul {β : ℂ} {m : ℕ} {F : XY m → V} (hF : Integrable F (muXY β m))
     {χ : (Fin (m + 1) → ℂ) → ℝ} (hχ : Continuous χ) {B : ℝ} (hB : ∀ x, |χ x| ≤ B) :

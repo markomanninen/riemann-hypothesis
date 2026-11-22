@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+
+@[expose] public section
 
 open PowerSeries GlobalTheory.MomOne
 open scoped ComplexConjugate BigOperators Topology
@@ -21,7 +25,8 @@ lemma coeff_sS_pow (ζ : ℂ_[q]) (m n : ℕ) :
     intro k _
     simp only [mul_pow, map_mul, map_pow, map_natCast]
     ring
-  rw [hs, add_pow, Finset.sum_congr rfl hterm, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hs, add_pow, Finset.sum_congr rfl hterm, map_sum]
   simp only [PowerSeries.coeff_C_mul_X_pow]
   rw [Finset.sum_ite_eq]
   split_ifs with hn
@@ -81,8 +86,8 @@ lemma shiftS_add {ζ : ℂ_[q]} (h : ‖ζ - 1‖ < 1) {f g : ℂ_[q]⟦X⟧} (h
   obtain ⟨B, hB⟩ := hf
   obtain ⟨B', hB'⟩ := hg
   ext n
-  rw [map_add, coeff_shiftS, coeff_shiftS, coeff_shiftS]
-  simp only [map_add, add_mul]
+  rw [map_add (f := _), coeff_shiftS, coeff_shiftS, coeff_shiftS]
+  simp only [map_add (f := _), add_mul]
   exact (summable_term (a := fun m => coeff m f) h hB n).tsum_add
     (summable_term (a := fun m => coeff m g) h hB' n)
 
@@ -139,7 +144,7 @@ lemma shiftS_one (f : ℂ_[q]⟦X⟧) : shiftS 1 f = f := by
 lemma coeff_DT (f : ℂ_[q]⟦X⟧) (n : ℕ) :
     coeff n (DT f) = coeff (n + 1) f * ((n : ℂ_[q]) + 1) + coeff n f * n := by
   rcases n with _ | n
-  · rw [DT, add_mul, one_mul, map_add, PowerSeries.coeff_zero_X_mul, PowerSeries.coeff_derivative]
+  · rw [DT, add_mul, one_mul, map_add (f := _), PowerSeries.coeff_zero_X_mul, PowerSeries.coeff_derivative]
     simp
   · simp [DT, add_mul, PowerSeries.coeff_derivative, PowerSeries.coeff_succ_X_mul]
 
@@ -147,7 +152,7 @@ lemma DT_sS_pow (ζ : ℂ_[q]) (m : ℕ) :
     DT (sS ζ ^ m) = C (m : ℂ_[q]) * (sS ζ ^ (m - 1) + sS ζ ^ m) := by
   unfold DT
   rw [Derivation.leibniz_pow]
-  have hd : derivative ℂ_[q] (sS ζ) = C ζ := by simp [sS]
+  have hd : PowerSeries.derivative (sS ζ) = C ζ := by simp [sS]
   have h1 : (1 + X) * C ζ = sS ζ + 1 := by
     unfold sS
     ring
@@ -174,7 +179,7 @@ lemma DT_shiftS {ζ : ℂ_[q]} (h : ‖ζ - 1‖ < 1) {f : ℂ_[q]⟦X⟧} (hf :
   have hk : ∀ m : ℕ, coeff (n + 1) (sS ζ ^ m) * ((n : ℂ_[q]) + 1) + coeff n (sS ζ ^ m) * n =
       (m : ℂ_[q]) * coeff n (sS ζ ^ (m - 1)) + (m : ℂ_[q]) * coeff n (sS ζ ^ m) := by
     intro m
-    rw [← coeff_DT, DT_sS_pow, PowerSeries.coeff_C_mul, map_add, mul_add]
+    rw [← coeff_DT, DT_sS_pow, PowerSeries.coeff_C_mul, map_add (f := _), mul_add]
   have s0 := summable_term (a := fun m => coeff m f) h hB n
   have s1 := summable_term (a := fun m => coeff m f) h hB (n + 1)
   have s2 := summable_term (a := fun m => coeff m f * (m : ℂ_[q])) h hB1 n

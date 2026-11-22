@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.CalcSteps
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Lap
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevOperatorFacts
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FunctionalCalculusJointCurve
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformLimitRightDerivativesStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.CalcSteps
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Lap
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevOperatorFacts
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FunctionalCalculusJointCurve
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformLimitRightDerivativesStatement
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset Filter Topology
 open scoped ContDiff ComplexConjugate InnerProductSpace ZeroAtInfty ENNReal
@@ -52,7 +56,7 @@ theorem sob_complete : ∀ (n : ℕ) [MeasurableSpace (G n)] [BorelSpace (G n)] 
         dist (cls μ (Rw w' (Rw w (a p.1)))) (cls μ (Rw w' (Rw w (a p.2))))) (atTop ×ˢ atTop) (𝓝 0) := by
       have e0 : (C * ∑ w' ∈ S, (0 : ℝ)) = 0 := by simp
       rw [← e0]
-      refine Tendsto.const_mul C (tendsto_finset_sum _ fun w' _ => ?_)
+      refine Tendsto.const_mul C (tendsto_finsetSum _ fun w' _ => ?_)
       have h1 := hC (w' ++ w)
       simp only [← GlobalTheory.CompanionTheory.CurveJ.Rw_append] at h1
       rw [prod_atTop_atTop_eq]

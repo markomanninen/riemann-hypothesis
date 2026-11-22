@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemCompletedGridArrowLatticeIffIntegralFrameMatr
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsValuationOneElementAtGridPlaces
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SelfDualHomLatticeModulusShiftLocalEqLatO
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AuxiliaryVectorDecompositionEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalBlockDetBlockTriangular
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AbsNormCoprimeOfSup
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PsiPrimitiveStandardFramesBesselLevel
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DependenceFixed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemCompletedGridArrowLatticeIffIntegralFrameMatr
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsValuationOneElementAtGridPlaces
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SelfDualHomLatticeModulusShiftLocalEqLatO
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AuxiliaryVectorDecompositionEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalBlockDetBlockTriangular
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AbsNormCoprimeOfSup
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PsiPrimitiveStandardFramesBesselLevel
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DependenceFixed
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SepRows GlobalTheory.Asc
 open scoped TensorProduct
@@ -103,8 +108,8 @@ open GlobalTheory.FunObj.Comparison₂ GlobalTheory.StdFrames Formalism.L2.DIV G
 variable {D : D7} {S T : HSp D} {ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)}
   {ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem v_le_of_mem_latO_idLat (hS : IsSelfDualC S ΛS) {βS : GL (Fin S.rank) (EAf D)} {βT : GL (Fin T.rank) (EAf D)}
     (hβS : IsFrame βS ΛS) (hβT : IsFrame βT ΛT) (w : Pl D.host.E)
     (hw : ∀ a ∈ D.host.AA, Valued.v (algebraMap D.host.E (Kw w) a) ≤ 1)
@@ -115,7 +120,7 @@ theorem v_le_of_mem_latO_idLat (hS : IsSelfDualC S ΛS) {βS : GL (Fin S.rank) (
   set B : WithZero (Multiplicative ℤ) := WithZero.exp (-(k : ℤ)) with hB
   let p : WO S T → Prop := fun u => ∀ a b, Valued.v (cpt (D := D) w (Comparison₂.fr βT βS (u.map (toEAf D)) a b)) ≤ B
   have hadd : ∀ x y, p x → p y → p (x + y) := fun x y hx hy a b => by
-    rw [Matrix.map_add _ (toEAf D).map_add, Comparison₂.fr_add, Matrix.add_apply, RingHom.map_add]
+    rw [show (x + y).map (toEAf D) = x.map (toEAf D) + y.map (toEAf D) from Matrix.ext fun i j => by simp only [Matrix.map_apply, Matrix.add_apply, map_add], Comparison₂.fr_add, Matrix.add_apply, RingHom.map_add (f := _)]
     exact Valuation.map_add_le _ (hx a b) (hy a b)
   have hneg : ∀ x, p x → p (-x) := fun x hx a b => by
     rw [Matrix.map_neg _ (toEAf D).map_neg, fr_neg, Matrix.neg_apply, RingHom.map_neg, Valuation.map_neg]
@@ -146,7 +151,7 @@ theorem v_le_of_mem_latO_idLat (hS : IsSelfDualC S ΛS) {βS : GL (Fin S.rank) (
         rw [Comparison₂.fr, Matrix.mul_zero, Matrix.zero_mul]]
       simp
     · intro x y _ _ hx hy a b
-      rw [genMap_add, Matrix.map_add _ (eToEAf D).map_add, Comparison₂.fr_add, Matrix.add_apply, RingHom.map_add]
+      rw [genMap_add, show (GlobalTheory.LatVac.genMap S T 1 s x + GlobalTheory.LatVac.genMap S T 1 s y).map (eToEAf D) = (GlobalTheory.LatVac.genMap S T 1 s x).map (eToEAf D) + (GlobalTheory.LatVac.genMap S T 1 s y).map (eToEAf D) from Matrix.ext fun i j => by simp only [Matrix.map_apply, Matrix.add_apply, map_add], Comparison₂.fr_add, Matrix.add_apply, RingHom.map_add (f := _)]
       exact Valuation.map_add_le _ (hx a b) (hy a b)
     · intro o x _ hx a b
       rw [show o • x = (algebraMap (𝓞 D.host.E) D.host.E o) • x from (algebraMap_smul _ _ _).symm, genMap_smul,
@@ -188,8 +193,8 @@ theorem v_le_of_mem_latO_idLat (hS : IsSelfDualC S ΛS) {βS : GL (Fin S.rank) (
 
 end GlobalTheory.DepthBig
 
-open GlobalTheory.FunObj.Comparison₂ GlobalTheory.StdFrames Formalism.L2.DIV GlobalTheory.DepthBig in
 
+open GlobalTheory.FunObj.Comparison₂ GlobalTheory.StdFrames Formalism.L2.DIV GlobalTheory.DepthBig in
 theorem GlobalTheory.DepthBig.smul_mem_hatMx_of_mem_latBig : All fun {D} _ _ _ {G} _ _ => ∀ i, i < D.R.m →
     ∀ v : WO (G.V (.grid (i + 1) 0)) (G.V (.grid i 0)),
       v ∈ latO (G.V (.grid (i + 1) 0)) (G.V (.grid i 0)) (G.Λ (.grid (i + 1) 0) : Set _) (G.Λ (.grid i 0) : Set _)
@@ -204,8 +209,67 @@ theorem GlobalTheory.DepthBig.smul_mem_hatMx_of_mem_latBig : All fun {D} _ _ _ {
       exact (GlobalTheory.ChiGrid.colY_isV D T L μ0 hL j hX.2).sd
   have hS := hV (.grid (i + 1) 0) ⟨hi, Nat.zero_le _⟩
   have hT := hV (.grid i 0) ⟨hi.le, Nat.zero_le _⟩
-  obtain ⟨βS, hβS⟩ := GlobalTheory.latticeFrame.exists_frame D.host.F D.host.E _ _ hS.1
-  obtain ⟨βT, hβT⟩ := GlobalTheory.latticeFrame.exists_frame D.host.F D.host.E _ _ hT.1
+  have hfull : ∀ (V : HSp D) (Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)),
+      IsSelfDualC V Λ → Submodule.IsFullLattice D.host.E Λ := by
+    intro V Λ hΛ
+    haveI : Submodule.IsLattice D.host.E Λ := hΛ.1
+    refine ⟨?_⟩
+    obtain ⟨s, hs⟩ := hΛ.1.fg
+    apply eq_top_iff.mpr
+    intro y _
+    let f : (Fin V.rank → D.host.E) → D.host.E := fun x =>
+      ∑ i, ∑ j, star (x i) * V.gram i j * y j
+    obtain ⟨a, ha⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors (𝓞 D.host.E)) s f
+    have ha0 : (algebraMap (𝓞 D.host.E) D.host.E a) ≠ 0 := by
+      exact (FaithfulSMul.algebraMap_injective _ _).ne (mem_nonZeroDivisors_iff_ne_zero.mp a.2)
+    let P : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E) := {
+      carrier := {x | ∃ b : 𝓞 D.host.E, (b : D.host.E) = (algebraMap (𝓞 D.host.E) D.host.E a) * f x}
+      zero_mem' := by refine ⟨0, ?_⟩; simp [f]
+      add_mem' := by
+        rintro x z ⟨b, hb⟩ ⟨c, hc⟩
+        refine ⟨b + c, ?_⟩
+        change (b : D.host.E) + c = _
+        rw [hb, hc]
+        simp [f, map_add, add_mul, Finset.sum_add_distrib, mul_add]
+      smul_mem' := by
+        rintro c x ⟨b, hb⟩
+        refine ⟨RingOfIntegers.mapRingHom (starRingEnd D.host.E) c * b, ?_⟩
+        simp only [map_mul, hb, f, Pi.smul_apply, Algebra.smul_def, map_mul, RingOfIntegers.mapRingHom_apply, star_mul]
+        simp only [Finset.mul_sum]
+        apply Finset.sum_congr rfl
+        intro i _
+        apply Finset.sum_congr rfl
+        intro j _
+        change star (c : D.host.E) * _ = _
+        ring }
+    have hsP : (s : Set (Fin V.rank → D.host.E)) ⊆ P := by
+      intro x hx
+      obtain ⟨b, hb⟩ := ha x hx
+      exact ⟨b, by simpa [Algebra.smul_def] using hb⟩
+    have hy : (algebraMap (𝓞 D.host.E) D.host.E a) • y ∈ Λ := by
+      apply (hΛ.2 _).2
+      intro x hx
+      have hxP : x ∈ P := (hs ▸ Submodule.span_le.mpr hsP) hx
+      obtain ⟨b, hb⟩ := hxP
+      refine ⟨b, ?_⟩
+      rw [hb]
+      dsimp only [f, Pi.smul_apply]
+      simp only [smul_eq_mul, Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro i _
+      apply Finset.sum_congr rfl
+      intro j _
+      ring
+    have hy' : (algebraMap (𝓞 D.host.E) D.host.E a) • y ∈ Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E)) :=
+      Submodule.subset_span hy
+    have := (Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E))).smul_mem
+      (algebraMap (𝓞 D.host.E) D.host.E a)⁻¹ hy' 
+    change (algebraMap (𝓞 D.host.E) D.host.E a)⁻¹ •
+      ((algebraMap (𝓞 D.host.E) D.host.E a) • y) ∈ _ at this
+    rw [← smul_assoc, smul_eq_mul, inv_mul_cancel₀ ha0, one_smul] at this
+    exact this
+  obtain ⟨βS, hβS⟩ := GlobalTheory.latticeFrame.exists_frame D.host.F D.host.E _ _ (hfull _ _ hS)
+  obtain ⟨βT, hβT⟩ := GlobalTheory.latticeFrame.exists_frame D.host.F D.host.E _ _ (hfull _ _ hT)
   obtain ⟨e0, e1, e2⟩ := Comparison₂.cpt_idemSum he
   rw [Comparison₂.mem_hatMx_iff hβS hβT]
   refine ⟨fun a b => ?_, fun a b => ?_⟩

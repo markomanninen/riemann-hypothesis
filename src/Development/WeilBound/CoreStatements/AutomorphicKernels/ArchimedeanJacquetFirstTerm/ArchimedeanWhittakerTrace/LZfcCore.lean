@@ -1,10 +1,13 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FourierCompactness.SigmaSigmaOfGood
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TotallyRealSelfAnnihilatorAdeleCharacter
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RationalSymplecticPointsSelfAnnihilator
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStdCharNegOneOfStandardTraceAdelicAddChar
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TripleAdaptedPlaneLocalFactor
+module
 
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfCoefficientsSeparatingCharactersEqZero
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FourierCompactness.SigmaSigmaOfGood
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TotallyRealSelfAnnihilatorAdeleCharacter
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RationalSymplecticPointsSelfAnnihilator
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStdCharNegOneOfStandardTraceAdelicAddChar
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TripleAdaptedPlaneLocalFactor
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfCoefficientsSeparatingCharactersEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +38,8 @@ theorem incM_map_cA (γ : Matrix (Fin n) (Fin n) E) : (incM F (γ.map σ)) = (in
   simp [incM, Matrix.map_apply, GlobalTheory.LeviLine.cA_inclR]
 
 theorem trace_map_cA (M : Matrix (Fin n) (Fin n) (AE F E)) : (M.map (cA σ)).trace = cA σ M.trace := by
-  simp [Matrix.trace, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.trace, map_sum]
 
 theorem trace_tst (ε : ℤˣ) (γ : Matrix (Fin n) (Fin n) E) (β : Matrix (Fin n) (Fin n) (AE F E))
     (hβ : βᵀ = -((ε : ℤ) • β.map (cA σ))) :
@@ -74,12 +78,12 @@ theorem rat_of_ker (hcm : IsCMExt F E σ) {ψ : AddChar (AF F) ℂ} (hψ : IsStd
   have key : ∀ i j (e : E), ψ (Algebra.trace (AF F) (AE F E) ((1 : AF F) ⊗ₜ[F] e * β i j)) = 1 := by
     intro i j e
     have h1 := h _ (tst_mem hcm ε (Matrix.single j i (-(e / 2))))
-    rw [trace_tst ε _ β hβ, trace_incM_single, map_add, trace_cA hcm] at h1
+    rw [trace_tst ε _ β hβ, trace_incM_single, map_add (f := _), trace_cA hcm] at h1
     have hI : ∀ c : E, inclR (F := F) (AF F) c = (1 : AF F) ⊗ₜ[F] c := fun c => rfl
     have hadd : ∀ a c : E, Algebra.trace (AF F) (AE F E) ((1 : AF F) ⊗ₜ[F] (a + c) * β i j) =
         Algebra.trace (AF F) (AE F E) ((1 : AF F) ⊗ₜ[F] a * β i j) +
           Algebra.trace (AF F) (AE F E) ((1 : AF F) ⊗ₜ[F] c * β i j) := fun a c => by
-      rw [TensorProduct.tmul_add, add_mul, map_add]
+      rw [TensorProduct.tmul_add, add_mul, map_add (f := _)]
     have hneg : ∀ a : E, Algebra.trace (AF F) (AE F E) ((1 : AF F) ⊗ₜ[F] (-a) * β i j) =
         -Algebra.trace (AF F) (AE F E) ((1 : AF F) ⊗ₜ[F] a * β i j) := fun a => by
       rw [TensorProduct.tmul_neg, neg_mul, map_neg]
@@ -156,10 +160,10 @@ theorem fc_inj_pt_per {B : Base F E} (hB : B.IsGood σ) (b : GL (Fin n ⊕ Fin n
     (fun T => hψ.1.comp (htr.comp ((continuous_const.matrix_mul continuous_subtype_val).matrix_trace)).neg)
     (fun T β β' => by
       unfold chr
-      rw [AddSubgroup.coe_add, Matrix.mul_add, Matrix.trace_add, map_add, neg_add, AddChar.map_add_eq_mul])
+      rw [AddSubgroup.coe_add, Matrix.mul_add, Matrix.trace_add, map_add (f := _), neg_add, AddChar.map_add_eq_mul])
     (fun T T' β => by
       unfold chr
-      rw [AddSubgroup.coe_add, AddSubgroup.coe_add, Matrix.add_mul, Matrix.trace_add, map_add, neg_add,
+      rw [AddSubgroup.coe_add, AddSubgroup.coe_add, Matrix.add_mul, Matrix.trace_add, map_add (f := _), neg_add,
         AddChar.map_add_eq_mul])
     (fun β => by
       unfold chr
@@ -168,7 +172,9 @@ theorem fc_inj_pt_per {B : Base F E} (hB : B.IsGood σ) (b : GL (Fin n ⊕ Fin n
     (fun T β => hψ.2.1 _)
     (chr_ker hB hb)
     lam 𝓖 hlam hFD (fun β => f (nb β * x))
-    (hf.comp ((PositivityTheory.SiegelWeilFormula.kfour.nb_continuous hσ hb hnb).mul continuous_const))
+    (by
+      set_option synthInstance.maxHeartbeats 400000 in
+        exact hf.comp ((PositivityTheory.SiegelWeilFormula.kfour.nb_continuous hσ hb hnb).mul continuous_const))
     (fun γ hγ β => by
       show f (nb (γ + β) * x) = f (nb β * x)
       rw [PositivityTheory.SiegelWeilFormula.kfour.nb_add hnb, mul_assoc]
@@ -176,12 +182,6 @@ theorem fc_inj_pt_per {B : Base F E} (hB : B.IsGood σ) (b : GL (Fin n ⊕ Fin n
     (fun T => (integral_congr_ae (.of_forall fun β => mul_comm _ _)).trans (hx T))
   have h0 := congrFun key 0
   simpa [PositivityTheory.SiegelWeilFormula.kfour.nb_zero hnb] using h0
-
-theorem fc_inj_pt_core {B : Base F E} (hB : B.IsGood σ) (b : GL (Fin n ⊕ Fin n) E) (nb : nA σ Y b → G2 σ Y)
-    (lam : Measure (nA σ Y b)) (𝓖 : Set (nA σ Y b)) (hb : IsFrame2 σ Y b) (hc : CoefData (σ := σ) (Y := Y) b nb lam 𝓖)
-    (f : G2 σ Y → ℂ) (hf : Continuous f) (hinv : ∀ γ ∈ rat2 σ Y, ∀ y, f (γ * y) = f y) (x : G2 σ Y)
-    (hx : ∀ T : nF σ Y b, fc B.ψ b nb lam 𝓖 f T x = 0) : f x = 0 :=
-  fc_inj_pt_per hB b nb lam 𝓖 hb hc f hf (fun β hβ g => hinv _ (PositivityTheory.SiegelWeilFormula.kfour.nb_rat hc.1 β hβ) g) x hx
 
 end PositivityTheory.FTA.ZFC
 

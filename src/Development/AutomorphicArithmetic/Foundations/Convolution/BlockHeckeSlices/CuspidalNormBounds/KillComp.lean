@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.HkApply
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.BandOps
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CompBound
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.KillOne
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommuteRtOfMemZalg
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.HkApply
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.BandOps
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CompBound
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.KillOne
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommuteRtOfMemZalg
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ private theorem exists_esymm (n : ℕ) (c : Fin n → ℂ) :
     have h3 : (Polynomial.X ^ n : Polynomial ℂ).coeff ((Fin.rev i : Fin n) : ℕ) = 0 := by
       rw [Polynomial.coeff_X_pow, if_neg (by omega)]
     have h4 : q.coeff ((Fin.rev i : Fin n) : ℕ) = a (Fin.rev i) := by
-      simp only [q, Polynomial.finset_sum_coeff, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow]
+      simp only [q, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow]
       rw [Finset.sum_eq_single (Fin.rev i)]
       · simp
       · intro b _ hb
@@ -85,7 +89,7 @@ private theorem vars_of_gen {τ κ : Type} [Fintype τ] {n : ℕ} {F : KF (τ ×
 
 section Ops
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ}
 
 private def Q (S : Set (Pl E)) (C : ℝ) (ψ : Sm E n) : Prop := Band C ψ ∧ Sph S ψ
 
@@ -98,7 +102,7 @@ private theorem Q_zero (hb : BandOps E) (hC : 0 ≤ C) : Q S C (0 : Sm E n) :=
   ⟨(hb n C hC).1, fun w _ x _ => map_zero _⟩
 
 private theorem Q_add (hb : BandOps E) (hC : 0 ≤ C) {ψ χ : Sm E n} (h : Q S C ψ) (h' : Q S C χ) : Q S C (ψ + χ) :=
-  ⟨((hb n C hC).2 ψ h.1).1 χ h'.1, fun w hw x hx => by rw [map_add, h.2 w hw x hx, h'.2 w hw x hx]⟩
+  ⟨((hb n C hC).2 ψ h.1).1 χ h'.1, fun w hw x hx => by rw [map_add (f := _), h.2 w hw x hx, h'.2 w hw x hx]⟩
 
 private theorem Op_zero (hb : BandOps E) (hC : 0 ≤ C) : Op S C k (0 : Module.End ℂ (Sm E n)) := fun ψ _ =>
   ⟨Q_zero hb hC, by simp⟩
@@ -108,7 +112,7 @@ private theorem Op_one : Op S C k (1 : Module.End ℂ (Sm E n)) := fun ψ h => �
 private theorem Op_add (hb : BandOps E) (hC : 0 ≤ C) {T T' : Module.End ℂ (Sm E n)} (h : Op S C k T) (h' : Op S C k T') :
     Op S C k (T + T') := fun ψ hψ =>
   ⟨Q_add hb hC (h ψ hψ).1 (h' ψ hψ).1, by
-    rw [LinearMap.add_apply, LinearMap.add_apply, map_add, (h ψ hψ).2, (h' ψ hψ).2]⟩
+    rw [LinearMap.add_apply, LinearMap.add_apply, map_add (f := _), (h ψ hψ).2, (h' ψ hψ).2]⟩
 
 private theorem Op_sum (hb : BandOps E) (hC : 0 ≤ C) {ι : Type*} (s : Finset ι) {T : ι → Module.End ℂ (Sm E n)}
     (h : ∀ i ∈ s, Op S C k (T i)) : Op S C k (∑ i ∈ s, T i) := by
@@ -172,7 +176,7 @@ end UpperTheory.ConvolutionTheory.BW
 
 open UpperTheory.ConvolutionTheory.BW in
 theorem UpperTheory.ConvolutionTheory.BW.killComp :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.KillComp E := by
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.KillComp E := by
   intro E _ _ _ S n C φ w F G hC hφ hS hw hv hG hsum k d hd
   have hh := UpperTheory.ConvolutionTheory.BW.hkOps E
   have hb := UpperTheory.ConvolutionTheory.BW.bandOps E
@@ -183,7 +187,7 @@ theorem UpperTheory.ConvolutionTheory.BW.killComp :
   have hQ : Q S C φ := ⟨hφ, hS⟩
   have hQk : Q S C (rt E n (k : GA E n) φ) := Q_rt hh hb hC k hQ
   have hop : ∀ i, Op S C (k : GA E n) (app (G i)) := fun i => Op_app hh hb hC fun β hβ p hp =>
-    hv p ((MvPolynomial.mem_vars p).2 ⟨β, vars_of_gen (hG i) hβ, hp⟩)
+    hv p ((MvPolynomial.mem_vars_iff_mem_support p).2 ⟨β, vars_of_gen (hG i) hβ, hp⟩)
   let W : ℕ → Sm E n := fun e => ∑ i ∈ Finset.range e, app (G i) φ
   have hWQ : ∀ e, Q S C (W e) := fun e => by
     have h := (Op_sum hb hC (Finset.range e) fun i _ => hop i) φ hQ
@@ -205,7 +209,7 @@ theorem UpperTheory.ConvolutionTheory.BW.killComp :
     | succ e ih =>
       have e1 : rt E n (k : GA E n) (W (e + 1)) =
           (1 : ℂ) • rt E n (k : GA E n) (W e) + app (G e) (rt E n (k : GA E n) φ) := by
-        simp only [W, Finset.sum_range_succ, map_add, one_smul]
+        simp only [W, Finset.sum_range_succ, map_add (f := _), one_smul]
         rw [(hop e φ hQ).2]
       have hU2 : Umg (app (G e) (rt E n (k : GA E n) φ)) := (hop e _ hQk).1.1.toUmg
       rw [e1, hlin _ _ 1 (hWU e) hU2 t, ih, one_mul, Finset.sum_range_succ]

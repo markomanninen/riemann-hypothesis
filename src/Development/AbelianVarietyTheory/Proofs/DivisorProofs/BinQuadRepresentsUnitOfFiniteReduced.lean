@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FieldCase
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FieldCase
+
+@[expose] public section
 
 open Polynomial
 
@@ -40,7 +44,7 @@ theorem norm_surj_of_finite_reduced_involution : ∀ (R : Type) [CommRing R] [Fi
       rw [← hτf, ← map_mul, ← hv, v.inv_mul, map_one]
     calc τ (↑v⁻¹ : R) = τ ↑v⁻¹ * (f * ↑v⁻¹) := by rw [← hv, v.mul_inv, mul_one]
       _ = ↑v⁻¹ := by rw [← mul_assoc, h1, one_mul]
-  let tA : A := ⟨θ + τ θ, memA _ (by rw [map_add, hτ, add_comm])⟩
+  let tA : A := ⟨θ + τ θ, memA _ (by rw [map_add (f := _), hτ, add_comm])⟩
   let mA : A := ⟨θ * τ θ, memA _ (by rw [map_mul, hτ, mul_comm])⟩
   let fA : A := ⟨f, memA _ hτf⟩
   let wA : A := ⟨↑u⁻¹ * ↑u⁻¹, memA _ (by rw [map_mul, hτdi]; ring)⟩
@@ -62,7 +66,7 @@ theorem norm_surj_of_finite_reduced_involution : ∀ (R : Type) [CommRing R] [Fi
   have hab' := congrArg Subtype.val hab
   push_cast [tA, mA, fA] at hab'
   refine ⟨(a : R) + θ * b, ?_⟩
-  rw [map_add, map_mul, fixA a, fixA b]
+  rw [map_add (f := _), map_mul, fixA a, fixA b]
   linear_combination hab'
 
 end GlobalTheory

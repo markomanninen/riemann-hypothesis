@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagonalLagrangianInvariantForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralPointsIndicatorIsVacuum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagonalLagrangianInvariantForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralPointsIndicatorIsVacuum
+
+@[expose] public section
+
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun
 open scoped Matrix
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -21,42 +26,42 @@ attribute [local instance] GlobalTheory.AdelicUnitaryTop.locallyCompact_finiteAd
   GlobalTheory.AdelicUnitaryTop.secondCountable_finiteAdele GlobalTheory.AdelicUnitaryTop.t2Space_finiteAdeleRing_of_numberField
   GlobalTheory.DiagForm.measAf GlobalTheory.DiagForm.borelAf
 
-local instance measLoc (v : Pl F) : MeasurableSpace (ι → Fv F v) := borel _
-local instance borelLoc (v : Pl F) : BorelSpace (ι → Fv F v) := ⟨rfl⟩
+local instance measLoc (v : Pl (F := F)) : MeasurableSpace (ι → Fv F v) := borel _
+local instance borelLoc (v : Pl (F := F)) : BorelSpace (ι → Fv F v) := ⟨rfl⟩
 
-def prj (v : Pl F) (y : ι → Af F) : ι → Fv F v := fun i => evalV F v (y i)
+def prj (v : Pl (F := F)) (y : ι → Af F) : ι → Fv F v := fun i => evalV F v (y i)
 
-def sgl (v : Pl F) (t : ι → Fv F v) : ι → Af F := fun i => singleFin v (t i)
+def sgl (v : Pl (F := F)) (t : ι → Fv F v) : ι → Af F := fun i => singleFin v (t i)
 
 def intPts (F : Type) [Field F] [NumberField F] (ι : Type) : Set (ι → Af F) :=
   Set.univ.pi fun _ => {x : FiniteAdeleRing (𝓞 F) F | ∀ v : HeightOneSpectrum (𝓞 F), x v ∈ v.adicCompletionIntegers F}
 
-def away (v : Pl F) (ι : Type) : Set (ι → Af F) := (fun y => y - sgl v (prj v y)) ⁻¹' intPts F ι
+def away (v : Pl (F := F)) (ι : Type) : Set (ι → Af F) := (fun y => y - sgl v (prj v y)) ⁻¹' intPts F ι
 
 omit [Fintype ι] in
-theorem continuous_prj (v : Pl F) : Continuous (prj (ι := ι) v) :=
+theorem continuous_prj (v : Pl (F := F)) : Continuous (prj (ι := ι) v) :=
   continuous_pi fun i => (RestrictedProduct.continuous_eval v).comp (continuous_apply i)
 
 omit [Fintype ι] in
-theorem continuous_sgl (v : Pl F) : Continuous (sgl (ι := ι) v) :=
+theorem continuous_sgl (v : Pl (F := F)) : Continuous (sgl (ι := ι) v) :=
   continuous_pi fun i => (continuous_singleFin v).comp (continuous_apply i)
 
 omit [Fintype ι] in
-theorem prj_sgl_add (v : Pl F) (t : ι → Fv F v) (y : ι → Af F) : prj v (sgl v t + y) = t + prj v y := by
+theorem prj_sgl_add (v : Pl (F := F)) (t : ι → Fv F v) (y : ι → Af F) : prj v (sgl v t + y) = t + prj v y := by
   funext i
-  simp only [prj, sgl, Pi.add_apply, map_add, evalV_singleFin_self]
+  simp only [prj, sgl, Pi.add_apply, map_add (f := _), evalV_singleFin_self]
 
 omit [Fintype ι] in
-theorem sgl_add_mem_away (v : Pl F) (t : ι → Fv F v) (y : ι → Af F) : sgl v t + y ∈ away v ι ↔ y ∈ away v ι := by
+theorem sgl_add_mem_away (v : Pl (F := F)) (t : ι → Fv F v) (y : ι → Af F) : sgl v t + y ∈ away v ι ↔ y ∈ away v ι := by
   have e : sgl v t + y - sgl v (prj v (sgl v t + y)) = y - sgl v (prj v y) := by
     rw [prj_sgl_add]
     funext i
-    simp only [sgl, Pi.add_apply, Pi.sub_apply, map_add]
+    simp only [sgl, Pi.add_apply, Pi.sub_apply, map_add (f := _)]
     abel
   simp only [away, Set.mem_preimage, e]
 
 omit [Fintype ι] in
-theorem zero_mem_away (v : Pl F) : (0 : ι → Af F) ∈ away v ι := by
+theorem zero_mem_away (v : Pl (F := F)) : (0 : ι → Af F) ∈ away v ι := by
   intro i _ w
   have e : ((0 : ι → Af F) - sgl v (prj v 0) : ι → Af F) i = 0 := by
     show (0 : Af F) - singleFin v (evalV F v 0) = 0
@@ -68,23 +73,23 @@ theorem zero_mem_away (v : Pl F) : (0 : ι → Af F) ∈ away v ι := by
 omit [Fintype ι] in
 theorem isCompact_intPts : IsCompact (intPts F ι) := isCompact_univ_pi fun _ => (PI.IntAdCpctOpenWork.main F).2
 
-theorem isClopen_away (v : Pl F) : IsClopen (away v ι) :=
+theorem isClopen_away (v : Pl (F := F)) : IsClopen (away v ι) :=
   IsClopen.preimage ⟨isCompact_intPts.isClosed,
     isOpen_set_pi Set.finite_univ fun _ _ => (PI.IntAdCpctOpenWork.main F).1⟩
     (continuous_id.sub ((continuous_sgl v).comp (continuous_prj v)))
 
-omit [Fintype ι] in
 
-theorem exists_compact (v : Pl F) {K : Set (ι → Fv F v)} (hK : IsCompact K) :
+omit [Fintype ι] in
+theorem exists_compact (v : Pl (F := F)) {K : Set (ι → Fv F v)} (hK : IsCompact K) :
     ∃ C : Set (ι → Af F), IsCompact C ∧ prj v ⁻¹' K ∩ away v ι ⊆ C := by
   refine ⟨(fun p : (ι → Fv F v) × (ι → Af F) => sgl v p.1 + p.2) '' (K ×ˢ intPts F ι),
     (hK.prod isCompact_intPts).image (((continuous_sgl v).comp continuous_fst).add continuous_snd), ?_⟩
   rintro y ⟨h1, h2⟩
   exact ⟨(prj v y, y - sgl v (prj v y)), ⟨h1, h2⟩, add_sub_cancel _ _⟩
 
-def ind (v : Pl F) (ι : Type) : (ι → Af F) → ℂ := (away v ι).indicator 1
+def ind (v : Pl (F := F)) (ι : Type) : (ι → Af F) → ℂ := (away v ι).indicator 1
 
-theorem mul_ind_mem_SB (v : Pl F) {φ : (ι → Fv F v) → ℂ} (hφ : φ ∈ SB (ι → Fv F v)) :
+theorem mul_ind_mem_SB (v : Pl (F := F)) {φ : (ι → Fv F v) → ℂ} (hφ : φ ∈ SB (ι → Fv F v)) :
     (fun y => φ (prj v y) * ind v ι y) ∈ SB (ι → Af F) := by
   refine ⟨(hφ.1.comp_continuous (continuous_prj v)).mul
     (LocallyConstant.indicator (1 : LocallyConstant _ ℂ) (isClopen_away v)).isLocallyConstant, ?_⟩
@@ -95,37 +100,37 @@ theorem mul_ind_mem_SB (v : Pl F) {φ : (ι → Fv F v) → ℂ} (hφ : φ ∈ S
   by_contra h1
   exact right_ne_zero_of_mul h0 (Set.indicator_of_notMem h1 _)
 
-def muLoc (v : Pl F) (ι : Type) [Fintype ι] : Measure (ι → Fv F v) :=
+def muLoc (v : Pl (F := F)) (ι : Type) [Fintype ι] : Measure (ι → Fv F v) :=
   ((Measure.addHaar : Measure (Vf F ι)).restrict (away v ι)).map (prj v)
 
-theorem muLoc_apply (v : Pl F) {s : Set (ι → Fv F v)} (hs : MeasurableSet s) :
+theorem muLoc_apply (v : Pl (F := F)) {s : Set (ι → Fv F v)} (hs : MeasurableSet s) :
     muLoc v ι s = (Measure.addHaar : Measure (Vf F ι)) (prj v ⁻¹' s ∩ away v ι) := by
   rw [muLoc, Measure.map_apply (continuous_prj v).measurable hs,
     Measure.restrict_apply ((continuous_prj v).measurable hs)]
 
-theorem isAddHaarMeasure_muLoc (v : Pl F) : (muLoc v ι).IsAddHaarMeasure where
-  lt_top_of_isCompact K hK := by
-    obtain ⟨C, hC, h⟩ := exists_compact v hK
-    rw [muLoc_apply v hK.isClosed.measurableSet]
-    exact (measure_mono h).trans_lt hC.measure_lt_top
-  map_add_left_eq_self t := by
-    refine Measure.ext fun s hs => ?_
-    have hm : Measurable fun x : ι → Fv F v => t + x := (continuous_const.add continuous_id).measurable
-    rw [Measure.map_apply hm hs, muLoc_apply v hs, muLoc_apply v (hm hs),
-      ← measure_preimage_add _ (sgl v t) (prj v ⁻¹' s ∩ away v ι)]
-    congr 1
-    ext y
-    simp only [Set.mem_inter_iff, Set.mem_preimage, prj_sgl_add, sgl_add_mem_away]
-  open_pos U hU hne := by
-    obtain ⟨t, ht⟩ := hne
-    rw [muLoc_apply v hU.measurableSet]
-    refine ((hU.preimage (continuous_prj v)).inter (isClopen_away v).isOpen).measure_ne_zero _
-      ⟨sgl v t + 0, ?_, (sgl_add_mem_away v t 0).2 (zero_mem_away v)⟩
-    have e : prj v (0 : ι → Af F) = 0 := funext fun i => map_zero _
-    rw [Set.mem_preimage, prj_sgl_add, e, add_zero]
-    exact ht
+theorem isAddHaarMeasure_muLoc (v : Pl (F := F)) : (muLoc v ι).IsAddHaarMeasure :=
+  { lt_top_of_isCompact K hK := by
+      obtain ⟨C, hC, h⟩ := exists_compact v hK
+      rw [muLoc_apply v hK.isClosed.measurableSet]
+      exact (measure_mono h).trans_lt hC.measure_lt_top
+    toIsAddLeftInvariant := ⟨fun t => by
+      refine Measure.ext fun s hs => ?_
+      have hm : Measurable fun x : ι → Fv F v => t + x := (continuous_const.add continuous_id).measurable
+      rw [Measure.map_apply hm hs, muLoc_apply v hs, muLoc_apply v (hm hs),
+        ← measure_preimage_add _ (sgl v t) (prj v ⁻¹' s ∩ away v ι)]
+      congr 1
+      ext y
+      simp only [Set.mem_inter_iff, Set.mem_preimage, prj_sgl_add, sgl_add_mem_away]⟩
+    toIsOpenPosMeasure := ⟨fun U hU hne => by
+      obtain ⟨t, ht⟩ := hne
+      rw [muLoc_apply v hU.measurableSet]
+      refine ((hU.preimage (continuous_prj v)).inter (isClopen_away v).isOpen).measure_ne_zero _
+        ⟨sgl v t + 0, ?_, (sgl_add_mem_away v t 0).2 (zero_mem_away v)⟩
+      have e : prj v (0 : ι → Af F) = 0 := funext fun i => map_zero _
+      rw [Set.mem_preimage, prj_sgl_add, e, add_zero]
+      exact ht⟩ }
 
-theorem integral_muLoc (v : Pl F) {φ : (ι → Fv F v) → ℂ} (hφ : Continuous φ) :
+theorem integral_muLoc (v : Pl (F := F)) {φ : (ι → Fv F v) → ℂ} (hφ : Continuous φ) :
     ∫ x, φ x ∂(muLoc v ι) = ∫ y : Vf F ι, φ (prj v y) * ind v ι y ∂Measure.addHaar := by
   rw [muLoc, integral_map (continuous_prj v).measurable.aemeasurable hφ.aestronglyMeasurable,
     ← integral_indicator (isClopen_away v).isOpen.measurableSet]
@@ -133,19 +138,19 @@ theorem integral_muLoc (v : Pl F) {φ : (ι → Fv F v) → ℂ} (hφ : Continuo
   funext y
   by_cases hy : y ∈ away v ι <;> simp [ind, hy]
 
-theorem ind_diag (v : Pl F) (y : ι → Af F) : ind v (ι ⊕ ι) (Sum.elim y y) = ind v ι y := by
+theorem ind_diag (v : Pl (F := F)) (y : ι → Af F) : ind v (ι ⊕ ι) (Sum.elim y y) = ind v ι y := by
   have e : Sum.elim y y ∈ away v (ι ⊕ ι) ↔ y ∈ away v ι :=
     ⟨fun h i _ => h (Sum.inl i) trivial, fun h i _ => by cases i <;> exact h _ trivial⟩
   simp only [ind, Set.indicator_apply, e, Pi.one_apply]
 
 omit [Fintype ι] in
-theorem tens_pureA (v : Pl F) (φ : (ι → Fv F v) → ℂ) (f : (ι → mixedEmbedding.mixedSpace F) → ℂ) (g : (ι → Af F) → ℂ) :
+theorem tens_pureA (v : Pl (F := F)) (φ : (ι → Fv F v) → ℂ) (f : (ι → mixedEmbedding.mixedSpace F) → ℂ) (g : (ι → Af F) → ℂ) :
     tens (evFin F v) φ (pureA F f g) = pureA F f fun y => φ (prj v y) * g y := by
   funext x
   exact mul_left_comm _ _ _
 
 omit [Fintype ι] in
-theorem pureA_ind_add (v : Pl F) (f : (ι → mixedEmbedding.mixedSpace F) → ℂ) (x z : ι → AF F)
+theorem pureA_ind_add (v : Pl (F := F)) (f : (ι → mixedEmbedding.mixedSpace F) → ℂ) (x z : ι → AF F)
     (hz : At (evFin F v) z) : pureA F f (ind v ι) (x + z) = pureA F f (ind v ι) x := by
   have h := hz (1 - pairA F 0 (singleFin v 1)) (by
     rw [map_sub, map_one]
@@ -185,7 +190,7 @@ theorem exists_arch : ∃ f : SchwartzMap (ι ⊕ ι → mixedEmbedding.mixedSpa
   show lDiag F ι _ = 0
   rw [lDiag_pureA f hg, h, mul_zero]
 
-theorem exists_local (v : Pl F) : ∃ r₀ : (ι ⊕ ι → AF F) → ℂ, (∀ φ ∈ SB (ι ⊕ ι → Fv F v), Rest (evFin F v) φ r₀) ∧
+theorem exists_local (v : Pl (F := F)) : ∃ r₀ : (ι ⊕ ι → AF F) → ℂ, (∀ φ ∈ SB (ι ⊕ ι → Fv F v), Rest (evFin F v) φ r₀) ∧
     ∃ c₀ : ℂ, c₀ ≠ 0 ∧ ∃ μ : Measure (ι → Fv F v), μ.IsAddHaarMeasure ∧
       (∀ φ ∈ SB (ι ⊕ ι → Fv F v), lDiag F ι (tens (evFin F v) φ r₀) = c₀ * ∫ x, φ (Sum.elim x x) ∂μ) ∧
       ∃ φ₀ ∈ SB (ι → Fv F v), ∫ x, φ₀ x * φ₀ x ∂μ ≠ 0 := by
@@ -228,9 +233,9 @@ end GlobalTheory.DiagLocal
 
 theorem GlobalTheory.DiagLocal.exists_diag_form : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E)
     (a a' : ℕ) (G : Geo σ a a') (ψ : AddChar (AF F) ℂ)
-    (d' : Darboux (symp (cA σ) (-1) (incM F G.W.J) (incM F G.V'.J)) (Fin a' × Fin (a + a')))
-    (dd : Darboux (symp (cA σ) (-1) (incM F G.W.J) (dbl (incM F G.V'.J))) ((Fin a' × Fin (a + a')) ⊕ (Fin a' × Fin (a + a')))),
-    IsDblCoord (cA σ) (-1) (incM F G.W.J) (incM F G.V'.J) d' dd → ∀ v : Pl F,
+    (d' : Darboux (symp (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (-1) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) G.W.J) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) G.V'.J)) (Fin a' × Fin (a + a')))
+    (dd : Darboux (symp (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (-1) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) G.W.J) (dbl ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) G.V'.J))) ((Fin a' × Fin (a + a')) ⊕ (Fin a' × Fin (a + a')))),
+    IsDblCoord (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (-1) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) G.W.J) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) G.V'.J) d' dd → ∀ v : Pl (F := F),
     ∃ l ∈ (adeleClass F).adm ((Fin a' × Fin (a + a')) ⊕ (Fin a' × Fin (a + a'))),
       (∀ z : Matrix (Fin (a + a')) (Fin a') (AE F E), ∀ φ ∈ (adeleClass F).sp ((Fin a' × Fin (a + a')) ⊕ (Fin a' × Fin (a + a'))),
         l (dd.rho ψ (z * (diagCols (Fin a') : Matrix (Fin a' ⊕ Fin a') (Fin a') (AE F E))ᵀ) φ) = l φ) ∧

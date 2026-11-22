@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsPeriodHom
-import Development.AbelianVarietyTheory.Definitions.Divisors.FstTszeSec
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioCover
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisationPreimageValueRulesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisedOneFormEvaluationRulesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsPeriodHom
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FstTszeSec
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioCover
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisationPreimageValueRulesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisedOneFormEvaluationRulesStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -126,29 +130,30 @@ theorem fst_phi {B O : Type} [CommRing B] [Algebra ℂ B] [CommRing O] [Algebra 
 theorem snd_phi {B O : Type} [CommRing B] [Algebra ℂ B] [CommRing O] [Algebra ℂ O] (α : B →ₐ[ℂ] O) (ℓ : Ω[B⁄ℂ] →+ (Fin g → O))
     (h : ∀ (b : B) ω, ℓ (b • ω) = α b • ℓ ω) (c : TrivSqZeroExt B Ω[B⁄ℂ]) : (phi α ℓ h c).snd = ℓ c.snd := zero_add _
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 def Phi (U : A.left.affineOpens) (ℓ : Ω[Sec (str A) U.1⁄ℂ] →+ (Fin g → Hol (W u U.1)))
     (h : ∀ b ω, ℓ (b • ω) = valHom u U.1 b • ℓ ω) :
-    (diagExt ℂ (Sec (str A) U.1)).thick (affPt (str A) U) (affPt_w _ U) ⟶ (rl u).obj ((ch u).jet U) where
-  φ := { phi (valHom u U.1) ℓ h with
-    commutes' := fun c => TrivSqZeroExt.ext ((fst_phi _ ℓ h _).trans ((valHom u U.1).commutes c))
-      ((snd_phi _ ℓ h _).trans (map_zero ℓ)) }
-  φ₀ := (Ideal.Quotient.mk (RingHom.ker (TrivSqZeroExt.fstHom ℂ (Hol (W u U.1)) (Fin g → Hol (W u U.1))).toRingHom)).comp
-    ((TrivSqZeroExt.inlHom (Hol (W u U.1)) (Fin g → Hol (W u U.1))).comp (valHom u U.1 : Sec (str A) U.1 →+* Hol (W u U.1)))
-  comm c := Ideal.Quotient.eq.2 (by
-    change (TrivSqZeroExt.inl (valHom u U.1 c.fst) - phi (valHom u U.1) ℓ h c).fst = 0
-    rw [TrivSqZeroExt.fst_sub, fst_phi, TrivSqZeroExt.fst_inl, sub_self])
-  dp := by
-    letI := ((ch u).jet U).ratAlg
-    refine isDPMorphism_of_rat _ ((ch u).jet U).δ (phi (valHom u U.1) ℓ h) fun c hc => ?_
-    have h0 : c.fst = 0 := hc
-    change (phi (valHom u U.1) ℓ h c).fst = 0
-    rw [fst_phi, h0, map_zero]
-  pt := by
-    exact ((Category.assoc _ _ _).symm.trans (congrArg (· ≫ affPt (str A) U) (Cris.spMap_comp (valHom u U.1 : Sec (str A) U.1 →+* Hol (W u U.1))
-      ((Ideal.Quotient.mk (RingHom.ker (TrivSqZeroExt.fstHom ℂ (Hol (W u U.1)) (Fin g → Hol (W u U.1))).toRingHom)).comp
-        (TrivSqZeroExt.inlHom (Hol (W u U.1)) (Fin g → Hol (W u U.1))))).symm)).symm
+    (diagExt ℂ (Sec (str A) U.1)).thick (affPt (str A) U) (affPt_w _ U) ⟶ (rl u).obj ((ch u).jet U) :=
+  let T := (ch u).jet U
+  letI : Ring T.C := T.ring.toRing
+  let q := (Ideal.Quotient.mk T.J).comp T.ρ
+  { φ := { phi (valHom u U.1) ℓ h with
+      commutes' := fun c => TrivSqZeroExt.ext ((fst_phi _ ℓ h _).trans ((valHom u U.1).commutes c))
+        ((snd_phi _ ℓ h _).trans (map_zero ℓ)) }
+    φ₀ := q.comp (valHom u U.1).toRingHom
+    comm c := Ideal.Quotient.eq.2 (by
+      change (TrivSqZeroExt.inl (valHom u U.1 c.fst) - phi (valHom u U.1) ℓ h c).fst = 0
+      rw [TrivSqZeroExt.fst_sub, fst_phi, TrivSqZeroExt.fst_inl, sub_self])
+    dp := by
+      letI := T.ratAlg
+      refine isDPMorphism_of_rat _ T.δ (phi (valHom u U.1) ℓ h) fun c hc => ?_
+      have h0 : c.fst = 0 := hc
+      change (phi (valHom u U.1) ℓ h c).fst = 0
+      rw [fst_phi, h0, map_zero]
+    pt := by
+      change spMap (q.comp (valHom u U.1).toRingHom) ≫ affPt (str A) U = spMap q ≫ (rl u).x U
+      rw [Cris.spMap_comp, Category.assoc] <;> rfl }
 
 abbrev sec0 (U : A.left.affineOpens) : TU U ⟶ (diagExt ℂ (Sec (str A) U.1)).thick (affPt (str A) U) (affPt_w _ U) :=
   (diagExt ℂ (Sec (str A) U.1)).secHom (affPt_w _ U) (diagExt ℂ _).i fun _ => rfl
@@ -206,8 +211,8 @@ theorem jet_alg {B O : Type} [CommRing B] [Algebra ℂ B] [CommRing O] [Algebra 
   rw [snd_phi, TrivSqZeroExt.snd_sub (Charts.tszeSec d _), Pi.sub_apply, Charts.snd_tszeSec, hi] at z2
   exact z2.trans (sub_zero _)
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem jet_eq (f : Z1 (O (dp0 ℂ) (str A))) (U : A.left.affineOpens) (ℓ : Ω[Sec (str A) U.1⁄ℂ] →+ (Fin g → Hol (W u U.1)))
     (h : ∀ b ω, ℓ (b • ω) = valHom u U.1 b • ℓ ω)
     (hD : ∀ b a, ℓ (KaehlerDifferential.D ℂ _ b) a = dw a (valHom u U.1 b)) (G0 : Hol (W u U.1)) (Gj κ : TrivSqZeroExt (Hol (W u U.1)) (Fin g → Hol (W u U.1)))
@@ -231,11 +236,11 @@ theorem lift_fn (U : A.left.Opens) (ℓ : Ω[Sec (str A) U⁄ℂ] →+ (Fin g �
     rfl
   | zero =>
     rw [map_zero, map_zero, Pi.zero_apply, ← Hol.ev_apply p hp, map_zero]; rfl
-  | add x y _ _ hx hy => rw [map_add, map_add, Pi.add_apply, Hol.fn_add _ _ hp, hx, hy]; rfl
+  | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _), Pi.add_apply, Hol.fn_add _ _ hp, hx, hy]; rfl
   | smul b x _ hx => rw [h, e2, Pi.smul_apply, smul_eq_mul, Hol.fn_mul _ _ hp, hx, fn_valHom u U b hp]; rfl
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem main : ∀ (A : Over (Sp ℂ)) [GrpObj A] (g : ℕ) (L : LB A.left) (u : HolUnif A L g), ∀ (c : FirstDeRham (str A)) (q : u.Λ →+ ℂ) (per : u.Λ →+ Hol (fibFam u).V), (∀ l, per l = algebraMap ℂ _ (q l)) → IsPeriod (fibUnif u) c per → IsPer u.ex u.Λ (cmp1 (str A) c) q := by
   intro A _ g L u c q per hper hP
   obtain ⟨f, rfl⟩ := H1.mk_surjective _ c
@@ -261,9 +266,11 @@ theorem main : ∀ (A : Over (Sp ℂ)) [GrpObj A] (g : ℕ) (L : LB A.left) (u :
       have k1' : (G ((ch u).triv V) : Hol (W u V.1)) - Charts.sh hle (G ((ch u).triv U)) =
         evc u f (Charts.ptHom ((ch u).triv V) hle) - (ch u).cst V (per l) := k1
       have k2' : Charts.sh hle (eva u f U) + evc u f (Charts.ptHom ((ch u).triv V) hle) =
-        valHom u V.1 ((cmpZZ (str A) f).1.1 _ _ a) + eva u f V := k2
-      simp only [H, map_sub]
-      linear_combination k1' + k2'
+        valHom u V.1 ((cmpZZ (str A) f).1.1 _ _ a) + eva u f V := by
+          rw [cmpZZ_f (str A) f a]
+          exact k2
+      simp only [H, RingHom.map_sub]
+      linear_combination (norm := abel1) k1' + k2'
     have k4 := congrArg (fun x : Hol (W u V.1) => x.fn (pt z)) k3
     simp only [Hol.fn_add _ _ hz'] at k4
     rw [Charts.fn_cst _ _ _ hz', Charts.fn_sh hle _ hz', fn_valHom u _ _ hz', hper, Hol.fn_algebraMap (W := ⊤) _ (Opens.mem_top _)] at k4
@@ -271,7 +278,8 @@ theorem main : ∀ (A : Over (Sp ℂ)) [GrpObj A] (g : ℕ) (L : LB A.left) (u :
   have hd : ∀ U : A.left.affineOpens, ∀ z ∈ pre u.ex U.1, HasFDerivAt (fun z => (H U).fn (pt z))
       ((fderiv ℂ (H U).fn (pt z)).comp (ContinuousLinearMap.inr ℂ _ _)) z := fun U z hz =>
     ((H U).analytic (pt z) hz).differentiableAt.hasFDerivAt.comp z (hasFDerivAt_prodMk_right 0 z)
-  refine ⟨cmpZZ (str A) f, fun U z => (H U).fn (pt z), rfl, ⟨fun U z hz => (hd U z hz).differentiableAt.differentiableWithinAt,
+  refine ⟨cmpZZ (str A) f, fun U z => (H U).fn (pt z), (comparison_mk (str A) f).symm,
+    ⟨fun U z hz => (hd U z hz).differentiableAt.differentiableWithinAt,
     fun U V a z hz => ?_, fun U z hz => ?_⟩, fun U l z hz => ?_⟩
   · have := key 0 U V a z hz
     simpa using this

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomEqZeroOfIsConnOfIsEt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomEqZeroOfIsConnOfIsEt
+
+@[expose] public section
+
 open CategoryTheory GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup
 
 open TensorProduct Coalgebra Bialgebra WithConv
@@ -62,9 +67,8 @@ theorem GlobalTheory.PDivGroup.semiHom_factor_of_isConn_of_isEt :
       (q₁ ≫ i₁).app n (x.app n (TensorProduct.lid k _ (LinearMap.rTensor _ counit t))) := by
     intro t
     induction t with
-    | zero => simp
     | add u v hu hv =>
-      rw [map_add, map_add, hu, hv, map_add, map_add, ← map_add, ← map_add]
+      rw [map_add (f := _), map_add (f := _), hu, hv, map_add (f := _), map_add (f := _), ← map_add (f := _), ← map_add (f := _)]
     | tmul a₁ a₂ =>
       rw [TensorProduct.map_tmul, SemiBialgHom.lin_apply, SemiBialgHom.lin_apply,
         Algebra.TensorProduct.lift_tmul, LinearMap.rTensor_tmul, TensorProduct.lid_tmul]

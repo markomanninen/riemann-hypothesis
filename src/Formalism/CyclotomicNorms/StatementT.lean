@@ -1,4 +1,8 @@
-import Formalism.CyclotomicNorms.StatementI
+module
+
+public import Formalism.CyclotomicNorms.StatementI
+
+@[expose] public section
 
 open Polynomial
 

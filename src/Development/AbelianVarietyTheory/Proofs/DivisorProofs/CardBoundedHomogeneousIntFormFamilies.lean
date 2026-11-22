@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MonomialCountAndBinomialEstimates
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MonomialCountAndBinomialEstimates
+
+@[expose] public section
+
 open Filter Topology MvPolynomial GlobalTheory.HSAmp
 
 namespace GlobalTheory.HSAmp.Count
@@ -11,7 +16,7 @@ theorem abs_intCast_le_iff (c : ℤ) {R : ℝ} (hR : 0 ≤ R) :
 
 theorem coeff_sum_monomial {D q : ℕ} [Fintype {α : Fin (D + 1) →₀ ℕ // α.degree = q}]
     (g : {α : Fin (D + 1) →₀ ℕ // α.degree = q} → ℤ) (β : Fin (D + 1) →₀ ℕ) :
-    coeff β (∑ a, monomial a.1 (g a)) = if h : β.degree = q then g ⟨β, h⟩ else 0 := by
+    AddMonoidAlgebra.coeff (∑ a, monomial a.1 (g a)) β = if h : β.degree = q then g ⟨β, h⟩ else 0 := by
   classical
   rw [coeff_sum]
   simp only [coeff_monomial]
@@ -29,14 +34,14 @@ theorem coeff_sum_monomial {D q : ℕ} [Fintype {α : Fin (D + 1) →₀ ℕ // 
     exact h a.2
 
 theorem coeff_eq_zero_of_isHomogeneous {D q : ℕ} {P : MvPolynomial (Fin (D + 1)) ℤ}
-    (hP : P.IsHomogeneous q) {β : Fin (D + 1) →₀ ℕ} (hβ : β.degree ≠ q) : coeff β P = 0 := by
+    (hP : P.IsHomogeneous q) {β : Fin (D + 1) →₀ ℕ} (hβ : β.degree ≠ q) : AddMonoidAlgebra.coeff P β = 0 := by
   by_contra hc
   exact hβ (by rw [Finsupp.degree_eq_weight_one]; exact hP hc)
 
 end GlobalTheory.HSAmp.Count
 
 open GlobalTheory.HSAmp.Count in
-theorem GlobalTheory.HSAmp.card_bounded_forms : ∀ (D q δ : ℕ) (R : ℝ), 0 ≤ R → {T : Fin δ → MvPolynomial (Fin (D + 1)) ℤ | (∀ i, (T i).IsHomogeneous q) ∧ ∀ i α, |((coeff α (T i) : ℤ) : ℝ)| ≤ R}.Finite ∧ {T : Fin δ → MvPolynomial (Fin (D + 1)) ℤ | (∀ i, (T i).IsHomogeneous q) ∧ ∀ i α, |((coeff α (T i) : ℤ) : ℝ)| ≤ R}.ncard = (2 * ⌊R⌋₊ + 1) ^ (δ * (q + D).choose D) ∧ Nat.card {α : Fin (D + 1) →₀ ℕ // α.degree = q} = (q + D).choose D ∧ Module.finrank ℤ (homogeneousSubmodule (Fin (D + 1)) ℤ q) = (q + D).choose D ∧ Module.Finite ℤ (homogeneousSubmodule (Fin (D + 1)) ℤ q) := by
+theorem GlobalTheory.HSAmp.card_bounded_forms : ∀ (D q δ : ℕ) (R : ℝ), 0 ≤ R → {T : Fin δ → MvPolynomial (Fin (D + 1)) ℤ | (∀ i, (T i).IsHomogeneous q) ∧ ∀ i α, |((AddMonoidAlgebra.coeff (T i) α : ℤ) : ℝ)| ≤ R}.Finite ∧ {T : Fin δ → MvPolynomial (Fin (D + 1)) ℤ | (∀ i, (T i).IsHomogeneous q) ∧ ∀ i α, |((AddMonoidAlgebra.coeff (T i) α : ℤ) : ℝ)| ≤ R}.ncard = (2 * ⌊R⌋₊ + 1) ^ (δ * (q + D).choose D) ∧ Nat.card {α : Fin (D + 1) →₀ ℕ // α.degree = q} = (q + D).choose D ∧ Module.finrank ℤ (homogeneousSubmodule (Fin (D + 1)) ℤ q) = (q + D).choose D ∧ Module.Finite ℤ (homogeneousSubmodule (Fin (D + 1)) ℤ q) := by
   intro D q δ R hR
   classical
   have hAcard : Nat.card {α : Fin (D + 1) →₀ ℕ // α.degree = q} = (q + D).choose D := by
@@ -45,10 +50,10 @@ theorem GlobalTheory.HSAmp.card_bounded_forms : ∀ (D q δ : ℕ) (R : ℝ), 0 
   haveI : Finite {α : Fin (D + 1) →₀ ℕ // α.degree = q} := (Finsupp.finite_of_degree_eq q).to_subtype
   letI : Fintype {α : Fin (D + 1) →₀ ℕ // α.degree = q} := Fintype.ofFinite _
   set S := {T : Fin δ → MvPolynomial (Fin (D + 1)) ℤ | (∀ i, (T i).IsHomogeneous q) ∧
-    ∀ i α, |((coeff α (T i) : ℤ) : ℝ)| ≤ R} with hS
+    ∀ i α, |((AddMonoidAlgebra.coeff (T i) α : ℤ) : ℝ)| ≤ R} with hS
   let F : S → (Fin δ → {α : Fin (D + 1) →₀ ℕ // α.degree = q} →
       Finset.Icc (-(⌊R⌋₊ : ℤ)) (⌊R⌋₊ : ℤ)) :=
-    fun T i a => ⟨coeff a.1 (T.1 i), (abs_intCast_le_iff _ hR).1 (T.2.2 i a.1)⟩
+    fun T i a => ⟨AddMonoidAlgebra.coeff (T.1 i) a.1, (abs_intCast_le_iff _ hR).1 (T.2.2 i a.1)⟩
   have hF : Function.Bijective F := by
     constructor
     · rintro ⟨T, hT⟩ ⟨T', hT'⟩ h
@@ -68,7 +73,8 @@ theorem GlobalTheory.HSAmp.card_bounded_forms : ∀ (D q δ : ℕ) (R : ℝ), 0 
         · simpa using hR
       · funext i a
         apply Subtype.ext
-        simp [F, coeff_sum_monomial, a.2]
+        change AddMonoidAlgebra.coeff (∑ b, monomial b.1 (f i b : ℤ)) a.1 = (f i a : ℤ)
+        rw [coeff_sum_monomial, dif_pos a.2]
   let e := Equiv.ofBijective F hF
   have hfin : S.Finite := Set.finite_coe_iff.1 (Finite.of_equiv _ e.symm)
   refine ⟨hfin, ?_, hAcard, ?_, ?_⟩

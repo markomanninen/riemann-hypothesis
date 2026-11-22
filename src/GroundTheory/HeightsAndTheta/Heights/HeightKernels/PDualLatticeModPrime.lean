@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualLatticeModPrime
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLatticeIndex
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualLatticeModPrime
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLatticeIndex
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -86,8 +91,8 @@ theorem dual_le_span (F : HermLattice K i) :
 
 end DualLatticeModPrimeAlt
 
-open DualLatticeModPrimeAlt in
 
+open DualLatticeModPrimeAlt in
 theorem DualLatticeModPrime.proof : DualLatticeModPrime.Statement := by
   intro K _ _ i F 𝔭 h𝔭
   classical
@@ -129,7 +134,7 @@ theorem DualLatticeModPrime.proof : DualLatticeModPrime.Statement := by
   have incl : ∀ φ : dualLattice F, (φ : Fin i → K) ∈ DA := fun φ => Submodule.subset_span φ.2
   let ι : dualLattice F →+ DA := AddMonoidHom.mk' (fun φ => ⟨φ, incl φ⟩) fun _ _ => rfl
   let τ : DA →+ (Fin i → 𝓞 K ⧸ 𝔭) := AddMonoidHom.mk' (fun x l => ρ (b.repr x (g l)))
-    fun x y => by funext l; simp [map_add]
+    fun x y => by funext l; simp [map_add (f := _)]
   have hsmul : ∀ (μ : 𝓞 K) (x : DA), ((algebraMap (𝓞 K) (locAt 𝔭) μ • x : DA) : Fin i → K) =
       algebraMap (𝓞 K) K μ • (x : Fin i → K) := fun μ x => by
     rw [Submodule.coe_smul, algebraMap_smul, algebraMap_smul]
@@ -140,7 +145,8 @@ theorem DualLatticeModPrime.proof : DualLatticeModPrime.Statement := by
     let x : DA := ∑ j, algebraMap (𝓞 K) (locAt 𝔭) (a j) • b j
     have hx : ∀ j, b.repr x j = algebraMap (𝓞 K) (locAt 𝔭) (a j) := by
       intro j
-      simp only [x, map_sum, map_smul, Module.Basis.repr_self, Finsupp.coe_finsetSum, Finset.sum_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [x, map_sum, map_smul, Module.Basis.repr_self, Finsupp.coe_finsetSum, Finset.sum_apply,
         Finsupp.smul_apply, Finsupp.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero,
         Finset.sum_ite_eq', Finset.mem_univ, if_true]
     obtain ⟨s, hs, hsx⟩ := exists_smul_mem 𝔭 D x.2

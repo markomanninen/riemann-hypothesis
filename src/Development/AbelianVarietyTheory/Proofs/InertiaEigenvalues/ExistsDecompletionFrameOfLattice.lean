@@ -1,27 +1,31 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeAlgebraMapOC
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TraceAlmostOntoOfLevels
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OcTensorCoeffActionMatrixMultiplicativeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DecompletionFrameOfMatrixFormStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFontaineThetaFrobeniusInverseShiftStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.KapIdemMemInCStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OcTensorCoeffBasisCoordsMemCyclotomicLevelOfPoweStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormLtRho1OfMemIdealPowerStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IoEquivariantStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RankCountStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicLevelSubgroupMemWachSubgroupsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPrimeEqMulPrimitiveRootSubOnePowStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAinfTensorLatticeSpecialisationStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SemilinearIteratePrimePowSubMemFiltrationStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GammaActionSubMemSpanPowSuccStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsContinuousGaloisLatticeMatrixIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLatticeSandwichAinfStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCyclotomicTowerLevelGeneratorPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormPrimitiveRootPrimePowSubOnePadicComplexStatement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeAlgebraMapOC
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TraceAlmostOntoOfLevels
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OcTensorCoeffActionMatrixMultiplicativeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DecompletionFrameOfMatrixFormStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFontaineThetaFrobeniusInverseShiftStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.KapIdemMemInCStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OcTensorCoeffBasisCoordsMemCyclotomicLevelOfPoweStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormLtRho1OfMemIdealPowerStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IoEquivariantStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RankCountStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicLevelSubgroupMemWachSubgroupsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPrimeEqMulPrimitiveRootSubOnePowStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAinfTensorLatticeSpecialisationStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SemilinearIteratePrimePowSubMemFiltrationStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GammaActionSubMemSpanPowSuccStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsContinuousGaloisLatticeMatrixIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLatticeSandwichAinfStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCyclotomicTowerLevelGeneratorPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormPrimitiveRootPrimePowSubOnePadicComplexStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem exists_lift (x : S.RA) (M0 h0 : ℕ) (hinj : Function.Injective S.inclR)
   choose z hz using fun y : ↥N => LinearMap.mem_range.1 (h1 y y.2)
   refine ⟨AddMonoidHom.mk' z (fun y y' => hi ?_), fun a y => hi ?_, fun g u hu y y' hy => hi ?_,
     fun t => ?_⟩
-  · rw [map_add, hz, hz, hz, Submodule.coe_add, map_add, smul_add]
+  · rw [map_add (f := _), hz, hz, hz, Submodule.coe_add, map_add (f := _), smul_add]
   · rw [AddMonoidHom.mk'_apply, TWincl_smul, hz, hz, Submodule.coe_smul,
       jD_smulA, smul_comm]
   · rw [AddMonoidHom.mk'_apply, TWincl_smul, TWincl_smul,
@@ -80,7 +84,7 @@ theorem exists_lift (x : S.RA) (M0 h0 : ℕ) (hinj : Function.Injective S.inclR)
         intro r
         obtain ⟨w, hw, e⟩ := ih r
         obtain ⟨w', hw', e'⟩ := ih' r
-        exact ⟨w + w', add_mem hw hw', by rw [map_add, e, e', smul_add, smul_add]⟩
+        exact ⟨w + w', add_mem hw hw', by rw [map_add (f := _), e, e', smul_add, smul_add]⟩
       | smul c v _ ih =>
         intro r
         obtain ⟨w, hw, e⟩ := ih (r * algebraMap S.O S.RA c)
@@ -124,7 +128,7 @@ theorem γD_pow_sub (l : ℕ) [Fact l.Prime] (g : S.W.Gam)
 
 theorem one_add_X : 1 + S.W.X = (1 + letπ) ^ (S.PD.p ^ (S.W.s - 1)) := by
   have h1 : S.W.φA (1 + letπ) = (1 + letπ) ^ S.PD.p := by
-    rw [map_add, map_one, S.W.φA_π]
+    rw [map_add (f := _), map_one, S.W.φA_π]
     funext i
     simp [letπ, LocWach.q, S.W.q₀_def]
   have h2 : ∀ k, (S.W.φA ^ k) (1 + letπ) = (1 + letπ) ^ (S.PD.p ^ k) := by
@@ -132,7 +136,7 @@ theorem one_add_X : 1 + S.W.X = (1 + letπ) ^ (S.PD.p ^ (S.W.s - 1)) := by
     induction k with
     | zero => simp
     | succ k ih => rw [pow_succ, AlgHom.mul_apply, h1, map_pow, ih, ← pow_mul, pow_succ]
-  rw [← h2, map_add, map_one]
+  rw [← h2, map_add (f := _), map_one]
   rfl
 
 theorem γA_letE (g : S.W.Gam) (i : ZMod S.n) : S.W.γA g (letE i) = letE i := by
@@ -180,7 +184,8 @@ theorem assemble (act : GQ l →* (PadicComplex l ≃+* PadicComplex l)) (χ : G
   have hA : ∀ a y, Ψ (α a • y) = (A a).mulVec (Ψ y) := fun a y => by rw [hΨ, hα]
   have core : ∀ y, Ψ y = D.mulVec (co y) := by
     intro y
-    conv_lhs => rw [← b.sum_repr y, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← b.sum_repr y, map_sum]
     have h1 : D.mulVec (co y) = ∑ j, co y j • Ψ (y₀ j) := by
       funext i
       simp [D, Matrix.mulVec, dotProduct, mul_comm]
@@ -247,7 +252,7 @@ theorem assemble (act : GQ l →* (PadicComplex l ≃+* PadicComplex l)) (χ : G
         refine Submodule.smul_induction_on this (fun r hr n _ => ?_) (fun x y hx hy => ?_)
         · rw [map_smul, Finsupp.smul_apply, smul_eq_mul]
           exact J.mul_mem_right _ hr
-        · rw [map_add, Finsupp.add_apply]
+        · rw [map_add (f := _), Finsupp.add_apply]
           exact J.add_mem hx hy
       · rw [← core, map_sub, hy', ← hcol]
         rfl)
@@ -323,9 +328,9 @@ theorem one_add_pow_sub (LL : FinExt l) (w : Ainf l) (k : ℕ) :
 
 end Roots
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 2000000 in
-
 theorem exists_decompletion : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW), ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let S := sit D.loc HW l (D.locA l) K s LL h; let E : S.Comparison₂ := ((F l).E K s LL h).tie; ∀ (T : LocLat S.G S.Qp S.LL S.O) (M0 h0 : ℕ), HypW S E T M0 h0 → ∀ (d : ℕ) (M : GQ l → Matrix (Fin d) (Fin d) (PadicComplex l)) (A : ↥(OL LL) → Matrix (Fin d) (Fin d) (PadicComplex l)), IsMat K LL T M A → ∃ (Dm : Matrix (Fin d) (Fin d) (PadicComplex l)) (U : GQ l → Matrix (Fin d) (Fin d) (PadicComplex l)) (g : GQ l), IsDec (D.locA l).actC (D.loc l).χQ K (mN l s (M0 + h0)) M Dm U g ∧ ∀ a i j, (Dm⁻¹ * A a * Dm) i j ∈ intC (Ks K (mN l s (M0 + h0))) := by
   intro D HW F l _ K s LL h S E T M0 h0 hW d M A hM
   obtain ⟨-, -, N, hN⟩ := hW
@@ -364,7 +369,7 @@ theorem exists_decompletion : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.l
     have h1 := congrArg E.io (one_add_X S)
     have h2 : S.PD.p = l := (D.loc l).PD_p K
     have h3 : S.W.s = s := (HW l).W_s K s LL h
-    rw [map_add, map_one, map_pow, map_add, map_one, E.io_π, h2, h3] at h1
+    rw [map_add (f := _), map_one, map_pow, map_add (f := _), map_one, E.io_π, h2, h3] at h1
     exact add_left_cancel (h1.trans (one_add_pow_sub LL _ _))
   have hθw : θ w = AI.ζ (1 + n) - 1 := by
     rw [map_sub, map_one, map_pow, hθ.2, show s + n = (1 + n) + (s - 1) by omega, zeta_pow]

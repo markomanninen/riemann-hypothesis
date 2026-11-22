@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.HdimEqZeroOfSubsingleton
-import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.HigherDirectImagesVanishOfIsAffineHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.HdimEqZeroOfSubsingleton
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.HigherDirectImagesVanishOfIsAffineHom
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -60,8 +64,8 @@ section Pull
 
 variable {X' : Scheme.{0}} {s : X ⟶ Sp k} {s' : X' ⟶ Sp k} {f : X' ⟶ X}
 
-variable (s s' f) in
 
+variable (s s' f) in
 def appSec (U : X.Opens) : Sec s U →+* Sec s' (f ⁻¹ᵁ U) := (f.app U).hom
 
 omit [CommRing k] in
@@ -117,8 +121,8 @@ section Pull3
 
 variable {X' : Scheme.{0}} {s : X ⟶ Sp k} {s' : X' ⟶ Sp k} {f : X' ⟶ X}
 
-variable (s) in
 
+variable (s) in
 def toOmega (j : ℕ) : formsPre s j ⟶
     (SheafOfModules.forget _ ⋙ PresheafOfModules.restrictScalars (𝟙 X.ringCatSheaf.obj)).obj
       (Omega s j) :=
@@ -228,16 +232,5 @@ def hodgeZeroZeroEquiv : letI := algΓ s; hodgeH s 0 0 ≃ₗ[k] Γ(X, ⊤) :=
   (cohOn.mapIso k ⊤ 0 (omegaZeroIso s)).trans ((coh.zeroUnitEquiv X).restrictScalars k)
 
 end Zero2
-
-example (s : X ⟶ Sp k) : Module k (hodgeH s 2 1) := inferInstance
-
-example : Nontrivial (hodgeH (𝟙 (Sp ℤ)) 0 0) :=
-  letI : Nontrivial Γ(Sp ℤ, ⊤) :=
-    (Scheme.ΓSpecIso (CommRingCat.of ℤ)).commRingCatIsoToRingEquiv.toEquiv.nontrivial
-  (hodgeZeroZeroEquiv (𝟙 (Sp ℤ))).toEquiv.nontrivial
-
-example {X' : Scheme.{0}} (s : X ⟶ Sp k) (f : X' ⟶ X) (r : k) (x : hodgeH s 1 1) :
-    hodgePull (s' := f ≫ s) rfl 1 1 (r • x) = r • hodgePull (s' := f ≫ s) rfl 1 1 x :=
-  map_smul _ r x
 
 end GlobalTheory.HodgeCoh

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.PartCPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.PartCPf
+
+@[expose] public section
 
 noncomputable section
 open Polynomial LateralTheory.E.PartDiagCut

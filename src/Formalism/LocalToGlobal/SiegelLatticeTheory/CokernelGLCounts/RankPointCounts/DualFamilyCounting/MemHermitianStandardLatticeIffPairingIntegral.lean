@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NOfibAlg
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LeadingMinorIntegrality
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NOfibAlg
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LeadingMinorIntegrality
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,9 +46,9 @@ theorem coef_span_e (y : (VS D).V) (hy : y ∈ latSpanS (fun a => aaD D a) X.eX)
   | zero => exact ⟨fun a => by rw [map_zero]; exact Submodule.zero_mem (aaD D a : Submodule (𝓞 D.host.E) D.host.E), fun a => by simp, by simpa using pW_smul X 0 0⟩
   | add z w _ _ hz hw =>
     refine ⟨fun a => ?_, fun a => ?_, ?_⟩
-    · rw [map_add]
+    · rw [map_add (f := _)]
       exact Submodule.add_mem (aaD D a : Submodule (𝓞 D.host.E) D.host.E) (hz.1 a) (hw.1 a)
-    · rw [map_add, hz.2.1 a, hw.2.1 a, add_zero]
+    · rw [map_add (f := _), hz.2.1 a, hw.2.1 a, add_zero]
     · rw [pW_add, hz.2.2, hw.2.2, add_zero]
   | smul o z _ hz =>
     rw [← algebraMap_smul D.host.E o z]
@@ -76,8 +80,8 @@ theorem coef_span_f (y : (VS D).V) (hy : y ∈ latSpanS (fun a => (aaD D a)⁻¹
   | zero => exact ⟨fun a => by simp, fun a => by rw [map_zero]; exact Submodule.zero_mem (((aaD D a)⁻¹ : FI) : Submodule (𝓞 D.host.E) D.host.E), by simpa using pW_smul X 0 0⟩
   | add z w _ _ hz hw =>
     refine ⟨fun a => ?_, fun a => ?_, ?_⟩
-    · rw [map_add, hz.1 a, hw.1 a, add_zero]
-    · rw [map_add]
+    · rw [map_add (f := _), hz.1 a, hw.1 a, add_zero]
+    · rw [map_add (f := _)]
       exact Submodule.add_mem (((aaD D a)⁻¹ : FI) : Submodule (𝓞 D.host.E) D.host.E) (hz.2.1 a) (hw.2.1 a)
     · rw [pW_add, hz.2.2, hw.2.2, add_zero]
   | smul o z _ hz =>
@@ -100,9 +104,9 @@ theorem mem_hermitianStandardLattice_iff_pairing_integral (x : (VS D).V) : x ∈
     have hwp := X.Lb_perp w hw
     have hwW : InW X w := fun c => hwp c
     refine ⟨fun a => ?_, fun a => ?_, ?_⟩
-    · rw [map_add, map_add, (hwp a).2, hf1 a, add_zero, add_zero]
+    · rw [map_add (f := _), map_add (f := _), (hwp a).2, hf1 a, add_zero, add_zero]
       exact he1 a
-    · rw [map_add, map_add, (hwp a).1, he2 a, zero_add, zero_add]
+    · rw [map_add (f := _), map_add (f := _), (hwp a).1, he2 a, zero_add, zero_add]
       exact hf2 a
     · rw [pW_add, pW_add, he3, hf3, pW_of_inW X hwW, zero_add, add_zero]
       exact hw

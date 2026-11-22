@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.ActAllMemIntSpanAtG
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.ActAllMemIntSpanAtG
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -15,7 +19,8 @@ theorem subAll_comp {K : Type} [Field K] {ι : Type} {n : ℕ} (g h : ι → Mat
     apply MvPolynomial.algHom_ext
     intro v
     obtain ⟨τ, a, c⟩ := v
-    simp only [AlgHom.comp_apply, subAll, aeval_X, map_sum, map_mul, aeval_C, MvPolynomial.algebraMap_eq,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.comp_apply, subAll, aeval_X, map_sum, map_mul, aeval_C, MvPolynomial.algebraMap_eq,
       Matrix.mul_apply, Finset.mul_sum, Finset.sum_mul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl (fun d _ => Finset.sum_congr rfl (fun b _ => ?_))

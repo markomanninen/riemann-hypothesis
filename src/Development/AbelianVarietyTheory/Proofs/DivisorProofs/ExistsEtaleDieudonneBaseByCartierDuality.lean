@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEtDualOfConn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEtDualOfConn
+
+@[expose] public section
+
 open CategoryTheory GlobalTheory.PDiv GlobalTheory.PDivGroup
 
 theorem GlobalTheory.dieuBase_isEt_of_isConn :

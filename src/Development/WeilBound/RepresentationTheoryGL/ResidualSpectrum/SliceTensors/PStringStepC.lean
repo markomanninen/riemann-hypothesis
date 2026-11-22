@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PStringStepB
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
-import GroundTheory.PAdicHodge.AInfGalois
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PStringStepB
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import GroundTheory.PAdicHodge.AInfGalois
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ open scoped ComplexConjugate
 
 namespace PositivityTheory.Rg.Rs.StrStepC
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 def twL {a₁ a₂ d₁ d₂ : ℕ} (π₁ : CuspSub E a₁) (π₂ : CuspSub E a₂) (x : Fin d₁ → ℂ) (y : Fin d₂ → ℂ) :
     List (Σ a, CG E a) :=
@@ -21,7 +25,7 @@ theorem map_fsum {α β ι : Type} (f : α → β) (s : Finset ι) (g : ι → M
     (∑ i ∈ s, g i).map f = ∑ i ∈ s, (g i).map f :=
   map_sum (Multiset.mapAddMonoidHom f) g s
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem absNorm_ne_zero (w : HeightOneSpectrum (𝓞 E)) : ((Ideal.absNorm w.asIdeal : ℕ) : ℂ) ≠ 0 := by
   have := NumberField.HeightOneSpectrum.one_lt_absNorm w
   exact_mod_cast (by omega : Ideal.absNorm w.asIdeal ≠ 0)
@@ -37,8 +41,8 @@ theorem hinv_absC (w : HeightOneSpectrum (𝓞 E)) (x : ℂ) :
   change (conj (((Ideal.absNorm w.asIdeal : ℕ) : ℂ) ^ (-x)))⁻¹ = _
   rw [← h1, ← Complex.cpow_neg, map_neg, neg_neg]
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem satTw_string (w : HeightOneSpectrum (𝓞 E)) (z : ℂ) (C B₀ : Multiset ℂˣ) {d : ℕ} (e : Fin d → ℝ)
     (h : C.map (fun b : ℂˣ => (b : ℂ)) = ∑ i, satTw w (e i : ℂ) B₀) :
     satTw w z C = ∑ i, B₀.map fun b : ℂˣ => (b : ℂ) * ((Ideal.absNorm w.asIdeal : ℕ) : ℂ) ^ (-(z + (e i : ℂ))) := by
@@ -120,7 +124,7 @@ theorem perm_of (hR : GlobalTheory.Published.JacquetShalikaRigidity) {a₁ a₂ 
   have hT : (∑ i, B₁.map (· * (GlobalTheory.CuspRep.Model.absC E (x i)).val w)) +
       ∑ j, B₂.map (· * (GlobalTheory.CuspRep.Model.absC E (y j)).val w) = BV := by
     apply Multiset.map_injective (f := fun b : ℂˣ => (b : ℂ)) Units.val_injective
-    rw [e, Multiset.map_add, map_fsum, map_fsum]
+    rw [e, Multiset.map_add (f := _), map_fsum, map_fsum]
     congr 1 <;> refine Finset.sum_congr rfl fun i _ => ?_ <;> rw [Multiset.map_map] <;>
       refine Multiset.map_congr rfl fun b _ => ?_ <;> simp [StrStepB.absC_val]
   have hm : ∀ (C : Multiset ℂˣ) (u : ℂˣ), C.map (fun b => (star b)⁻¹) = C →
@@ -133,7 +137,7 @@ theorem perm_of (hR : GlobalTheory.Published.JacquetShalikaRigidity) {a₁ a₂ 
   calc _ = BV := hT
     _ = BV.map (fun b => (star b)⁻¹) := hV.symm
     _ = _ := by
-      rw [← hT, Multiset.map_add, map_fsum, map_fsum]
+      rw [← hT, Multiset.map_add (f := _), map_fsum, map_fsum]
       simp only [hm B₁ _ hh₁, hm B₂ _ hh₂, hinv_absC]
 
 end PositivityTheory.Rg.Rs.StrStepC

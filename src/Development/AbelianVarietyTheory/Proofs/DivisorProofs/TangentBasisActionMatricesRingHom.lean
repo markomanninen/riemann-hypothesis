@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigRank
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsBlockMetricDiagForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigRank
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsBlockMetricDiagForm
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -41,13 +46,14 @@ theorem actMat_ringHom : ∀ {E : Type} [Field E] [NumberField E] [IsCMField E] 
   · intro a b
     ext i j
     have e : ∑ k, A (a + b) i k • T k = ∑ k, (A a + A b) i k • T k := by
-      rw [← hact, map_add, LinearMap.add_apply, hact, hact]
+      rw [← hact, map_add (f := _), LinearMap.add_apply, hact, hact]
       simp [Matrix.add_apply, add_smul, Finset.sum_add_distrib]
     exact congrFun (uniq _ _ e) j
   · intro a b
     ext i j
     have e : ∑ k, A (a * b) i k • T k = ∑ k, (A a * A b) i k • T k := by
-      rw [← hact, mul_comm a b, map_mul, Module.End.mul_apply, hact, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hact, mul_comm a b, map_mul, Module.End.mul_apply, hact, map_sum]
       simp only [map_smul, hact, Finset.smul_sum, smul_smul, Matrix.mul_apply, Finset.sum_smul]
       exact Finset.sum_comm
     exact congrFun (uniq _ _ e) j

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
+
+@[expose] public section
 
 noncomputable section
 open UpperTheory.V.ZK
@@ -43,7 +47,8 @@ lemma bd_cm {G H : Type} [Group G] [Group H] (f : G →* H) (m : ℕ) (z : Ch A 
     bd A H m (cm A f (m + 1) z) = cm A f m (bd A G m z) := by
   have : (bd A H m).comp (cm A f (m + 1)) = (cm A f m).comp (bd A G m) := by
     refine Finsupp.lhom_ext fun g a => ?_
-    simp only [LinearMap.comp_apply, cm_single, bd_single, map_add, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.comp_apply, cm_single, bd_single, map_add (f := _), map_sum, map_smul]
     simp only [contract_map]
   exact LinearMap.congr_fun this z
 
@@ -81,7 +86,8 @@ lemma cm_prism {G H : Type} [Group G] [Group H] (f : G →* H) (k : G) (m : ℕ)
     cm A f (m + 1) (prism A k m z) = prism A (f k) m (cm A f m z) := by
   have : (cm A f (m + 1)).comp (prism A k m) = (prism A (f k) m).comp (cm A f m) := by
     refine Finsupp.lhom_ext fun g a => ?_
-    simp only [LinearMap.comp_apply, cm_single, prism_single, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.comp_apply, cm_single, prism_single, map_sum, map_smul]
     simp only [insert_map, conj_map]
   exact LinearMap.congr_fun this z
 

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscBDefs
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscBDefs
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -28,7 +32,7 @@ theorem evT_eq_blockPoint_of_mh (sg : K →+* ℂ) (q : KTp K d.D d.N) (hq : q �
     exact Prod.ext (Fin.succ_injective _ h.1) h.2
   have hvars : (q.vars : Set (TVar d.D d.N)) ⊆ Set.range φ := by
     intro v hv
-    rw [Finset.mem_coe, MvPolynomial.mem_vars] at hv
+    rw [Finset.mem_coe, MvPolynomial.mem_vars_iff_mem_support] at hv
     obtain ⟨s, hs, hsv⟩ := hv
     have h0 : v.1 ≠ 0 := by
       intro h0
@@ -63,7 +67,7 @@ theorem evT_eq_blockPoint_of_mh (sg : K →+* ℂ) (q : KTp K d.D d.N) (hq : q �
     show _ = m b.succ
     rw [← hqm _ hsq b.succ]
     refine Finset.sum_congr rfl fun j _ => ?_
-    exact (Finsupp.mapDomain_apply hφi s (b, j)).symm
+    exact (Finsupp.mapDomain_apply_of_injective hφi s (b, j)).symm
   exact ⟨g, hg0, hgm, heval⟩
 
 theorem logInt_evT_of_mh (sg : K →+* ℂ) (q : KTp K d.D d.N) (m : Fin (d.D + 1) → ℕ)

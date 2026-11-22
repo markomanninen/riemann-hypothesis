@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEqSumBallFn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEqSumBallFn
+
+@[expose] public section
+
 open ValuativeRel OnePoint GlobalTheory.LocGL.ProjLine
 
 namespace GlobalTheory.LocGL.ProjLine
@@ -78,7 +83,7 @@ theorem ballFn_sub_mem_of_radial (k : Type) [Field k] [ValuativeRel k] [Topologi
   convert S.sub_mem hG hG' using 1
   funext x
   induction x using OnePoint.rec with
-  | infty => simp
+  | infty => simp [ballFn]
   | coe x =>
     show (F (0 : k) - F b) * (ballFn 0 ϖ x - ballFn 1 ϖ x) = g x - g (x - 1)
     rw [ballFn_coe, ballFn_coe, hϖ, sub_zero]

@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.RestBlockSubstIsMultiHomogeneous
+module
+
+public import ReciprocityTheory.SemistableReduction.RestBlockSubstIsMultiHomogeneous
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,7 +89,7 @@ theorem neg_log_norm_coeff_le_finitePlaces {K : Type*} [Field K] [NumberField K]
   have hpos : ∀ w : FinitePlace K, 0 < w (f.coeff s) := fun w => NumberField.FinitePlace.pos_iff.mpr hc
   have hU : (⋃ t ∈ f.support, Function.mulSupport (fun w : FinitePlace K => w (f.coeff t))).Finite :=
     Set.Finite.biUnion f.support.finite_toSet
-      (fun t ht => NumberField.FinitePlace.mulSupport_finite (MvPolynomial.mem_support_iff.mp ht))
+      (fun t ht => NumberField.FinitePlace.hasFiniteMulSupport (MvPolynomial.mem_support_iff.mp ht))
   set T := hU.toFinset with hT
   have hsubG : Function.support (fun w : FinitePlace K => Real.log (gaussAbs w f)) ⊆ (T : Set _) := by
     intro w hw

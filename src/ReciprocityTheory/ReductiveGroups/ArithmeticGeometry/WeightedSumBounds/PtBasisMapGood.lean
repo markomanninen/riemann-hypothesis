@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PtRescaleGood
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PtRescaleGood
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.Sh
 
@@ -62,7 +66,18 @@ theorem ptBasisMap_lin (G : LogFGL v d) {γ : Fin d → Fin d → PowerSeries C}
     intro x hx c
     obtain ⟨a, rfl⟩ : ∃ a, ptOn a (γ a) = x := by simpa [List.mem_ofFn] using hx
     exact (ptOn_good a (hγ a) c).1
-  rw [ptBasisMap, ptSumL_lin G _ hc b s, List.map_ofFn, List.sum_ofFn]
+  have hsum (l : List (Fin d → MvPowerSeries (Fin d) C))
+      (h : ∀ x ∈ l, ∀ c, constantCoeff (x c) = 0) :
+      coeff (Finsupp.single s 1) (ptSumL G l b) =
+        (l.map fun x => coeff (Finsupp.single s 1) (x b)).sum := by
+    induction l with
+    | nil => simp [ptSumL]
+    | cons x l ih =>
+      have hl : ∀ y ∈ l, ∀ c, constantCoeff (y c) = 0 :=
+        fun y hy => h y (List.mem_cons_of_mem x hy)
+      rw [ptSumL, ptAdd_lin G (h x List.mem_cons_self) (ptSumL_const G l hl), ih hl,
+        List.map_cons, List.sum_cons]
+  rw [ptBasisMap, hsum _ hc, List.map_ofFn, List.sum_ofFn]
   simp [Function.comp_def, ptOn_lin _ (hγ _)]
 
 theorem ptBasisMap_lg (G : LogFGL v d) {γ : Fin d → Fin d → PowerSeries C}
@@ -73,7 +88,19 @@ theorem ptBasisMap_lg (G : LogFGL v d) {γ : Fin d → Fin d → PowerSeries C}
     intro x hx c
     obtain ⟨a, rfl⟩ : ∃ a, ptOn a (γ a) = x := by simpa [List.mem_ofFn] using hx
     exact (ptOn_good a (hγ a) c).1
-  rw [ptBasisMap, ptSumL_lg G _ hc b, List.map_ofFn, List.sum_ofFn]
+  have hsum (l : List (Fin d → MvPowerSeries (Fin d) C))
+      (h : ∀ x ∈ l, ∀ c, constantCoeff (x c) = 0) :
+      subst (ptSumL G l) (G.lg b) = (l.map fun x => subst x (G.lg b)).sum := by
+    induction l with
+    | nil =>
+      simp only [ptSumL, List.map_nil, List.sum_nil]
+      exact subst_zero_of_constantCoeff_zero (G.lg_const b)
+    | cons x l ih =>
+      have hl : ∀ y ∈ l, ∀ c, constantCoeff (y c) = 0 :=
+        fun y hy => h y (List.mem_cons_of_mem x hy)
+      rw [ptSumL, ptAdd_lg G (h x List.mem_cons_self) (ptSumL_const G l hl), ih hl,
+        List.map_cons, List.sum_cons]
+  rw [ptBasisMap, hsum _ hc, List.map_ofFn, List.sum_ofFn]
   exact Finset.sum_congr rfl fun a _ => ptOn_lg G a (hγ a) b
 
 theorem pt_inv_int {M : Matrix (Fin d) (Fin d) C} (hM : ∀ i j, M i j ∈ ptIntSub v)

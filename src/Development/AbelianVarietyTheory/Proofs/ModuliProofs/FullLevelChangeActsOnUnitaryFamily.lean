@@ -1,25 +1,29 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.TopAmpExists
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.ArcFamSt
-import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.ImmersedBy
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.UTorsSt
-import Development.AbelianVarietyTheory.PublishedTheorems.SemistableReduction₂.SemistableReductionSt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelMapFibreSimplyTransitive
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsReducedIsNormalSchemeIsLocallyNoetherianOfSmoo
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CmModelCoefficientSubringDedekindCompatibleEmbed
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjDescendLowerLevel
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.MinimalAndDimLe
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FullObjOfObj
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsMulEquivOfIsGrpPullback
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ObjMapIdCompCancel
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.TopAmpExists
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.ArcFamSt
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.ImmersedBy
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.UTorsSt
+public import Development.AbelianVarietyTheory.PublishedTheorems.SemistableReduction₂.SemistableReductionSt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelMapFibreSimplyTransitive
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsReducedIsNormalSchemeIsLocallyNoetherianOfSmoo
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CmModelCoefficientSubringDedekindCompatibleEmbed
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjDescendLowerLevel
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.MinimalAndDimLe
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FullObjOfObj
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsMulEquivOfIsGrpPullback
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ObjMapIdCompCancel
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -62,8 +66,8 @@ theorem geomAt_iff {N : ℕ} {S S' : Scheme.{0}} {t : SAB H S} {t' : SAB H S'} {
     · obtain ⟨p, rfl⟩ := e.surjective p
       obtain ⟨q, rfl⟩ := e.surjective q
       rw [e.symm_apply_apply, e.symm_apply_apply]
-      obtain ⟨w, hw, -⟩ := (isPullCubical_iff m.cm t.cub t'.cub).1 m.lin
-      exact (weilIs_grpPullback_of_comm _ _ _ _ f m.φ _ _ t.PP.isLB t'.PP.isLB m.cart ⟨w, (isGen_iff w).2 hw⟩
+      obtain ⟨w, hw, -⟩ := m.lin
+      exact (weilIs_grpPullback_of_comm _ _ _ _ f m.φ _ _ t.PP.isLB t'.PP.isLB m.cart ⟨w, hw⟩
         (Over.mk x) n p q (e p) (e q) _ (he p) (he q)).2 h
     · exact e.injective ((hl a).trans ((hI a).trans (e.apply_symm_apply _).symm))
 
@@ -134,7 +138,7 @@ theorem exists_restrict (l : Level H) (n : ℕ) (β : RZ H n l.A →+* KA l)
     rintro x (rfl | rfl | rfl)
     · refine ⟨(1 + (baseKA l).ρ) / 2, ?_, hw⟩
       have : σ ((1 + (baseKA l).ρ) / 2) = (1 + (baseKA l).ρ) / 2 := by
-        rw [map_div₀, map_add, map_one, hσ, map_ofNat]
+        rw [map_div₀, map_add (f := _), map_one, hσ, map_ofNat]
       change ((σ _ : KA l) : ℂ) ∈ RZ H n l.A
       rw [this]
       exact Subring.subset_closure (Or.inl hw)
@@ -163,7 +167,7 @@ theorem exists_extend (l : Level H) (n : ℕ) (β : RZ H n l.A →+* KA l)
   have := hd.2.2
   have := BaseRing.finiteDimensional_KA l
   have hinj : Function.Injective δ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro z hz
     by_contra h0
     have ha : IsAlgebraic ℤ z := by
@@ -177,9 +181,10 @@ theorem exists_extend (l : Level H) (n : ℕ) (β : RZ H n l.A →+* KA l)
 
 end GlobalTheory.FamAut
 
-open GlobalTheory.FamAut GlobalTheory.LevelFibre in
 
+open GlobalTheory.FamAut GlobalTheory.LevelFibre in
 theorem GlobalTheory.famCore_exists_aut : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (n N : ℕ) (MM : Scheme.{0}) (sM : MM ⟶ Sp (RZ H n N)) (tM : SAB H MM) (lev : D.La → (𝟙_ (Over MM) ⟶ tM.G)) (l : Level H) (Xo : Moduli D l) (β : RZ H n N →+* KA l) (a : Xo.X ⟶ MM) (ν₀ : SABMap Xo.univ.t tM a) (h : a ≫ sM = Xo.s ≫ spMap β) (r : Xo.X ≅ Xo.X) (ν : SABMap Xo.univ.t Xo.univ.t r.hom) (g : D.La →ₗ[𝓞 E] D.La) (σ : KA l ≃+* KA l), 1 ≤ D.p + D.q → l.A = N → n.Prime → Odd n → (∃ j, 1 ≤ j ∧ N = n ^ j) → IsInc (RZ H n N).subtype (KA l).val.toRingHom β → FamCore D sM tM lev → Surjective (pullback.lift a _ h) → (∀ x, (Xo.univ.etaA x).left ≫ ν₀.φ = a ≫ (lev x).left) → σ (baseKA l).ρ = (baseKA l).ρ → r.hom ≫ Xo.s = Xo.s ≫ spMap σ.toRingHom → (∀ x, (Xo.univ.etaA (g x)).left ≫ ν.φ = r.hom ≫ (Xo.univ.etaA x).left) → ∃ (ρ : MM ≅ MM) (_ : SABMap tM tM ρ.hom) (σ₀ : RZ H n N ≃+* RZ H n N), a ≫ ρ.hom = r.hom ≫ a ∧ ρ.hom ≫ sM = sM ≫ spMap σ₀.toRingHom ∧ σ₀ (RZ.rt H n N) = RZ.rt H n N := by
+  open GlobalTheory.FamAut GlobalTheory.LevelFibre in
   rintro - - E _ _ _ H D n N MM sM tM lev l Xo β a ν₀ h r ν g σ - rfl hn - ⟨j, -, hj⟩ hβ F hsurj h₀ hσ hr hν
   rcases isEmpty_or_nonempty Xo.X with hX | ⟨⟨p⟩⟩
   · exact ⟨Iso.refl _, ObjComp.sabMapId tM, RingEquiv.refl _, (isInitialOfIsEmpty (X := Xo.X)).hom_ext _ _,
@@ -225,7 +230,7 @@ theorem GlobalTheory.famCore_exists_aut : Out.Laws → Out.Laws2 → ∀ (E : Ty
 
   have o₁ := fullObj_of_obj Xo.s Xo.univ β hβ
   have o₂ : FullObj D (r.hom ≫ a ≫ sM) Xo.univ.t (fun x => Xo.univ.etaA (g x)) := by
-    refine ⟨o₁.proper, o₁.ample, o₁.ktriv, fun x y => by rw [map_add, o₁.add], fun x => by rw [map_nsmul, o₁.ker],
+    refine ⟨o₁.proper, o₁.ample, o₁.ktriv, fun x y => by rw [map_add (f := _), o₁.add], fun x => by rw [map_nsmul, o₁.ker],
       fun k _ _ _ x δ hx => ?_⟩
     exact (geomAt_iff ν hν x _ _).2 (o₁.geom k _ δ (by rw [← hx, ← h, Category.assoc]))
 

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullFSExtension
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjFrameBasePtFree
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CNormSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullFSExtension
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjFrameBasePtFree
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CNormSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -171,7 +176,8 @@ theorem pr_ne_zero (hBP : ProjFrameBasePtFree.Statement) (hfr : IsProjFrame x e)
     rintro _ ⟨k, rfl⟩
     have hk : z (e k) = 0 := congrFun h0 k
     have he : (⟨(), (e k).2⟩ : Ix κ) = e k := rfl
-    simp only [SetLike.mem_coe, RingHom.mem_ker, hψ, RingHom.comp_apply, linForm, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [SetLike.mem_coe, RingHom.mem_ker, hψ, RingHom.comp_apply, linForm, map_sum, map_mul,
       map_C, map_X, eval_C, eval_X, projMat]
     simp only [eq_intCast, Int.cast_ite, Int.cast_one, Int.cast_zero, ite_mul, one_mul, zero_mul]
     rw [Finset.sum_eq_single (e k).2 (fun i _ hi => if_neg (Ne.symm hi))
@@ -242,8 +248,8 @@ theorem exists_ratio_lb (hBP : ProjFrameBasePtFree.Statement) (hfr : IsProjFrame
 
 end PullFSExtension
 
-open PullFSExtension in
 
+open PullFSExtension in
 theorem PullFSExtension.proof (hBP : ProjFrameBasePtFree.Statement) : PullFSExtension.Statement := by
   intro D Ω _ _ κ _ x e hfr
   obtain ⟨δ, hδ, hlb⟩ := exists_ratio_lb hBP hfr
@@ -257,7 +263,7 @@ theorem PullFSExtension.proof (hBP : ProjFrameBasePtFree.Statement) : PullFSExte
       ⟨fun h0 => by obtain ⟨i, hi⟩ := hz.1 (); exact hi (congrFun h0 _), hz.2⟩
     have hpz := pr_ne_zero hBP hfr hzp
     have hev : (fun y => Real.log ((HermLine.ofCone (metric e δ)).h y)) =ᶠ[𝓝 z]
-        fun y => Real.log ((fsMetric (Fin (D + 1))).ρ (pr e y)) := by
+        fun y => Real.log ((fsMetric (ι := Fin (D + 1))).ρ (pr e y)) := by
       have hr : ∀ᶠ y in 𝓝 z, δ / 2 < ratio e y :=
         (contDiffAt_ratio e hzp.1 (n := 0)).continuousAt.eventually
           (lt_mem_nhds (by linarith [hlb z hzp]))
@@ -266,10 +272,10 @@ theorem PullFSExtension.proof (hBP : ProjFrameBasePtFree.Statement) : PullFSExte
       rw [metric_of_ge e hδ hy0 hy.le, congrFun log_fs_eq (pr e y),
         Real.log_sqrt (by rw [normSqE_eq]; positivity)]
       ring
-    have hφ : ContDiffAt ℝ 2 (fun u => Real.log ((fsMetric (Fin (D + 1))).ρ u)) (pr e z) := by
+    have hφ : ContDiffAt ℝ 2 (fun u => Real.log ((fsMetric (ι := Fin (D + 1))).ρ u)) (pr e z) := by
       rw [log_fs_eq]
       exact contDiffAt_const.mul (contDiff_normSqE.contDiffAt.log (normSqE_pos hpz).ne')
-    have key := leviForm_comp_clm (pr e) (fun u => Real.log ((fsMetric (Fin (D + 1))).ρ u)) z w hφ
+    have key := leviForm_comp_clm (pr e) (fun u => Real.log ((fsMetric (ι := Fin (D + 1))).ρ u)) z w hφ
     beta_reduce at key
     rw [leviForm_congr hev w, key]
     exact leviForm_log_fs_nonneg hpz (pr e w)

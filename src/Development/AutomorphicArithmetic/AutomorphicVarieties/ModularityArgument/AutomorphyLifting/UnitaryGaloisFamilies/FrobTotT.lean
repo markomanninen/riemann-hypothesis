@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.UnitaryGaloisFamilies.IrrCaseT
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.TotalFrobeniusCompatibility
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.RecTExists
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalRepGLExistsSatakeParameters
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSatakeGLOfHasSatakeParametersPrincipalSeries
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.UnitaryGaloisFamilies.IrrCaseT
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.TotalFrobeniusCompatibility
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.RecTExists
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalRepGLExistsSatakeParameters
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSatakeGLOfHasSatakeParametersPrincipalSeries
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ private theorem sumList_spec (g : Weil h) : ∀ (c : ℕ) (f : Fin c → WD h) (
   induction c with
   | zero =>
     intro f M _
-    have e : sumList (List.ofFn f) = WD.lpZero h := by simp [sumList]
+    have e : sumList (List.ofFn f) = WD.lpZero (h := h) := by simp [sumList]
     rw [e, WD.lpZero, WD.unr_mk, WD.charPol_mk, WDRep.diag_ρ, charpoly_diagEnd]
     exact ⟨WDRep.unr_diag _, by simp⟩
   | succ c ih =>
@@ -44,10 +48,10 @@ private theorem sumList_spec (g : Weil h) : ∀ (c : ℕ) (f : Fin c → WD h) (
     obtain ⟨h1, h2⟩ := ih (fun i => f i.succ) (fun i => M i.succ) fun i => H i.succ
     have e : sumList (List.ofFn f) = (f 0).lpSum (sumList (List.ofFn fun i => f (Fin.succ i))) := by
       rw [List.ofFn_succ]; rfl
-    rw [e, WD.charPol_lpSum, h2, (H 0).2, Fin.sum_univ_succ, Multiset.map_add, Multiset.prod_add]
+    rw [e, WD.charPol_lpSum, h2, (H 0).2, Fin.sum_univ_succ, Multiset.map_add (f := _), Multiset.prod_add]
     exact ⟨unr_lpSum (H 0).1 h1, rfl⟩
 
-private theorem rec_eq_diagV {rc : IrrGL (w.adicCompletion E) → WD h} (H : IsRecV h rc) {a : ℕ}
+private theorem rec_eq_diagV {rc : IrrGL (k := w.adicCompletion E) → WD h} (H : IsRecV h rc) {a : ℕ}
     {σ : IrrRep (GL (Fin a) (w.adicCompletion E))} {α : Fin a → ℂˣ} (hα : HasSatake σ.ρ α) :
     rc (cls σ) = WD.mk (WDRep.diag h fun i => (α i)⁻¹) := by
   obtain ⟨_, _, _, L⟩ := H
@@ -55,7 +59,7 @@ private theorem rec_eq_diagV {rc : IrrGL (w.adicCompletion E) → WD h} (H : IsR
   exact L.sat (cls σ) α ⟨IrrRep.irr _, fixed_ne_bot_of_equiv φ hα.2.1,
     (IsSubquotient.of_surjective φ.toIntertwiningMap φ.toLinearEquiv.surjective).trans hα.2.2⟩
 
-private theorem rec_tw_diag {rc : IrrGL (w.adicCompletion E) → WD h} (H : IsRecV h rc) {n : ℕ}
+private theorem rec_tw_diag {rc : IrrGL (k := w.adicCompletion E) → WD h} (H : IsRecV h rc) {n : ℕ}
     (σ : SmIrr (GL (Fin n) (w.adicCompletion E))) (B : Multiset ℂˣ) (hB : GlobalTheory.LFun.HasSatGL w σ.ρ B) (s : ℝ) :
     ∃ α : Fin n → ℂˣ, B = Finset.univ.val.map α ∧
       (rc (cl σ)).lpTw s = WD.mk (WDRep.diag h fun i => (α i)⁻¹ * qPow w s) := by
@@ -85,7 +89,7 @@ private theorem val_inv_eq (n d k : ℕ) (a : ℂˣ) :
   push_cast
   ring
 
-private theorem totPar_spec {rc : IrrGL (w.adicCompletion E) → WD h} (H : IsRecV h rc) (n c : ℕ) (a d : Fin c → ℕ)
+private theorem totPar_spec {rc : IrrGL (k := w.adicCompletion E) → WD h} (H : IsRecV h rc) (n c : ℕ) (a d : Fin c → ℕ)
     (ρ : ∀ i, SmIrr (GL (Fin (a i)) (w.adicCompletion E))) (S : Fin c → Multiset ℂˣ)
     (hS : ∀ i, GlobalTheory.LFun.HasSatGL w (ρ i).ρ (S i)) (g : Weil h) (hg : deg g = -1) :
     (totPar n d ρ A h rc).unr ∧
@@ -104,20 +108,5 @@ private theorem totPar_spec {rc : IrrGL (w.adicCompletion E) → WD h} (H : IsRe
   rfl
 
 end UpperTheory.V.Z.Win.Gu
-
-theorem UpperTheory.V.Z.Win.Gu.frobTotT :
-    HypothesesH → ExtraV → GdLaws → FrobTotT := by
-  intro _ hX hG F Ω _ _ _ _ _ l _ ι n c a d r _ w hl ρ S hS H A h
-  obtain ⟨rc, hrc⟩ := UpperTheory.Zero.LLC.recTExists F Ω A w h
-  have hsp := totPar_spec (hX F Ω A w h rc hrc) n c a d ρ S hS
-  have hu := (hsp (frob h)⁻¹ (by rw [deg_inv, deg_frob])).1
-  have hx := ((H A h rc hrc).1 hl).isWDOf ((hG F Ω A w h).2.2.2 _ hu)
-  have hw := hx.wdOf_eq hl
-  obtain ⟨t, ht, φ, hφ, N, b, hN, -⟩ := hx
-  refine ⟨(hN.unr_wdOf_iff hl ht ι).1 (by rw [hw]; exact hu), fun s hs => ?_⟩
-  have hd : deg (⟨s, mem_Weil_of_isFrob h hs⟩ : Weil h) = 1 := deg_eq_one_iff.2 hs
-  have := hN.charPol_wdOf hl ht ι (⟨s, mem_Weil_of_isFrob h hs⟩ : Weil h)⁻¹
-  rw [hw, (hsp _ (by rw [deg_inv, hd])).2] at this
-  exact this.symm
 
 end

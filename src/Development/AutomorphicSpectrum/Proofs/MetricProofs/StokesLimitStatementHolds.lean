@@ -1,17 +1,23 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsStokesLimitTVb
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PNbarLeviChartReg
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PNbarSmooth
-import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffAtOfIsPotential
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContDiffAtLogNorm
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedIntegralTendstoOffDivisorStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsMeasurableDominatingFunctionStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalSectionOfPotentialOnModelStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularChartDataPropertiesStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalHolomorphicSectionOfPotentialStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedIntegralModelFormulaStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularizedWeightPshAndBoundsStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularizedWeightTendstoC2Statement
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsStokesLimitTVb
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PNbarLeviChartReg
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PNbarSmooth
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffAtOfIsPotential
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FirstChernLeviEqConstant
+public import ReciprocityTheory.AnalyticForms.LeviForms.TailBoundA
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegrableOnOfNormLeSumAbsLogAddLogLog
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedIntegralTendstoOffDivisorStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsMeasurableDominatingFunctionStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalSectionOfPotentialOnModelStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularChartDataPropertiesStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalHolomorphicSectionOfPotentialStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedIntegralModelFormulaStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularizedWeightPshAndBoundsStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularizedWeightTendstoC2Statement
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 
@@ -373,7 +379,7 @@ theorem stokesLimitTVb : StokesLimitTVb.Statement := by
     have h0 : X.Vb B p q = fun _ => 0 := by
       funext t
       unfold ComponentSetting.Vb ptsIntegral
-      rw [dif_neg hΨ]
+      rw [dite_eq_right hΨ]
     rw [h0]
     exact tendsto_const_nhds
   obtain ⟨Θ, hΘ, hΘs⟩ := GlobalTheory.T.local_holomorphic_section_of_potential K ι (mCoordIdeal D.y) D.n X.M D.A' D.A'_pos.1
@@ -428,7 +434,7 @@ theorem stokesLimitTVb : StokesLimitTVb.Statement := by
     · have hVb : X.Vb B p q t = ptsIntegralAt (mCoordIdeal D.y) hΨ.choose
           (fun _ z => (q : ℝ)⁻¹ * Real.log ((X.NbarQ B p q t).h z)) (fun z => X.Cd.cuspWeight z / 2) := by
         unfold ComponentSetting.Vb ptsIntegral
-        rw [dif_pos hΨ]
+        rw [dite_eq_left hΨ]
         congr 1
         funext _ z
         simp only [ComponentSetting.omN]

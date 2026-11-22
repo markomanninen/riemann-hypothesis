@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.EveryPointSatisfiesFrameCondition
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.EveryPointSatisfiesFrameCondition
+
+@[expose] public section
 
 open NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp IsLocalRing UpperTheory.V UpperTheory.V.HV UpperTheory.V.Base
 open scoped Matrix
@@ -58,10 +62,6 @@ theorem cc_sq {F Ω : Type} [Field F] [Field Ω] [Algebra F Ω] {σ : G F Ω}
   apply j.injective
   show j (σ (σ x)) = j x
   rw [hj, hj, Complex.conj_conj]
-
-theorem galEmb_comp (K L Ω : Type) [Field K] [NumberField K] [Field L] [NumberField L] [Field Ω] [CharZero Ω]
-    [Algebra K Ω] [Algebra L Ω] [Algebra K L] [IsScalarTower K L Ω] (s : G L Ω) :
-    galEmb ℚ K Ω (galEmb K L Ω s) = galEmb ℚ L Ω s := rfl
 
 theorem irr_of_matIrr {Γ Γ' k : Type} [Group Γ] [Group Γ'] [Field k] {n : ℕ} (hn : 1 ≤ n) (U : Subgroup Γ)
     (a : Γ → Matrix (Fin n) (Fin n) k) (ha : U3.MatIrr U a) (φ : Γ' →* Γ) (hφ : U ≤ φ.range) (r : Γ' →* GL (Fin n) k)

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ChartConeObjects
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.SegreChartObjects
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ChartConeObjects
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.SegreChartObjects
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

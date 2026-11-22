@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.PairSums.SumPair
-import ReciprocityTheory.Hypotheses.GalCoh
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.PairSums.SumPair
+public import ReciprocityTheory.Hypotheses.GalCoh
+
+@[expose] public section
 
 noncomputable section
 

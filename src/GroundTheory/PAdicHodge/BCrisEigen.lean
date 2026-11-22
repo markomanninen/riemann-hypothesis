@@ -1,7 +1,13 @@
-import Mathlib
-import GroundTheory.PAdicHodge.BCrisEigenFixed
-import GroundTheory.PAdicHodge.BCrisEigenChar
-import GroundTheory.PAdicHodge.BCrisEigenMaps
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.BCrisNewton
+public import GroundTheory.PAdicHodge.GalSmulAlgebraMapPadicPlus
+public import GroundTheory.PAdicHodge.BCrisEigenChar
+public import GroundTheory.PAdicHodge.BCrisEigenMaps
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -20,8 +26,8 @@ local notation "𝔹dR" => BDeRham (normInteger ℂ_[p]) p
 variable {ε : PreTilt (normInteger ℂ_[p]) p} (hε : PreTilt.untilt ε = 1)
   (hζ : PreTilt.untilt ((_root_.frobeniusEquiv (PreTilt (normInteger ℂ_[p]) p) p).symm ε) ≠ 1)
 
-include hζ in
 
+include hζ in
 theorem exists_eq_zpow_mul_unit {y : 𝔹dR} (hy : y ≠ 0) :
     ∃ (i : ℤ) (u : 𝔹ˣ), y = algebraMap 𝔹 𝔹dR (fontaineT ε hε) ^ i * algebraMap 𝔹 𝔹dR (u : 𝔹) := by
   have ht : Irreducible (fontaineT ε hε) :=
@@ -84,8 +90,8 @@ theorem exists_gal_smul_unit (σ : Gal(PadicAlgCl p/L)) {i : ℤ} {u : 𝔹} {q 
   field_simp
   linear_combination h3
 
-variable (p) in
 
+variable (p) in
 def SenTateCharacters : Prop :=
   ∀ (K : IntermediateField ℚ_[p] (PadicAlgCl p)) [FiniteDimensional ℚ_[p] K]
     (η : Gal(PadicAlgCl p/K) →* ℚ_[p]ˣ), Continuous η →
@@ -124,9 +130,9 @@ theorem exists_twist_of_finite_image {K : IntermediateField ℚ_[p] (PadicAlgCl 
   obtain ⟨z, hz, hzc⟩ := hc σ
   exact ⟨z, by rw [hz, hψL], hzc⟩
 
+
 include hζ in
 set_option maxHeartbeats 1600000 in
-
 theorem exists_unramified_twist (hST : SenTateCharacters p)
     {K : IntermediateField ℚ_[p] (PadicAlgCl p)} [FiniteDimensional ℚ_[p] K] {y : 𝔹dR}
     (hy0 : y ≠ 0) (hyσ : ∀ σ : Gal(PadicAlgCl p/K), ∃ q : ℚ_[p],
@@ -190,9 +196,9 @@ theorem isUnit_of_fixed_twist {R F G : Type*} [CommRing R] [IsDomain R] [Field F
     exact (hBu.mul c.isUnit).mul (Units.isUnit _)
   exact (isUnit_pow_iff hf.ne').1 hbfu
 
+
 include hζ in
 set_option maxHeartbeats 3200000 in
-
 theorem isUnit_of_twist {L : IntermediateField ℚ_[p] (PadicAlgCl p)} [FiniteDimensional ℚ_[p] L]
     {b : BCris hε} (hb0 : b ≠ 0) {i : ℤ} {u : 𝔹ˣ}
     (hyu : iotaB hε hζ b = algebraMap 𝔹 𝔹dR (fontaineT ε hε) ^ i * algebraMap 𝔹 𝔹dR (u : 𝔹))
@@ -237,9 +243,9 @@ theorem isUnit_of_twist {L : IntermediateField ℚ_[p] (PadicAlgCl p)} [FiniteDi
     ← gal_smul_bDeRham_def, gal_smul_algebraMap_bDeRham, huL σ, hCσ σ, map_mul, mul_pow]
   field_simp
 
+
 include hζ in
 set_option maxHeartbeats 3200000 in
-
 theorem isUnit_of_forall_galB_eq_mul (hST : SenTateCharacters p)
     {K : IntermediateField ℚ_[p] (PadicAlgCl p)} [FiniteDimensional ℚ_[p] K] {b : BCris hε}
     (hb0 : b ≠ 0)
@@ -253,23 +259,6 @@ theorem isUnit_of_forall_galB_eq_mul (hST : SenTateCharacters p)
       rw [← iotaB_galB (K := K) hε hζ σ b, hq, map_mul, iotaB_algebraMap_padic_bdRPlus])
   exact isUnit_of_twist hε hζ (L := L) hb0 hyu hf huL hc
 
-include hζ in
-set_option maxHeartbeats 3200000 in
-set_option synthInstance.maxHeartbeats 400000 in
-
-theorem isRegular_bCris (hST : SenTateCharacters p) {K : IntermediateField ℚ_[p] (PadicAlgCl p)}
-    [FiniteDimensional ℚ_[p] K] :
-    letI := isDomain_bCris hε hζ
-    letI := galBAction (K := K) hε
-    haveI := smulCommClass_galBAction (K := K) hε
-    IsRegular Gal(PadicAlgCl p/K) ℚ_[p] (BCris hε) :=
-  letI := isDomain_bCris hε hζ
-  letI := galBAction (K := K) hε
-  haveI := smulCommClass_galBAction (K := K) hε
-  { image_fixedPoints := image_fixedPoints_fractionRing (K := K) hε hζ
-    isUnit_of_mem_span := fun b hb0 hb => isUnit_of_forall_galB_eq_mul hε hζ hST hb0 fun σ => by
-      obtain ⟨q, hq⟩ := Submodule.mem_span_singleton.1 (hb σ)
-      exact ⟨q, (hq.symm.trans (Algebra.smul_def q b) :)⟩ }
 
 end ACris
 

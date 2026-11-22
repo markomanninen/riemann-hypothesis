@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GradedWeylDivisibility.StatementE
+module
+
+public import Mathlib
+public import Formalism.GradedWeylDivisibility.StatementE
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility
 
@@ -35,23 +39,23 @@ theorem single_monomial (p : Fin r × Fin n) (m : Fin r × Fin n →₀ ℕ) (c 
 
 theorem coeff_single (p : Fin r × Fin n) (e : Fin r × Fin n →₀ ℕ) (he : e p = 0) (k : ℕ)
     (G : MvPolynomial (Fin r × Fin n) R) :
-    coeff e ((single R p G).coeff k) = coeff (e + Finsupp.single p k) G := by
+    AddMonoidAlgebra.coeff ((single R p G).coeff k) e = AddMonoidAlgebra.coeff G (e + Finsupp.single p k) := by
   classical
   induction G using MvPolynomial.induction_on' with
   | add G H hG hH => simp [hG, hH]
   | monomial m c =>
-    rw [single_monomial, Polynomial.coeff_monomial, coeff_monomial]
+    rw [single_monomial, Polynomial.coeff_monomial, Finsupp.single_apply, coeff_monomial]
     by_cases h : m = e + Finsupp.single p k
     · have h1 : m p = k := by simp [h, he]
       have h2 : m.erase p = e := by
         ext v
         by_cases hv : v = p
         · simp [hv, he]
-        · simp [h, Finsupp.erase_ne hv, Finsupp.single_apply, Ne.symm hv]
+        · simp [h, Finsupp.erase_ne hv]
       simp [h1, h2, ← h]
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       split_ifs with h1
-      · rw [coeff_monomial, if_neg]
+      · rw [coeff_monomial, ite_eq_right]
         intro h2
         apply h
         rw [← h2, ← h1, Finsupp.erase_add_single]
@@ -94,7 +98,7 @@ theorem eval_applyWord (e : Fin r × Fin n →₀ ℕ) (L : List (Fin r × Fin n
     (h1 : ∀ q ∈ L, q.2.val < q.1.val) (h2 : L.Pairwise fun q p => q ≠ p ∧ p.2.val ≤ q.2.val)
     (F : MvPolynomial (Fin r × Fin n) R) :
     eval (idFrame R r n) (applyWord R (L.map (letter e)) F) =
-      coeff (e.filter (· ∈ L)) (unitri R L F) := by
+      (unitri R L F).coeff (e.filter (· ∈ L)) := by
   induction L using List.reverseRecOn generalizing F with
   | nil =>
     have h : (eval (idFrame R r n)) = constantCoeff.comp (unitri R ([] : List (Fin r × Fin n))).toRingHom := by
@@ -119,7 +123,7 @@ theorem eval_applyWord (e : Fin r × Fin n →₀ ℕ) (L : List (Fin r × Fin n
     rw [hw, ih hL1 h2]
     have hm := map_rowGen (R := R) L p ⟨p.2.val, hpr⟩ rfl hp hpL
       (fun q hq => ⟨hL1 q hq, (h3 q hq p (by simp)).2⟩) F
-    have hc := congrArg (fun P => Polynomial.coeff P (e p)) hm
+    have hc := congrArg (fun P => _root_.AddMonoidAlgebra.coeff (M := ℕ) P (e p)) hm
     simp only [Polynomial.coeff_map] at hc
     have hc' : unitri R L (rowDiv R ⟨p.2.val, hpr⟩ p.1 (e p) F) =
         (single R p (unitri R (L ++ [p]) F)).coeff (e p) := hc
@@ -149,10 +153,10 @@ theorem wordOf_eq (e : Fin r × Fin n →₀ ℕ) : wordOf e = (positions r n).m
   | cons a l ih =>
     by_cases h : s.val < a.val
     · have hr : s.val < r := lt_trans h a.2
-      rw [List.filterMap_cons, dif_pos ⟨h, hr⟩, List.filter_cons_of_pos (by simpa using h)]
+      rw [List.filterMap_cons, dite_eq_left ⟨h, hr⟩, List.filter_cons_of_pos (by simpa using h)]
       simp only [List.map_cons, ih]
       simp [letter, hr]
-    · rw [List.filterMap_cons, dif_neg (fun h' => h h'.1), List.filter_cons_of_neg (by simpa using h)]
+    · rw [List.filterMap_cons, dite_eq_right (fun h' => h h'.1), List.filter_cons_of_neg (by simpa using h)]
       exact ih
 
 theorem pairwise_positions :
@@ -224,7 +228,8 @@ theorem coeffWord : Formalism.GradedWeylDivisibility.CoeffWord := by
   rw [wordOf_eq, eval_applyWord e _ (fun q hq => (mem_positions q).1 hq) pairwise_positions]
   conv_lhs => rw [F.as_sum]
   conv_rhs => rw [F.as_sum]
-  rw [map_sum, coeff_sum, coeff_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, coeff_sum, coeff_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
   have hw : Finsupp.weight (colW r n) m = ν := hF (mem_support_iff.1 hm)
   by_cases hl : LowerTri m
@@ -233,6 +238,7 @@ theorem coeffWord : Formalism.GradedWeylDivisibility.CoeffWord := by
     refine eq_of_filter_eq m e hl he (fun s => by rw [← weight_colW, hw, hν]) fun v hv => ?_
     have := DFunLike.congr_fun h v
     simpa [Finsupp.filter_apply, mem_positions, hv] using this
-  · rw [unitri_monomial_of_not m hl, coeff_monomial, if_neg (fun h : m = e => hl (h ▸ he)), coeff_zero]
+  · rw [unitri_monomial_of_not m hl, coeff_monomial, ite_eq_right (fun h : m = e => hl (h ▸ he)),
+      AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
 
 end GlobalTheory.CoeffWord

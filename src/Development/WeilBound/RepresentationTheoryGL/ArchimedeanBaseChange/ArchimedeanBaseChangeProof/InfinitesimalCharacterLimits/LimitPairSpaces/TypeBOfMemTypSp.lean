@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LimitPairSpaces.TensorSpanEqPairSpace
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LimitPairSpaces.TensorSpanEqPairSpace
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,10 +46,6 @@ theorem typSp_le {N : ℕ} (K : Subgroup (GL (Fin N) (Af E))) (W : Submodule ℂ
     (U : Submodule ℂ (Sm E N)) : TypSp K W U ≤ U :=
   Submodule.span_le.2 fun _ h => h.1
 
-theorem typSp_mono {N : ℕ} {K K' : Subgroup (GL (Fin N) (Af E))} {W W' : Submodule ℂ (Kinf E N → ℂ)}
-    {U U' : Submodule ℂ (Sm E N)} (hK : K' ≤ K) (hW : W ≤ W') (hU : U ≤ U') : TypSp K W U ≤ TypSp K' W' U' :=
-  Submodule.span_mono fun _ h => ⟨hU h.1, fun u hu g => h.2.1 u (hK hu) g, fun g => hW (h.2.2 g)⟩
-
 theorem tensor_span_mono {a b : ℕ} {U₁ U₁' : Submodule ℂ (Sm E a)} {U₂ U₂' : Submodule ℂ (Sm E b)} (h₁ : U₁ ≤ U₁')
     (h₂ : U₂ ≤ U₂') : tens2 U₁ U₂ ≤ tens2 U₁' U₂' :=
   Submodule.span_mono fun _ ⟨φ₁, hφ₁, φ₂, hφ₂, e⟩ => ⟨φ₁, h₁ hφ₁, φ₂, h₂ hφ₂, e⟩
@@ -79,10 +79,12 @@ theorem sep_left {X Y V : Type} [AddCommGroup V] [Module ℂ V] (j : V →ₗ[�
     simp [Finset.sum_apply, mul_comm]
   have e2 : (⟨χ, hχ⟩ : A) = ∑ i, g i y • L (j (f i)) := by
     have h3 : L ((j.comp A.subtype) ⟨χ, hχ⟩) = ⟨χ, hχ⟩ := LinearMap.congr_fun hL _
-    rw [← h3, LinearMap.comp_apply, Submodule.subtype_apply, e, e1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h3, LinearMap.comp_apply, Submodule.subtype_apply, e, e1, map_sum]
     simp only [map_smul]
   have e3 := congrArg (fun v : A => j (v : V) x) e2
-  simp only [Submodule.coe_sum, Submodule.coe_smul, map_sum, map_smul, Finset.sum_apply, Pi.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Submodule.coe_sum, Submodule.coe_smul, map_sum, map_smul, Finset.sum_apply, Pi.smul_apply,
     smul_eq_mul] at e3
   rw [← congrFun e x, e3]
   exact Finset.sum_congr rfl fun i _ => mul_comm _ _

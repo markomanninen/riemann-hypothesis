@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.GenericOfIsIsoRestrict
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqGenericPoint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.GenericOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqGenericPoint
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,25 +21,25 @@ variable {k : Type} [CommRing k] {X Y Z : Scheme.{0}} {p : X ⟶ Sp k} {q : Y �
 
 theorem refines_pull_pull (L : HermLB p) (f : Y ⟶ X) (hf : f ≫ p = q) (g : Z ⟶ Y) (hg : g ≫ q = t)
     (h : (g ≫ f) ≫ p = t) :
-    Refines ((L.pull f hf).pull g hg) (L.pull (g ≫ f) h) (fun c => c PUnit.unit) 0 where
-  le c y hy := mem_iInter.2 fun a => mem_iInter.1 (mem_iInter.1 hy PUnit.unit) a
-  g W r z c c' hc hc' := by
+    Refines ((L.pull f hf).pull g hg) (L.pull (g ≫ f) h) (fun c => c PUnit.unit) 0 := by
+  refine ⟨fun c y hy => mem_iInter.2 fun a => mem_iInter.1 (mem_iInter.1 hy PUnit.unit) a, ?_, ?_⟩
+  · intro W r z c c' hc hc'
     have h₁ := mem_iInter.1 hc PUnit.unit
     have h₂ := mem_iInter.1 hc' PUnit.unit
     refine (gm_pull_g _ g r z c c' hc hc').trans ((gm_pull_g _ f (r ≫ g) z _ _ h₁ h₂).trans ?_)
     refine Eq.trans ?_ (gm_pull_g _ (g ≫ f) r z (c PUnit.unit) (c' PUnit.unit)
       (mem_iInter.2 fun a => mem_iInter.1 h₁ a) (mem_iInter.2 fun a => mem_iInter.1 h₂ a)).symm
     rw [Category.assoc]
-  φ σ c y hy := by
+  · intro σ c y hy
     refine (((L.pull f hf).φ σ).pull_φ g hg c y).trans (((L.φ σ).pull_φ f hf _ _).trans ?_)
     refine Eq.trans ?_ (((L.φ σ).pull_φ (g ≫ f) h (c PUnit.unit) y).symm.trans (add_zero _).symm)
     exact congrArg _ (Subtype.ext (Category.assoc _ _ _))
 
 theorem refines_pull_comp (L : HermLB p) (f : Y ⟶ X) (hf : f ≫ p = q) (g : Z ⟶ Y) (hg : g ≫ q = t)
     (h : (g ≫ f) ≫ p = t) :
-    Refines (L.pull (g ≫ f) h) ((L.pull f hf).pull g hg) (fun c _ => c) 0 where
-  le c y hy := mem_iInter.2 fun _ => mem_iInter.2 fun a => mem_iInter.1 hy a
-  g W r z c c' hc hc' := by
+    Refines (L.pull (g ≫ f) h) ((L.pull f hf).pull g hg) (fun c _ => c) 0 := by
+  refine ⟨fun c y hy => mem_iInter.2 fun _ => mem_iInter.2 fun a => mem_iInter.1 hy a, ?_, ?_⟩
+  · intro W r z c c' hc hc'
     have h₁ : (r ≫ g) z ∈ (L.B.pull f).U c := mem_iInter.2 fun a => mem_iInter.1 hc a
     have h₂ : (r ≫ g) z ∈ (L.B.pull f).U c' := mem_iInter.2 fun a => mem_iInter.1 hc' a
     have h₃ : r z ∈ ((L.B.pull f).pull g).U fun _ => c := mem_iInter.2 fun _ => h₁
@@ -45,7 +49,7 @@ theorem refines_pull_comp (L : HermLB p) (f : Y ⟶ X) (hf : f ≫ p = q) (g : Z
     have e₃ := gm_pull_g L.B (g ≫ f) r z c c' hc hc'
     rw [← Category.assoc] at e₃
     exact e₃.trans (e₁.trans e₂).symm
-  φ σ c y hy := by
+  · intro σ c y hy
     refine ((L.φ σ).pull_φ (g ≫ f) h c y).trans (Eq.symm ((add_zero _).trans ?_))
     refine (((L.pull f hf).φ σ).pull_φ g hg (fun _ => c) y).trans (((L.φ σ).pull_φ f hf _ _).trans ?_)
     exact congrArg _ (Subtype.ext (Category.assoc _ _ _))
@@ -53,11 +57,13 @@ theorem refines_pull_comp (L : HermLB p) (f : Y ⟶ X) (hf : f ≫ p = q) (g : Z
 variable {L : HermLB p} {h : X → ℝ} {D : ℕ}
 
 theorem IsArithHeight.restrict (hX : IsArithVar p D) (H : L.IsArithHeight h) (i : Y ⟶ X) [IsClosedImmersion i]
-    (hi : i ≫ p = q) : (L.pull i hi).IsArithHeight fun y => h (i y) where
-  vertical Z j _ _ κ _ _ _ d hd := (H.vertical Z (j ≫ i) κ d hd).trans (congrArg (fun n : ℤ => (n : ℝ) * _)
-    (topSelf_congr κ (L.restr (j ≫ i)).isLB ((L.pull i hi).restr j).isLB
-      (L.refines_pull_comp i hi j rfl (by rw [Category.assoc, hi])).lbIso d))
-  point Z j _ _ _ hc hd r hr := by
+    (hi : i ≫ p = q) : (L.pull i hi).IsArithHeight fun y => h (i y) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro Z j _ _ κ _ _ _ d hd
+    exact (H.vertical Z (j ≫ i) κ d hd).trans (congrArg (fun n : ℤ => (n : ℝ) * _)
+      (topSelf_congr κ (L.restr (j ≫ i)).isLB ((L.pull i hi).restr j).isLB
+        (L.refines_pull_comp i hi j rfl (by rw [Category.assoc, hi])).lbIso d))
+  · intro Z j _ _ _ hc hd r hr
     have key (t : Z ⟶ Sp k) (ht : (j ≫ i) ≫ p = t) (r) (hr : IsRatSec (L.pull (j ≫ i) ht).B r) :
         h (i (j (genericPoint Z))) = (L.pull (j ≫ i) ht).curveDeg hr ∧ IsArithVar t 0 := by
       subst ht
@@ -70,7 +76,7 @@ theorem IsArithHeight.restrict (hX : IsArithVar p D) (H : L.IsArithHeight h) (i 
     refine congrArg _ (finsum_congr fun σ => finsum_congr fun y => h'.logNorm hr (mem_offSupp.2 ?_))
     rw [under_eq_genericPoint h₂ y]
     exact CartierDiv.genericPoint_notMem_supp _
-  recursion Z j _ _ _ hc e he hd m r hr := by
+  · intro Z j _ _ _ hc e he hd m r hr
     have key (t : Z ⟶ Sp k) (ht : (j ≫ i) ≫ p = t) (r) (hr : IsRatSec ((L.pull (j ≫ i) ht).pow m).B r) :
         (L.pull (j ≫ i) ht).ArchIntegrable ((L.pull (j ≫ i) ht).pow m) e hr ∧
         m * h (i (j (genericPoint Z))) =
@@ -79,9 +85,22 @@ theorem IsArithHeight.restrict (hX : IsArithVar p D) (H : L.IsArithHeight h) (i 
       subst ht
       exact H.recursion Z (j ≫ i) hc e he hd m r hr
     have e' : (j ≫ i) ≫ p = j ≫ q := by rw [Category.assoc, hi]
-    have h' := L.refines_pull_comp i hi j rfl e'
-    have h'' := h'.pow m
+    let N := L.pull (j ≫ i) e'
+    let M := (L.pull i hi).restr j
+    have h' : Refines N M (fun c _ => c) 0 := L.refines_pull_comp i hi j rfl e'
+    have h'' : Refines (N.pow m) (M.pow m) (fun c a _ => c a) 0 := by
+      refine ⟨fun c y hy => mem_iInter.2 fun a => h'.le _ (mem_iInter.1 hy a), ?_, ?_⟩
+      · intro W s z c c' hc hc'
+        rw [gm_pow N m s z c c' hc hc',
+          gm_pow M m s z _ _ (mem_iInter.2 fun a => h'.le _ (mem_iInter.1 hc a))
+            (mem_iInter.2 fun a => h'.le _ (mem_iInter.1 hc' a)),
+          h'.g W s z _ _ (mem_iInter.1 hc PUnit.unit) (mem_iInter.1 hc' PUnit.unit)]
+      · intro σ c y hy
+        exact ((N.φ σ).zpow_φ m c y).trans
+          ((congrArg _ ((h'.φ σ _ _ (mem_pow_iff.1 hy)).trans (add_zero _))).trans
+            (((M.φ σ).zpow_φ m (fun a _ => c a) y).symm.trans (add_zero _).symm))
     obtain ⟨h₁, h₂⟩ := key _ e' _ (h''.isRatSec hr)
+    change N.ArchIntegrable (N.pow m) e (h''.isRatSec hr) at h₁
     unfold HermLB.ArchIntegrable Weight.ChernIntegrableOn at h₁
     unfold HermLB.archInt at h₂
     rw [h''.div hr] at h₁ h₂
@@ -139,20 +158,64 @@ theorem heightProjection_of_arProj (H : ArProj) : HeightProjection := by
     ((topologicalKrullDim_eq_of_isEmbedding i.isClosedEmbedding.isEmbedding hr).symm.trans hd)
   have hq : g ≫ i ≫ p = q := (Category.assoc _ _ _).symm.trans hπ
   obtain ⟨f, hf, e₁⟩ := (H k Z Y (i ≫ p) q e hZ hY g hq hg (hdeg ▸ hm)).1 _ _ (hh.isSelfInter_restrict hX i rfl)
-  exact ⟨f, (L.refines_pull_pull i rfl g hq hπ).isArithHeight hY hf, by rw [e₁, hdeg, hi]⟩
+  refine ⟨f, ?_, by rw [e₁, hdeg, hi]⟩
+  let N := (L.pull i rfl).pull g hq
+  let M := L.pull (g ≫ i) hπ
+  have hRef : Refines N M (fun c => c PUnit.unit) 0 := L.refines_pull_pull i rfl g hq hπ
+  have pullRefines (W : Scheme.{0}) (j : W ⟶ Y) :
+      Refines (N.restr j) (M.restr j) (fun c a => c a PUnit.unit) 0 := by
+    refine ⟨fun c y hy => mem_iInter.2 fun a => hRef.le _ (mem_iInter.1 hy a), ?_, ?_⟩
+    · intro V s z c c' hc hc'
+      refine (gm_pull_g _ j s z c c' hc hc').trans ((hRef.g V (s ≫ j) z _ _
+        (mem_iInter.1 hc PUnit.unit) (mem_iInter.1 hc' PUnit.unit)).trans ?_)
+      exact (gm_pull_g M.B j s z (fun a => c a PUnit.unit) (fun a => c' a PUnit.unit)
+        (mem_iInter.2 fun a => hRef.le _ (mem_iInter.1 hc a))
+        (mem_iInter.2 fun a => hRef.le _ (mem_iInter.1 hc' a))).symm
+    · intro σ c y hy
+      refine ((N.φ σ).pull_φ j rfl c y).trans ((hRef.φ σ _ _
+        (mem_of_mem_linComb (m := fun _ => Points.PtsOver.map j rfl _ y) (fun _ => rfl) hy PUnit.unit)).trans ?_)
+      exact congrArg (· + _) ((M.φ σ).pull_φ j rfl (fun a => c a PUnit.unit) y).symm
+  change M.IsArithHeight f
+  refine ⟨?_, ?_, ?_⟩
+  · intro W j _ _ κ _ _ _ d hd
+    exact (hf.vertical W j κ d hd).trans (congrArg (fun n : ℤ => (n : ℝ) * _)
+      (topSelf_congr κ (N.restr j).isLB (M.restr j).isLB (pullRefines W j).lbIso d))
+  · intro W j _ _ _ hc hd r hr
+    have h' := pullRefines W j
+    rw [hf.point W j hc hd _ (h'.isRatSec hr), HermLB.curveDeg, HermLB.curveDeg, h'.div hr]
+    refine congrArg _ (finsum_congr fun σ => finsum_congr fun y => h'.logNorm hr (mem_offSupp.2 ?_))
+    rw [under_eq_genericPoint (hY.of_isClosedImmersion j hc hd) y]
+    exact CartierDiv.genericPoint_notMem_supp _
+  · intro W j _ _ _ hc d hd hdim m r hr
+    have h' := pullRefines W j
+    have h'' : Refines ((N.restr j).pow m) ((M.restr j).pow m) (fun c a b => c a b PUnit.unit) 0 := by
+      refine ⟨fun c y hy => mem_iInter.2 fun a => h'.le _ (mem_iInter.1 hy a), ?_, ?_⟩
+      · intro V s z c c' hs hs'
+        rw [gm_pow (N.restr j) m s z c c' hs hs',
+          gm_pow (M.restr j) m s z _ _ (mem_iInter.2 fun a => h'.le _ (mem_iInter.1 hs a))
+            (mem_iInter.2 fun a => h'.le _ (mem_iInter.1 hs' a)),
+          h'.g V s z _ _ (mem_iInter.1 hs PUnit.unit) (mem_iInter.1 hs' PUnit.unit)]
+      · intro σ c y hy
+        exact (((N.restr j).φ σ).zpow_φ m c y).trans
+          ((congrArg _ ((h'.φ σ _ _ (mem_pow_iff.1 hy)).trans (add_zero _))).trans
+            ((((M.restr j).φ σ).zpow_φ m (fun a b => c a b PUnit.unit) y).symm.trans (add_zero _).symm))
+    obtain ⟨h₁, h₂⟩ := hf.recursion W j hc d hd hdim m _ (h''.isRatSec hr)
+    change (N.restr j).ArchIntegrable ((N.restr j).pow m) d (h''.isRatSec hr) at h₁
+    unfold HermLB.ArchIntegrable Weight.ChernIntegrableOn at h₁
+    unfold HermLB.archInt at h₂
+    rw [h''.div hr] at h₁ h₂
+    simp only [h'.chernPart] at h₁
+    refine ⟨fun σ => Weight.ChernIntegrableOn.congr (h₁ σ) (isOpen_offSupp _).measurableSet
+      fun y hy => h''.logNorm hr hy, h₂.trans (congrArg _ (finsum_congr fun σ => ?_))⟩
+    rw [h'.chernInt]
+    exact Weight.chernInt_congr (isOpen_offSupp _).measurableSet fun y hy => h''.logNorm hr hy
 
 theorem cycleHeights_of_arCalc (H : ArCalc) : CycleHeights :=
   ⟨H.arExists, H.arMix, heightProjection_of_arProj H.arProj⟩
 
 namespace CycleHeights
 
-theorem arExists (H : CycleHeights) : ArExists := H.1
-
-theorem arMix (H : CycleHeights) : ArMix := H.2.1
-
 theorem heightProjection (H : CycleHeights) : HeightProjection := H.2.2
-
-theorem arChange (H : CycleHeights) : ArChange := arChange_of_arMix H.1 H.2.1
 
 variable {k : Type} [CommRing k] {X Y : Scheme.{0}} {p : X ⟶ Sp k} {q : Y ⟶ Sp k} {D e : ℕ}
 
@@ -161,49 +224,6 @@ theorem existsUnique (H : CycleHeights) (hX : IsArithVar p D) (L : HermLB p) : �
   have ⟨h, hh⟩ := (H.1 k X p D hX).1 L
   ⟨h, hh, fun _ h' => h'.unique hX hh⟩
 
-theorem height_pull (H : CycleHeights) (hX : IsArithVar p D) (hY : IsArithVar q e) (π : Y ⟶ X) (hπ : π ≫ p = q)
-    {L : HermLB p} {h : X → ℝ} {h' : Y → ℝ} (hh : L.IsArithHeight h) (hh' : (L.pull π hπ).IsArithHeight h')
-    {W : Scheme.{0}} [IsIntegral W] (j : W ⟶ Y) [IsClosedImmersion j] (hc : CharZero Γ(W, ⊤)) {d : ℕ}
-    (hd : topologicalKrullDim W = (d + 1 : ℕ))
-    (hd' : topologicalKrullDim (closure ({π (j (genericPoint W))} : Set X)) = (d + 1 : ℕ))
-    (hm : π.residueDegree (j (genericPoint W)) ≠ 0) :
-    h' (j (genericPoint W)) = π.residueDegree (j (genericPoint W)) * h (π (j (genericPoint W))) := by
-  have hW := hY.of_isClosedImmersion j hc hd
-  have e₁ : (j ≫ π) ≫ p = j ≫ q := by rw [Category.assoc, hπ]
-  have hdeg : (j ≫ π).residueDegree (genericPoint W) = π.residueDegree (j (genericPoint W)) := by
-    rw [GlobalTheory.CurveDegreesCompare.residueDegree_comp, residueDegree_of_isClosedImmersion j, mul_one]
-  obtain ⟨f, hf, e₂⟩ := H.2.2 k X W p _ D d hX hW (j ≫ π) e₁ hd' (hdeg ▸ hm) L h hh
-  rw [hdeg] at e₂
-  exact (hh'.isSelfInter_restrict hY j rfl).unique hW
-    ⟨f, (L.refines_pull_comp π hπ j rfl e₁).isArithHeight hW hf, e₂⟩
-
-theorem isSelfInter_pull_of_isIso_restrict (H : CycleHeights) [IsIntegral X] [IsIntegral Y] (hX : IsArithVar p D)
-    (hY : IsArithVar q D) (π : Y ⟶ X) (hπ : π ≫ p = q) (U : X.Opens) (hU : (U : Set X).Nonempty) [IsIso (π ∣_ U)]
-    {L : HermLB p} {a : ℝ} (ha : L.IsSelfInter a) : (L.pull π hπ).IsSelfInter a := by
-  obtain ⟨h₁, h₂⟩ := generic_of_isIso_restrict π U hU
-  obtain ⟨h, hh, rfl⟩ := ha
-  have := H.2.2 k X Y p q D D hX hY π hπ (by
-    rw [h₁, (genericPoint_spec X).def]
-    exact (IsHomeomorph.topologicalKrullDim_eq _ (Homeomorph.Set.univ X).isHomeomorph).trans hX.dim_eq)
-    (by rw [h₂]; exact one_ne_zero) L h hh
-  rwa [h₂, h₁, Nat.cast_one, one_mul] at this
-
-theorem isSelfInter_shift (H : CycleHeights) [IsIntegral X] (hX : IsArithVar p D) {L : HermLB p} {a : ℝ}
-    (t : (k →+* ℂ) → ℝ) (ht : ∀ σ, t ((starRingEnd ℂ).comp σ) = t σ) (ha : L.IsSelfInter a) :
-    (L.shift t ht).IsSelfInter (a + ((D : ℝ) + 1) * ∑ᶠ σ, t σ * (L.φ σ).chernInt D univ fun _ => 1) :=
-  TwistTop.isSelfInter_shift H.1 H.arChange k X p D hX L a t ht ha
-
 end CycleHeights
-
-example (t : ℝ) : IsArithVar (𝟙 (Sp ℤ)) 0 ∧
-    topologicalKrullDim (closure ({genericPoint (Sp ℤ)} : Set (Sp ℤ))) = (0 + 1 : ℕ) ∧
-    (𝟙 (Sp ℤ) : _ ⟶ _).residueDegree (genericPoint _) = 1 ∧
-    ((ArithBase.trivShift t).pull (𝟙 _) (Category.id_comp _)).IsSelfInter t := by
-  obtain ⟨h, hh, e⟩ := ArithBase.isSelfInter_trivShift t
-  refine ⟨ArithBase.isArithVar_int, ?_, Scheme.Hom.residueDegree_id _,
-    e ▸ hh.isSelfInter_restrict ArithBase.isArithVar_int (𝟙 _) (Category.id_comp _)⟩
-  rw [(genericPoint_spec (Sp ℤ)).def]
-  exact (IsHomeomorph.topologicalKrullDim_eq _ (Homeomorph.Set.univ _).isHomeomorph).trans
-    ArithBase.isArithVar_int.dim_eq
 
 end GlobalTheory.Published

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Yzb9.SelfDual :
     {V : Type} →
@@ -210,7 +214,7 @@ private lemma UpperTheory.Reformulated.B.Yzb9.exists_strictHenselian_absolutely_
         rw [hT0, real_inner_smul_left, hT0, hsym u, hsym u a, h1] }
   have hTl : ∀ v, Tl v = T0 v := fun v => rfl
   have hinj : Function.Injective Tl := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro v hv
     apply hnd v
     intro w
@@ -262,7 +266,7 @@ theorem UpperTheory.Reformulated.B.Yzb9.existsUnique_of_equiv :
   have hf : Continuous f := ψ.continuous.comp he
   have hf' : Continuous f.symm := he'.comp ψ.symm.continuous
   obtain ⟨T, hT⟩ := UpperTheory.Reformulated.B.Yzb9.exists_strictHenselian_absolutely_closed_local_ring (fun u v => l (f.symm u) (f.symm v))
-    (fun u u' v => by simp only [map_add, hadd]) (fun u v => hsym _ _)
+    (fun u u' v => by simp only [map_add (f := _), hadd]) (fun u v => hsym _ _)
     (fun v => (hcont _).comp hf')
     (fun u hu => by
       have : f.symm u = 0 := hnd _ (fun y => by

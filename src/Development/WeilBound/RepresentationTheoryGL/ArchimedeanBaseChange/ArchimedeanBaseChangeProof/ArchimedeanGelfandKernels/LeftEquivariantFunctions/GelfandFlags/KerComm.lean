@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.IntSmooth
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.IntSmooth
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,23 +92,27 @@ theorem gel_ninv (hGC : GelComm) {W₁ W₂ : Submodule ℂ (Fin n → ℂ)} {F 
 
 theorem zop_props (hGC : GelComm) {W₁ W₂ : Submodule ℂ (Fin n → ℂ)} :
     ∀ (w : List (Bool × ℕ)) (F : Mat n → V), ContDiffOn ℝ ∞ F (GLs n) → NInv W₁ W₂ F →
-      ContDiffOn ℝ ∞ (zOp w F) (GLs n) ∧ NInv W₁ W₂ (zOp w F)
-  | [], F, hF, hN => ⟨hF, hN⟩
-  | p :: w, F, hF, hN => by
-    obtain ⟨h1, h2⟩ := zop_props hGC w F hF hN
+      ContDiffOn ℝ ∞ (zOp w F) (GLs n) ∧ NInv W₁ W₂ (zOp w F) := by
+  intro w
+  induction w with
+  | nil => exact fun F hF hN => ⟨hF, hN⟩
+  | cons p w ih =>
+    intro F hF hN
+    obtain ⟨h1, h2⟩ := ih F hF hN
     exact ⟨(hGC n V V p.1 p.2 _ h1).1, gel_ninv hGC h1 h2 p.1 p.2⟩
 
 theorem zop_field (hGC : GelComm) (hGF : GelFlag) {W₁ W₂ : Submodule ℂ (Fin n → ℂ)} (hW : W₁ ≤ W₂)
     (A : Mat n → (V →L[ℂ] V)) (hA : ContDiffOn ℝ ∞ A (GLs n)) (hQ : QInv W₁ W₂ A) :
     ∀ (w : List (Bool × ℕ)) (F : Mat n → V), ContDiffOn ℝ ∞ F (GLs n) → NInv W₁ W₂ F →
-      EqOn (zOp w (fun y => A y (F y))) (fun y => A y (zOp w F y)) (GLs n)
-  | [], _, _, _ => fun _ _ => rfl
-  | p :: w, F, hF, hN => by
-    intro x hx
-    have ih := zop_field hGC hGF hW A hA hQ w F hF hN
+      EqOn (zOp w (fun y => A y (F y))) (fun y => A y (zOp w F y)) (GLs n) := by
+  intro w
+  induction w with
+  | nil => exact fun _ _ _ _ _ => rfl
+  | cons p w ih =>
+    intro F hF hN x hx
     obtain ⟨h1, h2⟩ := zop_props hGC w F hF hN
     show gel p.1 p.2 (zOp w (fun y => A y (F y))) x = A x (gel p.1 p.2 (zOp w F) x)
-    rw [gel_congr ih p.1 p.2 hx]
+    rw [gel_congr (ih F hF hN) p.1 p.2 hx]
     exact hGF n V W₁ W₂ hW A (zOp w F) hA h1 hQ h2 p.1 p.2 x hx
 
 end Props
@@ -116,16 +124,20 @@ variable {P Q W : Type} [NormedAddCommGroup P] [NormedSpace ℝ P] [NormedAddCom
 
 theorem slice_eq {U : P × Q → W} {O : Set Q} (hO : IsOpen O) (hU : ContDiffOn ℝ ∞ U (Set.univ ×ˢ O)) (p : P) :
     ∀ m : ℕ, ∀ x ∈ O, iteratedFDeriv ℝ m (fun y => U (p, y)) x =
-      (iteratedFDeriv ℝ m U (p, x)).compContinuousLinearMap (fun _ => ContinuousLinearMap.inr ℝ P Q)
-  | 0, x, _ => by
+      (iteratedFDeriv ℝ m U (p, x)).compContinuousLinearMap (fun _ => ContinuousLinearMap.inr ℝ P Q) := by
+  intro m
+  induction m with
+  | zero =>
+    intro x _
     ext h
     simp [iteratedFDeriv_zero_apply]
-  | m + 1, x, hx => by
+  | succ m ih =>
+    intro x hx
     have hS : IsOpen (Set.univ ×ˢ O : Set (P × Q)) := isOpen_univ.prod hO
     have hpx : (p, x) ∈ (Set.univ ×ˢ O : Set (P × Q)) := ⟨trivial, hx⟩
     have hev : (iteratedFDeriv ℝ m (fun y => U (p, y))) =ᶠ[nhds x]
         (fun y => (iteratedFDeriv ℝ m U (p, y)).compContinuousLinearMap (fun _ => ContinuousLinearMap.inr ℝ P Q)) :=
-      Filter.eventually_of_mem (hO.mem_nhds hx) fun y hy => slice_eq hO hU p m y hy
+      Filter.eventually_of_mem (hO.mem_nhds hx) fun y hy => ih y hy
     have hdiff : DifferentiableAt ℝ (iteratedFDeriv ℝ m U) (p, x) := by
       have h1 := hU.differentiableOn_iteratedFDerivWithin (m := m) (by exact_mod_cast ENat.natCast_lt_top m) hS.uniqueDiffOn
       have h2 : DifferentiableOn ℝ (iteratedFDeriv ℝ m U) (Set.univ ×ˢ O) :=

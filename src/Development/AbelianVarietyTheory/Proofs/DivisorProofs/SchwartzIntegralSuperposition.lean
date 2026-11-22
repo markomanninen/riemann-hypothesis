@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 
 namespace GlobalTheory
@@ -71,8 +76,6 @@ noncomputable def wt (k n : ℕ) : SchwartzMap E ℂ →L[ℂ]
 
 theorem wt_apply (k n : ℕ) (w : SchwartzMap E ℂ) (x : E) :
     wt k n w x = (‖x‖ ^ k : ℝ) • iteratedFDeriv ℝ n w x := rfl
-
-theorem wt_eq (k n : ℕ) (w : SchwartzMap E ℂ) : wt k n w = wtFun k n w := rfl
 
 theorem continuous_iteratedFDeriv_at (n : ℕ) (x : E) :
     Continuous (fun w : SchwartzMap E ℂ => iteratedFDeriv ℝ n w x) := by
@@ -159,8 +162,8 @@ theorem wt_integral (hΦ : Continuous Φ) (hc : AEStronglyMeasurable c ν)
 
 end SchwartzIntegralExchange
 
-open SchwartzIntegralExchange in
 
+open SchwartzIntegralExchange in
 theorem schwartz_clm_integral_comm :
     ∀ (E : Type) [NormedAddCommGroup E] [NormedSpace ℝ E] (P : Type) [TopologicalSpace P]
     [SecondCountableTopology P] [MeasurableSpace P] [OpensMeasurableSpace P] (ν : Measure P)

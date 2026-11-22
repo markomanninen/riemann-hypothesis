@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.IdeleNormEmbeddingNegOneReal
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.IdeleNormEmbeddingNegOneReal
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ theorem hU_fin (D : Dat ℚ E) (u : ℝ) : (D.mkE 0 (bI u)).2 = 0 := by
 theorem finOne_hU (D : Dat ℚ E) (u : ℝ) : FinOne (hU D u) := by
   intro i j
   have h := hU_fin D u
-  fin_cases i <;> fin_cases j <;> simp [hU, nE, h]
+  fin_cases i <;> fin_cases j <;> simp [hU, nE, gl, SpecialLinearGroup.toGL, nU, h]
 
 theorem infOne_em {k : GL (Fin 2) (A ℚ)} (h : ∀ i j, (k.val i j).1 = ((1 : Matrix (Fin 2) (Fin 2) (A ℚ)) i j).1) :
     InfOneG (em E k) := by
@@ -56,7 +60,7 @@ theorem infOne_em {k : GL (Fin 2) (A ℚ)} (h : ∀ i j, (k.val i j).1 = ((1 : M
   rw [e, e2]
   fin_cases i <;> fin_cases j <;> simp [Matrix.one_apply]
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 theorem exists_X (D : Dat ℚ E) (u : ℝ) : ∃ X, infGL E 2 X = hU D u := by
   set z := D.mkE 0 (bI u) with hz
@@ -67,7 +71,7 @@ theorem exists_X (D : Dat ℚ E) (u : ℝ) : ∃ X, infGL E 2 X = hU D u := by
     by ext i j; fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two]⟩, Units.ext ?_⟩
   ext i j
   change (1 : Matrix (Fin 2) (Fin 2) (A E)) i j - sInf E ((1 : Matrix (Fin 2) (Fin 2) (Cinf E)) i j) + sInf E (!![1, GlobalTheory.CuspRep.pInf E z; 0, 1] i j) = _
-  fin_cases i <;> fin_cases j <;> simp [hU, nE, ← hz, hs]
+  fin_cases i <;> fin_cases j <;> simp [hU, nE, gl, SpecialLinearGroup.toGL, nU, ← hz, hs]
 
 theorem Tr_translate {P : CuspSub E 2} {φ : GL (Fin 2) (A E) → ℂ} (h : φ ∈ Tr P) (x : GL (Fin 2) (A E)) :
     (fun g => φ (g * x)) ∈ Tr P := by

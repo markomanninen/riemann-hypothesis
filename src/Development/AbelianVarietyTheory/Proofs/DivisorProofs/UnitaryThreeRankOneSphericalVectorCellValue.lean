@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvUAbsU
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemShellUIffDepth
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SwapLtSwapIffOfAddTwo
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenIsCompactUnitaryIntegralPoints
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FIwasawa
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvUAbsU
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemShellUIffDepth
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SwapLtSwapIffOfAddTwo
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenIsCompactUnitaryIntegralPoints
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FIwasawa
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ theorem map_heisM_rev (σ : L →+* L) {n : ℕ} {i j k : Fin n} (hr : i.rev = k
   have e3 : ∀ x : Fin n, j = x.rev ↔ j = x := fun x => by
     conv_lhs => rw [← hj]
     exact Fin.rev_inj
-  simp only [heisM_apply, e1, e2, e3, Fin.rev_inj, map_add, apply_ite σ, map_one, map_zero, eq_comm (a := t) (b := s),
+  simp only [heisM_apply, e1, e2, e3, Fin.rev_inj, map_add (f := _), apply_ite σ, map_one, map_zero, eq_comm (a := t) (b := s),
     and_comm (a := k = t), and_comm (a := j = t)]
   ring
 
@@ -310,7 +314,7 @@ theorem value_point : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicati
     exact Int.eq_ofNat_of_zero_le hv.le
   unfold chiDeltaU
   rw [Finset.prod_eq_single k]
-  · rw [dif_pos (by omega)]
+  · rw [dite_eq_left (by omega)]
     show α k ^ ordL ((((Pb : GU σ n) : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) a a) *
         (q : ℂ) ^ (-(ordL ((((Pb : GU σ n) : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) a a)) *
           ((n : ℤ) - 1 - 2 * (k.val : ℤ))) = _
@@ -321,7 +325,7 @@ theorem value_point : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicati
     have hi : i.val < k.val := by
       have : i.val ≠ k.val := fun h => hik (Fin.ext h)
       omega
-    rw [dif_pos (by omega), hdiag _ hi]
+    rw [dite_eq_left (by omega), hdiag _ hi]
     simp
   · simp
 

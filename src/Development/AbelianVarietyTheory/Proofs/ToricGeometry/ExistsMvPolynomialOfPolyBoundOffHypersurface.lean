@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
-import ReciprocityTheory.ThetaQuasiPeriods.Transl
-import ReciprocityTheory.ThetaQuasiPeriods.Change
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PolyGrowthStatementPf
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EntireApplyEqOfPeriodicOfSpanReal
+module
+
+public import Mathlib
+public import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
+public import ReciprocityTheory.ThetaQuasiPeriods.Transl
+public import ReciprocityTheory.ThetaQuasiPeriods.Change
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PolyGrowthStatementPfB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.LiftFactorization
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EntireApplyEqOfPeriodicOfSpanReal
+
+@[expose] public section
 
 open Filter Topology Asymptotics
 
@@ -150,8 +155,8 @@ private theorem polynomial_eventually_ne_zero_lemma_3 {ρ : Polynomial ℂ} (hρ
     Polynomial.mem_roots hρ, Polynomial.IsRoot.def, h0, Set.mem_singleton_iff, true_and]
   exact ht
 
-open Filter Topology Asymptotics in
 
+open Filter Topology Asymptotics in
 theorem _root_.GlobalTheory.exists_mvPolynomial_of_poly_bound_off_hypersurface :
     ∀ (d m : ℕ) (q : MvPolynomial (Fin d) ℂ) (f : (Fin d → ℂ) → ℂ) (C : ℝ), q ≠ 0 →
       DifferentiableOn ℂ f {x | MvPolynomial.eval x q ≠ 0} →
@@ -217,9 +222,10 @@ theorem _root_.GlobalTheory.exists_mvPolynomial_of_poly_bound_off_hypersurface :
           MvPolynomial.eval x (Polynomial.aeval (MvPolynomial.X 0) φ) = φ.eval (x 0) := by
         intro φ
         induction φ using Polynomial.induction_on' with
-        | add p₁ p₂ h₁ h₂ => simp only [map_add, Polynomial.eval_add, h₁, h₂]
+        | add p₁ p₂ h₁ h₂ => simp only [map_add (f := _), Polynomial.eval_add, h₁, h₂]
         | monomial n a => simp [Polynomial.aeval_monomial, Polynomial.eval_monomial]
-      rw [hPmdef, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hPmdef, map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_mul, MvPolynomial.eval_rename, hA]
       rfl
@@ -255,7 +261,7 @@ theorem _root_.GlobalTheory.exists_mvPolynomial_of_poly_bound_off_hypersurface :
       have hx0 : f x = φ.eval (x 0) := by
         have := hφ (x 0) (by rw [hr, hxc]; exact hx)
         rw [← this, hxc]
-      rw [hx0, hinterp, Lagrange.interpolate_apply, Polynomial.eval_finset_sum, hPm]
+      rw [hx0, hinterp, Lagrange.interpolate_apply, Polynomial.eval_finsetSum, hPm]
       refine Finset.sum_congr rfl fun k hk => ?_
       rw [Polynomial.eval_mul, Polynomial.eval_C, mul_comm]
       congr 1

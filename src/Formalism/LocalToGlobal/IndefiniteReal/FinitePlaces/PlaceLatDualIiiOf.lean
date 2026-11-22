@@ -1,9 +1,13 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceDualASt
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.TwoSplitIdem
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatMod
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SplitInt
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.CharLem
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.InfPartSplitIdem
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceDualASt
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.TwoSplitIdem
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatMod
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SplitInt
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.CharLem
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.InfPartSplitIdem
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,8 @@ theorem splitIdem_cA {e : AE D} (h : IsSplitIdem D e) : IsSplitIdem D (cA D e) :
 theorem idemSum_mul_fI {e : AE D} {P : Finset (Formalism.L2.DIV.Pl D.host.E)} (he : IsIdemSum e P) :
     e * fI D = e ∧ cA D e * fI D = cA D e := by
   obtain ⟨⟨es, hes, rfl⟩, -⟩ := he
-  rw [Finset.sum_mul, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_mul, map_sum, Finset.sum_mul]
   exact ⟨Finset.sum_congr rfl fun PP hPP => splitIdem_mul_fI (hes PP hPP).1,
     Finset.sum_congr rfl fun PP hPP => splitIdem_mul_fI (splitIdem_cA (hes PP hPP).1)⟩
 
@@ -50,10 +55,12 @@ theorem idemSum_int {P : Finset (Formalism.L2.DIV.Pl D.host.E)} {e : AE D} (he :
     finPart D e ∈ intAE D ∧ finPart D (cA D e) ∈ intAE D := by
   obtain ⟨⟨es, hes, rfl⟩, -⟩ := he
   refine ⟨?_, ?_⟩
-  · rw [map_sum]
-    exact AddSubgroup.sum_mem _ fun PP hPP => splitIdem_int (hes PP hPP).1
-  · rw [map_sum, map_sum]
-    exact AddSubgroup.sum_mem _ fun PP hPP => splitIdem_int (splitIdem_cA (hes PP hPP).1)
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum]
+      exact AddSubgroup.sum_mem _ fun PP hPP => splitIdem_int (hes PP hPP).1
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum, map_sum]
+      exact AddSubgroup.sum_mem _ fun PP hPP => splitIdem_int (splitIdem_cA (hes PP hPP).1)
 
 theorem infPart_fI : infPart D (fI D) = 0 := by
   show infPart D (algebraMap (AF D.host.F) (AE D) (pairA D.host.F 0 1)) = 0

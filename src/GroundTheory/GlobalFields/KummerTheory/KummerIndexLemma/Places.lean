@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.KummerTheory.KummerIndexLemma.PowerPlaces
-import GroundTheory.GlobalFields.SUnits
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.KummerTheory.KummerIndexLemma.PowerPlaces
+public import GroundTheory.GlobalFields.SUnits
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,15 +97,15 @@ universe u
 
 variable {K : Type u} [Field K] [NumberField K] [HasEnoughRootsOfUnity K p]
 
-omit [Fact p.Prime] [HasEnoughRootsOfUnity K p] in
 
+omit [Fact p.Prime] [HasEnoughRootsOfUnity K p] in
 theorem valuation_eq_one_of_mem_unit {S : Set (HeightOneSpectrum (𝓞 K))} {x : Kˣ}
     (hx : x ∈ S.unit K) {v : HeightOneSpectrum (𝓞 K)} (hv : v ∉ S) :
     v.valuation K (x : K) = 1 :=
   Set.unit_valuation_eq_one (S := S) (K := K) ⟨x, hx⟩ hv
 
-omit [HasEnoughRootsOfUnity K p] in
 
+omit [HasEnoughRootsOfUnity K p] in
 theorem relIndex_unitsPow_sUnit_ne_zero (S : Finset (HeightOneSpectrum (𝓞 K))) :
     (unitsPow K p).relIndex ((S : Set (HeightOneSpectrum (𝓞 K))).unit K) ≠ 0 := by
   set Δ := (S : Set (HeightOneSpectrum (𝓞 K))).unit K

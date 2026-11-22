@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtFractionNoetherianClosed
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkSpecializes
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.MemRangeOfIntegralAtHeightOneOver
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtFractionNoetherianClosed
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkSpecializes
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.MemRangeOfIntegralAtHeightOneOver
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Flat
 
@@ -29,7 +33,7 @@ theorem exists_point_of_prime {X : Scheme.{0}} {Ω : Type} [Field Ω] {ξ : Spec
   have hsp : hU.fromSpec y ⤳ p.1 := by
     have hle : y ≤ hU.primeIdealOf ⟨p.1, hp⟩ := by
       change 𝔮 ≤ (hU.primeIdealOf ⟨p.1, hp⟩).asIdeal
-      rw [← IsLocalization.AtPrime.comap_maximalIdeal (X.presheaf.stalk p.1)
+      rw [← IsLocalization.AtPrime.under_maximalIdeal (X.presheaf.stalk p.1)
         (hU.primeIdealOf ⟨p.1, hp⟩).asIdeal]
       exact Ideal.comap_mono (IsLocalRing.le_maximalIdeal hP'.ne_top)
     have := ((PrimeSpectrum.le_iff_specializes _ _).1 hle).map hU.fromSpec.continuous
@@ -42,7 +46,7 @@ theorem exists_point_of_prime {X : Scheme.{0}} {Ω : Type} [Field Ω] {ξ : Spec
       letI algG := TopCat.Presheaf.algebra_section_stalk X.presheaf (⟨genPt ξ, hg⟩ : U)
       have locG := hU.isLocalization_stalk ⟨genPt ξ, hg⟩
       have hnu : ¬ IsUnit (algebraMap Γ(X, U) (X.presheaf.stalk (genPt ξ)) r) := by
-        rw [← IsLocalization.AtPrime.comap_maximalIdeal (X.presheaf.stalk (genPt ξ))
+        rw [← IsLocalization.AtPrime.under_maximalIdeal (X.presheaf.stalk (genPt ξ))
           (hU.primeIdealOf ⟨genPt ξ, hg⟩).asIdeal] at hr
         exact (IsLocalRing.mem_maximalIdeal _).1 hr
       have hz : (Scheme.stalkClosedPointTo ξ).hom
@@ -71,7 +75,7 @@ theorem exists_point_of_prime {X : Scheme.{0}} {Ω : Type} [Field Ω] {ξ : Spec
   · have h1 : ringKrullDim (X.presheaf.stalk (hU.fromSpec y)) = (𝔮.height : WithBot ℕ∞) :=
       IsLocalization.AtPrime.ringKrullDim_eq_height 𝔮 (X.presheaf.stalk (hU.fromSpec y))
     have h2 : 𝔮.height = P'.height :=
-      IsLocalization.height_comap (hU.primeIdealOf ⟨p.1, hp⟩).asIdeal.primeCompl P'
+      IsLocalization.height_under (hU.primeIdealOf ⟨p.1, hp⟩).asIdeal.primeCompl P'
     have h3 : P'.height = P.height := RingEquiv.height_comap e P
     change ringKrullDim (X.presheaf.stalk (hU.fromSpec y)) = _
     rw [h1, h2, h3]

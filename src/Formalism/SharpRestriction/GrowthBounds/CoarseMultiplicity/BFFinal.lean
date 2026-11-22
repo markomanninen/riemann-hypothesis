@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.IoBlockEqSum
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFCoarse
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SymbolFormOfOrthogonality
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BlockForm
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.IoBlockEqSum
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFCoarse
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SymbolFormOfOrthogonality
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BlockForm
+
+@[expose] public section
 
 noncomputable section
 

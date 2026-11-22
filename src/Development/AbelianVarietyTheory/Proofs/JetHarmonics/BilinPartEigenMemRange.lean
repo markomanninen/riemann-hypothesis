@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.HStable
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.HStable
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -26,7 +30,8 @@ theorem bilinPart_eigen_mem_range : ∀ (R : Type) [CommRing R] (d : ℕ) (O : T
     ring
   have e2 : dotProduct v' ((sg1 k h * dAct k B a - (dAct k B (star a)).transpose * sg1 k h).mulVec v) =
       algebraMap R k (∑ i, u' i * ∑ j, M i j * u j) := by
-    simp only [map_sum, map_mul, hM, dotProduct, Matrix.mulVec, hv, hv']
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, hM, dotProduct, Matrix.mulVec, hv, hv']
   obtain ⟨w, hw⟩ := hα.exists_left_inv
   refine ⟨-(w * ∑ i, u' i * ∑ j, M i j * u j), ?_⟩
   rw [map_neg, map_mul, ← e2, e1, mul_neg, neg_neg, ← mul_assoc, ← map_mul, hw, map_one, one_mul]

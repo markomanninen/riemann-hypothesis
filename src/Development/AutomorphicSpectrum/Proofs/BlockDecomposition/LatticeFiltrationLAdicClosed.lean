@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.LatDefs
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.GrSplit
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LatticeFiltrationLTorsionFreeStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemLatticeSubIffSumStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LatticeFiltrationComapSpanPowStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.LatDefs
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.GrSplit
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LatticeFiltrationLTorsionFreeStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemLatticeSubIffSumStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LatticeFiltrationComapSpanPowStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -57,7 +61,7 @@ theorem T_split (r : ℕ) {b : B} (hb : b ∈ T f ξ l M r) :
   | add x y _ _ hx hy =>
     obtain ⟨c, t, ht, rfl⟩ := hx
     obtain ⟨c', t', ht', rfl⟩ := hy
-    exact ⟨c + c', t + t', add_mem ht ht', by rw [map_add]; ring⟩
+    exact ⟨c + c', t + t', add_mem ht ht', by rw [map_add (f := _)]; ring⟩
   | neg x _ hx =>
     obtain ⟨c, t, ht, rfl⟩ := hx
     exact ⟨-c, -t, neg_mem ht, by rw [map_neg]; ring⟩
@@ -156,7 +160,7 @@ theorem closed_succ {m : ℕ} (h : Lat.Hyp f ξ l m) (hc : Lat.DPClosed (Lat.ι 
       have hy' : Lat.ι f ξ l M y ∈ Ideal.span {f ξ ^ (r + 1)} := by
         rw [E] at hy; exact hy
       have hxa' : Lat.ι f ξ l M a * (l : B) ^ n + Lat.ι f ξ l M y = Lat.ι f ξ l M x := by
-        rw [← hxa]; simp only [map_add, map_mul, map_pow, map_natCast]
+        rw [← hxa]; simp only [map_add (f := _), map_mul, map_pow, map_natCast]
       have e : f (c - (l : W) ^ n * d) * Lat.dpE f ξ l M r =
           (l : B) ^ n * t' + Lat.ι f ξ l M y - t := by
         simp only [map_sub, map_mul, map_pow, map_natCast]

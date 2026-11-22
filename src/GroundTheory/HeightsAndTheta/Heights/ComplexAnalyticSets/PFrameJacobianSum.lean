@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFrameJacobianSum
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCauchyBinet
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFrameJacobianSum
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCauchyBinet
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -42,8 +47,8 @@ theorem det_adjoint_comp (S : EuclideanSpace ℂ (Fin d) →ₗ[ℂ] EuclideanSp
 
 end FrameJacobianSumAlt
 
-open FrameJacobianSumAlt in
 
+open FrameJacobianSumAlt in
 theorem FrameJacobianSum.proof : FrameJacobianSum.Statement := by
   intro d n T b
   classical
@@ -56,7 +61,7 @@ theorem FrameJacobianSum.proof : FrameJacobianSum.Statement := by
     have hG : (Matrix.of fun i j : Fin d => inner ℂ ((frameProjLin b I ∘ₗ T) (e i))
         ((frameProjLin b I ∘ₗ T) (e j))) = (rowsOf N ⟨I, h⟩)ᴴ * rowsOf N ⟨I, h⟩ := by
       ext i j
-      rw [Matrix.of_apply, PiLp.inner_apply, mul_apply, ← (I.orderIsoOfFin h).toEquiv.sum_comp]
+      rw [Matrix.of_apply, PiLp.inner_apply, Matrix.mul_apply, ← (I.orderIsoOfFin h).toEquiv.sum_comp]
       refine Finset.sum_congr rfl fun m _ => ?_
       simp [rowsOf, hN, frameProjLin, conjTranspose_apply, e, RCLike.inner_apply, mul_comm]
     rw [hG, det_mul, det_conjTranspose, Complex.star_def, Complex.conj_mul', norm_pow,
@@ -66,7 +71,7 @@ theorem FrameJacobianSum.proof : FrameJacobianSum.Statement := by
     rw [det_adjoint_comp]
     have hG : (Matrix.of fun i j : Fin d => inner ℂ (T (e i)) (T (e j))) = Nᴴ * N := by
       ext i j
-      rw [Matrix.of_apply, ← b.sum_inner_mul_inner, mul_apply]
+      rw [Matrix.of_apply, ← b.sum_inner_mul_inner, Matrix.mul_apply]
       refine Finset.sum_congr rfl fun k _ => ?_
       simp [hN, conjTranspose_apply]
     rw [hG, CauchyBinet.proof]

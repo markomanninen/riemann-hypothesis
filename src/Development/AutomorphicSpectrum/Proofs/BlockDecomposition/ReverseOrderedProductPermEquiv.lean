@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.LUnlinkedComm
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContragredientProductIrreducibleStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductIrreducibleAppendEquiv
+module
+
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.LUnlinkedComm
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContragredientProductIrreducibleStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductIrreducibleAppendEquiv
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult Zc Zc.Cos
 
@@ -138,15 +142,15 @@ section Rep
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-theorem prodIrr_congr {h N : ℕ} {x x' : Fin h → IrrGL k} (e : x = x') (hd : ∑ a, (x a).1 = N)
+theorem prodIrr_congr {h N : ℕ} {x x' : Fin h → IrrGL (k := k)} (e : x = x') (hd : ∑ a, (x a).1 = N)
     (hd' : ∑ a, (x' a).1 = N) : Nonempty ((prodIrr x hd).Equiv (prodIrr x' hd')) := by
   subst e
   exact ⟨.refl _⟩
 
-set_option maxHeartbeats 1000000 in
 
-theorem prodIrr_append_middle {p m m' s r q u : ℕ} (P : Fin p → IrrGL k) (Q : Fin m → IrrGL k)
-    (Q' : Fin m' → IrrGL k) (S : Fin s → IrrGL k) (hr : ∑ i, (P i).1 = r) (hq : ∑ i, (Q i).1 = q)
+set_option maxHeartbeats 1000000 in
+theorem prodIrr_append_middle {p m m' s r q u : ℕ} (P : Fin p → IrrGL (k := k)) (Q : Fin m → IrrGL (k := k))
+    (Q' : Fin m' → IrrGL (k := k)) (S : Fin s → IrrGL (k := k)) (hr : ∑ i, (P i).1 = r) (hq : ∑ i, (Q i).1 = q)
     (hq' : ∑ i, (Q' i).1 = q) (hu : ∑ i, (S i).1 = u)
     (C : Nonempty ((prodIrr Q hq).Equiv (prodIrr Q' hq')))
     (h₁ : ∑ i, (Fin.append P (Fin.append Q S) i).1 = r + (q + u))
@@ -164,9 +168,9 @@ theorem prodIrr_append_middle {p m m' s r q u : ℕ} (P : Fin p → IrrGL k) (Q 
   obtain ⟨G⟩ := C
   exact ⟨E₁.symm.trans ((prod₂Equiv (.refl _) (F₁.symm.trans ((prod₂Equiv G (.refl _)).trans F₂))).trans E₂)⟩
 
-set_option maxHeartbeats 400000 in
 
-theorem prodIrr_swap_adj {h N : ℕ} (y : Fin h → IrrGL k) (i j : Fin h) (hij : (j : ℕ) = i + 1)
+set_option maxHeartbeats 400000 in
+theorem prodIrr_swap_adj {h N : ℕ} (y : Fin h → IrrGL (k := k)) (i j : Fin h) (hij : (j : ℕ) = i + 1)
     (C : ∀ (q : ℕ) (hq : ∑ t, (![y i, y j] t).1 = q) (hq' : ∑ t, (![y j, y i] t).1 = q),
       Nonempty ((prodIrr ![y i, y j] hq).Equiv (prodIrr ![y j, y i] hq')))
     (hd : ∑ a, (y a).1 = N) (hd' : ∑ a, ((y ∘ Equiv.swap i j) a).1 = N) :
@@ -233,15 +237,15 @@ theorem precedes_or_of_linked {Δ Δ' : Segment k} (h : Δ.Linked Δ') : Δ.Prec
 
 theorem prodIrr_equiv_of_isRevOrdered : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k], GlobalTheory.Published.IrreducibleAdmissibleGL → LUnlinkedComm k →
-    ∀ {h N : ℕ} (Γ : Fin h → Segment k) (σ : Equiv.Perm (Fin h)) (y : Fin h → IrrGL k)
+    ∀ {h N : ℕ} (Γ : Fin h → Segment k) (σ : Equiv.Perm (Fin h)) (y : Fin h → IrrGL (k := k))
       (hd : ∑ a, (y a).1 = N) (hd' : ∑ a, (y (σ a)).1 = N), IsRevOrdered Γ → IsRevOrdered (Γ ∘ σ) →
       (∀ i, IsLSeg (Γ i) (y i).rep) → Nonempty ((prodIrr y hd).Equiv (prodIrr (y ∘ σ) hd')) := by
   intro k _ _ _ _ _ hc h N Γ σ y hd hd' hΓ hΓσ hL
-  let f : Fin h → Segment k × IrrGL k := fun a => (Γ a, y a)
-  let r : (Fin h → Segment k × IrrGL k) → (Fin h → Segment k × IrrGL k) → Prop := fun g g' =>
+  let f : Fin h → Segment k × IrrGL (k := k) := fun a => (Γ a, y a)
+  let r : (Fin h → Segment k × IrrGL (k := k)) → (Fin h → Segment k × IrrGL (k := k)) → Prop := fun g g' =>
     (∑ a, (g a).2.1 = ∑ a, (g' a).2.1) ∧ ∀ (M : ℕ) (h₁ : ∑ a, (g a).2.1 = M) (h₂ : ∑ a, (g' a).2.1 = M),
       Nonempty ((prodIrr (fun a => (g a).2) h₁).Equiv (prodIrr (fun a => (g' a).2) h₂))
-  let U : Segment k × IrrGL k → Segment k × IrrGL k → Prop := fun u v =>
+  let U : Segment k × IrrGL (k := k) → Segment k × IrrGL (k := k) → Prop := fun u v =>
     ¬ u.1.Linked v.1 ∧ IsLSeg u.1 u.2.rep ∧ IsLSeg v.1 v.2.rep
   have hrefl : ∀ g, r g g := fun g => ⟨rfl, fun M h₁ h₂ => ⟨.refl _⟩⟩
   have htrans : ∀ g g' g'', r g g' → r g' g'' → r g g'' := by
@@ -250,7 +254,7 @@ theorem prodIrr_equiv_of_isRevOrdered : ∀ {k : Type} [Field k] [ValuativeRel k
     have A := e₁ M h₁ (s₁.symm.trans h₁)
     have B := e₂ M (s₁.symm.trans h₁) h₃
     exact A.elim fun A => B.elim fun B => ⟨A.trans B⟩
-  have hswap : ∀ (g : Fin h → Segment k × IrrGL k) (i j : Fin h), (j : ℕ) = i + 1 → U (g i) (g j) →
+  have hswap : ∀ (g : Fin h → Segment k × IrrGL (k := k)) (i j : Fin h), (j : ℕ) = i + 1 → U (g i) (g j) →
       r g (g ∘ Equiv.swap i j) := by
     rintro g i j hij ⟨hl, hi, hj⟩
     refine ⟨(Equiv.sum_comp (Equiv.swap i j) fun a => (g a).2.1).symm, fun M h₁ h₂ => ?_⟩

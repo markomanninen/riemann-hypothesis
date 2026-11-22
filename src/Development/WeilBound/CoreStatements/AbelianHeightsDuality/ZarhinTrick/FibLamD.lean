@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.FibLamC
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.FibLamC
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,12 +21,13 @@ namespace PositivityTheory.PrwZar
 
 variable {S : Scheme.{0}} {A B : Over S} [GrpObj A] [GrpObj B]
 
-omit [GrpObj A] [GrpObj B] in
 
+omit [GrpObj A] [GrpObj B] in
 theorem pull_zcPair {P : LB (A ⊗ B).left} (hP : P.IsLB) (lm : A ⟶ B) (mu : B ⟶ A) (α : Matrix (Fin 4) (Fin 4) ℤ)
     {Y Z : Over S} (w : Z ⟶ Y) (u u' : Y ⟶ G4 (A ⊗ B)) :
     pull w.left (zcPair hP lm mu α u u') = zcPair hP lm mu α (w ≫ u) (w ≫ u') := by
-  simp only [zcPair, map_add, map_sum, map_nsmul, map_zsmul, pull_evc, Category.assoc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [zcPair, map_add (f := _), map_sum, map_nsmul, map_zsmul, pull_evc, Category.assoc]
 
 section Pieces
 

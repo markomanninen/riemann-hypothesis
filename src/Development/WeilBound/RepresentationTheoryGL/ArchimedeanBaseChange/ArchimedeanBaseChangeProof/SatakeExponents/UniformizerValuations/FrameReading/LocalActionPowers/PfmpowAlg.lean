@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.LocalActionPowers.PfmpowLoc
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.LocalActionPowers.PfmpowLev
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.LocalActionPowers.PfmpowLoc
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.LocalActionPowers.PfmpowLev
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem isHecke_zero {G : Type} [Group G] [TopologicalSpace G] (K : Subgroup G) 
 
 theorem isTestFunction_modify {φ ψ : ∀ w : Pl E, GLw a w × GLw b w → ℂ} (hφ : IsTestP φ) (T : Finset (Pl E))
     (V₁ : ∀ w : Pl E, Subgroup (GLw a w)) (V₂ : ∀ w : Pl E, Subgroup (GLw b w))
-    (hV₁ : ∀ w, IsLevel (thL a w) (GlobalTheory.LFun.KGL w a) (V₁ w)) (hV₂ : ∀ w, IsLevel (thL b w) (GlobalTheory.LFun.KGL w b) (V₂ w))
+    (hV₁ : ∀ w, IsLevel (thL a w) (GlobalTheory.LFun.KGL w (n := a)) (V₁ w)) (hV₂ : ∀ w, IsLevel (thL b w) (GlobalTheory.LFun.KGL w (n := b)) (V₂ w))
     (hout : ∀ w, w ∉ T → ψ w = φ w) (hin : ∀ w ∈ T, IsHecke ((V₁ w).prod (V₂ w)) (ψ w)) : IsTestP ψ := by
   obtain ⟨K₁, K₂, hK₁, hK₂, hT⟩ := hφ
   refine ⟨fun w => if w ∈ T then V₁ w else K₁ w, fun w => if w ∈ T then V₂ w else K₂ w, ⟨fun w => ?_, ?_⟩,

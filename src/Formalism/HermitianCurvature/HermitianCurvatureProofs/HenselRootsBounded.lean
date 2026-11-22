@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
+module
+
+public import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
+
+@[expose] public section
 
 noncomputable section
 
@@ -434,10 +438,11 @@ section Core
 
 variable {K : Type} [CommRing K]
 
-open Classical in
 
+open Classical in
 def TT (s : ℕ) (Cut : Set K) (τ : Kˣ) (F : Kˣ → ℂ) (c : Kˣ) : ℂ :=
-  if (c : K) ∈ Cut then ∑ᶠ z : Kˣ, if z ^ s = τ * c then F z else 0 else 0
+  by classical
+     exact if (c : K) ∈ Cut then ∑ᶠ z : Kˣ, if z ^ s = τ * c then F z else 0 else 0
 
 def mulQ (R : Subring K) (lam : Kˣ) (h1 : (lam : K) ∈ R) (h2 : ((lam⁻¹ : Kˣ) : K) ∈ R) :
     (K ⧸ R.toAddSubgroup) ≃ (K ⧸ R.toAddSubgroup) where

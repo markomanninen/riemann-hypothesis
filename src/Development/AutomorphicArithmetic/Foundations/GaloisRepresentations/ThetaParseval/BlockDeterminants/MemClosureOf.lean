@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SchurStep
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ContinuousInfiniteAdeleMap
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSplitChartSplitChart
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfLocalLevelsUnitaryIsOpenIsCompactIsLeve
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdeleEqZeroOfComp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BcCompFinAwayPtOfNotMem
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SchurStep
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ContinuousInfiniteAdeleMap
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSplitChartSplitChart
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfLocalLevelsUnitaryIsOpenIsCompactIsLeve
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdeleEqZeroOfComp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BcCompFinAwayPtOfNotMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,7 @@ private theorem toAdele_cj (z : AE (maximalRealSubfield E) E) :
     toAdele _ E (cA (cj E) z) = GlobalTheory.UnitaryBC.conjAd E (toAdele _ E z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a x =>
     change toAdele _ E (a ⊗ₜ[maximalRealSubfield E] (IsCMField.complexConj E x)) = _
     rw [GlobalTheory.UnitaryHeckeBaseChange.toAdele_tmul, GlobalTheory.UnitaryHeckeBaseChange.toAdele_tmul, map_mul, conjAd_adeleMap,
@@ -96,7 +100,7 @@ private theorem at_evI_iff (h : IsCMExt F E σ) {m : ℕ} (M : Matrix (Fin m) (F
   · have h1 : u.1 = 0 := (InfiniteAdeleRing.ringEquiv_mixedSpace F).map_eq_zero_iff.1 hu
     exact Prod.ext ((congrArg (· * _) h1).trans (zero_mul _)) ((congrArg (u.2 * ·) (sub_self _)).trans (mul_zero _))
 
-private theorem at_evFin_iff (h : IsCMExt F E σ) (v : Pl F) {m : ℕ} (M : Matrix (Fin m) (Fin m) (AE F E)) :
+private theorem at_evFin_iff (h : IsCMExt F E σ) (v : Pl (F := F)) {m : ℕ} (M : Matrix (Fin m) (Fin m) (AE F E)) :
     At (evFin F v) M ↔ ∀ i j, (toAdele F E (M i j)).1 = 0 ∧
       ∀ Q : HeightOneSpectrum (𝓞 E), Q.under (𝓞 F) ≠ v → (toAdele F E (M i j)).2 Q = 0 := by
   obtain ⟨ε, hε⟩ := GlobalTheory.UnitaryHeckeBaseChange.exists_isIndicator v
@@ -167,28 +171,29 @@ private theorem coord_adeleMap [IsCMField E] {w : InfinitePlace F} (τ : EmbOver
     (funext fun k => by
       have e : coord τ.1 (pInf E (GlobalTheory.IndefiniteRowSideFullHecke.UnitaryHeckeCharacterIdele.adeleMap F E (algebraMap F _ k))) = τ.1 (algebraMap F E k) := by
         rw [GlobalTheory.IndefiniteRowSideFullHecke.UnitaryHeckeCharacterIdele.adeleMap_algebraMap, GlobalTheory.CuspRep.coord_algebraMap]
-      exact e.trans ((RingHom.congr_fun τ.2 k).trans
-        (InfinitePlace.Completion.extensionEmbedding_coe w ((WithAbs.equiv w.1).symm k)).symm))) a.1
+      apply e.trans ((RingHom.congr_fun τ.2 k).trans ?_)
+      simpa [InfiniteAdeleRing.algebraMap_apply, ← WithAbs.equiv_symm_apply] using
+        (InfinitePlace.Completion.extensionEmbedding_coe w ((WithAbs.equiv w.1).symm k)).symm)) a.1
 
 private theorem piInf_eq [IsCMField E] {w : InfinitePlace F} (τ : EmbOver E w) (z : AE F E) :
     piInf τ z = coord τ.1 (pInf E (toAdele F E z)) := by
   induction z using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a x =>
     rw [GlobalTheory.UnitaryHeckeBaseChange.toAdele_tmul, map_mul, map_mul, coord_adeleMap, GlobalTheory.CuspRep.coord_algebraMap]
     rfl
 
-private theorem complMap_at {v : Pl F} {w : HeightOneSpectrum (𝓞 E)} (h : w.under (𝓞 F) = v) (a : Af F) :
+private theorem complMap_at {v : Pl (F := F)} {w : HeightOneSpectrum (𝓞 E)} (h : w.under (𝓞 F) = v) (a : Af F) :
     complMap h (a v) = GlobalTheory.IndefiniteRowSideFullHecke.UnitaryHeckeCharacterIdele.finiteCompletionMap F E w (a (w.under (𝓞 F))) := by
   subst h
   exact GlobalTheory.CharTransport.locMap_eq F E w _
 
-private theorem piW_eq {v : Pl F} (t : E →ₐ[F] Fv F v) (z : AE F E) :
+private theorem piW_eq {v : Pl (F := F)} (t : E →ₐ[F] Fv F v) (z : AE F E) :
     complMap (splitPrime_under t) (piW t z) = pLoc E (splitPrime t) (pFin E (toAdele F E z)) := by
   induction z using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a x =>
     have e : piW t (a ⊗ₜ[F] x) = a.2 v * t x := rfl
     rw [e, map_mul, GlobalTheory.LFun.SplitTie.complMap_apply_emb t, complMap_at, GlobalTheory.UnitaryHeckeBaseChange.toAdele_tmul, map_mul, map_mul]
@@ -236,8 +241,6 @@ private theorem mem_closure_of' {G H : Type} [Group G] [Group H] [TopologicalSpa
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
 private abbrev Θ : AE (maximalRealSubfield E) E ≃+* Ad E := adeleEquiv (cmE (E := E))
-
-private theorem Θ_apply (z : AE (maximalRealSubfield E) E) : Θ z = toAdele _ E z := rfl
 
 private theorem toAdele_symm (y : Ad E) : toAdele (maximalRealSubfield E) E (Θ.symm y) = y := Θ.apply_symm_apply y
 
@@ -346,7 +349,7 @@ private theorem toAdele_brE (g : GlobalTheory.UnitaryBC.UA E n) (i j : Fin n) :
 private theorem pInf_zero (y : Ad E) : pInf E y = 0 ↔ y.1 = 0 := (GlobalTheory.CuspRep.infEq E).symm.map_eq_zero_iff
 
 private theorem mem_finU (g : GlobalTheory.UnitaryBC.UA E n) :
-    g ∈ GlobalTheory.UnitaryBC.finU E n ↔ ∀ i j, ((g.1.1 - 1 : Matrix (Fin n) (Fin n) (Ad E)) i j).1 = 0 :=
+    g ∈ GlobalTheory.UnitaryBC.finU (E := E) (n := n) ↔ ∀ i j, ((g.1.1 - 1 : Matrix (Fin n) (Fin n) (Ad E)) i j).1 = 0 :=
   (gl_map_eq_one (pInf E) g.1).trans (forall₂_congr fun _ _ => pInf_zero _)
 
 private theorem mem_infU (g : GlobalTheory.UnitaryBC.UA E n) :
@@ -384,7 +387,7 @@ private theorem brE_isBr : IsBr X (brE X δ hδ hJ) := by
       exact h i j
   · refine mem_closure_of' (brE X δ hδ hJ) _ _ (fun g => ?_) g
     refine (at_evFin_iff cmE _ _).trans ?_
-    have hl : g ∈ GlobalTheory.UnitaryBC.locU n w ↔ g ∈ GlobalTheory.UnitaryBC.finU E n ∧ ∀ u : HeightOneSpectrum (𝓞 E),
+    have hl : g ∈ GlobalTheory.UnitaryBC.locU n w ↔ g ∈ GlobalTheory.UnitaryBC.finU (E := E) (n := n) ∧ ∀ u : HeightOneSpectrum (𝓞 E),
         u.under (𝓞 (maximalRealSubfield E)) ≠ w.under (𝓞 (maximalRealSubfield E)) → g ∈ (GlobalTheory.UnitaryBC.cLoc (n := n) u).ker := by
       unfold GlobalTheory.UnitaryBC.locU
       rw [Subgroup.mem_inf]

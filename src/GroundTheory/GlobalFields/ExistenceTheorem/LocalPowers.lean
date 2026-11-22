@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.SplittingFromInequality
-import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups
-import GroundTheory.GlobalFields.KummerTheory.SplittingKummer
-import GroundTheory.GlobalFields.KummerTheory.Unramified
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.SplittingFromInequality
+public import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups
+public import GroundTheory.GlobalFields.KummerTheory.SplittingKummer
+public import GroundTheory.GlobalFields.KummerTheory.Unramified
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -34,8 +38,8 @@ section Kummer
 
 variable {K : Type*} [Field K] {n : ℕ} [NeZero n]
 
-omit [NeZero n] in
 
+omit [NeZero n] in
 theorem forall_mem_zpowers_exists_pow_eq {F : Type*} [Field F] [Algebra K F] {y : Kˣ}
     (h : ∃ x : F, x ^ n = algebraMap K F (y : K)) :
     ∀ a ∈ Subgroup.zpowers y, ∃ x : F, x ^ n = algebraMap K F (a : K) := by
@@ -52,16 +56,15 @@ instance finite_zpowers_quotient_unitsPow (y : Kˣ) :
     rintro _ ⟨x, rfl⟩
     rw [Subgroup.mem_subgroupOf]
     exact ⟨(x : Kˣ), rfl⟩
-  have : Group.FG (Subgroup.zpowers y) := (Group.fg_iff_subgroup_fg _).2
-    ⟨{y}, by rw [Finset.coe_singleton, ← Subgroup.zpowers_eq_closure]⟩
+  have : Group.FG (Subgroup.zpowers y) := inferInstance
   have := Subgroup.finiteIndex_range_powMonoidHom_of_fg (Subgroup.zpowers y) (NeZero.ne n)
   have := Subgroup.finiteIndex_of_le hle
   exact Subgroup.finite_quotient_of_finiteIndex
 
 variable [HasEnoughRootsOfUnity K n] {Ω : Type*} [Field Ω] [Algebra K Ω] [IsSepClosed Ω]
 
-omit [IsSepClosed Ω] in
 
+omit [IsSepClosed Ω] in
 theorem adjoin_eq_top_of_pow_eq {y : Kˣ} (α : kummerExtension K n Ω (Subgroup.zpowers y))
     (hα : α ^ n = algebraMap K _ (y : K)) : adjoin K {α} = ⊤ := by
   refine eq_top_iff.2 fun m _ ↦ ?_

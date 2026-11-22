@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.ComapInclusionIsLocalHom
+module
+
+public import ReciprocityTheory.SemistableReduction.ComapInclusionIsLocalHom
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FreeQuotientRank
 

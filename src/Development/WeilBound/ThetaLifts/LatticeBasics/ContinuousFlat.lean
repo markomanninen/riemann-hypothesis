@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.Unfold0
-import Development.WeilBound.ThetaLifts.LatticeBasics.FarRight
-import Development.WeilBound.ThetaLifts.LatticeBasics.FdEqZero
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.Unfold0
+public import Development.WeilBound.ThetaLifts.LatticeBasics.FarRight
+public import Development.WeilBound.ThetaLifts.LatticeBasics.FdEqZero
+
+@[expose] public section
 
 noncomputable section
 

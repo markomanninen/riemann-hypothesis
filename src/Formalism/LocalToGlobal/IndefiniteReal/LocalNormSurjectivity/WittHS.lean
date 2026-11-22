@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNormSurjectivity.FinNormSurj
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNormSurjectivity.FinNormSurj
+
+@[expose] public section
 
 noncomputable section
 

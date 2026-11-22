@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FormsOver
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FormsOver
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,11 +71,6 @@ def shimXOfPkg {D : D7} {G : DV.Geo D.what₂.LL} {jC : ∀ (p : ℕ) [Fact p.Pr
 section
 variable {D : D7} {A : Amb D} {F : SrcFam A} {L : CmList A} {C : CxSt D.what₂.LL} (K : CutSt C) (R : ResSt C)
   {jC : ∀ (p : ℕ) [Fact p.Prime], PlL D p → (DV.KW p →+* ℂ)} {ng : NgPkg} (k : Kits F L C jC ng)
-
-def shimXAt (N j : ℕ) (hN : 2 ≤ N) (hj : j ≤ N) (κ : Lv A) (h : 1 ≤ j ∧ j < N) : DV.ShimX D.what₂.Tau :=
-  shimXOfPkg ((F.src N j hN hj κ).cx L (k N j hN hj κ).B (k N j hN hj κ).fl)
-    ((F.src N j hN hj κ).alg L C K R (k N j hN hj κ).Φ (k N j hN hj κ).dim_eq (k N j hN hj κ).Mb)
-    (k N j hN hj κ).pad h κ.primes (fun _ hp => Nat.prime_of_mem_primeFactors hp)
 
 end
 

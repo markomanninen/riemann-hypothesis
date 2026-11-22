@@ -1,5 +1,9 @@
-import Formalism.SizeWindowBrackets.PrimeClassLossHypothesesSatisfiable
-import Formalism.SizeWindowBrackets.ChainSlopeWindows.OneLeThresholdMulPowers
+module
+
+public import Formalism.SizeWindowBrackets.PrimeClassLossHypothesesSatisfiable
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.OneLeThresholdMulPowers
+
+@[expose] public section
 
 namespace Formalism.LFunctionChainParameters.SmallOrderPrimeLosses
 

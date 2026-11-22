@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParamCommF
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParamCommF
+
+@[expose] public section
 
 open Matrix
 

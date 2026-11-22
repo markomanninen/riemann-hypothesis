@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.LocusEqTopOfDualPow
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.InterNumConsEqCokernel
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsIsoGrCechMapPolyToGamma
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsLinearMapMultilinearMapBaseChange
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.GeometricallyReducedOfPerfectField
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.CoeNonzeroLocusCanonicalEqComplRange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.LocusEqTopOfDualPow
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.InterNumConsEqCokernel
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsIsoGrCechMapPolyToGamma
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsLinearMapMultilinearMapBaseChange
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.GeometricallyReducedOfPerfectField
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.CoeNonzeroLocusCanonicalEqComplRange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -22,8 +26,8 @@ section Defs
 
 variable (k : Type) [Field k] {X : Scheme.{0}} [Algebra k Γ(X, ⊤)]
 
-variable (X) in
 
+variable (X) in
 def strHom : X ⟶ Sp k := X.toSpecΓ ≫ Spec.map (CommRingCat.ofHom (algebraMap k Γ(X, ⊤)))
 
 abbrev redι (Z : Closeds X) : (Scheme.IdealSheafData.vanishingIdeal Z).subscheme ⟶ X :=
@@ -77,8 +81,8 @@ theorem strHom_eq {f : X ⟶ Sp k}
   rw [strHom, e, Spec.map_comp, ← Scheme.toSpecΓ_naturality_assoc,
     toSpecΓ_SpecMap_ΓSpecIso_inv, Category.comp_id]
 
-variable (k X) in
 
+variable (k X) in
 theorem algebraMap_eq_strHom (r : k) :
     algebraMap k Γ(X, ⊤) r = (strHom k X).appTop ((Scheme.ΓSpecIso (.of k)).inv r) := by
   have e : (Scheme.ΓSpecIso (.of k)).inv ≫ (strHom k X).appTop =
@@ -226,11 +230,6 @@ theorem HasNonzeroSec.pow [IsIntegral X] (h : HasNonzeroSec L) (hL : L.IsLB) (n 
   · obtain ⟨s, hs⟩ := hasNonzeroSec_iff.1 h
     exact hasNonzeroSec_iff.2 ⟨secToPow s n, (nonzeroLocus_secToPow s hn).ge hs⟩
 
-theorem EffCartierData.hasNonzeroSec [Nonempty X] (D : EffCartierData X) :
-    HasNonzeroSec D.lb := by
-  obtain ⟨x, hx⟩ := D.dense_nonzeroLocus_canonical.nonempty
-  exact ⟨_, sec_ne_zero_of_mem hx⟩
-
 end Sections
 
 section Curve
@@ -274,8 +273,8 @@ theorem interNum_one_nonneg_of_sec (hH : IsAmpleLB H) (hd : topologicalKrullDim 
   rw [Pi.single_eq_same] at this
   exact ha this
 
-omit [IsIntegral C] in
 
+omit [IsIntegral C] in
 theorem interNum_one_of_cls_eq_add (hH : IsAmpleLB H) (hd : topologicalKrullDim C = 1)
     {A B : LB C} (hL : L.IsLB) (hA : A.IsLB) (hB : B.IsLB) (e : cls L hL = cls A hA + cls B hB) :
     interNum k (structureModule C) ![L] =
@@ -323,7 +322,7 @@ theorem IsCompleteCurve.interNumRed_of_cls_eq_add (hZ : IsCompleteCurve k Z) (hH
   rw [interNumRed_one_eq hN, interNumRed_one_eq hA, interNumRed_one_eq hB]
   exact interNum_one_of_cls_eq_add (hH.pull_of_isClosedImmersion (redι Z))
     ((topologicalKrullDim_red Z).trans hZ.2) (LB.isLB_pull hN _) (LB.isLB_pull hA _)
-    (LB.isLB_pull hB _) (by rw [cls_pull hN, cls_pull hA, cls_pull hB, e, map_add])
+    (LB.isLB_pull hB _) (by rw [cls_pull hN, cls_pull hA, cls_pull hB, e, map_add (f := _)])
 
 theorem interNumRed_one_eq_zero (hL : L.IsLB) (e : cls L hL = 0) (Z : Closeds X) :
     interNumRed k Z ![L] = 0 :=
@@ -391,11 +390,8 @@ variable {k : Type} [Field k] {X Y : Scheme.{0}} [Algebra k Γ(X, ⊤)] {H L M N
 theorem IsNef.of_cls_eq (h : IsNef k M) (hL : L.IsLB) (e : cls L hL = cls M h.isLB) : IsNef k L :=
   ⟨hL, fun Z hZ => (h.2 Z hZ).trans_eq (interNumRed_one_congr hL h.isLB e Z).symm⟩
 
-theorem IsNef.of_lbIso (h : IsNef k M) (hL : L.IsLB) (e : LBIso L M) : IsNef k L :=
-  h.of_cls_eq hL ((cls_eq_iff hL h.isLB).2 e)
 
 variable (k X) in
-
 theorem isNef_triv : IsNef k (LB.triv X) :=
   ⟨LB.isLB_triv X, fun Z _ => (interNumRed_one_eq_zero (LB.isLB_triv X) rfl Z).ge⟩
 
@@ -419,12 +415,6 @@ theorem IsNef.tens (hA : IsNef k A) (hB : IsNef k B) (hH : IsAmpleLB H) : IsNef 
 theorem IsNef.pow (h : IsNef k L) (hH : IsAmpleLB H) (n : ℕ) : IsNef k (lbPow L n) :=
   ⟨isLB_lbPow h.isLB n, fun Z hZ => (mul_nonneg (Nat.cast_nonneg n) (h.2 Z hZ)).trans_eq
     (hZ.interNumRed_lbPow hH h.isLB n).symm⟩
-
-theorem isNef_pow_iff (hH : IsAmpleLB H) (hL : L.IsLB) {n : ℕ} (hn : 1 ≤ n) :
-    IsNef k (lbPow L n) ↔ IsNef k L :=
-  ⟨fun h => ⟨hL, fun Z hZ => nonneg_of_mul_nonneg_right
-      ((h.2 Z hZ).trans_eq (hZ.interNumRed_lbPow hH hL n)) (Nat.cast_pos.2 hn)⟩,
-    fun h => h.pow hH n⟩
 
 theorem IsNef.of_cls_eq_sum {ι : Type*} (s : Finset ι) {P : ι → LB X} (hP : ∀ i, IsNef k (P i))
     (n : ι → ℕ) (hH : IsAmpleLB H) (hN : N.IsLB)
@@ -458,13 +448,6 @@ theorem IsNef.pull_of_isClosedImmersion [Algebra k Γ(Y, ⊤)] (h : IsNef k L) (
   refine this.trans_eq (congrArg _ (funext fun j => ?_))
   fin_cases j
   rfl
-
-theorem IsAmpleLB.not_isNef_dual (h : IsAmpleLB A) {Z : Closeds X} (hZ : IsCompleteCurve k Z) :
-    ¬ IsNef k (dual A) := fun h' => by
-  have h₁ := h'.2 Z hZ
-  have h₂ := h.interNumRed_pos hZ
-  rw [hZ.interNumRed_dual h h.isLB] at h₁
-  omega
 
 end Nef
 
@@ -503,8 +486,8 @@ theorem IsPsEff.exists_hasNonzeroSec [IsLocallyNoetherian X] (h : IsPsEff N) (hA
     cls_tens (isLB_dual hB.isLB) (isLB_lbPow hA.isLB q), cls_dual hB.isLB, cls_lbPow hA.isLB]
   module
 
-omit [IsIntegral X] in
 
+omit [IsIntegral X] in
 theorem IsPsEff.of_cls_eq (h : IsPsEff M) (hL : L.IsLB) (e : cls L hL = cls M h.isLB) :
     IsPsEff L := by
   obtain ⟨A, hA, hs⟩ := h.2
@@ -514,10 +497,6 @@ theorem IsPsEff.of_cls_eq (h : IsPsEff M) (hL : L.IsLB) (e : cls L hL = cls M h.
     (isLB_lbPow (isLB_tens (isLB_lbPow h.1 m) hA.isLB) r)
     (by rw [cls_lbPow_tens_lbPow hL hA.isLB, cls_lbPow_tens_lbPow h.1 hA.isLB, e])⟩
 
-omit [IsIntegral X] in
-
-theorem IsPsEff.of_lbIso (h : IsPsEff M) (hL : L.IsLB) (e : LBIso L M) : IsPsEff L :=
-  h.of_cls_eq hL ((cls_eq_iff hL h.isLB).2 e)
 
 theorem isPsEff_of_hasNonzeroSec_pow (hH : IsAmpleLB H) (hL : L.IsLB) {n : ℕ} (hn : 1 ≤ n)
     (h : HasNonzeroSec (lbPow L n)) : IsPsEff L := by
@@ -533,9 +512,6 @@ theorem isPsEff_of_hasNonzeroSec_pow (hH : IsAmpleLB H) (hL : L.IsLB) {n : ℕ} 
 theorem HasNonzeroSec.isPsEff (h : HasNonzeroSec L) (hL : L.IsLB) (hH : IsAmpleLB H) :
     IsPsEff L :=
   isPsEff_of_hasNonzeroSec_pow hH hL le_rfl (h.pow hL 1)
-
-theorem EffCartierData.isPsEff (D : EffCartierData X) (hH : IsAmpleLB H) : IsPsEff D.lb :=
-  D.hasNonzeroSec.isPsEff D.isLB_lb hH
 
 theorem IsGenerated.isPsEff (h : IsGenerated L) (hH : IsAmpleLB H) : IsPsEff L :=
   h.hasNonzeroSec.isPsEff h.isLB hH
@@ -566,14 +542,6 @@ theorem IsPsEff.of_cls_eq_add (hL : IsPsEff L) (hM : IsPsEff M) (hN : N.IsLB)
 
 theorem IsPsEff.tens (hL : IsPsEff L) (hM : IsPsEff M) : IsPsEff (tens L M) :=
   hL.of_cls_eq_add hM (isLB_tens hL.isLB hM.isLB) rfl
-
-theorem IsPsEff.exists_of_dual [IsLocallyNoetherian X] (hA : IsAmpleLB A) (h : IsPsEff (dual A)) :
-    ∃ r : ℕ, 1 ≤ r ∧ HasNonzeroSec (lbZPow A (-r)) := by
-  obtain ⟨r, hr, hr'⟩ := h.exists_hasNonzeroSec hA (m := 2) one_le_two
-  refine ⟨r, hr, hr'.of_cls_eq (Twist.isLB_lbZPow hA.isLB _)
-    (isLB_lbPow (isLB_tens (isLB_lbPow h.1 2) hA.isLB) r) ?_⟩
-  rw [cls_lbPow_tens_lbPow h.1 hA.isLB, cls_lbZPow hA.isLB, cls_dual hA.isLB]
-  module
 
 end PsEff
 
@@ -636,9 +604,6 @@ theorem IsBig.of_cls_eq (h : IsBig k M) (hL : L.IsLB) (e : cls L hL = cls M h.is
   obtain ⟨D, hD, c, hc, hm⟩ := h.3
   exact ⟨hL, fun m => finite_coh_zero_twist_congr _ _ (e' m) (h.2 m), D, hD, c, hc,
     hm.mono fun m hm => by rwa [lineBundleGlobalSectionsDim_congr_picardClass _ _ (e' m)]⟩
-
-theorem IsBig.of_lbIso (h : IsBig k M) (hL : L.IsLB) (e : LBIso L M) : IsBig k L :=
-  h.of_cls_eq hL ((cls_eq_iff hL h.isLB).2 e)
 
 theorem hasNonzeroSection_of_le_sectionBound {c : ℝ} (hc : 0 < c) {m D : ℕ} (hm : 1 ≤ m)
     (h : c * (m : ℝ) ^ D ≤ lbH0 k L) : HasNonzeroSec L :=
@@ -755,8 +720,6 @@ theorem isBig_twistingSheaf : IsBig k (O1 k N) := by
   gcongr
   omega
 
-theorem isPsEff_twistingSheaf : IsPsEff (O1 k N) := (isAmple_projective_O_one k N).isPsEff
-
 theorem triv_nef_not_big : IsNef k (LB.triv (PSpace k (N + 1))) ∧
     IsPsEff (LB.triv (PSpace k (N + 1))) ∧ ¬ IsBig k (LB.triv (PSpace k (N + 1))) := by
   refine ⟨isNef_triv k _, (isGenerated_triv _).isPsEff (isAmple_projective_O_one k _), fun h => ?_⟩
@@ -770,35 +733,11 @@ theorem triv_nef_not_big : IsNef k (LB.triv (PSpace k (N + 1))) ∧
     sectionDim_twistingSheaf_pow, zero_add, Nat.choose_self, Nat.cast_one] at h₁
   exact h₂.not_ge h₁
 
-theorem not_isPsEff_dual_twistingSheaf :
-    ¬ IsPsEff (dual (O1 k (N + 1))) ∧ ¬ IsBig k (dual (O1 k (N + 1))) := by
-  have := isNoetherian_of_isProjOver (isProjOver_str k (N + 1))
-  have h : ¬ IsPsEff (dual (O1 k (N + 1))) := fun h => by
-    obtain ⟨r, hr, hs⟩ := h.exists_of_dual (isAmple_projective_O_one k _)
-    have := ProjCoh.subsingleton_coh_zero k (N := N + 1) (by omega) (n := -r) (by omega)
-    exact not_nontrivial _ (hasNonzeroSec_iff_nontrivial.1 hs)
-  exact ⟨h, fun h' => h (h'.isPsEff (isAmple_projective_O_one k _))⟩
-
 theorem isCompleteCurve_top : IsCompleteCurve k (⊤ : Closeds (PSpace k 1)) :=
   have := isProper_str k 1
   (isCompleteCurve_iff (algebraMap_top_eq k 1)).2 ⟨IrreducibleSpace.isIrreducible_univ _,
     (topologicalKrullDim_eq_of_isEmbedding Topology.IsEmbedding.id Set.range_id).trans
       (topologicalKrullDim_eq k 1)⟩
-
-theorem not_isNef_dual_twistingSheaf : ¬ IsNef k (dual (O1 k 1)) :=
-  (isAmple_projective_O_one k 1).not_isNef_dual (isCompleteCurve_top k)
-
-example : lbH0 ℚ (lbPow (O1 ℚ 2) 2) = 6 := sectionDim_twistingSheaf_pow ℚ 2 2
-
-example : 0 < interNumRed k (⊤ : Closeds (PSpace k 1)) ![O1 k 1] ∧
-    interNumRed k (⊤ : Closeds (PSpace k 1)) ![dual (O1 k 1)] < 0 := by
-  have h := (isAmple_projective_O_one k 1).interNumRed_pos (isCompleteCurve_top k)
-  rw [(isCompleteCurve_top k).interNumRed_dual (isAmple_projective_O_one k 1) (O1_isLB k 1)]
-  omega
-
-example : IsNef k (lbPow (O1 k 2) 3) ∧ IsBig k (lbPow (O1 k 2) 3) ∧ IsPsEff (lbPow (O1 k 2) 3) :=
-  have h := (isBig_twistingSheaf k 2).pow (algebraMap_top_eq k 2) (isProjOver_str k 2) (n := 3) (by norm_num)
-  ⟨(isNef_twistingSheaf k 2).pow (isAmple_projective_O_one k 2) 3, h, h.isPsEff (isAmple_projective_O_one k 2)⟩
 
 end ProjSpace
 

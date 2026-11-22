@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.GlobalCharacterOfInputs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceDualWeylModuleInvRationalPointEqConjCharAt
-import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.Branch
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.GlobalCharacterOfInputs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceDualWeylModuleInvRationalPointEqConjCharAt
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.Branch
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,20 @@ theorem weylat_weylChar_eq_gtChar {n : ℕ} (l : DomWeight n) (γ : Fin n → �
     omega
   have h1 := ReciprocityTheory.ChartRestriction.TR.Weyl.weylGT ℂ n l.w l.anti γ h0
   have h2 := ReciprocityTheory.ChartRestriction.TR.Weyl.weylGT ℂ n 0 antitone_const γ h0
-  rw [ReciprocityTheory.ChartRestriction.TR.Weyl.gtChar_zero, mul_one] at h2
+  have hzero : ∀ (m : ℕ) (t : Fin m → ℂ), ReciprocityTheory.ChartRestriction.TR.Weyl.gtChar m 0 t = 1 := by
+    intro m
+    induction m with
+    | zero => intro t; simp [ReciprocityTheory.ChartRestriction.TR.Weyl.gtChar]
+    | succ m ih =>
+      intro t
+      have h : ReciprocityTheory.ChartRestriction.TR.Weyl.interl (0 : Fin (m + 1) → ℤ) = {(0 : Fin m → ℤ)} := by
+        ext mu
+        simp only [ReciprocityTheory.ChartRestriction.TR.Weyl.interl, Fintype.mem_piFinset,
+          Pi.zero_apply, Finset.Icc_self, Finset.mem_singleton]
+        exact ⟨fun h => funext h, fun h i => congrFun h i⟩
+      rw [ReciprocityTheory.ChartRestriction.TR.Weyl.gtChar, h, Finset.sum_singleton, ih]
+      simp [ReciprocityTheory.ChartRestriction.TR.Weyl.wsum]
+  rw [hzero, mul_one] at h2
   have hw : ReciprocityTheory.ChartRestriction.TR.Weyl.wden n γ ≠ 0 := by
     unfold ReciprocityTheory.ChartRestriction.TR.Weyl.wden
     refine Finset.prod_ne_zero_iff.2 fun i _ => Finset.prod_ne_zero_iff.2 fun j _ => ?_
@@ -52,7 +69,7 @@ theorem weylAt_holds : WeylAt := by
     simp only [Units.val_mk0]
   have hex : ∃ g : GL (Fin n) ℂ, g.val.charpoly = (diagonal γ).charpoly := ⟨D, by rw [hD]⟩
   unfold chAt
-  rw [dif_pos hex, GlobalTheory.ContraChar.trace_sqRep_eq_of_charpoly_eq l _ D (hex.choose_spec.trans (by rw [hD])),
+  rw [dite_eq_left hex, GlobalTheory.ContraChar.trace_sqRep_eq_of_charpoly_eq l _ D (hex.choose_spec.trans (by rw [hD])),
     GlobalTheory.ContraChar.trace_sqRep_diag l D γ hD, weylat_weylChar_eq_gtChar l γ h0 hinj]
 
 end PositivityTheory.Rg.BcB.G8

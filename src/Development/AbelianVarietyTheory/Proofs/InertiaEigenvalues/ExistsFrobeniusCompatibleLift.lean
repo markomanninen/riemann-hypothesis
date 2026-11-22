@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWittVectorGhostEqFrobeniusIterateStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GhostComponentInjectiveOfNoTorsionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWittVectorGhostEqFrobeniusIterateStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GhostComponentInjectiveOfNoTorsionStatement
+
+@[expose] public section
+
 open scoped NNReal
 
 namespace GlobalTheory.DworkLift
@@ -20,7 +25,7 @@ theorem exists_frobenius_compatible_lift : ∀ (l : ℕ) [Fact l.Prime] (A : Typ
       map_one' := inj _ _ fun n => by rw [hs, map_one, hit, map_one]
       map_mul' := fun a b => inj _ _ fun n => by rw [map_mul, hs, hs, hs, hit, hit, hit, map_mul]
       map_zero' := inj _ _ fun n => by rw [hs, map_zero, hit, map_zero]
-      map_add' := fun a b => inj _ _ fun n => by rw [map_add, hs, hs, hs, hit, hit, hit, map_add] }
+      map_add' := fun a b => inj _ _ fun n => by rw [map_add (f := _), hs, hs, hs, hit, hit, hit, map_add (f := _)] }
   have hS0 : ∀ a, (S a).coeff 0 = a := fun a => by
     change (s a).coeff 0 = a
     have h := hs a 0

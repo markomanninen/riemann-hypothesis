@@ -1,9 +1,13 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Qf21.degLE :
     {κ R : Type} → [inst : CommRing R] → Finset κ → ℕ → MvPolynomial κ R → Prop :=
     fun {κ R : Type} [CommRing R] (W : Finset κ) (n : ℕ) (F : MvPolynomial κ R) ↦
-      ∀ (β : κ →₀ ℕ), MvPolynomial.coeff β F ≠ (0 : R) → ∑ k ∈ W, (β : κ → ℕ) k ≤ n
+      ∀ (β : κ →₀ ℕ), AddMonoidAlgebra.coeff F β ≠ (0 : R) → ∑ k ∈ W, (β : κ → ℕ) k ≤ n
 
 theorem UpperTheory.Reformulated.B.Qf21.degLE_sum.{u_1} :
     ∀ {κ R : Type} [inst : CommRing R] {α : Type u_1} {W : Finset κ} {n : ℕ} (s : Finset α) (F : α → MvPolynomial κ R),

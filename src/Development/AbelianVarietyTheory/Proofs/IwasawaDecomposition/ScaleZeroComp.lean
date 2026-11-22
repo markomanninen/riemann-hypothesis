@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.HeightBoundStatement.HTBoundSt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TorsionRepresentableFiniteFreeStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DerivationDivisibleOfCocommStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PowEqScaleAndExistsUniqueTorsion
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ValuationRingHenselianAndSmoothPointsLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.HeightBoundStatement.HTBoundSt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TorsionRepresentableFiniteFreeStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DerivationDivisibleOfCocommStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PowEqScaleAndExistsUniqueTorsion
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ValuationRingHenselianAndSmoothPointsLift
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -43,10 +47,6 @@ theorem eps_dual {A B : Type} [CommRing A] [CommRing B] (f : A →+* B) (a : A) 
     (epsMul (f a)).comp (dualMap f) = (dualMap f).comp (epsMul a) := by
   refine RingHom.ext fun z => ?_
   ext <;> simp [epsMul, dualMap, _root_.mul_comm]
-
-theorem eps_one {A : Type} [CommRing A] : epsMul (1 : A) = RingHom.id _ := by
-  refine RingHom.ext fun z => ?_
-  ext <;> simp [epsMul]
 
 section Divide
 

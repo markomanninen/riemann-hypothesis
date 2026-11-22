@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField IsDedekindDomain IntermediateField
 open scoped Pointwise
@@ -45,8 +49,8 @@ instance cen_prime (A : ValuationSubring Ω) : (cen A).IsPrime where
 theorem val_eq_one {A : ValuationSubring Ω} {s : 𝓞 Ω} (h : s ∉ cen A) : A.valuation (s : Ω) = 1 :=
   le_antisymm (int_le A s) (not_lt.1 h)
 
-variable (E) in
 
+variable (E) in
 theorem frac [Algebra.IsAlgebraic E Ω] (A : ValuationSubring Ω) {x : Ω} (hx : x ∈ A) :
     ∃ b s : 𝓞 Ω, s ∉ cen A ∧ x * s = b := by
   obtain ⟨F, hF, y, rfl⟩ : ∃ F : IntermediateField E Ω, FiniteDimensional E F ∧ ∃ y : F, algebraMap F Ω y = x :=
@@ -75,7 +79,7 @@ theorem coe_smul (g : Ω ≃ₐ[E] Ω) (b : 𝓞 Ω) : ((g • b : 𝓞 Ω) : Ω
 
 theorem map_mem [Algebra.IsAlgebraic E Ω] (A : ValuationSubring Ω) (g : Ω ≃ₐ[E] Ω)
     (hg : ∀ b : 𝓞 Ω, g • b ∈ cen A → b ∈ cen A) {x : Ω} (hx : x ∈ A) : g x ∈ A := by
-  obtain ⟨b, s, hs, e⟩ := frac E A hx
+  obtain ⟨b, s, hs, e⟩ := frac (E := E) A hx
   have h1 := val_eq_one fun h => hs (hg s h)
   have h2 := int_le A (g • b)
   rw [coe_smul, ← e, map_mul, map_mul, ← coe_smul g s, h1, mul_one] at h2
@@ -94,7 +98,7 @@ theorem of_cong [Algebra.IsAlgebraic E Ω] (A : ValuationSubring Ω) (g : Ω ≃
     refine ⟨fun h => ?_, fun h => map_mem A g⁻¹ (fun b hb => ?_) h⟩
     · simpa using map_mem A g (fun b => (hiff b).1) h
     · simpa using (hiff _).2 hb
-  · obtain ⟨b, s, hs, e⟩ := frac E A hx
+  · obtain ⟨b, s, hs, e⟩ := frac (E := E) A hx
     have h1 := val_eq_one fun h => hs ((hiff s).1 h)
     have h2 := val_eq_one hs
     have key : (g x - x ^ q) * (((g • s : 𝓞 Ω) : Ω) * (s : Ω) ^ q) =
@@ -173,7 +177,9 @@ theorem lift [IsGalois E Ω] (L : IntermediateField E Ω) [FiniteDimensional E L
         show θ (u (Ideal.Quotient.mk Q (algebraMap (𝓞 L) (𝓞 Ω) (τ • y)))) =
           Ideal.Quotient.mk Q (algebraMap (𝓞 L) (𝓞 Ω) (τ • y))
         rw [hu, hg'L, hτ] }
-  have hmax : (Q.under (𝓞 L)).IsMaximal := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal Q
+  have hmax : (Q.under (𝓞 L)).IsMaximal :=
+    Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (algebraMap (𝓞 L) (𝓞 Ω))
+      (algebraMap_isIntegral_iff.mpr this) Q
   let _ : Field (𝓞 L ⧸ Q.under (𝓞 L)) := Ideal.Quotient.field _
   have hbij : Function.Bijective ψ := Algebra.IsAlgebraic.algHom_bijective ψ
   obtain ⟨k, hk⟩ := Ideal.Quotient.stabilizerHom_surjective_of_profinite (G := G) (Q.under (𝓞 L)) Q

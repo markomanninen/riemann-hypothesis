@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.ChF
 
@@ -26,7 +30,7 @@ private theorem padicInt_ringHom_matrix_ext (p : ℕ) [Fact p.Prime] (O : Type) 
     rw [Nat.cast_pow, ← hd]; ring
   have h : f c - g c = (p ^ k : ℕ) • (f d - g d) := by
     rw [hc]
-    simp only [map_add, map_mul, map_natCast, nsmul_eq_mul, mul_sub]
+    simp only [map_add (f := _), map_mul, map_natCast, nsmul_eq_mul, mul_sub]
     abel
   have h' : f c i j - g c i j = (p : O) ^ k * (f d i j - g d i j) := by
     have := congrFun (congrFun h i) j

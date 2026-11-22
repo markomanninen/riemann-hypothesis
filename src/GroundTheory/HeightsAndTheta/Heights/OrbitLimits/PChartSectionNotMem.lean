@@ -1,12 +1,17 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StChartSection
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreChartDim
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IsSmoothMetricOfIsSmoothHerm
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ConeChart
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.BaseChangeC
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRat
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgDim
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StChartSection
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreChartDim
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IsSmoothMetricOfIsSmoothHerm
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ConeChart
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.BaseChangeC
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRat
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgDim
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -24,8 +29,8 @@ def coneMap (𝔮 : Ideal (MvPolynomial (Σ k, ι k) ℂ)) :
     MvPolynomial (Σ k, ι k) ℂ →ₐ[ℂ] MvPolynomial K (MvPolynomial (Σ k, ι k) ℂ ⧸ 𝔮) :=
   aeval fun q => X q.1 * C (Ideal.Quotient.mk 𝔮 (X q))
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem aeval_C_mk (𝔮 : Ideal (MvPolynomial (Σ k, ι k) ℂ)) (f : MvPolynomial (Σ k, ι k) ℂ) :
     aeval (fun q => (C (Ideal.Quotient.mk 𝔮 (X q)) : MvPolynomial K (MvPolynomial (Σ k, ι k) ℂ ⧸ 𝔮))) f =
       C (Ideal.Quotient.mk 𝔮 f) := by
@@ -47,8 +52,8 @@ theorem coneMap_of_isMultiHomog (𝔮 : Ideal (MvPolynomial (Σ k, ι k) ℂ)) {
   rw [aeval_C_mk] at h
   exact h
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem ringKrullDim_ker_coneMap (𝔮 : Ideal (MvPolynomial (Σ k, ι k) ℂ)) [𝔮.IsPrime] (p : (k : K) → ι k)
     (h1 : ∀ k, (X ⟨k, p k⟩ - 1 : MvPolynomial (Σ k, ι k) ℂ) ∈ 𝔮) (d : ℕ)
     (hd : ringKrullDim (MvPolynomial (Σ k, ι k) ℂ ⧸ 𝔮) = (d : WithBot ℕ∞)) :
@@ -123,7 +128,7 @@ theorem ringKrullDim_ker_coneMap (𝔮 : Ideal (MvPolynomial (Σ k, ι k) ℂ)) 
         rfl
       rwa [h3] at h2
     | add f g hf hg =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact AC.add_mem hf hg
     | mul_X f q hf =>
       rw [map_mul, map_mul]
@@ -161,8 +166,8 @@ theorem ringKrullDim_ker_coneMap (𝔮 : Ideal (MvPolynomial (Σ k, ι k) ℂ)) 
 
 end ChartSectionNotMem
 
-open ChartSectionNotMem in
 
+open ChartSectionNotMem in
 theorem ChartSectionNotMem.proof : ChartSectionNotMem.Statement := by
   classical
   intro K _ _ ι _ P e m σ i A s hP hs J hJ hmem
@@ -237,7 +242,7 @@ theorem ChartSectionNotMem.proof : ChartSectionNotMem.Statement := by
       | add f g hf hg =>
         obtain ⟨f', hf'⟩ := hf
         obtain ⟨g', hg'⟩ := hg
-        exact ⟨f' + g', by rw [map_add, hf', hg', map_add]⟩
+        exact ⟨f' + g', by rw [map_add (f := _), hf', hg', map_add (f := _)]⟩
       | mul_X f a hf =>
         obtain ⟨f', hf'⟩ := hf
         obtain ⟨g', hg'⟩ := hXa a

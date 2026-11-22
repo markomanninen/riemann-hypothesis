@@ -1,6 +1,10 @@
-import Formalism.SatakeDualWeyl.StatementC
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureExists
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureConjugationInvariant
+module
+
+public import Formalism.SatakeDualWeyl.StatementC
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureExists
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureConjugationInvariant
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ def stdformQ (M : Matrix n n ℂ) (y : n → ℂ) : ℝ :=
 
 theorem stdform_continuous_Q (M : Matrix n n ℂ) : Continuous (stdformQ M) := by
   unfold stdformQ
-  exact Complex.continuous_re.comp (continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+  exact Complex.continuous_re.comp (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
     ((Complex.continuous_conj.comp (continuous_apply i)).mul continuous_const).mul (continuous_apply j))
 
 theorem stdform_Q_dot (M : Matrix n n ℂ) (y : n → ℂ) :
@@ -79,7 +83,7 @@ theorem stdform_psd (τ : E →+* ℂ) (M : Matrix n n ℂ) (hM : ∀ i j, ∃ e
         ((Complex.continuous_ofReal.comp continuous_snd).mul continuous_const))
       convert h0 using 1
       funext ab
-      simp [map_add, map_mul, map_ratCast]
+      simp [map_add (f := _), map_mul, map_ratCast]
     have h2 : DenseRange fun v : n → ℚ × ℚ => fun i => τ (((v i).1 : E) + ((v i).2 : E) * e0) :=
       DenseRange.piMap (fun _ => h1)
     have hsub : closure (Set.range fun v : n → ℚ × ℚ => fun i => τ (((v i).1 : E) + ((v i).2 : E) * e0)) ⊆
@@ -142,7 +146,8 @@ theorem stdform_hform_map (σ : E →ₐ[F] E) (τ : E →+* ℂ)
     (hσ : τ.comp (σ : E →+* E) = (starRingEnd ℂ).comp τ) (J : Matrix n n E) (x : n → E) :
     τ (hform (σ : E →+* E) J x x) =
       ∑ i, ∑ j, starRingEnd ℂ (τ (x i)) * (J.map τ) i j * τ (x j) := by
-  simp only [hform, map_sum, map_mul, Matrix.map_apply, AlgHom.coe_toRingHom, stdform_conj σ τ hσ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hform, map_sum, map_mul, Matrix.map_apply, AlgHom.coe_toRingHom, stdform_conj σ τ hσ]
 
 theorem stdform_hform_fixed (σ : E →ₐ[F] E) (τ : E →+* ℂ)
     (hσ : τ.comp (σ : E →+* E) = (starRingEnd ℂ).comp τ) (J : Matrix n n E)
@@ -152,7 +157,8 @@ theorem stdform_hform_fixed (σ : E →ₐ[F] E) (τ : E →+* ℂ)
   have hJ' : ∀ i j, σ (J i j) = J j i := fun i j => by
     have h := congrFun (congrFun hJ j) i
     simpa [cT] using h
-  simp only [hform, map_sum, map_mul, AlgHom.coe_toRingHom, stdform_invol σ τ hσ, hJ']
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hform, map_sum, map_mul, AlgHom.coe_toRingHom, stdform_invol σ τ hσ, hJ']
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.FirstLiftOfHypotheses
-import Formalism.SharpRestriction.LevelLetterCocycles.RToolModDStab
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.FirstLiftOfHypotheses
+public import Formalism.SharpRestriction.LevelLetterCocycles.RToolModDStab
+
+@[expose] public section
 
 noncomputable section
 

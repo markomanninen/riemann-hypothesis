@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.MapInclKMemTwCentResOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MapInclKMemTwCentResOne
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount
 open scoped TensorProduct Classical
 
@@ -41,7 +46,7 @@ theorem finite_quot_of_gen {R A B : Type} [CommRing R] [CommRing A] [CommRing B]
     rw [Subring.mem_closure_iff] at hx
     refine AddSubgroup.closure_mono ?_ hx
     exact Submonoid.closure_le.2 hsub
-  haveI : AddGroup.FG (R ⧸ I) := ⟨⟨hS.toFinset, by rw [Set.Finite.coe_toFinset]; exact htop⟩⟩
+  haveI : AddGroup.FG (R ⧸ I) := AddGroup.fg_iff.mpr ⟨S, htop, hS⟩
   refine AddCommGroup.finite_of_fg_torsion _ fun x => ?_
   refine isOfFinAddOrder_iff_nsmul_eq_zero.2 ⟨n, Nat.pos_of_ne_zero hn, ?_⟩
   rw [nsmul_eq_mul]

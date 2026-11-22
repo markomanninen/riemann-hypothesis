@@ -1,5 +1,9 @@
-import Mathlib.NumberTheory.Bertrand
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.LayerLe
+module
+
+public import Mathlib.NumberTheory.Bertrand
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.LayerLe
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.Top UpperTheory.V.HV
 

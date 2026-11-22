@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ArBirational
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResidueDegreeOfIsOpenImmersion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ArBirational
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResidueDegreeOfIsOpenImmersion
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,8 +13,8 @@ open CategoryTheory AlgebraicGeometry TopologicalSpace
 
 namespace GlobalTheory.Published
 
-open CategoryTheory AlgebraicGeometry TopologicalSpace in
 
+open CategoryTheory AlgebraicGeometry TopologicalSpace in
 theorem _root_.GlobalTheory.Published.generic_of_isIso_restrict {X X' : Scheme.{0}} [IsIntegral X]
     [IsIntegral X'] (π : X' ⟶ X) (U : X.Opens)
     (hU : (U : Set X).Nonempty) [IsIso (π ∣_ U)] :
@@ -43,8 +47,8 @@ theorem _root_.GlobalTheory.Published.generic_of_isIso_restrict {X X' : Scheme.{
     _root_.GlobalTheory.CurveDegreesCompare.residueDegree_of_isOpenImmersion (π ∣_ U), hx] at h1
   simpa using h1
 
-open CategoryTheory AlgebraicGeometry TopologicalSpace in
 
+open CategoryTheory AlgebraicGeometry TopologicalSpace in
 theorem _root_.GlobalTheory.Published.arBirational_of_arProj (H : _root_.GlobalTheory.Published.ArProj) :
     _root_.GlobalTheory.Published.ArBirational := by
   intro k _ X X' _ _ p p' D hp hp' _ _ π hπ U hU hiso L a hL

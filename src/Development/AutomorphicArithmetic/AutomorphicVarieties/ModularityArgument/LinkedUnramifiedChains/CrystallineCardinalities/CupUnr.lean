@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.CocycleTransportH1fSurjective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrField
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OpenField
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsIntBasis
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.CharFil
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FrobFree
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FrobCyc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrIff
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.CocycleTransportH1fSurjective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrField
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OpenField
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsIntBasis
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.CharFil
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FrobFree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FrobCyc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrIff
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Topology UpperTheory.V UpperTheory.V.Loc
 open TensorProduct Module
@@ -89,7 +93,7 @@ private theorem gk_case [IsTopologicalRing E] (hP : LocalPublishedTheorems) (K :
     rw [map_smul, b.toDual_apply_left, smul_eq_mul] at h1
     linear_combination -h1
   choose f hf hff using hf
-  refine ⟨fun s => ∑ i, f i s • b i, continuous_finset_sum _ fun i _ => (hf i).smul continuous_const,
+  refine ⟨fun s => ∑ i, f i s • b i, continuous_finsetSum _ fun i _ => (hf i).smul continuous_const,
     fun s s' => ?_⟩
   rw [cyc_val, ← Algebra.smul_def]
   conv_rhs => rw [← b.sum_repr (κ s)]

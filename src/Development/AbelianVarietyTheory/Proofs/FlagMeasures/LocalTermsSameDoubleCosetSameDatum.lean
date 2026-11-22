@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FrameDualUnipotentGroupActsUnitriangularOnto
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsDatumOfTwoCongruentFrames
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsDatumOfTwoCongruentFramesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDatumOfTermReadOnLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FrameDualUnipotentGroupActsUnitriangularOnto
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsDatumOfTwoCongruentFrames
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsDatumOfTwoCongruentFramesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDatumOfTermReadOnLattice
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.Loc Formalism.MainNotions.S.LocNG GlobalTheory.LocOver
 open scoped Classical
 
@@ -169,10 +174,10 @@ lemma cong_img {r : ℕ} {f₁ f₁' f₂ f₂' : Fin (r + 1) → V} (k : V ≃�
       rw [LinearEquiv.coe_coe] at hyk
       rwa [← k.injective hyk]
     · apply k.injective
-      rw [he, map_add, map_add]
+      rw [he, map_add (f := _), map_add (f := _)]
   · rintro ⟨a, ha, b, hb, c, hc, hbX, hcX, rfl⟩
     refine ⟨k a, (TermOver.mem_img k _ _).2 ⟨a, ha, rfl⟩, k b, (TermOver.mem_img k _ _).2 ⟨b, hb, rfl⟩,
-      k c, (TermOver.mem_img k _ _).2 ⟨c, hc, rfl⟩, ?_, ?_, by rw [map_add, map_add]⟩
+      k c, (TermOver.mem_img k _ _).2 ⟨c, hc, rfl⟩, ?_, ?_, by rw [map_add (f := _), map_add (f := _)]⟩
     · rw [hX]; exact Submodule.mem_map_of_mem hbX
     · rw [hX']; exact Submodule.mem_map_of_mem hcX
 
@@ -205,7 +210,8 @@ lemma tri_map (k : V ≃ₗ[E] V) {n : ℕ} {f g : Fin n → V} (h : Tri E f g) 
   obtain ⟨A, hA, hC⟩ := h
   exact ⟨A, hA, fun b => by
     show k (g b) = ∑ a, A a b • k (f a)
-    rw [hC b, map_sum]; simp only [map_smul]⟩
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hC b, map_sum]; simp only [map_smul]⟩
 
 lemma tri_trans {n : ℕ} {f g h : Fin n → V} (h1 : Tri E f g) (h2 : Tri E g h) : Tri E f h := by
   obtain ⟨A, ⟨hA0, hA1⟩, hA⟩ := h1

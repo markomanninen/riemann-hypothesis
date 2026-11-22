@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedDeterminedBySpherical
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedDeterminedBySpherical
+
+@[expose] public section
 
 noncomputable section
 

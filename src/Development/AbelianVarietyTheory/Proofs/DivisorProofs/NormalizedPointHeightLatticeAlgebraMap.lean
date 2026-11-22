@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeightIffOfDegreeEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeightIffOfDegreeEq
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,7 +33,7 @@ theorem mk_algebraMap (w : HeightOneSpectrum (𝓞 L)) (x : K) :
   have h0 : v.valuation K x ≠ 0 := (v.valuation K).ne_zero_iff.2 hx
   rw [FinitePlace.mk_apply, FinitePlace.mk_apply, FinitePlace.norm_embedding', FinitePlace.norm_embedding',
     ← HeightOneSpectrum.valuation_liesOver L v w x, map_pow, WithZeroMulInt.toNNReal_neg_apply _ h0,
-    WithZeroMulInt.toNNReal_neg_apply _ h0, Ideal.ramificationIdx'_eq_ramificationIdx _ _ v.ne_bot, hn, locDeg]
+    WithZeroMulInt.toNNReal_neg_apply _ h0, hn, locDeg]
   push_cast
   rw [← zpow_natCast, ← zpow_natCast, ← zpow_natCast, ← zpow_mul, ← zpow_mul, ← zpow_mul]
   congr 1
@@ -146,7 +150,8 @@ theorem pointHeight_algebraMap : ∀ (F K : Type) [Field F] [NumberField F] [Fie
   have h₁ := finsum_log_iSup_algebraMap (L := K') hz
   have h₂ := sum_comp_algebraMap (L := K')
     fun τ : K →+* ℂ => Real.log (archSize (A (τ.comp (algebraMap F K))) fun j => τ (y j))
-  simp only [map_sum, map_mul, ← IsScalarTower.algebraMap_apply] at h₁
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, ← IsScalarTower.algebraMap_apply] at h₁
   simp only [RingHom.comp_assoc, ← IsScalarTower.algebraMap_eq, RingHom.comp_apply] at h₂
   have hK : (0 : ℝ) < Module.finrank ℚ K := by exact_mod_cast Module.finrank_pos
   have hKL : (0 : ℝ) < Module.finrank K K' := by exact_mod_cast Module.finrank_pos

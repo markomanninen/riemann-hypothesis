@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
-import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
-import Formalism.LocalToGlobal.CharacterGerms.NegMem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IntSOfMulEqOne
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.GaugeBiadditiveSymmAdjointIntegralEnd
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+public import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
+public import Formalism.LocalToGlobal.CharacterGerms.NegMem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IntSOfMulEqOne
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.GaugeBiadditiveSymmAdjointIntegralEnd
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,8 @@ def expAt (X : RawChart C d I κ) {ω : Type} [Fintype ω] (v : ω → κ → C)
 
 theorem comb_cc {ι ω : Type} [Fintype ι] (c : ι → C) (φ : ι → ω) :
     constantCoeff (∑ w, c w • (MvPowerSeries.X (φ w) : MvPowerSeries ω C)) = 0 := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun y _ => ?_
   rw [constantCoeff_smul, constantCoeff_X, smul_zero]
 
@@ -46,7 +51,7 @@ theorem subst_endomorphismSeries_expAt (H : RLaw X V) {ω : Type} [Fintype ω] (
   unfold expAt
   congr 1
   funext x
-  simp only [Matrix.mulVec, dotProduct, Finset.smul_sum, Finset.sum_smul, smul_smul]
+  simp only [Matrix.mulVec, dotProduct, Finset.sum_smul, Finset.smul_sum, smul_smul]
   exact Finset.sum_comm
 
 theorem subst_hEnd_expAt (H : RLaw X V) {ω : Type} [Fintype ω] (v : ω → κ → C) (A B : Matrix κ κ C) :
@@ -144,7 +149,8 @@ theorem exists_intS_frame_eq_prod : ∀ (C : Type) [Field C] [CharZero C] (V : V
     rw [MvPowerSeries.constantCoeff_smul, hEnd_cc H, smul_zero]
   have h3 : MvPowerSeries.subst (expAt X₀ u) ((X₀.k : C) • D + (X₀.k : C) • hEnd X₀ 1 W) =
       ∑ o, MvPowerSeries.subst (r o) (X o).hRow := by
-    rw [← smul_add, MvPowerSeries.subst_smul he, MvPowerSeries.subst_add he, ← h1, ← MvPowerSeries.subst_add he,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← smul_add, MvPowerSeries.subst_smul he, MvPowerSeries.subst_add he, ← h1, ← MvPowerSeries.subst_add he,
       hDdef, sub_add_cancel, ← MvPowerSeries.substAlgHom_apply he, map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun o _ => ?_
     rw [MvPowerSeries.substAlgHom_apply, h2]
@@ -153,7 +159,7 @@ theorem exists_intS_frame_eq_prod : ∀ (C : Type) [Field C] [CharZero C] (V : V
     intS_mul (intS_prod _ fun o => intS_subst (cπ o) (fun p => hπ o p.1 p.2) (hf o)) hkD.2, ?_⟩
   show MvPowerSeries.subst (expAt X₀ u) _ = ∏ o, MvPowerSeries.subst (r o) _
   rw [mul_assoc, ← mvExp_add hkD.1 c1, MvPowerSeries.subst_mul he,
-    subst_mvExp ce (by rw [map_add, hkD.1, c1, add_zero]), h3,
+    subst_mvExp ce (by rw [map_add (f := _), hkD.1, c1, add_zero]), h3,
     mvExp_sum _ (fun o => by rw [cc_subst (cr o), cH]), ← MvPowerSeries.substAlgHom_apply he, map_prod,
     ← Finset.prod_mul_distrib]
   refine Finset.prod_congr rfl fun o _ => ?_

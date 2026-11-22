@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdLowerA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdScale
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.ProdSubLtEqFactorial
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarBasic
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PBridge
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdLowerA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdScale
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.ProdSubLtEqFactorial
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarBasic
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PBridge
+
+@[expose] public section
 
 noncomputable section
 

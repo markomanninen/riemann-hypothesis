@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinMapsOfForall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLagrAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerMemSchwartzBruhatFinitePlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LagrangianInvariantFormsProportionalFinitePlaceStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticFormEqZeroOfLagrangianAtPlaceStatement
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLagrAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerMemSchwartzBruhatFinitePlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LagrangianInvariantFormsProportionalFinitePlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticFormEqZeroOfLagrangianAtPlaceStatement
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped TensorProduct Matrix GlobalTheory.VacAny
 
 noncomputable section
@@ -55,7 +60,7 @@ theorem finrank_eq_of_isotropic {K : Type} [Field K] {κ : Type} [Fintype κ] (�
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem continuous_psiAt (ψ : AddChar (AF F) ℂ) (v : Pl F) (h : PsiUnr ψ v) : Continuous (psiAt ψ v) := by
+theorem continuous_psiAt (ψ : AddChar (AF F) ℂ) (v : Pl (F := F)) (h : PsiUnr ψ v) : Continuous (psiAt ψ v) := by
   have hker : ∀ y ∈ v.adicCompletionIntegers F, psiAt ψ v y = 1 := fun y hy => by
     have := (h 1).2 (one_mem _) y hy
     rwa [one_mul] at this
@@ -67,7 +72,7 @@ theorem continuous_psiAt (ψ : AddChar (AF F) ℂ) (v : Pl F) (h : PsiUnr ψ v) 
   filter_upwards [hO.mem_nhds (zero_mem _)] with s hs
   rw [AddChar.map_add_eq_mul, hker s hs, mul_one]
 
-theorem psiAt_ne_one (ψ : AddChar (AF F) ℂ) (v : Pl F) (h : PsiUnr ψ v) : psiAt ψ v ≠ 1 := by
+theorem psiAt_ne_one (ψ : AddChar (AF F) ℂ) (v : Pl (F := F)) (h : PsiUnr ψ v) : psiAt ψ v ≠ 1 := by
   intro h1
   have hall : ∀ x : Fv F v, x ∈ v.adicCompletionIntegers F := fun x => (h x).1 fun y _ => by
     rw [← psiAt_apply, h1]; rfl
@@ -78,41 +83,41 @@ theorem psiAt_ne_one (ψ : AddChar (AF F) ℂ) (v : Pl F) (h : PsiUnr ψ v) : ps
   rw [map_inv₀, map_inv₀, Algebra.algebraMap_self_apply, hπ, ← WithZero.exp_neg, ← WithZero.exp_zero, WithZero.exp_le_exp] at h2
   omega
 
-theorem liftV_one_smul {M : Type} [AddCommGroup M] [Module (AF F) M] (v : Pl F) (u : M) (hu : At (evFin F v) u) :
+theorem liftV_one_smul {M : Type} [AddCommGroup M] [Module (AF F) M] (v : Pl (F := F)) (u : M) (hu : At (evFin F v) u) :
     liftV v (1 : Fv F v) • u = u := by
   have h := hu (1 - liftV v 1) (by rw [map_sub, map_one, evFin_liftV, sub_self])
   rw [sub_smul, one_smul] at h
   exact (sub_eq_zero.1 h).symm
 
-theorem liftV_one_mul (v : Pl F) (x : AF F) : liftV v (1 : Fv F v) * x = liftV v (evFin F v x) := by
+theorem liftV_one_mul (v : Pl (F := F)) (x : AF F) : liftV v (1 : Fv F v) * x = liftV v (evFin F v x) := by
   have h := at_liftV v (1 : Fv F v) (x - liftV v (evFin F v x)) (by rw [map_sub, evFin_liftV, sub_self])
   have h2 := liftV_one_smul v _ (at_liftV v (evFin F v x))
   rw [smul_eq_mul] at h h2
   linear_combination h + h2
 
-theorem liftV_one_smul_eq_zero (v : Pl F) (a : AE F E) (ha : compFin F E v a = 0) : liftV v (1 : Fv F v) • a = 0 := by
-  have key : ∀ a : AE F E, liftV v (1 : Fv F v) • a = (liftV v).rTensor E (compFin F E v a) := by
+theorem liftV_one_smul_eq_zero (v : Pl (F := F)) (a : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) (ha : compFin F E v a = 0) : liftV v (1 : Fv F v) • a = 0 := by
+  have key : ∀ a : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E), liftV v (1 : Fv F v) • a = (liftV v).rTensor E (compFin F E v a) := by
     intro a
     induction a using TensorProduct.induction_on with
     | zero => simp
     | tmul x e =>
       rw [TensorProduct.smul_tmul', smul_eq_mul, liftV_one_mul]
       simp [compFin]
-    | add x y hx hy => rw [smul_add, hx, hy, map_add, map_add]
+    | add x y hx hy => rw [smul_add, hx, hy, map_add (f := _), map_add (f := _)]
   rw [key, ha, map_zero]
 
-theorem exists_map_compFin (v : Pl F) {α β : Type} (A : Matrix α β (Fv F v ⊗[F] E)) :
-    ∃ C : Matrix α β (AE F E), C.map (compFin F E v) = A := by
+theorem exists_map_compFin (v : Pl (F := F)) {α β : Type} (A : Matrix α β (Fv F v ⊗[F] E)) :
+    ∃ C : Matrix α β (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)), C.map (compFin F E v) = A := by
   refine ⟨A.map ((liftV v).rTensor E), ?_⟩
   ext i j
   simp only [Matrix.map_apply]
   induction A i j using TensorProduct.induction_on with
   | zero => simp
   | tmul x e => simp [compFin, evFin_liftV]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
-theorem mul_eq_self {n d : ℕ} (v : Pl F) (u : Matrix (Fin n) (Fin d) (AE F E)) (hu : At (evFin F v) u)
-    (N : Matrix (Fin d) (Fin d) (AE F E)) (hN : N.map (compFin F E v) = 1) : u * N = u := by
+theorem mul_eq_self {n d : ℕ} (v : Pl (F := F)) (u : Matrix (Fin n) (Fin d) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) (hu : At (evFin F v) u)
+    (N : Matrix (Fin d) (Fin d) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) (hN : N.map (compFin F E v) = 1) : u * N = u := by
   have h0 : liftV v (1 : Fv F v) • (N - 1) = 0 := by
     ext i j
     refine liftV_one_smul_eq_zero v _ ?_
@@ -126,13 +131,13 @@ theorem mul_eq_self {n d : ℕ} (v : Pl F) (u : Matrix (Fin n) (Fin d) (AE F E))
     rw [← liftV_one_smul v u hu, Matrix.smul_mul, ← Matrix.mul_smul, h0, Matrix.mul_zero]
   rwa [Matrix.mul_sub, Matrix.mul_one, sub_eq_zero] at h1
 
-theorem at_mul {α β γ : Type} [Fintype β] (v : Pl F) (u : Matrix α β (AE F E)) (hu : At (evFin F v) u)
-    (A : Matrix β γ (AE F E)) : At (evFin F v) (u * A) := fun t ht => by
+theorem at_mul {α β γ : Type} [Fintype β] (v : Pl (F := F)) (u : Matrix α β (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) (hu : At (evFin F v) u)
+    (A : Matrix β γ (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) : At (evFin F v) (u * A) := fun t ht => by
   rw [← Matrix.smul_mul, hu t ht, Matrix.zero_mul]
 
-theorem exists_compl (σ : E →ₐ[F] E) {d m : ℕ} (W : Spc F E d) (v : Pl F) (C : Matrix (Fin d) (Fin m) (AE F E))
-    (hC : IsLagrAt σ W v C) (n : ℕ) : ∃ C' : Matrix (Fin d) (Fin m) (AE F E), IsLagrAt σ W v C' ∧
-      ∀ u : Matrix (Fin n) (Fin d) (AE F E), At (evFin F v) u → ∃ x ∈ lagAt v C, ∃ y ∈ lagAt v C', u = x + y := by
+theorem exists_compl (σ : E →ₐ[F] E) {d m : ℕ} (W : Spc F E d) (v : Pl (F := F)) (C : Matrix (Fin d) (Fin m) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)))
+    (hC : IsLagrAt σ W v C) (n : ℕ) : ∃ C' : Matrix (Fin d) (Fin m) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)), IsLagrAt σ W v C' ∧
+      ∀ u : Matrix (Fin n) (Fin d) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)), At (evFin F v) u → ∃ x ∈ lagAt v C, ∃ y ∈ lagAt v C', u = x + y := by
   obtain ⟨h0, Cx, M, hx, h1, h2⟩ := hC
   obtain ⟨C', hC'⟩ := exists_map_compFin v Cx
   obtain ⟨M₁, hM₁⟩ := exists_map_compFin v M.toRows₁
@@ -152,7 +157,7 @@ theorem exists_compl (σ : E →ₐ[F] E) {d m : ℕ} (W : Spc F E d) (v : Pl F)
       ← Matrix.transpose_add, mul_eq_self v u hu _ hN]
 
 theorem exists_at_locCo {W : Type} [AddCommGroup W] [Module (AF F) W]
-    {B : W → W → AF F} {κ : Type} [Fintype κ] (co : Darboux B κ) (v : Pl F) (p : (κ → Fv F v) × (κ → Fv F v)) :
+    {B : W → W → AF F} {κ : Type} [Fintype κ] (co : Darboux B κ) (v : Pl (F := F)) (p : (κ → Fv F v) × (κ → Fv F v)) :
     ∃ u : W, At (evFin F v) u ∧ locCo co v u = p := by
   refine ⟨co.e.symm (fun k => liftV v (p.1 k), fun k => liftV v (p.2 k)), ?_, ?_⟩
   · intro r hr
@@ -166,7 +171,7 @@ theorem exists_at_locCo {W : Type} [AddCommGroup W] [Module (AF F) W]
 
 variable {σ : E →ₐ[F] E} {n d : ℕ} {X : Spc F E n} {W : Spc F E d}
 
-def lagCo (M : Model σ X W) (v : Pl F) {m : ℕ} (C : Matrix (Fin d) (Fin m) (AE F E)) :
+def lagCo (M : Model σ X W) (v : Pl (F := F)) {m : ℕ} (C : Matrix (Fin d) (Fin m) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) :
     Submodule (Fv F v) ((Fin n × Fin d → Fv F v) × (Fin n × Fin d → Fv F v)) where
   carrier := locCo M.co v '' lagAt v C
   zero_mem' := ⟨0, ⟨fun u _ => smul_zero u, 0, by simp⟩, map_zero _⟩
@@ -179,16 +184,18 @@ def lagCo (M : Model σ X W) (v : Pl F) {m : ℕ} (C : Matrix (Fin d) (Fin m) (A
       by rw [Matrix.smul_mul]⟩, ?_⟩
     ext k <;> simp [locCo, evFin_liftV, -Matrix.smul_mul]
 
-theorem lagCo_isotropic (M : Model σ X W) (v : Pl F) {m : ℕ} (C : Matrix (Fin d) (Fin m) (AE F E))
+theorem lagCo_isotropic (M : Model σ X W) (v : Pl (F := F)) {m : ℕ} (C : Matrix (Fin d) (Fin m) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)))
     (hC : IsLagrAt σ W v C) : ∀ a ∈ lagCo M v C, ∀ b ∈ lagCo M v C, a.1 ⬝ᵥ b.2 = b.1 ⬝ᵥ a.2 := by
   rintro _ ⟨u, hu, rfl⟩ _ ⟨u', hu', rfl⟩
   have h0 := GlobalTheory.T.symplecticForm_eq_zero_of_lagrangianAtPlace σ X.J W v C hC (-1) u u' hu hu'
+  change symp (cA σ) (-1) (incM F X.J) (incM F W.J) u u' = 0 at h0
   rw [M.co.form] at h0
   have h1 := congrArg (evFin F v) h0
   rw [← sub_eq_zero]
-  simpa [locCo, dotProduct, map_sum, map_mul, map_sub] using h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [locCo, dotProduct, map_sum, map_mul, map_sub] using h1
 
-theorem finrank_lagCo (M : Model σ X W) (v : Pl F) {m : ℕ} (C : Matrix (Fin d) (Fin m) (AE F E))
+theorem finrank_lagCo (M : Model σ X W) (v : Pl (F := F)) {m : ℕ} (C : Matrix (Fin d) (Fin m) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)))
     (hC : IsLagrAt σ W v C) : Module.finrank (Fv F v) (lagCo M v C) = Fintype.card (Fin n × Fin d) := by
   obtain ⟨C', hC', hdec⟩ := exists_compl σ W v C hC n
   refine finrank_eq_of_isotropic _ (lagCo M v C') (lagCo_isotropic M v C hC) (lagCo_isotropic M v C' hC') ?_
@@ -196,12 +203,12 @@ theorem finrank_lagCo (M : Model σ X W) (v : Pl F) {m : ℕ} (C : Matrix (Fin d
   intro p _
   obtain ⟨u, hu, rfl⟩ := exists_at_locCo M.co v p
   obtain ⟨x, hx, y, hy, rfl⟩ := hdec u hu
-  rw [map_add]
+  rw [map_add (f := _)]
   exact Submodule.add_mem_sup ⟨x, hx, rfl⟩ ⟨y, hy, rfl⟩
 
 theorem exists_test : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (n d : ℕ)
-    (X : Spc F E n) (W : Spc F E d) (M : Model σ X W) (ψ : AddChar (AF F) ℂ) (v : Pl F), PsiUnr ψ v →
-    ∀ (m : ℕ) (C : Matrix (Fin d) (Fin m) (AE F E)), GlobalTheory.InertVacLag.IsLagrAt σ W v C →
+    (X : Spc F E n) (W : Spc F E d) (M : Model σ X W) (ψ : AddChar (AF F) ℂ) (v : Pl (F := F)), PsiUnr ψ v →
+    ∀ (m : ℕ) (C : Matrix (Fin d) (Fin m) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))), GlobalTheory.InertVacLag.IsLagrAt σ W v C →
     ∃ φ₀ ∈ SB (Fin n × Fin d → Fv F v), ∀ l : ((Fin n × Fin d → Fv F v) → ℂ) →ₗ[ℂ] ℂ,
       GlobalTheory.InertVacLag.HeisInv M ψ v C l → l φ₀ = 0 → ∀ φ ∈ SB (Fin n × Fin d → Fv F v), l φ = 0 := by
   intro F E _ _ _ _ _ σ n d X W M ψ v hψ m C hC

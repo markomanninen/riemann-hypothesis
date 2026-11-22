@@ -1,10 +1,15 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.LeviForms.RegGlue
-import ReciprocityTheory.AnalyticForms.LeviForms.RegChartC
-import ReciprocityTheory.AnalyticForms.LeviForms.TailCut
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalPshRegularizationLogBoundStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalRegularizationGradientBoundStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MollifyConvergesC2Rate
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.LeviForms.RegGlue
+public import ReciprocityTheory.AnalyticForms.LeviForms.RegChartC
+public import ReciprocityTheory.AnalyticForms.LeviForms.TailCut
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalPshRegularizationLogBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalRegularizationGradientBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MollifyConvergesC2Rate
+
+@[expose] public section
+
 open MeasureTheory Metric Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.AnForm.M.FinHolAtlas
 open scoped ContDiff
 
@@ -102,9 +107,9 @@ lemma oc_rLoc_ge (S : Finset (Fin D)) (m : Fin D → ℕ) {z : Fin D → ℂ}
 lemma oc_rLoc_cont (S : Finset (Fin D)) (m : Fin D → ℕ) :
     ContinuousOn (rLoc S m) (ReciprocityTheory.AnForm.A.coordDiv S)ᶜ := by
   unfold rLoc
-  refine continuousOn_const.add (continuousOn_finset_sum _ fun i hi => ?_)
+  refine continuousOn_const.add (continuousOn_finsetSum _ fun i hi => ?_)
   refine continuousOn_const.mul (ContinuousOn.log ?_ ?_)
-  · refine continuousOn_const.div (by fun_prop) ?_
+  · refine continuousOn_const.div₀ (by fun_prop) ?_
     intro z hz
     have : z i ≠ 0 := fun h0 => hz ⟨i, hi, h0⟩
     positivity

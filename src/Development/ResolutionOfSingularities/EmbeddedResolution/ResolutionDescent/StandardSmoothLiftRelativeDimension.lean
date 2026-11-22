@@ -1,5 +1,9 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.StandardSmoothLift
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.StandardSmoothLift
+
+@[expose] public section
 
 universe u
 

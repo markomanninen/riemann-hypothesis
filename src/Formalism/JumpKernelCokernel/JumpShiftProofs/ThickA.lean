@@ -1,4 +1,8 @@
-import Formalism.JumpKernelCokernel.Statement
+module
+
+public import Formalism.JumpKernelCokernel.Statement
+
+@[expose] public section
 
 namespace Formalism.KernelCokernelLengths.ThicknessFirstBoundLogLemmas
 

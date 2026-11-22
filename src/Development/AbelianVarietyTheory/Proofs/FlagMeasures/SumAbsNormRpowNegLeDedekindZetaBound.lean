@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HermitianLattices.StatementMass
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIdealInClassOfNormLeSqrtDiscr
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.StatementMass
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIdealInClassOfNormLeSqrtDiscr
+
+@[expose] public section
 
 open MeasureTheory NumberField Finset
 open scoped ArithmeticFunction.zeta

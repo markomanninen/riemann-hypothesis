@@ -1,22 +1,27 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.UpVApply
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPoints
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogResolutionFromOrbitCharts
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.HoloMapOfLocalProductCharts
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FrameDataLocalResolutionRegular
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FrameDataLocalIntegrability
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FrameDataLocalDegreeBound
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FrameDataLocalNormComparison
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.PRhoContinuous
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockMapFrameRestriction
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FrameDataLocalResolutionOpen
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.CardPIdxEqChoose
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FrameDataLocalDegreeEstimate
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.UpVSmul
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorMulSelf
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChartImmersion
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.UpVApply
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPoints
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogResolutionFromOrbitCharts
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HoloMapOfLocalProductCharts
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FrameDataLocalResolutionRegular
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FrameDataLocalIntegrability
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FrameDataLocalDegreeBound
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FrameDataLocalNormComparison
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PRhoContinuous
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockMapFrameRestriction
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FrameDataLocalResolutionOpen
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.CardPIdxEqChoose
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FrameDataLocalDegreeEstimate
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.UpVSmul
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorMulSelf
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChartImmersion
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
 open GlobalTheory.CompanionTheory.Ar.PB.WSq GlobalTheory.CompanionTheory.Ar.PB.WMan
@@ -170,7 +175,7 @@ theorem main : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι 
     have hc'κ : ∀ k', c' (κ k') = c k' := fun k' => by
       have hk : ∃ k'', κ k'' = κ k' := ⟨k', rfl⟩
       simp only [c']
-      rw [dif_pos hk, hb.1 hk.choose_spec]
+      rw [dite_eq_left hk, hb.1 hk.choose_spec]
     have hyP : IsMultiHomogIdeal (mCoordIdeal y) := GroundTheory.Heights₂.Heights.CoordinateConeArithVar.isMultiHomogIdeal _
     refine ⟨fun p => c' p.1 * z₀ p, mcPts_smul hyP c' hc'0 hz₀, ?_, ?_⟩
     · funext q

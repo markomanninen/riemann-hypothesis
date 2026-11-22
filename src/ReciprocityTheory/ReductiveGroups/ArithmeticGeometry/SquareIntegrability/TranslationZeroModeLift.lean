@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.QuotientTorusMinimumBound
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.QuotientTorusMinimumBound
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -33,20 +37,21 @@ theorem Uh_add (X : PT E) (q : ℕ) {a b : Vsp X.dim} (ha : a ∈ X.L) (hb : b �
     exact_mod_cast hε
 
   have h1 : Hf v (a + b) = Hf v a + Hf v b := by
-    simp only [Hf, PiLp.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+    simp only [Hf, PiLp.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
   have h2 : Hf (v - a) b = Hf v b - Hf a b := by
     simp only [Hf, PiLp.sub_apply, sub_mul, Finset.sum_sub_distrib]
   have h3 : Hf (a + b) (a + b) = Hf a a + Hf a b + Hf b a + Hf b b := by
-    simp only [Hf, PiLp.add_apply, map_add, mul_add, add_mul, Finset.sum_add_distrib]
+    simp only [Hf, PiLp.add_apply, map_add (f := _), mul_add, add_mul, Finset.sum_add_distrib]
     ring
   have h4 : Hf b a = (starRingEnd ℂ) (Hf a b) := by
-    simp only [Hf, map_sum, map_mul, Complex.conj_conj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Hf, map_sum, map_mul, Complex.conj_conj]
     exact Finset.sum_congr rfl fun i _ => mul_comm _ _
   have h5 : Hf b a - Hf a b = -(2 * (k : ℂ) * Complex.I) := by
     rw [h4]
     have hz := Complex.re_add_im (Hf a b)
     rw [← hz, hk]
-    simp only [map_add, map_mul, Complex.conj_ofReal, Complex.conj_I]
+    simp only [map_add (f := _), map_mul, Complex.conj_ofReal, Complex.conj_I]
     push_cast
     ring
   have hexp : Complex.exp (-(q * Real.pi * (2 * (k : ℂ) * Complex.I)) / 2) =
@@ -106,7 +111,7 @@ theorem zeroModeLift_add_lattice {x : Vsp X.dim} (hx : x ∈ Ip X I) (v : Vsp X.
   have hd1 := Hf_decomp (K := IR I) (hK_of hI) v x
   have hd2 := Hf_decomp (K := IR I) (hK_of hI) x x
   unfold F0 S
-  rw [map_add, h1, Hf_wmap (hK_of hI), Hf_wmap (hK_of hI), hd1, hd2]
+  rw [map_add (f := _), h1, Hf_wmap (hK_of hI), Hf_wmap (hK_of hI), hd1, hd2]
   simp only [hz, hzr]
   have hexp : ∀ a b c d : ℂ, a + b = c + d → cexp a * cexp b = cexp c * cexp d := by
     intro a b c d h

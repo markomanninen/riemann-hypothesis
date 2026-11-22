@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousFourierGau
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousFourierGau
+
+@[expose] public section
+
 open MeasureTheory Complex Matrix GlobalTheory.RealWeil
-open scoped RealInnerProductSpace ContDiff Real ComplexOrder
+open scoped RealInnerProductSpace ContDiff Real ComplexOrder MatrixOrder
 
 namespace GlobalTheory
 
-open scoped MatrixOrder in
 
+open scoped MatrixOrder in
 theorem cartanInvolution_conj_of_posDef (ι : Type) [Fintype ι] [DecidableEq ι]
     (s s' : Matrix ι ι ℂ) (hs : sᴴ = s) (hss : s * s = 1) (hs's' : s' * s' = 1)
     (hM : (s * s').PosDef) :

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantApply
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AevalEqZeroOfDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantApply
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AevalEqZeroOfDvd
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 
 noncomputable section
@@ -11,25 +16,29 @@ namespace GlobalTheory.EtC.GalSec.Tens
 
 variable (K Ω : Type) [Field K] [Field Ω] [Algebra K Ω]
 
-open Classical in
 
-def conj (θ : Ω) : Finset Ω := ((minpoly K θ).aroots Ω).toFinset
+open Classical in
+def conj (θ : Ω) : Finset Ω := by
+  classical
+  exact ((minpoly K θ).aroots Ω).toFinset
 
 def DependsOn (k : ℕ) (θ : Ω) (φ : LCRing K Ω k) : Prop :=
   ∀ g g' : Fin k → (Ω ≃ₐ[K] Ω), (∀ i, g i θ = g' i θ) → φ g = φ g'
 
-open Classical in
 
-def pick (k : ℕ) (θ : Ω) (t : Fin k → Ω) : Fin k → (Ω ≃ₐ[K] Ω) :=
-  if h : ∃ g : Fin k → (Ω ≃ₐ[K] Ω), ∀ i, g i θ = t i then h.choose else 1
+open Classical in
+def pick (k : ℕ) (θ : Ω) (t : Fin k → Ω) : Fin k → (Ω ≃ₐ[K] Ω) := by
+  classical
+  exact if h : ∃ g : Fin k → (Ω ≃ₐ[K] Ω), ∀ i, g i θ = t i then h.choose else 1
 
 variable {K Ω}
 variable {B : Type} [CommRing B]
 
-open Classical in
 
-def idem (g₀ : Ω →+* B) (θ : Ω) (b : B) (s : conj K Ω θ) : B :=
-  g₀ (∏ j ∈ (Finset.univ : Finset (conj K Ω θ)).erase s, ((s : Ω) - (j : Ω)))⁻¹ *
+open Classical in
+def idem (g₀ : Ω →+* B) (θ : Ω) (b : B) (s : conj K Ω θ) : B := by
+  classical
+  exact g₀ (∏ j ∈ (Finset.univ : Finset (conj K Ω θ)).erase s, ((s : Ω) - (j : Ω)))⁻¹ *
     ∏ j ∈ (Finset.univ : Finset (conj K Ω θ)).erase s, (b - g₀ (j : Ω))
 
 def lev (g₀ : Ω →+* B) {k : ℕ} (gs : Fin k → (Ω →+* B)) (θ : Ω) (φ : LCRing K Ω k) : B :=
@@ -89,7 +98,8 @@ theorem prod_sub_conj_eq_zero [Algebra.IsAlgebraic K Ω] [Normal K Ω] [Algebra.
     (h : σ'.comp (algebraMap K Ω) = g₀.comp (algebraMap K Ω)) (θ : Ω) :
     ∏ s ∈ conj K Ω θ, (σ' θ - g₀ s) = 0 := by
   have h1 : (∏ s ∈ conj K Ω θ, (X - C s)).eval₂ g₀ (σ' θ) = ∏ s ∈ conj K Ω θ, (σ' θ - g₀ s) := by
-    rw [eval₂_finset_prod]; simp
+    rw [eval₂_finsetProd]
+    simp
   rw [← h1, prod_conj, eval₂_map, ← h, ← hom_eval₂, ← aeval_def, minpoly.aeval, map_zero]
 
 theorem idem_spec [Algebra.IsAlgebraic K Ω] [Normal K Ω] {B : Type} [CommRing B] (g₀ : Ω →+* B)
@@ -123,7 +133,7 @@ theorem pick_spec [Algebra.IsAlgebraic K Ω] [Normal K Ω] (k : ℕ) (θ : Ω) (
     choose g hg using fun i => (mem_conj_iff θ (t i)).1 (ht i)
     exact ⟨g, hg⟩
   classical
-  rw [pick, dif_pos hex]
+  rw [pick, dite_eq_left hex]
   exact hex.choose_spec i
 
 end GlobalTheory.EtC.GalSec.Tens

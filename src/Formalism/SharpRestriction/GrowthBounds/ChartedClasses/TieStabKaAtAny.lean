@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ClsChartedLabAt
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.SecondKernelStabilizers
-import Formalism.LocalToGlobal.InertKernelTheory.SecondKernelCoupledLastLift
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ClsChartedLabAt
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.SecondKernelStabilizers
+public import Formalism.LocalToGlobal.InertKernelTheory.SecondKernelCoupledLastLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,9 +21,6 @@ theorem tieStab_kaAtAny [Fact (D.what₂.places.resChar w).Prime] (X : LabIn I) 
     (hU : DV.Used D μ) (hS0 : OrbitPlaces.Stab0 D) (j : ℕ) (hj : j ≤ D.R.m) : TieStabAt (Y := Y) u μ (kaAtAny X H Gt Ch hCh).cls j :=
   Formalism.L2.KerInert.SecondKernelStabilizers.stabilizer_any_level D c Tw u μ w h Fl Lv (labAt X H) I H Formalism.L2.G.RelativeIndexFlags.blockRationality_holds Gt Ch hCh std vp unif eO
     eO_spec dG dG_spec om Y hU hS0 j hj
-
-def fillEmpty (hE : ∀ j, D.R.m < j → IsEmpty (Lv.comp j)) : ∀ j, D.R.m < j → Lv.comp j → (D.chTw u μ).cls j :=
-  fun j hj a => (hE j hj).elim a
 
 end Formalism.MainNotions.G.KAat
 

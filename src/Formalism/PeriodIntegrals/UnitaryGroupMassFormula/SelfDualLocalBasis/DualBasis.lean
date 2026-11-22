@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SelfDualLoc
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SelfDualLoc
+
+@[expose] public section
 
 open Matrix NumberField IsDedekindDomain
 open scoped TensorProduct

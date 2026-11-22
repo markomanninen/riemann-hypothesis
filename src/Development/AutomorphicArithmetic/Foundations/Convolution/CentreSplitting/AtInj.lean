@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExSummand
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SSatIff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.StrongMultiplicityOne.Strong
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DefsObj
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExSummand
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SSatIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.StrongMultiplicityOne.Strong
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DefsObj
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -18,11 +22,10 @@ theorem UpperTheory.ConvolutionTheory.Dp.atInj :
   obtain ⟨π', hπ', -⟩ := exCusp E n μ V' hV'
   have e : π = π' := by
     refine GlobalTheory.CuspRep.CuspSub.ext (UpperTheory.V.Af.strongMultOneC E n π π' ?_)
-    filter_upwards [hS.compl_mem_cofinite] with w hw
+    filter_upwards [hS.eventually_cofinite_notMem] with w hw
     obtain ⟨B, hB, h1⟩ := (sSatIff E n μ π V hπ w _).1 (h w hw)
     obtain ⟨B', hB', h2⟩ := (sSatIff E n μ π' V' hπ' w _).1 (h' w hw)
-    have : B' = B := Multiset.map_injective (fun a b e => Units.ext e) (hB'.symm.trans hB)
-    subst this
-    exact ⟨B', h1, h2⟩
+    obtain rfl : B = B' := Multiset.map_injective Units.val_injective (hB.symm.trans hB')
+    exact ⟨_, h1, h2⟩
   subst e
   rw [((exSummand E n μ π V).1 hπ).2, ((exSummand E n μ π V').1 hπ').2]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ theorem evM_conj {n : ℕ} (σ : E →+* ℂ) (z : ℝ ⊗[ℚ] Matrix (Fin n) (
     rw [evM_tmul, evM_tmul]
     ext i j
     simp [ComplexEmbedding.conjugate_coe_eq]
-  | add a b ha hb => rw [map_add, ha, hb, map_add, Matrix.map_add _ (map_add _)]
+  | add a b ha hb => rw [map_add (f := _), ha, hb, map_add (f := _), Matrix.map_add _ (map_add _)]
 
 def Th {K : Type} (f : K → (E →+* ℂ)) {n : ℕ} {V : Type} [AddCommGroup V] [Module ℚ V] (β : V →ₗ[ℚ] (Fin n → E)) :
     ℝ ⊗[ℚ] V →ₗ[ℝ] (K × Fin n → ℂ) :=
@@ -78,13 +82,13 @@ theorem Th_act {K : Type} (f : K → (E →+* ℂ)) {n : ℕ} {V : Type} [AddCom
       exact (congrFun (Matrix.mulVec_zero _) i).symm
     | tmul s w => exact th_actOn_tmul_eq_evM_mulVec f β rep hβ r s m w τ i
     | add a b ha hb =>
-      rw [map_add, map_add, Pi.add_apply, ha, hb]
+      rw [map_add (f := _), map_add (f := _), Pi.add_apply, ha, hb]
       have : (fun j => Th f β (a + b) (τ, j)) = (fun j => Th f β a (τ, j)) + (fun j => Th f β b (τ, j)) := by
         ext j
         simp
       rw [this, Matrix.mulVec_add, Pi.add_apply]
   | add c d hc hd =>
-    rw [map_add, LinearMap.add_apply, map_add, Pi.add_apply, hc, hd, map_add, Matrix.add_mulVec, Pi.add_apply]
+    rw [map_add (f := _), LinearMap.add_apply, map_add (f := _), Pi.add_apply, hc, hd, map_add (f := _), Matrix.add_mulVec, Pi.add_apply]
 
 variable [IsCMField E]
 
@@ -118,7 +122,7 @@ theorem evM_star {n : ℕ} (H : Matrix (Fin n) (Fin n) E) (hH : (H.map (IsCMFiel
     rw [hx, Matrix.mul_smul, ← Matrix.mul_assoc, ← Matrix.mul_assoc, Matrix.mul_nonsing_inv _ hG,
       Matrix.one_mul, star_trivial, Matrix.smul_mul]
   | add a b ha hb =>
-    rw [map_add, MulOpposite.unop_add, map_add, map_add, Matrix.mul_add, ha, hb,
+    rw [map_add (f := _), MulOpposite.unop_add, map_add (f := _), map_add (f := _), Matrix.mul_add, ha, hb,
       Matrix.conjTranspose_add, Matrix.add_mul]
 
 theorem term_pos (D h z : ℂ) (hD : D.re = 0) (hD' : D.im < 0) (hi : h.im = 0) (hr : h.re ≠ 0) :

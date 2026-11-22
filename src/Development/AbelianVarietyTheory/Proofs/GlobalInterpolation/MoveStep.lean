@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ExistsRecordDat
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.JetsAllOfColIn
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OffOfNotMem
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.BadPrimeNormPrimeNeLevelPrime
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DecoratedLatticePointMoveDiamond
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SameOfAbove
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UkTermOfMoveStep
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ChThOkOfColIn
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.XiEntryInvariant
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FirstCoupledKernelEquivariantCosets
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.KAtTopEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ExistsRecordDat
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.JetsAllOfColIn
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OffOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.BadPrimeNormPrimeNeLevelPrime
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DecoratedLatticePointMoveDiamond
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SameOfAbove
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UkTermOfMoveStep
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ChThOkOfColIn
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.XiEntryInvariant
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FirstCoupledKernelEquivariantCosets
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.KAtTopEquiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,8 +33,6 @@ abbrev dat (l : I.Laws) (Z : TC.Later B (I.cols l)) (u : B.Word) (a : I.ι) : Da
 
 instance datFE (l : I.Laws) (Z : TC.Later B (I.cols l)) (u : B.Word) (Bd : Dat (I.rec7 l Z) u) : Field Bd.E := Bd.fE
 
-instance datNE (l : I.Laws) (Z : TC.Later B (I.cols l)) (u : B.Word) (Bd : Dat (I.rec7 l Z) u) : NumberField Bd.E := Bd.nE
-
 instance datSE (l : I.Laws) (Z : TC.Later B (I.cols l)) (u : B.Word) (Bd : Dat (I.rec7 l Z) u) : StarRing Bd.E := Bd.sE
 
 theorem dat_ch (l : I.Laws) (l0 : I.Law0 l) (Z : TC.Later B (I.cols l)) (u : B.Word) (a : I.ι) :
@@ -38,9 +40,6 @@ theorem dat_ch (l : I.Laws) (l0 : I.Law0 l) (Z : TC.Later B (I.cols l)) (u : B.W
 
 theorem own_eq (l : I.Laws) (l0 : I.Law0 l) (Z : TC.Later B (I.cols l)) (u : B.Word) :
     own (I.rec7 l Z) u = tw (I.tw l l0 Z) u I.mu0 := rfl
-
-example (l : I.Laws) (Z : TC.Later B (I.cols l)) (u : B.Word) (a : I.ι) (i : ℕ) : (dat I l Z u a).Ker i :=
-  kAt (Pr := B.primes X) B.wts I.Ch I.sel (I.tup a) (I.cst a) (I.idx a) I.A u i
 
 variable {I}
 
@@ -69,6 +68,10 @@ open Classical in
 theorem sees (l : I.Laws) (Z : TC.Later B (I.cols l)) (u : B.Word) (a : I.ι) : (dat I l Z u a).Sees :=
   Inh.sees_ofOk B (I.cols l) Z.W Z.V Z.S Z.N Z.G u X (I.chIn u a) (I.atIn u a) (I.perIn u a) (I.fmIn l.pr u a) (l.ch u a)
     (l.lev u a) (l.per u a) (l.ovr u a) rfl (fun _ h => h) (fun _ _ => rfl) (fun _ => decide_eq_true_iff)
+
+local instance moveStepDatNumberField (I : TC B X) (l : I.Laws) (Z : TC.Later B (I.cols l))
+    (u : B.Word) (a : I.ι) : @NumberField (dat I l Z u a).E (dat I l Z u a).fE :=
+  (dat I l Z u a).nE
 
 theorem kerEq (h : I.Ok) (l : I.Laws) (Z : TC.Later B (I.cols l)) (u : B.Word) (a : I.ι)
     (hth : _root_.Formalism.L2.Col.ChTh.Ok (Ch := I.Ch) (I.cst a) (chTh (Pr := B.primes X) B.wts I.Ch I.sel (I.tup a) (I.cst a) I.A u (B.R.m - 2)))

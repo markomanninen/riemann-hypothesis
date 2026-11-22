@@ -1,5 +1,9 @@
-import Formalism.HarderNarasimhan.DefsPl
-import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+module
+
+public import Formalism.HarderNarasimhan.DefsPl
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+
+@[expose] public section
 
 open Module
 
@@ -22,7 +26,8 @@ theorem gramBlock_gram_comb {ι E F : Type*} [Fintype ι] [NormedAddCommGroup E]
     (g : E →ₗ[ℝ] F) (f : ι → E) (M : Matrix ι ι ℝ) :
     Matrix.gram ℝ (fun j => g (∑ i, M i j • f i)) = M.transpose * Matrix.gram ℝ (fun i => g (f i)) * M := by
   ext j l
-  simp only [Matrix.gram_apply, Matrix.mul_apply, Matrix.transpose_apply, map_sum, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.gram_apply, Matrix.mul_apply, Matrix.transpose_apply, map_sum, map_smul,
     sum_inner, inner_sum, real_inner_smul_left, real_inner_smul_right, Finset.sum_mul]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
 
@@ -32,7 +37,7 @@ private theorem det_gram_le_one_of_norm_sum_sq_le {κ F : Type*} [Fintype κ] [D
     (Matrix.gram ℝ w).det ≤ 1 := by
   have hP := Matrix.posSemidef_gram ℝ w
   rw [hP.isHermitian.det_eq_prod_eigenvalues]
-  apply Finset.prod_le_one
+  apply Finset.prod_le_one₀
   · intro i _
     simpa using hP.eigenvalues_nonneg i
   · intro i _
@@ -160,7 +165,8 @@ theorem gram_block_determinant : GramBlock := by
         have hsum : ∑ a, x a • w a = ∑ v, y v := by
           rw [Fintype.sum_sigma]
           refine Finset.sum_congr rfl fun v _ => ?_
-          simp only [y, z, w, map_sum, map_smul, Finset.smul_sum, smul_smul, mul_comm]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [y, z, w, map_sum, map_smul, Finset.smul_sum, smul_smul, mul_comm]
         have hzE : ∀ v, z v ∈ Ev v := fun v =>
           Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (hfW ⟨v, i⟩).2
         have hyE : ∀ v, y v ∈ Ev' v := fun v => Submodule.smul_mem _ _ (hT v _ (hzE v)).1

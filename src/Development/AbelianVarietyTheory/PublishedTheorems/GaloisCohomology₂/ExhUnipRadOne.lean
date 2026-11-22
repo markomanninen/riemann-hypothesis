@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsExhaustionGL
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.NonemptyEquivParIndZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsExhaustionGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsSumMultiplicityOne
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivProdIrrZero
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.LocGL.ProjLine ValuativeRel
 
@@ -18,7 +23,7 @@ theorem exh_unipRad_one {s : ℕ} {d : Fin s → ℕ} (e : (Σ a : Fin s, Fin (d
   simpa using h2
 
 theorem exh_deg_one (c : IrrCl (GL (Fin 1) k)) : ∃ 𝔪 : Multiset (Segment k), IsL 𝔪 (IrrGL.rep ⟨1, c⟩) := by
-  have hc : IrrGL.IsCusp (⟨1, c⟩ : IrrGL k) := ⟨one_pos, c.rep.smooth, fun s d e he => absurd (exh_unipRad_one e) he⟩
+  have hc : IrrGL.IsCusp (⟨1, c⟩ : IrrGL (k := k)) := ⟨one_pos, c.rep.smooth, fun s d e he => absurd (exh_unipRad_one e) he⟩
   exact ⟨_, (single_spec hc).2.2.2⟩
 
 theorem exh_equiv_zero {m : Fin 0 → Type} [∀ a, Fintype (m a)] [∀ a, DecidableEq (m a)] (e : (Σ a, m a) ≃ Fin 0)
@@ -44,7 +49,7 @@ theorem exh_equiv_zero {m : Fin 0 → Type} [∀ a, Fintype (m a)] [∀ a, Decid
     { toFun := fun φ => E (φ.1.1 1) • v
       map_add' := fun φ ψ => by
         show E (φ.1.1 1 + ψ.1.1 1) • v = _
-        rw [map_add, add_smul]
+        rw [map_add (f := _), add_smul]
       map_smul' := fun a φ => by
         show E (a • φ.1.1 1) • v = a • (E (φ.1.1 1) • v)
         rw [map_smul, smul_eq_mul, mul_smul]
@@ -64,36 +69,18 @@ theorem exh_equiv_zero {m : Fin 0 → Type} [∀ a, Fintype (m a)] [∀ a, Decid
   exact ⟨equivOfBijective f ⟨hinj, hsurj⟩⟩
 
 theorem exh_deg_zero (c : IrrCl (GL (Fin 0) k)) : IsL (0 : Multiset (Segment k)) (IrrGL.rep ⟨0, c⟩) := by
-  let x : Fin 0 → IrrGL k := Fin.elim0
+  let x : Fin 0 → IrrGL (k := k) := Fin.elim0
   have hd : ∑ a, (x a).1 = 0 := by simp
   refine ⟨0, x, hd, ⟨Fin.elim0, ⟨rfl, fun i => i.elim0⟩, fun i => i.elim0⟩, ?_⟩
   obtain ⟨φ⟩ := exh_equiv_zero (stdBlocks (fun a => (x a).1) hd) (piTensor fun a => (x a).rep)
     (PiTensorProduct.isEmptyEquiv (Fin 0)) c.rep.ρ c.rep.irr
   exact (isCosocle_self c.rep.irr).of_equiv (.refl _) φ.symm
 
-theorem exh_not_zero (x : IrrGL k) (hx : 0 < x.1) : ¬ IsL (0 : Multiset (Segment k)) x.rep := by
-  rintro ⟨h, y, hd, ⟨Δ, ⟨hΔ, -⟩, -⟩, -⟩
-  have : h = 0 := by simpa using congrArg Multiset.card hΔ
-  subst this
-  simp at hd
-  omega
-
-theorem exh_le_one (x : IrrGL k) (hx : x.1 ≤ 1) : ∃ 𝔪 : Multiset (Segment k), IsL 𝔪 x.rep := by
+theorem exh_le_one (x : IrrGL (k := k)) (hx : x.1 ≤ 1) : ∃ 𝔪 : Multiset (Segment k), IsL 𝔪 x.rep := by
   obtain ⟨n, c⟩ := x
   obtain rfl | rfl : n = 0 ∨ n = 1 := by simp at hx; omega
   · exact ⟨0, exh_deg_zero c⟩
   · exact exh_deg_one c
-
-theorem exh_char_two {η : kˣ →* ℂˣ} (hη : IsSmoothChar η) :
-    ∃ 𝔪 : Multiset (Segment k), IsL 𝔪 (IrrGL.rep ⟨2, (IrrRep.det (Fin 2) η hη).cl⟩) := by
-  have hχ := hη.mul (isSmoothChar_absPow (k := k) (-(1 / 2)))
-  have h := isL_detRep_two hχ
-  have e : η * absPow k (-(1 / 2)) * absPow k (1 / 2) = η := by
-    rw [mul_assoc, ← absPow_add]; simp
-  rw [e] at h
-  exact ⟨_, h.of_equiv (equivRep (IrrRep.det (Fin 2) η hη))⟩
-
-example : IsNonarchimedeanLocalField ℚ_[2] ∧ CharZero ℚ_[2] := ⟨inferInstance, inferInstance⟩
 
 end GlobalTheory.LocGL
 end

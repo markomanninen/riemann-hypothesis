@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTieDefs
-import Formalism.LocalToGlobal.CharacterGerms.RowTieCartFB
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieDefs
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieCartFB
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,8 +23,6 @@ def pairSubst {τ : Type} (a b : κ → MvPowerSeries τ C) : Fin 2 × κ → Mv
 
 def hAt (X : RawChart C d I κ) {τ : Type} (a b : κ → MvPowerSeries τ C) : MvPowerSeries τ C :=
   MvPowerSeries.subst (pairSubst a b) X.h
-
-def ee (i j : ℕ) : Fin 2 →₀ ℕ := Finsupp.single 0 i + Finsupp.single 1 j
 
 def inV (j : Fin 2) (f : PowerSeries C) : MvPowerSeries (Fin 2) C :=
   PowerSeries.subst (MvPowerSeries.X j : MvPowerSeries (Fin 2) C) f
@@ -84,8 +86,8 @@ theorem rescale_HH (X : RawChart C d I κ) (x z : κ → PowerSeries C) (hx : �
 
 end SelfConjPoints
 
-open SelfConjPoints in
 
+open SelfConjPoints in
 theorem r1sHResc (C : Type) [Field C] (d : ℕ) (I : Fin 2 → Type) [∀ g, Fintype (I g)] (κ : Type) [Fintype κ]
     (X : RawChart C d I κ) (x z : κ → PowerSeries C) (hx : ∀ i, PowerSeries.constantCoeff (x i) = 0)
     (hz : ∀ i, PowerSeries.constantCoeff (z i) = 0) (c : C) :

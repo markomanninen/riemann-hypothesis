@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsSideBis
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsSideBis
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.StatementOfDegreeAndBound
-import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.AntitoneOfAppend
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StatementOfDegreeAndBound
+public import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.AntitoneOfAppend
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ lemma low_mul {f g : MvPolynomial σ R} {a b : ℕ} (hf : ∀ m ∈ f.support, a
     by_cases hx : x ∈ f.support
     · by_cases hy : y ∈ g.support
       · exfalso; apply hlt
-        rw [← hxy, map_add]
+        rw [← hxy, map_add (f := _)]
         exact add_le_add (hf x hx) (hg y hy)
       · rw [notMem_support_iff.1 hy, mul_zero]
     · rw [notMem_support_iff.1 hx, zero_mul]
@@ -45,7 +49,7 @@ lemma low_mul {f g : MvPolynomial σ R} {a b : ℕ} (hf : ∀ m ∈ f.support, a
       · by_cases hy : y ∈ g.support
         · have h1 := hf x hx
           have h2 := hg y hy
-          have h3 : Finsupp.weight w x + Finsupp.weight w y = a + b := by rw [← map_add, hxy, hm]
+          have h3 : Finsupp.weight w x + Finsupp.weight w y = a + b := by rw [← map_add (f := _), hxy, hm]
           rw [if_pos (by omega), if_pos (by omega)]
         · rw [notMem_support_iff.1 hy]; simp
       · rw [notMem_support_iff.1 hx]; simp
@@ -57,7 +61,7 @@ lemma low_mul {f g : MvPolynomial σ R} {a b : ℕ} (hf : ∀ m ∈ f.support, a
       rw [coeff_weightedHomogeneousComponent, coeff_weightedHomogeneousComponent]
       by_cases h1 : Finsupp.weight w x = a
       · by_cases h2 : Finsupp.weight w y = b
-        · exfalso; apply hm; rw [← hxy, map_add, h1, h2]
+        · exfalso; apply hm; rw [← hxy, map_add (f := _), h1, h2]
         · rw [if_neg h2, mul_zero]
       · rw [if_neg h1, zero_mul]
 

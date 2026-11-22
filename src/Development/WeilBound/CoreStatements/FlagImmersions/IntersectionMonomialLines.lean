@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.KleimanSt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.KleimanSt
+
+@[expose] public section
 
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo Filter Topology GlobalTheory.CompanionTheory.Ar.Top
 
@@ -40,7 +44,8 @@ theorem intersection_monomial_lines : ∀ II : IntersectionSystem, IsIntersectio
   intro II hII K _ ι _ P d J ℓ w hP hℓ
   set m : J →₀ ℕ := ∑ k, Finsupp.single (w k) 1 with hm
   have hdeg : m.degree = d := by
-    simp [hm, map_sum, Finsupp.degree_single]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hm, map_sum, Finsupp.degree_single]
   set L : List J := (Finsupp.toMultiset m).toList with hL
   have hML : (L : Multiset J) = Finset.univ.val.map w := by
     rw [hL, Multiset.coe_toList, hm, toMultiset_sum_single]
@@ -59,7 +64,7 @@ theorem intersection_monomial_lines : ∀ II : IntersectionSystem, IsIntersectio
       rw [hlen]
       exact k.2
     simp only [monoLines, Function.comp_apply, hσ k]
-    rw [dif_pos hk]
+    rw [dite_eq_left hk]
     rfl
   refine ⟨hdeg, σ, hmono, ?_⟩
   rw [hmono]

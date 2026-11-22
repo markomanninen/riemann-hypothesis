@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HermitianTwists.RepNewformOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HeckeAdjoints.SatConj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.UOfSat
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HermitianTwists.RepNewformOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HeckeAdjoints.SatConj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.UOfSat
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.L2.Host Formalism.ConjugateSelfDual UpperTheory.V UpperTheory.V.TR UpperTheory.V.Sd UpperTheory.V.Af.Gk GlobalTheory.LFun
 
@@ -8,7 +12,7 @@ theorem UpperTheory.V.Af.Rn.satHerm :
     UpperTheory.V.Af.Rn.SatHerm := by
   intro π H hH w α β hB
   have hB0 : HasSatGL w (π.locRep w) {α, β} := hB
-  have hK : ∀ k ∈ KGL w 2, GlobalTheory.CuspRep.invT 2 _ k ∈ KGL w 2 := by
+  have hK : ∀ k ∈ KGL w (n := 2), GlobalTheory.CuspRep.invT 2 _ k ∈ KGL w (n := 2) := by
     rintro _ ⟨k, rfl⟩
     exact ⟨GlobalTheory.CuspRep.invT 2 _ k, InvT.map_invT _ k⟩
   have hB' : HasSatGL w ((π.locRep w).comp (GlobalTheory.CuspRep.invT 2 (w.adicCompletion ℚ))) (({α, β} : Multiset ℂˣ).map (·⁻¹)) :=

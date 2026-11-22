@@ -1,11 +1,40 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LineHeightInvariantScaling
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightAssemblyFinal
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PCurveRatSectionSum
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PFlZArithVar
-import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.PNefOnFibresRelabel
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.Reading
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LineHeightInvariantScaling
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightAssemblyFull
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitDegreeRatio
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitLocalSum
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCenterZero
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitConjSum
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitChartRing
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitChartMax
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitChartQuot
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitChartDehom
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitChartResidue
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitChartMult
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.PLocalQuotCard
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.PCentredPlacesFinite
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.PCentredRingNormal
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.PLocalNormalIndex
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.PLocalQuotCentred
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.PPlacesRingQuot
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.PLocalLengthPlaces
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCenterChart
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.PPlaceCentredSum
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitChartTerm
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCenterLe
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCenterMemIff
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCenterPrime
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.PSubringPrimeMaximal
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCenterDivSupp
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PCurveRatSectionSum
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PFlZArithVar
+public import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.PNefOnFibresRelabel
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.Reading
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,7 +124,7 @@ theorem multAt_map (e : ∀ k, ι k ≃ Fin (n k + 1)) (J V : Ideal (MRing ι)) 
     rw [dif_pos hV, dif_pos hV']
     exact congrArg ENat.toNat (length_localizedModule_quotient_map (ren e) J V)
   · have hV' : ¬ (V.map (ren e)).IsPrime := fun h' => hV ((isPrime_map_ringEquiv_iff (ren e) V).1 h')
-    rw [dif_neg hV, dif_neg hV']
+    rw [dite_eq_right hV, dite_eq_right hV']
 
 theorem length_chart_map (e : ∀ k, ι k ≃ Fin (n k + 1)) (V : Ideal (MRing ι)) (c : ∀ k, ι k) :
     Module.length ℤ (MRing (blockIdx n) ⧸ (V.map (ren e) ⊔
@@ -223,7 +252,7 @@ theorem mConeMap_ren {Ω : Type} [Field Ω] (e : ∀ k, ι k ≃ Fin (n k + 1)) 
     mConeMap (ι := blockIdx n) y (ren e f) = mConeMap (y ∘ sig e) f := by
   induction f using MvPolynomial.induction_on with
   | C a => simp [mConeMap, ren_C]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p q hp =>
     rw [map_mul, map_mul, map_mul, hp]
     obtain ⟨k, i⟩ := q
@@ -245,7 +274,7 @@ theorem mCoordIdeal_ringHom {L Ω : Type} [Field L] [Field Ω] (j : L →+* Ω) 
     intro f
     induction f using MvPolynomial.induction_on with
     | C a => simp [mConeMap]
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | mul_X p q hp =>
       rw [map_mul, map_mul, map_mul, hp]
       simp [mConeMap]
@@ -275,7 +304,7 @@ theorem lineHt_tensor (A B : HermLine ι) (L : Type) [Field L] [NumberField L] (
 theorem isSmoothHerm_pushLine (e : ∀ k, ι k ≃ Fin (n k + 1)) {A : HermLine ι} (hA : IsSmoothHerm A) :
     IsSmoothHerm (pushLine e A) := by
   have hu : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun z : Coord n → ℂ => z ∘ sig e) :=
-    contDiff_pi.2 fun p => contDiff_apply ℝ ℂ (sig e p)
+    contDiff_pi.2 fun p => contDiff_apply ℝ (fun _ => ℂ) (sig e p)
   have h : ContDiffOn ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (A.h ∘ fun z : Coord n → ℂ => z ∘ sig e)
       {z : Coord n → ℂ | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0} := by
     refine ContDiffOn.comp hA hu.contDiffOn fun z hz k => ?_

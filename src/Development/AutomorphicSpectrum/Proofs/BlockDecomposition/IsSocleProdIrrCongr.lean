@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.SatakeSocle.SocleOne
-import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.Outright
-import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.ExhaustionOfThree
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.GenericUnitaryDualGLOfTwo
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsOrderedFormSingleRev
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsLSegSingle
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.SatakeSocle.SocleOne
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.Outright
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.ExhaustionOfThree
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.GenericUnitaryDualGLOfTwo
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsOrderedFormSingleRev
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsLSegSingle
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.SplitWeil ValuativeRel
 
@@ -12,7 +16,7 @@ namespace GlobalTheory.CompanionTheory.LocGL
 
 theorem isSocle_prodIrr_congr {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k] {h N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V]
-    {π : Representation ℂ (GL (Fin N) k) V} {y z : Fin h → IrrGL k} (e : y = z)
+    {π : Representation ℂ (GL (Fin N) k) V} {y z : Fin h → IrrGL (k := k)} (e : y = z)
     (hy : ∑ a, (y a).1 = N) (hz : ∑ a, (z a).1 = N) (H : IsSocle π (prodIrr y hy)) :
     IsSocle π (prodIrr z hz) := by
   subst e
@@ -20,7 +24,7 @@ theorem isSocle_prodIrr_congr {k : Type} [Field k] [ValuativeRel k] [Topological
 
 theorem socleOne : PositivityTheory.SphericalProduct.SocleOne := by
   intro k _ _ _ _ _ n ξ hξ hanti hd
-  let x : Fin n → IrrGL k := fun i =>
+  let x : Fin n → IrrGL (k := k) := fun i =>
     IrrGL.ofChar (ξ (Fin.rev i)) (isSmoothChar_of_isUnram (hξ (Fin.rev i)))
   have hLF : LFactors (PositivityTheory.SphericalProduct.msOne ξ hξ) x :=
     ⟨_, GlobalTheory.CompanionTheory.OneTermOrder.isOrderedForm_single_rev k n ξ hξ hanti, fun i => isLSeg_single k _ _⟩

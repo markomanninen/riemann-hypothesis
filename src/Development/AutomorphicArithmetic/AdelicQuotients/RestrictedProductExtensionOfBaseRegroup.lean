@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SelmerRankBoundLaurent
-import GroundTheory.AutomorphicForms.RestrictedProductMatrix
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SelmerRankBoundLaurent
+public import GroundTheory.AutomorphicForms.RestrictedProductMatrix
+
+@[expose] public section
 
 open PositivityTheory.Rg.Tf.Geo UpperTheory.ConvolutionTheory.G UpperTheory.ConvolutionTheory.T4
 open Filter

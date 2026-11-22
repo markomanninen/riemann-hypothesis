@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KappaOK
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KappaOK
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.SiegelTor GlobalTheory.EndLoc
 
@@ -64,13 +69,12 @@ section Hom
 variable {S : Scheme.{0}}
 
 theorem isMonHom_of_mul_comp {G H : Over S} [GrpObj G] [GrpObj H] (f : G ⟶ H)
-    (h : ∀ (T : Over S) (x y : T ⟶ G), (x * y) ≫ f = (x ≫ f) * (y ≫ f)) : IsMonHom f where
-  one_hom := by
-    rw [MonObj.one_eq_one, MonObj.one_eq_one]
+    (h : ∀ (T : Over S) (x y : T ⟶ G), (x * y) ≫ f = (x ≫ f) * (y ≫ f)) : IsMonHom f := by
+  refine ⟨?_, ?_⟩
+  · rw [MonObj.one_eq_one G, MonObj.one_eq_one H]
     exact map_one (MonoidHom.mk' (fun x : 𝟙_ (Over S) ⟶ G ↦ x ≫ f) (h _))
-  mul_hom := by
-    rw [MonObj.mul_eq_mul, h, MonObj.mul_eq_mul, MonObj.comp_mul]
-    simp
+  · rw [MonObj.mul_eq_mul G, MonObj.mul_eq_mul H, MonObj.comp_mul, tensorHom_fst, tensorHom_snd]
+    exact h _ _ _
 
 def preHom {T T' G : Over S} [GrpObj G] (p : T' ⟶ T) : (T ⟶ G) →* (T' ⟶ G) :=
   MonoidHom.mk' (fun a => p ≫ a) fun a b => MonObj.comp_mul p a b
@@ -173,7 +177,6 @@ theorem actZ_add (N N' : ord d) : actZ A B d la mu (N + N') = actZ A B d la mu N
   · rw [MonObj.mul_comp, actZ_pa, actZ_pa, actZ_pa, ← E_add]
     congr 1
     funext j
-    simp only [Subring.coe_add, Matrix.add_apply, Pi.add_apply]
     exact Int.add_ediv_of_dvd_left (N.2 j i)
   · rw [MonObj.mul_comp, actZ_pb, actZ_pb, actZ_pb, ← E_add]
     congr 1 <;> funext j <;> simp

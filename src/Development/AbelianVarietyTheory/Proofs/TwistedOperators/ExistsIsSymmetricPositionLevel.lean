@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.FramePositiveSum
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnipotentRadicalBasic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.FramePositiveSum
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnipotentRadicalBasic
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix Topology GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.IndefiniteRowSideFullHecke.FramePositiveSum
 
@@ -79,7 +83,7 @@ theorem exists_residue_char {ψ : AddChar k Circle} (hψ : HasConductor ψ 1) {�
     have h3 : ψ ((ϖ⁻¹ : kˣ) * ((y : k) - z)) = 1 := by
       refine hψ.eq_one ?_
       have h0 : 0 < valuation k (ϖ : k) := by simp [zero_lt_iff]
-      simp only [cball, Set.mem_setOf_eq, Units.val_one, map_one, map_mul, Units.val_inv_eq_inv_val, map_inv₀]
+      simp only [cball, Set.mem_ofPred_eq, Units.val_one, map_one, map_mul, Units.val_inv_eq_inv_val, map_inv₀]
       rwa [inv_mul_le_one₀ h0]
     rw [show ((ϖ⁻¹ : kˣ) : k) * (y : k) = (ϖ⁻¹ : kˣ) * ((y : k) - z) + (ϖ⁻¹ : kˣ) * (z : k) by ring,
       AddChar.map_add_eq_mul, h3, one_mul]
@@ -89,7 +93,7 @@ theorem exists_residue_char {ψ : AddChar k Circle} (hψ : HasConductor ψ 1) {�
   obtain ⟨y, rfl⟩ := hs y
   obtain ⟨z, rfl⟩ := hs z
   beta_reduce
-  rw [← map_add, h2, h2, h2, ← AddChar.map_add_eq_mul, ← mul_add]
+  rw [← map_add (f := _), h2, h2, h2, ← AddChar.map_add_eq_mul, ← mul_add]
   rfl
 
 def symSumInt {κ l : ℕ} (g : GL (Fin κ ⊕ Fin l) 𝒪[k]) : 𝒪[k] :=
@@ -99,12 +103,17 @@ def symSumInt {κ l : ℕ} (g : GL (Fin κ ⊕ Fin l) 𝒪[k]) : 𝒪[k] :=
 omit [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem map_symSumInt {F : Type} [Field F] (f : 𝒪[k] →+* F) {κ l : ℕ} (g : GL (Fin κ ⊕ Fin l) 𝒪[k]) :
     f (symSumInt g) = symSum (Matrix.GeneralLinearGroup.map f g) := by
-  simp only [symSumInt, symSum, simpleSum, superSum, map_add, map_sum, apply_ite f, map_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [symSumInt, symSum, simpleSum, superSum, map_add (f := _), map_sum, apply_ite f, map_zero]
   rfl
 
 end Local
 
-theorem exists_isSymLevel : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (ψ : AddChar k Circle), HasConductor ψ 1 → ∀ ϖ : kˣ, IsUnif ϖ → ∀ ρ κ l : ℕ, ∃ P : TypeDatum k (Fin κ ⊕ Fin l), IsSymLevel ψ ϖ ρ P := by
+theorem exists_isSymLevel :
+    ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
+      (ψ : AddChar k Circle), HasConductor ψ 1 → ∀ ϖ : kˣ, IsUnif ϖ →
+      ∀ ρ κ l : ℕ, ∃ P : GlobalTheory.StepData.TypeDatum k (Fin κ ⊕ Fin l),
+        GlobalTheory.IndefiniteRowSideFullHecke.FramePositiveSum.IsSymLevel ψ ϖ ρ P := by
   intro k _ _ _ _ ψ hψ ϖ hϖ ρ κ l
   obtain ⟨χ, hadd, hres⟩ := exists_residue_char hψ hϖ
   let χ' : symGroup 𝓀[k] κ l (ρ + 1) →* ℂˣ :=

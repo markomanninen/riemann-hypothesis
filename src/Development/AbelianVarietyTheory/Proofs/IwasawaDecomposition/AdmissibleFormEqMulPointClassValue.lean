@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RenVar
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemGrassmannianRelationIdealSupMonomialSpanStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdmissibleChernFormProdGrassmannianBasisCopiesStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdmissibleChernFormKillsGrassmannianRelationCopiStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RenVar
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemGrassmannianRelationIdealSupMonomialSpanStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdmissibleChernFormProdGrassmannianBasisCopiesStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdmissibleChernFormKillsGrassmannianRelationCopiStatement
+
+@[expose] public section
 
 noncomputable section
 open MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -18,7 +22,7 @@ def S (H : Host E) (Dw : Datum H) : Submodule ℝ (MvPolynomial ((E →+* ℂ) �
   zero_mem' := ⟨0, fun Θ _ => by simp⟩
   add_mem' := by
     rintro a b ⟨β, hβ⟩ ⟨β', hβ'⟩
-    exact ⟨β + β', fun Θ h => by rw [map_add, hβ Θ h, hβ' Θ h]; ring⟩
+    exact ⟨β + β', fun Θ h => by rw [map_add (f := _), hβ Θ h, hβ' Θ h]; ring⟩
   smul_mem' := by
     rintro c a ⟨β, hβ⟩
     exact ⟨c * β, fun Θ h => by rw [map_smul, hβ Θ h, smul_eq_mul]; ring⟩
@@ -44,7 +48,7 @@ theorem prod_ren_mem (H : Host E) (Dw : Datum H) (s : Finset (GlobalTheory.AllWt
         ren σ h * ∏ τ ∈ Finset.univ.erase σ, ren τ (g τ) ∈ S H Dw := by
       intro h hh
       obtain ⟨j, hj, b, hb, rfl⟩ := Submodule.mem_sup.1 hh
-      rw [map_add, add_mul]
+      rw [map_add (f := _), add_mul]
       refine add_mem ⟨0, fun Θ hΘ => ?_⟩ ?_
       · rw [zero_mul, mul_comm]
         exact GlobalTheory.T.adm_apply_mul_ren_eq_zero_of_mem_J E H Dw Θ hΘ σ j hj _
@@ -57,7 +61,7 @@ theorem prod_ren_mem (H : Host E) (Dw : Datum H) (s : Finset (GlobalTheory.AllWt
           · subst e; rw [Function.update_self]; exact hb
           · rw [Function.update_of_ne e]; exact hg τ (by simp [e, hτ])
         | zero => simp
-        | add x y _ _ hx hy => rw [map_add, add_mul]; exact add_mem hx hy
+        | add x y _ _ hx hy => rw [map_add (f := _), add_mul]; exact add_mem hx hy
         | smul c x _ hx => rw [map_smul, smul_mul_assoc]; exact Submodule.smul_mem _ c hx
     have := key (g σ) (GlobalTheory.T.mem_grassmannianRelationIdeal_sup_monomialSpan _ _ _)
     rwa [← prod_update, Function.update_eq_self] at this

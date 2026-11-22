@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -20,11 +25,7 @@ theorem grad_apply (p : MvPolynomial σ ℂ) (i : σ) : grad w p i = eval w (pde
 theorem grad_mul (a b : MvPolynomial σ ℂ) :
     grad w (a * b) = eval w a • grad w b + eval w b • grad w a := by
   ext i
-  simp only [grad_apply, Derivation.leibniz, smul_eq_mul, map_add, map_mul, Pi.add_apply, Pi.smul_apply]
-
-theorem grad_C (c : ℂ) : grad w (C c : MvPolynomial σ ℂ) = 0 := by
-  ext i
-  simp [grad_apply]
+  simp only [grad_apply, Derivation.leibniz, smul_eq_mul, map_add (f := _), map_mul, Pi.add_apply, Pi.smul_apply]
 
 theorem grad_X_sub_C [DecidableEq σ] (j : σ) : grad w (X j - C (w j)) = Pi.single j 1 := by
   ext i
@@ -40,27 +41,12 @@ theorem grad_mul_of_eval_eq_zero (r p : MvPolynomial σ ℂ) (hp : eval w p = 0)
 def linPart [Fintype σ] (c : σ → ℂ) : MvPolynomial σ ℂ :=
   ∑ i, C (c i) * (X i - C (w i))
 
-theorem eval_linPart [Fintype σ] (c : σ → ℂ) : eval w (linPart w c) = 0 := by
-  simp [linPart]
-
-theorem grad_linPart [Fintype σ] (c : σ → ℂ) : grad w (linPart w c) = c := by
-  classical
-  ext i
-  rw [linPart, map_sum, Finset.sum_apply]
-  simp [grad_mul, grad_C, grad_X_sub_C, Pi.single_apply]
-
-theorem linPart_single [Fintype σ] [DecidableEq σ] (j : σ) : linPart w (Pi.single j 1) = X j - C (w j) := by
-  rw [linPart, Finset.sum_eq_single j]
-  · simp
-  · intro b _ hb; simp [hb]
-  · simp
-
 theorem sub_C_eval_mem_span (p : MvPolynomial σ ℂ) :
     p - C (eval w p) ∈ Ideal.span (Set.range fun i => (X i - C (w i) : MvPolynomial σ ℂ)) := by
   induction p using MvPolynomial.induction_on with
   | C a => simp
   | add p q hp hq =>
-    rw [map_add, map_add, show p + q - (C (eval w p) + C (eval w q)) = (p - C (eval w p)) + (q - C (eval w q)) by
+    rw [map_add (f := _), map_add (f := _), show p + q - (C (eval w p) + C (eval w q)) = (p - C (eval w p)) + (q - C (eval w q)) by
       ring]
     exact Ideal.add_mem _ hp hq
   | mul_X p i hp =>
@@ -85,7 +71,7 @@ theorem grad_eq_zero_of_mem_sq {p : MvPolynomial σ ℂ}
   rw [pow_two] at hp
   refine Submodule.mul_induction_on hp (fun a ha b hb => ?_) (fun x y hx hy => ?_)
   · rw [grad_mul, RingHom.mem_ker.1 ha, RingHom.mem_ker.1 hb, zero_smul, zero_smul, add_zero]
-  · rw [map_add, hx, hy, add_zero]
+  · rw [map_add (f := _), hx, hy, add_zero]
 
 theorem sub_linPart_mem_sq [Fintype σ] {p : MvPolynomial σ ℂ}
     (hp : p ∈ RingHom.ker (eval w : MvPolynomial σ ℂ →+* ℂ)) :
@@ -94,7 +80,8 @@ theorem sub_linPart_mem_sq [Fintype σ] {p : MvPolynomial σ ℂ}
   rw [ker_eval_eq_span] at hp
   obtain ⟨a, rfl⟩ := (Ideal.mem_span_range_iff_exists_fun).1 hp
   have hg : grad w (∑ i, a i * (X i - C (w i))) = fun i => eval w (a i) := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp_rw [grad_mul, grad_X_sub_C, map_sub, eval_X, eval_C, sub_self, zero_smul, add_zero]
     ext i
     simp [Finset.sum_apply, Pi.single_apply]

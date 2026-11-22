@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.CFDefs
-import Development.WeilBound.CoreStatements.PeriodRingComparison.RationalRingEquivalences.IsLogCore
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.CFDefs
+public import Development.WeilBound.CoreStatements.PeriodRingComparison.RationalRingEquivalences.IsLogCore
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,8 @@ theorem log_sub_mem (ε : PreTilt ↥(PadicComplexInt l) l) (h : BdRPlus.theta l
     rw [BdRPlus.ker_thetaC, RingHom.mem_ker, map_sub, h, map_one, sub_self]
   have hX : BdRPlus.eval l (Cmp6.OC l) n ((u l ε - 1) ^ n) = 0 :=
     (mem_ker_pow_iff l _ n).1 (Ideal.pow_mem_pow hk n)
-  rw [mem_ker_pow_iff, map_sub, BdRPlus.eval_log, truncLog_eq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [mem_ker_pow_iff, map_sub, BdRPlus.eval_log, truncLog_eq, map_sum]
   simp only [map_mul, map_pow, RingHom.map_rat_algebraMap]
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simp

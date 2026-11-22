@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SplitDoublingNBlock
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SplitDoublingNBlock
+
+@[expose] public section
 
 noncomputable section
 

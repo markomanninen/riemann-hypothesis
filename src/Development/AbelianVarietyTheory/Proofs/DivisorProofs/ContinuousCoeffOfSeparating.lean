@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfMemSpanK
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfMemSpanK
+
+@[expose] public section
 
 namespace GlobalTheory.ContinuousRepresentationCoefficients
 
@@ -34,7 +38,7 @@ theorem continuous_translate {E : Type} [Field E] [NumberField E] [NumberField.I
   have h4 : (hu k).unit = Unitary.toUnits k := Units.ext rfl
   show GlobalTheory.CuspRep.chart φ.1 g (k.1 : GlobalTheory.CuspRep.Lie E a) = _
   unfold GlobalTheory.CuspRep.chart
-  rw [dif_pos (hu k), h4]
+  rw [dite_eq_left (hu k), h4]
   rfl
 
 theorem isContRep_sub {E : Type} [Field E] [NumberField E] [NumberField.IsTotallyComplex E]

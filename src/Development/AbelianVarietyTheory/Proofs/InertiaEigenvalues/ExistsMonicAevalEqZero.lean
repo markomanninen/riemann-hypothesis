@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 universe u_1
 
@@ -25,7 +29,7 @@ theorem exists_monic_aeval_eq_zero {R E : Type*} [CommRing R] [Field E] [Algebra
       simp [Algebra.algebraMap_eq_smul_one, Matrix.smul_mulVec]
     | add a b ha hb =>
       intro x
-      simp only [map_add, Polynomial.map_add, LinearMap.add_apply, Submodule.coe_add, ha, hb,
+      simp only [map_add (f := _), Polynomial.map_add (f := _), LinearMap.add_apply, Submodule.coe_add, ha, hb,
         Matrix.add_mulVec]
     | monomial k a ih =>
       intro x
@@ -56,7 +60,7 @@ theorem isIntegral_trace {E : Type u_1} [inst : Field E] [NumberField E] (_φ : 
     rw [IsScalarTower.algebraMap_eq (NumberField.RingOfIntegers E) E K, ← Polynomial.map_map,
       aeval_map_algebraMap]
     exact h1
-  rw [← isIntegral_algebraMap_iff (algebraMap E K).injective]
+  rw [← isIntegral_algebraMap_iff (B := K)]
   have htr : algebraMap E K M.trace = N.trace := by
     simp [N, Matrix.trace]
   rw [htr, Matrix.trace_eq_sum_roots_charpoly]

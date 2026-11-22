@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.CutTailC
+module
+
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.CutTailC
+
+@[expose] public section
 
 noncomputable section
 

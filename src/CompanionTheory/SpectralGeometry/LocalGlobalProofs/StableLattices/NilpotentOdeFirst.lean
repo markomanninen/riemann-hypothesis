@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.LineFormulas.RightRule
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.LineFormulas.RightRule
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,7 +91,7 @@ theorem odeA : CompanionTheory.RgExh.Dec.N.OdeA := by
   have hVle : ∀ T, 0 ≤ T → ∫ t in (0 : ℝ)..T, V t ≤ C := by
     intro T hT
     rw [intervalIntegral.integral_of_le hT]
-    exact setIntegral_mono_set hVint (ae_of_all _ hVn) Ioc_subset_Ioi_self.eventuallyLE
+    exact setIntegral_mono_set hVint (ae_of_all _ hVn) (ae_of_all _ Ioc_subset_Ioi_self)
   have hbound : ∀ T, 0 ≤ T → ∫ t in (0 : ℝ)..T, U t ≤ (U 0 + (1 / a) * C) / a := by
     intro T hT
     have hI : ∫ t in (0 : ℝ)..T, D t = ‖f T‖ ^ 2 * E T - ‖f 0‖ ^ 2 * E 0 := by

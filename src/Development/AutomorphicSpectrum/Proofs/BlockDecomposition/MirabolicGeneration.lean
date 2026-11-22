@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.MirabolicGenerators.SideUnfold
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.MirabolicGenerators.SideUnfold
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ theorem sec_top_apply {G : Type} [Group G] [TopologicalSpace G] {W : Type} [Norm
     [NormedSpace ℂ W] (K : Subgroup G) (ρ : K →* (W →L[ℂ] W)) (g : G) (w : W)
     (hw : ∀ r : K, ρ r w = w) : sec K ⊤ (1 : G → ℂ) ρ g w = w := by
   unfold sec
-  rw [dif_pos ⟨1, Subgroup.mem_top _⟩]
+  rw [dite_eq_left ⟨1, Subgroup.mem_top _⟩]
   simp [hw]
 
 theorem mirGen_of_core : SecLaw → TestSph → AvgMem → AvgInv → SideOf → TestK → Core → MirGen := by

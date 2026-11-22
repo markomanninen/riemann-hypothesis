@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.AugBijPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.AugBijPf
+
+@[expose] public section
 
 noncomputable section
 open Polynomial IsLocalRing
@@ -39,7 +43,8 @@ theorem LocPow_of : LateralTheory.E.AugBijPf.LocPow := by
   have hres : residue A ξ.1 = residue A η := by rw [hη, map_pow]; exact he.symm
   have hηu : residue A η ≠ 0 := hres ▸ hx.ne_zero (NeZero.ne q)
   have hS : IsUnit (∑ j ∈ Finset.range q, ξ.1 ^ j * η ^ (q - 1 - j)) := by
-    rw [← residue_ne_zero_iff_isUnit, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← residue_ne_zero_iff_isUnit, map_sum]
     simp only [map_mul, map_pow, hres]
     rw [geom_sum₂_self]
     exact mul_ne_zero (by simpa using (hq.map (residue A)).ne_zero) (pow_ne_zero _ hηu)

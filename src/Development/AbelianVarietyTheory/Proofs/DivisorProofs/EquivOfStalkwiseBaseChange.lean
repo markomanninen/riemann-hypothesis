@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSpaceDescentLocalEquivalenceStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmallEtaleCechNerveResolutionOfSurjectiveStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyEquivalenceOfStrictlyHenselianStaStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoveringsRefineOfCechConerveProperty
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyEquivalenceBasicProperties
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSpaceDescentLocalEquivalenceStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmallEtaleCechNerveResolutionOfSurjectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyEquivalenceOfStrictlyHenselianStaStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoveringsRefineOfCechConerveProperty
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyEquivalenceBasicProperties
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex TensorProduct GlobalTheory.EtC
 
 noncomputable section
@@ -59,15 +64,16 @@ theorem main : ∀ (R : Type) [CommRing R] (F : Shv R) (S : Scheme.{0}) (E E' : 
   have hsq : (bcMap α p).app U0 ≫ pullback.fst p (sch.map U0.hom) =
       pullback.fst (α ≫ p) (sch.map U0.hom) ≫ α := by
     simp only [bcMap, pullback.map]
-    exact pullback.lift_fst _ _ _
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact pullback.lift_fst _ _ _
   haveI hI : IsIso (sch.map U0.hom) := by
     change IsIso (sch.map (𝟙 S))
     rw [CategoryTheory.Functor.map_id]
     infer_instance
   have key : Eqv R ((bcMap α p).app U0 ≫ pullback.fst p (sch.map U0.hom)) F :=
-    (hcomp _ _ _ _ _).1 h2 (hiso _ _ _ (fst_isIso _ _))
+    (hcomp _ _ _ _ _).1 h2 (hiso _ _ _ (fst_isIso p (sch.map U0.hom)))
   rw [hsq] at key
-  exact (hcomp _ _ _ _ _).2.1 (hiso _ _ _ (fst_isIso _ _)) key
+  exact (hcomp _ _ _ _ _).2.1 (hiso _ _ _ (fst_isIso (α ≫ p) (sch.map U0.hom))) key
 
 end GlobalTheory.EtC.LocGlobSp
 

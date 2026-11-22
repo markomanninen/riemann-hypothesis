@@ -1,14 +1,18 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ColGeR
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PatternSetCardColumnStepStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdditiveCharacterSumOrthogonalityStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerColumnRecursionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalUnipotentRadicalSumZeroStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerVanishesOfRadicalSumsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GLTransitiveNonzeroVectorsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockEmbeddingGLInverseStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerBlockEmbeddingConjStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ColGeR
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PatternSetCardColumnStepStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdditiveCharacterSumOrthogonalityStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerColumnRecursionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalUnipotentRadicalSumZeroStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerVanishesOfRadicalSumsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GLTransitiveNonzeroVectorsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockEmbeddingGLInverseStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerBlockEmbeddingConjStatement
+
+@[expose] public section
 
 open ReciprocityTheory.Ty.Fin GlobalTheory.CompanionTheory.TyFin.ColStep
 
@@ -24,19 +28,19 @@ theorem colGeR_single (K : Type) [Field K] (d j : ℕ) (hj : 1 ≤ j) :
     · have hlt : (i : ℕ) < j := by omega
       have hij : (⟨(i : ℕ), hlt⟩ : Fin j) = ⟨j - 1, by omega⟩ := Fin.ext (by simp; omega)
       simp only [colGeR, colGeE]
-      rw [dif_pos ⟨hl, hlt⟩, hij]
+      rw [dite_eq_left ⟨hl, hlt⟩, hij]
       simp [hl, hi]
       omega
     · simp only [colGeR, colGeE]
       by_cases hlt : (i : ℕ) < j
-      · rw [dif_pos ⟨hl, hlt⟩]
+      · rw [dite_eq_left ⟨hl, hlt⟩]
         have hne : (⟨(i : ℕ), hlt⟩ : Fin j) ≠ ⟨j - 1, by omega⟩ := by
           intro h; have := congrArg Fin.val h; simp at this; omega
         simp [hi, Pi.single_eq_of_ne hne]
-      · rw [dif_neg (by tauto)]
+      · rw [dite_eq_right (by tauto)]
         simp [hi]
   · simp only [colGeR, colGeE]
-    rw [dif_neg (by tauto)]
+    rw [dite_eq_right (by tauto)]
     have : (j + 1 ≤ (l : ℕ)) ↔ j ≤ (l : ℕ) := by omega
     simp [this]
 

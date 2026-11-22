@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemCutQGrp
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationLeOneOfPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemCutQGrp
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationLeOneOfPow
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC GlobalTheory.Mem.Col2.MemChart Matrix
 open scoped TensorProduct
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
@@ -13,7 +18,9 @@ theorem cqOf_empty_or_coset : ∀ {X : Fields} {Pr : Primes X} {R : Ranks} {sel 
   have hP : P.1 ∉ Pr.vGs := hQ P.1 P.2
   by_cases hj : j + 1 = R.m
   · right
-    obtain ⟨y0, -, hY⟩ := r.mem_ybSet hj
+    have hyb := r.mem_ybSet hj
+    simp only [ybSet, Set.mem_setOf_eq] at hyb
+    obtain ⟨y0, -, hY⟩ := hyb
     have hq : ((qOf P.1 : X.E) ^ cst.M) ≠ 0 := pow_ne_zero _ (by
       rw [Nat.cast_ne_zero]
       unfold qOf

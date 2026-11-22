@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsOpenDetBottomLeftNeZero
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PhiBoundPartsOfRadicalParametrisation
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixTranspose
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsOpenDetBottomLeftNeZero
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PhiBoundPartsOfRadicalParametrisation
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixTranspose
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,8 @@ section mk
 variable {k j ρ : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq]
 
-open Classical in
 
+open Classical in
 def chartCoefficient (b b' : RC k j ρ → ℝ) (Φ : (Fin j → Fin j → ℂ) → Mt k ρ → (Wq →L[ℂ] Wp)) (g : B.Mat k (j + ρ)) :
     Wq →L[ℂ] Wp :=
   if DjU k j ρ g ≠ 0 then
@@ -74,10 +78,8 @@ open scoped ComplexConjugate
 
 variable {k j ρ : ℕ}
 
-local notation "∞'" => ((⊤ : ℕ∞) : WithTop ℕ∞)
-
 theorem ms_skewOf {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {x : E}
-    {f : E → (G.UT j → ℂ) × (Fin j → ℝ)} (hf : ContDiffAt ℝ ∞' f x) : MS (fun y => skewOf (f y)) x := by
+    {f : E → (G.UT j → ℂ) × (Fin j → ℝ)} (hf : ContDiffAt ℝ ∞ f x) : MS (fun y => skewOf (f y)) x := by
   have hU : MS (fun y => G.strictUpper (f y).1) x := by
     intro a b
     simp only [G.strictUpper, Matrix.of_apply]
@@ -99,12 +101,12 @@ theorem ms_skewOf {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {x : E}
   exact ms_add (ms_sub hU (ms_conjT hU)) hD
 
 theorem ms_ofC {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {x : E} {m n : ℕ}
-    {f : E → (Fin m → Fin n → ℂ)} (hf : ContDiffAt ℝ ∞' f x) : MS (fun y => Matrix.of (f y)) x := by
+    {f : E → (Fin m → Fin n → ℂ)} (hf : ContDiffAt ℝ ∞ f x) : MS (fun y => Matrix.of (f y)) x := by
   intro i j
   exact contDiffAt_pi.1 (contDiffAt_pi.1 hf i) j
 
 theorem ms_rnC {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {x : E} {f : E → RC k j ρ}
-    (hf : ContDiffAt ℝ ∞' f x) : MS (fun y => Rn k j ρ (f y)) x := by
+    (hf : ContDiffAt ℝ ∞ f x) : MS (fun y => Rn k j ρ (f y)) x := by
   have h1 : MS (fun y => Matrix.of (f y).1) x := ms_ofC hf.fst
   have h2 : MS (fun y => skewOf (f y).2) x := ms_skewOf hf.snd
   unfold Rn
@@ -113,7 +115,7 @@ theorem ms_rnC {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {x : E} {f
   · exact ms_mul (ms_const _) (ms_add (ms_csmul _ (ms_mul (ms_mul (ms_conjT h1) (ms_const _)) h1)) h2)
 
 theorem ms_rnC_inv {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {x : E} {f : E → RC k j ρ}
-    (hf : ContDiffAt ℝ ∞' f x) : MS (fun y => (Rn k j ρ (f y))⁻¹) x := by
+    (hf : ContDiffAt ℝ ∞ f x) : MS (fun y => (Rn k j ρ (f y))⁻¹) x := by
   exact ms_inv (ms_rnC hf) (Matrix.det_ne_zero_of_left_inverse (rn_inv_mul _))
 
 theorem ms_psiC (q₀ : (RC k j ρ × RC k j ρ) × ((Fin j → Fin j → ℂ) × Mt k ρ)) (h₀ : (Matrix.of q₀.2.1).det ≠ 0) :
@@ -148,11 +150,9 @@ open Formalism.FourierDecayAlt.P.PBI.Sm
 variable {k j ρ : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq]
 
-local notation "∞'" => ((⊤ : ℕ∞) : WithTop ℕ∞)
-
 theorem continuous_gN' : Continuous (fun g : B.Mat k (j + ρ) => B.gN g) := by
   unfold B.gN
-  exact (continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+  exact (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
     Complex.continuous_normSq.comp ((continuous_apply j).comp (continuous_apply i))).sqrt
 
 theorem chartCoefficient_hasCompactSupport (Bs : B.RealPlaceData k (j + ρ) Wp Wq) (b b' : RC k j ρ → ℝ) (hb : ContDiff ℝ ∞ b)
@@ -181,7 +181,7 @@ theorem chartCoefficient_hasCompactSupport (Bs : B.RealPlaceData k (j + ρ) Wp W
     unfold chartCoefficient at hne
     rw [if_pos hD] at hne
     have hμ' : Matrix.of (chart (Matrix.of.symm g)).2.2 ∈ B.GV k ρ := by
-      simpa [chart] using hμ
+      simpa only [chart, Equiv.apply_symm_apply] using hμ
     obtain ⟨hc, hΦne⟩ := smul_ne_zero_iff.1 hne
     have hc' : b (chart (Matrix.of.symm g)).1.1 * b' (chart (Matrix.of.symm g)).1.2 ≠ 0 := by exact_mod_cast hc
     obtain ⟨hb1, hb2⟩ := mul_ne_zero_iff.1 hc'
@@ -201,7 +201,7 @@ theorem chartCoefficient_hasCompactSupport (Bs : B.RealPlaceData k (j + ρ) Wp W
       have hch₁ := chart_psiC hdet hμ₁
       obtain ⟨UΦ, FΦ, hUΦ, hq₁U, hFΦ, hΦF⟩ := hΦ q₁.2 (hKV hq₁.2.1) hμ₁
       have hOpenD : IsOpen {g : B.Mat k (j + ρ) | (bk31 g).det ≠ 0} := isOpen_det_bottom_left_ne_zero
-      have hchc : ContDiffOn ℝ ∞' (fun g : B.Mat k (j + ρ) => chart (Matrix.of.symm g))
+      have hchc : ContDiffOn ℝ ∞ (fun g : B.Mat k (j + ρ) => chart (Matrix.of.symm g))
           {g : B.Mat k (j + ρ) | (bk31 g).det ≠ 0} := chart_contDiffOn
       set U := {g : B.Mat k (j + ρ) | (bk31 g).det ≠ 0} ∩
         (fun g : B.Mat k (j + ρ) => (chart (Matrix.of.symm g)).2) ⁻¹' UΦ with hUdef
@@ -212,20 +212,20 @@ theorem chartCoefficient_hasCompactSupport (Bs : B.RealPlaceData k (j + ρ) Wp W
         FΦ (chart (Matrix.of.symm g)).2, hUo, ⟨hD₁, by simp only [Set.mem_preimage, hch₁]; exact hq₁U⟩, ?_, ?_⟩
       · have hsub' : U ⊆ {g : B.Mat k (j + ρ) | (bk31 g).det ≠ 0} := Set.inter_subset_left
         have hchU := hchc.mono hsub'
-        have hx : ContDiffOn ℝ ∞' (fun g : B.Mat k (j + ρ) => b (chart (Matrix.of.symm g)).1.1) U :=
+        have hx : ContDiffOn ℝ ∞ (fun g : B.Mat k (j + ρ) => b (chart (Matrix.of.symm g)).1.1) U :=
           hb.comp_contDiffOn ((contDiff_fst.comp contDiff_fst).comp_contDiffOn hchU)
-        have hx' : ContDiffOn ℝ ∞' (fun g : B.Mat k (j + ρ) => b' (chart (Matrix.of.symm g)).1.2) U :=
+        have hx' : ContDiffOn ℝ ∞ (fun g : B.Mat k (j + ρ) => b' (chart (Matrix.of.symm g)).1.2) U :=
           hb'.comp_contDiffOn ((contDiff_snd.comp contDiff_fst).comp_contDiffOn hchU)
-        have hF : ContDiffOn ℝ ∞' (fun g : B.Mat k (j + ρ) => FΦ (chart (Matrix.of.symm g)).2) U :=
+        have hF : ContDiffOn ℝ ∞ (fun g : B.Mat k (j + ρ) => FΦ (chart (Matrix.of.symm g)).2) U :=
           hFΦ.comp (contDiff_snd.comp_contDiffOn hchU) (fun g hg => hg.2)
-        have hc : ContDiffOn ℝ ∞' (fun g : B.Mat k (j + ρ) =>
+        have hc : ContDiffOn ℝ ∞ (fun g : B.Mat k (j + ρ) =>
             ((b (chart (Matrix.of.symm g)).1.1 * b' (chart (Matrix.of.symm g)).1.2 : ℝ) : ℂ)) U :=
           Complex.ofRealCLM.contDiff.comp_contDiffOn (hx.mul hx')
         exact hc.smul hF
       · intro g hgU hgG
         have hD : DjU k j ρ g ≠ 0 := (djU_ne_iff g).2 hgU.1
         obtain ⟨-, hμ, -⟩ := chart_spec g hgG hD
-        have hμ' : Matrix.of (chart (Matrix.of.symm g)).2.2 ∈ B.GV k ρ := by simpa [chart] using hμ
+        have hμ' : Matrix.of (chart (Matrix.of.symm g)).2.2 ∈ B.GV k ρ := by simpa only [chart, Equiv.apply_symm_apply] using hμ
         unfold chartCoefficient
         rw [if_pos hD, hΦF _ hgU.2 hμ']
     · refine ⟨Cᶜ, fun _ => 0, hCc.isClosed.isOpen_compl, hC, contDiffOn_const, fun g hgU hgG => ?_⟩

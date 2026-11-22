@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CutZeroNotLeSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PZeroIdealChart
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CutZeroNotLeSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PZeroIdealChart
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman

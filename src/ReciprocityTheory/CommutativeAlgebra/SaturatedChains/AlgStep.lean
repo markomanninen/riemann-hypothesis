@@ -1,11 +1,15 @@
-import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.IsSaturatedChain
+module
+
+public import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.IsSaturatedChain
+
+@[expose] public section
 
 namespace ReciprocityTheory.CA
 
 open Polynomial
 
-attribute [local instance] Polynomial.algebra Polynomial.isLocalization in
 
+attribute [local instance] Polynomial.algebra Polynomial.isLocalization in
 theorem height_le_one_of_comap_C_eq_bot {A : Type*} [CommRing A] [IsDomain A]
     (Q : Ideal A[X]) [Q.IsPrime] (hQ : Q.comap C = ⊥) : Q.height ≤ 1 := by
 
@@ -16,13 +20,16 @@ theorem height_le_one_of_comap_C_eq_bot {A : Type*} [CommRing A] [IsDomain A]
     have h0 : s ∈ Q.comap C := hsQ
     rw [hQ, Ideal.mem_bot] at h0
     exact nonZeroDivisors.ne_zero hs h0
+  letI : Algebra A[X] (FractionRing A)[X] := Polynomial.algebra A (FractionRing A)
+  haveI : IsLocalization (Submonoid.map (C : A →+* A[X]) (nonZeroDivisors A))
+      (FractionRing A)[X] := Polynomial.isLocalization (nonZeroDivisors A) (FractionRing A)
   haveI hQ' : (Q.map (algebraMap A[X] (FractionRing A)[X])).IsPrime :=
     IsLocalization.isPrime_of_isPrime_disjoint _ _ Q ‹Q.IsPrime› hd
-  have hcomap := IsLocalization.comap_map_of_isPrime_disjoint
+  have hcomap := IsLocalization.under_map_of_isPrime_disjoint
     (Submonoid.map (C : A →+* A[X]) (nonZeroDivisors A)) (FractionRing A)[X] ‹Q.IsPrime› hd
   have hh : Q.height = (Q.map (algebraMap A[X] (FractionRing A)[X])).height :=
     (congrArg Ideal.height hcomap.symm).trans
-      (IsLocalization.height_comap (Submonoid.map (C : A →+* A[X]) (nonZeroDivisors A)) _)
+      (IsLocalization.height_under (Submonoid.map (C : A →+* A[X]) (nonZeroDivisors A)) _)
   have h1 := Ideal.height_le_ringKrullDim_of_ne_top hQ'.ne_top
   rw [Polynomial.ringKrullDim_of_isNoetherianRing, ringKrullDim_eq_zero_of_field, zero_add,
     ← hh] at h1
@@ -44,11 +51,11 @@ theorem height_le_height_comap_C_add_one {R : Type*} [CommRing R] [IsNoetherianR
     exact hs hsP
   haveI hP' : (P.map (algebraMap R[X] (Localization.AtPrime p)[X])).IsPrime :=
     IsLocalization.isPrime_of_isPrime_disjoint _ _ P ‹P.IsPrime› hd
-  have hcomap := IsLocalization.comap_map_of_isPrime_disjoint
+  have hcomap := IsLocalization.under_map_of_isPrime_disjoint
     (Submonoid.map (C : R →+* R[X]) p.primeCompl) (Localization.AtPrime p)[X] ‹P.IsPrime› hd
   have hh : P.height = (P.map (algebraMap R[X] (Localization.AtPrime p)[X])).height :=
     (congrArg Ideal.height hcomap.symm).trans
-      (IsLocalization.height_comap (Submonoid.map (C : R →+* R[X]) p.primeCompl) _)
+      (IsLocalization.height_under (Submonoid.map (C : R →+* R[X]) p.primeCompl) _)
   have h1 := Ideal.height_le_ringKrullDim_of_ne_top hP'.ne_top
   rw [Polynomial.ringKrullDim_of_isNoetherianRing,
     IsLocalization.AtPrime.ringKrullDim_eq_height p (Localization.AtPrime p), ← hh] at h1
@@ -56,17 +63,7 @@ theorem height_le_height_comap_C_add_one {R : Type*} [CommRing R] [IsNoetherianR
 
 private theorem height_eq_order_height_lemma {R : Type*} [CommRing R] (p : Ideal R) [hp : p.IsPrime] :
     p.height = Order.height (⟨p, hp⟩ : PrimeSpectrum R) := by
-  have hmem : p ∈ p.minimalPrimes := by
-    rw [Ideal.minimalPrimes_eq_subsingleton_self]
-    exact Set.mem_singleton p
-  unfold Ideal.height
-  refine le_antisymm ((iInf₂_le p hmem).trans (le_of_eq rfl)) (le_iInf₂ fun J hJ => ?_)
-  have hJp : J = p := by
-    have h2 := hJ
-    rw [Ideal.minimalPrimes_eq_subsingleton_self] at h2
-    exact h2
-  subst hJp
-  exact le_of_eq rfl
+  exact PrimeSpectrum.height_eq_orderHeight ⟨p, hp⟩
 
 theorem height_add_one_le_height_comap_of_surjective {A S : Type*} [CommRing A] [IsDomain A]
     [CommRing S] (φ : A →+* S) (hφ : Function.Surjective φ) (hker : RingHom.ker φ ≠ ⊥)

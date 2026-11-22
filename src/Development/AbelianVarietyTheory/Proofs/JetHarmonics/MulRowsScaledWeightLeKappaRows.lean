@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmQuadraticFormEqAlternatingForm
-import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmQuadraticFormEqAlternatingForm
+public import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.DIV.Cons Formalism.L2.DIV Formalism.L2.Pj Formalism.L2.Indef Formalism.L2.Indef.Tree Formalism.L2.Indef.Tree.DepthCond Formalism.DivisionValues Formalism.EigenvalueLevelCeiling
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Datum Level Moduli Coeff)
 open ReciprocityTheory.ChartRestriction.G.Pdiv.ChartF (AvFSt HTFSt UpFSt)
@@ -40,7 +45,7 @@ theorem mul_ofGaps_le {p : ℕ} (T : ℕ) (g a : Fin p → ℕ)
       have h1 := h i
       rw [ofGaps_last g i hn]
       unfold WeightAlgebra.gapZ at h1
-      rw [dif_neg hn] at h1
+      rw [dite_eq_right hn] at h1
       exact_mod_cast h1
     | succ n ih =>
       intro i hi
@@ -49,7 +54,7 @@ theorem mul_ofGaps_le {p : ℕ} (T : ℕ) (g a : Fin p → ℕ)
       have h2 := ih ⟨i.1 + 1, hn⟩ (by simp only; omega)
       rw [ofGaps_succ g i hn, Nat.mul_add]
       unfold WeightAlgebra.gapZ at h1
-      rw [dif_pos hn] at h1
+      rw [dite_eq_left hn] at h1
       have h3 : ((T * g i : ℕ) : ℤ) ≤ (a i : ℤ) - a ⟨i.1 + 1, hn⟩ := by push_cast; exact h1
       omega
   exact key (p - 1 - i.1) i (by have := i.2; omega)
@@ -63,7 +68,7 @@ theorem mul_lWt_aP_le (D : D7) {j : ℕ} (ka : WeightFamilies.Wt D j) (T nW : �
   · exact mul_toNat_fdiv_le _ _ _ _ h0 le_rfl
   · refine mul_toNat_fdiv_le _ _ _ _ h0 ?_
     unfold WeightAlgebra.gapZ
-    rw [dif_neg h]
+    rw [dite_eq_right h]
     have : (0 : ℤ) ≤ ((WeightFamilies.dimY D j : ℤ) + 2) * nW := by positivity
     have : (0 : ℤ) ≤ (D.R.r : ℤ) := by positivity
     linarith
@@ -77,7 +82,7 @@ theorem mul_lWt_aM_le (D : D7) {j : ℕ} (ka : WeightFamilies.Wt D j) (T nW : �
   · exact mul_toNat_fdiv_le _ _ _ _ h0 le_rfl
   · refine mul_toNat_fdiv_le _ _ _ _ h0 ?_
     unfold WeightAlgebra.gapZ
-    rw [dif_neg h]
+    rw [dite_eq_right h]
     linarith
 
 theorem mul_DF_lWt_le (D : D7) {j : ℕ} (ka : WeightFamilies.Wt D j) (T nW : ℕ) (hW : Even nW) :

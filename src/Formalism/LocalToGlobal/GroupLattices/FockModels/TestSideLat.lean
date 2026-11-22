@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideTen
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideTen
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -54,7 +58,7 @@ theorem repr_int {O Kf V : Type} [CommRing O] [Field Kf] [Algebra O Kf] [AddComm
   | add u v _ _ hu hv =>
     obtain ⟨a1, h1⟩ := hu
     obtain ⟨a2, h2⟩ := hv
-    exact ⟨a1 + a2, by rw [map_add, map_add, Finsupp.add_apply, h1, h2]⟩
+    exact ⟨a1 + a2, by rw [map_add (f := _), map_add (f := _), Finsupp.add_apply, h1, h2]⟩
   | smul c v _ hv =>
     obtain ⟨a1, h1⟩ := hv
     refine ⟨c * a1, ?_⟩

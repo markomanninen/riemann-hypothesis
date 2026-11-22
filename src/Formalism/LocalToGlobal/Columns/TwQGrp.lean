@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.TwQCmp
-import Formalism.LocalToGlobal.Columns.TwQThetaOpen
+module
+
+public import Formalism.LocalToGlobal.Columns.TwQCmp
+public import Formalism.LocalToGlobal.Columns.TwQThetaOpen
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -80,9 +84,6 @@ def qbK (c : Kv) : Subgroup (GL (Fin n) Kv) where
       rw [_root_.mul_sub, hh]; noncomm_ring
     rw [e]
     exact qbDiv_neg (qbDiv_mul_left ha2 ha3)
-
-theorem mem_qbK {c : Kv} {k : GL (Fin n) Kv} : k ∈ qbK c ↔ qbInt (k : Matrix (Fin n) (Fin n) Kv) ∧
-    qbInt ((k⁻¹ : GL (Fin n) Kv) : Matrix (Fin n) (Fin n) Kv) ∧ qbDiv c ((k : Matrix (Fin n) (Fin n) Kv) - 1) := Iff.rfl
 
 theorem qbK_conj {c : Kv} {k h : GL (Fin n) Kv} (hk : k ∈ qbK c) (h1 : qbInt (h : Matrix (Fin n) (Fin n) Kv))
     (h2 : qbInt ((h⁻¹ : GL (Fin n) Kv) : Matrix (Fin n) (Fin n) Kv)) : h⁻¹ * k * h ∈ qbK c := by

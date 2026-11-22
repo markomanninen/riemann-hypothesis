@@ -1,5 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.OneMemNbh
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DiscreteBranchingUpq
+module
+
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.OneMemNbh
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ProjExists
+
+@[expose] public section
+
 open MeasureTheory Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Ell
 open scoped InnerProductSpace
 open GlobalTheory.SepReal
@@ -29,8 +35,7 @@ theorem continuous_hsn_umat {m : ℕ} (ε : Fin m → Bool) : Continuous fun g :
   unfold hsn
   have hu : Continuous fun g : UJ ε => umat g := Units.continuous_val.comp continuous_subtype_val
   refine Real.continuous_sqrt.comp ?_
-  refine continuous_finset_sum _ fun a _ => continuous_finset_sum _ fun b _ => ?_
-  exact ((continuous_apply b).comp ((continuous_apply a).comp hu)).norm.pow 2
+  fun_prop
 
 end GlobalTheory.SepReal.powerIntegrability
 
@@ -80,8 +85,8 @@ end GlobalTheory.SepReal.powerIntegrability
 
 namespace GlobalTheory.SepReal
 
-open GlobalTheory.SepReal.powerIntegrability in
 
+open GlobalTheory.SepReal.powerIntegrability in
 theorem powInt_of_volBall : VolBall → PowInt := by
   intro hV m ε A hm hA
   obtain ⟨-, hfin, -⟩ := hV m ε (1 / 4) 1 (by norm_num) one_pos

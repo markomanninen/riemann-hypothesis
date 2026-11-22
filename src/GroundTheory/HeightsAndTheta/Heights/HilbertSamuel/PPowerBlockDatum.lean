@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlock
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlockVeronese
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerHeightsirational
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlockArith
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlockMetric
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlockMeasure
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResVolume
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlock
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlockVeronese
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerHeightsirational
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlockArith
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlockMetric
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlockMeasure
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResVolume
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -35,8 +40,8 @@ theorem isMultiHomogIdeal_top {K : Type} [Fintype K] {ι : K → Type} [∀ k, F
 
 end PowerBlockDatum
 
-open PowerBlockDatum in
 
+open PowerBlockDatum in
 theorem PowerBlockDatum.proof (hE : ResExistsStatement) (hV : ResVolume.Statement)
     (hVer : PowerBlockVeronese.Statement) (hBir : PowerHeightsirational.Statement)
     (hAr : PowerBlockArith.Statement) (hMet : PowerBlockMetric.Statement)

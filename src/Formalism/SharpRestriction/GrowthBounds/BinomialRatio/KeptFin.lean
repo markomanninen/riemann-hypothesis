@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSystems
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSystems
+
+@[expose] public section
 
 noncomputable section
 

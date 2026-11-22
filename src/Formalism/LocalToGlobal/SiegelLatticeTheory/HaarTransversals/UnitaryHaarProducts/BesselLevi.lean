@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.BesselFrame
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.BesselFrame
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem Qm_mulVec_mem_span {p : ℕ} (hp : p ≤ r) (y : Fin (2 * r + k + 1) →
   rw [Matrix.mulVec_smul, Qm_mulVec_bvec]
   by_cases hi : i.val < p
   · have : colQ e f wf z0 i = e ⟨i.val, by omega⟩ := by
-      unfold colQ; rw [dif_pos (by omega)]
+      unfold colQ; rw [dite_eq_left (by omega)]
     rw [this]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨⟨i.val, by omega⟩, by simp only [Set.mem_setOf_eq]; exact hi, rfl⟩)
   · rw [hy i (by omega), zero_smul]; exact Submodule.zero_mem _

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import ReciprocityTheory.GaloisValuations.Global
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import ReciprocityTheory.GaloisValuations.Global
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,9 +84,9 @@ theorem prime_l : Prime ((l : ℕ) : 𝓞 ℚ) := by
   rw [← MulEquiv.prime_iff Rat.ringOfIntegersEquiv.toMulEquiv]
   simpa using h
 
-variable (l) in
 
-def vQ : HeightOneSpectrum (𝓞 ℚ) where
+variable (l) in
+def vQ (l : ℕ) [Fact l.Prime] : HeightOneSpectrum (𝓞 ℚ) where
   asIdeal := Ideal.span {((l : ℕ) : 𝓞 ℚ)}
   isPrime := (Ideal.span_singleton_prime (prime_l l).ne_zero).mpr (prime_l l)
   ne_bot := by rw [Ne, Ideal.span_singleton_eq_bot]; exact (prime_l l).ne_zero
@@ -139,7 +143,11 @@ theorem exists_emb [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] (A : ValuationSubring 
     (hA : A.valuation ((l : ℕ) : Ω) < 1) :
     ∃ j : Ω →+* PadicAlgCl l, ∀ x, x ∈ A ↔ ‖j x‖ ≤ 1 := by
   have : Algebra.IsAlgebraic ℚ Ω := IsAlgClosure.isAlgebraic
-  let j0 : Ω →ₐ[ℚ] PadicAlgCl l := IsAlgClosed.lift
+  let j0 : Ω →ₐ[ℚ] PadicAlgCl l := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have h0 : (placeJ (j0 : Ω →+* PadicAlgCl l)).valuation ((l : ℕ) : Ω) < 1 := by
     rw [val_lt_one_iff (mem_placeJ _), map_natCast]
     have h1 : ‖((l : ℕ) : PadicAlgCl l)‖ = ‖((l : ℕ) : ℚ_[l])‖ := by

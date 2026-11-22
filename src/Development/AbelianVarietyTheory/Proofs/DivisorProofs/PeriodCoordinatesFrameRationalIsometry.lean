@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPinnedOfIsUnf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPinnedOfIsUnf
+
+@[expose] public section
+
 open NumberField AlgebraicGeometry CategoryTheory ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj GlobalTheory.GeoLevel GlobalTheory.LevelCusp GlobalTheory.FrameUnif
 open GlobalTheory.Dict (castFr)
 open GlobalTheory.FrameNorm (IsUnitFr)
@@ -22,7 +27,8 @@ private lemma emb_mulVec_eq_map_mulVec_emb {E : Type} [Field E] [NumberField E] 
     (τ : E →+* ℂ) (A : Matrix (Fin r) (Fin r) E) (v : Fin r → E) :
     _root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb τ (A *ᵥ v) = (A.map τ) *ᵥ _root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb τ v := by
   funext k
-  simp [_root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb, Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [_root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb, Matrix.mulVec, dotProduct, map_sum, map_mul]
 
 open NumberField AlgebraicGeometry CategoryTheory in
 open scoped Matrix in
@@ -31,9 +37,9 @@ private lemma col_mul_eq_mulVec_col' {r : ℕ} (A M : Matrix (Fin r) (Fin r) ℂ
   funext k
   simp [_root_.ReciprocityTheory.ChartRestriction.G.FD.col, Matrix.mulVec, dotProduct, Matrix.mul_apply]
 
+
 open NumberField AlgebraicGeometry CategoryTheory in
 open scoped Matrix in
-
 theorem _root_.GlobalTheory.GeoLevel.perFr_lact_of_isMatch : ∀ (E : Type) [Field E] [NumberField E]
     [IsCMField E] (r : ℕ) (X X' : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r) (a : GL (Fin r) E)
     (h : _root_.GlobalTheory.LevelCusp.IsMatch X X' a) (x : _root_.ReciprocityTheory.ChartRestriction.G.FD.Frame X.Ψ r) (v : Fin r → E)
@@ -49,29 +55,29 @@ theorem _root_.GlobalTheory.GeoLevel.perFr_lact_of_isMatch : ∀ (E : Type) [Fie
   unfold _root_.Formalism.L2.PjFree.perFr
   by_cases hτ : τ ∈ X.Ψ
   · have hτ' : τ ∈ X'.Ψ := hΨ ▸ hτ
-    rw [dif_pos hτ', dif_pos hτ]
+    rw [dite_eq_left hτ', dite_eq_left hτ]
     by_cases hi : X.p0 + i < r
     · have hi' : X'.p0 + i < r := hp ▸ hi
-      rw [dif_pos hi', dif_pos hi]
+      rw [dite_eq_left hi', dite_eq_left hi]
       have hfin : (⟨X'.p0 + i, hi'⟩ : Fin r) = ⟨X.p0 + i, hi⟩ := Fin.ext (by simp [hp])
       rw [hfin, mat_lact_castFr_eq_map_mul hΨ a x τ hτ' hτ, emb_mulVec_eq_map_mulVec_emb, Matrix.mul_inv_rev,
         Matrix.mulVec_mulVec, Matrix.mul_assoc, Matrix.nonsing_inv_mul _ hA, Matrix.mul_one]
     · have hi' : ¬ X'.p0 + i < r := hp ▸ hi
-      rw [dif_neg hi', dif_neg hi]
+      rw [dite_eq_right hi', dite_eq_right hi]
   · have hτ' : τ ∉ X'.Ψ := hΨ ▸ hτ
-    rw [dif_neg hτ', dif_neg hτ]
+    rw [dite_eq_right hτ', dite_eq_right hτ]
     by_cases hσ : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.conjEmb τ ∈ X.Ψ
     · have hσ' : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.conjEmb τ ∈ X'.Ψ := hΨ ▸ hσ
-      rw [dif_pos hσ', dif_pos hσ]
+      rw [dite_eq_left hσ', dite_eq_left hσ]
       by_cases hj : X.p0 - 1 - i < r
       · have hj' : X'.p0 - 1 - i < r := hp ▸ hj
-        rw [dif_pos hj', dif_pos hj]
+        rw [dite_eq_left hj', dite_eq_left hj]
         have hfin : (⟨X'.p0 - 1 - i, hj'⟩ : Fin r) = ⟨X.p0 - 1 - i, hj⟩ := Fin.ext (by simp [hp])
         rw [hfin, mat_lact_castFr_eq_map_mul hΨ a x _ hσ' hσ, col_mul_eq_mulVec_col', emb_mulVec_eq_map_mulVec_emb]
         exact h.hermC_eq _ _ _
       · have hj' : ¬ X'.p0 - 1 - i < r := hp ▸ hj
-        rw [dif_neg hj', dif_neg hj]
+        rw [dite_eq_right hj', dite_eq_right hj]
     · have hσ' : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.conjEmb τ ∉ X'.Ψ := hΨ ▸ hσ
-      rw [dif_neg hσ', dif_neg hσ]
+      rw [dite_eq_right hσ', dite_eq_right hσ]
 
 end GlobalTheory.GeoLevel

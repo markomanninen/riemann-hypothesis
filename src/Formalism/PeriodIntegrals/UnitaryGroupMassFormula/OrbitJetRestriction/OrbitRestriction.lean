@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitJetRestriction.RestrictedJetEquation
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitJetRestriction.RestrictedJetEquation
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,6 +26,9 @@ theorem orbitRestriction : ∀ (D : Formalism.BasicNotions.D7) (E : PI.OrbJet.En
   unfold PI.OrbJet.OrbitThetaExpansion
   refine ⟨_, ?_, key⟩
   intro m
+  change (ZMod (nP D p) × Fin (D.R.N i) × Fin (D.R.N (i + 1)) →₀ ℕ) at m
+  change ‖MvPowerSeries.coeff m (killCompl (orbEmb D p r (Fin (D.R.N i) × Fin (D.R.N (i + 1)))) U)‖ ≤ 1
+  rw [MvPowerSeries.coeff_killCompl]
   exact hU _
 
 end PI.OrbJet.OrbW

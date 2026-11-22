@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
-import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CharpolyWeilDelignePotSemistableEnlargeCoefficie
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsPotentiallySemistableCoefficientFieldEnlarge
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PotSemistableParameterBlockSumEqDirectSumStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+public import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CharpolyWeilDelignePotSemistableEnlargeCoefficie
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsPotentiallySemistableCoefficientFieldEnlarge
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PotSemistableParameterBlockSumEqDirectSumStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain Polynomial GlobalTheory.HeightCounting GlobalTheory.RowTie GlobalTheory.SplitRead GlobalTheory.NPin
 open Formalism.BasicNotions.Loc
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -68,6 +73,7 @@ theorem wdPst_eq_of_map (s : ↥L₁.1 →+* ↥L₂.1) (hs : ∀ a, (s a : Om l
     wdPst P ι Bw h hj ρ₂ = wdPst P ι Bw h hj ρ₁ := by
   haveI := hV₁.finite
   haveI := hV₂.finite
+  set_option synthInstance.maxHeartbeats 400000 in
   have hT : ∀ (a : ↥L₁.1) (x : ↥(Dpst P ρ₁)), EnlargeCoeff.dQ P hf (a • x) = s a • EnlargeCoeff.dQ P hf x :=
     fun a x => Subtype.ext (EnlargeCoeff.tensQ_smul P s hfs a x.1)
   letI := algC ι L₁
@@ -92,6 +98,7 @@ theorem wdPst_eq_of_map (s : ↥L₁.1 →+* ↥L₂.1) (hs : ∀ a, (s a : Om l
     simp only [AddMonoidHom.mk'_apply] at hms
     rw [hx, hms]
     refine Submodule.sum_mem _ fun j _ => ?_
+    change wdMk P ι ρ₂ ((Dpst P ρ₂).module.toSMul.smul (b j) (EnlargeCoeff.dQ P hf (EnlargeCoeff.dQ P (hπ j) x))) ∈ Φ.range
     rw [wdMk_smul]
     exact Submodule.smul_mem _ _ ⟨wdMk P ι ρ₁ (EnlargeCoeff.dQ P (hπ j) x), EnlargeCoeff.chg_mk _ _ _ _ _ _ _ _ _ _⟩
   have hinj : Function.Injective Φ := (LinearMap.injective_iff_surjective_of_finrank_eq_finrank hdim).2 hsurj

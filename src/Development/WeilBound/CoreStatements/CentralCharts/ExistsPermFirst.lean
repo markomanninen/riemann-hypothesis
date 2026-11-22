@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.CentralCharts.PshAt0
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsSncAdaptedChartAtPointStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SncAdaptedChartSectionFormStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogResolutionFubiniStudyPositive
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SameOrbitRefl
+module
+
+public import Development.WeilBound.CoreStatements.CentralCharts.PshAt0
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsSncAdaptedChartAtPointStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SncAdaptedChartSectionFormStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogResolutionFubiniStudyPositive
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SameOrbitRefl
+
+@[expose] public section
 
 noncomputable section
 

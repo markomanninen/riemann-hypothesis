@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial Matrix
 
@@ -130,7 +134,8 @@ private lemma torusTransfer_key {K : Type*} [Field K] {ι : Type*} [Fintype ι]
       have h2 := hw _ h1
       simp only [sub_mul, Finset.sum_sub_distrib] at h2
       rw [sub_eq_zero.1 h2]
-    rw [Finset.sum_congr rfl hsame, ← Finset.sum_mul, ← map_sum, hfib j, map_zero, zero_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_congr rfl hsame, ← Finset.sum_mul, ← map_sum, hfib j, map_zero, zero_mul]
   · rw [Finset.not_nonempty_iff_eq_empty.1 hne, Finset.sum_empty]
 
 private lemma torusTransfer_spec {K : Type*} [Field K] {ι : Type*} [Fintype ι] [DecidableEq ι]

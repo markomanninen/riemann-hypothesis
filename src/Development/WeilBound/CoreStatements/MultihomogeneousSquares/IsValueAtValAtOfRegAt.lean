@@ -1,9 +1,13 @@
-import Development.WeilBound.CoreStatements.MultihomogeneousSquares.SingSt
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DominatingRegularPushStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DominatingCoordsReindexedStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointsIffCentresStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ValAtIffValueAtStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemAbLocusIff
+module
+
+public import Development.WeilBound.CoreStatements.MultihomogeneousSquares.SingSt
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DominatingRegularPushStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DominatingCoordsReindexedStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointsIffCentresStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ValAtIffValueAtStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemAbLocusIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem isValueAt_valAt_of_regAt {K : Type} [Fintype K] {J : K → Type} [∀ k,
     exact hwh (hw.2 h (GroundTheory.Heights₂.Heights.LowerBoundFree.mem_mCoordIdeal_of_aeval_eq_zero x hh h0))
   have hex : ∃ v, IsValueAt x s w v := ⟨_, d, g, h, hg, hh, hxh, hgh, hwh, rfl⟩
   unfold GroundTheory.Heights₂.Heights.LowerBoundFree.valAt
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hex.choose_spec
 
 theorem c0 : C0 := by

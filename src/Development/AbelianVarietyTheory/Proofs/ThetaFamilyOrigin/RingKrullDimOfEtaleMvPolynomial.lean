@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.HeightAddRingKrullDimQuotientMvPolynomialField
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+module
+
+public import Mathlib
+public import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.HeightAddRingKrullDimQuotientMvPolynomialField
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -14,7 +18,8 @@ theorem isMaximal_under_of_finiteType (K R B : Type*) [Field K] [CommRing R] [Co
   letI := Ideal.Quotient.field m
   haveI : Module.Finite K (B ⧸ m) := finite_of_finite_type_of_isJacobsonRing K (B ⧸ m)
   haveI : Algebra.IsIntegral R (B ⧸ m) := Algebra.IsIntegral.tower_top K
-  have h := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := R) (⊥ : Ideal (B ⧸ m))
+  have h := Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := R) (⊥ : Ideal (B ⧸ m))
+  change (Ideal.comap (algebraMap R (B ⧸ m)) ⊥).IsMaximal at h
   rwa [IsScalarTower.algebraMap_eq R B (B ⧸ m), ← Ideal.comap_comap, Ideal.Quotient.algebraMap_eq,
     ← RingHom.ker_eq_comap_bot, Ideal.mk_ker] at h
 

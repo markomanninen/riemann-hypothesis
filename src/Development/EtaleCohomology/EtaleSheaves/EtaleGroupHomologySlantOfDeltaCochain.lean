@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.EtaleChapterDThree
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.EtaleChapterDThree
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -150,7 +154,7 @@ theorem etale_group_homology_slant_of_delta_cochain (h : DeltaCo) : D3 := by
       AddMonoidHom.mk' (fun c => HK.pre R (z c) F (m + n) n (by ring)) (fun c c' => by
         have : z (c + c') = z c + z c' := Cocycle.ext (by
           change slantCo R X (groupHomology.iCycles (Rep.trivial R Γ R) m (c + c')) = slantCo R X _ + slantCo R X _
-          rw [map_add]; exact slantCo_add R X _ _)
+          rw [map_add (f := _)]; exact slantCo_add R X _ _)
         rw [this]; exact cpre_add _ _ _ _ _ _)
     have hs : Function.Surjective (groupHomology.π (Rep.trivial R Γ R) m).hom.toAddMonoidHom :=
       (ModuleCat.epi_iff_surjective (groupHomology.π (Rep.trivial R Γ R) m)).1
@@ -165,7 +169,7 @@ theorem etale_group_homology_slant_of_delta_cochain (h : DeltaCo) : D3 := by
     rw [e]
     exact AddMonoidHom.liftOfRightInverse_comp_apply _ _ _ ⟨T, hk⟩ c
   unfold slantR
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hex.choose_spec
 
 theorem goal_of (h : DeltaCo) : LateralTheory.E.EtaleChapterDThree :=

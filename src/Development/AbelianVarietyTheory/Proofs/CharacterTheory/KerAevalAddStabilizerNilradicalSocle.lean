@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+
+@[expose] public section
 
 open Polynomial GlobalTheory.CuspGL
 
@@ -31,9 +35,9 @@ theorem aeval_add_nilRad {A : Submodule F V} {g h : Module.End F V} (hg : ∀ x 
   induction p using Polynomial.induction_on' with
   | add p q hp hq =>
     refine ⟨fun x hx => ?_, fun x => ?_⟩
-    · simp only [map_add, LinearMap.add_apply, hp.1 x hx, hq.1 x hx]
+    · simp only [map_add (f := _), LinearMap.add_apply, hp.1 x hx, hq.1 x hx]
     · have := A.add_mem (hp.2 x) (hq.2 x)
-      simp only [map_add, LinearMap.add_apply]
+      simp only [map_add (f := _), LinearMap.add_apply]
       convert this using 1
       abel
   | monomial n a =>

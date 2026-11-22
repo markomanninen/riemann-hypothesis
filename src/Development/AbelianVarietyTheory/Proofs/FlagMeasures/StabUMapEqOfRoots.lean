@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OfRoots
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramUnipotentStabilizerBruhatCellConjRoot
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.IsUpUniMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OfRoots
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramUnipotentStabilizerBruhatCellConjRoot
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.IsUpUniMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,8 +76,8 @@ theorem stabU_map_eq_ofRoots {K : Type} [Field K] (ψ : K →+* ℂ) (p : Point 
   ext a b
   unfold GlobalTheory.LoopV.ofRoots
   by_cases hr : (a, b) ∈ GlobalTheory.LoopV.roots (ptMat p)
-  · rw [dif_pos hr]
-  · rw [dif_neg hr]
+  · rw [dite_eq_left hr]
+  · rw [dite_eq_right hr]
     rcases lt_trichotomy a b with hab | rfl | hab
     · rw [if_neg hab.ne]
       have hσ : σ.symm a < σ.symm b := by

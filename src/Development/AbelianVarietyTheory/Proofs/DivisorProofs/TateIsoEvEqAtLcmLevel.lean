@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiltGraded
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiltGraded
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,15 +55,15 @@ theorem dvd_EF (D : Datum H) (l : Level H) {a c : D.La} (ha : a ∈ l.Mb • (�
     exact dvd_mul_right _ _
   · intro x y hx hy
     show (l.M : ℤ) ∣ D.EF (x + y) c
-    rw [map_add, LinearMap.add_apply]
+    rw [map_add (f := _), LinearMap.add_apply]
     exact dvd_add hx hy
 
 end GlobalTheory.LowDat.Uniq
 
 namespace GlobalTheory.LowDat
 
-open GlobalTheory.LowDat.Uniq in
 
+open GlobalTheory.LowDat.Uniq in
 theorem tateIso_ev_lcm_eq : ∀ {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} (D : Datum H) (l : Level H)
     (k : Type) [Field k] (Q : Type) [Group Q] (act : 𝓞 E → Q → Q) (e : ℕ → Q → Q → kˣ → Prop),
     (∀ n, 0 < n → ∀ x y c c', e n x y c → e n x y c' → c = c') → ∀ J J' : TateIso D k Q act e, J.ζ l.M' = J'.ζ l.M' →
@@ -116,7 +120,7 @@ theorem tateIso_ev_lcm_eq : ∀ {E : Type} [Field E] [NumberField E] [IsCMField 
     have hcm : c ∈ l.Mb • (⊤ : Submodule (𝓞 E) D.La) := Submodule.sub_mem _ hb hf'
     have hdiv : ∀ a, (l.M : ℤ) ∣ D.EF a c := by
       intro a
-      rw [decomp a, map_add, LinearMap.add_apply]
+      rw [decomp a, map_add (f := _), LinearMap.add_apply]
       refine dvd_add (dvd_EF D l (Submodule.smul_mem_smul hf Submodule.mem_top) hcm) ?_
       have hga : g2 • a ∈ l.Mb.map (H.bar : 𝓞 E →+* 𝓞 E) • (⊤ : Submodule (𝓞 E) D.La) :=
         Submodule.smul_mem_smul hg2 Submodule.mem_top
@@ -127,7 +131,7 @@ theorem tateIso_ev_lcm_eq : ∀ {E : Type} [Field E] [NumberField E] [IsCMField 
       rw [← (J'.ζ_prim l.M hM0).zpow_eq_one_iff_dvd, hcdef, map_sub, zpow_sub, heq, mul_inv_cancel]
     have hdiv' : ∀ a, (l.M : ℤ) ∣ D.EF c a := fun a => by
       have h := D.alt (a + c)
-      simp only [map_add, LinearMap.add_apply, D.alt a, D.alt c, zero_add, add_zero] at h
+      simp only [map_add (f := _), LinearMap.add_apply, D.alt a, D.alt c, zero_add, add_zero] at h
       have h' : D.EF c a = - D.EF a c := by linarith
       rw [h']; exact (hdiv a).neg_right
     choose q hq using hdiv'
@@ -136,7 +140,7 @@ theorem tateIso_ev_lcm_eq : ∀ {E : Type} [Field E] [NumberField E] [IsCMField 
       { toFun := q
         map_add' := fun x y => by
           apply mul_left_cancel₀ hMne
-          rw [← hq, mul_add, ← hq, ← hq, map_add]
+          rw [← hq, mul_add, ← hq, ← hq, map_add (f := _)]
         map_smul' := fun m x => by
           apply mul_left_cancel₀ hMne
           rw [← hq, RingHom.id_apply, smul_eq_mul, mul_left_comm, ← hq, map_zsmul, smul_eq_mul] }

@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.GlobalFields.KummerTheory.Degree
-import GroundTheory.GlobalFields.KummerTheory.Unramified
-import GroundTheory.GlobalFields.NormResidueSymbol.RestrictNormalInfiniteLocalSymbol
-import GroundTheory.GlobalFields.GlobalReciprocity.General
-import GroundTheory.GlobalFields.PowerSubgroupIndex.Existence
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.KummerTheory.Degree
+public import GroundTheory.GlobalFields.KummerTheory.Unramified
+public import GroundTheory.GlobalFields.NormResidueSymbol.RestrictNormalInfiniteLocalSymbol
+public import GroundTheory.GlobalFields.GlobalReciprocity.General
+public import GroundTheory.GlobalFields.PowerSubgroupIndex.Existence
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -28,8 +32,8 @@ section SUnits
 
 variable {K : Type u} [Field K] [NumberField K] (n : ℕ) [NeZero n] [HasEnoughRootsOfUnity K n]
 
-omit [HasEnoughRootsOfUnity K n] in
 
+omit [HasEnoughRootsOfUnity K n] in
 theorem unitsPow_subgroupOf_sUnit (S : Set (HeightOneSpectrum (𝓞 K))) :
     (unitsPow K n).subgroupOf (S.unit K) = (powMonoidHom n : S.unit K →* S.unit K).range := by
   ext e
@@ -58,8 +62,8 @@ instance finiteIndex_unitsPow_subgroupOf_sUnit (S : Set (HeightOneSpectrum (𝓞
     ((unitsPow K n).subgroupOf (S.unit K)).FiniteIndex :=
   ⟨by rw [index_unitsPow_subgroupOf_sUnit]; exact pow_ne_zero _ (NeZero.ne n)⟩
 
-variable (K) in
 
+variable (K) in
 abbrev sUnitKummerField (S : Set (HeightOneSpectrum (𝓞 K))) :
     IntermediateField K (AlgebraicClosure K) :=
   kummerExtension K n (AlgebraicClosure K) (S.unit K)

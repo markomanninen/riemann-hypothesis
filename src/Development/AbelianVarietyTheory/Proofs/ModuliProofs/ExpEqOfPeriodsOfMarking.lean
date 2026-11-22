@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueRealLinearOfEventuallyAddModDiscrete
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsInvariantNatLengthLattice
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnitOnInjectiveOfCommRing
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ObjMapUniqueOfIsDominant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueRealLinearOfEventuallyAddModDiscrete
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsInvariantNatLengthLattice
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnitOnInjectiveOfCommRing
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ObjMapUniqueOfIsDominant
+
+@[expose] public section
 
 open Filter Topology Set
 
@@ -60,11 +64,11 @@ theorem exists_realLinear_lift {V : Type*} [NormedAddCommGroup V] [NormedSpace �
         rw [← zero_sub, ← zero_sub a.2, hom_sub he, hom_sub he', ha, hom_zero he, hom_zero he'] }
   have hΓ : IsClosed (Γ : Set (V × V)) := isClosed_of_closed_near_zero Γ hc
   let Φ : V →+ V ⧸ Λ := AddMonoidHom.mk' (fun z => Λ.mkQ (s z)) fun a b => by
-    rw [← map_add, ← hiff, he, hs, hs, hs, he']
+    rw [← map_add (f := _), ← hiff, he, hs, hs, hs, he']
   have : CompactSpace (V ⧸ Λ) := ⟨by
     rw [← Λ.mkQ_surjective.range_eq]
     exact IsZLattice.isCompact_range_of_periodic Λ _ Λ.isOpenQuotientMap_mkQ.continuous fun z w hw => by
-      rw [map_add, Submodule.mkQ_apply Λ w, (Submodule.Quotient.mk_eq_zero Λ).2 hw, add_zero]⟩
+      rw [map_add (f := _), Submodule.mkQ_apply Λ w, (Submodule.Quotient.mk_eq_zero Λ).2 hw, add_zero]⟩
   have hG : IsClosed {p : V × (V ⧸ Λ) | Φ p.1 = p.2} := by
     rw [← (IsOpenQuotientMap.id.prodMap Λ.isOpenQuotientMap_mkQ).isQuotientMap.isClosed_preimage]
     convert hΓ using 1
@@ -189,7 +193,7 @@ theorem eq_self_of_isometry (D : Datum H) (l : Level H) {g : ℕ} {ty : Fin g �
     (hM : ∀ b ∈ l.Mb.map (H.bar : 𝓞 E →+* 𝓞 E) • (⊤ : Submodule (𝓞 E) D.La), ∃ z, φ b = b + l.M • z)
     (z : Fin g → ℂ) : h z = z := by
   obtain ⟨-, hinj, hd, hspan, Hm, -, hpos, hIm⟩ := hP
-  let σ : Module.End ℤ D.La := (AddMonoidHom.mk' φ fun a b => hinj (by simp only [hφ, map_add])).toIntLinearMap
+  let σ : Module.End ℤ D.La := (AddMonoidHom.mk' φ fun a b => hinj (by simp only [hφ, map_add (f := _)])).toIntLinearMap
   have hσ : ∀ a, σ a = φ a := fun _ => rfl
   have := D.fin
   have : Module.Finite ℤ D.La := Module.Finite.trans (𝓞 E) D.La
@@ -227,7 +231,7 @@ theorem eq_self_of_isometry (D : Datum H) (l : Level H) {g : ℕ} {ty : Fin g �
       obtain ⟨z₂, hz₂⟩ := ObjRigid.exists_eq_nsmul D l.M (i • (φ a - a)) fun b => by
         obtain ⟨w, hw⟩ := hM (H.bar i • b) (Submodule.smul_mem_smul (Ideal.mem_map_of_mem _ hi) trivial)
         have h1 := hEF a (H.bar i • b)
-        rw [hw, map_add, map_nsmul, nsmul_eq_mul] at h1
+        rw [hw, map_add (f := _), map_nsmul, nsmul_eq_mul] at h1
         rw [D.adj, map_sub, LinearMap.sub_apply]
         exact ⟨-D.EF (φ a) w, by linarith⟩
       refine ⟨z₂ + z₁, ?_⟩
@@ -301,7 +305,7 @@ theorem exp_eq_of_periods_of_marking : ∀ (E : Type) [Field E] [NumberField E] 
     exact LinearMap.congr_fun hc _
   ·
     have hM1 : (l.M : ℂ) ≠ 0 := Nat.cast_ne_zero.2 hM.ne'
-    have hadd : ∀ a b, φ (a + b) = φ a + φ b := fun a b => hP.2.1 (by simp only [hφ, map_add])
+    have hadd : ∀ a b, φ (a + b) = φ a + φ b := fun a b => hP.2.1 (by simp only [hφ, map_add (f := _)])
     have hns : ∀ (n : ℕ) a, φ (n • a) = n • φ a := fun n a => hP.2.1 (by simp only [hφ, map_nsmul])
     refine Submodule.smul_induction_on hb (fun j hj x _ => ?_) ?_
     · obtain ⟨a, w, rfl⟩ := (hf l.M' (Nat.lcm_pos hM l.A_pos)).2 x
@@ -310,7 +314,7 @@ theorem exp_eq_of_periods_of_marking : ∀ (E : Type) [Field E] [NumberField E] 
       obtain ⟨z, hz⟩ := (hom_eq_iff add (Λ := P.range) ker _ _).1
         ((he' _ _).symm.trans ((eta' _ ha).symm.trans (eta _ ha)))
       have h1 : φ (f l.M' (j • a)) = f l.M' (j • a) + l.M • z := hP.2.1 (by
-        rw [map_add, map_nsmul, hz, ← Nat.cast_smul_eq_nsmul ℂ, ← smul_sub, smul_inv_smul₀ hM1, add_sub_cancel])
+        rw [map_add (f := _), map_nsmul, hz, ← Nat.cast_smul_eq_nsmul ℂ, ← smul_sub, smul_inv_smul₀ hM1, add_sub_cancel])
       have h2 : j • l.M' • w = l.M • r • j • w := by rw [hr, mul_smul, smul_comm j, smul_comm j]
       refine ⟨z + φ (r • j • w) - r • j • w, ?_⟩
       rw [smul_add, ← map_smul, h2, hadd, h1, hns, smul_sub, smul_add]

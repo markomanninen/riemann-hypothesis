@@ -1,24 +1,29 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.FieldNumbersSemilocalMaxIdeals
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRegMassNearSmall
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRegBallMass
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRegFormCompare
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRegLelongMono
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRegLelongAnnulus
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRegRadialWeight
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRadialPrimitive
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PMaDensLogPow
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRegLogDensNonneg
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSmallSetBallCover
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSmallSetTubeVolume
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PPrimeTubeVolume
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PVarietyMassLower
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PTangentGraphLowerDensity
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PVarietyTangentGraphDense
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PVarietyLelongMono
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PVarWirtinger
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PVarLelongMono
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PLinearNoetherNormalization
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.FieldNumbersSemilocalMaxIdeals
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRegMassNearSmall
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRegBallMass
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRegFormCompare
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRegLelongMono
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRegLelongAnnulus
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRegRadialWeight
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRadialPrimitive
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PMaDensLogPow
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRegLogDensNonneg
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSmallSetBallCover
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSmallSetTubeVolume
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PPrimeTubeVolume
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PVarietyMassLower
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PTangentGraphLowerDensity
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PVarietyTangentGraphDense
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PVarietyLelongMono
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PVarWirtinger
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PVarLelongMono
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PLinearNoetherNormalization
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GlobalTheory.CompanionTheory.VarLelong
@@ -43,7 +48,6 @@ theorem mdisc_update_const {e : ℕ} (G H : Matrix (Fin (e + 1)) (Fin (e + 1)) �
   rw [← mdisc_comp_perm (Fin.cons G (fun _ : Fin e => H) : Fin (e + 1) → _) (Equiv.swap 0 i)]
   congr 1
   funext k
-  simp only [Function.comp_apply, cons_const_apply', Function.update_apply]
   by_cases hki : k = i
   · subst hki
     simp
@@ -52,7 +56,7 @@ theorem mdisc_update_const {e : ℕ} (G H : Matrix (Fin (e + 1)) (Fin (e + 1)) �
       apply hki
       have := congrArg (Equiv.swap 0 i) h
       simpa using this
-    simp [hki, this]
+    simp [hki, cons_const_apply', this]
 
 theorem maDens_log_all {e : ℕ} (p : (Fin (e + 1) → ℂ) → ℝ) (y : Fin (e + 1) → ℂ)
     (hp : ContDiffAt ℝ 2 p y) (hpos : 0 < p y) :
@@ -245,8 +249,8 @@ theorem varRadialWeight {d : ℕ} {J : Ideal (MvPolynomial (Fin n) ℂ)} {A : Ma
         funext y
         exact (hpt y).symm
 
-open RegLelongAnnulus in
 
+open RegLelongAnnulus in
 theorem varLelongAnnulus : VarLelongAnnulus.Statement := by
   have hCM := HilbertSamuel.Closed.ChartMassCompact
   intro n d J A x r s hJ hdim hAf hr hrs
@@ -354,7 +358,7 @@ theorem varLelongAnnulus : VarLelongAnnulus.Statement := by
     by_contra hle
     replace hle := not_lt.1 hle
     apply hz
-    rw [Set.indicator_of_notMem (fun h => h.2 ((mem_euclBall_iff_sq x hr z).2 (by linarith))), mul_zero]
+    rw [Set.indicator_of_notMem (fun (h : z ∈ euclBall x s \ euclBall x r) => h.2 ((mem_euclBall_iff_sq x hr z).2 (by linarith))), mul_zero]
   have hR : Tendsto (fun k => ∫ y, chartDens J A (fun z => r ^ (2 * (d + 1)) * s ^ (2 * (d + 1)) *
         (radialTransform (d + 1) (hk k) (euclPot (z - x) / s ^ 2) -
           radialTransform (d + 1) (hk k) (euclPot (z - x) / r ^ 2)))

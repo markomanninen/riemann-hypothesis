@@ -1,7 +1,17 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL4.PColSlope
-import Formalism.LocalToGlobal.GlobalTheory.GL4.PNabla
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.UpperSlopeOfMaximalConstant
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.PColSlope
+public import Formalism.SharpRestriction.GlobalSchurBounds.FlipTwoThree
+public import Formalism.LocalToGlobal.HermitianColumns.ColsHerm
+public import Formalism.LocalToGlobal.HermitianForms.FormsTied
+public import Formalism.GradedWeylDivisibility.StatementE
+public import Formalism.SuccessiveMinima.StatementMink
+public import Formalism.SharpRestriction.GlobalSchurBounds.IntegrableOfContinuousCircleMeasure
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.WeTransposeWordTransposeWord
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.UpperSlopeOfMaximalConstant
+
+@[expose] public section
 
 open Module NumberField
 
@@ -58,12 +68,6 @@ theorem colSlopeEq_of (h1 : TSpanEqVV) (h2 : ZBasisStd) (D : D7) (h3 : QSlope D)
     field_simp
   rw [hm, mul_add, e3]
   ring
-
-theorem Link5F_of_three (h1 : TSpanEqVV) (h2 : ZBasisStd) (h3 : ∀ D, QSlope D) : Link5F := by
-  unfold Link5F
-  intro eps Fm _ _ _
-  exact Formalism.MainNotions.flipTwoThree.familySlopeLower_of_open Fm
-    ⟨0, fun x _ _ i => Formalism.MainNotions.flipTwoThree.lower_slope_of_column_slope _ (colSlopeEq_of h1 h2 _ (h3 _))⟩
 
 end Formalism.L2.GlobalTheoryTheory.TraceIntegrality
 

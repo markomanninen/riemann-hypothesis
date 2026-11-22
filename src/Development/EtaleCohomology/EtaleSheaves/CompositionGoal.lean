@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.ArchimedeanComparison
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ArchimedeanComparison
+
+@[expose] public section
 
 namespace LateralTheory.E.CompositionGoal
 

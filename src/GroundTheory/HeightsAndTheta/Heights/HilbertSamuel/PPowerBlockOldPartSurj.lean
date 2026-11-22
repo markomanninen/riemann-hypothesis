@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlockOldPartSurj
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlockOldPartSurj
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -79,13 +84,13 @@ theorem homog_X [DecidableEq K] (p : Σ k, ι k) : IsMultiHomog (X p : MRing ι)
     rw [Pi.single_eq_same, Finset.sum_eq_single i]
     · simp
     · intro b _ hb
-      rw [Finsupp.single_apply, if_neg]
+      rw [Finsupp.single_apply, ite_eq_right]
       intro e
       exact hb (eq_of_heq (Sigma.mk.inj_iff.mp e).2).symm
     · simp
   · rw [Pi.single_eq_of_ne h]
     refine Finset.sum_eq_zero fun j _ => ?_
-    rw [Finsupp.single_apply, if_neg]
+    rw [Finsupp.single_apply, ite_eq_right]
     intro e
     exact h (congrArg Sigma.fst e).symm
 
@@ -129,7 +134,8 @@ theorem mConeMap_homog (y : (Σ k, ι k) → Ω) {g : MRing ι} {d : K → ℕ} 
   classical
   conv_lhs => rw [g.as_sum]
   conv_rhs => rw [g.as_sum]
-  rw [map_sum, map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun m hm => ?_
   have hdeg := hg m hm
   simp only [mConeMap, aeval_monomial, map_mul]
@@ -178,7 +184,7 @@ theorem exists_form_of_mem_chartRingZ (y : (Σ k, ι k) → Ω) (c : ∀ k, ι k
       homog_add (homog_mul h₁ (homog_chartMon c δ₂)) ?_, ?_⟩
     · rw [add_comm δ₁]
       exact homog_mul h₂ (homog_chartMon c δ₁)
-    · rw [map_add, map_mul, map_mul, v₁, v₂, aeval_chartMon, aeval_chartMon, hpow]
+    · rw [map_add (f := _), map_mul, map_mul, v₁, v₂, aeval_chartMon, aeval_chartMon, hpow]
       ring
   | mul x z _ _ hx hz =>
     obtain ⟨δ₁, e₁, h₁, v₁⟩ := hx
@@ -276,7 +282,8 @@ theorem exists_ne_zero {y : (Σ k, ι k) → Ω} {c : ∀ k, ι k} (hc : ∀ k, 
     push_cast [Nat.cast_sub h2]
     linarith
   have hΦy : aeval y Φ = 0 := by
-    rw [hΦ, map_sub, map_sum, aeval_chartMon, sub_eq_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hΦ, map_sub, map_sum, aeval_chartMon, sub_eq_zero]
     calc ∑ j, aeval y (U j * G j * chartMon c (fun k => Dt k - ε j k))
         = ∑ j, u j * (v j * ∏ k, y ⟨k, c k⟩ ^ (-((m : ℤ) * a k))) * ∏ k, y ⟨k, c k⟩ ^ (Dt k + E k) := by
           refine Finset.sum_congr rfl fun j _ => ?_
@@ -290,7 +297,8 @@ theorem exists_ne_zero {y : (Σ k, ι k) → Ω} {c : ∀ k, ι k} (hc : ∀ k, 
   have hΦx := hx.2 Φ (mem_of_homog hΦh hΦy)
   by_contra hall
   simp only [not_exists, not_not] at hall
-  simp only [hΦ, map_sub, map_sum, map_mul, eval_chartMon, hall, mul_zero, zero_mul, Finset.sum_const_zero,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hΦ, map_sub, map_sum, map_mul, eval_chartMon, hall, mul_zero, zero_mul, Finset.sum_const_zero,
     zero_sub, neg_eq_zero] at hΦx
   exact (Finset.prod_ne_zero_iff.mpr fun k _ => pow_ne_zero _ (hxc k)) hΦx
 
@@ -362,12 +370,13 @@ theorem vanish_new {N : ℕ} (y : (Σ k, ι k) → Ω) (v : Fin N → Ω) (E : K
   let ψ : MRing ι →+* ℂ := (eval x).comp (MvPolynomial.map (Int.castRingHom ℂ))
   have hcoef : MvPolynomial.map ψ (Γ f) = 0 := by
     ext μ
-    rw [coeff_map, coeff_zero]
-    have hm : coeff μ (Γ f) ∈ mCoordIdeal y := by
+    simp only [coeff_map, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
+    have hm : AddMonoidAlgebra.coeff (Γ f) μ ∈ mCoordIdeal y := by
       show _ ∈ RingHom.ker (mConeMap y)
       rw [RingHom.mem_ker]
-      have := congrArg (coeff μ) hzero
-      rwa [coeff_map, coeff_zero] at this
+      have := congrArg (AddMonoidAlgebra.coeff · μ) hzero
+      simpa only [coeff_map, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply,
+        AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom] using this
     exact hx.2 _ hm
 
   have hval : ((eval fun _ => (1 : ℂ)).comp ((MvPolynomial.map ψ).comp Γ.toRingHom)) =
@@ -405,8 +414,8 @@ theorem vanish_new {N : ℕ} (y : (Σ k, ι k) → Ω) (v : Fin N → Ω) (E : K
 
 end PowerBlockOldPartSurj
 
-open PowerBlockOldPartSurj in
 
+open PowerBlockOldPartSurj in
 theorem PowerBlockOldPartSurj.proof : PowerBlockOldPartSurj.Statement := by
   intro K _ ι _ Ω _ y a m N v hv hgen x hx
   classical

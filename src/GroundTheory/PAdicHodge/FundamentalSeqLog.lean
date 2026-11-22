@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.PAdicHodge.ACrisPhi
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.ACrisPhi
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -14,20 +19,19 @@ section PD
 
 variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p]
-
 local notation "𝒪" => normInteger K
-local notation "𝒪♭" => PreTilt (normInteger K) p
-local notation "θ" => fontaineTheta (normInteger K) p
+local notation "𝒪♭" => PreTilt 𝒪 p
 local notation "𝔸" => Localization.Away (p : AInf K p)
-local notation "φ" => WittVector.frobeniusEquiv p (PreTilt (normInteger K) p)
-local notation "𝔭" => Ideal.span {(p : ACris K p)}
+local notation "θ" => fontaineTheta 𝒪 p
+local notation "φ" => WittVector.frobeniusEquiv p 𝒪♭
 local notation "𝔭₀" => Ideal.span {(p : ACrisZero K p)}
+local notation "𝔭" => Ideal.span {(p : ACris K p)}
 
 theorem dpow_zero_right {n : ℕ} (hn : n ≠ 0) : dpow n (0 : AInf K p) = 0 := by
   rw [dpow, map_zero, zero_pow hn, mul_zero]
 
-variable (K p) in
 
+variable (K p) in
 def pdIdeal : Ideal (AInf K p) where
   carrier := {x | ∀ n : ℕ, dpow n x ∈ ACrisZero K p}
   add_mem' {x y} hx hy n := by
@@ -42,9 +46,6 @@ def pdIdeal : Ideal (AInf K p) where
     simp only [Set.mem_ofPred_eq] at hx ⊢
     rw [smul_eq_mul, mul_comm, dpow_mul]
     exact Subalgebra.mul_mem _ (hx n) (Subalgebra.pow_mem _ (Subalgebra.algebraMap_mem _ c) n)
-
-theorem mem_pdIdeal {x : AInf K p} : x ∈ pdIdeal K p ↔ ∀ n, dpow n x ∈ ACrisZero K p :=
-  Iff.rfl
 
 theorem ker_le_pdIdeal : RingHom.ker θ ≤ pdIdeal K p := fun _ hx n => dpow_mem hx n
 
@@ -92,8 +93,10 @@ def logTermJA {x : AInf K p} (hx : x ∈ pdIdeal K p) (n : ℕ) : ACris K p :=
   algebraMap (ACrisZero K p) (ACris K p) (logTermJ hx n)
 
 theorem exists_isAdicSum_logTermJA {x : AInf K p} (hx : x ∈ pdIdeal K p) :
-    ∃ s, IsAdicSum 𝔭 (logTermJA hx) s :=
-  exists_isAdicSum fun k => ⟨p * k, fun _ hn => algebraMap_mem_pow (logTermJ_mem hx hn)⟩
+    ∃ s, IsAdicSum 𝔭 (logTermJA hx) s := by
+  refine exists_isAdicSum fun k => ⟨p * k, fun n hn => ?_⟩
+  have h := Ideal.mem_map_of_mem (algebraMap (ACrisZero K p) (ACris K p)) (logTermJ_mem hx hn)
+  rwa [Ideal.map_pow, Ideal.map_span, Set.image_singleton, map_natCast] at h
 
 def logJ {x : AInf K p} (hx : x ∈ pdIdeal K p) : ACris K p :=
   (exists_isAdicSum_logTermJA hx).choose
@@ -171,27 +174,31 @@ theorem logJ_one_add_pow {x : AInf K p} (hx : x ∈ pdIdeal K p) :
   have h1 := hN M (le_of_max_le_left hM)
   have h2 : ∑ n ∈ Finset.range M, (p : ACris K p) * logTermJA hx n -
       ∑ n ∈ Finset.range M, logTermJA (one_add_pow_sub_one_mem_pdIdeal hx) n ∈ 𝔭 ^ k := by
-    have h := algebraMap_mem_pow (sum_p_mul_logTermJ_sub_mem hx (le_of_max_le_right hM))
-    rw [map_sub, map_sum, map_sum] at h
+    have h := Ideal.mem_map_of_mem (algebraMap (ACrisZero K p) (ACris K p))
+      (sum_p_mul_logTermJ_sub_mem hx (le_of_max_le_right hM))
+    rw [Ideal.map_pow, Ideal.map_span, Set.image_singleton, map_natCast] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum, map_sum] at h
     simpa only [map_mul, map_natCast, logTermJA] using h
   have := add_mem h1 h2
   simp only at this
   rwa [sub_add_sub_cancel] at this
 
 theorem phiZero_logTermJ {x : AInf K p} (hx : x ∈ pdIdeal K p) (hφ : φ x ∈ pdIdeal K p) (n : ℕ) :
-    phiZero K p (logTermJ hx n) = logTermJ hφ n := by
+    phiZero (K := K) (p := p) (logTermJ hx n) = logTermJ hφ n := by
   apply Subtype.ext
   rw [coe_phiZero, coe_logTermJ, coe_logTermJ, map_mul, map_mul, map_pow, map_neg, map_one,
     map_natCast, phiAway_dpow]
 
 theorem phi_logTermJA {x : AInf K p} (hx : x ∈ pdIdeal K p) (hφ : φ x ∈ pdIdeal K p) (n : ℕ) :
-    phi K p (logTermJA hx n) = logTermJA hφ n := by
+    phi (K := K) (p := p) (logTermJA hx n) = logTermJA hφ n := by
   rw [logTermJA, logTermJA, phi_algebraMap_zero, phiZero_logTermJ hx hφ]
 
 theorem phi_logJ {x : AInf K p} (hx : x ∈ pdIdeal K p) (hφ : φ x ∈ pdIdeal K p) :
-    phi K p (logJ hx) = logJ hφ :=
-  (logJ_eq_of_isAdicSum (((isAdicSum_logJ hx).map (phi K p) span_p_le_comap_phi).congr
-    (phi_logTermJA hx hφ))).symm
+    phi (K := K) (p := p) (logJ hx) = logJ hφ :=
+  (logJ_eq_of_isAdicSum
+    (((isAdicSum_logJ hx).map (phi (K := K) (p := p)) span_p_le_comap_phi).congr
+      (phi_logTermJA hx hφ))).symm
 
 theorem mu_mem_pdIdeal {x : 𝒪♭} (hx : PreTilt.untilt x - 1 ∈ Ideal.span {(p : 𝒪)}) :
     AInf.mu (K := K) x ∈ pdIdeal K p :=
@@ -201,7 +208,7 @@ def logTeich {x : 𝒪♭} (hx : PreTilt.untilt x - 1 ∈ Ideal.span {(p : 𝒪)
   logJ (mu_mem_pdIdeal hx)
 
 theorem phi_logTeich {x : 𝒪♭} (hx : PreTilt.untilt x - 1 ∈ Ideal.span {(p : 𝒪)}) :
-    phi K p (logTeich hx) = (p : ACris K p) * logTeich hx := by
+    phi (K := K) (p := p) (logTeich hx) = (p : ACris K p) * logTeich hx := by
   have h1 := one_add_pow_sub_one_mem_pdIdeal (mu_mem_pdIdeal hx)
   have hφ : φ (AInf.mu (K := K) x) ∈ pdIdeal K p := by rw [frobenius_mu]; exact h1
   rw [logTeich, phi_logJ _ hφ, logJ_congr (frobenius_mu x) hφ h1, logJ_one_add_pow]
@@ -212,22 +219,21 @@ section Theta
 
 variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p] [CharZero K]
-
 local notation "𝒪" => normInteger K
-local notation "𝒪♭" => PreTilt (normInteger K) p
-local notation "θ" => fontaineTheta (normInteger K) p
+local notation "𝒪♭" => PreTilt 𝒪 p
 local notation "𝔸" => Localization.Away (p : AInf K p)
+local notation "θ" => fontaineTheta 𝒪 p
 local notation "𝔭" => Ideal.span {(p : ACris K p)}
 
 theorem thetaZero_logTermJ_zero {x : AInf K p} (hx : x ∈ pdIdeal K p) :
-    thetaZero K p (logTermJ hx 0) = θ x := by
+    thetaZero (K := K) (p := p) (logTermJ hx 0) = θ x := by
   apply Subtype.ext
   rw [coe_thetaZero, coe_logTermJ, pow_zero, Nat.factorial_zero, Nat.cast_one, one_mul, one_mul,
     zero_add, dpow_one, thetaAway_algebraMap]
 
 theorem thetaZero_logTermJ_mem {x : AInf K p} (hx : x ∈ pdIdeal K p) {c : 𝒪}
     (hc : θ x = (p : 𝒪) ^ 2 * c) (m : ℕ) :
-    thetaZero K p (logTermJ hx (m + 1)) ∈ Ideal.span {(p : 𝒪) ^ 3} := by
+    thetaZero (K := K) (p := p) (logTermJ hx (m + 1)) ∈ Ideal.span {(p : 𝒪) ^ 3} := by
   obtain ⟨w, hw⟩ := exists_natCast_mul_eq_pow (K := K) (p := p) (n := m + 2) (k := 2 * m + 1)
     (by omega) (by have := Nat.factorization_lt p (show m + 2 ≠ 0 by omega); omega)
   rw [Ideal.mem_span_singleton']
@@ -257,18 +263,20 @@ theorem thetaZero_logTermJ_mem {x : AInf K p} (hx : x ∈ pdIdeal K p) {c : 𝒪
     (-1 : K) ^ (m + 1) * e2
 
 theorem theta_logJ_sub_mem {x : AInf K p} (hx : x ∈ pdIdeal K p) {c : 𝒪}
-    (hc : θ x = (p : 𝒪) ^ 2 * c) : theta K p (logJ hx) - θ x ∈ Ideal.span {(p : 𝒪) ^ 3} := by
-  have hle : 𝔭 ≤ (Ideal.span {(p : 𝒪)}).comap (theta K p) := by
+    (hc : θ x = (p : 𝒪) ^ 2 * c) :
+    theta (K := K) (p := p) (logJ hx) - θ x ∈ Ideal.span {(p : 𝒪) ^ 3} := by
+  have hle : 𝔭 ≤ (Ideal.span {(p : 𝒪)}).comap (theta (K := K) (p := p)) := by
     rw [Ideal.span_le, Set.singleton_subset_iff, SetLike.mem_coe, Ideal.mem_comap, map_natCast]
     exact Ideal.mem_span_singleton_self _
-  obtain ⟨N, hN⟩ := (isAdicSum_logJ hx).map (theta K p) hle 3
+  obtain ⟨N, hN⟩ := (isAdicSum_logJ hx).map (theta (K := K) (p := p)) hle 3
   have h := hN (N + 1) (Nat.le_succ N)
-  have ht : ∀ n, theta K p (logTermJA hx n) = thetaZero K p (logTermJ hx n) := fun n => by
+  have ht : ∀ n, theta (K := K) (p := p) (logTermJA hx n) =
+      thetaZero (K := K) (p := p) (logTermJ hx n) := fun n => by
     rw [logTermJA, AdicCompletion.algebraMap_apply, Algebra.algebraMap_self, RingHom.id_apply,
       theta_of]
   simp only [ht] at h
   rw [Finset.sum_range_succ', thetaZero_logTermJ_zero, Ideal.span_singleton_pow] at h
-  have hs : ∑ n ∈ Finset.range N, thetaZero K p (logTermJ hx (n + 1)) ∈
+  have hs : ∑ n ∈ Finset.range N, thetaZero (K := K) (p := p) (logTermJ hx (n + 1)) ∈
       Ideal.span {(p : 𝒪) ^ 3} :=
     Ideal.sum_mem _ fun n _ => thetaZero_logTermJ_mem hx hc n
   have := add_mem h hs
@@ -277,7 +285,7 @@ theorem theta_logJ_sub_mem {x : AInf K p} (hx : x ∈ pdIdeal K p) {c : 𝒪}
 
 theorem theta_logTeich_sub_mem {x : 𝒪♭} (hx : PreTilt.untilt x - 1 ∈ Ideal.span {(p : 𝒪)})
     {c : 𝒪} (hc : PreTilt.untilt x - 1 = (p : 𝒪) ^ 2 * c) :
-    theta K p (logTeich hx) - (p : 𝒪) ^ 2 * c ∈ Ideal.span {(p : 𝒪) ^ 3} := by
+    theta (K := K) (p := p) (logTeich hx) - (p : 𝒪) ^ 2 * c ∈ Ideal.span {(p : 𝒪) ^ 3} := by
   have hθ : θ (AInf.mu (K := K) x) = PreTilt.untilt x - 1 := by
     rw [AInf.mu, map_sub, fontaineTheta_teichmuller, map_one]
   have h := theta_logJ_sub_mem (mu_mem_pdIdeal hx) (c := c) (by rw [hθ, hc])

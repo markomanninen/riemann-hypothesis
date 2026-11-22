@@ -1,5 +1,10 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.ObstructionLifting.H1StructureDimLe
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.ObstructionLifting.H1StructureDimLe
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.CechPic GlobalTheory.AbDual CompanionTheory.ObstructionTrivialLocus
@@ -112,16 +117,8 @@ theorem spread {C : Type} [CommRing C] [IsNoetherianRing C] (I p : Ideal C) [p.I
 
 theorem triv_pull_iff {P Q X : Scheme.{0}} {L : LB X} (hL : L.IsLB) (e : P ≅ Q) (a : Q ⟶ X) (b : P ⟶ X)
     (h : e.hom ≫ a = b) : Triv (L.pull b) ↔ Triv (L.pull a) := by
-  have ha := pull_isLB hL a
-  have hb := pull_isLB hL b
-  refine ((cls_eq_zero_iff hb).symm.trans ?_).trans (cls_eq_zero_iff ha)
-  rw [cls_pull hL, cls_pull hL]
-  constructor
-  · intro z
-    have : a = e.inv ≫ b := by rw [← h, Iso.inv_hom_id_assoc]
-    rw [this, pull_comp, z, map_zero]
-  · intro z
-    rw [← h, pull_comp, z, map_zero]
+  have h' : e.inv ≫ b = a := by rw [← h, Iso.inv_hom_id_assoc]
+  exact ⟨CubeOpen.triv_comp e.inv h', CubeOpen.triv_comp e.hom h⟩
 
 theorem flat_piece (hCI : CIFlat) {S Y Z : Scheme.{0}} (s : Y ⟶ S) (i : Z ⟶ Y) [IsClosedImmersion i]
     [LocallyQuasiFinite (i ≫ s)] {U : S.Opens} (hU : IsAffineOpen U) [IsNoetherianRing Γ(S, U)]
@@ -237,9 +234,7 @@ theorem flat_of_gens (hCI : CIFlat) {S Y Z : Scheme.{0}} [IsLocallyNoetherian S]
 
 theorem triv_pull_pull {P Q X : Scheme.{0}} {L : LB X} (hL : L.IsLB) (a : Q ⟶ X) (b : P ⟶ Q) :
     Triv ((L.pull a).pull b) ↔ Triv (L.pull (b ≫ a)) := by
-  have ha := pull_isLB hL a
-  refine (cls_eq_zero_iff (pull_isLB ha b)).symm.trans (Iff.trans ?_ (cls_eq_zero_iff (pull_isLB hL (b ≫ a))))
-  rw [cls_pull ha, cls_pull hL, cls_pull hL, pull_comp]
+  exact CubeGen.triv_pull_iff L (fun _ : PUnit => a) (fun _ => 1) b
 
 theorem few_gens (hF : FewEquations) {S : Scheme.{0}} (A Y Z : Over S) [GrpObj A] (g : ℕ) (hab : IsAbelianScheme A)
     (hsm : SmoothOfRelativeDimension g A.hom) (N : LB (A ⊗ Y).left) (hN : N.IsLB) (i : Z ⟶ Y)
@@ -251,13 +246,19 @@ theorem few_gens (hF : FewEquations) {S : Scheme.{0}} (A Y Z : Over S) [GrpObj A
   let t : Sp O ⟶ Y.left := spMap φ ≫ hV.fromSpec
   let τ : Sp O ⟶ S := t ≫ Y.hom
   have hG := isGrpPullback_pullback A τ
-  have habO := GlobalTheory.PolPull.isAbelianScheme_of_isGrpPullback hab hG
+  have habO : IsAbelianScheme ((Over.pullback τ).obj A) :=
+    { comm := by
+        haveI := hab.comm
+        exact GlobalTheory.PolPull.isCommMonObj_of_isGrpPullback hG
+      smooth := MorphismProperty.of_isPullback (P := @Smooth) hG.1 hab.smooth
+      proper := MorphismProperty.of_isPullback (P := @IsProper) hG.1 hab.proper
+      geomConnected := MorphismProperty.of_isPullback (P := @GeometricallyConnected) hG.1 hab.geomConnected }
   have hsmO : SmoothOfRelativeDimension g ((Over.pullback τ).obj A).hom :=
     (smoothOfRelativeDimension_isStableUnderBaseChange (n := g)).of_isPullback hG.1 hsm
   let m : ((Over.pullback τ).obj A).left ⟶ (A ⊗ Y).left :=
     pullback.lift (pullback.fst A.hom τ) (pullback.snd A.hom τ ≫ t) (by
       rw [pullback.condition, Category.assoc])
-  refine hF O ((Over.pullback τ).obj A) g habO hsmO (N.pull m) (pull_isLB hN m) _ hne fun J => ?_
+  refine hF O ((Over.pullback τ).obj A) g habO hsmO (N.pull m) (LB.isLB_pull hN m) _ hne fun J => ?_
   let T : Over S := Over.mk (spMap (Ideal.Quotient.mk J) ≫ τ)
   let yJ : T ⟶ Y := Over.homMk (spMap (Ideal.Quotient.mk J) ≫ t) (by simp [T, τ])
   have hpb := (IsPullback.of_hasPullback ((Over.pullback τ).obj A).hom

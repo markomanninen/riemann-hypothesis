@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
-import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ContinuousCharacterFiniteOrderIntegralUnits
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+public import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ContinuousCharacterFiniteOrderIntegralUnits
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Pj Formalism.IndefR.Links Formalism.L2.JoinChr Formalism.L2.Host
 open scoped TensorProduct
@@ -48,11 +52,11 @@ theorem eq_prod_of_components {E : Type} [Field E] [NumberField E] {R A B : Type
     simp [hl, hinf]
   have hloc1 : ∀ P, ev P (q (l P)) = algebraMap E _ (k P : E) := by
     intro P
-    simp only [hl, map_add, map_mul, map_sub, map_one, h1, hinc]
+    simp only [hl, map_add (f := _), map_mul, map_sub, map_one, h1, hinc]
     ring
   have hloc0 : ∀ P Q, Q ≠ P → ev Q (q (l P)) = 1 := by
     intro P Q hQ
-    simp only [hl, map_add, map_mul, map_sub, map_one, h0 P Q hQ]
+    simp only [hl, map_add (f := _), map_mul, map_sub, map_one, h0 P Q hQ]
     ring
   have huS : ∀ P ∈ S, ev P (q u) = algebraMap E _ (k P : E) := by
     intro P hP

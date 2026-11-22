@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.FormalDegree.FormalDegreeHilbert.HlamStable
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.KSchur
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.DecPos
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiFacts
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.SumNormAdjointSqEqHsOp
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.FormalDegree.FormalDegreeHilbert.HlamStable
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.KSchur
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.DecPos
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiFacts
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.SumNormAdjointSqEqHsOp
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,7 +79,7 @@ theorem hsOp_integral_rank_one (m : Measure K) [IsFiniteMeasure m] {u : K → V}
       _ = ∑ i, (d : ℂ) * ∫ k, ((φ k : ℝ) : ℂ) * (⟪u k, b i⟫_ℂ * ⟪A (b i), u k⟫_ℂ) ∂m :=
           sum_congr rfl fun i _ => hterm i
       _ = (d : ℂ) * ∫ k, ∑ i, ((φ k : ℝ) : ℂ) * (⟪u k, b i⟫_ℂ * ⟪A (b i), u k⟫_ℂ) ∂m := by
-          rw [← mul_sum, integral_finset_sum _ hintg]
+          rw [← mul_sum, integral_finsetSum _ hintg]
       _ = (d : ℂ) * ∫ k, ((φ k * (d * ∫ k', φ k' * ‖⟪u k, u k'⟫_ℂ‖ ^ 2 ∂m) : ℝ) : ℂ) ∂m := by
           congr 1
           refine integral_congr_ae (Filter.Eventually.of_forall fun k => ?_)
@@ -138,7 +142,8 @@ theorem hsPs : HsPs := by
     Complex.ext (by simp [phiK]) (by simp [(phiM_posDef μ (posDef_conj k hx)).2])
   have hps : psM T μ x = ((Module.finrank ℂ T.V : ℝ) : ℂ) •
       ∫ k, ((phiK μ x k : ℝ) : ℂ) • (T.op k * projW T * T.op k⁻¹) ∂(dk ε) := by
-    unfold psM dk
+    unfold psM
+    delta dk
     simp_rw [hφeq]
     rw [integral_smul_measure, ENNReal.toReal_inv, ← Complex.coe_smul, smul_smul]
     congr 1

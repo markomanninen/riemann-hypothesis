@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSpecMax
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChartDomain
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSpecMax
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChartDomain
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -148,7 +153,8 @@ theorem secB_secForm (i : Fin e) :
   have h : Ideal.Quotient.mk (secIdeal (modelR e I v) (parY e n v)) (secForm (parY e n v) i) = 0 :=
     Ideal.Quotient.eq_zero_iff_mem.mpr
       (Ideal.mem_sup_left (Ideal.mem_sup_right (Ideal.subset_span ⟨i, rfl⟩)))
-  rw [← h, secForm, linForm, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← h, secForm, linForm, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [map_mul]
   congr 1
@@ -159,7 +165,8 @@ theorem secB_chartForm :
   have h : Ideal.Quotient.mk (secIdeal (modelR e I v) (parY e n v)) (chartForm (parY e n v)) = 1 := by
     rw [← sub_eq_zero, ← map_one (Ideal.Quotient.mk _), ← map_sub, Ideal.Quotient.eq_zero_iff_mem]
     exact Ideal.mem_sup_right (Ideal.mem_span_singleton_self _)
-  rw [← h, chartForm, linForm, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← h, chartForm, linForm, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [map_mul]
   congr 1
@@ -212,17 +219,21 @@ theorem Φ_val (hj : toSecB e I v (X j) ∉ 𝔫) (p : Par e n) : Φ hj (val e I
   · by_cases hl : l = j
     · subst hl
       have h := congrArg (algebraMap (SecB e I v) (Localization.AtPrime 𝔫)) (secB_secForm e (I := I) (v := v) i)
-      rw [map_sum, map_zero, Fintype.sum_eq_add_sum_subtype_ne _ l] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero, Fintype.sum_eq_add_sum_subtype_ne _ l] at h
       simp only [map_mul] at h
-      simp only [val, dite_true, map_neg, map_mul, map_sum, Φ_X, Φ_cx, FreePar.val, parB]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [val, dite_true, map_neg, map_mul, map_sum, Φ_X, Φ_cx, FreePar.val, parB]
       exact solve_inl (L := Localization.AtPrime 𝔫) h hc
     · simp only [val, hl, dite_false, Φ_X, FreePar.val]
   · by_cases hl : l = j
     · subst hl
       have h := congrArg (algebraMap (SecB e I v) (Localization.AtPrime 𝔫)) (secB_chartForm e (I := I) (v := v))
-      rw [map_sum, map_one, Fintype.sum_eq_add_sum_subtype_ne _ l] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_one, Fintype.sum_eq_add_sum_subtype_ne _ l] at h
       simp only [map_mul] at h
-      simp only [val, dite_true, map_sub, map_one, map_mul, map_sum, Φ_X, Φ_cx, FreePar.val, parB]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [val, dite_true, map_sub, map_one, map_mul, map_sum, Φ_X, Φ_cx, FreePar.val, parB]
       exact solve_inr (L := Localization.AtPrime 𝔫) h hc
     · simp only [val, hl, dite_false, Φ_X, FreePar.val]
 

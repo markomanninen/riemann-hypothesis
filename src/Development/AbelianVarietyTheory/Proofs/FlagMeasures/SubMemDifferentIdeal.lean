@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
-import Formalism.FlagUnipotentLattices.CardSubmodulesAndLinearEquivBounds
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Formalism.FlagUnipotentLattices.CardSubmodulesAndLinearEquivBounds
+
+@[expose] public section
 
 open NumberField Module Matrix Formalism.BasicNotions
 open scoped ENNReal
@@ -44,7 +48,7 @@ private lemma sub_mem_differentIdeal_of_eq_star (h : _root_.Formalism.BasicNotio
   have hpdeg : p.natDegree = 2 := by rw [hp_def]; compute_degree!
   have hpm : p.Monic := by rw [hp_def]; monicity!
   have hroot : aeval θ p = 0 := by
-    simp only [hp_def, map_add, map_sub, map_mul, map_pow, aeval_X, aeval_C, hs, hn]
+    simp only [hp_def, map_add (f := _), map_sub, map_mul, map_pow, aeval_X, aeval_C, hs, hn]
     ring
   have hint : IsIntegral (𝓞 F) θ := Algebra.IsIntegral.isIntegral θ
   have hdvd := minpoly.isIntegrallyClosed_dvd hint hroot
@@ -77,11 +81,11 @@ private lemma sub_mem_differentIdeal_of_eq_star (h : _root_.Formalism.BasicNotio
   simp [hp_def, hs]
   ring
 
+
 open NumberField Module Matrix in
 open scoped ENNReal in
 open Polynomial in
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E] in
-
 theorem _root_.GlobalTheory.CMDiscrSq.differentIdeal_eq_top (h : _root_.Formalism.BasicNotions.CMData F E) : differentIdeal (𝓞 F) (𝓞 E) = ⊤ := by
   by_contra hne
   obtain ⟨P, hP, hle⟩ := Ideal.exists_le_maximal _ hne
@@ -90,9 +94,9 @@ theorem _root_.GlobalTheory.CMDiscrSq.differentIdeal_eq_top (h : _root_.Formalis
 
 end GlobalTheory.CMDiscrSq
 
+
 open NumberField Module Matrix in
 open scoped ENNReal in
-
 theorem _root_.GlobalTheory.cm_discr_sq : ∀ (F E : Type) [Field F] [NumberField F] [Field E]
     [NumberField E] [StarRing E] [Algebra F E], _root_.Formalism.BasicNotions.CMData F E → |discr E| = discr F ^ 2 ∧
       Ideal.absNorm (Ideal.map (algebraMap (𝓞 F) (𝓞 E)) (differentIdeal ℤ (𝓞 F))) =

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightPtsIntegralPoints
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.CurveComplexPoint
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightPtsIntegralPoints
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.CurveComplexPoint
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

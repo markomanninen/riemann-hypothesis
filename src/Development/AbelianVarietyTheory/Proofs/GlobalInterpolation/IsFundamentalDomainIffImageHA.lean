@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SignatureLatticeIndependence
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.IsometryTransportFrames
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SignatureLatticeIndependence
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.IsometryTransportFrames
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,9 +23,9 @@ theorem isFundamentalDomain_iff_image {G₁ G₂ : Type} [Group G₁] [Group G�
       invFun := fun g => ⟨φ.symm g, (hΓ _).2 (by simp)⟩
       left_inv := fun g => Subtype.ext (by simp)
       right_inv := fun g => Subtype.ext (by simp) }
-  have hq : Measure.QuasiMeasurePreserving φ μ (μ.map φ) := ⟨hφ, Measure.AbsolutelyContinuous.rfl⟩
+  have hq : Measure.QuasiMeasurePreserving φ μ (μ.map φ) := ⟨hφ.aemeasurable, Measure.AbsolutelyContinuous.rfl⟩
   have hq' : Measure.QuasiMeasurePreserving φ.symm (μ.map φ) μ := by
-    refine ⟨hφ', ?_⟩
+    refine ⟨hφ'.aemeasurable, ?_⟩
     rw [Measure.map_map hφ' hφ]
     have : (φ.symm : G₂ → G₁) ∘ φ = id := by ext x; simp
     rw [this, Measure.map_id]

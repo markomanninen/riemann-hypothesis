@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TameParahoricRepSplitsAsProduct
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwJqInj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwJqTheta
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TameParahoricRepSplitsAsProduct
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwJqInj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwJqTheta
+
+@[expose] public section
+
 open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi UpperTheory.V.AlgebraTools GlobalTheory.PRep
 
 section General
@@ -45,7 +50,7 @@ private theorem exists_nil {ρ : Representation ℂ G V} (hl : HasFiniteLength �
   obtain ⟨b, hb⟩ := hxc t
   let R : Subrepresentation ρ := ⟨N.toSubmodule ⊔ LinearMap.range (f ^ (a + b)), fun g v hv => by
     obtain ⟨y, hy, _, ⟨z, rfl⟩, rfl⟩ := Submodule.mem_sup.1 hv
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (N.apply_mem_toSubmodule g hy) ⟨ρ g z, by rw [hf, pow_comm_rep]⟩⟩
   have hR : x ∉ R.toSubmodule := fun hv => by
     obtain ⟨y, hy, _, ⟨z, rfl⟩, h⟩ := Submodule.mem_sup.1 hv

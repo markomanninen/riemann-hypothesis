@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.EPerpMid
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.EPerpMid
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,11 +69,12 @@ theorem haarTr_holds (u u' : D.what₂.Word) (τ : D.what₂.Tau) : HaarTr C u u
     rw [trG_inv, ← trG_mul, ← trG_mul]
     exact Formalism.L2.SG.Pf.Bridge.fwd_N hT' (hU _) hy2
   refine ⟨?_, ?_, ?_, ?_⟩
-  · haveI := hσ; exact hme.sigmaFinite_map
+  · have := hσ
+    exact hme.sigmaFinite_map
   · intro h0
     apply hne
     have h := congrArg (fun m : Measure (Formalism.QuantumDeterminants.Mt D.R.k D.R.rS) => m Set.univ) h0
-    simp only [Measure.coe_zero, Pi.zero_apply] at h
+    simp only [FunLike.coe_zero, Pi.zero_apply] at h
     rw [hme.map_apply, Set.preimage_univ] at h
     exact Measure.measure_univ_eq_zero.1 h
   · rw [hme.map_apply]
@@ -97,7 +102,7 @@ theorem haarTr_holds (u u' : D.what₂.Word) (τ : D.what₂.Tau) : HaarTr C u u
       exact Formalism.L2.SG.Pf.Bridge.inN_Q hT' hsN'
     have hcomp : (Formalism.QuantumDeterminants.lmulM s) ∘ f = f ∘ (fun x => y0 * x) := by
       funext x
-      simp only [Function.comp, hf, Formalism.QuantumDeterminants.lmulM, Matrix.of_symm_apply]
+      simp only [Function.comp, hf, Formalism.QuantumDeterminants.lmulM]
       rw [trG_mul]
       congr 1
       show s = C.Qi τ * (C.Q τ * s * C.Qi τ) * C.Q τ
@@ -109,6 +114,6 @@ theorem haarTr_holds (u u' : D.what₂.Word) (τ : D.what₂.Tau) : HaarTr C u u
         exact continuous_const.matrix_mul continuous_id
       exact this.measurable
     rw [Measure.map_map hcont_l hme.measurable, hcomp,
-      ← Measure.map_map hme.measurable (continuous_mul_left y0).measurable, hinv y0 hy0S]
+      ← Measure.map_map hme.measurable (continuous_const_mul y0).measurable, hinv y0 hy0S]
 
 end Formalism.L2.SG.Pf.Carrier.CarPinTor

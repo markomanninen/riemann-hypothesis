@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsDefs
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsGsEquiv
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsLocal
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsRep
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsDualPf
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsDefs
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsGsEquiv
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsLocal
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsRep
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsDualPf
+
+@[expose] public section
 
 noncomputable section
 

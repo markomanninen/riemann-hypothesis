@@ -1,13 +1,17 @@
-import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.KleimanSt
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagDegreeWeightFormulaStatement
-import Development.WeilBound.CoreStatements.FlagImmersions.AltEqZero
-import Development.WeilBound.CoreStatements.FlagImmersions.SumChooseLe
-import Development.WeilBound.CoreStatements.FlagImmersions.CoeffShift
+module
+
+public import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.KleimanSt
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagDegreeWeightFormulaStatement
+public import Development.WeilBound.CoreStatements.FlagImmersions.AltEqZero
+public import Development.WeilBound.CoreStatements.FlagImmersions.SumChooseLe
+public import Development.WeilBound.CoreStatements.FlagImmersions.CoeffShift
+
+@[expose] public section
 
 noncomputable section
 
@@ -166,7 +170,7 @@ theorem lam_bound (u : Wt Ψ N) (τ τ' : Ψ) (i : Fin N) (g U : ℝ) (hg : 0 < 
   have hl : lam τ k (X (τ', i) ^ (k - 1) * linRoot u ^ (dimFl Ψ N + 1)) =
       (-1) ^ (dimFl Ψ N + 1) * ((dimFl Ψ N + 1).factorial : ℝ) * ((k - 1).factorial : ℝ) *
         (r * ∏ τ'', gdet (rho τ'') (vv u (τ', i) τ'')).coeff (k - 1) := by
-    rw [← hsum, Polynomial.finset_sum_coeff, Finset.mul_sum, lam]
+    rw [← hsum, Polynomial.finsetSum_coeff, Finset.mul_sum, lam]
     refine Finset.sum_congr rfl fun c _ => ?_
     exact alt_pow _ _ _ _ _ (by rw [sum_bump]; omega)
   have hM := (hr.mul (maj_rho u τ' i g hg hsep) (by positivity) (by positivity)) (k - 1)

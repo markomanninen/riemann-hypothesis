@@ -1,5 +1,9 @@
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.DataLevel
+module
+
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.DataLevel
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,31 +60,6 @@ attribute [instance] ColRec.wordFin ColRec.nfLL ColRec.starLL
 end Formalism.L2.Col
 
 namespace Formalism.BasicNotions
-
-@[reducible] def Rows.Data.colRows {R : Ranks} (S : Rows.Data R) : Formalism.L2.Col.ColRows R where
-  LL := S.LL
-  embLL := S.embLL
-  places := S.places
-  Tau := S.Tau
-  card_Tau := S.card_Tau
-  Word := S.Word
-
-@[reducible] def D7.colRec (D : D7) : Formalism.L2.Col.ColRec where
-  R := D.R
-  host := D.host
-  sp := D.sp
-  what₂ := D.what₂.colRows
-  eTau := D.eTau
-  wordFin := D.wordFin
-  u₀ := D.u₀
-  hcW := D.hcW
-  mem := D.mem
-  nfLL := D.nfLL
-  starLL := D.starLL
-  embE := D.embE
-  cOf := D.cOf
-  clsLat := D.clsLat
-  fm := D.fm
 
 end Formalism.BasicNotions
 

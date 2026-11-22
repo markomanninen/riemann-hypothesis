@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ConjStableShaFam
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ConjStableShaFam
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base
 
@@ -18,7 +22,8 @@ private theorem mem_nhds_one_gal_iff_exists_finset_fixing (K L : Type) [Field K]
       have h := congrArg (fun z : F => (z : L)) (b.sum_repr ⟨y, hy⟩)
       simp only [IntermediateField.coe_sum, IntermediateField.coe_smul] at h
       exact h.symm
-    rw [hy', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hy', map_sum]
     simp [map_smul, hb]
   · rintro ⟨S, hS⟩
     refine Filter.mem_of_superset ?_ hS

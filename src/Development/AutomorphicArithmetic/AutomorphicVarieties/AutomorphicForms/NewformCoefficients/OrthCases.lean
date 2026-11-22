@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.CuspCritAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.Decomp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.NslMul
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.CuspCritAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.Decomp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.NslMul
+
+@[expose] public section
 
 open NumberField Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep UpperTheory.V.Sd
 open scoped Matrix MatrixGroups
@@ -68,7 +72,7 @@ theorem UpperTheory.V.Af.Nf.liftK :
   have hr : ∀ i j, x.val i 0 * x.val j 0 + x.val i 1 * x.val j 1 = if i = j then 1 else 0 := by
     intro i j
     have h := congrArg (fun m => ev (m i j)) r.2.2
-    simp only [Matrix.mul_apply, Fin.sum_univ_two, Matrix.star_apply, map_add, map_mul, Matrix.one_apply] at h
+    simp only [Matrix.mul_apply, Fin.sum_univ_two, Matrix.star_apply, map_add (f := _), map_mul, Matrix.one_apply] at h
     rw [apply_ite ev, map_one, map_zero] at h
     exact h
   have h1 : x.val 0 0 ^ 2 + x.val 0 1 ^ 2 = 1 := by have := hr 0 0; simp only [if_true] at this; linear_combination this

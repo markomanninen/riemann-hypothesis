@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.TcoMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.TcoMem
+
+@[expose] public section
+
 open GlobalTheory.PD
 
 namespace GlobalTheory
@@ -81,7 +86,7 @@ theorem isArtinianRing_fib_quot : ∀ (k K : Type) [Field k] [Field K] [Algebra 
       obtain ⟨c₂, h₂⟩ := ihb
       refine ⟨c₁ + c₂, ?_⟩
       have : f ⟨a + b, add_mem ha hb⟩ = f ⟨a, ha⟩ + f ⟨b, hb⟩ := map_add f ⟨a, ha⟩ ⟨b, hb⟩
-      rw [this, map_add]
+      rw [this, map_add (f := _)]
       convert add_mem h₁ h₂ using 1
       ring
     | mul a b ha hb iha ihb =>

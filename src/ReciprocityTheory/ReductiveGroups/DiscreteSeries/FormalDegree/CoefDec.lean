@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.RangeDatumEmbedding
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.EqZeroOfDatumEmbeddingEqZero
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiGelfand
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Exists
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.RangeDatumEmbedding
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.EqZeroOfDatumEmbeddingEqZero
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiGelfand
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Exists
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ theorem coef_dec_of_isDS [CompleteSpace H] (hDS : Formalism.MainNotions.S.IsDS �
       ≤ ‖v‖ * ‖Ψ (S7.toMK k * NormedSpace.exp X) v‖ := norm_inner_le_norm _ _
     _ ≤ ‖v‖ * (‖Ψ (S7.toMK k * NormedSpace.exp X)‖ * ‖v‖) :=
         mul_le_mul_of_nonneg_left (ContinuousLinearMap.le_opNorm _ _) (norm_nonneg _)
-    _ = ‖Ψ (S7.toMK k * NormedSpace.exp X)‖ := by rw [hv1]; ring
+    _ = ‖Ψ (S7.toMK k * NormedSpace.exp X)‖ := by simp only [hv1, mul_one, one_mul]
     _ ≤ _ := hdec k X hX
 
 end ReciprocityTheory.ChartRestriction.DS

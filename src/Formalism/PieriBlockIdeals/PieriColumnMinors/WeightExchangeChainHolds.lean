@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PieriBlockIdeals.WEChain
-import Formalism.PieriBlockIdeals.PieriColumnMinors.ContentLinkageHolds
-import Formalism.PieriBlockIdeals.PieriColumnMinors.WeightExchangeBoundHolds
+module
+
+public import Mathlib
+public import Formalism.PieriBlockIdeals.WEChain
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.ContentLinkageHolds
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.WeightExchangeBoundHolds
+
+@[expose] public section
 
 noncomputable section
 

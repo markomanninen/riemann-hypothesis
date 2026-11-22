@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.Imports
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.Imports
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.HeightsSet
@@ -16,8 +21,8 @@ open Classical
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
-open Classical in
 
+open Classical in
 def wt (T : Finset K) : (Σ k, ι k) → ℕ := fun p ↦ if p.1 ∈ T then 1 else 0
 
 def proj (T : Finset K) : MRing ι →+* MRing ι :=
@@ -38,7 +43,7 @@ theorem weight_eq_zero_iff {σ : Type*} (w : σ → ℕ) (d : σ →₀ ℕ) :
     rw [smul_eq_mul, h p (Finsupp.mem_support_iff.mp hp), mul_zero]
 
 theorem coeff_proj (T : Finset K) (f : MRing ι) (d : (Σ k, ι k) →₀ ℕ) :
-    coeff d (proj T f) = if ∀ p, d p ≠ 0 → p.1 ∉ T then coeff d f else 0 := by
+    AddMonoidAlgebra.coeff (proj T f) d = if ∀ p, d p ≠ 0 → p.1 ∉ T then AddMonoidAlgebra.coeff f d else 0 := by
   classical
   rw [proj_apply, coeff_weightedHomogeneousComponent]
   have : Finsupp.weight (wt T) d = 0 ↔ ∀ p, d p ≠ 0 → p.1 ∉ T := by
@@ -77,7 +82,8 @@ theorem proj_univ (f : MRing ι) : proj Finset.univ f = C (constantCoeff f) := b
 theorem proj_X_of_mem {T : Finset K} {k : K} (hk : k ∈ T) (i : ι k) :
     proj T (X ⟨k, i⟩ : MRing ι) = 0 := by
   ext d
-  rw [coeff_proj, coeff_zero, coeff_X]
+  rw [coeff_proj, coeff_X]
+  simp only [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
   split_ifs with h1 h2
   · subst h2
     exact absurd hk (h1 ⟨k, i⟩ (by simp))
@@ -141,8 +147,8 @@ theorem isHomogeneous_of_mem_minimalPrimes (T : Finset K) {J V : Ideal (MRing ι
 
 end CurveDivVertical
 
-open CurveDivVertical in
 
+open CurveDivVertical in
 theorem CurveDivVertical.full : CurveDivVertical.Statement := by
   classical
   intro K _ ι _ W s a hW hs hsW V hV hhor

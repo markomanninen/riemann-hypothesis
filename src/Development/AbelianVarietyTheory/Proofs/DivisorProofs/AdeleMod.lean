@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetVecEq
-import Formalism.LocalToGlobal.GlobalTheory.GL1.CompactFixesLattice.AdeleIntA
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetVecEq
+public import Formalism.LocalToGlobal.GlobalTheory.GL1.CompactFixesLattice.AdeleIntA
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,14 +59,14 @@ theorem tens_mod (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E
       refine ⟨algebraMap F E (a : F), ⟨algebraMap (𝓞 F) (𝓞 E) a, rfl⟩, (1 : E) ⊗ₜ[F] w, hr w hw, ?_⟩
       have e2 := congrArg (Algebra.TensorProduct.includeRight (R := F) (A := E)
         (B := FiniteAdeleRing (𝓞 F) F)) e
-      rw [map_add, map_mul, map_natCast, AlgHom.commutes] at e2
+      rw [map_add (f := _), map_mul, map_natCast, AlgHom.commutes] at e2
       exact e2
   | zero => exact ⟨0, zero_mem _, 0, zero_mem _, by rw [map_zero, mul_zero, add_zero]⟩
   | one => exact ⟨1, one_mem _, 0, zero_mem _, by rw [map_one, mul_zero, add_zero]⟩
   | add x y _ _ ihx ihy =>
     obtain ⟨a, ha, z, hz, rfl⟩ := ihx
     obtain ⟨b, hb, w, hw, rfl⟩ := ihy
-    exact ⟨a + b, add_mem ha hb, z + w, add_mem hz hw, by rw [map_add]; ring⟩
+    exact ⟨a + b, add_mem ha hb, z + w, add_mem hz hw, by rw [map_add (f := _)]; ring⟩
   | neg x _ ihx =>
     obtain ⟨a, ha, z, hz, rfl⟩ := ihx
     exact ⟨-a, neg_mem ha, -z, neg_mem hz, by rw [map_neg]; ring⟩

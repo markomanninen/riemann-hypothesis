@@ -1,18 +1,21 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.AdmissibleOfTypeII
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.AutomorphyDescent.AutNewformW
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.AdmissibleOfTypeII
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.AutomorphyDescent.AutNewformW
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
 
 section
-open private cls_eq_one block_form conj_mat eigvec exists_two from Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.AdmissibleOfTypeII
 open UpperTheory.GalN.V
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.GalOfCusp Matrix IsLocalRing
 open UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.Alg UpperTheory.V.U3
 theorem UpperTheory.GalN.V.adm2B_rhoK_of_typeII_of_modular_extensions :
     CohInp → ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {K : Type} [Field K] [NumberField K] [Algebra K Ω]
-      {l : ℕ} [Fact l.Prime] {c : Coef l} {N : ℕ} [NeZero N] {e : ℕ} {ψ : DirichletCharacter c.O N} (D : Dat Ω K c e ψ) {U : D.ULoc} {g₁ : G ℚ Ω}, D.Marked g₁ → ∀ {r : G ℚ Ω →* GG 3 (PadicAlgCl l)} (h : D.IsPt U g₁ r), ∀ (ι : Qbar l ≃+* ℂ),
+      {l : ℕ} [Fact l.Prime] {c : Coef l} {N : ℕ} [NeZero N] {e : ℕ} {ψ : DirichletCharacter c.O N} (D : Dat Ω K c e ψ) {U : (_root_.UpperTheory.V.U3.Univ (_root_.UpperTheory.V.U3.GCond.noCondition _ (D.η.comp D.ι) (D.Ψ.comp D.ι)))} {g₁ : G ℚ Ω}, D.Marked g₁ → ∀ {r : G ℚ Ω →* GG (m := 3) (R := PadicAlgCl l)} (h : D.IsPt U g₁ r), ∀ (ι : Qbar l ≃+* ℂ),
       TypeII D.η r → (∀ W : G ℚ Ω →* GL (Fin 2) (PadicAlgCl l), D.IsExt r W → _root_.UpperTheory.V.Z.Win.Dn.IsModularA D ι W) →
       _root_.UpperTheory.V.Z.Win.Dn.Adm2B ι e (N * (discr K).natAbs) (D.rhoK r h.mult) := by
   intro hC Ω _ _ _ K _ _ _ l hl c N _ e ψ D U g₁ hM r h ι hII hmod
@@ -30,11 +33,32 @@ theorem UpperTheory.GalN.V.adm2B_rhoK_of_typeII_of_modular_extensions :
   have hkill : ∀ g : G ℚ Ω, (∀ ζ : Ω, ζ ^ (N * (discr K).natAbs) = 1 → g ζ = ζ) → ψQ g = 1 ∧ D.η g = 1 := fun g hg => by
     constructor
     · show Units.map (algebraMap c.O (PadicAlgCl l)).toMonoidHom (ψ.toUnitHom (Chr.cls ℚ Ω N g)) = 1
-      rw [cls_eq_one N g fun ζ hζ => hg ζ (by rw [pow_mul, hζ, one_pow]), map_one, map_one]
+      have hcls : Chr.cls ℚ Ω N g = 1 := by
+        have : IsAlgClosed Ω := IsAlgClosure.isAlgClosed ℚ
+        have : NeZero (N : Ω) := ⟨Nat.cast_ne_zero.mpr (NeZero.ne N)⟩
+        obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot Ω N
+        have hfix := hg ζ (by rw [pow_mul, hζ.pow_eq_one, one_pow])
+        have hpow := Chr.cls_spec (k := ℚ) N g ζ hζ.pow_eq_one
+        rw [hfix] at hpow
+        have hone : ζ ^ (1 : ZMod N).val = ζ := by
+          rw [ZMod.val_one_eq_one_mod, hζ.eq_orderOf, pow_mod_orderOf, pow_one]
+        apply Units.ext
+        apply ZMod.val_injective
+        exact hζ.pow_inj (ZMod.val_lt _) (ZMod.val_lt _) (hpow.symm.trans hone.symm)
+      rw [hcls, map_one, map_one]
     · rw [← MonoidHom.mem_ker, D.η_ker]
       exact UpperTheory.mem_galOf_quadratic_of_fixes_discr_roots_of_unity Ω K D.gd.quad hodd g fun ζ hζ => hg ζ (by rw [pow_mul', hζ, one_pow])
-  have hblk : ∀ g ∈ D.η.ker, (r g).mat = !![W g 0 0, 0, W g 0 1; 0, 1, 0; W g 1 0, 0, W g 1 1] := fun g hg =>
-    block_form _ _ (hII.1 g hg) (h11 g hg) (hext.1 g hg)
+  have hblk : ∀ g ∈ D.η.ker, (r g).mat = !![W g 0 0, 0, W g 0 1; 0, 1, 0; W g 1 0, 0, W g 1 1] := fun g hg => by
+    have hzero := hII.1 g hg
+    have h01 := hzero 0 1 (by decide)
+    have h10 := hzero 1 0 (by decide)
+    have h12 := hzero 1 2 (by decide)
+    have h21 := hzero 2 1 (by decide)
+    change (r g).mat =
+      !![(W g).val 0 0, 0, (W g).val 0 1; 0, 1, 0; (W g).val 1 0, 0, (W g).val 1 1]
+    rw [hext.1 g hg]
+    ext i j
+    fin_cases i <;> fin_cases j <;> simp [corner, h01, h10, h12, h21, h11 g hg]
   refine ⟨W, hirr, hmod W hext, ⟨hcont, fun w hw => ?_, fun w hw => ?_⟩, ?_, 1, fun s => ?_⟩
   · obtain ⟨A, hA⟩ := exists_isPlaceOver Ω w
     have hAl : ¬ A.valuation (l : Ω) < 1 := fun h' => hw (((places ℚ Ω l A).2.2.1 w hA).1 h')
@@ -67,11 +91,17 @@ theorem UpperTheory.GalN.V.adm2B_rhoK_of_typeII_of_modular_extensions :
         !![W s 0 0, 0, W s 0 1; 0, 1, 0; W s 1 0, 0, W s 1 1] *ᵥ v = (D.ΨQ s : Qbar l) • v := fun s hs => by
       have hr : (r s).right = 1 := (h.mult s).trans (hIk hs)
       rw [← hblk s (hIk hs)]
-      refine eigvec M _ _ ?_ fun i j hij => ?_
-      · rw [← conj_mat M r s hr, hdiag s hs 0]
-        simp [GG.mat, tor_val, wt1]
-      · rw [← conj_mat M r s hr]
-        exact hup s (hID hs) (hIk hs) i j hij
+      have hconj : (conjBy M r s).mat = M.val * (r s).mat * (M⁻¹ : GL (Fin 3) (Qbar l)).val := by
+        simp [conjBy, GG.mat, hr]
+      have hcol : (conjBy M r s).mat *ᵥ Pi.single 0 1 = (D.ΨQ s : Qbar l) • Pi.single 0 1 := by
+        rw [Matrix.mulVec_single_one]
+        funext i
+        fin_cases i
+        · simpa [Matrix.col, GG.mat, tor_val, wt1] using hdiag s hs 0
+        · simpa using hup s (hID hs) (hIk hs) 1 0 (by decide)
+        · simpa using hup s (hID hs) (hIk hs) 2 0 (by decide)
+      rw [hv, ← Matrix.mulVec_smul, ← hcol, hconj, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec,
+        ← Matrix.mul_assoc, ← Matrix.mul_assoc, Units.inv_mul, Matrix.one_mul]
     have hv1 : v 1 = 0 := by
       have := congrFun (hev s₀ hs₀) 1
       simp [Matrix.mulVec, dotProduct, Fin.sum_univ_three] at this
@@ -104,7 +134,22 @@ theorem UpperTheory.GalN.V.adm2B_rhoK_of_typeII_of_modular_extensions :
         rfl
     refine ⟨A, hA, ![ψQ, ψQ⁻¹], κ, fun i s hs => ?_, hflag, hκ', Or.inl fun i j hij => ?_⟩
     · fin_cases i <;> simp [(hkill s hs).1]
-    · obtain ⟨s, hs, hn⟩ := exists_two D.gd.l_odd A hAl
+    · have htwo : ∃ s ∈ Ine (F := ℚ) A, ∀ n : ℤ, cycBar ℚ Ω l s ^ n = 1 → n = 0 := by
+        have hu : IsUnit ((2 : ℕ) : ℤ_[l]) := by
+          rw [PadicInt.isUnit_iff, PadicInt.norm_natCast_eq_one_iff]
+          exact (Nat.coprime_primes hl.out Nat.prime_two).2 D.gd.l_odd
+        obtain ⟨u, hu⟩ := hu
+        obtain ⟨s, hs, hcyc⟩ := GlobalTheory.CycInertia.cycZ_Ine_surjective Ω l A hAl u
+        refine ⟨s, hs, fun n hn => ?_⟩
+        have hval : ((cycBar ℚ Ω l s : (Qbar l)ˣ) : Qbar l) = ((2 : ℚ) : Qbar l) := by
+          show ((algebraMap ℚ_[l] (Qbar l)).comp PadicInt.Coe.ringHom) (cycZ ℚ Ω l s : ℤ_[l]) = _
+          rw [hcyc, hu, map_natCast]
+          simp
+        have hpow := congrArg Units.val hn
+        rw [Units.val_zpow_eq_zpow_val, hval, Units.val_one, ← Rat.cast_zpow] at hpow
+        have hrat : (2 : ℚ) ^ n = 1 := by exact_mod_cast hpow
+        exact (zpow_eq_one_iff_right₀ (by norm_num) (by norm_num)).1 hrat
+      obtain ⟨s, hs, hn⟩ := htwo
       have h1 := DFunLike.congr_fun hij ⟨s, hID hs⟩
       rw [MonoidHom.mul_apply, hκ' i _ hs, hκ' j _ hs] at h1
       have hf : ∀ i, ((![ψQ, ψQ⁻¹] i) s) ^ Nat.card (ZMod N)ˣ = 1 := fun i => by

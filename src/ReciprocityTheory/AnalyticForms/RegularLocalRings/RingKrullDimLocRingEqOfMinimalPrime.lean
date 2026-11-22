@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.JacChart
-import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.HeightAddRingKrullDimQuotientMvPolynomialField
-import ReciprocityTheory.CommutativeAlgebra.MaximalIdealSquares.RingKrullDimQuotientSpanSingletonAddOne
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.JacChart
+public import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.HeightAddRingKrullDimQuotientMvPolynomialField
+public import ReciprocityTheory.CommutativeAlgebra.MaximalIdealSquares.RingKrullDimQuotientSpanSingletonAddOne
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 

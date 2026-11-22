@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGenericFibreRadicalPrime
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGenericFibreTor
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StHypersurfacePresentation
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGenericFibreRadicalPrime
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGenericFibreTor
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StHypersurfacePresentation
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -79,7 +84,7 @@ theorem exists_of_mem_ker_fibreMap {σ ι : Type*} {d : ℕ} (K : Ideal (MvPolyn
       add_mem' := by
         rintro a b ⟨e₁, W₁, hW₁, h₁⟩ ⟨e₂, W₂, hW₂, h₂⟩
         refine ⟨e₁ + e₂, Polynomial.C (D ^ e₂) * W₁ + Polynomial.C (D ^ e₁) * W₂, ?_, ?_⟩
-        · simp [Polynomial.map_add, Polynomial.map_mul, hW₁, hW₂]
+        · simp [Polynomial.map_add (f := _), Polynomial.map_mul, hW₁, hW₂]
         · have e : δ ^ (e₁ + e₂) * (a + b) - ev (Polynomial.C (D ^ e₂) * W₁ + Polynomial.C (D ^ e₁) * W₂) =
               δ ^ e₂ * (δ ^ e₁ * a - ev W₁) + δ ^ e₁ * (δ ^ e₂ * b - ev W₂) := by
             simp only [ev, δ, Polynomial.eval₂_add, Polynomial.eval₂_mul, Polynomial.eval₂_C, Polynomial.eval₂_pow,
@@ -152,7 +157,7 @@ theorem Monic.dvd_of_dvd_C_pow_mul_pow {R : Type*} [CommRing R] [IsDomain R] {m 
     refine ⟨Polynomial.C (algebraMap R (FractionRing R) c)⁻¹ * u.map (algebraMap R (FractionRing R)),
       Polynomial.C (algebraMap R (FractionRing R) c)⁻¹ * v.map (algebraMap R (FractionRing R)), ?_⟩
     have h1 := congrArg (Polynomial.map (algebraMap R (FractionRing R))) huv
-    rw [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_mul, Polynomial.map_C,
+    rw [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_mul, Polynomial.map_C,
       ← Polynomial.derivative_map] at h1
     rw [mul_assoc, mul_assoc, ← mul_add, h1, ← Polynomial.C_mul, inv_mul_cancel₀ hfc, Polynomial.C_1]
   have hd' : m.map (algebraMap R (FractionRing R)) ∣
@@ -226,7 +231,7 @@ theorem GenericFibreRadicalPrime.proof (hT : GenericFibreTor.Statement)
   have hψD : ψ D ≠ 0 := by
     intro h0'
     apply ht₂
-    have := congrArg (MvPolynomial.coeff μ) h0'
+    have := congrArg (AddMonoidAlgebra.coeff · μ) h0'
     simpa [ψ, MvPolynomial.coeff_map] using this
 
   have hnzd : ∀ (k : ℕ) (g : MvPolynomial ι ℂ), φ (aeval y D) ^ k * g ∈ K.map φ → g ∈ K.map φ := by
@@ -261,7 +266,7 @@ theorem GenericFibreRadicalPrime.proof (hT : GenericFibreTor.Statement)
   obtain ⟨e', he'⟩ := dvd_of_eval₂_mem_fibre K y θ m D q hker hq t _ h2
   have huv' : u.map ψ * m.map ψ + v.map ψ * Polynomial.derivative (m.map ψ) = Polynomial.C (ψ D) := by
     have := congrArg (Polynomial.map ψ) huv
-    simpa [Polynomial.map_add, Polynomial.map_mul, Polynomial.derivative_map] using this
+    simpa [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.derivative_map] using this
   have hmh : m.map ψ ∣ H.map ψ :=
     Monic.dvd_of_dvd_C_pow_mul_pow (hm.map ψ) hψD huv' hN.ne' he'
   obtain ⟨s, hs'⟩ := hmh

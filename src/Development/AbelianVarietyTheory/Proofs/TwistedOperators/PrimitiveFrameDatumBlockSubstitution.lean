@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LiftResMulSub
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LiftResMulSub
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.RootEx
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
@@ -72,7 +77,7 @@ theorem fFun_comp_mul {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
       have := congrArg (· * ((invT H)⁻¹).val) hh
       simp only [Matrix.mul_assoc, Units.mul_inv, Matrix.mul_one] at this
       rw [this, map_mul, map_inv, Units.val_mul]
-    rw [fFun, dif_neg hX, fFun, dif_neg hX', mul_zero]
+    rw [fFun, dite_eq_right hX, fFun, dite_eq_right hX', mul_zero]
 
 theorem phiA_blockSubst : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     [MeasurableSpace k] [BorelSpace k]

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothHermCombLine
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PointIdealMultiprojectivePrime
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PointIdealHorizontalIffCharZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ClosureDimIffArithmeticVarietyStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothHermCombLine
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PointIdealMultiprojectivePrime
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PointIdealHorizontalIffCharZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ClosureDimIffArithmeticVarietyStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -85,8 +89,8 @@ end GlobalTheory.CompanionTheory.MixZ.PtDictProof
 
 namespace GlobalTheory.CompanionTheory.MixZ
 
-open GlobalTheory.CompanionTheory.MixZ.PtDictProof in
 
+open GlobalTheory.CompanionTheory.MixZ.PtDictProof in
 theorem ptDict : PtDict := by
   intro m n Z _ j _ d hd
   have hP := isMultiProjPrime_ptIdeal m n (j (genericPoint Z))

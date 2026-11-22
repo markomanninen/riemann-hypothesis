@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsPF
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsPF
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.IsPFSum.isPF_sum :
     ∀ {A : Type} [inst : Ring A] [inst_1 : Algebra ℂ A] {ι : Type} (s : Finset ι) {f : ι → ℂ → A},

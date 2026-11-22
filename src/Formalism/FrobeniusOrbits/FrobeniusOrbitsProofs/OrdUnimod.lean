@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.FrobeniusOrbits.HostThickExists
-import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Galois
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.FrobMulInertia
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Decomp
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.SplitK
+module
+
+public import Mathlib
+public import Formalism.FrobeniusOrbits.HostThickExists
+public import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Galois
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.FrobMulInertia
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Decomp
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.SplitK
+
+@[expose] public section
 
 open NumberField IntermediateField Ideal
 open scoped Pointwise nonZeroDivisors

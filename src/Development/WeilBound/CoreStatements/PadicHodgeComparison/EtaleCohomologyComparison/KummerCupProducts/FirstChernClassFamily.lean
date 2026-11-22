@@ -1,8 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.EtaleComparisonMapOfFacts
-import BuildAid.D2
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.EtaleComparisonMapOfFacts
+public import Lean.LibrarySuggestions.Basic
+public import Lean.Elab.Command
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
+set_option maxHeartbeats 0
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GroundTheory.PAdicHodge
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial in
 private lemma UpperTheory.Reformulated.B.IntegralOfNormBounded.mem_of_mul_eq_one {A K : Type*} [CommRing A] [Field K] [Algebra A K]
@@ -25,7 +29,7 @@ private lemma UpperTheory.Reformulated.B.IntegralOfNormBounded.mem_of_mul_eq_one
   obtain ⟨d, hd'⟩ := Nat.exists_eq_succ_of_ne_zero hd
   have h2 : aeval t p.eraseLead + t ^ (d + 1) = 0 := by
     have h3 := p.eraseLead_add_C_mul_X_pow
-    rw [← h3, map_add, map_mul, aeval_C, map_pow, aeval_X, hm.leadingCoeff, map_one, one_mul,
+    rw [← h3, map_add (f := _), map_mul, aeval_C, map_pow, aeval_X, hm.leadingCoeff, map_one, one_mul,
       hd'] at h0
     exact h0
   have h4 : t = -(y ^ d * aeval t p.eraseLead) := by

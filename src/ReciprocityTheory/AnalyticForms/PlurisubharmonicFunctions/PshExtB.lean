@@ -1,5 +1,9 @@
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshExtA
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+module
+
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshExtA
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+
+@[expose] public section
 
 open Metric Real Filter Topology MeasureTheory
 

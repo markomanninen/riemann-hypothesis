@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.StdPowMemOfLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.StdPowMemOfLe
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped InnerProductSpace BigOperators

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.JoinForms
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Bridge
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.JoinForms
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Bridge
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,11 +77,13 @@ variable (s : A →+* A) (Jm : Matrix (Fin n) (Fin n) A) (spl : A ≃+* K × K)
 
 theorem hform_fst (hs : ∀ x, spl (s x) = ((spl x).2, (spl x).1)) (z y : Fin n → A) :
     (spl (hform s Jm z y)).1 = ∑ i, ∑ j, (spl (z i)).2 * (spl (Jm i j)).1 * (spl (y j)).1 := by
-  simp only [hform, map_sum, map_mul, Prod.fst_sum, Prod.fst_mul, hs]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hform, map_sum, map_mul, Prod.fst_sum, Prod.fst_mul, hs]
 
 theorem hform_snd (hs : ∀ x, spl (s x) = ((spl x).2, (spl x).1)) (z y : Fin n → A) :
     (spl (hform s Jm z y)).2 = ∑ i, ∑ j, (spl (z i)).1 * (spl (Jm i j)).2 * (spl (y j)).2 := by
-  simp only [hform, map_sum, map_mul, Prod.snd_sum, Prod.snd_mul, hs]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hform, map_sum, map_mul, Prod.snd_sum, Prod.snd_mul, hs]
 
 theorem fst_mulVec (g : GL (Fin n) A) (y : Fin n → A) (b : Fin n) :
     (spl (((g : Matrix (Fin n) (Fin n) A) *ᵥ y) b)).1 =
@@ -211,14 +217,6 @@ def SelfDualAt (σ : E →ₐ[F] E) (J : Matrix (Fin n) (Fin n) E) (v : HeightOn
         tensInt (F := F) (v.adicCompletion F) (intOE E) (v.adicCompletionIntegers F).toSubring
 
 variable {σ : E →ₐ[F] E} {J : Matrix (Fin n) (Fin n) E} {T f : ℕ} {bad : Set (HeightOneSpectrum (𝓞 F))} {gp : Fin 2 → ℕ}
-
-def levAtG_of_GLev' (S : Formalism.L2.Forms.StepLevel F E σ J T f bad) (G : Formalism.L2.Forms.GLoc F E σ gp) (k m t j nb skip fc : ℕ)
-    (hfc : fc = fcX k m j n) (X : Formalism.L2.Forms.GLev S G (aX k m j) t nb skip fc (fixX m j))
-    (hint : ∀ (i : Fin 2) (v : HeightOneSpectrum (𝓞 F)) (h : (gp i : 𝓞 F) ∈ v.asIdeal), SplitInt v (G.sp i v h))
-    (hdual : ∀ (i : Fin 2) (v : HeightOneSpectrum (𝓞 F)), (gp i : 𝓞 F) ∈ v.asIdeal → SelfDualAt σ J v S.Lb) :
-    LevAtG σ J gp G.sp S.Lb S.Uloc k m t j :=
-  levAtG_of_GLev S G k m t j nb skip fc hfc X fun i v h =>
-    splitStabL_of σ J v (G.sp i v h) S.Lb (X.fr i v h) (G.sp_sig i v h) (hint i v h) (hdual i v h) (X.fr_lat i v h)
 
 end Conc
 

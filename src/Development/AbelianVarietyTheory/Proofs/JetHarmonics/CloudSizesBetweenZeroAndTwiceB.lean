@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmQuadraticFormEqAlternatingForm
-import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmQuadraticFormEqAlternatingForm
+public import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.DIV.Cons Formalism.L2.DIV Formalism.L2.Pj Formalism.L2.Indef Formalism.L2.Indef.Tree Formalism.L2.Indef.Tree.DepthCond Formalism.DivisionValues Formalism.EigenvalueLevelCeiling
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Datum Level Moduli Coeff)
@@ -93,7 +97,7 @@ theorem sizes_le_two_mul : ∀ (D : D7) (L : SizeData₂ D) (_ : ParameterChoice
     exact absurd h2 (by decide)
   · have h1 : 1 ≤ j ∧ j ≤ (numOf D L).R.m := hj
     have h2 : j - 1 < D.R.m := by have := hj.1; have := hj.2; omega
-    rw [NumDatum.w, NumDatum.eQ, dif_pos h1, wj, dif_pos h2]
+    rw [NumDatum.w, NumDatum.eQ, dite_eq_left h1, wj, dite_eq_left h2]
     rfl
 
 end GlobalTheory.RunDepth

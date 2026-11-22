@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralLeviConstantTermStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralTwistedConjInvariant
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralProductGroup
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StableTwistedOrbitalIntegralIntegralNormCongruen
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsConjGLOfCharpolyEqOfSeparable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralLeviConstantTermStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralTwistedConjInvariant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralProductGroup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StableTwistedOrbitalIntegralIntegralNormCongruen
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsConjGLOfCharpolyEqOfSeparable
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -32,18 +37,46 @@ theorem existsOfCharpoly : ∀ (k : Type) [Field k] (a : ℕ) (Q : k[X]), Q.Moni
 theorem twOrb_twConj : ∀ {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] (θ : G →* G) (K : Subgroup G)
     (δ g : G) (f : G → ℂ), twOrb θ K (g⁻¹ * δ * θ g) f = twOrb θ K δ f := by
   intro G _ _ _ θ K δ g f
+  let e :
+      DoubleCoset.Quotient (GlobalTheory.BCT.twCent θ (g⁻¹ * δ * θ g) : Set G) (K : Set G) ≃
+        DoubleCoset.Quotient (GlobalTheory.BCT.twCent θ δ : Set G) (K : Set G) := {
+    toFun q := DoubleCoset.mk (GlobalTheory.BCT.twCent θ δ) K (g * Quotient.out q)
+    invFun q := DoubleCoset.mk (GlobalTheory.BCT.twCent θ (g⁻¹ * δ * θ g)) K (g⁻¹ * Quotient.out q)
+    left_inv q := by
+      obtain ⟨t, ht, k, hk, he⟩ := DoubleCoset.mk_out_eq_mul (twCent θ δ) K (g * Quotient.out q)
+      show DoubleCoset.mk _ K (g⁻¹ * Quotient.out (DoubleCoset.mk (GlobalTheory.BCT.twCent θ δ) K (g * Quotient.out q))) = q
+      rw [he]
+      conv_rhs => rw [← DoubleCoset.out_eq' q]
+      rw [DoubleCoset.eq]
+      refine ⟨g⁻¹ * t⁻¹ * g, ?_, k⁻¹, K.inv_mem hk, by group⟩
+      rw [GlobalTheory.TwOrbConj.twCent_conj]
+      exact ⟨t⁻¹, (GlobalTheory.BCT.twCent θ δ).inv_mem ht, by simp [MulAut.conj_apply]⟩
+    right_inv q := by
+      obtain ⟨t, ht, k, hk, he⟩ := DoubleCoset.mk_out_eq_mul (twCent θ (g⁻¹ * δ * θ g)) K (g⁻¹ * Quotient.out q)
+      show DoubleCoset.mk _ K (g * Quotient.out (DoubleCoset.mk (GlobalTheory.BCT.twCent θ (g⁻¹ * δ * θ g)) K
+        (g⁻¹ * Quotient.out q))) = q
+      rw [he]
+      conv_rhs => rw [← DoubleCoset.out_eq' q]
+      rw [DoubleCoset.eq]
+      rw [GlobalTheory.TwOrbConj.twCent_conj] at ht
+      obtain ⟨s, hs, rfl⟩ := ht
+      refine ⟨s⁻¹, (GlobalTheory.BCT.twCent θ δ).inv_mem hs, k⁻¹, K.inv_mem hk, ?_⟩
+      simp only [MulEquiv.coe_toMonoidHom, MulAut.conj_apply]
+      group
+  }
   rw [GlobalTheory.TwOrbConj.twOrb_eq, GlobalTheory.TwOrbConj.twOrb_eq]
-  calc ∑ᶠ q, GlobalTheory.TwOrbConj.summand θ K (g⁻¹ * δ * θ g) f (Quotient.out q)
-      = ∑ᶠ q, GlobalTheory.TwOrbConj.summand θ K δ f (Quotient.out (GlobalTheory.TwOrbConj.dcEquiv θ K δ g q)) := by
+  calc ∑ᶠ q : DoubleCoset.Quotient (twCent θ (g⁻¹ * δ * θ g) : Set G) (K : Set G), GlobalTheory.TwOrbConj.summand θ K (g⁻¹ * δ * θ g) f (Quotient.out q)
+      = ∑ᶠ q : DoubleCoset.Quotient (twCent θ (g⁻¹ * δ * θ g) : Set G) (K : Set G), GlobalTheory.TwOrbConj.summand θ K δ f (Quotient.out (e q)) := by
         refine finsum_congr fun q => ?_
         rw [GlobalTheory.TwOrbConj.summand_twist]
-        obtain ⟨t, ht, k, hk, he⟩ := (DoubleCoset.eq _ _ _ _).1
-          (DoubleCoset.out_eq' (twCent θ δ) K (DoubleCoset.mk _ K (g * Quotient.out q))).symm
+        obtain ⟨t, ht, k, hk, he⟩ :=
+          DoubleCoset.mk_out_eq_mul (twCent θ δ) K (g * Quotient.out q)
         show _ = GlobalTheory.TwOrbConj.summand θ K δ f (Quotient.out (DoubleCoset.mk (twCent θ δ) K (g * Quotient.out q)))
-        rw [he, GlobalTheory.TwOrbConj.summand_rep θ K δ f _ ht hk]
-    _ = ∑ᶠ q, GlobalTheory.TwOrbConj.summand θ K δ f (Quotient.out q) :=
+        exact (congrArg (GlobalTheory.TwOrbConj.summand θ K δ f) he).trans
+          (GlobalTheory.TwOrbConj.summand_rep θ K δ f _ ht hk) |>.symm
+    _ = ∑ᶠ q : DoubleCoset.Quotient (twCent θ δ : Set G) (K : Set G), GlobalTheory.TwOrbConj.summand θ K δ f (Quotient.out q) :=
         finsum_comp_equiv (f := fun q : DoubleCoset.Quotient (twCent θ δ : Set G) (K : Set G) =>
-          GlobalTheory.TwOrbConj.summand θ K δ f (Quotient.out q)) (GlobalTheory.TwOrbConj.dcEquiv θ K δ g)
+          GlobalTheory.TwOrbConj.summand θ K δ f (Quotient.out q)) (e)
 
 theorem twOrb_mulConst : ∀ {G : Type} [Group G] [TopologicalSpace G] (θ : G →* G) (K : Subgroup G) (δ : G) (f c : G → ℂ),
     (∀ x, c (x⁻¹ * δ * θ x) = c δ) → twOrb θ K δ (fun y => c y * f y) = c δ * twOrb θ K δ f := by
@@ -147,11 +180,8 @@ theorem summand_map' (e : G ≃ₜ* H) (θ : G →* G) (θ' : H →* H) (K : Sub
     rw [← GlobalTheory.BCT.OrbProd.avg_comp_equiv ψ]
     congr 1
     funext k
-    simp only [Function.comp_apply]
-    rw [← hf]
-    congr 1
-    show (e y * e k.1)⁻¹ * e δ * θ' (e y * e k.1) = _
-    rw [← map_mul, ← he, ← map_inv, ← map_mul, ← map_mul]
+    change f' ((e y * e k.1)⁻¹ * e δ * θ' (e y * e k.1)) = _
+    rw [← map_mul, ← he, ← map_inv, ← map_mul, ← map_mul, hf]
 
 def dcMap' (e : G ≃ₜ* H) (T K : Subgroup G) (T' K' : Subgroup H) :
     DoubleCoset.Quotient (T : Set G) (K : Set G) → DoubleCoset.Quotient (T' : Set H) (K' : Set H) :=
@@ -161,18 +191,19 @@ theorem dcMap_bij' (e : G ≃ₜ* H) (T K : Subgroup G) (T' K' : Subgroup H) (hT
     (hK : ∀ g, g ∈ K ↔ e g ∈ K') : Function.Bijective (dcMap' e T K T' K') := by
   constructor
   · intro q1 q2 h
-    obtain ⟨a, ha, b, hb, hab⟩ := (DoubleCoset.eq _ _ _ _).1 h
-    rw [← DoubleCoset.out_eq' T K q1, ← DoubleCoset.out_eq' T K q2, DoubleCoset.eq]
+    change DoubleCoset.mk T' K' (e (Quotient.out q1)) = DoubleCoset.mk T' K' (e (Quotient.out q2)) at h
+    obtain ⟨a, ha, b, hb, hab⟩ := (DoubleCoset.eq (H := T') (K := K')).1 h
+    rw [← DoubleCoset.out_eq' q1, ← DoubleCoset.out_eq' q2, DoubleCoset.eq]
     refine ⟨e.symm a, (hT _).2 (by simpa using ha), e.symm b, (hK _).2 (by simpa using hb), ?_⟩
     apply e.injective
     simp only [map_mul, ContinuousMulEquiv.apply_symm_apply]
     exact hab
   · intro q'
     refine ⟨DoubleCoset.mk T K (e.symm (Quotient.out q')), ?_⟩
-    obtain ⟨a, b, ha, hb, hab⟩ := DoubleCoset.mk_out_eq_mul T K (e.symm (Quotient.out q'))
+    obtain ⟨a, ha, b, hb, hab⟩ := DoubleCoset.mk_out_eq_mul T K (e.symm (Quotient.out q'))
     unfold dcMap'
     rw [hab]
-    conv_rhs => rw [← DoubleCoset.out_eq' T' K' q']
+    conv_rhs => rw [← DoubleCoset.out_eq' q']
     rw [DoubleCoset.eq]
     refine ⟨(e a)⁻¹, T'.inv_mem ((hT a).1 ha), (e b)⁻¹, K'.inv_mem ((hK b).1 hb), ?_⟩
     simp only [map_mul, ContinuousMulEquiv.apply_symm_apply]
@@ -185,7 +216,7 @@ theorem twOrb_transport' [IsTopologicalGroup G] [IsTopologicalGroup H] (e : G �
   rw [twOrb_eq, twOrb_eq,
     ← finsum_comp_equiv (Equiv.ofBijective _ (dcMap_bij' e (twCent θ δ) K (twCent θ' (e δ)) K' hT hK))]
   refine finsum_congr fun q => ?_
-  obtain ⟨a, b, ha, hb, hab⟩ := DoubleCoset.mk_out_eq_mul (twCent θ' (e δ)) K' (e (Quotient.out q))
+  obtain ⟨a, ha, b, hb, hab⟩ := DoubleCoset.mk_out_eq_mul (twCent θ' (e δ)) K' (e (Quotient.out q))
   have e2 : Quotient.out (Equiv.ofBijective _ (dcMap_bij' e (twCent θ δ) K (twCent θ' (e δ)) K' hT hK) q) =
       a * e (Quotient.out q) * b := hab
   rw [e2, summand_rep θ' K' (e δ) f' _ ha hb, summand_map' e θ θ' K K' δ f f' he hK hf]
@@ -202,7 +233,7 @@ theorem topEquivC_apply {G : Type} [Group G] [TopologicalSpace G] (H : Subgroup 
 
 theorem toSub_top {G : Type} [Group G] (H : Subgroup G) (hH : H = ⊤) (x : H) : toSub H (x : G) = x := by
   apply Subtype.ext
-  rw [toSub, dif_pos x.2]
+  rw [toSub, dite_eq_left x.2]
 
 theorem twOrb_top : ∀ {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] (H : Subgroup G), H = ⊤ →
     ∀ (K : Subgroup H) (δ : H) (f : H → ℂ),
@@ -226,18 +257,18 @@ theorem isHecke_top : ∀ {G : Type} [Group G] [TopologicalSpace G] [IsTopologic
     congr 1
     apply e.injective
     show ((toSub H y : H) : G) = e (e.symm y)
-    rw [ContinuousMulEquiv.apply_symm_apply, toSub, dif_pos (hall _)]
+    rw [ContinuousMulEquiv.apply_symm_apply, toSub, dite_eq_left (hall _)]
   have hmap : ((K'.map H.subtype : Subgroup G) : Set G) = e.toHomeomorph '' (K' : Set H) := by
     rw [Subgroup.coe_map]
     rfl
   have hmul : ∀ (k : H) (y : G), toSub H ((k : G) * y) = k * toSub H y := by
     intro k y
     apply Subtype.ext
-    rw [Subgroup.coe_mul, toSub, toSub, dif_pos (hall _), dif_pos (hall _)]
+    rw [Subgroup.coe_mul, toSub, toSub, dite_eq_left (hall _), dite_eq_left (hall _)]
   have hmul' : ∀ (k : H) (y : G), toSub H (y * (k : G)) = toSub H y * k := by
     intro k y
     apply Subtype.ext
-    rw [Subgroup.coe_mul, toSub, toSub, dif_pos (hall _), dif_pos (hall _)]
+    rw [Subgroup.coe_mul, toSub, toSub, dite_eq_left (hall _), dite_eq_left (hall _)]
   refine ⟨?_, ?_, ?_⟩
   · rw [hmap]
     exact e.toHomeomorph.isOpenMap _ hK'
@@ -260,7 +291,7 @@ theorem blk_zero_charpoly (E : Type) [Field E] [NumberField E] [IsCMField E] (n 
     exact ((Matrix.isUnit_iff_isUnit_det _).mp m.1.isUnit).mul ((Matrix.isUnit_iff_isUnit_det _).mp m.2.isUnit)
   unfold blk
   simp only []
-  rw [dif_pos hU, IsUnit.unit_spec, Matrix.charpoly_reindex, Matrix.mul_zero, Matrix.charpoly_fromBlocks_zero₁₂]
+  rw [dite_eq_left hU, IsUnit.unit_spec, Matrix.charpoly_reindex, Matrix.mul_zero, Matrix.charpoly_fromBlocks_zero₁₂]
 
 theorem det_of_charpoly {k : Type} [Field k] {a : ℕ} (x : GL (Fin a) k) {Q : k[X]} (h : x.val.charpoly = Q) :
     x.val.det = (-1) ^ a * Q.coeff 0 := by
@@ -278,7 +309,7 @@ theorem charpoly_conj' {k : Type} [Field k] {a : ℕ} (g x : GL (Fin a) k) :
   rw [Units.val_mul, Units.val_mul, Matrix.coe_units_inv, Matrix.charpoly_units_conj']
 
 theorem toSub_val {G : Type} [Group G] {H : Subgroup G} {g : G} (h : g ∈ H) : (toSub H g : G) = g := by
-  rw [toSub, dif_pos h]
+  rw [toSub, dite_eq_left h]
 
 theorem det_conj' {k : Type} [Field k] {a : ℕ} (u v : GL (Fin a) k) :
     GeneralLinearGroup.det (u⁻¹ * v * u) = GeneralLinearGroup.det v := by
@@ -292,7 +323,7 @@ theorem match_ctMu_of_isSplitAt : ∀ (E : Type) [Field E] [NumberField E] [IsCM
   have hnr : ∀ k (y : GLw k w), nrmL k w y = y := fun k y => by simp only [nrmL, if_pos hw]
   have hUL : UL n w = ⊤ := by simp only [UL, if_pos hw]
   have hks : ∀ γ, kapSign n w Q₁ γ = 1 := fun γ => by simp only [kapSign, if_pos hw]
-  have hKL : (KL n w).map (UL n w).subtype = GlobalTheory.LFun.KGL w n := by
+  have hKL : (KL n w).map (UL n w).subtype = GlobalTheory.LFun.KGL w (n := n) := by
     rw [KL, Subgroup.subgroupOf_map_subtype, hUL, inf_top_eq]
   have hmem : ∀ g : GLw n w, g ∈ UL n w := fun g => by rw [hUL]; trivial
   unfold stTw2 kapOrb
@@ -327,10 +358,10 @@ theorem match_ctMu_of_isSplitAt : ∀ (E : Type) [Field E] [NumberField E] [IsCM
     obtain ⟨x₂, hx₂⟩ := existsOfCharpoly _ (n - a) Q₂ hm₂ hd₂ h0.2
     have hs₁ : Q₁.Separable := hsep.of_mul_left
     have hs₂ : Q₂.Separable := hsep.of_mul_right
-    have hLHS : clSum (MonoidHom.id _) ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w (n - a)))
+    have hLHS : clSum (MonoidHom.id _) ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := (n - a))))
         {y : GLw a w × GLw (n - a) w | y.1.val.charpoly = Q₁ ∧ y.2.val.charpoly = Q₂} 1
         (ctMu (Nat.add_sub_cancel' ha) w μ f) = twOrb (MonoidHom.id _)
-        ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w (n - a))) (x₁, x₂) (ctMu (Nat.add_sub_cancel' ha) w μ f) := by
+        ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := (n - a)))) (x₁, x₂) (ctMu (Nat.add_sub_cancel' ha) w μ f) := by
       rw [clSum_oneClass _ _ _ _ _ (x₁, x₂) ?_ ?_ ?_ ?_ (fun g => twOrb_twConj _ _ _ _ _)]
       · simp
       · exact ⟨hx₁, hx₂⟩
@@ -346,7 +377,7 @@ theorem match_ctMu_of_isSplitAt : ∀ (E : Type) [Field E] [NumberField E] [IsCM
     have hcp : (γ₀ : GLw n w).val.charpoly = Q₁ * Q₂ := by
       rw [hv, blk_zero_charpoly, hx₁, hx₂]
     have hRHS : clSum (MonoidHom.id (UL n w)) (KL n w) {γ : UL n w | γ.1.val.charpoly = Q₁ * Q₂} (fun _ => 1) f =
-        twOrb (MonoidHom.id _) (GlobalTheory.LFun.KGL w n) (blk (Nat.add_sub_cancel' ha) w (x₁, x₂) 0)
+        twOrb (MonoidHom.id _) (GlobalTheory.LFun.KGL w (n := n)) (blk (Nat.add_sub_cancel' ha) w (x₁, x₂) 0)
           (fun y => f (toSub (UL n w) y)) := by
       rw [clSum_oneClass _ _ _ _ _ γ₀ hcp ?_ ?_ ?_ (fun g => twOrb_twConj _ _ _ _ _), one_mul, twOrb_top _ hUL, hKL, hv]
       · intro γ hγ
@@ -383,7 +414,7 @@ theorem match_ctMu_of_isSplitAt : ∀ (E : Type) [Field E] [NumberField E] [IsCM
         GeneralLinearGroup.det x₂ ^ a) : ℂ) * absHalf w (resultant Q₁ Q₂ ^ 2 / (x₁.val.det ^ (n - a) * x₂.val.det ^ a)) := by
       unfold delta
       simp only [if_pos hw]
-      rw [dif_pos hne, hu, hdd]
+      rw [dite_eq_left hne, hu, hdd]
     have hct : ctMu (Nat.add_sub_cancel' ha) w μ f = fun y =>
         (μ ((-1) ^ (a * (n - a)) * GeneralLinearGroup.det y.1 ^ (n - a) * GeneralLinearGroup.det y.2 ^ a) : ℂ) *
           ct (Nat.add_sub_cancel' ha) w (fun y => f (toSub (UL n w) y)) y := rfl

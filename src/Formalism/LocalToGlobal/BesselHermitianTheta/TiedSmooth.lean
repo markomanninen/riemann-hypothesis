@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.BesselHermitianTheta.MinfDensity
+module
+
+public import Formalism.LocalToGlobal.BesselHermitianTheta.MinfDensity
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) (V : HSp D)
 
-open Classical in
 
+open Classical in
 def atTau (τ : D.what₂.Tau) (g : Matrix (Fin V.rank) (Fin V.rank) ℂ) : GA D V :=
   if h : ∃ x, IsAtTau θ V τ g x then h.choose else 1
 

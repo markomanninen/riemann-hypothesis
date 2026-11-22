@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.HTChartExists
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFunctionalMulStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HodgeTateLatticeBaseChangePairingStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsHodgeTateFunctionalStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFunctionalEndomorphismStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFunctionalUniqueStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.HTChartExists
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFunctionalMulStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HodgeTateLatticeBaseChangePairingStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsHodgeTateFunctionalStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFunctionalEndomorphismStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFunctionalUniqueStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,7 +99,7 @@ theorem charOf_neg (y : Fin N → 𝓞 E) :
       ← powChar_apply m ζ hζ, map_neg, AddMonoidHom.neg_apply, ofAdd_neg, map_inv]
 
 def mulMap (b : 𝓞 E) : T →* T :=
-  liftSurj π hπ (π.comp (DistribMulAction.toAddMonoidHom (Fin N → 𝓞 E) b).toMultiplicative) (fun z hz => by
+  liftSurj π hπ (π.comp (DistribSMul.toAddMonoidHom (Fin N → 𝓞 E) b).toMultiplicative) (fun z hz => by
     obtain ⟨z', hz'⟩ := (hker (Multiplicative.toAdd z)).1 hz
     show π (Multiplicative.ofAdd (b • Multiplicative.toAdd z)) = 1
     rw [hker, hz', smul_comm]
@@ -179,7 +183,7 @@ theorem htChartExists : HTChartExists := by
       rw [this]; exact hwb k
     | zero => rw [map_zero, show χ 0 = 1 from charOf_zero _ _ _ _ _ _ _]; exact hzero
     | add y y' _ _ h1 h2 =>
-      rw [map_add, show χ (y + y') = χ y * χ y' from charOf_add _ _ _ _ _ _ _ y y']; exact hadd _ _ _ _ h1 h2
+      rw [map_add (f := _), show χ (y + y') = χ y * χ y' from charOf_add _ _ _ _ _ _ _ y y']; exact hadd _ _ _ _ h1 h2
     | neg y _ h1 => rw [map_neg, show χ (-y) = (χ y)⁻¹ from charOf_neg _ _ _ _ _ _ _ y]; exact hneg _ _ h1
 
   have hlin : ∀ (a : 𝓞 E) y, ∃ u, h (a • y) = dualAct ρ (RingOfIntegers.mapRingEquiv c) a (h y) + (p ^ n) • u := by

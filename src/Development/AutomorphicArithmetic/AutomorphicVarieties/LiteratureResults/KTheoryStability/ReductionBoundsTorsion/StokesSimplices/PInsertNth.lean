@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.StokesSimplices.SumInsertNth
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.StokesSimplices.SumInsertNth
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ lemma isCompact_Δ' (m : ℕ) : IsCompact (Δ m) := by
       simp only [Set.setOf_forall]
       exact isClosed_iInter fun j => isClosed_le continuous_const (continuous_apply j)
     have h2 : IsClosed {t : Fin m → ℝ | ∑ j, t j ≤ 1} :=
-      isClosed_le (continuous_finset_sum _ fun j _ => continuous_apply j) continuous_const
+      isClosed_le (continuous_finsetSum _ fun j _ => continuous_apply j) continuous_const
     exact h1.inter h2
   exact (isCompact_univ_pi fun _ => isCompact_Icc).of_isClosed_subset hcl hsub
 
@@ -90,7 +94,7 @@ theorem asm (hA : StokesSimplexSubdivision) (hH : SubHyp) (hS : SubSlice) (U : S
     (hφ r).continuousOn_fderiv_of_isOpen hU le_rfl
   set P : (Fin (q + 1) → ℝ) → V := fun t => y 0 + ∑ j, t j • (y j.succ - y 0) with hP
   have hPc : Continuous P :=
-    continuous_const.add (continuous_finset_sum _ fun j _ => (continuous_apply j).smul continuous_const)
+    continuous_const.add (continuous_finsetSum _ fun j _ => (continuous_apply j).smul continuous_const)
   have hW : IsOpen (P ⁻¹' U) := hU.preimage hPc
   have hΔW : Δ (q + 1) ⊆ P ⁻¹' U := fun t ht => hmem (q + 1) y hy t ht
   have hmeas : ∀ m, MeasurableSet (Δ m) := fun m => (isCompact_Δ' m).isClosed.measurableSet
@@ -143,7 +147,7 @@ theorem asm (hA : StokesSimplexSubdivision) (hH : SubHyp) (hS : SubSlice) (U : S
       ∫ t in Δ (q + 1), fderiv ℝ (fun z => ω z (i.removeNth fun j => y j.succ - y 0)) (P t)
         (y i.succ - y 0) := by
     show ∫ t in Δ (q + 1), extDeriv ω (P t) (fun j => y j.succ - y 0) = _
-    rw [setIntegral_congr_fun (hmeas _) hext, integral_finset_sum]
+    rw [setIntegral_congr_fun (hmeas _) hext, integral_finsetSum]
     · congr 1
       funext i
       rw [← integral_const_mul]
@@ -163,14 +167,15 @@ theorem asm (hA : StokesSimplexSubdivision) (hH : SubHyp) (hS : SubSlice) (U : S
       rw [← hA V q]
       congr 1
       funext j
-      simp only [Fin.succ_zero_eq_one, sub_sub_sub_cancel_right]
-    rw [e1, integral_finset_sum]
+      simp only [Fin.succ_zero_eq_one]
+      abel
+    rw [e1, integral_finsetSum]
     · congr 1
       funext i
       rw [integral_const_mul]
     · intro i _
       have hc : ContinuousOn (fun s : Fin q → ℝ => y 1 + ∑ j, s j • (y j.succ.succ - y 1)) (Δ q) :=
-        (continuous_const.add (continuous_finset_sum _ fun j _ =>
+        (continuous_const.add (continuous_finsetSum _ fun j _ =>
           (continuous_apply j).smul continuous_const)).continuousOn
       exact (continuousOn_const.mul ((hφc (i.removeNth fun j => y j.succ - y 0)).comp hc hQ)).integrableOn_compact (isCompact_Δ' _)
   rw [hR, Fin.sum_univ_succ]

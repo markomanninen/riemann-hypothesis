@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential DividedPowers ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.CxCoh GlobalTheory.PDA GlobalTheory.PDForm GlobalTheory.SmoothLift
 
 set_option autoImplicit false
@@ -103,13 +108,13 @@ theorem rel_add_smul : ∀ (D : Data) (Λ : Lift D),
   intro D Λ
   refine ⟨?_, ?_, ?_, ?_⟩
   · rintro a b h h' ⟨k, f, w, hf, hw, hk, hr⟩ ⟨k', f', w', hf', hw', hk', hr'⟩
-    refine ⟨k + k', f + f', w + w', by rw [map_add, hf, hf'], by rw [map_add, hw, hw'], ?_, ?_⟩
+    refine ⟨k + k', f + f', w + w', by rw [map_add (f := _), hf, hf'], by rw [map_add (f := _), hw, hw'], ?_, ?_⟩
     · show k.1.1 + k'.1.1 = f.1 + f'.1
       rw [hk, hk']
     · refine ⟨fun U V c ↦ (congrArg₂ (· + ·) (hr.1 U V c) (hr'.1 U V c)).trans (map_add (Λ.e V) _ _).symm,
         fun U ↦ (congrArg₂ (· + ·) (hr.2 U) (hr'.2 U)).trans ?_⟩
       show _ = Submodule.Quotient.mk ((Λ.semi U).m1 (w.1.2 U + w'.1.2 U))
-      rw [map_add, Submodule.Quotient.mk_add]
+      rw [map_add (f := _), Submodule.Quotient.mk_add]
   · rintro r a h ⟨k, f, w, hf, hw, hk, hr⟩
     refine ⟨⟨r • k.1, crystallineCompatibleFormsComplex_cocyclesOne_smul_mem r k.2⟩, r • f, r • w, by rw [map_smul, hf], by rw [map_smul, hw], ?_, ?_⟩
     · show r • k.1.1 = r • f.1
@@ -119,16 +124,16 @@ theorem rel_add_smul : ∀ (D : Data) (Λ : Lift D),
       show _ = Submodule.Quotient.mk ((Λ.semi U).m1 (r • w.1.2 U))
       rw [map_smulₛₗ, RingHom.id_apply, Submodule.Quotient.mk_smul]
   · rintro a b h h' ⟨k, f, w, hf, hw, hk, hr⟩ ⟨k', f', w', hf', hw', hk', hr'⟩
-    refine ⟨k + k', f + f', w + w', by rw [map_add, hf, hf'], by rw [map_add, hw, hw'], ?_, ?_⟩
+    refine ⟨k + k', f + f', w + w', by rw [map_add (f := _), hf, hf'], by rw [map_add (f := _), hw, hw'], ?_, ?_⟩
     · show k.1.1 + k'.1.1 = f.1 + f'.1
       rw [hk, hk']
     · refine ⟨fun U V W c d ↦ (congrArg₂ (· + ·) (hr.1 U V W c d) (hr'.1 U V W c d)).trans (map_add (Λ.e W) _ _).symm,
         fun U V c ↦ (congrArg₂ (· + ·) (hr.2.1 U V c) (hr'.2.1 U V c)).trans ?_,
         fun U ↦ (congrArg₂ (· + ·) (hr.2.2 U) (hr'.2.2 U)).trans ?_⟩
       · show _ = Submodule.Quotient.mk ((Λ.semi V).m1 (w.1.2.1 U V c + w'.1.2.1 U V c))
-        rw [map_add, Submodule.Quotient.mk_add]
+        rw [map_add (f := _), Submodule.Quotient.mk_add]
       · show _ = Submodule.Quotient.mk ((Λ.semi U).mOm 2 (w.1.2.2 U + w'.1.2.2 U))
-        rw [map_add, Submodule.Quotient.mk_add]
+        rw [map_add (f := _), Submodule.Quotient.mk_add]
   · rintro r a h ⟨k, f, w, hf, hw, hk, hr⟩
     refine ⟨⟨r • k.1, crystallineCompatibleFormsComplex_cocyclesTwo_smul_mem r k.2⟩, r • f, r • w, by rw [map_smul, hf], by rw [map_smul, hw], ?_, ?_⟩
     · show r • k.1.1 = r • f.1

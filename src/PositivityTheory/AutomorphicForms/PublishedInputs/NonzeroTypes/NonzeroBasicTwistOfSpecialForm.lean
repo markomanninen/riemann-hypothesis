@@ -1,5 +1,9 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.CJDefs
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.ScalarOnInertiaProp
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.CJDefs
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.ScalarOnInertiaProp
+
+@[expose] public section
 
 noncomputable section
 

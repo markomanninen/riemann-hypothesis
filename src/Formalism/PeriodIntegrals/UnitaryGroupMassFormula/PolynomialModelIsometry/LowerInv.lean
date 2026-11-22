@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialModelIsometry.IsPolyMon
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialModelIsometry.IsPolyMon
+
+@[expose] public section
 
 noncomputable section
 
@@ -125,7 +129,8 @@ lemma lowerInv_not_cdom {N : ℕ} {Λ : Fin N → ℝ} {a b : Fin N} (hab : a < 
     rw [hL]
     simp [root, Pi.single_apply, mul_sub, Finset.sum_sub_distrib]
   have h1 := congrArg L heq
-  simp only [map_sum, map_smul, hroot] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, hroot] at h1
   have lhs : L (Λ - (Λ + (m : ℝ) • root a b)) = (m : ℝ) * (((b : ℕ) : ℝ) - ((a : ℕ) : ℝ)) := by
     rw [sub_add_cancel_left, map_neg, map_smul, hroot, smul_eq_mul]; ring
   rw [lhs] at h1
@@ -164,7 +169,7 @@ theorem lower_triangular_invariance : LowerInv := by
     rw [← hp c, hQ, Matrix.smul_single, smul_eq_mul, mul_one]
   choose pp hpp using hex
   have hadd : ∀ y z : S, pp (y + z) = pp y + pp z := fun y z => Polynomial.funext fun c => by
-    rw [Polynomial.eval_add, hpp, hpp, hpp, map_add, inner_add_right]
+    rw [Polynomial.eval_add, hpp, hpp, hpp, map_add (f := _), inner_add_right]
   have hsmul : ∀ (r : ℂ) (y : S), pp (r • y) = Polynomial.C r * pp y := fun r y =>
     Polynomial.funext fun c => by
       rw [Polynomial.eval_mul, Polynomial.eval_C, hpp, hpp, map_smul, inner_smul_right]

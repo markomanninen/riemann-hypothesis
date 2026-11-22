@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
-import Development.AbelianVarietyTheory.Definitions.Foundations.LiftApplyOfMemAdmissibleSubalgebra
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+public import Development.AbelianVarietyTheory.Definitions.Foundations.LiftApplyOfMemAdmissibleSubalgebra
+
+@[expose] public section
 
 namespace GlobalTheory.AdjoinStableCommutes
 
@@ -27,11 +31,11 @@ theorem adjoin_stable_and_commutes {E V G : Type} [Field E] [AddCommGroup V] [Mo
     · rw [Module.algebraMap_end_apply, Module.algebraMap_end_apply, map_smul]
   | add a b _ _ ha hb =>
     intro x hx
-    rw [map_add]
+    rw [map_add (f := _)]
     refine ⟨?_, fun s => ?_⟩
     · rw [LinearMap.add_apply]
       exact W.add_mem (ha x hx).1 (hb x hx).1
-    · rw [LinearMap.add_apply, LinearMap.add_apply, map_add, (ha x hx).2 s, (hb x hx).2 s]
+    · rw [LinearMap.add_apply, LinearMap.add_apply, map_add (f := _), (ha x hx).2 s, (hb x hx).2 s]
   | mul a b _ _ ha hb =>
     intro x hx
     rw [map_mul]

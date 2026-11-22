@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CoeEqAlgebraMapZeroEquiv
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsAlgHomOfIsBaseChange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CoeEqAlgebraMapZeroEquiv
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsAlgHomOfIsBaseChange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -56,19 +60,6 @@ theorem projTrace_of_isBaseChange {S N : Type*} [CommRing S] [Algebra R S] [AddC
   have : ψ = dualTensorHom S N N t' := hl.algHom_ext _ _ fun x ↦ (h x).trans (h1 x).symm
   rw [this, projTrace_dualTensorHom, projTrace_dualTensorHom, h2]
 
-theorem projTrace_id_of_rankAtStalk {d : ℕ} (h : ∀ p, Module.rankAtStalk (R := R) M p = d) :
-    projTrace R M LinearMap.id = d := by
-  refine Module.eq_of_localization_maximal (fun P _ ↦ Localization.AtPrime P)
-    (fun P _ ↦ Algebra.linearMap R (Localization.AtPrime P)) _ _ fun P hP ↦ ?_
-  rw [Algebra.linearMap_apply, Algebra.linearMap_apply]
-  have hb := IsLocalizedModule.isBaseChange P.primeCompl (Localization.AtPrime P)
-    (LocalizedModule.mkLinearMap P.primeCompl M)
-  have : Module.Free (Localization.AtPrime P) (LocalizedModule P.primeCompl M) :=
-    Module.free_of_flat_of_isLocalRing
-  rw [← projTrace_of_isBaseChange hb LinearMap.id LinearMap.id (fun _ ↦ rfl), projTrace_eq_trace,
-    LinearMap.trace_id, map_natCast, ← h ⟨P, hP.isPrime⟩]
-  rfl
-
 end ProjTrace
 
 section AlgTrace
@@ -90,12 +81,6 @@ theorem algTrace_of_isPushout {C C' : Type*} [CommRing C] [CommRing C'] [Algebra
     [Module.Finite C C'] [Module.Projective C C'] [h : Algebra.IsPushout B C B' C'] (b : B') :
     algTrace C C' (algebraMap B' C' b) = algebraMap B C (algTrace B B' b) :=
   projTrace_of_isBaseChange h.out _ _ fun x ↦ (map_mul (algebraMap B' C') b x).symm
-
-theorem algTrace_one {d : ℕ} (h : ∀ p, Module.rankAtStalk (R := B) B' p = d) :
-    algTrace B B' 1 = d := by
-  rw [algTrace_apply, ← projTrace_id_of_rankAtStalk h]
-  congr 1
-  ext; simp
 
 theorem algTrace_algebraMap_of_bijective (h : Function.Bijective (algebraMap B B')) (b : B) :
     algTrace B B' (algebraMap B B' b) = b := by
@@ -120,9 +105,6 @@ def formLin (j : ℕ) : Om k B j →ₗ[B] Om k B' j where
   map_add' := map_add _
   map_smul' b x := by
     rw [SemiHom.mOm_smul, RingHom.id_apply, algebraMap_smul]
-
-theorem formLin_apply {j : ℕ} (x : Om k B j) :
-    formLin k B B' j x = (semiHom_algebraMap k B B').mOm j x := rfl
 
 theorem isBaseChange_formLin [Algebra.FormallyEtale B B'] (j : ℕ) :
     IsBaseChange B' (formLin k B B' j) := by
@@ -207,13 +189,15 @@ variable {k : Type} [CommRing k] {X : Scheme.{0}} (s : X ⟶ Sp k) (j : ℕ)
 instance secModule (F : X.Modules) (U : X.Opens) : Module (Sec s U) Γ(F, U) :=
   inferInstanceAs (Module Γ(X, U) Γ(F, U))
 
-def toOm (U : X.Opens) : OmU s U j →ₗ[Sec s U] Γ(Omega s j, U) := ((toOmega s j).app (op U)).hom
+def toOm (U : X.Opens) : OmU s U j →ₗ[Sec s U] Γ(Omega s j, U) :=
+  ((toOmega (s := s) j).app (op U)).hom
 
-theorem toOm_apply (U : X.Opens) (x : OmU s U j) : toOm s j U x = (toOmega s j).app (op U) x := rfl
+theorem toOm_apply (U : X.Opens) (x : OmU s U j) :
+    toOm s j U x = (toOmega (s := s) j).app (op U) x := rfl
 
 theorem res_toOm {U V : X.Opens} (h : V ≤ U) (x : OmU s U j) :
     (Omega s j).presheaf.map (homOfLE h).op (toOm s j U x) = toOm s j V (formRes s h j x) :=
-  (PresheafOfModules.naturality_apply (toOmega s j) (homOfLE h).op x).symm
+  (PresheafOfModules.naturality_apply (toOmega (s := s) j) (homOfLE h).op x).symm
 
 theorem exists_formRes_eq_zero {U : X.Opens} {x : OmU s U j} (h : toOm s j U x = 0) {p : X}
     (hp : p ∈ U) : ∃ V : X.Opens, ∃ hV : V ≤ U, p ∈ V ∧ formRes s hV j x = 0 := by
@@ -377,8 +361,8 @@ def homOfAffine : G ⟶ F :=
 theorem homOfAffine_app (U : X.affineOpens) (x : Γ(G, U.1)) :
     (homOfAffine φ hφ).app U.1 x = φ U x := preHomOfAffine_app φ hφ U x
 
-omit φ hφ in
 
+omit φ hφ in
 theorem hom_ext_affine {a b : G ⟶ F}
     (h : ∀ U : X.Opens, IsAffineOpen U → ∀ x, a.app U x = b.app U x) : a = b := by
   ext U x

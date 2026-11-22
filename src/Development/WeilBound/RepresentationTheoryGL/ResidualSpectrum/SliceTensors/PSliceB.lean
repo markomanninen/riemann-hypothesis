@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.BCountable
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.BCountable
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,7 +75,7 @@ theorem B_low_mul_block (hpq : p < q) (b : {x : PPos n {p, q} // ¬ IsTop p x} �
   by_cases h : B_low b i k = 0
   · rw [h, zero_mul]
   · have := B_low_apply_ne hpq b h
-    rw [blockEntry_apply, dif_neg (by omega), mul_zero]
+    rw [blockEntry_apply, dite_eq_right (by omega), mul_zero]
 
 theorem B_low_mul_low (hpq : p < q) (b : {x : PPos n {p, q} // ¬ IsTop p x} → R) : B_low b * B_low b = 0 := by
   ext i j
@@ -91,14 +95,14 @@ theorem B_parEntry_join (_hpq : p < q) (a : {x : PPos n {p, q} // IsTop p x} →
   ext i j
   simp only [B_low, Matrix.add_apply, parEntry_apply, blockEntry_apply, joinPos]
   by_cases hP : ∃ s ∈ ({p, q} : Finset ℕ), (i : ℕ) < s ∧ s ≤ (j : ℕ)
-  · rw [dif_pos hP, dif_pos hP]
+  · rw [dite_eq_left hP, dite_eq_left hP]
     by_cases hT : (i : ℕ) < p ∧ p ≤ (j : ℕ)
     · have hT' : IsTop p (⟨(i, j), hP⟩ : PPos n {p, q}) := hT
-      rw [dif_pos hT, dif_pos hT', dif_pos hT', Pi.zero_apply, zero_add]
+      rw [dite_eq_left hT, dite_eq_left hT', dite_eq_left hT', Pi.zero_apply, zero_add]
       rfl
     · have hT' : ¬ IsTop p (⟨(i, j), hP⟩ : PPos n {p, q}) := hT
-      rw [dif_neg hT, dif_neg hT', dif_neg hT', add_zero]
-  · rw [dif_neg hP, dif_neg hP, zero_add, dif_neg]
+      rw [dite_eq_right hT, dite_eq_right hT', dite_eq_right hT', add_zero]
+  · rw [dite_eq_right hP, dite_eq_right hP, zero_add, dite_eq_right]
     rintro hT
     exact hP ⟨p, by simp, hT⟩
 
@@ -126,7 +130,7 @@ theorem B_block_sub (hpq : p < q) (b : {x : PPos n {p, q} // ¬ IsTop p x} → R
     by_cases h' : B_low b k j = 0
     · rw [h', mul_zero]
     · have := B_low_apply_ne hpq b h'
-      rw [blockEntry_apply, dif_neg (by omega), zero_mul]
+      rw [blockEntry_apply, dite_eq_right (by omega), zero_mul]
 
 theorem B_shear_mat (hpq : p < q) (b : {x : PPos n {p, q} // ¬ IsTop p x} → R) (A : UPos n p → R) :
     parGL (joinPos 0 b) * unipGL A = unipGL (A - B_ell b A) * parGL (joinPos 0 b) := by

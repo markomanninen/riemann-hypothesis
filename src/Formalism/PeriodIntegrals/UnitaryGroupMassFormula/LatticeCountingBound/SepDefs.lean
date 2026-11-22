@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.BoxBoundAlt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeSizeContinuity.LatSizeContOfSteps
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.BoxBoundAlt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeSizeContinuity.LatSizeContOfSteps
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ def perpE (I : Formalism.MainNotions.S.AutInst) (δ : Matrix (Fin I.n) (Fin I.n)
     intro a b ha hb z hz
     have h1 := ha z hz
     have h2 := hb z hz
-    simp only [hf, Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib] at h1 h2 ⊢
+    simp only [hf, Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib] at h1 h2 ⊢
     rw [h1, h2, add_zero]
   zero_mem' := by
     intro z _

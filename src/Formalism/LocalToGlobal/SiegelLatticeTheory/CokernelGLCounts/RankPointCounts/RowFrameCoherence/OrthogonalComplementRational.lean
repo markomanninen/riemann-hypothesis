@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RowFrameCoherence.ClassFrameOO1FrameValPiIso
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HermitianETransportInvariant
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RowFrameCoherence.ClassFrameOO1FrameValPiIso
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HermitianETransportInvariant
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,8 @@ theorem ker_map_le_span {K L : Type*} [Field K] [Field L] (φ : K →+* L) {m n 
   have hmap : ∀ x : n → K, (A.map φ) *ᵥ (φ ∘ x) = φ ∘ (A *ᵥ x) := by
     intro x
     funext k
-    simp [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum]
   have hT : Submodule.span L (Set.range w) ≤ LinearMap.ker (A.map φ).mulVecLin := by
     rw [Submodule.span_le]
     rintro _ ⟨i, rfl⟩
@@ -217,7 +222,7 @@ theorem zhat_rat (M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) :
 theorem dl_rat (Z : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) X.B.I.E) :
     Formalism.L2.SG.RealObj.Dl (Z.map (X.B.I.φ v)) (D.R.rS + 1) = X.B.I.φ v Z.det := by
   unfold Formalism.L2.SG.RealObj.Dl
-  rw [dif_pos le_rfl, RingHom.map_det]
+  rw [dite_eq_left le_rfl, RingHom.map_det]
   congr 1
 
 theorem adj_rat (Z : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) X.B.I.E) :
@@ -334,7 +339,8 @@ variable {D : D7} (X : HidaSetting D) (Y : Formalism.L2.SG.Full.Full X) (u u' : 
 theorem classFrameOO2_hE_expand (a x : Fin X.B.I.n → X.B.I.E) :
     Formalism.L2.SG.Pf.Level.hE X a x = ∑ j, Formalism.L2.SG.Pf.Level.hE X a (Pi.single j 1) * x j := by
   conv_lhs => rw [← Formalism.L2.SG.Pf.Level.sum_single X x]
-  rw [← Formalism.L2.SG.Pf.Level.hEl_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Formalism.L2.SG.Pf.Level.hEl_apply, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_smul, Formalism.L2.SG.Pf.Level.hEl_apply, smul_eq_mul, mul_comm]
 

@@ -1,5 +1,9 @@
-import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.StatementTop
-import Formalism.FrobeniusContraction.FrobeniusContractionProofs.ContractBij
+module
+
+public import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.StatementTop
+public import Formalism.FrobeniusContraction.FrobeniusContractionProofs.ContractBij
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,7 @@ theorem phi_map_surjective : StatPhiOnto := by
       rw [pow_succ]
       exact Ideal.mul_mem_mul (hφpow j r hr) hQI
     · intro x y hx hy
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ hx hy
   have hbij := _root_.subIdBijectiveOfContracting_holds A W.N I g hcontr
   obtain ⟨z, hz⟩ := hbij.2 (-(⟨n, hn⟩ : W.N))

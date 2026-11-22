@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.HaarUniqInf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.T2SpaceTensorProductFiniteExtension
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PushSupp
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.DetNZHolds
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.HaarUniqInf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.T2SpaceTensorProductFiniteExtension
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PushSupp
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.DetNZHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,8 +42,8 @@ theorem regI_of (hW : WittInf) : RegI := by
   have hc : Continuous (orbM X u') :=
     PI.AprimeInfT.continuous_orbit (Ainf X.B.I.F) X.B.I.cm.sig X.B.I.J _
   have hd := detNZ_holds X u' ψ hT μinf νinf fibInf hP
-  refine ⟨hc.measurable, fun g => ?_, fun g => (continuous_mul_left g).measurable, fun t =>
-    ((continuous_mul_left t).comp continuous_subtype_val).measurable, fun C hC =>
+  refine ⟨hc.measurable, fun g => ?_, fun g => (continuous_const_mul g).measurable, fun t =>
+    ((continuous_const_mul t).comp continuous_subtype_val).measurable, fun C hC =>
     ⟨hC.isClosed.measurableSet, hC.image hc, (hC.image hc).isClosed.measurableSet⟩,
     hW X u' ψ hT μinf νinf fibInf hP, ?_⟩
   · have hmat : Continuous (fun _ : TupI X =>

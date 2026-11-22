@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.FockLin
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorOperator.FockLin
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -28,7 +32,7 @@ theorem ok_add_left {β₁ β₂ s : MvPolynomial (Fin n' × (Fin (m + 1) × Fin
   refine ⟨f₁ + f₂, fun l hl => ?_, fun G hG H hH => ?_⟩
   · rcases Finset.mem_union.1 (Finsupp.support_add hl) with h | h
     exacts [hf₁ l h, hf₂ l h]
-  · rw [mul_add, fockR_add_right, e₁ G hG H hH, e₂ G hG H hH, combo_add, map_add,
+  · rw [mul_add, fockR_add_right, e₁ G hG H hH, e₂ G hG H hH, combo_add, map_add (f := _),
       fockR_add_left]
 
 theorem ok_add_right {β s₁ s₂ : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) K}
@@ -38,7 +42,7 @@ theorem ok_add_right {β s₁ s₂ : MvPolynomial (Fin n' × (Fin (m + 1) × Fin
   refine ⟨f₁ + f₂, fun l hl => ?_, fun G hG H hH => ?_⟩
   · rcases Finset.mem_union.1 (Finsupp.support_add hl) with h | h
     exacts [hf₁ l h, hf₂ l h]
-  · rw [mul_add, fockR_add_left, e₁ G hG H hH, e₂ G hG H hH, combo_add, map_add,
+  · rw [mul_add, fockR_add_left, e₁ G hG H hH, e₂ G hG H hH, combo_add, map_add (f := _),
       fockR_add_left]
 
 theorem ok_smul_left (a : K) {β s : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) K}

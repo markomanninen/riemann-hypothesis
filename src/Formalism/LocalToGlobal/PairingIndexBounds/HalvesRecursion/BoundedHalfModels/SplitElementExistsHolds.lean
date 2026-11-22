@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.BoundedHalfModels.Assemble
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.BoundedHalfModels.Assemble
+
+@[expose] public section
 
 noncomputable section
 open scoped nonZeroDivisors

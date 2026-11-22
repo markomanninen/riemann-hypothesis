@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.TwiceValuationFactorialProduct
-import Formalism.PolynomialDimension.FinalNum
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.TwiceValuationFactorialProduct
+public import Formalism.PolynomialDimension.FinalNum
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ private theorem fr_mono_of_valid (hV : Fr.Valid L₁ N₁) (j : ℤ) :
 private theorem fr_last_mono_in_index_of_valid (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (a : ℤ) :
     ∀ b : ℤ, a ≤ b → Fr.fr a (r - 1) ≤ Fr.fr b (r - 1) := by
   intro b hab
-  induction b, hab using Int.le_induction with
+  induction b, hab using Int.leInduction with
   | base => exact le_rfl
   | succ k _ ih =>
     exact le_trans ih (le_trans (hV.2.2.2.1 k).le

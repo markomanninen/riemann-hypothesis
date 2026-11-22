@@ -1,4 +1,8 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FactorRapid
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FactorRapid
+
+@[expose] public section
 
 noncomputable section
 

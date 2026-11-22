@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.SplitStable
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.SplitLoc
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OccursBasics
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.SplitStable
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.SplitLoc
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OccursBasics
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,13 +19,13 @@ open scoped ComplexConjugate
 
 namespace UpperTheory.ConvolutionTheory.T
 
-private theorem mem_fixL' {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+private theorem mem_fixL' {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
     (w : Pl K) (J : Subgroup (Gw n w)) (x : LL μ) (h : ∀ g ∈ J, rhoL μ w g x = x) : x ∈ fixL μ w J := by
   simp only [fixL, fixF, Submodule.mem_iInf, LinearMap.mem_eqLocus]
   rintro _ ⟨g, hg, rfl⟩
   exact h g hg
 
-private theorem exists_fixed {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+private theorem exists_fixed {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
     (V : Submodule ℂ (LL μ)) (hV : IsSummand μ V) (w : Pl K) :
     ∃ (S : Subgroup (Gw n w)) (x : LL μ), IsOpen (S : Set (Gw n w)) ∧ x ∈ V ∧ x ≠ 0 ∧ ∀ g ∈ S, rhoL μ w g x = x := by
   letI : MeasurableSpace (Gw n w) := borel _

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AevalLogDefect
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AevalLogDefect
+
+@[expose] public section
 
 open GlobalTheory.LogU MvPolynomial Finset
 
@@ -17,8 +21,8 @@ lemma single_add_single_eq_iff {i j i' j' : ℕ} :
   · rintro ⟨rfl, rfl⟩; rfl
 
 lemma coeff_monomial_two (i j p q : ℕ) (c : ℤ) :
-    coeff (Finsupp.single 0 i + Finsupp.single 1 j)
-        (monomial (Finsupp.single (0 : Fin 2) p + Finsupp.single 1 q) c) =
+    AddMonoidAlgebra.coeff (monomial (Finsupp.single (0 : Fin 2) p + Finsupp.single 1 q) c)
+        (Finsupp.single 0 i + Finsupp.single 1 j) =
       if p = i ∧ q = j then c else 0 := by
   rw [coeff_monomial]
   simp only [single_add_single_eq_iff]
@@ -59,7 +63,7 @@ lemma factorial_dvd_term (n K s a : ℕ) (hK1 : 1 ≤ K) (hKn : K ≤ n) (hs : s
 
 def Good (n : ℕ) (f : MvPolynomial (Fin 2) ℤ) : Prop :=
   ∀ i j : ℕ, n ≤ i + j → ((n.factorial * ((n - 1) / 2).factorial : ℕ) : ℤ) ∣
-    ((i.factorial * j.factorial : ℕ) : ℤ) * coeff (Finsupp.single 0 i + Finsupp.single 1 j) f
+    ((i.factorial * j.factorial : ℕ) : ℤ) * AddMonoidAlgebra.coeff f (Finsupp.single 0 i + Finsupp.single 1 j)
 
 lemma good_sub {n : ℕ} {f g : MvPolynomial (Fin 2) ℤ} (hf : Good n f) (hg : Good n g) :
     Good n (f - g) := by
@@ -145,7 +149,7 @@ theorem good_logDefect (n : ℕ) : Good n (logDefect n) := by
 
 theorem logDefect_coeff_dvd : ∀ (n i j : ℕ), n ≤ i + j → ∃ d : ℤ,
     ((i.factorial * j.factorial : ℕ) : ℤ) *
-        MvPolynomial.coeff (Finsupp.single 0 i + Finsupp.single 1 j) (GlobalTheory.LogU.logDefect n) =
+        AddMonoidAlgebra.coeff (GlobalTheory.LogU.logDefect n) (Finsupp.single 0 i + Finsupp.single 1 j) =
       ((n.factorial * ((n - 1) / 2).factorial : ℕ) : ℤ) * d := by
   intro n i j h
   exact good_logDefect n i j h

@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.OrbitDecayEstimates.CurveDerivativeDecay.DerivativeUpperBound
+module
+
+public import Development.WeilBound.CoreStatements.OrbitDecayEstimates.CurveDerivativeDecay.DerivativeUpperBound
+
+@[expose] public section
 
 noncomputable section
 

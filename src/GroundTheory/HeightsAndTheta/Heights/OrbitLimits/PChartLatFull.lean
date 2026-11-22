@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsChartLatFull
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PZeroCocycleSection
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsChartLatFull
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PZeroCocycleSection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets

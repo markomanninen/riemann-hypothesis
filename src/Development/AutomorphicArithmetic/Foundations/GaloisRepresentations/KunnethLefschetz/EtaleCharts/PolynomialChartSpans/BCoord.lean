@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.DCoord
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.DCoord
+
+@[expose] public section
 
 open CategoryTheory Limits MvPolynomial
 
@@ -169,7 +173,7 @@ private theorem etale_chart {A E B : Type} [CommRing A] [CommRing E] [CommRing B
       rw [RingHom.comp_apply, hF, map_mul, RingHom.id_apply, hGγ, hGψ,
         Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
     | add x y hx hy =>
-      simp only [RingHom.comp_apply, RingHom.id_apply, map_add] at hx hy ⊢
+      simp only [RingHom.comp_apply, RingHom.id_apply, map_add (f := _)] at hx hy ⊢
       rw [hx, hy]
   let e := RingEquiv.ofRingHom F G hFG hGF
   have h8 := RingHom.Etale.respectsIso.1 _ e hbc

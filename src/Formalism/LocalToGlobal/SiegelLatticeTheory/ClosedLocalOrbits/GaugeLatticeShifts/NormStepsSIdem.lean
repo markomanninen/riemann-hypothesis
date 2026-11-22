@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NormStepsLeviOntoS
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NormStepsLeviOntoS
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,27 +19,12 @@ variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 def OverG (v : HeightOneSpectrum (𝓞 X.B.I.F)) : Prop := ((X.B.g : ℕ) : 𝓞 X.B.I.F) ∈ v.asIdeal
 
-theorem g_ne_zero : X.B.g ≠ 0 := by
-  exact Formalism.L2.SG.Pf.modulus_g_ne_zero X
-
 theorem val_g (v : HeightOneSpectrum (𝓞 X.B.I.F)) :
     Valued.v ((X.B.g : ℕ) : v.adicCompletion X.B.I.F) = v.intValuation ((X.B.g : ℕ) : 𝓞 X.B.I.F) := by
   have h : ((X.B.g : ℕ) : v.adicCompletion X.B.I.F) =
       ((algebraMap (𝓞 X.B.I.F) X.B.I.F ((X.B.g : ℕ) : 𝓞 X.B.I.F) : X.B.I.F) : v.adicCompletion X.B.I.F) := by
     rw [map_natCast]
-    first
-    | (simp only [map_natCast, UniformSpace.Completion.coe_natCast]; rfl)
-    | (induction X.B.g with
-        | zero =>
-          simp only [Nat.cast_zero]
-          first
-          | rfl
-          | (rw [WithVal.equiv_symm_zero]; rfl)
-          | (simp only [map_zero, UniformSpace.Completion.coe_zero]; rfl)
-        | succ n ih =>
-          push_cast
-          rw [ih, map_add, map_one, UniformSpace.Completion.coe_add, UniformSpace.Completion.coe_one]
-          rfl)
+    exact (map_natCast (algebraMap X.B.I.F (v.adicCompletion X.B.I.F)) _).symm
   rw [h, HeightOneSpectrum.valuedAdicCompletion_eq_valuation', HeightOneSpectrum.valuation_of_algebraMap]
 
 def eS : Af X.B.I.F :=

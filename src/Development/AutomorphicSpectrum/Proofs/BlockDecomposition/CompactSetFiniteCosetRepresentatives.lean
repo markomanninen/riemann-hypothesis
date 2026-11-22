@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped Topology
 
 namespace GlobalTheory.CompanionTheory.OpenSubgroupCosets

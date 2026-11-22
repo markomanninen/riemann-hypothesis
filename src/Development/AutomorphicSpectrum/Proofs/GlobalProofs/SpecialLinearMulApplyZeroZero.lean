@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.Garding
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.Garding
+
+@[expose] public section
 
 open Matrix Formalism.REAL Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.LinRed GlobalTheory.FlagMeas GlobalTheory.RealInd GlobalTheory.CompanionTheory.Hypotheses₂ GlobalTheory.CompanionTheory.Hypotheses₂.HCA
 open scoped InnerProductSpace ContDiff
@@ -28,7 +32,7 @@ theorem exists_avg_op (ρ : Γ → H →L[ℂ] H) (hρ : ∀ u, Continuous fun x
   let L : H →ₗ[ℂ] H :=
     { toFun := fun u => ∫ x, w x • ρ x u ∂μ
       map_add' := fun u v => by
-        simp only [map_add, smul_add]
+        simp only [map_add (f := _), smul_add]
         exact integral_add (integrable_w μ ρ hρ hw hc u) (integrable_w μ ρ hρ hw hc v)
       map_smul' := fun c u => by
         simp only [map_smul, RingHom.id_apply]
@@ -151,6 +155,7 @@ theorem smooth_of_commutant_stable {H : Type} [NormedAddCommGroup H] [InnerProdu
     (hK : ∀ k ∈ maxCpt G, ∀ v, ‖π k v‖ = ‖v‖) (Y : Submodule ℂ H) [FiniteDimensional ℂ Y]
     (hY : ∀ T : H →L[ℂ] H, (∀ k ∈ maxCpt G, ∀ u, T (π k u) = π k (T u)) → ∀ y ∈ Y, T y ∈ Y) :
     ∀ v ∈ Y, IsSmoothVec G π v := by
+  letI : Inv (Set (GT hG hcl)) := Set.inv
   intro v hv
   let μ : Measure (GT hG hcl) := Measure.haar
   obtain ⟨h1, hm⟩ := hrep
@@ -160,7 +165,7 @@ theorem smooth_of_commutant_stable {H : Type} [NormedAddCommGroup H] [InnerProdu
   have hmul : ∀ x y u, ρ (x * y) u = ρ x (ρ y u) := fun x y u => by
     show π (toM x * toM y) u = π (toM x) (π (toM y) u)
     rw [hm (toM x) x.2 (toM y) y.2, ContinuousLinearMap.comp_apply]
-  have hρ1 : ∀ u, ρ 1 u = u := fun u => by simp only [ρ, toM_one, h1, ContinuousLinearMap.one_apply]
+  have hρ1 : ∀ u, ρ 1 u = u := fun u => by simp only [ρ, toM_one, h1, one_apply_eq_self]
   obtain ⟨V, hV, hclose⟩ := exists_nhds_close ρ hρ hρ1 Y
   have hVi : V⁻¹ ∈ 𝓝 (1 : GT hG hcl) := inv_mem_nhds_one _ hV
   rw [emb_toM.isInducing.nhds_eq_comap, mem_comap] at hVi
@@ -201,10 +206,6 @@ theorem smooth_of_commutant_stable {H : Type} [NormedAddCommGroup H] [InnerProdu
   simp only [w, _root_.mul_inv_rev, inv_inv, toM_mul]
 
 section ClosedNeeded
-
-def gl1 : Set (Matrix (Fin 1) (Fin 1) ℂ) := {g | g 0 0 ≠ 0}
-
-def phase (g : Matrix (Fin 1) (Fin 1) ℂ) : ℂ →L[ℂ] ℂ := (g 0 0 / (‖g 0 0‖ : ℂ)) • (1 : ℂ →L[ℂ] ℂ)
 
 end ClosedNeeded
 

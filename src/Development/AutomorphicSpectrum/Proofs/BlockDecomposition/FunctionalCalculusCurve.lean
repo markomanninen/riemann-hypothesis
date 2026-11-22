@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.Friedrichs
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.Friedrichs
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ namespace GlobalTheory.CompanionTheory.WaveCurve
 
 open PositivityTheory.RgBcC.Fc
 
-local notation "sg(" y ")" => (((y : ℝ) : ℂ) ^ (1 / 2 : ℂ))
+local notation "sg(" y ")" => ((y : ℂ) ^ (1 / 2 : ℂ))
 
 lemma sg_eq (y : ℝ) :
     sg(y) = (Real.sqrt (max y 0) : ℂ) + (Real.sqrt (max (-y) 0) : ℂ) * Complex.I := by
@@ -159,7 +163,7 @@ lemma wv_decay (c : ℝ) {N j : ℕ} (hj : j + 1 ≤ 4 * N) (t y : ℝ) :
 
 lemma wv_continuous (c : ℝ) (N j : ℕ) (t : ℝ) : Continuous (wv c N j t) := by
   have hW : Continuous fun y : ℝ => cut c y * ((1 + y ^ 2) ^ N)⁻¹ := by
-    refine (cut_continuous c).mul (Continuous.inv₀ (by fun_prop) fun y => ?_)
+    refine (cut_continuous c).mul (Continuous.fun_inv₀ (by fun_prop) fun y => ?_)
     positivity
   have hs := sg_continuous
   have hH : Continuous fun y : ℝ =>
@@ -267,7 +271,7 @@ lemma wv_taylor (c : ℝ) {N j : ℕ} (hj : j + 2 ≤ 4 * N) (t h y : ℝ) (hh :
 lemma coe_toC0 {f : ℝ → ℂ} (h1 : Continuous f) (h2 : Tendsto f (cocompact ℝ) (𝓝 0)) :
     ⇑(toC0 f) = f := by
   unfold toC0
-  rw [dif_pos (⟨h1, h2⟩ : Continuous f ∧ Tendsto f (cocompact ℝ) (𝓝 0))]
+  rw [dite_eq_left (⟨h1, h2⟩ : Continuous f ∧ Tendsto f (cocompact ℝ) (𝓝 0))]
   rfl
 
 theorem fcurve : Fcurve := by

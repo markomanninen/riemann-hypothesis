@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.TensFun
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CommInt
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.AdjInt
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.Unimod
-import GroundTheory.AutomorphicForms.CuspidalProjection.OrthogonalProjectionOntoCompSubtypeL
-import GroundTheory.AutomorphicForms.CompactFormulaSums
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TensFun
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CommInt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.AdjInt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.Unimod
+public import GroundTheory.AutomorphicForms.CuspidalProjection.OrthogonalProjectionOntoCompSubtypeL
+public import GroundTheory.AutomorphicForms.CompactFormulaSums
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -33,7 +37,7 @@ private theorem int_add {G H : Type} [Group G] [TopologicalSpace G] [MeasurableS
     (μ : Measure G) [IsFiniteMeasureOnCompacts μ] (f g : CompactlySupportedContinuousMap G ℂ) :
     π.integrated μ (UnitaryRep.ccToL1 μ (f + g)) =
       π.integrated μ (UnitaryRep.ccToL1 μ f) + π.integrated μ (UnitaryRep.ccToL1 μ g) := by
-  rw [UnitaryRep.ccToL1_add, map_add]
+  rw [UnitaryRep.ccToL1_add, map_add (f := _)]
 
 private theorem int_smul {G H : Type} [Group G] [TopologicalSpace G] [MeasurableSpace G] [OpensMeasurableSpace G]
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] (π : UnitaryRep G H)
@@ -53,7 +57,7 @@ private theorem int_commute {G G₁ H : Type} [Group G] [TopologicalSpace G] [Gr
   exact (UnitaryRep.comp_integrated_of_mem_intertwiners _ μ hT f).symm
 
 theorem UpperTheory.ConvolutionTheory.Tf.opAlg :
-    ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (ν : Measure (archGroup K n)) [ν.IsHaarMeasure] (m : Measure (AdelicGLn.FiniteAdelicGL K n)) [m.IsHaarMeasure],
+    ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (ν : Measure (archGroup K n)) [ν.IsHaarMeasure] (m : Measure (AdelicGLn.FiniteAdelicGL K n)) [m.IsHaarMeasure],
       (∀ β β' : TI K n, Oinf μ ν (conv ν β β') = Oinf μ ν β ∘L Oinf μ ν β' ∧ Oinf μ ν (β + β') = Oinf μ ν β + Oinf μ ν β') ∧
       (∀ e e' : TF K n, Ofin μ m (conv m e e') = Ofin μ m e ∘L Ofin μ m e' ∧ Ofin μ m (e + e') = Ofin μ m e + Ofin μ m e') ∧
       (∀ (c : ℂ) (β : TI K n) (e : TF K n), Oinf μ ν (c • β) = c • Oinf μ ν β ∧ Ofin μ m (c • e) = c • Ofin μ m e) ∧
@@ -80,6 +84,6 @@ theorem UpperTheory.ConvolutionTheory.Tf.opAlg :
   · exact (Tf.adjInt _ _ _ m e e' h).1
   · exact norm_int_le _ ν β
   · exact norm_int_le _ m e
-  · exact (Tf.commInt _ _ _ _ (rightRegularRep (rationalGLOne K n) μ) (archP K n) continuous_archP
+  · exact (Tf.commInt _ _ _ _ (rightRegularRep (rationalGLOne (K := K) (n := n)) μ) (archP K n) continuous_archP
       (MultiplicityOne.finProj K n) MultiplicityOne.continuous_finProj ν m β e).2 hpq
   · exact int_commute _ (archP K n) continuous_archP ν _ (MultiplicityOne.finProj K n h) fun a => (hpq a h).symm

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConjTupRefl
-import Development.AbelianVarietyTheory.Definitions.Divisors.GenReads
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsRootNotMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMapOfOfExtends
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.LevelFourierTransformAutAndHomogeneous
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConjTupRefl
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GenReads
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsRootNotMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMapOfOfExtends
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.LevelFourierTransformAutAndHomogeneous
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT Formalism.L2.Pj
 open scoped TensorProduct
@@ -120,7 +124,7 @@ theorem redM_nsmul (PP : Pl D.host.E) {b a : ℕ} {N : Matrix (Fin b) (Fin a) (E
   have h : (m • N) i j ∈ Formalism.L2.Herm.intAf D.host.F D.host.E := nsmul_mem (hN i j) m
   show redM PP (m • N) i j = (m : kP PP) * redM PP N i j
   unfold redM
-  rw [dif_pos h, dif_pos (hN i j), ← nsmul_eq_mul]
+  rw [dite_eq_left h, dite_eq_left (hN i j), ← nsmul_eq_mul]
   exact (resS D.host.F PP).toAddMonoidHom.map_nsmul m ⟨N i j, hN i j⟩
 
 theorem topL_smul {κ : Type} [CommRing κ] {b a : ℕ} (k : ℕ) (c : κ) (y : Matrix (Fin b) (Fin a) κ) :
@@ -158,13 +162,13 @@ theorem map_omegaQ_smul (τ : ℂ ≃+* ℂ) {a b : ℕ} (Q : Finset (Pl D.host.
     · rw [hdet PP h, Units.isUnit_units_mul]
   unfold omegaQ
   by_cases h : ∀ PP ∈ Q, LowZero r (y PP) ∧ IsUnit (topL r (y PP)).det
-  · rw [dif_pos h, dif_pos (hiff.2 h), map_prod, ← Finset.prod_mul_distrib]
+  · rw [dite_eq_left h, dite_eq_left (hiff.2 h), map_prod, ← Finset.prod_mul_distrib]
     refine Finset.prod_congr rfl fun PP _ => ?_
     have e : (hiff.2 h PP.1 PP.2).2.unit = (v PP.1 PP.2 ^ r)⁻¹ * (h PP.1 PP.2).2.unit :=
       Units.ext (by rw [IsUnit.unit_spec, Units.val_mul, IsUnit.unit_spec]; exact hdet PP.1 PP.2)
     rw [map_zpow₀, ← hξ PP.1 PP.2, e, MonoidHom.map_mul, MonoidHom.map_inv, Units.val_mul, Units.val_inv_eq_inv_val,
       _root_.zpow_neg_one, _root_.zpow_neg_one, mul_inv, inv_inv]
-  · rw [dif_neg h, dif_neg (mt hiff.1 h), map_zero, mul_zero]
+  · rw [dite_eq_right h, dite_eq_right (mt hiff.1 h), map_zero, mul_zero]
 
 theorem exists_idele_at {PP : Pl D.host.E} {e : AE D} (he : Formalism.L2.NTheta.IsIdemAt e PP) (v : (kP PP)ˣ) :
     ∃ s : (AE D)ˣ, ∀ (χ : (AE D)ˣ →* Circle) (χH : Formalism.L2.Host.HChar D.host.E) (ξ : (kP PP)ˣ →* ℂˣ),
@@ -199,8 +203,8 @@ section Dat
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T0 : Type} {A : FamIn D.what₂.LL G Pl0 T0 D.R.m}
   {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem datum_conj (R : RealDat D A Ks) (hL : R.toLevCh.Is A.μ0) (i : Fin D.R.m) {K' : Type} [Field K'] (σ' : K' →+* ℂ)
     (τ : ℂ ≃+* ℂ) {t t' : T0} (ht : ConjTup R τ t t') {La : Type} [AddCommGroup La] [Module (𝓞 D.host.E) La]
     (ι : La →ₗ[𝓞 D.host.E] (Fin (Wc D i).rank → D.host.E)) (N : Submodule (𝓞 D.host.E) La)
@@ -238,9 +242,9 @@ theorem datum_conj (R : RealDat D A Ks) (hL : R.toLevCh.Is A.μ0) (i : Fin D.R.m
 
 end Dat
 
+
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem conj_coeff : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T0 : Type) (A : FamIn D.what₂.LL G Pl0 T0 D.R.m) (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (R : RealDat D A T.Q.c.F) (F : Face D A) (κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1)) (v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec), GlobalTheory.Hk3.Core R F → Nonempty (FWTie T R κ v₀) → ∀ (i : Fin D.R.m) (Tp : Type) (tup : Tp → T0) (M : OMDat T.toCore R i Tp tup), M.Pins (κ i) (v₀ i (sg0 D A)) (iotaW T i) (T.x₀ ((i : ℕ) + 1) M.s0) → ∀ (τ : ℂ ≃+* ℂ) (ta : M.c'.F ≃+* M.c'.F), (∀ a : M.c'.F, ((ta a : M.c'.F) : ℂ) = τ (a : ℂ)) → FixBase T R i τ → ∀ (a b : Tp) (e : M.Cl' a ≃ M.Cl' b), SameCover M a b e → ConjTup R τ (tup a) (tup b) → ∃ (u : M.c'.F) (s : (AE D)ˣ) (w' : M.Cl' a → (Fin (Vc D i).rank → LevQ (T.Q.Dw ((i : ℕ) + 1)) (M.dδ a).l₂) → M.c'.F), (u : ℂ) = ((R.xi (tup b) s : Circle) : ℂ) ∧ (∀ k, HEq (w' k) (M.w b (e k))) ∧ ∀ k q, ta (M.w a k q) = u * w' k q := by
   intro D G _ _ Pl0 T0 A T _ R F κ v₀ hcore _ i Tp tup M hP τ ta hta hfix a b e hsame hconj
   obtain ⟨⟨cx, hcx⟩, -⟩ := hsame

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbUnitary
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.Published GlobalTheory.QSA GlobalTheory.PlaneSU
 open scoped TensorProduct Quaternion
 
@@ -31,7 +36,7 @@ theorem emb_qm_continuous : ∀ (F E : Type) [Field F] [NumberField F] [Field E]
   apply continuous_matrix
   intro i j
   simp only [emb, Matrix.add_apply, Matrix.mul_apply, Matrix.sub_apply]
-  refine continuous_const.add (continuous_finset_sum _ fun l _ => (hR _).comp
-    (continuous_finset_sum _ fun k _ => (hL _).comp ((hq k l).sub continuous_const)))
+  refine continuous_const.add (continuous_finsetSum _ fun l _ => (hR _).comp
+    (continuous_finsetSum _ fun k _ => (hL _).comp ((hq k l).sub continuous_const)))
 
 end GlobalTheory

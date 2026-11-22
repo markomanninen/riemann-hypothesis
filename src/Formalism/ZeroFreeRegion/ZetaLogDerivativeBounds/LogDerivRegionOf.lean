@@ -1,5 +1,9 @@
-import Formalism.ZeroFreeRegion.SmallHeightLogDeriv
-import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.LdrMid
+module
+
+public import Formalism.ZeroFreeRegion.SmallHeightLogDeriv
+public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.LdrMid
+
+@[expose] public section
 
 open Complex
 

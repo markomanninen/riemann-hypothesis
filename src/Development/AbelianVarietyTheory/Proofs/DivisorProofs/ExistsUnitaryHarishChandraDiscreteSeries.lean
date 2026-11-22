@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DerivedAdjoint
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DerivedAdjoint
+
+@[expose] public section
+
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible GlobalTheory.FockAlg MvPolynomial
 
 noncomputable section
@@ -11,9 +16,9 @@ namespace GlobalTheory.DiscreteSeriesUnitary
 def unitaryModule {p q : ℕ} {T : GrpData p q} (D : DSRep T) : UGKMod p q where
   M := D.HK
   ip := LinearMap.mk₂'ₛₗ (starRingEnd ℂ) (RingHom.id ℂ) (fun x y => inner ℂ (D.ι x) (D.ι y))
-    (fun x y z => by simp only [map_add, inner_add_left])
+    (fun x y z => by simp only [map_add (f := _), inner_add_left])
     (fun c x y => by simp only [map_smul, inner_smul_left, smul_eq_mul])
-    (fun x y z => by simp only [map_add, inner_add_right])
+    (fun x y z => by simp only [map_add (f := _), inner_add_right])
     (fun c x y => by simp only [map_smul, inner_smul_right, smul_eq_mul, RingHom.id_apply])
   herm x y := inner_conj_symm (D.ι y) (D.ι x)
   pos x hx := by

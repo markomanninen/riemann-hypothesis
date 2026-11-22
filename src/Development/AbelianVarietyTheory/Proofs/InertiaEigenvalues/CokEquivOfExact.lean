@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Small2
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Small2
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.BlochKatoReduction Formalism.MainNotions.BlochKatoReduction.Gen GlobalTheory.TwSys GlobalTheory.SelFun GlobalTheory.Published GlobalTheory.ResSel GlobalTheory.StepTwo
 
@@ -26,7 +30,8 @@ theorem mk_eq_sum (Φ : Matrix (Fin a) (Fin a) R) (y : Fin a → R) :
     ext j
     simp [Finset.sum_apply, Pi.single_apply]
   conv_lhs => rw [hy]
-  simp only [map_sum, map_smul, univ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, univ]
 
 theorem univ_ker (Φ : Matrix (Fin a) (Fin a) R) : matAct Φ (univ Φ) = 0 := by
   funext i
@@ -46,7 +51,8 @@ theorem map_ker {B B' : Type} [AddCommGroup B] [Module R B] [AddCommGroup B'] [M
   rw [matAct_apply', Pi.zero_apply] at h
   rw [matAct_apply', Pi.zero_apply]
   calc ∑ j, Φ i j • f (u j) = f (∑ j, Φ i j • u j) := by
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         simp only [map_smul]
     _ = 0 := by rw [h, map_zero]
 
@@ -82,7 +88,8 @@ theorem hom_ext {B : Type} [AddCommGroup B] [Module R B]
     (h : ∀ c, f (univ Φ c) = g (univ Φ c)) : f = g := by
   apply Submodule.linearMap_qext
   refine LinearMap.ext fun y => ?_
-  simp only [LinearMap.comp_apply, mk_eq_sum, map_sum, map_smul, h]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.comp_apply, mk_eq_sum, map_sum, map_smul, h]
 
 end
 

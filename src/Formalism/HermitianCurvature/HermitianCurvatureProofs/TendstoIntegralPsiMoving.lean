@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementG
-import Mathlib.Analysis.Fourier.RiemannLebesgueLemma
+module
+
+public import Formalism.HermitianCurvature.StatementG
+public import Mathlib.Analysis.Fourier.RiemannLebesgueLemma
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBK
 

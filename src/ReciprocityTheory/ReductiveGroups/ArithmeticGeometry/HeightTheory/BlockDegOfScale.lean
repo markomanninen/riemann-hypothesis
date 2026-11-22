@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ScaleMultiHomogeneous
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ScaleMultiHomogeneous
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -10,7 +14,7 @@ variable {K : Type} [Field K] {D N : ℕ}
 
 theorem coeff_scaleEquiv {σ : Type*} [Fintype σ] (P : σ → Prop) [DecidablePred P] (u : Kˣ)
     (F : MvPolynomial σ K) (s : σ →₀ ℕ) :
-    coeff s (scaleEquiv P u F) = (u : K) ^ (∑ v ∈ Finset.univ.filter P, s v) * coeff s F := by
+    AddMonoidAlgebra.coeff (scaleEquiv P u F) s = (u : K) ^ (∑ v ∈ Finset.univ.filter P, s v) * AddMonoidAlgebra.coeff F s := by
 
   have hmon : ∀ (t : σ →₀ ℕ) (a : K), scaleEquiv P u (monomial t a) =
       monomial t ((u : K) ^ (∑ v ∈ Finset.univ.filter P, t v) * a) := by
@@ -31,7 +35,7 @@ theorem coeff_scaleEquiv {σ : Type*} [Fintype σ] (P : σ → Prop) [DecidableP
     · subst h
       rfl
     · simp
-  · rw [map_add, coeff_add, coeff_add, hp, hq, mul_add]
+  · rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, mul_add]
 
 theorem sum_filter_block (b : Fin (D + 1)) (s : TVar D N →₀ ℕ) :
     (∑ v ∈ Finset.univ.filter (fun v : TVar D N => v.1 = b), s v) = ∑ j, s (b, j) := by
@@ -44,9 +48,9 @@ theorem block_deg_of_scale [CharZero K] (b : Fin (D + 1)) (a : ℕ) (F : MvPolyn
     ∀ s ∈ F.support, ∑ j, s (b, j) = a := by
   intro s hs
   have h2 : (2 : K) ≠ 0 := two_ne_zero
-  have h := congrArg (coeff s) (hF (Units.mk0 2 h2))
+  have h := congrArg (AddMonoidAlgebra.coeff · s) (hF (Units.mk0 2 h2))
   rw [coeff_scaleEquiv, coeff_C_mul, sum_filter_block] at h
-  have hc : coeff s F ≠ 0 := mem_support_iff.1 hs
+  have hc : AddMonoidAlgebra.coeff F s ≠ 0 := mem_support_iff.1 hs
   have h' := mul_right_cancel₀ hc h
   simp only [Units.val_mk0] at h'
   have h'' : ((2 ^ (∑ j, s (b, j)) : ℕ) : K) = ((2 ^ a : ℕ) : K) := by

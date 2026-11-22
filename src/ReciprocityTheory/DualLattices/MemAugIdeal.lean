@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.CotangentSurjective
+module
+
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,7 @@ def qPi (q d : ℕ) : LieDualModP q R d ≃ₗ[R] ((i : Fin d) → R ⧸ Ideal.s
         rw [hπ, Pi.zero_apply, Submodule.Quotient.mk_eq_zero, Pi.smul_apply, smul_eq_mul]
         exact Ideal.mul_mem_right _ _ hr
       · intro x y hx hy
-        rw [map_add, hx, hy, add_zero]
+        rw [map_add (f := _), hx, hy, add_zero]
     · intro hx
       have : ∀ i, ∃ s, s * (q : R) = x i := fun i => by
         have := congrFun hx i

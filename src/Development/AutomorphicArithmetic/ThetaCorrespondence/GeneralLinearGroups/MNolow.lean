@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.CasselmanSuffTemp
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BernsteinUnitaryProductIrreducible
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.TotallyDisjointProductIrreducibleOfPolynomialRin
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LanglandsClassificationCuspidalSupport
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CentralExponentBoundOver
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.MFront
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.MBound
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.Imports
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.TScalarFull
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.CasselmanSuffTemp
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BernsteinUnitaryProductIrreducible
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.TotallyDisjointProductIrreducibleOfPolynomialRin
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LanglandsClassificationCuspidalSupport
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CentralExponentBoundOver
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.MFront
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.MBound
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.Imports
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.TScalarFull
+
+@[expose] public section
 
 open Filter Topology GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult UpperTheory.Lit.Cas
 
@@ -70,11 +74,11 @@ private theorem scalarBy_nu (χ : kˣ →* ℂˣ) (hχ : IsSmoothChar χ) (z : k
 end SlopeTestRemainingChoices
 
 theorem UpperTheory.Lit.Mix.nolow :
-    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → GlobalTheory.Published.ZelevinskyPolynomialRing → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (r t : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V] (σ : Representation ℂ (GL (Fin r) k) V) (A : Multiset (IrrGL k)) (χ : kˣ →* ℂˣ) (hχ : IsSmoothChar χ), r < t → HasSupport σ A → IsUnitarisable σ → IsUnitaryChar χ → (IrrGL.ofChar χ hχ).nu (-((t : ℂ) - 1) / 2) ∉ A := by
+    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → GlobalTheory.Published.ZelevinskyPolynomialRing → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (r t : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V] (σ : Representation ℂ (GL (Fin r) k) V) (A : Multiset (IrrGL (k := k))) (χ : kˣ →* ℂˣ) (hχ : IsSmoothChar χ), r < t → HasSupport σ A → IsUnitarisable σ → IsUnitaryChar χ → (IrrGL.ofChar χ hχ).nu (-((t : ℂ) - 1) / 2) ∉ A := by
   intro hG hBZ hZ k _ _ _ _ r t V _ _ σ A χ hχ hrt hA hU hχu hmem
   classical
   set c0 : ℝ := -((t : ℝ) - 1) / 2 with hc0
-  let B : ℝ → IrrGL k := fun e => (IrrGL.ofChar χ hχ).nu (e : ℂ)
+  let B : ℝ → IrrGL (k := k) := fun e => (IrrGL.ofChar χ hχ).nu (e : ℂ)
   have hB_inj : ∀ {e e' : ℝ}, B e = B e' → e = e' := fun h => (IrrGL.nu_ofChar_inj χ hχ).mp h
   have hmem' : B c0 ∈ A := by
     have e : ((c0 : ℝ) : ℂ) = -((t : ℂ) - 1) / 2 := by
@@ -123,11 +127,11 @@ theorem UpperTheory.Lit.Mix.nolow :
     congr 1
     ext a
     simp
-  let A₀ : Multiset (IrrGL k) := S.val.map x
-  let A₁ : Multiset (IrrGL k) := Sᶜ.val.map x
+  let A₀ : Multiset (IrrGL (k := k)) := S.val.map x
+  let A₁ : Multiset (IrrGL (k := k)) := Sᶜ.val.map x
   have hA01 : A₀ + A₁ = A := by
     show S.val.map x + Sᶜ.val.map x = A
-    rw [← hxA, ← e0, ← e1, ← Multiset.map_add, Multiset.filter_add_not]
+    rw [← hxA, ← e0, ← e1, ← Multiset.map_add (f := _), Multiset.filter_add_not]
   have hA₀sum : (A₀.map Sigma.fst).sum = S.card := by
     simp only [A₀, Multiset.map_map]
     rw [← Finset.sum_eq_multiset_sum]
@@ -163,7 +167,7 @@ theorem UpperTheory.Lit.Mix.nolow :
     UpperTheory.Lit.Mix.front hG hBZ hZ k S.card n V σ A₀ A₁ (by rw [hA01]; exact hA) hA₀sum hsep'
   obtain ⟨z, hzt, hz1⟩ := exists_small k
   have hzpos := nabs_pos' k z
-  let E : IrrGL k → ℝ := fun y => if hy : ∃ e : ℝ, y = B e then hy.choose else 0
+  let E : IrrGL (k := k) → ℝ := fun y => if hy : ∃ e : ℝ, y = B e then hy.choose else 0
   have hE : ∀ e, E (B e) = e := by
     intro e
     have hy : ∃ e' : ℝ, B e = B e' := ⟨e, rfl⟩

@@ -1,4 +1,8 @@
-import Formalism.MahlerMeasure.LevelSum
+module
+
+public import Formalism.MahlerMeasure.LevelSum
+
+@[expose] public section
 
 namespace Formalism.GM
 

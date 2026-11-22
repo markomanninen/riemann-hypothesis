@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetVecEq
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.WeilOperatorRationalTranslateMemThetaFunctions
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIdeleGenerator
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsHalfIdem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetVecEq
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.WeilOperatorRationalTranslateMemThetaFunctions
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIdeleGenerator
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsHalfIdem
+
+@[expose] public section
+
 open scoped Pointwise
 open Formalism.BasicNotions Formalism.IndefR.Links IsDedekindDomain NumberField
 open Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3
@@ -152,7 +157,8 @@ theorem mem_skew_iff {𝔪 : Ideal (𝓞 D.host.E)} (h𝔪 : 𝔪 ≠ ⊥) {y : 
       rw [e']; exact y1 b' hb'
     have e : sgA D (y : AE D) * ((y⁻¹ : (AE D)ˣ) : AE D) * inc D x =
         ∑ i, sgA D (w i) * (((y⁻¹ : (AE D)ˣ) : AE D) * inc D (x * D.host.conj (b i : D.host.E))) := by
-      rw [hy, map_sum, Finset.sum_mul, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hy, map_sum, Finset.sum_mul, Finset.sum_mul]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_mul, GlobalTheory.NormSum.PtsMem.sgA_inc, map_mul]; ring
     rw [e]
@@ -198,8 +204,8 @@ theorem move_iff {R : Type*} [CommRing R] (S : Subring R) {e y yi Y Yi T : R} (h
 theorem zeroAt_zero' (D : D7) (q : ℕ) : ZeroAt D q 0 :=
   fun _ => ⟨1, one_pos, Nat.coprime_one_left q, 0, zero_mem _, by simp⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_skew_move : ∀ (D : D7) (𝔪 : Ideal (𝓞 D.host.E)), 𝔪 ≠ ⊥ → IsCoprime 𝔪 (D.host.conj • 𝔪) → ∀ d : ℕ, ∃ (g' : GA D d) (x' : (AE D)ˣ), SuppSplit D (g' : GL (Fin d) (AE D)) ∧ Moves D (g' : GL (Fin d) (AE D)) (skewLat D 𝔪 d) ∧ (∀ q : ℕ, q.Prime → InertQ D q → ZeroAt D q ((x' : AE D) - 1)) ∧ x' = Matrix.GeneralLinearGroup.det (g' : GL (Fin d) (AE D)) * sgU D x' := by
   intro D 𝔪 h𝔪 hcop d
   obtain ⟨y, f, y1, ⟨k, b, w, hb, hw, hy⟩, hf, hff, hfy, hq⟩ := exists_gen_idem 𝔪 h𝔪 hcop
@@ -243,9 +249,9 @@ theorem exists_skew_move : ∀ (D : D7) (𝔪 : Ideal (𝓞 D.host.E)), 𝔪 ≠
     ring
   obtain ⟨v, hv_def⟩ : ∃ v : (AE D)ˣ, v = u * (sgU D u)⁻¹ := ⟨_, rfl⟩
   have hv : (v : AE D) = ((1 - e) * (y : AE D) + e) * ((1 - e) * sgA D ((y⁻¹ : (AE D)ˣ) : AE D) + e) := by
-    rw [hv_def, Units.val_mul, hsi, hu_val, hu_inv, map_add, map_mul, map_sub, map_one, hse]
+    rw [hv_def, Units.val_mul, hsi, hu_val, hu_inv, map_add (f := _), map_mul, map_sub, map_one, hse]
   have hvi : ((v⁻¹ : (AE D)ˣ) : AE D) = ((1 - e) * ((y⁻¹ : (AE D)ˣ) : AE D) + e) * ((1 - e) * sgA D (y : AE D) + e) := by
-    rw [hv_def, mul_inv_rev, inv_inv, Units.val_mul, hsv, hu_val, hu_inv, map_add, map_mul, map_sub, map_one, hse, mul_comm]
+    rw [hv_def, mul_inv_rev, inv_inv, Units.val_mul, hsv, hu_val, hu_inv, map_add (f := _), map_mul, map_sub, map_one, hse, mul_comm]
   have hv2 : ((1 - e) * sgA D (y : AE D) + e) * ((1 - e) * sgA D ((y⁻¹ : (AE D)ˣ) : AE D) + e) = 1 := by
     linear_combination (1 - e) ^ 2 * hY + (2 - sgA D (y : AE D) - sgA D ((y⁻¹ : (AE D)ˣ) : AE D)) * he
   have hss : sgU D (sgU D u) = u := Units.ext (VacMove.sgA_sgA D _)

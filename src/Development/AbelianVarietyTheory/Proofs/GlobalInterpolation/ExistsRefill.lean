@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
-import Formalism.LocalToGlobal.GlobalTheory.IsResidueClassZero
-import Formalism.SharpRestriction.GrowthBounds.SmallOrderPrimes
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DisjointExceptional
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ThinScalesIffHostBound
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Formalism.LocalToGlobal.GlobalTheory.IsResidueClassZero
+public import Formalism.SharpRestriction.GrowthBounds.SmallOrderPrimes
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DisjointExceptional
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ThinScalesIffHostBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem bsH_step {φ : Formalism.HC.Frame} (h t : φ.A) : Arith.bsH h (t + h) = 
   have hex : ∃ v : ℕ, ∃ i : ℕ, φ.ofNat v + i • h = t := ⟨t.val, 0, by simp⟩
   have hex' : ∃ v : ℕ, ∃ i : ℕ, φ.ofNat v + i • h = t + h := ⟨(t + h).val, 0, by simp⟩
   unfold Arith.bsH
-  rw [dif_pos hex, dif_pos hex']
+  rw [dite_eq_left hex, dite_eq_left hex']
   congr 1
   exact Nat.find_congr' (fun {v} => hiff v)
 
@@ -116,8 +120,8 @@ theorem thick_iff (D : D7) (z : Bool × HH D) : plGG D z ∈ D.host.thickPlaces 
 
 variable {D : D7}
 
-open Classical in
 
+open Classical in
 def offC (L : SizeData₂ D) (j : ℕ) (z : Bool × HH D) : ℝ :=
   if j ∈ SizeData₂.lifts D then wPl D j z - (if z.1 = false ∧ z.2 ∈ D.host.TT then (bL L z.2 : ℝ) else 0)
   else if IsTopPl D z then L.sc.b' / L.sc.x else if IsThickPl D z then L.sc.b else L.sc.w'' D.R.n
@@ -132,7 +136,7 @@ theorem offC_top (L : SizeData₂ D) (j : ℕ) (z : Bool × HH D) (h : IsTopPl D
     obtain ⟨h1, h2⟩ := Finset.mem_Icc.1 hj
     have h3 := L.win_top j h1 h2 (tauPl D z) ⟨z.2, h.2⟩ (by rw [eTau_tauPl]; simp [plGG, h.1])
     unfold wPl bL
-    rw [dif_pos h.2]
+    rw [dite_eq_left h.2]
     constructor <;> linarith [h3.1, h3.2]
   · rw [if_neg hj, if_pos h]
     constructor <;> linarith
@@ -212,7 +216,7 @@ theorem one_le_fill {L : SizeData₂ D} (X : Inst D L) (hw : 1 ≤ L.sc.w'' D.R.
   · have h' : z.1 = false ∧ z.2 ∈ D.host.TT := h1
     rw [if_pos h']
     unfold bL
-    rw [dif_pos h1.2]
+    rw [dite_eq_left h1.2]
     linarith [(X.off_top j z h1).1, L.bT_ge ⟨z.2, h1.2⟩]
   · have h' : ¬ (z.1 = false ∧ z.2 ∈ D.host.TT) := h1
     rw [if_neg h', zero_add]
@@ -233,7 +237,7 @@ theorem tau_eq_zero_of_not_candidate {L : SizeData₂ D} (X : Inst D L) (K : Con
 theorem ioP_eq_zero_of_not_cand {L : SizeData₂ D} (X : Inst D L) (K : Consts) (a b : HH D → ℤ) (p : ℕ) (h : ¬ Cand D L K p) :
     ioP X K a b p = 0 := by
   unfold ioP
-  rw [dif_neg (by rw [VV_empty X K a b p h]; simp)]
+  rw [dite_eq_right (by rw [VV_empty X K a b p h]; simp)]
 
 theorem TTP_subset {L : SizeData₂ D} (X : Inst D L) (K : Consts) (a b : HH D → ℤ) (p : ℕ) :
     TTP X K a b p ⊆ D.host.TT := by
@@ -267,8 +271,8 @@ theorem exists_big (L : SizeData₂ D) (hf : {w | D.what₂.muAt w ≠ D.what₂
     have := Nat.le_of_dvd (hG u) h
     omega
 
-open Classical in
 
+open Classical in
 def refill (L : SizeData₂ D) (X : Inst D L) (K : Consts) (Cr : ℝ) (EX : ErrX D) (c : ErrC) (S : Finset D.what₂.places.Pl)
     (hS : Big L S) (hA : HostArith D.host) (hw : 1 ≤ L.sc.w'' D.R.n) (hX : L.sc.X' ≤ L.sc.X'' D.R.n)
     (hu : ∀ w, D.what₂.muAt w = D.what₂.mu0 → ∀ j ∈ SizeData₂.lifts D, Fval L j w = 0) : SizeData₂ D :=

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ProofRowTieValsCg
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ProofRowTieValsCg
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,12 +111,8 @@ theorem EK_map {φ : Pt C 1 dd} (hφ : IsEndo Y φ) {lam : WVO (IS I0) → C}
   rw [Pi.mul_apply, mul_right_comm, ← h, Finset.sum_mul]
   exact Finset.sum_congr rfl fun j _ => by ring
 
-theorem isEndo_act (x : O) : IsEndo Y (Y.B.A.act x) where
-  int := Y.intAct x
-  cc := Y.B.A.const x
-  add := by
-    simp only [VP.coordinateChange_comp1_intertwines_action, VP.addOf_eq']
-    exact VP.actAt_addAt Y x (VP.cc_pt 0) (VP.cc_pt 1)
+theorem isEndo_act (x : O) : IsEndo Y (Y.B.A.act x) :=
+  ⟨Y.intAct x, Y.B.A.const x, Y.B.A.hom x⟩
 
 theorem EK_act (x : O) (κ : WVO (IS I0) → C) : VP.actAt Y x (EK Y p κ) = EK Y p (lamAct Y p x * κ) :=
   EK_map Y p (isEndo_act Y x) (fun w => (p w.1).e_eig w.2.2 x) κ
@@ -328,7 +328,8 @@ theorem toAllS_expPtS (o : Orb) (g col : Fin 2) (i : Fin dd) :
   have h0 : ∀ x : Fin 2 × Fin dd, MvPowerSeries.constantCoeff (∑ c : I0 o, (Y.rawSelf (p o)).u g c x •
       (MvPowerSeries.X (⟨g, c⟩ : WV (IS I0 o)) : MvPowerSeries (WV (IS I0 o)) C)) = 0 := by
     intro m
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero fun c _ => ?_
     rw [MvPowerSeries.smul_eq_C_mul, map_mul, MvPowerSeries.constantCoeff_X, mul_zero]
   show MvPowerSeries.subst _ (MvPowerSeries.subst _ (MvPowerSeries.subst

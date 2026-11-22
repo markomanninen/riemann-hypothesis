@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PsiHolomorphicNearPositiveMatricesAtOneStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PsiComplexifiedKEquivarianceStatement
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IndefiniteUnitaryPreservesForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PsiHolomorphicNearPositiveMatricesAtOneStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PsiComplexifiedKEquivarianceStatement
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IndefiniteUnitaryPreservesForm
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec Filter Topology
 open scoped InnerProductSpace ComplexOrder
@@ -73,7 +77,8 @@ theorem differentiableAt_of_coef {E W : Type*} [NormedAddCommGroup E] [NormedSpa
     funext y
     ext v
     conv_lhs => rw [← b.sum_repr' v, ← b.sum_repr' (f y _)]
-    simp only [map_sum, map_smul, inner_sum, inner_smul_right, _root_.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, inner_sum, inner_smul_right, _root_.sum_apply,
       _root_.smul_apply, ContinuousLinearMap.smulRight_apply, innerSL_apply_apply,
       Finset.sum_smul, smul_smul]
     simp only [mul_comm]

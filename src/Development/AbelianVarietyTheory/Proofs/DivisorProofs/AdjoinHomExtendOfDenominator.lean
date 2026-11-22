@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyAlgHomAdjoin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyAlgHomAdjoin
+
+@[expose] public section
 
 namespace GlobalTheory
 

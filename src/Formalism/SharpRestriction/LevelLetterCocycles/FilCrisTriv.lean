@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.StrictSesLetter
-import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.StrictSesLetter
+public import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem crisMap_φVB (z : V ⊗[Qp] B) :
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul v c => simp [crisMap, φVB]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem crisMap_φVB_pow (s : ℕ) (z : V ⊗[Qp] B) :
     crisMap B f (((φVB PD (LL := LL) (V := V)) ^ s) z) =
@@ -44,7 +48,7 @@ theorem act_φVB (g : G) (z : V ⊗[Qp] B) :
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul v c => simp [actVB, φVB, PD.φ_comm]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem φVB_Dcris {z : V ⊗[Qp] B} (hz : z ∈ Dcris PD ρ) : φVB PD (LL := LL) (V := V) z ∈ Dcris PD ρ := by
   simp only [Dcris, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply, LinearMap.id_apply,
@@ -65,7 +69,7 @@ theorem act_mulVB (g : G) (c : K₀) (z : V ⊗[Qp] B) :
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul v w => simp [actVB, mulVB]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem mulVB_Dcris (c : K₀) {z : V ⊗[Qp] B} (hz : z ∈ Dcris PD ρ) :
     mulVB (LL := LL) (V := V) (B := B) c z ∈ Dcris PD ρ := by
@@ -74,13 +78,6 @@ theorem mulVB_Dcris (c : K₀) {z : V ⊗[Qp] B} (hz : z ∈ Dcris PD ρ) :
   intro g
   rw [act_mulVB, hz g]
 
-theorem act_ιV (g : G) (z : V ⊗[Qp] B) :
-    actVdR PD ρ g (ιV PD (LL := LL) (V := V) z) = ιV PD (LL := LL) (V := V) (actVB PD ρ g z) := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
-  | tmul v c => simp [actVdR, ιV, actVB, PD.ι_comm]
-  | add x y hx hy => simp only [map_add, hx, hy]
-
 theorem coord_ιV {ι₀ : Type} (b : Module.Basis ι₀ Qp V) (i : ι₀) (z : V ⊗[Qp] B) :
     Formalism.MainNotions.LiftingTheory.lone_coord b i BdR (ιV PD (LL := LL) (V := V) z) = PD.ι (Formalism.MainNotions.LiftingTheory.lone_coord b i B z) := by
   induction z using TensorProduct.induction_on with
@@ -88,7 +85,7 @@ theorem coord_ιV {ι₀ : Type} (b : Module.Basis ι₀ Qp V) (i : ι₀) (z : 
   | tmul v c =>
     simp [Formalism.MainNotions.LiftingTheory.lone_coord, ιV, Algebra.smul_def, IsScalarTower.algebraMap_apply Qp K₀ B,
       IsScalarTower.algebraMap_apply Qp K₀ BdR]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 private theorem tensor_eq_sum_lemma {n : ℕ} (b : Module.Basis (Fin n) Qp V) (C : Type) [AddCommGroup C]
     [Module Qp C] (z : V ⊗[Qp] C) :
@@ -104,7 +101,7 @@ private theorem tensor_eq_sum_lemma {n : ℕ} (b : Module.Basis (Fin n) Qp V) (C
       simp [Formalism.MainNotions.LiftingTheory.lone_coord]
     rw [e, Module.Basis.sum_repr]
   | add x y hx hy =>
-    simp only [map_add, TensorProduct.tmul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib]
     exact congrArg₂ (· + ·) hx hy
 
 private theorem coord_act_lemma_2 (hρ : ∀ g x, ρ g x = x) {n : ℕ} (b : Module.Basis (Fin n) Qp V) (i : Fin n)
@@ -114,7 +111,7 @@ private theorem coord_act_lemma_2 (hρ : ∀ g x, ρ g x = x) {n : ℕ} (b : Mod
   | zero => simp
   | tmul v c =>
     simp [Formalism.MainNotions.LiftingTheory.lone_coord, actVB, hρ, Algebra.smul_def, IsScalarTower.algebraMap_apply Qp K₀ B]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 private theorem coord_map_lemma_3 {n : ℕ} (b : Module.Basis (Fin n) Qp V) (i : Fin n) {C D : Type}
     [AddCommGroup C] [Module Qp C] [AddCommGroup D] [Module Qp D] (g : C →ₗ[Qp] D) (w : V ⊗[Qp] C) :
@@ -123,7 +120,7 @@ private theorem coord_map_lemma_3 {n : ℕ} (b : Module.Basis (Fin n) Qp V) (i :
   induction w using TensorProduct.induction_on with
   | zero => simp
   | tmul v c => simp [Formalism.MainNotions.LiftingTheory.lone_coord]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 private theorem fil_le_lemma_4 (a : ℤ) (k : ℕ) : PD.Fil (a + (k : ℤ)) ≤ PD.Fil a := by
   induction k with
@@ -217,7 +214,7 @@ private theorem crisMap_rT_lemma_9 {V V' : Type} [AddCommGroup V] [Module LL V] 
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v c => simp [crisMap]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 private theorem crisMap_inj_lemma_10 {V V' : Type} [AddCommGroup V] [Module LL V] [Module Qp V] [IsScalarTower Qp LL V] [AddCommGroup V'] [Module LL V'] [Module Qp V'] [IsScalarTower Qp LL V'] (C : Type) [CommRing C] [Algebra Qp C]
     (f : V →ₗ[LL] V') (hf : Function.Injective f) : Function.Injective (crisMap (Qp := Qp) C f) := by
@@ -244,7 +241,7 @@ private theorem crisMap_act_lemma_12 {V V' : Type} [AddCommGroup V] [Module LL V
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul v c => simp [crisMap, actVB, hf]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 private theorem algmap_lT_lemma_15 {U : Type} [AddCommGroup U] [Module LL U] [Module Qp U] [IsScalarTower Qp LL U] {C D : Type} [AddCommGroup C] [Module Qp C]
     [AddCommGroup D] [Module Qp D] (g : C →ₗ[Qp] D) (w : U ⊗[Qp] C) :
@@ -252,7 +249,7 @@ private theorem algmap_lT_lemma_15 {U : Type} [AddCommGroup U] [Module LL U] [Mo
   induction w using TensorProduct.induction_on with
   | zero => simp
   | tmul v c => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 private theorem filV_iff_lemma_13 {U : Type} [AddCommGroup U] [Module LL U] [Module Qp U] [IsScalarTower Qp LL U] (a : ℤ) (y : U ⊗[Qp] BdR) :
     y ∈ FilV PD (LL := LL) (V := U) a ↔ LinearMap.lTensor U ((PD.Fil a).restrictScalars Qp).mkQ y = 0 := by
@@ -268,7 +265,7 @@ private theorem comm_q_lemma_21 {V V' : Type} [AddCommGroup V] [Module LL V] [Mo
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v c => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 private theorem filV_strict_lemma_16 {V V' : Type} [AddCommGroup V] [Module LL V] [Module Qp V] [IsScalarTower Qp LL V] [AddCommGroup V'] [Module LL V'] [Module Qp V'] [IsScalarTower Qp LL V'] (f : V →ₗ[LL] V') (hf : Function.Injective f)
     (a : ℤ) (x : V ⊗[Qp] BdR) (hx : crisMap BdR f x ∈ FilV PD (LL := LL) (V := V') a) :
@@ -294,14 +291,14 @@ private theorem crisMap_iV_lemma_17 {V V' : Type} [AddCommGroup V] [Module LL V]
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul v c => simp [crisMap, ιV]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 private theorem crisMap_mulVB_lemma_19 {V V' : Type} [AddCommGroup V] [Module LL V] [Module Qp V] [IsScalarTower Qp LL V] [AddCommGroup V'] [Module LL V'] [Module Qp V'] [IsScalarTower Qp LL V'] (f : V →ₗ[LL] V') (c : K₀) (z : V ⊗[Qp] B) :
     crisMap B f (mulVB (LL := LL) (V := V) (B := B) c z) = mulVB (LL := LL) (V := V') (B := B) c (crisMap B f z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul v w => simp [crisMap, mulVB]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem fil_pull [FiniteDimensional Qp LL] (W : LocWach PD LL O v n)
     (hK : Function.Bijective (algebraMap K₀ K)) (h9 : DcrisExactStrict PD LL)

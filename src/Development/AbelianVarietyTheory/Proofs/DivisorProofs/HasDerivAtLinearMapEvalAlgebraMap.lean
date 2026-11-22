@@ -1,18 +1,22 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Filter Topology
 
 namespace GlobalTheory
 
-open Polynomial in
 
+open Polynomial in
 theorem hasDerivAt_linearMap_eval_algebraMap {A : Type*} [CommRing A] [Algebra ℝ A]
     (Φ : A →ₗ[ℝ] ℝ) (R : Polynomial A) (τ : ℝ) :
     HasDerivAt (fun t : ℝ => Φ (R.eval (algebraMap ℝ A t)))
       (Φ ((derivative R).eval (algebraMap ℝ A τ))) τ := by
   induction R using Polynomial.induction_on' with
   | add p q hp hq =>
-    simp only [eval_add, map_add, derivative_add]
+    simp only [eval_add, map_add (f := _), derivative_add]
     exact hp.add hq
   | monomial n a =>
     simp only [eval_monomial, derivative_monomial]

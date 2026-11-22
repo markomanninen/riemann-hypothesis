@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormUniq
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OntoFormLawsStatement
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormUniq
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OntoFormLawsStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -48,15 +52,15 @@ theorem lifts_nonempty (V : Z.Opens) : Nonempty (Lifts q V) :=
   ⟨{ v := fun T g => anyLift q T g
      hv := fun T g => anyLift_spec q T g }⟩
 
-open Classical in
 
+open Classical in
 def ext {V V' : Z.Opens} (h : V' ≤ V) (Λ' : Lifts q V') : Lifts q V where
   v T g := if hT : inU q V' T.obj then Λ'.v ⟨T.obj, hT⟩ (rs h g) else anyLift q T g
   hv T g := by
     by_cases hT : inU q V' T.obj
     · rw [dif_pos hT]
       exact (Λ'.hv ⟨T.obj, hT⟩ (rs h g)).trans (ev_res q h T.obj hT T.property g)
-    · rw [dif_neg hT]
+    · rw [dite_eq_right hT]
       exact anyLift_spec q T g
 
 theorem ext_v {V V' : Z.Opens} (h : V' ≤ V) (k : inU q V' ≤ inU q V) (Λ' : Lifts q V')

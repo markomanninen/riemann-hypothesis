@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsBisSide
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerLast
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsBisSide
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerLast
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -278,8 +283,8 @@ end Pairs
 
 end FlagPairJoinLeft
 
-open FlagPairJoinLeft in
 
+open FlagPairJoinLeft in
 theorem FlagPairJoinLeft.proof (hVert : JoinVerticalDivisorLeft.Statement) : FlagPairJoinLeft.Statement := by
   intro O _ _ _ Ω _ _ K _ ι _ x K' _ ι' _ z K₂ _ ι₂ _ w N V _ _ E E' EF E'F hF hF' φ EB E'B hB hB'
   exact ⟨assocFlagPair O x z w hF hF' hB hB' φ fun i => hVert O Ω K ι x K' ι' z K₂ ι₂ w _ _ _ (φ.vert i),

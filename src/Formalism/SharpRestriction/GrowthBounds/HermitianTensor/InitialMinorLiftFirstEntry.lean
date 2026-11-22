@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.DerivativeRepresentation
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.DerivativeRepresentation
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,14 +12,14 @@ open Formalism.MainNotions.G Formalism.MainNotions.flipOneThree Formalism.Counti
 
 theorem qc_midOf_zero (r : ℕ) : midOf (0 : Fin (r + 1 + 1)) = none := by
   unfold midOf
-  rw [dif_neg]
+  rw [dite_eq_right]
   simp
 
 theorem qc_rowA_add {K : Type} [CommRing K] {k n : ℕ} (a : Fin k) (f g : MvPolynomial (Fin k × Fin n) K) (d : ℕ)
     (hf : RowA a f d) (hg : RowA a g d) : RowA a (f + g) d := by
   intro u hu
-  rw [coeff_add] at hu
-  by_cases h : coeff u f = 0
+  rw [MvPolynomial.coeff_add] at hu
+  by_cases h : AddMonoidAlgebra.coeff f u = 0
   · rw [h, zero_add] at hu
     exact hg u hu
   · exact hf u h
@@ -29,7 +33,7 @@ theorem qc_rowA_smul {K : Type} [CommRing K] {k n : ℕ} (a : Fin k) (c : K) (f 
 theorem qc_rowA_zero {K : Type} [CommRing K] {k n : ℕ} (a : Fin k) (d : ℕ) :
     RowA a (0 : MvPolynomial (Fin k × Fin n) K) d := by
   intro u hu
-  exact absurd (coeff_zero u) hu
+  simp at hu
 
 theorem qc_rowA_one {K : Type} [CommRing K] {k n : ℕ} (a : Fin k) : RowA a (1 : MvPolynomial (Fin k × Fin n) K) 0 := by
   classical
@@ -64,7 +68,7 @@ private theorem degA_prod_X_eq_card_first_coord_eq {K : Type} [CommRing K] {k n 
 
 private theorem rowA_of_support_subset {K : Type} [CommRing K] {k n : ℕ} (a : Fin k)
     (f g : MvPolynomial (Fin k × Fin n) K) (d : ℕ)
-    (h : ∀ u, coeff u g ≠ 0 → coeff u f ≠ 0) (hf : RowA a f d) : RowA a g d :=
+    (h : ∀ u, AddMonoidAlgebra.coeff g u ≠ 0 → AddMonoidAlgebra.coeff f u ≠ 0) (hf : RowA a f d) : RowA a g d :=
   fun u hu => hf u (h u hu)
 
 theorem qc_rowA_minor (A : Type) [CommRing A] {r n s : ℕ} (I : Fin s → Fin r) (hs : s ≤ n) (a : Fin r) (d : ℕ)
@@ -100,7 +104,7 @@ theorem qc_resY_zero (A : Type) [CommRing A] (r : ℕ) : resY A r 0 = 0 := by
 
 theorem qc_resY_add (A : Type) [CommRing A] (r : ℕ) (s t : MvPolynomial (Fin (r + 1 + 1) × Fin (r + 1 + 1)) A) :
     resY A r (s + t) = resY A r s + resY A r t := by
-  simp only [resY, map_add]
+  simp only [resY, map_add (f := _)]
 
 theorem qc_resY_smul (A : Type) [CommRing A] (r : ℕ) (c : A) (s : MvPolynomial (Fin (r + 1 + 1) × Fin (r + 1 + 1)) A) :
     resY A r (c • s) = c • resY A r s := by
@@ -113,7 +117,8 @@ theorem qc_resY_X_zero (A : Type) [CommRing A] (r : ℕ) (a : Fin (r + 1 + 1)) :
 
 theorem qc_resY_X_mid (A : Type) [CommRing A] (r : ℕ) (a : Fin (r + 1 + 1)) (j : Fin r) :
     resY A r (X (a, midI r j)) = ∑ i : Fin r, X (i, j) * (if a.val = (midI r i).val then 1 else 0) := by
-  simp [resY, subY, midOf_midI, idPoint, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [resY, subY, midOf_midI, idPoint, map_sum]
 
 theorem qc_resY_X_mid_mid (A : Type) [CommRing A] (r : ℕ) (i j : Fin r) :
     resY A r (X (midI r i, midI r j)) = X (i, j) := by
@@ -186,10 +191,10 @@ theorem qc_shapeC_om (r s : ℕ) (hs : s ≤ r) : shapeC 1 (qcOm r s) = qcOm (r 
     rw [if_neg h0]
     unfold midOf
     by_cases h1 : 0 < t.val ∧ t.val < r + 1
-    · rw [dif_pos h1]
+    · rw [dite_eq_left h1]
       simp only [Fin.val_mk]
       split_ifs <;> omega
-    · rw [dif_neg h1]
+    · rw [dite_eq_right h1]
       simp only
       split_ifs <;> omega
 
@@ -264,8 +269,7 @@ theorem qc_pad (A : Type) [CommRing A] (r : ℕ) : ∀ e : ℕ,
   · have := qc_pow_mem A (r + 1 + 1) (r + 1 + 1) _ _ hmem e
     convert this using 2
     funext t
-    simp only [Pi.smul_apply, smul_eq_mul]
-    unfold shapeC
+    simp only [shapeC, Pi.smul_apply, nsmul_eq_mul]
     split_ifs
     · simp
     · cases midOf t <;> simp

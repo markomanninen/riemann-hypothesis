@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjRelEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjRelEquiv
+
+@[expose] public section
+
 open NumberField GlobalTheory.UnitaryBC IsDedekindDomain Matrix Polynomial GlobalTheory.CuspRep Formalism.UG GlobalTheory.BCT GlobalTheory.KapLat
 open scoped Classical
 
@@ -26,11 +31,11 @@ theorem fits_prod : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (w : 
     obtain ⟨a, b, hab⟩ := hcop
     have e₁ : aeval u₁ b * aeval u₁ (Q₂.map e.symm.toRingHom) = 1 := by
       have := congrArg (aeval u₁) hab
-      rw [map_add, map_mul, map_mul, hr₁, mul_zero, zero_add, map_one] at this
+      rw [map_add (f := _), map_mul, map_mul, hr₁, mul_zero, zero_add, map_one] at this
       exact this
     have e₂ : aeval u₂ a * aeval u₂ (Q₁.map e.symm.toRingHom) = 1 := by
       have := congrArg (aeval u₂) hab
-      rw [map_add, map_mul, map_mul, hr₂, mul_zero, add_zero, map_one] at this
+      rw [map_add (f := _), map_mul, map_mul, hr₂, mul_zero, add_zero, map_one] at this
       exact this
     rw [eq_top_iff]
     rintro ⟨y, z⟩ -
@@ -43,8 +48,8 @@ theorem fits_prod : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (w : 
     have key : ((aeval u₁ p, aeval u₂ r) : B₁.A × B₂.A) =
         aeval ((u₁, u₂) : B₁.A × B₂.A) (b * Q₂.map e.symm.toRingHom * p + a * Q₁.map e.symm.toRingHom * r) := by
       refine Prod.ext ?_ ?_
-      · rw [hfst, map_add, map_mul, map_mul, map_mul, map_mul, hr₁, mul_zero, zero_mul, add_zero, e₁, one_mul]
-      · rw [hsnd, map_add, map_mul, map_mul, map_mul, map_mul, hr₂, mul_zero, zero_mul, zero_add, e₂, one_mul]
+      · rw [hfst, map_add (f := _), map_mul, map_mul, map_mul, map_mul, hr₁, mul_zero, zero_mul, add_zero, e₁, one_mul]
+      · rw [hsnd, map_add (f := _), map_mul, map_mul, map_mul, map_mul, hr₂, mul_zero, zero_mul, zero_add, e₂, one_mul]
     exact key ▸ Polynomial.aeval_mem_adjoin_singleton K.E _
   · show aeval ((u₁, u₂) : B₁.A × B₂.A) ((Q₁ * Q₂).map e.symm.toRingHom) = 0
     rw [Polynomial.map_mul]

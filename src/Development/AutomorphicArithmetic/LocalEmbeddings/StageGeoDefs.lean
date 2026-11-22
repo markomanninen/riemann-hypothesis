@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.LocalEmbeddings.FinMatchDefs
-import Development.AutomorphicArithmetic.LocalEmbeddings.ComplEquivEvW
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.LocalEmbeddings.FinMatchDefs
+public import Development.AutomorphicArithmetic.LocalEmbeddings.ComplEquivEvW
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
+
+@[expose] public section
 
 noncomputable section
 

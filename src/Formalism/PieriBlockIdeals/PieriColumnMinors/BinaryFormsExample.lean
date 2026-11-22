@@ -1,6 +1,10 @@
-import Formalism.PieriBlockIdeals.LemmaDSkeletonUnit
-import Formalism.PieriBlockIdeals.PieriColumnMinors.Symmetrization
-import Formalism.PieriBlockIdeals.PieriColumnMinors.DividedPowerZeroZeroVector
+module
+
+public import Formalism.PieriBlockIdeals.LemmaDSkeletonUnit
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.Symmetrization
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.DividedPowerZeroZeroVector
+
+@[expose] public section
 
 open Polynomial
 
@@ -29,7 +33,7 @@ theorem good_part_abstract_holds : GoodPartAbstract := by
       · rw [hs, zero_smul]; exact Submodule.zero_mem _
       · exact Submodule.smul_mem _ _ (Submodule.mem_iSup_of_mem τ (Submodule.mem_iSup_of_mem hs hm))
     · rw [map_zero]; exact Submodule.zero_mem _
-    · intro x y hx hy; rw [map_add]; exact Submodule.add_mem _ hx hy
+    · intro x y hx hy; rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   · refine iSup₂_le fun τ hτ m hm => ?_
     refine ⟨(w ^ n + ∑ a : Fin n, χ τ a * w ^ a.val)⁻¹ • m, ?_⟩
     rw [map_smul, hAm τ m hm, smul_smul, inv_mul_cancel₀ hτ, one_smul]
@@ -135,14 +139,16 @@ theorem sum_diagFirst_eq_smul {k R P M : Type*} [CommRing k] [AddCommGroup M] [M
 
 theorem depth_eigen_holds : DepthEigen := by
   intro k V P R _ _ _ _ _ _ _ S n z
-  rw [LinearMap.sum_apply, Finset.sum_congr rfl fun α _ => ((symMap_equivariant_holds k V P R S n z).2.1 α α), ← map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.sum_apply, Finset.sum_congr rfl fun α _ => ((symMap_equivariant_holds k V P R S n z).2.1 α α), ← map_sum,
     sum_diagFirst_eq_smul, map_smul]
 
 theorem depth_orthogonal_holds : DepthOrthogonal := by
   intro k V P R _ _ _ _ _ _ _ _ S B h n n' hne z z'
   have h1 : B ((∑ α : P, S.E (Sum.inl α) (Sum.inl α)) (S.mu n z)) (S.mu n' z') =
       B (S.mu n z) ((∑ α : P, S.E (Sum.inl α) (Sum.inl α)) (S.mu n' z')) := by
-    rw [LinearMap.sum_apply, LinearMap.sum_apply, map_sum, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.sum_apply, LinearMap.sum_apply, map_sum, map_sum, LinearMap.sum_apply]
     exact Finset.sum_congr rfl fun α _ => h _ _ _ _
   rw [depth_eigen_holds, depth_eigen_holds, map_smul, LinearMap.smul_apply, map_smul, smul_eq_mul, smul_eq_mul] at h1
   have h2 : ((n' : k) - (n : k)) * B (S.mu n z) (S.mu n' z') = 0 := by linear_combination h1
@@ -201,7 +207,7 @@ theorem depth_span_holds : DepthSpan := by
       · exact Submodule.mem_iSup_of_mem (n + 1) (h2 n (c, β) z)
       · exact Submodule.mem_iSup_of_mem n ((h5 n z).1 c d)
     · rw [map_zero]; exact Submodule.zero_mem _
-    · intro x y hx hy; rw [map_add]; exact Submodule.add_mem _ hx hy
+    · intro x y hx hy; rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   refine ⟨h1, h2, h3, h4, h5, h6, fun hgen => hgen _ ?_ h6⟩
   exact h1.symm.le.trans (le_iSup (fun n => LinearMap.range (S.mu n)) 0)
 
@@ -212,7 +218,8 @@ theorem mfact_cast_ne_zero {k ι : Type*} [Field k] [CharZero k] [Fintype ι] [D
 
 theorem iota_kernel_holds : IotaKernel := by
   intro k V P R _ _ _ _ _ _ _ _ S B h n v hv z
-  rw [symMap_apply_sum_words, map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [symMap_apply_sum_words, map_sum, LinearMap.sum_apply]
   refine Finset.sum_eq_zero fun g _ => ?_
   rw [pairing_word_adjoint S B h, ← (word_products_of_content S g).2]
   have h1 := hv (cont g)
@@ -232,7 +239,7 @@ theorem iota_injective_holds : IotaInjective := by
     · subst hn; exact iota_kernel_holds k V P R S B h _ _ hz z'
     · exact depth_orthogonal_holds k V P R S B h n' n hn z' z
   · simp
-  · intro x y hx hy; rw [map_add, LinearMap.add_apply, hx, hy, add_zero]
+  · intro x y hx hy; rw [map_add (f := _), LinearMap.add_apply, hx, hy, add_zero]
 
 theorem nabla_criterion_holds : NablaCriterion := by
   intro O K V P R _ _ _ _ _ _ _ _ _ _ _ _ S B DelL h n z
@@ -327,7 +334,8 @@ theorem shape_coefficient_holds : ShapeCoeff := by
   have hm := shapePoly_monic lam2 tau
   have hd := natDegree_shapePoly_eq htau
   conv_rhs => rw [hm.as_sum, hd]
-  rw [Polynomial.map_add, Polynomial.map_pow, map_X, Polynomial.map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Polynomial.map_add (f := _), Polynomial.map_pow, map_X, Polynomial.map_sum,
     Fin.sum_univ_eq_sum_range (fun a => (C (((shapePoly lam2 tau).coeff a : ℤ) : A) * X ^ a : A[X])) i]
   congr 1
   refine Finset.sum_congr rfl fun a _ => ?_
@@ -659,92 +667,9 @@ theorem depth_skeleton_third_form_holds : LemmaDSkeleton3 := by
   exact depth_skeleton_literal_holds O K V P q S B n w lam2 DelL _ xi lam l e i' hl hO
     (inputs_from_pieri_holds O K V P q S B n w lam2 DelL xi lam (l : O) e i' H)
 
-def glOperatorOnSequences (K : Type) [Field K] (y d : ℕ) : Unit ⊕ Fin 1 → Unit ⊕ Fin 1 → Module.End K (ℕ → K)
-  | Sum.inl _, Sum.inl _ => LinearMap.pi fun j => (((y + d : ℕ) : K) - j) • LinearMap.proj j
-  | Sum.inl _, Sum.inr _ => LinearMap.pi fun j => ((j : K) + 1) • LinearMap.proj (j + 1)
-  | Sum.inr _, Sum.inl _ => LinearMap.pi fun j =>
-      match j with
-      | 0 => 0
-      | i + 1 => ((d : K) - i) • LinearMap.proj i
-  | Sum.inr _, Sum.inr _ => LinearMap.pi fun j => ((y : K) + j) • LinearMap.proj j
-
 section Inst
 
 variable (K : Type) [Field K] (y d : ℕ)
-
-theorem glOperator_diag_first_apply (a b : Unit) (x : ℕ → K) (j : ℕ) :
-    glOperatorOnSequences K y d (Sum.inl a) (Sum.inl b) x j = (((y + d : ℕ) : K) - j) * x j := rfl
-
-theorem glOperator_raising_apply (a : Unit) (b : Fin 1) (x : ℕ → K) (j : ℕ) :
-    glOperatorOnSequences K y d (Sum.inl a) (Sum.inr b) x j = ((j : K) + 1) * x (j + 1) := rfl
-
-theorem glOperator_lowering_zero (a : Fin 1) (b : Unit) (x : ℕ → K) : glOperatorOnSequences K y d (Sum.inr a) (Sum.inl b) x 0 = 0 := rfl
-
-theorem glOperator_lowering_apply (a : Fin 1) (b : Unit) (x : ℕ → K) (j : ℕ) :
-    glOperatorOnSequences K y d (Sum.inr a) (Sum.inl b) x (j + 1) = ((d : K) - j) * x j := rfl
-
-theorem glOperator_diag_second_apply (a b : Fin 1) (x : ℕ → K) (j : ℕ) :
-    glOperatorOnSequences K y d (Sum.inr a) (Sum.inr b) x j = ((y : K) + j) * x j := rfl
-
-theorem glOperator_commutator (a b c e : Unit ⊕ Fin 1) :
-    glOperatorOnSequences K y d a b * glOperatorOnSequences K y d c e - glOperatorOnSequences K y d c e * glOperatorOnSequences K y d a b =
-      (if b = c then glOperatorOnSequences K y d a e else 0) - (if e = a then glOperatorOnSequences K y d c b else 0) := by
-  refine LinearMap.ext fun x => funext fun j => ?_
-  have key : ∀ a : Unit ⊕ Fin 1, a = Sum.inl () ∨ a = Sum.inr 0 := by
-    rintro (a | a)
-    · exact Or.inl rfl
-    · exact Or.inr (congrArg Sum.inr (Subsingleton.elim _ _))
-  rcases key a with rfl | rfl <;> rcases key b with rfl | rfl <;> rcases key c with rfl | rfl <;>
-    rcases key e with rfl | rfl <;> rcases j with _ | j <;>
-    simp [glOperator_diag_first_apply, glOperator_raising_apply, glOperator_lowering_zero, glOperator_lowering_apply, glOperator_diag_second_apply] <;> ring
-
-def binaryFormCoords : Submodule K (ℕ → K) where
-  carrier := {x | ∀ j, d < j → x j = 0}
-  add_mem' := by
-    intro a b ha hb j hj
-    rw [Pi.add_apply, ha j hj, hb j hj, add_zero]
-  zero_mem' := fun _ _ => rfl
-  smul_mem' := by
-    intro c a ha j hj
-    rw [Pi.smul_apply, ha j hj, smul_zero]
-
-theorem glOperator_preserves_binaryFormCoords (a b : Unit ⊕ Fin 1) : ∀ x ∈ binaryFormCoords K d, glOperatorOnSequences K y d a b x ∈ binaryFormCoords K d := by
-  intro x hx j hj
-  rcases a with a | a <;> rcases b with b | b
-  · rw [glOperator_diag_first_apply, hx j hj, mul_zero]
-  · rw [glOperator_raising_apply, hx (j + 1) (by omega), mul_zero]
-  · rcases j with _ | j
-    · rfl
-    · rw [glOperator_lowering_apply]
-      rcases Nat.lt_or_ge d j with h | h
-      · rw [hx j h, mul_zero]
-      · rw [show j = d by omega, sub_self, zero_mul]
-  · rw [glOperator_diag_second_apply, hx j hj, mul_zero]
-
-def binaryFormsSetting : HidaSetting K (binaryFormCoords K d) Unit (Fin 1) where
-  E a b := (glOperatorOnSequences K y d a b).restrict (glOperator_preserves_binaryFormCoords K y d a b)
-  comm a b c e := by
-    refine LinearMap.ext fun x => Subtype.ext ?_
-    have h := congrArg (fun T : Module.End K (ℕ → K) => T x.1) (glOperator_commutator K y d a b c e)
-    by_cases h1 : b = c <;> by_cases h2 : e = a <;> simpa [h1, h2] using h
-  W := (binaryFormCoords K 0).comap (binaryFormCoords K d).subtype
-  w := ((y + d : ℕ) : K)
-  kill α a u hu := by
-    refine Subtype.ext (funext fun j => ?_)
-    change glOperatorOnSequences K y d (Sum.inl α) (Sum.inr a) u.1 j = 0
-    rw [glOperator_raising_apply, show u.1 (j + 1) = 0 from hu (j + 1) (by omega), mul_zero]
-  scal α β u hu := by
-    rw [if_pos (Subsingleton.elim α β)]
-    refine Subtype.ext (funext fun j => ?_)
-    change glOperatorOnSequences K y d (Sum.inl α) (Sum.inl β) u.1 j = ((y + d : ℕ) : K) * u.1 j
-    rw [glOperator_diag_first_apply]
-    rcases j with _ | j
-    · simp
-    · rw [show u.1 (j + 1) = 0 from hu (j + 1) (by omega), mul_zero, mul_zero]
-  stab b b' u hu := by
-    intro j hj
-    change glOperatorOnSequences K y d (Sum.inr b) (Sum.inr b') u.1 j = 0
-    rw [glOperator_diag_second_apply, show u.1 j = 0 from hu j hj, mul_zero]
 
 end Inst
 
@@ -752,46 +677,17 @@ section Inst2
 
 variable (K : Type) [Field K] [CharZero K] (y d : ℕ)
 
-def binaryFormMonomial (j : ℕ) : binaryFormCoords K d :=
-  ⟨fun i => if i = j ∧ j ≤ d then 1 else 0, by
-    intro i hi
-    change (if i = j ∧ j ≤ d then (1 : K) else 0) = 0
-    rw [if_neg]; omega⟩
-
-theorem binaryFormMonomial_apply (j i : ℕ) : (binaryFormMonomial K d j).1 i = if i = j ∧ j ≤ d then 1 else 0 := rfl
-
-def inverseBinomialCoeff (j : ℕ) : K := ∏ i ∈ Finset.range j, ((i : K) + 1) / ((d : K) - i)
-
-def binaryFormPairing : LinearMap.BilinForm K (binaryFormCoords K d) :=
-  ∑ j ∈ Finset.range (d + 1), inverseBinomialCoeff K d j • LinearMap.BilinForm.linMulLin
-    (LinearMap.proj j ∘ₗ (binaryFormCoords K d).subtype) (LinearMap.proj j ∘ₗ (binaryFormCoords K d).subtype)
-
-theorem monomial_zero_mem_highestWeight_space : binaryFormMonomial K d 0 ∈ (binaryFormsSetting K y d).W := by
-  intro i hi
-  change (binaryFormMonomial K d 0).1 i = 0
-  rw [binaryFormMonomial_apply, if_neg (by omega)]
-
 end Inst2
 
 section Inst3
 
 variable (K : Type) [Field K] [CharZero K] (y d : ℕ)
 
-def highestWeightVector : (binaryFormsSetting K y d).W := ⟨binaryFormMonomial K d 0, monomial_zero_mem_highestWeight_space K y d⟩
-
-def singletonWord : Fin 1 → Fin 1 × Unit := fun _ => (0, ())
-
 end Inst3
 
 section Inst4
 
 variable (K : Type) [Field K] [CharZero K] (y d : ℕ)
-
-def binaryForms_grading : (Unit ⊕ Fin 1 → ℤ) →+ ℤ := Pi.evalAddMonoidHom (fun _ => ℤ) (Sum.inl ())
-
-def binaryForms_highestWeight : Unit ⊕ Fin 1 → ℤ := Sum.elim (fun _ => (y : ℤ) + d) (fun _ => (y : ℤ))
-
-def binaryForms_firstDepthWeight : Unit ⊕ Fin 1 → ℤ := Sum.elim (fun _ => (y : ℤ) + d - 1) (fun _ => (y : ℤ) + 1)
 
 variable (O : Type) [CommRing O] [Algebra O K]
 

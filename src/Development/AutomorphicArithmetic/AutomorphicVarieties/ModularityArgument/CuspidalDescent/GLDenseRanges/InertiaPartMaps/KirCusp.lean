@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.KirCusp
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsGenericOfIsLocComp
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.WhittakerCuspidal.WhitCuspOfSegCuspGeneric
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.KirCusp
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsGenericOfIsLocComp
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.WhittakerCuspidal.WhitCuspOfSegCuspGeneric
+
+@[expose] public section
+
 open UpperTheory.V.Z.Desc.V0
 
 open NumberField IsDedekindDomain MeasureTheory Matrix GlobalTheory.CuspRep GlobalTheory.CuspGeneric
@@ -120,7 +125,7 @@ private theorem denseRange_mapGL {K B : Type} [Field K] [Field B] [TopologicalSp
     rfl
   rw [e]; exact hQO
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 private noncomputable def pw (w : HeightOneSpectrum (𝓞 E)) : GA E a →* GL (Fin a) (w.adicCompletion E) :=
   (GeneralLinearGroup.map (pLoc E w)).comp (GeneralLinearGroup.map (pFin E))
@@ -143,7 +148,7 @@ private theorem comm_of_pw (w : HeightOneSpectrum (𝓞 E)) {h : GA E a} (hk : p
   · rw [map_mul, map_mul, pFin_finGL]
     exact LocUniq.comm_locGL w hk u
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 private theorem isMirL_mul {k : Type} [Field k] {p q : GL (Fin a) k} (hp : IsMirL p) (hq : IsMirL q) : IsMirL (p * q) := by
   intro i j hi
   change (p.val * q.val) i j = _
@@ -152,7 +157,7 @@ private theorem isMirL_mul {k : Type} [Field k] {p q : GL (Fin a) k} (hp : IsMir
   simp only [Matrix.one_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
   exact hq i j hi
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 private theorem isMirL_one {k : Type} [Field k] : IsMirL (1 : GL (Fin a) k) := fun _ _ _ => rfl
 
 private def X (w : HeightOneSpectrum (𝓞 E)) : Set (GA E a) := {g | IsMirL (pw w g)}
@@ -247,7 +252,7 @@ theorem UpperTheory.V.Z.Desc.V0.kirCusp :
       have hU : IsOpen {u | σ.ρ u v = v} := σ.5 v
       obtain ⟨γ, hγ⟩ := (denseRange_mapGL (algebraMap E (w.adicCompletion E))
         (HeightOneSpectrum.denseRange_algebraMap E w) a).exists_mem_open
-        (hU.preimage (continuous_mul_right (pw w g))) ⟨(pw w g)⁻¹, by
+        (hU.preimage (continuous_mul_const (pw w g))) ⟨(pw w g)⁻¹, by
           change σ.ρ ((pw w g)⁻¹ * pw w g) v = v
           rw [inv_mul_cancel, map_one]
           rfl⟩

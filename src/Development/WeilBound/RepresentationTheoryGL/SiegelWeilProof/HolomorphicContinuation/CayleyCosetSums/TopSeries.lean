@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.IntegralTsumSupp
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.MapsToUpToSign
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.IntegralTsumSupp
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.MapsToUpToSign
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,11 +22,12 @@ private theorem isCompact_KR' (n : ℕ) : IsCompact ((KR n : Set (GR n))) := by
   classical
   let S : Set (M2 n) := {x | InG x ∧ xᴴ * x = 1}
   have hSc : IsClosed S := by
+    change IsClosed ({x : M2 n | InG x} ∩ {x : M2 n | xᴴ * x = 1})
     refine IsClosed.inter ?_ ?_
     · exact isClosed_eq
-        (((continuous_id.matrix_conjTranspose).matrix_mul continuous_const).matrix_mul continuous_id)
+        ((((continuous_id : Continuous (fun x : M2 n => x)).matrix_conjTranspose).matrix_mul continuous_const).matrix_mul continuous_id)
         continuous_const
-    · exact isClosed_eq ((continuous_id.matrix_conjTranspose).matrix_mul continuous_id) continuous_const
+    · exact isClosed_eq (((continuous_id : Continuous (fun x : M2 n => x)).matrix_conjTranspose).matrix_mul continuous_id) continuous_const
   have hBox : IsCompact (Set.pi Set.univ fun _ : Fin n ⊕ Fin n =>
       Set.pi Set.univ fun _ : Fin n ⊕ Fin n => Metric.closedBall (0 : ℂ) 1) :=
     isCompact_univ_pi fun _ => isCompact_univ_pi fun _ => isCompact_closedBall 0 1

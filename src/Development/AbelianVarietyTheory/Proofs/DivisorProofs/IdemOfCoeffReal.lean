@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.ProjLemmas
-import Formalism.LocalToGlobal.Divisibility.LiftLat
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+public import Formalism.LocalToGlobal.Divisibility.LiftLat
+
+@[expose] public section
 
 open Formalism.L2.DIV
 
@@ -10,7 +14,8 @@ theorem idemOf_coeff_real : ∀ {K G : Type} [Field K] [Group G] [Fintype G] (σ
     (X : Finset (G → K)), (∀ χ ∈ X, IsAbsIrrChar χ) → GoodStable X →
     ∀ g, star (σ ((idemOf X).coeff g)) = σ ((idemOf X).coeff g) := by
   intro K G _ _ _ σ X hX hS g
-  rw [coeff_idemOf, map_sum, star_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coeff_idemOf, map_sum, star_sum]
   refine Finset.sum_nbij' (fun χ t => χ t⁻¹) (fun χ t => χ t⁻¹) hS hS
     (fun χ _ => by simp) (fun χ _ => by simp) fun χ hχ => ?_
   have h1 := (hX χ hχ).map_inv σ 1

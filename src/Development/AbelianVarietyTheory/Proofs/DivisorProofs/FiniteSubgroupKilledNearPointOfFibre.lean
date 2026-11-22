@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvPowSubNsmulMemAugIdealSq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FundamentalSequenceContinuityAll
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNotMemSmulEqZeroOfSubmodule
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvPowSubNsmulMemAugIdealSq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FundamentalSequenceContinuityAll
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNotMemSmulEqZeroOfSubmodule
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open scoped CategoryTheory.Obj TensorProduct
 
@@ -33,13 +38,6 @@ theorem tmap_pt (hc : Spec.map φ ≫ jU = jW ≫ Z.hom) {R R' : CommRingCat.{0}
   ext1
   change Spec.map σ ≫ Spec.map ψ ≫ jW = Spec.map (ψ ≫ σ) ≫ jW
   rw [Spec.map_comp, Category.assoc]
-
-theorem tmap_tmap {R R' R'' : CommRingCat.{0}} {χ : A ⟶ R} {χ' : A ⟶ R'} {χ'' : A ⟶ R''}
-    (σ : R ⟶ R') (h : χ ≫ σ = χ') (τ : R' ⟶ R'') (h' : χ' ≫ τ = χ'') :
-    tmap jU τ h' ≫ tmap jU σ h = tmap jU (σ ≫ τ) (by rw [← Category.assoc, h, h']) := by
-  ext1
-  change Spec.map τ ≫ Spec.map σ = Spec.map (σ ≫ τ)
-  rw [Spec.map_comp]
 
 theorem pt_inj (hc : Spec.map φ ≫ jU = jW ≫ Z.hom) [IsOpenImmersion jW] {G : Over S'} (i : Z ⟶ G)
     [Mono i] {R : CommRingCat.{0}} {χ : A ⟶ R} (ψ ψ' : B ⟶ R) (h : φ ≫ ψ = χ) (h' : φ ≫ ψ' = χ)

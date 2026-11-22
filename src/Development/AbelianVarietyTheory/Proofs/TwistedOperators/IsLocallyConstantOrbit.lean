@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TwistedKernelFixed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TwistedKernelFixed
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,8 @@ theorem exists_orbit (hπ : IsSmooth π) {H : Subgroup G} (hH : IsCompact (H : S
     continuous_subtype_val).range_finite
   have hS : ∀ u, u ∈ hf.toFinset ↔ ∃ h ∈ H, π h v = u := fun u => by simp
   refine ⟨hf.toFinset, hS, mem_fixed.2 fun g hg => ?_⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   have key : ∀ g ∈ H, ∀ u ∈ hf.toFinset, π g u ∈ hf.toFinset := fun g hg u hu => by
     obtain ⟨h, hh, rfl⟩ := (hS u).1 hu
     exact (hS _).2 ⟨g * h, mul_mem hg hh, by simp⟩
@@ -58,8 +63,8 @@ theorem exists_orbit (hπ : IsSmooth π) {H : Subgroup G} (hH : IsCompact (H : S
   · rw [← Module.End.mul_apply, ← map_mul]; simp
   · rw [← Module.End.mul_apply, ← map_mul]; simp
 
-variable (π) in
 
+variable (π) in
 def Inj (I J : Subgroup G) : Prop := ∀ v ∈ fixed π I, v ∈ twKer π J 1 → v = 0
 
 theorem Inj.trans (hπ : IsSmooth π) {I J K : Subgroup G} (hJ : IsCompact (J : Set G))
@@ -268,8 +273,8 @@ open Matrix
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
   {n : Type} [Fintype n] [DecidableEq n]
 
-variable (k) in
 
+variable (k) in
 def grp {f : n → n → ℤ} (hf : Conc f) : Subgroup (GL n k) where
   carrier := {g | (∀ i j, Deep (f i j) (g.val i j)) ∧ ∀ i j, Deep (f i j) ((g⁻¹).val i j)}
   one_mem' := by
@@ -281,7 +286,7 @@ def grp {f : n → n → ℤ} (hf : Conc f) : Subgroup (GL n k) where
   mul_mem' := by
     have : ∀ A B : Matrix n n k, (∀ i j, Deep (f i j) (A i j)) → (∀ i j, Deep (f i j) (B i j)) →
         ∀ i j, Deep (f i j) ((A * B) i j) := fun A B hA hB i j => by
-      rw [mul_apply]
+      rw [Matrix.mul_apply]
       exact Deep.sum fun l _ => ((hA i l).mul (hB l j)).mono (hf.2 i j l)
     intro a b ha hb
     refine ⟨this _ _ ha.1 hb.1, ?_⟩
@@ -329,7 +334,7 @@ theorem diag_unit {f : n → n → ℤ} (hf : Chamber f) {p : GL n k} {i : n}
     ¬ Deep 1 (p.val i i) := by
   intro h
   have h3 : Deep 1 ((p.val * (p⁻¹).val) i i) := by
-    rw [mul_apply]
+    rw [Matrix.mul_apply]
     refine Deep.sum fun l _ => ?_
     by_cases c : l = i
     · subst c
@@ -355,7 +360,7 @@ theorem mem_of_entry (hg : Conc g) (hf : Chamber f) (hij : i ≠ j)
   rw [c.1, c.2]
   obtain ⟨hu0, hu⟩ := deep_inv (diag_unit hf (h1 i) fun l => h2 l i (by grind))
   have h3 : (p.val * (p⁻¹).val) i j = 0 := by simp [one_apply_ne hij]
-  rw [mul_apply, ← Finset.add_sum_erase _ _ (Finset.mem_univ i), add_eq_zero_iff_eq_neg] at h3
+  rw [Matrix.mul_apply, ← Finset.add_sum_erase _ _ (Finset.mem_univ i), add_eq_zero_iff_eq_neg] at h3
   have h4 : Deep (f i j) (p.val i i * (p⁻¹).val i j) := by
     rw [h3]
     exact (Deep.sum fun l hl => ((h1 i l).mul (h2 l j (by grind))).mono (hf.1.2 i j l)).neg

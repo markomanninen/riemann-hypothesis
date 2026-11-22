@@ -1,20 +1,25 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
-import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsUniqueSamePt
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TorusCoordAdd
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniquePullB
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpFLinear
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUnitLevels
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ThetaGrpActIterateEqOfPowEqOne
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsGenOfIso
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsLevelPoint
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SvalEqZeroOfWeightSum
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CombBijective
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.FourierJacobiExpansionOverFieldInjective
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsUniqueSamePt
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TorusCoordAdd
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniquePullB
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpFLinear
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUnitLevels
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ThetaGrpActIterateEqOfPowEqOne
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsGenOfIso
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsLevelPoint
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SvalEqZeroOfWeightSum
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CombBijective
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.FourierJacobiExpansionOverFieldInjective
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -30,8 +35,8 @@ variable {R : Type} [CommRing R] [IsDomain R] {I : Ideal R} {D : DegPre R}
   {U : PreU I D A G} {S : Type} [CommRing S] {φ : R →+* S} [IsLocalRing S]
 open ReciprocityTheory.ChartRestriction.G.DVR FormalPoint
 
-omit [IsDomain R] [IsLocalRing S] in
 
+omit [IsDomain R] [IsLocalRing S] in
 def levelPt (I : Ideal R) (φ : R →+* S) (e : ℕ) :
     (Over.map (thick R I e)).obj (Over.mk (levelMap I φ e)) ⟶ Over.mk (spMap φ) :=
   Over.homMk (adicLevelι (I.map φ) (e + 1)) (levelMap_thick I φ e).symm

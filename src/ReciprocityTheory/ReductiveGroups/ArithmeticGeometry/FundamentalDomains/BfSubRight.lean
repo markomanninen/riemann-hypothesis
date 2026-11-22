@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.SignTypeCancelIdentity
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.SignTypeCancelIdentity
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.OrthonormalChartBounds
 
@@ -84,7 +88,8 @@ lemma Bf_coord (Z : X.Coord) (τ : X.Ψ) (v w : Fin r → ℂ) :
           conj (X.lowBlock Z τ c b)) * conj (w b) := Finset.sum_comm
       _ = _ := by
           refine Finset.sum_congr rfl fun c _ => ?_
-          rw [map_sum, mul_assoc, Finset.sum_mul_sum, Finset.mul_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum, mul_assoc, Finset.sum_mul_sum, Finset.mul_sum]
           refine Finset.sum_congr rfl fun a _ => ?_
           rw [Finset.mul_sum]
           refine Finset.sum_congr rfl fun b _ => ?_
@@ -109,7 +114,8 @@ lemma Bf_sub_right (Z : X.Coord) (τ : X.Ψ) (v t w : Fin r → ℂ) :
 
 lemma Bf_conj (Z : X.Coord) (τ : X.Ψ) (v w : Fin r → ℂ) : Bf X Z τ w v = conj (Bf X Z τ v w) := by
   rw [Bf_coord X, Bf_coord X]
-  simp only [map_sub, map_sum, map_mul, starRingEnd_self_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, map_mul, starRingEnd_self_apply]
   congr 1 <;> exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
 
 private lemma sum_eq_add_sum_castLE_of_vanish_above {n : ℕ} (k : Fin n) (f : Fin n → ℂ) (hf : ∀ j : Fin n, k < j → f j = 0) :

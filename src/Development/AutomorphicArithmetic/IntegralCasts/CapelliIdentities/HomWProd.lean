@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Qi22.wsum.{v} :
     {ι : Type v} → (ι → ℤ) → (ι →₀ ℕ) → ℤ :=

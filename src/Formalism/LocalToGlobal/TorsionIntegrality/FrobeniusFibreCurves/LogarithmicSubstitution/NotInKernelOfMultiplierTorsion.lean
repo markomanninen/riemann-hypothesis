@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalJ
-import Formalism.EllipticTorsion.FormalGroupPointsNoTorsion
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.ShiftAnalyticW
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementK
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalJ
+public import Formalism.EllipticTorsion.FormalGroupPointsNoTorsion
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.ShiftAnalyticW
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementK
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -260,7 +264,8 @@ theorem not_in_kernel_of_multiplier_torsion (h1 : TwoTorsionKernelUnique) (h2 : 
     rw [hκ P hP]
     exact (h3 ℂ_[2] W hIM h2n _).2 (hxlt P hP hne)
   have hsum : ‖ι (∑ P ∈ S, (3 * L.weierstrassP P ^ 2 - L.g₂ / 4))‖ = 16 := by
-    rw [map_sum, ← Finset.add_sum_erase S _ hPS]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← Finset.add_sum_erase S _ hPS]
     have hr := norm_sum_lt (S.erase PS) (fun P => ι (3 * L.weierstrassP P ^ 2 - L.g₂ / 4))
       (by norm_num : (0 : ℝ) < 16) hklt
     rw [IsUltrametricDist.norm_add_eq_max_of_norm_ne_norm (by rw [hk16]; exact hr.ne'), hk16]

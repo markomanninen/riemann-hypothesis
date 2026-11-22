@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -39,11 +43,8 @@ theorem trace_quotient_eq_of_projective (R S : Type) [CommRing R] [IsDomain R]
   apply (equivQuotMaximalIdeal p Rₚ).injective
   rw [trace_quotient_eq_trace_localization_quotient S p Rₚ Sₚ, IsScalarTower.algebraMap_eq S Sₚ,
     RingHom.comp_apply, Ideal.Quotient.algebraMap_eq, Algebra.trace_quotient_mk,
-    RingEquiv.apply_symm_apply, ← Algebra.intTrace_eq_trace,
-    ← Algebra.intTrace_eq_of_isLocalization R S p.primeCompl (Aₘ := Rₚ) (Bₘ := Sₚ) x,
-    ← Ideal.Quotient.algebraMap_eq, ← IsScalarTower.algebraMap_apply]
-  simp only [equivQuotMaximalIdeal, RingHom.quotientKerEquivOfSurjective, RingEquiv.coe_trans,
-    Function.comp_apply, Ideal.quotEquivOfEq_mk, RingHom.quotientKerEquivOfRightInverse.apply,
-    RingHom.kerLift_mk]
+    ← Algebra.intTrace_eq_trace,
+    ← Algebra.intTrace_eq_of_isLocalization R S p.primeCompl (Aₘ := Rₚ) (Bₘ := Sₚ) x]
+  simp
 
 end GlobalTheory

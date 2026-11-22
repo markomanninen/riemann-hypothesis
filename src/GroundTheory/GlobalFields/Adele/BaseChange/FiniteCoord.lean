@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.Adele.BaseChange.FiniteMap
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.Adele.BaseChange.FiniteMap
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -42,22 +46,23 @@ def localCoord (v : HeightOneSpectrum (𝓞 K)) (i : ι) :
   ((Algebra.TensorProduct.basis (v.adicCompletion K) b).coord i).comp
     (tensorEquiv L v).symm.toLinearEquiv.toLinearMap
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem sum_localCoord (v : HeightOneSpectrum (𝓞 K)) (z : CompletionsOver L v) :
     ∑ i, algebraMap (v.adicCompletion K) (CompletionsOver L v) (localCoord b v i z) *
       algebraMap L (CompletionsOver L v) (b i) = z := by
   have h := (Algebra.TensorProduct.basis (v.adicCompletion K) b).sum_repr
     ((tensorEquiv L v).symm z)
   have h2 := congrArg (tensorEquiv L v) h
-  rw [AlgEquiv.apply_symm_apply, map_sum] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [AlgEquiv.apply_symm_apply, map_sum] at h2
   conv_rhs => rw [← h2]
   refine Finset.sum_congr rfl fun i _ ↦ ?_
   rw [Algebra.TensorProduct.basis_apply, map_smul, tensorEquiv_one_tmul, Algebra.smul_def]
   rfl
 
-omit [Fintype ι] [DecidableEq ι] in
 
+omit [Fintype ι] [DecidableEq ι] in
 theorem localCoord_algebraMap (v : HeightOneSpectrum (𝓞 K)) (i : ι) (l : L) :
     localCoord b v i (algebraMap L (CompletionsOver L v) l) =
       algebraMap K (v.adicCompletion K) (b.repr l i) := by
@@ -96,8 +101,8 @@ theorem localCoord_mem (v : HeightOneSpectrum (𝓞 K)) (i : ι) (z : Completion
   rw [localCoord_eq_sum_trace]
   exact sum_mem fun w _ ↦ trace_mem_adicCompletionIntegers v w.1 (hz w)
 
-omit [Fintype ι] [DecidableEq ι] in
 
+omit [Fintype ι] [DecidableEq ι] in
 theorem continuous_localCoord (v : HeightOneSpectrum (𝓞 K)) (i : ι) :
     Continuous (localCoord b v i) :=
   IsModuleTopology.continuous_of_linearMap (localCoord b v i)

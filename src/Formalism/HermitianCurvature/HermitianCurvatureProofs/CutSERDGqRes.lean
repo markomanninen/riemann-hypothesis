@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialIdentityOfQuadratic
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialIdentityOfQuadratic
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Matrix

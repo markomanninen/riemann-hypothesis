@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceChangeBaseVacuumHeisenbergCombinationStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceHermitianFramePropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DataAsCombinationsAtSplitPlacesProofStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualLatticePrescribedFinitelyManySplitPlacesStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceBaseVacuumDatumExistsUniqueStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceDataDistinctPlacesCommuteStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.OverAllExists
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatticeVacuumIffPlacewise
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsClopenIsCompactMapsPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceChangeBaseVacuumHeisenbergCombinationStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceHermitianFramePropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DataAsCombinationsAtSplitPlacesProofStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualLatticePrescribedFinitelyManySplitPlacesStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualSplitComponentIsLatticeStabilizerEq
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceBaseVacuumDatumExistsUniqueStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceDataDistinctPlacesCommuteStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.OverAllExists
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatticeVacuumIffPlacewise
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsClopenIsCompactMapsPair
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,6 +25,24 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 namespace GlobalTheory.FinPl.RebaseProof
 
 variable {D : D7} {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
+
+theorem full_of_isLat {p : SplitPt D k} {S : HSp D} {n : Type} [Fintype n] [DecidableEq n]
+    (β : Frame p S n) (L : Lat S) (hL : IsSelfDualC S L)
+    (Λ : Submodule 𝒪[k] (n → k)) (hΛ : Λ.IsLattice k) (h : β.IsLat L Λ) : Λ.IsFullLattice k := by
+  refine { toIsLattice := hΛ, span_eq_top := ?_ }
+  obtain ⟨m, s, c, hs, hc, _⟩ := GlobalTheory.FinPl.FrameLat.exists_gen (p := p) hL
+  apply top_unique
+  intro x _
+  have hx := congrArg (β.b' *ᵥ ·) (hc (β.b *ᵥ x))
+  simp only [Matrix.mulVec_sum, Matrix.mulVec_smul, Matrix.mulVec_mulVec, β.b'b, Matrix.one_mulVec] at hx
+  rw [hx]
+  apply Submodule.sum_mem
+  intro i _
+  apply Submodule.smul_mem
+  apply Submodule.subset_span
+  apply (h _).2
+  rw [Matrix.mulVec_mulVec, β.bb', Matrix.one_mulVec]
+  exact GlobalTheory.FinPl.FrameLat.sec_inc_mem (p := p) (hs i)
 
 section One
 
@@ -40,6 +63,8 @@ theorem sp1 (hstd : IsStdChar D ψ (-1)) (hu : p.UnitAA) {NS N'S : Lat S} {NT N'
     (hAS : α.IsLat NS AS) (hAT : β.IsLat NT AT) (hA'S : α.IsLat N'S A'S) (hA'T : β.IsLat N'T A'T)
     {f₀ g : WO S T → ℂ} (hf₀ : Vac ψ S T NS NT (· = p.v) f₀) (hg : Over ψ α β NS NT f₀ (latInd A'S A'T) g) :
     Vac ψ S T N'S N'T (· = p.v) g ∧ ∀ Ψ h, Over ψ α β NS NT f₀ Ψ h ↔ Over ψ α β N'S N'T g Ψ h := by
+  haveI := full_of_isLat α NS h1 AS inferInstance hAS
+  haveI := full_of_isLat β NT h2 AT inferInstance hAT
   have R := (GlobalTheory.T.splitPlace_changeBaseVacuum_heisenbergCombination D k p n n' ψ hstd hu S T α β NS N'S NT N'T h1 h2 h3 h4).1 A'S A'T hA'S hA'T f₀ g hg
   refine ⟨R.1, fun Ψ h => ⟨R.2 Ψ h, fun hh => ?_⟩⟩
   obtain ⟨g', hg', huniq⟩ := (GlobalTheory.T.splitPlace_baseVacuum_datum_exists_unique D k p n n' ψ hstd S T α β N'S N'T h3 h4 g R.1).1 (latInd AS AT)
@@ -181,8 +206,8 @@ section Gen
 variable {ι : Type} {p : ι → SplitPt D k} {n n' : Type} [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n']
   {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D} {α : ∀ i, Frame (p i) S n'} {β : ∀ i, Frame (p i) T n}
 
-open Classical in
 
+open Classical in
 theorem gen (hstd : IsStdChar D ψ (-1)) {I : List ι} {P : Pl D → Prop} (hPl : Places p I P) (l : List ι) :
     l.Nodup → ∀ (NS N'S : Lat S) (NT N'T : Lat T) (AS A'S : ι → Submodule 𝒪[k] (n' → k))
       (AT A'T : ι → Submodule 𝒪[k] (n → k)),
@@ -215,8 +240,20 @@ theorem gen (hstd : IsStdChar D ψ (-1)) {I : List ι} {P : Pl D → Prop} (hPl 
       by_cases hj : j ∈ l
       · simp only [BT, if_pos hj]; exact (hL j).2.2.2
       · simp only [BT, if_neg hj]; exact (hL j).2.2.1
-    obtain ⟨N₁S, hN₁S, hlatS, -⟩ := GlobalTheory.T.selfDualLattice_prescribed_finitelyManySplitPlaces D k ι p I P hPl n' S α NS h1 BS hBS
-    obtain ⟨N₁T, hN₁T, hlatT, -⟩ := GlobalTheory.T.selfDualLattice_prescribed_finitelyManySplitPlaces D k ι p I P hPl n T β NT h2 BT hBT
+    have hBSfull : ∀ j, (BS j).IsFullLattice k := fun j => by
+      by_cases hj : j ∈ l
+      · apply full_of_isLat (α j) N'S h3 _ (hBS j)
+        simpa only [BS, if_pos hj] using (hA j).2.1
+      · apply full_of_isLat (α j) NS h1 _ (hBS j)
+        simpa only [BS, if_neg hj] using (hA j).1
+    have hBTfull : ∀ j, (BT j).IsFullLattice k := fun j => by
+      by_cases hj : j ∈ l
+      · apply full_of_isLat (β j) N'T h4 _ (hBT j)
+        simpa only [BT, if_pos hj] using (hA j).2.2.2
+      · apply full_of_isLat (β j) NT h2 _ (hBT j)
+        simpa only [BT, if_neg hj] using (hA j).2.2.1
+    obtain ⟨N₁S, hN₁S, hlatS, -⟩ := GlobalTheory.T.selfDualLattice_prescribed_finitelyManySplitPlaces D k ι p I P hPl n' S α NS h1 BS hBSfull
+    obtain ⟨N₁T, hN₁T, hlatT, -⟩ := GlobalTheory.T.selfDualLattice_prescribed_finitelyManySplitPlaces D k ι p I P hPl n T β NT h2 BT hBTfull
     obtain ⟨g₁, hg₁, hO⟩ := ValDbl.overAll_cons.1 hg
     have hg₁' : OverAll ψ α β NS NT (fun j => latInd (BS j) (BT j)) l f g₁ :=
       overAll_congrΨ l (fun j hj => by simp only [BS, BT, if_pos hj]) f g₁ hg₁
@@ -274,9 +311,9 @@ theorem rebaseAll : ∀ D : D7, RebaseAll D := by
   have hA : ∀ j, (α j).IsLat LS (ALS j) ∧ (α j).IsLat MS (AMS j) ∧ (β j).IsLat LT (ALT j) ∧ (β j).IsLat MT (AMT j) :=
     fun j => ⟨hALS2 j, hAMS2 j, hALT2 j, hAMT2 j⟩
   obtain ⟨e, he1, he2⟩ := (GlobalTheory.T.dataAsCombinationsAtSplitPlaces_proof D k ι p I P hPl n n' ψ hstd S T α β LS LT hLS hLT
-    (fun i => latInd (AMS i) (AMT i))).1 (fun i => by haveI := hAMS1 i; haveI := hAMT1 i; exact latInd_mem_SB _ _)
+    (fun i => latInd (AMS i) (AMT i))).1 (fun i => by haveI := full_of_isLat (α i) MS hMS _ (hAMS1 i) (hAMS2 i); haveI := full_of_isLat (β i) MT hMT _ (hAMT1 i) (hAMT2 i); exact latInd_mem_SB _ _)
   have AC' := GlobalTheory.T.dataAsCombinationsAtSplitPlaces_proof D k ι p I P hPl n n' ψ hstd S T α β MS MT hMS hMT (fun i => latInd (ALS i) (ALT i))
-  obtain ⟨e', he'1, he'2⟩ := AC'.1 (fun i => by haveI := hALS1 i; haveI := hALT1 i; exact latInd_mem_SB _ _)
+  obtain ⟨e', he'1, he'2⟩ := AC'.1 (fun i => by haveI := full_of_isLat (α i) LS hLS _ (hALS1 i) (hALS2 i); haveI := full_of_isLat (β i) LT hLT _ (hALT1 i) (hALT2 i); exact latInd_mem_SB _ _)
   refine ⟨e, e', he1, he'1, fun f hf => ?_⟩
   have hfv : ∀ j, Vac ψ S T LS LT (· = (p j).v) f := fun j => ValDbl.vac_at ((hPl.mem _).2 ⟨j, rfl⟩) hf
   obtain ⟨hgv, hiff⟩ := gen hstd hPl I hPl.nodup LS MS LT MT ALS AMS ALT AMT hLS hLT hMS hMT hL hA

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -9,8 +14,8 @@ noncomputable section
 
 universe u
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem isReduced_tensorProduct_of_forall_field {k : Type*} [Field k] (C : Type*) [CommRing C]
     [Algebra k C]
     (h : ∀ (E : Type u) [Field E] [Algebra k E] [Algebra.EssFiniteType k E], IsReduced (C ⊗[k] E))
@@ -27,7 +32,7 @@ theorem isReduced_tensorProduct_of_forall_field {k : Type*} [Field k] (C : Type*
     AlgHom.pi fun P =>
       (IsScalarTower.toAlgHom k (B ⧸ P.1) (FractionRing (B ⧸ P.1))).comp (Ideal.Quotient.mkₐ k P.1)
   have hφ : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro b hb
     have hmem : b ∈ sInf (minimalPrimes B) := by
       rw [Submodule.mem_sInf]
@@ -74,8 +79,8 @@ theorem isReduced_fractionRing_mvPolynomial_tensorProduct (K : Type u) [Field K]
     (Algebra.TensorProduct.cancelBaseChange K R R (FractionRing R) L).symm.toAlgHom
     (AlgEquiv.injective _)
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem isReduced_tensorProduct_field_of_perfectField (K : Type u) [Field K] [PerfectField K]
     (L : Type u) [Field L] [Algebra K L] (E : Type u) [Field E] [Algebra K E]
     [Algebra.EssFiniteType K E] : IsReduced (L ⊗[K] E) := by

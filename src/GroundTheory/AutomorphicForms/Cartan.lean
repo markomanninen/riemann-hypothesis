@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GLnLattice
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MulLeftCancelOfDetNeZero
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GLnLattice
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MulLeftCancelOfDetNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -299,28 +303,6 @@ theorem existsUnique_mem_doubleCoset (g : GL (Fin n) F) :
   obtain ⟨μ, hμ, h⟩ := exists_eq_mul_diagPow_mul F n g
   exact ⟨μ, ⟨hμ, (mem_doubleCoset_diagPow F n).mpr h⟩,
     fun ν hν => (eq_of_mem_doubleCoset F n hν.1 hμ hν.2 ((mem_doubleCoset_diagPow F n).mpr h))⟩
-
-def dominantEquivDoubleCoset :
-    {μ : Fin n → ℤ // IsDominant μ} ≃
-      DoubleCoset.Quotient (integralGL F n : Set (GL (Fin n) F)) (integralGL F n) :=
-  Equiv.ofBijective (fun μ => DoubleCoset.mk (integralGL F n) (integralGL F n) (diagPow F n μ))
-    ⟨fun μ ν h => by
-      obtain ⟨k₁, hk₁, k₂, hk₂, hk⟩ :=
-        (DoubleCoset.eq (integralGL F n) (integralGL F n) _ _).mp h
-      exact Subtype.ext (eq_of_mem_doubleCoset F n μ.2 ν.2 (mem_doubleCoset_self _ _ _)
-        ((mem_doubleCoset_diagPow F n).mpr ⟨k₁⁻¹, inv_mem hk₁, k₂⁻¹, inv_mem hk₂, by
-          rw [hk]; group⟩)),
-    fun q => by
-      obtain ⟨μ, hμ, k₁, hk₁, k₂, hk₂, hk⟩ := exists_eq_mul_diagPow_mul F n q.out
-      refine ⟨⟨μ, hμ⟩, ?_⟩
-      rw [← DoubleCoset.out_eq' (integralGL F n) (integralGL F n) q]
-      exact (DoubleCoset.eq (integralGL F n) (integralGL F n) _ _).mpr ⟨k₁, hk₁, k₂, hk₂, hk⟩⟩
-
-@[simp]
-theorem dominantEquivDoubleCoset_apply (μ : {μ : Fin n → ℤ // IsDominant μ}) :
-    dominantEquivDoubleCoset F n μ =
-      DoubleCoset.mk (integralGL F n) (integralGL F n) (diagPow F n μ) :=
-  rfl
 
 section Lattices
 

@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
-import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
-import Formalism.LocalToGlobal.CharacterGerms.NegMem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ConstantCoeffEv
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+public import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
+public import Formalism.LocalToGlobal.CharacterGerms.NegMem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ConstantCoeffEv
+
+@[expose] public section
 
 open scoped BigOperators
 open NumberField Formalism.IncomingBounds Formalism.L2.FormalSeriesBounds Formalism.L2.Pj GlobalTheory.RowLaw ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
@@ -37,7 +41,7 @@ theorem low_one (D : ℕ) : Low V D 0 (1 : MvPowerSeries τ C) := fun μ _ => by
 
 theorem Low.add {D : ℕ} {w : ℝ} {g h : MvPowerSeries τ C} (hg : Low V D w g) (hh : Low V D w h) :
     Low V D w (g + h) := fun μ hμ => by
-  rw [map_add]; exact (hg μ hμ).add (hh μ hμ)
+  rw [map_add (f := _)]; exact (hg μ hμ).add (hh μ hμ)
 
 theorem Low.mul {D : ℕ} {w w' : ℝ} {g h : MvPowerSeries τ C} (hg : Low V D w g) (hh : Low V D w' h) :
     Low V D (w + w') (g * h) := fun μ hμ => by
@@ -45,7 +49,7 @@ theorem Low.mul {D : ℕ} {w w' : ℝ} {g h : MvPowerSeries τ C} (hg : Low V D 
   rw [coeff_mul]
   refine VF.Ge.sum fun p hp => ?_
   have e : p.1.degree + p.2.degree = μ.degree := by
-    rw [← map_add, Finset.HasAntidiagonal.mem_antidiagonal.mp hp]
+    rw [← map_add (f := _), Finset.HasAntidiagonal.mem_antidiagonal.mp hp]
   exact (hg _ (by omega)).mul (hh _ (by omega))
 
 def Cong (V : VF C) (D : ℕ) (w : ℝ) (g h : MvPowerSeries τ C) : Prop :=

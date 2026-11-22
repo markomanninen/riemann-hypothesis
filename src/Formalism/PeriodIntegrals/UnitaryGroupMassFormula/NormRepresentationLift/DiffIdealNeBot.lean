@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermDef
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem one_mem_ddS_neg (D : D7) (m : ℕ) :
     rw [hpow]
     exact FractionalIdeal.coeIdeal_le_one
   rw [zpow_neg, zpow_natCast, ← FractionalIdeal.one_le]
-  have h1 := FractionalIdeal.inv_anti_mono hI one_ne_zero hle
+  have h1 := FractionalIdeal.inv_anti_mono hI hle
   rwa [inv_one] at h1
 
 theorem e_mem_lam (D : D7) {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (Λ : Submodule (𝓞 D.host.E) (VS D).V)

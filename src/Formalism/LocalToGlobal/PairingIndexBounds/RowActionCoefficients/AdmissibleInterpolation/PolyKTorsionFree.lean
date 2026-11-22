@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.CoefProd
-import Formalism.LocalToGlobal.GroupLattices.FockModels.SwRowGenMonomial
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.CoefProd
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.SwRowGenMonomial
+
+@[expose] public section
 
 open MvPolynomial
 

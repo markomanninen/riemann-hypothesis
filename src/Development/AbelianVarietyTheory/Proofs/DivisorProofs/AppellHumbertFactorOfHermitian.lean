@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.StepsNonvacuous
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.HermFormPullEqOfLbIsoPow
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsHomOfLinearScalingHermForm
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.SectionsPowEqThetaLevelChar
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ReFormPosOfThetaNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfFderivEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GaussManinPeriods
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.HermFormPullEqOfLbIsoPow
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsHomOfLinearScalingHermForm
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.SectionsPowEqThetaLevelChar
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ReFormPosOfThetaNeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfFderivEqZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -163,7 +168,7 @@ theorem re_form_pos_of_relAmple :
         rw [MvPolynomial.eval₂Hom_C]
         exact (val_appLE _ (A.hom ∣_ ⊤) ⊤ _ _ a mt).trans
           ((congrArg (fun y => valAt' y ⊤ a) (hc _ 0)).trans (val_appLE _ (A.hom ∣_ ⊤) ⊤ _ _ a m0).symm)
-      | add Q Q' h h' => rw [map_add, val_add _ mt, val_add _ m0, h, h']
+      | add Q Q' h h' => rw [map_add (f := _), val_add _ mt, val_add _ m0, h, h']
       | mul_X Q j h =>
         rw [map_mul, val_mul _ mt, val_mul _ m0, h, MvPolynomial.eval₂Hom_X']
         congr 1
@@ -195,7 +200,7 @@ theorem re_form_pos_of_relAmple :
     have h2 := him (star x)
     rw [star_star] at h1 h2
     exact Complex.le_def.mpr ⟨h1, h2.symm⟩
-  refine (hpsd.dotProduct_mulVec_zero_iff (star z)).mp ?_
+  refine (hpsd.dotProduct_mulVec_zero_iff).mp ?_
   rw [star_star]
   exact Complex.ext h0.symm (him z)
 

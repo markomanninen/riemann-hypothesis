@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.NerveFaceClosed
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.NerveFaceClosed
+
+@[expose] public section
 
 open Set UpperTheory.V.ConeExtensionAcyclic
 
@@ -51,7 +55,8 @@ private theorem bd_kap_succ {I : Type} (a : I) (n : ℕ) (c : Ch I (n + 1)) :
       rw [Finsupp.smul_single, smul_eq_mul, mul_one]
     have e2 : Finsupp.single t m = m • Finsupp.single t 1 := by
       rw [Finsupp.smul_single, smul_eq_mul, mul_one]
-    rw [e1, e2, map_smul, map_smul, map_smul, bd_single, bd_single, Fin.sum_univ_succ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, e2, map_smul, map_smul, map_smul, bd_single, bd_single, Fin.sum_univ_succ, map_sum]
     simp only [map_smul, kap_single, cons_zero_succAbove, cons_succ_succAbove, Fin.val_zero, pow_zero, one_smul, Fin.val_succ, pow_succ]
     simp only [mul_neg, mul_one, neg_smul, Finset.sum_neg_distrib, smul_add, smul_neg, sub_eq_add_neg]
   exact LinearMap.congr_fun hlin c

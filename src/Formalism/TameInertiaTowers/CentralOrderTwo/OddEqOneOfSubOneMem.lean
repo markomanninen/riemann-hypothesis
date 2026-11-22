@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.TameInertiaTowers.StatementField
-import Formalism.TameInertiaTowers.InvLength
-import Formalism.TameInertiaTowers.CentralOrderTwo.NormalOrderTwoCentral
+module
+
+public import Mathlib
+public import Formalism.TameInertiaTowers.StatementField
+public import Formalism.TameInertiaTowers.InvLength
+public import Formalism.TameInertiaTowers.CentralOrderTwo.NormalOrderTwoCentral
+
+@[expose] public section
 
 open NumberField Ideal
 
@@ -415,6 +419,6 @@ theorem invLength : InvLength := by
   have hker : Nat.card f.ker = Nat.gcd (2 ^ N) k :=
     Nat.eq_of_mul_eq_mul_right hdpos (hmul.trans hd.symm)
   rw [hcard, hker, gcd_two_pow N k hk]
-  rfl
+  simp [hkdef, padicValInt, padicValNat]
 
 end Formalism.TwoAdicCyclotomicDecomposition

@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.ContinuousCj
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.ContinuousCj
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,8 @@ def A0 (L : LD d) (v : Fin L.n → E) : Matrix (Fin d.n) (Fin d.n) E := 1 + ∑ 
 
 theorem Au_inc (v : Fin L.n → E) : Au L (GlobalTheory.ThK.incV F v) = incM F (A0 L v) := by
   ext a b
-  simp [Au, A0, incM, Matrix.one_apply, Matrix.sum_apply, Matrix.single_apply, GlobalTheory.ThK.incV, map_sum, apply_ite]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Au, A0, incM, Matrix.one_apply, Matrix.sum_apply, Matrix.single_apply, GlobalTheory.ThK.incV, map_sum, apply_ite]
 
 theorem Apc (hU : L.UData uM ν 𝓤) (u : Fin L.n → AE F E) : (Ap hU u).map (cA σ) = (Au L (-u))ᵀ := by
   have h1 : (Ap hU u).map (cA σ) * (Au L u)ᵀ = 1 := mul_eq_one_comm.1 (frame_blk d (inFrame_uM hU u))

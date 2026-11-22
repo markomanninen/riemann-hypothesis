@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafTw0GenFreeOf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafTw0GenFreeOf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC

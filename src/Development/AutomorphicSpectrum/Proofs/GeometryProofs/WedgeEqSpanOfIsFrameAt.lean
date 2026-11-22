@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EtaleLocalizationAtPrimeTensorOfLowHeight
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EtaleLocalizationAtPrimeTensorOfLowHeight
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj GlobalTheory.CompanionTheory.Ar
 
@@ -31,6 +35,7 @@ theorem Lat.wedge_eq_span_of_isFrameAt :
       refine this.trans (Finset.sum_congr rfl fun f _ => ?_)
       have h2 := (exteriorPower.ιMulti Ω r (M := E)).toMultilinearMap.map_smul_univ
         (fun i => (c i (f i) : Ω)) (fun i => b (f i))
+      simp only [RingHom.id_apply] at h2
       refine h2.trans ?_
       have h3 : ((∏ i, c i (f i) : regAt ξ p) : Ω) = ∏ i, (c i (f i) : Ω) := by simp
       rw [← h3]

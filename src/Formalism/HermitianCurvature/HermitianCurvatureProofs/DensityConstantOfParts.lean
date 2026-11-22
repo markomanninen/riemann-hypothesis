@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.KloostermanDensity
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KloostermanDensity
+
+@[expose] public section
 
 open Matrix Formalism.FourierDecayAlt
 
@@ -63,7 +67,7 @@ theorem density_constant_of_parts : DensCOfParts := by
     rw [← hV (bigPt d') 1 d' (Dens.isLocPt_bigPt d' hd') (Dens.ptMatN_bigPt d').symm]
     exact hBV Wp Wq P p F hC hR d' hd'
   · unfold KB.Pl.V D.vecV
-    rw [dif_neg (fun h => ha h.1)]
+    rw [dite_eq_right (fun h => ha h.1)]
 
 end Formalism.FourierDecayAlt.P.PBJ
 

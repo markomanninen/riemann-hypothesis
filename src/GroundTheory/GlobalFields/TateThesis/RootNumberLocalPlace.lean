@@ -1,10 +1,14 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.EulerFactorsFourierFinite
-import GroundTheory.GlobalFields.TateThesis.AdelicCharLocal
-import GroundTheory.GlobalFields.KummerTheory.LocalIndexAtPlace
-import GroundTheory.GlobalFields.Artin.ConductorOneDim
-import GroundTheory.AutomorphicForms.GL2.FiniteAdeleDecomp
-import GroundTheory.LocalFields.LocalZeta
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.EulerFactorsFourierFinite
+public import GroundTheory.GlobalFields.TateThesis.AdelicCharLocal
+public import GroundTheory.GlobalFields.KummerTheory.LocalIndexAtPlace
+public import GroundTheory.GlobalFields.Artin.ConductorOneDim
+public import GroundTheory.AutomorphicForms.GL2.FiniteAdeleDecomp
+public import GroundTheory.LocalFields.LocalZeta
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -139,7 +143,7 @@ theorem quasiCharConductor_localChar :
 theorem isUnramifiedChar_localChar_iff :
     IsUnramifiedChar (localChar χ v) ↔ ¬ v.asIdeal ∣ χ.conductor := by
   rw [IsUnramifiedChar, χ.unitFiltrationUnits_le_ker_localChar_iff v 0, Nat.le_zero,
-    multiplicity_eq_zero]
+    multiplicity_eq_zero (Ideal.finiteMultiplicity v.isPrime.ne_top χ.conductor_ne_bot)]
 
 theorem isLocallyConstant_finiteTest : IsLocallyConstant (χ.finiteTest v) := by
   refine (IsLocallyConstant.iff_eventually_eq _).2 fun x₀ ↦ ?_

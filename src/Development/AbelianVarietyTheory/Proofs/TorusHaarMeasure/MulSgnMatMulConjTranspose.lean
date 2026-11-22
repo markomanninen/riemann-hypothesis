@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExtFStatementPfB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpCStatementPfA
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExtFStatementPfB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpCStatementPfA
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates
   MeasureTheory Topology
@@ -194,9 +198,9 @@ theorem norm_nmat_sub_one_le {r : ℕ} (X : Data E r) (z : V (nd X)) (τ : X.Ψ)
   rw [Matrix.sub_apply, Matrix.one_apply]
   simp only [mat, nmat, Matrix.of_apply]
   by_cases h : b < a
-  · rw [dif_pos h, if_neg h.ne', sub_zero]
+  · rw [dite_eq_left h, if_neg h.ne', sub_zero]
     exact PiLp.norm_apply_le z _
-  · rw [dif_neg h, sub_self, norm_zero]
+  · rw [dite_eq_right h, sub_self, norm_zero]
     exact norm_nonneg _
 
 theorem isometry_of_orth {r : ℕ} (X : Data E r) {x0 x : Frame X.Ψ r} (h0 : IsOrth X x0)
@@ -225,7 +229,7 @@ theorem minorRatio_near :
     hc.continuousOn
   refine ⟨δ, ∏ _τ : X.Ψ, (4 * B), hδ, fun x hx z hz => ?_⟩
   rw [← Finset.prod_mul_distrib]
-  refine Finset.prod_le_prod (fun τ _ => by positivity) fun τ _ => ?_
+  refine Finset.prod_le_prod₀ (fun τ _ => by positivity) fun τ _ => ?_
   have hiso := isometry_of_orth X h0 hx τ
   have h1 : ‖dmin X.Gm (cpt X x z) τ i0‖ ≤ B := by
     rw [dmin_cpt_eq X h0 hx]

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+
+@[expose] public section
+
 open TensorProduct
 
 namespace GlobalTheory.BSP
@@ -28,8 +33,8 @@ private theorem one_tmul_quotient_eq_zero_iff_mem_smul {A : Type} [CommRing A] (
   rw [map_one, one_smul] at h
   rw [← (quotTensorEquivQuotSMul M I).map_eq_zero_iff, h, Submodule.Quotient.mk_eq_zero]
 
-open TensorProduct in
 
+open TensorProduct in
 theorem _root_.GlobalTheory.BSP.bijective_of_bijective_baseChange_quotient :
     ∀ (A : Type) [CommRing A] (𝔞 : Ideal A), 𝔞 ≤ Ideal.jacobson ⊥ → ∀ (P : Type) [AddCommGroup P] [Module A P] [Module.Finite A P] (P' : Type) [AddCommGroup P'] [Module A P'] [Module.Finite A P'] [Module.Projective A P'] (w : P →ₗ[A] P'), Function.Bijective (w.baseChange (A ⧸ 𝔞)) → Function.Bijective w := by
   intro A _ 𝔞 h𝔞 P _ _ _ P' _ _ _ _ w hw
@@ -64,7 +69,7 @@ theorem _root_.GlobalTheory.BSP.bijective_of_bijective_baseChange_quotient :
       rw [one_tmul_quotient_eq_zero_iff_mem_smul] at h0
       rw [LinearMap.range_eq_map, ← Submodule.map_smul'', ← hπw _ (hwπ p)]
       exact Submodule.mem_map_of_mem h0
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro p hp
   have : π p ∈ LinearMap.range π := ⟨p, rfl⟩
   rw [hbot, Submodule.mem_bot, hπw p hp] at this

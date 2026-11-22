@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.ReadLimit
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PackOf
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.FaceMapCompSuccAboveCastSucc
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.InfinitesimalCharacterGlue
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.LimitbLem
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.ReadLimit
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PackOf
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.FaceMapCompSuccAboveCastSucc
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.InfinitesimalCharacterGlue
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.LimitbLem
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,8 @@ namespace PositivityTheory.Rg.BcB.F.Rd.B
 
 open PositivityTheory.Rg.BcB.F PositivityTheory.Rg.BcB.F.Rd
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem packK (hBO : BlockOperatorsProductAdjoint) {E : Type} [Field E] [NumberField E] [IsCMField E] (B : Block E)
     (W₁ : Submodule ℂ (Kinf E B.a → ℂ)) (W₂ : Submodule ℂ (Kinf E B.b → ℂ))
     (K₁ : Subgroup (GL (Fin B.a) (Af E))) (K₂ : Subgroup (GL (Fin B.b) (Af E)))
@@ -69,11 +73,11 @@ theorem packK (hBO : BlockOperatorsProductAdjoint) {E : Type} [Field E] [NumberF
     · by_cases hm : m = 0
       · have e1 : ka' s m v = (B.a : ℂ) • t₀.ka v := by
           show (if h : 1 ≤ m ∧ 0 < B.a then _ else _) = _
-          rw [dif_neg h, if_pos hm]
+          rw [dite_eq_right h, if_pos hm]
         rw [e1, hm]; exact isKer_smul_rank _ _ _ _ s (hka0 v)
       · have e1 : ka' s m v = 0 := by
           show (if h : 1 ≤ m ∧ 0 < B.a then _ else _) = _
-          rw [dif_neg h, if_neg hm]
+          rw [dite_eq_right h, if_neg hm]
         have ha : B.a = 0 := by omega
         rw [e1]; exact isKer_zero_rank ha _ _ _ s m
   have hkerB : ∀ s m v, IsKer B.μb (B.Mb v) [(s, m)] bump (kb' s m v) := by
@@ -84,11 +88,11 @@ theorem packK (hBO : BlockOperatorsProductAdjoint) {E : Type} [Field E] [NumberF
     · by_cases hm : m = 0
       · have e1 : kb' s m v = (B.b : ℂ) • t₀.kb v := by
           show (if h : 1 ≤ m ∧ 0 < B.b then _ else _) = _
-          rw [dif_neg h, if_pos hm]
+          rw [dite_eq_right h, if_pos hm]
         rw [e1, hm]; exact isKer_smul_rank _ _ _ _ s (hkb0 v)
       · have e1 : kb' s m v = 0 := by
           show (if h : 1 ≤ m ∧ 0 < B.b then _ else _) = _
-          rw [dif_neg h, if_neg hm]
+          rw [dite_eq_right h, if_neg hm]
         have hb : B.b = 0 := by omega
         rw [e1]; exact isKer_zero_rank hb _ _ _ s m
   have hderA' : ∀ v s m, PositivityTheory.Rg.BcB.E.conv B.D.μ (tens (Function.update t₀.ka v (ka' s m v)) t₀.kb t₀.ψ) f =
@@ -108,14 +112,14 @@ theorem packK (hBO : BlockOperatorsProductAdjoint) {E : Type} [Field E] [NumberF
     · by_cases hm : m = 0
       · have e1 : ka' s m v = (B.a : ℂ) • t₀.ka v := by
           show (if h : 1 ≤ m ∧ 0 < B.a then _ else _) = _
-          rw [dif_neg h, if_pos hm]
+          rw [dite_eq_right h, if_pos hm]
         have e2 : ca v s m = (B.a : ℂ) * c := by
           show (if 1 ≤ m ∧ 0 < B.a then _ else _) = _
           rw [if_neg h, if_pos hm]
         rw [e1, e2, tens_update_smul, conv_smulM, show tens t₀.ka t₀.kb t₀.ψ = t₀.Φ from rfl, h0, smul_smul]
       · have e1 : ka' s m v = 0 := by
           show (if h : 1 ≤ m ∧ 0 < B.a then _ else _) = _
-          rw [dif_neg h, if_neg hm]
+          rw [dite_eq_right h, if_neg hm]
         have e2 : ca v s m = 0 := by
           show (if 1 ≤ m ∧ 0 < B.a then _ else _) = _
           rw [if_neg h, if_neg hm]
@@ -137,14 +141,14 @@ theorem packK (hBO : BlockOperatorsProductAdjoint) {E : Type} [Field E] [NumberF
     · by_cases hm : m = 0
       · have e1 : kb' s m v = (B.b : ℂ) • t₀.kb v := by
           show (if h : 1 ≤ m ∧ 0 < B.b then _ else _) = _
-          rw [dif_neg h, if_pos hm]
+          rw [dite_eq_right h, if_pos hm]
         have e2 : cb v s m = (B.b : ℂ) * c := by
           show (if 1 ≤ m ∧ 0 < B.b then _ else _) = _
           rw [if_neg h, if_pos hm]
         rw [e1, e2, tens_update_smul_b, conv_smulM, show tens t₀.ka t₀.kb t₀.ψ = t₀.Φ from rfl, h0, smul_smul]
       · have e1 : kb' s m v = 0 := by
           show (if h : 1 ≤ m ∧ 0 < B.b then _ else _) = _
-          rw [dif_neg h, if_neg hm]
+          rw [dite_eq_right h, if_neg hm]
         have e2 : cb v s m = 0 := by
           show (if 1 ≤ m ∧ 0 < B.b then _ else _) = _
           rw [if_neg h, if_neg hm]

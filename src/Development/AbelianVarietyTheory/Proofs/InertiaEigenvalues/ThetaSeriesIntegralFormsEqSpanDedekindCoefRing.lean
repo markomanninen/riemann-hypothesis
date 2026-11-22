@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockOfApply
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearIndependentComplexOfSubfieldCoeffLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockHarmonicLatticeFgAndSpansValueSpace
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsClassSystem
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockOfApply
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearIndependentComplexOfSubfieldCoeffLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FockHarmonicLatticeFgAndSpansValueSpace
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsClassSystem
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem exists_extend {N : Submodule R W} (hN : Indep N) (s : N →ₗ[R] V) : �
       obtain ⟨a, ha, rfl⟩ := h
       exact h2 ⟨a, ha⟩
     | zero => simp
-    | add _ _ _ _ e1 e2 => rw [Submodule.coe_add, map_add, map_add, e1, e2]
+    | add _ _ _ _ e1 e2 => rw [Submodule.coe_add, map_add (f := _), map_add (f := _), e1, e2]
     | smul a x _ e =>
       rw [map_smul, ← e]
       exact s'.map_smul (a : ℂ) (x : W)
@@ -89,7 +93,7 @@ theorem mem_span_ker [IsDedekindDomain R] {L : Submodule R V} (hL : L.FG) {M : S
       exact sub_eq_zero.2 h2.symm
   | zero => simp
   | add y z _ _ h1 h2 =>
-    rw [map_add, map_add, add_sub_add_comm]
+    rw [map_add (f := _), map_add (f := _), add_sub_add_comm]
     exact add_mem h1 h2
   | smul a y _ h1 =>
     have := Submodule.smul_mem _ a h1
@@ -115,12 +119,12 @@ theorem mem_span_iInf_ker [IsDedekindDomain R] {M : Submodule R W} (hM : Indep M
       rw [Submodule.span_span_of_tower]
       exact Module.Finite.span_finset ℂ s
     have hlt : Submodule.span ℂ (L' : Set V) < Submodule.span ℂ (L : Set V) := by
-      refine lt_of_le_of_ne (Submodule.span_mono fun z hz => hz.1) fun e => hy0 ?_
+      refine lt_of_le_of_ne (Submodule.span_mono (show (L' : Set V) ⊆ (L : Set V) from fun z hz => hz.1)) fun e => hy0 ?_
       have h1 : Submodule.span ℂ (L' : Set V) ≤ LinearMap.ker (T a) := Submodule.span_le.2 fun z hz => hz.2
       exact h1 (e ▸ Submodule.subset_span hy)
     have := ih _ (hn ▸ Submodule.finrank_lt_finrank_of_lt hlt) L' hL' rfl (fun b z hz => hT b z hz.1) x
       (mem_span_ker hL hM (T a) (hT a) hx (h0 a)) h0
-    exact Submodule.span_mono (fun z hz => And.intro hz.1.1 hz.2) this
+    exact Submodule.span_mono (show {y | y ∈ L' ∧ ∀ a, T a y = 0} ⊆ {y | y ∈ L ∧ ∀ a, T a y = 0} from fun z hz => ⟨hz.1.1, hz.2⟩) this
 
 theorem law_mem_span [IsDedekindDomain R] {G Γ : Type} [Group G] [Group Γ] (ι : Γ →* G) (ρ : Γ →* Module.End ℂ W)
     (J : Subgroup G) (χ : J →* ℂˣ) (hχ : ∀ k, ((χ k : ℂˣ) : ℂ) ∈ R) (C : G → Submodule R W) (hfg : ∀ g, (C g).FG)
@@ -229,13 +233,76 @@ theorem mtLat_eq_span : ∀ (D : D7) (S T : HSp D) (B : Base S T), B.Good → �
       IsLocalization.of_le_isUnit_of_bijective (by rintro _ ⟨x, hx, rfl⟩; rw [Submonoid.mem_bot.1 hx, map_one]; exact one_mem _)
         ⟨fun _ _ e => hφ (congrArg Subtype.val e), φ.rangeRestrict_surjective⟩
     exact IsLocalization.isDedekindDomain R (M := ⊥) bot_le _
+  have hfull : ∀ (V : HSp D) (Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)),
+      IsSelfDualC V Λ → Submodule.IsFullLattice D.host.E Λ := by
+    intro V Λ hΛ
+    haveI : Submodule.IsLattice D.host.E Λ := hΛ.1
+    refine ⟨?_⟩
+    obtain ⟨s, hs⟩ := hΛ.1.fg
+    apply eq_top_iff.mpr
+    intro y _
+    let f : (Fin V.rank → D.host.E) → D.host.E := fun x =>
+      ∑ i, ∑ j, star (x i) * V.gram i j * y j
+    obtain ⟨a, ha⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors (𝓞 D.host.E)) s f
+    have ha0 : (algebraMap (𝓞 D.host.E) D.host.E a) ≠ 0 := by
+      exact (FaithfulSMul.algebraMap_injective _ _).ne (mem_nonZeroDivisors_iff_ne_zero.mp a.2)
+    let P : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E) := {
+      carrier := {x | ∃ b : 𝓞 D.host.E, (b : D.host.E) = (algebraMap (𝓞 D.host.E) D.host.E a) * f x}
+      zero_mem' := by refine ⟨0, ?_⟩; simp [f]
+      add_mem' := by
+        rintro x z ⟨b, hb⟩ ⟨c, hc⟩
+        refine ⟨b + c, ?_⟩
+        change (b : D.host.E) + c = _
+        rw [hb, hc]
+        simp [f, map_add, add_mul, Finset.sum_add_distrib, mul_add]
+      smul_mem' := by
+        rintro c x ⟨b, hb⟩
+        refine ⟨RingOfIntegers.mapRingHom (starRingEnd D.host.E) c * b, ?_⟩
+        simp only [map_mul, hb, f, Pi.smul_apply, Algebra.smul_def, map_mul, RingOfIntegers.mapRingHom_apply, star_mul]
+        simp only [Finset.mul_sum]
+        apply Finset.sum_congr rfl
+        intro i _
+        apply Finset.sum_congr rfl
+        intro j _
+        change star (c : D.host.E) * _ = _
+        ring }
+    have hsP : (s : Set (Fin V.rank → D.host.E)) ⊆ P := by
+      intro x hx
+      obtain ⟨b, hb⟩ := ha x hx
+      exact ⟨b, by simpa [Algebra.smul_def] using hb⟩
+    have hy : (algebraMap (𝓞 D.host.E) D.host.E a) • y ∈ Λ := by
+      apply (hΛ.2 _).2
+      intro x hx
+      have hxP : x ∈ P := (hs ▸ Submodule.span_le.mpr hsP) hx
+      obtain ⟨b, hb⟩ := hxP
+      refine ⟨b, ?_⟩
+      rw [hb]
+      dsimp only [f, Pi.smul_apply]
+      simp only [smul_eq_mul, Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro i _
+      apply Finset.sum_congr rfl
+      intro j _
+      ring
+    have hy' : (algebraMap (𝓞 D.host.E) D.host.E a) • y ∈ Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E)) :=
+      Submodule.subset_span hy
+    have := (Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E))).smul_mem
+      (algebraMap (𝓞 D.host.E) D.host.E a)⁻¹ hy'
+    change (algebraMap (𝓞 D.host.E) D.host.E a)⁻¹ •
+      ((algebraMap (𝓞 D.host.E) D.host.E a) • y) ∈ _ at this
+    rw [← smul_assoc, smul_eq_mul, inv_mul_cancel₀ ha0, one_smul] at this
+    exact this
   refine le_antisymm (fun f hf => ?_) (Submodule.span_le.2 fun f hf => ?_)
   · obtain ⟨m, y, hy⟩ := exists_isClassSystem B hB.frame ψ
     obtain ⟨h1, h2⟩ := (B.mem_mtLat σ emb O).1 hf
     have := law_mem_span (O := O) (Bridge.ratF S) (B.act.comp (GQ S).subtype) (B.levJ ψ) (B.levLam ψ) hlam
       (B.coefLat σ emb φ.range)
-      (fun g => (HarmLattice.harmLat_fg_span D _ _ _ _ _ _ _ _ _ hB.wt (pq_le hB) hc
-        (Formalism.UG.P.csGlob_lattice _ (Module.Finite.iff_fg.2 hB.frame.sdS.1.fg) hB.frame.sdS.1.span_eq_top _)).1)
+      (fun g => by
+        haveI : Submodule.IsFullLattice D.host.E (B.latAt g) :=
+          Formalism.UG.P.csGlob_lattice _ (Module.Finite.iff_fg.2 hB.frame.sdS.1.fg)
+            (hfull S B.F.ΛS hB.frame.sdS).span_eq_top _
+        exact (HarmLattice.harmLat_fg_span D _ _ _ _ _ _ _ _ _ hB.wt (pq_le hB) hc
+          (by infer_instance)).1)
       (fun γ g k P hP => Base.act_mem_coefLat hB.frame hc γ g k (Base.mem_St_of_mem_levJ k.2) hP)
       (fun I F hF hi => GlobalTheory.T.linearIndependent_complex_of_subfield_coeffLattice D S T B hB K σ emb φ.range hc (Subfield.closure (φ.range : Set ℂ)) Subfield.subset_closure I F
         (fun a g => hF a g trivial) (indep_closure hi))

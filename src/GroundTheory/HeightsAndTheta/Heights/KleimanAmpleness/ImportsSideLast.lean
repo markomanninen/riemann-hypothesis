@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SegreLiftVal
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SegreLiftVal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -27,8 +32,5 @@ theorem SegreLiftComap.hyps :
   rintro g ⟨c, d, rfl⟩
   obtain rfl : c = d := Subsingleton.elim _ _
   simp
-
-example (h : SegreLiftComap.Statement) :=
-  h ℚ Unit (fun _ => Fin 1) ⊥ SegreLiftComap.hyps.1 SegreLiftComap.hyps.2
 
 end GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization

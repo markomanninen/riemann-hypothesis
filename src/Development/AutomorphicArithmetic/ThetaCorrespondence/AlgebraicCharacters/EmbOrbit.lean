@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IotaSpec
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.HeckeLAdicCharacterDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.AlgebraicCharacterWD
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IotaSpec
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.HeckeLAdicCharacterDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.AlgebraicCharacterWD
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,8 @@ variable {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAl
   (hj : GlobalTheory.Pst.Induces Bw)
 
 def WDis (κ : ↥(Dec (F := F) A) →* (Qbar l)ˣ) (ξ : Weil h →* (Qbar l)ˣ) : Prop :=
-  IsPstAt P Bw (rk1 κ) ∧ ∃ hs, wdAt P ι Bw h hj (rk1 κ) = WD.lpOfChar h ((Units.map ι.toRingHom.toMonoidHom).comp ξ) hs
+  IsPstAt P Bw (rk1 κ) ∧ ∃ hs,
+    GlobalTheory.Pst.wdAt P ι Bw h hj (rk1 κ) = WD.lpOfChar h ((Units.map ι.toRingHom.toMonoidHom).comp ξ) hs
 
 end
 

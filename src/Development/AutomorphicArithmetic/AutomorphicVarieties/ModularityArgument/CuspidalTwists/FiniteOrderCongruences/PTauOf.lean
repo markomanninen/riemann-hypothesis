@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalTwists.FiniteOrderCongruences.TwistIne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GalEmbTop
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ScNorm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IntegralityOfNormCoefficients
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharInertiaSurjective
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDecompositionGroupCyclotomicCharacterZpowN
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalTwists.FiniteOrderCongruences.TwistIne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GalEmbTop
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ScNorm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IntegralityOfNormCoefficients
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharInertiaSurjective
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDecompositionGroupCyclotomicCharacterZpowN
+
+@[expose] public section
 
 noncomputable section
 
@@ -136,8 +140,6 @@ def tau (hy : Hyp H k u g0) : Γ →* M2 R where
         Nm_conj hy hy.g0 hbg, Nm_inv, h1]
       simp only [mul_assoc, mul_one]
 
-theorem tau_apply (hy : Hyp H k u g0) (g : Γ) : tau hy g = tauF H k u g0 g := rfl
-
 theorem form_of (a b s : R) (h1 : a * a - b * b = 1) (h2 : s * s = 1) :
     (!![a, s * b; b, s * a] : M2 R)ᵀ * !![1, 0; 0, -1] * !![a, s * b; b, s * a] = !![1, 0; 0, -1] := by
   have eT : (!![a, s * b; b, s * a] : M2 R)ᵀ = !![a, b; s * b, s * a] := by
@@ -242,19 +244,19 @@ def kO (g : G ℚ Ω) : c.O :=
 theorem kO_res (x : G K' Ω) : ((kO K' κ c hc (resQ K' x) : c.O) : Qbar l) = κ x := by
   have h : ∃ y, resQ K' y = resQ K' x := ⟨x, rfl⟩
   unfold kO
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   show (κ h.choose : Qbar l) = κ x
   rw [res_inj K' h.choose_spec]
 
 theorem kO_off (g : G ℚ Ω) (hg : ¬ ∃ x, resQ K' x = g) : kO K' κ c hc g = 1 := by
   unfold kO
-  rw [dif_neg hg]
+  rw [dite_eq_right hg]
 
 def PP (e : ℤ) (A : ValuationSubring Ω) : Prop :=
   ∀ h : G K' Ω, resQ K' h ∈ Ine (F := ℚ) A → κ h = cycBar K' Ω l h ^ e
 
-open Classical in
 
+open Classical in
 def sA (m : ℕ) (A : ValuationSubring Ω) : c.O := if PP K' κ (m : ℤ) A then 1 else -1
 
 end Kap

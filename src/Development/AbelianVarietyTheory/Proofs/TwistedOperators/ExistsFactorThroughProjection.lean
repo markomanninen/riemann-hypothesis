@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.FactorThroughProjection
 
@@ -7,7 +11,8 @@ theorem exists_factor_through_projection {J : Type} [Fintype J] [DecidableEq J] 
     (χ : ((i : J) → A i) →+* k) :
     ∃ (i : J) (ψ : A i →+* k), ∀ (x : (i : J) → A i), χ x = ψ (x i) := by
   have hsum : ∑ i : J, χ (Pi.single i (1 : A i)) = 1 := by
-    rw [← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum]
     have h : ∑ i : J, (Pi.single i (1 : A i) : (j : J) → A j) = 1 :=
       Finset.univ_sum_single (1 : (j : J) → A j)
     rw [h, map_one]
@@ -29,7 +34,7 @@ theorem exists_factor_through_projection {J : Type} [Fintype J] [DecidableEq J] 
       map_one' := hone
       map_mul' := fun a b => by rw [hmul, map_mul]
       map_zero' := by simp
-      map_add' := fun a b => by rw [Pi.single_add, map_add] }
+      map_add' := fun a b => by rw [Pi.single_add, map_add (f := _)] }
   refine ⟨i, ψ, fun x => ?_⟩
   change χ x = χ (Pi.single i (x i))
   have hx : (Pi.single i (x i) : (j : J) → A j) = x * Pi.single i (1 : A i) := by

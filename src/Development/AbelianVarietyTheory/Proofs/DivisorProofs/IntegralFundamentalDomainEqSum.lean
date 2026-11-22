@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory IsDedekindDomain NumberField
 
@@ -109,12 +113,12 @@ theorem integral_fundamentalDomain_eq_sum : ∀ {G : Type} [Group G] [Measurable
     fun i => (integrable_indicator_iff (hC i)).mpr (integrableOn_const (hm i).1)
   constructor
   · rw [IntegrableOn, hpt]
-    exact integrable_finset_sum _ fun i _ => hint i
+    exact MeasureTheory.integrable_finsetSum _ fun i _ => hint i
   · calc ∫ x in 𝓕, Φ x ∂μ
         = ∫ x in 𝓕, ∑ i, (dcoset Γ K (g i)).indicator (fun _ => Φ (g i)) x ∂μ := by
           conv_lhs => rw [hpt]
       _ = _ := by
-          rw [integral_finset_sum _ fun i _ => hint i]
+          rw [MeasureTheory.integral_finsetSum _ fun i _ => hint i]
           refine Finset.sum_congr rfl fun i _ => ?_
           rw [integral_indicator_const _ (hC i), Measure.real, (hm i).2, Complex.real_smul]
           push_cast

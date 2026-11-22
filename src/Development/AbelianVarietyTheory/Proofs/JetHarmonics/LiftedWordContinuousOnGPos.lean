@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementTBB
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyContinuousOn
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementTBB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyContinuousOn
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Filter Topology MeasureTheory
 
@@ -16,7 +20,7 @@ theorem liftedWord_continuousOn_GPos : ∀ (Wp Wq : Type) [NormedAddCommGroup Wp
     apply Formalism.FourierDecayAlt.P.PBE.opApply_continuousOn
     intro T hT
     have h1 : ContinuousOn T.coef (B.GPos p.T.base) :=
-      (Formalism.FourierDecayAlt.P.PBE.ckOn_continuousOn' (fun g hg => hg.1) (hIn.1 T hT).1).mono hsub
+      (Formalism.FourierDecayAlt.P.PBE.ckOn_continuousOn' (UU := C6.domL p.T.base ∅) (fun g hg => hg.1) (hIn.1 T hT).1).mono hsub
     have h2 : ContinuousOn (B.Rw T.word F) (B.GPos p.T.base) :=
       (Formalism.FourierDecayAlt.P.B5.ckOn_continuousOn (Formalism.FourierDecayAlt.P.JFxG.ckOn_Rw_top hF T.word T.word_lie)).mono hGPG
     exact h1.clm_apply h2

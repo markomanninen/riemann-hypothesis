@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContDiffDerivHeisenbergCMRealLineTheta
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContDiffDerivHeisenbergCMRealLineTheta
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -33,7 +37,7 @@ theorem contDiff_deriv_heisOF_line_k : ∀ (F E : Type) [Field F] [NumberField F
         rw [show Fin.init (0 : Fin (k + 1) → ℝ) = (0 : Fin k → ℝ) from rfl, Pi.zero_apply, map_zero, map_zero, add_zero]
       map_add' := fun u v => by
         show L' (Fin.init (u + v)) + L (u (Fin.last k) + v (Fin.last k)) = _
-        rw [show Fin.init (u + v) = Fin.init u + Fin.init v from rfl, map_add, map_add]
+        rw [show Fin.init (u + v) = Fin.init u + Fin.init v from rfl, map_add (f := _), map_add (f := _)]
         abel }
   haveI : IsModuleTopology (AF F) (AF F ⊗[F] E) := ⟨rfl⟩
   haveI : IsTopologicalRing (AF F ⊗[F] E) := IsModuleTopology.isTopologicalRing (AF F) _
@@ -47,7 +51,7 @@ theorem contDiff_deriv_heisOF_line_k : ∀ (F E : Type) [Field F] [NumberField F
     refine contDiff_pi.2 fun i => ?_
     induction i using Fin.lastCases with
     | last => simp only [Fin.snoc_last]; exact contDiff_snd
-    | cast j => simp only [Fin.snoc_castSucc]; exact (contDiff_apply ℝ ℝ j).comp contDiff_fst
+    | cast j => simp only [Fin.snoc_castSucc]; exact (contDiff_apply ℝ (fun _ => ℝ) j).comp contDiff_fst
   let h : (Fin k → ℝ) × ℝ → ℂ := fun p => f (w + M (Fin.snoc (α := fun _ => ℝ) p.1 p.2))
   have hh : ContDiff ℝ ∞ h := hg.comp hsnoc
   have hfe : ∀ x t, f (w + L' x + L t) = h (x, t) := by
@@ -62,7 +66,7 @@ theorem contDiff_deriv_heisOF_line_k : ∀ (F E : Type) [Field F] [NumberField F
     let φ : ℝ →+ ℂ :=
       { toFun := fun t => lam (symplOHF σ JS JT ξ₀ y (L t))
         map_zero' := by rw [map_zero L, symplOHF_zero_right, map_zero]
-        map_add' := fun a b => by rw [map_add L, symplOHF_add_right, map_add] }
+        map_add' := fun a b => by rw [map_add L, symplOHF_add_right, map_add (f := _)] }
     have hφ : Continuous φ := hl.comp (continuous_symplOHF σ JS JT ξ₀ continuous_const hL)
     have := (φ.toRealLinearMap hφ).map_smul t 1
     rw [smul_eq_mul, mul_one, Complex.real_smul] at this
@@ -94,13 +98,13 @@ theorem contDiff_deriv_heisOF_line_k : ∀ (F E : Type) [Field F] [NumberField F
   let φ' : (Fin k → ℝ) →+ ℂ :=
     { toFun := fun x => lam (symplOHF σ JS JT ξ₀ (L' x) (L 1))
       map_zero' := by rw [map_zero L', symplOHF_zero_left, map_zero]
-      map_add' := fun a b => by rw [map_add L', symplOHF_add_left, map_add] }
+      map_add' := fun a b => by rw [map_add L', symplOHF_add_left, map_add (f := _)] }
   have hφ' : ContDiff ℝ ∞ φ' :=
     (φ'.toRealLinearMap (hl.comp (continuous_symplOHF σ JS JT ξ₀ hL' continuous_const))).contDiff
   have e : (fun x => deriv (fun t : ℝ => heisOF σ JS JT ξ₀ B.ψ (L t) f (w + L' x)) 0) = fun x =>
       (lam (symplOHF σ JS JT ξ₀ w (L 1)) + φ' x) * h (x, 0) + fderiv ℝ h (x, 0) (0, 1) := by
     funext x
-    rw [(hd x).deriv, symplOHF_add_left, map_add]
+    rw [(hd x).deriv, symplOHF_add_left, map_add (f := _)]
     rfl
   rw [e]
   have hin : ContDiff ℝ ∞ (fun x : Fin k → ℝ => (x, (0 : ℝ))) := contDiff_id.prodMk contDiff_const

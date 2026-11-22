@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsUnitarySupportedAtPlaceOfMulEqIdem
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContinuousIsotropicSandwichMeanTranslation
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.T2SpaceMatrixOfIsNonarchimedeanLocalField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsUnitarySupportedAtPlaceOfMulEqIdem
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContinuousIsotropicSandwichMeanTranslation
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.T2SpaceMatrixOfIsNonarchimedeanLocalField
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory Matrix ValuativeRel GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.LocMod
 
 open scoped Topology
@@ -96,7 +101,7 @@ def contrBil (hψ : IsStdChar D ψ (-1)) {ρ σ : ℕ} {B : BesLev D ρ} {B' : B
   LinearMap.mk₂ ℂ (fun Ψ₁ Ψ₂ => GlobalTheory.Unf.contr l S vL (T₁ Ψ₁) (T₂ Ψ₂))
     (fun a a' b => by
       funext u v
-      simp only [GlobalTheory.Unf.contr, map_add, Pi.add_apply, mul_add]
+      simp only [GlobalTheory.Unf.contr, map_add (f := _), Pi.add_apply, mul_add]
       exact integral_add (integrable_contr hψ l S vL (h₁ a) (h₂ b) u v)
         (integrable_contr hψ l S vL (h₁ a') (h₂ b) u v))
     (fun c a b => by
@@ -105,7 +110,7 @@ def contrBil (hψ : IsStdChar D ψ (-1)) {ρ σ : ℕ} {B : BesLev D ρ} {B' : B
       rw [← integral_const_mul]; congr 1; funext w; ring)
     (fun a b b' => by
       funext u v
-      simp only [GlobalTheory.Unf.contr, map_add, Pi.add_apply, add_mul]
+      simp only [GlobalTheory.Unf.contr, map_add (f := _), Pi.add_apply, add_mul]
       exact integral_add (integrable_contr hψ l S vL (h₁ a) (h₂ b) u v)
         (integrable_contr hψ l S vL (h₁ a) (h₂ b') u v))
     (fun c a b => by

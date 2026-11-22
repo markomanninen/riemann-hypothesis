@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LamIdealOfNotPrimePow
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.QFormCountStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ThetaQFormStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RayClassIdealCountEqNcardShiftedBinaryFormStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LamIdealOfNotPrimePow
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.QFormCountStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ThetaQFormStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RayClassIdealCountEqNcardShiftedBinaryFormStatement
+
+@[expose] public section
+
 open Complex ArithmeticFunction MeasureTheory Filter Topology NumberField GlobalTheory.Hk GlobalTheory.Mem
 open scoped Classical
 

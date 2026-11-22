@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CocompactOfMemIffAdelic
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CocompactOfMemIffAdelic
+
+@[expose] public section
 
 open NumberField MeasureTheory Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet PositivityTheory.ThKR
 open Formalism.UG (cT)
@@ -13,8 +17,8 @@ open GlobalTheory.UnipFlagCore
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin n) (Fin n) E} {r : ℕ}
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem unipMin_eq_radSet (X : Matrix (Fin n) (Fin r) E) :
     unipMin σ J X = radSet σ J X Fin.val := by
   ext u

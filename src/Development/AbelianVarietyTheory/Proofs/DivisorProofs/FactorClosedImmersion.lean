@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigExtMapRelFrobCompRigOfOmega
-import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigExtMapRelFrobCompRigOfOmega
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+
+@[expose] public section
+
 open CategoryTheory TensorProduct Coalgebra Bialgebra GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup
 
 noncomputable section
@@ -22,15 +27,15 @@ theorem liftClosed_comp {K G H : PDivGroup p k} (i : K ⟶ G)
     (hi : ∀ n : ℕ, Function.Surjective (i.app n)) (f : H ⟶ G)
     (hf : ∀ n : ℕ, RingHom.ker (i.app n) ≤ RingHom.ker (f.app n)) :
     liftClosed i hi f hf ≫ i = f :=
-  hom_ext fun n => BialgHom.ext fun a => liftSurj_apply (i.app n) (hi n) (f.app n) (hf n) a
+  Hom.ext (funext fun n => BialgHom.ext fun a => liftSurj_apply (i.app n) (hi n) (f.app n) (hf n) a)
 
 theorem cancel_closed {K G H : PDivGroup p k} (i : K ⟶ G)
     (hi : ∀ n : ℕ, Function.Surjective (i.app n)) (g g' : H ⟶ K) (h : g ≫ i = g' ≫ i) :
     g = g' :=
-  hom_ext fun n => BialgHom.ext fun b => by
+  Hom.ext (funext fun n => BialgHom.ext fun b => by
     obtain ⟨a, rfl⟩ := hi n b
     have := DFunLike.congr_fun (congrArg (fun u : H ⟶ G => u.app n) h) a
-    simpa using this
+    simpa using this)
 
 end GlobalTheory.PDivGroup
 

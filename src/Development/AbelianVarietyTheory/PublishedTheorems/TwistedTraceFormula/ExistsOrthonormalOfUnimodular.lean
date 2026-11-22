@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsCongrIffTraceFormsIsometricCm
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasseNormTheoremQuadraticExtension
-import Formalism.HermitianLattices.HermitianLatticesProofs.UnimodUnramUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsCongrIffTraceFormsIsometricCm
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasseNormTheoremQuadraticExtension
+public import Formalism.HermitianLattices.HermitianLatticesProofs.UnimodUnramUnique
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped Matrix TensorProduct ComplexConjugate WithZero
@@ -74,12 +78,13 @@ theorem exists_represent_of_five (h2 : (2 : K) ≠ 0)
   rw [Fintype.sum_option, Fintype.sum_sum_type] at hw0
   have hw1 := congrArg (algebraMap K L) hw0
   have hw2 : algebraMap K L (w none) ≠ 0 := (map_ne_zero _).2 hw
-  simp only [a, Option.elim, Sum.elim_inl, Sum.elim_inr, map_add, map_mul, map_neg, map_pow, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [a, Option.elim, Sum.elim_inl, Sum.elim_inr, map_add (f := _), map_mul, map_neg, map_pow, map_sum,
     hγ', hκ', hd, map_zero] at hw1
   have hs : ∀ s : K, c (algebraMap K L s) = algebraMap K L s := fun s => (hF _).2 ⟨s, rfl⟩
   refine ⟨fun i => (algebraMap K L (w (some (Sum.inl i))) +
     algebraMap K L (w (some (Sum.inr i))) * θ) / algebraMap K L (w none), ?_⟩
-  simp only [dotProduct, Matrix.mulVec_diagonal, Function.comp_apply, map_div₀, map_add, map_mul,
+  simp only [dotProduct, Matrix.mulVec_diagonal, Function.comp_apply, map_div₀, map_add (f := _), map_mul,
     hs, hθ]
   have : ∀ i, (algebraMap K L (w (some (Sum.inl i))) + algebraMap K L (w (some (Sum.inr i))) * θ) /
       algebraMap K L (w none) * (g i * ((algebraMap K L (w (some (Sum.inl i))) +
@@ -208,14 +213,14 @@ theorem congr_iff_of_five (h2 : (2 : K) ≠ 0)
 
 end Abstract
 
-open ValuativeRel in
 
+open ValuativeRel in
 theorem isotropic_five_of_localField (K : Type*) [Field K] [ValuativeRel K] [TopologicalSpace K]
     [IsNonarchimedeanLocalField K] (h2 : (2 : K) ≠ 0) (a : Fin 5 → K) :
     ∃ x : Fin 5 → K, x ≠ 0 ∧ ∑ i, a i * x i ^ 2 = 0 := by
   classical
   let e := IsNonarchimedeanLocalField.valueGroupWithZeroIsoInt K
-  let w : Valuation K ℤᵐ⁰ := (valuation K).map e.toMonoidWithZeroHom e.strictMono.monotone
+  let w : Valuation K ℤᵐ⁰ := Valuation.map ⟨e.toMonoidWithZeroHom, e.strictMono.monotone⟩ (valuation K)
   have hw : ∀ x, w x = e (valuation K x) := fun _ => rfl
   have hlt : ∀ x y, w x < w y ↔ valuation K x < valuation K y := fun x y => by
     rw [hw, hw]; exact e.strictMono.lt_iff_lt
@@ -261,7 +266,8 @@ theorem isotropic_five_of_localField (K : Type*) [Field K] [ValuativeRel K] [Top
       exact (IsLocalRing.residue_eq_zero_iff _).2 ((hmax _).2 ((hlt1 _).1 h))
     · have hmem : (∑ i, ∑ j, r i j * y i * y j) ∈ 𝓂[K] := by
         rw [← IsLocalRing.residue_eq_zero_iff, ← hx]
-        simp only [map_sum, map_mul, hy]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_mul, hy]
       rw [hlt1]
       simpa [r] using (hmax _).1 hmem
 
@@ -368,23 +374,10 @@ theorem congr_of_local (hG : ∀ a b, cc (G a b) = G b a) (hG' : ∀ a b, cc (G'
   have h1 := congrArg (Subtype.val : maximalRealSubfield E → E) hxy
   have h2 : IsCMField.complexConj E θ = -θ := hθ
   simp [a, hdθ] at h1
-  simp only [cc, map_add, map_mul, IsCMField.complexConj_apply_eq_self, h2, h1]
+  simp only [cc, map_add (f := _), map_mul, IsCMField.complexConj_apply_eq_self, h2, h1]
   ring
 
 end Global
-
-theorem exists_orthonormal_of_unimodular (R : Type) [CommRing R] (σ : R ≃+* R)
-    (hσ : ∀ x, σ (σ x) = x) (R₀ : Subring R) (hR₀ : ∀ x, x ∈ R₀ ↔ σ x = x)
-    [HenselianLocalRing R₀] [Finite (IsLocalRing.ResidueField R₀)]
-    (hθ : ∃ θ : R, IsUnit (θ - σ θ)) {n : ℕ} {A : Matrix (Fin n) (Fin n) R}
-    (hA : ∀ a b, σ (A a b) = A b a) (hd : IsUnit A.det) :
-    ∃ P : Matrix (Fin n) (Fin n) R, IsUnit P.det ∧ Pᵀ * A * P.map σ = 1 := by
-  obtain ⟨g, hg, h⟩ := Formalism.HermitianLatticesTheory.unimodUnramUnique R σ hσ R₀ hR₀ hθ n A
-    (by ext a b; exact hA b a) hd
-  refine ⟨g.map σ, ?_, ?_⟩
-  · rw [show (g.map σ).det = σ g.det from (RingHom.map_det (σ : R →+* R) g).symm]
-    exact hg.map σ
-  · rwa [show (g.map σ).map σ = g by ext a b; exact hσ _]
 
 end GlobalTheory.HermLocal
 

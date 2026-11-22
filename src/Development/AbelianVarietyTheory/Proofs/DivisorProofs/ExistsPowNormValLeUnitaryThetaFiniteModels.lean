@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.SpecializesGenericImage
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsMonoFamNontrivial
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SpecializesGenericImage
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsMonoFamNontrivial
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open GlobalTheory.Toroidal GlobalTheory.Models GlobalTheory.LN GlobalTheory.ShFam GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZH GlobalTheory.Poinc
@@ -115,10 +120,10 @@ theorem exists_pow_norm_val_le : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
       obtain ⟨b, hb, hyb⟩ := hy
       rcases le_total ‖φ₁ a‖ ‖φ₁ b‖ with hab | hab
       · exact ⟨b, hb, by
-          rw [map_add]
+          rw [map_add (f := _)]
           exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hxa.trans hab) hyb)⟩
       · exact ⟨a, ha, by
-          rw [map_add]
+          rw [map_add (f := _)]
           exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hxa (hyb.trans hab))⟩
     | smul b x _ hx =>
       obtain ⟨a, ha, hxa⟩ := hx

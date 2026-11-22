@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HeckeTateFunctionalEquationCM
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussUnitsNormSq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemPowOfPsiAtTrivial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntWitness
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HeckeTateFunctionalEquationCM
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussUnitsNormSq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemPowOfPsiAtTrivial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntWitness
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CMVal GlobalTheory.IndefiniteRowSideFullHecke.CompletedLStripBounds GlobalTheory.HeckeEps
 open Formalism.L2.Host (atFin IsUnitAt)
 
@@ -48,7 +53,7 @@ theorem gaussSumAt_normSq (χ : HChar E) (w : HeightOneSpectrum (𝓞 E)) (a : �
   have f_add : ∀ x y, f (x + y) = f x * f y := fun x y => by
     have e : ((x + y : 𝓞 E) : E) / c = (x : E) / c + (y : E) / c := by push_cast; ring
     show psiAt w _ = psiAt w _ * psiAt w _
-    rw [e, map_add, psiAt_add]
+    rw [e, map_add (f := _), psiAt_add]
   have f_zero : ∀ x ∈ P ^ a, f x = 1 := fun x hx => by
     apply psiAt_eq_one
     have h1 := valuation_sub_le (w := w) (y := x) (y' := 0) (by simpa using hx)
@@ -62,7 +67,7 @@ theorem gaussSumAt_normSq (χ : HChar E) (w : HeightOneSpectrum (𝓞 E)) (a : �
       map_add_eq_mul' := fun q r => by
         rw [← f_add]
         apply f_congr
-        rw [← Ideal.Quotient.eq, map_add, Ideal.Quotient.mk_out, Ideal.Quotient.mk_out, Ideal.Quotient.mk_out] }
+        rw [← Ideal.Quotient.eq, map_add (f := _), Ideal.Quotient.mk_out, Ideal.Quotient.mk_out, Ideal.Quotient.mk_out] }
   have ψb_mk : ∀ x, ψb (Ideal.Quotient.mk _ x) = f x := fun x =>
     f_congr _ _ (by rw [← Ideal.Quotient.eq, Ideal.Quotient.mk_out])
   have hout : ∀ u : (𝓞 E ⧸ P ^ a)ˣ, (Quotient.out (u : 𝓞 E ⧸ P ^ a) : 𝓞 E) ∉ P := out_notMem w ha
@@ -87,7 +92,7 @@ theorem gaussSumAt_normSq (χ : HChar E) (w : HeightOneSpectrum (𝓞 E)) (a : �
   have hG : gaussSumAt χ w a c = ∑ u : (𝓞 E ⧸ P ^ a)ˣ, (((χb u)⁻¹ : ℂˣ) : ℂ) * ψb (u : 𝓞 E ⧸ P ^ a) := by
     rw [gaussSumAt, finsum_eq_sum_of_fintype]
     refine Finset.sum_congr rfl fun u _ => ?_
-    rw [gaussTerm, dif_neg (hne0 _ (hout u))]
+    rw [gaussTerm, dite_eq_right (hne0 _ (hout u))]
     rfl
   have hM : ∀ q : 𝓞 E ⧸ P ^ a, IsUnit q ↔ q ∉ P.map (Ideal.Quotient.mk (P ^ a)) := fun q => by
     obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective q

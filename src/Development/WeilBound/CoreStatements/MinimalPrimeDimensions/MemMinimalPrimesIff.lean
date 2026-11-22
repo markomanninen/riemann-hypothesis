@@ -1,4 +1,8 @@
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PFundCycleBaseChange
+module
+
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PFundCycleBaseChange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,7 +22,8 @@ theorem cone_of_homog {d : ℕ} {g : MvPolynomial (Fin m) R} (hg : g.IsHomogeneo
     cone c t g = Polynomial.X ^ d * Polynomial.C (eval₂Hom c t g) := by
   conv_lhs => rw [g.as_sum]
   conv_rhs => rw [g.as_sum]
-  simp only [cone, map_sum, eval₂Hom_monomial, Finset.mul_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [cone, map_sum, eval₂Hom_monomial, Finset.mul_sum, map_mul]
   refine Finset.sum_congr rfl fun a ha => ?_
   have : a.degree = d := by rw [Finsupp.degree_eq_weight_one]; exact hg (mem_support_iff.1 ha)
   simp only [Finsupp.prod, mul_pow, Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum, map_prod, map_pow]
@@ -26,7 +31,8 @@ theorem cone_of_homog {d : ℕ} {g : MvPolynomial (Fin m) R} (hg : g.IsHomogeneo
 
 theorem coeff_cone (g : MvPolynomial (Fin m) R) (d : ℕ) :
     (cone c t g).coeff d = eval₂Hom c t (homogeneousComponent d g) := by
-  conv_lhs => rw [← g.sum_homogeneousComponent, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← g.sum_homogeneousComponent, map_sum]
   simp only [cone_of_homog c t (homogeneousComponent_isHomogeneous _ g), Polynomial.finsetSum_coeff,
     Polynomial.X_pow_mul_C, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow, mul_ite, mul_one, mul_zero,
     Finset.sum_ite_eq, Finset.mem_range]
@@ -89,7 +95,8 @@ theorem exists_homog (hk : t k = 1) (g : MvPolynomial (Fin m) R) {N : ℕ} (hN :
     have hd' := Finset.mem_range.1 hd
     rwa [one_mul, show d + (N - d) = N by omega] at h
   · conv_rhs => rw [← g.sum_homogeneousComponent]
-    simp only [map_sum, map_mul, map_pow, eval₂Hom_X', hk, one_pow, mul_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_pow, eval₂Hom_X', hk, one_pow, mul_one]
 
 theorem exists_homog' (hs : Function.Surjective (eval₂Hom c t)) (hk : t k = 1) (a : A) :
     ∃ (N : ℕ) (G : MvPolynomial (Fin m) R), G.IsHomogeneous N ∧ eval₂Hom c t G = a := by
@@ -176,7 +183,7 @@ theorem localMult_map {S L : Type} [CommRing S] [CommRing L] (φ : S →+* L) (W
     (hs : ∀ b, ∃ a s, φ s ∉ W' ∧ b * φ s = φ a) (hJ : RingHom.ker φ ≤ J) :
     localMult (J.map φ) W' = localMult J (W'.comap φ) := by
   have hW : (W'.comap φ).IsPrime := Ideal.comap_isPrime _ _
-  rw [localMult, localMult, dif_pos hW, dif_pos ‹W'.IsPrime›]
+  rw [localMult, localMult, dite_eq_left hW, dite_eq_left ‹W'.IsPrime›]
   congr 1
   set SW := Localization.AtPrime (W'.comap φ)
   set LW := Localization.AtPrime W'
@@ -249,7 +256,7 @@ theorem localMult_pr (hs : Function.Surjective (eval₂Hom c t)) (hk : t k = 1) 
       obtain ⟨n, a, h⟩ := h
       obtain ⟨n', a', h'⟩ := h'
       exact ⟨n + n', a * X k ^ n' + a' * X k ^ n, by
-        simp only [map_add, map_mul, map_pow, hXk, ← h, ← h']; ring⟩
+        simp only [map_add (f := _), map_mul, map_pow, hXk, ← h, ← h']; ring⟩
     | monomial n a =>
       obtain ⟨N, G, h1, rfl⟩ := exists_homog' hs hk a
       exact ⟨N, G * X k ^ n, by
@@ -268,7 +275,7 @@ theorem localMult_pr (hs : Function.Surjective (eval₂Hom c t)) (hk : t k = 1) 
     · exact q.zero_mem⟩
   have h2 := GroundTheory.Heights₂.Heights.localMult_map_of_flat (B := Polynomial A)
     (Ideal.span {eval₂Hom c t (linForm u)}) q (q.map Polynomial.C) Localization.AtPrime.map_eq_maximalIdeal
-  rw [← h2, Ideal.map_span, Set.image_singleton, Polynomial.algebraMap_eq, localMult, localMult, dif_pos hp, dif_pos hp]
+  rw [← h2, Ideal.map_span, Set.image_singleton, Polynomial.algebraMap_eq, localMult, localMult, dite_eq_left hp, dite_eq_left hp]
   refine congrArg (fun I : Ideal (Localization.AtPrime (q.map (Polynomial.C : A →+* Polynomial A))) =>
     (Module.length (Localization.AtPrime (q.map (Polynomial.C : A →+* Polynomial A))) (_ ⧸ I)).toNat) ?_
   rw [Ideal.map_span, Ideal.map_span, Set.image_singleton, Set.image_singleton, map_mul,

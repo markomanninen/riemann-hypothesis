@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.OrthZero
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.TwtrContOfMem
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.IntegrableShift
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.SplitCentreMulTor
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.OrthZero
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.TwtrContOfMem
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.IntegrableShift
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.SplitCentreMulTor
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,7 +94,7 @@ private theorem ldet_shift {g : GA E n} (hg : logAbs g.val.det = 0) (x : H E n 0
 
 private theorem slab_rt (D : Dom E n 0) {a : GA E n → ℂ} (ha : Slab D a) {g : GA E n} (hg : logAbs g.val.det = 0) :
     Slab D fun x => a (x * g) := by
-  have hc : Continuous fun x => a (x * g) := ha.1.comp (continuous_mul_right g)
+  have hc : Continuous fun x => a (x * g) := ha.1.comp (continuous_mul_const g)
   refine ⟨hc, fun γ x => ?_, fun t x => ?_, fun u hu hs => ?_⟩
   · show a (_ * x * g) = a (x * g)
     rw [mul_assoc]
@@ -101,14 +105,15 @@ private theorem slab_rt (D : Dom E n 0) {a : GA E n → ℂ} (ha : Slab D a) {g 
   · have hm := ha.2.2.2 u hu hs
     have hcm : Continuous fun x : H E n 0 => a (x.1 * g) * u (ldet x) :=
       (hc.comp continuous_fst).mul (hu.comp continuous_ldet)
-    refine ⟨hcm.aestronglyMeasurable, ?_⟩
     have hsh := lintegral_shift D (fun x : H E n 0 => ‖a x.1 * u (ldet x)‖ₑ ^ (2 : ENNReal).toReal) (fun γ x => by
       show ‖a ((γ : H E n 0).1 * x.1) * u (ldet ((γ : H E n 0) * x))‖ₑ ^ _ = _
       rw [slab_rat ha, ldet_rat]) ((g, 1) : H E n 0)
     simp only [ldet_shift hg] at hsh
-    rw [eLpNorm_eq_lintegral_rpow_enorm two_ne_zero ENNReal.ofNat_ne_top]
-    have h2 := hm.2
-    rw [eLpNorm_eq_lintegral_rpow_enorm two_ne_zero ENNReal.ofNat_ne_top, ← hsh] at h2
+    change eLpNorm (fun x : H E n 0 => a (x.1 * g) * u (ldet x)) 2 D.ν < ⊤
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top hcm.aestronglyMeasurable]
+    have h2 := hm
+    change eLpNorm (fun x : H E n 0 => a x.1 * u (ldet x)) 2 D.ν < ⊤ at h2
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top hm.aestronglyMeasurable, ← hsh] at h2
     exact h2
 
 private theorem pair_rt (D : Dom E n 0) {a b : GA E n → ℂ} (ha : Slab D a) (hb : Slab D b) (u : ℝ → ℂ) {g : GA E n}

@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsVertRIndexSteps
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsUnitOfNumMem
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.MemMCoordIdealOfAevalEqZero
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCurveDivVertical
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsVertRIndexSteps
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsUnitOfNumMem
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.MemMCoordIdealOfAevalEqZero
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCurveDivVertical
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -68,7 +73,7 @@ theorem exists_homog {S : Type*} [CommRing S] (χ : MRing (fun _ : Unit => T) �
     · refine (h₁.mul (isWH_X_pow c n₂)).add ?_
       rw [add_comm n₁]
       exact h₂.mul (isWH_X_pow c n₁)
-    · simp only [map_add, map_mul, map_pow, hχ, one_pow, mul_one, e₁, e₂]
+    · simp only [map_add (f := _), map_mul, map_pow, hχ, one_pow, mul_one, e₁, e₂]
   | mul_X p i hp =>
     obtain ⟨n, G, h, e⟩ := hp
     refine ⟨n + 1, G * X i, h.mul (isWH_X' i), ?_⟩
@@ -93,7 +98,7 @@ theorem exists_homog_mem {S : Type*} [CommRing S] (χ : MRing (fun _ : Unit => T
     · refine (h₁.mul (isWH_X_pow c n₂)).add ?_
       rw [add_comm n₁]
       exact h₂.mul (isWH_X_pow c n₁)
-    · simp only [map_add, map_mul, map_pow, hχ, one_pow, mul_one, e₁, e₂]
+    · simp only [map_add (f := _), map_mul, map_pow, hχ, one_pow, mul_one, e₁, e₂]
   | smul a x _ hx =>
     obtain ⟨n, G, hG, h, e⟩ := hx
     obtain ⟨m, A, hA, eA⟩ := exists_homog χ c hχ a
@@ -121,8 +126,8 @@ theorem aeval_div {K' : Type} [Field K'] (y : (Σ _ : Unit, T) → K') (c : T)
 
 end VerticalPointResidue
 
-open VerticalPointResidue in
 
+open VerticalPointResidue in
 theorem VertPointResidue.proof (hC : CurveCharts.Statement) : VertPointResidue.Statement := by
   intro T _ K' _ _ y s hP hs hsP W hW
   classical
@@ -159,7 +164,7 @@ theorem VertPointResidue.proof (hC : CurveCharts.Statement) : VertPointResidue.S
     with hJ
   have hgeo : ∀ b, geoNum 0 W b = ((Module.length ℤ (MRing (fun _ : Unit => T) ⧸ J)).toNat : ℤ) := by
     intro b
-    rw [geoNum, dif_pos hWrel]
+    rw [geoNum, dite_eq_left hWrel]
   obtain ⟨hF, hFin, hcard⟩ := Inter.regularityLocalResidue_holds.chart_field_card hWmh hcW hdim (charOf W) hp
   letI : Field (MRing (fun _ : Unit => T) ⧸ J) := hF.toField
   set c : T := (hWrel ()).choose with hc
@@ -276,7 +281,7 @@ theorem VertPointResidue.proof (hC : CurveCharts.Statement) : VertPointResidue.S
         eq_intCast ((Ideal.Quotient.mk J).comp C) a]
       exact intCast_mem _ a
     | add p q hp hq =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem hp hq
     | mul_X p i hp =>
       obtain ⟨⟨⟩, u⟩ := i
@@ -292,7 +297,7 @@ theorem VertPointResidue.proof (hC : CurveCharts.Statement) : VertPointResidue.S
       obtain ⟨w, hw, z, hz, rfl⟩ := Submodule.mem_sup.mp hb
       obtain ⟨n, G, hGW, hG, hφG⟩ := exists_homog_mem φ c hφc hWmh hw
       have h1 : (b : K') = aeval y G * (y ⟨(), c⟩ ^ n)⁻¹ := by
-        rw [← hφform G n hG, hφG, ← hf, map_add, hspan z hz, add_zero]
+        rw [← hφform G n hG, hφG, ← hf, map_add (f := _), hspan z hz, add_zero]
       have hXn : IsMultiHomog (X ⟨(), c⟩ ^ n : MRing (fun _ : Unit => T)) (fun _ => n) :=
         isMultiHomog_iff.mpr (isWH_X_pow c n)
       have hXnW : (X ⟨(), c⟩ ^ n : MRing (fun _ : Unit => T)) ∉ W :=
@@ -300,8 +305,7 @@ theorem VertPointResidue.proof (hC : CurveCharts.Statement) : VertPointResidue.S
       have hval : (b : K') * aeval y (X ⟨(), c⟩ ^ n : MRing (fun _ : Unit => T)) = aeval y G := by
         rw [h1, map_pow, aeval_X, mul_assoc, inv_mul_cancel₀ (pow_ne_zero _ hyc), mul_one]
       have hmemS : ∃ (d : Unit → ℕ) (g h : MRing (fun _ : Unit => T)), IsMultiHomog g d ∧
-          IsMultiHomog h d ∧ g ∈ W ∧ h ∉ W ∧ (b : K') * aeval y h = aeval y g :=
-by
+          IsMultiHomog h d ∧ g ∈ W ∧ h ∉ W ∧ (b : K') * aeval y h = aeval y g := by
         refine ⟨fun _ => n, G, X ⟨(), c⟩ ^ n, ?_, ?_, ?_, ?_, ?_⟩
         · exact hG
         · exact hXn
@@ -327,7 +331,7 @@ by
         intro hJh
         obtain ⟨w, hw, z, hz, hwz⟩ := Submodule.mem_sup.mp hJh
         obtain ⟨n', G, hGW, hG, hφG⟩ := exists_homog_mem φ c hφc hWmh hw
-        have e1 : φ G = φ h := by rw [hφG, ← hwz, map_add, hspan z hz, add_zero]
+        have e1 : φ G = φ h := by rw [hφG, ← hwz, map_add (f := _), hspan z hz, add_zero]
         have hmem : G * X ⟨(), c⟩ ^ d () - h * X ⟨(), c⟩ ^ n' ∈ mCoordIdeal y := by
           refine LowerBoundFree.mem_mCoordIdeal_of_aeval_eq_zero y (d := fun _ => n' + d ()) ?_ ?_
           · refine isMultiHomog_iff.mpr (isWH_sub ((isMultiHomog_iff.mp hG).mul (isWH_X_pow c _)) ?_)

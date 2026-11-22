@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.ContinuousAtOfClosedRel
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.GMonomial
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+module
+
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.ContinuousAtOfClosedRel
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.GMonomial
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+
+@[expose] public section
 
 namespace PositivityTheory.UnitarySelfGeneration.CSnc
 
@@ -86,7 +90,7 @@ theorem exists_loc {A : FinHolAtlas e X} {L₀ L : LocPot X} {s₀ s : X → X �
     · rintro ⟨h1, h2⟩
       have : y ∈ W k ∩ ψ.source := by rw [hW]; exact ⟨h1.1, h2⟩
       exact ⟨this.1, h1⟩
-  · exact holoOn_of_compat hψ (G := fun v => u (v - c)) (fun y hy => hy.1) fun y hy =>
+  · exact holoOn_of_compat hψ (U := (ψ.restrOpen (ψ.source ∩ ψ ⁻¹' Metric.ball c r) hop).source) (G := fun v => u (v - c)) (fun y hy => hy.1) fun y hy =>
       AnalyticAt.comp (g := u) (f := fun v => v - c) (hu _ (hsub y hy.2.2)) (analyticAt_id.sub analyticAt_const)
   · have := hF _ (hsub y hy.2.2)
     simp only [sub_add_cancel, ψ.left_inv hy.1] at this

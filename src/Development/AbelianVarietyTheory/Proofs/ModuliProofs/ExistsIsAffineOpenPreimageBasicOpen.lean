@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsDenomOfIsAffineOpen
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.GenericExistsUniqueOActOfIsGrpPullback
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsAffineHomOfIsPullbackSpecMap
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsDenomOfIsAffineOpen
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.GenericExistsUniqueOActOfIsGrpPullback
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsAffineHomOfIsPullbackSpecMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,8 +100,8 @@ theorem exists_basicOpen_le {V : (Sp R).Opens} (hV : genericPoint (Sp R) ∈ V) 
   rintro rfl
   exact (PrimeSpectrum.mem_basicOpen _ _).1 hf (Ideal.zero_mem _)
 
-omit [IsDomain R] in
 
+omit [IsDomain R] in
 theorem isAffineOpen_inf_preimage_basicOpen (p : X ⟶ Sp R) {U : X.Opens} (hU : IsAffineOpen U) (f : R) :
     IsAffineOpen (U ⊓ p ⁻¹ᵁ PrimeSpectrum.basicOpen f) := by
   have := hU.basicOpen (constFn p U f)
@@ -105,8 +109,8 @@ theorem isAffineOpen_inf_preimage_basicOpen (p : X ⟶ Sp R) {U : X.Opens} (hU :
   rw [basicOpen_eq_of_affine] at e
   exact e ▸ this
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem exists_isAffineOpen_preimage_basicOpen (H : IsPullback φ π p (spMap (algebraMap R K))) [QuasiCompact p]
     [QuasiSeparated p] [IsAffine X'] : ∃ f : R, f ≠ 0 ∧ IsAffineOpen (p ⁻¹ᵁ PrimeSpectrum.basicOpen f) := by
   obtain ⟨e, he⟩ := IsGenericPointHom.fractionField R K
@@ -192,13 +196,22 @@ theorem relAmple_spread : ∀ (R K : Type) [CommRing R] [IsDomain R] [IsNoetheri
     show A.hom (ψ z) ∈ PrimeSpectrum.basicOpen f
     rw [e]
     exact fun hm => (pullback.snd A.hom (spMap φ) z).isPrime.ne_top (Ideal.eq_top_of_isUnit_mem _ hm hu)
-  refine (relAmple_iff_isAmpleLB_of_isAffine _ (LB.isLB_pull hM _)).2
-    (isAmpleLB_of_cover (LB.isLB_pull hM _) hn (fun i => secPowPull (θ i) ψ) (top_le_iff.1 fun z _ => ?_) fun i => ?_)
-  · obtain ⟨i, hi⟩ := Opens.mem_iSup.1 (hc (hD z))
+  have hs : ⨆ i, Out.nonzeroLocus (secPowPull (θ i) ψ) = ⊤ := top_le_iff.1 fun z _ => by
+    obtain ⟨i, hi⟩ := Opens.mem_iSup.1 (hc (hD z))
     exact Opens.mem_iSup.2 ⟨i, (nonzeroLocus_secPowPull (θ i) ψ).ge hi⟩
-  · have e : ψ ⁻¹ᵁ (Out.nonzeroLocus (θ i) ⊓ A.hom ⁻¹ᵁ PrimeSpectrum.basicOpen f) =
+  have ha' : ∀ i, IsAffineOpen (Out.nonzeroLocus (secPowPull (θ i) ψ)) := fun i => by
+    have e : ψ ⁻¹ᵁ (Out.nonzeroLocus (θ i) ⊓ A.hom ⁻¹ᵁ PrimeSpectrum.basicOpen f) =
         Out.nonzeroLocus (secPowPull (θ i) ψ) :=
       (le_antisymm (fun z hz => hz.1) fun z hz => ⟨hz, hD z⟩).trans (nonzeroLocus_secPowPull (θ i) ψ).symm
     exact e ▸ (ha i).preimage ψ
+  refine (relAmple_iff_isAmpleLB_of_isAffine _ (LB.isLB_pull hM _)).2 ?_
+  refine ⟨LB.isLB_pull hM _, ⟨?_⟩, ?_⟩
+  · have e : (Set.univ : Set (pullback A.hom (spMap φ) : Scheme)) = ⋃ i, (Out.nonzeroLocus (secPowPull (θ i) ψ) : Set (pullback A.hom (spMap φ) : Scheme)) := by
+      rw [← Opens.coe_iSup, hs, Opens.coe_top]
+    rw [e]
+    exact isCompact_iUnion fun i => (ha' i).isCompact
+  · intro x
+    obtain ⟨i, hi⟩ := Opens.mem_iSup.1 (hs.ge (Set.mem_univ x))
+    exact ⟨n, hn, secPowPull (θ i) ψ, hi, ha' i⟩
 
 end GlobalTheory.AmpleSpread

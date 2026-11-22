@@ -1,5 +1,9 @@
-import Mathlib
-import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
+module
+
+public import Mathlib
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -113,15 +117,16 @@ theorem sum_expand {α : Type} (hS : Set0 μ 𝓕 mK 𝓓) (hc : Continuous φ)
     Λ * conj Λ * pr μ 𝓕 φ 1 1 = ∑ b ∈ B, ∑ b' ∈ B, pr μ 𝓕 φ (t b) (t b') := by
   have key : ∀ g, Λ * conj Λ * (φ (g * 1) * conj (φ (g * 1))) =
       ∑ b ∈ B, ∑ b' ∈ B, φ (g * t b) * conj (φ (g * t b')) := fun g => by
-    rw [← Finset.sum_mul_sum, ← map_sum, hsum, map_mul, mul_one]; ring
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.sum_mul_sum, ← map_sum, hsum, map_mul, mul_one]; ring
   calc Λ * conj Λ * pr μ 𝓕 φ 1 1
       = ∫ g in 𝓕 ∩ band, Λ * conj Λ * (φ (g * 1) * conj (φ (g * 1))) ∂μ :=
         (integral_const_mul _ _).symm
     _ = ∫ g in 𝓕 ∩ band, ∑ b ∈ B, ∑ b' ∈ B, φ (g * t b) * conj (φ (g * t b')) ∂μ := by simp only [key]
     _ = ∑ b ∈ B, ∫ g in 𝓕 ∩ band, ∑ b' ∈ B, φ (g * t b) * conj (φ (g * t b')) ∂μ :=
-        integral_finset_sum _ fun b _ => integrable_finset_sum _ fun b' _ => trans_integrable hS hc hb _ _
+        integral_finsetSum _ fun b _ => integrable_finsetSum _ fun b' _ => trans_integrable hS hc hb _ _
     _ = _ := Finset.sum_congr rfl fun b _ =>
-        integral_finset_sum _ fun b' _ => trans_integrable hS hc hb _ _
+        integral_finsetSum _ fun b' _ => trans_integrable hS hc hb _ _
 
 theorem pr_self_ne (hS : Set0 μ 𝓕 mK 𝓓) (hG : G1) {ω : HeckeCharacter ℚ} (hc : Continuous φ)
     (hb : ∃ C : ℝ, ∀ g, ‖φ g‖ ≤ C) (hl : LInv φ)

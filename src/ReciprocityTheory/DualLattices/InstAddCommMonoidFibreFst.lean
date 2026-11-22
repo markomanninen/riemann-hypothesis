@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.SqZeroOfSpan
+module
+
+public import ReciprocityTheory.DualLattices.SqZeroOfSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -287,12 +291,6 @@ lemma nsmul1_zero2 (x : B.G R) (n : ℕ) : HEq (B.nsmul1 (B.zero2 x) n) (B.zero2
 lemma nsmul1_zero1 (y : B.G R) (n : ℕ) : HEq (B.nsmul1 (B.zero1 y) n) (B.zero1 y) := by
   have h := B.fibreFst_nsmul_mk (B.zero1 y) n
   have h0 : (B.S1mk (B.zero1 y)) = 0 := rfl
-  rw [h0, nsmul_zero] at h
-  exact (Sigma.ext_iff.1 h.symm).2
-
-lemma nsmul2_zero2 (x : B.G R) (n : ℕ) : HEq (B.nsmul2 (B.zero2 x) n) (B.zero2 x) := by
-  have h := B.fibreSnd_nsmul_mk (B.zero2 x) n
-  have h0 : (B.S2mk (B.zero2 x)) = 0 := rfl
   rw [h0, nsmul_zero] at h
   exact (Sigma.ext_iff.1 h.symm).2
 

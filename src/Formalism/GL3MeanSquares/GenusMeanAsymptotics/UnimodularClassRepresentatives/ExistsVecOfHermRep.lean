@@ -1,5 +1,9 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensityRatio
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.FiniteDimensionalOfOrtho
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensityRatio
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.FiniteDimensionalOfOrtho
+
+@[expose] public section
 
 open NumberField Module
 
@@ -45,7 +49,7 @@ theorem VecSplit.finrank_add_one {h : V →ₗ⋆[K] V →ₗ[K] K} {h' : V' →
       rintro ⟨c, a⟩ hca
       have h1 : c • S.x₀ + S.ι a = 0 := by simpa [f] using hca
       have h2 : h S.x₀ (c • S.x₀ + S.ι a) = 0 := by rw [h1, map_zero]
-      rw [map_add, map_smul, S.orth, add_zero, smul_eq_mul] at h2
+      rw [map_add (f := _), map_smul, S.orth, add_zero, smul_eq_mul] at h2
       have hc : c = 0 := (mul_eq_zero.mp h2).resolve_right S.hx₀
       subst hc
       have h3 : S.ι a = 0 := by simpa using h1
@@ -96,7 +100,7 @@ theorem exists_vec_of_hermRep (hH : HermRepUnram) (hK : Formalism.HermitianLatti
   obtain ⟨s, t, hst⟩ := hH K hK (h x x) (h y'.1 y'.1) n (star_sesq_eq_swap_of_isSymm hs x x) (star_sesq_eq_swap_of_isSymm hs _ _) hn
     (fun φ => hd x hx φ) (fun φ => hd _ hy0 φ) hpos
   refine ⟨star s • x + star t • y'.1, ?_⟩
-  simp only [map_add, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, map_smul, smul_eq_mul,
+  simp only [map_add (f := _), map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, map_smul, smul_eq_mul,
     hxy, hyx, starRingEnd_apply, star_star]
   linear_combination hst
 

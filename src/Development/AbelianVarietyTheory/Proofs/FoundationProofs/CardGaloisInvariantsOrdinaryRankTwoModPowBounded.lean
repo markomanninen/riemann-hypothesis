@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContinuousMatQApply
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SelNZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCommutatorDetNonzero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContinuousMatQApply
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SelNZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCommutatorDetNonzero
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.Ord2.GwIneq
 open scoped Matrix
 
@@ -81,7 +86,8 @@ theorem exists_card_ker_pow_le (c : Coef l) (k : ℕ) :
   obtain ⟨a, ha⟩ := (Submodule.mem_span_range_iff_exists_fun ℤ_[l]).1 hx
   refine ⟨fun i => PadicInt.toZModPow k (a i), ?_⟩
   simp only
-  rw [QuotientAddGroup.eq, ← ha, map_sum, ← Finset.sum_neg_distrib, ← Finset.sum_add_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [QuotientAddGroup.eq, ← ha, map_sum, ← Finset.sum_neg_distrib, ← Finset.sum_add_distrib]
   refine AddSubgroup.sum_mem _ fun i _ => ?_
   obtain ⟨w, hw⟩ : ∃ w : ℤ_[l], a i - (PadicInt.toZModPow k (a i)).val = (l : ℤ_[l]) ^ k * w := by
     have hm : a i - ((PadicInt.toZModPow k (a i)).val : ℤ_[l]) ∈ Ideal.span {(l : ℤ_[l]) ^ k} := by
@@ -91,7 +97,7 @@ theorem exists_card_ker_pow_le (c : Coef l) (k : ℕ) :
   refine ⟨red c n (w • s i), ?_⟩
   have e1 : (PadicInt.toZModPow k (a i)).val • red c n (s i) = red c n ((((PadicInt.toZModPow k (a i)).val : ℕ) : ℤ_[l]) • s i) := by
     rw [Nat.cast_smul_eq_nsmul, map_nsmul]
-  rw [e1, ← map_neg, ← map_add, ← neg_smul, ← add_smul, neg_add_eq_sub, hw, mul_smul]
+  rw [e1, ← map_neg, ← map_add (f := _), ← neg_smul, ← add_smul, neg_add_eq_sub, hw, mul_smul]
   simp only [AddMonoidHom.coe_mulLeft]
   rw [← map_natCast (red c n), ← map_pow, ← map_mul]
   congr 1

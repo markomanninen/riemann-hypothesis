@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -42,13 +46,18 @@ variable {X : Scheme.{0}} {Ω : Type} [Field Ω] {G : Over X} [GrpObj G] {ξ : S
 theorem valAt_comp (M : LieModel G ξ V) {R : Type} [CommRing R] [IsLocalRing R]
     {z : Spec (CommRingCat.of R) ⟶ X} (f : G ⟶ G) [IsMonHom f] {e e' : V} (he : M.pt e' = M.pt e ≫ f)
     {w : epsAt z ⟶ G} (h : M.ValAt z e w) : M.ValAt z e' (w ≫ f) := by
-  rw [LieModel.valAt_iff] at *
-  obtain ⟨h1, v, hv, rfl⟩ := h
-  refine ⟨h1, v ≫ f, ?_, by rw [Category.assoc]⟩
-  rw [LieModel.extends_iff] at *
-  refine ⟨?_, by rw [he, hv.2, Category.assoc]⟩
-  have := (isTanAt_iff v).1 hv.1
-  rw [isTanAt_iff, ← Category.assoc, this, one_comp]
+  obtain ⟨h1, v, hv, hw⟩ := h
+  refine ⟨h1, v ≫ f, ⟨?_, ?_⟩, ?_⟩
+  · have ht := (isTanAt_iff v).1 hv.1
+    rw [isTanAt_iff, ← Category.assoc, ht, one_comp]
+  · change (M.pt e').left = _
+    rw [he]
+    change (M.pt e).left ≫ f.left = _
+    rw [hv.2, Category.assoc]
+    rfl
+  · change w.left ≫ f.left = _
+    rw [hw, Category.assoc]
+    rfl
 
 end Val
 
@@ -63,7 +72,6 @@ theorem mem_eigSp_of_valAt : ∀ (E : Type) [Field E] [NumberField E] [IsCMField
     show (Y.jQ ≫ pullback.fst _ _) ≫ Y.s = _
     rw [Category.assoc, pullback.condition, ← Category.assoc, Y.jQ_over]
   have hh := hv
-  rw [LieModel.valAt_iff] at hh
   obtain ⟨h0, -⟩ := hh
   have hgen : ∀ n, genMap (Z.ξ₀ ≫ Y.j) ⟨centre (y ≫ Y.j), h0⟩ (germ Y.s (centre (y ≫ Y.j)) n) = Z.inc (β n) := by
     intro n

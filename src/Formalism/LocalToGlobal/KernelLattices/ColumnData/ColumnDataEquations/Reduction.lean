@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ColumnData
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SemiCharImg
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.IntegralSquareRoots.ConstCopies
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.IntegralSquareRoots.HenselQuad
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.TripleSumIndependence.TripleSumIndep
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SplitTripleEquations.MuOneOfSplit
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SplitPairGen
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SemiCharImg
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.IntegralSquareRoots.ConstCopies
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.IntegralSquareRoots.HenselQuad
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.TripleSumIndependence.TripleSumIndep
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SplitTripleEquations.MuOneOfSplit
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SplitPairGen
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.BasicNotions Classical
@@ -93,10 +97,5 @@ def J2 (B : Cd.Base D cc δ) : Prop :=
     TaylorLogMetric.pull D B.tor (1 : Matrix (Fin N) (Fin N) D.host.E) (γ' : Matrix (Fin N') (Fin N') D.host.E) (B.thZero N N') =
       (∏ τ : D.what₂.Tau, TaylorLogMetric.embT D τ (γ' : Matrix (Fin N') (Fin N') D.host.E).det) ^ (N / 2) •
         B.thMoved N N' (StandardLatticesGL3.stdL D N) (SDLat.smulLat (γ' : Matrix (Fin N') (Fin N') D.host.E) (StandardLatticesGL3.stdL D N'))
-
-def Reduction : Prop :=
-  ∀ (D : Car) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (B : Cd.Base D cc δ) (χ : TaylorLogMetric.IdE D → ℂ),
-    TaylorLogMetric.IsChi D χ → B.LatAll → (∀ N N', Even N → Even N' → B.ThZeroMem N N') →
-    SqP D B.tor → Tr0L D B.tor → Tr0R D B.tor → PullIop D B.tor → J1 B → J2 B → B.EqP χ
 
 end Formalism.L2.Ker.Cd.PairingIndexBounds.Eq

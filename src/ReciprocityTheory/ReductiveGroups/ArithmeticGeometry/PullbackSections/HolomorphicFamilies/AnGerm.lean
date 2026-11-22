@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.HolJetE
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.HolJetE
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -63,16 +67,6 @@ def ePt (z : Fin g → ℂ) : Over.mk x0 ⟶ G := Over.homMk (e z) (he z)
 
 def lftJ (z : Fin g → ℂ) : Sp ℂ ⟶ (Over.mk x0 ⊗ G).left := (ptSecT G (ePt e he z)).left
 
-open Classical in
-
-def frU (fr : L.ι → (Fin g → ℂ) → ℂ) (m k : ℕ) (j : L.ι) : (Jet ℂ (Fin 1 × Fin g) m)ˣ :=
-  if hu : IsUnit (jetOf m (fun z => fr j z ^ k)) then hu.unit else 1
-
-def frGen (fr : L.ι → (Fin g → ℂ) → ℂ) (m k : ℕ) :
-    LB.Gen (LB.LinComb L (Y := (overAt x0 (Jet ℂ (Fin 1 × Fin g) m)).left) (K := Fin 1)
-      (fun _ => (xJ e hol he m).left) (fun _ => (k : ℤ))) where
-  s j := Units.map (((overAt x0 (Jet ℂ (Fin 1 × Fin g) m)).left.presheaf.map (homOfLE le_top).op).hom.comp
-        (toΓ (Jet ℂ (Fin 1 × Fin g) m))).toMonoidHom (frU L fr m k (j 0))
 
 end Fam
 

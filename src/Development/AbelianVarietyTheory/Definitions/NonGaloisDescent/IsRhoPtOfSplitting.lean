@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
-import Formalism.LocalRingCardinality.DataNChTie
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.LatticeConditions
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.BlockComplementLattice
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.TwistedTriples
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsJumpMultiset
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.T2SpaceCoefficientRing
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
+public import Formalism.LocalRingCardinality.DataNChTie
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.LatticeConditions
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.BlockComplementLattice
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.TwistedTriples
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsJumpMultiset
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.T2SpaceCoefficientRing
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,21 +31,11 @@ def locE {k : ℕ} (M : Formalism.MainNotions.N.GE D.nd →* Matrix (Fin k) (Fin
 def chiE (χ : Formalism.MainNotions.N.GE D.nd →* (D.nd.O i)ˣ) : Br.G D.nbr i w hw →* (↥L'.1)ˣ :=
   (Units.map (inc D i w hw L' h).toMonoidHom).comp (Br.locChi D.nbr i w hw χ)
 
-theorem locE_apply {k : ℕ} (M : Formalism.MainNotions.N.GE D.nd →* Matrix (Fin k) (Fin k) (D.nd.O i)) (g : Br.G D.nbr i w hw)
-    (a b : Fin k) : locE D i w hw L' h M g a b = inc D i w hw L' h (Br.loc D.nbr i w hw M g a b) := rfl
-
-theorem chiE_apply (χ : Formalism.MainNotions.N.GE D.nd →* (D.nd.O i)ˣ) (g : Br.G D.nbr i w hw) :
-    ((chiE D i w hw L' h χ g : (↥L'.1)ˣ) : ↥L'.1) =
-      inc D i w hw L' h ((Br.locChi D.nbr i w hw χ g : (Br.LL D.nbr i w hw)ˣ) : Br.LL D.nbr i w hw) := rfl
 
 include h in
-
 theorem nonempty_embE : Nonempty (Br.Kw D.nbr i w hw →ₐ[ℚ_[D.nd.l i]] ↥L'.1) :=
   ⟨((D.nbr i w hw).Kw.1.val).codRestrict L'.1.toSubalgebra
     fun x => h ((D.nbr i w hw).LL_split (D.nbr i w hw).Kw.1.val x)⟩
-
-example {k : ℕ} (M : Formalism.MainNotions.N.GE D.nd →* Matrix (Fin k) (Fin k) (D.nd.O i)) :
-    locE D i w hw (D.nbr i w hw).LL le_rfl M = Br.loc D.nbr i w hw M := rfl
 
 end Enl
 
@@ -94,15 +88,6 @@ def TameCyc (C : NChoice D) : Prop :=
 def AttachedIn (a : D.nd.Loc) (π : D.nd.X a) (j : D.ntw.Tw) (s : D.ntw.Sig j) : Prop :=
   ∃ h : D.ntw.twOf a = j, GlobalTheory.IndefiniteRowSideFullHecke.LatticeConditions.Attached D a π (cast (congrArg D.ntw.Sig h.symm) s)
 
-theorem attachedIn_self (a : D.nd.Loc) (π : D.nd.X a) (s : D.ntw.Sig (D.ntw.twOf a)) :
-    AttachedIn D a π _ s ↔ GlobalTheory.IndefiniteRowSideFullHecke.LatticeConditions.Attached D a π s :=
-  ⟨fun ⟨_, h⟩ => h, fun h => ⟨rfl, h⟩⟩
-
-theorem AttachedIn.jS_side {D : D7} {a : D.nd.Loc} {π : D.nd.X a} {j : D.ntw.Tw} {s : D.ntw.Sig j}
-    (h : AttachedIn D a π j s) : D.ntw.jS j s = D.nd.j a ∧ D.ntw.side j s = D.ntw.twSide a := by
-  obtain ⟨rfl, _, _, -, -, -, ht⟩ := h
-  exact ⟨ht.1, ht.2.1⟩
-
 def SelCore (C : NChoice D) (ρ : ∀ i : D.nd.Loc, D.nd.X i → (Formalism.MainNotions.N.GE D.nd →* GL (Fin D.R.r) (D.nd.O i))) : Prop :=
   ∀ i : D.nd.Loc, ∀ π ∈ D.nd.Zgood i, ∃ s : D.ntw.Sig (C.twI (D.nd.w i)),
     BlochKatoReduction.Gen.goodS (BlochKatoReduction.bk0 D) (C.twI (D.nd.w i)) s ∧ D.ntw.side _ s = C.sd (D.nd.w i) ∧
@@ -112,19 +97,6 @@ def SelCore (C : NChoice D) (ρ : ∀ i : D.nd.Loc, D.nd.X i → (Formalism.Main
       BlochKatoReduction.Gen.sLen (BlochKatoReduction.bk0 D) (C.twI (D.nd.w i)) s (C.k' (D.nd.w i)) (C.Q (D.nd.w i)) (psiG D C (D.nd.w i)) ∧
     AttachedIn D i π (C.twI (D.nd.w i)) s
 
-theorem SelCore.bound {D : D7} {C : NChoice D}
-    {ρ : ∀ i : D.nd.Loc, D.nd.X i → (Formalism.MainNotions.N.GE D.nd →* GL (Fin D.R.r) (D.nd.O i))} (h : SelCore D C ρ)
-    (i : D.nd.Loc) (b : ℝ) (hb : 0 ≤ b)
-    (hs : ∀ s : D.ntw.Sig (C.twI (D.nd.w i)), BlochKatoReduction.Gen.goodS (BlochKatoReduction.bk0 D) (C.twI (D.nd.w i)) s →
-      D.ntw.jS _ s = D.nd.j i → D.ntw.side _ s = C.sd (D.nd.w i) →
-      BlochKatoReduction.Gen.sLen (BlochKatoReduction.bk0 D) (C.twI (D.nd.w i)) s (C.k' (D.nd.w i)) (C.Q (D.nd.w i)) (psiG D C (D.nd.w i)) ≤
-        ENNReal.ofReal b) :
-    ∀ π ∈ D.nd.Zgood i, Br.sFin D.loc D.nbr i (ρ i) π ∧ (Br.sPi D.loc D.nbr i (ρ i) π : ℝ) ≤ b := by
-  intro π hπ
-  obtain ⟨s, h1, h2, h3, h4, h6⟩ := h i π hπ
-  have h5 := hs s h1 h6.jS_side.1 h2
-  exact ⟨h3 (ne_top_of_le_ne_top ENNReal.ofReal_ne_top h5), (ENNReal.ofReal_le_ofReal_iff hb).1 (h4.trans h5)⟩
-
 def TriplesGood : Prop :=
   ∀ (a : D.nd.Loc) (σ : D.what₂.FT) (Sg : List (Part D.naut.CG)), GlobalTheory.IndefiniteRowSideFullHecke.LatticeConditions.GoodRowOf D (D.nd.j a) σ →
     HasParamW D.nd D.naut a σ Sg →
@@ -133,13 +105,6 @@ def TriplesGood : Prop :=
 def GoodPtRow : Prop :=
   ∀ (a : D.nd.Loc), ∀ π ∈ D.nd.Zgood a, ∃ (σ : D.what₂.FT) (Sg : List (Part D.naut.CG)),
     GlobalTheory.IndefiniteRowSideFullHecke.LatticeConditions.GoodRowOf D (D.nd.j a) σ ∧ HasParamW D.nd D.naut a σ Sg ∧ HasParamX D.nd D.naut a π Sg
-
-theorem GoodPtRow.exists_attached {D : D7} (hG : GoodPtRow D) (hT : TriplesGood D) (a : D.nd.Loc)
-    (π : D.nd.X a) (hπ : π ∈ D.nd.Zgood a) :
-    ∃ s, GlobalTheory.IndefiniteRowSideFullHecke.LatticeConditions.Attached D a π s ∧ BlochKatoReduction.Gen.goodS (BlochKatoReduction.bk0 D) (D.ntw.twOf a) s := by
-  obtain ⟨σ, Sg, h1, h2, h3⟩ := hG a π hπ
-  obtain ⟨s, h4, h5⟩ := hT a σ Sg h1 h2
-  exact ⟨s, ⟨σ, Sg, h1, h2, h3, h4⟩, h5⟩
 
 def ResAbsIrr : Prop :=
   ∀ (a : D.nd.Loc), ∀ π ∈ D.nd.Zgood a, ∀ ρ : Formalism.MainNotions.N.GE D.nd →* GL (Fin D.R.r) (D.nd.O a),
@@ -161,9 +126,6 @@ theorem sameTwistAt_iff (a : D.nd.Loc) (j : D.ntw.Tw) (k : ℕ) (ψ : Formalism.
 
 def SameTwist (C : NChoice D) : Prop :=
   ∀ a : D.nd.Loc, SameTwistAt D a (C.twI (D.nd.w a)) (C.k' (D.nd.w a)) (psiG D C (D.nd.w a))
-
-theorem SameTwist.twOf_eq {D : D7} {C : NChoice D} (h : SameTwist D C) (a : D.nd.Loc) :
-    D.ntw.twOf a = C.twI (D.nd.w a) := (h a).1
 
 theorem SameTwist.exists_heq {D : D7} {C : NChoice D} (h : SameTwist D C) (a : D.nd.Loc) :
     ∃ f : D.ntw.O0 (C.twI (D.nd.w a)) →+* D.nd.O a, HEq f (D.ntw.twist₂ a) ∧
@@ -249,8 +211,8 @@ theorem multV_cycPow_line [Algebra.IsSeparable Qp K] [FiniteDimensional Qp LL] (
 
 end Periods
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem BlockE.of_splitting (i : D.nd.Loc) (r : D.nd.X i → (Formalism.MainNotions.N.GE D.nd →* GL (Fin D.R.nV) (D.nd.O i)))
     (ρ : D.nd.X i → (Formalism.MainNotions.N.GE D.nd →* GL (Fin D.R.r) (D.nd.O i))) (π : D.nd.X i)
     (hc : BlockRepresentationsSemisimple.IsComplement D.nd i (r π) (ρ π)) : BlockE D i r ρ π := by
@@ -357,36 +319,6 @@ theorem pt (h : PtFam D r ρ) : ∀ i, ∀ π ∈ D.nd.Z i, GlobalTheory.Indefin
 
 theorem block (h : PtFam D r ρ) : ∀ i, ∀ π ∈ D.nd.Z i, BlockE D i (r i) (ρ i) π :=
   fun i π hπ => BlockE.of_splitting D i _ _ π (h.compl i π hπ)
-
-theorem exists_extend (hC : GlobalTheory.IndefiniteRowSideFullHecke.BlockRepresentationsSemisimple.Complement_at D) (hr : ∀ i, GoodR D.nd i (r i)) :
-    ∃ ρ, PtFam D r ρ := by
-  classical
-  refine ⟨fun i π => if hπ : π ∈ D.nd.Z i then (hC i π hπ (r i π) (hr i π)).choose else 1,
-    hr, fun i π => ?_, fun i π hπ => ?_⟩
-  · by_cases hπ : π ∈ D.nd.Z i
-    · simp only [dif_pos hπ]
-      exact (hC i π hπ (r i π) (hr i π)).choose_spec.cont
-    · simp only [dif_neg hπ]
-      exact continuous_const
-  · simp only [dif_pos hπ]
-    exact (hC i π hπ (r i π) (hr i π)).choose_spec
-
-theorem exists_pair (hC : GlobalTheory.IndefiniteRowSideFullHecke.BlockRepresentationsSemisimple.Complement_at D) (hr : ∀ i, ∃ r, GoodR D.nd i r) :
-    ∃ r ρ, PtFam D r ρ := by
-  choose r hr using hr
-  exact ⟨r, exists_extend hC hr⟩
-
-example (h : PtFam D r ρ) (ht : 0 < D.R.t) (i : D.nd.Loc) (π : D.nd.X i) (hπ : π ∈ D.nd.Z i)
-    (w : HeightOneSpectrum (𝓞 D.host.E)) (hw : w ∈ placesOver D.host.E (D.nd.l i))
-    (L' : FinExt (D.nd.l i)) (hL : (D.nbr i w hw).LL.1 ≤ L'.1) (τ : Br.Kw D.nbr i w hw →ₐ[ℚ_[D.nd.l i]] ↥L'.1) :
-    multV (Br.PD D.loc D.nbr i w hw) (matRep (locE D i w hw L' hL (rTwO D.nd i (r i) π))) τ 0 =
-      multV (Br.PD D.loc D.nbr i w hw) (matRep (locE D i w hw L' hL (WpO D.nd i (ρ i) π))) τ 0 + 1 ∧
-    multV (Br.PD D.loc D.nbr i w hw) (matRep (locE D i w hw L' hL (rTwO D.nd i (r i) π))) τ (-1) =
-      multV (Br.PD D.loc D.nbr i w hw) (matRep (locE D i w hw L' hL (WpO D.nd i (ρ i) π))) τ (-1) := by
-  have h0 := (h.block i π hπ w hw L' hL τ).1
-  refine ⟨?_, ?_⟩
-  · rw [h0 0, if_pos ⟨le_rfl, by exact_mod_cast ht⟩]
-  · rw [h0 (-1), if_neg (by omega), add_zero]
 
 end PtFam
 

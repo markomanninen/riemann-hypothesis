@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.OfRingsLocalSectionsHolds
+module
+
+public import Development.EtaleCohomology.TateTwists.OfRingsLocalSectionsHolds
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 
@@ -7,10 +11,6 @@ def LateralTheory.EtaleFoundations.twF_gen_inj : Prop :=
     Function.Injective (fun c : ZMod q =>
       (c.val • (Submodule.Quotient.mk (Finsupp.single ζ 1) : (twF q i).obj (CommRingCat.of B)) :
         (twF q i).obj (CommRingCat.of B)))
-
-def LateralTheory.EtaleFoundations.gen_conn_surj : Prop :=
-  ∀ (q : ℕ) [NeZero q] (A : Type) [CommRing A], Nontrivial A → (∀ e : A, IsIdempotentElem e → e = 0 ∨ e = 1) →
-    ∀ (i : ℤ) (ζ : Prim q Γ(Spec (CommRingCat.of A), ⊤)), Function.Surjective (fun c : ZMod q => c.val • twGen i ζ)
 
 namespace LateralTheory.EtaleFoundations.GenConn
 
@@ -29,7 +29,20 @@ theorem inj_of (h : LateralTheory.EtaleFoundations.twF_gen_inj) (q : ℕ) [NeZer
   have hsec : φ (c1.val • m - c2.val • m) = 0 := by
     rw [map_sub, map_nsmul, map_nsmul]; exact sub_eq_zero.2 hc
   obtain ⟨u⟩ := (inferInstance : Nonempty U)
-  obtain ⟨V, j, v, -, -, -, hV⟩ := LateralTheory.EtaleFoundations.OfRingsLoc.loc_inj (twF q i) (c1.val • m - c2.val • m) hsec u
+  have hloc : ∃ (V : Scheme.{0}) (j : V ⟶ U) (v : V),
+      IsAffine V ∧ Etale j ∧ j v = u ∧
+        ((twF q i).map j.appTop).hom (c1.val • m - c2.val • m) = 0 := by
+    have h0 : φ (c1.val • m - c2.val • m) = φ 0 := by
+      rw [map_zero]; exact hsec
+    obtain ⟨V, j, v, hV, hj, hv, hS⟩ := LateralTheory.EtaleFoundations.OfRingsLoc.cov_pt _
+      (Presheaf.equalizerSieve_mem Scheme.etaleTopology
+        (toSheafify Scheme.etaleTopology (Scheme.Γ ⋙ twF q i)) _ 0 h0) u
+    refine ⟨V, j, v, hV, hj, hv, ?_⟩
+    have h1 : ConcreteCategory.hom ((Scheme.Γ ⋙ twF q i).map j.op) (c1.val • m - c2.val • m) =
+        ConcreteCategory.hom ((Scheme.Γ ⋙ twF q i).map j.op) 0 := hS
+    rw [map_zero] at h1
+    exact h1
+  obtain ⟨V, j, v, -, -, -, hV⟩ := hloc
   let ψ := ((twF q i).map j.appTop).hom
   have hV2 : ψ (c1.val • m) = ψ (c2.val • m) := sub_eq_zero.1 ((ψ.map_sub _ _).symm.trans hV)
   erw [map_nsmul, map_nsmul] at hV2

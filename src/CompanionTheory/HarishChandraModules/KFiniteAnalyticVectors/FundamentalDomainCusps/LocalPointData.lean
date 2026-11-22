@@ -1,6 +1,10 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.FundamentalDomainCusps.LogNormEstimates
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictGen
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.TauReduction.BlockGramReduction.MemIntegersOfMemIntAd
+module
+
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.FundamentalDomainCusps.LogNormEstimates
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictGen
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.TauReduction.BlockGramReduction.MemIntegersOfMemIntAd
+
+@[expose] public section
 
 open Matrix MeasureTheory NumberField Topology Module
 open scoped TensorProduct
@@ -13,7 +17,8 @@ open Formalism.MainNotions.S Formalism.MainNotions.LeviCoordinates Formalism.L2.
 
 theorem atV_sum (I : AutInst) (v : InfinitePlace I.F) {d : ℕ} (a : Fin d → I.E) (w : Fin d → Fin I.n → I.E) :
     atV I v (∑ i, a i • w i) = ∑ i, I.φ v (a i) • atV I v (w i) := by
-  simp only [atV, ← mulVec_smul, ← mulVec_sum]; congr 1; funext i; simp [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [atV, ← mulVec_smul, ← mulVec_sum]; congr 1; funext i; simp [map_sum]
 
 theorem exists_near (I : AutInst) : ∃ C : ℝ, 0 < C ∧ ∀ β : InfinitePlace I.F → ℂ,
     ∃ a : I.E, IsIntegral ℤ a ∧ ∀ v, ‖β v - I.φ v a‖ ≤ C := by
@@ -23,7 +28,8 @@ theorem exists_near (I : AutInst) : ∃ C : ℝ, 0 < C ∧ ∀ β : InfinitePlac
   · rw [integralBasis_apply]; exact RingOfIntegers.isIntegral_coe _
   · have e : β v - I.φ v (∑ k, (⌊b.repr β k⌋ : I.E) * integralBasis I.E k) =
         ∑ k, ((Int.fract (b.repr β k) : ℝ) : ℂ) * b k v := by
-      rw [show β v = (∑ k, b.repr β k • b k) v by rw [b.sum_repr β], map_sum, Finset.sum_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [show β v = (∑ k, b.repr β k • b k) v by rw [b.sum_repr β], map_sum, Finset.sum_apply,
         ← Finset.sum_sub_distrib]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [Int.fract, map_mul, map_intCast, Pi.smul_apply, Complex.real_smul]
@@ -93,7 +99,8 @@ theorem exists_sandwich (I : AutInst) : ∃ c : ℕ, 1 ≤ c ∧ (∀ l ∈ I.L,
 theorem iv_mulVec (I : AutInst) (A : Matrix (Fin I.n) (Fin I.n) I.E) (l : Fin I.n → I.E) :
     A.map (Formalism.UG.inclE (F := I.F) (Af I.F)) *ᵥ iv I l = iv I (A *ᵥ l) := by
   funext i
-  simp [iv, mulVec, dotProduct, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [iv, mulVec, dotProduct, map_sum]
 
 theorem cong_Lf (I : AutInst) {c g : ℕ} (h1 : ∀ l ∈ I.L, (c : I.E) • l ∈ IntV I) (h2 : ∀ u ∈ IntV I, (c : I.E) • u ∈ I.L)
     {A : Matrix (Fin I.n) (Fin I.n) I.E} (hA : Cong I (g * c * c) A) : ∀ y ∈ I.Lf, ∃ z ∈ I.Lf,

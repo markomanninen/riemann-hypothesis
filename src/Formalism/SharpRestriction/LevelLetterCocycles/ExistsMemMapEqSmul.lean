@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.MainNotions.RamifiedCoefficientChains.S9.FactorialSumBounds
 
@@ -31,7 +35,7 @@ theorem linearMap_aeval_apply_comm_of_intertwine (f : M₁ →ₗ[O] M₂) (d₁
     (hf : ∀ y, f (d₁ y) = d₂ (f y)) (P : O[X]) (y : M₁) :
     f (aeval d₁ P y) = aeval d₂ P (f y) := by
   refine Polynomial.induction_on' P (fun p q hp hq => ?_) (fun n a => ?_)
-  · rw [map_add, map_add, linearMap_add_apply, linearMap_add_apply, map_add, hp, hq]
+  · rw [map_add (f := _), map_add (f := _), linearMap_add_apply, linearMap_add_apply, map_add (f := _), hp, hq]
   · rw [aeval_end_monomial_apply, aeval_end_monomial_apply, map_smul, linearMap_pow_apply_comm_of_intertwine f d₁ d₂ hf]
 
 private theorem pow_apply_mem_of_invariant' (N : Submodule O M₁) (d : M₁ →ₗ[O] M₁) (hN : ∀ y ∈ N, d y ∈ N)
@@ -45,7 +49,7 @@ private theorem pow_apply_mem_of_invariant' (N : Submodule O M₁) (d : M₁ →
 theorem aeval_apply_mem_of_invariant (N : Submodule O M₁) (d : M₁ →ₗ[O] M₁) (hN : ∀ y ∈ N, d y ∈ N)
     (P : O[X]) {y : M₁} (hy : y ∈ N) : aeval d P y ∈ N := by
   refine Polynomial.induction_on' P (fun p q hp hq => ?_) (fun n a => ?_)
-  · rw [map_add, linearMap_add_apply]
+  · rw [map_add (f := _), linearMap_add_apply]
     exact N.add_mem hp hq
   · rw [aeval_end_monomial_apply]
     exact N.smul_mem a (pow_apply_mem_of_invariant' N d hN n hy)

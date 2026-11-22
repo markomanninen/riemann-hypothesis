@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLatticeDiscriminantOrderNeZeroUnimodula
-import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.MinkowskiNumberDvdFactorial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLatticeDiscriminantOrderNeZeroUnimodula
+public import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.MinkowskiNumberDvdFactorial
+
+@[expose] public section
 
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt
 open scoped Pointwise ENNReal Classical
@@ -18,61 +22,79 @@ section Index
 variable {K V : Type} [Field K] [NumberField K] [AddCommGroup V] [Module K V]
   [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
 
-theorem lattice_of_idx {A B : Submodule (𝓞 K) V} (hA : Submodule.IsLattice K A) (hle : B ≤ A)
-    (h : idxN A B ≠ 0) : Submodule.IsLattice K B := by
-  refine ⟨hA.fg.of_le hle, ?_⟩
+theorem lattice_of_idx {A B : Submodule (𝓞 K) V} (hA : Submodule.IsFullLattice K A) (hle : B ≤ A)
+    (h : idxN A B ≠ 0) : Submodule.IsFullLattice K B := by
+  haveI : Submodule.IsLattice K B := Submodule.IsLattice.of_fg K (hA.fg.of_le hle)
+  refine ⟨?_⟩
   rw [eq_top_iff, ← hA.span_eq_top, Submodule.span_le]
   intro x hx
-  have h1 : idxN A B • x ∈ B := AddSubgroup.nsmul_relIndex_mem B.toAddSubgroup (K := A.toAddSubgroup) hx
-  have h2 : ((idxN A B : ℕ) : K) ≠ 0 := by exact_mod_cast h
-  have h3 : x = ((idxN A B : ℕ) : K)⁻¹ • (idxN A B • x) := by
-    rw [← Nat.cast_smul_eq_nsmul K, smul_smul, inv_mul_cancel₀ h2, one_smul]
-  rw [h3]
-  exact Submodule.smul_mem _ _ (Submodule.subset_span h1)
-
-omit [NumberField K] in
+  have hn : idxN A B • x ∈ B :=
+    AddSubgroup.nsmul_relIndex_mem B.toAddSubgroup (K := A.toAddSubgroup) hx
+  have hnK : ((idxN A B : ℕ) : K) ≠ 0 := Nat.cast_ne_zero.mpr h
+  have hx' : x = ((idxN A B : ℕ) : K)⁻¹ • (idxN A B • x) := by
+    rw [← Nat.cast_smul_eq_nsmul K, smul_smul, inv_mul_cancel₀ hnK, one_smul]
+  rw [hx']
+  exact Submodule.smul_mem _ _ (Submodule.subset_span hn)
 
 theorem lattice_map {W : Type} [AddCommGroup W] [Module K W] [Module (𝓞 K) W] [IsScalarTower (𝓞 K) K W]
-    {A : Submodule (𝓞 K) V} (hA : Submodule.IsLattice K A) (f : V →ₗ[K] W) (hf : Function.Surjective f) :
-    Submodule.IsLattice K (A.map (f.restrictScalars (𝓞 K))) := by
-  refine ⟨hA.fg.map _, ?_⟩
-  have : ((A.map (f.restrictScalars (𝓞 K)) : Submodule (𝓞 K) W) : Set W) = f '' A := rfl
-  rw [this, ← Submodule.map_span, hA.span_eq_top, Submodule.map_top, LinearMap.range_eq_top.2 hf]
+    {A : Submodule (𝓞 K) V} (hA : Submodule.IsFullLattice K A) (f : V →ₗ[K] W) (hf : Function.Surjective f) :
+    Submodule.IsFullLattice K (A.map (f.restrictScalars (𝓞 K))) := by
+  haveI : Submodule.IsLattice K (A.map (f.restrictScalars (𝓞 K))) :=
+    Submodule.IsLattice.of_fg K (hA.fg.map _)
+  refine ⟨?_⟩
+  change Submodule.span K (f '' (A : Set V)) = ⊤
+  rw [← Submodule.map_span, hA.span_eq_top, Submodule.map_top, LinearMap.range_eq_top.2 hf]
 
-theorem exists_rat_basis [Module ℚ V] [Module.Finite ℚ V] {A : Submodule (𝓞 K) V}
-    (hA : Submodule.IsLattice K A) :
+theorem exists_rat_basis [Module ℚ V] [IsScalarTower ℚ K V] [Module.Finite ℚ V] {A : Submodule (𝓞 K) V}
+    (hA : Submodule.IsFullLattice K A) :
     ∃ b : Module.Basis (Fin (Module.finrank ℚ V)) ℚ V, A.toAddSubgroup = AddSubgroup.closure (Set.range b) := by
   have hfin : Module.Finite (𝓞 K) A := Module.Finite.iff_fg.mpr hA.fg
   have hfinZ : Module.Finite ℤ A := Module.Finite.trans (𝓞 K) _
   have hL : Submodule.IsLattice ℚ (A.restrictScalars ℤ) := by
     refine ⟨Module.Finite.iff_fg.mp hfinZ, ?_⟩
-    rw [eq_top_iff]
-    intro x _
-    have h := idxN_ne_zero hA (Submodule.fg_span_singleton (R := 𝓞 K) x)
-    set n := idxN (Submodule.span (𝓞 K) {x}) A with hn
-    have h1 : n • x ∈ A := AddSubgroup.nsmul_relIndex_mem A.toAddSubgroup
-      (K := (Submodule.span (𝓞 K) {x}).toAddSubgroup) (Submodule.mem_span_singleton_self x)
-    have h2 : (n : ℚ) ≠ 0 := by exact_mod_cast h
-    have h3 : x = (n : ℚ)⁻¹ • (n • x) := by
-      rw [← Nat.cast_smul_eq_nsmul ℚ, smul_smul, inv_mul_cancel₀ h2, one_smul]
-    rw [h3]
-    exact Submodule.smul_mem _ _ (Submodule.subset_span h1)
-  have hr : Module.finrank ℤ (A.restrictScalars ℤ) = Module.finrank ℚ V := by
-    unfold Module.finrank
-    rw [Submodule.IsLattice.rank' ℚ]
+    intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
+  have hsmul (a : K) {x : V}
+      (hx : x ∈ Submodule.span ℚ ((A.restrictScalars ℤ : Submodule ℤ V) : Set V)) :
+      a • x ∈ Submodule.span ℚ ((A.restrictScalars ℤ : Submodule ℤ V) : Set V) := by
+    obtain ⟨m, s, hm, hms⟩ :=
+      (IsFractionRing.isAlgebraic_iff ℤ ℚ K |>.mpr (.of_finite ℚ a)).exists_nsmul_eq (𝓞 K)
+    induction hx using Submodule.span_induction with
+    | mem y hy =>
+      have hsy : s • y ∈ A := A.smul_mem s hy
+      have key : a • y = (m : ℚ)⁻¹ • (s • y) := by
+        rw [← algebraMap_smul K s y, ← hms, smul_assoc, ← Nat.cast_smul_eq_nsmul ℚ,
+          inv_smul_smul₀ (by exact_mod_cast hm)]
+      rw [key]
+      exact Submodule.smul_mem _ _ (Submodule.subset_span hsy)
+    | zero => simp
+    | add y z _ _ hy hz => rw [smul_add]; exact add_mem hy hz
+    | smul q y _ hy => rw [smul_comm]; exact Submodule.smul_mem _ _ hy
+  have hspan : Submodule.span ℚ ((A.restrictScalars ℤ : Submodule ℤ V) : Set V) = ⊤ := by
+    apply Submodule.eq_top_iff'.2
+    intro x
+    have hx : x ∈ Submodule.span K (A : Set V) := by rw [hA.span_eq_top]; trivial
+    induction hx using Submodule.span_induction with
+    | mem y hy => exact Submodule.subset_span hy
+    | zero => exact zero_mem _
+    | add y z _ _ hy hz => exact add_mem hy hz
+    | smul a y _ hy => exact hsmul a hy
+  haveI : (A.restrictScalars ℤ).IsFullLattice ℚ := ⟨hspan⟩
+  have : Module.Finite ℤ (A.restrictScalars ℤ) := Submodule.IsLattice.finite ℚ _
+  have : Module.Free ℤ (A.restrictScalars ℤ) := Submodule.IsLattice.free ℚ _
+  have hr := Submodule.IsFullLattice.finrank_eq ℚ (A.restrictScalars ℤ)
   let b₀ := Module.finBasisOfFinrankEq ℤ (A.restrictScalars ℤ) hr
-  refine ⟨b₀.extendOfIsLattice ℚ, ?_⟩
+  refine ⟨b₀.extendOfIsFullLattice ℚ, ?_⟩
   rw [← Submodule.span_int_eq_addSubgroupClosure]
-  have e : Set.range (b₀.extendOfIsLattice ℚ) = (A.restrictScalars ℤ).subtype '' Set.range b₀ := by
+  have e : Set.range (b₀.extendOfIsFullLattice ℚ) = (A.restrictScalars ℤ).subtype '' Set.range b₀ := by
     rw [← Set.range_comp]
     congr 1
-    funext i
-    simp
+    exact funext fun i => b₀.extendOfIsFullLattice_apply ℚ i
   rw [e, ← Submodule.map_span, b₀.span_eq, Submodule.map_top, Submodule.range_subtype]
   rfl
 
-theorem idx_gmap [FiniteDimensional K V] {A B : Submodule (𝓞 K) V} (hA : Submodule.IsLattice K A)
-    (hB : Submodule.IsLattice K B) (F : V ≃ₗ[K] V) (h1 : B ≤ A) (h2 : gmap F B ≤ A) :
+theorem idx_gmap [FiniteDimensional K V] {A B : Submodule (𝓞 K) V} (hA : Submodule.IsFullLattice K A)
+    (hB : Submodule.IsFullLattice K B) (F : V ≃ₗ[K] V) (h1 : B ≤ A) (h2 : gmap F B ≤ A) :
     (idxN A (gmap F B) : ℚ) = |Algebra.norm ℚ (LinearMap.det (F : V →ₗ[K] V))| * idxN A B := by
   let _ : Module ℚ V := Module.compHom V (algebraMap ℚ K)
   have : IsScalarTower ℚ K V := IsScalarTower.of_algebraMap_smul fun _ _ => rfl
@@ -92,11 +114,11 @@ theorem idx_gmap [FiniteDimensional K V] {A B : Submodule (𝓞 K) V} (hA : Subm
     ← a.det_comp ((F : V →ₗ[K] V).restrictScalars ℚ) b]
   rfl
 
-theorem idx_gmap' [FiniteDimensional K V] {A B C D : Submodule (𝓞 K) V} (hA : Submodule.IsLattice K A)
-    (hB : Submodule.IsLattice K B) (hC : Submodule.IsLattice K C) (F : V ≃ₗ[K] V) (hBC : B ≤ C)
+theorem idx_gmap' [FiniteDimensional K V] {A B C D : Submodule (𝓞 K) V} (hA : Submodule.IsFullLattice K A)
+    (hB : Submodule.IsFullLattice K B) (hC : Submodule.IsFullLattice K C) (F : V ≃ₗ[K] V) (hBC : B ≤ C)
     (hDC : D ≤ C) (hi : idxN C B = idxN C D) (hDA : D ≤ A) (h2 : gmap F B ≤ A) :
     (idxN A (gmap F B) : ℚ) = |Algebra.norm ℚ (LinearMap.det (F : V →ₗ[K] V))| * idxN A D := by
-  have hE : Submodule.IsLattice K (A ⊔ C) := Submodule.IsLattice.sup K A C
+  have hE : Submodule.IsFullLattice K (A ⊔ C) := Submodule.IsFullLattice.sup K A C
   have e := idx_gmap hE hB F (hBC.trans le_sup_right) (h2.trans le_sup_left)
   rw [← idxN_mul h2 (le_sup_left : A ≤ A ⊔ C), ← idxN_mul hBC (le_sup_right : C ≤ A ⊔ C), hi,
     idxN_mul hDC (le_sup_right : C ≤ A ⊔ C), ← idxN_mul hDA (le_sup_left : A ≤ A ⊔ C)] at e
@@ -112,7 +134,7 @@ theorem norm_le {K : Type} [Field K] [NumberField K] (a : K) (c : ℝ) (h : ∀ 
   have e := congrArg norm (Algebra.norm_eq_prod_embeddings ℚ ℂ a)
   rw [norm_prod, eq_ratCast, Complex.norm_ratCast] at e
   rw [Rat.cast_abs, e, ← AlgHom.card ℚ K ℂ, ← Finset.card_univ, ← Finset.prod_const]
-  exact Finset.prod_le_prod (fun _ _ => norm_nonneg _) (fun σ _ => h σ.toRingHom)
+  exact Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) (fun σ _ => h σ.toRingHom)
 
 theorem det_one_sub_le {K U : Type} [Field K] [StarRing K] [AddCommGroup U] [Module K U]
     [FiniteDimensional K U] (σ : K →+* ℂ) (h : U →ₗ[K] U →ₗ⋆[K] K) (η : U →ₗ[K] U)
@@ -129,7 +151,8 @@ theorem det_one_sub_le {K U : Type} [Field K] [StarRing K] [AddCommGroup U] [Mod
     have h1 : u b - η (u b) = ∑ c, A c b • u c := by
       simp only [hA, LinearMap.toMatrix_apply]
       exact (u.sum_repr _).symm
-    simp only [bEta, Matrix.of_apply, h1, map_sum, map_smulₛₗ, Matrix.mul_apply, Matrix.transpose_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [bEta, Matrix.of_apply, h1, map_sum, map_smulₛₗ, Matrix.mul_apply, Matrix.transpose_apply,
       Matrix.conjTranspose_apply, hG, smul_eq_mul]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [mul_comm]; rfl
@@ -139,7 +162,8 @@ theorem det_one_sub_le {K U : Type} [Field K] [StarRing K] [AddCommGroup U] [Mod
     have h1 : ∀ b, h (∑ a, v a • u a) (u b) = 0 := by
       intro b
       have := congrFun hvG b
-      simpa [Matrix.vecMul, dotProduct, hG, map_sum] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [Matrix.vecMul, dotProduct, hG, map_sum] using this
     have h2 : h (∑ a, v a • u a) = 0 := u.ext fun b => h1 b
     have h3 : (∑ a, v a • u a) = 0 := by
       by_contra hne
@@ -167,8 +191,8 @@ omit [NumberField K] [StarRing K] [FiniteDimensional K V] [Module (𝓞 K) V] [I
 theorem mem_fixSp (η : V ≃ₗ[K] V) (x : V) : x ∈ fixSp η ↔ η x = x := by
   simp [fixSp, sub_eq_zero]
 
-omit [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 
+omit [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 theorem exists_proj_aut {H : HermSpace K V} (hK : IsCMUnram K) (hP : PD H.B.flip) {η : V ≃ₗ[K] V}
     (hη : ∀ x y, H.B (η x) (η y) = H.B x y) {g : ℕ} (hg : 0 < g) :
     ∃ (p : V →ₗ[K] fixSp η) (F : V ≃ₗ[K] V), (∀ t : fixSp η, p t = t) ∧
@@ -198,10 +222,10 @@ theorem exists_proj_aut {H : HermSpace K V} (hK : IsCMUnram K) (hP : PD H.B.flip
   set F₀ : V →ₗ[K] V := (fixSp η).subtype ∘ₗ p + (g : K)⁻¹ • (LinearMap.id - (η : V →ₗ[K] V)) with hF₀
   have f1 : ∀ x, F₀ x = p x + (g : K)⁻¹ • (x - η x) := fun x => rfl
   have hinj : Function.Injective F₀ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     have a1 := congrArg p hx
-    rw [f1, map_add, map_smul, (p2 _).2 (p4 x), p1, smul_zero, add_zero, map_zero] at a1
+    rw [f1, map_add (f := _), map_smul, (p2 _).2 (p4 x), p1, smul_zero, add_zero, map_zero] at a1
     rw [f1, a1, Submodule.coe_zero, zero_add, smul_eq_zero, sub_eq_zero] at hx
     have a2 : x ∈ fixSp η := (mem_fixSp η x).2 (hx.resolve_left (inv_ne_zero hg0)).symm
     have a3 := p1 ⟨x, a2⟩
@@ -249,7 +273,7 @@ theorem flip_nondeg {H : HermSpace K V} (hP : PD H.B.flip) : H.B.flip.Nondegener
 
 theorem disc_latIn {H : HermSpace K V} (hP : PD H.B.flip) {U : Submodule K V} (p : V →ₗ[K] U)
     (p1 : ∀ t : U, p t = t) (p2 : ∀ (x : V) (t : U), H.B t (p x) = H.B t x) {A : Submodule (𝓞 K) V}
-    (hA : Submodule.IsLattice K A) :
+    (hA : Submodule.IsFullLattice K A) :
     discN (hRes H.B.flip U) (latIn U A) =
       idxN (Formalism.HermitianLatticesTheory.dual H.B.flip A) ((latIn U A).comap (p.restrictScalars (𝓞 K))) := by
   have dl := dualLattice (𝓞 K) K V H.B.flip (flip_isSymm H) (flip_nondeg hP) star_algebraMap_ringOfIntegers_mem_range A hA
@@ -278,11 +302,11 @@ theorem disc_latIn {H : HermSpace K V} (hP : PD H.B.flip) {U : Submodule K V} (p
   exact (AddSubgroup.relIndex_comap (latIn U A).toAddSubgroup (p.restrictScalars (𝓞 K)).toAddMonoidHom
     (Formalism.HermitianLatticesTheory.dual H.B.flip A).toAddSubgroup).symm
 
-omit [StarRing K] [FiniteDimensional K V] in
 
+omit [StarRing K] [FiniteDimensional K V] in
 theorem exists_same_index {U : Submodule K V} (p : V →ₗ[K] U) (p1 : ∀ t : U, p t = t)
-    {D : Submodule (𝓞 K) V} (hD : Submodule.IsLattice K D) :
-    ∃ B C : Submodule (𝓞 K) V, Submodule.IsLattice K B ∧ Submodule.IsLattice K C ∧ B ≤ C ∧ D ≤ C ∧
+    {D : Submodule (𝓞 K) V} (hD : Submodule.IsFullLattice K D) :
+    ∃ B C : Submodule (𝓞 K) V, Submodule.IsFullLattice K B ∧ Submodule.IsFullLattice K C ∧ B ≤ C ∧ D ≤ C ∧
       idxN C B = idxN C D ∧ ∀ b ∈ B, ∃ m : U, (m : V) ∈ D ∧ ∃ y ∈ D, b = m + (y - p y) := by
   set P : V →ₗ[𝓞 K] V := (U.subtype ∘ₗ p).restrictScalars (𝓞 K) with hP
   have hPx : ∀ x, P x = p x := fun _ => rfl
@@ -291,8 +315,8 @@ theorem exists_same_index {U : Submodule K V} (p : V →ₗ[K] U) (p1 : ∀ t : 
     intro b hb
     obtain ⟨m, ⟨hm1, hm2⟩, _, ⟨y, hy, rfl⟩, rfl⟩ := Submodule.mem_sup.1 hb
     exact ⟨⟨m, hm2⟩, hm1, y, hy, rfl⟩
-  have hC : Submodule.IsLattice K (D.map P ⊔ D) :=
-    Submodule.IsLattice.of_le_of_isLattice_of_fg K le_sup_right ((hD.fg.map P).sup hD.fg)
+  have hC : Submodule.IsFullLattice K (D.map P ⊔ D) :=
+    Submodule.IsFullLattice.of_le_of_fg K le_sup_right ((hD.fg.map P).sup hD.fg)
   have e1 : D.map P ⊔ B = D.map P ⊔ D := by
     refine le_antisymm (sup_le le_sup_left (sup_le (inf_le_left.trans le_sup_right) ?_))
       (sup_le le_sup_left fun y hy => ?_)
@@ -307,7 +331,7 @@ theorem exists_same_index {U : Submodule K V} (p : V →ₗ[K] U) (p1 : ∀ t : 
       refine ⟨?_, z, hz, rfl⟩
       obtain ⟨m, hm, y, hy, e⟩ := hBm _ hb
       have := congrArg p e
-      rw [hPx, map_add, map_sub, p1, p1, p1, sub_self, add_zero] at this
+      rw [hPx, map_add (f := _), map_sub, p1, p1, p1, sub_self, add_zero] at this
       rw [SetLike.mem_coe, hPx, this]
       exact hm
     · rintro b ⟨hb, z, hz, rfl⟩
@@ -324,7 +348,7 @@ theorem exists_same_index {U : Submodule K V} (p : V →ₗ[K] U) (p1 : ∀ t : 
 
 theorem core {H : HermSpace K V} (hK : IsCMUnram K) (hP : PD H.B.flip) {η : V ≃ₗ[K] V}
     (hη : ∀ x y, H.B (η x) (η y) = H.B x y) {g : ℕ} (hg : 0 < g) {A D : Submodule (𝓞 K) V}
-    (hA : Submodule.IsLattice K A) (hD : Submodule.IsLattice K D) (hle : D ≤ Formalism.HermitianLatticesTheory.dual H.B.flip A)
+    (hA : Submodule.IsFullLattice K A) (hD : Submodule.IsFullLattice K D) (hle : D ≤ Formalism.HermitianLatticesTheory.dual H.B.flip A)
     (hfix : ∀ t ∈ fixSp η, t ∈ D → t ∈ A)
     (hpair : ∀ y ∈ D, (g : K)⁻¹ • (y - η y) ∈ Formalism.HermitianLatticesTheory.dual H.B.flip A) :
     (discN (hRes H.B.flip (fixSp η)) (latIn (fixSp η) A) : ℝ) ≤
@@ -338,7 +362,7 @@ theorem core {H : HermSpace K V} (hK : IsCMUnram K) (hP : PD H.B.flip) {η : V �
     obtain ⟨m, hm, y, hy, rfl⟩ := hBm b hb
     refine ⟨m, hm, y, hy, ?_⟩
     change F _ = _
-    rw [hF, map_add, map_sub, p1, p1, sub_self, add_zero, map_add, map_sub, (mem_fixSp η m).1 m.2,
+    rw [hF, map_add (f := _), map_sub, p1, p1, sub_self, add_zero, map_add (f := _), map_sub, (mem_fixSp η m).1 m.2,
       (mem_fixSp η (p y)).1 (p y).2]
     congr 2
     abel
@@ -350,9 +374,9 @@ theorem core {H : HermSpace K V} (hK : IsCMUnram K) (hP : PD H.B.flip) {η : V �
     intro b hb
     obtain ⟨m, hm, y, hy, rfl⟩ := key b hb
     change ((p _ : fixSp η) : V) ∈ A
-    rw [map_add, map_smul, p3, smul_zero, add_zero, p1]
+    rw [map_add (f := _), map_smul, p3, smul_zero, add_zero, p1]
     exact hfix m m.2 hm
-  have hFB : Submodule.IsLattice K (gmap F B) := lattice_map hB (F : V →ₗ[K] V) F.surjective
+  have hFB : Submodule.IsFullLattice K (gmap F B) := lattice_map hB (F : V →ₗ[K] V) F.surjective
   have h3 : idxN (Formalism.HermitianLatticesTheory.dual H.B.flip A) ((latIn (fixSp η) A).comap (p.restrictScalars (𝓞 K))) ≤
       idxN (Formalism.HermitianLatticesTheory.dual H.B.flip A) (gmap F B) :=
     AddSubgroup.relIndex_le_of_le_left ((Submodule.toAddSubgroup_le _ _).mpr h2) (idxN_ne_zero hFB dl.fg)
@@ -377,8 +401,9 @@ theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommG
   have l2 : fixLat p.2.1.2 ≤ L₀ := fun y hy => (m2.1 hy).2
   change GlobalTheory.Mass.idxN L₀ (fixLat p.1.2) = x at i1
   change GlobalTheory.Mass.idxN L₀ (fixLat p.2.1.2) = x' at i2
-  have hA := lattice_of_idx hL.1 l1 (by omega)
-  have hD := lattice_of_idx hL.1 l2 (by omega)
+  have hL₀ : Submodule.IsFullLattice K L₀ := hL.1
+  have hA := lattice_of_idx hL₀ l1 (by omega)
+  have hD := lattice_of_idx hL₀ l2 (by omega)
   obtain ⟨an, -, -, hint, -⟩ :=
     Formalism.HermitianLatticesTheory.dualBasic (𝓞 K) K V H.B.flip (flip_isSymm H) Formalism.HermitianLatticesTheory.star_algebraMap_ringOfIntegers_mem_range
   have l3 := (hint L₀).1 hL.2
@@ -400,7 +425,7 @@ theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommG
         map_mul, map_natCast, map_neg, smul_eq_mul]
       field_simp)
   rw [← idxN_mul (l2.trans l3) l4, ← idxN_mul l2 l3, i2,
-    idxN_dual H.B.flip (flip_isSymm H) (flip_nondeg hP) hA x L₀ hL.1 l1 i1] at hc
+    idxN_dual H.B.flip (flip_isSymm H) (flip_nondeg hP) hA x L₀ hL₀ l1 i1] at hc
   change GlobalTheory.Mass.idxN _ _ = D₀ at hD₀
   rw [hD₀] at hc
   refine hc.trans (le_of_eq ?_)

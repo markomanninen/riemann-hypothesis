@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsionFreeOfForallExists
-import Development.AbelianVarietyTheory.Definitions.Divisors.NefFibOfIsNef
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExtFormAdjEqNegSecondForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsionFreeOfForallExists
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NefFibOfIsNef
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExtFormAdjEqNegSecondForm
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -64,15 +68,16 @@ theorem VInfAt.prodMk {f' : CxPts p σ → G} (h : VInfAt f y) (h' : VInfAt f' y
     contDiff_pi.2 fun a => contDiff_apply _ _ _
   have cr : ContDiff ℝ ∞ fun (v : ι ⊕ ι' → ℂ) a => v (.inr a) :=
     contDiff_pi.2 fun a => contDiff_apply _ _ _
+  let S : Set (ι ⊕ ι' → ℂ) :=
+    (fun v a => v (.inl a)) ⁻¹' O ∩ (fun v a => v (.inr a)) ⁻¹' O'
   refine ⟨W ⊓ W', ι ⊕ ι', inferInstance,
     Sum.elim (fun a => resG X inf_le_left (g a)) fun a => resG X inf_le_right (g' a),
-    fun v => (F fun a => v (.inl a), F' fun a => v (.inr a)),
-    (fun v a => v (.inl a)) ⁻¹' O ∩ (fun v a => v (.inr a)) ⁻¹' O', hW,
+    fun v => (F fun a => v (.inl a), F' fun a => v (.inr a)), S, hW,
     (h₂.preimage cl.continuous).inter (h₂'.preimage cr.continuous), ⟨?_, ?_⟩,
-    (h₄.comp cl.contDiffOn fun _ hv => hv.1).prodMk
-      (h₄'.comp cr.contDiffOn fun _ hv => hv.2), ?_⟩
-  · simpa only [mem_preimage, Sum.elim_inl, ev_res _ hW] using h₃
-  · simpa only [mem_preimage, Sum.elim_inr, ev_res _ hW] using h₃'
+    (h₄.comp (s := S) cl.contDiffOn fun _ hv => hv.1).prodMk
+      (h₄'.comp (s := S) cr.contDiffOn fun _ hv => hv.2), ?_⟩
+  · simpa only [S, mem_preimage, Sum.elim_inl, ev_res _ hW] using h₃
+  · simpa only [S, mem_preimage, Sum.elim_inr, ev_res _ hW] using h₃'
   · filter_upwards [h₅, h₅', (isOpen_ptsIn _).mem_nhds hW] with z e e' hz
     simp only [Sum.elim_inl, Sum.elim_inr, ev_res _ hz, e, e']
 
@@ -88,13 +93,6 @@ theorem vInfAt_pi {ι : Type} [Fintype ι] {f : CxPts p σ → ι → F}
         (((ContinuousLinearMap.single ℝ (fun _ : ι => F) a).contDiff.comp contDiff_fst).add
           contDiff_snd)
   simpa only [Finset.univ_sum_single] using H Finset.univ
-
-theorem VInfAt.continuousAt (h : VInfAt f y) : ContinuousAt f y := by
-  obtain ⟨W, ι, _, g, F, O, h₁, h₂, h₃, h₄, h₅⟩ := h
-  refine ContinuousAt.congr ?_ h₅.symm
-  exact ContinuousAt.comp (f := fun z a => ev p σ W (g a) z)
-    (h₄.continuousOn.continuousAt (h₂.mem_nhds h₃)) (continuousAt_pi.2 fun a =>
-      (continuousOn_ev (g a)).continuousAt ((isOpen_ptsIn W).mem_nhds h₁))
 
 theorem VInfAt.pull {q : Y ⟶ Sp k} (π : Y ⟶ X) (hπ : π ≫ p = q) {z : CxPts q σ}
     (h : VInfAt f (PtsOver.map π hπ _ z)) : VInfAt (fun w => f (PtsOver.map π hπ _ w)) z := by
@@ -138,13 +136,13 @@ namespace VB.Chart
 
 variable {E : X.Modules} {r : ℕ} (c c' c'' : Chart E r) {V W : X.Opens} {y : CxPts p σ}
 
-variable (p σ) in
 
+variable (p σ) in
 def crd (s : Γ(E, V)) (y : CxPts p σ) : Fin r → ℂ := fun a =>
   ev p σ (V ⊓ c.U) ((c.isFrame.basis inf_le_right).repr (resM E inf_le_left s) a) y
 
-variable (p σ) in
 
+variable (p σ) in
 def tr (y : CxPts p σ) : Matrix (Fin r) (Fin r) ℂ := Matrix.of fun a b => c.crd p σ (c'.e b) y a
 
 theorem crd_eq (s : Γ(E, V)) (h : W ≤ V) (h' : W ≤ c.U) (hy : y ∈ ptsIn p σ W) (a : Fin r) :
@@ -161,7 +159,7 @@ theorem crd_resM (s : Γ(E, V)) (h : W ≤ V) (hy : y ∈ ptsIn p σ W) :
 
 theorem crd_add (s t : Γ(E, V)) (y : CxPts p σ) :
     c.crd p σ (s + t) y = c.crd p σ s y + c.crd p σ t y := funext fun a => by
-  simp only [crd, map_add, Finsupp.add_apply, ev_add, Pi.add_apply]
+  simp only [crd, map_add (f := _), Finsupp.add_apply, ev_add, Pi.add_apply]
 
 theorem crd_smul (g : Γ(X, V)) (s : Γ(E, V)) (y : CxPts p σ) :
     c.crd p σ (g • s) y = ev p σ V g y • c.crd p σ s y := funext fun a => by
@@ -202,7 +200,7 @@ theorem tr_mul (h' : y ∈ ptsIn p σ c'.U) (h'' : y ∈ ptsIn p σ c''.U) :
 
 theorem tr_self (h : y ∈ ptsIn p σ c.U) : c.tr p σ c y = 1 := by
   ext a b
-  rw [tr, of_apply, c.crd_frame h, Pi.single_apply, one_apply]
+  rw [tr, of_apply, c.crd_frame h, Pi.single_apply, Matrix.one_apply]
 
 theorem isUnit_tr (h : y ∈ ptsIn p σ c.U) (h' : y ∈ ptsIn p σ c'.U) : IsUnit (c.tr p σ c' y) :=
   IsUnit.of_mul_eq_one _ ((c.tr_mul c' c h' h).trans (c.tr_self h))
@@ -247,15 +245,61 @@ theorem crd_pull (hE : IsVB E r) {q : Y ⟶ Sp k} (π : Y ⟶ X) (hπ : π ≫ p
     ((QCoh.res_pullbackSections π E hT inf_le_left s).trans
       (QCoh.pullbackSections_res π E hle inf_le_left s).symm)
 
-def dual : Chart (VB.dual E) r := ⟨c.U, _, c.isFrame.dual⟩
+theorem dualApp_chart_sum (h : V ≤ c.U) (d : Fin r → Γ(VB.dual E, V))
+    (hd : ∀ i j, dualApp (d i) le_rfl (resM E h (c.e j)) =
+      (c.isFrame.basis h).repr (resM E h (c.e j)) i)
+    (a : Fin r → Γ(X, V)) (j : Fin r) :
+    dualApp (∑ i, a i • d i) le_rfl (resM E h (c.e j)) = a j := by
+  classical
+  have hcoord (i : Fin r) : dualApp (d i) le_rfl (resM E h (c.e j)) =
+      if j = i then 1 else 0 := by
+    rw [hd, ← c.isFrame.basis_apply h j, Module.Basis.repr_self_apply]
+  simp only [dualApp_sum, LinearMap.sum_apply, dualApp_smul, resG_self,
+    LinearMap.smul_apply, smul_eq_mul, hcoord, mul_ite, mul_one, mul_zero,
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true]
+
+def dual : Chart (VB.dual E) r := by
+  let d (i : Fin r) : Γ(VB.dual E, c.U) :=
+    homMk (G := SheafOfModules.unit X.ringCatSheaf) (fun _ h => (c.isFrame.basis h).coord i)
+      (fun _ _ h h' s => c.isFrame.repr_resM h h' s i)
+  refine ⟨c.U, d, fun V h => ?_⟩
+  have hsum (a : Fin r → Γ(X, V)) (j : Fin r) :
+      dualApp (Fintype.linearCombination Γ(X, V) (fun i => resM (VB.dual E) h (d i)) a)
+        le_rfl (resM E h (c.e j)) = a j := by
+    rw [Fintype.linearCombination_apply]
+    apply dualApp_chart_sum c h
+    intro i j
+    rw [dualApp_res]
+    rfl
+  refine ⟨fun a a' e => funext fun j => ?_, fun l => ?_⟩
+  · rw [← hsum a j, ← hsum a' j, e]
+  · refine ⟨fun j => dualApp l le_rfl (resM E h (c.e j)), ?_⟩
+    exact c.isFrame.dual_ext h fun j => hsum _ j
 
 theorem tr_dual (h : y ∈ ptsIn p σ c.U) (h' : y ∈ ptsIn p σ c'.U) :
     c.dual.tr p σ c'.dual y = (c'.tr p σ c y)ᵀ := by
   have hW := mem_ptsIn_inf.2 ⟨h, h'⟩
   ext a b
   rw [tr, tr, transpose_apply, of_apply, of_apply, c'.crd_eq _ inf_le_left inf_le_right hW]
-  exact (c.dual.crd_eq (c'.dual.e b) inf_le_right inf_le_left hW a).trans
-    (congrArg (ev p σ _ · y) (c.isFrame.dual_basis_repr _ _ a))
+  refine (c.dual.crd_eq (c'.dual.e b) inf_le_right inf_le_left hW a).trans
+    (congrArg (ev p σ _ · y) ?_)
+  let hV : c.U ⊓ c'.U ≤ c.U := inf_le_left
+  let hV' : c.U ⊓ c'.U ≤ c'.U := inf_le_right
+  let l := resM (VB.dual E) hV' (c'.dual.e b)
+  let B := c.dual.isFrame.basis hV
+  change B.repr l a = _
+  have hl := c.dual.isFrame.basis_equivFun_symm hV (B.equivFun l)
+  change B.equivFun.symm (B.equivFun l) = _ at hl
+  rw [LinearEquiv.symm_apply_apply] at hl
+  have he := dualApp_chart_sum c hV (fun i => resM (VB.dual E) hV (c.dual.e i))
+    (fun i j => (LinearMap.congr_fun (dualApp_res (c.dual.e i) hV le_rfl) _).trans rfl)
+    (B.equivFun l) a
+  calc
+    B.repr l a = B.equivFun l a := (congrFun (Module.Basis.equivFun_apply B l) a).symm
+    _ = _ := he.symm
+    _ = dualApp l le_rfl (resM E hV (c.e a)) :=
+      congrArg (fun m => dualApp m le_rfl (resM E hV (c.e a))) hl.symm
+    _ = _ := (LinearMap.congr_fun (dualApp_res (c'.dual.e b) hV' le_rfl) _).trans rfl
 
 def map {E' : X.Modules} (φ : E ≅ E') : Chart E' r := ⟨c.U, _, c.isFrame.map_iso φ.hom⟩
 
@@ -265,7 +309,8 @@ theorem crd_map {E' : X.Modules} (φ : E ≅ E') (s : Γ(E, V)) (y : CxPts p σ)
   · have h₁ := (mem_ptsIn_inf.1 hy).2
     rw [← c.crd_resM s inf_le_left hy, ← (c.map φ).crd_resM _ inf_le_left hy, ← app_resM,
       ← (c.isFrame.basis inf_le_right).sum_repr (resM E _ s)]
-    simp only [map_sum, Scheme.Modules.Hom.app_smul, crd_sum, crd_smul, IsFrame.basis_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Scheme.Modules.Hom.app_smul, crd_sum, crd_smul, IsFrame.basis_apply,
       app_resM, crd_resM _ _ _ hy, c.crd_frame h₁]
     exact Finset.sum_congr rfl fun b _ => congrArg _ ((c.map φ).crd_frame h₁ b)
   · funext a
@@ -291,22 +336,6 @@ theorem tr_map {E' : X.Modules} (φ : E ≅ E') (y : CxPts p σ) :
   ext a b
   exact congrFun (c.crd_map φ (c'.e b) y) a
 
-def ofLB {L : LB X} (hL : L.IsLB) (i : L.ι) : Chart (toMod L) 1 :=
-  ⟨L.U i, _, isFrame_chartSec hL i⟩
-
-theorem tr_ofLB {L : LB X} (hL : L.IsLB) {i j : L.ι} (hi : y ∈ ptsIn p σ (L.U i))
-    (hj : y ∈ ptsIn p σ (L.U j)) (a b : Fin 1) :
-    (ofLB hL i).tr p σ (ofLB hL j) y a b = gv p σ L i j y := by
-  have hW := mem_ptsIn_inf.2 ⟨hi, hj⟩
-  have e := (ofLB hL i).crd_resM (LB.chartSec hL j) inf_le_right hW
-  have e' := (ofLB hL i).crd_resM (LB.chartSec hL i) inf_le_left hW
-  rw [show resM (toMod L) inf_le_right (LB.chartSec hL j) = _ from
-    LB.map_chartSec_change hL i j inf_le_left inf_le_right, crd_smul, e', resG_self] at e
-  refine (congrFun e a).symm.trans ?_
-  have := congrFun ((ofLB hL i).crd_frame hi a) a
-  rw [Pi.single_eq_same] at this
-  exact (congrArg (_ * ·) this).trans (mul_one _)
-
 end VB.Chart
 
 namespace HermFrame
@@ -327,13 +356,6 @@ theorem chg_apply (A : Matrix n m ℂ) (H : Matrix n n ℂ) (a b : m) :
 theorem chg_chg (A : Matrix n m ℂ) (B : Matrix m l ℂ) (H : Matrix n n ℂ) :
     chg B (chg A H) = chg (A * B) H := by
   simp only [chg, transpose_mul, conjTranspose_mul, Matrix.mul_assoc]
-
-@[simp] theorem chg_one [DecidableEq n] (H : Matrix n n ℂ) : chg 1 H = H := by simp [chg]
-
-@[simp] theorem chg_zero (H : Matrix n n ℂ) : chg (0 : Matrix n m ℂ) H = 0 := by simp [chg]
-
-theorem chg_smul (A : Matrix n m ℂ) (t : ℂ) (H : Matrix n n ℂ) : chg A (t • H) = t • chg A H := by
-  simp [chg]
 
 theorem chg_map_star (A : Matrix n m ℂ) (H : Matrix n n ℂ) :
     chg (A.map star) (H.map star) = (chg A H).map star := by
@@ -385,9 +407,6 @@ variable {A A' : CxPts p σ → Matrix m n ℂ}
 
 theorem MInfAt.congr (h : MInfAt A y) (e : A' =ᶠ[𝓝 y] A) : MInfAt A' y := fun a b =>
   (h a b).congr (e.fun_comp fun M => M a b)
-
-theorem MInfAt.mContDiffAt (h : MInfAt A y) {D : ℕ} (c : AlgChart p σ D) (hy : y ∈ c.e.source) :
-    MContDiffAt ∞ (fun v => A (c.e.symm v)) (c.e y) := fun a b => (h a b).contDiffAt_chart c hy
 
 variable [Fintype m] [Fintype n]
 
@@ -462,37 +481,6 @@ theorem form_frame (c : Chart E r) (hc : y ∈ ptsIn p σ c.U) (a b : Fin r) :
     h.form (c.e a) (c.e b) y = h.G c y a b := by
   rw [h.form_eq c hc _ _ hc, c.crd_frame hc, c.crd_frame hc, form_single]
 
-theorem form_resM (s t : Γ(E, V)) (hW : W ≤ V) (hy : y ∈ ptsIn p σ W) :
-    h.form (resM E hW s) (resM E hW t) y = h.form s t y := by
-  rw [form, form, Chart.crd_resM _ _ _ hy, Chart.crd_resM _ _ _ hy]
-
-theorem form_add_left (s s' t : Γ(E, V)) (y : CxPts p σ) :
-    h.form (s + s') t y = h.form s t y + h.form s' t y := by
-  rw [form, Chart.crd_add, HermFrame.form_add_left]; rfl
-
-theorem form_smul_left (g : Γ(X, V)) (s t : Γ(E, V)) (y : CxPts p σ) :
-    h.form (g • s) t y = ev p σ V g y * h.form s t y := by
-  rw [form, Chart.crd_smul, HermFrame.form_smul_left]; rfl
-
-theorem conj_form (s t : Γ(E, V)) (y : CxPts p σ) :
-    starRingEnd ℂ (h.form s t y) = h.form t s y :=
-  HermFrame.conj_form (h.posDef _ y (h.isVB.mem_pick y)).isHermitian _ _
-
-theorem G_of_notMem (c : Chart E r) (hc : y ∉ ptsIn p σ c.U) : h.G c y = 0 := by
-  rw [h.trans _ c y (h.isVB.mem_pick y), Chart.tr_of_notMem _ _ hc, chg_zero]
-
-theorem ext_of_exists {h h' : Met p σ E r}
-    (H : ∀ y, ∃ c : Chart E r, y ∈ ptsIn p σ c.U ∧ h.G c y = h'.G c y) : h = h' :=
-  Met.ext (funext₂ fun c y => by
-    obtain ⟨c₀, hy, e⟩ := H y
-    rw [h.trans c₀ c y hy, h'.trans c₀ c y hy, e])
-
-theorem ext_form {h h' : Met p σ E r}
-    (H : ∀ (V : X.Opens) (s t : Γ(E, V)) y, y ∈ ptsIn p σ V → h.form s t y = h'.form s t y) :
-    h = h' := ext_of_exists fun y => ⟨_, h.isVB.mem_pick y, Matrix.ext fun a b => by
-      rw [← h.form_frame _ (h.isVB.mem_pick y), ← h'.form_frame _ (h.isVB.mem_pick y),
-        H _ _ _ _ (h.isVB.mem_pick y)]⟩
-
 def ofPt (hE : IsVB E r) (c : CxPts p σ → Chart E r) (hc : ∀ y, y ∈ ptsIn p σ (c y).U)
     (H : CxPts p σ → Matrix (Fin r) (Fin r) ℂ) (hH : ∀ y, (H y).PosDef) : Met p σ E r where
   isVB := hE
@@ -515,8 +503,8 @@ theorem ofCover_G {hE : IsVB E r} {ι : Sort*} {c : ι → Chart E r} {hc}
 
 def IsCInf : Prop := ∀ (c : Chart E r), ∀ y ∈ ptsIn p σ c.U, MInfAt (h.G c) y
 
-variable {h} in
 
+variable {h} in
 theorem isCInf_of_exists (H : ∀ y, ∃ c : Chart E r, y ∈ ptsIn p σ c.U ∧ MInfAt (h.G c) y) :
     h.IsCInf := fun c y hy => by
   obtain ⟨c₀, h₀, e⟩ := H y
@@ -527,8 +515,8 @@ def IsConj (h' : Met p σ' E r) : Prop :=
   ∀ (c : Chart E r) (y : CxPts p σ) (y' : CxPts p σ'), y'.1 = spMap (starRingEnd ℂ) ≫ y.1 →
     h'.G c y' = (h.G c y).map star
 
-variable {h} in
 
+variable {h} in
 theorem isConj_of_exists {h' : Met p σ' E r}
     (H : ∀ (y : CxPts p σ) (y' : CxPts p σ'), y'.1 = spMap (starRingEnd ℂ) ≫ y.1 →
       ∃ c : Chart E r, y ∈ ptsIn p σ c.U ∧ h'.G c y' = (h.G c y).map star) : h.IsConj h' :=
@@ -549,14 +537,6 @@ theorem pull_G {q : Y ⟶ Sp k} (π : Y ⟶ X) (hπ : π ≫ p = q) (c : Chart E
   ofCover_G (c := fun c : Chart E r => c.pull h.isVB π) (fun c c' z hz hz' => by
     rw [c.tr_pull c' _ π hπ hz hz', ← h.trans c c' _ hz]) hz
 
-theorem form_pull {q : Y ⟶ Sp k} (π : Y ⟶ X) (hπ : π ≫ p = q) (s t : Γ(E, V)) {T : Y.Opens}
-    (hT : T ≤ π ⁻¹ᵁ V) {z : CxPts q σ} (hz : z ∈ ptsIn q σ T) :
-    (h.pull π hπ).form (pullbackSections π E hT s) (pullbackSections π E hT t) z =
-      h.form s t (PtsOver.map π hπ _ z) := by
-  have hc := h.isVB.mem_pick (PtsOver.map π hπ _ z)
-  rw [(h.pull π hπ).form_eq (Chart.pull _ h.isVB π) hc _ _ hz, h.pull_G π hπ _ hc,
-    Chart.crd_pull _ _ π hπ _ _ hz hc, Chart.crd_pull _ _ π hπ _ _ hz hc, form]
-
 def dual : Met p σ (VB.dual E) r :=
   ofCover h.isVB.dual Chart.dual (fun y => ⟨_, h.isVB.mem_pick y⟩)
     (fun c y => dualGram (h.G c y)) fun c y hy => posDef_dualGram (h.posDef c y hy)
@@ -574,20 +554,6 @@ theorem map_G (φ : E ≅ E') (c : Chart E r) (hy : y ∈ ptsIn p σ c.U) :
     (h.map φ).G (c.map φ) y = h.G c y :=
   ofCover_G (fun c c' y hy _ => by rw [c.tr_map c' φ, ← h.trans c c' y hy]) hy
 
-theorem form_map (φ : E ≅ E') (s t : Γ(E, V)) (hy : y ∈ ptsIn p σ V) :
-    (h.map φ).form (φ.hom.app V s) (φ.hom.app V t) y = h.form s t y := by
-  have hc := h.isVB.mem_pick y
-  rw [(h.map φ).form_eq (Chart.map _ φ) hc _ _ hy, h.map_G φ _ hc, Chart.crd_map, Chart.crd_map, form]
-
-def expMul (u : CxPts p σ → ℝ) : Met p σ E r where
-  isVB := h.isVB
-  G c y := (Real.exp (u y) : ℂ) • h.G c y
-  posDef c y hy := (h.posDef c y hy).smul (by exact_mod_cast Real.exp_pos _)
-  trans c c' y hy := by rw [chg_smul, ← h.trans c c' y hy]
-
-theorem form_expMul (u : CxPts p σ → ℝ) (s t : Γ(E, V)) (y : CxPts p σ) :
-    (h.expMul u).form s t y = Real.exp (u y) * h.form s t y := form_smul _ _ _ _
-
 def detWeight : Weight p σ (det E r) where
   isLB := h.isVB.isLB_det
   φ c y := -Real.log (h.G c y).det.re
@@ -596,33 +562,6 @@ def detWeight : Weight p σ (det E r) where
     rw [h.trans c c' y hy, det_chg, c.det_tr c' hy hy', Complex.re_ofReal_mul,
       Real.log_mul (by positivity) (det_re_pos (h.posDef c y hy)).ne']
     ring
-
-def ofWeight {L : LB X} (φ : Weight p σ L) : Met p σ (toMod L) 1 :=
-  ofCover (isVB_toMod φ.isLB) (Chart.ofLB φ.isLB) (fun y => ⟨_, mem_pick φ.isLB y⟩)
-    (fun i y => (Real.exp (-φ.φ i y) : ℂ) • 1)
-    fun _ _ _ => PosDef.one.smul (by exact_mod_cast Real.exp_pos _)
-
-theorem ofWeight_G {L : LB X} (φ : Weight p σ L) {i : L.ι} (hy : y ∈ ptsIn p σ (L.U i)) :
-    (ofWeight φ).G (Chart.ofLB φ.isLB i) y = (Real.exp (-φ.φ i y) : ℂ) • 1 :=
-  ofCover_G (fun i j y hi hj => by
-    have := gv_ne_zero (B := L) hi hj
-    have e := det_chg ((Chart.ofLB φ.isLB i).tr p σ (Chart.ofLB φ.isLB j) y)
-      ((Real.exp (-φ.φ i y) : ℂ) • 1)
-    simp only [det_unique, Chart.tr_ofLB φ.isLB hi hj, Matrix.smul_apply, one_apply_eq,
-      smul_eq_mul, mul_one] at e
-    ext a b
-    rw [Subsingleton.elim a default, Subsingleton.elim b default, e, φ.trans i j y hi hj, neg_sub,
-      sub_eq_add_neg, Real.exp_add, Real.exp_log (by positivity)]
-    simp) hy
-
-def ofFrame {e : Fin r → Γ(E, ⊤)} (he : IsFrame e) (H : CxPts p σ → Matrix (Fin r) (Fin r) ℂ)
-    (hH : ∀ y, (H y).PosDef) : Met p σ E r :=
-  ofPt (fun _ => ⟨⊤, e, trivial, he⟩) (fun _ => ⟨⊤, e, he⟩) (fun _ => mem_ptsIn_top) H hH
-
-theorem ofFrame_G {e : Fin r → Γ(E, ⊤)} (he : IsFrame e)
-    (H : CxPts p σ → Matrix (Fin r) (Fin r) ℂ) (hH : ∀ y, (H y).PosDef) (y : CxPts p σ) :
-    (ofFrame he H hH).G ⟨⊤, e, he⟩ y = H y :=
-  (congrArg (chg · (H y)) (Chart.tr_self ⟨⊤, e, he⟩ mem_ptsIn_top)).trans (chg_one _)
 
 variable {h}
 
@@ -642,29 +581,8 @@ theorem IsCInf.map (H : h.IsCInf) (φ : E ≅ E') : (h.map φ).IsCInf := isCInf_
   refine ⟨Chart.map _ φ, hc, (H _ _ hc).congr ?_⟩
   filter_upwards [(isOpen_ptsIn _).mem_nhds hc] with w hw using h.map_G φ _ hw
 
-theorem IsCInf.expMul (H : h.IsCInf) {u : CxPts p σ → ℝ} (hu : ∀ y, CInfAt u y) :
-    (h.expMul u).IsCInf := fun c y hy a b =>
-  ((vInfAt_iff_cInfAt.2 (hu y)).prodMk (H c y hy a b)).comp_contDiff
-    (Ψ := fun x => (Real.exp x.1 : ℂ) * x.2)
-    ((Complex.ofRealCLM.contDiff.comp (Real.contDiff_exp.comp contDiff_fst)).mul contDiff_snd)
-
 theorem IsCInf.detWeight (H : h.IsCInf) : h.detWeight.IsCInf := fun c y hy =>
   ((H c y hy).log_det (det_re_pos (h.posDef c y hy)).ne').neg
-
-theorem isCInf_ofWeight {L : LB X} {φ : Weight p σ L} (H : φ.IsCInf) : (ofWeight φ).IsCInf :=
-  isCInf_of_exists fun y => by
-    have hc := mem_pick φ.isLB y
-    refine ⟨Chart.ofLB φ.isLB _, hc, MInfAt.congr (A := fun w =>
-      (Real.exp (-φ.φ (pick φ.isLB y) w) : ℂ) • 1) (fun a b => ?_) ?_⟩
-    · exact (vInfAt_iff_cInfAt.2 (H _ y hc)).comp_contDiff
-        (Ψ := fun x => (Real.exp (-x) : ℂ) * (1 : Matrix (Fin 1) (Fin 1) ℂ) a b)
-        ((Complex.ofRealCLM.contDiff.comp (Real.contDiff_exp.comp contDiff_neg)).mul contDiff_const)
-    · filter_upwards [(isOpen_ptsIn _).mem_nhds hc] with w hw using ofWeight_G φ hw
-
-theorem isCInf_ofFrame {e : Fin r → Γ(E, ⊤)} (he : IsFrame e)
-    {H : CxPts p σ → Matrix (Fin r) (Fin r) ℂ} (hH : ∀ y, (H y).PosDef) (hs : ∀ y, MInfAt H y) :
-    (ofFrame he H hH).IsCInf := isCInf_of_exists fun y =>
-  ⟨⟨⊤, e, he⟩, mem_ptsIn_top, (hs y).congr (.of_forall (ofFrame_G he H hH))⟩
 
 end Met
 
@@ -699,13 +617,6 @@ theorem IsConj.map (H : h.IsConj h') (φ : E ≅ E') : (h.map φ).IsConj (h'.map
     exact ⟨Chart.map _ φ, hc, by
       rw [h.map_G _ _ hc, h'.map_G _ _ ((mem_ptsIn_iff_of_conj e).2 hc), H _ _ _ e]⟩
 
-theorem IsConj.expMul (H : h.IsConj h') {u : CxPts p σ → ℝ} {u' : CxPts p σ' → ℝ}
-    (hu : ∀ (y : CxPts p σ) (y' : CxPts p σ'), y'.1 = spMap (starRingEnd ℂ) ≫ y.1 → u' y' = u y) :
-    (h.expMul u).IsConj (h'.expMul u') := fun c y y' e => by
-  ext a b
-  simp only [Met.expMul, H c y y' e, hu y y' e, Matrix.smul_apply, map_apply, smul_eq_mul,
-    Complex.star_def, map_mul, Complex.conj_ofReal]
-
 theorem det_map_star_re {n : Type} [Fintype n] [DecidableEq n] (M : Matrix n n ℂ) :
     (M.map star).det.re = M.det.re := by
   rw [show M.map star = Mᵀᴴ from rfl, det_conjTranspose, det_transpose, Complex.star_def,
@@ -714,22 +625,6 @@ theorem det_map_star_re {n : Type} [Fintype n] [DecidableEq n] (M : Matrix n n �
 theorem IsConj.detWeight (H : h.IsConj h') : h.detWeight.IsConj h'.detWeight :=
   fun c y y' e _ => congrArg (fun x => -Real.log x) ((congrArg (·.det.re) (H c y y' e)).trans
     (det_map_star_re _))
-
-theorem isConj_ofWeight {L : LB X} {φ : Weight p σ L} {φ' : Weight p σ' L} (H : φ.IsConj φ') :
-    (ofWeight φ).IsConj (ofWeight φ') := isConj_of_exists fun y y' e => by
-  have hc := mem_pick φ.isLB y
-  refine ⟨Chart.ofLB φ.isLB _, hc, ?_⟩
-  rw [ofWeight_G φ hc, ofWeight_G φ' ((mem_ptsIn_iff_of_conj e).2 hc), H _ y y' e hc]
-  ext a b
-  simp only [Matrix.smul_apply, map_apply, smul_eq_mul, Complex.star_def, map_mul,
-    Complex.conj_ofReal, Subsingleton.elim a b, one_apply_eq, map_one]
-
-theorem detWeight_ofWeight {L : LB X} (φ : Weight p σ L) {i : L.ι} {y : CxPts p σ}
-    (hy : y ∈ ptsIn p σ (L.U i)) : (ofWeight φ).detWeight.φ (Chart.ofLB φ.isLB i) y = φ.φ i y := by
-  change -Real.log _ = _
-  rw [ofWeight_G φ hy]
-  simp only [det_unique, Matrix.smul_apply, one_apply_eq, smul_eq_mul, mul_one, Complex.ofReal_re,
-    Real.log_exp, neg_neg]
 
 end Met
 
@@ -757,59 +652,19 @@ def dual : VMetric p (VB.dual E) r :=
 def map (φ : E ≅ E') : VMetric p E' r :=
   ⟨h.isVB.of_iso φ, fun σ => (h.met σ).map φ, fun σ σ' => (h.conj σ σ').map φ⟩
 
-def scale (t : ℝ) : VMetric p E r :=
-  ⟨h.isVB, fun σ => (h.met σ).expMul fun _ => t, fun σ σ' => (h.conj σ σ').expMul fun _ _ _ => rfl⟩
-
-def ofLB (L : HermLB p) : VMetric p (toMod L.B) 1 :=
-  ⟨isVB_toMod L.isLB, fun σ => .ofWeight (L.φ σ), fun σ σ' => Met.isConj_ofWeight (L.conj σ σ')⟩
-
-variable (p) in
-
-def orthonormal {e : Fin r → Γ(E, ⊤)} (he : IsFrame e) : VMetric p E r :=
-  ⟨fun _ => ⟨⊤, e, trivial, he⟩, fun _ => .ofFrame he (fun _ => 1) fun _ => PosDef.one,
-    fun _ _ => Met.isConj_of_exists fun _ _ _ => ⟨⟨⊤, e, he⟩, mem_ptsIn_top, by
-      rw [Met.ofFrame_G, Met.ofFrame_G, Matrix.map_one _ (star_zero _) (star_one _)]⟩⟩
-
-def IsCInfNorm : Prop :=
-  ∀ (Y : Scheme.{0}) (π : Y ⟶ X), SmoothOfRelativeDimension 1 (π ≫ p) → (h.pull π rfl).IsCInf
 
 def IsIsometry (h' : VMetric p E' r) (φ : E ≅ E') : Prop :=
   ∀ σ (V : X.Opens) (s t : Γ(E, V)), ∀ y ∈ ptsIn p σ V,
     (h'.met σ).form (φ.hom.app V s) (φ.hom.app V t) y = (h.met σ).form s t y
-
-def IsOrthSum (h : VMetric p (E₁ ⊞ E₂) r) (h₁ : VMetric p E₁ r₁) (h₂ : VMetric p E₂ r₂) : Prop :=
-  ∀ σ (V : X.Opens) (s t : Γ(E₁ ⊞ E₂, V)), ∀ y ∈ ptsIn p σ V, (h.met σ).form s t y =
-    (h₁.met σ).form ((Limits.biprod.fst : E₁ ⊞ E₂ ⟶ E₁).app V s)
-        ((Limits.biprod.fst : E₁ ⊞ E₂ ⟶ E₁).app V t) y +
-      (h₂.met σ).form ((Limits.biprod.snd : E₁ ⊞ E₂ ⟶ E₂).app V s)
-        ((Limits.biprod.snd : E₁ ⊞ E₂ ⟶ E₂).app V t) y
-
-theorem isIsometry_iff {h' : VMetric p E' r} {φ : E ≅ E'} : h.IsIsometry h' φ ↔ h' = h.map φ := by
-  refine ⟨fun H => VMetric.ext (funext fun σ => Met.ext_form fun V s t y hy => ?_), ?_⟩
-  · obtain ⟨s, rfl⟩ : ∃ s', φ.hom.app V s' = s := ⟨φ.inv.app V s, congr(($(φ.inv_hom_id)).app V s)⟩
-    obtain ⟨t, rfl⟩ : ∃ t', φ.hom.app V t' = t := ⟨φ.inv.app V t, congr(($(φ.inv_hom_id)).app V t)⟩
-    exact (H σ V s t y hy).trans ((h.met σ).form_map φ s t hy).symm
-  · rintro rfl σ V s t y hy
-    exact (h.met σ).form_map φ s t hy
 
 variable {h}
 
 theorem IsCInf.pull (H : h.IsCInf) {q : Y ⟶ Sp k} (π : Y ⟶ X) (hπ : π ≫ p = q) :
     (h.pull π hπ).IsCInf := fun σ => (H σ).pull π hπ
 
-theorem IsCInf.isCInfNorm (H : h.IsCInf) : h.IsCInfNorm := fun _ π _ => H.pull π rfl
-
 theorem IsCInf.dual (H : h.IsCInf) : h.dual.IsCInf := fun σ => (H σ).dual
 
 theorem IsCInf.map (H : h.IsCInf) (φ : E ≅ E') : (h.map φ).IsCInf := fun σ => (H σ).map φ
-
-theorem IsCInf.scale (H : h.IsCInf) (t : ℝ) : (h.scale t).IsCInf := fun σ =>
-  (H σ).expMul (cInfAt_const t)
-
-theorem isCInf_ofLB (L : HermLB p) : (ofLB L).IsCInf := fun σ => Met.isCInf_ofWeight (L.cInf σ)
-
-theorem isCInf_orthonormal {e : Fin r → Γ(E, ⊤)} (he : IsFrame e) : (orthonormal p he).IsCInf :=
-  fun _ => Met.isCInf_ofFrame he (fun _ => PosDef.one) fun y _ _ => vInfAt_const _ y
 
 def det (H : h.IsCInf) : HermLB p where
   B := VB.det E r
@@ -818,16 +673,7 @@ def det (H : h.IsCInf) : HermLB p where
   cInf σ := (H σ).detWeight
   conj σ σ' := (h.conj σ σ').detWeight
 
-variable (h) in
 
-def FirstChernIntegrable : Prop :=
-  ∀ σ, (h.met σ).detWeight.ChernIntegrableOn 1 univ fun _ => 1
-
-variable (h) in
-
-def first_chern_integral : ℝ := ∑ᶠ σ, (h.met σ).detWeight.chernInt 1 univ fun _ => 1
-
-theorem firstChernIntegral_eq_degree (H : h.IsCInf) : h.first_chern_integral = ArInt.gdeg (det H) 1 := rfl
 
 end VMetric
 
@@ -848,31 +694,9 @@ def pull {q : Y ⟶ Sp k} (π : Y ⟶ X) (hπ : π ≫ p = q) : HermVB q r :=
 
 def dual : HermVB p r := ⟨_, E.h.dual, E.cInf.dual⟩
 
-def scale (t : ℝ) : HermVB p r := ⟨_, E.h.scale t, E.cInf.scale t⟩
-
 def det : HermLB p := VMetric.det E.cInf
 
-def ofLB (L : HermLB p) : HermVB p 1 := ⟨_, .ofLB L, VMetric.isCInf_ofLB L⟩
-
-variable (p r) in
-
-def std : HermVB p r :=
-  ⟨_, .orthonormal p (isFrame_freeFrame X (Fin r)), VMetric.isCInf_orthonormal _⟩
 
 end HermVB
-
-example {E : X.Modules} {r : ℕ} (h : VMetric p E r) (t : ℝ) (c : Chart E r) {y : CxPts p σ}
-    (hy : y ∈ ptsIn p σ c.U) :
-    ((h.scale t).met σ).detWeight.φ c y = (h.met σ).detWeight.φ c y - r * t := by
-  change -Real.log ((Real.exp t : ℂ) • (h.met σ).G c y).det.re = -Real.log _ - _
-  rw [det_smul, Fintype.card_fin, ← Complex.ofReal_pow, Complex.re_ofReal_mul,
-    Real.log_mul (by positivity) (det_re_pos ((h.met σ).posDef c y hy)).ne', Real.log_pow,
-    Real.log_exp]
-  ring
-
-example {E : X.Modules} (h : Met p σ E 1) (c : Chart E 1) {y : CxPts p σ} (hy : y ∈ ptsIn p σ c.U)
-    (e : h.G c y = (Real.pi : ℂ) • 1) : h.dual.G c.dual y 0 0 = 1 / Real.pi := by
-  rw [h.dual_G c hy, e]
-  simp [dualGram, Matrix.inv_def, Ring.inverse_eq_inv]
 
 end GlobalTheory

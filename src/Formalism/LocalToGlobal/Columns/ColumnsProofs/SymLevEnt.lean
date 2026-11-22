@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.OcbLevIsSym
-import Formalism.LocalToGlobal.Columns.RecLevelSymF
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.OcbLevIsSym
+public import Formalism.LocalToGlobal.Columns.RecLevelSymF
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Matrix
 
@@ -14,62 +18,7 @@ section Fix
 
 variable {κ : Type} [CommRing κ]
 
-theorem sl_HJsym_col_k {n r k t j rS : ℕ} (h : r ≤ n) (hr : r = k + 2 * rS + 1) {M : GL (Fin n) κ}
-    (hM : M ∈ HJsym κ n k r t j rS h) (i : Fin n) (hk : k < n) :
-    (M : Matrix (Fin n) (Fin n) κ) i ⟨k, hk⟩ = if i.val = k then 1 else 0 := by
-  obtain ⟨hB, h0⟩ := mem_HPar.mp hM
-  have hkr : k < r := by omega
-  by_cases hi : i.val < r
-  · obtain ⟨h1, h2, h3⟩ := (mem_HPsymF_iff (show k + rS ≤ r by omega)).mp h0
-    have e : ∀ a b : Fin r, ((blk0 n κ h (List.replicate j t) ⟨M, hB⟩ : GL (Fin r) κ) : Matrix (Fin r) (Fin r) κ) a b =
-        (M : Matrix (Fin n) (Fin n) κ) (Fin.castLE h a) (Fin.castLE h b) := fun a b => rfl
-    have ei : i = Fin.castLE h ⟨i.val, hi⟩ := Fin.ext rfl
-    have ek : (⟨k, hk⟩ : Fin n) = Fin.castLE h ⟨k, hkr⟩ := Fin.ext rfl
-    rw [ei, ek, ← e]
-    by_cases hik : i.val = k
-    · rw [if_pos (by simpa using hik)]
-      have : (⟨i.val, hi⟩ : Fin r) = ⟨k, hkr⟩ := Fin.ext hik
-      rw [this]
-      exact h2 _
-    · rw [if_neg (by simpa using hik)]
-      by_cases hrs : rS = 0
-      · subst hrs
-        by_cases hik' : i.val < k
-        · exact h3 ⟨i.val, hi⟩ ⟨k, hkr⟩ hik' (by simp)
-        · apply h1
-          simp only [symIdx]
-          split_ifs <;> omega
-      · apply h1
-        simp only [symIdx]
-        split_ifs <;> omega
-  · rw [if_neg (by omega)]
-    apply hB
-    show coarse r (List.replicate j t) k < coarse r (List.replicate j t) i.val
-    rw [coarse_of_lt hkr, coarse_of_le (by omega)]
-    omega
-
 end Fix
-
-theorem lastLevel_fixes_basisVector_holds : FixESym := by
-  intro X Pr R Ch m2 hm h hh w
-  have hj : m2 + 1 + 1 = R.m := by omega
-  have hw : h w ∈ (colLevSym Ch (m2 + 1) w).H := LevFam.mem_at _ ⟨h, hh⟩ w
-  rw [colLevSym_pred Ch hj] at hw
-  have hk : R.k < R.N (m2 + 1) := by
-    have := r_le_N_of_le (R := R) hj.ge
-    have := r_eq_sym R
-    omega
-  funext i
-  show ∑ l, ((h w : GL (Fin (R.N (m2 + 1))) (𝓞 X.E ⧸ w.1.asIdeal)) : Matrix _ _ (𝓞 X.E ⧸ w.1.asIdeal)) i l *
-      Loc.eN (𝓞 X.E ⧸ w.1.asIdeal) (R.N (m2 + 1)) R.k l = Loc.eN (𝓞 X.E ⧸ w.1.asIdeal) (R.N (m2 + 1)) R.k i
-  rw [Finset.sum_eq_single ⟨R.k, hk⟩]
-  · rw [sl_HJsym_col_k (r_le_N_of_le (R := R) hj.ge) (r_eq_sym R) hw i hk]
-    simp [Loc.eN]
-  · intro l _ hl
-    have : l.val ≠ R.k := fun e => hl (Fin.ext e)
-    simp [Loc.eN, this]
-  · intro hn
-    exact absurd (Finset.mem_univ _) hn
 
 section EntY
 
@@ -174,7 +123,7 @@ theorem sl_insEquiv_symm_val {N c k N' : ℕ} (hk : k ≤ N) (hN : N' = N + c) (
 
 theorem sl_ocbM {N : ℕ} (M : GL (Fin N) κ) (p p' : Fin N) : ocbM M p.val p'.val = (M : Matrix (Fin N) (Fin N) κ) p p' := by
   unfold ocbM
-  rw [dif_pos ⟨p.2, p'.2⟩]
+  rw [dite_eq_left ⟨p.2, p'.2⟩]
 
 theorem sl_insGL_pat {N c k j t rS r N' : ℕ} (hk : k ≤ N) (hN' : N' = N + c) (h : r ≤ N') (hr : r = k + j + c)
     (hNd : N = k + j + j * t) (hc : c + j = 2 * rS + 1) (ht : 0 < t) (M : GL (Fin N) κ) :
@@ -333,7 +282,7 @@ theorem sl_supSum_eq {n a : ℕ} (S : Finset ℕ) (A : Matrix (Fin n) (Fin n) κ
   by_cases hc : i.val + 1 < a ∧ i.val ∈ S
   · rw [if_pos hc]
     by_cases hi1 : i.val + 1 < n
-    · rw [dif_pos hi1, Finset.sum_eq_single ⟨i.val + 1, hi1⟩]
+    · rw [dite_eq_left hi1, Finset.sum_eq_single ⟨i.val + 1, hi1⟩]
       · rw [if_pos ⟨rfl, hc.1, hc.2⟩]
       · intro b _ hb
         rw [if_neg]
@@ -341,7 +290,7 @@ theorem sl_supSum_eq {n a : ℕ} (S : Finset ℕ) (A : Matrix (Fin n) (Fin n) κ
         exact hb (Fin.ext h1.symm)
       · intro hh
         exact absurd (Finset.mem_univ _) hh
-    · rw [dif_neg hi1]
+    · rw [dite_eq_right hi1]
       apply Finset.sum_eq_zero
       intro b _
       rw [if_neg]
@@ -438,7 +387,7 @@ theorem sl_blk_det {n r t j s : ℕ} (ht : 0 < t) (hn : n = r + j * t) (hs : s <
 
 theorem sl_ocbChiK_unit (χ : κˣ →* Kˣ) (u : κˣ) : ocbChiK χ (u : κ) = ((χ u : Kˣ) : K) := by
   unfold ocbChiK
-  rw [dif_pos u.isUnit]
+  rw [dite_eq_left u.isUnit]
   congr 2
   exact Units.ext rfl
 
@@ -463,7 +412,7 @@ theorem sl_ocbM_ins (M : GL (Fin N) κ) (p p' : ℕ) (hp : p < N) (hp' : p' < N)
   have b1 : (if p < k then p else p + c) < N' := by split_ifs <;> omega
   have b2 : (if p' < k then p' else p' + c) < N' := by split_ifs <;> omega
   unfold ocbM
-  rw [dif_pos ⟨b1, b2⟩, dif_pos ⟨hp, hp'⟩, insGL_val, sl_insEquiv_of_val hk hN' ⟨p, hp⟩ _ rfl,
+  rw [dite_eq_left ⟨b1, b2⟩, dite_eq_left ⟨hp, hp'⟩, insGL_val, sl_insEquiv_of_val hk hN' ⟨p, hp⟩ _ rfl,
     sl_insEquiv_of_val hk hN' ⟨p', hp'⟩ _ rfl, Matrix.fromBlocks_apply₁₁]
 
 theorem sl_ocbM_ins_row (M : GL (Fin N) κ) (i i' : ℕ) (hi1 : k ≤ i) (hi2 : i < k + c) (hne : i ≠ i') :
@@ -485,10 +434,10 @@ theorem sl_ocbM_ins_late (M : GL (Fin N) κ) (i i' : ℕ) (hi : k + c ≤ i) (hi
     ocbM (insGL κ N c k N' hk hN' M) i i' = ocbM M (i - c) (i' - c) := by
   unfold ocbM
   by_cases hb : i < N' ∧ i' < N'
-  · rw [dif_pos hb, dif_pos ⟨by omega, by omega⟩, insGL_val,
+  · rw [dite_eq_left hb, dite_eq_left ⟨by omega, by omega⟩, insGL_val,
       sl_insEquiv_of_val hk hN' ⟨i - c, by omega⟩ ⟨i, hb.1⟩ (by dsimp only; split_ifs <;> omega),
       sl_insEquiv_of_val hk hN' ⟨i' - c, by omega⟩ ⟨i', hb.2⟩ (by dsimp only; split_ifs <;> omega), Matrix.fromBlocks_apply₁₁]
-  · rw [dif_neg hb, dif_neg (by omega)]
+  · rw [dite_eq_right hb, dite_eq_right (by omega)]
 
 end InsEnt
 
@@ -508,9 +457,9 @@ theorem character_level_zero_entries (ψ : AddChar κ K) (χ : ℕ → κˣ →*
   unfold SX
   simp only [Finset.mem_filter, Finset.mem_range]
   by_cases hc : i < n - 1
-  · rw [if_pos ⟨by omega, by omega, Or.inl (by omega)⟩, if_pos hc, dif_pos (by omega)]
+  · rw [if_pos ⟨by omega, by omega, Or.inl (by omega)⟩, if_pos hc, dite_eq_left (by omega)]
     unfold ocbM
-    rw [dif_pos ⟨by omega, by omega⟩]
+    rw [dite_eq_left ⟨by omega, by omega⟩]
   · rw [if_neg (by omega), if_neg hc]
 
 theorem sl_lamJsym_ent (ψ : AddChar κ K) (χ : ℕ → κˣ →* Kˣ) {n k r t j rS c N : ℕ} (h : r ≤ n) (hr0 : r = k + 2 * rS + 1)
@@ -530,9 +479,9 @@ theorem sl_lamJsym_ent (ψ : AddChar κ K) (χ : ℕ → κˣ →* Kˣ) {n k r t
     unfold SPsymF
     simp only [Finset.mem_filter, Finset.mem_range]
     by_cases hc : i + 1 < r ∧ i + 1 ≠ k
-    · rw [if_pos ⟨hc.1, by omega, hc.2⟩, if_pos hc, dif_pos hc.1]
+    · rw [if_pos ⟨hc.1, by omega, hc.2⟩, if_pos hc, dite_eq_left hc.1]
       unfold ocbM
-      rw [dif_pos ⟨by omega, by omega⟩]
+      rw [dite_eq_left ⟨by omega, by omega⟩]
       rfl
     · rw [if_neg (fun hh => hc ⟨hh.1, hh.2.2⟩), if_neg hc]
   · refine Finset.prod_congr rfl fun s hs => ?_
@@ -542,7 +491,7 @@ theorem sl_lamJsym_ent (ψ : AddChar κ K) (χ : ℕ → κˣ →* Kˣ) {n k r t
     ext a b
     rw [Matrix.of_apply, Matrix.of_apply, ← hB s hs' a.1 b.1]
     unfold ocbM
-    rw [dif_pos ⟨(blockPositionsEquiv ht hn hs' a).1.2, (blockPositionsEquiv ht hn hs' b).1.2⟩]
+    rw [dite_eq_left ⟨(blockPositionsEquiv ht hn hs' a).1.2, (blockPositionsEquiv ht hn hs' b).1.2⟩]
     rfl
 
 end LamAsm
@@ -555,10 +504,10 @@ theorem closedLevels_by_entries_holds : OcbLevIsSym := by
   have hN := N_eq_blocks R j
   have hpsi : psi0P Ch w.1 = Ch.psi0 w := by
     unfold psi0P
-    rw [dif_pos w.2]
+    rw [dite_eq_left w.2]
   have hchi : chiP Ch w.1 = extChi (fun s => Ch.chi s w) := by
     unfold chiP
-    rw [dif_pos w.2]
+    rw [dite_eq_left w.2]
     rfl
   rw [hpsi, hchi]
   rcases Nat.eq_zero_or_pos j with rfl | hj0

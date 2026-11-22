@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianDeRhamStructure
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechDeRhamComparisonBijectiveCupSmooth
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullOverOneEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianDeRhamFreeOfCrystallineComparisonStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianDeRhamStructure
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechDeRhamComparisonBijectiveCupSmooth
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullOverOneEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianDeRhamFreeOfCrystallineComparisonStatement
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.DeRham
 attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.CechDR KaehlerDifferential
@@ -49,7 +54,7 @@ theorem snd_val_affine {R' : Type} [CommRing R'] [Algebra R R'] (U : X.affineOpe
       map_mul' := fun a b ↦ by
         ext
         · simp
-        · simp only [TrivSqZeroExt.snd_mul, hop, map_add, map_smul, TrivSqZeroExt.snd_add,
+        · simp only [TrivSqZeroExt.snd_mul, hop, map_add (f := _), map_smul, TrivSqZeroExt.snd_add,
             TrivSqZeroExt.snd_inl, TrivSqZeroExt.snd_inr, TrivSqZeroExt.fst_add,
             TrivSqZeroExt.fst_inl, TrivSqZeroExt.fst_inr, smul_eq_mul, Algebra.smul_def]
           simp [MulOpposite.smul_eq_mul_unop]
@@ -108,8 +113,8 @@ theorem snd_val_eq_zero (y : Sp (DualNumber R) ⟶ X)
           TrivSqZeroExt.inr (algebraMap R R' c.snd)
         map_one' := by ext <;> simp
         map_zero' := by ext <;> simp
-        map_add' := fun a b ↦ by ext <;> simp <;> ring
-        map_mul' := fun a b ↦ by ext <;> simp [MulOpposite.smul_eq_mul_unop] <;> ring
+        map_add' := fun a b ↦ by ext <;> simp [Algebra.smul_def] <;> ring
+        map_mul' := fun a b ↦ by ext <;> simp [MulOpposite.smul_eq_mul_unop, Algebra.smul_def, TrivSqZeroExt.algebraMap_eq_inl'] <;> ring
         commutes' := fun r ↦ by ext <;> simp [TrivSqZeroExt.algebraMap_eq_inl'] }
     let y' := spMap (φ : DualNumber R →+* TrivSqZeroExt R' R') ≫ y
     have hy' : y' ≫ s = spMap (algebraMap R (TrivSqZeroExt R' R')) := by
@@ -140,7 +145,7 @@ theorem snd_val_eq_zero (y : Sp (DualNumber R) ⟶ X)
     have h1 := snd_val_affine ⟨U, hU⟩ α y' hy' hα f (h0 _)
     rw [hv] at h1
     have h2 : algebraMap R R' (TrivSqZeroExt.snd (R := R) ((SqExt.dual R).val y hy f.1)) = 0 := by
-      simpa [φ] using h1
+      simpa [φ, Algebra.smul_def, TrivSqZeroExt.algebraMap_eq_inl'] using h1
     obtain ⟨⟨t, ht⟩, ht'⟩ := (IsLocalization.map_eq_zero_iff m.primeCompl R' _).1 h2
     exact ⟨t, ht, ht'⟩
   by_contra hx

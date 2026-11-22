@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.MixCore
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubicalLawRight
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.MixCore
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubicalLawRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,11 +41,6 @@ theorem GenOf.inv (a : GenOf M F) : GenOf M fun U _ h => (F U h)⁻¹ := by
   simp only [zpow_neg, Finset.prod_inv_distrib]
   rw [hF U h]
 
-theorem GenOf.pull (a : GenOf M F) (r : Y' ⟶ Y) : GenOf M fun U _ h => F U fun q => h (r ≫ q) := by
-  obtain ⟨K, _, φ, ε, u, hu, hF⟩ := a
-  exact ⟨K, inferInstance, fun k => r ≫ φ k, ε, LB.pullGen M φ ε u r, pullGen_isGen M φ ε u hu r,
-    fun U _ h => hF U fun q => h (r ≫ q)⟩
-
 theorem genOf_one : GenOf (Y := Y) M fun _ _ _ => 1 := by
   refine ⟨PEmpty, inferInstance, PEmpty.elim, PEmpty.elim, LB.oneGen M, ?_, fun U _ h => by simp⟩
   intro i j
@@ -55,11 +54,6 @@ theorem GenOf.pow (a : GenOf M F) (n : ℕ) : GenOf M fun U _ h => F U h ^ n := 
   induction n with
   | zero => exact genOf_one.congr fun U _ h => by simp
   | succ n ih => exact (ih.mul a).congr fun U _ h => by simp [pow_succ]
-
-theorem GenOf.zpow (a : GenOf M F) (n : ℤ) : GenOf M fun U _ h => F U h ^ n := by
-  cases n with
-  | ofNat n => exact (a.pow n).congr fun U _ h => by simp
-  | negSucc n => exact (a.pow (n + 1)).inv.congr fun U _ h => by simp [zpow_negSucc]
 
 private theorem sameSum_of_prod_pow_eq {X Y : Scheme.{0}} {K K' : Type} [Fintype K] [Fintype K']
     (φ : K → (Y ⟶ X)) (ε : K → ℤ) (φ' : K' → (Y ⟶ X)) (ε' : K' → ℤ)
@@ -232,22 +226,6 @@ theorem genOf_pow (hs : L.IsSymmetric) (y : T ⟶ A) (n : ℕ) : GenOf L.L fun _
     simp only [ofMul_mul, ofMul_inv, ofMul_pow, ofMul_one, nsmul_add, smul_neg, add_nsmul, one_nsmul]
     abel!
 
-include c in
-theorem genOf_cubN (m x : T ⟶ A) (k : ℕ) : GenOf L.L fun _ _ h => h (m ^ k * x).left * (h (m ^ k).left)⁻¹ * (h x.left)⁻¹ *
-    h (1 : T ⟶ A).left * (h (m * x).left * (h m.left)⁻¹ * (h x.left)⁻¹ * h (1 : T ⟶ A).left)⁻¹ ^ k := by
-  induction k with
-  | zero =>
-    refine genOf_one.congr fun U _ h => ?_
-    simp only [pow_zero, _root_.one_mul, _root_.mul_one]
-    apply Additive.ofMul.injective
-    simp only [ofMul_mul, ofMul_inv, ofMul_one]
-    abel!
-  | succ k ih =>
-    refine ((genOf_cub c (m ^ k) m x).mul ih).congr fun U _ h => ?_
-    rw [pow_succ m k]
-    apply Additive.ofMul.injective
-    simp only [ofMul_mul, ofMul_inv, ofMul_pow, ofMul_one, nsmul_add, smul_neg, add_nsmul, one_nsmul]
-    abel!
 
 theorem exists_norm (φ : A ⟶ A) [IsMonHom φ] {a b : ℕ} {a' b' : ℤ} (ha : a' = a) (hb : b' = b)
     (g : GenOf L.L fun _ _ h => h (𝟙 A.left) ^ a * (h φ.left ^ b)⁻¹) :

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DensInfLoc
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DensInfLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ theorem changeVar_holds : ChangeVar := by
   have hs : HasStrictFDerivAt Θ
       ((ContinuousLinearEquiv.refl ℝ (Fin n → ℝ) : (Fin n → ℝ) ≃L[ℝ] (Fin n → ℝ)) :
         (Fin n → ℝ) →L[ℝ] (Fin n → ℝ)) x0 := by
-    have := hΘc.contDiffAt.hasStrictFDerivAt (x := x0) one_ne_zero
+    have := hΘc.contDiffAt.hasStrictFDerivAt_fderiv (x := x0) one_ne_zero
     rw [hid] at this
     exact this
   let PH := hs.toOpenPartialHomeomorph Θ

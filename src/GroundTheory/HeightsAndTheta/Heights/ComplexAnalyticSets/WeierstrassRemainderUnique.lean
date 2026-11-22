@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGermWeierstrassPreparation
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGermWeierstrassPreparation
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -126,12 +131,12 @@ theorem weierstrass_remainder_eq_zero {σ : Type} [Fintype σ] {d : ℕ} (c : Fi
   have hevW : ∀ t : ℂ, (X ^ d + ∑ i : Fin d, C (c i z) * X ^ (i : ℕ)).eval t =
       weierstrassPolynomial c (pointWithLast z t) := by
     intro t
-    simp only [eval_add, eval_pow, eval_X, eval_finset_sum, eval_mul, eval_C, weierstrassPolynomial]
+    simp only [eval_add, eval_pow, eval_X, Polynomial.eval_finsetSum, eval_mul, eval_C, weierstrassPolynomial]
     rfl
   have hevP : ∀ t : ℂ, (∑ i : Fin d, C (a i z) * X ^ (i : ℕ)).eval t =
       ∑ i : Fin d, a i (fun k => pointWithLast z t (some k)) * pointWithLast z t none ^ (i : ℕ) := by
     intro t
-    simp only [eval_finset_sum, eval_mul, eval_C, eval_pow, eval_X]
+    simp only [Polynomial.eval_finsetSum, eval_mul, eval_C, eval_pow, eval_X]
     rfl
   have hdvd := polynomial_dvd_of_eval_eq_mul_near_roots (Metric.isOpen_ball (x := (0 : ℂ)) (ε := min ε 1)) d
     _ (∑ i : Fin d, C (a i z) * X ^ (i : ℕ)) (fun t => q (pointWithLast z t)) hWm hWn
@@ -144,11 +149,11 @@ theorem weierstrass_remainder_eq_zero {σ : Type} [Fintype σ] {d : ℕ} (c : Fi
       rw [mem_ball_zero_iff]
       refine norm_lt_of_monic_root_small_coeffs (fun i => c i z) hr0 (min_le_right _ _) hη hcz t ?_
       have h0 : (X ^ d + ∑ i : Fin d, C (c i z) * X ^ (i : ℕ)).eval t = 0 := ht
-      simpa only [eval_add, eval_pow, eval_X, eval_finset_sum, eval_mul, eval_C] using h0)
+      simpa only [eval_add, eval_pow, eval_X, Polynomial.eval_finsetSum, eval_mul, eval_C] using h0)
   have hP0 : (∑ i : Fin d, C (a i z) * X ^ (i : ℕ)) = 0 :=
     eq_zero_of_dvd_of_degree_lt hdvd (by rw [degree_eq_natDegree hWm.ne_zero, hWn]; exact degree_sum_fin_lt _)
   have hcoeff := congrArg (fun p : ℂ[X] => p.coeff (j : ℕ)) hP0
-  simpa [finset_sum_coeff, coeff_C_mul_X_pow, Fin.val_inj] using hcoeff
+  simpa [Polynomial.finsetSum_coeff, coeff_C_mul_X_pow, Fin.val_inj] using hcoeff
 
 end
 

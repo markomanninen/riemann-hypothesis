@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FiniteNonunitMatrix
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FiniteNonunitMatrix
+
+@[expose] public section
 
 open Matrix
 

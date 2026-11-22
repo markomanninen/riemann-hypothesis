@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.DerivEqFderivPair
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.AbsArgLtPi
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.DerivEqFderivPair
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.AbsArgLtPi
+
+@[expose] public section
 
 noncomputable section
 
@@ -114,8 +118,8 @@ theorem djFd : DjFd := by
     with hAdef
   have hA : DifferentiableAt ℂ A 0 := by
     simp only [hAdef]
-    exact (DifferentiableAt.fun_finset_prod fun i _ => (differentiableAt_const _).sub differentiableAt_id).mul
-      (DifferentiableAt.fun_finset_prod fun i _ => ((differentiableAt_const _).sub differentiableAt_id))
+    exact (DifferentiableAt.fun_finsetProd fun i _ => (differentiableAt_const _).sub differentiableAt_id).mul
+      (DifferentiableAt.fun_finsetProd fun i _ => ((differentiableAt_const _).sub differentiableAt_id))
   have hA0 : A 0 = 0 := by
     simp only [hAdef]
     rw [Finset.prod_eq_zero (i := 0) (by simp; omega) (by simp), zero_mul]

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix
 open scoped BigOperators
 
@@ -44,7 +49,8 @@ theorem exists_integral_dual_family (E M : Type) [Field E] [NumberField E] [Fiel
       ext i
       simp [Pi.single_apply, eq_comm]
     have h3 := congrArg (algebraMap (𝓞 M) M) h1
-    rw [map_sum] at h3
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h3
     refine h3.trans (Finset.sum_congr rfl fun j _ => ?_)
     rw [hl, Algebra.smul_def, map_mul, mul_comm, ← IsScalarTower.algebraMap_apply]
     rfl

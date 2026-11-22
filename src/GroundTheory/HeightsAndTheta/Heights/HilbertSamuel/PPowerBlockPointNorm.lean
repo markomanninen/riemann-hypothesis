@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlockPointNorm
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionPointValue
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsLocalRep
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerBlockPointNorm
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionPointValue
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsLocalRep
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -121,7 +126,7 @@ theorem pn_aeval_mem {S : Type*} [CommRing S] (T : Subalgebra ℤ S) {σ : Type*
     rw [aeval_C]
     exact T.algebraMap_mem r
   | add f g hf hg =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact T.add_mem hf hg
   | mul_X f p hf =>
     rw [map_mul, aeval_X]
@@ -167,7 +172,8 @@ theorem aeval_scale_new {S : Type*} [CommRing S] [Algebra ℤ S] {N q : ℕ} {F 
 theorem homog_bind_new {N q : ℕ} {e : K → ℕ} (G : Fin N → MRing ι) (hG : ∀ j, IsMultiHomog (G j) e)
     {F : MRing (addIdx ι N)} (hF : IsMultiHomog F (blockDeg (none : Option K) q)) :
     IsMultiHomog (bind₁ (newSubst G) F) (q • e) := by
-  rw [F.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [F.as_sum, map_sum]
   refine pn_sum _ fun μ hμ => ?_
   rw [bind₁_monomial]
   have hfac : ∀ p ∈ μ.support, IsMultiHomog (newSubst G p ^ μ p) (μ p • e) := by
@@ -287,8 +293,8 @@ end Block
 
 end PowerBlockPointNorm
 
-open PowerBlockPointNorm in
 
+open PowerBlockPointNorm in
 theorem PowerBlockPointNorm.proof (h1 : SectionPointValue.Statement) (h2 : LocalRep.Statement) :
     PowerBlockPointNorm.Statement := by
   intro K _ _ ι _ Ω _ y A m N v B hA _ hv hmet q F hF

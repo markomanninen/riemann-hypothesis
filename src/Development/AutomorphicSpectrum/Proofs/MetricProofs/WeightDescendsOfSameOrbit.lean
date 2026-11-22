@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.PartialFlagBlocks
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PartialFlagBlocks
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GlobalTheory.CompanionTheory.Ar.PB.FA GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
 
@@ -29,7 +34,7 @@ private theorem grading_map_coeff_eq_monomial {K σ : Type} (s : σ → K)
     · simp
   · rename_i f1 f2 hf hg
     intro a
-    simp only [map_add, MvPolynomial.coeff_add, hf, hg]
+    simp only [map_add (f := _), MvPolynomial.coeff_add, hf, hg]
   · rename_i f n hf
     intro a
     rw [map_mul φ f (MvPolynomial.X n), hφ, mul_left_comm, MvPolynomial.coeff_C_mul,
@@ -71,7 +76,7 @@ private theorem smul_mem_lemma_2 {K : Type} {ι : K → Type} {Φ : Type} [Field
   have hcomp : ∀ a, (φ f).coeff a ∈ mCoordIdeal y := by
     intro a
     have h1 : (MvPolynomial.aeval (R := ℤ) y).toRingHom ((φ f).coeff a) = 0 := by
-      have := congrArg (MvPolynomial.coeff a) (hA f)
+      have := congrArg (AddMonoidAlgebra.coeff · a) (hA f)
       rw [hf', MvPolynomial.coeff_zero, MvPolynomial.coeff_map] at this
       exact this.symm
     show (φ f).coeff a ∈ RingHom.ker (mConeMap y)

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MooreNorm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MooreNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -112,9 +116,9 @@ theorem gsum_lin_last (q K E : ℕ) (M : ℕ → Matrix m m F) (x : m → F) (a 
   · refine Finset.sum_congr rfl fun k _ => ?_
     rw [lin_succ_last, show k + 1 + K = K + 1 + k by ring]
     congr 1
-    funext b
+    ext b
     simp only [Fin.val_last]
-    rw [← pow_mul, ← pow_add, show K + (k + 1) = K + 1 + k by ring]
+    rw [← pow_mul, ← pow_add, show K + (k + 1) = K + 1 + k by omega]
 
 theorem card_lin (q K E : ℕ) (M : ℕ → Matrix m m F) :
     Nat.card {x : m → F // Integral x ∧ gsum q (K + (E + 1)) M x = 0} =

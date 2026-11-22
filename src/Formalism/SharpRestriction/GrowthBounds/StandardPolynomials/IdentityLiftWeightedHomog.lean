@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.MultidegAdd
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PsiRes0Ne
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.MultidegAdd
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PsiRes0Ne
+
+@[expose] public section
 
 noncomputable section
 
@@ -114,7 +118,8 @@ theorem identity_lift_monomial (w : O) (M : MonH X) :
 theorem identity_lift_eq_sum (w : O) (P : RHH O X) :
     lift1 X O w P = ∑ m ∈ P.support, monomial m (algebraMap O (KK O) (w ^ ndM X m) * P.coeff m) := by
   conv_lhs => rw [← MvPolynomial.support_sum_monomial_coeff P]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   have e : (monomial m (P.coeff m) : RHH O X) = C (P.coeff m) * monomial m 1 := by
     rw [C_mul_monomial, mul_one]
@@ -154,16 +159,15 @@ theorem inWjRg_zero_of_inA (w : O) {f : RHH O X} (hf : InA f)
   obtain ⟨a, ha⟩ := lift_substitution_coeff_divisible X.p X.n' O w (hhLetters X.TT) 1 g hg f hf m
   exact ⟨w ^ degUS (hhLetters X.TT) 1 m * a, by rw [ha, pow_zero, one_mul]⟩
 
-theorem IsFac.one (w : O) : IsFac (X := X) w (1 : RHH O X) 0 1 where
-  inA := (inA_iff_wj w).2 (inWj_one w)
-  ord := fun g _ => by
+theorem IsFac.one (w : O) : IsFac (X := X) w (1 : RHH O X) 0 1 := by
+  have hInt : InA (1 : RHH O X) := (inA_iff_wj w).2 (inWj_one w)
+  refine ⟨hInt, ?_, ?_, hInt⟩
+  · intro g _
     unfold InWjRg
     rw [map_one]
     exact inWj_one w
-  sym := by
-    rw [map_one, pow_zero, one_smul, sub_self]
+  · rw [map_one, pow_zero, one_smul, sub_self]
     exact (wjSub w _).zero_mem
-  sgInt := (inA_iff_wj w).2 (inWj_one w)
 
 theorem IsFac.pow {w : O} {f sg : RHH O X} {o : ℕ} (h : IsFac w f o sg) (u : ℕ) : IsFac w (f ^ u) (u * o) (sg ^ u) := by
   induction u with
@@ -175,32 +179,26 @@ theorem IsFac.pow {w : O} {f sg : RHH O X} {o : ℕ} (h : IsFac w f o sg) (u : �
     rwa [e] at this
 
 theorem IsFac.congr_sg {w : O} {f sg sg' : RHH O X} {o : ℕ} (h : IsFac w f o sg) (h' : InWj w (sg - sg') 1)
-    (hi : InA sg') : IsFac w f o sg' where
-  inA := h.inA
-  ord := h.ord
-  sym := by
-    have e : liftSubst X.p X.n' O w 1 (hhLetters X.TT) 1 f - (w ^ o) • sg' =
-        (liftSubst X.p X.n' O w 1 (hhLetters X.TT) 1 f - (w ^ o) • sg) + (w ^ o) • (sg - sg') := by
-      rw [smul_sub]; abel
-    rw [e]
-    have := wj_smul_pow h' o
-    rw [add_comm 1 o] at this
-    exact (wjSub w (o + 1)).add_mem h.sym this
-  sgInt := hi
+    (hi : InA sg') : IsFac w f o sg' := by
+  refine ⟨h.inA, h.ord, ?_, hi⟩
+  have e : liftSubst X.p X.n' O w 1 (hhLetters X.TT) 1 f - (w ^ o) • sg' =
+      (liftSubst X.p X.n' O w 1 (hhLetters X.TT) 1 f - (w ^ o) • sg) + (w ^ o) • (sg - sg') := by
+    rw [smul_sub]; abel
+  rw [e]
+  have := wj_smul_pow h' o
+  rw [add_comm 1 o] at this
+  exact (wjSub w (o + 1)).add_mem h.sym this
 
 theorem IsFac.of_exact {w : O} {f sg r : RHH O X} {o e : ℕ} (hA : InA f)
     (hord : ∀ g : Matrix (Fin (X.m + 1)) (Fin (X.m + 1)) (WF X.p X.n'), IsGLW g →
       InWjRg X.p X.n' O w 1 (hhLetters X.TT) g f o)
     (he : 1 ≤ e) (hs : InA sg) (hr : InA r)
-    (hl : liftSubst X.p X.n' O w 1 (hhLetters X.TT) 1 f = (w ^ o) • (sg + (w ^ e) • r)) : IsFac w f o sg where
-  inA := hA
-  ord := hord
-  sym := by
-    rw [hl, smul_add, add_sub_cancel_left, smul_smul, ← pow_add]
-    have := wj_smul_pow ((inA_iff_wj w).1 hr) (o + e)
-    rw [zero_add] at this
-    exact wj_mono (by omega) this
-  sgInt := hs
+    (hl : liftSubst X.p X.n' O w 1 (hhLetters X.TT) 1 f = (w ^ o) • (sg + (w ^ e) • r)) : IsFac w f o sg := by
+  refine ⟨hA, hord, ?_, hs⟩
+  rw [hl, smul_add, add_sub_cancel_left, smul_smul, ← pow_add]
+  have := wj_smul_pow ((inA_iff_wj w).1 hr) (o + e)
+  rw [zero_add] at this
+  exact wj_mono (by omega) this
 
 end FacCalc
 

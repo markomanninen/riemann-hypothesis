@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.MulVecOfRealVecAddMemSpanPeriodLattice
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.MulVecOfRealVecAddMemSpanPeriodLattice
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
 
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.PTheta Matrix
 open scoped Kronecker
@@ -146,11 +150,11 @@ theorem kron_mulVec (S : Matrix (Fin r) (Fin r) R) (P : Matrix (Fin h) (Fin h) R
 
 theorem kron_one_mulVec (P : Matrix (Fin h) (Fin h) R) (z : Fin g → R) (u : Fin r) (i : Fin h) :
     (kron σ 1 P *ᵥ z) (σ (u, i)) = ∑ j, P i j * z (σ (u, j)) := by
-  simp [kron_mulVec, one_apply]
+  simp [kron_mulVec, Matrix.one_apply]
 
 theorem kron_mulVec_one (S : Matrix (Fin r) (Fin r) R) (z : Fin g → R) (u : Fin r) (i : Fin h) :
     (kron σ S 1 *ᵥ z) (σ (u, i)) = ∑ v, S u v * z (σ (v, i)) := by
-  simp [kron_mulVec, one_apply]
+  simp [kron_mulVec, Matrix.one_apply]
 
 theorem kron_posDef {S : Matrix (Fin r) (Fin r) ℝ} {P : Matrix (Fin h) (Fin h) ℝ} (hS : S.PosDef)
     (hP : P.PosDef) : (kron σ S P).PosDef :=
@@ -159,12 +163,12 @@ theorem kron_posDef {S : Matrix (Fin r) (Fin r) ℝ} {P : Matrix (Fin h) (Fin h)
 theorem kron_one_map_im (τ : Matrix (Fin h) (Fin h) ℂ) :
     (kron σ 1 τ).map Complex.im = kron σ 1 (τ.map Complex.im) := by
   ext i j
-  by_cases hij : (σ.symm i).1 = (σ.symm j).1 <;> simp [kron, one_apply, hij]
+  by_cases hij : (σ.symm i).1 = (σ.symm j).1 <;> simp [kron, Matrix.one_apply, hij]
 
 theorem kron_one_map_re (τ : Matrix (Fin h) (Fin h) ℂ) :
     (kron σ 1 τ).map Complex.re = kron σ 1 (τ.map Complex.re) := by
   ext i j
-  by_cases hij : (σ.symm i).1 = (σ.symm j).1 <;> simp [kron, one_apply, hij]
+  by_cases hij : (σ.symm i).1 = (σ.symm j).1 <;> simp [kron, Matrix.one_apply, hij]
 
 def coordFst (x : Fin r → (Fin h ⊕ Fin h → ℤ)) : Fin g → ℤ :=
   fun k => x (σ.symm k).1 (.inl (σ.symm k).2)
@@ -299,7 +303,7 @@ theorem endo_period (a : Matrix (Fin r) (Fin r) ℤ) (τ : Matrix (Fin h) (Fin h
   have e : (kron σ (a.map (Int.cast : ℤ → ℝ)) 1).map Complex.ofReal =
       kron σ (a.map (Int.cast : ℤ → ℂ)) 1 := by
     ext i j
-    by_cases hij : (σ.symm i).2 = (σ.symm j).2 <;> simp [kron, one_apply, hij]
+    by_cases hij : (σ.symm i).2 = (σ.symm j).2 <;> simp [kron, Matrix.one_apply, hij]
   ext k
   obtain ⟨⟨u, i⟩, rfl⟩ := σ.surjective k
   rw [endo, mulVecLin_apply, e, kron_mulVec_one]

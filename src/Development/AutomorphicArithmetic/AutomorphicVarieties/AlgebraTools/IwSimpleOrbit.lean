@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwMemIwC
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwMemIwC
+
+@[expose] public section
+
 open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 
 section SlopeTestRemainingChoices
@@ -86,7 +91,7 @@ private theorem elem_mem {i j : Fin n} (h : i < j) (a : 𝒪[k]) :
   · ext p q
     show algebraMap 𝒪[k] k ((1 + single i j a : Matrix (Fin n) (Fin n) 𝒪[k]) p q) =
       (1 + single i j _ : Matrix (Fin n) (Fin n) k) p q
-    simp only [Matrix.add_apply, one_apply, single_apply, map_add]
+    simp only [Matrix.add_apply, Matrix.one_apply, single_apply, map_add (f := _)]
     split_ifs <;> simp
 
 end SlopeTestRemainingChoices

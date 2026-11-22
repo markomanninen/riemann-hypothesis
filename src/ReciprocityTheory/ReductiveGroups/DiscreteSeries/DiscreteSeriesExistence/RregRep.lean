@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SquareIntegrableInnerProduct
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SquareIntegrableInnerProduct
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,13 +18,13 @@ theorem rregRep_umat_inj (ε : Fin n → Bool) {x y : Formalism.REAL.UJ ε}
 theorem rregRep_rreg_umat (ε : Fin n → Bool) (y : Formalism.REAL.UJ ε) :
     rreg ε (Formalism.MainNotions.S.umat y) = rregG ε y := by
   have h : ∃ y' : Formalism.REAL.UJ ε, Formalism.MainNotions.S.umat y' = Formalism.MainNotions.S.umat y := ⟨y, rfl⟩
-  rw [rreg, dif_pos h]
+  rw [rreg, dite_eq_left h]
   exact congrArg (rregG ε) (rregRep_umat_inj ε h.choose_spec)
 
 theorem rregRep_rregG_apply (ε : Fin n → Bool) (y : Formalism.REAL.UJ ε) (f : L2 ε) :
     rregG ε y f = Lp.compMeasurePreserving (fun x : Formalism.REAL.UJ ε => x * y)
       (measurePreserving_mul_right ε y) f := by
-  rw [rregG, dif_pos (measurePreserving_mul_right ε y)]
+  rw [rregG, dite_eq_left (measurePreserving_mul_right ε y)]
   rfl
 
 private theorem Jm_mul_selfDiscreteSeriesExistence (ε : Fin n → Bool) :

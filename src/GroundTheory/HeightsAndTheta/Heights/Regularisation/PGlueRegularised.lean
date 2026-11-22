@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshRegMax
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.RegMaxReindex
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.GlueCharts
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshRegMax
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.RegMaxReindex
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.GlueCharts
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Regular
@@ -19,8 +24,8 @@ namespace RegChartData
 
 variable {D : ℕ} {X : Type*} [TopologicalSpace X] {A : FinHolAtlas D X} (R : RegChartData A)
 
-open Classical in
 
+open Classical in
 theorem glue_eventually (ρ : Mollifier D) (η : Fin R.N → X → ℝ) {Cη K t ε : ℝ}
     (hcut : R.IsCutoffFamily η Cη) (hε : 0 ≤ ε)
     (hcmp : ∀ j k, ∀ x ∈ R.mid j ∩ R.mid k, |R.phReg ρ K t j x - R.phReg ρ K t k x| ≤ ε)
@@ -82,8 +87,8 @@ theorem arg_contDiffAt (ρ : Mollifier D) (η : Fin R.N → X → ℝ) {Cη K t 
 
 end RegChartData
 
-open Classical in
 
+open Classical in
 theorem GlueRegularised.proof : GlueRegularised.Statement := by
   intro X _ _ _ D A R ρ η Cη K t ε hcut ht hε hball hcmp
   refine ⟨fun i y hy => ?_, fun k x hx w => ?_⟩

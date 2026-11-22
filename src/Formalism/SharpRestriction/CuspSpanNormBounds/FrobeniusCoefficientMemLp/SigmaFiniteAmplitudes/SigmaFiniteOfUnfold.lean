@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FdegOfSchur
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LUFactorOrbitBounds
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeLemma3
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSB
-import Formalism.SharpRestriction.CuspSpanNormBounds.LowestKTypeMultiplicity
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FdegOfSchur
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LUFactorOrbitBounds
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeLemma3
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSB
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LowestKTypeMultiplicity
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,6 +92,7 @@ theorem map_inv_haarLieN (κ : ℝ≥0∞) :
   have h0 := (Formalism.FourierDecayAlt.P.S3dx6.mp_inv_N
     (Formalism.MainNotions.BridgeLemma₃.hu_haarUp.2 k r _ Formalism.MainNotions.BridgeCSB.isHaarOn_nuN)).map_eq
   rw [he κ, Measure.map_smul, Measure.map_smul, h0]
+  all_goals exact Formalism.FourierDecayAlt.P.B7.measurable_invM.aemeasurable
 
 theorem ae_mem_sk {S : Set (Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ)} {μ : Measure (Mt k r)} (h : Formalism.MainNotions.S.IsHaarOn S μ) :
     ∀ᵐ x ∂μ, Matrix.of x ∈ S := by

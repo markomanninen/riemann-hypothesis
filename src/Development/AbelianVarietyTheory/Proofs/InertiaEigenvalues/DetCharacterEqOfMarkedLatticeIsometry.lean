@@ -1,19 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConjTupRefl
-import Development.AbelianVarietyTheory.Definitions.Divisors.GenReads
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsRootNotMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMapOfOfExtends
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.SecEqZeroOfComplex
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.MarkedIsometryHalf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConjTupRefl
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GenReads
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsRootNotMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMapOfOfExtends
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.SecEqZeroOfComplex
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.MarkedIsometryHalf
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Pj
 open scoped TensorProduct Matrix
 namespace GlobalTheory.MarkIso
 
 open GlobalTheory.Member
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem xi_det_eq_of_marked_isometry : ∀ {D : D7} {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E} {Dw : Datum H} (l : Level H) (V : HSp D)
     (io : Dw.La →ₗ[𝓞 D.host.E] (Fin V.rank → D.host.E)) (hio : LinearMap.range io = latG V 1)
     (A A' : Datum H) (t : Dw.La →ₗ[𝓞 D.host.E] A.La) (t' : Dw.La →ₗ[𝓞 D.host.E] A'.La)
@@ -94,7 +99,7 @@ theorem xi_det_eq_of_marked_isometry : ∀ {D : D7} {H : ReciprocityTheory.Chart
       refine ⟨-φL' z, ?_, ?_⟩
       · rw [← SetLike.mem_coe, ← hLg']
         exact ⟨-z, map_neg _ _⟩
-      · rw [Matrix.one_mulVec, ← hδ2, hz, map_add, map_nsmul, smul_neg]
+      · rw [Matrix.one_mulVec, ← hδ2, hz, map_add (f := _), map_nsmul, smul_neg]
         abel)
   have hδQ : δ ∈ GQ V := (r1 δ).2 ⟨δ', hδ⟩
   have h3' : (finHom V u).1.det * 1 - 1 ∈

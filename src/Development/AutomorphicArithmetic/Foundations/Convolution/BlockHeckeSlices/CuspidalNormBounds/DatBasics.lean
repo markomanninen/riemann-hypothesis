@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CapPoly
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CapPoly
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.CuspRep GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Global.IdeleGroup
 open UpperTheory.V.Cm
 
 namespace UpperTheory.ConvolutionTheory.BW
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ}
 
 private theorem posIdele_inf (s : ℝ) (hs : 0 < s) (w : InfinitePlace E) :
     ((posIdele s hs : GroundTheory.Global.IdeleGroup E) : AdeleRing (𝓞 E) E).1 w =
@@ -16,7 +20,7 @@ private theorem posIdele_inf (s : ℝ) (hs : 0 < s) (w : InfinitePlace E) :
   rw [← coe_infiniteProj, infiniteProj_posIdele]
   change GroundTheory.Global.posRealElem w _ = _
   unfold GroundTheory.Global.posRealElem
-  rw [dif_neg hw]
+  rw [dite_eq_right hw]
   simp [InfinitePlace.mult, hw, Real.sqrt_sq hs.le]
 
 private noncomputable def eU (E : Type) [Field E] (x : ℝ) : (Cinf E)ˣ where
@@ -200,7 +204,7 @@ private theorem comb {S : Set (Pl E)} (d : Dat S n) : Function.Surjective d.idx 
 end UpperTheory.ConvolutionTheory.BW
 
 theorem UpperTheory.ConvolutionTheory.BW.datBasics :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.DatBasics E := by
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.DatBasics E := by
   intro E _ _ _
   refine ⟨fun S r b => blo_sum b, fun S n d => ?_⟩
   obtain ⟨h1, h2, h3, h4⟩ := comb d
@@ -226,6 +230,7 @@ theorem UpperTheory.ConvolutionTheory.BW.datBasics :
   · obtain ⟨c, hc⟩ := J_eq d j
     obtain ⟨c', hc'⟩ := J_eq d l
     rw [hc, hc']
+    set_option synthInstance.maxHeartbeats 400000 in
     exact ((Commute.sum_left _ _ _ fun i _ => Commute.sum_right _ _ _ fun k _ => comm_lie i k).smul_left c).smul_right c'
   · obtain ⟨c, hc⟩ := J_eq d j
     obtain ⟨a, ha⟩ : ∃ a : Fin n → (Cinf E)ˣ, d.tr v = infGL E n (diagUnits n a) := ⟨_, diag_eq _⟩
@@ -233,5 +238,6 @@ theorem UpperTheory.ConvolutionTheory.BW.datBasics :
     exact (Commute.sum_left _ _ _ fun i _ => comm_rt i a).smul_left c
   · obtain ⟨c, hc⟩ := J_eq d j
     exact ⟨c • ∑ i ∈ Finset.univ.filter fun i => d.idx i = j, ιC E n (toL (Matrix.single i i 1)), by
-      rw [map_smul, map_sum, Finset.sum_congr rfl fun i _ => uC_ιC _]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_smul, map_sum, Finset.sum_congr rfl fun i _ => uC_ιC _]
       exact hc⟩

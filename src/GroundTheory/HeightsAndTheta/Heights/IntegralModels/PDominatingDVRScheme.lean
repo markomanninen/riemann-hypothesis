@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.Statements
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.PDominatingDVR
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.PKrullAkizuki
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.PKrullAkizukiQuotientLength
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.PTorsionFreeQuotientLength
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.PBlowUpChart
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.Statements
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.PDominatingDVR
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.PKrullAkizuki
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.PKrullAkizukiQuotientLength
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.PTorsionFreeQuotientLength
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.PBlowUpChart
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Model

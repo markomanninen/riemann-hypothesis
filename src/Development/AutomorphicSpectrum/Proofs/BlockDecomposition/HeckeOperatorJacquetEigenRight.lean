@@ -1,18 +1,22 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.SquareIntegrableTempered.CentredSegments.IrreducibleUnif
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.StandardFunctorsFiniteLength
-import GroundTheory.AutomorphicForms.SmoothRep
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriBlockUpperLeviLower
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsOpenIsCompactPrincipal
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TypeFunctionConstantTermVanishSplitPlace
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.SquareIntegrableTempered.CentredSegments.IrreducibleUnif
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.StandardFunctorsFiniteLength
+public import GroundTheory.AutomorphicForms.SmoothRep
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriBlockUpperLeviLower
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsOpenIsCompactPrincipal
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TypeFunctionConstantTermVanishSplitPlace
+
+@[expose] public section
 
 open Filter Topology MeasureTheory GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult ValuativeRel
 
 namespace GlobalTheory.CompanionTheory.HeckeJacquet
 
-open GroundTheory.Automorphic in
 
+open GroundTheory.Automorphic in
 theorem sub_mem_of_invariant_forms {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
     [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G]
     {V : Type} [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ G V)
@@ -74,15 +78,15 @@ theorem totallyDisconnected_GL (N : ℕ) : TotallyDisconnectedSpace (GL (Fin N) 
     Units.continuous_val.continuousOn Units.val_injective
     (isTotallyDisconnected_of_totallyDisconnectedSpace _)⟩
 
-variable (k) in
 
+variable (k) in
 theorem val_unif_lt_one : valuation k ((Zls.unifU k : kˣ) : k) < 1 := by
   have hle : valuation k ((Zls.unif k : 𝒪[k]) : k) ≤ 1 := (Zls.unif k).2
   refine lt_of_le_of_ne hle fun h1 => (Zls.irreducible_unif (k := k)).not_isUnit ?_
   exact ((Valuation.integer.integers (valuation k)).isUnit_iff_valuation_eq_one).2 h1
 
-variable (k) in
 
+variable (k) in
 theorem val_le_unif (x : k) (hx : valuation k x < 1) :
     valuation k x ≤ valuation k ((Zls.unifU k : kˣ) : k) := by
   have hint := Valuation.integer.integers (valuation k)

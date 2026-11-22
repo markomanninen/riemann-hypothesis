@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.RegVert
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.RegAVpt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.RegVert
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.RegAVpt
+
+@[expose] public section
 
 namespace Formalism.L2.Pj.RegA
 
@@ -129,7 +133,7 @@ theorem reg_vertical_e {O A : Type} [CommRing O] [IsDomain O] [IsDiscreteValuati
     have hmc : Ideal.map (algebraMap A (Localization.AtPrime P))
         (Q.comap (algebraMap A (Localization.AtPrime P))) = Q := by
       first
-      | exact IsLocalization.map_comap P.primeCompl (Localization.AtPrime P) Q
+      | exact IsLocalization.map_under P.primeCompl (Localization.AtPrime P) Q
       | exact IsLocalization.map_comap (M := P.primeCompl) Q
     rw [hQeq] at hmc
     exact (hmaxL.trans hmc).le
@@ -254,8 +258,8 @@ theorem reg_vertical_e {O A : Type} [CommRing O] [IsDomain O] [IsDiscreteValuati
   have hmaxV : (maximalIdeal V).comap (algebraMap O V) = maximalIdeal O := by
     haveI hmx : ((maximalIdeal V).comap (algebraMap O V)).IsMaximal := by
       first
-      | exact Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (maximalIdeal V)
-      | exact Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := O) (maximalIdeal V)
+      | exact Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (algebraMap _ _) (RingHom.Finite.to_isIntegral (RingHom.finite_algebraMap.mpr inferInstance)) (maximalIdeal V)
+      | exact Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := O) (algebraMap _ _) (RingHom.Finite.to_isIntegral (RingHom.finite_algebraMap.mpr inferInstance)) (maximalIdeal V)
       | infer_instance
       | exact Ideal.IsMaximal.under O (maximalIdeal V)
     exact IsLocalRing.eq_maximalIdeal hmx

@@ -1,10 +1,15 @@
-import CompanionTheory.EightfoldTheory.VariationTheory.PublishedTheorems.ImportsAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Hypotheses2
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DiscreteTopologyRatN
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.NormNatCastLtOne
-import GroundTheory.AutomorphicForms.StrongApproximationSLDense
+module
+
+public import CompanionTheory.EightfoldTheory.VariationTheory.PublishedTheorems.ImportsAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Hypotheses2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DiscreteTopologyRatN
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.NormNatCastLtOne
+public import GroundTheory.AutomorphicForms.StrongApproximationSLDense
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.UnitaryBC UpperTheory.V.Af UpperTheory.V
 open scoped Matrix TensorProduct

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupCartier
-import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupChartPreimages
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupCartier
+public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupChartPreimages
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry TensorProduct
 open FunctorialResolution.Blowup

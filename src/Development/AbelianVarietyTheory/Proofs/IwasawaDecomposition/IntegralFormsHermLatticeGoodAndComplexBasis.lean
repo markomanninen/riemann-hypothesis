@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SameForm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteDetermining
-import Formalism.LocalToGlobal.Columns.ToHLatLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SameForm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteDetermining
+public import Formalism.LocalToGlobal.Columns.ToHLatLemmas
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Df
 attribute [local instance] GlobalTheory.Mem.Col2.starE
 
@@ -18,16 +23,13 @@ theorem toCx_add {B : Base} {X : PreX B.toPre} (I : TC B X) (hX : B.fields.Ok) (
     toCx I hX a (x + y) = toCx I hX a x + toCx I hX a y := by
   have h1 : toCx I hX a (x + y) = toMtP B.wts I.Ch I.sel (I.tup a) I.Ps B.embLL
       ((show MtildeV B.wts I.Ch I.sel (I.tup a) I.Ps from x) + (show MtildeV B.wts I.Ch I.sel (I.tup a) I.Ps from y)) := rfl
-  rw [h1, map_add]
+  rw [h1, map_add (f := _)]
   rfl
 
 noncomputable def toCxₛₗ {B : Base} {X : PreX B.toPre} (I : TC B X) (hX : B.fields.Ok) (a : I.ι) : (MtHL I hX a).V →ₛₗ[B.embLL] MtCx I a where
   toFun := toCx I hX a
   map_add' := toCx_add I hX a
   map_smul' := toCx_smul I hX a
-
-theorem toCxₛₗ_apply {B : Base} {X : PreX B.toPre} (I : TC B X) (hX : B.fields.Ok) (a : I.ι) (x : (MtHL I hX a).V) :
-    toCxₛₗ I hX a x = toCx I hX a x := rfl
 
 theorem toCx_linearIndependent {B : Base} {X : PreX B.toPre} (I : TC B X) (hX : B.fields.Ok) (a : I.ι) :
     LinearIndependent ℂ (fun i => toCx I hX a ((MtHL I hX a).b i)) :=

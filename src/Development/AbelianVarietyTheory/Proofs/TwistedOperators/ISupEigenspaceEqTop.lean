@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsJointIntEigenvectorOfStable
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsEqMulProdMinors
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsJointIntEigenvectorOfStable
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsEqMulProdMinors
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,8 @@ private theorem sum_neg_index_smul_diag_apply_comm {V : Type*} [AddCommGroup V] 
     · subst ha; simp [hb]
     · subst hb; simp [ha]
     · simp [ha, hb]
-  simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, h1, smul_add,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, h1, smul_add,
     Finset.sum_add_distrib, smul_sub, Finset.sum_sub_distrib, smul_ite, smul_zero,
     Finset.sum_ite_eq', Finset.sum_ite_eq, Finset.mem_univ, if_true]
   rw [sub_smul, neg_smul, neg_smul]
@@ -147,7 +152,7 @@ theorem exists_highest_pair {V : Type*} [AddCommGroup V] [Module ℂ V] {k l : �
       e i j ((∑ a : Fin k, (-((a : ℕ) : ℂ)) • e a a +
         ∑ b : Fin l, (-((b : ℕ) : ℂ)) • f b b) x) + (((j : ℕ) : ℂ) - ((i : ℕ) : ℂ)) • e i j x := by
     intro i j x
-    rw [LinearMap.add_apply, LinearMap.add_apply, map_add, sum_neg_index_smul_diag_apply_comm e he,
+    rw [LinearMap.add_apply, LinearMap.add_apply, map_add (f := _), sum_neg_index_smul_diag_apply_comm e he,
       sum_smul_apply_comm_of_commute (e i j) (fun b => f b b) _ (fun b => hef i j b b)]
     abel
   have hHf : ∀ i j (x : V), (∑ a : Fin k, (-((a : ℕ) : ℂ)) • e a a +
@@ -155,7 +160,7 @@ theorem exists_highest_pair {V : Type*} [AddCommGroup V] [Module ℂ V] {k l : �
       f i j ((∑ a : Fin k, (-((a : ℕ) : ℂ)) • e a a +
         ∑ b : Fin l, (-((b : ℕ) : ℂ)) • f b b) x) + (((j : ℕ) : ℂ) - ((i : ℕ) : ℂ)) • f i j x := by
     intro i j x
-    rw [LinearMap.add_apply, LinearMap.add_apply, map_add, sum_neg_index_smul_diag_apply_comm f hf,
+    rw [LinearMap.add_apply, LinearMap.add_apply, map_add (f := _), sum_neg_index_smul_diag_apply_comm f hf,
       sum_smul_apply_comm_of_commute (f i j) (fun a => e a a) _ (fun a => (hef a a i j).symm)]
     abel
   set H : Module.End ℂ V := ∑ a : Fin k, (-((a : ℕ) : ℂ)) • e a a +
@@ -273,7 +278,7 @@ theorem iSup_eigenspace_eq_top {σ ι : Type*} (g : ι → Module.End ℂ (MvPol
   rw [Submodule.mem_iInf]
   intro i
   rw [Module.End.mem_eigenspace_iff]
-  have h : monomial n (coeff n P) = coeff n P • monomial n (1 : ℂ) := by
+  have h : monomial n (AddMonoidAlgebra.coeff P n) = AddMonoidAlgebra.coeff P n • monomial n (1 : ℂ) := by
     rw [smul_monomial, smul_eq_mul, mul_one]
   rw [h, map_smul, hg, smul_comm]
 
@@ -301,14 +306,15 @@ theorem rowOp_monomial {σ I J : Type*} [Fintype J] (z : I × J → σ) (a : I) 
 
 private theorem coeff_apply_of_diagonal_on_monomials {σ : Type*} (g : MvPolynomial σ ℂ →ₗ[ℂ] MvPolynomial σ ℂ)
     (w : (σ →₀ ℕ) → ℂ) (hg : ∀ n, g (monomial n 1) = w n • monomial n 1)
-    (P : MvPolynomial σ ℂ) (m : σ →₀ ℕ) : coeff m (g P) = w m * coeff m P := by
+    (P : MvPolynomial σ ℂ) (m : σ →₀ ℕ) : AddMonoidAlgebra.coeff (g P) m = w m * AddMonoidAlgebra.coeff P m := by
   classical
-  have hmon : ∀ n, g (monomial n (coeff n P)) = (coeff n P * w n) • monomial n 1 := by
+  have hmon : ∀ n, g (monomial n (AddMonoidAlgebra.coeff P n)) = (AddMonoidAlgebra.coeff P n * w n) • monomial n 1 := by
     intro n
-    have h : monomial n (coeff n P) = coeff n P • monomial n (1 : ℂ) := by
+    have h : monomial n (AddMonoidAlgebra.coeff P n) = AddMonoidAlgebra.coeff P n • monomial n (1 : ℂ) := by
       rw [smul_monomial, smul_eq_mul, mul_one]
     rw [h, map_smul, hg, smul_smul]
-  conv_lhs => rw [P.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [P.as_sum, map_sum]
   simp only [hmon, coeff_sum, coeff_smul, smul_eq_mul]
   simp only [MvPolynomial.coeff_monomial, mul_ite, mul_one, mul_zero]
   rw [Finset.sum_ite_eq']
@@ -326,7 +332,7 @@ theorem colOp_eq_smul_iff {σ I J : Type*} [Fintype I] (z : I × J → σ) (k : 
     simp only [Nat.cast_sum, Int.cast_sum, Int.cast_natCast]
   constructor
   · intro h m hm
-    have h1 := congrArg (coeff m) h
+    have h1 := congrArg (AddMonoidAlgebra.coeff · m) h
     rw [coeff_apply_of_diagonal_on_monomials _ _ hw, coeff_smul, smul_eq_mul] at h1
     exact mul_right_cancel₀ (mem_support_iff.mp hm) h1
   · intro h
@@ -346,7 +352,7 @@ theorem rowOp_eq_smul_iff {σ I J : Type*} [Fintype J] (z : I × J → σ) (a : 
     simp only [Nat.cast_sum, Int.cast_sum, Int.cast_natCast]
   constructor
   · intro h m hm
-    have h1 := congrArg (coeff m) h
+    have h1 := congrArg (AddMonoidAlgebra.coeff · m) h
     rw [coeff_apply_of_diagonal_on_monomials _ _ hw, coeff_smul, smul_eq_mul] at h1
     exact mul_right_cancel₀ (mem_support_iff.mp hm) h1
   · intro h

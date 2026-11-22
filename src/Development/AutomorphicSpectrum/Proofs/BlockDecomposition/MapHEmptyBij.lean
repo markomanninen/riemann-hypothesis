@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CosieveRes
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CosieveRes
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -100,7 +104,8 @@ def cechHom {A B : Sy.{w} R ι} (m : A.Hom B) :
     DCx.Hom (cechCos A).dcx (cechCos B).dcx (RingHom.id R) where
   f p q := (prodHom fun i : Fin (p + 1) → ι => m.φ (ent i)).f q
   ch p q x := by
-    rw [Cos.d_apply, Cos.d_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Cos.d_apply, Cos.d_apply, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_zsmul]
     refine congrArg _ (funext fun t => ?_)

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.WeilSiegelTheta.EisCellsDefs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsBlockMatrixTwoByTwoFinEq
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.WeilSiegelTheta.EisCellsDefs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsBlockMatrixTwoByTwoFinEq
+
+@[expose] public section
 
 open scoped Matrix
 open GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions.EC
@@ -59,7 +63,7 @@ theorem extB_eq_selE {r n : ℕ} (hr : r ≤ n) (b : Matrix (Fin r) (Fin r) K) :
   simp only [extB, Matrix.mul_apply, Matrix.transpose_apply, selE]
   by_cases hi : (i : ℕ) < r
   · by_cases hj : (j : ℕ) < r
-    · rw [dif_pos ⟨hi, hj⟩]
+    · rw [dite_eq_left ⟨hi, hj⟩]
       have e1 : ∀ l : Fin r, (∑ k : Fin r, (if (i : ℕ) = k then (1 : K) else 0) * b k l) = b ⟨i, hi⟩ l := by
         intro l
         rw [Finset.sum_eq_single ⟨i, hi⟩]
@@ -75,13 +79,13 @@ theorem extB_eq_selE {r n : ℕ} (hr : r ≤ n) (b : Matrix (Fin r) (Fin r) K) :
         have hne : (j : ℕ) ≠ l := fun h => hl (Fin.ext h.symm)
         simp [hne]
       · intro h; exact absurd (Finset.mem_univ _) h
-    · rw [dif_neg (fun h => hj h.2)]
+    · rw [dite_eq_right (fun h => hj h.2)]
       symm
       apply Finset.sum_eq_zero
       intro l _
       have hne : (j : ℕ) ≠ l := fun h => hj (h ▸ l.2)
       simp [hne]
-  · rw [dif_neg (fun h => hi h.1)]
+  · rw [dite_eq_right (fun h => hi h.1)]
     symm
     apply Finset.sum_eq_zero
     intro l _

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.ChainLawPhi
-import Formalism.LocalToGlobal.Columns.StdBasisFlagSubmoduleOfBlockTriangular
+module
+
+public import Formalism.LocalToGlobal.Columns.ChainLawPhi
+public import Formalism.LocalToGlobal.Columns.StdBasisFlagSubmoduleOfBlockTriangular
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -403,17 +407,17 @@ theorem clPfUV_mul {K : Type} [Field K] (χ : kˣ →* Kˣ) (a b : k) : clPfUV �
   by_cases ha : IsUnit a
   · by_cases hb : IsUnit b
     · have hab : IsUnit (a * b) := ha.mul hb
-      rw [dif_pos hab, dif_pos ha, dif_pos hb]
+      rw [dite_eq_left hab, dite_eq_left ha, dite_eq_left hb]
       have e : hab.unit = ha.unit * hb.unit := Units.ext (by simp)
       rw [e, map_mul, Units.val_mul]
     · have hab : ¬ IsUnit (a * b) := fun h => hb (IsUnit.mul_iff.mp h).2
-      rw [dif_neg hab, dif_neg hb, mul_zero]
+      rw [dite_eq_right hab, dite_eq_right hb, mul_zero]
   · have hab : ¬ IsUnit (a * b) := fun h => ha (IsUnit.mul_iff.mp h).1
-    rw [dif_neg hab, dif_neg ha, zero_mul]
+    rw [dite_eq_right hab, dite_eq_right ha, zero_mul]
 
 theorem clPfUV_ne {K : Type} [Field K] (χ : kˣ →* Kˣ) {a : k} (h : IsUnit a) : clPfUV χ a ≠ 0 := by
   unfold clPfUV
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact Units.ne_zero _
 
 def clPfLam {K : Type} [Field K] (ψ₀ : AddChar k K) (χ : ℕ → kˣ →* Kˣ) (k₀ r t J : ℕ) (X : ℕ → ℕ → k) : K :=

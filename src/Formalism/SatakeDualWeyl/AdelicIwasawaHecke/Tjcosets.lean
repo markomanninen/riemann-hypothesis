@@ -1,5 +1,9 @@
-import Formalism.SatakeDualWeyl.StatementE
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.TjcosetsLoc
+module
+
+public import Formalism.SatakeDualWeyl.StatementE
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.TjcosetsLoc
+
+@[expose] public section
 
 noncomputable section
 

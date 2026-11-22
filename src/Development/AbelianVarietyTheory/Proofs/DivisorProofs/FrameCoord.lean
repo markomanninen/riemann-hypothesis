@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HtValOnSubset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HtValOnSubset
+
+@[expose] public section
 
 noncomputable section
 

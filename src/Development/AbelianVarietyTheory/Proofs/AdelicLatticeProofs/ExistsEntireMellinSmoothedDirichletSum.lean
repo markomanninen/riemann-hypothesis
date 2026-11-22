@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField IsDedekindDomain NumberField.mixedEmbedding MeasureTheory Complex Classical
 open scoped ContDiff nonZeroDivisors
@@ -133,8 +137,7 @@ lemma mellin_sum {ι : Type} [Countable ι] {a : ι → ℂ} {N : ι → ℝ} {w
     rw [mellin]
     congr 1
     funext t
-    simp only [hG, smul_eq_mul]
-    rw [tsum_mul_left]
+    exact (tsum_const_smul'' _).symm
   have hGi : ∀ i, ∫ t in Ioi (0 : ℝ), G i t = a i * (N i : ℂ) ^ (-s) * mellin wt s := by
     intro i
     by_cases hai : a i = 0

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.PB GlobalTheory.CompanionTheory.Ar.PB.FMX GlobalTheory.CompanionTheory.Ar.FlagBun
@@ -34,7 +39,7 @@ theorem det_map_mul_submatrix {Ω L : Type} [Field Ω] [Field L] (f : Ω →+* L
 variable {Ψ : Type} {p q : ℕ}
 
 theorem full_of_noBlock (K₀ : Type) (t : StepIx Ψ p q)
-    (h : ∀ r, blkF Ψ p q K₀ r ≠ some (.inr t)) : (t.2 : ℕ) + 1 = rk Ψ p q t.1 := by
+    (h : ∀ r, blkF (Ψ := Ψ) (p := p) (q := q) K₀ r ≠ some (.inr t)) : (t.2 : ℕ) + 1 = rk Ψ p q t.1 := by
   obtain ⟨s, i⟩ := t
   rcases s with τ | τ
   · have hi : (i : ℕ) < p := i.2
@@ -63,7 +68,8 @@ theorem full_of_noBlock (K₀ : Type) (t : StepIx Ψ p q)
 theorem basePart_yv : ∀ (Ψ : Type) [Fintype Ψ] (p q : ℕ) (Ω : Type) [Field Ω] (n : Ψ ⊕ Ψ → ℕ)
     (A : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω) (K₀ : Type) [Fintype K₀] (J₀ : K₀ → Type)
     [∀ k, Fintype (J₀ k)] (x₀ : (Σ k, J₀ k) → Ω), ∀ r,
-    basePart (blkF Ψ p q K₀) (yv A x₀) r = algebraMap Ω (GenField Ω (rk Ψ p q)) (xb A x₀ r) := by
+    basePart (blkF (Ψ := Ψ) (p := p) (q := q) K₀) (yv A x₀) r =
+      algebraMap Ω (GenField Ω (rk Ψ p q)) (xb A x₀ r) := by
   intro Ψ _ p q Ω _ n A K₀ _ J₀ _ x₀ r
   obtain ⟨⟨k, hk⟩, i⟩ := r
   rcases k with k | t

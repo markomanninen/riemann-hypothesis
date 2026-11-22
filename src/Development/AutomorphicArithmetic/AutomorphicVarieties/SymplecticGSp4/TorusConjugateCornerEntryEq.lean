@@ -1,12 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.TriComb
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.DiagCases
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SpanZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.PtScale
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.PtLift
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.GeAlgTop
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.PtInSmul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.TriComb
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.DiagCases
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SpanZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.PtScale
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.PtLift
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.GeAlgTop
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.PtInSmul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
 private theorem linked_iff_torus_conjugate {H K : Type} [Group H] [Field K] {r r' : H →* M4 K} {t : Kˣ × Kˣ}

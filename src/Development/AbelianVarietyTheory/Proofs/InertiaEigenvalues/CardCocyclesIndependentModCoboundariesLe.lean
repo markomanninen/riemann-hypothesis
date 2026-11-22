@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistedModelAdmissibleCocycles
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.OnePlusPowerAssembly
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeSmulMem
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GammaMinusOneDivVariablePolarKernelLeSenWeightsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PolarPartFinrankAddSenWeightsLeRankStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GammaNablaMemOfKillingPolynomialStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleLetterDataWindowArithmeticStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistedModelAdmissibleCocycles
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.OnePlusPowerAssembly
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeSmulMem
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GammaMinusOneDivVariablePolarKernelLeSenWeightsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PolarPartFinrankAddSenWeightsLeRankStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GammaNablaMemOfKillingPolynomialStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleLetterDataWindowArithmeticStatement
+
+@[expose] public section
 
 open GlobalTheory.PhiGam GlobalTheory.AdmLoc GlobalTheory.Models
 open scoped LaurentSeries PowerSeries
@@ -31,8 +35,8 @@ theorem card_le_sum {k V ι : Type} [Field k] [AddCommGroup V] [Module k V] [Fin
 
 variable {k : Type} [Field k] {l n m : ℕ} [Fact l.Prime] [CharP k l] [NeZero n] {R : RingPG k l}
 
-omit [Fact l.Prime] [CharP k l] [NeZero n] in
 
+omit [Fact l.Prime] [CharP k l] [NeZero n] in
 theorem cob_mem (D : ModPG R n (Vc k m)) (y : ZMod n → Vc k m) :
     ((fun i => D.φ i (y (i - 1)) - y i, fun i => D.γ i (y i) - y i) :
       (ZMod n → Vc k m) × (ZMod n → Vc k m)) ∈ herrB D := ⟨y, rfl⟩
@@ -78,7 +82,7 @@ theorem gauge_one (D : ModPG R n (Vc k m)) (Dt : TopData n m) (N : Lats k n m)
     push_cast; nlinarith
   have hc : D.γ i (b i - D.φ i (y (i - 1)) + x i) - (b i - D.φ i (y (i - 1)) + x i) =
       D.φ i (g (i - 1) - (D.γ (i - 1) (y (i - 1)) - y (i - 1))) - (g i - (D.γ i (x i) - x i)) := by
-    simp only [map_sub, map_add, D.comm]
+    simp only [map_sub, map_add (f := _), D.comm]
     linear_combination (norm := module) h0
   have hsh : ∀ (a : ℤ) (P : Submodule k⟦X⟧ (Vc k m)), 0 ≤ a → P ≤ sh (-a) P := fun a P ha => by
     simpa [sh_zero_eq] using sh_le_sh_of_le (a := 0) (b := -a) (by omega) P
@@ -102,13 +106,14 @@ theorem gauge_one (D : ModPG R n (Vc k m)) (Dt : TopData n m) (N : Lats k n m)
     rw [hc]
     exact Submodule.sub_mem _ hdeep (hxB i h)
 
-omit [Fact l.Prime] [CharP k l] [NeZero n] in
 
+omit [Fact l.Prime] [CharP k l] [NeZero n] in
 theorem span_prop {s : ℕ} (c : Fin s → Vc k m) (g : Vc k m →ₗ[k] Vc k m) (P Q : Submodule k⟦X⟧ (Vc k m))
     (h : ∀ a, c a ∈ P ∧ g (c a) - c a ∈ Q) :
     ∀ x ∈ LinearMap.range (Fintype.linearCombination k c), x ∈ P ∧ g x - x ∈ Q := by
   rintro _ ⟨t, rfl⟩
-  rw [Fintype.linearCombination_apply, map_sum, ← Finset.sum_sub_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Fintype.linearCombination_apply, map_sum, ← Finset.sum_sub_distrib]
   refine ⟨Submodule.sum_mem _ fun a _ => Submodule.smul_of_tower_mem _ _ (h a).1,
     Submodule.sum_mem _ fun a _ => ?_⟩
   rw [map_smul, ← smul_sub]
@@ -170,7 +175,8 @@ theorem main : GlobalTheory.IndefiniteRowSideFullHecke.OnePlusPowerCharacters.Le
     obtain ⟨y, -, hy⟩ := (Gauge.main R D Dt.w Dt.wst (Dt.sg l) N hL hAB hC
       (fun i => by have := (hW i).1; have := (hw i).2; unfold TopData.wst at this; omega) (fun i => (hs i).1)
       (∑ a, t a • z' a).1 (∑ a, t a • z' a).2 (fun i => by
-        simp only [Prod.snd_sum, Prod.fst_sum, Finset.sum_apply, Prod.smul_snd, Prod.smul_fst, Pi.smul_apply,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Prod.snd_sum, Prod.fst_sum, Finset.sum_apply, Prod.smul_snd, Prod.smul_fst, Pi.smul_apply,
           map_sum, map_smul, ← Finset.sum_sub_distrib, ← smul_sub]
         exact Finset.sum_congr rfl fun a _ => by rw [(hc a i).1])
       (fun i => sh_le_sh_of_le (by omega) _ (hg i))).2 hg (fun i => by
@@ -191,6 +197,7 @@ theorem main : GlobalTheory.IndefiniteRowSideFullHecke.OnePlusPowerCharacters.Le
     funext a
     refine Fintype.linearIndependent_iff.1 hli t ?_ a
     have h4 : (herrB D).mkQ (∑ a, t a • z a) = 0 := (Submodule.Quotient.mk_eq_zero _).2 h3
-    simpa only [map_sum, map_smul] using h4
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [map_sum, map_smul] using h4
 
 end GlobalTheory.Models.PolarBound

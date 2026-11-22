@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.TheoremOfCubeOfAdditionFormulas
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DifferentiableSqTh
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TaylorSeriesInParameterRescaleOfAlgebraic
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SigmaStarSquareQuotientInModelParameter
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GenusOneDatumModelLatticeAlgebraicData
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SigmaStarCubeColumnsModelParameterSeries
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MvPowerSeriesThreeEqZeroOfSubstLines
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.TheoremOfCubeOfAdditionFormulas
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DifferentiableSqTh
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TaylorSeriesInParameterRescaleOfAlgebraic
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SigmaStarSquareQuotientInModelParameter
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GenusOneDatumModelLatticeAlgebraicData
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SigmaStarCubeColumnsModelParameterSeries
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MvPowerSeriesThreeEqZeroOfSubstLines
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum GlobalTheory.EvenTheta
 open scoped BigOperators
 
@@ -51,7 +56,7 @@ theorem map_gap {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) (s T : P
     fun a ha f => PowerSeries.map_subst (HasSubst.of_constantCoeff_zero ha) f
   simp only [gap, map_sub, map_mul]
   rw [e _ (by simp), e _ (by simp), e _ (by simp), e _ (by simp), e _ (by simp), e _ (by simp)]
-  simp only [map_add, map_sub, MvPowerSeries.map_X]
+  simp only [map_add (f := _), map_sub, MvPowerSeries.map_X]
 
 theorem add_entire {Λ : AddSubgroup ℂ} (h : IsLat Λ) {v : ℂ} (hv : v ∉ Λ) (z w : ℂ) :
     sgStar Λ (z + w) * sgStar Λ (z - w) =
@@ -77,7 +82,7 @@ theorem tay_mul {F G : ℂ → ℂ} (hF : Differentiable ℂ F) (hG : Differenti
 theorem tay_add {F G : ℂ → ℂ} (hF : Differentiable ℂ F) (hG : Differentiable ℂ G) :
     PowerSeries.mk (coef1 fun z => F z + G z) = PowerSeries.mk (coef1 F) + PowerSeries.mk (coef1 G) := by
   ext n
-  simp only [map_add, coeff_mk, GlobalTheory.SerTransport.taylorCoeff_add_entire hF hG]
+  simp only [map_add (f := _), coeff_mk, GlobalTheory.SerTransport.taylorCoeff_add_entire hF hG]
 
 theorem tay_scale {F : ℂ → ℂ} (hF : Differentiable ℂ F) (c : ℂ) :
     (subst (C c * X : PowerSeries ℂ) (PowerSeries.mk (coef1 F)) : PowerSeries ℂ) =
@@ -112,7 +117,7 @@ theorem gap_taylor {Λ : AddSubgroup ℂ} (h : IsLat Λ) {v : ℂ} (hv : v ∉ �
     funext z
     rw [add_mul, sub_mul, add_entire h hv]
     ring
-  rw [map_add, map_sub, add_mul, sub_mul] at key
+  rw [map_add (f := _), map_sub, add_mul, sub_mul] at key
   unfold gap
   linear_combination key
 
@@ -209,7 +214,7 @@ theorem sigma_add_param : ∀ D : D7, Formalism.MainNotions.Ext.CutA.PAdicSigmaA
     rw [subst_mul hs, subst_mul hs, subst_X hs, subst_C]
   have hwq : constantCoeff g.wq ≠ 0 := by
     have e := congrArg constantCoeff (show g.wq = _ from hq)
-    simp only [map_add, map_mul, map_pow, map_one, constantCoeff_X] at e
+    simp only [map_add (f := _), map_mul, map_pow, map_one, constantCoeff_X] at e
     rw [e]
     simp
   have sT : ∀ a : MvPowerSeries (Fin 2) ℂ_[p], MvPowerSeries.constantCoeff a = 0 →

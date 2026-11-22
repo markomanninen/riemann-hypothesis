@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LocPoly
-import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Height
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LocPoly
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Height
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.HenQ
 open GlobalTheory.CuspRep (GA Af finGL)
 

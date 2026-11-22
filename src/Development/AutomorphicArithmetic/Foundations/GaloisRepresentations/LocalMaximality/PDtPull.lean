@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
+
+@[expose] public section
+
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
@@ -98,7 +103,7 @@ theorem UpperTheory.Gal.productCup_of_system.dtPull_of :
     unfold dtS
     congr 1
     funext a
-    simp only [tt, ← IsScalarTower.algebraMap_apply]
+    rw [tt, tt, IsScalarTower.algebraMap_apply F K K']
   · obtain ⟨hle, ⟨ev, hev⟩, hbv, -⟩ := hVB K' (rB ℂ K' (xv x) {0}) e.1
     have hLoc := hLO F K' d x hY.covY hY.red e
     have htB : ∀ l, tt K' x l ∈ rB ℂ K' (xv x) {0} := fun l => tco_mem ℂ K' (xv x) l
@@ -117,11 +122,13 @@ theorem UpperTheory.Gal.productCup_of_system.dtPull_of :
     have hAh : ev.mapMatrix ah = A e := by
       ext m l
       change ev (⟨g m l, hgl m l⟩ + ∑ l', ⟨tt K' x l', hle (htB l')⟩ * ⟨c m l' l, hcl m l' l⟩) = A e m l
-      rw [map_add, map_sum, hge]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_add (f := _), map_sum, hge]
       simp only [map_mul, ht0, zero_mul, Finset.sum_const_zero, add_zero]
     have hD : ∀ m, D ℂ K' (j2 (tt K x m)) = ∑ l, (ah m l : K') • D ℂ K' (tt K' x l) := by
       intro m
-      rw [hgt m, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hgt m, map_sum]
       simp_rw [hah, add_smul, Finset.sum_add_distrib, Derivation.leibniz, hcD, Finset.smul_sum,
         Finset.sum_smul, smul_smul]
       rw [Finset.sum_add_distrib]

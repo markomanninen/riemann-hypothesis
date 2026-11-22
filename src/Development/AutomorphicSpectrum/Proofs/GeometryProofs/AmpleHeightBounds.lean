@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArchimedeanValueBoundStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HeightLowerBoundChartNormStatement
-import ReciprocityTheory.SemistableReduction.LogNormCoeffSubLeBlockSphereLogMean
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArchimedeanValueBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HeightLowerBoundChartNormStatement
+public import ReciprocityTheory.SemistableReduction.LogNormCoeffSubLeBlockSphereLogMean
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ lemma log_sup_support {ι : Type} [Fintype ι] (x : ι → L) (hx : ∃ i, x i �
   have hS : (⋃ i ∈ Finset.univ.filter (fun i => x i ≠ 0),
       Function.mulSupport fun v : FinitePlace L => v (x i)).Finite := by
     refine Set.Finite.biUnion (Finset.finite_toSet _) fun i hi => ?_
-    exact FinitePlace.mulSupport_finite (by simpa using hi)
+    exact FinitePlace.hasFiniteMulSupport (by simpa using hi)
   refine hS.subset fun v hv => ?_
   by_contra hn
   apply hv
@@ -45,7 +49,7 @@ lemma log_sup_support {ι : Type} [Fintype ι] (x : ι → L) (hx : ∃ i, x i �
   simp [h3]
 
 lemma log_support {x : L} (hx : x ≠ 0) : (Function.support fun v : FinitePlace L => Real.log (v x)).Finite := by
-  refine (FinitePlace.mulSupport_finite hx).subset fun v hv => ?_
+  refine (FinitePlace.hasFiniteMulSupport hx).subset fun v hv => ?_
   intro h
   apply hv
   simp only [h, Real.log_one]
@@ -56,7 +60,7 @@ lemma product_formula {x : L} (hx : x ≠ 0) :
   have h := prod_abs_eq_one hx
   rw [InfinitePlace.prod_eq_abs_norm] at h
   rw [ReciprocityTheory.MultiplicativeHeights.sum_log_norm_embedding_eq x hx]
-  have hf : (Function.mulSupport fun v : FinitePlace L => v x).Finite := FinitePlace.mulSupport_finite hx
+  have hf : (Function.mulSupport fun v : FinitePlace L => v x).Finite := FinitePlace.hasFiniteMulSupport hx
   have hpos : ∀ v : FinitePlace L, v x ≠ 0 := fun v => by
     simpa using hx
   have e : (∑ᶠ v : FinitePlace L, Real.log (v x)) = Real.log (∏ᶠ v : FinitePlace L, v x) := by
@@ -85,8 +89,8 @@ lemma product_formula {x : L} (hx : x ≠ 0) :
 lemma finsum_le_of_le {α : Type} {f g : α → ℝ} (hf : (Function.support f).Finite) (hg : (Function.support g).Finite)
     (h : ∀ a, f a ≤ g a) : ∑ᶠ a, f a ≤ ∑ᶠ a, g a := by
   classical
-  rw [finsum_eq_sum_of_support_subset (s := hf.toFinset ∪ hg.toFinset) f (by simp [Set.subset_def]; tauto),
-    finsum_eq_sum_of_support_subset (s := hf.toFinset ∪ hg.toFinset) g (by simp [Set.subset_def]; tauto)]
+  rw [finsum_eq_sum_of_support_subset (s := hf.toFinset ∪ hg.toFinset) f (by simp [Set.subset_def]),
+    finsum_eq_sum_of_support_subset (s := hf.toFinset ∪ hg.toFinset) g (by simp [Set.subset_def])]
   exact Finset.sum_le_sum fun a _ => h a
 
 lemma avg_abs_le (S : (L →+* ℂ) → ℝ) {C : ℝ} (h : ∀ σ, |S σ| ≤ C) :
@@ -121,13 +125,12 @@ lemma bnorm_smul (c : K → ℂ) (z : (Σ k, ι k) → ℂ) (k : K) :
   rw [Real.sqrt_mul (by positivity), Real.sqrt_sq (norm_nonneg _)]
 
 lemma continuous_bnorm (k : K) : Continuous fun z : (Σ k, ι k) → ℂ => bnorm z k :=
-  Real.continuous_sqrt.comp
-    (continuous_finset_sum _ fun i _ => ((continuous_apply (⟨k, i⟩ : Σ k, ι k)).norm).pow 2)
+  Real.continuous_sqrt.comp (by fun_prop)
 
 lemma contDiffOn_bnorm (k : K) :
     ContDiffOn ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun z : (Σ k, ι k) → ℂ => bnorm z k) {z | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0} := by
   have h1 : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) fun z : (Σ k, ι k) → ℂ => ∑ i, ‖z ⟨k, i⟩‖ ^ 2 :=
-    ContDiff.sum fun i _ => (contDiff_apply ℝ ℂ (⟨k, i⟩ : Σ k, ι k)).norm_sq ℝ
+    ContDiff.sum fun i _ => (contDiff_apply ℝ (fun _ => ℂ) (⟨k, i⟩ : Σ k, ι k)).norm_sq ℝ
   refine h1.contDiffOn.sqrt fun z hz => ?_
   have := bnorm_pos (hz k)
   unfold bnorm at this

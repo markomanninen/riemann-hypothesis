@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetOpIntegral
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CharacterValueAtT
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetOpIntegral
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CharacterValueAtT
+
+@[expose] public section
+
 open GlobalTheory.ColPeriod
 
 namespace GlobalTheory.ColPeriod

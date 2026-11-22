@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotStage
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotStage
+
+@[expose] public section
 
 open MeasureTheory Topology
 open scoped ENNReal

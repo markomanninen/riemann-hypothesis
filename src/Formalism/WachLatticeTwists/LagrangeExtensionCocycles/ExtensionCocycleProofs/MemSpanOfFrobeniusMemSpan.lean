@@ -1,6 +1,10 @@
-import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.Statement
-import Formalism.LagrangeIdealLifts.LiftLagrangeIdealInt
-import Formalism.WindowSums.PowerSeriesRelationList
+module
+
+public import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.Statement
+public import Formalism.LagrangeIdealLifts.LiftLagrangeIdealInt
+public import Formalism.WindowSums.PowerSeriesRelationList
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,7 +91,7 @@ theorem lagrange_annihilation : StatLagrange := by
   choose w hw using hw
   obtain ⟨q, hq⟩ : ∃ q : O[X], ∀ a ∈ S₁, q.eval (c a) = w a * ∏ b ∈ S₁.erase a, (c a - c b) := by
     refine ⟨∑ a' ∈ S₁, C (w a') * ∏ b ∈ S₁.erase a', (X - C (c b)), fun a ha => ?_⟩
-    rw [eval_finset_sum, Finset.sum_eq_single a]
+    rw [eval_finsetSum, Finset.sum_eq_single a]
     · simp [eval_prod]
     · intro a' _ hne
       rw [eval_mul, eval_prod, Finset.prod_eq_zero (Finset.mem_erase.2 ⟨hne.symm, ha⟩) (by simp),
@@ -106,7 +110,7 @@ theorem lagrange_resolvent_kills_class : StatLagrangeKill := by
   intro ℓ _ O _ _ S₁ S₂ c sg P _ _ g hdisj hassoc h1 h2 x
   obtain ⟨p₁, p₂, hp⟩ := Ideal.mem_span_pair.1 (lagrange_annihilation ℓ O S₁ S₂ c sg hdisj hassoc)
   have h3 : aeval g (C ((ℓ : O) ^ lagE ℓ sg S₁ S₂)) = 0 := by
-    rw [← hp, map_add, map_mul, map_mul, h1, h2, mul_zero, mul_zero, add_zero]
+    rw [← hp, map_add (f := _), map_mul, map_mul, h1, h2, mul_zero, mul_zero, add_zero]
   rw [aeval_C, Algebra.algebraMap_eq_smul_one] at h3
   have h4 : (((ℓ : O) ^ lagE ℓ sg S₁ S₂) • (1 : Module.End O P)) x = (0 : Module.End O P) x := by
     rw [h3]

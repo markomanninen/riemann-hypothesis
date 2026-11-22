@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ClassNumImQ
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticDifference.QuadraticDifferenceForm
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ClassNumImQ
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticDifference.QuadraticDifferenceForm
+
+@[expose] public section
 
 noncomputable section
 

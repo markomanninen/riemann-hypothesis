@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC Formalism.UG Formalism.BasicNotions GlobalTheory.DefU
 
@@ -9,8 +13,8 @@ namespace GlobalTheory.EmbUnitary
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
-open Classical in
 
+open Classical in
 def twist (τ : E →+* ℂ) : ℂ →+* ℂ :=
   if (InfinitePlace.mk τ).embedding = τ then RingHom.id ℂ else starRingEnd ℂ
 
@@ -100,7 +104,8 @@ theorem yG_unitary (τ : E →+* ℂ) (u : Matrix.unitaryGroup (Fin n) ℂ) :
   split_ifs with hw
   · have h2 := congrFun₂ hu i j
     simp only [Matrix.mul_apply, Matrix.star_apply] at h2
-    simp only [← twist_star, ← map_mul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← twist_star, ← map_mul, ← map_sum]
     change twist τ (∑ k, star ((u : Matrix (Fin n) (Fin n) ℂ) k i) * (u : Matrix (Fin n) (Fin n) ℂ) k j) = _
     rw [h2, Matrix.one_apply, Matrix.one_apply]
     split_ifs <;> simp

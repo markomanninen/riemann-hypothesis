@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PerCEmb
-import Formalism.LocalToGlobal.IndefiniteReal.ThPinsR
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AnnihilationCreationPeriodCoordinates
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FockPolynomialVectorOriginEqPolyDeriv
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.StdCharFinitePartRationalEqExpTrace
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermCColMulVec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HxOfIsONFr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PsiHalfSymplecticOrthonormalFrameStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CplxOfFrame
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThAHeisEntireLinearInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PerCEmb
+public import Formalism.LocalToGlobal.IndefiniteReal.ThPinsR
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AnnihilationCreationPeriodCoordinates
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FockPolynomialVectorOriginEqPolyDeriv
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.StdCharFinitePartRationalEqExpTrace
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermCColMulVec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HxOfIsONFr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PsiHalfSymplecticOrthonormalFrameStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CplxOfFrame
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThAHeisEntireLinearInjective
+
+@[expose] public section
 
 open NumberField Matrix Complex MeasureTheory IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Dict GlobalTheory.AdTh
@@ -37,7 +41,8 @@ theorem aeval_scale {σ : Type} (c : ℂ) {P : MvPolynomial σ ℂ} {d : ℕ} (h
     MvPolynomial.aeval (fun l => MvPolynomial.C c * MvPolynomial.X l : σ → MvPolynomial σ ℂ) P = c ^ d • P := by
   conv_lhs => rw [P.as_sum]
   conv_rhs => rw [P.as_sum]
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
   have hd : ∑ i ∈ m.support, m i = d := by
     have := hP (MvPolynomial.mem_support_iff.1 hm)
@@ -150,7 +155,7 @@ theorem dRho_eq (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) (hV : V.gram = 1
     have a1 := congrFun (congrFun hw i) j
     have a2 := congrFun (congrFun h2 i) j
     simp only [Matrix.map_apply, Matrix.zero_apply] at a1 a2 ⊢
-    rw [Matrix.add_apply, (finPart D).map_add, a1, a2, add_zero]
+    rw [Matrix.add_apply, map_add (finPart D), a1, a2, add_zero]
   rw [heisO, hsym w _ hw, hG _ hreal, hadd, hz, Complex.im_sum]
 
 theorem crea_eq (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) (hV : V.gram = 1) (hn : Even V.rank)
@@ -251,7 +256,7 @@ theorem pureTensorO_zero_eq_thP : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) 
     intro Q
     induction Q using MvPolynomial.induction_on' with
     | add P P' hP hP' =>
-      rw [map_add, map_add, I2.polyDeriv_add, ← hP, ← hP']
+      rw [map_add (f := _), map_add (f := _), I2.polyDeriv_add, ← hP, ← hP']
       rfl
     | monomial m a =>
       have e : MvPolynomial.monomial m a = a • MvPolynomial.monomial m (1 : ℂ) := by

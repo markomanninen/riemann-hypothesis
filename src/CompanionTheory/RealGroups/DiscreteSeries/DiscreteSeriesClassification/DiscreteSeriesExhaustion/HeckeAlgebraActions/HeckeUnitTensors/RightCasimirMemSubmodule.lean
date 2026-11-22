@@ -1,4 +1,8 @@
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.HeckeUnitTensors.CommuteLeftRightCasimir
+module
+
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.HeckeUnitTensors.CommuteLeftRightCasimir
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,8 +41,8 @@ theorem right_casimir_mem_submodule {H} (h : H ∈ Isub X) : y2 X H ∈ Isub X :
     rwa [pow_succ, Module.End.mul_apply] at this
   · intro x y hx hy; rw [map_add]; exact add_mem hx hy
 
-variable (X) in
 
+variable (X) in
 def Om' : Module.End ℂ (Fin (m + 1) → Fin (m + 1) → X.V) := y2 X + (eta X).comp (psi X)
 
 theorem Om'_mem_Isub {H} (h : H ∈ Isub X) : Om' X H ∈ Isub X := by
@@ -52,7 +56,7 @@ theorem Om'_pow_mem_Isub (k : ℕ) {H} (h : H ∈ Isub X) : (Om' X ^ k) H ∈ Is
 
 theorem aeval_mem_Isub (p : ℂ[X]) {H} (h : H ∈ Isub X) : aeval (Om' X) p H ∈ Isub X := by
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, LinearMap.add_apply]; exact add_mem hp hq
+  | add p q hp hq => rw [map_add (f := _), LinearMap.add_apply]; exact add_mem hp hq
   | monomial k c =>
     rw [aeval_monomial, Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul, LinearMap.smul_apply]
     exact Submodule.smul_mem _ _ (Om'_pow_mem_Isub k h)
@@ -95,6 +99,6 @@ theorem Pr_Isub (hS : ScalChar X χ) {H} (h : H ∈ Isub X) :
     refine ⟨(χ s - cn (m + 1)) ^ k • v, fun c => ?_⟩
     simp only [LinearMap.comp_apply, left_casimir_pow_apply, eta_apply, Pr_om_pow hS, Pi.single_smul, map_smul]
   · rintro x y ⟨v, hv⟩ ⟨w, hw⟩
-    exact ⟨v + w, fun c => by rw [Pi.add_apply, map_add, hv, hw, Pi.single_add, map_add]⟩
+    exact ⟨v + w, fun c => by rw [Pi.add_apply, map_add (f := _), hv, hw, Pi.single_add, map_add (f := _)]⟩
 
 end CompanionTheory.RgExh.Hk.UnitPf

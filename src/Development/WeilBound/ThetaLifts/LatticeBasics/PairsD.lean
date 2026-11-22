@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 noncomputable section
@@ -82,11 +87,13 @@ theorem exists_smul_of_rank_le_aleph0 (hV : Module.rank ℂ V ≤ ℵ₀) (φ : 
       intro k hk
       rw [← Finset.prod_erase_mul _ _ hk, map_mul, Module.End.mul_apply, hw]
     have h3 := congrArg (aeval φ (∏ j ∈ s, (X - C j))) hg
-    rw [map_sum, map_zero] at h3
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h3
     simp only [LinearMap.map_smul_of_tower] at h3
     rw [Finset.sum_congr rfl (fun k hk => by rw [key k hk])] at h3
     have h4 : aeval φ (∑ k ∈ s, C (g k) * ∏ j ∈ s.erase k, (X - C j)) v = 0 := by
-      rw [← h3, map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← h3, map_sum, LinearMap.sum_apply]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_mul, aeval_C, Module.End.mul_apply, Module.algebraMap_end_apply]
     have hP := hv0 _ h4
@@ -262,9 +269,9 @@ private theorem dite_update_eq_update_dite {ι : Type} [DecidableEq ι] {X : ι 
       simp
     · have h1 : (⟨v, hv⟩ : T) ≠ i := fun h => hvi (by rw [← h])
       have h2 : v ≠ ⟨i, hT i.2⟩ := fun h => hvi (by rw [h])
-      rw [dif_pos hv, Function.update_of_ne h1, Function.update_of_ne h2, dif_pos hv]
+      rw [dite_eq_left hv, Function.update_of_ne h1, Function.update_of_ne h2, dite_eq_left hv]
   · have h2 : v ≠ ⟨i, hT i.2⟩ := fun h => hv (by rw [h]; exact i.2)
-    rw [dif_neg hv, Function.update_of_ne h2, dif_neg hv]
+    rw [dite_eq_right hv, Function.update_of_ne h2, dite_eq_right hv]
 
 theorem exists_ext {ι : Type} [DecidableEq ι] {X : ι → Type} [∀ i, AddCommGroup (X i)] [∀ i, Module ℂ (X i)]
     (T T₁ : Finset ι) (hT : T ⊆ T₁) (s : ∀ i, X i) :
@@ -272,7 +279,7 @@ theorem exists_ext {ι : Type} [DecidableEq ι] {X : ι → Type} [∀ i, AddCom
       ∀ u : ∀ i, X i, (∀ i ∉ T, u i = s i) →
         e (PiTensorProduct.tprod ℂ fun v : T => u v) = PiTensorProduct.tprod ℂ fun v : T₁ => u v := by
   classical
-  let f : MultilinearMap ℂ (fun v : T => X v) (PiTensorProduct ℂ fun v : T₁ => X v) :=
+  let f : MultilinearMap (RingHom.id ℂ) (fun v : T => X v) (PiTensorProduct ℂ fun v : T₁ => X v) :=
     { toFun := fun m => PiTensorProduct.tprod ℂ fun v : T₁ => if h : (v : ι) ∈ T then m ⟨v, h⟩ else s v
       map_update_add' := fun m i x y => by
         simp only [dite_update_eq_update_dite T T₁ hT s]
@@ -286,7 +293,7 @@ theorem exists_ext {ι : Type} [DecidableEq ι] {X : ι → Type} [∀ i, AddCom
   congr 1
   funext v
   by_cases hv : (v : ι) ∈ T
-  · rw [dif_pos hv]
-  · rw [dif_neg hv, hu v hv]
+  · rw [dite_eq_left hv]
+  · rw [dite_eq_right hv, hu v hv]
 
 end GlobalTheory.ThK.Dbl.Dens

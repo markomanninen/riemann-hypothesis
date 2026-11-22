@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreSplit
+module
+
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem th_gen_harm (c τ : ℂ) (c0 : ℚ) (hc : c = c0) (N : Submodule ℂ (Th
         have hs := harmonicSplitting_holds p q r s true true rfl e
         rw [hs] at hg
         obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hg
-        rw [map_add]
+        rw [map_add (f := _)]
         refine N.add_mem (hharm _ y hy.1 (Submodule.span_mono ?_ hy.2)) ?_
         · intro P hP
           exact ⟨hP.1 rfl, hP.2 rfl⟩
@@ -71,7 +75,8 @@ theorem th_gen_harm (c τ : ℂ) (c0 : ℚ) (hc : c = c0) (N : Submodule ℂ (Th
   rintro x -
   obtain ⟨f, rfl⟩ := Submodule.Quotient.mk_surjective _ x
   change thMkC p q r s c f ∈ N
-  rw [← sum_homogeneousComponent f, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← sum_homogeneousComponent f, map_sum]
   exact N.sum_mem fun d _ => key d _ (homogeneousComponent_mem d f)
 
 theorem gen_oneDeg (c : ℂ) (c0 : ℚ) (hc : c = c0) {g : Pol p q r s} (h0 : g ≠ 0)

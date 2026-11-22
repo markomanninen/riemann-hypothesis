@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TransferenceCoverHolds
+module
+
+public import Mathlib
+public import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TransferenceCoverHolds
+
+@[expose] public section
 
 namespace GlobalTheory
 

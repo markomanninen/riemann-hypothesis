@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.IntegralityFromMetricOfOrthBasisLat
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.OrthBasisLatOf
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.IntegralityFromMetricOfOrthBasisLat
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.OrthBasisLatOf
+
+@[expose] public section
 
 noncomputable section
 

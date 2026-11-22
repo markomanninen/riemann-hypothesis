@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.MultiplicityOne.HeckeIntegrability.LiftFactorization
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PCompat
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PActLoc
-import Development.DiscreteGroups.PiInvariants.CasimirInfinity.CasInfOfIm
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.LogAbsEqLogIdeleNorm
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.MultiplicityOne.HeckeIntegrability.LiftFactorization
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PCompat
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PActLoc
+public import Development.DiscreteGroups.PiInvariants.CasimirInfinity.CasInfOfIm
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.LogAbsEqLogIdeleNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -132,8 +136,8 @@ private theorem hecke_cont {Γ : Type} [Group Γ] [TopologicalSpace Γ] [IsTopol
   have := hh _ hx g
   simpa using this.symm
 
-open PositivityTheory.Rg.BcB PositivityTheory.Rg.BcB.CG in
 
+open PositivityTheory.Rg.BcB PositivityTheory.Rg.BcB.CG in
 private def split0 (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) :
     (InfinitePlace E → G n) × GL (Fin n) (Af E) ≃ₜ* PositivityTheory.Rg.BcB.E.H E n 0 where
   toFun p := (splitGA n p, 1)

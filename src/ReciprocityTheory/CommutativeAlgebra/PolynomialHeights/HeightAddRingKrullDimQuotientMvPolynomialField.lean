@@ -1,5 +1,9 @@
-import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.PolyCM
-import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.Integral
+module
+
+public import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.PolyCM
+public import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.Integral
+
+@[expose] public section
 
 namespace ReciprocityTheory.CA
 

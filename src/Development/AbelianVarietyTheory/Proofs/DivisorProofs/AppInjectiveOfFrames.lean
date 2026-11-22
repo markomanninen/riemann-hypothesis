@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToIThCapDegOfAddNsmulDivP
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsVBAndClsDetOfShortExact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToIThCapDegOfAddNsmulDivP
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsVBAndClsDetOfShortExact
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,7 +31,8 @@ theorem app_injective_of_frames {X : Scheme.{0}} {F E : X.Modules} (φ : F ⟶ E
     have h0 := Fintype.linearIndependent_iff.1 li ((he.basis h).repr x) (by
       rw [← hx]
       conv_rhs => rw [← (he.basis h).sum_repr x]
-      simp only [map_sum, map_smul, Function.comp_apply])
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, Function.comp_apply])
     exact (he.basis h).ext_elem fun j => by simp [h0 j]
   exact this
 

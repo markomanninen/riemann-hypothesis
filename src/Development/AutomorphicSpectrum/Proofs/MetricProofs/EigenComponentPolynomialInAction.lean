@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannLatticeEigenProjectionStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannLatticeEigenProjectionStatement
+
+@[expose] public section
+
 open NumberField Matrix Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp GroundTheory.Heights₂.Heights.LowerBoundFree GroundTheory.Heights₂.Heights.Regular
 
 noncomputable section
@@ -43,8 +48,8 @@ theorem span_eq_top :
   rw [LinearMap.pi_apply_eq_sum_univ φ w]
   simp only [hc, smul_zero, Finset.sum_const_zero, LinearMap.zero_apply]
 
-open Classical in
 
+open Classical in
 theorem exists_coeffs (s : 𝓞 E →+* ℂ) : ∃ (N : ℕ) (a : Fin N → 𝓞 E) (c : Fin N → ℂ),
     ∀ t : E →+* ℂ, ∑ i, c i * t (algebraMap (𝓞 E) E (a i)) = if t = extend s then 1 else 0 := by
   have hmem : (fun t : E →+* ℂ => if t = extend s then (1 : ℂ) else 0) ∈
@@ -80,7 +85,8 @@ theorem eigComp_eq_sum : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
       t (algebraMap (𝓞 E) E b) • eigComp R.B (t.comp (algebraMap (𝓞 E) E)) z := by
     intro b
     conv_lhs => rw [← hsum z]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun t _ => hB b t
   calc eigComp R.B s z
       = ∑ t : E →+* ℂ, (if t = extend s then (1 : ℂ) else 0) •

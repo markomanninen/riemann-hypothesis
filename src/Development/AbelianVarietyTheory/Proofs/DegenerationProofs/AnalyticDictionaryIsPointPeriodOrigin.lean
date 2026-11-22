@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ReframeSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ReframeSt
+
+@[expose] public section
 
 open scoped BigOperators
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -66,7 +70,7 @@ theorem Dict.existsUnique_isPt (v : B.V) : ∃! g, d.IsPt v g := by
     rw [← map_add d.eX, d.c_eq, d.c_eq]
     have h := d.cube_val (B.ct x) (B.ct x') v.2
     ext
-    simp only [s, E, AddEquiv.symm_apply_apply, map_add, Units.val_mul, Units.val_inv_eq_inv_val,
+    simp only [s, E, AddEquiv.symm_apply_apply, map_add (f := _), Units.val_mul, Units.val_inv_eq_inv_val,
       Units.val_mk0, AnArc.e_add]
     have hθ : (N.θ (d.ex (B.ct x)) (d.ex (B.ct x')) (d.ex v.2) : ℂ) =
         d.fr (B.ct x + B.ct x' + v.2) * d.fr (B.ct x) * d.fr (B.ct x') * d.fr v.2 /
@@ -98,7 +102,7 @@ theorem Dict.exists_isPt (g : N.Gt) : ∃ v, d.IsPt v g := by
     push_cast at hm'
     have h := d.cube_val (B.ct x) (B.ct y) w
     ext
-    simp only [φ, map_add, Units.val_mul, Units.val_inv_eq_inv_val, mul_inv]
+    simp only [φ, map_add (f := _), Units.val_mul, Units.val_inv_eq_inv_val, mul_inv]
     have hS : (g.s (d.eX x + d.eX y) : ℂ) =
         g.s (d.eX x) * g.s (d.eX y) / N.θ (d.ex (B.ct x)) (d.ex (B.ct y)) (d.ex w) := by
       rw [eq_div_iff (Units.ne_zero _)]
@@ -223,7 +227,7 @@ theorem Dict.isPt_one_iff (v : B.V) : d.IsPt v 1 ↔ ∃ la : B.La, la.y = 0 ∧
           simp)
         map_add' := fun x y => Int.cast_injective (α := ℂ) (by
           rw [Int.cast_add, (hint (x + y)).choose_spec, (hint x).choose_spec, (hint y).choose_spec]
-          simp only [map_add, AnArc.H_add_left]
+          simp only [map_add (f := _), AnArc.H_add_left]
           ring) }
     refine ⟨AnArc.La.mk 0 n l, AnArc.La.mk_y _ _ _, ?_⟩
     refine Prod.ext (AddMonoidHom.ext fun x => ?_) ?_

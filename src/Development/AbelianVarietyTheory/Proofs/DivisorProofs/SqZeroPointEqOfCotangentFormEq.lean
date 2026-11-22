@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuasiCompactZeroSec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsoToBidualOfLocalFrames
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuasiCompactZeroSec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsoToBidualOfLocalFrames
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -30,7 +34,7 @@ theorem sub_mul_sub_eq_zero_of_closure {B : Type*} [CommRing B] (ψ : B →+* B)
     | one => simp
     | add a b _ _ ha hb =>
       calc (x - ψ x) * (a + b - ψ (a + b)) = (x - ψ x) * (a - ψ a) + (x - ψ x) * (b - ψ b) := by
-            rw [map_add]; ring
+            rw [map_add (f := _)]; ring
         _ = 0 := by rw [ha, hb, add_zero]
     | neg a _ ha =>
       calc (x - ψ x) * (-a - ψ (-a)) = -((x - ψ x) * (a - ψ a)) := by rw [map_neg]; ring
@@ -48,7 +52,7 @@ theorem sub_mul_sub_eq_zero_of_closure {B : Type*} [CommRing B] (ψ : B →+* B)
   | add a b _ _ ha hb =>
     intro y
     calc (a + b - ψ (a + b)) * (y - ψ y) = (a - ψ a) * (y - ψ y) + (b - ψ b) * (y - ψ y) := by
-          rw [map_add]; ring
+          rw [map_add (f := _)]; ring
       _ = 0 := by rw [ha, hb, add_zero]
   | neg a _ ha =>
     intro y
@@ -109,8 +113,8 @@ namespace GlobalTheory.SqZeroPt
 variable {O : Type} [CommRing O] {M : Type} [AddCommGroup M] [Module O M] [Module Oᵐᵒᵖ M]
   [IsCentralScalar O M]
 
-variable (M) in
 
+variable (M) in
 abbrev preimTop (U : (Sp O).Opens) : (TM O M).left.Opens :=
   (𝟙 (TM O M).left) ⁻¹ᵁ ⊤ ⊓ (TM O M).hom ⁻¹ᵁ U
 

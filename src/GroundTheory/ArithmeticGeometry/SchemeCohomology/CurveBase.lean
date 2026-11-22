@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.Linear
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.WeilDivisorSheaf
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.Linear
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.WeilDivisorSheaf
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open CategoryTheory AlgebraicGeometry Order Topology
@@ -70,33 +75,6 @@ lemma ringKrullDim_stalk_eq_one (hX : topologicalKrullDim X ≤ 1) {x : X}
     (hx : x ≠ genericPoint X) : ringKrullDim (X.presheaf.stalk x) = 1 := by
   rw [ringKrullDim_stalk_eq_coheight, coheight_eq_one hX hx]
   rfl
-
-lemma PrimeDivisor.point_ne_genericPoint (Z : PrimeDivisor X) : Z.point ≠ genericPoint X := by
-  intro h
-  have h1 := Z.coheight_point
-  rw [h, coheight_eq_zero.mpr (fun y _ => genericPoint_specializes y)] at h1
-  exact zero_ne_one h1
-
-noncomputable def primeDivisorEquiv (hX : topologicalKrullDim X ≤ 1) :
-    PrimeDivisor X ≃ {x : X // x ≠ genericPoint X} where
-  toFun Z := ⟨Z.point, Z.point_ne_genericPoint⟩
-  invFun x := ⟨x.1, ringKrullDim_stalk_eq_one hX x.2⟩
-  left_inv _ := rfl
-  right_inv _ := rfl
-
-lemma isClosed_singleton_of_ne (hX : topologicalKrullDim X ≤ 1) {x : X}
-    (hx : x ≠ genericPoint X) : IsClosed ({x} : Set X) := by
-  rw [← closure_subset_iff_isClosed]
-  intro y hy
-  rw [← specializes_iff_mem_closure] at hy
-  by_contra hne
-  have hlt : y < x := lt_of_le_not_ge (hy : y ≤ x) fun hxy =>
-    hne (Specializes.antisymm (hxy : y ⤳ x) hy).eq
-  have h := coheight_add_one_le hlt
-  rw [coheight_eq_one hX hx] at h
-  have h2 := coheight_le_one hX y
-  have : (1 : ℕ∞) + 1 ≤ 1 := h.trans h2
-  norm_num at this
 
 end DimensionOne
 

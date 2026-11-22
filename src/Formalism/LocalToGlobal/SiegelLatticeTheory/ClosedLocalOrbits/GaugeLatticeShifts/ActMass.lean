@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LatSpanLeSpan
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NormLinks
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDict
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.FullExists
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHNeat
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NormClosed
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LatSpanLeSpan
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NormLinks
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDict
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.FullExists
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHNeat
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NormClosed
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,10 +88,12 @@ theorem eq_of_indW {β β' : (VS D).V ≃ₗ[D.host.E] (VS D).V} (hβ : β ∈ s
   ext y
   have hdec : y = (y - prV X y) + prV X y := by abel
   have h1 : β (y - prV X y) = y - prV X y := by
-    rw [sub_prV_eq, map_add, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [sub_prV_eq, map_add (f := _), map_sum, map_sum]
     simp only [map_smul, he, hf]
   have h1' : β' (y - prV X y) = y - prV X y := by
-    rw [sub_prV_eq, map_add, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [sub_prV_eq, map_add (f := _), map_sum, map_sum]
     simp only [map_smul, he', hf']
   have hw : prV X y ∈ perpS (VS D) (X.Fu u).X := fun x hx => by
     rw [hXs] at hx
@@ -103,7 +109,7 @@ theorem eq_of_indW {β β' : (VS D).V ≃ₗ[D.host.E] (VS D).V} (hβ : β ∈ s
     rw [hf] at ha
     rw [hf'] at ha'
     rw [map_sub, ha, ha', sub_self]
-  rw [hdec, map_add, map_add, h1, h1', sub_eq_zero.1 hz]
+  rw [hdec, map_add (f := _), map_add (f := _), h1, h1', sub_eq_zero.1 hz]
 
 variable {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)} (cs : ColSys X u what₂)
 

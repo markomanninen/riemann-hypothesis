@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GenCapRepIntertwine
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadCorrespondenceOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GenCapRepIntertwine
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadCorrespondenceOfParts
+
+@[expose] public section
 
 noncomputable section
 

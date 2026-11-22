@@ -1,8 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuationTheory
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.WtSubOneLe
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatFrame
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CoeffProdLeadingMinors
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.TypicalCurveStructureConstants
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.RootStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.FactorialWeightedSumBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.OmBStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.WtSubOneLe
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatFrame
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CoeffProdLeadingMinors
+
+@[expose] public section
+
 open MvPowerSeries ReciprocityTheory.PGsh ReciprocityTheory.ChartRestriction.G.Sh GlobalTheory.FGDepth
 
 namespace GlobalTheory.DetPowShape
@@ -65,7 +73,8 @@ theorem detPow_shape : ∀ (C : Type) [Field C] [CharZero C] (i c : ℕ),
     have h1 : (∑ a : Fin i, Finsupp.single (⟨a, a⟩ : Σ _ : Fin i, Fin i) c) =
         Finsupp.mapDomain f (∑ a : Fin i, Finsupp.single a c) := by
       change _ = Finsupp.mapDomain.addMonoidHom f _
-      simp [map_sum, f]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, f]
     have h2 : MvPolynomial.killCompl hf (detPow C i c) =
         MvPolynomial.monomial (∑ a : Fin i, Finsupp.single a c) 1 := by
       unfold detPow

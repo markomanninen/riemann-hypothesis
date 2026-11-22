@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardQuotPowSmulBoundsDvrFgModule
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardQuotPowSmulBoundsDvrFgModule
+
+@[expose] public section
+
 open scoped NumberField
 
 namespace GlobalTheory.TorsQuotCount
@@ -118,7 +123,7 @@ theorem card_killed_eq : ∀ (K : Type) [Field K] [NumberField K] (M : Type) [Ad
         rw [hf, map_smul, add_smul, mul_smul, mul_smul, hcX, smul_zero, zero_add]
         exact smul_comm _ _ _
       · intro x y hx hy
-        rw [map_add]
+        rw [map_add (f := _)]
         exact add_mem hx hy
   have hQ : Nat.card ((M ⧸ P) ⧸ LinearMap.range f) = Nat.card (M ⧸ (𝔟 • ⊤ : Submodule (𝓞 K) M)) := by
     rw [hrange]

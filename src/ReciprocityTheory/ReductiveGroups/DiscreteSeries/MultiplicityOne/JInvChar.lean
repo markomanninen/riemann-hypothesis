@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvCharB
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvCharB
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.DS.Mult1
 

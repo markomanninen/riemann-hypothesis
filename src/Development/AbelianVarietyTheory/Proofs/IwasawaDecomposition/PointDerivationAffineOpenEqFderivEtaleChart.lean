@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsLatBasisZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpanPeriodLatticeComplexSemiAbelianEqTopStatement
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsLatBasisZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpanPeriodLatticeComplexSemiAbelianEqTopStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory GlobalTheory.Toroidal GlobalTheory.ShFam GlobalTheory.ShFam.Pad GlobalTheory.ShFam.Hor GlobalTheory.ShFam.Hor.LogCh
 open scoped Matrix CategoryTheory.Obj Topology
@@ -39,7 +44,7 @@ theorem derivation_eq_zero_of_etale {k A : Type} [CommRing k] [CommRing A] {g : 
     intro q
     induction q using MvPolynomial.induction_on with
     | C a => exact h0 a
-    | add q r hq hr => rw [map_add, map_add, hq, hr, add_zero]
+    | add q r hq hr => rw [map_add (f := _), map_add (f := _), hq, hr, add_zero]
     | mul_X q i hq => rw [map_mul, hm, hq, hX]; simp
   let F : A →+* DualNumber ℂ := dualHom e D hm
   let F₀ : A →+* DualNumber ℂ := (algebraMap ℂ (DualNumber ℂ)).comp e
@@ -117,7 +122,7 @@ theorem exists_eq_fderiv : ∀ (k : Type) [CommRing k] (Y : Scheme.{0}) (p : Y �
       (ChartGlue.mem_over c.e hx₀ hxW)) fun _ h => h.2
 
   let Dd : Γ(Y, Y.basicOpen g) →+ ℂ := AddMonoidHom.mk' (fun a => (ψW a).snd - dW a) fun a b => by
-    simp only [map_add, TrivSqZeroExt.snd_add, hdadd]
+    simp only [map_add (f := _), TrivSqZeroExt.snd_add, hdadd]
     ring
   have hD : Dd = 0 := by
     refine derivation_eq_zero_of_etale ((resG Y hWc).comp (MvPolynomial.eval₂Hom (algX p c.U) c.x))

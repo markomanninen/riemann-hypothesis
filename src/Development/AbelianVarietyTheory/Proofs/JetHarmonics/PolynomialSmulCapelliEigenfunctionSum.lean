@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementU
-import Formalism.HermitianCurvature.StatementQ
-import Formalism.HermitianCurvature.LetterProductDoubleDegreeCount
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CapelliEigenSumLinearCombinationStatement
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutFpmDecay
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ConjEntrySmulCapelliEigenSum
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementU
+public import Formalism.HermitianCurvature.StatementQ
+public import Formalism.HermitianCurvature.LetterProductDoubleDegreeCount
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CapelliEigenSumLinearCombinationStatement
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutFpmDecay
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ConjEntrySmulCapelliEigenSum
+
+@[expose] public section
+
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Finset
 
 namespace GlobalTheory.EigenSumPoly

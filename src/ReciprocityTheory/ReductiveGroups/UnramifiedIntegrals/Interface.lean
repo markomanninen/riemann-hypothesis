@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.Statement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.Statement
+
+@[expose] public section
 
 noncomputable section
 open Formalism.L2.Th1.CM

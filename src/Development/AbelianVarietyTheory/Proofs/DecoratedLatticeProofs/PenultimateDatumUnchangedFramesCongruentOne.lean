@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PsiDatumAgreeColumnDatumAtTypePrime
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemParahoricOfTrivialReduction
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PhiMapsAndOmegaLaw
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RowCharacterIdAddQSmulLatticePreservingEqOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XiAtCongInvariant
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLevelGroupModTypePrime
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PsiDatumAgreeColumnDatumAtTypePrime
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemParahoricOfTrivialReduction
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PhiMapsAndOmegaLaw
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RowCharacterIdAddQSmulLatticePreservingEqOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XiAtCongInvariant
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLevelGroupModTypePrime
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col
 
@@ -21,18 +25,18 @@ variable {E : Type} [Field E]
 
 theorem resX_extE {n : ℕ} (c : ℕ) (κ : (Fin n → E) ≃ₗ[E] (Fin n → E)) (v : Fin (n + c) → E) :
     resX c (extE c κ v) = κ (resX c v) := by
-  rw [extE_apply, map_add, resX_inX]
+  rw [extE_apply, map_add (f := _), resX_inX]
   abel
 
 theorem atNL_inX {n : ℕ} (c : ℕ) (w : Fin n → E) : atNL E (n + c) n (Loc.inX E n c w) = 0 := by
   unfold atNL
   split_ifs with h
-  · rw [LinearMap.proj_apply, inX_apply, dif_neg (lt_irrefl n)]
+  · rw [LinearMap.proj_apply, inX_apply, dite_eq_right (lt_irrefl n)]
   · rfl
 
 theorem atNL_extE {n : ℕ} (c : ℕ) (κ : (Fin n → E) ≃ₗ[E] (Fin n → E)) (v : Fin (n + c) → E) :
     atNL E (n + c) n (extE c κ v) = atNL E (n + c) n v := by
-  rw [extE_apply, map_add, atNL_inX, add_zero]
+  rw [extE_apply, map_add (f := _), atNL_inX, add_zero]
 
 theorem joinCol_inFr {n' c' n c : ℕ} (f : Sp E n' ≃ₗ[E] Sp E n') (f' : Sp E n ≃ₗ[E] Sp E n) (x : HomE E n' n)
     (y : Sp E n) :
@@ -45,7 +49,7 @@ theorem joinCol_inFr {n' c' n c : ℕ} (f : Sp E n' ≃ₗ[E] Sp E n') (f' : Sp 
   congr 1
   have h1 : LinearMap.funLeft E E (Fin.castAdd c') (extE c' f v) = f (LinearMap.funLeft E E (Fin.castAdd c') v) :=
     resX_extE c' f v
-  rw [h1, atNL_extE, map_add, map_smul]
+  rw [h1, atNL_extE, map_add (f := _), map_smul]
   rfl
 
 end Ext

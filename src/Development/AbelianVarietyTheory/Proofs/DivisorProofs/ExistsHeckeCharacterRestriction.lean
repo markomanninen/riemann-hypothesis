@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RestrictsToQuadraticSignPowOfRestrictsToQuadrati
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemNormGroupIffEverywhereNorm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnitaryCharOfOpenSubgroupAndHom
-import Formalism.UnipotentAdelicQuotients.ThmBInHecke
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsNontrivialHeckeChar
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OpenSigmaStableUnitNeighborhoodStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdeleCharacterTrivialOnCongruenceStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuadraticCharacterExtendsToIdeleClassStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RestrictsToQuadraticSignPowOfRestrictsToQuadrati
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemNormGroupIffEverywhereNorm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnitaryCharOfOpenSubgroupAndHom
+public import Formalism.UnipotentAdelicQuotients.ThmBInHecke
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsNontrivialHeckeChar
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OpenSigmaStableUnitNeighborhoodStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdeleCharacterTrivialOnCongruenceStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuadraticCharacterExtendsToIdeleClassStatement
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
@@ -34,11 +39,15 @@ theorem eq_one_of_congr : ∀ (E : Type) [Field E] [NumberField E] (m : ℕ), 3 
   let w : 𝓞 E := ⟨v, hint⟩
   have hN := Algebra.norm_eq_prod_embeddings ℚ ℂ v
   have hZ : ((Algebra.norm ℤ w : ℤ) : ℚ) = Algebra.norm ℚ v := Algebra.coe_norm_int w
-  let τ₀ : E →ₐ[ℚ] ℂ := IsAlgClosed.lift
+  let τ₀ : E →ₐ[ℚ] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hprod : ‖∏ τ : E →ₐ[ℚ] ℂ, τ v‖ < 1 := by
     rw [norm_prod, ← Finset.mul_prod_erase _ _ (Finset.mem_univ τ₀)]
     have hr : ∏ τ ∈ Finset.univ.erase τ₀, ‖τ v‖ ≤ 1 :=
-      Finset.prod_le_one (fun _ _ => norm_nonneg _) (fun τ _ => (hb τ.toRingHom).le)
+      Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) (fun τ _ => (hb τ.toRingHom).le)
     calc ‖τ₀ v‖ * ∏ τ ∈ Finset.univ.erase τ₀, ‖τ v‖ ≤ ‖τ₀ v‖ * 1 :=
           mul_le_mul_of_nonneg_left hr (norm_nonneg _)
       _ < 1 := by rw [mul_one]; exact hb τ₀.toRingHom
@@ -134,11 +143,11 @@ theorem base_congr_of_tmul : ∀ (F E : Type) [Field F] [NumberField F] [Field E
         show Algebra.trace F E (x : E) = algebraMap (𝓞 F) F r from rfl, HeightOneSpectrum.valuation_of_algebraMap]
       exact HeightOneSpectrum.intValuation_le_one v r
     | zero => intro v; rw [map_zero, map_zero]; exact zero_mem _
-    | add a b _ _ ha hb => intro v; rw [map_add, map_add]; exact add_mem (ha v) (hb v)
+    | add a b _ _ ha hb => intro v; rw [map_add (f := _), map_add (f := _)]; exact add_mem (ha v) (hb v)
     | neg a _ ha => intro v; rw [map_neg, map_neg]; exact neg_mem (ha v)
   refine ⟨T s, hint s hs, ?_⟩
   have e := congrArg T he
-  rw [hT, map_add, hnat, show (1 : A ⊗[F] E) = (1 : A) ⊗ₜ[F] (1 : E) from rfl, hT, htr1, one_mul] at e
+  rw [hT, map_add (f := _), hnat, show (1 : A ⊗[F] E) = (1 : A) ⊗ₜ[F] (1 : E) from rfl, hT, htr1, one_mul] at e
   have h2A : (2 : A) * algebraMap F A (1 / 2) = 1 := by
     rw [show (2 : A) = algebraMap F A 2 from (map_ofNat _ 2).symm, ← map_mul]
     norm_num

@@ -1,77 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
 open GlobalTheory.ZM
 noncomputable section
 namespace GlobalTheory.ZM.CycBase
-
-lemma zeta_prim {k : ℕ} (hk : k ≠ 0) : IsPrimitiveRoot (zeta k) k := Complex.isPrimitiveRoot_exp k hk
-
-lemma snd_eq_zero {p k : ℕ} (hk : k ≠ 0) (hkp : k.Coprime p) (hp : p.Prime) {K : Type} [Field K]
-    (f : ZP p k →+* DualNumber K) (x : ZP p k) : (f x).snd = 0 := by
-  have hinv : ∀ m : ℕ, m.Coprime p → ∀ h : (m : ℂ)⁻¹ ∈ ZP p k,
-      (f ⟨_, h⟩).snd = 0 ∧ (m : K) ≠ 0 := by
-    intro m hm h
-    have hm0 : m ≠ 0 := by
-      rintro rfl
-      exact hp.ne_one (by simpa using hm)
-    have h1 : (m : ZP p k) * ⟨_, h⟩ = 1 := by
-      apply Subtype.ext
-      simp [hm0]
-    have h2 := congrArg f h1
-    rw [map_mul, map_natCast, map_one] at h2
-    have h3 := congrArg TrivSqZeroExt.fst h2
-    have h4 := congrArg TrivSqZeroExt.snd h2
-    simp only [TrivSqZeroExt.fst_mul, TrivSqZeroExt.fst_natCast, TrivSqZeroExt.fst_one] at h3
-    have hmK : (m : K) ≠ 0 := left_ne_zero_of_mul_eq_one h3
-    simp only [DualNumber.snd_mul, TrivSqZeroExt.fst_natCast, TrivSqZeroExt.snd_natCast, zero_mul, add_zero,
-      TrivSqZeroExt.snd_one] at h4
-    exact ⟨(mul_eq_zero.mp h4).resolve_left hmK, hmK⟩
-  have hkK : (k : K) ≠ 0 := (hinv k hkp (Subring.subset_closure (Or.inr ⟨k, hkp, rfl⟩))).2
-  obtain ⟨x, hx⟩ := x
-  induction hx using Subring.closure_induction with
-  | mem x hx =>
-    rcases hx with rfl | ⟨m, hm, rfl⟩
-    · have h1 : zetaZP p k ^ k = 1 := Subtype.ext (zeta_prim hk).pow_eq_one
-      have h2 := congrArg f h1
-      rw [map_pow, map_one] at h2
-      have h3 := congrArg TrivSqZeroExt.fst h2
-      have h4 := congrArg TrivSqZeroExt.snd h2
-      rw [TrivSqZeroExt.fst_pow, TrivSqZeroExt.fst_one] at h3
-      rw [TrivSqZeroExt.snd_pow, TrivSqZeroExt.snd_one] at h4
-      have h5 : (f (zetaZP p k)).fst ≠ 0 := by
-        intro h0
-        rw [h0, zero_pow hk] at h3
-        exact zero_ne_one h3
-      change (f (zetaZP p k)).snd = 0
-      simpa [hkK, h5] using h4
-    · exact (hinv m hm _).1
-  | zero => change (f 0).snd = 0; simp
-  | one => change (f 1).snd = 0; simp
-  | add x y hx hy ihx ihy =>
-    change (f (⟨x, hx⟩ + ⟨y, hy⟩)).snd = 0
-    simp only [map_add, TrivSqZeroExt.snd_add, ihx, ihy, add_zero]
-  | neg x hx ihx =>
-    change (f (-⟨x, hx⟩)).snd = 0
-    simp only [map_neg, TrivSqZeroExt.snd_neg, ihx, neg_zero]
-  | mul x y hx hy ihx ihy =>
-    change (f (⟨x, hx⟩ * ⟨y, hy⟩)).snd = 0
-    simp only [map_mul, DualNumber.snd_mul, ihx, ihy, mul_zero, zero_mul, add_zero]
-
-lemma eq_constPt {p k : ℕ} (hk : k ≠ 0) (hkp : k.Coprime p) (hp : p.Prime) {K : Type} [Field K]
-    (y : Sp (DualNumber K) ⟶ Sp (ZP p k)) : y = constPt y := by
-  obtain ⟨f, rfl⟩ := Spec.map_surjective y
-  simp only [constPt, spMap, ← Spec.map_comp]
-  congr 1
-  ext x
-  · simp [TrivSqZeroExt.algebraMap_eq_inl]
-  · simp [snd_eq_zero hk hkp hp f.hom x, TrivSqZeroExt.algebraMap_eq_inl]
 
 abbrev CF (k : ℕ) : IntermediateField ℚ ℂ := IntermediateField.adjoin ℚ {zeta k}
 
@@ -199,7 +142,7 @@ private lemma ringHom_ZP_pow_dualNumber_snd_eq_zero {K : Type} [Field K] {p n e 
   | zero => rw [show (⟨0, _⟩ : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.ZP p (n ^ e)) = 0 from rfl, map_zero]; rfl
   | one => rw [show (⟨1, _⟩ : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.ZP p (n ^ e)) = 1 from rfl, map_one]; rfl
   | add y z hy hz ihy ihz =>
-    rw [show (⟨y + z, add_mem hy hz⟩ : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.ZP p (n ^ e)) = ⟨y, hy⟩ + ⟨z, hz⟩ from rfl, map_add,
+    rw [show (⟨y + z, add_mem hy hz⟩ : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.ZP p (n ^ e)) = ⟨y, hy⟩ + ⟨z, hz⟩ from rfl, map_add (f := _),
       TrivSqZeroExt.snd_add, ihy, ihz, add_zero]
   | neg y hy ihy =>
     rw [show (⟨-y, neg_mem hy⟩ : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.ZP p (n ^ e)) = -⟨y, hy⟩ from rfl, map_neg,
@@ -222,9 +165,9 @@ private lemma spec_dualNumber_hom_ZP_eq_constPt {K : Type} [Field K] {p n e : �
   · simp [TrivSqZeroExt.algebraMap_eq_inl]
   · simp [TrivSqZeroExt.algebraMap_eq_inl, ringHom_ZP_pow_dualNumber_snd_eq_zero hn hn0]
 
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField in
 open scoped CategoryTheory.Obj TensorProduct in
-
 theorem _root_.GlobalTheory.ZM.CycBase.exists_base : ∀ (n e p k : ℕ), n.Prime → p.Prime → n ≠ p → 1 ≤ e →
     k = n ^ e → ∃ (o : Type) (_ : CommRing o) (b : _root_.GlobalTheory.ZM.TBase o k) (em : o →+* ℂ)
       (j : o →+* _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.ZP p k), _root_.GlobalTheory.ZM.ArBase em ∧ j (b.ζ : o) = _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.zetaZP p k ∧

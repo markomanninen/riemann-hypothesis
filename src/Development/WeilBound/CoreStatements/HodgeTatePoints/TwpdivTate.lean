@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.PairingExtends
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.PairingExtends
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,8 @@ theorem tate_equiv {La : Type} [AddCommGroup La] [Module.Free ℤ La] [Module.Fi
       (j (∑ i, c i ⊗ₜ b i)).conv n = (τ (∑ i, digit n (c i) • b i)).conv n := by
     intro c n
     change lvl G n _ = lvl G n _
-    simp only [map_sum, hj, lvl_smul, map_nsmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, hj, lvl_smul, map_nsmul]
   have hdiv : ∀ n (a a' : La), (∃ u : La, a - a' = (p ^ n) • u) ↔
       ∀ i, ((b.repr a i : ℤ) : ZMod (p ^ n)) = (b.repr a' i : ℤ) := by
     intro n a a'

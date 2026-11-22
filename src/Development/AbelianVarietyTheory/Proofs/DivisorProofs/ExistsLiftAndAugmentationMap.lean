@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RatBasisLinearIndependentInt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RatBasisLinearIndependentInt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -59,7 +63,7 @@ theorem PDPoly.exists_lift_and_aug : ∀ (B : Type) [CommRing B] (Q : PDPoly B),
       | add x y _ _ hx hy =>
         have : x + y - algebraMap B Q.P (ε (x + y)) =
             (x - algebraMap B Q.P (ε x)) + (y - algebraMap B Q.P (ε y)) := by
-          rw [map_add, map_add]; abel
+          rw [map_add (f := _), map_add (f := _)]; abel
         rw [this]; exact add_mem hx hy
       | smul b x _ hx =>
         have : b • x - algebraMap B Q.P (ε (b • x)) = algebraMap B Q.P b * (x - algebraMap B Q.P (ε x)) := by

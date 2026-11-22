@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PadicSubsetSums.CentralIdempotents.GaloisConjCentralIdempotent
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.BlockEmbeddingFactors
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeviTensorBlockExt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralIdempotentsSimpleFDRepFiniteFinsumEqOne
+module
+
+public import Mathlib
+public import Formalism.PadicSubsetSums.CentralIdempotents.GaloisConjCentralIdempotent
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.BlockEmbeddingFactors
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeviTensorBlockExt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralIdempotentsSimpleFDRepFiniteFinsumEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -109,7 +113,7 @@ theorem factor_iso : ∀ (K : Type) [Field K] [Fintype K] [DecidableEq K] (r s :
   intro K _ _ _ r s b lam hsimp c d h W _ _ ρ hF
   refine ⟨blockNum b c h, ?_⟩
   set e := blockNum b c h
-  let ρ' : Representation ℂ (GL (Fin d) K) (lam c) := (transp e (lam c)).ρ
+  let ρ' : Representation ℂ (GL (Fin d) K) (lam c) := (Formalism.IrreducibleCountingLemmas.TYPES.transp e (lam c)).ρ
   have hirr : ρ'.IsIrreducible := GlobalTheory.SerOSys.ZSum.isIrreducible_of_simple _ (Formalism.L2.PT.simple_transp e (hsimp c))
   have hnt : ∀ c', Nontrivial (lam c') := fun c' =>
     PI.GreenLabelSurjWork.nontrivial_of_simple _ (hsimp c')

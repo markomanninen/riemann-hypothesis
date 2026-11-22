@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.SigmaSplitSymmInl
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.MapInclKMemTwCentResOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedNormProductIterateTwistedConj
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SigIterateApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SigResIterateEqSelf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.SigmaSplitSymmInl
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MapInclKMemTwCentResOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedNormProductIterateTwistedConj
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SigIterateApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SigResIterateEqSelf
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount ReciprocityTheory.DiscreteGroups.LocalClassField
 open scoped TensorProduct Classical
 

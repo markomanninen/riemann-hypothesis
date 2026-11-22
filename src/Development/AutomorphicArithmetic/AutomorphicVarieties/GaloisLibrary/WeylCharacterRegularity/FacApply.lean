@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylCharacterRegularity.IsRegConj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylAlgebraQuantumDet.IsTop
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylCharacterRegularity.IsRegConj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylAlgebraQuantumDet.IsTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem isReg_fac (P : Weyl.Pre a) (N : ℕ) (τ : E →+* ℂ) : IsReg (fac P N
       MvPolynomial.eval (fun ab => coord τ (y.val ab.1 ab.2)) q) ∈ regFun E a := fun q => by
     induction q using MvPolynomial.induction_on with
     | C c => simp only [MvPolynomial.eval_C]; exact (regFun E a).algebraMap_mem c
-    | add p q hp hq => simp only [map_add]; exact (regFun E a).add_mem hp hq
+    | add p q hp hq => simp only [map_add (f := _)]; exact (regFun E a).add_mem hp hq
     | mul_X p n hp =>
       simp only [map_mul, MvPolynomial.eval_X]
       exact (regFun E a).mul_mem hp (Algebra.subset_adjoin (Or.inl ⟨τ, n.1, n.2, rfl⟩))
@@ -46,7 +50,7 @@ theorem diff_coef (P : Weyl.Pre a) (i j : Fin P.d) : Differentiable ℂ (P.coef 
   clear e hp
   induction p using MvPolynomial.induction_on with
   | C c => simp
-  | add p q hp hq => simp only [map_add]; exact hp.add hq
+  | add p q hp hq => simp only [map_add (f := _)]; exact hp.add hq
   | mul_X p n hp =>
     simp only [map_mul, MvPolynomial.eval_X]
     exact hp.mul (by fun_prop : Differentiable ℂ fun x : Fin a → Fin a → ℂ => x n.1 n.2)
@@ -77,7 +81,7 @@ theorem dOf_fac (P : Weyl.Pre a) (N : ℕ) (τ : E →+* ℂ) (X : Lie E a) :
   ring
 
 open Classical in
-theorem eOf_fac [IsTotallyComplex E] (P : Weyl.Pre a) (N : ℕ) (τ' τ : E →+* ℂ) (i j : Fin a) :
+theorem eOf_fac [_root_.NumberField.IsTotallyComplex E] (P : Weyl.Pre a) (N : ℕ) (τ' τ : E →+* ℂ) (i j : Fin a) :
     eOf (fac P N τ') τ i j =
       if τ' = τ then P.E i j + (if i = j then algebraMap ℂ _ (-(N : ℂ)) else 0) else 0 := by
   have h1 : ∀ x : Cinf E, dOf (fac P N τ') (toL (Matrix.single i j x)) =

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.DistinguishedUnitIdeals.CoprimeProd
-import Formalism.EisensteinCokernelLengths.FactorialValuationBounds.LemmaCRam
+module
+
+public import Mathlib
+public import Formalism.DistinguishedUnitIdeals.CoprimeProd
+public import Formalism.EisensteinCokernelLengths.FactorialValuationBounds.LemmaCRam
+
+@[expose] public section
 
 noncomputable section
 

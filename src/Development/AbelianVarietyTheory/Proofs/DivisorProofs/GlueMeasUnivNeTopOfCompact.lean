@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ChartMeasApplyOfSubset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ChartMeasApplyOfSubset
+
+@[expose] public section
+
 open Set MeasureTheory
 open ReciprocityTheory.L2DbarEstimates (V)
 open scoped ENNReal
@@ -36,7 +41,7 @@ theorem glueMeas_univ_ne_top_of_compact {M : Type} [TopologicalSpace M] [Compact
       exact Metric.ball_subset_closedBall hz.2
     obtain ⟨C, hC⟩ :=
       (isCompact_closedBall ((e i) y) δ).exists_bound_of_continuousOn ((hr i).mono hδs)
-    refine ⟨U, hUo, ⟨hi, Metric.mem_ball_self hδ⟩, ?_⟩
+    refine ⟨U, hUo, ⟨hi, Set.mem_preimage.mpr (Metric.mem_ball_self hδ)⟩, ?_⟩
     have hm := GlobalTheory.ChartGlue.measurableSet_image (e i) hUo.measurableSet hUs
     rw [hμ, GlobalTheory.ChartGlue.glueMeas_apply e _ hd hρ i hUo.measurableSet hUs,
       GlobalTheory.ChartGlue.chartMeas_apply_of_subset _ _ hUo.measurableSet hUs]

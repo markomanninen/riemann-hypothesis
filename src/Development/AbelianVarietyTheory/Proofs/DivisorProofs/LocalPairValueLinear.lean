@@ -1,12 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PointsNonemptyUnitaryRankOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHaarMeasureScaling
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAdelicCharacter
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianFormNegOnOrthogonalOfPositiveIndexOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegDefOfHermitianMatrixPositiveIndexEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLower
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHyperplane
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegDefiniteHyperplaneOfSignatureOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointsNonemptyUnitaryRankOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHaarMeasureScaling
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAdelicCharacter
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianFormNegOnOrthogonalOfPositiveIndexOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegDefOfHermitianMatrixPositiveIndexEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLower
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount GlobalTheory.LKCx
 open scoped TensorProduct Classical
 

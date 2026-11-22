@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsBlockTrdeg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsBlockTrdeg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -89,14 +94,14 @@ theorem isHomogeneous_forgetWeight (κ : K → K') {P : Ideal (MRing ι')} (h : 
   rw [weight_forgetWeight]
   exact ha d (mem_support_iff.mpr hd) k.1
 
-omit [Fintype K'] [∀ k, Fintype (ι' k)] in
 
+omit [Fintype K'] [∀ k, Fintype (ι' k)] in
 theorem isWeightedHomogeneous_rename (κ : K → K') {v : (Σ k, ι k) → (Σ k', ι' k')}
     (hv : ∀ p, (v p).1 ∈ Set.range κ) (g : MvPolynomial (Σ k, ι k) ℤ) :
     IsWeightedHomogeneous (forgetWeight κ) (rename v g) 0 := by
   induction g using MvPolynomial.induction_on with
   | C a => rw [rename_C]; exact isWeightedHomogeneous_C _ _
-  | add p q hp hq => rw [map_add]; exact hp.add hq
+  | add p q hp hq => rw [map_add (f := _)]; exact hp.add hq
   | mul_X p q hp =>
     rw [map_mul, rename_X]
     have h0 : forgetWeight κ (v q) = 0 := by
@@ -111,8 +116,8 @@ theorem isWeightedHomogeneous_rename (κ : K → K') {v : (Σ k, ι k) → (Σ k
 def forgetMonomial (κ : K → K') (i : ∀ k : Forgotten κ, ι' k.1) (a : Forgotten κ →₀ ℕ) : MRing ι' :=
   ∏ k, X ⟨k.1, i k⟩ ^ a k
 
-omit [∀ k, Fintype (ι' k)] in
 
+omit [∀ k, Fintype (ι' k)] in
 theorem isWeightedHomogeneous_forgetMonomial (κ : K → K') (i : ∀ k : Forgotten κ, ι' k.1)
     (a : Forgotten κ →₀ ℕ) :
     IsWeightedHomogeneous (forgetWeight κ) (forgetMonomial κ i a) ⇑a := by
@@ -137,8 +142,8 @@ variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
   {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} {P' : Ideal (MRing ι')}
   {L : Type} [Field L] [Algebra ℚ L] {φ : MRing ι' →+* L}
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem algebraicIndependent_forgotten (hv : ∀ p, (v p).1 = κ p.1) (hP : IsMultiHomogIdeal P')
     (hprime : P'.IsPrime) (hker : RingHom.ker φ = P') (i : ∀ k : Forgotten κ, ι' k.1)
     (hi : ∀ k, (X ⟨k.1, i k⟩ : MRing ι') ∉ P') (S : Subalgebra ℚ L)
@@ -149,24 +154,25 @@ theorem algebraicIndependent_forgotten (hv : ∀ p, (v p).1 = κ p.1) (hP : IsMu
   set ψ : MvPolynomial (Σ k, ι k) ℤ →+* L := φ.comp (rename v).toRingHom with hψ
   have hA : adjoin ℚ (Set.range fun p : Σ k, ι k ↦ φ (X (v p))) = adjoin ℚ (Set.range fun p ↦ ψ (X p)) := by
     simp [ψ]
-  obtain ⟨N, hN, hNs⟩ := exists_nat_mul_mem_range_finset ψ (p.support.image fun a ↦ ((coeff a p : S) : L)) (by
+  obtain ⟨N, hN, hNs⟩ := exists_nat_mul_mem_range_finset ψ (p.support.image fun a ↦ ((AddMonoidAlgebra.coeff p a : S) : L)) (by
     intro y hy
     obtain ⟨a, -, rfl⟩ := Finset.mem_image.mp hy
     rw [← hA]
-    exact hS (coeff a p).2)
+    exact hS (AddMonoidAlgebra.coeff p a).2)
   choose g hg using fun a : p.support ↦ RingHom.mem_range.mp (hNs _ (Finset.mem_image_of_mem _ a.2))
   set H : MRing ι' := ∑ a : p.support, rename v (g a) * forgetMonomial κ i a.1 with hHdef
   have hH : H ∈ P' := by
     rw [← hker, RingHom.mem_ker]
     have e1 : φ H = (N : L) * aeval (fun k : Forgotten κ ↦ φ (X ⟨k.1, i k⟩)) p := by
-      rw [hHdef, map_sum, aeval_def, eval₂_eq', Finset.mul_sum, ← Finset.sum_coe_sort p.support]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hHdef, map_sum, aeval_def, eval₂_eq', Finset.mul_sum, ← Finset.sum_coe_sort p.support]
       refine Finset.sum_congr rfl fun a _ ↦ ?_
       rw [map_mul, show φ (rename v (g a)) = ψ (g a) from rfl, hg a, forgetMonomial, map_prod]
       simp only [map_pow, mul_assoc]
       rfl
     rw [e1, hp, mul_zero]
   refine MvPolynomial.ext _ _ fun a ↦ ?_
-  rw [coeff_zero]
+  rw [AddMonoidAlgebra.coeff_zero]
   by_cases ha : a ∈ p.support
   swap
   · exact notMem_support_iff.mp ha
@@ -180,7 +186,8 @@ theorem algebraicIndependent_forgotten (hv : ∀ p, (v p).1 = κ p.1) (hP : IsMu
     (isHomogeneous_forgetWeight κ hP) hH (⇑a)
   have e2 : weightedHomogeneousComponent (forgetWeight κ) (⇑a) H =
       rename v (g ⟨a, ha⟩) * forgetMonomial κ i a := by
-    rw [hHdef, map_sum, Finset.sum_eq_single ⟨a, ha⟩]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hHdef, map_sum, Finset.sum_eq_single ⟨a, ha⟩]
     · exact (hhom ⟨a, ha⟩).weightedHomogeneousComponent_same
     · intro b _ hb
       exact (hhom b).weightedHomogeneousComponent_ne _
@@ -189,7 +196,7 @@ theorem algebraicIndependent_forgotten (hv : ∀ p, (v p).1 = κ p.1) (hP : IsMu
   rw [e2] at hcomp
   rcases hprime.mem_or_mem hcomp with h1 | h1
   · rw [← hker, RingHom.mem_ker] at h1
-    have h2 : (N : L) * ((coeff a p : S) : L) = 0 := by
+    have h2 : (N : L) * ((AddMonoidAlgebra.coeff p a : S) : L) = 0 := by
       rw [← hg ⟨a, ha⟩]
       exact h1
     have : CharZero L := charZero_of_injective_algebraMap (algebraMap ℚ L).injective

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.CharacterValuation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.CharacterValuation
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -28,10 +32,6 @@ theorem _root_.GlobalTheory.CharVal.MaxV.unique (h : _root_.GlobalTheory.CharVal
   obtain ⟨a, ha, hγ⟩ := h.2
   obtain ⟨b, hb, hδ⟩ := h'.2
   exact le_antisymm (hγ ▸ h'.1 a ha) (hδ ▸ h.1 b hb)
-
-theorem val_smul_le (r : 𝓞 E) (a : E) : P.valuation E (r • a) ≤ P.valuation E a := by
-  rw [Algebra.smul_def, map_mul]
-  exact mul_le_of_le_one_left' (P.valuation_le_one r)
 
 open NumberField IsDedekindDomain in
 open scoped Pointwise in
@@ -200,11 +200,11 @@ theorem _root_.GlobalTheory.CharVal.mem_locP' (I : Submodule (𝓞 E) E) (x : E)
     x ∈ _root_.Formalism.HermitianLatticesTheory.localization₂ P.asIdeal I ↔ ∃ s : 𝓞 E, s ∉ P.asIdeal ∧ s • x ∈ I :=
   Iff.rfl
 
+
 open NumberField IsDedekindDomain in
 open scoped Pointwise in
 variable {E : Type} [Field E] [NumberField E] in
 variable {P : HeightOneSpectrum (𝓞 E)} {I J : Submodule (𝓞 E) E} {γ δ : WithZero (Multiplicative ℤ)} in
-
 theorem _root_.GlobalTheory.CharVal.MaxV.mem_locP (h : _root_.GlobalTheory.CharVal.MaxV P I γ) (h0 : γ ≠ 0) (x : E) :
     x ∈ _root_.Formalism.HermitianLatticesTheory.localization₂ P.asIdeal I ↔ P.valuation E x ≤ γ := by
   rw [_root_.GlobalTheory.CharVal.mem_locP']

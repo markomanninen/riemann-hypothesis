@@ -1,5 +1,9 @@
-import Formalism.GaussJetBounds.GenLogInverse
-import Formalism.GaussJetBounds.GaussJetProofs.SubstitutionWeightBound
+module
+
+public import Formalism.GaussJetBounds.GenLogInverse
+public import Formalism.GaussJetBounds.GaussJetProofs.SubstitutionWeightBound
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -190,7 +194,8 @@ theorem pure_cross_term_weight : PureCross.{u, v} := by
   · intro m hm
     rw [monoWtGe_iff]
     unfold bSum
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (Real.rpow_nonneg h0.le _)
       fun ab _ => ?_
     rw [MvPowerSeries.coeff_subst (hsub ab)]
@@ -230,9 +235,11 @@ theorem pure_cross_term_weight : PureCross.{u, v} := by
           show ((l ^ α : ℕ) : ℝ) * rho l + (((l ^ β : ℕ) : ℝ) * rho l + 1) =
             ((l ^ α : ℕ) : ℝ) * rho l + ((l ^ β : ℕ) : ℝ) * rho l + 1 by ring, min_self]
       have hPP : MvPowerSeries.coeff m (P * P') = 0 := by
-        rw [hP, hP', Finset.sum_mul_sum, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hP, hP', Finset.sum_mul_sum, map_sum]
         refine Finset.sum_eq_zero fun i _ => ?_
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         refine Finset.sum_eq_zero fun j _ => ?_
         rw [pow_pair_eq, MvPowerSeries.coeff_monomial_ne]
         exact fun h => hm ⟨i, j, α, β, h⟩

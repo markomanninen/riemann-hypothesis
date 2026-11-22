@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyCuspFrame
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothOfAlgClosedUnif
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyCuspFrame
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothOfAlgClosedUnif
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.CechPic GlobalTheory.Vanishing GlobalTheory.CompHS
 
 set_option autoImplicit false
@@ -36,8 +41,8 @@ def CarriesTri {Y : Model Xo c (RingHom.id c.F)} (C : FlagCpt Y (RingEquiv.refl 
 def Vo {Y : Model Xo c (RingHom.id c.F)} (C : FlagCpt Y (RingEquiv.refl c.F)) : C.Y.X.Opens :=
   C.π ⁻¹ᵁ ⟨Set.range Y.jQ, (haveI := Y.jQ_open; Y.jQ.isOpenEmbedding.isOpen_range)⟩
 
-open GlobalTheory.Toroidal (gen genι genStr) in
 
+open GlobalTheory.Toroidal (gen genι genStr) in
 instance isIso_genι {Y : Model Xo c (RingHom.id c.F)} : IsIso (genι Y) := by
   have : IsIso (spMap (RingHom.id c.F)) := by
     show IsIso (Spec.map (𝟙 _))

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIdemOfAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIntegralSplitIdempotentOverTwo
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MulMemIntA
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIdemOfAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIntegralSplitIdempotentOverTwo
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MulMemIntA
+
+@[expose] public section
+
 open IsDedekindDomain NumberField
 open scoped TensorProduct
 

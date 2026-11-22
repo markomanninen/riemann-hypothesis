@@ -1,5 +1,9 @@
-import Formalism.LatticeRigidity.StatementD
-import Mathlib
+module
+
+public import Mathlib
+public import Formalism.GelfandTransference.EnergyIdentity
+
+@[expose] public section
 
 namespace Formalism.SA.P
 

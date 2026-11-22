@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.Columns.AdelicLemmas
-import Formalism.LocalToGlobal.Columns.ColForms
-import Formalism.LocalToGlobal.Columns.DecoFin
-import Formalism.LocalRingCardinality.DataLevel
+module
+
+public import Formalism.LocalToGlobal.Columns.AdelicLemmas
+public import Formalism.LocalToGlobal.Columns.ColForms
+public import Formalism.LocalToGlobal.Columns.DecoFin
+public import Formalism.LocalRingCardinality.DataLevel
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix
 open scoped TensorProduct
@@ -15,7 +19,7 @@ open Formalism.L2.DIV (Pl kP St redAt redFn)
 section Lev
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
-variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] (ST SG : Finset (Pl E)) (H : Subgroup (GLG E n SG))
+variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] (ST SG : Finset (Pl E)) (H : Subgroup (GLG (E := E) (n := n) (SG := SG)))
 
 def levU : Subgroup (GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) := (JH hc n ST SG H).map (J0 hc n ST).subtype
 
@@ -101,25 +105,25 @@ end Fun
 section Cls
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
-variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] (ST SG : Finset (Pl E)) (H : Subgroup (GLG E n SG))
+variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] (ST SG : Finset (Pl E)) (H : Subgroup (GLG (E := E) (n := n) (SG := SG)))
 
 abbrev AdCl : Type := Formalism.L2.DIV.Cl hc (1 : Matrix (Fin n) (Fin n) E) (levU hc n ST SG H)
 
-abbrev DecoCl : Type := MulAction.orbitRel.Quotient (UF E n × H) (DecoSet E n ST SG)
+abbrev DecoCl : Type := MulAction.orbitRel.Quotient (UF E n × H) (DecoSet (E := E) (n := n) (ST := ST) (SG := SG))
 
-def decoCls (d : DecoSet E n ST SG) : DecoCl n ST SG H := Quotient.mk (MulAction.orbitRel (UF E n × H) (DecoSet E n ST SG)) d
+def decoCls (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) : DecoCl n ST SG H := Quotient.mk (MulAction.orbitRel (UF E n × H) (DecoSet (E := E) (n := n) (ST := ST) (SG := SG))) d
 
-def ptOf (d : DecoSet E n ST SG) : UAd hc n :=
+def ptOf (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) : UAd hc n :=
   open Classical in
   if h : ∃ x : UAd hc n, decoOf ST SG (x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) = d then h.choose else 1
 
-def adClsOf (d : DecoSet E n ST SG) : AdCl hc n ST SG H := Quotient.mk'' (ptOf hc n ST SG d)
+def adClsOf (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) : AdCl hc n ST SG H := Quotient.mk'' (ptOf hc n ST SG d)
 
-def decoOfD (c : DiaG E ST) (x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) : DecoSet E n ST SG := (decoOf ST SG x).dia c
+def decoOfD (c : DiaG (E := E) (ST := ST)) (x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) : DecoSet (E := E) (n := n) (ST := ST) (SG := SG) := (decoOf ST SG x).dia c
 
-def ptOfD (c : DiaG E ST) (d : DecoSet E n ST SG) : UAd hc n := ptOf hc n ST SG (d.dia c⁻¹)
+def ptOfD (c : DiaG (E := E) (ST := ST)) (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) : UAd hc n := ptOf hc n ST SG (d.dia c⁻¹)
 
-def stabRat (d : DecoSet E n ST SG) : MulAction.stabilizer (UF E n × H) d →* URat hc n :=
+def stabRat (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) : MulAction.stabilizer (UF E n × H) d →* URat hc n :=
   (ratEquiv hc n).symm.toMonoidHom.comp ((MonoidHom.fst (UF E n) H).comp (Subgroup.subtype _))
 
 end Cls
@@ -132,8 +136,8 @@ def parFam (h : r ≤ n) (t s : ℕ) {SG : Finset (Pl E)} (P : LevFam E K r SG)
     (χ : ∀ w : SG, ℕ → (𝓞 E ⧸ w.1.asIdeal)ˣ →* Kˣ) : LevFam E K n SG := fun w =>
   ⟨HPar n (𝓞 E ⧸ w.1.asIdeal) h (List.replicate s t) (P w).H, lamPar h (List.replicate s t) (P w).lam (χ w)⟩
 
-open Classical in
 
+open Classical in
 def parDat (h : r ≤ n) (t s : ℕ) {SG : Finset (Pl E)} (P : LevFam E K r SG)
     (χ : ∀ w : SG, ℕ → (𝓞 E ⧸ w.1.asIdeal)ˣ →* Kˣ) : Formalism.L2.DIV.LevDat E K n where
   r := r
@@ -154,21 +158,11 @@ open Formalism.BasicNotions (Ranks)
 
 variable {X : Fields} {Pr : Primes X} {R : Ranks}
 
-theorem kj_le_N (R : Ranks) (j : ℕ) : R.k + j ≤ R.N j := by
-  simp only [Ranks.N, Nat.mul_add, Nat.mul_one]
-  omega
-
 theorem N_eq_blocks (R : Ranks) (j : ℕ) : R.N j = (R.k + j) + j * R.t := by
   simp only [Ranks.N, Nat.mul_add, Nat.mul_one]
   omega
 
 instance neZeroN (R : Ranks) (j : ℕ) : NeZero (R.N j) := ⟨(R.N_pos j).ne'⟩
-
-def colP (Ch : Chars X Pr R.m) (j : ℕ) : LevFam X.E X.K (R.k + j) Pr.vGs := fun w =>
-  ⟨HU (𝓞 X.E ⧸ w.1.asIdeal) (R.k + j), supChar (Ch.psi0 w) (R.k + j) (R.k + j) [] (SX R.k R.m j)⟩
-
-def colDat (Ch : Chars X Pr R.m) (j : ℕ) : Formalism.L2.DIV.LevDat X.E X.K (R.N j) :=
-  parDat (kj_le_N R j) R.t j (colP Ch j) fun w => extChi fun s => Ch.chi s w
 
 def colLevS (Ch : Chars X Pr R.m) (j : ℕ) : LevFam X.E X.K (R.N j) Pr.vGs := fun w =>
   if j + 1 < R.m then colLev Ch j w
@@ -179,30 +173,17 @@ def colLevS (Ch : Chars X Pr R.m) (j : ℕ) : LevFam X.E X.K (R.N j) Pr.vGs := f
     ⟨HXmsharp (𝓞 X.E ⧸ w.1.asIdeal) (R.N j) R.k R.r R.t R.m,
       lamXmsharp (Ch.psi0 w) (extChi fun s => Ch.chi s w) (R.N j) R.k R.r R.t R.m⟩
 
-@[reducible] def colGSDS (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m) (u : Pr.Word) (j : ℕ) : GSD X.K :=
-  formGSD (colVal W u j (Pr.vT u) Pr.vGs) (colLevS Ch j)
-
 variable (hc : Formalism.BasicNotions.CMData X.F X.E) (Ch : Chars X Pr R.m)
 
-def colU (u : Pr.Word) (j : ℕ) : Subgroup (GL (Fin (R.N j)) (X.E ⊗[X.F] Formalism.L2.Herm.Af X.F)) :=
-  levU hc (R.N j) (Pr.vT u) Pr.vGs (colLev Ch j).grp
-
-def colUS (u : Pr.Word) (j : ℕ) : Subgroup (GL (Fin (R.N j)) (X.E ⊗[X.F] Formalism.L2.Herm.Af X.F)) :=
-  levU hc (R.N j) (Pr.vT u) Pr.vGs (colLevS Ch j).grp
 
 open Classical in
-
-def diaT (u : Pr.Word) : DiaG X.E (Pr.vT u) := fun P =>
+def diaT (u : Pr.Word) : DiaG (E := X.E) (ST := Pr.vT u) := fun P =>
   if h : IsUnit (Ideal.Quotient.mk P.1.asIdeal (X.conjO (Pr.piT u))) then h.unit else 1
 
-def colDia (R : Ranks) (u : Pr.Word) (j : ℕ) : DiaG X.E (Pr.vT u) := if j < R.m then 1 else diaT u
+def colDia (R : Ranks) (u : Pr.Word) (j : ℕ) : DiaG (E := X.E) (ST := Pr.vT u) := if j < R.m then 1 else diaT u
 
 def colPt (u : Pr.Word) (j : ℕ) (d : ColDeco X Pr u (R.N j)) : UAd hc (R.N j) :=
   ptOfD hc (R.N j) (Pr.vT u) Pr.vGs (colDia R u j) d
-
-def colTyp (u : Pr.Word) (j : ℕ) : colU hc Ch u j →* X.Kˣ := levTyp (colLev Ch j).chr
-
-def colTypS (u : Pr.Word) (j : ℕ) : colUS hc Ch u j →* X.Kˣ := levTyp (colLevS Ch j).chr
 
 end Cols
 

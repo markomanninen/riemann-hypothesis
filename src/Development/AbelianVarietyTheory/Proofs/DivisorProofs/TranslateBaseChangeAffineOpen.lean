@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordConstruction
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -19,7 +24,7 @@ theorem translate_baseChange_affineOpen : ∀ (R R₁ : Type) [CommRing R] [Comm
   let a₁ : Over.mk (𝟙 (Sp R₁)) ⟶ G₁ :=
     Over.homMk (pullback.lift (f := G.hom) (g := f) a.left (𝟙 (Sp R₁))
       ((Over.w a).trans (Category.id_comp _).symm))
-      (by show pullback.lift _ _ _ ≫ pullback.snd G.hom f = 𝟙 _; exact pullback.lift_snd _ _ _)
+      (by show pullback.lift _ _ _ ≫ pullback.snd G.hom f = 𝟙 _; simp)
   let e : G₁ ⟶ Over.mk (𝟙 (Sp R₁)) := Over.homMk G₁.hom (by simp)
   let c : G₁ ⟶ G₁ := e ≫ a₁
   have hc : ∀ g : G₁ ⟶ G₁, g ≫ c = c := fun g =>

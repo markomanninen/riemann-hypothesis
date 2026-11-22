@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StarDepthToFunNonneg
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PullLinInjective
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonnegSumSmulIntBilinFormToRealMemPsdCone
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StarDepthToFunNonneg
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PullLinInjective
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonnegSumSmulIntBilinFormToRealMemPsdCone
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,8 +49,8 @@ theorem inCone_of_strict {m' n : ℕ} {σ : Fin m' → LinearMap.BilinForm ℤ X
     · linarith
   exact h3 _ (hβ i) (hβp i) he
 
-omit [Module O X] [Module.Finite O X] in
 
+omit [Module O X] [Module.Finite O X] in
 theorem inRCone_of_nsmul {m : ℕ} {σ : Fin m → LinearMap.BilinForm ℤ X} {β : LinearMap.BilinForm ℤ X} {k : ℕ}
     {d : Fin m → ℕ} (hk : 0 < k) (h : k • β = ∑ j, d j • σ j) : InRCone σ β := by
   refine ⟨fun j => (d j : ℝ) / k, fun j => by positivity, LinearMap.ext₂ fun a b => ?_⟩
@@ -68,7 +72,7 @@ theorem isStarOf_of_cover (hcover : ∀ (X : Type) [AddCommGroup X] (m : ℕ) (�
   refine ⟨h1, h2, ?_⟩
   intro X _ _ _ _ hX n γ' hγ'
   set B : X →ₗ[ℤ] X →ₗ[ℤ] ℝ := ∑ j, (1 : ℝ) • toReal (γ' j) with hBdef
-  have hB : B ∈ psdCone H.bar X :=
+  have hB : B ∈ psdCone (bar := H.bar) (X := X) :=
     ConeSub.sum_smul_toReal_mem_psdCone (𝓞 E) H.bar X n γ' _ hγ'.mem hγ'.nonneg fun _ => zero_le_one
   obtain ⟨S, -, hfin⟩ := (hψ X hX).finite
   obtain ⟨e, m, γ, c, hγ, -, hc, he⟩ := hfin B hB

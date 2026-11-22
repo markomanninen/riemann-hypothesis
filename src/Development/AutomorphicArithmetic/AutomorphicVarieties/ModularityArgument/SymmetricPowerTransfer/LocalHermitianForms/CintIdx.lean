@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.NormOneIsCoboundaryUnramifiedQuadratic
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.NormOneIsCoboundaryUnramifiedQuadratic
+
+@[expose] public section
 
 open QuadraticAlgebra
 
@@ -157,10 +161,10 @@ theorem cint_relIndex_ne_zero (h : IsLoc O Δ) (hτ : τ ^ 2 - 4 ≠ 0) {m : O} 
         Etau K τ) := by
       apply isIntegral_of_trace_norm (2 * q * s + p * s') (q * q * s * s + p * q * s * s' + q * q * s' * s')
       · rw [QuadraticAlgebra.trace_def]
-        simp only [map_add, map_mul, map_ofNat]
+        simp only [map_add (f := _), map_mul, map_ofNat]
         linear_combination (algebraMap O K s') * eτ
       · rw [QuadraticAlgebra.norm_def]
-        simp only [map_add, map_mul]
+        simp only [map_add (f := _), map_mul]
         linear_combination (algebraMap O K q * algebraMap O K s * algebraMap O K s') * eτ
     have hdiff : quo z2.1 = quo z1.1 + algebraMap O K m •
         (⟨algebraMap O K q * algebraMap O K s, algebraMap O K q * algebraMap O K s'⟩ : Etau K τ) := by

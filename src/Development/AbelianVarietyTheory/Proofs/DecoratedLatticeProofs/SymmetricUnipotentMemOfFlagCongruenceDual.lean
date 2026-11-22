@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagLevelCharacterEqPsiDivN
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagLevelCharacterEqPsiDivN
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.DIV GlobalTheory.FlagBasis
 open scoped TensorProduct
 
@@ -15,7 +20,7 @@ theorem mul_flagGram_apply {K : Type} [CommRing K] {ρ k : ℕ}
     (A : Matrix (Fin (2 * ρ + k + 1)) (Fin (2 * ρ + k + 1)) K) (i j : Fin (2 * ρ + k + 1)) :
     (A * flagGram K (2 * ρ + k + 1) ρ k) i j =
       A i ⟨dualIdx ρ k j.val, dualIdx_lt' j.2⟩ * (if dualIdx ρ k j.val = ρ + k then -1 else 1) := by
-  rw [mul_apply, Finset.sum_eq_single ⟨dualIdx ρ k j.val, dualIdx_lt' j.2⟩]
+  rw [Matrix.mul_apply, Finset.sum_eq_single ⟨dualIdx ρ k j.val, dualIdx_lt' j.2⟩]
   · simp only [flagGram, Fin.val_mk]
     rw [if_pos ((dualIdx_iff' j.2 (dualIdx_lt' j.2)).mpr rfl)]
   · intro l _ hl
@@ -29,7 +34,7 @@ theorem flagGram_mul_apply {K : Type} [CommRing K] {ρ k : ℕ}
     (A : Matrix (Fin (2 * ρ + k + 1)) (Fin (2 * ρ + k + 1)) K) (i j : Fin (2 * ρ + k + 1)) :
     (flagGram K (2 * ρ + k + 1) ρ k * A) i j =
       (if i.val = ρ + k then -1 else 1) * A ⟨dualIdx ρ k i.val, dualIdx_lt' i.2⟩ j := by
-  rw [mul_apply, Finset.sum_eq_single ⟨dualIdx ρ k i.val, dualIdx_lt' i.2⟩]
+  rw [Matrix.mul_apply, Finset.sum_eq_single ⟨dualIdx ρ k i.val, dualIdx_lt' i.2⟩]
   · simp only [flagGram, Fin.val_mk, if_true]
   · intro l _ hl
     simp only [flagGram]
@@ -90,7 +95,7 @@ theorem flagCond_dual_unipSym : ∀ (K : Type) [CommRing K] (n ρ k : ℕ), n = 
       intro p q ht hp hq
       have hNM : (((M⁻¹ : GL (Fin (2 * ρ + k + 1)) K) : Matrix (Fin (2 * ρ + k + 1)) (Fin (2 * ρ + k + 1)) K) * (M : Matrix (Fin (2 * ρ + k + 1)) (Fin (2 * ρ + k + 1)) K)) p q = (1 : Matrix (Fin (2 * ρ + k + 1)) (Fin (2 * ρ + k + 1)) K) p q := by
         rw [Units.inv_mul]
-      rw [mul_apply, Finset.sum_eq_single p] at hNM
+      rw [Matrix.mul_apply, Finset.sum_eq_single p] at hNM
       · rw [hN p p hp le_rfl, Matrix.one_apply_eq, one_mul] at hNM
         exact hNM
       · intro l _ hl

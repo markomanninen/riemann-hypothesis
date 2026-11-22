@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareTriple
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareTriple
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,9 +46,6 @@ theorem externalProductOnHermitianSum_add_left {S A B : HSp D} (φ₁ φ₂ : WO
 theorem externalProductOnHermitianSum_smul_left {S A B : HSp D} (c : ℂ) (φ : WO S A → ℂ) (φ' : WO S B → ℂ) :
     box2 (c • φ) φ' = c • box2 φ φ' := by
   funext x; simp [box2, mul_assoc]
-
-example {S A B : HSp D} (φ : WO S A → ℂ) (x : WO S (GlobalTheory.Doubling.hsum A B)) :
-    box2 (A := A) (B := B) φ (fun _ => 1) x = φ (topR (A := A) (B := B) x) := mul_one _
 
 end GlobalTheory.RouteSeesaw
 

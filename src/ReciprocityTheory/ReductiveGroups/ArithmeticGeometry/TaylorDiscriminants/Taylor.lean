@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleRightZeroThd
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleRightZeroThd
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -52,7 +56,7 @@ theorem cml_perm {l l' : List V} (p : l.Perm l') :
           · obtain ⟨j, rfl⟩ : ∃ j, i = l₀.length + (j + 2) := ⟨i - (l₀.length + 2), by omega⟩
             simp [List.getElem_append]
       · have hk' : ¬ (l₀ ++ x :: y :: k).length = n := by simpa using hk
-        rw [dif_neg hk, dif_neg hk']
+        rw [dite_eq_right hk, dite_eq_right hk']
     | trans _ _ ih₁ ih₂ => intro l₀; exact (ih₁ l₀).trans (ih₂ l₀)
   intro h h'
   have e := key []
@@ -98,7 +102,8 @@ theorem mD_cons {φ : V → ℂ} {x : V} (hφ : ContDiffAt ℂ ω φ x) (v : V) 
 theorem mD_cons_sum {φ : V → ℂ} {x : V} (hφ : ContDiffAt ℂ ω φ x) {ι : Type} (t : Finset ι) (c : ι → ℂ)
     (w : ι → V) (s : Multiset V) :
     mD φ x ((∑ i ∈ t, c i • w i) ::ₘ s) = ∑ i ∈ t, c i * mD φ x (w i ::ₘ s) := by
-  simp only [mD_cons hφ, map_sum, map_smul, ContinuousMultilinearMap.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mD_cons hφ, map_sum, map_smul, ContinuousMultilinearMap.sum_apply,
     ContinuousMultilinearMap.smul_apply, smul_eq_mul]
 
 end Sym
@@ -119,7 +124,7 @@ theorem ev_zero' {m n d : ℕ} (a : Fin m → Pt R n d) : ev a (0 : PS R m d) = 
   | simp [ev, MvPowerSeries.subst]
 
 theorem dof_addF {g : ℕ} (v : Fin g → R) (f : PS R 1 g) :
-    Dof (addF R g) v f = ∑ j, C (v j) * pderiv R ((0 : Fin 1), j) f := by
+    Dof (addF R g) v f = ∑ j, C (v j) * MvPowerSeries.pderiv ((0 : Fin 1), j) f := by
   classical
   unfold Dof
   refine Finset.sum_congr rfl fun j _ => ?_
@@ -151,7 +156,7 @@ theorem coeff_tay (θ : (Fin g → ℂ) → ℂ) (s : Multiset (Fin g → ℂ)) 
 theorem dirs_add_single (n : Fin 1 × Fin g →₀ ℕ) (p : Fin 1 × Fin g) :
     dirs (n + Finsupp.single p 1) = Pi.single p.2 1 ::ₘ dirs n := by
   first
-  | (simp only [dirs, map_add, Finsupp.toMultiset_single, one_nsmul, Multiset.map_add, Multiset.map_singleton]
+  | (simp only [dirs, map_add (f := _), Finsupp.toMultiset_single, one_nsmul, Multiset.map_add (f := _), Multiset.map_singleton]
      rw [add_comm, Multiset.singleton_add])
   | simp [dirs, Finsupp.toMultiset_add, add_comm]
 
@@ -180,7 +185,7 @@ theorem dof_tay {θ : (Fin g → ℂ) → ℂ} (hθ : ContDiffAt ℂ ω θ 0) (v
   classical
   rw [dof_addF]
   ext n
-  have key : ∀ j : Fin g, coeff n (C (v j) * pderiv ℂ ((0 : Fin 1), j) (tay θ s)) =
+  have key : ∀ j : Fin g, coeff n (C (v j) * MvPowerSeries.pderiv ((0 : Fin 1), j) (tay θ s)) =
       v j * mD θ 0 (Pi.single j 1 ::ₘ (dirs n + s)) / fct n := by
     intro j
     have h1 : ((n ((0 : Fin 1), j) : ℂ) + 1) ≠ 0 := Nat.cast_add_one_ne_zero _
@@ -189,7 +194,8 @@ theorem dof_tay {θ : (Fin g → ℂ) → ℂ} (hθ : ContDiffAt ℂ ω θ 0) (v
       Multiset.cons_add]
     push_cast
     field_simp
-  rw [map_sum, Finset.sum_congr rfl fun j _ => key j, coeff_tay, Multiset.add_cons]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_congr rfl fun j _ => key j, coeff_tay, Multiset.add_cons]
   have hs := mD_cons_sum hθ Finset.univ v (fun j => (Pi.single j (1 : ℂ) : Fin g → ℂ)) (dirs n + s)
   rw [← sum_single_smul v] at hs
   rw [hs, Finset.sum_div]
@@ -215,7 +221,7 @@ theorem toMultiset_map_eq {ι : Type} [Fintype ι] (u : ι → Fin g → ℂ) (m
   refine Finsupp.induction_linear m ?_ ?_ ?_
   · simp
   · intro f₁ f₂ h₁ h₂
-    rw [map_add, Multiset.map_add, h₁, h₂]
+    rw [map_add (f := _), Multiset.map_add (f := _), h₁, h₂]
     simp [Multiset.replicate_add, Finset.sum_add_distrib]
   · intro a b
     rw [Finsupp.toMultiset_single, Multiset.map_nsmul, Multiset.map_singleton, Multiset.nsmul_singleton]
@@ -274,7 +280,8 @@ theorem constantCoeff_dpolyOf_tay {θ : (Fin g → ℂ) → ℂ} (hθ : ContDiff
     (u : ι → Fin g → ℂ) (P : MvPolynomial ι ℂ) :
     constantCoeff (DpolyOf (addF ℂ g) u P (tay θ 0)) = ReciprocityTheory.ChartRestriction.G.I2.polyDeriv P u θ 0 := by
   unfold DpolyOf
-  rw [polyDeriv_eq_mD hθ, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [polyDeriv_eq_mD hθ, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [map_mul, MvPowerSeries.constantCoeff_C, constantCoeff_dmonOf_tay hθ]
 

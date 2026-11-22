@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType
-import Formalism.LocalToGlobal.Columns.HeckeSp
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BlockDetLowUEmb
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType
+public import Formalism.LocalToGlobal.Columns.HeckeSp
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BlockDetLowUEmb
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.Doubling GlobalTheory.GLDoubling GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection GlobalTheory.ZonalCellDecomposition GlobalTheory.SatakeBound GlobalTheory.ParHecke GlobalTheory.LowerHecke
 
 noncomputable section
@@ -11,12 +16,12 @@ namespace GlobalTheory.CosetDistinct
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
   {A D : Type} [Fintype A] [DecidableEq A] [Fintype D] [DecidableEq D]
 
-local notation "E" m => emb₂ k (Equiv.refl (A ⊕ D)) (1, m)
+local notation "E" m:arg => emb₂ k (Equiv.refl (A ⊕ D)) (1, m)
 
 theorem lowU_mul_lowU (a b : Matrix D A k) : (lowU a * lowU b : GL (A ⊕ D) k) = lowU (a + b) := by
   ext1; rw [Units.val_mul, val_lowU, val_lowU, val_lowU, fromBlocks_multiply]; simp [add_comm]
 
-theorem emb_one_inv (m : GL D k) : (E m)⁻¹ = (E m⁻¹) := by rw [← map_inv]; simp
+theorem emb_one_inv (m : GL D k) : (E m)⁻¹ = E (m⁻¹) := by rw [← map_inv]; simp
 
 theorem quot_eq (ν ν' : Matrix D A k) (a b w : GL D k) :
     (lowU ν * (E a) * (E w))⁻¹ * (lowU ν' * (E b) * (E w)) =

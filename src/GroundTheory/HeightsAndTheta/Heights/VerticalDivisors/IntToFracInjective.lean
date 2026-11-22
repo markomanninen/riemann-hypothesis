@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -74,7 +79,8 @@ def secIdealOf (e : ℕ) (I : Ideal (MvPolynomial (Fin n) K)) (v : HeightOneSpec
 def vertDeg (e : ℕ) (I : Ideal (MvPolynomial (Fin n) K)) (u : Fin n → 𝓞 K)
     (v : HeightOneSpectrum (𝓞 K)) : ℕ :=
   ∑ᶠ W ∈ vertComps I u v,
-    localMult (integralModel I ⊔ Ideal.span {linForm u}) W * chowDegree (reduceMod v W) (e + 1)
+    GroundTheory.Heights₂.Heights.localMult
+      (integralModel I ⊔ Ideal.span {linForm u}) W * chowDegree (reduceMod v W) (e + 1)
 
 end NumberField
 
@@ -133,8 +139,8 @@ def SpecMax.Statement : Prop :=
       (∀ W ∈ specComps I v, (secIdealOf e I v W).IsMaximal) ∧
         ∀ 𝔫 : Ideal (SecB e I v), 𝔫.IsMaximal → ∃! W, W ∈ specComps I v ∧ secIdealOf e I v W = 𝔫
 
-open Classical in
 
+open Classical in
 def SpecLength.Statement : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] (n e : ℕ) (I : Ideal (MvPolynomial (Fin n) K))
     (f : MvPolynomial (Fin (e + 1) × Fin n) K) (u : Fin n → 𝓞 K) (v : HeightOneSpectrum (𝓞 K)),
@@ -143,7 +149,10 @@ def SpecLength.Statement : Prop :=
         Ring.ord (Localization.AtPrime 𝔫.asIdeal)
             (algebraMap (SecB e I v) (Localization.AtPrime 𝔫.asIdeal)
               (secLin (modelR e I v) (parY e n v) (fun j => algebraMap (𝓞 K) (ParDVR e n v) (u j)))) =
-          if linForm u ∈ W then (localMult (integralModel I ⊔ Ideal.span {linForm u}) W : ℕ∞) else 0
+          (letI : Decidable (linForm u ∈ W) := Classical.propDecidable _
+           if linForm u ∈ W then
+             (GroundTheory.Heights₂.Heights.localMult
+               (integralModel I ⊔ Ideal.span {linForm u}) W : ℕ∞) else 0)
 
 def SpecResidue.Statement : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] (n e : ℕ) (I : Ideal (MvPolynomial (Fin n) K))
@@ -179,7 +188,8 @@ def OrdEq.Statement : Prop :=
 def VertTermEq.Statement : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] (n e : ℕ) (I : Ideal (MvPolynomial (Fin n) K))
     (u : Fin n → 𝓞 K) (v : HeightOneSpectrum (𝓞 K)),
-      vertTermAt I (e + 1) u v = vertDeg e I u v * Real.log (Ideal.absNorm v.asIdeal)
+      GroundTheory.Heights₂.Heights.vertTermAt I (e + 1) u v =
+        vertDeg e I u v * Real.log (Ideal.absNorm v.asIdeal)
 
 def GaussEq.Statement : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] (n e : ℕ) (I : Ideal (MvPolynomial (Fin n) K))

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.BridgeCol
-import Formalism.LocalToGlobal.Columns.RowFormsAdelic
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.BridgeCol
+public import Formalism.LocalToGlobal.Columns.RowFormsAdelic
+
+@[expose] public section
 
 open NumberField
 
@@ -13,7 +17,7 @@ section ColPts
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
 variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] (ST SG : Finset (Formalism.L2.DIV.Pl E))
-  (H : Subgroup (Col.GLG E n SG))
+  (H : Subgroup (Col.GLG (E := E) (n := n) (SG := SG)))
 
 def colJ : Subgroup (Col.UAd hc n) := (Col.JH hc n ST SG H).map (Col.ToUnitaryAdelic hc n ST)
 
@@ -122,11 +126,6 @@ def colAdPts (hS : Col.DecoPtSurj hc n ST SG) : AdPts S (Col.ratIn hc n) (colJ h
   q_eqv := colQ_eqv o
   q_fib := colQ_fib o
 
-open Classical in
-
-def colAdPtsG (hG : Col.UnimodGenus hc n) (hR : Formalism.L2.DIV.RedSurj) (hT : Formalism.L2.DIV.IsSplitSet (ST ∪ SG))
-    (hD : Disjoint ST SG) : AdPts S (Col.ratIn hc n) (colJ hc n ST SG H) :=
-  colAdPts o (Col.decoPtSurj_of hc n ST SG hG hR hT hD)
 
 def colClassPres (hS : Col.DecoPtSurj hc n ST SG) (h : S.Ok) {W : Type} [NormedAddCommGroup W] [InnerProductSpace ℂ W]
     (σ : K →+* ℂ) (ρ : Col.URat hc n →* Module.End ℂ W) (χ : colJ hc n ST SG H →* ℂˣ)
@@ -145,10 +144,6 @@ section Forms
 
 variable {X : Col.Fields} (hc : Formalism.BasicNotions.CMData X.F X.E) {n : ℕ} [NeZero n]
   {ST SG : Finset (IsDedekindDomain.HeightOneSpectrum (𝓞 X.E))}
-
-def colAdPtsForm (C : Col.CoefPk X n (Col.DecoSet X.E n ST SG)) (Λ : Col.LevFam X.E X.K n SG)
-    (hS : Col.DecoPtSurj hc n ST SG) : AdPts (Col.formGSD C Λ) (Col.ratIn hc n) (colJ hc n ST SG Λ.grp) :=
-  colAdPts (Col.rf_onDeco C Λ) hS
 
 end Forms
 

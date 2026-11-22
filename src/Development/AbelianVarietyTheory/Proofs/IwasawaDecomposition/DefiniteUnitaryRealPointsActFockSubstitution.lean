@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColLieApply
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PureTensorLIntertwine
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmPureTensorOOfFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PureTensorOMulSource
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MaximalCompactActsOnRealVacuaByDetPowers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColLieApply
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PureTensorLIntertwine
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmPureTensorOOfFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PureTensorOMulSource
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MaximalCompactActsOnRealVacuaByDetPowers
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,8 +41,30 @@ theorem pureTensorO_mul_mul (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ)
     {f : WO V W → ℂ} (hf : IsThetaFunO ψ V W f) (P : Pol D.what₂.Tau W.rank V.rank) :
     pureTensorO ψ θ V W (fun _ => 1) (fun _ => 1) (fun τ => BV τ * U τ) (fun τ => BW τ * H τ) f P =
       pureTensorO ψ θ V W (fun _ => 1) (fun _ => 1) BV BW f (subst (fun τ => (U τ)⁻¹) H P) := by
-  have hadd : ∀ f f', IsThetaFunO ψ V W f → IsThetaFunO ψ V W f' → IsThetaFunO ψ V W (f + f') := fun _ _ => theta_add
-  have hsm : ∀ (a : ℂ) f, IsThetaFunO ψ V W f → IsThetaFunO ψ V W (a • f) := fun a _ => theta_smul a
+  have hadd : ∀ f f', IsThetaFunO ψ V W f → IsThetaFunO ψ V W f' → IsThetaFunO ψ V W (f + f') := fun f g hf hg => {
+    quasi γ w := by simp only [Pi.add_apply, hf.quasi, hg.quasi, mul_add]
+    level := by
+      obtain ⟨U, hU, h1⟩ := hf.level
+      obtain ⟨U', hU', h2⟩ := hg.level
+      refine ⟨U ⊓ U', hU.inter hU', fun u hu h0 => ?_⟩
+      funext w
+      have e1 := congrFun (h1 u hu.1 h0) w
+      have e2 := congrFun (h2 u hu.2 h0) w
+      unfold heisO at e1 e2 ⊢
+      rw [Pi.add_apply, Pi.add_apply, mul_add, e1, e2]
+    cont := hf.cont.add hg.cont
+    smooth k L h1 h2 w := (hf.smooth k L h1 h2 w).add (hg.smooth k L h1 h2 w) }
+  have hsm : ∀ (a : ℂ) f, IsThetaFunO ψ V W f → IsThetaFunO ψ V W (a • f) := fun c f hf => {
+    quasi γ w := by rw [Pi.smul_apply, Pi.smul_apply, hf.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
+    level := by
+      obtain ⟨U, hU, h1⟩ := hf.level
+      refine ⟨U, hU, fun u hu h0 => ?_⟩
+      funext w
+      have e1 := congrFun (h1 u hu h0) w
+      unfold heisO at e1 ⊢
+      rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+    cont := hf.cont.const_smul c
+    smooth k L h1 h2 w := contDiff_const.mul (hf.smooth k L h1 h2 w) }
   have hA : ∀ (BS : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ)
       (BT : D.what₂.Tau → Matrix (Fin W.rank) (Fin W.rank) ℂ) i f, IsThetaFunO ψ V W f →
       IsThetaFunO ψ V W (aPlusAll (heisO ψ V W) θ (fun _ => cplxO 1 1) BS BT i f) :=
@@ -61,14 +87,15 @@ theorem pureTensorO_mul_mul (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ)
   | C a =>
     rw [MvPolynomial.algHom_C, MvPolynomial.algebraMap_eq, ← mul_one (MvPolynomial.C a), ← MvPolynomial.smul_eq_C_mul,
       map_smul, map_smul, h1, h1]
-  | add P Q hP hQ => rw [map_add, map_add, map_add, hP, hQ]
+  | add P Q hP hQ => rw [map_add (f := _), map_add (f := _), map_add (f := _), hP, hQ]
   | mul_X P v hP =>
     obtain ⟨τ, i, j⟩ := v
     rw [mul_comm, hX, hP, map_mul]
     clear hP
     generalize (subst _ H P : Pol D.what₂.Tau W.rank V.rank) = Q
     rw [subst, MvPolynomial.aeval_X]
-    simp only [Finset.sum_mul, smul_mul_assoc, map_sum, map_smul, hX]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.sum_mul, smul_mul_assoc, map_sum, map_smul, hX]
     simp only [aPlusAll, aPlus]
     rw [unitMap_mul_mul, crea_sum hψ hθ _ (hm _ _ _), Finset.smul_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
@@ -86,24 +113,8 @@ theorem om_vac {χS χT : (AE D)ˣ →* Circle} {ω : GA D V × GA D W →* Modu
     (cS : ∀ τ, sS τ * compAt θ τ (Formalism.L2.Theta.mt V g) = compAt θ τ (Formalism.L2.Theta.mt V g) * sS τ)
     (cT : ∀ τ, sT τ * compAt θ τ (Formalism.L2.Theta.mt W h) = compAt θ τ (Formalism.L2.Theta.mt W h) * sT τ) :
     ∃ c : ℂ, ω (g, h) f = c • f := by
-  have dS := GlobalTheory.PlaceModel.isSelfDualC_latFrame V
-  have dT := GlobalTheory.PlaceModel.isSelfDualC_latFrame W
-  obtain ⟨f₀, h₀⟩ := GlobalTheory.VacuumO.vacExists D ψ θ hω.std hθ V W sS sT kV kW hS hT _ _ dS dT
-  have h1 := GlobalTheory.WeilVacMove.isVacO_om D ψ θ V W χS χT ω hω hθ sS sS sT sT _ _ _ _ g h cS cT
-    (fun u => ⟨fun hu => ⟨u, hu, (GlobalTheory.VacuumChar.actO_fin hg hh (GlobalTheory.SplitScalar.latO_fin hu)).symm⟩,
-      fun ⟨u₀, hu, e⟩ => by rwa [e, GlobalTheory.VacuumChar.actO_fin hg hh (GlobalTheory.SplitScalar.latO_fin hu)]⟩) f₀ h₀
-  obtain ⟨c, -, e⟩ := GlobalTheory.VacUnique.vacUniqueO D ψ θ hω.std hθ V W sS sT kV kW hS hT _ _ dS dT f₀ _ h₀ h1
-  refine ⟨c, ?_⟩
-  have hs := GlobalTheory.VacuumChar.mem_span kV kW hS hT dS dT h₀ (f := f) ⟨hf, hv⟩
-  clear hf hv
-  induction hs using Submodule.span_induction with
-  | mem _ hx =>
-    obtain ⟨x, rfl⟩ := hx
-    show ω (g, h) (heisO ψ V W x f₀) = c • heisO ψ V W x f₀
-    rw [hω.om_heis g h _ _ h₀.2.theta, GlobalTheory.VacuumChar.actO_fin hg hh x.2, e, GlobalTheory.SplitScalar.heisO_smul]
-  | zero => rw [map_zero, smul_zero]
-  | add a b _ _ ha hb => rw [map_add, ha, hb, smul_add]
-  | smul r a _ ha => rw [map_smul, ha, smul_comm]
+  obtain ⟨x₁, x₂, y₁, y₂, hc⟩ := GlobalTheory.VacuumChar.vacuum_char D ψ θ V W χS χT ω hω hθ kV kW sS sT hS hT
+  exact ⟨_, hc f hf hv g hg h hh cS cT⟩
 
 open Classical in
 theorem compAt_atTau {S : D.what₂.Tau → SPar} {M : DSModel V S} (hθ : IsInfFam θ) (h : AllPlus M) (τ : D.what₂.Tau)

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.PartFixed
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitaryAdelicInfFinSplitPeriodsUnimodular
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsVacFOfIsVacVec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.PartFixed
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitaryAdelicInfFinSplitPeriodsUnimodular
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsVacFOfIsVacVec
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SepRows
 open scoped TensorProduct
@@ -48,7 +53,7 @@ theorem eInf_mul (z : AE D) : eInf D * z = ιInf D (infPart D z) := by
     congr 1
     exact Prod.ext (α := Ainf D.host.F) (β := Af D.host.F) (by change (1 : Ainf D.host.F) * a.1 = a.1; exact one_mul _)
       (by change (0 : Af D.host.F) * a.2 = 0; exact zero_mul _)
-  | add z z' hz hz' => rw [mul_add, hz, hz', RingHom.map_add, LinearMap.map_add]
+  | add z z' hz hz' => rw [mul_add, hz, hz', RingHom.map_add (f := _), LinearMap.map_add (f := _)]
 
 theorem eFin_mul (z : AE D) : eFin D * z = ιFin D (finPart D z) := by
   induction z using TensorProduct.induction_on with
@@ -58,7 +63,7 @@ theorem eFin_mul (z : AE D) : eFin D * z = ιFin D (finPart D z) := by
     congr 1
     exact Prod.ext (α := Ainf D.host.F) (β := Af D.host.F) (by change (0 : Ainf D.host.F) * a.1 = 0; exact zero_mul _)
       (by change (1 : Af D.host.F) * a.2 = a.2; exact one_mul _)
-  | add z z' hz hz' => rw [mul_add, hz, hz', RingHom.map_add, LinearMap.map_add]
+  | add z z' hz hz' => rw [mul_add, hz, hz', RingHom.map_add (f := _), LinearMap.map_add (f := _)]
 
 theorem eInf_add_eFin : eInf D + eFin D = 1 := by
   rw [eInf, eFin, ← TensorProduct.add_tmul, Algebra.TensorProduct.one_def]

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Characterised
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsConeMass
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Characterised
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsConeMass
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

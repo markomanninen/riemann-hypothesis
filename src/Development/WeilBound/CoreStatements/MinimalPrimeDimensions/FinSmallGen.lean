@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.NvalLeOfMul
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.ExistsPointOfValGen
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.NvalLeOfMul
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.ExistsPointOfValGen
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj Formalism.BasicNotions.TH Formalism.L2.Theta ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.AllWt GlobalTheory.CompHt GlobalTheory.CovTop GlobalTheory.CovHt GlobalTheory.Mean4 GlobalTheory.Mean4O
 open scoped ENNReal Classical
 open GlobalTheory GlobalTheory.CompanionTheory GlobalTheory.CompanionTheory.SmallFin
@@ -10,8 +15,9 @@ namespace ChowFormHeightComparison₂.RegularPointExistence
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H}
   {l : Level H} {Xo : Moduli Dw l} {c : Coeff l}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
+set_option synthInstance.maxHeartbeats 100000 in
 theorem fin_small_gen {r : ℕ} (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (Z : Comp Xo c) (G : WTZ E)
     (hFG : (latOn U Z G).FG) (hsp : Submodule.span c.F (latOn U Z G : Set (cuspOn U Z G)) = ⊤)
     (hB : GlobalTheory.DegVal.BirOn U Z G) (la : HeightOneSpectrum (𝓞 c.F)) {Γ : Type} [LinearOrderedCommGroupWithZero Γ] (ν : Valuation (Om Z) Γ)
@@ -84,7 +90,7 @@ theorem fin_small_gen {r : ℕ} (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (Z :
       rw [this]
       exact S.algebraMap_mem a
     | add P Q hP hQ =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact S.add_mem hP hQ
     | mul_X P i hP =>
       rw [map_mul, map_mul]

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EMatMulNegCol
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FibreMassEq
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EMatMulNegCol
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FibreMassEq
+
+@[expose] public section
 
 open scoped Matrix NNReal ENNReal TensorProduct
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.WhitFree GlobalTheory.CompanionTheory.WeilSiegel.Frame GlobalTheory.CompanionTheory.AvgFree MeasureTheory
@@ -19,7 +23,8 @@ theorem isOpen_tupIn_of_isOpen {M n : ℕ} {L : Set (R ⊗[F] E)} (hL : IsOpen L
     simp [tupIn]
   rw [this]
   refine isOpen_iInter_of_finite fun i => isOpen_iInter_of_finite fun k => ?_
-  exact hL.preimage ((continuous_apply k).comp (continuous_apply i))
+  exact hL.preimage (show Continuous (fun X : Fin n → Fin M → R ⊗[F] E => X i k) from
+    (continuous_apply k).comp (continuous_apply i))
 
 theorem isOpen_unit_pow_image {L : Set (R ⊗[F] E)} (hL : IsOpen L) (t : (R ⊗[F] E)ˣ) (j : ℕ) :
     IsOpen ((fun x => (t : R ⊗[F] E) ^ j * x) '' L) := by
@@ -60,8 +65,7 @@ theorem isOpen_nearNF {M n : ℕ} (O : Set (R ⊗[F] E)) {L : Set (R ⊗[F] E)} 
   refine (isOpen_tupIn_of_isOpen R hL).inter ?_
   refine isOpen_iUnion fun l => isOpen_iUnion fun a => isOpen_iUnion fun _ => ?_
   refine isOpen_iInter_of_finite fun k => hT.preimage ?_
-  refine continuous_finset_sum _ fun i _ => ?_
-  exact (continuous_apply_apply i k).mul continuous_const
+  fun_prop
 
 theorem isClosed_nearNF [T2Space (R ⊗[F] E)] {M n : ℕ} {O L : Set (R ⊗[F] E)} (hO : IsCompact O)
     (hL : IsCompact L) (t : R ⊗[F] E) (j : ℕ) :
@@ -76,9 +80,7 @@ theorem isClosed_nearNF [T2Space (R ⊗[F] E)] {M n : ℕ} {O L : Set (R ⊗[F] 
     refine ((isCompact_tupIn R hL).prod (isCompact_univ_pi fun _ => hO)).inter_right ?_
     refine (isClosed_eq ?_ continuous_const).inter (isClosed_iInter fun k => hT.preimage ?_)
     · exact (continuous_apply l).comp continuous_snd
-    · refine continuous_finset_sum _ fun i _ => ?_
-      exact ((continuous_apply_apply i k).comp continuous_fst).mul
-        ((continuous_apply i).comp continuous_snd)
+    · fun_prop
   have : nearNF (M := M) (n := n) R O L t j = ⋃ l, Prod.fst '' C l := by
     ext X
     simp only [nearNF, Set.mem_setOf_eq, Set.mem_iUnion, Set.mem_image]

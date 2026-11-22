@@ -1,4 +1,8 @@
-import Formalism.LocalRingCardinality.SpanPowerMembership.GatRing
+module
+
+public import Formalism.LocalRingCardinality.SpanPowerMembership.GatRing
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsBisMore
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsBisMore
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -71,8 +76,8 @@ theorem mem_of_pow_mul_mem {F Ω : Type*} [CommRing F] [Field Ω] [Algebra F Ω]
 
 end FlagFrameOfFullFlag
 
-open FlagFrameOfFullFlag in
 
+open FlagFrameOfFullFlag in
 theorem FlagFrameOfFullFlag.proof : FlagFrameOfFullFlag.Statement := by
   intro F _ Ω _ _ K _ ι _ x e hV N E _ _ B fl
 
@@ -204,7 +209,8 @@ theorem FlagFrameOfFullFlag.proof : FlagFrameOfFullFlag.Statement := by
     have htri' := repr_tri b u (fun q => IndefiniteRowSideFullHecke.NumbersDVR.Bundles.chartMon x c (fl.deg q))
       fun q => (hu q).2
     have hy : w.repr v i = a i * (u i * IndefiniteRowSideFullHecke.NumbersDVR.Bundles.chartMon x c (fl.deg i)) := by
-      rw [hva, map_sum, Finsupp.finsetSum_apply, Finset.sum_eq_single i]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hva, map_sum, Finsupp.finsetSum_apply, Finset.sum_eq_single i]
       · rw [map_smul, Finsupp.smul_apply, smul_eq_mul, (htri' i).1]
       · intro q _ hqi
         rw [map_smul, Finsupp.smul_apply, smul_eq_mul]

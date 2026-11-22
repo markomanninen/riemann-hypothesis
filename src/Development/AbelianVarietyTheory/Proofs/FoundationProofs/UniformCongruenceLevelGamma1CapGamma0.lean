@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsRootOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TwoVarPolySubstMatrixBasicLawsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsRootOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TwoVarPolySubstMatrixBasicLawsStatement
+
+@[expose] public section
 
 open GlobalTheory.KZ GlobalTheory.KZ.H3 Matrix
 open scoped MatrixGroups
@@ -61,7 +65,7 @@ theorem unif_level : ∀ (N l : ℕ) (R : Type) [CommRing R] (Φ : SL(2, ℤ) �
     exact ⟨{ModularGroup.S, ModularGroup.T}, SpecialLinearGroup.SL2Z_generators, Set.toFinite _⟩
   haveI : (Gam N l).FiniteIndex := by unfold Gam; infer_instance
   haveI : Group.FG (Gam N l) := Subgroup.fg_of_index_ne_zero _
-  obtain ⟨S, hS⟩ := (Group.fg_def).1 this
+  obtain ⟨_, S, _, hS⟩ := (Group.fg_iff').1 (inferInstance : Group.FG (Gam N l))
   choose Mf hMf hMeq using fun s : Gam N l => hinv s.1 s.2
   let M := ∏ s ∈ S, Mf s
   have hMpos : 0 < M := Finset.prod_pos fun s _ => hMf s

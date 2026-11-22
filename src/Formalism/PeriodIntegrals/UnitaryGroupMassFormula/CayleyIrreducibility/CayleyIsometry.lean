@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CayleyIrreducibility.DivClosedOf
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CayleyIrreducibility.DivClosedOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,7 @@ theorem map_Lp (G : Matrix (Fin n) (Fin n) ℂ) (z : Bool × Fin n × Fin n → 
 
 theorem eval_dp (G : Matrix (Fin n) (Fin n) ℂ) (z : Bool × Fin n × Fin n → ℂ) :
     eval z (dp G) = det (1 + (eval z).mapMatrix (Lp G)) := by
-  rw [dp, RingHom.map_det, map_add, map_one]
+  rw [dp, RingHom.map_det, map_add (f := _), map_one]
 
 theorem eval_hq (G : Matrix (Fin n) (Fin n) ℂ) (p : MvPolynomial (Fin n × Fin n) ℂ)
     (z : Bool × Fin n × Fin n → ℂ) (A : Matrix (Fin n) (Fin n) ℂ) (hA : (eval z).mapMatrix (Lp G) = A)
@@ -85,7 +89,7 @@ theorem eval_hq (G : Matrix (Fin n) (Fin n) ℂ) (p : MvPolynomial (Fin n × Fin
     eval z (hq G p) = det (1 + A) ^ p.totalDegree *
       eval (fun x => ((1 - A) * (1 + A)⁻¹) x.1 x.2) p := by
   have hMm : (eval z).mapMatrix (Mp G) = (1 - A) * adjugate (1 + A) := by
-    rw [Mp, map_mul, map_sub, map_one, RingHom.map_adjugate, map_add, map_one, hA]
+    rw [Mp, map_mul, map_sub, map_one, RingHom.map_adjugate, map_add (f := _), map_one, hA]
   have hM : ∀ i j, eval z (Mp G i j) = det (1 + A) * ((1 - A) * (1 + A)⁻¹) i j := by
     intro i j
     have h2 : (1 - A) * (1 + A)⁻¹ = (det (1 + A))⁻¹ • ((1 - A) * adjugate (1 + A)) := by
@@ -93,7 +97,8 @@ theorem eval_hq (G : Matrix (Fin n) (Fin n) ℂ) (p : MvPolynomial (Fin n × Fin
     rw [h2, Matrix.smul_apply, smul_eq_mul, ← mul_assoc, mul_inv_cancel₀ hd, one_mul, ← hMm]
     rfl
   have hdz : eval z (dp G) = det (1 + A) := by rw [eval_dp, hA]
-  rw [hq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hq, map_sum]
   conv_rhs => rw [eval_eq', Finset.mul_sum]
   refine Finset.sum_congr rfl fun d hdm => ?_
   simp only [map_mul, map_pow, map_prod, eval_C, hdz, hM, mul_pow, Finset.prod_mul_distrib,

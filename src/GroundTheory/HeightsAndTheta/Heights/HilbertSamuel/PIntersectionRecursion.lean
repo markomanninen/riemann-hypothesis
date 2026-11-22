@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyCN
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PMinimalPrimeMultiHomog
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyCN
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PMinimalPrimeMultiHomog
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -18,8 +23,8 @@ theorem blockWeight_cast_eq_unitDeg {K : Type} [DecidableEq K] (ι : K → Type)
   simp only [blockWeight, unitDeg, Pi.single_apply]
   split_ifs <;> rfl
 
-open Classical in
 
+open Classical in
 theorem IntersectionRecursion.proof : IntersectionRecursion.Statement.{u} := by
   intro F _ K _ _ ι _ q d hq hdim b i hX bs
   have : q.IsPrime := hq.isPrime
@@ -51,20 +56,20 @@ theorem IntersectionRecursion.proof : IntersectionRecursion.Statement.{u} := by
   refine finsum_congr fun W => ?_
   unfold divCycle
   by_cases hW : W ∈ J.minimalPrimes ∧ IsRelevant W
-  · rw [dif_pos hW]
+  · rw [dite_eq_left hW]
     have hWp : W.IsPrime := hW.1.1.1
     have hWh : IsMultiHomogIdeal W := MinimalPrimeMultiHomog.proof F K ι J W hJh hW.1
     have hWle : ringKrullDim (MRing ι F ⧸ W) ≤ ringKrullDim (MRing ι F ⧸ J) :=
       ringKrullDim_le_of_surjective (Ideal.Quotient.factor hW.1.1.2)
         (Ideal.Quotient.factor_surjective hW.1.1.2)
     by_cases hWd : ringKrullDim (MRing ι F ⧸ W) = ((d + Fintype.card K : ℕ) : WithBot ℕ∞)
-    · rw [dif_pos ⟨⟨hWp, hWh, hW.2⟩, hW.1.1.2, hWd⟩]
-    · rw [dif_neg fun h => hWd h.2.2]
+    · rw [dite_eq_left ⟨⟨hWp, hWh, hW.2⟩, hW.1.1.2, hWd⟩]
+    · rw [dite_eq_right fun h => hWd h.2.2]
       have hWlt : ringKrullDim (MRing ι F ⧸ W) < ((d + Fintype.card K : ℕ) : WithBot ℕ∞) := by
         exact lt_of_le_of_ne
           (HilbDegBound.le_natCast_of_lt_natCast_succ (lt_of_le_of_lt hWle hJlt)) hWd
       rw [IntNumVanish.full F K ι d W hWp hWh (Or.inr hWlt) bs, mul_zero]
-  · rw [dif_neg hW, zero_mul, dif_neg]
+  · rw [dite_eq_right hW, zero_mul, dite_eq_right]
     rintro ⟨hWq, hJW, hWd⟩
     have : W.IsPrime := hWq.isPrime
     refine hW ⟨TopDimMinimal.full _ J W (d + Fintype.card K) hJW hJlt ?_, hWq.relevant⟩

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NmatEqLowMat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NmatEqLowMat
+
+@[expose] public section
+
 open ReciprocityTheory.ChartRestriction.G.FD MeasureTheory GlobalTheory.IntBall
 open scoped ENNReal Matrix
 
@@ -13,18 +18,18 @@ theorem blkW_upper {r : ℕ} (p0 : ℕ) (w : Low r → ℂ) (i j : Fin (r - 1)) 
   unfold blkW
   split_ifs
   · unfold lowMat
-    rw [dif_neg (by rw [Fin.lt_def]; simp only; omega), if_neg (by rw [Fin.ext_iff]; simp only; omega)]
+    rw [dite_eq_right (by rw [Fin.lt_def]; simp only; omega), if_neg (by rw [Fin.ext_iff]; simp only; omega)]
   · unfold lowMat
-    rw [dif_neg (by rw [Fin.lt_def]; simp only; omega), if_neg (by rw [Fin.ext_iff]; simp only; omega)]
+    rw [dite_eq_right (by rw [Fin.lt_def]; simp only; omega), if_neg (by rw [Fin.ext_iff]; simp only; omega)]
 
 theorem blkW_diag {r : ℕ} (p0 : ℕ) (w : Low r → ℂ) (i : Fin (r - 1)) :
     blkW p0 w i i = 1 := by
   unfold blkW
   split_ifs
   · unfold lowMat
-    rw [dif_neg (lt_irrefl _), if_pos rfl]
+    rw [dite_eq_right (lt_irrefl _), if_pos rfl]
   · unfold lowMat
-    rw [dif_neg (lt_irrefl _), if_pos rfl]
+    rw [dite_eq_right (lt_irrefl _), if_pos rfl]
 
 theorem lowerTri_det_one {n : ℕ} (T : Matrix (Fin n) (Fin n) ℂ)
     (hu : ∀ i j, i < j → T i j = 0) (hd : ∀ i, T i i = 1) : T.det = 1 := by

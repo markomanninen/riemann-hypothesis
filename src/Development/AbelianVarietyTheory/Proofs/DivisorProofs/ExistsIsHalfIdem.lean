@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsFinWeil
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OmAtSmulRight
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ContinuousBicharacterWeilSetup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsFinWeil
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OmAtSmulRight
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ContinuousBicharacterWeilSetup
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ def latQ (S T : HSp D) (LS : Set (Fin S.rank → D.host.E)) (LT : Set (Fin T.ran
   carrier := {x | finRat S T x ∈ latO S T LS LT fun _ => True}
   add_mem' {x y} hx hy := by
     show finRat S T (x + y) ∈ latO S T LS LT fun _ => True
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hx hy
   zero_mem' := by
     show finRat S T 0 ∈ latO S T LS LT fun _ => True
@@ -61,8 +65,8 @@ theorem mem_latQ {S T : HSp D} {LS : Set (Fin S.rank → D.host.E)} {LT : Set (F
 def gamQ (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (x y : Matrix (Fin T.rank) (Fin S.rank) D.host.E) : ℂ :=
   ψ (symplO S T (finRat S T x) (finRat S T y))
 
-open Classical in
 
+open Classical in
 def chiLat (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (LS : Set (Fin S.rank → D.host.E)) (LT : Set (Fin T.rank → D.host.E))
     (w : 𝓞 D.host.E) (x : WO S T) : ℂ :=
   if (1 - realIdem D) • x ∈ latO S T LS LT (fun _ => True) then

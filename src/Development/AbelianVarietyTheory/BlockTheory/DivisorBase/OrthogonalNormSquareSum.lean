@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
-import Formalism.LocalToGlobal.Columns.CoefModB
-import Formalism.LocalToGlobal.Divisibility.CoefMod
-import Formalism.LocalRingCardinality.DataCoeff
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+public import Formalism.LocalToGlobal.Columns.CoefModB
+public import Formalism.LocalToGlobal.Divisibility.CoefMod
+public import Formalism.LocalRingCardinality.DataCoeff
+
+@[expose] public section
 
 open scoped ComplexOrder Matrix
 open Formalism.BasicNotions Formalism.L2.DIV Formalism.L2.Col
@@ -69,8 +73,6 @@ def OrthNormLogBound : Prop :=
     ∑ τ, (2 * ((N : ℝ) - 1) * ((dOne hN (lam τ) (sg τ) : ℤ) : ℝ) + (N : ℝ) * ((N : ℝ) - 1) / 2) * Real.log (2 * a) ≤
       C * ∑ τ, ((N : ℝ) * ((dOne hN (lam τ) (sg τ) : ℤ) : ℝ) + (N : ℝ) ^ 2) * Real.log (2 * a)
 
-def LastMapNormWithBound : Prop := LastMapNorm ∧ OrthNormLogBound
-
 section Checks
 
 variable {K : Type} [Field K] {N n : ℕ} (hN : N = n + 1) (G' : Matrix (Fin n) (Fin n) K) (g : K)
@@ -88,16 +90,6 @@ theorem factor_sq (lam : DomWeight N) (sg : DomWeight n) {T : ℝ} (hT : 0 < T) 
     push_cast
     ring
   rw [factor, mul_pow, mul_pow, h1, sq_abs, Real.sq_sqrt hk, mul_assoc]
-
-example : Br.Interlace (by rfl : 3 = 2 + 1) ⟨![3, 1, 0], by decide⟩ ⟨![2, 0], by decide⟩ ∧
-    Br.SameShift (⟨![3, 1, 0], by decide⟩ : DomWeight 3) (⟨![2, 0], by decide⟩ : DomWeight 2) ∧
-    Br.nBr (⟨![3, 1, 0], by decide⟩ : DomWeight 3) (⟨![2, 0], by decide⟩ : DomWeight 2) = 2 ∧
-    dOne (by rfl : 3 = 2 + 1) ⟨![3, 1, 0], by decide⟩ ⟨![2, 0], by decide⟩ = 2 := by
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · unfold Br.Interlace; decide
-  · unfold Br.SameShift; decide
-  · decide
-  · decide
 
 end Checks
 

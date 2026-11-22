@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelParam
+module
+
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelParam
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.Doubling GlobalTheory.GLDoubling GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection GlobalTheory.ZonalCellDecomposition GlobalTheory.SatakeBound
 
 noncomputable section
@@ -89,8 +94,8 @@ theorem val_det_blocks {j : GL (A ⊕ D) k} (hj : j ∈ parahoric k A D) :
   have i22 : valuation k j.val.toBlocks₂₂.det ≤ 1 := det_int fun i l => hJ _ _
   exact ⟨eq_one_of_mul i11 i22 h2, eq_one_of_mul i22 i11 (by rw [mul_comm]; exact h2)⟩
 
-omit [Fintype E] [DecidableEq E] in
 
+omit [Fintype E] [DecidableEq E] in
 theorem inSupp_mul {x : Matrix (A ⊕ E) (A ⊕ D) k} (hx : InSupp x) {j : GL (A ⊕ D) k}
     (hj : j ∈ parahoric k A D) : InSupp (x * j.val) ∧
       valuation k ((x * j.val).toBlocks₁₁.det - x.toBlocks₁₁.det * j.val.toBlocks₁₁.det) < 1 := by
@@ -98,12 +103,12 @@ theorem inSupp_mul {x : Matrix (A ⊕ E) (A ⊕ D) k} (hx : InSupp x) {j : GL (A
   have hl := (mem_parahoric.1 hj).2
   obtain ⟨hxi, hxd, hxl⟩ := hx
   have hprod : ∀ i l, (x * j.val) i l ∈ 𝒪[k] := fun i l => by
-    rw [mul_apply]; exact sum_mem fun m _ => mul_mem (hxi i m) (hJ m l)
+    rw [Matrix.mul_apply]; exact sum_mem fun m _ => mul_mem (hxi i m) (hJ m l)
   have hcong : valuation k ((x * j.val).toBlocks₁₁.det - x.toBlocks₁₁.det * j.val.toBlocks₁₁.det) < 1 := by
     rw [← det_mul]
     refine val_det_sub_lt (fun i l => hprod _ _) (fun i l => ?_) (fun i l => ?_)
-    · rw [mul_apply]; exact sum_mem fun m _ => mul_mem (hxi _ _) (hJ _ _)
-    · simp only [toBlocks₁₁, of_apply, mul_apply, Fintype.sum_sum_type, add_sub_cancel_left]
+    · rw [Matrix.mul_apply]; exact sum_mem fun m _ => mul_mem (hxi _ _) (hJ _ _)
+    · simp only [toBlocks₁₁, of_apply, Matrix.mul_apply, Fintype.sum_sum_type, add_sub_cancel_left]
       exact Valuation.map_sum_lt _ one_ne_zero fun m _ => val_mul_lt (hxi _ _) (hl _ _)
   have hd1 : valuation k (x.toBlocks₁₁.det * j.val.toBlocks₁₁.det) = 1 := by
     rw [map_mul, hxd, one_mul, (val_det_blocks hj).1]
@@ -112,7 +117,7 @@ theorem inSupp_mul {x : Matrix (A ⊕ E) (A ⊕ D) k} (hx : InSupp x) {j : GL (A
     refine Valuation.map_eq_of_sub_lt _ ?_
     rw [hd1]; exact hcong
   · intro e a
-    rw [mul_apply, Fintype.sum_sum_type]
+    rw [Matrix.mul_apply, Fintype.sum_sum_type]
     refine Valuation.map_add_lt _ (Valuation.map_sum_lt _ one_ne_zero fun m _ => ?_)
       (Valuation.map_sum_lt _ one_ne_zero fun m _ => ?_)
     · rw [mul_comm]; exact val_mul_lt (hJ _ _) (hxl _ _)
@@ -148,7 +153,7 @@ theorem om_datum : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k
       refine tame_eq hξ (by rw [Units.val_mul, map_mul, Units.val_mk0, hx.2.1, one_mul]; exact h11) ?_
       rw [Units.val_mul, Units.val_mk0, Units.val_mk0]
       exact hc
-    rw [dif_pos hs, dif_pos hx, t1, t2, map_mul, map_mul]
+    rw [dite_eq_left hs, dite_eq_left hx, t1, t2, map_mul, map_mul]
     simp only [Units.val_mul, _root_.mul_inv_rev, Units.val_inv_eq_inv_val]
     have a1 : (ξ u : ℂ) ≠ 0 := Units.ne_zero _
     field_simp
@@ -156,6 +161,6 @@ theorem om_datum : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k
       have := (inSupp_mul hs (inv_mem hj)).1
       rw [Matrix.mul_assoc, ← Units.val_mul, mul_inv_cancel, Units.val_one, Matrix.mul_one] at this
       exact hx this
-    rw [dif_neg hs, dif_neg hx, mul_zero, mul_zero]
+    rw [dite_eq_right hs, dite_eq_right hx, mul_zero, mul_zero]
 
 end GlobalTheory.DatumEigen

@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.NumberField
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.MetricsProjectionFormulaNef
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.PointsIntegralSmallLimit
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IntegrableOnTargetOfTsupport
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridge
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.NumberField
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.MetricsProjectionFormulaNef
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.PointsIntegralSmallLimit
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IntegrableOnTargetOfTsupport
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridge
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
+
+@[expose] public section
+
 open MvPolynomial NumberField Filter Topology ReciprocityTheory.ChartRestriction.G.Geo GlobalTheory.CompanionTheory.Ar.Flat
 
 namespace PositivityTheory.Xgn.RealisationRoots
@@ -224,7 +229,7 @@ theorem mono_roots {Ψ : Type} [Fintype Ψ] {N : ℕ} (M : GlobalTheory.Companio
   obtain ⟨r, hr⟩ := hall _ (List.get_mem _ ⟨j, hl⟩)
   refine ⟨r, fun t => ?_⟩
   unfold GlobalTheory.CompanionTheory.Ar.Top.monoLines
-  rw [dif_pos hl, ← hr]
+  rw [dite_eq_left hl, ← hr]
   rfl
 
 end PositivityTheory.Xgn.RealisationRoots
@@ -283,7 +288,7 @@ theorem PositivityTheory.Xgn.root_of_realisation_telescoping : GlobalTheory.Comp
     by_cases h : 0 < (r.2 : ℕ)
     · exact Or.inl ⟨_, fun t h0 h1 z hz => by
         have := hxh t h0 h1 r.1 r.2 z hz
-        rwa [dif_pos h] at this⟩
+        rwa [dite_eq_left h] at this⟩
     · exact Or.inr fun t h0 h1 z hz => by
         have := hxh t h0 h1 r.1 r.2 z hz
-        rwa [dif_neg h] at this
+        rwa [dite_eq_right h] at this

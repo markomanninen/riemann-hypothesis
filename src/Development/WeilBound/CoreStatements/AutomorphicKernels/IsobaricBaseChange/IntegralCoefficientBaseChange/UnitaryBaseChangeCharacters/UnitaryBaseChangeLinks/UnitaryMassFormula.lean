@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
-import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.TwistedGLMassFormulaStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.TwistedGLMassFormulaStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,7 +106,7 @@ theorem exists_B {K : Type} [Field K] [CharZero K] {n : ℕ} (c : K →+* K) (hc
   have hcε : c ε = ε := by simp [hε]
   have h0 : ∀ m : ℕ, (m : K) + c s ≠ 0 := fun m h => hs (by
     have h' := congrArg c h
-    rw [map_add, map_natCast, hc, map_zero] at h'
+    rw [map_add (f := _), map_natCast, hc, map_zero] at h'
     linear_combination h - h')
   have hinj : Function.Injective fun m : ℕ => ((m : K) + s) / ((m : K) + c s) := fun m k h => by
     simp only at h
@@ -132,7 +136,7 @@ theorem exists_B {K : Type} [Field K] [CharZero K] {n : ℕ} (c : K →+* K) (hc
     γ.val * ε • (1 : Matrix (Fin n) (Fin n) K) * cT c (a • (1 : Matrix (Fin n) (Fin n) K) + (ε * c a) • γ.val)
   have e : cT c (a • (1 : Matrix (Fin n) (Fin n) K) + (ε * c a) • γ.val) = c a • 1 + (ε * a) • cT c γ.val := by
     ext i j
-    simp only [cT, Matrix.transpose_apply, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add,
+    simp only [cT, Matrix.transpose_apply, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _),
       map_mul, hcε, hc, Matrix.one_apply, apply_ite c, map_one, map_zero, eq_comm (a := j)]
   rw [e, mul_smul_comm, mul_one, smul_mul_assoc, mul_add, mul_smul_comm, mul_smul_comm, mul_one, mul_eq_one_comm.1 hγ,
     smul_add, smul_smul, smul_smul, ← mul_assoc, hε2, one_mul, add_comm]
@@ -145,20 +149,20 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
 theorem conjFin_conjFin (x : Af E) : conjFin (cc E) (conjFin (cc E) x) = x := by
   obtain ⟨y, rfl⟩ := (GlobalTheory.LFun.finAdEquiv (Fr E) E).surjective x
-  change conjFin (cc E) (conjFin (cc E) (AEq y)) = AEq y
+  change conjFin (cc E) (conjFin (cc E) (AEq (E := E) y)) = AEq (E := E) y
   rw [← AEq_sig, ← AEq_sig]
   congr 1
   induction y using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul a x =>
     change a ⊗ₜ[Fr E] (IsCMField.complexConj E (IsCMField.complexConj E x)) = _
     rw [IsCMField.complexConj_apply_apply]
 
-def pU : finU E n →* GL (Fin n) (Af E) :=
-  ((GeneralLinearGroup.map (pFin E)).comp (UA E n).subtype).comp (finU E n).subtype
+def pU : finU (E := E) (n := n) →* GL (Fin n) (Af E) :=
+  ((GeneralLinearGroup.map (pFin E)).comp (UA E n).subtype).comp (finU (E := E) (n := n)).subtype
 
-theorem finGL_pU (k : finU E n) : finGL E n (pU k) = k.1.1 := finGL_pFin k
+theorem finGL_pU (k : finU (E := E) (n := n)) : finGL E n (pU k) = k.1.1 := finGL_pFin k
 
 theorem pU_injective : Function.Injective (pU (E := E) (n := n)) := fun a b h =>
   Subtype.ext (Subtype.ext (by rw [← finGL_pU, h, finGL_pU]))
@@ -167,9 +171,9 @@ theorem continuous_pU : Continuous (pU (E := E) (n := n)) :=
   (Continuous.units_map _ (continuous_id.matrix_map (continuous_snd : Continuous (pFin E)))).comp
     (continuous_subtype_val.comp continuous_subtype_val)
 
-theorem tau_pU (k : finU E n) : tau n (conjFin (cc E)) (pU k) = pU k := (tau_eq_iff _ _).2 (cT_pFin k.1)
+theorem tau_pU (k : finU (E := E) (n := n)) : tau n (conjFin (cc E)) (pU k) = pU k := (tau_eq_iff _ _).2 (cT_pFin k.1)
 
-def sU (g : GL (Fin n) (Af E)) (h : tau n (conjFin (cc E)) g = g) : finU E n :=
+def sU (g : GL (Fin n) (Af E)) (h : tau n (conjFin (cc E)) g = g) : finU (E := E) (n := n) :=
   ⟨⟨finGL E n g, finGL_mem_UA _ ((tau_eq_iff _ _).1 h)⟩, pInf_finGL _⟩
 
 theorem pU_sU (g : GL (Fin n) (Af E)) (h : tau n (conjFin (cc E)) g = g) : pU (sU g h) = g := pFin_finGL g
@@ -201,7 +205,7 @@ theorem pU_finPt (γ : UE E n) : pU (finPt γ) = ratF E n γ.1 := by
     exact dif_pos (sU _ h).2
   rw [e, pU_sU]
 
-theorem mem_ratFinU (k : finU E n) : k ∈ ratFinU E n ↔ pU k ∈ (ratF E n).range := by
+theorem mem_ratFinU (k : finU (E := E) (n := n)) : k ∈ ratFinU E n ↔ pU k ∈ (ratF E n).range := by
   constructor
   · rintro ⟨g, -, hg⟩
     exact ⟨g, (pFin_finGL _).symm.trans (congrArg (GeneralLinearGroup.map (pFin E)) hg)⟩
@@ -209,9 +213,9 @@ theorem mem_ratFinU (k : finU E n) : k ∈ ratFinU E n ↔ pU k ∈ (ratF E n).r
     refine ⟨g, (mem_UE g).2 (ratF_injective ?_), (congrArg (finGL E n) hg).trans (finGL_pU k)⟩
     rw [ratF_tau, hg, tau_pU]
 
-def centEquiv (x : finU E n) (δ : GL (Fin n) (Af E))
+def centEquiv (x : finU (E := E) (n := n)) (δ : GL (Fin n) (Af E))
     (h : ∀ g, g ∈ twCent (thF E n) δ ↔ tau n (conjFin (cc E)) g = g ∧ g * pU x = pU x * g) :
-    twCent (MonoidHom.id (finU E n)) x ≃ₜ* twCent (thF E n) δ where
+    twCent (MonoidHom.id (finU (E := E) (n := n))) x ≃ₜ* twCent (thF E n) δ where
   toFun t := ⟨pU t.1, (h _).2 ⟨tau_pU _, by
     have ht : t.1 * x = x * t.1 := t.2
     rw [← map_mul, ht, map_mul]⟩⟩
@@ -244,7 +248,7 @@ theorem exists_norm (γ : UE E n) : ∃ δ : GL (Fin n) E, δ * thE E n δ = γ.
   have hΦ : ratF E n (PhiU n E) = PhiU n (Af E) := map_PhiU _
   haveI : T2Space (Af E) := inferInstanceAs (T2Space (RestrictedProduct _ _ _))
   haveI : T2Space (GL (Fin n) (Af E)) := Units.isEmbedding_embedProduct.t2Space
-  haveI : T2Space (finU E n) := T2Space.of_injective_continuous pU_injective continuous_pU
+  haveI : T2Space (finU (E := E) (n := n)) := T2Space.of_injective_continuous pU_injective continuous_pU
   refine GlobalTheory.T.twistedCentralizerMass_eq_of_topEquiv _ _ _ _ _ _ _ _ (isClosed_twCent _ continuous_id _) (isClosed_twCent _ continuous_thF _)
     (centEquiv (finPt γ) (ratF E n (B * (PhiU n E)⁻¹)) fun g => ?_) fun t => mem_ratFinU t.1
   rw [map_mul, map_inv, hΦ, pU_finPt]
@@ -254,7 +258,7 @@ theorem exists_norm (γ : UE E n) : ∃ δ : GL (Fin n) E, δ * thE E n δ = γ.
       change B.val.map _ = _ + _ • γ.1.val.map _
       rw [hB]
       ext i j
-      simp only [Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add, map_mul, Matrix.one_apply,
+      simp only [Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _), map_mul, Matrix.one_apply,
         apply_ite (algebraMap E (Af E)), map_one, map_zero]
     have hg' : g.val * (ratF E n γ.1).val = (ratF E n γ.1).val * g.val := congrArg Units.val hg
     apply Units.ext

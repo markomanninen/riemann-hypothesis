@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits
 
 namespace GlobalTheory
@@ -34,8 +39,5 @@ theorem IdealSheafData.ideal_comap_top_of_isAffine (X Y : Scheme.{0}) [IsAffine 
     simp only [Scheme.Hom.comp_appTop, CommRingCat.hom_comp, RingHom.comp_apply] at hc
     change (pullback.fst f J.subschemeι).appTop.hom (f.appTop.hom j) = 0
     rw [hc, hj', map_zero]
-
-example : ∀ (X Y : Scheme.{0}) [IsAffine X] [IsAffine Y] (f : X ⟶ Y) (J : Y.IdealSheafData), (J.comap f).ideal ⟨⊤, isAffineOpen_top X⟩ = Ideal.map f.appTop.hom (J.ideal ⟨⊤, isAffineOpen_top Y⟩) :=
-  fun X Y _ _ f J => IdealSheafData.ideal_comap_top_of_isAffine X Y f J
 
 end GlobalTheory

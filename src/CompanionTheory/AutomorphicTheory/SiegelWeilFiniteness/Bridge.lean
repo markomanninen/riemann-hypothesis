@@ -1,6 +1,10 @@
-import Formalism.UnipotentAdelicQuotients.SiegelWeilUnitaryConvergent
-import GroundTheory.AutomorphicForms.HermitianExistenceLocal
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Statements
+module
+
+public import Formalism.UnipotentAdelicQuotients.SiegelWeilUnitaryConvergent
+public import GroundTheory.AutomorphicForms.HermitianExistenceLocal
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Statements
+
+@[expose] public section
 
 namespace CompanionTheory.SWFin
 
@@ -26,7 +30,7 @@ theorem HR_eq {M : ℕ} (J : Matrix (Fin M) (Fin M) E) (R : Type) [CommRing R] [
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul r e => rfl
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   ext g
   show cT (sigR R (conj F E).toAlgHom) _ * _ * _ = _ ↔ _
   rw [this]
@@ -48,7 +52,7 @@ theorem HFin_eq {M : ℕ} (J : Matrix (Fin M) (Fin M) E) :
       rw [tensorMap_tmul, Algebra.TensorProduct.lid_tmul]
       show algebraMap F 𝔸[F] r ⊗ₜ[F] e = (1 : 𝔸[F]) ⊗ₜ[F] (r • e)
       rw [Algebra.algebraMap_eq_smul_one, TensorProduct.smul_tmul]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   ext g
   rw [Subgroup.mem_subgroupOf]
   constructor
@@ -79,7 +83,7 @@ theorem finite_volume_unitary_adelic {M : ℕ} (J : Matrix (Fin M) (Fin M) E) (h
   exact allSome_of _ h
 
 theorem finVol_of (hC : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-      [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E] (M : ℕ)
+      [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (M : ℕ)
       (h : HermitianForm F E (Fin M → E)), AdelicCovolumeFinite.Statement h (Pi.basisFun E (Fin M)))
     (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E)
     (hσ : IsCMExt F E σ) (M : ℕ) (J : Matrix (Fin M) (Fin M) E) (hJ : IsHermND σ J) : FinVol F E σ M J := by
@@ -99,8 +103,10 @@ theorem finVol_of (hC : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
   unfold AdelicCovolumeFinite.Statement at h
   rw [hr] at h
   have hg := gram_ofGram J hH hu
-  generalize gram (HermitianForm.ofGram J hH hu).toSesq (Pi.basisFun E (Fin M)) = J' at h hg
-  subst hg
-  exact finite_volume_unitary_adelic J' hu h _ (HR_eq J' _)
+  change ∀ (μ : Measure (unitaryPoints F E (gram (HermitianForm.ofGram J hH hu).toSesq (Pi.basisFun E (Fin M))) 𝔸[F])) [μ.IsHaarMeasure],
+    ∃ D : Set (unitaryPoints F E (gram (HermitianForm.ofGram J hH hu).toSesq (Pi.basisFun E (Fin M))) 𝔸[F]),
+      IsFundamentalDomain (unitaryDiagonal F (gram (HermitianForm.ofGram J hH hu).toSesq (Pi.basisFun E (Fin M)))).range D μ ∧ μ D < ⊤ at h
+  rw [hg] at h
+  exact finite_volume_unitary_adelic J hu h _ (HR_eq J _)
 
 end CompanionTheory.SWFin

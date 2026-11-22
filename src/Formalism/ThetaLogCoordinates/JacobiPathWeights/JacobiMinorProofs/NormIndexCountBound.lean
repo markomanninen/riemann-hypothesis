@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.StatementP
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.LeIffLtColHeight
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.StatementP
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.LeIffLtColHeight
+
+@[expose] public section
 
 noncomputable section
 

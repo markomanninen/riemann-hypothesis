@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.PointNormSqNonnegQuotient
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.PointNormSqNonnegQuotient
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -48,9 +52,10 @@ theorem uc_What (hI : IsSplit P I) (hP : Ext.PackingCount) (a r) :
 
 theorem wmap_What (hI : IsSplit P I) (hP : Ext.PackingCount) (a r) :
     wmap (IR I) (What hI hP a r) = wmap (IR I) (∑ j, a j • cp hI j) + (bB hI hP).equivFun.symm r := by
-  rw [What, map_add]
+  rw [What, map_add (f := _)]
   congr 1
-  rw [Module.Basis.equivFun_symm_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Module.Basis.equivFun_symm_apply, map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [ContinuousLinearMap.map_smul_of_tower, cpp_wmap]
 

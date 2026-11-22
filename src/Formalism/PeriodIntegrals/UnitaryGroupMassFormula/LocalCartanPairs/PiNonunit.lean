@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SqPair
-import Formalism.HermitianLattices.HermitianLatticesProofs.UnimodUnramUnique
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SqPair
+public import Formalism.HermitianLattices.HermitianLatticesProofs.UnimodUnramUnique
+
+@[expose] public section
 
 noncomputable section
 open Matrix

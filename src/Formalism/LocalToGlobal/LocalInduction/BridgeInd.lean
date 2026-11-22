@@ -1,5 +1,9 @@
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalToGlobal.GaloisLevelStructure.DefsGal
+module
+
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalToGlobal.GaloisLevelStructure.DefsGal
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,5 @@ structure LocTied (D : D7) where
     BridgeInd (D.nbr i w hw) (D.nd.plOm.1 w)
   ntwbr : ∀ (i : D.ntw.Tw) (w : PlE D.host) (hw : w ∈ placesOver D.host.E (D.ntw.l i)),
     BridgeInd (D.ntwbr i w hw) (D.nd.plOm.1 w)
-
-def LocTiedP (D : D7) : Prop := Nonempty (LocTied D)
 
 end Formalism.L2

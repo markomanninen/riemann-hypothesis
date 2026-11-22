@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CharConj
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AgreeOfAdjoin
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ConjEqNegOfSq
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CharConj
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AgreeOfAdjoin
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ConjEqNegOfSq
+
+@[expose] public section
 
 noncomputable section
 

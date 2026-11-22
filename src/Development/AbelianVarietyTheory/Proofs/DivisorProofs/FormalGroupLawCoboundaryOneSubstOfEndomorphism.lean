@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsHomNmulOfIsLawStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsHomNmulOfIsLawStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -24,14 +28,14 @@ theorem map_inL (φ : R →+* S) (f : MvPowerSeries (Fin d) R) : map φ (inL f) 
   rw [map_subst (hasSubst_cc fun _ => constantCoeff_X _)]
   congr 1
   funext i
-  simp
+  exact map_X φ _
 
 theorem map_inR (φ : R →+* S) (f : MvPowerSeries (Fin d) R) : map φ (inR f) = inR (map φ f) := by
   unfold inR
   rw [map_subst (hasSubst_cc fun _ => constantCoeff_X _)]
   congr 1
   funext i
-  simp
+  exact map_X φ _
 
 theorem mvPowerSeriesMap_evalTwoGroups {τ : Type} [Finite τ] (φ : R →+* S) (c : MvPowerSeries (Fin d ⊕ Fin d) R)
     (u v : Fin d → MvPowerSeries τ R) (hu : ∀ i, constantCoeff (u i) = 0)

@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCocharLie
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCocharLieLieModel
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueSemilinear
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.MemMaxSmulTopIff
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteProjectiveStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsCocharacterLieModelStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorusInjectiveLieMapStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCocharLie
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCocharLieLieModel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueSemilinear
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.MemMaxSmulTopIff
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteProjectiveStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsCocharacterLieModelStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorusInjectiveLieMapStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem exists_div {R X : Type} [CommRing R] [IsDomain R] [IsDiscreteValuationRi
   choose f hf using hd
   refine ⟨AddMonoidHom.mk' f fun a b => ?_, ?_⟩
   · apply mul_left_cancel₀ hπ.ne_zero
-    rw [mul_add, ← hf, ← hf, ← hf, map_add]
+    rw [mul_add, ← hf, ← hf, ← hf, map_add (f := _)]
   · ext χ
     simp [hf]
 
@@ -58,7 +62,6 @@ theorem lie_torus_saturated : ∀ (R K : Type) [CommRing R] [IsDomain R] [IsDisc
       rw [hz, map_smulₛₗ, hcπ, zero_smul]
     have a1 := hj (A δ)
     have a2 := hjT δ
-    unfold LieModel.Lifts at a1 a2
     rw [Category.comp_id] at a1 a2
     rw [h0, pt_zero, hA, Over.comp_left] at a1
     have h1 : Mk.pt (jT δ) ≫ u = 1 := by

@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCyclotomicTowerLevelGeneratorProperties
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCyclotomicTowerLevelGeneratorProperties
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.MainNotions.LocalSituation GlobalTheory.Cyc
 open TensorProduct
@@ -100,7 +104,7 @@ theorem lTensor_TWmap {T T' : LocLat G Qp LL O} (f : LatHom T.L T'.L) (φ : R �
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a t => simp [TWmap]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem lTensor_TWact {T T' : LocLat G Qp LL O} (f : LatHom T.L T'.L) (φ : R →ₐ[O] R) (g : G)
     (x : TW R T) :
@@ -110,7 +114,7 @@ theorem lTensor_TWact {T T' : LocLat G Qp LL O} (f : LatHom T.L T'.L) (φ : R �
   | tmul a t =>
     have : resT f (T.actT g t) = T'.actT g (resT f t) := Subtype.ext (f.equiv g t)
     simp [TWact, this]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 end Generic
 
@@ -354,7 +358,7 @@ theorem norm_le_of_v_le (P : LocPrime l) (LL : FinExt l) (a b : ℚ_[l])
     rw [zero_add] at this
     exact absurd h (not_le.2 this)
   have h1 : IsIntegral ℤ_[l] (algebraMap ℚ_[l] ↥LL.1 (b / a)) := (P.v_O LL _).1 h0
-  rw [isIntegral_algebraMap_iff (algebraMap ℚ_[l] ↥LL.1).injective] at h1
+  rw [isIntegral_algebraMap_iff ] at h1
   obtain ⟨y, hy⟩ := IsIntegrallyClosed.isIntegral_iff.1 h1
   have h2 : ‖b / a‖ ≤ 1 := by rw [← hy]; exact y.2
   rw [hb, norm_mul]

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.LocalDensityEuler
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MultipliableEulerFac
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CmLocalDensitiesProductFormulaStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.LocalDensityEuler
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MultipliableEulerFac
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CmLocalDensitiesProductFormulaStatement
+
+@[expose] public section
 
 namespace GlobalTheory.DensityProductClosed
 

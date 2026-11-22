@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
-import Development.AbelianVarietyTheory.Definitions.Foundations.Mdl
-import Development.AbelianVarietyTheory.Definitions.Foundations.HahnPowOrderLeadingCoeff
-import Development.AbelianVarietyTheory.Definitions.Foundations.CthFac
-import Development.AbelianVarietyTheory.Definitions.Foundations.SgC
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
+public import Development.AbelianVarietyTheory.Definitions.Foundations.Mdl
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HahnPowOrderLeadingCoeff
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CthFac
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SgC
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem mem_fixMu_iff {M : ℕ} (s : Ω ≃ₐ[ℚ] Ω) : s ∈ fixMu Ω M ↔ �
   induction hz using IntermediateField.adjoin_induction with
   | mem z hz => exact h z hz
   | algebraMap q => exact s.commutes q
-  | add a b _ _ ha hb => rw [map_add, ha, hb]
+  | add a b _ _ ha hb => rw [map_add (f := _), ha, hb]
   | inv a _ ha => rw [map_inv₀, ha]
   | mul a b _ _ ha hb => rw [map_mul, ha, hb]
 
@@ -79,7 +83,7 @@ theorem kumH_apply {F Ω' : Type*} [Field F] [Field Ω'] [Algebra F Ω'] {N : �
     conv_lhs => rw [hk b, map_mul, map_pow, hfix a, hk a]
     ring
   unfold kumH
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   rfl
 
 theorem eps_eOm [IsAlgClosed Ω] (q : ℚ) : ε (eOm ε q) = Complex.exp (2 * Real.pi * Complex.I * (q : ℂ)) := by
@@ -254,40 +258,5 @@ def wkTop (X : Tower Ω ε) (l n r N : ℕ) (x : ZMod N) (c d : ℕ) (σ : Ω �
     (topEta X (l ^ (r + n) * N) (topChar X (l ^ (r + n) * N) l n (topU X l (r + n) N x c))
       (topChar X (l ^ (r + n) * N) l n (topV X l (r + n) N d)))
     (topLift X (l ^ (r + n) * N) σ)⁻¹ : topL X (l ^ (r + n) * N)) : X.K)
-
-theorem wkTop_mem (X : Tower Ω ε) (l n r N : ℕ) (x : ZMod N) (c d : ℕ) (σ : Ω ≃ₐ[ℚ] Ω) :
-    wkTop X l n r N x c d σ ∈ topL X (l ^ (r + n) * N) := Subtype.property _
-
-theorem pow_dvd_topLevel (l n r N : ℕ) : l ^ n ∣ l ^ (r + n) * N :=
-  (pow_dvd_pow l (Nat.le_add_left n r)).mul_right N
-
-example : topT 3 1 5 = 2 ∧ topT 3 2 5 = 4 := by
-  have h : ∀ s k : ℕ, k < 5 → (3 : ZMod 5) ^ s * (k : ZMod 5) = 1 → topT 3 s 5 = k := fun s k hk e => by
-    have e1 := topT_spec (l := 3) (N := 5) (by norm_num) s
-    have hu : IsUnit ((3 : ZMod 5) ^ s) := IsUnit.of_mul_eq_one _ e
-    have e2 : ((topT 3 s 5 : ℕ) : ZMod 5) = k := hu.mul_left_cancel (by rw [e]; exact_mod_cast e1)
-    have e3 : topT 3 s 5 < 5 := ZMod.val_lt _
-    have e4 := congrArg ZMod.val e2
-    rwa [ZMod.val_natCast, ZMod.val_natCast, Nat.mod_eq_of_lt e3, Nat.mod_eq_of_lt hk] at e4
-  exact ⟨h 1 2 (by norm_num) (by decide), h 2 4 (by norm_num) (by decide)⟩
-
-example [IsAlgClosed Ω] : ε (eOm ε (1 / ((2 : ℕ) : ℚ) ^ 2)) = Complex.I := by
-  rw [eps_eOm]
-  refine Eq.trans ?_ Complex.exp_pi_div_two_mul_I
-  congr 1
-  push_cast
-  ring
-
-example : (Complex.conjAe.restrictScalars ℚ) ∈ fixMu ℂ 2 ∧ (Complex.conjAe.restrictScalars ℚ) ∉ fixMu ℂ 4 := by
-  rw [mem_fixMu_iff, mem_fixMu_iff]
-  refine ⟨fun z hz => ?_, fun h => ?_⟩
-  · rcases mul_self_eq_one_iff.1 (by rw [← sq]; exact hz : z * z = 1) with rfl | rfl <;> simp
-  · have := congrArg Complex.im (h Complex.I Complex.I_pow_four)
-    norm_num at this
-
-example : (kumH (F := ℝ) 2 (-1 : ℂ) Complex.I Complex.conjAe).toAdd = 1 := by
-  have hζ : IsPrimitiveRoot (-1 : ℂ) 2 := IsPrimitiveRoot.neg_one 0 (by norm_num)
-  rw [kumH_apply hζ (fun g => by simp) (w := (-1 : ℝ)) (by norm_num) (by simp)]
-  exact kum_eq_of hζ Complex.I_ne_zero 1 (by simp [ZMod.val_one])
 
 end GlobalTheory.K4

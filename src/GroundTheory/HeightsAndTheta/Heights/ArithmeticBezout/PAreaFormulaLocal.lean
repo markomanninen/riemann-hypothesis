@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsAreaFormulaLocal
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PAreaGraph
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PAreaGraphBound
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PAreaGraphPiece
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PAreaGraphPartition
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PGraphJacContinuous
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetImageAreaSetFrame
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsAreaFormulaLocal
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PAreaGraph
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PAreaGraphBound
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PAreaGraphPiece
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PAreaGraphPartition
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PGraphJacContinuous
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetImageAreaSetFrame
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -82,8 +87,8 @@ theorem setLIntegral_image {E : Type*} [NormedAddCommGroup E] [InnerProductSpace
 
 end AreaFormulaLocal
 
-open AreaFormulaLocal AreaGraphPiece in
 
+open AreaFormulaLocal AreaGraphPiece in
 theorem AreaFormulaLocal.proof : AreaFormulaLocal.Statement := by
   intro E F _ _ _ _ _ _ _ _ _ _ k hk U f x₀ hU hf hx₀ hinj
   classical
@@ -99,7 +104,7 @@ theorem AreaFormulaLocal.proof : AreaFormulaLocal.Statement := by
   obtain ⟨m, c, c', hcc, hc'⟩ := exists_frame (LinearMap.range (D : E →ₗ[ℝ] F)) hWk
   let Q : F →ₗ[ℝ] EuclideanSpace ℝ (Fin k ⊕ Fin m) :=
     { toFun := fun z => pairPt (c z) (c' z)
-      map_add' := fun z w => by rw [map_add, map_add, pairPt_add]
+      map_add' := fun z w => by rw [map_add (f := _), map_add (f := _), pairPt_add]
       map_smul' := fun r z => by rw [map_smul, map_smul, pairPt_smul]; rfl }
   have hQ : ∀ z, ‖Q z‖ = ‖z‖ := hcc
 

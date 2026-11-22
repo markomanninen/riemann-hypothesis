@@ -1,20 +1,24 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.PerDeriv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.LocEig
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.UopSum
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.EisensteinSmoothContinuous
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.PeriodicIntegralFundamentalDomainInvariant
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.EisensteinPeriodDerivative
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.EisensteinConstantTermUpperBlock
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.EisensteinConstantTermOfPeriodMeanOfUpperBlock
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ConstantTermAutomorphy
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.EisensteinLieAlgebraAction
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.EisensteinCentralLieAction
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.EisensteinContinuousLeftAction
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.RayClassGroupFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsCharacterSeparation
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.EisensteinNormEqAbsPow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EquivOfISupRange
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.PerDeriv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.LocEig
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.UopSum
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.EisensteinSmoothContinuous
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.PeriodicIntegralFundamentalDomainInvariant
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.EisensteinPeriodDerivative
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.EisensteinConstantTermUpperBlock
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.EisensteinConstantTermOfPeriodMeanOfUpperBlock
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ConstantTermAutomorphy
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.EisensteinLieAlgebraAction
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.EisensteinCentralLieAction
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.EisensteinContinuousLeftAction
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.RayClassGroupFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsCharacterSeparation
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.EisensteinNormEqAbsPow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EquivOfISupRange
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -171,7 +175,7 @@ private theorem proj (hR : RayFin) (hC : CharPick) {φ : TR.Sm F 2} {ψ : GA F 2
     let M : (GA F 2 → ℂ) →ₗ[ℂ] (GA F 2 → ℂ) :=
       { toFun := fun θ g => L fun t => ((ν.1 t⁻¹ : ℂˣ) : ℂ) * θ (aff t 0 * g)
         map_add' := fun a b => funext fun g => by
-          rw [Pi.add_apply, ← map_add]; congr 1; funext t; simp [mul_add]
+          rw [Pi.add_apply, ← map_add (f := _)]; congr 1; funext t; simp [mul_add]
         map_smul' := fun c a => funext fun g => by
           rw [Pi.smul_apply, ← map_smul]; congr 1; funext t; simp [mul_left_comm] }
     refine ⟨M ∘ₗ Λ, fun h => ?_⟩
@@ -219,7 +223,8 @@ private theorem loc {φ : TR.Sm F 2} {Ψ : GA F 2 → ℂ} (h0 : Ψ ≠ 0) (hr :
     rintro _ ⟨a, -, rfl⟩ _ ⟨b, -, rfl⟩ e
     rw [Function.surjInv_eq hs, Function.surjInv_eq hs] at e
     rw [e]
-  rw [(uopSum F w _ _ c Φ hΦ).2 _ hS, ← hM1, ← map_smul, ← he, (uopSum F w _ _ c φ hf).2 _ hS, map_add, map_sum, hM1]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [(uopSum F w _ _ c Φ hΦ).2 _ hS, ← hM1, ← map_smul, ← he, (uopSum F w _ _ c φ hf).2 _ hS, map_add (f := _), map_sum, hM1]
   simp only [hM, apply_ite M, map_zero]
 
 omit [IsTotallyReal F] in
@@ -259,8 +264,8 @@ private theorem main (hA : SmCont) (hB : CtBasic) (hL : CtLeft) (hR : RayFin) (h
     rw [locGL, corner_scalar, corner_aff, finGL, corner_scalar, corner_aff, ι_aff, ι_aff, hZ, hΨ, ← mul_assoc, ← Units.val_mul, smul_eq_mul]
     congr 2
     change ω.loc w d * (η * ν).loc w (a / d) = _
-    simp only [HChar.loc_mul, HChar.loc_inv, div_eq_mul_inv, map_mul, map_inv, mul_inv]
-    ac_rfl
+    simp only [HChar.loc, MonoidHom.comp_apply, Subgroup.coe_mul, Subgroup.coe_inv, MonoidHom.mul_apply, MonoidHom.inv_apply, div_eq_mul_inv, map_mul, map_inv, mul_inv]
+    simp only [mul_comm, mul_left_comm, mul_assoc]
   refine ⟨η, ω * η⁻¹, hη, hω.mul hη.inv, by rw [mul_comm, inv_mul_cancel_right], ?_⟩
   have num : ∀ w : Pl F, (((normV w : ℝ) ^ ((k : ℝ) / 2 - 1) : ℝ) : ℂ) * ((normV w : ℂ) * ((η * ν).val w : ℂˣ)) = (η.val w : ℂˣ) ∧
       (((normV w : ℝ) ^ ((k : ℝ) / 2 - 1) : ℝ) : ℂ) * ((ω * η⁻¹ * ν⁻¹).val w : ℂˣ) =
@@ -280,9 +285,13 @@ private theorem main (hA : SmCont) (hB : CtBasic) (hL : CtLeft) (hR : RayFin) (h
     · linear_combination ((η.val w : ℂˣ) : ℂ) * e1'
     · linear_combination (((ω * η⁻¹).val w : ℂˣ) : ℂ) * e2'
   have u1 : ∀ (w : Pl F) x, IsUnitAt w x → (η * ν).loc w x = 1 → η.loc w x = 1 := fun w x hx h => by
-    rwa [HChar.loc_mul, (hν2 w).1 x hx, mul_one] at h
+    have hn := (hν2 w).1 x hx
+    simp only [HChar.loc, MonoidHom.comp_apply] at hn
+    simpa only [HChar.loc, MonoidHom.comp_apply, Subgroup.coe_mul, MonoidHom.mul_apply, hn, mul_one] using h
   have u2 : ∀ (w : Pl F) x, IsUnitAt w x → (ω * η⁻¹ * ν⁻¹).loc w x = 1 → (ω * η⁻¹).loc w x = 1 := fun w x hx h => by
-    rwa [HChar.loc_mul, HChar.loc_inv, (hν2 w).1 x hx, inv_one, mul_one] at h
+    have hn := (hν2 w).1 x hx
+    simp only [HChar.loc, MonoidHom.comp_apply] at hn
+    simpa only [HChar.loc, MonoidHom.comp_apply, Subgroup.coe_mul, Subgroup.coe_inv, MonoidHom.mul_apply, MonoidHom.inv_apply, hn, inv_one, mul_one] using h
   refine ⟨fun w hw => ?_, fun w hw => ?_⟩
   · obtain ⟨l, e, h, -⟩ := key w
     obtain ⟨h1, h2⟩ := h hw

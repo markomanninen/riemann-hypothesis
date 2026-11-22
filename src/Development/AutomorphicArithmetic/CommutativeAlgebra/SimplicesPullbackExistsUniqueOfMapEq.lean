@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.BlowupCategories.SpanScale
+module
+
+public import Development.AutomorphicArithmetic.BlowupCategories.SpanScale
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Pbf UpperTheory.Blow
 

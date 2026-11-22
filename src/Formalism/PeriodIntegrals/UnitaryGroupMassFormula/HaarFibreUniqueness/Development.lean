@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.OmFibreUniq
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.OmFibreUniq
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,13 +48,13 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 theorem dX_haar (h : ∃ μ, SdW F E σ n J (Fv F v) (psiV F ψ v) a μ) :
     (dX σ J ψ v a).IsAddHaarMeasure := by
   unfold dX
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec.1
 
 theorem dT_haar (h : ∃ ν, SdHerm F E σ (Fv F v) (psiV F ψ v) a ν) :
     (dT σ ψ v a).IsAddHaarMeasure := by
   unfold dT
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec.1
 
 theorem omUnique_of (h0 : SdEx) (h1 : FibEx) (h4 : FibUniq) : OmUnique σ J ψ v a := by

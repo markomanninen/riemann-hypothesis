@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.MaIntEmpty
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.MaIntEmpty
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.A
 
@@ -23,12 +27,6 @@ def IsPsh_iff_isLeviPshStatement : Prop :=
   ∀ (D : ℕ) (U : Set (Fin D → ℂ)) (φ : (Fin D → ℂ) → ℝ), IsOpen U → ContDiffOn ℝ 2 φ U →
     (IsPsh U φ ↔ IsLeviPsh U φ)
 
-def IsPshInhabitStatement : Prop :=
-  ∀ D : ℕ, IsPsh (Set.univ : Set (Fin D → ℂ)) (fun z => ∑ j, ‖z j‖ ^ 2) ∧
-    IsPsh (Set.univ : Set (Fin D → ℂ)) (fun z => ‖z‖) ∧
-    IsLeviPsh (Set.univ : Set (Fin D → ℂ)) (fun z => ∑ j, ‖z j‖ ^ 2) ∧
-    ¬ IsPsh (Set.univ : Set (Fin (D + 1) → ℂ)) (fun z => -‖z 0‖ ^ 2)
-
 def IsPsh_locallyIntegrableStatement : Prop :=
   ∀ (D : ℕ) (U : Set (Fin D → ℂ)) (φ : (Fin D → ℂ) → ℝ), IsOpen U → IsPsh U φ →
     LocallyIntegrableOn φ U volume
@@ -46,10 +44,12 @@ def SubMeanPolydiscStatement : Prop :=
 def coordDiv (S : Finset (Fin D)) : Set (Fin D → ℂ) :=
   {z | ∃ i ∈ S, z i = 0}
 
-open Classical in
 
+open Classical in
 def limsupExt (U A : Set (Fin D → ℂ)) (v : (Fin D → ℂ) → ℝ) (z : Fin D → ℂ) : ℝ :=
-  if z ∈ A then limsup v (𝓝[U \ A] z) else v z
+  by
+    classical
+    exact if z ∈ A then limsup v (𝓝[U \ A] z) else v z
 
 def PshExtensionStatement : Prop :=
   ∀ (D : ℕ) (S : Finset (Fin D)) (U : Set (Fin D → ℂ)) (u : (Fin D → ℂ) → ℝ) (C : ℝ),
@@ -97,10 +97,6 @@ def MollifyStatement : Prop :=
         ∀ z ∈ shrink U ε, φ z ≤ molli ρ ε φ z ∧ molli ρ ε φ z ≤ polyMax φ z ε) ∧
       (∀ z ∈ U, Tendsto (fun ε => molli ρ ε φ z) (𝓝[>] 0) (𝓝 (φ z)))
 
-def MollifyLipStatement : Prop :=
-  ∀ (D : ℕ) (ρ : Mollifier D) (U : Set (Fin D → ℂ)) (φ : (Fin D → ℂ) → ℝ) (L : NNReal),
-    LipschitzOnWith L φ U → ∀ ε, 0 < ε → ∀ z ∈ shrink U ε, |molli ρ ε φ z - φ z| ≤ L * ε
-
 def MollificationSecondOrder : Prop :=
   ∀ (D : ℕ) (ρ : Mollifier D) (U K : Set (Fin D → ℂ)) (φ : (Fin D → ℂ) → ℝ),
     IsOpen U → ContDiffOn ℝ 3 φ U → IsCompact K → K ⊆ U →
@@ -131,11 +127,6 @@ def RegMaxStatement : Prop :=
       (∀ t : ι → ℝ, ∑ j, fderiv ℝ (regMax (ι := ι) η) t (Pi.single j 1) = 1)) ∧
     ∃ C : ℝ, ∀ η : ℝ, 0 < η → ∀ (t : ι → ℝ) (i j : ι),
       |fderiv ℝ (fderiv ℝ (regMax (ι := ι) η)) t (Pi.single i 1) (Pi.single j 1)| ≤ C / η
-
-def RegMaxPshStatement : Prop :=
-  ∀ (D : ℕ) (ι : Type) [Fintype ι] [Nonempty ι] (η : ℝ) (U : Set (Fin D → ℂ))
-    (u : ι → (Fin D → ℂ) → ℝ), IsOpen U → 0 < η → (∀ j, IsPsh U (u j)) →
-    IsPsh U (fun z => regMax η (fun j => u j z))
 
 def RegMaxLeviStatement : Prop :=
   ∀ (D : ℕ) (ι : Type) [Fintype ι] [Nonempty ι] (η : ℝ) (U : Set (Fin D → ℂ))

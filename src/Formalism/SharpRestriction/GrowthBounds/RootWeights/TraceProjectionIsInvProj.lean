@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.DeltaIntegralEnvelopingStable
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.DeltaIntegralEnvelopingStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -206,7 +210,7 @@ theorem trace_projection_isInvProj [NeZero n] [CharZero (KK O)] [FiniteDimension
       · rw [hu2, map_zero]
     · exact map_zero _
     · intro x y _ _ hx hy
-      rw [map_add, hx, hy]
+      rw [map_add (f := _), hx, hy]
     · intro a x _ hx
       rw [map_smul, hx]
   · unfold isoSub at hx
@@ -231,7 +235,7 @@ theorem trace_projection_isInvProj [NeZero n] [CharZero (KK O)] [FiniteDimension
       · rw [hu1, zero_mul, zero_smul]
     · exact map_zero _
     · intro x y _ _ hx hy
-      rw [map_add, hx, hy, add_zero]
+      rw [map_add (f := _), hx, hy, add_zero]
     · intro a x _ hx
       rw [map_smul, hx, smul_zero]
 

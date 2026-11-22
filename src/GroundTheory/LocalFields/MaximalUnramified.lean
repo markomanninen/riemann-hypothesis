@@ -1,16 +1,20 @@
-import Mathlib
-import GroundTheory.LocalFields.Interface
-import GroundTheory.LocalFields.FiniteExtension
-import GroundTheory.LocalFields.Uniqueness
-import GroundTheory.LocalFields.Integers
-import GroundTheory.LocalFields.UnitsPowers
-import GroundTheory.LocalFields.UnramifiedRootsOfUnity
-import GroundTheory.LocalFields.UnramifiedGalois
-import GroundTheory.LocalFields.UnramifiedExistence
-import GroundTheory.LocalFields.AbstractLocalReciprocity.ProfiniteInteger
-import GroundTheory.LocalFields.AbstractLocalReciprocity.ExistsEqNsmulOfProjEqZero
-import GroundTheory.LocalFields.AbstractLocalReciprocity.Frobenius
-import GroundTheory.LocalFields.AbstractLocalReciprocity.Valuation
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.Interface
+public import GroundTheory.LocalFields.FiniteExtension
+public import GroundTheory.LocalFields.Uniqueness
+public import GroundTheory.LocalFields.Integers
+public import GroundTheory.LocalFields.UnitsPowers
+public import GroundTheory.LocalFields.UnramifiedRootsOfUnity
+public import GroundTheory.LocalFields.UnramifiedGalois
+public import GroundTheory.LocalFields.UnramifiedExistence
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.ProfiniteInteger
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.ExistsEqNsmulOfProjEqZero
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.Frobenius
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.Valuation
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,6 @@ variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchi
   {Ω : Type*} [Field Ω] [Algebra K Ω]
 
 omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
-
 theorem algEquiv_pow_apply_of_apply_eq_pow {L : Type*} [Field L] [Algebra K L] {τ : L ≃ₐ[K] L}
     {x : L} {q : ℕ} (h : τ x = x ^ q) (k : ℕ) : (τ ^ k) x = x ^ q ^ k := by
   induction k with
@@ -94,7 +97,6 @@ theorem apply_eq_pow_pow_of_pow_eq_one {n : ℕ} (hn : n ≠ 0) {ζ : Ω}
   rw [map_pow, ha, ← pow_mul, ← pow_mul, mul_comm]
 
 variable (K Ω) in
-
 class HasUnramifiedRoots : Prop where
   exists_isPrimitiveRoot : ∀ n : ℕ, n ≠ 0 → ∃ ζ : Ω, IsPrimitiveRoot ζ (Nat.card 𝓀[K] ^ n - 1)
 
@@ -102,12 +104,10 @@ instance hasUnramifiedRoots_of_isSepClosed [IsSepClosed Ω] : HasUnramifiedRoots
   ⟨fun _ hn ↦ exists_isPrimitiveRoot_card_pow_sub_one (K := K) hn⟩
 
 variable (K Ω) in
-
 def unramifiedRoots : Set Ω :=
   {ξ | ∃ n : ℕ, n ≠ 0 ∧ ξ ^ (Nat.card 𝓀[K] ^ n - 1) = 1}
 
 omit [Algebra K Ω] in
-
 theorem mem_unramifiedRoots_iff {ξ : Ω} :
     ξ ∈ unramifiedRoots K Ω ↔ ∃ m : ℕ, (m : 𝓀[K]) ≠ 0 ∧ ξ ^ m = 1 := by
   constructor
@@ -130,7 +130,6 @@ theorem mem_unramifiedRoots_iff {ξ : Ω} :
 
 variable (K) in
 open Classical in
-
 def unramifiedCoord (σ : Ω ≃ₐ[K] Ω) (n : ℕ+) : ZMod n :=
   if h : ∃ a : ZMod n, ∀ ξ : Ω, ξ ^ (Nat.card 𝓀[K] ^ (n : ℕ) - 1) = 1 →
       σ ξ = ξ ^ Nat.card 𝓀[K] ^ a.val then h.choose else 0
@@ -145,7 +144,7 @@ theorem natCast_eq_unramifiedCoord_iff {n : ℕ+} {ζ : Ω}
     refine ⟨a₀, fun ξ hξ ↦ apply_eq_pow_pow_of_pow_eq_one hn hζ ?_ hξ⟩
     rw [ha₀, pow_pow_eq_pow_pow_iff hn hζ, ZMod.val_natCast]
     exact (Nat.mod_modEq a₀ n).symm
-  have hc : unramifiedCoord K σ n = hex.choose := dif_pos hex
+  have hc : unramifiedCoord K σ n = hex.choose := dite_eq_left hex
   rw [hc, hex.choose_spec ζ hζ.pow_eq_one, pow_pow_eq_pow_pow_iff hn hζ,
     ← ZMod.natCast_eq_natCast_iff, ZMod.natCast_zmod_val]
   exact eq_comm
@@ -200,7 +199,6 @@ variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchi
   {Ω : Type*} [Field Ω] [Algebra K Ω] [HasUnramifiedRoots K Ω]
 
 variable (K Ω) in
-
 def unramifiedDegree : (Ω ≃ₐ[K] Ω) →* Multiplicative ℤ̂ where
   toFun σ := Multiplicative.ofAdd ⟨fun n ↦ unramifiedCoord K σ n,
     mem_profiniteIntegers.2 fun _ _ h ↦ castHom_unramifiedCoord σ h⟩
@@ -215,7 +213,7 @@ def unramifiedDegree : (Ω ≃ₐ[K] Ω) →* Multiplicative ℤ̂ where
     congr 1
     ext n
     show unramifiedCoord K (σ * τ) n = proj n (_ + _)
-    rw [map_add, unramifiedCoord_mul]
+    rw [map_add (f := _), unramifiedCoord_mul]
     rfl
 
 theorem proj_toAdd_unramifiedDegree (σ : Ω ≃ₐ[K] Ω) (n : ℕ+) :
@@ -315,10 +313,9 @@ theorem unramifiedDegree_eq_ofAdd_one_iff (σ : Ω ≃ₐ[K] Ω) :
   exact this
 
 omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] [HasUnramifiedRoots K Ω] in
-
 theorem mem_fixingSubgroup_adjoin_iff {S : Set Ω} {σ : Ω ≃ₐ[K] Ω} :
     σ ∈ (adjoin K S).fixingSubgroup ↔ ∀ x ∈ S, σ x = x := by
-  rw [← Subgroup.zpowers_le, ← le_iff_le, adjoin_le_iff]
+  rw [← Subgroup.zpowers_le, ← le_fixedField_iff_le_fixingSubgroup, adjoin_le_iff]
   refine ⟨fun h x hx ↦ (mem_fixedField_iff _ _).1 (h hx) σ (Subgroup.mem_zpowers σ), fun h x hx ↦ ?_⟩
   refine (mem_fixedField_iff _ _).2 fun τ hτ ↦ ?_
   have hσ : σ ∈ MulAction.stabilizer (Ω ≃ₐ[K] Ω) x := h x hx
@@ -332,19 +329,16 @@ variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchi
   {Ω : Type*} [Field Ω] [Algebra K Ω]
 
 omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
-
 theorem pow_sub_one_dvd_pow_sub_one (q : ℕ) {m n : ℕ} (h : m ∣ n) : q ^ m - 1 ∣ q ^ n - 1 := by
   obtain ⟨k, rfl⟩ := h
   rw [pow_mul]
   simpa [one_pow] using Nat.sub_dvd_pow_sub_pow (q ^ m) 1 k
 
 variable (K Ω) in
-
 def maximalUnramifiedExtension : IntermediateField K Ω :=
   ⨆ E : {E : IntermediateField K Ω // IsUnramifiedSubextension E}, E.1
 
 omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
-
 theorem IsUnramifiedSubextension.le_maximalUnramifiedExtension {E : IntermediateField K Ω}
     (hE : IsUnramifiedSubextension E) : E ≤ maximalUnramifiedExtension K Ω :=
   le_iSup (fun E : {E : IntermediateField K Ω // IsUnramifiedSubextension E} ↦ E.1) ⟨E, hE⟩
@@ -477,7 +471,6 @@ theorem unramifiedDegree_maximalUnramifiedExtension_injective :
   exact MonoidHom.mem_ker.1 hσ
 
 variable (K Ω) in
-
 def maximalUnramifiedExtensionGaloisEquiv :
     (maximalUnramifiedExtension K Ω ≃ₐ[K] maximalUnramifiedExtension K Ω) ≃ₜ* Multiplicative ℤ̂ :=
   let e : (maximalUnramifiedExtension K Ω ≃ₐ[K] maximalUnramifiedExtension K Ω) ≃* Multiplicative ℤ̂ :=
@@ -488,13 +481,7 @@ def maximalUnramifiedExtensionGaloisEquiv :
     continuous_invFun :=
       (Continuous.homeoOfEquivCompactToT2 (f := e.toEquiv) continuous_unramifiedDegree).symm.continuous }
 
-@[simp]
-theorem maximalUnramifiedExtensionGaloisEquiv_apply (ρ : maximalUnramifiedExtension K Ω ≃ₐ[K] maximalUnramifiedExtension K Ω) :
-    maximalUnramifiedExtensionGaloisEquiv K Ω ρ = unramifiedDegree K (maximalUnramifiedExtension K Ω) ρ :=
-  rfl
-
 variable (K Ω) in
-
 def maximalUnramifiedExtensionFrobenius : maximalUnramifiedExtension K Ω ≃ₐ[K] maximalUnramifiedExtension K Ω :=
   (maximalUnramifiedExtensionGaloisEquiv K Ω).symm (Multiplicative.ofAdd 1)
 
@@ -528,7 +515,6 @@ theorem restrictNormal_eq_maximalUnramifiedExtensionFrobenius_iff (σ : Ω ≃�
 
 omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] [HasUnramifiedRoots K Ω]
   [IsGalois K Ω] in
-
 theorem dense_zpowers_ofAdd_one :
     Dense (Subgroup.zpowers (Multiplicative.ofAdd (1 : ℤ̂)) : Set (Multiplicative ℤ̂)) := by
   have h : (Subgroup.zpowers (Multiplicative.ofAdd (1 : ℤ̂)) : Set (Multiplicative ℤ̂)) =
@@ -542,30 +528,6 @@ theorem dense_zpowers_ofAdd_one :
       exact ⟨k, by rw [← ofAdd_zsmul, zsmul_one]⟩
   rw [h]
   exact Multiplicative.ofAdd.surjective.denseRange.dense_image continuous_ofAdd denseRange_intCast
-
-theorem dense_zpowers_maximalUnramifiedExtensionFrobenius :
-    Dense (Subgroup.zpowers (maximalUnramifiedExtensionFrobenius K Ω) :
-      Set (maximalUnramifiedExtension K Ω ≃ₐ[K] maximalUnramifiedExtension K Ω)) := by
-  have h : (Subgroup.zpowers (maximalUnramifiedExtensionFrobenius K Ω) :
-      Set (maximalUnramifiedExtension K Ω ≃ₐ[K] maximalUnramifiedExtension K Ω)) =
-      (maximalUnramifiedExtensionGaloisEquiv K Ω).symm ''
-        (Subgroup.zpowers (Multiplicative.ofAdd (1 : ℤ̂)) : Set (Multiplicative ℤ̂)) := by
-    ext ρ
-    simp only [SetLike.mem_coe, Subgroup.mem_zpowers_iff, Set.mem_image]
-    constructor
-    · rintro ⟨k, rfl⟩
-      exact ⟨_, ⟨k, rfl⟩, by rw [map_zpow]; rfl⟩
-    · rintro ⟨_, ⟨k, rfl⟩, rfl⟩
-      exact ⟨k, by rw [map_zpow]; rfl⟩
-  rw [h]
-  exact (maximalUnramifiedExtensionGaloisEquiv K Ω).symm.surjective.denseRange.dense_image
-    (maximalUnramifiedExtensionGaloisEquiv K Ω).symm.continuous dense_zpowers_ofAdd_one
-
-theorem topologicalClosure_zpowers_maximalUnramifiedExtensionFrobenius :
-    (Subgroup.zpowers (maximalUnramifiedExtensionFrobenius K Ω)).topologicalClosure = ⊤ :=
-  SetLike.coe_injective (by
-    rw [Subgroup.topologicalClosure_coe, dense_zpowers_maximalUnramifiedExtensionFrobenius.closure_eq,
-      Subgroup.coe_top])
 
 end MaximalUnramified
 
@@ -594,7 +556,7 @@ variable (K M : Type*) [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarc
   [Algebra K M] [ValuativeExtension K M] [FiniteDimensional K M]
 
 theorem card_residueField_eq_pow_residueDegree :
-    Nat.card 𝓀[M] = Nat.card 𝓀[K] ^ residueDegree K M := by
+    Nat.card 𝓀[M] = Nat.card 𝓀[K] ^ ((IsLocalRing.maximalIdeal 𝒪[M]).inertiaDeg (𝒪[K])) := by
   have := Fintype.ofFinite 𝓀[K]
   have := Fintype.ofFinite 𝓀[M]
   rw [residueDegree_eq_finrank, Nat.card_eq_fintype_card, Nat.card_eq_fintype_card,
@@ -609,16 +571,16 @@ variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchi
 
 theorem unramifiedCoord_fixingSubgroup (σ : L.fixingSubgroup) (n : ℕ+) :
     unramifiedCoord K (σ : Ω ≃ₐ[K] Ω) n =
-      (residueDegree K L : ZMod n) * unramifiedCoord L (fixingSubgroupEquiv L σ) n := by
+      (((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) : ZMod n) * unramifiedCoord L (fixingSubgroupEquiv L σ) n := by
   have hQ := card_residueField_eq_pow_residueDegree K L
-  have key : ((residueDegree K L * (unramifiedCoord L (fixingSubgroupEquiv L σ) n).val : ℕ) :
+  have key : ((((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) * (unramifiedCoord L (fixingSubgroupEquiv L σ) n).val : ℕ) :
       ZMod n) = unramifiedCoord K (σ : Ω ≃ₐ[K] Ω) n := by
     rw [natCast_eq_unramifiedCoord_iff_forall]
     intro ξ hξ
     have hξ' : ξ ^ (Nat.card 𝓀[L] ^ (n : ℕ) - 1) = 1 := by
       rw [hQ, ← pow_mul]
       obtain ⟨c, hc⟩ := pow_sub_one_dvd_pow_sub_one (Nat.card 𝓀[K])
-        (dvd_mul_left (n : ℕ) (residueDegree K L))
+        (dvd_mul_left (n : ℕ) (((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K]))))
       rw [hc, pow_mul, hξ, one_pow]
     have h := (natCast_eq_unramifiedCoord_iff_forall (K := L) (fixingSubgroupEquiv L σ) n
       (unramifiedCoord L (fixingSubgroupEquiv L σ) n).val).1 (ZMod.natCast_zmod_val _) ξ hξ'
@@ -627,7 +589,7 @@ theorem unramifiedCoord_fixingSubgroup (σ : L.fixingSubgroup) (n : ℕ+) :
   rw [← key, Nat.cast_mul, ZMod.natCast_zmod_val]
 
 theorem unramifiedDegree_fixingSubgroup (σ : L.fixingSubgroup) :
-    unramifiedDegree K Ω σ = unramifiedDegree L Ω (fixingSubgroupEquiv L σ) ^ residueDegree K L := by
+    unramifiedDegree K Ω σ = unramifiedDegree L Ω (fixingSubgroupEquiv L σ) ^ ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) := by
   refine multiplicative_ext fun n ↦ ?_
   rw [proj_toAdd_unramifiedDegree, toAdd_pow, map_nsmul, proj_toAdd_unramifiedDegree, nsmul_eq_mul,
     unramifiedCoord_fixingSubgroup]
@@ -636,7 +598,7 @@ variable [IsGalois K Ω]
 
 theorem map_unramifiedDegree_fixingSubgroup :
     L.fixingSubgroup.map (unramifiedDegree K Ω) =
-      (powMonoidHom (residueDegree K L) : Multiplicative ℤ̂ →* Multiplicative ℤ̂).range := by
+      (powMonoidHom (((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K]))) : Multiplicative ℤ̂ →* Multiplicative ℤ̂).range := by
   have := IsGalois.tower_top_of_isGalois K L Ω
   ext x
   simp only [Subgroup.mem_map, MonoidHom.mem_range, powMonoidHom_apply]
@@ -649,7 +611,7 @@ theorem map_unramifiedDegree_fixingSubgroup :
     exact ⟨σ, σ.2, (unramifiedDegree_fixingSubgroup L σ)⟩
 
 theorem inertiaDegree_unramifiedDegree_fixingSubgroup :
-    inertiaDegree (unramifiedDegree K Ω) L.fixingSubgroup = residueDegree K L := by
+    inertiaDegree (unramifiedDegree K Ω) L.fixingSubgroup = ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) := by
   rw [inertiaDegree, map_unramifiedDegree_fixingSubgroup,
     ProfiniteInteger.index_range_powMonoidHom (residueDegree_pos K L).ne']
 

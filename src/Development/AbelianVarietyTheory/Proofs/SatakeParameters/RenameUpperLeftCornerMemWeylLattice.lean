@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+module
+
+public import Mathlib
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility
 
@@ -34,21 +38,21 @@ theorem rename_hw (ν : Fin a → ℕ) (ν' : Fin b → ℕ)
     have hja : ¬ (j : ℕ) < a := by
       intro hlt
       exact hj ⟨⟨j, hlt⟩, by simp, by ext; simp⟩
-    rw [h j, dif_neg hja]
+    rw [h j, dite_eq_right hja]
     simp
   · intro i _
     rw [map_pow, rename_lpMinor R hab _ _ (by have := i.2; omega)]
     have e1 : ν' (Fin.castLE hab i) = ν i := by
-      rw [h, dif_pos (by simp)]
+      rw [h, dite_eq_left (by simp)]
       rfl
     have e2 : nuNext ν' (Fin.castLE hab i) = nuNext ν i := by
       unfold nuNext
       by_cases h1 : (i : ℕ) + 1 < a
-      · rw [dif_pos h1, dif_pos (by simp; omega), h, dif_pos (by simpa using h1)]
+      · rw [dite_eq_left h1, dite_eq_left (by simp; omega), h, dite_eq_left (by simpa using h1)]
         rfl
-      · rw [dif_neg h1]
+      · rw [dite_eq_right h1]
         split_ifs with h2
-        · rw [h, dif_neg (by simpa using h1)]
+        · rw [h, dite_eq_right (by simpa using h1)]
         · rfl
     rw [e1, e2]
     rfl

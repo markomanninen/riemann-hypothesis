@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FockSpaces.ProdGenMem
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FockSpaces.ProdGenMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,13 +31,13 @@ theorem linLift (hB : TBij) (d : SD σ) {V : Type} [AddCommGroup V] [Module ℂ 
   choose φ0 hφ0 using fun v => (hB F E σ d).2.1 (t v) (ht v)
   refine ⟨{ toFun := φ0, map_add' := fun v v' => ?_, map_smul' := fun a v => ?_ }, fun v => hφ0 v⟩
   · refine T_inj hB d (hφ0 (v + v')).1 (d.sch.add_mem (hφ0 v).1 (hφ0 v').1) ?_
-    rw [T_add, (hφ0 _).2, (hφ0 _).2, (hφ0 _).2, map_add]
+    rw [T_add, (hφ0 _).2, (hφ0 _).2, (hφ0 _).2, map_add (f := _)]
   · refine T_inj hB d (hφ0 (a • v)).1 (d.sch.smul_mem a (hφ0 v).1) ?_
     rw [RingHom.id_apply, T_smul, (hφ0 _).2, (hφ0 _).2, map_smul]
 
 theorem fP_add {m n : ℕ} (P Q : PX m n) : fP (P + Q) = fP P + fP Q := by
   funext u
-  simp only [fP, evX, map_add, Pi.add_apply, add_mul]
+  simp only [fP, evX, map_add (f := _), Pi.add_apply, add_mul]
 
 theorem fP_smul {m n : ℕ} (a : ℂ) (P : PX m n) : fP (a • P) = a • fP P := by
   funext u
@@ -48,30 +52,12 @@ def tensP {d : SD σ} (R : RD d) (w : InfinitePlace F) (Ψ : Mx F E d.m d.n → 
     funext X
     simp only [RD.tens, fP_smul, Pi.smul_apply, smul_eq_mul, RingHom.id_apply, mul_assoc]
 
-def tensS {d : SD σ} (R : RD d) (w : InfinitePlace F) (Ψ : Mx F E d.m d.n → ℂ) :
-    𝓢(Fin d.m → Fin d.n → ℂ, ℂ) →ₗ[ℂ] (Mx F E d.m d.n → ℂ) where
-  toFun S := R.tens w S Ψ
-  map_add' S S' := by
-    funext X
-    simp only [RD.tens, SchwartzMap.add_apply, Pi.add_apply, add_mul]
-  map_smul' a S := by
-    funext X
-    simp only [RD.tens, SchwartzMap.smul_apply, Pi.smul_apply, smul_eq_mul, RingHom.id_apply, mul_assoc]
-
 theorem liftEx_of : TBij → FockMem → LiftEx := by
   intro hB hF F E _ _ _ _ _ σ d R w Ψ hΨ
   obtain ⟨φ, hφ⟩ := linLift hB d (tensP R w Ψ) fun P => (hF F E σ d R).1 (((hF F E σ d R).2.1 w Ψ hΨ).1 P)
   exact ⟨φ, hφ⟩
 
 theorem liftEx (hB : TBij) : LiftEx := liftEx_of hB fockMem
-
-theorem liftSw (hB : TBij) (d : SD σ) (R : RD d) (w : InfinitePlace F) (Ψ : Mx F E d.m d.n → ℂ) (hΨ : Ψ ∈ R.away w) :
-    ∃ φ : 𝓢(Fin d.m → Fin d.n → ℂ, ℂ) →ₗ[ℂ] d.Fn, ∀ S, φ S ∈ d.sch ∧ d.T (φ S) = R.tens w S Ψ :=
-  linLift hB d (tensS R w Ψ) fun S => tens_mem d R w S ⟨S, rfl⟩ Ψ hΨ
-
-theorem liftSw1 (hB : TBij) (d : SD σ) (R : RD d) (w : InfinitePlace F) (f : (Fin d.m → Fin d.n → ℂ) → ℂ) (hf : IsSw f)
-    (Ψ : Mx F E d.m d.n → ℂ) (hΨ : Ψ ∈ R.away w) : ∃ Φ ∈ d.sch, d.T Φ = R.tens w f Ψ :=
-  (hB F E σ d).2.1 _ (tens_mem d R w f hf Ψ hΨ)
 
 end PositivityTheory.SiegelWeilFormula.KFock
 

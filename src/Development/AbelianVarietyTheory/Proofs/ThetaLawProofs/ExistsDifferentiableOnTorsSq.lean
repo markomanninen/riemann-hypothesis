@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.DegProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.DegProd
+
+@[expose] public section
+
 open GlobalTheory.KeyKa
 
 namespace GlobalTheory.TorsionHolomorphic
@@ -24,8 +29,8 @@ theorem _root_.GlobalTheory.TorsionHolomorphic.differentiableOn_finset_sum {ι :
     DifferentiableOn ℂ (fun e => ∑ i ∈ s, f i e) W :=
   DifferentiableOn.fun_sum (fun i _ => hf i)
 
-variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] in
 
+variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] in
 theorem _root_.GlobalTheory.TorsionHolomorphic.differentiableOn_det {n : Type} [Fintype n] [DecidableEq n] (A : E → Matrix n n ℂ)
     (W : Set E) (hA : ∀ p q, DifferentiableOn ℂ (fun e => A e p q) W) :
     DifferentiableOn ℂ (fun e => (A e).det) W := by
@@ -47,8 +52,8 @@ theorem _root_.GlobalTheory.TorsionHolomorphic.differentiableOn_matrix_mul {n : 
   simp only [Matrix.mul_apply]
   exact DifferentiableOn.fun_sum (fun r _ => (hA p r).mul (hB r q))
 
-variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] in
 
+variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] in
 theorem _root_.GlobalTheory.TorsionHolomorphic.differentiableOn_matrix_inv {n : Type} [Fintype n] [DecidableEq n] (A : E → Matrix n n ℂ)
     (W : Set E) (hA : ∀ p q, DifferentiableOn ℂ (fun e => A e p q) W)
     (hdet : ∀ e ∈ W, (A e).det ≠ 0) (p q : n) :
@@ -125,8 +130,8 @@ private theorem contracting_homotopy_of_det_anticommutator_ne_zero {Ix : Type} [
     _ = A * A⁻¹ := by rw [hA, Matrix.add_mul]
     _ = 1 := Matrix.mul_nonsing_inv A hu
 
-variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] in
 
+variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] in
 theorem _root_.GlobalTheory.TorsionHolomorphic.exists_differentiableOn_torsSq :
     ∀ (E Ix : Type) [NormedAddCommGroup E] [NormedSpace ℂ E] [Fintype Ix] [DecidableEq Ix] (deg : Ix → ℕ) (D : E → Matrix Ix Ix ℂ) (W : Set E) (e₀ : E) (t₀ : ℂ), IsOpen W → e₀ ∈ W → (∀ p q, DifferentiableOn ℂ (fun e => D e p q) W) → (∀ e ∈ W, _root_.GlobalTheory.KeyKa.IsCx deg (D e)) → _root_.GlobalTheory.KeyKa.TorsSq deg (D e₀) t₀ → ∃ (W' : Set E) (t : E → ℂ), IsOpen W' ∧ e₀ ∈ W' ∧ W' ⊆ W ∧ DifferentiableOn ℂ t W' ∧ ∀ e ∈ W', _root_.GlobalTheory.KeyKa.TorsSq deg (D e) (t e) := by
   intro E Ix _ _ _ _ deg D W e₀ t₀ hW he₀ hD hcx htor

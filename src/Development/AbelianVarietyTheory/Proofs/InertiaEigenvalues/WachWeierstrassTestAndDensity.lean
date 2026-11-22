@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ProdPrimePowDvd
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ProdPrimePowDvd
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc TensorProduct GlobalTheory.NL
 
 namespace GlobalTheory.NL.WDiv
@@ -34,7 +39,7 @@ theorem powerSeries_expansion_image_dense_with_denominator [IsDomain O] [IsFract
     simp only [map_mul] at hne'
     refine ⟨PowerSeries.C (d * n) + PowerSeries.C e * (PowerSeries.X - PowerSeries.C x) * a, d * e,
       mul_ne_zero hd (nonZeroDivisors.ne_zero he), PowerSeries.C (algebraMap O L e) * w * z, ?_⟩
-    simp only [map_add, map_mul, map_sub, ev_C', hev]
+    simp only [map_add (f := _), map_mul, map_sub, ev_C', hev]
     linear_combination (-(PowerSeries.C (algebraMap O L d))) * hne' -
       PowerSeries.C (algebraMap O L d) * PowerSeries.C (algebraMap O L e) * hg +
       PowerSeries.C (algebraMap O L e) * PowerSeries.X * w * hz +
@@ -91,7 +96,8 @@ theorem prod_prim [IsDomain O] {l : ℕ} (hp : l.Prime) {j : ℕ} {μ : O} (h : 
   have := congrArg (Polynomial.aeval (1 + PowerSeries.X : PowerSeries O))
     ((Polynomial.cyclotomic_prime_pow_eq_geom_sum (R := O) (n := j) hp).symm.trans
       (Polynomial.cyclotomic_eq_prod_X_sub_primitiveRoots h))
-  simpa [map_prod, map_sum, PowerSeries.algebraMap_apply] using this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [map_prod, map_sum, PowerSeries.algebraMap_apply] using this
 
 end Series
 
@@ -111,7 +117,7 @@ theorem phi_pow_one_add (j : ℕ) : (W.φA ^ j) (1 + letπ) = (1 + letπ) ^ PD.p
   | zero => simp
   | succ j ih =>
     have h : W.φA (1 + letπ) = (1 + letπ) ^ PD.p := by
-      rw [map_add, map_one, W.φA_π]
+      rw [map_add (f := _), map_one, W.φA_π]
       funext i
       have := W.q₀_def
       simp only [Pi.add_apply, Pi.mul_apply, Pi.pow_apply, Pi.one_apply, letπ, LocWach.q]
@@ -120,7 +126,7 @@ theorem phi_pow_one_add (j : ℕ) : (W.φA ^ j) (1 + letπ) = (1 + letπ) ^ PD.p
 
 theorem X_eq (i : ZMod n) : W.X i = (1 + PowerSeries.X) ^ PD.p ^ (W.s - 1) - 1 := by
   have h := phi_pow_one_add W (W.s - 1)
-  rw [map_add, map_one] at h
+  rw [map_add (f := _), map_one] at h
   have h2 := congrFun h i
   simp only [Pi.add_apply, Pi.pow_apply, Pi.one_apply] at h2
   change 1 + W.X i = (1 + PowerSeries.X) ^ _ at h2
@@ -134,7 +140,8 @@ theorem Q_eq [IsDomain O] (i : ZMod n) :
     apply mul_left_cancel₀ (PowerSeries.X_ne_zero (R := O))
     rw [W.q₀_def, ← mul_geom_sum]
     ring
-  rw [LocWach.Q, hq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LocWach.Q, hq, map_sum]
   simp only [map_pow, phi_pow_one_add, Finset.sum_apply, Pi.add_apply, Pi.pow_apply, Pi.one_apply, letπ]
 
 noncomputable def ev (i : ZMod n) (ζ : LL) : PowerSeries O →ₐ[O] PowerSeries LL :=
@@ -271,7 +278,7 @@ theorem exists_prim {l : ℕ} [Fact l.Prime] {K : FinExt l} {s : ℕ} {LL : FinE
     ∃ μ : ↥(OL LL), IsPrimitiveRoot μ (l ^ s) := by
   have hp : l.Prime := Fact.out
   haveI : NeZero ((l ^ s : ℕ) : Om l) := ⟨by exact_mod_cast (pow_pos hp.pos s).ne'⟩
-  obtain ⟨z, hz⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot (Om l) (l ^ s)
+  obtain ⟨z, hz⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot (Om l) (l ^ s)
   have h1 : z ∈ Ks K s :=
     (le_sup_right : _ ≤ Ks K s) (IntermediateField.subset_adjoin _ _ hz.pow_eq_one)
   have h2 : z ∈ LL.1 := h.2.2.2 (Ks K s).val ⟨z, h1⟩

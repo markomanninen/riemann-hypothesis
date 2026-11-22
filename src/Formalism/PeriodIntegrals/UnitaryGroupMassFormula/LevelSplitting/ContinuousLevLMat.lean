@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.IsClosedAsub
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.IsClosedAsub
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ section Af
 variable {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E] [FiniteDimensional F E]
   {σ : E →ₐ[F] E} {M : ℕ} {J : Matrix (Fin M) (Fin M) E} {r : ℕ}
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem continuous_uT (P : Frame E M r) (a b : Fin r) :
     Continuous fun g : HA (Af F) σ J => uT (Af F) σ J P g a b := by
   have h1 : Continuous fun g : HA (Af F) σ J => lin (Af F) σ J g (ratV (F := F) (Af F) (P.e b)) :=
@@ -36,10 +40,11 @@ theorem continuous_levL_mat (T : F) (P : Frame E M r) {X : Type} [TopologicalSpa
     {U W : X → Matrix (Fin r) (Fin r) (Af F ⊗[F] E)}
     (hU : ∀ a b, Continuous fun x => U x a b) (hW : ∀ a b, Continuous fun x => W x a b) :
     Continuous fun x => LinearMap.toMatrix' (levL (datR (Af F) σ J P T) (U x) (W x)) := by
-  simp only [levL, map_add, map_sum, map_smul]
-  refine (continuous_const.add (continuous_finset_sum _ fun a _ => continuous_finset_sum _ fun b _ =>
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [levL, map_add (f := _), map_sum, map_smul]
+  refine (continuous_const.add (continuous_finsetSum _ fun a _ => continuous_finsetSum _ fun b _ =>
     (hU a b).smul continuous_const)).add
-    (continuous_finset_sum _ fun d _ => continuous_finset_sum _ fun b _ => (hW d b).smul continuous_const)
+    (continuous_finsetSum _ fun d _ => continuous_finsetSum _ fun b _ => (hW d b).smul continuous_const)
 
 theorem continuous_levG (hσσ : ∀ x, σ (σ x) = x) (hJ : IsHermND σ J) (P : Frame E M r) (T : F)
     (hP : P.IsStd σ J T) : Continuous (levG (R := Af F) hσσ hJ hP) := by

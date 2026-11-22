@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.AtLaws
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.AtLaws
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -32,7 +36,7 @@ private theorem psi_curve (w : InfinitePlace F) (b : A F) (δ : F) (i : Fin 4) (
       rw [hm]
       congr 2
       have : TR.pInf F (at1 w t) w = t := by rw [hp]; simp
-      simp only [map_mul, map_add, Pi.mul_apply, Pi.add_apply, this, hβ, hκ]
+      simp only [map_mul, map_add (f := _), Pi.mul_apply, Pi.add_apply, this, hβ, hκ]
       ring
     have h1 : b * q4 δ (v + Pi.single i (at1 w t)) = b * q4 δ v + at1 w (t * (β + t * κ)) := by
       rw [quadraticForm_add_expand, ← h0]
@@ -73,7 +77,7 @@ private theorem p_apply (O : Ops F) (δ : F) (w : InfinitePlace F) (i : Fin 4) (
 end SlopeTestRemainingChoices
 
 theorem UpperTheory.ConvolutionTheory.R2.Fo.dN :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E] (D : Dat F E) (W : Weil D) (O : Ops F) w i b, O.d w i * W.Om (nU b) = W.Om (nU b) * (O.d w i + cw w b • O.p D.δ w i) ∧
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (D : Dat F E) (W : Weil D) (O : Ops F) w i b, O.d w i * W.Om (nU b) = W.Om (nU b) * (O.d w i + cw w b • O.p D.δ w i) ∧
     O.x w i * W.Om (nU b) = W.Om (nU b) * O.x w i := by
   intro F E _ _ _ _ _ _ _ D W O w i b
   refine ⟨?_, ?_⟩

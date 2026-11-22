@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatIndLastKerRow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatIndLastKerRow
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ theorem isHalf_resT_symm_pair {S A L : HSp D} (o : OrthDec S A L) (T : HSp D) {e
 
 theorem zrow_add' {T L : HSp D} (β : Frame p T n) (ζ : Fin L.rank → D.host.E) (x y : WO T L) :
     zrow β ζ (x + y) = zrow β ζ x + zrow β ζ y := by
-  simp only [zrow, Matrix.vecMul_add, Pi.add_apply, map_add]
+  simp only [zrow, Matrix.vecMul_add, Pi.add_apply, map_add (f := _)]
   rw [← smul_add, ← Matrix.add_vecMul]
   rfl
 
@@ -130,7 +134,7 @@ theorem isSBHalf_boxT_rowFun_dualInd : ∀ (D : D7) (k : Type) [Field k] [Valuat
     rw [hH] at hu1
     have hA := (halfInd_ne_zero_iff' _ _).1 (left_ne_zero_of_mul_eq_one hu1)
     have hR := rowFun_dualInd_ne_zero β ζ ΛT (right_ne_zero_of_mul_eq_one hu1)
-    rw [hbox, hbox, map_add, map_nsmul, Prod.fst_add, Prod.snd_add, Prod.smul_fst, Prod.smul_snd,
+    rw [hbox, hbox, map_add (f := _), map_nsmul, Prod.fst_add, Prod.snd_add, Prod.smul_fst, Prod.smul_snd,
       hinv _ hA.1 hA.2, rowFun_dualInd_add_nsmul β ζ ΛT hR.1 hR.2]
   · rw [hbox] at ht
     have hΦt := left_ne_zero_of_mul ht

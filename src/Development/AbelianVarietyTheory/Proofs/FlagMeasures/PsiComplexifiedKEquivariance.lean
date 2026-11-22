@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InnerRepK
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.HalfSumRootsStandard
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ProdPartialZpow
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PhiPositiveDefiniteCholeskyFormula
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IwasawaDecompComplexifiedMaxCompact
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IwasawaInt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InnerRepK
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.HalfSumRootsStandard
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ProdPartialZpow
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PhiPositiveDefiniteCholeskyFormula
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IwasawaDecompComplexifiedMaxCompact
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IwasawaInt
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec
 open scoped InnerProductSpace ComplexOrder

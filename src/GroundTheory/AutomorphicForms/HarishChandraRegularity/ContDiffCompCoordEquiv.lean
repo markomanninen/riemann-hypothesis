@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GKModules.RightRegular
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GKModules.RightRegular
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 

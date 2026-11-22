@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.OpenClosedSequences
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchwartzBruhatEventuallyInvariantOfContinuousAct
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.OpenClosedSequences
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchwartzBruhatEventuallyInvariantOfContinuousAct
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ namespace GlobalTheory.SBInduced
 variable {G X Y : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [TopologicalSpace X]
   [TopologicalSpace Y]
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 theorem isClosedEmbedding_translate (r : X → G → X) (h1 : ∀ x, r x 1 = x)
     (hm : ∀ x g h, r x (g * h) = r (r x g) h) (hc : Continuous (fun p : X × G => r p.1 p.2))
     {j : Y → X} (hj : IsClosedEmbedding j) (g : G) : IsClosedEmbedding fun y => r (j y) g := by
@@ -111,7 +115,7 @@ theorem sb_induced : ∀ (G X Y W : Type) [Group G] [TopologicalSpace G] [IsTopo
           rw [hA, hA, map_mul, hu, mul_one, hm, hu'])⟩
       map_add' := fun Φ Ψ => Subtype.ext (Subtype.ext (funext fun g => by
         show ev.symm (A (Φ + Ψ) g) = ev.symm (A Φ g) + ev.symm (A Ψ g)
-        rw [← map_add]
+        rw [← map_add (f := _)]
         congr 1
         exact Subtype.ext (funext fun y => mul_add _ _ _)))
       map_smul' := fun a Φ => Subtype.ext (Subtype.ext (funext fun g => by

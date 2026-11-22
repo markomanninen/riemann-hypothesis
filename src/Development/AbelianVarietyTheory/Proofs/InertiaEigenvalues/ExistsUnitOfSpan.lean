@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FontaineFormalismOfRegular
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FontaineFormalismOfRegular
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,11 +71,11 @@ theorem tw_smul (χ : G → LL) (g : G) (b : BdR) (w : BdR ⊗[Qp] LL) :
   induction w using TensorProduct.induction_on with
   | zero => simp
   | tmul c v => simp [tw_tmul, TensorProduct.smul_tmul']
-  | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+  | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
 
 def twInv (χ : G → LL) : Submodule K (BdR ⊗[Qp] LL) where
   carrier := {x | ∀ g, tw PD χ g x = x}
-  add_mem' ha hb g := by rw [map_add, ha g, hb g]
+  add_mem' ha hb g := by rw [map_add (f := _), ha g, hb g]
   zero_mem' g := map_zero _
   smul_mem' c x hx g := by
     rw [← algebraMap_smul BdR c x, tw_smul, AlgEquiv.commutes, hx g]
@@ -87,7 +91,7 @@ theorem finrank_twInv [FiniteDimensional Qp LL] (ν : Representation LL G (Fin 1
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul v b => simp [e, actVdR, tw_tmul, hν]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have hm : ((DdR PD ν).restrictScalars Qp).map (e : _ →ₗ[Qp] _) = (twInv PD χ).restrictScalars Qp := by
     ext y
     obtain ⟨x, rfl⟩ := e.surjective y
@@ -130,8 +134,8 @@ theorem exists_unit [Infinite Qp] [FiniteDimensional Qp LL] (hB : IsField BdR) (
   rintro _ ⟨i, rfl⟩
   exact (v i).2
 
-variable (V) in
 
+variable (V) in
 def mulR : BdR ⊗[Qp] LL →ₗ[Qp] (V ⊗[Qp] BdR →ₗ[LL] V ⊗[Qp] BdR) :=
   TensorProduct.lift (LinearMap.mk₂ Qp
     (fun b c => c • AlgebraTensorModule.map (LinearMap.id : V →ₗ[LL] V) (LinearMap.mulLeft Qp b))
@@ -148,21 +152,21 @@ theorem mulR_one (x : V ⊗[Qp] BdR) : mulR V (1 : BdR ⊗[Qp] LL) x = x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => rw [Algebra.TensorProduct.one_def, mulR_tmul, one_smul, one_mul]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem mulR_mul (d d' : BdR ⊗[Qp] LL) (x : V ⊗[Qp] BdR) :
     mulR V (d * d') x = mulR V d (mulR V d' x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul v b =>
     induction d using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [add_mul, map_add, LinearMap.add_apply, hx, hy]
+    | add x y hx hy => simp only [add_mul, map_add (f := _), LinearMap.add_apply, hx, hy]
     | tmul b₁ c₁ =>
       induction d' using TensorProduct.induction_on with
       | zero => simp
-      | add x y hx hy => simp only [mul_add, map_add, LinearMap.add_apply, hx, hy]
+      | add x y hx hy => simp only [mul_add, map_add (f := _), LinearMap.add_apply, hx, hy]
       | tmul b₂ c₂ => simp only [Algebra.TensorProduct.tmul_mul_tmul, mulR_tmul, mul_smul, mul_assoc]
 
 theorem act_mulR (ρ ρ' : Representation LL G V) (χ : G → LL) (hρ : ∀ g x, ρ' g x = χ g • ρ g x)
@@ -170,11 +174,11 @@ theorem act_mulR (ρ ρ' : Representation LL G V) (χ : G → LL) (hρ : ∀ g x
     actVdR PD ρ' g (mulR V d x) = mulR V (tw PD χ g d) (actVdR PD ρ g x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul v b =>
     induction d using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, LinearMap.add_apply, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), LinearMap.add_apply, hx, hy]
     | tmul b₁ c₁ => simp [mulR_tmul, tw_tmul, actVdR, hρ, mul_smul]
 
 theorem finrank_DdR_twist [Infinite Qp] [FiniteDimensional Qp LL] (hB : IsField BdR)

@@ -1,4 +1,8 @@
-import Formalism.PadicSubsetSums.StableGradedCounts.CrossFactorCount
+module
+
+public import Formalism.PadicSubsetSums.StableGradedCounts.CrossFactorCount
+
+@[expose] public section
 
 open Finset Polynomial
 
@@ -27,22 +31,24 @@ section sets
 
 variable (K L : Type) [Field K] [Fintype K] [Field L] [Algebra K L] [IsAlgClosed L]
 
-open Classical in
 
-noncomputable def e3A (δ l : ℕ) : Finset (Fin δ → K) :=
-  (Finset.univ : Finset (Fin δ → K)).filter (fun c => Irreducible (monicOf c) ∧
+open Classical in
+noncomputable def e3A (δ l : ℕ) : Finset (Fin δ → K) := by
+  classical
+  exact Finset.univ.filter (fun c => Irreducible (monicOf c) ∧
       ¬ Set.InjOn (primeToPart l) ((monicOf c).rootSet L))
 
-open Classical in
-
-noncomputable def e3I (δ : ℕ) : Finset (Fin δ → K) :=
-  (Finset.univ : Finset (Fin δ → K)).filter
-      (fun c => Irreducible (monicOf c) ∧ (monicOf c).coeff 0 ≠ 0)
 
 open Classical in
+noncomputable def e3I (δ : ℕ) : Finset (Fin δ → K) := by
+  classical
+  exact Finset.univ.filter (fun c => Irreducible (monicOf c) ∧ (monicOf c).coeff 0 ≠ 0)
 
-noncomputable def e3C (δ l : ℕ) (P' : K[X]) : Finset (Fin δ → K) :=
-  (Finset.univ : Finset (Fin δ → K)).filter (fun c => Irreducible (monicOf c) ∧
+
+open Classical in
+noncomputable def e3C (δ l : ℕ) (P' : K[X]) : Finset (Fin δ → K) := by
+  classical
+  exact Finset.univ.filter (fun c => Irreducible (monicOf c) ∧
       (monicOf c).coeff 0 ≠ 0 ∧ ∃ x ∈ (monicOf c).rootSet L, ∃ y ∈ P'.rootSet L,
         primeToPart l x = primeToPart l y)
 
@@ -57,10 +63,10 @@ def e3PB (g δ δ' : ℕ) : Finset ℕ :=
   ((g ^ δ - 1).primeFactors ∪ (g ^ δ' - 1).primeFactors).filter
     (fun l => l ^ (4 * padicValNat l (g ^ δ - 1)) ≤ g ^ δ)
 
-def e3SA (N : ℕ) : Set (Fin N → K) :=
+noncomputable def e3SA (N : ℕ) : Set (Fin N → K) :=
   ⋃ δ ∈ Finset.Icc 2 N, ⋃ l ∈ e3PA (Fintype.card K) δ, ⋃ c' ∈ e3A K L δ l, e3D K N (monicOf c')
 
-def e3SB (N : ℕ) : Set (Fin N → K) :=
+noncomputable def e3SB (N : ℕ) : Set (Fin N → K) :=
   ⋃ δ ∈ Finset.Icc 1 N, ⋃ δ' ∈ Finset.Icc 1 δ, ⋃ l ∈ e3PB (Fintype.card K) δ δ',
     ⋃ c'' ∈ e3I K δ', ⋃ c' ∈ e3C K L δ l (monicOf c''), e3D K N (monicOf c' * monicOf c'')
 
@@ -292,11 +298,12 @@ theorem square_set_mem_exceptional_union {N : ℕ} {c : Fin N → K} (hc : c ∈
       intro hv
       rw [hv, mul_zero, pow_zero] at hlt
       omega
+    rw [Nat.padicValNat_def] at hv
     have hpos : Fintype.card K ^ d - 1 ≠ 0 := by
       intro h
-      rw [h, padicValNat.zero] at hv
+      rw [h, multiplicity_zero_right] at hv
       exact hv rfl
-    have hldvd : l ∣ Fintype.card K ^ d - 1 := dvd_of_one_le_padicValNat (Nat.one_le_iff_ne_zero.2 hv)
+    have hldvd : l ∣ Fintype.card K ^ d - 1 := Nat.multiplicity_dvd_of_ne_zero hv
     have hle : l ≤ Fintype.card K ^ d - 1 := Nat.le_of_dvd (by omega) hldvd
     have hdN : Fintype.card K ^ d ≤ Fintype.card K ^ N := Nat.pow_le_pow_right (by omega) hd'.2
     apply hlBB
@@ -376,7 +383,7 @@ private theorem two_pow_card_primeFactors_le_add_one (n : ℕ) : 2 ^ n.primeFact
   · simp
   · calc 2 ^ n.primeFactors.card = ∏ _p ∈ n.primeFactors, 2 := by rw [Finset.prod_const]
       _ ≤ ∏ p ∈ n.primeFactors, p :=
-          Finset.prod_le_prod (fun _ _ => by positivity)
+          Finset.prod_le_prod₀ (fun _ _ => by positivity)
             (fun p hp => (Nat.prime_of_mem_primeFactors hp).two_le)
       _ ≤ n := Nat.le_of_dvd hn (Nat.prod_primeFactors_dvd n)
       _ ≤ n + 1 := Nat.le_succ n

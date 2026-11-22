@@ -1,5 +1,9 @@
-import Mathlib.RingTheory.ZMod.UnitsCyclic
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
+module
+
+public import Mathlib.RingTheory.ZMod.UnitsCyclic
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
+
+@[expose] public section
 
 noncomputable section
 

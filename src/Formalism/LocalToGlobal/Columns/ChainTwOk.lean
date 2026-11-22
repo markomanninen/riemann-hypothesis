@@ -1,5 +1,15 @@
-import Formalism.LocalToGlobal.Columns.ChainTwL
-import Formalism.LocalToGlobal.Columns.ChainOneOkF
+module
+
+public import Formalism.LocalToGlobal.Columns.ChainTwL
+public import Formalism.LocalToGlobal.Columns.ChainOneOk
+public import Formalism.LocalToGlobal.Columns.ReductionExistsInLatticeStabilizerHolds
+public import Formalism.LocalToGlobal.Columns.ResidueFieldUnfoldingClaimsHold
+public import Formalism.LocalToGlobal.Columns.BlockTriangularMulVecMemPartialFlag
+public import Formalism.LocalToGlobal.Columns.ReducedMatrixExtensionEntry
+public import Formalism.LocalToGlobal.Columns.FrameEntryAuxiliarySuperdiagonal
+public import Formalism.LocalToGlobal.Columns.ColumnsProofs.SymLevEnt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -45,7 +55,7 @@ theorem twInX_mem_std (P : HeightOneSpectrum (𝓞 E)) {n c : ℕ} (x : Sp E n) 
   constructor
   · intro h l
     have h1 := h (Fin.castAdd c l)
-    rwa [ciInX_apply, dif_pos (by simp)] at h1
+    rwa [ciInX_apply, dite_eq_left (by simp)] at h1
   · intro h l
     rw [ciInX_apply]
     split_ifs with hl
@@ -70,12 +80,12 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.m)
 
 open Classical
 
-variable (X) in
 
+variable (X) in
 def TwDegOne (P : HeightOneSpectrum (𝓞 X.E)) : Prop := (qOf P).Prime ∧ ((qOf P : ℕ) : 𝓞 X.E) ∉ P.asIdeal ^ 2
 
-variable (X Pr R) in
 
+variable (X Pr R) in
 def TwFinQ (sharp : Bool) : Prop :=
   ∀ (j : ℕ) (P : HeightOneSpectrum (𝓞 X.E)), P ∉ Pr.vGs → TwDegOne X P →
     {D : Quotient (twSetoid (Pr := Pr) (R := R) sharp j P) | ∃ h, Quotient.mk _ h = D ∧ TwBdd (Pr := Pr) j P h}.Finite

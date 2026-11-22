@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementJC
-import Formalism.HermitianCurvature.HerGenC
+module
+
+public import Formalism.HermitianCurvature.StatementJC
+public import Formalism.HermitianCurvature.HerGenC
+
+@[expose] public section
 
 open MeasureTheory
 

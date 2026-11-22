@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatDefs
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatCoreB
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatCoreC
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatCoreD
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsDiscreteUOfIsDiscrete
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatDefs
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatCoreB
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatCoreC
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatCoreD
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsDiscreteUOfIsDiscrete
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ open scoped TensorProduct
 
 namespace PositivityTheory.Rg.Rs.SatakeVectors
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 namespace Core
 
@@ -33,18 +37,18 @@ theorem evT_piTensor_locRepU {c : ℕ} {n : Fin c → ℕ} (w : HeightOneSpectru
   | smul_tprod r ψ =>
     rw [map_smul, map_smul, map_smul, piTensor_tprod, evT_tprod, evT_tprod]
     rfl
-  | add v₁ v₂ h₁ h₂ => rw [map_add, map_add, map_add, h₁, h₂]
+  | add v₁ v₂ h₁ h₂ => rw [map_add (f := _), map_add (f := _), map_add (f := _), h₁, h₂]
 
 end Core
 
-open PositivityTheory.Rg.Rs.SatakeVectors.Core in
 
+open PositivityTheory.Rg.Rs.SatakeVectors.Core in
 theorem isSatVecGL_of_ind {c N : ℕ} {n : Fin c → ℕ} (h : ∑ i, n i = N) {w : HeightOneSpectrum (𝓞 E)}
     (U : ∀ i, Submodule ℂ (Sm E (n i)))
     (hst : ∀ i (g : GL (Fin (n i)) (Af E)), ∀ ψ ∈ U i, finRep E (n i) g ψ ∈ U i)
     (hsm : ∀ i, ∀ ψ ∈ U i, IsOpen {g : GL (Fin (n i)) (w.adicCompletion E) | finRep E (n i) (locGL E (n i) w g) ψ = ψ})
     (S : Fin c → Multiset ℂˣ) (hS : ∀ i, SatLike (U i) w (S i))
-    {F : Sm E N} (h0 : F ≠ 0) (hK : ∀ k ∈ GlobalTheory.LFun.KGL w N, finRep E N (locGL E N w k) F = F)
+    {F : Sm E N} (h0 : F ≠ 0) (hK : ∀ k ∈ GlobalTheory.LFun.KGL w (n := N), finRep E N (locGL E N w k) F = F)
     (hu : ∀ u ∈ unipRad (Ad E) (stdBlocks n h), ∀ g, F.1 (u * g) = F.1 g)
     (ht : ∀ (k : Kinf E N) (g : GL (Fin N) (Af E)),
       (fun m => F.1 (leviEmb (Ad E) (stdBlocks n h) m * (infGL E N (Unitary.toUnits k) * finGL E N g))) ∈
@@ -69,7 +73,7 @@ theorem isSatVecGL_of_ind {c N : ℕ} {n : Fin c → ℕ} (h : ∑ i, n i = N) {
           {g | finRep E (n i) (locGL E (n i) w g) ψ.1 = ψ.1} := by
         ext g; exact Subtype.ext_iff
       rw [e]; exact hsm i ψ.1 ψ.2
-    have hS' : ∀ i, ∀ x ∈ GlobalTheory.PRep.fixed (locRepU w (U i) (hst i)) (GlobalTheory.LFun.KGL w (n i)), x ≠ 0 →
+    have hS' : ∀ i, ∀ x ∈ GlobalTheory.PRep.fixed (locRepU w (U i) (hst i)) (GlobalTheory.LFun.KGL w (n := (n i))), x ≠ 0 →
         GlobalTheory.LFun.IsSatVecGL w (locRepU w (U i) (hst i)) x (S i) := fun i x hx hx0 =>
       GlobalTheory.LFun.IsSatVecGL.of_map (U i).subtype (fun _ _ => rfl) Subtype.val_injective
         (hS i x.1 x.2 (fun k' hk' => congrArg Subtype.val (GlobalTheory.LGrp.mem_fixed.1 hx k' hk'))

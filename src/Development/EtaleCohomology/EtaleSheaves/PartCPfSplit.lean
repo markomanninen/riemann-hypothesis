@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.PartCPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.PartCPf
+
+@[expose] public section
 
 noncomputable section
 open Polynomial LateralTheory.E.PartDiagCut GlobalTheory.EtC
@@ -34,7 +38,7 @@ theorem split_of (hLoc : LateralTheory.E.HensCut.LocAIC) (hMS : LateralTheory.E.
   refine Polynomial.ext fun k => funext fun e => ?_
   have h2 : (∏ l, (X - C (fun e => g e l))).map (Pi.evalRingHom (fun e : P.1 => Localization (S I e.1)) e)
       = ∏ l, (X - C (g e l)) := by simp [Polynomial.map_prod]
-  have := congrArg (coeff · k) ((hg e).trans h2.symm)
+  have := congrArg (fun q : (Localization (S I e.1))[X] => q.coeff k) ((hg e).trans h2.symm)
   simpa [coeff_map] using this
 
 theorem PartC_of (hLoc : LateralTheory.E.HensCut.LocAIC) (hMS : LateralTheory.E.HensCut.MonicSplits) (hIP : LateralTheory.E.HensCut.IdemPart)

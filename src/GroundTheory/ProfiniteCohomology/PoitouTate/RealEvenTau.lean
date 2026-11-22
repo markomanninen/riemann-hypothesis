@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.PoitouTate.RealEvenFree
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.PoitouTate.RealEvenFree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -8,9 +13,9 @@ namespace GroundTheory.ProfCoh
 
 open IsDedekindDomain NumberField CategoryTheory GroundTheory.Global
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 attribute [local instance 2000] Rep.hV2
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
   (ιs : ∀ v : S, ℚ̄ →ₐ[K.1] AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1))
@@ -18,15 +23,17 @@ variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
   (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((N : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S) (hev : Even N)
 
 def GsTauBijective (U : OpenSubgroup (galUnramifiedOutside K.1 ℚ̄ S)) : Prop :=
+  letI : IsDiscreteRep (gsRoots S N) := isDiscreteRep_gsRoots S N
+  letI := isDiscreteRep_res_subtype (gsRoots S N) (U : Subgroup (galUnramifiedOutside K.1 ℚ̄ S))
   ∀ τ : compactCohomologyRes (mackeyFamily U (gsFinFamily S ιs))
       (Rep.res (U : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)).subtype (gsRoots S N)) 3 →+ ZMod N,
     Function.Surjective τ → ∀ {r s : ℕ} (h : r + s = 3),
       Function.Bijective (compactZmodDualityMap (mackeyFamily U (gsFinFamily S ιs))
         (Rep.res (U : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)).subtype (gsRoots S N)) (nsmul_gsRoots S N) τ h)
 
+
 set_option maxHeartbeats 1000000 in
 include hS hev in
-
 theorem gsTauBijective_gsOpenSubgroup {L : FiniteSubfield} [Fact (K ≤ L)]
     (hL : ∀ x : L.1, algebraMap L.1 ℚ̄ x ∈ maxUnramifiedOutside K.1 ℚ̄ S)
     (W₀ : OpenSubgroup (galUnramifiedOutside K.1 ℚ̄ S))

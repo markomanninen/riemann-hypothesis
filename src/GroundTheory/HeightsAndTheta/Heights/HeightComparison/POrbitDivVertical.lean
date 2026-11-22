@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitDivVertical
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.PHeightRecR
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitDivVertical
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.PHeightRecR
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -47,7 +52,8 @@ theorem OrbitDivVertical.proof : OrbitDivVertical.Statement := by
   set m := P.natDegree
   let f : ℕ → MvPolynomial (Coord n) ℤ := fun j ↦ C (P.coeff j) * s ^ j * M ^ (m - j)
   have hfW : ∑ j ∈ Finset.range (m + 1), f j ∈ orbitIdeal x := by
-    rw [orbitIdeal, Geo.mCoordIdeal, RingHom.mem_ker, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [orbitIdeal, Geo.mCoordIdeal, RingHom.mem_ker, map_sum]
     have hterm : ∀ j ∈ Finset.range (m + 1), Geo.mConeMap (ι := blockIdx n) y (f j) =
         C (algebraMap ℤ (AlgebraicClosure ℚ) (P.coeff j) * (σ / μ) ^ j * μ ^ m) * T ^ m := by
       intro j hj
@@ -59,7 +65,8 @@ theorem OrbitDivVertical.proof : OrbitDivVertical.Statement := by
       simp only [f, map_mul, map_pow, hφs, hφM, MvPolynomial.algHom_C, mul_assoc, e1, e2]
       simp only [eq_intCast, map_intCast, mul_pow]
       ring
-    rw [Finset.sum_congr rfl hterm, ← Finset.sum_mul, ← map_sum, ← Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_congr rfl hterm, ← Finset.sum_mul, ← map_sum, ← Finset.sum_mul]
     have hPτ : ∑ j ∈ Finset.range (m + 1), algebraMap ℤ (AlgebraicClosure ℚ) (P.coeff j) *
         (σ / μ) ^ j = 0 := by
       rw [← hP, Polynomial.aeval_eq_sum_range]

@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.WtSubOneLe
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleRightZeroThd
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.WtSubOneLe
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleRightZeroThd
+
+@[expose] public section
 
 namespace GlobalTheory.TypicalCurve
 
@@ -118,7 +122,8 @@ theorem typicalCurves_of_type_of_typical_tangents :
         PowerSeries.coeff m (G.lgCurve γ a) := by
     intro a m
     have e := congrArg (PowerSeries.coeff m) (lgCurve_nsmulF G hε (p ^ h - 1) a)
-    rw [hεe, lgCurve_sumF G g hg, map_sum, PowerSeries.coeff_smul, smul_eq_mul] at e
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hεe, lgCurve_sumF G g hg, map_sum, PowerSeries.coeff_smul, smul_eq_mul] at e
     rw [← e, Finset.sum_mul, ← Fin.sum_univ_eq_sum_range]
     refine Finset.sum_congr rfl fun j _ => ?_
     simp only [g]

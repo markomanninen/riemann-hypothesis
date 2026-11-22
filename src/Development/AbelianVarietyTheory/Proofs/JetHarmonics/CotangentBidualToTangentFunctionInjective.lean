@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.AlWellDefSt
-import Development.AbelianVarietyTheory.BlockTheory.JetGauges.HodgeTateCharacterSystems
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsUniqueIsAl
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FinrankOfIsStandardSmoothOfRelativeDimension
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.AlWellDefSt
+public import Development.AbelianVarietyTheory.BlockTheory.JetGauges.HodgeTateCharacterSystems
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsUniqueIsAl
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FinrankOfIsStandardSmoothOfRelativeDimension
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
@@ -121,12 +125,10 @@ theorem toLieG_surjective : Function.Surjective (toLieG (G := G)) := by
   · rw [tangentAlg_fst, h3]; rfl
   · rw [tangentAlg_snd, hv]
 
-variable (G) in
 
+variable (G) in
 def lieEquiv : Lie G ≃ LieG G :=
   Equiv.ofBijective toLieG ⟨toLieG_injective, toLieG_surjective⟩
-
-theorem lieEquiv_val (v : Lie G) : (lieEquiv G v).1 = tangentPt v := rfl
 
 theorem scale_tangentPt {R : Type} [CommRing R] [Algebra O R] (v : Cotangent G →ₗ[O] R) (a : R) :
     scale O a ≫ (tangentPt v : specO O (DualNumber R) ⟶ G) = tangentPt (a • v) := by
@@ -221,14 +223,14 @@ theorem mem_omega_iff (g : LieG G → O) :
     refine ⟨fun x y h => ?_, fun a x h => ?_⟩
     · obtain ⟨v, rfl⟩ := (lieEquiv G).surjective x
       obtain ⟨w, rfl⟩ := (lieEquiv G).surjective y
-      rw [hF, hF, ← map_add, ← hF]
+      rw [hF, hF, ← map_add (f := _), ← hF]
       exact congrArg g (Subtype.ext (lieEquiv_add v w).symm)
     · obtain ⟨v, rfl⟩ := (lieEquiv G).surjective x
       rw [hF, ← smul_eq_mul, ← map_smul, ← hF]
       exact congrArg g (Subtype.ext (lieEquiv_smul a v).symm)
 
-variable (G) in
 
+variable (G) in
 def cotangentBidualToTangentFunction : Module.Dual O (Lie G) →ₗ[O] (LieG G → O) where
   toFun F x := F ((lieEquiv G).symm x)
   map_add' _ _ := rfl
@@ -252,20 +254,17 @@ theorem range_cotangentBidualToTangentFunction : LinearMap.range (cotangentBidua
     obtain ⟨v, rfl⟩ := (lieEquiv G).surjective x
     rw [cotangentBidualToTangentFunction_apply, hF]
 
-variable (G) in
 
+variable (G) in
 def bidualEquivOmega : Module.Dual O (Lie G) ≃ₗ[O] omega G :=
   (LinearEquiv.ofInjective _ cotangentBidualToTangentFunction_injective).trans (LinearEquiv.ofEq _ _ range_cotangentBidualToTangentFunction)
 
-variable (G) in
 
+variable (G) in
 def ev : Cotangent G →ₗ[O] (LieG G → O) := cotangentBidualToTangentFunction G ∘ₗ Module.Dual.eval O (Cotangent G)
 
 theorem ev_apply (f : Cotangent G) (v : Lie G) : ev G f (lieEquiv G v) = v f :=
   cotangentBidualToTangentFunction_apply (Module.Dual.eval O (Cotangent G) f) v
-
-theorem ev_mem (f : Cotangent G) : ev G f ∈ omega G :=
-  range_cotangentBidualToTangentFunction.le ⟨Module.Dual.eval O (Cotangent G) f, rfl⟩
 
 theorem ev_injective [Module.IsReflexive O (Cotangent G)] : Function.Injective (ev G) :=
   cotangentBidualToTangentFunction_injective.comp (Module.bijective_dual_eval O (Cotangent G)).1
@@ -274,8 +273,8 @@ theorem range_ev [Module.IsReflexive O (Cotangent G)] : LinearMap.range (ev G) =
   rw [ev, LinearMap.range_comp_of_range_eq_top _
     (LinearMap.range_eq_top.2 (Module.bijective_dual_eval O (Cotangent G)).2), range_cotangentBidualToTangentFunction]
 
-variable (G) in
 
+variable (G) in
 def omegaEquiv [Module.IsReflexive O (Cotangent G)] : Cotangent G ≃ₗ[O] omega G :=
   (LinearEquiv.ofInjective _ ev_injective).trans (LinearEquiv.ofEq _ _ range_ev)
 
@@ -320,64 +319,14 @@ section Characters
 
 variable {O : Type} [CommRing O] {G : Over (Spec (CommRingCat.of O))} [GrpObj G]
 
-theorem torsion_ext {N : ℕ} {T : Over (Spec (CommRingCat.of O))} {x y : T ⟶ torsion G N}
-    (h : x ≫ torsion.ι G N = y ≫ torsion.ι G N) : x = y :=
-  pullback.hom_ext h (toUnit_unique _ _)
-
-theorem comp_ι_pow {N : ℕ} {T : Over (Spec (CommRingCat.of O))} (x : T ⟶ torsion G N) :
-    (x ≫ torsion.ι G N) ^ N = 1 := by
-  rw [← comp_pow, torsion_ι_pow, comp_one]
-
-theorem torsionLift_comp_ι {N : ℕ} {T : Over (Spec (CommRingCat.of O))} (x : T ⟶ torsion G N)
-    (h : (x ≫ torsion.ι G N) ^ N = 1) : torsionLift (x ≫ torsion.ι G N) h = x :=
-  torsion_ext (torsionLift_ι _ _)
-
 variable [IsCommMonObj G]
 
-theorem isCharTors_iff {N : ℕ} (f : torsion G N ⟶ Gm (Spec (CommRingCat.of O))) :
-    IsCharTors G N f ↔ ∃ χ : TorsionChar G N, χ.hom = f := by
-  constructor
-  · intro h
-    exact ⟨⟨f, fun T x y hx hy => h T _ _ _ (by simp only [torsionLift_ι])⟩, rfl⟩
-  · rintro ⟨χ, rfl⟩ T x y z hz
-    have h := χ.map_mul T _ _ (comp_ι_pow x) (comp_ι_pow y)
-    rw [torsionLift_comp_ι, torsionLift_comp_ι] at h
-    rw [← h]
-    congr 1
-    exact torsion_ext (hz.trans (torsionLift_ι _ _).symm)
-
-variable (G) in
-
-def tvEquiv (p : ℕ) : Tv G p ≃ CharSystem G p where
-  toFun χ :=
-    { char := fun n => ⟨χ.χ n, fun T x y hx hy => χ.isChar n T _ _ _ (by simp only [torsionLift_ι])⟩
-      compat := fun n => ((Category.id_comp _).symm.trans (χ.compat n _ (𝟙 _) (torsionIncl G p n)
-        (by rw [Category.id_comp, torsionIncl, torsionLift_ι]))).symm }
-  invFun t :=
-    { χ := fun n => (t.char n).hom
-      isChar := fun n => (isCharTors_iff _).2 ⟨_, rfl⟩
-      compat := fun n T x y h => by
-        have e : x ≫ torsionIncl G p n = y :=
-          torsion_ext (by rw [Category.assoc, torsionIncl, torsionLift_ι, h])
-        rw [← t.compat n, ← Category.assoc, e] }
-  left_inv _ := rfl
-  right_inv _ := rfl
 
 end Characters
 
 section HodgeTate
 
 variable {O : Type} [CommRing O] [IsLocalRing O] {G : Over (Spec (CommRingCat.of O))} [GrpObj G]
-
-theorem dualBC_tangentPt {R R' : Type} [CommRing R] [Algebra O R] [CommRing R'] [Algebra O R']
-    (φ : R →ₐ[O] R') (v : Cotangent G →ₗ[O] R) :
-    ptMap (dualBC φ) ≫ (tangentPt v : specO O (DualNumber R) ⟶ G) =
-      tangentPt (φ.toLinearMap ∘ₗ v) := by
-  rw [tangentPt_eq, tangentPt_eq, ← Category.assoc, ptMap_comp_ptMap]
-  congr 2
-  refine AlgHom.ext fun b => TrivSqZeroExt.ext ?_ ?_
-  · simp [dualBC_fst, tangentAlg_fst]
-  · simp [dualBC_snd, tangentAlg_snd]
 
 variable [IsCommMonObj G] {p : ℕ}
 

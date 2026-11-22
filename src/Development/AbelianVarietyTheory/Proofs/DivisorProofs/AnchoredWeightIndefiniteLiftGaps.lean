@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CovolXOfCovol
-import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ComponentModelWeightDimensionDictionary
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.WeightFloorInequalities
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NumericalConsequencesOfPins
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CovolXOfCovol
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ComponentModelWeightDimensionDictionary
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.WeightFloorInequalities
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NumericalConsequencesOfPins
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.L2 Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AllWt GlobalTheory.CompHt GlobalTheory.BigTop GlobalTheory.CovTop
   GlobalTheory.CompHS GlobalTheory.HSApp
@@ -43,9 +47,9 @@ theorem lam_mono (h : HCParam R) (a : ℕ) : ∀ d : ℕ, a + d < R.r → lamAt 
 
 theorem lam_b (h : HCParam R) (l : ℕ) (hl : l < R.m) : lamAt h (R.k - 1 + l) = -h.b ⟨l, hl⟩ := by
   unfold lamAt
-  rw [dif_neg (by omega)]
+  rw [dite_eq_right (by omega)]
   have e : R.k - 1 + l - (R.k - 1) = l := by omega
-  rw [dif_pos (by omega)]
+  rw [dite_eq_left (by omega)]
   congr 2
   exact Fin.ext e
 
@@ -56,12 +60,12 @@ theorem lam_gapS {D : D7} {L : SizeData₂ D} (P : ParameterChoice' D L) (t : D.
   have hm := D.R.two_le_m
   have hr : D.R.r = D.R.k + D.R.m - 1 := rfl
   by_cases h1 : n + 1 < D.R.k - 1
-  · have e1 : lamAt (D.hc t) n = (D.hc t).v ⟨n, by omega⟩ := by unfold lamAt; rw [dif_pos (by omega)]
-    have e2 : lamAt (D.hc t) (n + 1) = (D.hc t).v ⟨n + 1, h1⟩ := by unfold lamAt; rw [dif_pos h1]
+  · have e1 : lamAt (D.hc t) n = (D.hc t).v ⟨n, by omega⟩ := by unfold lamAt; rw [dite_eq_left (by omega)]
+    have e2 : lamAt (D.hc t) (n + 1) = (D.hc t).v ⟨n + 1, h1⟩ := by unfold lamAt; rw [dite_eq_left h1]
     rw [e1, e2]; exact s1 n h1
   · by_cases h2 : n + 1 = D.R.k - 1
     · have e1 : lamAt (D.hc t) n = (D.hc t).v ⟨D.R.k - 2, by omega⟩ := by
-        unfold lamAt; rw [dif_pos (by omega)]; congr 1; exact Fin.ext (by simp; omega)
+        unfold lamAt; rw [dite_eq_left (by omega)]; congr 1; exact Fin.ext (by simp; omega)
       have e2 : lamAt (D.hc t) (n + 1) = -(D.hc t).b ⟨0, by omega⟩ := by
         have := lam_b (D.hc t) 0 (by omega)
         rw [show n + 1 = D.R.k - 1 + 0 by omega]; exact this
@@ -122,7 +126,7 @@ theorem bigEnt (p : PtAt ex Csz) (P : ParameterChoice' D L) (i : Fin D.R.m) (t :
   refine ⟨?_, hnn⟩
   rw [GlobalTheory.Shares.WtDic.wtA_tau]
   unfold ext0
-  rw [dif_pos hj, (p.fw.kap i t).1 ⟨j, hj⟩, sig_Wc]
+  rw [dite_eq_left hj, (p.fw.kap i t).1 ⟨j, hj⟩, sig_Wc]
   unfold aPl
   rw [if_pos hj]
   exact Int.toNat_of_nonneg hnn
@@ -159,7 +163,7 @@ theorem smallEnt (p : PtAt ex Csz) (P : ParameterChoice' D L) (i : Fin D.R.m) (t
   refine ⟨?_, hnn⟩
   rw [GlobalTheory.Shares.WtDic.wtA_conj]
   unfold ext0
-  rw [dif_pos (by omega), (p.fw.kap i t).2.1 ⟨_, by omega⟩, sig_Wc]
+  rw [dite_eq_left (by omega), (p.fw.kap i t).2.1 ⟨_, by omega⟩, sig_Wc]
   unfold aMi
   rw [if_pos (by omega)]
   have e1 : (D.R.sigW ((i : ℕ) + 1)).2 - ((D.R.sigW ((i : ℕ) + 1)).2 - 1 - s) = s + 1 := by omega
@@ -170,8 +174,8 @@ theorem smallEnt (p : PtAt ex Csz) (P : ParameterChoice' D L) (i : Fin D.R.m) (t
 
 end Ent
 
-open GlobalTheory.BigTop GlobalTheory.CovTop GlobalTheory.CompHS in
 
+open GlobalTheory.BigTop GlobalTheory.CovTop GlobalTheory.CompHS in
 theorem gaps : ∀ {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst D L} {Gl : Formalism.MainNotions.G.LatInst D}
     {Kc : Formalism.MainNotions.G.Consts} {Y0 : DivX D} {cX : ExtraC} {ex : Extra D L hT Gi Gl Kc Y0 cX} {Csz : ℝ}
     (p : PtAt ex Csz) (P : ParameterChoice' D L) (i : Fin D.R.m), (i : ℕ) + 1 < D.R.m →
@@ -203,7 +207,7 @@ theorem gaps : ∀ {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism
           else -((wtA (p.κ i) (conjEmb (DV.tauEmb D t), (D.R.sigW ((i : ℕ) + 1)).2 - 1 - (k + 1 - (D.R.sigW ((i : ℕ) + 1)).1)) : ℕ) : ℤ)
             - ((D.R.nV / 2 : ℕ) : ℤ)) := by
       unfold gap
-      rw [dif_pos hk]
+      rw [dite_eq_left hk]
       simp only [uW, uWt, Pi.sub_apply, GlobalTheory.FlatLine.parWt, laOf, weightOf, hp', hq', ht, hn]
       ring
     rw [hgap, hp']

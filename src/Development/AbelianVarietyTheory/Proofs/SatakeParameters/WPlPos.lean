@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.ParConsts
-import Formalism.LocalRingCardinality.DataKerI
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ScaleFamilySizeRelationsEventually
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BTLeFiveQuarters
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.LocalRingCardinality.DataKerI
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ScaleFamilySizeRelationsEventually
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BTLeFiveQuarters
+
+@[expose] public section
 
 open Formalism.MainNotions Formalism.BasicNotions Formalism.MainNotions.G Classical
 

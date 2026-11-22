@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.AffineSplittingSpan.InclInj
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.AffineSplittingSpan.InclInj
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,8 @@ theorem key {G : Type} [Group G] (j : ℕ) (e : (Fin (j + 1) → G) → ℝ) (he
     (g : Fin (j + 1) → G) :
     dC e (fun i => (MonoidHom.id G) (Fin.partialProd g i) • (1 : G)) =
       ev (MonoidHom.id G) e 1 (bd G j (Finsupp.single g 1)) := by
-  rw [ev_eq, bd, Finsupp.linearCombination_single, one_smul, map_add, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ev_eq, bd, Finsupp.linearCombination_single, one_smul, map_add (f := _), map_sum,
     Finsupp.linearCombination_single, dC, Fin.sum_univ_succ]
   simp only [MonoidHom.id_apply, smul_eq_mul, mul_one, Fin.succAbove_zero, one_smul,
     Fin.val_zero, pow_zero, one_mul, map_smul, Finsupp.linearCombination_single, Fin.val_succ]
@@ -44,7 +49,7 @@ theorem evCob : EvCob := by
     induction w using Finsupp.induction_linear with
     | zero => simp [ev]
     | add a b ha hb =>
-      rw [map_add, EvaluationCoboundary.ev_eq, map_add, ← EvaluationCoboundary.ev_eq, ← EvaluationCoboundary.ev_eq, ha, hb,
+      rw [map_add (f := _), EvaluationCoboundary.ev_eq, map_add (f := _), ← EvaluationCoboundary.ev_eq, ← EvaluationCoboundary.ev_eq, ha, hb,
         EvaluationCoboundary.ev_eq, EvaluationCoboundary.ev_eq e (bd G j b), ← map_add, ← EvaluationCoboundary.ev_eq]
     | single g r =>
       rw [EvaluationCoboundary.ev_eq, Finsupp.linearCombination_single, EvaluationCoboundary.key j e he g,

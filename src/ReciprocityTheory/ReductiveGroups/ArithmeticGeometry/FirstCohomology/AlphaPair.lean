@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.OneCHyp
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.OneCHyp
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -73,7 +77,7 @@ theorem mem_nsmul_of_dvd (Dw : Datum H) (N : ℕ) (d : Dw.La)
   have skew : ∀ x y, Dw.EF x y = - Dw.EF y x := by
     intro x y
     have hxy := Dw.alt (x + y)
-    simp only [map_add, LinearMap.add_apply, Dw.alt] at hxy
+    simp only [map_add (f := _), LinearMap.add_apply, Dw.alt] at hxy
     linarith
   have hdiv : ∀ y, (N : ℤ) ∣ Dw.EF d y := fun y => by
     rw [skew]
@@ -81,7 +85,7 @@ theorem mem_nsmul_of_dvd (Dw : Datum H) (N : ℕ) (d : Dw.La)
   let φ : Dw.La →ₗ[ℤ] ℤ :=
     { toFun := fun y => Dw.EF d y / N
       map_add' := fun y z => by
-        simp only [map_add]
+        simp only [map_add (f := _)]
         exact Int.add_ediv_of_dvd_left (hdiv y)
       map_smul' := fun m y => by
         simp only [map_smul, smul_eq_mul, RingHom.id_apply]
@@ -119,7 +123,7 @@ theorem sep_core (A : PolAV (Sp (FractionRing R))) : letI := H.starRing
     obtain ⟨f, hf⟩ := mem_nsmul_of_dvd Dw N (a - a') hcon
     exact hdN f hf
   have h1 : Dw.EF b0 (a - a') = Dw.EF ((u * β) • b0) (a - a') + Dw.EF ((u' * star β) • b0) (a - a') := by
-    rw [← LinearMap.add_apply, ← map_add, ← add_smul, huu, one_smul]
+    rw [← LinearMap.add_apply, ← map_add (f := _), ← add_smul, huu, one_smul]
   have h2 : (N : ℤ) ∣ Dw.EF ((u * β) • b0) (a - a') := by
     have hd' : H.bar (u * β) • (a - a') = N • (H.bar u • (e - e')) := by
       rw [map_mul, mul_smul, smul_sub]

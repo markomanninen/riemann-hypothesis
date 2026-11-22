@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleTrace.LRingPf
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.BasisOne
+module
+
+public import Development.EtaleCohomology.EtaleTrace.LRingPf
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.BasisOne
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.EtaleTrace LateralTheory.EtaleTrace.LRingPf

@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.NeutralLocalFields.Duality
-import ReciprocityTheory.GroupCohomology.InfRes
-import ReciprocityTheory.GroupCohomology.CardLenStatement
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.KbarRepContAction
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.Herbrand
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnrDefs
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.QZDefs
+module
+
+public import Mathlib
+public import ReciprocityTheory.NeutralLocalFields.Duality
+public import ReciprocityTheory.GroupCohomology.InfRes
+public import ReciprocityTheory.GroupCohomology.CardLenStatement
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.KbarRepContAction
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.Herbrand
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnrDefs
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.QZDefs
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -70,7 +74,7 @@ def vOn : multOf p K →+ ℤ where
     rw [vOnFun_spec]; simp
   map_add' x y := by
     apply Int.cast_injective (α := ℝ)
-    rw [Int.cast_add, vOnFun_spec, vOnFun_spec, vOnFun_spec, AddSubgroup.coe_add, map_add, mul_add]
+    rw [Int.cast_add, vOnFun_spec, vOnFun_spec, vOnFun_spec, AddSubgroup.coe_add, map_add (f := _), mul_add]
 
 theorem vOn_spec (x : multOf p K) : (vOn p K x : ℝ) = eK p K * vbar p x.1 := vOnFun_spec p K x
 
@@ -110,8 +114,8 @@ def degLK : ℕ := (subG p K L).index
 
 abbrev GalLK : Type := GK p K ⧸ subG p K L
 
-variable {p K L} in
 
+variable {p K L} in
 def resGK (h : K ≤ L) : GK p L →* GK p K where
   toFun σ := { σ.toRingEquiv with commutes' := fun x => σ.commutes ⟨x.1, h x.2⟩ }
   map_one' := rfl
@@ -136,17 +140,19 @@ theorem resGK_continuous (h : K ≤ L) : Continuous (resGK h) := by
   intro x hx
   have hx' : x = ∑ i, b.repr ⟨x, hx⟩ i • (b i : PadicAlgCl p) := by
     have := congrArg E.val (b.sum_repr ⟨x, hx⟩)
-    rw [map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
     exact this.symm
   rw [hx']
   show resGK h σ _ = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Algebra.smul_def, map_mul, AlgEquiv.commutes]
   exact congrArg _ (Set.mem_iInter.1 hσ i)
 
-variable {p K L} in
 
+variable {p K L} in
 theorem subG_normal_of_stable (h : ∀ (σ : GK p K), ∀ x ∈ L, σ x ∈ L) : (subG p K L).Normal := by
   refine ⟨fun n hn g x hx => ?_⟩
   show g (n (g⁻¹ x)) = x
@@ -250,8 +256,8 @@ def layerUIncl [(subG p K L).Normal] : Pair (layerU p K L) (layer p K L) :=
       induction g using QuotientGroup.induction_on with
       | H σ => rfl)
 
-variable {p K} in
 
+variable {p K} in
 def layerInfl {L L' : IntermediateField ℚ_[p] (PadicAlgCl p)} (h : L ≤ L') [(subG p K L).Normal]
     [(subG p K L').Normal] : Pair (layer p K L) (layer p K L') where
   φ := QuotientGroup.map (subG p K L') (subG p K L) (MonoidHom.id _) (fun _ hσ x hx => hσ x (h hx))
@@ -265,8 +271,8 @@ def layerInfl {L L' : IntermediateField ℚ_[p] (PadicAlgCl p)} (h : L ≤ L') [
     induction g using QuotientGroup.induction_on with
     | H σ => rfl
 
-open Classical in
 
+open Classical in
 def vLayerMap [(subG p K L).Normal] : (layer p K L).V →+ ℤ :=
   if h : ∃ f : (layer p K L).V →+ ℤ, ∀ x, (f x : ℝ) = eK p L * vbar p x.1 then h.choose else 0
 
@@ -290,8 +296,8 @@ abbrev Br : Type := (kbarT p K).H 2
 
 def BrLK [(subG p K L).Normal] : Submodule ℤ (Br p K) := LinearMap.range ((layerInf p K L).hom.H 2)
 
-variable {p K L} in
 
+variable {p K L} in
 def resPair (h : K ≤ L) : Pair (kbarT p K) (kbarT p L) where
   φ := resGK h
   u := LinearMap.id
@@ -299,8 +305,8 @@ def resPair (h : K ≤ L) : Pair (kbarT p K) (kbarT p L) where
   u_cont := continuous_id
   equiv _ _ := rfl
 
-variable {p K L} in
 
+variable {p K L} in
 def BrKer (h : K ≤ L) : Submodule ℤ (Br p K) := LinearMap.ker ((resPair h).hom.H 2)
 
 abbrev urT : TRep ℤ (GalLK p K (MaximalUnramifiedExtension p K)) := layer p K (MaximalUnramifiedExtension p K)
@@ -312,8 +318,8 @@ def IsInv (f : (urT p K).H 2 →+ QZ) : Prop :=
     (∀ g, (m g : ℚ) = t (g 0) + t (g 1) - t (g 0 * g 1)) → (∀ g, z.1 g = m g • π) →
     f ((urT p K).coch.cls 2 z hz) = QuotientAddGroup.mk (t (frobLK p K (MaximalUnramifiedExtension p K)))
 
-open Classical in
 
+open Classical in
 def invUr : (urT p K).H 2 →+ QZ := if h : ∃ f, IsInv p K f then h.choose else 0
 
 end

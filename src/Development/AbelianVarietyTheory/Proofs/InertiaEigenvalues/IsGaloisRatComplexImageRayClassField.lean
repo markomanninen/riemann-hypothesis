@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SmulCommClassGalIntegers
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.FiniteDimensionalOfSz
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsGaloisOfIsRayFieldTop
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SmulCommClassGalIntegers
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.FiniteDimensionalOfSz
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsGaloisOfIsRayFieldTop
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -25,7 +29,7 @@ theorem isModulus_transport {K K' N : Type} [Field K] [NumberField K] [Field K']
     obtain ⟨j, rfl⟩ := (RingOfIntegers.mapRingEquiv s).surjective j
     refine ⟨c * a, Ideal.mem_span_singleton'.2 ⟨c, rfl⟩, j, (hmm j).1 hj,
       (RingOfIntegers.mapRingEquiv s).injective ?_⟩
-    rw [map_add, map_mul, hij, map_one]
+    rw [map_add (f := _), map_mul, hij, map_one]
   refine ⟨hm', fun 𝔭 hp => ?_, fun α β hr => ?_⟩
   · obtain ⟨𝔮, rfl⟩ := (primeEquiv s).surjective 𝔭
     rw [heckeVal_transport s hs]

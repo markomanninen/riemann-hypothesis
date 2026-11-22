@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ThetaKernelFiring
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ThetaKernelFiring
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem lab_fixed (ρ : D.what₂.Tau) : lab D.what₂.embLL ρ = ρ := by
   have h : ∃ τ, labE D.what₂.embLL τ = tauE D ρ ∨ labE D.what₂.embLL τ = (starRingEnd ℂ).comp (tauE D ρ) :=
     ⟨ρ, Or.inl (labE_fixed ρ)⟩
   unfold lab
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   have hs := h.choose_spec
   generalize h.choose = τ at hs
   rw [labE_fixed] at hs
@@ -37,20 +41,6 @@ theorem lab_fixed (ρ : D.what₂.Tau) : lab D.what₂.embLL ρ = ρ := by
     rw [hs] at a
     simp at a
     linarith
-
-theorem one_le_aPl_last (i : Fin D.R.m) (τ : D.what₂.Tau) :
-    1 ≤ aPl D i (D.R.k + i) τ (D.R.k + i - 1) := by
-  have hk := D.R.m_add_three_le_k
-  have hi := i.2
-  unfold aPl Formalism.L2.NTheta.lamAt
-  rw [if_pos (by omega), dif_neg (by omega), dif_pos (by omega)]
-  have e : (⟨D.R.k + i - 1 - (D.R.k - 1), by omega⟩ : Fin D.R.m) = i := Fin.ext (by simp; omega)
-  rw [e]
-  have g := (D.hc τ).gap_be i
-  have c : ((D.R.k + i - 1 : ℕ) : ℚ) = (D.R.k : ℚ) + i - 1 := by
-    rw [Nat.cast_sub (by omega)]; push_cast; ring
-  rw [c, Int.le_toNat (Int.floor_nonneg.2 (by push_cast; linarith)), Int.le_floor]
-  push_cast; linarith
 
 theorem parAt_fixed (W : HSp D) (ρ : D.what₂.Tau) :
     parAt W D.what₂.embLL ρ = Formalism.L2.NTheta.holPar _ _ (Formalism.L2.NTheta.wtOf D W ρ) := by

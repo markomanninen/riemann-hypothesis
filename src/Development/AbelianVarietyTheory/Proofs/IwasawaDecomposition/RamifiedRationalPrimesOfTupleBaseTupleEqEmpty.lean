@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.QLocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.HostPins
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTypeDimensionAndLocalIntegralsDegreeOneStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SingleBlockDoublingIntegralValueStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TupleCharRamifiedAtAllPrimesOverPlaceStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.QLocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.HostPins
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTypeDimensionAndLocalIntegralsDegreeOneStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SingleBlockDoublingIntegralValueStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TupleCharRamifiedAtAllPrimesOverPlaceStatement
+
+@[expose] public section
+
 open MeasureTheory Matrix NumberField IsDedekindDomain Formalism.BasicNotions Formalism.DoubleCosetMeasures Formalism.L2.Host Formalism.L2.DIV Formalism.L2.DIV.QLoc GlobalTheory.Mem.HD
 
 noncomputable section
@@ -110,8 +115,8 @@ theorem one_lt_absNorm {L : Type} [Field L] [NumberField L] (v : HeightOneSpectr
 variable (Tp : TupTied D C nch) (hp : TupPins Tp) (Pv : HeightOneSpectrum (𝓞 D.host.F) → HeightOneSpectrum (𝓞 D.host.E))
   (hPv : ∀ v, Pv v ∈ aboveF (L := D.host.E) D.host.F v)
 
-include hp hPv in
 
+include hp hPv in
 theorem ram_Pv (μ : D.what₂.Tup) (v : {v : HeightOneSpectrum (𝓞 D.host.F) // Tp.InQ' μ v}) :
     ¬ (Tp.xi μ).UnrAt (Pv v.1) := by
   obtain ⟨w, hw, hr⟩ := v.2
@@ -133,8 +138,8 @@ theorem absNorm_Pv (μ : D.what₂.Tup) (v : {v : HeightOneSpectrum (𝓞 D.host
 
 theorem one_le_letterBlockLength : 1 ≤ D.R.t := by have := D.R.three_m_lt_t; omega
 
-include hp hPv in
 
+include hp hPv in
 theorem stepEx (μ : D.what₂.Tup) (v : {v : HeightOneSpectrum (𝓞 D.host.F) // Tp.InQ' μ v}) (j : ℕ) :
     (∃ n, TypeDimAt (Pv v.1) (delQ Tp μ (Pv v.1)) (nuP C (Pv v.1)) D.R.r D.R.t j n) ∧
       ∃ z, StepAt (Pv v.1) (delQ Tp μ (Pv v.1)) (nuP C (Pv v.1)) D.R.r D.R.t j z :=
@@ -199,111 +204,6 @@ theorem reLoc (Z₀ : DivX D) : QLocTiedC (reducedDivisorCharacter Tp hp Pv hPv 
   show ((nuP C (Pv v.1) (i.1 + 1) (piP (Pv v.1)) : ℂˣ) : ℂ) = _
   rw [nuP_succ]
   rfl
-
-@[simp] theorem reQ_geo (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).geo = Z₀.geo := rfl
-
-@[simp] theorem reQ_Lev (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).Lev = Z₀.Lev := rfl
-
-@[simp] theorem reQ_levPr (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).levPr = Z₀.levPr := rfl
-
-@[simp] theorem reQ_shv (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).shv = Z₀.shv := rfl
-
-@[simp] theorem reQ_shv_N (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).shv_N = Z₀.shv_N := rfl
-
-@[simp] theorem reQ_shv_lev (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).shv_lev = Z₀.shv_lev := rfl
-
-@[simp] theorem reQ_PlP (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).PlP = Z₀.PlP := rfl
-
-@[simp] theorem reQ_plpNe (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).plpNe = Z₀.plpNe := rfl
-
-@[simp] theorem reQ_wtP (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).wtP = Z₀.wtP := rfl
-
-@[simp] theorem reQ_wtP_nonneg (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).divisorWeight_nonneg = Z₀.divisorWeight_nonneg := rfl
-
-@[simp] theorem reQ_wtP_sum (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).divisorWeight_sum = Z₀.divisorWeight_sum := rfl
-
-@[simp] theorem reQ_plP (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).plP = Z₀.plP := rfl
-
-@[simp] theorem reQ_wtP_def (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).divisorWeight_def = Z₀.divisorWeight_def := rfl
-
-@[simp] theorem reQ_jC (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).jC = Z₀.jC := rfl
-
-@[simp] theorem reQ_Mp (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).Mp = Z₀.Mp := rfl
-
-@[simp] theorem reQ_vdd (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).vdd = Z₀.vdd := rfl
-
-@[simp] theorem reQ_vdd_unram (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).vdd_unram = Z₀.vdd_unram := rfl
-
-@[simp] theorem reQ_phiFr_unram (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).phiFr_unram = Z₀.phiFr_unram := rfl
-
-@[simp] theorem reQ_vdd_nonneg (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).vdd_nonneg = Z₀.vdd_nonneg := rfl
-
-@[simp] theorem reQ_CurveM (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).CurveM = Z₀.CurveM := rfl
-
-@[simp] theorem reQ_degM (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).degM = Z₀.degM := rfl
-
-@[simp] theorem reQ_htMdl (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).htMdl = Z₀.htMdl := rfl
-
-@[simp] theorem reQ_htCurve (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).htCurve = Z₀.htCurve := rfl
-
-@[simp] theorem reQ_htCurve_deg (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).htCurve_deg = Z₀.htCurve_deg := rfl
-
-@[simp] theorem reQ_MjH (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).MjH = Z₀.MjH := rfl
-
-@[simp] theorem reQ_MjH_good (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).MjH_good = Z₀.MjH_good := rfl
-
-@[simp] theorem reQ_jM (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).jM = Z₀.jM := rfl
-
-@[simp] theorem reQ_jM_basis (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).jM_basis = Z₀.jM_basis := rfl
-
-@[simp] theorem reQ_jM_lat (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).jM_lat = Z₀.jM_lat := rfl
-
-@[simp] theorem reQ_MjLat_sub (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).MjLat_sub = Z₀.MjLat_sub := rfl
-
-@[simp] theorem reQ_jM_metric (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).jM_metric = Z₀.jM_metric := rfl
-
-@[simp] theorem reQ_Comp (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).Comp = Z₀.Comp := rfl
-
-@[simp] theorem reQ_degHH (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).degHH = Z₀.degHH := rfl
-
-@[simp] theorem reQ_Yv (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).Yv = Z₀.Yv := rfl
-
-@[simp] theorem reQ_Ybd (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).Ybd = Z₀.Ybd := rfl
-
-@[simp] theorem reQ_Lw (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).Lw = Z₀.Lw := rfl
-
-@[simp] theorem reQ_iMj (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).iMj = Z₀.iMj := rfl
-
-@[simp] theorem reQ_iMj_mem (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).iMj_mem = Z₀.iMj_mem := rfl
-
-@[simp] theorem reQ_logLam (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).logLam = Z₀.logLam := rfl
-
-@[simp] theorem reQ_logLam_base (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).logLam_base = Z₀.logLam_base := rfl
-
-@[simp] theorem reQ_kapR (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).kapR = Z₀.kapR := rfl
-
-@[simp] theorem reQ_kapR_pos (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).kapR_pos = Z₀.kapR_pos := rfl
-
-@[simp] theorem reQ_kapR_conj (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).kapR_conj = Z₀.kapR_conj := rfl
-
-@[simp] theorem reQ_Surf (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).Surf = Z₀.Surf := rfl
-
-@[simp] theorem reQ_surfCh2 (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).surfCh2 = Z₀.surfCh2 := rfl
-
-@[simp] theorem reQ_surfDegOm (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).surfDegOm = Z₀.surfDegOm := rfl
-
-@[simp] theorem reQ_SurfFp (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).SurfFp = Z₀.SurfFp := rfl
-
-@[simp] theorem reQ_surfFpCh2 (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).surfFpCh2 = Z₀.surfFpCh2 := rfl
-
-@[simp] theorem reQ_plpFin (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).plpFin = Z₀.plpFin := rfl
-
-@[simp] theorem reQ_compFin (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).compFin = Z₀.compFin := rfl
-
-@[simp] theorem reQ_Qp (Z₀ : DivX D) : (reQ Tp hp Pv hPv Z₀).Qp = qpSet Tp := rfl
-
-@[simp] theorem reQ_QPl (Z₀ : DivX D) (μ : D.what₂.Tup) :
-    (reQ Tp hp Pv hPv Z₀).QPl μ = {v : HeightOneSpectrum (𝓞 D.host.F) // Tp.InQ' μ v} := rfl
 
 end GlobalTheory.Mem.HD.ReQ
 

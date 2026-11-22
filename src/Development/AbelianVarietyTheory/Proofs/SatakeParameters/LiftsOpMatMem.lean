@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ReprMemOfBasisRational
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DcOpCommOfCommute
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ReprMemOfBasisRational
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DcOpCommOfCommute
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.L2.DIV Formalism.IndefR.Links NumberField
 attribute [local instance] Formalism.BasicNotions.Host.cmStar

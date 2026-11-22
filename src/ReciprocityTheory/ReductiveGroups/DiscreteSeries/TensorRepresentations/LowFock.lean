@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.DSymmHypsInhabited
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.LowFockC
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.LowFockD
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.LowFockE
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.DSymmHypsInhabited
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.LowFockC
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.LowFockD
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.LowFockE
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,9 +43,5 @@ theorem lowFock_exists (ε : Fin n → Bool) {E : Fin n → Fin n → Module.End
   refine ⟨lfLift ε x, lfLift_mem_tensFock ε hxV, lfLift_mem_physSub ε x, lfLift_ne_zero ε hx0, ?_⟩
   rw [← hwt]
   exact lfLift_isKHWVec ε hxw hxh
-
-def sVec (ε : Fin n → Bool) : Fock n :=
-  (((univ.filter fun x : Fin n × Fin n => ε x.1 = true ∧ ε x.2 = false ∧ x.2 < x.1).toList).map
-    fun x => ExteriorAlgebra.ι ℂ (Pi.single x (1 : ℂ))).prod
 
 end ReciprocityTheory.ChartRestriction.DS

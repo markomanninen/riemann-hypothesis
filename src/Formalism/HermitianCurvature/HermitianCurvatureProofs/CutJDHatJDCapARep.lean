@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapAGrp
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatQMinOp
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapAGrp
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatQMinOp
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -31,7 +35,9 @@ theorem exists_polyOp_qminor_sum {k r t κ : ℕ} {Wp Wq : Type} [NormedAddCommG
       simpa using this
     · rw [List.mem_singleton] at h1
       subst h1
-      refine ⟨by rw [hT₀]; simp, fun _ => 0, Formalism.FourierDecayAlt.P.PartialDerivativeAlgebra.pd_const 0 κ, fun g => rfl, fun g => rfl⟩
+      refine ⟨by rw [hT₀]; simp, fun _ => 0, Formalism.FourierDecayAlt.P.PartialDerivativeAlgebra.pd_const 0 κ, fun g => ?_, fun g => ?_⟩
+      · simp [T₀, pTerm]
+      · simp [T₀, pTerm]
   · unfold B.opOrder
     apply foldr_max_eq
     · intro x hx
@@ -45,8 +51,7 @@ theorem exists_polyOp_qminor_sum {k r t κ : ℕ} {Wp Wq : Type} [NormedAddCommG
       exact ⟨T₀, Or.inr rfl, by rw [hT₀]; simp⟩
   · intro UU F hF g hgU hg
     have hT₀a : T₀.coef g (B.Rw T₀.word F g) = 0 := by
-      change ((0 : ℂ) • ContinuousLinearMap.id ℂ (Wq →L[ℂ] Wp)) (B.Rw T₀.word F g) = 0
-      simp
+      simp [T₀, pTerm]
     simp only [B.opApply, List.map_append, List.sum_append, List.map_singleton, List.sum_singleton, hT₀a,
       add_zero, Θ₁]
     rw [sum_flatMap, Finset.sum_map_toList]

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerElements.CoefMapSingle
-import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerElements.SamePrimesMulPow
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerElements.CoefMapSingle
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerElements.SamePrimesMulPow
+
+@[expose] public section
 
 open Finset UpperTheory.V.Bern UpperTheory.V
 
@@ -12,8 +16,8 @@ theorem UpperTheory.V.Stk.groupRing_intAt_div_smul_of_padicValNat_le :
     simp [Stk.cf]
   rw [hcoef]
   have hdvdM : l ^ (padicValNat l D + t) ∣ M :=
-    (pow_dvd_pow l (by omega)).trans pow_padicValNat_dvd
-  have hdvdD : l ^ padicValNat l D ∣ D := pow_padicValNat_dvd
+    (pow_dvd_pow l (by omega)).trans (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
+  have hdvdD : l ^ padicValNat l D ∣ D := (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
   obtain ⟨k, hk⟩ := hdvdM
   obtain ⟨E, hE⟩ := hdvdD
   have hnd : ¬ l ∣ E := by
@@ -21,7 +25,7 @@ theorem UpperTheory.V.Stk.groupRing_intAt_div_smul_of_padicValNat_le :
     apply pow_succ_padicValNat_not_dvd (p := l) hD.ne'
     conv_rhs => rw [hE]
     rw [pow_succ]
-    exact Nat.mul_dvd_mul_left _ hl
+    simpa only [Nat.padicValNat_def] using Nat.mul_dvd_mul_left (l ^ padicValNat l D) hl
   have hE0 : E ≠ 0 := by
     rintro rfl
     simp at hE

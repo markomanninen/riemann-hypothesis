@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.MoveQkCore
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.MoveQkCore
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,7 +130,7 @@ theorem exists_mult [Module.Free ℤ X] (h : IsCub θ) {c : X → A} (hc : ∀ �
     rw [map_zero]; rfl
   · intro χ χ'
     show (Additive.toMul (s (χ + χ'))).u * θ (c χ) (c χ') b = (Additive.toMul (s χ)).u * (Additive.toMul (s χ')).u
-    rw [map_add, toMul_add, Ex.mul_u, hb, hb, h.s01 b, h.s12 (c χ) b, inv_mul_cancel_right]
+    rw [map_add (f := _), toMul_add, Ex.mul_u, hb, hb, h.s01 b, h.s12 (c χ) b, inv_mul_cancel_right]
 
 theorem exists_root [Module.Free ℤ X] {n : ℕ} (hU : ∀ u : U, ∃ r, r ^ n = u) (l : X → U) (hl : ∀ χ χ', l (χ + χ') = l χ * l χ') :
     ∃ ro : X → U, (∀ χ χ', ro (χ + χ') = ro χ * ro χ') ∧ ∀ χ, ro χ ^ n = l χ := by
@@ -136,7 +140,7 @@ theorem exists_root [Module.Free ℤ X] {n : ℕ} (hU : ∀ u : U, ∃ r, r ^ n 
     (fun a => by obtain ⟨r, hr⟩ := hU (Additive.toMul a); exact ⟨Additive.ofMul r, hr⟩)
   refine ⟨fun χ => Additive.toMul (s χ), fun χ χ' => ?_, fun χ => LinearMap.congr_fun hs χ⟩
   show Additive.toMul (s (χ + χ')) = Additive.toMul (s χ) * Additive.toMul (s χ')
-  rw [map_add, toMul_add]
+  rw [map_add (f := _), toMul_add]
 
 end Ext
 

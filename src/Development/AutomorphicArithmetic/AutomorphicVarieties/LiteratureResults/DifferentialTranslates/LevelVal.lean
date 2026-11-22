@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.SecondFromFirstStatement
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.SecondFromFirstStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ private theorem sum_cmp (m : S ⊗[ℂ] (Fin d → ℂ)) :
     congr 1
     ext i
     simp [Finset.sum_apply, Pi.single_apply]
-  | add x y hx hy => simp only [map_add, TensorProduct.add_tmul, Finset.sum_add_distrib, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), TensorProduct.add_tmul, Finset.sum_add_distrib, hx, hy]
 
 private theorem cmp_sum (L : Module.End ℂ S) (c : ℂ) (j : Fin d) (m : S ⊗[ℂ] (Fin d → ℂ)) :
     cmp j ((L.rTensor (Fin d → ℂ) + (Matrix.toLin' (c • (1 : Matrix (Fin d) (Fin d) ℂ))).lTensor S) m) =
@@ -35,11 +39,11 @@ private theorem cmp_sum (L : Module.End ℂ S) (c : ℂ) (j : Fin d) (m : S ⊗[
   induction m using TensorProduct.induction_on with
   | zero => simp
   | tmul φ v => simp [cmp_tmul, smul_smul]
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, map_add, smul_add]; abel
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), map_add (f := _), smul_add]; abel
 
 end Components
 
-private theorem cmp_apply {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a d : ℕ}
+private theorem cmp_apply {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a d : ℕ}
     (m : Sm E a ⊗[ℂ] (Fin d → ℂ)) (j : Fin d) (g : GA E a) : (cmp j m).1 g = ev m g j := by
   induction m using TensorProduct.induction_on with
   | zero => simp
@@ -58,8 +62,8 @@ theorem levelVal : LevelVal := by
         rw [ev_tmul, ev_tmul, h]
     | zero => exact ⟨fun γ g => by simp, fun u _ g => by simp⟩
     | add x y _ _ hx hy =>
-      exact ⟨fun γ g => by simp only [map_add, Pi.add_apply, hx.1 γ g, hy.1 γ g],
-        fun u hu g => by simp only [map_add, Pi.add_apply, hx.2 u hu g, hy.2 u hu g]⟩
+      exact ⟨fun γ g => by simp only [map_add (f := _), Pi.add_apply, hx.1 γ g, hy.1 γ g],
+        fun u hu g => by simp only [map_add (f := _), Pi.add_apply, hx.2 u hu g, hy.2 u hu g]⟩
     | smul c x _ hx =>
       exact ⟨fun γ g => by simp only [map_smul, Pi.smul_apply, hx.1 γ g],
         fun u hu g => by simp only [map_smul, Pi.smul_apply, hx.2 u hu g]⟩

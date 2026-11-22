@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PrimOfIsUnitDet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PrimOfIsUnitDet
+
+@[expose] public section
+
 open GlobalTheory.GramCount
 open scoped Classical
 
@@ -27,7 +32,7 @@ theorem exists_isPrimitive_invol_invariant {B : Type} [CommRing B] [Fintype B] (
       exact ha ((hω.mul_left_eq_zero).1 h3)
     obtain ⟨u, hu⟩ := hex
     have hs : c (a * u + c (a * u)) = a * u + c (a * u) := by
-      rw [map_add, hc, add_comm]
+      rw [map_add (f := _), hc, add_comm]
     obtain ⟨s', hs'⟩ := (hfix _ hs hu).exists_right_inv
     have hcs : c s' = s' := by
       have h4 := congrArg c hs'

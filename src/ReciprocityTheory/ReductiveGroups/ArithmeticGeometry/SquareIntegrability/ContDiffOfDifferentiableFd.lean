@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -65,7 +69,7 @@ theorem continuous_weight (q n : ℕ) :
     fun k i => (EuclideanSpace.proj i).continuous.comp (continuous_apply k)
   have hHC : Continuous fun v : Fin n → Vsp X.dim => HC v v := by
     unfold HC Hf
-    exact continuous_finset_sum _ fun k _ => continuous_finset_sum _ fun i _ =>
+    exact continuous_finsetSum _ fun k _ => continuous_finsetSum _ fun i _ =>
       (hc k i).mul (Complex.continuous_conj.comp (hc k i))
   exact Complex.continuous_ofReal.comp
     (Real.continuous_exp.comp (continuous_const.mul (Complex.continuous_re.comp hHC)))
@@ -100,7 +104,8 @@ theorem l2_sum_eq_sum_norm_sq_of_orthogonal {n : ℕ} (q : ℕ) {ι : Type*} (s 
       ∑ i ∈ s, ∑ j ∈ s, (c i * (starRingEnd ℂ) (c j)) *
         (e i v * (starRingEnd ℂ) (e j v) * (Real.exp (-(q * Real.pi) * (HC v v).re) : ℂ)) := by
     intro v
-    rw [map_sum, Finset.sum_mul, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_mul, Finset.sum_mul]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Finset.mul_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun j _ => ?_
@@ -114,16 +119,16 @@ theorem l2_sum_eq_sum_norm_sq_of_orthogonal {n : ℕ} (q : ℕ) {ι : Type*} (s 
       ∑ i ∈ s, ∑ j ∈ s, (c i * (starRingEnd ℂ) (c j)) *
         ∫ v in X.fd n, e i v * (starRingEnd ℂ) (e j v) * (Real.exp (-(q * Real.pi) * (HC v v).re) : ℂ) := by
     simp_rw [hsum_int]
-    rw [MeasureTheory.integral_finset_sum _ fun i hi =>
-      MeasureTheory.integrable_finset_sum _ fun j hj => hterm i hi j hj]
+    rw [MeasureTheory.integral_finsetSum _ fun i hi =>
+      MeasureTheory.integrable_finsetSum _ fun j hj => hterm i hi j hj]
     refine Finset.sum_congr rfl fun i hi => ?_
-    rw [MeasureTheory.integral_finset_sum _ fun j hj => hterm i hi j hj]
+    rw [MeasureTheory.integral_finsetSum _ fun j hj => hterm i hi j hj]
     refine Finset.sum_congr rfl fun j _ => ?_
     first
       | exact MeasureTheory.integral_const_mul _ _
       | exact MeasureTheory.integral_mul_left _ _
   have hF : Continuous (fun v => ∑ i ∈ s, c i * e i v) :=
-    continuous_finset_sum _ fun i hi => continuous_const.mul (he i hi)
+    continuous_finsetSum _ fun i hi => continuous_const.mul (he i hi)
   have hip : X.l2ip q (fun v => ∑ i ∈ s, c i * e i v) (fun v => ∑ i ∈ s, c i * e i v) =
       ∑ i ∈ s, ∑ j ∈ s, (c i * (starRingEnd ℂ) (c j)) * X.l2ip q (e i) (e j) := by
     simp only [PT.l2ip, MeasureTheory.setAverage_eq]

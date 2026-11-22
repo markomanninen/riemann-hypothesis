@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapAGrp
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapAdInv
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableCsmul
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AAInvTrans
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapAGrp
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapAdInv
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableCsmul
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AAInvTrans
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ContDiff
@@ -54,7 +58,7 @@ theorem groupingM {M : Type*} [AddCommGroup M] [Module ℂ M] {t N : ℕ} (κ : 
       · intro i j hij heq
         have e : ∀ x, p.2 (p.2⁻¹ x) = x := fun x => by rw [Equiv.Perm.inv_def, Equiv.apply_symm_apply]
         simp only [Function.comp_apply, e] at heq
-        exact absurd (hp.injective heq) (ne_of_lt hij)
+        exact le_of_eq (congrArg (↑(p.2⁻¹) : Fin t → Fin t) (hp.injective heq))
     rw [← hs]
     ext1
     · funext l; simp
@@ -291,7 +295,8 @@ theorem post_qm (L : E →L[ℂ] E) (F : Mat k r → E) {t : ℕ} (hF : CkOn ((t
 theorem post_AAop (L : E →L[ℂ] E) (F : Mat k r → E) (hF : CkOn ((r : ℕ) : ℕ∞) (GV k r) F) (u : ℂ)
     {g : Mat k r} (hg : g ∈ GV k r) :
     C3.AAop k r r le_rfl u (fun x => L (F x)) g = L (C3.AAop k r r le_rfl u F g) := by
-  simp only [C3.AAop, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [C3.AAop, map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   split_ifs
   · rw [map_smul, post_qm L F hF _ _ u hg]
@@ -300,7 +305,8 @@ theorem post_AAop (L : E →L[ℂ] E) (F : Mat k r → E) (hF : CkOn ((r : ℕ) 
 theorem post_AAvop (L : E →L[ℂ] E) (F : Mat k r → E) (hF : CkOn ((r : ℕ) : ℕ∞) (GV k r) F) (ell : ℂ)
     {g : Mat k r} (hg : g ∈ GV k r) :
     C3.AAvop k r r le_rfl ell (fun x => L (F x)) g = L (C3.AAvop k r r le_rfl ell F g) := by
-  simp only [C3.AAvop, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [C3.AAvop, map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   split_ifs
   · rw [map_smul, post_qm L F hF _ _ _ hg]

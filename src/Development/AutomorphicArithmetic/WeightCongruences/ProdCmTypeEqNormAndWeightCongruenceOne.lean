@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataHost
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
-import Development.AutomorphicArithmetic.WeightCongruences.ProdNegOneZpow
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataHost
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+public import Development.AutomorphicArithmetic.WeightCongruences.ProdNegOneZpow
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions
 

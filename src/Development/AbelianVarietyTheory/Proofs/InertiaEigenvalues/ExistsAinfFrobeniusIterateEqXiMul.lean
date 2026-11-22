@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsAlgClosedTiltFieldAndValuationRing
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsAlgClosedTiltFieldAndValuationRing
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
+
 open Formalism
 open scoped Formalism.Per
 
@@ -41,7 +46,8 @@ theorem xi_bar_ne_zero (e : Per.Fl l) (he : GlobalTheory.MemLoc.IsEps e) :
     WittVector.constantCoeff (GlobalTheory.MemLoc.xi e) ≠ 0 := by
   set e' := (frobeniusEquiv (Per.Fl l) l).symm e with he'
   have hxi : WittVector.constantCoeff (GlobalTheory.MemLoc.xi e) = ∑ i ∈ Finset.range l, e' ^ i := by
-    simp [GlobalTheory.MemLoc.xi, map_sum, map_pow, WittVector.constantCoeff_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [GlobalTheory.MemLoc.xi, map_sum, map_pow, WittVector.constantCoeff_apply,
       WittVector.teichmuller_coeff_zero, he']
   have hpow : e' ^ l = e := by
     have := (frobeniusEquiv (Per.Fl l) l).apply_symm_apply e
@@ -79,7 +85,7 @@ theorem exists_step (e : Per.Fl l) (he : GlobalTheory.MemLoc.IsEps e) (n : ℕ) 
   refine ⟨y, dvd_of_constantCoeff _ ?_⟩
   rw [iterate_tm]
   simp only [eval_add, eval_sub, eval_pow, eval_X, eval_C, eval_mul] at hy
-  rw [map_add, map_sub, map_mul, WittVector.constantCoeff_apply (x := Per.tm _),
+  rw [map_add (f := _), map_sub, map_mul, WittVector.constantCoeff_apply (x := Per.tm _),
     WittVector.constantCoeff_apply (x := Per.tm _), WittVector.teichmuller_coeff_zero,
     WittVector.teichmuller_coeff_zero]
   rw [← hy]
@@ -92,7 +98,7 @@ theorem exists_start (e : Per.Fl l) (he : GlobalTheory.MemLoc.IsEps e) (n : ℕ)
   have hq1 : l ^ n - 1 ≠ 0 := by omega
   have hmon : (X ^ (l ^ n - 1) - C a : (Per.Fl l)[X]).Monic := monic_X_pow_sub_C a hq1
   have hnd : (X ^ (l ^ n - 1) - C a : (Per.Fl l)[X]).natDegree ≠ 0 := by
-    rw [natDegree_X_pow_sub_C]; exact hq1
+    rw [natDegree_X_pow_sub_C _]; exact hq1
   obtain ⟨y, hy⟩ := GlobalTheory.TiltAlgClosed.exists_root_preTilt ℂ_[l] hmon hnd
   simp only [eval_sub, eval_pow, eval_X, eval_C, sub_eq_zero] at hy
   refine ⟨y, ?_, ?_⟩
@@ -111,7 +117,7 @@ theorem period_solution : ∀ (l : ℕ) [Fact l.Prime] (e : Per.Fl l), GlobalThe
   let F : Per.Ainf l → Per.Ainf l := fun w => Φ w - ξ * w
   have F_sub : ∀ a b, F (a - b) = F a - F b := fun a b => by simp only [F, map_sub]; ring
   have F_lin : ∀ (m : ℕ) a b, F (a + (l : Per.Ainf l) ^ m * b) = F a + (l : Per.Ainf l) ^ m * F b :=
-    fun m a b => by simp only [F, map_add, map_mul, map_pow, map_natCast]; ring
+    fun m a b => by simp only [F, map_add (f := _), map_mul, map_pow, map_natCast]; ring
   have step : ∀ (k : ℕ) (w : Per.Ainf l), ∃ w' : Per.Ainf l,
       (l : Per.Ainf l) ^ (k + 1) ∣ F w →
         (l : Per.Ainf l) ^ (k + 2) ∣ F w' ∧ (l : Per.Ainf l) ^ (k + 1) ∣ w' - w := by
@@ -172,7 +178,7 @@ theorem period_solution : ∀ (l : ℕ) [Fact l.Prime] (e : Per.Fl l), GlobalThe
     have e1 : L = Per.tm w₀ + (l : Per.Ainf l) * (c' - c) := by
       rw [pow_one] at hc; rw [zero_add, pow_one] at hc'
       rw [mul_sub, ← hc, ← hc', ← hseq0]; ring
-    rw [e1, map_add, constantCoeff_natCast_mul, add_zero, WittVector.constantCoeff_apply,
+    rw [e1, map_add (f := _), constantCoeff_natCast_mul, add_zero, WittVector.constantCoeff_apply,
       WittVector.teichmuller_coeff_zero]
   refine ⟨L, fun h0 => ?_, ?_⟩
   · have := congrArg WittVector.constantCoeff h0

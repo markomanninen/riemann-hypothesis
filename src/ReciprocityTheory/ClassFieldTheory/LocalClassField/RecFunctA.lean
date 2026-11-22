@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPairDefs
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPair
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.NormOpen
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPairA
-import ReciprocityTheory.GroupCohomology.CupCor
-import ReciprocityTheory.GroupCohomology.ContractNthCastAddCastSucc
-import ReciprocityTheory.GroupCohomology.ResNormalHolds
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPairDefs
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPair
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.NormOpen
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPairA
+public import ReciprocityTheory.GroupCohomology.CupCor
+public import ReciprocityTheory.GroupCohomology.ContractNthCastAddCastSucc
+public import ReciprocityTheory.GroupCohomology.ResNormalHolds
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 

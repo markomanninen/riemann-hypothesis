@@ -1,26 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SmulCommClassGalIntegers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SmulCommClassGalIntegers
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.NT.Model
 open NumberField IsDedekindDomain GlobalTheory.NT
-
-theorem isFrob_one {K : Type} [Field K] [NumberField K] (p : HeightOneSpectrum (𝓞 K)) : IsFrob K p 1 := by
-  refine ⟨p.asIdeal, p.isPrime, ⟨(Ideal.comap_id p.asIdeal).symm⟩, fun x => ?_⟩
-  rw [one_smul, ← Ideal.Quotient.eq, map_pow]
-  have := p.isMaximal
-  have : Finite (𝓞 K ⧸ p.asIdeal) := Ring.HasFiniteQuotients.finiteQuotient p.ne_bot
-  letI := Fintype.ofFinite (𝓞 K ⧸ p.asIdeal)
-  letI : Field (𝓞 K ⧸ p.asIdeal) := Ideal.Quotient.field _
-  have hN : Ideal.absNorm p.asIdeal = Fintype.card (𝓞 K ⧸ p.asIdeal) := by
-    rw [Ideal.absNorm_apply, Submodule.cardQuot_apply, Nat.card_eq_fintype_card]
-  rw [hN, FiniteField.pow_card]
-
-theorem heckeVal_one {K : Type} [Field K] [NumberField K] (p : HeightOneSpectrum (𝓞 K)) :
-    heckeVal K (1 : (K ≃ₐ[K] K) →* ℂˣ) p = 1 := by
-  unfold heckeVal
-  rw [dif_pos ⟨fun _ _ => rfl, ⟨1, isFrob_one p⟩⟩]
-  simp
 
 theorem absNorm_eq (p : HeightOneSpectrum (𝓞 ℚ)) :
     Ideal.absNorm p.asIdeal = (Rat.HeightOneSpectrum.primesEquiv p : ℕ) := by
@@ -32,50 +19,6 @@ theorem absNorm_eq (p : HeightOneSpectrum (𝓞 ℚ)) :
     simp
   rw [h1, Ideal.absNorm_span_natCast, NumberField.RingOfIntegers.rank, Module.finrank_self, pow_one]
   rfl
-
-theorem zeta_prod (s : ℂ) (hs : 1 < s.re) : HasProd (fun 𝔭 : HeightOneSpectrum (𝓞 ℚ) =>
-      (1 - heckeVal ℚ (1 : (ℚ ≃ₐ[ℚ] ℚ) →* ℂˣ) 𝔭 * ((Ideal.absNorm 𝔭.asIdeal : ℕ) : ℂ) ^ (-s))⁻¹) (riemannZeta s) := by
-  have h := riemannZeta_eulerProduct_hasProd hs
-  rw [← (Rat.HeightOneSpectrum.primesEquiv (R := 𝓞 ℚ)).hasProd_iff] at h
-  convert h using 1
-  funext 𝔭
-  simp only [Function.comp_apply, heckeVal_one, one_mul, absNorm_eq]
-
-private theorem algEquiv_self_eq_one {K : Type} [Field K] (σ : K ≃ₐ[K] K) : σ = 1 :=
-  AlgEquiv.ext fun x => by simpa using σ.commutes x
-
-private theorem heckeVal_self_eq_one {K : Type} [Field K] [NumberField K] (χ : (K ≃ₐ[K] K) →* ℂˣ)
-    (p : HeightOneSpectrum (𝓞 K)) : heckeVal K χ p = 1 := by
-  have hχ : χ = 1 := MonoidHom.ext fun σ => by rw [algEquiv_self_eq_one σ, map_one, MonoidHom.one_apply]
-  subst hχ
-  exact heckeVal_one p
-
-private theorem heckeIdeal_self_eq_one {K : Type} [Field K] [NumberField K] (χ : (K ≃ₐ[K] K) →* ℂˣ)
-    (I : Ideal (𝓞 K)) : heckeIdeal K χ I = 1 := by
-  unfold heckeIdeal
-  simp [heckeVal_self_eq_one]
-
-theorem condNorm_one {K : Type} [Field K] [NumberField K] (χ : (K ≃ₐ[K] K) →* ℂˣ) : condNorm K χ = 1 := by
-  have hmod : IsModulus K χ ⊤ := by
-    unfold IsModulus
-    refine ⟨top_ne_bot, fun 𝔭 _ => ?_, fun α β _ => ?_⟩
-    · rw [heckeVal_self_eq_one]
-      exact one_ne_zero
-    · rw [heckeIdeal_self_eq_one, heckeIdeal_self_eq_one]
-  unfold condNorm
-  apply le_antisymm
-  · exact Nat.sInf_le ⟨⊤, hmod, Ideal.absNorm_top⟩
-  · refine le_csInf ⟨1, ⊤, hmod, Ideal.absNorm_top⟩ ?_
-    rintro n ⟨𝔪, h𝔪, rfl⟩
-    unfold IsModulus at h𝔪
-    exact Nat.one_le_iff_ne_zero.mpr fun h0 => h𝔪.1 (Ideal.absNorm_eq_zero_iff.mp h0)
-
-theorem bigQ_rat : bigQ ℚ ℚ = 1 := by
-  unfold bigQ
-  simp [condNorm_one]
-
-example : NormOne 7 1 2 := ⟨-1, 1, by norm_num⟩
-example : NormOne 7 2 7 := ⟨-1, 1, by norm_num⟩
 
 theorem pow_eq_pow_iff_modEq_of_isPrimitiveRoot {R : Type} [CommRing R] [IsDomain R] {ζ : R} {m : ℕ} [NeZero m] (h : IsPrimitiveRoot ζ m)
     {a b : ℕ} : ζ ^ a = ζ ^ b ↔ a ≡ b [MOD m] := by
@@ -199,7 +142,7 @@ theorem heckeVal_galChar (ψ : DirichletCharacter ℂ m) (𝔭 : HeightOneSpectr
     rw [unramIn_cyc m F 𝔭 hp σ hσ, map_one]
   have hcond : (∀ σ, InInertia F 𝔭 σ → galChar m F ψ σ = 1) ∧ ∃ σ, IsFrob F 𝔭 σ := ⟨hin, hex⟩
   unfold heckeVal
-  rw [dif_pos hcond]
+  rw [dite_eq_left hcond]
   have hs := gal_of_isFrob m F 𝔭 hp hcond.2.choose_spec
   simp only [galChar, MonoidHom.coe_comp, Function.comp_apply, MulEquiv.coe_toMonoidHom,
     MulChar.coe_toUnitHom]
@@ -396,92 +339,6 @@ theorem bigQ_four (F : Type) [Field F] [NumberField F] [IsCyclotomicExtension {4
   unfold bigQ
   rw [hsup]
   simp
-
-example : bigQ ℚ (CyclotomicField 4 ℚ) = 4 :=
-  @bigQ_four _ _ _ (CyclotomicField.isCyclotomicExtension 4 ℚ)
-
-theorem nums_example : QNum (Real.exp 1) 5 11 ∧ DNum (Real.exp 1) 5 11 7 := by
-  have hX1 : Formalism.MainNotions.GlobalTheoryTheory.X1 (Real.exp 1) 5 = Real.exp (Real.exp 1) := by
-    unfold Formalism.MainNotions.GlobalTheoryTheory.X1
-    norm_num
-  have hX2 : Formalism.MainNotions.GlobalTheoryTheory.X2 (Real.exp 1) 5 = Real.exp (Real.exp 1) := by
-    unfold Formalism.MainNotions.GlobalTheoryTheory.X2
-    norm_num
-  have he1 := Real.exp_one_gt_d9
-  have he2 := Real.exp_one_lt_d9
-
-  have hlo : (11 : ℝ) ≤ Real.exp (Real.exp 1) := by
-    have h2 : Real.exp (Real.exp 1) = Real.exp 1 * Real.exp 1 * Real.exp (Real.exp 1 - 2) := by
-      rw [← Real.exp_add, ← Real.exp_add]
-      congr 1
-      ring
-    have h3 := Real.add_one_le_exp (Real.exp 1 - 2)
-    have hA : (7.3 : ℝ) < Real.exp 1 * Real.exp 1 := by nlinarith
-    have hB : (1.7 : ℝ) ≤ Real.exp (Real.exp 1 - 2) := by linarith
-    rw [h2]
-    nlinarith
-  have hhi : Real.exp (Real.exp 1) < 49 := by
-    have h2 : Real.exp (Real.exp 1) < Real.exp 3 := Real.exp_lt_exp.mpr (by linarith)
-    have h3 : Real.exp 3 = Real.exp 1 ^ 3 := by
-      rw [← Real.exp_nat_mul]
-      norm_num
-    have h4 := pow_lt_pow_left₀ he2 (Real.exp_pos 1).le (by norm_num : (3 : ℕ) ≠ 0)
-    norm_num at h4
-    linarith
-  unfold QNum DNum
-  rw [hX1, hX2]
-  refine ⟨⟨by norm_num, by norm_num, ?_, ?_⟩, by norm_num, by norm_num, ?_, ?_, ?_, ?_⟩
-  · rw [Real.sqrt_lt' (by norm_num)]
-    norm_num
-    linarith
-  · exact_mod_cast hlo
-  · rw [Real.sqrt_lt' (by norm_num)]
-    norm_num
-    linarith
-  · norm_num
-    linarith
-  · simp only [Formalism.MainNotions.GlobalTheoryTheory.kronSym, Nat.factorization_eq_zero_of_not_dvd (by norm_num : ¬ 2 ∣ 11)]
-    norm_num
-  · intro p hp hle
-    have hp2 : p = 2 := by
-      norm_num at hle
-      have h3 : (p : ℝ) < 3 := by linarith
-      have h4 : p < 3 := by exact_mod_cast h3
-      have := hp.two_le
-      omega
-    subst hp2
-    simp only [Formalism.MainNotions.GlobalTheoryTheory.kronSym, Formalism.MainNotions.GlobalTheoryTheory.kron2, Nat.prime_two.factorization_self]
-    norm_num
-
-theorem one_le_mult {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {ρ : ℂ} (h : ρ ∈ ntZeros χ) : 1 ≤ mult χ ρ := by
-  unfold ntZeros at h
-  simp only [Set.mem_ofPred_eq] at h
-  obtain ⟨_, h1, hL⟩ := h
-  have hρ : ρ ≠ 1 := fun e => by
-    rw [e] at h1
-    simp at h1
-
-  have han : AnalyticOnNhd ℂ (DirichletCharacter.LFunction χ) ({1}ᶜ : Set ℂ) :=
-    DifferentiableOn.analyticOnNhd (fun s hs =>
-      (DirichletCharacter.differentiableAt_LFunction χ s (Or.inl hs)).differentiableWithinAt)
-      isOpen_compl_singleton
-  have hne0 : analyticOrderAt (DirichletCharacter.LFunction χ) ρ ≠ 0 :=
-    (han ρ hρ).analyticOrderAt_ne_zero.mpr hL
-
-  have hnetop : analyticOrderAt (DirichletCharacter.LFunction χ) ρ ≠ ⊤ := by
-    intro htop
-    have hconn : IsPreconnected ({1}ᶜ : Set ℂ) :=
-      (isConnected_compl_singleton_of_one_lt_rank (by rw [Complex.rank_real_complex]; norm_num) 1).isPreconnected
-    have hzero := han.eqOn_zero_of_preconnected_of_eventuallyEq_zero hconn hρ
-      (analyticOrderAt_eq_top.mp htop)
-    have h2 : (2 : ℂ) ∈ ({1}ᶜ : Set ℂ) := by norm_num
-    exact DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inr (by norm_num : (2 : ℂ) ≠ 1))
-      (by norm_num) (hzero h2)
-  obtain ⟨n, hn⟩ := ENat.ne_top_iff_exists.mp hnetop
-  unfold mult analyticOrderNatAt
-  rw [← hn, ENat.toNat_natCast]
-  rw [← hn] at hne0
-  exact Nat.one_le_iff_ne_zero.mpr (by exact_mod_cast hne0)
 
 end GlobalTheory.NT.Model
 end

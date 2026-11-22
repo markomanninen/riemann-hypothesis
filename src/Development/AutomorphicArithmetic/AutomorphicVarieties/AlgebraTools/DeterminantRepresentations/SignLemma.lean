@@ -1,5 +1,8 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.SchurLine
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial Matrix
 

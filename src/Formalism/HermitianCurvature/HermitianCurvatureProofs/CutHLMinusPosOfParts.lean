@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHL2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGHeadV
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DerivativeKeepsCharacter
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointCornerScaledSingleComm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RdVOfEq
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHL2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGHeadV
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DerivativeKeepsCharacter
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointCornerScaledSingleComm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RdVOfEq
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped ComplexConjugate
@@ -33,19 +37,21 @@ theorem map_qminor' {A B : Type} [Ring A] [Algebra ℂ A] [Ring B] [Algebra ℂ 
     (Eu : Fin n → Fin n → A) (a b : Fin t → Fin n) (u : ℂ) :
     φ (qminor Eu a b u) = qminor (fun p q => φ (Eu p q)) a b u := by
   unfold qminor
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [map_mul, map_intCast, map_list_prod, List.map_ofFn]
   congr 2
-  congr 1
-  funext i
-  simp only [Function.comp_apply, Tm, map_add, apply_ite φ, AlgHom.commutes, map_zero]
+  apply congrArg List.ofFn
+  funext k
+  by_cases h : a (σ k) = b k <;> simp [Tm, h]
 
 theorem map_AAv {A B : Type} [Ring A] [Algebra ℂ A] [Ring B] [Algebra ℂ B] (φ : A →ₐ[ℂ] B) (k r : ℕ)
     (Eu : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → A) (y : Fin r → Fin (2 * r + k + 1) → ℂ) (n : ℕ)
     (hn : n ≤ r) (ℓ : ℂ) : φ (C3.AAv k r Eu y n hn ℓ) = C3.AAv k r (fun p q => φ (Eu p q)) y n hn ℓ := by
   unfold C3.AAv
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun B _ => ?_
   split_ifs
   · rw [map_smul, map_qminor']
@@ -134,7 +140,7 @@ private theorem minus_positive_of_parts_lemma_3 {k r m : ℕ} (hm : m + 2 ≤ r)
     (fun b x => hS b (x : B') x.2) hy1 hy2
   have hmap : ∀ n (hn : n ≤ r), (S.val (C3.AAv k r E' y n hn ℓ)) = C3.AAv k r E0 y n hn ℓ := fun n hn =>
     map_AAv S.val k r E' y n hn ℓ
-  simp only [La', LinearMap.comp_apply, AlgHom.toLinearMap_apply, map_mul, map_add, AlgHom.commutes] at key
+  simp only [La', LinearMap.comp_apply, AlgHom.toLinearMap_apply, map_mul, map_add (f := _), AlgHom.commutes] at key
   rw [hmap, hmap, hmap] at key
   rw [map_add (algebraMap ℂ B')]
   exact key
@@ -293,7 +299,7 @@ theorem _root_.Formalism.FourierDecayAlt.P.minus_positive_of_parts : MinusPosOfP
     rw [Nat.cast_sub (by omega)]
     push_cast
     ring
-  rw [E1, E2, E3, E4, key, mul_add, map_add, ← Algebra.commutes, ← Algebra.smul_def, map_smul, hc]
+  rw [E1, E2, E3, E4, key, mul_add, map_add (f := _), ← Algebra.commutes, ← Algebra.smul_def, map_smul, hc]
   module
 
 end Formalism.FourierDecayAlt.P.CutHL.MPos

@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.CxPassSk
-import Formalism.LocalToGlobal.IndefiniteReal.EqZeroOfMemRangeAdjoint
-import Formalism.LocalToGlobal.GlobalTheory.PassageBaseSymmetricLevels
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.SecondStepGluing
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.AuxStatement14
-import Formalism.LocalToGlobal.Divisibility.RowLatLemmas
-import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.CxPassSk
+public import Formalism.LocalToGlobal.IndefiniteReal.EqZeroOfMemRangeAdjoint
+public import Formalism.LocalToGlobal.GlobalTheory.PassageBaseSymmetricLevels
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.SecondStepGluing
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.AuxStatement14
+public import Formalism.LocalToGlobal.Divisibility.RowLatLemmas
+public import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder InnerProductSpace
@@ -74,7 +78,8 @@ theorem aniso {v0 : InfinitePlace K} (hv0 : IsConjAt v0) {H : Matrix (Fin n) (Fi
     simpa using hi
   have key : star (fun i => v0.embedding (x i)) ⬝ᵥ (H.map v0.embedding) *ᵥ (fun i => v0.embedding (x i)) =
       v0.embedding (star x ⬝ᵥ H *ᵥ x) := by
-    simp only [dotProduct, Matrix.mulVec, Matrix.map_apply, map_sum, map_mul, Pi.star_apply, hs]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, Matrix.mulVec, Matrix.map_apply, map_sum, map_mul, Pi.star_apply, hs]
   have hpos := hH.dotProduct_mulVec_pos hy
   rw [key, hx, map_zero] at hpos
   exact lt_irrefl _ hpos
@@ -257,8 +262,8 @@ theorem M_eq [Fintype P] : (∑ k : P, (((ψ k)⁻¹ : Kˣ) : K) • B.S.actMat 
         ext a
         simp
 
-include hv0 hOk hX hZ in
 
+include hv0 hOk hX hZ in
 theorem sub_toF : ∀ f ∈ B.Mt ⟨X, P, ψ⟩, ∃ f' ∈ B.Mt (Lvl.full X),
     B.toF ⟨X, P, ψ⟩ Z ((B.Pq ⟨X, P, ψ⟩ Z).mulVec f) = B.toF (Lvl.full X) Z ((B.Pq (Lvl.full X) Z).mulVec f') := by
   intro f hf
@@ -281,8 +286,8 @@ theorem sub_toF : ∀ f ∈ B.Mt ⟨X, P, ψ⟩, ∃ f' ∈ B.Mt (Lvl.full X),
     have hP := isPr_Phi B hv0 hOk ⟨X, P, ψ⟩ hX Z f
     exact hP.unique hH (isPr_down B hv0 hOk hX Z hZ P ψ h0 hmem.2)
 
-include hv0 hOk hX hZ in
 
+include hv0 hOk hX hZ in
 theorem act_toF (g : G) : ∀ f ∈ B.Mt (Lvl.full X), ∃ f' ∈ B.Mt (Lvl.full X),
     B.r g (B.toF (Lvl.full X) Z ((B.Pq (Lvl.full X) Z).mulVec f)) =
       B.toF (Lvl.full X) Z ((B.Pq (Lvl.full X) Z).mulVec f') := by
@@ -311,8 +316,8 @@ theorem act_toF (g : G) : ∀ f ∈ B.Mt (Lvl.full X), ∃ f' ∈ B.Mt (Lvl.full
     rw [hf'] at h2
     exact h1.unique hH h2
 
-include hv0 hOk hX hZ in
 
+include hv0 hOk hX hZ in
 theorem avg_toF [Fintype P] : ∀ f ∈ B.Mt (Lvl.full X), ∃ f' ∈ B.Mt ⟨X, P, ψ⟩,
     ∑ k : P, (((ψ k)⁻¹ : Kˣ) : K) • B.r (k : G) (B.toF (Lvl.full X) Z ((B.Pq (Lvl.full X) Z).mulVec f)) =
       B.toF ⟨X, P, ψ⟩ Z ((B.Pq ⟨X, P, ψ⟩ Z).mulVec f') := by
@@ -359,7 +364,8 @@ theorem avg_toF [Fintype P] : ∀ f ∈ B.Mt (Lvl.full X), ∃ f' ∈ B.Mt ⟨X,
     have h3 := isPr_Phi B hv0 hOk ⟨X, P, ψ⟩ hX Z fb
     rw [hfb] at h3
     have h4 := h2.unique hH h3
-    rw [toF_eq B ⟨X, P, ψ⟩ Z fb, ← h4, Matrix.sum_mulVec, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [toF_eq B ⟨X, P, ψ⟩ Z fb, ← h4, Matrix.sum_mulVec, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [toF_eq, equivFun_symm_act, Matrix.smul_mulVec, map_smul]
 
@@ -387,37 +393,21 @@ theorem glue_lattice {D : ℕ} {T : Type} [Finite T] (t0 : T) (μ : HeightOneSpe
     intro x
     unfold glueLat
     exact Submodule.mem_iInf _
-  choose a ha0 ha using fun t => GluingInclusion.denom (K := K) (L t0) (L t) (Submodule.IsLattice.fg (self := hL t0))
-    (Submodule.IsLattice.span_eq_top (self := hL t))
-  have hc0 : (∏ t, a t) ≠ 0 := Finset.prod_ne_zero_iff.mpr (fun t _ => ha0 t)
-  have hcL : ∀ x ∈ L t0, (∏ t, a t) • x ∈ glueLat (fun w => L (μ w)) := by
-    intro x hx
-    rw [hGmem]
-    intro w
-    obtain ⟨r, hr⟩ := Finset.dvd_prod_of_mem a (Finset.mem_univ (μ w))
-    rw [hr, mul_comm, mul_smul]
-    exact Formalism.HermitianLatticesTheory.locBasic_le_locS _ _ ((L (μ w)).smul_mem r (ha (μ w) x hx))
   have hle : glueLat (fun w => L (μ w)) ≤ ⨆ t, L t := by
     intro x hx
     refine GluingInclusion.lg (RingOfIntegers.not_isField K) _ x fun w => ?_
     exact Formalism.HermitianLatticesTheory.locBasic_locS_mono _ (le_iSup L (μ w)) ((hGmem x).mp hx w)
   have hNfg : (⨆ t, L t).FG := Submodule.fg_iSup L fun t => Submodule.IsLattice.fg (self := hL t)
-  have hinvsmul : ∀ (r : 𝓞 K), r ≠ 0 → ∀ y : Fin D → K, (algebraMap (𝓞 K) K r)⁻¹ • (r • y) = y := by
-    intro r hr y
-    have : algebraMap (𝓞 K) K r ≠ 0 := by simpa using (IsFractionRing.injective (𝓞 K) K).ne hr
-    rw [← algebraMap_smul K r y, smul_smul, inv_mul_cancel₀ this, one_smul]
   refine ⟨Submodule.FG.of_le hNfg hle, ?_⟩
-  rw [eq_top_iff, ← Submodule.IsLattice.span_eq_top (self := hL t0), Submodule.span_le]
-  intro x hx
-  rw [← hinvsmul _ hc0 x]
-  exact Submodule.smul_mem _ _ (Submodule.subset_span (hcL x hx))
-
+  intro s hs hli
+  exact (LinearIndependent.iff_fractionRing _ _).mp hli
 end Glue
 
 theorem cpt_sum_smul {K : Type} [Field K] (σ : K →+* ℂ) {n : ℕ} {ι : Type} (s : Finset ι) (c : ι → K)
     (x : ι → Fin n → K) : cpt σ (∑ i ∈ s, c i • x i) = ∑ i ∈ s, σ (c i) • cpt σ (x i) := by
   funext j
-  simp only [cpt, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [cpt, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul]
 
 end Sand
 
@@ -426,202 +416,12 @@ namespace In
 variable {K : Type} [Field K] [NumberField K] [StarRing K] {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {m : ℕ}
   (I : In K G Pl0 T m)
 
-theorem mem_RRg {x : Fin I.Sg.D → K} : x ∈ I.Sg.RR ↔ ∀ w : HeightOneSpectrum (𝓞 K), ∃ c ∈ w.asIdeal.primeCompl,
-    ∃ z ∈ (lv (faceOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false).abelian₂ (I.X.μ w),
-      I.X.rowMat I.cg false (I.X.μ w) *ᵥ z = c • x := by
-  constructor
-  · intro h w
-    obtain ⟨c, hc, hcx⟩ := (Submodule.mem_iInf _).mp h w
-    exact ⟨c, hc, (exponent_index_lattice.mem_matLat _ _ _).mp hcx⟩
-  · intro h
-    refine (Submodule.mem_iInf _).mpr fun w => ?_
-    obtain ⟨c, hc, z, hz, e⟩ := h w
-    exact ⟨c, hc, (exponent_index_lattice.mem_matLat _ _ _).mpr ⟨z, hz, e⟩⟩
-
-theorem mem_RRb (b : Bool) {x : Fin (I.Sb b).D → K} : x ∈ (I.Sb b).RR ↔ ∀ w : HeightOneSpectrum (𝓞 K),
-    ∃ c ∈ w.asIdeal.primeCompl, ∃ z ∈ (lv (faceOf I.A I.P0 I.ψ0 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) b).abelian₂ (I.X.μ w),
-      I.X.rowMat I.cr b (I.X.μ w) *ᵥ z = c • x := by
-  constructor
-  · intro h w
-    obtain ⟨c, hc, hcx⟩ := (Submodule.mem_iInf _).mp h w
-    exact ⟨c, hc, (exponent_index_lattice.mem_matLat _ _ _).mp hcx⟩
-  · intro h
-    refine (Submodule.mem_iInf _).mpr fun w => ?_
-    obtain ⟨c, hc, z, hz, e⟩ := h w
-    exact ⟨c, hc, (exponent_index_lattice.mem_matLat _ _ _).mpr ⟨z, hz, e⟩⟩
-
 section Prin
 
 variable {I} {s : ℕ} (hH : I.Hyp s)
 include hH
 
-theorem hZ_of (t : T) : ∀ g : G, I.X.Z t ≤ (I.X.Z t).comap ((I.A.fam.R t).r g) :=
-  fun g _ hz => hH.stable.1 t (Sum.inr g) (Submodule.mem_map_of_mem hz)
-
-theorem key_g (t : T) (x : Fin ((lv (faceOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false).dQ t) → K) :
-    I.iCg (cpt I.A.fam.base.v0.embedding (I.X.rowMat I.cg false t *ᵥ x)) =
-      I.X.Θ t (I.X.jR t (I.cg.toR I.X.zs false t x)) := by
-  have h1 : I.iCg (cpt I.A.fam.base.v0.embedding (I.X.rowMat I.cg false t *ᵥ x)) =
-      I.X.iC I.cg false t (cpt I.A.fam.base.v0.embedding x) := by
-    rw [cpt_mulVec, CxData.rowMat, kMat_map _ (hH.ratMug t)]
-    refine relMat_spec _ _ (fun k => ?_) _
-    rw [← (hH.h2g.2 t).2]
-    exact ⟨_, rfl⟩
-  rw [h1, CxData.iC_eq_comp, CxData.lin_uQ_cpt]
-
-theorem inj_g {x y : Fin I.Sg.D → K}
-    (h : I.iCg (cpt I.A.fam.base.v0.embedding x) = I.iCg (cpt I.A.fam.base.v0.embedding y)) : x = y :=
-  cpt_injective _ (hH.h2g.1 h)
-
-theorem rowG_surj (t : T) : Function.Surjective (I.X.rowMat I.cg false t).mulVec :=
-  (bij_of_map I.A.fam.base.v0.embedding _ (by
-    rw [CxData.rowMat, kMat_map _ (hH.ratMug t)]
-    exact relMat_bij _ _ hH.h2g.1 (hH.h2g.2 t).1 (hH.h2g.2 t).2)).2
-
-theorem epM_idem (hρ : I.PRho) (P : Subgroup G) (ψ : P →* Kˣ) : I.epM P ψ * I.epM P ψ = I.epM P ψ := by
-  obtain ⟨h1, hmul, -⟩ := hρ s hH
-  let ρh : G →* Matrix (Fin I.Sg.D) (Fin I.Sg.D) K :=
-    { toFun := I.ρf, map_one' := h1, map_mul' := hmul }
-  have e : I.epM P ψ = Formalism.L2.GlobalTheoryTheory.DivPassage2.typeProj ρh P ψ := rfl
-  rw [e]
-  exact Formalism.L2.GlobalTheoryTheory.DivPassage2.typeProj_mul_self ρh P ψ
-
-theorem toRg_inj (t : T) : Function.Injective (I.cg.toR I.X.zs false t) :=
-  BlockDat.toF_injective (I.A.fam.R t) (Lvl.full I.A.fam.X) (I.X.Z t)
-
-theorem sub_g (t : T) (P : Subgroup G) (ψ : P →* Kˣ)
-    (J : Matrix (Fin ((lv (faceOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false).dQ t))
-      (Fin ((I.A.fam.R t).dZ (I.A.fam.lvl P ψ) (I.X.Z t))) K)
-    (hJ : ∀ x, I.cg.toR I.X.zs false t (J *ᵥ x) = (I.A.fam.R t).toF (I.A.fam.lvl P ψ) (I.X.Z t) x) :
-    ∀ y ∈ (I.A.fam.R t).abelian₂ (I.A.fam.lvl P ψ) (I.X.Z t),
-      J *ᵥ y ∈ (lv (faceOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false).abelian₂ t := by
-  intro y hy
-  obtain ⟨f, hf, rfl⟩ := (exponent_index_lattice.mem_matLat _ _ _).mp hy
-  obtain ⟨f', hf', he⟩ := Sand.sub_toF (B := I.A.fam.R t) (hv0 := hH.ok.conj) (hOk := hH.ok.what₂ t)
-    (hX := hH.ok.irr) (Z := I.X.Z t) (hZ := hZ_of hH t) (P := P) (ψ := ψ) f hf
-  have hex : ∃ z ∈ (lv (faceOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false).abelian₂ t,
-      I.cg.toR I.X.zs false t z =
-        (I.A.fam.R t).toF (I.A.fam.lvl P ψ) (I.X.Z t) ((I.A.fam.R t).Pq (I.A.fam.lvl P ψ) (I.X.Z t) *ᵥ f) :=
-    ⟨_, (exponent_index_lattice.mem_matLat _ _ _).mpr ⟨f', hf', rfl⟩, he.symm⟩
-  obtain ⟨z, hz, hze⟩ := hex
-  have e : J *ᵥ ((I.A.fam.R t).Pq (I.A.fam.lvl P ψ) (I.X.Z t) *ᵥ f) = z := toRg_inj hH t (by rw [hJ, hze])
-  rw [e]
-  exact hz
-
-theorem avg_g (hρ : I.PRho) (t : T) (P : Subgroup G) (ψ : P →* Kˣ)
-    (J : Matrix (Fin ((lv (faceOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false).dQ t))
-      (Fin ((I.A.fam.R t).dZ (I.A.fam.lvl P ψ) (I.X.Z t))) K)
-    (hJ : ∀ x, I.cg.toR I.X.zs false t (J *ᵥ x) = (I.A.fam.R t).toF (I.A.fam.lvl P ψ) (I.X.Z t) x) :
-    ∀ y ∈ (lv (faceOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false).abelian₂ t,
-      ∃ z ∈ (I.A.fam.R t).abelian₂ (I.A.fam.lvl P ψ) (I.X.Z t),
-        (Nat.card P : K) • (I.epM P ψ *ᵥ (I.X.rowMat I.cg false t *ᵥ y)) = I.X.rowMat I.cg false t *ᵥ (J *ᵥ z) := by
-  intro y hy
-  obtain ⟨f, hf, rfl⟩ := (exponent_index_lattice.mem_matLat _ _ _).mp hy
-  let _ : Fintype P := Fintype.ofFinite P
-  obtain ⟨fb, hfb, he⟩ := Sand.avg_toF (B := I.A.fam.R t) (hv0 := hH.ok.conj) (hOk := hH.ok.what₂ t)
-    (hX := hH.ok.irr) (Z := I.X.Z t) (hZ := hZ_of hH t) (P := P) (ψ := ψ) f hf
-  have hex : ∃ z ∈ (I.A.fam.R t).abelian₂ (I.A.fam.lvl P ψ) (I.X.Z t),
-      ∑ k : P, (((ψ k)⁻¹ : Kˣ) : K) • (I.A.fam.R t).r (k : G)
-        (I.cg.toR I.X.zs false t ((lv (faceOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false).Pq t *ᵥ f)) =
-        (I.A.fam.R t).toF (I.A.fam.lvl P ψ) (I.X.Z t) z :=
-    ⟨_, (exponent_index_lattice.mem_matLat _ _ _).mpr ⟨fb, hfb, rfl⟩, he⟩
-  obtain ⟨z, hz, hze⟩ := hex
-  refine ⟨z, hz, ?_⟩
-  have hc : (Nat.card P : K) ≠ 0 := by exact_mod_cast (Nat.card_pos (α := P)).ne'
-  have hep : I.epM P ψ = (Nat.card P : K)⁻¹ • ∑ k : P, (((ψ k)⁻¹ : Kˣ) : K) • I.ρf (k : G) := rfl
-  apply inj_g hH
-  rw [key_g hH, hJ, ← hze, hep, Matrix.smul_mulVec, smul_smul, mul_inv_cancel₀ hc, one_smul,
-    Matrix.sum_mulVec]
-  simp only [Matrix.smul_mulVec]
-  erw [Sand.cpt_sum_smul]
-  rw [map_sum, map_sum, map_sum]
-  refine Finset.sum_congr rfl fun k _ => ?_
-  erw [map_smul, (hρ s hH).2.2 (k : G) (I.X.rowMat I.cg false t *ᵥ ((lv (faceOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false).Pq t *ᵥ f)),
-    key_g hH t ((lv (faceOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false).Pq t *ᵥ f), LinearMap.map_smulₛₗ, map_smul]
-  exact congrArg _ (hH.gequiv t k _).symm
-
-theorem sub_b (hJt : I.PJt) (b : Bool) (t : T) :
-    ∀ y ∈ (lv (faceOf I.A I.P0 I.ψ0 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) b).abelian₂ t,
-      I.Jt b t *ᵥ y ∈ (lv (faceOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false).abelian₂ t := by
-  cases b
-  · exact sub_g hH t I.P0 I.ψ0 (I.Jt false t) (fun x => (hJt s hH false t).2.1 x)
-  · exact sub_g hH t I.P1 I.ψ1 (I.Jt true t) (fun x => (hJt s hH true t).2.1 x)
-
-theorem avg_b (hJt : I.PJt) (hρ : I.PRho) (b : Bool) (t : T) :
-    ∀ y ∈ (lv (faceOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false).abelian₂ t,
-      ∃ z ∈ (lv (faceOf I.A I.P0 I.ψ0 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) b).abelian₂ t,
-        (Nat.card (I.lvP b) : K) • (I.epM (I.lvP b) (I.lvψ b) *ᵥ (I.X.rowMat I.cg false t *ᵥ y)) =
-          I.X.rowMat I.cg false t *ᵥ (I.Jt b t *ᵥ z) := by
-  cases b
-  · exact avg_g hH hρ t I.P0 I.ψ0 (I.Jt false t) (fun x => (hJt s hH false t).2.1 x)
-  · exact avg_g hH hρ t I.P1 I.ψ1 (I.Jt true t) (fun x => (hJt s hH true t).2.1 x)
-
 end Prin
-
-theorem pLat_of (_hJt : I.PJt) : I.PLat := by
-  intro s hH
-  have : Finite T := hH.ok.tup_fin
-  exact Sand.glue_lattice I.A.fam.base.μ0 I.X.μ
-    (fun t => matLat (I.X.rowMat I.cg false t) ((lv (faceOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false).abelian₂ t))
-    (fun t => GluingInclusion.matLat_lattice' _ (rowG_surj hH t) _
-      (show Submodule.IsLattice K ((I.A.fam.R t).abelian₂ (Lvl.full I.A.fam.X) (I.X.Z t)) from
-        BlockDat.Lam_lat hH.ok.conj (hH.ok.what₂ t) hH.ok.irr))
-
-theorem pGLat_of (_hJt : I.PJt) (hρ : I.PRho) : I.PGLat := by
-  intro s hH g x hx
-  rw [mem_RRg] at hx ⊢
-  intro w
-  obtain ⟨c, hc, z, hz, hzx⟩ := hx w
-  obtain ⟨f, hf, rfl⟩ := (exponent_index_lattice.mem_matLat _ _ _).mp hz
-  obtain ⟨f', hf', he⟩ := Sand.act_toF (B := I.A.fam.R (I.X.μ w)) (hv0 := hH.ok.conj) (hOk := hH.ok.what₂ _)
-    (hX := hH.ok.irr) (Z := I.X.Z (I.X.μ w)) (hZ := hZ_of hH _) g f hf
-  have hex : ∃ z ∈ (lv (faceOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false).abelian₂ (I.X.μ w),
-      (I.A.fam.R (I.X.μ w)).r g (I.cg.toR I.X.zs false (I.X.μ w)
-        ((lv (faceOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false).Pq (I.X.μ w) *ᵥ f)) =
-        I.cg.toR I.X.zs false (I.X.μ w) z :=
-    ⟨_, (exponent_index_lattice.mem_matLat _ _ _).mpr ⟨f', hf', rfl⟩, he⟩
-  obtain ⟨z', hz', hze⟩ := hex
-  refine ⟨c, hc, z', hz', ?_⟩
-  rw [← exponent_index_lattice.mulVec_osmul, ← hzx]
-  apply inj_g hH
-  erw [key_g hH, (hρ s hH).2.2 g (I.X.rowMat I.cg false (I.X.μ w) *ᵥ ((lv (faceOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false).Pq (I.X.μ w) *ᵥ f)),
-    key_g hH (I.X.μ w) ((lv (faceOf I.A ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false).Pq (I.X.μ w) *ᵥ f), ← hze]
-  exact hH.gequiv _ g _
-
-theorem pSand_of (hJt : I.PJt) (hJ : I.PJ) (hρ : I.PRho) (hR : I.PRange) : I.PSand := by
-  intro s hH b
-  refine ⟨fun x hx => ?_, fun y hy hyr => ?_⟩
-  · rw [mem_RRb] at hx
-    rw [mem_RRg]
-    intro w
-    obtain ⟨c, hc, z, hz, hzx⟩ := hx w
-    refine ⟨c, hc, I.Jt b (I.X.μ w) *ᵥ z, sub_b hH hJt b _ z hz, ?_⟩
-    exact ((hJt s hH b _).2.2 z).symm.trans
-      ((congrArg (fun v => I.Jm b *ᵥ v) hzx).trans (exponent_index_lattice.mulVec_osmul _ _ _))
-  · obtain ⟨z0, hz0⟩ := LinearMap.mem_range.mp hyr
-    have hyr' := hyr
-    rw [← hR s hH b] at hyr'
-    obtain ⟨x0, hx0⟩ := LinearMap.mem_range.mp hyr'
-    rw [Matrix.mulVecLin_apply] at hz0 hx0
-    have hidem : I.epM (I.lvP b) (I.lvψ b) *ᵥ y = y := by
-      rw [← hz0, Matrix.mulVec_mulVec, epM_idem hH hρ]
-    refine ⟨((Nat.card (I.lvP b) : ℕ) : 𝓞 K) • x0, ?_, by rw [exponent_index_lattice.mulVec_osmul, hx0]⟩
-    rw [mem_RRg] at hy
-    rw [mem_RRb]
-    intro w
-    obtain ⟨c, hc, z, hz, hzy⟩ := hy w
-    obtain ⟨zb, hzb, he⟩ := avg_b hH hJt hρ b (I.X.μ w) z hz
-    refine ⟨c, hc, zb, hzb, ?_⟩
-    apply (hJ s hH b).2
-    have h3 : (Nat.card (I.lvP b) : K) •
-        (I.epM (I.lvP b) (I.lvψ b) *ᵥ (I.X.rowMat I.cg false (I.X.μ w) *ᵥ z)) =
-        I.Jm b *ᵥ (c • (((Nat.card (I.lvP b) : ℕ) : 𝓞 K) • x0)) := by
-      have h4 : I.epM (I.lvP b) (I.lvψ b) *ᵥ (I.X.rowMat I.cg false (I.X.μ w) *ᵥ z) = c • y :=
-        (congrArg (fun v => I.epM (I.lvP b) (I.lvψ b) *ᵥ v) hzy).trans (by rw [exponent_index_lattice.mulVec_osmul, hidem])
-      rw [h4]
-      simp only [exponent_index_lattice.mulVec_osmul]
-      rw [hx0, Nat.cast_smul_eq_nsmul K, Nat.cast_smul_eq_nsmul (𝓞 K), smul_comm]
-    exact ((hJt s hH b _).2.2 zb).trans (he.symm.trans h3)
 
 end In
 

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CharacterBoxes.PairGood
+module
+
+public import Development.AutomorphicArithmetic.CharacterBoxes.PairGood
+
+@[expose] public section
 
 noncomputable section
 

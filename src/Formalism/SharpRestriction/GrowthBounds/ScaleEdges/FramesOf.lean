@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ManyEdges
-import Formalism.SharpRestriction.GrowthBounds.WittFrameLocaliserOrders
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ManyEdges
+public import Formalism.SharpRestriction.GrowthBounds.WittFrameLocaliserOrders
+
+@[expose] public section
 
 noncomputable section
 

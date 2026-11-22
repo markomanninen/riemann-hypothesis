@@ -1,8 +1,24 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
-import Formalism.WindowSums.PowerSeriesRelationList
-import Formalism.TruncatedSeriesCounting.EtaDeterminantPolynomialIdentities
-import Formalism.DistinguishedUnitIdeals.DescentLemmasAllHold
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
+public import Formalism.WindowSums.PowerSeriesRelationList
+public import Formalism.TruncatedSeriesCounting.EtaDeterminantPolynomialIdentities
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.GroundTheory
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.AevalApplySubEvalOneMem
+public import Formalism.DistinguishedUnitIdeals.CoprimeProd
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.LevelsModConstIffOfNoDown
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.CutPlace
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.LemmaC
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.Rounding
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.AprimeCuts
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.DescentEstimateDownUp
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.UnivPart
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.Descent
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.LinExtEqZeroOfMemExt
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.LevelsModConstIffOfDownDown
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +96,7 @@ private lemma exists_divisibilityInvariant {O : Type} [CommRing O] (ϖ : O) (e :
 private lemma coeff_dvd_of_mem_span {O : Type} [CommRing O] (d : O) (B : ℕ) (F : PowerSeries O)
     (hF : F ∈ Ideal.span {C d, (X : PowerSeries O) ^ B}) (j : ℕ) (hj : j < B) : d ∣ coeff j F := by
   obtain ⟨a, b, rfl⟩ := Ideal.mem_span_pair.mp hF
-  rw [map_add, coeff_mul_C, coeff_mul_X_pow', if_neg (by omega), add_zero]
+  rw [map_add (f := _), coeff_mul_C, coeff_mul_X_pow', if_neg (by omega), add_zero]
   exact dvd_mul_left _ _
 
 theorem content_divisibility : R2 := by

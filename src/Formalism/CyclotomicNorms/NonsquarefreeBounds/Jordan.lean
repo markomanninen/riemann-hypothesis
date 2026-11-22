@@ -1,5 +1,9 @@
-import Formalism.CyclotomicNorms.StatementI
-import Formalism.GaloisIrreducibility.NoSolvableTransitive
+module
+
+public import Formalism.CyclotomicNorms.StatementI
+public import Formalism.GaloisIrreducibility.NoSolvableTransitive
+
+@[expose] public section
 
 open Finset
 
@@ -31,8 +35,9 @@ theorem blocks_form_cycle : BlocksCycle := by
       intro s
       rw [Function.iterate_succ_apply', ih, hφdef, Finset.image_image]
       congr 1
-      funext y
-      simp only [Function.comp_apply, pow_succ', mul_smul]
+      funext x
+      dsimp [Function.comp_apply]
+      rw [← mul_smul, ← pow_succ']
   have hφB : ∀ (i : ℕ), ∀ s ∈ B, φ^[i] s ∈ B := by
     intro i s hs
     rw [hφ]

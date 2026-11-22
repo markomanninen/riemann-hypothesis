@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatFrame
+
+@[expose] public section
 
 open MvPowerSeries ReciprocityTheory.PGsh GlobalTheory.FGDepth
 
@@ -22,11 +26,11 @@ theorem exists_lipschitz_eval {C : Type} [Field C] (v : AddValuation C (WithTop 
     obtain ⟨K₁, h₁, h₁'⟩ := hp
     obtain ⟨K₂, h₂, h₂'⟩ := hq
     refine ⟨max K₁ K₂, fun a ha => ?_, fun M a a' ha ha' hM => ?_⟩
-    · rw [map_add]
+    · rw [map_add (f := _)]
       refine v.map_le_add (le_trans ?_ (h₁ a ha)) (le_trans ?_ (h₂ a ha))
       · exact WithTop.coe_le_coe.mpr (neg_le_neg (le_max_left _ _))
       · exact WithTop.coe_le_coe.mpr (neg_le_neg (le_max_right _ _))
-    · rw [map_add, map_add, add_sub_add_comm]
+    · rw [map_add (f := _), map_add (f := _), add_sub_add_comm]
       refine v.map_le_add (le_trans ?_ (h₁' M a a' ha ha' hM))
         (le_trans ?_ (h₂' M a a' ha ha' hM))
       · exact WithTop.coe_le_coe.mpr (sub_le_sub_left (le_max_left _ _) _)
@@ -70,7 +74,8 @@ theorem exists_poly_derivAt0_subst {C : Type} [Field C] {σ Λ : Type} [Fintype 
       simp [u, MvPowerSeries.smul_eq_C_mul]
     · ext d
       simp
-  rw [← key, derivAt0, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← key, derivAt0, map_sum]
   refine Finset.sum_congr rfl fun α _ => ?_
   rw [map_mul, MvPolynomial.eval_C, coeff_map]
 

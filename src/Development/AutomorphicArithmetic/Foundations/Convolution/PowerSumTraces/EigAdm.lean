@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OfinProd
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OpBasics
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.FixLev
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.RrTens
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CompatEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.PrjFix
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OfinProd
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OpBasics
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.FixLev
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.RrTens
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CompatEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.PrjFix
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.CuspidalSpectrum GlobalTheory.IndefiniteRowSideFullHecke.IwahoriDoubleCosets GlobalTheory.PRep Formalism.BasicNotions GlobalTheory.CuspRep GlobalTheory.SmGL PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Geo UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.GM UpperTheory.ConvolutionTheory.C
@@ -19,8 +23,8 @@ private theorem comp_eq {K : Type} [Field K] [NumberField K] {n : ℕ} (v : Pl K
   show (AdelicGLn.finiteRestrictedEquiv K n (AdelicGLn.prodEquiv K n (finEmb K n y)).2) v = _
   rw [prodEquiv_finEmb]
 
-open scoped Classical in
 
+open scoped Classical in
 private theorem levOn_inter {K : Type} [Field K] [NumberField K] {n : ℕ} (P : Finset (Pl K))
     (U : ∀ v : Pl K, Subgroup (Gw n v)) :
     (levOn P (fun v => U v ⊓ GLnLocal.integralGL (v.adicCompletion K) n) :
@@ -53,7 +57,7 @@ private theorem levOn_inter {K : Type} [Field K] [NumberField K] {n : ℕ} (P : 
     · exact ⟨h2 v hv, h3⟩
     · exact h3
 
-private theorem fixL_anti {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL K n))
+private theorem fixL_anti {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL (K := K) (n := n)))
     [μ.IsHaarMeasure] (v : Pl K) {J J' : Subgroup (Gw n v)} (h : J' ≤ J) : fixL μ v J ≤ fixL μ v J' := by
   intro f hf
   simp only [fixL, fixF, Submodule.mem_iInf] at hf ⊢

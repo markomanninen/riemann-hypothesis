@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsEquivalenceFiniteEtaleBaseChangeResidueField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsEquivalenceFiniteEtaleBaseChangeResidueField
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex Simplicial TensorProduct GlobalTheory.EtC
 
 noncomputable section
@@ -56,7 +61,7 @@ theorem map_maximalIdeal_le_of_isIntegral (A B : Type*) [CommRing A] [IsLocalRin
     (maximalIdeal A).map (algebraMap A B) ≤ M := by
   rw [Ideal.map_le_iff_le_comap]
   have : (M.comap (algebraMap A B)).IsMaximal :=
-    Ideal.isMaximal_comap_of_isIntegral_of_isMaximal M
+    Ideal.isMaximal_under_of_isIntegral_of_isMaximal M
   exact (IsLocalRing.eq_maximalIdeal this).ge
 
 theorem exists_isIdempotentElem_lift_quotient_of_isIntegral (A B : Type) [CommRing A]
@@ -77,7 +82,8 @@ theorem exists_isIdempotentElem_lift_quotient_of_isIntegral (A B : Type) [CommRi
   have hsum : b₀ * b₀ - b₀ = ∑ i, r₀ i * algebraMap A B₀ (a i) := by
     apply Subtype.ext
     show b * b - b = B₀.val (∑ i, r₀ i * algebraMap A B₀ (a i))
-    rw [map_sum, ← hs]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← hs]
     refine Finset.sum_congr rfl fun i _ ↦ ?_
     rw [map_mul, AlgHom.commutes, hsa i, smul_eq_mul]
     rfl

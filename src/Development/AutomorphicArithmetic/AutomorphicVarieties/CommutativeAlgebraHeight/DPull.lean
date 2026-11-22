@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MapSurj
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MapSurj
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -14,7 +18,8 @@ private theorem pull_D (S : Type) [CommRing S] [Algebra A S] (y : S ⊗[A] E') :
 private theorem map_gen {ι : Type} [Fintype ι] (x : ι → E') :
     Algebra.TensorProduct.map (AlgHom.id (MvPolynomial ι A) (MvPolynomial ι A)) f (Det.gen (A := A) x) =
       Det.gen (A := A) (fun a => f (x a)) := by
-  simp [Det.gen, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Det.gen, map_sum]
 
 private theorem pull_chiS (S : Type) [CommRing S] [Algebra A S] (y : S ⊗[A] E') :
     (D.pull f).chiS S y = D.chiS S (Algebra.TensorProduct.map (AlgHom.id S S) f y) := by
@@ -27,7 +32,7 @@ private theorem pull_chiS (S : Type) [CommRing S] [Algebra A S] (y : S ⊗[A] E'
   · induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 private theorem map_coeff {ι : Type} (α : ι →₀ ℕ) (y : MvPolynomial ι A ⊗[A] E') :
     f (TensorProduct.lid A E' ((MvPolynomial.lcoeff A α).rTensor E' y)) =
@@ -36,7 +41,7 @@ private theorem map_coeff {ι : Type} (α : ι →₀ ℕ) (y : MvPolynomial ι 
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 private theorem map_chElt {k : ℕ} (x : Fin k → E') (α : Fin k →₀ ℕ) :
     f ((D.pull f).chElt x α) = D.chElt (fun a => f (x a)) α := by
@@ -58,7 +63,7 @@ theorem UpperTheory.V.CA.d_pull :
     simp
   · rw [Det.mem_ker] at hx ⊢
     intro S _ _ y u v
-    rw [pull_D, pull_D, map_add, map_mul, map_mul, Algebra.TensorProduct.map_tmul, map_one]
+    rw [pull_D, pull_D, map_add (f := _), map_mul, map_mul, Algebra.TensorProduct.map_tmul, map_one]
     exact hx S _ _ _
   · unfold Det.CH at hx
     induction hx using TwoSidedIdeal.span_induction with
@@ -66,7 +71,7 @@ theorem UpperTheory.V.CA.d_pull :
       obtain ⟨k, z, α, rfl⟩ := h
       exact TwoSidedIdeal.subset_span ⟨k, _, α, map_chElt D f z α⟩
     | zero => rw [map_zero]; exact D.CH.zero_mem
-    | add x y _ _ hx hy => rw [map_add]; exact D.CH.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact D.CH.add_mem hx hy
     | neg x _ hx => rw [map_neg]; exact D.CH.neg_mem hx
     | left_absorb a x _ hx => rw [map_mul]; exact D.CH.mul_mem_left _ _ hx
     | right_absorb b x _ hx => rw [map_mul]; exact D.CH.mul_mem_right _ _ hx

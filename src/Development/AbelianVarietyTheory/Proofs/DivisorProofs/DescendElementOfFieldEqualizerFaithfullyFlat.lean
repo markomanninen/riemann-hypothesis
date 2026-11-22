@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemRangeOfForallAlgHomEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemRangeOfForallAlgHomEq
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory.SymDesc
@@ -8,7 +13,7 @@ variable {R R₁ : Type} [CommRing R] [IsDomain R] [CommRing R₁] [Algebra R R�
 
 theorem injective_quotient (Q : Ideal R₁) (hQ : Q.comap (algebraMap R R₁) = ⊥) :
     Function.Injective (algebraMap R (R₁ ⧸ Q)) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro r hr
   have : r ∈ Q.comap (algebraMap R R₁) := by
     rw [Ideal.mem_comap, ← Ideal.Quotient.eq_zero_iff_mem, Ideal.Quotient.mk_algebraMap]
@@ -62,7 +67,7 @@ theorem exists_sub_mem_of_under_eq_bot [IsIntegrallyClosed R] [CharZero R]
   apply IsFractionRing.injective A K₀
   rw [map_zero]
   have h : π (s - algebraMap R R₁ y) = 0 := by
-    rw [map_sub, hπ, hy, he', sub_self]
+    rw [RingHom.map_sub, hπ, hy, he', sub_self]
   exact h
 
 theorem eq_of_sub_mem [Algebra.IsIntegral R R₁] (s : R₁)
@@ -88,7 +93,11 @@ theorem eq_of_sub_mem [Algebra.IsIntegral R R₁] (s : R₁)
     haveI : Module.IsTorsionFree R (R₁ ⧸ P) := by
       rw [Module.isTorsionFree_iff_algebraMap_injective]; exact hRA
     haveI : Algebra.IsAlgebraic R (R₁ ⧸ P) := Algebra.IsIntegral.isAlgebraic
-    let l : (R₁ ⧸ P) →ₐ[R] M := IsAlgClosed.lift
+    let l : (R₁ ⧸ P) →ₐ[R] M := (by
+      refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+      solve_by_elim* (maxDepth := 2) only [*,
+        @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+        @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
     refine ⟨l.toRingHom.comp (Ideal.Quotient.mk P), ?_, fun x hx => ?_⟩
     · ext r
       simp only [RingHom.comp_apply, Ideal.Quotient.mk_algebraMap, AlgHom.toRingHom_eq_coe,

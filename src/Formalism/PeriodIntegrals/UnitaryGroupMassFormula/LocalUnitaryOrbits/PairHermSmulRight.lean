@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.BHRSmulRight
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.BHRSmulRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem b_tr_sig (hcm : IsCMExt F E σ) (w : Fv F v ⊗[F] E) :
 def hm {a : ℕ} (hinv : ∀ y, σ (σ y) = y) (i j : Fin a) (c : Fv F v ⊗[F] E) : HermR (Fv F v) σ a :=
   ⟨Matrix.single i j c + Matrix.single j i (sigR (Fv F v) σ c), fun p q => by
     simp only [Matrix.add_apply, Matrix.single_apply]
-    rw [map_add, apply_ite (sigR (Fv F v) σ), apply_ite (sigR (Fv F v) σ), map_zero, sigR_sigR v σ hinv, add_comm]
+    rw [map_add (f := _), apply_ite (sigR (Fv F v) σ), apply_ite (sigR (Fv F v) σ), map_zero, sigR_sigR v σ hinv, add_comm]
     congr 1 <;> exact if_congr and_comm rfl rfl⟩
 
 theorem coe_hm {a : ℕ} (hinv : ∀ y, σ (σ y) = y) (i j : Fin a) (c : Fv F v ⊗[F] E) :
@@ -77,8 +81,10 @@ theorem pair_int (hcm : IsCMExt F E σ) {a : ℕ} {S T : HermR (Fv F v) σ a} (h
   have hu : u ∈ OEv (E := E) v :=
     sum_mem fun p _ => sum_mem fun q _ => b_mul_mem v (hS p q) (hT q p)
   have hfix : sigR (Fv F v) σ u = u := by
-    rw [hudef, map_sum]
-    simp only [map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hudef, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun p _ => Finset.sum_congr rfl fun q _ => ?_
     rw [← S.2 p q, ← T.2 q p]

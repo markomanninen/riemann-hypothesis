@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.InfEmbGrpEq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.InfEmbGrpEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -6,7 +10,7 @@ open NumberField NumberField.mixedEmbedding Matrix GlobalTheory.CuspRep GroundTh
 
 namespace UpperTheory.V.Cm
 
-variable (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ)
+variable (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ)
 
 def mixRing : Cinf E ≃+* mixedSpace E := (infEq E).trans (InfiniteAdeleRing.ringEquiv_mixedSpace E)
 
@@ -45,8 +49,6 @@ def grpEq : GL (Fin a) (Cinf E) ≃* archGroup E a :=
   (Units.mapEquiv (matEq E a).toMulEquiv).trans Subgroup.topEquiv.symm
 
 variable {E a}
-
-@[simp] theorem coe_lieEq (X : Lie E a) : (lieEq E a X : ArchMatrix E a) = matEq E a (Matrix.of X) := rfl
 
 @[simp] theorem coe_grpEq (y : GL (Fin a) (Cinf E)) :
     (((grpEq E a y : archGroup E a) : (ArchMatrix E a)ˣ) : ArchMatrix E a) = matEq E a y.val := rfl

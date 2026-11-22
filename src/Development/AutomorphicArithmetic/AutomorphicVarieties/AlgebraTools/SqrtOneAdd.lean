@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial Matrix IsLocalRing TensorProduct
 
@@ -20,11 +24,8 @@ theorem UpperTheory.V.AlgebraTools.sqrt_one_add :
         norm_num
       rw [this]
       exact h2.map _)
-  have hu : IsUnit α := by
-    have hj := HenselianRing.jac (I := I) hα
-    rw [Ideal.mem_jacobson_bot] at hj
-    have := hj 1
-    simpa using this
+  have hu : IsUnit α :=
+    Ideal.isUnit_of_sub_one_mem_jacobson α (HenselianRing.jac (I := I) hα)
   refine ⟨hu.unit, ?_, ?_⟩
   · simp only [IsUnit.unit_spec]
     have := hroot

@@ -1,4 +1,8 @@
-import Formalism.WeaklyAdmissibleFiltrations.CocyclesFunctorial
+module
+
+public import Formalism.WeaklyAdmissibleFiltrations.CocyclesFunctorial
+
+@[expose] public section
 
 noncomputable section
 

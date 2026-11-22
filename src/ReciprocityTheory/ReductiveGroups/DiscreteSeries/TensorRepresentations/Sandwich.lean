@@ -1,8 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Residue
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Transported
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.SandwichA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiExistsStatement
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.SandwichA
+
+@[expose] public section
 
 noncomputable section
 

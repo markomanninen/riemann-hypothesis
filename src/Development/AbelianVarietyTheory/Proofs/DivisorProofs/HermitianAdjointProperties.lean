@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmulMemOfIsIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmulMemOfIsIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,13 +28,14 @@ theorem cc_mulVec (A : Matrix (Fin r) (Fin r) E) (y : Fin r → E) :
   ext i; simp [mulVec, dotProduct, cc, map_sum, map_mul]
 
 theorem map_one_cc : (1 : Matrix (Fin r) (Fin r) E).map cc = 1 := by
-  ext i j; by_cases h : i = j <;> simp [one_apply, h, cc]
+  exact Matrix.map_one cc (by simp [cc]) (by simp [cc])
 
 theorem map_smul_cc (c : E) (A : Matrix (Fin r) (Fin r) E) : (c • A).map cc = cc c • A.map cc := by
   ext i j; simp [cc, map_mul]
 
 theorem trace_map_cc (A : Matrix (Fin r) (Fin r) E) : (A.map cc).trace = cc A.trace := by
-  simp [Matrix.trace, cc, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.trace, cc, map_sum]
 
 end GlobalTheory.LieDisc.HAdjAlg
 
@@ -74,7 +79,7 @@ theorem GlobalTheory.LieDisc.hAdj_algebra : ∀ (E : Type) [Field E] [NumberFiel
       intro u w
       rw [adj1, herm_eq_dot, herm_eq_dot, herm_eq_dot, ← dotProduct_add, ← mulVec_add]
       congr 2
-      ext b; simp [add_mulVec, cc, map_add]
+      ext b; simp [add_mulVec, cc, map_add (f := _)]
     constructor
     · intro hs
       have hv : ∀ w, (hAdj G Y + Y) *ᵥ w = 0 := by

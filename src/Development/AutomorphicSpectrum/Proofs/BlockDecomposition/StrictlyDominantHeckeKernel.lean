@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.StrictDominanceCasselman.IsStrictlyDominant
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsDominantOneAndMul
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetFixedFirstConditionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StrictlyDominantContractsUnipotentStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FixedVectorZeroOfDualStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.StrictDominanceCasselman.IsStrictlyDominant
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsDominantOneAndMul
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetFixedFirstConditionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StrictlyDominantContractsUnipotentStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FixedVectorZeroOfDualStatement
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL ValuativeRel PositivityTheory.Lbc
 
@@ -63,7 +67,7 @@ theorem heckeOp_nilpotent_on_ker :
       obtain ⟨A, hA⟩ := ha
       obtain ⟨B, hB⟩ := hb
       refine ⟨max A B, fun r hr l hl => ?_⟩
-      rw [map_add, map_add, hA r (le_trans (le_max_left _ _) hr) l hl,
+      rw [map_add (f := _), map_add (f := _), hA r (le_trans (le_max_left _ _) hr) l hl,
         hB r (le_trans (le_max_right _ _) hr) l hl, add_zero]
     | smul c a _ ha =>
       obtain ⟨A, hA⟩ := ha

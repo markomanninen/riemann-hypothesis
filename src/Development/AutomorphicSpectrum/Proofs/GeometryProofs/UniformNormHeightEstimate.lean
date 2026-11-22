@@ -1,20 +1,28 @@
-import Mathlib
-import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.NefRR
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ModelSmall
-import Development.AutomorphicSpectrum.Statements.TowerExistence.GoodTowerExistsX
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.VolumeInputs
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.OverLaUnique
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RealTowerGeometricAgreement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.NefPolarizationStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RealTowerNefGeneralStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SectionsGenericIndicators
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TowerComponentsCompatibleLawsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericFrameComponentBoundStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArithmeticDegreePositiveHermStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.UniformNormSectionCountStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TowerWeightOfZeroStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.NefRR
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ModelSmall
+public import Development.AutomorphicSpectrum.Statements.TowerExistence.GoodTowerExistsX
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEmbeddingPieces
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.HasMultiplier
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.OverLaUnique
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RealTowerGeometricAgreement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.NefPolarizationStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RealTowerNefGeneralStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SectionsGenericIndicators
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TowerComponentsCompatibleLawsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericFrameComponentBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArithmeticDegreePositiveHermStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.UniformNormSectionCountStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TowerWeightOfZeroStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Filter Topology
 open Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.BasicNotions Formalism.MainNotions
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Rec GlobalTheory.CompanionTheory.Ar.Plug
@@ -60,7 +68,8 @@ theorem count_le {K R Om Ω : Type} [Field K] [NumberField K] [AddCommGroup R] [
       have hs : ∀ i, s i ∈ V := fun i => Submodule.sum_mem _ fun a _ => V.smul_mem _ (v a).2
       have hphi : ∀ i, φ (ev (s i)) = ∑ a, (∑ b, (g (a, b, i) : Ω) * ψ (bK b)) * φ (ev (v a)) := by
         intro i
-        simp only [s, c, map_sum, map_smul, Algebra.smul_def, map_mul, Finset.sum_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [s, c, map_sum, map_smul, Algebra.smul_def, map_mul, Finset.sum_mul]
         refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
         simp [ψ, map_ratCast]
       have hterm : ∀ a b i, (g (a, b, i) : Ω) * (w * φ (ev (bK b • (v a : R))) * f i) =
@@ -91,7 +100,7 @@ theorem count_le {K R Om Ω : Type} [Field K] [NumberField K] [AddCommGroup R] [
     have := key s _ hs
     rw [Fintype.card_coe] at this
     exact (Nat.le_mul_of_pos_right _ hpos).trans this
-  haveI : Module.Finite K V := Module.rank_lt_aleph0_iff.1 (hrank.trans_lt (Cardinal.nat_lt_aleph0 _))
+  haveI : Module.Finite K V := Module.rank_lt_aleph0_iff.1 (hrank.trans_lt Cardinal.natCast_lt_aleph0)
   rw [← Module.finrank_eq_rank, Cardinal.toENat_nat]
   have := key _ (Module.finBasis K V) (Module.finBasis K V).linearIndependent
   rw [Fintype.card_fin] at this
@@ -127,7 +136,7 @@ theorem growth_le_of_shift (D : ℕ) (r : ℕ → ℕ∞) (Rk : ℕ → ℕ) (δ
       refine ENat.ne_top_iff_exists.1 (fun ht => ?_) |>.imp fun _ e => e.symm
       have := h τ
       rw [ht, ENat.top_mul (Nat.cast_ne_zero.2 hδ.ne')] at this
-      exact ENat.coe_ne_top _ (top_le_iff.1 this)
+      exact ENat.natCast_ne_top _ (top_le_iff.1 this)
     have hmle : m * δ ≤ Rk (τ + k₀) := by
       have := h τ
       rw [hm] at this
@@ -210,7 +219,8 @@ theorem geomDeg_combLine_top (hI : PB.Inputs) (M : Top.RootModel Ψ N) (n : Opti
   have hδ : (M.δ : ℝ) ≠ 0 := Nat.cast_ne_zero.2 M.δ_pos.ne'
   have e1 : Top.toA ((∑ r, MvPolynomial.C (n (some r) : ℝ) * MvPolynomial.X r) ^ Top.dimFl Ψ N) =
       (∑ o, MvPolynomial.C (n o : ℝ) * MvPolynomial.X o : Top.RPA Ψ N) ^ Top.dimFl Ψ N := by
-    simp only [Top.toA, map_pow, map_sum, map_mul, MvPolynomial.rename_C, MvPolynomial.rename_X, Fintype.sum_option, hn,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Top.toA, map_pow, map_sum, map_mul, MvPolynomial.rename_C, MvPolynomial.rename_X, Fintype.sum_option, hn,
       Int.cast_zero, map_zero, zero_mul, zero_add]
   rw [e1, Top.RealGeo.geoFun_pow, Finset.mul_sum]
   have h := ptsIntegral_combLine (e := Top.dimFl Ψ N) hI.resExists M.arith (M.line 1) (Top.RealGeo.line_smooth M)
@@ -222,9 +232,9 @@ theorem geomDeg_combLine_top (hI : PB.Inputs) (M : Top.RootModel Ψ N) (n : Opti
     have : ∏ i, (n (w i) : ℝ) = 0 := Finset.prod_eq_zero (Finset.mem_univ j) (by simp [hj, hn])
     simp [this]
   · have hc : (∑ j, Finsupp.single (w j) (1 : ℕ)) none = 0 := by
-      rw [Finsupp.finset_sum_apply]
+      rw [Finsupp.finsetSum_apply]
       refine Finset.sum_eq_zero fun j _ => ?_
-      rw [Finsupp.single_apply, if_neg fun h => hw ⟨j, h⟩]
+      rw [Finsupp.single_apply, ite_eq_right fun h => hw ⟨j, h⟩]
     rw [Top.RealGeo.geoMono_word hI M R w, hc, pow_zero, mul_one,
       ptsIntegral_one_eq_mInt hI.resExists resBridge R M.arith fun i => Top.RealGeo.line_smooth M (w i)]
     field_simp

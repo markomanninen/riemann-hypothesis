@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Formalism.RealPlaceAnalysis.StatementE
-import Formalism.RealPlaceAnalysis.StatementKT
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Formalism.RealPlaceAnalysis.StatementE
+public import Formalism.RealPlaceAnalysis.StatementKT
+
+@[expose] public section
 
 open BranchingSupport Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
@@ -46,7 +50,8 @@ theorem splitCas_on_summand : ∀ (M : Type) [NormedAddCommGroup M] [InnerProduc
   intro M _ _ Ns _ _ n E F io mu s hE hF hio y
   funext i
   have h1 : io (Formalism.REAL.Cas F y) i = ∑ a, ∑ b, dualTens E a b (dualTens E b a (io y)) i := by
-    simp [Formalism.REAL.Cas, LinearMap.sum_apply, map_sum, Finset.sum_apply, hio]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Formalism.REAL.Cas, LinearMap.sum_apply, map_sum, Finset.sum_apply, hio]
   rw [dualTens_casimir_apply, hE, hF, map_smul, casG_sub_single, Pi.smul_apply] at h1
   have h2 : (2 : ℂ) • splitCas E (io y) i
       = (2 : ℂ) • (((-mu s + (1 - (n : ℝ)) / 2 : ℝ) : ℂ) • io y i) := by

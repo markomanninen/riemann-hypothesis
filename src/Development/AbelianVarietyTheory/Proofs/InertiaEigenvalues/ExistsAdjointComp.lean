@@ -1,25 +1,29 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ParamsEx
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GaussianBinomialClosedForm
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRangeRestrictEq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaProjectionIntertwinesLevelLifts
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GoodProjectorUnitaryFormsModelLaws
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalOperatorsFormsOnRankSpaceNormal
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EigenvectorAdjointIntertwinerNormalOperators
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaIntertwinesMatchedOperators
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RealizationFamilyNormalOperators
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalThetaCorrespondenceInertPlaceOfHowe
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaLiftGoodProjectorIntertwinesMatchedHecke
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TwoSidedHeckePartnerInertPrime
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaLiftTransferHeckePolySplitPrime
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeightCocharacterEqOfGoodPlaces
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HyperspecialFixesAllChainVacuaAtInertPrime
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurConstantsExistOnChainOfCuspRapidDecay
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ParamsEx
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GaussianBinomialClosedForm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRangeRestrictEq
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaProjectionIntertwinesLevelLifts
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GoodProjectorUnitaryFormsModelLaws
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalOperatorsFormsOnRankSpaceNormal
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EigenvectorAdjointIntertwinerNormalOperators
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaIntertwinesMatchedOperators
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RealizationFamilyNormalOperators
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalThetaCorrespondenceInertPlaceOfHowe
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaLiftGoodProjectorIntertwinesMatchedHecke
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TwoSidedHeckePartnerInertPrime
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaLiftTransferHeckePolySplitPrime
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeightCocharacterEqOfGoodPlaces
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HyperspecialFixesAllChainVacuaAtInertPrime
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurConstantsExistOnChainOfCuspRapidDecay
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ theorem exists_adjoint_comp {X E : Type} [NormedAddCommGroup X] [InnerProductSpa
   intro y hy
   let S : N →ₗ[ℂ] N := (LinearMap.adjoint f ∘ₗ f).restrict hk
   have hinj : Function.Injective S := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro u hu
     have h1 : LinearMap.adjoint f (f u) = 0 := congrArg Subtype.val hu
     have h2 : ⟪f u, f u⟫_ℂ = 0 := by rw [← LinearMap.adjoint_inner_left, h1, inner_zero_left]
@@ -88,14 +92,15 @@ theorem actL_comp {V : HSp D} {β : GL (Fin V.rank) (Lev.EAf D)} {L : LevDat D.h
   have e : actL V β L g₀ (fun x => l (c.ext F x)) = actG0 V β L g₀ (fun x => l (c.ext F x)) := rfl
   rw [e]
   unfold actG0
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   show _ * l (c.ext F _) = _
   rw [← h1, map_smul, Pi.smul_apply, map_smul, smul_eq_mul, inv_mul_cancel_left₀ h0]
 
 theorem sum_fix {G E E' : Type} [Group G] [Fintype G] [AddCommGroup E] [Module ℂ E] [AddCommGroup E'] [Module ℂ E']
     (ρ : Representation ℂ G E) (ρ' : Representation ℂ G E') (f : E →ₗ[ℂ] E') (hf : GlobalTheory.IndefiniteRowSideFullHecke.TranslateRepresentations.Commutes ρ ρ' f)
     (c : G → ℂ) (x : E) (hx : (∑ g, c g • ρ g) x = x) : ∑ g, c g • ρ' g (f x) = f x := by
-  conv_rhs => rw [← hx, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [← hx, LinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun g _ => ?_
   rw [LinearMap.smul_apply, map_smul, hf g x]
 
@@ -111,7 +116,8 @@ theorem gaL_fix {V : HSp D} {β : GL (Fin V.rank) (Lev.EAf D)} {L : LevDat D.hos
   have e3 : (fun x => l (c.ext (M.e u) x)) = ∑ g, a g • fun x => l (c.ext (M.e (π g u)) x) := by
     conv_lhs => rw [← hu]
     funext x
-    simp only [map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
   rw [e2]
   simp only [e1]
   exact e3.symm
@@ -273,7 +279,7 @@ theorem eig_keep (hH : HoweUnram) (R : RealDat D A Ks) (F : Face D A) (hC : Core
     (fun k hk l hl => eig_of_match R F hC hS hX i t h' hh' hN P hG _ (partner_split R F hC hS i t P hG hP k hk) l y hl) d hd
 
 theorem eig_add {H : Type} [AddCommGroup H] [Module ℂ H] (L : Module.End ℂ H) (l : ℂ) {a b : H} (ha : L a = l • a)
-    (hb : L b = l • b) : L (a + b) = l • (a + b) := by rw [map_add, ha, hb, smul_add]
+    (hb : L b = l • b) : L (a + b) = l • (a + b) := by rw [map_add (f := _), ha, hb, smul_add]
 
 theorem eig_smul {H : Type} [AddCommGroup H] [Module ℂ H] (L : Module.End ℂ H) (l z : ℂ) {a : H} (ha : L a = l • a) :
     L (z • a) = l • (z • a) := by rw [map_smul, ha, smul_comm]
@@ -286,7 +292,7 @@ theorem fix_add {H X W : Type} [AddCommGroup H] [Module ℂ H] [AddCommGroup W] 
     (hb : T (fun x => l (E b x)) = fun x => l (E b x)) : T (fun x => l (E (a + b) x)) = fun x => l (E (a + b) x) := by
   have e : (fun x => l (E (a + b) x)) = (fun x => l (E a x)) + fun x => l (E b x) := by
     funext x; simp
-  rw [e, map_add, ha, hb]
+  rw [e, map_add (f := _), ha, hb]
 
 theorem fix_smul {H X W : Type} [AddCommGroup H] [Module ℂ H] [AddCommGroup W] [Module ℂ W] (T : (X → ℂ) →ₗ[ℂ] (X → ℂ))
     (E : H →ₗ[ℂ] (X → W)) (l : W →ₗ[ℂ] ℂ) (z : ℂ) {a : H} (ha : T (fun x => l (E a x)) = fun x => l (E a x)) :

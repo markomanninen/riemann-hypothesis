@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.UnipotentRadicalActionFormula
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.NCDefs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.ToMatrixLin
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.UnipotentRadicalActionFormula
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.NCDefs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.ToMatrixLin
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem fix_span {Φ : (n → A) →ₗ[A] (n → A)} (he : ∀ a, Φ (D.e a) = 
   | (induction hx using Submodule.span_induction with
       | mem y hy => obtain ⟨a, rfl⟩ := hy; exact he a
       | zero => exact map_zero Φ
-      | add y z _ _ hy hz => rw [map_add, hy, hz]
+      | add y z _ _ hy hz => rw [map_add (f := _), hy, hz]
       | smul c y _ hy => rw [map_smul, hy])
 
 def sMat (D : Dat A n r) (half : A) (y : Fin r → n → A) : Matrix n n A :=
@@ -206,7 +210,7 @@ theorem yH_mul_Z {g : HA R σ J} (hg : g ∈ PI.LevelKSplit.W.NC.LevelUnipotentS
   rw [yH_eq (T := T), yH_eq (T := T), lin_mul]
   have e : lin R σ J z ((datR R σ J P T).f a) = (datR R σ J P T).f a +
       (lin R σ J z ((datR R σ J P T).f a) - (datR R σ J P T).f a) := by abel
-  rw [e, map_add, fix_span (unipotent_radical_fixes_frame hg) (Z_f hJ H hh hz a), map_add, pWp_span H (Z_f hJ H hh hz a),
+  rw [e, map_add (f := _), fix_span (unipotent_radical_fixes_frame hg) (Z_f hJ H hh hz a), map_add (f := _), pWp_span H (Z_f hJ H hh hz a),
     add_zero]
 
 theorem Z_comm {z : HA R σ J} (hz : z ∈ PI.LevelKSplit.W.NC.Zsub R σ J P) {g : HA R σ J}
@@ -231,12 +235,12 @@ theorem Z_comm {z : HA R σ J} (hz : z ∈ PI.LevelKSplit.W.NC.Zsub R σ J P) {g
           congr 1; abel
       _ = lin R σ J z ((datR R σ J P T).f a) +
             (lin R σ J g ((datR R σ J P T).f a) - (datR R σ J P T).f a) := by
-          rw [map_add, Z_fix hJ H hh hz hnf]
+          rw [map_add (f := _), Z_fix hJ H hh hz hnf]
       _ = lin R σ J g ((datR R σ J P T).f a) +
             (lin R σ J z ((datR R σ J P T).f a) - (datR R σ J P T).f a) := by abel
       _ = lin R σ J g ((datR R σ J P T).f a +
             (lin R σ J z ((datR R σ J P T).f a) - (datR R σ J P T).f a)) := by
-          rw [map_add, fix_span (unipotent_radical_fixes_frame hg) (Z_f hJ H hh hz a)]
+          rw [map_add (f := _), fix_span (unipotent_radical_fixes_frame hg) (Z_f hJ H hh hz a)]
       _ = lin R σ J g (lin R σ J z ((datR R σ J P T).f a)) := by
           congr 1; abel
 
@@ -302,8 +306,10 @@ theorem H_conj_sHG {g : HA R σ J} (hg : g ∈ Hsub R σ J P) {y : Fin r → Fin
     rw [← hu, lin_lin_inv]
   have luv : ∀ a, lin R σ J g (uv (datR R σ J P T) half y a) =
       uv (datR R σ J P T) half (fun b => lin R σ J g (y b)) a := fun a => by
-    simp only [uv, cf, map_add, map_sum, map_smul, H_e hJ H hh hg, hu]
-  simp only [map_add, map_sub, map_sum, map_smul, e1, e2, luv, H_e hJ H hh hg, lin_lin_inv]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [uv, cf, map_add (f := _), map_sum, map_smul, H_e hJ H hh hg, hu]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_sub, map_sum, map_smul, e1, e2, luv, H_e hJ H hh hg, lin_lin_inv]
 
 theorem H_xp {h : HA R σ J} (hh' : h ∈ Hsub R σ J P) {v : Fin M → R ⊗[F] E}
     (hv : Xp (datR R σ J P T) v) : Xp (datR R σ J P T) (lin R σ J h v) :=
@@ -320,7 +326,7 @@ theorem H_comm_Z {g : HA R σ J} (hg : g ∈ Hsub R σ J P) {z : HA R σ J}
   · rw [lin_mul, lin_mul, H_f hJ H hh hgi a]
     have e : lin R σ J z ((datR R σ J P T).f a) = (datR R σ J P T).f a +
         (lin R σ J z ((datR R σ J P T).f a) - (datR R σ J P T).f a) := by abel
-    rw [e, map_add, H_f hJ H hh hg a, fix_span (H_e hJ H hh hg) (Z_f hJ H hh hz a)]
+    rw [e, map_add (f := _), H_f hJ H hh hg a, fix_span (H_e hJ H hh hg) (Z_f hJ H hh hz a)]
 
 end Sec
 

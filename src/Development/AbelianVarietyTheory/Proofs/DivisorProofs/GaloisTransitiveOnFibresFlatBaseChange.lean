@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaloisInvariantFunctionsFlatBaseChange
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIsoNormalizationPullbackOfToIntegralClosure
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaloisInvariantFunctionsFlatBaseChange
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIsoNormalizationPullbackOfToIntegralClosure
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,25 +35,29 @@ variable {X Z : Scheme.{0}} {f : X ⟶ Sp R} {p : Z ⟶ X} {s : Z ⟶ Sp R'}
 def act (σ : Gal ρ) : Z ⟶ Z :=
   hpb.lift p (s ≫ spMap (Gal.hom σ)) (by rw [Category.assoc, spMap_gal_comp, hpb.w])
 
-@[reassoc] theorem act_p (σ : Gal ρ) : act hpb σ ≫ p = p := hpb.lift_fst _ _ _
-
 @[reassoc] theorem galoisBaseChangeSchemeAction_comp_snd (σ : Gal ρ) : act hpb σ ≫ s = s ≫ spMap (Gal.hom σ) := hpb.lift_snd _ _ _
 
-theorem act_one : act hpb 1 = 𝟙 Z :=
-  hpb.hom_ext (by rw [act_p, Category.id_comp]) (by rw [galoisBaseChangeSchemeAction_comp_snd, spMap_gal_one, Category.comp_id, Category.id_comp])
+theorem act_one : act hpb 1 = 𝟙 Z := by
+  have hp : act hpb 1 ≫ p = p := hpb.lift_fst _ _ _
+  exact hpb.hom_ext (by rw [hp, Category.id_comp])
+    (by rw [galoisBaseChangeSchemeAction_comp_snd, spMap_gal_one, Category.comp_id, Category.id_comp])
 
-theorem act_mul (σ τ : Gal ρ) : act hpb (σ * τ) = act hpb σ ≫ act hpb τ :=
-  hpb.hom_ext (by rw [act_p, Category.assoc, act_p, act_p])
+theorem act_mul (σ τ : Gal ρ) : act hpb (σ * τ) = act hpb σ ≫ act hpb τ := by
+  have hp (g : Gal ρ) : act hpb g ≫ p = p := hpb.lift_fst _ _ _
+  exact hpb.hom_ext (by rw [hp, Category.assoc, hp, hp])
     (by rw [galoisBaseChangeSchemeAction_comp_snd, Category.assoc, galoisBaseChangeSchemeAction_comp_snd, galoisBaseChangeSchemeAction_comp_snd_assoc, spMap_gal_mul])
 
 def actAut : Gal ρ →* Aut Z where
   toFun σ :=
-    { hom := act hpb σ⁻¹
-      inv := act hpb σ
-      hom_inv_id := by rw [← act_mul, inv_mul_cancel, act_one]
-      inv_hom_id := by rw [← act_mul, mul_inv_cancel, act_one] }
-  map_one' := Iso.ext (by change act hpb 1⁻¹ = 𝟙 Z; rw [inv_one, act_one])
-  map_mul' σ τ := Iso.ext (by change act hpb (σ * τ)⁻¹ = act hpb τ⁻¹ ≫ act hpb σ⁻¹; rw [mul_inv_rev, act_mul])
+    { asIso :=
+        { hom := act hpb σ⁻¹
+          inv := act hpb σ
+          hom_inv_id := by rw [← act_mul, inv_mul_cancel, act_one]
+          inv_hom_id := by rw [← act_mul, mul_inv_cancel, act_one] } }
+  map_one' := Aut.ext (Iso.ext (by change act hpb 1⁻¹ = 𝟙 Z; rw [inv_one, act_one]))
+  map_mul' σ τ := Aut.ext (Iso.ext (by
+    change act hpb (σ * τ)⁻¹ = act hpb τ⁻¹ ≫ act hpb σ⁻¹
+    rw [mul_inv_rev, act_mul]))
 
 end GlobalTheory.Mum.GalOrbit
 
@@ -64,10 +72,11 @@ theorem gal_transitive_on_fibres : ∀ (R R' : Type) [CommRing R] [CommRing R'] 
   have : Finite (Gal (algebraMap R R')) := hG.1
   have : Flat Y.hom := hfl
   have : IsAffineHom p := MorphismProperty.of_isPullback (P := @IsAffineHom) hpb.flip inferInstance
+  have hp (σ : Gal (algebraMap R R')) : GalOrbit.act hpb σ ≫ p = p := hpb.lift_fst _ _ _
   have hinv : ∀ W : Y.left.Opens, IsAffineOpen W → ∀ u : Γ(Z, p ⁻¹ᵁ W),
       GlobalTheory.IsInvariantSection (GalOrbit.actAut hpb) _ u → u ∈ Set.range (p.app W) := by
     intro W hW u hu
-    refine (InvFun.affine_inv (algebraMap R R') hinj hG hpb (GalOrbit.act hpb) (GalOrbit.act_p hpb)
+    refine (InvFun.affine_inv (algebraMap R R') hinj hG hpb (GalOrbit.act hpb) hp
       (GalOrbit.galoisBaseChangeSchemeAction_comp_snd hpb) hW).2 u fun σ hσ => ?_
     obtain ⟨h₁, h₂⟩ := hu σ⁻¹
     have key : ∀ (τ τ' : Gal (algebraMap R R')) (_ : τ = τ') (e : p ⁻¹ᵁ W ≤ GalOrbit.act hpb τ ⁻¹ᵁ (p ⁻¹ᵁ W))
@@ -76,7 +85,7 @@ theorem gal_transitive_on_fibres : ∀ (R R' : Type) [CommRing R] [CommRing R'] 
       rintro τ _ rfl _ _; rfl
     exact (key _ _ (inv_inv σ).symm hσ h₁).trans h₂
   obtain ⟨g, hg⟩ := (GlobalTheory.apply_eq_iff_exists_aut_of_invariant (GalOrbit.actAut hpb) p
-    (fun g => GalOrbit.act_p hpb _) hinv z z').1 hzz
-  exact ⟨g⁻¹, GalOrbit.act hpb g⁻¹, GalOrbit.act_p hpb _, GalOrbit.galoisBaseChangeSchemeAction_comp_snd hpb _, hg⟩
+    (fun g => hp g⁻¹) hinv z z').1 hzz
+  exact ⟨g⁻¹, GalOrbit.act hpb g⁻¹, hp _, GalOrbit.galoisBaseChangeSchemeAction_comp_snd hpb _, hg⟩
 
 end GlobalTheory.Mum

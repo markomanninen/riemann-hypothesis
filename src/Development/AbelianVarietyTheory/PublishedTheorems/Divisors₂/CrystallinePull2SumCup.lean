@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsAdditiveOfUniversal
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsChernExistsUniqueAndIso
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolarizationCrystalFormAdjointConjAction
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPolarizationFormIsotropicFiltration
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsAdditiveOfUniversal
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsChernExistsUniqueAndIso
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolarizationCrystalFormAdjointConjAction
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPolarizationFormIsotropicFiltration
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -22,7 +26,7 @@ theorem cup_add_cup {R : Type} [CommRing R] {C : Type 1} [Category.{0} C] (F : C
     (a b : CatCoh.H1 F) : cup F a b + cup F b a = 0 := by
   obtain ⟨a, rfl⟩ := CatCoh.H1.mk_surjective F a
   obtain ⟨b, rfl⟩ := CatCoh.H1.mk_surjective F b
-  rw [cup_mk, cup_mk, ← map_add]
+  rw [cup_mk, cup_mk, ← map_add (f := _)]
   refine CatCoh.H2.mk_eq_zero.2 ⟨fun T T' φ ↦ -(a.1 T T' φ * b.1 T T' φ), ?_⟩
   funext T T' T'' φ ψ
   simp only [d1_apply, Submodule.coe_add, Pi.add_apply, cupZ_apply, Z1.comp a, Z1.comp b, map_mul, map_neg]
@@ -85,11 +89,10 @@ theorem prim_prod (c : prim κ t (A ⊗ B)) : c.1 = pullOver κ t (fst A B) (pri
 theorem grpMor_prod {σ : R →+* R'} {b : S' ⟶ S} {f : A'.left ⟶ A.left} {g : B'.left ⟶ B.left}
     (m : GrpMor κ t A κ' t' A' σ b f) (n : GrpMor κ t B κ' t' B' σ b g) {h : (A' ⊗ B').left ⟶ (A ⊗ B).left}
     (h₁ : h ≫ (fst A B).left = (fst A' B').left ≫ f) (h₂ : h ≫ (snd A B).left = (snd A' B').left ≫ g) :
-    GrpMor κ t (A ⊗ B) κ' t' (A' ⊗ B') σ b h where
-  dp := m.dp
-  base := m.base
-  w := by rw [← Over.w (fst A B), ← Category.assoc, h₁, Category.assoc, m.w, ← Category.assoc, Over.w]
-  mul T x y x₀ y₀ hx hy := by
+    GrpMor κ t (A ⊗ B) κ' t' (A' ⊗ B') σ b h := by
+  refine ⟨m.dp, m.base, ?_, ?_⟩
+  · rw [← Over.w (fst A B), ← Category.assoc, h₁, Category.assoc, m.w, ← Category.assoc, Over.w]
+  · intro T x y x₀ y₀ hx hy
     refine Limits.pullback.hom_ext ?_ ?_
     · change (x₀ * y₀).left ≫ (fst A B).left = ((x * y).left ≫ h) ≫ (fst A B).left
       rw [Category.assoc, h₁, ← Category.assoc, ← Over.comp_left, ← Over.comp_left, MonObj.mul_comp,
@@ -111,19 +114,25 @@ theorem IsCorrForm.pull {P : LB (A ⊗ B).left} {φ : Crys κ t A →ₗ[R] Crys
   obtain ⟨N, a, c, hc, hφ⟩ := H
   have k := grpMor_prod m n h₁ h₂
   refine ⟨tensorForm κ' t' A' B' (fun i ↦ m.pull (a i)) fun i ↦ n.pull (c i),
-    ⟨N, _, _, (isChern_existsUnique_and_iso R' _ κ' _ _).2 _ _ (pull_isLB hP h) hP' e _ ?_,
+    ⟨N, _, _, (isChern_existsUnique_and_iso R' _ κ' _ _).2 _ _ (LB.isLB_pull hP h) hP' e _ ?_,
       tensorForm_apply _ _ _ _ _ _⟩, fun x x' y y' hx hy ↦ ?_⟩
   · have := isChern_pull k.isMor hc
-    rw [map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
     convert this using 2 with i
     rw [IsMor.pullCohomologyTwo_cup]
     congr 1
     · congr 1
-      exact (IsMor.pullback1_comp _ _ (m.comp (homMor κ' t' (fst A' B'))).isMor (fun _ ↦ rfl) rfl _).trans
+      have mf : IsMor κ (A.hom ≫ t) κ' ((A' ⊗ B').hom ≫ t') σ ((fst A' B').left ≫ f) :=
+        ⟨m.dp, by rw [Category.assoc, m.isMor.w, ← Category.assoc, ← Category.assoc, Over.w]⟩
+      exact (IsMor.pullback1_comp _ _ mf (fun _ ↦ rfl) rfl _).trans
         (IsMor.pullback1_comp _ _ _ (fun _ ↦ rfl) h₁ _).symm
-    · exact (IsMor.pullback1_comp _ _ (n.comp (homMor κ' t' (snd A' B'))).isMor (fun _ ↦ rfl) rfl _).trans
+    · have ng : IsMor κ (B.hom ≫ t) κ' ((A' ⊗ B').hom ≫ t') σ ((snd A' B').left ≫ g) :=
+        ⟨n.dp, by rw [Category.assoc, n.isMor.w, ← Category.assoc, ← Category.assoc, Over.w]⟩
+      exact (IsMor.pullback1_comp _ _ ng (fun _ ↦ rfl) rfl _).trans
         (IsMor.pullback1_comp _ _ _ (fun _ ↦ rfl) h₂ _).symm
-  · simp only [tensorForm_apply, hφ, map_sum, map_mul, hx _, hy _]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [tensorForm_apply, hφ, map_sum, map_mul, hx _, hy _]
 
 theorem IsCorrForm.unique (C : CupSquare κ t (A ⊗ B)) {P : LB (A ⊗ B).left} (hP : P.IsLB)
     {φ φ' : Crys κ t A →ₗ[R] Crys κ t B →ₗ[R] R} (H : IsCorrForm κ t A B P φ) (H' : IsCorrForm κ t A B P φ') :
@@ -142,7 +151,8 @@ theorem IsCorrForm.unique (C : CupSquare κ t (A ⊗ B)) {P : LB (A ⊗ B).left}
   obtain ⟨n, a, b, hc, hφ⟩ := H
   obtain ⟨n', a', b', hc', hφ'⟩ := H'
   have e := congrArg Λ (((isChern_existsUnique_and_iso R _ κ _ _).1 _ hP).unique hc hc')
-  simpa only [map_sum, key, ← hφ, ← hφ'] using e
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa only [map_sum, key, ← hφ, ← hφ'] using e
 
 theorem eq_zero_of_triv {X : Scheme.{0}} {s : X ⟶ Sp R} {L : LB X} (hL : L.IsLB) (h : Triv L) {z : Cris.H2 κ s}
     (hz : IsChern κ s L z) : z = 0 :=
@@ -154,7 +164,8 @@ theorem crystallinePull2_sum_cup {X Y : Over S} (f : Y ⟶ X)
     (m : IsMor κ (X.hom ≫ t) κ (Y.hom ≫ t) (RingHom.id R) f.left) {n : ℕ}
     (a b : Fin n → Cris.H1 κ (X.hom ≫ t)) :
     m.pull2 (∑ k, cup _ (a k) (b k)) = ∑ k, cup _ (pullOver κ t f (a k)) (pullOver κ t f (b k)) := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun k _ ↦ IsMor.pullCohomologyTwo_cup _ _ _
 
 theorem exists_isCorrForm (C : CupSquare κ t (A ⊗ B)) {P : LB (A ⊗ B).left} (hP : P.IsLB)
@@ -167,12 +178,12 @@ theorem exists_isCorrForm (C : CupSquare κ t (A ⊗ B)) {P : LB (A ⊗ B).left}
   let r : Cris.H1 κ ((A ⊗ B).hom ≫ t) → prim κ t B := fun c ↦ primPull κ t (inr A B) ⟨c, hm c⟩
   have d : ∀ c, c = pullOver κ t (fst A B) (l c).1 + pullOver κ t (snd A B) (r c).1 := fun c ↦ prim_prod ⟨c, hm c⟩
   have z₁ : ∑ k, cup _ (pullOver κ t (fst A B) (l (u k)).1) (pullOver κ t (fst A B) (l (v k)).1) = 0 := by
-    have e := eq_zero_of_triv (pull_isLB hP _) h₂ (isChern_pull (homMor κ t (inl A B)).isMor hz)
+    have e := eq_zero_of_triv (LB.isLB_pull hP _) h₂ (isChern_pull (homMor κ t (inl A B)).isMor hz)
     rw [crystallinePull2_sum_cup] at e
     rw [← crystallinePull2_sum_cup _ (homMor κ t (fst A B)).isMor]
     exact (congrArg _ e).trans (map_zero _)
   have z₂ : ∑ k, cup _ (pullOver κ t (snd A B) (r (u k)).1) (pullOver κ t (snd A B) (r (v k)).1) = 0 := by
-    have e := eq_zero_of_triv (pull_isLB hP _) h₁ (isChern_pull (homMor κ t (inr A B)).isMor hz)
+    have e := eq_zero_of_triv (LB.isLB_pull hP _) h₁ (isChern_pull (homMor κ t (inr A B)).isMor hz)
     rw [crystallinePull2_sum_cup] at e
     rw [← crystallinePull2_sum_cup _ (homMor κ t (snd A B)).isMor]
     exact (congrArg _ e).trans (map_zero _)
@@ -184,7 +195,7 @@ theorem exists_isCorrForm (C : CupSquare κ t (A ⊗ B)) {P : LB (A ⊗ B).left}
   simp only [Fin.append_left, Fin.append_right, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun k _ ↦ ?_
   conv_rhs => rw [d (u k), d (v k)]
-  simp only [Submodule.coe_neg, map_neg, LinearMap.neg_apply, map_add, LinearMap.add_apply]
+  simp only [Submodule.coe_neg, map_neg, LinearMap.neg_apply, map_add (f := _), LinearMap.add_apply]
   rw [neg_eq_of_add_eq_zero_right (cup_add_cup _ _ _)]
   abel
 
@@ -195,11 +206,11 @@ theorem IsCorrForm.adjoint {A₁ B₁ : Over S} [GrpObj A₁] [GrpObj B₁] (C :
     [IsMonHom v] (e : LBIso (ev P (fst A B₁) (snd A B₁ ≫ v)) (ev P₁ (fst A B₁ ≫ u) (snd A B₁)))
     (x : Crys κ t A) (y : Crys κ t B₁) : φ x (push κ t v y) = φ₁ (push κ t u x) y := by
   obtain ⟨χ, hχ, k⟩ := H.pull hP (homMor κ t (𝟙 A)) (homMor κ t v) (by simp only [← Over.comp_left, lift_fst, lift_snd, Category.comp_id])
-    (by simp only [← Over.comp_left, lift_fst, lift_snd, Category.comp_id]) (pull_isLB hP₁ _) e
+    (by simp only [← Over.comp_left, lift_fst, lift_snd, Category.comp_id]) (LB.isLB_pull hP₁ _) e
   obtain ⟨χ₁, hχ₁, k₁⟩ := H₁.pull hP₁ (homMor κ t u) (homMor κ t (𝟙 B₁))
     (h := (lift (fst A B₁ ≫ u) (snd A B₁)).left) (by simp only [← Over.comp_left, lift_fst, lift_snd, Category.comp_id]) (by simp only [← Over.comp_left, lift_fst, lift_snd, Category.comp_id])
-    (pull_isLB hP₁ _) (ChernExists.lbIso_refl (pull_isLB hP₁ _))
-  obtain rfl := hχ.unique C (pull_isLB hP₁ _) hχ₁
+    (LB.isLB_pull hP₁ _) (ChernExists.lbIso_refl (LB.isLB_pull hP₁ _))
+  obtain rfl := hχ.unique C (LB.isLB_pull hP₁ _) hχ₁
   have e₁ := k (push κ t (𝟙 A) x) x (push κ t v y) y (fun _ ↦ rfl) fun _ ↦ rfl
   have e₂ := k₁ (push κ t u x) x (push κ t (𝟙 B₁) y) y (fun _ ↦ rfl) fun _ ↦ rfl
   have e₃ : φ (push κ t (𝟙 A) x) (push κ t v y) = φ₁ (push κ t u x) (push κ t (𝟙 B₁) y) := e₁.symm.trans e₂
@@ -248,8 +259,8 @@ theorem exists_prod_pullback {b : S' ⟶ S} {f : A'.left ⟶ A.left} {g : B'.lef
       rw [Category.assoc, Category.assoc, m.1.w, n.1.w, ← Category.assoc, ← Category.assoc, Over.w, Over.w]),
     Limits.pullback.lift_fst _ _ _, Limits.pullback.lift_snd _ _ _⟩
 
-omit [GrpObj A] [GrpObj B] [GrpObj A'] [GrpObj B'] in
 
+omit [GrpObj A] [GrpObj B] [GrpObj A'] [GrpObj B'] in
 theorem isPullback_prod {b : S' ⟶ S} {f : A'.left ⟶ A.left} {g : B'.left ⟶ B.left}
     (m : IsPullback f A'.hom A.hom b) (n : IsPullback g B'.hom B.hom b) {h : (A' ⊗ B').left ⟶ (A ⊗ B).left}
     (h₁ : h ≫ (fst A B).left = (fst A' B').left ≫ f) (h₂ : h ≫ (snd A B).left = (snd A' B').left ≫ g) :
@@ -267,8 +278,8 @@ open GlobalTheory.Published
 
 variable {A B : Over (Sp R)} [GrpObj A] [GrpObj B] {g g' : ℕ}
 
-omit [GrpObj A] [GrpObj B] in
 
+omit [GrpObj A] [GrpObj B] in
 theorem smooth_prod (hg : SmoothOfRelativeDimension g A.hom) (hg' : SmoothOfRelativeDimension g' B.hom) :
     SmoothOfRelativeDimension (g' + g) (A ⊗ B).hom := by
   have : SmoothOfRelativeDimension g' (Limits.pullback.fst A.hom B.hom) :=

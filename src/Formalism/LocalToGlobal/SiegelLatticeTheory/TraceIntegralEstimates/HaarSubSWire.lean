@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.HaarSubSF
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.LocalRingCardinality.IntCastDvdOfDvdIntegers
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.NMeasInv
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QuotNuSigma
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.HaarSubSF
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalRingCardinality.IntCastDvdOfDvdIntegers
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.NMeasInv
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QuotNuSigma
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,8 @@ theorem hform_crdX {D : D7} (X : HidaSetting D) (v w : (VS D).V) :
       (VS D).hT v w := by
   conv_rhs => rw [← X.bas.sum_repr v, ← X.bas.sum_repr w]
   unfold Formalism.UG.hform crdOf
-  simp only [map_sum, map_mul, X.ιE_conj, X.J_eq, RingEquiv.apply_symm_apply, LinearMap.map_smulₛₗ,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, X.ιE_conj, X.J_eq, RingEquiv.apply_symm_apply, LinearMap.map_smulₛₗ,
     LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, RingHom.id_apply, Finset.mul_sum]
   have hst : ∀ x : D.host.E, star x = D.host.conj x := fun x => Formalism.MainNotions.S.Inh.tie_star D x
   simp only [hst]

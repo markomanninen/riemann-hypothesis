@@ -1,5 +1,9 @@
-import Formalism.FormalDegreeBessel.StatementG
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+module
+
+public import Formalism.FormalDegreeBessel.StatementG
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+
+@[expose] public section
 
 open Matrix
 
@@ -165,16 +169,16 @@ lemma ggBlockA (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (
     rw [ggHpk_mulVec_Wb k r z hz, hz _ (Or.inl (by simp [eI])), mul_zero]
   unfold fvec ggLastU
   by_cases ha : a.val < r <;> by_cases hb : b.val < r
-  · rw [dif_pos ha, dif_pos hb, if_neg (by intro h; have := congrArg Fin.val h.1; simp at this; omega)]
+  · rw [dite_eq_left ha, dite_eq_left hb, if_neg (by intro h; have := congrArg Fin.val h.1; simp at this; omega)]
     simp only [bvec, ggHerm_bvec_right, mulVec_single_one]
     simp [ggHpk_ee]
-  · rw [dif_pos ha, dif_neg hb, if_neg (by intro h; have := congrArg Fin.val h.1; simp at this; omega)]
+  · rw [dite_eq_left ha, dite_eq_right hb, if_neg (by intro h; have := congrArg Fin.val h.1; simp at this; omega)]
     simp only [bvec, ggHerm_bvec_right, hza, mul_zero]
-  · rw [dif_neg ha, dif_pos hb, if_neg (by intro h; have := congrArg Fin.val h.2; simp at this; omega)]
+  · rw [dite_eq_right ha, dite_eq_left hb, if_neg (by intro h; have := congrArg Fin.val h.2; simp at this; omega)]
     rw [ggHerm_swap _ (GBasic.Hpk_herm k r), bvec, ggHerm_bvec_right, hza, star_zero, mul_zero]
   · have hal : a = Fin.last r := Fin.ext (by simp; omega)
     have hbl : b = Fin.last r := Fin.ext (by simp; omega)
-    rw [dif_neg ha, dif_neg hb, if_pos ⟨hal, hbl⟩, mul_one]
+    rw [dite_eq_right ha, dite_eq_right hb, if_pos ⟨hal, hbl⟩, mul_one]
 
 theorem group_gram_holds : GGram := by
   intro k r z z' hz hz' g hg

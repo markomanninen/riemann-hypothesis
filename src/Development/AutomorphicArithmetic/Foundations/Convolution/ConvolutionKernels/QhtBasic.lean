@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalTwistEx
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalTwistEx
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
+
+@[expose] public section
 
 open MeasureTheory NumberField GroundTheory.Automorphic GroundTheory.Automorphic.CuspidalSpectrum GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.CuspidalProjection PositivityTheory.Rg.Tf.Core UpperTheory.ConvolutionTheory.K
@@ -58,10 +62,11 @@ private theorem continuous_height {K : Type} [Field K] [NumberField K] {n : ℕ}
     Continuous (AutomorphicForm.height : AdelicGLn.AdelicGL K n → ℝ) := by
   unfold AutomorphicForm.height
   refine Continuous.mul ?_ continuous_finprod
-  exact continuous_finset_prod _ fun w _ => (continuous_locHeight.comp (continuous_infAt w)).pow _
+  exact continuous_finsetProd _ fun w _ => (continuous_locHeight.comp (continuous_infAt w)).pow _
 
 private theorem measurable_qht {K : Type} [Field K] [NumberField K] {n : ℕ} :
     Measurable (qht : G1 K n → ℝ) := by
+  set_option synthInstance.maxHeartbeats 400000 in
   haveI : Countable (Gam K n) := TopologicalSpace.separableSpace_iff_countable.1 inferInstance
   unfold qht
   refine Measurable.iInf fun γ => Continuous.measurable ?_

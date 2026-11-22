@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PSplit
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HaarRightInvariantCompact
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PSplit
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HaarRightInvariantCompact
+
+@[expose] public section
 
 noncomputable section
 

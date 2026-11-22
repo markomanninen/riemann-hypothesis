@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,8 @@ theorem reduce_of_equiv {K : Type} [CommRing K] [TopologicalSpace K] {W : Type} 
   have hsum : ∀ w, ∑ i, Φ (z₀ i) w * Φ (y 0 i) w = 1 := by
     intro w
     have := congrFun (congrArg Φ hz₀) w
-    simpa [dotProduct, map_sum, Finset.sum_apply] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [dotProduct, map_sum, Finset.sum_apply] using this
   have hmax : ∀ w, ∃ i, (∀ j, ‖Φ (y 0 j) w‖ ≤ ‖Φ (y 0 i) w‖) ∧ Φ (y 0 i) w ≠ 0 := by
     intro w
     obtain ⟨i₀, hi₀⟩ : ∃ i, Φ (y 0 i) w ≠ 0 := by
@@ -86,7 +91,8 @@ theorem reduce_of_equiv {K : Type} [CommRing K] [TopologicalSpace K] {W : Type} 
       have : Φ (((a : K) • y) 0 i) w = (u w)⁻¹ * Φ (y 0 i) w := by simp [hΦa]
       rw [this, hΦz 0 i w]
       split_ifs <;> simp
-    simp only [dotProduct, map_sum, Finset.sum_apply, map_mul, Pi.mul_apply, map_one, Pi.one_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, map_sum, Finset.sum_apply, map_mul, Pi.mul_apply, map_one, Pi.one_apply]
     rw [Finset.sum_congr rfl fun i _ => h1 i]
     simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true]
     exact inv_mul_cancel₀ (hu w)
@@ -121,7 +127,7 @@ theorem exists_basis (σ : E →ₐ[F] E) (h : IsCMExt F E σ) {δ : E} (hδ : �
     intro s t hst
     have h2 : s • (1 : E) - t • δ = 0 := by
       have := congrArg σ.toLinearMap hst
-      rw [map_add, LinearMap.map_smul, LinearMap.map_smul, map_zero] at this
+      rw [map_add (f := _), LinearMap.map_smul, LinearMap.map_smul, map_zero] at this
       simp only [AlgHom.toLinearMap_apply, map_one, hδ, smul_neg] at this
       rwa [sub_eq_add_neg]
     have h3 : (2 * t) • δ = 0 := by
@@ -261,7 +267,7 @@ theorem exists_equiv (σ : E →ₐ[F] E) (h : IsCMExt F E σ) :
       fun w => ((ρ w (a w) : ℝ) : ℂ) + ((ρ w (c w) : ℝ) : ℂ) * t w := by
     intro a c
     funext w
-    rw [map_add]
+    rw [map_add (f := _)]
     simp only [Φ₀, Algebra.TensorProduct.productMap_apply_tmul]
     show ((ρ w (a w) : ℝ) : ℂ) * τ w 1 + ((ρ w (c w) : ℝ) : ℂ) * τ w δ = _
     rw [map_one, mul_one]

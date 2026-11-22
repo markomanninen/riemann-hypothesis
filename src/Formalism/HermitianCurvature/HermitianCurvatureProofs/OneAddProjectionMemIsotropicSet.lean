@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TriangularFactorMiddleRow
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormFormOneUnitary.HermitianOrthogonalProjectionVector
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TriangularFactorMiddleRow
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormFormOneUnitary.HermitianOrthogonalProjectionVector
+
+@[expose] public section
 
 open Matrix Finset
 

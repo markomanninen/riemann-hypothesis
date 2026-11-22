@@ -1,5 +1,9 @@
-import Mathlib
-import Lemmata.MiscLemmasB.Imports
+module
+
+public import Mathlib
+public import Lemmata.MiscLemmasB.Imports
+
+@[expose] public section
 
 open MeasureTheory Topology
 

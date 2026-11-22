@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.RestPlOf
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.RestPlOf
+
+@[expose] public section
 
 noncomputable section
 

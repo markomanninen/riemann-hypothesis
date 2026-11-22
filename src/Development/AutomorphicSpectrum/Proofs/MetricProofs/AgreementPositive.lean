@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.AgreementPos
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MongeAmpereRegularizationLogLogBoundStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntersectionDifferenceTelescopingIntegralStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.TendstoLimUnderOfCauchyRate
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LimRateMulLogSqLe
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.AbsCoeffProdXLeOne
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.AgreementPos
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MongeAmpereRegularizationLogLogBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntersectionDifferenceTelescopingIntegralStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.TendstoLimUnderOfCauchyRate
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LimRateMulLogSqLe
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.AbsCoeffProdXLeOne
+
+@[expose] public section
 
 open MvPolynomial MeasureTheory Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo
 open ReciprocityTheory.ChartRestriction.G.AI ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB

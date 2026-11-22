@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.MemMulAAOfTrace
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SelfDualCLatP
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.MemMulAAOfTrace
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SelfDualCLatP
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,17 +1,20 @@
-import Development.AutomorphicArithmetic.BlowupCategories.SpanScale
-import Development.AutomorphicArithmetic.CommutativeAlgebra.PullCupPowEqCupPowPull
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupHypercohomologyPullbackStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCupProductGradedCommStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCupProductAssocStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCupUnitAndPrimitiveRootClassesStatement
+module
+
+public import Development.AutomorphicArithmetic.BlowupCategories.SpanScale
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.PullCupPowEqCupPowPull
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupHypercohomologyPullbackStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCupProductGradedCommStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCupProductAssocStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCupUnitAndPrimitiveRootClassesStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Pbf UpperTheory.Blow
 
 private theorem ht_cast_cast {q : ℕ} {E : Spc} {n i n' i' n'' i'' : ℤ} (h1 : n = n') (h2 : i = i') (h3 : n' = n'') (h4 : i' = i'')
     (x : Ht q E n i) : Ht.cast h3 h4 (Ht.cast h1 h2 x) = Ht.cast (h1.trans h3) (h2.trans h4) x := by
   subst h1 h2 h3 h4
   rfl
-
-private theorem ht_cast_self {q : ℕ} {E : Spc} {n i : ℤ} (h1 : n = n) (h2 : i = i) (x : Ht q E n i) : Ht.cast h1 h2 x = x := rfl
 
 private theorem ht_cast_zero {q : ℕ} {E : Spc} {n i n' i' : ℤ} (h1 : n = n') (h2 : i = i') :
     Ht.cast h1 h2 (0 : Ht q E n i) = 0 := by
@@ -104,7 +107,8 @@ private theorem core {q : ℕ} [NeZero q] (N : ℕ) (hN : 1 ≤ N) {E X Y B : Sp
     rw [← pull_comp, ← pull_comp, hc]
   have h1 : ∑ j : Fin (N + 1), ((cup q (pull _ p _ _ (pull _ πX _ _ (a j))) (cpow q (pull _ β _ _ ξY) j)).cast (by ring) (by ring) : Ht q B n i) = 0 := by
     have h' := congrArg (pull _ β (tw q i) n) h
-    rw [map_sum, map_zero] at h'
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h'
     rw [← h']
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [pull_cast, pull_cup, UpperTheory.pull_cupPow_eq_cupPow_pull q β ξY j hY, pp]
@@ -119,7 +123,15 @@ private theorem core {q : ℕ} [NeZero q] (N : ℕ) (hN : 1 ≤ N) {E X Y B : Sp
       rw [pull_cast, cup_cast_left, ht_cast_cast]
       rfl
     · simp only [y1]
-      rw [map_sum, map_sum, AddMonoidHom.finset_sum_apply, ht_cast_sum]
+      have sum_apply {A B : Type 1} [AddCommMonoid A] [AddCommMonoid B]
+          {ι : Type} (s : Finset ι) (f : ι → A →+ B) (x : A) :
+          (s.sum f) x = s.sum (fun j => f j x) := by
+        classical
+        induction s using Finset.induction_on with
+        | empty => simp
+        | insert a s ha ih => simp [ha, ih]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_sum, sum_apply, ht_cast_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [pull_cast, cup_cast_left, ht_cast_cast]
       exact (step_term p ξX (pull _ β _ _ ξY) hX hrel _ k _ _ _ _).symm)

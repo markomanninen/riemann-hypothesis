@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.EventuallyNormFinLeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EventuallyNormFinLeOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -108,8 +112,8 @@ open Classical in
 theorem evalV_singleV (v u : HeightOneSpectrum (𝓞 F)) (y : Fv F v) :
     Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F u (singleV F v y) = (Pi.single v y : ∀ t : HeightOneSpectrum (𝓞 F), Fv F t) u := rfl
 
-open Classical in
 
+open Classical in
 def singleFin (v : HeightOneSpectrum (𝓞 F)) : Fv F v →ₗ[F] Af F where
   toFun := singleV F v
   map_add' a b := Subtype.ext (Pi.single_add v a b)
@@ -442,16 +446,6 @@ theorem embAt_mem (S : Finset (HeightOneSpectrum (𝓞 F))) (x : ∀ v : S, GLoc
     (fun _ _ _ _ h => commute_emb σ J _ (proj_emb_ne σ J (fun e => h (Subtype.ext e)) _)) fun v _ => mem_atPts.2 ⟨mem_finPts.2 (by simp), fun u hu => ?_⟩
   exact proj_emb_ne σ J (fun e : u = v.1 => hu (e ▸ v.2)) _
 
-theorem range_embAt (S : Finset (HeightOneSpectrum (𝓞 F))) : (embAt σ J S).range = atPts σ J S := by
-  refine le_antisymm (by rintro _ ⟨x, rfl⟩; exact embAt_mem σ J S x) fun g hg => ⟨projAt σ J S g, ?_⟩
-  have h := mem_atPts.1 (embAt_mem σ J S (projAt σ J S g))
-  have h' := mem_atPts.1 hg
-  refine GAd_ext σ J (fun w => ?_) fun v => ?_
-  · rw [mem_finPts_iff_forall.1 h.1 w, mem_finPts_iff_forall.1 h'.1 w]
-  · by_cases hv : v ∈ S
-    · exact proj_embAt σ J S _ ⟨v, hv⟩
-    · rw [h.2 v hv, h'.2 v hv]
-
 theorem range_emb (v : HeightOneSpectrum (𝓞 F)) : (emb σ J v).range = atPts σ J {v} := by
   ext g
   rw [mem_atPts]
@@ -476,27 +470,6 @@ def partAway (S : Finset (HeightOneSpectrum (𝓞 F))) (g : GAd σ J) : awayPts 
 
 theorem embAt_mul_partAway (S : Finset (HeightOneSpectrum (𝓞 F))) (g : GAd σ J) :
     embAt σ J S (projAt σ J S g) * partAway σ J S g = g := mul_inv_cancel_left _ _
-
-def atAwayEquiv (S : Finset (HeightOneSpectrum (𝓞 F))) : GAd σ J ≃* (∀ v : S, GLoc σ J v) × awayPts σ J S :=
-  MulEquiv.symm (MulEquiv.ofBijective
-    (MonoidHom.noncommCoprod (embAt σ J S) (awayPts σ J S).subtype fun x y =>
-      commute_atPts_awayPts σ J (embAt_mem σ J S x) y.2)
-    ⟨(injective_iff_map_eq_one _).2 fun p hp => by
-      have hp' : embAt σ J S p.1 * p.2.1 = 1 := hp
-      have h1 : p.1 = 1 := funext fun v => by
-        have := congrArg (proj σ J v) hp'
-        rwa [map_mul, proj_embAt, mem_awayPts.1 p.2.2 v v.2, mul_one, map_one] at this
-      rw [h1, map_one, one_mul] at hp'
-      exact Prod.ext h1 (Subtype.ext hp'),
-    fun g => ⟨(projAt σ J S g, partAway σ J S g), embAt_mul_partAway σ J S g⟩⟩)
-
-theorem atAwayEquiv_symm_apply (S : Finset (HeightOneSpectrum (𝓞 F))) (p : (∀ v : S, GLoc σ J v) × awayPts σ J S) :
-    (atAwayEquiv σ J S).symm p = embAt σ J S p.1 * p.2 := rfl
-
-theorem atAwayEquiv_apply (S : Finset (HeightOneSpectrum (𝓞 F))) (g : GAd σ J) :
-    atAwayEquiv σ J S g = (projAt σ J S g, partAway σ J S g) :=
-  (atAwayEquiv σ J S).symm.injective (by
-    rw [MulEquiv.symm_apply_apply]; exact (embAt_mul_partAway σ J S g).symm)
 
 def embArchPi : (∀ w, GArch σ J w) →* GInf σ J :=
   MonoidHom.noncommPiCoprod (fun w => embArchInf σ J w) fun u w h x y => GInf_ext σ J fun t => by
@@ -538,24 +511,10 @@ theorem continuous_noncommProd {ι X M : Type} [TopologicalSpace X] [Monoid M] [
   | insert i s hi ih =>
     exact ((hf i).mul ih).congr fun x => (Finset.noncommProd_insert_of_notMem s i (fun i => f i x) _ hi).symm
 
-theorem continuous_projAt (S : Finset (HeightOneSpectrum (𝓞 F))) : Continuous (projAt σ J S) :=
-  continuous_pi fun v => continuous_proj σ J v
-
 theorem continuous_embAt (S : Finset (HeightOneSpectrum (𝓞 F))) : Continuous (embAt σ J S) :=
   continuous_noncommProd (fun (v : S) (x : ∀ v : S, GLoc σ J v) => emb σ J v (x v))
     (fun v => (continuous_emb σ J v).comp (continuous_apply v))
     (fun _ _ _ h => commute_emb σ J _ (proj_emb_ne σ J (fun e => h (Subtype.ext e)) _)) Finset.univ
-
-theorem continuous_partAway (S : Finset (HeightOneSpectrum (𝓞 F))) : Continuous (partAway σ J S) :=
-  (((continuous_embAt σ J S).comp (continuous_projAt σ J S)).inv.mul continuous_id).subtype_mk _
-
-def atAwayContEquiv (S : Finset (HeightOneSpectrum (𝓞 F))) :
-    GAd σ J ≃ₜ* (∀ v : S, GLoc σ J v) × awayPts σ J S :=
-  { atAwayEquiv σ J S with
-    continuous_toFun := ((continuous_projAt σ J S).prodMk (continuous_partAway σ J S)).congr fun g =>
-      (atAwayEquiv_apply σ J S g).symm
-    continuous_invFun := ((continuous_embAt σ J S).comp continuous_fst).mul
-      (continuous_subtype_val.comp continuous_snd) }
 
 theorem continuous_embArchPi : Continuous (embArchPi σ J) :=
   continuous_noncommProd (fun w (x : ∀ w, GArch σ J w) => embArchInf σ J w (x w))
@@ -592,7 +551,7 @@ theorem infEmb_sigR (h : IsCMExt F E σ) (τ : EmbOver E w) (y : w.Completion �
     starRingEnd ℂ (infEmb τ y) = infEmb τ (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR _ σ y) := by
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a e =>
     have := h.1
     have h2 := InfinitePlace.Completion.extensionEmbeddingOfIsReal_apply (IsTotallyReal.isReal w) a
@@ -616,7 +575,7 @@ theorem infEmb_bijective (h : IsCMExt F E σ) (τ : EmbOver E w) : Function.Bije
   have hsurj : Function.Surjective (infEmb τ) := by
     intro z
     refine ⟨e.symm (z.re - z.im / (τ.1 x).im * (τ.1 x).re) ⊗ₜ[F] 1 + e.symm (z.im / (τ.1 x).im) ⊗ₜ[F] x, ?_⟩
-    rw [map_add, infEmb_tmul, infEmb_tmul, he, he, e.apply_symm_apply, e.apply_symm_apply, map_one]
+    rw [map_add (f := _), infEmb_tmul, infEmb_tmul, he, he, e.apply_symm_apply, e.apply_symm_apply, map_one]
     apply Complex.ext
     · simp only [mul_one, Complex.add_re, Complex.ofReal_re, Complex.re_ofReal_mul]; ring
     · simp only [mul_one, Complex.add_im, Complex.ofReal_im, Complex.im_ofReal_mul]; field_simp; ring

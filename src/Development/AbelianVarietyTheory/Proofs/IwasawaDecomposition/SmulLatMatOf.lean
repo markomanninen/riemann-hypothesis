@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAlgOfFinite
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAlgOfFinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,7 +101,8 @@ theorem mem_lat {n : ℕ} (N : Submodule (𝓞 X.E) (Sp X.E n)) (y : Fin n → D
 theorem stdH_vec (hok : s.Ok) {n : ℕ} (x y : Sp X.E n) :
     (letI := D.host.cmStar; stdH D.host.E n (vec s x) (vec s y)) = s.iE (hStd X.E n x y) := by
   show ∑ i, (letI := D.host.cmStar; star (s.iE (x i))) * s.iE (y i) = s.iE (∑ i, star (x i) * y i)
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, hok.2, star_conj]
 
@@ -118,7 +123,33 @@ theorem sd_lat (hok : s.Ok) {n : ℕ} {N : Submodule (𝓞 X.E) (Sp X.E n)} (hN 
   · rw [eq_top_iff]
     intro y _
     have h1 : (fun i => s.iE.symm (y i) : Sp X.E n) ∈ Submodule.span X.E (N : Set (Sp X.E n)) := by
-      rw [hN.1.span_eq_top]; trivial
+      have hspan : Submodule.span X.E (N : Set (Sp X.E n)) = ⊤ := by
+        let W := Submodule.span X.E (N : Set (Sp X.E n))
+        change W = ⊤
+        by_contra h
+        let e : Sp X.E n ≃ₗ⋆[X.E] Sp X.E n := starLinearEquiv X.E
+        let g : Sp X.E n →ₗ[X.E] Module.Dual X.E W :=
+          (LinearMap.domRestrict' W).comp ((hStd X.E n).comp e.toLinearMap)
+        have hdim : Module.finrank X.E (Module.Dual X.E W) < Module.finrank X.E (Sp X.E n) := by
+          rw [Subspace.dual_finrank_eq]
+          exact Submodule.finrank_lt h
+        obtain ⟨x, hx, hx₀⟩ :=
+          Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+        have hsmul (a : X.E) : a • e x ∈ N := by
+          rw [← hN.2, dualBasic_mem_dual]
+          intro z hz
+          apply hStd_mem_one_symm
+          have hxz : hStd X.E n (e x) z = 0 :=
+            congrArg (fun f : Module.Dual X.E W => f ⟨z, Submodule.subset_span hz⟩) (LinearMap.mem_ker.mp hx)
+          simp [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hxz]
+        let i : X.E →ₗ[𝓞 X.E] N :=
+          ((LinearMap.toSpanSingleton X.E _ (e x)).restrictScalars (𝓞 X.E)).codRestrict N hsmul
+        let : Module.Finite (𝓞 X.E) N := Module.Finite.iff_fg.mpr hN.1.fg
+        let : Module.Finite (𝓞 X.E) X.E := Module.Finite.of_injective i fun a b hab =>
+          smul_left_injective X.E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+        exact NumberField.RingOfIntegers.not_isField X.E
+          (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 X.E) X.E) (Field.toIsField X.E))
+      rw [hspan]; trivial
     have h2 := vec_spanE s _ h1
     rw [vec_surj s] at h2
     exact Submodule.span_mono (fun z hz => Submodule.subset_span hz) h2
@@ -148,7 +179,8 @@ theorem apply_eq_sum {n : ℕ} (γ : Sp X.E n ≃ₗ[X.E] Sp X.E n) (x : Sp X.E 
   have h : x = ∑ j, x j • (Pi.single j 1 : Sp X.E n) := by
     funext k
     simp [Finset.sum_apply, Pi.single_apply]
-  conv_lhs => rw [h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [h, map_sum]
   rw [Finset.sum_apply]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_smul, Pi.smul_apply, smul_eq_mul, mul_comm]
@@ -157,7 +189,8 @@ theorem matOf_mulVec {n : ℕ} (γ : Sp X.E n ≃ₗ[X.E] Sp X.E n) (x : Sp X.E 
     (matOf s γ).mulVec (vec s x) = vec s (γ x) := by
   funext i
   show ∑ j, s.iE (γ (Pi.single j 1) i) * s.iE (x j) = s.iE (γ x i)
-  rw [apply_eq_sum γ x i, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [apply_eq_sum γ x i, map_sum]
   simp only [map_mul]
 
 theorem smulLat_matOf {n : ℕ} (γ : Sp X.E n ≃ₗ[X.E] Sp X.E n) (N : Submodule (𝓞 X.E) (Sp X.E n)) :

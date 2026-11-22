@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EopWMemStabAlg
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OnlyStableSubspaces
-open NumberField Matrix MeasureTheory GlobalTheory.CuspRep GlobalTheory.UnitaryBC PositivityTheory.Rg.BcB PositivityTheory.Rg.BcB.E PositivityTheory.Rg.BcB.Desc GlobalTheory.CompanionTheory.TwY GlobalTheory.CompanionTheory.TrPassage
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EopWMemStabAlg
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OnlyStableSubspaces
+
+@[expose] public section
+
+open NumberField Matrix MeasureTheory GlobalTheory.CuspRep GlobalTheory.UnitaryBC PositivityTheory.Rg.BcB PositivityTheory.Rg.BcB.E PositivityTheory.Rg.BcB.Desc GlobalTheory.CompanionTheory.TwY
 open PositivityTheory.RgBcC (KMod lefE lefT phiOf infOf IsMult Inf GLs IsEig MultAlg)
 open PositivityTheory.RgBcC.Real (IsLefK)
 open PositivityTheory.RgBcC.RealD (invA flipA trOn hwSp harmSet kF gelA barF IsPair IsDerivK)
@@ -90,8 +95,8 @@ theorem lieD_theta (X : Lie E n) {φ : GA E n → ℂ} (hφ : φ ∈ Sm E n) (g 
   rw [e.fderiv_eq, h2.fderiv]
   simp
 
-open ComplexConjugate in
 
+open ComplexConjugate in
 theorem atEmb_conjugate (w : InfinitePlace E) (z : ℂ) :
     atEmb (ComplexEmbedding.conjugate w.embedding) z = atEmb w.embedding (conj z) := by
   have hne : w.embedding ≠ ComplexEmbedding.conjugate w.embedding := fun h =>
@@ -99,8 +104,8 @@ theorem atEmb_conjugate (w : InfinitePlace E) (z : ℂ) :
   unfold atEmb
   rw [InfinitePlace.mk_conjugate_eq, InfinitePlace.mk_embedding, if_neg hne, if_pos rfl]
 
-open ComplexConjugate in
 
+open ComplexConjugate in
 theorem star_atEmb (w : InfinitePlace E) (z : ℂ) : star (atEmb w.embedding z) = atEmb w.embedding (conj z) := by
   funext v
   simp only [atEmb, InfinitePlace.mk_embedding, if_true, Pi.star_apply]

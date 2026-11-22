@@ -1,15 +1,19 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianHaarMeasure.Assemble
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianHaarMeasure.HermitianAlgebraGeneration
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnRdSkew
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmStar
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmMove
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnCovDet
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnCovHat
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.CovariantHatSqOfLin
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnCovLin
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnYLeibniz
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnEabGl
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnEabPres
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianHaarMeasure.Assemble
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianHaarMeasure.HermitianAlgebraGeneration
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnRdSkew
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmStar
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QmMove
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnCovDet
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnCovHat
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.CovariantHatSqOfLin
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnCovLin
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnYLeibniz
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnEabGl
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnEabPres
+
+@[expose] public section
 
 theorem qnHermHaar : Formalism.FourierDecayAlt.Q.HermHaar :=
   PI.QnHermHaar.qnHermHaar_of_alg PI.QnHermHaar.hermitian_algebra_generation qnRdSkew quantum_minor_star

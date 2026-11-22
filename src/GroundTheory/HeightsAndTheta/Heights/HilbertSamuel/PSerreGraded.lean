@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSerreGraded
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSerreGraded
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -219,11 +224,11 @@ theorem torsion_bound (hA : algebraMap (MvPolynomial (Fin q) ℤ) (Polynomial Ω
   rw [MvPolynomial.as_sum (f g), Finset.sum_smul, finsetSum_coeff]
   refine AddSubgroup.sum_mem _ fun v _ => ?_
   by_cases hlow : ∀ j, v j < Dm
-  · have hdeg : (MvPolynomial.monomial v (MvPolynomial.coeff v (f g)) • g).natDegree < k + 1 := by
+  · have hdeg : (MvPolynomial.monomial v (AddMonoidAlgebra.coeff (f g) v) • g).natDegree < k + 1 := by
       rw [smul_eq w hA, act_monomial]
-      have h1 := natDegree_mul_le (p := C (((MvPolynomial.coeff v (f g) : ℤ) : Ω) * ∏ j, w j ^ v j) *
+      have h1 := natDegree_mul_le (p := C (((AddMonoidAlgebra.coeff (f g) v : ℤ) : Ω) * ∏ j, w j ^ v j) *
         X ^ (∑ j, v j)) (q := g)
-      have h2 := natDegree_C_mul_X_pow_le (((MvPolynomial.coeff v (f g) : ℤ) : Ω) * ∏ j, w j ^ v j)
+      have h2 := natDegree_C_mul_X_pow_le (((AddMonoidAlgebra.coeff (f g) v : ℤ) : Ω) * ∏ j, w j ^ v j)
         (∑ j, v j)
       have h3 : ∑ j, v j ≤ q * Dm := by
         calc ∑ j, v j ≤ ∑ _j : Fin q, Dm := Finset.sum_le_sum fun j _ => (hlow j).le
@@ -234,8 +239,8 @@ theorem torsion_bound (hA : algebraMap (MvPolynomial (Fin q) ℤ) (Polynomial Ω
     exact zero_mem _
   · simp only [not_forall, not_lt] at hlow
     obtain ⟨j, hj⟩ := hlow
-    have hsplit : MvPolynomial.monomial v (MvPolynomial.coeff v (f g)) =
-        MvPolynomial.monomial (v - Finsupp.single j Dm) (MvPolynomial.coeff v (f g)) *
+    have hsplit : MvPolynomial.monomial v (AddMonoidAlgebra.coeff (f g) v) =
+        MvPolynomial.monomial (v - Finsupp.single j Dm) (AddMonoidAlgebra.coeff (f g) v) *
           MvPolynomial.X j ^ Dm := by
       rw [← MvPolynomial.monomial_add_single, tsub_add_cancel_of_le (Finsupp.single_le_iff.mpr hj)]
     rw [hsplit, mul_smul]

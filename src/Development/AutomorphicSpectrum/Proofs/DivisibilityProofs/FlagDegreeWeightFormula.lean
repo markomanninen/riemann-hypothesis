@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
-import Formalism.DegreeFormula.PointDegree.FlagDeg
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
+public import Formalism.DegreeFormula.PointDegree.FlagDeg
+
+@[expose] public section
 
 open MvPolynomial Filter Topology GlobalTheory.CompanionTheory.Ar.Top
 

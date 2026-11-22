@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.SigmaFiniteAmplitudes.RStabInv
-import Formalism.PeriodIntegrals.ContinuousExpLie
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.SigmaFiniteAmplitudes.RStabInv
+public import Formalism.PeriodIntegrals.ContinuousExpLie
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped ENNReal

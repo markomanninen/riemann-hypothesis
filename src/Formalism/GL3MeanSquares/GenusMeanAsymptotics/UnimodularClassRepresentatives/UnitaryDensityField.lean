@@ -1,6 +1,10 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExtPPowLeSpanSup
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CardLiftMatrix
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MemRangeLinPart
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExtPPowLeSpanSup
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CardLiftMatrix
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MemRangeLinPart
+
+@[expose] public section
 
 open NumberField Module
 
@@ -11,8 +15,6 @@ namespace Formalism.HermitianLattices.Ext.L3.unitaryAbsoluteValueBounds
 open NormLifting
 
 variable {K F : Type} [Field K] [NumberField K] [StarRing K] [Field F] [NumberField F] [Algebra F K]
-
-local notation "ι" => algebraMap (𝓞 F) (𝓞 K)
 
 abbrev AQ (K : Type) {F : Type} [Field K] [Field F] [Algebra F K] (𝔭 : Ideal (𝓞 F)) (k : ℕ) : Type :=
   𝓞 K ⧸ extP K 𝔭 ^ k
@@ -119,8 +121,8 @@ theorem exists_tr_one (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF :
     rw [← hc]
     exact Ideal.mem_map_of_mem _ h
   obtain ⟨u, hu⟩ := MeanA.exists_mul_sub_one_mem_pow h𝔭 hc𝔭 N
-  refine ⟨ι u * b, ?_⟩
-  have e : conjO K a * (ι u * b) + conjO K (ι u * b) * a - 1 = ι (u * c - 1) := by
+  refine ⟨(algebraMap (𝓞 F) (𝓞 K)) u * b, ?_⟩
+  have e : conjO K a * ((algebraMap (𝓞 F) (𝓞 K)) u * b) + conjO K ((algebraMap (𝓞 F) (𝓞 K)) u * b) * a - 1 = (algebraMap (𝓞 F) (𝓞 K)) (u * c - 1) := by
     rw [map_mul (conjO K), idealPowerSpanBounds.conjO_map hF, map_sub, map_mul, map_one, hc]
     ring
   rw [e, idealPowerSpanBounds.mem_pow_iff]
@@ -167,7 +169,7 @@ theorem cntP_succ (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsF
       rw [← ha, Ideal.Quotient.factor_mk, inQ_mk 𝔭 hk] at hi₀
       obtain ⟨b, hb⟩ := exists_tr_one hK hF h𝔭 hi₀ (k + 1)
       refine SecondPropositionFree.mem_range_linPart _ y i₀ (b := Ideal.Quotient.mk _ b) ?_ hw
-      rw [← ha, sg_mk, sg_mk, ← map_mul, ← map_mul, ← map_add, ← map_one (Ideal.Quotient.mk _),
+      rw [← ha, sg_mk, sg_mk, ← map_mul, ← map_mul, ← map_add (f := _), ← map_one (Ideal.Quotient.mk _),
         Ideal.Quotient.eq]
       exact hb)
   rw [Ideal.Quotient.factor_mk] at h

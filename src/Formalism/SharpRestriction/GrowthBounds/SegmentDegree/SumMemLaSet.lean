@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.FamilyDegreesAdmissible
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.FamilyDegreesAdmissible
+
+@[expose] public section
 
 noncomputable section
 

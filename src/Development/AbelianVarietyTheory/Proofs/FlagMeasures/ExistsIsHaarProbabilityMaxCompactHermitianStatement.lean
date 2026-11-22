@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIsHaarProbabilityMaxCompactHermitian
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsCompactKH
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIsHaarProbabilityMaxCompactHermitian
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsCompactKH
+
+@[expose] public section
+
 open MeasureTheory Matrix Filter Topology
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.exists_isHaarProbabilityMaxCompactHermitian : ∀ k r : ℕ, ∃ μ : Measure (Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ), GlobalTheory.KFinAvg.IsHaarKH k r μ := by

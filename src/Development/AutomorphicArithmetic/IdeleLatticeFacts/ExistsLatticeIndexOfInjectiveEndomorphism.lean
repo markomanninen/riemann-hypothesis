@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutEtaB
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepBI
-import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.PLocalLatticeIndex
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutEtaB
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepBI
+public import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.PLocalLatticeIndex
+
+@[expose] public section
 
 open scoped TensorProduct Matrix Topology Kronecker ComplexOrder Classical
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Matrix
@@ -72,7 +76,7 @@ private theorem relIndex_eq_inv_norm_det_basis_change {m : ℕ} (a c : Module.Ba
       rw [← Submodule.span_image, ← Set.range_comp, ← hc]
       congr 2
       funext i
-      simp
+      exact Module.Basis.equiv_apply _ _ _ _
     rw [← key, ha, Submodule.map_coe]
     rfl
   exact LocalLatticeIndex.index_eq_det A B _ hAfg hAsp himg hBA

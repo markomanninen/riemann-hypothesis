@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.DecompB
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DcAevalIntertwine
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.DecompB
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DcAevalIntertwine
+
+@[expose] public section
 
 noncomputable section
 
@@ -269,7 +273,7 @@ theorem dc_ee_fin_stable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace �
       refine le_iSup (fun j => S0.map (EE ^ j)) (j + 1) ⟨y, hy, ?_⟩
       rw [pow_succ', Module.End.mul_apply]
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact W.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact W.add_mem hx hy
 
 end ReciprocityTheory.ChartRestriction.DS
 
@@ -319,7 +323,8 @@ theorem dc_eeF_Qsymm {M : Type*} [AddCommGroup M] [Module ℂ M] {E : Fin n → 
       Q (eeF dual E f) g = Q f (eeF dual E g) := by
   intro f hf g hg
   have hΩ : Q (casimir (tensF dual E) f) g = Q f (casimir (tensF dual E) g) := by
-    simp only [casimir, LinearMap.sum_apply, Module.End.mul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [casimir, LinearMap.sum_apply, Module.End.mul_apply, map_sum]
     refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
     rw [hadj a b _ (dc_tens_genSub_stable dual b a f hf) g hg,
       hadj b a f hf _ (dc_tens_genSub_stable dual b a g hg), ← mul_assoc, dc_adjSign_mul_swap, one_mul]

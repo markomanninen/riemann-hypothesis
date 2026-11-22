@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+
+@[expose] public section
 
 noncomputable section
 

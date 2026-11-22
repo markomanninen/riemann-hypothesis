@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.FirstStepSecondHalfCondition
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePGerm
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.FirstStepSecondHalfCondition
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePGerm
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -134,7 +138,7 @@ theorem mms_zero : MMS V (0 : MvPowerSeries σ C) := by
 
 theorem MMS.add {f g : MvPowerSeries σ C} (hf : MMS V f) (hg : MMS V g) : MMS V (f + g) := by
   intro μ
-  rw [map_add]
+  rw [map_add (f := _)]
   exact mm_add (hf μ) (hg μ)
 
 theorem MMS.neg {f : MvPowerSeries σ C} (hf : MMS V f) : MMS V (-f) := by
@@ -150,7 +154,8 @@ theorem MMS.sub {f g : MvPowerSeries σ C} (hf : MMS V f) (hg : MMS V g) : MMS V
 theorem mms_sum {ι : Type} (s : Finset ι) {f : ι → MvPowerSeries σ C} (hf : ∀ i ∈ s, MMS V (f i)) :
     MMS V (∑ i ∈ s, f i) := by
   intro μ
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact mm_sum s _ (fun i hi => hf i hi μ)
 
 theorem MMS.mul_left {f g : MvPowerSeries σ C} (hf : IntS V f) (hg : MMS V g) : MMS V (f * g) := by
@@ -158,12 +163,7 @@ theorem MMS.mul_left {f g : MvPowerSeries σ C} (hf : IntS V f) (hg : MMS V g) :
   rw [MvPowerSeries.coeff_mul]
   exact mm_sum _ _ (fun p _ => mm_mul_ge' (hf p.1) (hg p.2))
 
-theorem MMS.mul_right {f g : MvPowerSeries σ C} (hf : MMS V f) (hg : IntS V g) : MMS V (f * g) := by
-  intro μ
-  rw [MvPowerSeries.coeff_mul]
-  exact mm_sum _ _ (fun p _ => mm_mul_ge (hf p.1) (hg p.2))
-
-theorem MMS.pderiv {f : MvPowerSeries σ C} (hf : MMS V f) (i : σ) : MMS V (MvPowerSeries.pderiv C i f) := by
+theorem MMS.pderiv {f : MvPowerSeries σ C} (hf : MMS V f) (i : σ) : MMS V (MvPowerSeries.pderiv i f) := by
   intro μ
   rw [MvPowerSeries.coeff_pderiv]
   refine mm_mul_ge (hf _) ?_
@@ -214,14 +214,6 @@ theorem MMS.subst [Finite σ] {a : σ → MvPowerSeries τ C} (ha0 : ∀ s, MvPo
 theorem MMS.ev_of {d m n : ℕ} {a : Fin m → Pt C n d} (ha : Z0 a) (hi : ∀ k i, IntS V (a k i)) {f : PS C m d}
     (hf : MMS V f) : MMS V (ev a f) := by
   exact MMS.subst (a := fun p : Fin m × Fin d => a p.1 p.2) (fun p => ha p.1 p.2) (fun p => hi p.1 p.2) hf
-
-def intSer (V : VF C) (σ : Type) : Subring (MvPowerSeries σ C) where
-  carrier := {f | IntS V f}
-  mul_mem' := fun ha hb => intS_mul ha hb
-  one_mem' := intS_one
-  add_mem' := fun ha hb => intS_add ha hb
-  zero_mem' := intS_zero
-  neg_mem' := fun ha => intS_neg ha
 
 theorem mms_l_mul {f : MvPowerSeries σ C} (hf : IntS V f) : MMS V ((V.l : MvPowerSeries σ C) * f) := by
   intro μ
@@ -304,9 +296,9 @@ theorem intS_frobTw {c : MvPowerSeries σ C} (hc : IntS V c) : IntS V (frobTw V.
 theorem mms_frobTw_add {f g : MvPowerSeries σ C} (hf : IntS V f) (hg : IntS V g) :
     MMS V (frobTw V.l (f + g) - (frobTw V.l f + frobTw V.l g)) := by
   intro μ
-  rw [map_sub, map_add, coeff_frobTw, coeff_frobTw, coeff_frobTw]
+  rw [map_sub, map_add (f := _), coeff_frobTw, coeff_frobTw, coeff_frobTw]
   split_ifs
-  · rw [map_add, ← sub_sub]
+  · rw [map_add (f := _), ← sub_sub]
     exact mm_add_pow (hf _) (hg _)
   · rw [add_zero, sub_zero]
     exact mm_zero
@@ -322,7 +314,7 @@ private theorem mm_neg_pow_add_lemma_6 {a : C} (ha : V.Ge 0 a) : V.MM ((-a) ^ V.
 theorem mms_frobTw_neg {f : MvPowerSeries σ C} (hf : IntS V f) :
     MMS V (frobTw V.l (-f) + frobTw V.l f) := by
   intro μ
-  rw [map_add, coeff_frobTw, coeff_frobTw]
+  rw [map_add (f := _), coeff_frobTw, coeff_frobTw]
   split_ifs
   · rw [map_neg]
     exact mm_neg_pow_add_lemma_6 (hf _)
@@ -361,7 +353,8 @@ theorem mms_pow_frobTw [Finite σ] {f : MvPowerSeries σ C} (hf : IntS V f) : MM
   set P : MvPowerSeries σ C := ∑ ν ∈ S, MvPowerSeries.monomial ν (MvPowerSeries.coeff ν f) with hP
   have hcoeffP : ∀ ν, MvPowerSeries.coeff ν P = if ν ∈ S then MvPowerSeries.coeff ν f else 0 := by
     intro ν
-    rw [hP, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hP, map_sum]
     simp only [MvPowerSeries.coeff_monomial]
     rw [Finset.sum_ite_eq]
   have hlow : ∀ ν, ν ≤ μ → MvPowerSeries.coeff ν (f - P) = 0 := by
@@ -389,7 +382,8 @@ theorem mms_pow_frobTw [Finite σ] {f : MvPowerSeries σ C} (hf : IntS V f) : MM
   have h4 : frobTw V.l P = ∑ ν ∈ S, (MvPowerSeries.monomial ν (MvPowerSeries.coeff ν f)) ^ V.l := by
     ext μ'
     rw [coeff_frobTw]
-    simp only [hP, map_sum, monomial_pow_lemma_9, MvPowerSeries.coeff_monomial]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hP, map_sum, monomial_pow_lemma_9, MvPowerSeries.coeff_monomial]
     split_ifs with hd
     · rw [Finset.sum_ite_eq]
       have e : ∀ ν : σ →₀ ℕ, (μ' = V.l • ν) ↔ (ν = μ'.mapRange (fun n => n / V.l) (Nat.zero_div V.l)) := by

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSymm
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasisBaseChange
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPushEquiv
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLieBasisOfHolUnif
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSymm
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasisBaseChange
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPushEquiv
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLieBasisOfHolUnif
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -29,9 +33,9 @@ theorem finrank_of_existsUnique {k V : Type} [Field k] [AddCommGroup V] [Module 
 
 end GlobalTheory.UnifEigenRank
 
+
 open GlobalTheory.UnifLieBasis in
 open ReciprocityTheory.ChartRestriction.G.Chart (prodPts scaleD isTan_iff isLieComb_iff isTan_scale) in
-
 theorem GlobalTheory.UnifEigenRank.finrank_eigenspace_of_lieMult : ∀ (P₀ : Out.PolAV (Sp ℂ)) (u : HolUnif P₀.A P₀.L P₀.g) (Hm : Matrix (Fin P₀.g) (Fin P₀.g) ℂ) (χ : u.Λ → ℂ), GoodU u Hm χ → ∀ (O : Type) [CommRing O] (act : OAct O P₀.A) (F : O → Module.End ℂ (Fin P₀.g → ℂ)), (∀ a z, u.ex (F a z) = u.ex z ≫ act.act a) → ∀ (τ : O →+* ℂ) (n : ℕ), LieMult act (𝟙 _) τ n → Module.finrank ℂ ↥(⨅ a, Module.End.eigenspace (F a) (τ a)) = n := by
   intro P₀ u Hm χ hu O _ act F hF τ n hn
   have := act.hom
@@ -68,10 +72,24 @@ theorem GlobalTheory.UnifEigenRank.finrank_eigenspace_of_lieMult : ∀ (P₀ : O
       exact (hu.tan₂ _).unique ⟨t1, h1⟩ ⟨t2, h2⟩
   choose W hW using fun i => (hu.tan₁ (v i) (hv i).1).exists
   have ht : ∀ i, Chart.IsTan (R := ℂ) (G := P₀.A) (v i) := fun i => (isTan_iff _).2 (hv i).1
+  have list_prod : ∀ {k : ℕ} (x : Fin k → Fin P₀.g → ℂ) (y : Fin k → (epsR ℂ ⟶ P₀.A)),
+      (∀ i, Chart.IsTan (y i)) → (∀ i, u.IsDiff (x i) (y i)) →
+      Chart.IsTan (List.ofFn y).prod ∧ u.IsDiff (∑ i, x i) (List.ofFn y).prod := by
+    intro k
+    induction k with
+    | zero =>
+      intro x y hy hx
+      simp only [List.ofFn_zero, List.prod_nil, Finset.univ_eq_empty, Finset.sum_empty]
+      exact ⟨Chart.isTan_one, isDiff_zero u⟩
+    | succ k ih =>
+      intro x y hy hx
+      obtain ⟨h1, h2⟩ := ih (fun i => x i.succ) (fun i => y i.succ) (fun i => hy _) (fun i => hx _)
+      rw [List.ofFn_succ, List.prod_cons, Fin.sum_univ_succ]
+      exact ⟨Chart.isTan_mul (hy 0) h1, isDiff_add u (hy 0) h1 (hx 0) h2⟩
   have hp : ∀ c : Fin n → ℂ, IsTangent (prodPts (R := ℂ) (G := P₀.A) c v) ∧
       u.IsDiff (∑ i, c i • W i) (prodPts (R := ℂ) (G := P₀.A) c v) := by
     intro c
-    obtain ⟨a, b⟩ := isDiff_list_prod u (fun i => c i • W i) _
+    obtain ⟨a, b⟩ := list_prod (fun i => c i • W i) (fun i => Chart.spMap (scaleD (c i)) ≫ v i)
       (fun i => isTan_scale (c i) (ht i)) (fun i => isDiff_smul u (ht i) (hW i) (c i))
     exact ⟨(isTan_iff _).1 a, b⟩
   refine UnifEigenRank.finrank_of_existsUnique _ W (fun i => (key _ _ (hv i).1 (hW i)).1 (hv i).2) fun z hz => ?_

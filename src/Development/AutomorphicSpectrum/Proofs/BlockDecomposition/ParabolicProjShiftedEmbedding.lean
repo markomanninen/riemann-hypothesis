@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgVanish
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCIndValue
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgVanish
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCIndValue
+
+@[expose] public section
+
 open Matrix GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.BZMir GlobalTheory.BZMir.Leib GlobalTheory.RgGu.Leib GlobalTheory.CompanionTheory.BZPhiPG
 open scoped TensorProduct
 
@@ -67,8 +72,15 @@ variable (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 
 theorem sEmb_mem_HPG (i t : ℕ) (h : MirabolicParabolic k (i + 1) t) :
     sEmb k ((i + 1) + t) (h : Mir k ((i + 1) + t)) ∈ HPG k (i + 1) (t + 1) := by
-  have hh := (GlobalTheory.CompanionTheory.LeibPhi.mem_mirabolicParabolic_iff k (i + 1) t
-    (h : GlobalTheory.BZMir.Mir k ((i + 1) + t))).1 h.2
+  have hh : ∀ (b : Fin (t + 1)) (a : Fin (i + 1)),
+      (((h : Mir k ((i + 1) + t)) : GL (Fin ((i + 1) + t + 1)) k) :
+        Matrix (Fin ((i + 1) + t + 1)) (Fin ((i + 1) + t + 1)) k)
+        (eGP (i + 1) t ⟨true, b⟩) (eGP (i + 1) t ⟨false, a⟩) = 0 := by
+    have hp : ((h : Mir k ((i + 1) + t)) : GL (Fin ((i + 1) + t + 1)) k) ∈
+        parab k (eGP (i + 1) t) := h.2
+    rw [mem_parab_iff] at hp
+    intro b a
+    exact hp true false b a (by decide)
   have hentry : ∀ p q : Fin ((i + 1) + t + 1 + 1),
       (((GlobalTheory.CompanionTheory.BZPhiPG.sEmb k ((i + 1) + t) (h : GlobalTheory.BZMir.Mir k ((i + 1) + t)) :
           GlobalTheory.BZMir.Mir k ((i + 1) + t + 1)) : GL (Fin ((i + 1) + t + 1 + 1)) k) :

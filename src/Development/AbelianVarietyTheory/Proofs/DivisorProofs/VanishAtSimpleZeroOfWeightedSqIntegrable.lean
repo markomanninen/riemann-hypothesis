@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.L2DbarEstimates.Imports
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSignHolds
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.L2ExtensionLogCanonical
-import Development.AbelianVarietyTheory.Definitions.Divisors.EtaleEmpty
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.VanishAtSStatementPf
+module
+
+public import Mathlib
+public import ReciprocityTheory.L2DbarEstimates.Imports
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSignHolds
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.L2ExtensionLogCanonical
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EtaleEmpty
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.VanishAtSStatementPf
+
+@[expose] public section
+
 open MeasureTheory Filter Topology Metric ReciprocityTheory.L2DbarEstimates ReciprocityTheory.L2DbarEstimates.Y GlobalTheory.OTY GlobalTheory.Published.L2Extension
 open scoped ENNReal ContDiff
 
@@ -23,7 +28,7 @@ theorem vanish_at_simple_zero_of_weighted_sq_integrable :
   have hOn : O ∈ 𝓝 p := hO.mem_nhds hpO
 
   have htr : Tendsto (fun z : V n => z + p) (𝓝 0) (𝓝 p) := by
-    have := (continuous_add_right p).tendsto (0 : V n)
+    have := (continuous_add_const p).tendsto (0 : V n)
     simpa using this
   set a := ‖u p‖ with ha
   have ha0 : 0 < a := norm_pos_iff.mpr hne

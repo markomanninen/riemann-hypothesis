@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
+
+@[expose] public section
 
 open UpperTheory.V.FW
 
@@ -20,21 +24,23 @@ private theorem card_addHom_zmod (l : ℕ) [Fact l.Prime] (A : Type) [AddCommGro
   @card_addHom_mod l _ A _ _ (AddCommGroup.zmodModule h)
 
 theorem UpperTheory.V.FW.cardTors :
-    ∀ (C : Type) [CommGroup C] [Finite C], (∀ n : ℕ, (powR C n).index = Nat.card (torK C n)) ∧ ∀ (l : ℕ) [Fact l.Prime], Nat.card (C →* Multiplicative (ZMod l)) = (powR C l).index := by
+    ∀ (C : Type) [CommGroup C] [Finite C], (∀ n : ℕ, (powR (C := C) n).index = Nat.card (torK (C := C) n)) ∧ ∀ (l : ℕ) [Fact l.Prime], Nat.card (C →* Multiplicative (ZMod l)) = (powR (C := C) l).index := by
   intro C _ _
   refine ⟨fun n => ?_, fun l _ => ?_⟩
-  · have h1 := Subgroup.card_mul_index (powR C n)
-    have h2 := Subgroup.card_mul_index (torK C n)
-    have h3 : (torK C n).index = Nat.card (powR C n) := Subgroup.index_ker _
+  · have h1 := Subgroup.card_mul_index (powR (C := C) n)
+    have h2 := Subgroup.card_mul_index (torK (C := C) n)
+    have h3 : (torK (C := C) n).index = Nat.card (powR (C := C) n) := Subgroup.index_ker _
     rw [h3] at h2
-    have hpos : 0 < Nat.card (powR C n) := Nat.card_pos
-    have h4 : Nat.card (powR C n) * (powR C n).index
-        = Nat.card (powR C n) * Nat.card (torK C n) := by
+    have hpos : 0 < Nat.card (powR (C := C) n) := Nat.card_pos
+    have h4 : Nat.card (powR (C := C) n) * (powR (C := C) n).index
+        = Nat.card (powR (C := C) n) * Nat.card (torK (C := C) n) := by
       rw [h1, ← h2, mul_comm]
     exact Nat.eq_of_mul_eq_mul_left hpos h4
-  · set N := powR C l
+  · set N := powR (C := C) l
     have hle : ∀ f : C →* Multiplicative (ZMod l), N ≤ f.ker := by
-      rintro f _ ⟨c, rfl⟩
+      intro f x hx
+      change x ∈ (powMonoidHom l : C →* C).range at hx
+      rcases MonoidHom.mem_range.mp hx with ⟨c, rfl⟩
       rw [MonoidHom.mem_ker, powMonoidHom_apply, map_pow]
       apply Multiplicative.toAdd.injective
       simp [toAdd_pow]
@@ -55,6 +61,7 @@ theorem UpperTheory.V.FW.cardTors :
       apply Additive.toMul.injective
       rw [toMul_nsmul, ← hc, toMul_zero, QuotientGroup.mk'_apply, ← QuotientGroup.mk_pow,
         QuotientGroup.eq_one_iff]
-      exact ⟨c, rfl⟩
+      change c ^ l ∈ (powMonoidHom l : C →* C).range
+      exact MonoidHom.mem_range.mpr ⟨c, by simp [powMonoidHom_apply]⟩
     rw [card_addHom_zmod l (Additive (C ⧸ N)) ht]
     rfl

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SmithMat
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SmithNormalForm.IsUnitOneAddVecMulVec
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SmithMat
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SmithNormalForm.IsUnitOneAddVecMulVec
+
+@[expose] public section
 
 namespace PI.SmithWork
 
@@ -101,7 +105,7 @@ theorem exists_blk {n : ℕ} (A : Matrix (Fin (n + 1)) (Fin (n + 1)) R) :
     have h0 : blk (0 : R) (0 : Matrix (Fin n) (Fin n) R) = A := by
       rw [hA]
       ext a c
-      refine Fin.cases ?_ (fun i => ?_) a <;> refine Fin.cases ?_ (fun k => ?_) c <;> simp
+      refine Fin.cases ?_ (fun i => ?_) a <;> refine Fin.cases ?_ (fun k => ?_) c <;> simp [blk]
     rw [h0]
     exact Eqv.refl A
   let S : Set R := {r | r ≠ 0 ∧ ∃ B, Eqv A B ∧ B 0 0 = r}
@@ -212,12 +216,12 @@ theorem smith (n : ℕ) : ∀ A : Matrix (Fin n) (Fin n) R,
       cases a using Fin.cases with
       | zero =>
         cases c using Fin.cases with
-        | zero => simp
-        | succ k => simp [Matrix.diagonal_apply, (Fin.succ_ne_zero k).symm]
+        | zero => simp [blk]
+        | succ k => simp [blk, Matrix.diagonal_apply, (Fin.succ_ne_zero k).symm]
       | succ i =>
         cases c using Fin.cases with
-        | zero => simp [Matrix.diagonal_apply, Fin.succ_ne_zero]
-        | succ k => simp [Matrix.diagonal_apply, Fin.succ_inj]
+        | zero => simp [blk, Matrix.diagonal_apply, Fin.succ_ne_zero]
+        | succ k => simp [blk, Matrix.diagonal_apply, Fin.succ_inj]
     refine ⟨Fin.cons b d, ?_, ?_⟩
     · rw [← eb]
       exact hAD.trans (Eqv.blk ⟨U, V, hU, hV, hUV⟩ b)

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+
+@[expose] public section
+
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI
 
 namespace GlobalTheory.CuspGL
@@ -11,7 +16,7 @@ theorem exists_int_eq_of_isIntegral_of_mul_eq_int {x : ℂ} (hx : IsIntegral ℤ
   have hq : x = algebraMap ℚ ℂ ((k : ℚ) / n) := by
     simp only [eq_ratCast, Rat.cast_div, Rat.cast_intCast]
     rw [eq_div_iff hn', mul_comm, h]
-  rw [hq, isIntegral_algebraMap_iff (algebraMap ℚ ℂ).injective] at hx
+  rw [hq, isIntegral_algebraMap_iff ] at hx
   obtain ⟨j, hj⟩ := IsIntegrallyClosed.isIntegral_iff.mp hx
   refine ⟨j, ?_⟩
   rw [hq, ← hj]
@@ -70,7 +75,8 @@ theorem exists_int_retraction_of_isIntegral :
     simp [Pi.single_apply]
   have key : ((∑ i, c i * m i : ℤ) : ℂ) = f (p m) := by
     conv_rhs => rw [hdec]
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     push_cast
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, map_smul, ← hc, zsmul_eq_mul, mul_comm]

@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearIndepOnOfInvariant
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemMaxUnramifiedOfCrystallineRatio
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RatioInvariantInK0
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConcretePeriodDeRhamModuleFinrankLe
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearIndepOnOfInvariant
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemMaxUnramifiedOfCrystallineRatio
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RatioInvariantInK0
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConcretePeriodDeRhamModuleFinrankLe
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct Module
 
@@ -35,10 +39,10 @@ theorem finrank_split {L A A₁ A₂ : Type} [Field L] [AddCommGroup A] [Module 
       apply Prod.ext
       · apply Subtype.ext
         change p₁ (i₁ y₁ + i₂ y₂) = y₁
-        rw [map_add, h11, h12, add_zero]
+        rw [map_add (f := _), h11, h12, add_zero]
       · apply Subtype.ext
         change p₂ (i₁ y₁ + i₂ y₂) = y₂
-        rw [map_add, h21, h22, zero_add]
+        rw [map_add (f := _), h21, h22, zero_add]
   rw [(LinearEquiv.ofBijective f hf).finrank_eq, Module.finrank_prod]
 
 section Funct
@@ -58,7 +62,7 @@ theorem ext_comm {R R' : Type} [AddCommGroup R] [Module Qp R] [AddCommGroup R'] 
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [ext, h]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 variable {V₁ : Type} [AddCommGroup V₁] [Module LL V₁] [Module Qp V₁] [IsScalarTower Qp LL V₁]
     {V₂ : Type} [AddCommGroup V₂] [Module LL V₂] [Module Qp V₂] [IsScalarTower Qp LL V₂]
@@ -76,22 +80,22 @@ theorem finrank_split_tensor (R : Type) [AddCommGroup R] [Module Qp R] (e : V �
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul v b => simp [ext]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   · intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul v b => simp [ext]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   · intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul v b => simp [ext]
-    | add a b ha hb => simp only [map_add, ha, hb, add_zero]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb, add_zero]
   · intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul v b => simp [ext]
-    | add a b ha hb => simp only [map_add, ha, hb, add_zero]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb, add_zero]
   · intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
@@ -102,7 +106,7 @@ theorem finrank_split_tensor (R : Type) [AddCommGroup R] [Module Qp R] (e : V �
         LinearMap.fst_apply, LinearMap.snd_apply, ← map_add, Prod.mk_add_mk, add_zero, zero_add,
         Prod.mk.eta, LinearEquiv.symm_apply_apply]
     | add a b ha hb =>
-      simp only [map_add]
+      simp only [map_add (f := _)]
       rw [add_add_add_comm, ha, hb]
 
 end Funct
@@ -207,14 +211,14 @@ theorem finrank_FildR_add (e : V ≃ₗ[LL] V₁ × V₂)
 
 end Per
 
-open GlobalTheory.Per.FontaineBound in
 
+open GlobalTheory.Per.FontaineBound in
 private theorem dcris_finite_le {l : ℕ} [Fact l.Prime] {P : LocPrime l} {AI : LocAinf l P} (T : LocTied l P AI)
     (K LL : FinExt l) (V : Type) [AddCommGroup V] [Module ↥LL.1 V] [Module ℚ_[l] V]
     [IsScalarTower ℚ_[l] ↥LL.1 V] [FiniteDimensional ↥LL.1 V] (ρ : Representation ↥LL.1 ↥(GK K) V) :
     Module.Finite ↥LL.1 (Dcris (P.PD K) ρ) ∧
       finrank ↥LL.1 (Dcris (P.PD K) ρ) ≤ finrank ℚ_[l] ↥(K0 K) * finrank ↥LL.1 V := by
-  have := isDomain_cris (P.PD K) (isField_of_tied T)
+  have := isDomain_cris (PD := P.PD K) (isField_of_tied T)
   have := (P.PD K).finK₀
   have := LL.2
   refine finite_finrank_le (P.PD K).actB

@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FockSignTransposeExchangesLocalGlActionsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiscreteSeriesModelUnitaryIrreducibleOrthonormal
-import Formalism.LocalToGlobal.IndefiniteReal.GvPairOfOrbitDerivCont
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SmoothVectorsOfLieClosedFamilyStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FockSignTransposeExchangesLocalGlActionsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiscreteSeriesModelUnitaryIrreducibleOrthonormal
+public import Formalism.LocalToGlobal.IndefiniteReal.GvPairOfOrbitDerivCont
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SmoothVectorsOfLieClosedFamilyStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory NumberField Matrix
 open GlobalTheory.Chain GlobalTheory.ChainFr GlobalTheory.PairLift GlobalTheory.Chain.RealIt
 open scoped TensorProduct InnerProductSpace ComplexConjugate
@@ -149,7 +154,7 @@ theorem exists_adj {L L' E F : Type} [AddCommGroup L] [Module ℂ L] [AddCommGro
   refine ⟨LinearMap.mk₂ ℂ (fun Q w => f (j.symm Q) w) ?_ ?_ ?_ ?_, fun Q w y => (hf _ _ y).symm⟩
   · intro Q₁ Q₂ w
     refine ext_inner_right ℂ fun y => ?_
-    simp only [inner_add_left, ← hf, map_add, LinearMap.add_apply, inner_add_right]
+    simp only [inner_add_left, ← hf, map_add (f := _), LinearMap.add_apply, inner_add_right]
   · intro c Q w
     refine ext_inner_right ℂ fun y => ?_
     simp only [inner_smul_left, ← hf, hjs, map_smul, LinearMap.smul_apply, inner_smul_right, Complex.conj_conj]
@@ -181,7 +186,7 @@ theorem adj_locIt : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPar) (
     have hjP : j P₂ = Q₂ := by
       have hc : starRingEnd ℂ ((aS : ℂ) * Y.trace) = -((aS : ℂ) * Y.trace) := by
         rw [map_mul, hcq, conj_trace_of_lie (gram_det_ne M' τ) hY, mul_neg]
-      rw [hP₂, hQ₂, map_add, (hj _).1, hjc, AddEquiv.apply_symm_apply, hc, neg_smul, ← sub_eq_add_neg]
+      rw [hP₂, hQ₂, map_add (f := _), (hj _).1, hjc, AddEquiv.apply_symm_apply, hc, neg_smul, ← sub_eq_add_neg]
     have hg : Continuous fun t : ℝ => M'.rep τ (NormedSpace.exp (t • Y)) (A' Q₂ w) := cont_rep_exp M' τ hY _
     have hw : ∀ (y : M'.H τ) (t₀ : ℝ), HasDerivAt (fun s : ℝ => ⟪y, M'.rep τ (NormedSpace.exp (s • Y)) (A' Q w)⟫_ℂ)
         ⟪y, M'.rep τ (NormedSpace.exp (t₀ • Y)) (A' Q₂ w)⟫_ℂ t₀ := by
@@ -241,7 +246,7 @@ theorem adj_locIt : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPar) (
         have em : (M.fr τ * -X * (M.fr τ)⁻¹).map (starRingEnd ℂ) = -(M.fr τ * X * (M.fr τ)⁻¹).map (starRingEnd ℂ) := by
           rw [Matrix.mul_neg, Matrix.neg_mul, Matrix.map_neg _ (map_neg _)]
         rw [em, locS_neg, Matrix.trace_neg, mul_neg, neg_smul, LinearMap.neg_apply, hP₁]
-        simp only [map_sub, map_add, map_neg, LinearMap.sub_apply, LinearMap.add_apply, LinearMap.neg_apply]
+        simp only [map_sub, map_add (f := _), map_neg, LinearMap.sub_apply, LinearMap.add_apply, LinearMap.neg_apply]
         abel
       rw [hv] at h1
       have h2 : HasDerivAt (fun s : ℝ => M.rep τ (NormedSpace.exp ((-s) • X)) (A (j.symm Q) y))
@@ -282,7 +287,7 @@ theorem adj_locIt : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPar) (
           (locS (M'.ε τ) (M.ε τ) ((M'.fr τ * Y₂ * (M'.fr τ)⁻¹).map (starRingEnd ℂ)) Q - ((aS : ℂ) * Y₂.trace) • Q)
         rw [em, locS_add, LinearMap.add_apply, Matrix.trace_add, mul_add, add_smul]
         abel
-      rw [e, map_add, LinearMap.add_apply]
+      rw [e, map_add (f := _), LinearMap.add_apply]
     have hsmul : ∀ Q (c : ℝ) Y, A' (δ ((c : ℂ) • Y) Q) w = (c : ℂ) • A' (δ Y Q) w := by
       intro Q c Y
       have em : (M'.fr τ * ((c : ℂ) • Y) * (M'.fr τ)⁻¹).map (starRingEnd ℂ) =

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GlobalTheoremInputs
+module
+
+public import Formalism.SharpRestriction.GlobalTheoremInputs
+
+@[expose] public section
 
 namespace Formalism.MainNotions
 

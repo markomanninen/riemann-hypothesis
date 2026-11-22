@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FlagBundles.Statements
-import GroundTheory.HeightsAndTheta.Heights.FlagBundles.StatementsZonalPairing
-import GroundTheory.HeightsAndTheta.Heights.FlagBundles.ZonalPairingCalculus
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FlagBundles.Statements
+public import GroundTheory.HeightsAndTheta.Heights.FlagBundles.StatementsZonalPairing
+public import GroundTheory.HeightsAndTheta.Heights.FlagBundles.ZonalPairingCalculus
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FlagBundles

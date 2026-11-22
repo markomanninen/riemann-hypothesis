@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsCobOfIsAffineOpen
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.KunnethSymmProductAffineCoversStatement
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsInvDer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsCobOfIsAffineOpen
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.KunnethSymmProductAffineCoversStatement
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsInvDer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -18,11 +22,7 @@ variable {Z : Scheme.{0}}
 
 theorem rsT_eq {O₀ O : Z.Opens} (h : O ≤ O₀) (s : Γ(Z, O₀)) : rsT s O = resG Z h s := by
   unfold rsT
-  rw [dif_pos h]
-
-theorem rsT_self {O : Z.Opens} (s : Γ(Z, O)) : rsT s O = s := by
-  unfold rsT resG
-  simp
+  rw [dite_eq_left h]
 
 theorem rsT_add {O₀ : Z.Opens} (O : Z.Opens) (s t : Γ(Z, O₀)) : rsT (s + t) O = rsT s O + rsT t O := by
   unfold rsT
@@ -65,7 +65,7 @@ theorem rsT_rsT {O₀ O O' : Z.Opens} (h' : O' ≤ O) (h : O ≤ O₀) (s : Γ(Z
 theorem rsT_pbT {Y : Scheme.{0}} (f : Z ⟶ Y) {O₀ : Y.Opens} {O O' : Z.Opens} (h' : O' ≤ O)
     (h : O ≤ f ⁻¹ᵁ O₀) (s : Γ(Y, O₀)) : rsT (pbT f s O) O' = pbT f s O' := by
   unfold pbT
-  rw [dif_pos h, dif_pos (h'.trans h), rsT_eq h']
+  rw [dite_eq_left h, dite_eq_left (h'.trans h), rsT_eq h']
   unfold resG
   rw [← CommRingCat.comp_apply, Scheme.Hom.appLE_map]
 

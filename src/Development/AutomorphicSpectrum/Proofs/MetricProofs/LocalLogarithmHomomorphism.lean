@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IterDifferentiableOn
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IterDifferentiableOn
+
+@[expose] public section
+
 open Set Filter Topology Metric
 
 namespace GlobalTheory.CompanionTheory.Ar.Flat.LocalLog

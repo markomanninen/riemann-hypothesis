@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnfoldingEquivalence.ExtractFreeFillMatrix
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnfoldingEquivalence.ExtractFreeFillMatrix
+
+@[expose] public section
 
 open PI.UnfoldEquiv PI.UnfoldEquiv.Loc
 
@@ -22,9 +26,9 @@ private theorem inX_single' {n c : ℕ} (s : Fin n) :
   funext l
   rw [inX_apply']
   by_cases h : l.1 < n
-  · rw [dif_pos h]
+  · rw [dite_eq_left h]
     simp only [Pi.single_apply, Fin.ext_iff]
-  · rw [dif_neg h, Pi.single_apply, if_neg]
+  · rw [dite_eq_right h, Pi.single_apply, if_neg]
     intro e
     rw [Fin.ext_iff] at e
     have := s.2
@@ -41,7 +45,7 @@ theorem Q_iff {n' n c : ℕ} (xj : (Fin n' → k) →ₗ[k] (Fin n → k)) (x : 
     simp only [IsFree, not_and, not_or] at hnf
     unfold base
     by_cases hs : s.1 < n'
-    · rw [dif_pos hs]
+    · rw [dite_eq_left hs]
       have e : (Pi.single s 1 : Fin (n' + (c + 1)) → k) =
           inX k n' (c + 1) (Pi.single ⟨s.1, hs⟩ 1) := by
         rw [inX_single']
@@ -52,7 +56,7 @@ theorem Q_iff {n' n c : ℕ} (xj : (Fin n' → k) →ₗ[k] (Fin n → k)) (x : 
           | (rw [LinearMap.toMatrix'_apply])
           | (rw [LinearMap.toMatrix'_apply]; congr 1; funext j'; simp [Pi.single_apply, Fin.ext_iff])
       · rfl
-    · rw [dif_neg hs]
+    · rw [dite_eq_right hs]
       obtain ⟨j, hj⟩ : ∃ j, s.1 = n' + j := ⟨s.1 - n', by omega⟩
       rw [hj] at hnf
       rw [hj, Nat.add_sub_cancel_left, ← eN_val_eq_single s, hj]
@@ -86,7 +90,7 @@ theorem Q_iff {n' n c : ℕ} (xj : (Fin n' → k) →ₗ[k] (Fin n → k)) (x : 
         rw [inX_single', ← eN_val_eq_single, Hs l s'.1 (by omega) (by simp only [IsFree]; omega),
           inX_apply']
         unfold base
-        rw [dif_pos hs']
+        rw [dite_eq_left hs']
         split_ifs with hl
         · first
             | rfl
@@ -108,7 +112,7 @@ theorem Q_iff {n' n c : ℕ} (xj : (Fin n' → k) →ₗ[k] (Fin n → k)) (x : 
 theorem isFillOf_fillMatrix {n' n c : ℕ} (xj : (Fin n' → k) →ₗ[k] (Fin n → k)) (t : FC n' (c + 1) n c → k) : Q xj (xx1 xj t) := by
   rw [Q_iff]
   intro l s h
-  rw [fillMatrix_single, dif_neg h]
+  rw [fillMatrix_single, dite_eq_right h]
 
 theorem fillMatrix_extractFree {n' n c : ℕ} {xj : (Fin n' → k) →ₗ[k] (Fin n → k)} {x : (Fin (n' + (c + 1)) → k) →ₗ[k] (Fin (n + c) → k)}
     (h : Q xj x) : xx1 xj (fe x) = x := by

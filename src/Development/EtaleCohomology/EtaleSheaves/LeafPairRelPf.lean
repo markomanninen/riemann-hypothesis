@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafTripleFPPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafTripleFPPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4 LateralTheory.E.LeafDescendVCut LateralTheory.E.LeafDescendChainPf
@@ -36,7 +40,8 @@ theorem LeafPairRel_of (hO : LeafObjFP) (hF : LeafFactorStage) : LeafPairRel := 
       ((γ1 ≫ c0) ≫ toR S) (by simp only [Category.assoc, toR_incl, pullback.lift_snd]), ?_, ?_, ?_⟩
   · rw [Category.assoc, pullback.condition, ← Category.assoc, hg1, Category.assoc, incl_incl]
   · rw [pullback.lift_snd]; exact fp_snd _ _ (fp_snd _ _ hp1)
-  · convert pb_lift h hsE' using 2; exact pullback.lift_snd _ _ _
+  · convert pb_lift h hsE' using 2
+    simp only [pullback.lift_snd]
   · apply pullback.hom_ext
     · rw [Category.assoc, pullback.lift_fst, Category.assoc, pullback.lift_fst, ← Category.assoc, hg2,
         Category.assoc, pullback.lift_fst]

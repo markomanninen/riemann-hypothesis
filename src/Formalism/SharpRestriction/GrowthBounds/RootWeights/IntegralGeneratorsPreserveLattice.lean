@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.PolarizationDividedPowerMonomial
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.PolynomialMemWeightSpaceIff
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.PolarizationDividedPowerMonomial
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.PolynomialMemWeightSpaceIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -92,7 +96,7 @@ theorem divided_powers_preserve_polarization (p : ℕ) [Fact p.Prime] (Q : MvPol
   by_cases hkw : k ≤ m w
   · right
     have hz : padicValInt p (ε ^ k * ((m w).choose k : ℤ)) = padicValNat p ((m w).choose k) := by
-      simp [padicValInt, Int.natAbs_mul, Int.natAbs_pow, hε]
+      simp [padicValInt, Int.natAbs_mul, Int.natAbs_pow, hε, ← Nat.padicValNat_def]
     rw [hz]
     set s : Finset σ := m.support ∪ {v, w} with hs
     have hvs : v ∈ s := by simp [hs]
@@ -139,7 +143,7 @@ theorem divided_powers_preserve_polarization (p : ℕ) [Fact p.Prime] (Q : MvPol
     have hC1 : (m v + k).choose k ≠ 0 := (Nat.choose_pos (by omega)).ne'
     have hC2 : (m w).choose k ≠ 0 := (Nat.choose_pos hkw).ne'
     have hv := congrArg (padicValNat p) hid
-    rw [padicValNat.mul hEpos hC1, padicValNat.mul hE'pos hC2] at hv
+    rw [(show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) hEpos hC1, (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) hE'pos hC2] at hv
     omega
   · left
     have : (m w).choose k = 0 := Nat.choose_eq_zero_of_lt (by omega)
@@ -178,8 +182,8 @@ section
 
 variable {K : Type} [Field K] [CharZero K] {ι : Type} [Fintype ι] {n : ℕ}
 
-open Classical in
 
+open Classical in
 def letterPolarization (K : Type) [Field K] {ι : Type} {n : ℕ} (LL : Letters ι) (S : Set ι) (a b : Fin n) (l : ι) :
     Module.End K (MvPolynomial (ι × Fin n) K) :=
   if l ∈ S then (if LL.vec l then polarizationOperator K (l, a) (l, b) else -(polarizationOperator K (l, b) (l, a))) else 0
@@ -301,7 +305,7 @@ theorem char_zero_stability_of_closure {p : ℕ} (hp : p.Prime) {O : Type} [Comm
         intro m
         obtain ⟨a, ha⟩ := hF m
         obtain ⟨b, hb⟩ := hG m
-        exact ⟨a + b, by rw [MvPolynomial.coeff_add, ha, hb, map_add]⟩
+        exact ⟨a + b, by rw [MvPolynomial.coeff_add, ha, hb, map_add (f := _)]⟩
       · intro u' hu' F hF
         refine hint u' (fun m => ?_) F hF
         have h1 := hmono m 1

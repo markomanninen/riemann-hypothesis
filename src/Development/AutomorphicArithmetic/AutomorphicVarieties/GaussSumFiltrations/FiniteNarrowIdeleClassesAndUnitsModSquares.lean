@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPos
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.HCFFromRecipB
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPos
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.HCFFromRecipB
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep UpperTheory.V UpperTheory.V.Af UpperTheory.V.Sd GlobalTheory.HilbertThetaSeries
 open scoped Matrix
 
@@ -62,8 +67,8 @@ theorem reAt_eq (v : InfinitePlace F) (x : F) :
   rw [reAt, ← InfinitePlace.embedding_of_isReal_apply]
   exact Complex.ofReal_re _
 
-open Classical in
 
+open Classical in
 def sgn (k : Fˣ) : InfinitePlace F → Bool := fun v => decide (0 < reAt v (k : F))
 
 theorem tp_of_sgn_eq (k σ : Fˣ) (h : sgn k = sgn σ) : TP ((k * σ⁻¹ : Fˣ) : F) := by
@@ -101,14 +106,14 @@ theorem narrowClass_unitsSq_finite : ∀ (F : Type) [Field F] [NumberField F] [I
     have hy0c : finClass y0 = finClass z := hc.choose_spec
     have hy0m : y0 ∈ Y0 := by
       refine Finset.mem_image.2 ⟨finClass z, Finset.mem_univ _, ?_⟩
-      rw [dif_pos hc]
+      rw [dite_eq_left hc]
     obtain ⟨k, u, hu, hk⟩ := eq_of_finClass_eq_one (z * y0⁻¹) (by rw [map_mul, map_inv, hy0c, mul_inv_cancel])
     have hs : ∃ σ : Fˣ, sgn σ = sgn k := ⟨k, rfl⟩
     set σ := hs.choose with hσ
     have hσs : sgn σ = sgn k := hs.choose_spec
     have hσm : σ ∈ S := by
       refine Finset.mem_image.2 ⟨sgn k, Finset.mem_univ _, ?_⟩
-      rw [dif_pos hs]
+      rw [dite_eq_left hs]
     refine ⟨ι σ * y0, Finset.mem_image.2 ⟨(σ, y0), Finset.mem_product.2 ⟨hσm, hy0m⟩, rfl⟩,
       k * σ⁻¹, u, tp_of_sgn_eq k σ hσs.symm, hu, ?_⟩
     have hz : z = ι k * u * y0 := by rw [← hk, inv_mul_cancel_right]

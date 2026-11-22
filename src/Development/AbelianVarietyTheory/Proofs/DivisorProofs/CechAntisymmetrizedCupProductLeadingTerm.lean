@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
+
+@[expose] public section
+
 open GlobalTheory GlobalTheory.DI
 
 set_option autoImplicit false

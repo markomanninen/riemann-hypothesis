@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.Reframe
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FrameBorelGroupoidProperties
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ValuesEqOfCommonPointStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.Reframe
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FrameBorelGroupoidProperties
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ValuesEqOfCommonPointStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,6 +17,9 @@ namespace GlobalTheory.Reg.SecGlue
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Reg
+
+-- Prefer the same algebra instance used in the definition of FChart.
+attribute [local instance 1100] Subalgebra.algebra
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
   {Xo : Moduli Dw l} {c : Coeff l}
@@ -126,10 +133,70 @@ theorem val_unique (hl : EvLaws Xo c) {L : Type} [Field L] [Algebra c.F L] {y : 
     (h1 : Val hb y v) (h2 : Val hb y v') : v = v' := by
   obtain ⟨C, ψ, z, t, hz, ht, rfl⟩ := h1
   obtain ⟨C', ψ', z', t', hz', ht', rfl⟩ := h2
-  obtain ⟨-, hmul, hinv, -⟩ := GlobalTheory.Reg.BorelGroupoid.frBor_groupoid E H Dw l Xo c L
-  have := (GlobalTheory.T.values_eq_of_common_point E H Dw l Xo c hl h C C' L ψ ψ' z z' _ hz hz'
-    (hmul _ _ _ _ _ ht (hinv _ _ _ ht'))).2 e b (hb C) (hb C')
-  rw [this, ← mul_assoc, ← wchar_mul, mul_comm t, mul_inv_cancel_left]
+  have G := GlobalTheory.Reg.BorelGroupoid.frBor_groupoid E H Dw l Xo c
+  obtain ⟨-, hmul, hinv, -⟩ := G L
+  have hval {r : Ix Dw → Lˣ} (hbor : FrBor r z z') :
+      ψ' ⟨_, hb C'⟩ = wchar e r * ψ ⟨_, hb C⟩ := by
+    obtain ⟨g, hg, hopn⟩ := C'.opn C.R L ψ C.y z hz ⟨ψ', z', r⁻¹, hz', hinv _ _ _ hbor⟩
+    have hg0 : g ≠ 0 := fun he => hg (by rw [he, map_zero])
+    have hg1 : C.R.val g ≠ 0 := fun he => hg0 (Subtype.ext he)
+    have hZ : C.Z = C'.Z := by
+      obtain ⟨ψ₀, z₀, s₀, hz₀, hs₀⟩ := hopn (Om C.Z) C.R.val (Ne.isUnit hg1) C.yg C.gen
+      exact (chart_comp C.Z C' ψ₀ z₀ _ hz₀ ((G _).2.1 _ _ _ _ _ hs₀ ((G _).2.2.1 _ _ _ C.bor))).symm
+    have hbC := hb C
+    have hbC' := hb C'
+    obtain ⟨Z, R, sm, frac, yC, yg, tC, gen, bor, mono, opn⟩ := C
+    obtain ⟨Z', R', sm', frac', yC', yg', tC', gen', bor', mono', opn'⟩ := C'
+    dsimp only at *
+    subst hZ
+    -- Compare the two chart values in the localization through which both specializations factor.
+    let S := Localization.Away (M := R) g
+    let _ : Algebra c.F S := OreLocalization.instAlgebra (S := Submonoid.powers (g : R))
+    let lam : R →ₐ[c.F] S := IsScalarTower.toAlgHom c.F R S
+    have hlam : IsUnit (lam g) := IsLocalization.Away.algebraMap_isUnit g
+    obtain ⟨mu, hmu⟩ : ∃ m : S →ₐ[c.F] Om Z, m.comp lam = R.val :=
+      ChartCompat.away_lift g R.val hg1
+    obtain ⟨nu, hnu⟩ : ∃ m : S →ₐ[c.F] L, m.comp lam = ψ := ChartCompat.away_lift g ψ hg
+    have hinj : Function.Injective mu := ChartCompat.away_inj g mu (by rw [hmu]; exact Subtype.val_injective)
+    obtain ⟨w, hw⟩ := hl.bc R S lam yC
+    obtain ⟨φ, v, s, hv, hs⟩ := hopn S lam hlam w hw
+    have U := GlobalTheory.Frames.frMap_unique_refl_iff E H Dw l Xo c
+
+    obtain ⟨vmu, hvmu⟩ := hl.bc S (Om Z) mu v
+    have m1 : FrMap mu w yg := frMap_cancel _ _ _ lam mu yC w yg hw (by rw [hmu]; exact gen)
+    have b1 := frBorBC _ _ mu s v w vmu yg hs hvmu m1
+    have m2 : FrMap (mu.comp φ) yC' vmu := frMap_trans _ _ _ φ mu yC' v vmu hv hvmu
+    have b2 := (G _).2.1 _ _ _ _ _ b1 ((G _).2.1 _ _ _ _ _ ((G _).2.2.1 _ _ _ bor) bor')
+    have e1 : mu.comp φ = R'.val := mono' _ _ _ _ _ _ m2 gen' b2
+    have e2 : vmu = yg' := (U _ _ R'.val yC').1 _ _ (e1 ▸ m2) gen'
+    subst e2
+    have e3 : tC = tC' * fun i => Units.map (mu : S →* Om Z) (s i) :=
+      (G _).2.2.2 _ _ _ _ bor ((G _).2.1 _ _ _ _ _ bor' b1)
+
+    obtain ⟨vnu, hvnu⟩ := hl.bc S L nu v
+    have m3 : FrMap nu w z := frMap_cancel _ _ _ lam nu yC w z hw (by rw [hnu]; exact hz)
+    have b3 := frBorBC _ _ nu s v w vnu z hs hvnu m3
+    have m4 : FrMap (nu.comp φ) yC' vnu := frMap_trans _ _ _ φ nu yC' v vnu hv hvnu
+    have b4 := hmul _ _ _ _ _ b3 hbor
+    have e4 : nu.comp φ = ψ' := mono' _ _ _ _ _ _ m4 hz' b4
+    have e5 : vnu = z' := (U _ _ ψ' yC').1 _ _ (e4 ▸ m4) hz'
+    subst e5
+    have e6 : (fun i => Units.map (nu : S →* L) (s i)) * r = 1 :=
+      (G _).2.2.2 _ _ _ _ b4 ((G _).1 _)
+    have e7 : lam ⟨_, hbC⟩ = wchar e s * φ ⟨_, hbC'⟩ := by
+      apply hinj
+      have a1 : mu (lam ⟨_, hbC⟩) = wchar e tC * b Z := DFunLike.congr_fun hmu ⟨_, hbC⟩
+      have a2 : mu (φ ⟨_, hbC'⟩) = wchar e tC' * b Z := DFunLike.congr_fun e1 ⟨_, hbC'⟩
+      have a0 : wchar e tC = wchar e tC' * mu (wchar e s) := by
+        rw [e3, wchar_mul, wchar_map]
+      rw [map_mul, a1, a2, a0]
+      ac_rfl
+    have a3 : ψ ⟨_, hbC⟩ = nu (wchar e s) * ψ' ⟨_, hbC'⟩ := by
+      rw [← hnu, ← e4, AlgHom.comp_apply, AlgHom.comp_apply, e7, map_mul]
+    have a4 : nu (wchar e s) * wchar e r = 1 := by
+      rw [← wchar_map, ← wchar_mul, e6, wchar_one]
+    rw [a3, ← mul_assoc, mul_comm (wchar e r), a4, one_mul]
+  rw [hval (hmul _ _ _ _ _ ht (hinv _ _ _ ht')), ← mul_assoc, ← wchar_mul, mul_comm t, mul_inv_cancel_left]
 
 theorem val_map (hl : EvLaws Xo c) {S T : Type} [CommRing S] [Algebra c.F S] [CommRing T] [Algebra c.F T]
     (φ : S →ₐ[c.F] T) {y : FrPt Xo c S} {y' : FrPt Xo c T} (hy : FrMap φ y y') {v : S} (h1 : Val hb y v) :
@@ -168,7 +235,7 @@ theorem exists_rep (hl : EvLaws Xo c) (hA : Atlas h) {S : Type} [CommRing S] [Al
       add_mem' := by
         rintro g g' ⟨s, hs⟩ ⟨s', hs'⟩
         exact ⟨s + s', fun L _ _ χ w v h1 h2 => by
-          rw [map_add, map_add, add_mul, hs L χ w v h1 h2, hs' L χ w v h1 h2]⟩
+          rw [map_add (f := _), map_add (f := _), add_mul, hs L χ w v h1 h2, hs' L χ w v h1 h2]⟩
       smul_mem' := by
         rintro r g ⟨s, hs⟩
         exact ⟨r * s, fun L _ _ χ w v h1 h2 => by
@@ -237,7 +304,7 @@ theorem exists_sec_of_regular : ∀ (E : Type) [Field E] [NumberField E] [IsCMFi
     rw [hg' p y' L χ w' _ hw' hv', map_mul, hg' p y L χ w v hw hv, wchar_map]
   · have hh := hl.test _ (genFr h Z)
     unfold evC evR evalAt
-    rw [dif_pos hh]
+    rw [dite_eq_left hh]
     exact hg' _ _ _ _ _ _ hh.choose_spec.choose_spec.choose_spec (val_gen hb hA Z)
 
 end GlobalTheory.Reg.SecGlue

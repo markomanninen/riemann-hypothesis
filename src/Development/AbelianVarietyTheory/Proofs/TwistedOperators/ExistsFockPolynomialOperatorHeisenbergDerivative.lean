@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfPderivStable
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockPolynomialVectorMaximalCompactBasisSubstitut
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfPderivStable
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockPolynomialVectorMaximalCompactBasisSubstitut
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum
 open Formalism.IndefR.Mult (DSModel dualPar parA parB)
@@ -35,8 +39,8 @@ theorem Jm_herm (ε : Fin n → Bool) : (Formalism.REAL.Jm ε)ᴴ = Formalism.RE
   rw [Matrix.diagonal_conjTranspose]
   congr 1; funext a; simp only [Pi.star_apply]; split_ifs <;> simp
 
-open scoped ComplexOrder in
 
+open scoped ComplexOrder in
 theorem isCartanInv_of_isFrameOf {G s fr : Mn n} {ε : Fin n → Bool} (h : IsFrameOf G s ε fr) : IsCartanInv G s := by
   obtain ⟨hu', rfl, rfl⟩ := h
   have hu := (Matrix.isUnit_iff_isUnit_det _).1 hu'
@@ -121,10 +125,10 @@ theorem pure_deriv {B : (X → ℂ) → (X → ℂ)} {c : ι → ℂ}
   induction Q using MvPolynomial.induction_on with
   | C a => simp [hC, Bsm _ _ hf, hv]
   | add p q hp hq =>
-    rw [map_add, Badd _ _ (hm _) (hm _), hp, hq, ← map_add, ← Finset.sum_add_distrib]
-    simp only [map_add, smul_add]
+    rw [map_add (f := _), Badd _ _ (hm _) (hm _), hp, hq, ← map_add (f := _), ← Finset.sum_add_distrib]
+    simp only [map_add (f := _), smul_add]
   | mul_X p j hp =>
-    rw [mul_comm, hX, hBA _ _ (hm _), hp, ← hX, ← map_smul, ← map_add]
+    rw [mul_comm, hX, hBA _ _ (hm _), hp, ← hX, ← map_smul, ← map_add (f := _)]
     congr 1
     simp only [MvPolynomial.pderiv_mul, smul_add, Finset.sum_add_distrib, Finset.mul_sum, mul_smul_comm]
     rw [add_comm]
@@ -165,6 +169,37 @@ include hψ hθ
 theorem aPlus_comm {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) :
     aPlus (heisO ψ S T) θ τ (cplxO sS sT) z (aPlus (heisO ψ S T) θ τ (cplxO sS sT) z' f) =
     aPlus (heisO ψ S T) θ τ (cplxO sS sT) z' (aPlus (heisO ψ S T) θ τ (cplxO sS sT) z f) := by
+  have theta_add {f g : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (hg : IsThetaFunO ψ S T g) :
+      IsThetaFunO ψ S T (f + g) := by
+    refine {
+        quasi γ w := by simp only [Pi.add_apply, hf.quasi, hg.quasi, mul_add]
+        level := by
+          obtain ⟨U, hU, h1⟩ := hf.level
+          obtain ⟨U', hU', h2⟩ := hg.level
+          refine ⟨U ⊓ U', hU.inter hU', fun u hu h0 => ?_⟩
+          funext w
+          have e1 := congrFun (h1 u hu.1 h0) w
+          have e2 := congrFun (h2 u hu.2 h0) w
+          unfold heisO at e1 e2 ⊢
+          rw [Pi.add_apply, Pi.add_apply, mul_add, e1, e2]
+        cont := hf.cont.add hg.cont
+        smooth k L h1 h2 w := (hf.smooth k L h1 h2 w).add (hg.smooth k L h1 h2 w)
+
+    }
+  have theta_smul (c : ℂ) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) : IsThetaFunO ψ S T (c • f) := by
+    refine {
+        quasi γ w := by
+          rw [Pi.smul_apply, Pi.smul_apply, hf.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
+        level := by
+          obtain ⟨U, hU, h1⟩ := hf.level
+          refine ⟨U, hU, fun u hu h0 => ?_⟩
+          funext w
+          have e1 := congrFun (h1 u hu h0) w
+          unfold heisO at e1 ⊢
+          rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+        cont := hf.cont.const_smul c
+        smooth k L h1 h2 w := contDiff_const.mul (hf.smooth k L h1 h2 w)
+    }
   have ht := fun z => theta_dRho hθ hψ τ z hf
   have hc := fun z z' => dRho_comm hψ hθ τ z τ z' hf
   obtain ⟨h1, h2⟩ := omDir_cplx hS hT z z'
@@ -183,6 +218,37 @@ theorem annih_aPlus {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) :
     aPlus (heisO ψ S T) θ τ (cplxO sS sT) z' (annih (heisO ψ S T) θ τ (cplxO sS sT) z f) +
       ((fockScale D τ : ℂ)⁻¹ * (-(4 * π * I) * ((omDir S T τ z τ z' : ℝ) +
         I * (omDir S T τ (cplxO sS sT z) τ z' : ℝ)))) • f := by
+  have theta_add {f g : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (hg : IsThetaFunO ψ S T g) :
+      IsThetaFunO ψ S T (f + g) := by
+    refine {
+        quasi γ w := by simp only [Pi.add_apply, hf.quasi, hg.quasi, mul_add]
+        level := by
+          obtain ⟨U, hU, h1⟩ := hf.level
+          obtain ⟨U', hU', h2⟩ := hg.level
+          refine ⟨U ⊓ U', hU.inter hU', fun u hu h0 => ?_⟩
+          funext w
+          have e1 := congrFun (h1 u hu.1 h0) w
+          have e2 := congrFun (h2 u hu.2 h0) w
+          unfold heisO at e1 e2 ⊢
+          rw [Pi.add_apply, Pi.add_apply, mul_add, e1, e2]
+        cont := hf.cont.add hg.cont
+        smooth k L h1 h2 w := (hf.smooth k L h1 h2 w).add (hg.smooth k L h1 h2 w)
+
+    }
+  have theta_smul (c : ℂ) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) : IsThetaFunO ψ S T (c • f) := by
+    refine {
+        quasi γ w := by
+          rw [Pi.smul_apply, Pi.smul_apply, hf.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
+        level := by
+          obtain ⟨U, hU, h1⟩ := hf.level
+          refine ⟨U, hU, fun u hu h0 => ?_⟩
+          funext w
+          have e1 := congrFun (h1 u hu h0) w
+          unfold heisO at e1 ⊢
+          rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+        cont := hf.cont.const_smul c
+        smooth k L h1 h2 w := contDiff_const.mul (hf.smooth k L h1 h2 w)
+    }
   have ht := fun z => theta_dRho hθ hψ τ z hf
   have hc := fun z z' => dRho_comm hψ hθ τ z τ z' hf
   obtain ⟨h1, h2⟩ := omDir_cplx hS hT z z'
@@ -199,6 +265,37 @@ omit hS hT hψ hθ
 
 theorem exists_dRho_ptAt : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (S T : HSp D) (τ : D.what₂.Tau), IsStdChar D ψ (-1) → IsInfFam θ → ∀ (sS frS : Mn S.rank) (εS : Fin S.rank → Bool) (sT frT : Mn T.rank) (εT : Fin T.rank → Bool), IsFrameOf (gramAt D S τ) sS εS frS → IsFrameOf (gramAt D T τ) sT εT frT → ∀ z : Matrix (Fin T.rank) (Fin S.rank) ℂ, ∃ L : Module.End ℂ (LPol T.rank S.rank), ∀ f, IsThetaFunO ψ S T f → IsFockVacAt (heisO ψ S T) θ τ (cplxO sS sT) f → ∀ P, dRho (heisO ψ S T) θ τ z (ptAt ψ θ S T τ sS sT frS⁻¹ frT⁻¹ f P) = ptAt ψ θ S T τ sS sT frS⁻¹ frT⁻¹ f (L P) := by
   intro D ψ θ S T τ hψ hθ sS frS εS sT frT εT hfS hfT z
+  have theta_add {f g : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (hg : IsThetaFunO ψ S T g) :
+      IsThetaFunO ψ S T (f + g) := by
+    refine {
+        quasi γ w := by simp only [Pi.add_apply, hf.quasi, hg.quasi, mul_add]
+        level := by
+          obtain ⟨U, hU, h1⟩ := hf.level
+          obtain ⟨U', hU', h2⟩ := hg.level
+          refine ⟨U ⊓ U', hU.inter hU', fun u hu h0 => ?_⟩
+          funext w
+          have e1 := congrFun (h1 u hu.1 h0) w
+          have e2 := congrFun (h2 u hu.2 h0) w
+          unfold heisO at e1 e2 ⊢
+          rw [Pi.add_apply, Pi.add_apply, mul_add, e1, e2]
+        cont := hf.cont.add hg.cont
+        smooth k L h1 h2 w := (hf.smooth k L h1 h2 w).add (hg.smooth k L h1 h2 w)
+
+    }
+  have theta_smul (c : ℂ) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) : IsThetaFunO ψ S T (c • f) := by
+    refine {
+        quasi γ w := by
+          rw [Pi.smul_apply, Pi.smul_apply, hf.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
+        level := by
+          obtain ⟨U, hU, h1⟩ := hf.level
+          refine ⟨U, hU, fun u hu h0 => ?_⟩
+          funext w
+          have e1 := congrFun (h1 u hu h0) w
+          unfold heisO at e1 ⊢
+          rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+        cont := hf.cont.const_smul c
+        smooth k L h1 h2 w := contDiff_const.mul (hf.smooth k L h1 h2 w)
+    }
   have hS := isCartanInv_of_isFrameOf hfS
   have hT := isCartanInv_of_isFrameOf hfT
   let u : Fin T.rank × Fin S.rank → Matrix (Fin T.rank) (Fin S.rank) ℂ := fun k => unitMap frS⁻¹ frT⁻¹ k.1 k.2
@@ -227,7 +324,8 @@ theorem exists_dRho_ptAt : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : I
   have h2 : aPlus (heisO ψ S T) θ τ (cplxO sS sT) z (pureTensorL A f P) =
       pureTensorL A f (∑ k, α k • (MvPolynomial.X k * P)) := by
     conv_lhs => rw [eq_sum_unitMap hfS.1 hfT.1 z]
-    rw [GlobalTheory.FockSubst.aPlus_dir_sum hψ hθ τ sS sT hm, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [GlobalTheory.FockSubst.aPlus_dir_sum hψ hθ τ sS sT hm, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [GlobalTheory.FockSubst.aPlus_dir_smul hψ hθ τ sS sT hm _ _ (cplxO_unitMap hfS hfT k.1 k.2), map_smul,
       pure_X_mul hadd hsm hA hc Aadd Asm hf]
@@ -236,7 +334,7 @@ theorem exists_dRho_ptAt : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : I
     rw [aPlus, smul_smul, mul_inv_cancel₀ (fockScale_ne_zero τ), one_smul, annih, crea]
     module
   change dRho (heisO ψ S T) θ τ z (pureTensorL A f P) = pureTensorL A f _
-  rw [h3, h1, h2, ← map_smul, ← map_add, ← map_smul]
+  rw [h3, h1, h2, ← map_smul, ← map_add (f := _), ← map_smul]
   congr 1
   simp only [LinearMap.smul_apply, LinearMap.add_apply, LinearMap.sum_apply, LinearMap.mulLeft_apply]
   rfl

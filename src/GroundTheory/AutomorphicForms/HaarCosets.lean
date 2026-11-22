@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.LocallyConstantCompact
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.LocallyConstantCompact
+
+@[expose] public section
 
 noncomputable section
 

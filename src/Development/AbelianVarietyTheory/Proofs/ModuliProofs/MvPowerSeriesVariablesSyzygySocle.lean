@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
@@ -58,12 +63,14 @@ theorem mvPowerSeries_X_syzygy {k : Type} [CommRing k] {g : ℕ}
         refine forall_congr' fun l => forall_congr' fun hl => ?_
         simp [Finsupp.single_apply, (hl.trans h).ne']
       simp only [e2, hj, h, hji, ne_eq, not_false_eq_true, if_true, true_and, and_true]
-  simp only [Matrix.mulVec, dotProduct, Matrix.sub_apply, Matrix.transpose_apply, sub_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, Matrix.sub_apply, Matrix.transpose_apply, sub_mul,
     map_sum, map_sub, h1, h2, Finset.sum_sub_distrib]
   by_cases hi : ∀ l < i, m l = 0
   · rw [Finset.sum_eq_zero (fun j _ => if_neg (fun H => H.1 (hi j H.2.1)))]
     have h3 := congrArg (coeff (m + single i 1)) hr
-    rw [map_sum, map_zero, ← Finset.add_sum_erase _ _ (Finset.mem_univ i), coeff_mul_X_ite] at h3
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero, ← Finset.add_sum_erase _ _ (Finset.mem_univ i), coeff_mul_X_ite] at h3
     simp only [iff_true_intro hi, true_and]
     rw [← Finset.sum_filter, Finset.filter_ne']
     simp only [Finsupp.add_apply, single_eq_same, add_tsub_cancel_right] at h3
@@ -99,11 +106,12 @@ theorem mvPowerSeries_prod_X_pow_notMem {k : Type} [CommRing k] [Nontrivial k] {
     | insert a s ha ih =>
       rw [Finset.prod_insert ha, Finset.sum_insert ha, ih, X_pow_eq, monomial_mul_monomial, one_mul]
   have := congrArg (coeff (∑ i : Fin g, single i N)) hc
-  rw [hp, coeff_monomial_same, map_sum, Finset.sum_eq_zero] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hp, coeff_monomial_same, map_sum, Finset.sum_eq_zero] at this
   · exact zero_ne_one this
   · intro i _
     refine X_pow_dvd_iff.1 (dvd_mul_left _ _) _ ?_
-    simp [Finsupp.finset_sum_apply, Finsupp.single_apply]
+    simp [Finsupp.finsetSum_apply, Finsupp.single_apply]
 
 theorem mvPowerSeries_variables_syzygy_socle :
     ∀ (k : Type) [Field k] (g : ℕ) (x : Fin g → MvPowerSeries (Fin g) k), (∀ i, x i = MvPowerSeries.X i) → (∀ r : Fin g → _, ∑ i, r i * x i = 0 → ∃ s : Matrix (Fin g) (Fin g) _, s.transpose = -s ∧ (∀ i, s i i = 0) ∧ r = s.mulVec x) ∧ ∀ N : ℕ, ∏ i, x i ^ N ∉ Ideal.span (Set.range fun i => x i ^ (N + 1)) := by

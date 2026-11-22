@@ -1,12 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
-import Formalism.SatakeDualWeyl.Statement
-import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+module
 
-theorem UpperTheory.Reformulated.B.Qk24.aux2 :
-    ∀ (I : Formalism.MainNotions.S.AutInst), IsFractionRing (NumberField.RingOfIntegers I.F) I.F := by
-  intro I
-  infer_instance
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Formalism.SatakeDualWeyl.Statement
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.Qk24.VA :
     Formalism.MainNotions.S.AutInst → Type :=

@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Cint
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NoLeak
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetTermBasicFactsStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermExponentsNonnegAndDefectGroupBoundStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EichlerLatticeLocallyConstantDataStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Cint
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NoLeak
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetTermBasicFactsStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermExponentsNonnegAndDefectGroupBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EichlerLatticeLocallyConstantDataStatement
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL GlobalTheory.IdxInt MeasureTheory
 open scoped Pointwise ENNReal Classical
@@ -73,7 +77,8 @@ theorem h_smul_r (c : E) (y a : S.V) : S.h y (c • a) = L.cj c * S.h y a := by
 theorem h_zero_r (y : S.V) : S.h y 0 = 0 := by simp [Frames.h, hf]
 theorem h_cj (x y : S.V) : L.cj (S.h x y) = S.h y x := by
   have hH : ∀ i j, L.cj (S.Hm j i) = S.Hm i j := fun i j => congrFun (congrFun S.herm.1 i) j
-  simp only [Frames.h, hf, map_sum, map_mul, L.cj_cj, hH]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Frames.h, hf, map_sum, map_mul, L.cj_cj, hH]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
@@ -280,7 +285,7 @@ theorem one_add_unit {z : E} (hz : z ∈ L.O) : ∃ e ∈ L.O, e * (1 + algebraM
   obtain ⟨v, hv⟩ := hu.exists_left_inv
   have hv' := congrArg (fun c : 𝒪[F] => algebraMap F E (c : F)) hv
   push_cast at hv'
-  simp only [map_mul, map_add, map_one, ← ht, ← hn] at hv'
+  simp only [map_mul, map_add (f := _), map_one, ← ht, ← hn] at hv'
   refine ⟨algebraMap F E v * (1 + algebraMap F E S.ϖ * L.cj z),
     L.O.mul_mem (algO S v) (L.O.add_mem L.O.one_mem (L.O.mul_mem (algO S _) hc)), ?_⟩
   linear_combination hv'
@@ -368,8 +373,8 @@ variable [IsNonarchimedeanLocalField F] [CharZero F]
 
 theorem sOf_tr (w : S.MW) : S.sOf w + L.cj (S.sOf w) = S.h w.2.1 w.2.1 + (w.2.2 + L.cj w.2.2) := by
   have h2 : algebraMap F E 2⁻¹ + algebraMap F E 2⁻¹ = 1 := by
-    rw [← map_add, ← map_one (algebraMap F E)]; congr 1; norm_num
-  simp only [Frames.sOf, map_add, map_mul, AlgEquiv.commutes, h_cj]
+    rw [← map_add (f := _), ← map_one (algebraMap F E)]; congr 1; norm_num
+  simp only [Frames.sOf, map_add (f := _), map_mul, AlgEquiv.commutes, h_cj]
   linear_combination S.h w.2.1 w.2.1 * h2
 
 theorem Mv_lin {J : ℕ} {d : S.Datum} {Λ : Submodule L.O S.V} {w : S.MW} (h : S.Mv J d Λ w) : w ∈ lin S J := by

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NonemptyInvFunEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NonemptyInvFunEquiv
+
+@[expose] public section
 
 open MvPolynomial GlobalTheory.IndefiniteRowSideFullHecke.MinorOrderedEntries GlobalTheory.OneFunctional Formalism.BasicNotions GlobalTheory.Branching
 open scoped TensorProduct DirectSum
@@ -20,7 +24,7 @@ theorem piTensor_map_surjective_and_ker :
     intro b
     induction b using PiTensorProduct.induction_on with
     | smul_tprod r f => simp [PiTensorProduct.map_tprod, hπs]
-    | add p q hp hq => rw [map_add, map_add, hp, hq]
+    | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq]
   refine ⟨fun b => ⟨_, back b⟩, ?_⟩
   intro l hl
 
@@ -56,7 +60,7 @@ theorem piTensor_map_surjective_and_ker :
     intro z
     induction z using PiTensorProduct.induction_on with
     | smul_tprod r f => simp [PiTensorProduct.map_tprod, key f]
-    | add p q hp hq => rw [map_add, map_add, map_add, map_add, ← hp, ← hq]
+    | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), ← hp, ← hq]
   intro z hz
   rw [hall z, hz, map_zero, map_zero]
 

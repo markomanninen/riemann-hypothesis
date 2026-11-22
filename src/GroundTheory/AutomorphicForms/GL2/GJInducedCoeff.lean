@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJZetaDefs
-import GroundTheory.AutomorphicForms.HaarCosets
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJZetaDefs
+public import GroundTheory.AutomorphicForms.HaarCosets
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -38,7 +43,7 @@ theorem exists_extend_dual (hρ : IsSmooth ρ) (hτ : IsSmooth τ)
 
     have hker : ∀ y ∈ coinvariantsKer ρ K, ℓ y = 0 := by
       intro y hy
-      refine Submodule.span_induction ?_ (by simp) (fun a b _ _ ha hb => by rw [map_add, ha, hb, add_zero])
+      refine Submodule.span_induction ?_ (by simp) (fun a b _ _ ha hb => by rw [map_add (f := _), ha, hb, add_zero])
         (fun c a _ ha => by rw [map_smul, ha, smul_zero]) hy
       rintro _ ⟨k, rfl⟩
       simp [hℓ k.1.1 k.1.2 k.2]
@@ -54,8 +59,8 @@ variable {F : Type*} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchi
   {n : ℕ} {α : Type*} [LinearOrder α] {β : Fin n → α}
   {W : Type*} [AddCommGroup W] [Module ℂ W] {σ : Representation ℂ (levi F n β) W}
 
-variable (F n) in
 
+variable (F n) in
 theorem exists_reps_congruenceSubgroup (m : ℕ) :
     ∃ R : Finset (GL (Fin n) F), (∀ x ∈ R, x ∈ integralGL F n) ∧
       ∀ k ∈ integralGL F n, ∃ x ∈ R, x⁻¹ * k ∈ congruenceSubgroup F n m := by
@@ -129,12 +134,12 @@ theorem exists_eval_decomposition (hσ : IsSmooth σ) {m : ℕ} {R : Finset (GL 
     else 0, fun x => ?_, fun ψ hψ => ?_⟩
   · by_cases hx : x ∈ R
     · dsimp only
-      rw [dif_pos hx, mem_fixedVectors_dual]
+      rw [dite_eq_left hx, mem_fixedVectors_dual]
       intro k hk w
       simp only [LinearMap.coe_comp, Function.comp_apply, Submodule.coe_subtype]
       rw [fixedProj_apply_act hσ hKMc hKMo hk]
     · dsimp only
-      rw [dif_neg hx]
+      rw [dite_eq_right hx]
       exact zero_mem _
   · have hval : ∀ x ∈ R, ((fixedProj σ hσ hKMc hKMo ((ψ : GL (Fin n) F → W) x) :
         fixedVectors σ KM) : W) = (ψ : GL (Fin n) F → W) x := fun x hx =>
@@ -147,10 +152,11 @@ theorem exists_eval_decomposition (hσ : IsSmooth σ) {m : ℕ} {R : Finset (GL 
     have hlam : lam ψ = L (E ⟨ψ, hψ⟩) := by
       simp only [L, LinearMap.coe_comp, Function.comp_apply, Submodule.coe_subtype]
       rw [← LinearMap.comp_apply E' E, hE', LinearMap.id_apply]
-    rw [hlam, hEψ, map_sum, ← Finset.sum_coe_sort R]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hlam, hEψ, map_sum, ← Finset.sum_coe_sort R]
     refine Finset.sum_congr rfl fun x _ => ?_
     dsimp only
-    rw [dif_pos x.2]
+    rw [dite_eq_left x.2]
     simp only [LinearMap.coe_comp, Function.comp_apply, Submodule.coe_subtype]
     rw [hval x x.2]
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.NotMemOfMulExp
-import Formalism.RealPlaceAnalysis.FinalF
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.NotMemOfMulExp
+public import Formalism.RealPlaceAnalysis.FinalF
+
+@[expose] public section
 
 open MeasureTheory Matrix Formalism.REAL Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.SmoothGlob GlobalTheory.LowTypeDetermined GlobalTheory.TypeSum
 open scoped Topology ContDiff
@@ -162,7 +166,7 @@ theorem eq_zero_of_test (H : UJ ε → ℂ) (hH : Continuous H)
   have h2 : 0 < ∫ g : UJ ε, φ (Matrix.of.symm (umat g)) * (star (H y) * H g).re ∂(muG ε) := by
     refine (hψ.mul hc).integral_pos_of_hasCompactSupport_nonneg_nonzero (x := y) hψc.mul_right (fun g => ?_) ?_
     · by_cases h0 : φ (Matrix.of.symm (umat g)) = 0
-      · simp [h0]
+      · rw [h0, zero_mul]; exact le_rfl
       · exact mul_nonneg (hφr ⟨_, rfl⟩).1 (le_of_lt (hVU (hφs (subset_tsupport _ h0))))
     · rw [hφ1, one_mul]; exact hpos.ne'
   refine h2.ne' ?_

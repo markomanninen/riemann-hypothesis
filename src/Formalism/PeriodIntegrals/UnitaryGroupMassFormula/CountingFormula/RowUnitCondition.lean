@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.HermFormShiftedVectorZero
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RowLatticeMassHolds
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.HermFormShiftedVectorZero
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RowLatticeMassHolds
+
+@[expose] public section
 
 open NumberField Module Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.BasicNotions Formalism.L2.SG.CntLocal
 open Classical
@@ -35,10 +39,10 @@ theorem exists_one {K : Type} [Field K] [NumberField K] [StarRing K]
       add_mem' := by
         rintro a b ⟨m₁, hm₁, e₁⟩ ⟨m₂, hm₂, e₂⟩
         refine ⟨m₁ + m₂, M.add_mem hm₁ hm₂, ?_⟩
-        rw [map_add, LinearMap.add_apply, e₁, e₂]
+        rw [map_add (f := _), LinearMap.add_apply, e₁, e₂]
         show star (algebraMap (𝓞 K) K a) + star (algebraMap (𝓞 K) K b) =
           star (algebraMap (𝓞 K) K (a + b))
-        rw [map_add, star_add]
+        rw [map_add (f := _), star_add]
       zero_mem' := ⟨0, M.zero_mem, by
         rw [map_zero, LinearMap.zero_apply]
         show (0 : K) = star (algebraMap (𝓞 K) K 0)

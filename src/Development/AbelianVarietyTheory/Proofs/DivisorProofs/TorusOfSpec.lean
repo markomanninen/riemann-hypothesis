@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjRelEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjRelEquiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ def pullLat (w : Pl E) {K : GlobalTheory.UnitLemma.UQ} (B : GlobalTheory.UnitLem
     simp
   add_mem' := by
     intro a b ha hb c i
-    rw [smul_add, map_add, Matrix.mulVec_add, Pi.add_apply]
+    rw [smul_add, map_add (f := _), Matrix.mulVec_add, Pi.add_apply]
     exact add_mem (ha c i) (hb c i)
   smul_mem' := by
     intro c' a ha c i
@@ -42,7 +46,7 @@ theorem torusOf_spec (w : Pl E) {K : GlobalTheory.UnitLemma.UQ} (B : GlobalTheor
     (ha : ∀ y, ψ ((a : B.A) * y) = g.val *ᵥ ψ y) : torusOf w B ψ g = a := by
   have h : ∃ a : B.Aˣ, ∀ y, ψ ((a : B.A) * y) = g.val *ᵥ ψ y := ⟨a, ha⟩
   unfold torusOf
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   apply Units.ext
   have h1 := h.choose_spec 1
   have h2 := ha 1

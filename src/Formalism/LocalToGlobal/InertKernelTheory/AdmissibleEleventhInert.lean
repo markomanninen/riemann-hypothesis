@@ -1,9 +1,13 @@
-import Formalism.LocalToGlobal.InertKernelTheory.FinalA
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.SigmaAlg
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.EndInt
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.PhNorm
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.GenusOneDatumExistence
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.ExistsWittSeriesInverseFormalGroupIso
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.FinalA
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.SigmaAlg
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.EndInt
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.PhNorm
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.GenusOneDatumExistence
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.ExistsWittSeriesInverseFormalGroupIso
+
+@[expose] public section
 
 namespace Formalism.L2.KerInert
 

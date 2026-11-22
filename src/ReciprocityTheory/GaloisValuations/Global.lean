@@ -1,6 +1,10 @@
-import Formalism.ConjugateSelfDual.Statement
-import ReciprocityTheory.GaloisValuations.GlobalA
-import ReciprocityTheory.GaloisValuations.GlobalB
+module
+
+public import Formalism.ConjugateSelfDual.Statement
+public import ReciprocityTheory.GaloisValuations.GlobalA
+public import ReciprocityTheory.GaloisValuations.GlobalB
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,8 +89,8 @@ instance normal_Ine_subgroupOf (A : ValuationSubring (Ω)) :
     rw [Subgroup.mem_subgroupOf] at hn ⊢
     simpa using conj_mem_Ine g.2 hn
 
-variable (F Ω) in
 
+variable (F Ω) in
 def cycZ (l : ℕ) [Fact l.Prime] : G F Ω →* ℤ_[l]ˣ :=
   (cyclotomicCharacter (Ω) l).comp
     (MulSemiringAction.toRingAut (G F Ω) (Ω))
@@ -96,26 +100,26 @@ theorem cyc_eq_map_cycZ (l : ℕ) [Fact l.Prime] (σ : G F Ω) :
     cyc F Ω l σ = Units.map ((algebraMap ℚ_[l] (PadicAlgCl l)).comp PadicInt.Coe.ringHom).toMonoidHom
       (cycZ F Ω l σ) := rfl
 
-variable (F Ω) in
 
+variable (F Ω) in
 theorem continuous_cycZ (l : ℕ) [Fact l.Prime] : Continuous (cycZ F Ω l) :=
   cyclotomicCharacter.continuous l F Ω
 
-variable (F Ω) in
 
+variable (F Ω) in
 def cycMod (l : ℕ) [Fact l.Prime] (r : ℕ) : G F Ω →* (ZMod (l ^ r))ˣ :=
   (Units.map (PadicInt.toZModPow r : ℤ_[l] →+* ZMod (l ^ r)).toMonoidHom).comp (cycZ F Ω l)
 
 def IsCC (c : G F Ω) : Prop :=
   ∃ j : Ω →+* ℂ, ∀ x, j (c x) = starRingEnd ℂ (j x)
 
-variable (Ω) in
 
+variable (Ω) in
 def placeOf (v : HeightOneSpectrum (𝓞 F)) : ValuationSubring (Ω) :=
   @Classical.epsilon _ ⟨⊤⟩ (fun A => IsPlaceOver A v)
 
-variable (Ω) in
 
+variable (Ω) in
 def frobOf (v : HeightOneSpectrum (𝓞 F)) : G F Ω :=
   @Classical.epsilon _ ⟨1⟩ (fun σ : G F Ω => IsFrob (placeOf Ω v) (normV v) σ)
 
@@ -123,8 +127,8 @@ section unram
 
 variable (S : Set (HeightOneSpectrum (𝓞 F)))
 
-variable (Ω) in
 
+variable (Ω) in
 def NS : Subgroup (G F Ω) :=
   (Subgroup.normalClosure
     (⋃ v ∈ Sᶜ, ⋃ A ∈ {A : ValuationSubring (Ω) | IsPlaceOver A v}, Inertia (F := F) A)
@@ -136,12 +140,12 @@ instance normal_NS : (NS Ω S).Normal := by
 variable (Ω) in
 theorem isClosed_NS : IsClosed (NS Ω S : Set (G F Ω)) := Subgroup.isClosed_topologicalClosure _
 
-variable (Ω) in
 
+variable (Ω) in
 abbrev GS := G F Ω ⧸ NS Ω S
 
-variable (Ω) in
 
+variable (Ω) in
 def toGS : G F Ω →* GS Ω S := QuotientGroup.mk' (NS Ω S)
 
 variable (Ω) in
@@ -260,8 +264,8 @@ theorem isFrob_mul_of_mem_Ine {A : ValuationSubring (Ω)} {q : ℕ} {σ ι : G F
   rw [e]
   exact Valuation.map_add_lt _ ((valuation_apply_lt_one_iff hσD' _).mpr (hιI x hx)) (hσF x hx)
 
-variable (Ω) in
 
+variable (Ω) in
 theorem exists_isPlaceOver (v : HeightOneSpectrum (𝓞 F)) :
     ∃ A : ValuationSubring (Ω), IsPlaceOver A v := by
   classical

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.InvertibleSheaf
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.InvertibleSheaf
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -22,35 +27,14 @@ instance : Algebra R (Via φ) := φ.toAlgebra
 
 def ofComplex : ℂ ≃+* Via φ := RingEquiv.refl ℂ
 
-lemma algebraMap_apply (r : R) : algebraMap R (Via φ) r = ofComplex φ (φ r) := rfl
-
-def conj : Via φ →ₗ[R] Via ((starRingEnd ℂ).comp φ) where
-  toFun z := starRingEnd ℂ (show ℂ from z)
-  map_add' a b := map_add (starRingEnd ℂ) (show ℂ from a) (show ℂ from b)
-  map_smul' r z := by
-    change starRingEnd ℂ (φ r * (show ℂ from z)) = (starRingEnd ℂ) (φ r) * starRingEnd ℂ (show ℂ from z)
-    rw [map_mul]
-
-def conjInv : Via ((starRingEnd ℂ).comp φ) →ₗ[R] Via φ where
-  toFun z := starRingEnd ℂ (show ℂ from z)
-  map_add' a b := map_add (starRingEnd ℂ) (show ℂ from a) (show ℂ from b)
-  map_smul' r z := by
-    change starRingEnd ℂ (starRingEnd ℂ (φ r) * (show ℂ from z)) =
-      φ r * starRingEnd ℂ (show ℂ from z)
-    rw [map_mul, Complex.conj_conj]
-
-lemma conjInv_conj (z : Via φ) : conjInv φ (conj φ z) = z := Complex.conj_conj (show ℂ from z)
-
-lemma conj_conjInv (z : Via ((starRingEnd ℂ).comp φ)) : conj φ (conjInv φ z) = z :=
-  Complex.conj_conj (show ℂ from z)
-
 end Via
 
 variable {X : Scheme.{u}} (L : X.Modules)
 
-variable (X) in
 
-abbrev locRing (p : X) : CommRingCat.{u} := TopCat.Presheaf.stalk (X := X.toTopCat) X.sheaf.obj p
+variable (X) in
+abbrev locRing (X : Scheme.{u}) (p : X) : CommRingCat.{u} :=
+  TopCat.Presheaf.stalk (X := X.toTopCat) X.sheaf.obj p
 
 abbrev modStalk (p : X) : Type u :=
   TopCat.Presheaf.stalk (X := X.toTopCat) (C := Ab.{u}) ((preMod X).obj L).presheaf p
@@ -120,10 +104,6 @@ def stalkEquiv {U : X.Opens} {p : X} (hp : p ∈ U) {e : ((preMod X).obj L).obj 
     (he : IsBasisOn ((preMod X).obj L) U e) : locRing X p ≃ₗ[locRing X p] modStalk L p :=
   LinearEquiv.ofBijective (LinearMap.toSpanSingleton _ _ (germM hp e)) (bijective_smul_germ hp he)
 
-lemma stalkEquiv_apply {U : X.Opens} {p : X} (hp : p ∈ U) {e : ((preMod X).obj L).obj (op U)}
-    (he : IsBasisOn ((preMod X).obj L) U e) (r : locRing X p) :
-    stalkEquiv hp he r = r • germM hp e := rfl
-
 section Fibre
 
 variable {p : X} {φ : locRing X p →+* ℂ}
@@ -139,82 +119,25 @@ instance : Module ℂ (fibreAt L p φ) :=
 
 lemma complex_smul_def (c : ℂ) (s : fibreAt L p φ) : c • s = Via.ofComplex φ c • s := rfl
 
-variable (L φ) in
 
+variable (L φ) in
 def fibreMk (c : Via φ) (m : modStalk L p) : fibreAt L p φ :=
   (c ⊗ₜ[locRing X p] m : TensorProduct (locRing X p) (Via φ) (modStalk L p))
 
-variable (φ) in
 
+variable (φ) in
 def value {U : X.Opens} (hp : p ∈ U) (s : ((preMod X).obj L).obj (op U)) : fibreAt L p φ :=
-  fibreMk L φ 1 (germM hp s)
+  fibreMk (L := L) (φ := φ) 1 (germM hp s)
+
 
 variable (φ) in
-
 def fibreEquiv {U : X.Opens} (hp : p ∈ U) {e : ((preMod X).obj L).obj (op U)}
     (he : IsBasisOn ((preMod X).obj L) U e) : fibreAt L p φ ≃ₗ[Via φ] Via φ :=
   (TensorProduct.AlgebraTensorModule.congr (LinearEquiv.refl (Via φ) (Via φ))
     (stalkEquiv hp he).symm).trans
       (TensorProduct.AlgebraTensorModule.rid (locRing X p) (Via φ) (Via φ))
 
-lemma fibreEquiv_fibreMk {U : X.Opens} (hp : p ∈ U) {e : ((preMod X).obj L).obj (op U)}
-    (he : IsBasisOn ((preMod X).obj L) U e) (c : Via φ) (r : locRing X p) :
-    fibreEquiv φ hp he (fibreMk L φ c (r • germM hp e)) = Via.ofComplex φ (φ r) * c := by
-  have : (stalkEquiv hp he).symm (r • germM hp e) = r := by
-    rw [LinearEquiv.symm_apply_eq, stalkEquiv_apply]
-  change TensorProduct.AlgebraTensorModule.rid (locRing X p) (Via φ) (Via φ) (c ⊗ₜ (stalkEquiv hp he).symm
-    (r • germM hp e)) = _
-  rw [this, TensorProduct.AlgebraTensorModule.rid_tmul, Algebra.smul_def]
-  rfl
 
-lemma fibreEquiv_value {U : X.Opens} (hp : p ∈ U) {e : ((preMod X).obj L).obj (op U)}
-    (he : IsBasisOn ((preMod X).obj L) U e) : fibreEquiv φ hp he (value φ hp e) = 1 := by
-  have := fibreEquiv_fibreMk (φ := φ) hp he 1 1
-  rw [one_smul, map_one, mul_one] at this
-  exact this
-
-variable (φ) in
-
-def fibreEquivComplex {U : X.Opens} (hp : p ∈ U) {e : ((preMod X).obj L).obj (op U)}
-    (he : IsBasisOn ((preMod X).obj L) U e) : fibreAt L p φ ≃ₗ[ℂ] ℂ where
-  toFun s := (Via.ofComplex φ).symm (fibreEquiv φ hp he s)
-  invFun c := (fibreEquiv φ hp he).symm (Via.ofComplex φ c)
-  map_add' a b := by rw [map_add, map_add]
-  map_smul' c s := by
-    rw [complex_smul_def, LinearEquiv.map_smul, smul_eq_mul, map_mul, RingEquiv.symm_apply_apply]
-    rfl
-  left_inv s := by simp
-  right_inv c := by simp
-
-lemma value_ne_zero {U : X.Opens} (hp : p ∈ U) {e : ((preMod X).obj L).obj (op U)}
-    (he : IsBasisOn ((preMod X).obj L) U e) : value φ hp e ≠ 0 := by
-  intro h
-  have := fibreEquiv_value (φ := φ) hp he
-  rw [h, map_zero] at this
-  exact zero_ne_one this
-
-variable (φ) in
-
-def fibreConj : fibreAt L p φ ≃+ fibreAt L p ((starRingEnd ℂ).comp φ) where
-  toFun s := TensorProduct.map (Via.conj φ) LinearMap.id
-    (show TensorProduct (locRing X p) (Via φ) (modStalk L p) from s)
-  invFun s := TensorProduct.map (Via.conjInv φ) LinearMap.id
-    (show TensorProduct (locRing X p) (Via ((starRingEnd ℂ).comp φ)) (modStalk L p) from s)
-  left_inv s := by
-    change TensorProduct.map (Via.conjInv φ) LinearMap.id
-      (TensorProduct.map (Via.conj φ) LinearMap.id
-        (show TensorProduct (locRing X p) (Via φ) (modStalk L p) from s)) = s
-    rw [← LinearMap.comp_apply, ← TensorProduct.map_comp]
-    have : (Via.conjInv φ).comp (Via.conj φ) = LinearMap.id := LinearMap.ext (Via.conjInv_conj φ)
-    rw [this, LinearMap.id_comp, TensorProduct.map_id, LinearMap.id_apply]
-  right_inv s := by
-    change TensorProduct.map (Via.conj φ) LinearMap.id
-      (TensorProduct.map (Via.conjInv φ) LinearMap.id
-        (show TensorProduct (locRing X p) (Via ((starRingEnd ℂ).comp φ)) (modStalk L p) from s)) = s
-    rw [← LinearMap.comp_apply, ← TensorProduct.map_comp]
-    have : (Via.conj φ).comp (Via.conjInv φ) = LinearMap.id := LinearMap.ext (Via.conj_conjInv φ)
-    rw [this, LinearMap.id_comp, TensorProduct.map_id, LinearMap.id_apply]
-  map_add' a b := map_add _ _ _
 
 end Fibre
 

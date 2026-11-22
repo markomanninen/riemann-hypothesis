@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyCuspFrame
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothOfAlgClosedUnif
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FramesExist
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsStalkFactor
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonemptyAdaptedOfIntStep
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ToroidalBoundaryMetricData
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyCuspFrame
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothOfAlgClosedUnif
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FramesExist
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsStalkFactor
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonemptyAdaptedOfIntStep
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ToroidalBoundaryMetricData
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 
 set_option autoImplicit false
@@ -45,7 +50,8 @@ theorem ev_eigDefect (X : FlagCover Y) {S : Type} [CommRing S] (w : Sp S ⟶ X.Y
       (((X.F.M k).ρ a).map (ev (w ≫ X.π) (X.F.M k).U (X.F.inM hw rfl))).mulVec
         (fun m => X.F.uAt k w hw σ m i) j - ψ (embK c σ a) * X.F.uAt k w hw σ j i := by
   unfold eigDefect
-  rw [map_sub, map_sum, map_mul, ev_cstF X w _ hw ψ hψ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, map_sum, map_mul, ev_cstF X w _ hw ψ hψ]
   simp only [map_mul, Matrix.mulVec, dotProduct, Matrix.map_apply]
   congr 1
   refine Finset.sum_congr rfl fun m _ => ?_
@@ -105,7 +111,8 @@ theorem existsUnique_of_retraction {R N : Type} [CommRing R] [AddCommGroup N] [M
   have hAC : Matrix.of A * C = 1 := by
     ext i j
     have h := congrFun (congrArg ρ (hA i)) j
-    rw [hρ, map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hρ, map_sum] at h
     simp only [map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul] at h
     rw [Matrix.mul_apply, Matrix.one_apply]
     refine Eq.trans ?_ (h.symm.trans ?_)

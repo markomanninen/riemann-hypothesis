@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GaussJetBounds.GenLogInverse
+module
+
+public import Mathlib
+public import Formalism.GaussJetBounds.GenLogInverse
+
+@[expose] public section
 
 noncomputable section
 

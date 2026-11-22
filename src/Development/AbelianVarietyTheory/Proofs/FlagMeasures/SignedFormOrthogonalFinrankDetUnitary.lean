@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicFlagLeviMaxCompactClosedSubgroups
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicFlagLeviMaxCompactClosedSubgroups
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
 
@@ -16,8 +20,8 @@ variable {n : ℕ} {ε : Fin n → Bool}
 def basisMat (V : Submodule ℂ (Fin n → ℂ)) : Matrix (Fin n) (Fin (Module.finrank ℂ V)) ℂ :=
   Matrix.of fun j i => (Module.finBasis ℂ V i : Fin n → ℂ) j
 
-variable (ε) in
 
+variable (ε) in
 def pairMap (V : Submodule ℂ (Fin n → ℂ)) : (Fin n → ℂ) →ₗ[ℂ] (Fin (Module.finrank ℂ V) → ℂ) :=
   ((basisMat V)ᴴ * Formalism.REAL.Jm ε).mulVecLin
 
@@ -62,7 +66,8 @@ theorem pair_sum (V : Submodule ℂ (Fin n → ℂ)) (x : V) (y : Fin n → ℂ)
   have hx : (x : Fin n → ℂ) =
       ∑ i, (Module.finBasis ℂ V).repr x i • ((Module.finBasis ℂ V i : V) : Fin n → ℂ) := by
     have hs := congrArg V.subtype ((Module.finBasis ℂ V).sum_repr x)
-    rw [map_sum] at hs
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at hs
     simp only [map_smul, Submodule.subtype_apply] at hs
     exact hs.symm
   rw [hx, star_sum, sum_dotProduct]
@@ -170,7 +175,7 @@ theorem det_of_intertwine {X Y : Type} [AddCommGroup X] [Module ℂ X] [AddCommG
     intro x
     conv_lhs => rw [← (Submodule.prodEquivOfIsCompl W C hC).apply_symm_apply x,
       Submodule.coe_prodEquivOfIsCompl']
-    rw [map_add, hπW _ ((Submodule.prodEquivOfIsCompl W C hC).symm x).1.2, zero_add]
+    rw [map_add (f := _), hπW _ ((Submodule.prodEquivOfIsCompl W C hC).symm x).1.2, zero_add]
   have hinj : Function.Injective (π ∘ₗ C.subtype) := by
     rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']
     intro c hc
@@ -285,11 +290,11 @@ theorem perp_modulus : ∀ (n : ℕ) (ε : Fin n → Bool) (V V' : Submodule ℂ
   rw [norm_mul, norm_one] at e3
   refine ⟨hV', ?_, ?_⟩
   · unfold detOn
-    rw [dif_pos k1', dif_pos k1]
+    rw [dite_eq_left k1', dite_eq_left k1]
     linear_combination ‖LinearMap.det ((toLin' (uMat m)).restrict k1)‖ * e2 -
       ‖LinearMap.det ((toLin' (uMat m)).restrict k1')‖ * e1
   · unfold detOn
-    rw [dif_pos k1]
+    rw [dite_eq_left k1]
     refine lt_of_le_of_ne (norm_nonneg _) fun h0 => ?_
     rw [← h0, zero_mul] at e3
     exact zero_ne_one e3

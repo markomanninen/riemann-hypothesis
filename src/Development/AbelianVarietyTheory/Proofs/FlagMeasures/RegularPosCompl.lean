@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FixedPointsGramVector
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FixedPointsGramVector
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 open MeasureTheory Matrix Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf
 open scoped InnerProductSpace

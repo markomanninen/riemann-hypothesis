@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CastGLSymmApply
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ClsHypA
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CastGLSymmApply
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ClsHypA
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,8 @@ theorem fst_mulVec (I : LocId L p nV W Qq) (v : Fin nV) (x : GL (Fin R.k) (E ⊗
     (y : Fin R.k → E ⊗[F] (I.plc v).adicCompletion F) (a : Fin R.k) :
     (splV I v (((x : Matrix (Fin R.k) (Fin R.k) _) *ᵥ y) a)).1 =
       (((bc (fstV I v) x : GL (Fin R.k) _) : Matrix (Fin R.k) (Fin R.k) _) *ᵥ fun b => (splV I v (y b)).1) a := by
-  simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Prod.fst_sum, Prod.fst_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Prod.fst_sum, Prod.fst_mul]
   rfl
 
 theorem first_iff (I : LocId L p nV W Qq) (v : Fin nV) (x : GL (Fin R.k) (E ⊗[F] (I.plc v).adicCompletion F)) :
@@ -73,7 +78,9 @@ theorem isHyperbolicAt_of_integralSplit (I : LocId L p nV W Qq) (hb : NotBad I) 
     exact ⟨fun y hy => ⟨_, (h y).1 hy, fun _ => rfl⟩,
       fun y hy => ⟨_, (((stabGL (Formalism.L2.Herm.locL (I.plc v) L.Lb)).inv_mem h) y).1 hy, fun _ => rfl⟩⟩
   · rintro ⟨ha, hb'⟩
-    exact stab_of_first (splV I v) (sigR sp.cm.sig ((I.plc v).adicCompletion F)) (I.spl_sig (I.plc v) (I.pl v).2)
-      ((I.plc v).adicCompletionIntegers F).toSubring (intV E (I.plc v)) (h1 v) _ _ (h2 v) x hx ha hb'
+    exact stab_of_first (splV I v) (sigR sp.cm.sig ((I.plc v).adicCompletion F))
+      (I.spl_sig (I.plc v) (I.pl v).2) ((I.plc v).adicCompletionIntegers F).toSubring
+      (intV E (I.plc v)) (h1 v) (sp.gram0.map (inclE (F := F) ((I.plc v).adicCompletion F)))
+      (Formalism.L2.Herm.locL (I.plc v) L.Lb) (h2 v) x hx ha hb'
 
 end Formalism.L2.G.Cmp

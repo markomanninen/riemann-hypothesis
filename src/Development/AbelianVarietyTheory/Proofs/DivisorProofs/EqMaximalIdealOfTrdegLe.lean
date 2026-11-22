@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FromBaseAlt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FromBaseAlt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 
 namespace GlobalTheory

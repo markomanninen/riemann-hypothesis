@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+
+@[expose] public section
 
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
@@ -14,7 +18,7 @@ theorem evC_aeval_invariants {κ : Type} (Φ : κ → MvPolynomial (ι × ι) �
     (y : Matrix ι ι ℂ) : evC (aeval Φ P) y = eval (fun k => evC (Φ k) y) P := by
   induction P using MvPolynomial.induction_on with
   | C a => simp [evC]
-  | add p q hp hq => simp only [evC, map_add] at *; rw [hp, hq]
+  | add p q hp hq => simp only [evC, map_add (f := _)] at *; rw [hp, hq]
   | mul_X p n hp => simp only [evC, map_mul, aeval_X, eval_X] at *; rw [hp]
 
 theorem evC_det_generic [Fintype ι] [DecidableEq ι] (y : Matrix ι ι ℂ) :
@@ -43,7 +47,8 @@ theorem exists_evC_eq_of_relations [Fintype ι] [DecidableEq ι] (Γ : Set (Matr
       rw [this]
     have hone : Rey 1 = 1 := hR.fix 1 (fun g hg y => by simp [evC])
     have h2 : ∑ k, (Φ k - C (z k)) * Rey (a k) = 1 := by
-      rw [← hone, ← ha, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hone, ← ha, map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [smul_eq_mul, mul_comm (a k), hR.mul _ _ (hinv k)]
     have h3 : ∀ k, ∃ P : MvPolynomial κ ℂ, aeval Φ P = Rey (a k) := by
@@ -53,7 +58,8 @@ theorem exists_evC_eq_of_relations [Fintype ι] [DecidableEq ι] (Γ : Set (Matr
       exact this
     choose P hP using h3
     have h4 := hz (∑ k, (X k - C (z k)) * P k - 1) (by
-      simp only [map_sub, map_sum, map_mul, aeval_X, aeval_C, map_one, hP, algebraMap_eq]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sub, map_sum, map_mul, aeval_X, aeval_C, map_one, hP, algebraMap_eq]
       rw [h2, sub_self])
     simp at h4
   obtain ⟨M, hM, hIM⟩ := Ideal.exists_le_maximal I hne

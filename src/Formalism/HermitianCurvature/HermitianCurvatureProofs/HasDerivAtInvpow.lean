@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HsVecApply
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BudgetClassEstimate
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.HasDerivAtInvpow
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.DegPderivMul
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.Expand
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HsVecApply
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutoffIteratedFDerivBounded
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.HasDerivAtInvpow
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.DegPderivMul
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.Expand
+
+@[expose] public section
 
 open Matrix MvPolynomial
 open scoped ComplexConjugate ContDiff Topology
@@ -24,12 +28,12 @@ private lemma exists_zhat_eq_eval_poly_deg_le_one (z z' : Fin (2 * r + k + 1) �
   refine ⟨fun a b => ∑ i, ∑ j, C (((Fm k r z)ᴴ * Hpk k r) a i * Fm k r z' j b) *
     MvPolynomial.X (Sum.inl (i, j)), ?_, ?_⟩
   · intro a b
-    refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun i _ => ?_)
-    refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun j _ => ?_)
-    exact deg_CX _ _
+    exact MvPolynomial.totalDegree_finsetSum_le fun i _ =>
+      MvPolynomial.totalDegree_finsetSum_le fun j _ => deg_CX _ _
   · intro g a b
     rw [Zhat_eq]
-    simp only [map_sum, map_mul, eval_C, eval_X, PI.UnitaryGroupMassFormula.UsCompose.vars, Sum.elim_inl, Matrix.mul_apply, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, eval_C, eval_X, PI.UnitaryGroupMassFormula.UsCompose.vars, Sum.elim_inl, Matrix.mul_apply, Finset.sum_mul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_
     exact Finset.sum_congr rfl fun x _ => by ring
@@ -41,12 +45,12 @@ private lemma exists_star_zhat_eq_eval_poly_deg_le_one (z z' : Fin (2 * r + k + 
   refine ⟨fun a b => ∑ i, ∑ j, C (star (((Fm k r z)ᴴ * Hpk k r) a i * Fm k r z' j b)) *
     MvPolynomial.X (Sum.inr (i, j)), ?_, ?_⟩
   · intro a b
-    refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun i _ => ?_)
-    refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun j _ => ?_)
-    exact deg_CX _ _
+    exact MvPolynomial.totalDegree_finsetSum_le fun i _ =>
+      MvPolynomial.totalDegree_finsetSum_le fun j _ => deg_CX _ _
   · intro g a b
     rw [Zhat_eq]
-    simp only [map_sum, map_mul, eval_C, eval_X, PI.UnitaryGroupMassFormula.UsCompose.vars, Sum.elim_inr, Matrix.mul_apply, Finset.sum_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, eval_C, eval_X, PI.UnitaryGroupMassFormula.UsCompose.vars, Sum.elim_inr, Matrix.mul_apply, Finset.sum_mul,
       star_sum, star_mul']
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_

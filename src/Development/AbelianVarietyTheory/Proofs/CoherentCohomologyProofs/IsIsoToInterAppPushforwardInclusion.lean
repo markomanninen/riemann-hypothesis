@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MapFOneInjectiveOfSectionsSurjective
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CohomologyPresheafFunctorMapAppApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MapFOneInjectiveOfSectionsSurjective
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CohomologyPresheafFunctorMapAppApply
+
+@[expose] public section
 
 open CategoryTheory Limits Opposite TopologicalSpace
 
@@ -18,8 +22,6 @@ section Inter
 def interFunctor (W : Opens X) : Opens X ⥤ Opens X where
   obj B := B ⊓ W
   map i := homOfLE (inf_le_inf_right W i.le)
-
-@[simp] lemma interFunctor_obj (W B : Opens X) : (interFunctor W).obj B = B ⊓ W := rfl
 
 def interFunctorIso (W : Opens X) :
     Opens.map W.inclusion' ⋙ W.isOpenEmbedding.functor ≅ interFunctor W :=
@@ -49,23 +51,6 @@ def toInter (W : Opens X) : 𝟭 (X.Sheaf A) ⟶ interSheaf A W where
 
 variable {A}
 
-@[simp] lemma interSheaf_obj_obj_obj (W : Opens X) (F : X.Sheaf A) (B : Opens X) :
-    ((interSheaf A W).obj F).obj.obj (op B) = F.obj.obj (op (B ⊓ W)) := rfl
-
-@[simp] lemma interSheaf_obj_obj_map (W : Opens X) (F : X.Sheaf A) {B B' : Opens X}
-    (i : B' ⟶ B) : ((interSheaf A W).obj F).obj.map i.op =
-      F.obj.map (homOfLE (inf_le_inf_right W i.le)).op := rfl
-
-@[simp] lemma interSheaf_map_hom_app (W : Opens X) {F G : X.Sheaf A} (f : F ⟶ G) (B : Opens X) :
-    ((interSheaf A W).map f).hom.app (op B) = f.hom.app (op (B ⊓ W)) := rfl
-
-@[simp] lemma toInter_app_hom_app (W : Opens X) (F : X.Sheaf A) (B : Opens X) :
-    ((toInter A W).app F).hom.app (op B) = F.obj.map (homOfLE inf_le_left).op := rfl
-
-instance isFlasque_interSheaf (W : Opens X) (F : X.Sheaf A) [hF : F.IsFlasque] :
-    ((interSheaf A W).obj F).IsFlasque where
-  epi _ := hF.epi _
-
 lemma isIso_toInter_app_of_isBasis {𝔅 : Set (Opens X)} (h𝔅 : Opens.IsBasis 𝔅) (W : Opens X)
     (G : X.Sheaf A)
     (h : ∀ B ∈ 𝔅, IsIso (G.obj.map (homOfLE (inf_le_left : B ⊓ W ≤ B)).op)) :
@@ -83,11 +68,6 @@ lemma isIso_toInter_app_pushforward {Y : TopCat.{u}} (j : Y ⟶ X) (W : Opens X)
     exact inferInstanceAs (IsIso (G.obj.map
       ((Opens.map j).map (homOfLE (inf_le_left : B ⊓ W ≤ B))).op))
 
-instance isIso_toInter_app_pushforward_inclusion' (W : Opens X)
-    (G : ((Opens.toTopCat X).obj W).Sheaf A) :
-    IsIso ((toInter A W).app ((TopCat.Sheaf.pushforward A W.inclusion').obj G)) :=
-  isIso_toInter_app_pushforward W.inclusion' W (fun y ↦ y.2) G
-
 lemma toInter_app_comp_map_comp_inv (W : Opens X) {F G : X.Sheaf A} (f : F ⟶ G)
     [IsIso ((toInter A W).app G)] :
     (toInter A W).app F ≫ (interSheaf A W).map f ≫ inv ((toInter A W).app G) = f := by
@@ -99,18 +79,6 @@ end Inter
 section Iso
 
 variable (A : Type u') [Category.{u} A]
-
-def interSheafIso (W : Opens X) :
-    W.isOpenEmbedding.sheafPullback A ⋙ TopCat.Sheaf.pushforward A W.inclusion' ≅
-      interSheaf A W :=
-  haveI := W.isOpenEmbedding.functor_isContinuous
-  Functor.sheafPushforwardContinuousComp' (interFunctorIso W) A _ _ _
-
-def interSheafIsoPullback (W : Opens X) :
-    TopCat.Sheaf.pullback AddCommGrpCat.{u} W.inclusion' ⋙
-      TopCat.Sheaf.pushforward AddCommGrpCat.{u} W.inclusion' ≅ interSheaf AddCommGrpCat.{u} W :=
-  Functor.isoWhiskerRight (W.isOpenEmbedding.sheafPullbackIso AddCommGrpCat.{u}) _ ≪≫
-    interSheafIso _ W
 
 end Iso
 
@@ -126,8 +94,8 @@ variable {S : ShortComplex (X.Sheaf AddCommGrpCat.{u})}
 lemma exact_map_interSheaf (hS : S.ShortExact) (W : Opens X) :
     (S.map (interSheaf AddCommGrpCat.{u} W)).Exact ∧
       Mono (S.map (interSheaf AddCommGrpCat.{u} W)).f :=
-  ((Functor.preservesFiniteLimits_tfae (interSheaf AddCommGrpCat.{u} W)).out 1 3 rfl rfl).mpr
-    inferInstance S ⟨hS.exact, hS.mono_f⟩
+  ((Functor.preservesFiniteLimits_tfae (interSheaf AddCommGrpCat.{u} W)).out 1 4 rfl rfl).mpr
+    inferInstance S hS
 
 lemma shortExact_map_interSheaf (hS : S.ShortExact) {𝔅 : Set (Opens X)} (h𝔅 : Opens.IsBasis 𝔅)
     (hinf : ∀ B ∈ 𝔅, ∀ B' ∈ 𝔅, B ⊓ B' ∈ 𝔅)

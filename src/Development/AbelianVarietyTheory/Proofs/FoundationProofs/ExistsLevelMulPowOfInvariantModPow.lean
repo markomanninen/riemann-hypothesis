@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiagMod
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiagMod
+
+@[expose] public section
 
 open scoped MatrixGroups TensorProduct
 open Matrix GlobalTheory.KZ GlobalTheory.KZ.ES
@@ -80,7 +84,8 @@ theorem exists_invariant {H A : Type} [Group H] [CommGroup A] (s : H → A →* 
   choose g hg using hf
   have hwd : ∀ a b : H, (a : H ⧸ D) = b → s a f = s b f := by
     intro a b hab
-    have h1 : a * (a⁻¹ * b) * a⁻¹ ∈ D := Subgroup.Normal.conj_mem ‹_› _ (QuotientGroup.eq.1 hab) a
+    have h1 : a * (a⁻¹ * b) * a⁻¹ ∈ D :=
+      Subgroup.Normal.conj_mem (a⁻¹ * b) (QuotientGroup.eq.1 hab) a
     have h2 : b = (a * (a⁻¹ * b) * a⁻¹) * a := by group
     conv_rhs => rw [h2, hs, hD _ h1]
   set F : A := ∏ x : H ⧸ D, s x.out f with hF
@@ -112,31 +117,31 @@ end GlobalTheory.KZ.ES.CongruenceDescent
 
 namespace GlobalTheory.KZ.ES
 
-open CongruenceDescent CongruenceSubgroup in
 
+open CongruenceDescent CongruenceSubgroup in
 theorem exists_lev_mul_pow_of_invariant_mod_pow :
     ∀ {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] (ε : Ω →+* ℂ) (X : Tower Ω ε), ∀ (l n M e : ℕ), l.Prime → 0 < M → ∀ f : X.Kˣ, Lev X (M ^ e) f → (∀ γ ∈ CongruenceSubgroup.Gamma M, ∃ g : X.Kˣ, X.sl (ofSL γ) (f : X.K) = f * (g : X.K) ^ (l ^ n)) → ∃ (k : ℕ) (h : X.Kˣ), Lev X (M * l ^ k) ((f : X.K) * (h : X.K) ^ (l ^ n)) := by
   intro Ω _ _ _ ε X l n M e hl hM f hlev hf
   obtain ⟨a, q, hq, hMq⟩ := Nat.exists_eq_pow_mul_and_not_dvd hM.ne' l hl.ne_one
   have hlq : l.Coprime q := hl.coprime_iff_not_dvd.2 hq
-  let H : Subgroup SL(2, ℤ) := Gamma (M * l ^ (a * e))
-  haveI := Gamma_normal (M ^ e)
+  let H : Subgroup SL(2, ℤ) := CongruenceSubgroup.Gamma (M * l ^ (a * e))
+  haveI := CongruenceSubgroup.Gamma_normal (M ^ e)
   haveI : NeZero (M ^ e) := ⟨(pow_pos hM e).ne'⟩
-  let D : Subgroup H := (Gamma (M ^ e)).subgroupOf H
+  let D : Subgroup H := (CongruenceSubgroup.Gamma (M ^ e)).subgroupOf H
   haveI : D.FiniteIndex := inferInstance
   have hcard : l.Coprime (Nat.card (H ⧸ D)) := by
-    refine coprime_card_of_pow_eq_one hl (hlq.pow_right e) fun x => ?_
+    refine CongruenceDescent.coprime_card_of_pow_eq_one hl (hlq.pow_right e) fun x => ?_
     obtain ⟨γ, rfl⟩ := QuotientGroup.mk_surjective x
     rw [← QuotientGroup.mk_pow, QuotientGroup.eq_one_iff, Subgroup.mem_subgroupOf, Subgroup.coe_pow]
-    refine Gamma_le_of_dvd ?_ (pow_pow_mem_Gamma_mul (q := q) ?_ γ.2 e)
+    refine CongruenceDescent.Gamma_le_of_dvd ?_ (CongruenceDescent.pow_pow_mem_Gamma_mul (q := q) ?_ γ.2 e)
     · exact ⟨M, by rw [hMq]; ring⟩
     · exact ⟨l ^ a * l ^ (a * e), by rw [hMq]; ring⟩
-  obtain ⟨h, hh⟩ := exists_invariant (H := H) (A := X.Kˣ)
+  obtain ⟨h, hh⟩ := CongruenceDescent.exists_invariant (H := H) (A := X.Kˣ)
     (fun γ => Units.map (X.sl (ofSL γ) : X.K →* X.K))
     (fun g h a => Units.ext (by simp [X.sl_mul])) D (hcard.pow_left n) f
     (fun δ hδ => Units.ext (by simpa using hlev δ hδ))
     (fun γ => by
-      obtain ⟨g, hg⟩ := hf γ (Gamma_le_of_dvd (dvd_mul_right _ _) γ.2)
+      obtain ⟨g, hg⟩ := hf γ (CongruenceDescent.Gamma_le_of_dvd (dvd_mul_right _ _) γ.2)
       exact ⟨g, Units.ext (by simpa using hg)⟩)
   refine ⟨a * e, h, fun γ hγ => ?_⟩
   have := congrArg Units.val (hh ⟨γ, hγ⟩)

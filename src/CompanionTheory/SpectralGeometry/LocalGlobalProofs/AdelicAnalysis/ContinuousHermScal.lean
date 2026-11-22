@@ -1,5 +1,10 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 
@@ -45,7 +50,7 @@ theorem exists_basis {σ : E →ₐ[F] E} (hσ : IsCMExt F E σ) :
     have hσs : ∀ (c : F) (z : E), σ (c • z) = c • σ z := fun c z => by
       rw [Algebra.smul_def, Algebra.smul_def, map_mul, AlgHom.commutes]
     have h' := congrArg σ hst
-    simp only [map_add, hσs, map_one, hσδ, map_zero, smul_neg] at h'
+    simp only [map_add (f := _), hσs, map_one, hσδ, map_zero, smul_neg] at h'
     have hs2 : (s + s) • (1 : E) = 0 := by
       rw [add_smul]
       linear_combination hst + h'
@@ -91,7 +96,7 @@ theorem fixed_eq {σ : E →ₐ[F] E} (hσ : IsCMExt F E σ) {y : R ⊗[F] E} (h
     simp [hB, Algebra.TensorProduct.basis_repr_tmul]
   have hc : c1 = 0 := by
     have := congrArg (fun z => B.repr z 1) hz
-    simp only [map_add, Finsupp.add_apply, hr, map_zero, Finsupp.zero_apply] at this
+    simp only [map_add (f := _), Finsupp.add_apply, hr, map_zero, Finsupp.zero_apply] at this
     rw [← half_add (F := F) R c1, this, mul_zero]
   exact ⟨c0, by rw [hy', hc]; simp⟩
 
@@ -194,7 +199,7 @@ theorem map_hermScal {σ : E →ₐ[F] E} (hσ : IsCMExt F E σ) {d : ℕ} (b : 
     rfl
   have hemb : MeasurableEmbedding e := by
     refine MeasurableEmbedding.of_measurable_inverse (g := fun y => y.1 0) ?_ ?_ ?_ ?_
-    · exact (measurable_pi_lambda _ fun _ => measurable_id).prodMk measurable_const
+    · exact (Measurable.of_eval fun _ => measurable_id).prodMk measurable_const
     · have : Set.range e = Set.univ := by
         refine Set.eq_univ_of_forall fun y => ⟨y.1 0, ?_⟩
         refine Prod.ext ?_ (Subsingleton.elim _ _)
@@ -216,7 +221,7 @@ theorem map_hermScal {σ : E →ₐ[F] E} (hσ : IsCMExt F E σ) {d : ℕ} (b : 
     rw [Measure.pi_of_empty _ x₀, Measure.prod_dirac]
     have h1 : (Measure.pi fun _ : Fin 1 => lam) = lam.map (fun s _ => s) :=
       ((measurePreserving_funUnique lam (Fin 1)).symm (MeasurableEquiv.funUnique (Fin 1) R)).map_eq.symm
-    have hm1 : Measurable fun (s : R) (_ : Fin 1) => s := measurable_pi_lambda _ fun _ => measurable_id
+    have hm1 : Measurable fun (s : R) (_ : Fin 1) => s := Measurable.of_eval fun _ => measurable_id
     have hm2 : Measurable fun y : Fin 1 → R => (y, x₀) := measurable_id.prodMk measurable_const
     rw [h1, Measure.map_map hm2 hm1]
     rfl

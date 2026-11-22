@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.SemisimplificationConstituents
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.SemisimplificationConstituents
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N
 
@@ -55,7 +59,7 @@ private theorem stable_sup' (f : Representation k Γ V) (A B : Submodule k V) (h
     (hB : Stable f B) : Stable f (A ⊔ B) := by
   intro g x hx
   obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hx
-  rw [map_add]
+  rw [map_add (f := _)]
   exact Submodule.add_mem_sup (hA g a ha) (hB g b hb)
 
 theorem partial_step (ρ : Representation k Γ V) (U U' : Submodule k V) (hU : Stable ρ U)
@@ -79,7 +83,7 @@ theorem partial_step (ρ : Representation k Γ V) (U U' : Submodule k V) (hU : S
     have e1 : p (v - p v) = 0 := by rw [map_sub, hpp, sub_self]
     have e2 : p (s g (p v)) = s g (p v) := hpU _ (hsU' g _ (hp v))
     have e3 : s' g v = s g (p v) + (ρ g (v - p v) - p (ρ g (v - p v))) := by rw [hs', glue_apply]
-    rw [hB g _ e1, e3, map_add, e2]
+    rw [hB g _ e1, e3, map_add (f := _), e2]
     generalize ρ g (v - p v) = x
     rw [map_sub, hpp, sub_self, add_zero, add_sub_cancel_left]
   set Wm : Submodule k V := U ⊓ LinearMap.ker p with hWm
@@ -114,7 +118,7 @@ theorem partial_step (ρ : Representation k Γ V) (U U' : Submodule k V) (hU : S
       obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hx
       have hbk : p b = 0 := (hX hb).2
       have hρb : ρ g b = p (ρ g b) + s' g b := by rw [hB g b hbk]; abel
-      rw [map_add, hρb, ← add_assoc]
+      rw [map_add (f := _), hρb, ← add_assoc]
       exact Submodule.add_mem_sup (add_mem (hU' g a ha) (hp _)) (hXs g b hb)
     rcases hmax (U' ⊔ X) hρX le_sup_left (sup_le hle (hX.trans inf_le_left)) with h1 | h1
     · left

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BlochKatoDuality
+module
+
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BlochKatoDuality
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ENNReal NNReal
@@ -68,7 +72,6 @@ instance : MeasurableSpace (Gp U hU) := inferInstanceAs (MeasurableSpace {x : Mt
 instance : BorelSpace (Gp U hU) := inferInstanceAs (BorelSpace {x : Mt k r // x ∈ amb U})
 instance : SecondCountableTopology (Gp U hU) :=
   inferInstanceAs (SecondCountableTopology {x : Mt k r // x ∈ amb U})
-instance : T2Space (Gp U hU) := inferInstanceAs (T2Space {x : Mt k r // x ∈ amb U})
 
 def inc (x : Gp U hU) : Mt k r := x.1
 
@@ -156,6 +159,7 @@ theorem haarUnique : HaarUnique := by
         rw [← Measure.isMulLeftInvariant_eq_smul (pull hU ν) (pull hU μ)]
     _ = Measure.haarScalarFactor (pull hU ν) (pull hU μ) • μ := by
         rw [Measure.map_smul, map_pull μ hμ.conc]
+        exact inc_cont.measurable.aemeasurable
 
 theorem haarInvFromUnique : HaarInvFromUnique :=
   _root_.UpperTheory.Reformulated.B.BlochKatoDuality.haarInvFromUnique
@@ -270,13 +274,9 @@ namespace Formalism.FourierDecayAlt.P
 
 theorem haar_measure_unique_up_to_scalar : Formalism.FourierDecayAlt.B2.HaarUnique := B2x1.haarUnique
 
-theorem haar_inversion_of_uniqueness : Formalism.FourierDecayAlt.B2.HaarInvFromUnique := B2x1.haarInvFromUnique
-
 theorem haar_measure_inversion : Formalism.FourierDecayAlt.B2.HaarInv := B2x1.haarInvFromUnique B2x1.haarUnique
 
 theorem conjugation_preserves_haar : Formalism.FourierDecayAlt.B2.ConjHaar := B2x1.conjHaar
-
-theorem compact_conjugation_of_uniqueness : Formalism.FourierDecayAlt.B2.CompactConjFromUnique := B2x1.compactConjFromUnique
 
 theorem compact_subgroup_conjugation : Formalism.FourierDecayAlt.B2.CompactConj := B2x1.compactConjFromUnique B2x1.haarUnique B2x1.conjHaar
 

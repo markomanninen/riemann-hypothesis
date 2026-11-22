@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DefsRep
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DefsRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ lemma kExp_Jm_conjTranspose (ε : Fin n → Bool) : (Jm ε)ᴴ = Jm ε := by
   unfold Jm
   rw [Matrix.diagonal_conjTranspose]
   congr 1
-  funext a
+  funext i
   simp only [Pi.star_apply]
   split_ifs <;> simp
 

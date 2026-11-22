@@ -1,28 +1,33 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupCoproduct
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupOpenCover
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProper
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.NoetherianBlowup
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.Saturation
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.StrictTransform
-import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupClosedSubscheme
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothRegular
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.EmbeddedResolutionRule
-import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.ClopenSubscheme
-import Development.ResolutionOfSingularities.Foundations.Schemes.SchemeCoproduct
-import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.ReducedSubscheme
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.FunctorialPrincipalization
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedStrictTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.DiscardedLocus
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupCoproduct
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupOpenCover
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProper
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.NoetherianBlowup
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.Saturation
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.StrictTransform
+public import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrictTransformCharts.BlowupClosedSubscheme
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothRegular
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.EmbeddedResolutionRule
+public import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.ClopenSubscheme
+public import Development.ResolutionOfSingularities.Foundations.Schemes.SchemeCoproduct
+public import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.ReducedSubscheme
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.FunctorialPrincipalization
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedStrictTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.DiscardedLocus
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry TopologicalSpace Opposite
@@ -190,7 +195,7 @@ private theorem range_coprod_inl_eq_preimage {A B X : Scheme.{u}} (a : A ⟶ X) 
   · rintro _ ⟨z, rfl⟩
     have h1 : (coprod.desc a b).base ((coprod.inl : A ⟶ A ⨿ B).base z) = a.base z := by
       have h := congrArg (fun f : A ⟶ X => f.base z) (coprod.inl_desc a b)
-      simpa using h
+      exact h
     rw [Set.mem_preimage, h1]
     exact ha z
   · intro z hz
@@ -201,7 +206,7 @@ private theorem range_coprod_inl_eq_preimage {A B X : Scheme.{u}} (a : A ⟶ X) 
     obtain ⟨y, rfl⟩ := hz2
     have h1 : (coprod.desc a b).base ((coprod.inr : B ⟶ A ⨿ B).base y) = b.base y := by
       have h := congrArg (fun f : B ⟶ X => f.base y) (coprod.inr_desc a b)
-      simpa using h
+      exact h
     rw [Set.mem_preimage, h1] at hz
     exact Set.disjoint_left.mp hdisj hz (hb y)
 
@@ -213,7 +218,7 @@ private theorem range_coprod_inr_eq_preimage {A B X : Scheme.{u}} (a : A ⟶ X) 
   · rintro _ ⟨y, rfl⟩
     have h1 : (coprod.desc a b).base ((coprod.inr : B ⟶ A ⨿ B).base y) = b.base y := by
       have h := congrArg (fun f : B ⟶ X => f.base y) (coprod.inr_desc a b)
-      simpa using h
+      exact h
     rw [Set.mem_preimage, h1]
     exact hb y
   · intro z hz
@@ -222,7 +227,7 @@ private theorem range_coprod_inr_eq_preimage {A B X : Scheme.{u}} (a : A ⟶ X) 
     obtain ⟨x, rfl⟩ := hzl
     have h1 : (coprod.desc a b).base ((coprod.inl : A ⟶ A ⨿ B).base x) = a.base x := by
       have h := congrArg (fun f : A ⟶ X => f.base x) (coprod.inl_desc a b)
-      simpa using h
+      exact h
     rw [Set.mem_preimage, h1] at hz
     exact Set.disjoint_left.mp hdisj (ha x) hz
 
@@ -526,11 +531,16 @@ theorem isBlowupAlongIdealSheaf_totalTransition_of_coprod_desc (i : ℕ)
           coprod.map (coprod.desc (S.strictTransformMap i) (S.detachedι i)) (𝟙 (S.detachedCoprod i)) =
         S.totalTransition i := by
     refine coprod.hom_ext ?_ ?_
-    · simp [coprodSwapAssocIso_hom, coprodSwapAssocHom, EmbeddedBlowupSequence.totalTransition,
-        coprod.inl_desc, coprod.inr_desc]
-    · refine coprod.hom_ext ?_ ?_ <;>
-        simp [coprodSwapAssocIso_hom, coprodSwapAssocHom, EmbeddedBlowupSequence.totalTransition,
-          coprod.inl_desc, coprod.inr_desc]
+    · simp only [coprodSwapAssocIso_hom, coprodSwapAssocHom, Category.assoc,
+        coprod.inl_desc_assoc, coprod.inl_map, coprod.inl_desc]
+      exact (S.inl_totalTransition_eq_strictTransformMap_inl i).symm
+    · refine coprod.hom_ext ?_ ?_
+      · simp only [coprodSwapAssocIso_hom, coprodSwapAssocHom, Category.assoc,
+          coprod.inr_desc_assoc, coprod.inl_desc_assoc, coprod.inr_map, Category.comp_id]
+        exact (S.inl_inr_totalTransition i).symm
+      · simp only [coprodSwapAssocIso_hom, coprodSwapAssocHom, Category.assoc,
+          coprod.inr_desc_assoc, coprod.inl_map, coprod.inr_desc]
+        exact (S.inr_inr_totalTransition i).symm
   have hfin := hmap.iso_hom_comp
     (coprodSwapAssocIso (S.strictTransform (i + 1)) (S.detachedScheme i) (S.detachedCoprod i))
   rw [hcomp] at hfin
@@ -580,15 +590,6 @@ theorem transitionsAreBlowupsForEmbeddings_of_detachedLocusIsOpen (A : Principal
   intro k _ _ Y pY _ _ _ _ D
   exact transitionsAreBlowups_of_detachedLocusIsOpen (D.toEmbeddedBlowupSequence A) (h k Y pY D)
     (allLevelsNoetherian_toEmbeddedBlowupSequence A k Y pY D)
-
-def vanishingIdealClosureImage {X Z : Scheme.{u}} (f : Z ⟶ X) (C : Set ↥Z) : X.IdealSheafData :=
-  Scheme.IdealSheafData.vanishingIdeal
-    (⟨closure (⇑f.base '' C), isClosed_closure⟩ : TopologicalSpace.Closeds ↥X)
-
-theorem vanishingIdealClosureImage_eq {X Z : Scheme.{u}} (f : Z ⟶ X) (C : Set ↥Z) :
-    vanishingIdealClosureImage f C =
-      Scheme.IdealSheafData.vanishingIdeal
-        (⟨closure (⇑f.base '' C), isClosed_closure⟩ : TopologicalSpace.Closeds ↥X) := rfl
 
 theorem isClopen_of_mem_irreducibleComponents_of_smooth {k : Type u} [Field k] {X : Scheme.{u}}
     (p : X ⟶ Spec (CommRingCat.of k)) [AlgebraicGeometry.Smooth p]

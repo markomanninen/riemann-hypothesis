@@ -1,12 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MinpolyIrreducibleNatDegreeOfRankOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsMulCommutativeCentRealUJ
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowSmulNormLeOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.T2SpaceKq
-import GroundTheory.Brauer.BaseChangeCSA
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBasisIntKQ
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointsNonemptyUnitaryRankOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MarkedSumIrr
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsMulCommutativeCentRealUJ
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowSmulNormLeOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.T2SpaceKq
+public import GroundTheory.Brauer.BaseChangeCSA
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBasisIntKQ
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount GlobalTheory.LKCx
 open scoped TensorProduct Classical
+
+
+#check GlobalTheory.IntBasisKQ.exists_basis_intKQ
 
 noncomputable section
 
@@ -74,8 +83,8 @@ theorem isCompact_Kres (K : IntermediateField ℚ_[p] (PadicAlgCl p)) [FiniteDim
   rw [e]
   exact Units.isClosedEmbedding_embedProduct.isCompact_preimage (hBc.prod hB')
 
-open Polynomial in
 
+open Polynomial in
 theorem rho_charpoly_sep (G : HTGroup p) (w : Fin G.m) (y : G.C) (hdeg : (minpoly G.F y).natDegree = G.n)
     (hsep : (minpoly G.F y).Separable) : (G.rho w y).charpoly.Separable := by
   letI : Algebra G.F (G.Fw w) := (G.embW w).toAlgebra
@@ -107,6 +116,8 @@ theorem rho_charpoly_sep (G : HTGroup p) (w : Fin G.m) (y : G.C) (hdeg : (minpol
     have h := linearIndependent_pow (K := G.F) y
     rw [hdeg] at h
     exact h
+  letI : Module.Free G.F (G.Fw w) := Module.Free.of_divisionRing _ _
+  letI : Module.Flat G.F (G.Fw w) := Module.Flat.of_free
   have hliC : LinearIndependent (G.Fw w) (fun i : Fin G.n => z ^ (i : ℕ)) := by
     have h := Module.Flat.linearIndependent_one_tmul (S := G.Fw w) hliF
     convert h using 1

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.EtaleGroupHomologySlantOfDeltaCochain
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.EtaleGroupHomologySlantOfDeltaCochain
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -29,7 +33,8 @@ theorem homD_of (h : Faces) : HomD := by
     have d : ((chainsN R).obj (BX Γ X)).d (m + 1) m =
         ∑ i : Fin (m + 2), (-1 : ℤ) ^ (i : ℕ) • (free R).map ((BX Γ X).δ i) :=
       AlgebraicTopology.alternatingFaceMapComplex_obj_d _ m
-    rw [e, ← hf (_ + _), map_add, map_sum, d, slantHom_single]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, ← hf (_ + _), map_add (f := _), map_sum, d, slantHom_single]
     have e2 : ∀ j : Fin (m + 1), f ((-1 : ℤ) ^ ((j : ℕ) + 1) • Finsupp.single (j.contractNth (· * ·) g) r) =
         (-1 : ℤ) ^ ((j : ℕ) + 1) • (ULift.up r : ULift.{1} R) • (free R).map (grpPt X (j.contractNth (· * ·) g)) :=
       fun j => by rw [map_zsmul, hf, slantHom_single]

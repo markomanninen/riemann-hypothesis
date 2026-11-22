@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.Procyclic
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.Procyclic
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -52,7 +57,7 @@ theorem IsTopologicalGenerator.exists_hom_zmod_orderOf {σ : G} (hσ : IsTopolog
     change m • Additive.ofMul τ = _
     rw [← ofMul_zpow]
   have hinj : Function.Injective ψ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro k hk
     obtain ⟨m, rfl⟩ := ZMod.intCast_surjective k
     rw [hψ, ← ofMul_one, Additive.ofMul.injective.eq_iff] at hk
@@ -122,13 +127,13 @@ theorem IsTopologicalGenerator.exists_cocycle_of_hom (hσ : IsTopologicalGenerat
     induction y using Int.induction_on with
     | zero => simp [hc0]
     | succ y ih =>
-      rw [← add_assoc, hrec, ih, hrec, map_add, hρ, add_assoc]
+      rw [← add_assoc, hrec, ih, hrec, map_add (f := _), hρ, add_assoc]
     | pred y ih =>
       have e1 := hrec (x + (-(y : ℤ) - 1))
       have e2 := hrec (-(y : ℤ) - 1)
       rw [show x + (-(y : ℤ) - 1) + 1 = x + -(y : ℤ) by ring, ih] at e1
       rw [show -(y : ℤ) - 1 + 1 = -(y : ℤ) by ring] at e2
-      rw [e2, map_add, hρ] at e1
+      rw [e2, map_add (f := _), hρ] at e1
       have e3 := e1.symm
       rw [← add_assoc] at e3
       exact add_right_cancel e3
@@ -238,8 +243,8 @@ theorem IsPrimePowGenerator.H1Eval_surjective (hℓ : ℓ.Prime) (hσ : IsPrimeP
     congrArg Subtype.val ((cochainsComplex A).i_cyclesMk x 2 (by simp) hx)
   rw [h, hfσ]
 
-omit [TotallyDisconnectedSpace G] in
 
+omit [TotallyDisconnectedSpace G] in
 theorem primary_discreteCoind_of_primary (A : Rep.{u} k G) [IsDiscreteRep A]
     (hA : ∀ a : A, ∃ e : ℕ, ℓ ^ e • a = 0) (f : discreteCoind k G A) : ∃ e : ℕ, ℓ ^ e • f = 0 := by
   let f' : LocallyConstant G A := f
@@ -250,8 +255,8 @@ theorem primary_discreteCoind_of_primary (A : Rep.{u} k G) [IsDiscreteRep A]
   show ℓ ^ K • f' x = 0
   exact pow_nsmul_eq_zero_of_le (hK ⟨⟨f' x, x, rfl⟩, rfl⟩) (hkk ⟨f' x, x, rfl⟩)
 
-omit [TotallyDisconnectedSpace G] in
 
+omit [TotallyDisconnectedSpace G] in
 theorem primary_coindCokernel_of_primary (A : Rep.{u} k G) [IsDiscreteRep A]
     (hA : ∀ a : A, ∃ e : ℕ, ℓ ^ e • a = 0) (x : coindCokernel A) : ∃ e : ℕ, ℓ ^ e • x = 0 := by
   have hepi : Epi (coindCokernelπ A) := (coindShortComplex_shortExact A).epi_g
@@ -262,7 +267,7 @@ theorem primary_coindCokernel_of_primary (A : Rep.{u} k G) [IsDiscreteRep A]
 theorem IsPrimePowGenerator.mem_range_sub_one_discreteCoind (hℓ : ℓ.Prime) (hσ : IsPrimePowGenerator ℓ σ)
     (A : Rep.{u} k G) [IsDiscreteRep A] (hA : ∀ a : A, ∃ e : ℕ, ℓ ^ e • a = 0) (c : LocallyConstant G A) :
     c ∈ LinearMap.range ((discreteCoind k G A).ρ σ - 1) := by
-  have hz := isZero_cohomology_discreteCoind k G A 0
+  have hz := isZero_cohomology_discreteCoind (k := k) (G := G) (X := A) 0
   have hs : Subsingleton (cohomology (discreteCoind k G A) 1) :=
     ModuleCat.subsingleton_of_isZero hz
   obtain ⟨x, hx⟩ := hσ.H1Eval_surjective hℓ (discreteCoind k G A)

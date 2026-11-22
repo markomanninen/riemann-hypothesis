@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Admissible
-import Formalism.HermitianCurvature.HeisenbergConjugationMeasurePreserving
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Admissible
+public import Formalism.HermitianCurvature.HeisenbergConjugationMeasurePreserving
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt GlobalTheory.ThA MeasureTheory Formalism.QuantumDeterminants Matrix
 open scoped InnerProductSpace
@@ -109,22 +113,18 @@ theorem contOn : ContinuousOn (aT k r) (Metric.sphere (0 : ℂ) 1) := by
 theorem circle_compact : IsCompact (aT k r '' Metric.sphere (0 : ℂ) 1) :=
   (isCompact_sphere _ _).image_of_continuousOn contOn
 
-theorem circle_subgroup : B2.IsClosedSubgroup (aT k r '' Metric.sphere (0 : ℂ) 1) where
-  one_mem := ⟨1, by simp, aT_one⟩
-  mul_mem := by
-    rintro _ ⟨a, ha, rfl⟩ _ ⟨b, hb, rfl⟩
+theorem circle_subgroup : B2.IsClosedSubgroup (aT k r '' Metric.sphere (0 : ℂ) 1) := by
+  refine ⟨⟨1, by simp, aT_one⟩, ?_, ?_, ?_, circle_compact.isClosed⟩
+  · rintro _ ⟨a, ha, rfl⟩ _ ⟨b, hb, rfl⟩
     refine ⟨a * b, ?_, (aT_mul a b).symm⟩
     simp only [mem_sphere_zero_iff_norm] at *
     rw [norm_mul, ha, hb, mul_one]
-  inv_mem := by
-    rintro _ ⟨a, ha, rfl⟩
+  · rintro _ ⟨a, ha, rfl⟩
     refine ⟨a⁻¹, ?_, (aT_inv (ne_zero_of_mem_unit_sphere ⟨a, ha⟩)).symm⟩
     simp only [mem_sphere_zero_iff_norm] at *
     rw [norm_inv, ha, inv_one]
-  unit := by
-    rintro _ ⟨a, ha, rfl⟩
+  · rintro _ ⟨a, ha, rfl⟩
     exact aT_unit (ne_zero_of_mem_unit_sphere ⟨a, ha⟩)
-  closed := circle_compact.isClosed
 
 theorem conj_cont (a : B.Mat k r) : Continuous (conjM a : Mt k r → Mt k r) :=
   (continuous_const.matrix_mul (continuous_id (X := B.Mat k r))).matrix_mul continuous_const

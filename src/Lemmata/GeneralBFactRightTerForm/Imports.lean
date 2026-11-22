@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Bl.general_b_fact_right_ter_form
 
@@ -268,7 +272,7 @@ theorem goal1 :
     apply NumberField.RingOfIntegers.ext
     change σ (algebraMap (NumberField.RingOfIntegers L) L y) =
       algebraMap (NumberField.RingOfIntegers L) L (1 - y)
-    rw [map_sub, map_one, hy, map_div₀, map_add, map_one, h, map_ofNat]
+    rw [map_sub, map_one, hy, map_div₀, map_add (f := _), map_one, h, map_ofNat]
     ring
   have h1 : (1 : NumberField.RingOfIntegers L) ∈ P := by
     rcases hP.mem_or_mem hmem with h' | h'

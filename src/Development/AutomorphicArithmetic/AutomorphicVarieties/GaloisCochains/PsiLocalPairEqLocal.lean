@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.GLinkQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.StrGen
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.GLinkQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.StrGen
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module UpperTheory.V UpperTheory.V.Fr UpperTheory.V.GC
 
@@ -61,6 +65,89 @@ theorem UpperTheory.V.GC.b1 :
     rcases (Nat.Prime.dvd_mul hl.out).1 h1 with h2 | h2
     · exact not_dvd_ker_index l _ (h2.trans (Subgroup.relIndex_dvd_index_of_normal _ _))
     · exact h.g.idx h2
+  have hplaces (A : ValuationSubring Ω) : (A ≠ ⊤ → ∃ v : HeightOneSpectrum (𝓞 F), IsPlaceOver A v) ∧ (A = ⊤ → Ine (F := F) A = ⊥) := by
+    have hint : ∀ z : Ω, IsIntegral ℤ z → A.valuation z ≤ 1 := by
+      intro z hz
+      obtain ⟨y, rfl⟩ := (IsIntegrallyClosed.isIntegral_iff (R := A) (K := Ω)).mp (hz.tower_top (A := A))
+      exact A.valuation_le_one y
+    have hOk : ∀ x : 𝓞 F, A.valuation (algebraMap F Ω (x : F)) ≤ 1 := fun x =>
+      hint _ x.isIntegral_coe.algebraMap
+    have htop : A = ⊤ → ∀ y : Ω, A.valuation y < 1 → y = 0 := by
+      intro hA y hy
+      by_contra h0
+      have h2 : A.valuation y⁻¹ ≤ 1 :=
+        (A.valuation_le_one_iff _).mpr (by rw [hA]; exact ValuationSubring.mem_top _)
+      have h3 : A.valuation y * A.valuation y⁻¹ = 1 := by
+        rw [← map_mul, mul_inv_cancel₀ h0, map_one]
+      have h4 : A.valuation y * A.valuation y⁻¹ < 1 :=
+        lt_of_le_of_lt (mul_le_of_le_one_right' h2) hy
+      exact absurd h3 (ne_of_lt h4)
+    refine ⟨?_, ?_⟩
+    · intro hA
+      let p : Ideal (𝓞 F) :=
+        { carrier := {x | A.valuation (algebraMap F Ω (x : F)) < 1}
+          add_mem' := by
+            intro a b ha hb
+            simp only [Set.mem_setOf_eq, map_add (f := _)] at *
+            exact lt_of_le_of_lt (A.valuation.map_add _ _) (max_lt ha hb)
+          zero_mem' := by simp
+          smul_mem' := by
+            intro c x hx
+            simp only [Set.mem_setOf_eq, smul_eq_mul, map_mul] at *
+            exact lt_of_le_of_lt (mul_le_of_le_one_left' (hOk c)) hx }
+      have hprime : p.IsPrime := by
+        refine ⟨?_, ?_⟩
+        · rw [Ne, Ideal.eq_top_iff_one]
+          show ¬ A.valuation (algebraMap F Ω ((1 : 𝓞 F) : F)) < 1
+          simp
+        · intro x y hxy
+          change A.valuation (algebraMap F Ω ((x * y : 𝓞 F) : F)) < 1 at hxy
+          change A.valuation (algebraMap F Ω (x : F)) < 1 ∨ A.valuation (algebraMap F Ω (y : F)) < 1
+          simp only [map_mul] at hxy
+          by_contra h
+          push_neg at h
+          have hx1 : A.valuation (algebraMap F Ω (x : F)) = 1 := le_antisymm (hOk x) h.1
+          have hy1 : A.valuation (algebraMap F Ω (y : F)) = 1 := le_antisymm (hOk y) h.2
+          rw [hx1, hy1, one_mul] at hxy
+          exact lt_irrefl _ hxy
+      have hne : p ≠ ⊥ := by
+        intro hbot
+        apply hA
+        have hk : ∀ y : F, A.valuation (algebraMap F Ω y) ≤ 1 := by
+          intro y
+          obtain ⟨a, b, hb, rfl⟩ := IsFractionRing.div_surjective (A := 𝓞 F) y
+          have hb0 : (b : 𝓞 F) ≠ 0 := nonZeroDivisors.ne_zero hb
+          have hbv : A.valuation (algebraMap F Ω (algebraMap (𝓞 F) F b)) = 1 := by
+            refine le_antisymm (hOk b) (not_lt.mp fun h => hb0 ?_)
+            have hbp : b ∈ p := h
+            rw [hbot] at hbp
+            exact (Submodule.mem_bot _).mp hbp
+          rw [map_div₀, map_div₀, hbv, div_one]
+          exact hOk a
+        have hf : ∀ y : F, algebraMap F Ω y ∈ A := fun y => (A.valuation_le_one_iff _).mp (hk y)
+        let f : F →+* A := (algebraMap F Ω).codRestrict A hf
+        have hcomp : (algebraMap A Ω).comp f = algebraMap F Ω := by
+          ext y
+          rfl
+        rw [eq_top_iff]
+        intro z _
+        have hz : IsIntegral A z := by
+          obtain ⟨q, hqm, hq⟩ := Algebra.IsIntegral.isIntegral (R := F) z
+          refine ⟨q.map f, hqm.map f, ?_⟩
+          rw [Polynomial.eval₂_map, hcomp]
+          exact hq
+        obtain ⟨y, rfl⟩ := (IsIntegrallyClosed.isIntegral_iff (R := A) (K := Ω)).mp hz
+        exact y.2
+      exact ⟨⟨p, hprime, hne⟩, fun x => Iff.rfl⟩
+    · intro hA
+      rw [Subgroup.eq_bot_iff_forall]
+      intro σ hσ
+      obtain ⟨-, hσ⟩ := hσ
+      ext z
+      have h1 := hσ z ((A.valuation_le_one_iff _).mpr (by rw [hA]; exact ValuationSubring.mem_top _))
+      have h2 := htop hA _ h1
+      rw [sub_eq_zero] at h2
+      simpa using h2
   have key := strGen F Ω l k U (K ⊓ (cycMod F Ω l 1).ker) (inf_le_left.trans hKU) (h.g.isOpen.inter hω) hidx
     Φ.del.ker π' ((h.g.cont.comp continuous_subtype_val).subtype_mk _)
     (π.subgroupComap_surjective_of_surjective _ h.g.onto) (Φ.V × Bool) (fun p => Φ.Gv p.1) Φ.loc2
@@ -69,9 +156,9 @@ theorem UpperTheory.V.GC.b1 :
       rw [h.K_Ψ _ hu.1, inv_one]) (fun B u hu huK => by
       by_cases hB : B = ⊤
       · left
-        rw [((Base.places F Ω l B).2.1 hB).1, Subgroup.mem_bot] at hu
+        rw [((hplaces B).2 hB), Subgroup.mem_bot] at hu
         exact Subtype.ext (by rw [hπ', hu, map_one]; rfl)
-      obtain ⟨w, hw⟩ := (Base.places F Ω l B).1 hB
+      obtain ⟨w, hw⟩ := (hplaces B).1 hB
       by_cases hS : w ∈ S
       · right
         obtain ⟨v, rfl⟩ := (h.loc.mem w).2 (h.only w hS)

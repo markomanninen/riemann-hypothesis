@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DatumOfIsIntegersLattice
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDiscreteValuationRingValuationSubringAtPrime
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentSlopeMemStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DatumOfIsIntegersLattice
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDiscreteValuationRingValuationSubringAtPrime
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentSlopeMemStatement
+
+@[expose] public section
 
 noncomputable section
 

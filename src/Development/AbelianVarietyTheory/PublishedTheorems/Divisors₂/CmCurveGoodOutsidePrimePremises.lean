@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDiscreteValuationRingValuationSubringAtPrime
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.ComplexMultiplicationJPremises
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDiscreteValuationRingValuationSubringAtPrime
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.ComplexMultiplicationJPremises
+
+@[expose] public section
 
 open NumberField IsDedekindDomain WeierstrassCurve
 open scoped nonZeroDivisors IntermediateField
@@ -208,16 +212,6 @@ theorem IsGoodCMCurve.numberField (h : IsGoodCMCurve p F A) : NumberField F := b
 theorem IsGoodCMCurve.isElliptic (h : IsGoodCMCurve p F A) : A.IsElliptic := by
   obtain ⟨-, hA, -⟩ := h
   exact hA
-
-theorem IsGoodCMCurve.hasGoodReductionOutside [NumberField F] (h : IsGoodCMCurve p F A) :
-    HasGoodReductionOutside p A := by
-  obtain ⟨_, _, L₀, _, _, _, hg⟩ := h
-  exact hg
-
-theorem IsGoodCMCurve.j_eq [A.IsElliptic] (h : IsGoodCMCurve p F A) {L : PeriodPair}
-    (hL : IsIntegersLattice p L) : (A.j : ℂ) = (latticeCurve L).j := by
-  obtain ⟨_, _, L₀, hL₀, _, hj, _⟩ := h
-  exact hj.trans (hL₀.j_eq hL)
 
 theorem IsGoodCMCurve.field_eq (h : IsGoodCMCurve p F A) {L : PeriodPair}
     (hL : IsIntegersLattice p L) : F = ℚ⟮(latticeCurve L).j⟯ := by

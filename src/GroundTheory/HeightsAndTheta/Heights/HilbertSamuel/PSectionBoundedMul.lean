@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionRing
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionRing
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -12,8 +17,8 @@ namespace SectionBoundedMul
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω]
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem isMultiHomog_mul {g h : MRing ι} {a b : K → ℕ} (hg : IsMultiHomog g a)
     (hh : IsMultiHomog h b) : IsMultiHomog (g * h) (a + b) := by
   classical
@@ -22,8 +27,8 @@ theorem isMultiHomog_mul {g h : MRing ι} {a b : K → ℕ} (hg : IsMultiHomog g
   simp only [Finsupp.add_apply, Finset.sum_add_distrib, Pi.add_apply]
   rw [hg m₁ hm₁ k, hh m₂ hm₂ k]
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem isMultiHomog_sub {g h : MRing ι} {d : K → ℕ} (hg : IsMultiHomog g d)
     (hh : IsMultiHomog h d) : IsMultiHomog (g - h) d := by
   classical
@@ -32,17 +37,16 @@ theorem isMultiHomog_sub {g h : MRing ι} {d : K → ℕ} (hg : IsMultiHomog g d
   · exact hg m hm
   · exact hh m hm
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem isMultiHomog_monomial (e : (Σ k, ι k) →₀ ℕ) (r : ℤ) :
     IsMultiHomog (monomial e r : MRing ι) (fun k => ∑ i, e ⟨k, i⟩) := by
   classical
   intro m hm k
   rw [Finset.mem_singleton.mp (support_monomial_subset hm)]
 
-omit [Fintype K] in
-open Classical in
 
+open Classical in
 theorem sum_single_apply (k' : K) (j : ι k') (b : ℕ) (k : K) :
     ∑ i, (Finsupp.single (⟨k', j⟩ : Σ k, ι k) b) ⟨k, i⟩ = if k' = k then b else 0 := by
   classical
@@ -73,14 +77,14 @@ theorem isMultiHomog_chartMono (c : ∀ k, ι k) (d : K → ℕ) : IsMultiHomog 
   rw [hd] at hm
   exact hm
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem aeval_chartMono (y : (Σ k, ι k) → Ω) (c : ∀ k, ι k) (d : K → ℕ) :
     aeval y (chartMono c d) = ∏ k, y ⟨k, c k⟩ ^ d k := by
   simp [chartMono, map_prod]
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem eval_chartMono (z : (Σ k, ι k) → ℂ) (c : ∀ k, ι k) (d : K → ℕ) :
     eval z (map (Int.castRingHom ℂ) (chartMono c d)) = ∏ k, z ⟨k, c k⟩ ^ d k := by
   simp [chartMono, map_prod]
@@ -125,7 +129,7 @@ theorem exists_form_of_mem_chartRingZ (y : (Σ k, ι k) → Ω) (c : ∀ k, ι k
       · exact isMultiHomog_mul h₁ (isMultiHomog_chartMono c δ₂) m hm
       · rw [add_comm δ₁]
         exact isMultiHomog_mul h₂ (isMultiHomog_chartMono c δ₁) m hm
-    · rw [map_add, map_mul, map_mul, v₁, v₂, aeval_chartMono, aeval_chartMono, hpow]
+    · rw [map_add (f := _), map_mul, map_mul, v₁, v₂, aeval_chartMono, aeval_chartMono, hpow]
       ring
   | mul x w _ _ hx hw =>
     obtain ⟨δ₁, e₁, h₁, v₁⟩ := hx
@@ -160,8 +164,8 @@ theorem exists_chartForm (y : (Σ k, ι k) → Ω) (a : K → ℤ) (n : ℕ) {s 
 
 end SectionBoundedMul
 
-open SectionBoundedMul in
 
+open SectionBoundedMul in
 theorem SectionBoundedMul.proof : SectionBoundedMul.Statement := by
   intro K _ ι _ Ω _ y A n m C C' s t hs ht hbs hbt dg dh g h z hg hh hdeg he hz
   choose c hc using hz.1

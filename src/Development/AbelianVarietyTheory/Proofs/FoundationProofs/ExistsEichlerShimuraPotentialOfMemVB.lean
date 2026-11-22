@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.LiftApplyOfMemAdmissibleSubalgebra
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsRootOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.LiftApplyOfMemAdmissibleSubalgebra
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsRootOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,6 +64,6 @@ theorem exists_pot_of_mem_VB : ∀ {Ω : Type} [Field Ω] [Algebra ℚ Ω] (ε :
     have : c ⊗ₜ[ℤ_[l]] (b : X.Fn l) = c • ((1 : E) ⊗ₜ[ℤ_[l]] (b : X.Fn l)) := by
       rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one]
     rw [this]; exact S.smul_mem c (h1 b b.2)
-  | add y y' h h' => rw [map_add]; exact S.add_mem h h'
+  | add y y' h h' => rw [map_add (f := _)]; exact S.add_mem h h'
 
 end GlobalTheory.KZ.H3

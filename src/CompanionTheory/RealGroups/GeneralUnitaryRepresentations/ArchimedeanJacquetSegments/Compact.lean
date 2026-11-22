@@ -1,6 +1,10 @@
-import CompanionTheory.RealGroups.GeneralUnitaryRepresentations.ArchimedeanJacquetSegments.Complementary
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantModulus
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
+module
+
+public import CompanionTheory.RealGroups.GeneralUnitaryRepresentations.ArchimedeanJacquetSegments.Complementary
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantModulus
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,9 +65,10 @@ theorem rc_of_KO (q : parab k (blk2 d)) (hq : (q : GL (Fin (d + d)) k) ∈ KO k 
     · have e : (leviProj k (blk2 d) q a)⁻¹ = leviProj k (blk2 d) q⁻¹ a := by rw [map_inv]; rfl
       rw [e, leviProj_apply]
       exact h2 _ _
-  unfold rc
-  rw [GlobalTheory.LGrp.nabs_det_of_mem_KO (hK 0), GlobalTheory.LGrp.nabs_det_of_mem_KO (hK 1)]
-  simp
+  letI : MeasurableSpace (GL (Fin d) k) := borel _
+  have hdet (a : Fin 2) : nabs k (Matrix.GeneralLinearGroup.det (leviProj k (blk2 d) q a)) = 1 :=
+    GlobalTheory.LGrp.nabs_det_of_mem_KO (hK a)
+  simp only [rc, hdet, inv_one, mul_one]
 
 theorem exists_pw (x : GL (Fin (d + d)) k) :
     ∃ p : parab k (blk2 d), ∃ w ∈ KO k (Fin (d + d)), x = (p : GL (Fin (d + d)) k) * w := by

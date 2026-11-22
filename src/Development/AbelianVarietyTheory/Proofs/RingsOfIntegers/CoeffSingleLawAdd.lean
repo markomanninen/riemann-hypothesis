@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.NatCastMulCoeffOfPderivEq
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.NatCastMulCoeffOfPderivEq
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -46,7 +50,8 @@ theorem coeff_single_subst {σ τ R : Type*} [CommRing R] [Fintype σ]
       subst a (f - C (constantCoeff f) - ∑ s, C (coeff (Finsupp.single s 1) f) * X s) := by
     conv_lhs => rw [hsplit]
     rw [subst_add ha, subst_add ha]
-  rw [hexp, map_add, map_add, hord, add_zero, subst_C' ha, subst_sum' ha, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hexp, map_add (f := _), map_add (f := _), hord, add_zero, subst_C' ha, subst_sum' ha, map_sum]
   simp [subst_mul ha, subst_C' ha, subst_X ha, coeff_C_mul, coeff_C]
 
 variable {R : Type} [CommRing R] {d : ℕ}
@@ -110,7 +115,7 @@ theorem dAct_add_and_one : ∀ (R : Type) [CommRing R] (d : ℕ) (O : Type) [Com
     unfold dAct FB.actK
     rw [B.A.add_act]
     simp only [coeff_map]
-    rw [coeff_single_law_add B.G (B.A.act a) (B.A.act b) (B.A.const a) (B.A.const b), map_add]
+    rw [coeff_single_law_add B.G (B.A.act a) (B.A.act b) (B.A.const a) (B.A.const b), map_add (f := _)]
   · ext i j
     unfold dAct FB.actK
     simp only [B.A.one_act, coeff_map, Matrix.one_apply, pt, coeff_single_X, Prod.mk.injEq, true_and]

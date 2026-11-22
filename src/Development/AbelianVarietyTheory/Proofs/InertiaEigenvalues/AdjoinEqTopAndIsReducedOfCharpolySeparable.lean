@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.EqZeroOfNotPrimary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.EqZeroOfNotPrimary
+
+@[expose] public section
 
 open Polynomial
 

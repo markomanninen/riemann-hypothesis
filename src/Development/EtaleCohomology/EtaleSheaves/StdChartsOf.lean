@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.StandardChartsLineOne
-import Development.EtaleCohomology.EtaleSheaves.ChartsPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.StandardChartsLineOne
+public import Development.EtaleCohomology.EtaleSheaves.ChartsPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E2Cut

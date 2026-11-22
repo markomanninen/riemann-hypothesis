@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.HeckeChar
-import GroundTheory.GlobalFields.TateThesis.IdeleMeasure
-import GroundTheory.GlobalFields.TateThesis.ArchCharsUnitary
-import GroundTheory.GlobalFields.TateThesis.Gaussian
-import GroundTheory.GlobalFields.TateThesis.GaussianComplex
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.HeckeChar
+public import GroundTheory.GlobalFields.TateThesis.IdeleMeasure
+public import GroundTheory.GlobalFields.TateThesis.ArchCharsUnitary
+public import GroundTheory.GlobalFields.TateThesis.Gaussian
+public import GroundTheory.GlobalFields.TateThesis.GaussianComplex
+
+@[expose] public section
 
 open NumberField InfinitePlace InfinitePlace.Completion MeasureTheory Complex ComplexConjugate
 open scoped Real
@@ -81,8 +85,8 @@ theorem infinitePlaceMeasure_zero (w : InfinitePlace K) : infinitePlaceMeasure w
     change ringEquivComplexOfIsComplex hc 0 = 0
     exact map_zero _
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem integral_infinitePlaceUnitsMeasure_of_isReal {w : InfinitePlace K} (hw : w.IsReal)
     (g : w.Completion → ℂ) :
     ∫ a : (w.Completion)ˣ, g a ∂infinitePlaceUnitsMeasure w =
@@ -101,8 +105,8 @@ theorem integral_infinitePlaceUnitsMeasure_of_isReal {w : InfinitePlace K} (hw :
   push_cast
   rw [div_eq_inv_mul]
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem integral_infinitePlaceUnitsMeasure_of_isComplex {w : InfinitePlace K} (hw : w.IsComplex)
     (g : w.Completion → ℂ) :
     ∫ a : (w.Completion)ˣ, g a ∂infinitePlaceUnitsMeasure w =
@@ -216,23 +220,16 @@ def infiniteTest (w : InfinitePlace K) (a : w.Completion) : ℂ :=
   (if 0 < χ.infiniteWeight w then conj (extensionEmbedding w a) else extensionEmbedding w a) ^
       (χ.infiniteWeight w).natAbs * ((Real.exp (-(π * w.mult * ‖a‖ ^ 2)) : ℝ) : ℂ)
 
-open Classical in
 
+open Classical in
 def infiniteGamma (w : InfinitePlace K) (s : ℂ) : ℂ :=
   if w.IsReal then Gammaℝ (s + χ.infiniteTau w * I + χ.infiniteWeight w)
   else Gammaℂ (s + χ.infiniteTau w * I + ((χ.infiniteWeight w).natAbs : ℂ) / 2)
 
-omit [NumberField K] in
-open Classical in
 
+open Classical in
 def infiniteConst (w : InfinitePlace K) : ℂ := if w.IsReal then 1 else π
 
-omit [NumberField K] in
-theorem infiniteConst_ne_zero (w : InfinitePlace K) : infiniteConst w ≠ 0 := by
-  unfold infiniteConst
-  split_ifs
-  · exact one_ne_zero
-  · exact_mod_cast Real.pi_ne_zero
 
 theorem integral_infiniteTest (w : InfinitePlace K) {s : ℂ} (hs : 0 < s.re) :
     ∫ a : (w.Completion)ˣ, χ.infiniteTest w a * χ.infiniteComponent w a *

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubledUnitaryPartnerDiagStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsContOnOfLocal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubledUnitaryPartnerDiagStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsContOnOfLocal
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta
 open IsDedekindDomain NumberField
@@ -75,8 +79,13 @@ theorem GlobalTheory.WeilCont.schA_periodic_finite_cosets : ∀ (F : Type) [Fiel
         rw [← hper _ hL (GlobalTheory.WeilCont.adeleJoin F x (y i0))]
         congr 1
         funext i
-        simp only [GlobalTheory.WeilCont.adeleJoin, Pi.add_apply, Pi.sub_apply, Pi.zero_apply, map_zero]
-        exact Prod.ext (add_zero _).symm (add_sub_cancel _ _).symm
+        apply Prod.ext
+        · change (InfiniteAdeleRing.ringEquiv_mixedSpace F).symm (x i) =
+            (InfiniteAdeleRing.ringEquiv_mixedSpace F).symm (x i) +
+              (InfiniteAdeleRing.ringEquiv_mixedSpace F).symm 0
+          rw [map_zero, add_zero]
+        · change w i = y i0 i + (w i - y i0 i)
+          exact (add_sub_cancel _ _).symm
       · intro j _ hj
         rw [if_neg (fun h => hj (he (h.symm.trans hi0.symm))), mul_zero]
       · intro h

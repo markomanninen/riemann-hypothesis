@@ -1,13 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiSeenA
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MulMemLp
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MulLinearAe
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MulFunctionAe
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MultiplicationFunction
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MultiplicationNormBound
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiSeenA
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MulLinearAe
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MultiplicationNormBound
+
+@[expose] public section
 
 open UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi DiscreteGroups.T1.G
 
@@ -48,17 +50,6 @@ end Abs
 section Mul
 
 variable {X : Type*} [MeasurableSpace X] {ν : Measure X} (c : X → ℝ)
-
-private theorem mul_memLp (hc : Measurable c) (hb : ∀ x, |c x| ≤ 1) (f : Lp ℂ 2 ν) :
-    MemLp (fun x => (c x : ℂ) * (f : X → ℂ) x) 2 ν :=
-  by apply _root_.UpperTheory.Reformulated.B.Qf3.mul_memLp <;> assumption
-
-private noncomputable def mulFn (hc : Measurable c) (hb : ∀ x, |c x| ≤ 1) (f : Lp ℂ 2 ν) : Lp ℂ 2 ν :=
-  by apply _root_.UpperTheory.Reformulated.B.MultiplicationFunction.mulFn <;> assumption
-
-private theorem mulFn_ae (hc : Measurable c) (hb : ∀ x, |c x| ≤ 1) (f : Lp ℂ 2 ν) :
-    (mulFn c hc hb f : X → ℂ) =ᵐ[ν] fun x => (c x : ℂ) * (f : X → ℂ) x :=
-  by apply _root_.UpperTheory.Reformulated.B.MulFunctionAe.mulFn_ae <;> assumption
 
 private noncomputable def mulL (hc : Measurable c) (hb : ∀ x, |c x| ≤ 1) : Lp ℂ 2 ν →L[ℂ] Lp ℂ 2 ν :=
   by apply _root_.UpperTheory.Reformulated.B.MultiplicationNormBound.mulL <;> assumption

@@ -1,11 +1,16 @@
-import Mathlib
-import Formalism.PeriodIntegrals.DiscIn
-import Formalism.PeriodIntegrals.ZerosWindowIn
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.Assemble
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.PerronGlue
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.LocalProofs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.LogWindowLe
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.LGrowthFinal
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.DiscIn
+public import Formalism.PeriodIntegrals.ZerosWindowIn
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.Assemble
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.PerronGlue
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.LocalProofs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.LogWindowLe
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.LGrowthMain
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.LGrowthZeta
+
+@[expose] public section
 
 noncomputable section
 

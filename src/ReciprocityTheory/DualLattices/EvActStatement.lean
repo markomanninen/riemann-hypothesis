@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.TowerZeroSurjective
+module
+
+public import ReciprocityTheory.DualLattices.TowerZeroSurjective
+
+@[expose] public section
 
 noncomputable section
 

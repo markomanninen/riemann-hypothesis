@@ -1,6 +1,10 @@
-import Formalism.JumpKernelCokernel.Statement
-import Formalism.JumpKernelCokernel.JumpShiftProofs.RowDegreeBound
-import Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.ExpBound
+module
+
+public import Formalism.JumpKernelCokernel.Statement
+public import Formalism.JumpKernelCokernel.JumpShiftProofs.RowDegreeBound
+public import Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.ExpBound
+
+@[expose] public section
 
 namespace Formalism.KernelCokernelLengths
 

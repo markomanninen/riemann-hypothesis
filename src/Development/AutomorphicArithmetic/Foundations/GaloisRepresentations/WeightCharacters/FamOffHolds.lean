@@ -1,8 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.WeightCharacters.DeltaNear
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAlgebraicWeightDefiniteUnitaryAutRepStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniqueWeightDefiniteUnitaryAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.WeightCharacters.DeltaNear
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAlgebraicWeightDefiniteUnitaryAutRepStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniqueWeightDefiniteUnitaryAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +23,17 @@ theorem famOff_holds : FamOff := by
   obtain ⟨e, he⟩ : ∃ e, B y₁ y₂ (GlobalTheory.CoefIrred.tenMul W e) ≠ 0 := by
     by_contra hc
     push_neg at hc
-    have h1 := (GlobalTheory.T.dualWeylModule_tensor_coefficient_universal (InfinitePlace E) a W (UA E a → ℂ) 0).unique (y₁ := B y₁ y₂) (y₂ := 0)
-      (fun u => hc u) (fun u => rfl)
+    have h1 : B y₁ y₂ = 0 := by
+      apply (Formalism.L2.DIV.bVV ℂ W).ext
+      intro i
+      have hi : Formalism.L2.DIV.bVV ℂ W i = GlobalTheory.CoefIrred.tenMul W
+          (fun τ => GlobalTheory.CoefIrred.ssBasis ℂ (W τ) (i τ)) := by
+        apply Subtype.ext
+        rw [Formalism.L2.DIV.bVV_coe, GlobalTheory.CoefIrred.tenMul_coe,
+          Formalism.L2.DIV.bVVfun]
+        simp only [GlobalTheory.CoefIrred.ssBasis_coe]
+      rw [hi]
+      exact hc _
     exact hv₀ (by rw [h1]; rfl)
   have h : (AU.mk ⟨U, hU⟩).HasWt v.embedding (W v) := by
     refine ⟨isIrreducible_sqRep a (W v), B y₁ y₂ ∘ₗ (GlobalTheory.CoefIrred.tenMul W).toLinearMap e v, fun h0 => he ?_, fun x => hBU _ _ _,

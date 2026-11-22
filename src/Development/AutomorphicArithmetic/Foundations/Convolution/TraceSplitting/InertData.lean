@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.SplitStable
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.HoweType
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.AtDown
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.SbInv
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.ValuationNatCastLeOne
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.SplitStable
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.HoweType
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.AtDown
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.SbInv
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.ValuationNatCastLeOne
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain ValuativeRel Filter
 open GroundTheory.Automorphic GroundTheory.Global GroundTheory.Global.SemiLocal

@@ -1,4 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.ProdModeCharExp
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.ProdModeCharExp
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.GeneratedSubStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,7 +106,7 @@ instance tsubCore : InnerProductSpace.Core ℂ (TSub S) where
       simp [tform]
     · exact (tform_self_re_pos h).le
   add_left x y z := by
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact tform_add_left _ _ _
   smul_left x y r := by
     simp only [map_smul]

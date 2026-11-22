@@ -1,11 +1,15 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafChartCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafChartCut
+
+@[expose] public section
 
 noncomputable section
 
 namespace LateralTheory.CohomologicalPurity.ChartCut
 
-open RingHom in
 
+open RingHom in
 theorem shrink_away {n : ℕ} {R S : Type} [CommRing R] [CommRing S] (ψ : R →+* S) (u v : S)
     (T : Type) [CommRing T] [Algebra S T] [IsLocalization.Away (u * v) T]
     (h : ((algebraMap S (Localization.Away u)).comp ψ).IsStandardSmoothOfRelativeDimension n) :

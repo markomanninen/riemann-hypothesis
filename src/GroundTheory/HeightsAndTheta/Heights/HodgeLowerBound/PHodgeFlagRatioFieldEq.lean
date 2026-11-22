@@ -1,13 +1,18 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsHodgeFlagRatioFieldEq
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsRatioFieldSpan
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsHodgeFlagSpan
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPivotMinorFlag
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.ObjectsTied
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PRatioFieldSpan
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHodgeFlagSpan
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PPivotMinorFlag
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.GenMat0FrEqMap
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsHodgeFlagRatioFieldEq
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsRatioFieldSpan
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsHodgeFlagSpan
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPivotMinorFlag
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.ObjectsTied
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PRatioFieldSpan
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHodgeFlagSpan
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PPivotMinorFlag
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.GenMat0FrEqMap
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

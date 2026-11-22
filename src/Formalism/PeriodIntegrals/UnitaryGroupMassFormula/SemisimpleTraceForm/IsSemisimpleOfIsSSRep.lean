@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SSAscent
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemisimpleTraceForm.TraceNilStep
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SSAscent
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemisimpleTraceForm.TraceNilStep
+
+@[expose] public section
 
 namespace PI.SSAscent.UnitaryGroupMassFormula
 
@@ -54,11 +58,6 @@ def liftSub (A : Subalgebra k (Matrix (Fin a) (Fin a) k)) (W : Submodule k (Fin 
   smul_mem' x v hv := by
     rw [smul_sub_def]
     exact h x.2 v hv
-
-theorem restrict_liftSub (A : Subalgebra k (Matrix (Fin a) (Fin a) k)) (W : Submodule k (Fin a → k))
-    (h : A ≤ stabAlg W) : (liftSub A W h).restrictScalars k = W := by
-  ext v
-  exact Iff.rfl
 
 theorem isInv_restrict {Γ : Type} [Group Γ] (ρ : Γ →* GL (Fin a) k)
     (N : Submodule (imAlg ρ) (Fin a → k)) : IsInv ρ (N.restrictScalars k) := by

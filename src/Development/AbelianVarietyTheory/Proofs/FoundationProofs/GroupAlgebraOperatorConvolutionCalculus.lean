@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.StandardFiveNontrivial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.StandardFiveNontrivial
+
+@[expose] public section
 
 noncomputable section
 open Polynomial Classical GlobalTheory.BadShare
@@ -36,7 +40,8 @@ theorem convCalc_dirac_right (a : G → ℂ) : conv a dirac = a := by
 theorem convCalc_star (a b : G → ℂ) (ha : ∀ x, a x⁻¹ = (starRingEnd ℂ) (a x))
     (hb : ∀ x, b x⁻¹ = (starRingEnd ℂ) (b x)) (x : G) :
     conv a b x⁻¹ = (starRingEnd ℂ) (conv b a x) := by
-  simp only [conv, map_sum, map_mul, ← ha, ← hb]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [conv, map_sum, map_mul, ← ha, ← hb]
   rw [← Equiv.sum_comp (Equiv.mulLeft x⁻¹)]
   refine Finset.sum_congr rfl fun y _ => ?_
   simp [mul_comm, mul_assoc]
@@ -83,7 +88,8 @@ theorem convCalc_rk [FiniteDimensional ℂ M] (e : G → ℂ) (he : conv e e = e
       rintro x ⟨y, rfl⟩
       exact LinearMap.congr_fun h1 y⟩
   rw [rk, ← hp.trace]
-  simp [op, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [op, map_sum]
 
 end
 

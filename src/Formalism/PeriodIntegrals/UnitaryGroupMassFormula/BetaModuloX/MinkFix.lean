@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaModuloX.MapEqOfIff
-import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.IdealsOfNormEqIndexSet
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaModuloX.MapEqOfIff
+public import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.IdealsOfNormEqIndexSet
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,9 @@ theorem mink_fix (L : Submodule (𝓞 E) Q) (hL : L.FG) (φ : Q →ₗ[E] Q) (h�
     (hcong : ∀ x ∈ L, ∃ y ∈ L, φ x - x = g • y) : ∀ x ∈ L, φ x = x := by
   have hfinO : Module.Finite (𝓞 E) L := Module.Finite.iff_fg.2 hL
   have hfinZ : Module.Finite ℤ L := Module.Finite.trans (𝓞 E) L
-  have := Formalism.HermitianLatticesTheory.isAddTorsionFree_ringOfIntegers_submodule (K := E) L
+  have : IsAddTorsionFree L :=
+    Formalism.HermitianLatticesTheory.isAddTorsionFree_ringOfIntegers_submodule (K := E) L
+  have : HasUniqueDiv L := IsAddTorsionFree.hasUniqueDiv
   have hfree : Module.Free ℤ L := Module.free_of_finite_type_torsion_free'
   let ψ : L →ₗ[ℤ] L :=
     (((φ.restrictScalars (𝓞 E)).restrict hφL : L →ₗ[𝓞 E] L) : L →+ L).toIntLinearMap
@@ -34,7 +40,7 @@ theorem mink_fix (L : Submodule (𝓞 E) Q) (hL : L.FG) (φ : Q →ₗ[E] Q) (h�
       rw [Function.iterate_succ_apply', Function.iterate_succ_apply', hψ, ih]
   have hψn : ψ ^ n = 1 := by
     refine LinearMap.ext fun x => Subtype.ext ?_
-    rw [Module.End.pow_apply, hiter, hpow]
+    rw [pow_apply_eq_iterate, hiter, hpow]
     rfl
   have hc : ∀ x : L, ∃ y : L, ψ x - x = (g : ℤ) • y := by
     intro x
@@ -56,7 +62,7 @@ theorem mink_fix (L : Submodule (𝓞 E) Q) (hL : L.FG) (φ : Q →ₗ[E] Q) (h�
     rw [LinearMap.toMatrixAlgEquiv_apply]
     have h := hyf (b j)
     rw [sub_eq_iff_eq_add'] at h
-    rw [h, map_add, map_zsmul, Finsupp.add_apply, Finsupp.smul_apply, Module.Basis.repr_self,
+    rw [h, map_add (f := _), map_zsmul, Finsupp.add_apply, Finsupp.smul_apply, Module.Basis.repr_self,
       Finsupp.single_apply]
     simp [B, Matrix.one_apply, eq_comm]
   have hA1 := Formalism.HermitianLatticeCounting.P.finite_order_congruence _ n (g : ℤ) A B (by exact_mod_cast hg) hn hAn hAB

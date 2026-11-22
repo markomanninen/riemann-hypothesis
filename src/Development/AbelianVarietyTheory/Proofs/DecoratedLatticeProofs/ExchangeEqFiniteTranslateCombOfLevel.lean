@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ToOneSucc
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsOpenKerOfContinuous
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ToOneSucc
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsOpenKerOfContinuous
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.PosOne
 open GlobalTheory.IndefiniteRowSideFullHecke.FourierJacobiAverage (app HasTensorVal fl opEFJ IsQuotIntFJ IsFJ Represents)
 open GlobalTheory.IndefiniteRowSideFullHecke.FramePositiveSum (IsCO rescale)
@@ -13,7 +18,7 @@ open GlobalTheory.IndefiniteRowSideFullHecke.PositiveTwistAverage GlobalTheory.R
 theorem comb_sum {G ι : Type} (T : Finset ι) (g : ι → G) (a : ℂ) (f : G → ℂ) :
     comb (∑ t ∈ T, Finsupp.single (g t) a) f = a * ∑ t ∈ T, f (g t) := by
   unfold comb
-  rw [← Finsupp.sum_finset_sum_index (fun _ => zero_mul _) (fun _ _ _ => add_mul _ _ _), Finset.mul_sum]
+  rw [← Finsupp.sum_finsetSum_index (fun _ => zero_mul _) (fun _ _ _ => add_mul _ _ _), Finset.mul_sum]
   refine Finset.sum_congr rfl fun t _ => ?_
   rw [Finsupp.sum_single_index (zero_mul _)]
 
@@ -23,7 +28,7 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 theorem exists_comb {ψ : AddChar k Circle} (hψ : Continuous ψ) (hψ1 : ψ ≠ 1) (ν : Measure k) [ν.IsAddHaarMeasure]
     (g : (n → k) → GL (n ⊕ Fin c) k) (hg : Continuous g) (hg1 : g 0 = 1)
     (hadd : ∀ a b, g (a + b) = g a * g b) (U : Subgroup (GL (n ⊕ Fin c) k)) (hU : IsOpen (U : Set (GL (n ⊕ Fin c) k)))
-    (W : Submodule 𝒪[k] (n → k)) (hW : W.IsLattice k) :
+    (W : Submodule 𝒪[k] (n → k)) (hW : W.IsFullLattice k) :
     ∃ e : GL (n ⊕ Fin c) k →₀ ℂ, ∀ f : GL (n ⊕ Fin c) k → ℂ,
       (∀ x b, g b ∈ U → f (g x * g b) = f (g x)) → (∀ x, x ∉ perp ψ W → f (g x) = 0) →
       ∫ x, f (g x) ∂(Measure.pi fun _ => ν) = comb e f := by
@@ -32,14 +37,15 @@ theorem exists_comb {ψ : AddChar k Circle} (hψ : Continuous ψ) (hψ1 : ψ ≠
   have hV : {b : n → k | g b ∈ U} ∈ 𝓝 (0 : n → k) :=
     hg.continuousAt.preimage_mem_nhds (hU.mem_nhds (by simp [hg1, U.one_mem]))
   obtain ⟨t, ht⟩ := exists_ballLat_subset (inter_mem hV (perp_mem_nhds hψ W hW))
-  have hBl := ballLat_isLattice (m := n) t
-  obtain ⟨T, hT⟩ := exists_isReps (perp ψ W) (ballLat n t).toAddSubgroup (isCompact_perp hψ hψ1 W hW)
-    (LatPair.isClopen_lattice (ballLat n t)).2
+  have hBl : (ballLat n t).IsFullLattice k := ballLat_isLattice t
+  letI : (ballLat n t).IsFullLattice k := hBl
+  have hBopen := (LatPair.isClopen_lattice (ballLat n t)).2
+  obtain ⟨T, hT⟩ := exists_isReps (perp ψ W) (ballLat n t).toAddSubgroup (isCompact_perp hψ hψ1 W hW) hBopen
   refine ⟨∑ x ∈ T, Finsupp.single (g x)
     ((((Measure.pi fun _ : n => ν).real ((ballLat n t).toAddSubgroup : Set (n → k)) : ℝ) : ℂ)), fun f h1 h0 => ?_⟩
   rw [comb_sum]
   refine integral_eq_sum_reps (Measure.pi fun _ : n => ν) (fun x hx => (ht hx).2)
-    (LatPair.isClopen_lattice (ballLat n t)).2 (isCompact_lattice _ hBl) hT (fun x => f (g x)) h0
+    hBopen (isCompact_lattice _ hBl) hT (fun x => f (g x)) h0
     fun x b hb => ?_
   simp only [hadd]
   exact h1 x b (ht hb).1
@@ -65,7 +71,7 @@ theorem exchange_eq_comb : ∀ (k : Type) [Field k] [ValuativeRel k] [Topologica
     ExchangeSupport.rowE_zero ExchangeSupport.rowE_add U hU (ballLat n s') (ballLat_isLattice s')
   refine ⟨e, e', fun A _ _ σ hσ l v hv => ⟨fun hl => ?_, fun hl => ?_⟩⟩
   · refine he (fun g => l (σ g v)) (fun x b hb => ?_) (fun x hx => ?_)
-    · simp only [map_mul, Module.End.mul_apply, hv _ hb]
+    · simp only [map_mul, mul_apply_eq_comp, hv _ hb]
     · by_contra hne
       refine hx fun u hu => ?_
       have := ((ExchangeSupport.exchange_support k n c p hp hc ψ hψ hψ1 ν A σ hσ l v).2 hl).2 u x
@@ -74,7 +80,7 @@ theorem exchange_eq_comb : ∀ (k : Type) [Field k] [ValuativeRel k] [Topologica
       rw [← inv_eq_one, ← AddChar.map_neg_eq_inv]
       exact Circle.ext (by simpa only [Circle.coe_one] using h4)
   · refine he' (fun g => l (σ g v)) (fun x b hb => ?_) (fun x hx => ?_)
-    · simp only [map_mul, Module.End.mul_apply, hv _ hb]
+    · simp only [map_mul, mul_apply_eq_comp, hv _ hb]
     · by_contra hne
       refine hx fun β hβ => ?_
       have := ((ExchangeSupport.exchange_support k n c p hp hc ψ hψ hψ1 ν A σ hσ l v).1 hl).2.1 x β

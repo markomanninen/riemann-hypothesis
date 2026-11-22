@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,12 +48,12 @@ theorem Gd.step (hF : Antitone F) {y u : PowerSeries LL} (hy : y = X * u) (hu : 
   subst hy
   have hc : ∀ j i, coeff (i + 1) (A j) = coeff i (u * A' j) := by
     intro j i
-    rw [hA j, map_add, coeff_C, if_neg (by omega : i + 1 ≠ 0), zero_add, mul_assoc, coeff_succ_X_mul]
+    rw [hA j, map_add (f := _), coeff_C, if_neg (by omega : i + 1 ≠ 0), zero_add, mul_assoc, coeff_succ_X_mul]
   refine ⟨?_, ?_⟩
   · have h0 := H 0
     have e : ∀ j, coeff 0 (A j) = o j := by
       intro j
-      rw [hA j, map_add, coeff_C, if_pos rfl, mul_assoc, coeff_zero_X_mul, add_zero]
+      rw [hA j, map_add (f := _), coeff_C, if_pos rfl, mul_assoc, coeff_zero_X_mul, add_zero]
     simp only [e, Nat.cast_zero, sub_zero] at h0
     exact h0
   · apply Formalism.MainNotions.N.Ln34.LevelExpansions.Gd.unit hF hu
@@ -91,7 +95,8 @@ private theorem sum_coeff_smul_eq_sum_coeff_y_pow_mul_smul {y : PowerSeries LL} 
     ∑ j, coeff i (A j) • v j = ∑ j, coeff i (y ^ N * A' j) • v j := by
   have e : ∀ j, coeff i (A j) = ∑ k ∈ range N, p j k * coeff i (y ^ k) + coeff i (y ^ N * A' j) := by
     intro j
-    rw [hA j, map_add, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hA j, map_add (f := _), map_sum]
     simp only [coeff_C_mul]
   have hk0 : ∀ k ∈ range N, ∑ j, (p j k * coeff i (y ^ k)) • v j = 0 := by
     intro k hk
@@ -162,7 +167,7 @@ theorem poly_expand (y : PowerSeries LL) (N : ℕ) : ∀ Q : Polynomial LL, ∃ 
     refine ⟨G, ?_⟩
     have hQ : Polynomial.aeval y Q = Polynomial.aeval y Q.divX * y + C (Q.coeff 0) := by
       have e := congrArg (Polynomial.aeval y) (Polynomial.divX_mul_X_add Q)
-      rw [map_add, map_mul, Polynomial.aeval_X, Polynomial.aeval_C, algebraMap_powerSeries_eq_C] at e
+      rw [map_add (f := _), map_mul, Polynomial.aeval_X, Polynomial.aeval_C, algebraMap_powerSeries_eq_C] at e
       exact e.symm
     rw [hQ, hG, Finset.sum_range_succ', add_mul, Finset.sum_mul]
     have hs : ∑ k ∈ range N, C (Q.divX.coeff k) * y ^ k * y = ∑ k ∈ range N, C (Q.coeff (k + 1)) * y ^ (k + 1) := by
@@ -322,8 +327,8 @@ theorem integ {yU yD : Z → PowerSeries LL} (HU : Dv ev O yU) (HD : Dv ev O yD)
   have hPt : Polynomial.aeval (yD zD) P = C (x * a₂ ^ h) * yU zD ^ b * yD zD ^ h := by
     rw [hP, hUD]
     first
-    | (simp only [map_mul, map_pow, map_add, Polynomial.aeval_X, Polynomial.aeval_C, algebraMap_powerSeries_eq_C]; done)
-    | (simp only [map_mul, map_pow, map_add, Polynomial.aeval_X, Polynomial.aeval_C, algebraMap_powerSeries_eq_C]; ring)
+    | (simp only [map_mul, map_pow, map_add (f := _), Polynomial.aeval_X, Polynomial.aeval_C, algebraMap_powerSeries_eq_C]; done)
+    | (simp only [map_mul, map_pow, map_add (f := _), Polynomial.aeval_X, Polynomial.aeval_C, algebraMap_powerSeries_eq_C]; ring)
   have hsU : IsUnit (yU zD) := by rw [hUD]; exact unit_add_C hyD hδ
   have key : yU zD ^ (h - b) * Polynomial.aeval (yD zD) P = C x * (C a₂ * yU zD * yD zD) ^ h := by
     rw [hPt]
@@ -396,7 +401,7 @@ theorem caseB {V₁ V₂ : Type*} [AddCommGroup V₁] [Module LL V₁] [AddCommG
   obtain ⟨G', hG'⟩ := poly_expand (yU zU) (B + η + (h - b) + 1) P
   have hPt : Polynomial.aeval (yU zU) P = C κ * yU zU ^ (h - b) * yD zU ^ (B + η) := by
     rw [hP, hDU]
-    simp only [map_mul, map_pow, map_add, Polynomial.aeval_X, Polynomial.aeval_C, algebraMap_powerSeries_eq_C]
+    simp only [map_mul, map_pow, map_add (f := _), Polynomial.aeval_X, Polynomial.aeval_C, algebraMap_powerSeries_eq_C]
     ring
   rw [hPt] at hG'
   have huniq : ∑ j, algebraMap O LL (q j (B + η + (h - b))) • v₂ j = P.coeff (B + η + (h - b)) • w :=
@@ -423,11 +428,12 @@ theorem caseC {O K : Type*} [CommRing O] [Field K] [Algebra O K] (l : ℕ) [Fact
   obtain ⟨c, hc⟩ : ∃ c, c = b.choose (B - 1) := ⟨_, rfl⟩
   rw [← hc] at ho hy
   have hc0 : c ≠ 0 := by rw [hc]; exact (Nat.choose_pos (by omega)).ne'
-  obtain ⟨c', hc'⟩ := (pow_padicValNat_dvd : l ^ padicValNat l c ∣ c)
+  obtain ⟨c', hc'⟩ := ((_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _)) : l ^ padicValNat l c ∣ c)
   have hnd : ¬ l ∣ c' := by
     rintro ⟨d, rfl⟩
     have hd : l ^ (padicValNat l c + 1) ∣ l ^ padicValNat l c * (l * d) := ⟨d, by ring⟩
     rw [← hc'] at hd
+    rw [Nat.padicValNat_def] at hd
     exact pow_succ_padicValNat_not_dvd (p := l) hc0 hd
   generalize hv : padicValNat l c = v at hc' hy
   obtain ⟨r, hr⟩ := hδ
@@ -456,7 +462,7 @@ theorem yc_bound (l : ℕ) [hl : Fact l.Prime] (b B η h : ℕ) (hb : b ≤ h)
   obtain ⟨v, hv⟩ : ∃ v, v = padicValNat l (b.choose (B - 1)) := ⟨_, rfl⟩
   rw [← hv]
   have hvlog : v ≤ Nat.log l b := by
-    rw [hv, ← Nat.factorization_def _ hl.out]
+    rw [hv, Nat.padicValNat_def, ← Nat.factorization_def _ hl.out]
     exact Nat.factorization_choose_le_log
   have hl1 : (1 : ℝ) < l := by exact_mod_cast hl.out.one_lt
   have hvle : (v : ℝ) ≤ Real.logb l h := by

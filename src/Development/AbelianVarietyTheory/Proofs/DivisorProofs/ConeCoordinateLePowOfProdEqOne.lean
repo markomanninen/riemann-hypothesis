@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspRapidDecaySiegelGL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfMemSpanK
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspRapidDecaySiegelGL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfMemSpanK
+
+@[expose] public section
+
 open NumberField GlobalTheory.CuspRep GlobalTheory.CuspQuot GlobalTheory.AutGrowth MeasureTheory GroundTheory.Global GroundTheory.Automorphic GroundTheory.Automorphic.Reduction
 
 namespace GlobalTheory
@@ -72,13 +77,13 @@ theorem coneCoord_le_pow_of_prod_eq_one : ∀ (a : ℕ) (t : ℝ), 0 < t → ∃
   have ex_le : ∃ j, r j ≤ 1 := by
     by_contra hcon
     push_neg at hcon
-    have := Finset.prod_lt_prod_of_nonempty (s := Finset.univ) (f := fun _ => (1 : ℝ)) (g := r)
+    have := Finset.prod_lt_prod_of_nonempty₀ (s := Finset.univ) (f := fun _ => (1 : ℝ)) (g := r)
       (fun _ _ => one_pos) (fun j _ => hcon j) hne
     simp [hprod] at this
   have ex_ge : ∃ j, 1 ≤ r j := by
     by_contra hcon
     push_neg at hcon
-    have := Finset.prod_lt_prod_of_nonempty (s := Finset.univ) (f := r) (g := fun _ => (1 : ℝ))
+    have := Finset.prod_lt_prod_of_nonempty₀ (s := Finset.univ) (f := r) (g := fun _ => (1 : ℝ))
       (fun j _ => hr j) (fun j _ => hcon j) hne
     simp [hprod] at this
   obtain ⟨j, hj⟩ := ex_le

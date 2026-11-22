@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.GROWCountStatement
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TracePowEqZeroOfLeDim
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.GROWCountStatement
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TracePowEqZeroOfLeDim
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 
@@ -23,7 +27,7 @@ private theorem trace_aeval_X_mul {K : Type*} [Field K] {n : ℕ} (N : Matrix (F
     (h : ∀ k : ℕ, (N ^ (k + 1)).trace = 0) (p : K[X]) :
     (aeval N (X * p)).trace = 0 := by
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => rw [mul_add, map_add, Matrix.trace_add, hp, hq, add_zero]
+  | add p q hp hq => rw [mul_add, map_add (f := _), Matrix.trace_add, hp, hq, add_zero]
   | monomial n a =>
     rw [show (X * monomial n a : K[X]) = monomial (n + 1) a by
       rw [← C_mul_X_pow_eq_monomial, ← C_mul_X_pow_eq_monomial]; ring]
@@ -44,7 +48,7 @@ private theorem isNilpotent_of_trace_pow_succ {K : Type*} [Field K] [CharZero K]
     rw [show (X ^ (m + 1) * q : K[X]) = X * minpoly K N by rw [hq]; ring, map_mul,
       minpoly.aeval, mul_zero]
   have h1 : aeval N (u * X ^ (m + 1)) + aeval N (v * q) = 1 := by
-    rw [← map_add, huv, map_one]
+    rw [← map_add (f := _), huv, map_one]
   have hprod : aeval N (u * X ^ (m + 1)) * aeval N (v * q) = 0 := by
     rw [← map_mul, show (u * X ^ (m + 1) * (v * q) : K[X]) = u * v * (X ^ (m + 1) * q) by ring,
       map_mul, hXq, mul_zero]

@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ColInst
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KernelAtPointPenultimateStepFirstCoupledKernel
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.YsAtFiniteNonempty
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevQFiniteIndexAndRoot
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.XiEntryInvariant
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FirstCoupledKernelEquivariantCosets
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.KAtTopEquiv
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.KmapOfOkOfVecP
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ChThOkOfColIn
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ColInst
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KernelAtPointPenultimateStepFirstCoupledKernel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.YsAtFiniteNonempty
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevQFiniteIndexAndRoot
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.XiEntryInvariant
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FirstCoupledKernelEquivariantCosets
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.KAtTopEquiv
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.KmapOfOkOfVecP
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ChThOkOfColIn
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,10 +41,18 @@ theorem lam_root (hL : L.Ok Ch sel mu cst G m2) {j : ℕ} (b : L.β j) (P : {P /
   have h0 : Loc.n1Arg r = 0 := by
     unfold Loc.n1Arg
     rw [show cOf R j - 1 = 0 by have := hL.hm; unfold cOf; omega, Finset.sum_range_zero]
-  simp only [chiInv, lamRow, hP, if_false, LocE.lamQB, h0, hL.cst_ok.psi_int _ 0 ChRoot.intAt_zero', inv_one, one_mul] at hχ
+  simp only [chiInv, lamRow, hP, ite_false, LocE.lamQB, h0, hL.cst_ok.psi_int _ 0 ChRoot.intAt_zero', inv_one, one_mul] at hχ
   have hne := ((L.levQ j b P).lam g).ne_zero
   rw [hχ] at hne
-  obtain ⟨k, hk, h2⟩ := ChRoot.unitV_root _ _ (fun h0 => hne (inv_eq_zero.2 h0))
+  have unitV_root (χ : (𝓞 X.E ⧸ P.1.asIdeal)ˣ →* X.Kˣ) (a : X.E) (ha : LocE.unitV χ a ≠ 0) :
+      ∃ k : ℕ, 0 < k ∧ LocE.unitV χ a ^ k = 1 := by
+    unfold LocE.unitV at ha ⊢
+    split_ifs at ha ⊢
+    · have : Finite (𝓞 X.E ⧸ P.1.asIdeal) := Ideal.finiteQuotientOfFreeOfNeBot _ P.1.ne_bot
+      refine ⟨Nat.card (𝓞 X.E ⧸ P.1.asIdeal)ˣ, Nat.card_pos, ?_⟩
+      rw [← Units.val_pow_eq_pow_val, ← map_pow, pow_card_eq_one', map_one, Units.val_one]
+    · exact (ha rfl).elim
+  obtain ⟨k, hk, h2⟩ := unitV_root _ _ (fun h0 => hne (inv_eq_zero.2 h0))
   refine ⟨k, hk, Units.ext ?_⟩
   rw [Units.val_pow_eq_pow_val, hχ, inv_pow, h2, inv_one, Units.val_one]
 
@@ -228,8 +240,8 @@ theorem kRat_true {i : ℕ} (hR : ReadsAt B.fields.emb B.embLL (l.ch u a) (kTrue
     (I.fm l u a).KRat i :=
   fun x => exists_K_embF hR hE ((l.fmL u a).fam i) ((l.fmL u a).fam (i + 1)) x
 
-variable (u a) in
 
+variable (u a) in
 theorem pRat_true : (I.fm l u a).PRat := by
   have hw := LvT.BuiltChain.weights_ok (I.perIn u a) (B.hcW u) B.fields.emb
     fun τ => congrArg RowPar.sg (B.wts_isOk.hc_row u τ).symm

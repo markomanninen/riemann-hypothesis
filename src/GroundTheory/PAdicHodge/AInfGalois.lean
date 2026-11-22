@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.PAdicHodge.KerFontaineThetaCompFrobeniusEquivSymmPow
-import GroundTheory.PAdicHodge.AInfTopology
-import GroundTheory.PAdicHodge.TiltMap
-import GroundTheory.PAdicHodge.TiltAlgebra
-import GroundTheory.PAdicHodge.GaloisOnCp
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.KerFontaineThetaCompFrobeniusEquivSymmPow
+public import GroundTheory.PAdicHodge.AInfTopology
+public import GroundTheory.PAdicHodge.TiltMap
+public import GroundTheory.PAdicHodge.TiltAlgebra
+public import GroundTheory.PAdicHodge.GaloisOnCp
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -20,8 +25,8 @@ variable {K L M : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p] [IsPerfectoidField L p]
   [IsPerfectoidField M p]
 
-variable (p) in
 
+variable (p) in
 def map (φ : K →+* L) (hφ : ∀ x, ‖φ x‖ = ‖x‖) : AInf K p →+* AInf L p :=
   WittVector.map (preTiltMap p φ hφ)
 
@@ -66,37 +71,8 @@ theorem map_frobeniusEquiv (φ : K →+* L) (hφ : ∀ x, ‖φ x‖ = ‖x‖) 
   rw [map_coeff, WittVector.frobeniusEquiv_coeff, WittVector.frobeniusEquiv_coeff, map_coeff,
     map_pow]
 
-theorem map_frobeniusEquiv_symm (φ : K →+* L) (hφ : ∀ x, ‖φ x‖ = ‖x‖) (x : AInf K p) :
-    map p φ hφ ((WittVector.frobeniusEquiv p _).symm x) =
-      (WittVector.frobeniusEquiv p _).symm (map p φ hφ x) := by
-  refine WittVector.ext fun n => ?_
-  rw [map_coeff, WittVector.frobeniusEquiv_symm_coeff, WittVector.frobeniusEquiv_symm_coeff,
-    map_coeff, RingHom.map_frobeniusEquiv_symm]
 
-omit [IsUltrametricDist K] in
 
-theorem norm_toRingHom_apply (σ : K ≃+* K) (hσ : ∀ x, ‖σ x‖ = ‖x‖) (x : K) :
-    ‖(σ : K →+* K) x‖ = ‖x‖ :=
-  hσ x
-
-omit [IsUltrametricDist K] in
-
-theorem norm_symm_toRingHom_apply (σ : K ≃+* K) (hσ : ∀ x, ‖σ x‖ = ‖x‖) (x : K) :
-    ‖(σ.symm : K →+* K) x‖ = ‖x‖ := by
-  change ‖σ.symm x‖ = ‖x‖
-  rw [← hσ, RingEquiv.apply_symm_apply]
-
-variable (p) in
-
-def mapEquiv (σ : K ≃+* K) (hσ : ∀ x, ‖σ x‖ = ‖x‖) : AInf K p ≃+* AInf K p :=
-  RingEquiv.ofRingHom (map p (σ : K →+* K) (norm_toRingHom_apply σ hσ))
-    (map p (σ.symm : K →+* K) (norm_symm_toRingHom_apply σ hσ))
-    (by
-      rw [← map_comp, ← map_id]
-      exact map_congr (RingHom.ext fun x => σ.apply_symm_apply x) _ _)
-    (by
-      rw [← map_comp, ← map_id]
-      exact map_congr (RingHom.ext fun x => σ.symm_apply_apply x) _ _)
 
 end Functor
 

@@ -1,5 +1,9 @@
-import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.ZfoTermReNonneg
-import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.ZfoGrowthBall
+module
+
+public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.ZfoTermReNonneg
+public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.ZfoGrowthBall
+
+@[expose] public section
 
 open Complex Metric
 

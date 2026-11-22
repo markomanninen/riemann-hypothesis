@@ -1,4 +1,8 @@
-import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.StatementTop
+module
+
+public import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.StatementTop
+
+@[expose] public section
 
 namespace Formalism.RepresentationBoundsCohomology.N2.Size
 
@@ -28,10 +32,13 @@ variable (ℓ : ℕ) [Fact ℓ.Prime]
 lemma sum_range_val (n : ℕ) :
     (∑ k ∈ range (n + 1), padicValNat ℓ k) = padicValNat ℓ n.factorial := by
   induction n with
-  | zero => simp
+  | zero =>
+    simp only [Finset.sum_range_succ, Finset.sum_range_zero, zero_add]
+    rw [Nat.padicValNat_def, Nat.padicValNat_def]
+    simp
   | succ n ih =>
     rw [Finset.sum_range_succ, ih, Nat.factorial_succ,
-      padicValNat.mul (by omega) (Nat.factorial_ne_zero n)]
+      (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (by omega) (Nat.factorial_ne_zero n)]
     ring
 
 lemma sum_val_half (n : ℕ) (T : Finset ℤ) (hT : ∀ j ∈ T, j.natAbs ≤ n)
@@ -48,7 +55,10 @@ lemma sum_val_half (n : ℕ) (T : Finset ℤ) (hT : ∀ j ∈ T, j.natAbs ≤ n)
       · have h1 := h x hx
         have h2 := h y hy
         omega
-  calc ∑ j ∈ T, padicValInt ℓ j = ∑ j ∈ T, padicValNat ℓ j.natAbs := rfl
+  calc ∑ j ∈ T, padicValInt ℓ j = ∑ j ∈ T, padicValNat ℓ j.natAbs := by
+        apply Finset.sum_congr rfl
+        intro j hj
+        simp [padicValInt, Nat.padicValNat_def]
     _ = ∑ k ∈ T.image Int.natAbs, padicValNat ℓ k := (Finset.sum_image hinj).symm
     _ ≤ ∑ k ∈ range (n + 1), padicValNat ℓ k := by
         apply Finset.sum_le_sum_of_subset_of_nonneg
@@ -94,7 +104,8 @@ lemma JSet_sum (M h : ℕ) (jumps : Finset ℤ) (hj : ∀ a ∈ jumps, -(M : ℤ
   constructor <;> omega
 
 lemma legendre (n : ℕ) : (ℓ - 1) * padicValNat ℓ n.factorial ≤ n := by
-  rw [sub_one_mul_padicValNat_factorial]
+  rw [Nat.padicValNat_def]
+  rw [(Fact.out : ℓ.Prime).sub_one_mul_multiplicity_factorial]
   exact Nat.sub_le _ _
 
 lemma val_factorial_le_self (n : ℕ) : padicValNat ℓ n.factorial ≤ n := by

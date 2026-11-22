@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsRestBis
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsRestBis
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -38,7 +43,7 @@ theorem exists_mvpoly_backDiff {K : Type} [DecidableEq K] (k : K) (q : MvPolynom
       intro y
       clear hP
       induction P using Polynomial.induction_on' with
-      | add p q hp hq => simp only [map_add, Polynomial.eval_add, hp, hq]
+      | add p q hp hq => simp only [map_add (f := _), Polynomial.eval_add, hp, hq]
       | monomial n c => simp [Polynomial.aeval_monomial]
     have hu : monomial u a = monomial (u.erase k) a * X k ^ (u k) := by
       rw [X_pow_eq_monomial, monomial_mul, mul_one, add_comm, Finsupp.single_add_erase]
@@ -52,7 +57,7 @@ theorem exists_mvpoly_backDiff {K : Type} [DecidableEq K] (k : K) (q : MvPolynom
   | add p q hp hq =>
     obtain ⟨R₁, h₁⟩ := hp
     obtain ⟨R₂, h₂⟩ := hq
-    exact ⟨R₁ + R₂, fun x => by simp only [map_add]; linear_combination h₁ x + h₂ x⟩
+    exact ⟨R₁ + R₂, fun x => by simp only [map_add (f := _)]; linear_combination h₁ x + h₂ x⟩
 
 theorem PolyOfDiffsExact.full : PolyOfDiffsExact.Statement := by
   intro K _ _ h hq
@@ -112,7 +117,7 @@ theorem PolyOfDiffsExact.full : PolyOfDiffsExact.Statement := by
         intro P
         induction P using MvPolynomial.induction_on with
         | C a => simp
-        | add p q hp hq => simp only [map_add, hp, hq]
+        | add p q hp hq => simp only [map_add (f := _), hp, hq]
         | mul_X p j hp =>
           simp only [map_mul, hp, bind₁_X_right, eval_X]
           by_cases hj : j = k
@@ -120,7 +125,7 @@ theorem PolyOfDiffsExact.full : PolyOfDiffsExact.Statement := by
           · simp [z, hj]
       have e := line k m (m k)
       rw [Function.update_eq_self] at e
-      rw [map_sub, map_add, hz, hz, ← hp _ hm0]
+      rw [map_sub, map_add (f := _), hz, hz, ← hp _ hm0]
       linear_combination e
   obtain ⟨p, hp⟩ := key Finset.univ
   exact ⟨p, fun m => hp m (fun j hj => absurd (Finset.mem_univ j) hj)⟩

@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StGlob
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemHeckeSplitPlaceSetIffDoubleCoset
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StGlob
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemHeckeSplitPlaceSetIffDoubleCoset
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
 open GlobalTheory.GalCut GlobalTheory.UnitaryBC GlobalTheory.Cong GlobalTheory.DefU
@@ -151,7 +156,7 @@ private theorem isOpen_Jc {d : w.adicCompletion E} (hd : d ≠ 0) (hc : Valued.v
   · exact (isOpen_ball w hd).preimage ((Units.continuous_coe_inv.matrix_elem i j).sub continuous_const)
 
 private theorem Jc_le_KGL {c : WithZero (Multiplicative ℤ)} (hc : c ≤ 1) :
-    Jc (a := a) (Valued.v : Valuation (w.adicCompletion E) (WithZero (Multiplicative ℤ))) c hc ≤ GlobalTheory.LFun.KGL w a := by
+    Jc (a := a) (Valued.v : Valuation (w.adicCompletion E) (WithZero (Multiplicative ℤ))) c hc ≤ GlobalTheory.LFun.KGL w (n := a) := by
   intro g hg
   have h1 := Mt_of_sub hc hg.1
   have h2 := Mt_of_sub hc hg.2

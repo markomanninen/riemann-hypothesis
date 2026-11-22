@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
-import Formalism.RealPlaceAnalysis.FinalF
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.KMapLowestKTypeSubspaceEqScalar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
+public import Formalism.RealPlaceAnalysis.FinalF
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.KMapLowestKTypeSubspaceEqScalar
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec GlobalTheory.DSId
 open scoped InnerProductSpace ComplexOrder ContDiff
@@ -41,7 +45,7 @@ private lemma contDiff_hs_sub_one {n : ℕ} :
   have hsub : ContDiff ℝ ∞ (fun y : Matrix (Fin n) (Fin n) ℂ => y - 1) :=
     contDiff_id.sub contDiff_const
   have hent : ContDiff ℝ ∞ (fun y : Matrix (Fin n) (Fin n) ℂ => (y - 1) i j) :=
-    (contDiff_apply_apply ℝ ℂ i j).comp hsub
+    (contDiff_apply_apply ℝ i j).comp hsub
   exact (contDiff_norm_sq ℝ).comp hent
 
 theorem exists_conjInvariant_bump (n : ℕ) (ε : Fin n → Bool) (U : Set (UJ ε))
@@ -140,7 +144,7 @@ theorem exists_smooth_fix_lowKSub : ∀ (n : ℕ) (ε : Fin n → Bool) (lam : F
   let T : lowKSub ε lam σ →ₗ[ℂ] H :=
     { toFun := fun s => ∫ g, F s g ∂(muG ε)
       map_add' := fun x y => by
-        simp only [F, Submodule.coe_add, map_add, smul_add]
+        simp only [F, Submodule.coe_add, map_add (f := _), smul_add]
         exact integral_add (hFi x) (hFi y)
       map_smul' := fun c x => by
         simp only [F, Submodule.coe_smul, map_smul, RingHom.id_apply]

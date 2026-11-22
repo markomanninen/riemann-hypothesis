@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.QmRowExp
-import Formalism.PeriodIntegrals.QmRowForm
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.GeneratorCommutatorQuantumDet
+module
+
+public import Formalism.PeriodIntegrals.QmRowExp
+public import Formalism.PeriodIntegrals.QmRowForm
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.GeneratorCommutatorQuantumDet
+
+@[expose] public section
 
 open Finset
 

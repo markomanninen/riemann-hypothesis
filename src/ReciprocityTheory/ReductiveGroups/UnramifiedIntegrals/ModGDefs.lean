@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDefs
-import ReciprocityTheory.NeutralLocalFields.HilbertClassField
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDefs
+public import ReciprocityTheory.NeutralLocalFields.HilbertClassField
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical

@@ -1,13 +1,17 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.TwistedKernels.ExPhiPlusOnto
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PolyBall
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemTwKerIffAverage
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierTransformInversionLocalFieldPi
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsMemTwKerPolyBall
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwKerPolyBallLeOfValuationLe
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AnnSubsetOfMemNhds
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRepsSumEqZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SumTwOrbitEqZero
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.TwistedKernels.ExPhiPlusOnto
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PolyBall
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemTwKerIffAverage
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierTransformInversionLocalFieldPi
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsMemTwKerPolyBall
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwKerPolyBallLeOfValuationLe
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AnnSubsetOfMemNhds
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRepsSumEqZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SumTwOrbitEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,8 +73,8 @@ theorem isOpen_ann (ψ : AddChar k Circle) (hψ : Continuous ψ) (n : ℕ) (t : 
 
 end GlobalTheory.CompanionTheory.MirFourier
 
-open GlobalTheory.CompanionTheory.MirFourier in
 
+open GlobalTheory.CompanionTheory.MirFourier in
 theorem GlobalTheory.CompanionTheory.MirFourier.fourier : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k], GlobalTheory.BZMir.Fun.Fourier k := by
   intro k _ _ _ _ ψ hψ h1 n V _ _ τ hτ v hv

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistSplitLoc
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistSplitLoc
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -49,7 +54,7 @@ def cf (I : Finset (Fin (N + 1))) (hI : I ⊆ support x) :
   toFun w := (UT.toL (locEmb η M₀ I hI w)).coeff ((n : ℤ), c)
   map_zero' := by rw [map_zero, UT.toL_zero, AddMonoidAlgebra.coeff_zero]; rfl
   map_add' w w' := by
-    rw [map_add, UT.toL_add, AddMonoidAlgebra.coeff_add, Finsupp.add_apply]
+    rw [map_add (f := _), UT.toL_add, AddMonoidAlgebra.coeff_add, Finsupp.add_apply]
 
 theorem cf_locResS (I J : StdCell N) (hI : I.1 ⊆ support x) (hJ : J.1 ⊆ support x) (h : I.1 ⊆ J.1)
     (w : LocMod (MvPolynomial (Fin (r + 1)) S) N (TwM η M₀) I.1) :
@@ -84,7 +89,7 @@ theorem ιfun_add (K : Chart x) (z z' : ((G.twist (B.pow n)).twist (twistSys S x
     ιfun η M₀ n c hG hB K (z + z') = ιfun η M₀ n c hG hB K z + ιfun η M₀ n c hG hB K z' := by
   apply locEmb_injective η M₀ K.2.2
   change UT.toL _ = UT.toL _
-  rw [map_add, UT.toL_add, ιfun_emb, ιfun_emb, ιfun_emb, Submodule.coe_add, single_add]
+  rw [map_add (f := _), UT.toL_add, ιfun_emb, ιfun_emb, ιfun_emb, Submodule.coe_add, single_add]
 
 theorem ιfun_zero (K : Chart x) : ιfun η M₀ n c hG hB K 0 = 0 := by
   apply locEmb_injective η M₀ K.2.2
@@ -112,8 +117,8 @@ theorem ιfun_emb' {i : ℕ} (J : Cech.Idx (Finset.univ : Finset (Fin (N + 1))) 
     UT.toL (locEmb η M₀ J.1.1 h (ιfun η M₀ n c hG hB (downI J h).1 z)) = single ((n : ℤ), c) (z : Ω) :=
   ιfun_emb η M₀ n c hG hB (downI J h).1 z
 
-open Classical in
 
+open Classical in
 def Fmap (i : ℕ) (t : Cech.Cochain (fun K : Chart x => ↥(((G.twist (B.pow n)).twist (twistSys S x c)).sub K)) i) :
     Cech.Cochain (locSys (MvPolynomial (Fin (r + 1)) S) N (TwM η M₀)) i :=
   fun J => if h : J.1.1 ⊆ support x then ιfun η M₀ n c hG hB (downI J h).1 (t (downI J h)) else 0
@@ -177,7 +182,8 @@ theorem F_d (i : ℕ) (t : Cech.Cochain (fun K : Chart x => ↥(((G.twist (B.pow
     have e2 : UT.toL (locEmb η M₀ J.1.1 hJ
         (Cech.d (locSys (MvPolynomial (Fin (r + 1)) S) N (TwM η M₀)) locResS i (Fmap η M₀ n c hG hB i t) J)) =
         ∑ j : J.1.1, Cech.sgn J.1.1 j • single ((n : ℤ), c) ((t (Cech.face (downI J hJ) j)) : Ω) := by
-      rw [Cech.d_apply, map_sum, UT.toL_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Cech.d_apply, map_sum, UT.toL_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       have hf : (Cech.face J j).1.1 ⊆ support x := (Cech.face_subset J j).trans hJ
       rw [map_zsmul, UT.toL_zsmul, locEmb_locResS η M₀ (Cech.face J j).1 J.1 hf hJ,
@@ -201,7 +207,8 @@ theorem gm_zero (i : ℕ) (K : Cech.Idx (support x) i) : gm η M₀ n c i 0 K = 
 theorem gm_d (i : ℕ) (s : Cech.Cochain (locSys (MvPolynomial (Fin (r + 1)) S) N (TwM η M₀)) i)
     (K : Cech.Idx (support x) (i + 1)) :
     gm η M₀ n c (i + 1) (Cech.d _ locResS i s) K = ∑ j : K.1.1, Cech.sgn K.1.1 j • gm η M₀ n c i s (Cech.face K j) := by
-  rw [gm, Cech.d_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [gm, Cech.d_apply, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_zsmul, cf_locResS η M₀ n c _ _ ((Cech.face_subset (upI K) j).trans K.1.2.2) K.1.2.2]
   rfl

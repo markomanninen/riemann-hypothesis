@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4GeometricSide.InnerEq
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.UnitaryCurves.StarMulOfPlaces
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4GeometricSide.InnerEq
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.UnitaryCurves.StarMulOfPlaces
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh GlobalTheory.WigAlg Formalism.REAL GlobalTheory.UnitaryBC
 open UpperTheory.V.Z.GSp4Splitting PositivityTheory.RgBcC PositivityTheory.RgBcC.RealD PositivityTheory.RgBcC.Bridge PositivityTheory.Rg.BcB.Desc
@@ -13,13 +17,13 @@ private theorem adj_of_skew {M : Type} [AddCommGroup M] [Module ℂ M] (H : M �
     (φ ψ : M) : H (A φ) ψ = - H φ (B ψ) := by
   have h1 := h 1 φ ψ
   have hI := h Complex.I φ ψ
-  simp only [LinearMap.add_apply, LinearMap.smul_apply, map_add, map_smulₛₗ, one_smul, star_one,
+  simp only [LinearMap.add_apply, LinearMap.smul_apply, map_add (f := _), map_smulₛₗ, one_smul, star_one,
     Complex.star_def, Complex.conj_I, map_neg, neg_smul, map_one, RingHom.id_apply, smul_eq_mul,
     Complex.conj_conj, LinearMap.neg_apply] at h1 hI
   linear_combination (1 / 2 : ℂ) * h1 + (Complex.I / 2) * hI +
     ((H (A φ) ψ + H φ (B ψ) - H (B φ) ψ - H φ (A ψ)) / 2) * Complex.I_sq
 
-private theorem lie_single {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ} (π : CuspSub E n)
+private theorem lie_single {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ} (π : CuspSub E n)
     (τ : E →+* ℂ) (a b : Fin n) (z : ℂ) :
     lieOp π (fun i j => atEmb τ (Matrix.single a b z i j)) =
       z • cx τ (lieOp π) a b + star z • cx (PositivityTheory.Rg.Cz.barE E τ) (lieOp π) a b := by
@@ -34,12 +38,12 @@ private theorem lie_single {E : Type} [Field E] [NumberField E] [IsTotallyComple
     simp [Matrix.single_apply, hi.symm]
   · simp
 
-private theorem cx_val {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ} (π : CuspSub E n)
+private theorem cx_val {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ} (π : CuspSub E n)
     (τ : E →+* ℂ) (a b : Fin n) (ψ : π.V) : (cx τ (lieOp π) a b ψ).1 = Eop τ a b ψ.1 := by
   rw [← GlobalTheory.WigCap.res_Eop]
   rfl
 
-private theorem emb_ne {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] (w : InfinitePlace E) :
+private theorem emb_ne {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (w : InfinitePlace E) :
     w.embedding ≠ ComplexEmbedding.conjugate w.embedding := by
   intro h
   have hc : w.IsComplex := IsTotallyComplex.isComplex w
@@ -108,7 +112,7 @@ theorem UpperTheory.V.Z.GSp4Splitting.rlPair :
   · intro a b x y
     simp only [kF, LinearMap.add_apply]
     rw [D.inner_eq, D.inner_eq]
-    simp only [map_add, iE1, iE2, map_neg, LinearMap.add_apply, LinearMap.neg_apply, adjA, adjB]
+    simp only [map_add (f := _), iE1, iE2, map_neg, LinearMap.add_apply, LinearMap.neg_apply, adjA, adjB]
     ring
   · intro a b x y
     simp only [pF, LinearMap.sub_apply]

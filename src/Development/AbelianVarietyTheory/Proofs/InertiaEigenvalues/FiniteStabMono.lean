@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RelIndexCj
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RelIndexCj
+
+@[expose] public section
+
 open GlobalTheory.ClassRefine GlobalTheory.ClassPet
 
 noncomputable section
@@ -178,8 +183,9 @@ theorem exists_form [Finite ι] {K Γ₁ Γ₂ : Subgroup G} (hK : ∀ x, (cj K 
   obtain ⟨c₂, hc₂', e₂⟩ := dsum_prop hK le_rfl inf_le_left hc₂ hc₃ hf₂ hf₃
   have hpos : 0 < ∑ k, c k := Finset.sum_pos (fun k _ => hc k) ⟨⟨_, hk₀⟩, Finset.mem_univ _⟩
   refine ⟨∑ k, B k, c₂ * c₁ / ∑ k, c k, ⟨fun x y => ?_, fun x hx => ?_⟩, by positivity, fun γ hγ => hβinv γ (h₁ hγ), fun x x' => ?_⟩
-  · simp only [LinearMap.sum_apply, map_sum]
-    exact Finset.sum_congr rfl fun k _ => (hB k).1 x y
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [LinearMap.sum_apply, map_sum]
+      exact Finset.sum_congr rfl fun k _ => (hB k).1 x y
   · simp only [LinearMap.sum_apply, Complex.re_sum]
     exact Finset.sum_pos (fun k _ => (hB k).2 x hx) ⟨⟨_, hk₀⟩, Finset.mem_univ _⟩
   · have e₃ := e₁ (fun g => (∑ k, B k) (f x g) (f x' g)) (fun a ha g => hβinv a ha x x' g g) (hr₀ _ x x')

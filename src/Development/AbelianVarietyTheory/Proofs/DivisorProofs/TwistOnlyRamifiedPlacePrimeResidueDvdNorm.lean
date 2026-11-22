@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsValCharTwist
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LevelCharactersUnramifiedOffLevelPlaces
+module
+
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsValCharTwist
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LevelCharactersUnramifiedOffLevelPlaces
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CMVal Formalism.BasicNotions Formalism.IndefR.Links GlobalTheory.ChiGrid GlobalTheory.FunObj.SqNum
 
 namespace GlobalTheory.SqTop
@@ -37,7 +42,7 @@ theorem twist_ram_prime_dvd_Qn : ∀ {D : D7} {T : Type} {Lc : LevCh D T} {sc : 
     rcases (hL.Q_ram t w).1 hxi with h | ⟨PP, h, hc⟩
     · exact ⟨w, h, Or.inl rfl⟩
     · exact ⟨PP, h, Or.inr hc⟩
-  have hunder : PP.under (𝓞 D.host.F) = w.under (𝓞 D.host.F) := by
+  have hunder : (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP) = w.under (𝓞 D.host.F) := by
     rcases hw with rfl | hc
     · rfl
     · exact GlobalTheory.LevelPlaces.under_eq_of_isConjPl hc

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.LeviCommutantWordReduction
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwLMulSelf
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.LeviCommutantWordReduction
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwLMulSelf
+
+@[expose] public section
 
 open Finset PositivityTheory.RgBcC.RealD
 open GlobalTheory.CompanionTheory.LvChain

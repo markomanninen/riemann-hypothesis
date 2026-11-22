@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
-import Formalism.LocalToGlobal.ProjectiveLattices.LiftLaSpec
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsPointedOfIsHkIsog
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
+public import Formalism.LocalToGlobal.ProjectiveLattices.LiftLaSpec
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsPointedOfIsHkIsog
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -15,8 +19,8 @@ section Local
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
 
-variable (l) in
 
+variable (l) in
 structure IsSplitOff (P : Ideal (𝓞 E)) (p : ℕ) : Prop where
   max : P.IsMaximal
   split : P ⊔ P.map (H.bar : 𝓞 E →+* 𝓞 E) = ⊤
@@ -65,11 +69,6 @@ theorem keepsCusp_iff_exists (hE : HasTransform Xo c P p i cq a n) (hD : Detects
     show (hkOp hE' hD' hF' f).1 ∈ cusp Xo c U a n
     rw [e]
     exact hg
-
-theorem IsSplitOff.absNorm_ne_zero (h : IsSplitOff l P p) : (Ideal.absNorm P : c.F) ≠ 0 := by
-  rw [Nat.cast_ne_zero, Ne, Ideal.absNorm_eq_zero_iff]
-  rintro rfl
-  exact h.prime.ne_zero (by exact_mod_cast Ideal.mem_bot.1 h.under)
 
 end Local
 

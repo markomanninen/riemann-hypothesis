@@ -1,6 +1,10 @@
-import Formalism.ZeroFreeRegion.SmallHeightLogDeriv
-import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.AbsZetaPrimeSumErrorLeOfOneLe
-import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.AbsZetaPrimeSumErrorLeOfLarge
+module
+
+public import Formalism.ZeroFreeRegion.SmallHeightLogDeriv
+public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.AbsZetaPrimeSumErrorLeOfOneLe
+public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.AbsZetaPrimeSumErrorLeOfLarge
+
+@[expose] public section
 
 open Complex
 

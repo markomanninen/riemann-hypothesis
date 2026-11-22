@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.Legendre
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.Legendre
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,8 +55,8 @@ lemma wEta_ω₂ (L : PeriodPair) : wEta L L.ω₂ = 2 * wZeta L (L.ω₂ / 2) :
 
 end WeierstrassZetaQuasiPeriod
 
-open WeierstrassZetaQuasiPeriod in
 
+open WeierstrassZetaQuasiPeriod in
 theorem zetaQuasi_of (hd : ZetaHasDeriv) (ho : ZetaOdd) : ZetaQuasi := by
   intro L ω z hω hz
   let G : AddSubgroup ℂ :=
@@ -61,21 +65,26 @@ theorem zetaQuasi_of (hd : ZetaHasDeriv) (ho : ZetaOdd) : ZetaQuasi := by
       add_mem' := by
         rintro a b ⟨ha, ha'⟩ ⟨hb, hb'⟩
         refine ⟨add_mem ha hb, fun x hx => ?_⟩
-        rw [← add_assoc, hb' _ (add_notMem ha hx), ha' x hx, map_add, add_assoc]
+        calc
+          wZeta L (x + (a + b)) = wZeta L (x + a + b) := by congr 1; abel
+          _ = wZeta L (x + a) + wEta L b :=
+            hb' (x + a) (WeierstrassZetaQuasiPeriod.add_notMem ha hx)
+          _ = (wZeta L x + wEta L a) + wEta L b := by rw [ha' x hx]
+          _ = wZeta L x + wEta L (a + b) := by rw [map_add]; abel
       zero_mem' := ⟨zero_mem _, fun x _ => by simp⟩
       neg_mem' := by
         rintro a ⟨ha, ha'⟩
         refine ⟨neg_mem ha, fun x hx => ?_⟩
-        have h := ha' (x + -a) (add_notMem (neg_mem ha) hx)
+        have h := ha' (x + -a) (WeierstrassZetaQuasiPeriod.add_notMem (neg_mem ha) hx)
         rw [neg_add_cancel_right] at h
         rw [map_neg, h]; ring }
   have hG : L.lattice ≤ G.toIntSubmodule := by
     rw [PeriodPair.lattice, Submodule.span_le]
     rintro _ (rfl | rfl)
     · exact ⟨L.ω₁_mem_lattice, fun x hx => by
-        rw [wEta_ω₁]; exact diff_eq hd ho L L.ω₁_mem_lattice L.ω₁_div_two_notMem_lattice hx⟩
+        rw [WeierstrassZetaQuasiPeriod.wEta_ω₁]; exact WeierstrassZetaQuasiPeriod.diff_eq hd ho L L.ω₁_mem_lattice L.ω₁_div_two_notMem_lattice hx⟩
     · exact ⟨L.ω₂_mem_lattice, fun x hx => by
-        rw [wEta_ω₂]; exact diff_eq hd ho L L.ω₂_mem_lattice L.ω₂_div_two_notMem_lattice hx⟩
+        rw [WeierstrassZetaQuasiPeriod.wEta_ω₂]; exact WeierstrassZetaQuasiPeriod.diff_eq hd ho L L.ω₂_mem_lattice L.ω₂_div_two_notMem_lattice hx⟩
   exact (hG hω).2 z hz
 
 end Formalism.L2.Th1.F

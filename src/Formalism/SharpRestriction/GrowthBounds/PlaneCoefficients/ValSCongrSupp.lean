@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PlaneCoeffOneTTens
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ThresholdGeOddPosition
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PlaneCoeffOneTTens
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ThresholdGeOddPosition
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem valS_congr_supp {R : Type*} [CommRing R] {ι : Type*} {n : ℕ} [NeZero 
     apply MvPolynomial.eval₂_congr
     intro v c hv hc
     have hvL : v.1 ∈ L := (MvPolynomial.mem_supported.mp hA)
-      ((MvPolynomial.mem_vars v).mpr ⟨c, MvPolynomial.mem_support_iff.mpr hc, hv⟩)
+      ((MvPolynomial.mem_vars_iff_mem_support v).mpr ⟨c, MvPolynomial.mem_support_iff.mpr hc, hv⟩)
     by_cases hS : v.1 ∈ S
     · have hS' : v.1 ∈ S' := (h v.1 hvL).mp hS
       simp only [hS, hS', if_true]

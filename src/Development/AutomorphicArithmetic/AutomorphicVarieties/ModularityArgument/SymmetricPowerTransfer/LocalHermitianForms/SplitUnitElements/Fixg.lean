@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.BilinearSmul.BSmulRight
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.BilinearSmul.BSmulRight
+
+@[expose] public section
 
 open QuadraticAlgebra Matrix UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc
 
@@ -102,7 +106,8 @@ theorem UpperTheory.V.Z.Sym.Loc.One.fixg :
       have hx' : ∀ i, IsInt O (Q x i) := hx
       have hxe : x = ∑ i, R i (Q x i) := by
         show x = ∑ i, P.symm (G *ᵥ Pi.single i (Q x i))
-        rw [← map_sum, ← Matrix.mulVec_sum, Finset.univ_sum_single, hPQ, P.symm_apply_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← map_sum, ← Matrix.mulVec_sum, Finset.univ_sum_single, hPQ, P.symm_apply_apply]
       rw [hxe]
       refine Submodule.sum_mem _ fun i _ => ?_
       obtain ⟨a, b, hab⟩ := hdec _ (hx' i)
@@ -121,7 +126,7 @@ theorem UpperTheory.V.Z.Sym.Loc.One.fixg :
         · simp [hij]
       have hR : R i (Q x i) = a • R i 1 + b • R i w := by
         show P.symm (G *ᵥ Pi.single i (Q x i)) = a • R i 1 + b • R i w
-        rw [hsp, Matrix.mulVec_add, Matrix.mulVec_smul, Matrix.mulVec_smul, map_add, map_smul, map_smul,
+        rw [hsp, Matrix.mulVec_add, Matrix.mulVec_smul, Matrix.mulVec_smul, map_add (f := _), map_smul, map_smul,
           ← algebra_compatible_smul, ← algebra_compatible_smul]
       rw [hR]
       exact add_mem (Submodule.smul_mem _ _ (Submodule.subset_span h1S))
@@ -146,7 +151,7 @@ theorem UpperTheory.V.Z.Sym.Loc.One.fixg :
       | add z v _ _ hz hv =>
         intro i
         show IsInt O ((M *ᵥ P (z + v)) i)
-        rw [map_add, Matrix.mulVec_add]
+        rw [map_add (f := _), Matrix.mulVec_add]
         exact (hz i).add (hv i)
       | smul a z _ hz =>
         intro i

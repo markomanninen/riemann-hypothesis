@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SideMultiplicityCharacter
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SideMultiplicityCharacter
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -17,7 +21,23 @@ def chrL_alt {L : LocAll (lay0 D)} {cf : CharFrame D} {jE : D.host.E →+* Qb} {
 set_option maxHeartbeats 8000000 in
 theorem nonempty_twOpen_alt : ∀ (D : D7) (cf : CharFrame D) (jE : D.host.E →+* Qb) (A : _root_.GlobalTheory.HeightCounting.CharFrameHostEmbedding D cf jE) (low : Finset ℕ) (Pq : HeightOneSpectrum (𝓞 (maximalRealSubfield D.host.E)) → PlE D.host) (S : RatDat D.ntw) (hL : ∀ j, ℕ → PlE D.host → Module.End D.what₂.LL (S.WL j)) (eig : ℕ → D.what₂.FT → ℕ → PlE D.host → ↥D.LL0) (θ : ∀ kk : Fin 2, Multiplicative (ZMod (D.host.g kk)) →* (↥D.LL0)ˣ) (Bs : SideB D cf A.row low Pq S hL eig θ) (M : MtFam D) (C : NChoice D) (tp : TupTied D cf C), ChoiceSide D cf M Bs.exp C tp → MtInput D M tp.tup C.Q → (∀ x : D.LL0, star (x : D.what₂.LL) ∈ D.LL0) → (∀ j g, ∃ z : ℤ, eExp D j g = z) → (∀ v, v ∈ placesOver D.host.E D.host.pde ∨ v ∈ placesOver D.host.E D.host.pde' → IsSplitPl D.host v) → GlobalTheory.RowTie.ChebSplit D.nd → ∀ (big : D.what₂.places.Pl → Finset ℂ) (L : LocAll (lay0 D)) (Sp : NdSpec A.pl M C big L.X L.T) (Au : _root_.GlobalTheory.HeightCounting.AutomorphicSpecialisation A M tp.tup Sp.iq L.Y L.C), Nonempty (TwOpen (withLoc L) (chL L C) (cfL L cf) (tpL L tp) (mtL L M) low) := by
   intro D cf jE A low Pq S hL eig θ Bs M C tp ch _ _ _ _ _ big L Sp Au
-  have ch' := chSideL Sp ch
+  have ch' : ChoiceSide (withLoc L) (cfL L cf) (mtL L M) (expL L Bs.exp) (chL L C) (tpL L tp) := by
+    refine { nct := ?_
+             choice := ?_
+             off := ch.off
+             adm := ch.adm
+             psi := ch.psi
+             eMt_level := ch.eMt_level }
+    · refine { twOf_eq := Sp.twOf_eq
+               twSide_eq := Sp.twSide_eq
+               Q_eq := ?_
+               psi_eq := ?_
+               embedding_baseField_condition := ch.nct.embedding_baseField_condition }
+      · intro a
+        exact (Sp.Q_eq _ _ a ((L.X.locs_mem _ _ a).2 ⟨rfl, rfl⟩)).trans (Sp.Qc_eq _ _)
+      · obtain ⟨ψ0, h1, h2, -⟩ := ch.nct.psi_eq
+        exact ⟨ψ0, h1, h2, fun a g => Sp.psi_eq a g _ (h2 _ g)⟩
+    · exact { ch.choice with }
   let K := chiDL L Bs.chiD (fun a => toHC ((tpL L tp).psi ((withLoc L).nd.w a)))
   have h0 : ∀ x, K.etaT.χ x = (cfL L cf).eta.1 x := Bs.eta_eq
   have h1 : ∀ (j : Fin (withLoc L).R.m) x, (K.mu0 (j.1 + 1)).χ x = ((cfL L cf).mu0 j).1 x := Bs.ringSpec_normalisedCharacter_eq

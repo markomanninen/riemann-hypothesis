@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.RowGenCoeffZero
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.ThetaInjHd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.RowGenCoeffZero
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.ThetaInjHd
+
+@[expose] public section
 
 noncomputable section
 

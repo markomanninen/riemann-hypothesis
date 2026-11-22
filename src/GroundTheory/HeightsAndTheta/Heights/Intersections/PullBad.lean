@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.KerEqBotOfCoord
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsFurtherBis
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.KerEqBotOfCoord
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsFurtherBis
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

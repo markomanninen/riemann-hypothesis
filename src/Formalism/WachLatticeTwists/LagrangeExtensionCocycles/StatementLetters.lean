@@ -1,4 +1,8 @@
-import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.Statement
+module
+
+public import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,22 +18,6 @@ structure Letters {ℓ : ℕ} [Fact ℓ.Prime] {A : Type} [CommRing A] [Algebra 
   hq : q = (ℓ : A) * w + G.X ^ (ℓ - 1)
   φ : ZMod n → D →+ D
   φ_smul : ∀ (i : ZMod n) (a : A) (x : D), φ i (a • x) = φA a • φ i x
-
-def Letters.step {ℓ : ℕ} [Fact ℓ.Prime] {A : Type} [CommRing A] [Algebra ℤ_[ℓ] A] {G : GBase ℓ A}
-    {n : ℕ} {D : Type} [AddCommGroup D] [Module A D] [Module ℤ_[ℓ] D] [IsScalarTower ℤ_[ℓ] A D]
-    (Λ : Letters G n D) (i : ZMod n) : PhiStep ℓ A D D where
-  φA := Λ.φA
-  π := G.X
-  q := Λ.q
-  w := Λ.w
-  φπ := Λ.φπ
-  hq := Λ.hq
-  φ := Λ.φ i
-  φ_smul := Λ.φ_smul i
-  P := (Λ.pair (i - 1)).N
-  P' := (Λ.pair (i - 1)).N'
-  R := (Λ.pair i).N
-  R' := (Λ.pair i).N'
 
 def StatWPrime : Prop :=
   ∀ (ℓ : ℕ) [Fact ℓ.Prime], ℓ ≠ 2 → ∀ (A : Type) [CommRing A] [Algebra ℤ_[ℓ] A] (G : GBase ℓ A)

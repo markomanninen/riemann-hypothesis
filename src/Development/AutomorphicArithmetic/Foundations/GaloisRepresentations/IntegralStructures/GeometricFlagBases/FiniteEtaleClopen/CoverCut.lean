@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FiniteEtaleClopen.ClopenExtAlt
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FiniteEtaleClopen.ClopenExtAlt
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry NumberField IsDedekindDomain
 open GlobalTheory.GalV (HTower)
@@ -114,8 +118,8 @@ theorem UpperTheory.Gal.Int.Geo.Cut.coverCut :
     refine ⟨fun w => ?_⟩
     have hw : m w ∈ ⇑(pullback.fst C.p (gen O k)) ⁻¹' (V : Set C.Y) := by
       rw [Set.mem_preimage, ← Scheme.Hom.comp_apply]
-      simp only [m]
-      rw [pullback.lift_fst, Scheme.Hom.comp_apply, ← Scheme.Opens.range_ι V]
+      simp only [m, pullback.lift_fst]
+      apply (show Set.range ⇑V.ι ⊆ (V : Set C.Y) by rw [Scheme.Opens.range_ι])
       exact ⟨_, rfl⟩
     rw [hpre] at hw
     obtain ⟨z, hz⟩ := hw

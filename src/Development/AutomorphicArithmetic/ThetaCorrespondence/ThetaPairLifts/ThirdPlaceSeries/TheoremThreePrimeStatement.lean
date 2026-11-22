@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.AdmissibleThreePrime
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.AdmissibleResidualTameEigenvalues
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.AdmissibleThreePrime
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.AdmissibleResidualTameEigenvalues
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 

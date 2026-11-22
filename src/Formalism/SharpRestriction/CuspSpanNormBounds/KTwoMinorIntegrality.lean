@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.FrameFixingOrbitRelation
-import Formalism.SharpRestriction.CuspSpanNormBounds.KappaEndpoints
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrameFixingOrbitRelation
+public import Formalism.SharpRestriction.CuspSpanNormBounds.KappaEndpoints
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,9 +14,6 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formal
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def NormLB : Prop := ∀ (D : D7) (x : D.host.E), IsIntegral ℤ x → x ≠ 0 → 1 ≤ ∏ τ : D.what₂.Tau, ‖embS D τ x‖ ^ 2
-
-def MinorInt : Prop := ∀ (D : D7) (X : TermTie D) (u : D.what₂.Word) (t : D.s.Term u u), LatticeIndexAndWeightTheory.FrameHyp X t →
-  ∀ l, l ≤ D.R.rS → IsIntegral ℤ (Dl (X.fl t).fl (X.fl' t).fl l)
 
 def LatSum : Prop := ∀ (ι : Type) [Fintype ι] (P : Finset (ι → ℂ)) (R : ℝ), 1 ≤ R →
   (∀ p ∈ P, ∀ q ∈ P, p ≠ q → 1 ≤ ∏ i, ‖p i - q i‖) →

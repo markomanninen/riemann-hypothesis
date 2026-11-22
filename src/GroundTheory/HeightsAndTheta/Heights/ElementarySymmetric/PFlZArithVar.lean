@@ -1,8 +1,21 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StatementsFlZArithVar
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StatementsFlZIdealEqCoord
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PFlagArithVar
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PBlockRatioAlg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices.InstFintypeFlIdx
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.GenericFibreKerTarget
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ProjLineRankTwoPushforwardHypotheses
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.MoriwakiSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.HSClosing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.DoubleBlock
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.EqZeroOfSecTraceMulEqZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedA
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsArith
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PFlagArithVar
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PBlockRatioAlg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -17,8 +30,8 @@ section Rename
 
 variable {K : Type} [Fintype K] {ι ι' : K → Type} [∀ k, Fintype (ι k)] [∀ k, Fintype (ι' k)]
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem isMultiHomog_rename_sigma (e : ∀ k, ι k ≃ ι' k) {g : MRing ι} {a : K → ℕ}
     (hg : ReciprocityTheory.ChartRestriction.G.Geo.IsMultiHomog g a) :
     ReciprocityTheory.ChartRestriction.G.Geo.IsMultiHomog (rename (Equiv.sigmaCongrRight e) g : MRing ι') a := by
@@ -29,7 +42,7 @@ theorem isMultiHomog_rename_sigma (e : ∀ k, ι k ≃ ι' k) {g : MRing ι} {a 
   have h1 : ∀ i : ι' k, Finsupp.mapDomain (Equiv.sigmaCongrRight e) m0 ⟨k, i⟩ = m0 ⟨k, (e k).symm i⟩ := by
     intro i
     have : (⟨k, i⟩ : Σ k, ι' k) = Equiv.sigmaCongrRight e ⟨k, (e k).symm i⟩ := by simp
-    rw [this, Finsupp.mapDomain_apply (Equiv.sigmaCongrRight e).injective]
+    rw [this, Finsupp.mapDomain_apply_of_injective (Equiv.sigmaCongrRight e).injective]
   simp only [h1]
   rw [Equiv.sum_comp (e k).symm (fun j => m0 ⟨k, j⟩)]
   exact hg m0 hm0 k
@@ -75,38 +88,8 @@ end Rename
 
 variable (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : ℕ)
 
-def setIncrEquiv (q : FlBlock Ψ N) : IndefiniteRowSideFullHecke.LowerBoundFree.Nine.FlZBlk Ψ N q ≃ FlIdx Ψ N q where
-  toFun S := ⟨S.1.orderEmbOfFin S.2, (S.1.orderEmbOfFin S.2).strictMono⟩
-  invFun A := ⟨Finset.univ.image A.1, by rw [Finset.card_image_of_injective _ A.2.injective, Finset.card_fin]⟩
-  left_inv S := by
-    apply Subtype.ext
-    simp only
-    exact Finset.image_orderEmbOfFin_univ S.1 S.2
-  right_inv A := by
-    apply Subtype.ext
-    exact (Finset.orderEmbOfFin_unique _ (fun x => Finset.mem_image_of_mem _ (Finset.mem_univ x)) A.2).symm
 
-omit [Fintype Ψ] [DecidableEq Ψ] in
-
-theorem flZIncr_eq : flZIncr Ψ N = Equiv.sigmaCongrRight (setIncrEquiv Ψ N) := rfl
-
-omit [Fintype Ψ] [DecidableEq Ψ] in
-
-theorem flZIncr_isBlockMap : IsBlockMap id (flZIncr Ψ N) := by
-  rw [flZIncr_eq]
-  refine ⟨Function.injective_id, (Equiv.sigmaCongrRight _).injective, fun _ => rfl, fun q _ => ?_⟩
-  exact (Equiv.sigmaCongrRight (setIncrEquiv Ψ N)).surjective q
 
 end FlZArithVar
-
-theorem FlZArithVar.proof (h : FlZIdealEqCoord.Statement) : FlZArithVar.Statement := by
-  intro Ψ _ _ _ N hN
-  have hA := FlagArithVar.proof Ψ N hN
-  have hI : IndefiniteRowSideFullHecke.LowerBoundFree.Nine.FlZIdeal Ψ N = imageZ (flZIncr Ψ N) (PFl Ψ N) := by
-    rw [h Ψ N, PFl]
-    exact GroundTheory.Heights₂.Heights.Inter.BlockRatioAlgebraic.mCoordIdeal_comp_v
-      (FlZArithVar.flZIncr_isBlockMap Ψ N) (yFl Ψ N)
-  rw [hI, imageZ, FlZArithVar.flZIncr_eq]
-  exact FlZArithVar.isArithVar_comap_rename_sigma (FlZArithVar.setIncrEquiv Ψ N) hA
 
 end GroundTheory.Heights₂.Heights.LowerBoundFree

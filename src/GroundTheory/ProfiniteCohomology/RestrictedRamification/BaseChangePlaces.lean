@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.LocalMaps
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalLimits.IsScalarTowerFiniteSubfieldAlgebraicClosure
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.LocalMaps
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalLimits.IsScalarTowerFiniteSubfieldAlgebraicClosure
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -69,8 +74,8 @@ theorem pi_single_algebraMap_completionsOver {w : PlacesOver L v} [DecidableEq (
     simp
   · simp [hu]
 
-open Classical in
 
+open Classical in
 def completionEmbeddingOfAlgHom :
     (placeOfAlgHom j).1.adicCompletion L →ₐ[v.adicCompletion F]
       AlgebraicClosure (v.adicCompletion F) where
@@ -78,7 +83,7 @@ def completionEmbeddingOfAlgHom :
   map_one' := tensorLiftOfAlgHom_single_placeOfAlgHom j
   map_mul' x y := by rw [Pi.single_mul, map_mul]
   map_zero' := by rw [Pi.single_zero, map_zero]
-  map_add' x y := by rw [Pi.single_add, map_add]
+  map_add' x y := by rw [Pi.single_add, map_add (f := _)]
   commutes' a := by
     rw [pi_single_algebraMap_completionsOver, map_mul, AlgHom.commutes,
       tensorLiftOfAlgHom_single_placeOfAlgHom,
@@ -149,7 +154,7 @@ theorem finiteDimensional_adicCompletion_of_placesOver (w : PlacesOver L v) :
     FiniteDimensional (v.adicCompletion F) (w.1.adicCompletion L) :=
   Module.finite_of_finrank_pos (by
     rw [finrank_eq_ramificationIdx_mul_inertiaDeg]
-    exact Nat.mul_pos (Ideal.ramificationIdx_pos w.1.asIdeal (𝓞 F))
+    exact Nat.mul_pos (Ideal.ramificationIdx_pos (R := 𝓞 F) w.1.asIdeal)
       (Ideal.inertiaDeg_pos w.1.asIdeal (𝓞 F)))
 
 theorem exists_placeOfAlgHom_eq (w : PlacesOver L v) :

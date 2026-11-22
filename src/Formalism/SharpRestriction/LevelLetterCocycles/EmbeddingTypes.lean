@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LargeLevelLemmas
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LargeLevelLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,9 +52,9 @@ def powB (L : Lattice (O := O) ρ) (n : ℕ) : Submodule O (G → V) :=
 def lenModPow (L : Lattice (O := O) ρ) (n : ℕ) : ℕ∞ :=
   Module.length O (↥(latticeFiniteCocycles PD L) ⧸ (powB PD L n).comap (latticeFiniteCocycles PD L).subtype)
 
+
 omit [TopologicalSpace G] [TopologicalSpace V] [ContinuousAdd V] [ContinuousConstSMul LL V]
   [Module Qp V] [IsScalarTower Qp LL V] in
-
 def lenInvD (L : Lattice (O := O) ρ) : ℕ∞ :=
   Module.length O ↥(Representation.invariants (repD L))
 
@@ -75,8 +79,8 @@ def EmbTypeUc (τ₀ : Br.Kw D.nbr i w hw →ₐ[ℚ_[D.nd.l i]] Br.LL D.nbr i w
 def EmbTypeUe (ep : Bool) (τ₀ : Br.Kw D.nbr i w hw →ₐ[ℚ_[D.nd.l i]] Br.LL D.nbr i w hw) : Prop :=
   if ep then Br.EmbTypeU D.nbr i w hw τ₀ else EmbTypeUc τ₀
 
-variable (i w hw) in
 
+variable (i w hw) in
 def PlTypeUe (ep : Bool) : Prop := ∀ τ₀, EmbTypeUe (i := i) (w := w) (hw := hw) ep τ₀
 
 end TypeSign
@@ -313,11 +317,5 @@ def aux₃ (e' : ℕ) (c0 : HeightOneSpectrum (𝓞 D.host.E) → ℕ) (cB : ℕ
     JumpConditions i ρ π dc ∧ ColengthRowPlaceBound i r ρ π dc e' c0 ∧ ShaBoundTheoremB i ρ π dc e' c0 cB
 
 end Pt
-
-def Stmt (D : D7) : Prop :=
-  ∀ (ep : Bool) (i : D.nd.Loc) (r : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV) (D.nd.O i)))
-    (ρ : D.nd.X i → (GE D.nd →* GL (Fin D.R.r) (D.nd.O i))) (π : D.nd.X i) (dc : Decl D i)
-    (e' : ℕ) (c0 : HeightOneSpectrum (𝓞 D.host.E) → ℕ) (cB : ℕ),
-    GoodR D.nd i r → admitted i r ρ π dc ep e' c0 cB → aux₃ i r ρ π dc ep e' c0 cB
 
 end Formalism.MainNotions.EmbeddingTypes

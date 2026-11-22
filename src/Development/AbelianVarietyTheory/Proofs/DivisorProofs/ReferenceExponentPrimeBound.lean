@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EightDvdNCol
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
-import Development.AbelianVarietyTheory.Definitions.Divisors.MulSmulIdemMem
-import Development.AbelianVarietyTheory.Definitions.Divisors.WedgeNrmLeOfWedgeNormLe
-import Development.AbelianVarietyTheory.Definitions.Divisors.CongModRefl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasUnramifiedIntegralFramedPointsOfGoodPlacesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComplexUniformizationLawsOfGoodDeepCoverStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTwSecOfConst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMulInvPow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OrdConjDifferentAndSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsKeySectionInverseRootTwistingSectionSpreadStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseLocusExponentTwistingSectionMulLeStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsNumberFieldPoint
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsExtraSide
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EightDvdNCol
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MulSmulIdemMem
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WedgeNrmLeOfWedgeNormLe
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CongModRefl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasUnramifiedIntegralFramedPointsOfGoodPlacesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComplexUniformizationLawsOfGoodDeepCoverStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTwSecOfConst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMulInvPow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OrdConjDifferentAndSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsKeySectionInverseRootTwistingSectionSpreadStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseLocusExponentTwistingSectionMulLeStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsNumberFieldPoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsExtraSide
+
+@[expose] public section
 
 open GlobalTheory.IndefiniteRowSideFullHecke.DifferentConjugateDefects NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AllWt GlobalTheory.FlatLine GlobalTheory.FlatTw GlobalTheory.SlopeRec GlobalTheory.CovTop GlobalTheory.BigTop GlobalTheory.RefSum
 set_option synthInstance.maxHeartbeats 400000
@@ -68,7 +72,7 @@ theorem different_vp_eq_zero {E : Type} [Field E] [NumberField E] [IsCMField E] 
   have : ¬ q ∣ (discr E).natAbs := fun hd => h (Nat.mem_primeFactors.2 ⟨hq, (hd.mul_left _).mul_right _,
     mul_ne_zero (mul_ne_zero (mul_ne_zero two_ne_zero H.d_prime.ne_zero) (Int.natAbs_ne_zero.2 (discr_ne_zero E)))
       (Nat.lcm_ne_zero (by have := l.three_le; omega) l.A_pos.ne')⟩)
-  rw [different_vp, padicValNat.eq_zero_of_not_dvd this]
+  rw [different_vp, Nat.padicValNat_def, multiplicity_eq_zero_of_not_dvd this]
   simp
 
 theorem refExp_vp_le_of_laws {E : Type} [Field E] [NumberField E] [IsCMField E] [IsGalois ℚ E]
@@ -105,19 +109,5 @@ theorem refExp_vp_le_of_laws {E : Type} [Field E] [NumberField E] [IsCMField E] 
         rw [hn, Int.floor_intCast]
         simpa using h1
   rwa [add_sub_cancel] at key
-
-theorem refExp_vp_le_shift : Hypotheses2 → ∀ (D : D7) (T : CoreJ D) (j : ℕ) (Y : Deep T.toCore j) (e : ℕ) (o : ℝ), LawsJ T → InR D j → Y.Good e o → 1 ≤ (T.Q.Dw j).p → 1 ≤ (T.Q.Dw j).q → FlatExists Y.U (xiR D) → ∀ (u : GlobalTheory.AllWt.Weight (T.Q.Dw j)) (w₀ : Psi T.Q.H → ℤ) (m : ℕ) (cst : ℝ) (q : ℕ), q.Prime → refExp_vp Y.U cst (wtOf (T.Q.Dw j) u 0) q ≤ refExp_vp Y.U cst (wtOf (T.Q.Dw j) (u + parWt (T.Q.Dw j) w₀) m) q + (((if q ∈ badPrimes T.Q.H Y.d.l₂ then (m * (D.R.f * D.R.r) * (different_vp D.host.E q : ℝ) + 1) else 0 : ℝ)) : EReal) := by
-  intro hP D T j Y e o hT hj hY _ _ hF u w₀ m cst q hq
-  haveI : IsGalois ℚ D.host.E := D.host.hostE_isGalois
-  have hL := GlobalTheory.T.complexUniformizationLaws_of_goodDeepCover D T j Y e o hT hj hY
-  have hp := hT.pins
-  have hr : (T.Q.Dw j).p + (T.Q.Dw j).q = D.R.r := by
-    rw [(hp.2.2.2 j hj).1, (hp.2.2.2 j hj).2.1]
-    have := hj.1; have := hj.2
-    simp only [Ranks.sigW, Ranks.r]; omega
-  have h2 := two_mul_sum_mult (T.Q.Dw j)
-  rw [StandardLattice.finrank_host D, hr, mul_assoc] at h2
-  exact refExp_vp_le_of_laws hL (GlobalTheory.T.hasUnramifiedIntegralFramedPoints_of_goodPlaces hP.q18 hP.q1 hP.p5 _ _ _ _ _ _ hL.pos) hF u w₀ m cst hq
-    (by exact_mod_cast Nat.eq_of_mul_eq_mul_left two_pos h2)
 
 end GlobalTheory.RefSum.WFree

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPfH
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPfH
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.PoinPf
 
@@ -143,8 +147,8 @@ theorem sumBall_holds : SumBallStatement (E := E) := by
       have hka := hcomp x' hx'o w hw1
       have hdens : cd ≤ densF X x' w := by
         unfold densF
-        refine Finset.prod_le_prod (fun _ _ => by positivity) fun τ _ =>
-          Finset.prod_le_prod (fun _ _ => by norm_num) fun i _ => ?_
+        refine Finset.prod_le_prod₀ (fun _ _ => by positivity) fun τ _ =>
+          Finset.prod_le_prod₀ (fun _ _ => by norm_num) fun i _ => ?_
         rw [dmin_cpt_orth X hx'o]
         have h0 : 0 < ‖lminor (Gw X w τ) i.castSucc‖ := by
           rw [← dmin_cpt_orth X hx'o]; exact norm_pos_iff.2 (dmin_ne X hyd τ _)

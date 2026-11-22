@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.PeterssonNormOfUpLift
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.PeterssonNormOfUpLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,8 +66,8 @@ end Sobolev₂
 
 variable {D : D7}
 
-open Classical in
 
+open Classical in
 def ContAt {V : HSp D} {S : D.what₂.Tau → SPar} (M : Mult.DSModel V S) (T : Mult.MMap M) : Prop :=
   ∀ τ (v : M.Vec) (x : GA D V), ∃ ℓ : M.H τ →ₗ[ℂ] ℂ, Sobolev₂ (lieAt V τ) (M.rep τ) ℓ ∧
     ∀ w : M.sm τ, ℓ w = T (Function.update v τ w) x

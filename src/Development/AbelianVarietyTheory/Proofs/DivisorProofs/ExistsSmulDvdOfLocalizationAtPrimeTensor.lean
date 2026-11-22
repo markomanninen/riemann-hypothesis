@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GalMapGalElt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GalMapGalElt
+
+@[expose] public section
+
 open scoped TensorProduct
 open TensorProduct
 
@@ -20,7 +25,7 @@ theorem exists_smul_dvd_of_localization_atPrime_tensor :
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a c => simp [f]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   rw [hf, algebraMap_smul] at hm'
   obtain ⟨⟨m'', t⟩, rfl⟩ := IsLocalizedModule.mk'_surjective Q.primeCompl f m'
   simp only [Function.uncurry_apply_pair] at hm'

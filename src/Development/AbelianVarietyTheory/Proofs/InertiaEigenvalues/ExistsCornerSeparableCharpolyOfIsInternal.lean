@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ResidualConstruction
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanRingCornerIdealModuleIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ResidualConstruction
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanRingCornerIdealModuleIff
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N GlobalTheory.IndefiniteRowSideFullHecke.CongruenceModuleMatrices GlobalTheory.SpanRing
 
@@ -64,7 +68,8 @@ theorem exists_separable_charpoly_of_isInternal {K : Type} [Field K] [Infinite K
       rw [← Matrix.toLin'_apply, Matrix.toLin'_toMatrix']
     have hw' : w = ((∑ k, (v j).repr ⟨w, hw⟩ k • v j k : W j) : Fin t → K) := by
       rw [(v j).sum_repr]
-    rw [hD, hw', Submodule.coe_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hD, hw', Submodule.coe_sum, map_sum]
     refine Submodule.sum_mem _ fun k _ => ?_
     rw [Submodule.coe_smul, map_smul]
     refine Submodule.smul_mem _ _ ?_

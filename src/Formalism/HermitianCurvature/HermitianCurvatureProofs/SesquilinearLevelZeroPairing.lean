@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PairLevZeroIndep
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PairLevZeroIndep
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBF
 
@@ -147,7 +151,7 @@ def Gen (L : R.LevelData (Pr (RadSp P.k P.r z z' π π')) P.r) (st : Fr.Start (P
 def Ucls (K0 : Submodule ℂ (RadSp P.k P.r z z' π π')) (G : Set (Pr (RadSp P.k P.r z z' π π'))) :
     Submodule ℂ (RadSp P.k P.r z z' π π') where
   carrier := {Φ | ∀ m ∈ Submonoid.closure G, m.1 Φ ∈ K0}
-  add_mem' {Φ Ψ} hΦ hΨ m hm := by rw [map_add]; exact K0.add_mem (hΦ m hm) (hΨ m hm)
+  add_mem' {Φ Ψ} hΦ hΨ m hm := by rw [map_add (f := _)]; exact K0.add_mem (hΦ m hm) (hΨ m hm)
   zero_mem' m _ := by rw [map_zero]; exact K0.zero_mem
   smul_mem' c Φ hΦ m hm := by rw [map_smul]; exact K0.smul_mem c (hΦ m hm)
 

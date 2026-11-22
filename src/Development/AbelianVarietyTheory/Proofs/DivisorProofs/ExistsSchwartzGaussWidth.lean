@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
+
+@[expose] public section
+
 open FourierTransform MeasureTheory Filter Topology
 
 noncomputable section

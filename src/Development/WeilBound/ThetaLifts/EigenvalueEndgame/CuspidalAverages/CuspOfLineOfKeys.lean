@@ -1,9 +1,13 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.CuspidalAverages.AvLine
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.CuspidalAverages.KillCoef
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.AeFacts
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.TowerCodimensionTwo
-import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDictSec
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.CuspidalAverages.AvLine
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.CuspidalAverages.KillCoef
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.AeFacts
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.TowerCodimensionTwo
+public import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDictSec
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,8 +89,8 @@ theorem wh_ne {f : UA σ W.J → ℂ} (hf : IsAut (W := W) f)
   · simpa using congrFun e 1
   · rw [← wh_right C h H, h0]; rfl
 
-omit H hψ in
 
+omit H hψ in
 theorem wh_two {u u' : Matrix (Fin d) (Fin 2) E} (h : Fr (σ : E →+* E) W.J u u') {ct : (UA σ W.J → ℂ) → UA σ W.J → ℂ}
     (H : IsCt (colSp u) ct) (hψ : StdPsi ψ) {f : UA σ W.J → ℂ} (hf : IsAut (W := W) f) (hm : Mod f)
     (h1 : Av σ W (colSp (fst u one_le_two)) f 0) {x₀} {V} (hV : V ∈ 𝓝 x₀) {b : ℕ → GL (Fin 2) (AE F E)} {y : ℕ → ℂ} (b0 : b 0 = 1)

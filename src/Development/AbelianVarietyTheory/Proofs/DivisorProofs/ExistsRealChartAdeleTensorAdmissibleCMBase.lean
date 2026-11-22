@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTopologicalRingAE
-import Formalism.LocalToGlobal.NumberFieldFamilies.ThetaCB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTopologicalRingAE
+public import Formalism.LocalToGlobal.NumberFieldFamilies.ThetaCB
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,7 +99,7 @@ theorem exists_gen {σ : E →ₐ[F] E} (h : IsCMExt F E σ) :
       rw [LinearIndependent.pair_iff]
       intro s t hst
       have h3 := congrArg σ hst
-      rw [map_add, Algebra.smul_def, Algebra.smul_def, map_mul, map_mul, σ.commutes, σ.commutes, map_one, map_zero,
+      rw [map_add (f := _), Algebra.smul_def, Algebra.smul_def, map_mul, map_mul, σ.commutes, σ.commutes, map_one, map_zero,
         ← Algebra.smul_def, ← Algebra.smul_def] at h3
       have h4 : t • (σ δ - δ) = 0 := by
         rw [smul_sub, eq_neg_of_add_eq_zero_right h3, eq_neg_of_add_eq_zero_right hst, sub_self]
@@ -138,8 +142,8 @@ theorem exists_chart_of_cm {σ : E →ₐ[F] E} (h : IsCMExt F E σ) (tau : Infi
       continuous_pi fun w => (Complex.continuous_re.comp (continuous_apply w)).sub ((c2 w).mul continuous_const)
     have c3 : Continuous (sndC c) := continuous_pi c2
     exact ((continuous_embA _).comp (continuous_rho.comp c1)).add ((continuous_embA _).comp (continuous_rho.comp c3))
-  · rw [hι, RingHom.map_add, finPart_embA, finPart_embA, add_zero]
-  · rw [hι, RingHom.map_add, infPart_embA, infPart_embA, RingHom.map_add, hθ', hθ', rc_rho, rc_rho, map_one, mul_one]
+  · rw [hι, RingHom.map_add (f := _), finPart_embA, finPart_embA, add_zero]
+  · rw [hι, RingHom.map_add (f := _), infPart_embA, infPart_embA, RingHom.map_add (f := _), hθ', hθ', rc_rho, rc_rho, map_one, mul_one]
     have h0 : (c w).im ≠ 0 := hδ _
     show (((z w).re - (z w).im / (c w).im * (c w).re : ℝ) : ℂ) + (((z w).im / (c w).im : ℝ) : ℂ) * c w = z w
     apply Complex.ext
@@ -149,7 +153,7 @@ theorem exists_chart_of_cm {σ : E →ₐ[F] E} (h : IsCMExt F E σ) (tau : Infi
     have key : ∀ w, rc w (b₀ w) = 0 ∧ rc w (b₁ w) = 0 := by
       intro w
       have e := hi w
-      rw [hb, RingHom.map_add, hθ', hθ', map_one, mul_one] at e
+      rw [hb, RingHom.map_add (f := _), hθ', hθ', map_one, mul_one] at e
       have e1 := congrArg Complex.re e
       have e2 := congrArg Complex.im e
       rw [Complex.add_im, Complex.ofReal_im, Complex.im_ofReal_mul, zero_add, Complex.zero_im] at e2

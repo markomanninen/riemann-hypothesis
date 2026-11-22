@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.DdSPowLeOne
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.DdSPowLeOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,7 +103,8 @@ theorem frameOpFull (D : D7) (u : D.what₂.Word) (F0 : FlagG (VS D) D.R.rS ((Tu
     intro b a
     have h := congrArg (fun M : Matrix (Fin D.R.rS) (Fin D.R.rS) (𝓞 D.host.E) =>
       algebraMap (𝓞 D.host.E) D.host.E (M b a)) hUiU
-    simp only [Matrix.mul_apply, Matrix.one_apply, map_sum, map_mul] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.one_apply, map_sum, map_mul] at h
     exact h.trans (by split_ifs <;> simp)
   have hUU : ∀ a b, ∑ c, star (UE c a) * U'E c b = if a = b then 1 else 0 := by
     intro a b

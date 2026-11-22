@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjFrameFibrePt
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.POneBlockPointDeg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.LemCone
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.StepTStB
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjFrameFibrePt
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.POneBlockPointDeg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.LemCone
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.StepTStB
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -60,7 +65,8 @@ theorem aeval_inl_eq_zero {f : MRing (GlobalTheory κ)} (hf : f ∈ coordIdeal �
 
 theorem aeval_inl_mul_eq_zero {f : MRing (GlobalTheory κ)} (hf : f ∈ coordIdeal ℤ x) {R : Type*} [CommRing R]
     (φ : G.Φ' →+* R) (s : R) : aeval (fun p : Ix κ => φ (G.x' (aV D p.2)) * s) f = 0 := by
-  rw [← sum_homogeneousComponent f, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← sum_homogeneousComponent f, map_sum]
   refine Finset.sum_eq_zero fun d _ => ?_
   rw [aeval_mul_of_isHomogeneous _ _ (homogeneousComponent_isHomogeneous d f)]
   have h0 := aeval_inl_eq_zero G (coordIdeal_isHomogIdeal ℤ x f hf d)
@@ -185,7 +191,7 @@ theorem exists_clear_poly (Q : Polynomial G.Φ) : ∃ b : MRing (GlobalTheory (F
     obtain ⟨b₁, hb₁, F₁, e₁⟩ := hp
     obtain ⟨b₂, hb₂, F₂, e₂⟩ := hq
     refine ⟨b₁ * b₂, by rw [map_mul]; exact mul_ne_zero hb₁ hb₂, Polynomial.C b₂ * F₁ + Polynomial.C b₁ * F₂, ?_⟩
-    rw [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_mul, Polynomial.map_C, Polynomial.map_C, ← e₁, ← e₂]
+    rw [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_mul, Polynomial.map_C, Polynomial.map_C, ← e₁, ← e₂]
     simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, map_mul]
     ring
   | monomial n c =>
@@ -243,8 +249,8 @@ theorem transcendental_frame (hF : IsProjFrame x e) : Transcendental G.Φ (G.x' 
 
 end ProjFrameFibrePt
 
-open ProjFrameFibrePt in
 
+open ProjFrameFibrePt in
 theorem ProjFrameFibrePt.proof : ProjFrameFibrePt.Statement := by
   intro D Ω _ _ κ _ x e _ hF G
   classical

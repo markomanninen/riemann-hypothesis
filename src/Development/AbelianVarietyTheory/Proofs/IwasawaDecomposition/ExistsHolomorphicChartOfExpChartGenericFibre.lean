@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLieBase
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.HodgePeriodGram
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeChartBoundsOfSchurLemW
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLieBase
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.HodgePeriodGram
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeChartBoundsOfSchurLemW
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Toroidal GlobalTheory.ShFam GlobalTheory.ProjVar GlobalTheory.FlagBundle GlobalTheory.GoodMetric GlobalTheory.LieBase
 open Classical
 open Matrix
@@ -142,7 +147,7 @@ theorem exists_holoChart_of_expChart : ∀ (E : Type) [Field E] [NumberField E] 
         · rw [hset]
           exact (c₁.e.continuousOn_symm.mono hsub).isOpen_inter_preimage hB (isOpen_ptsIn _)
         · rw [hset]
-          refine ((c₁.holo (j ⁻¹ᵁ U) ((j.app U).hom f)).mono fun w hw => ⟨hsub hw.1, hw.2⟩).congr
+          refine ((c₁.holo (j ⁻¹ᵁ U) ((j.app U).hom f)).mono fun w (hw : w ∈ Φ.target ∩ c₁.e.symm ⁻¹' ptsIn X.str (σ.comp e.toRingHom) (j ⁻¹ᵁ U)) => ⟨hsub hw.1, hw.2⟩).congr
             fun w _ => ?_
           exact valR_comp (c₁.e.symm w).1 j U f
       rw [differentiableAt_pi]

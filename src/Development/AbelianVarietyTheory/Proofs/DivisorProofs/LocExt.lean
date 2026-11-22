@@ -1,12 +1,39 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DensConst
-import Development.AbelianVarietyTheory.Definitions.Divisors.ContinuousBcPt
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAmbOfIsArithVar
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalSectionDivisorPullbackGeneric
-import ReciprocityTheory.AnalyticForms.PotentialTheory.ProjectiveLineFubiniStudyFacts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSeparatedOfIsProjOver
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CInfAtSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DensConst
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ContinuousBcPt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAmbOfIsArithVar
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalSectionDivisorPullbackGeneric
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffAtOfIsPotential
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Partition
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IntegrableOnTargetOfTsupport
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasure
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShift
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Stokes
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LogInt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.SNCAtlas
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialPullbackStatement
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.GreenSt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PLCurveA
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PLLocalStatement
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PushAFinsumInter
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Pullback
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.AnalyticSubsetChartLocal
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Measure
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.AtlasIndep
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Degree
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeInt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffFubiniStudyRatioCompChart0
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ProjectiveLinePartitionContinuousCoe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSeparatedOfIsProjOver
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CInfAtSum
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Set Filter Topology MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -27,7 +54,7 @@ theorem locExt {k : Type} [CommRing k] {X Y : Scheme.{0}} {p : X ⟶ Sp k} {q : 
     obtain ⟨N, i, hi, rfl⟩ := hp
     exact ⟨N, π ≫ i, inferInstance, by rw [Category.assoc, hπ]⟩
   have hemb : IsClosedEmbedding (ptMap π hπ σ) := by
-    have := CxPts.compactSpace σ hq
+    have : CompactSpace (CxPts q σ) := GlobalTheory.CxPts.compactSpace σ hq
     have hc : Continuous (ptMap π hπ σ) := continuous_of_comp (f := π) fun _ => rfl
     refine hc.isClosedEmbedding fun y y' h => Subtype.ext ?_
     exact (cancel_mono π).1 (congrArg Subtype.val h)

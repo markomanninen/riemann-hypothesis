@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IdempotentAdelesAndSmallAdelicMatrices
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUnitaryAdelicDecompositionSplitSupport
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsRepSuppSplit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IdempotentAdelesAndSmallAdelicMatrices
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUnitaryAdelicDecompositionSplitSupport
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsRepSuppSplit
+
+@[expose] public section
 
 namespace GlobalTheory.Ker.CutAt
 
@@ -69,7 +73,8 @@ theorem exists_cut (c : E ≃ₐ[F] E) (G : Matrix (Fin n) (Fin n) E) (hG : IsHe
     · simp [he1' v hv]
     · simp [he0' v hv]
   have hee₀ : e * e₀ = 0 := by
-    ext v
+    ext v : 1
+    change e v * e₀ v = 0
     by_cases hv : I ≤ v.asIdeal
     · have : e₀ v = 0 := by
         by_contra hne
@@ -172,13 +177,13 @@ theorem place_mul_eq_zero {D : D7} (V : HSp D) {g : GA D V} (α : Af D.host.F)
       rw [hal]; exact Algebra.TensorProduct.map_tmul _ _ _ _
     have h2 : finPart D ((mt V g - 1) i j) = ((finHom V g).1 - 1) i j := by
       rw [hfm, Matrix.sub_apply, Matrix.sub_apply, Matrix.map_apply, map_sub, Matrix.one_apply, Matrix.one_apply]
-      split_ifs <;> simp
+      split_ifs <;> simp only [map_one, map_zero]
     rw [h1, h2]
     have := congrFun (congrFun h i) j
-    simpa [Matrix.smul_apply] using this
+    simpa only [Matrix.smul_apply, Matrix.zero_apply, Pi.zero_apply, smul_eq_mul] using this
+
 
 set_option maxHeartbeats 1000000 in
-
 theorem exists_rat_real_trivAt_cong : ∀ (D : D7) (V : HSp D) (L : Lt D.host.E V.rank) (I : Ideal (𝓞 D.host.F)) (M : ℕ), (L.FG ∧ Submodule.span D.host.E (L : Set (Fin V.rank → D.host.E)) = ⊤) → I ≠ ⊥ → 0 < M → ∀ g : GA D V, ∃ γ ∈ GQ V, ∃ a ∈ GinfC V, ∃ g' ∈ GfC V, ∃ k ∈ GfC V, g = γ * a * g' * k ∧ TrivAt V I g' ∧ TrivOff V I k ∧ CongK V L M k ∧ ∀ J : Ideal (𝓞 D.host.E), (M : 𝓞 D.host.E) ∈ J → ∀ u ∈ hatV L, fmt V k *ᵥ u - u ∈ hatV (J • L) := by
   intro D V L I M ⟨hfg, hsp⟩ hI hM g
   obtain ⟨-, -, -, -, hcc, -, hc1, hGh, hdet, -, -⟩ := GlobalTheory.Member.latHat_eq_hat_and_gram D V
@@ -223,7 +228,8 @@ theorem exists_rat_real_trivAt_cong : ∀ (D : D7) (V : HSp D) (L : Lt D.host.E 
     apply place_mul_eq_zero V α _ i j
     rw [hk₁f]
     have hαe : α * e = 0 := by
-      ext v'
+      ext v' : 1
+      change α v' * e v' = 0
       by_cases hvv : v' = v
       · rw [hvv]; simp [he0 v hv]
       · have : α v' = 0 := hα0 v' hvv

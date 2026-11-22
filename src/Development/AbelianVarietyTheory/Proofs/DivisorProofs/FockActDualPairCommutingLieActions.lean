@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataTheta
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockQuadraticActionMapLieBracketStatement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataTheta
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockQuadraticActionMapLieBracketStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions.TH
 open scoped Kronecker
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.Laws3
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.Laws3
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out
@@ -16,7 +20,5 @@ theorem cube_pull_sharp {S S' : Scheme.{0}} {G : Over S} {G' : Over S'} [GrpObj 
       (c' : CubicalStr G' (m.rigLB L hL hr)), c'.t = m.thetaPull L.L c.t := by
   obtain ⟨hL, hr, -, -⟩ := CubePf.cubePull S S' G G' m L c
   exact ⟨hL, hr, CubePf.cubical m L c hL hr, (CubePf.thetaPull_eq m L.L c.t).symm⟩
-
-theorem both : GtBaseChangeSt ∧ CubePullSt := ⟨GlobalTheory.laws3.1, GlobalTheory.laws3.2⟩
 
 end GlobalTheory.PullSharp

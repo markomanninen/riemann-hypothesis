@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.EvFinIdemSelf
-import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.ArchSlice
-import Development.WeilBound.ThetaLifts.CartanFactorisation.TensOfEval
-import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.PureSt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.EvFinIdemSelf
+public import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.ArchSlice
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.TensOfEval
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.PureSt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,12 +31,12 @@ variable {κ : Type} [Fintype κ]
 theorem opF_eq {v : Pl F} {S : ((κ → AF F) → ℂ) → (κ → AF F) → ℂ} {φ φ₁ : (κ → Fv F v) → ℂ} (h0 : φ ∈ SB _) (h1 : φ₁ ∈ SB _)
     (h : Acts (evFin F v) S φ φ₁) : opF v S φ = φ₁ := by
   have ex : ∃ φ₁ ∈ SB (κ → Fv F v), Acts (evFin F v) S φ φ₁ := ⟨φ₁, h1, h⟩
-  rw [opF, dif_pos ex]
+  rw [opF, dite_eq_left ex]
   exact GlobalTheory.TensUniq.eq_of_tens_eq v φ _ _ h0 fun r hr => (ex.choose_spec.2 r hr).symm.trans (h r hr)
 
 theorem opI_eq (hU : ArchUniq) {S : ((κ → AF F) → ℂ) → (κ → AF F) → ℂ} {f f₁ : SInf F κ} (h : Acts (evI F) S f f₁) : opI S f = f₁ := by
   have ex : ∃ f₁ : SInf F κ, Acts (evI F) S f f₁ := ⟨f₁, h⟩
-  rw [opI, dif_pos ex]
+  rw [opI, dite_eq_left ex]
   exact (hU F κ f _ _).1 S ex.choose_spec h
 
 theorem acts_comp {R : Type} [Zero R] {ev : AF F → R} {S S' : ((κ → AF F) → ℂ) → (κ → AF F) → ℂ} {φ φ₁ φ₂ : (κ → R) → ℂ}
@@ -49,7 +53,7 @@ theorem pure_real {S : ((κ → AF F) → ℂ) → (κ → AF F) → ℂ} {f f�
   have := congrFun (hz (idem F v) (evI_idem v)) i
   have h2 := congrArg (evFin F v) this
   rw [Pi.smul_apply, smul_eq_mul, map_mul, evFin_idem_self, one_mul, Pi.zero_apply, map_zero] at h2
-  rw [Pi.add_apply, map_add, h2, add_zero]
+  rw [Pi.add_apply, map_add (f := _), h2, add_zero]
 
 theorem proj_adm (x : κ → AF F) : (LinearMap.proj x : ((κ → AF F) → ℂ) →ₗ[ℂ] ℂ) ∈ (adeleClass F).adm κ := fun g _ =>
   ⟨g (fun i => (x i).2) • ((BoundedContinuousFunction.evalCLM ℂ fun i => InfiniteAdeleRing.ringEquiv_mixedSpace F (x i).1).comp
@@ -75,8 +79,6 @@ theorem acts_rho_fin {W : Type} [AddCommGroup W] [Module (AF F) W] {B : W → W 
       rw [map_smul, Prod.smul_snd, Pi.smul_apply, smul_eq_mul, map_mul, evFin_idem_self, one_mul]
   rw [e] at h
   convert h using 1
-  funext x
-  simp only [schr, invOf_eq_inv]
   rfl
 
 theorem acts_rho_inf {W : Type} [AddCommGroup W] [Module (AF F) W] {B : W → W → AF F} (co : Darboux B κ) {ψ : AddChar (AF F) ℂ}
@@ -109,8 +111,9 @@ theorem acts_rho_inf {W : Type} [AddCommGroup W] [Module (AF F) W] {B : W → W 
         _ = _ := by rw [h3, mul_one]
     have hd : ∀ a b : κ → AF F, evI F (a ⬝ᵥ b) = (fun i => evI F (a i)) ⬝ᵥ fun i => evI F (b i) := fun a b => by
       show evIH F _ = _
-      simp only [dotProduct, map_sum, map_mul]; rfl
-    rw [evI_add, evI_mul, h2, map_add, ← Algebra.smul_def, map_smul, hd, hd]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [dotProduct, map_sum, map_mul]; rfl
+    rw [evI_add, evI_mul, h2, map_add (f := _), ← Algebra.smul_def, map_smul, hd, hd]
     simp only [PositivityTheory.Mix.beta, smul_eq_mul]
     push_cast
     rw [one_div, inv_mul_eq_div]

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTotalBiChains
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AwOCommDStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalDifferentialEval
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TotalDifferentialEval
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTotalBiChains
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AwOCommDStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalDifferentialEval
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TotalDifferentialEval
+
+@[expose] public section
+
 open CategoryTheory Limits Opposite AlgebraicTopology GlobalTheory.EZ
 universe u v
 
@@ -50,7 +55,7 @@ theorem ιz_d (a b k : ℕ) :
   · rw [ιz_ne Y _ _ _ h, zero_comp]
     refine (Finset.sum_eq_zero fun x hx => ?_).symm
     rw [Finset.HasAntidiagonal.mem_antidiagonal] at hx
-    rw [dT_eq_zero _ _ _ _ (by omega), Functor.map_zero, zero_comp]
+    rw [dT_eq_zero a b x.1 x.2 (by omega), Functor.map_zero, zero_comp]
 
 def shufF (G : ∀ a b n : ℕ, bo a b ⟶ bo n n) (n : ℕ) : (tot Y).X n ⟶ (diagCx Y).X n :=
   (dbl Y).totalDesc (c₁₂ := ComplexShape.down ℕ) (fun a b _ => (ev Y).map (G a b n))
@@ -65,7 +70,8 @@ theorem shufF_comm (G : ∀ a b n : ℕ, bo a b ⟶ bo n n)
     (tot Y).d (n + 1) n ≫ shufF Y G n = shufF Y G (n + 1) ≫ (diagCx Y).d (n + 1) n := by
   refine total.hom_ext (K := dbl Y) (c₁₂ := ComplexShape.down ℕ) (fun a b h => ?_)
   simp only [ComplexShape.π_def] at h
-  rw [← ιz_eq Y _ _ _ h, ← Category.assoc, ιz_d, Preadditive.sum_comp, ← Category.assoc, ιz_shufF Y G _ _ _ h,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← ιz_eq Y _ _ _ h, ← Category.assoc, ιz_d, Preadditive.sum_comp, ← Category.assoc, ιz_shufF Y G _ _ _ h,
     ← evd', ← Functor.map_comp, hG a b n h, Functor.map_sum]
   refine Finset.sum_congr rfl fun x hx => ?_
   rw [Category.assoc, ιz_shufF Y G _ _ _ (Finset.HasAntidiagonal.mem_antidiagonal.1 hx), Functor.map_comp]
@@ -88,11 +94,13 @@ theorem awF_comm (n : ℕ) : awF Y (n + 1) ≫ (tot Y).d (n + 1) n = (diagCx Y).
   simp_rw [← Category.assoc, ← Functor.map_comp]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun y hy => ?_
-  rw [awop' n y.1 y.2 (Finset.HasAntidiagonal.mem_antidiagonal.1 hy), Functor.map_sum, Preadditive.sum_comp]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [awop' n y.1 y.2 (Finset.HasAntidiagonal.mem_antidiagonal.1 hy), Functor.map_sum, Preadditive.sum_comp]
 
 theorem awF_shufF (G : ∀ a b n : ℕ, bo a b ⟶ bo n n) (n : ℕ) :
     awF Y n ≫ shufF Y G n = (ev Y).map (∑ x ∈ antidiagonal n, awO n x.1 x.2 ≫ G x.1 x.2 n) := by
-  rw [awF_eq, Preadditive.sum_comp, Functor.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [awF_eq, Preadditive.sum_comp, Functor.map_sum]
   refine Finset.sum_congr rfl fun x hx => ?_
   rw [Category.assoc, ιz_shufF Y G _ _ _ (Finset.HasAntidiagonal.mem_antidiagonal.1 hx), Functor.map_comp]
 
@@ -102,7 +110,8 @@ theorem idc_self (n : ℕ) : idc n n = 𝟙 _ := by
   exact Nat.le_of_lt_succ j.2
 
 theorem ev_idO_self (a b : ℕ) : (ev Y).map (idO a b a b) = 𝟙 _ := by
-  rw [idO, if_pos ⟨rfl, rfl⟩, ev_map_bop, idc_self, idc_self]
+  unfold idO
+  rw [if_pos ⟨rfl, rfl⟩, ev_map_bop, idc_self, idc_self]
   simp
   rfl
 
@@ -111,7 +120,8 @@ theorem sum_idO (a b n : ℕ) (h : a + b = n) :
   rw [Finset.sum_eq_single (a, b)]
   · rw [ev_idO_self, Category.id_comp]
   · intro y _ hy
-    rw [idO, if_neg (fun h' => hy (Prod.ext h'.1.symm h'.2.symm)), Functor.map_zero, zero_comp]
+    unfold idO
+    rw [if_neg (fun h' => hy (Prod.ext h'.1.symm h'.2.symm)), Functor.map_zero, zero_comp]
   · intro hy
     exact absurd (Finset.HasAntidiagonal.mem_antidiagonal.2 h) hy
 
@@ -138,7 +148,7 @@ theorem ιz_dNext (K : ∀ a b a' b' : ℕ, bo a b ⟶ bo a' b') (a b n : ℕ) (
     rw [Homotopy.dNext_zero_chainComplex, Limits.comp_zero]
     refine (Finset.sum_eq_zero fun x _ => Finset.sum_eq_zero fun j hj => ?_).symm
     rw [Finset.HasAntidiagonal.mem_antidiagonal] at hj
-    rw [dT_eq_zero _ _ _ _ (by omega), Limits.zero_comp, Functor.map_zero, Limits.zero_comp]
+    rw [dT_eq_zero a b j.1 j.2 (by omega), Limits.zero_comp, Functor.map_zero, Limits.zero_comp]
   | succ m =>
     rw [Homotopy.dNext_succ_chainComplex, ← Category.assoc, ιz_d, Preadditive.sum_comp, Nat.add_sub_cancel]
     rw [Finset.sum_comm]
@@ -186,7 +196,7 @@ def htpyD (G : ∀ a b n : ℕ, bo a b ⟶ bo n n)
     rw [HomologicalComplex.comp_f, HomologicalComplex.id_f, Homotopy.prevD_chainComplex]
     change awF Y n ≫ shufF Y G n = _
     rw [awF_shufF, hH n]
-    simp only [Functor.map_add, Functor.map_id, Functor.map_comp]
+    simp only [Functor.map_add (ev Y), Functor.map_id, Functor.map_comp]
     rw [evd', homD, if_pos rfl, show (ev Y).map (𝟙 (bo n n)) = 𝟙 ((diagCx Y).X n) from (ev Y).map_id _]
     cases n with
     | zero =>
@@ -220,7 +230,8 @@ def htpyT (G : ∀ a b n : ℕ, bo a b ⟶ bo n n)
     simp_rw [← Category.assoc, ← Functor.map_comp]
     rw [Finset.sum_congr rfl fun y hy => by
       rw [hK a b y.1 y.2 (Finset.HasAntidiagonal.mem_antidiagonal.1 hy)]]
-    simp_rw [Functor.map_add, Preadditive.add_comp, Finset.sum_add_distrib, sum_idO Y a b _ rfl,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp_rw [Functor.map_add (ev Y), Preadditive.add_comp, Finset.sum_add_distrib, sum_idO Y a b _ rfl,
       Functor.map_sum, Preadditive.sum_comp]
 
     simp only [Preadditive.comp_add, Category.comp_id]

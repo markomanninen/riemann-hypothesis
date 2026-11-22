@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepTop
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepThtFacts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepTop
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepThtFacts
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep
 

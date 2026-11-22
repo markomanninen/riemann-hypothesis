@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValRingLocRing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstRelIffTwistFactorAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValRingLocRing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstRelIffTwistFactorAt
+
+@[expose] public section
+
 open NumberField Matrix Complex IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Dict GlobalTheory.AdTh GlobalTheory.ClsVal
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level Host
@@ -40,14 +45,18 @@ theorem chiData_chrTh_base : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 
       fin_cases k
       · exact Ideal.mul_mem_right _ _ hk
       · exact Ideal.mul_mem_left _ _ hk)
-    rw [Formalism.L2.Host.HChar.loc_mul, Formalism.L2.Host.HChar.loc_inv, (R.C.isMu0 i).unr Q hg x hx, R.C.isEta.unr Q x hx,
+    have loc_mul (a b : Formalism.L2.Host.HChar D.host.E) :
+        (a * b).loc Q x = a.loc Q x * b.loc Q x := rfl
+    have loc_inv (a : Formalism.L2.Host.HChar D.host.E) :
+        (a⁻¹).loc Q x = (a.loc Q x)⁻¹ := rfl
+    rw [loc_mul, loc_inv, (R.C.isMu0 i).unr Q hg x hx, R.C.isEta.unr Q x hx,
       inv_one, one_mul]
   · have hcard : (Formalism.L2.Host.aboveF (L := D.host.E) D.host.F (Q.under (𝓞 D.host.F))).card ≠ 1 := by
       refine ne_of_gt (Finset.one_lt_card.2 ⟨Q, ?_, GlobalTheory.IdemSupport.cP Q, ?_, hQ.symm⟩)
       · rw [Formalism.L2.Host.aboveF, Set.Finite.mem_toFinset]; rfl
       · rw [Formalism.L2.Host.aboveF, Set.Finite.mem_toFinset]; exact GlobalTheory.IdemSupport.under_cP Q
     rw [Formalism.L2.Host.HChar.resFin_mul, Formalism.L2.Host.HChar.resFin_inv, (R.C.isMu0 i).triv.1, R.C.isEta.res.1,
-      Formalism.L2.Host.etaFin, if_neg hcard, inv_one, one_mul]
+      Formalism.L2.Host.etaFin, ite_eq_right hcard, inv_one, one_mul]
 
 end GlobalTheory.LevelSeries
 

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.TensFun
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TensFun
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace

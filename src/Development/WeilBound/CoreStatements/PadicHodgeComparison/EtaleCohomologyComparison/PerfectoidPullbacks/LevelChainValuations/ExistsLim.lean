@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.FinDefs
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.FinDefs
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -37,12 +41,12 @@ theorem exists_lim (hS : S.Good) (P : RhoSys S G D c1K) {M : Model l K} (a : D.C
     intro x φ ψ
     apply ext_P hS
     intro m
-    rw [map_add, hk0, hk0, hk0, map_add]
+    rw [map_add (f := _), hk0, hk0, hk0, map_add (f := _)]
   have haddx : ∀ x y φ, k0 (x + y) φ = k0 x φ + k0 y φ := by
     intro x y φ
     apply ext_P hS
     intro m
-    rw [map_add, hk0, hk0, hk0]
+    rw [map_add (f := _), hk0, hk0, hk0]
     have e := P.uniq a hM j m (x + y) _ _ (hf m (x + y)) (P.add a hM j m x y _ _ (hf m x) (hf m y))
     rw [e]
     rfl
@@ -132,9 +136,11 @@ theorem kap_abs (hR : R.Facts) (hi : ∀ c, R.i c ∈ R.P) (hS : S.Good) (P : Rh
     obtain ⟨f, hf⟩ := P.ex a hM i m x
     obtain ⟨g, hg⟩ := P.ex a hM j m y
     obtain ⟨hh, hhh⟩ := P.ex a hM (i + j) m z
-    rw [hkP a hM (i + j) m z hh hhh, P.cup a hM m x y z f g hh hf hg hhh hc b b' φ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hkP a hM (i + j) m z hh hhh, P.cup a hM m x y z f g hh hf hg hhh hc b b' φ, map_sum]
     refine Finset.sum_congr rfl fun s _ => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun s' _ => ?_
     rw [map_mul, map_mul, hkP a hM i m x f hf, hkP a hM j m y g hg,
       (hS.lev m).toB_K (φ (cupK M.q rfl (b s) (b' s'))) ⟨_, hR.o_mem _⟩ rfl]

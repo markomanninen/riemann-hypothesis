@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.RowLat
-import Formalism.LocalToGlobal.Divisibility.ProjLemmas
-import Formalism.LocalToGlobal.Divisibility.FramesLemmas
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.SecondStepGluing
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.PlaceSumSquares
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.LocBasis
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ConjTransposeEqOfPosDef
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ReductionLemmaFirst
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.RowLat
+public import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+public import Formalism.LocalToGlobal.Divisibility.FramesLemmas
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.SecondStepGluing
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.PlaceSumSquares
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.LocBasis
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ConjTransposeEqOfPosDef
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ReductionLemmaFirst
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain Polynomial
 open scoped Matrix ComplexOrder
@@ -16,6 +20,16 @@ noncomputable section
 namespace Formalism.L2.DIV
 
 open Formalism.DivisionValues Formalism.L2.Indef
+
+theorem matLat_full {K : Type} [Field K] [NumberField K] {m n : ℕ}
+    (A : Matrix (Fin m) (Fin n) K) (hA : Function.Surjective A.mulVec)
+    (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsFullLattice K M) :
+    Submodule.IsFullLattice K (matLat A M) := by
+  refine { toIsLattice := Submodule.IsLattice.of_fg K (hM.fg.map _), span_eq_top := ?_ }
+  rw [matLat, Submodule.map_coe]
+  change Submodule.span K (A.mulVecLin '' (M : Set _)) = ⊤
+  rw [Submodule.span_image, hM.span_eq_top, Submodule.map_top, LinearMap.range_eq_top]
+  exact hA
 
 namespace BlockDat
 
@@ -38,8 +52,17 @@ theorem HV_rat (i j) : B.HV ℓ i j ∈ cmMax K :=
 theorem HV_pos (v : InfinitePlace K) : ((B.HV ℓ).map v.embedding).PosDef :=
   (good_part_hermitian_spec K v0 hv0 B.S h.hrat h.hpos G B.r h.actRat ℓ.X hX ℓ.P ℓ.ψ).2.2 v
 
+omit hv0 hX in
+private theorem nab_full : Submodule.IsFullLattice K B.S.nabLat :=
+  ValuationLatticeField.valLatF_isFullLattice B.S.I B.S.I_injective B.S.Nab h.good.nab_isFullLattice
+
 theorem nab_lat : Submodule.IsLattice K B.S.nabLat :=
   (local_bounds_first K v0 hv0 B.S s h.good (h.hpos v0) G B.r h.act ℓ.X hX ℓ.P ℓ.ψ).1
+
+omit hv0 hX in
+theorem Mt_full : Submodule.IsFullLattice K (B.Mt ℓ) :=
+  exponent_index_lattice.cut_isFullLattice (B.vE ℓ)
+    (image_idempotent_spec K _ (B.S.gaMat B.r (goodAt ℓ.X ℓ.P ℓ.ψ))).1 _ (nab_full h)
 
 theorem Mt_lat : Submodule.IsLattice K (B.Mt ℓ) :=
   (local_bounds_first K v0 hv0 B.S s h.good (h.hpos v0) G B.r h.act ℓ.X hX ℓ.P ℓ.ψ).2.1
@@ -70,50 +93,11 @@ theorem XQ_quot : IsQuotMetric (B.Pq ℓ Z) (B.HV ℓ) (B.XQ ℓ Z) :=
 theorem Lam_lat : Submodule.IsLattice K (B.abelian₂ ℓ Z) :=
   GluingInclusion.matLat_lattice' (B.Pq ℓ Z) (Pq_surj hv0 h hX) (B.Mt ℓ) (Mt_lat hv0 h hX)
 
+theorem Lam_full : Submodule.IsFullLattice K (B.abelian₂ ℓ Z) :=
+  matLat_full (B.Pq ℓ Z) (Pq_surj hv0 h hX) (B.Mt ℓ) (Mt_full h)
+
 theorem XQ_herm : IsHermAt v0 (B.HZ ℓ Z) (B.XQ ℓ Z) :=
   quotFrameHermAt K v0 hv0 _ _ (B.HV ℓ) (HV_pos hv0 h hX) (B.zE ℓ Z) (B.Pq ℓ Z) (Pq_orth hv0 h hX)
-
-theorem XQ_rat (hr : SubHasRatBasis (B.Z0 ℓ Z)) : IsRatHerm (cmMax K) (B.HZ ℓ Z) (B.XQ ℓ Z) := by
-  have hE : ∀ i a, B.zE ℓ Z i a ∈ cmMax K := fun i a => subE_rat (B.Z0 ℓ Z) hr i a
-  have e : B.XQ ℓ Z = restrFrame (B.zE ℓ Z) (B.HV ℓ) :=
-    quotEqRestrRat K (cmMax K) (isCMSub_cmMax' K) _ _ (B.HV ℓ) (HV_pos hv0 h hX) (B.zE ℓ Z) (B.Pq ℓ Z) hE
-      (Pq_orth hv0 h hX)
-  rw [e]
-  exact (restrFrameRatHerm K (cmMax K) (isCMSub_cmMax' K) (fun a ha => star_mem_cmMax ha) _ _ (B.HV ℓ)
-    (HV_rat hv0 h hX) (HV_pos hv0 h hX) (B.zE ℓ Z) (subspace_image_spec K _ (B.Z0 ℓ Z)).1 hE).1
-
-theorem ker_Pq : LinearMap.ker (B.Pq ℓ Z).mulVecLin = B.U ℓ Z := by
-  obtain ⟨h1, h2⟩ := Pq_orth hv0 h hX
-  have hrange := (subspace_image_spec K _ (B.Z0 ℓ Z)).2
-  ext x
-  rw [LinearMap.mem_ker, Matrix.mulVecLin_apply]
-  constructor
-  · intro hx z hz
-    have hz' : z ∈ LinearMap.range (B.zE ℓ Z).mulVecLin := by rw [show B.zE ℓ Z = subE (B.Z0 ℓ Z) from rfl, hrange]; exact hz
-    obtain ⟨a, rfl⟩ := hz'
-    have h3 := congrArg (fun M => star a ⬝ᵥ M.mulVec x) h2
-    simp only [Matrix.zero_mulVec, dotProduct_zero] at h3
-    rw [Matrix.mul_sub, Matrix.mul_one, Matrix.sub_mulVec, ← Matrix.mulVec_mulVec _ _ (B.zE ℓ Z * B.Pq ℓ Z),
-      ← Matrix.mulVec_mulVec x (B.zE ℓ Z), hx, Matrix.mulVec_zero, Matrix.mulVec_zero, sub_zero] at h3
-    rw [Matrix.mulVecLin_apply, RationalHermitianForm.hform_eq_dot, Matrix.star_mulVec, ← Matrix.dotProduct_mulVec,
-      Matrix.mulVec_mulVec]
-    exact h3
-  · intro hx
-    have h4 : ((B.zE ℓ Z)ᴴ * B.HV ℓ).mulVec x = 0 := by
-      ext a
-      have := hx ((B.zE ℓ Z).mulVec (Pi.single a 1)) (by
-        rw [← hrange]; exact ⟨_, rfl⟩)
-      rw [RationalHermitianForm.hform_eq_dot, Matrix.star_mulVec, ← Matrix.dotProduct_mulVec,
-        Matrix.mulVec_mulVec] at this
-      have e : star (Pi.single a (1 : K) : Fin (B.dZ ℓ Z) → K) = Pi.single a 1 := by
-        ext i
-        by_cases hi : i = a
-        · subst hi; simp
-        · simp [Pi.single_eq_of_ne hi]
-      rw [e, single_one_dotProduct] at this
-      exact this
-    show (((B.zE ℓ Z)ᴴ * B.HV ℓ * B.zE ℓ Z)⁻¹ * ((B.zE ℓ Z)ᴴ * B.HV ℓ)).mulVec x = 0
-    rw [← Matrix.mulVec_mulVec, h4, Matrix.mulVec_zero]
 
 theorem range_vE_le : LinearMap.range (B.vE ℓ).mulVecLin ≤
     LinearMap.range (B.S.lvlE B.r ℓ.P ℓ.ψ).mulVecLin := by
@@ -141,6 +125,11 @@ theorem lvlNab_lat : Submodule.IsLattice K (B.S.lvlNab B.r ℓ.P ℓ.ψ) :=
 
 theorem Tl_lat : Submodule.IsLattice K (B.Tl ℓ Z) :=
   GluingInclusion.matLat_lattice' (B.lPr ℓ Z) (lPr_surj hv0 h hX) _ (lvlNab_lat hv0 h hX)
+
+theorem Tl_full : Submodule.IsFullLattice K (B.Tl ℓ Z) :=
+  matLat_full (B.lPr ℓ Z) (lPr_surj hv0 h hX) _
+    (exponent_index_lattice.cut_isFullLattice (B.S.lvlE B.r ℓ.P ℓ.ψ)
+      (image_idempotent_spec K _ (B.S.gaMat B.r (lvlIdem ℓ.P ℓ.ψ))).1 _ (nab_full h))
 
 end Basic
 
@@ -220,7 +209,7 @@ theorem eigProj_mem_of_stable [FiniteDimensional K V] (hc : PairComm op) (hs : S
         exact A.zero_mem
     | zero => simp
     | add a b _ _ iha ihb =>
-      rw [Submodule.coe_add, map_add]
+      rw [Submodule.coe_add, map_add (f := _)]
       exact A.add_mem iha ihb
   exact key ⟨v, hv⟩
 
@@ -234,7 +223,8 @@ variable {K : Type} [Field K] [NumberField K] [StarRing K] (S : CSD K)
 theorem gaMat_eq_toMatrix (a : MonoidAlgebra K G) :
     S.gaMat r a = LinearMap.toMatrix S.basis S.basis (S.gaOp r a) := by
   unfold CSD.gaMat CSD.gaOp CSD.actMat
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul]
 
 theorem gaMat_mulVec_equivFun (a : MonoidAlgebra K G) (φ : S.Forms) :
@@ -301,12 +291,6 @@ theorem blockProd_ne_zero (P : B.Pl) : B.blockProd P ≠ 0 := by
   intro h0
   obtain ⟨ν, _, hν⟩ := List.mem_map.mp h0
   exact blockPoly_ne_zero _ _ _ hν
-
-theorem HasRes.hasBlocks {Sg : Pl0 → K[X]} {x : B.Pl × ℕ → K} (hx : B.HasRes Sg x) :
-    Col.HasBlocks B.n B.q B.t B.bl x := by
-  intro P
-  rw [hx P]
-  exact dvd_mul_left _ _
 
 theorem HasRes.excl {Sg Sg' : Pl0 → K[X]} (hne : ∃ P : B.Pl, Sg (B.pl P) ≠ Sg' (B.pl P))
     (x : B.Pl × ℕ → K) (hx : B.HasRes Sg x) : ¬ B.HasRes Sg' x := by
@@ -427,7 +411,8 @@ theorem part_top {v0 : InfinitePlace K} (hv0 : IsConjAt v0) {s : ℕ} (h : B.Ok 
   choose yy hyy using key
   have hsum : y = ∑ i, yy i := by
     apply B.toF_injective ℓ Z
-    rw [map_sum, Finset.sum_congr rfl fun i _ => hyy i]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_congr rfl fun i _ => hyy i]
     exact (sum_eigProj h.comm h.split _ hex h1).symm
   rw [hsum]
   refine Submodule.sum_mem _ fun i _ => Submodule.mem_iSup_of_mem i ?_
@@ -664,42 +649,27 @@ theorem sameTypes_base {s : ℕ} (h : F.Ok s) (P : Subgroup G) (ψ : P →* Kˣ)
     ((F.R F.μ0).sameTypes_self (F.lvl P ψ) h.conj (h.what₂ F.μ0) h.irr)
 
 theorem side_WF {s : ℕ} (h : F.Ok s) (P : Subgroup G) (ψ : P →* Kˣ) (Zs : DefSub F.amb) (hst : Zs.Stable)
-    (hin : Zs.InBlock) (hsep : F.TypesSep) : (F.side P ψ Zs).WF where
-  cm := isCMSub_cmMax' K
-  conj := h.conj
-  HV_rat t := BlockDat.HV_rat (ℓ := F.lvl P ψ) h.conj (h.what₂ t) h.irr
-  HV_pos t := BlockDat.HV_pos (ℓ := F.lvl P ψ) h.conj (h.what₂ t) h.irr
-  Mt_lat t := BlockDat.Mt_lat (ℓ := F.lvl P ψ) h.conj (h.what₂ t) h.irr
-  Pq_surj t := BlockDat.Pq_surj (ℓ := F.lvl P ψ) (Z := Zs.Z t) h.conj (h.what₂ t) h.irr
-  XQ_quot t := BlockDat.XQ_quot (ℓ := F.lvl P ψ) (Z := Zs.Z t) h.conj (h.what₂ t) h.irr
-  Lam_lat t := BlockDat.Lam_lat (ℓ := F.lvl P ψ) (Z := Zs.Z t) h.conj (h.what₂ t) h.irr
-  Qp_indep := (F.R F.μ0).part_indep (F.lvl P ψ) (Zs.Z F.μ0) (h.what₂ F.μ0).comm (fun p : F.base.Ix => p.1)
-    fun p p' hpp => (F.R F.μ0).sep_of_mem_ixFin p.2 p'.2 fun e => hpp (Subtype.ext e)
-  Qp_top := (F.R F.μ0).part_top (F.lvl P ψ) (Zs.Z F.μ0) h.conj (h.what₂ F.μ0) h.irr (stable_rows hst F.μ0)
-    (fun p : F.base.Ix => p.1) (fun p p' hpp => (F.R F.μ0).sep_of_mem_ixFin p.2 p'.2 fun e => hpp (Subtype.ext e))
-    ((F.sameTypes_base h P ψ hin).trans ((F.R F.μ0).good_part_coordinates_mono _
-      (Col.eigSum_mono fun x hx => (F.isType_iff _ id x).1 hx)))
-  XT_herm j t := BlockDat.XQ_herm (ℓ := F.lvlA P ψ) (Z := Zs.Zl j t) h.conj (h.lifts j t) h.irr
-  Tl_lat j t := BlockDat.Tl_lat (ℓ := F.lvlA P ψ) (Z := Zs.Zl j t) h.conj (h.lifts j t) h.irr
-  Zp_indep j := (F.L j F.μ0).part_indep (F.lvlA P ψ) (Zs.Zl j F.μ0) (h.lifts j F.μ0).comm
-    (fun p : F.base.Ix => F.tr j p.1) fun p p' hpp => hsep p.1 p.2 p'.1 p'.2 (fun e => hpp (Subtype.ext e)) j
-
-theorem side_Pos (P : Subgroup G) (ψ : P →* Kˣ) (Zs : DefSub F.amb) (hrow : F.RowsExist P ψ Zs) :
-    (F.side P ψ Zs).Pos := hrow
-
-theorem side_Proviso {s : ℕ} (h : F.Ok s) (P : Subgroup G) (ψ : P →* Kˣ) (Zs : DefSub F.amb)
-    (hrat : F.LiftRat P ψ Zs) : (F.side P ψ Zs).Proviso := by
-  unfold DefSide.Proviso
-  intro j
-  exact BlockDat.XQ_rat (B := F.L j F.μ0) (ℓ := F.lvlA P ψ) (Z := Zs.Zl j F.μ0) h.conj (h.lifts j F.μ0) h.irr (hrat j)
-
-theorem side_Types {s : ℕ} (h : F.Ok s) (P : Subgroup G) (ψ : P →* Kˣ) (Zs : DefSub F.amb) (hst : Zs.Stable)
-    (hsep : F.TypesSep) (hsame : F.SameTypes P ψ Zs) : (F.side P ψ Zs).Types :=
-  fun j => (F.L j F.μ0).part_top (F.lvlA P ψ) (Zs.Zl j F.μ0) h.conj (h.lifts j F.μ0) h.irr
-    (stable_lifts hst j F.μ0) (fun p : F.base.Ix => F.tr j p.1)
-    (fun p p' hpp => hsep p.1 p.2 p'.1 p'.2 (fun e => hpp (Subtype.ext e)) j)
-    ((hsame j).trans ((F.L j F.μ0).good_part_coordinates_mono _
-      (Col.eigSum_mono fun x hx => (F.isType_iff _ (F.tr j) x).1 hx)))
+    (hin : Zs.InBlock) (hsep : F.TypesSep) : (F.side P ψ Zs).WF := by
+  exact {
+    cm := isCMSub_cmMax' K
+    conj := h.conj
+    HV_rat t := BlockDat.HV_rat (ℓ := F.lvl P ψ) h.conj (h.what₂ t) h.irr
+    HV_pos t := BlockDat.HV_pos (ℓ := F.lvl P ψ) h.conj (h.what₂ t) h.irr
+    Mt_lat t := BlockDat.Mt_full (ℓ := F.lvl P ψ) (h.what₂ t)
+    Pq_surj t := BlockDat.Pq_surj (ℓ := F.lvl P ψ) (Z := Zs.Z t) h.conj (h.what₂ t) h.irr
+    XQ_quot t := BlockDat.XQ_quot (ℓ := F.lvl P ψ) (Z := Zs.Z t) h.conj (h.what₂ t) h.irr
+    Lam_lat t := BlockDat.Lam_full (ℓ := F.lvl P ψ) (Z := Zs.Z t) h.conj (h.what₂ t) h.irr
+    Qp_indep := (F.R F.μ0).part_indep (F.lvl P ψ) (Zs.Z F.μ0) (h.what₂ F.μ0).comm (fun p : F.base.Ix => p.1)
+      fun p p' hpp => (F.R F.μ0).sep_of_mem_ixFin p.2 p'.2 fun e => hpp (Subtype.ext e)
+    Qp_top := (F.R F.μ0).part_top (F.lvl P ψ) (Zs.Z F.μ0) h.conj (h.what₂ F.μ0) h.irr (stable_rows hst F.μ0)
+      (fun p : F.base.Ix => p.1) (fun p p' hpp => (F.R F.μ0).sep_of_mem_ixFin p.2 p'.2 fun e => hpp (Subtype.ext e))
+      ((F.sameTypes_base h P ψ hin).trans ((F.R F.μ0).good_part_coordinates_mono _
+        (Col.eigSum_mono fun x hx => (F.isType_iff _ id x).1 hx)))
+    XT_herm j t := BlockDat.XQ_herm (ℓ := F.lvlA P ψ) (Z := Zs.Zl j t) h.conj (h.lifts j t) h.irr
+    Tl_lat j t := BlockDat.Tl_full (ℓ := F.lvlA P ψ) (Z := Zs.Zl j t) h.conj (h.lifts j t) h.irr
+    Zp_indep j := (F.L j F.μ0).part_indep (F.lvlA P ψ) (Zs.Zl j F.μ0) (h.lifts j F.μ0).comm
+      (fun p : F.base.Ix => F.tr j p.1) fun p p' hpp => hsep p.1 p.2 p'.1 p'.2 (fun e => hpp (Subtype.ext e)) j
+  }
 
 end DefFam
 
@@ -707,30 +677,16 @@ section Side
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K] {Bs : DefBase K} {Df : DefSide Bs}
 
-theorem locBasisOf_spec {D : ℕ} (L : Submodule (𝓞 K) (Fin D → K)) (hL : Submodule.IsLattice K L)
+theorem locBasisOf_spec {D : ℕ} (L : Submodule (𝓞 K) (Fin D → K)) (hL : Submodule.IsFullLattice K L)
     (w : HeightOneSpectrum (𝓞 K)) : IsLocBasis L w (locBasisOf L w) := by
   have hex := semilocal_basis_exists K D L hL w
   unfold locBasisOf
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hex.choose_spec
 
-theorem ebOf_spec (hW : Df.WF) (t : Bs.Tup) (w : HeightOneSpectrum (𝓞 K)) :
-    IsLocBasis (Df.abelian₂ t) w (ebOf Df t w) := locBasisOf_spec _ (hW.Lam_lat t) w
-
-theorem RR_spec (hW : Df.WF) (S : IndefData Df) (hH0 : S.H0) (hι : ∀ t, Function.Surjective (S.ι t).mulVec) :
-    Submodule.IsLattice K S.RR ∧ ∀ w : HeightOneSpectrum (𝓞 K),
-      Formalism.HermitianLatticesTheory.localization₂ w.asIdeal S.RR =
-        Formalism.HermitianLatticesTheory.localization₂ w.asIdeal (matLat (S.ι (S.μ w)) (Df.abelian₂ (S.μ w))) := by
-  refine lattice_gluing K S.D (matLat (S.ι Bs.μ0) (Df.abelian₂ Bs.μ0))
-    (fun w => matLat (S.ι (S.μ w)) (Df.abelian₂ (S.μ w)))
-    (GluingInclusion.matLat_lattice' _ (hι _) _ (hW.Lam_lat _))
-    (fun w => GluingInclusion.matLat_lattice' _ (hι _) _ (hW.Lam_lat _)) ?_
-  refine S.Tw.finite_toSet.subset fun w hw => ?_
-  rw [Finset.mem_coe, hH0.2 w]
-  intro e
-  apply hw
-  show Formalism.HermitianLatticesTheory.localization₂ w.asIdeal (matLat (S.ι (S.μ w)) (Df.abelian₂ (S.μ w))) = _
-  rw [e]
+theorem ebOf_spec (t : Bs.Tup) (hL : Submodule.IsFullLattice K (Df.abelian₂ t))
+    (w : HeightOneSpectrum (𝓞 K)) :
+    IsLocBasis (Df.abelian₂ t) w (ebOf Df t w) := locBasisOf_spec _ hL w
 
 theorem sum_partPr (t : Bs.Tup) (hi : iSupIndep (Df.Qp t)) (ht : (⨆ p, Df.Qp t p) = ⊤) :
     ∑ p, partPr Df t p = 1 := by
@@ -744,7 +700,8 @@ theorem sum_partPr (t : Bs.Tup) (hi : iSupIndep (Df.Qp t)) (ht : (⨆ p, Df.Qp t
     intro p
     unfold partPr
     rw [dif_pos (hc p)]
-  simp_rw [hp, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [hp, ← map_sum]
   rw [← LinearMap.toMatrix'_id]
   congr 1
   apply LinearMap.ext
@@ -763,7 +720,7 @@ theorem sum_partPr (t : Bs.Tup) (hi : iSupIndep (Df.Qp t)) (ht : (⨆ p, Df.Qp t
     · intro hq
       exact absurd (Finset.mem_univ q) hq
   | zero => simp
-  | add a b _ _ iha ihb => rw [map_add, iha, ihb, map_add]
+  | add a b _ _ iha ihb => rw [map_add (f := _), iha, ihb, map_add (f := _)]
 
 theorem rowXE_spec (hW : Df.WF) (Y : Matrix (Fin (Df.dQ Bs.μ0)) (Fin (Df.dQ Bs.μ0)) ℂ) (hY : IsUnit Y.det)
     (κ : InfinitePlace K → ℝ) (hκ : ∀ v, 0 < κ v) (lam : Bs.J → Bs.Ix → InfinitePlace K → ℝ)
@@ -803,12 +760,12 @@ namespace DefFam
 variable {K : Type} [Field K] [NumberField K] [StarRing K] {G : Type} [Group G] [Fintype G]
   {Pl0 T J : Type} [Fintype J] (F : DefFam K G Pl0 T J)
 
-theorem GmOf_le [IsTotallyComplex K] {s : ℕ} (h : F.Ok s) (P : Subgroup G) (ψ : P →* Kˣ) (Zs : DefSub F.amb)
+theorem GmOf_le [_root_.NumberField.IsTotallyComplex K] {s : ℕ} (h : F.Ok s) (P : Subgroup G) (ψ : P →* Kˣ) (Zs : DefSub F.amb)
     (t : T) (w : HeightOneSpectrum (𝓞 K)) :
     vw w (GmOf (F.side P ψ Zs) t w) ≤
       (((F.side P ψ Zs).dQ t : ℕ) : ℤ) * vw w ((Fintype.card G * s : ℕ) : K) := by
   have hl : 0 < Fintype.card G * s := Nat.mul_pos Fintype.card_pos (h.what₂ t).good.s_pos
-  have hlat := BlockDat.Lam_lat (ℓ := F.lvl P ψ) (Z := Zs.Z t) h.conj (h.what₂ t) h.irr
+  have hlat := BlockDat.Lam_full (ℓ := F.lvl P ψ) (Z := Zs.Z t) h.conj (h.what₂ t) h.irr
   have := reduction_lemma_first K (cmMax K) (isCMSub_cmMax' K) F.v0 h.conj _ _ ((F.R t).HV (F.lvl P ψ))
     (BlockDat.HV_rat (ℓ := F.lvl P ψ) h.conj (h.what₂ t) h.irr)
     (BlockDat.HV_pos (ℓ := F.lvl P ψ) h.conj (h.what₂ t) h.irr) ((F.R t).Pq (F.lvl P ψ) (Zs.Z t))
@@ -829,202 +786,5 @@ end Formalism.L2.DIV
 namespace Formalism.L2.DIV.Test
 
 open Formalism.DivisionValues Formalism.L2.Indef Formalism.L2.Col Formalism.L2.NCov
-
-theorem mem_cmMax_rat (a : ℚ) : a ∈ cmMax ℚ := by
-  show ∀ σ : ℚ →+* ℂ, σ (star a) = starRingEnd ℂ (σ a)
-  intro σ
-  first
-    | rw [star_trivial, eq_ratCast σ a, map_ratCast]
-    | simp [eq_ratCast σ a]
-
-abbrev G3 := Equiv.Perm (Fin 3)
-
-def x0 : Unit × ℕ → ℚ := fun p => if p.2 = 0 then 1 else if p.2 = 1 then 5 else 0
-
-def tB : BlockDat ℚ G3 Unit where
-  S := regCSD ℚ G3
-  r := regAct ℚ G3
-  Pl := Unit
-  pl := id
-  q := fun _ => 2
-  n := 1
-  t := 1
-  op := fun p => x0 p • 1
-  bl := [fun _ => 5]
-
-abbrev tX : Finset (G3 → ℚ) := {fun _ => 1}
-
-def tF : DefFam ℚ G3 Unit Unit Unit where
-  v0 := Classical.arbitrary _
-  μ0 := ()
-  X := tX
-  R := fun _ => tB
-  L := fun _ _ => tB
-  tr := fun _ => id
-
-theorem tB_eigAt : eigAt tB.op x0 = ⊤ := by
-  unfold eigAt
-  rw [iInf_eq_top]
-  intro i
-  exact maxGen_smul_one (x0 i)
-
-theorem tB_hasRes : tB.HasRes (fun _ => 1) x0 := by
-  intro P
-  simp only [heckePoly, heckePolyOf, BlockDat.blockProd, blockPoly, tB, x0, Finset.sum_range_succ,
-    Finset.sum_range_zero, Finset.prod_range_succ, Finset.prod_range_zero, List.map_cons, List.map_nil,
-    List.prod_cons, List.prod_nil]
-  simp
-  ring
-
-theorem tB_partF : tB.partF (fun _ => 1) = ⊤ := by
-  refine eq_top_iff.mpr ?_
-  rw [← tB_eigAt]
-  exact eigAt_le_eigSum tB_hasRes
-
-theorem tB_ZH : tB.ZH = ⊤ := by
-  refine eq_top_iff.mpr ?_
-  rw [← tB_eigAt]
-  exact eigAt_le_eigSum (BlockDat.HasRes.hasBlocks tB tB_hasRes)
-
-theorem example_good_coordinates_top (ℓ : Lvl ℚ G3) : tB.inV0 ℓ ⊤ = ⊤ := by
-  refine eq_top_iff.mpr fun u _ => ?_
-  rw [BlockDat.mem_goodPart_iff]
-  exact Submodule.mem_top
-
-theorem tB_res_eq {Sg : Unit → ℚ[X]} (h : tB.partF Sg ≠ ⊥) : Sg = fun _ => 1 := by
-  obtain ⟨x, hx, hocc⟩ := tB.exists_of_partF_ne_bot h
-  have hxx : x = x0 := funext fun i =>
-    eq_of_occurs_of_le (op := tB.op) hocc ((maxGen_smul_one (V := tB.S.Forms) (x0 i)).symm ▸ le_top)
-  subst hxx
-  funext P
-  exact mul_right_cancel₀ (tB.blockProd_ne_zero P) (((hx P).symm.trans (tB_hasRes P)))
-
-theorem tB_resSet : tB.resSet tX = {fun _ => 1} := by
-  ext Sg
-  rw [Set.mem_singleton_iff]
-  constructor
-  · intro h
-    refine tB_res_eq fun h0 => h.2 ?_
-    rw [h0, BlockDat.good_part_coordinates_bot]
-  · rintro rfl
-    refine ⟨fun _ _ => rfl, ?_⟩
-    show tB.inV0 _ (tB.partF fun _ => 1) ≠ ⊥
-    rw [tB_partF, example_good_coordinates_top]
-    have hpos : 0 < tB.nV (Lvl.full tX) := reg_V0dim_pos_lvl ℚ G3 ⊥
-    have : Nonempty (Fin (tB.nV (Lvl.full tX))) := ⟨⟨0, hpos⟩⟩
-    exact top_ne_bot
-
-theorem tB_mem_ixFin (Sg : Unit → ℚ[X]) : Sg ∈ tB.ixFin tX ↔ Sg = fun _ => 1 := by
-  have hfin : (tB.resSet tX).Finite := by
-    rw [tB_resSet]; exact Set.finite_singleton _
-  unfold BlockDat.ixFin
-  rw [dif_pos hfin, Set.Finite.mem_toFinset, tB_resSet, Set.mem_singleton_iff]
-
-theorem tB_ok : tB.Ok 1 where
-  good := reg_good ℚ G3
-  hrat _ _ := mem_cmMax_rat _
-  hpos v := reg_H_posDef ℚ G3 v (rat_isConjAt v)
-  act := regAct_good ℚ G3
-  actRat _ _ _ := mem_cmMax_rat _
-  comm i j := by
-    apply LinearMap.ext
-    intro v
-    show x0 i • (x0 j • v) = x0 j • (x0 i • v)
-    exact smul_comm _ _ _
-  split i := top_unique (le_iSup_of_le (x0 i) (maxGen_smul_one (x0 i)).ge)
-  opG i g := by
-    apply LinearMap.ext
-    intro v
-    show x0 i • (tB.r g v) = tB.r g (x0 i • v)
-    exact (map_smul _ _ _).symm
-  blocks := ⟨le_rfl, List.cons_ne_nil _ _, fun ν hν P => by
-    have hν' : ν = fun _ => (5 : ℚ) := List.mem_singleton.1 hν
-    subst hν'
-    norm_num⟩
-  q_pos _ := show 0 < 2 by norm_num
-  pl_inj := Function.injective_id
-
-theorem tX_irr : ∀ χ ∈ tX, IsAbsIrrChar χ := by
-  intro χ hχ
-  rw [show χ = fun _ => (1 : ℚ) from Finset.mem_singleton.1 hχ]
-  exact isAbsIrrChar_one ℚ G3
-
-theorem tF_ok : tF.Ok 1 where
-  conj := rat_isConjAt _
-  tup_fin := inferInstance
-  irr := tX_irr
-  what₂ _ := tB_ok
-  lifts _ _ := tB_ok
-
-def tZs : DefSub tF.amb := ⟨fun _ => tB.goodF tX, fun _ _ => tB.goodF tX⟩
-
-theorem tZs_stable : tZs.Stable := by
-  have hs := tB.goodF_stable tF_ok.conj tB_ok tX_irr
-  unfold DefSub.Stable
-  refine ⟨fun t i => ?_, fun j t i => ?_⟩
-  · rcases i with i | g
-    · exact Submodule.map_le_iff_le_comap.mpr (hs.1 i)
-    · exact Submodule.map_le_iff_le_comap.mpr (hs.2 g)
-  · rcases i with i | g
-    · exact Submodule.map_le_iff_le_comap.mpr (hs.1 i)
-    · exact Submodule.map_le_iff_le_comap.mpr (hs.2 g)
-
-theorem tZs_inBlock : tZs.InBlock := by
-  unfold DefSub.InBlock
-  refine ⟨fun t => ?_, fun j t => ?_⟩
-  · show tB.goodF tX ≤ tB.ZH ⊓ tB.goodF tX
-    rw [tB_ZH]
-    exact le_inf le_top le_rfl
-  · show tB.goodF tX ≤ tB.ZH ⊓ tB.goodF tX
-    rw [tB_ZH]
-    exact le_inf le_top le_rfl
-
-theorem example_invariant_good_top (P : Subgroup G3) : tB.Z0 (tF.lvl P 1) (tB.goodF tX) = ⊤ := by
-  exact tB.good_part_coordinates_good_eq_top (tF.lvl P 1) tF_ok.conj tX_irr
-
-theorem tF_rows (P : Subgroup G3) : tF.RowsExist P 1 tZs := by
-  show 0 < subDim (tB.Z0 (tF.lvl P 1) (tB.goodF tX))
-  rw [example_invariant_good_top]
-  unfold subDim
-  rw [finrank_top, finrank_fin_fun]
-  exact reg_V0dim_pos_lvl ℚ G3 P
-
-theorem tF_isType (f : (Unit → ℚ[X]) → Unit → ℚ[X]) (hf : f (fun _ => 1) = fun _ => 1) :
-    eigSum tB.op (tF.IsType tB f) = ⊤ := by
-  refine eq_top_iff.mpr ?_
-  rw [← tB_eigAt]
-  have hx : tF.IsType tB f x0 := by
-    unfold DefFam.IsType
-    refine ⟨fun _ => 1, (tB_mem_ixFin _).mpr rfl, ?_⟩
-    rw [hf]
-    exact tB_hasRes
-  exact eigAt_le_eigSum hx
-
-theorem tF_same (P : Subgroup G3) : tF.SameTypes P 1 tZs := by
-  intro j
-  have h1 := tF_isType (tF.tr j) rfl
-  have h2 := example_good_coordinates_top (tF.lvlA P 1)
-  show tB.Z0 _ _ ≤ tB.inV0 _ (eigSum tB.op (tF.IsType tB (tF.tr j)))
-  rw [h1, h2]
-  exact le_top
-
-theorem tF_sep : tF.TypesSep := by
-  first
-    | (unfold DefFam.TypesSep
-       intro Sg hSg Sg' hSg' hne j
-       exact absurd (((tB_mem_ixFin Sg).mp hSg).trans ((tB_mem_ixFin Sg').mp hSg').symm) hne)
-    | (intro Sg hSg Sg' hSg' hne j
-       exfalso
-       exact hne (((tB_mem_ixFin Sg).mp hSg).trans ((tB_mem_ixFin Sg').mp hSg').symm))
-    | (intro Sg hSg Sg' hSg' hne
-       exact absurd (((tB_mem_ixFin Sg).mp hSg).trans ((tB_mem_ixFin Sg').mp hSg').symm) hne)
-
-theorem tF_rat (P : Subgroup G3) : tF.LiftRat P 1 tZs :=
-  fun _ => ⟨finBasis ℚ _, fun _ _ => mem_cmMax_rat _⟩
-
-theorem tF_WF (P : Subgroup G3) :
-    (tF.side P 1 tZs).WF ∧ (tF.side P 1 tZs).Pos ∧ (tF.side P 1 tZs).Proviso ∧ (tF.side P 1 tZs).Types := by
-  exact ⟨tF.side_WF tF_ok P 1 tZs tZs_stable tZs_inBlock tF_sep, tF.side_Pos P 1 tZs (tF_rows P),
-    tF.side_Proviso tF_ok P 1 tZs (tF_rat P), tF.side_Types tF_ok P 1 tZs tZs_stable tF_sep (tF_same P)⟩
 
 end Formalism.L2.DIV.Test

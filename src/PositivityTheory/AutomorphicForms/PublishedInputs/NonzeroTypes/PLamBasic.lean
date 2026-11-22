@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroLeviEigenvectorExists
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroLeviEigenvectorExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,7 +93,7 @@ theorem chk_unit (μ : kˣ →* ℂˣ) (u : 𝒪[k]ˣ) : chk μ (algebraMap 𝒪
   have h0 : algebraMap 𝒪[k] k u ≠ 0 := by
     intro h
     exact u.ne_zero (Subtype.val_injective (by simpa using h))
-  rw [chk, dif_neg h0, show Units.mk0 _ h0 = unitIncl k u from Units.ext rfl]
+  rw [chk, dite_eq_right h0, show Units.mk0 _ h0 = unitIncl k u from Units.ext rfl]
   rfl
 
 end UpperTheory.TNZ.Grp.P_lamBasic

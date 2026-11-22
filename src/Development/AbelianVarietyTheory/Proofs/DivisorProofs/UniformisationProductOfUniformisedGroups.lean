@@ -1,23 +1,27 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBoxGenOfSection
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStrBoxOfIsSumDeg
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsExternalTensorRigidifiedCubicalProductStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGenericFibreProductSumPolarisedAbelianVariStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusExtensionProductOverThickeningOfSumDataStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TMulOfBox
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdUnit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GmCharHom
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGeneratingBoxProductOfRestrictedIsosStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigAlongBox
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsLastLast
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompatBox
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThickeningProductIsoPreservesCubicalStructureStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoxFamilyProductDegenerationStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BoxFamilyLinearIndependentProductDegenerationStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExpansionModIdealPowBoxProductEqBoxProductStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothDimTensor
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FamDimOfExpBij
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExpBijOfBasisCard
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBoxGenOfSection
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStrBoxOfIsSumDeg
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsExternalTensorRigidifiedCubicalProductStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGenericFibreProductSumPolarisedAbelianVariStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusExtensionProductOverThickeningOfSumDataStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TMulOfBox
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdUnit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GmCharHom
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGeneratingBoxProductOfRestrictedIsosStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigAlongBox
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsLastLast
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompatBox
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThickeningProductIsoPreservesCubicalStructureStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoxFamilyProductDegenerationStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BoxFamilyLinearIndependentProductDegenerationStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExpansionModIdealPowBoxProductEqBoxProductStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothDimTensor
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FamDimOfExpBij
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExpBijOfBasisCard
+
+@[expose] public section
 
 noncomputable section
 
@@ -137,7 +141,7 @@ theorem exists_gt (hD : IsSumDeg D.toPre D₁.toPre D₂.toPre p₁ p₂ q₁ q�
   obtain ⟨τ₁, hτ₁, hκ₁⟩ := hi₁ j₁ (fun y => congrArg Prod.fst (hj₁ y)) (fun y => congrArg Prod.snd (hj₁ y))
   obtain ⟨τ₂, hτ₂, hκ₂⟩ := hi₂ j₂ (fun y => congrArg Prod.fst (hj₂ y)) (fun y => congrArg Prod.snd (hj₂ y))
   have hj : ∀ χ, j₁ (q₁ χ) + j₂ (q₂ χ) = χ := fun χ => hD.xsum.1 (by
-    rw [map_add, hj₁, hj₂, Prod.mk_add_mk, add_zero, zero_add]; rfl)
+    rw [map_add (f := _), hj₁, hj₂, Prod.mk_add_mk, add_zero, zero_add]; rfl)
   exact ⟨⟨q, q_hom, q_flat, q_surj, q_aff, i, i_hom, hker, t, ht,
     GlobalTheory.ProdUnif.tMul_of_box R _ _ _ p₁ p₂ q₁ q₂ hD w hc _ _ _ _ g₁.pG g₂.pG _ _ hp₁ hp₂ t g₁.t g₂.t H g₁.t_mul g₂.t_mul,
     fun χ => GlobalTheory.ProdUnifUnit.unit_box R _ _ _ p₁ p₂ q₁ q₂ w _ (thick R I e) _ _ _ _ _ _ g₁.pG g₂.pG χ (t χ) _ _ inferInstance
@@ -161,8 +165,8 @@ theorem thickMap_pG (hD : IsSumDeg D.toPre D₁.toPre D₂.toPre p₁ p₂ q₁ 
         ((Category.assoc _ _ _).trans ((congrArg (((Over.pullback (thick R I e)).map (snd G₁ G₂)).left ≫ ·) (U₂.gt_q e)).trans (h₂ e).symm)))))))
   exact congrArg (fun z => z.left) h
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_pre (hD : IsSumDeg D.toPre D₁.toPre D₂.toPre p₁ p₂ q₁ q₂) (hA : IsSumPolAV A A₁ A₂ a₁ a₂)
     (U₁ : UnifPre I D₁ A₁ G₁) (U₂ : UnifPre I D₂ A₂ G₂)
     (wM : LB.Iso D.toPre.P.L (extLB D₁.toPre.P.L D₂.toPre.P.L p₁.left p₂.left))
@@ -247,8 +251,8 @@ theorem exists_pre (hD : IsSumDeg D.toPre D₁.toPre D₂.toPre p₁ p₂ q₁ q
         (UnifPullRig.thickMap_fstG I e _) (U₂.gt_q e) (U₁.w_compat e) (U₂.w_compat e) },
     wL, ⟨gen₁, gen₂, ⟨wL, hwLgen⟩, hq₁, hq₂, hi₁, hi₂⟩, hwLgen, ht, Q⟩
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem expands_box (hD : IsSumDeg D.toPre D₁.toPre D₂.toPre p₁ p₂ q₁ q₂)
     {U₁ : UnifPre I D₁ A₁ G₁} {U₂ : UnifPre I D₂ A₂ G₂} {U : UnifPre I D A (G₁ ⊗ G₂)}
     {wM : LB.Iso D.toPre.P.L (extLB D₁.toPre.P.L D₂.toPre.P.L p₁.left p₂.left)} (hwM : wM.IsGen)

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFreeIntegralModelsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArithVarietyCoordIdealStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFreeIntegralModelsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArithVarietyCoordIdealStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointIdeal segreVec IsFlagFrame IsFlagPair SameGenericFibre IsModelOver divCycle)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg fnField)
@@ -47,7 +52,7 @@ theorem overring {R₀ R Ω : Type} [CommRing R₀] [IsDomain R₀] [CommRing R]
       map_one' := hinj (by rw [hφ, map_one, map_one])
       map_zero' := hinj (by rw [hφ, map_zero, map_zero])
       map_mul' := fun a b => hinj (by rw [hφ, map_mul, map_mul, hφ, hφ])
-      map_add' := fun a b => hinj (by rw [hφ, map_add, map_add, hφ, hφ]) }
+      map_add' := fun a b => hinj (by rw [hφ, map_add (f := _), map_add (f := _), hφ, hφ]) }
   have hf : ∀ x, algebraMap R Ω (f x) = algebraMap R₀ Ω x := hφ
   clear_value f
   have hfi : Function.Injective f := fun a b h => IsFractionRing.injective R₀ Ω (by rw [← hf, ← hf, h])

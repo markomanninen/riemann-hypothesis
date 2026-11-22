@@ -1,9 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
 theorem UpperTheory.V.Fr.pr_ext :
-    ∀ {l : ℕ} [Fact l.Prime] {k : Type} [Field k] [CharP k l] {F : Frame l k} {C₀ n : ℕ}, F.Ok C₀ → ∀ (C : Type) [CommRing C] (r r' : F.Γ →* GG n C), (∀ s, (r s).right = F.del s) → (∀ s, (r' s).right = F.del s) → (r F.c).mat = (r' F.c).mat → (∀ s : F.G0, (r s).mat = (r' s).mat) → r = r' := by
+    ∀ {l : ℕ} [Fact l.Prime] {k : Type} [Field k] [CharP k l] {F : Frame l k} {C₀ n : ℕ},
+      F.Ok C₀ → ∀ (C : Type) [CommRing C] (r r' : F.Γ →* GG (m := n) (R := C)),
+        (∀ s, (r s).right = F.del s) → (∀ s, (r' s).right = F.del s) →
+        (r F.c).mat = (r' F.c).mat → (∀ s : F.G0, (r s).mat = (r' s).mat) → r = r' := by
   intro l _ k _ _ F C₀ n hF C _ r r' h h' hc h0
   have key : ∀ s, (r s).mat = (r' s).mat → r s = r' s := fun s hs =>
     SemidirectProduct.ext (Units.ext hs) ((h s).trans (h' s).symm)

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTieMemC
-import Formalism.LocalToGlobal.CharacterGerms.NormOneRowInvariant
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieMemC
+public import Formalism.LocalToGlobal.CharacterGerms.NormOneRowInvariant
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,8 @@ theorem shift_same (hΦ : ∀ x, Φ (X x) = ∑ q, MvPolynomial.C (w x.1 q) * X 
     (hlt : ∀ ρ c q, keyL (lt (ρ, c) q) = (σ0, c.val, colf ρ q)) (σ : T) (i i' : Fin (r σ)) (t : C)
     (ρ : Fin N) (c : Fin N') (h : ¬ (σ = σ0 ∧ c.val = i.val)) :
     rowShift r n C σ i i' t (Φ (X (ρ, c))) = Φ (X (ρ, c)) := by
-  rw [hΦ, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hΦ, map_sum]
   refine Finset.sum_congr rfl fun q _ => ?_
   rw [map_mul, rowShift_C, rowShift_X, hlt, if_neg]
   intro e
@@ -35,7 +40,8 @@ theorem shift_add (hΦ : ∀ x, Φ (X x) = ∑ q, MvPolynomial.C (w x.1 q) * X (
     (hlt : ∀ ρ c q, keyL (lt (ρ, c) q) = (σ0, c.val, colf ρ q)) (i i' : Fin (r σ0)) (t : C)
     (ρ : Fin N) (c c' : Fin N') (hc : c.val = i.val) (hc' : c'.val = i'.val) :
     rowShift r n C σ0 i i' t (Φ (X (ρ, c))) = Φ (X (ρ, c)) + MvPolynomial.C t * Φ (X (ρ, c')) := by
-  rw [hΦ, hΦ, map_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hΦ, hΦ, map_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun q _ => ?_
   have h2 : (lt (ρ, c) q).2.2 = colf ρ q := congrArg (fun x : T × ℕ × Fin n => x.2.2) (hlt ρ c q)
   have h1 : keyL (lt (ρ, c) q) = (σ0, i.val, (lt (ρ, c) q).2.2) := by rw [hlt, hc, h2]
@@ -96,14 +102,6 @@ theorem rowShift_minor_lin (hΦ : ∀ x, Φ (X x) = ∑ q, MvPolynomial.C (w x.1
       rw [e2]
   · simp
 
-theorem rowShift_monomial_eq_self (hΦ : ∀ x, Φ (X x) = ∑ q, MvPolynomial.C (w x.1 q) * X (lt x q))
-    (hlt : ∀ ρ c q, keyL (lt (ρ, c) q) = (σ0, c.val, colf ρ q)) (σ : T) (i i' : Fin (r σ)) (hi : i' < i) (t : C)
-    (e : ℕ → ℕ) : rowShift r n C σ i i' t (Φ (monP C N N' e)) = Φ (monP C N N' e) := by
-  unfold monP
-  rw [map_prod, map_prod]
-  refine Finset.prod_congr rfl fun k _ => ?_
-  rw [map_pow, map_pow, rowShift_minor_lin Φ σ0 w lt colf hΦ hlt σ i i' hi t k]
-
 end Atom
 
 section Fam
@@ -129,8 +127,8 @@ theorem SelfConjugatePlaceSetting.en_fst (H : SelfConjugatePlaceSetting r cc a t
     have h2 : (1 : ZMod 2) + 1 = 0 := rfl
     rw [add_assoc, h2, add_zero]
 
-variable (r tau gm) in
 
+variable (r tau gm) in
 def PsiS (o : Orb) {M : ℕ} (col : Fin M → Fin N) :
     MvPolynomial (Fin M × WV fun _ => IIs r tau o) C →ₐ[C] MvPolynomial (Letter T r n) C :=
   (subG r tau gm plc).comp (rename fun x : Fin M × WV fun _ => IIs r tau o =>

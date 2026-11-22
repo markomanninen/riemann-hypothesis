@@ -1,12 +1,17 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNefPlusAmpleDegree
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenDegAmple
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PShiftDegreePolynomial
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNefAmpleGeneric
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PCurvePointsFinite
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenDegTwist
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyBridgeFull
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.KleimanSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNefPlusAmpleDegree
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenDegAmple
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PShiftDegreePolynomial
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNefAmpleGeneric
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PCurvePointsFinite
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenDegTwist
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyBridgeFull
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.KleimanSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -26,8 +31,8 @@ theorem genDeg_one_pos (hA : GenDegAmple.Statement) {K : Type} [Fintype K] {ι :
   have h := hA K ι _ (CurvePointsFinite.genericPt W) d 1 hV fun _ => le_rfl
   rwa [hEq] at h
 
-open Classical in
 
+open Classical in
 theorem nefOnF_of_nefOnGenericDeg {K : Type} [Fintype K] [Nonempty K] {ι : K → Type} [∀ k, Fintype (ι k)]
     {P : Ideal (MRing ι)} {b : K → ℤ} (hb : NefOnGenericDeg P b) :
     KH.NefOnF (fun V _ L => NumbersDVR.intNum ℚ V L) (P.map (MvPolynomial.map (Int.castRingHom ℚ))) b := by

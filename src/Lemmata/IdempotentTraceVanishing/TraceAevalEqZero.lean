@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemisimpleTraceForm.TraceNilStep
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemisimpleTraceForm.TraceNilStep
+
+@[expose] public section
 
 namespace Bl.IdempotentTraceVanishing
 
@@ -43,7 +47,7 @@ private lemma key {K : Type} [Field K] [CharZero K] {a : ℕ} (M : Matrix (Fin a
       = Polynomial.aeval M (u * Polynomial.X ^ k) := by
     have h1 : (1 : Matrix (Fin a) (Fin a) K) - Polynomial.aeval M (u * Polynomial.X ^ k)
         = Polynomial.aeval M (v * q) := by
-      rw [sub_eq_iff_eq_add', ← map_add, huv, map_one]
+      rw [sub_eq_iff_eq_add', ← map_add (f := _), huv, map_one]
     have h2 : Polynomial.aeval M (u * Polynomial.X ^ k) *
         (1 - Polynomial.aeval M (u * Polynomial.X ^ k)) = 0 := by
       rw [h1, ← map_mul]
@@ -63,7 +67,7 @@ private lemma key {K : Type} [Field K] [CharZero K] {a : ℕ} (M : Matrix (Fin a
     _ = Polynomial.aeval M (Polynomial.X ^ k * (u * Polynomial.X ^ k)) + Polynomial.aeval M (v * r) := by
         have hpoly : Polynomial.X ^ k * (u * Polynomial.X ^ k + v * q)
             = Polynomial.X ^ k * (u * Polynomial.X ^ k) + v * r := by rw [hq]; ring
-        rw [hpoly, map_add]
+        rw [hpoly, map_add (f := _)]
     _ = M ^ k * Polynomial.aeval M (u * Polynomial.X ^ k) + Polynomial.aeval M (v * r) := by
         rw [map_mul (Polynomial.aeval M) (Polynomial.X ^ k), map_pow, Polynomial.aeval_X]
     _ = 0 := by rw [hE0, mul_zero, map_mul, hrM, mul_zero, add_zero]

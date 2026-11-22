@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTieUpFBrS
-import Mathlib
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieUpFBrS
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -125,7 +129,8 @@ theorem eigFreeSt_holds : EigFreeSt := by
   have hmap : ∀ (A : Matrix (Fin n) (Fin n) R) (v : Fin n → R), f ∘ (A.mulVec v) = (A.map f).mulVec (f ∘ v) := by
     intro A v
     funext x
-    simp [Matrix.mulVec, dotProduct, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mulVec, dotProduct, map_sum]
   have hinj : Function.Injective f := hI.hom_inj
   have hinjv : ∀ v w : Fin n → R, f ∘ v = f ∘ w → v = w :=
     fun v w h => funext fun x => hinj (congrFun h x)
@@ -145,7 +150,8 @@ theorem eigFreeSt_holds : EigFreeSt := by
       funext x
       have hx := congrFun h1 x
       simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Function.comp_apply] at hx ⊢
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [map_mul, hW]
       exact hx.symm
     · intro c hc
@@ -153,7 +159,8 @@ theorem eigFreeSt_holds : EigFreeSt := by
       have h1 := congrFun hc (J i)
       apply hinj
       rw [← h1]
-      simp [Finset.sum_apply, map_sum, hW, hBδ]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Finset.sum_apply, map_sum, hW, hBδ]
 
 end UpFBr
 

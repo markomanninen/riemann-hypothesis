@@ -1,4 +1,8 @@
-import Formalism.ThetaLogCoordinates.DualWeylCoordinates.DualWeylProofs.QhCountAll
+module
+
+public import Formalism.ThetaLogCoordinates.DualWeylCoordinates.DualWeylProofs.QhCountAll
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped Matrix TensorProduct
 open Matrix
@@ -79,7 +83,7 @@ theorem carry : ∀ (p f : ℕ), 2 ≤ p → 0 < f → ∀ (y : ℕ → NNReal),
         rw [← hkm n, pow_add]
         ring
     _ ≤ ∏ n : Fin f, y j ^ (e n * p ^ m n) :=
-        Finset.prod_le_prod (fun _ _ => zero_le) fun n _ => pow_le_pow_left₀ zero_le (hyk n) _
+        Finset.prod_le_prod₀ (fun _ _ => zero_le) fun n _ => pow_le_pow_left₀ zero_le (hyk n) _
     _ = y j ^ (∑ n : Fin f, e n * p ^ m n) := Finset.prod_pow_eq_pow_sum _ _ _
     _ ≤ y j ^ p ^ f := pow_le_pow_of_le_one zero_le (hle1 j) hTf
     _ = (y j ^ p) ^ p ^ (f - 1) := by

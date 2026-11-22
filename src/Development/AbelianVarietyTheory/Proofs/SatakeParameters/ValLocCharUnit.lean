@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetOpIntegral
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CharacterValueAtT
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsUnitaryCarries
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemZmuOfPowPred
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetOpIntegral
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CharacterValueAtT
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsUnitaryCarries
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemZmuOfPowPred
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,7 +73,7 @@ theorem val_locChar_unit {E K : Type} [Field E] [NumberField E] [Field K] [Numbe
     w.valuation K (LocE.locChar (qOf P) cq ψ a) = 1 := by
   have hu := GlobalTheory.LocCharVal.isUnit_redP P _ ha
   have : Finite (𝓞 E ⧸ P.asIdeal) := Ideal.finiteQuotientOfFreeOfNeBot _ P.ne_bot
-  rw [GlobalTheory.LastSteps.locChar_unit _ _ hu, LocE.unitV, dif_pos hu]
+  rw [GlobalTheory.LastSteps.locChar_unit _ _ hu, LocE.unitV, dite_eq_left hu]
   exact GlobalTheory.CharVal.unit_of_finOrder (MonoidHom.isOfFinOrder ψ (isOfFinOrder_of_finite _))
 
 theorem val_locChar {E K : Type} [Field E] [NumberField E] [Field K] [NumberField K] (w : HeightOneSpectrum (𝓞 K))
@@ -114,7 +118,7 @@ theorem scalarUnit_of (hL : LevelPrimes) (hH : HeckeUnit) (hT : TwistUnit) : Sca
       (fun x y hx hy => by rw [map_mul, hx, hy, one_mul]) fun v => ?_
     split_ifs with hv
     · exact map_one _
-    · rw [Units.val_zpow_eq_zpow_val, map_zpow₀, mUof, dif_pos hj, Units.val_mul, Units.val_inv_eq_inv_val,
+    · rw [Units.val_zpow_eq_zpow_val, map_zpow₀, mUof, dite_eq_left hj, Units.val_mul, Units.val_inv_eq_inv_val,
         Units.val_inv_eq_inv_val, map_mul, map_inv₀, map_inv₀, hval _ (g_notMem_sel hX hPr hsel hv),
         (hT X.F X.E X.K S mu _ w).1]
       simp

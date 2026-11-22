@@ -1,5 +1,9 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsIsomFrame
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AddMulInvMem
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsIsomFrame
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AddMulInvMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -163,7 +167,7 @@ theorem norm_formula {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) {y w : V
     (hρ : ρ * (h w y - u * a) + star (ρ * (h w y - u * a)) = u - h w w) :
     h (ρ • y + w) (ρ • y + w) = u * (star (1 + ρ * a) * (1 + ρ * a)) := by
   have hyw : h y w = star (h w y) := (hs.eq w y).symm
-  simp only [map_add, LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, hy, hyw,
+  simp only [map_add (f := _), LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, hy, hyw,
     starRingEnd_apply, RingHom.id_apply]
   simp only [star_mul', star_sub, hu, star_add, star_one] at hρ ⊢
   linear_combination hρ
@@ -182,7 +186,7 @@ theorem exists_unit_norm (hS : IsHermSemilocal S) (hπ : IsUnif S π) {h : V →
   refine ⟨s • y + w, M.add_mem (hM s hsS y hy) hw, ?_⟩
   have hyw : h y w = star (h w y) := (hs.eq w y).symm
   have e : h (s • y + w) (s • y + w) = 1 + (star s * s * h y y + h w w) := by
-    simp only [map_add, LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, hyw,
+    simp only [map_add (f := _), LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, hyw,
       starRingEnd_apply, RingHom.id_apply]
     simp only [star_mul'] at hs1
     linear_combination hs1

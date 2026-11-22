@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UpZeroMemLev
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemLevelIffSymmetricPositionEntryPattern
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UpZeroMemLev
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemLevelIffSymmetricPositionEntryPattern
+
+@[expose] public section
+
 open ValuativeRel Matrix
 open scoped Classical
 
@@ -14,7 +19,21 @@ theorem exists_N_embX_inv_mul_mem_KOne :
         n ∈ GlobalTheory.RootEx.N k (Fin κ) (s + 1) (S.ρ + 1) ∧ n ∈ S.P.J ∧ GlobalTheory.RootEx.embX (s + 1) γ ∈ S.P.J ∧
         (n * GlobalTheory.RootEx.embX (s + 1) γ)⁻¹ * x ∈ GlobalTheory.SplitWeil.KOne k (Fin κ ⊕ Fin (s + 1)) := by
   intro k _ _ _ _ s κ S x hx
-  obtain ⟨hxK, hpat⟩ := (mem_J_iff_pattern k s κ S x).1 hx
+  have mem_J_iff_pattern (g : GL (Fin κ ⊕ Fin (s + 1)) k) :
+      g ∈ S.P.J ↔ g ∈ KO k _ ∧ ∀ a b, ¬ FreeTop S.ρ a b →
+        valuation k (g.val a b - (1 : Matrix _ _ k) a b) < 1 := by
+    rw [S.sym.1 g]
+    constructor
+    · rintro ⟨u, hu, γ, hγ, g₀, hg₀, hgb⟩
+      refine ⟨⟨g₀, hg₀⟩, fun a b hab => ?_⟩
+      rw [← hg₀, SymPattern.entry_lt_iff, hgb]
+      exact SymPattern.pat_of_mul S.ρ u ((Radical.mem_N_iff u).mp hu) γ hγ a b hab
+    · rintro ⟨⟨g₀, hg₀⟩, hpat⟩
+      obtain ⟨u, hu, γ, hγ, he⟩ := SymPattern.exists_of_pat S.ρ
+        (Matrix.GeneralLinearGroup.map (IsLocalRing.residue 𝒪[k]) g₀) (fun a b hab => by
+          rw [← SymPattern.entry_lt_iff, hg₀]; exact hpat a b hab)
+      exact ⟨u, (Radical.mem_N_iff u).mpr hu, γ, hγ, g₀, hg₀, he⟩
+  obtain ⟨hxK, hpat⟩ := (mem_J_iff_pattern x).1 hx
   set M : Matrix (Fin κ ⊕ Fin (s + 1)) (Fin κ ⊕ Fin (s + 1)) k :=
     fun a b => if FreeTop S.ρ a b then x.val a b else (1 : Matrix _ _ k) a b with hMdef
   have hMax : MaxM (M - x.val) := by
@@ -63,11 +82,11 @@ theorem exists_N_embX_inv_mul_mem_KOne :
     have : n = (x * u) * (embX (s + 1) γ)⁻¹ := by rw [e]; group
     rw [this]; exact mul_mem hMK (inv_mem hembK)
   refine ⟨n, γ, (Radical.mem_N_iff n).2 hn, ?_, ?_, ?_⟩
-  · refine (mem_J_iff_pattern k s κ S n).2 ⟨hnK, fun a b hab => ?_⟩
+  · refine (mem_J_iff_pattern n).2 ⟨hnK, fun a b hab => ?_⟩
     have h1 := GlobalTheory.SymPattern.pat_of_mul S.ρ n hn 1 (fun r s _ => rfl) a b hab
     rw [map_one, mul_one] at h1
     rw [h1, sub_self, map_zero]; exact zero_lt_one
-  · refine (mem_J_iff_pattern k s κ S _).2 ⟨hembK, fun a b hab => ?_⟩
+  · refine (mem_J_iff_pattern _).2 ⟨hembK, fun a b hab => ?_⟩
     have h1 := GlobalTheory.SymPattern.pat_of_mul S.ρ 1 (fun r s _ => rfl) γ hγ a b hab
     rw [one_mul] at h1
     rw [h1, sub_self, map_zero]; exact zero_lt_one

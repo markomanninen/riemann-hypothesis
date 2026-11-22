@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FinTensMemLatO
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsInverseChart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FinTensMemLatO
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsInverseChart
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,10 +25,6 @@ def invT : GL n A →* GL n A where
     by rw [← Matrix.transpose_mul, Units.inv_mul, Matrix.transpose_one]⟩
   map_one' := Units.ext (by simp)
   map_mul' a b := Units.ext (by simp [Matrix.transpose_mul])
-
-theorem invT_val (g : GL n A) : ((invT g : GL n A) : Matrix n n A) = ((g⁻¹ : GL n A) : Matrix n n A)ᵀ := rfl
-
-theorem invT_inv_val (g : GL n A) : (((invT g)⁻¹ : GL n A) : Matrix n n A) = (g : Matrix n n A)ᵀ := rfl
 
 theorem invT_invT (g : GL n A) : invT (invT g) = g := Units.ext rfl
 
@@ -73,8 +73,8 @@ def formLat (G : Matrix (Fin n) (Fin n) E) (Λ : Submodule (𝓞 E) (Fin n → E
     rw [star_smul, star_star, Matrix.smul_vecMul]
 
 theorem formLat_isLattice {G : Matrix (Fin n) (Fin n) E} (hG : IsUnit G.det) {Λ : Submodule (𝓞 E) (Fin n → E)}
-    (h : Submodule.IsLattice E Λ) : Submodule.IsLattice E (formLat G Λ) where
-  fg := by
+    (h : Submodule.IsLattice E Λ) : Submodule.IsLattice E (formLat G Λ) :=
+  Submodule.IsLattice.of_fg E (by
     obtain ⟨s, hs⟩ := h.fg
     classical
     refine ⟨s.image fun x => star x ᵥ* G, le_antisymm (Submodule.span_le.2 ?_) ?_⟩
@@ -91,22 +91,7 @@ theorem formLat_isLattice {G : Matrix (Fin n) (Fin n) E} (hG : IsUnit G.det) {Λ
         have := Submodule.smul_mem _ (⟨star (c : E), Formalism.BasicNotions.Examples₂.star_isIntegral _ c.2⟩ : 𝓞 E) hx
         change star ((c : E) • x) ᵥ* G ∈ _
         rw [star_smul, Matrix.smul_vecMul]
-        exact this
-  span_eq_top := by
-    rw [eq_top_iff]
-    intro y _
-    have hy : y = star (star (y ᵥ* G⁻¹)) ᵥ* G := by
-      rw [star_star, Matrix.vecMul_vecMul, Matrix.nonsing_inv_mul _ hG, Matrix.vecMul_one]
-    have hx : star (y ᵥ* G⁻¹) ∈ Submodule.span E (Λ : Set (Fin n → E)) := h.span_eq_top ▸ Submodule.mem_top
-    rw [hy]
-    generalize star (y ᵥ* G⁻¹) = x at hx
-    induction hx using Submodule.span_induction with
-    | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
-    | zero => simp
-    | add x y _ _ hx hy => rw [star_add, Matrix.add_vecMul]; exact Submodule.add_mem _ hx hy
-    | smul c x _ hx =>
-      rw [star_smul, Matrix.smul_vecMul]
-      exact Submodule.smul_mem _ _ hx
+        exact this)
 
 theorem form_dual {G : Matrix (Fin n) (Fin n) E} (hG : IsUnit G.det) (hh : Gᴴ = G) (x y : Fin n → E) :
     ∑ i, ∑ j, star ((star x ᵥ* G) i) * G⁻¹ᵀ i j * (star y ᵥ* G) j = star (∑ i, ∑ j, star (x i) * G i j * y j) := by

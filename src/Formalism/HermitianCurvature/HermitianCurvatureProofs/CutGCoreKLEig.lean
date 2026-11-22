@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTKLineCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedF
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTKLineCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedF
+
+@[expose] public section
 
 open Matrix Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -28,12 +32,14 @@ theorem alg {ι : Type} [Fintype ι] [DecidableEq ι] (Qs : ι → (Wq →L[ℂ]
     have h := congrArg (fun T : Wq →L[ℂ] Wp => T v) (hid Y)
     simp only [ContinuousLinearMap.comp_apply] at h
     rw [← h]
-    simp [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum]
   have hEv : ∀ v, E v = ∑ σ, E (Qs σ v) := by
     intro v
     have h : (∑ σ, Qs σ) v = v := by rw [hsum, ContinuousLinearMap.one_apply]
     conv_lhs => rw [← h]
-    rw [ContinuousLinearMap.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ContinuousLinearMap.sum_apply, map_sum]
   constructor
   · intro h Y v
     have hE : ∀ w, E (Qs ρ w) = E w := fun w => congrArg (fun T : Wq →L[ℂ] Wp => T w) h

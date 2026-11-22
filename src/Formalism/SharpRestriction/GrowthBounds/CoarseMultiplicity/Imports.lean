@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.LevOfSymVar
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.LevOfSymVar
+
+@[expose] public section
 
 noncomputable section
 

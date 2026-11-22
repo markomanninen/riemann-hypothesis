@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EquivOfISupRange
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EquivOfISupRange
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.LFun Formalism.UG Formalism.UG.P Formalism.L2.Host UpperTheory.V.Cj.S
 open GroundTheory.Automorphic.AutomorphicForm (UPos unipGL constantTerm archCompact infEmb isExpLieAlgebra)
@@ -23,8 +27,8 @@ theorem UpperTheory.V.Cj.S.opComm :
   · by_cases e : w = w'
     · subst e
       have hK := Final.GLintComm E w a
-      change heckeVec (fL a w) (KGL w a) h (heckeVec (fL a w) (KGL w a) h' φ) =
-        heckeVec (fL a w) (KGL w a) h' (heckeVec (fL a w) (KGL w a) h φ)
+      change heckeVec (fL a w) (KGL w (n := a)) h (heckeVec (fL a w) (KGL w (n := a)) h' φ) =
+        heckeVec (fL a w) (KGL w (n := a)) h' (heckeVec (fL a w) (KGL w (n := a)) h φ)
       rw [← SatCompare.heckeVec_conv hK hh hh' (hφ w hw), ← SatCompare.heckeVec_conv hK hh' hh (hφ w hw),
         Final.HeckeCommGL E w a ℂ h hh h' hh']
     · refine hk_comm_of (fL a w') (Final.GLintComm E w' a) hh' (hkOp (fL a w) (Final.GLintComm E w a) hh)

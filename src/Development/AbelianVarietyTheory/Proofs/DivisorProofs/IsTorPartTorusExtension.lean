@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TorMatch
-import Development.AbelianVarietyTheory.Definitions.Divisors.LabRange
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.ImmersedBy
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UniformisationTorusMonoAndFactor
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCommonFieldOfFieldPointsSamePoint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorMatch
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LabRange
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.ImmersedBy
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UniformisationTorusMonoAndFactor
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCommonFieldOfFieldPointsSamePoint
+
+@[expose] public section
 
 noncomputable section
 
@@ -109,11 +113,6 @@ def ExtNear (gγ : Over.mk M.pt ⟶ G) (w : M.Z) : Prop := ∃ W h, w ∈ W ∧ 
 def ValAt (gγ : Over.mk M.pt ⟶ G) {T : Scheme.{0}} (s : T ⟶ M.Z) (v : T ⟶ G.left) : Prop :=
   ∃ (W : M.Z.Opens) (h : W.toScheme ⟶ G.left) (s' : T ⟶ W.toScheme), IsExt gγ W h ∧ s' ≫ W.ι = s ∧ s' ≫ h = v
 
-theorem extNear_of_section (σ : M.Z ⟶ G.left) (hσ : σ ≫ G.hom = 𝟙 _) (w : M.Z) :
-    ExtNear (Over.homMk (M.pt ≫ σ) (by simp [hσ]) : Over.mk M.pt ⟶ G) w :=
-  ⟨⊤, (⊤ : M.Z.Opens).ι ≫ σ, trivial, by rw [Category.assoc, hσ, Category.comp_id],
-    fun x hx => by rw [← Category.assoc, hx]; rfl⟩
-
 theorem ValAt.over {gγ : Over.mk M.pt ⟶ G} {T : Scheme.{0}} {s : T ⟶ M.Z} {v : T ⟶ G.left} (h : ValAt gγ s v) :
     v ≫ G.hom = s := by
   obtain ⟨W, h, s', ⟨h1, -⟩, rfl, rfl⟩ := h
@@ -184,8 +183,8 @@ def LatAt {X : Type} [AddCommGroup X] (m : I → X →+ X) (c : T → X →+ ZMo
     (tι : splitTorus (Sp κ) X ⟶ G₀), s (closedPoint κ) = w ∧ s ≫ M.s = spMap a ∧ IsGrpPullback G₀ G s φ ∧ IsTorPart tι ∧
     Compat f gγ ζ L m c s a φ tι
 
-variable (G) in
 
+variable (G) in
 def RkAt (w : M.Z) (r : ℕ) : Prop :=
   ∃ (X : Type) (_ : AddCommGroup X) (_ : Module.Free ℤ X) (_ : Module.Finite ℤ X) (κ : Type) (_ : Field κ)
     (s : Sp κ ⟶ M.Z) (G₀ : Over (Sp κ)) (_ : GrpObj G₀) (φ : G₀.left ⟶ G.left) (tι : splitTorus (Sp κ) X ⟶ G₀),
@@ -193,18 +192,8 @@ def RkAt (w : M.Z) (r : ℕ) : Prop :=
 
 variable {f gγ ζ L}
 
-theorem LatAt.rkAt {X : Type} [AddCommGroup X] [Module.Free ℤ X] [Module.Finite ℤ X] {m : I → X →+ X}
-    {c : T → X →+ ZMod L} {w : M.Z} (h : LatAt f gγ ζ L m c w) : RkAt G w (Module.finrank ℤ X) := by
-  obtain ⟨κ, _, s, a, G₀, _, φ, tι, h1, -, h2, h3, -⟩ := h
-  exact ⟨X, _, inferInstance, inferInstance, κ, _, s, G₀, _, φ, tι, h1, h2, h3, rfl⟩
-
-example (X : Type) [AddCommGroup X] [Module.Free ℤ X] [Module.Finite ℤ X] (w : M.Z) :
-    RkAt (splitTorus M.Z X) w (Module.finrank ℤ X) :=
-  ⟨X, _, inferInstance, inferInstance, M.Z.residueField w, inferInstance, M.Z.fromSpecResidueField w, _, inferInstance, _, 𝟙 _,
-    Scheme.fromSpecResidueField_apply _ _, GlobalTheory.SplitTorus.isGrpPullback_bcMap _ X, isTorPart_id, rfl⟩
 
 omit [GrpObj G] in
-
 theorem Compat.equiv {X X' : Type} [AddCommGroup X] [AddCommGroup X'] {m : I → X →+ X} {c : T → X →+ ZMod L}
     {m' : I → X' →+ X'} {c' : T → X' →+ ZMod L} {A : Type} [CommRing A] {s : Sp A ⟶ M.Z} {a : o →+* A}
     {G₀ : Over (Sp A)} {φ : G₀.left ⟶ G.left} {tι : splitTorus (Sp A) X ⟶ G₀} (h : Compat f gγ ζ L m c s a φ tι)
@@ -229,8 +218,8 @@ theorem Compat.equiv {X X' : Type} [AddCommGroup X] [AddCommGroup X'] {m : I →
         GlobalTheory.SplitTorus.torusMap_id, Category.id_comp]
       exact hv
 
-omit [GrpObj G] in
 
+omit [GrpObj G] in
 theorem Compat.pull {X : Type} [AddCommGroup X] {m : I → X →+ X} {c : T → X →+ ZMod L} {A B : Type} [CommRing A]
     [CommRing B] {s : Sp A ⟶ M.Z} {a : o →+* A} {G₀ : Over (Sp A)} [GrpObj G₀] {φ : G₀.left ⟶ G.left}
     {tι : splitTorus (Sp A) X ⟶ G₀} (h : Compat f gγ ζ L m c s a φ tι) (b : A →+* B) {G₁ : Over (Sp B)} [GrpObj G₁]

@@ -1,7 +1,11 @@
-import Formalism.GaussJetBounds.FrameJetEval
-import Formalism.GaussJetBounds.GaussJetProofs.Generic
-import Formalism.GaussJetBounds.GaussJetProofs.GField
-import Formalism.GaussJetBounds.GaussJetProofs.ConstantCoeffEvenDerivativeEqZero
+module
+
+public import Formalism.GaussJetBounds.FrameJetEval
+public import Formalism.GaussJetBounds.GaussJetProofs.Generic
+public import Formalism.GaussJetBounds.GaussJetProofs.GField
+public import Formalism.GaussJetBounds.GaussJetProofs.ConstantCoeffEvenDerivativeEqZero
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.RaCpaf
-import ReciprocityTheory.DualLattices.CotangentSurjective
-import ReciprocityTheory.DualLattices.BlockOneMulMulBlockOne
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.RaCpaf
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+public import ReciprocityTheory.DualLattices.BlockOneMulMulBlockOne
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+
+@[expose] public section
 
 open ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Up GlobalTheory.CompanionTheory.Ar.GR
 open scoped Matrix
@@ -20,7 +24,8 @@ theorem exists_smith_basis (hv : v.Integers R) {ι : Type} [Fintype ι] [Decidab
   obtain ⟨m, g, hg⟩ := Submodule.fg_iff_exists_fin_generating_family.1 hL
   let e : ι ≃ Fin (Fintype.card ι) := Fintype.equivFin ι
   let A : Matrix (Fin (Fintype.card ι)) (Fin m) R := Matrix.of fun i k => g k (e.symm i)
-  obtain ⟨P, Q, a, hP, hQ, hD⟩ := ReciprocityTheory.PGsh.Up.Smith.smith_mat hv _ m A
+  obtain ⟨P, Q, a, hP, hQ, hD⟩ :=
+    ReciprocityTheory.PGsh.Up.Smith.smith_mat (v := v) hv (Fintype.card ι) m A
   have hPv : P⁻¹ * P = 1 := Matrix.nonsing_inv_mul _ hP
   have hQv : Q * Q⁻¹ = 1 := Matrix.mul_nonsing_inv _ hQ
   have hAQ : A * Q = P⁻¹ * (P * A * Q) := by

@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepC
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepB
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpanHeisenbergTranslatesOfLatticeVacuaEqTopStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilRepresentationOfLatticeVacuaStatement
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepC
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepB
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpanHeisenbergTranslatesOfLatticeVacuaEqTopStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilRepresentationOfLatticeVacuaStatement
+
+@[expose] public section
 
 noncomputable section
 

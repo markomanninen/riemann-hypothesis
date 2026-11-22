@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -51,7 +55,7 @@ theorem eq_one_of_norm_one_of_valuation_sub_one_le (E : Type) [Field E] [NumberF
       rfl
     rw [h1, abs_norm_eq_prod_embeddings_closeOne]
     calc ∏ φ : E →+* ℂ, ‖φ (ε - 1)‖ ≤ ∏ _φ : E →+* ℂ, (2 : ℝ) := by
-          refine Finset.prod_le_prod (fun _ _ => norm_nonneg _) (fun φ _ => ?_)
+          refine Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) (fun φ _ => ?_)
           rw [map_sub, map_one]
           calc ‖φ ε - 1‖ ≤ ‖φ ε‖ + ‖(1 : ℂ)‖ := norm_sub_le _ _
             _ = 2 := by rw [habs φ, norm_one]; norm_num

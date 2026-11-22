@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ConjInv
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ConjInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +76,7 @@ structure admitted (D : Dat ℚ E) (ω : HChar ℚ) (φ : GL (Fin 2) (A E) → �
   wdec : ∀ C : Set (GL (Fin 2) (A E)), IsCompact C → ∃ K : Set (FiniteAdeleRing (𝓞 ℚ) ℚ), IsCompact K ∧ ∀ r : ℕ, ∃ B : ℝ,
     ∀ y : (A ℚ)ˣ, ∀ k ∈ C, ‖Wo D φ (em E (aE y) * k)‖ ≤ B * ((1 + |re y|) ^ r)⁻¹ ∧ (Wo D φ (em E (aE y) * k) ≠ 0 → (y : A ℚ).2 ∈ K)
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 structure Gd (D : Dat ℚ E) (P : CuspSub E 2) (L N : ℕ) (φ : GL (Fin 2) (A E) → ℂ) : Prop where
   pos : 0 < N
@@ -103,21 +107,21 @@ def Unit1 (ω : HChar ℚ) : Prop := ∀ a, ‖((ω.1 a : ℂˣ) : ℂ)‖ = 1
 
 def Entire (a : ℕ → ℂ) : Prop := ∃ F : ℂ → ℂ, Differentiable ℂ F ∧ ∀ s : ℂ, 4 < s.re → F s = LSeries a s
 
-def AllA (p : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E], Dat ℚ E → CuspSub E 2 → HChar ℚ → HChar ℚ → Prop) : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (D : Dat ℚ E) (P : CuspSub E 2) (ω χ : HChar ℚ),
+def AllA (p : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E], Dat ℚ E → CuspSub E 2 → HChar ℚ → HChar ℚ → Prop) : Prop :=
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (D : Dat ℚ E) (P : CuspSub E 2) (ω χ : HChar ℚ),
     CenN P ω → Unit1 ω → (∀ a, (χ.1 a * ω.1 a) ^ 2 = 1) → p E D P ω χ
 
 def TrAdm : Prop := AllA fun _ _ _ _ D P ω _ => ∀ φ ∈ Tr P, admitted D ω φ
 
 def PerTr : Prop := AllA fun _ _ _ _ D P ω χ => (∀ φ ∈ Tr P, admitted D ω φ) → ∀ M U, NoPer M U χ P → ∀ φ ∈ Tr P, Per M U χ φ = 0
 
-def Ent : Prop := AllA fun _ _ _ _ D _ ω χ => ∀ M U φ, admitted D ω φ → Per M U χ φ = 0 → ∀ Φ ∈ schwartzBruhatPi ℚ (Fin 2),
+def Ent : Prop := AllA fun _ _ _ _ D _ ω χ => ∀ M U φ, admitted D ω φ → Per M U χ φ = 0 → ∀ Φ ∈ schwartzBruhatPi (K := ℚ) (ι := Fin 2),
   Differentiable ℂ (Zs M U χ φ Φ)
 
-def Unf : Prop := AllA fun _ _ _ _ D _ ω χ => ∀ M U, ∃ c : ℂ, c ≠ 0 ∧ ∀ φ, admitted D ω φ → ∀ Φ ∈ schwartzBruhatPi ℚ (Fin 2),
+def Unf : Prop := AllA fun _ _ _ _ D _ ω χ => ∀ M U, ∃ c : ℂ, c ≠ 0 ∧ ∀ φ, admitted D ω φ → ∀ Φ ∈ schwartzBruhatPi (K := ℚ) (ι := Fin 2),
   ∀ s : ℂ, 4 < s.re → Zs M U χ φ Φ s = c * Zu D M χ φ Φ s
 
-def PhiMem : Prop := ∀ N p, 0 < N → PhiN N p ∈ schwartzBruhatPi ℚ (Fin 2)
+def PhiMem : Prop := ∀ N p, 0 < N → PhiN N p ∈ schwartzBruhatPi (K := ℚ) (ι := Fin 2)
 
 def Fac : Prop := AllA fun _ _ _ _ D P ω χ => ∀ M L N, ChOk χ L → ∃ c : ℂ, c ≠ 0 ∧ ∀ φ, admitted D ω φ → Gd D P L N φ → ∀ a, IsAs P χ N a →
   ∀ (e : ℕ) (p : MvPolynomial (Fin 2) ℂ), p.IsHomogeneous (2 * e) → ∀ s : ℂ, 4 < s.re → LSeriesSummable a s →

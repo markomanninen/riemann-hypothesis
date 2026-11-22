@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TiedAt
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TensorOneApply
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemSplit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TiedAt
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TensorOneApply
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemSplit
+
+@[expose] public section
 
 noncomputable section
 

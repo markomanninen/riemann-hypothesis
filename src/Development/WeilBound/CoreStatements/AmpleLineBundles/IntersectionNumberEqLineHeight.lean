@@ -1,7 +1,11 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HeightLowerBoundChartNorm
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsVerticalBound
-import Development.WeilBound.CoreStatements.AmpleLineBundles.PtsIntegralMap
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HeightLowerBoundChartNorm
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsVerticalBound
+public import Development.WeilBound.CoreStatements.AmpleLineBundles.PtsIntegralMap
+
+@[expose] public section
 
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo NumberField GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Top GlobalTheory.CompanionTheory.Ar.Small GlobalTheory.CompanionTheory.Ar.Cmp GlobalTheory.CompanionTheory.Ar.Ht
 
@@ -30,7 +34,7 @@ def stdLine (m : K → ℕ) : HermLine ι where
 theorem stdLine_smooth (m : K → ℕ) : IsSmoothHerm (stdLine (ι := ι) m) := by
   refine ContDiff.contDiffOn ?_
   refine contDiff_prod fun k _ => ContDiff.pow (ContDiff.sum fun i _ => ?_) _
-  exact (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ ℂ (⟨k, i⟩ : Σ k, ι k))
+  exact (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ (fun _ => ℂ) (⟨k, i⟩ : Σ k, ι k))
 
 theorem tensor_smooth {A B : HermLine ι} (hA : IsSmoothHerm A) (hB : IsSmoothHerm B) :
     IsSmoothHerm (A.tensor B) := ContDiffOn.mul hA hB
@@ -199,10 +203,42 @@ theorem CoverDenseAlt.intersection_number_eq_line_height : ∀ (K : Type) [Finty
       exact GroundTheory.Heights₂.Heights.OrbitDivVertical.proof K n (toNum e A hA) x _ hx hsec V hV
     have h4 : ∀ V ∈ divSupp (Ideal.map (ren e) W) (ren e s), ∀ (c1 c2 : (k : K) → blockIdx n k),
         (∀ k, X ⟨k, c1 k⟩ ∉ V) → (∀ k, X ⟨k, c2 k⟩ ∉ V) →
-        Nonempty (MRing (blockIdx n) ⧸ chartId V c1 ≃+* MRing (blockIdx n) ⧸ chartId V c2) := by
+        Nonempty (MRing (blockIdx n) ⧸ chartId V c1 ≃+* MRing (blockIdx n) ⧸ chartId V c2) :=
+      open GroundTheory.Heights₂.Heights in by
       intro V hV c1 c2 hc1 hc2
+      have hvertical := h3 V hV
       rw [hs, hWx] at hV
-      exact (CoverDenseAlt.chartDehom_full K n (toNum e A hA) x _ hx hsec V hV c1 c2 hc1 hc2).2
+      have hVprime : V.IsPrime := hV.1.1.1
+      have hWV : orbitIdeal x ≤ V := le_sup_left.trans hV.1.1.2
+      have hVh : ∀ f ∈ V, ∀ b, weightedHomogeneousComponent (coordDeg n) b f ∈ V :=
+        fun _ hf b => weightedHomogeneousComponent_mem_of_mem_divSupp x
+          ((geoMultiHomog_iff _ a0).mp hhom') hV hf b
+      have hfield (d : (k : K) → blockIdx n k) (hd : ∀ k, X ⟨k, d k⟩ ∉ V) :
+          IsField (dehomFrac V d).range := by
+        have hxd : ∀ k, x k (d k) ≠ 0 := by
+          intro k hxk
+          apply hd k (hWV ?_)
+          rw [orbitIdeal, mCoordIdeal, RingHom.mem_ker, mConeMap, aeval_X]
+          simp [flatCone, hxk]
+        obtain ⟨eQ⟩ := OrbitChartQuot.proof K n x d hxd V hWV
+        let eRange := eQ.trans (quotEquivRange hVh hd)
+        have hprime : (chartPoint x d V).IsPrime :=
+          (Ideal.Quotient.isDomain_iff_prime _).mp (Function.Injective.isDomain eRange eRange.injective)
+        have hne : chartPoint x d V ≠ ⊥ := by
+          intro hbot
+          apply hvertical
+          refine le_antisymm (fun m hm => Ideal.mem_bot.mpr ?_) bot_le
+          have hmem : chartEval x d (C m) ∈ chartPoint x d V := Ideal.mem_map_of_mem _ hm
+          rw [hbot, Ideal.mem_bot] at hmem
+          simpa using hmem
+        have hmax := SubringPrimeMaximal.proof (ratioField x) _ _ hprime hne
+        exact MulEquiv.isField ((Ideal.Quotient.maximal_ideal_iff_isField_quotient _).mp hmax)
+          eRange.symm.toMulEquiv
+      have hr : (dehomFrac V c1).range = (dehomFrac V c2).range :=
+        le_antisymm (range_dehomFrac_le hc2 hc1 (hfield c2 hc2))
+          (range_dehomFrac_le hc1 hc2 (hfield c1 hc1))
+      exact ⟨(quotEquivRange hVh hc1).trans
+        ((Subalgebra.equivOfEq _ _ hr).toRingEquiv.trans (quotEquivRange hVh hc2).symm)⟩
     rw [h0, ← recR_map e (II K ι) (II K (blockIdx n)) W hhomW hfin A (toNum e A hA).toGeo s h1 h2 h3 h4,
       hs, hWx, CoverDenseAlt.heightRecR_full K n (II K (blockIdx n)) (toNum e A hA) x _ hx hsec,
       height_toNum e A hA x, hdeg]

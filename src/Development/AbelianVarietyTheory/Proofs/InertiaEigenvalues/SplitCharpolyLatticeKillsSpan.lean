@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.OffRange
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.OffRange
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.IntegralHeckeForms Formalism.ConjugateSelfDual ReciprocityTheory.Gal NumberField IsDedekindDomain Polynomial GlobalTheory.LiftLeaf GlobalTheory.SupLaw
 open scoped TensorProduct
 
@@ -16,7 +21,7 @@ theorem charpoly_split_kills_span : ∀ (O V B : Type) [CommRing O] [IsDomain O]
     have key : ∀ (q : O[X]) (b : B), Polynomial.aeval T (q.map (algebraMap O (FractionRing O))) (e b) = e (Polynomial.aeval t q b) := by
       intro q b
       induction q using Polynomial.induction_on' with
-      | add p q hp hq => simp only [Polynomial.map_add, map_add, LinearMap.add_apply, hp, hq]
+      | add p q hp hq => simp only [Polynomial.map_add (f := _), map_add (f := _), LinearMap.add_apply, hp, hq]
       | monomial n a =>
           simp only [Polynomial.map_monomial, Polynomial.aeval_monomial, Module.End.mul_apply, Module.algebraMap_end_apply, hpow, LinearMap.map_smul_of_tower]
           rw [algebraMap_smul]

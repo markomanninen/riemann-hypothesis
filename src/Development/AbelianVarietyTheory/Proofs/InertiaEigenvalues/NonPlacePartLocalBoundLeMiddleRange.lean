@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CyclotomicBounds.SmallFacts
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BoundAtTwoThreeFamily
-import Formalism.SharpRestriction.GlobalTheoremInputs
-import Formalism.SharpRestriction.LevelLetterCocycles.NEqRZeroMulXPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LargeLevelLemmas
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CyclotomicBounds.SmallFacts
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BoundAtTwoThreeFamily
+public import Formalism.SharpRestriction.GlobalTheoremInputs
+public import Formalism.SharpRestriction.LevelLetterCocycles.NEqRZeroMulXPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LargeLevelLemmas
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations GlobalTheory.NLink
 
 noncomputable section
@@ -41,7 +46,8 @@ theorem vdel_le_two_t (i : D.nd.Loc) (h2 : D.nd.l i ∉ D.host.small) : (D.nd.vd
   have h := LargeLevelLemmas.vdel_le i
   have hs : D.nd.s0 i = 1 := UpperTheory.Small.localLevel_eq_one_of_not_mem_smallPrimes D.nd i h2
   have hv : (padicValNat (D.nd.l i) D.R.t.factorial : ℚ) ≤ D.R.t := by
-    exact_mod_cast padicValNat_factorial_le (D.nd.l i) D.R.t
+    rw [Nat.padicValNat_def]
+    exact_mod_cast multiplicity_factorial_le (D.nd.l i) D.R.t
   rw [hs] at h
   have : D.nd.vdel i ≤ 2 * (D.R.t : ℚ) := by
     push_cast at h

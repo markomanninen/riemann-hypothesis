@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.ApartOfNotMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatrixExtPLoc
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.ApartOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatrixExtPLoc
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKGeo GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.CuspRep GlobalTheory.UnitaryBC UpperTheory.Gal.W2.Seed
 open UpperTheory.Gal.CertificateRingHomMap (GUf Gam0 AfQ Plc sim mat comp rat lev ZU)
 open GlobalTheory.SplitPts (conjE)
@@ -28,7 +33,8 @@ theorem UpperTheory.Gal.W2.Seed.pAdTEx :
     obtain ⟨c, rfl⟩ := TensorProduct.eq_repr_basis_right b y
     have hc0 : (c.mapRange Q.ρ (map_zero _)).sum (fun i m => m ⊗ₜ[ℚ] b i) = 0 := by
       rw [Finsupp.sum_mapRange_index (by simp)]
-      rw [← hy, Finsupp.sum, Finsupp.sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hy, Finsupp.sum, Finsupp.sum, map_sum]
       rfl
     have hc := TensorProduct.sum_tmul_basis_right_eq_zero b _ hc0
     have hci : ∀ i, e * c i = c i := by
@@ -75,15 +81,14 @@ theorem UpperTheory.Gal.W2.Seed.pAdTEx :
       by_cases hp : (p : 𝓞 ℚ) ∈ v.asIdeal
       · have : ((1 - e) * b) v = (1 - e v) * b v := rfl
         rw [this, (he v).1 hp, sub_self, zero_mul, map_zero]
-        exact zero_le'
+        exact zero_le
       · have : ((1 - e) * b) v = (1 - e v) * b v := rfl
         rw [this, (he v).2 hp, sub_zero, one_mul]
         exact hb v hp
     · rw [hM, map_mul, map_sub, map_one, hρe, sub_zero, one_mul]
   have hMs : Function.Surjective M := by
     intro z
-    induction z using TensorProduct.induction_on with
-    | zero => exact ⟨0, map_zero _⟩
+    induction z using TensorProduct.inductionOn with
     | tmul a x =>
       obtain ⟨b, rfl⟩ := Q.surj a
       exact ⟨b ⊗ₜ x, rfl⟩
@@ -151,7 +156,7 @@ theorem UpperTheory.Gal.W2.Seed.pAdTEx :
                 rw [ι.apply_symm_apply, map_sub, map_mul]
                 by_cases hp : (p : 𝓞 E) ∈ w.asIdeal
                 · rw [(he' w).1 hp, one_mul, sub_self, map_zero]
-                  exact zero_le'
+                  exact zero_le
                 · rw [(he' w).2 hp, zero_mul, sub_zero]
                   exact hx w hp
               have := hC _ hi
@@ -160,10 +165,9 @@ theorem UpperTheory.Gal.W2.Seed.pAdTEx :
             show M (ι.symm (conjFin (conjE E) x)) = conjT E (AfP p) (M (ι.symm x))
             obtain ⟨y, rfl⟩ := ι.surjective x
             rw [ι.symm_apply_apply]
-            induction y using TensorProduct.induction_on with
-            | zero => simp
+            induction y using TensorProduct.inductionOn with
             | tmul a z =>
               rw [h1, map_mul, h3, conjFin_algebraMap, ← h1, ι.symm_apply_apply, hM, hM, conjT_tmul]
               rfl
             | add u v hu hv =>
-              simp only [map_add, hu, hv] }⟩
+              simp only [map_add (f := _), hu, hv] }⟩

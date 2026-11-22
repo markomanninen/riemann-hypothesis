@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSIpInt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRadAdj
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACHaarPos
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSIpInt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRadAdj
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACHaarPos
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ContDiff
@@ -118,7 +122,8 @@ theorem rds_hsVec_ne_zero {A : Wq →L[ℂ] Wp} (hA : A ≠ 0) : B.hsVec A ≠ 0
     have := congrArg (fun v => (WithLp.ofLp v) i) h
     simpa [B.hsVec] using this
   ext v
-  rw [← (stdOrthonormalBasis ℂ Wq).sum_repr v, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← (stdOrthonormalBasis ℂ Wq).sum_repr v, map_sum]
   simp [hb]
 
 theorem rdsMul_mem (a : (Fin r → ℂ) → ℝ) (b : ℂ → ℝ) (ha : ContDiff ℝ ∞ a) (hb : ContDiff ℝ ∞ b)

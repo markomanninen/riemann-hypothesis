@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.NkExponent
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreesLargeBeyond
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.NkExponent
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreesLargeBeyond
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,8 +27,8 @@ theorem brk_hat (m : ℕ) (η δ a : ℝ) (hη0 : 0 ≤ η) (hδη : δ ≤ η) 
     _ ≤ a * Real.exp (2 * η) := mul_le_mul_of_nonneg_left h2 hA0
     _ = Real.exp (2 * η) * a := by ring
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem brk_core (s m : ℕ) (La p A lam0 : ℝ) (Ai Ci ρ u nn : Fin s → ℝ) (cc : ℕ → ℝ)
     (hroom : 2 * s + 1 ≤ m) (hk10 : 10 ≤ (m : ℝ) + 1) (hLa1 : 1 ≤ La) (hLak : 4 * La ≤ (m : ℝ) + 1)
     (hpk : ((m : ℝ) + 1) ^ 2 ≤ p) (hkA : ((m : ℝ) + 1) ^ 3 ≤ A) (hkAi : ∀ i, ((m : ℝ) + 1) ^ 3 ≤ Ai i)

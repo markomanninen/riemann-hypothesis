@@ -1,13 +1,17 @@
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.OrbAddUp
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.OrbAddOne
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.OrbRestr
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.OrbRestrOne
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.EntAtD
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SumOrbC
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.OrbBoundF
-import Formalism.SharpRestriction.Divisibility.OrbitPlaces
-import Development.AutomorphicArithmetic.OrbitLabellings.KvalGeThetaOfShape
-import Development.AutomorphicArithmetic.OrbitLabellings.FInertSubEatILeOrbitAverageSubErrors
+module
+
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.OrbAddUp
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.OrbAddOne
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.OrbRestr
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.OrbRestrOne
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.EntAtD
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SumOrbC
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.OrbBoundF
+public import Formalism.SharpRestriction.Divisibility.OrbitPlaces
+public import Development.AutomorphicArithmetic.OrbitLabellings.KvalGeThetaOfShape
+public import Development.AutomorphicArithmetic.OrbitLabellings.FInertSubEatILeOrbitAverageSubErrors
+
+@[expose] public section
 
 namespace Formalism.MainNotions.DIV.Lemmas.OrbitEntryBounds
 

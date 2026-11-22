@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.Closed
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.ScaleZeroIff
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.LogSizeBoundLe
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OnePosDef
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FirstWeightLeConductor
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.RestXiPOfNS
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.Closed
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.ScaleZeroIff
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.LogSizeBoundLe
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OnePosDef
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FirstWeightLeConductor
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.RestXiPOfNS
+
+@[expose] public section
 
 noncomputable section
 

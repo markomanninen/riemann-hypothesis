@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qf4.pow_sub_one_mem :
     ∀ {S : Type} [inst : CommRing S] (J : Ideal S) (p : ℕ),

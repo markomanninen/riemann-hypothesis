@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsInvariantBlockDetNormEqPowOfMemSpectrum
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsSquareSubmatrixDetNeZeroOfLeftInverse
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.NormLeOneOfFrobeniusPowEigenvectorMemFilZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FontaineFormalismOfRegular
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsInvariantBlockDetNormEqPowOfMemSpectrum
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsSquareSubmatrixDetNeZeroOfLeftInverse
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.NormLeOneOfFrobeniusPowEigenvectorMemFilZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FontaineFormalismOfRegular
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal TensorProduct Module UpperTheory.V.Loc Topology Polynomial
 
 private noncomputable def filS {l : ℕ} [Fact l.Prime] (K : FinExt l) : Subring (Bcr l) where
@@ -13,7 +18,7 @@ private noncomputable def filS {l : ℕ} [Fact l.Prime] (K : FinExt l) : Subring
   one_mem' := fun k => by
     rw [map_one, map_one]; exact ((PP l).PD K).one_mem
   add_mem' := fun {a b} ha hb k => by
-    rw [map_add, map_add]; exact Submodule.add_mem _ (ha k) (hb k)
+    rw [map_add (f := _), map_add (f := _)]; exact Submodule.add_mem _ (ha k) (hb k)
   zero_mem' := fun k => by
     rw [map_zero, map_zero]; exact Submodule.zero_mem _
   neg_mem' := fun {a} ha k => by

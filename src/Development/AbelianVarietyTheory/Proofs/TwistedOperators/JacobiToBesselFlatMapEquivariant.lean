@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.PartFixed
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsVacFOfIsVacVec
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DoubleMixedModelValueAtZeroEquivariant
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.JacobiToBesselFlatIntertwinesWeilAction
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatSchwartzTargetUnipotentConjBesselCharacter
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsRationalOrbitPointEqBesselBasePoint
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselGroupActionFourierBesselBasePoint
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagUnipotentRadicalSurjectsUnitriangularCharact
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilDatumDescendsToWittCoreOfExists
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsWeilDatumHermitianPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.PartFixed
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsVacFOfIsVacVec
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DoubleMixedModelValueAtZeroEquivariant
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.JacobiToBesselFlatIntertwinesWeilAction
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatSchwartzTargetUnipotentConjBesselCharacter
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsRationalOrbitPointEqBesselBasePoint
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselGroupActionFourierBesselBasePoint
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagUnipotentRadicalSurjectsUnitriangularCharact
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilDatumDescendsToWittCoreOfExists
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsWeilDatumHermitianPair
+
+@[expose] public section
 
 noncomputable section
 
@@ -172,17 +176,24 @@ theorem evalAt_eq (ψ : AddChar (AF D.host.F) ℂ) (σ : ℕ) (J : JacL D (σ + 
   have hV := (GlobalTheory.T.mixedCoordinates_of_thetaFunction_are_thetaFunctions D ψ s.weil.std).1 J.W J.W₀ B.V (σ + 1) J.d s.vS.μ s.vS.𝓕 s.vS.covol Ψ hΨ
   have hΨk := s.weil.om_pres (1, n * embA B.d B.o h) Ψ hΨ
   simp only [evalAt]
+  change _root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.target B.d J.W₀ ψ s.vT.μ s.vT.𝓕
+    (_root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.source J.d B.V ψ s.vS.μ s.vS.𝓕 (s.om (J.d.emb0 g, n * embA B.d B.o h) Ψ) x) 0 =
+    s.om₀ (g, B.o.emb (h, 1)) (_root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.target B.d J.W₀ ψ s.vT.μ s.vT.𝓕
+    (_root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.source J.d B.V ψ s.vS.μ s.vS.𝓕 Ψ (mt B.V (n * embA B.d B.o h)⁻¹ ⬝ x)) 0)
   rw [show s.om (J.d.emb0 g, n * embA B.d B.o h) = s.om (J.d.emb0 g, 1) * s.om (1, n * embA B.d B.o h) by
     rw [← map_mul]; simp]
   rw [Module.End.mul_apply, (hS _ hΨk).core, (hS _ hΨ).target]
   have hFt := hV (mt B.V (n * embA B.d B.o h)⁻¹ ⬝ x)
-  generalize J.d.mixS B.V ψ s.vS.μ s.vS.𝓕 Ψ (mt B.V (n * embA B.d B.o h)⁻¹ ⬝ x) = F at hFt ⊢
+  generalize _root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.source J.d B.V ψ s.vS.μ s.vS.𝓕 Ψ (mt B.V (n * embA B.d B.o h)⁻¹ ⬝ x) = F at hFt ⊢
   have hF1 := hom₁.om_pres (1, B.d.emb0 (B.o.emb (h, 1))) F hFt
   have hF2 := hom₁.om_pres (1, n) _ hF1
+  have hz := mixT_zero_flagN B.d ψ s.χV om₁ s.om₀ s.vT.μ s.vT.𝓕 hom₁.om_pres hT _ hF1 n hn
+  change _root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.target B.d J.W₀ ψ s.vT.μ s.vT.𝓕 (om₁ (1, n) (om₁ (1, B.d.emb0 (B.o.emb (h, 1))) F)) 0 =
+    _root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.target B.d J.W₀ ψ s.vT.μ s.vT.𝓕 (om₁ (1, B.d.emb0 (B.o.emb (h, 1))) F) 0 at hz
   rw [show om₁ (1, n * embA B.d B.o h) = om₁ (1, n) * om₁ (1, B.d.emb0 (B.o.emb (h, 1))) by
     rw [← map_mul, embA_apply]; simp]
   rw [Module.End.mul_apply, (hT _ hF2).source, Matrix.mul_zero,
-    mixT_zero_flagN B.d ψ s.χV om₁ s.om₀ s.vT.μ s.vT.𝓕 hom₁.om_pres hT _ hF1 n hn, (hT _ hFt).core,
+    hz, (hT _ hFt).core,
     show s.om₀ (g, B.o.emb (h, 1)) = s.om₀ (g, 1) * s.om₀ (1, B.o.emb (h, 1)) by rw [← map_mul]; simp,
     Module.End.mul_apply]
 
@@ -220,8 +231,8 @@ open GlobalTheory.Unf.FB GlobalTheory.Unf.FlatComm
 
 variable {D : D7}
 
-set_option maxHeartbeats 600000 in
 
+set_option maxHeartbeats 600000 in
 theorem flFB_om (ψ : AddChar (AF D.host.F) ℂ) (σ : ℕ) (J : JacL D (σ + 1)) (B : BesL D σ) (s : StFB ψ J B)
     (om₁ : Om J.W₀ B.V) (hom₁ : IsWeilDatumO ψ J.W₀ B.V s.χV s.χW om₁) (Ψ : WO J.W B.V → ℂ) (hΨ : IsThetaFunO ψ J.W B.V Ψ)
     (g : GA D J.W₀) (h : GA D B.A) :

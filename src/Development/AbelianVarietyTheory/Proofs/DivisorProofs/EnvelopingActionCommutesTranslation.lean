@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EnvRepAllEnvIncl
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.RightDerivativeAlongLieSmoothAndLinear
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EnvRepAllEnvIncl
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.RightDerivativeAlongLieSmoothAndLinear
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ theorem expMap_add_smul (H : IsLieData σ j s) (X : L) (t h : ℝ) :
   have hb : ∀ x : 𝔸, x ∈ Metric.eball (0 : 𝔸) (NormedSpace.expSeries ℝ 𝔸).radius := fun x =>
     (NormedSpace.expSeries_radius_eq_top ℝ 𝔸).symm ▸ edist_lt_top _ _
   simp only [expMap]
-  rw [← H.mul _ _ (DerLinear.exp_unitary H _) (DerLinear.exp_unitary H _), add_smul, map_add,
+  rw [← H.mul _ _ (DerLinear.exp_unitary H _) (DerLinear.exp_unitary H _), add_smul, map_add (f := _),
     NormedSpace.exp_add_of_commute_of_mem_ball (𝕂 := ℝ) ?_ (hb _) (hb _)]
   rw [map_smul, map_smul]
   exact ((Commute.refl (j X)).smul_left t).smul_right h
@@ -72,8 +76,8 @@ theorem hasDerivAt_transl (H : IsLieData σ j s) {φ : G → ℂ} (hφ : Sm (exp
   change φ (x * expMap j s (u • X)) = φ (x * expMap j s (t • X) * expMap j s ((u - t) • X))
   rw [mul_assoc, ← expMap_add_smul H, add_sub_cancel]
 
-omit [FiniteDimensional ℝ 𝔸] in
 
+omit [FiniteDimensional ℝ 𝔸] in
 theorem contDiff_deriv_param {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] {K : E × ℝ → ℂ}
     (hK : ContDiff ℝ ∞ K) : ContDiff ℝ ∞ fun q => deriv (fun r => K (q, r)) 0 := by
   have e : ∀ q, deriv (fun r => K (q, r)) 0 = fderiv ℝ K (q, 0) ((0 : E), (1 : ℝ)) := fun q =>
@@ -92,11 +96,13 @@ theorem jointSm_der (H : IsLieData σ j s) (Y : L) {Ψ : ℝ → G → ℂ} (hΨ
       Ψ q.1.1 (g * s (c q.1.2 * NormedSpace.exp (j (q.2 • Y)))) :=
     hF.comp ((contDiff_fst.comp contDiff_fst).prodMk ((contDiff_snd.comp contDiff_fst).prodMk contDiff_snd))
   convert contDiff_deriv_param hK using 1
-  funext q
-  simp only [Der, expMap]
   congr 1
   funext r
-  rw [mul_assoc, H.mul _ _ (hu _) (DerLinear.exp_unitary H _)]
+  change deriv (fun t => Ψ r.1 ((g * s (c r.2)) * expMap j s (t • Y))) 0 = _
+  congr 1
+  funext t
+  change Ψ r.1 ((g * s (c r.2)) * s (NormedSpace.exp (j (t • Y)))) = _
+  rw [H.mul _ _ (hu _) (DerLinear.exp_unitary H _), mul_assoc]
 
 theorem hasDerivAt_der (H : IsLieData σ j s) (Y : L) {Ψ Ψ' : ℝ → G → ℂ} (hΨ : JointSm σ s Ψ)
     (hd : ∀ t x, HasDerivAt (fun t => Ψ t x) (Ψ' t x) t) (t : ℝ) (x : G) :
@@ -201,8 +207,8 @@ attribute [local instance 100] LieRing.ofAssociativeRing
 
 variable {D : D7} {θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)} {V : HSp D}
 
-open Classical in
 
+open Classical in
 theorem envRepAll_ι_of_tmul (R : RealPoints θ V) (τ : D.what₂.Tau) (c : ℂ) (X : LieAt V τ) :
     envRepAll R (UniversalEnvelopingAlgebra.ι ℂ (DirectSum.of (fun τ => ℂ ⊗[ℝ] LieAt V τ) τ (c ⊗ₜ X))) =
       c • opInf R (atPlace V τ X) := by
@@ -219,8 +225,8 @@ theorem envRepAll_ι_mem (R : RealPoints θ V) (x : GlobalTheory.AutFinLit.LieC 
     induction y using TensorProduct.induction_on with
     | zero => rw [map_zero, map_zero, map_zero]; exact zero_mem _
     | tmul c X => rw [envRepAll_ι_of_tmul]; exact Subalgebra.smul_mem _ (Algebra.subset_adjoin (Set.mem_range_self _)) c
-    | add a b ha hb => rw [map_add, map_add, map_add]; exact add_mem ha hb
-  | add a b ha hb => rw [map_add, map_add]; exact add_mem ha hb
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _)]; exact add_mem ha hb
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
 
 theorem envRepAll_mem (R : RealPoints θ V) (u : GlobalTheory.AutFinLit.Env V) :
     envRepAll R u ∈ Algebra.adjoin ℂ (Set.range (opInf R)) := by
@@ -231,14 +237,14 @@ theorem envRepAll_mem (R : RealPoints θ V) (u : GlobalTheory.AutFinLit.Env V) :
   | algebraMap r => rw [AlgHom.commutes, AlgHom.commutes]; exact Subalgebra.algebraMap_mem _ r
   | ι x => rw [← UniversalEnvelopingAlgebra.ι_apply]; exact envRepAll_ι_mem R x
   | mul a b ha hb => rw [map_mul, map_mul]; exact mul_mem ha hb
-  | add a b ha hb => rw [map_add, map_add]; exact add_mem ha hb
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
 
 end Concrete
+
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta GlobalTheory.SmoothForms GlobalTheory.IndefiniteRowSideFullHecke.LieAlgebraExponentialFamilies GlobalTheory.CentralOps in
 attribute [local instance] Formalism.BasicNotions.Host.cmStar in
 attribute [local instance 100] LieRing.ofAssociativeRing in
-
 theorem envRepAll_comm_lie : ∀ (D : D7) (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)), IsInfFam θ →
     ∀ (V : HSp D) (R : RealPoints θ V) (u : GlobalTheory.AutFinLit.Env V), (∀ a ∈ GinfC V, ∀ (f : SmF θ V)
       (hfa : (fun x => f.1 (x * a)) ∈ SmF θ V), (envRepAll R u ⟨_, hfa⟩).1 = fun x => (envRepAll R u f).1 (x * a)) →
@@ -256,7 +262,7 @@ theorem envRepAll_comm_lie : ∀ (D : D7) (θ : D.what₂.Tau → (Ainf D.host.F
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul c X => rw [envRepAll_ι_of_tmul, smul_mul_assoc, mul_smul_comm, hcomm]
-    | add a b ha hb => rw [map_add, map_add, map_add, add_mul, mul_add, ha, hb]
-  | add a b ha hb => rw [map_add, map_add, add_mul, mul_add, ha, hb]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _), add_mul, mul_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), add_mul, mul_add, ha, hb]
 
 end GlobalTheory.EnvCommLie

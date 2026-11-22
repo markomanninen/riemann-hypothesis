@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.Integral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.Integral
+
+@[expose] public section
 
 open Finset GlobalTheory.KummerEisensteinGalois
 

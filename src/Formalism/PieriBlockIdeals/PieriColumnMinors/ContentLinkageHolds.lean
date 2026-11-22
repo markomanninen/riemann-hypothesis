@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PieriBlockIdeals.Statement
+module
+
+public import Mathlib
+public import Formalism.PieriBlockIdeals.Statement
+
+@[expose] public section
 
 noncomputable section
 

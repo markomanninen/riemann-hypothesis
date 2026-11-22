@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.LocalEmbeddings.ArchSz
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraicHeckeCharValuesInNumberField
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryHeckeCharacterValues
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HeckeCharLocPowEqOneOnLocalUnitsStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.LocalEmbeddings.ArchSz
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraicHeckeCharValuesInNumberField
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryHeckeCharacterValues
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HeckeCharLocPowEqOneOnLocalUnitsStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.L2.Host GlobalTheory.ConjSize
 
@@ -16,7 +20,6 @@ private theorem exists_pow_eq_span {L : Type} [Field L] [NumberField L] (v : Hei
     have h1 := pow_card_eq_one (x := ClassGroup.mk0 ⟨v.asIdeal, hI⟩)
     rw [← map_pow] at h1
     convert h1
-    simp
   obtain ⟨a, ha⟩ := ((ClassGroup.mk0_eq_one_iff hpow).1 hone).principal
   refine ⟨_, a, Fintype.card_pos, ?_, ha⟩
   rintro rfl

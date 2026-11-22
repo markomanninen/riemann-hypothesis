@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.SuccMulSuccSubOneDivSucc
-import Formalism.LocalToGlobal.InertKernelTheory.SubBSplit
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.SuccMulSuccSubOneDivSucc
+public import Formalism.LocalToGlobal.InertKernelTheory.SubBSplit
+
+@[expose] public section
 
 open Formalism.MainNotions.G Formalism.MainNotions.FormalGroupSystem Formalism.L2.G.Pend Finset
 
@@ -41,7 +45,8 @@ theorem mapT_yMat (v : X.Pl) (s : Fin (X.G.P.n' v)) :
   simp only [Matrix.map_apply, Matrix.mul_apply, yMat, mapT, MvPolynomial.map_C]
   rw [show (tau0 X Kc j W : XspC (X.Pj (j + 1)) Kc →+* XspC (X.Pj (j + 1)) Kc) (MvPolynomial.X (idxS X j ⟨v, (s, (b, t))⟩)) =
     frF X Kc j W (idxS X j ⟨v, (s, (b, t))⟩) from MvPolynomial.aeval_X _ _]
-  simp only [frF, idxS, map_sum, map_mul, cD, RingHom.comp_apply, Fin.cast_cast, Fin.cast_eq_self]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [frF, idxS, map_sum, map_mul, cD, RingHom.comp_apply, Fin.cast_cast, Fin.cast_eq_self]
   rfl
 
 end GlobalTheory.FrameB
@@ -235,13 +240,13 @@ theorem thU_det_Yt (h : FrRel X Kc j U W κ) (v : X.Pl) (s : Fin (X.G.P.n' v)) (
   rw [odd_YtMat X Kc j U W v s (κ v s) ((h v s).2 ho), Matrix.det_smul, Fintype.card_fin, map_pow]
   rfl
 
-variable (X Kc j W κ) in
 
+variable (X Kc j W κ) in
 def kN : Kc := ∏ v : X.Pl, ∏ s : Fin (X.G.P.n' v),
   if IsOddPos s then ((W v s).det⁻¹) ^ (exY X j v s).toNat * (κ v s ^ NN X.G.P.m X.t j) ^ (exT X j v s).toNat else 1
 
-variable (X Kc j W κ) in
 
+variable (X Kc j W κ) in
 def kD : Kc := ∏ v : X.Pl, ∏ s : Fin (X.G.P.n' v),
   if IsOddPos s then ((W v s).det⁻¹) ^ (-exY X j v s).toNat * (κ v s ^ NN X.G.P.m X.t j) ^ (-exT X j v s).toNat else 1
 
@@ -333,8 +338,8 @@ variable {p : ℕ} [Fact p.Prime] {X : Sys p} {Kc : Type} [Field Kc] [Algebra (F
 
 theorem coeff_cD_mapT (W : ∀ v : X.Pl, Fin (X.G.P.n' v) → Matrix (Fin (NN X.G.P.m X.t (j + 1))) (Fin (NN X.G.P.m X.t (j + 1))) Kc)
     (k : Kc) (P : DA X Kc j) (n : X.ZA j →₀ ℕ) :
-    MvPolynomial.coeff n (cD X Kc j k * mapT X Kc j W P) = (k • (tau0 X Kc j W).toLinearMap) (MvPolynomial.coeff n P) := by
-  show MvPolynomial.coeff n (MvPolynomial.C _ * MvPolynomial.map _ P) = _
+    AddMonoidAlgebra.coeff (cD X Kc j k * mapT X Kc j W P) n = (k • (tau0 X Kc j W).toLinearMap) (AddMonoidAlgebra.coeff P n) := by
+  show AddMonoidAlgebra.coeff (MvPolynomial.C _ * MvPolynomial.map _ P) n = _
   rw [MvPolynomial.coeff_C_mul, MvPolynomial.coeff_map, LinearMap.smul_apply, Algebra.smul_def]
   rfl
 

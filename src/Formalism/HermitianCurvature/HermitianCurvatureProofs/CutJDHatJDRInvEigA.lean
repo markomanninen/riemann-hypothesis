@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRInvDefs
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGLet
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRInvDefs
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGLet
+
+@[expose] public section
 
 open Matrix
 

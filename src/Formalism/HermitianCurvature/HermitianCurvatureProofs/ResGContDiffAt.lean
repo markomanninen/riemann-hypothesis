@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MinorCellOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadJFExists
-import Formalism.FormalDegreeBessel.FinalWR
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MinorCellOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadJFExists
+public import Formalism.FormalDegreeBessel.FinalWR
+
+@[expose] public section
 
 open Matrix
 
@@ -18,8 +22,8 @@ section cell
 variable {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq] {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
-open Classical in
 
+open Classical in
 def resW (h : Mx k r → V) (g : Mx k r) : (Fin r → ℂ) → V :=
   fun c' => if c' ∈ OmX r then resG k r (Fin.last r) h c' g else 0
 
@@ -105,29 +109,39 @@ theorem pOp_zero (l : Fin r) : pOp l (fun _ : Fin r → ℂ => (0 : V)) = fun _ 
   funext x; unfold pOp wirt; split_ifs <;> simp
 
 theorem vAB_mem (y : ℂ) : ∀ (i : ℕ) {G : (Fin r → ℂ) → V}, G ∈ WSm r V →
-    (vAB r y i).1 G ∈ WSm r V ∧ (vAB r y i).2 G ∈ WSm r V
-  | 0, G, hG => ⟨hG, (WSm r V).zero_mem⟩
-  | i + 1, G, hG => by
-    obtain ⟨hA, hB⟩ := vAB_mem y i hG
+    (vAB r y i).1 G ∈ WSm r V ∧ (vAB r y i).2 G ∈ WSm r V := by
+  intro i
+  induction i with
+  | zero =>
+    intro G hG
+    exact ⟨hG, (WSm r V).zero_mem⟩
+  | succ i ih =>
+    intro G hG
+    obtain ⟨hA, hB⟩ := ih hG
     by_cases hi : i < r
-    · simp only [vAB, dif_pos hi]
+    · simp only [vAB, dite_eq_left hi]
       refine ⟨wsm_sub ((WSm r V).add_mem ((WSm r V).smul_mem y hA) (opL_mem ⟨i, hi⟩ 0 hA))
         (opL_mem ⟨i, hi⟩ 1 hB), opL_mem ⟨i, hi⟩ 2 hA⟩
-    · simp only [vAB, dif_neg hi]
+    · simp only [vAB, dite_eq_right hi]
       exact ⟨hA, hB⟩
 
 theorem vAB_lin (y : ℂ) : ∀ (i : ℕ) {G₁ G₂ : (Fin r → ℂ) → V}, G₁ ∈ WSm r V → G₂ ∈ WSm r V → ∀ s : ℂ,
     (vAB r y i).1 (G₁ + s • G₂) = (vAB r y i).1 G₁ + s • (vAB r y i).1 G₂ ∧
-      (vAB r y i).2 (G₁ + s • G₂) = (vAB r y i).2 G₁ + s • (vAB r y i).2 G₂
-  | 0, G₁, G₂, _, _, s => ⟨rfl, by show (0 : (Fin r → ℂ) → V) = 0 + s • 0; simp⟩
-  | i + 1, G₁, G₂, h₁, h₂, s => by
-    obtain ⟨ih1, ih2⟩ := vAB_lin y i h₁ h₂ s
+      (vAB r y i).2 (G₁ + s • G₂) = (vAB r y i).2 G₁ + s • (vAB r y i).2 G₂ := by
+  intro i
+  induction i with
+  | zero =>
+    intro G₁ G₂ _ _ s
+    exact ⟨rfl, by show (0 : (Fin r → ℂ) → V) = 0 + s • 0; simp⟩
+  | succ i ih =>
+    intro G₁ G₂ h₁ h₂ s
+    obtain ⟨ih1, ih2⟩ := ih h₁ h₂ s
     obtain ⟨hA₁, hB₁⟩ := vAB_mem y i h₁
     obtain ⟨hA₂, hB₂⟩ := vAB_mem y i h₂
     have hsA := (WSm r V).smul_mem s hA₂
     have hsB := (WSm r V).smul_mem s hB₂
     by_cases hi : i < r
-    · simp only [vAB, dif_pos hi]
+    · simp only [vAB, dite_eq_left hi]
       rw [ih1, ih2]
       refine ⟨?_, ?_⟩
       · have e1 : pOp ⟨i, hi⟩ ((vAB r y i).1 G₁ + s • (vAB r y i).1 G₂) =
@@ -142,21 +156,26 @@ theorem vAB_lin (y : ℂ) : ∀ (i : ℕ) {G₁ G₂ : (Fin r → ℂ) → V}, G
         rw [smul_comm y s]
         abel
       · rw [show ciOp ⟨i, hi⟩ = opL ⟨i, hi⟩ 2 from rfl, opL_add _ _ hA₁ hsA, opL_smul _ _ hA₂]
-    · simp only [vAB, dif_neg hi]
+    · simp only [vAB, dite_eq_right hi]
       exact ⟨ih1, ih2⟩
 
 theorem vAB_comm (y : ℂ) (j : Fin r) : ∀ (i : ℕ), i ≤ j.val → ∀ {G : (Fin r → ℂ) → V}, G ∈ WSm r V →
     (vAB r y i).1 G ∈ WSm r V ∧ (vAB r y i).2 G ∈ WSm r V ∧
-      (vAB r y i).1 (pOp j G) = pOp j ((vAB r y i).1 G) ∧ (vAB r y i).2 (pOp j G) = pOp j ((vAB r y i).2 G)
-  | 0, _, G, hG => ⟨hG, (WSm r V).zero_mem, rfl, by simp only [vAB]; exact (pOp_zero j).symm⟩
-  | i + 1, hij, G, hG => by
-    obtain ⟨hA, hB, c1, c2⟩ := vAB_comm y j i (by omega) hG
+      (vAB r y i).1 (pOp j G) = pOp j ((vAB r y i).1 G) ∧ (vAB r y i).2 (pOp j G) = pOp j ((vAB r y i).2 G) := by
+  intro i
+  induction i with
+  | zero =>
+    intro _ G hG
+    exact ⟨hG, (WSm r V).zero_mem, rfl, by simp only [vAB]; exact (pOp_zero j).symm⟩
+  | succ i ih =>
+    intro hij G hG
+    obtain ⟨hA, hB, c1, c2⟩ := ih (by omega) hG
     have hpG : pOp j G ∈ WSm r V := opL_mem j 0 hG
     have hi : i < r := by have := j.isLt; omega
     have hne : (⟨i, hi⟩ : Fin r) ≠ j := by intro h; rw [← h] at hij; simp at hij
     obtain ⟨hm1, hm2⟩ := vAB_mem y (i + 1) hG
     refine ⟨hm1, hm2, ?_, ?_⟩
-    · simp only [vAB, dif_pos hi]
+    · simp only [vAB, dite_eq_left hi]
       rw [c1, c2]
       have hpA : pOp ⟨i, hi⟩ ((vAB r y i).1 G) ∈ WSm r V := opL_mem _ 0 hA
       have hcB : cOp ⟨i, hi⟩ ((vAB r y i).2 G) ∈ WSm r V := opL_mem _ 1 hB
@@ -168,7 +187,7 @@ theorem vAB_comm (y : ℂ) (j : Fin r) : ∀ (i : ℕ), i ≤ j.val → ∀ {G :
       have k2 : opL j 0 (cOp ⟨i, hi⟩ ((vAB r y i).2 G)) = cOp ⟨i, hi⟩ (opL j 0 ((vAB r y i).2 G)) :=
         (commuting_functional_holds r V j ⟨i, hi⟩ 0 1 _ hB (Or.inl (Ne.symm hne)))
       rw [k1, k2]
-    · simp only [vAB, dif_pos hi]
+    · simp only [vAB, dite_eq_left hi]
       rw [c1]
       exact (commuting_functional_holds r V j ⟨i, hi⟩ 0 2 _ hA (Or.inl (Ne.symm hne))).symm
 

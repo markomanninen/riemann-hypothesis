@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
-import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
-import ReciprocityTheory.ThetaQuasiPeriods.Transl
-import ReciprocityTheory.ThetaQuasiPeriods.Change
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+public import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
+public import ReciprocityTheory.ThetaQuasiPeriods.Transl
+public import ReciprocityTheory.ThetaQuasiPeriods.Change
+
+@[expose] public section
 
 open ReciprocityTheory.PTheta Complex Matrix Filter Topology
 open scoped BigOperators Real
@@ -178,7 +182,7 @@ theorem exists_nhds_subset_range {d : ℕ} {A W : Type*} [CommRing A] [Algebra �
     intro h
     obtain ⟨α, β, hαβ⟩ := Ideal.mem_span_pair.mp hpq
     have := congrArg (fun r => Φ w₀ (Polynomial.eval₂ j.toRingHom a r)) hαβ
-    simp only [Polynomial.eval₂_add, Polynomial.eval₂_mul, hp, map_add, map_mul, h,
+    simp only [Polynomial.eval₂_add, Polynomial.eval₂_mul, hp, map_add (f := _), map_mul, h,
       Polynomial.eval₂_C, mul_zero, map_zero, add_zero] at this
     exact hq this.symm
   let u : W → Fin d → ℂ := fun w i => Φ w (j (MvPolynomial.X i))
@@ -186,12 +190,12 @@ theorem exists_nhds_subset_range {d : ℕ} {A W : Type*} [CommRing A] [Algebra �
   have hus : HasStrictFDerivAt u (fderiv ℂ u w₀) w₀ :=
     (GlobalTheory.SCV.analyticOnNhd_of_differentiable hu Set.univ w₀ trivial).hasStrictFDerivAt
   have hinj : Function.Injective (fderiv ℂ u w₀) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro ξ hξ
     refine himm ξ fun b => derivation_eq_zero j a p q hp hb (Φ w₀) hq hp'
       (fun b => fderiv ℂ (fun w => Φ w b) w₀ ξ) ?_ ?_ ?_ ?_ b
     · intro x y
-      simp only [map_add]
+      simp only [map_add (f := _)]
       rw [fderiv_fun_add (hΦ x w₀) (hΦ y w₀)]; rfl
     · intro x y
       simp only [map_mul]
@@ -252,7 +256,7 @@ theorem differentiable_eval {W ι : Type*} [NormedAddCommGroup W] [NormedSpace �
     Differentiable ℂ fun w => MvPolynomial.eval (f w) F := by
   induction F using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => simp only [map_add]; exact hp.add hq
+  | add p q hp hq => simp only [map_add (f := _)]; exact hp.add hq
   | mul_X p i hp => simp only [map_mul, MvPolynomial.eval_X]; exact hp.mul (hf i)
 
 theorem cone_eq_zeroLocus {E ι : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.DiscriminantEstimates.DiscriminantTheorems.TBIdemDen
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.DiscriminantEstimates.DiscriminantTheorems.TBIdemDen
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,7 +25,8 @@ theorem sum_dual_mul {ι : Type} [Fintype ι] [DecidableEq ι] (b : Module.Basis
     ∑ i, TB.trDual b i * b i = 1 := by
   have key : ∀ y : E, Algebra.trace ℚ E ((∑ i, TB.trDual b i * b i - 1) * y) = 0 := by
     intro y
-    rw [sub_mul, one_mul, map_sub, Algebra.trace_eq_matrix_trace (TB.trDual b) y, Matrix.trace,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [sub_mul, one_mul, map_sub, Algebra.trace_eq_matrix_trace (TB.trDual b) y, Matrix.trace,
       Finset.sum_mul, map_sum, sub_eq_zero]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     rw [Matrix.diag_apply, Algebra.leftMulMatrix_eq_repr_mul, repr_trDual_lemma]
@@ -44,11 +49,6 @@ theorem trace_dual_mul {ι : Type} [Fintype ι] [DecidableEq ι] (b : Module.Bas
   by_cases hki : k = i
   · subst hki; simp
   · rw [if_neg hki, Finsupp.single_apply, if_neg (Ne.symm hki)]
-
-theorem trace_mul_dual {ι : Type} [Fintype ι] [DecidableEq ι] (b : Module.Basis ι ℚ E) (k i : ι) :
-    Algebra.trace ℚ E (b k * TB.trDual b i) = if k = i then 1 else 0 := by
-  rw [mul_comm]
-  exact trace_dual_mul b i k
 
 theorem idem_data_basis {k V : Type} [Field k] [CommRing V] [Algebra V k] (ψ : E →+* k)
     (hint : ∀ x : 𝓞 E, ∃ v : V, algebraMap V k v = ψ (algebraMap (𝓞 E) E x)) (w : V)
@@ -90,7 +90,8 @@ theorem idem_data_basis {k V : Type} [Field k] [CommRing V] [Algebra V k] (ψ : 
       rw [Matrix.adjugate_mul, Matrix.smul_apply, Matrix.one_apply]
       split_ifs <;> simp
     have h2 : Algebra.trace ℚ E (algebraMap (𝓞 E) E (z i) * bQ k) = (((G.adjugate * G) i k : ℤ) : ℚ) := by
-      rw [hzdef, hbQ_apply, Matrix.mul_apply, map_sum, Finset.sum_mul, map_sum, Int.cast_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hzdef, hbQ_apply, Matrix.mul_apply, map_sum, Finset.sum_mul, map_sum, Int.cast_sum]
       refine Finset.sum_congr rfl (fun j _ => ?_)
       rw [map_zsmul, smul_mul_assoc, map_zsmul, ← hG, zsmul_eq_mul, Int.cast_mul]
     rw [h2, h1]
@@ -116,7 +117,8 @@ theorem idem_data_basis {k V : Type} [Field k] [CommRing V] [Algebra V k] (ψ : 
       rw [map_mul, map_intCast, hz i, ← mul_assoc, ← Int.cast_mul, hε, Int.cast_natCast]
     rw [map_mul, hv i, e1, map_mul, map_natCast, ← mul_assoc, hw, one_mul]
   refine ⟨bZ, fun i => w * v i, ?_, ?_⟩
-  · rw [← map_one ψ, ← sum_dual_mul bQ, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_one ψ, ← sum_dual_mul bQ, map_sum]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     rw [hc i, map_mul, hbQ_apply]
   · intro a
@@ -127,11 +129,13 @@ theorem idem_data_basis {k V : Type} [Field k] [CommRing V] [Algebra V k] (ψ : 
       have hs := bZ.sum_repr (a * bZ i)
       rw [mul_comm (algebraMap (𝓞 E) E a), mul_assoc, hbQ_apply i, ← map_mul (algebraMap (𝓞 E) E)]
       conv_lhs => rw [← hs]
-      rw [map_sum, Finset.mul_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.mul_sum, map_sum]
       simp only [map_zsmul, mul_smul_comm, ← hbQ_apply, trace_dual_mul]
       simp
     simp only [hc]
-    rw [← map_mul ψ, dual_expand bQ (algebraMap (𝓞 E) E a * TB.trDual bQ j), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_mul ψ, dual_expand bQ (algebraMap (𝓞 E) E a * TB.trDual bQ j), map_sum]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     rw [hm i, Int.cast_smul_eq_zsmul, map_zsmul, zsmul_eq_mul]
 

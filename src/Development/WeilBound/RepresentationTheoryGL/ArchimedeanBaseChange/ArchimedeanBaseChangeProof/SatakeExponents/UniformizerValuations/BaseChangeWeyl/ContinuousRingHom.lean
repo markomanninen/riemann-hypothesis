@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SatIndepOf
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SatIndepOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,7 @@ theorem exists_root {d : ℕ} (hd : Valued.v ((d : w.adicCompletion E)) < 1) (t 
       simp only [f, derivative_sub, derivative_X_pow, derivative_C, sub_zero, eval_mul, eval_C, eval_pow,
         eval_X, one_pow, mul_one]
       push_cast; ring
-    rw [this, map_add, map_one, Ideal.Quotient.eq_zero_iff_mem.mpr (Ideal.mul_mem_right _ _ hdO), zero_add]
+    rw [this, map_add (f := _), map_one, Ideal.Quotient.eq_zero_iff_mem.mpr (Ideal.mul_mem_right _ _ hdO), zero_add]
     exact isUnit_one
   obtain ⟨a, ha, -⟩ := HenselianRing.is_henselian (I := IsLocalRing.maximalIdeal O) f hmon 1 hf1 hf2
   refine ⟨(a : w.adicCompletion E), ?_⟩
@@ -183,7 +187,7 @@ theorem cjEq : CjEq := by
       ∀ x : E, s' (algebraMap E _ x) = algebraMap E _ (IsCMField.complexConj E x) := ⟨s, hc, hs⟩
   have hcj : GlobalTheory.BCT.cj w = h.choose := by
     unfold GlobalTheory.BCT.cj
-    rw [dif_pos h]
+    rw [dite_eq_left h]
   rw [hcj]
   have hdense : DenseRange (algebraMap E (w.adicCompletion E)) := by
     apply HeightOneSpectrum.denseRange_algebraMap

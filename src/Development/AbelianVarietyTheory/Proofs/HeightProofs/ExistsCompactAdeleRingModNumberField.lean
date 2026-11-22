@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteAdeleStrongApproximationModNat
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteAdeleStrongApproximationModNat
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory
 
@@ -17,12 +21,14 @@ theorem exists_bound_sub_integer :
       = ∑ i, ((Int.fract ((integralBasis F).repr x i) : ℚ) : F) * integralBasis F i := by
     conv_lhs => enter [1]; rw [← (integralBasis F).sum_repr x]
     change _ - algebraMap (𝓞 F) F _ = _
-    rw [map_sum, ← Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_zsmul, ← integralBasis_apply, Int.fract, Rat.smul_def, zsmul_eq_mul]
     push_cast
     ring
-  rw [h, ← InfinitePlace.norm_embedding_eq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, ← InfinitePlace.norm_embedding_eq, map_sum]
   refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => ?_)
   rw [map_mul, norm_mul, InfinitePlace.norm_embedding_eq v (integralBasis F i), map_ratCast,
     Complex.norm_ratCast]
@@ -81,11 +87,11 @@ theorem exists_compact_adele : ∀ (F : Type) [Field F] [NumberField F], ∃ K :
   obtain ⟨y, hy⟩ := hK' (a.1 - algebraMap F (InfiniteAdeleRing F) x)
   refine ⟨x + y, ?_, ?_⟩
   · change a.1 - algebraMap F (InfiniteAdeleRing F) (x + y) ∈ K
-    rw [map_add, ← sub_sub]; exact hy
+    rw [map_add (f := _), ← sub_sub]; exact hy
   · change ∀ v, (a.2 - algebraMap F (FiniteAdeleRing (𝓞 F) F) (x + y)) v ∈ v.adicCompletionIntegers F
     have h : a.2 - algebraMap F (FiniteAdeleRing (𝓞 F) F) (x + y) =
         b - algebraMap F (FiniteAdeleRing (𝓞 F) F) y := by
-      rw [hab, map_add, one_smul]; ring
+      rw [hab, map_add (f := _), one_smul]; ring
     rw [h]
     intro v
     exact sub_mem (hb v) (HeightOneSpectrum.coe_mem_adicCompletionIntegers v y)

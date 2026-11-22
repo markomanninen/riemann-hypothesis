@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.TateTwists.EtaleAlexanderWhitneyCupCochainExistsForPairing
-import Development.EtaleCohomology.TateTwists.FreeExt
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleAlexanderWhitneyCupCochainExistsForPairing
+public import Development.EtaleCohomology.TateTwists.FreeExt
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LiftQMk
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConstOneMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LiftQMk
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConstOneMem
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 set_option maxHeartbeats 1000000
@@ -58,10 +62,11 @@ theorem coordQ_iotaW (lam : O) (a k : ℕ) (x : Fin k → ↥(Xq LL lam a)) (j :
     obtain ⟨s, rfl⟩ := Submodule.Quotient.mk_surjective _ y
     rw [iotaW_tmul, coordQ_mk]
     by_cases hj : j = j' <;> simp [basisVec, hj]
-  simp [map_sum, h]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, h]
 
 theorem iotaW_injective (lam : O) (a k : ℕ) : Function.Injective (iotaW LL lam a k) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro u hu
   obtain ⟨x, rfl⟩ := exists_sum LL k u
   have : x = 0 := by
@@ -80,7 +85,8 @@ theorem exists_iotaW (lam : O) (a k : ℕ) (q : (Fin k → LL) ⧸ stdG O LL k) 
     rw [map_smul, map_zero, coordQ_mk] at this
     exact this
   refine ⟨∑ j, basisVec LL k j ⊗ₜ[O] ⟨_, hx j⟩, ?_⟩
-  simp only [map_sum, iotaW_tmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, iotaW_tmul]
   have : v = ∑ j, v j • (basisVec (O := O) LL k j : Fin k → LL) := by
     funext j'
     simp [basisVec, Finset.sum_apply, Pi.single_apply]
@@ -101,7 +107,7 @@ theorem iotaW_actTw (hinj : Function.Injective (algebraMap O LL)) {G : Type} [Gr
     have e1 := map_add (tableLineDegreeTwo.actTw (stdLatG hinj (twistM N θ)) ↥(Xq LL lam a) θ g) u v
     have e2 := map_add (actD (stdLatG hinj N) g) (iotaW LL lam a k u) (iotaW LL lam a k v)
     refine (congrArg _ e1).trans ((map_add _ _ _).trans ?_)
-    rw [map_add]
+    rw [map_add (f := _)]
     exact (congrArg₂ (· + ·) hu hv).trans e2.symm
   | tmul t y =>
     obtain ⟨y, hy⟩ := y

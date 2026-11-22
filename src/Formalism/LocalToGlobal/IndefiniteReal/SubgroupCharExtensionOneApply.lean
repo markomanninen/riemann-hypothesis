@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
-import Formalism.LocalToGlobal.BesselHermitianTheta.MinfDensity
-import Formalism.LocalToGlobal.Divisibility.DefGroup
+module
+
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+public import Formalism.LocalToGlobal.BesselHermitianTheta.MinfDensity
+public import Formalism.LocalToGlobal.Divisibility.DefGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,12 +75,6 @@ def levChi (V : HSp D) (β : GL (Fin V.rank) (EAf D)) (L : Formalism.L2.DIV.LevD
 def HasType (V : HSp D) (β : GL (Fin V.rank) (EAf D)) (L : Formalism.L2.DIV.LevDat D.host.E ℂ V.rank) (F : GA D V → ℂ) : Prop :=
   ∀ κ ∈ levG V β L, ∀ h, F (h * κ) = levChi V β L κ * F h
 
-def KgQ (V : HSp D) (β : GL (Fin V.rank) (EAf D)) (r : ℕ) (hr : r ≤ V.rank) (Pg Q : Finset (Formalism.L2.DIV.Pl D.host.E)) :
-    Subgroup (GL (Fin V.rank) (EAf D)) :=
-  Formalism.L2.DIV.Kg D.sp.cm V.gram β Pg ⊓
-    Formalism.L2.DIV.parLev D.sp.cm V.gram β
-      { r := r, hr := hr, t := 1, s := 0, Pg := ∅, Q := Q, P := Formalism.L2.DIV.LevelP.triv ∅ r ℂ, cg := fun _ _ => 1, xq := fun _ => 1 }
-
 def IsBaseFrame (V : HSp D) (β : GL (Fin V.rank) (EAf D)) (Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)) (N : ℕ) :
     Prop :=
   Formalism.L2.DIV.IsFrame β Λ ∧ Formalism.L2.Herm.dualL D.sp.cm V Λ = Λ ∧ 0 < N ∧
@@ -100,8 +98,8 @@ def IsLevelActionImage (V : HSp D) (β : GL (Fin V.rank) (EAf D)) (L : Formalism
     (F F' : GA D V → ℂ) : Prop :=
   ∀ κ, IsLevelLift V β L g0 κ → ∀ h, F' h = (levChi V β (flagL L) κ)⁻¹ * F (h * κ)
 
-open Classical in
 
+open Classical in
 def actG0 (V : HSp D) (β : GL (Fin V.rank) (EAf D)) (L : Formalism.L2.DIV.LevDat D.host.E ℂ V.rank) (g0 : Formalism.L2.DIV.G0 L.Pg L.r)
     (F : GA D V → ℂ) : GA D V → ℂ :=
   if hk : ∃ κ, IsLevelLift V β L g0 κ then
@@ -139,14 +137,6 @@ def IsMeasLevDef (V : HSp D) (K : Subgroup (GL (Fin V.rank) (EAf D))) (μ : Meas
 def IsMeasFD (V : HSp D) (K : Subgroup (GL (Fin V.rank) (EAf D))) (μ : Measure (GA D V)) (𝓕 : Set (GA D V)) : Prop :=
   IsMeasLev V K μ ∧ IsFundamentalDomain (GQ V) 𝓕 μ
 
-def IsL2Pairing (V : HSp D) (K : Subgroup (GL (Fin V.rank) (EAf D))) (F1 F2 : GA D V → ℂ) (c : ℂ) : Prop :=
-  AllSome (IsMeasLev V K) fun μ => AllSome (fun 𝓕 => IsFundamentalDomain (GQ V) 𝓕 μ) fun 𝓕 =>
-    IntegrableOn (fun h => F1 h * star (F2 h)) 𝓕 μ ∧ ∫ h in 𝓕, F1 h * star (F2 h) ∂μ = c
-
-def IsDefiniteL2Pairing (V : HSp D) (K : Subgroup (GL (Fin V.rank) (EAf D))) (F1 F2 : GA D V → ℂ) (c : ℂ) : Prop :=
-  AllSome (IsMeasLevDef V K) fun μ => AllSome (fun 𝓕 => IsFundamentalDomain (GQ V) 𝓕 μ) fun 𝓕 =>
-    IntegrableOn (fun h => F1 h * star (F2 h)) 𝓕 μ ∧ ∫ h in 𝓕, F1 h * star (F2 h) ∂μ = c
-
 def clSum (V : HSp D) (K : Subgroup (GL (Fin V.rank) (EAf D))) (F1 F2 : GL (Fin V.rank) (EAf D) → ℂ) : ℂ :=
   ∑ᶠ c : Formalism.L2.DIV.Cl D.sp.cm V.gram K, ((Nat.card (Formalism.L2.DIV.Gam c) : ℂ))⁻¹ *
     (F1 ((Formalism.L2.DIV.rep c : Formalism.L2.DIV.UA D.sp.cm V.gram) : GL (Fin V.rank) (EAf D)) *
@@ -160,17 +150,6 @@ section API
 variable {V : HSp D} {β : GL (Fin V.rank) (EAf D)} {L : Formalism.L2.DIV.LevDat D.host.E ℂ V.rank}
 
 theorem mem_levA {K : Subgroup (GL (Fin V.rank) (EAf D))} {κ : GA D V} : κ ∈ levA V K ↔ κ ∈ GfC V ∧ finE V κ ∈ K := Iff.rfl
-
-theorem datY_B_eq_datX (r t m : ℕ) (Pg Q : Finset (Formalism.L2.DIV.Pl D.host.E)) (P : Formalism.L2.DIV.LevelP Pg r ℂ)
-    (χ : ℕ → ∀ PP : Formalism.L2.DIV.Pl D.host.E, (Formalism.L2.DIV.kP PP)ˣ →* ℂˣ)
-    (ξ : ∀ PP : Formalism.L2.DIV.Pl D.host.E, (Formalism.L2.DIV.kP PP)ˣ →* ℂˣ) :
-    datY (D := D) (r + m * t) r t m (Nat.le_add_right _ _) Pg Q P χ ξ Frm.B = Formalism.L2.DIV.datX r t m Pg Q P χ ξ := rfl
-
-theorem datY_A_eq_datV (r t j : ℕ) (Pg Q : Finset (Formalism.L2.DIV.Pl D.host.E)) (P : Formalism.L2.DIV.LevelP Pg r ℂ)
-    (χ : ℕ → ∀ PP : Formalism.L2.DIV.Pl D.host.E, (Formalism.L2.DIV.kP PP)ˣ →* ℂˣ)
-    (ξ : ∀ PP : Formalism.L2.DIV.Pl D.host.E, (Formalism.L2.DIV.kP PP)ˣ →* ℂˣ) :
-    datY (D := D) (r + t) r t 1 (Nat.le_add_right _ _) Pg Q P (fun _ => χ j) ξ Frm.A =
-      Formalism.L2.DIV.datV r t j Pg Q P χ ξ := rfl
 
 theorem subgroupCharExtension_one_apply {G N : Type} [Group G] [MulOneClass N] (P : Subgroup G) (x : G) :
     Formalism.L2.DIV.ext1 P (⇑(1 : P →* N)) x = 1 := by
@@ -276,12 +255,6 @@ theorem IsPLevel.hasType {P : Formalism.L2.DIV.LevelP L.Pg L.r ℂ} {F : GA D V 
     rw [hsp, ← mul_assoc, mul_inv_cancel₀ n, one_mul]
   rw [hc, key]
   ring
-
-theorem level_action_unique {g0 : Formalism.L2.DIV.G0 L.Pg L.r} {F F₁ F₂ : GA D V → ℂ} (hex : ∃ κ, IsLevelLift V β L g0 κ)
-    (h₁ : IsLevelActionImage V β L g0 F F₁) (h₂ : IsLevelActionImage V β L g0 F F₂) : F₁ = F₂ := by
-  obtain ⟨κ, hκ⟩ := hex
-  funext h
-  rw [h₁ κ hκ h, h₂ κ hκ h]
 
 end API
 

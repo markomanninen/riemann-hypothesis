@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ScaleFamilySizeRelationsEventually
-import Formalism.SharpRestriction.ParConsts
-import Formalism.LocalRingCardinality.DataKerI
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ScaleFamilySizeRelationsEventually
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.LocalRingCardinality.DataKerI
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+
+@[expose] public section
+
 open Formalism.MainNotions Formalism.BasicNotions Formalism.MainNotions.G Classical
 
 namespace GlobalTheory.ShXa

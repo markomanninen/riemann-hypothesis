@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosureFiniteEtale
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosureFiniteEtale
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 open scoped TensorProduct
 
@@ -50,7 +55,7 @@ theorem closure_finite : ∀ (A R : Type) [CommRing A] [IsDomain A] [CommRing R]
     [IsIntegrallyClosed R] [Algebra A R], Function.Injective (algebraMap A R) →
     ∀ (D : Type) [CommRing D] [Algebra (GlobalTheory.LocAcyc.GenFib A R) D]
     [Module.Finite (GlobalTheory.LocAcyc.GenFib A R) D] [Algebra.Etale (GlobalTheory.LocAcyc.GenFib A R) D],
-    letI := GlobalTheory.KeyOriginNoeth.closureAlg A R D
+    letI := GlobalTheory.KeyOriginNoeth.closureAlg A R D;
     Module.Finite R (GlobalTheory.KeyOriginNoeth.closure A R D) := by
   intro A R _ _ _ _ _ _ _ hinj D _ _ _ _
   classical
@@ -69,7 +74,7 @@ theorem closure_finite : ∀ (A R : Type) [CommRing A] [IsDomain A] [CommRing R]
   haveI : IsScalarTower R GF K' :=
     IsScalarTower.of_algebraMap_eq (fun r => (IsLocalization.lift_eq (M := S) hS r).symm)
   have hg : Function.Injective (algebraMap GF K') := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨⟨r, s⟩, rfl⟩ := IsLocalization.mk'_surjective S x
     change g (IsLocalization.mk' GF r s) = 0 at hx

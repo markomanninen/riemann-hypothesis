@@ -1,5 +1,9 @@
-import Formalism.ThetaLogCoordinates.DualWeylCoordinates.StatementH
-import Formalism.GradedWeylDivisibility.StatementE
+module
+
+public import Formalism.ThetaLogCoordinates.DualWeylCoordinates.StatementH
+public import Formalism.GradedWeylDivisibility.StatementE
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -75,13 +79,13 @@ theorem qn_deriv_rowGen (n : ℕ) (a b : Fin n) (hab : a ≠ b) (f : MvPolynomia
     rw [hD]
     simp [transposeVariables, rowGen]
   | add p q hp hq =>
-    simp only [map_add, Polynomial.derivative_add, hp, hq]
+    simp only [map_add (f := _), Polynomial.derivative_add, hp, hq]
   | mul_X p i hp =>
     have hL : qn_D n a b (p * X i) = p * qn_D n a b (X i) + X i * qn_D n a b p := by
       rw [Derivation.leibniz]
       simp [smul_eq_mul]
     rw [hL]
-    simp only [map_add, map_mul, Polynomial.derivative_mul, hp, hX i]
+    simp only [map_add (f := _), map_mul, Polynomial.derivative_mul, hp, hX i]
     ring
 
 theorem qn_deriv_rowGen_diag (n : ℕ) (a : Fin n) (f : MvPolynomial (Fin n × Fin n) ℚ) :
@@ -104,14 +108,14 @@ theorem qn_deriv_rowGen_diag (n : ℕ) (a : Fin n) (f : MvPolynomial (Fin n × F
     rw [hD]
     simp [transposeVariables, rowGen]
   | add p q hp hq =>
-    simp only [map_add, Polynomial.derivative_add, mul_add, hp, hq]
+    simp only [map_add (f := _), Polynomial.derivative_add, mul_add, hp, hq]
   | mul_X p i hp =>
     have hL : qn_D n a a (p * X i) = p * qn_D n a a (X i) + X i * qn_D n a a p := by
       rw [Derivation.leibniz]
       simp [smul_eq_mul]
     rw [hL, map_mul, map_mul, Polynomial.derivative_mul, mul_add, ← mul_assoc,
       mul_left_comm (1 + Polynomial.X) (rowGen ℚ a a (transposeVariables ℚ n p)), hp, hX i]
-    simp only [map_add, map_mul]
+    simp only [map_add (f := _), map_mul]
     ring
 
 end Formalism.InvariantFactorPaths.ColumnFamilies

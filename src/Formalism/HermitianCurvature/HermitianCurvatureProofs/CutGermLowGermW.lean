@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermLow
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSettingBis
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermLow
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSettingBis
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP.GLG
 

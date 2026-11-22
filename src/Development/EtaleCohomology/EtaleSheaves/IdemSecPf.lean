@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.SysFMPfSys
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIsoNormalizationPullbackOfToIntegralClosure
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SysFMPfSys
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIsoNormalizationPullbackOfToIntegralClosure
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry LateralTheory.E.SysFMPf

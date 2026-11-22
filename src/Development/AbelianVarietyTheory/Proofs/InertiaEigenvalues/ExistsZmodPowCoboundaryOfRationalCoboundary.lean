@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
-import Formalism.GaloisCohomology.Statement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
+public import Formalism.GaloisCohomology.Statement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.Published GlobalTheory.Published.PoitouTate
 
@@ -26,7 +30,7 @@ theorem exists_addHom_zmod_pow_extend (O : Type) [CommRing O] (l n : ℕ) [Fact 
       map_zero' := by simp
       map_add' := by
         intro a b
-        rw [map_add, ZMod.val_add, hcong, mul_add, Nat.cast_add] }
+        rw [map_add (f := _), ZMod.val_add, hcong, mul_add, Nat.cast_add] }
 
   obtain ⟨h, hh⟩ := (Module.Baer.of_divisible UnitAddCircle).extension_property_addMonoidHom
     (AddMonoidHom.mulLeft ((l : O) ^ n)) hinj ((ZMod.toAddCircle).comp g)
@@ -58,7 +62,7 @@ theorem exists_addHom_zmod_pow_extend (O : Type) [CommRing O] (l n : ℕ) [Fact 
   have hAadd : ∀ a b, A (a + b) = A a + A b := by
     intro a b
     apply ZMod.toAddCircle_injective (l ^ (n + 1))
-    rw [map_add, hA, hA, hA, map_add]
+    rw [map_add (f := _), hA, hA, hA, map_add (f := _)]
   refine ⟨⟨⟨A, ?_⟩, hAadd⟩, ?_⟩
   · apply ZMod.toAddCircle_injective (l ^ (n + 1))
     rw [hA, map_zero, map_zero]
@@ -83,9 +87,9 @@ theorem addHom_zmod_pow_algebraMap_mul (O : Type) [CommRing O] (l m : ℕ) [Fact
     rw [← Nat.cast_pow, ← nsmul_eq_mul, map_nsmul, nsmul_eq_mul, ZMod.natCast_self, zero_mul]
   have hsplit : algebraMap ℤ_[l] O u * o
       = v • o + (l : O) ^ m * (algebraMap ℤ_[l] O w * o) := by
-    rw [hu, map_add, map_mul, map_pow, map_natCast, map_natCast, nsmul_eq_mul]
+    rw [hu, map_add (f := _), map_mul, map_pow, map_natCast, map_natCast, nsmul_eq_mul]
     ring
-  rw [hsplit, map_add, hkill, add_zero, map_nsmul, nsmul_eq_mul, hv, ZMod.natCast_zmod_val]
+  rw [hsplit, map_add (f := _), hkill, add_zero, map_nsmul, nsmul_eq_mul, hv, ZMod.natCast_zmod_val]
 
 theorem exists_zmod_pow_coboundary_of_rational_coboundary :
     ∀ (Γ : Type) [Group Γ] [TopologicalSpace Γ] [CompactSpace Γ] (l : ℕ) [Fact l.Prime] (ε : Γ → ℤ_[l]) (O L : Type) [CommRing O] [Algebra ℤ_[l] O] [Field L] [TopologicalSpace L] [IsTopologicalRing L] (ι : O →+* L), Function.Injective ι → IsOpen (Set.range ι) → (l : L) ≠ 0 → (∀ x : L, ∃ n : ℕ, (l : L) ^ n * x ∈ Set.range ι) → ∀ (β : O →+ ZMod (l ^ 1)) (z : Γ → Γ → O) (f : Γ → L), Continuous f → (∀ g h, ι (z g h) = ι (algebraMap ℤ_[l] O (ε g)) * f h - f (g * h) + f g) → ∃ (n : ℕ) (a : Γ → ZMod (l ^ (n + 1))), Continuous a ∧ ∀ g h, PadicInt.toZModPow (n + 1) (ε g) * a h - a (g * h) + a g = ((l ^ n * (β (z g h)).val : ℕ) : ZMod (l ^ (n + 1))) := by
@@ -115,7 +119,7 @@ theorem exists_zmod_pow_coboundary_of_rational_coboundary :
       = algebraMap ℤ_[l] O (ε g) * F h - F (g * h) + F g := by
     intro g h
     apply hι
-    rw [map_mul, map_pow, map_natCast, hz, map_add, map_sub, map_mul, hF, hF, hF]
+    rw [map_mul, map_pow, map_natCast, hz, map_add (f := _), map_sub, map_mul, hF, hF, hF]
     ring
   have hkill : ∀ x : O, A ((l : O) ^ (N + 1) * x) = 0 := by
     intro x
@@ -132,12 +136,12 @@ theorem exists_zmod_pow_coboundary_of_rational_coboundary :
     obtain ⟨o, ho⟩ := hg
     have hFg : F g = F g₁ + (l : O) ^ (N + 1) * o := by
       apply hι
-      rw [map_add, map_mul, map_pow, map_natCast, ho, mul_inv_cancel_left₀ (hlN _), hF, hF]
+      rw [map_add (f := _), map_mul, map_pow, map_natCast, ho, mul_inv_cancel_left₀ (hlN _), hF, hF]
       ring
     show A (F g) = A (F g₁)
-    rw [hFg, map_add, hkill, add_zero]
+    rw [hFg, map_add (f := _), hkill, add_zero]
   · intro g h
-    rw [← addHom_zmod_pow_algebraMap_mul O l (N + 1) A (ε g) (F h), ← map_sub, ← map_add,
+    rw [← addHom_zmod_pow_algebraMap_mul O l (N + 1) A (ε g) (F h), ← map_sub, ← map_add (f := _),
       ← hrel, hA]
 
 end GlobalTheory

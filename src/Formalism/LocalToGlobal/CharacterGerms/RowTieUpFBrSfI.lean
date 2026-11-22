@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTieUpFBrSf
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieUpFBrSf
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -85,7 +89,8 @@ theorem eig_atS {Y : FBChart C V OE dd} (p : SelfData Y d I0) (hinj : Function.I
     refine ⟨fun k => lift (b (e k)) (hbint (e k)), ?_, ?_⟩
     · funext j
       apply hinj
-      simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, hlift, hu]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, hlift, hu]
       rw [← hsum (fun c => b c * p.e c j) (fun c hc => by rw [hbsupp c hc, zero_mul]), ← hvb', hvC]
     · intro c' hc'
       funext k
@@ -94,7 +99,8 @@ theorem eig_atS {Y : FBChart C V OE dd} (p : SelfData Y d I0) (hinj : Function.I
       have h2 : ∀ j, vC j = ∑ m, algebraMap R C (c' m) * p.e (e m) j := by
         intro j
         rw [hvC, ← hc']
-        simp [Finset.sum_apply, map_sum, hu]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp [Finset.sum_apply, map_sum, hu]
       simp_rw [h2, Finset.sum_mul]
       rw [Finset.sum_comm]
       simp_rw [_root_.mul_assoc, ← Finset.mul_sum, hw2]
@@ -248,8 +254,8 @@ open Formalism.L2.Pj NumberField
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
 variable (Xo : Moduli Dw l) (c : Coeff l) [StarRing (𝓞 E)]
 
-variable {Xo c} in
 
+variable {Xo c} in
 theorem upCharS_at_chartL {T : CDVR} {io : c.F →+* T.Fr} {y : IntFr Xo c T io} {C3 : IntChart T io y}
     {C : Type} [Field C] [CharZero C] {V : VF C} {ie : T.Fr →+* C} (hPlace : Pl.PlaceCriterionOfIdempotent)
     (hL : UpFLaw V.l T.V (𝓞 E) (chD C3.ch) C3.FT C3.actT)
@@ -258,36 +264,28 @@ theorem upCharS_at_chartL {T : CDVR} {io : c.F →+* T.Fr} {y : IntFr Xo c T io}
     {Orb : Type} {d : ℕ} [NeZero d] {lab : LabS E C Orb d} (ha : LabSArith V io ie lab) (hg : LabSGeo C3 ie Y lab)
     (hr : lab.RankOK Dw) (o : Orb) (Hc : ∀ g, (Y.rawSelf (selfOfLab ha hg o)).CartHyp V g) :
     UPCharSelfSt Y (selfOfLab ha hg o) Hc := by
-  obtain ⟨h1, h2, h3, h4⟩ := chart_ties hie hY
-  exact upCharS_of_upFLaw_RR hPlace Y (selfOfLab ha hg o) (rankHyp_ofLabS ha hg hr o) Hc T.V C3.FT C3.actT hL
-    (ie.comp (algebraMap T.V T.Fr)) h1 h2 h3 h4 hd
+  have h := chart_ties hie hY
+  have hrank : (Y.rawSelf (selfOfLab ha hg o)).RankHyp := by
+    refine { big_compl := (hr o).1, rk_big := ?_, rk_small := ?_ }
+    · refine Fin.forall_fin_two.mpr ⟨?_, ?_⟩
+      · intro a hb
+        simp only [FBChart.rawSelf, selfOfLab]
+        convert (card_sigma_fst (fun b => Dw.mult (lab.tau o b)) a).trans ((hr o).2.1 a hb) using 2
+        exact Finset.filter_congr (fun _ _ => Iff.rfl)
+      · intro a hb
+        simp only [FBChart.rawSelf, selfOfLab, ite_eq_right (by decide : (1 : Fin 2) ≠ 0)]
+        exact (card_sigma_shift (fun b => Dw.mult (lab.tau o b)) lab.hd a).trans ((hr o).2.2.2.1 a hb)
+    · refine Fin.forall_fin_two.mpr ⟨?_, ?_⟩
+      · intro a hb
+        simp only [FBChart.rawSelf, selfOfLab]
+        convert (card_sigma_fst (fun b => Dw.mult (lab.tau o b)) a).trans ((hr o).2.2.1 a hb) using 2
+        exact Finset.filter_congr (fun _ _ => Iff.rfl)
+      · intro a hb
+        simp only [FBChart.rawSelf, selfOfLab, ite_eq_right (by decide : (1 : Fin 2) ≠ 0)]
+        exact (card_sigma_shift (fun b => Dw.mult (lab.tau o b)) lab.hd a).trans ((hr o).2.2.2.2 a hb)
+  exact upCharS_of_upFLaw_RR hPlace Y (selfOfLab ha hg o) hrank Hc T.V C3.FT C3.actT hL
+    (ie.comp (algebraMap T.V T.Fr)) h.1 h.2.1 h.2.2.1 h.2.2.2 hd
 
-variable {Xo c} in
-
-theorem upCharS_at_chart {T : CDVR} {io : c.F →+* T.Fr} {y : IntFr Xo c T io} {C3 : IntChart T io y}
-    {C : Type} [Field C] [CharZero C] {V : VF C} {ie : T.Fr →+* C} (hUp : UpFSt V.l) (hPlace : Pl.PlaceCriterionOfIdempotent)
-    (hGeoJ : GeoJ T.V C3.I.G.G (𝓞 E) (fun a => C3.I.G.act.act a) (chD C3.ch) C3.FT C3.actT)
-    (hie : EmbOK T V ie) (hd : ¬ ((V.l : ℤ) ∣ Algebra.discr ℤ (Module.Free.chooseBasis ℤ (𝓞 E))))
-    {k : ℕ} {Y : FBChart C V (𝓞 E) (chD C3.ch)} (hY : IsBC C3 ie k Y)
-    {Orb : Type} {d : ℕ} [NeZero d] {lab : LabS E C Orb d} (ha : LabSArith V io ie lab) (hg : LabSGeo C3 ie Y lab)
-    (hr : lab.RankOK Dw) (o : Orb) (Hc : ∀ g, (Y.rawSelf (selfOfLab ha hg o)).CartHyp V g) :
-    UPCharSelfSt Y (selfOfLab ha hg o) Hc :=
-  upCharS_at_chartL hPlace (upFLaw_at_chart hUp Y.l_odd hGeoJ hie hd) hie hd hY ha hg hr o Hc
-
-def CharacterHypothesisSelfUnramified : Prop :=
-  (∀ a : 𝓞 E, star a = H.bar a) →
-  ∀ (T : CDVR) (io : c.F →+* T.Fr) (y : IntFr Xo c T io) (C3 : IntChart T io y)
-    (C : Type) [Field C] [CharZero C] (V : VF C) (ie : T.Fr →+* C), EmbOK T V ie →
-    ¬ ((V.l : ℤ) ∣ Algebra.discr ℤ (Module.Free.chooseBasis ℤ (𝓞 E))) →
-    ∀ (k : ℕ) (Y : FBChart C V (𝓞 E) (chD C3.ch)), IsBC C3 ie k Y →
-    ∀ (Orb : Type) (d : ℕ) [NeZero d] (lab : LabS E C Orb d) (ha : LabSArith V io ie lab) (hg : LabSGeo C3 ie Y lab),
-    lab.RankOK Dw → ∀ o (Hc : ∀ g, (Y.rawSelf (selfOfLab ha hg o)).CartHyp V g), RawChart.CHSt Hc
-
-theorem chart_hypothesis_self_unramified_of_forms (hUp : ∀ (p : ℕ) [Fact p.Prime], UpFSt p) (hPlace : Pl.PlaceCriterionOfIdempotent) (hGeo : GeoJA3St Xo c) :
-    CharacterHypothesisSelfUnramified Xo c :=
-  fun hstar T io y C3 _ _ _ V _ hie hd _ Y hY _ _ _ _ ha hg hr o Hc =>
-    chStSelf_of_upChar Y (selfOfLab ha hg o) (rankHyp_ofLabS ha hg hr o) Hc
-      (upCharS_at_chart (hUp V.l) hPlace (hGeo hstar T io y C3) hie hd hY ha hg hr o Hc)
 
 end Chart
 

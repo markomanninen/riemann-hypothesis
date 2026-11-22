@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightedSectionExponentShift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightedSectionExponentShift
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory Formalism.L2.Pj Formalism.BasicNotions
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -212,11 +217,7 @@ theorem exists_isHomogeneous_secZ_genFix : ∀ (E : Type) [Field E] [NumberField
       have p₁ : (∏ b, ∏ i, T b i i ^ a b i) = 2 ^ (∑ b, ∑ i, a b i) := by
         simp only [T, Matrix.diagonal_apply_eq, Finset.prod_pow_eq_pow_sum]
       have p₂ : evalFr G (fun b' => X b' * T b') = MvPolynomial.eval (fun v => 2 * x v) G := by
-        unfold evalFr
-        congr 2
-        funext v
-        simp only [T, Matrix.mul_diagonal, X, Matrix.of_apply]
-        exact mul_comm _ _
+        simp [evalFr, X, T, Matrix.mul_diagonal, mul_comm]
       have p₃ : (∏ b, (X b * T b).det ^ k b) = (∏ b, (X b).det ^ k b) * ∏ b, ∏ i, T b i i ^ k b := by
         rw [← Finset.prod_mul_distrib]
         refine Finset.prod_congr rfl fun b _ => ?_

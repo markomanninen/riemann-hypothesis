@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.CpRegPhRegOfNonneg
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PBoundedGlue
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.CpRegPhRegOfNonneg
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PBoundedGlue
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

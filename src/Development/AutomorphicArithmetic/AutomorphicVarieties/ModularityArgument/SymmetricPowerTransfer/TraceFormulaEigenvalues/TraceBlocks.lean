@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.IsGenEig
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.IsGenEig
+
+@[expose] public section
 
 open MulAction
 
@@ -205,9 +209,11 @@ theorem trace_blocks {Q : Type} [Fintype Q] [FiniteDimensional ℂ V] (E : Q →
       Function.eval, LinearMap.coe_single, Pi.single_apply]
     rw [Finset.sum_comm]
     simp
-  rw [hL, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hL, map_sum]
   refine Finset.sum_congr rfl fun o' _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   have hterm : ∀ o, LinearMap.trace ℂ (Q → V)
       (LinearMap.single ℂ (fun _ : Q => V) o' ∘ₗ (E o' o ∘ₗ LinearMap.proj o)) =
       if o = o' then LinearMap.trace ℂ V (E o' o) else 0 := by

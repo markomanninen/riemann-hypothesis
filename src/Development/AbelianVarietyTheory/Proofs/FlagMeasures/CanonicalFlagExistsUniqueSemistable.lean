@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CanonicalLatticeFiltrationSizePropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NearTrivialPointwise
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CanonicalLatticeFiltrationSizePropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NearTrivialPointwise
+
+@[expose] public section
 
 open GlobalTheory.Count Formalism.MainNotions.S Formalism.HN Formalism.REAL Matrix NumberField MeasureTheory Finset
 
@@ -12,12 +16,12 @@ namespace GlobalTheory.PointFlag
 
 section General
 
-variable {K V ι : Type} [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K] [AddCommGroup V] [Module K V]
+variable {K V ι : Type} [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] [AddCommGroup V] [Module K V]
   [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [Fintype ι] [DecidableEq ι] (b : Module.Basis ι K V)
   (X : InfinitePlace K → Matrix ι ι ℂ)
 
-omit [IsTotallyComplex K] in
 
+omit [_root_.NumberField.IsTotallyComplex K] in
 theorem isSat_of_le {L A S : Submodule (𝓞 K) V} (hS : IsSat (Formalism.HermitianLatticesTheory.realize b X) L S) (h : S ≤ A)
     (hA : A ≤ L) : IsSat (Formalism.HermitianLatticesTheory.realize b X) A S := by
   have mono : ∀ {A B : Submodule (𝓞 K) V}, A ≤ B →
@@ -26,8 +30,8 @@ theorem isSat_of_le {L A S : Submodule (𝓞 K) V} (hS : IsSat (Formalism.Hermit
     exact ⟨z, hAB hz, rfl⟩
   exact ⟨h, mono h, fun y hy hy' => hS.2.2 y (mono hA hy) hy'⟩
 
-omit [IsTotallyComplex K] in
 
+omit [_root_.NumberField.IsTotallyComplex K] in
 theorem rk_lt (hX : ∀ v, IsUnit (X v).det) {A S : Submodule (𝓞 K) V} (hA : A.FG)
     (hS : IsSat (Formalism.HermitianLatticesTheory.realize b X) A S) (hne : S ≠ A) :
     rk (Formalism.HermitianLatticesTheory.realize b X) S < rk (Formalism.HermitianLatticesTheory.realize b X) A := by
@@ -35,14 +39,14 @@ theorem rk_lt (hX : ∀ v, IsUnit (X v).det) {A S : Submodule (𝓞 K) V} (hA : 
   refine lt_of_le_of_ne (hSB.2.2.2.2.2.2.2 S hS).2.1 (fun h => hne ?_)
   exact (hSB.2.2.1 S A hS hS.1 le_rfl h.symm).symm
 
-omit [IsTotallyComplex K] in
+omit [_root_.NumberField.IsTotallyComplex K] in
 theorem rkK_lt (hX : ∀ v, IsUnit (X v).det) {A S : Submodule (𝓞 K) V} (hA : A.FG)
     (hS : IsSat (Formalism.HermitianLatticesTheory.realize b X) A S) (hne : S ≠ A) : rkK S < rkK A := by
   have h := rk_lt b X hX hA hS hne
   rw [(plLat K V ι b X hX A hA).2.1, (plLat K V ι b X hX S (hA.of_le hS.1)).2.1] at h
   exact lt_of_mul_lt_mul_left h (Nat.zero_le _)
 
-omit [IsTotallyComplex K] in
+omit [_root_.NumberField.IsTotallyComplex K] in
 theorem isSat_bot (hX : ∀ v, IsUnit (X v).det) {A : Submodule (𝓞 K) V} (hA : A.FG) :
     IsSat (Formalism.HermitianLatticesTheory.realize b X) A (⊥ : Submodule (𝓞 K) V) :=
   (satBasic (𝓞 K) V _ (Formalism.HermitianLatticesTheory.realize b X) A (plLat K V ι b X hX A hA).1).2.2.2.2.2.1

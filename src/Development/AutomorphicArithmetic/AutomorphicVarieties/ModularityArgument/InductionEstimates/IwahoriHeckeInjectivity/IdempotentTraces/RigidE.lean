@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.HeckeInj
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExSummand
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.NormIff
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.IsoEq
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SSatIff
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SInfIff
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PStringStepB
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.JacquetShalikaRigidity
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.HeckeInj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExCusp
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ExSummand
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.NormIff
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.IsoEq
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SSatIff
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.SInfIff
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PStringStepB
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.JacquetShalikaRigidity
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -17,8 +21,8 @@ open scoped ComplexConjugate Classical
 
 open UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E
 
-private theorem transfer {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a b : ℕ}
-    {μ : Measure (normOneGL E a)} [μ.IsHaarMeasure] {μ' : Measure (normOneGL E b)} [μ'.IsHaarMeasure]
+private theorem transfer {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a b : ℕ}
+    {μ : Measure (normOneGL (K := E) (n := a))} [μ.IsHaarMeasure] {μ' : Measure (normOneGL (K := E) (n := b))} [μ'.IsHaarMeasure]
     {π : CuspSub E a} {π' : CuspSub E b} {V : Submodule ℂ (LL μ)} {V' : Submodule ℂ (LL μ')}
     (h : Dp.Carries μ π V) (h' : Dp.Carries μ' π' V')
     (e : (⟨a, CG.mk π⟩ : Σ c, CG E c) = ⟨b, CG.mk π'⟩) :
@@ -29,10 +33,10 @@ private theorem transfer {E : Type} [Field E] [NumberField E] [IsTotallyComplex 
   · exact (Dp.sInfIff E a μ π V h τ _).2 ((Dp.sInfIff E a μ' π V' h' τ _).1 (hA.1 τ))
   · exact (Dp.sSatIff E a μ π V h w _).2 ((Dp.sSatIff E a μ' π V' h' w _).1 (hA.2 w hw))
 
-private theorem core {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {ι κ : Type} [Fintype ι] [Fintype κ]
+private theorem core {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {ι κ : Type} [Fintype ι] [Fintype κ]
     (d : ι → ℕ) (d' : κ → ℕ) (hd : ∀ i, 0 < d i) (hd' : ∀ j, 0 < d' j)
-    (μ : ∀ i, Measure (normOneGL E (d i))) [∀ i, (μ i).IsHaarMeasure]
-    (μ' : ∀ j, Measure (normOneGL E (d' j))) [∀ j, (μ' j).IsHaarMeasure]
+    (μ : ∀ i, Measure (normOneGL (K := E) (n := (d i)))) [∀ i, (μ i).IsHaarMeasure]
+    (μ' : ∀ j, Measure (normOneGL (K := E) (n := (d' j)))) [∀ j, (μ' j).IsHaarMeasure]
     (V : ∀ i, Submodule ℂ (LL (μ i))) (V' : ∀ j, Submodule ℂ (LL (μ' j)))
     (hV : ∀ i, IsSummand (μ i) (V i)) (hV' : ∀ j, IsSummand (μ' j) (V' j)) (S : Set (Pl E)) (hS : S.Finite)
     (lam : ι → ℂ) (B : ι → Pl E → Multiset ℂ) (B' : κ → Pl E → Multiset ℂ)

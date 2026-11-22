@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.TraceDefinitePairsEqAutomorphicTrace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteClassesFixedGammaIrr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DpairEigenRootNormSq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.TraceDefinitePairsEqAutomorphicTrace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteClassesFixedGammaIrr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DpairEigenRootNormSq
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount GlobalTheory.LKCx
 open scoped TensorProduct Classical
 
@@ -13,8 +18,10 @@ theorem integral_of_term_ne_zero : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p) 
     (r : ℕ) (K : Subgroup (Gr G r)) (φ : Gr G r → ℂ), 0 < r →
     IsTest (MonoidHom.id _) L.K.toSubgroup L.K.toSubgroup f → IsTest (sigG G r) (KHT p G.m G.n r G.Fw) K φ →
     ∃ N : ℕ, 0 < N ∧ ∀ P : DPair G, Irreducible P.pol → P.term L.K.toSubgroup f r K φ ≠ 0 →
-      IsIntegral ℤ ((N : ℤ) • (P.γ : G.C)) ∧ IsIntegral ℤ ((N : ℤ) • ((P.γ⁻¹ : G.Cˣ) : G.C)) := by
+      IsIntegral ℤ ((N : ℤ) • (P.γ : G.C)) ∧ IsIntegral ℤ ((N : ℤ) • ((P.γ⁻¹ : G.Cˣ) : G.C)) := open scoped Pointwise in by
+  classical
   intro p _ G L f r K φ hr hf hφ
+  letI : Inv (Set G.GAf) := Set.inv
   obtain ⟨Ω, hΩc, hΩ⟩ := GlobalTheory.T.twistedHeckeTestFunction_support_compact p G L f hf
   obtain ⟨D, hD, hDp⟩ := GlobalTheory.T.compact_conj_charpoly_bounded_denominators_awayP p G (Ω ∪ Ω⁻¹) (hΩc.union hΩc.inv)
   obtain ⟨k, hk⟩ := GlobalTheory.T.twisted_orbit_norm_bounds p G r K φ hr hφ
@@ -48,10 +55,11 @@ theorem integral_of_term_ne_zero : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p) 
   swap
   · exact absurd rfl hP
   rw [DPair.termAt, pointSum] at hP
-  obtain ⟨q, hq⟩ : ∃ q, _ ≠ (0 : ℂ) := by
+  have exists_nonzero {α : Type} (F : α → ℂ) (hF : finsum F ≠ 0) : ∃ q, F q ≠ 0 := by
     by_contra hc
     push_neg at hc
-    exact hP (by rw [finsum_congr hc]; exact finsum_zero)
+    exact hF (finsum_eq_zero_of_forall_eq_zero hc)
+  obtain ⟨q, hq⟩ := exists_nonzero _ hP
   have hq2 := (mul_ne_zero_iff.1 hq).2
   have hfq := (mul_ne_zero_iff.1 hq2).1
   have hφq := (mul_ne_zero_iff.1 hq2).2
@@ -251,7 +259,6 @@ theorem finite_pol_int (G : HTGroup p) (N : ℕ) (hN : 0 < N) :
       have := congrArg (starRingEnd ℂ) hr
       rw [map_zero, Polynomial.hom_eval₂] at this
       convert this using 2
-      exact RingHom.ext fun x => rfl
     obtain ⟨h1, h2⟩ := hkey _ _ hr'
     refine ⟨by simpa using h1, ?_⟩
     have := h2.map (starRingEnd ℂ).toIntAlgHom

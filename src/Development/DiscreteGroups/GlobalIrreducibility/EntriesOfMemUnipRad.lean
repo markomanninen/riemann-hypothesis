@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.GlobalIrreducibility.GoodColUInv
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.GoodColUInv
+
+@[expose] public section
 
 noncomputable section
 

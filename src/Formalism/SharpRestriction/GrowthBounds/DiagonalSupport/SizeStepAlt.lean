@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.LeCubeMul
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.LeCubeMul
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IsCplAtSelf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplMap
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IsCplAtSelf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplMap
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.AlgebraTools
 
@@ -67,12 +71,12 @@ private theorem level_map {R : Type} [CommRing R] {p : Ideal R} {B : Type} [Comm
     · have hid : algebraMap R B (S x * S y) * (x + y) - algebraMap R B (S y * A x + S x * A y) =
           algebraMap R B (S y) * (algebraMap R B (S x) * x - algebraMap R B (A x)) +
           algebraMap R B (S x) * (algebraMap R B (S y) * y - algebraMap R B (A y)) := by
-        simp only [map_mul, map_add]
+        simp only [map_mul, map_add (f := _)]
         ring
       rw [hid]
       exact Ideal.add_mem _ (Ideal.mul_mem_left _ _ (hAS x)) (Ideal.mul_mem_left _ _ (hAS y))
     · show g (S y * A x + S x * A y) = g (S x * S y) * (F x + F y)
-      rw [map_add, map_mul, map_mul, map_mul, ← hF0 x, ← hF0 y]
+      rw [map_add (f := _), map_mul, map_mul, map_mul, ← hF0 x, ← hF0 y]
       ring
 
 theorem UpperTheory.V.AlgebraTools.IsCplAt.existsUnique_lift :

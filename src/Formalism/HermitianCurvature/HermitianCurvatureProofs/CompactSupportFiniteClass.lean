@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaConjOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DilationUnipotentWeylMeasure
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormDiagonalEntryDilationGeneratorLeOne
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaConjOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DilationUnipotentWeylMeasure
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormDiagonalEntryDilationGeneratorLeOne
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ContDiff
@@ -72,14 +76,16 @@ theorem phi_contDiffAt (F' : Mat k r → E) {U : Set (Mat k r)} (hU : IsOpen U) 
     intro bs q hq
     have hsh : ContDiff ℝ ∞ (fun p : ((Fin (j + 1) → Mat k r) × Mat k r) × Mat k r =>
         ((fun i : Fin j => p.1.1 i.succ), p.2)) :=
-      (contDiff_pi.2 fun (i : Fin j) => (contDiff_apply ℝ (Mat k r) i.succ).comp (contDiff_fst.comp contDiff_fst)).prodMk
+      (contDiff_pi.2 fun (i : Fin j) => by
+        simpa only [Function.comp_def] using
+          (contDiff_apply ℝ (fun _ : Fin (j + 1) => Mat k r) i.succ).comp (contDiff_fst.comp contDiff_fst)).prodMk
         contDiff_snd
     have h1 : ContDiffAt ℝ ∞ (Function.uncurry fun (p : (Fin (j + 1) → Mat k r) × Mat k r) (g : Mat k r) =>
         Phi F' j (fun i => bs i.succ) ((fun i => p.1 i.succ), g)) (q, q.2) :=
       (ih (fun i => bs i.succ) ((fun i => q.1 i.succ), q.2) hq).comp (q, q.2) hsh.contDiffAt
     have h2 := ContDiffAt.fderiv h1 contDiffAt_snd top_add_one_le
     have h3 : ContDiff ℝ ∞ (fun p : (Fin (j + 1) → Mat k r) × Mat k r => vf (bs 0) (p.1 0) p.2) :=
-      vf_contDiff (bs 0) ((contDiff_apply ℝ (Mat k r) 0).comp contDiff_fst) contDiff_snd
+      vf_contDiff (bs 0) ((contDiff_apply ℝ (fun _ : Fin (j + 1) => Mat k r) 0).comp contDiff_fst) contDiff_snd
     exact h2.clm_apply h3.contDiffAt
 
 end Formalism.FourierDecayAlt.P.JFxG
@@ -217,10 +223,5 @@ theorem compact_support_finite_class : Formalism.FourierDecayAlt.P.JFxG.CptInCC 
       (fun y hy => (hmemlr y hy).1) g hgC hg
     rw [h0, norm_zero, mul_zero]
     positivity
-
-theorem jf_radAdj_of_parts : Formalism.FourierDecayAlt.P.JFxG.Exhaust → Formalism.FourierDecayAlt.JF.JDom → Formalism.FourierDecayAlt.P.JFxG.JThetaAdjC →
-    Formalism.FourierDecayAlt.P.JFxG.BetaAdjC → Formalism.FourierDecayAlt.JF.RadAdj := by
-  intro hE hJ hA hB
-  exact radial_adjoint_of_parts hE (theta_conj_of_parts hJ compact_support_finite_class hA) hB
 
 end Formalism.FourierDecayAlt.P

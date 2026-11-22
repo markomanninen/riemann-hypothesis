@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.ExistsInvariantPreimageAverage
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExistsInvariantPreimageAverage
+
+@[expose] public section
 
 noncomputable section
 

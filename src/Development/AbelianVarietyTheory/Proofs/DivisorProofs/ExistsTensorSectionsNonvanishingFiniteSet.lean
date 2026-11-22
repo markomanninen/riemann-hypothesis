@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAmbOfIsArithVar
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsFiniteSubsetNonzeroLocus
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAmbOfIsArithVar
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsFiniteSubsetNonzeroLocus
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace MvPolynomial
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -21,7 +26,9 @@ theorem exists_tens_sec_finite_subset_nonzeroLocus : ∀ (k : Type) [CommRing k]
   have := hq.isNoetherian
   obtain ⟨N, j, hj, e⟩ := hq.isProjOver
   let A₀ : HermLB q := (ProjSpace.hermitianTwistingSheaf k N).pull j e
-  have hA : IsAmpleLB A₀.B := (isAmple_projective_O_one k N).pull_of_isClosedImmersion j
+  have hA : IsAmpleLB A₀.B := by
+    dsimp [A₀, HermLB.pull, ProjSpace.hermitianTwistingSheaf, HermLB.fs]
+    exact (isAmple_projective_O_one k N).pull_of_isClosedImmersion j
   obtain ⟨n, h₁, h₂⟩ := (tendsto_natCast_atTop_atTop.eventually
     ((hA.eventually_exists_finite_subset_nonzeroLocus M.isLB hS).and
       (hA.eventually_exists_finite_subset_nonzeroLocus (LB.isLB_triv Y) hS))).exists

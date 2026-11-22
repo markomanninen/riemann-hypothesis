@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.OrbitPlaces
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CapLeWidth
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.OrbitPlaces
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CapLeWidth
+
+@[expose] public section
+
 open Formalism.MainNotions Formalism.BasicNotions Formalism.MainNotions.G Classical
 
 namespace GlobalTheory.ShapeUniform
@@ -102,7 +107,7 @@ theorem nuRow_le_at (hx2 : 2 ≤ x) (hx1 : Fm.x1 < x) (i : Fm.Ix x) : ∀ u, ∀
   obtain ⟨a1, hw3⟩ := GlobalTheory.HCEntries.wj_bounds hS h2x j h1j hmj τ
   have hwe : DV.wSz (Fm.D x i) j τ = wj (Fm.D x i) j τ := by
     unfold DV.wSz wj
-    rw [dif_pos ⟨h1j, hmj⟩, dif_pos (by omega)]
+    rw [dite_eq_left ⟨h1j, hmj⟩, dite_eq_left (by omega)]
   have hj' := Finset.mem_Icc.1 hj
   obtain ⟨j', rfl⟩ : ∃ j', j = j' + 1 := ⟨j - 1, by omega⟩
   have hl' : l < (Fm.D x i).R.N j' := by simpa using hl
@@ -191,8 +196,8 @@ theorem two_w_at (hx1 : Fm.x1 < x) (i : Fm.Ix x) (hg : Big eps x) : ∀ (u : (Fm
   have hxp : 0 < L.sc.x := by linarith
   have hb : 0 < L.sc.b := Real.exp_pos _
   have hb' : 0 < L.sc.b' := div_pos (mul_pos hxp hb) (Real.exp_pos _)
-  have ha : aL L z.2 = L.aT ⟨z.2, hz.2⟩ := by unfold aL; rw [dif_pos hz.2]
-  have hbb : bL L z.2 = L.bT ⟨z.2, hz.2⟩ := by unfold bL; rw [dif_pos hz.2]
+  have ha : aL L z.2 = L.aT ⟨z.2, hz.2⟩ := by unfold aL; rw [dite_eq_left hz.2]
+  have hbb : bL L z.2 = L.bT ⟨z.2, hz.2⟩ := by unfold bL; rw [dite_eq_left hz.2]
   have a1 := (L.aT_win ⟨z.2, hz.2⟩).1
   have a2 := L.bT_ge ⟨z.2, hz.2⟩
   have a3 : 4 * L.sc.b ≤ L.sc.a := by
@@ -360,7 +365,7 @@ theorem gap_at (hx1 : Fm.x1 < x) (i : Fm.Ix x) (hg : Big eps x) : ∀ (u : (Fm.D
   have hN : D.R.k ≤ D.R.N j := by unfold Ranks.N; omega
   have hk' : (5 : ℝ) ≤ D.R.k := by exact_mod_cast hk
   have hb : 0 < L.sc.b := Real.exp_pos _
-  have ha : aL L t = L.aT ⟨t, ht⟩ := by unfold aL; rw [dif_pos ht]
+  have ha : aL L t = L.aT ⟨t, ht⟩ := by unfold aL; rw [dite_eq_left ht]
   have a1 := (L.aT_win ⟨t, ht⟩).2
   have a3 : 4 * L.sc.b ≤ L.sc.a := by
     unfold Scale.a

@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.SemilocalAlgebras.Finite
-import GroundTheory.GlobalFields.SemilocalAlgebras.Galois
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.SemilocalAlgebras.Finite
+public import GroundTheory.GlobalFields.SemilocalAlgebras.Galois
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ variable {L} (v : HeightOneSpectrum (𝓞 K))
 
 theorem splitsCompletely_iff_forall_finrank :
     SplitsCompletely L v ↔
-      ∀ w : PlacesOver L v, finrank (v.adicCompletion K) (w.1.adicCompletion L) = 1 := by
+      ∀ w : PlacesOver (L := L) v, finrank (v.adicCompletion K) (w.1.adicCompletion L) = 1 := by
   constructor
   · intro h w
     obtain ⟨h1, h2⟩ := h w.1 w.2
@@ -71,30 +75,61 @@ theorem splitsCompletely_iff_forall_finrank :
     rw [finrank_eq_ramificationIdx_mul_inertiaDeg L v w] at this
     exact mul_eq_one.mp this
 
+open scoped Valued in
 theorem splitsCompletely_iff_isFiniteSplit :
     SplitsCompletely L v ↔
       Algebra.IsFiniteSplit (v.adicCompletion K) (v.adicCompletion K ⊗[K] L) := by
   rw [splitsCompletely_iff_forall_finrank, ← isFiniteSplit_pi_iff]
-  exact ⟨fun h ↦ .of_algEquiv (tensorEquiv L v).symm, fun h ↦ .of_algEquiv (tensorEquiv L v)⟩
+  let C := (w : PlacesOver (L := L) v) → w.1.adicCompletion L
+  let f : v.adicCompletion K ⊗[K] L →ₐ[v.adicCompletion K] C :=
+    Algebra.TensorProduct.lift (Algebra.ofId _ _) (IsScalarTower.toAlgHom K L _)
+      (fun _ _ ↦ Commute.all _ _)
+  have hf : Function.Surjective f := by
+    have hclosed : IsClosed (LinearMap.range f.toLinearMap : Set C) :=
+      Submodule.isClosed_of_finiteDimensional _
+    have hdense : DenseRange (algebraMap L C) :=
+      denseRange_algebraMap_pi (fun w : PlacesOver (L := L) v ↦ w.1) Subtype.val_injective
+    have hdense' : Dense (Set.range f) := hdense.mono (by
+      rintro _ ⟨x, rfl⟩
+      exact ⟨1 ⊗ₜ x, by simp [f]⟩)
+    rw [LinearMap.coe_range] at hclosed
+    change IsClosed (Set.range f) at hclosed
+    rw [← Set.range_eq_univ, ← hclosed.closure_eq, hdense'.closure_eq]
+  have hdim : finrank (v.adicCompletion K) (v.adicCompletion K ⊗[K] L) =
+      finrank (v.adicCompletion K) C := by
+    dsimp [C]
+    rw [Module.finrank_baseChange, Module.finrank_pi_fintype]
+    calc
+      finrank K L =
+          ∑ w : PlacesOver (L := L) v,
+            w.1.asIdeal.ramificationIdx (𝓞 K) * w.1.asIdeal.inertiaDeg (𝓞 K) := by
+        have := v.isPrime
+        rw [IsFractionRing.finrank_eq (𝓞 K) K (𝓞 L) L,
+          ← Ideal.sum_ramification_inertia_eq_finrank v.asIdeal (𝓞 L)]
+        exact (Fintype.sum_equiv (placesOverEquiv (L := L) v) _ _ (fun _ ↦ rfl)).symm
+      _ = _ := Finset.sum_congr rfl fun w _ ↦
+        (finrank_eq_ramificationIdx_mul_inertiaDeg L v w.1).symm
+  have hi : Function.Injective f :=
+    (LinearMap.injective_iff_surjective_of_finrank_eq_finrank (f := f.toLinearMap) hdim).2 hf
+  have e := AlgEquiv.ofBijective f ⟨hi, hf⟩
+  exact ⟨fun h ↦ .of_algEquiv e.symm, fun h ↦ .of_algEquiv e⟩
 
 variable (L) in
+theorem nonempty_placesOver : Nonempty (PlacesOver (L := L) v) := by
+  have := v.isPrime
+  exact (placesOverEquiv (L := L) v).nonempty
 
-theorem nonempty_placesOver : Nonempty (PlacesOver L v) := by
-  by_contra h
-  rw [not_nonempty_iff] at h
-  have := sum_finrank_eq L v
-  rw [Finset.univ_eq_empty, Finset.sum_empty] at this
-  exact (Module.finrank_pos (R := K) (M := L)).ne this
-
-theorem finrank_eq_of_isGalois [IsGalois K L] (w w' : PlacesOver L v) :
+theorem finrank_eq_of_isGalois [IsGalois K L] (w w' : PlacesOver (L := L) v) :
     finrank (v.adicCompletion K) (w.1.adicCompletion L) =
       finrank (v.adicCompletion K) (w'.1.adicCompletion L) := by
-  obtain ⟨σ, hσ⟩ := MulAction.exists_smul_eq (L ≃ₐ[K] L) w w'
-  exact (galEquiv v σ w.1 w'.1 (congrArg Subtype.val hσ.symm)).toLinearEquiv.finrank_eq
+  obtain ⟨σ, hσ⟩ :=
+    Ideal.exists_smul_eq_of_isGaloisGroup v.asIdeal w.1.asIdeal w'.1.asIdeal (L ≃ₐ[K] L)
+  have hw : w'.1 = σ • w.1 := HeightOneSpectrum.ext hσ.symm
+  exact (galEquiv v σ w.1 w'.1 hw).toLinearEquiv.finrank_eq
 
 theorem splitsCompletely_iff_exists_finrank [IsGalois K L] :
     SplitsCompletely L v ↔
-      ∃ w : PlacesOver L v, finrank (v.adicCompletion K) (w.1.adicCompletion L) = 1 := by
+      ∃ w : PlacesOver (L := L) v, finrank (v.adicCompletion K) (w.1.adicCompletion L) = 1 := by
   rw [splitsCompletely_iff_forall_finrank]
   refine ⟨fun h ↦ ?_, fun ⟨w, hw⟩ w' ↦ (finrank_eq_of_isGalois v w w').symm.trans hw⟩
   obtain ⟨w⟩ := nonempty_placesOver L v

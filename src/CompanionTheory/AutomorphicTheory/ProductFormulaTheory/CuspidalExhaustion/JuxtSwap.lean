@@ -1,5 +1,9 @@
-import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.CuspidalExhaustion.JuxtDefs
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CuspidalTwistInjectiveImports
+module
+
+public import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.CuspidalExhaustion.JuxtDefs
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CuspidalTwistInjectiveImports
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,10 +13,10 @@ namespace CompanionTheory.Exh
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-theorem nu_nu_nat (x : IrrGL k) (a b : ℕ) : (x.nu (a : ℂ)).nu (b : ℂ) = x.nu ((a + b : ℕ) : ℂ) := by
+theorem nu_nu_nat (x : IrrGL (k := k)) (a b : ℕ) : (x.nu (a : ℂ)).nu (b : ℂ) = x.nu ((a + b : ℕ) : ℂ) := by
   rw [IrrGL.nu_nu, Nat.cast_add]
 
-theorem not_linked_single (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (ρ : IrrGL k) (hρ : ρ.IsCusp) (n j : ℕ)
+theorem not_linked_single (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (ρ : IrrGL (k := k)) (hρ : ρ.IsCusp) (n j : ℕ)
     (hj : j + 2 ≤ n) :
     ¬ (Segment.single (ρ.nu (n : ℂ)) (hρ.nu _)).Linked (Segment.single (ρ.nu (j : ℂ)) (hρ.nu _)) := by
   rintro ⟨⟨Γ, hΓ⟩, -, -⟩
@@ -40,7 +44,7 @@ theorem not_linked_single (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) 
     have := inj _ _ e1
     omega
 
-theorem mem_tail_decW (Δ : Segment k) (x : IrrGL k) (hx : x ∈ (decW Δ).tail) :
+theorem mem_tail_decW (Δ : Segment k) (x : IrrGL (k := k)) (hx : x ∈ (decW Δ).tail) :
     ∃ j : ℕ, j + 2 ≤ Δ.len ∧ x = Δ.first.nu (j : ℂ) := by
   obtain ⟨m, hm, rfl⟩ := List.getElem_of_mem hx
   have hm' : m + 1 < Δ.len := by
@@ -50,8 +54,8 @@ theorem mem_tail_decW (Δ : Segment k) (x : IrrGL k) (hx : x ∈ (decW Δ).tail)
   refine ⟨Δ.len - (m + 2), by omega, ?_⟩
   simp only [List.getElem_tail, decW, List.getElem_ofFn, Segment.term, Fin.val_rev]
 
-theorem move_past (hS : SwapP k) (σ ρ : IrrGL k) (hρ : ρ.IsCusp) :
-    ∀ (Q P : List (IrrGL k)), (∀ q ∈ Q, ∃ hq : q.IsCusp, ¬ (Segment.single ρ hρ).Linked (Segment.single q hq)) →
+theorem move_past (hS : SwapP k) (σ ρ : IrrGL (k := k)) (hρ : ρ.IsCusp) :
+    ∀ (Q P : List (IrrGL (k := k))), (∀ q ∈ Q, ∃ hq : q.IsCusp, ¬ (Segment.single ρ hρ).Linked (Segment.single q hq)) →
       EmbL σ (P ++ ρ :: Q) → EmbL σ (P ++ Q ++ [ρ]) := by
   intro Q
   induction Q with
@@ -64,8 +68,8 @@ theorem move_past (hS : SwapP k) (σ ρ : IrrGL k) (hρ : ρ.IsCusp) :
     have h4 := ih (P ++ [q]) (fun q' hq' => hQ q' (by simp [hq'])) (by simpa using h3)
     simpa using h4
 
-theorem emb_move_end (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hS : SwapP k) (σ : IrrGL k) (Δ : Segment k)
-    (P Q : List (IrrGL k)) (h1 : decW Δ = P ++ Q) (hP : P ≠ []) (he : EmbL σ (P ++ nxt Δ :: Q)) :
+theorem emb_move_end (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hS : SwapP k) (σ : IrrGL (k := k)) (Δ : Segment k)
+    (P Q : List (IrrGL (k := k))) (h1 : decW Δ = P ++ Q) (hP : P ≠ []) (he : EmbL σ (P ++ nxt Δ :: Q)) :
     EmbL σ (decW Δ ++ [nxt Δ]) := by
   obtain ⟨p, P', rfl⟩ := List.exists_cons_of_ne_nil hP
   rw [h1]

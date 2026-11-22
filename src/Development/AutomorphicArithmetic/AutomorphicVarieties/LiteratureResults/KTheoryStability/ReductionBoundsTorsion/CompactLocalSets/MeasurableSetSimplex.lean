@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.CompactLocalSets.OverlapG
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.LowbdSmul
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.CompactLocalSets.OverlapG
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.LowbdSmul
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,7 +90,8 @@ theorem intP_inv {q : ℕ} (ω : Form (HS L N) q) (g : Gp L N) (hg : FInv ω g)
   simp only [intP, intS]
   refine setIntegral_congr_fun (measurableSet_simplex q) fun t ht => ?_
   have hv : ∀ j, ((g • y j : Pos L N) : HS L N) = actL g (y j).1 := fun j => rfl
-  simp only [hv, ← map_sub, ← map_smul, ← map_sum, ← map_add]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hv, ← map_sub, ← map_smul, ← map_sum, ← map_add (f := _)]
   have hp := simplex_pos (fun j => (y j).1) (fun j => (y j).2) t ht
   have := congrArg (fun f => f (fun j => (y j.succ).1 - (y 0).1)) (hg _ hp)
   simpa [Function.comp_def, map_sub] using this

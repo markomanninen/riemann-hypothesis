@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 
 private theorem eqv_of_isIso_comp {R : Type} [CommRing R] {E E' E'' : Spc} (a : E ⟶ E') [IsIso a]

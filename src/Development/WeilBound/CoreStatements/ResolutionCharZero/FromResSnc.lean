@@ -1,9 +1,13 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Statements
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsClopen
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsChartNormalization
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsOpenImmersion
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.StrictTransform
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Statements
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsClopen
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsChartNormalization
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsOpenImmersion
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.StrictTransform
+
+@[expose] public section
 
 noncomputable section
 
@@ -182,16 +186,16 @@ theorem isStrictNormalCrossings_radical_prod {W : Scheme.{0}} {k : Type} [Field 
   have hγ' : ∀ i, ∀ h : i < E.length,
       (γ i = none → restrictIdeal ((E[i]'h).comap (𝟙 W)) V' = ⊤) ∧
       (∀ j, γ i = some j →
-        restrictIdeal ((E[i]'h).comap (𝟙 W)) V' = (c.restrict hV'V).coordIdeal {j}) := by
+        restrictIdeal ((E[i]'h).comap (𝟙 W)) V' = (c.restrictCompat hV'V).coordIdeal {j}) := by
     intro i h
     rw [Scheme.IdealSheafData.comap_id]
     refine ⟨fun hg => restrictIdeal_eq_top_of_le _ hV'V ((hγ i h).1 hg), fun j hg => ?_⟩
     exact restrictIdeal_eq_restrict_coordIdeal_of_le hV'V c _ {j} ((hγ i h).2 j hg)
   obtain ⟨J₀, hJ₀mem, hJ₀⟩ :=
     exists_finset_comap_prod_ideal_eq_span_prod_coord (𝟙 W) ⟨V, hV⟩ hV' hV'U
-      (c.restrict hV'V) E γ (fun i h => (hγ' i h).1) (fun i h => (hγ' i h).2) hinjγ
+      (c.restrictCompat hV'V) E γ (fun i h => (hγ' i h).1) (fun i h => (hγ' i h).2) hinjγ
   have hJ₀prime : ∀ j ∈ J₀,
-      (c.restrict hV'V).coord j ∈ (hV'.primeIdealOf ⟨y, hyV'⟩).asIdeal := by
+      (c.restrictCompat hV'V).coord j ∈ (hV'.primeIdealOf ⟨y, hyV'⟩).asIdeal := by
     intro j hj
     obtain ⟨i, hi, hγi⟩ := hJ₀mem j hj
     rw [FunctorialResolution.EmbeddedResolution.EtaleChart.coord_restrict c hV'V j]
@@ -205,32 +209,32 @@ theorem isStrictNormalCrossings_radical_prod {W : Scheme.{0}} {k : Type} [Field 
       rw [h10]
       exact Submodule.zero_mem _
     · exact hs
-  have hcinj : Function.Injective (c.restrict hV'V).coord := by
+  have hcinj : Function.Injective (c.restrictCompat hV'V).coord := by
     have h := @etaleChartCoord_injective k _ n ↥(W.presheaf.obj (op V')) _
-      (c.restrict hV'V).algebra ((c.restrict hV'V).algebra_etale hV') hntr
+      (c.restrictCompat hV'V).algebra ((c.restrictCompat hV'V).algebra_etale hV') hntr
     intro a b hab
     refine h ?_
     simp only [etaleChartCoord_eq_coord]
     exact hab
   have hrad := @isRadical_span_singleton_prod_etaleChartCoord k _ n
-    ↥(W.presheaf.obj (op V')) _ (c.restrict hV'V).algebra
-    ((c.restrict hV'V).algebra_etale hV') J₀
+    ↥(W.presheaf.obj (op V')) _ (c.restrictCompat hV'V).algebra
+    ((c.restrictCompat hV'V).algebra_etale hV') J₀
   simp only [etaleChartCoord_eq_coord] at hrad
   obtain ⟨N, f, hfcoord, hfreg⟩ :=
-    exists_isRegularParameterSystem_with_coords_of_mem_prime hV' (c.restrict hV'V) y hyV'
+    exists_isRegularParameterSystem_with_coords_of_mem_prime hV' (c.restrictCompat hV'V) y hyV'
       J₀ hJ₀prime
   choose ι hι using hfcoord
   have hinj2 : ∀ a ∈ J₀.attach, ∀ b ∈ J₀.attach,
       (fun j : { x // x ∈ J₀ } => ι j.1 j.2) a = (fun j : { x // x ∈ J₀ } => ι j.1 j.2) b →
         a = b := by
     intro a _ b _ hab
-    have h1 : (c.restrict hV'V).coord a.1 = (c.restrict hV'V).coord b.1 := by
+    have h1 : (c.restrictCompat hV'V).coord a.1 = (c.restrictCompat hV'V).coord b.1 := by
       rw [← hι a.1 a.2, ← hι b.1 b.2]
       exact congrArg f hab
     exact Subtype.ext (hcinj h1)
   have hprodJ : (∏ i ∈ J₀.attach.image (fun j : { x // x ∈ J₀ } => ι j.1 j.2), f i)
-      = ∏ j ∈ J₀, (c.restrict hV'V).coord j := by
-    rw [Finset.prod_image hinj2, ← Finset.prod_attach J₀ (fun j => (c.restrict hV'V).coord j)]
+      = ∏ j ∈ J₀, (c.restrictCompat hV'V).coord j := by
+    rw [Finset.prod_image hinj2, ← Finset.prod_attach J₀ (fun j => (c.restrictCompat hV'V).coord j)]
     exact Finset.prod_congr rfl fun j _ => hι j.1 j.2
   refine ⟨isRegularLocalRing_stalk_of_smooth p y,
     ⟨V', hV'⟩, hyV', N, f, J₀.attach.image (fun j : { x // x ∈ J₀ } => ι j.1 j.2), hfreg, ?_⟩
@@ -272,7 +276,7 @@ theorem preimage_union_eq_strictTransform_union {X X₁ : Scheme.{0}} [IsLocally
   · rintro (hx | hx)
     · left
       rw [hcl] at hx
-      exact closure_minimal (fun y hy => hy.1) hD hx
+      exact closure_minimal (by exact fun y hy => hy.1) hD hx
     · exact Or.inr hx
 
 theorem support_exceptionalProduct_eq {k : Type} [Field k] {X : Scheme.{0}}
@@ -310,15 +314,19 @@ theorem support_exceptionalProduct_eq {k : Type} [Field k] {X : Scheme.{0}}
       simp only [Set.mem_union, Set.mem_iUnion, exists_prop]
       constructor
       · rintro (⟨D, hD, hx⟩ | hx)
-        · have := (preimage_union_eq_strictTransform_union (s.blowupMap n) (s.center n) D).subset
-            (Or.inl hx : x ∈ _ ∪ _)
+        · have : x ∈ ((strictTransform (s.blowupMap n) (s.center n) D).support : Set (s.obj (n + 1))) ∪
+              (s.blowupMap n) ⁻¹' (s.center n).support := by
+            apply (preimage_union_eq_strictTransform_union (s.blowupMap n) (s.center n) D).subset
+            exact Or.inl hx
           rcases this with h1 | h1
           · exact Or.inl ⟨_, ⟨D, hD, rfl⟩, h1⟩
           · exact Or.inr h1
         · exact Or.inr hx
       · rintro (⟨_, ⟨D, hD, rfl⟩, hx⟩ | hx)
-        · have := (preimage_union_eq_strictTransform_union (s.blowupMap n) (s.center n) D).superset
-            (Or.inl hx : x ∈ _ ∪ _)
+        · have : x ∈ (s.blowupMap n) ⁻¹' D.support ∪
+              (s.blowupMap n) ⁻¹' (s.center n).support := by
+            apply (preimage_union_eq_strictTransform_union (s.blowupMap n) (s.center n) D).superset
+            exact Or.inl hx
           rcases this with h1 | h1
           · exact Or.inl ⟨D, hD, h1⟩
           · exact Or.inr h1
@@ -410,15 +418,19 @@ theorem support_exceptionalProduct_eq_drop {k : Type} [Field k] {X : Scheme.{0}}
       simp only [Set.mem_union, Set.mem_iUnion, exists_prop]
       constructor
       · rintro (⟨D, hD, hx⟩ | hx)
-        · have := (preimage_union_eq_strictTransform_union (s.blowupMap n) (s.center n) D).subset
-            (Or.inl hx : x ∈ _ ∪ _)
+        · have : x ∈ ((strictTransform (s.blowupMap n) (s.center n) D).support : Set (s.obj (n + 1))) ∪
+              (s.blowupMap n) ⁻¹' (s.center n).support := by
+            apply (preimage_union_eq_strictTransform_union (s.blowupMap n) (s.center n) D).subset
+            exact Or.inl hx
           rcases this with h1 | h1
           · exact Or.inl ⟨_, ⟨D, hD, rfl⟩, h1⟩
           · exact Or.inr h1
         · exact Or.inr hx
       · rintro (⟨_, ⟨D, hD, rfl⟩, hx⟩ | hx)
-        · have := (preimage_union_eq_strictTransform_union (s.blowupMap n) (s.center n) D).superset
-            (Or.inl hx : x ∈ _ ∪ _)
+        · have : x ∈ (s.blowupMap n) ⁻¹' D.support ∪
+              (s.blowupMap n) ⁻¹' (s.center n).support := by
+            apply (preimage_union_eq_strictTransform_union (s.blowupMap n) (s.center n) D).superset
+            exact Or.inl hx
           rcases this with h1 | h1
           · exact Or.inl ⟨D, hD, h1⟩
           · exact Or.inr h1

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FullRk
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwasawaStdMaxParab
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FullRk
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwasawaStdMaxParab
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitFlip GlobalTheory.SplitWeil
 open scoped Matrix Topology
@@ -119,8 +123,8 @@ theorem exists_Y0_mul_parab (hnd : n ≤ d) {p : GL (Fin d) k}
   exact ⟨⟨_, _, key _ _ _ _ (mul_inv_cancel p) h1 h2, key _ _ _ _ (inv_mul_cancel p) h2 h1⟩, h1⟩
 
 section Psi
-open Classical in
 
+open Classical in
 def psi (f : GL (Fin d) k → ℂ) (Y : Matrix (Fin n) (Fin d) k) : ℂ :=
   if h : ∃ κ ∈ KO k (Fin d), Y = GlobalTheory.FullRankCoinv.Y0 k n d * κ.val then f h.choose else 0
 
@@ -140,7 +144,7 @@ theorem psi_Y0_mul (hf : f ∈ GlobalTheory.FullRankCoinv.indSp k n d ν) {κ : 
   simp
 
 theorem psi_eq_zero {Y : Matrix (Fin n) (Fin d) k} (h : ¬ ∃ κ ∈ KO k (Fin d), Y = Yo * κ.val) : psi f Y = 0 := by
-  rw [psi, dif_neg h]
+  rw [psi, dite_eq_right h]
 
 theorem integral_of_mul_Y0 (hnd : n ≤ d) {A : Matrix (Fin n) (Fin n) k} {M : Matrix (Fin d) (Fin d) k}
     (h : A * Yo = Yo * M) (hM : ∀ i j, M i j ∈ 𝒪[k]) : ∀ i j, A i j ∈ 𝒪[k] := by
@@ -245,9 +249,9 @@ theorem isLocallyConstant_psi (hnd : n ≤ d) (hf : f ∈ GlobalTheory.FullRankC
   by_cases hY : ∃ κ ∈ KO k (Fin d), Y = Yo * κ.val
   · obtain ⟨κ, hκ, rfl⟩ := hY
     obtain ⟨U, hU, hfU⟩ := hf.1
-    set V : Set (GL (Fin d) k) := {u | u ∈ KO k (Fin d) ∧ κ⁻¹ * u * κ ∈ U}
+    set V : Set (GL (Fin d) k) := (KO k (Fin d) : Set _) ∩ (fun u => κ⁻¹ * u * κ) ⁻¹' U
     have hV : V ∈ 𝓝 1 := by
-      refine Filter.inter_mem (isOpen_KO.mem_nhds (one_mem _)) ?_
+      refine Filter.inter_mem (isOpen_KO.mem_nhds (one_mem (KO k (Fin d)))) ?_
       have hc : Continuous fun u : GL (Fin d) k => κ⁻¹ * u * κ := (continuous_const.mul continuous_id).mul continuous_const
       have := hc.tendsto 1
       simp only [mul_one, inv_mul_cancel] at this

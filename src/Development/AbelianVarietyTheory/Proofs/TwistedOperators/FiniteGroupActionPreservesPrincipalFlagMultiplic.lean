@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
-import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
-import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IdemOfIsPrimeIdem
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IdemOfIsPrimeIdem
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,7 @@ theorem finiteGroupAction_preserves_principalFlagMultiplicity : ∀ {D : D7} {V 
       ext v h
       rw [hU v, MultilinearMap.smul_apply, Pi.smul_apply, smul_eq_mul]
       unfold actG0
-      rw [dif_pos hk]
+      rw [dite_eq_left hk]
       congr 1
       show T v (h * hk.choose) = ∑ γ ∈ ({hk.choose} : Finset (GA D V)), T v (h * γ)
       rw [Finset.sum_singleton]
@@ -89,7 +93,7 @@ theorem finiteGroupAction_preserves_principalFlagMultiplicity : ∀ {D : D7} {V 
       ext v h
       rw [hU v]
       unfold actG0
-      rw [dif_neg hk]
+      rw [dite_eq_right hk]
       rfl
     rw [hEq]
     exact GlobalTheory.MultMem.isMultMap_zero

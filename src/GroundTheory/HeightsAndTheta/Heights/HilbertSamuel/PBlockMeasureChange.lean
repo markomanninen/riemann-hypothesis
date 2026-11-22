@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockMeasureChange
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSupBoundBlock
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.SupBoundCountLattice
-import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.DetIneq
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockMeasureChange
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSupBoundBlock
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.SupBoundCountLattice
+public import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.DetIneq
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -89,8 +94,8 @@ theorem det_le {r : ℕ} {G G' : Matrix (Fin r) (Fin r) ℝ} (hG : G.IsHermitian
 
 end BlockMeasureChange
 
-open BlockMeasureChange in
 
+open BlockMeasureChange in
 theorem BlockMeasureChange.proof (hS : SupBoundBlock.Statement) : BlockMeasureChange.Statement := by
   intro D K _ _ ι _ Ω _ _ d d' hy hk hA
   obtain ⟨C, hC, hsup⟩ := sup_one_le hS d
@@ -119,10 +124,10 @@ theorem BlockMeasureChange.proof (hS : SupBoundBlock.Statement) : BlockMeasureCh
       rw [hy, hk]; exact hex
     have e1 : blockChi d n = -(1 / 2) *
         Real.log (blockGram d n (fun j => map (Int.castRingHom ℚ) (f j))).det := by
-      rw [blockChi, dif_pos hex, hbf]
+      rw [blockChi, dite_eq_left hex, hbf]
     have e2 : blockChi d' n = -(1 / 2) *
         Real.log (blockGram d' n (fun j => map (Int.castRingHom ℚ) (f j))).det := by
-      rw [blockChi, dif_pos hex', hsame _ _ hy hk hex', hbf]
+      rw [blockChi, dite_eq_left hex', hsame _ _ hy hk hex', hbf]
     set G := blockGram d n (fun j => map (Int.castRingHom ℚ) (f j))
     set G' := blockGram d' n (fun j => map (Int.castRingHom ℚ) (f j))
     have hnR : (1 : ℝ) ≤ n := by exact_mod_cast hn

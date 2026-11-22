@@ -1,7 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ZetaActRefl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomogeneityOfIsTauOfStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTauOfUpperHalfPlaneLatticeSmulSL2Z
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ZetaActRefl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomogeneityOfIsTauOfStatement
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorsTransport
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.TranslateProduct
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDefs
+
+@[expose] public section
 
 open scoped UpperHalfPlane MatrixGroups Matrix ModularForm ComplexConjugate
 open GlobalTheory.QFam GlobalTheory.WpFam
@@ -102,8 +108,8 @@ private lemma isTauOf_tauPair_denom_smul (γ : SL(2, ℤ)) (τ : ℍ) :
   · rintro ⟨u, v, rfl⟩
     exact ⟨_, _, (key u v).symm⟩
 
-open scoped UpperHalfPlane MatrixGroups Matrix ModularForm ComplexConjugate in
 
+open scoped UpperHalfPlane MatrixGroups Matrix ModularForm ComplexConjugate in
 theorem _root_.GlobalTheory.WpFam.isFam_wp_wpd : ∀ (N : ℕ) [NeZero N],
     _root_.GlobalTheory.QFam.IsFam (_root_.GlobalTheory.WpFam.vact N) 2
         (_root_.GlobalTheory.WpFam.wp N) ∧

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineBundleGlobalSectionsDimCongrPicardClass
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitMkOfFormallyUnramified
-import Development.AbelianVarietyTheory.Definitions.Divisors.SmoothOfRelativeDimensionPspace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineBundleGlobalSectionsDimCongrPicardClass
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitMkOfFormallyUnramified
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SmoothOfRelativeDimensionPspace
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,7 +20,7 @@ namespace GlobalTheory.Published
 def KawamataViehweg : Prop :=
   ∀ (k : Type) [Field k] [IsAlgClosed k] [CharZero k] (X : Scheme.{0}) [Algebra k Γ(X, ⊤)]
     [IsIntegral X] (D : ℕ) [SmoothOfRelativeDimension D (strHom k X)],
-    IsProjOver (strHom k X) →
+    IsProjOver (strHom k (X := X)) →
     ∀ (K : CanonLB (strHom k X) D) (N : LB X), IsNef k N → IsBig k N →
       ∀ q : ℕ, 0 < q → Subsingleton (coh (LB.toMod (tens K.bundle N)) q)
 
@@ -40,15 +44,5 @@ theorem KawamataViehweg.twist (h : KawamataViehweg) {k : Type} [Field k] [IsAlgC
   exact (cohOn.mapIso Γ(X, ⊤) ⊤ q (i ≪≫ Twist.unitTwistIso _)).toEquiv.subsingleton_congr.2
     (h.of_hom hp hX K h₁ h₂ hq)
 
-open GlobalTheory.ProjSpace in
-
-example (D : ℕ) : IsIntegral (PSpace ℂ D) ∧ IsProjOver (strHom ℂ (PSpace ℂ D)) ∧
-    IsNef ℂ (O1 ℂ D) ∧ IsBig ℂ (O1 ℂ D) ∧
-    ∃ _ : SmoothOfRelativeDimension D (strHom ℂ (PSpace ℂ D)),
-      Nonempty (CanonLB (strHom ℂ (PSpace ℂ D)) D) := by
-  rw [strHom_eq (algebraMap_top_eq ℂ D)]
-  have hs := Adelic.smoothOfRelativeDimension_pspace ℂ D
-  exact ⟨inferInstance, isProjOver_str ℂ D, isNef_twistingSheaf ℂ D, isBig_twistingSheaf ℂ D,
-    hs, CanonLB.nonempty⟩
 
 end GlobalTheory.Published

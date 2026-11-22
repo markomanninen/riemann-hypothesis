@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.TwistedSlicesSquareIntegrable
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.L2DecayOfCountEscape
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.GapAbsOf
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.TwistedSlicesSquareIntegrable
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.L2DecayOfCountEscape
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.GapAbsOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,18 +13,18 @@ open GlobalTheory.CuspRep GlobalTheory.UnitaryBC
 
 namespace PositivityTheory.Rg.Rs
 
-def Dict : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (N : ℕ),
+def Dict : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (N : ℕ),
   (∀ r t, aT E N r t = An.aR E N r t) ∧ (∀ t, splitCentre E N t = An.tor E fun _ => t) ∧ latticeGL E N = An.lat E N ∧
   ∀ (φ : Sm E N), IsAutForm φ → ∀ r, 0 < r → r < N → IsCT r φ.1 (An.ctn r φ.1) ∧
     ∀ F, IsCT r φ.1 F → ∃ c : ℂ, c ≠ 0 ∧ F = fun g => c * An.ctn r φ.1 g
 
-def NiceAut : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (N : ℕ) (φ : Sm E N), IsAutForm φ →
+def NiceAut : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (N : ℕ) (φ : Sm E N), IsAutForm φ →
   (∀ (t : ℝ) g, φ.1 (An.tor E (fun _ => t) * g) = φ.1 g) → An.Nice φ.1
 
-def InitBnd : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (N : ℕ) (φ : Sm E N), IsAutForm φ →
+def InitBnd : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (N : ℕ) (φ : Sm E N), IsAutForm φ →
   (∀ (t : ℝ) g, φ.1 (An.tor E (fun _ => t) * g) = φ.1 g) → ∃ M : ℝ, An.Bnd φ.1 fun _ => M
 
-def FinTr : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (N : ℕ) (φ : Sm E N), IsAutForm φ →
+def FinTr : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (N : ℕ) (φ : Sm E N), IsAutForm φ →
   ∀ r, 0 < r → r < N → ∀ F, IsCT r φ.1 F →
     FiniteDimensional ℂ (Submodule.span ℂ (Set.range fun t : ℝ => fun g => F (aT E N r t * g)))
 

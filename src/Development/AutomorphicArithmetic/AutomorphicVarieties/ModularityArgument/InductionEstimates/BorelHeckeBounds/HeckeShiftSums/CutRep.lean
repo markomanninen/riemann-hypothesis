@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.OmMeas
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.LocFin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.DenseCc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecFun
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.ConvolutionSpectra.CutLaws
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.ConvolutionSpectra.CutSpec
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.OmMeas
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.LocFin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.DenseCc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecFun
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.ConvolutionSpectra.CutLaws
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.ConvolutionSpectra.CutSpec
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -86,9 +90,14 @@ private theorem ae_down {K : Type} [Field K] [NumberField K] (μ : Measure (G1 K
     rw [lintegral_quotientMeasure]
     refine (lintegral_congr_ae (g := 0) (ae_restrict_of_ae ?_)).trans (by simp)
     filter_upwards [h] with y hy
-    exact indicator_of_notMem (fun hA => hA.2 (hy hA.1)) _
+    exact indicator_of_notMem (fun (hA : _ ∈ E ∩ {p | (w : RightCosetSpace (Gam K (2 + 2)) → ℂ) p ≠ 0}) => hA.2 (hy hA.1)) _
   rw [lintegral_indicator_one hm] at h0
-  exact ae_iff.2 (measure_mono_null (fun p hp => _root_.not_imp.1 hp) h0)
+  apply ae_iff.2
+  refine measure_mono_null (fun p hp => ?_) h0
+  have hpE : p ∈ E := by
+    by_contra hn
+    exact hp (fun hE => (hn hE).elim)
+  exact ⟨hpE, fun hz => hp (fun _ => hz)⟩
 
 private theorem first {K : Type} [Field K] [NumberField K] (μ : Measure (G1 K (2 + 2))) [μ.IsHaarMeasure]
     {μ₂ : Measure (G1 K 2)} {τ₁ τ₂ : Submodule ℂ (L2 μ₂)} {D : TypeDat K (2 + 2)} {d : ℕ} (A : Line μ τ₁ τ₂ D d)
@@ -135,7 +144,7 @@ private theorem first {K : Type} [Field K] [NumberField K] (μ : Measure (G1 K (
   have hin := closure_mono hsub ((denseCc d).2.2 T c hc)
   rw [hcl.closure_eq] at hin
   have hz : R (A.J c) = 0 := hin
-  filter_upwards [(quasiMeasurePreserving_mk (Gam K (2 + 2)) μ).ae ((hR _).1 hz)] with y hy hO
+  filter_upwards [MeasureTheory.QuasiMeasurePreserving.ae (quasiMeasurePreserving_mk (Gam K (2 + 2)) μ) ((hR _).1 hz)] with y hy hO
   exact hy ((hmk y).2 hO)
 
 private theorem th_chi {K : Type} [Field K] [NumberField K] (μ : Measure (G1 K (2 + 2))) [μ.IsHaarMeasure]
@@ -158,7 +167,8 @@ private theorem th_chi {K : Type} [Field K] [NumberField K] (μ : Measure (G1 K 
   generalize ((q.out : G1 K (2 + 2)) * y) = z
   have hs : A.sec (U (HH z)) z = ∑ i, U (HH z) i * A.sec (EuclideanSpace.single i (1 : ℂ)) z := by
     conv_lhs => rw [← eu_sum (U (HH z))]
-    rw [map_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_apply]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, Pi.smul_apply, smul_eq_mul]
   have ex : ((((2 + 2 : ℕ) : ℝ) / 2 * HP 2 2 z : ℝ) : ℂ) = 2 * (HH z : ℂ) := by
@@ -185,10 +195,11 @@ private theorem rep_chi {K : Type} [Field K] [NumberField K] (μ : Measure (G1 K
     rw [h1, Finset.sum_congr rfl fun i _ => h2 i]
     simp only [mul_smul, ← Finset.smul_sum, eu_sum]
   · have h2 := ae_all_iff.2 fun i => A.spec _ _ (u i) (hβ i) (hβc i) (hu i)
-    have h3 := (quasiMeasurePreserving_mk (Gam K (2 + 2)) μ).ae (sum_ae Finset.univ fun i => A.J (u i))
+    have h3 := MeasureTheory.QuasiMeasurePreserving.ae (quasiMeasurePreserving_mk (Gam K (2 + 2)) μ) (sum_ae Finset.univ fun i => A.J (u i))
     unfold Reps
     filter_upwards [h2, h3] with y a b
-    rw [map_sum, b, Finset.sum_congr rfl fun i _ => a i]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, b, Finset.sum_congr rfl fun i _ => a i]
     exact th_chi μ A T U χ h0 y
 
 private theorem th_lim {K : Type} [Field K] [NumberField K] (T : ℝ) (G : G1 K (2 + 2) → ℂ) (y : G1 K (2 + 2)) :
@@ -281,7 +292,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.cutRep :
   have hJ : Tendsto (fun n => A.J (w n)) atTop (𝓝 (A.J (cut (Eu d) (Ioi T) u))) :=
     (A.J.continuous.tendsto _).comp hlim
   obtain ⟨ns, hns, hae⟩ := (tendstoInMeasure_of_tendsto_Lp hJ).exists_seq_tendsto_ae
-  have h1 := (quasiMeasurePreserving_mk (Gam K (2 + 2)) μ).ae hae
+  have h1 := MeasureTheory.QuasiMeasurePreserving.ae (quasiMeasurePreserving_mk (Gam K (2 + 2)) μ) hae
   have h2 := ae_all_iff.2 hr
   unfold Reps
   filter_upwards [h1, h2] with y a b

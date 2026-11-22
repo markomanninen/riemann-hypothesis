@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.TauReduction.LatticeVectorsBoundedBelow
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.TauReduction.LatticeVectorsBoundedBelow
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -128,8 +132,8 @@ theorem exists_nat_mul_IntAf (a : E ⊗[F] Formalism.MainNotions.S.Af F) :
         (m₁ : E ⊗[F] Formalism.MainNotions.S.Af F) * ((m₂ : E ⊗[F] Formalism.MainNotions.S.Af F) * y) by push_cast; ring]
     exact add_mem (mul_mem (natCast_mem _ _) h₁) (mul_mem (natCast_mem _ _) h₂)
 
-variable (F E) in
 
+variable (F E) in
 def trT : E ⊗[F] Formalism.MainNotions.S.Af F →ₗ[F] Formalism.MainNotions.S.Af F :=
   TensorProduct.lift ((LinearMap.lsmul F (Formalism.MainNotions.S.Af F)).comp (Algebra.trace F E))
 
@@ -183,7 +187,7 @@ theorem trT_mem (z : E ⊗[F] Formalism.MainNotions.S.Af F) (hz : z ∈ Formalis
     rw [← hc]
     exact mul_mem (algebraMap_int_mem_intAd c) y.2
   | add x y hx hy =>
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     exact add_mem hx hy
 
 theorem mem_OE_of_inclE_mem (e : E) (he : Formalism.UG.inclE (F := F) (Formalism.MainNotions.S.Af F) e ∈ Formalism.MainNotions.S.IntAf F E) :
@@ -341,7 +345,7 @@ theorem Lf_mat {d₁ d₂ : ℕ}
     (fun i => sum_mem fun j _ => mul_mem (hM i j) (H₁ y hy j))
   convert hw using 1
   funext i
-  simp only [Pi.smul_apply, smul_eq_mul, Matrix.mulVec, dotProduct, Finset.mul_sum]
+  simp only [Pi.smul_apply, Matrix.mulVec, dotProduct, smul_eq_mul, Finset.mul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   push_cast
   ring
@@ -363,7 +367,8 @@ theorem mem_L_of_inclE_mem (u : Fin I.n → I.E)
       obtain ⟨⟨l, hl⟩, rfl⟩ := hv
       obtain ⟨o, ho⟩ := (I.L_dual l).1 hl y hy
       have : Φ (fun i => ι (l i)) = ι (Formalism.UG.hform (starRingEnd I.E) I.J y l) := by
-        simp only [Φ, Formalism.UG.hform, map_sum, map_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Φ, Formalism.UG.hform, map_sum, map_mul]
       rw [this, ← ho]
       exact inclE_int_mem I o
     | zero => simp [Φ]
@@ -381,7 +386,8 @@ theorem mem_L_of_inclE_mem (u : Fin I.n → I.E)
       exact mul_mem a.2 hv
   have h1 := hΦ _ hu
   have : Φ (fun i => ι (u i)) = ι (Formalism.UG.hform (starRingEnd I.E) I.J y u) := by
-    simp only [Φ, Formalism.UG.hform, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Φ, Formalism.UG.hform, map_sum, map_mul]
   rw [this] at h1
   exact mem_OE_of_inclE_mem _ h1
 
@@ -389,8 +395,8 @@ end Lat
 
 end TraceIntegralityAlt
 
-open TraceIntegralityAlt in
 
+open TraceIntegralityAlt in
 theorem t0 : LatticeCommensurable := by
   intro I x
   obtain ⟨d₁, hd₁, H₁⟩ := Lf_upper I

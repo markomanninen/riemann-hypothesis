@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Principal
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.KcDiffSmulMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Principal
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.KcDiffSmulMem
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators Pointwise nonZeroDivisors
@@ -73,9 +77,11 @@ def twist (σ : E ≃ₐ[ℚ] E) (C : Set E) {N : ℕ} (L : Submodule (𝓞 E) (
     simp [mul_add]
   zero_mem' := by
     intro c hc
-    convert L.zero_mem using 1
-    funext i
-    simp
+    have h : (σ.symm ∘ (star c • 0) : Fin N → E) = 0 := by
+      funext i
+      simp only [Function.comp_apply, Pi.zero_apply, smul_zero, map_zero]
+    rw [h]
+    exact L.zero_mem
   smul_mem' := by
     intro r v hv c hc
     rw [smul_comm, comp_int_smul]
@@ -91,7 +97,7 @@ theorem smul_mem_twist (σ : E ≃ₐ[ℚ] E) {C : Set E}
   refine L.smul_mem _ ?_
   convert hu using 1
   funext i
-  simp
+  simp only [Function.comp_apply, AlgEquiv.symm_apply_apply]
 
 theorem isSDLat_twist (σ : E ≃ₐ[ℚ] E) (hs : ∀ x, σ (star x) = star (σ x)) {C : Set E}
     (h1 : ∀ c ∈ C, ∀ d ∈ C, star c * d ∈ (algebraMap (𝓞 E) E).range)
@@ -108,7 +114,8 @@ theorem isSDLat_twist (σ : E ≃ₐ[ℚ] E) (hs : ∀ x, σ (star x) = star (σ
   have hH : ∀ (a : E) (u y : Fin N → E), stdH E N (a • (σ ∘ u : Fin N → E)) y =
       σ (stdH E N u (σ.symm ∘ (star a • y))) := by
     intro a u y
-    simp only [stdH, map_sum, map_mul, hs, Function.comp, Pi.smul_apply, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [stdH, map_sum, map_mul, hs, Function.comp, Pi.smul_apply, smul_eq_mul,
       AlgEquiv.apply_symm_apply, star_mul]
     exact Finset.sum_congr rfl fun i _ => by ring
   obtain ⟨⟨s, hs'⟩, hspan, hdual⟩ := hL
@@ -318,7 +325,8 @@ theorem exists_conjugate_pair : ∀ (D : D7) (σ : D.host.E ≃ₐ[ℚ] D.host.E
       refine map_mem_YYl D σ.symm (fun a ha A hA => ?_) hA
       have e : (a • A).map σ.symm = ∑ i, σ.symm (a * d i) • (star (c i) • A).map σ.symm := by
         ext p q
-        simp only [Matrix.sum_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul, ← map_mul, ← map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Matrix.sum_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul, ← map_mul, ← map_sum]
         conv_lhs => rw [← mul_one (a * A p q), ← h2, Finset.mul_sum]
         rw [Finset.sum_congr rfl fun i _ =>
           (by ring : a * A p q * (star (c i) * d i) = a * d i * (star (c i) * A p q))]

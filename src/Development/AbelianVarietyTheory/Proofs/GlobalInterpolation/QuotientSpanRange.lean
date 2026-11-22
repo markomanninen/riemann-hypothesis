@@ -1,11 +1,15 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing Matrix
 
 namespace GlobalTheory.RegularQuotient
 
-open IsLocalRing Matrix in
 
+open IsLocalRing Matrix in
 theorem _root_.GlobalTheory.RegularQuotient.quot_regular (Λ : Type) [CommRing Λ]
     [IsRegularLocalRing Λ] {ι κ : Type} [Fintype ι]
     [Fintype κ] (t : ι → Λ) (z : κ → Λ)
@@ -67,8 +71,8 @@ theorem _root_.GlobalTheory.RegularQuotient.quot_regular (Λ : Type) [CommRing �
   exact ⟨IsRegularLocalRing.of_spanFinrank_maximalIdeal_le _ (hgen.trans hdim.ge), hmap, hspan,
     hdim⟩
 
-open IsLocalRing Matrix in
 
+open IsLocalRing Matrix in
 theorem _root_.GlobalTheory.RegularQuotient.exists_extend (Λ : Type) [CommRing Λ]
     [IsRegularLocalRing Λ] {ι : Type} [Fintype ι]
     (τ : ι → maximalIdeal Λ)
@@ -124,14 +128,15 @@ private theorem linearIndependent_toCotangent_of_sum_mem_maximalIdeal_sq (A : Ty
     have he : (⟨∑ j, a j * x j, hmem⟩ : maximalIdeal A) =
         ∑ j, a j • (⟨x j, hx j⟩ : maximalIdeal A) := by
       ext; simp [Submodule.coe_sum, smul_eq_mul]
-    rw [he, map_sum, ← hg]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [he, map_sum, ← hg]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, ← ha j, ← IsLocalRing.ResidueField.algebraMap_eq, algebraMap_smul]
   rw [← ha i, IsLocalRing.residue_eq_zero_iff]
   exact hind a hsum i
 
-open IsLocalRing Matrix in
 
+open IsLocalRing Matrix in
 theorem _root_.GlobalTheory.RegularQuotient.quotient_span_range : ∀ (A : Type) [CommRing A] [IsRegularLocalRing A] (d k : ℕ)
     (x : Fin k → A),
     ringKrullDim A = ((d + k : ℕ) : WithBot ℕ∞) → (∀ i, x i ∈ maximalIdeal A) →

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspFormAdelicFunctionsIndependentGoodEmbedding
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspFormAdelicFunctionsEqModelValuesSemilinearStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisationGoodEmbeddingIndependentReadingsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HilbertModelConjugationAntilinearBijectionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspFormAdelicFunctionsIndependentGoodEmbedding
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspFormAdelicFunctionsEqModelValuesSemilinearStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisationGoodEmbeddingIndependentReadingsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HilbertModelConjugationAntilinearBijectionStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.L2.Pj Formalism.IndefR.FWT Formalism.IndefR GlobalTheory.HolDict
 open scoped TensorProduct InnerProductSpace ContDiff
@@ -17,7 +21,8 @@ theorem span_range_le {F U H : Type} [Field F] [AddCommGroup U] [Module F U] [Ad
     Submodule.span ℂ (Set.range j) ≤ Submodule.span ℂ (Set.range fun k => j (b k)) := by
   rw [Submodule.span_le]
   rintro _ ⟨u, rfl⟩
-  rw [← b.sum_repr u, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← b.sum_repr u, map_sum]
   refine Submodule.sum_mem _ fun k _ => ?_
   rw [map_smulₛₗ]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
@@ -49,9 +54,11 @@ theorem indep_of_conj {H X : Type} [AddCommGroup H] [Module ℂ H] {m : ℕ} (ev
   have h1 : ∑ k, starRingEnd ℂ (a k) • φ k = 0 := by
     funext g
     have h2 := congrFun (congrArg E ha) g
-    rw [map_sum, map_zero, Finset.sum_apply] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero, Finset.sum_apply] at h2
     have h3 := congrArg (starRingEnd ℂ) h2
-    rw [map_sum, Pi.zero_apply, map_zero] at h3
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Pi.zero_apply, map_zero] at h3
     rw [Finset.sum_apply, Pi.zero_apply, ← h3]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul]
@@ -72,7 +79,7 @@ theorem unif_all : GlobalTheory.Published.CuspRapidDecay → GlobalTheory.Mem.Vo
   obtain ⟨v, -, hv⟩ := jTop_bar T R κ v₀ hσ hV (hbar i σ hσ hV)
   have ind : ∀ (m : ℕ) (b : Fin m → Cu T κ i), LinearIndependent T.Q.c.F b →
       LinearIndependent ℂ fun k => jTop T R κ v₀ i σ (b k) := fun m b hb =>
-    indep_of_conj (evAt R i σ v) (fun x y => by simp only [evAt, map_add]; rfl)
+    indep_of_conj (evAt R i σ v) (fun x y => by simp only [evAt, map_add (f := _)]; rfl)
       (fun a x => by simp only [evAt, map_smul]; rfl) _ _
       (GlobalTheory.PhiIndep.phiC_indep D T κ hT.laws i _ hg hV m b hb) fun k g => congrFun (hv (b k)) g
   refine ⟨ind, ?_⟩

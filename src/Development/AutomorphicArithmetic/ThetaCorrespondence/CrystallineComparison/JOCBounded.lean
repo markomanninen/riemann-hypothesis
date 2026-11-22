@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.LeafDefs
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.LeafDefs
+
+@[expose] public section
 
 noncomputable section
 

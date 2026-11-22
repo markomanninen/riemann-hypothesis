@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAddHaarMeasureVolumeLie
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EsymmEqSumFilterPermStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurMulDetEqDetStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAddHaarMeasureVolumeLie
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EsymmEqSumFilterPermStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurMulDetEqDetStatement
+
+@[expose] public section
+
 open scoped Classical
 
 open MvPolynomial in

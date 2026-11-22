@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ProjExists
-import Development.AbelianVarietyTheory.Definitions.Foundations.StrictInterlaceIffDescEnum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ProjExists
+public import Development.AbelianVarietyTheory.Definitions.Foundations.StrictInterlaceIffDescEnum
+
+@[expose] public section
 
 open Formalism.L2.Theta
 

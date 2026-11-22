@@ -1,5 +1,9 @@
-import Formalism.SatakeDualWeyl.StatementF
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
+module
+
+public import Formalism.SatakeDualWeyl.StatementF
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
+
+@[expose] public section
 
 open Formalism.UG
 
@@ -21,22 +25,13 @@ theorem fSatake_nontriv {ϖ : L} {σ : L →+* L} {q : ℕ} (hU : IsUnramInv ϖ 
 
 theorem isCommensurated_integral_unitary_of_unramified {ϖ : L} {σ : L →+* L} {q : ℕ} (hU : IsUnramInv ϖ σ q) (n : ℕ) :
     IsCommensurated (KU σ n) := by
+  haveI : (Valued.v : Valuation L (WithZero (Multiplicative ℤ))).IsNontrivial :=
+    fSatake_nontriv hU
   obtain ⟨-, -, -, hvϖ, -, hq2, hq⟩ := hU
   set A := (Valued.v : Valuation L (WithZero (Multiplicative ℤ))).valuationSubring with hA
   haveI : IsCyclic (WithZero (Multiplicative ℤ))ˣ :=
     isCyclic_of_surjective (WithZero.unitsWithZeroEquiv (α := Multiplicative ℤ)).symm.toMonoidHom
       (MulEquiv.surjective _)
-  have h0 : Valued.v ϖ ≠ 0 := by rw [hvϖ]; exact WithZero.coe_ne_zero
-  haveI : Nontrivial ↥(MonoidWithZeroHom.ofClass
-      (Valued.v : Valuation L (WithZero (Multiplicative ℤ)))).valueGroup := by
-    refine ⟨⟨1, ⟨Units.mk0 (Valued.v ϖ) h0, MonoidWithZeroHom.mem_valueGroup _ ⟨ϖ, rfl⟩⟩, ?_⟩⟩
-    intro h
-    have h1 := congrArg (fun u : ↥(MonoidWithZeroHom.ofClass
-      (Valued.v : Valuation L (WithZero (Multiplicative ℤ)))).valueGroup =>
-        ((u : (WithZero (Multiplicative ℤ))ˣ) : WithZero (Multiplicative ℤ))) h
-    simp only [OneMemClass.coe_one, Units.val_one, Units.val_mk0, hvϖ] at h1
-    have h2 := WithZero.coe_injective (h1.symm.trans WithZero.coe_one.symm)
-    exact absurd (Multiplicative.ofAdd.injective (h2.trans ofAdd_zero.symm)) (by norm_num)
   haveI hD : IsDiscreteValuationRing ↥A.toSubring := Valuation.valuationSubring_isDiscreteValuationRing _
   have hRes : Finite (IsLocalRing.ResidueField ↥A.toSubring) := by
     apply Nat.finite_of_card_ne_zero
@@ -85,7 +80,7 @@ theorem fSatake_v_eq {x : L} (hx : x ≠ 0) :
     Valued.v x = ((Multiplicative.ofAdd (-ordL x) : Multiplicative ℤ) : WithZero (Multiplicative ℤ)) := by
   have h : Valued.v x ≠ 0 := (Valuation.ne_zero_iff _).2 hx
   unfold ordL
-  rw [dif_neg h, neg_neg, ofAdd_toAdd, WithZero.coe_unzero]
+  rw [dite_eq_right h, neg_neg, ofAdd_toAdd, WithZero.coe_unzero]
 
 private lemma ordL_eq_of_valuation_eq {x : L} (hx : x ≠ 0) {k : ℤ}
     (h : Valued.v x = ((Multiplicative.ofAdd (-k) : Multiplicative ℤ) : WithZero (Multiplicative ℤ))) :
@@ -102,10 +97,6 @@ theorem fSatake_ord_mul {x y : L} (hx : x ≠ 0) (hy : y ≠ 0) : ordL (x * y) =
 theorem fSatake_ord_one : ordL (1 : L) = 0 := by
   apply ordL_eq_of_valuation_eq one_ne_zero
   simp
-
-theorem fSatake_ord_inv {x : L} (hx : x ≠ 0) : ordL x⁻¹ = -ordL x := by
-  apply ordL_eq_of_valuation_eq (inv_ne_zero hx)
-  rw [map_inv₀, fSatake_v_eq hx, ← WithZero.coe_inv, ← ofAdd_neg, neg_neg]
 
 theorem fSatake_ord_of_v {x y : L} (h : Valued.v x = Valued.v y) : ordL x = ordL y := by
   unfold ordL
@@ -128,9 +119,5 @@ theorem fSatake_ord_nonneg {x : L} (hx : x ≠ 0) (hO : x ∈ intL L) : 0 ≤ or
   rw [fSatake_v_eq hx, ← WithZero.coe_one, WithZero.coe_le_coe, ← ofAdd_zero,
     Multiplicative.ofAdd_le] at h1
   linarith
-
-theorem fSatake_v_one {x : L} (hx : x ≠ 0) (h : ordL x = 0) : Valued.v x = 1 := by
-  rw [fSatake_v_eq hx, h]
-  rfl
 
 end Formalism.UG.P

@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.DegPushFibA
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumSymm
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.DegPushFibA
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumSymm
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace FunctorialResolution.EmbeddedResolution
 
@@ -75,7 +79,7 @@ private theorem derivation_mem_pow_sub_one (J : Ideal R) (D : Derivation k R R) 
         exact mul_pow_sub_one_le J m (Ideal.mul_mem_mul hb hDa)
       · intro x y hx hy
         show D (x + y) ∈ J ^ m
-        rw [map_add]
+        rw [map_add (f := _)]
         exact Submodule.add_mem _ hx hy
 
 private theorem iterate_derivation_mem_pow_sub (J : Ideal R) (D : Derivation k R R) :
@@ -145,7 +149,8 @@ private theorem iterate_derivation_sum {B S : Type*} [CommRing B] [CommRing S] [
   | zero => simp
   | succ m ih =>
       simp only [Function.iterate_succ_apply']
-      rw [ih, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [ih, map_sum]
 
 private theorem sum_choose_succ_mul_eq {S : Type*} [CommRing S] (u v : ℕ → S) (n : ℕ) :
     (∑ i ∈ Finset.range (n + 1), ((n.choose i : ℕ) : S) * (u (i + 1) * v (n - i)))
@@ -207,7 +212,8 @@ private theorem iterate_derivation_mul {B S : Type*} [CommRing B] [CommRing S] [
         rw [derivation_natCast_mul, D.leibniz, e1, e2]
         simp only [smul_eq_mul]
         ring
-      rw [Function.iterate_succ_apply', ih, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Function.iterate_succ_apply', ih, map_sum]
       refine Eq.trans (Finset.sum_congr rfl hstep) ?_
       rw [Finset.sum_add_distrib]
       exact sum_choose_succ_mul_eq (fun i => (⇑D)^[i] x) (fun i => (⇑D)^[i] y) n
@@ -416,10 +422,6 @@ theorem multiIndexDeriv_add {h : ℕ} (D : Fin h → Derivation k R R)
   multiIndexDeriv_add_of_comm_forall h D hD α β x
 
 def unitMultiIndex {h : ℕ} (i : Fin h) : Fin h → ℕ := fun j => if j = i then 1 else 0
-
-@[simp]
-theorem unitMultiIndex_apply {h : ℕ} (i j : Fin h) :
-    unitMultiIndex i j = if j = i then 1 else 0 := rfl
 
 theorem sum_unitMultiIndex {h : ℕ} (i : Fin h) : ∑ j, unitMultiIndex i j = 1 := by
   simp [unitMultiIndex]

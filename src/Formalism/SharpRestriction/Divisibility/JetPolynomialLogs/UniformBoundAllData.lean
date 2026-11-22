@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.Divisibility.JetPolynomialLogs.OneLetterJetKernel
-import Formalism.SharpRestriction.Divisibility.JetPolynomialLogs.LetterLogIntegrality
+module
+
+public import Formalism.SharpRestriction.Divisibility.JetPolynomialLogs.OneLetterJetKernel
+public import Formalism.SharpRestriction.Divisibility.JetPolynomialLogs.LetterLogIntegrality
+
+@[expose] public section
 
 noncomputable section
 

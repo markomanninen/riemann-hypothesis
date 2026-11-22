@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.StandingNumericalData
-import Formalism.SharpRestriction.CuspSpanNormBounds.RootMeasBig
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.StandingNumericalData
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RootMeasBig
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset Filter Topology
 open scoped InnerProductSpace ENNReal

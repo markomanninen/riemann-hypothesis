@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LatticeGoodBaseChangeStatement
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XGraphRestrictBc
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LatticeGoodBaseChangeStatement
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XGraphRestrictBc
+
+@[expose] public section
 
 open GlobalTheory.CompanionTheory.Ar.Num
 
@@ -76,7 +80,8 @@ private theorem dotDual_spanOver_bcMap_eq {o Ω C : Type} [CommRing o] [Field Ω
   have hdot : ∀ u v : Fin m → Ω,
       bcMap Ω C (Fin m) u ⬝ᵥ bcMap Ω C (Fin m) v = algebraMap Ω C (u ⬝ᵥ v) := by
     intro u v
-    simp only [dotProduct, hb, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, hb, map_sum, map_mul]
   apply le_antisymm
   · intro y hy
     rw [PositivityTheory.Xgn.ImageLatticeBaseChange.mem_dotDual] at hy
@@ -86,7 +91,8 @@ private theorem dotDual_spanOver_bcMap_eq {o Ω C : Type} [CommRing o] [Field Ω
       calc y j = ∑ l, y l * algebraMap Ω C (if l = j then 1 else 0) := by
             simp [apply_ite]
         _ = ∑ i, (∑ l, algebraMap Ω C (a i l) * y l) * algebraMap Ω C (γ i j) := by
-            simp_rw [← hid, map_sum, map_mul, Finset.mul_sum, Finset.sum_mul]
+            set_option synthInstance.maxHeartbeats 100000 in
+              simp_rw [← hid, map_sum, map_mul, Finset.mul_sum, Finset.sum_mul]
             rw [Finset.sum_comm]
             refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun l _ => ?_
             ring
@@ -139,12 +145,14 @@ private theorem exists_dual_pair_af_of_summand_locFree {o Ω : Type} [CommRing o
     have hval : v ⬝ᵥ (fun j => φ (finProdFinEquiv.symm i) (linMap n χ (Pi.single j 1))) =
         φ (finProdFinEquiv.symm i) (linMap n χ v) := by
       conv_rhs => rw [hv']
-      simp only [map_sum, map_smul, smul_eq_mul, dotProduct]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, smul_eq_mul, dotProduct]
     rw [hval]
     exact hφ _ _ hv
   · intro l j
     have h := congrArg (fun e => π e l) (hsum (linMap n χ (Pi.single j 1)))
-    simp only [map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, hπ] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, hπ] at h
     rw [show (if l = j then (1 : Ω) else 0) = (Pi.single j 1 : Fin n → Ω) l by simp [Pi.single_apply], ← h]
     exact (finProdFinEquiv.symm.sum_comp
       (fun x => π (u x) l * φ x (linMap n χ (Pi.single j 1)))).trans

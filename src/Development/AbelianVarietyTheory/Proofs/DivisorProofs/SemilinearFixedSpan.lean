@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -25,7 +29,8 @@ theorem semilinear_fixed_span (L : Type) [Field L] (s : L ≃+* L) (r : ℕ) (hr
 
   have htr : ∀ w : V, F (∑ i ∈ Finset.range r, (⇑F)^[i] w) = ∑ i ∈ Finset.range r, (⇑F)^[i] w := by
     intro w
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     have h1 := Finset.sum_range_succ' (fun i => (⇑F)^[i] w) r
     have h2 := Finset.sum_range_succ (fun i => (⇑F)^[i] w) r
     simp only [Function.iterate_succ_apply'] at h1
@@ -58,7 +63,8 @@ theorem semilinear_fixed_span (L : Type) [Field L] (s : L ≃+* L) (r : ℕ) (hr
     have hfix : (∑ i ∈ Finset.range r, (⇑F)^[i] (a • v)) ∈ Submodule.span L {v | F v = v} :=
       Submodule.subset_span (htr (a • v))
     have h0 := hfk hfix
-    rw [LinearMap.mem_ker, map_sum] at h0
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.mem_ker, map_sum] at h0
     simp only [Finset.sum_apply, Pi.smul_apply, Function.comp_apply, smul_eq_mul, hχ,
       Pi.zero_apply]
     rw [Fin.sum_univ_eq_sum_range (fun i => f ((⇑F)^[i] v) * (⇑s)^[i] a)]

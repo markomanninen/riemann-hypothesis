@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PolyBall
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemTwKerIffAverage
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierTransformInversionLocalFieldPi
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PolyBall
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemTwKerIffAverage
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierTransformInversionLocalFieldPi
+
+@[expose] public section
+
 open Matrix GlobalTheory.PRep GlobalTheory.BZMir GlobalTheory.SplitWeil GlobalTheory.CompanionTheory.MirFourier ValuativeRel
 open scoped Topology
 
@@ -18,18 +23,18 @@ theorem sum_twOrbit_eq_zero {G V : Type} [CommGroup G] [TopologicalSpace G] [IsT
     (hk : v ∈ twKer ρ L θ) [L₁.Normal] [Fintype (L ⧸ L₁)] :
     ∑ q : L ⧸ L₁, twOrbit ρ L θ v q.out = 0 := by
   classical
-  haveI : CompactSpace L := isCompact_iff_compactSpace.mp hL
+  have : CompactSpace L := isCompact_iff_compactSpace.mp hL
   have hle : L₁ ≤ θ.ker := fun x hx => hθ x hx
   have hopen : IsOpen (θ.ker : Set L) := Subgroup.isOpen_mono hle hL₁
   obtain ⟨M, hM, hsum⟩ := exists_sum_eq_zero hρ hL θ hopen hk
-  haveI : L₁.FiniteIndex := Subgroup.finiteIndex_of_finite_quotient
+  have : L₁.FiniteIndex := Subgroup.finiteIndex_of_finite_quotient
   set C : Subgroup L := (M ⊓ L₁).normalCore with hC
-  haveI : C.Normal := Subgroup.normalCore_normal _
-  haveI : C.FiniteIndex := inferInstance
-  haveI : Fintype (L ⧸ C) := Fintype.ofFinite _
+  have : C.Normal := Subgroup.normalCore_normal _
+  have : C.FiniteIndex := inferInstance
+  have : Fintype (L ⧸ C) := Fintype.ofFinite _
   have hCM : C ≤ M ⊓ L₁ := Subgroup.normalCore_le _
-  haveI : Finite (L₁ ⧸ C.subgroupOf L₁) := inferInstance
-  haveI : Fintype (L₁ ⧸ C.subgroupOf L₁) := Fintype.ofFinite _
+  have : Finite (L₁ ⧸ C.subgroupOf L₁) := inferInstance
+  have : Fintype (L₁ ⧸ C.subgroupOf L₁) := Fintype.ofFinite _
   have h0 := hsum C (hCM.trans inf_le_left)
   rw [sum_out_refine (hCM.trans inf_le_right) (twOrbit ρ L θ v)
     (fun x k hk => twOrbit_mul_right ρ L θ v x k ⟨hv k hk, hθ k hk⟩)] at h0
@@ -42,10 +47,10 @@ theorem eq_zero_of_twKer :
     ∀ {G V : Type} [CommGroup G] [TopologicalSpace G] [IsTopologicalGroup G] [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ G V), IsSmooth ρ → ∀ (L : Subgroup G), IsCompact (L : Set G) → ∀ (L₁ : Subgroup L), IsOpen (L₁ : Set L) → ∀ (v : V), (∀ x ∈ L₁, ρ (x : G) v = v) → ∀ {ι : Type} (R : Finset ι), R.Nonempty → ∀ (χ : ι → (L →* ℂˣ)), (∀ a ∈ R, ∀ x ∈ L₁, χ a x = 1) → (∀ a ∈ R, v ∈ twKer ρ L (χ a)) → (∀ x : L, x ∉ L₁ → ∑ a ∈ R, (((χ a x)⁻¹ : ℂˣ) : ℂ) = 0) → v = 0 := by
   intro G V _ _ _ _ _ ρ hρ L hL L₁ hL₁ v hv ι R hR χ hχ hker hsum
   classical
-  haveI : CompactSpace L := isCompact_iff_compactSpace.mp hL
-  haveI : Finite (L ⧸ L₁) := Subgroup.quotient_finite_of_isOpen _ hL₁
-  haveI : L₁.Normal := Subgroup.normal_of_comm L₁
-  haveI : Fintype (L ⧸ L₁) := Fintype.ofFinite _
+  have : CompactSpace L := isCompact_iff_compactSpace.mp hL
+  have : Finite (L ⧸ L₁) := Subgroup.quotient_finite_of_isOpen _ hL₁
+  have : L₁.Normal := inferInstance
+  have : Fintype (L ⧸ L₁) := Fintype.ofFinite _
   have key : ∀ a ∈ R, ∑ q : L ⧸ L₁, twOrbit ρ L (χ a) v q.out = 0 := fun a ha =>
     sum_twOrbit_eq_zero ρ hρ L hL L₁ hL₁ v hv (χ a) (hχ a ha) (hker a ha)
   have h0 : ∑ q : L ⧸ L₁, ∑ a ∈ R, twOrbit ρ L (χ a) v q.out = 0 := by

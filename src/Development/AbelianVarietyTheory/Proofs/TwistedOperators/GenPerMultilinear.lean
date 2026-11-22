@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DefPerEqGenPer
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DefPerEqGenPer
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc} (
 theorem kerA_col_add (t : T) (j : ℕ) (f f' : Sch G (.col t j)) :
     ∀ g h, W.kerA (.col t j) (f + f') g h = W.kerA (.col t j) f g h + W.kerA (.col t j) f' g h := by
   intro g h
-  simp only [GridData.Weil.kerA, GridData.Weil.ker, thetaKO, map_add, Pi.add_apply]
+  simp only [GridData.Weil.kerA, GridData.Weil.ker, thetaKO, map_add (f := _), Pi.add_apply]
 
 theorem kerA_col_smul (t : T) (j : ℕ) (c : ℂ) (f : Sch G (.col t j)) :
     ∀ g h, W.kerA (.col t j) (c • f) g h = c * W.kerA (.col t j) f g h := by
@@ -29,7 +33,7 @@ theorem kerA_col_smul (t : T) (j : ℕ) (c : ℂ) (f : Sch G (.col t j)) :
 theorem kerA_right_add (i j : ℕ) (f f' : Sch G (.right i j)) :
     ∀ g h, W.kerA (.right i j) (f + f') g h = W.kerA (.right i j) f g h + W.kerA (.right i j) f' g h := by
   intro g h
-  simp only [GridData.Weil.kerA, GridData.Weil.ker, thetaKO, map_add, Pi.add_apply]
+  simp only [GridData.Weil.kerA, GridData.Weil.ker, thetaKO, map_add (f := _), Pi.add_apply]
 
 theorem kerA_right_smul (i j : ℕ) (c : ℂ) (f : Sch G (.right i j)) :
     ∀ g h, W.kerA (.right i j) (c • f) g h = c * W.kerA (.right i j) f g h := by
@@ -83,7 +87,7 @@ theorem pathLift_column_add (t : T) : ∀ (n : ℕ) (f f' f'' : ∀ j : Fin n, S
       rw [e1] at h1b ⊢
       rw [e2] at h2b ⊢
       exact liftA_datum_add W M (fun g h => by rw [h0]; exact kerA_col_add W t n _ _ g h) h1b h2b
-    · obtain ⟨j1, rfl⟩ := Fin.exists_castSucc_eq.2 hj
+    · rcases Fin.eq_castSucc_of_ne_last hj with ⟨j1, rfl⟩
       have el : f (Fin.last n) = f'' (Fin.last n) := (hne _ (Ne.symm hj)).1
       have el' : f' (Fin.last n) = f'' (Fin.last n) := (hne _ (Ne.symm hj)).2
       have ih := pathLift_column_add t n (fun j => f j.castSucc) (fun j => f' j.castSucc) (fun j => f'' j.castSucc) j1
@@ -106,7 +110,7 @@ theorem pathLift_column_smul (t : T) (c : ℂ) : ∀ (n : ℕ) (f f'' : ∀ j : 
         funext fun j => hne _ (Fin.castSucc_lt_last j).ne
       rw [e1]
       exact liftA_datum_smul W M c (fun g h => by rw [h0]; exact kerA_col_smul W t n c _ g h)
-    · obtain ⟨j1, rfl⟩ := Fin.exists_castSucc_eq.2 hj
+    · rcases Fin.eq_castSucc_of_ne_last hj with ⟨j1, rfl⟩
       have el : f (Fin.last n) = f'' (Fin.last n) := hne _ (Ne.symm hj)
       have ih := pathLift_column_smul t c n (fun j => f j.castSucc) (fun j => f'' j.castSucc) j1
         (fun j hj' => hne _ (fun e => hj' (Fin.castSucc_injective _ e))) h0 F
@@ -136,7 +140,7 @@ theorem pathLift_row_add (k : ℕ) : ∀ (n : ℕ) (f f' f'' : ∀ i : Fin n, Sc
       rw [e1] at h1b ⊢
       rw [e2] at h2b ⊢
       exact liftA_datum_add W M (fun g h => by rw [h0]; exact kerA_right_add W n k _ _ g h) h1b h2b
-    · obtain ⟨j1, rfl⟩ := Fin.exists_castSucc_eq.2 hj
+    · rcases Fin.eq_castSucc_of_ne_last hj with ⟨j1, rfl⟩
       have el : f (Fin.last n) = f'' (Fin.last n) := (hne _ (Ne.symm hj)).1
       have el' : f' (Fin.last n) = f'' (Fin.last n) := (hne _ (Ne.symm hj)).2
       have ih := pathLift_row_add k n (fun j => f j.castSucc) (fun j => f' j.castSucc) (fun j => f'' j.castSucc) j1
@@ -159,7 +163,7 @@ theorem pathLift_row_smul (k : ℕ) (c : ℂ) : ∀ (n : ℕ) (f f'' : ∀ i : F
         funext fun j => hne _ (Fin.castSucc_lt_last j).ne
       rw [e1]
       exact liftA_datum_smul W M c (fun g h => by rw [h0]; exact kerA_right_smul W n k c _ g h)
-    · obtain ⟨j1, rfl⟩ := Fin.exists_castSucc_eq.2 hj
+    · rcases Fin.eq_castSucc_of_ne_last hj with ⟨j1, rfl⟩
       have el : f (Fin.last n) = f'' (Fin.last n) := hne _ (Ne.symm hj)
       have ih := pathLift_row_smul k c n (fun j => f j.castSucc) (fun j => f'' j.castSucc) j1
         (fun j hj' => hne _ (fun e => hj' (Fin.castSucc_injective _ e))) h0 F
@@ -217,7 +221,7 @@ theorem colLift_add [DecidableEq (Fin D.R.m)] (Q1 : PolCol ch.G) (i : Fin D.R.m)
     (fun j => ch.W.fock (.top t j) (movedVec t ch.S.toGridChoice (d.1 j)) (Function.update Q1 i x' j))
     (fun j => ch.W.fock (.top t j) (movedVec t ch.S.toGridChoice (d.1 j)) (Function.update Q1 i (x + x') j)) i
     (fun j hj => by simp only [Function.update_of_ne hj, and_self])
-    (by simp only [Function.update_self, map_add]) _ h1 h2
+    (by simp only [Function.update_self, map_add (f := _)]) _ h1 h2
 
 theorem colLift_smul [DecidableEq (Fin D.R.m)] (Q1 : PolCol ch.G) (i : Fin D.R.m) (c : ℂ)
     (x : PolF D (ch.G.V (.top ((i : ℕ) + 1))).rank (ch.G.V (.top i)).rank) ξ :
@@ -243,7 +247,7 @@ theorem rowLift_add [DecidableEq (Fin D.R.m)] (Q2 : PolRow ch.G) (i : Fin D.R.m)
     (fun j => ch.W.fock (.chi j D.R.m) (movedVec t ch.S.toGridChoice (d.2 j)) (Function.update Q2 i x' j))
     (fun j => ch.W.fock (.chi j D.R.m) (movedVec t ch.S.toGridChoice (d.2 j)) (Function.update Q2 i (x + x') j)) i
     (fun j hj => by simp only [Function.update_of_ne hj, and_self])
-    (by simp only [Function.update_self, map_add]) _ h1 h2
+    (by simp only [Function.update_self, map_add (f := _)]) _ h1 h2
 
 theorem rowLift_smul [DecidableEq (Fin D.R.m)] (Q2 : PolRow ch.G) (i : Fin D.R.m) (c : ℂ)
     (x : PolF D (ch.G.V (.grid i D.R.m)).rank (ch.G.V (.grid ((i : ℕ) + 1) D.R.m)).rank) η :
@@ -390,8 +394,8 @@ theorem genPer_eta_smul (Q : PolCol ch.G × PolRow ch.G) (c : ℂ) ξ η :
   simp only [Pi.smul_apply, smul_eq_mul, mul_left_comm _ c, integral_const_mul]
 
 theorem genPer_multilinear (hc : ∀ Q ξ η, GenConv ch t a M d y Q ξ η) :
-    ∃ Φ : MultilinearMap ℂ (fun j : Fin D.R.m => PolF D (ch.G.V (.top ((j : ℕ) + 1))).rank (ch.G.V (.top j)).rank)
-      (MultilinearMap ℂ (fun i : Fin D.R.m => PolF D (ch.G.V (.grid i D.R.m)).rank (ch.G.V (.grid ((i : ℕ) + 1) D.R.m)).rank)
+    ∃ Φ : MultilinearMap (RingHom.id ℂ) (fun j : Fin D.R.m => PolF D (ch.G.V (.top ((j : ℕ) + 1))).rank (ch.G.V (.top j)).rank)
+      (MultilinearMap (RingHom.id ℂ) (fun i : Fin D.R.m => PolF D (ch.G.V (.grid i D.R.m)).rank (ch.G.V (.grid ((i : ℕ) + 1) D.R.m)).rank)
         (Module.Dual ℂ (GlobalTheory.IndefiniteRowSideFullHecke.LevelPlusSubgroup.coefPlus ch.G ch.W.θ).W →ₗ[ℂ] Module.Dual ℂ R.cX.W →ₗ[ℂ] ℂ)),
       ∀ Q ξ η, Φ Q.1 Q.2 ξ η = genPer ch t a M d y Q ξ η := by
   refine ⟨

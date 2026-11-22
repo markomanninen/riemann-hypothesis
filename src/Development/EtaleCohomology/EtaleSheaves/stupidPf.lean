@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.CxDescPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.CxDescPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CochainComplex.HomComplex LateralTheory.E.CxDescPf

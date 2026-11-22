@@ -1,7 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnitaryArchimedeanCoordinateActionLinearMul
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ArchActOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnitaryArchimedeanCoordinateActionLinearMul
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ArchActOne
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open GlobalTheory.ArchUniq GlobalTheory.ArchUniq.Coord GlobalTheory.ArchLine
@@ -15,4 +18,5 @@ theorem _root_.GlobalTheory.T.unitary_archimedean_coordinate_action_linear_mul :
       archAct M h (c • v) = c • archAct M h v) ∧
     (∀ (h h' : UA σ W.J) (v : (Fin n × Fin d → mixedEmbedding.mixedSpace F) × (Fin n × Fin d → mixedEmbedding.mixedSpace F)),
       archAct M (h * h') v = archAct M h (archAct M h' v)) := by
-  first | exact @GlobalTheory.ArchLine.archAct_linear_mul | exact GlobalTheory.ArchLine.archAct_linear_mul | (intros; apply GlobalTheory.ArchLine.archAct_linear_mul <;> assumption)
+  intro F E _ _ _ _ _ σ n d X W M
+  exact GlobalTheory.ArchLine.archAct_linear_mul M

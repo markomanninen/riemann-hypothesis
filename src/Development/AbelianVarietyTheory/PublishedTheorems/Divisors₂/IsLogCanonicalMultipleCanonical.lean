@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsClosedImmersionGenericPoint
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FinrankRiemannRochNsmulHyperplane
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsGloballyGeneratedIffGeneratingSections
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MemRangeOfForallHeightEqOneOfIsReflexive
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsBasisKaehlerOfAlgebraicIndependent
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpanFinrankMaximalIdealLeNcardOfLeSupSq
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsClosedImmersionGenericPoint
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FinrankRiemannRochNsmulHyperplane
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsGloballyGeneratedIffGeneratingSections
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MemRangeOfForallHeightEqOneOfIsReflexive
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsBasisKaehlerOfAlgebraicIndependent
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpanFinrankMaximalIdealLeNcardOfLeSupSq
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -51,8 +55,8 @@ def IsFormOrd (η : RatForms p n) (a : ℤ) : Prop :=
   ∃ ω : Forms E.const n, IsFreeGen E.ring ω ∧
     ∃ f : X.functionFieldˣ, η = (f : X.functionField) • E.toRat n ω ∧ E.ord f = a
 
-open Classical in
 
+open Classical in
 def formOrd (η : RatForms p n) : ℤ := if h : ∃ a, E.IsFormOrd η a then h.choose else 0
 
 theorem ord_mul (f g : X.functionFieldˣ) : E.ord (f * g) = E.ord f + E.ord g := by
@@ -94,7 +98,7 @@ theorem IsFormOrd.unique {η : RatForms p n} (hη : η ≠ 0) {a b : ℤ} (h : E
 theorem IsFormOrd.formOrd_eq {η : RatForms p n} (hη : η ≠ 0) {a : ℤ} (h : E.IsFormOrd η a) :
     E.formOrd η = a := by
   have h' : ∃ a, E.IsFormOrd η a := ⟨a, h⟩
-  rw [formOrd, dif_pos h']
+  rw [formOrd, dite_eq_left h']
   exact h'.choose_spec.unique hη h
 
 variable (E)
@@ -127,8 +131,8 @@ theorem exists_isFreeGen [PerfectField k] [LocallyOfFiniteType p]
       conv_lhs => rw [← e₁, strHom, ← Category.assoc, Scheme.fromSpecStalk_toSpecΓ, ← Spec.map_comp]
       congr 1
       ext a
-      simp [Cartier.constFn, fnOf, algX, Scheme.Hom.appLE]
-      rfl
+      have hApp : p.appLE ⊤ ⊤ (by simp) = p.appTop := p.appLE_eq_app
+      simp [Cartier.constFn, fnOf, algX, algebraΓOfHom_algebraMap, hApp]
     rw [e₂, Spec.preimage_map]
     rfl
   have h2 := topologicalKrullDim_preimage_genericPoint_eq p (d := m + 1) (by rw [e]; exact h1)
@@ -159,7 +163,7 @@ theorem regAt_of_forall_coheight_eq_one [IsLocallyNoetherian X] [GlobalTheory.Is
     fun q hq h1 => ?_
   let P : PrimeSpectrum Γ(X, U) := ⟨q.comap (algebraMap _ (X.presheaf.stalk x)), inferInstance⟩
   have hP1 : P.asIdeal.height = 1 :=
-    (IsLocalization.height_comap (hU.primeIdealOf ⟨x, hx⟩).asIdeal.primeCompl q).trans h1
+    (IsLocalization.height_under (hU.primeIdealOf ⟨x, hx⟩).asIdeal.primeCompl q).trans h1
   have hPQ : P ≤ hU.primeIdealOf ⟨x, hx⟩ := fun s hs => by_contra fun hs' =>
     hq.ne_top (q.eq_top_of_isUnit_mem hs (IsLocalization.map_units (X.presheaf.stalk x)
       (⟨s, hs'⟩ : (hU.primeIdealOf ⟨x, hx⟩).asIdeal.primeCompl)))
@@ -236,8 +240,8 @@ theorem IsAt.ord_eq [IsLocallyNoetherian X] (h : E.IsAt z) (g : X.functionField�
   rw [← h1]
   exact (WithZero.exp_log ((map_ne_zero _).2 g.ne_zero)).symm
 
-variable (p) in
 
+variable (p) in
 theorem exists_isAt [LocallyOfFiniteType p] (z : X)
     [IsDiscreteValuationRing (X.presheaf.stalk z)] : ∃ E : DivOver p, E.IsAt z := by
   let V : ValuationSubring X.functionField :=
@@ -271,25 +275,12 @@ theorem exists_isAt_of_coheight_eq_one [LocallyOfFiniteType p] [IsLocallyNoether
   haveI := IsNormalScheme.isDiscreteValuationRing_stalk h
   exists_isAt p z
 
-theorem exists_isAt_affineLine :
-    ∃ (z : Sp (Polynomial k)) (E : DivOver (spMap (algebraMap k (Polynomial k)))),
-    E.IsAt z := by
-  let z : Sp (Polynomial k) := ⟨Ideal.span {Polynomial.X},
-    (Ideal.span_singleton_prime Polynomial.X_ne_zero).mpr Polynomial.prime_X⟩
-  have hz : Order.coheight z = 1 := by
-    rw [← idealHeight_eq_coheight]
-    exact Ideal.height_span_singleton_eq_one_of_mem_nonZeroDivisors (R := Polynomial k)
-      (mem_nonZeroDivisors_of_ne_zero Polynomial.X_ne_zero) Polynomial.prime_X.not_unit
-  haveI : LocallyOfFiniteType (spMap (algebraMap k (Polynomial k))) :=
-    HasRingHomProperty.Spec_iff.2 (RingHom.finiteType_algebraMap.2 inferInstance)
-  exact ⟨z, exists_isAt_of_coheight_eq_one hz⟩
-
 end DivOver
 
 section Pairs
 
-omit [IsIntegral X] in
 
+omit [IsIntegral X] in
 structure IsEffQDiv (Δ : X → ℚ) : Prop where
 
   finite : (Function.support Δ).Finite
@@ -305,25 +296,25 @@ variable (p : X ⟶ Sp k) {n : ℕ}
 def IsLogEqn (Δ : X → ℚ) (η : RatForms p n) (x : X) (m : ℕ) (g : X.functionFieldˣ) : Prop :=
   ∀ z, z ⤳ x → ∀ E : DivOver p, E.IsAt z → (m : ℚ) * (E.formOrd η + Δ z) = E.ord g
 
-variable {p} in
 
+variable {p} in
 def discrep (E : DivOver p) (η : RatForms p n) (m : ℕ) (g : X.functionFieldˣ) : ℚ :=
   E.formOrd η - E.ord g / m
 
-variable (n) in
 
+variable (n) in
 def KltAt (Δ : X → ℚ) (x : X) : Prop :=
   ∃ (η : RatForms p n) (m : ℕ) (g : X.functionFieldˣ), η ≠ 0 ∧ 0 < m ∧ IsLogEqn p Δ η x m g ∧
     ∀ E : DivOver p, E.Through x → -1 < discrep E η m g
 
-variable (n) in
 
+variable (n) in
 def LcAt (Δ : X → ℚ) (x : X) : Prop :=
   ∃ (η : RatForms p n) (m : ℕ) (g : X.functionFieldˣ), η ≠ 0 ∧ 0 < m ∧ IsLogEqn p Δ η x m g ∧
     ∀ E : DivOver p, E.Through x → -1 ≤ discrep E η m g
 
-variable (n) in
 
+variable (n) in
 def IsLogCanonicalMultiple (Δ : X → ℚ) (m : ℕ) (G : CartierDiv X) : Prop :=
   ∃ η : RatForms p n, η ≠ 0 ∧ ∀ x g, G.IsEqn x g → IsLogEqn p Δ η x m g
 
@@ -339,18 +330,6 @@ theorem IsLogEqn.discrep_eq_neg (h : IsLogEqn p Δ η x m g) (hm : 0 < m) (hz : 
   rw [discrep, ← h z hz E hE]
   field_simp
   ring
-
-theorem KltAt.lt_one (h : KltAt p n Δ x) (hz : z ⤳ x) (hE : E.IsAt z) : Δ z < 1 := by
-  obtain ⟨η, m, g, -, hm, hg, h⟩ := h
-  have := h E (hE.through hz)
-  rw [hg.discrep_eq_neg hm hz hE] at this
-  linarith
-
-theorem LcAt.le_one (h : LcAt p n Δ x) (hz : z ⤳ x) (hE : E.IsAt z) : Δ z ≤ 1 := by
-  obtain ⟨η, m, g, -, hm, hg, h⟩ := h
-  have := h E (hE.through hz)
-  rw [hg.discrep_eq_neg hm hz hE] at this
-  linarith
 
 theorem DivOver.ord_pow (E : DivOver p) (f : X.functionFieldˣ) (r : ℕ) :
     E.ord (f ^ r) = r * E.ord f := by
@@ -433,8 +412,8 @@ theorem DivOver.formOrd_formOf_nonneg (hn : topologicalKrullDim X = n) {U : X.Op
   rw [← h, E.ord_nonneg_iff, ← (E.isFreeGen_toRat hω').1 e₁]
   exact a.2
 
-omit [PerfectField k] [LocallyOfFiniteType p] in
 
+omit [PerfectField k] [LocallyOfFiniteType p] in
 theorem DivOver.formOrd_formOf_eq_zero {U : X.Opens} (hz : z ∈ U) (hE : E.IsAt z)
     {ω : FormsOn p n U} (hω : IsFrame ω) : E.formOrd (formOf U (gen_mem hz) ω) = 0 := by
   have h0 : formOf U (gen_mem hz) ω ≠ 0 := fun h =>
@@ -462,8 +441,8 @@ theorem DivOver.formOrd_formOf_eq_zero {U : X.Opens} (hz : z ∈ U) (hE : E.IsAt
   exact hω.gen.of_isBaseChange (isBaseChange_exteriorPower
     (KaehlerDifferential.isBaseChange_of_formallyEtale k Γ(X, U) E.ring) n)
 
-omit [LocallyOfFiniteType p] in
 
+omit [LocallyOfFiniteType p] in
 theorem kltAt_zero_of_smooth [SmoothOfRelativeDimension n p] (hn : topologicalKrullDim X = n)
     (x : X) : KltAt p n 0 x := by
   haveI := SmoothOfRelativeDimension.smooth n p
@@ -478,8 +457,8 @@ theorem kltAt_zero_of_smooth [SmoothOfRelativeDimension n p] (hn : topologicalKr
     norm_num
     linarith
 
-omit [LocallyOfFiniteType p] in
 
+omit [LocallyOfFiniteType p] in
 theorem isLogCanonicalMultiple_canonical [IsLocallyNoetherian X] [SmoothOfRelativeDimension n p]
     (hn : topologicalKrullDim X = n) (D : CartierDiv X) (hm : 0 < m) :
     IsLogCanonicalMultiple p n (qWeil D m) m (m • canonical p n + D) := by
@@ -512,11 +491,14 @@ section Checks
 variable {p : X ⟶ Sp k} {n : ℕ} [IsLocallyNoetherian X]
 
 theorem isEffQDiv_qWeil [CompactSpace X] {D : CartierDiv X} (hD : D.Eff) (m : ℕ) :
-    IsEffQDiv (qWeil D m) where
-  finite := D.finite_support_mult.subset fun z hz h => hz (by simp [qWeil, h])
-  coheight z hz := CartierDiv.coheight_eq_one_of_mult_ne_zero (D := D) fun h =>
-    hz (by simp [qWeil, h])
-  nonneg z := by
+    IsEffQDiv (qWeil D m) := by
+  refine ⟨D.finite_support_mult.subset ?_, ?_, ?_⟩
+  · intro z hz h
+    exact hz (by simp [qWeil, h])
+  · intro z hz
+    exact CartierDiv.coheight_eq_one_of_mult_ne_zero (D := D) fun h =>
+      hz (by simp [qWeil, h])
+  · intro z
     refine div_nonneg (Int.cast_nonneg ?_) (Nat.cast_nonneg m)
     obtain ⟨g, hg⟩ := D.exists_isEqn z
     obtain ⟨a, ha⟩ := CartierDiv.eff_iff.1 hD z g hg
@@ -524,15 +506,6 @@ theorem isEffQDiv_qWeil [CompactSpace X] {D : CartierDiv X} (hD : D.Eff) (m : �
     · rw [hg.mult_eq, ← ha, ord_algebraMap hz fun h => g.ne_zero (by rw [← ha, h, map_zero])]
       exact Int.natCast_nonneg _
     · rw [hg.mult_eq, Scheme.ord_eq_zero_of_coheight_neq_one hz]
-
-theorem not_kltAt_of_one_le [LocallyOfFiniteType p] [GlobalTheory.IsNormalScheme X] {Δ : X → ℚ} {x z : X}
-    (hz : z ⤳ x) (h1 : Order.coheight z = 1) (h : 1 ≤ Δ z) : ¬ KltAt p n Δ x := fun hk =>
-  have ⟨_, hE⟩ := DivOver.exists_isAt_of_coheight_eq_one (p := p) h1
-  (hk.lt_one hz hE).not_ge h
-
-example (d : ℕ) (x : (ProjVar.proj ℂ d).X) :
-    KltAt (ProjVar.proj ℂ d).str (ProjVar.proj ℂ d).dim 0 x :=
-  kltAt_zero_of_smooth (ProjVar.Var.topologicalKrullDim_eq _) x
 
 end Checks
 
@@ -572,22 +545,5 @@ def IsolatedNonKltDivisor : Prop :=
         (∀ y ∈ U, y ≠ x → KltAt p n (Δ + qWeil D₀ m) y) ∧ ¬ KltAt p n (Δ + qWeil D₀ m) x
 
 def NadelVanishingAndNonKltDivisor : Prop := NadelVanishingPair ∧ IsolatedNonKltDivisor
-
-theorem NadelVanishingPair.of_smooth (h : NadelVanishingPair) (Y : ProjVar.Var ℂ) (N D M : Y.Dv)
-    {m r : ℕ} (hm : 0 < m) (hr : 0 < r) (hD : Y.Eff D) (hM : Y.nef M) (hM' : Y.big M)
-    (e : ∀ C, Y.IsCurve C → (Y.deg C N : ℚ) =
-      Y.deg C (canonical Y.str Y.dim) + Y.deg C D / m + Y.deg C M / r) :
-    ∃ J : Y.X.IdealSheafData, (∀ x, x ∈ J.support ↔ ¬ KltAt Y.str Y.dim (qWeil D m) x) ∧
-      ∀ i, 0 < i → Subsingleton (coh (twist (idealModule J) (Y.lb N)) i) := by
-  haveI := Y.isNormalScheme
-  refine h Y.X Y.str Y.dim Y.isProjOver Y.topologicalKrullDim_eq _ _ m _ r _ (isLB_toLB N)
-    (isEffQDiv_qWeil hD m) hm (isLogCanonicalMultiple_canonical Y.topologicalKrullDim_eq D hm) hr
-    hM hM' fun C hC => ?_
-  have hC' := (Y.isCurve_iff C).2 hC
-  have : (m : ℚ) ≠ 0 := by exact_mod_cast hm.ne'
-  change (Y.deg C N : ℚ) = Y.deg C (m • canonical Y.str Y.dim + D) / m + Y.deg C M / r
-  rw [e C hC', hC'.deg_add, hC'.deg_nsmul]
-  push_cast
-  field_simp
 
 end GlobalTheory.Published

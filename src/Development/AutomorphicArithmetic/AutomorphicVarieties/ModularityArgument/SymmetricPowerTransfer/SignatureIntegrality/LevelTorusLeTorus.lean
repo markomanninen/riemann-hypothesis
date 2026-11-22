@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.UnitaryDoubleCosetIndicator
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.UnitaryDoubleCosetIndicator
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,7 @@ theorem dg_mem_Kc {c : ℕ} {s : Fin n → kˣ} : dg s ∈ Kc k n c ↔ ∀ i, s
     exact (inv_le_one₀ (zero_lt_iff.2 (by simp))).1 b2
   · intro h
     refine mem_Kc_of (dg_mem_KO fun i => Uc_le_Uo k c (h i)) fun i j => ?_
-    rw [dg, Matrix.sub_apply, val_diagT, diagonal_apply, one_apply]
+    rw [dg, Matrix.sub_apply, val_diagT, diagonal_apply, Matrix.one_apply]
     split_ifs
     exacts [(mem_Uc.1 (h i)).2, by simp]
 

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.PAdicHodge.BdRAlg
-import GroundTheory.PAdicHodge.BdRGalois
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.BdRAlg
+public import GroundTheory.PAdicHodge.BdRGalois
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -14,7 +19,7 @@ section AlgCl
 variable (p : ℕ) [Fact p.Prime]
 
 local notation "𝔹" => BDeRhamPlus (normInteger ℂ_[p]) p
-local notation "𝔪" => maximalIdeal (BDeRhamPlus (normInteger ℂ_[p]) p)
+local notation "𝔪" => maximalIdeal 𝔹
 
 instance isAdicComplete_maximalIdeal_bDeRhamPlus_padicComplex :
     IsAdicComplete (maximalIdeal (BDeRhamPlus (normInteger ℂ_[p]) p))
@@ -71,14 +76,6 @@ theorem eq_algClToQuot (n : ℕ) (g : PadicAlgCl p →ₐ[ℚ_[p]] 𝔹 ⧸ 𝔪
 theorem thetaQuot_factorₐ {k n : ℕ} (hle : k ≤ n) (y : 𝔹 ⧸ 𝔪 ^ (n + 1)) :
     thetaQuot p k (Ideal.Quotient.factorₐ ℚ_[p] (Ideal.pow_le_pow_right (Nat.succ_le_succ hle)) y) =
       thetaQuot p n y := by
-  obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective y
-  rfl
-
-theorem factorₐ_comp_factorₐ {a b c : ℕ} (hab : a ≤ b) (hbc : b ≤ c) :
-    (Ideal.Quotient.factorₐ ℚ_[p] (Ideal.pow_le_pow_right hab) : 𝔹 ⧸ 𝔪 ^ b →ₐ[ℚ_[p]] 𝔹 ⧸ 𝔪 ^ a).comp
-      (Ideal.Quotient.factorₐ ℚ_[p] (Ideal.pow_le_pow_right hbc)) =
-      Ideal.Quotient.factorₐ ℚ_[p] (Ideal.pow_le_pow_right (hab.trans hbc)) := by
-  ext y
   obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective y
   rfl
 
@@ -165,7 +162,7 @@ theorem gal_smul_algClToBdR (σ : Gal(PadicAlgCl p/K)) (x : PadicAlgCl p) :
           (σ : PadicAlgCl p →+* PadicAlgCl p))
       commutes' := fun q => by
         simp only [RingHom.toMonoidHom_eq_coe, OneHom.toFun_eq_coe, MonoidHom.toOneHom_coe,
-          MonoidHom.coe_coe, RingHom.coe_comp, Function.comp_apply, RingHom.coe_coe, galBdR_apply]
+          MonoidHom.coe_ofClass, RingHom.coe_comp, Function.comp_apply, RingHom.coe_coe, galBdR_apply]
         rw [IsScalarTower.algebraMap_apply ℚ_[p] K (PadicAlgCl p), AlgEquiv.commutes,
           ← IsScalarTower.algebraMap_apply, AlgHom.commutes, gal_smul_algebraMap_bdR] }
   have hg : g = algClToBdR p := eq_algClToBdR p g fun y => by

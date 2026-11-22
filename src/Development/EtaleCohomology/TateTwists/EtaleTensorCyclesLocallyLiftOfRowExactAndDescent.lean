@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleTensorComplexLocallyExactOfLiftedSections
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleTensorComplexLocallyExactOfLiftedSections
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 open scoped TensorProduct DirectSum
@@ -94,7 +98,7 @@ theorem etale_tensor_cycles_locally_lift_of_row_exact_and_descent (hA : EtaleTen
       rintro W k ⟨z', hz'⟩
       refine ⟨z' + Sec.res k z, ?_⟩
       have e2 : Sec.map (T.sc w).f (z' + Sec.res k z) = Sec.map (T.sc w).f z' + Sec.map (T.sc w).f (Sec.res k z) := by
-        simp only [Sec.map, map_add]
+        simp only [Sec.map, map_add (f := _)]
       have e3 : Sec.res k (Sec.res g (τ.lift U w x) - (show Sec (T.X w) V from Sec.map (T.sc w).f z)) =
           Sec.res k (Sec.res g (τ.lift U w x)) - Sec.res k (show Sec (T.X w) V from Sec.map (T.sc w).f z) := by
         exact map_sub _ _ _

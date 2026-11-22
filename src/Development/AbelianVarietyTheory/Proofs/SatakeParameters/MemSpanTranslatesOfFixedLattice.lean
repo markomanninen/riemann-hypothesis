@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.LinearIndependentWave
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.LinearIndependentWave
+
+@[expose] public section
 
 noncomputable section
 
@@ -118,7 +122,8 @@ theorem mem_span_translates_of_fixed {G V : Type} [AddCommGroup G] [AddCommGroup
     hWY _ (hWX f hfW _ (X.neg_mem (hL'X (q.out).2))) _ (hPY _ (q'.out).2)
   have gL : ∀ q, ∀ x ∈ L, ρ x (g q) = g q := by
     intro q x hx
-    simp only [g, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [g, map_sum]
     refine Finset.sum_congr rfl fun q' _ => ?_
     have hxX : x ∈ X := hL'X (hLL' hx)
     have hrX : -((q.out : L') : G) ∈ X := X.neg_mem (hL'X (q.out).2)
@@ -127,7 +132,8 @@ theorem mem_span_translates_of_fixed {G V : Type} [AddCommGroup G] [AddCommGroup
   have gP : ∀ q, ∀ y ∈ Yh, (∀ x ∈ L, χ x y = 1) → ρ y (g q) = g q := by
     intro q y hy hyL
     have hyP : y ∈ P := (memP y).2 ⟨hy, hyL⟩
-    simp only [g, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [g, map_sum]
     refine Eq.trans ?_ (Equiv.sum_comp (Equiv.addRight (QuotientAddGroup.mk ⟨y, hyP⟩ : P ⧸ K.addSubgroupOf P))
       (fun q' : P ⧸ K.addSubgroupOf P => ρ ((q'.out : P) : G) (ρ (-((q.out : L') : G)) f)))
     refine Finset.sum_congr rfl fun q' _ => ?_
@@ -142,7 +148,8 @@ theorem mem_span_translates_of_fixed {G V : Type} [AddCommGroup G] [AddCommGroup
       intro q q'
       have hrX := hL'X (q.out).2
       rw [ρXY _ hrX _ (hPY _ (q'.out).2), ρX _ hrX _ (X.neg_mem hrX), add_neg_cancel, ρ0]
-    simp only [g, map_sum, step]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [g, map_sum, step]
     rw [Finset.sum_comm]
     simp only [← Finset.sum_smul]
     rw [Finset.sum_eq_single (0 : P ⧸ K.addSubgroupOf P)]

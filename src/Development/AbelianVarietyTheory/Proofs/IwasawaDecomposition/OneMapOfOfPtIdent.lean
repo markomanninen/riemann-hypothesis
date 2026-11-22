@@ -1,17 +1,23 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
-import Formalism.LocalToGlobal.IndefiniteReal.FWExist
-import Formalism.LocalToGlobal.ProjectiveLattices.SpMapAlgHomId
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CXiValIff
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.SecBCAndCuspBC
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ActLevAndActBC
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntValuationEqOfMem
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PlaceExtensionValues
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicCuspFormAutomorphicBoundedSquareIntegrable
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicLinearIndependent
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsSpanOfOnto
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OmegaDataLevelFormsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevelMapExtensionStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
+public import Formalism.LocalToGlobal.IndefiniteReal.FWExist
+public import Formalism.LocalToGlobal.ProjectiveLattices.SpMapAlgHomId
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CXiValIff
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.SecBCAndCuspBC
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ActLevAndActBC
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntValuationEqOfMem
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PlaceExtensionValues
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicCuspFormAutomorphicBoundedSquareIntegrable
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicLinearIndependent
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsSpanOfOnto
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OmegaDataLevelForms
+public import Formalism.LocalToGlobal.IndefiniteReal.FWTie
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevelMapExtension
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +50,8 @@ theorem ratio_mem {K C Y : Type} [Field K] [AddCommGroup C] [Module K C] [Finite
     simp only [Finset.sum_smul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun j _ => ?_
-    conv_lhs => rw [← b.sum_repr (fs j), map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← b.sum_repr (fs j), map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [map_smulₛₗ, smul_smul]
   obtain ⟨s, hs, e⟩ := key as fs ha
@@ -88,7 +95,7 @@ theorem exists_coef_ext {K K' : Type} [Field K] [Field K'] {σ : K →+* ℂ} {�
       have e2 : MvPolynomial.monomial m a = a • MvPolynomial.monomial m (1 : K) := by simp [MvPolynomial.smul_monomial]
       rw [e1, map_smul, Module.Basis.constr_basis, e2, map_smul, map_smulₛₗ, ← RingHom.congr_fun hσ a]
       rfl
-    | add p q hp hq => rw [map_add, map_add, hp, hq, map_add, map_add]
+    | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _), map_add (f := _)]
   refine ⟨{ toFun := fun v => g v, map_add' := fun x y => g.map_add _ _, map_smul' := fun a x => g.map_smul a _ },
     fun v => ⟨⟨_, GlobalTheory.Proof.TensorMapDescent.map_mem_VV ι lam _ v.2⟩, rfl, (hg v).trans (congrArg c₀ (LinearMap.congr_fun hπ v))⟩⟩
 
@@ -110,6 +117,7 @@ theorem psi_inv (hT : LawsJ T) (hj : InR D j) {a : (D.host.E →+* ℂ) × ℕ �
   have hl : ((lieFac (T.Q.Dw j) (xiR D) a : ℝ) : ℂ) ≠ 0 := by exact_mod_cast (lieFac_pos _ _ _).ne'
   exact mul_left_cancel₀ hl h
 
+set_option synthInstance.maxHeartbeats 100000 in
 theorem psi_indep (hT : LawsJ T) (hj : InR D j) {a : (D.host.E →+* ℂ) × ℕ → ℕ} {n : ℕ} (hD : Dom a n) (m : ℕ)
     (b : Fin m → T.cuspA j a n) (hb : LinearIndependent T.Q.c.F b) :
     LinearIndependent ℂ fun l => psi T j hV (b l : T.R j) := by
@@ -132,6 +140,7 @@ theorem InForms.inv (hT : LawsJ T) (hj : InR D j) {a : (D.host.E →+* ℂ) × �
   intro γ hγ g
   simp only [Finset.sum_apply, Pi.smul_apply, psi_inv T j hV hT hj hD (fs _).2 γ hγ g]
 
+set_option synthInstance.maxHeartbeats 100000 in
 theorem InForms.ratio (hT : LawsJ T) (hj : InR D j) {a : (D.host.E →+* ℂ) × ℕ → ℕ} {n : ℕ} (hD : Dom a n)
     {K₀ K' : IntermediateField ℚ ℂ} (h0 : K₀ ≤ K') (hc : T.Q.c.F ≤ K') {Φ Φ' : GA D W → ℂ} (h : InForms T j hV a n K₀ Φ)
     (h' : InForms T j hV a n K' Φ') {ρ : ℂ} (e : Φ = ρ • Φ') (hne : Φ ≠ 0) : ρ ∈ K' := by
@@ -217,39 +226,6 @@ theorem pins_scaleXi (u : O.c'.F) (hu : u ≠ 0) {c0 : ℂ} (h : XiConst O ι x�
     ⟨_, hr, xiConst_scaleXi O u h⟩, hP.model₂⟩
   exact ⟨isLev_scale _ _ ((map_ne_zero _).2 hu) (hP.cov t).1, (hP.cov t).2⟩
 
-set_option maxHeartbeats 1600000 in
-
-theorem exists_retie {F : Face D A} (hR : R.Char F) (hP : O.Pins κ v₀ ι x₀)
-    (lev : G → (C.Q.Dw ((i : ℕ) + 1)).La →ₗ[𝓞 D.host.E] (C.Q.Dw ((i : ℕ) + 1)).La)
-    (hlev : LevIs R i ι C.Q.l.M (Mfr C.Q.l) lev)
-    (hact : ActLev (Xo := C.Q.Xo ((i : ℕ) + 1)) C.Q.c fun g => (lev g, LinearMap.id)) {gramR c0R c0L}
-    (hT : Bridge.FamTie R.B R.pl (R.Sb : Set (Pl D.host.E)) R.Q (labLL D) (fun τ => Bridge.lamRdef (Ptw D) τ)
-      (fun i τ => Bridge.lamLdef (Vc D i).rank ((i : ℕ) + 1) τ) gramR c0R c0L) :
-    ∃ O' : OMDat C R i Tp tup, O'.c' = O.c' ∧ O'.Pins κ v₀ ι x₀ ∧ O'.lev = lev ∧ CoefficientBaseChange R i O'.jL (inC O'.c') (c0L i) O'.c0' := by
-  classical
-  obtain ⟨c1, hc1⟩ := exists_coef_ext (W := (R.cV i).W) O.jL hP.lift.field (lamV D i) (c0L i)
-  choose h J' h1 h2 h3 h4 using fun t => (hP.tuple t).reps
-  have hL : ThPinsR R i O.jL (inC O.c') v₀ c1 ι C.Q.l.M (Mfr C.Q.l) lev :=
-    ⟨hP.lift.field, hP.lift.std, hP.lift.v0, ⟨_, _, _, hT, hc1⟩, hlev⟩
-  have h0 : ∀ t y, (∀ k, (R.HV i (tup t)).e y (fin _ (h t k)) = 0) → onQ (Wc D i) (R.thF i (tup t) y v₀) = 0 := fun t y hy => by
-    have e1 := h3 t y 0 fun k => (hy k).trans (map_zero _).symm
-    have e2 := h3 t 0 0 fun k => by rw [map_zero]; exact (map_zero _).symm
-    rw [← e1, e2, map_zero]
-    rfl
-  refine ⟨{ O with
-    c0' := c1, lev := lev
-    thAd := fun t x => if hx : ∃ y, Place R i (tup t) (h t) c1 y x then onQ (Wc D i) (R.thF i (tup t) hx.choose v₀) else 0
-    Plc := fun t x => ∃ x₀, Place R i (tup t) (h t) c1 (jVx R i (tup t) x₀) x }, rfl,
-    ⟨hL, fun t => ⟨⟨h t, J' t, h1 t, GlobalTheory.RationalValues.placeEx_of_char R F hR i _ _ hL _ _, fun y x hy => ?_, fun x => Iff.rfl⟩,
-      (hP.tuple t).B, (hP.tuple t).xi, (hP.tuple t).phi, (hP.tuple t).half⟩,
-      ⟨hact, (GlobalTheory.FieldBC.actLev_and_actBC _ _ _ _ _ _ _ O.hle _ _ hact).1⟩,
-      hP.bad, hP.reps, hP.ep, hP.io, hP.w, hP.cov, hP.cxi, hP.model₂⟩, rfl, hc1⟩
-  have hx : ∃ y, Place R i (tup t) (h t) c1 y x := ⟨y, hy⟩
-  refine (dif_pos hx).trans ?_
-  have h5 := h0 t (hx.choose - y) fun k => by
-    rw [map_sub, Pi.sub_apply, hx.choose_spec k, hy k, sub_self]
-  rw [map_sub] at h5
-  exact sub_eq_zero.1 h5
 
 end Change
 
@@ -307,8 +283,8 @@ theorem chiG_ne (g : G) : chiG R i g ≠ 0 := Finset.prod_ne_zero_iff.2 fun _ _ 
 abbrev cQ (T : CoreJ D) (i : Fin D.R.m) (hV : T.V ((i : ℕ) + 1) T.σ₀ = Wc D i) (q : AutQ (Wc D i)) : ℂ :=
   T.cE ((i : ℕ) + 1) T.σ₀ (castDict hV (T.dict ((i : ℕ) + 1) T.σ₀) q.out).1
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_base (hV : T.V ((i : ℕ) + 1) T.σ₀ = Wc D i) (hn : κ.n = (Vc D i).rank)
     {O : OMDat T.toCore R i Unit fun _ => A.μ0} (hP : O.Pins κ v₀ ι x₀) {ph : ℂ}
     (hrow : O.OneMapOf κ v₀ (T.cE ((i : ℕ) + 1) O.s0) ph)
@@ -338,8 +314,8 @@ theorem exists_base (hV : T.V ((i : ℕ) + 1) T.σ₀ = Wc D i) (hn : κ.n = (Vc
     rw [← h3 z₀ q, ← e, h5, mul_left_comm, h4]
     ring
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_transfer (hT : LawsJ T) (hV : T.V ((i : ℕ) + 1) T.σ₀ = Wc D i) (hn : κ.n = (Vc D i).rank)
     {Tp : Type} {tup : Tp → T0} {O : OMDat T.toCore R i Tp tup} (hP : O.Pins κ v₀ ι x₀)
     (hE : O.EquivAt κ (T.cE ((i : ℕ) + 1) O.s0))
@@ -382,8 +358,8 @@ theorem span_read {W : HSp D} {I : Type} (θ : I → AutQ W → ℂ) (a b c d : 
     · simp only [Pi.smul_apply, smul_eq_mul]; linear_combination r * h2 q
     · simp only [Pi.smul_apply, smul_eq_mul]; linear_combination r * h3 q
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem oneMapOf_of_ptIdent (hT : LawsJ T) (hV : T.V ((i : ℕ) + 1) T.σ₀ = Wc D i) (hn : κ.n = (Vc D i).rank)
     {O : OMDat T.toCore R i Unit fun _ => A.μ0} (hP : O.Pins κ v₀ ι x₀) {ph : ℂ}
     (hrow : O.OneMapOf κ v₀ (T.cE ((i : ℕ) + 1) O.s0) ph)
@@ -439,8 +415,8 @@ theorem oneMapOf_of_ptIdent (hT : LawsJ T) (hV : T.V ((i : ℕ) + 1) T.σ₀ = W
     rw [h0, Pi.zero_apply, mul_zero] at e3 ⊢
     exact ((mul_eq_zero.1 e3.symm).resolve_right (div_ne_zero hc0 hc0')).symm
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem const_ratio_mem (hT : LawsJ T) (hV : T.V ((i : ℕ) + 1) T.σ₀ = Wc D i) (hn : κ.n = (Vc D i).rank)
     {O : OMDat T.toCore R i Unit fun _ => A.μ0} (hF : O.c'.F = D.what₂.embLL.toRatAlgHom.fieldRange)
     (hP : O.Pins κ v₀ ι x₀) {ph : ℂ} (hrow : O.OneMapOf κ v₀ (T.cE ((i : ℕ) + 1) O.s0) ph)

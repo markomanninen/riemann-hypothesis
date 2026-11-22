@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.FramedLatticeZeroCycleHeight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapLine
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PencilLinePolynomialNatDegreeLeAndCoeffStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TotalDegreePencilLineDiscriminantLeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NotSquareLinearFactorOfPencilLineDiscriminantNeZStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IrreduciblePencilLinePolynomialGenericLineStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+public import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointHeight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapLine
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PencilLinePolynomialNatDegreeLeAndCoeffStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TotalDegreePencilLineDiscriminantLeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NotSquareLinearFactorOfPencilLineDiscriminantNeZStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IrreduciblePencilLinePolynomialGenericLineStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -35,7 +40,7 @@ theorem exists_specialise_ne_zero : ∀ (F S T : Type) [Field F] [Infinite F] (R
   intro F S T _ _ R hR
   have h1 : sumAlgEquiv F S T R ≠ 0 := (map_ne_zero_iff _ (sumAlgEquiv F S T).injective).2 hR
   obtain ⟨m, hm⟩ := MvPolynomial.ne_zero_iff.1 h1
-  obtain ⟨v, hv⟩ : ∃ v : T → F, eval v (coeff m (sumAlgEquiv F S T R)) ≠ 0 := by
+  obtain ⟨v, hv⟩ : ∃ v : T → F, eval v (AddMonoidAlgebra.coeff (sumAlgEquiv F S T R) m) ≠ 0 := by
     by_contra! H
     exact hm (MvPolynomial.funext fun x => by simpa using H x)
   refine ⟨v, fun h => hv ?_⟩
@@ -44,20 +49,21 @@ theorem exists_specialise_ne_zero : ∀ (F S T : Type) [Field F] [Infinite F] (R
     intro P
     induction P using MvPolynomial.induction_on with
     | C a => simp
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | mul_X p i hp =>
       rw [map_mul, map_mul, map_mul, hp]
       cases i <;> simp
-  rw [← coeff_map, ← key, h, coeff_zero]
+  rw [← coeff_map, ← key, h]
+  simp
 
 theorem irreducible_of_map {F L : Type} [Field F] [Field L] [Algebra F L] {σ : Type} (f : MvPolynomial σ F)
     (h : Irreducible (MvPolynomial.map (algebraMap F L) f)) : Irreducible f := by
   have hinj := (algebraMap F L).injective
   haveI : IsLocalHom (MvPolynomial.map (σ := σ) (algebraMap F L)) := ⟨fun g hg => by
     obtain ⟨c, hc, e⟩ := MvPolynomial.isUnit_iff_eq_C_of_isReduced.1 hg
-    have hc0 : algebraMap F L (coeff 0 g) = c := by
+    have hc0 : algebraMap F L (AddMonoidAlgebra.coeff g 0) = c := by
       rw [← coeff_map, e, coeff_zero_C]
-    refine MvPolynomial.isUnit_iff_eq_C_of_isReduced.2 ⟨coeff 0 g, ?_, ?_⟩
+    refine MvPolynomial.isUnit_iff_eq_C_of_isReduced.2 ⟨AddMonoidAlgebra.coeff g 0, ?_, ?_⟩
     · refine isUnit_iff_ne_zero.2 fun h0 => hc.ne_zero ?_
       rw [← hc0, h0, map_zero]
     · apply MvPolynomial.map_injective _ hinj

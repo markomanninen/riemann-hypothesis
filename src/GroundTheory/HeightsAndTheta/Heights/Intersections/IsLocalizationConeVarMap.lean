@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.OneNotMemOfIsPrime
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.OneNotMemOfIsPrime
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -51,21 +56,22 @@ theorem varMono_notMem {I : Ideal (MRing ι)} [I.IsPrime] {v : ∀ k, ι k}
 
 theorem coneVarMap_coe (hPW : P ≤ W) (v : ∀ k, ι k) (G : MvPolynomial K (locRing P W)) :
     ((coneVarMap P W hPW v G : coneLocRing P W hPW) : FractionRing (MRing ι ⧸ P)) =
-      ∑ e ∈ G.support, ((coeff e G : locRing P W) : FractionRing (MRing ι ⧸ P)) * fracHom P (varMono v e) := by
+      ∑ e ∈ G.support, ((AddMonoidAlgebra.coeff G e : locRing P W) : FractionRing (MRing ι ⧸ P)) * fracHom P (varMono v e) := by
   rw [coneVarMap, aeval_def, eval₂_eq']
   change (coneLocRing P W hPW).val _ = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun e _ => ?_
   rw [map_mul, map_prod, varMono, map_prod]
   simp only [map_pow]
   rfl
 
-variable {P W} in
 
+variable {P W} in
 theorem exists_clear (hPW : P ≤ W) (G : MvPolynomial K (locRing P W)) :
     ∃ (V : MRing ι) (b : K → ℕ) (N : (K →₀ ℕ) → MRing ι), IsMultiHomog V b ∧ V ∉ W ∧
       ∀ e, IsMultiHomog (N e) b ∧
-        ((coeff e G : locRing P W) : FractionRing (MRing ι ⧸ P)) * fracHom P V = fracHom P (N e) := by
+        ((AddMonoidAlgebra.coeff G e : locRing P W) : FractionRing (MRing ι ⧸ P)) * fracHom P V = fracHom P (N e) := by
   classical
   induction G using MvPolynomial.induction_on' with
   | monomial e c =>
@@ -88,21 +94,22 @@ theorem exists_clear (hPW : P ≤ W) (G : MvPolynomial K (locRing P W)) :
     · refine homog_add (homog_mul (hN1 e).1 hV2) ?_
       rw [add_comm b1 b2]
       exact homog_mul (hN2 e).1 hV1
-    · rw [coeff_add]
-      change (((coeff e G1 : locRing P W) : FractionRing (MRing ι ⧸ P)) + (coeff e G2 : locRing P W)) * _ = _
-      simp only [map_add, map_mul]
+    · rw [MvPolynomial.coeff_add]
+      change (((AddMonoidAlgebra.coeff G1 e : locRing P W) : FractionRing (MRing ι ⧸ P)) + (AddMonoidAlgebra.coeff G2 e : locRing P W)) * _ = _
+      simp only [map_add (f := _), map_mul]
       rw [← (hN1 e).2, ← (hN2 e).2]
       ring
 
-variable {P W} in
 
+variable {P W} in
 theorem coneVarMap_mul_clear (hPW : P ≤ W) (v : ∀ k, ι k) (G : MvPolynomial K (locRing P W))
     {V : MRing ι} {b : K → ℕ} {N : (K →₀ ℕ) → MRing ι}
     (hN : ∀ e, IsMultiHomog (N e) b ∧
-        ((coeff e G : locRing P W) : FractionRing (MRing ι ⧸ P)) * fracHom P V = fracHom P (N e)) :
+        ((AddMonoidAlgebra.coeff G e : locRing P W) : FractionRing (MRing ι ⧸ P)) * fracHom P V = fracHom P (N e)) :
     ((coneVarMap P W hPW v G : coneLocRing P W hPW) : FractionRing (MRing ι ⧸ P)) * fracHom P V =
       fracHom P (∑ e ∈ G.support, N e * varMono v e) := by
-  rw [coneVarMap_coe, Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coneVarMap_coe, Finset.sum_mul, map_sum]
   refine Finset.sum_congr rfl fun e _ => ?_
   rw [map_mul, ← (hN e).2]
   ring
@@ -117,11 +124,11 @@ theorem mem_of_clear_mem {I : Ideal (MRing ι)} [I.IsPrime] (hI : IsMultiHomogId
   · intro e1 _ e2 _ h12
     exact DFunLike.coe_injective (add_left_cancel h12)
 
-variable {P W} in
 
+variable {P W} in
 theorem coneVarMap_injective (hPW : P ≤ W) (hPh : IsMultiHomogIdeal P) {v : ∀ k, ι k}
     (hv : ∀ k, (X ⟨k, v k⟩ : MRing ι) ∉ W) : Function.Injective (coneVarMap P W hPW v) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro G hG
   obtain ⟨V, b, N, -, hVW, hN⟩ := exists_clear hPW G
   have hV0 : fracHom P V ≠ 0 := by
@@ -135,29 +142,29 @@ theorem coneVarMap_injective (hPW : P ≤ W) (hPh : IsMultiHomogIdeal P) {v : �
   have hvP : ∀ k, (X ⟨k, v k⟩ : MRing ι) ∉ P := fun k h => hv k (hPW h)
   have hNP : ∀ e ∈ G.support, N e ∈ P := mem_of_clear_mem hPh hvP G.support (fun e => (hN e).1) hNum
   refine MvPolynomial.ext _ _ fun e => ?_
-  rw [coeff_zero]
+  change G.coeff e = 0
   by_contra hne
   have he : e ∈ G.support := mem_support_iff.mpr hne
   have h1 := (hN e).2
   rw [fracHom_eq_zero_iff.mpr (hNP e he)] at h1
-  have h2 : ((coeff e G : locRing P W) : FractionRing (MRing ι ⧸ P)) = 0 :=
+  have h2 : ((AddMonoidAlgebra.coeff G e : locRing P W) : FractionRing (MRing ι ⧸ P)) = 0 :=
     (mul_eq_zero.mp h1).resolve_right hV0
   exact hne (Subtype.ext h2)
 
-variable {P W} in
 
+variable {P W} in
 theorem isUnit_algebraMap_cone (hPW : P ≤ W) {g : MRing ι} (hg : g ∉ W) :
     IsUnit (algebraMap (MRing ι ⧸ P) (coneLocRing P W hPW) (Ideal.Quotient.mk P g)) :=
   IsLocalization.map_units (coneLocRing P W hPW)
     (⟨_, ⟨g, hg, rfl⟩⟩ : W.primeCompl.map (Ideal.Quotient.mk P))
 
-variable {P W} in
 
+variable {P W} in
 theorem isUnit_coneVarMap (hPW : P ≤ W) (hWh : IsMultiHomogIdeal W) {v : ∀ k, ι k}
     (hv : ∀ k, (X ⟨k, v k⟩ : MRing ι) ∉ W) (G : MvPolynomial K (locRing P W)) {e : K →₀ ℕ}
-    (he : IsUnit (coeff e G)) : IsUnit (coneVarMap P W hPW v G) := by
+    (he : IsUnit (AddMonoidAlgebra.coeff G e)) : IsUnit (coneVarMap P W hPW v G) := by
   obtain ⟨V, b, N, hV, hVW, hN⟩ := exists_clear hPW G
-  have hNe : N e ∉ W := (isUnit_iff hPW (coeff e G) (hN e).1 hV hVW (hN e).2).mp he
+  have hNe : N e ∉ W := (isUnit_iff hPW (AddMonoidAlgebra.coeff G e) (hN e).1 hV hVW (hN e).2).mp he
   have hesupp : e ∈ G.support := mem_support_iff.mpr he.ne_zero
   have hNum : ∑ e ∈ G.support, N e * varMono v e ∉ W := fun h =>
     hNe (mem_of_clear_mem hWh hv G.support (fun e => (hN e).1) h e hesupp)
@@ -168,8 +175,8 @@ theorem isUnit_coneVarMap (hPW : P ≤ W) (hWh : IsMultiHomogIdeal W) {v : ∀ k
     Subtype.ext (coneVarMap_mul_clear hPW v G hN)
   exact isUnit_of_mul_isUnit_left (heq ▸ isUnit_algebraMap_cone hPW hNum)
 
-variable {P W} in
 
+variable {P W} in
 theorem exists_lift (hPW : P ≤ W) {v : ∀ k, ι k} (hv : ∀ k, (X ⟨k, v k⟩ : MRing ι) ∉ W) (f : MRing ι) :
     ∃ F, coneVarMap P W hPW v F =
       algebraMap (MRing ι ⧸ P) (coneLocRing P W hPW) (Ideal.Quotient.mk P f) := by
@@ -181,7 +188,10 @@ theorem exists_lift (hPW : P ≤ W) {v : ∀ k, ι k} (hv : ∀ k, (X ⟨k, v k�
   | add p q hp hq =>
     obtain ⟨F, hF⟩ := hp
     obtain ⟨G, hG⟩ := hq
-    exact ⟨F + G, by rw [map_add, hF, hG, map_add, map_add]⟩
+    refine ⟨F + G, ?_⟩
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add, hF, hG, map_add (Ideal.Quotient.mk P),
+        map_add (algebraMap (MRing ι ⧸ P) (coneLocRing P W hPW))]
   | mul_X p n hp =>
     obtain ⟨F, hF⟩ := hp
     obtain ⟨k, i⟩ := n
@@ -200,13 +210,13 @@ theorem exists_lift (hPW : P ≤ W) {v : ∀ k, ι k} (hv : ∀ k, (X ⟨k, v k�
       locRing.algebraMap_cone_coe, ← fracHom_apply, ← fracHom_apply, ← fracHom_apply, map_mul]
     rw [div_mul_cancel₀ _ hX0]
 
-variable {P W} in
 
+variable {P W} in
 theorem exists_isUnit_coeff (hPW : P ≤ W) {v : ∀ k, ι k} (G : MvPolynomial K (locRing P W))
     {g : MRing ι} (hg : g ∉ W)
     (hG : coneVarMap P W hPW v G =
       algebraMap (MRing ι ⧸ P) (coneLocRing P W hPW) (Ideal.Quotient.mk P g)) :
-    ∃ e, IsUnit (coeff e G) := by
+    ∃ e, IsUnit (AddMonoidAlgebra.coeff G e) := by
   by_contra hcon
   push Not at hcon
   obtain ⟨V, b, N, hV, hVW, hN⟩ := exists_clear hPW G
@@ -229,8 +239,8 @@ theorem isPrime_map_C {A : Type*} [CommRing A] (σ : Type*) (p : Ideal A) [p.IsP
   rw [← Ideal.mk_ker (I := p), ← MvPolynomial.ker_map]
   exact RingHom.ker_isPrime _
 
-variable {P W} in
 
+variable {P W} in
 theorem isLocalization_coneVarMap (hPW : P ≤ W) (hPh : IsMultiHomogIdeal P) (hWh : IsMultiHomogIdeal W)
     (v : ∀ k, ι k) (hv : ∀ k, (X ⟨k, v k⟩ : MRing ι) ∉ W) :
     haveI := isLocalRing hPW
@@ -244,7 +254,7 @@ theorem isLocalization_coneVarMap (hPW : P ≤ W) (hPh : IsMultiHomogIdeal P) (h
   rw [isLocalization_iff]
   refine ⟨fun G => ?_, fun z => ?_, fun {x y} hxy => ?_⟩
   · obtain ⟨G, hG⟩ := G
-    have : ∃ e, IsUnit (coeff e G) := by
+    have : ∃ e, IsUnit (AddMonoidAlgebra.coeff G e) := by
       by_contra h
       push Not at h
       exact hG (mem_map_C_iff.mpr fun e => (IsLocalRing.mem_maximalIdeal _).mpr (h e))

@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSAdjH
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSConst
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRadAdj
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSAdjH
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSConst
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRadAdj
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt MeasureTheory
 
@@ -398,7 +402,7 @@ theorem gauge_reality_holds : GTCReal := by
       hGc hGs (fun ζ h => by simp only [Kf]; rw [h, mul_zero])
     have hpt : ∀ ζ, Lf ζ - Rf ζ = x * (-(Ja ζ + Jb ζ) + Kf ζ) := by
       intro ζ
-      simp only [Lf, Rf, Ja, Jb, Kf, gg, Complex.star_def, map_mul, map_sub, map_neg, map_add, Complex.conj_ofReal,
+      simp only [Lf, Rf, Ja, Jb, Kf, gg, Complex.star_def, map_mul, map_sub, map_neg, map_add (f := _), Complex.conj_ofReal,
         Complex.conj_conj, map_div₀, map_one, map_ofNat, hxr]
       ring
     have hibp := ibp_dZb (fun w => G w * gg w) (fun w => star (F w)) (hG1.mul (gg_sm.of_le (by exact_mod_cast le_top)))
@@ -439,7 +443,7 @@ theorem gauge_reality_holds : GTCReal := by
       rw [← this]
       congr 1
       funext ζ
-      simp only [kk, Complex.real_smul, Complex.star_def, Complex.conj_ofReal]
+      simp only [kk, Complex.star_def, Complex.conj_ofReal, Complex.real_smul]
       ring)
     ζ0 (Metric.mem_ball_self (by positivity))
   have h1 : χ ζ0 = 1 := χ.one_of_mem_closedBall (Metric.mem_closedBall_self (by positivity))

@@ -1,5 +1,9 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsClosedOfChartIdeal
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.BijOnClosedPointsOfIsIso
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsClosedOfChartIdeal
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.BijOnClosedPointsOfIsIso
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 

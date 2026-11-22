@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.PadicValNatAbsNormEqZero
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.PadicValNatAbsNormEqZero
+
+@[expose] public section
 
 open NumberField IsDedekindDomain UniqueFactorizationMonoid
 
@@ -15,11 +19,11 @@ theorem padicValInt_discr_mul_count_eq :
   have hdecomp : (discr E).natAbs =
       p ^ padicValNat p (discr E).natAbs * ((discr E).natAbs / p ^ (discr E).natAbs.factorization p) := by
     conv_lhs => rw [← Nat.ordProj_mul_ordCompl_eq_self (discr E).natAbs p]
-    rw [Nat.factorization_def _ hp.out]
+    rw [Nat.factorization_def _ hp.out, Nat.padicValNat_def]
   have hnd : ¬ p ∣ (discr E).natAbs / p ^ (discr E).natAbs.factorization p :=
     Nat.not_dvd_ordCompl hp.out hd
   have h := ReciprocityTheory.ChartRestriction.G.PullbackSections.Pf.diffExp E p _ _ hp.out hnd hdecomp P hP hpP
   rw [h]
-  rfl
+  rw [padicValInt, Nat.padicValNat_def]
 
 end GlobalTheory.CompanionTheory.Different

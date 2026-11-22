@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.WmpNatCardQuotEqPowFinrank
+module
+
+public import Formalism.LocalToGlobal.Columns.WmpNatCardQuotEqPowFinrank
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,9 +35,9 @@ theorem double_sum_eq_of_filter_card {α M : Type} [DecidableEq α] [AddCommMono
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 E))}
 
-open Classical in
 
-def decorationPathCount (P Q : Ideal (𝓞 E)) (i j : ℕ) (d f : DecoSet E n ST SG) : ℕ :=
+open Classical in
+def decorationPathCount (P Q : Ideal (𝓞 E)) (i j : ℕ) (d f : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) : ℕ :=
   ((d.heckeNb P i).filter fun e => f ∈ e.heckeNb Q j).card
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K] {S : GSD K}
@@ -50,7 +54,7 @@ theorem card_filter_neighbours_eq_paths (c : DecoPts S E n ST SG) (P Q : Ideal (
     Equiv.apply_symm_apply]
 
 theorem heckeOperators_commute_of_paths (c : DecoPts S E n ST SG) (P Q : Ideal (𝓞 E)) (i j : ℕ)
-    (h : ∀ d f : DecoSet E n ST SG, decorationPathCount P Q i j d f = decorationPathCount Q P j i d f) :
+    (h : ∀ d f : DecoSet (E := E) (n := n) (ST := ST) (SG := SG), decorationPathCount P Q i j d f = decorationPathCount Q P j i d f) :
     Commute (heckeD c P i).op (heckeD c Q j).op := by
   classical
   refine LinearMap.ext fun φ => Subtype.ext (funext fun d => ?_)
@@ -64,7 +68,7 @@ def DecorationPathSymmetry (E : Type) [Field E] [NumberField E] [StarRing E] (n 
   ∀ P Q : HeightOneSpectrum (𝓞 E), conjPrime₂ P ≠ P → conjPrime₂ Q ≠ Q →
     (∀ R : ST, R.1 ≠ P ∧ R.1 ≠ conjPrime₂ P) → (∀ w : SG, w.1 ≠ P ∧ w.1 ≠ conjPrime₂ P) →
     (∀ R : ST, R.1 ≠ Q ∧ R.1 ≠ conjPrime₂ Q) → (∀ w : SG, w.1 ≠ Q ∧ w.1 ≠ conjPrime₂ Q) →
-    ∀ (i j : ℕ) (d f : DecoSet E n ST SG), decorationPathCount P.asIdeal Q.asIdeal i j d f = decorationPathCount Q.asIdeal P.asIdeal j i d f
+    ∀ (i j : ℕ) (d f : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)), decorationPathCount P.asIdeal Q.asIdeal i j d f = decorationPathCount Q.asIdeal P.asIdeal j i d f
 
 private lemma levOff_conjP_ne_and_ne_places {S0 : Set (HeightOneSpectrum (𝓞 E))} (x : LevOff ST SG S0) :
     conjPrime₂ x.1 ≠ x.1 ∧ (∀ R : ST, R.1 ≠ x.1 ∧ R.1 ≠ conjPrime₂ x.1) ∧ (∀ w : SG, w.1 ≠ x.1 ∧ w.1 ≠ conjPrime₂ x.1) := by

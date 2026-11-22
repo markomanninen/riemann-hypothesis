@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueAdmissibleLocalComponentDefiniteUnit
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsLocalComponentEigenvectorAtSplitPlaceIsoty
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueAdmissibleLocalComponentDefiniteUnit
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsLocalComponentEigenvectorAtSplitPlaceIsoty
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -37,8 +42,8 @@ theorem fixed_ne_bot : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], U
 
   have hfixx : ∀ x : locU n w, p x ∈ K' w → RU E n (x : UA E n) φ = φ := by
     intro x hx
-    have hxfin : (x : UA E n) ∈ finU E n := (Subgroup.mem_inf.1 x.2).1
-    have hy : (⟨x, hxfin⟩ : finU E n) ∈ globLev S K' := by
+    have hxfin : (x : UA E n) ∈ finU (E := E) (n := n) := (Subgroup.mem_inf.1 x.2).1
+    have hy : (⟨x, hxfin⟩ : finU (E := E) (n := n)) ∈ globLev S K' := by
       simp only [globLev, Subgroup.mem_iInf]
       intro w' hw'
       rw [Subgroup.mem_comap, Subgroup.mem_map]
@@ -71,7 +76,8 @@ theorem fixed_ne_bot : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], U
       rw [hpx] at h1
       rw [← hu i]
       exact h1
-    rw [Finset.sum_congr rfl hterm, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_congr rfl hterm, ← map_sum]
     have hs : ∑ i ∈ c.support, c i = (⟨φ, hφπ⟩ : π) := hsum
     rw [hs]
     apply Subtype.ext

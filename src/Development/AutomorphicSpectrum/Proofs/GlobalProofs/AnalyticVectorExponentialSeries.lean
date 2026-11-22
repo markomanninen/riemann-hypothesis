@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionOfSmoothVector
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionOfSmoothVector
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ private theorem hasDerivAt_sum_one_sub_pow_div_factorial_smul {f : ℕ → ℝ �
   | zero => simpa using hf 0 s
   | succ N ih =>
     have h2 := ih.add ((hasDerivAt_one_sub_pow_succ_div_factorial N s).smul (hf (N + 1) s))
-    convert h2 using 1
+    convert (preTransparency := .reducible) h2 using 1
     · funext t
       exact Finset.sum_range_succ _ _
     · rw [neg_smul]

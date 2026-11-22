@@ -1,5 +1,9 @@
-import Formalism.AdmissibleDesigns.LengthSemilinear
-import Formalism.AdmissibleDesigns.FinDimOfLat
+module
+
+public import Formalism.AdmissibleDesigns.LengthSemilinear
+public import Formalism.AdmissibleDesigns.FinDimOfLat
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -51,16 +55,16 @@ theorem resQ_bij : Function.Bijective (resQ e Ψ Q Q' hQ) := by
     obtain ⟨x, hx, rfl⟩ := (hQ y).1 hy
     exact ⟨⟨x, hx⟩, rfl⟩
 
-include hinj hQ in
 
+include hinj hQ in
 def resQE : ↥Q ≃ₛₗ[(e : R →+* S)] ↥Q' :=
   LinearEquiv.ofBijective (resQ e Ψ Q Q' hQ) (resQ_bij e Ψ hinj Q Q' hQ)
 
 include hinj hQ in
 theorem resQE_apply (x : ↥Q) : ((resQE e Ψ hinj Q Q' hQ x : ↥Q') : N) = Ψ (x : M) := rfl
 
-include hinj hQ hP in
 
+include hinj hQ hP in
 theorem len_semi :
     Module.length R (↥Q ⧸ P.comap Q.subtype) = Module.length S (↥Q' ⧸ P'.comap Q'.subtype) := by
   obtain ⟨E, hE⟩ : ∃ E : ↥Q ≃ₛₗ[(e : R →+* S)] ↥Q', ∀ x, ((E x : ↥Q') : N) = Ψ (x : M) :=

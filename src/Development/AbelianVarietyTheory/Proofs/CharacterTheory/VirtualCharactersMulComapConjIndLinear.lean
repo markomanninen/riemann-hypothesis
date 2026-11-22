@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsCharacterOverSubfieldInducedClassFunction
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsCharacterOverSubfieldOfRepresentation
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsCharacterOverSubfieldRestrictClassFunctionOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsCharacterOverSubfieldInducedClassFunction
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsCharacterOverSubfieldOfRepresentation
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsCharacterOverSubfieldRestrictClassFunctionOne
+
+@[expose] public section
+
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI
 namespace GlobalTheory.BI
 
@@ -40,8 +45,7 @@ theorem _root_.GlobalTheory.BI.isChar_monoidHom_complex {G : Type} [Group G] (la
   have key := (_root_.GlobalTheory.BI.isChar_and_isIrrChar_of_rep ℂ ℂ G ℂ ρ).1
   convert key using 1
   funext g
-  simp only [Algebra.algebraMap_self, RingHom.id_apply, Representation.character]
-  exact (trace_mulLeft_complex_lemma _).symm
+  simpa [ρ, Representation.character] using (trace_mulLeft_complex_lemma (lam g : ℂ)).symm
 
 open Polynomial in
 theorem _root_.GlobalTheory.BI.subgroupFunctionExtendByZero_add {G : Type} [Group G] (H : Subgroup G) (a b : H → ℂ)
@@ -57,8 +61,8 @@ noncomputable def indAddHomComplex {G : Type} [Group G] [Finite G] (H : Subgroup
     haveI := Fintype.ofFinite G
     simp only [ind, Pi.add_apply, subgroupFunctionExtendByZero_add, finsum_eq_sum_of_fintype, Finset.sum_add_distrib, mul_add])
 
-open Polynomial in
 
+open Polynomial in
 theorem _root_.GlobalTheory.BI.virt_mul_comap_conj_ind_linear : ∀ (G : Type) [Group G] [Finite G],
     (∀ a ∈ _root_.GlobalTheory.BI.Virt ℂ ℂ G, ∀ b ∈ _root_.GlobalTheory.BI.Virt ℂ ℂ G,
       a * b ∈ _root_.GlobalTheory.BI.Virt ℂ ℂ G) ∧
@@ -102,7 +106,7 @@ theorem _root_.GlobalTheory.BI.virt_mul_comap_conj_ind_linear : ∀ (G : Type) [
       exact AddSubgroup.subset_closure
         (_root_.GlobalTheory.BI.isChar_ind ℂ ℂ G H ψ hψ')
     | zero => simpa using zero_mem _
-    | add ψ φ _ _ hψ hφ => simpa [map_add] using add_mem hψ hφ
+    | add ψ φ _ _ hψ hφ => simpa [map_add (f := _)] using add_mem hψ hφ
     | neg ψ _ hψ => simpa [map_neg] using neg_mem hψ
   · intro lam
     exact _root_.GlobalTheory.BI.isChar_mem_virt_complex (_root_.GlobalTheory.BI.isChar_monoidHom_complex lam)

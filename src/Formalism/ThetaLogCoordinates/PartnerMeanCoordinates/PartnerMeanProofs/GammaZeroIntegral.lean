@@ -1,8 +1,13 @@
-import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.TheoremMXB
+module
+
+public import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.TheoremMXB
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.MC
 
-open Formalism.GM Formalism.GM.M Formalism.GM.TM Formalism.GM.DimensionMonotonicity Formalism.CountingSumsFrames Formalism.CountingSumsFrames.TO Formalism.InvariantFactorPaths.OddLevelGainBounds.TB MvPolynomial Finset
+open Formalism.GM Formalism.GM.M Formalism.GM.TM Formalism.GM.DimensionMonotonicity
+  Formalism.CountingSumsFrames Formalism.CountingSumsFrames.TO MvPolynomial Finset
 
 theorem gamma_zero_integral {p : ℕ} [Fact p.Prime] (K r : ℕ) (LLw : Letters (K + 1)) (ρ : Fin r) (n a : ℕ) (κ : ℝ)
     (hS : LLw.total ≤ n) (hn : n ≤ a) (h4 : (K + 2) * (r * Nat.log p a) ≤ ⌈κ⌉₊)
@@ -52,17 +57,17 @@ theorem gamma_zero_integral {p : ℕ} [Fact p.Prime] (K r : ℕ) (LLw : Letters 
   simp only [hδ, FrozenVariableComponents.snoc_deg_last, FrozenVariableComponents.snoc_deg_castSucc] at h1
   have h2 : padicValNat p Den = padicValNat p (n - LLw.total).factorial + padicValNat p LLw.total.factorial +
       ∑ i, padicValNat p (LLw.deg i).factorial := by
-    rw [hDen, padicValNat.mul (Nat.mul_ne_zero (Nat.factorial_pos _).ne' (Nat.factorial_pos _).ne')
+    rw [hDen, (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (Nat.mul_ne_zero (Nat.factorial_pos _).ne' (Nat.factorial_pos _).ne')
       (Finset.prod_ne_zero_iff.mpr fun i _ => (Nat.factorial_pos _).ne'),
-      padicValNat.mul (Nat.factorial_pos _).ne' (Nat.factorial_pos _).ne',
+      (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (Nat.factorial_pos _).ne' (Nat.factorial_pos _).ne',
       gammaIntegralityLemmas.v_prod _ _ (fun i _ => (Nat.factorial_pos _).ne')]
   have h3 : padicValNat p (n - LLw.total).factorial + padicValNat p LLw.total.factorial ≤
       padicValNat p n.factorial := by
     have e := Nat.choose_mul_factorial_mul_factorial hS
-    rw [← e, padicValNat.mul (Nat.mul_ne_zero (Nat.choose_pos hS).ne' (Nat.factorial_pos _).ne')
-      (Nat.factorial_pos _).ne', padicValNat.mul (Nat.choose_pos hS).ne' (Nat.factorial_pos _).ne']
+    rw [← e, (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (Nat.mul_ne_zero (Nat.choose_pos hS).ne' (Nat.factorial_pos _).ne')
+      (Nat.factorial_pos _).ne', (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (Nat.choose_pos hS).ne' (Nat.factorial_pos _).ne']
     omega
-  have h5 := gammaIntegralityLemmas.norm_K (p := p) ⌈κ⌉₊ (coeff m F) (coeff m F') 0 0 (by simpa using hc m) (by simpa using hc' m)
+  have h5 := gammaIntegralityLemmas.norm_K (p := p) ⌈κ⌉₊ (AddMonoidAlgebra.coeff F m) (AddMonoidAlgebra.coeff F' m) 0 0 (by simpa using hc m) (by simpa using hc' m)
     Num Den hNum0 hDen0 1 norm_one (by
       have : (padicValNat p Den : ℤ) ≤ (padicValNat p Num : ℤ) + (⌈κ⌉₊ : ℤ) := by
         have : padicValNat p Den ≤ padicValNat p Num + ⌈κ⌉₊ := by
@@ -164,7 +169,7 @@ theorem tieOpsX_main : TieOpsX := by
         exact Submodule.subset_span ⟨⟨⟨_, hwΩ⟩, b⟩, rfl⟩
       · rw [← FfL_apply, map_zero]; exact Submodule.zero_mem _
       · intro x y _ _ hx hy
-        rw [← FfL_apply, map_add]; exact Submodule.add_mem _ hx hy
+        rw [← FfL_apply, map_add (f := _)]; exact Submodule.add_mem _ hx hy
       · intro c x _ hx
         rw [← FfL_apply, LinearMap.map_smul_of_tower]; exact Submodule.smul_mem _ c hx
     · have hbot : MMw p ((LL.setTies T n).takeD (T.pos i + 1)) T.J (T.thrUpTo i) ρ

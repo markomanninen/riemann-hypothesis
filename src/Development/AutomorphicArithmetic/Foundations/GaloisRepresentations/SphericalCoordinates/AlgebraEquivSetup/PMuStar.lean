@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.ApartOfNotMem
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.ApartOfNotMem
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKGeo GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.CuspRep GlobalTheory.UnitaryBC UpperTheory.Gal.W2.Seed
 open UpperTheory.Gal.CertificateRingHomMap (GUf Gam0 AfQ Plc sim mat comp rat lev ZU)
@@ -49,5 +53,5 @@ theorem UpperTheory.Gal.W2.Seed.pMuStar :
     have := congrFun (congrFun hk i) k
     simpa [Matrix.diagonal_mul, Matrix.mul_diagonal] using this
   | add x y hx hy =>
-    rw [map_add, MulOpposite.unop_add, map_add, Matrix.mul_add, hx, hy, map_add,
+    rw [map_add (f := _), MulOpposite.unop_add, map_add (f := _), Matrix.mul_add, hx, hy, map_add (f := _),
       Matrix.map_add _ (map_add _), Matrix.transpose_add, Matrix.add_mul]

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.FormalGroupLawChartFiniteHeightSpecialFibre
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.StarRingExtOfStar
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UniversalJetsReindexFin
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UniversalStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsLawOfOfMatch
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.FormalGroupLawChartFiniteHeightSpecialFibre
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.StarRingExtOfStar
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UniversalJetsReindexFin
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UniversalStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsLawOfOfMatch
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1

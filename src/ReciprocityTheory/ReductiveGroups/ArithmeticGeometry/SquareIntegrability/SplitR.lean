@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitC
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitC
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -66,8 +70,8 @@ def rkP (τ : E →+* ℂ) : Vsp dim →ₗ[ℂ] (Fin (dim τ) → ℂ) where
   map_add' v w := by ext a; simp
   map_smul' c v := by ext a; simp
 
-open Classical in
 
+open Classical in
 def rkQ (τ : E →+* ℂ) : (Fin (dim τ) → ℂ) →ₗ[ℂ] Vsp dim where
   toFun y := ∑ a, y a • EuclideanSpace.single (⟨τ, a⟩ : Idx dim) (1 : ℂ)
   map_add' y z := by simp [add_smul, Finset.sum_add_distrib]
@@ -79,7 +83,7 @@ theorem rkQP_apply (τ : E →+* ℂ) (v : Vsp dim) (i : Idx dim) :
   obtain ⟨σ, b⟩ := i
   by_cases h : σ = τ
   · subst h
-    simp [rkQ, rkP, EuclideanSpace.single_apply, Sigma.mk.inj_iff]
+    simp [rkQ, rkP, PiLp.single_apply, Sigma.mk.inj_iff]
     rw [Finset.sum_eq_single b]
     · simp
     · intro x _ hx
@@ -90,7 +94,7 @@ theorem rkQP_apply (τ : E →+* ℂ) (v : Vsp dim) (i : Idx dim) :
         exact (eq_of_heq (Sigma.mk.inj_iff.mp h).2).symm
     · intro h
       exact absurd (Finset.mem_univ b) h
-  · simp [rkQ, rkP, EuclideanSpace.single_apply, Sigma.mk.inj_iff, h]
+  · simp [rkQ, rkP, PiLp.single_apply, Sigma.mk.inj_iff, h]
 
 end rk
 

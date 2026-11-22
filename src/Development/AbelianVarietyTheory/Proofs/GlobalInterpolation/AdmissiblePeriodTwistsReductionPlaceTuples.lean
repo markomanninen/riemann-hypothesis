@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.HookProducts.AdmPerTw
-import Formalism.SharpRestriction.Divisibility.HookProducts.AdmPtTw
-import Formalism.LocalToGlobal.GroupLattices.AdmissibleAtGeneratorPlaces
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.HookProducts.AdmPerTw
+public import Formalism.SharpRestriction.Divisibility.HookProducts.AdmPtTw
+public import Formalism.LocalToGlobal.GroupLattices.AdmissibleAtGeneratorPlaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,9 +23,10 @@ theorem perTwAt_of_perDecTw {D : D7} {Dx : DivX D} {T : TwForms D} (hD : DGamDef
   obtain ⟨pc, hs, hi⟩ := h
   choose y hy hv using hi x hx F hF
   refine ⟨∑ c, ((Nat.card ((T.fm u μ).stabilizer₂ c) : ℕ) : D.what₂.LL)⁻¹ * y c, ?_, fun w hw => ?_⟩
-  · rw [hs, map_sum]
-    refine Finset.sum_congr rfl fun c _ => ?_
-    rw [map_mul, map_inv₀, map_natCast, hy c]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [hs, map_sum]
+      refine Finset.sum_congr rfl fun c _ => ?_
+      rw [map_mul, map_inv₀, map_natCast, hy c]
   · refine Finset.sum_induction _ (fun t => t = 0 ∨ -ur D w (Formalism.MainNotions.WeilJacquetShalikaLaw.vDG D u w) ≤ (vAdd (D.plEq w) t : ℝ))
       (fun a b ha hb => Formalism.MainNotions.WeightDegreeSizes.pair_add_ge D w ha hb) (Or.inl rfl) fun c _ => ?_
     rcases hv c w hw with h0 | h0

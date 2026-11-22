@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsionFreeOfForallExists
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsionFreeOfForallExists
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,12 +33,14 @@ theorem exists_local_section {F G : X.Modules} (φ : F ⟶ G) [Epi φ] {s : ℕ}
   refine ⟨U', hU.trans hle, hx', fun W h =>
     (he.basis (h.trans hU)).constr Γ(X, W) fun i => resM F (h.trans (hU' i)) (a i),
     fun W W' h h' t => ?_, fun W h t => ?_⟩
-  · simp only [Module.Basis.constr_apply_fintype, Module.Basis.equivFun_apply, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [Module.Basis.constr_apply_fintype, Module.Basis.equivFun_apply, map_sum,
       resM_smul, resM_resM]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    rw [← he.repr_resM (h.trans hU) h']
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [← he.repr_resM (h.trans hU) h']
   · rw [← appLinear_apply]
-    simp only [Module.Basis.constr_apply_fintype, Module.Basis.equivFun_apply, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Module.Basis.constr_apply_fintype, Module.Basis.equivFun_apply, map_sum,
       map_smul, appLinear_apply, app_resM, ha, resM_resM]
     conv_rhs => rw [← (he.basis (h.trans hU)).sum_repr t]
     simp only [IsFrame.basis_apply]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothHermCombLine
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothHermCombLine
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -10,7 +14,7 @@ open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo GlobalTheory.ArInt
 namespace GlobalTheory.CompanionTheory.MixZ.PolarProof
 
 theorem multilinear_eq_zero {V : Type} [AddCommGroup V] {N : ℕ}
-    (M : MultilinearMap ℤ (fun _ : Fin N => V) ℝ)
+    (M : (Fin N → V) →ₘₗ[ℤ] ℝ)
     (hs : ∀ (a : Fin N → V) (σ : Equiv.Perm (Fin N)), M (a ∘ σ) = M a)
     (hd : ∀ x : V, M (fun _ => x) = 0) (a : Fin N → V) : M a = 0 := by
   classical
@@ -19,7 +23,8 @@ theorem multilinear_eq_zero {V : Type} [AddCommGroup V] {N : ℕ}
   have expand : ∀ T : Finset (Fin N), M (fun _ => ∑ i, if i ∈ T then 0 else a i) =
       ∑ f : Fin N → Fin N, if T ⊆ (Finset.univ.image f)ᶜ then M (a ∘ f) else 0 := by
     intro T
-    rw [M.map_sum (fun _ i => if i ∈ T then 0 else a i)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [M.map_sum (fun _ i => if i ∈ T then 0 else a i)]
     refine Finset.sum_congr rfl fun f _ => ?_
     split_ifs with h
     · congr 1
@@ -84,7 +89,7 @@ theorem eq_of_diag {V : Type} [AddCommGroup V] {N : ℕ} (S T : (Fin N → V) �
     intro a j b c
     simp only [Pi.sub_apply, aS, aT]
     ring
-  let M : MultilinearMap ℤ (fun _ : Fin N => V) ℝ :=
+  let M : (Fin N → V) →ₘₗ[ℤ] ℝ :=
     { toFun := S - T
       map_update_add' := by
         intro inst m j b c
@@ -151,11 +156,12 @@ section Lin
 variable {κ : Type} [Fintype κ]
 
 theorem lin_add (a b : κ → ℤ) : lin (fun o => ((a + b) o : ℝ)) = lin (fun o => (a o : ℝ)) + lin (fun o => (b o : ℝ)) := by
-  simp only [lin, Pi.add_apply, Int.cast_add, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [lin, Pi.add_apply, Int.cast_add, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem lin_elim_zero (n : κ → ℤ) :
     lin (fun o : Option κ => (((o.elim 0 n : ℤ)) : ℝ)) = rename some (lin fun i => (n i : ℝ)) := by
-  simp [lin, Fintype.sum_option, map_sum, rename_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [lin, Fintype.sum_option, map_sum, rename_X]
 
 theorem lin_elim_one :
     lin (fun o : Option κ => (((o.elim 1 fun _ => 0 : ℤ)) : ℝ)) = MvPolynomial.X none := by
@@ -193,7 +199,7 @@ theorem polar : Polar := by
         by_cases h : i = j
         · subst h; simp
         · simp [Function.update_of_ne h]
-      rw [e, e, e, ← map_add, ← add_mul]
+      rw [e, e, e, ← map_add (f := _), ← add_mul]
       congr 2
       exact lin_add b c
     · intro a j b c

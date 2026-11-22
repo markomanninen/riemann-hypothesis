@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.UnlinkedHalfIntegral.UnitFormC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.UnlinkedHalfIntegral.UnlinkedHeckeRoots.MapLk
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.UnlinkedHalfIntegral.UnitFormC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.UnlinkedHalfIntegral.UnlinkedHeckeRoots.MapLk
+
+@[expose] public section
 
 open Finset UpperTheory.V.Sd
 
@@ -43,7 +47,8 @@ private theorem sum_conj {N : ℕ} [NeZero N] (σ : ℂ ≃+* ℂ) (χ : Dirichl
     (F : ℂ → ℂ) (hF : ∀ x, σ (F x) = F (σ x)) :
     σ (∑ a : ZMod N, χ⁻¹ a * F (ZMod.stdAddChar a : ℂ)) =
       (cj σ χ)⁻¹ ((s⁻¹ : (ZMod N)ˣ) : ZMod N) * ∑ a : ZMod N, (cj σ χ)⁻¹ a * F (ZMod.stdAddChar a : ℂ) := by
-  rw [map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.mul_sum]
   refine Fintype.sum_equiv (Units.mulLeft s) _ _ fun a => ?_
   have hu : (Units.mulLeft s a : ZMod N) = (s : ZMod N) * a := rfl
   rw [map_mul, hF, hs, cj_inv_apply, hu, ← mul_assoc, ← map_mul, ← mul_assoc, Units.inv_mul, one_mul]

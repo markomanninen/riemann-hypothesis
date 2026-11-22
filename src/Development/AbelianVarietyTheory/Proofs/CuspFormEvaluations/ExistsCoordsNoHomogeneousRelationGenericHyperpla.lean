@@ -1,25 +1,30 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsAlgebraicIndependentRatiosOfGenericZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsAlgebraicIndependentRatiosOfGenericZero
+
+@[expose] public section
 
 namespace GlobalTheory
 
-open MvPolynomial in
 
+open MvPolynomial in
 theorem aeval_mul_of_isHomogeneous_cone {K L ι : Type} [CommRing K] [CommRing L] [Algebra K L]
     {Q : MvPolynomial ι K} {d : ℕ} (hQ : Q.IsHomogeneous d) (c : L) (x : ι → L) :
     aeval (fun a => c * x a) Q = c ^ d * aeval x Q := by
   classical
   conv_lhs => rw [Q.as_sum]
   conv_rhs => rw [Q.as_sum]
-  rw [map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun s hs => ?_
   have hd := hQ.degree_eq_sum_deg_support hs
   simp only [aeval_monomial, Finsupp.prod, mul_pow, Finset.prod_mul_distrib,
     Finset.prod_pow_eq_pow_sum, ← hd]
   ring
 
-open MvPolynomial in
 
+open MvPolynomial in
 theorem aeval_eq_pow_mul_aeval_dehomogenise {K L : Type} [CommRing K] [Field L] [Algebra K L]
     {m : ℕ} {Q : MvPolynomial (Fin (m + 1)) K} {d : ℕ} (hQ : Q.IsHomogeneous d)
     (x : Fin (m + 1) → L) (hx : x 0 ≠ 0) :
@@ -40,8 +45,8 @@ theorem aeval_eq_pow_mul_aeval_dehomogenise {K L : Type} [CommRing K] [Field L] 
   rw [aeval_mul_of_isHomogeneous_cone hQ,
     aeval_eq_bind₁ (Fin.cons 1 X : Fin (m + 1) → MvPolynomial (Fin m) K), aeval_bind₁, key]
 
-open MvPolynomial in
 
+open MvPolynomial in
 theorem dehomogenise_ne_zero_of_isHomogeneous {K : Type} [Field K]
     {m : ℕ} {Q : MvPolynomial (Fin (m + 1)) K} {d : ℕ} (hQ : Q.IsHomogeneous d) (h0 : Q ≠ 0) :
     aeval (Fin.cons 1 X : Fin (m + 1) → MvPolynomial (Fin m) K) Q ≠ 0 := by

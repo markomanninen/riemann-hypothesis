@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianClassFiniteness.LevelA
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianClassFiniteness.Development
-import Lemmata.IntegerMulIntegral.IntMulIntegral
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianClassFiniteness.LevelA
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianClassFiniteness.Development
+public import Lemmata.IntegerMulIntegral.IntMulIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,7 @@ theorem lvB_lat_up (L : Submodule (𝓞 E) (Fin n → E)) (hL : L.FG) :
     | zero => intro i; simp
     | add x y _ _ hx hy =>
       intro i
-      simp only [Pi.add_apply, map_add, mul_add]
+      simp only [Pi.add_apply, map_add (f := _), mul_add]
       exact add_mem (hx i) (hy i)
     | smul a x _ hx =>
       intro i

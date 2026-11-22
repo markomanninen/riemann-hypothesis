@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmFieldStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial GlobalTheory.BCT GlobalTheory.UnitaryBC Formalism.UG
 open scoped Classical
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -17,7 +22,7 @@ theorem ordL_of_eq {x : L} {u : Multiplicative ℤ}
     ordL x = -Multiplicative.toAdd u := by
   have h0 : Valued.v x ≠ 0 := by rw [h]; exact WithZero.coe_ne_zero
   unfold ordL
-  rw [dif_neg h0]
+  rw [dite_eq_right h0]
   congr 2
   apply WithZero.coe_injective
   rw [WithZero.coe_unzero, h]

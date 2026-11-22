@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.IsLocallyConstantRankAtStalkEigenSub
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.IsLocallyConstantRankAtStalkEigenSub
+
+@[expose] public section
 
 open NumberField Matrix
 open scoped TensorProduct ComplexConjugate
@@ -66,7 +70,8 @@ lemma exists_diag {E : Type} [Field E] [NumberField E] {W : Type} [AddCommGroup 
     simp only [c, Module.Basis.reindex_apply, hb, ← he, Equiv.apply_symm_apply]
   refine ⟨c.equivFun, fun a v i => ?_⟩
   conv_lhs => rw [← c.sum_equivFun v]
-  simp only [map_sum, map_smul, hc, Finset.sum_apply, Pi.smul_apply, Module.Basis.equivFun_self, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, hc, Finset.sum_apply, Pi.smul_apply, Module.Basis.equivFun_self, smul_eq_mul]
   simp [mul_comm]
 
 lemma trace_real {W : Type} [AddCommGroup W] [Module ℝ W] [Module ℂ W] [IsScalarTower ℝ ℂ W]
@@ -148,13 +153,15 @@ lemma exists_herm {g : ℕ} (B : LinearMap.BilinForm ℝ (Fin g → ℂ)) (halt 
   have hsum : ∀ x y, h x y = ∑ i, x i * h (Pi.single i 1) y := fun x y => by
     change hl y x = ∑ i, x i • hl y (Pi.single i 1)
     conv_lhs => rw [pi_eq_sum_univ' x]
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
   have key : ∀ x y, hermForm (Matrix.of fun i j => h (Pi.single i 1) (Pi.single j 1)) x y = h x y := fun x y => by
     rw [hsum x y]
     unfold hermForm dotProduct
     refine Finset.sum_congr rfl fun i _ => ?_
     congr 1
-    rw [hconj, hsum y, map_sum (starRingEnd ℂ)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hconj, hsum y, map_sum (starRingEnd ℂ)]
     simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, Pi.star_apply]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, ← hconj, mul_comm]
@@ -235,7 +242,7 @@ theorem exists_isPeriod (E : Type) [Field E] [NumberField E] [IsCMField E] (H : 
   let P : D.La →+ (Fin g → ℂ) :=
     { toFun := fun x => e (1 ⊗ₜ x)
       map_zero' := by simp
-      map_add' := fun x y => by rw [TensorProduct.tmul_add, map_add] }
+      map_add' := fun x y => by rw [TensorProduct.tmul_add, map_add (f := _)] }
   have hP : ∀ x, P x = e (1 ⊗ₜ x) := fun _ => rfl
   let b := Module.Free.chooseBasis ℤ D.La
   let c := (b.baseChange ℝ).map e
@@ -261,16 +268,16 @@ theorem exists_isPeriod (E : Type) [Field E] [NumberField E] [IsCMField E] (H : 
     exact ⟨b i, (hc i).symm⟩
   · have halt0 : ∀ x y, D.EF x y = -D.EF y x := fun x y => by
       have := D.alt (x + y)
-      simp only [map_add, LinearMap.add_apply, D.alt] at this
+      simp only [map_add (f := _), LinearMap.add_apply, D.alt] at this
       linarith
     have halt : ∀ x y, D.EF.baseChange ℝ x y = -D.EF.baseChange ℝ y x := fun x y => by
       induction x using TensorProduct.induction_on with
       | zero => simp
-      | add x x' h h' => simp only [map_add, LinearMap.add_apply, h, h']; ring
+      | add x x' h h' => simp only [map_add (f := _), LinearMap.add_apply, h, h']; ring
       | tmul r x =>
         induction y using TensorProduct.induction_on with
         | zero => simp
-        | add y y' h h' => simp only [map_add, LinearMap.add_apply, h, h']; ring
+        | add y y' h h' => simp only [map_add (f := _), LinearMap.add_apply, h, h']; ring
         | tmul r' y => simp [halt0 x y, mul_comm]
     have hs : ∀ z, e.symm (Complex.I • z) = J (e.symm z) := fun z => by
       rw [e.symm_apply_eq, heJ, e.apply_symm_apply]

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.IndexSt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.IndexSt
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AI
 
@@ -57,7 +61,8 @@ theorem norm_int_eq_norm_rat {K : Type*} [Field K] [NumberField K] (O : Subring 
   ext i j
   have hx : (f : K) * b' j = ∑ k, ((b.repr (f * b j) k : ℤ) : ℚ) • b' k := by
     have e1 := congrArg (O.subtype.toIntAlgHom.toLinearMap) (b.sum_repr (f * b j))
-    rw [map_sum] at e1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at e1
     simp only [map_zsmul] at e1
     simp only [hb', Int.cast_smul_eq_zsmul]
     exact e1.symm

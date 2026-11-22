@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.NormIterFstComp
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.NormIterFstComp
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
+
+@[expose] public section
 
 noncomputable section
 

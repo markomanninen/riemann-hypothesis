@@ -1,6 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MinpolyIrreducibleNatDegreeOfRankOne
-import GroundTheory.Brauer.TensorSimple
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointsNonemptyUnitaryRankOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MarkedSumIrr
+public import GroundTheory.Brauer.TensorSimple
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount GlobalTheory.LKCx
 open scoped TensorProduct Classical
 
@@ -10,7 +16,7 @@ namespace GlobalTheory.LKCx
 
 variable {p : ℕ} [Fact p.Prime]
 
-theorem real_comb_integralBasis_eq_zero {K : Type} [Field K] [NumberField K] [IsTotallyComplex K]
+theorem real_comb_integralBasis_eq_zero {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K]
     (r : Module.Free.ChooseBasisIndex ℤ (𝓞 K) → ℝ)
     (h : ∀ w : InfinitePlace K, ∑ i, (r i : ℂ) * w.embedding (integralBasis K i) = 0) : r = 0 := by
   have hli := (mixedEmbedding.latticeBasis K).linearIndependent
@@ -113,7 +119,8 @@ theorem psiAll_liftBaseChange_injective (G : HTGroup p) :
   rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']
   intro x hx
   rw [← bR.sum_repr x] at hx ⊢
-  simp only [map_sum, map_smul, hbR] at hx
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, hbR] at hx
   have h0 := Fintype.linearIndependent_iff.mp (psiAll_towerBasis_linearIndependent G) _ hx
   simp [h0]
 

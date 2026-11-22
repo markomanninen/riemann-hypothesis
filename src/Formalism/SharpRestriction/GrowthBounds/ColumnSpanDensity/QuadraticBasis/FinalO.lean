@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.QuadraticBasis.QuadRoots
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.QuadraticBasis.OIsoOf
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.QuadraticBasis.QuadRoots
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.QuadraticBasis.OIsoOf
+
+@[expose] public section
 
 namespace Formalism.MainNotions.flipOneThree.Pf.QuadraticBasis
 

@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.DetShiftNormOf
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LGradedLemmas
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LFockqLemmas
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.DetShiftNormOf
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LGradedLemmas
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LFockqLemmas
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility
 
@@ -16,7 +20,7 @@ theorem rowGen_coeff_zero (a b : Fin N) (f : MvPolynomial (Fin N × Fin N) ℚ) 
   · next c =>
     simp [rowGen, Polynomial.algebraMap_apply, MvPolynomial.algebraMap_eq]
   · next p q hp hq =>
-    rw [map_add, Polynomial.coeff_add, hp, hq]
+    rw [map_add (f := _), Polynomial.coeff_add, hp, hq]
   · next p v hp =>
     rw [map_mul, Polynomial.mul_coeff_zero, hp]
     simp only [rowGen, MvPolynomial.aeval_X]
@@ -60,8 +64,8 @@ theorem polynomial_eq_divisibility : PolEqRowDiv := by
     rw [polE_apply]
     simp [rowDiv, rowGen, Polynomial.algebraMap_apply, MvPolynomial.algebraMap_eq]
   · next p q hp hq =>
-    rw [map_add, hp, hq]
-    simp only [rowDiv, map_add, Polynomial.coeff_add]
+    rw [map_add (f := _), hp, hq]
+    simp only [rowDiv, map_add (f := _), Polynomial.coeff_add]
   · next p v hp =>
     rw [polE_mul_X, rowDiv_one_mul_X, hp]
 
@@ -81,7 +85,7 @@ theorem determinant_shift_norm : DetShiftNormOf := by
     intro a
     ext m
     rw [lgraded_coeff_euler, MvPolynomial.coeff_smul, smul_eq_mul]
-    by_cases hm : coeff m (hw ℚ le_rfl (fun i : Fin N => ν i + 1)) = 0
+    by_cases hm : AddMonoidAlgebra.coeff (hw ℚ le_rfl (fun i : Fin N => ν i + 1)) m = 0
     · simp [hm]
     · have hW := hwRowWeight ℚ N N le_rfl _ hν' hm
       have hWa := congrFun hW a

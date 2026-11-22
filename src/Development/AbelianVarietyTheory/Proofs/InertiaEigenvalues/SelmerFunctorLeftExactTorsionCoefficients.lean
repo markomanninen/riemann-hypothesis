@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.H1MapSubgroup
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.H1MapSubgroup
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.BlochKatoReduction Formalism.MainNotions.BlochKatoReduction.Gen GlobalTheory.TwSys GlobalTheory.SelFun GlobalTheory.Published
 
@@ -24,7 +28,7 @@ theorem mk_eq_zero_iff (z : Z1 ρ) :
 theorem mapH1_injective (u : M' →ₗ[R] M) (hu : ∀ g m, u (ρ' g m) = ρ g (u m)) (hinj : Function.Injective u)
     (h0 : ∀ m : M, (∀ g, ∃ m', ρ g m - m = u m') → ∃ m', m = u m') :
     Function.Injective (mapH1 ρ' ρ u continuous_of_discreteTopology hu) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨z, rfl⟩ := Submodule.Quotient.mk_surjective _ x
   obtain ⟨m, hm⟩ := (mk_eq_zero_iff ρ (cocycles1MapOfEquivariant ρ' ρ u continuous_of_discreteTopology hu z)).1 hx
@@ -50,7 +54,7 @@ theorem exists_lift (u : M' →ₗ[R] M) (hu : ∀ g m, u (ρ' g m) = ρ g (u m)
     exact hm g
   let z' : Z1 ρ' := ⟨fun g => Function.invFun u ((z - b).1 g),
     (continuous_of_discreteTopology (f := Function.invFun u)).comp (z - b).2.1, fun g h => hinj (by
-      rw [map_add, hu, h1, h1, h1]
+      rw [map_add (f := _), hu, h1, h1, h1]
       exact (z - b).2.2 g h)⟩
   refine ⟨Submodule.Quotient.mk z', ?_⟩
   have e : cocycles1MapOfEquivariant ρ' ρ u continuous_of_discreteTopology hu z' = z - b := Subtype.ext (funext h1)

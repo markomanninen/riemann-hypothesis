@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.BinMatNatDegreeLe
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.BinMatNatDegreeLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,7 +61,7 @@ theorem win_abs (hGW : GramWindow2) (hw : Function.Injective w) (he : Function.I
       rw [map_smul, map_smul, ProjS.fockK_smul_left, mul_div_assoc])
     (fun i u u' v => by
       show M.fockK (tiePhi w e o n (z0 + i) (T (u + u'))) v / dF = _
-      rw [map_add, map_add, ProjS.fockK_add_left, add_div])
+      rw [map_add (f := _), map_add (f := _), ProjS.fockK_add_left, add_div])
     (fun i a u v => by
       show M.fockK (tiePhi w e o n (z0 + i) (T u)) (a • v) / dF = _
       rw [ProjS.fockK_smul_right, mul_div_assoc])

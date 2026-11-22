@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UltraDefs
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UltraDefs
+
+@[expose] public section
 
 open Filter UpperTheory.V.AlgebraTools
 open scoped TensorProduct
@@ -23,7 +27,8 @@ private theorem ker_map_power_series_quotient (R : Type) [CommRing R] (a : Ideal
     choose c hc' using hc'
     have : f = ∑ x ∈ s, PowerSeries.mk (fun n => c n x) * PowerSeries.C x := by
       ext n
-      rw [map_sum, ← hc' n]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, ← hc' n]
       refine Finset.sum_congr rfl fun x _ => ?_
       rw [PowerSeries.coeff_mul_C, PowerSeries.coeff_mk]
     rw [this]

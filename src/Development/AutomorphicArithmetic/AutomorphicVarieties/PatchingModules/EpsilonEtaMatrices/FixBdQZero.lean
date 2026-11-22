@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.FinAm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LemmaB
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CardEqPowLength
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.FinAm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LemmaB
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CardEqPowLength
+
+@[expose] public section
 
 open Matrix Filter NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 
@@ -256,7 +260,7 @@ theorem UpperTheory.V.Pa.fixBd :
     · have ht : r ((Matrix.transposeLinearEquiv (Fin n) (Fin n) x.A (DD x.A k.g)).toLinearMap (Matrix.of Z0)) = Yᵀ := by
         rw [← hZY]
         rfl
-      rw [LinearMap.add_apply, map_add, LinearMap.id_apply, hZY, ht, hY.2.1 htr, neg_add_cancel]
+      rw [LinearMap.add_apply, map_add (f := _), LinearMap.id_apply, hZY, ht, hY.2.1 htr, neg_add_cancel]
     · simp
   · show r ((e s • ((LinearMap.mulLeft x.A (P s)).comp (LinearMap.mulRight x.A (Q s))) - LinearMap.id :
         Matrix (Fin n) (Fin n) (DD x.A k.g) →ₗ[x.A] Matrix (Fin n) (Fin n) (DD x.A k.g)) (Matrix.of Z0)) = 0

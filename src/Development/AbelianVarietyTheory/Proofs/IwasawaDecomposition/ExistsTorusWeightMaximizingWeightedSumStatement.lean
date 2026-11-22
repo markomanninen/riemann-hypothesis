@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTorusWeightMaximizingWeightedSum
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPolyRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTorusWeightMaximizingWeightedSum
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPolyRep
+
+@[expose] public section
+
 open Matrix GlobalTheory.AlgWtHW
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.exists_torusWeight_maximizing_weighted_sum : ∀ (n : ℕ) (ι : Type) [Fintype ι] [DecidableEq ι] (Φ : GL (Fin n) ℂ → Matrix ι ι ℂ) (μ₀ : Fin n → ℤ), IsWt Φ μ₀ → ∃ μ : Fin n → ℤ, IsWt Φ μ ∧ ∀ ν : Fin n → ℤ, IsWt Φ ν → ∑ i : Fin n, ((n : ℤ) - ((i : ℕ) : ℤ)) * ν i ≤ ∑ i : Fin n, ((n : ℤ) - ((i : ℕ) : ℤ)) * μ i := by

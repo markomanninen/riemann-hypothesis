@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,10 +53,11 @@ def degreeOfFamily (h : HermFam K V) (E : Submodule (𝓞 K) V) {r : ℕ} (v : F
   (Real.log ((Submodule.span (𝓞 K) (Set.range v)).toAddSubgroup.relIndex E.toAddSubgroup : ℝ)
     - (1 / 2) * ∑ σ : K →+* ℂ, Real.log (h.gram σ v).det.re) / finrank ℚ K
 
-open Classical in
 
-def deg (h : HermFam K V) (E : Submodule (𝓞 K) V) : ℝ :=
-  if hE : ∃ p : (Σ r : ℕ, Fin r → V), IsFrame K E p.2 then degreeOfFamily h E hE.choose.2 else 0
+open Classical in
+def deg (h : HermFam K V) (E : Submodule (𝓞 K) V) : ℝ := by
+  classical
+  exact if hE : ∃ p : (Σ r : ℕ, Fin r → V), IsFrame K E p.2 then degreeOfFamily h E hE.choose.2 else 0
 
 end
 

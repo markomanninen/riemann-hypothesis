@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.EtAICPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.EtAICPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC Polynomial

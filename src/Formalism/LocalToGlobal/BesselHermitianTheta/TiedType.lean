@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedSmooth
-import Formalism.LocalToGlobal.BesselHermitianTheta.NoncompactGapAtLeastRange
+module
+
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedSmooth
+public import Formalism.LocalToGlobal.BesselHermitianTheta.NoncompactGapAtLeastRange
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,11 @@
-import Development.WeilBound.CoreStatements.SesquilinearFractions.EqZeroOfCoef
-import Development.WeilBound.CoreStatements.SesquilinearFractions.PureTypeLatticesOrthogonal
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsEqSmulOfFinrankOne
+module
+
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.EqZeroOfCoef
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.PureTypeLatticesOrthogonal
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsEqSmulOfFinrankOne
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open Matrix GlobalTheory GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DecaysOfMemSmoothSpan
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemContraIff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MeasurePreservingToMixedPiSymm
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeAdelicMatrixIntegralTranslate
-import GroundTheory.AutomorphicForms.FourierWhittaker.PartialCoeffDiagonalBlockGLEqVecCoeff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegrableOnMinAbsDetInvFundamentalDomainStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MellinTypeIntegralEntireOfRapidDecayStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SchwartzBruhatIntegrableMomentsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DecaysOfMemSmoothSpan
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemContraIff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MeasurePreservingToMixedPiSymm
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeAdelicMatrixIntegralTranslate
+public import GroundTheory.AutomorphicForms.FourierWhittaker.PartialCoeffDiagonalBlockGLEqVecCoeff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegrableOnMinAbsDetInvFundamentalDomainStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MellinTypeIntegralEntireOfRapidDecayStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SchwartzBruhatIntegrableMomentsStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,15 +18,15 @@ open NumberField Matrix MeasureTheory GlobalTheory.CuspRep GlobalTheory.ShortVec
 
 namespace GlobalTheory.RSnm
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem invT_invT (g : GA E a) : invT a (Ad E) (invT a (Ad E) g) = g :=
   Units.ext (by change ((g.val)ᵀ)ᵀ = g.val; exact transpose_transpose _)
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem continuous_invT : Continuous (invT a (Ad E)) := by
   refine Units.continuous_iff.2 ⟨?_, ?_⟩
   · change Continuous fun g : GA E a => ((g⁻¹ : GA E a).val)ᵀ
@@ -45,7 +49,8 @@ theorem bounded_of_decays (ha : 0 < a) {F : GA E a → ℂ} (hF : Decays F) : �
   have key := hC g 1 rfl (fun j => (d : E) * e j) hξ (fun i _ => by
     have h1 : pFin E (((fun j => algebraMap E (Ad E) ((d : E) * e j)) ᵥ* g.val) i) =
         (d : Af E) * pFin E (((fun j => algebraMap E (Ad E) (e j)) ᵥ* g.val) i) := by
-      simp only [vecMul, dotProduct, map_mul, map_natCast, Finset.mul_sum, map_sum, mul_assoc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [vecMul, dotProduct, map_mul, map_natCast, Finset.mul_sum, map_sum, mul_assoc]
     show pFin E _ ∈ _
     rw [h1]
     exact hmem i)
@@ -75,8 +80,8 @@ theorem decays_smoothInf_invT {F : GA E a → ℂ} (hF : Decays fun g => F (invT
     exact mul_le_mul_of_nonneg_left (h g _ (Set.mul_mem_mul hcC ⟨_, ⟨u, hx, rfl⟩, rfl⟩) ξ hξ hm) (norm_nonneg _)
   · simp [image_eq_zero_of_notMem_tsupport hx]
 
-variable (a) in
 
+variable (a) in
 def goodFns : Submodule ℂ (GA E a → ℂ) where
   carrier := {F | Continuous F ∧ Decays F ∧ Decays fun g => F (invT a (Ad E) g)}
   zero_mem' := ⟨continuous_const, Decays.zero, Decays.zero⟩
@@ -105,67 +110,67 @@ open GroundTheory.Automorphic.FourierWhittaker (colGL uMat uMat_apply colX colX_
 
 namespace GlobalTheory.RSnm
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a n m : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a n m : ℕ}
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem mul_apply_of_row {R : Type} [CommRing R] {A B : Matrix (Fin n) (Fin n) R} {j : Fin n}
     (hA : ∀ t, A j t = (1 : Matrix (Fin n) (Fin n) R) j t) (l : Fin n) : (A * B) j l = B j l := by
-  rw [mul_apply, ← one_mul B, mul_apply]
+  rw [Matrix.mul_apply, ← one_mul B, Matrix.mul_apply]
   simp only [hA, one_mul]
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem mul_apply_of_col {R : Type} [CommRing R] {A B : Matrix (Fin n) (Fin n) R} {l : Fin n}
     (hB : ∀ t, B t l = (1 : Matrix (Fin n) (Fin n) R) t l) (i : Fin n) : (A * B) i l = A i l := by
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   simp only [hB]
-  rw [← mul_apply, mul_one]
+  rw [← Matrix.mul_apply, mul_one]
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem colGL_row_last {R : Type} [CommRing R] (k : ℕ) (y : Fin k → R) {j : Fin n} (hj : j.val + 1 = n) (t : Fin n) :
     (colGL (n := n) k y : Matrix (Fin n) (Fin n) R) j t = (1 : Matrix (Fin n) (Fin n) R) j t := by
-  rw [colGL, coe_uGL, uMat_apply, one_apply]
+  rw [colGL, coe_uGL, uMat_apply, Matrix.one_apply]
   split_ifs with h1 h2
   · rfl
   · exact absurd h2 (by rw [Fin.lt_def]; omega)
   · rfl
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem colGL_col {R : Type} [CommRing R] {k : ℕ} (hk : k ≠ m) (y : Fin k → R) {l : Fin n} (hl : l.val = m)
     (i : Fin n) : (colGL (n := n) k y : Matrix (Fin n) (Fin n) R) i l = (1 : Matrix (Fin n) (Fin n) R) i l := by
-  rw [colGL, coe_uGL, uMat_apply, one_apply]
+  rw [colGL, coe_uGL, uMat_apply, Matrix.one_apply]
   split_ifs with h1 h2
   · rfl
-  · rw [colX_apply, dif_neg (by simp only; omega)]
+  · rw [colX_apply, dite_eq_right (by simp only; omega)]
   · rfl
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem blockGL_row_last {R : Type} [CommRing R] (hmn : m < n) (h : GL (Fin m) R) {j : Fin n} (hj : j.val + 1 = n)
     (t : Fin n) : (blockGL hmn.le h : Matrix (Fin n) (Fin n) R) j t = (1 : Matrix (Fin n) (Fin n) R) j t := by
-  rw [coe_blockGL, blockMat_apply, dif_neg (by omega), one_apply]
+  rw [coe_blockGL, blockMat_apply, dite_eq_right (by omega), Matrix.one_apply]
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem blockGL_col {R : Type} [CommRing R] (hmn : m < n) (h : GL (Fin m) R) {l : Fin n} (hl : l.val = m)
     (i : Fin n) : (blockGL hmn.le h : Matrix (Fin n) (Fin n) R) i l = (1 : Matrix (Fin n) (Fin n) R) i l := by
-  rw [coe_blockGL, blockMat_apply, one_apply]
+  rw [coe_blockGL, blockMat_apply, Matrix.one_apply]
   split_ifs with h1 h2 h3 <;> first | rfl | omega | (subst h3; omega)
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem det_colGL {R : Type} [CommRing R] (k : ℕ) (y : Fin k → R) :
     GeneralLinearGroup.det (colGL (n := n) k y) = 1 :=
   Units.ext (by rw [GeneralLinearGroup.val_det_apply, colGL, coe_uGL, det_uMat, Units.val_one])
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem det_blockGL {R : Type} [CommRing R] (hmn : m ≤ n) (h : GL (Fin m) R) :
     GeneralLinearGroup.det (blockGL hmn h) = GeneralLinearGroup.det h := by
   refine Units.ext ?_
   rw [GeneralLinearGroup.val_det_apply, GeneralLinearGroup.val_det_apply, coe_blockGL, blockMat,
     det_submatrix_equiv_self, det_fromBlocks_zero₂₁, det_one, mul_one]
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem continuous_blockGL (hmn : m ≤ n) : Continuous fun h : GA E m => (blockGL hmn h : GA E n) := by
   have hc : ∀ M : GA E m → Matrix (Fin m) (Fin m) (Ad E), Continuous M →
       Continuous fun h => blockMat (n := n) hmn (M h) := fun M hM => by
@@ -186,18 +191,18 @@ namespace GlobalTheory.RSnm
 
 open GroundTheory.Global GroundTheory.Global.IdeleGroup GroundTheory.Automorphic
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a n m : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a n m : ℕ}
 
 def detAbs (g : GA E a) : ℝ := (ideleModule E (GeneralLinearGroup.det g) : ℝ)
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem detAbs_pos (g : GA E a) : 0 < detAbs g := (ideleModule E _).2
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem detAbs_mul (g h : GA E a) : detAbs (g * h) = detAbs g * detAbs h := by
   simp only [detAbs, map_mul, Positive.val_mul]
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem continuous_detAbs : Continuous (detAbs (E := E) (a := a)) :=
   continuous_subtype_val.comp (continuous_ideleModule.comp (AdelicGLn.continuous_det E a))
 
@@ -209,16 +214,16 @@ theorem detAbs_invT (g : GA E a) : detAbs (invT a (Ad E) g) = (detAbs g)⁻¹ :=
   rw [detAbs, h, map_inv, Positive.coe_inv]
   rfl
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem detAbs_colGL (k : ℕ) (y : Fin k → Ad E) : detAbs (colGL (n := a) k y) = 1 := by
   rw [detAbs, det_colGL, map_one]; rfl
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem detAbs_blockGL (hmn : m ≤ n) (h : GA E m) : detAbs (blockGL hmn h : GA E n) = detAbs h := by
   rw [detAbs, detAbs, det_blockGL]
 
-variable (m) in
 
+variable (m) in
 def InS (g : GA E n) : Prop :=
   (∀ j t : Fin n, j.val + 1 = n → g.val j t = (1 : Matrix (Fin n) (Fin n) (Ad E)) j t) ∧
     ∀ i l : Fin n, l.val = m → g.val i l = (1 : Matrix (Fin n) (Fin n) (Ad E)) i l
@@ -270,7 +275,7 @@ theorem norm_le_of_inS (hmn : m < n) {φ : GA E n → ℂ} (hφ : φ ∈ goodFns
   rw [hTu] at b1
   have hr : ‖fun i => pInf E (r i)‖ ≤ 1 := by
     refine (pi_norm_le_iff_of_nonneg zero_le_one).2 fun t => ?_
-    simp only [r, one_apply]
+    simp only [r, Matrix.one_apply]
     split_ifs
     · rw [map_one]
       exact (pi_norm_le_iff_of_nonneg zero_le_one).2 fun w => by simp
@@ -344,7 +349,7 @@ open GroundTheory.Global GroundTheory.Global.IdeleGroup GroundTheory.Automorphic
 open GroundTheory.Automorphic.FourierWhittaker (partialCoeff_self partialCoeff_of_lt continuous_partialCoeff continuous_colGL
   vecMeasure_vecDomain measurableSet_vecDomain)
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a n m : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a n m : ℕ}
 
 theorem inS_colGL_mul {k : ℕ} (hk : k ≠ m) (y : Fin k → Ad E) {g : GA E n} (hg : InS m g) :
     InS m (colGL (n := n) k y * g) := by
@@ -357,12 +362,13 @@ theorem inS_colGL_mul {k : ℕ} (hk : k ≠ m) (y : Fin k → Ad E) {g : GA E n}
 theorem inS_blockGL (hmn : m < n) (h : GA E m) : InS m (blockGL hmn.le h : GA E n) :=
   ⟨fun j t hj => blockGL_row_last hmn h hj t, fun i l hl => blockGL_col hmn h hl i⟩
 
-variable (m) in
 
+variable (m) in
 def colSmooth (F : (Fin m → Ad E) → ℂ) (φ : GA E n → ℂ) (g : GA E n) : ℂ :=
   ∫ x, F x * φ (g * colGL m x) ∂GJMatrix.adeleMeasurePi E
 
-theorem continuous_colSmooth {F : (Fin m → Ad E) → ℂ} (hF : F ∈ GJMatrix.schwartzBruhatPi E (Fin m))
+set_option synthInstance.maxHeartbeats 200000 in
+theorem continuous_colSmooth {F : (Fin m → Ad E) → ℂ} (hF : F ∈ GJMatrix.schwartzBruhatPi (K := E) (ι := Fin m))
     {φ : GA E n → ℂ} (hc : Continuous φ) {C : ℝ} (hC : ∀ g, ‖φ g‖ ≤ C) : Continuous (colSmooth m F φ) :=
   continuous_of_dominated (bound := fun x => ‖F x‖ * C)
     (fun g => ((GJMatrix.continuous_of_mem_schwartzBruhatPi hF).mul
@@ -372,7 +378,7 @@ theorem continuous_colSmooth {F : (Fin m → Ad E) → ℂ} (hF : F ∈ GJMatrix
     (.of_forall fun x => continuous_const.mul (hc.comp (continuous_id.mul continuous_const)))
 
 theorem colSmooth_bound (hmn : m < n) {φ : GA E n → ℂ} (hφ : φ ∈ goodFns n) {F : (Fin m → Ad E) → ℂ}
-    (hF : F ∈ GJMatrix.schwartzBruhatPi E (Fin m)) (N : ℕ) :
+    (hF : F ∈ GJMatrix.schwartzBruhatPi (K := E) (ι := Fin m)) (N : ℕ) :
     ∃ C : ℝ, ∀ g, InS m g → ‖colSmooth m F φ g‖ ≤ C * (min (detAbs g) (detAbs g)⁻¹) ^ N := by
   obtain ⟨⟨L, hL, hsupp⟩, hint⟩ := GlobalTheory.T.schwartz_bruhat_integrable_moments E m F hF
   obtain ⟨C, hC0, hC⟩ := norm_le_of_inS hmn hφ hL N
@@ -421,10 +427,10 @@ open GroundTheory.Global GroundTheory.Global.IdeleGroup GroundTheory.Automorphic
 open GroundTheory.Automorphic.FourierWhittaker (continuous_partialCoeff)
 open scoped ComplexConjugate nonZeroDivisors
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n m : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n m : ℕ}
+
 
 variable (m) in
-
 def rsIntegrand (hmn : m ≤ n) (F : (Fin m → Ad E) → ℂ) (φ : GA E n → ℂ) (φ' : GA E m → ℂ) (s : ℂ) (h : GA E m) : ℂ :=
   FourierWhittaker.partialCoeff (colSmooth m F φ) (m + 1) (blockGL hmn h) * conj (φ' h) *
     ((detAbs h : ℝ) : ℂ) ^ (s - ((n : ℂ) - m) / 2)

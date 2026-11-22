@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.IsChartIff
-import Formalism.LocalToGlobal.ProjectiveLattices.VAtVNeBot
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsChartIff
+public import Formalism.LocalToGlobal.ProjectiveLattices.VAtVNeBot
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -177,10 +181,6 @@ structure IntegralChartA3 (T : CDVR) (io : c.F →+* T.Fr) (y : IntFr Xo c T io)
   frameT : IsFrameG I.G (𝟙 (Sp T.V)) (chD ch) xT FT actT ph1T ph2T syT adT eT
   primT : IsPrimG I.G wPT
   gen : IsGenFibreChart ch I FT actT ph1T ph2T syT adT uvecT xT eT wPT
-
-def ChartDirectionsIntegral : Prop :=
-  ∀ (T : CDVR) (io : c.F →+* T.Fr) (y : IntFr Xo c T io) (C : IntegralChartA3 Xo c T io y) (ℓ : Lt1 Dw) (i : Fin (chD C.ch)),
-    (letI := io.toAlgebra; C.ch.uvec ℓ i) ∈ (algebraMap T.V T.Fr).range
 
 def ChartSaturated : Prop :=
   ∀ (T : CDVR) (io : c.F →+* T.Fr) (y : IntFr Xo c T io) (C : IntegralChartA3 Xo c T io y) (τ : E →+* ℂ),

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ColMeas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CyclotomicDvdExpandOfCoprime
+
+@[expose] public section
 
 open GlobalTheory.Col PowerSeries
 
@@ -17,7 +21,7 @@ theorem sum_units_primePow_teichmuller_reindex :
       Nat.Coprime ((c : ZMod p).val ^ (p ^ m) * (1 + p) ^ l) (p ^ (m + 1)) := by
     intro c l
     apply Nat.Coprime.pow_right
-    apply Nat.Coprime.mul
+    apply Nat.Coprime.mul_left
     · apply Nat.Coprime.pow_left
       rw [Nat.coprime_comm, hpp.coprime_iff_not_dvd]
       intro h

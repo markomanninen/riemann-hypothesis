@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.GrAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.RepStar
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.TriProdZero
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.GrAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.RepStar
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.TriProdZero
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.CA UpperTheory.V.Pa Polynomial
 open scoped TensorProduct
@@ -48,7 +52,7 @@ private theorem ch_prod_zero {R : Type} [CommRing R] {n : ℕ} (M : Matrix (Fin 
     congr 1
     congr 1
     funext k
-    simp only [Function.comp_apply, map_sub, aeval_X, aeval_C, Algebra.algebraMap_eq_smul_one]
+    simp [Algebra.algebraMap_eq_smul_one]
   rw [e, ← h, aeval_self_charpoly]
 
 theorem UpperTheory.V.Pa.rep_gens :

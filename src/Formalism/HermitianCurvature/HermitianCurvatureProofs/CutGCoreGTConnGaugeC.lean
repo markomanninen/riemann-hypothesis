@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGauge
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGauge
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -40,7 +44,8 @@ theorem connF_phase (P : M.Par) (hTT : 0 ≤ P.TT) (Bs : B.RealPlaceData P.k P.r
       (fun ρ ζ => B ρ ζ - star (u ρ ζ) * NF.dZb (u ρ) ζ) := fun ρ =>
     ⟨(hAB ρ).1.add ((conj_smooth (hu ρ).1).mul (dZ_smooth P (hu ρ).1).1),
       (hAB ρ).2.sub ((conj_smooth (hu ρ).1).mul (dZ_smooth P (hu ρ).1).2)⟩
-  refine ⟨hSm, fun Φ ρ => ?_⟩
+  refine ⟨hSm, ?_⟩
+  intro Φ ρ
   have hc := conj_smooth (hu ρ).1
   rw [trR_phase P Bs e u hu, trR_phase P Bs e u hu, trR_phase P Bs e u hu, (hC Φ ρ).1, (hC Φ ρ).2]
   set g := trR P Bs e Φ ρ
@@ -68,6 +73,7 @@ theorem connF_phase (P : M.Par) (hTT : 0 ≤ P.TT) (Bs : B.RealPlaceData P.k P.r
     rw [e1, dzbQ_apply P hTT, fnZ_val P hc, fnZ_val P (hAB ρ).2, fnZ_val P (hSm ρ).2,
       (dZ_conj_unit P (hu ρ).1 (hu ρ).2 hq).2]
     ring
+
 
 end main
 

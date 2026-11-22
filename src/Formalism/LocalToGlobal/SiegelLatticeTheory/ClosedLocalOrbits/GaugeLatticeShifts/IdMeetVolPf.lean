@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.IdMeetKey
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.IdMeetKey
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,7 @@ theorem idMeetVolC_of (hK : IdMeetKeyC) (hV : VolColC) : IdMeetVolC := by
   have hR := roinf_eq_nocol Y ρ t hm.1.symm hm.2.1.symm hlin
   have hex : ∃ Ω, Formalism.L2.SG.HidaSetting.IsSFund X.B.I (ROinf t) Ω := hF t
   unfold FundOf
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   apply hV D X Y u ρ
   rw [← hR]
   exact hex.choose_spec

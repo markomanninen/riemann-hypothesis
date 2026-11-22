@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
+
+@[expose] public section
+
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
@@ -89,7 +94,7 @@ private lemma diag_mem {I J : Finset (Fin (d + 1))} {j : Fin (d + 1)} (hI : j �
     exact mul_mem_PP x (tmul_mem_tensorRing x (one_mem _) (rA_single_le x hJ b.2)) (diff_mem x hI hJ a.2)
   | add a b ha hb =>
     have := add_mem ha hb
-    simp only [map_add, TensorProduct.tmul_add]
+    simp only [map_add (f := _), TensorProduct.tmul_add]
     convert this using 1
     abel
 
@@ -171,7 +176,7 @@ private lemma scale_mem {I J : Finset (Fin (d + 1))} {j : Fin (d + 1)} (w : rA �
     obtain ⟨N, hN⟩ := ha
     obtain ⟨N', hN'⟩ := hb
     refine ⟨N + N', ?_⟩
-    rw [map_add, mul_add, pow_add]
+    rw [map_add (f := _), mul_add, pow_add]
     refine add_mem ?_ ?_
     · rw [mul_comm (_ ^ N), mul_assoc]
       exact (R0 x {j} {j}).mul_mem (pow_mem hst _) hN

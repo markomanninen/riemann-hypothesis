@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSatVecUOfDiag
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSatVecUOfDiag
+
+@[expose] public section
+
 open Formalism.UG GlobalTheory.PRep GlobalTheory.LFun
 
 noncomputable section
@@ -8,9 +13,6 @@ noncomputable section
 namespace GlobalTheory.HeckeAvg
 
 variable {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V] {ρ : Representation ℂ G V} {K : Subgroup G}
-
-def avg (ρ : Representation ℂ G V) (K : Subgroup G) (H : Subgroup K) (v : V) : V :=
-  ∑ᶠ κ : K ⧸ H, ρ ((κ.out : K) : G) v
 
 theorem mem_conj {g : G} {t : K} :
     t ∈ (K.map (MulAut.conj g).toMonoidHom).subgroupOf K ↔ g⁻¹ * (t : G) * g ∈ K := by

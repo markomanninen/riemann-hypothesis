@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DetOneAddSmulBlkMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DetOneAddSmulBlkMem
+
+@[expose] public section
 
 open scoped BigOperators
 
@@ -7,33 +11,33 @@ namespace GlobalTheory.BlockDetPoly
 
 def coeffSub {O X : Type} [CommRing O] (T : Subalgebra O (X → O)) (m : ℕ) :
     Subalgebra (MvPolynomial (Fin m) O) (X → MvPolynomial (Fin m) O) where
-  carrier := {f | ∀ d, (fun x => MvPolynomial.coeff d (f x)) ∈ T}
+  carrier := {f | ∀ d, (fun x => AddMonoidAlgebra.coeff (f x) d) ∈ T}
   mul_mem' := by
     intro f g hf hg d
-    have : (fun x => MvPolynomial.coeff d ((f * g) x)) = ∑ p ∈ Finset.HasAntidiagonal.antidiagonal d,
-        (fun x => MvPolynomial.coeff p.1 (f x)) * (fun x => MvPolynomial.coeff p.2 (g x)) := by
+    have : (fun x => AddMonoidAlgebra.coeff ((f * g) x) d) = ∑ p ∈ Finset.HasAntidiagonal.antidiagonal d,
+        (fun x => AddMonoidAlgebra.coeff (f x) p.1) * (fun x => AddMonoidAlgebra.coeff (g x) p.2) := by
       funext x
       simp [MvPolynomial.coeff_mul, Finset.sum_apply]
     rw [this]
     exact T.sum_mem fun p _ => T.mul_mem (hf _) (hg _)
   add_mem' := by
     intro f g hf hg d
-    have : (fun x => MvPolynomial.coeff d ((f + g) x)) =
-        (fun x => MvPolynomial.coeff d (f x)) + (fun x => MvPolynomial.coeff d (g x)) := by
+    have : (fun x => AddMonoidAlgebra.coeff ((f + g) x) d) =
+        (fun x => AddMonoidAlgebra.coeff (f x) d) + (fun x => AddMonoidAlgebra.coeff (g x) d) := by
       funext x
       simp
     rw [this]
     exact T.add_mem (hf _) (hg _)
-  algebraMap_mem' := fun p d => T.algebraMap_mem (MvPolynomial.coeff d p)
+  algebraMap_mem' := fun p d => T.algebraMap_mem (AddMonoidAlgebra.coeff p d)
 
 theorem C_mem_coeffSub {O X : Type} [CommRing O] (T : Subalgebra O (X → O)) (m : ℕ)
     (t : X → O) (ht : t ∈ T) : (fun x => MvPolynomial.C (t x)) ∈ coeffSub T m := by
   show ∀ d : Fin m →₀ ℕ,
-    (fun x => MvPolynomial.coeff d (MvPolynomial.C (t x) : MvPolynomial (Fin m) O)) ∈ T
+    (fun x => AddMonoidAlgebra.coeff (MvPolynomial.C (t x) : MvPolynomial (Fin m) O) d) ∈ T
   intro d
   rcases eq_or_ne d 0 with rfl | hd
   · simpa using ht
-  · have h0 : (fun x => MvPolynomial.coeff d (MvPolynomial.C (t x) : MvPolynomial (Fin m) O)) = 0 := by
+  · have h0 : (fun x => AddMonoidAlgebra.coeff (MvPolynomial.C (t x) : MvPolynomial (Fin m) O) d) = 0 := by
       funext x
       simp [MvPolynomial.coeff_C, Ne.symm hd]
     rw [h0]
@@ -42,8 +46,8 @@ theorem C_mem_coeffSub {O X : Type} [CommRing O] (T : Subalgebra O (X → O)) (m
 theorem det_comb_mem {O X Q : Type} [CommRing O] [CommRing Q] (T : Subalgebra O (X → O)) {n : ℕ}
     (R : Subalgebra O (X → Matrix (Fin n) (Fin n) O))
     (hR : ∀ (m : ℕ) (a : Fin m → X → Matrix (Fin n) (Fin n) O), (∀ k, a k ∈ R) →
-      ∀ d : Fin m →₀ ℕ, (fun x => MvPolynomial.coeff d (Matrix.det
-        (∑ k, (MvPolynomial.X k : MvPolynomial (Fin m) O) • (a k x).map MvPolynomial.C))) ∈ T)
+      ∀ d : Fin m →₀ ℕ, (fun x => AddMonoidAlgebra.coeff (Matrix.det
+        (∑ k, (MvPolynomial.X k : MvPolynomial (Fin m) O) • (a k x).map MvPolynomial.C)) d) ∈ T)
     (φ : O →+* Q) (S : Subalgebra Q (X → Q)) (hS : ∀ t ∈ T, (fun x => φ (t x)) ∈ S)
     {J : Type} [Fintype J] (b : J → X → Matrix (Fin n) (Fin n) O) (hb : ∀ j, b j ∈ R)
     (c : J → Q) : (fun x => Matrix.det (∑ j, c j • (b j x).map φ)) ∈ S := by
@@ -54,11 +58,11 @@ theorem det_comb_mem {O X Q : Type} [CommRing O] [CommRing Q] (T : Subalgebra O 
 
   let A : Matrix (Fin n) (Fin n) (MvPolynomial (Fin (Fintype.card J)) (X → O)) :=
     Matrix.of fun i j => ∑ k, MvPolynomial.X k * MvPolynomial.C (fun x => a k x i j)
-  have hcoef : ∀ d, MvPolynomial.coeff d A.det ∈ T := by
+  have hcoef : ∀ d, AddMonoidAlgebra.coeff A.det d ∈ T := by
     intro d
-    have h1 : MvPolynomial.coeff d A.det = fun x => MvPolynomial.coeff d (Matrix.det
+    have h1 : AddMonoidAlgebra.coeff A.det d = fun x => AddMonoidAlgebra.coeff (Matrix.det
         (∑ k, (MvPolynomial.X k : MvPolynomial (Fin (Fintype.card J)) O) •
-          (a k x).map MvPolynomial.C)) := by
+          (a k x).map MvPolynomial.C)) d := by
       funext x
       have h2 : MvPolynomial.map (Pi.evalRingHom (fun _ : X => O) x) A.det =
           Matrix.det (∑ k, (MvPolynomial.X k : MvPolynomial (Fin (Fintype.card J)) O) •
@@ -84,7 +88,7 @@ theorem det_comb_mem {O X Q : Type} [CommRing O] [CommRing Q] (T : Subalgebra O 
       Matrix.smul_apply, smul_eq_mul]
     exact (e.sum_comp (fun j' => c j' * φ (b j' x i j))).symm
   have key : (fun x => Matrix.det (∑ j, c j • (b j x).map φ)) =
-      ∑ d ∈ A.det.support, (fun x => φ (MvPolynomial.coeff d A.det x)) *
+      ∑ d ∈ A.det.support, (fun x => φ (AddMonoidAlgebra.coeff A.det d x)) *
         algebraMap Q (X → Q) (∏ k, c (e k) ^ d k) := by
     funext x
     rw [h3, MvPolynomial.eval₂_eq', Finset.sum_apply]
@@ -94,9 +98,9 @@ theorem det_comb_mem {O X Q : Type} [CommRing O] [CommRing Q] (T : Subalgebra O 
 
 private theorem mem_coeffSub_iff_forall_coeff_mem {O X : Type} [CommRing O] (T : Subalgebra O (X → O)) (m : ℕ)
     (f : X → MvPolynomial (Fin m) O) :
-    f ∈ coeffSub T m ↔ ∀ d, (fun x => MvPolynomial.coeff d (f x)) ∈ T := Iff.rfl
+    f ∈ coeffSub T m ↔ ∀ d, (fun x => AddMonoidAlgebra.coeff (f x) d) ∈ T := Iff.rfl
 
-theorem main : ∀ {O X : Type} [CommRing O] (T : Subalgebra O (X → O)) (n : ℕ) (R : Subalgebra O (X → Matrix (Fin n) (Fin n) O)), (∀ (m : ℕ) (a : Fin m → X → Matrix (Fin n) (Fin n) O), (∀ k, a k ∈ R) → ∀ d : Fin m →₀ ℕ, (fun x => MvPolynomial.coeff d (Matrix.det (∑ k, (MvPolynomial.X k : MvPolynomial (Fin m) O) • (a k x).map MvPolynomial.C))) ∈ T) → ∀ (m g : ℕ) (Θ : Fin m → Fin g → Fin g → X → Matrix (Fin n) (Fin n) O), (∀ k p q, Θ k p q ∈ R) → ∀ d : Fin m →₀ ℕ, (fun x => MvPolynomial.coeff d (Matrix.det (Matrix.of fun (pa qb : Fin g × Fin n) => ∑ k, (MvPolynomial.X k : MvPolynomial (Fin m) O) * MvPolynomial.C (Θ k pa.1 qb.1 x pa.2 qb.2)))) ∈ T := by
+theorem main : ∀ {O X : Type} [CommRing O] (T : Subalgebra O (X → O)) (n : ℕ) (R : Subalgebra O (X → Matrix (Fin n) (Fin n) O)), (∀ (m : ℕ) (a : Fin m → X → Matrix (Fin n) (Fin n) O), (∀ k, a k ∈ R) → ∀ d : Fin m →₀ ℕ, (fun x => AddMonoidAlgebra.coeff (Matrix.det (∑ k, (MvPolynomial.X k : MvPolynomial (Fin m) O) • (a k x).map MvPolynomial.C)) d) ∈ T) → ∀ (m g : ℕ) (Θ : Fin m → Fin g → Fin g → X → Matrix (Fin n) (Fin n) O), (∀ k p q, Θ k p q ∈ R) → ∀ d : Fin m →₀ ℕ, (fun x => AddMonoidAlgebra.coeff (Matrix.det (Matrix.of fun (pa qb : Fin g × Fin n) => ∑ k, (MvPolynomial.X k : MvPolynomial (Fin m) O) * MvPolynomial.C (Θ k pa.1 qb.1 x pa.2 qb.2))) d) ∈ T := by
   intro O X _ T n R hR m g Θ hΘ d
   classical
 
@@ -124,9 +128,9 @@ theorem main : ∀ {O X : Type} [CommRing O] (T : Subalgebra O (X → O)) (n : �
     simp [hbe]
 
   have hR' : ∀ (m' : ℕ) (a : Fin m' → X → Matrix (Fin n) (Fin n) (MvPolynomial (Fin m) O)),
-      (∀ k, a k ∈ R') → ∀ d' : Fin m' →₀ ℕ, (fun x => MvPolynomial.coeff d' (Matrix.det
+      (∀ k, a k ∈ R') → ∀ d' : Fin m' →₀ ℕ, (fun x => AddMonoidAlgebra.coeff (Matrix.det
         (∑ k, (MvPolynomial.X k : MvPolynomial (Fin m') (MvPolynomial (Fin m) O)) •
-          (a k x).map MvPolynomial.C))) ∈ coeffSub T m := by
+          (a k x).map MvPolynomial.C)) d') ∈ coeffSub T m := by
     intro m' a ha d'
     choose N c b hb hab using fun k => hrep (a k) (ha k)
     have hS : ∀ t ∈ T, (fun x => ((MvPolynomial.C : MvPolynomial (Fin m) O →+* MvPolynomial (Fin m')

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice MeasureTheory IsDedekindDomain NumberField
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Pj Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT
@@ -16,7 +20,7 @@ theorem ringHom_eq_on_adjoin_simple {E : Type} [Field E] [Algebra ℚ E] (f g : 
   induction hx using IntermediateField.adjoin_induction with
   | mem y hy => rw [Set.mem_singleton_iff.1 hy]; exact h
   | algebraMap q => simp
-  | add a b _ _ ha hb => rw [map_add, map_add, ha, hb]
+  | add a b _ _ ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
   | inv a _ ha => rw [map_inv₀, map_inv₀, ha]
   | mul a b _ _ ha hb => rw [map_mul, map_mul, ha, hb]
 
@@ -37,8 +41,5 @@ theorem overK_iff_good_of_pins {D : D7} (T : CoreJ D) [Algebra T.Q.c.F D.what₂
   refine (overK_iff_sqrt σ).trans ⟨fun h => ?_, fun h => ?_⟩
   · exact (congrArg σ hx).symm.trans (h.trans h1)
   · exact (congrArg σ hx).trans (Eq.trans h h1.symm)
-
-theorem overK_iff_good : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T0 : Type} {A : FamIn D.what₂.LL G Pl0 T0 D.R.m} (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (R : RealDat D A T.Q.c.F) (F : Face D A) (κw : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1)) (v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec), R.Char F → ∀ (fw : FWTie T R κw v₀) (i : Fin D.R.m), ∀ (σ : D.what₂.LL →+* ℂ), OverK σ ↔ GoodEmb T.Q.c (res T σ) :=
-  fun T _ _ _ _ _ _ fw _ σ => overK_iff_good_of_pins T fw.alg_eq fw.laws.pins σ
 
 end GlobalTheory.GalLift

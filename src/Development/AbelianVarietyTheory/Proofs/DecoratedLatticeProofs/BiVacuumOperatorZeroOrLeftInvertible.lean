@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisOFinsetSum
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HomLatticeCompletionSelfAnnihilatorAtPlaces
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BiCombEqLOpROp
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CompletedHomLatticeStableSplitIdempotent
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HomLatticeCompletionSplitPlacesActsBySignsStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsolateAbstractStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisOFinsetSum
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HomLatticeCompletionSelfAnnihilatorAtPlaces
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BiCombEqLOpROp
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CompletedHomLatticeStableSplitIdempotent
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HomLatticeCompletionSplitPlacesActsBySignsStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsolateAbstractStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ theorem symplOH_add_r (T T' : HSp D) (x y y' : WO T T') :
 
 theorem symplOH_two (T T' : HSp D) (x y : WO T T') : symplOH T T' x y + symplOH T T' x y = symplO T T' x y := by
   unfold symplOH
-  rw [← add_mul, ← RingHom.map_add, add_halves, RingHom.map_one, one_mul]
+  rw [← add_mul, ← RingHom.map_add (f := _), add_halves, RingHom.map_one, one_mul]
 
 theorem symplO_skew' (T T' : HSp D) (x y : WO T T') : symplO T T' y x = -symplO T T' x y := by
   rw [← symplOH_two, ← symplOH_two, symplOH_skew, neg_add]
@@ -119,12 +123,12 @@ theorem app_eq (op : BiOp A S A') (C : WO A S → WO S A' → ℂ) :
   have ha : ∀ p a b, t p (a + b) = t p a + t p b := fun p a b => add_smul a b _
   change _ = (kOp A S A' op).sum t
   unfold kOp
-  rw [← Finsupp.sum_finset_sum_index hz ha]
+  rw [← Finsupp.sum_finsetSum_index hz ha]
   unfold BiOp.app
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [biComb_eq, ← Finsupp.sum_finset_sum_index hz ha]
+  rw [biComb_eq, ← Finsupp.sum_finsetSum_index hz ha]
   refine Finset.sum_congr rfl fun x _ => ?_
-  rw [← Finsupp.sum_finset_sum_index hz ha]
+  rw [← Finsupp.sum_finsetSum_index hz ha]
   refine Finset.sum_congr rfl fun y _ => ?_
   rw [Finsupp.sum_single_index (hz _)]
 
@@ -132,9 +136,9 @@ theorem kOp_good (P : Pl D → Prop) (op : BiOp A S A') (hop : OpAt P op) :
     ∀ p ∈ (kOp A S A' op).support, p ∈ goodG A S A' P := by
   classical
   intro p hp
-  obtain ⟨i, -, hp⟩ := Finset.mem_biUnion.1 (Finsupp.support_finset_sum hp)
-  obtain ⟨x, hx, hp⟩ := Finset.mem_biUnion.1 (Finsupp.support_finset_sum hp)
-  obtain ⟨y, hy, hp⟩ := Finset.mem_biUnion.1 (Finsupp.support_finset_sum hp)
+  obtain ⟨i, -, hp⟩ := Finset.mem_biUnion.1 (Finsupp.support_finsetSum hp)
+  obtain ⟨x, hx, hp⟩ := Finset.mem_biUnion.1 (Finsupp.support_finsetSum hp)
+  obtain ⟨y, hy, hp⟩ := Finset.mem_biUnion.1 (Finsupp.support_finsetSum hp)
   rw [Finset.mem_singleton.1 (Finsupp.support_single_subset hp)]
   exact ⟨(hop i).1 x hx, (hop i).2 y hy⟩
 
@@ -161,7 +165,8 @@ theorem ofK_at (P : Pl D → Prop) (κ : (WO A S × WO S A') →₀ ℂ) (hκ : 
 
 theorem biComb_sum {ι : Type} (s : Finset ι) (e : WO A S →₀ ℂ) (e' : WO S A' →₀ ℂ) (F : ι → WO A S → WO S A' → ℂ) :
     biComb ψ A S A' e e' (∑ i ∈ s, F i) = ∑ i ∈ s, biComb ψ A S A' e e' (F i) := by
-  simp only [biComb_eq, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [biComb_eq, map_sum, Finset.smul_sum]
   conv_rhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun x _ => ?_
   exact Finset.sum_comm
@@ -190,8 +195,8 @@ theorem psi_eq_one_of_neg {z : AF D.host.F} (h : ψ (-z) = 1) : ψ z = 1 := by
 
 end GlobalTheory.ZeroOrInv
 
-open GlobalTheory.ZeroOrInv GlobalTheory.LatVac in
 
+open GlobalTheory.ZeroOrInv GlobalTheory.LatVac in
 theorem GlobalTheory.FinPl.biInv_main : ∀ D : D7, GlobalTheory.FinPl.BiInv D := by
   intro D k _ _ _ _ ι p I P hP ψ hψ A S A' op hop
   refine ⟨fun LA LS LA' hA hS hA' => ?_, fun e e' he he' => comp_part ψ A S A' P op hop e e' he he'⟩

@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SandZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PeriodDiscExtensionTateElement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SandZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PeriodDiscExtensionTateElement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct GlobalTheory.HWL GlobalTheory.HWL.Cmp
 
 noncomputable section
@@ -22,12 +27,14 @@ theorem coeff_ext (nb : Module.Basis (Fin r) A ↥N) {a b : Fin r → A}
 theorem eq_sum (nb : Module.Basis (Fin r) A ↥N) {x : M} (hx : x ∈ N) :
     x = ∑ i, nb.repr ⟨x, hx⟩ i • (nb i : M) := by
   have h := congrArg N.subtype (nb.sum_repr ⟨x, hx⟩)
-  rw [map_sum] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum] at h
   simpa using h.symm
 
 theorem semi_sum {f : M →+ M} {σ : A → A} (hf : ∀ a x, f (a • x) = σ a • f x) (a : Fin r → A)
     (x : Fin r → M) : f (∑ i, a i • x i) = ∑ i, σ (a i) • f (x i) := by
-  rw [map_sum]; exact Finset.sum_congr rfl fun i _ => hf _ _
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]; exact Finset.sum_congr rfl fun i _ => hf _ _
 
 theorem sum_sum (P C : Matrix (Fin r) (Fin r) A) (e : Fin r → M) (j : Fin r) :
     ∑ k, C k j • ∑ i, P i k • e i = ∑ i, (P * C) i j • e i := by

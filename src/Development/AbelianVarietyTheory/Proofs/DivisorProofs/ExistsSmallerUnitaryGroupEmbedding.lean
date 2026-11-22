@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AntiJMulApply
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AntiJMulApply
+
+@[expose] public section
+
 open Formalism.UG GlobalTheory.SatakeWeyl
 
 open Matrix
@@ -36,7 +41,7 @@ theorem mul_inclT_apply_of_not {p : Type} {e : Fin r → Fin n} (M : Matrix p (F
 
 theorem inclT_mul_incl {e : Fin r → Fin n} (he : Function.Injective e) : (incl L e)ᵀ * incl L e = 1 := by
   ext i j
-  simp [Matrix.mul_apply, incl, he.eq_iff, Matrix.one_apply, eq_comm]
+  simp [Matrix.mul_apply, incl, Function.swap, he.eq_iff, Matrix.one_apply, eq_comm]
 
 theorem antiJ_apply (i j : Fin n) : antiJ L n i j = if i.rev = j then 1 else 0 := by
   have : (i.val + j.val + 1 = n) ↔ i.rev = j := by
@@ -81,7 +86,8 @@ theorem extendMatrixByIdentityAlongIndices_mul {e : Fin r → Fin n} (he : Funct
 theorem conjTranspose_extendMatrixByIdentityAlongIndices (σ : L →+* L) (e : Fin r → Fin n) (M : Matrix (Fin r) (Fin r) L) :
     cT σ (ext1 e M) = ext1 e (cT σ M) := by
   ext a b
-  simp only [cT, ext1, Matrix.transpose_apply, Matrix.map_apply, Matrix.add_apply, Matrix.mul_apply, map_add,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [cT, ext1, Matrix.transpose_apply, Matrix.map_apply, Matrix.add_apply, Matrix.mul_apply, map_add (f := _),
     map_sum, map_mul, incl, Matrix.of_apply, Matrix.sub_apply, map_sub, Matrix.one_apply, apply_ite σ, map_one,
     map_zero, Finset.sum_mul]
   congr 1
@@ -112,8 +118,8 @@ theorem extendMatrixByIdentityAlongIndices_unitary [Valued L (WithZero (Multipli
 
 end GlobalTheory.SatakeWeyl.InclusionMultiplication
 
-open GlobalTheory.SatakeWeyl.InclusionMultiplication in
 
+open GlobalTheory.SatakeWeyl.InclusionMultiplication in
 theorem GlobalTheory.SatakeWeyl.embExists : GlobalTheory.SatakeWeyl.EmbExists := by
   intro L _ _ σ n r e he hr
   choose f hf using fun g : GU σ r => exists_mat (σ := σ) (ext1 e (mat g)) (extendMatrixByIdentityAlongIndices_unitary σ he hr _ g.2)

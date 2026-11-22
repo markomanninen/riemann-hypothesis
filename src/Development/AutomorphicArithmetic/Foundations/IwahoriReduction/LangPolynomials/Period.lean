@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.PLangR
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.DvdOfNormLe
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.PLangR
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.DvdOfNormLe
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ GlobalTheory.Col UpperTheory.Kd.C7
 open scoped Matrix
@@ -32,7 +36,7 @@ private theorem ringHom_algebraMap_padicInt_eq {l : ℕ} [Fact (Nat.Prime l)] {R
     rw [hw]
     ring
   rw [SModEq.zero, smul_eq_mul, Ideal.mul_top, Ideal.span_singleton_pow, Ideal.mem_span_singleton, hz]
-  simp only [map_add, map_mul, map_pow, map_natCast]
+  simp only [map_add (f := _), map_mul, map_pow, map_natCast]
   exact ⟨f (algebraMap ℤ_[l] R w) - algebraMap ℤ_[l] R w, by ring⟩
 
 private theorem transpose_leftMulMatrix_mul_structure_mul_eq {l : ℕ} [Fact (Nat.Prime l)] {S : Type} [CommRing S] [Algebra ℤ_[l] S] {d : ℕ}
@@ -47,12 +51,14 @@ private theorem transpose_leftMulMatrix_mul_structure_mul_eq {l : ℕ} [Fact (Na
   simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.of_apply]
   have h1 : ∀ m, ∑ k, Algebra.leftMulMatrix e a k k' * e.repr (e k * e m) i = e.repr (a * e k' * e m) i := by
     intro m
-    rw [← hsum a k', Finset.sum_mul, map_sum, Finsupp.finset_sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hsum a k', Finset.sum_mul, map_sum, Finsupp.finsetSum_apply]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [smul_mul_assoc, map_smul, Finsupp.smul_apply, smul_eq_mul]
   simp only [h1]
   have h2 : ∑ m, e.repr (a * e k' * e m) i * Algebra.leftMulMatrix e b m m' = e.repr (a * e k' * (b * e m')) i := by
-    rw [← hsum b m', Finset.mul_sum, map_sum, Finsupp.finset_sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hsum b m', Finset.mul_sum, map_sum, Finsupp.finsetSum_apply]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [mul_smul_comm, map_smul, Finsupp.smul_apply, smul_eq_mul]
     ring
@@ -62,7 +68,8 @@ private theorem sum_algebraMap_basis_mul_eq_algebraMap_sum_smul {l : ℕ} [Fact 
     ∑ i, algebraMap (PadicAlgCl l) ℂ_[l] (β.val i) *
         algebraMap (PadicAlgCl l) ℂ_[l] (algebraMap ℤ_[l] (PadicAlgCl l) (z i)) =
       algebraMap (PadicAlgCl l) ℂ_[l] ((∑ i, z i • β.e i : c.O) : PadicAlgCl l) := by
-  simp only [← map_mul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← map_mul, ← map_sum]
   congr 1
   simp [Bas.val, Algebra.smul_def, mul_comm]
 
@@ -105,7 +112,8 @@ theorem UpperTheory.Kd.C7.pPeriod :
     simp
   have hsum : (1 : ℂ_[l]) = ∑ m, Φ.jh (s m) * Φ.lam β (fun i => V i m) := by
     rw [← h1, ← hVs]
-    simp only [Fr.lam, Matrix.mulVec, dotProduct, map_sum, map_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Fr.lam, Matrix.mulVec, dotProduct, map_sum, map_mul, Finset.mul_sum]
     conv_lhs => rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun m _ => Finset.sum_congr rfl fun i _ => by ring
   have hne : (Finset.univ : Finset (Fin β.d)).Nonempty := by
@@ -113,8 +121,11 @@ theorem UpperTheory.Kd.C7.pPeriod :
     rw [Finset.not_nonempty_iff_eq_empty] at hE
     rw [hE, Finset.sum_empty] at hsum
     exact one_ne_zero hsum
-  obtain ⟨m0, -, hm0⟩ := IsUltrametricDist.exists_norm_finset_sum_le_of_nonempty hne
-    (fun m => Φ.jh (s m) * Φ.lam β (fun i => V i m))
+  obtain ⟨m0, -, hmax⟩ := Finset.exists_max_image Finset.univ
+    (fun m => ‖Φ.jh (s m) * Φ.lam β (fun i => V i m)‖) hne
+  have hm0 : ‖∑ m, Φ.jh (s m) * Φ.lam β (fun i => V i m)‖ ≤
+      ‖Φ.jh (s m0) * Φ.lam β (fun i => V i m0)‖ := by
+    exact IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (norm_nonneg _) hmax
   rw [← hsum, norm_one, norm_mul] at hm0
   set η : Fin β.d → Φ.R := fun i => V i m0 with hηdef
   set μ := Φ.lam β η with hμdef
@@ -133,7 +144,8 @@ theorem UpperTheory.Kd.C7.pPeriod :
   have hmapv : ∀ (M : Matrix (Fin β.d) (Fin β.d) ℤ_[l]) (w : Fin β.d → Φ.R) (i : Fin β.d),
       Φ.σ.symm ((M.map f *ᵥ w) i) = (M.map f *ᵥ fun k => Φ.σ.symm (w k)) i := by
     intro M w i
-    simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply, hσs]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply, hσs]
   have hηs' : η = Na *ᵥ fun k => Φ.σ.symm (η k) := by
     funext i
     have h := congrArg Φ.σ.symm (congrFun hη i)
@@ -160,7 +172,8 @@ theorem UpperTheory.Kd.C7.pPeriod :
     intro i
     have h2 : Φ.σ.symm (P i) =
         (fun k => Φ.σ.symm (x k)) ⬝ᵥ (Ci i *ᵥ fun m => Φ.σ.symm (η m)) := by
-      simp only [hP, hCi, dotProduct, Matrix.mulVec, map_sum, map_mul, Matrix.map_apply, hσs]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hP, hCi, dotProduct, Matrix.mulVec, map_sum, map_mul, Matrix.map_apply, hσs]
     rw [h2, hxs, hηs]
     calc (Na *ᵥ x) ⬝ᵥ (Ci i *ᵥ (Nb *ᵥ η)) = (x ᵥ* Na.transpose) ⬝ᵥ ((Ci i * Nb) *ᵥ η) := by
           rw [Matrix.vecMul_transpose, Matrix.mulVec_mulVec]
@@ -181,7 +194,8 @@ theorem UpperTheory.Kd.C7.pPeriod :
   have hmul : Φ.lam β P = Φ.lam β x * μ := by
     calc Φ.lam β P = ∑ k, ∑ m, Φ.jh (x k) * Φ.jh (η m) * ∑ i, algebraMap (PadicAlgCl l) ℂ_[l] (β.val i) *
           algebraMap (PadicAlgCl l) ℂ_[l] (algebraMap ℤ_[l] (PadicAlgCl l) (β.e.repr (β.e k * β.e m) i)) := by
-          simp only [Fr.lam, hP, hCi, dotProduct, Matrix.mulVec, Matrix.map_apply, Matrix.of_apply, map_sum,
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [Fr.lam, hP, hCi, dotProduct, Matrix.mulVec, Matrix.map_apply, Matrix.of_apply, map_sum,
             map_mul, hf, Fr.jh_alg, Finset.mul_sum]
           conv_lhs => rw [Finset.sum_comm]
           refine Finset.sum_congr rfl fun k _ => ?_

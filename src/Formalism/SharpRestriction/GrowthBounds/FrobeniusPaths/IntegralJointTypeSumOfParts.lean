@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.JointTypeLatticeSaturated
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.JointTypeLatticeSaturated
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,7 +130,7 @@ def fracSub (X : Submodule O (MvPolynomial σ O)) : Submodule (KK O) (MvPolynomi
   add_mem' := by
     rintro y1 y2 ⟨a1, h1, f1, hf1, e1⟩ ⟨a2, h2, f2, hf2, e2⟩
     refine ⟨a1 * a2, mul_ne_zero h1 h2, a2 • f1 + a1 • f2, X.add_mem (X.smul_mem _ hf1) (X.smul_mem _ hf2), ?_⟩
-    rw [_root_.map_add, map_smul', map_smul', e1, e2, smul_add, smul_smul, smul_smul, _root_.map_mul,
+    rw [_root_.map_add (f := _), map_smul', map_smul', e1, e2, smul_add, smul_smul, smul_smul, _root_.map_mul,
       mul_comm (algebraMap O (KK O) a2)]
   smul_mem' := by
     rintro c y ⟨a, h, f', hf, e⟩
@@ -204,7 +208,7 @@ theorem integral_joint_type_sum_of_parts (D : Formalism.BasicNotions.D7) (h16 : 
         (Submodule.subset_span ⟨q.1, q.2, I', I'', hpp q hq, hself q hq, h1, h2, rfl⟩)
       exact hW q hq h3.2
     | zero => rw [_root_.map_zero]; exact Submodule.zero_mem _
-    | add x y _ _ h1 h2 => rw [_root_.map_add]; exact Submodule.add_mem _ (h1 (by assumption)) (h2 (by assumption))
+    | add x y _ _ h1 h2 => rw [_root_.map_add (f := _)]; exact Submodule.add_mem _ (h1 (by assumption)) (h2 (by assumption))
     | smul a x _ h => rw [map_smul']; exact Submodule.smul_mem _ _ (h (by assumption))
   · intro f hf
     have hf' : MvPolynomial.map (algebraMap O (KK O)) f ∈ ⨆ q ∈ PP, jointType (KK O) LL q.1 q.2 := hf

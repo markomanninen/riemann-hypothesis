@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.StatementA
+module
+
+public import Formalism.GradedWeylDivisibility.StatementA
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -9,7 +13,7 @@ namespace Formalism.GradedWeylDivisibility
 theorem rowDiv_add (R : Type*) [CommRing R] {r n : ℕ} (a b : Fin r) (k : ℕ)
     (f g : MvPolynomial (Fin r × Fin n) R) :
     rowDiv R a b k (f + g) = rowDiv R a b k f + rowDiv R a b k g := by
-  simp only [rowDiv, map_add, Polynomial.coeff_add]
+  simp only [rowDiv, map_add (f := _), Polynomial.coeff_add]
 
 theorem rowDiv_smul (R : Type*) [CommRing R] {r n : ℕ} (a b : Fin r) (k : ℕ) (c : R)
     (f : MvPolynomial (Fin r × Fin n) R) :

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalTheoremOfUnramifiedLifting
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalTheoremOfUnramifiedLifting
+
+@[expose] public section
 
 noncomputable section
 

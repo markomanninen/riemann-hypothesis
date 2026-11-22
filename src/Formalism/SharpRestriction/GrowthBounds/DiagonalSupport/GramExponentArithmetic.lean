@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PickCore
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.Imports
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.BinomCombFOnFinset
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.VBBMonomialOne
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SizeStep
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.JointEIntList
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PickCore
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.Imports
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.BinomCombFOnFinset
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.VBBMonomialOne
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SizeStep
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.JointEIntList
+
+@[expose] public section
 
 noncomputable section
 

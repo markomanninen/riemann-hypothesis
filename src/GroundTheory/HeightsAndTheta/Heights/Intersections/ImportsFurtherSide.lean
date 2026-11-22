@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImageVarIdBotTwo
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImageVarIdBotTwo
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

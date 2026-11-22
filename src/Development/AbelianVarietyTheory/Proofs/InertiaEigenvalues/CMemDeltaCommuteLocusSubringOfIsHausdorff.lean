@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.DeltaStructureOfWittLengthTwoSection
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeltaAddSubMemPowStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.DeltaStructureOfWittLengthTwoSection
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeltaAddSubMemPowStatement
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
 
@@ -51,7 +56,7 @@ theorem teich_eq_pow (n : ℕ) (x : Fq l a) :
     obtain ⟨y, hy⟩ := ih
     refine ⟨y ^ (l ^ (a - 1)), ?_⟩
     have h1 : (y ^ (l ^ (a - 1))) ^ l = y := by
-      rw [← pow_mul, ← pow_succ, Nat.sub_add_cancel (NeZero.pos a)]; exact Fq.pow_card y
+      rw [← pow_mul, ← pow_succ, Nat.sub_add_cancel (NeZero.pos a)]; exact Fq.pow_card (l := l) (a := a) y
     rw [hy, pow_succ' l n, pow_mul, ← map_pow (WittVector.teichmuller l) (y ^ l ^ (a - 1)) l, h1]
 
 theorem deltaS_C_teich (x : Fq l a) :
@@ -96,8 +101,8 @@ end GlobalTheory.BSP.WDelta
 
 namespace GlobalTheory.BSP
 
-open GlobalTheory.BSP.WDelta in
 
+open GlobalTheory.BSP.WDelta in
 theorem C_mem_δLocus_of_hausdorff : ∀ (l : ℕ) [Fact l.Prime] (a : ℕ) [NeZero a] (C : Type) [CommRing C]
     (DC : Delta l C) (J : Ideal C), (l : C) ∈ J → IsHausdorff J C → ∀ σ : (Wq l a)⟦X⟧ →+* C,
     ∀ w : Wq l a, PowerSeries.C w ∈ δLocus (deltaS l a) DC σ := by
@@ -116,7 +121,7 @@ theorem C_mem_δLocus_of_hausdorff : ∀ (l : ℕ) [Fact l.Prime] (a : ℕ) [NeZ
   obtain ⟨r, hr⟩ := h1
   have h2 := GlobalTheory.T.delta_add_sub_mem_pow_of_mem_pow_succ l C DC J hl n (σ (PowerSeries.C s)) (σ (PowerSeries.C w - PowerSeries.C s))
     (by rw [hy, map_mul, map_pow, map_natCast]; exact Ideal.mul_mem_right _ _ (Ideal.pow_mem_pow hl _))
-  rw [← map_add, add_sub_cancel] at h2
+  rw [← map_add (f := _), add_sub_cancel] at h2
   have h3 : σ ((deltaS l a).δ (PowerSeries.C w)) - σ ((deltaS l a).δ (PowerSeries.C s)) ∈ J ^ n := by
     rw [← map_sub, hr, map_mul, map_pow, map_natCast]
     exact Ideal.mul_mem_right _ _ (Ideal.pow_mem_pow hl _)

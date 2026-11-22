@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField Module
 open scoped NumberTheorySymbols
@@ -47,7 +51,7 @@ theorem exists_ringHom (b : Basis (Fin 2) ℤ R) (h0 : b 0 = 1) {t n : ℤ}
     intro x y
     have : (x + y * b 1 : R) = x • b 0 + y • b 1 := by simp [h0]
     rw [this]
-    rw [map_add, map_smul, map_smul]
+    rw [map_add (f := _), map_smul, map_smul]
     simp [f]
   refine ⟨(AlgHom.ofLinearMap f (by simpa using hf 1 0) fun x y => ?_).toRingHom,
     by simpa using hf 0 1⟩
@@ -151,11 +155,12 @@ theorem ncard_dvd {J : Ideal (𝓞 K)} (hJ : J ≠ ⊥) (k : ℕ) :
       exact ⟨I', Nat.eq_of_mul_eq_mul_left hN h1, rfl⟩
     · rintro ⟨I', h1, rfl⟩
       exact ⟨by rw [map_mul, h1], dvd_mul_right _ _⟩
-  · convert Set.ncard_empty (Ideal (𝓞 K))
-    ext I
-    simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_and]
-    rintro rfl h'
-    exact h (map_dvd _ h')
+  · have hEmpty : {I : Ideal (𝓞 K) | Ideal.absNorm I = k ∧ J ∣ I} = ∅ := by
+      ext I
+      simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_and]
+      rintro rfl h'
+      exact h (map_dvd _ h')
+    rw [hEmpty, Set.ncard_empty]
 
 theorem int_dvd_of_mem {p : ℕ} {P : Ideal (𝓞 K)} (hP : P.under ℤ = .span {(p : ℤ)}) (x : ℤ) :
     (x : 𝓞 K) ∈ P ↔ (p : ℤ) ∣ x := by
@@ -497,12 +502,6 @@ theorem exists_isKroneckerChar {d : ℕ} (hd0 : d ≠ 0) (hd : d % 4 = 0 ∨ d %
       rw [ZMod.val_natCast, hf]
 
 variable {K : Type*} [Field K] [NumberField K] {d : ℕ}
-
-theorem exists_isKroneckerChar_of_discr (h2 : finrank ℚ K = 2) (hD : discr K = -d) :
-    ∃ χ : DirichletCharacter ℂ d, IsKroneckerChar χ := by
-  have := discr_mod_four h2
-  have := discr_ne_zero K
-  exact exists_isKroneckerChar (by omega) (by omega)
 
 theorem dedekindZeta_eq_mul_LFunction [NeZero d] (h2 : finrank ℚ K = 2) (hD : discr K = -d)
     {χ : DirichletCharacter ℂ d} (hχ : IsKroneckerChar χ) {s : ℂ} (hs : 1 < s.re) :

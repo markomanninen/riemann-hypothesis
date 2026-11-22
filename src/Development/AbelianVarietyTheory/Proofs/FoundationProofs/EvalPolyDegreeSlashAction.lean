@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+
+@[expose] public section
+
 open GlobalTheory.HeckeFamilyMatrices Polynomial UpperHalfPlane
 open scoped MatrixGroups ModularForm
 open scoped Manifold
@@ -15,7 +20,7 @@ theorem eval_polySlash : ∀ (w : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) (p : ℂ
       ((C ((g 0 0 : ℤ) : ℂ) * X + C ((g 0 1 : ℤ) : ℂ)) ^ i *
         (C ((g 1 0 : ℤ) : ℂ) * X + C ((g 1 1 : ℤ) : ℂ)) ^ (w - i)) := by
     simp [slP, LinearMap.sum_apply, LinearMap.toSpanSingleton_apply]
-  rw [hs, eval_finset_sum, eval_eq_sum_range' hn, Finset.mul_sum]
+  rw [hs, eval_finsetSum, eval_eq_sum_range' hn, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i hi => ?_
   have hi' : i ≤ w := Nat.lt_succ_iff.1 (Finset.mem_range.1 hi)
   simp only [eval_smul, eval_mul, eval_pow, eval_add, eval_C, eval_X, smul_eq_mul]

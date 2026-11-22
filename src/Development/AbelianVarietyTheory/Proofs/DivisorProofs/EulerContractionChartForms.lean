@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
+
+@[expose] public section
+
 open GlobalTheory GlobalTheory.LogDR
 
 namespace GlobalTheory.LogDR.StabTheta
@@ -9,7 +14,7 @@ theorem smul_mem_spanForms (M M' : Set K) (H : Set Ω[K⁄ℤ]) (a : ℕ) (c : K
     (h : ∀ m ∈ M, c * m ∈ M') {η : abelian₂ K} (hη : η ∈ spanForms M H a) :
     c • η ∈ spanForms M' H a := by
   have key : spanForms M H a ≤
-      (spanForms M' H a).comap (DistribMulAction.toAddMonoidHom (abelian₂ K) c) := by
+      (spanForms M' H a).comap (DistribSMul.toAddMonoidHom (abelian₂ K) c) := by
     unfold spanForms
     rw [AddSubgroup.closure_le]
     rintro _ ⟨m, hm, v, hv, rfl⟩

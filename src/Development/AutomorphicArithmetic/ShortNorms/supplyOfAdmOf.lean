@@ -1,12 +1,16 @@
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ThinScalesIffHostBound
-import Development.AutomorphicArithmetic.CharacterBoxes.Imports
-import Development.AutomorphicArithmetic.CharacterBoxes.WinPairs
-import Development.AutomorphicArithmetic.CharacterBoxes.FieldChi
-import Development.AutomorphicArithmetic.CharacterBoxes.IsChiField
-import Development.AutomorphicArithmetic.CharacterBoxes.BoundedTw
-import Development.AutomorphicArithmetic.CharacterBoxes.PairHyp
-import Development.AutomorphicArithmetic.CharacterBoxes.EventuallyRankLeRpowOfLtOneDivFiftytwo
-import Development.AutomorphicArithmetic.MeanSquareBounds.pairEx
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ThinScalesIffHostBound
+public import Development.AutomorphicArithmetic.CharacterBoxes.Imports
+public import Development.AutomorphicArithmetic.CharacterBoxes.WinPairs
+public import Development.AutomorphicArithmetic.CharacterBoxes.FieldChi
+public import Development.AutomorphicArithmetic.CharacterBoxes.IsChiField
+public import Development.AutomorphicArithmetic.CharacterBoxes.BoundedTw
+public import Development.AutomorphicArithmetic.CharacterBoxes.PairHyp
+public import Development.AutomorphicArithmetic.CharacterBoxes.EventuallyRankLeRpowOfLtOneDivFiftytwo
+public import Development.AutomorphicArithmetic.MeanSquareBounds.pairEx
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.HC GlobalTheory.EX UpperTheory.Top HostParam.Seam
 

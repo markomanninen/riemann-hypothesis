@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.ActualZetaSmooth
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ModelLevelMultiplier
+module
+
+public import Formalism.HermitianCurvature.ActualZetaSmooth
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ModelLevelMultiplier
+
+@[expose] public section
 
 section
 noncomputable section
@@ -109,7 +113,7 @@ theorem fderiv_wirt (f : ℂ → ℂ) (w v : ℂ) :
     rw [← hv2, ← hs]
   rw [e]
   conv_lhs => rw [hv]
-  rw [map_add, map_smul, map_smul]
+  rw [map_add (f := _), map_smul, map_smul]
   simp only [dZ, dZb, Complex.real_smul]
   have hI : Complex.I * Complex.I = -1 := Complex.I_mul_I
   linear_combination ((v.im : ℂ) * fderiv ℝ f w Complex.I) * hI
@@ -436,8 +440,8 @@ theorem smooth_comp (hD : IsOpen D) (hDU : ∀ g ∈ D, zetaL k r z z' i g ∈ U
   ⟨D, fun g => f (zetaL k r z z' i g), hD, hg0.2,
     hf.comp (zetaL_contDiff k r z z' i).contDiffOn (fun g hg => hDU g hg), fun _ _ _ => rfl⟩
 
-open Classical in
 
+open Classical in
 def MF (hD : IsOpen D) (f : ℂ → ℂ) : Module.End ℂ (VS k r i D E) :=
   if h : SmoothLev k r i D (fun g => f (zetaL k r z z' i g)) then Mh hD _ h else 0
 
@@ -982,7 +986,7 @@ theorem comm_of_sep {T : Type} [Fintype T] [DecidableEq T] {A : Type} [Ring A] [
         simp only [Set.mem_setOf_eq, map_mul] at *
         exact ha.mul_left hb
       add_mem' := fun {a b} ha hb => by
-        simp only [Set.mem_setOf_eq, map_add] at *
+        simp only [Set.mem_setOf_eq, map_add (f := _)] at *
         exact ha.add_left hb
       algebraMap_mem' := fun c => by
         simp only [Set.mem_setOf_eq, AlgHom.commutes]
@@ -1053,10 +1057,7 @@ def fstA (V : Type) [AddCommGroup V] [Module ℂ V] : Q.Pr V →ₐ[ℂ] Module.
   map_add' _ _ := rfl
   commutes' _ := rfl
 
-theorem fstA_apply (a : Q.Pr V) : fstA V a = a.1 := rfl
-
 theorem fst_mul (a b : Q.Pr V) : (a * b).1 = a.1 * b.1 := rfl
-theorem fst_add (a b : Q.Pr V) : (a + b).1 = a.1 + b.1 := rfl
 theorem fst_sub (a b : Q.Pr V) : (a - b).1 = a.1 - b.1 := rfl
 theorem fst_neg (a : Q.Pr V) : (-a).1 = -a.1 := rfl
 theorem fst_one : (1 : Q.Pr V).1 = 1 := rfl
@@ -1120,11 +1121,8 @@ theorem kap_Pj (h : M.Ty P → ℂ) (ρ : M.Ty P) : d.κ h * Pj d ρ = h ρ • 
   unfold Pj
   rw [← map_mul, ← map_smul]
   congr 1
-  funext τ
-  simp only [Pi.mul_apply, Pi.smul_apply, smul_eq_mul]
-  split_ifs with hτ
-  · subst hτ; ring
-  · ring
+  ext τ
+  by_cases hτ : τ = ρ <;> simp [hτ]
 
 theorem kap_comm (h h' : M.Ty P → ℂ) : d.κ h * d.κ h' = d.κ h' * d.κ h := by
   rw [← map_mul, ← map_mul, mul_comm]
@@ -1143,12 +1141,11 @@ theorem Pj_idem (ρ : M.Ty P) : Pj d ρ * Pj d ρ = Pj d ρ := by
 
 theorem sum_Pj : ∑ ρ, Pj d ρ = 1 := by
   unfold Pj
-  rw [← map_sum, ← map_one d.κ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, ← map_one d.κ]
   congr 1
-  funext τ
-  simp only [Finset.sum_apply, Pi.one_apply]
-  rw [Finset.sum_ite_eq]
-  simp
+  ext τ
+  simp [Finset.sum_apply]
 
 theorem decomp (a : A) : a = ∑ ρ', ∑ ρ, Pj d ρ' * a * Pj d ρ := by
   calc a = (∑ ρ', Pj d ρ') * a * (∑ ρ, Pj d ρ) := by rw [sum_Pj, one_mul, mul_one]
@@ -1613,24 +1610,6 @@ theorem supp_mul {δ δ' : ℕ → ℤ} {X Y : A} (hX : Supp κ δ X) (hY : Supp
     · rw [hX τ σ h2, zero_mul]
   · rw [hY ρ τ h1, mul_zero]
 
-theorem supp_add {δ : ℕ → ℤ} {X Y : A} (hX : Supp κ δ X) (hY : Supp κ δ Y) : Supp κ δ (X + Y) := by
-  intro ρ σ h; rw [mul_add, add_mul, hX ρ σ h, hY ρ σ h, add_zero]
-
-theorem supp_smul {δ : ℕ → ℤ} {X : A} (c : ℂ) (hX : Supp κ δ X) : Supp κ δ (c • X) := by
-  intro ρ σ h; rw [mul_smul_comm, smul_mul_assoc, hX ρ σ h, smul_zero]
-
-theorem supp_neg {δ : ℕ → ℤ} {X : A} (hX : Supp κ δ X) : Supp κ δ (-X) := by
-  intro ρ σ h; rw [mul_neg, neg_mul, hX ρ σ h, neg_zero]
-
-theorem supp_sub {δ : ℕ → ℤ} {X Y : A} (hX : Supp κ δ X) (hY : Supp κ δ Y) : Supp κ δ (X - Y) := by
-  rw [sub_eq_add_neg]; exact supp_add κ hX (supp_neg κ hY)
-
-theorem supp_sum {ι : Type*} (s : Finset ι) {δ : ℕ → ℤ} {X : ι → A} (hX : ∀ i ∈ s, Supp κ δ (X i)) :
-    Supp κ δ (∑ i ∈ s, X i) := by
-  intro ρ σ h; rw [Finset.mul_sum, Finset.sum_mul]; exact Finset.sum_eq_zero fun i hi => hX i hi ρ σ h
-
-theorem supp_zero (δ : ℕ → ℤ) : Supp κ δ (0 : A) := by intro ρ σ _; simp
-
 theorem supp_comm {X : A} (hX : ∀ f, Commute (κ f) X) : Supp κ 0 X := by
   intro ρ σ h; rw [off_zero] at h
   rw [show Pj κ σ * X = X * Pj κ σ from (hX _).eq, mul_assoc, Pj_orth κ h, mul_zero]
@@ -1701,21 +1680,6 @@ theorem left_none {δ : ℕ → ℤ} {X : A} (hX : Supp d.κ δ X) {ρ : M.Ty P}
     X * Pj d.κ ρ = 0 := by
   rw [eq_sum_left d.κ (X * Pj d.κ ρ)]
   exact Finset.sum_eq_zero fun σ _ => by rw [← mul_assoc]; exact hX ρ σ (h σ)
-
-theorem right_single {δ : ℕ → ℤ} {X : A} (hX : Supp d.κ δ X) {ρ τ : M.Ty P} (h : Off δ τ ρ) :
-    Pj d.κ ρ * X = Pj d.κ ρ * X * Pj d.κ τ := by
-  conv_lhs => rw [eq_sum_right d.κ (Pj d.κ ρ * X)]
-  exact Finset.sum_eq_single τ (fun σ _ hσ => hX σ ρ (fun h' => hσ (off_unique (off_neg h') (off_neg h))))
-    (fun h' => absurd (Finset.mem_univ _) h')
-
-theorem right_none {δ : ℕ → ℤ} {X : A} (hX : Supp d.κ δ X) {ρ : M.Ty P} (h : ∀ τ, ¬ Off δ τ ρ) :
-    Pj d.κ ρ * X = 0 := by
-  rw [eq_sum_right d.κ (Pj d.κ ρ * X)]
-  exact Finset.sum_eq_zero fun σ _ => hX σ ρ (h σ)
-
-theorem kap_eq_sum (f : M.Ty P → ℂ) : d.κ f = ∑ ρ, f ρ • Pj d.κ ρ := by
-  conv_lhs => rw [eq_sum_right d.κ (d.κ f)]
-  exact Finset.sum_congr rfl fun ρ _ => kap_Pj d.κ f ρ
 
 theorem ext_right {X Y : A} (h : ∀ ρ, X * Pj d.κ ρ = Y * Pj d.κ ρ) : X = Y := by
   rw [eq_sum_right d.κ X, eq_sum_right d.κ Y]; exact Finset.sum_congr rfl fun ρ _ => h ρ
@@ -2053,8 +2017,6 @@ variable {P : M.Par} {A : Type} [Ring A] [StarRing A] [Algebra ℂ A]
 
 theorem off_congr {δ δ' : ℕ → ℤ} {ρ σ : M.Ty P} (h : Off δ ρ σ) (e : δ = δ') : Off δ' ρ σ := e ▸ h
 
-theorem ee_val (l m : ℕ) : ee l m = if m = l then 1 else 0 := rfl
-
 variable {d : Q.NFData P A} (hd : Hyp d)
 include hd
 
@@ -2191,8 +2153,6 @@ theorem prod_shift {l j : ℕ} {τ π : M.Ty P} (h : ∀ i ∈ Icc 1 (P.k - 1), 
   refine Finset.prod_congr rfl fun i hi => ?_
   simp only [Finset.mem_erase] at hi
   rw [h i hi.2.2 hi.2.1 hi.1]
-
-theorem erase_comm' (s : Finset ℕ) (a b : ℕ) : (s.erase a).erase b = (s.erase b).erase a := Finset.erase_right_comm
 
 theorem mixed_scalar (hP : P.OK) {l j : ℕ} (hl : l ∈ Icc 1 (P.k - 1)) (hj : j ∈ Icc 1 (P.k - 1)) (hjl : j ≠ l)
     {τ ρ σ : M.Ty P} (hτ : M.Up P l τ ρ) (hτσ : M.Up P j τ σ) :
@@ -2477,17 +2437,12 @@ theorem fnmem_zb : L.ζb ∈ Set.range L.c ∪ Set.range L.ci ∪ Set.range L.cb
     {L.ζ, L.ζi, L.ζb, L.ζbi, L.GG, L.GGi} := by simp
 theorem fnmem_G : L.GG ∈ Set.range L.c ∪ Set.range L.ci ∪ Set.range L.cb ∪ Set.range L.cbi ∪
     {L.ζ, L.ζi, L.ζb, L.ζbi, L.GG, L.GGi} := by simp
-theorem fnmem_Gi : L.GGi ∈ Set.range L.c ∪ Set.range L.ci ∪ Set.range L.cb ∪ Set.range L.cbi ∪
-    {L.ζ, L.ζi, L.ζb, L.ζbi, L.GG, L.GGi} := by simp
 
 theorem zG : L.ζ * L.GG = L.GG * L.ζ := L.fns_comm _ (zeta_mem_functions L) _ (fnmem_G L)
 theorem zbG : L.ζb * L.GG = L.GG * L.ζb := L.fns_comm _ (fnmem_zb L) _ (fnmem_G L)
-theorem zGi : L.ζ * L.GGi = L.GGi * L.ζ := L.fns_comm _ (zeta_mem_functions L) _ (fnmem_Gi L)
-theorem zbGi : L.ζb * L.GGi = L.GGi * L.ζb := L.fns_comm _ (fnmem_zb L) _ (fnmem_Gi L)
 theorem zzb : L.ζb * L.ζ = L.ζ * L.ζb := L.fns_comm _ (fnmem_zb L) _ (zeta_mem_functions L)
 
 theorem Gs : L.GG * L.nabs = L.nabs * L.GG + L.ζ := by rw [L.nabs_GG]; abel
-theorem Gn : L.GG * L.nab = L.nab * L.GG - L.ζb := by rw [L.nab_GG]; abel
 
 theorem M3 : L.GG * (L.ζb * L.GGi) = L.ζb := by rw [← mul_assoc, ← zbG, mul_assoc, L.GG_GGi, mul_one]
 theorem M6 : L.GG * (L.ζ * L.GGi) = L.ζ := by rw [← mul_assoc, ← zG, mul_assoc, L.GG_GGi, mul_one]

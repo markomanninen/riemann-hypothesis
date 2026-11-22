@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StFibreOverFinite
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PFibreDivSupp
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StFibreOverFinite
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PFibreDivSupp
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

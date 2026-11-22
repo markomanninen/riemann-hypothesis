@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.ExistsWord
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.ExistsWord
+
+@[expose] public section
 
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Top
 
@@ -52,8 +56,10 @@ theorem flag_height_power_sum_zero : ∀ II : IntersectionSystem, IsFullIntersec
       refine Fin.lastCases ?_ (fun k => ?_) k
       · simp [u, GroundTheory.Heights₂.Heights.LowerBoundFree.xLine]
       · simp [u, GroundTheory.Heights₂.Heights.LowerBoundFree.xLine]
-    rw [Finset.sum_congr rfl (fun i _ => h1 i), ← map_sum, HH.sum_xDeg (N := N) τ, map_zero]
-  rw [MvPolynomial.as_sum Q, Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_congr rfl (fun i _ => h1 i), ← map_sum, HH.sum_xDeg (N := N) τ, map_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [MvPolynomial.as_sum Q, Finset.mul_sum, map_sum]
   apply Finset.sum_eq_zero
   intro m hm
   have hdeg : Finsupp.degree m = dimFl Ψ N := by
@@ -61,9 +67,9 @@ theorem flag_height_power_sum_zero : ∀ II : IntersectionSystem, IsFullIntersec
     rw [Finsupp.degree_eq_weight_one]
     exact this
   obtain ⟨w, hw⟩ := HH.exists_word (dimFl Ψ N) m hdeg
-  have hprod : pk τ 1 * monomial m (coeff m Q) =
+  have hprod : pk τ 1 * monomial m (AddMonoidAlgebra.coeff Q m) =
       ∑ i : Fin N, monomial (∑ k : Fin (dimFl Ψ N + 1),
-        Finsupp.single (Fin.snoc (α := fun _ => Ψ × Fin N) w (τ, i) k) 1) (coeff m Q) := by
+        Finsupp.single (Fin.snoc (α := fun _ => Ψ × Fin N) w (τ, i) k) 1) (AddMonoidAlgebra.coeff Q m) := by
     unfold pk
     rw [Finset.sum_mul]
     apply Finset.sum_congr rfl
@@ -71,9 +77,10 @@ theorem flag_height_power_sum_zero : ∀ II : IntersectionSystem, IsFullIntersec
     rw [pow_one, X, monomial_mul, one_mul, Fin.sum_univ_castSucc]
     simp only [Fin.snoc_castSucc, Fin.snoc_last]
     rw [← hw, add_comm (Finsupp.single (τ, i) 1)]
-  rw [hprod, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hprod, map_sum,
     Finset.sum_congr rfl (fun i _ => HH.hhFl_word II hII.1 hP
-      (Fin.snoc (α := fun _ => Ψ × Fin N) w (τ, i)) (coeff m Q)),
+      (Fin.snoc (α := fun _ => Ψ × Fin N) w (τ, i)) (AddMonoidAlgebra.coeff Q m)),
     ← Finset.mul_sum, ← Finset.mul_sum, key w, mul_zero, mul_zero]
 
 end RootFieldNumerics

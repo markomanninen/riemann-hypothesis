@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.TsgPolyVolPolyCoeffEven
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreLocal
-import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FormPolyIsHomogeneousAndEval
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.KillNoneFormPoly
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagHeightPolynomialWeightForm
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.XBirat
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.XFlArith
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHFlProdLinear
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PFsLineLevi
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.TsgPolyVolPolyCoeffEven
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreLocal
+public import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FormPolyIsHomogeneousAndEval
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.KillNoneFormPoly
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagHeightPolynomialWeightForm
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.XBirat
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.XFlArith
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHFlProdLinear
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PFsLineLevi
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 
 noncomputable section
@@ -45,7 +50,7 @@ theorem fsHerm_levi (a : K → ℕ) {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ 
     0 ≤ leviForm (fun y => Real.log ((fsHerm ι fun k => (a k : ℤ)).h y)) z w := by
   classical
   set F : K → ((Σ k, ι k) → ℂ) → ℝ :=
-    fun k y => Real.log ((fsMetric (ι k)).ρ (fun i => y ⟨k, i⟩)) with hF
+    fun k y => Real.log ((fsMetric (ι := ι k)).ρ (fun i => y ⟨k, i⟩)) with hF
   have hev : (fun y => Real.log ((fsHerm ι fun k => (a k : ℤ)).h y)) =ᶠ[𝓝 z]
       fun y => ∑ k ∈ Finset.univ, (a k : ℝ) * F k y := by
     have hopen : ∀ k, ∀ᶠ y in 𝓝 z, ∃ i, y ⟨k, i⟩ ≠ 0 := fun k => by
@@ -62,7 +67,7 @@ theorem fsHerm_levi (a : K → ℕ) {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ 
     rw [Real.log_prod fun k _ => (Real.rpow_pos_of_pos (hS k) _).ne']
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [Real.log_rpow (hS k)]
-    have hρ : (fsMetric (ι k)).ρ (fun i => y ⟨k, i⟩) = Real.sqrt (∑ i, ‖y ⟨k, i⟩‖ ^ 2) := by
+    have hρ : (fsMetric (ι := ι k)).ρ (fun i => y ⟨k, i⟩) = Real.sqrt (∑ i, ‖y ⟨k, i⟩‖ ^ 2) := by
       change ‖WithLp.toLp 2 (fun i => y ⟨k, i⟩)‖ = _
       rw [EuclideanSpace.norm_eq]
     simp only [hF]
@@ -76,7 +81,7 @@ theorem fsHerm_levi (a : K → ℕ) {z : (Σ k, ι k) → ℂ} (hz : ∀ k, ∃ 
       exact fun h0 => hi (congrFun h0 i)
     have hφ := ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.adens_contDiffAt_logρ_id
       (HilbertSamuel.ProjLine.isSmoothMetric_fs (J := ι k)) hk0
-    have hFk : F k = (fun u => Real.log ((fsMetric (ι k)).ρ u)) ∘ FubiniStudyLeviForm.blockProj ι k := rfl
+    have hFk : F k = (fun u => Real.log ((fsMetric (ι := ι k)).ρ u)) ∘ FubiniStudyLeviForm.blockProj ι k := rfl
     refine ⟨hFk ▸ hφ.comp z ((FubiniStudyLeviForm.blockProj ι k).restrictScalars ℝ).contDiff.contDiffAt,
       fun v => ?_⟩
     rw [hFk, levi_comp v ((FubiniStudyLeviForm.blockProj ι k).analyticAt z) hφ]
@@ -92,7 +97,7 @@ theorem fsHerm_monomials (P : Ideal (MRing ι)) (a : K → ℕ) :
   rw [norm_prod, fsHerm_h]
   unfold refNorm
   rw [Fintype.prod_sigma]
-  refine Finset.prod_le_prod (fun k _ => Finset.prod_nonneg fun _ _ => norm_nonneg _) fun k _ => ?_
+  refine Finset.prod_le_prod₀ (fun k _ => Finset.prod_nonneg fun _ _ => norm_nonneg _) fun k _ => ?_
   have hS : 0 ≤ ∑ i, ‖z ⟨k, i⟩‖ ^ 2 := Finset.sum_nonneg fun _ _ => sq_nonneg _
   have hle : ∀ i, ‖z ⟨k, i⟩ ^ μ ⟨k, i⟩‖ ≤ Real.sqrt (∑ i, ‖z ⟨k, i⟩‖ ^ 2) ^ μ ⟨k, i⟩ := fun i => by
     rw [norm_pow]
@@ -100,7 +105,7 @@ theorem fsHerm_monomials (P : Ideal (MRing ι)) (a : K → ℕ) :
     exact Finset.single_le_sum (f := fun i => ‖z ⟨k, i⟩‖ ^ 2) (fun _ _ => sq_nonneg _) (Finset.mem_univ i)
   calc ∏ i, ‖z ⟨k, i⟩ ^ μ ⟨k, i⟩‖
       ≤ ∏ i, Real.sqrt (∑ i, ‖z ⟨k, i⟩‖ ^ 2) ^ μ ⟨k, i⟩ :=
-        Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun i _ => hle i
+        Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun i _ => hle i
     _ = Real.sqrt (∑ i, ‖z ⟨k, i⟩‖ ^ 2) ^ a k := by
         rw [Finset.prod_pow_eq_pow_sum, hμ k]
     _ = (∑ i, ‖z ⟨k, i⟩‖ ^ 2) ^ (((a k : ℤ) : ℝ) / 2) := by
@@ -159,8 +164,8 @@ end Flag
 
 end FlPos
 
-open FlPos in
 
+open FlPos in
 theorem flHeight_nonneg_dominant : Inputs → ∀ (II : IntersectionSystem), IsFullIntersectionSystem II → ∀ (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] [Nonempty Ψ] (N : ℕ), 2 ≤ N → ∀ lam : Ψ × Fin N → ℝ, Dominant lam → 0 ≤ eval lam (hFlPoly Ψ N II) := by
   intro hIn II hII Ψ _ _ _ N hN lam hlam
   have hP : IsArithVar (PFl Ψ N) (antisymDegree Ψ N + 1) := (PositivityTheory.Xgp.t_fl_arith Ψ N hN).1

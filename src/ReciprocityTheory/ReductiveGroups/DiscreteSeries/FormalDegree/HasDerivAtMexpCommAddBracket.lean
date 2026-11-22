@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.TraceMulSelfEqSumEigenvaluesSq
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.TraceMulSelfEqSumEigenvaluesSq
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,7 @@ theorem hasDerivAt_exp_comm_add_bracket (A V X : R) (h : Commute A V) :
   have hB : fderiv ℝ NormedSpace.exp A (X * A - A * X) = X * NormedSpace.exp A - NormedSpace.exp A * X :=
     hG.unique hF
   have key := hchain (V + (X * A - A * X))
-  rw [map_add, hV, hB] at key
+  rw [map_add (f := _), hV, hB] at key
   exact key
 
 end Banach

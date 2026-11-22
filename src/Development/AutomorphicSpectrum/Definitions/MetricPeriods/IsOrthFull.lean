@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.HeightsSetAll
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.HeightsSetAll
+
+@[expose] public section
 
 noncomputable section
 

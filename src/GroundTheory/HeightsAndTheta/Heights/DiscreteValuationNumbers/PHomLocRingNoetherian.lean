@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsHomLocRingLocal
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsHomLocRingLocal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -35,8 +40,8 @@ abbrev img : MRing ι R →+* FractionRing (MRing ι R ⧸ P) :=
 
 variable {P}
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem img_eq_zero_iff {f : MRing ι R} : img P f = 0 ↔ f ∈ P := by
   simp [img, Ideal.Quotient.eq_zero_iff_mem]
 
@@ -48,8 +53,8 @@ theorem img_component_congr (hP : IsMultiHomogIdeal P) {u v : MRing ι R} (huv :
   rw [← map_sub]
   exact hP _ huv d
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem img_ne_zero {W : Ideal (MRing ι R)} (hPW : P ≤ W) {t : MRing ι R} (ht : t ∉ W) :
     img P t ≠ 0 := fun h0 => ht (hPW (img_eq_zero_iff.mp h0))
 
@@ -59,8 +64,8 @@ theorem quot_mem {W : Ideal (MRing ι R)} {b : K → ℕ} {f g : MRing ι R} (hf
 
 end HomLocRingNoetherian
 
-open HomLocRingNoetherian in
 
+open HomLocRingNoetherian in
 theorem HomLocRingNoetherian.proof (hmem : HomLocRingMem.Statement.{u}) :
     HomLocRingNoetherian.Statement.{u} := by
   intro R _ _ K _ _ ι _ P W _ hP hW _ hPW
@@ -124,9 +129,9 @@ theorem HomLocRingNoetherian.proof (hmem : HomLocRingMem.Statement.{u}) :
         (by simp only [map_mul]; rw [← hb₂]; ring) _ _ hτ hτW
       refine ⟨a₁ + a₂, I.add_mem ha₁I ha₂I, ?_⟩
       have hsum : img P (h₁ * (s * t₂) + h₂ * (s * t₁)) = img P ((t₁ * t₂) * h) := by
-        simp only [map_mul, map_add]; rw [← hb₁, ← hb₂, ← hy]; ring
+        simp only [map_mul, map_add (f := _)]; rw [← hb₁, ← hb₂, ← hy]; ring
       have hc := img_component_congr hP hsum ((e₁ + e₂) + d)
-      rw [component_form_mul (ht₁.mul ht₂), map_add, map_add] at hc
+      rw [component_form_mul (ht₁.mul ht₂), map_add (f := _), map_add (f := _)] at hc
       have h1 := img_ne_zero hPW ht₁W
       have h2 := img_ne_zero hPW ht₂W
       have h3 := img_ne_zero hPW htW

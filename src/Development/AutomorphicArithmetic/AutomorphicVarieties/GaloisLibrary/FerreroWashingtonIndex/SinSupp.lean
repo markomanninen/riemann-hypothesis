@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
+
+@[expose] public section
 
 open UpperTheory.V.FW
 
@@ -18,7 +22,7 @@ private theorem coeff_monic_poly_sum {k A ι : Type} [CommRing k] [AddCommGroup 
   by_contra hc
   push_neg at hc
   apply h
-  rw [AddMonoidAlgebra.coeff_sum, Finsupp.finset_sum_apply]
+  rw [AddMonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply]
   exact Finset.sum_eq_zero hc
 
 theorem UpperTheory.V.FW.sinSupp :

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -49,10 +53,5 @@ theorem trdeg_eq_cardinalMk_of_countable (F : Type*) [Field F] [Algebra F Ω] [C
     Cardinal.mk_le_aleph0 hΩ).symm
 
 end General
-
-theorem Complex.exists_ringEquiv_extend_of_trdeg_eq (F₁ F₂ : Subfield ℂ) (e : F₁ ≃+* F₂)
-    (h : Algebra.trdeg F₁ ℂ = Algebra.trdeg F₂ ℂ) :
-    ∃ σ : ℂ ≃+* ℂ, ∀ a : F₁, σ a = e a :=
-  GroundTheory.Global.exists_ringEquiv_extend_of_trdeg_eq e h
 
 end GroundTheory.Global

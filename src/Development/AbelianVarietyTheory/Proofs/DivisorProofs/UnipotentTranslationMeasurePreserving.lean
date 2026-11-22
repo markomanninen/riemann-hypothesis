@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SuperDiagEqSdM
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SuperDiagEqSdM
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CuspRep Matrix MeasureTheory GlobalTheory.WhitBump
 open scoped ContDiff
 
@@ -101,8 +106,8 @@ theorem det_lin {u : Matrix (Fin n) (Fin n) (Cinf E)} (hl : ∀ i j, j < i → u
 
 end GlobalTheory.WhitBump.Shear
 
-open GlobalTheory.WhitBump.Shear in
 
+open GlobalTheory.WhitBump.Shear in
 theorem GlobalTheory.WhitBump.exists_shear_measurePreserving : ∀ (E : Type) [Field E] [NumberField E] (n : ℕ)
     (u : GL (Fin n) (Cinf E)), u ∈ GlobalTheory.SmGL.unipB (Cinf E) (Fin n) →
     ∃ τ : Vp E n ≃ᵐ Vp E n, MeasurePreserving τ volume volume ∧

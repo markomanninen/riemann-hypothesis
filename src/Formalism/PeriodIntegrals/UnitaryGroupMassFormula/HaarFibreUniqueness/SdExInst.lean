@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HaarFibreUniqueness.SdExAbs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.SdDual
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TensTop
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HaarFibreUniqueness.SdExAbs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.SdDual
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TensTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,13 +30,13 @@ theorem BR_symm (σ : E →ₐ[F] E) (hσ : ∀ x, σ (σ x) = x) {n a : ℕ}
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul x y => simp [φ, sigR, Algebra.TensorProduct.map_tmul]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   have hinv : ∀ z, φ (φ z) = z := by
     intro z
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul x y => simp [φ, Algebra.TensorProduct.map_tmul, hσ]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   let e := AlgEquiv.ofBijective φ (Function.Involutive.bijective hinv)
   have htr : ∀ z, Algebra.trace (Fv F v) (Fv F v ⊗[F] E) (sigR (Fv F v) σ z) =
       Algebra.trace (Fv F v) (Fv F v ⊗[F] E) z := by
@@ -50,7 +54,8 @@ theorem BR_symm (σ : E →ₐ[F] E) (hσ : ∀ x, σ (σ x) = x) {n a : ℕ}
       hR (Fv F v) σ J x y = sigR (Fv F v) σ (hR (Fv F v) σ J y x) := by
     intro x y
     unfold hR Formalism.UG.hform
-    simp only [map_sum, map_mul, hss, hsJ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, hss, hsJ]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     ring
@@ -72,7 +77,7 @@ theorem BR_cont_joint (σ : E →ₐ[F] E) {n a : ℕ} (J : Matrix (Fin n) (Fin 
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul x y => simp [φ, sigR, Algebra.TensorProduct.map_tmul]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   have hsg : Continuous (sigR (Fv F v) σ) := by
     have h1 : ⇑(sigR (Fv F v) σ) = ⇑(φ.toLinearMap) := funext hφ
     rw [h1]
@@ -115,8 +120,8 @@ theorem pairHerm_cont_joint (σ : E →ₐ[F] E) (a : ℕ) :
     | exact IsModuleTopology.continuous_of_linearMap _
     | exact LinearMap.continuous_of_finiteDimensional _
   unfold pairHerm
-  refine continuous_const.mul (htr.comp (continuous_finset_sum _ fun i _ =>
-    continuous_finset_sum _ fun j _ => ?_))
+  refine continuous_const.mul (htr.comp (continuous_finsetSum _ fun i _ =>
+    continuous_finsetSum _ fun j _ => ?_))
   exact ((continuous_subtype_val.comp continuous_fst).matrix_elem i j).mul
     ((continuous_subtype_val.comp continuous_snd).matrix_elem j i)
 

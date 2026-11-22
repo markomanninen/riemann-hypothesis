@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.Generic
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.GamAt
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.TheoremZeroOfReducedInputs
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.LiftIndexPowFourLeDegree
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.AdmissibleModuleIffLatticeQuotients
-import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.MaximalCuspKernels.KerExistsStatement
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.SupBoundPageRows
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.LocalUnfoldBStatementHolds
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.LeadMCoeffEqZero
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.SumMultiLtSucc
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.MemSpanCuspReadingsIffComponents
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.Generic
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.GamAt
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.TheoremZeroOfReducedInputs
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.LiftIndexPowFourLeDegree
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.AdmissibleModuleIffLatticeQuotients
+public import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.ArcLineFunctions.ArcDatumIsArcPointBasis
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.SupBoundPageRows
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.LocalUnfoldBStatementHolds
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.LeadMCoeffEqZero
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.SumMultiLtSucc
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.MemSpanCuspReadingsIffComponents
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.WeightAlgebra Formalism.MainNotions.Gaps Formalism.MainNotions.Gaps.EtaleWeightGaps Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up GlobalTheory.RunIn GlobalTheory.Shares
 
@@ -47,13 +51,14 @@ private theorem coeff_lemma_3 {D : ℕ} (M : Finset (Fin D → ℕ)) (A : (Fin D
   have hp : p = 0 := by
     apply MvPolynomial.funext
     intro y
-    simp only [p, map_sum, MvPolynomial.eval_monomial, map_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [p, map_sum, MvPolynomial.eval_monomial, map_zero]
     rw [← h y]
     refine Finset.sum_congr rfl fun α _ => ?_
     rw [Finsupp.prod_fintype _ _ (fun i => pow_zero _)]
     simp
   intro α hα
-  have h1 := congrArg (MvPolynomial.coeff (Finsupp.equivFunOnFinite.symm α)) hp
+  have h1 := congrArg (AddMonoidAlgebra.coeff · (Finsupp.equivFunOnFinite.symm α)) hp
   simp only [p, MvPolynomial.coeff_sum, MvPolynomial.coeff_monomial, MvPolynomial.coeff_zero] at h1
   rw [Finset.sum_eq_single α] at h1
   · simpa using h1
@@ -211,7 +216,8 @@ theorem main : ∀ (D : D7) (T : Top D) (h : LawsP T) (j : ℕ) (hj : InR D j) (
       e.symm ⟨k, ⟨cpt ((T.U j T.σ₀).X k) ((Fl.Fl k).xs i) z, hz⟩⟩ else xs q
   let U : Set (V (nd ((T.U j T.σ₀).X k))) :=
     cpt ((T.U j T.σ₀).X k) ((Fl.Fl k).xs i) ⁻¹' ((T.U j T.σ₀).X k).dom
-  have hU : IsOpen U := (FourierCoefficientDomain.isOpen_dom _).preimage (IW.cpt_diff _ _).continuous
+  have hU : IsOpen U := (FourierCoefficientDomain.isOpen_dom _).preimage
+    (IW.cpt_diff ((T.U j T.σ₀).X k) ((Fl.Fl k).xs i)).continuous
   have h0U : (0 : V (nd ((T.U j T.σ₀).X k))) ∈ U := by
     simp only [U, Set.mem_preimage, IW.cpt_zero]
     exact hx0

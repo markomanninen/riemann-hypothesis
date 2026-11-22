@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MixedSpaceVecPairAsAdeles
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MixedSpaceVecPairAsAdeles
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta
 open IsDedekindDomain NumberField MeasureTheory
@@ -112,9 +116,11 @@ theorem pureA_fixed_fin :
     have hp2 : ∀ (w : κ → FiniteAdeleRing (𝓞 F) F) (i : κ), GlobalTheory.HeisSchA.p2 (finE F w i) = w i := fun _ _ => rfl
     refine Prod.ext ?_ ?_
     · change GlobalTheory.HeisSchA.p1 (x ⬝ᵥ finE F v + ⅟(2 : AdeleRing (𝓞 F) F) * (finE F u ⬝ᵥ finE F v)) = 0
-      simp only [map_add, map_mul, dotProduct, map_sum, hp1, mul_zero, Finset.sum_const_zero, add_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_add (f := _), map_mul, dotProduct, map_sum, hp1, mul_zero, Finset.sum_const_zero, add_zero]
     · change GlobalTheory.HeisSchA.p2 (x ⬝ᵥ finE F v + ⅟(2 : AdeleRing (𝓞 F) F) * (finE F u ⬝ᵥ finE F v)) = _
-      simp only [map_add, map_mul, dotProduct, map_sum, hp2]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_add (f := _), map_mul, dotProduct, map_sum, hp2]
       rfl
   have hf : (fun i => InfiniteAdeleRing.ringEquiv_mixedSpace F ((x + finE F u) i).1) =
       fun i => InfiniteAdeleRing.ringEquiv_mixedSpace F (x i).1 := by

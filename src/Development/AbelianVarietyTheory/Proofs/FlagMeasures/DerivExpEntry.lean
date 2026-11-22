@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsoPartStable
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsoPartStable
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
+
+@[expose] public section
+
 open MeasureTheory Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec GlobalTheory.DSId GlobalTheory.Jet
 open scoped InnerProductSpace ComplexOrder
 
@@ -20,7 +25,8 @@ theorem flow_vanish {W : Type} [AddCommGroup W] [Module ℂ W] (S : Submodule �
   have hexp : ∀ t (x : S), φ t x = ∑ j, b.repr x j * φ t (b j) := by
     intro t x
     have h := congrArg (φ t ∘ₗ S.subtype) (b.sum_repr x)
-    rw [map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h
     simp only [map_smul, smul_eq_mul] at h
     exact h.symm
   have key : (fun t i => φ t (b i)) = fun _ => 0 := by
@@ -114,10 +120,11 @@ theorem matOf_act {n : ℕ} {V : Type} [NormedAddCommGroup V] [InnerProductSpace
       (if a = c then matOf ℓ G d b else 0) - (if b = d then matOf ℓ G a c else 0) + ℓ (E c d (at1 G a b)) := by
     intro c d a b
     have := congrArg ℓ (arr_operator_one_apply E c d G a b)
-    rw [map_add, map_sub, apply_ite ℓ, apply_ite ℓ, map_zero] at this
+    rw [map_add (f := _), map_sub, apply_ite ℓ, apply_ite ℓ, map_zero] at this
     exact this
   ext a b
-  simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, Matrix.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, Matrix.sum_apply,
     Matrix.smul_apply, h, smul_eq_mul, mul_add, mul_sub, Finset.sum_add_distrib, Finset.sum_sub_distrib,
     Matrix.add_apply, Matrix.sub_apply, Matrix.of_apply, Matrix.mul_apply, mul_ite, mul_zero]
   congr 2

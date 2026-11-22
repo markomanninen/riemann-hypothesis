@@ -1,5 +1,9 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothHermCombLine
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernPartSingleton
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothHermCombLine
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernPartSingleton
+
+@[expose] public section
 
 set_option autoImplicit false
 

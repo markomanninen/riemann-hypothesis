@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSKfOrb
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DetAdmA
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DetAdmC
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DensFibV
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TopoGram
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.LatStab
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensPos
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSKfOrb
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DetAdmA
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DetAdmC
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DensFibV
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.TopoGram
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.LatStab
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensPos
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ def IntWittAE : Prop :=
     (σ : E →ₐ[F] E) (n : ℕ) (J : Matrix (Fin n) (Fin n) E) (a : ℕ) (X0 : Fin a → Fin n → E)
     (Λ : Set (Fin n → E)),
     IsCMExt F E σ → IsHermND σ J → (gramE σ J X0).det ≠ 0 →
-    (∃ L : Submodule (𝓞 E) (Fin n → E), Submodule.IsLattice E L ∧ (L : Set (Fin n → E)) = Λ) →
+    (∃ L : Submodule (𝓞 E) (Fin n → E), Submodule.IsFullLattice E L ∧ (L : Set (Fin n → E)) = Λ) →
     ∀ (d : ℕ) (b : Module.Basis (Fin d) F E),
     ∀ᶠ v : HeightOneSpectrum (𝓞 F) in cofinite, ∀ X ∈ latV (M := n) (n := a) b v,
       gramR (Fv F v) σ J X = (gramE σ J X0).map (inclR (Fv F v)) →
@@ -114,7 +118,7 @@ theorem continuous_act (R : Type) [CommRing R] [Algebra F R] [TopologicalSpace R
     ((HA.mat R σ J p.1 : GL (Fin n) (R ⊗[F] E)) : Matrix (Fin n) (Fin n) (R ⊗[F] E)).mulVec (p.2 c))
   exact (hmat.comp continuous_fst).matrix_mulVec ((continuous_apply c).comp continuous_snd)
 
-theorem kv_compact_open (L : Submodule (𝓞 E) (Fin n → E)) (hL : Submodule.IsLattice E L)
+theorem kv_compact_open (L : Submodule (𝓞 E) (Fin n → E)) (hL : Submodule.IsFullLattice E L)
     (v : HeightOneSpectrum (𝓞 F)) :
     IsCompact (Formalism.L2.SG.TypedSets.Kv σ J (L : Set (Fin n → E)) v) ∧
       IsOpen (Formalism.L2.SG.TypedSets.Kv σ J (L : Set (Fin n → E)) v) := by
@@ -196,7 +200,7 @@ theorem exists_cc_tup (v : HeightOneSpectrum (𝓞 F)) {a : ℕ} {O : Set (Fin a
   have : LocallyCompactSpace (Fv F v) := PI.VolStabS.locallyCompact_Fv F v
   let h := PI.VolStabS.DeterminantAdmissible.crdH (a := a) (M := n) b (Fv F v)
   obtain ⟨V, hV, hpV, hVO⟩ :=
-    (loc_compact_Haus_tot_disc_of_zero_dim (H := Fin a × Fin n × Fin (Module.finrank F E) → Fv F v)).exists_subset_of_mem_open
+    (loc_compact_Haus_tot_disc_of_zero_dim (X := Fin a × Fin n × Fin (Module.finrank F E) → Fv F v)).exists_subset_of_mem_open
       (Set.mem_image_of_mem h hy) (h.isOpenMap O hO)
   let K : Set (Fin a × Fin n × Fin (Module.finrank F E) → Fv F v) :=
     Set.pi Set.univ fun c => (Homeomorph.subRight (h y c)) ⁻¹' (v.adicCompletionIntegers F : Set (Fv F v))
@@ -219,7 +223,7 @@ section Place
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [FiniteDimensional F E]
   (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) {a : ℕ} (X0 : Fin a → Fin n → E)
 
-theorem exists_C (v : HeightOneSpectrum (𝓞 F)) (L : Submodule (𝓞 E) (Fin n → E)) (hL : Submodule.IsLattice E L)
+theorem exists_C (v : HeightOneSpectrum (𝓞 F)) (L : Submodule (𝓞 E) (Fin n → E)) (hL : Submodule.IsFullLattice E L)
     (hW : ∀ X : Fin a → Fin n → Fv F v ⊗[F] E, gramR (Fv F v) σ J X = (gramE σ J X0).map (inclR (Fv F v)) →
       ∃ g : HA (Fv F v) σ J, g • ratTup (F := F) (Fv F v) X0 = X) :
     ∃ C : Set (Fin a → Fin n → Fv F v ⊗[F] E), IsClopen C ∧ IsCompact C ∧

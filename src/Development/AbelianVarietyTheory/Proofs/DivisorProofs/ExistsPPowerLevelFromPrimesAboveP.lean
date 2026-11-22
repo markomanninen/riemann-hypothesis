@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsGPull
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtPlace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsGPull
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtPlace
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen GlobalTheory.UPel.HT.EtLev
@@ -86,7 +90,7 @@ theorem lev_mul (act : D.O → Q → Q) (hm : ∀ c a b, act c (a * b) = act c a
   obtain ⟨a, ha, b, hb, hab⟩ := Submodule.mem_sup.1 ((Ideal.eq_top_iff_one _).1 hIJ)
   have hone : ∀ c, act c 1 = 1 := fun c => by simpa using hm c 1 1
   have hsplit : ∀ u, act (algebraMap (𝓞 D.F) D.O a) u * act (algebraMap (𝓞 D.F) D.O b) u = u := fun u => by
-    rw [← hadd, ← map_add, hab, map_one, h1]
+    rw [← hadd, ← map_add (f := _), hab, map_one, h1]
   have fI : ∀ c ∈ I, ∀ x, act (algebraMap (𝓞 D.F) D.O c) (f x) = 1 := fun c hc x => by
     rw [← fs]; exact (fk _).2 (smul_mem_iSub hc x)
   have gJ : ∀ c ∈ J, ∀ x, act (algebraMap (𝓞 D.F) D.O c) (g x) = 1 := fun c hc x => by
@@ -101,7 +105,7 @@ theorem lev_mul (act : D.O → Q → Q) (hm : ∀ c a b, act c (a * b) = act c a
       rw [← hsplit (f x), fI a ha, h, _root_.mul_one]
     have e2 : g x = 1 := by rwa [e1, _root_.one_mul] at hx'
     have hxx : x = algebraMap (𝓞 D.F) D.O a • x + algebraMap (𝓞 D.F) D.O b • x := by
-      rw [← add_smul, ← map_add, hab, map_one, one_smul]
+      rw [← add_smul, ← map_add (f := _), hab, map_one, one_smul]
     rw [hxx]
     refine Submodule.add_mem _ (smul_mem_iSub_mul ha ((gk x).1 e2)) ?_
     rw [_root_.mul_comm I J]

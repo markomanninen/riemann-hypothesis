@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.ContinuousOnPot
-import Development.AutomorphicSpectrum.Statements.TowerExistence.GoodTowerExistsX
-import Development.AutomorphicSpectrum.Statements.MetricStatements.ExistsFlagModelBaseMetric
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.RootOnFund
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ContDiffUncentre
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.OmHeightslockG
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.ContinuousOnPot
+public import Development.AutomorphicSpectrum.Statements.TowerExistence.GoodTowerExistsX
+public import Development.AutomorphicSpectrum.Statements.MetricStatements.ExistsFlagModelBaseMetric
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.RootOnFund
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ContDiffUncentre
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.OmHeightslockG
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory NumberField Matrix ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Top GlobalTheory.CompanionTheory.Ar.PB GlobalTheory.CompanionTheory.Ar.PB.BMx ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P
 open ReciprocityTheory.ChartRestriction.G.Semi
@@ -176,13 +180,13 @@ theorem assemble {K : Type} [Fintype K] {J : K → Type} [∀ k, Fintype (J k)] 
     exact div_pos (pow_pos (norm_pos_iff.2 (hVv b y hy)) 2) (hnd b y (hVU b hy) _)
   have hQc : ∀ b, ContinuousOn (fun y => Qf (Rb.lift b y)) (Rb.U b) := by
     intro b
-    refine continuousOn_finset_sum _ fun q _ => ?_
+    refine continuousOn_finsetSum _ fun q _ => ?_
     exact ContinuousOn.div
       (((continuous_norm.comp (MvPolynomial.continuous_eval (GG q))).comp_continuousOn (hliftc b)).pow 2)
       ((continuous_nd (aa q)).comp_continuousOn (hliftc b)) fun y hy => (hnd b y hy q).ne'
   have hSc : ∀ b, ContinuousOn (S b) (ψ b).source := by
     intro b
-    refine continuousOn_finset_sum _ fun q _ => ?_
+    refine continuousOn_finsetSum _ fun q _ => ?_
     exact ContinuousOn.div ((continuous_norm.comp_continuousOn (holo_continuousOn _ (hwh b q))).pow 2)
       ((continuous_nd (aa q)).comp_continuousOn ((hliftc b).mono (hsrc b)))
       fun y hy => (hnd b y (hsrc b hy) q).ne'

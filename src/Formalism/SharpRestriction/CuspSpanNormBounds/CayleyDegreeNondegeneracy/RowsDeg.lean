@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.RowsNDF
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.RowsNDF
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,8 @@ section Deg
 
 variable {D : D7} {large₂ : SizeData₂ D} {X : TermTie D} {u u' : D.what₂.Word} {C1 : ℝ} (Y : LoopTie D large₂ X u u' C1)
 
-open Classical in
 
+open Classical in
 def rows_KZ (D : D7) (u u' : D.what₂.Word) (Z : GramM D) : ℝ :=
   ∏ τ : D.what₂.Tau, if leadMinorE Z D.R.rS = 0 then 1 else
     (1 + ‖embS D τ (leadMinorE Z (D.R.rS + 1) / leadMinorE Z D.R.rS)‖ / Real.sqrt ((Tu D u : ℝ) * (Tu D u' : ℝ))) /
@@ -129,8 +133,8 @@ theorem rows_deg_term (h : rows_Hyps Y C' Cl Cg cb Cu cT CT C0 A c Cpr Ca C2 Ch 
   rw [h3]
   exact Real.sqrt_le_sqrt h2
 
-include Y in
 
+include Y in
 theorem rows_thmA_deg (hThA : VanishingOnXAndXPlus.adm14 D u u') (hSt : Cnt.Stand D u u') (hG0 : @LatticeDeterminantFactorization D X u u') (hrd : 0 < D.host.rdE)
     (p : D.s.Pair u u') (hG1 : D.s.Gterm (D.s.pfst p) ≠ 0) (hG2 : D.s.Gterm (D.s.psnd p) ≠ 0) (hs : 2 ≤ D.s.s0 p)
     (hnd : ¬ ndP X p) :

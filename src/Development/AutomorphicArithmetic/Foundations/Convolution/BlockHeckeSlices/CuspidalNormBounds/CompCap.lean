@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.DatBasics
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.SliceUmg
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.SliceBound
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.SliceCap
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.DatBasics
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.SliceUmg
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.SliceBound
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.SliceCap
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
+
+@[expose] public section
 
 open NumberField
 
@@ -185,8 +189,8 @@ theorem UpperTheory.ConvolutionTheory.BW.compCap :
       rw [← List.prod_ofFn, map_list_prod, List.map_ofFn]
       congr 2
       funext i
-      simp only [hF, idx_cast, rho_zero, J_zero, Dat.lam, Fin.addCases_left, Function.comp]
-      rw [map_add, Polynomial.aeval_X, Polynomial.aeval_C]
+      simp only [Function.comp_apply, hF, idx_cast, rho_zero, J_zero, Dat.lam, Fin.addCases_left]
+      rw [map_add (f := _), Polynomial.aeval_X, Polynomial.aeval_C]
       refine (add_comm _ _).trans (congrArg (fun c : ℂ => algebraMap ℂ _ c + j1 E r s) ?_)
       push_cast
       ring

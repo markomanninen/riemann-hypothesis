@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.BetaLUniq
-import Lemmata.GeneralBFactThirdRest.Imports
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.BetaLUniq
+public import Lemmata.GeneralBFactThirdRest.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,8 @@ theorem finrank_orth_add (U : Submodule E S.V) :
     rw [Fintype.linearIndependent_iff]
     intro g hg i
     have h0 : S.hT (∑ j, star (g j) • (b j : S.V)) = 0 := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [LinearMap.map_smulₛₗ, starRingEnd_apply, star_star]
       exact hg
     have h1 : ∑ j, star (g j) • (b j : S.V) = 0 :=
@@ -45,7 +50,8 @@ theorem finrank_orth_add (U : Submodule E S.V) :
         rw [Submodule.coe_sum] at h2
         simp only [Submodule.coe_smul] at h2
         exact h2.symm
-      rw [this, map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [this, map_sum, LinearMap.sum_apply]
       refine Finset.sum_eq_zero fun i _ => ?_
       rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply]
       have := h (f i) (Submodule.subset_span ⟨i, rfl⟩)
@@ -63,11 +69,11 @@ theorem finrank_orth_add (U : Submodule E S.V) :
   rw [hco, hΦ] at this
   omega
 
-theorem exists_smul_mem (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsLattice E Λ) (x : S.V) :
-    ∃ a : 𝓞 E, a ≠ 0 ∧ a • x ∈ Λ := by
-  first | exact Bl.general_b_fact_third''''.goal1 .. | (apply Bl.general_b_fact_third''''.goal1 <;> assumption) | (intros; apply Bl.general_b_fact_third''''.goal1 <;> assumption) | (apply @Bl.general_b_fact_third''''.goal1 <;> assumption) | (intros; apply @Bl.general_b_fact_third''''.goal1 <;> assumption) | (apply @Bl.general_b_fact_third''''.goal1 <;> first | assumption | infer_instance) | exact @Bl.general_b_fact_third''''.goal1 E ‹_› ‹_› ‹_› S Λ hΛ x | exact @Bl.general_b_fact_third''''.goal1 E ‹_› ‹_› ‹_› S Λ hΛ | exact @Bl.general_b_fact_third''''.goal1 E ‹_› ‹_› ‹_› S Λ | exact @Bl.general_b_fact_third''''.goal1 E ‹_› ‹_› ‹_› S | exact @Bl.general_b_fact_third''''.goal1 E ‹_› ‹_› ‹_› | exact @Bl.general_b_fact_third''''.goal1 E ‹_› ‹_› | exact @Bl.general_b_fact_third''''.goal1 E ‹_› | exact @Bl.general_b_fact_third''''.goal1 E
+theorem exists_smul_mem (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsFullLattice E Λ) (x : S.V) :
+    ∃ a : 𝓞 E, a ≠ 0 ∧ a • x ∈ Λ :=
+  Bl.general_b_fact_third''''.goal1 S Λ hΛ x
 
-theorem span_inf_toO (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsLattice E Λ) (U : Submodule E S.V) :
+theorem span_inf_toO (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsFullLattice E Λ) (U : Submodule E S.V) :
     Submodule.span E ((Λ ⊓ toO S U : Submodule (𝓞 E) S.V) : Set S.V) = U := by
   apply le_antisymm
   · rw [Submodule.span_le]
@@ -84,7 +90,7 @@ theorem span_inf_toO (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsLattice E 
     rw [hx']
     exact Submodule.smul_mem _ _ (Submodule.subset_span hmem)
 
-theorem Xsp_le_UUE (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsLattice E Λ) {r : ℕ} {T T' : E}
+theorem Xsp_le_UUE (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsFullLattice E Λ) {r : ℕ} {T T' : E}
     (F : LFlag S r T) (F' : LFlag S r T') : Xsp F ≤ UUE Λ F F' := by
   rw [← span_inf_toO S Λ hΛ (Xsp F)]
   apply Submodule.span_mono
@@ -92,7 +98,7 @@ theorem Xsp_le_UUE (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsLattice E Λ
   simp only [UU]
   exact Submodule.mem_sup_left (Submodule.mem_sup_left (Submodule.mem_sup_left hx))
 
-theorem Xsp_le_UUE' (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsLattice E Λ) {r : ℕ} {T T' : E}
+theorem Xsp_le_UUE' (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsFullLattice E Λ) {r : ℕ} {T T' : E}
     (F : LFlag S r T) (F' : LFlag S r T') : Xsp F' ≤ UUE Λ F F' := by
   rw [← span_inf_toO S Λ hΛ (Xsp F')]
   apply Submodule.span_mono

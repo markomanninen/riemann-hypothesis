@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SameSetup
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsBasisAtTransport
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SameSetup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsBasisAtTransport
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,6 @@ open scoped TensorProduct
 set_option synthInstance.maxHeartbeats 400000
 set_option maxHeartbeats 1600000
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-local macro:max "kc% " e:term:max : term => `((by kexactB $e))
 
 namespace GlobalTheory.TwInputs.Move.RatUp
 
@@ -115,9 +117,9 @@ theorem datum_dn {s g P} (d : (setupUp r ρ).IsDatum ((i)) ((j)) b s g P) : ρ.I
     have c := (le_of_eq a) ((by with_unfolding_all exact (d.mem :)) : ((by with_unfolding_all exact (P :))) ∈ _)
     exact (by with_unfolding_all exact (c :))⟩
 
+
 omit h in
 variable (r) in
-
 def rdUp (rd : Rd ρ D.nexp i j b) : Rd (setupUp r ρ) (overD D r).nexp ((i)) ((j)) b := (rd)
 
 theorem rat_up {hρ : ρ.Good} {hρ' : (setupUp r ρ).Good} {rd : Rd ρ D.nexp i j b} (g : SeriesTie.Rat hρ rd) :

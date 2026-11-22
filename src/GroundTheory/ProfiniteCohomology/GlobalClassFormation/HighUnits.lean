@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.HighUnitsLocal
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.EqZeroOfBrauerLocalApplyEqZero
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.HighUnitsLocal
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.EqZeroOfBrauerLocalApplyEqZero
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -38,7 +43,7 @@ def realLocalization (ι : LocalEmbeddings K) {r : ℕ} (hr : 1 ≤ r) :
     rfl
   map_add' x y := by
     funext v
-    simp only [map_add]
+    simp only [map_add (f := _)]
     rfl
 
 theorem bijective_realComponents {r : ℕ} (hr : 3 ≤ r) :

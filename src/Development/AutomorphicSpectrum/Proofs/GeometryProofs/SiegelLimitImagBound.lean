@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MulVecEqZeroOfPair
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MulVecEqZeroOfPair
+
+@[expose] public section
 
 open Filter Topology Matrix
 

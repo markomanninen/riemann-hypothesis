@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseCupGlob
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseCupLocal
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseCupGlob
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseCupLocal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -13,8 +18,8 @@ variable {k G : Type} [CommRing k] [Group G] [TopologicalSpace G] [IsTopological
   {ι : Type} {H : ι → Type} [∀ v, Group (H v)] [∀ v, TopologicalSpace (H v)] [∀ v, IsTopologicalGroup (H v)]
   (φ : ∀ v, H v →ₜ* G)
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] in
 theorem cupCochain_const_left {A B : Rep.{0} k G} {q n : ℕ} (h : 0 + q = n) (m : A) (g : (Fin q → G) → B)
     (x : Fin n → G) :
     cupCochain h (fun _ => m) g x = m ⊗ₜ[k] g (fun j : Fin q => x ⟨j, by omega⟩) := by
@@ -45,8 +50,8 @@ theorem cochainOf_constCupSub (m : X) {s : ℕ} (e : (cochainsComplex B).X s) (z
   refine (congrArg μX.hom (cupCochain_const_left (show 0 + s = s by omega) m _ σ)).trans ?_
   congr 3
 
-include hj in
 
+include hj in
 theorem d_constCupSub (m : X) (x : (cochainsComplex U).X 1)
     (hx : ((cochainsMap j).f 1).hom x = ((cochainsComplex X).d 0 1).hom (constCochain X m))
     {s : ℕ} (e : (cochainsComplex B).X s) (he : ((cochainsComplex B).d s (s + 1)).hom e = 0)
@@ -68,8 +73,8 @@ variable (Ωᵥ : ∀ v, Rep.{0} k (H v)) [∀ v, IsDiscreteRep (Ωᵥ v)] (l : 
   (μΩ : ∀ v, Ωᵥ v ⊗ Rep.res (φ v).toMonoidHom B ⟶ Ωᵥ v)
   (hl : ∀ v, (Rep.resFunctor (φ v).toMonoidHom).map μX ≫ l v = resTensorHom (φ v).toMonoidHom (l v) (𝟙 _) ≫ μΩ v)
 
-include hj hl in
 
+include hj hl in
 theorem exists_compactCup_const
     (hμ : ∀ v, (Rep.resFunctor (φ v).toMonoidHom).map μU ≫ ((Rep.resFunctor (φ v).toMonoidHom).map j ≫ l v) =
       resTensorHom (φ v).toMonoidHom ((Rep.resFunctor (φ v).toMonoidHom).map j ≫ l v) (𝟙 _) ≫ μΩ v)
@@ -166,9 +171,9 @@ section Concrete
 
 open IsDedekindDomain NumberField GroundTheory.Global
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 attribute [local instance 2000] Rep.hV2
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
   (ιs : ∀ v : S, ℚ̄ →ₐ[K.1] AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1))
@@ -212,10 +217,10 @@ theorem gsPairingK_gsUnitsLocalMor (v : S) :
 variable [Fintype S] (n ℓ k : ℕ) [NeZero n] (hℓ : ℓ.Prime) (hnk : n = ℓ ^ k)
   (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
 
+
 set_option maxHeartbeats 1600000 in
 omit [Fintype S] in
 include hℓ hnk hS in
-
 theorem exists_gsUnitsData_cup_bock (t : sInvariantSubgroup (F := K.1) ℚ̄ S)
     (z : cocycles (zmodRep.{0} (galUnramifiedOutside K.1 ℚ̄ S) n) 1) :
     ∃ W : cocycles (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S)) 2,
@@ -235,7 +240,7 @@ theorem exists_gsUnitsData_cup_bock (t : sInvariantSubgroup (F := K.1) ℚ̄ S)
     (cochainsComplex (galSUnitsMax K.1 ℚ̄ S)).cyclesMk (sInvCochain S t) 2 (by simp) (d_sInvCochain S t)
   have hc : cocycleι _ 1 c = sInvCochain S t := (cochainsComplex (galSUnitsMax K.1 ℚ̄ S)).i_cyclesMk _ _ _ _
   have hnz : n • cohomologyπ (zmodRep.{0} (galUnramifiedOutside K.1 ℚ̄ S) n) 1 z = 0 :=
-    nsmul_cohomology_eq_zero _ (fun a => ULift.ext _ _ (by
+    nsmul_cohomology_eq_zero _ (fun a => ULift.ext (by
       change n • a.down = 0
       rw [nsmul_eq_mul, ZMod.natCast_self, zero_mul])) 1 _
   have hb' : n • cohomologyπ _ 2 x₁ = 0 :=

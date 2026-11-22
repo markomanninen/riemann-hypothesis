@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.CupProductRingLaws
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.CupProductRingLaws
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -26,7 +30,7 @@ def post {I J K K' : Cx R} (μ : Pair I J K) (u : K ⟶ K') : Pair I J K' where
     change Sec.map (K'.d w (w + 1)) (Sec.map (u.f w) _) =
       Sec.map (u.f (w + 1)) _ + s.negOnePow • Sec.map (u.f (w + 1)) _
     rw [map_map, u.comm w (w + 1), ← map_map, μ.leibniz]
-    simp only [Sec.map, map_add, map_zsmul_unit]
+    simp only [Sec.map, map_add (f := _), map_zsmul_unit]
 
 theorem post_mul {I J K K' : Cx R} (μ : Pair I J K) (u : K ⟶ K') (U : Scheme.{0}) (s t w : ℤ) (h : s + t = w)
     (a : Sec (I.X s) U) (b : Sec (J.X t) U) : (post μ u).mul U s t w h a b = Sec.map (u.f w) (μ.mul U s t w h a b) := rfl

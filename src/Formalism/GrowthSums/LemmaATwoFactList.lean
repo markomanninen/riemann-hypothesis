@@ -1,13 +1,15 @@
-import Formalism.GrowthSums.FactorialBaseGrowth.Coarse
-import Formalism.GrowthSums.FactorialBaseGrowth.Harmonic
-import Formalism.GrowthSums.FactorialBaseGrowth.QuadraticExponentIdentity
-import Formalism.GrowthSums.FactorialBaseGrowth.Segment
-import Formalism.GrowthSums.FactorialBaseGrowth.NextEvenTopHolds
-import Formalism.GrowthSums.FactorialBaseGrowth.LogCoef
-import Formalism.GrowthSums.FactorialBaseGrowth.Length
-import Formalism.GrowthSums.FactorialBaseGrowth.KapPrime
-import Mathlib
-import Formalism.GrowthSums.FactorialBaseGrowth.PathBasisOfCount
+module
+
+public import Formalism.GrowthSums.FactorialBaseGrowth.Coarse
+public import Formalism.GrowthSums.FactorialBaseGrowth.Harmonic
+public import Formalism.GrowthSums.FactorialBaseGrowth.QuadraticExponentIdentity
+public import Formalism.GrowthSums.FactorialBaseGrowth.Segment
+public import Formalism.GrowthSums.FactorialBaseGrowth.NextEvenTopHolds
+public import Formalism.GrowthSums.FactorialBaseGrowth.LogCoef
+public import Mathlib
+public import Formalism.GrowthSums.FactorialBaseGrowth.PathBasisOfCount
+
+@[expose] public section
 
 namespace Formalism.GrowthSums.Top
 

@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsBase
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SmoothingFinite
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Uniform
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsBase
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SmoothingFinite
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Uniform
+
+@[expose] public section
 
 open MeasureTheory Set Filter Topology Function Module
 
@@ -20,7 +24,7 @@ variable {L : Type*} [Group L] [TopologicalSpace L] [IsTopologicalGroup L] [Comp
 def fixedIn (σ : BanachRep L E) (W : Submodule ℂ E) (U : Subgroup L) : Submodule ℂ E where
   carrier := {w | w ∈ W ∧ ∀ u ∈ U, σ u w = w}
   add_mem' := fun {a b} ha hb =>
-    ⟨W.add_mem ha.1 hb.1, fun u hu => by rw [map_add, ha.2 u hu, hb.2 u hu]⟩
+    ⟨W.add_mem ha.1 hb.1, fun u hu => by rw [map_add (f := _), ha.2 u hu, hb.2 u hu]⟩
   zero_mem' := ⟨W.zero_mem, fun u _ => map_zero _⟩
   smul_mem' := fun c w hw => ⟨W.smul_mem c hw.1, fun u hu => by rw [map_smul, hw.2 u hu]⟩
 
@@ -126,24 +130,7 @@ namespace CuspidalSpectrum
 open AutomorphicForm
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
-variable (μ : Measure (Reduction.normOneGL K n)) [μ.IsHaarMeasure]
-
-theorem exists_isOpen_forall_cuspRep_finOne_eq (v : cuspidalL2 μ)
-    (hv : FiniteDimensional ℂ (Submodule.span ℂ (Set.range fun k :
-      (Reduction.maxCompact : Subgroup (AdelicGLn.AdelicGL K n)) =>
-        cuspRep μ ⟨k, Reduction.maxCompact_le_normOneGL k.2⟩ v))) :
-    ∃ U : Subgroup (AdelicGLn.integralFiniteGL K n),
-      IsOpen (U : Set (AdelicGLn.integralFiniteGL K n)) ∧ ∀ u ∈ U, cuspRep μ (finOne K n u) v = v := by
-  have hle : Submodule.span ℂ (Set.range fun u : AdelicGLn.integralFiniteGL K n =>
-      (cuspRep μ).comapHom (finOne K n) continuous_finOne u v) ≤
-      Submodule.span ℂ (Set.range fun k : (Reduction.maxCompact : Subgroup (AdelicGLn.AdelicGL K n)) =>
-        cuspRep μ ⟨k, Reduction.maxCompact_le_normOneGL k.2⟩ v) := by
-    refine Submodule.span_le.2 ?_
-    rintro _ ⟨u, rfl⟩
-    exact Submodule.subset_span ⟨⟨finEmb K n u, finEmb_mem_maxCompact u.2⟩, rfl⟩
-  have _ := hv
-  exact UnitaryRep.exists_isOpen_forall_eq_of_finiteDimensional _ v
-    (Submodule.finiteDimensional_of_le hle)
+variable (μ : Measure (Reduction.normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
 end CuspidalSpectrum
 

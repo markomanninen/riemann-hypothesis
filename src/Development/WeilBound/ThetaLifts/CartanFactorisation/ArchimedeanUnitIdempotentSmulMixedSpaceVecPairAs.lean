@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IntegrableOfRapidDecay
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IntegrableOfRapidDecay
+
+@[expose] public section
 
 open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open IsDedekindDomain NumberField MeasureTheory
@@ -83,7 +87,7 @@ theorem pureA_schrInf (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ) {κ : Type} [Fin
     funext i
     show InfiniteAdeleRing.ringEquiv_mixedSpace F (x i).1 + v.1 i =
       InfiniteAdeleRing.ringEquiv_mixedSpace F ((x i).1 + (InfiniteAdeleRing.ringEquiv_mixedSpace F).symm (v.1 i))
-    rw [map_add, RingEquiv.apply_symm_apply]
+    rw [map_add (f := _), RingEquiv.apply_symm_apply]
   have h2 : (fun i => (x i).2) = fun i => ((x + infE F v.1) i).2 := by
     funext i
     show (x i).2 = (x i).2 + 0
@@ -223,7 +227,7 @@ theorem exists_infLin (B : ((κ → AdeleRing (𝓞 F) F) × (κ → AdeleRing (
   refine ⟨{ toFun := fun v => infPart2 (B (mixedSpaceVecPairAsAdeles F v))
             invFun := fun v => infPart2 (B.symm (mixedSpaceVecPairAsAdeles F v))
             map_add' := fun v v' => by
-              rw [mixedSpaceVecPairAsAdeles_add, map_add, infPart2_add]
+              rw [mixedSpaceVecPairAsAdeles_add, map_add (f := _), infPart2_add]
             map_smul' := fun t v => by
               rw [mixedSpaceVecPairAsAdeles_real_smul, map_smul, infPart2_smul, RingHom.id_apply]
             left_inv := fun v => by

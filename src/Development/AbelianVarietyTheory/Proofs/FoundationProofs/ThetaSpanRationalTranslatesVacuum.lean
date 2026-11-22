@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaTranslationIntertwinerUnitary
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AdmissibleCharactersExist
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPoint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaTranslationIntertwinerUnitary
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AdmissibleCharactersExist
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPoint
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
@@ -73,16 +77,18 @@ theorem mem_span_translates (H : (∀ x y f, W x (W y f) = c x y • W (x + y) f
       have h2 := H1 y (m • b) (W (s (-a)) f)
       rw [h1, cA _ hy _ hl, one_smul] at h2
       exact h2.symm) hx
-    simp only [G, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [G, map_sum]
     rw [← this]
     refine Finset.sum_congr rfl fun q _ => ?_
     rw [H1, cA _ hx _ (rep_mem q), one_smul]
   have hWG : ∀ a, (c (s a) (s (-a)))⁻¹ • W (s a) (G a) =
       ∑ q : A ⧸ (subLa m A).addSubgroupOf A, (c a (s (rep q)) / c (s (rep q)) a) • W (rep q) f := by
     intro a
-    simp only [G, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [G, map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun q _ => ?_
-    rw [comm, H1 (s a), ← map_add, add_neg_cancel, map_zero, W0, map_smul, smul_smul, smul_smul, cs a (rep q),
+    rw [comm, H1 (s a), ← map_add (f := _), add_neg_cancel, map_zero, W0, map_smul, smul_smul, smul_smul, cs a (rep q),
       ← cs (rep q) a]
     congr 1
     have := H4 (s a) (s (-a))

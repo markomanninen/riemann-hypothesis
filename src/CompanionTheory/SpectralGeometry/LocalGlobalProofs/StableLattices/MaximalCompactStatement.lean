@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.LineFormulas.LineFacts
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.LineFormulas.LineFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem sum_enorm_sq {ι : Type*} [Fintype ι] (z : ι → ℂ) :
 theorem lintegral_enorm_sq_lt_top {X : Type*} [MeasurableSpace X] {μ : Measure X} {f : X → ℂ}
     (h : MemLp f 2 μ) : (∫⁻ x, ‖f x‖ₑ ^ 2 ∂μ) < ⊤ := by
   have h1 := h.eLpNorm_lt_top
-  have h2 := eLpNorm_nnreal_pow_eq_lintegral (f := f) (μ := μ) (p := 2) two_ne_zero
+  have h2 := eLpNorm_nnreal_pow_eq_lintegral (f := f) (μ := μ) (p := 2) two_ne_zero h.aestronglyMeasurable
   simp only [ENNReal.coe_ofNat, NNReal.coe_ofNat, ENNReal.rpow_ofNat] at h2
   rw [← h2]
   exact ENNReal.pow_lt_top h1
@@ -103,7 +107,7 @@ theorem kMaj : CompanionTheory.RgExh.Dec.N.S.KMaj := by
     congr 2
     exact sum_sq_translate hU hst b ξ g k hk
   · rw [lintegral_const_mul _ (Finset.measurable_sum _ fun i _ => hcm i),
-      lintegral_finset_sum _ fun i _ => hcm i]
+      lintegral_finsetSum _ fun i _ => hcm i]
     refine ENNReal.mul_lt_top ENNReal.ofReal_lt_top (ENNReal.sum_lt_top.2 fun i _ => ?_)
     exact lintegral_enorm_sq_lt_top (hS (b i : H) ξ)
   · intro g

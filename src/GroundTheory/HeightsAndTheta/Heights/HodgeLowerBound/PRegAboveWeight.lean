@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsRegAboveWeight
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsBdPtsNull
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsDivisorPreimageNull
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PTruncPsh
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PChartMollifiedBounds
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.ChartFun
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsRegAboveWeight
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsBdPtsNull
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsDivisorPreimageNull
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PTruncPsh
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PChartMollifiedBounds
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.ChartFun
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

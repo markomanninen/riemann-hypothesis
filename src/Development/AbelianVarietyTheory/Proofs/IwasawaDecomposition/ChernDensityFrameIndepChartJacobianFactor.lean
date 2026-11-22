@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AntisymmFibrePointTwo
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TopChernDensityInvariantHolomorphicFrameChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernTopChartIndependent
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHolomorphicInvertibleFrameCoordinates
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AntisymmFibrePointTwo
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TopChernDensityInvariantHolomorphicFrameChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernTopChartIndependent
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHolomorphicInvertibleFrameCoordinates
+
+@[expose] public section
+
 open AlgebraicGeometry MvPolynomial GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts GlobalTheory.ChartGlue GlobalTheory.FlagBundle GlobalTheory.HermFrame GlobalTheory.GoodMetric
 open ReciprocityTheory.L2DbarEstimates (V)
 open Filter Topology
@@ -20,8 +25,15 @@ theorem IsMetricOn.mContDiffAt_chart (hM : IsMetricOn E O H) {y : CxPts X.str σ
   intro a b
   have hy'' : c.e.symm (c.e y) = y := c.e.left_inv hc
   have hsm := hM.smooth y hy A hA
-  have hre := GlobalTheory.ChernWeilLine.cInfAt_eventually (hsm τ a b).1
-  have him := GlobalTheory.ChernWeilLine.cInfAt_eventually (hsm τ a b).2
+  have hevent {f : CxPts X.str σ → ℝ} (h : CInfAt f y) : ∀ᶠ z in 𝓝 y, CInfAt f z := by
+    obtain ⟨W, ι, i, g, F, O, h₁, h₂, h₃, h₄, h₅⟩ := h
+    have hW := (isOpen_ptsIn W).mem_nhds h₁
+    have hc : ContinuousAt (fun z a => ev X.str σ W (g a) z) y :=
+      continuousAt_pi.2 fun a => (continuousOn_ev (g a)).continuousAt hW
+    filter_upwards [hW, hc.preimage_mem_nhds (h₂.mem_nhds h₃), h₅.eventuallyEq_nhds] with z hz hzO hz5
+    exact ⟨W, ι, i, g, F, O, hz, h₂, hzO, h₄, hz5⟩
+  have hre := hevent (hsm τ a b).1
+  have him := hevent (hsm τ a b).2
   have hn : ∀ {f : CxPts X.str σ → ℝ}, (∀ᶠ z in 𝓝 y, CInfAt f z) → ContDiffAt ℝ 2 (f ∘ c.e.symm) (c.e y) := by
     intro f hf
     have hs : c.e.target ∩ c.e.symm ⁻¹' {z | CInfAt f z} ∈ 𝓝 (c.e y) := by
@@ -74,7 +86,15 @@ theorem IsMetricOn.chernTop_chart (hM : IsMetricOn E O H) (R : MvPolynomial (ι 
   have hg : (fun v => H A (c.e.symm v)) =ᶠ[𝓝 (c.e y)] fun w => K ((c'.e ∘ c.e.symm) w) := by
     filter_upwards [ho.mem_nhds hm] with w hw
     simp only [K, Function.comp_apply, c'.e.left_inv hw.2]
-  rw [GlobalTheory.ChernWeilLine.chernTop_congr R hg, key, e₂, transDet, Complex.sq_norm]
+  have hcongr : chernTop R (fun v => H A (c.e.symm v)) (c.e y) =
+      chernTop R (fun w => K ((c'.e ∘ c.e.symm) w)) (c.e y) := by
+    have hh : ∀ x : ι × ℕ, chernPoly (fun u => H A (c.e.symm u) x.1) (c.e y) x.2 =
+        chernPoly (fun u => K ((c'.e ∘ c.e.symm) u) x.1) (c.e y) x.2 := by
+      intro x
+      unfold chernPoly curvPoly
+      simp only [curv_congr (hg.mono fun u hu => congrFun hu x.1)]
+    simp only [chernTop, hh]
+  rw [hcongr, key, e₂, transDet, Complex.sq_norm]
 
 end GlobalTheory.GoodMetric
 

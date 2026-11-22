@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EvAtParabNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EvAtParabNeZero
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.IndefiniteRowSideFullHecke.CuspidalSupportClasses GlobalTheory.TypeDim ValuativeRel
 open scoped TensorProduct
@@ -45,7 +49,7 @@ def Clean (g : Matrix (Fin n) (Fin n) k) (i : Fin n) : Prop :=
   ∃ j, (∀ j', j' ≠ j → g i j' = 0) ∧ ∀ i', i' ≠ i → g i' j = 0
 
 theorem monomial_of_clean (g : GL (Fin n) k) (h : ∀ i, Clean g.val i) :
-    ∃ (w : Equiv.Perm (Fin n)) (c : Fin n → kˣ), g = GlobalTheory.Parabolic.permGL k w * diagT k (Fin n) c := by
+    ∃ (w : Equiv.Perm (Fin n)) (c : Fin n → kˣ), g = GlobalTheory.Parabolic.permGL (k := k) w * diagT k (Fin n) c := by
   choose p hrow hcol using h
   have hp : ∀ i, g.val i (p i) ≠ 0 := by
     intro i hz
@@ -316,7 +320,7 @@ theorem step (g : GL (Fin n) k) (S : Finset (Fin n)) (hS : ∀ i ∈ S, Clean g.
 
 theorem aux (m : ℕ) : ∀ (g : GL (Fin n) k) (S : Finset (Fin n)), (∀ i ∈ S, Clean g.val i) → (Sᶜ).card = m →
     ∃ (j j' : unipLevel k n) (w : Equiv.Perm (Fin n)) (c : Fin n → kˣ),
-      g = incl k n j * (GlobalTheory.Parabolic.permGL k w * diagT k (Fin n) c) * incl k n j' := by
+      g = incl k n j * (GlobalTheory.Parabolic.permGL (k := k) w * diagT k (Fin n) c) * incl k n j' := by
   induction m with
   | zero =>
     intro g S hS hc
@@ -346,7 +350,7 @@ theorem aux (m : ℕ) : ∀ (g : GL (Fin n) k) (S : Finset (Fin n)), (∀ i ∈ 
 
 theorem iwahori_bruhat : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     (n : ℕ) (g : GL (Fin n) k), ∃ (j j' : unipLevel k n) (w : Equiv.Perm (Fin n)) (c : Fin n → kˣ),
-      g = incl k n j * (GlobalTheory.Parabolic.permGL k w * diagT k (Fin n) c) * incl k n j' := by
+      g = incl k n j * (GlobalTheory.Parabolic.permGL (k := k) w * diagT k (Fin n) c) * incl k n j' := by
   intro k _ _ _ _ n g
   exact aux n g ∅ (by simp) (by simp)
 

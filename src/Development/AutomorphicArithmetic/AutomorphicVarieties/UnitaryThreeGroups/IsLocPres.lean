@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.Rigid0
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.Rigid0
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ open Matrix IsLocalRing UpperTheory.V.Alg
 section Coord
 
 variable {O G R : Type} [CommRing O] [Group G] [CommRing R] [Algebra O R] (η : G →* ℤˣ) (Ψ : G →* Oˣ)
-  (r : G →* GG 3 R) (W : WPres O ℤ R)
+  (r : G →* GG (m := 3) (R := R)) (W : WPres O ℤ R)
 
 def IsCoord (s : W.σ) : Prop :=
   ∃ g a b, W.wt s = wt6 a - wt6 b ∧ W.z s = emb (r g) a b - algebraMap O R (emb (r0 η Ψ g) a b)

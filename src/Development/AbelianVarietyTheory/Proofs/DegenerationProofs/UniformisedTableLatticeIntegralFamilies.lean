@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsFrameIff
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FromGtOfMemUnitGrp
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IntegralFamilyValuesTorsionTorusExtensionStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TorusExtensionTorsionMemUnitThetaConstantGroupStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsTorsionPointUnitValuePrimitiveIntegralFamiStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpBijFAndExpandsFLin
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionIdentificationWithPairingStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ThetaConstantValuationsUnitsEveryCosetStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ValuationNonnegIffSpanMultiplicationTranslatesStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.BOfNsmulLeft
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsFrameIff
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FromGtOfMemUnitGrp
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IntegralFamilyValuesTorsionTorusExtensionStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TorusExtensionTorsionMemUnitThetaConstantGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsTorsionPointUnitValuePrimitiveIntegralFamiStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpBijFAndExpandsFLin
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionIdentificationWithPairingStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ThetaConstantValuationsUnitsEveryCosetStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ValuationNonnegIffSpanMultiplicationTranslatesStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.BOfNsmulLeft
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj BigOperators
@@ -45,7 +49,8 @@ theorem cHom_res {W W' : (TFK (R := R) F ⊗ A.A).left.Opens} (h : W' ≤ W) (a 
 
 theorem exists_cmb {n : ℕ} (b : Fin n → SecA A F k) (a : Fin n → F) : ∃ t, Cmb b a t := by
   refine ⟨⟨fun j => ∑ i, cHom _ (a i) * (b i).f j, fun j j' => ?_⟩, fun j => rfl⟩
-  rw [map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, map_mul, cHom_res, cHom_res, (b i).compat j j']
   ring
@@ -53,7 +58,8 @@ theorem exists_cmb {n : ℕ} (b : Fin n → SecA A F k) (a : Fin n → F) : ∃ 
 theorem sum_comp {Γ : Type} [CommRing Γ] (c : F →+* Γ) {n n' : ℕ} (a : Fin n → F) (B : Fin n → Fin n' → F)
     (b : Fin n → Γ) (τ : Fin n' → Γ) (h : ∀ i, b i = ∑ i', c (B i i') * τ i') :
     ∑ i, c (a i) * b i = ∑ i', c (∑ i, a i * B i i') * τ i' := by
-  simp only [h, map_sum, map_mul, Finset.mul_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [h, map_sum, map_mul, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   simp only [_root_.mul_assoc]
 
@@ -84,7 +90,8 @@ theorem valAt_cmb {n : ℕ} {τ : Fin n → SecA A F k} {a l : Fin n → F} {t :
     rw [e, gs_eq _ _ _ hz] at h1
     exact h1.symm
   refine (hg t).trans ((congrArg g (h _)).trans ((map_sum g _ _).trans ?_))
-  rw [hc, dotProduct, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hc, dotProduct, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun i _ => (map_mul g _ _).trans ?_
   have e := (hg (τ i)).symm.trans (hl i z J hJ)
   rw [hc] at e
@@ -115,8 +122,11 @@ theorem valuation_eq_of {F : Type} [Field F] {v : AddValuation F (WithTop ℚ)} 
     (h : ∀ x, x ∈ O ↔ 0 ≤ v x) {x y : F} (e : v x = v y) : O.valuation x = O.valuation y := by
   have e' : O = (AddValuation.toValuation v).valuationSubring := ValuationSubring.ext _ _ h
   subst e'
-  refine (Valuation.isEquiv_valuation_valuationSubring (AddValuation.toValuation v)).val_eq.1 ?_
-  exact congrArg (fun a => Multiplicative.ofAdd (OrderDual.toDual a)) e
+  apply le_antisymm
+  · apply (Valuation.isEquiv_valuation_valuationSubring (AddValuation.toValuation v) x y).1
+    exact le_of_eq (congrArg (fun a => Multiplicative.ofAdd (OrderDual.toDual a)) e)
+  · apply (Valuation.isEquiv_valuation_valuationSubring (AddValuation.toValuation v) y x).1
+    exact le_of_eq (congrArg (fun a => Multiplicative.ofAdd (OrderDual.toDual a)) e.symm)
 
 theorem v_prod {F : Type} [Field F] (v : AddValuation F (WithTop ℚ)) {K : Type} (S : Finset K) (π : K → F) (q : K → ℚ)
     (h : ∀ i, v (π i) = (q i : WithTop ℚ)) : v (∏ i ∈ S, π i) = ((∑ i ∈ S, q i : ℚ) : WithTop ℚ) := by

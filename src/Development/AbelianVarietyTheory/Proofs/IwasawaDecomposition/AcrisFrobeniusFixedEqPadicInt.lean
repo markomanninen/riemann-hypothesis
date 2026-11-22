@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Acris0TorsionFree
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsBdRPlusSectionOfTheta
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMaps
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Acris0TorsionFree
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsBdRPlusSectionOfTheta
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMaps
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.MemLoc
 open scoped Formalism.Per
@@ -73,10 +77,10 @@ theorem exists_pow_pred_div_factorial (n : ℕ) :
   have hv : ((((n + 1).factorial : ℕ) : ℤ_[l])).valuation ≤ n := by
     have h := PadicInt.valuation_coe (((n + 1).factorial : ℕ) : ℤ_[l])
     rw [PadicInt.coe_natCast, Padic.valuation_natCast] at h
-    have h' : padicValNat l (n + 1).factorial = ((((n + 1).factorial : ℕ) : ℤ_[l])).valuation := by
+    have h' : multiplicity l (n + 1).factorial = ((((n + 1).factorial : ℕ) : ℤ_[l])).valuation := by
       exact_mod_cast h
     rw [← h']
-    exact Nat.lt_succ_iff.1 (padicValNat_factorial_lt_of_ne_zero l n.succ_ne_zero)
+    exact Nat.lt_succ_iff.1 (multiplicity_factorial_lt_of_ne_zero l n.succ_ne_zero)
   have hs := PadicInt.unitCoeff_spec h0
   have : (((n + 1).factorial : ℕ) : ℤ_[l]) ∣ (l : ℤ_[l]) ^ n := by
     rw [hs, Units.mul_left_dvd]
@@ -109,7 +113,7 @@ theorem phi_mod (s : Per.AinfP l) (hs : s ∈ Per.Acris0 l) :
       have hc' := congrArg ((algebraMap (Per.Ainf l) (Per.AinfP l)).comp (Per.zA l)) hc
       rw [map_mul, map_natCast, map_pow, map_natCast] at hc'
       have e1 := congrArg (Per.extP (Per.φA l)) hn
-      rw [map_mul, map_natCast, map_pow, GlobalTheory.RingBasics.awayMap_algebraMap₂, hz, map_add, map_pow, e, map_mul, map_natCast,
+      rw [map_mul, map_natCast, map_pow, GlobalTheory.RingBasics.awayMap_algebraMap₂, hz, map_add (f := _), map_pow, e, map_mul, map_natCast,
         ← mul_add, mul_pow, pow_succ (l : Per.AinfP l), ← hc'] at e1
       refine ⟨0, ((algebraMap (Per.Ainf l) (Per.AinfP l)).comp (Per.zA l)) c * (t + algebraMap (Per.Ainf l) (Per.AinfP l) z) ^ (n + 1),
         mul_mem (Subalgebra.algebraMap_mem _ _) (pow_mem (add_mem ht (Subalgebra.algebraMap_mem _ _)) _), ?_⟩
@@ -120,7 +124,7 @@ theorem phi_mod (s : Per.AinfP l) (hs : s ∈ Per.Acris0 l) :
   | add x y _ _ a b =>
     obtain ⟨a, t, ht, e⟩ := a
     obtain ⟨b, u, hu, e'⟩ := b
-    exact ⟨a + b, t + u, add_mem ht hu, by rw [map_add, map_add, e, e']; ring⟩
+    exact ⟨a + b, t + u, add_mem ht hu, by rw [map_add (f := _), map_add (f := _), e, e']; ring⟩
   | mul x y _ _ a b =>
     obtain ⟨a, t, ht, e⟩ := a
     obtain ⟨b, u, hu, e'⟩ := b
@@ -146,7 +150,7 @@ theorem thetaP_mem (s : Per.AinfP l) (hs : s ∈ Per.Acris0 l) : Per.θP l s ∈
       rw [this]
       exact zero_mem _
   | algebraMap r => rw [SecEx.fontaineTheta_algebraMap₂]; exact (Per.θ l r).2
-  | add x y _ _ a b => rw [map_add]; exact add_mem a b
+  | add x y _ _ a b => rw [RingHom.map_add (Per.θP l)]; exact add_mem a b
   | mul x y _ _ a b => rw [map_mul]; exact mul_mem a b
 
 theorem exists_int_nilpotent (t : Per.OC l) (ht : (l : Per.OC l) ∣ t ^ l - t) :
@@ -162,7 +166,7 @@ theorem exists_int_nilpotent (t : Per.OC l) (ht : (l : Per.OC l) ∣ t ^ l - t) 
   obtain ⟨n, hn⟩ := (mem_bot_iff_intCast l _).1 ((Subfield.mem_bot_iff_pow_eq_self _ l).2 h1)
   have h2 : ¬ IsUnit (t + ((-n : ℤ) : Per.OC l)) := by
     change _ ∈ IsLocalRing.maximalIdeal (Per.OC l)
-    rw [← IsLocalRing.residue_eq_zero_iff, map_add, map_intCast, ← hn]
+    rw [← IsLocalRing.residue_eq_zero_iff, map_add (f := _), map_intCast, ← hn]
     simp
   generalize hy : t + ((-n : ℤ) : Per.OC l) = y at h2
   have h3 : ‖(y : ℂ_[l])‖ < 1 := by
@@ -221,14 +225,14 @@ theorem fixed_mod (x : Per.Acris l) (hx : phiA l x = x) : ∃ c : ℤ, (l : Per.
   have h1 : x = algebraMap (Per.Ainf l) (Per.Acris l) a + (l : Per.Acris l) *
       (algebraMap (Per.Acris0 l) (Per.Acris l) ⟨t, ht⟩ + phiA l z) := by
     have h := congrArg (phiA l) hs
-    rw [hx, map_add, acrisFrobeniusRingHom_algebraMap_envelope, e0, map_add, ← alg_eq, pow_one, map_mul, map_mul, map_natCast,
+    rw [hx, RingHom.map_add (phiA l), acrisFrobeniusRingHom_algebraMap_envelope, e0, RingHom.map_add (algebraMap (Per.Acris0 l) (Per.Acris l)), ← alg_eq, pow_one, map_mul, map_mul, map_natCast,
       map_natCast] at h
     linear_combination h
   generalize algebraMap (Per.Acris0 l) (Per.Acris l) ⟨t, ht⟩ + phiA l z = w at h1
   obtain ⟨v, hv⟩ := GlobalTheory.RingBasics.frob_lift l a
   have h2 : (l : Per.Acris l) ∣ algebraMap (Per.Ainf l) (Per.Acris l) (a ^ l - a) := by
     have h := congrArg (phiA l) h1
-    rw [hx, map_add, phiA_alg, hv, map_add, map_mul, map_mul, map_natCast, map_natCast] at h
+    rw [hx, map_add (f := _), phiA_alg, hv, map_add (f := _), map_mul, map_mul, map_natCast, map_natCast] at h
     refine ⟨w - phiA l w - algebraMap (Per.Ainf l) (Per.Acris l) v, ?_⟩
     rw [map_sub]
     linear_combination h1 - h
@@ -244,11 +248,11 @@ theorem fixed_mod (x : Per.Acris l) (hx : phiA l x = x) : ∃ c : ℤ, (l : Per.
   obtain ⟨c, N, y, hy⟩ := exists_int_nilpotent l _ h3
   obtain ⟨y, rfl⟩ := SecEx.θ_surjective l y
   obtain ⟨k, hk, ek⟩ := pow_eq_mul l ((a + c) ^ N - l * y) (by
-    rw [map_sub, map_pow, map_add, map_intCast, map_mul, map_natCast, hy, sub_self])
+    rw [map_sub, map_pow, map_add (f := _), map_intCast, map_mul, map_natCast, hy, sub_self])
   have ek0 : algebraMap (Per.Ainf l) (Per.Acris0 l) ((a + c) ^ N - l * y) ^ l = (l : Per.Acris0 l) * ⟨k, hk⟩ :=
     Subtype.ext ek
   have ek1 := congrArg (algebraMap (Per.Acris0 l) (Per.Acris l)) ek0
-  rw [map_pow, ← alg_eq, map_mul, map_natCast, map_sub, map_pow, map_add, map_intCast, map_mul,
+  rw [map_pow, ← alg_eq, map_mul, map_natCast, map_sub, map_pow, map_add (f := _), map_intCast, map_mul,
     map_natCast] at ek1
   let π := Ideal.Quotient.mk (Ideal.span {(l : Per.Acris l)})
   have hπ : ∀ u, π u = 0 ↔ (l : Per.Acris l) ∣ u := fun u => by
@@ -262,7 +266,7 @@ theorem fixed_mod (x : Per.Acris l) (hx : phiA l x = x) : ∃ c : ℤ, (l : Per.
     rwa [map_pow, map_sub, map_mul, map_mul, map_natCast, hl, zero_mul, zero_mul, sub_zero, map_pow, map_add,
       map_intCast, ← pow_mul] at this⟩
   refine ⟨-c, (hπ _).1 ?_⟩
-  rw [h1, map_sub, map_add, map_mul, map_natCast, hl, map_intCast]
+  rw [h1, map_sub, map_add (f := _), map_mul, map_natCast, hl, map_intCast]
   push_cast
   linear_combination h4
 

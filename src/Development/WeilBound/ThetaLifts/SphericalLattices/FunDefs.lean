@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.HoweInert
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.ExistsEigenLift
-import Development.WeilBound.CoreStatements.LocalThetaKernels.IwasMain
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.HoweInert
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.ExistsEigenLift
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.IwasMain
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,8 +46,8 @@ def AvgSt : Prop :=
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {d : ℕ}
 
-variable (σ) in
 
+variable (σ) in
 def PSub (W : Spc F E d) (v : Pl F) {m : ℕ} (Cy : Matrix (Fin d) (Fin m) (AE F E)) : Subgroup (UA σ W.J) where
   carrier := {p | p ∈ PAt σ W v Cy ∧ p⁻¹ ∈ PAt σ W v Cy}
   one_mem' := by

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VacC
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TameTwistFamilySpecializationGood
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PlaceIdempotentUnderEqOfLiesOver
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VacC
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TameTwistFamilySpecializationGood
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PlaceIdempotentUnderEqOfLiesOver
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum IsDedekindDomain NumberField Matrix GlobalTheory.ExportSeries GlobalTheory.ExportSeries.DualType
 open Formalism.IndefR.Links (PolF)
 open Formalism.L2.NTheta (IsIdemAt)
@@ -20,7 +25,8 @@ open GlobalTheory.StepLaw (ResAt UnrOff)
 
 theorem idemSum_mul_idemAt {P Q : Finset (Pl D.host.E)} (h : SplitSet P) (hQ : Q ⊆ P) {PP : Pl D.host.E}
     (hPP : PP ∈ P) (hn : PP ∉ Q) : (idem Q + cA D (idem Q)) * idemAt PP = 0 := by
-  rw [idem, map_sum, add_mul, Finset.sum_mul, Finset.sum_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [idem, map_sum, add_mul, Finset.sum_mul, Finset.sum_mul,
     Finset.sum_eq_zero fun i hi => h.mul_eq_zero (hQ hi) hPP (by rintro rfl; exact hn hi),
     Finset.sum_eq_zero fun i hi => by rw [mul_comm]; exact h.mul_conj hPP (hQ hi), add_zero]
 
@@ -83,7 +89,8 @@ theorem unrOff_of_unram {χ : (AE D)ˣ →* Circle} {P Q : Finset (Pl D.host.E)}
   intro v ε hε hv x h1 h2 h3
   refine hχ x (infPart_eq_one hε h1) h2 h3 ?_
   have k : (idem Q + cA D (idem Q)) * algebraMap (AF D.host.F) (AE D) ε = 0 := by
-    rw [idem, map_sum, ← Finset.sum_add_distrib, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [idem, map_sum, ← Finset.sum_add_distrib, Finset.sum_mul]
     refine Finset.sum_eq_zero fun PP hPP => ?_
     obtain ⟨-, -, v', ε', hε', he⟩ := (h.isIdemAt hPP).1
     have hu := GlobalTheory.IdemUnder.under_eq_of_isIdemAt D _ PP v' ε' (h.isIdemAt hPP) hε' he

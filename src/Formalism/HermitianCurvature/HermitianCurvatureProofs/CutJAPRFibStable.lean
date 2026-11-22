@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPolyRadialCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepThtFacts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDtrSIo
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPolyRadialCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepThtFacts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDtrSIo
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField
 open scoped ComplexConjugate Matrix

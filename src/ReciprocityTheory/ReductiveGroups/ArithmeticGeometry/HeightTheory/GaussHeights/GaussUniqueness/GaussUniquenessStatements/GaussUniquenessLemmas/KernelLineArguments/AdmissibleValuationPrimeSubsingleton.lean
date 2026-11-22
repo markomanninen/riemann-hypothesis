@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GaussHeights.GaussUniqueness.GaussUniquenessStatements.GaussUniquenessLemmas.KernelLineArguments.SHomFactor
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GaussHeights.GaussUniqueness.GaussUniquenessStatements.GaussUniquenessLemmas.KernelLineArguments.KerNeBot
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GaussHeights.GaussUniqueness.GaussUniquenessStatements.GaussUniquenessLemmas.KernelLineArguments.SHomFactor
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GaussHeights.GaussUniqueness.GaussUniquenessStatements.GaussUniquenessLemmas.KernelLineArguments.KerNeBot
+
+@[expose] public section
 
 namespace GaussValuationUniqueness
 
@@ -26,7 +30,55 @@ theorem admissibleValuation_prime_subsingleton {K : Type} [Field K] [NumberField
   obtain ⟨_, j0, hj0, hnn, htr⟩ := hRC
   set a : Fin (d.N + 1) → Ω c := fun j => ratio (Ω := Ω c) (d.w j c) (d.w j0 c) with ha_def
   have ha : ∀ j, a j ∈ vRing v := fun j => (GaussValuationUniqueness.mem_vRing_iff v _).mpr (hnn j)
-  have hQne := GaussValuationUniqueness.ker_ne_bot (D := d.D) v hK j0 a ha (by have := hd.D_ge; omega) htr
+  have hQne : RingHom.ker
+      (GaussValuationUniqueness.psiR (D := d.D) v hK j0
+        (fun k => ⟨a (j0.succAbove k), ha _⟩)) ≠ ⊥ := by
+    letI := resAlg (F := K) v
+    intro hbot
+    let S : Set (IsLocalRing.ResidueField (vRing v)) :=
+      {r | ∃ j, ∃ h : a j ∈ vRing v, r = IsLocalRing.residue (vRing v) ⟨_, h⟩}
+    let ρL : Fin d.N → IntermediateField.adjoin
+        (IsLocalRing.ResidueField ((vRing v).comap (algebraMap K (Ω c)))) S :=
+      fun k => ⟨IsLocalRing.residue (vRing v) ⟨a (j0.succAbove k), ha _⟩,
+        IntermediateField.subset_adjoin _ _ ⟨j0.succAbove k, ha _, rfl⟩⟩
+    have hni := GaussValuationUniqueness.not_inj_of_trdeg (D := d.D) S j0 ρL
+      (by have := hd.D_ge; omega) htr
+    rw [injective_iff_map_eq_zero] at hni
+    push_neg at hni
+    obtain ⟨G, hG0, hG⟩ := hni
+    obtain ⟨f, rfl⟩ := MvPolynomial.map_surjective
+      (GaussValuationUniqueness.gK v hK) (GaussValuationUniqueness.gK_surj v hK) G
+    have hf : f ≠ 0 := by
+      rintro rfl
+      exact hG (map_zero _)
+    have H : GaussValuationUniqueness.psiR (D := d.D) v hK j0
+          (fun k => ⟨a (j0.succAbove k), ha _⟩) =
+        (MvPolynomial.map (algebraMap
+          (IntermediateField.adjoin
+            (IsLocalRing.ResidueField ((vRing v).comap (algebraMap K (Ω c)))) S)
+          (IsLocalRing.ResidueField (vRing v)))).comp
+        (((MvPolynomial.aeval (imgR (D := d.D) j0 ρL)).toRingHom).comp
+          (MvPolynomial.map (gK v hK))) := by
+      apply MvPolynomial.ringHom_ext
+      · intro r
+        simp only [GaussValuationUniqueness.psiR, GaussValuationUniqueness.psiT,
+          RingHom.comp_apply, MvPolynomial.eval₂Hom_C, MvPolynomial.map_C,
+          AlgHom.toRingHom_eq_coe, RingHom.coe_coe, MvPolynomial.aeval_C,
+          MvPolynomial.algebraMap_apply]
+        congr 1
+      · intro t
+        simp only [GaussValuationUniqueness.psiR, GaussValuationUniqueness.psiT,
+          RingHom.comp_apply, MvPolynomial.eval₂Hom_X', MvPolynomial.map_X,
+          AlgHom.toRingHom_eq_coe, RingHom.coe_coe, MvPolynomial.aeval_X]
+        rw [GaussValuationUniqueness.imgR_map, GaussValuationUniqueness.imgR_map]
+        rfl
+    have hmem : f ∈ RingHom.ker
+        (GaussValuationUniqueness.psiR (D := d.D) v hK j0
+          (fun k => ⟨a (j0.succAbove k), ha _⟩)) := by
+      rw [RingHom.mem_ker, H]
+      simp only [RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, hG0, map_zero]
+    rw [hbot] at hmem
+    exact hf (Ideal.mem_bot.mp hmem)
   set Q := RingHom.ker (GaussValuationUniqueness.psiR (D := d.D) v hK j0 (fun k => ⟨a (j0.succAbove k), ha _⟩))
     with hQ
   haveI : Q.IsPrime := RingHom.ker_isPrime _

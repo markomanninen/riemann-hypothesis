@@ -1,15 +1,20 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ZeroPartEigenvalueConvention
-import Formalism.LocalToGlobal.IndefiniteReal.EvalTieTOne
-import Formalism.LocalToGlobal.IndefiniteReal.RationalEmbedding
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RowLevelMatch
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiagGLConjApply
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CPAsIdeal
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SurjectiveReductionOntoFiniteLevelGroup
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TypePlacesOverNormAndCoverWithConjugates
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatIffOfSelfDual
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.FlagLevelCharacterEqPsiDivN
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ZeroPartEigenvalueConvention
+public import Formalism.LocalToGlobal.IndefiniteReal.EvalTieTOne
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalEmbedding
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RowLevelMatch
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiagGLConjApply
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CPAsIdeal
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SurjectiveReductionOntoFiniteLevelGroup
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TypePlacesOverNormAndCoverWithConjugates
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatIffOfSelfDual
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.FlagLevelCharacterEqPsiDivN
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.AutomorphicEvaluation Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned Formalism.L2.SG.RowLevelMatch Formalism.L2.SG.PoincareInHH.PoincareSetting MeasureTheory NumberField IsDedekindDomain
 open scoped InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -38,7 +43,7 @@ theorem resOf_one : resOf π (1 : A) = 1 := by
   rw [resOf_of_mem π (one_mem S)]; exact map_one π
 
 theorem resOf_add {x y : A} (hx : x ∈ S) (hy : y ∈ S) : resOf π (x + y) = resOf π x + resOf π y := by
-  rw [resOf_of_mem π hx, resOf_of_mem π hy, resOf_of_mem π (add_mem hx hy), ← map_add]; rfl
+  rw [resOf_of_mem π hx, resOf_of_mem π hy, resOf_of_mem π (add_mem hx hy), ← map_add (f := _)]; rfl
 
 theorem resOf_mul {x y : A} (hx : x ∈ S) (hy : y ∈ S) : resOf π (x * y) = resOf π x * resOf π y := by
   rw [resOf_of_mem π hx, resOf_of_mem π hy, resOf_of_mem π (mul_mem hx hy), ← map_mul]; rfl
@@ -65,7 +70,8 @@ theorem lin_mulVec {n : ℕ} (φ : (Fin n → A) →ₗ[A] A) (B : Matrix (Fin n
   have e : v = ∑ l, v l • (Pi.single l 1 : Fin n → A) := by
     funext i; simp [Finset.sum_apply, Pi.single_apply]
   conv_lhs => rw [e]
-  rw [Matrix.mulVec_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.mulVec_sum, map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [Matrix.mulVec_smul, map_smul, smul_eq_mul, mul_comm]
 
@@ -192,13 +198,13 @@ theorem flagV_e {M : Type} [Zero M] {ρ k n : ℕ} (e f : Fin ρ → M) (b : Fin
     congr 1
     exact Fin.ext hl
   · rw [if_neg h] at hl
-    rw [dif_neg (by omega), dif_neg (by omega), dif_pos hl, dif_neg h]
+    rw [dite_eq_right (by omega), dite_eq_right (by omega), dif_pos hl, dite_eq_right h]
 
 theorem flagV_b {M : Type} [Zero M] {ρ k n : ℕ} (e f : Fin ρ → M) (b : Fin k → M) (z : M) (i : Fin k)
     (l : Fin n) (hl : l.1 = ρ + i.1) : flagV ρ k n e f b z l = b i := by
   have := i.2
   unfold flagV
-  rw [dif_neg (by omega), dif_pos (by omega)]
+  rw [dite_eq_right (by omega), dif_pos (by omega)]
   congr 1
   exact Fin.ext (by simp only; omega)
 
@@ -342,7 +348,7 @@ theorem core (I : AutInst) {κ : Type} [CommRing κ] (π : IntAf I.F I.E →+* �
           · rw [if_neg hij, sub_zero] at h1
             rw [if_neg fun h => hij (Fin.ext (by omega))]
             exact Z0 h1
-    · rw [dif_neg hi, if_neg hi, resOf_zero]
+    · rw [dite_eq_right hi, if_neg hi, resOf_zero]
 
 end Core
 
@@ -382,8 +388,8 @@ theorem resS_of_cpt {D : D7} (PP : Pl D.host.E) {c : EAf D} (hc : c ∈ Formalis
     have h1 : GlobalTheory.StdFrames.cpt PP c = 0 := (mul_eq_zero.1 h0).resolve_right (sub_ne_zero.2 h)
     exact (GlobalTheory.AdIsom.resS_eq_zero_iff_cpt PP _).2 (by simp [h1])
 
-open Formalism.L2.SG.HidaSetting in
 
+open Formalism.L2.SG.HidaSetting in
 theorem resT_argT : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A) (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (h : X.B.I = Formalism.L2.SG.InstExistsPf.instOf D), R.toLevCh.Is A.μ0 → R.IsGrp F → ∀ β : GL (Fin (Yc D 0).rank) (EAf D), IsFrame β (Formalism.L2.Herm.crdLat (Yc D 0) (Yc D 0).L0) → (∀ PP ∈ R.Pg, RedIs β PP (flagAt X h PP)) → ∀ PP ∈ R.Pg, ∀ κ : GA D (Yc D 0), finE (Yc D 0) κ ∈ St β → GlobalTheory.SeeConjChar.resT PP (GlobalTheory.SeeConjChar.argT X h (finE (Yc D 0) κ)) = ∑ i, ∑ j, if symEdge D.R.rS D.R.k i j then ((GlobalTheory.SeeConjChar.wA D.R.rS D.R.k (GlobalTheory.SeeConjChar.sideAt X h PP) i j : ℤ) : kP PP) * ((upperLeftBlock (r_le_Y (D := D) 0) (redFn β PP (finE (Yc D 0) κ)) : GL (Fin D.R.r) (kP PP)).val i j) else 0 := by
   intro D G _ _ Pl0 T A Ks _ _ _ R F X h hLev _ β hF hred PP hPP κ hκ
   obtain ⟨y, hy⟩ := hκ

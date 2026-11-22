@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.TaylorMvLinear
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.IsogenyFormulaInstance
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.TaylorMvLinear
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.IsogenyFormulaInstance
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -30,7 +34,7 @@ theorem lineHom_apply (v : n → K) (T : MvPowerSeries n K) : lineHom v T = line
 
 theorem lineRestr_add (v : n → K) (S T : MvPowerSeries n K) :
     lineRestr v (S + T) = lineRestr v S + lineRestr v T := by
-  simp only [← lineHom_apply, map_add]
+  simp only [← lineHom_apply, map_add (f := _)]
 
 theorem lineRestr_mul (v : n → K) (S T : MvPowerSeries n K) :
     lineRestr v (S * T) = lineRestr v S * lineRestr v T := by
@@ -39,13 +43,10 @@ theorem lineRestr_mul (v : n → K) (S T : MvPowerSeries n K) :
 theorem lineRestr_one (v : n → K) : lineRestr v (1 : MvPowerSeries n K) = 1 := by
   simp only [← lineHom_apply, map_one]
 
-theorem lineRestr_prod {ι : Type*} (v : n → K) (s : Finset ι) (T : ι → MvPowerSeries n K) :
-    lineRestr v (∏ i ∈ s, T i) = ∏ i ∈ s, lineRestr v (T i) := by
-  simp only [← lineHom_apply, map_prod]
-
 theorem lineRestr_sum {ι : Type*} (v : n → K) (s : Finset ι) (T : ι → MvPowerSeries n K) :
     lineRestr v (∑ i ∈ s, T i) = ∑ i ∈ s, lineRestr v (T i) := by
-  simp only [← lineHom_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← lineHom_apply, map_sum]
 
 theorem lineRestr_C (v : n → K) (c : K) : lineRestr v (MvPowerSeries.C c) = PowerSeries.C c :=
   MvPowerSeries.subst_C c
@@ -70,7 +71,8 @@ theorem lineRestr_linSubst {K : Type*} [CommRing K] {m n : Type*} [Finite m] [Fi
   funext i
   change lineRestr v (∑ j, MvPowerSeries.C (M i j) * (MvPowerSeries.X j : MvPowerSeries n K)) = _
   rw [lineRestr_sum]
-  simp only [lineRestr_mul, lineRestr_C, lineRestr_X, Matrix.mulVec, dotProduct, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [lineRestr_mul, lineRestr_C, lineRestr_X, Matrix.mulVec, dotProduct, map_sum, map_mul,
     Finset.sum_mul, mul_assoc]
 
 theorem lineRestr_at1_eq_rescale {K n : Type} [Field K] [Finite n] (v : n → K) (i : n) (f : PowerSeries K) :

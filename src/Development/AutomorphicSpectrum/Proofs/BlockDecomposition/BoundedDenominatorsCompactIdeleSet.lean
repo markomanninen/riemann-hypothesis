@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThPr
-import GroundTheory.GlobalFields.Adele.Discrete
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThPr
+public import GroundTheory.GlobalFields.Adele.Discrete
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOmPinsEnl
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormalisedDataCoefficientMapInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOmPinsEnl
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormalisedDataCoefficientMapInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem exists_omOver : ∀ {B B' : Base} {f : Fr B.toPre} {f' : Fr B'.toPre} {T
         (∀ i', OMPins core' R'.toRealDat κ' v₀' O' i') ∧
         ∀ (i : Fin (w.st Z).toD7.R.m) (i' : Fin (w'.st Z').toD7.R.m), (i : ℕ) = i' → OmOver (z.geo.O i) (O' i') := by
   intro B B' f f' T T' w w' Z Z' hX hX' Wt Wt' z hE hf hp hS core' alg' eH el ec eD eX ex eι Xg tr R' cG' hP hL hB hW κ' v₀' ht
-  obtain ⟨O', k1, k2⟩ := OmExt.exists_omPins_enl z hE hf hp hS core' eH el ec eD eX ex eι R' cG' hP hL hB hW.1 κ' v₀' ht
+  obtain ⟨O', k1, k2⟩ := OmExt.exists_omPins_enl (w := w) (w' := w') (Z := Z) (Z' := Z') (Wt := Wt) (Wt' := Wt') z hE hf hp hS core' eH el ec eD eX ex eι R' cG' hP hL hB hW.1 κ' v₀' ht
   refine ⟨O', k1, fun i i' hi => ?_⟩
   have k3 := (k2 i i' hi).2
   have eHV := (hW.2 i i' hi).2.2.1

@@ -1,5 +1,9 @@
-import Formalism.LagrangeIdealLifts.Statement
-import Formalism.WindowSums.AnnihilatorPolynomials.ZpowVal
+module
+
+public import Formalism.LagrangeIdealLifts.Statement
+public import Formalism.WindowSums.AnnihilatorPolynomials.ZpowVal
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ theorem aeval_pres {R E : Type} [CommRing R] [AddCommGroup E] [Module R E] (f : 
   intro y hy
   induction p using Polynomial.induction_on' with
   | add p q hp hq =>
-    rw [map_add, LinearMap.add_apply]
+    rw [map_add (f := _), LinearMap.add_apply]
     exact S.add_mem hp hq
   | monomial n a =>
     rw [Polynomial.aeval_monomial, Module.End.mul_apply, Module.algebraMap_end_apply]
@@ -152,7 +156,7 @@ theorem main (P : Polynomial ℤ_[ℓ]) (cG : ℤ_[ℓ]) (hcG : cG ≠ 0)
     have e1 : cG • W.φ (B.X • n) = W.φ (cG • (B.X • n)) := (map_smul _ _ _).symm
     have e2 : cG • W.γ y = W.γ (cG • y) := (map_smul _ _ _).symm
     rw [smul_sub, smul_sub, smul_sub, e1, e2, hxe]
-    simp only [map_sub, map_add, W.comm]
+    simp only [map_sub, map_add (f := _), W.comm]
     abel
   have hω' : ω ∈ CS W := hω
   set p := Polynomial.aeval W.γ P with hp
@@ -186,7 +190,7 @@ theorem main (P : Polynomial ℤ_[ℓ]) (cG : ℤ_[ℓ]) (hcG : cG ≠ 0)
       (N_le_QS W (W.N.smul_mem _ hx₀)),
       ⟨B.X ^ M • z₀, W.N.smul_mem _ hz₀, by rw [pow_succ', mul_smul]⟩⟩, ?_⟩
   rw [mul_comm, mul_smul, eS, hy₀e, smul_sub, e0, e1, WD.d1]
-  simp only [map_add, map_neg, map_smul, smul_sub, smul_neg]
+  simp only [map_add (f := _), map_neg, map_smul, smul_sub, smul_neg]
   abel
 
 end CocyclePolynomialSubmodules

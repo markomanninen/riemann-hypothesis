@@ -1,11 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
-import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
-import Formalism.LocalToGlobal.CharacterGerms.NegMem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FrobeniusLiftEmbeddingsUnit
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+public import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
+public import Formalism.LocalToGlobal.CharacterGerms.NegMem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FrobeniusLiftEmbeddingsUnit
+
+@[expose] public section
+
 open scoped BigOperators
 open NumberField Formalism.IncomingBounds Formalism.L2.FormalSeriesBounds Formalism.L2.Pj GlobalTheory.RowLaw ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
 
@@ -24,7 +29,7 @@ theorem exists_pow_of_finite_field {K k : Type} [Field K] [Finite K] [CommRing k
           rw [Polynomial.degree_X]; exact_mod_cast Fintype.one_lt_card)
       have := Polynomial.prod_multiset_X_sub_C_of_monic_of_roots_card_eq hm (by
         rw [FiniteField.roots_X_pow_card_sub_X,
-          FiniteField.X_pow_card_sub_X_natDegree_eq K Fintype.one_lt_card]
+          Polynomial.natDegree_X_pow_sub_X (R := K) Fintype.one_lt_card]
         rfl)
       rw [← this, FiniteField.roots_X_pow_card_sub_X]
       rfl
@@ -79,8 +84,8 @@ theorem exists_eq_of_ker_le {O k : Type} [CommRing O] [CommRing k] [IsDomain k] 
   rw [TeichSeq.frob_iter l φ h, ← hg', hj]
   rfl
 
-open TeichSeq in
 
+open TeichSeq in
 theorem main : ∀ (C : Type) [Field C] (V : VF C) (O : Type) [CommRing O] (d : ℕ) [NeZero d] (em : ZMod d → (O →+* C)), (∀ a x, V.Ge 0 (em a x)) → (∀ a x, V.MM (em (a + 1) x - em a x ^ V.l)) → ∀ ψ : O →+* C, (∀ x, V.Ge 0 (ψ x)) → (∀ x, (∀ a, V.MM (em a x)) → V.MM (ψ x)) → ∃ a, ∀ x, V.MM (ψ x - em a x) := by
   intro C _ V O _ d _ em hint hfrob ψ hψ hker
   have : Fact V.l.Prime := ⟨V.l_prime⟩

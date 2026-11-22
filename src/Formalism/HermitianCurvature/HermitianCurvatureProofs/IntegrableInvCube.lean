@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCChain
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCChain
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBC
 
@@ -69,7 +73,7 @@ theorem size_step (f : ℕ) (Cs : ℝ) (hCs1 : 1 ≤ Cs) (dl R g : ℝ) (hdl : 0
   refine le_trans ?_ hV
   refine div_le_div_of_nonneg_right ?_ (by positivity)
   refine mul_le_mul_of_nonneg_left (hM.trans ?_) hdl
-  refine Finset.prod_le_prod (fun v _ => by positivity) fun v _ => ?_
+  refine Finset.prod_le_prod₀ (fun v _ => by positivity) fun v _ => ?_
   refine mul_le_mul_of_nonneg_left ?_ (by linarith)
   have h1 : R * L v / g ≤ R * thr v / g := div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_left (hL v).2 hR.le) hg.le
   have h0 : 0 ≤ R * L v / g := div_nonneg (mul_nonneg hR.le (hL v).1) hg.le

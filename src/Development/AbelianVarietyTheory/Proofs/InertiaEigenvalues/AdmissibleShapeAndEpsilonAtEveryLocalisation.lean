@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DecompositionData
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TameFixedLift
-import Development.AutomorphicArithmetic.CyclotomicBounds.FiniteDimensionalRoots
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DecompositionData
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TameFixedLift
+public import Development.AutomorphicArithmetic.CyclotomicBounds.FiniteDimensionalRoots
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations Module
 
 namespace GlobalTheory.admissible_shape_and_epsilon_at_every_localisation

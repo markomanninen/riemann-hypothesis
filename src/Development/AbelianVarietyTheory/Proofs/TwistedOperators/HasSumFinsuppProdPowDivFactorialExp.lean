@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConjMono
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConjMono
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links MeasureTheory IsDedekindDomain NumberField Matrix
 open scoped TensorProduct ComplexConjugate
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -53,7 +58,7 @@ theorem hasSum_finsupp_prod_pow_div_factorial_exp : ∀ (κ : Type) [Fintype κ]
     rw [← ((Equiv.arrowCongr e (Equiv.refl ℕ)).symm).hasSum_iff]
     convert hA using 1
     funext g
-    simp only [Function.comp_apply, Equiv.arrowCongr_symm, Equiv.arrowCongr_apply,
+    simp only [Equiv.arrowCongr_symm, Equiv.arrowCongr_apply,
       Equiv.symm_symm, Equiv.refl_symm, Equiv.coe_refl, Function.comp_def, id]
     exact (Equiv.prod_comp e.symm (fun k => x k ^ g (e k) / ((g (e k)).factorial : ℂ))).symm.trans
       (by simp)

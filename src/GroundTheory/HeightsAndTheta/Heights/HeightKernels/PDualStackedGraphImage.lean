@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedGraph
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualTopSimpleStacked
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualArithVar
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PIntDomainDim
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PChartRankAdjoin
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedGraph
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualTopSimpleStacked
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualArithVar
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PIntDomainDim
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PChartRankAdjoin
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -17,13 +22,14 @@ namespace StackedGraphImage
 
 variable {K : Type} [Field K] [NumberField K] {i : ℕ} {T : Type} [Fintype T] [DecidableEq T]
 
-omit [Fintype T] [DecidableEq T] in
 
+omit [Fintype T] [DecidableEq T] in
 theorem coord_stacked {F F' : HermLattice K i} {b : Module.Basis T ℤ (dualLattice F)}
     {b' : Module.Basis T ℤ (dualLattice F')} {a : T → ℤ}
     (hab : ∀ t, (b t : Fin i → K) = a t • (b' t : Fin i → K)) (p : Σ _ : Unit, T) :
     dualLatticeCoord b p = (a p.2 : ProjField K i) * dualLatticeCoord b' p := by
-  simp only [dualLatticeCoord, hab p.2, Pi.smul_apply, zsmul_eq_mul, map_mul, map_intCast, Finset.mul_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dualLatticeCoord, hab p.2, Pi.smul_apply, zsmul_eq_mul, map_mul, map_intCast, Finset.mul_sum,
     map_sum, mul_assoc]
 
 def twist (Ω : Type) [Field Ω] : MvPolynomial Unit Ω →+* MvPolynomial Unit (MvPolynomial Unit Ω) :=
@@ -180,8 +186,8 @@ theorem fibre_deg (hGr : GraphStatement) (hDim : FibreDimStatement) {F F' : Herm
 
 end StackedGraphImage
 
-open StackedGraphImage in
 
+open StackedGraphImage in
 theorem DualStackedGraphImage.proof (hGr : GraphStatement) (hDim : FibreDimStatement) :
     DualStackedGraphImage.Statement := by
   intro K _ _ i F F' T _ _ b b' a hi hab

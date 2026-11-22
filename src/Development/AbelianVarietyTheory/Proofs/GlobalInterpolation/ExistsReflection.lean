@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+
+@[expose] public section
 
 open scoped Matrix
 open Formalism.UG
@@ -28,7 +32,8 @@ theorem hform_smul_right (a : A) (x z : Fin M → A) :
 
 theorem conj_hform (hc : ∀ a, c (c a) = a) (hJ : ∀ i j, c (J j i) = J i j) (x y : Fin M → A) :
     c (hform c J x y) = hform c J y x := by
-  simp only [Formalism.UG.hform, map_sum, map_mul, hc, hJ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.UG.hform, map_sum, map_mul, hc, hJ]
   exact Finset.sum_comm.trans
     (Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring)
 
@@ -121,7 +126,7 @@ theorem exists_norm_one (hc : ∀ a, c (c a) = a) (hf : ∀ a, c a = a → a ≠
   by_cases h1 : (b - t) * c (b - t) = 0
   · by_cases h1' : (b + t) * c (b + t) = 0
     · rw [map_sub, hcb] at h1
-      rw [map_add, hcb] at h1'
+      rw [map_add (f := _), hcb] at h1'
       have h4 : (2 * b) * (t + c t) = (2 * b) * 0 := by linear_combination h1' - h1
       have htc : t + c t = 0 := (h2.mul hb).mul_left_cancel h4
       have hct : c t = -t := by linear_combination htc
@@ -154,31 +159,31 @@ theorem exists_norm_one (hc : ∀ a, c (c a) = a) (hf : ∀ a, c a = a → a ≠
       obtain ⟨θ, hθu⟩ := hθ
       have hcδ : c (θ - c θ) = -(θ - c θ) := by rw [map_sub, hc]; ring
       by_cases hd : (1 + (θ - c θ)) * c (1 + (θ - c θ)) = 0
-      · rw [map_add, map_one, hcδ] at hd
+      · rw [map_add (f := _), map_one, hcδ] at hd
         apply key (2 + (θ - c θ))
         · have e : (2 + (θ - c θ)) * c (2 + (θ - c θ)) = 3 := by
-            rw [map_add, map_ofNat, hcδ]
+            rw [map_add (f := _), map_ofNat, hcδ]
             linear_combination hd
           rw [e]
           exact hf 3 (map_ofNat c 3) h3
         · have e : 2 + (θ - c θ) - c (2 + (θ - c θ)) = 2 * (θ - c θ) := by
-            rw [map_add, map_ofNat, hcδ]
+            rw [map_add (f := _), map_ofNat, hcδ]
             ring
           rw [e]
           exact h2.mul hθu
         · have e : 2 + (θ - c θ) + c (2 + (θ - c θ)) = 2 * 2 := by
-            rw [map_add, map_ofNat, hcδ]
+            rw [map_add (f := _), map_ofNat, hcδ]
             ring
           rw [e]
           exact h2.mul h2
       · apply key (1 + (θ - c θ)) (hN _ hd)
         · have e : 1 + (θ - c θ) - c (1 + (θ - c θ)) = 2 * (θ - c θ) := by
-            rw [map_add, map_one, hcδ]
+            rw [map_add (f := _), map_one, hcδ]
             ring
           rw [e]
           exact h2.mul hθu
         · have e : 1 + (θ - c θ) + c (1 + (θ - c θ)) = 2 := by
-            rw [map_add, map_one, hcδ]
+            rw [map_add (f := _), map_one, hcδ]
             ring
           rw [e]
           exact h2

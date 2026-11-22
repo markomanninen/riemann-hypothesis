@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.CechFam
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.FiniteCohPushforwardIffOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSubsingletonCohTwistTensLbPow
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CechFam
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.FiniteCohPushforwardIffOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSubsingletonCohTwistTensLbPow
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.LogDR
@@ -27,13 +32,13 @@ theorem val_resM (hM : LatModel M F) {U W : X.Opens} (e : W ≤ U) (h : genericP
     (s : Γ(F, U)) : hM.val W h (resM F e s) = hM.val U (e h) s :=
   hM.res U W e h s
 
-variable (r) in
 
+variable (r) in
 def tval (hM : LatModel M F) (i : L.ι) (hi : genericPoint X ∈ L.U i) (U : X.Opens)
     (h : genericPoint X ∈ U) : Γ(twist F L, U) →+ V where
   toFun s := (r i)⁻¹ • hM.val (U ⊓ L.U i) (memInf h hi) (coord s i)
   map_zero' := by rw [coord_zero, map_zero, smul_zero]
-  map_add' s t := by rw [coord_add, map_add, smul_add]
+  map_add' s t := by rw [coord_add, map_add (f := _), smul_add]
 
 theorem tval_apply (hM : LatModel M F) (i : L.ι) (hi : genericPoint X ∈ L.U i) (U : X.Opens)
     (h : genericPoint X ∈ U) (s : Γ(twist F L, U)) :

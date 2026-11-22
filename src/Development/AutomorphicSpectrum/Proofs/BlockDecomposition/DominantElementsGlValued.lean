@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.JointGeneralisedEigenvectors.CasselmanStrictlyDominantExample
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.JointGeneralisedEigenvectors.CasselmanStrictlyDominantExample
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL Matrix Formalism.UG PositivityTheory.SphericalProduct
 open scoped Pointwise
@@ -143,7 +147,7 @@ theorem cc_lt_one : cc < 1 := by
 theorem ordL_eq {a : L} {A : Multiplicative ℤ} (h : Valued.v a = (A : WithZero (Multiplicative ℤ))) :
     ordL a = -Multiplicative.toAdd A := by
   have h0 : Valued.v a ≠ 0 := by rw [h]; exact WithZero.coe_ne_zero
-  rw [ordL, dif_neg h0]
+  rw [ordL, dite_eq_right h0]
   congr 2
   apply WithZero.coe_injective
   rw [WithZero.coe_unzero, h]
@@ -274,16 +278,21 @@ section Top
 
 open Filter Topology
 
+set_option maxHeartbeats 12000000 in
 theorem ev_ball (x : L) (A : Set L) (hA : A ∈ 𝓝 x) :
     ∀ᶠ m : ℕ in atTop, {y : L | Valued.v (y - x) ≤ cc ^ m} ⊆ A := by
-  obtain ⟨γ, hγ⟩ := Valued.mem_nhds.1 hA
-  obtain ⟨m₀, hm⟩ := exists_pow_lt₀ cc_lt_one
-    (Units.map (MonoidWithZeroHom.ValueGroup₀.embedding
-      (f := .ofClass (Valued.v : Valuation L (WithZero (Multiplicative ℤ))))) γ)
+  let v : Valuation L (WithZero (Multiplicative ℤ)) := Valued.v
+  have hb : ∃ γ : v.ValueGroup₀ˣ, {y : L | v.restrict (y - x) < γ.1} ⊆ A :=
+    Valued.mem_nhds.1 hA
+  obtain ⟨γ, hγ⟩ := hb
+  have hpow (u : (WithZero (Multiplicative ℤ))ˣ) : ∃ m : ℕ, cc ^ m < u :=
+    exists_pow_lt₀ cc_lt_one u
+  obtain ⟨m₀, hm⟩ := hpow (Units.map (MonoidWithZeroHom.ValueGroup₀.embedding
+    (f := (v : L →*₀ WithZero (Multiplicative ℤ)))).toMonoidHom γ)
   filter_upwards [eventually_ge_atTop m₀] with m hm' y hy
-  refine hγ ?_
-  have h2 : Valued.v (y - x) < _ := lt_of_le_of_lt (le_trans hy (pow_le_pow_right_of_le_one' cc_lt_one.le hm')) hm
-  exact (Valuation.restrict_lt_iff_lt_embedding _).2 h2
+  apply hγ
+  exact (Valuation.restrict_lt_iff_lt_embedding (v := v)).2
+    ((le_trans hy (pow_le_pow_right_of_le_one' cc_lt_one.le hm')).trans_lt hm)
 
 theorem ev_pi {ι X : Type} [Finite ι] [TopologicalSpace X] (a : ι → X) (S : ℕ → X → Set X)
     (h : ∀ x, ∀ A ∈ 𝓝 x, ∀ᶠ m in atTop, S m x ⊆ A) (A : Set (ι → X)) (hA : A ∈ 𝓝 a) :

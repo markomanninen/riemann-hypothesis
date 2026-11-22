@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianPairingAlgebra
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemIffForallMemLocalizeRingOfIntegers
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.DifferentiableToContinuousLinearMap
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianPairingAlgebra
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemIffForallMemLocalizeRingOfIntegers
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.DifferentiableToContinuousLinearMap
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -26,7 +30,7 @@ theorem finrank_add_finrank_orthogonal [FiniteDimensional E W] {h : W →ₗ[E] 
     · intro H s hs
       exact hrefl _ _ (H _ ⟨s, hs, rfl⟩)
   have hinj : Function.Injective h.flip := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     exact hn x fun y => hrefl _ _ (LinearMap.congr_fun hx y)
   let j : S →+ S.map h.flip := (h.flip.submoduleMap S).toAddMonoidHom
@@ -41,9 +45,9 @@ theorem finrank_add_finrank_orthogonal [FiniteDimensional E W] {h : W →ₗ[E] 
 
 def form (h : W →ₗ[E] W →ₛₗ[σ] E) : (W × W) →ₗ[E] (W × W) →ₛₗ[σ] E :=
   LinearMap.mk₂'ₛₗ (RingHom.id E) σ (fun p q => h p.1 q.1 - h p.2 q.2)
-    (fun p p' q => by simp only [Prod.fst_add, Prod.snd_add, map_add, LinearMap.add_apply]; ring)
+    (fun p p' q => by simp only [Prod.fst_add, Prod.snd_add, map_add (f := _), LinearMap.add_apply]; ring)
     (fun c p q => by simp [mul_sub])
-    (fun p q q' => by simp only [Prod.fst_add, Prod.snd_add, map_add]; ring)
+    (fun p q q' => by simp only [Prod.fst_add, Prod.snd_add, map_add (f := _)]; ring)
     (fun c p q => by simp [mul_sub])
 
 @[simp] theorem form_apply (h : W →ₗ[E] W →ₛₗ[σ] E) (p q : W × W) :
@@ -210,8 +214,8 @@ theorem apply_right_mem {u : W → W}
   have := I.add_mem hp (hu y (map_snd_le hI ⟨_, hp, rfl⟩))
   simpa using this
 
-omit hσ hh hn hd in
 
+omit hσ hh hn hd in
 theorem map_prodMap_left {u : W →ₗ[E] W} (hi : Function.Injective u)
     (hu : ∀ x ∈ (left I).orthogonalBilin h, u x - x ∈ left I) :
     I.map (u.prodMap LinearMap.id) = I := by
@@ -221,8 +225,8 @@ theorem map_prodMap_left {u : W →ₗ[E] W} (hi : Function.Injective u)
   · exact (LinearEquiv.finrank_eq (Submodule.equivMapOfInjective _
       (hi.prodMap Function.injective_id) I)).symm
 
-omit hσ hh hn hd in
 
+omit hσ hh hn hd in
 theorem map_prodMap_right {u : W →ₗ[E] W} (hi : Function.Injective u)
     (hu : ∀ y ∈ (right I).orthogonalBilin h, u y - y ∈ right I) :
     I.map (LinearMap.id.prodMap u) = I := by
@@ -232,15 +236,15 @@ theorem map_prodMap_right {u : W →ₗ[E] W} (hi : Function.Injective u)
   · exact (LinearEquiv.finrank_eq (Submodule.equivMapOfInjective _
       (Function.injective_id.prodMap hi) I)).symm
 
-omit hσ hh hn hd in
 
+omit hσ hh hn hd in
 theorem map_prodMap_transvection {ξ : W} (hξ : ξ ∈ left I) (b : E) {u : W →ₗ[E] W}
     (hu : ∀ v, u v = v + (b * h v ξ) • ξ) : I.map (u.prodMap LinearMap.id) = I := by
   refine map_prodMap_left hI ?_ fun x _ => ?_
-  · rw [injective_iff_map_eq_zero]
+  · set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro v hv
     have h0 : h (u v) ξ = 0 := by simp [hv]
-    rw [hu, map_add, LinearMap.add_apply, map_smul, LinearMap.smul_apply,
+    rw [hu, map_add (f := _), LinearMap.add_apply, map_smul, LinearMap.smul_apply,
       left_isotropic hI ξ hξ ξ hξ, smul_zero, add_zero] at h0
     rw [hu, h0] at hv
     simpa using hv

@@ -1,8 +1,12 @@
-import Formalism.PeriodIntegrals.WeylForU
-import Formalism.PeriodIntegrals.UnitaryDense
-import Formalism.PeriodIntegrals.HwIrred
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.GradedWeylDivisibility.FinalC
+module
+
+public import Formalism.PeriodIntegrals.WeylForU
+public import Formalism.PeriodIntegrals.UnitaryDense
+public import Formalism.PeriodIntegrals.HwIrred
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.GradedWeylDivisibility.FinalC
+
+@[expose] public section
 
 noncomputable section
 

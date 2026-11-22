@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.VecClose
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.VecClose
+
+@[expose] public section
 
 open PositivityTheory.Rg.BcB.E1
 
@@ -17,8 +21,9 @@ theorem ker_sub_of_kerBasic (hK : KerBasic) (X : Ctx) {φ φ' : X.G → ℂ} (h 
 
 theorem enorm_sq_Lp_two {α : Type*} [MeasurableSpace α] (ν : Measure α) (f : Lp ℂ 2 ν) :
     ‖f‖ₑ ^ 2 = ∫⁻ z, ‖(f : α → ℂ) z‖ₑ ^ 2 ∂ν := by
-  rw [Lp.enorm_def]
-  have h := eLpNorm_nnreal_pow_eq_lintegral (f := (f : α → ℂ)) (μ := ν) (p := 2) (by norm_num)
+  rw [Lp.eNorm_def]
+  have h := eLpNorm_nnreal_pow_eq_lintegral (f := (f : α → ℂ)) (μ := ν) (p := 2)
+    (by norm_num) (Lp.aestronglyMeasurable f)
   simpa using h
 
 theorem enorm_sq_piLp_two {ι : Type*} [Fintype ι] {E : ι → Type*}
@@ -28,7 +33,7 @@ theorem enorm_sq_piLp_two {ι : Type*} [Fintype ι] {E : ι → Type*}
     apply NNReal.coe_injective
     push_cast
     simpa using PiLp.norm_sq_eq_of_L2 E f
-  simp only [enorm_eq_nnnorm]
+  simp only [eNorm_eq_nnNorm]
   exact_mod_cast congrArg (fun t : NNReal => (t : ℝ≥0∞)) h
 
 theorem vecClose_of_kerBasic_colSq : KerBasic → ColSq → VecClose := by

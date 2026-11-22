@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.GeoTransport
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.GeoTransport
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain PositivityTheory.Rg.Tf.Loc UpperTheory.ConvolutionTheory.Loc GroundTheory.Global GroundTheory.Global.SemiLocal UpperTheory.V.Z.Tf.Orb
 open PositivityTheory.Rg.Tf.Geo (mapGL incFin galFin)
@@ -11,7 +15,7 @@ private theorem cent_facts (hCC : CentComm) {k : Type} [Field k] [TopologicalSpa
         Commute a b := by
   refine ⟨?_, fun a ha b hb => ?_⟩
   · have : ((Subgroup.centralizer {γ} : Subgroup (GL (Fin n) k)) : Set (GL (Fin n) k)) = {x | x * γ = γ * x} := by
-      ext x; simp [Subgroup.mem_centralizer_singleton_iff]
+      ext x; simp [Subgroup.mem_centralizer_singleton_iff, Commute, SemiconjBy]
     rw [this]
     exact isClosed_eq (continuous_id.mul continuous_const) (continuous_const.mul continuous_id)
   · rw [Subgroup.mem_centralizer_singleton_iff] at ha hb
@@ -68,9 +72,9 @@ private theorem key (hT : GLTop) (hC : ExtCont) (hCC : CentComm) (hH : HaarComm)
       (d1.measurable.comp measurable_subtype_coe) Φ hΦc.measurable
       (fun t g => congrArg φ (twConj_mul_left _ _ (hS ▸ ⟨t, t.2, rfl⟩) g)) _ hρ
     refine Eq.trans ?_ k1.symm
-    rw [(y2 ν _).2, PositivityTheory.Rg.Tf.Geo.quotInt, dif_pos hex]
+    rw [(y2 ν _).2, PositivityTheory.Rg.Tf.Geo.quotInt, dite_eq_left hex]
     simp only [hl, id]
-  · rw [PositivityTheory.Rg.Tf.Geo.quotInt, dif_neg hex, PositivityTheory.Rg.Tf.Geo.quotInt, dif_neg fun ⟨ρ', h'⟩ => hex ⟨_, (y2 ν ρ').1.1 h'⟩]
+  · rw [PositivityTheory.Rg.Tf.Geo.quotInt, dite_eq_right hex, PositivityTheory.Rg.Tf.Geo.quotInt, dite_eq_right fun ⟨ρ', h'⟩ => hex ⟨_, (y2 ν ρ').1.1 h'⟩]
 
 theorem UpperTheory.V.Z.Tf.Orb.placeOfLocal :
     UpperTheory.V.Z.Tf.Orb.GLTop → UpperTheory.V.Z.Tf.Orb.ExtCont → UpperTheory.V.Z.Tf.Orb.CentComm → UpperTheory.V.Z.Tf.Orb.HaarComm → UpperTheory.V.Z.Tf.Orb.TwCentImg → UpperTheory.V.Z.Tf.Orb.GeoOfMatch → UpperTheory.V.Z.Tf.Orb.GeoTransport → UpperTheory.V.Z.Tf.Orb.AlongIndep → UpperTheory.V.Z.Tf.Orb.PlaceOfLocal := by

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NormBoundOfClassesFrames
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ExistsOnOfPosDef
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NormBoundOfClassesFrames
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ExistsOnOfPosDef
+
+@[expose] public section
 
 noncomputable section
 

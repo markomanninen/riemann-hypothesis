@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.ScaledRamifiedLattice
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.ScaledRamifiedLattice
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2.Col
 
 namespace GlobalTheory

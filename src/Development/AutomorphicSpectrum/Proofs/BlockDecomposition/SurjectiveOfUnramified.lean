@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EtaleLiftingOfNilIdealStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EtaleLiftingOfNilIdealStatement
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry Polynomial DividedPowers GlobalTheory.LogCris GlobalTheory.PDA CrystallineSemistableComparison CrystallineSemistableComparison.CH CrystallineSemistableComparison.B
 open TensorProduct
@@ -44,7 +49,7 @@ theorem surjective_of_unramified {R S : Type} [CommRing R] [CommRing S] (p : ℕ
       rw [Algebra.TensorProduct.tmul_pow, Algebra.TensorProduct.lmul'_apply_tmul, mul_pow, hs',
         TensorProduct.tmul_smul, mul_smul_comm, mul_one, TensorProduct.smul_tmul']
     | add x y hx hy =>
-      rw [hadd, hx, hy, map_add, haddS, TensorProduct.add_tmul]
+      rw [hadd, hx, hy, map_add (f := _), haddS, TensorProduct.add_tmul]
   have hmul : ∀ u : S ⊗[R] S,
       u * t = (Algebra.TensorProduct.lmul' R (S := S) u ⊗ₜ[R] (1 : S)) * t := by
     intro u
@@ -57,7 +62,7 @@ theorem surjective_of_unramified {R S : Type} [CommRing R] [CommRing S] (p : ℕ
       rw [this, mul_assoc, hb, ← mul_assoc]
       simp
     | add x y hx hy =>
-      rw [add_mul, hx, hy, map_add, TensorProduct.add_tmul, add_mul]
+      rw [add_mul, hx, hy, map_add (f := _), TensorProduct.add_tmul, add_mul]
   have hidem : t * t = t := by
     rw [hmul t, ht1]
     exact one_mul t

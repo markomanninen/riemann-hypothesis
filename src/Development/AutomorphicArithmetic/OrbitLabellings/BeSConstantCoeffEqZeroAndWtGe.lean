@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.OrbitLabellings.ColDefs
-import Formalism.GaussJetBounds.OneLetterRadius
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.OrbitLabellings.ColDefs
+public import Formalism.GaussJetBounds.OneLetterRadius
+
+@[expose] public section
 
 open scoped BigOperators
 open Formalism.DworkPowerSeriesWeights Formalism.IncomingBounds UpperTheory.G2
@@ -63,7 +67,8 @@ theorem UpperTheory.beS_constantCoeff_eq_zero_and_wtGe :
     · simpa using Real.rpow_nonneg h0.le _
   unfold beS
   constructor
-  · rw [map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero fun r hr => asmOne_smul_const _ ?_
     have hbe0 : MvPowerSeries.constantCoeff (be r) = 0 := by
       by_contra h
@@ -71,7 +76,8 @@ theorem UpperTheory.beS_constantCoeff_eq_zero_and_wtGe :
         rwa [MvPowerSeries.coeff_zero_eq_constantCoeff_apply]
       have := ((hbe r hr).2.2.1 0 h').1
       simp [degE] at this
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero fun b _ => ?_
     exact MvPowerSeries.constantCoeff_subst_eq_zero
       (MvPowerSeries.hasSubst_of_constantCoeff_zero (hX0 r b)) (hX0 r b) hbe0

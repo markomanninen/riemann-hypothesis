@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfLoc
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,14 +17,14 @@ open PowerSeries
 variable {LL : Type} [Field LL]
 
 theorem framepf_exp_pow_sub_one (E : PowerSeries LL) (h0 : constantCoeff E = 1)
-    (hd : PowerSeries.derivative LL E = E) (p : ℕ) :
+    (hd : PowerSeries.derivative E = E) (p : ℕ) :
     ∃ w : PowerSeries LL, E ^ p - 1 = X * w ∧ constantCoeff w = (p : LL) := by
   have hX1 : X ∣ E - 1 := by
     rw [PowerSeries.X_dvd_iff]
     simp [h0]
   obtain ⟨w1, hw1⟩ := hX1
   have hc1 : constantCoeff w1 = 1 := by
-    have h2 : coeff 0 (PowerSeries.derivative LL E) = coeff 1 E := by
+    have h2 : coeff 0 (PowerSeries.derivative E) = coeff 1 E := by
       rw [PowerSeries.coeff_derivative]
       simp
     rw [hd] at h2
@@ -54,8 +58,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     [CommRing O] [Algebra O LL] {v : AddValuation LL (WithTop ℚ)} {n : ℕ}
     (W : LocWach PD LL O v n)
 
-open PowerSeries in
 
+open PowerSeries in
 theorem framepf_lev_q_simple (c : ZMod n) (ζ : LL) (hζ : IsPrimitiveRoot ζ PD.p) :
     ∃ u : PowerSeries LL, W.lev c ζ W.q = X * u ∧ constantCoeff u ≠ 0 := by
   obtain ⟨E, hE0, hEd, hE⟩ := W.lev_π c ζ ⟨1, by simpa using hζ⟩
@@ -81,7 +85,7 @@ theorem framepf_lev_q_simple (c : ZMod n) (ζ : LL) (hζ : IsPrimitiveRoot ζ PD
     simp only [Pi.mul_apply, Pi.sub_apply, Pi.pow_apply, Pi.add_apply, Pi.one_apply]
     exact W.q₀_def
   have hfq : W.lev c ζ letπ * W.lev c ζ W.q = E ^ PD.p - 1 := by
-    rw [← map_mul, hq, map_sub, map_pow, map_add, map_one, hE, mul_pow, ← map_pow, hζp, map_one,
+    rw [← map_mul, hq, map_sub, map_pow, map_add (f := _), map_one, hE, mul_pow, ← map_pow, hζp, map_one,
       one_mul]
   set P := W.lev c ζ letπ with hPdef
   have hP : P = C ζ * E - 1 := eq_sub_of_add_eq' hE

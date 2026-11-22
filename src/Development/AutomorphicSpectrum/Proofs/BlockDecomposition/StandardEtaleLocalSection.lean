@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsolutelyClosedPolynomialSplitsStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbsolutelyClosedPolynomialSplitsStatement
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry CrystallineSemistableComparison CrystallineSemistableComparison.R
 
@@ -20,7 +24,7 @@ theorem exists_sub_mem_of_prod_mem {S B : Type} [CommRing S] [CommRing B] [Algeb
     · obtain ⟨b, hb, hbQ⟩ := ih h
       exact ⟨b, Multiset.mem_cons_of_mem hb, hbQ⟩
 
-theorem exists_section_standardEtale : ∀ {S : Type} [CommRing S] , Aic S → Loc S →
+theorem exists_section_standardEtale : ∀ {S : Type} [CommRing S] , Aic (S := S) → Loc (S := S) →
     ∀ (B : Type) [CommRing B] [Algebra S B] [Algebra.IsStandardEtale S B] (Q : Ideal B), Q.IsPrime →
     (Q.comap (algebraMap S B)).IsMaximal →
     ∃ e : S, IsIdempotentElem e ∧ e ∉ Q.comap (algebraMap S B) ∧

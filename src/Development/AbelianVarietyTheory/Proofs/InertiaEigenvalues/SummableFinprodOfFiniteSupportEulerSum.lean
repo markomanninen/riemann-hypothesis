@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped InnerProductSpace BigOperators
@@ -58,7 +62,7 @@ theorem summable_finprod_of_finite_support_euler : ∀ (ι : Type) [DecidableEq 
       _ ≤ 1 + s v := by gcongr; exact hC v _ (Finset.notMem_erase _ _)
   calc ∑ f ∈ u, ∏ᶠ v, a v (f.1 v) ≤ ∑ p ∈ S.pi C, ∏ x ∈ S.attach, a x.1 (p x.1 x.2) := step1 ▸ step2
     _ = ∏ v ∈ S, ∑ x ∈ C v, a v x := (Finset.prod_sum S C a).symm
-    _ ≤ ∏ v ∈ S, Real.exp (s v) := Finset.prod_le_prod (fun v _ => Finset.sum_nonneg fun x _ => ha v x)
+    _ ≤ ∏ v ∈ S, Real.exp (s v) := Finset.prod_le_prod₀ (fun v _ => Finset.sum_nonneg fun x _ => ha v x)
           fun v _ => (hCv v).trans (by linarith [Real.add_one_le_exp (s v)])
     _ = Real.exp (∑ v ∈ S, s v) := (Real.exp_sum _ _).symm
     _ ≤ Real.exp (∑' v, s v) := Real.exp_le_exp.2 (hs.sum_le_tsum _ (fun v _ => hs0 v))

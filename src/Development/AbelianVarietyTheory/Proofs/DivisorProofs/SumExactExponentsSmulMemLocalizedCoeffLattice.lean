@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.PieriBlockIdeals.StatementLA
-import Formalism.LocalToGlobal.Divisibility.CoefMod
-import Formalism.LocalToGlobal.Divisibility.RowLat
-import Formalism.PieriBlockIdeals.PieriColumnMinors.ProdInitialMinorsMemDetSpan
-import Formalism.LocalToGlobal.Columns.CoefficientsModP
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAfMemIntUIff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StandardWeylLatticesFockDual
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmulMemLocPOfVal
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeylRowActionMemWeylLatticeSquare
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemClosureIff
+module
+
+public import Mathlib
+public import Formalism.PieriBlockIdeals.StatementLA
+public import Formalism.LocalToGlobal.Divisibility.CoefMod
+public import Formalism.LocalToGlobal.Divisibility.RowLat
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.ProdInitialMinorsMemDetSpan
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP
+public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAfMemIntUIff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StandardWeylLatticesFockDual
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmulMemLocPOfVal
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeylRowActionMemWeylLatticeSquare
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemClosureIff
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MvPolynomial Formalism.BasicNotions Formalism.L2.DIV
 
@@ -62,7 +66,7 @@ theorem factor_mem (w : HeightOneSpectrum (𝓞 K)) (p e n : ℕ) (ν : Fin n �
     field_simp
   | zero => simpa using zero_mem _
   | add a b _ _ ha hb =>
-    rw [map_add, smul_add]
+    rw [map_add (f := _), smul_add]
     exact add_mem ha hb
   | smul a g _ hg =>
     rw [map_smul, smul_comm]
@@ -130,11 +134,11 @@ namespace GlobalTheory.OntoExponentsLat
 theorem exZ_sum_smul_mem_locP_delAtr :
     ∀ (E K : Type) [Field E] [NumberField E] [Field K] [NumberField K] [StarRing K] (ι : Type) [Fintype ι] (n : ℕ)
       (emb : ι → E →+* K) (lam : ι → Formalism.BasicNotions.DomWeight n) (L : Submodule (𝓞 E) (Fin n → E)),
-      Submodule.IsLattice E L → ∀ (w : HeightOneSpectrum (𝓞 K)), ∀ x ∈ nabAtr emb lam L,
+      Submodule.IsFullLattice E L → ∀ (w : HeightOneSpectrum (𝓞 K)), ∀ x ∈ nabAtr emb lam L,
         (((Formalism.EigenvalueLevelCeiling.plc w : ℕ) : 𝓞 K) ^ (∑ τ, Formalism.CohomologicalDescent.LA.exZ n n le_rfl (lam τ).natW (Formalism.EigenvalueLevelCeiling.plc w))) • x ∈
           Formalism.HermitianLatticesTheory.localization₂ w.asIdeal (delAtr emb lam L) := by
   intro E K _ _ _ _ _ ι _ n emb lam L hL w x hx
-  have hM : ∀ τ, Submodule.IsLattice K (dualFr (tauLat emb τ L)) := fun τ =>
+  have hM : ∀ τ, Submodule.IsFullLattice K (dualFr (tauLat emb τ L)) := fun τ =>
     du_dualFr_lattice basisAtEx _ (tauLatLattice E K ι n emb τ L hL)
   choose B hB using fun τ => basisAtEx K n _ (hM τ) w
   have hx1 : (x : Pol K ι n) ∈ Formalism.HermitianLatticesTheory.localization₂ w.asIdeal (nabP lam fun τ => dualFr (tauLat emb τ L)) :=

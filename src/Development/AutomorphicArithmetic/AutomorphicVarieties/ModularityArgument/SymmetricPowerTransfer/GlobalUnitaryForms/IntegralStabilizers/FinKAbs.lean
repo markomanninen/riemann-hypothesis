@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.IsGenEig
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.IsGenEig
+
+@[expose] public section
 
 namespace UpperTheory.V.Z.Sym.Glob
 
@@ -29,7 +33,8 @@ private theorem exists_natAbs_det_mulLeft_sum_le_mul_pow_card {B : Type} [Ring B
   have hent : ∀ i l, |LinearMap.toMatrix b b (LinearMap.mulLeft ℤ (∑ t, c t • b t)) i l| ≤ (m : ℤ) * K0 := by
     intro i l
     rw [LinearMap.toMatrix_apply, LinearMap.mulLeft_apply, Finset.sum_mul]
-    simp only [smul_mul_assoc, map_sum, map_zsmul, Finsupp.coe_finset_sum, Finset.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [smul_mul_assoc, map_sum, map_zsmul, Finset.sum_apply',
       Finsupp.smul_apply, smul_eq_mul]
     calc |∑ t, c t * b.repr (b t * b l) i| ≤ ∑ t, |c t * b.repr (b t * b l) i| :=
           Finset.abs_sum_le_sum_abs _ _
@@ -202,7 +207,7 @@ theorem cls_abs {A M Γ G : Type} [Ring A] [CharZero A] [Ring M] [Group Γ] [Gro
       { carrier := {y | ∃ r ∈ R, j (y : A) = a * r}
         add_mem' := by
           rintro x y ⟨r, hr, hx⟩ ⟨s, hs, hy⟩
-          exact ⟨r + s, R.add_mem hr hs, by simp only [Subring.coe_add, map_add, hx, hy, mul_add]⟩
+          exact ⟨r + s, R.add_mem hr hs, by simp only [Subring.coe_add, map_add (f := _), hx, hy, mul_add]⟩
         zero_mem' := ⟨0, R.zero_mem, by simp⟩
         neg_mem' := by
           rintro x ⟨r, hr, hx⟩
@@ -306,7 +311,7 @@ theorem cls_abs {A M Γ G : Type} [Ring A] [CharZero A] [Ring M] [Group Γ] [Gro
   refine ⟨γ, Classical.choose hex, ?_, (Classical.choose hex)⁻¹ * k, ?_, by group⟩
   · rw [Finset.mem_image]
     refine ⟨φ k, hfin.mem_toFinset.2 ⟨k, hk, rfl⟩, ?_⟩
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
   · apply hU
     · exact hsub _ k hs.1 hk hs.2.le
     · rw [mul_inv_rev, inv_inv]

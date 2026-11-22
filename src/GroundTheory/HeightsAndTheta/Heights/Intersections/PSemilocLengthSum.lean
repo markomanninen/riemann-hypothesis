@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocLengthSum
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocResidueDeg
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreDivSupp
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StFibreOverFinite
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsLocRingDimOne
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PFiniteAlgebraLengthSum
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocLengthSum
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocResidueDeg
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreDivSupp
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StFibreOverFinite
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsLocRingDimOne
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PFiniteAlgebraLengthSum
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

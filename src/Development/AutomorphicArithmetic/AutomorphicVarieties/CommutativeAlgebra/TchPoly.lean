@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -17,20 +21,22 @@ private lemma tch_poly (n : ℕ) (R : Type) [CommRing R] {X : Type} (s : Finset 
   have h1 : (∑ j ∈ s, (∏ i, (1 + MvPolynomial.X i : MvPolynomial (Fin n) R) ^ (e j i)) *
       MvPolynomial.C (x j)) = 0 := by
     apply MvPolynomial.coe_injective (Fin n) R
-    rw [MvPolynomial.coe_zero, ← h, ← MvPolynomial.coeToMvPowerSeries.ringHom_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [MvPolynomial.coe_zero, ← h, ← MvPolynomial.coeToMvPowerSeries.ringHom_apply, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, map_prod]
     simp
   have h2 := congrArg (MvPolynomial.aeval (R := R)
     (fun i : Fin n => (MvPolynomial.X i - 1 : MvPolynomial (Fin n) R))) h1
-  rw [map_sum, map_zero] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero] at h2
   have h3 : ∑ j ∈ s, MvPolynomial.monomial (e j) (x j) = 0 := by
     rw [← h2]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [MvPolynomial.monomial_eq, Finsupp.prod_fintype _ _ (by simp)]
     simp [map_prod, mul_comm]
   intro j hj
-  have h4 := congrArg (MvPolynomial.coeff (e j)) h3
+  have h4 := congrArg (AddMonoidAlgebra.coeff · (e j)) h3
   rw [MvPolynomial.coeff_sum, Finset.sum_eq_single j] at h4
   · simpa using h4
   · intro k hk hkj

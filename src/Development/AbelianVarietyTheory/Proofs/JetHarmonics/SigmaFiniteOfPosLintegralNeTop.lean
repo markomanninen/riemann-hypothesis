@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.BesselNonvanishingReduction
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LowerSmoothStability.ExistsFinStableOfMemSSup
-import Development.AbelianVarietyTheory.BlockTheory.JetGauges.SideNormalisedGap
-import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.KFinDecayOfDecInf
+module
+
+public import Formalism.HermitianCurvature.BesselNonvanishingReduction
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LowerSmoothStability.ExistsFinStableOfMemSSup
+public import Development.AbelianVarietyTheory.BlockTheory.JetGauges.SideNormalisedGap
+public import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.KFinDecayOfDecInf
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal
@@ -26,7 +30,7 @@ theorem sigmaFinite_of_pos_lintegral_ne_top {X : Type*} [MeasurableSpace X] {ν 
 theorem measurable_mul_pair (k r : ℕ) :
     Measurable (fun p : Formalism.QuantumDeterminants.Mt k r × Formalism.QuantumDeterminants.Mt k r =>
       (fun i j => (Matrix.of p.2 * Matrix.of p.1) i j : Formalism.QuantumDeterminants.Mt k r)) := by
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   simp only [Matrix.mul_apply, Matrix.of_apply]
   fun_prop
 
@@ -49,7 +53,7 @@ theorem sigmaFinite_of_isQuotMeas {k r : ℕ} {μG μS ν : Measure (Formalism.Q
     have hfm : Measurable fun s : Formalism.QuantumDeterminants.Mt k r =>
         ((h (fun i j => (Matrix.of s * Matrix.of x) i j) : NNReal) : ℝ≥0∞) :=
       (measurable_coe_nnreal_ennreal.comp hmeas).comp
-        (measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => by
+        (Measurable.of_eval fun i => Measurable.of_eval fun j => by
           simp only [Matrix.mul_apply, Matrix.of_apply]
           fun_prop)
     rw [lintegral_eq_zero_iff hfm] at hx

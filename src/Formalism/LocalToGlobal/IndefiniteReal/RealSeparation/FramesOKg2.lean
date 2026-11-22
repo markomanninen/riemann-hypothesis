@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.FramesOKg
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.FramesOKg
+
+@[expose] public section
 
 noncomputable section
 

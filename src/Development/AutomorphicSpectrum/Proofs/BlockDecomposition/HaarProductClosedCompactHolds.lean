@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.HaarProductClosedCompact
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.HaarProductClosedCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -114,8 +118,9 @@ theorem exists_lift [SecondCountableTopology G] [T2Space G] (μ : Measure G)
     simpa using this⟩
   choose s hs r hr hsr using hPK
   let κ : G → Measure G := fun g => transl M η (s g)
-  haveI hκp : ∀ g, IsProbabilityMeasure (κ g) := fun g =>
-    Measure.isProbabilityMeasure_map (measurable_transl_fun M _).aemeasurable
+  haveI hκp : ∀ g, IsProbabilityMeasure (κ g) := fun g => by
+    change IsProbabilityMeasure (η.map _)
+    infer_instance
   have hκ : ∀ p ∈ P, ∀ k ∈ K, κ (p * k) = transl M η p := by
     intro p hp k hk
     have h := hsr (p * k)
@@ -148,7 +153,7 @@ theorem exists_lift [SecondCountableTopology G] [T2Space G] (μ : Measure G)
       exact ih.const_sub 1
     | iUnion f hd hf ih =>
       simp only [measure_iUnion hd hf]
-      exact Measurable.ennreal_tsum ih
+      exact Measurable.tsum ih
   have happ : ∀ g, ∀ A, MeasurableSet A → κ g A = η ((fun m : M => s g * (m : G)) ⁻¹' A) := fun g A hA =>
     Measure.map_apply (measurable_transl_fun M _) hA
   refine ⟨μ.bind κ, ?_, ?_, ?_, ?_⟩
@@ -234,7 +239,7 @@ theorem exists_eq_smul_subgroup [LocallyCompactSpace G] [SecondCountableTopology
   obtain ⟨μ', a1, a2, a3, a4⟩ := key μ hμ1 hμ2 hμ3 hμ4
   obtain ⟨ν', b1, b2, b3, b4⟩ := key ν hν1 hν2 hν3 hν4
   obtain ⟨c, c0, ct, hc⟩ := exists_eq_smul μ' ν' a3 b3
-  exact ⟨c, c0, ct, by rw [a4, b4, hc, Measure.map_smul]⟩
+  exact ⟨c, c0, ct, by rw [a4, b4, hc, Measure.map_smul c hemb.measurable.aemeasurable]⟩
 
 theorem haarProductClosedCompact_holds : Formalism.D.haarProductClosedCompact := by
   intro G _ _ _ _ _ _ _ _ μ _ _ hμ P K hP hK hPK μP μK p1 p2 p3 p4 k1 k2 k3

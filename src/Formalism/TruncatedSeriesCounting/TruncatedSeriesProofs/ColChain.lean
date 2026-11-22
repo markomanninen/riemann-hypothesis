@@ -1,4 +1,8 @@
-import Formalism.TruncatedSeriesCounting.RamifiedValuationInequality
+module
+
+public import Formalism.TruncatedSeriesCounting.RamifiedValuationInequality
+
+@[expose] public section
 
 noncomputable section
 

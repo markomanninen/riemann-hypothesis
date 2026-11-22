@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivConstClosedPts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalizationAtPrimeIsDomainIsIntegrallyClos
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StrictHenselisationEtaleOverPolynomial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLocalHomToStrictlyHenselianNormalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdealExtensionPrime
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLocalStageTensorPolynomialOriginStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivConstClosedPts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalizationAtPrimeIsDomainIsIntegrallyClos
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StrictHenselisationEtaleOverPolynomial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLocalHomToStrictlyHenselianNormalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdealExtensionPrime
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLocalStageTensorPolynomialOriginStatement
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 
 noncomputable section
@@ -23,7 +28,7 @@ theorem local_props (A' : Type) [CommRing A'] [IsDomain A'] [IsNoetherianRing A'
   haveI : IsIntegrallyClosed (Polynomial A') := by
     haveI := GlobalTheory.isIntegrallyClosed_mvPolynomial_fin A' 1
     exact IsIntegrallyClosed.of_equiv
-      ((MvPolynomial.renameEquiv A' (Equiv.equivPUnit.{1, 1} (Fin 1))).trans (MvPolynomial.pUnitAlgEquiv.{0, 0} A')).toRingEquiv
+      (MvPolynomial.uniqueAlgEquiv A' (Fin 1)).toRingEquiv
   obtain ⟨h1, h2⟩ := GlobalTheory.etale_localization_atPrime_isDomain_isIntegrallyClosed (Polynomial A') E Q
   haveI : IsNoetherianRing E := Algebra.FiniteType.isNoetherianRing (Polynomial A') E
   refine ⟨h1, IsLocalization.isNoetherianRing Q.primeCompl _ inferInstance, h2, ?_⟩
@@ -63,9 +68,9 @@ theorem good_stage : ∀ (T O : Type) [CommRing T] [IsDomain T] [IsLocalRing T] 
     haveI : IsLocalHom φ := hsh.2.2.1
     rw [← hφ, ← Ideal.comap_comap, GlobalTheory.comap_maximalIdeal_of_localHom_strictHens φ, ← hP]
     first
-      | exact Localization.AtPrime.comap_maximalIdeal (Localization.AtPrime P) P
-      | exact Localization.AtPrime.comap_maximalIdeal
-      | simpa [Ideal.under] using Localization.AtPrime.comap_maximalIdeal (Localization.AtPrime P) P
+      | exact Localization.AtPrime.under_maximalIdeal (Localization.AtPrime P) P
+      | exact Localization.AtPrime.under_maximalIdeal
+      | simpa [Ideal.under] using Localization.AtPrime.under_maximalIdeal (Localization.AtPrime P) P
   obtain ⟨A', _, _, _, _, _, _, ι, α, hια, hα⟩ := GlobalTheory.T.exists_local_hom_to_strictly_henselian_normal T hT A i hil
   obtain ⟨E', _, _, _, Q', _, hQ', β, γ, h1, h2, h3⟩ :=
     GlobalTheory.T.exists_localStage_tensor_polynomial_origin T O hO A i hil EA QA hQA jA hjA A' ι α hια hα

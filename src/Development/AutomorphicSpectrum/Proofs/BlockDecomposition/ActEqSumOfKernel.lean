@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
+
+@[expose] public section
+
 open MeasureTheory Matrix Finset
 open scoped ContDiff ComplexConjugate InnerProductSpace
 open PositivityTheory.RgTw (Mat G)
@@ -47,7 +52,7 @@ theorem act_eq_sum_of_kernel : LgFacts → ∀ (n : ℕ) [MeasurableSpace (G n)]
   have hi : ∀ i ∈ (Finset.univ : Finset ι),
       Integrable (fun y : G n => c i • ks i y.val (f (x * y.val))) μ :=
     fun i _ => (hint i).smul (c i)
-  rw [hpt, integral_finset_sum _ hi]
+  rw [hpt, MeasureTheory.integral_finsetSum _ hi]
   exact Finset.sum_congr rfl (fun i _ => integral_smul (c i) _)
 
 end GlobalTheory.CompanionTheory.WaveMult

@@ -1,10 +1,14 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.DecPos
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.DecLog
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.DecMoments
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.DecSum
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ToMKMulInv
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.DecALogLower
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.DecPos
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.DecLog
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.DecMoments
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.DecSum
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ToMKMulInv
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.DecALogLower
+
+@[expose] public section
 
 noncomputable section
 

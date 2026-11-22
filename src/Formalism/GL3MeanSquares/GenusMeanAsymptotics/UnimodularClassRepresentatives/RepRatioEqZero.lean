@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.NuGmapLocF
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.NuGmapLocF
+
+@[expose] public section
 
 open NumberField Module Filter
 
@@ -22,7 +26,7 @@ theorem eigenvalue_eq₂ (T : Submodule (𝓞 K) V') (𝔭 : Ideal (𝓞 F)) :
 
 theorem repRatio_eq (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F) (hs : h.IsSymm) (hd : IsTotPosDef h)
     (S : VecSplit h h') {L : Submodule (𝓞 K) V}
-    (hL : Submodule.IsLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) {𝔭 : Ideal (𝓞 F)}
+    (hL : Submodule.IsFullLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) {𝔭 : Ideal (𝓞 F)}
     (h𝔭 : 𝔭.IsMaximal) {n : 𝓞 F} (hn : n ≠ 0) {k : ℕ}
     (hk : 2 * vd h L 𝔭 + 2 * vF 𝔭 n + 2 ≤ k) {κ σ : ℝ}
     (e : (nkCount h L 𝔭 k n : ℝ) = κ * ((Ideal.absNorm 𝔭 : ℝ) ^ vd h L 𝔭 * nu h L 𝔭) * σ) :
@@ -44,9 +48,9 @@ theorem repRatio_eq (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : I
 
 theorem repRatio_eq_zero (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F) (hs : h.IsSymm) (hd : IsTotPosDef h)
     (S : VecSplit h h') {L : Submodule (𝓞 K) V}
-    (hL : Submodule.IsLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) {𝔭 : Ideal (𝓞 F)}
+    (hL : Submodule.IsFullLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) {𝔭 : Ideal (𝓞 F)}
     (h𝔭 : 𝔭.IsMaximal) {n : 𝓞 F} (hn : n ≠ 0) (hx : h S.x₀ S.x₀ = algebraMap F K (n : F))
-    (hE : ¬ ∃ M₂ : Submodule (𝓞 K) V, Submodule.IsLattice K M₂ ∧ Formalism.HermitianLatticesTheory.IsIntegralLat h M₂ ∧
+    (hE : ¬ ∃ M₂ : Submodule (𝓞 K) V, Submodule.IsFullLattice K M₂ ∧ Formalism.HermitianLatticesTheory.IsIntegralLat h M₂ ∧
       S.x₀ ∈ locF 𝔭 M₂) : repRatio h L 𝔭 n = 0 := by
   obtain ⟨s, hsr⟩ := exists_locReps hK hF hs hd S hL hLi h𝔭
   obtain ⟨R, hR⟩ := exists_mReps hK hF hs hd S hL hLi h𝔭 hn hx hsr
@@ -55,7 +59,12 @@ theorem repRatio_eq_zero (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (h
     intro M hM
     obtain ⟨⟨⟨g, hg, rfl⟩, hxM⟩, -⟩ := hR.1 M hM
     rw [LocalizedFibreSets.gmap_locF] at hxM
-    exact hE ⟨_, LocalizedFibreSets.isLattice_gmap g hL, UnimodularLocalization.isIntegralLat_gmap hg hLi, hxM⟩
+    have hL_gmap : Submodule.IsFullLattice K (Formalism.HermitianLatticesTheory.gmap g L) := by
+      refine { toIsLattice := Submodule.IsLattice.of_fg K (hL.fg.map _), span_eq_top := ?_ }
+      change Submodule.span K ((g : V →ₗ[K] V) '' (L : Set V)) = ⊤
+      rw [Submodule.span_image, hL.span_eq_top, Submodule.map_top, LinearMap.range_eq_top]
+      exact g.surjective
+    exact hE ⟨_, hL_gmap, UnimodularLocalization.isIntegralLat_gmap hg hLi, hxM⟩
   obtain ⟨J, hJ⟩ := (nkCount_eq_sum hK hF hs hd S hL hLi h𝔭 hn hx hR).exists
   obtain ⟨k, hk1, hk2⟩ := (hJ.and (eventually_ge_atTop (2 * vd h L 𝔭 + 2 * vF 𝔭 n + 2))).exists
   rw [hR0, Finset.sum_empty] at hk1
@@ -67,7 +76,7 @@ end LIOrb
 open LIOrb in
 theorem liRatio : LIRatio := by
   intro K F _ _ _ _ _ _ hK hF V V' _ _ _ _ _ _ _ _ _ _ h h' S L L₀ 𝔭 n hs hd h𝔭 hn hx hL hLi hL₀ hL₀i
-  by_cases hE : ∃ M₂ : Submodule (𝓞 K) V, Submodule.IsLattice K M₂ ∧
+  by_cases hE : ∃ M₂ : Submodule (𝓞 K) V, Submodule.IsFullLattice K M₂ ∧
       Formalism.HermitianLatticesTheory.IsIntegralLat h M₂ ∧ S.x₀ ∈ locF 𝔭 M₂
   · obtain ⟨M₂, hM₂, hM₂i, hx₂⟩ := hE
     obtain ⟨s, hsr⟩ := exists_locReps hK hF hs hd S hL hLi h𝔭
@@ -77,7 +86,8 @@ theorem liRatio : LIRatio := by
     obtain ⟨k, ⟨hk, hk₀⟩, hk1, hk2⟩ := ((hJ.and hJ₀).and
       ((eventually_ge_atTop (2 * vd h L 𝔭 + 2 * vF 𝔭 n + 2)).and
         (eventually_ge_atTop (2 * vd h L₀ 𝔭 + 2 * vF 𝔭 n + 2)))).exists
-    rw [psiP_eq_sum hK hF hs hd S hL hLi h𝔭 hsr, psiP_eq_sum hK hF hs hd S hL₀ hL₀i h𝔭 hsr₀,
+    rw [psiP_eq_sum hK hF hs hd S hL.toIsLattice hLi h𝔭 hsr,
+      psiP_eq_sum hK hF hs hd S hL₀.toIsLattice hL₀i h𝔭 hsr₀,
       repRatio_eq hK hF hs hd S hL hLi h𝔭 hn hk1 hk, repRatio_eq hK hF hs hd S hL₀ hL₀i h𝔭 hn hk2 hk₀]
     simp only [eigenvalue_eq₂, mul_left_comm _ (alphaStd K 𝔭 (finrank K V')), ← Finset.mul_sum]
     ring

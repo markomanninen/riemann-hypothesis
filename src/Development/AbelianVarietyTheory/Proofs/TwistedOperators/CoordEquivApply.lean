@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHasCls
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHasCls
+
+@[expose] public section
+
 open MeasureTheory Set Filter Polynomial NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.IndefiniteRowSideFullHecke.PlusPolynomialRoots GlobalTheory.TrEll
@@ -33,11 +38,11 @@ theorem smul_eq_map_mul (c : k ⊗[F] E) (y : k ⊗[F] Fld P) :
 theorem coordF_smul (i : Fin r) (c : k ⊗[F] E) (y : k ⊗[F] Fld P) : coordF P k i (c • y) = c * coordF P k i y := by
   induction c using TensorProduct.induction_on with
   | zero => simp
-  | add c c' h h' => rw [add_smul, map_add, h, h', add_mul]
+  | add c c' h h' => rw [add_smul, map_add (f := _), h, h', add_mul]
   | tmul a e =>
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add y y' h h' => rw [smul_add, map_add, h, h', map_add, mul_add]
+    | add y y' h h' => rw [smul_add, map_add (f := _), h, h', map_add (f := _), mul_add]
     | tmul a' z =>
       rw [smul_eq_map_mul, Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.tmul_mul_tmul, coordF_tmul,
         coordF_tmul, Algebra.TensorProduct.tmul_mul_tmul]
@@ -48,7 +53,8 @@ theorem coordF_smul (i : Fin r) (c : k ⊗[F] E) (y : k ⊗[F] Fld P) : coordF P
 def coordInv (w : Fin r → k ⊗[F] E) : k ⊗[F] Fld P := ∑ i, w i • ((1 : k) ⊗ₜ[F] powB P i)
 
 theorem coordF_coordInv (w : Fin r → k ⊗[F] E) (j : Fin r) : coordF P k j (coordInv P k w) = w j := by
-  simp only [coordInv, map_sum, coordF_smul, coordF_tmul, Module.Basis.repr_self]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coordInv, map_sum, coordF_smul, coordF_tmul, Module.Basis.repr_self]
   rw [Finset.sum_eq_single j (fun i _ h => by rw [Finsupp.single_apply, if_neg h, TensorProduct.tmul_zero, mul_zero])
     (by simp), Finsupp.single_eq_same, ← Algebra.TensorProduct.one_def, mul_one]
 
@@ -57,7 +63,7 @@ theorem coordInv_coordF (y : k ⊗[F] Fld P) : coordInv P k (fun i => coordF P k
   | zero => simp [coordInv]
   | add y y' h h' =>
     conv_rhs => rw [← h, ← h']
-    simp only [coordInv, map_add, add_smul, Finset.sum_add_distrib]
+    simp only [coordInv, map_add (f := _), add_smul, Finset.sum_add_distrib]
   | tmul a z =>
     simp only [coordInv, coordF_tmul, smul_eq_map_mul, Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.tmul_mul_tmul,
       mul_one, AlgHom.id_apply, IsScalarTower.coe_toAlgHom']

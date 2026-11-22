@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.QEqColPer
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlatBFSource
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.QEqColPer
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlatBFSource
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
@@ -172,8 +176,8 @@ theorem jPer_congr_above (M : GlobalTheory.FunObj.Vol G) (t : T) (C C' : BiFam G
     exact jPer_congr_above M t C C' F σ (j + 1 + 1) _ _ (by obtain ⟨a, ha⟩ := he; exact ⟨a + 1, by omega⟩)
       fun i hi hji => hC i hi (by omega)
 
-omit hM in
 
+omit hM in
 theorem jPer_congr_window (M : GlobalTheory.FunObj.Vol G) (t : T) (C C' : BiFam G) (F : Fn G (.grid D.R.m D.R.m)) (k : ℕ)
     (hk4 : k + 1 + 1 + 2 ≤ D.R.m) (hC : ∀ i, Even i → i ≠ k → i ≠ k + 1 + 1 → C i = C' i)
     (hpres : ∀ i, Even i → i < k → ∀ ψ : GA D (G.V (.top i)) → ℂ, GlobalTheory.Unf.IsContAut _ ψ →
@@ -192,18 +196,22 @@ theorem jPer_congr_window (M : GlobalTheory.FunObj.Vol G) (t : T) (C C' : BiFam 
     · have hCj : C j = C' j := hC j he (by omega) (by omega)
       simp only [jPer]
       rw [← hCj]
-      refine jPer_congr_window M t C C' F k hk4 hC hpres hwin σ (j + 1 + 1) _ _ ?_ hk ?_ (hpres j he hlt φ hφ)
-      · obtain ⟨a, ha⟩ := he; exact ⟨a + 1, by omega⟩
-      · obtain ⟨a, ha⟩ := he; obtain ⟨b, hb⟩ := hk; omega
-    · have hj2 : j + 2 * (σ + 1) + 2 = D.R.m := by simpa using hj
-      obtain rfl : j = k := by omega
-      rcases σ with _ | σ'
-      · simp only [jPer]
+      have hle : j + 1 + 1 ≤ k := by
+        rw [Nat.even_iff] at he hk
+        omega
+      exact jPer_congr_window M t C C' F k hk4 hC hpres hwin σ (j + 1 + 1) _ _
+        he.add_one.add_one hk hle (hpres j he hlt φ hφ)
+    · have hkj : k = j := Nat.le_antisymm hge hjk
+      subst k
+      cases σ with
+      | zero =>
+        simp only [jPer]
         rw [hwin φ hφ]
-      simp only [jPer]
-      rw [hwin φ hφ]
-      exact jPer_congr_above W M t C C' F σ' (j + 1 + 1 + 1 + 1) _ _
-        (by obtain ⟨a, ha⟩ := he; exact ⟨a + 2, by omega⟩) fun i hi hji => hC i hi (by omega) (by omega)
+      | succ σ' =>
+        simp only [jPer]
+        rw [hwin φ hφ]
+        exact jPer_congr_above W M t C C' F σ' (j + 1 + 1 + 1 + 1) _ _
+          (by obtain ⟨a, ha⟩ := he; exact ⟨a + 2, by omega⟩) fun i hi hji => hC i hi (by omega) (by omega)
 
 theorem conAt_update (Φ : SchDown G t) (h : Pts G) (j : ℕ) (x : GA D (G.V (.grid D.R.m j))) (i : ℕ) (h0 : i ≠ j)
     (h1 : i + 1 ≠ j) (h2 : i + 1 + 1 ≠ j) : conAt W hM Φ (Function.update h j x) i = conAt W hM Φ h i := by

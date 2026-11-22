@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.ExistsIsomMove
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsOrthogonalUnitVector
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.ExistsIsomMove
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsOrthogonalUnitVector
+
+@[expose] public section
 
 open NumberField Module
 
@@ -25,7 +29,8 @@ theorem linIndep_orth {ι : Type} [Fintype ι] (x : ι → V) (hxo : ∀ i j, i 
   rw [Fintype.linearIndependent_iff]
   intro c hc j
   have := congrArg (h (x j)) hc
-  rw [map_sum, map_zero, Finset.sum_eq_single j] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero, Finset.sum_eq_single j] at this
   · rw [map_smul, smul_eq_mul] at this
     exact (mul_eq_zero.1 this).resolve_right (hx0 j)
   · intro i _ hij
@@ -36,7 +41,8 @@ theorem orth_sub_proj {ι : Type} [Fintype ι] (x : ι → V) (hxo : ∀ i j, i 
     (hx0 : ∀ i, h (x i) (x i) ≠ 0) (v : V) (j : ι) :
     h (x j) (v - ∑ i, ((h (x i) (x i))⁻¹ * h (x i) v) • x i) = 0 := by
   classical
-  rw [map_sub, map_sum, Finset.sum_eq_single j]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, map_sum, Finset.sum_eq_single j]
   · rw [map_smul, smul_eq_mul, mul_right_comm, inv_mul_cancel₀ (hx0 j), one_mul, sub_self]
   · intro i _ hij
     rw [map_smul, hxo j i (Ne.symm hij), smul_zero]
@@ -131,7 +137,8 @@ theorem exists_isom_selfDual [FiniteDimensional K V] (hS : IsHermSemilocal S) (h
     exact sub_eq_zero.1 (hnd.2 _ hall)
   have hfwd : ∀ v, v ∈ L → g v ∈ M := by
     intro v hv
-    rw [hexp v, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hexp v, map_sum]
     refine M.sum_mem fun i _ => ?_
     rw [map_smul]
     exact hM.smul_mem _ (S.mul_mem (hxu i).2.2 (hL.int _ (hxL i) _ hv)) _ (hgM i)

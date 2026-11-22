@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.TheoremA
-import ReciprocityTheory.SemistableReduction.AlgAll
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.TheoremA
+public import ReciprocityTheory.SemistableReduction.AlgAll
+
+@[expose] public section
 
 namespace PI.HtPlacesSumWork
 
@@ -57,7 +61,6 @@ variable {S L : Type*} [CommRing S] [IsDedekindDomain S] [Field L] [Algebra S L]
 
 variable (L) in
 open Classical in
-
 noncomputable def addv : AddValuation L (WithTop ℤ) :=
   AddValuation.of (fun x => if x = 0 then ⊤ else (((-log (v.valuation L x) : ℤ)) : WithTop ℤ))
     (by simp) (by simp)
@@ -69,7 +72,7 @@ noncomputable def addv : AddValuation L (WithTop ℤ) :=
       · subst hy; simp
       by_cases hxy : x + y = 0
       · simp [hxy]
-      simp only [hx, hy, hxy, if_false]
+      simp only [hx, hy, hxy, ite_false]
       rw [← WithTop.coe_min, WithTop.coe_le_coe]
       have hx' : v.valuation L x ≠ 0 := by simpa using hx
       have hy' : v.valuation L y ≠ 0 := by simpa using hy
@@ -88,12 +91,12 @@ noncomputable def addv : AddValuation L (WithTop ℤ) :=
       · subst hy; simp
       have hx' : v.valuation L x ≠ 0 := by simpa using hx
       have hy' : v.valuation L y ≠ 0 := by simpa using hy
-      simp only [hx, hy, mul_eq_zero, or_self, if_false, map_mul, log_mul hx' hy']
+      simp only [hx, hy, mul_eq_zero, or_self, ite_false, map_mul, log_mul hx' hy']
       rw [← WithTop.coe_add]; congr 1; ring)
 
 theorem addv_apply {x : L} (hx : x ≠ 0) :
     addv L v x = (((-log (v.valuation L x) : ℤ)) : WithTop ℤ) := by
-  rw [addv, AddValuation.of_apply, if_neg hx]
+  rw [addv, AddValuation.of_apply, ite_eq_right hx]
 
 theorem addv_alg {s : S} (hs : s ≠ 0) :
     addv L v (algebraMap S L s) = (((-log (v.intValuation s) : ℤ)) : WithTop ℤ) := by
@@ -235,7 +238,6 @@ private theorem eq_addv_lemma_2 {Φ : Type*} [Field Φ] (u1 u2 : AddValuation Φ
     rw [AddValuation.map_mul, AddValuation.map_mul, hinv u1 x m hx hm, hinv u2 x a hx ha,
       hpow u1 π1 hπ1 n, hpow u2 π1 hπ1u2 n] at e2
     norm_cast at e1 e2
-    all_goals exact ⟨e1, e2⟩
   have k1 := key (-m).toNat
   have k2 := key ((-m).toNat - 1)
   have k3 := key m.toNat
@@ -274,7 +276,7 @@ variable [IsDedekindDomain (integralClosure O L)] [IsFractionRing (integralClosu
 
 theorem valPl_comap (Q : Ideal (integralClosure O L)) [Q.IsMaximal] :
     Q.comap (algebraMap O (integralClosure O L)) = maximalIdeal O :=
-  IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal Q)
+  IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_under_of_isIntegral_of_isMaximal Q)
 
 theorem valPl_ne_bot (Q : Ideal (integralClosure O L)) [Q.IsMaximal] : Q ≠ ⊥ := by
   intro h
@@ -292,7 +294,6 @@ def valPl_hv (Q : {Q : Ideal (integralClosure O L) // Q.IsMaximal}) :
   ⟨Q.1, Q.2.isPrime, valPl_ne_bot Q.1⟩
 
 variable (O L) in
-
 noncomputable def plOf (Q : {Q : Ideal (integralClosure O L) // Q.IsMaximal}) :
     AddValuation L (WithTop ℤ) :=
   addv L (valPl_hv Q)

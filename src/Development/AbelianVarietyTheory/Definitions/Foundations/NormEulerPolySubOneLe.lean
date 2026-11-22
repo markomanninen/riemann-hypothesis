@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Definitions.Divisors.EntireEqOfHalfPlane
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CountableIdealSummableAbsNormRpow
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EntireEqOfHalfPlane
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CountableIdealSummableAbsNormRpow
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,7 @@ def eulerPoly (B : Multiset ℂˣ) (x : ℂ) : ℂ := (B.map fun b : ℂˣ => 1 
 
 def eulerFac (B : Multiset ℂˣ) (x : ℂ) : ℂ := (eulerPoly B x)⁻¹
 
-@[simp] theorem eulerPoly_zero (x : ℂ) : eulerPoly 0 x = 1 := rfl
-@[simp] theorem eulerFac_zero (x : ℂ) : eulerFac 0 x = 1 := by simp [eulerFac]
+@[simp] theorem eulerFac_zero (x : ℂ) : eulerFac 0 x = 1 := by simp [eulerFac, eulerPoly]
 
 theorem eulerPoly_cons (b : ℂˣ) (B : Multiset ℂˣ) (x : ℂ) :
     eulerPoly (b ::ₘ B) x = (1 - (b : ℂ) * x) * eulerPoly B x := by simp [eulerPoly]
@@ -57,7 +60,7 @@ theorem eulerPoly_ne_zero {B : Multiset ℂˣ} {x : ℂ} (h : ∀ b ∈ B, ‖(b
 theorem norm_eulerPoly_sub_one_le {B : Multiset ℂˣ} {x : ℂ} {y : ℝ} (hy0 : 0 ≤ y) (hy : y ≤ 1)
     (h : ∀ b ∈ B, ‖(b : ℂ) * x‖ ≤ y) : ‖eulerPoly B x - 1‖ ≤ (2 ^ B.card - 1) * y := by
   induction B using Multiset.induction_on with
-  | empty => simp
+  | empty => simp [eulerPoly]
   | cons b B ih =>
     have h1 := ih fun c hc => h c (Multiset.mem_cons_of_mem hc)
     have h2 := h b (Multiset.mem_cons_self _ _)
@@ -99,8 +102,8 @@ def npowU (w : HeightOneSpectrum (𝓞 K)) (z : ℂ) : ℂˣ := Units.mk0 (npow 
 
 @[simp] theorem coe_npowU (w : HeightOneSpectrum (𝓞 K)) (z : ℂ) : (npowU w z : ℂ) = npow w z := rfl
 
-variable (K) in
 
+variable (K) in
 abbrev Fam : Type := HeightOneSpectrum (𝓞 K) → Multiset ℂˣ
 
 def locL (c : Fam K) (w : HeightOneSpectrum (𝓞 K)) (s : ℂ) : ℂ := eulerFac (c w) (npow w (-s))
@@ -177,9 +180,6 @@ theorem Converges.hasProd_and_ne_zero (h : Converges T c s) :
 theorem Converges.hasProd (h : Converges T c s) :
     HasProd (fun w : {w // w ∉ T} => locL c w s) (eulerProd T c s) := h.hasProd_and_ne_zero.1
 
-theorem Converges.multipliable (h : Converges T c s) : Multipliable fun w : {w // w ∉ T} => locL c w s :=
-  h.hasProd.multipliable
-
 theorem Converges.ne_zero (h : Converges T c s) : eulerProd T c s ≠ 0 := h.hasProd_and_ne_zero.2
 
 theorem eulerProd_add (h : Converges T c s) (h' : Converges T c' s) :
@@ -220,7 +220,7 @@ theorem Bounded.norm_eulerPoly_le {r : ℕ} {κ σ : ℝ} (h : Bounded T c r κ)
 
 theorem summable_rpow (T : Set (HeightOneSpectrum (𝓞 K))) {σ : ℝ} (hσ : 1 < σ) :
     Summable fun w : {w // w ∉ T} => ((Ideal.absNorm w.1.asIdeal : ℕ) : ℝ) ^ (-σ) :=
-  ((GlobalTheory.countable_ideal_and_summable_absNorm_rpow K).2 σ hσ).2.subtype {w | w ∉ T}
+  ((GlobalTheory.countable_ideal_and_summable_absNorm_rpow K).2 σ hσ).2.subtype (fun w => w ∉ T)
 
 theorem Bounded.converges {r : ℕ} {κ : ℝ} (h : Bounded T c r κ) (hs : κ + 1 < s.re) : Converges T c s :=
   ⟨fun w hw => eulerPoly_ne_zero fun _ hb => (h.norm_le le_rfl hw hb).trans_lt
@@ -231,7 +231,7 @@ theorem Bounded.converges {r : ℕ} {κ : ℝ} (h : Bounded T c r κ) (hs : κ +
 theorem differentiable_eulerPoly (B : Multiset ℂˣ) (w : HeightOneSpectrum (𝓞 K)) :
     Differentiable ℂ fun s => eulerPoly B (npow w (-s)) := by
   induction B using Multiset.induction_on with
-  | empty => simp
+  | empty => simp [eulerPoly]
   | cons b B ih =>
     simp only [eulerPoly_cons]
     refine ((differentiable_const _).sub ((differentiable_const _).mul ?_)).mul ih
@@ -267,32 +267,14 @@ theorem Bounded.add {r r' : ℕ} {κ : ℝ} (h : Bounded T c r κ) (h' : Bounded
   ⟨by simpa using add_le_add (h w hw).1 (h' w hw).1, fun b hb =>
     (Multiset.mem_add.1 hb).elim ((h w hw).2 b) ((h' w hw).2 b)⟩
 
-def IsCont (T : Set (HeightOneSpectrum (𝓞 K))) (c : Fam K) (σ : ℝ) (Λ : ℂ → ℂ) : Prop :=
-  DifferentiableOn ℂ Λ {s | σ < s.re} ∧ ∃ σ₀ : ℝ, ∀ s : ℂ, σ₀ < s.re → Converges T c s ∧ Λ s = eulerProd T c s
-
-def IsMerCont (T : Set (HeightOneSpectrum (𝓞 K))) (c : Fam K) (σ : ℝ) (Λ : ℂ → ℂ) : Prop :=
-  MeromorphicOn Λ {s | σ < s.re} ∧ ∃ σ₀ : ℝ, ∀ s : ℂ, σ₀ < s.re → Converges T c s ∧ Λ s = eulerProd T c s
-
-theorem IsCont.unique {σ : ℝ} {Λ Λ' : ℂ → ℂ} (h : IsCont T c σ Λ) (h' : IsCont T c σ Λ') :
-    Set.EqOn Λ Λ' {s | σ < s.re} := by
-  obtain ⟨h1, a, h2⟩ := h
-  obtain ⟨h1', a', h2'⟩ := h'
-  have ho : ∀ x : ℝ, IsOpen {s : ℂ | x < s.re} := fun x => isOpen_lt continuous_const Complex.continuous_re
-  refine (h1.analyticOnNhd (ho σ)).eqOn_of_preconnected_of_eventuallyEq (h1'.analyticOnNhd (ho σ))
-    (convex_halfSpace_re_gt σ).isPreconnected (z₀ := ((max σ (max a a') + 1 : ℝ) : ℂ))
-    (show σ < max σ (max a a') + 1 from (le_max_left _ _).trans_lt (lt_add_one _)) ?_
-  filter_upwards [(ho (max σ (max a a'))).mem_nhds (lt_add_one (max σ (max a a')))] with s hs
-  simp only [Set.mem_setOf_eq, max_lt_iff] at hs
-  rw [(h2 s hs.2.1).2, (h2' s hs.2.2).2]
-
 end Product
 
 section Hecke
 
 variable {K : Type} [Field K] [NumberField K]
 
-open Classical in
 
+open Classical in
 def heckeFam (χ : HChar K) : Fam K := fun w => if χ.UnrAt w then {χ.val w} else 0
 
 def heckeL (T : Set (HeightOneSpectrum (𝓞 K))) (χ : HChar K) (s : ℂ) : ℂ := eulerProd T (heckeFam χ) s
@@ -339,8 +321,8 @@ section Ext
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-variable (E) in
 
+variable (E) in
 def above (S : Set (HeightOneSpectrum (𝓞 F))) : Set (HeightOneSpectrum (𝓞 E)) := {w | w.under (𝓞 F) ∈ S}
 
 theorem mem_aboveF {v : HeightOneSpectrum (𝓞 F)} {w : HeightOneSpectrum (𝓞 E)} :
@@ -390,21 +372,21 @@ theorem LvTw_inert (c : Fam E) (m : HeightOneSpectrum (𝓞 E) → ℂˣ) {v : H
 
 open Formalism.MainNotions.SchurIrreducible
 
-variable (E) in
-open Classical in
 
+open Classical in
+variable (E) in
 def etaU (v : HeightOneSpectrum (𝓞 F)) : ℂˣ := if IsSplit (E := E) v then 1 else -1
 
 theorem etaU_sq (v : HeightOneSpectrum (𝓞 F)) : etaU E v ^ 2 = 1 := by
   unfold etaU; split_ifs <;> simp
 
-variable (E) in
-open Classical in
 
+open Classical in
+variable (E) in
 def etaFam (k : ℕ) : Fam F := fun v => if IsUnram (E := E) v ∨ Even k then {etaU E v ^ k} else 0
 
-variable (E) in
 
+variable (E) in
 def etaL (S : Set (HeightOneSpectrum (𝓞 F))) (k : ℕ) (s : ℂ) : ℂ := eulerProd S (etaFam E k) s
 
 theorem etaFam_of_unram {v : HeightOneSpectrum (𝓞 F)} (h : IsUnram (E := E) v) (k : ℕ) :
@@ -430,17 +412,17 @@ theorem bounded_etaFam (S : Set (HeightOneSpectrum (𝓞 F))) (k : ℕ) : Bounde
 theorem converges_etaFam (S : Set (HeightOneSpectrum (𝓞 F))) (k : ℕ) {s : ℂ} (hs : 1 < s.re) :
     Converges S (etaFam E k) s := (bounded_etaFam S k).converges (by simpa using hs)
 
-variable (E) in
 
+variable (E) in
 def dv (a b : ℕ) (v : HeightOneSpectrum (𝓞 F)) (s : ℂ) : ℂ :=
   ∏ i ∈ Finset.range a, locL (etaFam E (b + i)) v (2 * s + a - i)
 
-variable (E) in
 
+variable (E) in
 def dSfun (S : Set (HeightOneSpectrum (𝓞 F))) (a b : ℕ) (s : ℂ) : ℂ := ∏' v : {v // v ∉ S}, dv E a b v.1 s
 
-variable (E) in
 
+variable (E) in
 def dS (S : Set (HeightOneSpectrum (𝓞 F))) (a b : ℕ) : ℂ := dSfun E S a b (((b : ℂ) - a) / 2)
 
 theorem dv_center (a t : ℕ) (v : HeightOneSpectrum (𝓞 F)) :
@@ -465,30 +447,7 @@ theorem hasProd_dv (S : Set (HeightOneSpectrum (𝓞 F))) (a b : ℕ) {s : ℂ} 
 theorem dSfun_eq (S : Set (HeightOneSpectrum (𝓞 F))) (a b : ℕ) {s : ℂ} (hs : 0 < s.re) :
     dSfun E S a b s = ∏ i ∈ Finset.range a, etaL E S (b + i) (2 * s + a - i) := (hasProd_dv S a b hs).tprod_eq
 
-theorem dS_eq (S : Set (HeightOneSpectrum (𝓞 F))) (a : ℕ) {t : ℕ} (ht : 1 ≤ t) :
-    dS E S a (a + t) = ∏ k ∈ Finset.Icc (t + 1) (t + a), etaL E S k k ∧ dS E S a (a + t) ≠ 0 := by
-  have hc : ∀ k ∈ Finset.Icc (t + 1) (t + a), Converges S (etaFam E k) k := fun k hk =>
-    converges_etaFam S k (by
-      have := (Finset.mem_Icc.1 hk).1
-      rw [Complex.natCast_re]
-      exact_mod_cast (by omega : 1 < k))
-  have e : dS E S a (a + t) = ∏ k ∈ Finset.Icc (t + 1) (t + a), etaL E S k k := by
-    rw [dS, dSfun, show (((a + t : ℕ) : ℂ) - a) / 2 = (t : ℂ) / 2 by push_cast; ring]
-    simp only [dv_center]
-    exact (hasProd_prod fun k hk => (hc k hk).hasProd).tprod_eq
-  exact ⟨e, e ▸ Finset.prod_ne_zero_iff.2 fun k hk => (hc k hk).ne_zero⟩
-
 end Ext
-
-example : eulerFac {Units.mk0 2 two_ne_zero, (Units.mk0 2 two_ne_zero)⁻¹} (1 / 4) = 16 / 7 := by
-  simp [eulerFac, eulerPoly]; norm_num
-
-example {K : Type} [Field K] [NumberField K] (w : HeightOneSpectrum (𝓞 K)) (x : ℂˣ) : seg w x 1 = {x} := by
-  have : npowU w 0 = 1 := Units.ext (by simp [npow])
-  simp [seg, this]
-
-example {K : Type} [Field K] [NumberField K] (w : HeightOneSpectrum (𝓞 K)) :
-    ¬ Converges (K := K) ∅ (fun _ => {1}) 0 := fun h => h.1 w (by simp) (by simp [eulerPoly, npow])
 
 end GlobalTheory.LFun
 

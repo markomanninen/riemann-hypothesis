@@ -1,7 +1,11 @@
-import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.CuspidalExhaustion.JuxtDefs
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.JacquetMultiplicityPosImports
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.WordOccursOfSubquotientImports
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ShuffleOfPermImports
+module
+
+public import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.CuspidalExhaustion.JuxtDefs
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.JacquetMultiplicityPosImports
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.WordOccursOfSubquotientImports
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ShuffleOfPermImports
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,12 +57,12 @@ end Comb
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-theorem decW_single (ρ : IrrGL k) (hρ : ρ.IsCusp) : decW (Segment.single ρ hρ) = [ρ] := by
+theorem decW_single (ρ : IrrGL (k := k)) (hρ : ρ.IsCusp) : decW (Segment.single ρ hρ) = [ρ] := by
   simp [decW, Segment.single, Segment.term]
 
-theorem words_of_subq (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hW : ShlP k) (σ b : IrrGL k) (Δ : Segment k)
-    (hb : IsLSeg Δ b.rep) (hσ : SubqL σ [nxt Δ, b]) (l : List (IrrGL k)) (hl : ∀ ρ ∈ l, ρ.IsCusp) (he : EmbL σ l) :
-    ∃ P Q : List (IrrGL k), decW Δ = P ++ Q ∧ l = P ++ nxt Δ :: Q := by
+theorem words_of_subq (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hW : ShlP k) (σ b : IrrGL (k := k)) (Δ : Segment k)
+    (hb : IsLSeg Δ b.rep) (hσ : SubqL σ [nxt Δ, b]) (l : List (IrrGL (k := k))) (hl : ∀ ρ ∈ l, ρ.IsCusp) (he : EmbL σ l) :
+    ∃ P Q : List (IrrGL (k := k)), decW Δ = P ++ Q ∧ l = P ++ nxt Δ :: Q := by
   obtain ⟨hd1, hsub⟩ := hσ
   obtain ⟨hd2, f, hf⟩ := he
   have := GlobalTheory.SmGL.Model.nontrivial_of_isIrreducible σ.2.rep.irr

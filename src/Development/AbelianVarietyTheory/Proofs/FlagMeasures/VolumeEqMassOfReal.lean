@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
-import Formalism.LocalToGlobal.BesselHermitianTheta.Lemmas
-import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DoubleCosetsMassLevel
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GenusMassStdAll
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+public import Formalism.LocalToGlobal.BesselHermitianTheta.Lemmas
+public import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DoubleCosetsMassLevel
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GenusMassStdAll
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FinTensMemLatO
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
-import Formalism.LocalRingCardinality.ConjSqrtMinusD
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FinTensMemLatO
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+public import Formalism.LocalRingCardinality.ConjSqrtMinusD
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.LatVac
 open scoped TensorProduct
@@ -34,15 +38,15 @@ theorem idem_tensor {F A E K : Type} [Field F] [CommRing A] [Algebra F A] [CommR
   have h1 : e = j (φ u) * k ω - j (φ u) * j (φ r) := by
     rw [he, hjk, hjk, map_neg, map_mul, map_neg, map_mul, map_one]; ring
   have h2 : c e = j (φ u) * (1 - k ω) - j (φ u) * j (φ r) := by
-    rw [he, map_add, hc1, hcω, hjk, hjk, map_neg, map_mul, map_neg, map_mul, map_one, map_sub, map_one]; ring
+    rw [he, map_add (f := _), hc1, hcω, hjk, hjk, map_neg, map_mul, map_neg, map_mul, map_one, map_sub, map_one]; ring
   rw [h2, h1]
   refine idem_alg (j (φ 1)) _ _ _ (m : A ⊗[F] E) ?_ ?_ ?_ ?_
   · rw [← map_mul, ← map_mul, one_mul]
   · have : φ r * φ r - φ r + m * φ 1 = 0 := by
-      rw [← nsmul_eq_mul, ← map_nsmul, ← map_mul, ← map_sub, ← map_add, nsmul_eq_mul, mul_one, hr, map_zero]
+      rw [← nsmul_eq_mul, ← map_nsmul, ← map_mul, ← map_sub, ← map_add (f := _), nsmul_eq_mul, mul_one, hr, map_zero]
     simpa using congrArg j this
   · have : φ u - 2 * (φ u * φ r) = φ 1 := by
-      rw [two_mul, ← map_mul, ← map_add, ← map_sub, ← hu]; congr 1; ring
+      rw [two_mul, ← map_mul, ← map_add (f := _), ← map_sub, ← hu]; congr 1; ring
     have h := congrArg j this
     rwa [map_sub, map_mul, map_mul, map_ofNat] at h
   · have h := congrArg k hω
@@ -74,8 +78,8 @@ def placeHom : Fv F v →ₙ+* AF F where
   map_add' x y := Prod.ext (add_zero _).symm (af_ext F fun w => by
     change evalV F w (singleV F v (x + y)) = evalV F w (singleV F v x + singleV F v y)
     by_cases hw : w = v
-    · subst hw; simp only [map_add, evalV_singleV_same]
-    · simp only [map_add, evalV_singleV_ne F v _ hw, add_zero])
+    · subst hw; simp only [map_add (f := _), evalV_singleV_same]
+    · simp only [map_add (f := _), evalV_singleV_ne F v _ hw, add_zero])
   map_mul' x y := Prod.ext (mul_zero _).symm (af_ext F fun w => by
     change evalV F w (singleV F v (x * y)) = evalV F w (singleV F v x * singleV F v y)
     by_cases hw : w = v
@@ -122,7 +126,7 @@ theorem exists_omega (D : D7) : ∃ (ω : 𝓞 D.host.E) (k : ℕ),
   · show c * c - c + _ = 0
     rw [hmm, ← pow_two, hc]
   · show D.host.conj c = 1 - c
-    simp only [c, map_div₀, map_add, map_one, D.host.conj_sqrtMinusD, map_ofNat]
+    simp only [c, map_div₀, map_add (f := _), map_one, D.host.conj_sqrtMinusD, map_ofNat]
     ring
 
 theorem star_eq_conj (D : D7) (x : D.host.E) : star x = D.host.conj x := by

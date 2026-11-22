@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsFlatSecRankZero
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.SectionEqZeroOfGenericFramedPointValues
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvaluationLawsGenericFramesAtlasHold
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CountableFractionRingMvPolynomial
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsBijectiveKappa
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsFlatSecRankZero
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.SectionEqZeroOfGenericFramedPointValues
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvaluationLawsGenericFramesAtlasHold
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CountableFractionRingMvPolynomial
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsBijectiveKappa
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,11 @@ theorem isAlgebraic_of_norm_const {K Ω : Type} [Field K] [CharZero K] [Field Ω
       (Algebra.IsAlgebraic.isAlgebraic y) hbas.1.aevalEquiv.symm.injective (RingHom.ext fun z => by
         obtain ⟨p, rfl⟩ := hbas.1.aevalEquiv.surjective z
         simp [RingHom.algebraMap_toAlgebra]))⟩
-  let Q : Ω →ₐ[MvPolynomial T K] ℂ := IsAlgClosed.lift
+  let Q : Ω →ₐ[MvPolynomial T K] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let P : Ω →ₐ[K] ℂ := { Q.toRingHom with
     commutes' := fun a => by
       have := Q.commutes (MvPolynomial.C a)
@@ -80,7 +88,7 @@ theorem secZ_zero_eq : secZ Xo c 0 = sec Xo c 0 0 := by
   cases i <;> rfl
 
 theorem exists_eq_smul_idem {σ : c.F →+* ℂ} (U : Unf Xo c σ r) (hσ : GoodEmb c σ) (hU : IsUnf U)
-    (hF : FnAlgClosed Xo c) {Z : Comp Xo c} {g : Rul Xo c} (hg : g ∈ secZ Xo c 0) (hs : g ∈ suppOn Z) {b : ℝ}
+    (hF : FnAlgClosed (Xo := Xo) (c := c)) {Z : Comp Xo c} {g : Rul Xo c} (hg : g ∈ secZ Xo c 0) (hs : g ∈ suppOn Z) {b : ℝ}
     (hb : ∀ z ∈ framesOn U Z, ‖rdU U g z.1 z.2‖ = b) : ∃ a : c.F, g = a • idem Z := by
   obtain ⟨hL, -, h, hA⟩ := GlobalTheory.Reg.evLaws_genFr_atlas E H Dw l Xo c
   obtain ⟨⟨P₀⟩, hP⟩ := GlobalTheory.GenericReading.embedding_read_at_frame E H Dw l Xo c σ r U hσ hU h Z
@@ -120,7 +128,7 @@ theorem exists_eq_smul_idem {σ : c.F →+* ℂ} (U : Unf Xo c σ r) (hσ : Good
 
 variable {U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r} {x : ℝ}
 
-theorem ConstSec.exists_eq_smul (hU : ∀ σ, GoodEmb c σ → IsUnf (U σ)) (hF : FnAlgClosed Xo c) {Z : Comp Xo c}
+theorem ConstSec.exists_eq_smul (hU : ∀ σ, GoodEmb c σ → IsUnf (U σ)) (hF : FnAlgClosed (Xo := Xo) (c := c)) {Z : Comp Xo c}
     {la : Weight Dw} {δ : HeightOneSpectrum (𝓞 c.F) → ℝ} (s t : ConstSec U x Z la δ) :
     ∃ (a : c.F) (ha : a ≠ 0), t = s.smul a ha := by
   have hσ := goodEmb_goodOf c c.F.val.toRingHom
@@ -133,10 +141,15 @@ theorem ConstSec.exists_eq_smul (hU : ∀ σ, GoodEmb c σ → IsUnf (U σ)) (hF
     calc t.sig = t.sig * s.inv * s.sig := by
           rw [mul_assoc, mul_comm s.inv, s.mul_inv, mul_comm, t.idem_sig]
       _ = a • s.sig := by rw [ha', smul_mul_assoc, s.idem_sig]
-  have h0 : a ≠ 0 := fun h0 => t.sig_ne_zero (by rw [h, h0, zero_smul])
+  have h0 : a ≠ 0 := by
+    intro h0
+    apply t.sig_ne_zero
+    rw [h, h0]
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact zero_smul c.F s.sig
   exact ⟨a, h0, ConstSec.ext h⟩
 
-theorem ConstSec.deg_eq (hU : ∀ σ, GoodEmb c σ → IsUnf (U σ)) (hF : FnAlgClosed Xo c) {Z : Comp Xo c}
+theorem ConstSec.deg_eq (hU : ∀ σ, GoodEmb c σ → IsUnf (U σ)) (hF : FnAlgClosed (Xo := Xo) (c := c)) {Z : Comp Xo c}
     {la : Weight Dw} {δ : HeightOneSpectrum (𝓞 c.F) → ℝ} (s t : ConstSec U x Z la δ) : t.deg = s.deg := by
   obtain ⟨a, ha, rfl⟩ := ConstSec.exists_eq_smul hU hF s t
   exact ConstSec.deg_smul a ha s

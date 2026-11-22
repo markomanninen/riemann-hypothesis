@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.UpperBounds.FreeBallIffOfDimXEqZero
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.MulSgnMatMulConjTranspose
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsSmoothStepSharpSlope
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ContDiffAtLogMinorProd
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OrthoStatementPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfS
-import ReciprocityTheory.L2DbarEstimates.SkodaWeights.LeviVA
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.UpperBounds.FreeBallIffOfDimXEqZero
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.MulSgnMatMulConjTranspose
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsSmoothStepSharpSlope
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ContDiffAtLogMinorProd
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OrthoStatementPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfS
+public import ReciprocityTheory.L2DbarEstimates.SkodaWeights.LeviVA
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates MeasureTheory Topology
 open scoped ContDiff ENNReal Matrix
@@ -143,8 +147,8 @@ theorem rhX_lower {r : ℕ} (X : Data E r) {x : Frame X.Ψ r} (hx : x ∈ X.dom)
   have := hy (OntoS.dom_rmul X hyd hb') x2 h2
   rwa [rhX_rmul _ _ hb', rhX_rmul _ _ hb'] at this
 
-open Classical in
 
+open Classical in
 noncomputable def poleFn {r : ℕ} (X : Data E r) (G : Subgroup (GL (Fin r) E)) (x0 : Frame X.Ψ r) (ρ0 : ℝ)
     (k : ℝ → ℝ) (x : Frame X.Ψ r) : ℝ :=
   if h : ∃ γ, γ ∈ G ∧ rhX X x0 (lact γ x) < ρ0 then k (rhX X x0 (lact h.choose x)) else 0
@@ -155,7 +159,7 @@ variable {r : ℕ} {X : Data E r} {G : Subgroup (GL (Fin r) E)} {x0 x : Frame X.
 theorem poleFn_eq (hG : FreeBall X G x0 ρ0) (hx : x ∈ X.dom) {γ : GL (Fin r) E} (hγ : γ ∈ G)
     (h : rhX X x0 (lact γ x) < ρ0) : poleFn X G x0 ρ0 k x = k (rhX X x0 (lact γ x)) := by
   have hex : ∃ γ, γ ∈ G ∧ rhX X x0 (lact γ x) < ρ0 := ⟨γ, hγ, h⟩
-  rw [poleFn, dif_pos hex, hG.unique hex.choose_spec.1 hγ hx hex.choose_spec.2 h]
+  rw [poleFn, dite_eq_left hex, hG.unique hex.choose_spec.1 hγ hx hex.choose_spec.2 h]
 
 theorem poleFn_eq_zero {a : ℝ} (hk : ∀ u, a ≤ u → k u = 0) (h : ∀ γ ∈ G, a ≤ rhX X x0 (lact γ x)) :
     poleFn X G x0 ρ0 k x = 0 := by
@@ -178,7 +182,7 @@ theorem poleFn_inv (hG : FreeBall X G x0 ρ0) {γ : GL (Fin r) E} (hγ : γ ∈ 
   · have hex' : ¬ ∃ g, g ∈ G ∧ rhX X x0 (lact g (lact γ (rmul x b))) < ρ0 := by
       rintro ⟨g, hg, h⟩
       exact hex ⟨g * γ, G.mul_mem hg hγ, by rwa [← e]⟩
-    rw [poleFn, poleFn, dif_neg hex, dif_neg hex']
+    rw [poleFn, poleFn, dite_eq_right hex, dite_eq_right hex']
 
 theorem poleFn_local (h0 : IsOrth X x0) (hG : FreeBall X G x0 ρ0) {a : ℝ} (ha : a < ρ0)
     (hk : ∀ u, a ≤ u → k u = 0) {x1 : Frame X.Ψ r} {z : V (nd X)} (hz : z ∈ OmF X x1) :

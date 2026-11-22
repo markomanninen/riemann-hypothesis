@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.LevelStarExponents Formalism.MainNotions Formalism.MainNotions.Inhab GlobalTheory.EX NumberField
 
@@ -75,7 +79,7 @@ theorem rank_basic_bounds : ∀ eps : ℝ, 0 < eps → eps < 1 / 52 → ∃ x0 :
   have mi0 : (0 : ℝ) ≤ (R.m : ℝ)⁻¹ := by positivity
   have k1 : (1 : ℝ) ≤ R.k := by exact_mod_cast (by omega : 1 ≤ R.k)
   have hf1 : 1 ≤ R.f := by
-    have : 0 < R.f := by unfold Ranks.f Ranks.n; positivity
+    have : R.m ≤ R.f := R.m_le_f
     omega
   have hf1' : (1 : ℝ) ≤ R.f := by exact_mod_cast hf1
   have hfr := rank_mul_le hxp r0 hf hr

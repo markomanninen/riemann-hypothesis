@@ -1,11 +1,15 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SupportPhiZeroSubset
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MajorantEstimate
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FixedPointsGramVector
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.IsoRightInv
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.ZhatNormLinearBound
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.NsqMulVecLe
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.UnitaryWeylCompact
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DensityLemma.PointwiseBoundHolds
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SupportPhiZeroSubset
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MajorantEstimate
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FixedPointsGramVector
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.IsoRightInv
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.ZhatNormLinearBound
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.NsqMulVecLe
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.UnitaryWeylCompact
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DensityLemma.PointwiseBoundHolds
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.SmoothExtensionClosedSet
 
@@ -98,7 +102,7 @@ theorem isoExpl (H : Matrix (Fin n) (Fin n) ℂ) (m : ι → Fin n → ℂ) (hH 
 
 theorem nsq_cont : Continuous fun x : Fin n → ℂ => nsq x := by
   show Continuous fun x : Fin n → ℂ => ∑ i, Complex.normSq (x i)
-  exact continuous_finset_sum _ fun i _ => Complex.continuous_normSq.comp (continuous_apply i)
+  exact continuous_finsetSum _ fun i _ => Complex.continuous_normSq.comp (continuous_apply i)
 
 theorem eN_eq_sqrt (x : Fin n → ℂ) : eN x = Real.sqrt (nsq x) := by
   rw [eN, EuclideanSpace.norm_eq]
@@ -115,9 +119,9 @@ theorem gramOf_cont {X : Type*} [TopologicalSpace X] (H : Matrix (Fin n) (Fin n)
     continuousOn_pi.1 (continuousOn_pi.1 hm i) l
   refine continuousOn_pi.2 fun i => continuousOn_pi.2 fun j => ?_
   simp only [gramOf, Matrix.of_apply, herm, dotProduct, Matrix.mulVec, Pi.star_apply]
-  refine continuousOn_finset_sum _ fun l _ => ?_
+  refine continuousOn_finsetSum _ fun l _ => ?_
   refine ((hmi i l).star).mul ?_
-  exact continuousOn_finset_sum _ fun q _ => continuousOn_const.mul (hmi j q)
+  exact continuousOn_finsetSum _ fun q _ => continuousOn_const.mul (hmi j q)
 
 theorem isoUnif {X : Type*} [TopologicalSpace X] (H : Matrix (Fin n) (Fin n) ℂ) (hH : Hᴴ = H)
     (hHH : H * H = 1) (m : X → ι → Fin n → ℂ) (Kx : Set X) (hK : IsCompact Kx) (hm : ContinuousOn m Kx)
@@ -137,10 +141,10 @@ theorem isoUnif {X : Type*} [TopologicalSpace X] (H : Matrix (Fin n) (Fin n) ℂ
     have h3 : ContinuousOn (fun x => ((gramOf H (m x)).det)⁻¹ • (gramOf H (m x)).adjugate) Kx := h1.smul h2
     exact h3.congr fun x _ => e x
   have hA : ContinuousOn (fun x => ∑ j, ∑ k, ‖(gramOf H (m x))⁻¹ j k‖) Kx :=
-    continuousOn_finset_sum _ fun j _ => continuousOn_finset_sum _ fun k _ =>
+    continuousOn_finsetSum _ fun j _ => continuousOn_finsetSum _ fun k _ =>
       continuous_norm.comp_continuousOn (continuousOn_pi.1 (continuousOn_pi.1 hinv j) k)
   have hR : ContinuousOn (fun x => ∑ i, eN (m x i)) Kx :=
-    continuousOn_finset_sum _ fun i _ => eN_cont.comp_continuousOn (continuousOn_pi.1 hm i)
+    continuousOn_finsetSum _ fun i _ => eN_cont.comp_continuousOn (continuousOn_pi.1 hm i)
   have hc : ContinuousOn (fun x => cIso (Fintype.card ι) (∑ j, ∑ k, ‖(gramOf H (m x))⁻¹ j k‖)
       (∑ i, eN (m x i))) Kx := by
     simp only [cIso]

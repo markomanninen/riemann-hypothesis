@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsMulCommutativeCentRealUJ
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsMulCommutativeCentRealUJ
+
+@[expose] public section
 
 open Matrix Polynomial
 open GlobalTheory.ClassParam (krylov krylov_map exists_cyclic_field)
@@ -60,8 +64,5 @@ theorem conj_of_charpoly_eq_of_separable : ∀ (R : Type) [CommRing R], Set.Fini
         simp [mul_assoc]
     _ = γ * ↑a * ↑b⁻¹ := by rw [h1]
     _ = γ * (↑a * ↑b⁻¹) := by rw [mul_assoc]
-
-example : ∀ (R : Type) [CommRing R], Set.Finite {I : Ideal R | I.IsMaximal} → ∀ (n : ℕ) (γ δ : Matrix (Fin n) (Fin n) R), γ.charpoly = δ.charpoly → γ.charpoly.Separable → ∃ u : GL (Fin n) R, (u : Matrix (Fin n) (Fin n) R) * δ = γ * u :=
-  conj_of_charpoly_eq_of_separable
 
 end GlobalTheory.SemilocalConj

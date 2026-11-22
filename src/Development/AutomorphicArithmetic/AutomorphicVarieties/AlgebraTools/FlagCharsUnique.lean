@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.SepChars
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsExtraBis
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.SepChars
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsExtraBis
+
+@[expose] public section
 
 open Polynomial Matrix IsLocalRing TensorProduct
 
@@ -73,8 +77,8 @@ theorem UpperTheory.V.AlgebraTools.flag_chars_unique :
       · rw [Matrix.add_apply, a1 i j h, b1 i j h, add_zero]
       · rw [Matrix.add_apply, a2 i j h, b2 i j h, add_zero]
       · rw [add_mul, mul_add, a3, b3]
-      · rw [Matrix.add_apply, map_add, a4, b4]
-      · rw [Matrix.add_apply, Matrix.add_apply, map_add, map_add, a5, b5]
+      · rw [Matrix.add_apply, map_add (f := _), a4, b4]
+      · rw [Matrix.add_apply, Matrix.add_apply, map_add (f := _), map_add (f := _), a5, b5]
     | smul c a ha =>
       obtain ⟨P, P', a1, a2, a3, a4, a5⟩ := ha
       refine ⟨c • P, c • P', fun i j h => ?_, fun i j h => ?_, ?_, fun i => ?_, fun i => ?_⟩

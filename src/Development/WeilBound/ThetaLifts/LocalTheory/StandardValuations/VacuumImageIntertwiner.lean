@@ -1,11 +1,15 @@
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.SplitDict
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.LocalDef
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.VaceigenDual
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.LmOfLinBar
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDictAd
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDictMod
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDictSec
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfActs
+module
+
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.SplitDict
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.LocalDef
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.VaceigenDual
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.LmOfLinBar
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDictAd
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDictMod
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDictSec
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfActs
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -100,43 +104,6 @@ theorem reads_chg {ι : ((Fin n × Fin d → Fv F v) → ℂ) →ₗ[ℂ] (Matri
   refine ⟨φ₁, h1, h2, funext fun Y => ?_⟩
   rw [chg_apply, h3, hS]
   rfl
-
-theorem exists_cond (hψ : IsStd ψ) (v : Pl F) : ∃ δ : (Fv F v)ˣ, ∀ x : Fv F v,
-    (∀ y ∈ v.adicCompletionIntegers F, psiLoc ψ v (x * y) = 1) ↔ δ.1 * x ∈ v.adicCompletionIntegers F := by
-  have e : ∀ (α : Af F) (x : Fv F v), α * singleFin v x = singleFin v (x * α v) := fun α x => by
-    apply af_ext
-    intro u
-    by_cases hu : u = v
-    · subst hu
-      rw [map_mul, evalV_singleFin_self, evalV_singleFin_self, mul_comm]
-      rfl
-    · rw [map_mul, evalV_singleFin_ne hu, evalV_singleFin_ne hu, mul_zero]
-  have s1 : ∀ x : Fv F v, singleFin v x v = x := fun x => evalV_singleFin_self v x
-  have s0 : ∀ (x : Fv F v) u, u ≠ v → singleFin v x u = 0 := fun x u hu => evalV_singleFin_ne hu x
-  have h1 : ∀ x : Fv F v, (∀ y ∈ v.adicCompletionIntegers F, psiLoc ψ v (x * y) = 1) ↔
-      x ∈ GlobalTheory.Idele.localIdeal v (GlobalTheory.StdDual.codiff F) := fun x => by
-    have := GlobalTheory.SplitUnram.mem_adelicIdeal_codiff_iff hψ.1 (GlobalTheory.PsiNontriv.isStd_fin_rat hψ) (singleFin v x)
-    refine ⟨fun H => ?_, fun H y hy => ?_⟩
-    · have h2 := this.2 (fun α hα => by rw [e]; exact H _ (hα v)) v
-      rwa [s1] at h2
-    · have h2 := this.1 (fun u => by
-        by_cases hu : u = v
-        · subst hu; rw [s1]; exact H
-        · rw [s0 x u hu]; exact zero_mem _) (singleFin v y) (fun u => by
-        by_cases hu : u = v
-        · subst hu; rw [s1]; exact hy
-        · rw [s0 y u hu]; exact zero_mem _)
-      rwa [e, s1] at h2
-  obtain ⟨π, hπ⟩ := v.valuation_exists_uniformizer F
-  have hx : Valued.v (algebraMap F (Fv F v) (π ^ FractionalIdeal.count F v (GlobalTheory.StdDual.codiff F))) =
-      WithZero.exp (-FractionalIdeal.count F v (GlobalTheory.StdDual.codiff F)) := by
-    rw [GlobalTheory.Idele.valued_algebraMap, map_zpow₀, hπ, ← WithZero.exp_zsmul, smul_eq_mul, mul_neg, mul_one]
-  have hne : algebraMap F (Fv F v) (π ^ FractionalIdeal.count F v (GlobalTheory.StdDual.codiff F)) ≠ 0 := fun h0 => by
-    rw [h0, map_zero] at hx
-    exact WithZero.exp_ne_zero hx.symm
-  refine ⟨(Units.mk0 _ hne)⁻¹, fun x => ?_⟩
-  rw [h1, GlobalTheory.Idele.mem_localIdeal_iff GlobalTheory.StdDual.codiff_ne_zero, HeightOneSpectrum.mem_adicCompletionIntegers,
-    Units.val_inv_eq_inv_val, Units.val_mk0, map_mul, map_inv₀, hx, inv_mul_le_one₀ WithZero.exp_pos]
 
 theorem comp_comp (hσ : IsCMExt F E σ) (t : E →ₐ[F] Fv F v) : (t.comp σ).comp σ = t :=
   AlgHom.ext fun x => congrArg t (Vac.sigma_sigma hσ x)
@@ -283,11 +250,15 @@ theorem hTens_zero (h : IsSec σ t sec) {u u' : Matrix (Fin n) (Fin d) (AE F E)}
   refine h.ext _ (fun a ha => ?_) ?_ ?_
   · simp only [hTens, Finset.smul_sum, ← smul_mul_assoc, fun i j => kd_at_matrix.1 hu i j a ha, zero_mul, Finset.sum_const_zero]
   · rcases h0 with h0 | h0
-    · simp only [hTens, map_sum, map_mul, z h0.1, zero_mul, Finset.sum_const_zero]
-    · simp only [hTens, map_sum, map_mul, (h.conj _).1, z h0.2, mul_zero, Finset.sum_const_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [hTens, map_sum, map_mul, z h0.1, zero_mul, Finset.sum_const_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [hTens, map_sum, map_mul, (h.conj _).1, z h0.2, mul_zero, Finset.sum_const_zero]
   · rcases h0 with h0 | h0
-    · simp only [hTens, map_sum, map_mul, (h.conj _).2, z h0.2, mul_zero, Finset.sum_const_zero]
-    · simp only [hTens, map_sum, map_mul, z h0.1, zero_mul, Finset.sum_const_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [hTens, map_sum, map_mul, (h.conj _).2, z h0.2, mul_zero, Finset.sum_const_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [hTens, map_sum, map_mul, z h0.1, zero_mul, Finset.sum_const_zero]
 
 theorem vac_ind {B : Base F E} (hB : B.IsGood σ) {r s r' s' : ℕ} (hX : X.IsHerm σ B r s) (hW : W.IsSkew σ B r' s') {φ}
     (hφ : M.IsVac B.ψ v φ) {π₁ π₀ : AE F E →+* Fv F v} {co ι} (hι : M.IsLin B.ψ π₁ π₀ co ι)

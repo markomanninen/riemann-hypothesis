@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CountLow
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentChainDegreeEven
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CountLow
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentChainDegreeEven
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.VacOfShape
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleUnif
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.VacOfShape
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleUnif
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ def RebaseAll (D : D7) : Prop :=
 
 def LatAll (D : D7) : Prop :=
   ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (ι : Type) (p : ι → SplitPt D k) (I : List ι) (P : Pl D → Prop), Places p I P → ∀ (n : Type) [Fintype n] [DecidableEq n] (S : HSp D) (α : ∀ i, Frame (p i) S n) (L : Lat S), IsSelfDualC S L →
-    ∀ Λ : ι → Submodule 𝒪[k] (n → k), (∀ i, (Λ i).IsLattice k) →
+    ∀ Λ : ι → Submodule 𝒪[k] (n → k), (∀ i, (Λ i).IsFullLattice k) →
     ∃ M : Lat S, IsSelfDualC S M ∧ (∀ i, (α i).IsLat M (Λ i)) ∧ ∀ x, ¬ P x → latV S M (· = x) = latV S L (· = x)
 
 def ExtAll (D : D7) : Prop :=
@@ -121,7 +125,7 @@ def LastTAll (D : D7) : Prop :=
     ∃ ε : ι → 𝓀[k]ˣ, ∀ (α : ∀ i, Frame (p i) A n') (α₀ : ∀ i, Frame (p i) V₀ (n' ⊕ Fin 1)) (β : ∀ i, Frame (p i) S n)
       (γ : ∀ i, Frame (p i) T n'') (γ₀ : ∀ i, Frame (p i) X (n'' ⊕ Fin 1)),
       (∀ i, IsSumFrame o ζ (α i) (α₀ i) ∧ IsSumFrame o'' ζ₀ (γ i) (γ₀ i)) →
-      ∀ (Q : ι → Pair k n) (Λ : ι → Submodule 𝒪[k] (n'' → k)) [∀ i, (Λ i).IsLattice k] (Ψ : ι → Matrix n n' k → ℂ) (LA : Lat A)
+      ∀ (Q : ι → Pair k n) (Λ : ι → Submodule 𝒪[k] (n'' → k)) [∀ i, (Λ i).IsFullLattice k] (Ψ : ι → Matrix n n' k → ℂ) (LA : Lat A)
         (LS : Lat S) (LT : Lat T) (LX : Lat X) (L₁ : Lat V₀), IsSelfDualC A LA → IsSelfDualC S LS → IsSelfDualC T LT →
         IsSelfDualC X LX → IsSelfDualC V₀ L₁ → (∀ i, (β i).IsLat LS (Q i).lat ∧ (γ i).IsLat LT (Λ i)) →
       ∀ c c', Reps ψ α β LA LS Ψ I P c → Reps ψ β γ₀ LS LX (fun i => phiOne (ε i • Q i) (lastPair q (Λ i))) I P c' →

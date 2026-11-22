@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.BasisExtend
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.BasisExtend
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0.FractionFieldVariableLift
 
@@ -21,7 +25,7 @@ theorem clear_denoms (P : MvPolynomial σ (FractionRing A)) :
     obtain ⟨b₁, p₁, hb₁, h₁⟩ := hp
     obtain ⟨b₂, p₂, hb₂, h₂⟩ := hq
     refine ⟨b₁ * b₂, C b₂ * p₁ + C b₁ * p₂, mul_ne_zero hb₁ hb₂, ?_⟩
-    simp only [_root_.map_add, _root_.map_mul, MvPolynomial.map_C, h₁, h₂]
+    simp only [_root_.map_add (f := _), _root_.map_mul, MvPolynomial.map_C, h₁, h₂]
     ring
   next p n hp =>
     obtain ⟨b, q, hb, h⟩ := hp
@@ -43,8 +47,8 @@ theorem toFracY_injective : Function.Injective (toFracY A σ) := by
 
 set_option synthInstance.maxHeartbeats 400000 in
 theorem isFractionRing_toFracY :
-    letI := (toFracY A σ).toAlgebra
-    IsFractionRing (MvPolynomial σ A) (FractionRing (MvPolynomial σ (FractionRing A))) := by
+    @IsFractionRing (MvPolynomial σ A) _ (FractionRing (MvPolynomial σ (FractionRing A))) _
+      (toFracY A σ).toAlgebra := by
   letI := (toFracY A σ).toAlgebra
   refine ⟨?_, ?_, ?_⟩
   · intro y
@@ -120,21 +124,22 @@ private theorem linearIndependent_algebraMap_C_fractionRing
     rw [_root_.map_mul, ← liftY_algebraMap, ha j, _root_.map_mul, hmap, mul_assoc]
   have hsum : ∑ j, MvPolynomial.map (algebraMap L E) (a j) * MvPolynomial.C (e j) = 0 := by
     apply IsFractionRing.injective (MvPolynomial σ E) (FractionRing (MvPolynomial σ E))
-    rw [_root_.map_zero, _root_.map_sum, Finset.sum_congr rfl (fun j _ => key j), ← Finset.mul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [_root_.map_zero, _root_.map_sum, Finset.sum_congr rfl (fun j _ => key j), ← Finset.mul_sum,
       hg', mul_zero]
-  have hcoeff : ∀ m j, MvPolynomial.coeff m (a j) = 0 := by
+  have hcoeff : ∀ m j, AddMonoidAlgebra.coeff (a j) m = 0 := by
     intro m
     have hsum' : ∑ j, MvPolynomial.C (e j) * MvPolynomial.map (algebraMap L E) (a j) = 0 := by
       simpa only [mul_comm] using hsum
-    have h0 := congrArg (MvPolynomial.coeff m) hsum'
+    have h0 := congrArg (AddMonoidAlgebra.coeff · m) hsum'
     simp only [MvPolynomial.coeff_sum, MvPolynomial.coeff_C_mul, MvPolynomial.coeff_map,
-      MvPolynomial.coeff_zero] at h0
-    have h1 : ∑ j, MvPolynomial.coeff m (a j) • e j = 0 := by
-      simpa only [Algebra.smul_def, mul_comm] using h0
-    exact Fintype.linearIndependent_iff.mp he (fun j => MvPolynomial.coeff m (a j)) h1
+      AddMonoidAlgebra.coeff_zero] at h0
+    have h1 : ∑ j, AddMonoidAlgebra.coeff (a j) m • e j = 0 := by
+      simpa [Algebra.smul_def, mul_comm] using h0
+    exact Fintype.linearIndependent_iff.mp he (fun j => AddMonoidAlgebra.coeff (a j) m) h1
   have hai : a i = 0 := by
     ext m
-    rw [hcoeff m i, MvPolynomial.coeff_zero]
+    simpa using hcoeff m i
   have h2 := ha i
   rw [hai, _root_.map_zero] at h2
   have hβ : algebraMap (MvPolynomial σ L) (FractionRing (MvPolynomial σ L)) (b : MvPolynomial σ L) ≠ 0 :=

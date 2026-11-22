@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleMemIffPointsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RestrPreservesHomology
+module
+
+public import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleMemIffPointsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RestrPreservesHomology
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -28,11 +32,11 @@ theorem prodW_compatible (W : Scheme.{0}) :
   have hc := hx (f₁ ≫ prod.snd) (f₂ ≫ prod.snd) hg₁ hg₂ hsnd
   calc ℱ.obj.map f₁.op (x g₁ hg₁)
       = ℱ.obj.map u.op (ℱ.obj.map ((prodW W).map (f₁ ≫ prod.snd)).op (x g₁ hg₁)) := by
-        rw [← FunctorToTypes.map_comp_apply, ← op_comp, ← k₁]
+        rw [← Functor.map_comp_apply, ← op_comp, ← k₁]
     _ = ℱ.obj.map u.op (ℱ.obj.map ((prodW W).map (f₂ ≫ prod.snd)).op (x g₂ hg₂)) :=
         congrArg _ hc
     _ = ℱ.obj.map f₂.op (x g₂ hg₂) := by
-        rw [← FunctorToTypes.map_comp_apply, ← op_comp, ← k₂]
+        rw [← Functor.map_comp_apply, ← op_comp, ← k₂]
 
 set_option backward.isDefEq.respectTransparency false in
 theorem prodW_cover (W : Scheme.{0}) :
@@ -69,11 +73,6 @@ instance (W : Scheme.{0}) : (pw R W).Additive where
 variable {R}
 
 abbrev Bc (W : Scheme.{0}) (I : Cx R) : Cx R := ((pw R W).mapHomologicalComplex _).obj I
-
-instance (W : Scheme.{0}) (I : Cx R) [I.IsStrictlyGE 0] : (Bc W I).IsStrictlyGE 0 := by
-  rw [CochainComplex.isStrictlyGE_iff]
-  intro i hi
-  exact (pw R W).map_isZero (I.isZero_of_isStrictlyGE 0 i hi)
 
 def Supp (Q : Scheme.{0} → Prop) (P : PSh) : Prop := ∀ U : Scheme.{0}, Nonempty (P.obj (op U)) → Q U
 

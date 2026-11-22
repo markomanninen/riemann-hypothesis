@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTypeGroupBlockLift
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GoodIdempotentFixesOfOnlySeriesOfLabelActs
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroInertia
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplitPlaceGoodSignature
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsSplitPlaceEqFixedTypePrimePlace
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ConjugateSplitPlaceEqConjugatePlaceAndEmbedding
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsLevelCharacterAtConjugateSplitPlace
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EquivContra
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EqOrIsConjPlaceOfOverSplitPlace
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CharpolyDualTamePart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTypeGroupBlockLift
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GoodIdempotentFixesOfOnlySeriesOfLabelActs
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroInertia
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplitPlaceGoodSignature
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsSplitPlaceEqFixedTypePrimePlace
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ConjugateSplitPlaceEqConjugatePlaceAndEmbedding
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsLevelCharacterAtConjugateSplitPlace
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EquivContra
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EqOrIsConjPlaceOfOverSplitPlace
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CharpolyDualTamePart
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain Polynomial GlobalTheory.HeightCounting GlobalTheory.RowTie GlobalTheory.SplitRead GlobalTheory.NPin GlobalTheory.PendOf
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -26,8 +30,8 @@ theorem val_lt_iff (c : Ω ≃+* Ω) (hc : ∀ y, y ∈ A ↔ c y ∈ A') (y : �
   rw [valuation_lt_one_iff', valuation_lt_one_iff', ← hc, ← map_inv₀, ← hc,
     map_eq_zero_iff _ c.injective]
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem normV_eq (s : E ≃+* E) (c : Ω ≃+* Ω)
     (hs : ∀ x : E, c (algebraMap E Ω x) = algebraMap E Ω (s x)) (hc : ∀ y, y ∈ A ↔ c y ∈ A')
     (h : IsPlaceOver A w) (h' : IsPlaceOver A' w') : normV w' = normV w := by
@@ -41,8 +45,8 @@ theorem normV_eq (s : E ≃+* E) (c : Ω ≃+* Ω)
     exact (Ideal.map_comap_of_surjective (t : 𝓞 E →+* 𝓞 E) t.surjective _).symm
   exact (Nat.card_congr (Ideal.quotientEquiv w.asIdeal w'.asIdeal t h2).toEquiv).symm
 
-open Pointwise in
 
+open Pointwise in
 theorem mem_Ine_of (c : Ω ≃+* Ω) (hc : ∀ y, y ∈ A ↔ c y ∈ A') {γ γ' : G E Ω}
     (hγ : ∀ y, γ' (c y) = c (γ y)) (h : γ ∈ Ine (F := E) A) : γ' ∈ Ine (F := E) A' := by
   refine ⟨?_, fun x hx => ?_⟩
@@ -63,8 +67,8 @@ theorem mem_Ine_iff (c : Ω ≃+* Ω) (hc : ∀ y, y ∈ A ↔ c y ∈ A') {γ �
   ⟨mem_Ine_of c.symm (fun y => by rw [hc, c.apply_symm_apply])
     (fun y => by rw [eq_comm, c.symm_apply_eq, ← hγ, c.apply_symm_apply]), mem_Ine_of c hc hγ⟩
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem mem_Wild_iff (c : Ω ≃+* Ω) (hc : ∀ y, y ∈ A ↔ c y ∈ A') {γ γ' : G E Ω}
     (hγ : ∀ y, γ' (c y) = c (γ y)) : γ' ∈ Wild E A' ↔ γ ∈ Wild E A := by
   rw [mem_Wild, mem_Wild, c.surjective.forall]
@@ -72,8 +76,8 @@ theorem mem_Wild_iff (c : Ω ≃+* Ω) (hc : ∀ y, y ∈ A ↔ c y ∈ A') {γ 
   rw [map_ne_zero_iff _ c.injective, hγ, ← val_lt_iff c hc, map_sub c,
     map_div₀ c, map_one c]
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem exists_conj (s : E ≃+* E) (c : Ω ≃+* Ω)
     (hs : ∀ x : E, c (algebraMap E Ω x) = algebraMap E Ω (s x)) (γ : G E Ω) :
     ∃ γ' : G E Ω, ∀ y, γ' (c y) = c (γ y) := by
@@ -85,8 +89,8 @@ theorem exists_conj (s : E ≃+* E) (c : Ω ≃+* Ω)
   · show c (γ (c.symm _)) = _
     rw [c.symm_apply_apply]
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem exists_conj' (s : E ≃+* E) (c : Ω ≃+* Ω)
     (hs : ∀ x : E, c (algebraMap E Ω x) = algebraMap E Ω (s x)) (γ' : G E Ω) :
     ∃ γ : G E Ω, ∀ y, γ' (c y) = c (γ y) := by

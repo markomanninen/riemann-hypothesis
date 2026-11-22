@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoDualGen
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoAdicCont
-import ReciprocityTheory.Hypotheses.GalCoh
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoDualGen
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoAdicCont
+public import ReciprocityTheory.Hypotheses.GalCoh
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2
 open scoped Matrix
 
@@ -80,10 +85,10 @@ theorem contAction_scal (c : Coef l) {Γ : Type} [Group Γ] [TopologicalSpace Γ
 
 end GlobalTheory.Ord2.LocCharPerfect
 
+
 open GlobalTheory.Ord2.LocCharPerfect UpperTheory.V.X in
 attribute [local instance] levZMod in
 set_option maxHeartbeats 1000000 in
-
 theorem GlobalTheory.Ord2.LocCharPerfect.perfect : LocalFiniteness → LocalTateDuality → ∀ (l : ℕ) [Fact l.Prime] (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] (c : Coef l) (A : ValuationSubring Ω), OverL l A → ∀ θ θ' : ↥(Dec (F := ℚ) A) →* c.Oˣ, Continuous (fun g => ((θ g : c.Oˣ) : c.O)) → Continuous (fun g => ((θ' g : c.Oˣ) : c.O)) → θ * θ' = (UpperTheory.V.Base.chiO ℚ Ω l c.O).comp (Dec (F := ℚ) A).subtype → ∀ n : ℕ, 1 ≤ n → ∀ b : ↥(Dec (F := ℚ) A) → c.O, Continuous b → (∀ s t, ((l : ℕ) : c.O) ^ n ∣ b (s * t) - (b s + ((θ s : c.Oˣ) : c.O) * b t)) → (∀ a : ↥(Dec (F := ℚ) A) → c.O, Continuous a → (∀ s t, ((l : ℕ) : c.O) ^ n ∣ a (s * t) - (a s + ((θ' s : c.Oˣ) : c.O) * a t)) → ∃ u : ↥(Dec (F := ℚ) A) → c.O, Continuous u ∧ ∀ s t, ((l : ℕ) : c.O) ^ n ∣ b s * (((θ' s : c.Oˣ) : c.O) * a t) - ((((θ s : c.Oˣ) : c.O) * ((θ' s : c.Oˣ) : c.O)) * u t - u (s * t) + u s)) → ∃ x : c.O, ∀ s, ((l : ℕ) : c.O) ^ n ∣ b s - (((θ s : c.Oˣ) : c.O) * x - x) := by
   intro hF hT l _ Ω _ _ _ c A hA θ θ' hθ hθ' hθθ n hn b hb hbc hcup
   classical
@@ -125,16 +130,16 @@ theorem GlobalTheory.Ord2.LocCharPerfect.perfect : LocalFiniteness → LocalTate
   have hbsc : Continuous bs := by
     refine ((continuous_of_discreteTopology (f := fun y : Lev ((l : c.O) ^ n) =>
       TDual.mk (φ₀ ∘ₗ smulZ c n (sec y)))).comp (hmk.comp hb)).congr fun s => ?_
-    refine TDual.ext fun m => ?_
+    refine DFunLike.ext _ _ fun m => ?_
     show φ₀ (sec (Lev.mk ((l : c.O) ^ n) (b s)) • m) = φ₀ (b s • m)
     have hd : (l : c.O) ^ n ∣ sec (Lev.mk ((l : c.O) ^ n) (b s)) - b s := by
       rw [← Lev.mk_eq_zero, map_sub, hsec, sub_self]
     rw [smul_congr c n hd m]
   have hz : bs ∈ Z1 ((twDual χ rho).comp (MonoidHom.id _)) := by
     refine ⟨hbsc, fun s t => ?_⟩
-    refine TDual.ext fun m => ?_
+    refine DFunLike.ext _ _ fun m => ?_
     show φ₀ (b (s * t) • m) = φ₀ (b s • m) + ((χ s : (ZMod (l ^ n))ˣ) : ZMod (l ^ n)) * φ₀ (b t • rho s⁻¹ m)
-    rw [key, ← map_add, ← add_smul, smul_congr c n (hbc s t) m]
+    rw [key, ← map_add (f := _), ← add_smul, smul_congr c n (hbc s t) m]
   obtain ⟨-, -, hbij, -, -⟩ := hT ℚ Ω l n (Lev ((l : c.O) ^ n)) A rho v (by omega) hv hc
   have h0 : (Submodule.Quotient.mk ⟨bs, hz⟩ : H1 ((twDual χ rho).comp (MonoidHom.id _))) = 0 := by
     refine hbij.1 (Eq.trans ?_ (LinearMap.map_zero _).symm)
@@ -146,7 +151,7 @@ theorem GlobalTheory.Ord2.LocCharPerfect.perfect : LocalFiniteness → LocalTate
       intro s t
       have hm : Lev.mk ((l : c.O) ^ n) (((θ' s : c.Oˣ) : c.O) * at' t) = ((θ' s : c.Oˣ) : c.O) • Lev.mk ((l : c.O) ^ n) (at' t) := by
         rw [← smul_eq_mul, map_smul]
-      rw [← Lev.mk_eq_zero, map_sub, map_add, hm, hat, hat, hat, y.2.2 s t]
+      rw [← Lev.mk_eq_zero, map_sub, map_add (f := _), hm, hat, hat, hat, y.2.2 s t]
       exact sub_self _
     obtain ⟨u, hu, hdiv⟩ := hcup at' hac hacoc
     change (Submodule.Quotient.mk (cupCocycleZ1Z1 _ _ _ _ _ _ _ _ _) : H2 _) = 0
@@ -157,7 +162,7 @@ theorem GlobalTheory.Ord2.LocCharPerfect.perfect : LocalFiniteness → LocalTate
     have e1 : (((θ g : c.Oˣ) : c.O) * ((θ' g : c.Oˣ) : c.O)) • Lev.mk ((l : c.O) ^ n) (u h) -
         Lev.mk ((l : c.O) ^ n) (u (g * h)) + Lev.mk ((l : c.O) ^ n) (u g) =
         b g • ((θ' g : c.Oˣ) : c.O) • y.1 h := by
-      rw [← hat h, ← map_smul, ← map_smul, ← map_smul, ← map_sub, ← map_add, smul_eq_mul, smul_eq_mul,
+      rw [← hat h, ← map_smul, ← map_smul, ← map_smul, ← map_sub, ← map_add (f := _), smul_eq_mul, smul_eq_mul,
         smul_eq_mul]
       have := (Lev.mk_eq_zero _ _).2 (hdiv g h)
       rw [map_sub, sub_eq_zero] at this
@@ -165,7 +170,7 @@ theorem GlobalTheory.Ord2.LocCharPerfect.perfect : LocalFiniteness → LocalTate
     show ((χ g : (ZMod (l ^ n))ˣ) : ZMod (l ^ n)) * φ₀ (Lev.mk ((l : c.O) ^ n) (u h)) -
       φ₀ (Lev.mk ((l : c.O) ^ n) (u (g * h))) + φ₀ (Lev.mk ((l : c.O) ^ n) (u g)) =
       φ₀ (b g • ((θ' g : c.Oˣ) : c.O) • y.1 h)
-    rw [← e1, map_add, map_sub, ← hχs, map_smul, smul_eq_mul]
+    rw [← e1, map_add (f := _), map_sub, ← hχs, map_smul, smul_eq_mul]
   rw [Submodule.Quotient.mk_eq_zero] at h0
   obtain ⟨ψ, hψ⟩ := (mem_coboundaries1 _ _).1 (Submodule.mem_comap.1 h0)
   obtain ⟨x, hx⟩ := hφall ψ

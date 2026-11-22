@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SplitLinearModelNorm
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentMulCutSubOneEntry
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilRepThetaDatumHalfEqSmul
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsPlaceChartOfSplitIdempotent
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsSplitSupportedUnitaryComponent
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsNsmulActO
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplitChartUniformiserAndResidueCard
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RelativeLatticeVolumeOfDetValuation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryGroupCharacterOfHeckeChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SplitLinearModelNorm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentMulCutSubOneEntry
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilRepThetaDatumHalfEqSmul
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsPlaceChartOfSplitIdempotent
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsSplitSupportedUnitaryComponent
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsNsmulActO
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplitChartUniformiserAndResidueCard
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RelativeLatticeVolumeOfDetValuation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryGroupCharacterOfHeckeChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,7 +61,16 @@ theorem isSBHalf_modul {e : AE D} {Λ : AddSubgroup (WO S T)}
     (hden : ∀ y ∈ half S T (cA D e), ∃ k : ℕ, 0 < k ∧ k • y ∈ Λ) {Φ : WO S T → ℂ} (s0 : IsSBHalf e Λ Φ) {y : WO S T}
     (hy' : IsHalf (cA D e) y) : IsSBHalf e Λ fun t => ψ (symplO S T t y) * Φ t := by
   have hy := (isHalf_iff S T).1 hy'
-  have hb := isBichar_symplO S T ψ
+  have hb : IsBichar (fun x y : WO S T => ψ (symplO S T x y)) := by
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · intro a b y; rw [symplO_add_left, AddChar.map_add_eq_mul]
+    · intro a b y; rw [symplO_add_right, AddChar.map_add_eq_mul]
+    · intro y
+      have hz : symplO S T 0 y = 0 := by simpa using symplO_add_left S T 0 0 y
+      rw [hz, AddChar.map_zero_eq_one]
+    · intro y
+      have hz : symplO S T y 0 = 0 := by simpa using symplO_add_right S T y 0 0
+      rw [hz, AddChar.map_zero_eq_one]
   obtain ⟨k, hk, hk'⟩ := hden y hy
   obtain ⟨a1, k', hk1, a2, a3⟩ := s0
   refine ⟨fun t ht => a1 t (right_ne_zero_of_mul ht), k * k', Nat.mul_pos hk hk1, fun u hu hh t => ?_,
@@ -90,8 +103,13 @@ theorem om_model_of_base : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : 
       a • u ∈ (latO S T ΛS ΛT fun _ => True) ⊓ half S T a := fun a ha u hu =>
     AddSubgroup.mem_inf.2 ⟨GlobalTheory.SplitScalar.idem_smul_mem ha u hu, by rw [mem_half, smul_smul, ha]⟩
   have hden : ∀ y ∈ half S T (cA D e), ∃ k : ℕ, 0 < k ∧ k • y ∈ latO S T ΛS ΛT fun _ => True := fun y hy =>
-    exists_nsmul_mem_latO' hS.1 hT.1 y (infPart_of_half (infPart_cA hinf) ((isHalf_iff S T).2 hy))
-  have s0 := isSBHalf_actO hS.1 hT.1 g⁻¹ h⁻¹ (GlobalTheory.isSBHalf_halfInd e _)
+    exists_nsmul_mem_latO'
+      (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ hS)
+      (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ hT) y (infPart_of_half (infPart_cA hinf) ((isHalf_iff S T).2 hy))
+  letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull S ΛS hS
+  letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull T ΛT hT
+  have s0 := isSBHalf_actO (ΛS := ΛS) (ΛT := ΛT) inferInstance inferInstance g⁻¹ h⁻¹
+    (GlobalTheory.isSBHalf_halfInd e _)
   generalize latO S T ΛS ΛT (fun _ => True) = Λ at *
   have hLL' : ∀ u ∈ Λ ⊓ half S T e, ∀ y ∈ Λ ⊓ half S T (cA D e), ψ (symplO S T u y) = 1 := fun u hu y hy =>
     (hdual u (infPart_of_half hinf ((isHalf_iff S T).2 hu.2))).1 hu.1 y hy.1
@@ -112,7 +130,16 @@ theorem om_model_of_base : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : 
   have tf : ∀ k : ℕ, 0 < k → Function.Injective fun t : WO S T => k • t := fun k hk a b hab => by
     rw [← inv_smul_nsmul S T hk a, ← inv_smul_nsmul S T hk b]
     exact congrArg _ hab
-  have hb := isBichar_symplO S T ψ
+  have hb : IsBichar (fun x y : WO S T => ψ (symplO S T x y)) := by
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · intro a b y; rw [symplO_add_left, AddChar.map_add_eq_mul]
+    · intro a b y; rw [symplO_add_right, AddChar.map_add_eq_mul]
+    · intro y
+      have hz : symplO S T 0 y = 0 := by simpa using symplO_add_left S T 0 0 y
+      rw [hz, AddChar.map_zero_eq_one]
+    · intro y
+      have hz : symplO S T y 0 = 0 := by simpa using symplO_add_right S T y 0 0
+      rw [hz, AddChar.map_zero_eq_one]
   have hm : Φ ∈ waveSpan (fun x y : WO S T => ψ (symplO S T x y)) (half S T e) (half S T (cA D e)) (Λ ⊓ half S T e) := by
     obtain ⟨h1, k, hk, h2, h3⟩ := hΦ
     exact mem_waveSpan hb inf_le_right inf_le_right hLL' hX (half_div S T e) (half_div S T _) tf hfin Φ
@@ -124,7 +151,7 @@ theorem om_model_of_base : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : 
     obtain ⟨x, hx, y, hy, rfl⟩ := hh
     have hx' := (isHalf_iff S T).2 hx
     have hy' := (isHalf_iff S T).2 hy
-    have hth := GlobalTheory.FinTranslate.isTheta_heisO_fin hW.std.1 (infPart_of_half (infPart_cA hinf) hy') hf
+    have hth := GlobalTheory.FinTranslate.isThetaFunO_heisO hW.std.1.1 hW.std.1.2.1 hf (infPart_of_half (infPart_cA hinf) hy')
     rw [wave_act, GlobalTheory.SchrodSubst.placeModel_wave hLL' hden hTm hx' hy',
       hTm.trans _ (isSBHalf_modul hLL' hden s0 (isHalf_actO g h hy')) _ (isHalf_actO g h hx'),
       hTm.modul _ s0 _ (isHalf_actO g h hy'), hW.om_heis _ _ _ _ hth, hW.om_heis _ _ _ _ hf, hc, heisO_smul', heisO_smul']
@@ -133,15 +160,15 @@ theorem om_model_of_base : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : 
     rw [LinearMap.map_zero, LinearMap.map_zero, smul_zero]
   | add f f' _ _ h1 h2 =>
     change _ = c • Tm ((fun x => f (actO S T g⁻¹ h⁻¹ x)) + fun x => f' (actO S T g⁻¹ h⁻¹ x))
-    rw [LinearMap.map_add, LinearMap.map_add, LinearMap.map_add, h1, h2, smul_add]
+    rw [LinearMap.map_add (f := _), LinearMap.map_add (f := _), LinearMap.map_add (f := _), h1, h2, smul_add]
   | smul d f _ h1 =>
     change _ = c • Tm (d • fun x => f (actO S T g⁻¹ h⁻¹ x))
     rw [LinearMap.map_smul, LinearMap.map_smul, LinearMap.map_smul, h1, smul_comm]
 
 variable {ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)} {ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)}
 
-open GlobalTheory.SplitScalar in
 
+open GlobalTheory.SplitScalar in
 theorem om_eq_sum_lattice {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)}
     (hW : IsWeilDatumO ψ S T χS χT om) (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT) {e : AE D} (he : IsSplitIdem D e)
     {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f)
@@ -177,7 +204,18 @@ theorem om_eq_sum_lattice {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D 
       rintro _ ⟨γ, rfl⟩ w
       exact (congrArg norm (hf.quasi γ w)).trans (by rw [norm_mul, hψ.2.1, one_mul]))
   have hn : nrm2 μ 𝓕 (c • f) = 1 := hc μ 𝓕 hμ.1 hμ.2.1 hμ.2.2
-  have hcf := GlobalTheory.WeilVacMove.isTheta_smul c hf
+  have hcf : IsThetaFunO ψ S T (c • f) := {
+    quasi γ w := by
+      rw [Pi.smul_apply, Pi.smul_apply, hf.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
+    level := by
+      obtain ⟨U, hU, h1⟩ := hf.level
+      refine ⟨U, hU, fun u hu h0 => ?_⟩
+      funext w
+      have e1 := congrFun (h1 u hu h0) w
+      unfold heisO at e1 ⊢
+      rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+    cont := hf.cont.const_smul c
+    smooth k L h1 h2 w := contDiff_const.mul (hf.smooth k L h1 h2 w) }
   have hfix' : ∀ u ∈ Λ, IsHalf e u ∨ IsHalf (cA D e) u → heisO ψ S T u (c • f) = c • f := fun u hu hh => by
     rw [heisO_smul', hfix u hu hh]
   have h1 := hom _ hcf (fun u hu hh => hfix' u hu (Or.inl hh)) fun u hu hh => hfix' u hu (Or.inr hh)
@@ -269,14 +307,16 @@ theorem sum_halfInd {Λ : AddSubgroup (WO S T)} {a e : AE D} (he : e * e = e) (h
     ((isHalf_iff S T).1 (isHalf_smul' he t)) _ (fun u => t + u ∈ Λ ∧ IsHalf a (t + u)) _
     (fun u hu => add_mem_parts hae h1 t (hR u hu).2) (act_mem_parts hc hae h1 hg hh t)
 
-theorem finite_enlarge (hS : Submodule.IsLattice D.host.E ΛS) (hT : Submodule.IsLattice D.host.E ΛT) {e : AE D}
+theorem finite_enlarge (hS : Submodule.IsFullLattice D.host.E ΛS) (hT : Submodule.IsFullLattice D.host.E ΛT) {e : AE D}
     (he : e * e = e) {g : GA D S} {h : GA D T}
     (hle : ∀ w ∈ latO S T ΛS ΛT (fun _ => True), IsHalf e w → actO S T g⁻¹ h⁻¹ w ∈ latO S T ΛS ΛT (fun _ => True)) :
     Finite (↥((latO S T ΛS ΛT fun _ => True).comap (actAdd S T g⁻¹ h⁻¹) ⊓ half S T e) ⧸
       ((latO S T ΛS ΛT fun _ => True) ⊓ half S T e).addSubgroupOf
         ((latO S T ΛS ΛT fun _ => True).comap (actAdd S T g⁻¹ h⁻¹) ⊓ half S T e)) := by
-  obtain ⟨N, hN, h1⟩ := exists_nsmul_actO hS hT g h
-  obtain ⟨R₀, hR₀, h2⟩ := GlobalTheory.LatFinMod.latO_finite_mod D S T _ _ hS.fg hT.fg (fun _ => True) N hN
+  letI := hS
+  letI := hT
+  obtain ⟨N, hN, h1⟩ := exists_nsmul_actO (ΛS := ΛS) (ΛT := ΛT) inferInstance inferInstance g h
+  obtain ⟨R₀, hR₀, h2⟩ := GlobalTheory.LatFinMod.latO_finite_mod D S T _ _ hS.toIsLattice.fg hT.toIsLattice.fg (fun _ => True) N hN
   have hst := @GlobalTheory.SplitScalar.idem_smul_mem D S T (ΛS : Set _) (ΛT : Set _) _ he
   refine finite_quot _ _ (fun w hw => ⟨hle w hw.1 ((isHalf_iff S T).2 hw.2), hw.2⟩) (N := N) (fun a b hab => ?_)
     (hR₀.image fun r => e • r) fun w hw => ?_
@@ -303,12 +343,15 @@ theorem model_sum {Λ : AddSubgroup (WO S T)} {a : AE D} {f₀ : WO S T → ℂ}
     ∑ u ∈ R, heisO ψ S T u f₀ = Tm (∑ u ∈ R, fun t => halfInd a Λ (t + u)) := by
   have v := hTm.vac
   rw [one_smul] at v
-  rw [map_sum, ← v]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← v]
   exact Finset.sum_congr rfl fun u hu => (hTm.trans _ (GlobalTheory.isSBHalf_halfInd a _) u (hR u hu)).symm
 
 theorem om_base_enlarge : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (χS χT : (AE D)ˣ →* Circle) (om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)) (ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)) (ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)) (a : AE D) (f₀ : WO S T → ℂ) (Tm : (WO S T → ℂ) →ₗ[ℂ] (WO S T → ℂ)), IsWeilDatumO ψ S T χS χT om → IsSelfDualC S ΛS → IsSelfDualC T ΛT → a * a = a → infPart D a = 0 → IsThetaFunO ψ S T f₀ → IsPlaceModel ψ (symplO S T) (heisO ψ S T) a (latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) fun _ => True) 1 f₀ Tm → a * cA D a = 0 → IsLatVac (heisO ψ S T) (latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) fun _ => True) f₀ → ∀ e : AE D, IsSplitIdem D e → a * e = e → ∀ (g : GA D S) (h : GA D T), SuppAt e S g → SuppAt e T h → ∀ x y : (AE D)ˣ, IsDetAt e S g x → IsDetAt e T h y → (∀ w ∈ (latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) fun _ => True), IsHalf e w → actO S T g⁻¹ h⁻¹ w ∈ (latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) fun _ => True)) → om (g, h) f₀ = ((splitFacO χS χT x y : ℂ) * ((Real.sqrt ((((latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) fun _ => True) ⊓ GlobalTheory.PlaceModel.half S T e).relIndex ((latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) fun _ => True).comap (GlobalTheory.SplitHecke.actAdd S T g⁻¹ h⁻¹) ⊓ GlobalTheory.PlaceModel.half S T e) : ℕ) : ℝ) : ℝ) : ℂ)⁻¹) • Tm fun t => halfInd a (latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) fun _ => True) (actO S T g⁻¹ h⁻¹ t) := by
   intro D ψ S T χS χT om ΛS ΛT a f₀ Tm hW hS hT ha hinf hf hTm hc hv e he hae g h hg hh x y hx hy hle
-  haveI := finite_enlarge hS.1 hT.1 he.1 hle
+  letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull S ΛS hS
+  letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull T ΛT hT
+  haveI := finite_enlarge inferInstance inferInstance he.1 hle
   obtain ⟨R, r1, r2, r3⟩ := exists_reps ((latO S T ΛS ΛT fun _ => True) ⊓ half S T e)
     ((latO S T ΛS ΛT fun _ => True).comap (actAdd S T g⁻¹ h⁻¹) ⊓ half S T e)
   have hR : ∀ u ∈ R, actO S T g⁻¹ h⁻¹ u ∈ latO S T ΛS ΛT (fun _ => True) ∧ IsHalf e u := fun u hu =>

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
 
 open Polynomial UpperTheory.V.W
 
@@ -18,11 +22,12 @@ private theorem core1 {B Γ F A : Type} [CommRing B] [Monoid Γ] [Ring F] [Algeb
       rw [_root_.smul_pow, ← pow_mul, mul_comm, pow_mul, pow_succ, mul_smul, ← one_mul (Φ y₁ ^ N),
         ← smul_mul_assoc, hT, zero_mul, smul_zero]
     have h1 : (1 - T ^ (e + 1) • Φ y₁) * Φ (∑ k ∈ Finset.range N, (T ^ (e + 1) • y₁) ^ k) = 1 := by
-      simp only [map_sum, map_pow, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_pow, map_smul]
       rw [mul_neg_geom_sum, h0, sub_zero]
     refine ⟨(∑ k ∈ Finset.range N, (T ^ (e + 1) • y₁) ^ k) * (z + T ^ e • (y₁ * y₂)), ?_⟩
     rw [mul_sub, mul_smul_comm, map_mul, ← mul_assoc, h1, one_mul]
-    simp only [map_add, map_smul, map_mul, mul_sub, sub_mul, mul_one, one_mul, smul_add, smul_smul,
+    simp only [map_add (f := _), map_smul, map_mul, mul_sub, sub_mul, mul_one, one_mul, smul_add, smul_smul,
       smul_mul_smul_comm, ← pow_add]
     rw [show e + 2 + e = e + 1 + (e + 1) by ring]
     abel
@@ -104,7 +109,7 @@ private theorem core2 {n : ℕ} {P A C Γ : Type} [CommRing P] [CommRing A] [Com
     clear h1
     induction x using MonoidAlgebra.induction_linear with
     | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb, Matrix.map_add ι (map_add ι)]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb, Matrix.map_add ι (map_add ι)]
     | single g r =>
       rw [MonoidAlgebra.mapRingHom_single, hΦ]
       ext i j
@@ -131,7 +136,7 @@ private theorem map_dom {B C H G : Type} [CommRing B] [CommRing C] [Group H] [Gr
     MonoidAlgebra.mapRingHom H f (x.mapDomain s) = (MonoidAlgebra.mapRingHom G f x).mapDomain s := by
   induction x using MonoidAlgebra.induction_linear with
   | zero => simp
-  | add a b ha hb => simp only [map_add, MonoidAlgebra.mapDomain_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), MonoidAlgebra.mapDomain_add, ha, hb]
   | single g r => simp
 
 private theorem dom_dom {C H G K : Type} [CommRing C] (s : G → H) (t : H → K) (x : MonoidAlgebra C G) :
@@ -181,8 +186,9 @@ private theorem map_gen {B C G : Type} [CommRing B] [CommRing C] [Group G] (s : 
     (hψ : ∀ g ∈ s, ψ (MvPolynomial.X g) = y.coeff g) : MonoidAlgebra.mapRingHom G ψ (gen B s) = y := by
   classical
   ext g
-  simp only [gen, map_sum, MonoidAlgebra.mapRingHom_single, MonoidAlgebra.coeff_sum,
-    MonoidAlgebra.coeff_single, Finsupp.finset_sum_apply, Finsupp.single_apply, Finset.sum_ite_eq']
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [gen, map_sum, MonoidAlgebra.mapRingHom_single, MonoidAlgebra.coeff_sum,
+    MonoidAlgebra.coeff_single, Finsupp.finsetSum_apply, Finsupp.single_apply, Finset.sum_ite_eq']
   split_ifs with hg
   · exact hψ g hg
   · exact (Finsupp.notMem_support_iff.1 fun h => hg (hy h)).symm
@@ -190,7 +196,7 @@ private theorem map_gen {B C G : Type} [CommRing B] [CommRing C] [Group G] (s : 
 private theorem gen_coeff {B G : Type} [CommRing B] [DecidableEq G] (s : Finset G) (g : G) :
     (gen B s).coeff g = if g ∈ s then MvPolynomial.X g else 0 := by
   simp only [gen, MonoidAlgebra.coeff_sum,
-    MonoidAlgebra.coeff_single, Finsupp.finset_sum_apply, Finsupp.single_apply, Finset.sum_ite_eq']
+    MonoidAlgebra.coeff_single, Finsupp.finsetSum_apply, Finsupp.single_apply, Finset.sum_ite_eq']
 
 private theorem lemB {n : ℕ} {B A G : Type} [CommRing B] [CommRing A] [Group G] (R : GDet n A G)
     (f : B →+* A) (hf : Function.Injective f)
@@ -287,7 +293,7 @@ private theorem proj {n : ℕ} {A C C' H Γ : Type} [CommRing A] [CommRing C] [C
   congr 1
   induction y using MonoidAlgebra.induction_linear with
   | zero => simp
-  | add a b ha hb => simp only [map_add, MonoidAlgebra.mapDomain_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), MonoidAlgebra.mapDomain_add, ha, hb]
   | single g r =>
     ext i j
     have := congrFun (congrFun (ht g) i) j

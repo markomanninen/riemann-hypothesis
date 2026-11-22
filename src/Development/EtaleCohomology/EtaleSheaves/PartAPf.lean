@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.PartDiagCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.PartDiagCut
+
+@[expose] public section
 
 noncomputable section
 open LateralTheory.E.PartDiagCut
@@ -92,7 +96,8 @@ theorem PartA_of : PartA := by
     refine ⟨⟨⟨(x * s e' - b e') * ε e', ?_⟩, s e' * ⟨ε e', hεS⟩⟩, ?_⟩
     · rw [← Ideal.Quotient.eq_zero_iff_mem, map_mul, map_sub, map_mul, hε]
       have hx : Ideal.Quotient.mk I x = ∑ e : P.1, (Ideal.Quotient.mk I (b e) * t e) * e.1 := by
-        simp only [x, map_sum, map_mul, hτ, hε]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [x, map_sum, map_mul, hτ, hε]
       rw [sub_mul, mul_right_comm, hx, sum_mul_single]
       calc Ideal.Quotient.mk I (b e') * t e' * e'.1 * Ideal.Quotient.mk I (s e') - Ideal.Quotient.mk I (b e') * e'.1
           = Ideal.Quotient.mk I (b e') * (Ideal.Quotient.mk I (s e') * t e' * e'.1) - Ideal.Quotient.mk I (b e') * e'.1 := by ring

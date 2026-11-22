@@ -1,5 +1,9 @@
-import Formalism.AdmissibleDesigns.TrivialBoundTargetOfDict
-import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
+module
+
+public import Formalism.AdmissibleDesigns.TrivialBoundTargetOfDict
+public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 

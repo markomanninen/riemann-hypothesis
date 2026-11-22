@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PRLocV
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.SelfDualPI
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.IntSplitOf
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.LocIdFr
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PRLocV
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.SelfDualPI
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.IntSplitOf
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.LocIdFr
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,9 +30,6 @@ def latB (B : GL (Fin n) E) : Submodule (𝓞 E) (Fin n → E) where
     intro c x hx a
     rw [Matrix.mulVec_smul, Pi.smul_apply, Algebra.smul_def]
     exact mul_mem ⟨c, rfl⟩ (hx a)
-
-theorem mem_latB (B : GL (Fin n) E) (x : Fin n → E) :
-    x ∈ latB B ↔ ∀ a, (((B⁻¹ : GL (Fin n) E) : Matrix (Fin n) (Fin n) E) *ᵥ x) a ∈ (algebraMap (𝓞 E) E).range := Iff.rfl
 
 theorem single_int (j a : Fin n) : (Pi.single j 1 : Fin n → E) a ∈ (algebraMap (𝓞 E) E).range := by
   by_cases h : a = j
@@ -156,7 +157,8 @@ theorem hform_incl (y x : Fin n → E) :
     hform (sigR σ (v.adicCompletion F)) (J.map (inclE (F := F) (v.adicCompletion F)))
       (fun i => inclE (F := F) (v.adicCompletion F) (y i)) (fun i => inclE (F := F) (v.adicCompletion F) (x i)) =
       inclE (F := F) (v.adicCompletion F) (hform (σ : E →+* E) J y x) := by
-  simp only [hform, map_sum, map_mul, sigR_incl, Matrix.map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hform, map_sum, map_mul, sigR_incl, Matrix.map_apply]
   rfl
 
 theorem pair_int (M : Submodule (𝓞 E) (Fin n → E)) (x : Fin n → E) (hx : x ∈ dualSet (σ : E →+* E) J M)

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedTraceEquivariantAndInjectiveOfGroupDet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedTraceEquivariantAndInjectiveOfGroupDet
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.ArithmeticCylinders GlobalTheory.BadCount Module
 open scoped TensorProduct
@@ -21,7 +25,7 @@ theorem tmul_one_mem_nonZeroDivisors_of_field {K L R : Type} [Field K] [Field L]
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul l r => simp [Algebra.TensorProduct.tmul_mul_tmul]
-    | add a b ha hb => simp [map_add, add_mul, ha, hb]
+    | add a b ha hb => simp [map_add (f := _), add_mul, ha, hb]
   apply hinj
   rw [heq, hx, map_zero]
 
@@ -36,13 +40,13 @@ theorem finrank_le_card_mul_finrank_eig_baseChange : ∀ (K L Γ R W : Type) [Fi
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul l r => simp only [actL_tmul, map_mul, AlgHom.mul_apply]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have actL_one : ∀ x, actL 1 x = x := by
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul l r => simp only [actL_tmul, map_one, AlgHom.one_apply]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have inj_of : ∀ {M : Type} [AddCommGroup M] [Module K M] (g : M →ₗ[K] R), Function.Injective g →
       Function.Injective (g.baseChange L) := by
     intro M _ _ g hg
@@ -59,7 +63,7 @@ theorem finrank_le_card_mul_finrank_eig_baseChange : ∀ (K L Γ R W : Type) [Fi
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul l x => simp [ιV, ιm, A, Algebra.TensorProduct.tmul_mul_tmul]
-    | add x y hx hy => simp only [map_add, add_mul, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), add_mul, hx, hy]
   let e := hf.equiv
   let j : W →ₗ[L] L ⊗[K] R := ιV ∘ₗ e.symm.toLinearMap
   have hj : ∀ (g : Γ) w, j (ρ' g w) = actL g (j w) := by
@@ -73,26 +77,28 @@ theorem finrank_le_card_mul_finrank_eig_baseChange : ∀ (K L Γ R W : Type) [Fi
       simp only [j, LinearMap.comp_apply, LinearEquiv.coe_coe]
       rw [h1, map_smul, hρ', ← h2, ← h1, e.symm_apply_apply, e.symm_apply_apply]
       simp [ιV, actL_tmul, hρ]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have hje : ∀ z, j (e z) = ιV z := fun z => by simp [j]
   let T : W →ₗ[L] W := ∑ g : H, (((lam g)⁻¹ : Lˣ) : L) • ρ' g
   have hT : ∀ w, T w ∈ eig ρ' H lam := by
     intro w
     rw [mem_eig]
     intro k
-    simp only [T, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [T, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, Finset.smul_sum]
     refine Fintype.sum_equiv (Equiv.mulLeft k) _ _ (fun g => ?_)
     rw [Equiv.coe_mulLeft, Subgroup.coe_mul, map_mul ρ', Module.End.mul_apply, smul_smul, map_mul lam]
     congr 1
     rw [← Units.val_mul, mul_inv, mul_inv_cancel_left]
   have hjT : ∀ w, j (T w) = ∑ g : H, (((lam g)⁻¹ : Lˣ) : L) • actL g (j w) := by
     intro w
-    simp only [T, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, hj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [T, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, hj]
   let Ψ : L ⊗[K] Vm →ₗ[L] (H → eig ρ' H lam) :=
     LinearMap.pi fun h => LinearMap.codRestrict (eig ρ' H lam) (T ∘ₗ e.toLinearMap ∘ₗ (A h).baseChange L)
       (fun y => hT _)
   have hΨ : Function.Injective Ψ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro y hy
     have P : ∀ h : H, ∑ g : H, (((lam g)⁻¹ : Lˣ) : L) • actL g (ιm y * ((1 : L) ⊗ₜ act h u)) = 0 := by
       intro h
@@ -115,7 +121,7 @@ theorem finrank_le_card_mul_finrank_eig_baseChange : ∀ (K L Γ R W : Type) [Fi
           (Algebra.TensorProduct.includeRight : R →ₐ[K] L ⊗[K] R).mapMatrix
             ((Matrix.transpose (Matrix.of fun h g : H => act ((h : Γ) * g) u)).submatrix (Equiv.inv H) (Equiv.inv H)) := by
         ext h g
-        simp [actL_tmul, mul_inv_rev]
+        simp [actL_tmul, mul_inv_rev, Function.swap]
       show (Matrix.of fun h g : H => actL (((h * g : H) : Γ)⁻¹) ((1 : L) ⊗ₜ[K] u)).det ∈ _
       rw [hM, ← AlgHom.map_det, Matrix.det_submatrix_equiv_self, Matrix.det_transpose,
         Algebra.TensorProduct.includeRight_apply]

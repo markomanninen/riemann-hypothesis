@@ -1,8 +1,24 @@
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TameRamifiedTypeAtPlace
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CharacterChoiceData
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsReadingLaws
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ConjSPV
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeckeCharRamifiedOfRamifiedLocalComponentStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRealSubfieldPlaceInRamifiedSetStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EqOrIsConjPlaceOfOverSplitPlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ConjugateSplitPlaceEqConjugatePlaceAndEmbeddingStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsSplitPlaceParahoricSubgroupCharacterStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsLocalComponentEigenvectorAtSplitPlaceIsotyStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsParahoricTypeVectorOfUpperParahoricEigenStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsLevelCharacterAtConjugateSplitPlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsParahoricTypeVectorAtConjugatePlaceStatement
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CharacterChoiceData
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -11,8 +27,12 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formal
   IsDedekindDomain Polynomial GlobalTheory.HeightCounting GlobalTheory.RowTie GlobalTheory.SplitRead GlobalTheory.NPin
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 namespace GlobalTheory.TypeTame
-theorem typeTame_of_ramified_alt : ∀ (hL : _root_.UpperTheory.Zero.LLC.RecTExists) (D : D7) (P : _root_.GlobalTheory.NPin.CharacterChoiceData hL D), ∀ S : Reading P.T, _root_.GlobalTheory.NPin.IsFaithfulReading P S → ∀ i w hw, (∀ k, w ∉ placesOver D.host.E (D.host.g k)) → GlobalTheory.SplitWeil.IsTame (S i w hw).mu → ¬ GlobalTheory.SplitWeil.IsUnram (S i w hw).mu → TypeTame S i w hw := by
-  intro hL D P S hT i w hw hg htame hram
+theorem typeTame_of_ramified_alt (hL : _root_.UpperTheory.Zero.LLC.RecTExists) (D : D7)
+    (P : CharacterChoiceData hL D) (S : Reading P.T) (hT : IsFaithfulReading P S)
+    (i : D.nd.Loc) (w : PlE D.host) (hw : IsSplitPl D.host w)
+    (hg : ∀ k, w ∉ placesOver D.host.E (D.host.g k))
+    (htame : GlobalTheory.SplitWeil.IsTame (S i w hw).mu)
+    (hram : ¬ GlobalTheory.SplitWeil.IsUnram (S i w hw).mu) : TypeTame S i w hw := by
   refine ⟨htame, hram, fun Q => ?_⟩
   obtain ⟨h1, h2⟩ := D.nd.j_range i
   let j : Fin D.R.m := ⟨D.nd.j i - 1, by omega⟩
@@ -64,12 +84,12 @@ theorem typeTame_of_ramified_alt : ∀ (hL : _root_.UpperTheory.Zero.LLC.RecTExi
     · intro k
       have e : Units.map ((GlobalTheory.TypeTame.conjSP s).i : D.host.E →* s.v.adicCompletion (maximalRealSubfield D.host.E)) k =
           Units.map (s.i : D.host.E →* s.v.adicCompletion (maximalRealSubfield D.host.E))
-            (Units.map (MonoidHomClass.toMonoidHom D.host.conj) k) := by
-        ext; simp [hci']
-      have e2 := hcs.2 (Units.map (MonoidHomClass.toMonoidHom D.host.conj) k)
-      have e3 := hcsd.1 _ _ hconj k
-      have e4 := hcomp.2 k
-      rw [e, e2, e3, e4]
+            (Units.map (MonoidHom.ofClass D.host.conj) k) := by
+        apply Units.ext
+        exact hci' (k : D.host.E)
+      have e2 := hcs.2 (Units.map (MonoidHom.ofClass D.host.conj) k)
+      rw [e, e2, hcomp.2 k]
+      exact hcsd.1 _ _ hconj k
     · intro g h hg hh d hd
       obtain ⟨h', e⟩ := hK'of g ((hKm g).2 hg) h hh
       rw [← hmu_eq g hg d hd, ← e]

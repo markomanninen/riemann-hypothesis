@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HodgeTateCupKummerClassesEqDlogDeterminantStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HodgeTateCupKummerClassesEqDlogDeterminantStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,20 +22,23 @@ theorem mem_adjoin (L : ℕ) (x : On p L) : x ∈ Algebra.adjoin (O0 p) {xn p L,
   have hy : yn p L ∈ S := Algebra.subset_adjoin (by simp)
   have hb : ∀ b : O0 p, Ideal.Quotient.mk (towerIdeal p L) (C (C b)) ∈ S := by
     intro b
-    have : Ideal.Quotient.mk (towerIdeal p L) (C (C b)) = algebraMap (O0 p) (On p L) b := by
-      first | rfl | simp [Ideal.Quotient.algebraMap_eq, Polynomial.algebraMap_apply]
+    have : Ideal.Quotient.mk (towerIdeal p L) (C (C b)) = algebraMap (O0 p) (On p L) b := rfl
     rw [this]; exact S.algebraMap_mem b
   have hC : ∀ a : Polynomial (O0 p), Ideal.Quotient.mk (towerIdeal p L) (C a) ∈ S := by
     intro a
     induction a using Polynomial.induction_on with
     | C b => exact hb b
-    | add f g hf hg => rw [C_add, map_add]; exact S.add_mem hf hg
+    | add f g hf hg =>
+      rw [C_add, (Ideal.Quotient.mk (towerIdeal p L)).map_add]
+      exact S.add_mem hf hg
     | monomial k b _ =>
       rw [C_mul, C_pow, map_mul, map_pow]
       exact S.mul_mem (hb b) (S.pow_mem hx _)
   induction f using Polynomial.induction_on with
   | C a => exact hC a
-  | add f g hf hg => rw [map_add]; exact S.add_mem hf hg
+  | add f g hf hg =>
+    rw [(Ideal.Quotient.mk (towerIdeal p L)).map_add]
+    exact S.add_mem hf hg
   | monomial k a _ => rw [map_mul, map_pow]; exact S.mul_mem (hC a) (S.pow_mem hy _)
 
 theorem zeta_pow_sub (T : GlobalTheory.K5.Tower p Ω) (m k : ℕ) : T.ζ (m + k) ^ p ^ k = T.ζ m := by
@@ -44,11 +51,11 @@ theorem qq_pow_sub (T : GlobalTheory.K5.Tower p Ω) (m k : ℕ) : T.qq (m + k) ^
   | zero => simp
   | succ k ih => rw [pow_succ', pow_mul, ← add_assoc, T.qpow, ih]
 
-theorem isInt_nat (m : ℕ) : IsInt p (m : Ω) := by
+theorem isInt_nat (m : ℕ) : IsInt (p := p) (m : Ω) := by
   rw [IsInt, ← map_natCast (algebraMap (O0 p) Ω)]; exact isIntegral_algebraMap
 
 theorem isInt_emb (T : GlobalTheory.K5.Tower p Ω) (L : ℕ) (ι : On p L →ₐ[O0 p] Ω) (hι : IsEmb T L ι)
-    (x : On p L) : IsInt p (ι x) := by
+    (x : On p L) : IsInt (p := p) (ι x) := by
   have h : Algebra.adjoin (O0 p) {xn p L, yn p L} ≤ (integralClosure (O0 p) Ω).comap ι := by
     rw [Algebra.adjoin_le_iff]
     rintro z (rfl | rfl)
@@ -74,7 +81,8 @@ theorem fix_emb (T : GlobalTheory.K5.Tower p Ω) (L : ℕ) (ι : On p L →ₐ[O
       rw [hι.2]; exact hg'.2
   exact h (mem_adjoin L x)
 
-theorem cong_mono {k m : ℕ} (h : k ≤ m) {x y : Ω} (hc : Cong p m x y) : Cong p k x y := by
+theorem cong_mono {k m : ℕ} (h : k ≤ m) {x y : Ω}
+    (hc : Cong (p := p) m x y) : Cong (p := p) k x y := by
   obtain ⟨z, hz, e⟩ := hc
   refine ⟨(p : Ω) ^ (m - k) * z, IsIntegral.mul (IsIntegral.pow (isInt_nat p) _) hz, ?_⟩
   rw [e, ← mul_assoc, ← pow_add, Nat.add_sub_cancel' h]
@@ -84,8 +92,8 @@ theorem locallyConstantModPrimePow_of_le {k m : ℕ} (h : k ≤ m) {w : Gal p Ω
     obtain ⟨S, hS⟩ := hw.2 g
     exact ⟨S, fun h' hh => cong_mono h (hS h' hh)⟩⟩
 
-theorem cong_mul' {k : ℕ} {x y x' y' : Ω} (h : Cong p k x y) (h' : Cong p k x' y')
-    (hx' : IsInt p x') (hy : IsInt p y) : Cong p k (x * x') (y * y') := by
+theorem cong_mul' {k : ℕ} {x y x' y' : Ω} (h : Cong (p := p) k x y) (h' : Cong (p := p) k x' y')
+    (hx' : IsInt (p := p) x') (hy : IsInt (p := p) y) : Cong (p := p) k (x * x') (y * y') := by
   obtain ⟨a, ha, e⟩ := h
   obtain ⟨b, hb, e'⟩ := h'
   exact ⟨a * x' + y * b, (ha.mul hx').add (hy.mul hb), by linear_combination x' * e + y * e'⟩
@@ -116,7 +124,7 @@ theorem GlobalTheory.K5.LevelDown.cup_kummer_dlog_mod : ∀ (p : ℕ) [Fact p.Pr
   obtain ⟨c, hc⟩ := GlobalTheory.T.hodgeTate_cup_kummer_classes_eq_dlog_determinant p hp2
   refine ⟨c, ?_⟩
   intro Ω _ _ hclo T L n hnL hn ι hι u v α β α' β' hu hv r s hr hs a b lz lq ha hb hlz hlq
-  haveI := hclo.clo
+  have := hclo.clo
   have hpr : p.Prime := Fact.out
   have hL : 1 ≤ L := le_trans hn hnL
   have hpos : ∀ k, 0 < p ^ k := fun k => pow_pos hpr.pos k
@@ -169,17 +177,17 @@ theorem GlobalTheory.K5.LevelDown.cup_kummer_dlog_mod : ∀ (p : ℕ) [Fact p.Pr
   refine Basic.cong_trans ?_ (LevelDown.cong_mono hnL (hcong g hg h hh))
   beta_reduce
   rw [hX]
-  have hA : Cong p n ((a g).val : Ω) ((aL g).val : Ω) := Basic.cong_natCast
+  have hA : Cong (p := p) n ((a g).val : Ω) ((aL g).val : Ω) := Basic.cong_natCast
     (LevelDown.kum_down T hnL hR0 haL (by rw [hR]; exact ha) hg)
-  have hB : Cong p n ((b h).val : Ω) ((bL h).val : Ω) := Basic.cong_natCast
+  have hB : Cong (p := p) n ((b h).val : Ω) ((bL h).val : Ω) := Basic.cong_natCast
     (LevelDown.kum_down T hnL hS0 hbL (by rw [hS]; exact hb) hh)
-  have hC : Cong p n ((lz g).val : Ω) ((zL g).val : Ω) := Basic.cong_natCast
+  have hC : Cong (p := p) n ((lz g).val : Ω) ((zL g).val : Ω) := Basic.cong_natCast
     (LevelDown.kum_down T hnL hZ0 hzL (by rw [hZn]; exact hlz) hg)
-  have hD : Cong p n ((lq h).val : Ω) ((qL h).val : Ω) := Basic.cong_natCast
+  have hD : Cong (p := p) n ((lq h).val : Ω) ((qL h).val : Ω) := Basic.cong_natCast
     (LevelDown.kum_down T hnL (Basic.qq_ne_zero T _) hqL (by rw [hQn]; exact hlq) hh)
   have iN := fun m : ℕ => (LevelDown.isInt_nat (p := p) (Ω := Ω) m)
-  have iP : IsInt p ((p : Ω) ^ c) := IsIntegral.pow (iN p) c
-  have iX : IsInt p (ι (α * β' - β * α')) := LevelDown.isInt_emb T L ι hι _
+  have iP : IsInt (p := p) ((p : Ω) ^ c) := IsIntegral.pow (iN p) c
+  have iX : IsInt (p := p) (ι (α * β' - β * α')) := LevelDown.isInt_emb T L ι hι _
   refine Basic.cong_add ?_ ?_
   · exact LevelDown.cong_mul' (Basic.cong_refl _ _)
       (LevelDown.cong_mul' hA hB (iN _) (iN _)) ((iN _).mul (iN _)) iP

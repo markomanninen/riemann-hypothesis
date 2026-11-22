@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.StepUnfold
-import Development.AbelianVarietyTheory.Definitions.Divisors.BplusOfEquivariant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.StepUnfold
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BplusOfEquivariant
+
+@[expose] public section
 
 noncomputable section
 
@@ -106,8 +110,8 @@ theorem unitaryEmbedding_rational (d : HermitianOrthogonalExtensionData A B c ε
   show (ex P Q γE).map (incA D) = (matHom B (stabilizerEmbedding d γ)).1
   rw [unitaryEmbedding_matrix_formula, hA, ex_map]
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem continuous_unitaryEmbedding (d : HermitianOrthogonalExtensionData A B c ε) : Continuous (stabilizerEmbedding d) := by
   haveI : IsTopologicalRing (AF D.host.F ⊗[D.host.F] D.host.E) :=
     IsModuleTopology.isTopologicalRing (AF D.host.F) _

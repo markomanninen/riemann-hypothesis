@@ -1,14 +1,19 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.TransCancel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGenericHeckeMap
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.TransCancel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGenericHeckeMap
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
-open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen GlobalTheory.LKTrip GlobalTheory.LKGeo UpperTheory.Gal.G3
-open UpperTheory.Gal.Int.Geo (Lv IsTrans Integ KS Mem FEt KSEx KSNice)
+open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen GlobalTheory.LKTrip GlobalTheory.LKGeo
 open scoped TensorProduct
 universe u
 
-theorem UpperTheory.Gal.G3.pTatePull :
-    TatePull := by
+namespace UpperTheory.Gal.G3
+
+theorem pTatePull : TatePull := by
+  unfold TatePull
   intro p _ D R _ _ gb S S' s s' f N o o' m k _ t
   have hT := HeckeRestrict.tate_pullback D.toG o.A o'.A o.act o'.act o.P o'.P o.isLB o'.isLB f m.φ m.φ₂
     m.cart m.sq m.act m.pol k t
@@ -31,3 +36,5 @@ theorem UpperTheory.Gal.G3.pTatePull :
     refine ⟨I, fun hI' y => ?_, fun n x => (hI n x).symm⟩
     apply Over.OverMorphism.ext
     rw [hpt, hI N y, ← hI' y, hpt']
+
+end UpperTheory.Gal.G3

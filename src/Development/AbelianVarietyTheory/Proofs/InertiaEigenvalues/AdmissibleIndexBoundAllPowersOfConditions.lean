@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdmissibleIndexBoundAllPowers
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PropEOfAdmissible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsAuxiliaryPlaceFamilyAtLevelMono
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdmissibleIndexBoundAllPowers
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PropEOfAdmissible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsAuxiliaryPlaceFamilyAtLevelMono
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,15 +65,18 @@ theorem pb_abs {O K V : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing
         rw [LinearMap.map_smul, LinearMap.map_smul, LinearMap.smul_apply, smul_eq_mul, smul_eq_mul]
         ring
       simp only [vec]
-      rw [map_sum B0, LinearMap.sum_apply, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum B0, LinearMap.sum_apply, Finset.mul_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
-      rw [map_sum (B0 (algebraMap O K (d k) • b k)), Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum (B0 (algebraMap O K (d k) • b k)), Finset.mul_sum]
       refine Finset.sum_congr rfl fun l _ => ?_
       rw [e1]
       ring
     have rhs : algebraMap O K (Matrix.vecMul d Mat ⬝ᵥ e) =
         ∑ k, ∑ l, algebraMap O K (d k) * algebraMap O K (e l) * (c * B0 (b k) (b l)) := by
-      simp only [dotProduct, Matrix.vecMul, map_sum, map_mul, Finset.sum_mul, Mat]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [dotProduct, Matrix.vecMul, map_sum, map_mul, Finset.sum_mul, Mat]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
       rw [← hMo k l]; ring
@@ -118,7 +125,8 @@ theorem pb_abs {O K V : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing
       simp only [Submodule.coe_smul] at this
       exact this.symm
     conv_lhs => rw [h2]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i' _ => ?_
     rw [map_smul, S.snf, map_smul, Module.Basis.coord_apply, Module.Basis.repr_self, Finsupp.single_apply,
       smul_eq_mul, smul_eq_mul]
@@ -204,7 +212,8 @@ theorem pb_abs {O K V : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing
       have e1 : c / algebraMap O K (S.a (g.symm i)) =
           c / algebraMap O K (S.a (g.symm i)) * algebraMap O K (S.bM i ⬝ᵥ dc i) := by
         rw [h1, map_one, mul_one]
-      rw [e1, dotProduct, map_sum, map_sum, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [e1, dotProduct, map_sum, map_sum, Finset.mul_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_mul, map_mul, sub_eq_zero.1 (hlin k)]
       ring

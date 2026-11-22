@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.FarRightAlt
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.ImportsAlt
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.ContinuousSecondCayleyBlockMap
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.FarRightAlt
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.ImportsAlt
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.ContinuousSecondCayleyBlockMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,15 @@ private theorem det_diff_lemma {N : ℕ} {A : ℂ → Matrix (Fin N) (Fin N) ℂ
   simp only [Matrix.det_apply']
   refine Differentiable.fun_sum fun σ _ => ?_
   refine Differentiable.fun_mul (differentiable_const _) ?_
-  exact Differentiable.fun_finset_prod fun i _ => h (σ i) i
+  classical
+  have hp : ∀ s : Finset (Fin N), Differentiable ℂ (fun w => ∏ i ∈ s, A w (σ i) i) := by
+    intro s
+    induction s using Finset.induction_on with
+    | empty => simpa using (differentiable_const (1 : ℂ))
+    | insert a s ha ih =>
+      simp only [Finset.prod_insert ha]
+      exact (h (σ a) a).fun_mul ih
+  exact hp Finset.univ
 
 private theorem adj_diff_lemma_2 {N : ℕ} {A : ℂ → Matrix (Fin N) (Fin N) ℂ}
     (h : ∀ i j, Differentiable ℂ fun w => A w i j) (a b : Fin N) :
@@ -198,7 +210,7 @@ theorem absThm_gen (hV : VacOut) (hP : ProjOp) (hT : TSGen) (hB : Basis) (hFar :
     hT m n ε c t p q e sL ρ hL G Pp Γ ι s₀ Ht sec I Λ hD W hWfd hWst ν κ hν hκ hproj hlift x (yy i)
       (QQ i) (hQW i) (hyy i)
   have hmap : ∀ i, Continuous fun k : ↥(KR n) => g * ι (↑k * yy i) := fun i =>
-    continuous_const.mul (hD.ιcont.comp ((continuous_mul_right (yy i)).comp continuous_subtype_val))
+    continuous_const.mul (hD.ιcont.comp ((continuous_mul_const (yy i)).comp continuous_subtype_val))
   have hAh : ∀ i, DifferentiableOn ℂ (fun z => ∫ k, κ k * F z (g * ι (↑k * yy i)) ∂ν) (Metric.ball s₀ r) := by
     intro i
     refine (hH (↥(KR n)) ν univ isCompact_univ (by simp) (Metric.ball s₀ r)
@@ -274,7 +286,8 @@ theorem absThm_gen (hV : VacOut) (hP : ProjOp) (hT : TSGen) (hB : Basis) (hFar :
     have h := I_eq_of_sL hS hLC hL hD (Q := P) (Q' := ∑ j, cc j • QQ j)
       (fun y => by simp [map_sum, map_smul, hPc y]) g
     rw [h]
-    simp [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_smul]
   have hsumHV := hv_sum_lemma_6 Finset.univ (s₀ := s₀)
     (f := fun j z => cc j * GlobalTheory.Eis.cosetSum Pp Γ (hz Ht sec s₀ z (QQ j)) g)
     (z := fun j => cc j * I (QQ j) g) (fun j _ => (holValueAt_const (cc j) s₀).mul (key' j))

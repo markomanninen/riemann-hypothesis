@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.CubeTheorem.LBSpreads
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsProjOverOfIsProjOverBase
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CubeTheorem
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PerfAllOfModels
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PerfectBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PerfectOfGenericIsoStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.CubeTheorem.LBSpreads
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsProjOverOfIsProjOverBase
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CubeTheorem
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PerfAllOfModels
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PerfectBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PerfectOfGenericIsoStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 

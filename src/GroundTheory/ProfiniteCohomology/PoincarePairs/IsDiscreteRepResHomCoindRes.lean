@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.CompactCupEqCompactCupRight
-import GroundTheory.ProfiniteCohomology.MackeyFormula.CompactSupport
-import GroundTheory.ProfiniteCohomology.PoincareDuality.NsmulEqZeroOfNonemptyAddEquiv
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.CompactCupEqCompactCupRight
+public import GroundTheory.ProfiniteCohomology.MackeyFormula.CompactSupport
+public import GroundTheory.ProfiniteCohomology.PoincareDuality.NsmulEqZeroOfNonemptyAddEquiv
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -21,11 +26,6 @@ variable {k G : Type u} [CommRing k] [Group G]
 def dualEvalPairing (D M : Rep.{u} k G) : dualRep D M ⊗ M ⟶ D :=
   (β_ (dualRep D M) M).hom ≫ evalPairing D M
 
-@[simp]
-theorem dualEvalPairing_tmul (D M : Rep.{u} k G) (f : M →ₗ[k] D) (m : M) :
-    (dualEvalPairing D M).hom ((f : dualRep D M) ⊗ₜ[k] m : (dualRep D M ⊗ M : Rep k G)) = f m :=
-  rfl
-
 variable {H : Type u} [Group H]
 
 theorem resFunctor_map_comp_id (ψ : H →* G) {A B C : Rep.{u} k G} (μ : A ⊗ B ⟶ C) :
@@ -35,7 +35,7 @@ theorem resFunctor_map_comp_id (ψ : H →* G) {A B C : Rep.{u} k G} (μ : A ⊗
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul a b => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 end Eval
 
@@ -77,8 +77,8 @@ variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologic
   [∀ v, TopologicalSpace (Hv v)] [∀ v, IsTopologicalGroup (Hv v)] [∀ v, CompactSpace (Hv v)]
   (φ : ∀ v, Hv v →ₜ* G)
 
-omit [∀ v, CompactSpace (Hv v)] in
 
+omit [∀ v, CompactSpace (Hv v)] in
 instance isDiscreteRep_resHom_coind_res {K : Type u} [Group K] [TopologicalSpace K]
     [IsTopologicalGroup K] [CompactSpace K] (ψ : K →ₜ* G) (V : OpenSubgroup G) (A : Rep.{u} k G)
     [IsDiscreteRep A] :

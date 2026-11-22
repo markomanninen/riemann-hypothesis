@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.PerDeriv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.KLevTop
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.PerDeriv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.KLevTop
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.TamagawaNumberSpecialUnitary
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExactRatioOfFundamentalDomain
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.ToKnownTheoremsOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExactRatioOfFundamentalDomainStatement
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.TamagawaNumberSpecialUnitary
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExactRatioOfFundamentalDomain
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.ToKnownTheoremsOf
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasAtOf
+
+@[expose] public section
 
 section
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2 Formalism.L2.DIV Formalism.L2.Indef Formalism.L2.Pj Formalism.IndefR.Links Formalism.IndefR.FWT
@@ -34,17 +39,6 @@ theorem exact_covolume_ratio : ∀ (hP : _root_.GlobalTheory.CovTop.PublishedHod
   set ψ : AutQ (Wc D i) → ℂ := fun q => ((‖F v q.out‖ / c : ℝ) : ℂ) with hψdef
   have hK2 := K2 D T hT i _ hs hV f
   have hK3 := K3 D T hT i _ hs f hf
-  have hE : eLpNorm ψ 2 (muQ1 (Wc D i)) = petE (T.V ((i : ℕ) + 1) (GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.gd T σ))
-      (T.dict ((i : ℕ) + 1) (GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.gd T σ)) (muQ1 (T.V ((i : ℕ) + 1) (GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.gd T σ)))
-      (modelWt (T.U ((i : ℕ) + 1) (GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.gd T σ)) (GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.expW D i)) f := by
-    have e1 : eLpNorm ψ 2 (muQ1 (Wc D i)) =
-        eLpNorm (c⁻¹ • fun q : AutQ (Wc D i) => ‖GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.adFun T i hV f q.out‖) 2 (muQ1 (Wc D i)) := by
-      refine eLpNorm_congr_norm_ae (Filter.Eventually.of_forall fun q => ?_)
-      simp only [hψdef, Pi.smul_apply, smul_eq_mul, Complex.norm_real, Real.norm_eq_abs, abs_div, abs_norm,
-        abs_of_pos hc0, abs_mul, abs_inv, hnorm]
-      ring
-    rw [e1, eLpNorm_const_smul, hK2, ← mul_assoc, Real.enorm_eq_ofReal (inv_nonneg.2 hc0.le),
-      ← ENNReal.ofReal_mul (inv_nonneg.2 hc0.le), inv_mul_cancel₀ hc0.ne', ENNReal.ofReal_one, one_mul]
   have hψm : AEStronglyMeasurable ψ (muQ1 (Wc D i)) := by
     haveI : BorelSpace (GA D (Wc D i)) := ⟨rfl⟩
     have hm : Measurable fun q : AutQ (Wc D i) => F v q.out := by
@@ -59,7 +53,41 @@ theorem exact_covolume_ratio : ∀ (hP : _root_.GlobalTheory.CovTop.PublishedHod
       exact haut.cont.measurable
     refine Measurable.aestronglyMeasurable ?_
     exact Complex.measurable_ofReal.comp ((hm.norm).div_const c)
-  have hψ : MemLp ψ 2 (muQ1 (Wc D i)) := ⟨hψm, by rw [hE]; exact lt_top_iff_ne_top.2 hK3⟩
+  have hE : eLpNorm ψ 2 (muQ1 (Wc D i)) = petE (T.V ((i : ℕ) + 1) (GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.gd T σ))
+      (T.dict ((i : ℕ) + 1) (GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.gd T σ)) (muQ1 (T.V ((i : ℕ) + 1) (GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.gd T σ)))
+      (modelWt (T.U ((i : ℕ) + 1) (GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.gd T σ)) (GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.expW D i)) f := by
+    have e1 : eLpNorm ψ 2 (muQ1 (Wc D i)) =
+        eLpNorm (c⁻¹ • fun q : AutQ (Wc D i) => ‖GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.adFun T i hV f q.out‖) 2 (muQ1 (Wc D i)) := by
+      have heq : ∀ q : AutQ (Wc D i), ‖ψ q‖ =
+          (c⁻¹ • fun q : AutQ (Wc D i) => ‖GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.adFun T i hV f q.out‖) q := by
+        intro q
+        simp only [hψdef, Pi.smul_apply, smul_eq_mul, Complex.norm_real, Real.norm_eq_abs, abs_div, abs_norm,
+          abs_of_pos hc0, hnorm]
+        ring
+      have hm : AEStronglyMeasurable (c⁻¹ • fun q : AutQ (Wc D i) => ‖GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.adFun T i hV f q.out‖) (muQ1 (Wc D i)) :=
+        hψm.norm.congr (Filter.Eventually.of_forall heq)
+      refine eLpNorm_congr_norm_ae hψm hm (Filter.Eventually.of_forall fun q => ?_)
+      rw [← heq q, Real.norm_eq_abs, abs_norm]
+    have hadm : AEStronglyMeasurable (fun q : AutQ (Wc D i) =>
+        ‖GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.adFun T i hV f q.out‖)
+        (muQ1 (Wc D i)) := by
+      have heq : (fun q : AutQ (Wc D i) =>
+          ‖GlobalTheory.IndefiniteRowSideFullHecke.OneMeasureSizes.adFun T i hV f q.out‖) =
+          c • (fun q => ‖ψ q‖) := by
+        funext q
+        simp only [hψdef, Pi.smul_apply, smul_eq_mul, Complex.norm_real, Real.norm_eq_abs,
+          abs_div, abs_norm, abs_of_pos hc0, hnorm]
+        field_simp
+      rw [heq]
+      exact hψm.norm.const_smul c
+    rw [e1, eLpNorm_const_smul]
+    conv_lhs =>
+      rw [eLpNorm_eq_eLpNorm' (by norm_num) (by simp) hadm]
+    have ht : (2 : ENNReal).toReal = 2 := by norm_num
+    rw [ht, hK2]
+    rw [← mul_assoc, Real.enorm_eq_ofReal (inv_nonneg.2 hc0.le),
+      ← ENNReal.ofReal_mul (inv_nonneg.2 hc0.le), inv_mul_cancel₀ hc0.ne', ENNReal.ofReal_one, one_mul]
+  have hψ : MemLp ψ 2 (muQ1 (Wc D i)) := by rw [memLp_iff, hE]; exact lt_top_iff_ne_top.2 hK3
   have hI := GlobalTheory.ReadingNorm.integral_star_mul (Wc D i) (D.sp.W_sig _) hμ hF.2 (F v) haut.left ψ hψ c
     (fun q => by
       simp only [hψdef, Complex.norm_real, Real.norm_eq_abs, abs_div, abs_norm, abs_of_pos hc0]

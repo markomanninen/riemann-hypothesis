@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.TwistedSlicesSquareIntegrable
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.TwistedSlicesSquareIntegrable
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,7 +11,7 @@ open GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.
 
 namespace PositivityTheory.Rg.Rs.SatakeVectors
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem absNorm_cpow_ne_zero (w : HeightOneSpectrum (𝓞 E)) (s : ℂ) :
     (((Ideal.absNorm w.asIdeal : ℕ) : ℂ) ^ s) ≠ 0 := by
@@ -22,7 +26,7 @@ def qU (w : HeightOneSpectrum (𝓞 E)) (s : ℂ) : ℂˣ :=
     ((qU w s : ℂˣ) : ℂ) = ((Ideal.absNorm w.asIdeal : ℕ) : ℂ) ^ s := rfl
 
 def SatLike {m : ℕ} (U : Submodule ℂ (Sm E m)) (w : HeightOneSpectrum (𝓞 E)) (S : Multiset ℂˣ) : Prop :=
-  ∀ ψ ∈ U, (∀ k ∈ GlobalTheory.LFun.KGL w m, finRep E m (locGL E m w k) ψ = ψ) → ψ ≠ 0 →
+  ∀ ψ ∈ U, (∀ k ∈ GlobalTheory.LFun.KGL w (n := m), finRep E m (locGL E m w k) ψ = ψ) → ψ ≠ 0 →
     GlobalTheory.LFun.IsSatVecGL w ((finRep E m).comp (locGL E m w)) ψ S
 
 theorem satLike_of_satV {m : ℕ} {V : Submodule ℂ (Sm E m)} {w : HeightOneSpectrum (𝓞 E)} {B : Multiset ℂˣ}

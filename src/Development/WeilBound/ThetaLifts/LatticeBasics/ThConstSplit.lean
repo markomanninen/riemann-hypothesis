@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.ThConstInv
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDict
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ThConstInv
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDict
+
+@[expose] public section
 
 noncomputable section
 

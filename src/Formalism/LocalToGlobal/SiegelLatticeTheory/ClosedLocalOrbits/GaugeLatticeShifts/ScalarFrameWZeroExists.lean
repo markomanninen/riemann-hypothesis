@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ProductExactness
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.UnitaryIsometries
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ProductExactness
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.UnitaryIsometries
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,14 +49,16 @@ theorem dual_exists {m : ℕ} (V : Fin m → Fin n → ℂ) (hV : LinearIndepend
     simp only [LinearMap.comp_apply, Submodule.subtype_apply, Finsupp.lapply_apply] at h1
     rw [hV.repr_eq_single i _ rfl, Finsupp.single_apply] at h1
     rw [← h1]
-    conv_rhs => rw [pi_eq_sum_univ (V i), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [pi_eq_sum_univ (V i), map_sum]
     simp only [map_smul, smul_eq_mul]
   choose w hw using key
   refine ⟨fun j => Formalism.REAL.Jm ε *ᵥ star (w j), fun i j => ?_⟩
   rw [hJ_eq_dot, Matrix.mulVec_mulVec, Jm_mul_self, Matrix.one_mulVec]
   have h := hw j i
   calc star (V i) ⬝ᵥ star (w j) = conj (∑ k, V i k * w j k) := by
-        simp only [dotProduct, Pi.star_apply, map_sum, map_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [dotProduct, Pi.star_apply, map_sum, map_mul]
         rfl
     _ = _ := by rw [h]; split_ifs <;> simp
 
@@ -88,7 +94,7 @@ theorem partner_exists (e : Fin r → Fin n → ℂ) (z : Fin n → ℂ) (he : L
   classical
   have hz : z ∉ Submodule.span ℂ (Set.range e) := not_mem_span_of_orth ε e z hez hzz
   have hV : LinearIndependent ℂ (Fin.snoc e z : Fin (r + 1) → Fin n → ℂ) :=
-    linearIndependent_fin_snoc.2 ⟨he, hz⟩
+    linearIndependent_finSnoc.2 ⟨he, hz⟩
   obtain ⟨q, hq⟩ := dual_exists ε (Fin.snoc e z : Fin (r + 1) → Fin n → ℂ) hV
   have hEq : ∀ a b, hJ ε (e a) (q (Fin.castSucc b)) = if a = b then 1 else 0 := by
     intro a b

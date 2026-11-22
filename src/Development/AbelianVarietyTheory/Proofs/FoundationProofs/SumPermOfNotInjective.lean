@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.CapelliMain
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.CapelliMain
+
+@[expose] public section
+
 open Polynomial MeasureTheory
 
 namespace GlobalTheory.CapelliWeyl
@@ -21,7 +26,8 @@ theorem map_det_eq {C W : Type} [CommRing C] [Ring W] {n : ℕ} (f : C →+* W)
     (M : Matrix (Fin n) (Fin n) C) :
     f M.det = ∑ p : Equiv.Perm (Fin n), ((Equiv.Perm.sign p : ℤˣ) : ℤ) •
       (List.ofFn fun j : Fin n => f (M (p j) j)).prod := by
-  rw [Matrix.det_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.det_apply, map_sum]
   refine Finset.sum_congr rfl fun p _ => ?_
   rw [Units.smul_def, map_zsmul, ← List.prod_ofFn, map_list_prod, List.map_ofFn]
   rfl
@@ -61,7 +67,9 @@ theorem exists_comm_lift {W : Type} [Ring W] {n : ℕ} (x : Fin n → Fin n → 
   have hS : ∀ u ∈ S, ∀ v ∈ S, u * v = v * u := by
     rintro _ ⟨p, rfl⟩ _ ⟨q, rfl⟩
     exact (hx _ _ _ _).eq
-  letI : CommRing (Subring.closure S) := Subring.closureCommRingOfComm hS
+  letI : IsMulCommutative (Subring.closure S) :=
+    Subring.isMulCommutative_closure (fun a ha b hb _ => hS a ha b hb)
+  open scoped IsMulCommutative in
   refine ⟨(Subring.closure S).subtype.comp
     (MvPolynomial.eval₂Hom (Int.castRingHom _)
       (fun p => (⟨x p.1 p.2, Subring.subset_closure ⟨p, rfl⟩⟩ : Subring.closure S))), ?_⟩

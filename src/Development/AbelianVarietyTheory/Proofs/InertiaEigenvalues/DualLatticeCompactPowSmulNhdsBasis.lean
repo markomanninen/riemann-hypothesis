@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.WachLatticeTwists.LatticeDualFibres.FibreDualStable
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FactorMemCocyclesPowQuot
+module
+
+public import Mathlib
+public import Formalism.WachLatticeTwists.LatticeDualFibres.FibreDualStable
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FactorMemCocyclesPowQuot
+
+@[expose] public section
+
 open Formalism.RepresentationBoundsCohomology.LOC ReciprocityTheory.Gal GlobalTheory.LocDualInt
 open Formalism.NG (KO)
 
@@ -108,7 +113,7 @@ theorem isCompact_dualLattice_of_pairing [CompactSpace O] (hemb : Topology.IsOpe
   have hbT : ∀ i : b, (i : VT) ∈ D.T := fun i => hs ▸ Submodule.subset_span (hbs i.2)
   choose f hf using fun i : b => (hP (e.coord i)).exists
   let Φ : (b → O) → VT' := fun c => ∑ i, c i • f i
-  have hΦ : Continuous Φ := continuous_finset_sum _ fun i _ => (continuous_apply i).smul continuous_const
+  have hΦ : Continuous Φ := continuous_finsetSum _ fun i _ => (continuous_apply i).smul continuous_const
   have hsub : (D.T' : Set VT') ⊆ Set.range Φ := by
     intro y hy
     have hy' : ∀ i : b, D.bT (i : VT) y ∈ (1 : Submodule O (FractionRing O)) := fun i => hy _ (hbT i)
@@ -120,10 +125,12 @@ theorem isCompact_dualLattice_of_pairing [CompactSpace O] (hemb : Topology.IsOpe
     intro x
     have hx : D.bT x y = ∑ i, e.coord i x * algebraMap O (FractionRing O) (c i) := by
       conv_lhs => rw [← e.sum_repr x]
-      rw [map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, LinearMap.sum_apply]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [bT_smul_left, he, ← hc i, Module.Basis.coord_apply]
-    rw [map_sub, map_sum, hx, sub_eq_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum, hx, sub_eq_zero]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, hf, Algebra.smul_def, mul_comm]
   exact (isCompact_range hΦ).of_isClosed_subset (isClosed_dualLattice_of_pairing D hemb) hsub
@@ -211,7 +218,7 @@ theorem dualLat_compact_powSub_nhds : ∀ {O : Type} [CommRing O] [IsDomain O] [
     (fun n : ℕ => ((powSub (M := ↥D.T') ϖ n : Submodule O ↥D.T') : Set ↥D.T'))
     (fun n => AddSubgroup.isClosed_of_isOpen (powSub (M := ↥D.T') ϖ n).toAddSubgroup (hopen n))
     (by
-      rw [← Set.disjoint_iff_inter_eq_empty, Set.disjoint_left]
+      rw [Set.disjoint_left]
       intro z hz hz'
       have : z = 0 := eq_zero_of_mem_powSub D hL hP hϖ fun n => Set.mem_iInter.1 hz' n
       exact hz (this ▸ h0V))
@@ -219,6 +226,6 @@ theorem dualLat_compact_powSub_nhds : ∀ {O : Type} [CommRing O] [IsDomain O] [
       fun x hx => powSub_anti ϖ (le_max_right a b) hx⟩)
   refine ⟨n, fun z hz => hVU ?_⟩
   by_contra hc
-  exact Set.disjoint_left.1 (Set.disjoint_iff_inter_eq_empty.2 hn) hc hz
+  exact Set.disjoint_left.1 hn hc hz
 
 end GlobalTheory.LocDualTop

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNsmulFix
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilOrthogonalFiniteCover
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNsmulFix
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilOrthogonalFiniteCover
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -37,7 +42,8 @@ theorem exists_eigen_of_sep {Y V : Type} [AddCommGroup Y] [AddCommGroup V] [Modu
       have e2 : Quotient.out a = -y + (Quotient.out b + q) := by rw [← e1]; abel
       rw [← hρ, e1, hρ, hQ q hq, smul_smul, e2, hmul χ hχ, hmul χ hχ, hQχ χ hχ q hq, mul_one]
     calc χ y • ρ y (wf χ) = χ y • ∑ a : Y ⧸ Q, χ (Quotient.out a) • ρ y (ρ (Quotient.out a) v) := by
-          simp only [wf, map_sum, map_smul]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [wf, map_sum, map_smul]
       _ = χ y • ∑ a : Y ⧸ Q, χ (-y) • (χ (Quotient.out ((y : Y ⧸ Q) + a)) • ρ (Quotient.out ((y : Y ⧸ Q) + a)) v) := by
           simp only [hterm]
       _ = (χ y * χ (-y)) • ∑ a : Y ⧸ Q, χ (Quotient.out ((y : Y ⧸ Q) + a)) • ρ (Quotient.out ((y : Y ⧸ Q) + a)) v := by
@@ -128,7 +134,7 @@ theorem fin_of_mem {e : AEF F E} (he : IsSplitIdemF σ e) {u : WOF F E nS nT} (h
     u.map (infPartF F E) = 0 := by
   obtain ⟨h1, h2, v, ε, hpl, hsum⟩ := he
   have hs := congrArg (infPartF F E) hsum
-  rw [map_add, GlobalTheory.WeilPartsF.infPartF_placeIdem hpl] at hs
+  rw [map_add (f := _), GlobalTheory.WeilPartsF.infPartF_placeIdem hpl] at hs
   have hc : infPartF F E (cAF σ e) = 0 := by
     have a1 : infPartF F E (cAF σ e) * infPartF F E (cAF σ e) = infPartF F E (cAF σ e) := by
       rw [← map_mul, ← map_mul, h1]

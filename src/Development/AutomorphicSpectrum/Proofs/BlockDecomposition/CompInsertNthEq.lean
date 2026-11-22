@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaAbsoluteValues.KSumApply
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.KugaAbsoluteValues.KSumApply
+
+@[expose] public section
 
 open PositivityTheory.Rg.Cz Fin Function
 
@@ -22,7 +26,8 @@ theorem position_sum (B : M →ₗ[ℂ] M →ₗ⋆[ℂ] ℂ) (b : β → P) (T 
         B ((-1 : ℤ) ^ (s : ℕ) • T (b (I s)) (η (s.removeNth (b ∘ I)))) (θ (b ∘ I))
       = kIp B b η (kDel T' b θ) := by
   rw [← (Fin.insertNthEquiv (fun _ => β) s).sum_comp, Fintype.sum_prod_type, Finset.sum_comm]
-  simp only [kIp, kDel_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [kIp, kDel_apply, map_sum]
   refine Finset.sum_congr rfl fun J _ => Finset.sum_congr rfl fun i _ => ?_
   simp only [Fin.insertNthEquiv, Equiv.coe_fn_mk, comp_insertNth_eq, Fin.insertNth_apply_same,
     Fin.removeNth_insertNth]
@@ -36,7 +41,8 @@ theorem kIp_kD (B : M →ₗ[ℂ] M →ₗ⋆[ℂ] ℂ) (b : β → P) (T T' : P
   have hs : ∀ s : Fin (m + 1), ∑ I : Fin (m + 1) → β,
       B ((-1 : ℤ) ^ (s : ℕ) • T (b (I s)) (η (s.removeNth (b ∘ I)))) (θ (b ∘ I))
         = kIp B b η (kDel T' b θ) := fun s => position_sum B b T T' h η θ s
-  simp only [kIp, kD_apply, Function.comp_apply, map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [kIp, kD_apply, Function.comp_apply, map_sum, LinearMap.sum_apply]
   rw [Finset.sum_comm]
   simp only [kIp] at hs
   rw [Finset.sum_congr rfl fun s _ => hs s]

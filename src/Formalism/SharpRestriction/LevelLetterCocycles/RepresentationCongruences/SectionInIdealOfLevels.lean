@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsPartitionOfLPowLevels
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsPartitionOfLPowLevels
+
+@[expose] public section
 
 noncomputable section
 
@@ -92,7 +96,8 @@ theorem section_in_ideal_of_levels (hR : Formalism.MainNotions.UnusedSlot80.Tool
   rw [Equiv.sum_comp eqv.symm (fun p => G' p * algebraMap O W.EE (C' p k)), Fintype.sum_sigma]
   calc lE W (m + κ) * h k
       = (∑ s ∈ Finset.range e, algebraMap (LetA O n) W.EE (ε s)) * (lE W κ * h k) := by
-        rw [← map_sum, hsum, ← hlE, lE, lE, lE, pow_add]; ring
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← map_sum, hsum, ← hlE, lE, lE, lE, pow_add]; ring
     _ = ∑ s ∈ Finset.range e, algebraMap (LetA O n) W.EE (ε s) * lE W (κ - κs s) *
           (lE W (κs s) * h k) := by
         rw [Finset.sum_mul]

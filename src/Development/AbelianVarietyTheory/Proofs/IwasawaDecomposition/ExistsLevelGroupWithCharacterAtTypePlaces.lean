@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExponentAndTwistData
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteDimensionalForms
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDoubleCosetsDefiniteUnitaryMaximalLevelStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSplitPlOfNotIsConjPl
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExponentAndTwistData
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteDimensionalForms
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDoubleCosetsDefiniteUnitaryMaximalLevelStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSplitPlOfNotIsConjPl
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX GlobalTheory.HeightCounting GlobalTheory.HeightCounting.FormsStep NumberField IsDedekindDomain Polynomial
 open scoped TensorProduct
 
@@ -46,7 +51,7 @@ theorem proj_eq_lift (s : SplitPlace L) (x : AL L) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => rfl
-  | add a b ha hb => rw [map_add, map_add, map_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _), ha, hb]
 
 theorem locM_triv (s : SplitPlace L) {B : Set (HeightOneSpectrum (𝓞 (maximalRealSubfield L)))} {κ : GAf L n}
     (h : TrivOutside Bᶜ κ) (hv : s.v ∈ B) : NX.locM s κ = 1 := by
@@ -96,7 +101,7 @@ theorem red_intLift {R : Type} [CommRing R] (red : v.adicCompletionIntegers (max
     (hred : ∀ z : v.adicCompletionIntegers (maximalRealSubfield L), Valued.v (z : v.adicCompletion (maximalRealSubfield L)) < 1 → red z = 0) {z : v.adicCompletion (maximalRealSubfield L)} (c : v.adicCompletionIntegers (maximalRealSubfield L))
     (h : Valued.v (z - (c : v.adicCompletion (maximalRealSubfield L))) < 1) : red (NX.intLift v z) = red c := by
   have hz : z ∈ v.adicCompletionIntegers (maximalRealSubfield L) := int_of_cong ((HeightOneSpectrum.mem_adicCompletionIntegers _ _ _).1 c.2) h
-  rw [NX.intLift, dif_pos hz]
+  rw [NX.intLift, dite_eq_left hz]
   have h0 : red (⟨z, hz⟩ - c) = 0 := hred _ (by simpa using h)
   rwa [map_sub, sub_eq_zero] at h0
 
@@ -388,7 +393,7 @@ theorem i_redMat_mul {R : Type} [CommRing R] {r : ℕ} (h : r ≤ n) (v : Height
     intro z hz
     refine Matrix.ext fun a b => ?_
     show red (NX.intLift v (z (Fin.castLE h a) (Fin.castLE h b))) = red ⟨z (Fin.castLE h a) (Fin.castLE h b), _⟩
-    rw [NX.intLift, dif_pos (hz _ _)]
+    rw [NX.intLift, dite_eq_left (hz _ _)]
   rw [hl _ (int_mul hx.1 hy.1), hl _ hx.1, hl _ hy.1, intM_mul hx.1 hy.1, Matrix.map_mul]
   refine Matrix.ext fun a b => ?_
   set A := (intM x hx.1).map red with hA
@@ -433,7 +438,7 @@ theorem i_resRep (s : SplitPlace L) (z : s.v.adicCompletion (maximalRealSubfield
     rw [h2] at hlt
     exact lt_irrefl _ hlt
   unfold NX.resRep
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hex.choose_spec.2
 
 end ResRepProof
@@ -503,8 +508,8 @@ end Tame
 section Glob
 variable (D : D7) (T : TwR D.LL0 D.nd)
 
-open Classical in
 
+open Classical in
 def psiUnitT (θ : ∀ kk : Fin 2, Multiplicative (ZMod (D.host.g kk)) →* (↥D.LL0)ˣ) (i : T.Tw) (b : Bool) (u : G0g D.nd) :
     (FractionRing (T.O i))ˣ :=
   if h : u ∈ Formalism.IndefR.NX.U D.nd then psiUT D T θ i b ⟨u, h⟩ else 1
@@ -520,12 +525,12 @@ theorem psiUnitT_mul (i : T.Tw) (b : Bool) {u u' : G0g D.nd} (hu : u ∈ Formali
     (hu' : u' ∈ Formalism.IndefR.NX.U D.nd) :
     psiUnitT D T θ i b (u * u') = psiUnitT D T θ i b u * psiUnitT D T θ i b u' := by
   unfold psiUnitT
-  rw [dif_pos (mul_mem hu hu'), dif_pos hu, dif_pos hu', ← map_mul]
+  rw [dite_eq_left (mul_mem hu hu'), dite_eq_left hu, dite_eq_left hu', ← map_mul]
   rfl
 
 theorem psiUnitT_one (i : T.Tw) (b : Bool) : psiUnitT D T θ i b 1 = 1 := by
   unfold psiUnitT
-  rw [dif_pos (one_mem _)]
+  rw [dite_eq_left (one_mem _)]
   exact map_one _
 
 open Classical in
@@ -540,8 +545,8 @@ theorem mulSingle_mem_U (kv : Σ kk : Fin 2, D.nd.PlG kk) (M : Matrix (Fin D.R.r
   · rw [Pi.mulSingle_eq_of_ne h]
     exact ⟨Matrix.blockTriangular_one, fun a => by simp⟩
 
-open Classical in
 
+open Classical in
 def gU (i : T.Tw) (k : ℕ) (b : Bool) (kv : Σ kk : Fin 2, D.nd.PlG kk) (s : SplitPlace D.host.E)
     (red : s.v.adicCompletionIntegers (maximalRealSubfield D.host.E) →+* ZMod (D.host.g kv.1))
     (τ : (ZMod (D.host.g kv.1))ˣ →* (FractionRing (T.O i))ˣ)
@@ -576,7 +581,7 @@ theorem gU_one
     Units.ext (by rw [NX.glOf_val _ (by simp)]; rfl)
   have hun : hu.unit = 1 := Units.ext (by rw [IsUnit.unit_spec, hd]; rfl)
   unfold gU
-  rw [hM, hg, Pi.mulSingle_one, psiUnitT_one, map_one, one_mul, dif_pos hu, hun, map_one, map_one]
+  rw [hM, hg, Pi.mulSingle_one, psiUnitT_one, map_one, one_mul, dite_eq_left hu, hun, map_one, map_one]
 
 open Classical in
 theorem gU_eq (x : Matrix (Fin D.R.nV) (Fin D.R.nV) (s.v.adicCompletion (maximalRealSubfield D.host.E)))
@@ -585,7 +590,7 @@ theorem gU_eq (x : Matrix (Fin D.R.nV) (Fin D.R.nV) (s.v.adicCompletion (maximal
       (NX.glOf (NX.redMat s.v red (NX.topR (Nat.le_add_right D.R.r D.R.t : D.R.r ≤ D.R.nV) x))))) *
       Units.map (toKkT D T i k).toMonoidHom (τ hu.unit) := by
   unfold gU
-  rw [dif_pos hu]
+  rw [dite_eq_left hu]
 
 open Classical in
 theorem gU_mul
@@ -606,8 +611,8 @@ theorem gU_mul
     rw [HeightOneSpectrum.mem_adicCompletionIntegers, hdx]
   have hiy : NX.detT D.R.r y ∈ s.v.adicCompletionIntegers (maximalRealSubfield D.host.E) := by
     rw [HeightOneSpectrum.mem_adicCompletionIntegers, hdy]
-  have ex : NX.intLift s.v (NX.detT D.R.r x) = ⟨_, hix⟩ := by rw [NX.intLift, dif_pos hix]
-  have ey : NX.intLift s.v (NX.detT D.R.r y) = ⟨_, hiy⟩ := by rw [NX.intLift, dif_pos hiy]
+  have ex : NX.intLift s.v (NX.detT D.R.r x) = ⟨_, hix⟩ := by rw [NX.intLift, dite_eq_left hix]
+  have ey : NX.intLift s.v (NX.detT D.R.r y) = ⟨_, hiy⟩ := by rw [NX.intLift, dite_eq_left hiy]
   have hxy : red (NX.intLift s.v (NX.detT D.R.r (x * y))) =
       red (NX.intLift s.v (NX.detT D.R.r x)) * red (NX.intLift s.v (NX.detT D.R.r y)) := by
     rw [ex, ey, ← map_mul]

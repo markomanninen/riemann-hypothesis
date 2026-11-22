@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SplitPlaceSiegelLawDiagonalLagrangianCharacterIm
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.IntegralCompAddEquiv
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SplitPlaceSiegelLawDiagonalLagrangianCharacterIm
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.IntegralCompAddEquiv
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels

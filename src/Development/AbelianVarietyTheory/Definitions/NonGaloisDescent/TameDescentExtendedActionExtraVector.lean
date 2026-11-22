@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsEqAlgebraMapAddPowMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsEqAlgebraMapAddPowMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,8 +58,6 @@ theorem mem_invOf {B : Subalgebra O K⟦X⟧} {W : Submodule B (Vec K a ι)} {v 
 
 abbrev Minv : Submodule O (Vec K a ι) := Δ.invOf P.M
 
-abbrev Linv : Submodule O (Vec K a ι) := Δ.invOf P.L
-
 abbrev Y (η : ℕ) : Submodule O (Vec K a ι) := Δ.invOf (P.EM η)
 
 def Y' (η : ℕ) : Submodule O (Vec K a ι) := (Δ.Y η).map ((mulV K a ι (X ^ e)).restrictScalars O)
@@ -104,12 +106,6 @@ theorem mem_Zl_of_mem_Z {η : ℕ} {w : P.Pol} (hw : w ∈ Δ.Z η) : w ∈ Δ.Z
 theorem cls_mem_Z {η : ℕ} {y : Vec K a ι} (hy : y ∈ Δ.Y η) : P.cls y ∈ Δ.Z η :=
   ⟨⟨y, hy.1, rfl⟩, Δ.cls_mem_invariants hy.2⟩
 
-theorem vPol_mem_Z {η : ℕ} {w : P.Pol} (hw : w ∈ Δ.Z η) : P.vPol w ∈ Δ.Z η := by
-  obtain ⟨⟨y, hy, rfl⟩, h⟩ := Δ.mem_Z.1 hw
-  refine ⟨⟨_, (P.EM η).smul_mem (uIn (A O K) ^ e) hy, rfl⟩, fun g => ?_⟩
-  rw [PhiMod.vPol_cls, actPol_cls, act_X_pow_smul, ← PhiMod.vPol_cls, ← actPol_cls, h g,
-    PhiMod.vPol_cls]
-
 def actO : Representation O (TameGal K l e a) (Vec K a ι) where
   toFun g := (Δ.act g).restrictScalars O
   map_one' := LinearMap.ext fun v => by simp
@@ -134,8 +130,8 @@ def actQuot (η : ℕ) : Representation O (TameGal K l e a)
     rw [← coe_actEM] at h
     exact h
 
-variable (P) in
 
+variable (P) in
 def quotToPol (η : ℕ) : ((P.EM η).restrictScalars O ⧸
     (P.M.restrictScalars O).submoduleOf ((P.EM η).restrictScalars O)) →ₗ[O] P.Pol :=
   Submodule.liftQ _ (P.cls.restrictScalars O ∘ₗ Submodule.subtype _)
@@ -182,25 +178,11 @@ namespace Hom
 
 variable {Δ₁ : Descent P} {Δ₂ : Descent Q} {Δ₃ : Descent T} (F : Hom Δ₁ Δ₂)
 
-variable (Δ₁) in
-
-def scalar (c : O) : Hom Δ₁ Δ₁ where
-  toHom := BK.Hom.scalar P c
-  app_act g v := by
-    simp only [BK.Hom.app_scalar, algebraMap_smul]
-    exact (map_smul (Δ₁.actO g) c v).symm
-
-def comp (G : Hom Δ₂ Δ₃) (F : Hom Δ₁ Δ₂) : Hom Δ₁ Δ₃ where
-  toHom := G.toHom.comp F.toHom
-  app_act g v := by rw [BK.Hom.app_comp, BK.Hom.app_comp, F.app_act, G.app_act]
 
 omit [NeZero e] in
 theorem app_mem_inv {v : Vec K a ι} (hv : v ∈ Δ₁.inv) : F.app v ∈ Δ₂.inv :=
   fun g => by rw [← F.app_act, hv g]
 
-omit [NeZero e] in
-theorem app_mem_Minv {v : Vec K a ι} (hv : v ∈ Δ₁.Minv) : F.app v ∈ Δ₂.Minv :=
-  ⟨F.app_mem_M hv.1, F.app_mem_inv hv.2⟩
 
 omit [NeZero e] in
 theorem app_mem_Y {η : ℕ} {y : Vec K a ι} (hy : y ∈ Δ₁.Y η) : F.app y ∈ Δ₂.Y η :=
@@ -216,13 +198,6 @@ theorem onPol_act (g : TameGal K l e a) (w : P.Pol) :
   obtain ⟨y, rfl⟩ := P.Man.mkQ_surjective w
   rw [actPol_cls, BK.Hom.onPol_cls, BK.Hom.onPol_cls, actPol_cls, F.app_act]
 
-theorem onPol_mem_Z {η : ℕ} {w : P.Pol} (hw : w ∈ Δ₁.Z η) : F.onPol w ∈ Δ₂.Z η := by
-  obtain ⟨⟨y, hy, rfl⟩, h⟩ := Δ₁.mem_Z.1 hw
-  exact Δ₂.mem_Z.2 ⟨⟨_, F.app_mem_EM hy, rfl⟩, fun g => by rw [← F.onPol_act, h g]⟩
-
-theorem onPol_mem_Zl {η : ℕ} {w : P.Pol} (hw : w ∈ Δ₁.Zl η) : F.onPol w ∈ Δ₂.Zl η :=
-  ⟨F.onPol_mem_PolEta hw.1, fun g => by rw [← F.onPol_act, hw.2 g]⟩
-
 end Hom
 
 variable (Δ : Descent P) {y : Vec K a ι} (hy : y ∈ P.Mext (invE l e (A O K))) (hinv : y ∈ Δ.inv)
@@ -236,8 +211,8 @@ theorem tameDescent_extended_action_extraVector (g : TameGal K l e a) : (Δ.plus
 
 end Descent
 
-omit [NormedAlgebra ℚ_[l] K] [NeZero e] [NeZero a] [TameDescentExponentData K l e a] in
 
+omit [NormedAlgebra ℚ_[l] K] [NeZero e] [NeZero a] [TameDescentExponentData K l e a] in
 structure IsExactTriple {P : PhiMod O K l e a ι} {Q : PhiMod O K l e a κ} {T : PhiMod O K l e a μ}
     (F : Hom P Q) (G : Hom Q T) : Prop where
   inj : ∀ v ∈ P.M, F.app v = 0 → v = 0
@@ -253,7 +228,8 @@ variable (P : PhiMod O K l e a ι)
 omit [NormedAlgebra ℚ_[l] K] [NeZero e] in
 theorem nabla_mem_MM_of_basis (h : ∀ i, P.nabla (P.phi (bas i)) ∈ P.MM)
     (h' : ∀ i, P.phi (bas i) ∈ P.MM) {m : Vec K a ι} (hm : m ∈ P.MM) : P.nabla m ∈ P.MM := by
-  rw [P.eq_sum_phi_bas m, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [P.eq_sum_phi_bas m, map_sum]
   refine Submodule.sum_mem _ fun i _ => ?_
   have hc (τ) := P.mem_extc_iff.1 (mem_tot.1 hm τ) i
   rw [nabla_smul_tot]
@@ -262,7 +238,8 @@ theorem nabla_mem_MM_of_basis (h : ∀ i, P.nabla (P.phi (bas i)) ∈ P.MM)
 
 theorem EN_mem_Man_of_basis (h : ∀ i, P.EN (bas i) ∈ P.Man) {m : Vec K a ι} (hm : m ∈ P.Man) :
     P.EN m ∈ P.Man := by
-  rw [eq_sum_bas m, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [eq_sum_bas m, map_sum]
   refine Submodule.sum_mem _ fun i _ => ?_
   have hc (τ) : m τ i ∈ Rpi O K l e := mem_tot.1 hm τ i
   rw [EN_apply, conn_smul_tot, smul_add, smul_comm (E K l e) (fun τ => m τ i)]
@@ -318,27 +295,6 @@ theorem plus_lower {n : ℕ} (h : ∀ v ∈ P.M, E K l e ^ n • v ∈ P.L) (hn 
         ← map_smul (P.plusInl hy).app, ← bas_inr]
       exact sub_mem ((P.plus hy).L.smul_mem (EIn l e (A O K) ^ n)
         ((P.plus hy).phi_mem_L ((P.plus hy).bas_mem_M _))) (Hom.app_mem_ext _ le_rfl hn)) le_rfl
-
-theorem isExactTriple_plus [NormedAlgebra ℚ_[l] K] [NeZero e] :
-    IsExactTriple (P.plusInl hy) (P.plusProj hy) where
-  inj v _ h := by
-    rw [plusInl_app] at h
-    exact funext fun τ => funext fun i => congrFun (congrFun h τ) (.inl i)
-  exact v hv := by
-    rw [← join_eta v, plusProj_app]
-    constructor
-    · intro h
-      refine ⟨fun τ i => v τ (.inl i), mem_tot.2 fun τ i => mem_tot.1 hv τ (.inl i), ?_⟩
-      refine (P.plusInl_app hy _).trans (congrArg _ ?_)
-      exact funext fun τ => (congrFun (congrFun h τ) ()).symm
-    · rintro ⟨w, -, hw⟩
-      have := (P.plusInl_app hy w).symm.trans hw
-      exact funext fun τ => funext fun _ => (congrFun (congrFun this τ) (.inr ())).symm
-  finiteLength := by
-    have : Subsingleton (P.plusProj hy).coker := Submodule.Quotient.subsingleton_iff.2 <|
-      eq_top_iff.2 fun v _ => ⟨join 0 fun τ => v.1 τ (), (P.join_mem_Mext hy).2
-        ⟨zero_mem _, fun τ => mem_tot.1 v.2 τ ()⟩, P.plusProj_app hy _ _⟩
-    exact .of_subsingleton
 
 end PhiMod
 

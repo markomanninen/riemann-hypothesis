@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.SumSplitsEvalTwoWord
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.SumSplitsEvalTwoWord
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -44,7 +48,7 @@ def rW (c : ι → ι → k) (n : ι →₀ ℕ) : k :=
 theorem secondOrder_add (c : ι → ι → k) (p q : MvPolynomial ι k) :
     secondOrder k c (p + q) = secondOrder k c p + secondOrder k c q := by
   unfold secondOrder
-  simp only [map_add, mul_add, add_mul, Finset.sum_add_distrib]
+  simp only [map_add (f := _), mul_add, add_mul, Finset.sum_add_distrib]
   done
 
 theorem lamW_secondOrder (c : ι → ι → k) (P : MvPolynomial ι k) :

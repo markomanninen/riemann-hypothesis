@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueFixedPointOfAdicContraction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueFixedPointOfAdicContraction
+
+@[expose] public section
 
 open IsLocalRing TensorProduct
 
@@ -50,19 +54,19 @@ theorem exists_pow_sup_span_le (K : Ideal A) {σ : Type*} [Finite σ] (a : σ �
 
 end NilpotentEval
 
-open NilpotentEval in
 
+open NilpotentEval in
 theorem mvPowerSeries_eval_of_pow_mem : ∀ (A : Type) [CommRing A] (K : Ideal A) (σ : Type) [Finite σ] (a : σ → A), (∀ j, ∃ M : ℕ, a j ^ M ∈ K) → (IsAdicComplete K A → ∀ (R : Type) [CommRing R] [Algebra R A], ∃ ψ : MvPowerSeries σ R →ₐ[R] A, ∀ j, ψ (MvPowerSeries.X j) = a j) ∧ (IsHausdorff K A → ∀ (T : Type) [CommRing T] (ψ ψ' : MvPowerSeries σ T →+* A), (∀ t, ψ (MvPowerSeries.C t) = ψ' (MvPowerSeries.C t)) → (∀ j, ψ (MvPowerSeries.X j) = a j) → (∀ j, ψ' (MvPowerSeries.X j) = a j) → ψ = ψ') := by
   intro A _ K σ _ a ha
-  obtain ⟨N, hN⟩ := exists_pow_sup_span_le K a ha
+  obtain ⟨N, hN⟩ := NilpotentEval.exists_pow_sup_span_le K a ha
   have hmem : ∀ j, a j ∈ K ⊔ Ideal.span (Set.range a) := fun j =>
     Ideal.mem_sup_right (Ideal.subset_span ⟨j, rfl⟩)
   refine ⟨fun hK R _ _ => ?_, fun hK T _ ψ ψ' hC hψ hψ' => ?_⟩
   · haveI : IsAdicComplete (K ⊔ Ideal.span (Set.range a)) A :=
-      { toIsHausdorff := isHausdorff_of_pow_le hN
-        toIsPrecomplete := isPrecomplete_of_pow_le hN le_sup_left }
+      { toIsHausdorff := NilpotentEval.isHausdorff_of_pow_le hN
+        toIsPrecomplete := NilpotentEval.isPrecomplete_of_pow_le hN le_sup_left }
     exact ⟨mvEvalAdic R _ a hmem, mvEvalAdic_X _ a hmem⟩
-  · haveI := isHausdorff_of_pow_le hN
+  · haveI := NilpotentEval.isHausdorff_of_pow_le hN
     letI : Algebra T A := (ψ.comp MvPowerSeries.C).toAlgebra
     let φ : MvPowerSeries σ T →ₐ[T] A := { ψ with commutes' := fun _ => rfl }
     let φ' : MvPowerSeries σ T →ₐ[T] A := { ψ' with commutes' := fun t => (hC t).symm }

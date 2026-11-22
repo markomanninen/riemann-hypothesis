@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsHomogeneousCompIdeal
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsFlatSecRankZero
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.IdemMulMemCusp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsHomogeneousCompIdeal
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsFlatSecRankZero
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.IdemMulMemCusp
+
+@[expose] public section
 
 open MvPolynomial NumberField Module GlobalTheory.AllWt GlobalTheory.CompHt ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 
@@ -50,7 +54,7 @@ theorem exists_cuspOn_restrict : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
         evalAt_mul (K := c.F) (fun S _ _ => FrPt Xo c S) (fun φ y z => FrMap φ y z) (idem Z) f y
       rw [e, evR_idem hy ht, one_mul]
     · unfold evR evalAt
-      rw [dif_neg ht, dif_neg ht]
+      rw [dite_eq_right ht, dite_eq_right ht]
   · refine (mem_supLat_iff (Z := Z) hs).2 fun la v hv => ?_
     show 0 ≤ v (idem Z * (f : Rul Xo c))
     rw [(isVal_valOn hv).mul, val_idem hv, zero_add]

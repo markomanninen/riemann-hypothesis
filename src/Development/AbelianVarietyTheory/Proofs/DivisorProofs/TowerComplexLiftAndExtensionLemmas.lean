@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+
+@[expose] public section
+
 open CategoryTheory GlobalTheory.CxCoh
 
 namespace GlobalTheory.TowerLift
@@ -17,9 +22,9 @@ theorem closed_lift (W A B : ℕ → Type 1) [∀ n, AddCommGroup (W n)] [∀ n,
     obtain ⟨a', w, ha', hw⟩ := hcl n _ h0
     obtain ⟨w', rfl⟩ := hr n w
     refine ⟨⟨x' + a' + c (n + 1) w', ?_⟩, ?_⟩
-    · rw [map_add, map_add, hx', ha', hdc, add_zero, add_zero]
+    · rw [map_add (f := _), map_add (f := _), hx', ha', hdc, add_zero, add_zero]
     · show s n (x' + a' + c (n + 1) w') = x.1
-      rw [map_add, map_add, hsc, add_assoc, ← hw, add_sub_cancel]
+      rw [map_add (f := _), map_add (f := _), hsc, add_assoc, ← hw, add_sub_cancel]
   choose f hf using step
   obtain ⟨a₀, ha₀⟩ := hrg 0
   let g : ∀ n, {a : A n // d n a = b n} := fun n => Nat.rec ⟨a₀, ha₀⟩ (fun n x => f n x) n
@@ -36,7 +41,7 @@ theorem closed_extend (A B : ℕ → Type 1) [∀ n, AddCommGroup (A n)] [∀ n,
     obtain ⟨a'', rfl⟩ := hs n a
     refine ⟨⟨b' + d (n + 1) a'', (Z (n + 1)).add_mem hb' (hd _ _)⟩, ?_⟩
     show t n (b' + d (n + 1) a'') = x.1
-    rw [map_add, htd, ha]
+    rw [map_add (f := _), htd, ha]
   choose f hf using step
   let g : ∀ n, Z n := fun n => Nat.rec ⟨b₀, hb₀⟩ (fun n x => f n x) n
   exact ⟨fun n => (g n).1, rfl, fun n => (g n).2, fun n => hf n (g n)⟩

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjSpace
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjSpace
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -53,7 +58,8 @@ namespace ProjSpace
 variable (A : Type u) [CommRing A] {n : ℕ} (i : Fin (n + 1))
 
 local notation "Pn" => MvPolynomial (Fin (n + 1)) A
-local notation "xinv" => IsLocalization.Away.invSelf (S := ChartLoc A i) (X i : MvPolynomial (Fin (n + 1)) A)
+local notation "xinv" => IsLocalization.Away.invSelf (S := ChartLoc A i)
+  (X i : MvPolynomial (Fin (n + 1)) A)
 
 lemma algebraMap_X_mul_invSelf :
     algebraMap (MvPolynomial (Fin (n + 1)) A) (ChartLoc A i) (X i) * xinv = 1 :=
@@ -107,7 +113,8 @@ lemma scaleMap_homog {m : ℕ} {a : Pn} (ha : a ∈ grading A n m) :
   have hh : a.IsHomogeneous m := (mem_homogeneousSubmodule m a).1 ha
   conv_lhs => rw [a.as_sum]
   conv_rhs => rw [a.as_sum]
-  rw [map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl (fun e he => ?_)
   have hdeg : e.degree = m := by
     have := hh (mem_support_iff.mp he)
@@ -152,15 +159,6 @@ lemma polyToChart_chartToPoly : (polyToChart A i).comp (chartToPoly A i) = RingH
 def chartEquiv : Chart A i ≃+* MvPolynomial {j // j ≠ i} A :=
   RingEquiv.ofRingHom (chartToPoly A i) (polyToChart A i) (chartToPoly_polyToChart A i)
     (polyToChart_chartToPoly A i)
-
-instance [IsDomain A] : IsDomain (Chart A i) :=
-  (chartEquiv A i).toMulEquiv.isDomain
-
-instance [IsNoetherianRing A] : IsNoetherianRing (Chart A i) :=
-  isNoetherianRing_of_ringEquiv _ (chartEquiv A i).symm
-
-instance {k : Type u} [Field k] : UniqueFactorizationMonoid (Chart k i) :=
-  (chartEquiv k i).toMulEquiv.symm.uniqueFactorizationMonoid inferInstance
 
 end ProjSpace
 

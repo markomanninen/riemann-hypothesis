@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PairingDivisors.StatementA
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemCompletedOrderOfLocalCongruenceSplit
+module
+
+public import Mathlib
+public import Formalism.PairingDivisors.StatementA
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemCompletedOrderOfLocalCongruenceSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,7 @@ theorem exists_integer {f : E} (hf : f ∈ maximalRealSubfield E)
     rwa [FiniteAdeleRing.algebraMap_apply, HeightOneSpectrum.valuedAdicCompletion_eq_valuation'] at this
   have h1 : IsIntegral ℤ f := hb ▸ b.isIntegral_coe
   have h2 : IsIntegral ℤ (⟨f, hf⟩ : maximalRealSubfield E) :=
-    (isIntegral_algebraMap_iff (A := maximalRealSubfield E) (B := E) (RingHom.injective _)).1 h1
+    (isIntegral_algebraMap_iff (A := maximalRealSubfield E) (B := E) ).1 h1
   exact ⟨⟨_, h2⟩, rfl⟩
 
 theorem mem_hatO_iff : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (c : Ideal (OF E)), c ≠ ⊥ → ∀ z : Af E,
@@ -83,7 +87,7 @@ theorem mem_hatO_iff : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (c
     obtain ⟨a, b, hb, rfl⟩ := mem_orderC.1 hx
     refine ⟨iota a, Subring.le_topologicalClosure _ ⟨_, (a : maximalRealSubfield E).2, rfl⟩,
       fun w => val_iota_le_one w a, fun w => ?_⟩
-    rw [← sub_coord, map_add, add_assoc]
+    rw [← sub_coord, map_add (f := _), add_assoc]
     erw [add_sub_cancel_left]
     rw [add_coord]
     exact Valuation.map_add_le _ ((mem_iff_val (Ideal.map_ne_bot_of_ne_bot hc) _).1 hb w) (val_mul_le hc hn hy w)

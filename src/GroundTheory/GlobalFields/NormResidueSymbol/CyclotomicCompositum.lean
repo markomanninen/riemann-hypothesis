@@ -1,18 +1,22 @@
-import Mathlib
-import GroundTheory.GlobalFields.NormResidueSymbol.CyclotomicBase
-import GroundTheory.GlobalFields.IdeleClassGroup.InvariantsGalois
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.NormResidueSymbol.CyclotomicBase
+public import GroundTheory.GlobalFields.IdeleClassGroup.InvariantsGalois
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
 open NumberField IntermediateField IdeleGroup
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 noncomputable section
 
 namespace CyclotomicSymbol
 
 open FiniteSubfield
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 def compositum (K F : FiniteSubfield) : FiniteSubfield :=
   ⟨K.1 ⊔ F.1, inferInstance⟩
@@ -35,7 +39,6 @@ theorem fixingSubgroup_normal : F.1.fixingSubgroup.Normal := by
   have : IsGalois ℚ ℚ̄ := IsAlgClosure.isGalois ℚ ℚ̄
   have h : @IsGalois ℚ _ F.1 _ (IntermediateField.algebra' F.1) := by
     convert (inferInstance : IsGalois ℚ F.1)
-    exact Subsingleton.elim _ _
   rw [InfiniteGalois.normal_iff_isGalois]
   exact h
 
@@ -60,8 +63,8 @@ theorem mem_fixingSubgroup_iff_restrictNormal_eq_one (g : ℚ̄ ≃ₐ[ℚ] ℚ�
     rw [hg] at h1
     exact h1.symm
 
-variable [IsMulCommutative (F.1 ≃ₐ[ℚ] F.1)] in
 
+variable [IsMulCommutative (F.1 ≃ₐ[ℚ] F.1)] in
 theorem commutator_mem_fixingSubgroup (a b : ℚ̄ ≃ₐ[ℚ] ℚ̄) :
     (a * b)⁻¹ * (b * a) ∈ F.1.fixingSubgroup := by
   rw [mem_fixingSubgroup_iff_restrictNormal_eq_one]
@@ -80,8 +83,8 @@ instance isMulCommutative_compositum :
     fixingSubgroup_compositum]
   exact ⟨Subtype.property _, commutator_mem_fixingSubgroup F _ _⟩
 
-omit [IsMulCommutative (F.1 ≃ₐ[ℚ] F.1)] in
 
+omit [IsMulCommutative (F.1 ≃ₐ[ℚ] F.1)] in
 theorem restrictNormal_restrictHom (g : K.1.fixingSubgroup) :
     ((restrictHom (E := compositum K F) g).restrictScalars ℚ).restrictNormal F.1 =
       (g : ℚ̄ ≃ₐ[ℚ] ℚ̄).restrictNormal F.1 := by

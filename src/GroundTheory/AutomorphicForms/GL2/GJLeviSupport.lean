@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AdmissibleFiniteLength
-import GroundTheory.AutomorphicForms.LeviCartan
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AdmissibleFiniteLength
+public import GroundTheory.AutomorphicForms.LeviCartan
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

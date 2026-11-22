@@ -1,12 +1,16 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafExcIdentPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafExcDegPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafExcFormalPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafFreeCokInjPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafFreeCokPfSurj
-import Development.EtaleCohomology.CohomologicalPurity.LeafSurjGeoPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafInjGeoPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafExcSheafCut
-import Development.EtaleCohomology.CohomologicalPurity.LeafExcPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafExcIdentPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafExcDegPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafExcFormalPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafFreeCokInjPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafFreeCokPfSurj
+public import Development.EtaleCohomology.CohomologicalPurity.LeafSurjGeoPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafInjGeoPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafExcSheafCut
+public import Development.EtaleCohomology.CohomologicalPurity.LeafExcPf
+
+@[expose] public section
 
 namespace LateralTheory.Fin.LeafExc
 theorem etale_excision_identification_of_excision : LateralTheory.CohomologicalPurity.LeafExcIdent := by

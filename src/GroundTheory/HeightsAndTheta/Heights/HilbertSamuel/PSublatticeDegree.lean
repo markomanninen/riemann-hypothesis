@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.CovolumeGram
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSublatticeDegreeSteps
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.CovolumeGram
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSublatticeDegreeSteps
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -66,7 +71,7 @@ theorem SublatticeDegree.proof (hExt : SublatticeExtension.Statement) (hSpan : S
     omega
   have hprod : ∏ j, ‖w j‖ ^ 2 ≤ (C ^ R) ^ 2 := by
     calc ∏ j, ‖w j‖ ^ 2 ≤ ∏ _j, C ^ 2 :=
-          Finset.prod_le_prod (fun _ _ => by positivity) (fun j _ => pow_le_pow_left₀ (norm_nonneg _) (hw j) 2)
+          Finset.prod_le_prod₀ (fun _ _ => by positivity) (fun j _ => pow_le_pow_left₀ (norm_nonneg _) (hw j) 2)
       _ = (C ^ 2) ^ Fintype.card (Fin (finrank ℝ (EuclideanSpace ℝ (Fin R)) - Fintype.card (Fin R'))) := by
           rw [Finset.prod_const, Finset.card_univ]
       _ ≤ (C ^ 2) ^ R := pow_le_pow_right₀ (by nlinarith) hk

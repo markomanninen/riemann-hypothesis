@@ -1,6 +1,10 @@
-import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.StatementTop
-import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.ExtensionCocycleProofs.MemSpanOfFrobeniusMemSpan
-import Formalism.CoboundaryTransfers.WachBridges
+module
+
+public import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.StatementTop
+public import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.ExtensionCocycleProofs.MemSpanOfFrobeniusMemSpan
+public import Formalism.CoboundaryTransfers.WachBridges
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,13 +17,13 @@ theorem lift_to_subgroup_exists : StatLiftSub := by
   intro ℓ _ H₁ H₂ H₁' H₂' _ _ _ _ _ _ _ _ Hf₁ Hf₂ Hf₁' Hf₂' h h' res₂ cor₁ cor₂ g E hg hcr hcomm hres hcor hlift κ' hκ'
   obtain ⟨κ₁, hκ₁, he⟩ := hlift (res₂ κ') (hres κ' hκ')
   set v := padicValNat ℓ g with hv
-  obtain ⟨m, hm⟩ : ℓ ^ v ∣ g := pow_padicValNat_dvd
+  obtain ⟨m, hm⟩ : ℓ ^ v ∣ g := (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
   have hcop : ¬ ℓ ∣ m := by
     intro hdvd
     have h5 : ℓ ^ (v + 1) ∣ g := by
       rw [hm, pow_succ]
       exact mul_dvd_mul_left _ hdvd
-    exact pow_succ_padicValNat_not_dvd (by omega) h5
+    exact pow_succ_multiplicity_not_dvd (p := ℓ) (n := g) (Nat.ne_of_gt hg) (by simpa [hv, Nat.padicValNat_def] using h5)
   have hu : IsUnit (m : ℤ_[ℓ]) := by
     rw [PadicInt.isUnit_iff]
     have h1 : ‖((m : ℤ) : ℤ_[ℓ])‖ ≤ 1 := PadicInt.norm_le_one _

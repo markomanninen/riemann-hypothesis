@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushInvertible
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushInvertible
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,19 +42,5 @@ def zeroDatum (H : Host E) : Datum H where
       have hA : A = 0 := LinearMap.ext fun _ => Subsingleton.elim _ _
       subst hA
       simp [ht]⟩
-
-example (H : Host E) : (zeroDatum H).p * (zeroDatum H).q = 0 := rfl
-
-def trivLB (X : Scheme.{0}) : LB X := ⟨PUnit, fun _ => ⊤, fun _ _ => 1⟩
-
-lemma trivLB_isLB (X : Scheme.{0}) : (trivLB X).IsLB where
-  cover := by simp [trivLB]
-  g_self _ := map_one _
-  cocycle _ _ _ := by
-    show res _ 1 * res _ 1 = res _ 1
-    rw [map_one, map_one, map_one, _root_.one_mul]
-
-example (H : Host E) (l : Level H) : l.GoodAt 1 ↔ 3 ≤ l.M := by
-  simp [Level.GoodAt, Nat.factorization_eq_zero_of_not_prime _ Nat.not_prime_one]
 
 end ReciprocityTheory.ChartRestriction.G.Geo.Tor.Test

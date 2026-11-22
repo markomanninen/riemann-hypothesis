@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateNormComparison
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
-import Development.WeilBound.CoreStatements.HodgeTatePoints.GdChartFin
-import Development.WeilBound.CoreStatements.HodgeTatePoints.GcChart
-import Development.WeilBound.CoreStatements.HodgeTatePoints.RedOmHTBc
-import Development.WeilBound.CoreStatements.HodgeTatePoints.DualUnique
-import Development.WeilBound.CoreStatements.HodgeTatePoints.GaSurj
-import Development.WeilBound.CoreStatements.HodgeTatePoints.GdSplit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankDualAndRangeDualMapBaseChange
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateNormComparison
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.GdChartFin
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.GcChart
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.RedOmHTBc
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.DualUnique
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.GaSurj
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.GdSplit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankDualAndRangeDualMapBaseChange
+
+@[expose] public section
 
 open Module NumberField GlobalTheory.CompanionTheory.Ar.HT TensorProduct
 
@@ -90,7 +94,7 @@ theorem chart_sequence : ChartSequence := by
     obtain ⟨y0, hy0, h0⟩ := hcz w
     refine ⟨y0 + D.q σ x', (D.omHT σ).add_mem hy0 (PositivityTheory.HtPt.Ga.q_mem D σ x'), ?_⟩
     have hq : ∀ z, D.q σ z = qLin D σ z := fun _ => rfl
-    rw [hq, map_add, map_smul, ← hq, ← hq, h0, smul_add]
+    rw [hq, map_add (f := _), map_smul, ← hq, ← hq, h0, smul_add]
     all_goals rfl
 
 end PositivityTheory.HtPt.Ge

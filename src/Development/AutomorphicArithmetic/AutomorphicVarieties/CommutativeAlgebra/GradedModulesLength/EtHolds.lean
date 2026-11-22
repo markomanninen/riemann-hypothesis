@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+
+@[expose] public section
 
 open IsLocalRing Filter Formalism.MainNotions.V.Pf.V2.Calc UpperTheory.V.Alg UpperTheory.V.Alg.M
 
@@ -7,7 +11,11 @@ private theorem et_point (E K C : Type) [Field E] [Field K] [Algebra E K] [IsAlg
     ∃ ι : (C ⧸ m) →ₐ[E] K, Function.Injective ι := by
   letI : Field (C ⧸ m) := Ideal.Quotient.field m
   haveI : Module.Finite E (C ⧸ m) := finite_of_finite_type_of_isJacobsonRing E (C ⧸ m)
-  let ι : (C ⧸ m) →ₐ[E] K := IsAlgClosed.lift
+  let ι : (C ⧸ m) →ₐ[E] K := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   exact ⟨ι, ι.toRingHom.injective⟩
 
 private theorem et_unram (O K C : Type) [CommRing O] [Field K] [Algebra O K] [CommRing C] [Algebra O C]
@@ -33,7 +41,7 @@ private theorem et_unram (O K C : Type) [CommRing O] [Field K] [Algebra O K] [Co
     have hL : L ∈ PtDer ξ K := by
       intro a b
       show ι (D (a * b)) = ι (Ideal.Quotient.mk m a) • ι (D b) + ι (Ideal.Quotient.mk m b) • ι (D a)
-      rw [Derivation.leibniz, Algebra.smul_def, Algebra.smul_def, map_add, map_mul, map_mul,
+      rw [Derivation.leibniz, Algebra.smul_def, Algebra.smul_def, map_add (f := _), map_mul, map_mul,
         smul_eq_mul, smul_eq_mul]
       rfl
     rw [hD ξ, Submodule.mem_bot] at hL

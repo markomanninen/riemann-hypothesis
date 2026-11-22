@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.HasDerivAtInvExpCurveEntry
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.HasDerivAtInvExpCurveEntry
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,8 @@ theorem tensor_group_mul_kDiag (dual : Bool) (hσ : IsURepOn (UJset ε) σ) {g k
   have hσ' : σ (g * k) = (σ g).comp (σ k) := hσ.1.2 g hg k hkU
   have hkinv : k⁻¹ = kᴴ := Matrix.inv_eq_left_inv hkk
   funext c
-  simp only [tensGrp, kDiag, hσ', ContinuousLinearMap.comp_apply, map_sum, map_smul, Finset.smul_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [tensGrp, kDiag, hσ', ContinuousLinearMap.comp_apply, map_sum, map_smul, Finset.smul_sum,
     smul_smul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun d _ => ?_

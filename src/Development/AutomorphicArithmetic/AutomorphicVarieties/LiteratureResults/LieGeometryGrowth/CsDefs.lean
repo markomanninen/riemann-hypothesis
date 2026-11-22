@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.PullStmt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.PullStmt
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,11 +43,6 @@ def tp (A : V →L[ℝ] V) (B : F →L[ℝ] F) {q : ℕ} (w : V → V [⋀^Fin q
 theorem tp_apply (A : V →L[ℝ] V) (B : F →L[ℝ] F) {q : ℕ} (w : V → V [⋀^Fin q]→L[ℝ] F) (p : V) (v : Fin q → V) :
     tp A B w p v = B (w (A p) fun i => A (v i)) := rfl
 
-theorem tp_tp (A A' : V →L[ℝ] V) (B B' : F →L[ℝ] F) {q : ℕ} (w : V → V [⋀^Fin q]→L[ℝ] F) :
-    tp A B (tp A' B' w) = tp (A' * A) (B * B') w := rfl
-
-theorem tp_one {q : ℕ} (w : V → V [⋀^Fin q]→L[ℝ] F) : tp 1 1 w = w := rfl
-
 end An
 
 section Geo
@@ -56,21 +55,19 @@ def IsFun (Φ : S → V → ℝ) : Prop :=
   (∀ s, ContDiffOn ℝ ∞ (Φ s) G.Y) ∧ (∀ γ s, ∀ p ∈ G.Y, Φ (G.σ γ s) (G.ρ γ p) = Φ s p) ∧
     ∀ s (t : ℝ), 0 < t → ∀ p ∈ G.Y, Φ s (t • p) = Φ s p
 
-theorem isFun_zero : IsFun G 0 := ⟨fun _ => contDiffOn_const, fun _ _ _ _ => rfl, fun _ _ _ _ _ => rfl⟩
-
 end Geo
 
 section Ad
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 def pt (g : GL (Fin a) (Cinf E)) (x : GL (Fin a) (Af E)) : GA E a := infGL E a g * finGL E a x
 
 theorem pt_mul (g h : GL (Fin a) (Cinf E)) (x : GL (Fin a) (Af E)) : pt (g * h) x = pt g x * infGL E a h := by
   rw [pt, pt, map_mul, mul_assoc, infGL_comm, mul_assoc]
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 def Bnd (c : ℝ) (h : GL (Fin a) (Cinf E)) : Prop := ‖toL h.val‖ ≤ c ∧ ‖toL (h⁻¹).val‖ ≤ c
 
 structure IsLam (lam : GA E a → ℝ) : Prop where
@@ -112,8 +109,8 @@ theorem Tw_eq {q : ℕ} (w : Fm U Ξ q) (g h : GL (Fin a) (Cinf E)) (x : GL (Fin
 def Desc (f : GA E a → ℝ) (Φ : (GL (Fin a) (Af E) ⧸ U) → HV E a → ℝ) : Prop :=
   ∀ (g : GL (Fin a) (Cinf E)) (x : GL (Fin a) (Af E)), Φ (x : GL (Fin a) (Af E) ⧸ U) (sand g (hOne E a)) = f (pt g x)
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 def Zw (Z : (GL (Fin a) (Af E) ⧸ U) → HV E a → HV E a) (g : GL (Fin a) (Cinf E)) (x : GL (Fin a) (Af E)) (p : HV E a) :
     HV E a := sand g⁻¹ (Z (x : GL (Fin a) (Af E) ⧸ U) (sand g p))
 

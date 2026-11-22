@@ -1,11 +1,16 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.Saturation
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.StrictTransform
-import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
-import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SaturationByPowers
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.Saturation
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.StrictTransform
+public import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
+public import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SaturationByPowers
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry CategoryTheory.Limits
@@ -94,7 +99,7 @@ theorem map_saturationByPowers_of_flat {A B : Type*} [CommRing A] [CommRing B] [
           Ideal.mul_mem_right b _ (Ideal.mem_map_of_mem (algebraMap A B) hcc)
         simpa [Algebra.smul_def] using h2
     | add z₁ z₂ h₁ h₂ =>
-        rw [map_add, map_add]
+        rw [map_add (f := _), map_add (f := _)]
         exact Ideal.add_mem _ h₁ h₂
   have hy2 : y = TensorProduct.rid A B (LinearMap.lTensor B (LinearMap.ker u).subtype w) := by
     rw [hw]

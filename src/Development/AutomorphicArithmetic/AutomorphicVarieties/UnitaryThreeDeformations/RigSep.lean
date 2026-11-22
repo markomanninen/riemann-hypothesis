@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostNumber
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostNumber
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+
+@[expose] public section
 
 open NumberField Matrix IsLocalRing Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.Aut UpperTheory.V.UnitaryThreeInertia
 
@@ -17,7 +21,7 @@ private theorem norm_det_lt_one_of_norm_le_one_of_norm_apply_lt_one {K : Type*} 
   rw [norm_mul, hs, one_mul, norm_prod,
     ← Finset.mul_prod_erase Finset.univ (fun i => ‖A (σ i) i‖) (Finset.mem_univ (σ.symm a))]
   have hle : ∏ i ∈ Finset.univ.erase (σ.symm a), ‖A (σ i) i‖ ≤ 1 :=
-    Finset.prod_le_one (fun i _ => norm_nonneg _) (fun i _ => h1 _ _)
+    Finset.prod_le_one₀ (fun i _ => norm_nonneg _) (fun i _ => h1 _ _)
   have hlt : ‖A (σ (σ.symm a)) (σ.symm a)‖ < 1 := by
     rw [Equiv.apply_symm_apply]
     exact h2 _

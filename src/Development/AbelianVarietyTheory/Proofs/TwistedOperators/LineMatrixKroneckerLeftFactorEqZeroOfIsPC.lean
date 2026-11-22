@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.FockDeg
@@ -24,11 +28,12 @@ theorem plusPart_add (U D : Module.End ℂ (MvPolynomial σ ℂ))
       U (homogeneousComponent d P) := by
     intro d
     have hm := homogeneousComponent_mem d P
-    rw [LinearMap.add_apply, map_add, homogeneousComponent_of_mem (hU d _ hm),
+    rw [LinearMap.add_apply, map_add (f := _), homogeneousComponent_of_mem (hU d _ hm),
       homogeneousComponent_of_mem (hD d _ hm), if_pos rfl, if_neg (by omega), add_zero]
   unfold plusPart
   simp only [h]
-  rw [finsum_eq_sum_of_support_subset (s := Finset.range (P.totalDegree + 1)), ← map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [finsum_eq_sum_of_support_subset (s := Finset.range (P.totalDegree + 1)), ← map_sum,
     sum_homogeneousComponent]
   intro d hd
   by_contra hc
@@ -45,7 +50,7 @@ theorem minusPart_add (U D : Module.End ℂ (MvPolynomial σ ℂ))
       D (homogeneousComponent (d + 2) P) := by
     intro d
     have hm := homogeneousComponent_mem (d + 2) P
-    rw [LinearMap.add_apply, map_add, homogeneousComponent_of_mem (hU _ _ hm),
+    rw [LinearMap.add_apply, map_add (f := _), homogeneousComponent_of_mem (hU _ _ hm),
       homogeneousComponent_of_mem (hD _ _ hm), if_neg (by omega), if_pos (by omega), zero_add]
   unfold minusPart
   simp only [h]
@@ -55,7 +60,8 @@ theorem minusPart_add (U D : Module.End ℂ (MvPolynomial σ ℂ))
         homogeneousComponent_eq_zero _ _ (by omega), homogeneousComponent_eq_zero _ _ (by omega)]
       simp
     conv_rhs => rw [← h2]
-    rw [Finset.sum_range_succ' _ (P.totalDegree + 1 + 1), Finset.sum_range_succ' _ (P.totalDegree + 1),
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_range_succ' _ (P.totalDegree + 1 + 1), Finset.sum_range_succ' _ (P.totalDegree + 1),
       map_add, map_add, map_sum,
       hD0 _ _ (by omega) (homogeneousComponent_mem 0 P),
       hD0 _ _ (by omega) (homogeneousComponent_mem (0 + 1) P), add_zero, add_zero]
@@ -116,10 +122,10 @@ theorem inner_X_mul [DecidableEq σ] {H : Type} [NormedAddCommGroup H] [InnerPro
   have hm : ∀ (α : σ →₀ ℕ) (c : ℂ), (monomial α c : MvPolynomial σ ℂ) = c • monomial α 1 := by
     intro α c; rw [smul_monomial]; simp
   induction P using MvPolynomial.induction_on' with
-  | add P P' h h' => simp only [mul_add, map_add, inner_add_left, h, h']
+  | add P P' h h' => simp only [mul_add, map_add (f := _), inner_add_left, h, h']
   | monomial α a =>
     induction Q using MvPolynomial.induction_on' with
-    | add Q Q' h h' => simp only [map_add, inner_add_right, h, h']
+    | add Q Q' h h' => simp only [map_add (f := _), inner_add_right, h, h']
     | monomial β b =>
       rw [hm α a, hm β b, mul_smul_comm, Derivation.map_smul]
       simp only [map_smul, inner_smul_left, inner_smul_right, key]
@@ -249,7 +255,8 @@ theorem inner_plusPart_omAct {H : Type} [NormedAddCommGroup H] [InnerProductSpac
   have hM' : ∀ l l', linePos l = linePos l' → Mᴴ l l' = 0 := by
     intro l l' h; simp [hM l' l h.symm]
   rw [plusPart_omAct hM, minusPart_omAct hM', upOp_apply, downOp_apply]
-  simp only [map_sum, map_smul, sum_inner, inner_sum, inner_smul_left, inner_smul_right,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, sum_inner, inner_sum, inner_smul_left, inner_smul_right,
     ← Finset.sum_neg_distrib]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun l' _ => Finset.sum_congr rfl fun l _ => ?_

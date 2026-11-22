@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StRatioAlgDep
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PIntDomainDim
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBirationalModelExists
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StRatioAlgDep
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PIntDomainDim
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBirationalModelExists
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -16,7 +21,7 @@ namespace RatioAlgebraicDependence
 variable {K : Type} {ι : K → Type} {d : ℕ}
 
 def homog (c : ∀ k, ι k) (p : Fin d → Σ k, ι k) (f : MvPolynomial (Fin d) ℤ) : MvPolynomial (Σ k, ι k) ℤ :=
-  ∑ m ∈ f.support, C (coeff m f) *
+  ∑ m ∈ f.support, C (AddMonoidAlgebra.coeff f m) *
     ∏ j, X (p j) ^ m j * X ⟨(p j).1, c (p j).1⟩ ^ (f.totalDegree - m j)
 
 theorem aeval_homog {F : Type} [Field F] [Algebra ℤ F] (c : ∀ k, ι k) (p : Fin d → Σ k, ι k)
@@ -25,10 +30,12 @@ theorem aeval_homog {F : Type} [Field F] [Algebra ℤ F] (c : ∀ k, ι k) (p : 
       aeval (fun j ↦ w (p j) / w ⟨(p j).1, c (p j).1⟩) f := by
   classical
   have hsum : aeval (fun j ↦ w (p j) / w ⟨(p j).1, c (p j).1⟩) f =
-      ∑ m ∈ f.support, aeval (fun j ↦ w (p j) / w ⟨(p j).1, c (p j).1⟩) (monomial m (coeff m f)) := by
+      ∑ m ∈ f.support, aeval (fun j ↦ w (p j) / w ⟨(p j).1, c (p j).1⟩) (monomial m (AddMonoidAlgebra.coeff f m)) := by
     conv_lhs => rw [f.as_sum]
-    rw [map_sum]
-  rw [hsum, Finset.mul_sum, homog, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum, Finset.mul_sum, homog, map_sum]
   refine Finset.sum_congr rfl fun m hm ↦ ?_
   have hle : ∀ j, m j ≤ f.totalDegree := fun j ↦
     (monomial_le_degreeOf j hm).trans (degreeOf_le_totalDegree f j)
@@ -43,8 +50,8 @@ theorem aeval_homog {F : Type} [Field F] [Algebra ℤ F] (c : ∀ k, ι k) (p : 
 
 end RatioAlgebraicDependence
 
-open RatioAlgebraicDependence in
 
+open RatioAlgebraicDependence in
 theorem RatioAlgDep.proof : RatioAlgDep.Statement := by
   intro K _ ι _ Q d c p hQ
   classical
@@ -61,7 +68,7 @@ theorem RatioAlgDep.proof : RatioAlgDep.Statement := by
   rw [hy] at htr
   have := hprime
   have hA := IntDomainDim.proof (MRing ι ⧸ Q) (CoordinateConeArithVar.algebraMap_injective Q hhor)
-  rw [hdim, htr, map_add, map_natCast] at hA
+  rw [hdim, htr, map_add (f := _), map_natCast] at hA
   have hA' : ((d + Fintype.card K : ℕ) : ℕ∞) =
       Cardinal.toENat (Algebra.trdeg ℤ Ω) + Fintype.card K + 1 := by exact_mod_cast hA
   have hlt : Algebra.trdeg ℤ Ω < d := by

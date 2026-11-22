@@ -1,11 +1,16 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 open Classical
 
 namespace GlobalTheory.InvDiffLocal
 
-open IsDedekindDomain.HeightOneSpectrum in
 
+open IsDedekindDomain.HeightOneSpectrum in
 theorem exists_not_mem_mul_mem {R : Type} [CommRing R] [IsDedekindDomain R] {K : Type} [Field K]
     [Algebra R K] [IsFractionRing R K] (v : HeightOneSpectrum R) (t : K)
     (ht : v.valuation K t ≤ 1) :
@@ -76,8 +81,8 @@ end GlobalTheory.InvDiffLocal
 
 namespace GlobalTheory.InvDiffLocal
 
-open IsDedekindDomain.HeightOneSpectrum in
 
+open IsDedekindDomain.HeightOneSpectrum in
 theorem exists_approx_idempotent {K L : Type} [Field K] [NumberField K] [Field L] [NumberField L]
     [Algebra K L] (la : HeightOneSpectrum (𝓞 L)) (p : HeightOneSpectrum (𝓞 K)) (N : ℕ) :
     ∃ z : 𝓞 L, z ∉ la.asIdeal ∧ ∀ la' : HeightOneSpectrum (𝓞 L), la' ≠ la →
@@ -112,8 +117,8 @@ end GlobalTheory.InvDiffLocal
 
 namespace GlobalTheory.InvDiffLocal
 
-open IsDedekindDomain.HeightOneSpectrum in
 
+open IsDedekindDomain.HeightOneSpectrum in
 theorem valuation_mul_different_le_one : ∀ (K L : Type) [Field K] [NumberField K] [Field L]
     [NumberField L] [Algebra K L] (la : HeightOneSpectrum (𝓞 L)) (p : HeightOneSpectrum (𝓞 K)),
     la.asIdeal.under (𝓞 K) = p.asIdeal → ∀ y : L, (∃ N : ℕ, ∀ b : 𝓞 L,
@@ -152,7 +157,7 @@ theorem valuation_mul_different_le_one : ∀ (K L : Type) [Field K] [NumberField
     | zero => simp
     | add b c _ _ hb hc =>
       have : ((b + c : 𝓞 L) : L) * x = (b : L) * x + (c : L) * x := by push_cast; ring
-      rw [this, map_add, mul_add]
+      rw [this, map_add (f := _), mul_add]
       exact add_mem hb hc
     | smul n b _ hb =>
       have : ((n • b : 𝓞 L) : L) * x = n • ((b : L) * x) := by

@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.CoefficientRepTrivialOnUnramified
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.GalUnitary
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.SqBasis
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExpCharIntegralityCriterion
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.CoefficientRepTrivialOnUnramified
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.GalUnitary
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.SqBasis
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExpCharIntegralityCriterion
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel IsLocalRing GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V UpperTheory.V.Hi
 open UpperTheory.V.HV (Coef)
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -87,9 +92,9 @@ private theorem prod_delta {O K E : Type} [CommRing O] [CommRing K] [Algebra O K
     ∃ x ∈ 𝔞, ∏ e, ((if i e = j e then 1 else 0) + algebraMap O K (y e)) = (if i = j then 1 else 0) + algebraMap O K x := by
   refine ⟨∏ e, ((if i e = j e then 1 else 0) + y e) - ∏ e, (if i e = j e then 1 else 0), ?_, ?_⟩
   · rw [← Ideal.Quotient.eq, map_prod, map_prod]
-    exact Finset.prod_congr rfl fun e _ => by rw [map_add, Ideal.Quotient.eq_zero_iff_mem.2 (hy e), add_zero]
+    exact Finset.prod_congr rfl fun e _ => by rw [map_add (f := _), Ideal.Quotient.eq_zero_iff_mem.2 (hy e), add_zero]
   · rw [Fintype.prod_boole]
-    simp only [map_sub, map_prod, map_add, ← funext_iff, apply_ite (algebraMap O K), map_one, map_zero]
+    simp only [map_sub, map_prod, map_add (f := _), ← funext_iff, apply_ite (algebraMap O K), map_one, map_zero]
     split_ifs <;> ring
 
 theorem UpperTheory.V.Hi.wtRep :

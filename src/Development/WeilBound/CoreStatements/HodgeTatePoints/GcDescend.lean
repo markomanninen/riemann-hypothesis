@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LeadMinor
-import Development.WeilBound.CoreStatements.HodgeTatePoints.DvrOfHeightOne
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LeadMinor
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.DvrOfHeightOne
+
+@[expose] public section
 
 open Module NumberField GlobalTheory.CompanionTheory.Ar.HT TensorProduct
 
@@ -20,7 +24,7 @@ theorem test_descend : ∀ (A K : Type) [CommRing A] [IsDomain A] [IsNoetherianR
     IsLocalization.lift_eq hu a
   haveI : IsScalarTower A R O := IsScalarTower.of_algebraMap_eq fun a => (hcomp a).symm
   have hinjR : Function.Injective (algebraMap R O) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro r hr
     obtain ⟨⟨a, s⟩, rfl⟩ := IsLocalization.mk'_surjective q.primeCompl r
     have h2 : algebraMap A O a = 0 := by

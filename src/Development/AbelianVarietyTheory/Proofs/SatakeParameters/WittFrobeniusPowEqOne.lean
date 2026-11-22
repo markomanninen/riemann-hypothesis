@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
+
+@[expose] public section
 
 namespace GlobalTheory
 

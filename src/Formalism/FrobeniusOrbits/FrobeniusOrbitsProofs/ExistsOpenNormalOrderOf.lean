@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.FrobeniusOrbits.HostThickExists
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Orbits
+module
+
+public import Mathlib
+public import Formalism.FrobeniusOrbits.HostThickExists
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Orbits
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,42 +14,7 @@ open Formalism.TwoAdicCyclotomicDecomposition
 
 namespace Stab
 
-theorem exists_open_normal_orderOf {G : Type*} [Group G] [TopologicalSpace G]
-    [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G]
-    (x : G) (hx : IsOfFinOrder x) :
-    ∃ N : OpenNormalSubgroup G,
-      orderOf (QuotientGroup.mk x : G ⧸ (N.toSubgroup)) = orderOf x := by
-  classical
-  have hn : 0 < orderOf x := hx.orderOf_pos
-  set S : Set G := (fun i : ℕ => x ^ i) '' Set.Ioo 0 (orderOf x) with hSdef
-  have hS : IsClosed S := ((Set.finite_Ioo 0 (orderOf x)).image _).isClosed
-  have h1 : (1 : G) ∈ Sᶜ := by
-    rintro ⟨i, ⟨hi0, hin⟩, hi⟩
-    exact pow_ne_one_of_lt_orderOf hi0.ne' hin hi
-  obtain ⟨N, hN⟩ := ProfiniteGrp.exist_openNormalSubgroup_sub_open_nhds_of_one hS.isOpen_compl h1
-  refine ⟨N, le_antisymm ?_ ?_⟩
-  · exact Nat.le_of_dvd hn (orderOf_map_dvd (QuotientGroup.mk' N.toSubgroup) x)
-  · by_contra hlt
-    push_neg at hlt
-    have hfo : IsOfFinOrder (QuotientGroup.mk x : G ⧸ N.toSubgroup) := by
-      rw [isOfFinOrder_iff_pow_eq_one]
-      exact ⟨orderOf x, hn, by rw [← QuotientGroup.mk_pow, pow_orderOf_eq_one]; rfl⟩
-    have hj := hfo.orderOf_pos
-    have hmem : x ^ orderOf (QuotientGroup.mk x : G ⧸ N.toSubgroup) ∈ N.toSubgroup := by
-      rw [← QuotientGroup.eq_one_iff, QuotientGroup.mk_pow, pow_orderOf_eq_one]
-    exact hN hmem ⟨_, ⟨hj, hlt⟩, rfl⟩
-
 end Stab
-
-theorem hostProG : HostProG := by
-  intro g hg G _ _ _ _ _ hN x hx
-  obtain ⟨N, hNx⟩ := Stab.exists_open_normal_orderOf x hx
-  obtain ⟨m, hm⟩ := hN N.toSubgroup N.toOpenSubgroup.isOpen inferInstance
-  have hdvd : orderOf x ∣ g ^ m := by
-    rw [← hNx, ← hm]
-    exact orderOf_dvd_natCard _
-  obtain ⟨j, -, hj⟩ := (Nat.dvd_prime_pow hg).1 hdvd
-  exact ⟨j, hj⟩
 
 theorem hostStab : HostStab := by
   classical

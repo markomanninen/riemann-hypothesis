@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrysActApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QActMSubAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorLieConditionModHodgeFiltration
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrysActApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QActMSubAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorLieConditionModHodgeFiltration
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.UPel.Sm GlobalTheory.Cris GlobalTheory.DeRham
@@ -34,7 +39,7 @@ theorem two_rho_sub_ne_zero (b : GlobalTheory.UPel.HT.Base D R) (β : R →+* k)
     rw [map_intCast] at this
     exact this.ne_zero
   have hr := congrArg β b.ρ_root
-  simp only [map_add, map_sub, map_pow, map_mul, map_intCast, map_zero] at hr
+  simp only [map_add (f := _), map_sub, map_pow, map_mul, map_intCast, map_zero] at hr
   intro h0
   apply hk
   have : (β b.ρ - ((D.tr : k) - β b.ρ)) ^ 2 = ((D.tr ^ 2 - 4 * D.nm : ℤ) : k) := by
@@ -44,7 +49,7 @@ theorem two_rho_sub_ne_zero (b : GlobalTheory.UPel.HT.Base D R) (β : R →+* k)
 theorem nm_eq_mul (b : GlobalTheory.UPel.HT.Base D R) (β : R →+* k) :
     (D.nm : k) = β b.ρ * ((D.tr : k) - β b.ρ) := by
   have hr := congrArg β b.ρ_root
-  simp only [map_add, map_sub, map_pow, map_mul, map_intCast, map_zero] at hr
+  simp only [map_add (f := _), map_sub, map_pow, map_mul, map_intCast, map_zero] at hr
   linear_combination hr
 
 theorem exists_sep (b : GlobalTheory.UPel.HT.Base D R) (β : R →+* k) {i j : Fin D.a} (hij : i ≠ j) :
@@ -113,8 +118,9 @@ theorem lie_rho_decomp (o₀ : GlobalTheory.UPel.HT.Obj b N t) (β : R →+* k) 
     have := hw j c
     rw [← HL.ker_toLie (o₀.act.toF D), LinearMap.mem_ker, map_sub, map_smul, toLie_crys', sub_eq_zero] at this
     exact this
-  · rw [← HL.ker_toLie (o₀.act.toF D), LinearMap.mem_ker, map_sub, map_sum, sub_eq_zero] at hs
-    exact hs
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [← HL.ker_toLie (o₀.act.toF D), LinearMap.mem_ker, map_sub, map_sum, sub_eq_zero] at hs
+      exact hs
 
 theorem lie_decomp (o₀ : GlobalTheory.UPel.HT.Obj b N t) (β : R →+* k) (ht : t = spMap β) (HL : LieExact o₀.A)
     (v : Lie (o₀.act.toF D)) :
@@ -191,7 +197,8 @@ theorem jSub_le (o₀ : GlobalTheory.UPel.HT.Obj b N t) (β : R →+* k) (ht : t
       simp_rw [← Finset.sum_smul, hc', zero_smul, Finset.sum_const_zero]
     calc HL.toLie (o₀.act.toF D) (∑ l, lam l • GlobalTheory.HTCount.crysAct o₀ (algebraMap (𝓞 D.F) D.O (c l)) x)
         = ∑ l, lam l • c l • HL.toLie (o₀.act.toF D) x := by
-          simp only [map_sum, map_smul, toLie_crys]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [map_sum, map_smul, toLie_crys]
       _ = ∑ l, lam l • c l • u + ∑ l, lam l • ∑ j, β (b.t j (c l)) • w j := by
           rw [hs, ← Finset.sum_add_distrib]
           refine Finset.sum_congr rfl fun l _ => ?_

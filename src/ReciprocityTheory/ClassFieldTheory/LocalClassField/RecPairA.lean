@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPairDefs
-import ReciprocityTheory.GroupCohomology.ComapZeroCoboundariesEqBot
-import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPairDefs
+public import ReciprocityTheory.GroupCohomology.ComapZeroCoboundariesEqBot
+public import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -27,7 +31,7 @@ theorem exists_defect (χ : Additive G →+ QZ) (t : G → ℚ)
     (ht : ∀ g, (QuotientAddGroup.mk (t g) : QZ) = χ (Additive.ofMul g)) :
     ∃ m : (Fin 2 → G) → ℤ, ∀ g, (m g : ℚ) = t (g 0) + t (g 1) - t (g 0 * g 1) := by
   have h : ∀ g : Fin 2 → G, ∃ n : ℤ, (n : ℚ) = t (g 0) + t (g 1) - t (g 0 * g 1) := fun g =>
-    exists_int_of_mk_eq (by rw [QuotientAddGroup.mk_add, ht, ht, ht, ofMul_mul, map_add])
+    exists_int_of_mk_eq (by rw [QuotientAddGroup.mk_add, ht, ht, ht, ofMul_mul, map_add (f := _)])
   choose m hm using h
   exact ⟨m, hm⟩
 

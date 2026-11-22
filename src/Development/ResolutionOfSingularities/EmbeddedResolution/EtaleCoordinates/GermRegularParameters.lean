@@ -1,10 +1,15 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateQuotient
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinatePolynomialRing
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateQuotient
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinatePolynomialRing
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory Opposite AlgebraicGeometry TopologicalSpace
@@ -76,16 +81,5 @@ theorem exists_isRegularParameterSystem_with_coords_of_mem_prime (hU : IsAffineO
     exists_sections_span_eq_maximalIdeal_with_coords hU c x hx J₀
       (fun j hj => (germ_mem_maximalIdeal_iff hU x hx (c.coord j)).mpr (hJ₀ j hj))
   exact ⟨d, f, h2, h3, h4⟩
-
-theorem exists_isRegularParameterSystem_with_coords_of_germ_mem
-    (hU : IsAffineOpen U) (c : EtaleChart p U m) (x : X) (hx : x ∈ U) (J₀ : Finset (Fin m))
-    (hJ₀ : ∀ j ∈ J₀, X.presheaf.germ U x hx (c.coord j) ∈
-      IsLocalRing.maximalIdeal (X.presheaf.stalk x)) :
-    ∃ (n : ℕ) (f : Fin n → Γ(X, U)),
-      (∀ j ∈ J₀, ∃ i, f i = c.coord j) ∧
-      IsRegularParameterSystem (X.presheaf.stalk x) n
-        (fun i => X.presheaf.germ U x hx (f i)) :=
-  exists_isRegularParameterSystem_with_coords_of_mem_prime hU c x hx J₀
-    (fun j hj => (germ_mem_maximalIdeal_iff hU x hx (c.coord j)).mp (hJ₀ j hj))
 
 end FunctorialResolution.EmbeddedResolution

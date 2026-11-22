@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftTheta
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockCompMulFin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftTheta
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockCompMulFin
+
+@[expose] public section
 
 noncomputable section
 

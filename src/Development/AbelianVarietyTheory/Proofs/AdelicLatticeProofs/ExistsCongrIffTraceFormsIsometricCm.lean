@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AdelicLattices₂.AlgebraMapNormOfBasisOneSqrt
-import Development.AbelianVarietyTheory.PublishedTheorems.Landherr₂.ExistsNormTensor
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsQuaternaryOfCoordinates
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSquareOfValuedSubOneLt
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUnitValuedTernaryLtOne
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsZeroFiveOfValuation
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsForallAbvSubLt
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsRingHomAdicCompletion
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsZeroCoordNeZero
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsCongrIffTraceFormsIsometric
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AdelicLattices₂.AlgebraMapNormOfBasisOneSqrt
+public import Development.AbelianVarietyTheory.PublishedTheorems.Landherr₂.ExistsNormTensor
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsQuaternaryOfCoordinates
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSquareOfValuedSubOneLt
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUnitValuedTernaryLtOne
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsZeroFiveOfValuation
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsForallAbvSubLt
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsRingHomAdicCompletion
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsZeroCoordNeZero
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsOrthogonalBasisDotProductApplyEq
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsGlIsometryCompEqOfNondegenerate
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped Matrix WithZero
@@ -89,7 +94,7 @@ theorem exists_norm_over_extension (H : GlobalTheory.Published.HasseNormSt) (F :
       (by simpa using hα) (by simpa using hβ) (by simpa using hγ)
       (by rw [← map_pow, hs]; simp only [map_mul]) (by simpa using h0) ?_
     have := congrArg φ h
-    simpa only [map_add, map_sub, map_mul, map_pow, hφ, map_zero] using this
+    simpa only [map_add (f := _), map_sub, map_mul, map_pow, hφ, map_zero] using this
 
 theorem isotropic_four (H : GlobalTheory.Published.HasseNormSt) (F : Type) [Field F] [NumberField F]
     (a : Fin 4 → F) (ha : ∀ i, a i ≠ 0)
@@ -182,12 +187,12 @@ theorem exists_value_isSquare_div (F : Type) [Field F] [NumberField F] {a a' : F
       (algebraMap F _ a * p v ^ 2 + algebraMap F _ a' * q v ^ 2) - 1) <
         Valued.v (4 : v.1.adicCompletion F) := by
     intro v
-    simp only [map_add, map_mul, map_pow]
+    simp only [map_add (f := _), map_mul, map_pow]
     exact Set.mem_iInter.1 hT v
   replace hR : ∀ σ : F →+* ℝ,
       0 < σ (a * x ^ 2 + a' * y ^ 2) / (σ a * p' σ ^ 2 + σ a' * q' σ ^ 2) := by
     intro σ
-    simp only [map_add, map_mul, map_pow]
+    simp only [map_add (f := _), map_mul, map_pow]
     exact Set.mem_iInter.1 hR σ
   by_cases h0 : a * x ^ 2 + a' * y ^ 2 = 0
   · refine ⟨1, 0, by simpa using ha, fun v => ?_, fun σ => ?_⟩
@@ -300,26 +305,5 @@ theorem isotropic_of_indefinite (H : GlobalTheory.Published.HasseNormSt) (F : Ty
 theorem landherr_of_hasseNormSt (H : GlobalTheory.Published.HasseNormSt) : GlobalTheory.Published.Landherr :=
   landherr_of_isotropy fun F _ _ _ _ a hι ha hr => isotropic_of_indefinite H F a hι ha hr
 
-universe u v w in
-
-theorem trace_forms_and_landherr :
-    (∀ {F : Type u} {E : Type v} [Field F] [Field E] [Algebra F E], (2 : E) ≠ 0 →
-      ∀ c : E →+* E, (∀ t, c (c t) = t) → (∀ t : E, c t = t ↔ ∃ s : F, algebraMap F E s = t) →
-      ∀ {n : Type w} [Fintype n] [DecidableEq n] {G G' : Matrix n n E},
-      (∀ a b, c (G a b) = G b a) → (∀ a b, c (G' a b) = G' b a) → G.det ≠ 0 → G'.det ≠ 0 →
-      ((∃ P : Matrix n n E, P.det ≠ 0 ∧ G' = Pᵀ * G * P.map c) ↔
-        ∃ φ : (n → E) ≃ₗ[F] (n → E),
-          ∀ x, x ⬝ᵥ G' *ᵥ (c ∘ x) = φ x ⬝ᵥ G *ᵥ (c ∘ φ x))) ∧
-    (GlobalTheory.Published.HasseNormSt → ∀ (F : Type) [Field F] [NumberField F] {ι : Type w} [Fintype ι],
-      4 ≤ Fintype.card ι → ∀ a : ι → F, (∀ i, a i ≠ 0) →
-      (∀ σ : F →+* ℝ, ∃ x : ι → ℝ, x ≠ 0 ∧ ∑ i, σ (a i) * x i ^ 2 = 0) →
-      (∀ v : HeightOneSpectrum (𝓞 F), ∃ x : ι → v.adicCompletion F, x ≠ 0 ∧
-        ∑ i, algebraMap F (v.adicCompletion F) (a i) * x i ^ 2 = 0) →
-      ∃ x : ι → F, x ≠ 0 ∧ ∑ i, a i * x i ^ 2 = 0) ∧
-    (GlobalTheory.Published.HasseNormSt → GlobalTheory.Published.Landherr) :=
-  ⟨fun h2 c hc hF _ _ _ _ _ hG hG' hd hd' =>
-      exists_congr_iff_trace_forms_isometric h2 c hc hF hG hG' hd hd',
-    fun H F _ _ _ _ hι a ha hr hf => isotropic_of_locally_isotropic H F hι a ha hr hf,
-    landherr_of_hasseNormSt⟩
 
 end GlobalTheory.LocalQuad

@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGridSeparation
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRootGridLower
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNormalLocusRep
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreNormBound
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGridSeparation
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRootGridLower
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNormalLocusRep
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreNormBound
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

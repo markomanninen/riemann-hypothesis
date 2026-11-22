@@ -1,7 +1,11 @@
-import ReciprocityTheory.L2DbarEstimates.Localization.UnweightBackStatement
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.HoloWeakStatement
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.RegGlue
+module
+
+public import ReciprocityTheory.L2DbarEstimates.Localization.UnweightBackStatement
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.HoloWeakStatement
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.RegGlue
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.F
 
@@ -18,7 +22,7 @@ theorem regM_dbarDir_eq {n : ℕ} (g : V n → ℂ) (y v : V n) :
     have hc : c • w = c.re • w + c.im • (Complex.I • w) := by
       conv_lhs => rw [← Complex.re_add_im c]
       rw [add_smul, mul_smul, Complex.coe_smul, Complex.coe_smul]
-    rw [hc, map_add, map_smul, map_smul]
+    rw [hc, map_add (f := _), map_smul, map_smul]
   have hv : v = ∑ j, v j • bas n j := by
     conv_lhs => rw [← (EuclideanSpace.basisFun (Fin n) ℂ).sum_repr v]
     simp [bas]
@@ -27,9 +31,11 @@ theorem regM_dbarDir_eq {n : ℕ} (g : V n → ℂ) (y v : V n) :
     simp [Finset.smul_sum, smul_smul]
   have hLv : L v = ∑ j, L (v j • bas n j) := by
     conv_lhs => rw [hv]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
   have hLIv : L (Complex.I • v) = ∑ j, L ((Complex.I * v j) • bas n j) := by
-    rw [hIv, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hIv, map_sum]
   simp only [C.dbarDir, wdb, ← hL]
   rw [hLIv, hLv, Finset.mul_sum, Finset.mul_sum, ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun j _ => ?_
@@ -99,8 +105,8 @@ theorem regM_locInt {n : ℕ} (z : M → V n) (hz : IsLocalHomeomorph z)
   haveI : IsFiniteMeasure (volume.restrict K) :=
     ⟨by rw [Measure.restrict_apply_univ]; exact hK.measure_lt_top⟩
   have hL2 : MemLp (F ∘ e.symm) 2 (volume.restrict K) := by
-    refine ⟨hmeas, ?_⟩
-    rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top two_ne_zero ENNReal.ofNat_ne_top]
+    rw [memLp_iff,
+      eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top two_ne_zero ENNReal.ofNat_ne_top hmeas]
     simpa [ENNReal.rpow_two] using h2
   exact hL2.integrable one_le_two
 

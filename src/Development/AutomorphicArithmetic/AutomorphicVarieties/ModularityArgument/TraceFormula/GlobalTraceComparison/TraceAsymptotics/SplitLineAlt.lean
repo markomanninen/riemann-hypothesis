@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.StableBlock
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.StableBlock
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,9 +30,9 @@ def un (μ : HChar E) (a b : ℕ) (w : Pl E) (B₁ B₂ : Multiset ℂˣ) : Mult
 def ct0 (μ : HChar E) {a b : ℕ} (h : a + b = n) (f : ∀ w : Pl E, GLw n w → ℂ) (w : Pl E) : GLw a w × GLw b w → ℂ :=
   ctMu h w (μ.loc w) fun x : UL n w => f w x.1
 
-def ExAct : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E) (e : Ex (Fin (n + 1))), IsHecke (KGL w n) (fn1 n w e) ∧
+def ExAct : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E) (e : Ex (Fin (n + 1))), IsHecke (KGL w (n := n)) (fn1 n w e) ∧
   ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GLw n w) V) (x : V) (B : Multiset ℂˣ), IsSatVecGL w ρ x B →
-    levOp ρ (KGL w n) (KGL w n) (fn1 n w e) LinearMap.id x = ev1 n w e B • x
+    levOp ρ (KGL w (n := n)) (KGL w (n := n)) (fn1 n w e) LinearMap.id x = ev1 n w e B • x
 
 def ExHecke2 : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (a b : ℕ) (w : Pl E) (e : Ex (Fin (a + 1) × Fin (b + 1))), IsHecke (K2 a b w) (fn2 a b w e)
 
@@ -47,16 +51,16 @@ def Places : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], (�
 def RegCt : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (w : Pl E), IsSplitAt w → ∀ (μ : HChar E) (n a b : ℕ) (h : a + b = n) (f : ∀ w : Pl E, GLw n w → ℂ),
   (∀ y, f w y ≠ 0 → y.val.charpoly.Separable) → RegAt2 a b w (ct0 μ h f w)
 
-def LevelFn : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E) (τ : SmIrr (GLw n w)), ∃ f, Lc (KGL w n) f ∧ trc τ.ρ (KGL w n) f ≠ 0
+def LevelFn : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E) (τ : SmIrr (GLw n w)), ∃ f, Lc (KGL w (n := n)) f ∧ trc τ.ρ (KGL w (n := n)) f ≠ 0
 
 def RegFn : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E) (τ : SmIrr (GLw n w)) (B : Multiset ℂˣ), HasSatGL w τ.ρ B →
-  ∃ f, Lc (KGL w n) f ∧ trc τ.ρ (KGL w n) f ≠ 0 ∧ ∀ y, f y ≠ 0 → y.val.charpoly.Separable
+  ∃ f, Lc (KGL w (n := n)) f ∧ trc τ.ρ (KGL w (n := n)) f ≠ 0 ∧ ∀ y, f y ≠ 0 → y.val.charpoly.Separable
 
 def TrAvg : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E), IsSplitAt w → ∀ (μ : HChar E) (τ : SmIrr (GLw n w)) (f : ∀ w : Pl E, GLw n w → ℂ),
-  Lc (KGL w n) (f w) → trc τ.ρ (KGL w n) (fun g => ct0 μ (Nat.add_zero n) f w (g, 1)) = trc τ.ρ (KGL w n) (f w)
+  Lc (KGL w (n := n)) (f w) → trc τ.ρ (KGL w (n := n)) (fun g => ct0 μ (Nat.add_zero n) f w (g, 1)) = trc τ.ρ (KGL w (n := n)) (f w)
 
-def SplitLine : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E) (τ : SmIrr (GLw n w)), fixed τ.ρ (KGL w n) ≠ ⊥ →
-  Module.finrank ℂ (fixed τ.ρ (KGL w n)) = 1 ∧ ∃ B, HasSatGL w τ.ρ B
+def SplitLine : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E) (τ : SmIrr (GLw n w)), fixed τ.ρ (KGL w (n := n)) ≠ ⊥ →
+  Module.finrank ℂ (fixed τ.ρ (KGL w (n := n))) = 1 ∧ ∃ B, HasSatGL w τ.ρ B
 
 def InertLine : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], GlobalTheory.BCT.Unr E → ∀ (n : ℕ) (w : Pl E), ¬ IsSplitAt w → ∀ σ : SmIrr (UL n w),
   fixed σ.ρ (KL n w) ≠ ⊥ → FiniteDimensional ℂ (fixed σ.ρ (KL n w)) → Module.finrank ℂ (fixed σ.ρ (KL n w)) = 1
@@ -70,14 +74,14 @@ def Choice : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n :
   ∀ (μ : HChar E) (e : InfinitePlace E → ℤ), IsMu μ e →
   ∃ (S : Set (Pl E)) (Z : Finset (Pl E)) (B : Pl E → Multiset ℂˣ) (τ : ∀ w : Pl E, SmIrr (GLw n w)) (f : ∀ w : Pl E, GLw n w → ℂ),
     IsSection S ∧ SplitIn S Z ∧ (∀ w, Off Z w → (CG.mk π).HasSat w (B w) ∧ μ.UnrAt w) ∧
-    (∀ w ∈ Z, π.IsLocComp w (τ w) ∧ Lc (KGL w n) (f w) ∧ trc (τ w).ρ (KGL w n) (f w) ≠ 0) ∧
+    (∀ w ∈ Z, π.IsLocComp w (τ w) ∧ Lc (KGL w (n := n)) (f w) ∧ trc (τ w).ρ (KGL w (n := n)) (f w) ≠ 0) ∧
     ∃ w ∈ Z, ∀ y, f w y ≠ 0 → y.val.charpoly.Separable
 
 def RChoice : Prop := Places → LevelFn → RegFn → Choice
 
 def UEval : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], GlobalTheory.BCT.Unr E → ∀ n : ℕ, 1 ≤ n → ∀ S : Set (Pl E), IsSection S →
   ∀ (lam : InfinitePlace E → DomWeight n) (Z : Finset (Pl E)), SplitIn S Z → ∀ f : ∀ w : Pl E, GLw n w → ℂ,
-    (∀ w ∈ Z, Lc (KGL w n) (f w)) → (∃ w ∈ Z, ∀ y, f w y ≠ 0 → y.val.charpoly.Separable) →
+    (∀ w ∈ Z, Lc (KGL w (n := n)) (f w)) → (∃ w ∈ Z, ∀ y, f w y ≠ 0 → y.val.charpoly.Separable) →
     ∃ (K' : ∀ w : Pl E, Subgroup (UL n w)) (ι : Type) (_ : Fintype ι) (σ : ι → Submodule ℂ (UA E n → ℂ)) (A : ι → ℂ)
       (B : ι → Pl E → Multiset ℂˣ), IsLevelFam (fun w : Pl E => MonoidHom.id (UL n w)) (KL n) K' ∧
       (∀ i, IsAutRepU (σ i) ∧ (∀ w : Pl E, ¬ IsSplitAt w → IsUnramU (σ i) w) ∧ ∀ w, Off Z w → IsSplitAt w →
@@ -89,7 +93,7 @@ def RUEval : Prop := USide → Places → ExAct → SplitLine → InertLine → 
 
 def FamMatch : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], GlobalTheory.BCT.Unr E → ∀ (n : ℕ) (μ : HChar E) (e : InfinitePlace E → ℤ), IsMu μ e →
   ∀ S : Set (Pl E), IsSection S → ∀ Z : Finset (Pl E), SplitIn S Z → (∀ w, Off Z w → μ.UnrAt w) →
-  ∀ f : ∀ w : Pl E, GLw n w → ℂ, (∀ w ∈ Z, Lc (KGL w n) (f w)) → ∀ (a b : ℕ) (h : a + b = n),
+  ∀ f : ∀ w : Pl E, GLw n w → ℂ, (∀ w ∈ Z, Lc (KGL w (n := n)) (f w)) → ∀ (a b : ℕ) (h : a + b = n),
     (∀ w ∈ Z, Lc (K2 a b w) (ct0 μ h f w)) ∧
     ∃ t : Pl E → Fin (n + 1) → Ex (Fin (a + 1) × Fin (b + 1)), ∀ T : Finset (Pl E), SplitIn S T → Disjoint T Z → ∀ e₁ e₂,
       (∀ B₁ B₂ : Pl E → Multiset ℂˣ, (∀ w, Off Z w → (B₁ w).card = a ∧ (B₂ w).card = b) →
@@ -112,10 +116,6 @@ def Ends : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n a b
   (∀ w ∈ S, Φ w = if IsSplitAt w then ctMu h w (μ.loc w) (f w) else (K2 a b w : Set _).indicator 1) →
   (∀ w ∈ S, Φ' w = if IsSplitAt w then ctMu (Nat.add_zero n) w (μ.loc w) (f w) else (K2 n 0 w : Set _).indicator 1) →
   geomSt2 S l₁ l₂ Φ = geomSt2 S lam l₀ Φ'
-
-def TwData : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n a b : ℕ), a + b = n → 1 ≤ a → 1 ≤ b → ∀ (μ : HChar E) (D₁ : CD E a) (D₂ : CD E b),
-  ∃ D : CD E n, (∀ π : CuspSub E n, ¬ D.Has π) ∧
-    ∀ w B₁ B₂, μ.UnrAt w → D₁.Sat w B₁ → D₂.Sat w B₂ → D.Sat w (un μ a b w B₁ B₂)
 
 def Sep : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (S : Set (Pl E)), IsSection S → ∀ (Z : Finset (Pl E)) (I : Type) [Finite I]
   (B : Pl E → Multiset ℂˣ) (C : I → Pl E → Multiset ℂˣ),

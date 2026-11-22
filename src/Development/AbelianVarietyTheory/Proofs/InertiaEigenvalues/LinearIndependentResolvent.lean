@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.NonUnitShift
 
@@ -49,7 +53,8 @@ theorem linearIndependent_resolvent (T : Module.End ℂ V)
   have key : aeval T q v = 0 := by
     have h1 : aeval T (∏ k ∈ s, (X - C k)) (∑ j ∈ s, g j • w j) = 0 := by
       rw [hs, map_zero]
-    rw [← h1, hq, map_sum, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h1, hq, map_sum, map_sum, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun j hj => ?_
     rw [← Finset.prod_erase_mul s _ hj, map_mul, map_mul, aeval_C, map_sub, aeval_X, aeval_C,
       map_smul, Module.End.mul_apply, Module.End.mul_apply, hw, Module.algebraMap_end_apply]

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ObjPol
-import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ObjPol
+public import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
+
+@[expose] public section
 
 noncomputable section
 
@@ -231,8 +235,8 @@ def blockLat (O : Type*) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (
 abbrev SegVs (O : Type*) [CommRing O] [IsDomain O] (r s t : ℕ) :=
   SegBlock s r → MvPolynomial (BVar (2 * s + 1) r t) (KK O)
 
-open Classical in
 
+open Classical in
 def segLat (O : Type*) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (p r : ℕ) [NeZero r]
     (S : SegData s) (aTop : Fin s → ℕ) (aPlus : ℕ) (m : ℝ) : Submodule O (SegVs O r s S.t) :=
   Submodule.pi Set.univ (fun b => if Kept p r S aTop b then blockLat O p r S aTop aPlus m b else ⊥)
@@ -273,8 +277,8 @@ def blockRank (O : Type*) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] 
     (blockData p S aTop aPlus m b).SSZ O (r := r)
   Module.finrank (KK O) (Submodule.span (KK O) (L : Set (MvPolynomial (BVar (2 * s + 1) r S.t) (KK O))))
 
-open Classical in
 
+open Classical in
 def segRank (O : Type*) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (p r : ℕ) [NeZero r]
     (S : SegData s) (aTop : Fin s → ℕ) (aPlus : ℕ) (m : ℝ) : ℕ :=
   ∑ᶠ b : SegBlock s r, if Kept p r S aTop b then blockRank O p r S aTop aPlus m b else 0
@@ -282,9 +286,6 @@ def segRank (O : Type*) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (p
 def blockOrd (p : ℕ) {r : ℕ} (S : SegData s) (b : SegBlock s r) : ℕ :=
   (∑ i, (S.P p i * oEff S b i + (∑ c : Fin (r + 1), if (c : ℕ) = 0 then 0 else b.rz i c) + b.ry i 0)) +
     b.oPlus
-
-def windowA (r : ℕ) (S : SegData s) : Finset ℕ :=
-  Icc S.a ⌊(S.a : ℝ) + (S.a : ℝ) / (((r : ℝ) + 1) * S.Y)⌋₊
 
 section Orbit
 
@@ -314,8 +315,8 @@ def segS (TT : Finset (Fin n')) (j : Fin (numSeg TT)) : ℕ := (segDists TT j).l
 def segPos (TT : Finset (Fin n')) (j : Fin (numSeg TT)) (i : Fin (segS TT j)) : Fin n' :=
   posAdd (segStart TT j) ((segDists TT j).get i)
 
-open Classical in
 
+open Classical in
 def segData (p : ℕ) (TT : Finset (Fin n')) (bT : Fin n' → ℕ) (a : ℕ) (b' Y La E0 : ℝ) (j : Fin (numSeg TT)) :
     SegData (segS TT j) where
   sigma := ((List.finRange (segS TT j)).filter

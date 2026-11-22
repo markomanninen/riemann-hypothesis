@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.ModDepthGE
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAdicCompleteOfLeOfIsNoetherianRing
+module
+
+public import Mathlib
+public import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.ModDepthGE
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAdicCompleteOfLeOfIsNoetherianRing
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory

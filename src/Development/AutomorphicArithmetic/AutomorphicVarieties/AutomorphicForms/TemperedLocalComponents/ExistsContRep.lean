@@ -1,11 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.CuspSemisimpleReal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.RepNewform
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.PCuspFin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CapCentral
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.CuspSemisimpleReal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.RepNewform
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.PCuspFin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CapCentral
+
+@[expose] public section
+
 open NumberField GlobalTheory.CuspRep UpperTheory.V
 
-open Matrix in
 
+open Matrix in
 private theorem exists_contRep {K I : Type} [Group K] [TopologicalSpace K] {d : ℕ} (ξ : K →* Matrix (Fin d) (Fin d) ℂ)
     (ev : I → Module.Dual ℂ (Fin d → ℂ)) (hc : ∀ i v, Continuous fun k => ev i (ξ k *ᵥ v))
     (hs : ∀ k v, (∀ i, ev i v = 0) → ∀ i, ev i (ξ k *ᵥ v) = 0) :

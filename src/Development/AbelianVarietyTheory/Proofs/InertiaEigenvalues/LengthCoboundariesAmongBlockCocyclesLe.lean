@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LenCob
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MatKOSmulOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LenCob
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MatKOSmulOne
+
+@[expose] public section
 
 open Formalism Formalism.MainNotions Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module GlobalTheory.Pass GlobalTheory.Cut
 
@@ -59,7 +63,8 @@ theorem length_torsionBy_le {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValu
         rfl
       rw [e]
       change ∑ j, b j • (stdG O (FractionRing O) k).mkQ _ = (stdG O (FractionRing O) k).mkQ y
-      simp only [← map_smul, ← map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [← map_smul, ← map_sum]
       congr 1
       funext j
       have h0 : algebraMap O (FractionRing O) (b j) = algebraMap O (FractionRing O) a * y j := by
@@ -203,7 +208,8 @@ theorem del_smul_sum (hS : GoodCongruenceObjects D.nd r ρ π S) (Xs : Set (D.nd
       Check.matKO_smul_one, zero_smul] at h2
     rw [h2]
     congr 1
-    simp only [z, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [z, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [h1 _ (inSpan_scalar (hs j)) _ (Check.inY_yg i r S _), hψ _ (hs j), Check.matKO_smul_one]
     rfl
@@ -261,7 +267,8 @@ theorem sum_blocks (hS : GoodCongruenceObjects D.nd r ρ π S)
         ∑ j, toK D.nd i (f j S.π') • ((A j).map (toK D.nd i)).mulVec v := by
     intro k A v
     change ((toK D.nd i).mapMatrix _).mulVec v = _
-    rw [map_sum, Matrix.sum_mulVec]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Matrix.sum_mulVec]
     exact Finset.sum_congr rfl fun j _ => map_smul_mulVec _ _ _
   have h1 : ∀ g u, S.e (((rO D.nd i r π g).map (toK D.nd i)).mulVec u) =
       (((rhoO D.nd i ρ π g).map (toK D.nd i)).mulVec (S.e u).1,
@@ -269,7 +276,8 @@ theorem sum_blocks (hS : GoodCongruenceObjects D.nd r ρ π S)
     hS.2.1
   have h := fun u => hS.2.2.2.2.2.2.2.2.2.2.1.2.2.1 (S.e.symm u)
   rw [congrFun e S.π'] at h
-  simp only [Finset.sum_apply, hp, hsum, map_sum, map_smul, h1, LinearEquiv.apply_symm_apply] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_apply, hp, hsum, map_sum, map_smul, h1, LinearEquiv.apply_symm_apply] at h
   refine ⟨mat_ext fun v => ?_, fun c => ?_⟩
   · rw [Matrix.map_zero _ (map_zero _), Matrix.zero_mulVec, hsum]
     have := congrArg Prod.fst (h (v, 0))
@@ -279,7 +287,8 @@ theorem sum_blocks (hS : GoodCongruenceObjects D.nd r ρ π S)
     rw [Prod.snd_sum, Finset.sum_apply] at this
     simp only [Prod.smul_snd, Pi.smul_apply, smul_eq_mul, mul_one] at this
     apply IsFractionRing.injective (D.nd.O i) (KK D.nd i)
-    rw [apply_ite (algebraMap (D.nd.O i) (KK D.nd i)), map_zero, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [apply_ite (algebraMap (D.nd.O i) (KK D.nd i)), map_zero, map_sum]
     simp only [map_mul]
     exact this
 
@@ -290,10 +299,12 @@ theorem matKO_sum {O : Type} [CommRing O] [IsDomain O] {k m : ℕ} (a : Fin m �
   | H v =>
     simp only [Check.matKO_mk]
     change (stdG O (FractionRing O) k).mkQ _ = ∑ j, a j • (stdG O (FractionRing O) k).mkQ _
-    simp only [← map_smul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← map_smul, ← map_sum]
     congr 1
     change ((algebraMap O (FractionRing O)).mapMatrix _).mulVec v = _
-    rw [map_sum, Matrix.sum_mulVec]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Matrix.sum_mulVec]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← algebraMap_smul (FractionRing O) (a j) (Matrix.mulVec _ v), ← Matrix.smul_mulVec]
     congr 1

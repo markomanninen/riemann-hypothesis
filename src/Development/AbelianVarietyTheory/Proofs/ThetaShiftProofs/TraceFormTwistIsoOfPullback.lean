@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RelationsAreFunctions
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.NonemptyCubicalPull
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ValEqOfAppInjective
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TauBimultOfIsPullDeg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RelationsAreFunctions
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.NonemptyCubicalPull
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ValEqOfAppInjective
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TauBimultOfIsPullDeg
+
+@[expose] public section
 
 noncomputable section
 
@@ -136,7 +140,7 @@ theorem rig_val : val D.rigK r z J = om hD.w z J J' (r' ≫ (1 : TK R' ⟶ D'.P.
 theorem tau_val (a b : D'.X) : val (D.tau (hD.xe a) (hD.xe b)) r z J =
     (om hD.w z J J' (r' ≫ D'.xK (a + b)))⁻¹ * om hD.w z J J' (r' ≫ D'.xK a) * om hD.w z J J' (r' ≫ D'.xK b) *
       (om hD.w z J J' (r' ≫ (1 : TK R' ⟶ D'.P.A).left))⁻¹ * val (D'.tau a b) r' z J' := by
-  rw [TauPull.val_tau r hJ, TauPull.val_tau r' hJ', ← map_add, psi_val hD r r' hr hJ hJ', psi_val hD r r' hr hJ hJ',
+  rw [TauPull.val_tau r hJ, TauPull.val_tau r' hJ', ← map_add (f := _), psi_val hD r r' hr hJ hJ', psi_val hD r r' hr hJ hJ',
     psi_val hD r r' hr hJ hJ', rig_val hD r r' hr hJ hJ']
   apply Additive.ofMul.injective
   simp only [ofMul_mul, ofMul_inv]
@@ -341,8 +345,8 @@ theorem nonempty_psiOn_top (D : DegPre R) (h : ∀ χ, PsiUnitOn D χ Set.univ) 
   refine (val_pull hJ _ _ _).trans ((val_pull hJ (t χ) _ _).trans (Eq.trans ?_ (val_pull hJ _ _ _).symm))
   rw [← val_corr hJ (H χ), val_pull hJ, Category.assoc, Category.assoc, morphismRestrict_ι]
 
-include hD in
 
+include hD in
 theorem psiUnitOn_pull (hφ : Function.Injective φ) (x : D'.X) (h : PsiUnitOn D (hD.xe x) Set.univ) :
     PsiUnitOn D' x Set.univ := by
   obtain ⟨t, ht, H⟩ := (psiUnitOn_univ_iff D _).1 h

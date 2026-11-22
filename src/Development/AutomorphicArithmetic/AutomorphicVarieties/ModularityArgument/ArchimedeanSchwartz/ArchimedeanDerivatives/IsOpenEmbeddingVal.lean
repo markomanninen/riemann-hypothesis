@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ShiftOf
-import GroundTheory.AutomorphicForms.RealGroupsHaar
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ShiftOf
+public import GroundTheory.AutomorphicForms.RealGroupsHaar
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ private theorem nrm_pos_iff (x : Lie K n) : 0 < nrm x ↔ x ∈ invSet K n := by
   simp
 
 private theorem continuous_nrm : Continuous (nrm : Lie K n → ℝ) := by
-  refine continuous_finset_prod _ fun w _ => (Continuous.norm ?_).pow 2
+  refine continuous_finsetProd _ fun w _ => (Continuous.norm ?_).pow 2
   exact (continuous_apply w).comp
     (continuous_id (X := Matrix (Fin n) (Fin n) (InfinitePlace K → ℂ))).matrix_det
 

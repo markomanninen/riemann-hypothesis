@@ -1,9 +1,14 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.L2BoundedOnSmooth
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JSmoothA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.SchurB
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.ContinuousBlkWConj
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.UnitaryHaarColumns
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDiagExists
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleySignature
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JSmoothA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.SchurB
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.ContinuousBlkWConj
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.UnitaryHaarColumns
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,11 +27,6 @@ theorem haarSK_of {U : Set (Mat k r)} {μ : Measure (Mt k r)} (h : IsHaarOn U μ
   · haveI : IsFiniteMeasureOnCompacts μ := ⟨h4⟩
     infer_instance
   · assumption
-
-def mkSD {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
-    (σ : Mat k r → (H →L[ℂ] H)) (hrep : Formalism.MainNotions.S.IsURepOn (GV k r) σ) (hirr : Formalism.MainNotions.S.IsIrredOn (GV k r) σ)
-    (w : H) (hw : ‖w‖ = 1) (a C : ℝ) (hdec : ∀ x ∈ GV k r, ‖⟪w, σ x w⟫_ℂ‖ ≤ C * gN x ^ (-a)) : SigData k r :=
-  { Hs := H, σ := σ, rep := hrep, irr := hirr, w := w, w_norm := hw, a := a, Cw := C, dec := hdec }
 
 theorem conj_GV_of_UJ {ε : Fin (2 * r + k + 1) → Bool} {P : Mat k r} (hP : Formalism.MainNotions.S.IsCayley k r ε P)
     {g : Mat k r} (hg : g ∈ Formalism.MainNotions.S.UJset ε) : P⁻¹ * g * P ∈ GV k r := by
